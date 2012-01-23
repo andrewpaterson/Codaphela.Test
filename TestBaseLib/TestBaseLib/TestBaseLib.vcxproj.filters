@@ -1,0 +1,235 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{42d3eae2-e70f-4e9f-81b7-a434cecb85bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data">
+      <UniqueIdentifier>{6b2bc978-6684-4637-ab7d-aa059cc1db76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Array">
+      <UniqueIdentifier>{afb2e0df-ea6e-466d-9b0c-35acf11a6e95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Array\Tree">
+      <UniqueIdentifier>{f0a97557-d958-4b76-96ca-3a7abab94ccb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\String">
+      <UniqueIdentifier>{e1ac7d13-c279-425f-bd69-5d57da2c2e61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Time">
+      <UniqueIdentifier>{107d4c21-4b42-4e8d-9da9-c94fd6f5509f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Map">
+      <UniqueIdentifier>{081ad5e5-dc91-469d-9ac0-faa9db4c3b8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\ASCII">
+      <UniqueIdentifier>{ad81a583-cc63-48f1-a1f6-ce6a5a6d0512}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\File">
+      <UniqueIdentifier>{15a52ed0-48f1-4cda-95ea-1e198afe6da6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\File\System">
+      <UniqueIdentifier>{2bd3b6a3-9373-432e-9bcd-bb600b4cfe0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Math">
+      <UniqueIdentifier>{579b90d3-c2af-49aa-a0dc-9e41100bb3cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Memory">
+      <UniqueIdentifier>{498e30fc-fdcd-412f-b83d-b8d776df645c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Memory\Manager">
+      <UniqueIdentifier>{536f77c4-72d5-41e0-96e3-1fdc62e63472}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\File\Pack">
+      <UniqueIdentifier>{4a671ad4-e886-4d83-974e-d9a752add345}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\File\Chunk">
+      <UniqueIdentifier>{3d2b4f47-88cf-40b5-8e30-774ef8a32f21}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="TestBaseLib.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSorting.cpp">
+      <Filter>Source\Data</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayBit.cpp">
+      <Filter>Source\Data\Array</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayEmbedded.cpp">
+      <Filter>Source\Data\Array</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayInt.cpp">
+      <Filter>Source\Data\Array</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayInt2D.cpp">
+      <Filter>Source\Data\Array</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayLong.cpp">
+      <Filter>Source\Data\Array</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayPrimitiveTemplate.cpp">
+      <Filter>Source\Data\Array</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayTemplate.cpp">
+      <Filter>Source\Data\Array</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDenseArrayTemplate.cpp">
+      <Filter>Source\Data\Array\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSparseArrayTemplate.cpp">
+      <Filter>Source\Data\Array\Tree</Filter>
+    </ClCompile>
+    <ClCompile Include="TestStringHelper.cpp">
+      <Filter>Source\Data\String</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDate.cpp">
+      <Filter>Source\Data\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMapInt.cpp">
+      <Filter>Source\Data\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMapPtr.cpp">
+      <Filter>Source\Data\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="TestASCIITree.cpp">
+      <Filter>Source\Data\ASCII</Filter>
+    </ClCompile>
+    <ClCompile Include="TestBufferedFile.cpp">
+      <Filter>Source\File</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDiskFile.cpp">
+      <Filter>Source\File</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFileFinder.cpp">
+      <Filter>Source\File</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFileUtil.cpp">
+      <Filter>Source\File</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMD5File.cpp">
+      <Filter>Source\File</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMemoryFile.cpp">
+      <Filter>Source\File</Filter>
+    </ClCompile>
+    <ClCompile Include="TestChunkFile.cpp">
+      <Filter>Source\File\Chunk</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPackFile.cpp">
+      <Filter>Source\File\Pack</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFileSystem.cpp">
+      <Filter>Source\File\System</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIntegerHelper.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="TestNumbers.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFreeList.cpp">
+      <Filter>Source\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLinkListAligned.cpp">
+      <Filter>Source\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMemory.cpp">
+      <Filter>Source\Memory\Manager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TestSorting.h">
+      <Filter>Source\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="TestArrayBit.h">
+      <Filter>Source\Data\Array</Filter>
+    </ClInclude>
+    <ClInclude Include="TestArrayEmbedded.h">
+      <Filter>Source\Data\Array</Filter>
+    </ClInclude>
+    <ClInclude Include="TestArrayInt.h">
+      <Filter>Source\Data\Array</Filter>
+    </ClInclude>
+    <ClInclude Include="TestArrayInt2D.h">
+      <Filter>Source\Data\Array</Filter>
+    </ClInclude>
+    <ClInclude Include="TestArrayLong.h">
+      <Filter>Source\Data\Array</Filter>
+    </ClInclude>
+    <ClInclude Include="TestArrayPrimitiveTemplate.h">
+      <Filter>Source\Data\Array</Filter>
+    </ClInclude>
+    <ClInclude Include="TestArrayTemplate.h">
+      <Filter>Source\Data\Array</Filter>
+    </ClInclude>
+    <ClInclude Include="TestDenseArrayTemplate.h">
+      <Filter>Source\Data\Array\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="TestSparseArrayTemplate.h">
+      <Filter>Source\Data\Array\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="TestStringHelper.h">
+      <Filter>Source\Data\String</Filter>
+    </ClInclude>
+    <ClInclude Include="TestDate.h">
+      <Filter>Source\Data\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMapInt.h">
+      <Filter>Source\Data\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMapPtr.h">
+      <Filter>Source\Data\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="TestASCIITree.h">
+      <Filter>Source\Data\ASCII</Filter>
+    </ClInclude>
+    <ClInclude Include="TestBufferedFile.h">
+      <Filter>Source\File</Filter>
+    </ClInclude>
+    <ClInclude Include="TestDiskFile.h">
+      <Filter>Source\File</Filter>
+    </ClInclude>
+    <ClInclude Include="TestFileFinder.h">
+      <Filter>Source\File</Filter>
+    </ClInclude>
+    <ClInclude Include="TestFileUtil.h">
+      <Filter>Source\File</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMD5File.h">
+      <Filter>Source\File</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMemoryFile.h">
+      <Filter>Source\File</Filter>
+    </ClInclude>
+    <ClInclude Include="TestChunkFile.h">
+      <Filter>Source\File\Chunk</Filter>
+    </ClInclude>
+    <ClInclude Include="TestPackFile.h">
+      <Filter>Source\File\Pack</Filter>
+    </ClInclude>
+    <ClInclude Include="TestFileSystem.h">
+      <Filter>Source\File\System</Filter>
+    </ClInclude>
+    <ClInclude Include="TestIntegerHelper.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="TestNumbers.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="TestFreeList.h">
+      <Filter>Source\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="TestLinkListAligned.h">
+      <Filter>Source\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMemory.h">
+      <Filter>Source\Memory\Manager</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Log.txt" />
+    <None Include="Test.txt" />
+  </ItemGroup>
+</Project>

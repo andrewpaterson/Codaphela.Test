@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="TestCoreLib" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug Linux32">
+				<Option output="TestCoreLib" prefix_auto="0" extension_auto="0" />
+				<Option object_output="Debug Linux32" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-W" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-DLINUX_GNU_32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_CONSOLE" />
+				</Compiler>
+				<Linker>
+					<Add library="../../../CommonLibraries/lib/DebugLinux32/TestLib.lib" />
+					<Add library="../../../CommonLibraries/lib/DebugLinux32/CoreLib.lib" />
+					<Add library="../../../CommonLibraries/lib/DebugLinux32/BaseLib.lib" />
+				</Linker>
+			</Target>
+			<Target title="Release Linux32">
+				<Option output="TestCoreLib" prefix_auto="0" extension_auto="0" />
+				<Option object_output="Release Linux32" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-W" />
+					<Add option="-DLINUX_GNU_32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_CONSOLE" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="Debug Win32">
+				<Option output="TestCoreLib" prefix_auto="0" extension_auto="0" />
+				<Option object_output="Debug Win32" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-W" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add option="-DLINUX_GNU_32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_CONSOLE" />
+				</Compiler>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="TestCoreLib" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Release Win32" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-W" />
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_CONSOLE" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wno-write-strings" />
+			<Add directory="../../../CommonLibraries" />
+		</Compiler>
+		<Unit filename="TestArray.cpp" />
+		<Unit filename="TestArray.h" />
+		<Unit filename="TestArrayBit.cpp" />
+		<Unit filename="TestArrayBit.h" />
+		<Unit filename="TestArraySimple.cpp" />
+		<Unit filename="TestArraySimple.h" />
+		<Unit filename="TestChannel.cpp" />
+		<Unit filename="TestChannel.h" />
+		<Unit filename="TestChannelSource.cpp" />
+		<Unit filename="TestChannelSource.h" />
+		<Unit filename="TestChars.cpp" />
+		<Unit filename="TestChars.h" />
+		<Unit filename="TestClass.cpp" />
+		<Unit filename="TestClass.h" />
+		<Unit filename="TestClassStorage.cpp" />
+		<Unit filename="TestClassStorage.h" />
+		<Unit filename="TestCoreLib.cpp" />
+		<Unit filename="TestDurableFile.cpp" />
+		<Unit filename="TestDurableFile.h" />
+		<Unit filename="TestDurableFileController.cpp" />
+		<Unit filename="TestDurableFileController.h" />
+		<Unit filename="TestDurableSet.cpp" />
+		<Unit filename="TestDurableSet.h" />
+		<Unit filename="TestFastFunctions.cpp" />
+		<Unit filename="TestFastFunctions.h" />
+		<Unit filename="TestFloatHelper.cpp" />
+		<Unit filename="TestFloatHelper.h" />
+		<Unit filename="TestFunctionCaller.cpp" />
+		<Unit filename="TestFunctionCaller.h" />
+		<Unit filename="TestIndexedData.cpp" />
+		<Unit filename="TestIndexedData.h" />
+		<Unit filename="TestIndexedHuge.cpp" />
+		<Unit filename="TestIndexedHuge.h" />
+		<Unit filename="TestInstance.cpp" />
+		<Unit filename="TestInstance.h" />
+		<Unit filename="TestIntegerHelper.cpp" />
+		<Unit filename="TestIntegerHelper.h" />
+		<Unit filename="TestMap.cpp" />
+		<Unit filename="TestMap.h" />
+		<Unit filename="TestNumber.cpp" />
+		<Unit filename="TestNumber.h" />
+		<Unit filename="TestOperators.cpp" />
+		<Unit filename="TestOperators.h" />
+		<Unit filename="TestTextParser.cpp" />
+		<Unit filename="TestTextParser.h" />
+		<Unit filename="TestTransactionController.cpp" />
+		<Unit filename="TestTransactionController.h" />
+		<Unit filename="TestTransactionData.cpp" />
+		<Unit filename="TestTransactionData.h" />
+		<Unit filename="TestTransientIndexedFile.cpp" />
+		<Unit filename="TestTransientIndexedFile.h" />
+		<Unit filename="stdafx.cpp" />
+		<Unit filename="stdafx.h" />
+		<Extensions>
+			<envvars />
+			<code_completion />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

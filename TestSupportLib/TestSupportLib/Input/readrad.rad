@@ -1,0 +1,12 @@
+RawImage
+{
+	Width	32;
+	Height	48;
+	Channels
+	{
+		UChar Red;
+		UChar Green;
+		UChar Blue;
+	}
+	FileName	"readrad.raw";
+}

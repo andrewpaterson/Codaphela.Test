@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{293EAEA8-5D52-48B0-81E6-388B506F807D}</ProjectGuid>
+    <RootNamespace>TestCoreLib</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\gameengine\CommonLibraries;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\gameengine\CommonLibraries;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <IgnoreSpecificDefaultLibraries>LIBCMT;LIBCMTD;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <TargetMachine>MachineX86</TargetMachine>
+      <FixedBaseAddress>false</FixedBaseAddress>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="TestCoreLib.cpp" />
+    <ClCompile Include="TestFiles.cpp" />
+    <ClCompile Include="TestMap.cpp" />
+    <ClCompile Include="TestChars.cpp" />
+    <ClCompile Include="TestArraySimple.cpp" />
+    <ClCompile Include="TestIndexedData.cpp" />
+    <ClCompile Include="TestIndexedDataSmart.cpp" />
+    <ClCompile Include="TestIndexedHuge.cpp" />
+    <ClCompile Include="TestIndexes.cpp" />
+    <ClCompile Include="TestTransientIndexedFile.cpp" />
+    <ClCompile Include="TestDurableFile.cpp" />
+    <ClCompile Include="TestDurableFileController.cpp" />
+    <ClCompile Include="TestDurableSet.cpp" />
+    <ClCompile Include="TestTransactionController.cpp" />
+    <ClCompile Include="TestTransactionData.cpp" />
+    <ClCompile Include="TestXMLFile.cpp" />
+    <ClCompile Include="TestFunctionCaller.cpp" />
+    <ClCompile Include="TestFloatHelper.cpp" />
+    <ClCompile Include="TestIntegerHelper.cpp" />
+    <ClCompile Include="TestNumber.cpp" />
+    <ClCompile Include="TestFastFunctions.cpp" />
+    <ClCompile Include="TestOperators.cpp" />
+    <ClCompile Include="TestTextParser.cpp" />
+    <ClCompile Include="TestXMLParser.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TestFiles.h" />
+    <ClInclude Include="TestMap.h" />
+    <ClInclude Include="TestChars.h" />
+    <ClInclude Include="TestArraySimple.h" />
+    <ClInclude Include="TestIndexedData.h" />
+    <ClInclude Include="TestIndexedDataSmart.h" />
+    <ClInclude Include="TestIndexedHuge.h" />
+    <ClInclude Include="TestIndexes.h" />
+    <ClInclude Include="TestTransientIndexedFile.h" />
+    <ClInclude Include="TestDurableFile.h" />
+    <ClInclude Include="TestDurableFileController.h" />
+    <ClInclude Include="TestDurableSet.h" />
+    <ClInclude Include="TestTransactionController.h" />
+    <ClInclude Include="TestTransactionData.h" />
+    <ClInclude Include="TestXMLFile.h" />
+    <ClInclude Include="TestFunctionCaller.h" />
+    <ClInclude Include="TestFloatHelper.h" />
+    <ClInclude Include="TestIntegerHelper.h" />
+    <ClInclude Include="TestNumber.h" />
+    <ClInclude Include="TestFastFunctions.h" />
+    <ClInclude Include="TestOperators.h" />
+    <ClInclude Include="TestTextParser.h" />
+    <ClInclude Include="TestXMLParser.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="External.xml" />
+    <None Include="File.xml" />
+    <None Include="First.xml" />
+    <None Include="Second.xml" />
+    <None Include="Third.xml" />
+    <None Include="Log.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\CommonLibraries\BaseLib\BaseLib.vcxproj">
+      <Project>{e25d2dac-0e80-42b2-8fa7-99b837cf7588}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\CommonLibraries\CoreLib\CoreLib.vcxproj">
+      <Project>{52a2d18b-bc88-4eb9-9ef0-ae58c1e9fdd5}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\CommonLibraries\TestLib\TestLib.vcxproj">
+      <Project>{d06d265e-a503-42f8-a93a-a0a1c0b058ff}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Workspace">
+		<Project filename="../../CommonLibraries/TestLib/TestLib.cbp" />
+		<Project filename="TestBaseLib/TestBaseLib.cbp" active="1">
+			<Depends filename="../../CommonLibraries/TestLib/TestLib.cbp" />
+		</Project>
+		<Project filename="../../CommonLibraries/BaseLib/BaseLib.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>

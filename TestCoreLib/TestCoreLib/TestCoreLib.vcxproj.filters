@@ -1,0 +1,222 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{da1a14f7-1ec8-432b-9ce3-efb29ce8c400}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data">
+      <UniqueIdentifier>{8975ad15-e994-4d2b-9034-b0167f9084f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Map">
+      <UniqueIdentifier>{ac04942c-b002-4be5-a772-9f05c539517b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\String">
+      <UniqueIdentifier>{af58e0f6-897a-409e-bd39-09309c3c3fbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Array">
+      <UniqueIdentifier>{14e936f3-35ac-4e04-98ab-0e9055bedc3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\File">
+      <UniqueIdentifier>{1aed9247-84de-40a0-9b09-766f117e7b11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\File\Indexed">
+      <UniqueIdentifier>{54bb5c7a-9a10-419f-ad67-27920e26a5fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\File\Durable">
+      <UniqueIdentifier>{73270a9f-ceb5-47ee-bf89-cb589fa8323b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\File\Transaction">
+      <UniqueIdentifier>{87d170e1-6980-4589-bec9-0d7fab8a9476}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\File\XML">
+      <UniqueIdentifier>{72ca532d-bd99-4f61-acfb-b87bd33a0aa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Function">
+      <UniqueIdentifier>{c794489d-44ec-4e21-bb07-0e532537e877}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Math">
+      <UniqueIdentifier>{5f55bc52-0653-4429-bf22-26e3cd55ccba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Memory">
+      <UniqueIdentifier>{2bd1d6b0-cc0e-4e04-a474-6464ca245fec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Script">
+      <UniqueIdentifier>{bc57d699-f6cb-4d12-bcb3-0215b841409e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Text">
+      <UniqueIdentifier>{c8c22efd-cccb-4f35-b47f-7c27b17eca0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\File\Files">
+      <UniqueIdentifier>{bd81b3ff-2b4a-4ba4-97fb-d1d64129c154}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCoreLib.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMap.cpp">
+      <Filter>Source\Data\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="TestChars.cpp">
+      <Filter>Source\Data\String</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArraySimple.cpp">
+      <Filter>Source\Data\Array</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexedData.cpp">
+      <Filter>Source\File\Indexed</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexedDataSmart.cpp">
+      <Filter>Source\File\Indexed</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexedHuge.cpp">
+      <Filter>Source\File\Indexed</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexes.cpp">
+      <Filter>Source\File\Indexed</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTransientIndexedFile.cpp">
+      <Filter>Source\File\Indexed</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDurableFile.cpp">
+      <Filter>Source\File\Durable</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDurableFileController.cpp">
+      <Filter>Source\File\Durable</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDurableSet.cpp">
+      <Filter>Source\File\Durable</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTransactionController.cpp">
+      <Filter>Source\File\Transaction</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTransactionData.cpp">
+      <Filter>Source\File\Transaction</Filter>
+    </ClCompile>
+    <ClCompile Include="TestXMLFile.cpp">
+      <Filter>Source\File\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFunctionCaller.cpp">
+      <Filter>Source\Function</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFloatHelper.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIntegerHelper.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="TestNumber.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFastFunctions.cpp">
+      <Filter>Source\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="TestOperators.cpp">
+      <Filter>Source\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTextParser.cpp">
+      <Filter>Source\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="TestXMLParser.cpp">
+      <Filter>Source\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFiles.cpp">
+      <Filter>Source\File\Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMap.h">
+      <Filter>Source\Data\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="TestChars.h">
+      <Filter>Source\Data\String</Filter>
+    </ClInclude>
+    <ClInclude Include="TestArraySimple.h">
+      <Filter>Source\Data\Array</Filter>
+    </ClInclude>
+    <ClInclude Include="TestIndexedData.h">
+      <Filter>Source\File\Indexed</Filter>
+    </ClInclude>
+    <ClInclude Include="TestIndexedDataSmart.h">
+      <Filter>Source\File\Indexed</Filter>
+    </ClInclude>
+    <ClInclude Include="TestIndexedHuge.h">
+      <Filter>Source\File\Indexed</Filter>
+    </ClInclude>
+    <ClInclude Include="TestIndexes.h">
+      <Filter>Source\File\Indexed</Filter>
+    </ClInclude>
+    <ClInclude Include="TestTransientIndexedFile.h">
+      <Filter>Source\File\Indexed</Filter>
+    </ClInclude>
+    <ClInclude Include="TestDurableFile.h">
+      <Filter>Source\File\Durable</Filter>
+    </ClInclude>
+    <ClInclude Include="TestDurableFileController.h">
+      <Filter>Source\File\Durable</Filter>
+    </ClInclude>
+    <ClInclude Include="TestDurableSet.h">
+      <Filter>Source\File\Durable</Filter>
+    </ClInclude>
+    <ClInclude Include="TestTransactionController.h">
+      <Filter>Source\File\Transaction</Filter>
+    </ClInclude>
+    <ClInclude Include="TestTransactionData.h">
+      <Filter>Source\File\Transaction</Filter>
+    </ClInclude>
+    <ClInclude Include="TestXMLFile.h">
+      <Filter>Source\File\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="TestFunctionCaller.h">
+      <Filter>Source\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="TestFloatHelper.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="TestIntegerHelper.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="TestNumber.h">
+      <Filter>Source\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="TestFastFunctions.h">
+      <Filter>Source\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="TestOperators.h">
+      <Filter>Source\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="TestTextParser.h">
+      <Filter>Source\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="TestXMLParser.h">
+      <Filter>Source\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="TestFiles.h">
+      <Filter>Source\File\Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="External.xml">
+      <Filter>Source\File\XML</Filter>
+    </None>
+    <None Include="File.xml">
+      <Filter>Source\File\XML</Filter>
+    </None>
+    <None Include="First.xml">
+      <Filter>Source\File\XML</Filter>
+    </None>
+    <None Include="Second.xml">
+      <Filter>Source\File\XML</Filter>
+    </None>
+    <None Include="Third.xml">
+      <Filter>Source\File\XML</Filter>
+    </None>
+    <None Include="Log.txt" />
+  </ItemGroup>
+</Project>

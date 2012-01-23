@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Image">
+      <UniqueIdentifier>{da8e2d3d-708a-4bb1-b2da-7c806f02d090}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Image\Font">
+      <UniqueIdentifier>{876c8615-8a62-4cc7-8cea-334f67288179}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mesh">
+      <UniqueIdentifier>{4448e937-2f7e-43d9-b1d0-69f89b088ed0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TextEditor">
+      <UniqueIdentifier>{a5b23259-78be-4c56-a24a-d576373fe969}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shape">
+      <UniqueIdentifier>{47a626e0-7e47-47b3-aa1b-ebefdc76f4d3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSupportLib.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestBumpMapper.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImage.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageCel.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageCelsSource.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageColour.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageCombiner.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageDivider.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageDrawBox.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageGreyToRGB.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageImport.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageModifierStack.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageMultiAccessor.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageReader.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageRecolour.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageRGBToGrey.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageSwizzle.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageWriter.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestRectangleBestPacker.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestRectanglePow2Packer.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestWinText.cpp">
+      <Filter>Source Files\Image\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMeshColour.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMeshConnectivity.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMeshFaceReturn.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMeshMaterial.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMeshOBJReader.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMeshPolygons.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMeshShapes.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMeshUVCoords.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="TestNormalGeneration.cpp">
+      <Filter>Source Files\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPlainTextEditor.cpp">
+      <Filter>Source Files\TextEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="TestHalfSpace.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPolygon.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSphereShape.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTriangleShape.cpp">
+      <Filter>Source Files\Shape</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestBumpMapper.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestImage.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestImageCel.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestImageCelsSource.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestImageColour.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestImageCombiner.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestImageDivider.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestImageDrawBox.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestImageGreyToRGB.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestImageImport.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestImageModifierStack.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestImageMultiAccessor.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestImageReader.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestImageRecolour.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestImageRGBToGrey.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestImageSwizzle.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestRectangleBestPacker.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestRectanglePow2Packer.h">
+      <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="TestWinText.h">
+      <Filter>Source Files\Image\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMeshColour.h">
+      <Filter>Source Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMeshConnectivity.h">
+      <Filter>Source Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMeshFaceReturn.h">
+      <Filter>Source Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMeshMaterial.h">
+      <Filter>Source Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMeshOBJReader.h">
+      <Filter>Source Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMeshPolygons.h">
+      <Filter>Source Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMeshShapes.h">
+      <Filter>Source Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMeshUVCoords.h">
+      <Filter>Source Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="TestNormalGeneration.h">
+      <Filter>Source Files\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="TestPlainTextEditor.h">
+      <Filter>Source Files\TextEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="TestHalfSpace.h">
+      <Filter>Source Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="TestPolygon.h">
+      <Filter>Source Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="TestSphereShape.h">
+      <Filter>Source Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="TestTriangleShape.h">
+      <Filter>Source Files\Shape</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Log.txt" />
+    <None Include="Todo.txt" />
+  </ItemGroup>
+</Project>
