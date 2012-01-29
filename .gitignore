@@ -16,3 +16,6 @@ TestCoreLib/Debug/*
 TestBaseLib/Debug/*
 TestBaseLib/TestBaseLib/Log.txt
 TestStandardLib/TestStandardLib/Log.txt
+TestCoreLib/ipch/*
+TestStandardLib/Release/*
+TestStandardLib/TestStandardLib/Release/*

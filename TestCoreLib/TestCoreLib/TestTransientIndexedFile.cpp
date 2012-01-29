@@ -24,7 +24,7 @@ BOOL PrivateAssertCacheConsistency(CTransientIndexedFile* pcTransientIndexedFile
 	psCache = (SOIndexIndexCacheDescriptor*)pcTransientIndexedFile->mcCache.GetFirst();
 	while (psCache)
 	{
-		bResult = pcTransientIndexedFile->mcPointers.FindInSorted((STransientIndexedPointer*)&psCache->sIndex.OI, CompareOIndexToTransientIndexedPointer, &iIndex);
+		bResult = pcTransientIndexedFile->mcPointers.FindInSorted((STransientIndexedPointer*)&psCache->sIndex.oi, CompareOIndexToTransientIndexedPointer, &iIndex);
 		if (psCache->sIndex.iIndex != iIndex)
 		{
 			szExpected.Init();
