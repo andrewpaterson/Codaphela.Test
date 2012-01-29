@@ -27,6 +27,7 @@
 #include "TestFileFinder.h"
 #include "TestArrayEmbedded.h"
 #include "TestArrayBit.h"
+#include "TestLinkListTemplate.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -65,6 +66,7 @@ int main(int argc, char* argv[])
 	TestSorting();
 	TestArrayBit();
 	TestArrayEmbedded();
+	TestLinkListTemplate();
 
 	return TestTotalStatistics();
 }

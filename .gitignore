@@ -1,0 +1,17 @@
+
+TestBaseLib/TestBaseLib/Debug/*
+TestBaseLib/ipch/*
+TestBaseLib/TestBaseLib.sdf
+TestBaseLib/TestBaseLib.suo
+TestCoreLib/TestCoreLib.sdf
+TestCoreLib/TestCoreLib.suo
+TestCoreLib/TestCoreLib/Debug/*
+TestStandardLib/TestStandardLib/Debug/*
+TestStandardLib/TestStandardLib.sdf
+TestStandardLib/TestStandardLib.suo
+TestStandardLib/ipch/*
+TestStandardLib/Debug/*
+TestCoreLib/TestCoreLib/Log.txt
+TestCoreLib/Debug/*
+TestBaseLib/Debug/*
+TestBaseLib/TestBaseLib/Log.txt

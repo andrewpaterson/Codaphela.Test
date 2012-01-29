@@ -46,6 +46,9 @@
     <Filter Include="Source\File\Chunk">
       <UniqueIdentifier>{3d2b4f47-88cf-40b5-8e30-774ef8a32f21}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Data\LinkList">
+      <UniqueIdentifier>{84a720a1-3862-4dc3-b246-4fccae290aa8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -138,6 +141,9 @@
     <ClCompile Include="TestMemory.cpp">
       <Filter>Source\Memory\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="TestLinkListTemplate.cpp">
+      <Filter>Source\Data\LinkList</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestSorting.h">
@@ -226,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="TestMemory.h">
       <Filter>Source\Memory\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TestLinkListTemplate.h">
+      <Filter>Source\Data\LinkList</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
