@@ -185,6 +185,7 @@ void TestRootGraphRemoveSimple(void)
 	AssertInt(0, pTest3->NumTos());
 	AssertInt(1, pTest2->NumFroms());
 	AssertInt(1, pTest3->NumFroms());
+
 	//  Top1    Test3    Test5
 	//   |        |	      |
 	//  Set     Test2    Test4

@@ -121,6 +121,7 @@
     <ClCompile Include="TestFreeList.cpp" />
     <ClCompile Include="TestLinkListAligned.cpp" />
     <ClCompile Include="TestMemory.cpp" />
+    <ClCompile Include="TestTreeTemplate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestLinkListTemplate.h" />
@@ -153,6 +154,7 @@
     <ClInclude Include="TestFreeList.h" />
     <ClInclude Include="TestLinkListAligned.h" />
     <ClInclude Include="TestMemory.h" />
+    <ClInclude Include="TestTreeTemplate.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

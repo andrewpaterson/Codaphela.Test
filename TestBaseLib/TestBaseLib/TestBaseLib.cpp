@@ -28,6 +28,7 @@
 #include "TestArrayEmbedded.h"
 #include "TestArrayBit.h"
 #include "TestLinkListTemplate.h"
+#include "TestTreeTemplate.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -67,6 +68,7 @@ int main(int argc, char* argv[])
 	TestArrayBit();
 	TestArrayEmbedded();
 	TestLinkListTemplate();
+	TestTreeTemplate();
 
 	return TestTotalStatistics();
 }

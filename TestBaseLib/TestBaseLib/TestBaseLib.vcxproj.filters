@@ -49,6 +49,9 @@
     <Filter Include="Source\Data\LinkList">
       <UniqueIdentifier>{84a720a1-3862-4dc3-b246-4fccae290aa8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Data\Tree">
+      <UniqueIdentifier>{0a997eac-2375-4e68-9dbf-316388a222c1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -144,6 +147,9 @@
     <ClCompile Include="TestLinkListTemplate.cpp">
       <Filter>Source\Data\LinkList</Filter>
     </ClCompile>
+    <ClCompile Include="TestTreeTemplate.cpp">
+      <Filter>Source\Data\Tree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestSorting.h">
@@ -235,6 +241,9 @@
     </ClInclude>
     <ClInclude Include="TestLinkListTemplate.h">
       <Filter>Source\Data\LinkList</Filter>
+    </ClInclude>
+    <ClInclude Include="TestTreeTemplate.h">
+      <Filter>Source\Data\Tree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
