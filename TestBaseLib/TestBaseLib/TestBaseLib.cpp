@@ -29,6 +29,7 @@
 #include "TestArrayBit.h"
 #include "TestLinkListTemplate.h"
 #include "TestTreeTemplate.h"
+#include "TestCSVFileEditable.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -69,6 +70,7 @@ int main(int argc, char* argv[])
 	TestArrayEmbedded();
 	TestLinkListTemplate();
 	TestTreeTemplate();
+	TestCSVFileEditable();
 
 	return TestTotalStatistics();
 }

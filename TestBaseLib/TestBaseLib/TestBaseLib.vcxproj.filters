@@ -52,6 +52,9 @@
     <Filter Include="Source\Data\Tree">
       <UniqueIdentifier>{0a997eac-2375-4e68-9dbf-316388a222c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\File\CSV">
+      <UniqueIdentifier>{5c9d020c-6a23-4f38-8d02-7425b9912ff9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -150,6 +153,9 @@
     <ClCompile Include="TestTreeTemplate.cpp">
       <Filter>Source\Data\Tree</Filter>
     </ClCompile>
+    <ClCompile Include="TestCSVFileEditable.cpp">
+      <Filter>Source\File\CSV</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestSorting.h">
@@ -244,6 +250,9 @@
     </ClInclude>
     <ClInclude Include="TestTreeTemplate.h">
       <Filter>Source\Data\Tree</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCSVFileEditable.h">
+      <Filter>Source\File\CSV</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
