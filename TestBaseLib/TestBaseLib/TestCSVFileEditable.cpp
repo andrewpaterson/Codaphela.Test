@@ -24,7 +24,7 @@ Header1|Header2\n\
 	iFileLen = strlen(szFile);
 	pcMemoryFile = MemoryFile(szFile, iFileLen);
 
-	cCSVFile.Init('"', '|');
+	cCSVFile.Init('|');
 	cCSVFile.Open(pcMemoryFile);
 
 	cCSVFile.ReadAllLines();
