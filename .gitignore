@@ -20,3 +20,5 @@ TestCoreLib/ipch/*
 TestStandardLib/Release/*
 TestStandardLib/TestStandardLib/Release/*
 TestStandardLib/TestStandardLib.opensdf
+TestStandardLib/TestStandardLib120427.vsp
+TestStandardLib/TestStandardLib.psess
