@@ -196,7 +196,6 @@ void TestCacheEviction(void)
 	AssertLongLongInt(20LL, cNamedIndexes.GetIndex("Wordsworth"));
 	AssertInt(4, cNamedIndexes.NumNames());
 
-
 	cNamedIndexes.Add(66LL, "Alicia");
 	AssertLongLongInt(66LL, cNamedIndexes.GetIndex("Alicia"));
 	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
@@ -204,7 +203,6 @@ void TestCacheEviction(void)
 	AssertLongLongInt(19LL, cNamedIndexes.GetIndex("Camilla"));
 	AssertLongLongInt(20LL, cNamedIndexes.GetIndex("Wordsworth"));
 	AssertInt(5, cNamedIndexes.NumNames());
-
 
 	cNamedIndexes.Add(67LL, "Aardvark");
 	cNamedIndexes.Add(68LL, "Alfredo");
