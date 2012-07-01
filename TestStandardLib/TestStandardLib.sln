@@ -2,12 +2,15 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestStandardLib", "TestStandardLib\TestStandardLib.vcxproj", "{94B0D21C-D345-4665-8E02-2329EED520AB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5918EC20-07C3-485F-80BB-BED4F96EA48F} = {5918EC20-07C3-485F-80BB-BED4F96EA48F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseLib", "..\..\CommonLibraries\BaseLib\BaseLib.vcxproj", "{E25D2DAC-0E80-42B2-8FA7-99B837CF7588}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StandardLib", "..\..\CommonLibraries\StandardLib\StandardLib.vcxproj", "{2CFA23FA-6565-4744-8B75-9790B21CC0E5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CoreLib", "..\..\CommonLibraries\CoreLib\CoreLib.vcxproj", "{52A2D18B-BC88-4EB9-9EF0-AE58C1E9FDD5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CoreLib", "..\..\CommonLibraries\CoreLib\CoreLib.vcxproj", "{5918EC20-07C3-485F-80BB-BED4F96EA48F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E25D2DAC-0E80-42B2-8FA7-99B837CF7588} = {E25D2DAC-0E80-42B2-8FA7-99B837CF7588}
 	EndProjectSection
@@ -34,10 +37,10 @@ Global
 		{2CFA23FA-6565-4744-8B75-9790B21CC0E5}.Debug|Win32.Build.0 = Debug|Win32
 		{2CFA23FA-6565-4744-8B75-9790B21CC0E5}.Release|Win32.ActiveCfg = Release|Win32
 		{2CFA23FA-6565-4744-8B75-9790B21CC0E5}.Release|Win32.Build.0 = Release|Win32
-		{52A2D18B-BC88-4EB9-9EF0-AE58C1E9FDD5}.Debug|Win32.ActiveCfg = Debug|Win32
-		{52A2D18B-BC88-4EB9-9EF0-AE58C1E9FDD5}.Debug|Win32.Build.0 = Debug|Win32
-		{52A2D18B-BC88-4EB9-9EF0-AE58C1E9FDD5}.Release|Win32.ActiveCfg = Release|Win32
-		{52A2D18B-BC88-4EB9-9EF0-AE58C1E9FDD5}.Release|Win32.Build.0 = Release|Win32
+		{5918EC20-07C3-485F-80BB-BED4F96EA48F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5918EC20-07C3-485F-80BB-BED4F96EA48F}.Debug|Win32.Build.0 = Debug|Win32
+		{5918EC20-07C3-485F-80BB-BED4F96EA48F}.Release|Win32.ActiveCfg = Release|Win32
+		{5918EC20-07C3-485F-80BB-BED4F96EA48F}.Release|Win32.Build.0 = Release|Win32
 		{D06D265E-A503-42F8-A93A-A0A1C0B058FF}.Debug|Win32.ActiveCfg = Debug|Win32
 		{D06D265E-A503-42F8-A93A-A0A1C0B058FF}.Debug|Win32.Build.0 = Debug|Win32
 		{D06D265E-A503-42F8-A93A-A0A1C0B058FF}.Release|Win32.ActiveCfg = Release|Win32
