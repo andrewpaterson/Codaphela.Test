@@ -174,7 +174,7 @@ void TestCacheEviction(void)
 	cFileUtil.MakeDir("NamedIndexes/3");
 	cController.Init("NamedIndexes/3", TRUE);
 	cNamedIndexes.Init(&cController, 256, 4);
-	cController.mcDurableSet.Begin();
+	cController.Begin();
 
 	AssertInt(0, cNamedIndexes.NumNames());
 
@@ -226,7 +226,7 @@ void TestCacheEviction(void)
 
 	AssertInt(9, cNamedIndexes.NumNames());
 
-	cController.mcDurableSet.End();
+	cController.End();
 	cNamedIndexes.Kill();
 	cController.Kill();
 }

@@ -42,7 +42,7 @@ void TestIndexedFile(void)
 	szRewrite.Append("_File.DAT");
 
 	cDurableController.Init("IndexedFile", TRUE);
-	cDurableController.mcDurableSet.Begin();
+	cDurableController.Begin();
 
 	cIndexedFile.Init(&cDurableController, 0, szWrite.Text(), szRewrite.Text(), 9, 0);
 
@@ -56,7 +56,7 @@ void TestIndexedFile(void)
 	AssertTrue(bResult);
 	AssertInt(18, (int)cIndexedFile.mcFile.Size());
 
-	bResult = cDurableController.mcDurableSet.End();
+	bResult = cDurableController.End();
 	AssertTrue(bResult);
 	bResult = cIndexedFile.Kill();
 	AssertTrue(bResult);
@@ -77,7 +77,7 @@ void TestIndexedFile(void)
 
 
 	cDurableController.Init("IndexedFile", TRUE);
-	cDurableController.mcDurableSet.Begin();
+	cDurableController.Begin();
 
 	cIndexedFile.Init(&cDurableController, 0, szWrite.Text(), szRewrite.Text(), 9, 0);
 
@@ -94,7 +94,7 @@ void TestIndexedFile(void)
 	AssertString(sz2, szTemp);
 	AssertInt(18, (int)cIndexedFile.mcFile.Size());
 
-	bResult = cDurableController.mcDurableSet.End();
+	bResult = cDurableController.End();
 	AssertTrue(bResult);
 	bResult = cIndexedFile.Kill();
 	AssertTrue(bResult);
