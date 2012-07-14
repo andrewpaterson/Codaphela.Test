@@ -126,6 +126,9 @@
     <ClCompile Include="TestFiles.cpp">
       <Filter>Source\File\Files</Filter>
     </ClCompile>
+    <ClCompile Include="TestIndexedFile.cpp">
+      <Filter>Source\File\Indexed</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -199,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="TestFiles.h">
       <Filter>Source\File\Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestIndexedFile.h">
+      <Filter>Source\File\Indexed</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

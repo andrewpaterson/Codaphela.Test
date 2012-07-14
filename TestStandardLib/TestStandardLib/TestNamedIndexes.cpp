@@ -198,33 +198,33 @@ void TestCacheEviction(void)
 	AssertInt(4, cNamedIndexes.NumNames());
 
 	cNamedIndexes.Add(66LL, "Alicia");
-	//AssertLongLongInt(66LL, cNamedIndexes.GetIndex("Alicia"));
-	//AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
-	//AssertLongLongInt(73LL, cNamedIndexes.GetIndex("Alfred"));
-	//AssertLongLongInt(19LL, cNamedIndexes.GetIndex("Camilla"));
-	//AssertLongLongInt(20LL, cNamedIndexes.GetIndex("Wordsworth"));
-	//AssertInt(5, cNamedIndexes.NumNames());
+	AssertLongLongInt(66LL, cNamedIndexes.GetIndex("Alicia"));
+	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
+	AssertLongLongInt(73LL, cNamedIndexes.GetIndex("Alfred"));
+	AssertLongLongInt(19LL, cNamedIndexes.GetIndex("Camilla"));
+	AssertLongLongInt(20LL, cNamedIndexes.GetIndex("Wordsworth"));
+	AssertInt(5, cNamedIndexes.NumNames());
 
-	//cNamedIndexes.Add(67LL, "Aardvark");
-	//cNamedIndexes.Add(68LL, "Alfredo");
-	//bResult = cNamedIndexes.Add(69LL, "Play-dough");
-	//cNamedIndexes.Add(01LL, "Zynaps");
-	//AssertTrue(bResult);
-	//AssertLongLongInt(66LL, cNamedIndexes.GetIndex("Alicia"));
-	//AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
-	//AssertLongLongInt(73LL, cNamedIndexes.GetIndex("Alfred"));
-	//AssertLongLongInt(19LL, cNamedIndexes.GetIndex("Camilla"));
-	//AssertLongLongInt(20LL, cNamedIndexes.GetIndex("Wordsworth"));
-	//AssertLongLongInt(67LL, cNamedIndexes.GetIndex("Aardvark"));
-	//AssertLongLongInt(68LL, cNamedIndexes.GetIndex("Alfredo"));
-	//AssertLongLongInt(69LL, cNamedIndexes.GetIndex("Play-dough"));
-	//AssertLongLongInt(01LL, cNamedIndexes.GetIndex("Zynaps"));
-	//AssertInt(9, cNamedIndexes.NumNames());
+	cNamedIndexes.Add(67LL, "Aardvark");
+	cNamedIndexes.Add(68LL, "Alfredo");
+	bResult = cNamedIndexes.Add(69LL, "Play-dough");
+	cNamedIndexes.Add(01LL, "Zynaps");
+	AssertTrue(bResult);
+	AssertLongLongInt(66LL, cNamedIndexes.GetIndex("Alicia"));
+	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
+	AssertLongLongInt(73LL, cNamedIndexes.GetIndex("Alfred"));
+	AssertLongLongInt(19LL, cNamedIndexes.GetIndex("Camilla"));
+	AssertLongLongInt(20LL, cNamedIndexes.GetIndex("Wordsworth"));
+	AssertLongLongInt(67LL, cNamedIndexes.GetIndex("Aardvark"));
+	AssertLongLongInt(68LL, cNamedIndexes.GetIndex("Alfredo"));
+	AssertLongLongInt(69LL, cNamedIndexes.GetIndex("Play-dough"));
+	AssertLongLongInt(01LL, cNamedIndexes.GetIndex("Zynaps"));
+	AssertInt(9, cNamedIndexes.NumNames());
 
-	//bResult = cNamedIndexes.Add(88LL, "Play-dough");
-	//AssertFalse(bResult);
+	bResult = cNamedIndexes.Add(88LL, "Play-dough");
+	AssertFalse(bResult);
 
-	//AssertInt(9, cNamedIndexes.NumNames());
+	AssertInt(9, cNamedIndexes.NumNames());
 
 	cController.mcDurableSet.End();
 	cNamedIndexes.Kill();

@@ -71,7 +71,6 @@ void TestDurableFileRecovery(void)
 	cDurableFile3.Write(8, "CCCC", 4, 1);
 
 	cDurableSet.End();
-
 	cDurableSet.Kill();
 
 	cDurableFile1.Close(); 
@@ -110,7 +109,6 @@ void TestDurableFileRecovery(void)
 	cDurableSet.Add(&cDurableFile4);
 
 	cDurableSet.Recover();
-	cDurableSet.End();
 	cDurableSet.Kill();
 
 	cDurableFile1.Close(); 
@@ -150,7 +148,6 @@ void TestDurableFileRecovery(void)
 	cDurableSet.Add(&cDurableFile4);
 
 	cDurableSet.Recover();
-	cDurableSet.End();
 	cDurableSet.Kill();
 
 	cDurableFile1.Close(); 

@@ -96,6 +96,7 @@
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="TestCoreLib.cpp" />
     <ClCompile Include="TestFiles.cpp" />
+    <ClCompile Include="TestIndexedFile.cpp" />
     <ClCompile Include="TestMap.cpp" />
     <ClCompile Include="TestChars.cpp" />
     <ClCompile Include="TestArraySimple.cpp" />
@@ -122,6 +123,7 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestFiles.h" />
+    <ClInclude Include="TestIndexedFile.h" />
     <ClInclude Include="TestMap.h" />
     <ClInclude Include="TestChars.h" />
     <ClInclude Include="TestArraySimple.h" />

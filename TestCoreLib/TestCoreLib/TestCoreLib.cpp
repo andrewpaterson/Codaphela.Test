@@ -10,6 +10,7 @@
 #include "TestArraySimple.h"
 #include "TestFastFunctions.h"
 #include "TestIntegerHelper.h"
+#include "TestIndexedFile.h"
 #include "TestIndexes.h"
 #include "TestIndexedData.h"
 #include "TestIndexedDataSmart.h"
@@ -45,6 +46,7 @@ int main(int argc, char* argv[])
 	TestXMLParser();
 	TestXMLFile();
 	TestDurableFile();
+	TestIndexedFile();
 	TestIndexes();
 	TestIndexedHuge();
 	TestIndexedData();
