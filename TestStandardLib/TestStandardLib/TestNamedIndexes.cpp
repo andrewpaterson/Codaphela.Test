@@ -261,6 +261,56 @@ void TestCacheEviction(void)
 }
 
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLoad(void)
+{
+	CNamedIndexes				cNamedIndexes;
+	CDurableFileController		cController;
+	CFileUtil					cFileUtil;
+	CNamedIndexesBlocks*		pcBlock32;
+	CNamedIndexesBlocks*		pcBlock64;
+
+	cFileUtil.MakeDir("NamedIndexes/4");
+	cController.Init("NamedIndexes/4", TRUE);
+	cNamedIndexes.Init(&cController, 512, 6);
+	cController.Begin();
+
+	cNamedIndexes.Add(1LL, "Arthur Miller");
+	cNamedIndexes.Add(2LL, "systema skeletale");
+	cNamedIndexes.Add(3LL, "roe");
+	cNamedIndexes.Add(4LL, "order Plumbaginales Melba aldicarb");
+	cNamedIndexes.Add(5LL, "asphyxiate");
+	cNamedIndexes.Add(6LL, "Fonseca Bay Piaget Salt tomato plant");
+	cNamedIndexes.Add(7LL, "thoracic vertebra");
+	cNamedIndexes.Add(8LL, "LL75");
+	cNamedIndexes.Add(9LL, "Calendrer");
+	cNamedIndexes.Add(10LL, "zone refining refashion butter up");
+	cNamedIndexes.Add(11LL, "Chopin Dicranaceae transmountain insentient");
+	cNamedIndexes.Add(12LL, "Recipes Kerchiefs 32TX");
+	cNamedIndexes.Add(13LL, "factor V domestic relations");
+	cNamedIndexes.Add(14LL, "bedum ?");
+	cNamedIndexes.Add(15LL, "gauche");
+	cNamedIndexes.Add(16LL, "takeoff breakup value Tenuifolious magnitude");
+	cNamedIndexes.Add(17LL, "Forisfamiliated");
+	cNamedIndexes.Add(18LL, "amphibious bulk liquid transfer system");
+	cNamedIndexes.Add(19LL, "otoscope");
+	cNamedIndexes.Add(20LL, "impel Christmas");
+	cNamedIndexes.Add(21LL, "universalise rose fever IL59 Europe");
+
+	pcBlock32 = cNamedIndexes.TestGetBlock(32);
+	pcBlock64 = cNamedIndexes.TestGetBlock(64);
+
+	cController.End();
+	cNamedIndexes.Kill();
+
+	
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -276,6 +326,7 @@ void TestNamedIndexes(void)
 	TestAdd();
 	TestRemove();
 	TestCacheEviction();
+	//TestLoad();
 
 	cFileUtil.RemoveDir("NamedIndexes");
 
