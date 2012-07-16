@@ -30,6 +30,9 @@
 #include "TestLinkListTemplate.h"
 #include "TestTreeTemplate.h"
 #include "TestCSVFileEditable.h"
+#include "TestMemoryStack.h"
+#include "TestMemoryCache.h"
+#include "TestScratchPad.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,37 +43,40 @@ int main(int argc, char* argv[])
 {
 	InitTotalStatistics();
 
-	TestIntegerHelper();
-	TestArrayInt();
-	TestArrayLong();
-	TestArrayInt2D();
-	TestArrayPrimitiveTemplate();
-	TestMapInt();
-	TestMapPtr();
-	TestLinkListAligned();
-	TestFreeList();
-	TestASCIITree();
-	TestStringHelper();
-	TestNumbers();
-	TestArrayTemplate();
-	TestArrayDenseTemplate();
-	TestArraySparseTemplate();
-	TestFileUtil();
-	TestFileFinder();
-	TestMemoryFile();
-	TestDiskFile();
-	TestBufferedFile();
-	TestMD5File();
-	TestChunkFile();
-	TestPackFile();
-	TestFileSystem();
-	TestMemory();
-	TestSorting();
-	TestArrayBit();
-	TestArrayEmbedded();
-	TestLinkListTemplate();
-	TestTreeTemplate();
-	TestCSVFileEditable();
+	//TestIntegerHelper();
+	//TestArrayInt();
+	//TestArrayLong();
+	//TestArrayInt2D();
+	//TestArrayPrimitiveTemplate();
+	//TestMapInt();
+	//TestMapPtr();
+	//TestLinkListAligned();
+	//TestFreeList();
+	//TestASCIITree();
+	//TestStringHelper();
+	//TestNumbers();
+	//TestArrayTemplate();
+	//TestArrayDenseTemplate();
+	//TestArraySparseTemplate();
+	//TestFileUtil();
+	//TestFileFinder();
+	//TestMemoryFile();
+	//TestDiskFile();
+	//TestBufferedFile();
+	//TestMD5File();
+	//TestChunkFile();
+	//TestPackFile();
+	//TestFileSystem();
+	//TestSorting();
+	//TestArrayBit();
+	//TestArrayEmbedded();
+	//TestLinkListTemplate();
+	//TestTreeTemplate();
+	//TestCSVFileEditable();
+	//TestMemory();
+	//TestScratchPad();
+	//TestMemoryStack();
+	TestMemoryCache();
 
 	return TestTotalStatistics();
 }

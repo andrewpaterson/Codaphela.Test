@@ -323,10 +323,10 @@ void TestNamedIndexes(void)
 
 	cFileUtil.RemoveDir("NamedIndexes");
 
-	TestAdd();
-	TestRemove();
-	TestCacheEviction();
-	//TestLoad();
+	//TestAdd();
+	//TestRemove();
+	//TestCacheEviction();
+	TestLoad();
 
 	cFileUtil.RemoveDir("NamedIndexes");
 

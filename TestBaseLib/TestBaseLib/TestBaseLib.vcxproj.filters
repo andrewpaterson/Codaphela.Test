@@ -55,6 +55,18 @@
     <Filter Include="Source\File\CSV">
       <UniqueIdentifier>{5c9d020c-6a23-4f38-8d02-7425b9912ff9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Memory\FreeList">
+      <UniqueIdentifier>{d8e0b5f5-3d04-4b8a-adea-b9102cc078c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Memory\Cache">
+      <UniqueIdentifier>{052276fa-dd6f-40f9-9b73-3e5300c88e9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Memory\ScratchPad">
+      <UniqueIdentifier>{d8c169e4-1fb3-47a3-9c46-f5be02d8c70e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Memory\Stack">
+      <UniqueIdentifier>{5a2c8b49-5fb8-4be9-a2f1-c94f45225269}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -138,12 +150,6 @@
     <ClCompile Include="TestNumbers.cpp">
       <Filter>Source\Math</Filter>
     </ClCompile>
-    <ClCompile Include="TestFreeList.cpp">
-      <Filter>Source\Memory</Filter>
-    </ClCompile>
-    <ClCompile Include="TestLinkListAligned.cpp">
-      <Filter>Source\Memory</Filter>
-    </ClCompile>
     <ClCompile Include="TestMemory.cpp">
       <Filter>Source\Memory\Manager</Filter>
     </ClCompile>
@@ -155,6 +161,21 @@
     </ClCompile>
     <ClCompile Include="TestCSVFileEditable.cpp">
       <Filter>Source\File\CSV</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLinkListAligned.cpp">
+      <Filter>Source\Data\LinkList</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFreeList.cpp">
+      <Filter>Source\Memory\FreeList</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMemoryCache.cpp">
+      <Filter>Source\Memory\Cache</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMemoryStack.cpp">
+      <Filter>Source\Memory\Stack</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScratchPad.cpp">
+      <Filter>Source\Memory\ScratchPad</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -236,12 +257,6 @@
     <ClInclude Include="TestNumbers.h">
       <Filter>Source\Math</Filter>
     </ClInclude>
-    <ClInclude Include="TestFreeList.h">
-      <Filter>Source\Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="TestLinkListAligned.h">
-      <Filter>Source\Memory</Filter>
-    </ClInclude>
     <ClInclude Include="TestMemory.h">
       <Filter>Source\Memory\Manager</Filter>
     </ClInclude>
@@ -253,6 +268,21 @@
     </ClInclude>
     <ClInclude Include="TestCSVFileEditable.h">
       <Filter>Source\File\CSV</Filter>
+    </ClInclude>
+    <ClInclude Include="TestLinkListAligned.h">
+      <Filter>Source\Data\LinkList</Filter>
+    </ClInclude>
+    <ClInclude Include="TestFreeList.h">
+      <Filter>Source\Memory\FreeList</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMemoryCache.h">
+      <Filter>Source\Memory\Cache</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMemoryStack.h">
+      <Filter>Source\Memory\Stack</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScratchPad.h">
+      <Filter>Source\Memory\ScratchPad</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
