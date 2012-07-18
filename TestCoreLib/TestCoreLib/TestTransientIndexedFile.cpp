@@ -16,31 +16,41 @@
 BOOL PrivateAssertCacheConsistency(CTransientIndexedFile* pcTransientIndexedFile, int iLine, char* szFile)
 {
 	SOIndexIndexCacheDescriptor*	psCache;
+	SOIndexIndexCacheDescriptor*	psInitial;
 	BOOL							bResult;
 	int								iIndex;
 	CChars							szExpected;
 	CChars							szActual;
 
 	psCache = (SOIndexIndexCacheDescriptor*)pcTransientIndexedFile->mcCache.GetFirst();
-	while (psCache)
+	psInitial = psCache;
+	if (psInitial)
 	{
-		bResult = pcTransientIndexedFile->mcPointers.FindInSorted((STransientIndexedPointer*)&psCache->sIndex.oi, CompareOIndexToTransientIndexedPointer, &iIndex);
-		if (psCache->sIndex.iIndex != iIndex)
+		for (;;)
 		{
-			szExpected.Init();
-			szExpected.Append(iIndex);
-			szActual.Init();
-			szActual.Append(iIndex);
-			Fail(szExpected.Text(), szActual.Text(), iLine, szFile);
-			szExpected.Kill();
-			szActual.Kill();
-			return FALSE;
+			bResult = pcTransientIndexedFile->mcPointers.FindInSorted((STransientIndexedPointer*)&psCache->sIndex.oi, CompareOIndexToTransientIndexedPointer, &iIndex);
+			if (psCache->sIndex.iIndex != iIndex)
+			{
+				szExpected.Init();
+				szExpected.Append(iIndex);
+				szActual.Init();
+				szActual.Append(iIndex);
+				Fail(szExpected.Text(), szActual.Text(), iLine, szFile);
+				szExpected.Kill();
+				szActual.Kill();
+				return FALSE;
+			}
+			else
+			{
+				Pass();
+			}
+
+			psCache = (SOIndexIndexCacheDescriptor*)pcTransientIndexedFile->mcCache.GetNext(psCache);
+			if (psCache == psInitial)
+			{
+				break;
+			}
 		}
-		else
-		{
-			Pass();
-		}
-		psCache = (SOIndexIndexCacheDescriptor*)pcTransientIndexedFile->mcCache.GetNext(psCache);
 	}
 	return TRUE;
 }

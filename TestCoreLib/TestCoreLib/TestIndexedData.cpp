@@ -166,7 +166,7 @@ void TestIndexedAdd(void)
 
 	cFileUtil.RemoveDir("Database3");
 
-	cIndexedData.Init("Database3", 98, FALSE);
+	cIndexedData.Init("Database3", 98+12, FALSE);
 
 	OI = 0LL;
 	bResult = cIndexedData.Add(OI, szBat, 4, 0);
@@ -189,7 +189,7 @@ void TestIndexedAdd(void)
 
 	bResult = cIndexedData.Set(OI, szFish, 5, 0);
 	AssertBool(TRUE, bResult);
-	AssertInt(1, (int)cIndexedData.NumCached());
+	AssertInt(2, (int)cIndexedData.NumCached());
 	AssertInt(1, (int)cIndexedData.TestNumIgnoredCacheElements());
 	cIndexedData.Get(OI, szIn);
 	AssertString(szFish, szIn);
@@ -215,7 +215,7 @@ void TestIndexedAdd(void)
 	AssertBool(FALSE, bResult);
 	bResult = cIndexedData.Set(OI, szEve, 4, 0);
 	AssertBool(TRUE, bResult);
-	AssertInt(1, (int)cIndexedData.NumCached());
+	AssertInt(2, (int)cIndexedData.NumCached());
 	AssertInt(1, (int)cIndexedData.TestNumCachedIndexes());
 	cIndexedData.Flush();
 	AssertInt(3, (int)cIndexedData.NumInFile(4));
