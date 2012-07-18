@@ -1,4 +1,5 @@
 #include "CoreLib/DurableFileController.h"
+#include "StandardLib/NamedIndexesFileDumper.h"
 #include "StandardLib/NamedIndexes.h"
 #include "StandardLib/BaseObject.h"
 #include "TestLib/Assert.h"
@@ -307,8 +308,60 @@ void TestLoad(void)
 	cController.End();
 	cNamedIndexes.Kill();
 
-	
+	CChars	sz;
+
+	sz.Init();
+	DumpNamedIndexesFile(&sz, "NamedIndexes/4/32_0.NAM", 32, 6);
+	sz.AppendNewLine();
+	DumpNamedIndexesFile(&sz, "NamedIndexes/4/64_0.NAM", 64, 6);
+	sz.Dump();
+	sz.Kill();
 }
+
+/*
+
+NamedIndexes/4/32_0.NAM
+-----------------------
+0:      1 -> Arthur Miller
+1:      5 -> asphyxiate
+2:      8 -> LL75
+3:      3 -> roe
+4:      2 -> systema skeletale
+5:      7 -> thoracic vertebra
+
+6:     14 -> bedum ?
+7:      9 -> Calendrer
+8:     17 -> Forisfamiliated
+9:     15 -> gauche
+10:     19 -> otoscope
+11:     12 -> Recipes Kerchiefs 32TX
+
+12:     20 -> impel Christmas
+13:      5 -> asphyxiate
+14:      8 -> LL75
+15:      3 -> roe
+16:      2 -> systema skeletale
+17:      7 -> thoracic vertebra
+-----------------------
+
+NamedIndexes/4/64_0.NAM
+-----------------------
+0:     11 -> Chopin Dicranaceae transmountain insentient
+1:     13 -> factor V domestic relations
+2:      6 -> Fonseca Bay Piaget Salt tomato plant
+3:      4 -> order Plumbaginales Melba aldicarb
+4:     16 -> takeoff breakup value Tenuifolious magnitude
+5:     10 -> zone refining refashion butter up
+
+6:     18 -> amphibious bulk liquid transfer system
+7:     13 -> factor V domestic relations
+8:      6 -> Fonseca Bay Piaget Salt tomato plant
+9:      4 -> order Plumbaginales Melba aldicarb
+10:     16 -> takeoff breakup value Tenuifolious magnitude
+11:     10 -> zone refining refashion butter up
+-----------------------
+
+*/
 
 
 //////////////////////////////////////////////////////////////////////////
