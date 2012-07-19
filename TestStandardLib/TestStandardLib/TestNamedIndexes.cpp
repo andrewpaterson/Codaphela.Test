@@ -283,28 +283,29 @@ void TestLoad(void)
 	cNamedIndexes.Add(1LL, "Arthur Miller");
 	cNamedIndexes.Add(2LL, "systema skeletale");
 	cNamedIndexes.Add(3LL, "roe");
-	cNamedIndexes.Add(4LL, "order Plumbaginales Melba aldicarb");
+	//cNamedIndexes.Add(4LL, "order Plumbaginales Melba aldicarb");
 	cNamedIndexes.Add(5LL, "asphyxiate");
-	cNamedIndexes.Add(6LL, "Fonseca Bay Piaget Salt tomato plant");
+	//cNamedIndexes.Add(6LL, "Fonseca Bay Piaget Salt tomato plant");
 	cNamedIndexes.Add(7LL, "thoracic vertebra");
 	cNamedIndexes.Add(8LL, "LL75");
 	cNamedIndexes.Add(9LL, "Calendrer");
-	cNamedIndexes.Add(10LL, "zone refining refashion butter up");
-	cNamedIndexes.Add(11LL, "Chopin Dicranaceae transmountain insentient");
+	//cNamedIndexes.Add(10LL, "zone refining refashion butter up");
+	//cNamedIndexes.Add(11LL, "Chopin Dicranaceae transmountain insentient");
 	cNamedIndexes.Add(12LL, "Recipes Kerchiefs 32TX");
-	cNamedIndexes.Add(13LL, "factor V domestic relations");
+	//cNamedIndexes.Add(13LL, "factor V domestic relations");
 	cNamedIndexes.Add(14LL, "bedum ?");
 	cNamedIndexes.Add(15LL, "gauche");
-	cNamedIndexes.Add(16LL, "takeoff breakup value Tenuifolious magnitude");
+	//cNamedIndexes.Add(16LL, "takeoff breakup value Tenuifolious magnitude");
 	cNamedIndexes.Add(17LL, "Forisfamiliated");
-	cNamedIndexes.Add(18LL, "amphibious bulk liquid transfer system");
+	//cNamedIndexes.Add(18LL, "amphibious bulk liquid transfer system");
 	cNamedIndexes.Add(19LL, "otoscope");
 	cNamedIndexes.Add(20LL, "impel Christmas");
-	cNamedIndexes.Add(21LL, "universalise rose fever IL59 Europe");
+	//cNamedIndexes.Add(21LL, "universalise rose fever IL59 Europe");
 
 	pcBlock32 = cNamedIndexes.TestGetBlock(32);
 	pcBlock64 = cNamedIndexes.TestGetBlock(64);
 
+	cNamedIndexes.Save();
 	cController.End();
 	cNamedIndexes.Kill();
 
@@ -322,43 +323,43 @@ void TestLoad(void)
 
 NamedIndexes/4/32_0.NAM
 -----------------------
-0:      1 -> Arthur Miller
-1:      5 -> asphyxiate
-2:      8 -> LL75
-3:      3 -> roe
-4:      2 -> systema skeletale
-5:      7 -> thoracic vertebra
-
-6:     14 -> bedum ?
-7:      9 -> Calendrer
-8:     17 -> Forisfamiliated
-9:     15 -> gauche
+ 0:      1 -> Arthur Miller
+ 1:      5 -> asphyxiate
+ 2:      8 -> LL75
+ 3:      3 -> roe
+ 4:      2 -> systema skeletale
+ 5:      7 -> thoracic vertebra
+ 
+ 6:     14 -> bedum ?
+ 7:      9 -> Calendrer
+ 8:     17 -> Forisfamiliated
+ 9:     15 -> gauche
 10:     19 -> otoscope
 11:     12 -> Recipes Kerchiefs 32TX
 
 12:     20 -> impel Christmas
-13:      5 -> asphyxiate
-14:      8 -> LL75
-15:      3 -> roe
-16:      2 -> systema skeletale
-17:      7 -> thoracic vertebra
+13:      0 -> 
+14:      0 -> 
+15:      0 -> 
+16:      0 -> 
+17:      0 -> 
 -----------------------
 
 NamedIndexes/4/64_0.NAM
 -----------------------
-0:     11 -> Chopin Dicranaceae transmountain insentient
-1:     13 -> factor V domestic relations
-2:      6 -> Fonseca Bay Piaget Salt tomato plant
-3:      4 -> order Plumbaginales Melba aldicarb
-4:     16 -> takeoff breakup value Tenuifolious magnitude
-5:     10 -> zone refining refashion butter up
-
-6:     18 -> amphibious bulk liquid transfer system
-7:     13 -> factor V domestic relations
-8:      6 -> Fonseca Bay Piaget Salt tomato plant
-9:      4 -> order Plumbaginales Melba aldicarb
-10:     16 -> takeoff breakup value Tenuifolious magnitude
-11:     10 -> zone refining refashion butter up
+ 0:     11 -> Chopin Dicranaceae transmountain insentient
+ 1:     13 -> factor V domestic relations
+ 2:      6 -> Fonseca Bay Piaget Salt tomato plant
+ 3:      4 -> order Plumbaginales Melba aldicarb
+ 4:     16 -> takeoff breakup value Tenuifolious magnitude
+ 5:     10 -> zone refining refashion butter up
+ 
+ 6:     18 -> amphibious bulk liquid transfer system
+ 7:     21 -> universalise rose fever IL59 Europe
+ 8:      0 -> 
+ 9:      0 -> 
+10:      0 -> 
+11:      0 -> 
 -----------------------
 
 */
@@ -376,9 +377,9 @@ void TestNamedIndexes(void)
 
 	cFileUtil.RemoveDir("NamedIndexes");
 
-	TestAdd();
-	TestRemove();
-	TestCacheEviction();
+	//TestAdd();
+	//TestRemove();
+	//TestCacheEviction();
 	TestLoad();
 
 	cFileUtil.RemoveDir("NamedIndexes");
