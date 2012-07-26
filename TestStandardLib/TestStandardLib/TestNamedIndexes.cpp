@@ -18,14 +18,17 @@ void TestAdd(void)
 	BOOL					bResult;
 
 	cFileUtil.MakeDir("NamedIndexes/1");
+
 	cController.Init("NamedIndexes/1", TRUE);
 	cNamedIndexes.Init(&cController, 10 MB, 4);
+	cController.Begin();
+	cNamedIndexes.Load();
 
-	AssertInt(0, cNamedIndexes.NumNames());
+	AssertLongLongInt(0, cNamedIndexes.NumNames());
 
 	cNamedIndexes.Add(45LL, "Berty");
 	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
-	AssertInt(1, cNamedIndexes.NumNames());
+	AssertLongLongInt(1, cNamedIndexes.NumNames());
 
 	cNamedIndexes.Add(73LL, "Alfred");
 	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
@@ -40,7 +43,7 @@ void TestAdd(void)
 	AssertLongLongInt(73LL, cNamedIndexes.GetIndex("Alfred"));
 	AssertLongLongInt(19LL, cNamedIndexes.GetIndex("Camilla"));
 	AssertLongLongInt(20LL, cNamedIndexes.GetIndex("Wordsworth"));
-	AssertInt(4, cNamedIndexes.NumNames());
+	AssertLongLongInt(4, cNamedIndexes.NumNames());
 
 
 	cNamedIndexes.Add(66LL, "Alicia");
@@ -49,7 +52,7 @@ void TestAdd(void)
 	AssertLongLongInt(73LL, cNamedIndexes.GetIndex("Alfred"));
 	AssertLongLongInt(19LL, cNamedIndexes.GetIndex("Camilla"));
 	AssertLongLongInt(20LL, cNamedIndexes.GetIndex("Wordsworth"));
-	AssertInt(5, cNamedIndexes.NumNames());
+	AssertLongLongInt(5, cNamedIndexes.NumNames());
 
 
 	cNamedIndexes.Add(67LL, "Aardvark");
@@ -66,12 +69,17 @@ void TestAdd(void)
 	AssertLongLongInt(68LL, cNamedIndexes.GetIndex("Alfredo"));
 	AssertLongLongInt(69LL, cNamedIndexes.GetIndex("Play-dough"));
 	AssertLongLongInt(01LL, cNamedIndexes.GetIndex("Zynaps"));
-	AssertInt(9, cNamedIndexes.NumNames());
+	AssertLongLongInt(9, cNamedIndexes.NumNames());
 
 	bResult = cNamedIndexes.Add(88LL, "Play-dough");
 	AssertFalse(bResult);
 
-	AssertInt(9, cNamedIndexes.NumNames());
+	AssertLongLongInt(9, cNamedIndexes.NumNames());
+
+	cNamedIndexes.Save();
+	cController.End();
+	cNamedIndexes.Kill();
+	cController.Kill();
 }
 
 
@@ -87,8 +95,11 @@ void TestRemove(void)
 	BOOL					bResult;
 
 	cFileUtil.MakeDir("NamedIndexes/2");
+
 	cController.Init("NamedIndexes/2", TRUE);
 	cNamedIndexes.Init(&cController, 10 MB, 4);
+	cController.Begin();
+	cNamedIndexes.Load();
 
 	cNamedIndexes.Add(45LL, "Berty");
 	cNamedIndexes.Add(73LL, "Alfred");
@@ -102,7 +113,7 @@ void TestRemove(void)
 
 	cNamedIndexes.Add(01LL, "Zynaps");
 
-	AssertInt(9, cNamedIndexes.NumNames());
+	AssertLongLongInt(9, cNamedIndexes.NumNames());
 
 	bResult = cNamedIndexes.Remove("Aardvark");
 	AssertTrue(bResult);
@@ -117,15 +128,15 @@ void TestRemove(void)
 	AssertLongLongInt(20LL, cNamedIndexes.GetIndex("Wordsworth"));
 	AssertLongLongInt(01LL, cNamedIndexes.GetIndex("Zynaps"));
 
-	AssertInt(8, cNamedIndexes.NumNames());
+	AssertLongLongInt(8, cNamedIndexes.NumNames());
 
 	bResult = cNamedIndexes.Remove("Aardvark");
 	AssertFalse(bResult);
-	AssertInt(8, cNamedIndexes.NumNames());
+	AssertLongLongInt(8, cNamedIndexes.NumNames());
 
 	AssertTrue(cNamedIndexes.Remove("Alicia"));
 	AssertTrue(cNamedIndexes.Remove("Alfredo"));
-	AssertInt(6, cNamedIndexes.NumNames());
+	AssertLongLongInt(6, cNamedIndexes.NumNames());
 
 	AssertTrue(cNamedIndexes.Remove("Play-dough"));
 
@@ -137,7 +148,7 @@ void TestRemove(void)
 	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Play-dough"));
 	AssertLongLongInt(20LL, cNamedIndexes.GetIndex("Wordsworth"));
 	AssertLongLongInt(01LL, cNamedIndexes.GetIndex("Zynaps"));
-	AssertInt(5, cNamedIndexes.NumNames());
+	AssertLongLongInt(5, cNamedIndexes.NumNames());
 
 	AssertTrue(cNamedIndexes.Remove("Alfred"));
 	AssertTrue(cNamedIndexes.Remove("Berty"));
@@ -150,14 +161,19 @@ void TestRemove(void)
 	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Camilla"));
 	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Wordsworth"));
 	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Zynaps"));
-	AssertInt(0, cNamedIndexes.NumNames());
+	AssertLongLongInt(0, cNamedIndexes.NumNames());
 
 	cNamedIndexes.Add(45LL, "Berty");
-	AssertInt(1, cNamedIndexes.NumNames());
+	AssertLongLongInt(1, cNamedIndexes.NumNames());
 	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
 	AssertTrue(cNamedIndexes.Remove("Berty"));
 	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Berty"));
-	AssertInt(0, cNamedIndexes.NumNames());
+	AssertLongLongInt(0, cNamedIndexes.NumNames());
+
+	cNamedIndexes.Save();
+	cController.End();
+	cNamedIndexes.Kill();
+	cController.Kill();
 }
 
 
@@ -177,12 +193,13 @@ void TestCacheEviction(void)
 	cController.Init("NamedIndexes/3", TRUE);
 	cNamedIndexes.Init(&cController, 256, 4);
 	cController.Begin();
+	cNamedIndexes.Load();
 
-	AssertInt(0, cNamedIndexes.NumNames());
+	AssertLongLongInt(0, cNamedIndexes.NumNames());
 
 	cNamedIndexes.Add(45LL, "Berty");
 	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
-	AssertInt(1, cNamedIndexes.NumNames());
+	AssertLongLongInt(1, cNamedIndexes.NumNames());
 
 	cNamedIndexes.Add(73LL, "Alfred");
 	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
@@ -193,7 +210,7 @@ void TestCacheEviction(void)
 
 	cNamedIndexes.Add(19LL, "Camilla");
 	cNamedIndexes.Add(20LL, "Wordsworth");
-	AssertInt(4, cNamedIndexes.NumNames());
+	AssertLongLongInt(4, cNamedIndexes.NumNames());
 	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
 	AssertLongLongInt(73LL, cNamedIndexes.GetIndex("Alfred"));
 	AssertLongLongInt(19LL, cNamedIndexes.GetIndex("Camilla"));
@@ -201,18 +218,18 @@ void TestCacheEviction(void)
 
 	cBlockPtrs.Init(4);
 	cNamedIndexes.TestGetPotentialContainingBlocks("Berty", &cBlockPtrs);
-	AssertInt(1, cBlockPtrs.NumElements());
+	AssertLongLongInt(1, cBlockPtrs.NumElements());
 	AssertString("Alfred", (*cBlockPtrs.Get(0))->GetFirst());
 	AssertString("Wordsworth", (*cBlockPtrs.Get(0))->GetLast());
 	AssertTrue((*cBlockPtrs.Get(0))->IsCached());
 	cBlockPtrs.Kill();
 
 	cNamedIndexes.Add(66LL, "Alicia");
-	AssertInt(5, cNamedIndexes.NumNames());
+	AssertLongLongInt(5, cNamedIndexes.NumNames());
 
 	cBlockPtrs.Init(4);
 	cNamedIndexes.TestGetPotentialContainingBlocks("Alicia", &cBlockPtrs);
-	AssertInt(2, cBlockPtrs.NumElements());
+	AssertLongLongInt(2, cBlockPtrs.NumElements());
 	AssertString("Alfred", (*cBlockPtrs.Get(0))->GetFirst());
 	AssertString("Wordsworth", (*cBlockPtrs.Get(0))->GetLast());
 	AssertFalse((*cBlockPtrs.Get(0))->IsCached());
@@ -249,13 +266,14 @@ void TestCacheEviction(void)
 	AssertLongLongInt(68LL, cNamedIndexes.GetIndex("Alfredo"));
 	AssertLongLongInt(69LL, cNamedIndexes.GetIndex("Play-dough"));
 	AssertLongLongInt(01LL, cNamedIndexes.GetIndex("Zynaps"));
-	AssertInt(9, cNamedIndexes.NumNames());
+	AssertLongLongInt(9, cNamedIndexes.NumNames());
 
 	bResult = cNamedIndexes.Add(88LL, "Play-dough");
 	AssertFalse(bResult);
 
-	AssertInt(9, cNamedIndexes.NumNames());
+	AssertLongLongInt(9, cNamedIndexes.NumNames());
 
+	cNamedIndexes.Save();
 	cController.End();
 	cNamedIndexes.Kill();
 	cController.Kill();
@@ -276,9 +294,11 @@ void TestLoad(void)
 	CNamedIndexesBlocks*		pcBlock64;
 
 	cFileUtil.MakeDir("NamedIndexes/4");
+
 	cController.Init("NamedIndexes/4", TRUE);
 	cNamedIndexes.Init(&cController, 512, 6);
 	cController.Begin();
+	cNamedIndexes.Load();
 
 	cNamedIndexes.Add(1LL, "Arthur Miller");
 	cNamedIndexes.Add(2LL, "systema skeletale");
@@ -308,6 +328,7 @@ void TestLoad(void)
 	cNamedIndexes.Save();
 	cController.End();
 	cNamedIndexes.Kill();
+	cController.Kill();
 
 
 	//Make sure the files appear on disk as expected.
@@ -374,6 +395,7 @@ NamedIndexes/4/64_0.NAM\n\
 	cNamedIndexes.Save();
 	cController.End();
 	cNamedIndexes.Kill();
+	cController.Kill();
 }
 
 /*
@@ -434,9 +456,9 @@ void TestNamedIndexes(void)
 
 	cFileUtil.RemoveDir("NamedIndexes");
 
-	//TestAdd();
-	//TestRemove();
-	//TestCacheEviction();
+	TestAdd();
+	TestRemove();
+	TestCacheEviction();
 	TestLoad();
 
 	cFileUtil.RemoveDir("NamedIndexes");

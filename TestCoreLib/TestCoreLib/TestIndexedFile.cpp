@@ -24,7 +24,7 @@ void TestIndexedFile(void)
 	char						sz1[] = "12345678";
 	char						sz2[] = "ABCDEFGH";
 	char						sz3[] = "iopfghjk";
-	int							iIndex;
+	filePos						iIndex;
 	CTextFile					cTextFile;
 	char						szTemp[16];
 
@@ -45,21 +45,23 @@ void TestIndexedFile(void)
 	cDurableController.Begin();
 
 	cIndexedFile.Init(&cDurableController, 0, szWrite.Text(), szRewrite.Text(), 9, 0);
+	cIndexedFile.Open(&cDurableController);
 
 	iIndex = cIndexedFile.Write(sz3);
-	AssertInt(0, iIndex);
+	AssertLongLongInt(0, iIndex);
 
 	iIndex = cIndexedFile.Write(sz2);
-	AssertInt(1, iIndex);
+	AssertLongLongInt(1, iIndex);
 
 	bResult = cIndexedFile.Write(0, sz1);
 	AssertTrue(bResult);
-	AssertInt(18, (int)cIndexedFile.mcFile.Size());
+	AssertLongLongInt(18, cIndexedFile.mcFile.Size());
 
 	bResult = cDurableController.End();
 	AssertTrue(bResult);
-	bResult = cIndexedFile.Kill();
+	bResult = cIndexedFile.Close();
 	AssertTrue(bResult);
+	cIndexedFile.Kill();
 
 	cDurableController.Kill();
 
@@ -80,6 +82,7 @@ void TestIndexedFile(void)
 	cDurableController.Begin();
 
 	cIndexedFile.Init(&cDurableController, 0, szWrite.Text(), szRewrite.Text(), 9, 0);
+	cIndexedFile.Open(&cDurableController);
 
 	bResult = cIndexedFile.Read(1, szTemp);
 	AssertTrue(bResult);
@@ -96,8 +99,9 @@ void TestIndexedFile(void)
 
 	bResult = cDurableController.End();
 	AssertTrue(bResult);
-	bResult = cIndexedFile.Kill();
+	bResult = cIndexedFile.Close();
 	AssertTrue(bResult);
+	cIndexedFile.Kill();
 
 	cDurableController.Kill();
 

@@ -51,7 +51,7 @@ void TestDurableFileWrite(void)
 
 	CFileUtil		cFileUtil;
 	CDurableFile	cDurable;
-	int				iResult;
+	filePos			iResult;
 	CTextFile		cTextFile;
 
 	char			sz1[] = "In the age of chaos";
@@ -69,19 +69,19 @@ void TestDurableFileWrite(void)
 
 	cDurable.Begin();
 	iResult = cDurable.Write(sz1, (int)strlen(sz1), 1);
-	AssertInt(1, iResult);
+	AssertLongLongInt(1, iResult);
 	AssertLongLongInt(19, cDurable.miPosition);
 	AssertLongLongInt(19, cDurable.miLength);
 	AssertInt(1, cDurable.mcWrites.NumElements());
 
 	iResult = cDurable.Write(sz2, (int)strlen(sz2)+1, 1);
-	AssertInt(1, iResult);
+	AssertLongLongInt(1, iResult);
 	AssertLongLongInt(41, cDurable.miPosition);
 	AssertLongLongInt(41, cDurable.miLength);
 	AssertInt(1, cDurable.mcWrites.NumElements());
 
 	iResult = cDurable.Write(14, sz3, (int)strlen(sz3), 1);
-	AssertInt(1, iResult);
+	AssertLongLongInt(1, iResult);
 	AssertLongLongInt(19, cDurable.miPosition);
 	AssertLongLongInt(41, cDurable.miLength);
 	AssertInt(1, cDurable.mcWrites.NumElements());
@@ -115,7 +115,7 @@ void TestComplexDurableFile(void)
 
 	CFileUtil		cFileUtil;
 	CDurableFile	cDurable;
-	int				iResult;
+	filePos				iResult;
 	CTextFile		cTextFile;
 
 	char			sz1[] = "BBBB";
@@ -136,31 +136,31 @@ void TestComplexDurableFile(void)
 	cDurable.Begin();
 
 	iResult = cDurable.Write(4, sz1, 2, 2);
-	AssertInt(2, iResult);
+	AssertLongLongInt(2, iResult);
 	AssertLongLongInt(8, cDurable.miPosition);
 	AssertLongLongInt(8, cDurable.miLength);
 
 	iResult = cDurable.Write(10, sz2, 2, 2);
-	AssertInt(2, iResult);
+	AssertLongLongInt(2, iResult);
 	AssertLongLongInt(14, cDurable.miPosition);
 	AssertLongLongInt(14, cDurable.miLength);
 
 	memset(szDest, 0, 5);
 	iResult = cDurable.Read(8, szDest, 2, 2);
-	AssertInt(2, iResult);
+	AssertLongLongInt(2, iResult);
 	AssertLongLongInt(12, cDurable.miPosition);
 	AssertLongLongInt(14, cDurable.miLength);
 	AssertString("", szDest);
 	AssertString("CC", &szDest[2]);
 
 	iResult = cDurable.Write(12, sz3, 1, 4);
-	AssertInt(4, iResult);
+	AssertLongLongInt(4, iResult);
 	AssertLongLongInt(16, cDurable.miPosition);
 	AssertLongLongInt(16, cDurable.miLength);
 
 	memset(szDest, 0, 5);
 	iResult = cDurable.Read(14, szDest, 2, 2);
-	AssertInt(1, iResult);
+	AssertLongLongInt(1, iResult);
 	AssertLongLongInt(16, cDurable.miPosition);
 	AssertLongLongInt(16, cDurable.miLength);
 	AssertString("EE", szDest);
@@ -171,22 +171,22 @@ void TestComplexDurableFile(void)
 	AssertLongLongInt(16, cDurable.miLength);
 
 	iResult = cDurable.Write(0, sz4, 2, 2);
-	AssertInt(2, iResult);
+	AssertLongLongInt(2, iResult);
 	AssertLongLongInt(4, cDurable.miPosition);
 	iResult = cDurable.Write(8, sz2, 2, 1);
 
 	memset(szAll, 0, 17);
 	iResult = cDurable.Read(0, szAll, 4, 4);
-	AssertInt(4, iResult);
+	AssertLongLongInt(4, iResult);
 	AssertString("AAAABBBBCCCCEEEE", szAll);
 
 	iResult = cDurable.Read(11, szAll, 3, 2);
-	AssertInt(1, iResult);
+	AssertLongLongInt(1, iResult);
 
 	iResult = cDurable.Write(16, sz5, 1, 1);
 	memset(szAll, 0, 17);
 	iResult = cDurable.Read(11, szAll, 3, 2);
-	AssertInt(2, iResult);
+	AssertLongLongInt(2, iResult);
 	AssertString("CEEEEF", szAll);
 
 	cDurable.End();

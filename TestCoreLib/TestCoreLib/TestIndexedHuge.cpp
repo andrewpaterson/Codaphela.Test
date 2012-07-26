@@ -39,7 +39,7 @@ void TestIndexedHugeStuff(void)
 
 	cHuge.Init(&cDurableFile, FALSE, NULL, 12, 4, 1, 3);
 	AssertInt(12, cHuge.NumPossibleInMemoryIndexDescriptors());
-	AssertInt(432, cHuge.GetThirdLevelCacheByteSize());
+	AssertInt(528, cHuge.GetThirdLevelCacheByteSize());
 	AssertInt(72, cHuge.GetSecondLevelCacheByteSize());
 
 	cIndex1.Init(1LL, 1);
@@ -104,7 +104,7 @@ void TestIndexedHugeStuff(void)
 
 	cHuge.Init(&cDurableFile, FALSE, NULL, 12, 4, 2, 2);
 	AssertInt(8, cHuge.NumPossibleInMemoryIndexDescriptors());
-	AssertInt(288, cHuge.GetThirdLevelCacheByteSize());
+	AssertInt(352, cHuge.GetThirdLevelCacheByteSize());
 	AssertInt(144, cHuge.GetSecondLevelCacheByteSize());
 
 	for (i = 0; i < 48; i++)
