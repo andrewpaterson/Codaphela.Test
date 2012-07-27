@@ -22,7 +22,7 @@ void TestAdd(void)
 	cController.Init("NamedIndexes/1", TRUE);
 	cNamedIndexes.Init(&cController, 10 MB, 4);
 	cController.Begin();
-	cNamedIndexes.Load();
+	cNamedIndexes.Open();
 
 	AssertLongLongInt(0, cNamedIndexes.NumNames());
 
@@ -76,7 +76,7 @@ void TestAdd(void)
 
 	AssertLongLongInt(9, cNamedIndexes.NumNames());
 
-	cNamedIndexes.Save();
+	cNamedIndexes.Close();
 	cController.End();
 	cNamedIndexes.Kill();
 	cController.Kill();
@@ -99,7 +99,7 @@ void TestRemove(void)
 	cController.Init("NamedIndexes/2", TRUE);
 	cNamedIndexes.Init(&cController, 10 MB, 4);
 	cController.Begin();
-	cNamedIndexes.Load();
+	cNamedIndexes.Open();
 
 	cNamedIndexes.Add(45LL, "Berty");
 	cNamedIndexes.Add(73LL, "Alfred");
@@ -170,7 +170,7 @@ void TestRemove(void)
 	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Berty"));
 	AssertLongLongInt(0, cNamedIndexes.NumNames());
 
-	cNamedIndexes.Save();
+	cNamedIndexes.Close();
 	cController.End();
 	cNamedIndexes.Kill();
 	cController.Kill();
@@ -193,7 +193,7 @@ void TestCacheEviction(void)
 	cController.Init("NamedIndexes/3", TRUE);
 	cNamedIndexes.Init(&cController, 256, 4);
 	cController.Begin();
-	cNamedIndexes.Load();
+	cNamedIndexes.Open();
 
 	AssertLongLongInt(0, cNamedIndexes.NumNames());
 
@@ -273,7 +273,7 @@ void TestCacheEviction(void)
 
 	AssertLongLongInt(9, cNamedIndexes.NumNames());
 
-	cNamedIndexes.Save();
+	cNamedIndexes.Close();
 	cController.End();
 	cNamedIndexes.Kill();
 	cController.Kill();
@@ -298,7 +298,7 @@ void TestLoad(void)
 	cController.Init("NamedIndexes/4", TRUE);
 	cNamedIndexes.Init(&cController, 512, 6);
 	cController.Begin();
-	cNamedIndexes.Load();
+	cNamedIndexes.Open();
 
 	cNamedIndexes.Add(1LL, "Arthur Miller");
 	cNamedIndexes.Add(2LL, "systema skeletale");
@@ -325,7 +325,7 @@ void TestLoad(void)
 	pcBlock32 = cNamedIndexes.TestGetBlock(32);
 	pcBlock64 = cNamedIndexes.TestGetBlock(64);
 
-	cNamedIndexes.Save();
+	cNamedIndexes.Close();
 	cController.End();
 	cNamedIndexes.Kill();
 	cController.Kill();
@@ -388,11 +388,11 @@ NamedIndexes/4/64_0.NAM\n\
 	cController.Init("NamedIndexes/4", TRUE);
 	cNamedIndexes.Init(&cController, 512, 6);
 	cController.Begin();
-	cNamedIndexes.Load();
+	cNamedIndexes.Open();
 	
 	AssertLongLongInt(1LL, cNamedIndexes.GetIndex("Arthur Miller"));
 
-	cNamedIndexes.Save();
+	cNamedIndexes.Close();
 	cController.End();
 	cNamedIndexes.Kill();
 	cController.Kill();

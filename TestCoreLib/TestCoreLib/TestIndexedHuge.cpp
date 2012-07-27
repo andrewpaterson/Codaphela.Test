@@ -15,8 +15,8 @@ void TestIndexedHugeStuff(void)
 	CFileUtil			cFileUtil;
 	CChars				szWrite;
 	CChars				szRewrite;
-	CIndexDescriptor	cIndex1;
-	CIndexDescriptor	cTest;
+	CIndexedDataDescriptor	cIndex1;
+	CIndexedDataDescriptor	cTest;
 	int					i;
 	int					j;
 	BOOL				bResult;
@@ -54,9 +54,9 @@ void TestIndexedHugeStuff(void)
 	cHuge.Get(&cTest, 2LL);
 	AssertInt(2, cTest.GetDataSize());
 
-	AssertLongLongInt(0 * sizeof(CIndexDescriptor), cDurableFile.Size());
+	AssertLongLongInt(0 * sizeof(CIndexedDataDescriptor), cDurableFile.Size());
 	cHuge.UpdateFile();
-	AssertLongLongInt(3 * sizeof(CIndexDescriptor), cDurableFile.Size());
+	AssertLongLongInt(3 * sizeof(CIndexedDataDescriptor), cDurableFile.Size());
 
 	cIndex1.Init(4LL, 4);
 	cHuge.Set(&cIndex1);
@@ -71,26 +71,26 @@ void TestIndexedHugeStuff(void)
 	cIndex1.Init(12LL, 12);
 	cHuge.Set(&cIndex1);
 
-	AssertLongLongInt(5 * sizeof(CIndexDescriptor), cDurableFile.Size());
+	AssertLongLongInt(5 * sizeof(CIndexedDataDescriptor), cDurableFile.Size());
 	cHuge.Get(&cTest, 12LL);
 	AssertInt(12, cTest.GetDataSize());
 
 	cIndex1.Init(13LL, 13);
 	cHuge.Set(&cIndex1);
 
-	AssertLongLongInt(5 * sizeof(CIndexDescriptor), cDurableFile.Size());
+	AssertLongLongInt(5 * sizeof(CIndexedDataDescriptor), cDurableFile.Size());
 	cHuge.Get(&cTest, 13LL);
 	AssertInt(13, cTest.GetDataSize());
 	cHuge.Get(&cTest, 12LL);
 	AssertInt(12, cTest.GetDataSize());
 
-	AssertLongLongInt(5 * sizeof(CIndexDescriptor), cDurableFile.Size());
+	AssertLongLongInt(5 * sizeof(CIndexedDataDescriptor), cDurableFile.Size());
 	cHuge.Get(&cTest, 13LL);
 
 	cHuge.Get(&cTest, 4LL);
 	AssertInt(4, cTest.GetDataSize());
 
-	AssertLongLongInt(14 * sizeof(CIndexDescriptor), cDurableFile.Size());
+	AssertLongLongInt(14 * sizeof(CIndexedDataDescriptor), cDurableFile.Size());
 
 	cHuge.Get(&cTest, 2LL);
 	AssertInt(2, cTest.GetDataSize());
@@ -128,7 +128,7 @@ void TestIndexedHugeStuff(void)
 	}
 
 	cHuge.UpdateFile();
-	AssertLongLongInt(48 * sizeof(CIndexDescriptor), cDurableFile.Size());
+	AssertLongLongInt(48 * sizeof(CIndexedDataDescriptor), cDurableFile.Size());
 
 	cDurableFile.Close();
 	cDurableFile.Kill();

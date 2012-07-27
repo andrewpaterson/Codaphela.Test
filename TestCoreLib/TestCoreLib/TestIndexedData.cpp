@@ -24,7 +24,7 @@ void TestCacheEviction(void)
 
 	cFileUtil.RemoveDir("Database1");
 
-	AssertInt(40, sizeof(CIndexDescriptor));
+	AssertInt(40, sizeof(CIndexedDataDescriptor));
 
 	OI = 0LL;
 	cIndexedData.Init("Database1", 71, FALSE);  //A little more than two items in the cache...
