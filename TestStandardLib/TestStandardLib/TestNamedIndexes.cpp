@@ -76,8 +76,8 @@ void TestAdd(void)
 
 	AssertLongLongInt(9, cNamedIndexes.NumNames());
 
-	cNamedIndexes.Close();
 	cController.End();
+	cNamedIndexes.Close();
 	cNamedIndexes.Kill();
 	cController.Kill();
 }
@@ -170,8 +170,8 @@ void TestRemove(void)
 	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Berty"));
 	AssertLongLongInt(0, cNamedIndexes.NumNames());
 
-	cNamedIndexes.Close();
 	cController.End();
+	cNamedIndexes.Close();
 	cNamedIndexes.Kill();
 	cController.Kill();
 }
@@ -273,8 +273,8 @@ void TestCacheEviction(void)
 
 	AssertLongLongInt(9, cNamedIndexes.NumNames());
 
-	cNamedIndexes.Close();
 	cController.End();
+	cNamedIndexes.Close();
 	cNamedIndexes.Kill();
 	cController.Kill();
 }
@@ -292,6 +292,7 @@ void TestLoad(void)
 	CFileUtil					cFileUtil;
 	CNamedIndexesBlocks*		pcBlock32;
 	CNamedIndexesBlocks*		pcBlock64;
+	CNamedIndexesBlock*			pcBlock;
 
 	cFileUtil.MakeDir("NamedIndexes/4");
 
@@ -322,11 +323,35 @@ void TestLoad(void)
 	cNamedIndexes.Add(20LL, "impel Christmas");
 	cNamedIndexes.Add(21LL, "universalise rose fever IL59 Europe");
 
-	pcBlock32 = cNamedIndexes.TestGetBlock(32);
-	pcBlock64 = cNamedIndexes.TestGetBlock(64);
+	pcBlock32 = cNamedIndexes.GetBlockWithDataSize(32);
+	AssertInt(32, pcBlock32->GetDataSize())
+	pcBlock64 = cNamedIndexes.GetBlockWithDataSize(64);
+	AssertInt(64, pcBlock64->GetDataSize())
 
-	cNamedIndexes.Close();
+	AssertLongLongInt(1LL, cNamedIndexes.GetIndex("Arthur Miller"));
+	AssertLongLongInt(2LL, cNamedIndexes.GetIndex("systema skeletale"));
+	AssertLongLongInt(3LL, cNamedIndexes.GetIndex("roe"));
+	AssertLongLongInt(4LL, cNamedIndexes.GetIndex("order Plumbaginales Melba aldicarb"));
+	AssertLongLongInt(5LL, cNamedIndexes.GetIndex("asphyxiate"));
+	AssertLongLongInt(6LL, cNamedIndexes.GetIndex("Fonseca Bay Piaget Salt tomato plant"));
+	AssertLongLongInt(7LL, cNamedIndexes.GetIndex("thoracic vertebra"));
+	AssertLongLongInt(8LL, cNamedIndexes.GetIndex("LL75"));
+	AssertLongLongInt(9LL, cNamedIndexes.GetIndex("Calendrer"));
+	AssertLongLongInt(10LL, cNamedIndexes.GetIndex("zone refining refashion butter up"));
+	AssertLongLongInt(11LL, cNamedIndexes.GetIndex("Chopin Dicranaceae transmountain insentient"));
+	AssertLongLongInt(12LL, cNamedIndexes.GetIndex("Recipes Kerchiefs 32TX"));
+	AssertLongLongInt(13LL, cNamedIndexes.GetIndex("factor V domestic relations"));
+	AssertLongLongInt(14LL, cNamedIndexes.GetIndex("bedum ?"));
+	AssertLongLongInt(15LL, cNamedIndexes.GetIndex("gauche"));
+	AssertLongLongInt(16LL, cNamedIndexes.GetIndex("takeoff breakup value Tenuifolious magnitude"));
+	AssertLongLongInt(17LL, cNamedIndexes.GetIndex("Forisfamiliated"));
+	AssertLongLongInt(18LL, cNamedIndexes.GetIndex("amphibious bulk liquid transfer system"));
+	AssertLongLongInt(19LL, cNamedIndexes.GetIndex("otoscope"));
+	AssertLongLongInt(20LL, cNamedIndexes.GetIndex("impel Christmas"));
+	AssertLongLongInt(21LL, cNamedIndexes.GetIndex("universalise rose fever IL59 Europe"));
+
 	cController.End();
+	cNamedIndexes.Close();
 	cNamedIndexes.Kill();
 	cController.Kill();
 
@@ -390,58 +415,66 @@ NamedIndexes/4/64_0.NAM\n\
 	cController.Begin();
 	cNamedIndexes.Open();
 	
-	AssertLongLongInt(1LL, cNamedIndexes.GetIndex("Arthur Miller"));
+	pcBlock32 = cNamedIndexes.GetBlockWithDataSize(32);
+	pcBlock = pcBlock32->GetBlock(0);
+	AssertString("Arthur Miller", pcBlock->GetFirst());
+	AssertString("thoracic vertebra", pcBlock->GetLast());
+	pcBlock = pcBlock32->GetBlock(1);
+	AssertString("bedum ?", pcBlock->GetFirst());
+	AssertString("Recipes Kerchiefs 32TX", pcBlock->GetLast());
+	pcBlock = pcBlock32->GetBlock(2);
+	AssertString("impel Christmas", pcBlock->GetFirst());
+	AssertString("impel Christmas", pcBlock->GetLast());
 
-	cNamedIndexes.Close();
+	AssertLongLongInt(1LL, cNamedIndexes.GetIndex("Arthur Miller"));
+	AssertLongLongInt(2LL, cNamedIndexes.GetIndex("systema skeletale"));
+	AssertLongLongInt(3LL, cNamedIndexes.GetIndex("roe"));
+	AssertLongLongInt(4LL, cNamedIndexes.GetIndex("order Plumbaginales Melba aldicarb"));
+	AssertLongLongInt(5LL, cNamedIndexes.GetIndex("asphyxiate"));
+	AssertLongLongInt(6LL, cNamedIndexes.GetIndex("Fonseca Bay Piaget Salt tomato plant"));
+	AssertLongLongInt(7LL, cNamedIndexes.GetIndex("thoracic vertebra"));
+	AssertLongLongInt(8LL, cNamedIndexes.GetIndex("LL75"));
+	AssertLongLongInt(9LL, cNamedIndexes.GetIndex("Calendrer"));
+	AssertLongLongInt(10LL, cNamedIndexes.GetIndex("zone refining refashion butter up"));
+	AssertLongLongInt(11LL, cNamedIndexes.GetIndex("Chopin Dicranaceae transmountain insentient"));
+	AssertLongLongInt(12LL, cNamedIndexes.GetIndex("Recipes Kerchiefs 32TX"));
+	AssertLongLongInt(13LL, cNamedIndexes.GetIndex("factor V domestic relations"));
+	AssertLongLongInt(14LL, cNamedIndexes.GetIndex("bedum ?"));
+	AssertLongLongInt(15LL, cNamedIndexes.GetIndex("gauche"));
+	AssertLongLongInt(16LL, cNamedIndexes.GetIndex("takeoff breakup value Tenuifolious magnitude"));
+	AssertLongLongInt(17LL, cNamedIndexes.GetIndex("Forisfamiliated"));
+	AssertLongLongInt(18LL, cNamedIndexes.GetIndex("amphibious bulk liquid transfer system"));
+	AssertLongLongInt(19LL, cNamedIndexes.GetIndex("otoscope"));
+	AssertLongLongInt(20LL, cNamedIndexes.GetIndex("impel Christmas"));
+	AssertLongLongInt(21LL, cNamedIndexes.GetIndex("universalise rose fever IL59 Europe"));
+
+	AssertLongLongInt(1LL, cNamedIndexes.GetIndex("Arthur Miller"));
+	AssertLongLongInt(14LL, cNamedIndexes.GetIndex("bedum ?"));
+	AssertLongLongInt(21LL, cNamedIndexes.GetIndex("universalise rose fever IL59 Europe"));
+	AssertLongLongInt(3LL, cNamedIndexes.GetIndex("roe"));
+	AssertLongLongInt(16LL, cNamedIndexes.GetIndex("takeoff breakup value Tenuifolious magnitude"));
+	AssertLongLongInt(5LL, cNamedIndexes.GetIndex("asphyxiate"));
+	AssertLongLongInt(18LL, cNamedIndexes.GetIndex("amphibious bulk liquid transfer system"));
+	AssertLongLongInt(7LL, cNamedIndexes.GetIndex("thoracic vertebra"));
+	AssertLongLongInt(9LL, cNamedIndexes.GetIndex("Calendrer"));
+	AssertLongLongInt(13LL, cNamedIndexes.GetIndex("factor V domestic relations"));
+	AssertLongLongInt(15LL, cNamedIndexes.GetIndex("gauche"));
+	AssertLongLongInt(20LL, cNamedIndexes.GetIndex("impel Christmas"));
+	AssertLongLongInt(10LL, cNamedIndexes.GetIndex("zone refining refashion butter up"));
+	AssertLongLongInt(12LL, cNamedIndexes.GetIndex("Recipes Kerchiefs 32TX"));
+	AssertLongLongInt(8LL, cNamedIndexes.GetIndex("LL75"));
+	AssertLongLongInt(17LL, cNamedIndexes.GetIndex("Forisfamiliated"));
+	AssertLongLongInt(6LL, cNamedIndexes.GetIndex("Fonseca Bay Piaget Salt tomato plant"));
+	AssertLongLongInt(4LL, cNamedIndexes.GetIndex("order Plumbaginales Melba aldicarb"));
+	AssertLongLongInt(11LL, cNamedIndexes.GetIndex("Chopin Dicranaceae transmountain insentient"));
+	AssertLongLongInt(2LL, cNamedIndexes.GetIndex("systema skeletale"));
+	AssertLongLongInt(19LL, cNamedIndexes.GetIndex("otoscope"));
+
 	cController.End();
+	cNamedIndexes.Close();
 	cNamedIndexes.Kill();
 	cController.Kill();
 }
-
-/*
-
-NamedIndexes/4/32_0.NAM
------------------------
- 0:      1 -> Arthur Miller
- 1:      5 -> asphyxiate
- 2:      8 -> LL75
- 3:      3 -> roe
- 4:      2 -> systema skeletale
- 5:      7 -> thoracic vertebra
- 
- 6:     14 -> bedum ?
- 7:      9 -> Calendrer
- 8:     17 -> Forisfamiliated
- 9:     15 -> gauche
-10:     19 -> otoscope
-11:     12 -> Recipes Kerchiefs 32TX
-
-12:     20 -> impel Christmas
-13:      0 -> 
-14:      0 -> 
-15:      0 -> 
-16:      0 -> 
-17:      0 -> 
------------------------
-
-NamedIndexes/4/64_0.NAM
------------------------
- 0:     11 -> Chopin Dicranaceae transmountain insentient
- 1:     13 -> factor V domestic relations
- 2:      6 -> Fonseca Bay Piaget Salt tomato plant
- 3:      4 -> order Plumbaginales Melba aldicarb
- 4:     16 -> takeoff breakup value Tenuifolious magnitude
- 5:     10 -> zone refining refashion butter up
- 
- 6:     18 -> amphibious bulk liquid transfer system
- 7:     21 -> universalise rose fever IL59 Europe
- 8:      0 -> 
- 9:      0 -> 
-10:      0 -> 
-11:      0 -> 
------------------------
-
-*/
 
 
 //////////////////////////////////////////////////////////////////////////
