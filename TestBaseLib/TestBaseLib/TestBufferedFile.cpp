@@ -36,7 +36,7 @@ void TestBufferedFileRead(void)
 	{
 		AssertFalse(cFile.IsEndOfFile());
 		memset(sz, 0, 20);
-		iCount = cFile.Read(sz, 1, 1);
+		iCount = (int)cFile.Read(sz, 1, 1);
 		AssertChar(c, sz[0]);
 		AssertChar(0, sz[1]);
 		AssertInt(1, iCount);
@@ -50,7 +50,7 @@ void TestBufferedFileRead(void)
 	{
 		AssertFalse(cFile.IsEndOfFile());
 		memset(sz, 0, 20);
-		iCount = cFile.Read(sz, 1, 2);
+		iCount = (int)cFile.Read(sz, 1, 2);
 		szExpected[0] = 'a' + i*2;
 		szExpected[1] = 'b' + i*2;
 		AssertString(szExpected, sz);
@@ -58,7 +58,7 @@ void TestBufferedFileRead(void)
 	}
 	AssertFalse(cFile.IsEndOfFile());
 	memset(sz, 0, 20);
-	iCount = cFile.Read(sz, 1, 2);
+	iCount = (int)cFile.Read(sz, 1, 2);
 	AssertString("k", sz);
 	AssertInt(1, iCount);
 	AssertTrue(cFile.IsEndOfFile());
@@ -70,7 +70,7 @@ void TestBufferedFileRead(void)
 	{
 		AssertFalse(cFile.IsEndOfFile());
 		memset(sz, 0, 20);
-		iCount = cFile.Read(sz, 1, 3);
+		iCount = (int)cFile.Read(sz, 1, 3);
 		szExpected[0] = 'a' + i*3;
 		szExpected[1] = 'b' + i*3;
 		szExpected[2] = 'c' + i*3;
@@ -79,7 +79,7 @@ void TestBufferedFileRead(void)
 	}
 	AssertFalse(cFile.IsEndOfFile());
 	memset(sz, 0, 20);
-	iCount = cFile.Read(sz, 1, 3);
+	iCount = (int)cFile.Read(sz, 1, 3);
 	AssertString("jk", sz);
 	AssertInt(2, iCount);
 	AssertTrue(cFile.IsEndOfFile());

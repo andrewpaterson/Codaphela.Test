@@ -22,11 +22,11 @@ void TestMemoryFile(void)
 	bResult = cMemoryFile.Open(EFM_Read);
 	AssertTrue(bResult);
 
-	iResult = cMemoryFile.Read(szResult, (int)strlen(szHello)+1, 1);
+	iResult = (int)cMemoryFile.Read(szResult, (filePos)strlen(szHello)+1, 1);
 	AssertInt(1, iResult);
 	AssertString(szHello, szResult);
 	cMemoryFile.Seek(0, EFSO_SET);
-	iResult = cMemoryFile.Read(szResult, 1, (int)strlen(szHello)+1);
+	iResult = (int)cMemoryFile.Read(szResult, 1, (int)strlen(szHello)+1);
 	AssertInt((int)strlen(szHello)+1, iResult);
 	AssertString(szHello, szResult);
 
@@ -38,7 +38,7 @@ void TestMemoryFile(void)
 	bResult = cMemoryFile.Open(EFM_ReadWrite);
 	AssertTrue(bResult);
 	cMemoryFile.Seek(0, EFSO_END);
-	iResult = cMemoryFile.Write(szWorld, (int)strlen(szWorld)+1, 1);
+	iResult = (int)cMemoryFile.Write(szWorld, (int)strlen(szWorld)+1, 1);
 	AssertInt(1, iResult);
 	AssertString("Hello World", cMemoryFile.cArray.GetData());
 
