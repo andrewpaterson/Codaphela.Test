@@ -280,7 +280,6 @@ void TestCacheEviction(void)
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -298,8 +297,9 @@ void TestLoad(void)
 
 	cController.Init("NamedIndexes/4", TRUE);
 	cNamedIndexes.Init(&cController, 512, 6);
-	cController.Begin();
-	cNamedIndexes.Open();
+
+	AssertTrue(cController.Begin());
+	AssertTrue(cNamedIndexes.Open());
 
 	cNamedIndexes.Add(1LL, "Arthur Miller");
 	cNamedIndexes.Add(2LL, "systema skeletale");
@@ -350,8 +350,10 @@ void TestLoad(void)
 	AssertLongLongInt(20LL, cNamedIndexes.GetIndex("impel Christmas"));
 	AssertLongLongInt(21LL, cNamedIndexes.GetIndex("universalise rose fever IL59 Europe"));
 
-	cController.End();
-	cNamedIndexes.Close();
+	AssertTrue(cNamedIndexes.Save());
+	AssertTrue(cController.End());
+	AssertTrue(cNamedIndexes.Close());
+
 	cNamedIndexes.Kill();
 	cController.Kill();
 
@@ -412,9 +414,10 @@ NamedIndexes/4/64_0.NAM\n\
 
 	cController.Init("NamedIndexes/4", TRUE);
 	cNamedIndexes.Init(&cController, 512, 6);
-	cController.Begin();
-	cNamedIndexes.Open();
-	
+
+	AssertTrue(cController.Begin());
+	AssertTrue(cNamedIndexes.Open());
+
 	pcBlock32 = cNamedIndexes.GetBlockWithDataSize(32);
 	pcBlock = pcBlock32->GetBlock(0);
 	AssertString("Arthur Miller", pcBlock->GetFirst());
@@ -470,8 +473,85 @@ NamedIndexes/4/64_0.NAM\n\
 	AssertLongLongInt(2LL, cNamedIndexes.GetIndex("systema skeletale"));
 	AssertLongLongInt(19LL, cNamedIndexes.GetIndex("otoscope"));
 
-	cController.End();
-	cNamedIndexes.Close();
+	AssertTrue(cNamedIndexes.Save());
+	AssertTrue(cController.End());
+	AssertTrue(cNamedIndexes.Close());
+
+	cNamedIndexes.Kill();
+	cController.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestOptimise(void)
+{
+	CNamedIndexes				cNamedIndexes;
+	CDurableFileController		cController;
+	CFileUtil					cFileUtil;
+
+	cFileUtil.MakeDir("NamedIndexes/5");
+
+	cController.Init("NamedIndexes/5", TRUE);
+	cNamedIndexes.Init(&cController, 20 MB, 4);
+	
+	AssertTrue(cController.Begin());
+	AssertTrue(cNamedIndexes.Open());
+
+	cNamedIndexes.Add(7498273948792334521LL, "Vux/spaceships/Intruder");
+	cNamedIndexes.Add(8974598758345774533LL, "Vux/spaceships/Globule");
+	cNamedIndexes.Add(9223372036854775807LL, "Vux/spaceships/mega-watt Laser Cannon");
+	cNamedIndexes.Add(4376423847623874680LL, "Vux/spaceships/admiral Zex/menagarie-transport-ship");
+	cNamedIndexes.Add(5265267321786128702LL, "beast");
+	cNamedIndexes.Add(9213567356457326474LL, "Lunar Base");
+	cNamedIndexes.Add(1532564672346590234LL, "Earthling/spaceships/Cruiser");
+	cNamedIndexes.Add(8465236728346532649LL, "Earthling/spaceships/Dominator");
+	cNamedIndexes.Add(3749816364128750931LL, "Earthling/spaceships/surplus cold war nuclear war-heads");
+	cNamedIndexes.Add(1532564672346590234LL, "Earthling/spaceships/Point defense Laser system");
+	cNamedIndexes.Add(8352145325252165435LL, "Earthling/portraits/Captain Zelnick");
+	cNamedIndexes.Add(4678979686897958483LL, "Earthling/slave-shield");
+	cNamedIndexes.Add(3576898544356890986LL, "Ur-Quan/Kzer-za/spaceships/Dreadnought/hull");
+	cNamedIndexes.Add(7935687324790713849LL, "Ur-Quan/Kzer-za/spaceships/Dreadnought/launch figters/weapons/auto-targetting laser");
+	cNamedIndexes.Add(2536710003746523782LL, "Ur-Quan/Kzer-za/spaceships/Dreadnought/launch figters/HierachyCrew");
+	cNamedIndexes.Add(4368570346902094536LL, "Ur-Quan/kohr-Ah/spaceships/Marauder/hull");
+	cNamedIndexes.Add(8765325424368900113LL, "Ur-Quan/kohr-Ah/spaceships/spinning disk");
+	cNamedIndexes.Add(8334658173689122135LL, "Ur-Quan/kohr-Ah/spaceships/ring-of-flames");
+	cNamedIndexes.Add(1136946723821981232LL, "Zoq");
+	cNamedIndexes.Add(3476827346812023123LL, "Fot");
+	cNamedIndexes.Add(6513451892183782132LL, "Pik");
+	cNamedIndexes.Add(2384789236478123123LL, "Zoq Fot Pik/Sports/Frungy!");
+	cNamedIndexes.Add(5451523689723469328LL, "Spathi/Discriminator");
+	cNamedIndexes.Add(3214004623467012364LL, "Spathi/Eluder");
+	cNamedIndexes.Add(2841213793444383464LL, "Spathi/characters/captain/Fwiffo");
+	cNamedIndexes.Add(4012756480145431273LL, "Spathi/characters/captain/Fwiffo-on-the-moon");
+	
+	AssertTrue(cNamedIndexes.Save());
+	AssertTrue(cController.End());
+	AssertTrue(cNamedIndexes.Close());
+
+	cNamedIndexes.Kill();
+	cController.Kill();
+
+
+	cController.Init("NamedIndexes/5", FALSE);  //Not being durable during optimisation is important
+	cNamedIndexes.Init(&cController, 20 MB, 4);
+	cNamedIndexes.Optimise();
+	cNamedIndexes.Kill();
+	cController.Kill();
+
+
+	cController.Init("NamedIndexes/5", TRUE);
+	cNamedIndexes.Init(&cController, 20 MB, 4);
+
+	AssertTrue(cController.Begin());
+	AssertTrue(cNamedIndexes.Open());
+
+	AssertTrue(cNamedIndexes.Save());
+	AssertTrue(cController.End());
+	AssertTrue(cNamedIndexes.Close());
+
 	cNamedIndexes.Kill();
 	cController.Kill();
 }
@@ -489,10 +569,11 @@ void TestNamedIndexes(void)
 
 	cFileUtil.RemoveDir("NamedIndexes");
 
-	TestAdd();
-	TestRemove();
-	TestCacheEviction();
-	TestLoad();
+	//TestAdd();
+	//TestRemove();
+	//TestCacheEviction();
+	//TestLoad();
+	TestOptimise();
 
 	cFileUtil.RemoveDir("NamedIndexes");
 
