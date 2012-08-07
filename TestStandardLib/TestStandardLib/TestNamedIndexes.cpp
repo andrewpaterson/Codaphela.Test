@@ -491,6 +491,7 @@ void TestOptimise(void)
 	CNamedIndexes				cNamedIndexes;
 	CDurableFileController		cController;
 	CFileUtil					cFileUtil;
+	BOOL						bResult;
 
 	cFileUtil.MakeDir("NamedIndexes/5");
 
@@ -537,7 +538,8 @@ void TestOptimise(void)
 
 	cController.Init("NamedIndexes/5", FALSE);  //Not being durable during optimisation is important
 	cNamedIndexes.Init(&cController, 20 MB, 4);
-	cNamedIndexes.Optimise();
+	bResult = cNamedIndexes.Optimise();
+	AssertTrue(bResult);
 	cNamedIndexes.Kill();
 	cController.Kill();
 
