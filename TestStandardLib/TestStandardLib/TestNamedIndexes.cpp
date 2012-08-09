@@ -2,6 +2,7 @@
 #include "StandardLib/NamedIndexesFileDumper.h"
 #include "StandardLib/NamedIndexes.h"
 #include "StandardLib/BaseObject.h"
+#include "StandardLib/NamedIndexesOptimiser.h"
 #include "TestLib/Assert.h"
 #include "TestNamedIndexes.h"
 
@@ -492,6 +493,7 @@ void TestOptimise(void)
 	CDurableFileController		cController;
 	CFileUtil					cFileUtil;
 	BOOL						bResult;
+	CNamedIndexesOptimiser		cOptimiser;
 
 	cFileUtil.MakeDir("NamedIndexes/5");
 
@@ -528,6 +530,8 @@ void TestOptimise(void)
 	cNamedIndexes.Add(2841213793444383464LL, "Spathi/characters/captain/Fwiffo");
 	cNamedIndexes.Add(4012756480145431273LL, "Spathi/characters/captain/Fwiffo-on-the-moon");
 	
+	AssertLongLongInt(26, cNamedIndexes.NumNames());
+
 	AssertTrue(cNamedIndexes.Save());
 	AssertTrue(cController.End());
 	AssertTrue(cNamedIndexes.Close());
@@ -538,10 +542,79 @@ void TestOptimise(void)
 
 	cController.Init("NamedIndexes/5", FALSE);  //Not being durable during optimisation is important
 	cNamedIndexes.Init(&cController, 20 MB, 4);
-	bResult = cNamedIndexes.Optimise();
+	cOptimiser.Init(&cNamedIndexes);
+	bResult = cOptimiser.Optimise();
 	AssertTrue(bResult);
+	cOptimiser.Kill();
 	cNamedIndexes.Kill();
 	cController.Kill();
+
+	CChars sz;
+
+	sz.Init(); 
+	DumpNamedIndexesFile(&sz, "NamedIndexes/5/32_0.NAM", 32, 4); 
+	AssertString("\
+NamedIndexes/5/32_0.NAM\n\
+-----------------------\n\
+   0: 5265267321786128702 -> beast\n\
+   1: 4678979686897958483 -> Earthling/slave-shield\n\
+   2: 3476827346812023123 -> Fot\n\
+   3: 9213567356457326474 -> Lunar Base\n\
+\n\
+   4: 6513451892183782132 -> Pik\n\
+   5: 5451523689723469328 -> Spathi/Discriminator\n\
+   6: 3214004623467012364 -> Spathi/Eluder\n\
+   7: 8974598758345774533 -> Vux/spaceships/Globule\n\
+\n\
+   8: 1136946723821981232 -> Zoq\n\
+   9:      0 -> \n\
+  10:      0 -> \n\
+  11:      0 -> \n\
+-----------------------\n", sz.Text());
+	sz.Kill();
+
+	sz.Init(); 
+	DumpNamedIndexesFile(&sz, "NamedIndexes/5/64_0.NAM", 64, 4); 
+	AssertString("\
+NamedIndexes/5/64_0.NAM\n\
+-----------------------\n\
+   0: 8352145325252165435 -> Earthling/portraits/Captain Zelnick\n\
+   1: 1532564672346590234 -> Earthling/spaceships/Cruiser\n\
+   2: 8465236728346532649 -> Earthling/spaceships/Dominator\n\
+   3: 1532564672346590234 -> Earthling/spaceships/Point defense Laser system\n\
+\n\
+   4: 2841213793444383464 -> Spathi/characters/captain/Fwiffo\n\
+   5: 4012756480145431273 -> Spathi/characters/captain/Fwiffo-on-the-moon\n\
+   6: 4368570346902094536 -> Ur-Quan/kohr-Ah/spaceships/Marauder/hull\n\
+   7: 8334658173689122135 -> Ur-Quan/kohr-Ah/spaceships/ring-of-flames\n\
+\n\
+   8: 8765325424368900113 -> Ur-Quan/kohr-Ah/spaceships/spinning disk\n\
+   9: 3576898544356890986 -> Ur-Quan/Kzer-za/spaceships/Dreadnought/hull\n\
+  10: 4376423847623874680 -> Vux/spaceships/admiral Zex/menagarie-transport-ship\n\
+  11: 7498273948792334521 -> Vux/spaceships/Intruder\n\
+\n\
+  12: 9223372036854775807 -> Vux/spaceships/mega-watt Laser Cannon\n\
+  13: 2384789236478123123 -> Zoq Fot Pik/Sports/Frungy!\n\
+  14:      0 -> \n\
+  15:      0 -> \n\
+-----------------------\n", sz.Text());
+	sz.Kill();
+
+	sz.Init(); 
+	DumpNamedIndexesFile(&sz, "NamedIndexes/5/96_0.NAM", 96, 4); 
+	AssertString("\
+NamedIndexes/5/96_0.NAM\n\
+-----------------------\n\
+   0: 3749816364128750931 -> Earthling/spaceships/surplus cold war nuclear war-heads\n\
+   1: 2536710003746523782 -> Ur-Quan/Kzer-za/spaceships/Dreadnought/launch figters/HierachyCrew\n\
+   2: 7935687324790713849 -> Ur-Quan/Kzer-za/spaceships/Dreadnought/launch figters/weapons/auto-targetting laser\n\
+   3:      0 -> \n\
+-----------------------\n", sz.Text());
+	sz.Kill();
+
+	AssertFalse(cFileUtil.Exists("NamedIndexes/5/32_0.NAM.TMP"));
+	AssertFalse(cFileUtil.Exists("NamedIndexes/5/64_0.NAM.TMP"));
+	AssertFalse(cFileUtil.Exists("NamedIndexes/5/96_0.NAM.TMP"));
 
 
 	cController.Init("NamedIndexes/5", TRUE);
@@ -550,12 +623,71 @@ void TestOptimise(void)
 	AssertTrue(cController.Begin());
 	AssertTrue(cNamedIndexes.Open());
 
+	AssertLongLongInt(26, cNamedIndexes.NumNames());
+
+	AssertLongLongInt(5265267321786128702LL, cNamedIndexes.GetIndex("beast"));
+	AssertLongLongInt(9213567356457326474LL, cNamedIndexes.GetIndex("Lunar Base"));
+	AssertLongLongInt(1532564672346590234LL, cNamedIndexes.GetIndex("Earthling/spaceships/Cruiser"));
+	AssertLongLongInt(8465236728346532649LL, cNamedIndexes.GetIndex("Earthling/spaceships/Dominator"));
+	AssertLongLongInt(3749816364128750931LL, cNamedIndexes.GetIndex("Earthling/spaceships/surplus cold war nuclear war-heads"));
+	AssertLongLongInt(1532564672346590234LL, cNamedIndexes.GetIndex("Earthling/spaceships/Point defense Laser system"));
+	AssertLongLongInt(8352145325252165435LL, cNamedIndexes.GetIndex("Earthling/portraits/Captain Zelnick"));
+	AssertLongLongInt(4678979686897958483LL, cNamedIndexes.GetIndex("Earthling/slave-shield"));
+	AssertLongLongInt(3476827346812023123LL, cNamedIndexes.GetIndex("Fot"));
+	AssertLongLongInt(6513451892183782132LL, cNamedIndexes.GetIndex("Pik"));
+	AssertLongLongInt(5451523689723469328LL, cNamedIndexes.GetIndex("Spathi/Discriminator"));
+	AssertLongLongInt(3214004623467012364LL, cNamedIndexes.GetIndex("Spathi/Eluder"));
+	AssertLongLongInt(2841213793444383464LL, cNamedIndexes.GetIndex("Spathi/characters/captain/Fwiffo"));
+	AssertLongLongInt(4012756480145431273LL, cNamedIndexes.GetIndex("Spathi/characters/captain/Fwiffo-on-the-moon"));
+	AssertLongLongInt(3576898544356890986LL, cNamedIndexes.GetIndex("Ur-Quan/Kzer-za/spaceships/Dreadnought/hull"));
+	AssertLongLongInt(7935687324790713849LL, cNamedIndexes.GetIndex("Ur-Quan/Kzer-za/spaceships/Dreadnought/launch figters/weapons/auto-targetting laser"));
+	AssertLongLongInt(2536710003746523782LL, cNamedIndexes.GetIndex("Ur-Quan/Kzer-za/spaceships/Dreadnought/launch figters/HierachyCrew"));
+	AssertLongLongInt(4368570346902094536LL, cNamedIndexes.GetIndex("Ur-Quan/kohr-Ah/spaceships/Marauder/hull"));
+	AssertLongLongInt(8765325424368900113LL, cNamedIndexes.GetIndex("Ur-Quan/kohr-Ah/spaceships/spinning disk"));
+	AssertLongLongInt(8334658173689122135LL, cNamedIndexes.GetIndex("Ur-Quan/kohr-Ah/spaceships/ring-of-flames"));
+	AssertLongLongInt(7498273948792334521LL, cNamedIndexes.GetIndex("Vux/spaceships/Intruder"));
+	AssertLongLongInt(8974598758345774533LL, cNamedIndexes.GetIndex("Vux/spaceships/Globule"));
+	AssertLongLongInt(9223372036854775807LL, cNamedIndexes.GetIndex("Vux/spaceships/mega-watt Laser Cannon"));
+	AssertLongLongInt(4376423847623874680LL, cNamedIndexes.GetIndex("Vux/spaceships/admiral Zex/menagarie-transport-ship"));
+	AssertLongLongInt(1136946723821981232LL, cNamedIndexes.GetIndex("Zoq"));
+	AssertLongLongInt(2384789236478123123LL, cNamedIndexes.GetIndex("Zoq Fot Pik/Sports/Frungy!"));
+	
+	cNamedIndexes.Add(7234982374982126710LL, "Earthling/Quorum/Slave Shielded");
+	AssertLongLongInt(7234982374982126710LL, cNamedIndexes.GetIndex("Earthling/Quorum/Slave Shielded"));
+
 	AssertTrue(cNamedIndexes.Save());
 	AssertTrue(cController.End());
 	AssertTrue(cNamedIndexes.Close());
 
 	cNamedIndexes.Kill();
 	cController.Kill();
+
+	sz.Init(); 
+	DumpNamedIndexesFile(&sz, "NamedIndexes/5/64_0.NAM", 64, 4); 
+	AssertString("\
+NamedIndexes/5/64_0.NAM\n\
+-----------------------\n\
+   0: 8352145325252165435 -> Earthling/portraits/Captain Zelnick\n\
+   1: 1532564672346590234 -> Earthling/spaceships/Cruiser\n\
+   2: 8465236728346532649 -> Earthling/spaceships/Dominator\n\
+   3: 1532564672346590234 -> Earthling/spaceships/Point defense Laser system\n\
+\n\
+   4: 2841213793444383464 -> Spathi/characters/captain/Fwiffo\n\
+   5: 4012756480145431273 -> Spathi/characters/captain/Fwiffo-on-the-moon\n\
+   6: 4368570346902094536 -> Ur-Quan/kohr-Ah/spaceships/Marauder/hull\n\
+   7: 8334658173689122135 -> Ur-Quan/kohr-Ah/spaceships/ring-of-flames\n\
+\n\
+   8: 8765325424368900113 -> Ur-Quan/kohr-Ah/spaceships/spinning disk\n\
+   9: 3576898544356890986 -> Ur-Quan/Kzer-za/spaceships/Dreadnought/hull\n\
+  10: 4376423847623874680 -> Vux/spaceships/admiral Zex/menagarie-transport-ship\n\
+  11: 7498273948792334521 -> Vux/spaceships/Intruder\n\
+\n\
+  12: 7234982374982126710 -> Earthling/Quorum/Slave Shielded\n\
+  13: 9223372036854775807 -> Vux/spaceships/mega-watt Laser Cannon\n\
+  14: 2384789236478123123 -> Zoq Fot Pik/Sports/Frungy!\n\
+  15:      0 -> \n\
+-----------------------\n", sz.Text());
+	sz.Kill();
 }
 
 
@@ -571,10 +703,10 @@ void TestNamedIndexes(void)
 
 	cFileUtil.RemoveDir("NamedIndexes");
 
-	//TestAdd();
-	//TestRemove();
-	//TestCacheEviction();
-	//TestLoad();
+	TestAdd();
+	TestRemove();
+	TestCacheEviction();
+	TestLoad();
 	TestOptimise();
 
 	cFileUtil.RemoveDir("NamedIndexes");
