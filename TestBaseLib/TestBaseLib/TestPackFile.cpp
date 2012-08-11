@@ -248,6 +248,60 @@ void TestPackFileAdd(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestPackFileIterate(void)
+{
+	CPackFiles			cPak;
+	CDiskFile*			pcDiskFile;
+	CPackFileIterator	cIter;
+	CChars				sz;
+
+	pcDiskFile = DiskFile("Input/Test.Pak");
+	AssertNotNull(pcDiskFile);
+	cPak.Init(pcDiskFile, PFM_Read);
+
+	sz.Init(); AssertStringCase("Giana/Sisters/Document.txt", cPak.StartIteration(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Giana/Brothers.PAK", cPak.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Giana/Sisters.PAK", cPak.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	AssertNull(cPak.Iterate(&cIter));
+	cPak.StopIteration(&cIter);
+
+	cPak.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPackFileGetFiles(void)
+{
+	CPackFiles				cPak;
+	CDiskFile*				pcDiskFile;
+	CChars					sz;
+	CArrayPackFileNodePtrs	cArrayFiles;
+
+	pcDiskFile = DiskFile("Input/Test.Pak");
+	AssertNotNull(pcDiskFile);
+	cPak.Init(pcDiskFile, PFM_Read);
+	cArrayFiles.Init(8);
+
+	cPak.GetFiles(&cArrayFiles);
+
+	AssertInt(3, cArrayFiles.NumElements());
+
+	sz.Init(); AssertStringCase("Giana/Sisters/Document.txt", (*cArrayFiles.Get(0))->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Giana/Brothers.PAK", (*cArrayFiles.Get(1))->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Giana/Sisters.PAK", (*cArrayFiles.Get(2))->GetFullName(&sz), FALSE);  sz.Kill();
+
+	cArrayFiles.Kill();
+	cPak.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestPackFile(void)
 {
 	BeginTests();
@@ -257,6 +311,8 @@ void TestPackFile(void)
 	TestPackFileReadWriteMultipleFiles();
 
 	TestPackFileAdd();
+	TestPackFileGetFiles();
+	TestPackFileIterate();
 
 	FastFunctionsKill();
 	TestStatistics();

@@ -145,7 +145,7 @@ void TestFileSystemGetFiles(void)
 void TestFileSystemIterator(void)
 {
 	CFileSystem			cSystem;
-	CFileNodeIterator	cIter;
+	CFileSystemIterator	cIter;
 
 	cSystem.Init("Finder");
 
@@ -162,6 +162,7 @@ void TestFileSystemIterator(void)
 	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Marching.txt", cSystem.Iterate(&cIter)->GetFullName(), FALSE);
 	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ninja.txt", cSystem.Iterate(&cIter)->GetFullName(), FALSE);
 	AssertNull(cSystem.Iterate(&cIter));
+	cSystem.StopIteration(&cIter);
 
 	cSystem.Kill();
 }
