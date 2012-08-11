@@ -108,6 +108,69 @@ void TestFileSystemFindExtension(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFileSystemGetFiles(void)
+{
+	CFileSystem							cSystem;
+	CArraySystemFilePtrs				cArrayFiles;
+
+	cSystem.Init("Finder");
+	cArrayFiles.Init();
+
+	cSystem.GetFiles(&cArrayFiles);
+
+	AssertInt(12, cArrayFiles.NumElements());
+
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Lord\\1.rar", (*cArrayFiles.Get(0))->File()->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Rising\\2.rar", (*cArrayFiles.Get(1))->File()->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Storm\\3.rar", (*cArrayFiles.Get(2))->File()->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ants.rar", (*cArrayFiles.Get(3))->File()->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ants.txt", (*cArrayFiles.Get(4))->File()->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Echo.rar", (*cArrayFiles.Get(5))->File()->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\File.txt", (*cArrayFiles.Get(6))->File()->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Glenmark.wav", (*cArrayFiles.Get(7))->File()->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Last.txt", (*cArrayFiles.Get(8))->File()->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\March.rar", (*cArrayFiles.Get(9))->File()->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Marching.txt", (*cArrayFiles.Get(10))->File()->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ninja.txt", (*cArrayFiles.Get(11))->File()->GetFullName(), FALSE);
+
+	cArrayFiles.Kill();
+	cSystem.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFileSystemIterator(void)
+{
+	CFileSystem			cSystem;
+	CFileNodeIterator	cIter;
+
+	cSystem.Init("Finder");
+
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Lord\\1.rar", cSystem.StartIteration(&cIter)->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Rising\\2.rar", cSystem.Iterate(&cIter)->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Storm\\3.rar", cSystem.Iterate(&cIter)->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ants.rar", cSystem.Iterate(&cIter)->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ants.txt", cSystem.Iterate(&cIter)->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Echo.rar", cSystem.Iterate(&cIter)->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\File.txt", cSystem.Iterate(&cIter)->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Glenmark.wav", cSystem.Iterate(&cIter)->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Last.txt", cSystem.Iterate(&cIter)->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\March.rar", cSystem.Iterate(&cIter)->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Marching.txt", cSystem.Iterate(&cIter)->GetFullName(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ninja.txt", cSystem.Iterate(&cIter)->GetFullName(), FALSE);
+	AssertNull(cSystem.Iterate(&cIter));
+
+	cSystem.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFileSystem(void)
 {
 	BeginTests();
@@ -116,6 +179,8 @@ void TestFileSystem(void)
 	TestFileSystemInit();
 	TestFileSystemNearest();
 	TestFileSystemFindExtension();
+	TestFileSystemGetFiles();
+	TestFileSystemIterator();
 
 	FastFunctionsKill();
 	TestStatistics();

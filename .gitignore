@@ -45,3 +45,5 @@ TestCoreLib/TestCoreLib/TransactionDatabase5a
 TestCoreLib/TestCoreLib/TransactionDatabase5b
 TestCoreLib/TestCoreLib/TransactionDatabase5c
 TestCoreLib/TestCoreLib/TransactionDatabase5d
+TestSupportLib/ipch/*
+TestBaseLib/TestBaseLib.opensdf
