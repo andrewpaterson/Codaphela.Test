@@ -1,6 +1,7 @@
 #include "BaseLib/TextFile.h"
 #include "BaseLib/DebugOutput.h"
 #include "CoreLib/Files.h"
+#include "CoreLib/TypeConverter.h"
 #include "TestLib/Assert.h"
 #include "TestFiles.h"
 
@@ -45,6 +46,46 @@ void TestFilesSimple(void)
 	cTextFile.Read(pcFile);
 	AssertString("Spelling", cTextFile.Text());
 	cTextFile.Kill();
+
+	cFiles.Kill();
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFilesIteration(void)
+{
+	CFiles			cFiles;
+	CFileIterator	cIter;
+	CChars			sz;
+
+	cFiles.Init("Game", "PAK");
+
+	sz.Init(); AssertStringCase("Moose.txt", cFiles.StartIteration(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Scream.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Slay/Spelling.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Seattle.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Super/Barbie.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Super/Ken.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Cars.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Cheese/Moose.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Cheese/Scream.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Santa/Seattle.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Ambient.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("General.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Intro.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Models/Super/Barbie.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Models/Super/Ken.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Models/Cars.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Sounds/Santa/Seattle.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Sounds/Ambient.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Videos/Intro.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Videos/Outro.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	AssertNull(cFiles.Iterate(&cIter));
+	cFiles.StopIteration(&cIter);
 
 	cFiles.Kill();
 }
@@ -156,10 +197,17 @@ void AssertPakFile(char* szFileName, char* szContents, CFiles* pcFiles)
 void TestFiles(void)
 {
 	BeginTests();
+	
+	FastFunctionsInit();
+	TypeConverterInit();
 
-	TestFilesSimple();
-	TestGetFileNames();
-	TestFilesWholeDirectory();
+	//TestFilesSimple();
+	TestFilesIteration();
+	//TestGetFileNames();
+	//TestFilesWholeDirectory();
+
+	FastFunctionsKill();
+	TypeConverterKill();
 
 	TestStatistics();
 }
