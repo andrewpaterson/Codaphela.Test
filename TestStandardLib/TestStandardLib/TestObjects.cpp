@@ -17,7 +17,7 @@ void TestCompilation(void)
 
 		cTestPtr = cObjects.Add<CTestObject>();
 		cTestPtr = cObjects.Get<CTestObject>("Invalid Name");
-		cTestPtr = cObjects.Get<CTestObject>(INVALID_OBJECT_IDENTIFIER);
+		cTestPtr = cObjects.Get<CTestObject>(INVALID_O_INDEX);
 	}
 	AssertTrue(TRUE);
 }

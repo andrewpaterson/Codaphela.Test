@@ -34,9 +34,9 @@ void TestAdd(void)
 	cNamedIndexes.Add(73LL, "Alfred");
 	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
 	AssertLongLongInt(73LL, cNamedIndexes.GetIndex("Alfred"));
-	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex(""));
-	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Ax"));
-	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex((char*)NULL));
+	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex(""));
+	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex("Ax"));
+	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex((char*)NULL));
 
 	cNamedIndexes.Add(19LL, "Camilla");
 	cNamedIndexes.Add(20LL, "Wordsworth");
@@ -119,7 +119,7 @@ void TestRemove(void)
 	bResult = cNamedIndexes.Remove("Aardvark");
 	AssertTrue(bResult);
 
-	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Aardvark"));
+	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex("Aardvark"));
 	AssertLongLongInt(73LL, cNamedIndexes.GetIndex("Alfred"));
 	AssertLongLongInt(68LL, cNamedIndexes.GetIndex("Alfredo"));
 	AssertLongLongInt(66LL, cNamedIndexes.GetIndex("Alicia"));
@@ -142,11 +142,11 @@ void TestRemove(void)
 	AssertTrue(cNamedIndexes.Remove("Play-dough"));
 
 	AssertLongLongInt(73LL, cNamedIndexes.GetIndex("Alfred"));
-	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Alfredo"));
-	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Alicia"));
+	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex("Alfredo"));
+	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex("Alicia"));
 	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
 	AssertLongLongInt(19LL, cNamedIndexes.GetIndex("Camilla"));
-	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Play-dough"));
+	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex("Play-dough"));
 	AssertLongLongInt(20LL, cNamedIndexes.GetIndex("Wordsworth"));
 	AssertLongLongInt(01LL, cNamedIndexes.GetIndex("Zynaps"));
 	AssertLongLongInt(5, cNamedIndexes.NumNames());
@@ -157,18 +157,18 @@ void TestRemove(void)
 	AssertTrue(cNamedIndexes.Remove("Wordsworth"));
 	AssertTrue(cNamedIndexes.Remove("Zynaps"));
 
-	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Alfred"));
-	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Berty"));
-	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Camilla"));
-	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Wordsworth"));
-	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Zynaps"));
+	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex("Alfred"));
+	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex("Berty"));
+	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex("Camilla"));
+	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex("Wordsworth"));
+	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex("Zynaps"));
 	AssertLongLongInt(0, cNamedIndexes.NumNames());
 
 	cNamedIndexes.Add(45LL, "Berty");
 	AssertLongLongInt(1, cNamedIndexes.NumNames());
 	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
 	AssertTrue(cNamedIndexes.Remove("Berty"));
-	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Berty"));
+	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex("Berty"));
 	AssertLongLongInt(0, cNamedIndexes.NumNames());
 
 	cController.End();
@@ -205,9 +205,9 @@ void TestCacheEviction(void)
 	cNamedIndexes.Add(73LL, "Alfred");
 	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
 	AssertLongLongInt(73LL, cNamedIndexes.GetIndex("Alfred"));
-	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex(""));
-	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex("Ax"));
-	AssertLongLongInt(INVALID_OBJECT_IDENTIFIER, cNamedIndexes.GetIndex((char*)NULL));
+	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex(""));
+	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex("Ax"));
+	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex((char*)NULL));
 
 	cNamedIndexes.Add(19LL, "Camilla");
 	cNamedIndexes.Add(20LL, "Wordsworth");
