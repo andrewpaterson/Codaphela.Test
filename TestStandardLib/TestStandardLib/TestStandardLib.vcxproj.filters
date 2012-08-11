@@ -123,6 +123,9 @@
     <ClCompile Include="TestNamedIndexes.cpp">
       <Filter>Source\File\Indexed\Named</Filter>
     </ClCompile>
+    <ClCompile Include="TestObjects.cpp">
+      <Filter>Source\Object\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestChannelAccessor.h">
@@ -193,6 +196,9 @@
     </ClInclude>
     <ClInclude Include="TestNamedIndexes.h">
       <Filter>Source\File\Indexed\Named</Filter>
+    </ClInclude>
+    <ClInclude Include="TestObjects.h">
+      <Filter>Source\Object\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

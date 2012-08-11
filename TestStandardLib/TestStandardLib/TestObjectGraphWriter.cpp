@@ -52,6 +52,9 @@ void TestObjectGraphWriterSimple(void)
 	pTest2b->mp1 = pTest1c;
 	pTest2b->mp2 = pTest1b;
 
+	AssertInt(160, sizeof(CTestSaveableObject1)));  //If these sizes change the input test files will be wrong.
+	AssertInt(144, sizeof(CTestSaveableObject2)));
+
 	cSimpleWriter.Init("Output/GraphWriter/Data");
 	cGraphWriter.Init(&cSimpleWriter);
 	bResult = cGraphWriter.Write(&pTest2a);
