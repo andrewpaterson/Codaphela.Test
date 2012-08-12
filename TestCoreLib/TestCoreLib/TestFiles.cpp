@@ -60,31 +60,91 @@ void TestFilesIteration(void)
 {
 	CFiles			cFiles;
 	CFileIterator	cIter;
-	CChars			sz;
 
 	cFiles.Init("Game", "PAK");
 
-	sz.Init(); AssertStringCase("Moose.txt", cFiles.StartIteration(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Scream.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Slay/Spelling.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Seattle.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Super/Barbie.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Super/Ken.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Cars.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Cheese/Moose.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Cheese/Scream.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Santa/Seattle.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Ambient.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("General.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Intro.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Models/Super/Barbie.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Models/Super/Ken.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Models/Cars.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Sounds/Santa/Seattle.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Sounds/Ambient.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Videos/Intro.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Videos/Outro.txt", cFiles.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	AssertStringCase("Moose.txt", cFiles.StartIteration(&cIter)->GetFullName(), FALSE);
+	AssertInt(1, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_PackFiles, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Scream.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(1, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_PackFiles, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Slay/Spelling.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(1, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_PackFiles, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Seattle.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(1, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_PackFiles, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Super/Barbie.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(0, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_PackFiles, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Super/Ken.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(0, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_PackFiles, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Cars.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(0, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_PackFiles, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Cheese/Moose.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(0, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_PackFiles, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Cheese/Scream.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(0, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_PackFiles, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Santa/Seattle.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(0, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_PackFiles, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Ambient.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(0, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_PackFiles, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("General.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(0, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_PackFiles, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Intro.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(0, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_PackFiles, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Models/Super/Barbie.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(FILE_SYSTEM_RANK, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_FileSystem, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Models/Super/Ken.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(FILE_SYSTEM_RANK, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_FileSystem, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Models/Cars.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(FILE_SYSTEM_RANK, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_FileSystem, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Sounds/Santa/Seattle.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(FILE_SYSTEM_RANK, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_FileSystem, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Sounds/Ambient.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(FILE_SYSTEM_RANK, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_FileSystem, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Videos/Intro.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(FILE_SYSTEM_RANK, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_FileSystem, cIter.GetCurrent()->GetType());
+
+	AssertStringCase("Videos/Outro.txt", cFiles.Iterate(&cIter)->GetFullName(), FALSE); 
+	AssertInt(FILE_SYSTEM_RANK, cIter.GetCurrent()->GetFileRank());
+	AssertInt(FIRT_FileSystem, cIter.GetCurrent()->GetType());
+
 	AssertNull(cFiles.Iterate(&cIter));
+	AssertNull(cIter.GetCurrent());
 	cFiles.StopIteration(&cIter);
 
 	cFiles.Kill();
@@ -201,10 +261,10 @@ void TestFiles(void)
 	FastFunctionsInit();
 	TypeConverterInit();
 
-	//TestFilesSimple();
+	TestFilesSimple();
 	TestFilesIteration();
-	//TestGetFileNames();
-	//TestFilesWholeDirectory();
+	TestGetFileNames();
+	TestFilesWholeDirectory();
 
 	FastFunctionsKill();
 	TypeConverterKill();
