@@ -13,7 +13,6 @@
 //////////////////////////////////////////////////////////////////////////
 void TestResolve(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 
 	CClassStorage	cClassStorage;
@@ -39,7 +38,6 @@ void TestResolve(void)
 
 	cClassStorage.Kill();
 
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

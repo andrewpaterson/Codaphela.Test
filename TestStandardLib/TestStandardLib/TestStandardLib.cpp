@@ -22,6 +22,7 @@
 #include "TestObjectGraphWriter.h"
 #include "TestNamedIndexes.h"
 #include "TestObjects.h"
+#include "TestObjectConverter.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -54,6 +55,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestRoot();
 	TestObjectGraphWriter();
 	TestNamedIndexes();
+	TestObjectConverter();
 	TestObjects();
 
 	FastFunctionsKill();

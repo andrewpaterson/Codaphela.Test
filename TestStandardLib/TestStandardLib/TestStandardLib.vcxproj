@@ -91,6 +91,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="TestNamedIndexes.cpp" />
+    <ClCompile Include="TestObjectConverter.cpp" />
     <ClCompile Include="TestObjects.cpp" />
     <ClCompile Include="TestStandardLib.cpp" />
     <ClCompile Include="TestChannelAccessor.cpp" />
@@ -122,6 +123,7 @@
     <ClInclude Include="TestChannelPadder.h" />
     <ClInclude Include="TestChannels.h" />
     <ClInclude Include="TestExternalChannels.h" />
+    <ClInclude Include="TestObjectConverter.h" />
     <ClInclude Include="TestObjects.h" />
     <ClInclude Include="TestSingleChannelAccessor.h" />
     <ClInclude Include="TestActionEvent.h" />

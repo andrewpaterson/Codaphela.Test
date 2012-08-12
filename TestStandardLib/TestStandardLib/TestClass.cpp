@@ -51,7 +51,6 @@ void TestAddStructType(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCallMethod(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	ClassStorageInit();
 
@@ -116,7 +115,6 @@ void TestCallMethod(void)
 	AssertInt(18, iResult);
 
 	ClassStorageKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 
