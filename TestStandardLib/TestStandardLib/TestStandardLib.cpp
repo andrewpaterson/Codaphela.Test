@@ -16,6 +16,7 @@
 #include "TestChannelPadder.h"
 #include "TestUnknowns.h"
 #include "TestMapStringUnknown.h"
+#include "TestChunkFileNames.h"
 #include "TestParameters.h"
 #include "TestObject.h"
 #include "TestRoot.h"
@@ -50,6 +51,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestChannels();
 	TestChannelsAccessor();
 	TestSingleChannelAccessor();
+	TestChunkFileNames();
 	TestParameters();
 	TestObject();
 	TestRoot();

@@ -26,7 +26,7 @@ void TestChunkFileMD5ing(void)
 	cChunkFile.WriteOpen();
 	cChunkFile.WriteChunkBegin();
 	cChunkFile.Write(szFox, 1, iFoxLen);
-	cChunkFile.WriteChunkEnd(0);
+	cChunkFile.WriteChunkEnd("ChunkName");
 	cChunkFile.Write(szLorem, 1, iLoremLen);
 	cChunkFile.WriteClose();
 
