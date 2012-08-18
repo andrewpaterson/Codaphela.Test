@@ -94,6 +94,7 @@
     <ClCompile Include="TestNamedIndexes.cpp" />
     <ClCompile Include="TestObjectConverter.cpp" />
     <ClCompile Include="TestObjects.cpp" />
+    <ClCompile Include="TestPointer.cpp" />
     <ClCompile Include="TestStandardLib.cpp" />
     <ClCompile Include="TestChannelAccessor.cpp" />
     <ClCompile Include="TestChannelPadder.cpp" />
@@ -127,6 +128,7 @@
     <ClInclude Include="TestExternalChannels.h" />
     <ClInclude Include="TestObjectConverter.h" />
     <ClInclude Include="TestObjects.h" />
+    <ClInclude Include="TestPointer.h" />
     <ClInclude Include="TestSingleChannelAccessor.h" />
     <ClInclude Include="TestActionEvent.h" />
     <ClInclude Include="TestEvent.h" />

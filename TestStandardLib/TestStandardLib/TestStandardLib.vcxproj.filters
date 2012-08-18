@@ -55,6 +55,9 @@
     <Filter Include="Source\File\Chunk">
       <UniqueIdentifier>{537a4597-a6f5-4f0c-99dc-ed8b564b3169}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Object\Object\Pointer">
+      <UniqueIdentifier>{a820a87c-b4fd-4ba6-82b7-6e2aa417382b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestStandardLib.cpp">
@@ -138,6 +141,9 @@
     <ClCompile Include="TestChunkFileNames.cpp">
       <Filter>Source\File\Chunk</Filter>
     </ClCompile>
+    <ClCompile Include="TestPointer.cpp">
+      <Filter>Source\Object\Object\Pointer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestChannelAccessor.h">
@@ -217,6 +223,9 @@
     </ClInclude>
     <ClInclude Include="TestChunkFileNames.h">
       <Filter>Source\File\Chunk</Filter>
+    </ClInclude>
+    <ClInclude Include="TestPointer.h">
+      <Filter>Source\Object\Object\Pointer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

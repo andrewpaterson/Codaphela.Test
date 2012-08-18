@@ -8,7 +8,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestCompilation(void)
+void TestObjectsCompilation(void)
 {
 	if (FALSE)  //This is intentional.  This code must only be compiled (testing template compilation) not run.
 	{
@@ -32,7 +32,7 @@ void TestObjects(void)
 	BeginTests();
 	ObjectsInit(NULL);
 
-	TestCompilation();
+	TestObjectsCompilation();
 
 	ObjectsKill();
 	TestStatistics();
