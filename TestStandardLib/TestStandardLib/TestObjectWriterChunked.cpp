@@ -1,7 +1,7 @@
 #include "BaseLib/FileUtil.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectWriterChunked.h"
-#include "StandardLib/ObjectGraphWriter.h"
+#include "StandardLib/ObjectGraphSerialiser.h"
 #include "TestLib/Assert.h"
 #include "ObjectWriterChunkedTestClasses.h"
 
@@ -22,7 +22,7 @@ void TestObjectWriterChunkedWrite(void)
 void TestObjectWriterChunkedSerialised(void)
 {
 	CObjectWriterChunked		cWriter;
-	CObjectGraphWriter			cGraphWriter;
+	CObjectGraphSerialiser		cGraphWriter;
 
 	CTestWithArray				cObject1;
 	CPointer<CTestInteger>		pcObject2;

@@ -1,6 +1,6 @@
 #include "BaseLib/FileUtil.h"
 #include "StandardLib/Objects.h"
-#include "StandardLib/ObjectGraphWriter.h"
+#include "StandardLib/ObjectGraphSerialiser.h"
 #include "StandardLib/ObjectWriterSimple.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
@@ -18,7 +18,7 @@ void TestObjectGraphWriterReachability(void)
 	CPointer<CTestSaveableObject1>	pTest1c;
 	CPointer<CTestSaveableObject2>	pTest2a;
 	CPointer<CTestSaveableObject2>	pTest2b;
-	CObjectGraphWriter				cGraphWriter;
+	CObjectGraphSerialiser			cGraphWriter;
 	CObjectWriterSimple				cSimpleWriter;
 
 	BOOL							bResult;
