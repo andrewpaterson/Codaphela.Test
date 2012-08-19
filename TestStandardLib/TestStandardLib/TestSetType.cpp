@@ -2,7 +2,6 @@
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/SetType.h"
 #include "UnknownTestClasses.h"
-#include "TestSetType.h"
 
 
 //////////////////////////////////////////////////////////////////////////

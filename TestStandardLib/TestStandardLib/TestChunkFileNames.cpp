@@ -2,7 +2,6 @@
 #include "BaseLib/DiskFile.h"
 #include "TestLib/Assert.h"
 #include "StandardLib/ChunkFileNames.h"
-#include "TestChunkFileNames.h"
 
 
 //////////////////////////////////////////////////////////////////////////

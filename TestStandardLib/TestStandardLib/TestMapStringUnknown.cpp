@@ -4,7 +4,6 @@
 #include "StandardLib/MapStringUnknown.h"
 #include "TestLib/Assert.h"
 #include "UnknownTestClasses.h"
-#include "TestMapStringUnknown.h"
 
 
 //////////////////////////////////////////////////////////////////////////

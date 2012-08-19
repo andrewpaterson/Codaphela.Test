@@ -4,7 +4,6 @@
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/ArrayType.h"
 #include "UnknownTestClasses.h"
-#include "TestArrayType.h"
 
 
 //////////////////////////////////////////////////////////////////////////

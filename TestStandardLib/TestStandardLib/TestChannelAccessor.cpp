@@ -4,7 +4,6 @@
 #include "StandardLib/ChannelsAccessor.h"
 #include "StandardLib/ChannelsAccessorCreator.h"
 #include "TestLib/Assert.h"
-#include "TestChannelAccessor.h"
 
 #define CHANNEL_NAME_JACK	101
 #define CHANNEL_NAME_BOB	7

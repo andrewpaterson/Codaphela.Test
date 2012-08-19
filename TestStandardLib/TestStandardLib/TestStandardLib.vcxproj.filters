@@ -58,6 +58,12 @@
     <Filter Include="Source\Object\Object\Pointer">
       <UniqueIdentifier>{a820a87c-b4fd-4ba6-82b7-6e2aa417382b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Object\Object\IO\Graph">
+      <UniqueIdentifier>{46a81763-5ffd-4dec-9270-8f6ea7f34c37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Object\Object\IO\Writing">
+      <UniqueIdentifier>{92e58568-da5c-4cf6-8814-1f42abaf643e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestStandardLib.cpp">
@@ -95,9 +101,6 @@
     </ClCompile>
     <ClCompile Include="TestRoot.cpp">
       <Filter>Source\Object\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="TestObjectGraphWriter.cpp">
-      <Filter>Source\Object\Object\IO</Filter>
     </ClCompile>
     <ClCompile Include="TestUnknowns.cpp">
       <Filter>Source\Object\Unknown</Filter>
@@ -144,88 +147,22 @@
     <ClCompile Include="TestPointer.cpp">
       <Filter>Source\Object\Object\Pointer</Filter>
     </ClCompile>
+    <ClCompile Include="TestObjectGraphWriter.cpp">
+      <Filter>Source\Object\Object\IO\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="TestObjectWriterChunked.cpp">
+      <Filter>Source\Object\Object\IO\Writing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TestChannelAccessor.h">
-      <Filter>Source\Channel</Filter>
-    </ClInclude>
-    <ClInclude Include="TestChannelPadder.h">
-      <Filter>Source\Channel</Filter>
-    </ClInclude>
-    <ClInclude Include="TestChannels.h">
-      <Filter>Source\Channel</Filter>
-    </ClInclude>
-    <ClInclude Include="TestExternalChannels.h">
-      <Filter>Source\Channel</Filter>
-    </ClInclude>
-    <ClInclude Include="TestSingleChannelAccessor.h">
-      <Filter>Source\Channel</Filter>
-    </ClInclude>
-    <ClInclude Include="TestActionEvent.h">
-      <Filter>Source\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="TestEvent.h">
-      <Filter>Source\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="TestParameters.h">
-      <Filter>Source\Object\Parameters</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectTestClasses.h">
       <Filter>Source\Object\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="TestObject.h">
-      <Filter>Source\Object\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="TestRoot.h">
-      <Filter>Source\Object\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="TestObjectGraphWriter.h">
-      <Filter>Source\Object\Object\IO</Filter>
-    </ClInclude>
-    <ClInclude Include="TestUnknowns.h">
-      <Filter>Source\Object\Unknown</Filter>
     </ClInclude>
     <ClInclude Include="UnknownKillList.h">
       <Filter>Source\Object\Unknown</Filter>
     </ClInclude>
     <ClInclude Include="UnknownTestClasses.h">
       <Filter>Source\Object\Unknown</Filter>
-    </ClInclude>
-    <ClInclude Include="TestArrayType.h">
-      <Filter>Source\Object\Unknown\Collections\Array</Filter>
-    </ClInclude>
-    <ClInclude Include="TestArrayUnknown.h">
-      <Filter>Source\Object\Unknown\Collections\Array</Filter>
-    </ClInclude>
-    <ClInclude Include="TestSetType.h">
-      <Filter>Source\Object\Unknown\Collections\Set</Filter>
-    </ClInclude>
-    <ClInclude Include="TestSetUnknown.h">
-      <Filter>Source\Object\Unknown\Collections\Set</Filter>
-    </ClInclude>
-    <ClInclude Include="TestMapStringUnknown.h">
-      <Filter>Source\Object\Unknown\Collections\Map</Filter>
-    </ClInclude>
-    <ClInclude Include="TestClass.h">
-      <Filter>Source\Types</Filter>
-    </ClInclude>
-    <ClInclude Include="TestClassStorage.h">
-      <Filter>Source\Types</Filter>
-    </ClInclude>
-    <ClInclude Include="TestNamedIndexes.h">
-      <Filter>Source\File\Indexed\Named</Filter>
-    </ClInclude>
-    <ClInclude Include="TestObjects.h">
-      <Filter>Source\Object\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="TestObjectConverter.h">
-      <Filter>Source\Object\Object\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="TestChunkFileNames.h">
-      <Filter>Source\File\Chunk</Filter>
-    </ClInclude>
-    <ClInclude Include="TestPointer.h">
-      <Filter>Source\Object\Object\Pointer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

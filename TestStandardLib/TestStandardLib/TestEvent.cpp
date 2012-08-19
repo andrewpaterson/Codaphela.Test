@@ -3,7 +3,6 @@
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/ListenerCall.h"
 #include "TestLib/Assert.h"
-#include "TestEvent.h"
 
 
 class CTestObjectIsListenerWithEvent;

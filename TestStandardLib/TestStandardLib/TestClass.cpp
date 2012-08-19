@@ -3,7 +3,6 @@
 #include "CoreLib/TypeConverter.h"
 #include "StandardLib/ClassStorage.h"
 #include "TestLib/Assert.h"
-#include "TestClass.h"
 
 
 class CTestCallMethodClass

@@ -2,7 +2,6 @@
 #include "StandardLib/Root.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
-#include "TestRoot.h"
 
 
 //////////////////////////////////////////////////////////////////////////

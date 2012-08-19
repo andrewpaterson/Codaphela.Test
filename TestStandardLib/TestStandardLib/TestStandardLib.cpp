@@ -1,30 +1,32 @@
 #include <Windows.h>
 #include "TestLib/Assert.h"
-#include "TestClass.h"
-#include "TestClassStorage.h"
-#include "TestUnknowns.h"
-#include "TestArrayUnknown.h"
-#include "TestSetUnknown.h"
-#include "TestArrayType.h"
-#include "TestSetType.h"
-#include "TestEvent.h"
-#include "TestActionEvent.h"
-#include "TestChannels.h"
-#include "TestChannelAccessor.h"
-#include "TestSingleChannelAccessor.h"
-#include "TestExternalChannels.h"
-#include "TestChannelPadder.h"
-#include "TestUnknowns.h"
-#include "TestMapStringUnknown.h"
-#include "TestChunkFileNames.h"
-#include "TestParameters.h"
-#include "TestObject.h"
-#include "TestRoot.h"
-#include "TestObjectGraphWriter.h"
-#include "TestNamedIndexes.h"
-#include "TestObjects.h"
-#include "TestPointer.h"
-#include "TestObjectConverter.h"
+
+
+void TestClass(void);
+void TestClassStorage(void);
+void TestArrayType(void);
+void TestArrayUnknown(void);
+void TestUnknowns(void);
+void TestMapStringUnknown(void);
+void TestSetType(void);
+void TestSetUnknown(void);
+void TestChannelsAccessor(void);
+void TestExternalChannelPadder(void);
+void TestChannels(void);
+void TestExternalChannels(void);
+void TestSingleChannelAccessor(void);
+void TestActionEvent(void);
+void TestEvent(void);
+void TestChunkFileNames(void);
+void TestNamedIndexes(void);
+void TestObjectGraphWriter(void);
+void TestPointer(void);
+void TestObjectConverter(void);
+void TestObject(void);
+void TestObjects(void);
+void TestRoot(void);
+void TestParameters(void);
+void TestObjectWriterChunked(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -56,6 +58,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestParameters();
 	TestObject();
 	TestRoot();
+	TestObjectWriterChunked();
 	TestObjectGraphWriter();
 	TestNamedIndexes();
 	TestPointer();

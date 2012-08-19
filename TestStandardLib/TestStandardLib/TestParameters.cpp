@@ -2,7 +2,6 @@
 #include "StandardLib/Parameters.h"
 #include "StandardLib/Unknown.h"
 #include "TestLib/Assert.h"
-#include "TestParameters.h"
 
 
 class CTestClassFunctionParams : public CUnknown

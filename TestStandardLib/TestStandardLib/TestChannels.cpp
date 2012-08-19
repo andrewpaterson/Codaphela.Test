@@ -3,7 +3,6 @@
 #include "StandardLib/Channels.h"
 #include "StandardLib/ChannelsAccessorCreator.h"
 #include "TestLib/Assert.h"
-#include "TestChannels.h"
 
 
 //////////////////////////////////////////////////////////////////////////

@@ -4,7 +4,6 @@
 #include "StandardLib/BaseObject.h"
 #include "StandardLib/NamedIndexesOptimiser.h"
 #include "TestLib/Assert.h"
-#include "TestNamedIndexes.h"
 
 
 //////////////////////////////////////////////////////////////////////////

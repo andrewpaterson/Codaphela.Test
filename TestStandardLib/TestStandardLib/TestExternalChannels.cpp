@@ -6,7 +6,6 @@
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/ChannelsCopier.h"
 #include "TestLib/Assert.h"
-#include "TestExternalChannels.h"
 
 
 //////////////////////////////////////////////////////////////////////////

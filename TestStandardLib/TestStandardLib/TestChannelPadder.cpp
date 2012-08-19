@@ -3,7 +3,6 @@
 #include "StandardLib/ClassStorage.h"
 #include "StandardLib/ChannelPadder.h"
 #include "TestLib/Assert.h"
-#include "TestChannelPadder.h"
 
 
 //////////////////////////////////////////////////////////////////////////

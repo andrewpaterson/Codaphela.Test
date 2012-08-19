@@ -94,6 +94,7 @@
     <ClCompile Include="TestNamedIndexes.cpp" />
     <ClCompile Include="TestObjectConverter.cpp" />
     <ClCompile Include="TestObjects.cpp" />
+    <ClCompile Include="TestObjectWriterChunked.cpp" />
     <ClCompile Include="TestPointer.cpp" />
     <ClCompile Include="TestStandardLib.cpp" />
     <ClCompile Include="TestChannelAccessor.cpp" />
@@ -120,33 +121,9 @@
     <ClCompile Include="TestClassStorage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TestChunkFileNames.h" />
-    <ClInclude Include="TestNamedIndexes.h" />
-    <ClInclude Include="TestChannelAccessor.h" />
-    <ClInclude Include="TestChannelPadder.h" />
-    <ClInclude Include="TestChannels.h" />
-    <ClInclude Include="TestExternalChannels.h" />
-    <ClInclude Include="TestObjectConverter.h" />
-    <ClInclude Include="TestObjects.h" />
-    <ClInclude Include="TestPointer.h" />
-    <ClInclude Include="TestSingleChannelAccessor.h" />
-    <ClInclude Include="TestActionEvent.h" />
-    <ClInclude Include="TestEvent.h" />
-    <ClInclude Include="TestParameters.h" />
     <ClInclude Include="ObjectTestClasses.h" />
-    <ClInclude Include="TestObject.h" />
-    <ClInclude Include="TestRoot.h" />
-    <ClInclude Include="TestObjectGraphWriter.h" />
-    <ClInclude Include="TestUnknowns.h" />
     <ClInclude Include="UnknownKillList.h" />
     <ClInclude Include="UnknownTestClasses.h" />
-    <ClInclude Include="TestArrayType.h" />
-    <ClInclude Include="TestArrayUnknown.h" />
-    <ClInclude Include="TestSetType.h" />
-    <ClInclude Include="TestSetUnknown.h" />
-    <ClInclude Include="TestMapStringUnknown.h" />
-    <ClInclude Include="TestClass.h" />
-    <ClInclude Include="TestClassStorage.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

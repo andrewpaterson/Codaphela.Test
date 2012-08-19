@@ -1,6 +1,5 @@
 #include "TestLib/Assert.h"
 #include "StandardLib/Action.h"
-#include "TestActionEvent.h"
 
 
 class CTargetForAction : public CListener

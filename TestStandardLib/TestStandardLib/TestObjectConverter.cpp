@@ -5,7 +5,6 @@
 #include "StandardLib/ObjectConverterChunked.h"
 #include "StandardLib/String.h"
 #include "TestLib/Assert.h"
-#include "TestObjectConverter.h"
 
 
 //////////////////////////////////////////////////////////////////////////

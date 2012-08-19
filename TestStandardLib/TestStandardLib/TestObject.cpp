@@ -5,7 +5,6 @@
 #include "StandardLib/Pointer.h"
 #include "StandardLib/Root.h"
 #include "TestLib/Assert.h"
-#include "TestObject.h"
 
 
 //////////////////////////////////////////////////////////////////////////
