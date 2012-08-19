@@ -28,7 +28,9 @@ void TestObjectWriterChunkedSerialised(void)
 	CPointer<CTestInteger>		pcObject2;
 	CPointer<CTestInteger>		pcObject3;
 	CPointer<CTestInteger>		pcObject4;
-
+	CChunkFileNames				cChunkFile;
+	int							iLength;
+	char						szTest[4];
 
 	pcObject1 = ONMalloc(CTestWithArray, "Base/Level 1/Warning");
 	pcObject1->Init("Talking Clock", 17);
@@ -54,6 +56,52 @@ void TestObjectWriterChunkedSerialised(void)
 	cWriter.Kill();
 
 	AssertFile("Input/ChunkFile.DRG", "Output/ObjectWriterChunked/Test/Base/Level 1/ChunkFile.DRG");
+
+	cChunkFile.Init(DiskFile("Output/ObjectWriterChunked/Test/Base/Level 1/ChunkFile.DRG"));
+	AssertTrue(cChunkFile.ReadOpen());
+
+	//CTestWithArray pcObject1
+	AssertTrue(cChunkFile.ReadChunkBegin("Warning"));
+	AssertTrue(cChunkFile.ReadInt(&iLength));
+	AssertInt(98, iLength);
+	AssertTrue(cChunkFile.ReadData(szTest, 4));
+	AssertString("NAM", szTest);
+	AssertTrue(cChunkFile.ReadChunkEnd());
+
+	//CArray
+	AssertTrue(cChunkFile.ReadChunkBegin("Unnamed/0000000000000002"));
+	AssertTrue(cChunkFile.ReadInt(&iLength));
+	AssertInt(83, iLength);
+	AssertTrue(cChunkFile.ReadData(szTest, 4));
+	AssertString("IDX", szTest);
+	AssertTrue(cChunkFile.ReadChunkEnd());
+
+	//CTestInteger pcObject2
+	AssertTrue(cChunkFile.ReadChunkBegin("Unnamed/0000000000000003"));
+	AssertTrue(cChunkFile.ReadInt(&iLength));
+	AssertInt(49, iLength);
+	AssertTrue(cChunkFile.ReadData(szTest, 4));
+	AssertString("IDX", szTest);
+	AssertTrue(cChunkFile.ReadChunkEnd());
+
+	//CTestInteger pcObject3
+	AssertTrue(cChunkFile.ReadChunkBegin("Unnamed/0000000000000004"));
+	AssertTrue(cChunkFile.ReadInt(&iLength));
+	AssertInt(49, iLength);
+	AssertTrue(cChunkFile.ReadData(szTest, 4));
+	AssertString("IDX", szTest);
+	AssertTrue(cChunkFile.ReadChunkEnd());
+
+	//CTestInteger pcObject4
+	AssertTrue(cChunkFile.ReadChunkBegin("Unnamed/0000000000000005"));
+	AssertTrue(cChunkFile.ReadInt(&iLength));
+	AssertInt(49, iLength);
+	AssertTrue(cChunkFile.ReadData(szTest, 4));
+	AssertString("IDX", szTest);
+	AssertTrue(cChunkFile.ReadChunkEnd());
+
+	AssertTrue(cChunkFile.ReadClose());
+	cChunkFile.Kill();
 }
 
 
