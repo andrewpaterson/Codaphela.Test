@@ -1,10 +1,11 @@
 #ifndef __OBJECT_WRITER_CHUNKED_TEST_CLASSES_H__
 #define __OBJECT_WRITER_CHUNKED_TEST_CLASSES_H__
 #include "StandardLib/Object.h"
+#include "StandardLib/NamedObject.h"
 #include "StandardLib/Array.h"
 
 
-class CTestWithArray : public CObject
+class CTestWithArray : public CNamedObject
 {
 BASE_FUNCTIONS(CTestWithArray);
 protected:
@@ -26,7 +27,7 @@ public:
 
 class CTestInteger : public CObject
 {
-BASE_FUNCTIONS(CTestWithArray);
+BASE_FUNCTIONS(CTestInteger);
 public:
 	int mx;
 	int my; 
