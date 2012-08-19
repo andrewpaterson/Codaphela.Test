@@ -32,7 +32,7 @@ void TestAddStructType(void)
 	ClassStorageInit();
 
 	bResult = gcClassStorage.Add("Struct1", &pcClass);
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 
 	pcClass->AddField(PT_int, "AnInt");
 
@@ -83,33 +83,33 @@ void TestCallMethod(void)
 	gcClassStorage.ResolveAll();
 
 	pcInstanceClass = pcClass->GetInstanced();
-	AssertBool(TRUE, pcInstanceClass != NULL);
+	AssertTrue(pcInstanceClass != NULL);
 
 	psMethod = pcInstanceClass->GetGenericMethod(0);
-	AssertBool(TRUE, psMethod != NULL);
+	AssertTrue(psMethod != NULL);
 	(((CFunctionCaller*)&cTestCall)->*psMethod->mpvFunction.thisCall)();
 	AssertInt(0, cTestCall.x);
 	AssertInt(0, cTestCall.y);
 
 	psMethod = pcInstanceClass->GetGenericMethod(1);
-	AssertBool(TRUE, psMethod != NULL);
+	AssertTrue(psMethod != NULL);
 	(((CFunctionCaller*)&cTestCall)->*psMethod->mpvFunction.thisCall)();
 	AssertInt(-1, cTestCall.x);
 	AssertInt(-1, cTestCall.y);
 
 	psMethod = pcInstanceClass->GetMethod("SetX");
-	AssertBool(TRUE, psMethod != NULL);
+	AssertTrue(psMethod != NULL);
 	(((CFunctionCaller*)&cTestCall)->*(ThisCall_Void_Int)(psMethod->mpvFunction.thisCall))(7);
 	AssertInt(7, cTestCall.x);
 
 	psMethod = pcInstanceClass->GetMethod("SetY");
-	AssertBool(TRUE, psMethod != NULL);
+	AssertTrue(psMethod != NULL);
 	(((CFunctionCaller*)&cTestCall)->*(ThisCall_Void_Int)(psMethod->mpvFunction.thisCall))(11);
 
 	AssertInt(11, cTestCall.y);
 
 	psMethod = pcInstanceClass->GetMethod("Add");
-	AssertBool(TRUE, psMethod != NULL);
+	AssertTrue(psMethod != NULL);
 	iResult = (((CFunctionCaller*)&cTestCall)->*(ThisCall_Int_Void)(psMethod->mpvFunction.thisCall))();
 	AssertInt(18, iResult);
 

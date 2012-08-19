@@ -225,11 +225,11 @@ void TestVirtualCall(void)
 	AssertInt(0, pcTest->miBored);
 
 	bResult = pcTest->AddListener<CTestListener>(pcListener);
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 	bResult = pcTest->AddListener(&cAnother1);
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 	bResult = pcTest->AddListener(&cAnother2);
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 
 	pcTest->MakeEventStyle1Happen();
 	AssertInt(WH_WeGetSignal, pcTest->meWhatHappen);

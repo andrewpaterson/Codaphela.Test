@@ -23,7 +23,7 @@ void TestResolve(void)
 	pcClass->AddField(PT_int, "anInt");
 
 	bResult = cClassStorage.ResolveAll();
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 
 	//Oi, this is tested in the wrong file!
 	gcLogger.Disable();

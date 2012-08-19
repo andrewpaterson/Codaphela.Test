@@ -173,13 +173,13 @@ void TestMapStringUnknownLoad(void)
 
 	cFile.Init(DiskFile("MapStringUnknown/Map.dat"));
 	bResult = cFile.WriteOpen();
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 
 	bResult = cMap.Save(&cFile);
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 
 	bResult = cFile.WriteClose();
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 
 	cFile.Kill();
 	cMap.Kill();
@@ -188,13 +188,13 @@ void TestMapStringUnknownLoad(void)
 
 	cFile.Init(DiskFile("MapStringUnknown/Map.dat"));
 	bResult = cFile.ReadOpen();
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 
 	bResult = cMap.Load(&cFile);
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 
 	bResult = cFile.ReadClose();
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 
 	cFile.Kill();
 

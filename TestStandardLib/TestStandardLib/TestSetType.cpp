@@ -41,8 +41,8 @@ void TestSetTypeInstantiation(void)
 
 	//This test is not correct.  The order is not guaranteed.
 	//However it necessary to make the template compile.
-	AssertBool(TRUE, cSet.Contains(pcTest1));
-	AssertBool(TRUE, cSet.Contains(pcTest2));
+	AssertTrue(cSet.Contains(pcTest1));
+	AssertTrue(cSet.Contains(pcTest2));
 
 	pcTest = cSet.StartIteration(&sIter);
 	AssertPointer(pcTest1, pcTest);

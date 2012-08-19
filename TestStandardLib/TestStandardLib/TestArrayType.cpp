@@ -96,13 +96,13 @@ void TestArrayTypeLoad(void)
 	cFileUtil.MakeDir("ArrayType");
 	cFile.Init(DiskFile("ArrayType/Array.dat"));
 	bResult = cFile.WriteOpen();
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 
 	bResult = cArray.Save(&cFile);
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 
 	bResult = cFile.WriteClose();
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 
 	cFile.Kill();
 	cArray.Kill();
@@ -111,13 +111,13 @@ void TestArrayTypeLoad(void)
 
 	cFile.Init(DiskFile("ArrayType/Array.dat"));
 	bResult = cFile.ReadOpen();
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 
 	bResult = cArray.Load(&cFile);
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 
 	bResult = cFile.ReadClose();
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 
 	cFile.Kill();
 

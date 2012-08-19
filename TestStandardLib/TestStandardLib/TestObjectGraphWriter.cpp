@@ -10,7 +10,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectGraphWriterSimple(void)
+void TestObjectGraphWriterReachability(void)
 {
 	CFileUtil						cFileUtil;
 	CPointer<CTestSaveableObject1>	pTest1a;
@@ -55,17 +55,17 @@ void TestObjectGraphWriterSimple(void)
 	AssertInt(160, sizeof(CTestSaveableObject1)));  //If these sizes change the input test files will be wrong.
 	AssertInt(144, sizeof(CTestSaveableObject2)));
 
-	cSimpleWriter.Init("Output/GraphWriter/Data");
+	cSimpleWriter.Init("Output/GraphWriter/Data", "");
 	cGraphWriter.Init(&cSimpleWriter);
 	bResult = cGraphWriter.Write(&pTest2a);
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 	cGraphWriter.Kill();
 
-	AssertBool(TRUE, pTest1a->mbSaved);
-	AssertBool(TRUE, pTest1b->mbSaved);
-	AssertBool(TRUE, pTest1c->mbSaved);
-	AssertBool(TRUE, pTest2a->mbSaved);
-	AssertBool(TRUE, pTest2b->mbSaved);
+	AssertTrue(pTest1a->mbSaved);
+	AssertTrue(pTest1b->mbSaved);
+	AssertTrue(pTest1c->mbSaved);
+	AssertTrue(pTest2a->mbSaved);
+	AssertTrue(pTest2b->mbSaved);
 
 	AssertFile("Input/OneA.DRG", "Output/GraphWriter/Data/Test1/OneA.DRG");
 	AssertFile("Input/OneB.DRG", "Output/GraphWriter/Data/Test1/OneB.DRG");
@@ -88,7 +88,7 @@ void TestObjectGraphWriter(void)
 	ObjectsInit(NULL);
 	BeginTests();
 
-	TestObjectGraphWriterSimple();
+	TestObjectGraphWriterReachability();
 
 	TestStatistics();
 	ObjectsKill();

@@ -270,7 +270,7 @@ void TestCleanNulls(void)
 	AssertInt(1, cSet.NumElements());
 
 	bResult = cSet.Remove(apUnknowns[31]);
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 
 	AssertInt(0, cSet.NumElements());
 
