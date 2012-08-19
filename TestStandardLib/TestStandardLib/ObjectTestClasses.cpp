@@ -1,4 +1,4 @@
-#include "StandardLib/ObjectWriter.h"
+#include "StandardLib/ObjectSerialiser.h"
 #include "ObjectTestClasses.h"
 
 
@@ -31,7 +31,7 @@ void CTestObject::Kill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestObject::Save(CObjectWriter* pcFile)
+BOOL CTestObject::Save(CObjectSerialiser* pcFile)
 {
 	return FALSE;
 }
@@ -41,7 +41,7 @@ BOOL CTestObject::Save(CObjectWriter* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestObject::Load(CObjectReader* pcFile)
+BOOL CTestObject::Load(CObjectDeserialiser* pcFile)
 {
 	return FALSE;
 }
@@ -72,7 +72,7 @@ void CTestSaveableObject1::Kill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestSaveableObject1::Save(CObjectWriter* pcFile)
+BOOL CTestSaveableObject1::Save(CObjectSerialiser* pcFile)
 {
 	ReturnOnFalse(SaveHeader(pcFile));
 
@@ -89,7 +89,7 @@ BOOL CTestSaveableObject1::Save(CObjectWriter* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestSaveableObject1::Load(CObjectReader* pcFile)
+BOOL CTestSaveableObject1::Load(CObjectDeserialiser* pcFile)
 {
 	return FALSE;
 }
@@ -118,7 +118,7 @@ void CTestSaveableObject2::Kill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestSaveableObject2::Save(CObjectWriter* pcFile)
+BOOL CTestSaveableObject2::Save(CObjectSerialiser* pcFile)
 {
 	ReturnOnFalse(SaveHeader(pcFile));
 
@@ -134,7 +134,7 @@ BOOL CTestSaveableObject2::Save(CObjectWriter* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestSaveableObject2::Load(CObjectReader* pcFile)
+BOOL CTestSaveableObject2::Load(CObjectDeserialiser* pcFile)
 {
 	return FALSE;
 }

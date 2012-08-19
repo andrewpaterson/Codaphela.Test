@@ -21,8 +21,8 @@ public:
 
 	void Init(STestObjectKilledNotifier* psKilledNotifier);
 	void Kill(void);
-	BOOL Save(CObjectWriter* pcFile);
-	BOOL Load(CObjectReader* pcFile);
+	BOOL Save(CObjectSerialiser* pcFile);
+	BOOL Load(CObjectDeserialiser* pcFile);
 };
 
 
@@ -38,8 +38,8 @@ public:
 	void Init(void);
 	void Kill(void);
 
-	BOOL Save(CObjectWriter* pcFile);
-	BOOL Load(CObjectReader* pcFile);
+	BOOL Save(CObjectSerialiser* pcFile);
+	BOOL Load(CObjectDeserialiser* pcFile);
 };
 
 
@@ -55,8 +55,8 @@ public:
 	void Init(char* psz);
 	void Kill(void);
 
-	BOOL Save(CObjectWriter* pcFile);
-	BOOL Load(CObjectReader* pcFile);
+	BOOL Save(CObjectSerialiser* pcFile);
+	BOOL Load(CObjectDeserialiser* pcFile);
 };
 
 
