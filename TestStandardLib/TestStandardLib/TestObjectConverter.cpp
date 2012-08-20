@@ -2,7 +2,7 @@
 #include "BaseLib/MemoryFile.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectConverterText.h"
-#include "StandardLib/ObjectConverterChunked.h"
+#include "StandardLib/ObjectConverterNative.h"
 #include "StandardLib/String.h"
 #include "TestLib/Assert.h"
 
@@ -42,13 +42,18 @@ void TestObjectConverterText(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectConverterDragon(void)
 {
-	CObjectConverterChunked	cChunkedConverter;
+	CObjectConverterNative	cChunkedConverter;
 	CObjectSource*			pcObjectSource;
 	CPointerObject			pcObject;
+	CObjectSourceNative*	pcNativeSource;
 
 	cChunkedConverter.Init();
 	pcObjectSource = cChunkedConverter.CreateSource(NULL, "");
-	pcObjectSource->Convert("");
+	AssertNotNull(pcObjectSource);
+	AssertTrue(pcObjectSource->IsNative());
+	pcNativeSource = (CObjectSourceNative*)pcObjectSource;
+
+	pcNativeSource->Convert("");
 
 	pcObjectSource->Kill();
 	cChunkedConverter.Kill();
