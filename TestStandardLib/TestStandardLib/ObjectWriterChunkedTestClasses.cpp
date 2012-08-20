@@ -63,6 +63,39 @@ BOOL CTestInteger::Save(CObjectSerialiser* pcFile)
 BOOL CTestInteger::Load(CObjectDeserialiser* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadInt(&mx));
+	ReturnOnFalse(pcFile->ReadInt(&my));
+	ReturnOnFalse(pcFile->ReadInt(&mz));
+	return TRUE;
+}
+
+
+void CTestNamedString::Init(CPointer<CString> szString, CPointer<CTestNamedString> pAnother, char* szEmbedded)
+{
+	mszString = szString;
+	mpAnother = pAnother;
+	mszEmbedded.Init(szEmbedded);
+}
+
+
+void CTestNamedString::Kill(void)
+{
+	mszString->Kill();
+	CObject::Kill();
+}
+
+BOOL CTestNamedString::Save(CObjectSerialiser* pcFile)
+{
+	ReturnOnFalse(pcFile->WritePointer(mszString));
+	ReturnOnFalse(pcFile->WritePointer(mpAnother));
+	ReturnOnFalse(pcFile->WriteString(&mszEmbedded));
+	return TRUE;
+}
+
+BOOL CTestNamedString::Load(CObjectDeserialiser* pcFile)
+{
+	ReturnOnFalse(pcFile->ReadPointer(mszString.This()));
+	ReturnOnFalse(pcFile->ReadPointer(mpAnother.This()));
+	ReturnOnFalse(pcFile->ReadString(&mszEmbedded));
 	return TRUE;
 }
 

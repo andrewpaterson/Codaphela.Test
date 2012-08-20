@@ -5,6 +5,7 @@
 #include "StandardLib/ObjectConverterNative.h"
 #include "StandardLib/String.h"
 #include "TestLib/Assert.h"
+#include "ObjectWriterChunkedTestClasses.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,8 +41,38 @@ void TestObjectConverterText(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void SetupObjectConverterChunkFile(void)
+{
+	CPointer<CTestNamedString>	cNS1;
+	CPointer<CString>			sz;
+
+	cNS1 = ONMalloc(CTestNamedString, "NamedString 1");
+	sz = OMalloc(CString);
+
+	cNS1->Init(sz, gcObjects.Null<CTestNamedString>(), "Hello");
+	sz->Init("World");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void SetupObjectConverterBasicFile(void)
+{
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectConverterDragon(void)
 {
+	SetupObjectConverterChunkFile();
+	SetupObjectConverterBasicFile();
+
 	CObjectConverterNative	cChunkedConverter;
 	CObjectSource*			pcObjectSource;
 	CPointerObject			pcObject;
@@ -66,6 +97,11 @@ void TestObjectConverterDragon(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectConverter(void)
 {
+	CFileUtil	cFileUtil;
+
+	cFileUtil.RemoveDir("Output");
+	cFileUtil.MakeDir("Output/ObjectConverter");
+
 	ObjectsInit(NULL);
 	BeginTests();
 
@@ -74,5 +110,7 @@ void TestObjectConverter(void)
 
 	TestStatistics();
 	ObjectsKill();
+
+	cFileUtil.RemoveDir("Output");
 }
 

@@ -64,6 +64,9 @@
     <Filter Include="Source\Object\Object\IO\Writing">
       <UniqueIdentifier>{92e58568-da5c-4cf6-8814-1f42abaf643e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Object\Object\IO\Reading">
+      <UniqueIdentifier>{752e00e3-8f11-4383-9c74-da37a42dfa8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestStandardLib.cpp">
@@ -155,6 +158,9 @@
     </ClCompile>
     <ClCompile Include="ObjectWriterChunkedTestClasses.cpp">
       <Filter>Source\Object\Object\IO\Writing</Filter>
+    </ClCompile>
+    <ClCompile Include="TestObjectReaderChunked.cpp">
+      <Filter>Source\Object\Object\IO\Reading</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -27,6 +27,7 @@ void TestObjects(void);
 void TestRoot(void);
 void TestParameters(void);
 void TestObjectWriterChunked(void);
+void TestObjectReaderChunked(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -58,10 +59,11 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestParameters();
 	TestObject();
 	TestRoot();
+	TestPointer();
 	TestObjectWriterChunked();
 	TestObjectGraphWriter();
+	TestObjectReaderChunked();
 	TestNamedIndexes();
-	TestPointer();
 	TestObjectConverter();
 	TestObjects();
 

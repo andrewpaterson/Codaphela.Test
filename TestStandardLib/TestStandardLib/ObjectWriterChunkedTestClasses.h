@@ -3,6 +3,7 @@
 #include "StandardLib/Object.h"
 #include "StandardLib/NamedObject.h"
 #include "StandardLib/Array.h"
+#include "StandardLib/String.h"
 
 
 class CTestWithArray : public CNamedObject
@@ -41,4 +42,21 @@ public:
 };
 
 
+class CTestNamedString : public CNamedObject
+{
+BASE_FUNCTIONS(CTestNamedString);
+public:
+	CPointer<CString>			mszString;
+	CPointer<CTestNamedString>	mpAnother;
+	CChars						mszEmbedded;
+
+	void Init(CPointer<CString> szString, CPointer<CTestNamedString> pAnother, char* szEmbedded);
+	void Kill(void);
+
+	BOOL Save(CObjectSerialiser* pcFile);
+	BOOL Load(CObjectDeserialiser* pcFile);
+};
+
+
 #endif // __OBJECT_WRITER_CHUNKED_TEST_CLASSES_H__
+

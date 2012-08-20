@@ -94,6 +94,7 @@
     <ClCompile Include="TestChunkFileNames.cpp" />
     <ClCompile Include="TestNamedIndexes.cpp" />
     <ClCompile Include="TestObjectConverter.cpp" />
+    <ClCompile Include="TestObjectReaderChunked.cpp" />
     <ClCompile Include="TestObjects.cpp" />
     <ClCompile Include="TestObjectWriterChunked.cpp" />
     <ClCompile Include="TestPointer.cpp" />
