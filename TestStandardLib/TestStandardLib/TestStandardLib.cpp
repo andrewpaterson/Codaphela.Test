@@ -19,7 +19,7 @@ void TestActionEvent(void);
 void TestEvent(void);
 void TestChunkFileNames(void);
 void TestNamedIndexes(void);
-void TestObjectGraphWriter(void);
+void TestObjectGraphSerialiser(void);
 void TestPointer(void);
 void TestObjectConverter(void);
 void TestObject(void);
@@ -61,7 +61,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestRoot();
 	TestPointer();
 	TestObjectWriterChunked();
-	TestObjectGraphWriter();
+	TestObjectGraphSerialiser();
 	TestObjectReaderChunked();
 	TestNamedIndexes();
 	TestObjectConverter();

@@ -2,6 +2,8 @@
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectReaderChunked.h"
 #include "StandardLib/ObjectGraphDeserialiser.h"
+#include "StandardLib/ObjectWriterChunked.h"
+#include "StandardLib/ObjectGraphSerialiser.h"
 #include "TestLib/Assert.h"
 #include "ObjectWriterChunkedTestClasses.h"
 
@@ -11,7 +13,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void SetupObjectReaderChunkedChunkFile(void)
+CPointerObject SetupObjectReaderChunkedChunkFile(void)
 {
 	CPointer<CTestNamedString>	cNS1;
 	CPointer<CTestNamedString>	cNS2;
@@ -21,6 +23,9 @@ void SetupObjectReaderChunkedChunkFile(void)
 	CPointer<CTestInteger>		cI3;
 	CPointer<CTestWithArray>	cA1;
 	CPointer<CTestWithArray>	cA2;
+	CPointer<CString>			sz1;
+	CPointer<CString>			sz2;
+	CPointer<CString>			sz3;
 
 	cNS1 = ONMalloc(CTestNamedString, "NamedString 1");
 	cNS2 = ONMalloc(CTestNamedString, "NamedString 2");
@@ -32,6 +37,58 @@ void SetupObjectReaderChunkedChunkFile(void)
 
 	cA1 = ONMalloc(CTestWithArray, "Array 1");
 	cA2 = ONMalloc(CTestWithArray, "Array X");
+
+	sz1 = OMalloc(CString);
+	sz2 = OMalloc(CString);
+	sz3 = OMalloc(CString);
+
+	sz1->Init("String 1");
+	cNS1->Init(sz1, cNS2, "In Named 1");
+
+	cNS2->Init(sz1, cNS3, "Another in 2");
+
+	sz3->Init("3");
+	cNS3->Init(sz3, cNS1, "Three");
+
+	cI1->Init(3, 2, 1);
+	cI2->Init(543, 3, 4);
+	cI3->Init(10, 8192, 7);
+
+	sz2->Init("Ye!");
+	cA1->Init("Something with One", 1);
+	cA1->Add(sz2);
+	cA1->Add(cNS1);
+	cA1->Add(cI1);
+	cA1->Add(cNS3);
+	cA1->Add(cI2);
+	cA1->Add(cA2);
+
+	cA2->Init("An with 2", 2);
+	cA2->Add(cI3);
+	cA2->Add(cNS2);
+	cA2->Add(cI1);
+
+	return cA1;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void WriteObjectReaderChunkedFile(void)
+{
+	CPointerObject			cBase;
+	CObjectWriterChunked	cWriter;
+	CObjectGraphSerialiser	cGraphSerialiser;
+
+	cBase = SetupObjectReaderChunkedChunkFile();
+
+	cWriter.Init("Output\\ObjectReaderChunked\\Test\\", "", "Reader");
+	cGraphSerialiser.Init(&cWriter);
+	AssertTrue(cGraphSerialiser.Write(&cBase));
+	cGraphSerialiser.Kill();
+	cWriter.Kill();
 }
 
 
@@ -41,7 +98,18 @@ void SetupObjectReaderChunkedChunkFile(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectReaderChunkedDeserialised(void)
 {
-	SetupObjectReaderChunkedChunkFile();
+	CObjectReaderChunked		cReader;
+	CObjectGraphDeserialiser	cGraphDeserialiser;
+	CPointerObject				cBase;
+
+	WriteObjectReaderChunkedFile();
+
+	cReader.Init("Output\\ObjectReaderChunked\\Test\\", "Reader");
+	cGraphDeserialiser.Init(&cReader);
+	cBase = cGraphDeserialiser.Read("Array 1");
+	AssertTrue(cBase.IsNotNull());
+	cGraphDeserialiser.Kill();
+	cReader.Kill();
 }
 
 
@@ -54,7 +122,7 @@ void TestObjectReaderChunked(void)
 	CFileUtil	cFileUtil;
 
 	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output\\ObjectWriterChunked");
+	cFileUtil.MakeDir("Output\\ObjectReaderChunked");
 	ObjectsInit(NULL);
 	BeginTests();
 

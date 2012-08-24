@@ -10,7 +10,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectGraphWriterReachability(void)
+void TestObjectGraphSerialiserReachability(void)
 {
 	CFileUtil						cFileUtil;
 	CPointer<CTestSaveableObject1>	pTest1a;
@@ -18,7 +18,7 @@ void TestObjectGraphWriterReachability(void)
 	CPointer<CTestSaveableObject1>	pTest1c;
 	CPointer<CTestSaveableObject2>	pTest2a;
 	CPointer<CTestSaveableObject2>	pTest2b;
-	CObjectGraphSerialiser			cGraphWriter;
+	CObjectGraphSerialiser			cGraphSerialiser;
 	CObjectWriterSimple				cSimpleWriter;
 
 	BOOL							bResult;
@@ -56,10 +56,10 @@ void TestObjectGraphWriterReachability(void)
 	AssertInt(144, sizeof(CTestSaveableObject2));
 
 	cSimpleWriter.Init("Output/GraphWriter/Data", "");
-	cGraphWriter.Init(&cSimpleWriter);
-	bResult = cGraphWriter.Write(&pTest2a);
+	cGraphSerialiser.Init(&cSimpleWriter);
+	bResult = cGraphSerialiser.Write(&pTest2a);
 	AssertTrue(bResult);
-	cGraphWriter.Kill();
+	cGraphSerialiser.Kill();
 
 	AssertTrue(pTest1a->mbSaved);
 	AssertTrue(pTest1b->mbSaved);
@@ -79,7 +79,7 @@ void TestObjectGraphWriterReachability(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectGraphWriter(void)
+void TestObjectGraphSerialiser(void)
 {
 	CFileUtil	cFileUtil;
 
@@ -89,7 +89,7 @@ void TestObjectGraphWriter(void)
 	ObjectsInit(NULL);
 	BeginTests();
 
-	TestObjectGraphWriterReachability();
+	TestObjectGraphSerialiserReachability();
 
 	TestStatistics();
 	ObjectsKill();

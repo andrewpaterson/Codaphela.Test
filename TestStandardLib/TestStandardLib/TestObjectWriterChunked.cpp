@@ -63,7 +63,7 @@ void TestObjectWriterChunkedSerialised(void)
 	//CTestWithArray pcObject1
 	AssertTrue(cChunkFile.ReadChunkBegin("Warning"));
 	AssertTrue(cChunkFile.ReadInt(&iLength));
-	AssertInt(98, iLength);
+	AssertInt(106, iLength);
 	AssertTrue(cChunkFile.ReadData(szTest, 4));
 	AssertString("NAM", szTest);
 	AssertTrue(cChunkFile.ReadChunkEnd());
