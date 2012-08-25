@@ -116,7 +116,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	WriteObjectReaderChunkedFile();
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
-	AssertLongLongInt(1, gcObjects.NumMemoryObjects());
+	AssertLongLongInt(13, gcObjects.NumMemoryObjects());
 
 	ObjectsKill();
 	ObjectsInit(NULL);
@@ -129,7 +129,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	cBase = cGraphDeserialiser.Read("Array 1");
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
-	AssertLongLongInt(1, gcObjects.NumMemoryObjects());
+	AssertLongLongInt(13, gcObjects.NumMemoryObjects());
 
 	cA1 = gcObjects.Get("Array 1");
 	AssertTrue(cA1.IsNotNull());
