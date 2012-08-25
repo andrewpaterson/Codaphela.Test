@@ -9,10 +9,9 @@
 class CTestWithArray : public CNamedObject
 {
 BASE_FUNCTIONS(CTestWithArray);
-protected:
+public:
 	CPointer<CArray>	mcArray;
 
-public:
 	CChars				mszString;
 	int					mx;
 

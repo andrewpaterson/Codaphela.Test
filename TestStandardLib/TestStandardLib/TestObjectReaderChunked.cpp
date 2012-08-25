@@ -101,13 +101,70 @@ void TestObjectReaderChunkedDeserialised(void)
 	CObjectReaderChunked		cReader;
 	CObjectGraphDeserialiser	cGraphDeserialiser;
 	CPointerObject				cBase;
+	CPointer<CTestWithArray>	cA1;
+	CPointer<CTestWithArray>	cA2;
+	CPointer<CTestNamedString>	cNS1;
+	CPointer<CTestNamedString>	cNS2;
+	CPointer<CTestNamedString>	cNS3;
+
+	gcObjects.AddConstructor<CTestWithArray>();
+	gcObjects.AddConstructor<CTestInteger>();
+	gcObjects.AddConstructor<CTestNamedString>();
+	gcObjects.AddConstructor<CString>();
+	gcObjects.AddConstructor<CArray>();
 
 	WriteObjectReaderChunkedFile();
+
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(1, gcObjects.NumMemoryObjects());
+
+	ObjectsKill();
+	ObjectsInit(NULL);
+
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(0, gcObjects.NumMemoryObjects());
 
 	cReader.Init("Output\\ObjectReaderChunked\\Test\\", "Reader");
 	cGraphDeserialiser.Init(&cReader);
 	cBase = cGraphDeserialiser.Read("Array 1");
+
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(1, gcObjects.NumMemoryObjects());
+
+	cA1 = gcObjects.Get("Array 1");
+	AssertTrue(cA1.IsNotNull());
+	AssertString("CTestWithArray", cA1->ClassName());
+	AssertString("Something with One", cA1->mszString.Text());
+	AssertInt(1, cA1->mx);
+
+	cA2 = gcObjects.Get("Array X");
+	AssertTrue(cA2.IsNotNull());
+	AssertString("CTestWithArray", cA2->ClassName());
+	AssertString("An with 2", cA2->mszString.Text());
+	AssertInt(2, cA2->mx);
+
+	cNS1 = gcObjects.Get("NamedString 1");
+	AssertTrue(cNS1.IsNotNull());
+	AssertString("CTestNamedString", cNS1->ClassName());
+	AssertString("In Named 1", cNS1->mszEmbedded.Text());
+
+	cNS2 = gcObjects.Get("NamedString 2");
+	AssertTrue(cNS2.IsNotNull());
+	AssertString("CTestNamedString", cNS2->ClassName());
+	AssertString("Another in 2", cNS2->mszEmbedded.Text());
+
+	cNS3 = gcObjects.Get("NamedString 3");
+	AssertTrue(cNS3.IsNotNull());
+	AssertString("CTestNamedString", cNS3->ClassName());
+	AssertString("Three", cNS3->mszEmbedded.Text());
+
 	AssertTrue(cBase.IsNotNull());
+	AssertString("CTestWithArray", cBase->ClassName());
+	AssertPointer(&cA1, &cBase);
+	
+	AssertNotNull(&cA1->mcArray);
+
+
 	cGraphDeserialiser.Kill();
 	cReader.Kill();
 }
