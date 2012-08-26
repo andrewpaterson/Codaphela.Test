@@ -58,14 +58,14 @@
     <Filter Include="Source\Object\Object\Pointer">
       <UniqueIdentifier>{a820a87c-b4fd-4ba6-82b7-6e2aa417382b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Object\Object\IO\Graph">
+    <Filter Include="Source\Object\Object\Serialisation">
+      <UniqueIdentifier>{6ee4bb77-57bd-496f-80b6-636bb30f6a8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Object\Object\Serialisation\Graph">
       <UniqueIdentifier>{46a81763-5ffd-4dec-9270-8f6ea7f34c37}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Object\Object\IO\Writing">
-      <UniqueIdentifier>{92e58568-da5c-4cf6-8814-1f42abaf643e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Object\Object\IO\Reading">
-      <UniqueIdentifier>{752e00e3-8f11-4383-9c74-da37a42dfa8e}</UniqueIdentifier>
+    <Filter Include="Source\Object\Object\IO\Chunked">
+      <UniqueIdentifier>{7bc16bbe-a25f-472e-a6ed-52717855b07c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -151,16 +151,16 @@
       <Filter>Source\Object\Object\Pointer</Filter>
     </ClCompile>
     <ClCompile Include="TestObjectGraphWriter.cpp">
-      <Filter>Source\Object\Object\IO\Graph</Filter>
-    </ClCompile>
-    <ClCompile Include="TestObjectWriterChunked.cpp">
-      <Filter>Source\Object\Object\IO\Writing</Filter>
+      <Filter>Source\Object\Object\Serialisation\Graph</Filter>
     </ClCompile>
     <ClCompile Include="ObjectWriterChunkedTestClasses.cpp">
-      <Filter>Source\Object\Object\IO\Writing</Filter>
+      <Filter>Source\Object\Object\IO\Chunked</Filter>
+    </ClCompile>
+    <ClCompile Include="TestObjectWriterChunked.cpp">
+      <Filter>Source\Object\Object\IO\Chunked</Filter>
     </ClCompile>
     <ClCompile Include="TestObjectReaderChunked.cpp">
-      <Filter>Source\Object\Object\IO\Reading</Filter>
+      <Filter>Source\Object\Object\IO\Chunked</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -174,7 +174,7 @@
       <Filter>Source\Object\Unknown</Filter>
     </ClInclude>
     <ClInclude Include="ObjectWriterChunkedTestClasses.h">
-      <Filter>Source\Object\Object\IO\Writing</Filter>
+      <Filter>Source\Object\Object\IO\Chunked</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
