@@ -83,13 +83,15 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 {
 	CFileUtil							cFileUtil;
 	CPointer<CTestSaveableObject2>		cBase;
-	CPointer<CTestSaveableObject2>		cRead;
+	CPointer<CTestSaveableObject2>		cStart1;
 	CPointer<CRoot>						cRoot;
 	CPointer<CString>					szOne;
 	CPointer<CString>					cString1;
 	CPointer<CString>					cString2;
 	CObjectGraphSerialiser				cGraphSerialiser;
 	CObjectGraphDeserialiser			cGraphDeserialiser;
+	CPointer<CTestSaveableObject1>		cShared;
+	int									i;
 
 	cFileUtil.MakeDir("Output/GraphDeserialiser/Simple/Remapping");
 
@@ -117,17 +119,57 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	TestObjectGraphDeserialiserAddConstructors();
 
 	cRoot = ORoot();
-	szOne = OMalloc(CString);
-	szOne->Init("Hello World");
-	cRoot->Add(szOne);
-	AssertLongLongInt(3, szOne->GetOI());
 
-	cGraphDeserialiser.Init(pcReader);
-	cRead = cGraphDeserialiser.Read("Ow/Start 1");
-	AssertTrue(cRead.IsNotNull());
-	AssertLongLongInt(4, cRead->GetOI());
+	for (i = 0; i < 20; i++)
+	{
+		szOne = OMalloc(CString);
+		szOne->Init("Hello World ");
+		szOne->Append(i);
+		cRoot->Add(szOne);
+		AssertLongLongInt(3+i, szOne->GetOI());
+	}
 
+	cGraphDeserialiser.Init(pcReader, gcObjects.GetIndexGenerator());
+	cStart1 = cGraphDeserialiser.Read("Ow/Start 1");
+	AssertTrue(cStart1.IsNotNull());
+	AssertLongLongInt(23, cStart1->GetOI());
+
+	AssertTrue(cStart1->mp1.IsNotNull());
+	AssertString("CTestSaveableObject1", cStart1->mp1->ClassName());
+	cShared = cStart1->mp1;
+	AssertLongLongInt(24, cShared->GetOI());
+
+	AssertTrue(cStart1->mp2.IsNotNull());
+	AssertString("CString", cStart1->mp2->ClassName());
+	cString1 = cStart1->mp2;
+	AssertLongLongInt(25, cString1->GetOI());
 	cGraphDeserialiser.Kill();
+
+	for (i = 0; i < 20; i++)
+	{
+		szOne = OMalloc(CString);
+		szOne->Init("Hello World ");
+		szOne->Append(i + 20);
+		cRoot->Add(szOne);
+		AssertLongLongInt(26+i, szOne->GetOI());
+	}
+
+	cGraphDeserialiser.Init(pcReader, gcObjects.GetIndexGenerator());
+	cStart1 = cGraphDeserialiser.Read("Ow/Start 1");
+	AssertTrue(cStart1.IsNotNull());
+	AssertLongLongInt(46, cStart1->GetOI());
+
+	AssertTrue(cStart1->mp1.IsNotNull());
+	AssertString("CTestSaveableObject1", cStart1->mp1->ClassName());
+	cShared = cStart1->mp1;
+	AssertLongLongInt(47, cShared->GetOI());
+
+	AssertTrue(cStart1->mp2.IsNotNull());
+	AssertString("CString", cStart1->mp2->ClassName());
+	cString1 = cStart1->mp2;
+	AssertLongLongInt(48, cString1->GetOI());
+	cGraphDeserialiser.Kill();
+
 	pcReader->Kill();
 
 	ObjectsKill();

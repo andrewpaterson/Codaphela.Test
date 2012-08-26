@@ -78,7 +78,7 @@ void TestObjectReaderSimpleDeserialised(void)
 	AssertLongLongInt(0, gcObjects.NumMemoryObjects());
 
 	cReader.Init("Output\\ObjectReaderSimple\\Test\\");
-	cGraphDeserialiser.Init(&cReader);
+	cGraphDeserialiser.Init(&cReader, gcObjects.GetIndexGenerator());
 	cBase = cGraphDeserialiser.Read("Waggy");
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());

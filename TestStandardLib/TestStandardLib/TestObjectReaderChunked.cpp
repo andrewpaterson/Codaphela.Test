@@ -143,7 +143,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertLongLongInt(0, gcObjects.NumMemoryObjects());
 
 	cReader.Init("Output\\ObjectReaderChunked\\Test\\", "Reader");
-	cGraphDeserialiser.Init(&cReader);
+	cGraphDeserialiser.Init(&cReader, gcObjects.GetIndexGenerator());
 	cBase = cGraphDeserialiser.Read("Array 1");
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
@@ -191,8 +191,11 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertPointer(&cNS1, &cTemp);
 
 	cI1 = gcObjects.Get(5LL);
-	cI2 = gcObjects.Get(6LL);
-	cI3 = gcObjects.Get(7LL);
+	AssertString("CTestInteger", cI1->ClassName());
+	cI2 = gcObjects.Get(7LL);
+	AssertString("CTestInteger", cI2->ClassName());
+	cI3 = gcObjects.Get(10LL);
+	AssertString("CTestInteger", cI3->ClassName());
 
 	AssertInt(3, cI1->mx);
 	AssertInt(2, cI1->my);
