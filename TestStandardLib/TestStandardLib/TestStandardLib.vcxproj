@@ -94,6 +94,7 @@
     <ClCompile Include="TestChunkFileNames.cpp" />
     <ClCompile Include="TestNamedIndexes.cpp" />
     <ClCompile Include="TestObjectConverter.cpp" />
+    <ClCompile Include="TestObjectGraphDeserialiser.cpp" />
     <ClCompile Include="TestObjectReaderChunked.cpp" />
     <ClCompile Include="TestObjects.cpp" />
     <ClCompile Include="TestObjectWriterChunked.cpp" />
@@ -110,7 +111,7 @@
     <ClCompile Include="ObjectTestClasses.cpp" />
     <ClCompile Include="TestObject.cpp" />
     <ClCompile Include="TestRoot.cpp" />
-    <ClCompile Include="TestObjectGraphWriter.cpp" />
+    <ClCompile Include="TestObjectGraphSerialiser.cpp" />
     <ClCompile Include="TestUnknowns.cpp" />
     <ClCompile Include="UnknownKillList.cpp" />
     <ClCompile Include="UnknownTestClasses.cpp" />

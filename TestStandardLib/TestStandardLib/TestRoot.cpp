@@ -16,9 +16,9 @@ void TestRootDistance(void)
 	int							iDist;
 	CBaseObject*				pcFrom;
 
-	pcRoot = ONMalloc(CRoot, "GraphRoot");
-	pcRoot->Init();
-
+	ObjectsInit(NULL);
+	pcRoot = ORoot();
+	
 	pcTest1 = OMalloc(CTestObject);
 	pcTest1->Init(&sKilled1);
 
@@ -34,6 +34,8 @@ void TestRootDistance(void)
 	AssertInt(1, pcFrom->DistToRoot());
 	pcFrom = pcFrom->GetFrom(0);  //Root
 	AssertInt(0, pcFrom->DistToRoot());
+
+	ObjectsKill();
 }
 
 
@@ -57,14 +59,16 @@ void TestStackPointers(void)
 	CObject*					pcTest2;
 	CObject*					pcTest3;
 
+	ObjectsInit(NULL);
+
 	pTest1 = OMalloc(CTestObject);
 	pTest1->Init(&sKilled1);
 
 	pTest3 = OMalloc(CTestObject);
 	pTest3->Init(&sKilled3);
 
-	pcRoot = ONMalloc(CRoot, "GraphRoot");
-	pcRoot->Init();
+	pcRoot = ORoot();
+	
 	pcRoot->Add(pTest1);
 	pcRoot->Add(pTest3);
 
@@ -106,6 +110,8 @@ void TestStackPointers(void)
 	AssertBool(FALSE, sKilled1.bKilled);
 	AssertTrue( sKilled3.bKilled);
 	AssertBool(FALSE, sKilled2.bKilled);
+
+	ObjectsKill();
 }
 
 
@@ -130,9 +136,9 @@ void TestRootGraphRemoveSimple(void)
 	CPointer<CTestObject>		pTop1;
 	CPointer<CTestObject>		pTop2;
 
-	pRoot = ONMalloc(CRoot, "GraphRoot");
-	pRoot->Init();
-
+	ObjectsInit(NULL);
+	pRoot = ORoot();
+	
 	pTest2 = OMalloc(CTestObject);
 	pTest3 = OMalloc(CTestObject);
 	pTest4 = OMalloc(CTestObject);
@@ -384,6 +390,7 @@ void TestRootGraphRemoveSimple(void)
 	AssertTrue(sKilled2.bKilled);
 
 	pRoot->Kill();
+	ObjectsKill();
 }
 
 
@@ -408,9 +415,9 @@ void TestRootGraphRemoveComplex(void)
 	CPointer<CTestObject>		pTop1;
 	CPointer<CTestObject>		pTop2;
 
-	pRoot = ONMalloc(CRoot, "GraphRoot");
-	pRoot->Init();
-
+	ObjectsInit(NULL);
+	pRoot = ORoot();
+	
 	pTest2 = OMalloc(CTestObject);
 	pTest3 = OMalloc(CTestObject);
 	pTest4 = OMalloc(CTestObject);
@@ -566,6 +573,7 @@ void TestRootGraphRemoveComplex(void)
 	AssertTrue(sKilledTop2.bKilled);
 
 	pRoot->Kill();
+	ObjectsKill();
 }
 
 
@@ -592,9 +600,9 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	CPointer<CTestObject>		pTop1;
 	CPointer<CTestObject>		pTop2;
 
-	pRoot = ONMalloc(CRoot, "GraphRoot");
-	pRoot->Init();
-
+	ObjectsInit(NULL);
+	pRoot = ORoot();
+	
 	pTest1 = OMalloc(CTestObject);
 	pTest2 = OMalloc(CTestObject);
 	pTest3 = OMalloc(CTestObject);
@@ -681,6 +689,7 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 
 
 	pRoot->Kill();
+	ObjectsKill();
 }
 
 
@@ -707,9 +716,9 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 	CPointer<CTestObject>		pTop1;
 	CPointer<CTestObject>		pTop2;
 
-	pRoot = ONMalloc(CRoot, "GraphRoot");
-	pRoot->Init();
-
+	ObjectsInit(NULL);
+	pRoot = ORoot();
+	
 	pTest1 = OMalloc(CTestObject);
 	pTest2 = OMalloc(CTestObject);
 	pTest3 = OMalloc(CTestObject);
@@ -809,6 +818,7 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 
 
 	pRoot->Kill();
+	ObjectsKill();
 }
 
 
@@ -837,9 +847,9 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	CPointer<CTestObject>		pTop1;
 	CPointer<CTestObject>		pTop2;
 
-	pRoot = ONMalloc(CRoot, "GraphRoot");
-	pRoot->Init();
-
+	ObjectsInit(NULL);
+	pRoot = ORoot();
+	
 	pTest1 = OMalloc(CTestObject);
 	pTest2 = OMalloc(CTestObject);
 	pTest3 = OMalloc(CTestObject);
@@ -944,6 +954,7 @@ void TestRootGraphRemoveMostlyBalanced(void)
 
 
 	pRoot->Kill();
+	ObjectsKill();
 }
 
 
@@ -954,7 +965,6 @@ void TestRootGraphRemoveMostlyBalanced(void)
 void TestRoot(void)
 {
 	BeginTests();
-	ObjectsInit(NULL);
 
 	TestRootDistance();
 	TestStackPointers();
@@ -964,7 +974,6 @@ void TestRoot(void)
 	TestRootGraphRemoveUnbalancedSmall();
 	TestRootGraphRemoveMostlyBalanced();
 
-	ObjectsKill();
 	TestStatistics();
 }
 

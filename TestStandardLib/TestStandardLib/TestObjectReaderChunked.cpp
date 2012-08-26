@@ -52,7 +52,7 @@ CPointerObject SetupObjectReaderChunkedChunkFile(void)
 	sz3->Init("3");
 	cNS3->Init(sz3, cNS1, "Three");
 
-	cNS4->Init(gcObjects.Null<CString>(), gcObjects.Null<CTestNamedString>(), "Nulloid!");
+	cNS4->Init(ONNull(CString), ONNull(CTestNamedString), "Nulloid!");
 
 	cI1->Init(3, 2, 1);
 	cI2->Init(543, 3, 4);

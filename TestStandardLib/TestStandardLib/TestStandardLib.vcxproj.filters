@@ -150,9 +150,6 @@
     <ClCompile Include="TestPointer.cpp">
       <Filter>Source\Object\Object\Pointer</Filter>
     </ClCompile>
-    <ClCompile Include="TestObjectGraphWriter.cpp">
-      <Filter>Source\Object\Object\Serialisation\Graph</Filter>
-    </ClCompile>
     <ClCompile Include="ObjectWriterChunkedTestClasses.cpp">
       <Filter>Source\Object\Object\IO\Chunked</Filter>
     </ClCompile>
@@ -161,6 +158,12 @@
     </ClCompile>
     <ClCompile Include="TestObjectReaderChunked.cpp">
       <Filter>Source\Object\Object\IO\Chunked</Filter>
+    </ClCompile>
+    <ClCompile Include="TestObjectGraphSerialiser.cpp">
+      <Filter>Source\Object\Object\Serialisation\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="TestObjectGraphDeserialiser.cpp">
+      <Filter>Source\Object\Object\Serialisation\Graph</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
