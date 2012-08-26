@@ -18,6 +18,7 @@ CPointerObject SetupObjectReaderChunkedChunkFile(void)
 	CPointer<CTestNamedString>	cNS1;
 	CPointer<CTestNamedString>	cNS2;
 	CPointer<CTestNamedString>	cNS3;
+	CPointer<CTestNamedString>	cNS4;
 	CPointer<CTestInteger>		cI1;
 	CPointer<CTestInteger>		cI2;
 	CPointer<CTestInteger>		cI3;
@@ -30,6 +31,7 @@ CPointerObject SetupObjectReaderChunkedChunkFile(void)
 	cNS1 = ONMalloc(CTestNamedString, "NamedString 1");
 	cNS2 = ONMalloc(CTestNamedString, "NamedString 2");
 	cNS3 = ONMalloc(CTestNamedString, "NamedString 3");
+	cNS4 = ONMalloc(CTestNamedString, "NamedString 4");
 
 	cI1 = OMalloc(CTestInteger);
 	cI2 = OMalloc(CTestInteger);
@@ -50,6 +52,8 @@ CPointerObject SetupObjectReaderChunkedChunkFile(void)
 	sz3->Init("3");
 	cNS3->Init(sz3, cNS1, "Three");
 
+	cNS4->Init(gcObjects.Null<CString>(), gcObjects.Null<CTestNamedString>(), "Nulloid!");
+
 	cI1->Init(3, 2, 1);
 	cI2->Init(543, 3, 4);
 	cI3->Init(10, 8192, 7);
@@ -67,6 +71,7 @@ CPointerObject SetupObjectReaderChunkedChunkFile(void)
 	cA2->Add(cI3);
 	cA2->Add(cNS2);
 	cA2->Add(cI1);
+	cA2->Add(cNS4);
 
 	return cA1;
 }
@@ -106,6 +111,14 @@ void TestObjectReaderChunkedDeserialised(void)
 	CPointer<CTestNamedString>	cNS1;
 	CPointer<CTestNamedString>	cNS2;
 	CPointer<CTestNamedString>	cNS3;
+	CPointer<CTestNamedString>	cNS4;
+	CPointer<CString>			sz1;
+	CPointer<CString>			sz2;
+	CPointer<CString>			sz3;
+	CPointerObject				cTemp;
+	CPointer<CTestInteger>		cI1;
+	CPointer<CTestInteger>		cI2;
+	CPointer<CTestInteger>		cI3;
 
 	gcObjects.AddConstructor<CTestWithArray>();
 	gcObjects.AddConstructor<CTestInteger>();
@@ -116,10 +129,16 @@ void TestObjectReaderChunkedDeserialised(void)
 	WriteObjectReaderChunkedFile();
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
-	AssertLongLongInt(13, gcObjects.NumMemoryObjects());
+	AssertLongLongInt(14, gcObjects.NumMemoryObjects());
 
 	ObjectsKill();
 	ObjectsInit(NULL);
+
+	gcObjects.AddConstructor<CTestWithArray>();
+	gcObjects.AddConstructor<CTestInteger>();
+	gcObjects.AddConstructor<CTestNamedString>();
+	gcObjects.AddConstructor<CString>();
+	gcObjects.AddConstructor<CArray>();
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
 	AssertLongLongInt(0, gcObjects.NumMemoryObjects());
@@ -129,7 +148,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	cBase = cGraphDeserialiser.Read("Array 1");
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
-	AssertLongLongInt(13, gcObjects.NumMemoryObjects());
+	AssertLongLongInt(14, gcObjects.NumMemoryObjects());
 
 	cA1 = gcObjects.Get("Array 1");
 	AssertTrue(cA1.IsNotNull());
@@ -158,12 +177,44 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertString("CTestNamedString", cNS3->ClassName());
 	AssertString("Three", cNS3->mszEmbedded.Text());
 
+	cNS4 = gcObjects.Get("NamedString 4");
+	AssertTrue(cNS4.IsNotNull());
+
 	AssertTrue(cBase.IsNotNull());
 	AssertString("CTestWithArray", cBase->ClassName());
 	AssertPointer(&cA1, &cBase);
 	
 	AssertNotNull(&cA1->mcArray);
+	AssertInt(6, cA1->mcArray->NumElements())
+	sz2 = cA1->mcArray->Get(0);
+	AssertString("Ye!", sz2->Text());
+	cTemp = cA1->mcArray->Get(1);
+	AssertPointer(&cNS1, &cTemp);
 
+	cI1 = gcObjects.Get(5LL);
+	cI2 = gcObjects.Get(6LL);
+	cI3 = gcObjects.Get(7LL);
+
+	AssertInt(3, cI1->mx);
+	AssertInt(2, cI1->my);
+	AssertInt(1, cI1->mz);
+
+	AssertPointer(&cNS2, &cNS1->mpAnother);
+	AssertPointer(&cI1, &cA1->mcArray->Get(2));
+	AssertPointer(&cNS3, &cA1->mcArray->Get(3));
+	AssertPointer(&cNS1, &cNS3->mpAnother);
+	AssertPointer(&cI2, &cA1->mcArray->Get(4));
+	AssertPointer(&cA2, &cA1->mcArray->Get(5));
+
+	AssertNotNull(&cA2->mcArray);
+	AssertInt(4, cA2->mcArray->NumElements());
+	AssertPointer(&cI3, &cA2->mcArray->Get(0));
+	AssertPointer(&cNS2, &cA2->mcArray->Get(1));
+	AssertPointer(&cNS3, &cNS2->mpAnother);
+	AssertPointer(&cI1, &cA2->mcArray->Get(2));
+	AssertPointer(&cNS4, &cA2->mcArray->Get(3));
+	AssertPointer(NULL, &cNS4->mpAnother);
+	AssertPointer(NULL, &cNS4->mszString);
 
 	cGraphDeserialiser.Kill();
 	cReader.Kill();
