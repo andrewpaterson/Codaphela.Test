@@ -96,6 +96,7 @@
     <ClCompile Include="TestObjectConverter.cpp" />
     <ClCompile Include="TestObjectGraphDeserialiser.cpp" />
     <ClCompile Include="TestObjectReaderChunked.cpp" />
+    <ClCompile Include="TestObjectReaderSimple.cpp" />
     <ClCompile Include="TestObjects.cpp" />
     <ClCompile Include="TestObjectWriterChunked.cpp" />
     <ClCompile Include="TestPointer.cpp" />

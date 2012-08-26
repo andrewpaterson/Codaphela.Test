@@ -67,6 +67,9 @@
     <Filter Include="Source\Object\Object\IO\Chunked">
       <UniqueIdentifier>{7bc16bbe-a25f-472e-a6ed-52717855b07c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Object\Object\IO\Simple">
+      <UniqueIdentifier>{f553194d-9fd0-466f-a948-cf4476b96f44}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestStandardLib.cpp">
@@ -164,6 +167,9 @@
     </ClCompile>
     <ClCompile Include="TestObjectGraphDeserialiser.cpp">
       <Filter>Source\Object\Object\Serialisation\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="TestObjectReaderSimple.cpp">
+      <Filter>Source\Object\Object\IO\Simple</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

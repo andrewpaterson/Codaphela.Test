@@ -29,6 +29,7 @@ void TestParameters(void);
 void TestObjectWriterChunked(void);
 void TestObjectReaderChunked(void);
 void TestObjectGraphDeserialiser(void);
+void TestObjectReaderSimple(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -63,6 +64,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestPointer();
 	TestObjectWriterChunked();
 	TestObjectGraphSerialiser();
+	TestObjectReaderSimple();
 	TestObjectReaderChunked();
 	TestNamedIndexes();
 	TestObjects();
