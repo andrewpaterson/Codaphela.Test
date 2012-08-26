@@ -247,7 +247,7 @@ void TestVirtualCall(void)
 	AssertInt(0, cAnother3.iThisIsNotTheRightWayToUseListeners);
 
 	bResult = pcTest->AddListener<CTestBadListener>(NULL);
-	AssertBool(FALSE, bResult);
+	AssertFalse(bResult);
 
 	pcListener->Kill();
 	pcTest->Kill();

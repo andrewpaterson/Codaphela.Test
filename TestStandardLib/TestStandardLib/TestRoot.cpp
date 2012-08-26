@@ -100,16 +100,16 @@ void TestStackPointers(void)
 	iFroms = pcTest3->NumFroms();
 	AssertInt(1, iFroms);
 
-	AssertBool(FALSE, sKilled1.bKilled);
-	AssertBool(FALSE, sKilled3.bKilled);
-	AssertBool(FALSE, sKilled2.bKilled);
+	AssertFalse(sKilled1.bKilled);
+	AssertFalse(sKilled3.bKilled);
+	AssertFalse(sKilled2.bKilled);
 
 	pcTest2 = &pTest2;
 	pcRoot->Remove(pTest3);
 
-	AssertBool(FALSE, sKilled1.bKilled);
+	AssertFalse(sKilled1.bKilled);
 	AssertTrue( sKilled3.bKilled);
-	AssertBool(FALSE, sKilled2.bKilled);
+	AssertFalse(sKilled2.bKilled);
 
 	ObjectsKill();
 }
@@ -286,20 +286,20 @@ void TestRootGraphRemoveSimple(void)
 	//      Root(0)
 
 
-	AssertBool(FALSE, sKilled2.bKilled);
-	AssertBool(FALSE, sKilled3.bKilled);
-	AssertBool(FALSE, sKilled4.bKilled);
-	AssertBool(FALSE, sKilled5.bKilled);
-	AssertBool(FALSE, sKilledTop1.bKilled);
-	AssertBool(FALSE, sKilledTop2.bKilled);
+	AssertFalse(sKilled2.bKilled);
+	AssertFalse(sKilled3.bKilled);
+	AssertFalse(sKilled4.bKilled);
+	AssertFalse(sKilled5.bKilled);
+	AssertFalse(sKilledTop1.bKilled);
+	AssertFalse(sKilledTop2.bKilled);
 
 	pTest2->mpTest = NULL;
-	AssertBool(FALSE, sKilled2.bKilled);
+	AssertFalse(sKilled2.bKilled);
 	AssertTrue( sKilled3.bKilled);
-	AssertBool(FALSE, sKilled4.bKilled);
-	AssertBool(FALSE, sKilled5.bKilled);
-	AssertBool(FALSE, sKilledTop1.bKilled);
-	AssertBool(FALSE, sKilledTop2.bKilled);
+	AssertFalse(sKilled4.bKilled);
+	AssertFalse(sKilled5.bKilled);
+	AssertFalse(sKilledTop1.bKilled);
+	AssertFalse(sKilledTop2.bKilled);
 	AssertInt(2, pTest2->DistToRoot());
 	AssertInt(3, pTest4->DistToRoot());
 	AssertInt(4, pTest5->DistToRoot());
@@ -349,11 +349,11 @@ void TestRootGraphRemoveSimple(void)
 
 
 	pTest2->mpTest = NULL;
-	AssertBool(FALSE, sKilled2.bKilled);
+	AssertFalse(sKilled2.bKilled);
 	AssertTrue( sKilled4.bKilled);
 	AssertTrue( sKilled5.bKilled);
-	AssertBool(FALSE, sKilledTop1.bKilled);
-	AssertBool(FALSE, sKilledTop2.bKilled);
+	AssertFalse(sKilledTop1.bKilled);
+	AssertFalse(sKilledTop2.bKilled);
 	AssertInt(2, pTest2->DistToRoot());
 	AssertInt(3, pSet->DistToRoot());
 	AssertInt(4, pTop1->DistToRoot());
@@ -375,7 +375,7 @@ void TestRootGraphRemoveSimple(void)
 	AssertInt(4, pTop1->DistToRoot());
 	AssertInt(4, pTop2->DistToRoot());
 	pTest2->mpObject = NULL;
-	AssertBool(FALSE, sKilled2.bKilled);
+	AssertFalse(sKilled2.bKilled);
 	AssertTrue( sKilledTop1.bKilled);
 	AssertTrue( sKilledTop2.bKilled);
 	AssertInt(2, pTest2->DistToRoot());
@@ -479,12 +479,12 @@ void TestRootGraphRemoveComplex(void)
 
 
 	pTest4->mpTest = NULL;
-	AssertBool(FALSE, sKilled2.bKilled);
-	AssertBool(FALSE, sKilled3.bKilled);
-	AssertBool(FALSE, sKilled4.bKilled);
+	AssertFalse(sKilled2.bKilled);
+	AssertFalse(sKilled3.bKilled);
+	AssertFalse(sKilled4.bKilled);
 	AssertTrue( sKilled5.bKilled);
-	AssertBool(FALSE, sKilledTop1.bKilled);
-	AssertBool(FALSE, sKilledTop2.bKilled);
+	AssertFalse(sKilledTop1.bKilled);
+	AssertFalse(sKilledTop2.bKilled);
 	AssertInt(1, pTop1->NumFroms());
 	AssertPointer(&pTop2, pTop1->GetFrom(0));
 	AssertInt(2, pTop2->NumFroms());
@@ -499,12 +499,12 @@ void TestRootGraphRemoveComplex(void)
 	AssertPointer(&pSet, pTest4->GetFrom(0));
 
 	//Tested for root should never be true (outside of the CanFindRoot method).
-	AssertBool(FALSE, pSet->TestedForRoot());
-	AssertBool(FALSE, pTest2->TestedForRoot());
-	AssertBool(FALSE, pTest3->TestedForRoot());
-	AssertBool(FALSE, pTest4->TestedForRoot());
-	AssertBool(FALSE, pTop1->TestedForRoot());
-	AssertBool(FALSE, pTop2->TestedForRoot());
+	AssertFalse(pSet->TestedForRoot());
+	AssertFalse(pTest2->TestedForRoot());
+	AssertFalse(pTest3->TestedForRoot());
+	AssertFalse(pTest4->TestedForRoot());
+	AssertFalse(pTop1->TestedForRoot());
+	AssertFalse(pTop2->TestedForRoot());
 
 	//   Top1====Top2
 	//            |
@@ -543,13 +543,13 @@ void TestRootGraphRemoveComplex(void)
 	AssertInt(3, pTest4->DistToRoot());
 	AssertInt(3, pTest2->DistToRoot());
 	AssertInt(2, pSet->DistToRoot());
-	AssertBool(FALSE, pSet->TestedForRoot());
-	AssertBool(FALSE, pTest2->TestedForRoot());
-	AssertBool(FALSE, pTest3->TestedForRoot());
-	AssertBool(FALSE, pTest4->TestedForRoot());
-	AssertBool(FALSE, pTest5->TestedForRoot());
-	AssertBool(FALSE, pTop1->TestedForRoot());
-	AssertBool(FALSE, pTop2->TestedForRoot());
+	AssertFalse(pSet->TestedForRoot());
+	AssertFalse(pTest2->TestedForRoot());
+	AssertFalse(pTest3->TestedForRoot());
+	AssertFalse(pTest4->TestedForRoot());
+	AssertFalse(pTest5->TestedForRoot());
+	AssertFalse(pTop1->TestedForRoot());
+	AssertFalse(pTop2->TestedForRoot());
 
 	//   Top1====Top2
 	//     |      |
@@ -671,9 +671,9 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	AssertTrue(sKilled3.bKilled);
 	AssertTrue(sKilled4.bKilled);
 	AssertTrue(sKilled5.bKilled);
-	AssertBool(FALSE, sKilledTop1.bKilled);
-	AssertBool(FALSE, sKilledTop2.bKilled);
-	AssertBool(FALSE, sKilled1.bKilled);
+	AssertFalse(sKilledTop1.bKilled);
+	AssertFalse(sKilledTop2.bKilled);
+	AssertFalse(sKilled1.bKilled);
 	AssertInt(1, pSet->NumElements());
 
 	//   Top1(5)
@@ -789,13 +789,13 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 	AssertInt(7, pTop1->DistToRoot());
 	AssertInt(8, pTest1->DistToRoot());
 	AssertInt(9, pTop2->DistToRoot());
-	AssertBool(FALSE, sKilled2.bKilled);
-	AssertBool(FALSE, sKilled3.bKilled);
-	AssertBool(FALSE, sKilled4.bKilled);
-	AssertBool(FALSE, sKilled5.bKilled);
-	AssertBool(FALSE, sKilledTop1.bKilled);
-	AssertBool(FALSE, sKilledTop2.bKilled);
-	AssertBool(FALSE, sKilled1.bKilled);
+	AssertFalse(sKilled2.bKilled);
+	AssertFalse(sKilled3.bKilled);
+	AssertFalse(sKilled4.bKilled);
+	AssertFalse(sKilled5.bKilled);
+	AssertFalse(sKilledTop1.bKilled);
+	AssertFalse(sKilledTop2.bKilled);
+	AssertFalse(sKilled1.bKilled);
 
 	//   Top2(9)
 	//     |
@@ -924,13 +924,13 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	AssertInt(8, pTop2->DistToRoot());
 	AssertInt(9, pTest6->DistToRoot());
 	AssertTrue( sKilled2.bKilled);
-	AssertBool(FALSE, sKilled3.bKilled);
-	AssertBool(FALSE, sKilled4.bKilled);
-	AssertBool(FALSE, sKilled5.bKilled);
-	AssertBool(FALSE, sKilled6.bKilled);
-	AssertBool(FALSE, sKilledTop1.bKilled);
-	AssertBool(FALSE, sKilledTop2.bKilled);
-	AssertBool(FALSE, sKilled1.bKilled);
+	AssertFalse(sKilled3.bKilled);
+	AssertFalse(sKilled4.bKilled);
+	AssertFalse(sKilled5.bKilled);
+	AssertFalse(sKilled6.bKilled);
+	AssertFalse(sKilledTop1.bKilled);
+	AssertFalse(sKilledTop2.bKilled);
+	AssertFalse(sKilled1.bKilled);
 	AssertInt(1, pSet->NumElements());
 
 	//   Test6(9)       
