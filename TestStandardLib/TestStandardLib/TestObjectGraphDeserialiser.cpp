@@ -4,6 +4,8 @@
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "StandardLib/ObjectWriterSimple.h"
 #include "StandardLib/ObjectReaderSimple.h"
+#include "StandardLib/ObjectWriterChunked.h"
+#include "StandardLib/ObjectReaderChunked.h"
 #include "StandardLib/Root.h"
 #include "TestLib/Assert.h"
 #include "ObjectWriterChunkedTestClasses.h"
@@ -22,7 +24,6 @@ void TestObjectGraphDeserialiserAddConstructors(void)
 	gcObjects.AddConstructor<CString>();
 	gcObjects.AddConstructor<CArray>();
 	gcObjects.AddConstructor<CSet>();
-	gcObjects.AddConstructor<CTestObject>();
 	gcObjects.AddConstructor<CTestSaveableObject1>();
 	gcObjects.AddConstructor<CTestSaveableObject2>();
 	gcObjects.AddConstructor<CRoot>();
@@ -74,18 +75,21 @@ void TestObjectGraphDeserialiserBuildGraph1(void)
 	cRoot->Add(cIgnored);
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestRemappingOfSimpleFilesOIs(void)
+void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 {
 	CFileUtil							cFileUtil;
 	CPointer<CTestSaveableObject2>		cBase;
 	CPointer<CTestSaveableObject2>		cRead;
 	CPointer<CRoot>						cRoot;
 	CPointer<CString>					szOne;
+	CPointer<CString>					cString1;
+	CPointer<CString>					cString2;
+	CObjectGraphSerialiser				cGraphSerialiser;
+	CObjectGraphDeserialiser			cGraphDeserialiser;
 
 	cFileUtil.MakeDir("Output/GraphDeserialiser/Simple/Remapping");
 
@@ -93,16 +97,19 @@ void TestRemappingOfSimpleFilesOIs(void)
 	TestObjectGraphDeserialiserAddConstructors();
 	TestObjectGraphDeserialiserBuildGraph1();
 
-	CObjectGraphSerialiser		cGraphSerialiser;
-	CObjectWriterSimple			cWriter;
-
-	cWriter.Init("Output/GraphDeserialiser/Simple/Remapping", "");
-	cGraphSerialiser.Init(&cWriter);
+	cGraphSerialiser.Init(pcWriter);
 	cBase = gcObjects.Get("Ow/Start 1");
-	AssertLongLongInt(1, cBase->GetOI());
+	AssertLongLongInt(3, cBase->GetOI());
 	AssertTrue(cGraphSerialiser.Write(&cBase));
+	cString1 = gcObjects.Get(6LL);
+	AssertString("Black", cString1->Text());
+	AssertLongLongInt(6LL, cString1->GetOI());
+	cString2 = gcObjects.Get(7LL);
+	AssertString("Jack", cString2->Text());
+	AssertLongLongInt(7LL, cString2->GetOI());
+
 	cGraphSerialiser.Kill();
-	cWriter.Kill();
+	pcWriter->Kill();
 
 	ObjectsKill();
 
@@ -113,18 +120,15 @@ void TestRemappingOfSimpleFilesOIs(void)
 	szOne = OMalloc(CString);
 	szOne->Init("Hello World");
 	cRoot->Add(szOne);
-	AssertLongLongInt(1, szOne->GetOI());
+	AssertLongLongInt(3, szOne->GetOI());
 
-	CObjectGraphDeserialiser	cGraphDeserialiser;
-	CObjectReaderSimple			cReader;
-
-	cReader.Init("Output/GraphDeserialiser/Simple/Remapping");
-	cGraphDeserialiser.Init(&cReader);
+	cGraphDeserialiser.Init(pcReader);
 	cRead = cGraphDeserialiser.Read("Ow/Start 1");
 	AssertTrue(cRead.IsNotNull());
-	AssertLongLongInt(1, cRead->GetOI());
+	AssertLongLongInt(4, cRead->GetOI());
+
 	cGraphDeserialiser.Kill();
-	cReader.Kill();
+	pcReader->Kill();
 
 	ObjectsKill();
 }
@@ -134,9 +138,31 @@ void TestRemappingOfSimpleFilesOIs(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestRemappingOfSimpleFilesOIs(void)
+{
+	CObjectWriterSimple		cWriter;
+	CObjectReaderSimple		cReader;
+
+	cWriter.Init("Output/GraphDeserialiser/Simple/Remapping", "");
+	cReader.Init("Output/GraphDeserialiser/Simple/Remapping");
+
+	TestRemappingOfOIs(&cWriter, &cReader);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestRemappingOfChunkedFilesOIs(void)
 {
+	CObjectWriterChunked	cWriter;
+	CObjectReaderChunked	cReader;
 
+	cWriter.Init("Output/GraphDeserialiser/Simple/Remapping", "", "GraphFile");
+	cReader.Init("Output/GraphDeserialiser/Simple/Remapping", "GraphFile");
+
+	TestRemappingOfOIs(&cWriter, &cReader);
 }
 
 
@@ -171,6 +197,8 @@ void TestObjectGraphDeserialiser(void)
 
 	BeginTests();
 
+	TestRemappingOfSimpleFilesOIs();
+	TestRemappingOfChunkedFilesOIs();
 	TestOverwritingOfExistingNamesFromSimpleFiles();
 	TestOverwritingOfExistingNamesFromChunkedFiles();
 

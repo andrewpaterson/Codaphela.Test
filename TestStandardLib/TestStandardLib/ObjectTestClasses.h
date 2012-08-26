@@ -47,7 +47,7 @@ class CTestSaveableObject2 : public CNamedObject
 {
 BASE_FUNCTIONS(CTestSaveableObject2);
 public:
-	char*							mpsz;
+	CChars							msz;
 	CPointer<CTestSaveableObject1>	mp1;
 	CPointerObject					mp2;
 	BOOL							mbSaved;

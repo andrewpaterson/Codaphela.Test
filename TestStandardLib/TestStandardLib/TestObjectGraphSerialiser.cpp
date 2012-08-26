@@ -53,7 +53,7 @@ void TestObjectGraphSerialiserReachability(void)
 	pTest2b->mp2 = pTest1b;
 
 	AssertInt(160, sizeof(CTestSaveableObject1));  //If these sizes change the input test files will be wrong.
-	AssertInt(144, sizeof(CTestSaveableObject2));
+	AssertInt(160, sizeof(CTestSaveableObject2));
 
 	cSimpleWriter.Init("Output/GraphWriter/Data", "");
 	cGraphSerialiser.Init(&cSimpleWriter);
