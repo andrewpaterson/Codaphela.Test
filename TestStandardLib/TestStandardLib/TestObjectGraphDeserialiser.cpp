@@ -75,6 +75,7 @@ void TestObjectGraphDeserialiserBuildGraph1(void)
 	cRoot->Add(cIgnored);
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -99,10 +100,8 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	TestObjectGraphDeserialiserAddConstructors();
 	TestObjectGraphDeserialiserBuildGraph1();
 
-	cGraphSerialiser.Init(pcWriter);
 	cBase = gcObjects.Get("Ow/Start 1");
 	AssertLongLongInt(3, cBase->GetOI());
-	AssertTrue(cGraphSerialiser.Write(&cBase));
 	cString1 = gcObjects.Get(6LL);
 	AssertString("Black", cString1->Text());
 	AssertLongLongInt(6LL, cString1->GetOI());
@@ -110,6 +109,8 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	AssertString("Jack", cString2->Text());
 	AssertLongLongInt(7LL, cString2->GetOI());
 
+	cGraphSerialiser.Init(pcWriter);
+	AssertTrue(cGraphSerialiser.Write(&cBase));
 	cGraphSerialiser.Kill();
 	pcWriter->Kill();
 
@@ -212,18 +213,46 @@ void TestRemappingOfChunkedFilesOIs(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestOverwritingOfExistingNamesFromSimpleFiles(void)
-{
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 {
+	CObjectWriterChunked				cWriterStart1;
+	CObjectWriterChunked				cWriterStart2;
+	CObjectReaderChunked				cReader;
+	CFileUtil							cFileUtil;
+	CPointer<CTestSaveableObject2>		cOwStart1;
+	CPointer<CTestSaveableObject2>		cOwStart2;
+	CPointer<CTestSaveableObject2>		cStart1;
+	CObjectGraphSerialiser				cGraphSerialiser;
 
+	cWriterStart1.Init("Output/GraphDeserialiser/Simple/Remapping", "", "Start1");
+	cWriterStart2.Init("Output/GraphDeserialiser/Simple/Remapping", "", "Start2");
+	cReader.Init("Output/GraphDeserialiser/Simple/Remapping", "GraphFile");
+
+
+	cFileUtil.MakeDir("Output/GraphDeserialiser/Simple/Remapping");
+
+	ObjectsInit("Output/GraphDeserialiser/Simple/Remapping");
+	TestObjectGraphDeserialiserAddConstructors();
+	TestObjectGraphDeserialiserBuildGraph1();
+
+	cOwStart1 = gcObjects.Get("Ow/Start 1");
+	cGraphSerialiser.Init(&cWriterStart1);
+	AssertTrue(cGraphSerialiser.Write(&cOwStart1));
+	cGraphSerialiser.Kill();
+	cWriterStart1.Kill();
+
+	cOwStart2 = gcObjects.Get("Ow/Start 2");
+	cGraphSerialiser.Init(&cWriterStart2);
+	AssertTrue(cGraphSerialiser.Write(&cOwStart2));
+	cGraphSerialiser.Kill();
+	cWriterStart2.Kill();
+
+	ObjectsKill();
+
+	ObjectsInit("Output/GraphDeserialiser/Simple/Remapping");
+	TestObjectGraphDeserialiserAddConstructors();
+
+	ObjectsKill();
 }
 
 
@@ -241,7 +270,6 @@ void TestObjectGraphDeserialiser(void)
 
 	TestRemappingOfSimpleFilesOIs();
 	TestRemappingOfChunkedFilesOIs();
-	TestOverwritingOfExistingNamesFromSimpleFiles();
 	TestOverwritingOfExistingNamesFromChunkedFiles();
 
 	TestStatistics();
