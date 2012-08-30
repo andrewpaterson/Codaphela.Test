@@ -6,6 +6,7 @@
 
 void CTestWithArray::Init(char* szString, int x)
 {
+	mcArray.Init(this);
 	mcArray = OMalloc(CArray);
 	mcArray->Init();
 	mszString.Init(szString);
@@ -71,6 +72,8 @@ BOOL CTestInteger::Load(CObjectDeserialiser* pcFile)
 
 void CTestNamedString::Init(CPointer<CString> szString, CPointer<CTestNamedString> pAnother, char* szEmbedded)
 {
+	mszString.Init(this);
+	mpAnother.Init(this);
 	mszString = szString;
 	mpAnother = pAnother;
 	mszEmbedded.Init(szEmbedded);

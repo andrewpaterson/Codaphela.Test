@@ -53,6 +53,7 @@ BOOL CTestObject::Load(CObjectDeserialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 void CTestSaveableObject1::Init()
 {
+	mpObject.Init(this);
 	miInt = 7;
 	mszString.Init();
 	mbSaved = FALSE;
@@ -105,6 +106,8 @@ BOOL CTestSaveableObject1::Load(CObjectDeserialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 void CTestSaveableObject2::Init(char* psz)
 {
+	mp1.Init(this);
+	mp2.Init(this);
 	msz.Init(psz);
 	mbSaved = FALSE;
 }

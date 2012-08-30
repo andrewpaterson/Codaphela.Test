@@ -55,6 +55,9 @@ void TestObjectGraphDeserialiserBuildGraph1(void)
 	cStart1->Init("Battery");
 	cStart2->Init("Charger");
 
+	cRoot->Add(cStart1);
+	cRoot->Add(cStart2);
+
 	cStart1->mp1 = cShared;
 	cStart2->mp1 = cShared;
 
@@ -69,9 +72,6 @@ void TestObjectGraphDeserialiserBuildGraph1(void)
 	cStart2->mp2 = cString2;
 
 	cIgnored->Init(0, 1, 0);
-
-	cRoot->Add(cStart1);
-	cRoot->Add(cStart2);
 	cRoot->Add(cIgnored);
 }
 
@@ -155,22 +155,6 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 		AssertLongLongInt(26+i, szOne->GetOI());
 	}
 
-	cGraphDeserialiser.Init(pcReader, gcObjects.GetIndexGenerator());
-	cStart1 = cGraphDeserialiser.Read("Ow/Start 1");
-	AssertTrue(cStart1.IsNotNull());
-	AssertLongLongInt(46, cStart1->GetOI());
-
-	AssertTrue(cStart1->mp1.IsNotNull());
-	AssertString("CTestSaveableObject1", cStart1->mp1->ClassName());
-	cShared = cStart1->mp1;
-	AssertLongLongInt(47, cShared->GetOI());
-
-	AssertTrue(cStart1->mp2.IsNotNull());
-	AssertString("CString", cStart1->mp2->ClassName());
-	cString1 = cStart1->mp2;
-	AssertLongLongInt(48, cString1->GetOI());
-	cGraphDeserialiser.Kill();
-
 	pcReader->Kill();
 
 	ObjectsKill();
@@ -226,6 +210,8 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	CObjectGraphDeserialiser			cGraphDeserialiser;
 	CObjectReaderChunked				cReaderStart1;
 	CObjectReaderChunked				cReaderStart2;
+	CPointer<CTestSaveableObject1>		cShared;
+	CBaseObject*						pcShared;
 
 	cWriterStart1.Init("Output/GraphDeserialiser/Simple/Remapping", "", "Start1");
 	cWriterStart2.Init("Output/GraphDeserialiser/Simple/Remapping", "", "Start2");
@@ -248,6 +234,13 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	cGraphSerialiser.Kill();
 	cWriterStart2.Kill();
 
+	cShared = gcObjects.Get("Ow/Shared");
+	
+	AssertInt(3, cShared->NumFroms());
+	AssertPointer(&cOwStart1, cShared->GetFrom(0));
+	AssertPointer(&cOwStart2, cShared->GetFrom(1));
+	AssertPointer(&cShared, cShared->GetFrom(2));  //Remember: cShared->mpObject = cShared;
+
 	ObjectsKill();
 
 	ObjectsInit("Output/GraphDeserialiser/Simple/Remapping");
@@ -258,6 +251,14 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	cStart1 = cGraphDeserialiser.Read("Ow/Start 1");
 	cGraphDeserialiser.Kill();
 	cReaderStart1.Kill();
+
+	cShared = gcObjects.Get("Ow/Shared");
+
+	//Make sure the pointed 'froms' are correctly setup after loading.
+	AssertInt(3, cShared->NumFroms());
+	AssertPointer(&cOwStart1, cShared->GetFrom(0));
+	AssertPointer(&cOwStart2, cShared->GetFrom(1));
+	AssertPointer(&cShared, cShared->GetFrom(2));
 
 	AssertInt(89, cStart1->mp1->miInt);
 	cStart1->mp1->miInt = 66;

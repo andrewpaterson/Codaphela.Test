@@ -69,7 +69,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestNamedIndexes();
 	TestObjects();
 	TestObjectGraphDeserialiser();
-	//TestObjectConverter();
+	TestObjectConverter();
 
 	FastFunctionsKill();
 	KillEmptyString();
