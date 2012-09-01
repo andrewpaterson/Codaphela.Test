@@ -91,7 +91,7 @@ BOOL CTestSaveableObject1::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestSaveableObject1::Load(CObjectDeserialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->ReadPointer(mpObject.This()));
+	ReturnOnFalse(pcFile->ReadPointer(mpObject.This(this)));
 	ReturnOnFalse(pcFile->ReadInt(&miInt));
 	ReturnOnFalse(pcFile->ReadString(&mszString));
 
@@ -144,8 +144,8 @@ BOOL CTestSaveableObject2::Save(CObjectSerialiser* pcFile)
 BOOL CTestSaveableObject2::Load(CObjectDeserialiser* pcFile)
 {
 	pcFile->ReadString(&msz);
-	pcFile->ReadPointer(mp1.This());
-	pcFile->ReadPointer(mp2.This());
+	pcFile->ReadPointer(mp1.This(this));
+	pcFile->ReadPointer(mp2.This(this));
 	mbSaved = FALSE;
 	return TRUE;
 }

@@ -34,7 +34,7 @@ BOOL CTestWithArray::Save(CObjectSerialiser* pcFile)
 
 BOOL CTestWithArray::Load(CObjectDeserialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->ReadPointer(mcArray.This()));
+	ReturnOnFalse(pcFile->ReadPointer(mcArray.This(this)));
 	ReturnOnFalse(pcFile->ReadString(&mszString));
 	ReturnOnFalse(pcFile->ReadInt(&mx));
 	return TRUE;
@@ -96,8 +96,8 @@ BOOL CTestNamedString::Save(CObjectSerialiser* pcFile)
 
 BOOL CTestNamedString::Load(CObjectDeserialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->ReadPointer(mszString.This()));
-	ReturnOnFalse(pcFile->ReadPointer(mpAnother.This()));
+	ReturnOnFalse(pcFile->ReadPointer(mszString.This(this)));
+	ReturnOnFalse(pcFile->ReadPointer(mpAnother.This(this)));
 	ReturnOnFalse(pcFile->ReadString(&mszEmbedded));
 	return TRUE;
 }
