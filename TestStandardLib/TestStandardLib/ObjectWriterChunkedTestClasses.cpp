@@ -6,7 +6,7 @@
 
 void CTestWithArray::Init(char* szString, int x)
 {
-	mcArray.Init(this);
+	Pointer(mcArray.This());
 	mcArray = OMalloc(CArray);
 	mcArray->Init();
 	mszString.Init(szString);
@@ -34,7 +34,7 @@ BOOL CTestWithArray::Save(CObjectSerialiser* pcFile)
 
 BOOL CTestWithArray::Load(CObjectDeserialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->ReadPointer(mcArray.This(this)));
+	ReturnOnFalse(pcFile->ReadPointer(Pointer(mcArray.This())));
 	ReturnOnFalse(pcFile->ReadString(&mszString));
 	ReturnOnFalse(pcFile->ReadInt(&mx));
 	return TRUE;
@@ -72,8 +72,8 @@ BOOL CTestInteger::Load(CObjectDeserialiser* pcFile)
 
 void CTestNamedString::Init(CPointer<CString> szString, CPointer<CTestNamedString> pAnother, char* szEmbedded)
 {
-	mszString.Init(this);
-	mpAnother.Init(this);
+	Pointer(mszString.This());
+	Pointer(mpAnother.This());
 	mszString = szString;
 	mpAnother = pAnother;
 	mszEmbedded.Init(szEmbedded);
@@ -96,8 +96,8 @@ BOOL CTestNamedString::Save(CObjectSerialiser* pcFile)
 
 BOOL CTestNamedString::Load(CObjectDeserialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->ReadPointer(mszString.This(this)));
-	ReturnOnFalse(pcFile->ReadPointer(mpAnother.This(this)));
+	ReturnOnFalse(pcFile->ReadPointer(Pointer(mszString.This())));
+	ReturnOnFalse(pcFile->ReadPointer(Pointer(mpAnother.This())));
 	ReturnOnFalse(pcFile->ReadString(&mszEmbedded));
 	return TRUE;
 }
