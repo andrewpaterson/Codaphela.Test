@@ -143,6 +143,147 @@ void TestObjectPointerRemappingKilling(void)
 }
 
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectPointerRemappingComplex(void)
+{
+	CPointer<CRoot>					pRoot;
+	CPointer<CTestObject>			pTest1;
+	CPointer<CTestObject>			pTest2;
+	CPointer<CTestObject>			pTest3;
+	CPointer<CTestObject>			pTest4;
+	CPointer<CTestObject>			pTest5;
+	CPointer<CTestObject>			pTest6;
+	CPointer<CTestObject>			pTest7;
+	CPointer<CTestObject>			pTest8;
+	CPointer<CTestObject>			pTest9;
+	CPointer<CTestObject>			pTest10;
+	CPointer<CTestObject>			pTest11;
+	CPointer<CTestObject>			pTest12;
+	CPointer<CTestObject>			pTest13;
+	CPointer<CTestObject>			pTest14;
+	STestObjectKilledNotifier		sKillNotifier1;
+	STestObjectKilledNotifier		sKillNotifier2;
+	STestObjectKilledNotifier		sKillNotifier3;
+	STestObjectKilledNotifier		sKillNotifier4;
+	STestObjectKilledNotifier		sKillNotifier5;
+	STestObjectKilledNotifier		sKillNotifier6;
+	STestObjectKilledNotifier		sKillNotifier7;
+	STestObjectKilledNotifier		sKillNotifier8;
+	STestObjectKilledNotifier		sKillNotifier9;
+	STestObjectKilledNotifier		sKillNotifier10;
+	STestObjectKilledNotifier		sKillNotifier11;
+	STestObjectKilledNotifier		sKillNotifier12;
+	STestObjectKilledNotifier		sKillNotifier13;
+	STestObjectKilledNotifier		sKillNotifier14;
+	int								iNumRemapped;
+
+	ObjectsInit(NULL);
+
+	pRoot = ORoot();
+
+	pTest1 = OMalloc(CTestObject);
+	pTest2 = OMalloc(CTestObject);
+	pTest3 = OMalloc(CTestObject);
+	pTest4 = OMalloc(CTestObject);
+	pTest5 = OMalloc(CTestObject);
+	pTest6 = OMalloc(CTestObject);
+	pTest7 = OMalloc(CTestObject);
+	pTest8 = OMalloc(CTestObject);
+	pTest9 = OMalloc(CTestObject);
+	pTest10 = OMalloc(CTestObject);
+	pTest11 = OMalloc(CTestObject);
+	pTest12 = OMalloc(CTestObject);
+	pTest13 = OMalloc(CTestObject);
+	pTest14 = OMalloc(CTestObject);
+
+	pTest1->Init(&sKillNotifier1);
+	pTest2->Init(&sKillNotifier2);
+	pTest3->Init(&sKillNotifier3);
+	pTest4->Init(&sKillNotifier4);
+	pTest5->Init(&sKillNotifier5);
+	pTest6->Init(&sKillNotifier6);
+	pTest7->Init(&sKillNotifier7);
+	pTest8->Init(&sKillNotifier8);
+	pTest9->Init(&sKillNotifier9);
+	pTest10->Init(&sKillNotifier10);
+	pTest11->Init(&sKillNotifier11);
+	pTest12->Init(&sKillNotifier12);
+	pTest13->Init(&sKillNotifier13);
+	pTest14->Init(&sKillNotifier14);
+
+
+
+	//   Test8  Test9
+	//	   |    / |
+	//	   |   /  |
+	//	   |  /   |
+	//   Test6  Test7
+	//	   |  \   |	
+	//	   |   \  |	
+	//	   |    \ |	
+	//   Test4  Test5
+	//	   |      |	
+	//	   |      |	
+	//   Test2  Test3
+	//      \   /
+	//      Test1 
+	//        |
+	//        |
+	//       ...
+	//     Root(0)
+	//
+	//
+	//   Test13  Test14
+	//	   |  \  /  |	
+	//	   |   \/   |	
+	//	   |   /\   |	
+	//	   |  /  \  |	
+	//   Test11  Test12
+	//       \   /
+	//      Test10
+	//        |
+	//       ---
+	//        -
+	//
+	// Remap Test3 with Test 10
+
+
+
+
+
+
+
+
+	//   Test8  Test9
+	//	   |    /
+	//	   |   / 
+	//	   |  /  
+	//   Test6  Test13  Test14
+	//	   |  	  |  \  /  |	
+	//	   |      |   \/   |	
+	//	   | 	  |   /\   |	
+	//     |	  |  /  \  |	
+	//   Test4	Test11  Test12
+	//	   |  	   \    /
+	//	   |  	    \  /
+	//   Test2    Test10
+	//      \     /
+	//       \   /
+	//       Test1 
+	//        |
+	//        |
+	//       ...
+	//     Root(0)
+
+
+
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -154,6 +295,7 @@ void TestObject(void)
 	TestObjectSize();
 	TestObjectPointerRemapping();
 	TestObjectPointerRemappingKilling();
+	TestObjectPointerRemappingComplex();
 
 	TestStatistics();
 }
