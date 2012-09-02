@@ -91,6 +91,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ObjectWriterChunkedTestClasses.cpp" />
+    <ClCompile Include="TestArrayCommonObject.cpp" />
     <ClCompile Include="TestChunkFileNames.cpp" />
     <ClCompile Include="TestNamedIndexes.cpp" />
     <ClCompile Include="TestObjectConverter.cpp" />

@@ -25,6 +25,7 @@ void TestObjectConverter(void);
 void TestObject(void);
 void TestObjects(void);
 void TestRoot(void);
+void TestArrayCommonObject(void);
 void TestParameters(void);
 void TestObjectWriterChunked(void);
 void TestObjectReaderChunked(void);
@@ -62,6 +63,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestObject();
 	TestRoot();
 	TestPointer();
+	TestArrayCommonObject();
 	TestObjectWriterChunked();
 	TestObjectGraphSerialiser();
 	TestObjectReaderSimple();

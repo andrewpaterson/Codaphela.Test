@@ -70,6 +70,12 @@
     <Filter Include="Source\Object\Object\IO\Simple">
       <UniqueIdentifier>{f553194d-9fd0-466f-a948-cf4476b96f44}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Object\Object\Collection">
+      <UniqueIdentifier>{3d0ea913-1f78-4626-b4db-803d877cd650}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Object\Object\Collection\Common">
+      <UniqueIdentifier>{09217f32-ea61-4b1e-a5cc-9d6bd6bb9500}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestStandardLib.cpp">
@@ -170,6 +176,9 @@
     </ClCompile>
     <ClCompile Include="TestObjectReaderSimple.cpp">
       <Filter>Source\Object\Object\IO\Simple</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayCommonObject.cpp">
+      <Filter>Source\Object\Object\Collection\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
