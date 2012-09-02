@@ -293,6 +293,14 @@ void TestRootGraphRemoveSimple(void)
 	AssertFalse(sKilledTop1.bKilled);
 	AssertFalse(sKilledTop2.bKilled);
 
+	AssertInt(2, pTest2->NumTos());
+	AssertPointer(&pTest4, pTest2->TestGetTo(0));
+	AssertPointer(&pTest3, pTest2->TestGetTo(1));
+	AssertPointer(&pTest4, &pTest2->mpObject);
+	AssertPointer(&pTest3, &pTest2->mpTest);
+	AssertInt(1, pTest2->NumFroms());
+	AssertPointer(pRoot->TestGetSet(), pTest2->TestGetFrom(0));
+
 	pTest2->mpTest = NULL;
 	AssertFalse(sKilled2.bKilled);
 	AssertTrue( sKilled3.bKilled);
@@ -306,6 +314,12 @@ void TestRootGraphRemoveSimple(void)
 	AssertInt(5, pSet->DistToRoot());
 	AssertInt(6, pTop1->DistToRoot());
 	AssertInt(6, pTop2->DistToRoot());
+
+	AssertInt(1, pTest2->NumTos());
+	AssertPointer(&pTest4, pTest2->TestGetTo(0));
+	AssertPointer(&pTest4, &pTest2->mpObject);
+	AssertInt(1, pTest2->NumFroms());
+	AssertPointer(pRoot->TestGetSet(), pTest2->TestGetFrom(0));
 
 	//   Top1(6)  Top2(6)
 	//     \     / 
