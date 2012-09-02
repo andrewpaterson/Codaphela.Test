@@ -187,6 +187,9 @@ void TestCleanNulls(void)
 		sz.Kill();
 	}
 
+	AssertInt(32, cSet.NumElements());
+	AssertInt(32, cSet.UnsafeNumElements());
+
 	cSet.Remove(apUnknowns[0]);
 	cSet.Remove(apUnknowns[2]);
 	cSet.Remove(apUnknowns[3]);
@@ -200,8 +203,10 @@ void TestCleanNulls(void)
 	cSet.Remove(apUnknowns[26]);
 	cSet.Remove(apUnknowns[27]);
 	cSet.Remove(apUnknowns[28]);
-	//AssertInt(32, cSet.mcArray.miUsedElements);
-	//AssertInt(32, cSet.mcArray.miNumElements);
+
+	AssertInt(21, cSet.NumElements());
+	AssertInt(32, cSet.UnsafeNumElements());
+	
 	AssertPointer(NULL,          cSet.UnsafeGet(0));
 	AssertPointer(apUnknowns[1], cSet.UnsafeGet(1));
 	AssertPointer(NULL,          cSet.UnsafeGet(2));
@@ -238,8 +243,8 @@ void TestCleanNulls(void)
 	//CleanNullsIfNecessary happens here.
 	cSet.Remove(apUnknowns[29]);
 	AssertInt(20, cSet.NumElements());
-	//AssertInt(20, cSet.mcArray.miUsedElements);
-	//AssertInt(20, cSet.mcArray.miNumElements);
+	AssertInt(20, cSet.UnsafeNumElements());
+
 	AssertPointer(apUnknowns[1], cSet.UnsafeGet(0));
 	AssertPointer(apUnknowns[4], cSet.UnsafeGet(1));
 	AssertPointer(apUnknowns[5], cSet.UnsafeGet(2));
