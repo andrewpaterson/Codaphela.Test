@@ -22,6 +22,39 @@ void TestObjectsCompilation(void)
 }
 
 
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectFreeing(void)
+{
+	CPointer<CTestObject>			pTest1;
+	CPointer<CTestObject>			pTest2;
+	STestObjectKilledNotifier		sKillNotifier1;
+	STestObjectKilledNotifier		sKillNotifier2;
+
+	ObjectsInit(NULL);
+
+
+	pTest1 = OMalloc(CTestObject);
+	pTest2 = OMalloc(CTestObject);
+
+	pTest1->Init(&sKillNotifier1);
+	pTest2->Init(&sKillNotifier2);
+	AssertLongLongInt(2, gcObjects.NumMemoryObjects());
+
+	pTest1->Kill();
+	AssertLongLongInt(1, gcObjects.NumMemoryObjects());
+
+	pTest2->Kill();
+	AssertLongLongInt(0, gcObjects.NumMemoryObjects());
+	
+	ObjectsKill();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -29,11 +62,10 @@ void TestObjectsCompilation(void)
 void TestObjects(void)
 {
 	BeginTests();
-	ObjectsInit(NULL);
 
 	TestObjectsCompilation();
+	TestObjectFreeing();
 
-	ObjectsKill();
 	TestStatistics();
 }
 

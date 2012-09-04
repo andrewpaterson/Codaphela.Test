@@ -17,9 +17,9 @@ void TestObjectSize(void)
 	ObjectsInit(NULL);
 
 	AssertInt(12, sizeof(CUnknown));
-	AssertInt(96, sizeof(CObject));
-	AssertInt(136, sizeof(CRoot));
-	AssertInt(112, sizeof(CSet));
+	AssertInt(104, sizeof(CObject));
+	AssertInt(144, sizeof(CRoot));
+	AssertInt(120, sizeof(CSet));
 	AssertInt(8, sizeof(CPointerObject));
 
 	ObjectsKill();
@@ -330,7 +330,7 @@ void TestObjectPointerRemappingComplex(void)
 	AssertInt(5, pTest13->DistToRoot());
 	AssertInt(5, pTest14->DistToRoot());
 
-	AssertLongLongInt(15, gcObjects.NumMemoryObjects());
+	AssertLongLongInt(14, gcObjects.NumMemoryObjects());
 
 	//   Test8   Test9
 	//     |    /
