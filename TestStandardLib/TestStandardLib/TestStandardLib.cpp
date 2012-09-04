@@ -60,8 +60,8 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestSingleChannelAccessor();
 	TestChunkFileNames();
 	TestParameters();
-	TestObject();
 	TestRoot();
+	TestObject();
 	TestPointer();
 	TestArrayCommonObject();
 	TestObjectWriterChunked();

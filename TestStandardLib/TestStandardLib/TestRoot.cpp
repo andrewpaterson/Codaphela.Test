@@ -76,7 +76,10 @@ void TestStackPointers(void)
 	pTest2->Init(&sKilled2);
 	
 	pTest1->mpTest = pTest2;
+	AssertInt(3, pTest2->DistToRoot());
+
 	pTest3->mpTest = pTest2;
+	AssertInt(3, pTest2->DistToRoot());
 
 	AssertInt(0, pcRoot->NumFroms());
 	AssertInt(1, pcRoot->NumTos());
@@ -479,17 +482,18 @@ void TestRootGraphRemoveComplex(void)
 	AssertInt(3, pTest2->DistToRoot());
 	AssertInt(2, pSet->DistToRoot());
 
-	//   Top1====Top2
-	//     |      |
-	//   Test5  Test3
-	//	   |      |	
-	//	 Test4  Test2
-	//      \    /
-	//       \  /
-	//       Set
-	//        |
-	//       ...
-	//      Root(0)
+	//   Top1(5)====Top2(5)
+	//     |         |
+	//   Test5(4)  Test3(4)
+	//	   |         |	
+	//	 Test4(3)  Test2(3)
+	//      \       /
+	//       \     /
+	//        \   /
+	//        Set(2)
+	//          |
+	//         ...
+	//        Root(0)
 
 
 	pTest4->mpTest = NULL;
@@ -972,6 +976,168 @@ void TestRootGraphRemoveMostlyBalanced(void)
 }
 
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestRootGraphRemoveErrorFromPointerRemapping(void)
+{
+	CPointer<CRoot>					pRoot;
+	CPointer<CTestObject>			pTest1;
+	CPointer<CTestObject>			pTest2;
+	CPointer<CTestObject>			pTest3;
+	CPointer<CTestObject>			pTest4;
+	CPointer<CTestObject>			pTest5;
+	CPointer<CTestObject>			pTest6;
+	CPointer<CTestObject>			pTest7;
+	CPointer<CTestObject>			pTest8;
+	CPointer<CTestObject>			pTest9;
+	CPointer<CTestObject>			pTest15;
+	STestObjectKilledNotifier		sKillNotifier1;
+	STestObjectKilledNotifier		sKillNotifier2;
+	STestObjectKilledNotifier		sKillNotifier3;
+	STestObjectKilledNotifier		sKillNotifier4;
+	STestObjectKilledNotifier		sKillNotifier5;
+	STestObjectKilledNotifier		sKillNotifier6;
+	STestObjectKilledNotifier		sKillNotifier7;
+	STestObjectKilledNotifier		sKillNotifier8;
+	STestObjectKilledNotifier		sKillNotifier9;
+	STestObjectKilledNotifier		sKillNotifier15;
+
+	ObjectsInit(NULL);
+
+	pRoot = ORoot();
+
+	pTest1 = OMalloc(CTestObject);
+	pTest2 = OMalloc(CTestObject);
+	pTest3 = OMalloc(CTestObject);
+	pTest4 = OMalloc(CTestObject);
+	pTest5 = OMalloc(CTestObject);
+	pTest6 = OMalloc(CTestObject);
+	pTest7 = OMalloc(CTestObject);
+	pTest8 = OMalloc(CTestObject);
+	pTest9 = OMalloc(CTestObject);
+	pTest15 = OMalloc(CTestObject);
+
+	pTest1->Init(&sKillNotifier1);
+	pTest2->Init(&sKillNotifier2);
+	pTest3->Init(&sKillNotifier3);
+	pTest4->Init(&sKillNotifier4);
+	pTest5->Init(&sKillNotifier5);
+	pTest6->Init(&sKillNotifier6);
+	pTest7->Init(&sKillNotifier7);
+	pTest8->Init(&sKillNotifier8);
+	pTest9->Init(&sKillNotifier9);
+	pTest15->Init(&sKillNotifier15);
+
+	pRoot->Add(pTest1);
+	pTest1->mpObject = pTest2;
+	pTest1->mpTest = pTest3;
+	pTest2->mpObject = pTest15;
+	pTest15->mpTest = pTest4;
+	pTest3->mpObject = pTest5;
+	pTest4->mpTest = pTest6;
+	pTest5->mpObject = pTest6;
+	pTest5->mpTest = pTest7;
+	pTest6->mpObject = pTest8;
+	pTest6->mpTest = pTest9;
+	pTest7->mpTest = pTest9;
+
+	AssertInt(2, pTest1->DistToRoot());
+	AssertInt(3, pTest2->DistToRoot());
+	AssertInt(3, pTest3->DistToRoot());
+	AssertInt(4, pTest15->DistToRoot());
+	AssertInt(4, pTest5->DistToRoot());
+	AssertInt(5, pTest4->DistToRoot());
+	AssertInt(5, pTest6->DistToRoot());
+	AssertInt(5, pTest7->DistToRoot());
+	AssertInt(6, pTest8->DistToRoot());
+	AssertInt(6, pTest9->DistToRoot());
+
+	AssertLongLongInt(12, gcObjects.NumMemoryObjects());
+
+	//   Test8(6)  Test9(6)
+	//	   |      /  |
+	//	   |     /   |
+	//	   |    /    |
+	//	   |   /     |
+	//   Test6(5)  Test7(5)
+	//	   |   \     |	
+	//	   |    \    |	
+	//	   |     \   |	
+	//	   |      \  |	
+	//   Test4(5)  Test5(4)
+	//	   |         |	
+	//	   |         |	
+	//	 Test15(4)   |	
+	//	   |         |	
+	//	   |         |	
+	//   Test2(3)  Test3(3)
+	//      \      /
+	//       \    /
+	//        \  /
+	//       Test1(2)
+	//         |
+	//         |
+	//        ...
+	//      Root(0)
+
+	pTest1->mpTest = NULL;
+
+	AssertTrue(sKillNotifier3.bKilled);
+	AssertTrue(sKillNotifier5.bKilled);
+	AssertTrue(sKillNotifier7.bKilled);
+	AssertFalse(sKillNotifier9.bKilled);
+
+	AssertFalse(sKillNotifier1.bKilled);
+	AssertFalse(sKillNotifier2.bKilled);
+	AssertFalse(sKillNotifier4.bKilled);
+	AssertFalse(sKillNotifier6.bKilled);
+	AssertFalse(sKillNotifier8.bKilled);
+	AssertFalse(sKillNotifier15.bKilled);
+
+	AssertInt(1, pTest6->NumFroms());
+	AssertPointer(&pTest4, pTest6->TestGetFrom(0));
+	AssertInt(2, pTest6->NumTos());
+
+	AssertInt(2, pTest1->DistToRoot());
+	AssertInt(3, pTest2->DistToRoot());
+	AssertInt(4, pTest15->DistToRoot());
+	AssertInt(5, pTest4->DistToRoot());
+	AssertInt(6, pTest6->DistToRoot());
+	AssertInt(7, pTest8->DistToRoot());
+	AssertInt(7, pTest9->DistToRoot());
+	       
+	//  Test8(7)  Test9(7)
+	//	   \       /  
+	//      \     /   
+	//	     \   /    
+	//      Test6(6)  
+	//	       |  
+	//	       |  
+	//      Test4(5)  
+	//	       |       
+	//	       |       	
+	//	    Test15(4)
+	//	       |      
+	//	       |      
+	//      Test2(3) 
+	//         |     
+	//         |    
+	//         |  
+	//      Test1(2)
+	//         |
+	//         |
+	//        ...
+	//      Root(0)
+
+	AssertLongLongInt(9, gcObjects.NumMemoryObjects());
+
+	ObjectsKill();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -987,6 +1153,7 @@ void TestRoot(void)
 	TestRootGraphRemoveUnbalancedLarge();
 	TestRootGraphRemoveUnbalancedSmall();
 	TestRootGraphRemoveMostlyBalanced();
+	TestRootGraphRemoveErrorFromPointerRemapping();
 
 	TestStatistics();
 }

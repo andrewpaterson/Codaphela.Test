@@ -76,8 +76,7 @@ void TestObjectPointerRemapping(void)
 	AssertInt(1, pObject1->NumFroms());
 	AssertInt(0, pObject3->NumTos());
 	AssertInt(1, pObject3->NumFroms());
-	AssertInt(0, pObject2->NumTos());
-	AssertInt(0, pObject2->NumFroms());
+	AssertTrue(sKillNotifier2.bKilled);
 
 	ObjectsKill();
 }
@@ -165,6 +164,7 @@ void TestObjectPointerRemappingComplex(void)
 	CPointer<CTestObject>			pTest12;
 	CPointer<CTestObject>			pTest13;
 	CPointer<CTestObject>			pTest14;
+	CPointer<CTestObject>			pTest15;
 	STestObjectKilledNotifier		sKillNotifier1;
 	STestObjectKilledNotifier		sKillNotifier2;
 	STestObjectKilledNotifier		sKillNotifier3;
@@ -179,6 +179,7 @@ void TestObjectPointerRemappingComplex(void)
 	STestObjectKilledNotifier		sKillNotifier12;
 	STestObjectKilledNotifier		sKillNotifier13;
 	STestObjectKilledNotifier		sKillNotifier14;
+	STestObjectKilledNotifier		sKillNotifier15;
 	int								iNumRemapped;
 
 	ObjectsInit(NULL);
@@ -199,6 +200,7 @@ void TestObjectPointerRemappingComplex(void)
 	pTest12 = OMalloc(CTestObject);
 	pTest13 = OMalloc(CTestObject);
 	pTest14 = OMalloc(CTestObject);
+	pTest15 = OMalloc(CTestObject);
 
 	pTest1->Init(&sKillNotifier1);
 	pTest2->Init(&sKillNotifier2);
@@ -214,8 +216,33 @@ void TestObjectPointerRemappingComplex(void)
 	pTest12->Init(&sKillNotifier12);
 	pTest13->Init(&sKillNotifier13);
 	pTest14->Init(&sKillNotifier14);
+	pTest15->Init(&sKillNotifier15);
 
+	pRoot->Add(pTest1);
+	pTest1->mpObject = pTest2;
+	pTest1->mpTest = pTest3;
+	pTest2->mpObject = pTest15;
+	pTest15->mpTest = pTest4;
+	pTest3->mpObject = pTest5;
+	pTest4->mpTest = pTest6;
+	pTest5->mpObject = pTest6;
+	pTest5->mpTest = pTest7;
+	pTest6->mpObject = pTest8;
+	pTest6->mpTest = pTest9;
+	pTest7->mpTest = pTest9;
 
+	pTest10->mpObject = pTest11;
+	pTest10->mpTest = pTest12;
+	pTest11->mpObject = pTest13;
+	pTest11->mpTest = pTest14;
+	pTest12->mpObject = pTest13;
+	pTest12->mpTest = pTest14;
+
+	AssertInt(5, pTest6->DistToRoot());
+	AssertInt(6, pTest8->DistToRoot());
+	AssertInt(6, pTest9->DistToRoot());
+
+	AssertLongLongInt(17, gcObjects.NumMemoryObjects());
 
 	//   Test8  Test9
 	//	   |    / |
@@ -228,9 +255,12 @@ void TestObjectPointerRemappingComplex(void)
 	//   Test4  Test5
 	//	   |      |	
 	//	   |      |	
+	//	 Test15   |	
+	//	   |      |	
+	//	   |      |	
 	//   Test2  Test3
 	//      \   /
-	//      Test1 
+	//      Test1(2)
 	//        |
 	//        |
 	//       ...
@@ -248,39 +278,109 @@ void TestObjectPointerRemappingComplex(void)
 	//        |
 	//       ---
 	//        -
-	//
-	// Remap Test3 with Test 10
+	
+	iNumRemapped = pTest10.RemapFrom(&pTest3);
+	AssertInt(1, iNumRemapped);
 
+	AssertPointer(&pTest2, &pTest1->mpObject);
+	AssertPointer(&pTest10, &pTest1->mpTest);
 
+	AssertInt(1, pTest10->NumFroms());
+	AssertPointer(&pTest1, pTest10->TestGetFrom(0));
+	AssertInt(2, pTest10->NumTos());
+	AssertPointer(&pTest11, pTest10->TestGetTo(0));
+	AssertPointer(&pTest12, pTest10->TestGetTo(1));
+	AssertPointer(&pTest11, &pTest10->mpObject);
+	AssertPointer(&pTest12, &pTest10->mpTest);
 
+	AssertInt(1, pTest2->NumFroms());
+	AssertPointer(&pTest1, pTest2->TestGetFrom(0));
+	AssertInt(1, pTest2->NumTos());
+	AssertPointer(&pTest15, pTest2->TestGetTo(0));
+	AssertPointer(&pTest15, &pTest2->mpObject);
 
+	AssertTrue(sKillNotifier3.bKilled);
+	AssertTrue(sKillNotifier5.bKilled);
+	AssertTrue(sKillNotifier7.bKilled);
+	AssertFalse(sKillNotifier9.bKilled);
 
+	AssertFalse(sKillNotifier1.bKilled);
+	AssertFalse(sKillNotifier2.bKilled);
+	AssertFalse(sKillNotifier4.bKilled);
+	AssertFalse(sKillNotifier6.bKilled);
+	AssertFalse(sKillNotifier8.bKilled);
+	AssertFalse(sKillNotifier10.bKilled);
+	AssertFalse(sKillNotifier11.bKilled);
+	AssertFalse(sKillNotifier12.bKilled);
+	AssertFalse(sKillNotifier13.bKilled);
+	AssertFalse(sKillNotifier14.bKilled);
+	AssertFalse(sKillNotifier15.bKilled);
 
+	AssertInt(1, pTest6->NumFroms());
+	AssertPointer(&pTest4, pTest6->TestGetFrom(0));
+	AssertInt(2, pTest6->NumTos());
 
+	AssertInt(6, pTest6->DistToRoot());
+	AssertInt(7, pTest8->DistToRoot());
+	AssertInt(7, pTest9->DistToRoot());
 
-	//   Test8  Test9
-	//	   |    /
-	//	   |   / 
-	//	   |  /  
-	//   Test6  Test13  Test14
-	//	   |  	  |  \  /  |	
-	//	   |      |   \/   |	
-	//	   | 	  |   /\   |	
-	//     |	  |  /  \  |	
-	//   Test4	Test11  Test12
+	AssertInt(3, pTest10->DistToRoot());
+	AssertInt(4, pTest11->DistToRoot());
+	AssertInt(4, pTest12->DistToRoot());
+	AssertInt(5, pTest13->DistToRoot());
+	AssertInt(5, pTest14->DistToRoot());
+
+	AssertLongLongInt(15, gcObjects.NumMemoryObjects());
+
+	//   Test8   Test9
+	//     |    /
+	//     |   /       
+	//	   |  /        
+	//	 Test6           
+	//	   |  	         
+	//     |   Test13  Test14
+	//	   |     |  \  /  |	
+	//	   |     |   \/   |	
+	//	 Test4   |   /\   |	
+	//     |     |  /  \  |	
+	//     |   Test11  Test12
+	//  Test15    \      /
 	//	   |  	   \    /
 	//	   |  	    \  /
 	//   Test2    Test10
 	//      \     /
 	//       \   /
-	//       Test1 
+	//       Test1(2) 
 	//        |
 	//        |
 	//       ...
 	//     Root(0)
 
+	pRoot->Remove(pTest1);
+
+	AssertTrue(sKillNotifier1.bKilled);
+	AssertTrue(sKillNotifier2.bKilled);
+	AssertTrue(sKillNotifier3.bKilled);
+	AssertTrue(sKillNotifier4.bKilled);
+	AssertTrue(sKillNotifier6.bKilled);
+	AssertTrue(sKillNotifier8.bKilled);
+	AssertTrue(sKillNotifier10.bKilled);
+	AssertTrue(sKillNotifier11.bKilled);
+	AssertTrue(sKillNotifier12.bKilled);
+	AssertTrue(sKillNotifier13.bKilled);
+	AssertTrue(sKillNotifier14.bKilled);
+	AssertTrue(sKillNotifier15.bKilled);
+
+	AssertLongLongInt(2, gcObjects.NumMemoryObjects());
+
+	//       ---
+	//        -
+	//        |
+	//       ...
+	//     Root(0)
 
 
+	ObjectsKill();
 }
 
 
