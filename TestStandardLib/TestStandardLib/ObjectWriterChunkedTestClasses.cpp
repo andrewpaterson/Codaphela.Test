@@ -79,7 +79,6 @@ void CTestNamedString::Init(CPointer<CString> szString, CPointer<CTestNamedStrin
 	mszEmbedded.Init(szEmbedded);
 }
 
-
 void CTestNamedString::Kill(void)
 {
 	mszString->Kill();
@@ -101,4 +100,37 @@ BOOL CTestNamedString::Load(CObjectDeserialiser* pcFile)
 	ReturnOnFalse(pcFile->ReadString(&mszEmbedded));
 	return TRUE;
 }
+
+
+void CTestDoubleNamedString::Init(CPointer<CString> szString, CPointer<CTestNamedString> pSplit2, CPointer<CTestNamedString> pSplit1)
+{
+	Pointer(mszString.This());
+	Pointer(mpSplit1.This());
+	Pointer(mpSplit2.This());
+	mszString = szString;
+	mpSplit1 = pSplit1;
+	mpSplit2 = pSplit2;
+}
+
+void CTestDoubleNamedString::Kill(void)
+{
+	CObject::Kill();
+}
+
+BOOL CTestDoubleNamedString::Save(CObjectSerialiser* pcFile)
+{
+	ReturnOnFalse(pcFile->WritePointer(mszString));
+	ReturnOnFalse(pcFile->WritePointer(mpSplit1));
+	ReturnOnFalse(pcFile->WritePointer(mpSplit2));
+	return TRUE;
+}
+
+BOOL CTestDoubleNamedString::Load(CObjectDeserialiser* pcFile)
+{
+	ReturnOnFalse(pcFile->ReadPointer(Pointer(mszString.This())));
+	ReturnOnFalse(pcFile->ReadPointer(Pointer(mpSplit1.This())));
+	ReturnOnFalse(pcFile->ReadPointer(Pointer(mpSplit2.This())));
+	return TRUE;
+}
+
 

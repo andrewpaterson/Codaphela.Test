@@ -67,7 +67,7 @@ void TestObjectReaderSimpleDeserialised(void)
 	WriteObjectReaderSimpleFile();
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
-	AssertLongLongInt(2, gcObjects.NumMemoryObjects());
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
 	ObjectsInit(NULL);
@@ -75,14 +75,14 @@ void TestObjectReaderSimpleDeserialised(void)
 	gcObjects.AddConstructor<CTestNamedString>();
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
-	AssertLongLongInt(0, gcObjects.NumMemoryObjects());
+	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
 	cReader.Init("Output\\ObjectReaderSimple\\Test\\");
 	cGraphDeserialiser.Init(&cReader, gcObjects.GetIndexGenerator());
 	cBase = cGraphDeserialiser.Read("Waggy");
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
-	AssertLongLongInt(2, gcObjects.NumMemoryObjects());
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 
 	cNS1 = gcObjects.Get("Waggy");
 	AssertTrue(cNS1.IsNotNull());

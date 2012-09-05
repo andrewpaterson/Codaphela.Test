@@ -43,13 +43,13 @@ void TestObjectFreeing(void)
 
 	pTest1->Init(&sKillNotifier1);
 	pTest2->Init(&sKillNotifier2);
-	AssertLongLongInt(2, gcObjects.NumMemoryObjects());
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 
 	pTest1->Kill();
-	AssertLongLongInt(1, gcObjects.NumMemoryObjects());
+	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 
 	pTest2->Kill();
-	AssertLongLongInt(0, gcObjects.NumMemoryObjects());
+	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 	
 	ObjectsKill();
 }

@@ -242,7 +242,7 @@ void TestObjectPointerRemappingComplex(void)
 	AssertInt(6, pTest8->DistToRoot());
 	AssertInt(6, pTest9->DistToRoot());
 
-	AssertLongLongInt(17, gcObjects.NumMemoryObjects());
+	AssertLongLongInt(17, gcObjects.NumMemoryIndexes());
 
 	//   Test8  Test9
 	//	   |    / |
@@ -330,7 +330,7 @@ void TestObjectPointerRemappingComplex(void)
 	AssertInt(5, pTest13->DistToRoot());
 	AssertInt(5, pTest14->DistToRoot());
 
-	AssertLongLongInt(14, gcObjects.NumMemoryObjects());
+	AssertLongLongInt(14, gcObjects.NumMemoryIndexes());
 
 	//   Test8   Test9
 	//     |    /
@@ -371,7 +371,7 @@ void TestObjectPointerRemappingComplex(void)
 	AssertTrue(sKillNotifier14.bKilled);
 	AssertTrue(sKillNotifier15.bKilled);
 
-	AssertLongLongInt(2, gcObjects.NumMemoryObjects());
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 
 	//       ---
 	//        -

@@ -57,5 +57,21 @@ public:
 };
 
 
+class CTestDoubleNamedString : public CNamedObject
+{
+BASE_FUNCTIONS(CTestDoubleNamedString);
+public:
+	CPointer<CString>			mszString;
+	CPointer<CTestNamedString>	mpSplit2;
+	CPointer<CTestNamedString>	mpSplit1;
+
+	void Init(CPointer<CString> szString, CPointer<CTestNamedString> pSplit2, CPointer<CTestNamedString> pSplit1);
+	void Kill(void);
+
+	BOOL Save(CObjectSerialiser* pcFile);
+	BOOL Load(CObjectDeserialiser* pcFile);
+};
+
+
 #endif // __OBJECT_WRITER_CHUNKED_TEST_CLASSES_H__
 

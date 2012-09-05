@@ -1055,7 +1055,7 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 	AssertInt(6, pTest8->DistToRoot());
 	AssertInt(6, pTest9->DistToRoot());
 
-	AssertLongLongInt(12, gcObjects.NumMemoryObjects());
+	AssertLongLongInt(12, gcObjects.NumMemoryIndexes());
 
 	//   Test8(6)  Test9(6)
 	//	   |      /  |
@@ -1132,7 +1132,7 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 	//        ...
 	//      Root(0)
 
-	AssertLongLongInt(9, gcObjects.NumMemoryObjects());
+	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
 }
