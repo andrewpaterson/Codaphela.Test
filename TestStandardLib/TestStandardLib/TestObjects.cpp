@@ -41,6 +41,9 @@ void TestObjectFreeing(void)
 	pTest1 = OMalloc(CTestObject);
 	pTest2 = OMalloc(CTestObject);
 
+	AssertNotNull(&pTest1);
+	AssertNotNull(&pTest2);
+
 	pTest1->Init(&sKillNotifier1);
 	pTest2->Init(&sKillNotifier2);
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());

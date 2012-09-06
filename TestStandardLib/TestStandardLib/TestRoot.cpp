@@ -1218,7 +1218,7 @@ void TestRoot(void)
 	TestRootGraphRemoveUnbalancedSmall();
 	TestRootGraphRemoveMostlyBalanced();
 	TestRootGraphRemoveErrorFromPointerRemapping();
-//	TestRootGraphRemoveErrorFromObjectConverter();
+	TestRootGraphRemoveErrorFromObjectConverter();
 
 	TestStatistics();
 }

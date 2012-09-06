@@ -168,7 +168,7 @@ void TestObjectConverter(void)
 	BeginTests();
 
 	TestObjectConverterText();
-	//TestObjectConverterDragon();
+	TestObjectConverterDragon();
 
 	TestStatistics();
 	ObjectsKill();

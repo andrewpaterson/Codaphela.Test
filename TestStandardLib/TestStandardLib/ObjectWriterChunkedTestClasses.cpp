@@ -81,7 +81,7 @@ void CTestNamedString::Init(CPointer<CString> szString, CPointer<CTestNamedStrin
 
 void CTestNamedString::Kill(void)
 {
-	mszString->Kill();
+	mszString = NULL;;
 	CObject::Kill();
 }
 
