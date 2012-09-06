@@ -1,7 +1,9 @@
 #include "StandardLib/Objects.h"
+#include "StandardLib/String.h"
 #include "StandardLib/Root.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
+#include "ObjectWriterChunkedTestClasses.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -18,9 +20,12 @@ void TestRootDistance(void)
 
 	ObjectsInit(NULL);
 	pcRoot = ORoot();
+	AssertInt(ROOT_DIST_TO_ROOT, pcRoot->DistToRoot());
+	AssertInt(ROOT_DIST_TO_ROOT+1, pcRoot->TestGetSet()->DistToRoot());
 	
 	pcTest1 = OMalloc(CTestObject);
 	pcTest1->Init(&sKilled1);
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest1->DistToRoot());
 
 	pcRoot->Add(pcTest1);
 	AssertInt(1, pcTest1->NumFroms());
@@ -393,8 +398,8 @@ void TestRootGraphRemoveSimple(void)
 	AssertInt(4, pTop2->DistToRoot());
 	pTest2->mpObject = NULL;
 	AssertFalse(sKilled2.bKilled);
-	AssertTrue( sKilledTop1.bKilled);
-	AssertTrue( sKilledTop2.bKilled);
+	AssertTrue(sKilledTop1.bKilled);
+	AssertTrue(sKilledTop2.bKilled);
 	AssertInt(2, pTest2->DistToRoot());
 
 	//   Test2(2)
@@ -1142,6 +1147,65 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestRootGraphRemoveErrorFromObjectConverter(void)
+{
+	CPointer<CTestNamedString>			cNS1;
+	CPointer<CTestNamedString>			cNS2;
+	CPointer<CTestNamedString>			cDiamond;
+	CPointer<CTestDoubleNamedString>	cDouble;
+	CPointer<CString>					sz1;
+	CPointer<CString>					sz3;
+	CPointer<CString>					sz2;
+	CPointer<CString>					sz4;
+	CPointer<CRoot>						cRoot;
+
+	ObjectsInit(NULL);
+
+	cRoot = ORoot();
+
+	cDiamond = ONMalloc(CTestNamedString, "Diamond End");
+
+	cNS1 = ONMalloc(CTestNamedString, "NamedString 1");
+	sz1 = OMalloc(CString);
+
+	cNS1->Init(sz1, cDiamond, "Hello");
+	sz1->Init("World");
+
+	cNS2 = ONMalloc(CTestNamedString, "NamedString 2");
+	sz2 = OMalloc(CString);
+
+	cNS2->Init(sz2, cDiamond, "Hello");
+	sz2->Init("World");
+
+	sz3 = OMalloc(CString);
+	sz3->Init("End");
+	cDiamond->Init(sz3, ONNull(CTestNamedString), "1234");
+
+	sz4 = OMalloc(CString);
+	sz4->Init("Start");
+	cDouble = ONMalloc(CTestDoubleNamedString, "Double Start");
+	cDouble->Init(sz4, cNS1, ONNull(CTestNamedString));
+
+	cRoot->Add(cDouble);
+
+	AssertInt(2, cDouble->DistToRoot());
+	AssertInt(3, cNS1->DistToRoot());
+	AssertInt(4, cDiamond->DistToRoot());
+	AssertInt(-1, cNS2->DistToRoot());
+
+	cDouble->mpSplit2 = cNS2;
+
+	AssertInt(3, cNS2->DistToRoot());
+	AssertInt(4, cDiamond->DistToRoot());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestRoot(void)
 {
 	BeginTests();
@@ -1154,6 +1218,7 @@ void TestRoot(void)
 	TestRootGraphRemoveUnbalancedSmall();
 	TestRootGraphRemoveMostlyBalanced();
 	TestRootGraphRemoveErrorFromPointerRemapping();
+//	TestRootGraphRemoveErrorFromObjectConverter();
 
 	TestStatistics();
 }
