@@ -14,6 +14,23 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void SetupObjectConverterConstructors(void)
+{
+	gcObjects.AddConstructor<CTestWithArray>();
+	gcObjects.AddConstructor<CTestInteger>();
+	gcObjects.AddConstructor<CTestNamedString>();
+	gcObjects.AddConstructor<CTestDoubleNamedString>();
+	gcObjects.AddConstructor<CString>();
+	gcObjects.AddConstructor<CArray>();
+	gcObjects.AddConstructor<CSet>();
+	gcObjects.AddConstructor<CRoot>();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 CPointer<CTestDoubleNamedString> SetupObjectConverterChunkFile(void)
 {
 	CPointer<CTestNamedString>			cNS1;
@@ -71,16 +88,6 @@ CPointer<CTestDoubleNamedString> SetupObjectConverterChunkFile(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void SetupObjectConverterBasicFile(void)
-{
-
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 void WriteObjectConverterChunkedFile(void)
 {
 	CPointer<CTestDoubleNamedString>	cDouble;
@@ -103,13 +110,15 @@ void WriteObjectConverterChunkedFile(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectConverterDragon(void)
 {
-	CObjectConverterNative	cChunkedConverter;
-	CObjectSource*			pcObjectSource;
-	CObjectMultipleSource*	pcObjectMultipleSource;
-	CPointerObject			pcObject;
-	CDiskFile*				pcDiskFile;
+	CObjectConverterNative				cChunkedConverter;
+	CObjectSource*						pcObjectSource;
+	CObjectMultipleSource*				pcObjectMultipleSource;
+	CPointerObject						pcObject;
+	CDiskFile*							pcDiskFile;
+	CPointer<CTestDoubleNamedString>	pcDoubleNamedString;
 
 	WriteObjectConverterChunkedFile();
+	SetupObjectConverterConstructors();
 
 	pcDiskFile = DiskFile("Output\\ObjectConverter\\Double.DRG");
 	cChunkedConverter.Init(gcObjects.GetIndexGenerator());
@@ -133,6 +142,16 @@ void TestObjectConverterDragon(void)
 
 	pcObject = pcObjectSource->Convert("Double Start");
 	AssertNotNull(&pcObject);
+
+	pcDoubleNamedString = pcObject;
+	AssertNotNull(&pcDoubleNamedString->mszString);
+	AssertFalse(pcDoubleNamedString->mszString->IsHollow());
+	AssertString("Start", pcDoubleNamedString->mszString->Text());
+
+	pcObject = pcDoubleNamedString->mpSplit1;
+	AssertNotNull(&pcObject);
+	AssertTrue(pcObject->IsHollow());
+
 
 	pcObjectSource->Kill();
 	cChunkedConverter.Kill();
@@ -190,7 +209,7 @@ void TestObjectConverter(void)
 	BeginTests();
 
 	TestObjectConverterText();
-	//TestObjectConverterDragon();
+	TestObjectConverterDragon();
 
 	TestStatistics();
 	ObjectsKill();

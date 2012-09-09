@@ -21,6 +21,7 @@ void TestObjectGraphDeserialiserAddConstructors(void)
 	gcObjects.AddConstructor<CTestWithArray>();
 	gcObjects.AddConstructor<CTestInteger>();
 	gcObjects.AddConstructor<CTestNamedString>();
+	gcObjects.AddConstructor<CTestDoubleNamedString>();
 	gcObjects.AddConstructor<CString>();
 	gcObjects.AddConstructor<CArray>();
 	gcObjects.AddConstructor<CSet>();
