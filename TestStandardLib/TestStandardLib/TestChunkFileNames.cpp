@@ -346,6 +346,66 @@ void TestReading(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestNameIteration(void)
+{
+	CChunkFileNames			cChunkFile;
+	CDiskFile*				pcDiskFile;
+	SChunkFileNameIterator	sIter;
+	char*					szName;
+
+	pcDiskFile = DiskFile("Input/FrenchToast.DRG");
+	cChunkFile.Init(pcDiskFile);
+
+	cChunkFile.ReadOpen();
+
+
+	szName = cChunkFile.StartNameIteration(&sIter);
+	AssertString("new/age/violet/Tempest", szName);
+
+	szName = cChunkFile.IterateName(&sIter);
+	AssertString("new/age/shrinking/daisy/Sunlight", szName);
+
+	szName = cChunkFile.IterateName(&sIter);
+	AssertString("new/age/shrinking/daisy/Pusher", szName);
+
+	szName = cChunkFile.IterateName(&sIter);
+	AssertString("new/age/violet/Forensics", szName);
+
+	szName = cChunkFile.IterateName(&sIter);
+	AssertString("Unknown", szName);
+	
+	szName = cChunkFile.IterateName(&sIter);
+	AssertString("last/time/in/Paris", szName);
+
+	szName = cChunkFile.IterateName(&sIter);
+	AssertString("last/time/in/world/on/See", szName);
+
+	szName = cChunkFile.IterateName(&sIter);
+	AssertString("last/Schism", szName);
+
+	szName = cChunkFile.IterateName(&sIter);
+	AssertString("last/Tragic", szName);
+
+	szName = cChunkFile.IterateName(&sIter);
+	AssertString("Final", szName);
+
+	szName = cChunkFile.IterateName(&sIter);
+	AssertString("new/really/Final", szName);
+
+	szName = cChunkFile.IterateName(&sIter);
+	AssertNull(szName);
+
+	cChunkFile.StopIteration(&sIter);
+
+	cChunkFile.ReadClose();
+	cChunkFile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestChunkFileNames(void)
 {
 	CFileUtil	cFileUtil;
@@ -357,6 +417,7 @@ void TestChunkFileNames(void)
 
 	TestWriting();
 	TestReading();
+	TestNameIteration();
 
 	TestStatistics();
 	cFileUtil.RemoveDir("Output");

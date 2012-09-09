@@ -14,35 +14,6 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectConverterText(void)
-{
-	CObjectConverterText	cTextConverter;
-	char					szTextInFile[] = {"This is text\nin a file.\n"};
-	int						iTextLen;
-	CMemoryFile				cMemoryFile;
-	CObjectSource*			pcObjectSource;
-	CPointerObject			pcObject;
-	CPointer<CString>		pcString;
-	
-	iTextLen = strlen(szTextInFile);
-	cMemoryFile.Init(szTextInFile, iTextLen);
-
-	cTextConverter.Init();
-	pcObjectSource = cTextConverter.CreateSource(&cMemoryFile, "");
-	pcString = pcObjectSource->Convert("");
-	AssertString(szTextInFile, pcString->Text());
-	pcString->Kill();
-
-	cMemoryFile.Kill();
-	pcObjectSource->Kill();
-	cTextConverter.Kill();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 CPointer<CTestDoubleNamedString> SetupObjectConverterChunkFile(void)
 {
 	CPointer<CTestNamedString>			cNS1;
@@ -134,6 +105,7 @@ void TestObjectConverterDragon(void)
 {
 	CObjectConverterNative	cChunkedConverter;
 	CObjectSource*			pcObjectSource;
+	CObjectMultipleSource*	pcObjectMultipleSource;
 	CPointerObject			pcObject;
 	CDiskFile*				pcDiskFile;
 
@@ -141,15 +113,65 @@ void TestObjectConverterDragon(void)
 
 	pcDiskFile = DiskFile("Output\\ObjectConverter\\Double.DRG");
 	cChunkedConverter.Init();
-	pcObjectSource = cChunkedConverter.CreateSource(pcDiskFile, "");
+	pcObjectSource = cChunkedConverter.CreateSource(pcDiskFile, "Double");
 	AssertNotNull(pcObjectSource);
 	AssertTrue(pcObjectSource->IsNative());
+	AssertTrue(pcObjectSource->IsMultiSource());
 
-	pcObject = pcObjectSource->Convert("");
+	pcObjectMultipleSource = (CObjectMultipleSource*)pcObjectSource;
+	AssertInt(4, pcObjectMultipleSource->NumNames());
+	AssertString("Diamond End", pcObjectMultipleSource->GetName(0));
+	AssertString("Double Start", pcObjectMultipleSource->GetName(1));
+	AssertString("NamedString 1", pcObjectMultipleSource->GetName(2));
+	AssertString("NamedString 2", pcObjectMultipleSource->GetName(3));
+
+	AssertTrue(pcObjectSource->Contains("Diamond End"));
+	AssertTrue(pcObjectSource->Contains("Double Start"));
+	AssertTrue(pcObjectSource->Contains("NamedString 1"));
+	AssertTrue(pcObjectSource->Contains("NamedString 2"));
+	AssertFalse(pcObjectSource->Contains("Unnamed/0000000000000006"));
+
+	pcObject = pcObjectSource->Convert("Double Start");
 	AssertNotNull(&pcObject);
 
 	pcObjectSource->Kill();
 	cChunkedConverter.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectConverterText(void)
+{
+	CObjectConverterText	cTextConverter;
+	char					szTextInFile[] = {"This is text\nin a file.\n"};
+	int						iTextLen;
+	CMemoryFile				cMemoryFile;
+	CObjectSource*			pcObjectSource;
+	CPointerObject			pcObject;
+	CPointer<CString>		pcString;
+
+	iTextLen = strlen(szTextInFile);
+	cMemoryFile.Init(szTextInFile, iTextLen);
+
+	cTextConverter.Init();
+	pcObjectSource = cTextConverter.CreateSource(&cMemoryFile, "TextFile");
+	AssertTrue(pcObjectSource->Contains("TextFile"));
+	AssertFalse(pcObjectSource->Contains("AnythingElse"));
+	AssertFalse(pcObjectSource->Contains(""));
+	AssertFalse(pcObjectSource->Contains(NULL));
+	pcString = pcObjectSource->Convert("TextFile");
+	AssertString(szTextInFile, pcString->Text());
+	pcString->Kill();
+
+	pcString = pcObjectSource->Convert("");
+	AssertNull(&pcString);
+
+	cMemoryFile.Kill();
+	pcObjectSource->Kill();
+	cTextConverter.Kill();
 }
 
 

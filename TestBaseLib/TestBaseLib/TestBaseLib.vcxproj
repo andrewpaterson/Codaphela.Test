@@ -91,6 +91,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp" />
+    <ClCompile Include="TestChunkFileFile.cpp" />
     <ClCompile Include="TestCSVFileEditable.cpp" />
     <ClCompile Include="TestLinkListTemplate.cpp" />
     <ClCompile Include="TestMemoryCache.cpp" />
@@ -128,6 +129,7 @@
     <ClCompile Include="TestTreeTemplate.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="TestChunkFileFile.h" />
     <ClInclude Include="TestCSVFileEditable.h" />
     <ClInclude Include="TestLinkListTemplate.h" />
     <ClInclude Include="TestMemoryCache.h" />

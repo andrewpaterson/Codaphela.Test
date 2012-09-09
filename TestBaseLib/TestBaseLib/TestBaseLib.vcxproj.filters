@@ -67,6 +67,9 @@
     <Filter Include="Source\Memory\Stack">
       <UniqueIdentifier>{5a2c8b49-5fb8-4be9-a2f1-c94f45225269}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\File\Chunk\File">
+      <UniqueIdentifier>{48532850-bf26-4499-8d43-11e009bb52cf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -177,6 +180,9 @@
     <ClCompile Include="TestScratchPad.cpp">
       <Filter>Source\Memory\ScratchPad</Filter>
     </ClCompile>
+    <ClCompile Include="TestChunkFileFile.cpp">
+      <Filter>Source\File\Chunk\File</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestSorting.h">
@@ -283,6 +289,9 @@
     </ClInclude>
     <ClInclude Include="TestScratchPad.h">
       <Filter>Source\Memory\ScratchPad</Filter>
+    </ClInclude>
+    <ClInclude Include="TestChunkFileFile.h">
+      <Filter>Source\File\Chunk\File</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

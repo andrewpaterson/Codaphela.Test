@@ -8,10 +8,8 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestDiskFile(void)
+void TestDiskFileEndOfFile(void)
 {
-	BeginTests();
-
 	CDiskFile	cDiskFile;
 	CFileUtil	cFileUtil;
 	char		szHello[] = "Hello";
@@ -34,7 +32,7 @@ void TestDiskFile(void)
 
 	bResult = cFileUtil.Exists("Test.txt");
 	AssertTrue(bResult);
-	
+
 	cDiskFile.Init("Test.txt");
 	bResult = cDiskFile.Open(EFM_Read);
 	AssertTrue(bResult);
@@ -63,6 +61,18 @@ void TestDiskFile(void)
 	cDiskFile.Kill();
 
 	cFileUtil.Delete("Test.txt");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDiskFile(void)
+{
+	BeginTests();
+
+	TestDiskFileEndOfFile();
 
 	TestStatistics();
 }

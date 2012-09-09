@@ -20,6 +20,7 @@
 #include "TestBufferedFile.h"
 #include "TestMemoryFile.h"
 #include "TestChunkFile.h"
+#include "TestChunkFileFile.h"
 #include "TestPackFile.h"
 #include "TestFileSystem.h"
 #include "TestSorting.h"
@@ -65,6 +66,7 @@ int main(int argc, char* argv[])
 	TestBufferedFile();
 	TestMD5File();
 	TestChunkFile();
+	TestChunkFileFile();
 	TestPackFile();
 	TestFileSystem();
 	TestSorting();
