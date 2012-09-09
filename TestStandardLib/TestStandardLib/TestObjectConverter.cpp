@@ -116,8 +116,13 @@ void TestObjectConverterDragon(void)
 	CPointerObject						pcObject;
 	CDiskFile*							pcDiskFile;
 	CPointer<CTestDoubleNamedString>	pcDoubleNamedString;
+	CPointer<CRoot>						pcRoot;
 
+	ObjectsInit(NULL);
 	WriteObjectConverterChunkedFile();
+	ObjectsKill();
+
+	ObjectsInit(NULL);
 	SetupObjectConverterConstructors();
 
 	pcDiskFile = DiskFile("Output\\ObjectConverter\\Double.DRG");
@@ -147,14 +152,25 @@ void TestObjectConverterDragon(void)
 	AssertNotNull(&pcDoubleNamedString->mszString);
 	AssertFalse(pcDoubleNamedString->mszString->IsHollow());
 	AssertString("Start", pcDoubleNamedString->mszString->Text());
+	AssertInt(-1, pcDoubleNamedString->mszString->DistToRoot());
 
 	pcObject = pcDoubleNamedString->mpSplit1;
-	AssertNotNull(&pcObject);
-	AssertTrue(pcObject->IsHollow());
+	AssertTrue(pcObject.IsNotNull());
+	AssertTrue(pcObject.IsHollow());
+	AssertInt(-1, pcObject.DistToRoot());
 
+	pcRoot = ORoot();
+	pcRoot->Add(pcDoubleNamedString);
+	AssertInt(2, pcDoubleNamedString->DistToRoot());
+	AssertInt(3, pcDoubleNamedString->mszString->DistToRoot());
+	AssertTrue(pcObject.IsNotNull());
+	AssertTrue(pcObject.IsHollow());
+	AssertInt(3, pcObject.DistToRoot());
 
 	pcObjectSource->Kill();
 	cChunkedConverter.Kill();
+
+	ObjectsKill();
 }
 
 
@@ -171,6 +187,8 @@ void TestObjectConverterText(void)
 	CObjectSource*			pcObjectSource;
 	CPointerObject			pcObject;
 	CPointer<CString>		pcString;
+
+	ObjectsInit(NULL);
 
 	iTextLen = strlen(szTextInFile);
 	cMemoryFile.Init(szTextInFile, iTextLen);
@@ -191,6 +209,8 @@ void TestObjectConverterText(void)
 	cMemoryFile.Kill();
 	pcObjectSource->Kill();
 	cTextConverter.Kill();
+
+	ObjectsKill();
 }
 
 
@@ -205,14 +225,12 @@ void TestObjectConverter(void)
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output/ObjectConverter");
 
-	ObjectsInit(NULL);
 	BeginTests();
 
 	TestObjectConverterText();
 	TestObjectConverterDragon();
 
 	TestStatistics();
-	ObjectsKill();
 
 	cFileUtil.RemoveDir("Output");
 }
