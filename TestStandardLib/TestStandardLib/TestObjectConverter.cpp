@@ -117,6 +117,7 @@ void TestObjectConverterDragon(void)
 	CDiskFile*							pcDiskFile;
 	CPointer<CTestDoubleNamedString>	pcDoubleNamedString;
 	CPointer<CRoot>						pcRoot;
+	CPointerObject						pcObject2;
 
 	ObjectsInit(NULL);
 	WriteObjectConverterChunkedFile();
@@ -158,6 +159,7 @@ void TestObjectConverterDragon(void)
 	AssertTrue(pcObject.IsNotNull());
 	AssertTrue(pcObject.IsHollow());
 	AssertInt(-1, pcObject.DistToRoot());
+	AssertString("NamedString 2", pcObject.GetName());
 
 	pcRoot = ORoot();
 	pcRoot->Add(pcDoubleNamedString);
@@ -166,6 +168,19 @@ void TestObjectConverterDragon(void)
 	AssertTrue(pcObject.IsNotNull());
 	AssertTrue(pcObject.IsHollow());
 	AssertInt(3, pcObject.DistToRoot());
+	AssertString("NamedString 2", pcObject.GetName());
+
+	AssertString("NamedString 1", pcDoubleNamedString->mpSplit2.GetName());
+	AssertTrue(pcDoubleNamedString->mpSplit2.IsNotNull());
+	AssertTrue(pcDoubleNamedString->mpSplit2.IsHollow());
+	AssertInt(3, pcDoubleNamedString->mpSplit2.DistToRoot());
+	
+	pcObject2 = pcObjectSource->Convert("Named String2");
+	AssertTrue(pcObject2.IsNotNull());
+	AssertPointer(pcObject.Object(), pcObject2.Object());
+	AssertFalse(pcObject2.IsHollow());
+	AssertInt(3, pcObject2.DistToRoot());
+	AssertString("NamedString 2", pcObject2.GetName());
 
 	pcObjectSource->Kill();
 	cChunkedConverter.Kill();
