@@ -1,6 +1,6 @@
 #include "BaseLib/FileUtil.h"
 #include "StandardLib/Objects.h"
-#include "StandardLib/ObjectReaderSimple.h"
+#include "StandardLib/ObjectReaderSimpleDisk.h"
 #include "StandardLib/DependentObjectGraphDeserialiser.h"
 #include "StandardLib/ObjectWriterSimple.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
@@ -54,7 +54,7 @@ void WriteObjectReaderSimpleFile(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectReaderSimpleDeserialised(void)
 {
-	CObjectReaderSimple					cReader;
+	CObjectReaderSimpleDisk				cReader;
 	CDependentObjectGraphDeserialiser	cGraphDeserialiser;
 	CPointerObject						cBase;
 

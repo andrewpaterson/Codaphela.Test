@@ -3,9 +3,9 @@
 #include "StandardLib/DependentObjectGraphDeserialiser.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "StandardLib/ObjectWriterSimple.h"
-#include "StandardLib/ObjectReaderSimple.h"
+#include "StandardLib/ObjectReaderSimpleDisk.h"
 #include "StandardLib/ObjectWriterChunked.h"
-#include "StandardLib/ObjectReaderChunked.h"
+#include "StandardLib/ObjectReaderChunkFileDisk.h"
 #include "StandardLib/Root.h"
 #include "TestLib/Assert.h"
 #include "ObjectWriterChunkedTestClasses.h"
@@ -167,8 +167,8 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 //////////////////////////////////////////////////////////////////////////
 void TestRemappingOfSimpleFilesOIs(void)
 {
-	CObjectWriterSimple		cWriter;
-	CObjectReaderSimple		cReader;
+	CObjectWriterSimple			cWriter;
+	CObjectReaderSimpleDisk		cReader;
 
 	cWriter.Init("Output/GraphDeserialiser/Simple/Remapping", "");
 	cReader.Init("Output/GraphDeserialiser/Simple/Remapping");
@@ -183,8 +183,8 @@ void TestRemappingOfSimpleFilesOIs(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRemappingOfChunkedFilesOIs(void)
 {
-	CObjectWriterChunked	cWriter;
-	CObjectReaderChunked	cReader;
+	CObjectWriterChunked		cWriter;
+	CObjectReaderChunkFileDisk	cReader;
 
 	cWriter.Init("Output/GraphDeserialiser/Simple/Remapping", "", "GraphFile");
 	cReader.Init("Output/GraphDeserialiser/Simple/Remapping", "GraphFile");
@@ -206,8 +206,8 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	CPointer<CTestSaveableObject2>		cOwStart2;
 	CObjectGraphSerialiser				cGraphSerialiser;
 	CDependentObjectGraphDeserialiser	cGraphDeserialiser;
-	CObjectReaderChunked				cReaderStart1;
-	CObjectReaderChunked				cReaderStart2;
+	CObjectReaderChunkFileDisk			cReaderStart1;
+	CObjectReaderChunkFileDisk			cReaderStart2;
 	CPointer<CTestSaveableObject1>		cShared;
 	CPointer<CRoot>						cRoot;
 	CPointerObject						cObject;

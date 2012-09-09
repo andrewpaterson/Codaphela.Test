@@ -1,6 +1,6 @@
 #include "BaseLib/FileUtil.h"
 #include "StandardLib/Objects.h"
-#include "StandardLib/ObjectReaderChunked.h"
+#include "StandardLib/ObjectReaderChunkFileDisk.h"
 #include "StandardLib/DependentObjectGraphDeserialiser.h"
 #include "StandardLib/ObjectWriterChunked.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
@@ -102,7 +102,7 @@ void WriteObjectReaderChunkedFile(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectReaderChunkedDeserialised(void)
 {
-	CObjectReaderChunked				cReader;
+	CObjectReaderChunkFileDisk			cReader;
 	CDependentObjectGraphDeserialiser	cGraphDeserialiser;
 	CPointerObject						cBase;
 	CPointer<CTestWithArray>			cA1;
