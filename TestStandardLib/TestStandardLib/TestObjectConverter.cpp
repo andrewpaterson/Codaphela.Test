@@ -112,7 +112,7 @@ void TestObjectConverterDragon(void)
 	WriteObjectConverterChunkedFile();
 
 	pcDiskFile = DiskFile("Output\\ObjectConverter\\Double.DRG");
-	cChunkedConverter.Init();
+	cChunkedConverter.Init(gcObjects.GetIndexGenerator());
 	pcObjectSource = cChunkedConverter.CreateSource(pcDiskFile, "Double");
 	AssertNotNull(pcObjectSource);
 	AssertTrue(pcObjectSource->IsNative());
