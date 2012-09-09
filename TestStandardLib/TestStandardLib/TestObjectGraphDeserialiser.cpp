@@ -1,6 +1,6 @@
 #include "BaseLib/FileUtil.h"
 #include "StandardLib/Objects.h"
-#include "StandardLib/ObjectGraphDeserialiser.h"
+#include "StandardLib/DependentObjectGraphDeserialiser.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "StandardLib/ObjectWriterSimple.h"
 #include "StandardLib/ObjectReaderSimple.h"
@@ -90,7 +90,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	CPointer<CString>					cString1;
 	CPointer<CString>					cString2;
 	CObjectGraphSerialiser				cGraphSerialiser;
-	CObjectGraphDeserialiser			cGraphDeserialiser;
+	CDependentObjectGraphDeserialiser	cGraphDeserialiser;
 	CPointer<CTestSaveableObject1>		cShared;
 	int									i;
 
@@ -205,7 +205,7 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	CPointer<CTestSaveableObject2>		cOwStart1;
 	CPointer<CTestSaveableObject2>		cOwStart2;
 	CObjectGraphSerialiser				cGraphSerialiser;
-	CObjectGraphDeserialiser			cGraphDeserialiser;
+	CDependentObjectGraphDeserialiser	cGraphDeserialiser;
 	CObjectReaderChunked				cReaderStart1;
 	CObjectReaderChunked				cReaderStart2;
 	CPointer<CTestSaveableObject1>		cShared;

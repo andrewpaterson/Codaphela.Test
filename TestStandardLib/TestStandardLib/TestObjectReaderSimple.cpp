@@ -1,7 +1,7 @@
 #include "BaseLib/FileUtil.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectReaderSimple.h"
-#include "StandardLib/ObjectGraphDeserialiser.h"
+#include "StandardLib/DependentObjectGraphDeserialiser.h"
 #include "StandardLib/ObjectWriterSimple.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "TestLib/Assert.h"
@@ -54,13 +54,13 @@ void WriteObjectReaderSimpleFile(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectReaderSimpleDeserialised(void)
 {
-	CObjectReaderSimple			cReader;
-	CObjectGraphDeserialiser	cGraphDeserialiser;
-	CPointerObject				cBase;
+	CObjectReaderSimple					cReader;
+	CDependentObjectGraphDeserialiser	cGraphDeserialiser;
+	CPointerObject						cBase;
 
-	CPointer<CTestNamedString>	cNS1;
-	CPointer<CTestNamedString>	cNS2;
-	CPointerObject				cTemp;
+	CPointer<CTestNamedString>			cNS1;
+	CPointer<CTestNamedString>			cNS2;
+	CPointerObject						cTemp;
 
 	gcObjects.AddConstructor<CTestNamedString>();
 
