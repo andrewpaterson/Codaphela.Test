@@ -1,59 +1,54 @@
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
+#include "ObjectWriterChunkedTestClasses.h"
 
 
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectsCompilation(void)
+CPointer<CTestDoubleNamedString> SetupObjectsForDehollowfication(void)
 {
-	if (FALSE)  //This is intentional.  This code must only be compiled (testing template compilation) not run.
-	{
-		CObjects				cObjects;
-		CPointer<CTestObject>	cTestPtr;
+	CPointer<CTestNamedString>			cNS1;
+	CPointer<CTestNamedString>			cNS2;
+	CPointer<CTestNamedString>			cNS3;
+	CPointer<CTestNamedString>			cDiamond;
+	CPointer<CTestDoubleNamedString>	cDouble;
+	CPointer<CRoot>						cRoot;
 
-		cTestPtr = cObjects.Add<CTestObject>();
-		cTestPtr = cObjects.Get<CTestObject>("Invalid Name");
-		cTestPtr = cObjects.Get<CTestObject>(INVALID_O_INDEX);
-	}
-	AssertTrue(TRUE);
+	cRoot = ORoot();
+
+	cDiamond = ONMalloc(CTestNamedString, "Diamond");
+
+	cNS1 = ONMalloc(CTestNamedString, "NS1");
+	cNS1->Init(ONNull(CString), cDiamond, "NS1");
+
+	cNS2 = ONMalloc(CTestNamedString, "NS2");
+	cNS2->Init(ONNull(CString), cDiamond, "NS2");
+
+	cNS3 = ONMalloc(CTestNamedString, "NS3");
+	cNS3->Init(ONNull(CString), cNS1, "NS3");
+
+	cDiamond->Init(ONNull(CString), ONNull(CTestNamedString), "Diamond");
+
+	cDouble = ONMalloc(CTestDoubleNamedString, "Double");
+	cDouble->Init(ONNull(CString), cNS2, cNS3);
+
+	cRoot->Add(cDouble);
+	return cDouble;
 }
 
 
-
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectFreeing(void)
+void TestObjectDehollowfication(void)
 {
-	CPointer<CTestObject>			pTest1;
-	CPointer<CTestObject>			pTest2;
-	STestObjectKilledNotifier		sKillNotifier1;
-	STestObjectKilledNotifier		sKillNotifier2;
-
 	ObjectsInit(NULL);
-
-
-	pTest1 = OMalloc(CTestObject);
-	pTest2 = OMalloc(CTestObject);
-
-	AssertNotNull(&pTest1);
-	AssertNotNull(&pTest2);
-
-	pTest1->Init(&sKillNotifier1);
-	pTest2->Init(&sKillNotifier2);
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
-
-	pTest1->Kill();
-	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
-
-	pTest2->Kill();
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
-	
+	SetupObjectsForDehollowfication();
+	gcObjects.Close();
 	ObjectsKill();
 }
 
@@ -66,8 +61,7 @@ void TestObjects(void)
 {
 	BeginTests();
 
-	TestObjectsCompilation();
-	TestObjectFreeing();
+	TestObjectDehollowfication();
 
 	TestStatistics();
 }

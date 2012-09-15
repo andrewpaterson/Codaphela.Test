@@ -23,7 +23,7 @@ void TestObjectGraphSerialiser(void);
 void TestPointer(void);
 void TestObjectConverter(void);
 void TestObject(void);
-void TestObjects(void);
+void TestObjectsSimple(void);
 void TestRoot(void);
 void TestArrayCommonObject(void);
 void TestParameters(void);
@@ -31,7 +31,7 @@ void TestObjectWriterChunked(void);
 void TestObjectReaderChunked(void);
 void TestObjectGraphDeserialiser(void);
 void TestObjectReaderSimple(void);
-
+void TestObjects(void);
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -60,7 +60,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestSingleChannelAccessor();
 	TestChunkFileNames();
 	TestParameters();
-	TestObjects();
+	TestObjectsSimple();
 	TestRoot();
 	TestObject();
 	TestPointer();
@@ -72,6 +72,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestNamedIndexes();
 	TestObjectGraphDeserialiser();
 	TestObjectConverter();
+	TestObjects();
 
 	FastFunctionsKill();
 	KillEmptyString();

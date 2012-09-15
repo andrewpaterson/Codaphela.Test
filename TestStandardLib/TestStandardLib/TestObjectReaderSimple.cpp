@@ -114,7 +114,7 @@ void TestObjectReaderSimple(void)
 	CFileUtil	cFileUtil;
 
 	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output\\ObjectReaderSimple");
+	cFileUtil.MakeDir("Output/ObjectReaderSimple");
 	ObjectsInit(NULL);
 	BeginTests();
 
