@@ -56,12 +56,12 @@ CPointer<CTestDoubleNamedString> SetupObjectConverterChunkFile(void)
 	cNS2 = ONMalloc(CTestNamedString, "NamedString 2");
 	sz2 = OMalloc(CString);
 
-	cNS2->Init(sz2, cDiamond, "Hello");
-	sz2->Init("World");
+	cNS2->Init(sz2, cDiamond, "12345");
+	sz2->Init("6789");
 
 	sz3 = OMalloc(CString);
 	sz3->Init("End");
-	cDiamond->Init(sz3, ONNull(CTestNamedString), "1234");
+	cDiamond->Init(sz3, ONNull(CTestNamedString), "Before Swine");
 
 	sz4 = OMalloc(CString);
 	sz4->Init("Start");
@@ -108,7 +108,7 @@ void WriteObjectConverterChunkedFile(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectConverterDragon(void)
+void TestObjectConverterDragonExistingHollows(void)
 {
 	CObjectConverterNative				cChunkedConverter;
 	CObjectSource*						pcObjectSource;
@@ -117,7 +117,12 @@ void TestObjectConverterDragon(void)
 	CDiskFile*							pcDiskFile;
 	CPointer<CTestDoubleNamedString>	pcDoubleNamedString;
 	CPointer<CRoot>						pcRoot;
-	CPointerObject						pcObject2;
+	CPointer<CTestNamedString>			pcObject2;
+	CTestNamedString*					pcEnd;
+	CNamedHollowObject*					pcHollow;
+	CPointer<CTestNamedString>			pcObject3;
+	CTestNamedString*					pcTestNamedString3;
+	CTestNamedString*					pcTestNamedString2;
 
 	ObjectsInit(NULL);
 	WriteObjectConverterChunkedFile();
@@ -148,6 +153,7 @@ void TestObjectConverterDragon(void)
 
 	pcObject = pcObjectSource->Convert("Double Start");
 	AssertNotNull(&pcObject);
+	AssertString("CTestDoubleNamedString", pcObject.ClassName());
 
 	pcDoubleNamedString = pcObject;
 	AssertNotNull(&pcDoubleNamedString->mszString);
@@ -162,6 +168,8 @@ void TestObjectConverterDragon(void)
 	AssertString("NamedString 2", pcObject.GetName());
 
 	pcRoot = ORoot();
+	AssertLongLongInt(5, pcRoot->GetOI());
+
 	pcRoot->Add(pcDoubleNamedString);
 	AssertInt(2, pcDoubleNamedString->DistToRoot());
 	AssertInt(3, pcDoubleNamedString->mszString->DistToRoot());
@@ -169,18 +177,45 @@ void TestObjectConverterDragon(void)
 	AssertTrue(pcObject.IsHollow());
 	AssertInt(3, pcObject.DistToRoot());
 	AssertString("NamedString 2", pcObject.GetName());
+	AssertLongLongInt(3, pcObject.GetIndex());
 
 	AssertString("NamedString 1", pcDoubleNamedString->mpSplit2.GetName());
 	AssertTrue(pcDoubleNamedString->mpSplit2.IsNotNull());
 	AssertTrue(pcDoubleNamedString->mpSplit2.IsHollow());
 	AssertInt(3, pcDoubleNamedString->mpSplit2.DistToRoot());
 	
-	pcObject2 = pcObjectSource->Convert("Named String2");
+	pcHollow = (CNamedHollowObject*)gcObjects.GetBaseObject(3LL);
+	AssertNotNull(pcHollow);
+	AssertString("NamedString 2", pcHollow->GetName());
+
+	pcEnd = (CTestNamedString*)gcObjects.GetBaseObject(7LL);
+	AssertNull(pcEnd);
+
+	pcObject2 = pcObjectSource->Convert("NamedString 2");
+	AssertString("CTestNamedString", pcObject2.ClassName());
+	AssertLongLongInt(3, pcObject2.GetIndex());
 	AssertTrue(pcObject2.IsNotNull());
+	pcObject = pcDoubleNamedString->mpSplit1;
 	AssertPointer(pcObject.Object(), pcObject2.Object());
 	AssertFalse(pcObject2.IsHollow());
 	AssertInt(3, pcObject2.DistToRoot());
 	AssertString("NamedString 2", pcObject2.GetName());
+	pcTestNamedString2 = (CTestNamedString*)pcObject2.Object();
+	AssertString("6789", pcTestNamedString2->mszString->Text());
+	AssertTrue(pcTestNamedString2->mpAnother.IsHollow());
+	AssertString("Diamond End", pcTestNamedString2->mpAnother.GetName());
+	AssertLongLongInt(9, pcTestNamedString2->mpAnother.GetIndex());
+
+	pcObject3 = pcObjectSource->Convert("NamedString 1");
+	AssertFalse(pcObject3.IsNull());
+	AssertString("CTestNamedString", pcObject3.ClassName());
+	pcTestNamedString3 = (CTestNamedString*)pcObject3.Object();
+	AssertString("World", pcTestNamedString3->mszString->Text());
+	AssertTrue(pcTestNamedString3->mpAnother.IsHollow());
+	AssertString("Diamond End", pcTestNamedString3->mpAnother.GetName());
+	AssertLongLongInt(9, pcTestNamedString3->mpAnother.GetIndex());
+	AssertPointer(pcTestNamedString2->mpAnother.Object(), pcTestNamedString3->mpAnother.Object());
+	AssertTrue(pcTestNamedString2->mpAnother.IsHollow());
 
 	pcObjectSource->Kill();
 	cChunkedConverter.Kill();
@@ -243,7 +278,7 @@ void TestObjectConverter(void)
 	BeginTests();
 
 	TestObjectConverterText();
-	TestObjectConverterDragon();
+	TestObjectConverterDragonExistingHollows();
 
 	TestStatistics();
 
