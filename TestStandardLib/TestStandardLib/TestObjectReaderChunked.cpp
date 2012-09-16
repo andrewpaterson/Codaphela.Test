@@ -232,7 +232,7 @@ void TestObjectReaderChunked(void)
 	CFileUtil	cFileUtil;
 
 	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output\\ObjectReaderChunked");
+	cFileUtil.MakeDir("Output/ObjectReaderChunked");
 	ObjectsInit(NULL);
 	BeginTests();
 

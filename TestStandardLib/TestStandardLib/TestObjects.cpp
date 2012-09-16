@@ -16,13 +16,17 @@ CPointer<CTestDoubleNamedString> SetupObjectsForDehollowfication(void)
 	CPointer<CTestNamedString>			cDiamond;
 	CPointer<CTestDoubleNamedString>	cDouble;
 	CPointer<CRoot>						cRoot;
+	CPointer<CString>					cS1;
+	CPointer<CString>					cS2;
 
 	cRoot = ORoot();
 
 	cDiamond = ONMalloc(CTestNamedString, "Diamond");
 
+	cS1 = OMalloc(CString);
+	cS1->Init("CS1");
 	cNS1 = ONMalloc(CTestNamedString, "NS1");
-	cNS1->Init(ONNull(CString), cDiamond, "NS1");
+	cNS1->Init(cS1, cDiamond, "NS1");
 
 	cNS2 = ONMalloc(CTestNamedString, "NS2");
 	cNS2->Init(ONNull(CString), cDiamond, "NS2");
@@ -30,7 +34,9 @@ CPointer<CTestDoubleNamedString> SetupObjectsForDehollowfication(void)
 	cNS3 = ONMalloc(CTestNamedString, "NS3");
 	cNS3->Init(ONNull(CString), cNS1, "NS3");
 
-	cDiamond->Init(ONNull(CString), ONNull(CTestNamedString), "Diamond");
+	cS2 = OMalloc(CString);
+	cS2->Init("CS2");
+	cDiamond->Init(cS2, ONNull(CTestNamedString), "Diamond");
 
 	cDouble = ONMalloc(CTestDoubleNamedString, "Double");
 	cDouble->Init(ONNull(CString), cNS2, cNS3);
@@ -46,9 +52,43 @@ CPointer<CTestDoubleNamedString> SetupObjectsForDehollowfication(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectDehollowfication(void)
 {
-	ObjectsInit(NULL);
+	CFileUtil	cFileUtil;
+
+	cFileUtil.RemoveDir("Output");
+	cFileUtil.MakeDir("Output/Dehollowfication");
+	ObjectsInit("Output/Dehollowfication");
 	SetupObjectsForDehollowfication();
-	gcObjects.Close();
+	gcObjects.Flush();
+	ObjectsKill();
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectsFlush(void)
+{
+	CFileUtil	cFileUtil;
+	BOOL		bResult;
+
+	cFileUtil.RemoveDir("Output");
+	cFileUtil.MakeDir("Output/Dehollowfication");
+	ObjectsInit("Output/Dehollowfication");
+	SetupObjectsForDehollowfication();
+
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+	
+	bResult = gcObjects.Flush();
+	AssertTrue(bResult);
+
+	AssertLongLongInt(9, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+
 	ObjectsKill();
 }
 
@@ -61,6 +101,7 @@ void TestObjects(void)
 {
 	BeginTests();
 
+	TestObjectsFlush();
 	TestObjectDehollowfication();
 
 	TestStatistics();
