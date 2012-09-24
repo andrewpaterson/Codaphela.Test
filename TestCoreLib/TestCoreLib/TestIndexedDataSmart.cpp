@@ -48,7 +48,9 @@ void TestIndexedDataMemoryToHugeIndices(void)
 					2,
 					2,
 					1,
-					1 MB);
+					1 MB,
+					FALSE);
+
 	cIndexedData.Init(&cConfig);
 	cIndexedData.DurableBegin();
 
@@ -154,7 +156,9 @@ void TestIndexedDataWriteThrough(void)
 		2,
 		2,
 		1,
-		1 MB);
+		1 MB,
+		FALSE);
+
 	cIndexedData.Init(&cConfig);
 	cIndexedData.DurableBegin();
 
@@ -263,7 +267,9 @@ void TestIndexedDataWriteDirtyTesting(void)
 		2,
 		2,
 		1,
-		1 MB);
+		1 MB,
+		FALSE);
+
 	cIndexedData.Init(&cConfig);
 	cIndexedData.DurableBegin();
 
