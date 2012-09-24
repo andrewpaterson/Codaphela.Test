@@ -205,8 +205,8 @@ void TestObjects(void)
 	BeginTests();
 
 	TestObjectsInMemoryIteration();
-	//TestObjectsObjectSave();
-	//TestObjectsFlush();
+	TestObjectsObjectSave();
+	TestObjectsFlush();
 	//TestObjectDehollowfication();
 
 	TestStatistics();
