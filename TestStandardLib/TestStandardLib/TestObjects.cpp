@@ -50,6 +50,69 @@ CPointer<CTestDoubleNamedString> SetupObjectsForDehollowfication(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectsObjectSave(void)
+{
+	CFileUtil							cFileUtil;
+	CPointer<CTestDoubleNamedString>	cDouble;
+	BOOL								bResult;
+
+	cFileUtil.RemoveDir("Output");
+	cFileUtil.MakeDir("Output/ObjectSave");
+	ObjectsInit("Output/ObjectSave");
+	cDouble = SetupObjectsForDehollowfication();
+
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+	AssertTrue(cDouble.IsDirty());
+	
+	bResult = gcObjects.Save(cDouble.Object());
+	AssertTrue(bResult);
+	AssertTrue(cDouble.IsDirty());  //This object is *still* dirty after save.  Almost no objects will answer true to IsDirty.
+
+	AssertLongLongInt(1, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+	AssertInt(102, cDouble->SerialisedSize());
+	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached(102));
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached(110));
+
+	bResult = gcObjects.Save(cDouble.Object());
+	AssertTrue(bResult);
+	AssertLongLongInt(1, gcObjects.NumDatabaseObjects());
+	AssertInt(102, cDouble->SerialisedSize());
+	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached(102));
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached(110));
+	
+	cDouble->mszString = OMalloc(CString);
+	cDouble->mszString->Init("A String");
+
+	bResult = gcObjects.Save(cDouble.Object());
+	AssertTrue(bResult);
+	AssertLongLongInt(1, gcObjects.NumDatabaseObjects());
+	AssertInt(110, cDouble->SerialisedSize());
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached(102));
+	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached(110));
+
+	cDouble->mszString = OMalloc(CString);
+	cDouble->mszString->Init("Different Object");
+
+	AssertInt(110, cDouble->SerialisedSize());
+	bResult = gcObjects.Save(cDouble.Object());
+	AssertTrue(bResult);
+	AssertLongLongInt(1, gcObjects.NumDatabaseObjects());
+	AssertInt(110, cDouble->SerialisedSize());
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached(102));
+	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached(110));
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectDehollowfication(void)
 {
 	CFileUtil	cFileUtil;
@@ -61,7 +124,6 @@ void TestObjectDehollowfication(void)
 	gcObjects.Flush();
 	ObjectsKill();
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -101,8 +163,9 @@ void TestObjects(void)
 {
 	BeginTests();
 
-	TestObjectsFlush();
-	TestObjectDehollowfication();
+	TestObjectsObjectSave();
+	//TestObjectsFlush();
+	//TestObjectDehollowfication();
 
 	TestStatistics();
 }
