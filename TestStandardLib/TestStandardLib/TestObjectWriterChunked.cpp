@@ -115,7 +115,7 @@ void TestObjectWriterChunked(void)
 
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output/ObjectWriterChunked");
-	ObjectsInit(NULL);
+	ObjectsInit();
 	BeginTests();
 
 	TestObjectWriterChunkedWrite();

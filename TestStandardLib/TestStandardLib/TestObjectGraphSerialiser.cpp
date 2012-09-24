@@ -86,7 +86,7 @@ void TestObjectGraphSerialiser(void)
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output/GraphWriter");
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 	BeginTests();
 
 	TestObjectGraphSerialiserReachability();

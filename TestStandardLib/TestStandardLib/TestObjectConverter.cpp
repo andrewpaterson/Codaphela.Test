@@ -124,11 +124,11 @@ void TestObjectConverterDragonExistingHollows(void)
 	CTestNamedString*					pcTestNamedString3;
 	CTestNamedString*					pcTestNamedString2;
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 	WriteObjectConverterChunkedFile();
 	ObjectsKill();
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 	SetupObjectConverterConstructors();
 
 	pcDiskFile = DiskFile("Output\\ObjectConverter\\Double.DRG");
@@ -238,7 +238,7 @@ void TestObjectConverterText(void)
 	CPointerObject			pcObject;
 	CPointer<CString>		pcString;
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 
 	iTextLen = strlen(szTextInFile);
 	cMemoryFile.Init(szTextInFile, iTextLen);
@@ -336,11 +336,11 @@ void TestObjectConverterDragonRootDistance(void)
 	CDiskFile*							pcDiskFile;
 	CPointer<CRoot>						pcRoot;
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 	WriteObjectConverterChunkedFile2();
 	ObjectsKill();
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 	SetupObjectConverterConstructors();
 
 	pcDiskFile = DiskFile("Output\\ObjectConverter\\Trouble.DRG");

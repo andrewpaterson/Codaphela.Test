@@ -131,7 +131,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertLongLongInt(14, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
-	ObjectsInit(NULL);
+	ObjectsInit();
 
 	gcObjects.AddConstructor<CTestWithArray>();
 	gcObjects.AddConstructor<CTestInteger>();
@@ -233,7 +233,7 @@ void TestObjectReaderChunked(void)
 
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output/ObjectReaderChunked");
-	ObjectsInit(NULL);
+	ObjectsInit();
 	BeginTests();
 
 	TestObjectReaderChunkedDeserialised();

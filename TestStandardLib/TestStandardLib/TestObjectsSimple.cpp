@@ -33,7 +33,7 @@ void TestObjectFreeing(void)
 	STestObjectKilledNotifier		sKillNotifier1;
 	STestObjectKilledNotifier		sKillNotifier2;
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 
 	pTest1 = OMalloc(CTestObject);
 	pTest2 = OMalloc(CTestObject);

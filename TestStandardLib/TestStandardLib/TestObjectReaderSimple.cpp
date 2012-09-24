@@ -70,7 +70,7 @@ void TestObjectReaderSimpleDeserialised(void)
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
-	ObjectsInit(NULL);
+	ObjectsInit();
 
 	gcObjects.AddConstructor<CTestNamedString>();
 
@@ -115,7 +115,7 @@ void TestObjectReaderSimple(void)
 
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output/ObjectReaderSimple");
-	ObjectsInit(NULL);
+	ObjectsInit();
 	BeginTests();
 
 	TestObjectReaderSimpleDeserialised();

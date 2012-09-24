@@ -33,7 +33,7 @@ void TestPointerNegation(void)
 void TestPointer(void)
 {
 	BeginTests();
-	ObjectsInit(NULL);
+	ObjectsInit();
 
 	TestPointerNegation();
 

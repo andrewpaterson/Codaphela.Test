@@ -19,7 +19,7 @@ void TestArrayCommonPointerRemapping(void)
 	CPointerObject					pNull;
 	int								iNumRemapped;
 	
-	ObjectsInit(NULL);
+	ObjectsInit();
 
 	pRoot = ORoot();
 	pArray = OMalloc(CArrayCommonObject);

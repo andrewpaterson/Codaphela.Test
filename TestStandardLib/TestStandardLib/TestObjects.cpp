@@ -55,10 +55,14 @@ void TestObjectsObjectSave(void)
 	CFileUtil							cFileUtil;
 	CPointer<CTestDoubleNamedString>	cDouble;
 	BOOL								bResult;
+	CIndexedConfig						cConfig;
 
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output/ObjectSave");
-	ObjectsInit("Output/ObjectSave");
+	cConfig.OptimiseForGameGraph("Output/ObjectSave");
+	cConfig.SetTransient(TRUE);
+	ObjectsInit(&cConfig);
+
 	cDouble = SetupObjectsForDehollowfication();
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());

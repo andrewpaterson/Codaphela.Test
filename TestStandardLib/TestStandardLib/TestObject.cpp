@@ -14,7 +14,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestObjectSize(void)
 {
-	ObjectsInit(NULL);
+	ObjectsInit();
 
 	AssertInt(12, sizeof(CUnknown));
 	AssertInt(104, sizeof(CObject));
@@ -41,7 +41,7 @@ void TestObjectPointerRemapping(void)
 	STestObjectKilledNotifier		sKillNotifier3;
 	int								iNumRemapped;
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 
 	pRoot = ORoot();
 
@@ -101,7 +101,7 @@ void TestObjectPointerRemappingKilling(void)
 	STestObjectKilledNotifier		sKillNotifier5;
 	int								iNumRemapped;
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 
 	pRoot = ORoot();
 
@@ -182,7 +182,7 @@ void TestObjectPointerRemappingComplex(void)
 	STestObjectKilledNotifier		sKillNotifier15;
 	int								iNumRemapped;
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 
 	pRoot = ORoot();
 

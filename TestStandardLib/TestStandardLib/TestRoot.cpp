@@ -18,7 +18,7 @@ void TestRootDistance(void)
 	int							iDist;
 	CBaseObject*				pcFrom;
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 	pcRoot = ORoot();
 	AssertInt(ROOT_DIST_TO_ROOT, pcRoot->DistToRoot());
 	AssertInt(ROOT_DIST_TO_ROOT+1, pcRoot->TestGetSet()->DistToRoot());
@@ -64,7 +64,7 @@ void TestStackPointers(void)
 	CObject*					pcTest2;
 	CObject*					pcTest3;
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 
 	pTest1 = OMalloc(CTestObject);
 	pTest1->Init(&sKilled1);
@@ -144,7 +144,7 @@ void TestRootGraphRemoveSimple(void)
 	CPointer<CTestObject>		pTop1;
 	CPointer<CTestObject>		pTop2;
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 	pRoot = ORoot();
 	
 	pTest2 = OMalloc(CTestObject);
@@ -437,7 +437,7 @@ void TestRootGraphRemoveComplex(void)
 	CPointer<CTestObject>		pTop1;
 	CPointer<CTestObject>		pTop2;
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 	pRoot = ORoot();
 	
 	pTest2 = OMalloc(CTestObject);
@@ -623,7 +623,7 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	CPointer<CTestObject>		pTop1;
 	CPointer<CTestObject>		pTop2;
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 	pRoot = ORoot();
 	
 	pTest1 = OMalloc(CTestObject);
@@ -739,7 +739,7 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 	CPointer<CTestObject>		pTop1;
 	CPointer<CTestObject>		pTop2;
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 	pRoot = ORoot();
 	
 	pTest1 = OMalloc(CTestObject);
@@ -870,7 +870,7 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	CPointer<CTestObject>		pTop1;
 	CPointer<CTestObject>		pTop2;
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 	pRoot = ORoot();
 	
 	pTest1 = OMalloc(CTestObject);
@@ -1010,7 +1010,7 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 	STestObjectKilledNotifier		sKillNotifier9;
 	STestObjectKilledNotifier		sKillNotifier15;
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 
 	pRoot = ORoot();
 
@@ -1159,7 +1159,7 @@ void TestRootGraphRemoveErrorFromObjectConverter(void)
 	CPointer<CString>					sz4;
 	CPointer<CRoot>						cRoot;
 
-	ObjectsInit(NULL);
+	ObjectsInit();
 
 	cRoot = ORoot();
 
