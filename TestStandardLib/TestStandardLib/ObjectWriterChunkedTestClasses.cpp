@@ -133,4 +133,3 @@ BOOL CTestDoubleNamedString::Load(CObjectDeserialiser* pcFile)
 	return TRUE;
 }
 
-

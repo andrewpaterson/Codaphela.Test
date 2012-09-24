@@ -50,6 +50,43 @@ CPointer<CTestDoubleNamedString> SetupObjectsForDehollowfication(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectsInMemoryIteration()
+{
+	SIndexesIterator	sIter;
+	OIndex				oi;
+
+	ObjectsInit();
+	SetupObjectsForDehollowfication();
+
+	oi = gcObjects.StartMemoryIteration(&sIter);
+	AssertLongLongInt(1LL, oi);
+	oi = gcObjects.IterateMemory(&sIter);
+	AssertLongLongInt(2LL, oi);
+	oi = gcObjects.IterateMemory(&sIter);
+	AssertLongLongInt(3LL, oi);
+	oi = gcObjects.IterateMemory(&sIter);
+	AssertLongLongInt(4LL, oi);
+	oi = gcObjects.IterateMemory(&sIter);
+	AssertLongLongInt(5LL, oi);
+	oi = gcObjects.IterateMemory(&sIter);
+	AssertLongLongInt(6LL, oi);
+	oi = gcObjects.IterateMemory(&sIter);
+	AssertLongLongInt(7LL, oi);
+	oi = gcObjects.IterateMemory(&sIter);
+	AssertLongLongInt(8LL, oi);
+	oi = gcObjects.IterateMemory(&sIter);
+	AssertLongLongInt(9LL, oi);
+	oi = gcObjects.IterateMemory(&sIter);
+	AssertLongLongInt(INVALID_O_INDEX, oi);
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectsObjectSave(void)
 {
 	CFileUtil							cFileUtil;
@@ -167,7 +204,8 @@ void TestObjects(void)
 {
 	BeginTests();
 
-	TestObjectsObjectSave();
+	TestObjectsInMemoryIteration();
+	//TestObjectsObjectSave();
 	//TestObjectsFlush();
 	//TestObjectDehollowfication();
 
