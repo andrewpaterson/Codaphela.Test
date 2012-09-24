@@ -48,9 +48,10 @@ void TestIndexes(void)
 	szTemp = (char*)cIndexes.Get(268472648234LL);
 	AssertString(szTwo, szTemp);
 
-	cIndexes.Add(17LL, szFour);
+	bResult = cIndexes.Add(17LL, szFour);
+	AssertFalse(bResult);
 	szTemp = (char*)cIndexes.Get(17LL);
-	AssertString(szFour, szTemp);
+	AssertString(szOne, szTemp);
 	AssertInt(11, cIndexes.TestNumLevels());
 
 	bResult = cIndexes.Remove(17LL);
