@@ -193,6 +193,16 @@ void TestObjectsFlush(void)
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 
 	ObjectsKill();
+
+	AssertFile("Input/Dehollowfication/48_0.DAT",     "Output/Dehollowfication/48_0.DAT");
+	AssertFile("Input/Dehollowfication/56_0.DAT",     "Output/Dehollowfication/56_0.DAT");
+	AssertFile("Input/Dehollowfication/68_0.DAT",     "Output/Dehollowfication/68_0.DAT");
+	AssertFile("Input/Dehollowfication/89_0.DAT",     "Output/Dehollowfication/89_0.DAT");
+	AssertFile("Input/Dehollowfication/93_0.DAT",     "Output/Dehollowfication/93_0.DAT");
+	AssertFile("Input/Dehollowfication/101_0.DAT",    "Output/Dehollowfication/101_0.DAT");
+	AssertFile("Input/Dehollowfication/102_0.DAT",    "Output/Dehollowfication/102_0.DAT");
+	AssertFile("Input/Dehollowfication/Files.DAT",    "Output/Dehollowfication/Files.DAT");
+	AssertFile("Input/Dehollowfication/Indicies.DAT", "Output/Dehollowfication/Indicies.DAT");
 }
 
 
@@ -204,8 +214,8 @@ void TestObjects(void)
 {
 	BeginTests();
 
-	TestObjectsInMemoryIteration();
-	TestObjectsObjectSave();
+	//TestObjectsInMemoryIteration();
+	//TestObjectsObjectSave();
 	TestObjectsFlush();
 	//TestObjectDehollowfication();
 
