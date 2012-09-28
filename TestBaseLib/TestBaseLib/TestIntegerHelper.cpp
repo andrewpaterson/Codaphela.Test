@@ -136,9 +136,127 @@ void TestFindFirstSetBit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFindLastClearBit(void)
+{
+	unsigned char	ab[9];
+	int				iIndex;
+	int				iBit;
+
+	ab[0] = ab[1] = ab[2] = ab[3] = ab[4] = ab[5] = ab[6] = ab[7] = ab[8] = 0xff;
+	iIndex = FindLastClearBit(ab, 64);
+	AssertInt(-1, iIndex);
+
+	ab[0] = 0x7f;
+	iIndex = FindLastClearBit(ab, 64);
+	AssertInt(7, iIndex);
+	ab[0] = 0xfe;
+	iIndex = FindLastClearBit(ab, 64);
+	AssertInt(0, iIndex);
+
+	ab[0] = 0xff;
+
+	for (iBit = 0; iBit < 72; iBit++)
+	{
+		SetBit(iBit, ab, FALSE);
+		iIndex = FindLastClearBit(ab, 72);
+		AssertInt(iBit, iIndex);
+	}
+
+	ab[0] = 0xff;
+	iIndex = FindLastClearBit(ab, 2);
+	AssertInt(-1, iIndex);
+	ab[0] = 0xfd;
+	iIndex = FindLastClearBit(ab, 2);
+	AssertInt(1, iIndex);
+	ab[0] = 0xfe;
+	iIndex = FindLastClearBit(ab, 2);
+	AssertInt(0, iIndex);
+	ab[0] = 0xfc;
+	iIndex = FindLastClearBit(ab, 2);
+	AssertInt(1, iIndex);
+	ab[0] = 0xfb;
+	iIndex = FindLastClearBit(ab, 2);
+	AssertInt(-1, iIndex);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFindLastSetBit(void)
+{
+	unsigned char	ab[9];
+	int				iIndex;
+	int				iBit;
+
+	ab[0] = ab[1] = ab[2] = ab[3] = ab[4] = ab[5] = ab[6] = ab[7] = ab[8] = 0;
+	iIndex = FindLastSetBit(ab, 64);
+	AssertInt(-1, iIndex);
+
+	ab[7] = 128;
+	iIndex = FindLastSetBit(ab, 64);
+	AssertInt(63, iIndex);
+	ab[7] = 64;
+	iIndex = FindLastSetBit(ab, 64);
+	AssertInt(62, iIndex);
+	ab[7] = 32;
+	iIndex = FindLastSetBit(ab, 64);
+	AssertInt(61, iIndex);
+	ab[7] = 16;
+	iIndex = FindLastSetBit(ab, 64);
+	AssertInt(60, iIndex);
+	ab[7] = 8;
+	iIndex = FindLastSetBit(ab, 64);
+	AssertInt(59, iIndex);
+	ab[7] = 4;
+	iIndex = FindLastSetBit(ab, 64);
+	AssertInt(58, iIndex);
+	ab[7] = 2;
+	iIndex = FindLastSetBit(ab, 64);
+	AssertInt(57, iIndex);
+	ab[7] = 1;
+	iIndex = FindLastSetBit(ab, 64);
+	AssertInt(56, iIndex);
+	ab[7] = 0;
+	ab[6] = 128;
+	iIndex = FindLastSetBit(ab, 64);
+	AssertInt(55, iIndex);
+	ab[6] = 64;
+	iIndex = FindLastSetBit(ab, 64);
+	AssertInt(54, iIndex);
+
+	ab[6] = 0;
+	ab[0] = 128;
+	iIndex = FindLastSetBit(ab, 64);
+	AssertInt(7, iIndex);
+	ab[0] = 2;
+	iIndex = FindLastSetBit(ab, 64);
+	AssertInt(1, iIndex);
+	ab[0] = 1;
+	iIndex = FindLastSetBit(ab, 64);
+	AssertInt(0, iIndex);
+
+	ab[0] = 0;
+
+	for (iBit = 0; iBit < 72; iBit++)
+	{
+		SetBit(iBit, ab, TRUE);
+		iIndex = FindLastSetBit(ab, 72);
+		AssertInt(iBit, iIndex);
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIntegerHelper(void)
 {
 	TestFindFirstClearBit();
 	TestFindFirstSetBit();
+	TestFindLastClearBit();
+	TestFindLastSetBit();
 }
 
