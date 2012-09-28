@@ -22,8 +22,8 @@ void TestMemoryAdd(void)
 	void*				pv9;
 	void*				pv;
 	SMemoryAllocation*	psAlloc;
-	CFreeListBlock*	pcList;
-	CFreeListBlock*	pcListSame;
+	CFreeListBlock*		pcList;
+	CFreeListBlock*		pcListSame;
 	SFreeListIterator	sIter;
 	int*				piBits;
 
@@ -106,7 +106,7 @@ void TestMemoryLargeAdd(void)
 {
 	CMemory				cMemory;
 	void*				pv;
-	CFreeListBlock*	pcList;
+	CFreeListBlock*		pcList;
 
 	cMemory.Init();
 	pcList = cMemory.mcFreeLists.GetHead();
@@ -135,9 +135,124 @@ void TestMemoryLargeAdd(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMemoryFree(void)
+void SetupTestMemoryRemove(CMemory* pcMemory)
 {
+	void*				pv;
 
+	pcMemory->Init(4, FALSE);
+	pcMemory->AddParamBlock(8, 0, 4);
+	pcMemory->AddParamBlock(16, 8, 4);
+	pcMemory->AddParamBlock(24, 16, 4);
+
+	pv = pcMemory->Add(10);
+	AssertInt(1, pcMemory->NumElements());
+	pcMemory->Remove(pv);
+	AssertInt(0, pcMemory->NumElements());
+
+	pcMemory->Add(10);
+	pcMemory->Add(11);
+	pv = pcMemory->Add(12);
+	pcMemory->Add(13);
+
+	pcMemory->Add(9);
+	pcMemory->Add(14);
+	pcMemory->Add(10);
+	pcMemory->Add(9);
+
+	pcMemory->Add(9);
+	pcMemory->Add(14);
+
+	pcMemory->Remove(pv);
+	AssertInt(9, pcMemory->NumElements());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMemoryRemoveAllByArray(void)
+{
+	CMemory				cMemory;
+	CArrayVoidPtr		apv;
+	SMemoryIterator		sIter;
+	void*				pv;
+
+	SetupTestMemoryRemove(&cMemory);
+
+	apv.Init();
+	pv = cMemory.StartIteration(&sIter);
+	while (pv)
+	{
+		apv.Add(pv);
+		pv = cMemory.Iterate(&sIter);
+	}
+
+	AssertInt(9, apv.NumElements());
+
+	cMemory.Remove(&apv);
+	AssertInt(0, cMemory.NumElements());
+
+	apv.Kill();
+	cMemory.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMemoryRemoveHalfByArray(void)
+{
+	CMemory				cMemory;
+	CArrayVoidPtr		apv;
+	SMemoryIterator		sIter;
+	void*				pv;
+	BOOL				bAdd;
+
+	SetupTestMemoryRemove(&cMemory);
+
+	apv.Init();
+	pv = cMemory.StartIteration(&sIter);
+	bAdd = TRUE;
+	while (pv)
+	{
+		if (bAdd)
+		{
+			apv.Add(pv);
+		}
+		bAdd = !bAdd;
+		pv = cMemory.Iterate(&sIter);
+	}
+
+	AssertInt(5, apv.NumElements());
+
+	cMemory.Remove(&apv);
+	AssertInt(4, cMemory.NumElements());
+
+	apv.Kill();
+	cMemory.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMemoryRemoveNoneByArray(void)
+{
+	CMemory				cMemory;
+	CArrayVoidPtr		apv;
+
+	SetupTestMemoryRemove(&cMemory);
+
+	apv.Init();
+	
+	cMemory.Remove(&apv);
+	AssertInt(9, cMemory.NumElements());
+
+	apv.Kill();
+	cMemory.Kill();
 }
 
 
@@ -151,7 +266,9 @@ void TestMemory(void)
 
 	TestMemoryLargeAdd();
 	TestMemoryAdd();
-	TestMemoryFree();
+	TestMemoryRemoveAllByArray();
+	TestMemoryRemoveHalfByArray();
+	TestMemoryRemoveNoneByArray();
 
 	TestStatistics();
 }
