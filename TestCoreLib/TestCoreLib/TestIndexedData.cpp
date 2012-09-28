@@ -173,7 +173,7 @@ void TestIndexedAdd(void)
 	AssertBool(TRUE, bResult);
 	AssertInt(1, (int)cIndexedData.NumCached());
 	AssertInt(0, (int)cIndexedData.NumInFile(4));
-	cIndexedData.Flush();
+	cIndexedData.Flush(TRUE);
 	AssertInt(1, (int)cIndexedData.NumInFile(4));
 	AssertInt(0, (int)cIndexedData.NumCached());
 
@@ -194,7 +194,7 @@ void TestIndexedAdd(void)
 	cIndexedData.Get(OI, szIn);
 	AssertString(szFish, szIn);
 
-	cIndexedData.Flush();
+	cIndexedData.Flush(TRUE);
 	AssertInt(1, (int)cIndexedData.NumInFile(4));
 	AssertInt(1, (int)cIndexedData.NumInFile(5));
 	cIndexedData.Get(OI, szIn);
@@ -202,7 +202,7 @@ void TestIndexedAdd(void)
 
 	bResult = cIndexedData.Set(OI, szCat, 4, 0);
 	AssertBool(TRUE, bResult);
-	cIndexedData.Flush();
+	cIndexedData.Flush(TRUE);
 	AssertInt(2, (int)cIndexedData.NumInFile(4));  //One is ignored but they are both still in the file.
 	AssertInt(1, (int)cIndexedData.NumElements());
 
@@ -217,7 +217,7 @@ void TestIndexedAdd(void)
 	AssertBool(TRUE, bResult);
 	AssertInt(1, (int)cIndexedData.NumCached());
 	AssertInt(1, (int)cIndexedData.TestNumCachedIndexes());
-	cIndexedData.Flush();
+	cIndexedData.Flush(TRUE);
 	AssertInt(3, (int)cIndexedData.NumInFile(4));
 	AssertInt(1, (int)cIndexedData.NumInFile(5));
 	AssertInt(2, (int)cIndexedData.NumElements());

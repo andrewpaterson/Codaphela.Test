@@ -162,7 +162,7 @@ void TestObjectDehollowfication(void)
 	cFileUtil.MakeDir("Output/Dehollowfication");
 	ObjectsInit("Output/Dehollowfication");
 	SetupObjectsForDehollowfication();
-	gcObjects.Flush();
+	gcObjects.Flush(TRUE, TRUE);
 	ObjectsKill();
 }
 
@@ -185,7 +185,7 @@ void TestObjectsFlush(void)
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 	
-	bResult = gcObjects.Flush();
+	bResult = gcObjects.Flush(FALSE, FALSE);
 	AssertTrue(bResult);
 
 	AssertLongLongInt(9, gcObjects.NumDatabaseObjects());
@@ -210,14 +210,91 @@ void TestObjectsFlush(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectsEvict(void)
+{
+	CFileUtil	cFileUtil;
+	BOOL		bResult;
+
+	cFileUtil.RemoveDir("Output");
+	cFileUtil.MakeDir("Output/Eviction");
+	ObjectsInit("Output/Eviction");
+	SetupObjectsForDehollowfication();
+
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached());
+	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+
+	bResult = gcObjects.Flush(FALSE, FALSE);
+	AssertTrue(bResult);
+
+	AssertLongLongInt(9, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(9, gcObjects.NumDatabaseObjectsCached());
+	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+
+	ObjectsKill();
+
+	cFileUtil.RemoveDir("Output");
+	cFileUtil.MakeDir("Output/Eviction");
+	ObjectsInit("Output/Eviction");
+	SetupObjectsForDehollowfication();
+
+	bResult = gcObjects.Flush(FALSE, TRUE);
+	AssertTrue(bResult);
+
+	AssertLongLongInt(9, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached());
+	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+
+	ObjectsKill();
+
+	cFileUtil.RemoveDir("Output");
+	cFileUtil.MakeDir("Output/Eviction");
+	ObjectsInit("Output/Eviction");
+	SetupObjectsForDehollowfication();
+
+	bResult = gcObjects.Flush(TRUE, FALSE);
+	AssertTrue(bResult);
+
+	AssertLongLongInt(9, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(9, gcObjects.NumDatabaseObjectsCached());
+	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(0, gcObjects.NumMemoryNames());
+
+	ObjectsKill();
+
+	cFileUtil.RemoveDir("Output");
+	cFileUtil.MakeDir("Output/Eviction");
+	ObjectsInit("Output/Eviction");
+	SetupObjectsForDehollowfication();
+
+	bResult = gcObjects.Flush(TRUE, TRUE);
+	AssertTrue(bResult);
+
+	AssertLongLongInt(9, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached());
+	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(0, gcObjects.NumMemoryNames());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjects(void)
 {
 	BeginTests();
 
-	//TestObjectsInMemoryIteration();
-	//TestObjectsObjectSave();
+	TestObjectsInMemoryIteration();
+	TestObjectsObjectSave();
 	TestObjectsFlush();
-	//TestObjectDehollowfication();
+	TestObjectsEvict();
+	TestObjectDehollowfication();
 
 	TestStatistics();
 }
