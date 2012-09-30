@@ -16,7 +16,7 @@ public:
 	int					mx;
 
 	void Init(char* szString, int x);
-	void Kill(void);
+	void KillData(void);
 
 	void Add(CPointerObject pcObject);
 
@@ -34,7 +34,7 @@ public:
 	int mz;
 
 	void Init(int x, int y, int z);
-	void Kill(void);
+	void KillData(void);
 
 	BOOL Save(CObjectSerialiser* pcFile);
 	BOOL Load(CObjectDeserialiser* pcFile);
@@ -50,7 +50,7 @@ public:
 	CChars						mszEmbedded;
 
 	void Init(CPointer<CString> szString, CPointer<CTestNamedString> pAnother, char* szEmbedded);
-	void Kill(void);
+	void KillData(void);
 
 	BOOL Save(CObjectSerialiser* pcFile);
 	BOOL Load(CObjectDeserialiser* pcFile);
@@ -66,7 +66,7 @@ public:
 	CPointer<CTestNamedString>	mpSplit1;
 
 	void Init(CPointer<CString> szString, CPointer<CTestNamedString> pSplit2, CPointer<CTestNamedString> pSplit1);
-	void Kill(void);
+	void KillData(void);
 
 	BOOL Save(CObjectSerialiser* pcFile);
 	BOOL Load(CObjectDeserialiser* pcFile);

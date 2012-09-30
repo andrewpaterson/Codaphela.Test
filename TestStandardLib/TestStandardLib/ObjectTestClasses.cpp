@@ -20,9 +20,8 @@ void CTestObject::Init(STestObjectKilledNotifier* psKilledNotifier)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestObject::Kill(void)
+void CTestObject::KillData(void)
 {
-	CObject::Kill();
 	mpsKilledNotifier->bKilled = TRUE;
 }
 
@@ -64,10 +63,9 @@ void CTestSaveableObject1::Init()
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestSaveableObject1::Kill(void)
+void CTestSaveableObject1::KillData(void)
 {
 	mszString.Kill();
-	CObject::Kill();
 }
 
 
@@ -118,10 +116,9 @@ void CTestSaveableObject2::Init(char* psz)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestSaveableObject2::Kill(void)
+void CTestSaveableObject2::KillData(void)
 {
 	msz.Kill();
-	CObject::Kill();
 }
 
 

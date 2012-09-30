@@ -13,10 +13,9 @@ void CTestWithArray::Init(char* szString, int x)
 	mx = x;
 }
 
-void CTestWithArray::Kill(void)
+void CTestWithArray::KillData(void)
 {
 	mszString.Kill();
-	CObject::Kill();
 }
 
 void CTestWithArray::Add(CPointerObject pcObject)
@@ -48,9 +47,8 @@ void CTestInteger::Init(int x, int y, int z)
 	mz = z;
 }
 
-void CTestInteger::Kill(void)
+void CTestInteger::KillData(void)
 {
-	CObject::Kill();
 }
 
 BOOL CTestInteger::Save(CObjectSerialiser* pcFile)
@@ -79,10 +77,8 @@ void CTestNamedString::Init(CPointer<CString> szString, CPointer<CTestNamedStrin
 	mszEmbedded.Init(szEmbedded);
 }
 
-void CTestNamedString::Kill(void)
+void CTestNamedString::KillData(void)
 {
-	mszString = NULL;;
-	CObject::Kill();
 }
 
 BOOL CTestNamedString::Save(CObjectSerialiser* pcFile)
@@ -112,9 +108,8 @@ void CTestDoubleNamedString::Init(CPointer<CString> szString, CPointer<CTestName
 	mpSplit2 = pSplit2;
 }
 
-void CTestDoubleNamedString::Kill(void)
+void CTestDoubleNamedString::KillData(void)
 {
-	CObject::Kill();
 }
 
 BOOL CTestDoubleNamedString::Save(CObjectSerialiser* pcFile)
