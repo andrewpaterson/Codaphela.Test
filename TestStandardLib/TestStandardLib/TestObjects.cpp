@@ -164,6 +164,8 @@ void TestObjectDehollowfication(void)
 	SetupObjectsForDehollowfication();
 	gcObjects.Flush(TRUE, TRUE);
 	ObjectsKill();
+
+	AssertFalse(TRUE);
 }
 
 
@@ -286,10 +288,149 @@ void TestObjectsEvict(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectsObjectKillInGraph(void)
+{
+	CPointer<CTestNamedString>			cNS1;
+	CPointer<CTestNamedString>			cNS2;
+	CPointer<CRoot>						cRoot;
+	CPointer<CString>					cS1;
+	CPointer<CString>					cS2;
+
+	ObjectsInit();
+
+	cRoot = ORoot();
+
+	cS1 = OMalloc(CString);
+	cS1->Init("CS1");
+	cNS1 = ONMalloc(CTestNamedString, "NS1");
+	cNS1->Init(cS1, ONNull(CTestNamedString), "NS1");
+
+	cS2 = OMalloc(CString);
+	cS2->Init("CS2");
+	cNS2 = ONMalloc(CTestNamedString, "NS2");
+	cNS2->Init(cS2, cNS1, "NS2");
+
+	cRoot->Add(cNS2);
+	
+	AssertPointer(cNS2->mpAnother.Object(), cNS1.Object());
+	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+
+	cNS1->Kill();
+
+	AssertNull(cNS2->mpAnother.Object());
+	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
+	AssertPointer(cNS2->mszString.Object(), cS2.Object());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectsArrayKillInGraph(void)
+{
+	CPointer<CTestNamedString>			cNS1;
+	CPointer<CArray>					cA1;
+	CPointer<CArray>					cA2;
+	CPointer<CRoot>						cRoot;
+	CPointer<CString>					cS1;
+
+
+	ObjectsInit();
+
+	cRoot = ORoot();
+
+	cS1 = OMalloc(CString);
+	cS1->Init("CS1");
+	cNS1 = ONMalloc(CTestNamedString, "NS1");
+	cNS1->Init(cS1, ONNull(CTestNamedString), "NS1");
+
+	cA1 = OMalloc(CArray);
+	cA2 = OMalloc(CArray);
+
+	cA1->Init();
+	cA1->Add(cNS1);
+
+	cA2->Init();
+	cA2->Add(cNS1);
+
+	cRoot->Add(cA1);
+	cRoot->Add(cA2);
+
+	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+
+	cA1->Kill();
+	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+
+	cA2->Kill();
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectsObjectKillInArrayInGraph(void)
+{
+	CPointer<CTestNamedString>			cNS1;
+	CPointer<CArray>					cA1;
+	CPointer<CArray>					cA2;
+	CPointer<CRoot>						cRoot;
+	CPointer<CString>					cS1;
+
+
+	ObjectsInit();
+
+	cRoot = ORoot();
+
+	cS1 = OMalloc(CString);
+	cS1->Init("CS1");
+	cNS1 = ONMalloc(CTestNamedString, "NS1");
+	cNS1->Init(cS1, ONNull(CTestNamedString), "NS1");
+
+	cA1 = OMalloc(CArray);
+	cA2 = OMalloc(CArray);
+
+	cA1->Init();
+	cA1->Add(cNS1);
+
+	cA2->Init();
+	cA2->Add(cNS1);
+
+	cRoot->Add(cA1);
+	cRoot->Add(cA2);
+
+	AssertInt(1, cA1->NumTos());
+	AssertInt(1, cA2->NumTos());
+	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+
+	cNS1->Kill();
+	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
+
+	AssertInt(0, cA1->NumTos());
+	AssertInt(0, cA2->NumTos());
+
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjects(void)
 {
 	BeginTests();
 
+	TestObjectsObjectKillInGraph();
+	TestObjectsArrayKillInGraph();
+	TestObjectsObjectKillInArrayInGraph();
 	TestObjectsInMemoryIteration();
 	TestObjectsObjectSave();
 	TestObjectsFlush();
