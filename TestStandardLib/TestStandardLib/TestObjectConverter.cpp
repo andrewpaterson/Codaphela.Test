@@ -184,11 +184,11 @@ void TestObjectConverterDragonExistingHollows(void)
 	AssertTrue(pcDoubleNamedString->mpSplit2.IsHollow());
 	AssertInt(3, pcDoubleNamedString->mpSplit2.DistToRoot());
 	
-	pcHollow = (CNamedHollowObject*)gcObjects.GetBaseObject(3LL);
+	pcHollow = (CNamedHollowObject*)gcObjects.GetInMemoryObject(3LL);
 	AssertNotNull(pcHollow);
 	AssertString("NamedString 2", pcHollow->GetName());
 
-	pcEnd = (CTestNamedString*)gcObjects.GetBaseObject(7LL);
+	pcEnd = (CTestNamedString*)gcObjects.GetInMemoryObject(7LL);
 	AssertNull(pcEnd);
 
 	pcObject2 = pcObjectSource->Convert("NamedString 2");

@@ -10,7 +10,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestCacheEviction(void)
+void TestIndexedDataCacheEviction(void)
 {
 	CIndexedData	cIndexedData;
 	OIndex			OI;
@@ -98,7 +98,7 @@ void TestCacheEviction(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestLargeData(void)
+void TestIndexedDataLargeData(void)
 {
 	CIndexedData	cIndexedData;
 	OIndex			OI;
@@ -148,7 +148,7 @@ void TestLargeData(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexedAdd(void)
+void TestIndexedDataIndexedAdd(void)
 {
 	CIndexedData	cIndexedData;
 	OIndex			OI;
@@ -233,7 +233,7 @@ void TestIndexedAdd(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestDescriptorCaching(void)
+void TestIndexedDataDescriptorCaching(void)
 {
 	CIndexedData	cIndexedData;
 	OIndex			OI;
@@ -243,18 +243,18 @@ void TestDescriptorCaching(void)
 
 	cFileUtil.RemoveDir("Database4");
 
-	cIndexedData.Init("Database4", 96, FALSE);  //Used to be huge
+	cIndexedData.Init("Database4", 96, FALSE);  
 
 	OI = 0LL;
 	iData = 77;
 	cIndexedData.Add(OI, &iData, 4, 0); OI++; 
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
-	iData = 0; OI = 0LL; cIndexedData.Get(OI, &iData);
+	iData = 0; OI = 0LL; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(77, iData);
 
 	OI = 2LL;
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
-	iData = 0; OI = 0LL; cIndexedData.Get(OI, &iData);
+	iData = 0; OI = 0LL; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(77, iData);
 
 	OI = 2LL;
@@ -264,10 +264,10 @@ void TestDescriptorCaching(void)
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
-	iData = 0; OI--; cIndexedData.Get(OI, &iData);;
+	iData = 0; OI--; cIndexedData.Get(OI, (void*)&iData);;
 	AssertInt(77, iData);
 
-	iData = 0; OI = 0LL; cIndexedData.Get(OI, &iData);
+	iData = 0; OI = 0LL; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(77, iData);
 
 	iNumCached = cIndexedData.TestNumCachedIndexes();
@@ -275,7 +275,7 @@ void TestDescriptorCaching(void)
 
 	cIndexedData.Kill();
 
-	cIndexedData.Init("Database4", 96, FALSE);  //Used to be huge
+	cIndexedData.Init("Database4", 96, FALSE);  
 
 	iNumCached = cIndexedData.TestNumCachedIndexes();
 	AssertInt(0, (int)iNumCached);
@@ -290,7 +290,7 @@ void TestDescriptorCaching(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestNoCaching(BOOL bDurable)
+void TestIndexedDataNoCaching(BOOL bDurable)
 {
 	CIndexedData	cIndexedData;
 	OIndex			OI;
@@ -300,7 +300,7 @@ void TestNoCaching(BOOL bDurable)
 
 	cFileUtil.RemoveDir("Database5");
 
-	cIndexedData.Init("Database5", 0, bDurable);  //Used to be huge
+	cIndexedData.Init("Database5", 0, bDurable);  
 
 	cIndexedData.DurableBegin();
 
@@ -308,7 +308,7 @@ void TestNoCaching(BOOL bDurable)
 	iData = 77;
 	cIndexedData.Add(OI, &iData, 4, 0); OI++; 
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
-	iData = 0; OI = 0LL; cIndexedData.Get(OI, &iData);
+	iData = 0; OI = 0LL; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(77, iData);
 
 	iNumCached = cIndexedData.TestNumCachedIndexes();
@@ -316,7 +316,7 @@ void TestNoCaching(BOOL bDurable)
 
 	OI = 2LL;
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
-	iData = 0; OI = 0LL; cIndexedData.Get(OI, &iData);
+	iData = 0; OI = 0LL; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(77, iData);
 
 	iNumCached = cIndexedData.TestNumCachedIndexes();
@@ -329,10 +329,10 @@ void TestNoCaching(BOOL bDurable)
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
-	iData = 0; OI--; cIndexedData.Get(OI, &iData);;
+	iData = 0; OI--; cIndexedData.Get(OI, (void*)&iData);;
 
 	AssertInt(77, iData);
-	iData = 0; OI = 0LL; cIndexedData.Get(OI, &iData);
+	iData = 0; OI = 0LL; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(77, iData);
 
 	iNumCached = cIndexedData.TestNumCachedIndexes();
@@ -349,18 +349,69 @@ void TestNoCaching(BOOL bDurable)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexedDataGet(void)
+{
+	CIndexedData	cIndexedData;
+	CFileUtil		cFileUtil;
+	char*			szData;
+	int				iSize;
+	char			szSmellsLikeTeenSpirit[] = {"Smells Like Teen Spirit"};
+	char			szSeizedPotPlants[] = {"Seized pot plants turn out to be daisies"};
+	char			szCallingFromWindows[] = {"I am calling you from Windows"};
+	
+	cFileUtil.RemoveDir("Database6");
+
+	cIndexedData.Init("Database6", 1 MB, FALSE);
+	cIndexedData.Add(0x7634, szSmellsLikeTeenSpirit, (int)strlen(szSmellsLikeTeenSpirit)+1, 0);
+	cIndexedData.Add(0x3589, szSeizedPotPlants, (int)strlen(szSeizedPotPlants)+1, 0);
+	cIndexedData.Add(0x8743, szCallingFromWindows, (int)strlen(szCallingFromWindows)+1, 0);
+	
+	AssertLongLongInt(3, cIndexedData.NumElements());
+
+	cIndexedData.Kill();
+
+	cIndexedData.Init("Database6", 1 MB, FALSE);
+
+	AssertLongLongInt(3, cIndexedData.NumElements());
+
+	szData = (char*)cIndexedData.Get(0x7634, &iSize);
+	AssertInt((int)strlen(szSmellsLikeTeenSpirit)+1, iSize);
+	AssertString(szSmellsLikeTeenSpirit, szData);
+	free(szData);
+
+	szData = (char*)cIndexedData.Get(0x3589, &iSize);
+	AssertInt((int)strlen(szSeizedPotPlants)+1, iSize);
+	AssertString(szSeizedPotPlants, szData);
+	free(szData);
+
+	
+	szData = (char*)cIndexedData.Get(0x8743, &iSize);
+	AssertInt((int)strlen(szCallingFromWindows)+1, iSize);
+	AssertString(szCallingFromWindows, szData);
+	free(szData);
+
+	cIndexedData.Kill();
+	cFileUtil.RemoveDir("Database6");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexedData(void)
 {
 	FastFunctionsInit();
 	TypeConverterInit();
 	BeginTests();
 
-	TestCacheEviction();
-	TestLargeData();
-	TestIndexedAdd();
-	TestDescriptorCaching();
-	TestNoCaching(FALSE);
-	TestNoCaching(TRUE);
+	TestIndexedDataCacheEviction();
+	TestIndexedDataLargeData();
+	TestIndexedDataIndexedAdd();
+	TestIndexedDataDescriptorCaching();
+	TestIndexedDataNoCaching(FALSE);
+	TestIndexedDataNoCaching(TRUE);
+	TestIndexedDataGet();
 
 	TestStatistics();
 	FastFunctionsKill();

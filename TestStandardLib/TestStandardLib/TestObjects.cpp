@@ -50,6 +50,23 @@ CPointer<CTestDoubleNamedString> SetupObjectsForDehollowfication(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void SetupObjectsConstructors(void)
+{
+	gcObjects.AddConstructor<CTestWithArray>();
+	gcObjects.AddConstructor<CTestInteger>();
+	gcObjects.AddConstructor<CTestNamedString>();
+	gcObjects.AddConstructor<CTestDoubleNamedString>();
+	gcObjects.AddConstructor<CString>();
+	gcObjects.AddConstructor<CArray>();
+	gcObjects.AddConstructor<CSet>();
+	gcObjects.AddConstructor<CRoot>();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectsInMemoryIteration()
 {
 	SIndexesIterator	sIter;
@@ -154,36 +171,18 @@ void TestObjectsObjectSave(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectDehollowfication(void)
-{
-	CFileUtil	cFileUtil;
-
-	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output/Dehollowfication");
-	ObjectsInit("Output/Dehollowfication");
-	SetupObjectsForDehollowfication();
-	gcObjects.Flush(TRUE, TRUE);
-	ObjectsKill();
-
-	AssertFalse(TRUE);
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 void TestObjectsFlush(void)
 {
 	CFileUtil	cFileUtil;
 	BOOL		bResult;
 
 	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output/Dehollowfication");
-	ObjectsInit("Output/Dehollowfication");
+	cFileUtil.MakeDir("Output/Flush1");
+	ObjectsInit("Output/Flush1");
 	SetupObjectsForDehollowfication();
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 	
@@ -191,20 +190,71 @@ void TestObjectsFlush(void)
 	AssertTrue(bResult);
 
 	AssertLongLongInt(9, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 
 	ObjectsKill();
 
-	AssertFile("Input/Dehollowfication/48_0.DAT",     "Output/Dehollowfication/48_0.DAT");
-	AssertFile("Input/Dehollowfication/56_0.DAT",     "Output/Dehollowfication/56_0.DAT");
-	AssertFile("Input/Dehollowfication/68_0.DAT",     "Output/Dehollowfication/68_0.DAT");
-	AssertFile("Input/Dehollowfication/89_0.DAT",     "Output/Dehollowfication/89_0.DAT");
-	AssertFile("Input/Dehollowfication/93_0.DAT",     "Output/Dehollowfication/93_0.DAT");
-	AssertFile("Input/Dehollowfication/101_0.DAT",    "Output/Dehollowfication/101_0.DAT");
-	AssertFile("Input/Dehollowfication/102_0.DAT",    "Output/Dehollowfication/102_0.DAT");
-	AssertFile("Input/Dehollowfication/Files.DAT",    "Output/Dehollowfication/Files.DAT");
-	AssertFile("Input/Dehollowfication/Indicies.DAT", "Output/Dehollowfication/Indicies.DAT");
+	AssertFile("Input/Dehollowfication/48_0.DAT",     "Output/Flush1/48_0.DAT");
+	AssertFile("Input/Dehollowfication/56_0.DAT",     "Output/Flush1/56_0.DAT");
+	AssertFile("Input/Dehollowfication/68_0.DAT",     "Output/Flush1/68_0.DAT");
+	AssertFile("Input/Dehollowfication/89_0.DAT",     "Output/Flush1/89_0.DAT");
+	AssertFile("Input/Dehollowfication/93_0.DAT",     "Output/Flush1/93_0.DAT");
+	AssertFile("Input/Dehollowfication/101_0.DAT",    "Output/Flush1/101_0.DAT");
+	AssertFile("Input/Dehollowfication/102_0.DAT",    "Output/Flush1/102_0.DAT");
+	AssertFile("Input/Dehollowfication/Files.DAT",    "Output/Flush1/Files.DAT");
+	AssertFile("Input/Dehollowfication/Indicies.DAT", "Output/Flush1/Indicies.DAT");
+	AssertFile("Input/Dehollowfication/32_0.NAM",     "Output/Flush1/32_0.NAM");
+	AssertFile("Input/Dehollowfication/Files.NAM",    "Output/Flush1/Files.NAM");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectsFlushDurable(void)
+{
+	CFileUtil		cFileUtil;
+	BOOL			bResult;
+	CIndexedConfig	cConfig;
+
+	cFileUtil.RemoveDir("Output");
+	cFileUtil.MakeDir("Output/Flush2");
+	
+	cConfig.OptimiseForTransactions("Output/Flush2");
+	cConfig.SetWriteThrough(FALSE);
+
+	ObjectsInit(&cConfig);
+	SetupObjectsForDehollowfication();
+
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
+	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+
+	bResult = gcObjects.Flush(FALSE, FALSE);
+	AssertTrue(bResult);
+
+	AssertLongLongInt(9, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
+	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+
+	ObjectsKill();
+
+	AssertFile("Input/Dehollowfication/48_0.DAT",     "Output/Flush2/48_0.DAT");
+	AssertFile("Input/Dehollowfication/56_0.DAT",     "Output/Flush2/56_0.DAT");
+	AssertFile("Input/Dehollowfication/68_0.DAT",     "Output/Flush2/68_0.DAT");
+	AssertFile("Input/Dehollowfication/89_0.DAT",     "Output/Flush2/89_0.DAT");
+	AssertFile("Input/Dehollowfication/93_0.DAT",     "Output/Flush2/93_0.DAT");
+	AssertFile("Input/Dehollowfication/101_0.DAT",    "Output/Flush2/101_0.DAT");
+	AssertFile("Input/Dehollowfication/102_0.DAT",    "Output/Flush2/102_0.DAT");
+	AssertFile("Input/Dehollowfication/Files.DAT",    "Output/Flush2/Files.DAT");
+	AssertFile("Input/Dehollowfication/Indicies.DAT", "Output/Flush2/Indicies.DAT");
+	AssertFile("Input/Dehollowfication/32_0.NAM",     "Output/Flush2/32_0.NAM");
+	AssertFile("Input/Dehollowfication/Files.NAM",    "Output/Flush2/Files.NAM");
 }
 
 
@@ -424,6 +474,35 @@ void TestObjectsObjectKillInArrayInGraph(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectDehollowfication(void)
+{
+	CFileUtil			cFileUtil;
+	CPointerObject		cPointer;
+
+	cFileUtil.RemoveDir("Output");
+	cFileUtil.MakeDir("Output/Dehollowfication");
+	ObjectsInit("Output/Dehollowfication");
+	SetupObjectsForDehollowfication();
+	gcObjects.Flush(TRUE, TRUE);
+	AssertLongLongInt(9, gcObjects.NumDatabaseObjects());
+	ObjectsKill();
+
+	ObjectsInit("Output/Dehollowfication");
+	SetupObjectsConstructors();
+	AssertLongLongInt(9, gcObjects.NumDatabaseObjects());
+
+	cPointer = gcObjects.Get("Double");
+	AssertNotNull(cPointer.Object());
+	AssertString("", cPointer.ClassName());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjects(void)
 {
 	BeginTests();
@@ -434,6 +513,7 @@ void TestObjects(void)
 	TestObjectsInMemoryIteration();
 	TestObjectsObjectSave();
 	TestObjectsFlush();
+	TestObjectsFlushDurable();
 	TestObjectsEvict();
 	TestObjectDehollowfication();
 
