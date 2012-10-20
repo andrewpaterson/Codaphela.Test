@@ -28,6 +28,9 @@
 #include "TestFiles.h"
 
 
+void TestLogFile(void);
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -45,6 +48,7 @@ int main(int argc, char* argv[])
 	TestTextParser();
 	TestXMLParser();
 	TestXMLFile();
+	TestLogFile();
 	TestDurableFile();
 	TestIndexedFile();
 	TestIndexes();

@@ -223,8 +223,9 @@ void TestObjectsFlushDurable(void)
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output/Flush2");
 	
+
 	cConfig.OptimiseForTransactions("Output/Flush2");
-	cConfig.SetWriteThrough(FALSE);
+	//cConfig.SetWriteThrough(FALSE);
 
 	ObjectsInit(&cConfig);
 	SetupObjectsForDehollowfication();
