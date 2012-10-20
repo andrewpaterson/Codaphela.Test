@@ -1,8 +1,3 @@
-// TestCoreLib.cpp : Defines the entry point for the console application.
-//
-
-#include "stdafx.h"
-#include "BaseLib/Logger.h"
 #include "TestLib/Assert.h"
 
 
