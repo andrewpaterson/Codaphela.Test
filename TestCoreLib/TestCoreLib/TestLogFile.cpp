@@ -100,6 +100,97 @@ void TestLogFileRead(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestLogFileWrite(void)
+{
+	CLogFile*		pcLogFile;
+	CMemoryFile*	pcMemoryFile;
+	CFileBasic		cFile;
+	BOOL			bResult;
+	int				iLength;
+	char			sz[200];
+
+	pcMemoryFile = MemoryFile();
+	pcLogFile = LogFile(pcMemoryFile);
+	cFile.Init(pcLogFile);
+
+	bResult = cFile.Open(EFM_ReadWrite_Create);
+	AssertTrue(bResult);
+
+	bResult = cFile.WriteString("The suspense is killing me!");
+	AssertTrue(bResult);
+	AssertNull((char*)pcMemoryFile->GetBufferPointer());
+	
+	AssertInt(1, pcLogFile->GetNumWrites());
+	AssertLongLongInt(32, pcLogFile->GetWriteSize(0));
+
+	bResult = cFile.Seek(8);
+	AssertTrue(bResult);
+
+	bResult = cFile.WriteData("camisole", 8);
+	AssertTrue(bResult);
+	AssertInt(1, pcLogFile->GetNumWrites());
+	AssertLongLongInt(32, pcLogFile->GetWriteSize(0));
+	
+	AssertNull((char*)pcMemoryFile->GetBufferPointer());
+	cFile.Seek(0);
+	bResult = cFile.ReadStringLength(&iLength);
+	AssertTrue(bResult);
+	AssertInt(28, iLength);
+	AssertFalse(cFile.IsEndOfFile());
+	bResult = cFile.ReadStringChars(sz, iLength);
+	AssertString("The camisole is killing me!", sz);
+	AssertTrue(cFile.IsEndOfFile());
+
+	bResult = pcLogFile->CommitWrites();
+	AssertTrue(bResult);
+	AssertString("The camisole is killing me!", (char*)RemapSinglePointer(pcMemoryFile->GetBufferPointer(), sizeof(int)));
+
+	bResult = cFile.Close();  //This should go before CommitWrites and CommitWrites should be renamed to just Commit.
+	AssertTrue(bResult);
+
+	pcLogFile->Begin();
+	
+	bResult = cFile.Open(EFM_ReadWrite_Create);
+	AssertTrue(bResult);
+
+	bResult = cFile.Seek(4);
+	AssertTrue(bResult);
+	bResult = cFile.WriteData("Dog", 3);
+
+	bResult = cFile.Seek(20);
+	AssertTrue(bResult);
+	bResult = cFile.WriteData("plurgle", 7);
+
+	AssertInt(2, pcLogFile->GetNumWrites());
+	AssertLongLongInt(3, pcLogFile->GetWriteSize(0));
+	AssertLongLongInt(7, pcLogFile->GetWriteSize(1));
+
+
+	AssertString("The camisole is killing me!", (char*)RemapSinglePointer(pcMemoryFile->GetBufferPointer(), sizeof(int)));
+	cFile.Seek(0);
+	bResult = cFile.ReadStringLength(&iLength);
+	AssertTrue(bResult);
+	AssertInt(28, iLength);
+	AssertFalse(cFile.IsEndOfFile());
+	bResult = cFile.ReadStringChars(sz, iLength);
+	AssertString("Dog camisole is plurgle me!", sz);
+	AssertTrue(cFile.IsEndOfFile());
+
+	bResult = pcLogFile->CommitWrites();
+	AssertTrue(bResult);
+	AssertString("Dog camisole is plurgle me!", (char*)RemapSinglePointer(pcMemoryFile->GetBufferPointer(), sizeof(int)));
+
+	bResult = cFile.Close();
+	AssertTrue(bResult);
+
+	cFile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestLogFile(void)
 {
 	BeginTests();
@@ -109,6 +200,7 @@ void TestLogFile(void)
 
 	TestLogFileOpen();
 	TestLogFileRead();
+	TestLogFileWrite();
 
 	FastFunctionsKill();
 	TypeConverterKill();
