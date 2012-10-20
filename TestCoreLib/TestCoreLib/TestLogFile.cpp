@@ -165,7 +165,6 @@ void TestLogFileWrite(void)
 	AssertLongLongInt(3, pcLogFile->GetWriteSize(0));
 	AssertLongLongInt(7, pcLogFile->GetWriteSize(1));
 
-
 	AssertString("The camisole is killing me!", (char*)RemapSinglePointer(pcMemoryFile->GetBufferPointer(), sizeof(int)));
 	cFile.Seek(0);
 	bResult = cFile.ReadStringLength(&iLength);
@@ -179,6 +178,43 @@ void TestLogFileWrite(void)
 	bResult = pcLogFile->CommitWrites();
 	AssertTrue(bResult);
 	AssertString("Dog camisole is plurgle me!", (char*)RemapSinglePointer(pcMemoryFile->GetBufferPointer(), sizeof(int)));
+
+	bResult = cFile.Close();
+	AssertTrue(bResult);
+
+	pcLogFile->Begin();
+
+	bResult = cFile.Open(EFM_ReadWrite_Create);
+	AssertTrue(bResult);
+
+	cFile.Seek(4);
+	cFile.WriteData("X", 1);
+	cFile.Seek(6);
+	bResult = cFile.WriteData("Z", 1);
+	cFile.Seek(28);
+	cFile.WriteData("A", 1);
+	cFile.Seek(30);
+	bResult = cFile.WriteData("C", 1);
+	AssertInt(4, pcLogFile->GetNumWrites());
+
+	cFile.Seek(5);
+	cFile.WriteData("Y", 1);
+	AssertInt(3, pcLogFile->GetNumWrites());
+	
+	cFile.Seek(29);
+	cFile.WriteData("B", 1);
+	AssertInt(2, pcLogFile->GetNumWrites());
+
+	cFile.Seek(0);
+	bResult = cFile.ReadStringLength(&iLength);
+	AssertTrue(bResult);
+	bResult = cFile.ReadStringChars(sz, iLength);
+	AssertString("XYZ camisole is plurgle ABC", sz);
+	AssertTrue(cFile.IsEndOfFile());
+
+	bResult = pcLogFile->CommitWrites();
+	AssertTrue(bResult);
+	AssertString("XYZ camisole is plurgle ABC", (char*)RemapSinglePointer(pcMemoryFile->GetBufferPointer(), sizeof(int)));
 
 	bResult = cFile.Close();
 	AssertTrue(bResult);
