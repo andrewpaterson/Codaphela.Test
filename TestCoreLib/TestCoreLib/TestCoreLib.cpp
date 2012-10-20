@@ -3,32 +3,33 @@
 
 #include "stdafx.h"
 #include "BaseLib/Logger.h"
-#include "TestNumber.h"
-#include "TestMap.h"
-#include "TestTextParser.h"
-#include "TestChars.h"
-#include "TestArraySimple.h"
-#include "TestFastFunctions.h"
-#include "TestIntegerHelper.h"
-#include "TestIndexedFile.h"
-#include "TestIndexes.h"
-#include "TestIndexedData.h"
-#include "TestIndexedDataSmart.h"
-#include "TestDurableFile.h"
-#include "TestTransactionData.h"
-#include "TestTransactionController.h"
-#include "TestDurableSet.h"
-#include "TestTransientIndexedFile.h"
-#include "TestIndexedHuge.h"
-#include "TestOperators.h"
-#include "TestFunctionCaller.h"
-#include "TestFloatHelper.h"
-#include "TestXMLParser.h"
-#include "TestXMLFile.h"
-#include "TestFiles.h"
+#include "TestLib/Assert.h"
 
 
+void TestFloatHelper(void);
+void TestIntegerHelper(void);
+void TestFastFunctions(void);
+void TestArraySimple(void);
+void TestChars(void);
+void TestMap(void);
+void TestTextParser(void);
+void TestXMLParser(void);
+void TestXMLFile(void);
 void TestLogFile(void);
+void TestDurableFile(void);
+void TestIndexedFile(void);
+void TestIndexes(void);
+void TestIndexedHuge(void);
+void TestIndexedData(void);
+void TestIndexedDataSmart(void);
+void TestTransientIndexedFile(void);
+void TestTransactionData(void);
+void TestTransactionController(void);
+void TestDurableSet(void);
+void TestOperators(void);
+void TestFunctionCaller(void);
+void TestNumber(void);
+void TestFiles(void);
 
 
 //////////////////////////////////////////////////////////////////////////

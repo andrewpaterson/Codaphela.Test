@@ -1,4 +1,3 @@
-#include "TestTransientIndexedFile.h"
 #include "TestLib/Assert.h"
 #include "CoreLib/TransientIndexedFile.h"
 #include "BaseLib/FastFunctions.h"

@@ -1,4 +1,3 @@
-#include "TestTextParser.h"
 #include "CoreLib/TextParser.h"
 #include "TestLib/Assert.h"
 

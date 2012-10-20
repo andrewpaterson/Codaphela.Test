@@ -3,7 +3,6 @@
 #include "CoreLib/IndexedData.h"
 #include "CoreLib/TypeConverter.h"
 #include "TestLib/Assert.h"
-#include "TestIndexedData.h"
 
 
 //////////////////////////////////////////////////////////////////////////

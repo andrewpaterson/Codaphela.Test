@@ -1,6 +1,6 @@
-#include "TestArraySimple.h"
 #include "BaseLib/AdditionalTypes.h"
 #include "BaseLib/ArraySimpleChar.h"
+#include "TestLib/Assert.h"
 
 
 //////////////////////////////////////////////////////////////////////////

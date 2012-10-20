@@ -1,5 +1,4 @@
 #include "TestLib/Assert.h"
-#include "TestNumber.h"
 #include "BaseLib/NumberControl.h"
 #include "BaseLib/FastFunctions.h"
 #include "CoreLib/TypeConverter.h"

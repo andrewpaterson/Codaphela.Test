@@ -1,7 +1,6 @@
 #include "BaseLib/FileUtil.h"
 #include "CoreLib/IndexedHuge.h"
 #include "TestLib/Assert.h"
-#include "TestIndexedHuge.h"
 
 
 //////////////////////////////////////////////////////////////////////////

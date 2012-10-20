@@ -1,4 +1,3 @@
-#include "TestMap.h"
 #include "BaseLib/TreeInt.h"
 #include "BaseLib/IntegerHelper.h"
 #include "BaseLib/Numbers.h"
@@ -7,6 +6,7 @@
 #include "BaseLib/MapStringTemplate.h"
 #include "BaseLib/MapStringString.h"
 #include "BaseLib/MapStringInt.h"
+#include "TestLib/Assert.h"
 
 
 typedef CMapTemplate<int, int> CMapIntInt;

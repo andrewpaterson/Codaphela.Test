@@ -3,9 +3,6 @@
 #include "BaseLib/Chars.h"
 
 
-void TestFunctionCaller(void);
-
-
 class CTestFunctionCaller
 {
 public:

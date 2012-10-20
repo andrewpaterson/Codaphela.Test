@@ -2,7 +2,6 @@
 #include "BaseLib/MemoryFile.h"
 #include "CoreLib/XMLParser.h"
 #include "TestLib/Assert.h"
-#include "TestXMLParser.h"
 
 
 //////////////////////////////////////////////////////////////////////////

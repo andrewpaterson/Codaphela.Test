@@ -140,77 +140,11 @@
     <ClInclude Include="stdafx.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="TestMap.h">
-      <Filter>Source\Data\Map</Filter>
-    </ClInclude>
-    <ClInclude Include="TestChars.h">
-      <Filter>Source\Data\String</Filter>
-    </ClInclude>
-    <ClInclude Include="TestArraySimple.h">
-      <Filter>Source\Data\Array</Filter>
-    </ClInclude>
-    <ClInclude Include="TestIndexedData.h">
-      <Filter>Source\File\Indexed</Filter>
-    </ClInclude>
-    <ClInclude Include="TestIndexedDataSmart.h">
-      <Filter>Source\File\Indexed</Filter>
-    </ClInclude>
-    <ClInclude Include="TestIndexedHuge.h">
-      <Filter>Source\File\Indexed</Filter>
-    </ClInclude>
-    <ClInclude Include="TestIndexes.h">
-      <Filter>Source\File\Indexed</Filter>
-    </ClInclude>
-    <ClInclude Include="TestTransientIndexedFile.h">
-      <Filter>Source\File\Indexed</Filter>
-    </ClInclude>
-    <ClInclude Include="TestDurableFile.h">
-      <Filter>Source\File\Durable</Filter>
-    </ClInclude>
-    <ClInclude Include="TestDurableFileController.h">
-      <Filter>Source\File\Durable</Filter>
-    </ClInclude>
-    <ClInclude Include="TestDurableSet.h">
-      <Filter>Source\File\Durable</Filter>
-    </ClInclude>
-    <ClInclude Include="TestTransactionController.h">
-      <Filter>Source\File\Transaction</Filter>
-    </ClInclude>
-    <ClInclude Include="TestTransactionData.h">
-      <Filter>Source\File\Transaction</Filter>
-    </ClInclude>
     <ClInclude Include="TestXMLFile.h">
       <Filter>Source\File\XML</Filter>
     </ClInclude>
     <ClInclude Include="TestFunctionCaller.h">
       <Filter>Source\Function</Filter>
-    </ClInclude>
-    <ClInclude Include="TestFloatHelper.h">
-      <Filter>Source\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="TestIntegerHelper.h">
-      <Filter>Source\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="TestNumber.h">
-      <Filter>Source\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="TestFastFunctions.h">
-      <Filter>Source\Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="TestOperators.h">
-      <Filter>Source\Script</Filter>
-    </ClInclude>
-    <ClInclude Include="TestTextParser.h">
-      <Filter>Source\Text</Filter>
-    </ClInclude>
-    <ClInclude Include="TestXMLParser.h">
-      <Filter>Source\Text</Filter>
-    </ClInclude>
-    <ClInclude Include="TestFiles.h">
-      <Filter>Source\File\Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestIndexedFile.h">
-      <Filter>Source\File\Indexed</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

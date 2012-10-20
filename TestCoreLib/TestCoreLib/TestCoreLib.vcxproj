@@ -123,30 +123,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="TestFiles.h" />
-    <ClInclude Include="TestIndexedFile.h" />
-    <ClInclude Include="TestMap.h" />
-    <ClInclude Include="TestChars.h" />
-    <ClInclude Include="TestArraySimple.h" />
-    <ClInclude Include="TestIndexedData.h" />
-    <ClInclude Include="TestIndexedDataSmart.h" />
-    <ClInclude Include="TestIndexedHuge.h" />
-    <ClInclude Include="TestIndexes.h" />
-    <ClInclude Include="TestTransientIndexedFile.h" />
-    <ClInclude Include="TestDurableFile.h" />
-    <ClInclude Include="TestDurableFileController.h" />
-    <ClInclude Include="TestDurableSet.h" />
-    <ClInclude Include="TestTransactionController.h" />
-    <ClInclude Include="TestTransactionData.h" />
-    <ClInclude Include="TestXMLFile.h" />
     <ClInclude Include="TestFunctionCaller.h" />
-    <ClInclude Include="TestFloatHelper.h" />
-    <ClInclude Include="TestIntegerHelper.h" />
-    <ClInclude Include="TestNumber.h" />
-    <ClInclude Include="TestFastFunctions.h" />
-    <ClInclude Include="TestOperators.h" />
-    <ClInclude Include="TestTextParser.h" />
-    <ClInclude Include="TestXMLParser.h" />
+    <ClInclude Include="TestXMLFile.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="External.xml" />

@@ -1,7 +1,6 @@
 #include "BaseLib/FloatHelper.h"
 #include "TestLib/Assert.h"
 #include "TestLib/IntelTimer.h"
-#include "TestFloatHelper.h"
 
 
 //////////////////////////////////////////////////////////////////////////

@@ -3,7 +3,6 @@
 #include "CoreLib/Files.h"
 #include "CoreLib/TypeConverter.h"
 #include "TestLib/Assert.h"
-#include "TestFiles.h"
 
 
 void AssertPakFile(char* szFileName, char* szContents, CFiles* pcFiles);

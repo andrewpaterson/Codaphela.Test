@@ -1,4 +1,3 @@
-#include "TestIntegerHelper.h"
 #include "TestLib/Assert.h"
 #include "BaseLib/IntegerHelper.h"
 

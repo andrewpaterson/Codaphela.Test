@@ -2,7 +2,6 @@
 #include "BaseLib/TextFile.h"
 #include "CoreLib/IndexedFile.h"
 #include "TestLib/Assert.h"
-#include "TestIndexedFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////
