@@ -461,6 +461,25 @@ void TestLogFileCommandsComplex(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestLogFileDelete(void)
+{
+	CLogFile*		pcLogFile;
+	CMemoryFile*	pcMemoryFile;
+	CFileBasic		cFile;
+
+	pcMemoryFile = MemoryFile();
+
+	pcLogFile = LogFile(pcMemoryFile);
+	cFile.Init(pcLogFile);
+
+	pcLogFile->Begin();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestLogFile(void)
 {
 	BeginTests();
@@ -474,6 +493,7 @@ void TestLogFile(void)
 	TestLogFileFindHoles();
 	TestLogFileCommandsSimple();
 	TestLogFileCommandsComplex();
+	TestLogFileDelete();
 
 	FastFunctionsKill();
 	TypeConverterKill();
