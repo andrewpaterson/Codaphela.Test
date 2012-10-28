@@ -141,11 +141,11 @@ void TestLogFileWrite(void)
 	AssertString("The camisole is killing me!", sz);
 	AssertTrue(cFile.IsEndOfFile());
 
-	bResult = pcLogFile->CommitWrites();
+	bResult = pcLogFile->Commit();
 	AssertTrue(bResult);
 	AssertString("The camisole is killing me!", (char*)RemapSinglePointer(pcMemoryFile->GetBufferPointer(), sizeof(int)));
 
-	bResult = cFile.Close();  //This should go before CommitWrites and CommitWrites should be renamed to just Commit.
+	bResult = cFile.Close();  //This should go before Commit
 	AssertTrue(bResult);
 
 	pcLogFile->Begin();
@@ -175,7 +175,7 @@ void TestLogFileWrite(void)
 	AssertString("Dog camisole is plurgle me!", sz);
 	AssertTrue(cFile.IsEndOfFile());
 
-	bResult = pcLogFile->CommitWrites();
+	bResult = pcLogFile->Commit();
 	AssertTrue(bResult);
 	AssertString("Dog camisole is plurgle me!", (char*)RemapSinglePointer(pcMemoryFile->GetBufferPointer(), sizeof(int)));
 
@@ -212,7 +212,7 @@ void TestLogFileWrite(void)
 	AssertString("XYZ camisole is plurgle ABC", sz);
 	AssertTrue(cFile.IsEndOfFile());
 
-	bResult = pcLogFile->CommitWrites();
+	bResult = pcLogFile->Commit();
 	AssertTrue(bResult);
 	AssertString("XYZ camisole is plurgle ABC", (char*)RemapSinglePointer(pcMemoryFile->GetBufferPointer(), sizeof(int)));
 
@@ -220,6 +220,240 @@ void TestLogFileWrite(void)
 	AssertTrue(bResult);
 
 	cFile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLogFileFindHoles(void)
+{
+	CLogFile*		pcLogFile;
+	CFileBasic		cFile;
+	BOOL			bResult;
+	int				iInt1;
+	int				iInt2;
+	int				iInt3;
+	CArrayPointer	apvOverlapping;
+	int				i;
+	int				iSize;
+
+	pcLogFile = LogFile(NULL);
+	cFile.Init(pcLogFile);
+
+	pcLogFile->Begin();
+
+	bResult = cFile.Open(EFM_ReadWrite_Create);
+	AssertTrue(bResult);
+	
+	iInt1 = 872349342;
+	iInt2 = 763421934;
+	iInt3 = 158723346;
+	iSize = sizeof(int);
+
+	apvOverlapping.Init();
+	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, 1);
+	AssertTrue(bResult);
+	AssertInt(0, apvOverlapping.NumElements());
+	apvOverlapping.Kill();
+
+	cFile.Write(&iInt1, 4, 1);
+	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, 4);
+	AssertFalse(bResult);
+
+	cFile.Write(&iInt2, 4, 1);
+	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, 8);
+	AssertFalse(bResult);
+
+	for (i = 0; i < 8; i++)
+	{
+		bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, i);
+		AssertFalse(bResult);
+	}
+	for (i = 0; i < 8; i++)
+	{
+		bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, i, 8 -i);
+		AssertFalse(bResult);
+	}
+	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 7, 2);
+	AssertTrue(bResult);
+	AssertInt(1, apvOverlapping.NumElements());
+	apvOverlapping.Kill();
+
+	cFile.Seek(4, EFSO_CURRENT);
+	cFile.Write(&iInt3, 4, 1);
+	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, 16);
+	AssertTrue(bResult);
+	AssertInt(2, apvOverlapping.NumElements());
+	apvOverlapping.Kill();
+
+	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 12, 4);
+	AssertFalse(bResult);
+
+	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 11, 5);
+	AssertTrue(bResult);
+	AssertInt(1, apvOverlapping.NumElements());
+	apvOverlapping.Kill();
+
+	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, 8);
+	AssertFalse(bResult);
+
+	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, 9);
+	AssertTrue(bResult);
+	AssertInt(1, apvOverlapping.NumElements());
+	apvOverlapping.Kill();
+
+	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 7, 2);
+	AssertTrue(bResult);
+	AssertInt(1, apvOverlapping.NumElements());
+	apvOverlapping.Kill();
+
+	apvOverlapping.Init();
+	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 8, 1);
+	AssertTrue(bResult);
+	AssertInt(0, apvOverlapping.NumElements());
+	apvOverlapping.Kill();
+
+	apvOverlapping.Init();
+	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 8, 4);
+	AssertTrue(bResult);
+	AssertInt(0, apvOverlapping.NumElements());
+	apvOverlapping.Kill();
+
+	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 8, 5);
+	AssertTrue(bResult);
+	AssertInt(1, apvOverlapping.NumElements());
+	apvOverlapping.Kill();
+
+	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, 0);
+	AssertFalse(bResult);
+	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 7, 0);
+	AssertFalse(bResult);
+	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 8, 0);
+	AssertFalse(bResult);
+
+	//apvOverlapping.Kill();
+
+	cFile.Close();
+	pcLogFile->Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLogFileCommandsSimple(void)
+{
+	CLogFile*		pcLogFile;
+	CMemoryFile*	pcMemoryFile;
+	CFileBasic		cFile;
+	BOOL			bResult;
+	int				iInt;
+	int				iWritten;
+	int				iResult;
+	int				iRead;
+
+	pcMemoryFile = MemoryFile();
+	pcLogFile = LogFile(pcMemoryFile);
+	cFile.Init(pcLogFile);
+
+	pcLogFile->Begin();
+
+	bResult = cFile.Open(EFM_ReadWrite_Create);
+	AssertTrue(bResult);
+	AssertTrue(cFile.IsOpen());
+	AssertFalse(pcMemoryFile->IsOpen());
+
+	iInt = 872349342;
+	iWritten = (int)cFile.Write(&iInt, sizeof(int), 1);
+	AssertInt(1, iWritten);
+	AssertInt(0, pcMemoryFile->GetBufferSize());
+
+	bResult = cFile.Close();
+	AssertTrue(bResult);
+	AssertFalse(pcMemoryFile->IsOpen());
+	AssertInt(3, pcLogFile->GetNumCommands());
+
+	bResult = cFile.Open(EFM_ReadWrite_Create);
+	AssertTrue(bResult);
+	AssertTrue(cFile.IsOpen());
+	AssertInt(sizeof(int), (int)cFile.GetFileLength());
+	iRead = (int)cFile.Read(&iResult, sizeof(int), 1);
+	AssertInt(1, iRead);
+	AssertInt(iInt, iResult);
+	bResult = cFile.Close();
+	AssertTrue(bResult);
+	AssertInt(5, pcLogFile->GetNumCommands());
+
+	bResult = pcLogFile->Commit();
+	AssertTrue(bResult);
+	AssertFalse(pcMemoryFile->IsOpen());
+	AssertInt(sizeof(int), pcMemoryFile->GetBufferSize());
+	AssertInt(iInt, *((int*)pcMemoryFile->GetBufferPointer()));
+
+	pcLogFile->Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLogFileCommandsComplex(void)
+{
+	CLogFile*		pcLogFile;
+	CMemoryFile*	pcMemoryFile;
+	CFileBasic		cFile;
+	BOOL			bResult;
+	int				iWritten;
+	char			szABC[] = {"ABCDEFGHIJK"};
+	char			sz123[] = {"123"};
+	char			sz4[] = {"4"};
+	char			szExclamation[] = {"!?"};
+	char			szQWE[] = {"_QWE_"};
+	char			szResult[12];
+
+	pcMemoryFile = MemoryFile();
+	pcMemoryFile->Open(EFM_ReadWrite_Create);
+	pcMemoryFile->Write(szABC, 1, 12);
+	pcMemoryFile->Close();
+
+	pcLogFile = LogFile(pcMemoryFile);
+	cFile.Init(pcLogFile);
+
+	pcLogFile->Begin();
+
+	cFile.Open(EFM_ReadWrite_Create);
+	AssertInt(12, (int)cFile.GetFileLength());
+
+	iWritten = (int)cFile.Write(sz123, 1, 3);
+	AssertInt(3, iWritten);
+	iWritten = (int)cFile.Write(sz4, 1, 1);
+	AssertInt(1, iWritten);
+	cFile.Close();
+
+	cFile.Open(EFM_ReadWrite_Create);
+	cFile.Write(szExclamation, 1, 2);
+	cFile.Seek(3, EFSO_CURRENT);
+	cFile.Write(szQWE, 5, 1);
+	cFile.Close();
+
+	cFile.Open(EFM_Read);
+	AssertInt(12, (int)cFile.GetFileLength());
+	memset(szResult, 0, 12);
+	cFile.Read(szResult, 12, 1);
+	AssertString("!?34E_QWE_K", szResult);
+	cFile.Close();
+	
+	bResult = pcLogFile->Commit();
+	AssertTrue(bResult);
+	AssertFalse(pcMemoryFile->IsOpen());
+	AssertInt(12, pcMemoryFile->GetBufferSize());
+	AssertString("!?34E_QWE_K", (char*)pcMemoryFile->GetBufferPointer());
+
+	pcLogFile->Kill();
 }
 
 
@@ -237,6 +471,9 @@ void TestLogFile(void)
 	TestLogFileOpen();
 	TestLogFileRead();
 	TestLogFileWrite();
+	TestLogFileFindHoles();
+	TestLogFileCommandsSimple();
+	TestLogFileCommandsComplex();
 
 	FastFunctionsKill();
 	TypeConverterKill();
