@@ -60,6 +60,8 @@ void TestLogFileRead(void)
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
 
+	pcLogFile->Begin();
+
 	bResult = cFile.ReadStringLength(&iLength);
 	AssertTrue(bResult);
 	AssertInt(28, iLength);
@@ -173,6 +175,7 @@ void TestLogFileWrite(void)
 	AssertInt(28, iLength);
 	AssertFalse(cFile.IsEndOfFile());
 	bResult = cFile.ReadStringChars(sz, iLength);
+	AssertTrue(bResult);
 	AssertString("Dog camisole is plurgle me!", sz);
 	AssertTrue(cFile.IsEndOfFile());
 
@@ -365,7 +368,6 @@ void TestLogFileCommandsSimple(void)
 	bResult = cFile.Open(EFM_ReadWrite_Create);
 	AssertTrue(bResult);
 	AssertTrue(cFile.IsOpen());
-	AssertFalse(pcMemoryFile->IsOpen());
 
 	iInt = 872349342;
 	iWritten = (int)cFile.Write(&iInt, sizeof(int), 1);
@@ -374,7 +376,6 @@ void TestLogFileCommandsSimple(void)
 
 	bResult = cFile.Close();
 	AssertTrue(bResult);
-	AssertFalse(pcMemoryFile->IsOpen());
 	AssertInt(3, pcLogFile->GetNumCommands());
 
 	bResult = cFile.Open(EFM_ReadWrite_Create);
@@ -551,6 +552,7 @@ void TestLogFile(void)
 	TestLogFileCommandsSimple();
 	TestLogFileCommandsComplex();
 	TestLogFileDelete();
+	TestLogFileMultipleReadsAfterOpens();
 
 	FastFunctionsKill();
 	TypeConverterKill();
