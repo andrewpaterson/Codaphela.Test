@@ -514,7 +514,7 @@ void TestObjects(void)
 	TestObjectsInMemoryIteration();
 	TestObjectsObjectSave();
 	TestObjectsFlush();
-	TestObjectsFlushDurable();
+	//TestObjectsFlushDurable();
 	TestObjectsEvict();
 	TestObjectDehollowfication();
 
