@@ -577,12 +577,13 @@ void TestLogFileMultipleReadsAfterOpens(void)
 
 	cFile.Delete();
 	AssertTrue(cFileUtil.Exists("Output/LogFile2/OpenClose.txt"));
-	AssertInt(0, (int)cFile.GetFileSize())l
+	AssertInt(0, (int)cFile.GetFileSize());
 
-		cFile.Open(EFM_ReadWrite_Create);
+	cFile.Open(EFM_ReadWrite_Create);
 	cFile.Write(szA, 2, 1);
-	AssertInt(2, (int)cFile.GetFileSize())l
-		cFile.Close();
+	AssertInt(2, (int)cFile.GetFileSize());
+
+	cFile.Close();
 
 	pcLogFile->Commit();
 	cFile.Kill();
@@ -590,7 +591,7 @@ void TestLogFileMultipleReadsAfterOpens(void)
 	AssertTrue(cFileUtil.Exists("Output/LogFile2/OpenClose.txt"));
 	AssertInt(2, cFileUtil.Size("Output/LogFile2/OpenClose.txt"));
 
-	pcDiskFile = DiskFile("Output/LogFile2/File.txt");
+	pcDiskFile = DiskFile("Output/LogFile2/OpenClose.txt");
 	pcLogFile = LogFile(pcDiskFile);
 	cFile.Init(pcLogFile);
 	pcLogFile->Begin();
@@ -598,6 +599,11 @@ void TestLogFileMultipleReadsAfterOpens(void)
 	AssertTrue(cFile.Open(EFM_Read));
 	cFile.ReadData(szResult, 2);
 	AssertString("A", szResult);
+
+	cFile.Seek(0);
+	cFile.ReadData(szResult, 2);
+	AssertString("A", szResult);
+
 	cFile.Close();
 
 	cFile.Delete();
