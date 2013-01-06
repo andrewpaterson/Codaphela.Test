@@ -65,6 +65,7 @@ public:
 	CPointer<CTestNamedString>	mpSplit2;
 	CPointer<CTestNamedString>	mpSplit1;
 
+	void Init(void);
 	void Init(CPointer<CString> szString, CPointer<CTestNamedString> pSplit2, CPointer<CTestNamedString> pSplit1);
 	void KillData(void);
 

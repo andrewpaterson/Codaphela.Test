@@ -171,7 +171,7 @@ void TestObjectsObjectSave(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectsFlush(void)
+void TestObjectsFlushNoClear(void)
 {
 	CFileUtil	cFileUtil;
 	BOOL		bResult;
@@ -388,7 +388,6 @@ void TestObjectsArrayKillInGraph(void)
 	CPointer<CRoot>						cRoot;
 	CPointer<CString>					cS1;
 
-
 	ObjectsInit();
 
 	cRoot = ORoot();
@@ -433,7 +432,6 @@ void TestObjectsObjectKillInArrayInGraph(void)
 	CPointer<CArray>					cA2;
 	CPointer<CRoot>						cRoot;
 	CPointer<CString>					cS1;
-
 
 	ObjectsInit();
 
@@ -504,6 +502,85 @@ void TestObjectDehollowfication(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectsFlushClearGetByOid(void)
+{
+	CFileUtil							cFileUtil;
+	CPointerObject						cPointer;
+	CPointer<CTestDoubleNamedString>	cDouble;
+	CPointer<CRoot>						cRoot;
+
+	cFileUtil.RemoveDir("Output");
+	cFileUtil.MakeDir("Output/Dehollowfication");
+
+	ObjectsInit("Output/Dehollowfication");
+	SetupObjectsConstructors();
+	
+	cRoot = ORoot();
+	cDouble = ONMalloc(CTestDoubleNamedString, "Double");
+	cDouble->Init();
+	cRoot->Add(cDouble);
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
+	cPointer = gcObjects.Get(3);
+	AssertNotNull(cPointer.Object());
+	AssertString("CTestDoubleNamedString", cPointer.ClassName());
+
+	gcObjects.Flush(TRUE, TRUE);
+	AssertLongLongInt(3, gcObjects.NumDatabaseObjects());
+
+	cPointer = gcObjects.Get(3);
+	AssertNotNull(cPointer.Object());
+	AssertString("CTestDoubleNamedString", cPointer.ClassName());
+
+	cPointer = gcObjects.Get("Double");
+	AssertNotNull(cPointer.Object());
+	AssertString("CTestDoubleNamedString", cPointer.ClassName());
+
+	ObjectsKill();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectsFlushClearGetByName(void)
+{
+	CFileUtil							cFileUtil;
+	CPointerObject						cPointer;
+	CPointer<CTestDoubleNamedString>	cDouble;
+	CPointer<CRoot>						cRoot;
+
+	cFileUtil.RemoveDir("Output");
+	cFileUtil.MakeDir("Output/Dehollowfication");
+
+	ObjectsInit("Output/Dehollowfication");
+	SetupObjectsConstructors();
+
+	cRoot = ORoot();
+	cDouble = ONMalloc(CTestDoubleNamedString, "Double");
+	cDouble->Init();
+	cRoot->Add(cDouble);
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
+	cPointer = gcObjects.Get(3);
+	AssertNotNull(cPointer.Object());
+	AssertString("CTestDoubleNamedString", cPointer.ClassName());
+
+	gcObjects.Flush(TRUE, TRUE);
+	AssertLongLongInt(3, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(2, gcObjects.NumDatabaseNames());
+
+	cPointer = gcObjects.Get("Double");
+	AssertNotNull(cPointer.Object());
+	AssertString("CTestDoubleNamedString", cPointer.ClassName());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjects(void)
 {
 	BeginTests();
@@ -513,7 +590,9 @@ void TestObjects(void)
 	TestObjectsObjectKillInArrayInGraph();
 	TestObjectsInMemoryIteration();
 	TestObjectsObjectSave();
-	TestObjectsFlush();
+	TestObjectsFlushNoClear();
+	TestObjectsFlushClearGetByOid();
+	TestObjectsFlushClearGetByName();
 	//TestObjectsFlushDurable();
 	TestObjectsEvict();
 	TestObjectDehollowfication();
