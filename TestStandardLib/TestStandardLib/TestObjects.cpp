@@ -490,9 +490,11 @@ void TestObjectDehollowfication(void)
 	SetupObjectsConstructors();
 	AssertLongLongInt(9, gcObjects.NumDatabaseObjects());
 
+	AssertTrue(gcObjects.Contains("Double"));
+
 	cPointer = gcObjects.Get("Double");
 	AssertNotNull(cPointer.Object());
-	AssertString("", cPointer.ClassName());
+	AssertString("CTestDoubleNamedString", cPointer.ClassName());
 
 	ObjectsKill();
 }

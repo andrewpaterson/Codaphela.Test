@@ -617,11 +617,8 @@ NamedIndexes/5/96_0.NAM\n\
 
 
 	cController.Init("NamedIndexes/5", TRUE);
-	cNamedIndexes.Init(&cController, 20 MB, 4);
-
 	AssertTrue(cController.Begin());
-	AssertTrue(cNamedIndexes.Open());
-
+	cNamedIndexes.Init(&cController, 20 MB, 4);
 	AssertLongLongInt(26, cNamedIndexes.NumNames());
 
 	AssertLongLongInt(5265267321786128702LL, cNamedIndexes.GetIndex("beast"));
