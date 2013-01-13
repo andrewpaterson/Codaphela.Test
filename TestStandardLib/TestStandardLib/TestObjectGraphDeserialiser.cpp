@@ -22,11 +22,11 @@ void TestObjectGraphDeserialiserAddConstructors(void)
 	gcObjects.AddConstructor<CTestInteger>();
 	gcObjects.AddConstructor<CTestNamedString>();
 	gcObjects.AddConstructor<CTestDoubleNamedString>();
+	gcObjects.AddConstructor<CTestSaveableObject1>();
+	gcObjects.AddConstructor<CTestSaveableObject2>();
 	gcObjects.AddConstructor<CString>();
 	gcObjects.AddConstructor<CArray>();
 	gcObjects.AddConstructor<CSet>();
-	gcObjects.AddConstructor<CTestSaveableObject1>();
-	gcObjects.AddConstructor<CTestSaveableObject2>();
 	gcObjects.AddConstructor<CRoot>();
 }
 

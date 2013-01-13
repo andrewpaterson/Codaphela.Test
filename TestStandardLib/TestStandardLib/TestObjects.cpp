@@ -475,8 +475,14 @@ void TestObjectsObjectKillInArrayInGraph(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectDehollowfication(void)
 {
-	CFileUtil			cFileUtil;
-	CPointerObject		cPointer;
+	CFileUtil							cFileUtil;
+	CPointerObject						pPointer;
+	CTestDoubleNamedString*				pcInternal;
+	CPointer<CTestDoubleNamedString>	pDouble;
+	CPointer<CTestNamedString>			pSingle;
+	int									iClassSize;
+	OIndex								oiOld;
+	OIndex								oiNew;
 
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output/Dehollowfication");
@@ -492,9 +498,33 @@ void TestObjectDehollowfication(void)
 
 	AssertTrue(gcObjects.Contains("Double"));
 
-	cPointer = gcObjects.Get("Double");
-	AssertNotNull(cPointer.Object());
-	AssertString("CTestDoubleNamedString", cPointer.ClassName());
+	pPointer = gcObjects.Get("Double");
+	AssertNotNull(pPointer.Object());
+	AssertString("CTestDoubleNamedString", pPointer.ClassName());
+
+	pcInternal = (CTestDoubleNamedString*)pPointer.Object();
+	AssertTrue(pcInternal->mpSplit1.IsNotNull());
+	AssertTrue(pcInternal->mpSplit1.IsHollow());
+	AssertTrue(pcInternal->mpSplit2.IsNotNull());
+	AssertTrue(pcInternal->mpSplit2.IsHollow());
+
+	pDouble = pPointer;
+
+	oiOld = pDouble->mpSplit1.GetIndex();
+	AssertTrue(pcInternal->mpSplit1.IsHollow());  //Making we haven't de-hollowed the object by calling GetIndex.
+	'Problem - An oi of 1 is briefly assigned to the de-hollowed object and then it is reassigned back to its original value.
+	iClassSize = pDouble->mpSplit1->ClassSize();  //The method call - ClassSize() - is irrelevant as long as the -> operator on mpSplit1 is invoked.
+	AssertTrue(pcInternal->mpSplit1.IsNotNull());
+	AssertFalse(pcInternal->mpSplit1.IsHollow());
+	AssertInt(sizeof(CTestNamedString), iClassSize);
+	AssertString("CTestNamedString", pcInternal->mpSplit1.ClassName());
+	oiNew = pDouble->mpSplit1.GetIndex();
+	AssertLongLongInt(oiOld, oiNew);
+
+	'Problem - "pSingle =" does not de-hollow mpSplit2.  Although I am not sure this is a real problem as mpSplit2 is actually used it will be de-hollowed.
+	pSingle = pDouble->mpSplit2;
+	AssertTrue(pcInternal->mpSplit2.IsNotNull());
+	AssertFalse(pcInternal->mpSplit2.IsHollow());
 
 	ObjectsKill();
 }
@@ -587,16 +617,16 @@ void TestObjects(void)
 {
 	BeginTests();
 
-	TestObjectsObjectKillInGraph();
-	TestObjectsArrayKillInGraph();
-	TestObjectsObjectKillInArrayInGraph();
-	TestObjectsInMemoryIteration();
-	TestObjectsObjectSave();
-	TestObjectsFlushNoClear();
-	TestObjectsFlushClearGetByOid();
-	TestObjectsFlushClearGetByName();
-	//TestObjectsFlushDurable();
-	TestObjectsEvict();
+	//TestObjectsObjectKillInGraph();
+	//TestObjectsArrayKillInGraph();
+	//TestObjectsObjectKillInArrayInGraph();
+	//TestObjectsInMemoryIteration();
+	//TestObjectsObjectSave();
+	//TestObjectsFlushNoClear();
+	//TestObjectsFlushClearGetByOid();
+	//TestObjectsFlushClearGetByName();
+	////TestObjectsFlushDurable();
+	//TestObjectsEvict();
 	TestObjectDehollowfication();
 
 	TestStatistics();
