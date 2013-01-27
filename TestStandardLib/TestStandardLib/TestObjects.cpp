@@ -512,7 +512,7 @@ void TestObjectDehollowfication(void)
 
 	oiOld = pDouble->mpSplit1.GetIndex();
 	AssertTrue(pcInternal->mpSplit1.IsHollow());  //Making we haven't de-hollowed the object by calling GetIndex.
-	'Problem - An oi of 1 is briefly assigned to the de-hollowed object and then it is reassigned back to its original value.
+	//Problem - An oi of 1 is briefly assigned to the de-hollowed object and then it is reassigned back to its original value.
 	iClassSize = pDouble->mpSplit1->ClassSize();  //The method call - ClassSize() - is irrelevant as long as the -> operator on mpSplit1 is invoked.
 	AssertTrue(pcInternal->mpSplit1.IsNotNull());
 	AssertFalse(pcInternal->mpSplit1.IsHollow());
@@ -521,7 +521,6 @@ void TestObjectDehollowfication(void)
 	oiNew = pDouble->mpSplit1.GetIndex();
 	AssertLongLongInt(oiOld, oiNew);
 
-	'Problem - "pSingle =" does not de-hollow mpSplit2.  Although I am not sure this is a real problem as mpSplit2 is actually used it will be de-hollowed.
 	pSingle = pDouble->mpSplit2;
 	AssertTrue(pcInternal->mpSplit2.IsNotNull());
 	AssertFalse(pcInternal->mpSplit2.IsHollow());
@@ -617,17 +616,17 @@ void TestObjects(void)
 {
 	BeginTests();
 
-	//TestObjectsObjectKillInGraph();
-	//TestObjectsArrayKillInGraph();
-	//TestObjectsObjectKillInArrayInGraph();
-	//TestObjectsInMemoryIteration();
-	//TestObjectsObjectSave();
-	//TestObjectsFlushNoClear();
-	//TestObjectsFlushClearGetByOid();
-	//TestObjectsFlushClearGetByName();
-	////TestObjectsFlushDurable();
-	//TestObjectsEvict();
-	TestObjectDehollowfication();
+	TestObjectsObjectKillInGraph();
+	TestObjectsArrayKillInGraph();
+	TestObjectsObjectKillInArrayInGraph();
+	TestObjectsInMemoryIteration();
+	TestObjectsObjectSave();
+	TestObjectsFlushNoClear();
+	TestObjectsFlushClearGetByOid();
+	TestObjectsFlushClearGetByName();
+	//TestObjectsFlushDurable();
+	TestObjectsEvict();
+	//TestObjectDehollowfication();
 
 	TestStatistics();
 }

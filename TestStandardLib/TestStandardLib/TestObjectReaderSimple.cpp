@@ -4,6 +4,7 @@
 #include "StandardLib/DependentObjectGraphDeserialiser.h"
 #include "StandardLib/ObjectWriterSimple.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
+#include "StandardLib/ObjectAllocator.h"
 #include "TestLib/Assert.h"
 #include "ObjectWriterChunkedTestClasses.h"
 
@@ -62,6 +63,8 @@ void TestObjectReaderSimpleDeserialised(void)
 	CPointer<CTestNamedString>			cNS2;
 	CPointerObject						cTemp;
 
+	CObjectAllocator					cAllocator;
+
 	gcObjects.AddConstructor<CTestNamedString>();
 
 	WriteObjectReaderSimpleFile();
@@ -77,8 +80,9 @@ void TestObjectReaderSimpleDeserialised(void)
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
+	cAllocator.Init(&gcObjects, TRUE);
 	cReader.Init("Output\\ObjectReaderSimple\\Test\\");
-	cGraphDeserialiser.Init(&cReader, gcObjects.GetIndexGenerator());
+	cGraphDeserialiser.Init(&cReader, gcObjects.GetIndexGenerator(), &cAllocator);
 	cBase = cGraphDeserialiser.Read("Waggy");
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());

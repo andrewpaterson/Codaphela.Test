@@ -183,6 +183,12 @@
     <ClCompile Include="TestObjectsSimple.cpp">
       <Filter>Source\Object\Object</Filter>
     </ClCompile>
+    <ClCompile Include="TestNamedObject.cpp">
+      <Filter>Source\Object\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="NamedObjectTestClasses.cpp">
+      <Filter>Source\Object\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectTestClasses.h">
@@ -196,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="ObjectWriterChunkedTestClasses.h">
       <Filter>Source\Object\Object\IO\Chunked</Filter>
+    </ClInclude>
+    <ClInclude Include="NamedObjectTestClasses.h">
+      <Filter>Source\Object\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

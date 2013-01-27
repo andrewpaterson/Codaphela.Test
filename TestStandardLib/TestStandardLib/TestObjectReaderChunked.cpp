@@ -4,6 +4,7 @@
 #include "StandardLib/DependentObjectGraphDeserialiser.h"
 #include "StandardLib/ObjectWriterChunked.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
+#include "StandardLib/ObjectAllocator.h"
 #include "TestLib/Assert.h"
 #include "ObjectWriterChunkedTestClasses.h"
 
@@ -118,6 +119,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	CPointer<CTestInteger>				cI1;
 	CPointer<CTestInteger>				cI2;
 	CPointer<CTestInteger>				cI3;
+	CObjectAllocator					cAllocator;
 
 	gcObjects.AddConstructor<CTestWithArray>();
 	gcObjects.AddConstructor<CTestInteger>();
@@ -142,8 +144,9 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
+	cAllocator.Init(&gcObjects, TRUE);
 	cReader.Init("Output\\ObjectReaderChunked\\Test\\", "Reader");
-	cGraphDeserialiser.Init(&cReader, gcObjects.GetIndexGenerator());
+	cGraphDeserialiser.Init(&cReader, gcObjects.GetIndexGenerator(), &cAllocator);
 	cBase = cGraphDeserialiser.Read("Array 1");
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
