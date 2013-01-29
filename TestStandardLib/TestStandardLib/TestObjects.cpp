@@ -198,7 +198,7 @@ void TestObjectsFlushNoClear(void)
 
 	AssertFile("Input/Dehollowfication/48_0.DAT",     "Output/Flush1/48_0.DAT");
 	AssertFile("Input/Dehollowfication/56_0.DAT",     "Output/Flush1/56_0.DAT");
-	AssertFile("Input/Dehollowfication/68_0.DAT",     "Output/Flush1/68_0.DAT");
+	AssertFile("Input/Dehollowfication/72_0.DAT",     "Output/Flush1/72_0.DAT");
 	AssertFile("Input/Dehollowfication/89_0.DAT",     "Output/Flush1/89_0.DAT");
 	AssertFile("Input/Dehollowfication/93_0.DAT",     "Output/Flush1/93_0.DAT");
 	AssertFile("Input/Dehollowfication/101_0.DAT",    "Output/Flush1/101_0.DAT");
@@ -626,7 +626,7 @@ void TestObjects(void)
 	TestObjectsFlushClearGetByName();
 	//TestObjectsFlushDurable();
 	TestObjectsEvict();
-	//TestObjectDehollowfication();
+	TestObjectDehollowfication();
 
 	TestStatistics();
 }

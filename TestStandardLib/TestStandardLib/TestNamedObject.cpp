@@ -43,8 +43,10 @@ void TestNamedObjectName(void)
 	CPointer<CTestNamedObject>	pResult2;
 	CPointer<CTestNamedObject>	pResult3;
 	CPointer<CRoot>				pRoot;
+	CPointer<CSet>				pSet;
 	CSet*						pcSet;
-
+	OIndex						oiSet;
+	OIndex						oiNamed3;
 
 	cFileUtil.RemoveDir("Output/NamedObject");
 	cFileUtil.MakeDir("Output/NamedObject");
@@ -62,6 +64,7 @@ void TestNamedObjectName(void)
 	pNamed3->Init(3);
 	pNamed3->mpNamedTest1 = pNamed1;
 	pNamed3->mpNamedTest2 = pNamed2;
+	oiNamed3 = pNamed3->GetOI();
 	
 	pRoot = ORoot();
 	pRoot->Add(pNamed3);
@@ -78,23 +81,30 @@ void TestNamedObjectName(void)
 	pResult3 = gcObjects.Get("");
 	AssertNull(pResult3.Object());
 
+	pcSet = pRoot->TestGetSet();
+	oiSet = pcSet->GetOI();
+
 	gcObjects.Flush(FALSE, FALSE);
 	ObjectsKill();
+	pcSet = NULL;
 
 	ObjectsInit("Output/NamedObject");
 	TestNamedObjectAddConstructors();
-	pRoot = ORoot();
 
 	AssertLongLongInt(3, gcObjects.NumDatabaseNames());
 	AssertLongLongInt(4, gcObjects.NumDatabaseObjects());
-	AssertLongLongInt(1, gcObjects.NumMemoryNames());
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(0, gcObjects.NumMemoryNames());
+	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
-	pcSet = pRoot->TestGetSet();
-	AssertNotNull(pcSet);
-	AssertInt(1, pcSet->NumElements());
-	pResult3 = (CTestNamedObject*)pcSet->UnsafeGet(0);
-	AssertInt(3, pResult3->miNum);
+	pSet = gcObjects.Get(oiSet);
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertString("CSet", pSet.ClassName());
+
+	AssertTrue(pSet.IsNotNull());
+	AssertInt(1, pSet->NumElements());
+	pResult3 = (CTestNamedObject*)pSet->UnsafeGet(0);
+	AssertTrue(pResult3.IsNotNull());
+	AssertLongLongInt(oiNamed3, pResult3.GetIndex());
 
 	ObjectsKill();
 }

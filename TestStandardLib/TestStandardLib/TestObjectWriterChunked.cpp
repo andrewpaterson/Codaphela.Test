@@ -71,7 +71,7 @@ void TestObjectWriterChunkedSerialised(void)
 	//CArray
 	AssertTrue(cChunkFile.ReadChunkBegin("Unnamed/0000000000000002"));
 	AssertTrue(cChunkFile.ReadInt(&iLength));
-	AssertInt(83, iLength);
+	AssertInt(87, iLength);
 	AssertTrue(cChunkFile.ReadData(szTest, 4));
 	AssertString("IDX", szTest);
 	AssertTrue(cChunkFile.ReadChunkEnd());
