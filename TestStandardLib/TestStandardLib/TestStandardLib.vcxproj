@@ -94,6 +94,7 @@
     <ClCompile Include="ObjectWriterChunkedTestClasses.cpp" />
     <ClCompile Include="TestArrayCommonObject.cpp" />
     <ClCompile Include="TestChunkFileNames.cpp" />
+    <ClCompile Include="TestDehollowfication.cpp" />
     <ClCompile Include="TestNamedIndexes.cpp" />
     <ClCompile Include="TestNamedObject.cpp" />
     <ClCompile Include="TestObjectConverter.cpp" />

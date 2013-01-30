@@ -511,7 +511,7 @@ void TestObjectDehollowfication(void)
 	pDouble = pPointer;
 
 	oiOld = pDouble->mpSplit1.GetIndex();
-	AssertTrue(pcInternal->mpSplit1.IsHollow());  //Making we haven't de-hollowed the object by calling GetIndex.
+	AssertTrue(pcInternal->mpSplit1.IsHollow());  //Making sure we haven't de-hollowed the object by calling GetIndex.
 	//Problem - An oi of 1 is briefly assigned to the de-hollowed object and then it is reassigned back to its original value.
 	iClassSize = pDouble->mpSplit1->ClassSize();  //The method call - ClassSize() - is irrelevant as long as the -> operator on mpSplit1 is invoked.
 	AssertTrue(pcInternal->mpSplit1.IsNotNull());
@@ -616,16 +616,16 @@ void TestObjects(void)
 {
 	BeginTests();
 
-	TestObjectsObjectKillInGraph();
-	TestObjectsArrayKillInGraph();
-	TestObjectsObjectKillInArrayInGraph();
-	TestObjectsInMemoryIteration();
-	TestObjectsObjectSave();
-	TestObjectsFlushNoClear();
-	TestObjectsFlushClearGetByOid();
-	TestObjectsFlushClearGetByName();
-	//TestObjectsFlushDurable();
-	TestObjectsEvict();
+	//TestObjectsObjectKillInGraph();
+	//TestObjectsArrayKillInGraph();
+	//TestObjectsObjectKillInArrayInGraph();
+	//TestObjectsInMemoryIteration();
+	//TestObjectsObjectSave();
+	//TestObjectsFlushNoClear();
+	//TestObjectsFlushClearGetByOid();
+	//TestObjectsFlushClearGetByName();
+	////TestObjectsFlushDurable();
+	//TestObjectsEvict();
 	TestObjectDehollowfication();
 
 	TestStatistics();
