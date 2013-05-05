@@ -28,6 +28,7 @@ void TestObjectsSimple(void);
 void TestRoot(void);
 void TestArrayCommonObject(void);
 void TestParameters(void);
+void TestObjectAllocator(void);
 void TestObjectWriterChunked(void);
 void TestObjectReaderChunked(void);
 void TestObjectGraphDeserialiser(void);
@@ -68,15 +69,16 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	//TestPointer();
 	//TestArrayCommonObject();
 	//TestNamedObject();
+	TestObjectAllocator();
 	//TestObjectWriterChunked();
 	//TestObjectGraphSerialiser();
 	//TestObjectReaderSimple();
 	//TestObjectReaderChunked();
 	//TestNamedIndexes();
 	//TestObjectGraphDeserialiser();
-	//TestObjectConverter();
+	TestObjectConverter();
 	TestObjects();
-	//TestDehollowfication();
+	TestDehollowfication();
 
 	FastFunctionsKill();
 	KillEmptyString();

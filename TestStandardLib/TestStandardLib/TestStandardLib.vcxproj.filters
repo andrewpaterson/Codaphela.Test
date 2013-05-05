@@ -192,6 +192,9 @@
     <ClCompile Include="TestDehollowfication.cpp">
       <Filter>Source\Object\Object</Filter>
     </ClCompile>
+    <ClCompile Include="TestObjectAllocator.cpp">
+      <Filter>Source\Object\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectTestClasses.h">
