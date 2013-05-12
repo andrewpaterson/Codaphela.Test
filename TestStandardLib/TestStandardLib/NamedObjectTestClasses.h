@@ -6,7 +6,7 @@
 
 class CTestNamedObject : public CNamedObject
 {
-BASE_FUNCTIONS(CNamedObject);
+BASE_FUNCTIONS(CTestNamedObject);
 public:
 	CPointer<CTestNamedObject>		mpNamedTest1;
 	CPointer<CTestNamedObject>		mpNamedTest2;
