@@ -55,6 +55,7 @@ void TestArrayCommonPointerRemapping(void)
 
 	iNumRemapped = pObject3.RemapFrom(&pObject1);
 	AssertInt(2, iNumRemapped);
+	pObject1.Kill();
 
 	AssertInt(6, pArray->NumElements());
 	AssertNull(pArray->UnsafeGet(0));

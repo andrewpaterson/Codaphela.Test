@@ -353,6 +353,8 @@ void TestObjectConverterDragonRootDistance(void)
 
 	pcNS1 = pcObjectSource->Convert("NS1");
 	pcNS3 = pcObjectSource->Convert("NS3");
+	AssertNotNull(pcNS1.Object());
+	AssertNotNull(pcNS3.Object());
 	AssertPointer(&pcNS1, &pcNS3->mpAnother);
 	AssertPointer(&pcNS3, &pcDouble->mpSplit1);
 

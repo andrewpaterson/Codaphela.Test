@@ -69,6 +69,7 @@ void TestObjectPointerRemapping(void)
 	
 	iNumRemapped = pObject3.RemapFrom(&pObject2);
 	AssertInt(1, iNumRemapped);
+	pObject2.Kill();
 
 	AssertPointer(&pObject3, &pObject1->mpObject);
 
@@ -131,6 +132,7 @@ void TestObjectPointerRemappingKilling(void)
 
 	iNumRemapped = pObject4.RemapFrom(&pObject2);
 	AssertInt(1, iNumRemapped);
+	pObject2.Kill();
 
 	AssertPointer(&pObject4, &pObject1->mpObject);
 	AssertPointer(&pObject5, &pObject4->mpObject);
@@ -281,6 +283,7 @@ void TestObjectPointerRemappingComplex(void)
 	
 	iNumRemapped = pTest10.RemapFrom(&pTest3);
 	AssertInt(1, iNumRemapped);
+	pTest3.Kill();
 
 	AssertPointer(&pTest2, &pTest1->mpObject);
 	AssertPointer(&pTest10, &pTest1->mpTest);
