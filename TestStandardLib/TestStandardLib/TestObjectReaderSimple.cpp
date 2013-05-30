@@ -1,7 +1,7 @@
 #include "BaseLib/FileUtil.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectReaderSimpleDisk.h"
-#include "StandardLib/DependentObjectGraphDeserialiser.h"
+#include "StandardLib/ObjectGraphDeserialiser.h"
 #include "StandardLib/ObjectWriterSimple.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "StandardLib/ObjectAllocator.h"
@@ -55,15 +55,15 @@ void WriteObjectReaderSimpleFile(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectReaderSimpleDeserialised(void)
 {
-	CObjectReaderSimpleDisk				cReader;
-	CDependentObjectGraphDeserialiser	cGraphDeserialiser;
-	CPointerObject						cBase;
+	CObjectReaderSimpleDisk		cReader;
+	CObjectGraphDeserialiser	cGraphDeserialiser;
+	CPointerObject				cBase;
 
-	CPointer<CTestNamedString>			cNS1;
-	CPointer<CTestNamedString>			cNS2;
-	CPointerObject						cTemp;
+	CPointer<CTestNamedString>	cNS1;
+	CPointer<CTestNamedString>	cNS2;
+	CPointerObject				cTemp;
 
-	CObjectAllocator					cAllocator;
+	CObjectAllocator			cAllocator;
 
 	gcObjects.AddConstructor<CTestNamedString>();
 

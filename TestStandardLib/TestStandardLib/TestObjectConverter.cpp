@@ -112,7 +112,7 @@ void TestObjectConverterDragonExistingHollows(void)
 {
 	CObjectConverterNative				cChunkedConverter;
 	CObjectSource*						pcObjectSource;
-	CObjectMultipleSource*				pcObjectMultipleSource;
+	CObjectSourceChunked*				pcObjectMultipleSource;
 	CPointerObject						pcObject;
 	CDiskFile*							pcDiskFile;
 	CPointer<CTestDoubleNamedString>	pcDoubleNamedString;
@@ -138,7 +138,7 @@ void TestObjectConverterDragonExistingHollows(void)
 	AssertTrue(pcObjectSource->IsNative());
 	AssertTrue(pcObjectSource->IsMultiSource());
 
-	pcObjectMultipleSource = (CObjectMultipleSource*)pcObjectSource;
+	pcObjectMultipleSource = (CObjectSourceChunked*)pcObjectSource;
 	AssertInt(4, pcObjectMultipleSource->NumNames());
 	AssertString("Diamond End", pcObjectMultipleSource->GetName(0));
 	AssertString("Double Start", pcObjectMultipleSource->GetName(1));

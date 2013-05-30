@@ -1,6 +1,6 @@
 #include "BaseLib/FileUtil.h"
 #include "StandardLib/Objects.h"
-#include "StandardLib/DependentObjectGraphDeserialiser.h"
+#include "StandardLib/ObjectGraphDeserialiser.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "StandardLib/ObjectWriterSimple.h"
 #include "StandardLib/ObjectReaderSimpleDisk.h"
@@ -84,18 +84,18 @@ void TestObjectGraphDeserialiserBuildGraph1(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 {
-	CFileUtil							cFileUtil;
-	CPointer<CTestSaveableObject2>		cBase;
-	CPointer<CTestSaveableObject2>		cStart1;
-	CPointer<CRoot>						cRoot;
-	CPointer<CString>					szOne;
-	CPointer<CString>					cString1;
-	CPointer<CString>					cString2;
-	CObjectGraphSerialiser				cGraphSerialiser;
-	CDependentObjectGraphDeserialiser	cGraphDeserialiser;
-	CPointer<CTestSaveableObject1>		cShared;
-	int									i;
-	CObjectAllocator					cAllocator;
+	CFileUtil						cFileUtil;
+	CPointer<CTestSaveableObject2>	cBase;
+	CPointer<CTestSaveableObject2>	cStart1;
+	CPointer<CRoot>					cRoot;
+	CPointer<CString>				szOne;
+	CPointer<CString>				cString1;
+	CPointer<CString>				cString2;
+	CObjectGraphSerialiser			cGraphSerialiser;
+	CObjectGraphDeserialiser		cGraphDeserialiser;
+	CPointer<CTestSaveableObject1>	cShared;
+	int								i;
+	CObjectAllocator				cAllocator;
 
 	cFileUtil.MakeDir("Output/GraphDeserialiser/Simple/Remapping");
 
@@ -203,22 +203,22 @@ void TestRemappingOfChunkedFilesOIs(void)
 //////////////////////////////////////////////////////////////////////////
 void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 {
-	CObjectWriterChunked				cWriterStart1;
-	CObjectWriterChunked				cWriterStart2;
-	CFileUtil							cFileUtil;
-	CPointer<CTestSaveableObject2>		cOwStart1;
-	CPointer<CTestSaveableObject2>		cOwStart2;
-	CObjectGraphSerialiser				cGraphSerialiser;
-	CDependentObjectGraphDeserialiser	cGraphDeserialiser;
-	CObjectReaderChunkFileDisk			cReaderStart1;
-	CObjectReaderChunkFileDisk			cReaderStart2;
-	CPointer<CTestSaveableObject1>		cShared;
-	CPointer<CRoot>						cRoot;
-	CPointerObject						cObject;
-	int									iNumUnknowns;
-	int									iNumIndexes;
-	int									iNumNames;
-	CObjectAllocator					cAllocator;
+	CObjectWriterChunked			cWriterStart1;
+	CObjectWriterChunked			cWriterStart2;
+	CFileUtil						cFileUtil;
+	CPointer<CTestSaveableObject2>	cOwStart1;
+	CPointer<CTestSaveableObject2>	cOwStart2;
+	CObjectGraphSerialiser			cGraphSerialiser;
+	CObjectGraphDeserialiser		cGraphDeserialiser;
+	CObjectReaderChunkFileDisk		cReaderStart1;
+	CObjectReaderChunkFileDisk		cReaderStart2;
+	CPointer<CTestSaveableObject1>	cShared;
+	CPointer<CRoot>					cRoot;
+	CPointerObject					cObject;
+	int								iNumUnknowns;
+	int								iNumIndexes;
+	int								iNumNames;
+	CObjectAllocator				cAllocator;
 
 	cWriterStart1.Init("Output/GraphDeserialiser/Simple/Remapping", "", "Start1");
 	cWriterStart2.Init("Output/GraphDeserialiser/Simple/Remapping", "", "Start2");
@@ -302,6 +302,7 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	AssertInt(iNumIndexes+2, (int)gcObjects.NumMemoryIndexes());
 	AssertInt(iNumNames+1, (int)gcObjects.NumMemoryNames());
 
+	AssertNotNull(cOwStart2.Object());
 	cRoot->Add(cOwStart2);
 
 	AssertNotNull(&cOwStart2);

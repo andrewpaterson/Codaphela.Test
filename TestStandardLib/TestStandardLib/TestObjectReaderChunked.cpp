@@ -1,7 +1,7 @@
 #include "BaseLib/FileUtil.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectReaderChunkFileDisk.h"
-#include "StandardLib/DependentObjectGraphDeserialiser.h"
+#include "StandardLib/ObjectGraphDeserialiser.h"
 #include "StandardLib/ObjectWriterChunked.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "StandardLib/ObjectAllocator.h"
@@ -103,23 +103,23 @@ void WriteObjectReaderChunkedFile(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectReaderChunkedDeserialised(void)
 {
-	CObjectReaderChunkFileDisk			cReader;
-	CDependentObjectGraphDeserialiser	cGraphDeserialiser;
-	CPointerObject						cBase;
-	CPointer<CTestWithArray>			cA1;
-	CPointer<CTestWithArray>			cA2;
-	CPointer<CTestNamedString>			cNS1;
-	CPointer<CTestNamedString>			cNS2;
-	CPointer<CTestNamedString>			cNS3;
-	CPointer<CTestNamedString>			cNS4;
-	CPointer<CString>					sz1;
-	CPointer<CString>					sz2;
-	CPointer<CString>					sz3;
-	CPointerObject						cTemp;
-	CPointer<CTestInteger>				cI1;
-	CPointer<CTestInteger>				cI2;
-	CPointer<CTestInteger>				cI3;
-	CObjectAllocator					cAllocator;
+	CObjectReaderChunkFileDisk	cReader;
+	CObjectGraphDeserialiser	cGraphDeserialiser;
+	CPointerObject				cBase;
+	CPointer<CTestWithArray>	cA1;
+	CPointer<CTestWithArray>	cA2;
+	CPointer<CTestNamedString>	cNS1;
+	CPointer<CTestNamedString>	cNS2;
+	CPointer<CTestNamedString>	cNS3;
+	CPointer<CTestNamedString>	cNS4;
+	CPointer<CString>			sz1;
+	CPointer<CString>			sz2;
+	CPointer<CString>			sz3;
+	CPointerObject				cTemp;
+	CPointer<CTestInteger>		cI1;
+	CPointer<CTestInteger>		cI2;
+	CPointer<CTestInteger>		cI3;
+	CObjectAllocator			cAllocator;
 
 	gcObjects.AddConstructor<CTestWithArray>();
 	gcObjects.AddConstructor<CTestInteger>();

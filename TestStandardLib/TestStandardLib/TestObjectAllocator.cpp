@@ -100,7 +100,7 @@ void TestObjectAllocatorNamedOverwrite(void)
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
 
-	pNamed2 = cAllocator.Add("CTestNamedObject", "My Object Name", 1LL, &oiExisting);
+	pNamed2 = cAllocator.Add("CTestNamedObject", "My Object Name", &oiExisting);
 	AssertNotNull(pNamed2.Object());
 	AssertLongLongInt(2LL, pNamed2.GetIndex());
 	AssertString("My Object Name", pNamed2.GetName());

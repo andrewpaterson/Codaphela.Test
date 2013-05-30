@@ -41,7 +41,7 @@ void TestNamedObjectName(void)
 	CPointer<CTestNamedObject>	pNamed3;
 	CPointer<CTestNamedObject>	pResult1;
 	CPointer<CTestNamedObject>	pResult2;
-	CPointer<CTestNamedObject>	pResult3;
+	CPointerObject				pResult3;
 	CPointer<CRoot>				pRoot;
 	CPointer<CSet>				pSet;
 	CSet*						pcSet;
@@ -92,7 +92,7 @@ void TestNamedObjectName(void)
 	TestNamedObjectAddConstructors();
 
 	AssertLongLongInt(3, gcObjects.NumDatabaseNames());
-	AssertLongLongInt(4, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(5, gcObjects.NumDatabaseObjects());
 	AssertLongLongInt(0, gcObjects.NumMemoryNames());
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
@@ -101,10 +101,13 @@ void TestNamedObjectName(void)
 	AssertString("CSet", pSet.ClassName());
 
 	AssertTrue(pSet.IsNotNull());
+	AssertInt(1, pSet.DistToRoot());
+
 	AssertInt(1, pSet->NumElements());
-	pResult3 = (CTestNamedObject*)pSet->UnsafeGet(0);
+	pResult3 = pSet->UnsafeGet(0);
 	AssertTrue(pResult3.IsNotNull());
 	AssertLongLongInt(oiNamed3, pResult3.GetIndex());
+	AssertInt(2, pResult3.DistToRoot());
 
 	ObjectsKill();
 }
