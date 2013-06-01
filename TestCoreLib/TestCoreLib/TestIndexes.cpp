@@ -136,6 +136,14 @@ void TestIndexesAddAndRemove(void)
 
 	cIndexes.Remove(1);
 	AssertInt(0, (int)cIndexes.NumIndexed());
+	AssertTrue(cIndexes.TestTopIsEmpty());
+
+	cIndexes.Add(1, pvMem);
+	AssertInt(1, (int)cIndexes.NumIndexed());
+
+	cIndexes.Remove(1);
+	AssertInt(0, (int)cIndexes.NumIndexed());
+	AssertTrue(cIndexes.TestTopIsEmpty());
 
 	cIndexes.Kill();
 }
