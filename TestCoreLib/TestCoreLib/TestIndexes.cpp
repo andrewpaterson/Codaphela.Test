@@ -118,6 +118,33 @@ void TestIndexesIteration(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexesAddAndRemove(void)
+{
+	CIndexes			cIndexes;
+	void*				pvMem;
+	void*				pvTest;
+	int					i;
+
+	i = 391287491;
+	pvMem = &i;
+
+	cIndexes.Init(512);
+	AssertInt(0, (int)cIndexes.NumIndexed());
+	
+	cIndexes.Add(1, pvMem);
+	AssertInt(1, (int)cIndexes.NumIndexed());
+
+	cIndexes.Remove(1);
+	AssertInt(0, (int)cIndexes.NumIndexed());
+
+	cIndexes.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexes(void)
 {
 	FastFunctionsInit();
@@ -125,6 +152,7 @@ void TestIndexes(void)
 
 	TestIndexesSomething();
 	TestIndexesIteration();
+	TestIndexesAddAndRemove();
 	
 	TestStatistics();
 	FastFunctionsKill();
