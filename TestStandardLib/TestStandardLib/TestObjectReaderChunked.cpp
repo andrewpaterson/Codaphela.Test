@@ -34,8 +34,11 @@ CPointerObject SetupObjectReaderChunkedChunkFile(void)
 	cNS4 = ONMalloc(CTestNamedString, "NamedString 4");
 
 	cI1 = OMalloc(CTestInteger);
+	AssertLongLongInt(5LL, cI1->GetOI());
 	cI2 = OMalloc(CTestInteger);
+	AssertLongLongInt(6LL, cI2->GetOI());
 	cI3 = OMalloc(CTestInteger);
+	AssertLongLongInt(7LL, cI3->GetOI());
 
 	cA1 = ONMalloc(CTestWithArray, "Array 1");
 	cA2 = ONMalloc(CTestWithArray, "Array X");
@@ -120,6 +123,9 @@ void TestObjectReaderChunkedDeserialised(void)
 	CPointer<CTestInteger>		cI2;
 	CPointer<CTestInteger>		cI3;
 	CObjectAllocator			cAllocator;
+	OIndex						oiI1;
+	OIndex						oiI2;
+	OIndex						oiI3;
 
 	gcObjects.AddConstructor<CTestWithArray>();
 	gcObjects.AddConstructor<CTestInteger>();
@@ -193,11 +199,15 @@ void TestObjectReaderChunkedDeserialised(void)
 	cTemp = cA1->mcArray->Get(1);
 	AssertPointer(&cNS1, &cTemp);
 
-	cI1 = gcObjects.Get(5LL);
+	oiI1 = cGraphDeserialiser.GetNewIndexFromOld(5LL);
+	oiI2 = cGraphDeserialiser.GetNewIndexFromOld(6LL);
+	oiI3 = cGraphDeserialiser.GetNewIndexFromOld(7LL);
+
+	cI1 = gcObjects.Get(oiI1);
 	AssertString("CTestInteger", cI1->ClassName());
-	cI2 = gcObjects.Get(7LL);
+	cI2 = gcObjects.Get(oiI2);
 	AssertString("CTestInteger", cI2->ClassName());
-	cI3 = gcObjects.Get(10LL);
+	cI3 = gcObjects.Get(oiI3);
 	AssertString("CTestInteger", cI3->ClassName());
 
 	AssertInt(3, cI1->mx);
