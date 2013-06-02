@@ -123,6 +123,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	CPointer<CTestInteger>		cI2;
 	CPointer<CTestInteger>		cI3;
 	CObjectAllocator			cAllocator;
+	CDependentReadObjects		cDependentReadObjects;
 	OIndex						oiI1;
 	OIndex						oiI2;
 	OIndex						oiI3;
@@ -151,8 +152,9 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
 	cAllocator.Init(&gcObjects, TRUE);
+	cDependentReadObjects.Init();
 	cReader.Init("Output\\ObjectReaderChunked\\Test\\", "Reader");
-	cGraphDeserialiser.Init(&cReader, gcObjects.GetIndexGenerator(), &cAllocator);
+	cGraphDeserialiser.Init(&cReader, gcObjects.GetIndexGenerator(), &cAllocator, &cDependentReadObjects);
 	cBase = cGraphDeserialiser.Read("Array 1");
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
@@ -232,6 +234,8 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertPointer(NULL, &cNS4->mszString);
 
 	cGraphDeserialiser.Kill();
+	cDependentReadObjects.Kill();
+	cAllocator.Kill();
 	cReader.Kill();
 }
 

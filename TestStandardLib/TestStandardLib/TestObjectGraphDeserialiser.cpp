@@ -96,6 +96,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	CPointer<CTestSaveableObject1>	cShared;
 	int								i;
 	CObjectAllocator				cAllocator;
+	CDependentReadObjects			cDependentReadObjects;
 
 	cFileUtil.MakeDir("Output/GraphDeserialiser/Simple/Remapping");
 
@@ -134,7 +135,8 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	}
 
 	cAllocator.Init(&gcObjects, TRUE);
-	cGraphDeserialiser.Init(pcReader, gcObjects.GetIndexGenerator(), &cAllocator);
+	cDependentReadObjects.Init();
+	cGraphDeserialiser.Init(pcReader, gcObjects.GetIndexGenerator(), &cAllocator, &cDependentReadObjects);
 	cStart1 = cGraphDeserialiser.Read("Ow/Start 1");
 	AssertTrue(cStart1.IsNotNull());
 	AssertLongLongInt(23, cStart1->GetOI());
@@ -149,6 +151,8 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	cString1 = cStart1->mp2;
 	AssertLongLongInt(25, cString1->GetOI());
 	cGraphDeserialiser.Kill();
+	cDependentReadObjects.Kill();
+	cAllocator.Kill();
 
 	for (i = 0; i < 20; i++)
 	{
@@ -219,6 +223,7 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	int								iNumIndexes;
 	int								iNumNames;
 	CObjectAllocator				cAllocator;
+	CDependentReadObjects			cDependentReadObjects;
 
 	cWriterStart1.Init("Output/GraphDeserialiser/Simple/Remapping", "", "Start1");
 	cWriterStart2.Init("Output/GraphDeserialiser/Simple/Remapping", "", "Start2");
@@ -261,10 +266,13 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	cRoot = ORoot();
 
 	cAllocator.Init(&gcObjects, TRUE);
+	cDependentReadObjects.Init();
 	cReaderStart1.Init("Output/GraphDeserialiser/Simple/Remapping", "Start1");
-	cGraphDeserialiser.Init(&cReaderStart1, gcObjects.GetIndexGenerator(), &cAllocator);
+	cGraphDeserialiser.Init(&cReaderStart1, gcObjects.GetIndexGenerator(), &cAllocator, &cDependentReadObjects);
 	cOwStart1 = cGraphDeserialiser.Read("Ow/Start 1");
 	cGraphDeserialiser.Kill();
+	cDependentReadObjects.Kill();
+	cAllocator.Kill();
 	cReaderStart1.Kill();
 
 	AssertInt(-1, cOwStart1->DistToRoot());
@@ -292,10 +300,13 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	iNumNames = gcObjects.NumMemoryNames();
 
 	cAllocator.Init(&gcObjects, TRUE);
+	cDependentReadObjects.Init();
 	cReaderStart2.Init("Output/GraphDeserialiser/Simple/Remapping", "Start2");
-	cGraphDeserialiser.Init(&cReaderStart2, gcObjects.GetIndexGenerator(), &cAllocator);
+	cGraphDeserialiser.Init(&cReaderStart2, gcObjects.GetIndexGenerator(), &cAllocator, &cDependentReadObjects);
 	cOwStart2 = cGraphDeserialiser.Read("Ow/Start 2");
 	cGraphDeserialiser.Kill();
+	cDependentReadObjects.Kill();
+	cAllocator.Kill();
 	cReaderStart2.Kill();
 
 	AssertInt(iNumUnknowns+2, gcUnknowns.NumElements());

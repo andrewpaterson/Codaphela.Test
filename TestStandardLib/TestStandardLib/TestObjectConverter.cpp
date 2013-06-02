@@ -46,14 +46,17 @@ CPointer<CTestDoubleNamedString> SetupObjectConverterChunkFile(void)
 	cRoot = ORoot();
 
 	cDiamond = ONMalloc(CTestNamedString, "Diamond End");
+	AssertLongLongInt(3, cDiamond->GetOI());
 
 	cNS1 = ONMalloc(CTestNamedString, "NamedString 1");
+	AssertLongLongInt(4, cNS1->GetOI());
 	sz1 = OMalloc(CString);
 
 	cNS1->Init(sz1, cDiamond, "Hello");
 	sz1->Init("World");
 
 	cNS2 = ONMalloc(CTestNamedString, "NamedString 2");
+	AssertLongLongInt(6, cNS2->GetOI());
 	sz2 = OMalloc(CString);
 
 	cNS2->Init(sz2, cDiamond, "12345");
@@ -73,7 +76,7 @@ CPointer<CTestDoubleNamedString> SetupObjectConverterChunkFile(void)
 	AssertInt(2, cDouble->DistToRoot());
 	AssertInt(3, cNS1->DistToRoot());
 	AssertInt(4, cDiamond->DistToRoot());
-	AssertInt(-1, cNS2->DistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, cNS2->DistToRoot());
 
 	cDouble->mpSplit1 = cNS2;
 
@@ -119,10 +122,10 @@ void TestObjectConverterDragonExistingHollows(void)
 	CPointer<CRoot>						pcRoot;
 	CPointer<CTestNamedString>			pcObject2;
 	CTestNamedString*					pcEnd;
-	CNamedHollowObject*					pcHollow;
 	CPointer<CTestNamedString>			pcObject3;
 	CTestNamedString*					pcTestNamedString3;
 	CTestNamedString*					pcTestNamedString2;
+	OIndex								oiNew;
 
 	ObjectsInit();
 	WriteObjectConverterChunkedFile();
@@ -159,37 +162,39 @@ void TestObjectConverterDragonExistingHollows(void)
 	AssertNotNull(&pcDoubleNamedString->mszString);
 	AssertFalse(pcDoubleNamedString->mszString->IsHollow());
 	AssertString("Start", pcDoubleNamedString->mszString->Text());
-	AssertInt(-1, pcDoubleNamedString->mszString->DistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcDoubleNamedString->mszString->DistToRoot());
 
 	pcObject = pcDoubleNamedString->mpSplit1;
 	AssertTrue(pcObject.IsNotNull());
-	AssertTrue(pcObject.IsHollow());
-	AssertInt(-1, pcObject.DistToRoot());
+	AssertFalse(pcObject.IsHollow());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcObject.DistToRoot());
 	AssertString("NamedString 2", pcObject.GetName());
 
 	pcRoot = ORoot();
-	AssertLongLongInt(5, pcRoot->GetOI());
 
 	pcRoot->Add(pcDoubleNamedString);
 	AssertInt(2, pcDoubleNamedString->DistToRoot());
 	AssertInt(3, pcDoubleNamedString->mszString->DistToRoot());
 	AssertTrue(pcObject.IsNotNull());
-	AssertTrue(pcObject.IsHollow());
+	AssertFalse(pcObject.IsHollow());
 	AssertInt(3, pcObject.DistToRoot());
 	AssertString("NamedString 2", pcObject.GetName());
-	AssertLongLongInt(3, pcObject.GetIndex());
+
+	oiNew = cChunkedConverter.GetNewIndexFromOld(6);
+	AssertLongLongInt(oiNew, pcObject.GetIndex());
 
 	AssertString("NamedString 1", pcDoubleNamedString->mpSplit2.GetName());
 	AssertTrue(pcDoubleNamedString->mpSplit2.IsNotNull());
-	AssertTrue(pcDoubleNamedString->mpSplit2.IsHollow());
+	AssertFalse(pcDoubleNamedString->mpSplit2.IsHollow());
 	AssertInt(3, pcDoubleNamedString->mpSplit2.DistToRoot());
 	
-	pcHollow = (CNamedHollowObject*)gcObjects.GetInMemoryObject(3LL);
-	AssertNotNull(pcHollow);
-	AssertString("NamedString 2", pcHollow->GetName());
+	pcTestNamedString2 = (CTestNamedString*)gcObjects.GetInMemoryObject(oiNew);
+	AssertNotNull(pcTestNamedString2);
+	AssertString("NamedString 2", pcTestNamedString2->GetName());
 
-	pcEnd = (CTestNamedString*)gcObjects.GetInMemoryObject(7LL);
-	AssertNull(pcEnd);
+	oiNew = cChunkedConverter.GetNewIndexFromOld(3LL);
+	pcEnd = (CTestNamedString*)gcObjects.GetInMemoryObject(oiNew);
+	AssertString("Diamond End", pcEnd->GetName());
 
 	pcObject2 = pcObjectSource->Convert("NamedString 2");
 	AssertString("CTestNamedString", pcObject2.ClassName());
