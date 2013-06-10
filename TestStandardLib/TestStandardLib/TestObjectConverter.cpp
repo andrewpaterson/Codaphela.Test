@@ -198,7 +198,7 @@ void TestObjectConverterDragonExistingHollows(void)
 
 	pcObject2 = pcObjectSource->Convert("NamedString 2");
 	AssertString("CTestNamedString", pcObject2.ClassName());
-	AssertLongLongInt(3, pcObject2.GetIndex());
+	AssertLongLongInt(11, pcObject2.GetIndex());
 	AssertTrue(pcObject2.IsNotNull());
 	pcObject = pcDoubleNamedString->mpSplit1;
 	AssertPointer(pcObject.Object(), pcObject2.Object());
