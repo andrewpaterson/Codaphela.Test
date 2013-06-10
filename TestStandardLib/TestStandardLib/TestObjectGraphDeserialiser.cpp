@@ -144,12 +144,12 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	AssertTrue(cStart1->mp1.IsNotNull());
 	AssertString("CTestSaveableObject1", cStart1->mp1->ClassName());
 	cShared = cStart1->mp1;
-	AssertLongLongInt(24, cShared->GetOI());
+	AssertLongLongInt(25, cShared->GetOI());
 
 	AssertTrue(cStart1->mp2.IsNotNull());
 	AssertString("CString", cStart1->mp2->ClassName());
 	cString1 = cStart1->mp2;
-	AssertLongLongInt(25, cString1->GetOI());
+	AssertLongLongInt(24, cString1->GetOI());
 	cGraphDeserialiser.Kill();
 	cDependentReadObjects.Kill();
 	cAllocator.Kill();

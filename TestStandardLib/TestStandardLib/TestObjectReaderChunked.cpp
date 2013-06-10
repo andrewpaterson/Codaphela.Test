@@ -156,6 +156,8 @@ void TestObjectReaderChunkedDeserialised(void)
 	cReader.Init("Output\\ObjectReaderChunked\\Test\\", "Reader");
 	cGraphDeserialiser.Init(&cReader, gcObjects.GetIndexGenerator(), &cAllocator, &cDependentReadObjects, gcObjects.GetMemory());
 	cBase = cGraphDeserialiser.Read("Array 1");
+	AssertTrue(cBase.IsNotNull());
+	AssertString("CTestWithArray", cBase.ClassName());
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
 	AssertLongLongInt(14, gcObjects.NumMemoryIndexes());
@@ -166,9 +168,11 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertString("Something with One", cA1->mszString.Text());
 	AssertInt(1, cA1->mx);
 
+	AssertPointer(cBase.Object(), cA1.Object());
+
 	cA2 = gcObjects.Get("Array X");
 	AssertTrue(cA2.IsNotNull());
-	AssertString("CTestWithArray", cA2->ClassName());
+	AssertString("CTestWithArray", cA2.ClassName());
 	AssertString("An with 2", cA2->mszString.Text());
 	AssertInt(2, cA2->mx);
 
