@@ -524,7 +524,7 @@ void TestObjectDehollowfication(void)
 
 	pSingle = pDouble->mpSplit2;
 	AssertTrue(pcInternal->mpSplit2.IsNotNull());
-	AssertFalse(pcInternal->mpSplit2.IsHollow());
+	AssertTrue(pcInternal->mpSplit2.IsHollow());
 
 	ObjectsKill();
 }
