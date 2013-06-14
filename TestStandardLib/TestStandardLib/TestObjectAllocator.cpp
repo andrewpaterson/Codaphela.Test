@@ -28,7 +28,7 @@ void TestObjectAllocatorSimpleAdd(void)
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
-	cAllocator.Init(&gcObjects, TRUE);
+	cAllocator.Init(&gcObjects);
 
 	pNamed = cAllocator.Add("CTestNamedObject");
 	AssertNotNull(pNamed.Object());
@@ -59,7 +59,7 @@ void TestObjectAllocatorNamedAdd(void)
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
-	cAllocator.Init(&gcObjects, TRUE);
+	cAllocator.Init(&gcObjects);
 
 	pNamed1 = cAllocator.Add("CTestNamedObject", "My Object Name");
 	AssertNotNull(pNamed1.Object());
@@ -94,7 +94,7 @@ void TestObjectAllocatorNamedOverwrite(void)
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
-	cAllocator.Init(&gcObjects, TRUE);
+	cAllocator.Init(&gcObjects);
 
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 

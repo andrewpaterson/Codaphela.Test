@@ -151,7 +151,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
-	cAllocator.Init(&gcObjects, TRUE);
+	cAllocator.Init(&gcObjects);
 	cDependentReadObjects.Init();
 	cReader.Init("Output\\ObjectReaderChunked\\Test\\", "Reader");
 	cGraphDeserialiser.Init(&cReader, FALSE, gcObjects.GetIndexGenerator(), &cAllocator, &cDependentReadObjects, gcObjects.GetMemory());
