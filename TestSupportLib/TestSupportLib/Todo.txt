@@ -6,7 +6,6 @@ Write a UV Sphere Mapper mesh modifier
 Fix Skinning.  Fuck knows how broken it is.
 Write a Colour XYZ Mapper mesh modifier
 
-*Remove DataArray and DataIndicies etc...
 Fix Mesh Exporter to work with new Mesh
 Fix Mesh Converter to work with new Mesh
 Rename FindElement* to Find* 
@@ -18,6 +17,7 @@ Non-Z aligned shapes need fixing.
 Design/write the OBK reader.
 DrawImage must handle images and cels.
 Add a draw image modifier also.
+*Remove DataArray and DataIndicies etc...
 *Write some sort of CImageCel source thingy.
 *User should work with named CImageCelGroups rather than single CImageCels.
 *Rename Editor -> Modifier
