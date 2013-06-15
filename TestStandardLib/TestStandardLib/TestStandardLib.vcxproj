@@ -49,7 +49,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -91,10 +91,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="NamedObjectTestClasses.cpp" />
+    <ClCompile Include="ObjectTestSetup.cpp" />
     <ClCompile Include="ObjectWriterChunkedTestClasses.cpp" />
     <ClCompile Include="TestArrayCommonObject.cpp" />
     <ClCompile Include="TestChunkFileNames.cpp" />
     <ClCompile Include="TestDehollowfication.cpp" />
+    <ClCompile Include="TestKill.cpp" />
     <ClCompile Include="TestNamedIndexes.cpp" />
     <ClCompile Include="TestNamedObject.cpp" />
     <ClCompile Include="TestObjectAllocator.cpp" />
@@ -133,6 +135,7 @@
   <ItemGroup>
     <ClInclude Include="NamedObjectTestClasses.h" />
     <ClInclude Include="ObjectTestClasses.h" />
+    <ClInclude Include="ObjectTestSetup.h" />
     <ClInclude Include="ObjectWriterChunkedTestClasses.h" />
     <ClInclude Include="UnknownKillList.h" />
     <ClInclude Include="UnknownTestClasses.h" />
