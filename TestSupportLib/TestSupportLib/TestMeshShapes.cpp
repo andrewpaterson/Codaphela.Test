@@ -33,7 +33,7 @@ void TestPlane(void)
 	int					iNumPositions;
 	CMeshPolygon*		pcPolygon;
 
-	cMesh.Init(-1, "Plane");
+	cMesh.Init();
 	cMeshEditor.Init(&cMesh);
 
 	sXDirection.Init(1, 0, 0);
@@ -137,7 +137,7 @@ void TestBox(void)
 	int					iNumFaces;
 	int					iNumPositions;
 
-	cMesh.Init(-1, "Box");
+	cMesh.Init();
 	cMeshEditor.Init(&cMesh);
 
 	sXDirection.Init(1, 0, 0);
@@ -168,7 +168,7 @@ void TestBox(void)
 	cMesh.Kill();
 	AssertFile("Input/Box4x5x6.OBJ", "Output/Box4x5x6.OBJ");
 
-	cMesh.Init(-1, "Box");
+	cMesh.Init();
 
 	pcBoxEditor = cMeshEditor.AddModifier<CMeshBoxEditor>();
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 1, 2, 2);
@@ -180,7 +180,7 @@ void TestBox(void)
 	cMesh.Kill();
 	AssertFile("Input/Box1x2x2.OBJ", "Output/Box1x2x2.OBJ");
 
-	cMesh.Init(-1, "Box");
+	cMesh.Init();
 
 	pcBoxEditor = cMeshEditor.AddModifier<CMeshBoxEditor>();
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 2, 2, 2);
@@ -192,7 +192,7 @@ void TestBox(void)
 	cMesh.Kill();
 	AssertFile("Input/Box2x2x2.OBJ", "Output/Box2x2x2.OBJ");
 
-	cMesh.Init(-1, "Box");
+	cMesh.Init();
 
 	pcBoxEditor = cMeshEditor.AddModifier<CMeshBoxEditor>();
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 2, 1, 2);
@@ -204,7 +204,7 @@ void TestBox(void)
 	cMesh.Kill();
 	AssertFile("Input/Box2x1x2.OBJ", "Output/Box2x1x2.OBJ");
 
-	cMesh.Init(-1, "Box");
+	cMesh.Init();
 
 	pcBoxEditor = cMeshEditor.AddModifier<CMeshBoxEditor>();
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 2, 2, 1);
@@ -216,7 +216,7 @@ void TestBox(void)
 	cMesh.Kill();
 	AssertFile("Input/Box2x2x1.OBJ", "Output/Box2x2x1.OBJ");
 
-	cMesh.Init(-1, "Box");
+	cMesh.Init();
 
 	pcBoxEditor = cMeshEditor.AddModifier<CMeshBoxEditor>();
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 1, 1, 2);
@@ -228,7 +228,7 @@ void TestBox(void)
 	cMesh.Kill();
 	AssertFile("Input/Box1x1x2.OBJ", "Output/Box1x1x2.OBJ");
 
-	cMesh.Init(-1, "Box");
+	cMesh.Init();
 
 	pcBoxEditor = cMeshEditor.AddModifier<CMeshBoxEditor>();
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 1, 2, 1);
@@ -240,7 +240,7 @@ void TestBox(void)
 	cMesh.Kill();
 	AssertFile("Input/Box1x2x1.OBJ", "Output/Box1x2x1.OBJ");
 
-	cMesh.Init(-1, "Box");
+	cMesh.Init();
 
 	pcBoxEditor = cMeshEditor.AddModifier<CMeshBoxEditor>();
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 2, 1, 1);
@@ -252,7 +252,7 @@ void TestBox(void)
 	cMesh.Kill();
 	AssertFile("Input/Box2x1x1.OBJ", "Output/Box2x1x1.OBJ");
 
-	cMesh.Init(-1, "Box");
+	cMesh.Init();
 
 	pcBoxEditor = cMeshEditor.AddModifier<CMeshBoxEditor>();
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 1, 1, 1);
@@ -296,7 +296,7 @@ void TestDisc(void)
 	sZDirection.Init(0, 0, 1);
 	sStart.Init(0, 0, 0);
 
-	cMesh.Init(-1, "Disc");
+	cMesh.Init();
 	cMeshEditor.Init(&cMesh);
 
 	pcDiscEditor = cMeshEditor.AddModifier<CMeshDiscEditor>();
@@ -317,7 +317,7 @@ void TestDisc(void)
 	cMesh.Kill();
 	cMeshEditor.Kill();
 
-	cMesh.Init(-1, "Disc");
+	cMesh.Init();
 	cMeshEditor.Init(&cMesh);
 
 	pcDiscEditor = cMeshEditor.AddModifier<CMeshDiscEditor>();
@@ -355,7 +355,7 @@ void TestRing(void)
 	sZDirection.Init(0, 0, 1);
 	sStart.Init(0, 0, 0);
 
-	cMesh.Init(-1, "Disc");
+	cMesh.Init();
 	cMeshEditor.Init(&cMesh);
 
 	pcRingEditor = cMeshEditor.AddModifier<CMeshRingEditor>();
@@ -376,7 +376,7 @@ void TestRing(void)
 	cMesh.Kill();
 	cMeshEditor.Kill();
 
-	cMesh.Init(-1, "Disc");
+	cMesh.Init();
 	cMeshEditor.Init(&cMesh);
 
 	pcRingEditor = cMeshEditor.AddModifier<CMeshRingEditor>();
@@ -411,7 +411,7 @@ void TestCone(void)
 	CMeshConeEditor*	pcConeEditor;
 	CMeshEditor			cMeshEditor;
 
-	cMesh.Init(-1, "Box");
+	cMesh.Init();
 	cMeshEditor.Init(&cMesh);
 
 	sZDirection.Init(0, 0, 1);
@@ -473,7 +473,7 @@ void TestCylinder(void)
 	CMeshCylinderEditor*	pcCylinderEditor;
 	CMeshEditor				cMeshEditor;
 
-	cMesh.Init(-1, "Box");
+	cMesh.Init();
 	cMeshEditor.Init(&cMesh);
 
 	sZDirection.Init(0, 0, 1);

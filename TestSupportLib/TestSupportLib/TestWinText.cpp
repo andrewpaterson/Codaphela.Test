@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "StandardLib/Objects.h"
 #include "SupportLib/WinText.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
@@ -14,6 +15,8 @@
 void TestWinText(void)
 {
 	BeginTests();
+
+	ObjectsInit();
 
 	CWinText			cWinText;
 	SWinFontInstance*	psWinFont;
@@ -39,6 +42,8 @@ void TestWinText(void)
 
 	pcFont->Kill();
 	cWinText.Kill();
+
+	ObjectsKill();
 
 	TestStatistics();
 }

@@ -30,7 +30,7 @@ void TestMeshEdgeConnectivity(void)
 	int					i;
 	CCornerEdgesMap*	pcCornerEdgesMap;
 
-	cMesh.Init(-1, "Box");
+	cMesh.Init();
 	cMeshEditor.Init(&cMesh);
 
 	sXDirection.Init(1, 0, 0);

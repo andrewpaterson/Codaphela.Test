@@ -3,7 +3,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/NaiveFile.h"
 #include "CoreLib/TypeConverter.h"
-#include "StandardLib/Unknowns.h"
+#include "StandardLib/Objects.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/ImageCelsSource.h"
@@ -27,6 +27,8 @@ void TestImageCombinerMask(void)
 	CImage					cImage;
 	CImageCelsSource		cSource;
 	SImageColour			sColour;
+
+	ObjectsInit();
 
 	sColour.c[0] = 0;
 	sColour.c[1] = 0;
@@ -52,6 +54,8 @@ void TestImageCombinerMask(void)
 	cImage.Kill();
 	cCombiner.Kill();
 	cSource.Kill();
+
+	ObjectsKill();
 }
 
 

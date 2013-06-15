@@ -17,7 +17,7 @@ void TestMeshPolygonsAddFace(void)
 	CMeshEditor		cMeshEditor;
 	CMeshPolygon*	pcPolygon;
 
-	cMesh.Init(-1, "Box");
+	cMesh.Init();
 	cMeshEditor.Init(&cMesh);
 
 	cMesh.AddCorner(&SFloat3(0, 0, 0));
@@ -77,7 +77,7 @@ void TestMeshPolygonsAddDiscontiguousFace(BOOL bOutEdgeValue)
 	CMeshEditor		cMeshEditor;
 	CMeshPolygon*	pcPolygon;
 
-	cMesh.Init(-1, "Box");
+	cMesh.Init();
 	cMeshEditor.Init(&cMesh);
 
 	cMesh.AddCorner(&SFloat3(0, 0, 0));
@@ -137,7 +137,7 @@ void TestMeshPolygonAdjacency(void)
 	CMeshPlaneEditor*	pcPlane;
 	CArrayInt			aiAdjacent;
 
-	cMesh.Init(0, "Adjacency Test");
+	cMesh.Init();
 	cMeshEditor.Init(&cMesh);
 
 	pcPlane = cMeshEditor.AddModifier<CMeshPlaneEditor>();
