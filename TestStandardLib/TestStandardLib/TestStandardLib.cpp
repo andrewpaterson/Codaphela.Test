@@ -35,6 +35,8 @@ void TestObjectGraphDeserialiser(void);
 void TestObjectReaderSimple(void);
 void TestObjects(void);
 void TestDehollowfication(void);
+void TestKill(void);
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -79,6 +81,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestObjectConverter();
 	TestObjects();
 	TestDehollowfication();
+	TestKill();
 
 	FastFunctionsKill();
 	KillEmptyString();
