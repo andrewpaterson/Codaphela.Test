@@ -147,16 +147,16 @@ void TestIndexedDataWriteThrough(void)
 	//Using smart index access we should be able to add 4 objects before the memory index access runs out of memory and has to switch to huge.
 
 	cConfig.Manual("Database6",
-		FALSE,
-		FALSE,
-		TRUE,
-		4,
-		2,
-		2,
-		2,
-		1,
-		1 MB,
-		FALSE);
+					FALSE,
+					FALSE,
+					TRUE,
+					4,
+					2,
+					2,
+					2,
+					1,
+					1 MB,
+					FALSE);
 
 	cIndexedData.Init(&cConfig);
 	cIndexedData.DurableBegin();
@@ -258,16 +258,16 @@ void TestIndexedDataWriteDirtyTesting(void)
 	//Using smart index access we should be able to add 4 objects before the memory index access runs out of memory and has to switch to huge.
 
 	cConfig.Manual("Database8",
-		FALSE,
-		TRUE,
-		FALSE,
-		4,
-		2,
-		2,
-		2,
-		1,
-		1 MB,
-		FALSE);
+					FALSE,
+					TRUE,
+					FALSE,
+					4,
+					2,
+					2,
+					2,
+					1,
+					1 MB,
+					FALSE);
 
 	cIndexedData.Init(&cConfig);
 	cIndexedData.DurableBegin();
