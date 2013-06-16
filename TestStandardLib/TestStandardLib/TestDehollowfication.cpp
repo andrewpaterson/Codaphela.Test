@@ -130,18 +130,32 @@ void TestDehollowficationFromDatabase(void)
 
 	ObjectsInit(&cConfig);
 	SetupDehollowficationConstructors();
-	gcObjects.Dump();
-
 
 	CPointer<CRoot> pRoot = ORoot();
 
 	AssertTrue(pRoot->IsSetHollow());
-	
-	CPointerObject pTest = pRoot->Get("Double Start");
-	gcObjects.Dump();
+
+	CPointer<CTestDoubleNamedString> pTest = pRoot->Get<CTestDoubleNamedString>("Double Start");
 	AssertFalse(pRoot->IsSetHollow());
 	AssertTrue(pTest.IsNotNull());
 	AssertTrue(pTest.IsHollow());
+	
+	AssertTrue(gcObjects.GetMemory()->GetNames()->TestConsistency()); //Bug in CASCIITree.
+	AssertString("12345", pTest->mpSplit1->mszEmbedded.Text());
+	AssertTrue(gcObjects.GetMemory()->GetNames()->TestConsistency()); //Bug in CASCIITree.
+	AssertTrue(pTest->mpSplit1->mpAnother.IsHollow());
+	AssertTrue(pTest->mpSplit1->mszString.IsHollow());
+	AssertString("Diamond End", pTest->mpSplit1->mpAnother.GetName());
+	AssertString("6789", pTest->mpSplit1->mszString->Text());
+	AssertFalse(pTest->mpSplit1->mszString.IsHollow());
+
+	CPointer<CTestNamedString> pDiamond = pTest->mpSplit1->mpAnother;
+	AssertTrue(pTest->mpSplit1->mpAnother.IsHollow());
+	AssertTrue(pDiamond.IsHollow());
+
+	pDiamond->ClassName();
+	AssertFalse(pDiamond.IsHollow());
+	AssertFalse(pTest->mpSplit1->mpAnother.IsHollow());
 
 	ObjectsKill();
 }
