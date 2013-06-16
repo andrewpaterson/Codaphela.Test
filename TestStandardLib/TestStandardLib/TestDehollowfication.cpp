@@ -42,6 +42,7 @@ CPointer<CTestDoubleNamedString> SetupDehollowficationScene(void)
 	CPointer<CString>					sz2;
 	CPointer<CString>					sz4;
 	CPointer<CRoot>						cRoot;
+	CPointer<CTestNamedString>			cNS3;
 
 	cRoot = ORoot();
 
@@ -70,6 +71,11 @@ CPointer<CTestDoubleNamedString> SetupDehollowficationScene(void)
 	cRoot->Add(cDouble);
 
 	cDouble->mpSplit1 = cNS2;
+
+	cNS3 = ONMalloc(CTestNamedString, "NamedString 3");
+	cNS3->Init(sz1, cDiamond, "Random");
+
+	cRoot->Add(cNS3);
 
 	return cDouble;
 }
@@ -104,32 +110,38 @@ void TestDehollowficationFromDatabase(void)
 	CIndexedConfig	cConfig;
 	CFileUtil		cFileUtil;
 
-	cFileUtil.RemoveDir("Output\\Dehollowfication\\Database");
-
 	cConfig.Manual("Output\\Dehollowfication\\Database",
 					FALSE,
 					TRUE,
 					FALSE,
-					8,
+					4,
 					2,
-					4,
-					4,
+					4,  //4
+					12, //2 break with 12 objects.  
 					4 * sizeof(CIndexedDataDescriptor),
 					1 MB,
 					FALSE);
 
+	cFileUtil.RemoveDir("Output\\Dehollowfication\\Database");
 	ObjectsInit(&cConfig);
 	SetupDehollowficationScene();
-	gcObjects.Flush(TRUE, TRUE);
+	gcObjects.Flush(FALSE, FALSE);
 	ObjectsKill();
 
 	ObjectsInit(&cConfig);
 	SetupDehollowficationConstructors();
+	gcObjects.Dump();
+
 
 	CPointer<CRoot> pRoot = ORoot();
+
 	AssertTrue(pRoot->IsSetHollow());
 	
 	CPointerObject pTest = pRoot->Get("Double Start");
+	gcObjects.Dump();
+	AssertFalse(pRoot->IsSetHollow());
+	AssertTrue(pTest.IsNotNull());
+	AssertTrue(pTest.IsHollow());
 
 	ObjectsKill();
 }
