@@ -73,7 +73,7 @@ CPointer<CTestDoubleNamedString> SetupDehollowficationScene(void)
 	cDouble->mpSplit1 = cNS2;
 
 	cNS3 = ONMalloc(CTestNamedString, "NamedString 3");
-	cNS3->Init(sz1, cDiamond, "Random");
+	cNS3->Init(sz1, ONNull(CTestNamedString), "Random");
 
 	cRoot->Add(cNS3);
 
@@ -131,19 +131,30 @@ void TestDehollowficationFromDatabase(void)
 	ObjectsInit(&cConfig);
 	SetupDehollowficationConstructors();
 
+	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(0, gcObjects.NumMemoryNames());
+	AssertLongLongInt(11, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached());
+	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
+
 	CPointer<CRoot> pRoot = ORoot();
 
 	AssertTrue(pRoot->IsSetHollow());
+
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(1, gcObjects.NumMemoryNames());
+	AssertLongLongInt(11, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached());
+	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 
 	CPointer<CTestDoubleNamedString> pTest = pRoot->Get<CTestDoubleNamedString>("Double Start");
 	AssertFalse(pRoot->IsSetHollow());
 	AssertTrue(pTest.IsNotNull());
 	AssertTrue(pTest.IsHollow());
 	
-	AssertTrue(gcObjects.GetMemory()->GetNames()->TestConsistency()); //Bug in CASCIITree.
 	AssertString("12345", pTest->mpSplit1->mszEmbedded.Text());
-	AssertTrue(gcObjects.GetMemory()->GetNames()->TestConsistency()); //Bug in CASCIITree.
 	AssertTrue(pTest->mpSplit1->mpAnother.IsHollow());
+	AssertTrue(pTest->mpSplit2.IsHollow());
 	AssertTrue(pTest->mpSplit1->mszString.IsHollow());
 	AssertString("Diamond End", pTest->mpSplit1->mpAnother.GetName());
 	AssertString("6789", pTest->mpSplit1->mszString->Text());
@@ -157,6 +168,37 @@ void TestDehollowficationFromDatabase(void)
 	AssertFalse(pDiamond.IsHollow());
 	AssertFalse(pTest->mpSplit1->mpAnother.IsHollow());
 
+	AssertLongLongInt(10, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+	AssertLongLongInt(11, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(6, gcObjects.NumDatabaseObjectsCached());
+	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
+
+	AssertTrue(pTest->mpSplit2.IsHollow());
+	pTest->mpSplit2->ClassSize();
+	AssertFalse(pTest->mpSplit2.IsHollow());
+	AssertFalse(pTest->mpSplit2->mpAnother.IsHollow());
+	AssertPointer(pDiamond.Object(), pTest->mpSplit2->mpAnother.Object());
+
+	AssertLongLongInt(11, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+	AssertLongLongInt(11, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(7, gcObjects.NumDatabaseObjectsCached());
+	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
+
+	CPointer<CTestNamedString> pRandom = pRoot->Get<CTestNamedString>("NamedString 3");
+	AssertTrue(pRandom.IsNotNull());
+	AssertTrue(pRandom.IsHollow());
+
+	AssertTrue(pRandom->mszString.IsHollow());
+	AssertFalse(pRandom.IsHollow());
+	AssertTrue(pTest->mpSplit2->mszString.IsHollow());
+
+	AssertString("World", pRandom->mszString->Text());
+	AssertFalse(pRandom->mszString.IsHollow());
+	AssertFalse(pTest->mpSplit2->mszString.IsHollow());
+	AssertPointer(pRandom->mszString.Object(), pTest->mpSplit2->mszString.Object());
+
 	ObjectsKill();
 }
 
@@ -167,6 +209,19 @@ void TestDehollowficationFromDatabase(void)
 //////////////////////////////////////////////////////////////////////////
 void TestDehollowficationFromChunkFileSource(void)
 {
+	CFileUtil		cFileUtil;
+
+
+	cFileUtil.RemoveDir("Output\\Dehollowfication\\ChunkFile");
+	ObjectsInit("Output\\Dehollowfication\\Temp");
+	WriteDehollowficationChunkedFile();
+	ObjectsKill();
+	cFileUtil.RemoveDir("Output\\Dehollowfication\\Temp");
+
+	
+	ObjectsInit("Output\\Dehollowfication\\Temp");
+
+	ObjectsKill();
 }
 
 
