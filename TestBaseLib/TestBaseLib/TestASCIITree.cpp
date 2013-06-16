@@ -156,6 +156,43 @@ void TestASCIITreeRemove(void)
 
 	cTree.Kill();
 }
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestASCIITreeDiamondError(void)
+{
+	CASCIITree		cTree;
+
+	cTree.Init();
+	
+	AssertInt(0, cTree.Add(1, "GraphRoot"));
+	AssertInt(1, cTree.Add(3, "Diamond End"));
+	AssertInt(2, cTree.Add(5, "NamedString 1"));
+	AssertInt(3, cTree.Add(6, "NamedString 2"));
+	AssertInt(4, cTree.Add(10, "Double Start"));
+	AssertInt(5, cTree.Add(11, "NamedString 3"));
+	AssertTrue(cTree.TestConsistency());
+
+	cTree.Kill();
+	cTree.Init();
+
+	AssertInt(0, cTree.Add(1, "GraphRoot"));
+	AssertInt(1, cTree.Add(10, "Double Start"));
+	AssertInt(2, cTree.Add(11, "NamedString 3"));
+	AssertTrue(cTree.Remove(ATRS_MoveLastToRemoved, "Double Start"));
+	AssertTrue(cTree.TestConsistency());
+	AssertInt(2, cTree.Add(10, "Double Start"));
+	AssertInt(3, cTree.Add(6, "NamedString 2"));
+	AssertInt(4, cTree.Add(5, "NamedString 1"));
+	AssertTrue(cTree.Remove(ATRS_MoveLastToRemoved, "NamedString 2"));
+	AssertTrue(cTree.TestConsistency());
+	AssertInt(4, cTree.Add(6, "NamedString 2"));
+	AssertInt(5, cTree.Add(3, "Diamond End"));
+	AssertTrue(cTree.TestConsistency());
+
+	cTree.Kill();
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -168,6 +205,7 @@ void TestASCIITree(void)
 
 	TestASCIITreeAdd();
 	TestASCIITreeRemove();
+	TestASCIITreeDiamondError();
 
 	TestStatistics();
 }
