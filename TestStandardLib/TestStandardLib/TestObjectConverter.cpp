@@ -135,7 +135,7 @@ void TestObjectConverterDragonExistingHollows(void)
 	SetupObjectConverterConstructors();
 
 	pcDiskFile = DiskFile("Output\\ObjectConverter\\Double.DRG");
-	cChunkedConverter.Init(gcObjects.GetIndexGenerator());
+	cChunkedConverter.Init();
 	pcObjectSource = cChunkedConverter.CreateSource(pcDiskFile, "Double");
 	AssertNotNull(pcObjectSource);
 	AssertTrue(pcObjectSource->IsNative());
@@ -180,7 +180,7 @@ void TestObjectConverterDragonExistingHollows(void)
 	AssertInt(3, pcObject.DistToRoot());
 	AssertString("NamedString 2", pcObject.GetName());
 
-	oiNew = cChunkedConverter.GetNewIndexFromOld(6LL);
+	oiNew = cChunkedConverter.TestGetNewIndexFromOld(6LL);
 	AssertLongLongInt(oiNew, pcObject.GetIndex());
 
 	AssertString("NamedString 1", pcDoubleNamedString->mpSplit2.GetName());
@@ -192,7 +192,7 @@ void TestObjectConverterDragonExistingHollows(void)
 	AssertNotNull(pcTestNamedString2);
 	AssertString("NamedString 2", pcTestNamedString2->GetName());
 
-	oiNew = cChunkedConverter.GetNewIndexFromOld(3LL);
+	oiNew = cChunkedConverter.TestGetNewIndexFromOld(3LL);
 	AssertLongLongInt(INVALID_O_INDEX, oiNew);
 
 	pcObject2 = pcObjectSource->Convert("NamedString 2");
@@ -210,7 +210,7 @@ void TestObjectConverterDragonExistingHollows(void)
 	AssertString("Diamond End", pcTestNamedString2->mpAnother.GetName());
 	AssertLongLongInt(9, pcTestNamedString2->mpAnother.GetIndex());
 
-	oiNew = cChunkedConverter.GetNewIndexFromOld(3LL);
+	oiNew = cChunkedConverter.TestGetNewIndexFromOld(3LL);
 	pcEnd = (CTestNamedString*)gcObjects.GetInMemoryObject(oiNew);
 	AssertString("Diamond End", pcEnd->GetName());
 
@@ -352,7 +352,7 @@ void TestObjectConverterDragonRootDistance(void)
 	SetupObjectConverterConstructors();
 
 	pcDiskFile = DiskFile("Output\\ObjectConverter\\Trouble.DRG");
-	cChunkedConverter.Init(gcObjects.GetIndexGenerator());
+	cChunkedConverter.Init();
 	pcObjectSource = cChunkedConverter.CreateSource(pcDiskFile, "Trouble");
 
 	pcDouble = pcObjectSource->Convert("Double");

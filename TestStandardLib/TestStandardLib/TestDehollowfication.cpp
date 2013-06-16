@@ -211,16 +211,27 @@ void TestDehollowficationFromChunkFileSource(void)
 {
 	CFileUtil		cFileUtil;
 
-
 	cFileUtil.RemoveDir("Output\\Dehollowfication\\ChunkFile");
 	ObjectsInit("Output\\Dehollowfication\\Temp");
 	WriteDehollowficationChunkedFile();
 	ObjectsKill();
 	cFileUtil.RemoveDir("Output\\Dehollowfication\\Temp");
 
-	
-	ObjectsInit("Output\\Dehollowfication\\Temp");
+	CObjectSourceChunked* pcObjectSourceChunked;
 
+
+	CDiskFile*	pcDiskFile = DiskFile("Output\\Dehollowfication\\ChunkFile\\Double.DRG");
+
+	ObjectsInit("Output\\Dehollowfication\\Temp");
+	pcObjectSourceChunked = (CObjectSourceChunked*)gcObjects.AddSource<CObjectConverterNative>(pcDiskFile, "Double");  //Note the .DRG is intentionally dropped.
+	AssertNotNull(pcObjectSourceChunked);
+
+	AssertInt(4, pcObjectSourceChunked->NumNames());
+	AssertString("Diamond End", pcObjectSourceChunked->GetName(0));
+	AssertString("Double Start", pcObjectSourceChunked->GetName(1));
+	AssertString("NamedString 1", pcObjectSourceChunked->GetName(2));
+	AssertString("NamedString 2", pcObjectSourceChunked->GetName(3));
+	
 	ObjectsKill();
 }
 
