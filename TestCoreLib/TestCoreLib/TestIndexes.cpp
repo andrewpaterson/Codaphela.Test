@@ -122,7 +122,6 @@ void TestIndexesAddAndRemove(void)
 {
 	CIndexes			cIndexes;
 	void*				pvMem;
-	void*				pvTest;
 	int					i;
 
 	i = 391287491;

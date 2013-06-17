@@ -5,7 +5,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestCppParserLib", "TestCpp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseLib", "..\..\CommonLibraries\BaseLib\BaseLib.vcxproj", "{E25D2DAC-0E80-42B2-8FA7-99B837CF7588}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CoreLib", "..\..\CommonLibraries\CoreLib\CoreLib.vcxproj", "{52A2D18B-BC88-4EB9-9EF0-AE58C1E9FDD5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CoreLib", "..\..\CommonLibraries\CoreLib\CoreLib.vcxproj", "{5918EC20-07C3-485F-80BB-BED4F96EA48F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CppParserLib", "..\..\CommonLibraries\CppParserLib\CppParserLib.vcxproj", "{4D010C1E-4DCE-4271-9B1C-87BBF0BC761C}"
 EndProject
@@ -27,10 +27,10 @@ Global
 		{E25D2DAC-0E80-42B2-8FA7-99B837CF7588}.Debug|Win32.Build.0 = Debug|Win32
 		{E25D2DAC-0E80-42B2-8FA7-99B837CF7588}.Release|Win32.ActiveCfg = Release|Win32
 		{E25D2DAC-0E80-42B2-8FA7-99B837CF7588}.Release|Win32.Build.0 = Release|Win32
-		{52A2D18B-BC88-4EB9-9EF0-AE58C1E9FDD5}.Debug|Win32.ActiveCfg = Debug|Win32
-		{52A2D18B-BC88-4EB9-9EF0-AE58C1E9FDD5}.Debug|Win32.Build.0 = Debug|Win32
-		{52A2D18B-BC88-4EB9-9EF0-AE58C1E9FDD5}.Release|Win32.ActiveCfg = Release|Win32
-		{52A2D18B-BC88-4EB9-9EF0-AE58C1E9FDD5}.Release|Win32.Build.0 = Release|Win32
+		{5918EC20-07C3-485F-80BB-BED4F96EA48F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5918EC20-07C3-485F-80BB-BED4F96EA48F}.Debug|Win32.Build.0 = Debug|Win32
+		{5918EC20-07C3-485F-80BB-BED4F96EA48F}.Release|Win32.ActiveCfg = Release|Win32
+		{5918EC20-07C3-485F-80BB-BED4F96EA48F}.Release|Win32.Build.0 = Release|Win32
 		{4D010C1E-4DCE-4271-9B1C-87BBF0BC761C}.Debug|Win32.ActiveCfg = Debug|Win32
 		{4D010C1E-4DCE-4271-9B1C-87BBF0BC761C}.Debug|Win32.Build.0 = Debug|Win32
 		{4D010C1E-4DCE-4271-9B1C-87BBF0BC761C}.Release|Win32.ActiveCfg = Release|Win32

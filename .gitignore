@@ -56,3 +56,12 @@ TestStandardLib/TestStandardLib/Output
 TestSupportLib/TestSupportLib.opensdf
 TestSupportLib/TestSupportLib/Log.txt
 TestSupportLib/TestSupportLib/Output
+TestCppParserLib/TestCppParserLib/Debug/*
+TestCppParserLib/Debug/*
+TestCppParserLib/TestCppParserLib.sdf
+TestCppParserLib/TestCppParserLib.suo
+TestCppParserLib/TestCppParserLib/Log.txt
+TestInputLib/TestInputLib/Debug/*
+TestInputLib/Debug/*
+TestInputLib/TestInputLib/TestInputLib.sdf
+TestInputLib/TestInputLib/TestInputLib.suo
