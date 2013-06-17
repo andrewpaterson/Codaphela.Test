@@ -116,8 +116,8 @@ void TestDehollowficationFromDatabase(void)
 					FALSE,
 					4,
 					2,
-					4,  //4
-					12, //2 break with 12 objects.  
+					4,
+					2,
 					4 * sizeof(CIndexedDataDescriptor),
 					1 MB,
 					FALSE);
@@ -143,7 +143,6 @@ void TestDehollowficationFromDatabase(void)
 
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
-	AssertLongLongInt(11, gcObjects.NumDatabaseObjects());
 	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 
@@ -170,8 +169,7 @@ void TestDehollowficationFromDatabase(void)
 
 	AssertLongLongInt(10, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
-	AssertLongLongInt(11, gcObjects.NumDatabaseObjects());
-	AssertLongLongInt(6, gcObjects.NumDatabaseObjectsCached());
+	AssertLongLongInt(3, gcObjects.NumDatabaseObjectsCached());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 
 	AssertTrue(pTest->mpSplit2.IsHollow());
@@ -182,8 +180,7 @@ void TestDehollowficationFromDatabase(void)
 
 	AssertLongLongInt(11, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
-	AssertLongLongInt(11, gcObjects.NumDatabaseObjects());
-	AssertLongLongInt(7, gcObjects.NumDatabaseObjectsCached());
+	AssertLongLongInt(2, gcObjects.NumDatabaseObjectsCached());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 
 	CPointer<CTestNamedString> pRandom = pRoot->Get<CTestNamedString>("NamedString 3");
@@ -198,6 +195,8 @@ void TestDehollowficationFromDatabase(void)
 	AssertFalse(pRandom->mszString.IsHollow());
 	AssertFalse(pTest->mpSplit2->mszString.IsHollow());
 	AssertPointer(pRandom->mszString.Object(), pTest->mpSplit2->mszString.Object());
+
+	AssertLongLongInt(11, gcObjects.NumDatabaseObjects());
 
 	ObjectsKill();
 }
