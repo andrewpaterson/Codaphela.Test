@@ -223,6 +223,8 @@ void TestDehollowficationFromChunkFileSource(void)
 	CDiskFile*	pcDiskFile = DiskFile("Output\\Dehollowfication\\ChunkFile\\Double.DRG");
 
 	ObjectsInit("Output\\Dehollowfication\\Temp");
+	SetupDehollowficationConstructors();
+
 	pcObjectSourceChunked = (CObjectSourceChunked*)gcObjects.AddSource<CObjectConverterNative>(pcDiskFile, "Double");  //Note the .DRG is intentionally dropped.
 	AssertNotNull(pcObjectSourceChunked);
 
@@ -231,7 +233,21 @@ void TestDehollowficationFromChunkFileSource(void)
 	AssertString("Double Start", pcObjectSourceChunked->GetName(1));
 	AssertString("NamedString 1", pcObjectSourceChunked->GetName(2));
 	AssertString("NamedString 2", pcObjectSourceChunked->GetName(3));
-	
+
+	CPointer<CTestDoubleNamedString> pStart;
+
+	pStart = gcObjects.Get("Double Start");
+	AssertTrue(pStart.IsNotNull());
+	AssertString("CTestDoubleNamedString", pStart.ClassName());
+
+	AssertTrue(pStart->mpSplit1.IsHollow());
+	AssertTrue(pStart->mpSplit2.IsHollow());
+	AssertFalse(pStart->mszString.IsHollow());
+
+	pStart->mpSplit1->ClassName();
+	AssertFalse(pStart->mpSplit1.IsHollow());
+	AssertString("CTestNamedString", pStart->mpSplit1.ClassName());
+
 	ObjectsKill();
 }
 
