@@ -188,7 +188,7 @@ void TestObjectConverterDragonExistingHollows(void)
 	AssertTrue(pcDoubleNamedString->mpSplit2.IsHollow());
 	AssertInt(3, pcDoubleNamedString->mpSplit2.DistToRoot());
 	
-	pcTestNamedString2 = (CTestNamedString*)gcObjects.GetInMemoryObject(oiNew);
+	pcTestNamedString2 = (CTestNamedString*)gcObjects.TestGetFromMemory(oiNew).Object();
 	AssertNotNull(pcTestNamedString2);
 	AssertString("NamedString 2", pcTestNamedString2->GetName());
 
@@ -211,7 +211,7 @@ void TestObjectConverterDragonExistingHollows(void)
 	AssertLongLongInt(9, pcTestNamedString2->mpAnother.GetIndex());
 
 	oiNew = cChunkedConverter.TestGetNewIndexFromOld(3LL);
-	pcEnd = (CTestNamedString*)gcObjects.GetInMemoryObject(oiNew);
+	pcEnd = (CTestNamedString*)gcObjects.TestGetFromMemory(oiNew).Object();
 	AssertString("Diamond End", pcEnd->GetName());
 
 	pcObject3 = pcObjectSource->Convert("NamedString 1");

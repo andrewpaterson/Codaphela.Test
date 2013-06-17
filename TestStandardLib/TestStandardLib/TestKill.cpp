@@ -81,7 +81,7 @@ void TestKillBestPractice(void)
 	OIndex oiMissile3 = pMissile3->GetOI();
 
 	pMissile3->Kill();  //<-- This is what is being tested.
-	pMissile3 = gcObjects.GetFromMemory(oiMissile3);
+	pMissile3 = gcObjects.TestGetFromMemory(oiMissile3);
 	AssertTrue(pMissile3.IsNull());
 
 	AssertString("Kill not called", sMaverickBefore.cPicture.mszPretenedImAPicture);
