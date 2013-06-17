@@ -11,10 +11,10 @@ void TestUsageNullPointers(void)
 {
 	ObjectsInit();
 
-	CPointer<CGameWorld>		pWorld;
+	Ptr<CGameWorld>		pWorld;
 	CPointerObject				pNull = ONull;
-	CPointer<CPlayerVehicle>	pVehicle = ONull;
-	CPointer<CHarrier>			pHarrier;
+	Ptr<CPlayerVehicle>	pVehicle = ONull;
+	Ptr<CHarrier>			pHarrier;
 
 	pWorld = pNull;
 	pWorld->AddTickable(pNull);
@@ -30,7 +30,7 @@ void TestUsageNullPointers(void)
 
 	AssertString("This code must compile", "This code must compile");
 
-	pWorld = pHarrier;  //This probably shouldn't compile but it does because pHarrier (CPointer<CHarrier>) extends CPointerObject.
+	pWorld = pHarrier;  //This probably shouldn't compile but it does because pHarrier (Ptr<CHarrier>) extends CPointerObject.
 
 	ObjectsKill();
 }
@@ -42,8 +42,8 @@ void TestUsageNullPointers(void)
 //////////////////////////////////////////////////////////////////////////
 void TestUsageDefaultPointer(void)
 {
-	CPointer<CBaseObject>	pBase;
-	CPointer<>				pDefault;
+	Ptr<CBaseObject>	pBase;
+	Ptr<>				pDefault;
 	CPointerObject			pObject;
 
 	AssertString("This code must compile", "This code must compile");

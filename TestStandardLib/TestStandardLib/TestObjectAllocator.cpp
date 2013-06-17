@@ -22,8 +22,8 @@ void TestObjectAllocatorAddConstructors(void)
 void TestObjectAllocatorSimpleAdd(void)
 {
 	CObjectAllocator			cAllocator;
-	CPointer<CTestNamedObject>	pNamed;
-	CPointer<CTestNamedObject>	pTemp;
+	Ptr<CTestNamedObject>	pNamed;
+	Ptr<CTestNamedObject>	pTemp;
 
 	ObjectsInit();
 
@@ -52,9 +52,9 @@ void TestObjectAllocatorSimpleAdd(void)
 void TestObjectAllocatorNamedAdd(void)
 {
 	CObjectAllocator			cAllocator;
-	CPointer<CTestNamedObject>	pNamed1;
-	CPointer<CTestNamedObject>	pNamed2;
-	CPointer<CTestNamedObject>	pTemp;
+	Ptr<CTestNamedObject>	pNamed1;
+	Ptr<CTestNamedObject>	pNamed2;
+	Ptr<CTestNamedObject>	pTemp;
 
 	ObjectsInit();
 
@@ -86,9 +86,9 @@ void TestObjectAllocatorNamedAdd(void)
 void TestObjectAllocatorNamedOverwrite(void)
 {
 	CObjectAllocator			cAllocator;
-	CPointer<CTestNamedObject>	pNamed1;
-	CPointer<CTestNamedObject>	pNamed2;
-	CPointer<CTestNamedObject>	pTemp;
+	Ptr<CTestNamedObject>	pNamed1;
+	Ptr<CTestNamedObject>	pNamed2;
+	Ptr<CTestNamedObject>	pTemp;
 	long long int				oiExisting;
 
 	ObjectsInit();

@@ -68,7 +68,7 @@ BOOL CTestInteger::Load(CObjectDeserialiser* pcFile)
 }
 
 
-void CTestNamedString::Init(CPointer<CString> szString, CPointer<CTestNamedString> pAnother, char* szEmbedded)
+void CTestNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, char* szEmbedded)
 {
 	Pointer(mszString.This());
 	Pointer(mpAnother.This());
@@ -108,7 +108,7 @@ void CTestDoubleNamedString::Init(void)
 	mpSplit2 = ONull;
 }
 
-void CTestDoubleNamedString::Init(CPointer<CString> szString, CPointer<CTestNamedString> pSplit2, CPointer<CTestNamedString> pSplit1)
+void CTestDoubleNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pSplit2, Ptr<CTestNamedString> pSplit1)
 {
 	Pointer(mszString.This());
 	Pointer(mpSplit1.This());

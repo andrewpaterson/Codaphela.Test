@@ -36,14 +36,14 @@ void TestNamedObjectSize(void)
 void TestNamedObjectName(void)
 {
 	CFileUtil					cFileUtil;
-	CPointer<CTestNamedObject>	pNamed1;
-	CPointer<CTestNamedObject>	pNamed2;
-	CPointer<CTestNamedObject>	pNamed3;
-	CPointer<CTestNamedObject>	pResult1;
-	CPointer<CTestNamedObject>	pResult2;
+	Ptr<CTestNamedObject>	pNamed1;
+	Ptr<CTestNamedObject>	pNamed2;
+	Ptr<CTestNamedObject>	pNamed3;
+	Ptr<CTestNamedObject>	pResult1;
+	Ptr<CTestNamedObject>	pResult2;
 	CPointerObject				pResult3;
-	CPointer<CRoot>				pRoot;
-	CPointer<CSet>				pSet;
+	Ptr<CRoot>				pRoot;
+	Ptr<CSet>				pSet;
 	CSet*						pcSet;
 	OIndex						oiSet;
 	OIndex						oiNamed3;

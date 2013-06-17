@@ -15,18 +15,18 @@
 //////////////////////////////////////////////////////////////////////////
 CPointerObject SetupObjectReaderChunkedChunkFile(void)
 {
-	CPointer<CTestNamedString>	cNS1;
-	CPointer<CTestNamedString>	cNS2;
-	CPointer<CTestNamedString>	cNS3;
-	CPointer<CTestNamedString>	cNS4;
-	CPointer<CTestInteger>		cI1;
-	CPointer<CTestInteger>		cI2;
-	CPointer<CTestInteger>		cI3;
-	CPointer<CTestWithArray>	cA1;
-	CPointer<CTestWithArray>	cA2;
-	CPointer<CString>			sz1;
-	CPointer<CString>			sz2;
-	CPointer<CString>			sz3;
+	Ptr<CTestNamedString>	cNS1;
+	Ptr<CTestNamedString>	cNS2;
+	Ptr<CTestNamedString>	cNS3;
+	Ptr<CTestNamedString>	cNS4;
+	Ptr<CTestInteger>		cI1;
+	Ptr<CTestInteger>		cI2;
+	Ptr<CTestInteger>		cI3;
+	Ptr<CTestWithArray>		cA1;
+	Ptr<CTestWithArray>		cA2;
+	Ptr<CString>			sz1;
+	Ptr<CString>			sz2;
+	Ptr<CString>			sz3;
 
 	cNS1 = ONMalloc(CTestNamedString, "NamedString 1");
 	cNS2 = ONMalloc(CTestNamedString, "NamedString 2");
@@ -109,19 +109,19 @@ void TestObjectReaderChunkedDeserialised(void)
 	CObjectReaderChunkFileDisk	cReader;
 	CObjectGraphDeserialiser	cGraphDeserialiser;
 	CPointerObject				cBase;
-	CPointer<CTestWithArray>	cA1;
-	CPointer<CTestWithArray>	cA2;
-	CPointer<CTestNamedString>	cNS1;
-	CPointer<CTestNamedString>	cNS2;
-	CPointer<CTestNamedString>	cNS3;
-	CPointer<CTestNamedString>	cNS4;
-	CPointer<CString>			sz1;
-	CPointer<CString>			sz2;
-	CPointer<CString>			sz3;
+	Ptr<CTestWithArray>			cA1;
+	Ptr<CTestWithArray>			cA2;
+	Ptr<CTestNamedString>		cNS1;
+	Ptr<CTestNamedString>		cNS2;
+	Ptr<CTestNamedString>		cNS3;
+	Ptr<CTestNamedString>		cNS4;
+	Ptr<CString>				sz1;
+	Ptr<CString>				sz2;
+	Ptr<CString>				sz3;
 	CPointerObject				cTemp;
-	CPointer<CTestInteger>		cI1;
-	CPointer<CTestInteger>		cI2;
-	CPointer<CTestInteger>		cI3;
+	Ptr<CTestInteger>			cI1;
+	Ptr<CTestInteger>			cI2;
+	Ptr<CTestInteger>			cI3;
 	CObjectAllocator			cAllocator;
 	CDependentReadObjects		cDependentReadObjects;
 	OIndex						oiI1;

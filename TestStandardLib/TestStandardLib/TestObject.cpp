@@ -32,10 +32,10 @@ void TestObjectSize(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectPointerRemapping(void)
 {
-	CPointer<CRoot>					pRoot;
-	CPointer<CTestObject>			pObject1;
-	CPointer<CTestObject>			pObject2;
-	CPointer<CTestObject>			pObject3;
+	Ptr<CRoot>					pRoot;
+	Ptr<CTestObject>			pObject1;
+	Ptr<CTestObject>			pObject2;
+	Ptr<CTestObject>			pObject3;
 	STestObjectKilledNotifier		sKillNotifier1;
 	STestObjectKilledNotifier		sKillNotifier2;
 	STestObjectKilledNotifier		sKillNotifier3;
@@ -89,12 +89,12 @@ void TestObjectPointerRemapping(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectPointerRemappingKilling(void)
 {
-	CPointer<CRoot>					pRoot;
-	CPointer<CTestObject>			pObject1;
-	CPointer<CTestObject>			pObject2;
-	CPointer<CTestObject>			pObject3;
-	CPointer<CTestObject>			pObject4;
-	CPointer<CTestObject>			pObject5;
+	Ptr<CRoot>					pRoot;
+	Ptr<CTestObject>			pObject1;
+	Ptr<CTestObject>			pObject2;
+	Ptr<CTestObject>			pObject3;
+	Ptr<CTestObject>			pObject4;
+	Ptr<CTestObject>			pObject5;
 	STestObjectKilledNotifier		sKillNotifier1;
 	STestObjectKilledNotifier		sKillNotifier2;
 	STestObjectKilledNotifier		sKillNotifier3;
@@ -151,22 +151,22 @@ void TestObjectPointerRemappingKilling(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectPointerRemappingComplex(void)
 {
-	CPointer<CRoot>					pRoot;
-	CPointer<CTestObject>			pTest1;
-	CPointer<CTestObject>			pTest2;
-	CPointer<CTestObject>			pTest3;
-	CPointer<CTestObject>			pTest4;
-	CPointer<CTestObject>			pTest5;
-	CPointer<CTestObject>			pTest6;
-	CPointer<CTestObject>			pTest7;
-	CPointer<CTestObject>			pTest8;
-	CPointer<CTestObject>			pTest9;
-	CPointer<CTestObject>			pTest10;
-	CPointer<CTestObject>			pTest11;
-	CPointer<CTestObject>			pTest12;
-	CPointer<CTestObject>			pTest13;
-	CPointer<CTestObject>			pTest14;
-	CPointer<CTestObject>			pTest15;
+	Ptr<CRoot>					pRoot;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
+	Ptr<CTestObject>			pTest4;
+	Ptr<CTestObject>			pTest5;
+	Ptr<CTestObject>			pTest6;
+	Ptr<CTestObject>			pTest7;
+	Ptr<CTestObject>			pTest8;
+	Ptr<CTestObject>			pTest9;
+	Ptr<CTestObject>			pTest10;
+	Ptr<CTestObject>			pTest11;
+	Ptr<CTestObject>			pTest12;
+	Ptr<CTestObject>			pTest13;
+	Ptr<CTestObject>			pTest14;
+	Ptr<CTestObject>			pTest15;
 	STestObjectKilledNotifier		sKillNotifier1;
 	STestObjectKilledNotifier		sKillNotifier2;
 	STestObjectKilledNotifier		sKillNotifier3;

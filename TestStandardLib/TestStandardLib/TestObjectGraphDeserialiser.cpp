@@ -38,13 +38,13 @@ void TestObjectGraphDeserialiserAddConstructors(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectGraphDeserialiserBuildGraph1(void)
 {
-	CPointer<CTestSaveableObject2>	cStart1;
-	CPointer<CTestSaveableObject2>	cStart2;
-	CPointer<CRoot>					cRoot;
-	CPointer<CTestSaveableObject1>	cShared;
-	CPointer<CString>				cString1;
-	CPointer<CString>				cString2;
-	CPointer<CTestInteger>			cIgnored;
+	Ptr<CTestSaveableObject2>	cStart1;
+	Ptr<CTestSaveableObject2>	cStart2;
+	Ptr<CRoot>					cRoot;
+	Ptr<CTestSaveableObject1>	cShared;
+	Ptr<CString>				cString1;
+	Ptr<CString>				cString2;
+	Ptr<CTestInteger>			cIgnored;
 
 	cRoot = ORoot();
 	cStart1 = ONMalloc(CTestSaveableObject2, "Ow/Start 1");
@@ -84,19 +84,19 @@ void TestObjectGraphDeserialiserBuildGraph1(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 {
-	CFileUtil						cFileUtil;
-	CPointer<CTestSaveableObject2>	cBase;
-	CPointer<CTestSaveableObject2>	cStart1;
-	CPointer<CRoot>					cRoot;
-	CPointer<CString>				szOne;
-	CPointer<CString>				cString1;
-	CPointer<CString>				cString2;
-	CObjectGraphSerialiser			cGraphSerialiser;
-	CObjectGraphDeserialiser		cGraphDeserialiser;
-	CPointer<CTestSaveableObject1>	cShared;
-	int								i;
-	CObjectAllocator				cAllocator;
-	CDependentReadObjects			cDependentReadObjects;
+	CFileUtil					cFileUtil;
+	Ptr<CTestSaveableObject2>	cBase;
+	Ptr<CTestSaveableObject2>	cStart1;
+	Ptr<CRoot>					cRoot;
+	Ptr<CString>				szOne;
+	Ptr<CString>				cString1;
+	Ptr<CString>				cString2;
+	CObjectGraphSerialiser		cGraphSerialiser;
+	CObjectGraphDeserialiser	cGraphDeserialiser;
+	Ptr<CTestSaveableObject1>	cShared;
+	int							i;
+	CObjectAllocator			cAllocator;
+	CDependentReadObjects		cDependentReadObjects;
 
 	cFileUtil.MakeDir("Output/GraphDeserialiser/Simple/Remapping");
 
@@ -210,14 +210,14 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	CObjectWriterChunked			cWriterStart1;
 	CObjectWriterChunked			cWriterStart2;
 	CFileUtil						cFileUtil;
-	CPointer<CTestSaveableObject2>	cOwStart1;
-	CPointer<CTestSaveableObject2>	cOwStart2;
+	Ptr<CTestSaveableObject2>	cOwStart1;
+	Ptr<CTestSaveableObject2>	cOwStart2;
 	CObjectGraphSerialiser			cGraphSerialiser;
 	CObjectGraphDeserialiser		cGraphDeserialiser;
 	CObjectReaderChunkFileDisk		cReaderStart1;
 	CObjectReaderChunkFileDisk		cReaderStart2;
-	CPointer<CTestSaveableObject1>	cShared;
-	CPointer<CRoot>					cRoot;
+	Ptr<CTestSaveableObject1>	cShared;
+	Ptr<CRoot>					cRoot;
 	CPointerObject					cObject;
 	int								iNumUnknowns;
 	int								iNumIndexes;

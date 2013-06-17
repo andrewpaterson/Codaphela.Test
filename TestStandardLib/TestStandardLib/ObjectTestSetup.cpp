@@ -73,7 +73,7 @@ void CPlayerVehicle::SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAf
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CHarrier::Init(CPointer<CGameWorld> pWorld)
+void CHarrier::Init(Ptr<CGameWorld> pWorld)
 {
 	CPlayerVehicle::Init();
 
@@ -102,9 +102,9 @@ void CHarrier::KillData(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CPointer<CMissile> CHarrier::FireMissile(CPointerObject pTarget)
+Ptr<CMissile> CHarrier::FireMissile(CPointerObject pTarget)
 {
-	CPointer<CMissile> pMissile = OMalloc(CMissile);
+	Ptr<CMissile> pMissile = OMalloc(CMissile);
 	pMissile->Init(mpWorld);
 	maMissiles->Add(pMissile);
 	pMissile->SetTarget(pTarget);
@@ -119,7 +119,7 @@ CPointer<CMissile> CHarrier::FireMissile(CPointerObject pTarget)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CPointer<CArray> CHarrier::GetMissiles(void)
+Ptr<CArray> CHarrier::GetMissiles(void)
 {
 	return maMissiles;
 }
@@ -129,7 +129,7 @@ CPointer<CArray> CHarrier::GetMissiles(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CJeep::Init(CPointer<CGameWorld> pWorld)
+void CJeep::Init(Ptr<CGameWorld> pWorld)
 {
 	CPlayerVehicle::Init();
 
@@ -157,7 +157,7 @@ void CJeep::KillData(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CMissile::Init(CPointer<CGameWorld> pWorld)
+void CMissile::Init(Ptr<CGameWorld> pWorld)
 {
 	Pointer(mpWorld.This());
 	Pointer(mpTarget.This());
@@ -200,7 +200,7 @@ void CMissile::SetTarget(CPointerObject pTarget)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CRedJet::Init(CPointer<CGameWorld> pWorld)
+void CRedJet::Init(Ptr<CGameWorld> pWorld)
 {
 	Pointer(mpWorld.This());
 
@@ -209,7 +209,7 @@ void CRedJet::Init(CPointer<CGameWorld> pWorld)
 
 	mpWorld = pWorld;
 
-	CPointer<CRedJet> pThis;
+	Ptr<CRedJet> pThis;
 	pThis = this;
 	mpWorld->AddTickable(pThis);
 }
@@ -275,7 +275,7 @@ void CGameWorld::KillData(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CGameWorld::AddPlayer(CPointer<CPlayerVehicle> pPlayer)
+void CGameWorld::AddPlayer(Ptr<CPlayerVehicle> pPlayer)
 {
 	if (pPlayer.IsNull())
 	{

@@ -8,16 +8,16 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CPointer<CTestDoubleNamedString> SetupObjectsForDehollowfication(void)
+Ptr<CTestDoubleNamedString> SetupObjectsForDehollowfication(void)
 {
-	CPointer<CTestNamedString>			cNS1;
-	CPointer<CTestNamedString>			cNS2;
-	CPointer<CTestNamedString>			cNS3;
-	CPointer<CTestNamedString>			cDiamond;
-	CPointer<CTestDoubleNamedString>	cDouble;
-	CPointer<CRoot>						cRoot;
-	CPointer<CString>					cS1;
-	CPointer<CString>					cS2;
+	Ptr<CTestNamedString>			cNS1;
+	Ptr<CTestNamedString>			cNS2;
+	Ptr<CTestNamedString>			cNS3;
+	Ptr<CTestNamedString>			cDiamond;
+	Ptr<CTestDoubleNamedString>	cDouble;
+	Ptr<CRoot>						cRoot;
+	Ptr<CString>					cS1;
+	Ptr<CString>					cS2;
 
 	cRoot = ORoot();
 
@@ -107,7 +107,7 @@ void TestObjectsInMemoryIteration()
 void TestObjectsObjectSave(void)
 {
 	CFileUtil							cFileUtil;
-	CPointer<CTestDoubleNamedString>	cDouble;
+	Ptr<CTestDoubleNamedString>	cDouble;
 	BOOL								bResult;
 	CIndexedConfig						cConfig;
 
@@ -341,11 +341,11 @@ void TestObjectsEvict(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectsObjectKillInGraph(void)
 {
-	CPointer<CTestNamedString>			cNS1;
-	CPointer<CTestNamedString>			cNS2;
-	CPointer<CRoot>						cRoot;
-	CPointer<CString>					cS1;
-	CPointer<CString>					cS2;
+	Ptr<CTestNamedString>			cNS1;
+	Ptr<CTestNamedString>			cNS2;
+	Ptr<CRoot>						cRoot;
+	Ptr<CString>					cS1;
+	Ptr<CString>					cS2;
 
 	ObjectsInit();
 
@@ -382,11 +382,11 @@ void TestObjectsObjectKillInGraph(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectsArrayKillInGraph(void)
 {
-	CPointer<CTestNamedString>			cNS1;
-	CPointer<CArray>					cA1;
-	CPointer<CArray>					cA2;
-	CPointer<CRoot>						cRoot;
-	CPointer<CString>					cS1;
+	Ptr<CTestNamedString>			cNS1;
+	Ptr<CArray>					cA1;
+	Ptr<CArray>					cA2;
+	Ptr<CRoot>						cRoot;
+	Ptr<CString>					cS1;
 
 	ObjectsInit();
 
@@ -427,11 +427,11 @@ void TestObjectsArrayKillInGraph(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectsObjectKillInArrayInGraph(void)
 {
-	CPointer<CTestNamedString>			cNS1;
-	CPointer<CArray>					cA1;
-	CPointer<CArray>					cA2;
-	CPointer<CRoot>						cRoot;
-	CPointer<CString>					cS1;
+	Ptr<CTestNamedString>			cNS1;
+	Ptr<CArray>					cA1;
+	Ptr<CArray>					cA2;
+	Ptr<CRoot>						cRoot;
+	Ptr<CString>					cS1;
 
 	ObjectsInit();
 
@@ -478,8 +478,8 @@ void TestObjectDehollowfication(void)
 	CFileUtil							cFileUtil;
 	CPointerObject						pPointer;
 	CTestDoubleNamedString*				pcInternal;
-	CPointer<CTestDoubleNamedString>	pDouble;
-	CPointer<CTestNamedString>			pSingle;
+	Ptr<CTestDoubleNamedString>	pDouble;
+	Ptr<CTestNamedString>			pSingle;
 	int									iClassSize;
 	OIndex								oiOld;
 	OIndex								oiNew;
@@ -538,8 +538,8 @@ void TestObjectsFlushClearGetByOid(void)
 {
 	CFileUtil							cFileUtil;
 	CPointerObject						cPointer;
-	CPointer<CTestDoubleNamedString>	cDouble;
-	CPointer<CRoot>						cRoot;
+	Ptr<CTestDoubleNamedString>	cDouble;
+	Ptr<CRoot>						cRoot;
 
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output/Dehollowfication");
@@ -578,8 +578,8 @@ void TestObjectsFlushClearGetByName(void)
 {
 	CFileUtil							cFileUtil;
 	CPointerObject						cPointer;
-	CPointer<CTestDoubleNamedString>	cDouble;
-	CPointer<CRoot>						cRoot;
+	Ptr<CTestDoubleNamedString>	cDouble;
+	Ptr<CRoot>						cRoot;
 
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output/Dehollowfication");

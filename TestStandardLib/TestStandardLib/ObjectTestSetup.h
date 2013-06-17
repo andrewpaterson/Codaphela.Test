@@ -59,20 +59,20 @@ class CHarrier : public CPlayerVehicle
 {
 BASE_FUNCTIONS(CHarrier);
 protected:
-	CPointer<CArray>		maMissiles;
-	CPointer<CGameWorld>	mpWorld;
+	Ptr<CArray>		maMissiles;
+	Ptr<CGameWorld>	mpWorld;
 	int						miSpeed;
 
 public:
-	void					Init(CPointer<CGameWorld> pWorld);
+	void					Init(Ptr<CGameWorld> pWorld);
 	void					KillData(void);
 
 	BOOL					Save(CObjectSerialiser* pcFile) { return FALSE; };
 	BOOL					Load(CObjectDeserialiser* pcFile) { return FALSE; };
 
 	void					PlayerInput(void) {};
-	CPointer<CMissile>		FireMissile(CPointerObject pTarget);
-	CPointer<CArray>		GetMissiles(void);
+	Ptr<CMissile>		FireMissile(CPointerObject pTarget);
+	Ptr<CArray>		GetMissiles(void);
 };
 
 
@@ -80,12 +80,12 @@ class CJeep : public CPlayerVehicle
 {
 BASE_FUNCTIONS(CJeep);
 protected:
-	CPointer<CGameWorld>	mpWorld;
+	Ptr<CGameWorld>	mpWorld;
 	float					mfFrontWheel;
 	float					mfBackWheel;
 
 public:
-	void Init(CPointer<CGameWorld> pWorld);
+	void Init(Ptr<CGameWorld> pWorld);
 	void KillData(void);
 
 	BOOL Save(CObjectSerialiser* pcFile) { return FALSE; };
@@ -100,14 +100,14 @@ class CRedJet : public CNamedObject
 BASE_FUNCTIONS(CRedJet);
 protected:
 	CGraphicPicture			mcPicture;
-	CPointer<CGameWorld>	mpWorld;
+	Ptr<CGameWorld>	mpWorld;
 	SPhysicsPoint*			mpsPoint;
 
 	SStateOnKill*			mpsBeforeDeath;
 	SStateOnKill*			mpsAfterDeath;
 
 public:
-	void Init(CPointer<CGameWorld> pWorld);
+	void Init(Ptr<CGameWorld> pWorld);
 	void KillData(void);
 
 	BOOL Save(CObjectSerialiser* pcFile) { return FALSE; };
@@ -121,11 +121,11 @@ class CMissile : public CObject
 {
 BASE_FUNCTIONS(CMissile);
 protected:
-	CPointer<CGameWorld>	mpWorld;
+	Ptr<CGameWorld>	mpWorld;
 	CPointerObject			mpTarget;  
 
 public:
-	void				Init(CPointer<CGameWorld> pWorld);
+	void				Init(Ptr<CGameWorld> pWorld);
 	void				KillData(void);
 
 	BOOL				Save(CObjectSerialiser* pcFile) { return FALSE; };
@@ -140,9 +140,9 @@ class CGameWorld : public CObject
 {
 BASE_FUNCTIONS(CGameWorld);
 protected:
-	CPointer<CArray>			maTickables;
-	CPointer<CPlayerVehicle>	mpPlayer1;
-	CPointer<CPlayerVehicle>	mpPlayer2;
+	Ptr<CArray>			maTickables;
+	Ptr<CPlayerVehicle>	mpPlayer1;
+	Ptr<CPlayerVehicle>	mpPlayer2;
 
 public:
 	void Init(void);
@@ -152,7 +152,7 @@ public:
 	BOOL Load(CObjectDeserialiser* pcFile) { return FALSE; };
 
 	void Tick(void);
-	void AddPlayer(CPointer<CPlayerVehicle> pPlayer);
+	void AddPlayer(Ptr<CPlayerVehicle> pPlayer);
 	void AddTickable(CPointerObject pTickable);
 };
 

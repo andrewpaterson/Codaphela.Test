@@ -17,8 +17,8 @@ void TestKillBestPractice(void)
 	//regardless of wether anything else points to them.
 	//Those objects that did point to them will be updated to point to NULL.
 
-	CPointer<CRoot>			pRoot;
-	CPointer<CGameWorld>	pWorld;
+	Ptr<CRoot>			pRoot;
+	Ptr<CGameWorld>	pWorld;
 
 	pRoot = ORoot();
 	pWorld = OMalloc(CGameWorld);
@@ -26,10 +26,10 @@ void TestKillBestPractice(void)
 
 	pRoot->Add(pWorld);
 
-	CPointer<CHarrier> pHarrier = ONMalloc(CHarrier, "Harrier");
+	Ptr<CHarrier> pHarrier = ONMalloc(CHarrier, "Harrier");
 	pHarrier->Init(pWorld);
 
-	CPointer<CJeep> pJeep = ONMalloc(CJeep, "Jeep");
+	Ptr<CJeep> pJeep = ONMalloc(CJeep, "Jeep");
 	pJeep->Init(pWorld);
 
 	pWorld->AddPlayer(pHarrier);
@@ -48,8 +48,8 @@ void TestKillBestPractice(void)
 	SStateOnKill	sMaverickBefore;
 	SStateOnKill	sMaverickAfter;
 
-	CPointer<CRedJet>	pRedJetGoose = ONMalloc(CRedJet, "Goose");
-	CPointer<CRedJet>	pRedJetMaverick = ONMalloc(CRedJet, "Maverick");
+	Ptr<CRedJet>	pRedJetGoose = ONMalloc(CRedJet, "Goose");
+	Ptr<CRedJet>	pRedJetMaverick = ONMalloc(CRedJet, "Maverick");
 
 	pRedJetGoose->Init(pWorld);
 	pRedJetMaverick->Init(pWorld);
@@ -57,9 +57,9 @@ void TestKillBestPractice(void)
 	pRedJetGoose->SetKillHook(&sGooseBefore, &sGooseAfter);
 	pRedJetMaverick->SetKillHook(&sMaverickBefore, &sMaverickAfter);
 
-	CPointer<CMissile> pMissile1 = pHarrier->FireMissile(pRedJetGoose);
-	CPointer<CMissile> pMissile2 = pHarrier->FireMissile(pRedJetGoose);
-	CPointer<CMissile> pMissile3 = pHarrier->FireMissile(pRedJetMaverick);
+	Ptr<CMissile> pMissile1 = pHarrier->FireMissile(pRedJetGoose);
+	Ptr<CMissile> pMissile2 = pHarrier->FireMissile(pRedJetGoose);
+	Ptr<CMissile> pMissile3 = pHarrier->FireMissile(pRedJetMaverick);
 
 	AssertString("Kill not called", sMaverickBefore.cPicture.mszPretenedImAPicture);
 	AssertString("Kill not called", sMaverickAfter.cPicture.mszPretenedImAPicture);

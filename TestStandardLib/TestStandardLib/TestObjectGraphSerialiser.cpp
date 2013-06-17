@@ -13,11 +13,11 @@
 void TestObjectGraphSerialiserReachability(void)
 {
 	CFileUtil						cFileUtil;
-	CPointer<CTestSaveableObject1>	pTest1a;
-	CPointer<CTestSaveableObject1>	pTest1b;
-	CPointer<CTestSaveableObject1>	pTest1c;
-	CPointer<CTestSaveableObject2>	pTest2a;
-	CPointer<CTestSaveableObject2>	pTest2b;
+	Ptr<CTestSaveableObject1>	pTest1a;
+	Ptr<CTestSaveableObject1>	pTest1b;
+	Ptr<CTestSaveableObject1>	pTest1c;
+	Ptr<CTestSaveableObject2>	pTest2a;
+	Ptr<CTestSaveableObject2>	pTest2b;
 	CObjectGraphSerialiser			cGraphSerialiser;
 	CObjectWriterSimple				cSimpleWriter;
 

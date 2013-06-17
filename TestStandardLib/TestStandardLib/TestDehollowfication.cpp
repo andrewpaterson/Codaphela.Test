@@ -31,18 +31,18 @@ void SetupDehollowficationConstructors(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CPointer<CTestDoubleNamedString> SetupDehollowficationScene(void)
+Ptr<CTestDoubleNamedString> SetupDehollowficationScene(void)
 {
-	CPointer<CTestNamedString>			cNS1;
-	CPointer<CTestNamedString>			cNS2;
-	CPointer<CTestNamedString>			cDiamond;
-	CPointer<CTestDoubleNamedString>	cDouble;
-	CPointer<CString>					sz1;
-	CPointer<CString>					sz3;
-	CPointer<CString>					sz2;
-	CPointer<CString>					sz4;
-	CPointer<CRoot>						cRoot;
-	CPointer<CTestNamedString>			cNS3;
+	Ptr<CTestNamedString>			cNS1;
+	Ptr<CTestNamedString>			cNS2;
+	Ptr<CTestNamedString>			cDiamond;
+	Ptr<CTestDoubleNamedString>	cDouble;
+	Ptr<CString>					sz1;
+	Ptr<CString>					sz3;
+	Ptr<CString>					sz2;
+	Ptr<CString>					sz4;
+	Ptr<CRoot>						cRoot;
+	Ptr<CTestNamedString>			cNS3;
 
 	cRoot = ORoot();
 
@@ -87,7 +87,7 @@ CPointer<CTestDoubleNamedString> SetupDehollowficationScene(void)
 //////////////////////////////////////////////////////////////////////////
 void WriteDehollowficationChunkedFile(void)
 {
-	CPointer<CTestDoubleNamedString>	cDouble;
+	Ptr<CTestDoubleNamedString>	cDouble;
 	CObjectWriterChunked				cWriter;
 	CObjectGraphSerialiser				cGraphSerialiser;
 
@@ -137,7 +137,7 @@ void TestDehollowficationFromDatabase(void)
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 
-	CPointer<CRoot> pRoot = ORoot();
+	Ptr<CRoot> pRoot = ORoot();
 
 	AssertTrue(pRoot->IsSetHollow());
 
@@ -146,7 +146,7 @@ void TestDehollowficationFromDatabase(void)
 	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 
-	CPointer<CTestDoubleNamedString> pTest = pRoot->Get<CTestDoubleNamedString>("Double Start");
+	Ptr<CTestDoubleNamedString> pTest = pRoot->Get<CTestDoubleNamedString>("Double Start");
 	AssertFalse(pRoot->IsSetHollow());
 	AssertTrue(pTest.IsNotNull());
 	AssertTrue(pTest.IsHollow());
@@ -159,7 +159,7 @@ void TestDehollowficationFromDatabase(void)
 	AssertString("6789", pTest->mpSplit1->mszString->Text());
 	AssertFalse(pTest->mpSplit1->mszString.IsHollow());
 
-	CPointer<CTestNamedString> pDiamond = pTest->mpSplit1->mpAnother;
+	Ptr<CTestNamedString> pDiamond = pTest->mpSplit1->mpAnother;
 	AssertTrue(pTest->mpSplit1->mpAnother.IsHollow());
 	AssertTrue(pDiamond.IsHollow());
 
@@ -183,7 +183,7 @@ void TestDehollowficationFromDatabase(void)
 	AssertLongLongInt(2, gcObjects.NumDatabaseObjectsCached());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 
-	CPointer<CTestNamedString> pRandom = pRoot->Get<CTestNamedString>("NamedString 3");
+	Ptr<CTestNamedString> pRandom = pRoot->Get<CTestNamedString>("NamedString 3");
 	AssertTrue(pRandom.IsNotNull());
 	AssertTrue(pRandom.IsHollow());
 
@@ -233,7 +233,7 @@ void TestDehollowficationFromChunkFileSource(void)
 	AssertString("NamedString 1", pcObjectSourceChunked->GetName(2));
 	AssertString("NamedString 2", pcObjectSourceChunked->GetName(3));
 
-	CPointer<CTestDoubleNamedString> pStart;
+	Ptr<CTestDoubleNamedString> pStart;
 
 	pStart = gcObjects.Get("Double Start");
 	AssertTrue(pStart.IsNotNull());

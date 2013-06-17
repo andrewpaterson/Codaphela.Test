@@ -31,17 +31,17 @@ void SetupObjectConverterConstructors(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CPointer<CTestDoubleNamedString> SetupObjectConverterChunkFile(void)
+Ptr<CTestDoubleNamedString> SetupObjectConverterChunkFile(void)
 {
-	CPointer<CTestNamedString>			cNS1;
-	CPointer<CTestNamedString>			cNS2;
-	CPointer<CTestNamedString>			cDiamond;
-	CPointer<CTestDoubleNamedString>	cDouble;
-	CPointer<CString>					sz1;
-	CPointer<CString>					sz3;
-	CPointer<CString>					sz2;
-	CPointer<CString>					sz4;
-	CPointer<CRoot>						cRoot;
+	Ptr<CTestNamedString>			cNS1;
+	Ptr<CTestNamedString>			cNS2;
+	Ptr<CTestNamedString>			cDiamond;
+	Ptr<CTestDoubleNamedString>	cDouble;
+	Ptr<CString>					sz1;
+	Ptr<CString>					sz3;
+	Ptr<CString>					sz2;
+	Ptr<CString>					sz4;
+	Ptr<CRoot>						cRoot;
 
 	cRoot = ORoot();
 
@@ -93,7 +93,7 @@ CPointer<CTestDoubleNamedString> SetupObjectConverterChunkFile(void)
 //////////////////////////////////////////////////////////////////////////
 void WriteObjectConverterChunkedFile(void)
 {
-	CPointer<CTestDoubleNamedString>	cDouble;
+	Ptr<CTestDoubleNamedString>	cDouble;
 	CObjectWriterChunked				cWriter;
 	CObjectGraphSerialiser				cGraphSerialiser;
 
@@ -118,11 +118,11 @@ void TestObjectConverterDragonExistingHollows(void)
 	CObjectSourceChunked*				pcObjectMultipleSource;
 	CPointerObject						pcObject;
 	CDiskFile*							pcDiskFile;
-	CPointer<CTestDoubleNamedString>	pcDoubleNamedString;
-	CPointer<CRoot>						pcRoot;
-	CPointer<CTestNamedString>			pcObject2;
+	Ptr<CTestDoubleNamedString>	pcDoubleNamedString;
+	Ptr<CRoot>						pcRoot;
+	Ptr<CTestNamedString>			pcObject2;
 	CTestNamedString*					pcEnd;
-	CPointer<CTestNamedString>			pcObject3;
+	Ptr<CTestNamedString>			pcObject3;
 	CTestNamedString*					pcTestNamedString3;
 	CTestNamedString*					pcTestNamedString2;
 	OIndex								oiNew;
@@ -244,7 +244,7 @@ void TestObjectConverterText(void)
 	CMemoryFile				cMemoryFile;
 	CObjectSource*			pcObjectSource;
 	CPointerObject			pcObject;
-	CPointer<CString>		pcString;
+	Ptr<CString>		pcString;
 
 	ObjectsInit();
 
@@ -276,14 +276,14 @@ void TestObjectConverterText(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CPointer<CTestDoubleNamedString> SetupObjectConverterChunkFile2(void)
+Ptr<CTestDoubleNamedString> SetupObjectConverterChunkFile2(void)
 {
-	CPointer<CTestNamedString>			cNS1;
-	CPointer<CTestNamedString>			cNS2;
-	CPointer<CTestNamedString>			cNS3;
-	CPointer<CTestNamedString>			cDiamond;
-	CPointer<CTestDoubleNamedString>	cDouble;
-	CPointer<CRoot>						cRoot;
+	Ptr<CTestNamedString>			cNS1;
+	Ptr<CTestNamedString>			cNS2;
+	Ptr<CTestNamedString>			cNS3;
+	Ptr<CTestNamedString>			cDiamond;
+	Ptr<CTestDoubleNamedString>	cDouble;
+	Ptr<CRoot>						cRoot;
 
 	cRoot = ORoot();
 
@@ -314,7 +314,7 @@ CPointer<CTestDoubleNamedString> SetupObjectConverterChunkFile2(void)
 //////////////////////////////////////////////////////////////////////////
 void WriteObjectConverterChunkedFile2(void)
 {
-	CPointer<CTestDoubleNamedString>	cDouble;
+	Ptr<CTestDoubleNamedString>	cDouble;
 	CObjectWriterChunked				cWriter;
 	CObjectGraphSerialiser				cGraphSerialiser;
 
@@ -336,13 +336,13 @@ void TestObjectConverterDragonRootDistance(void)
 {
 	CObjectConverterNative				cChunkedConverter;
 	CObjectSource*						pcObjectSource;
-	CPointer<CTestDoubleNamedString>	pcDouble;
-	CPointer<CTestNamedString>			pcNS1;
-	CPointer<CTestNamedString>			pcNS2;
-	CPointer<CTestNamedString>			pcNS3;
-	CPointer<CTestNamedString>			pcDiamond;
+	Ptr<CTestDoubleNamedString>	pcDouble;
+	Ptr<CTestNamedString>			pcNS1;
+	Ptr<CTestNamedString>			pcNS2;
+	Ptr<CTestNamedString>			pcNS3;
+	Ptr<CTestNamedString>			pcDiamond;
 	CDiskFile*							pcDiskFile;
-	CPointer<CRoot>						pcRoot;
+	Ptr<CRoot>						pcRoot;
 
 	ObjectsInit();
 	WriteObjectConverterChunkedFile2();

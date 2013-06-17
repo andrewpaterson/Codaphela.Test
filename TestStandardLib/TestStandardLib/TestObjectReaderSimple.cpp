@@ -16,8 +16,8 @@
 //////////////////////////////////////////////////////////////////////////
 CPointerObject SetupObjectReaderSimpleFile(void)
 {
-	CPointer<CTestNamedString>	cNS1;
-	CPointer<CTestNamedString>	cNS2;
+	Ptr<CTestNamedString>	cNS1;
+	Ptr<CTestNamedString>	cNS2;
 
 	cNS1 = ONMalloc(CTestNamedString, "Waggy");
 	cNS2 = ONMalloc(CTestNamedString, "Dog");
@@ -59,8 +59,8 @@ void TestObjectReaderSimpleDeserialised(void)
 	CObjectGraphDeserialiser	cGraphDeserialiser;
 	CPointerObject				cBase;
 
-	CPointer<CTestNamedString>	cNS1;
-	CPointer<CTestNamedString>	cNS2;
+	Ptr<CTestNamedString>	cNS1;
+	Ptr<CTestNamedString>	cNS2;
 	CPointerObject				cTemp;
 
 	CObjectAllocator			cAllocator;

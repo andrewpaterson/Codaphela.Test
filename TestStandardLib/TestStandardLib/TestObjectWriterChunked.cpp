@@ -24,10 +24,10 @@ void TestObjectWriterChunkedSerialised(void)
 	CObjectWriterChunked		cWriter;
 	CObjectGraphSerialiser		cGraphSerialiser;
 
-	CPointer<CTestWithArray>	pcObject1;
-	CPointer<CTestInteger>		pcObject2;
-	CPointer<CTestInteger>		pcObject3;
-	CPointer<CTestInteger>		pcObject4;
+	Ptr<CTestWithArray>	pcObject1;
+	Ptr<CTestInteger>		pcObject2;
+	Ptr<CTestInteger>		pcObject3;
+	Ptr<CTestInteger>		pcObject4;
 	CChunkFileNames				cChunkFile;
 	int							iLength;
 	char						szTest[4];

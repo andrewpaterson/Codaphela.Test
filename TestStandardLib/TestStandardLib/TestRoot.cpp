@@ -13,8 +13,8 @@
 void TestRootDistance(void)
 {
 	STestObjectKilledNotifier	sKilled1;
-	CPointer<CRoot>				pcRoot;
-	CPointer<CTestObject>		pcTest1;
+	Ptr<CRoot>				pcRoot;
+	Ptr<CTestObject>		pcTest1;
 	int							iDist;
 	CBaseObject*				pcFrom;
 
@@ -54,10 +54,10 @@ void TestStackPointers(void)
 	STestObjectKilledNotifier	sKilled2;
 	STestObjectKilledNotifier	sKilled3;
 
-	CPointer<CRoot>				pcRoot;
-	CPointer<CTestObject>		pTest1;
-	CPointer<CTestObject>		pTest2;
-	CPointer<CTestObject>		pTest3;
+	Ptr<CRoot>				pcRoot;
+	Ptr<CTestObject>		pTest1;
+	Ptr<CTestObject>		pTest2;
+	Ptr<CTestObject>		pTest3;
 	int							iFroms;
 
 	CObject*					pcTest1;
@@ -129,20 +129,20 @@ void TestStackPointers(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveSimple(void)
 {
-	CPointer<CRoot>				pRoot;
+	Ptr<CRoot>				pRoot;
 	STestObjectKilledNotifier	sKilled2;
 	STestObjectKilledNotifier	sKilled3;
 	STestObjectKilledNotifier	sKilled4;
 	STestObjectKilledNotifier	sKilled5;
 	STestObjectKilledNotifier	sKilledTop1;
 	STestObjectKilledNotifier	sKilledTop2;
-	CPointer<CTestObject>		pTest2;
-	CPointer<CTestObject>		pTest3;
-	CPointer<CTestObject>		pTest4;
-	CPointer<CTestObject>		pTest5;
-	CPointer<CSet>				pSet;
-	CPointer<CTestObject>		pTop1;
-	CPointer<CTestObject>		pTop2;
+	Ptr<CTestObject>		pTest2;
+	Ptr<CTestObject>		pTest3;
+	Ptr<CTestObject>		pTest4;
+	Ptr<CTestObject>		pTest5;
+	Ptr<CSet>				pSet;
+	Ptr<CTestObject>		pTop1;
+	Ptr<CTestObject>		pTop2;
 
 	ObjectsInit();
 	pRoot = ORoot();
@@ -422,20 +422,20 @@ void TestRootGraphRemoveSimple(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveComplex(void)
 {
-	CPointer<CRoot>				pRoot;
+	Ptr<CRoot>				pRoot;
 	STestObjectKilledNotifier	sKilled2;
 	STestObjectKilledNotifier	sKilled3;
 	STestObjectKilledNotifier	sKilled4;
 	STestObjectKilledNotifier	sKilled5;
 	STestObjectKilledNotifier	sKilledTop1;
 	STestObjectKilledNotifier	sKilledTop2;
-	CPointer<CTestObject>		pTest2;
-	CPointer<CTestObject>		pTest3;
-	CPointer<CTestObject>		pTest4;
-	CPointer<CTestObject>		pTest5;
-	CPointer<CSet>				pSet;
-	CPointer<CTestObject>		pTop1;
-	CPointer<CTestObject>		pTop2;
+	Ptr<CTestObject>		pTest2;
+	Ptr<CTestObject>		pTest3;
+	Ptr<CTestObject>		pTest4;
+	Ptr<CTestObject>		pTest5;
+	Ptr<CSet>				pSet;
+	Ptr<CTestObject>		pTop1;
+	Ptr<CTestObject>		pTop2;
 
 	ObjectsInit();
 	pRoot = ORoot();
@@ -606,7 +606,7 @@ void TestRootGraphRemoveComplex(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveUnbalancedLarge(void)
 {
-	CPointer<CRoot>				pRoot;
+	Ptr<CRoot>				pRoot;
 	STestObjectKilledNotifier	sKilled1;
 	STestObjectKilledNotifier	sKilled2;
 	STestObjectKilledNotifier	sKilled3;
@@ -614,14 +614,14 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	STestObjectKilledNotifier	sKilled5;
 	STestObjectKilledNotifier	sKilledTop1;
 	STestObjectKilledNotifier	sKilledTop2;
-	CPointer<CTestObject>		pTest1;
-	CPointer<CTestObject>		pTest2;
-	CPointer<CTestObject>		pTest3;
-	CPointer<CTestObject>		pTest4;
-	CPointer<CTestObject>		pTest5;
-	CPointer<CSet>				pSet;
-	CPointer<CTestObject>		pTop1;
-	CPointer<CTestObject>		pTop2;
+	Ptr<CTestObject>		pTest1;
+	Ptr<CTestObject>		pTest2;
+	Ptr<CTestObject>		pTest3;
+	Ptr<CTestObject>		pTest4;
+	Ptr<CTestObject>		pTest5;
+	Ptr<CSet>				pSet;
+	Ptr<CTestObject>		pTop1;
+	Ptr<CTestObject>		pTop2;
 
 	ObjectsInit();
 	pRoot = ORoot();
@@ -722,7 +722,7 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveUnbalancedSmall(void)
 {
-	CPointer<CRoot>				pRoot;
+	Ptr<CRoot>				pRoot;
 	STestObjectKilledNotifier	sKilled1;
 	STestObjectKilledNotifier	sKilled2;
 	STestObjectKilledNotifier	sKilled3;
@@ -730,14 +730,14 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 	STestObjectKilledNotifier	sKilled5;
 	STestObjectKilledNotifier	sKilledTop1;
 	STestObjectKilledNotifier	sKilledTop2;
-	CPointer<CTestObject>		pTest1;
-	CPointer<CTestObject>		pTest2;
-	CPointer<CTestObject>		pTest3;
-	CPointer<CTestObject>		pTest4;
-	CPointer<CTestObject>		pTest5;
-	CPointer<CSet>				pSet;
-	CPointer<CTestObject>		pTop1;
-	CPointer<CTestObject>		pTop2;
+	Ptr<CTestObject>		pTest1;
+	Ptr<CTestObject>		pTest2;
+	Ptr<CTestObject>		pTest3;
+	Ptr<CTestObject>		pTest4;
+	Ptr<CTestObject>		pTest5;
+	Ptr<CSet>				pSet;
+	Ptr<CTestObject>		pTop1;
+	Ptr<CTestObject>		pTop2;
 
 	ObjectsInit();
 	pRoot = ORoot();
@@ -851,7 +851,7 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveMostlyBalanced(void)
 {
-	CPointer<CRoot>				pRoot;
+	Ptr<CRoot>				pRoot;
 	STestObjectKilledNotifier	sKilled1;
 	STestObjectKilledNotifier	sKilled2;
 	STestObjectKilledNotifier	sKilled3;
@@ -860,15 +860,15 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	STestObjectKilledNotifier	sKilled6;
 	STestObjectKilledNotifier	sKilledTop1;
 	STestObjectKilledNotifier	sKilledTop2;
-	CPointer<CTestObject>		pTest1;
-	CPointer<CTestObject>		pTest2;
-	CPointer<CTestObject>		pTest3;
-	CPointer<CTestObject>		pTest4;
-	CPointer<CTestObject>		pTest5;
-	CPointer<CTestObject>		pTest6;
-	CPointer<CSet>				pSet;
-	CPointer<CTestObject>		pTop1;
-	CPointer<CTestObject>		pTop2;
+	Ptr<CTestObject>		pTest1;
+	Ptr<CTestObject>		pTest2;
+	Ptr<CTestObject>		pTest3;
+	Ptr<CTestObject>		pTest4;
+	Ptr<CTestObject>		pTest5;
+	Ptr<CTestObject>		pTest6;
+	Ptr<CSet>				pSet;
+	Ptr<CTestObject>		pTop1;
+	Ptr<CTestObject>		pTop2;
 
 	ObjectsInit();
 	pRoot = ORoot();
@@ -988,17 +988,17 @@ void TestRootGraphRemoveMostlyBalanced(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveErrorFromPointerRemapping(void)
 {
-	CPointer<CRoot>					pRoot;
-	CPointer<CTestObject>			pTest1;
-	CPointer<CTestObject>			pTest2;
-	CPointer<CTestObject>			pTest3;
-	CPointer<CTestObject>			pTest4;
-	CPointer<CTestObject>			pTest5;
-	CPointer<CTestObject>			pTest6;
-	CPointer<CTestObject>			pTest7;
-	CPointer<CTestObject>			pTest8;
-	CPointer<CTestObject>			pTest9;
-	CPointer<CTestObject>			pTest15;
+	Ptr<CRoot>					pRoot;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
+	Ptr<CTestObject>			pTest4;
+	Ptr<CTestObject>			pTest5;
+	Ptr<CTestObject>			pTest6;
+	Ptr<CTestObject>			pTest7;
+	Ptr<CTestObject>			pTest8;
+	Ptr<CTestObject>			pTest9;
+	Ptr<CTestObject>			pTest15;
 	STestObjectKilledNotifier		sKillNotifier1;
 	STestObjectKilledNotifier		sKillNotifier2;
 	STestObjectKilledNotifier		sKillNotifier3;
@@ -1149,15 +1149,15 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveErrorFromObjectConverter(void)
 {
-	CPointer<CTestNamedString>			cNS1;
-	CPointer<CTestNamedString>			cNS2;
-	CPointer<CTestNamedString>			cDiamond;
-	CPointer<CTestDoubleNamedString>	cDouble;
-	CPointer<CString>					sz1;
-	CPointer<CString>					sz3;
-	CPointer<CString>					sz2;
-	CPointer<CString>					sz4;
-	CPointer<CRoot>						cRoot;
+	Ptr<CTestNamedString>			cNS1;
+	Ptr<CTestNamedString>			cNS2;
+	Ptr<CTestNamedString>			cDiamond;
+	Ptr<CTestDoubleNamedString>	cDouble;
+	Ptr<CString>					sz1;
+	Ptr<CString>					sz3;
+	Ptr<CString>					sz2;
+	Ptr<CString>					sz4;
+	Ptr<CRoot>						cRoot;
 
 	ObjectsInit();
 

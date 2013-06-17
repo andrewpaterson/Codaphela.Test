@@ -12,7 +12,7 @@ void TestObjectsCompilation(void)
 	if (FALSE)  //This is intentional.  This code must only be compiled (testing template compilation) not run.
 	{
 		CObjects				cObjects;
-		CPointer<CTestObject>	cTestPtr;
+		Ptr<CTestObject>	cTestPtr;
 
 		cTestPtr = cObjects.Add<CTestObject>();
 		cTestPtr = cObjects.Get<CTestObject>("Invalid Name");
@@ -28,8 +28,8 @@ void TestObjectsCompilation(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectFreeing(void)
 {
-	CPointer<CTestObject>			pTest1;
-	CPointer<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pTest2;
 	STestObjectKilledNotifier		sKillNotifier1;
 	STestObjectKilledNotifier		sKillNotifier2;
 

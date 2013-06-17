@@ -10,14 +10,14 @@
 //////////////////////////////////////////////////////////////////////////
 void TestArrayCommonPointerRemapping(void)
 {
-	CPointer<CArrayCommonObject>	pArray;
-	CPointer<CRoot>					pRoot;
-	CPointer<CTestObject>			pObject1;
-	CPointer<CTestSaveableObject1>	pObject2;
-	CPointer<CTestSaveableObject1>	pObject3;
-	STestObjectKilledNotifier		sKillNotifier;
-	CPointerObject					pNull;
-	int								iNumRemapped;
+	Ptr<CArrayCommonObject>		pArray;
+	Ptr<CRoot>					pRoot;
+	Ptr<CTestObject>			pObject1;
+	Ptr<CTestSaveableObject1>	pObject2;
+	Ptr<CTestSaveableObject1>	pObject3;
+	STestObjectKilledNotifier	sKillNotifier;
+	CPointerObject				pNull;
+	int							iNumRemapped;
 	
 	ObjectsInit();
 

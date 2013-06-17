@@ -16,7 +16,7 @@ class CTestObject : public CObject
 BASE_FUNCTIONS(CTestObject);
 public:
 	CPointerObject				mpObject;
-	CPointer<CTestObject>		mpTest;
+	Ptr<CTestObject>		mpTest;
 	STestObjectKilledNotifier*	mpsKilledNotifier;
 
 	void Init(STestObjectKilledNotifier* psKilledNotifier);
@@ -48,7 +48,7 @@ class CTestSaveableObject2 : public CNamedObject
 BASE_FUNCTIONS(CTestSaveableObject2);
 public:
 	CChars							msz;
-	CPointer<CTestSaveableObject1>	mp1;
+	Ptr<CTestSaveableObject1>	mp1;
 	CPointerObject					mp2;
 	BOOL							mbSaved;
 
