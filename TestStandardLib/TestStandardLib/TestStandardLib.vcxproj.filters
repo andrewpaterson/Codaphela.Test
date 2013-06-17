@@ -201,6 +201,9 @@
     <ClCompile Include="ObjectTestSetup.cpp">
       <Filter>Source\Object</Filter>
     </ClCompile>
+    <ClCompile Include="TestUsage.cpp">
+      <Filter>Source\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectTestClasses.h">

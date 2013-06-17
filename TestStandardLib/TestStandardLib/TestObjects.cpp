@@ -29,17 +29,17 @@ CPointer<CTestDoubleNamedString> SetupObjectsForDehollowfication(void)
 	cNS1->Init(cS1, cDiamond, "NS1");
 
 	cNS2 = ONMalloc(CTestNamedString, "NS2");
-	cNS2->Init(ONNull(CString), cDiamond, "NS2");
+	cNS2->Init(ONull, cDiamond, "NS2");
 
 	cNS3 = ONMalloc(CTestNamedString, "NS3");
-	cNS3->Init(ONNull(CString), cNS1, "NS3");
+	cNS3->Init(ONull, cNS1, "NS3");
 
 	cS2 = OMalloc(CString);
 	cS2->Init("CS2");
-	cDiamond->Init(cS2, ONNull(CTestNamedString), "Diamond");
+	cDiamond->Init(cS2, ONull, "Diamond");
 
 	cDouble = ONMalloc(CTestDoubleNamedString, "Double");
-	cDouble->Init(ONNull(CString), cNS2, cNS3);
+	cDouble->Init(ONull, cNS2, cNS3);
 
 	cRoot->Add(cDouble);
 	return cDouble;
@@ -354,7 +354,7 @@ void TestObjectsObjectKillInGraph(void)
 	cS1 = OMalloc(CString);
 	cS1->Init("CS1");
 	cNS1 = ONMalloc(CTestNamedString, "NS1");
-	cNS1->Init(cS1, ONNull(CTestNamedString), "NS1");
+	cNS1->Init(cS1, ONull, "NS1");
 
 	cS2 = OMalloc(CString);
 	cS2->Init("CS2");
@@ -395,7 +395,7 @@ void TestObjectsArrayKillInGraph(void)
 	cS1 = OMalloc(CString);
 	cS1->Init("CS1");
 	cNS1 = ONMalloc(CTestNamedString, "NS1");
-	cNS1->Init(cS1, ONNull(CTestNamedString), "NS1");
+	cNS1->Init(cS1, ONull, "NS1");
 
 	cA1 = OMalloc(CArray);
 	cA2 = OMalloc(CArray);
@@ -440,7 +440,7 @@ void TestObjectsObjectKillInArrayInGraph(void)
 	cS1 = OMalloc(CString);
 	cS1->Init("CS1");
 	cNS1 = ONMalloc(CTestNamedString, "NS1");
-	cNS1->Init(cS1, ONNull(CTestNamedString), "NS1");
+	cNS1->Init(cS1, ONull, "NS1");
 
 	cA1 = OMalloc(CArray);
 	cA2 = OMalloc(CArray);

@@ -32,8 +32,8 @@ void TestKillBestPractice(void)
 	CPointer<CJeep> pJeep = ONMalloc(CJeep, "Jeep");
 	pJeep->Init(pWorld);
 
-	pWorld->AddPlayer(pHarrier.This());
-	pWorld->AddPlayer(pJeep.This());
+	pWorld->AddPlayer(pHarrier);
+	pWorld->AddPlayer(pJeep);
 
 	SStateOnKill	sHarrierBefore;
 	SStateOnKill	sHarrierAfter;

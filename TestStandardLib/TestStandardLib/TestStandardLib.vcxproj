@@ -122,6 +122,7 @@
     <ClCompile Include="TestRoot.cpp" />
     <ClCompile Include="TestObjectGraphSerialiser.cpp" />
     <ClCompile Include="TestUnknowns.cpp" />
+    <ClCompile Include="TestUsage.cpp" />
     <ClCompile Include="UnknownKillList.cpp" />
     <ClCompile Include="UnknownTestClasses.cpp" />
     <ClCompile Include="TestArrayType.cpp" />

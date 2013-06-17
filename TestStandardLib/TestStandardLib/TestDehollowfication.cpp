@@ -61,19 +61,19 @@ CPointer<CTestDoubleNamedString> SetupDehollowficationScene(void)
 
 	sz3 = OMalloc(CString);
 	sz3->Init("End");
-	cDiamond->Init(sz3, ONNull(CTestNamedString), "Before Swine");
+	cDiamond->Init(sz3, ONull, "Before Swine");
 
 	sz4 = OMalloc(CString);
 	sz4->Init("Start");
 	cDouble = ONMalloc(CTestDoubleNamedString, "Double Start");
-	cDouble->Init(sz4, cNS1, ONNull(CTestNamedString));
+	cDouble->Init(sz4, cNS1, ONull);
 
 	cRoot->Add(cDouble);
 
 	cDouble->mpSplit1 = cNS2;
 
 	cNS3 = ONMalloc(CTestNamedString, "NamedString 3");
-	cNS3->Init(sz1, ONNull(CTestNamedString), "Random");
+	cNS3->Init(sz1, ONull, "Random");
 
 	cRoot->Add(cNS3);
 

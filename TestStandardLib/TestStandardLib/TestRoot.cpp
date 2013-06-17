@@ -1179,12 +1179,12 @@ void TestRootGraphRemoveErrorFromObjectConverter(void)
 
 	sz3 = OMalloc(CString);
 	sz3->Init("End");
-	cDiamond->Init(sz3, ONNull(CTestNamedString), "1234");
+	cDiamond->Init(sz3, ONull, "1234");
 
 	sz4 = OMalloc(CString);
 	sz4->Init("Start");
 	cDouble = ONMalloc(CTestDoubleNamedString, "Double Start");
-	cDouble->Init(sz4, cNS1, ONNull(CTestNamedString));
+	cDouble->Init(sz4, cNS1, ONull);
 
 	cRoot->Add(cDouble);
 

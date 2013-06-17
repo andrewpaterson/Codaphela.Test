@@ -103,9 +103,9 @@ void CTestDoubleNamedString::Init(void)
 	Pointer(mszString.This());
 	Pointer(mpSplit1.This());
 	Pointer(mpSplit2.This());
-	mszString = ONNull(CString);
-	mpSplit1 = ONNull(CTestNamedString);
-	mpSplit2 = ONNull(CTestNamedString);
+	mszString = ONull;
+	mpSplit1 = ONull;
+	mpSplit2 = ONull;
 }
 
 void CTestDoubleNamedString::Init(CPointer<CString> szString, CPointer<CTestNamedString> pSplit2, CPointer<CTestNamedString> pSplit1)

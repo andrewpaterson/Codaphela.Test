@@ -277,6 +277,11 @@ void CGameWorld::KillData(void)
 //////////////////////////////////////////////////////////////////////////
 void CGameWorld::AddPlayer(CPointer<CPlayerVehicle> pPlayer)
 {
+	if (pPlayer.IsNull())
+	{
+		return;
+	}
+
 	if (mpPlayer1.IsNull())
 	{
 		mpPlayer1 = pPlayer;
@@ -300,6 +305,9 @@ void CGameWorld::AddPlayer(CPointer<CPlayerVehicle> pPlayer)
 //////////////////////////////////////////////////////////////////////////
 void CGameWorld::AddTickable(CPointerObject pTickable)
 {
-	maTickables->Add(pTickable);
+	if (pTickable.IsNotNull())
+	{
+		maTickables->Add(pTickable);
+	}
 }
 
