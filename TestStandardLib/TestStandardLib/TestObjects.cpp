@@ -476,7 +476,7 @@ void TestObjectsObjectKillInArrayInGraph(void)
 void TestObjectDehollowfication(void)
 {
 	CFileUtil							cFileUtil;
-	CPointerObject						pPointer;
+	CPointer						pPointer;
 	CTestDoubleNamedString*				pcInternal;
 	Ptr<CTestDoubleNamedString>	pDouble;
 	Ptr<CTestNamedString>			pSingle;
@@ -537,7 +537,7 @@ void TestObjectDehollowfication(void)
 void TestObjectsFlushClearGetByOid(void)
 {
 	CFileUtil							cFileUtil;
-	CPointerObject						cPointer;
+	CPointer						cPointer;
 	Ptr<CTestDoubleNamedString>	cDouble;
 	Ptr<CRoot>						cRoot;
 
@@ -577,7 +577,7 @@ void TestObjectsFlushClearGetByOid(void)
 void TestObjectsFlushClearGetByName(void)
 {
 	CFileUtil							cFileUtil;
-	CPointerObject						cPointer;
+	CPointer						cPointer;
 	Ptr<CTestDoubleNamedString>	cDouble;
 	Ptr<CRoot>						cRoot;
 

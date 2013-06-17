@@ -116,7 +116,7 @@ void TestObjectConverterDragonExistingHollows(void)
 	CObjectConverterNative				cChunkedConverter;
 	CObjectSource*						pcObjectSource;
 	CObjectSourceChunked*				pcObjectMultipleSource;
-	CPointerObject						pcObject;
+	CPointer						pcObject;
 	CDiskFile*							pcDiskFile;
 	Ptr<CTestDoubleNamedString>	pcDoubleNamedString;
 	Ptr<CRoot>						pcRoot;
@@ -243,7 +243,7 @@ void TestObjectConverterText(void)
 	int						iTextLen;
 	CMemoryFile				cMemoryFile;
 	CObjectSource*			pcObjectSource;
-	CPointerObject			pcObject;
+	CPointer			pcObject;
 	Ptr<CString>		pcString;
 
 	ObjectsInit();

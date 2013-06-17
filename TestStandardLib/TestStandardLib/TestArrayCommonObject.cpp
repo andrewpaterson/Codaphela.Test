@@ -16,7 +16,7 @@ void TestArrayCommonPointerRemapping(void)
 	Ptr<CTestSaveableObject1>	pObject2;
 	Ptr<CTestSaveableObject1>	pObject3;
 	STestObjectKilledNotifier	sKillNotifier;
-	CPointerObject				pNull;
+	CPointer				pNull;
 	int							iNumRemapped;
 	
 	ObjectsInit();

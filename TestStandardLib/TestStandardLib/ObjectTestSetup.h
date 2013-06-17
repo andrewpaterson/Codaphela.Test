@@ -71,7 +71,7 @@ public:
 	BOOL					Load(CObjectDeserialiser* pcFile) { return FALSE; };
 
 	void					PlayerInput(void) {};
-	Ptr<CMissile>		FireMissile(CPointerObject pTarget);
+	Ptr<CMissile>		FireMissile(CPointer pTarget);
 	Ptr<CArray>		GetMissiles(void);
 };
 
@@ -122,7 +122,7 @@ class CMissile : public CObject
 BASE_FUNCTIONS(CMissile);
 protected:
 	Ptr<CGameWorld>	mpWorld;
-	CPointerObject			mpTarget;  
+	CPointer			mpTarget;  
 
 public:
 	void				Init(Ptr<CGameWorld> pWorld);
@@ -131,8 +131,8 @@ public:
 	BOOL				Save(CObjectSerialiser* pcFile) { return FALSE; };
 	BOOL				Load(CObjectDeserialiser* pcFile) { return FALSE; };
 
-	void				SetTarget(CPointerObject pTarget);
-	CPointerObject		GetTarget(void);
+	void				SetTarget(CPointer pTarget);
+	CPointer		GetTarget(void);
 };
 
 
@@ -153,6 +153,6 @@ public:
 
 	void Tick(void);
 	void AddPlayer(Ptr<CPlayerVehicle> pPlayer);
-	void AddTickable(CPointerObject pTickable);
+	void AddTickable(CPointer pTickable);
 };
 

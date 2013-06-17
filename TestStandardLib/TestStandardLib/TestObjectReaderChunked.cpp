@@ -13,7 +13,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CPointerObject SetupObjectReaderChunkedChunkFile(void)
+CPointer SetupObjectReaderChunkedChunkFile(void)
 {
 	Ptr<CTestNamedString>	cNS1;
 	Ptr<CTestNamedString>	cNS2;
@@ -86,7 +86,7 @@ CPointerObject SetupObjectReaderChunkedChunkFile(void)
 //////////////////////////////////////////////////////////////////////////
 void WriteObjectReaderChunkedFile(void)
 {
-	CPointerObject			cBase;
+	CPointer			cBase;
 	CObjectWriterChunked	cWriter;
 	CObjectGraphSerialiser	cGraphSerialiser;
 
@@ -108,7 +108,7 @@ void TestObjectReaderChunkedDeserialised(void)
 {
 	CObjectReaderChunkFileDisk	cReader;
 	CObjectGraphDeserialiser	cGraphDeserialiser;
-	CPointerObject				cBase;
+	CPointer				cBase;
 	Ptr<CTestWithArray>			cA1;
 	Ptr<CTestWithArray>			cA2;
 	Ptr<CTestNamedString>		cNS1;
@@ -118,7 +118,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	Ptr<CString>				sz1;
 	Ptr<CString>				sz2;
 	Ptr<CString>				sz3;
-	CPointerObject				cTemp;
+	CPointer				cTemp;
 	Ptr<CTestInteger>			cI1;
 	Ptr<CTestInteger>			cI2;
 	Ptr<CTestInteger>			cI3;

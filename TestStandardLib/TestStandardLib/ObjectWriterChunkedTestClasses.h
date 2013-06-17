@@ -18,7 +18,7 @@ public:
 	void Init(char* szString, int x);
 	void KillData(void);
 
-	void Add(CPointerObject pcObject);
+	void Add(CPointer pcObject);
 
 	BOOL Save(CObjectSerialiser* pcFile);
 	BOOL Load(CObjectDeserialiser* pcFile);

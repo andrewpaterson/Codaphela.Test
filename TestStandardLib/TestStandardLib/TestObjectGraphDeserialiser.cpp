@@ -218,7 +218,7 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	CObjectReaderChunkFileDisk		cReaderStart2;
 	Ptr<CTestSaveableObject1>	cShared;
 	Ptr<CRoot>					cRoot;
-	CPointerObject					cObject;
+	CPointer					cObject;
 	int								iNumUnknowns;
 	int								iNumIndexes;
 	int								iNumNames;

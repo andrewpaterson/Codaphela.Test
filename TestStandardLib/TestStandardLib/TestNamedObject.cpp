@@ -29,24 +29,25 @@ void TestNamedObjectSize(void)
 	AssertInt(128, sizeof(CNamedObject));
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
 void TestNamedObjectName(void)
 {
-	CFileUtil					cFileUtil;
+	CFileUtil				cFileUtil;
 	Ptr<CTestNamedObject>	pNamed1;
 	Ptr<CTestNamedObject>	pNamed2;
 	Ptr<CTestNamedObject>	pNamed3;
 	Ptr<CTestNamedObject>	pResult1;
 	Ptr<CTestNamedObject>	pResult2;
-	CPointerObject				pResult3;
+	CPointer				pResult3;
 	Ptr<CRoot>				pRoot;
 	Ptr<CSet>				pSet;
-	CSet*						pcSet;
-	OIndex						oiSet;
-	OIndex						oiNamed3;
+	CSet*					pcSet;
+	OIndex					oiSet;
+	OIndex					oiNamed3;
 
 	cFileUtil.RemoveDir("Output/NamedObject");
 	cFileUtil.MakeDir("Output/NamedObject");

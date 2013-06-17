@@ -10,7 +10,7 @@
 void TestPointerNegation(void)
 {
 	Ptr<CTestObject>	pcObject;
-	CPointerObject			pcBase;
+	CPointer			pcBase;
 
 	pcObject = OMalloc(CTestObject);
 	AssertFalse(!pcObject);

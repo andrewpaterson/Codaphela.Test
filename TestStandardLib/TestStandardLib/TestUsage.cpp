@@ -11,9 +11,9 @@ void TestUsageNullPointers(void)
 {
 	ObjectsInit();
 
-	Ptr<CGameWorld>		pWorld;
-	CPointerObject				pNull = ONull;
-	Ptr<CPlayerVehicle>	pVehicle = ONull;
+	Ptr<CGameWorld>			pWorld;
+	CPointer				pNull = ONull;
+	Ptr<CPlayerVehicle>		pVehicle = ONull;
 	Ptr<CHarrier>			pHarrier;
 
 	pWorld = pNull;
@@ -30,7 +30,7 @@ void TestUsageNullPointers(void)
 
 	AssertString("This code must compile", "This code must compile");
 
-	pWorld = pHarrier;  //This probably shouldn't compile but it does because pHarrier (Ptr<CHarrier>) extends CPointerObject.
+	pWorld = pHarrier;  //This probably shouldn't compile but it does because pHarrier (Ptr<CHarrier>) extends CPointer.
 
 	ObjectsKill();
 }
@@ -44,7 +44,7 @@ void TestUsageDefaultPointer(void)
 {
 	Ptr<CBaseObject>	pBase;
 	Ptr<>				pDefault;
-	CPointerObject			pObject;
+	CPointer			pObject;
 
 	AssertString("This code must compile", "This code must compile");
 }
@@ -63,5 +63,3 @@ void TestUsage(void)
 
 	TestStatistics();
 }
-
-

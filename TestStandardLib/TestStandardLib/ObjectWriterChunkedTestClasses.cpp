@@ -18,7 +18,7 @@ void CTestWithArray::KillData(void)
 	mszString.Kill();
 }
 
-void CTestWithArray::Add(CPointerObject pcObject)
+void CTestWithArray::Add(CPointer pcObject)
 {
 	mcArray->Add(pcObject);
 }

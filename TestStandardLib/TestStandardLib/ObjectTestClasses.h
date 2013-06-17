@@ -15,7 +15,7 @@ class CTestObject : public CObject
 {
 BASE_FUNCTIONS(CTestObject);
 public:
-	CPointerObject				mpObject;
+	CPointer				mpObject;
 	Ptr<CTestObject>		mpTest;
 	STestObjectKilledNotifier*	mpsKilledNotifier;
 
@@ -30,7 +30,7 @@ class CTestSaveableObject1 : public CNamedObject
 {
 BASE_FUNCTIONS(CTestSaveableObject1);
 public:
-	CPointerObject		mpObject;
+	CPointer		mpObject;
 	int					miInt;
 	CChars				mszString;
 	BOOL				mbSaved;
@@ -49,7 +49,7 @@ BASE_FUNCTIONS(CTestSaveableObject2);
 public:
 	CChars							msz;
 	Ptr<CTestSaveableObject1>	mp1;
-	CPointerObject					mp2;
+	CPointer					mp2;
 	BOOL							mbSaved;
 
 	void Init(char* psz);

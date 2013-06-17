@@ -14,7 +14,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CPointerObject SetupObjectReaderSimpleFile(void)
+CPointer SetupObjectReaderSimpleFile(void)
 {
 	Ptr<CTestNamedString>	cNS1;
 	Ptr<CTestNamedString>	cNS2;
@@ -35,7 +35,7 @@ CPointerObject SetupObjectReaderSimpleFile(void)
 //////////////////////////////////////////////////////////////////////////
 void WriteObjectReaderSimpleFile(void)
 {
-	CPointerObject			cBase;
+	CPointer			cBase;
 	CObjectWriterSimple		cWriter;
 	CObjectGraphSerialiser	cGraphSerialiser;
 
@@ -57,11 +57,11 @@ void TestObjectReaderSimpleDeserialised(void)
 {
 	CObjectReaderSimpleDisk		cReader;
 	CObjectGraphDeserialiser	cGraphDeserialiser;
-	CPointerObject				cBase;
+	CPointer				cBase;
 
 	Ptr<CTestNamedString>	cNS1;
 	Ptr<CTestNamedString>	cNS2;
-	CPointerObject				cTemp;
+	CPointer				cTemp;
 
 	CObjectAllocator			cAllocator;
 	CDependentReadObjects		cDependentReadObjects;

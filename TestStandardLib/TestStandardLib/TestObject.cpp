@@ -20,7 +20,7 @@ void TestObjectSize(void)
 	AssertInt(104, sizeof(CObject));
 	AssertInt(144, sizeof(CRoot));
 	AssertInt(120, sizeof(CSet));
-	AssertInt(8, sizeof(CPointerObject));
+	AssertInt(8, sizeof(CPointer));
 
 	ObjectsKill();
 }
@@ -36,10 +36,10 @@ void TestObjectPointerRemapping(void)
 	Ptr<CTestObject>			pObject1;
 	Ptr<CTestObject>			pObject2;
 	Ptr<CTestObject>			pObject3;
-	STestObjectKilledNotifier		sKillNotifier1;
-	STestObjectKilledNotifier		sKillNotifier2;
-	STestObjectKilledNotifier		sKillNotifier3;
-	int								iNumRemapped;
+	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectKilledNotifier	sKillNotifier2;
+	STestObjectKilledNotifier	sKillNotifier3;
+	int							iNumRemapped;
 
 	ObjectsInit();
 

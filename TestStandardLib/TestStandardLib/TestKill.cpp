@@ -18,7 +18,7 @@ void TestKillBestPractice(void)
 	//Those objects that did point to them will be updated to point to NULL.
 
 	Ptr<CRoot>			pRoot;
-	Ptr<CGameWorld>	pWorld;
+	Ptr<CGameWorld>		pWorld;
 
 	pRoot = ORoot();
 	pWorld = OMalloc(CGameWorld);
@@ -107,10 +107,10 @@ void TestKillBestPractice(void)
 	AssertString("012345678901234", sGooseBefore.cPicture.mszPretenedImAPicture);
 	AssertString("Alas I am Dead!", sGooseAfter.cPicture.mszPretenedImAPicture);
 	AssertInt(1, pMissile1->NumTos());
-	CPointerObject pTarget1 = pMissile1->GetTarget();
+	CPointer pTarget1 = pMissile1->GetTarget();
 	AssertTrue(pTarget1.IsNull());
 	AssertInt(1, pMissile2->NumTos());
-	CPointerObject pTarget2 = pMissile2->GetTarget();
+	CPointer pTarget2 = pMissile2->GetTarget();
 	AssertTrue(pTarget2.IsNull());
 	AssertLongLongInt(10, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(4, gcObjects.NumMemoryNames());
