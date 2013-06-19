@@ -37,6 +37,7 @@ void TestObjects(void);
 void TestDehollowfication(void);
 void TestKill(void);
 void TestUsage(void);
+void TestArray(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -84,6 +85,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestDehollowfication();
 	TestKill();
 	TestUsage();
+	TestArray();
 
 	FastFunctionsKill();
 	KillEmptyString();

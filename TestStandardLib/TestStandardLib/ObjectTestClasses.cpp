@@ -50,12 +50,15 @@ BOOL CTestObject::Load(CObjectDeserialiser* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestSaveableObject1::Init()
+Ptr<CTestSaveableObject1> CTestSaveableObject1::Init()
 {
 	Pointer(mpObject.This());
+
 	miInt = 7;
 	mszString.Init();
 	mbSaved = FALSE;
+
+	return Ptr<CTestSaveableObject1>(this);
 }
 
 
