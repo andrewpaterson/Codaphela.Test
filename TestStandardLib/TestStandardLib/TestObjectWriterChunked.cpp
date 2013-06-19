@@ -68,7 +68,7 @@ void TestObjectWriterChunkedSerialised(void)
 	AssertString("NAM", szTest);
 	AssertTrue(cChunkFile.ReadChunkEnd());
 
-	//CArray
+	//CArrayObject
 	AssertTrue(cChunkFile.ReadChunkBegin("Unnamed/0000000000000002"));
 	AssertTrue(cChunkFile.ReadInt(&iLength));
 	AssertInt(87, iLength);

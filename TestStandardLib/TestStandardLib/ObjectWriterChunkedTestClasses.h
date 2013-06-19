@@ -2,7 +2,7 @@
 #define __OBJECT_WRITER_CHUNKED_TEST_CLASSES_H__
 #include "StandardLib/Object.h"
 #include "StandardLib/NamedObject.h"
-#include "StandardLib/Array.h"
+#include "StandardLib/ArrayObject.h"
 #include "StandardLib/String.h"
 
 
@@ -10,7 +10,7 @@ class CTestWithArray : public CNamedObject
 {
 BASE_FUNCTIONS(CTestWithArray);
 public:
-	Ptr<CArray>	mcArray;
+	Ptr<CArrayObject>	mcArray;
 
 	CChars		mszString;
 	int			mx;

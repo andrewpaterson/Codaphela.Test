@@ -2,7 +2,7 @@
 #include "StandardLib/Objects.h"
 #include "StandardLib/Pointer.h"
 #include "StandardLib/Root.h"
-#include "StandardLib/Array.h"
+#include "StandardLib/ArrayObject.h"
 #include "TestLib/Assert.h"
 #include "NamedObjectTestClasses.h"
 
@@ -13,8 +13,8 @@
 //////////////////////////////////////////////////////////////////////////
 void TestNamedObjectAddConstructors(void)
 {
-	gcObjects.AddConstructor<CArray>();
-	gcObjects.AddConstructor<CSet>();
+	gcObjects.AddConstructor<CArrayObject>();
+	gcObjects.AddConstructor<CSetObject>();
 	gcObjects.AddConstructor<CRoot>();
 	gcObjects.AddConstructor<CTestNamedObject>();
 }
@@ -44,8 +44,8 @@ void TestNamedObjectName(void)
 	Ptr<CTestNamedObject>	pResult2;
 	CPointer				pResult3;
 	Ptr<CRoot>				pRoot;
-	Ptr<CSet>				pSet;
-	CSet*					pcSet;
+	Ptr<CSetObject>				pSet;
+	CSetObject*					pcSet;
 	OIndex					oiSet;
 	OIndex					oiNamed3;
 
@@ -99,7 +99,7 @@ void TestNamedObjectName(void)
 
 	pSet = gcObjects.Get(oiSet);
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
-	AssertString("CSet", pSet.ClassName());
+	AssertString("CSetObject", pSet.ClassName());
 
 	AssertTrue(pSet.IsNotNull());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pSet.DistToRoot());

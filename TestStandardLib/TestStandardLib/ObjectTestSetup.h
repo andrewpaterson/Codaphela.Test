@@ -1,6 +1,6 @@
 #include "StandardLib/Pointer.h"
 #include "StandardLib/NamedObject.h"
-#include "StandardLib/Array.h"
+#include "StandardLib/ArrayObject.h"
 
 
 class CMissile;
@@ -59,7 +59,7 @@ class CHarrier : public CPlayerVehicle
 {
 BASE_FUNCTIONS(CHarrier);
 protected:
-	Ptr<CArray>		maMissiles;
+	Ptr<CArrayObject>		maMissiles;
 	Ptr<CGameWorld>	mpWorld;
 	int						miSpeed;
 
@@ -72,7 +72,7 @@ public:
 
 	void					PlayerInput(void) {};
 	Ptr<CMissile>		FireMissile(CPointer pTarget);
-	Ptr<CArray>		GetMissiles(void);
+	Ptr<CArrayObject>		GetMissiles(void);
 };
 
 
@@ -140,7 +140,7 @@ class CGameWorld : public CObject
 {
 BASE_FUNCTIONS(CGameWorld);
 protected:
-	Ptr<CArray>			maTickables;
+	Ptr<CArrayObject>			maTickables;
 	Ptr<CPlayerVehicle>	mpPlayer1;
 	Ptr<CPlayerVehicle>	mpPlayer2;
 

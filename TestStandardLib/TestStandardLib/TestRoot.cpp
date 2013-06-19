@@ -140,7 +140,7 @@ void TestRootGraphRemoveSimple(void)
 	Ptr<CTestObject>		pTest3;
 	Ptr<CTestObject>		pTest4;
 	Ptr<CTestObject>		pTest5;
-	Ptr<CSet>				pSet;
+	Ptr<CSetObject>				pSet;
 	Ptr<CTestObject>		pTop1;
 	Ptr<CTestObject>		pTop2;
 
@@ -151,7 +151,7 @@ void TestRootGraphRemoveSimple(void)
 	pTest3 = OMalloc(CTestObject);
 	pTest4 = OMalloc(CTestObject);
 	pTest5 = OMalloc(CTestObject);
-	pSet = OMalloc(CSet);
+	pSet = OMalloc(CSetObject);
 	pTop1 = OMalloc(CTestObject);
 	pTop2 = OMalloc(CTestObject);
 
@@ -433,7 +433,7 @@ void TestRootGraphRemoveComplex(void)
 	Ptr<CTestObject>		pTest3;
 	Ptr<CTestObject>		pTest4;
 	Ptr<CTestObject>		pTest5;
-	Ptr<CSet>				pSet;
+	Ptr<CSetObject>				pSet;
 	Ptr<CTestObject>		pTop1;
 	Ptr<CTestObject>		pTop2;
 
@@ -444,7 +444,7 @@ void TestRootGraphRemoveComplex(void)
 	pTest3 = OMalloc(CTestObject);
 	pTest4 = OMalloc(CTestObject);
 	pTest5 = OMalloc(CTestObject);
-	pSet = OMalloc(CSet);
+	pSet = OMalloc(CSetObject);
 	pTop1 = OMalloc(CTestObject);
 	pTop2 = OMalloc(CTestObject);
 
@@ -619,7 +619,7 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	Ptr<CTestObject>		pTest3;
 	Ptr<CTestObject>		pTest4;
 	Ptr<CTestObject>		pTest5;
-	Ptr<CSet>				pSet;
+	Ptr<CSetObject>				pSet;
 	Ptr<CTestObject>		pTop1;
 	Ptr<CTestObject>		pTop2;
 
@@ -631,7 +631,7 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	pTest3 = OMalloc(CTestObject);
 	pTest4 = OMalloc(CTestObject);
 	pTest5 = OMalloc(CTestObject);
-	pSet = OMalloc(CSet);
+	pSet = OMalloc(CSetObject);
 	pTop1 = OMalloc(CTestObject);
 	pTop2 = OMalloc(CTestObject);
 
@@ -735,7 +735,7 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 	Ptr<CTestObject>		pTest3;
 	Ptr<CTestObject>		pTest4;
 	Ptr<CTestObject>		pTest5;
-	Ptr<CSet>				pSet;
+	Ptr<CSetObject>				pSet;
 	Ptr<CTestObject>		pTop1;
 	Ptr<CTestObject>		pTop2;
 
@@ -747,7 +747,7 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 	pTest3 = OMalloc(CTestObject);
 	pTest4 = OMalloc(CTestObject);
 	pTest5 = OMalloc(CTestObject);
-	pSet = OMalloc(CSet);
+	pSet = OMalloc(CSetObject);
 	pTop1 = OMalloc(CTestObject);
 	pTop2 = OMalloc(CTestObject);
 
@@ -866,7 +866,7 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	Ptr<CTestObject>		pTest4;
 	Ptr<CTestObject>		pTest5;
 	Ptr<CTestObject>		pTest6;
-	Ptr<CSet>				pSet;
+	Ptr<CSetObject>				pSet;
 	Ptr<CTestObject>		pTop1;
 	Ptr<CTestObject>		pTop2;
 
@@ -879,7 +879,7 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	pTest4 = OMalloc(CTestObject);
 	pTest5 = OMalloc(CTestObject);
 	pTest6 = OMalloc(CTestObject);
-	pSet = OMalloc(CSet);
+	pSet = OMalloc(CSetObject);
 	pTop1 = OMalloc(CTestObject);
 	pTop2 = OMalloc(CTestObject);
 

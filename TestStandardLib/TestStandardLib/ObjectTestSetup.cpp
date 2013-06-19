@@ -83,7 +83,7 @@ void CHarrier::Init(Ptr<CGameWorld> pWorld)
 	mpWorld = pWorld;
 	miSpeed = 7;
 
-	maMissiles = OMalloc(CArray);
+	maMissiles = OMalloc(CArrayObject);
 	maMissiles->Init();
 }
 
@@ -119,7 +119,7 @@ Ptr<CMissile> CHarrier::FireMissile(CPointer pTarget)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CArray> CHarrier::GetMissiles(void)
+Ptr<CArrayObject> CHarrier::GetMissiles(void)
 {
 	return maMissiles;
 }
@@ -257,7 +257,7 @@ void CGameWorld::Init(void)
 	Pointer(mpPlayer2.This());
 	Pointer(maTickables.This());
 
-	maTickables = OMalloc(CArray);
+	maTickables = OMalloc(CArrayObject);
 	maTickables->Init(128);
 }
 

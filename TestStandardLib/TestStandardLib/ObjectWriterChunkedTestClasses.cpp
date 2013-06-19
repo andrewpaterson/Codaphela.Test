@@ -7,7 +7,7 @@
 void CTestWithArray::Init(char* szString, int x)
 {
 	Pointer(mcArray.This());
-	mcArray = OMalloc(CArray);
+	mcArray = OMalloc(CArrayObject);
 	mcArray->Init();
 	mszString.Init(szString);
 	mx = x;

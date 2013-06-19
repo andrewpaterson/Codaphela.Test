@@ -57,8 +57,8 @@ void SetupObjectsConstructors(void)
 	gcObjects.AddConstructor<CTestNamedString>();
 	gcObjects.AddConstructor<CTestDoubleNamedString>();
 	gcObjects.AddConstructor<CString>();
-	gcObjects.AddConstructor<CArray>();
-	gcObjects.AddConstructor<CSet>();
+	gcObjects.AddConstructor<CArrayObject>();
+	gcObjects.AddConstructor<CSetObject>();
 	gcObjects.AddConstructor<CRoot>();
 }
 
@@ -383,8 +383,8 @@ void TestObjectsObjectKillInGraph(void)
 void TestObjectsArrayKillInGraph(void)
 {
 	Ptr<CTestNamedString>			cNS1;
-	Ptr<CArray>					cA1;
-	Ptr<CArray>					cA2;
+	Ptr<CArrayObject>					cA1;
+	Ptr<CArrayObject>					cA2;
 	Ptr<CRoot>						cRoot;
 	Ptr<CString>					cS1;
 
@@ -397,8 +397,8 @@ void TestObjectsArrayKillInGraph(void)
 	cNS1 = ONMalloc(CTestNamedString, "NS1");
 	cNS1->Init(cS1, ONull, "NS1");
 
-	cA1 = OMalloc(CArray);
-	cA2 = OMalloc(CArray);
+	cA1 = OMalloc(CArrayObject);
+	cA2 = OMalloc(CArrayObject);
 
 	cA1->Init();
 	cA1->Add(cNS1);
@@ -428,8 +428,8 @@ void TestObjectsArrayKillInGraph(void)
 void TestObjectsObjectKillInArrayInGraph(void)
 {
 	Ptr<CTestNamedString>			cNS1;
-	Ptr<CArray>					cA1;
-	Ptr<CArray>					cA2;
+	Ptr<CArrayObject>					cA1;
+	Ptr<CArrayObject>					cA2;
 	Ptr<CRoot>						cRoot;
 	Ptr<CString>					cS1;
 
@@ -442,8 +442,8 @@ void TestObjectsObjectKillInArrayInGraph(void)
 	cNS1 = ONMalloc(CTestNamedString, "NS1");
 	cNS1->Init(cS1, ONull, "NS1");
 
-	cA1 = OMalloc(CArray);
-	cA2 = OMalloc(CArray);
+	cA1 = OMalloc(CArrayObject);
+	cA2 = OMalloc(CArrayObject);
 
 	cA1->Init();
 	cA1->Add(cNS1);

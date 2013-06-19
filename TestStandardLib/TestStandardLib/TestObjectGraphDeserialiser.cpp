@@ -26,8 +26,8 @@ void TestObjectGraphDeserialiserAddConstructors(void)
 	gcObjects.AddConstructor<CTestSaveableObject1>();
 	gcObjects.AddConstructor<CTestSaveableObject2>();
 	gcObjects.AddConstructor<CString>();
-	gcObjects.AddConstructor<CArray>();
-	gcObjects.AddConstructor<CSet>();
+	gcObjects.AddConstructor<CArrayObject>();
+	gcObjects.AddConstructor<CSetObject>();
 	gcObjects.AddConstructor<CRoot>();
 }
 

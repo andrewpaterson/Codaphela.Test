@@ -19,7 +19,7 @@ void TestObjectSize(void)
 	AssertInt(12, sizeof(CUnknown));
 	AssertInt(104, sizeof(CObject));
 	AssertInt(144, sizeof(CRoot));
-	AssertInt(120, sizeof(CSet));
+	AssertInt(120, sizeof(CSetObject));
 	AssertInt(8, sizeof(CPointer));
 
 	ObjectsKill();

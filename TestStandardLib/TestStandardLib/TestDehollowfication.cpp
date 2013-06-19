@@ -21,8 +21,8 @@ void SetupDehollowficationConstructors(void)
 	gcObjects.AddConstructor<CTestNamedString>();
 	gcObjects.AddConstructor<CTestDoubleNamedString>();
 	gcObjects.AddConstructor<CString>();
-	gcObjects.AddConstructor<CArray>();
-	gcObjects.AddConstructor<CSet>();
+	gcObjects.AddConstructor<CArrayObject>();
+	gcObjects.AddConstructor<CSetObject>();
 	gcObjects.AddConstructor<CRoot>();
 }
 
