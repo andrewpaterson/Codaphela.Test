@@ -79,6 +79,9 @@
     <Filter Include="Source\Object\Object\Collection\Array">
       <UniqueIdentifier>{7ee6331e-5685-4a4b-9050-cbd30834e472}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Object\Object\Collection\Set">
+      <UniqueIdentifier>{a0b7fbe2-0aba-4aec-a99d-b55664c9dc19}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestStandardLib.cpp">
@@ -209,6 +212,9 @@
     </ClCompile>
     <ClCompile Include="TestArray.cpp">
       <Filter>Source\Object\Object\Collection\Array</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSet.cpp">
+      <Filter>Source\Object\Object\Collection\Set</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
