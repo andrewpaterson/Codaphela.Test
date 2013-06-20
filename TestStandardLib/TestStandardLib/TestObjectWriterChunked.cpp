@@ -24,10 +24,10 @@ void TestObjectWriterChunkedSerialised(void)
 	CObjectWriterChunked		cWriter;
 	CObjectGraphSerialiser		cGraphSerialiser;
 
-	Ptr<CTestWithArray>	pcObject1;
-	Ptr<CTestInteger>		pcObject2;
-	Ptr<CTestInteger>		pcObject3;
-	Ptr<CTestInteger>		pcObject4;
+	Ptr<CTestWithArray>			pcObject1;
+	Ptr<CTestInteger>			pcObject2;
+	Ptr<CTestInteger>			pcObject3;
+	Ptr<CTestInteger>			pcObject4;
 	CChunkFileNames				cChunkFile;
 	int							iLength;
 	char						szTest[4];
@@ -71,7 +71,7 @@ void TestObjectWriterChunkedSerialised(void)
 	//CArrayObject
 	AssertTrue(cChunkFile.ReadChunkBegin("Unnamed/0000000000000002"));
 	AssertTrue(cChunkFile.ReadInt(&iLength));
-	AssertInt(87, iLength);
+	AssertInt(93, iLength);
 	AssertTrue(cChunkFile.ReadData(szTest, 4));
 	AssertString("IDX", szTest);
 	AssertTrue(cChunkFile.ReadChunkEnd());
