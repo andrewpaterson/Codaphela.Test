@@ -15,13 +15,13 @@ public:
 	CChars		mszString;
 	int			mx;
 
-	void Init(char* szString, int x);
-	void KillData(void);
+	Ptr<CTestWithArray>	Init(char* szString, int x);
+	void				KillData(void);
 
-	void Add(CPointer pcObject);
+	void				Add(CPointer pcObject);
 
-	BOOL Save(CObjectSerialiser* pcFile);
-	BOOL Load(CObjectDeserialiser* pcFile);
+	BOOL				Save(CObjectSerialiser* pcFile);
+	BOOL				Load(CObjectDeserialiser* pcFile);
 };
 
 
@@ -33,11 +33,11 @@ public:
 	int my; 
 	int mz;
 
-	void Init(int x, int y, int z);
-	void KillData(void);
+	Ptr<CTestInteger>	Init(int x, int y, int z);
+	void				KillData(void);
 
-	BOOL Save(CObjectSerialiser* pcFile);
-	BOOL Load(CObjectDeserialiser* pcFile);
+	BOOL				Save(CObjectSerialiser* pcFile);
+	BOOL				Load(CObjectDeserialiser* pcFile);
 };
 
 
@@ -49,11 +49,11 @@ public:
 	Ptr<CTestNamedString>	mpAnother;
 	CChars					mszEmbedded;
 
-	void Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, char* szEmbedded);
-	void KillData(void);
+	Ptr<CTestNamedString>	Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, char* szEmbedded);
+	void					KillData(void);
 
-	BOOL Save(CObjectSerialiser* pcFile);
-	BOOL Load(CObjectDeserialiser* pcFile);
+	BOOL					Save(CObjectSerialiser* pcFile);
+	BOOL					Load(CObjectDeserialiser* pcFile);
 };
 
 
@@ -65,12 +65,12 @@ public:
 	Ptr<CTestNamedString>	mpSplit2;
 	Ptr<CTestNamedString>	mpSplit1;
 
-	void Init(void);
-	void Init(Ptr<CString> szString, Ptr<CTestNamedString> pSplit2, Ptr<CTestNamedString> pSplit1);
-	void KillData(void);
+	Ptr<CTestDoubleNamedString>	Init(void);
+	Ptr<CTestDoubleNamedString>	Init(Ptr<CString> szString, Ptr<CTestNamedString> pSplit2, Ptr<CTestNamedString> pSplit1);
+	void						KillData(void);
 
-	BOOL Save(CObjectSerialiser* pcFile);
-	BOOL Load(CObjectDeserialiser* pcFile);
+	BOOL						Save(CObjectSerialiser* pcFile);
+	BOOL						Load(CObjectDeserialiser* pcFile);
 };
 
 

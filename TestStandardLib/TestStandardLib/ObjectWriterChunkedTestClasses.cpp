@@ -4,13 +4,15 @@
 #include "ObjectWriterChunkedTestClasses.h"
 
 
-void CTestWithArray::Init(char* szString, int x)
+Ptr<CTestWithArray> CTestWithArray::Init(char* szString, int x)
 {
 	Pointer(mcArray.This());
 	mcArray = OMalloc(CArrayObject);
 	mcArray->Init();
 	mszString.Init(szString);
 	mx = x;
+
+	return Ptr<CTestWithArray>(this);
 }
 
 void CTestWithArray::KillData(void)
@@ -40,11 +42,12 @@ BOOL CTestWithArray::Load(CObjectDeserialiser* pcFile)
 }
 
 
-void CTestInteger::Init(int x, int y, int z)
+Ptr<CTestInteger> CTestInteger::Init(int x, int y, int z)
 {
 	mx = x;
 	my = y;
 	mz = z;
+	return Ptr<CTestInteger>(this);
 }
 
 void CTestInteger::KillData(void)
@@ -68,13 +71,15 @@ BOOL CTestInteger::Load(CObjectDeserialiser* pcFile)
 }
 
 
-void CTestNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, char* szEmbedded)
+Ptr<CTestNamedString> CTestNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, char* szEmbedded)
 {
 	Pointer(mszString.This());
 	Pointer(mpAnother.This());
 	mszString = szString;
 	mpAnother = pAnother;
 	mszEmbedded.Init(szEmbedded);
+
+	return Ptr<CTestNamedString>(this);
 }
 
 void CTestNamedString::KillData(void)
@@ -98,7 +103,7 @@ BOOL CTestNamedString::Load(CObjectDeserialiser* pcFile)
 }
 
 
-void CTestDoubleNamedString::Init(void)
+Ptr<CTestDoubleNamedString> CTestDoubleNamedString::Init(void)
 {
 	Pointer(mszString.This());
 	Pointer(mpSplit1.This());
@@ -106,9 +111,11 @@ void CTestDoubleNamedString::Init(void)
 	mszString = ONull;
 	mpSplit1 = ONull;
 	mpSplit2 = ONull;
+
+	return Ptr<CTestDoubleNamedString>(this);
 }
 
-void CTestDoubleNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pSplit2, Ptr<CTestNamedString> pSplit1)
+Ptr<CTestDoubleNamedString> CTestDoubleNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pSplit2, Ptr<CTestNamedString> pSplit1)
 {
 	Pointer(mszString.This());
 	Pointer(mpSplit1.This());
@@ -116,6 +123,8 @@ void CTestDoubleNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> p
 	mszString = szString;
 	mpSplit1 = pSplit1;
 	mpSplit2 = pSplit2;
+
+	return Ptr<CTestDoubleNamedString>(this);
 }
 
 void CTestDoubleNamedString::KillData(void)

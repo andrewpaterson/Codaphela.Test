@@ -26,7 +26,7 @@ void CGraphicPicture::Kill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CPlayerVehicle::Init(void)
+Ptr<CPlayerVehicle> CPlayerVehicle::Init(void)
 {
 	mpsPoint = (SPhysicsPoint*)malloc(sizeof(SPhysicsPoint));
 	mcPicture.Init();
@@ -37,6 +37,8 @@ void CPlayerVehicle::Init(void)
 
 	mpsBeforeDeath = NULL;
 	mpsAfterDeath = NULL;
+
+	return Ptr<CPlayerVehicle>(this);
 }
 
 
@@ -73,7 +75,7 @@ void CPlayerVehicle::SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAf
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CHarrier::Init(Ptr<CGameWorld> pWorld)
+Ptr<CHarrier> CHarrier::Init(Ptr<CGameWorld> pWorld)
 {
 	CPlayerVehicle::Init();
 
@@ -85,6 +87,8 @@ void CHarrier::Init(Ptr<CGameWorld> pWorld)
 
 	maMissiles = OMalloc(CArrayObject);
 	maMissiles->Init();
+
+	return Ptr<CHarrier>(this);
 }
 
 
@@ -129,7 +133,7 @@ Ptr<CArrayObject> CHarrier::GetMissiles(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CJeep::Init(Ptr<CGameWorld> pWorld)
+Ptr<CJeep> CJeep::Init(Ptr<CGameWorld> pWorld)
 {
 	CPlayerVehicle::Init();
 
@@ -138,6 +142,8 @@ void CJeep::Init(Ptr<CGameWorld> pWorld)
 	mpWorld = pWorld;
 	mfBackWheel = 2.3f;
 	mfFrontWheel = 2.1f;
+
+	return Ptr<CJeep>(this);
 }
 
 
@@ -157,13 +163,15 @@ void CJeep::KillData(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CMissile::Init(Ptr<CGameWorld> pWorld)
+Ptr<CMissile> CMissile::Init(Ptr<CGameWorld> pWorld)
 {
 	Pointer(mpWorld.This());
 	Pointer(mpTarget.This());
 
 	mpWorld = pWorld;
 	mpTarget = NULL;
+
+	return Ptr<CMissile>(this);
 }
 
 
@@ -200,7 +208,7 @@ void CMissile::SetTarget(CPointer pTarget)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CRedJet::Init(Ptr<CGameWorld> pWorld)
+Ptr<CRedJet> CRedJet::Init(Ptr<CGameWorld> pWorld)
 {
 	Pointer(mpWorld.This());
 
@@ -212,6 +220,8 @@ void CRedJet::Init(Ptr<CGameWorld> pWorld)
 	Ptr<CRedJet> pThis;
 	pThis = this;
 	mpWorld->AddTickable(pThis);
+
+	return Ptr<CRedJet>(this);
 }
 
 
@@ -251,7 +261,7 @@ void CRedJet::SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeat
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CGameWorld::Init(void)
+Ptr<CGameWorld> CGameWorld::Init(void)
 {
 	Pointer(mpPlayer1.This());
 	Pointer(mpPlayer2.This());
@@ -259,6 +269,8 @@ void CGameWorld::Init(void)
 
 	maTickables = OMalloc(CArrayObject);
 	maTickables->Init(128);
+
+	return Ptr<CGameWorld>(this);
 }
 
 

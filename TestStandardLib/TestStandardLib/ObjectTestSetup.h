@@ -43,15 +43,15 @@ protected:
 	SStateOnKill*		mpsAfterDeath;
 
 public:
-			void Init(void);
-			void KillData(void);
+			Ptr<CPlayerVehicle>	Init(void);
+			void				KillData(void);
 
-			BOOL Save(CObjectSerialiser* pcFile) { return FALSE; };
-			BOOL Load(CObjectDeserialiser* pcFile) { return FALSE; };
+			BOOL				Save(CObjectSerialiser* pcFile) { return FALSE; };
+			BOOL				Load(CObjectDeserialiser* pcFile) { return FALSE; };
 
-			void SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeath);
+			void				SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeath);
 
-	virtual void PlayerInput(void) =0;
+	virtual void				PlayerInput(void) =0;
 };
 
 
@@ -64,14 +64,14 @@ protected:
 	int						miSpeed;
 
 public:
-	void					Init(Ptr<CGameWorld> pWorld);
+	Ptr<CHarrier>			Init(Ptr<CGameWorld> pWorld);
 	void					KillData(void);
 
 	BOOL					Save(CObjectSerialiser* pcFile) { return FALSE; };
 	BOOL					Load(CObjectDeserialiser* pcFile) { return FALSE; };
 
 	void					PlayerInput(void) {};
-	Ptr<CMissile>		FireMissile(CPointer pTarget);
+	Ptr<CMissile>			FireMissile(CPointer pTarget);
 	Ptr<CArrayObject>		GetMissiles(void);
 };
 
@@ -85,13 +85,13 @@ protected:
 	float					mfBackWheel;
 
 public:
-	void Init(Ptr<CGameWorld> pWorld);
-	void KillData(void);
+	Ptr<CJeep>	Init(Ptr<CGameWorld> pWorld);
+	void		KillData(void);
 
-	BOOL Save(CObjectSerialiser* pcFile) { return FALSE; };
-	BOOL Load(CObjectDeserialiser* pcFile) { return FALSE; };
+	BOOL		Save(CObjectSerialiser* pcFile) { return FALSE; };
+	BOOL		Load(CObjectDeserialiser* pcFile) { return FALSE; };
 
-	void PlayerInput(void) {};
+	void		PlayerInput(void) {};
 };
 
 
@@ -99,21 +99,21 @@ class CRedJet : public CNamedObject
 {
 BASE_FUNCTIONS(CRedJet);
 protected:
-	CGraphicPicture			mcPicture;
-	Ptr<CGameWorld>	mpWorld;
-	SPhysicsPoint*			mpsPoint;
+	CGraphicPicture		mcPicture;
+	Ptr<CGameWorld>		mpWorld;
+	SPhysicsPoint*		mpsPoint;
 
-	SStateOnKill*			mpsBeforeDeath;
-	SStateOnKill*			mpsAfterDeath;
+	SStateOnKill*		mpsBeforeDeath;
+	SStateOnKill*		mpsAfterDeath;
 
 public:
-	void Init(Ptr<CGameWorld> pWorld);
-	void KillData(void);
+	Ptr<CRedJet>	Init(Ptr<CGameWorld> pWorld);
+	void			KillData(void);
 
-	BOOL Save(CObjectSerialiser* pcFile) { return FALSE; };
-	BOOL Load(CObjectDeserialiser* pcFile) { return FALSE; };
+	BOOL			Save(CObjectSerialiser* pcFile) { return FALSE; };
+	BOOL			Load(CObjectDeserialiser* pcFile) { return FALSE; };
 
-	void SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeath);
+	void			SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeath);
 };
 
 
@@ -125,7 +125,7 @@ protected:
 	CPointer			mpTarget;  
 
 public:
-	void				Init(Ptr<CGameWorld> pWorld);
+	Ptr<CMissile>		Init(Ptr<CGameWorld> pWorld);
 	void				KillData(void);
 
 	BOOL				Save(CObjectSerialiser* pcFile) { return FALSE; };
@@ -145,14 +145,14 @@ protected:
 	Ptr<CPlayerVehicle>	mpPlayer2;
 
 public:
-	void Init(void);
-	void KillData(void);
+	Ptr<CGameWorld> Init(void);
+	void			KillData(void);
 
-	BOOL Save(CObjectSerialiser* pcFile) { return FALSE; };
-	BOOL Load(CObjectDeserialiser* pcFile) { return FALSE; };
+	BOOL			Save(CObjectSerialiser* pcFile) { return FALSE; };
+	BOOL			Load(CObjectDeserialiser* pcFile) { return FALSE; };
 
-	void Tick(void);
-	void AddPlayer(Ptr<CPlayerVehicle> pPlayer);
-	void AddTickable(CPointer pTickable);
+	void			Tick(void);
+	void			AddPlayer(Ptr<CPlayerVehicle> pPlayer);
+	void			AddTickable(CPointer pTickable);
 };
 

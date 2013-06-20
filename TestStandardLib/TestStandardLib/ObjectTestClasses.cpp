@@ -7,12 +7,14 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestObject::Init(STestObjectKilledNotifier* psKilledNotifier)
+Ptr<CTestObject> CTestObject::Init(STestObjectKilledNotifier* psKilledNotifier)
 {
 	Pointer(mpObject.This());
 	Pointer(mpTest.This());
 	mpsKilledNotifier = psKilledNotifier;
 	mpsKilledNotifier->bKilled = FALSE;
+
+	return Ptr<CTestObject>(this);
 }
 
 
@@ -106,12 +108,14 @@ BOOL CTestSaveableObject1::Load(CObjectDeserialiser* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestSaveableObject2::Init(char* psz)
+Ptr<CTestSaveableObject2> CTestSaveableObject2::Init(char* psz)
 {
 	Pointer(mp1.This());
 	Pointer(mp2.This());
 	msz.Init(psz);
 	mbSaved = FALSE;
+
+	return Ptr<CTestSaveableObject2>(this);
 }
 
 

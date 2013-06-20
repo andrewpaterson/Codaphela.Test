@@ -19,10 +19,10 @@ public:
 	Ptr<CTestObject>			mpTest;
 	STestObjectKilledNotifier*	mpsKilledNotifier;
 
-	void Init(STestObjectKilledNotifier* psKilledNotifier);
-	void KillData(void);
-	BOOL Save(CObjectSerialiser* pcFile);
-	BOOL Load(CObjectDeserialiser* pcFile);
+	Ptr<CTestObject>	Init(STestObjectKilledNotifier* psKilledNotifier);
+	void				KillData(void);
+	BOOL				Save(CObjectSerialiser* pcFile);
+	BOOL				Load(CObjectDeserialiser* pcFile);
 };
 
 
@@ -52,11 +52,11 @@ public:
 	CPointer					mp2;
 	BOOL						mbSaved;
 
-	void Init(char* psz);
-	void KillData(void);
+	Ptr<CTestSaveableObject2>	Init(char* psz);
+	void						KillData(void);
 
-	BOOL Save(CObjectSerialiser* pcFile);
-	BOOL Load(CObjectDeserialiser* pcFile);
+	BOOL						Save(CObjectSerialiser* pcFile);
+	BOOL						Load(CObjectDeserialiser* pcFile);
 };
 
 
