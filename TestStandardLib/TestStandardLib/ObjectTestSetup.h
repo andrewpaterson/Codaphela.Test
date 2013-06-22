@@ -36,8 +36,8 @@ class CPlayerVehicle : public CNamedObject
 {
 BASE_FUNCTIONS(CPlayerVehicle);
 protected:
-	CGraphicPicture			mcPicture;
-	SPhysicsPoint*			mpsPoint;
+	CGraphicPicture		mcPicture;
+	SPhysicsPoint*		mpsPoint;
 
 	SStateOnKill*		mpsBeforeDeath;
 	SStateOnKill*		mpsAfterDeath;
@@ -59,20 +59,20 @@ class CHarrier : public CPlayerVehicle
 {
 BASE_FUNCTIONS(CHarrier);
 protected:
-	Ptr<CArrayObject>		maMissiles;
-	Ptr<CGameWorld>	mpWorld;
-	int						miSpeed;
+	Ptr<CArrayObject>	maMissiles;
+	Ptr<CGameWorld>		mpWorld;
+	int					miSpeed;
 
 public:
-	Ptr<CHarrier>			Init(Ptr<CGameWorld> pWorld);
-	void					KillData(void);
+	Ptr<CHarrier>		Init(Ptr<CGameWorld> pWorld);
+	void				KillData(void);
 
-	BOOL					Save(CObjectSerialiser* pcFile) { return FALSE; };
-	BOOL					Load(CObjectDeserialiser* pcFile) { return FALSE; };
+	BOOL				Save(CObjectSerialiser* pcFile) { return FALSE; };
+	BOOL				Load(CObjectDeserialiser* pcFile) { return FALSE; };
 
-	void					PlayerInput(void) {};
-	Ptr<CMissile>			FireMissile(CPointer pTarget);
-	Ptr<CArrayObject>		GetMissiles(void);
+	void				PlayerInput(void) {};
+	Ptr<CMissile>		FireMissile(CPointer pTarget);
+	Ptr<CArrayObject>	GetMissiles(void);
 };
 
 
@@ -121,18 +121,34 @@ class CMissile : public CObject
 {
 BASE_FUNCTIONS(CMissile);
 protected:
-	Ptr<CGameWorld>	mpWorld;
-	CPointer			mpTarget;  
+	Ptr<CGameWorld>		mpWorld;
+	CPointer			mpTarget;
 
 public:
-	Ptr<CMissile>		Init(Ptr<CGameWorld> pWorld);
-	void				KillData(void);
+	Ptr<CMissile>	Init(Ptr<CGameWorld> pWorld);
+	void			KillData(void);
 
-	BOOL				Save(CObjectSerialiser* pcFile) { return FALSE; };
-	BOOL				Load(CObjectDeserialiser* pcFile) { return FALSE; };
+	BOOL			Save(CObjectSerialiser* pcFile) { return FALSE; };
+	BOOL			Load(CObjectDeserialiser* pcFile) { return FALSE; };
 
-	void				SetTarget(CPointer pTarget);
+	void			SetTarget(CPointer pTarget);
 	CPointer		GetTarget(void);
+};
+
+
+class CClusterMissile : public CNamedObject
+{
+BASE_FUNCTIONS(CClusterMissile);
+public:
+	CMissile		mcMissile1;
+	CMissile		mcMissile2;
+	Ptr<CGameWorld>	mpWorld;
+
+	Ptr<CClusterMissile> 	Init(Ptr<CGameWorld> pWorld);
+	void					KillData(void);
+
+	BOOL					Save(CObjectSerialiser* pcFile) { return FALSE; };
+	BOOL					Load(CObjectDeserialiser* pcFile) { return FALSE; };
 };
 
 

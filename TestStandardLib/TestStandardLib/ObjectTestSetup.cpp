@@ -261,6 +261,35 @@ void CRedJet::SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeat
 //
 //
 //////////////////////////////////////////////////////////////////////////
+Ptr<CClusterMissile> CClusterMissile::Init(Ptr<CGameWorld> pWorld)
+{
+	Pointer(mpWorld.This());
+	Embedded(&mcMissile1);
+	Embedded(&mcMissile2);
+
+	mcMissile1.Init(pWorld);
+	mcMissile2.Init(pWorld);
+
+	return Ptr<CClusterMissile>(this);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CClusterMissile::KillData(void)
+{
+	mcMissile1.Kill();
+	mcMissile2.Kill();
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 Ptr<CGameWorld> CGameWorld::Init(void)
 {
 	Pointer(mpPlayer1.This());
@@ -322,4 +351,5 @@ void CGameWorld::AddTickable(CPointer pTickable)
 		maTickables->Add(pTickable);
 	}
 }
+
 

@@ -216,6 +216,9 @@
     <ClCompile Include="TestSet.cpp">
       <Filter>Source\Object\Object\Collection\Set</Filter>
     </ClCompile>
+    <ClCompile Include="TestEmbedded.cpp">
+      <Filter>Source\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectTestClasses.h">

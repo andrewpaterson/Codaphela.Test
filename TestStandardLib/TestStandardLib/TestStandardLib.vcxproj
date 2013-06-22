@@ -97,6 +97,7 @@
     <ClCompile Include="TestArrayCommonObject.cpp" />
     <ClCompile Include="TestChunkFileNames.cpp" />
     <ClCompile Include="TestDehollowfication.cpp" />
+    <ClCompile Include="TestEmbedded.cpp" />
     <ClCompile Include="TestKill.cpp" />
     <ClCompile Include="TestNamedIndexes.cpp" />
     <ClCompile Include="TestNamedObject.cpp" />

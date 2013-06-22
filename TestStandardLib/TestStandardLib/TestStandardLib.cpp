@@ -39,6 +39,7 @@ void TestKill(void);
 void TestUsage(void);
 void TestArray(void);
 void TestSet(void);
+void TestEmbedded(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -88,6 +89,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestUsage();
 	TestArray();
 	TestSet();
+	TestEmbedded();
 
 	FastFunctionsKill();
 	KillEmptyString();

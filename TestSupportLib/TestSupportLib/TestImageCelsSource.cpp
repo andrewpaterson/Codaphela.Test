@@ -25,7 +25,7 @@ void TestImageCelsSourceStarControl(void)
 	CImageCelSourceSingle	cSingle;
 	CImageCombiner			cCombiner;
 	CImage					cImage;
-	CImageCelsSource	cSource;
+	CImageCelsSource		cSource;
 	CImageSourceDiskFile	cDiskFile;
 	BOOL					bResult;
 
