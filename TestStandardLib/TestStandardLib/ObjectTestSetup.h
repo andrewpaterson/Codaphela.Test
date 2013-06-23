@@ -80,9 +80,9 @@ class CJeep : public CPlayerVehicle
 {
 BASE_FUNCTIONS(CJeep);
 protected:
-	Ptr<CGameWorld>	mpWorld;
-	float					mfFrontWheel;
-	float					mfBackWheel;
+	Ptr<CGameWorld>		mpWorld;
+	float				mfFrontWheel;
+	float				mfBackWheel;
 
 public:
 	Ptr<CJeep>	Init(Ptr<CGameWorld> pWorld);
@@ -152,11 +152,25 @@ public:
 };
 
 
+class CClusterLauncher : public CObject
+{
+BASE_FUNCTIONS(CClusterLauncher);
+public:
+	Ptr<CClusterMissile>	mpMissile;
+
+	Ptr<CClusterLauncher> 	Init(void);
+	void					KillData(void);
+
+	BOOL					Save(CObjectSerialiser* pcFile) { return FALSE; };
+	BOOL					Load(CObjectDeserialiser* pcFile) { return FALSE; };
+};
+
+
 class CGameWorld : public CObject
 {
 BASE_FUNCTIONS(CGameWorld);
 protected:
-	Ptr<CArrayObject>			maTickables;
+	Ptr<CArrayObject>	maTickables;
 	Ptr<CPlayerVehicle>	mpPlayer1;
 	Ptr<CPlayerVehicle>	mpPlayer2;
 
@@ -170,5 +184,6 @@ public:
 	void			Tick(void);
 	void			AddPlayer(Ptr<CPlayerVehicle> pPlayer);
 	void			AddTickable(CPointer pTickable);
+	void			RemoveTickable(CPointer pTickable);
 };
 

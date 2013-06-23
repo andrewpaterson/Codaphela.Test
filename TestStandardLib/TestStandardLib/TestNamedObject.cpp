@@ -26,7 +26,7 @@ void TestNamedObjectAddConstructors(void)
 //////////////////////////////////////////////////////////////////////////
 void TestNamedObjectSize(void)
 {
-	AssertInt(128, sizeof(CNamedObject));
+	AssertInt(168, sizeof(CNamedObject));
 }
 
 
@@ -44,8 +44,8 @@ void TestNamedObjectName(void)
 	Ptr<CTestNamedObject>	pResult2;
 	CPointer				pResult3;
 	Ptr<CRoot>				pRoot;
-	Ptr<CSetObject>				pSet;
-	CSetObject*					pcSet;
+	Ptr<CSetObject>			pSet;
+	CSetObject*				pcSet;
 	OIndex					oiSet;
 	OIndex					oiNamed3;
 

@@ -48,15 +48,21 @@ Ptr<CPlayerVehicle> CPlayerVehicle::Init(void)
 //////////////////////////////////////////////////////////////////////////
 void CPlayerVehicle::KillData(void)
 {
-	memcpy(&mpsBeforeDeath->sPoint, mpsPoint, sizeof(SPhysicsPoint));
-	memcpy(&mpsBeforeDeath->cPicture, &mcPicture, sizeof(CGraphicPicture));
+	if (mpsBeforeDeath)
+	{
+		memcpy(&mpsBeforeDeath->sPoint, mpsPoint, sizeof(SPhysicsPoint));
+		memcpy(&mpsBeforeDeath->cPicture, &mcPicture, sizeof(CGraphicPicture));
+	}
 
 	free(mpsPoint);
 	mpsPoint = NULL;
 	mcPicture.Kill();
 
-	memset(&mpsAfterDeath->sPoint, 0, sizeof(SPhysicsPoint));
-	memcpy(&mpsAfterDeath->cPicture, &mcPicture, sizeof(CGraphicPicture));
+	if (mpsAfterDeath)
+	{
+		memset(&mpsAfterDeath->sPoint, 0, sizeof(SPhysicsPoint));
+		memcpy(&mpsAfterDeath->cPicture, &mcPicture, sizeof(CGraphicPicture));
+	}
 }
 
 
@@ -285,6 +291,25 @@ void CClusterMissile::KillData(void)
 }
 
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CClusterLauncher> CClusterLauncher::Init(void)
+{
+	Pointer(mpMissile.This());
+	return Ptr<CClusterLauncher>(this);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CClusterLauncher::KillData(void)
+{
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -352,4 +377,16 @@ void CGameWorld::AddTickable(CPointer pTickable)
 	}
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CGameWorld::RemoveTickable(CPointer pTickable)
+{
+	if (pTickable.IsNotNull())
+	{
+		maTickables->Remove(pTickable);
+	}
+}
 
