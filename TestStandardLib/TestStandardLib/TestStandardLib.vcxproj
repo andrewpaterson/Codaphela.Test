@@ -90,6 +90,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="EmbeddedObjectTestClasses.cpp" />
     <ClCompile Include="NamedObjectTestClasses.cpp" />
     <ClCompile Include="ObjectTestSetup.cpp" />
     <ClCompile Include="ObjectWriterChunkedTestClasses.cpp" />
@@ -137,6 +138,7 @@
     <ClCompile Include="TestClassStorage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="EmbeddedObjectTestClasses.h" />
     <ClInclude Include="NamedObjectTestClasses.h" />
     <ClInclude Include="ObjectTestClasses.h" />
     <ClInclude Include="ObjectTestSetup.h" />

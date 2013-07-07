@@ -1,4 +1,6 @@
 #include "StandardLib/Objects.h"
+#include "StandardLib/ObjectSerialiser.h"
+#include "StandardLib/ObjectDeserialiser.h"
 #include "ObjectTestSetup.h"
 
 
@@ -214,6 +216,30 @@ void CMissile::SetTarget(CPointer pTarget)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+BOOL CMissile::Save(CObjectSerialiser* pcFile)
+{ 
+	ReturnOnFalse(pcFile->WritePointer(mpWorld));
+	ReturnOnFalse(pcFile->WritePointer(mpTarget));
+	return TRUE;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+BOOL CMissile::Load(CObjectDeserialiser* pcFile) 
+{ 
+	ReturnOnFalse(pcFile->ReadPointer(Pointer(mpWorld.This())));
+	ReturnOnFalse(pcFile->ReadPointer(Pointer(mpTarget.This())));
+	return TRUE; 
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 Ptr<CRedJet> CRedJet::Init(Ptr<CGameWorld> pWorld)
 {
 	Pointer(mpWorld.This());
@@ -288,6 +314,33 @@ void CClusterMissile::KillData(void)
 {
 	mcMissile1.Kill();
 	mcMissile2.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+BOOL CClusterMissile::Save(CObjectSerialiser* pcFile)
+{ 
+	ReturnOnFalse(mcMissile1.Save(pcFile));
+	ReturnOnFalse(pcFile->WritePointer(mpWorld));
+	return TRUE;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+BOOL CClusterMissile::Load(CObjectDeserialiser* pcFile) 
+{ 
+	Embedded(&mcMissile1);
+	Embedded(&mcMissile2);
+
+	ReturnOnFalse(mcMissile1.Load(pcFile));
+	ReturnOnFalse(pcFile->ReadPointer(Pointer(mpWorld.This())));
+	return TRUE; 
 }
 
 

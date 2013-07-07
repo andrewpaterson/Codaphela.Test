@@ -128,8 +128,8 @@ public:
 	Ptr<CMissile>	Init(Ptr<CGameWorld> pWorld);
 	void			KillData(void);
 
-	BOOL			Save(CObjectSerialiser* pcFile) { return FALSE; };
-	BOOL			Load(CObjectDeserialiser* pcFile) { return FALSE; };
+	BOOL			Save(CObjectSerialiser* pcFile);
+	BOOL			Load(CObjectDeserialiser* pcFile);
 
 	void			SetTarget(CPointer pTarget);
 	CPointer		GetTarget(void);
@@ -147,8 +147,8 @@ public:
 	Ptr<CClusterMissile> 	Init(Ptr<CGameWorld> pWorld);
 	void					KillData(void);
 
-	BOOL					Save(CObjectSerialiser* pcFile) { return FALSE; };
-	BOOL					Load(CObjectDeserialiser* pcFile) { return FALSE; };
+	BOOL					Save(CObjectSerialiser* pcFile);
+	BOOL					Load(CObjectDeserialiser* pcFile);
 };
 
 
