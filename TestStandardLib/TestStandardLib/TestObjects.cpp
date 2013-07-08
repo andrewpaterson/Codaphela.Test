@@ -131,16 +131,16 @@ void TestObjectsObjectSave(void)
 	AssertLongLongInt(1, gcObjects.NumDatabaseObjects());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
-	AssertInt(102, cDouble->SerialisedSize());
-	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached(102));
-	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached(110));
+	AssertInt(110, cDouble->SerialisedSize());
+	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached(110));
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached(122));
 
 	bResult = gcObjects.Save(cDouble.Object());
 	AssertTrue(bResult);
 	AssertLongLongInt(1, gcObjects.NumDatabaseObjects());
-	AssertInt(102, cDouble->SerialisedSize());
-	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached(102));
-	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached(110));
+	AssertInt(110, cDouble->SerialisedSize());
+	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached(110));
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached(122));
 	
 	cDouble->mszString = OMalloc(CString);
 	cDouble->mszString->Init("A String");
@@ -148,20 +148,20 @@ void TestObjectsObjectSave(void)
 	bResult = gcObjects.Save(cDouble.Object());
 	AssertTrue(bResult);
 	AssertLongLongInt(1, gcObjects.NumDatabaseObjects());
-	AssertInt(110, cDouble->SerialisedSize());
-	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached(102));
-	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached(110));
+	AssertInt(122, cDouble->SerialisedSize());
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached(110));
+	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached(122));
 
 	cDouble->mszString = OMalloc(CString);
 	cDouble->mszString->Init("Different Object");
 
-	AssertInt(110, cDouble->SerialisedSize());
+	AssertInt(122, cDouble->SerialisedSize());
 	bResult = gcObjects.Save(cDouble.Object());
 	AssertTrue(bResult);
 	AssertLongLongInt(1, gcObjects.NumDatabaseObjects());
-	AssertInt(110, cDouble->SerialisedSize());
-	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached(102));
-	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached(110));
+	AssertInt(122, cDouble->SerialisedSize());
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached(110));
+	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached(122));
 
 	ObjectsKill();
 }

@@ -133,7 +133,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 
 	AssertInt(160, sizeof(CEmbeddedObject));
 	AssertInt(496, sizeof(CEmbeddedContainer));
-	AssertInt(816, sizeof(CEmbeddedComplex));
+	AssertInt(944, sizeof(CEmbeddedComplex));
 
 	ObjectsInit("Output/EmbeddedObject/");
 	SetupEmbeddedObjectConstructors();
@@ -253,9 +253,9 @@ void TestEmbedded(void)
 {
 	BeginTests();
 
-	//TestEmbeddedObjectAddDistToRoot();
-	//TestEmbeddedObjectRemoveDistToRoot();
-	//TestEmbeddedObjectContainerDehollowfication();
+	TestEmbeddedObjectAddDistToRoot();
+	TestEmbeddedObjectRemoveDistToRoot();
+	TestEmbeddedObjectContainerDehollowfication();
 	TestEmbeddedIndex();
 	TestEmbeddedObjectPointTo();
 

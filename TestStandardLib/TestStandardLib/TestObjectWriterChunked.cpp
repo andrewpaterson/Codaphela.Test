@@ -63,7 +63,7 @@ void TestObjectWriterChunkedSerialised(void)
 	//CTestWithArray pcObject1
 	AssertTrue(cChunkFile.ReadChunkBegin("Warning"));
 	AssertTrue(cChunkFile.ReadInt(&iLength));
-	AssertInt(106, iLength);
+	AssertInt(110, iLength);
 	AssertTrue(cChunkFile.ReadData(szTest, 4));
 	AssertString("NAM", szTest);
 	AssertTrue(cChunkFile.ReadChunkEnd());
@@ -71,7 +71,7 @@ void TestObjectWriterChunkedSerialised(void)
 	//CArrayObject
 	AssertTrue(cChunkFile.ReadChunkBegin("Unnamed/0000000000000002"));
 	AssertTrue(cChunkFile.ReadInt(&iLength));
-	AssertInt(93, iLength);
+	AssertInt(105, iLength);
 	AssertTrue(cChunkFile.ReadData(szTest, 4));
 	AssertString("IDX", szTest);
 	AssertTrue(cChunkFile.ReadChunkEnd());
