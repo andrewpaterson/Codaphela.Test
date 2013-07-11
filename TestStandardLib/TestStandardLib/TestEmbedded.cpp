@@ -14,7 +14,7 @@ void SetupEmbeddedObjectConstructors(void)
 	gcObjects.AddConstructor<CArrayObject>();
 	gcObjects.AddConstructor<CSetObject>();
 	gcObjects.AddConstructor<CRoot>();
-	gcObjects.AddConstructor<CEmbeddedObject>();
+	gcObjects.AddConstructor<CEmbeddedTest>();
 	gcObjects.AddConstructor<CEmbeddedContainer>();
 	gcObjects.AddConstructor<CEmbeddedComplex>();
 
@@ -131,7 +131,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	ObjectsKill();
 	AssertTrue(bResult);
 
-	AssertInt(160, sizeof(CEmbeddedObject));
+	AssertInt(160, sizeof(CEmbeddedTest));
 	AssertInt(496, sizeof(CEmbeddedContainer));
 	AssertInt(944, sizeof(CEmbeddedComplex));
 

@@ -35,7 +35,7 @@ CPointer SetupObjectReaderSimpleFile(void)
 //////////////////////////////////////////////////////////////////////////
 void WriteObjectReaderSimpleFile(void)
 {
-	CPointer			cBase;
+	CPointer				cBase;
 	CObjectWriterSimple		cWriter;
 	CObjectGraphSerialiser	cGraphSerialiser;
 
@@ -43,7 +43,7 @@ void WriteObjectReaderSimpleFile(void)
 
 	cWriter.Init("Output\\ObjectReaderSimple\\Test\\", "");
 	cGraphSerialiser.Init(&cWriter);
-	AssertTrue(cGraphSerialiser.Write(&cBase));
+	AssertTrue(cGraphSerialiser.Write(cBase.BaseObject()));
 	cGraphSerialiser.Kill();
 	cWriter.Kill();
 }

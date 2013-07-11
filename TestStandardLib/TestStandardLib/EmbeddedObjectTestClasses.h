@@ -7,16 +7,16 @@
 #include "StandardLib/ObjectDeserialiser.h"
 
 
-class CEmbeddedObject : public CObject
+class CEmbeddedTest : public CObject
 {
-BASE_FUNCTIONS(CEmbeddedObject);
+BASE_FUNCTIONS(CEmbeddedTest);
 public:
 	int		miAmANumber;
 	float	mfSoAmI;
 	Ptr<>	mpTest;
 
 	void	Class(void);
-	Ptr<CEmbeddedObject> Init(void);
+	Ptr<CEmbeddedTest> Init(void);
 	void	KillData(void);
 
 	BOOL	Save(CObjectSerialiser* pcFile);
@@ -29,9 +29,9 @@ class CEmbeddedContainer : public CObject
 BASE_FUNCTIONS(CEmbeddedContainer);
 public:
 	char				msz[4];
-	CEmbeddedObject		mcOne;
+	CEmbeddedTest		mcOne;
 	int					mi;
-	CEmbeddedObject		mcTwo;
+	CEmbeddedTest		mcTwo;
 	float				mf;
 	Ptr<>				mpTest;
 
@@ -48,7 +48,7 @@ class CEmbeddedComplex : public CObject
 {
 BASE_FUNCTIONS(CEmbeddedComplex);
 public:
-	CEmbeddedObject		mcSimple;
+	CEmbeddedTest		mcSimple;
 	int					mai[2];
 	CArray<>			ma;
 	CEmbeddedContainer	mcContainer;

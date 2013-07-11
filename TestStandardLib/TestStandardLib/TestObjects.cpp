@@ -124,7 +124,7 @@ void TestObjectsObjectSave(void)
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 	AssertTrue(cDouble.IsDirty());
 	
-	bResult = gcObjects.Save(cDouble.Object());
+	bResult = gcObjects.Save(cDouble.BaseObject());
 	AssertTrue(bResult);
 	AssertTrue(cDouble.IsDirty());  //This object is *still* dirty after save.  Almost no objects will answer true to IsDirty.
 
@@ -135,7 +135,7 @@ void TestObjectsObjectSave(void)
 	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached(110));
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached(122));
 
-	bResult = gcObjects.Save(cDouble.Object());
+	bResult = gcObjects.Save(cDouble.BaseObject());
 	AssertTrue(bResult);
 	AssertLongLongInt(1, gcObjects.NumDatabaseObjects());
 	AssertInt(110, cDouble->SerialisedSize());
@@ -145,7 +145,7 @@ void TestObjectsObjectSave(void)
 	cDouble->mszString = OMalloc(CString);
 	cDouble->mszString->Init("A String");
 
-	bResult = gcObjects.Save(cDouble.Object());
+	bResult = gcObjects.Save(cDouble.BaseObject());
 	AssertTrue(bResult);
 	AssertLongLongInt(1, gcObjects.NumDatabaseObjects());
 	AssertInt(122, cDouble->SerialisedSize());
@@ -156,7 +156,7 @@ void TestObjectsObjectSave(void)
 	cDouble->mszString->Init("Different Object");
 
 	AssertInt(122, cDouble->SerialisedSize());
-	bResult = gcObjects.Save(cDouble.Object());
+	bResult = gcObjects.Save(cDouble.BaseObject());
 	AssertTrue(bResult);
 	AssertLongLongInt(1, gcObjects.NumDatabaseObjects());
 	AssertInt(122, cDouble->SerialisedSize());

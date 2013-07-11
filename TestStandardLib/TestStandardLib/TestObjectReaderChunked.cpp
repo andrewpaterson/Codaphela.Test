@@ -94,7 +94,7 @@ void WriteObjectReaderChunkedFile(void)
 
 	cWriter.Init("Output\\ObjectReaderChunked\\Test\\", "", "Reader");
 	cGraphSerialiser.Init(&cWriter);
-	AssertTrue(cGraphSerialiser.Write(&cBase));
+	AssertTrue(cGraphSerialiser.Write(cBase.BaseObject()));
 	cGraphSerialiser.Kill();
 	cWriter.Kill();
 }

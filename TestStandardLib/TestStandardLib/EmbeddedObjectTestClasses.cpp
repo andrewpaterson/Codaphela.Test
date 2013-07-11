@@ -5,7 +5,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CEmbeddedObject::Class(void)
+void CEmbeddedTest::Class(void)
 {
 	Pointer(mpTest.This());
 }
@@ -14,21 +14,21 @@ void CEmbeddedObject::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CEmbeddedObject> CEmbeddedObject::Init(void)
+Ptr<CEmbeddedTest> CEmbeddedTest::Init(void)
 {
 	Pointer(mpTest.This());
 	
 	miAmANumber = 85;
 	mfSoAmI = 58.0f;
 
-	return Ptr<CEmbeddedObject>(this);
+	return Ptr<CEmbeddedTest>(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CEmbeddedObject::KillData(void)
+void CEmbeddedTest::KillData(void)
 {
 	miAmANumber = 0;
 	mfSoAmI = 0.0f;
@@ -38,7 +38,7 @@ void CEmbeddedObject::KillData(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CEmbeddedObject::Save(CObjectSerialiser* pcFile)
+BOOL CEmbeddedTest::Save(CObjectSerialiser* pcFile)
 {
 	pcFile->WriteInt(miAmANumber);
 	pcFile->WriteFloat(mfSoAmI);
@@ -51,7 +51,7 @@ BOOL CEmbeddedObject::Save(CObjectSerialiser* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CEmbeddedObject::Load(CObjectDeserialiser* pcFile)
+BOOL CEmbeddedTest::Load(CObjectDeserialiser* pcFile)
 {
 	Class();
 
