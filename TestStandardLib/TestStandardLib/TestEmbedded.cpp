@@ -207,6 +207,7 @@ void TestEmbeddedObjectPointTo(void)
 	AssertTrue(pRoot.IsNotNull());
 	pContainer = pRoot->Get(0);
 	AssertTrue(pContainer.IsHollow());
+	AssertInt(6, pContainer.Object()->GetNumEmbedded());
 
 	szClassName = pContainer->ClassName();
 	AssertString("CEmbeddedContainer", szClassName);
@@ -228,7 +229,10 @@ void TestEmbeddedIndex(void)
 	cComplex.PreInit(NULL);
 	cComplex.Init();
 
+	AssertInt(0, cComplex.TestGetNumEmbeddedFromFlags());
 	AssertInt(6, cComplex.GetNumEmbedded());
+	AssertInt(6, cComplex.TestGetNumEmbeddedFromFlags());
+
 	AssertInt(1, cComplex.mcSimple.GetNumEmbedded());
 	AssertInt(1, cComplex.ma.GetNumEmbedded());
 	AssertInt(3, cComplex.mcContainer.GetNumEmbedded());
