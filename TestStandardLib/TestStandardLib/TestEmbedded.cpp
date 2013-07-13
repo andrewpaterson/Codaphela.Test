@@ -131,9 +131,9 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	ObjectsKill();
 	AssertTrue(bResult);
 
-	AssertInt(160, sizeof(CEmbeddedTest));
-	AssertInt(496, sizeof(CEmbeddedContainer));
-	AssertInt(944, sizeof(CEmbeddedComplex));
+	AssertInt(152, sizeof(CEmbeddedTest));
+	AssertInt(472, sizeof(CEmbeddedContainer));
+	AssertInt(896, sizeof(CEmbeddedComplex));
 
 	ObjectsInit("Output/EmbeddedObject/");
 	SetupEmbeddedObjectConstructors();
