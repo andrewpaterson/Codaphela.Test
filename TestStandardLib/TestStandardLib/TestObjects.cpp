@@ -196,16 +196,16 @@ void TestObjectsFlushNoClear(void)
 
 	ObjectsKill();
 
+	AssertFile("Input/Dehollowfication/32_0.NAM",     "Output/Flush1/32_0.NAM");
 	AssertFile("Input/Dehollowfication/48_0.DAT",     "Output/Flush1/48_0.DAT");
-	AssertFile("Input/Dehollowfication/56_0.DAT",     "Output/Flush1/56_0.DAT");
-	AssertFile("Input/Dehollowfication/72_0.DAT",     "Output/Flush1/72_0.DAT");
-	AssertFile("Input/Dehollowfication/89_0.DAT",     "Output/Flush1/89_0.DAT");
+	AssertFile("Input/Dehollowfication/60_0.DAT",     "Output/Flush1/60_0.DAT");
+	AssertFile("Input/Dehollowfication/82_0.DAT",     "Output/Flush1/82_0.DAT");
 	AssertFile("Input/Dehollowfication/93_0.DAT",     "Output/Flush1/93_0.DAT");
-	AssertFile("Input/Dehollowfication/101_0.DAT",    "Output/Flush1/101_0.DAT");
-	AssertFile("Input/Dehollowfication/102_0.DAT",    "Output/Flush1/102_0.DAT");
+	AssertFile("Input/Dehollowfication/97_0.DAT",     "Output/Flush1/97_0.DAT");
+	AssertFile("Input/Dehollowfication/109_0.DAT",    "Output/Flush1/109_0.DAT");
+	AssertFile("Input/Dehollowfication/110_0.DAT",    "Output/Flush1/110_0.DAT");
 	AssertFile("Input/Dehollowfication/Files.DAT",    "Output/Flush1/Files.DAT");
 	AssertFile("Input/Dehollowfication/Indicies.DAT", "Output/Flush1/Indicies.DAT");
-	AssertFile("Input/Dehollowfication/32_0.NAM",     "Output/Flush1/32_0.NAM");
 	AssertFile("Input/Dehollowfication/Files.NAM",    "Output/Flush1/Files.NAM");
 }
 
