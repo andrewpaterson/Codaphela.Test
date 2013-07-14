@@ -217,12 +217,11 @@ void TestEmbeddedObjectPointTo(void)
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestEmbeddedIndex(void)
+void TestEmbeddedGetEmbeddedIndex(void)
 {
 	CEmbeddedComplex	cComplex;
 
@@ -253,6 +252,45 @@ void TestEmbeddedIndex(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestEmbeddedGetEmbeddedObject(void)
+{
+	CEmbeddedComplex	cComplex;
+	CEmbeddedObject*	pcEmbedded;
+
+	cComplex.PreInit(NULL);
+	cComplex.Init();
+
+	pcEmbedded = cComplex.GetEmbeddedObject(0);
+	AssertPointer(&cComplex, pcEmbedded);
+	pcEmbedded = cComplex.GetEmbeddedObject(1);
+	AssertPointer(&cComplex.mcSimple, pcEmbedded);
+	pcEmbedded = cComplex.GetEmbeddedObject(2);
+	AssertPointer(&cComplex.ma, pcEmbedded);
+	pcEmbedded = cComplex.GetEmbeddedObject(3);
+	AssertPointer(&cComplex.mcContainer, pcEmbedded);
+	pcEmbedded = cComplex.GetEmbeddedObject(4);
+	AssertPointer(&cComplex.mcContainer.mcOne, pcEmbedded);
+	pcEmbedded = cComplex.GetEmbeddedObject(5);
+	AssertPointer(&cComplex.mcContainer.mcTwo, pcEmbedded);
+	pcEmbedded = cComplex.GetEmbeddedObject(6);
+	AssertNull(pcEmbedded);
+
+	pcEmbedded = cComplex.mcSimple.GetEmbeddedObject(0);
+	AssertPointer(&cComplex.mcSimple, pcEmbedded);
+	pcEmbedded = cComplex.mcSimple.GetEmbeddedObject(1);
+	AssertNull(pcEmbedded);
+
+	pcEmbedded = cComplex.ma.GetEmbeddedObject(0);
+	AssertPointer(&cComplex.ma, pcEmbedded);
+	pcEmbedded = cComplex.ma.GetEmbeddedObject(1);
+	AssertNull(pcEmbedded);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestEmbedded(void)
 {
 	BeginTests();
@@ -260,7 +298,8 @@ void TestEmbedded(void)
 	TestEmbeddedObjectAddDistToRoot();
 	TestEmbeddedObjectRemoveDistToRoot();
 	TestEmbeddedObjectContainerDehollowfication();
-	TestEmbeddedIndex();
+	TestEmbeddedGetEmbeddedIndex();
+	TestEmbeddedGetEmbeddedObject();
 	TestEmbeddedObjectPointTo();
 
 	TestStatistics();
