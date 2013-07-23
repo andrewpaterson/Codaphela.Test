@@ -259,7 +259,7 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 	pString2->ClassName();
 
 	Ptr<CTestNamedString> pDiamond1 = pString1->mpAnother;
-	Ptr<CTestNamedString> pDiamond2 = pString1->mpAnother;
+	Ptr<CTestNamedString> pDiamond2 = pString2->mpAnother;
 
 	AssertTrue(pDiamond1.IsHollow());
 	AssertTrue(pDiamond2.IsHollow());
