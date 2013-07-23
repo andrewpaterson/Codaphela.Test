@@ -222,6 +222,9 @@
     <ClCompile Include="EmbeddedObjectTestClasses.cpp">
       <Filter>Source\Object</Filter>
     </ClCompile>
+    <ClCompile Include="TestEmbeddedObjectRemapTos.cpp">
+      <Filter>Source\Object\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectTestClasses.h">
