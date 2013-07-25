@@ -251,5 +251,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
+    <None Include="EmbeddedTodo.txt" />
   </ItemGroup>
 </Project>

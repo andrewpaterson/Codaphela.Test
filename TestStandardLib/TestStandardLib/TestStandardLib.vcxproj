@@ -148,6 +148,7 @@
     <ClInclude Include="UnknownTestClasses.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="EmbeddedTodo.txt" />
     <None Include="Log.txt" />
   </ItemGroup>
   <ItemGroup>
