@@ -40,7 +40,7 @@ void TestUsage(void);
 void TestArray(void);
 void TestSet(void);
 void TestEmbedded(void);
-
+void TestEmbeddedObjectRemapTos(void);
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -90,6 +90,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestArray();
 	TestSet();
 	TestEmbedded();
+	TestEmbeddedObjectRemapTos();
 
 	FastFunctionsKill();
 	KillEmptyString();
