@@ -104,6 +104,30 @@ void TestEmbeddedObjectRemoveDistToRoot(void)
 	ObjectsKill();
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestEmbeddedObjectKill(void)
+{
+	ObjectsInit();
+
+	Ptr<CRoot>				pRoot = ORoot();
+	Ptr<CGameWorld>			pWorld = OMalloc(CGameWorld)->Init();
+
+	pRoot->Add(pWorld);
+
+	Ptr<CClusterMissile>	pMissile = ONMalloc(CClusterMissile, "Frank")->Init(pWorld);
+	Ptr<CHarrier>			pHarrier = OMalloc(CHarrier)->Init(pWorld);
+	Ptr<CMissile>			pHolder = OMalloc(CMissile)->Init(pWorld);
+
+	pWorld->AddTickable(pHolder);
+	pHolder->SetTarget(pHarrier);
+
+
+	ObjectsKill();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -297,6 +321,7 @@ void TestEmbedded(void)
 
 	TestEmbeddedObjectAddDistToRoot();
 	TestEmbeddedObjectRemoveDistToRoot();
+	TestEmbeddedObjectKill();
 	TestEmbeddedObjectContainerDehollowfication();
 	TestEmbeddedGetEmbeddedIndex();
 	TestEmbeddedGetEmbeddedObject();
