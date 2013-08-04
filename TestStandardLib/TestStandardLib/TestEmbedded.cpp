@@ -1,8 +1,8 @@
 #include "StandardLib/Objects.h"
+#include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestSetup.h"
 #include "EmbeddedObjectTestClasses.h"
-
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@ void SetupEmbeddedObjectConstructors(void)
 	gcObjects.AddConstructor<CEmbeddedTest>();
 	gcObjects.AddConstructor<CEmbeddedContainer>();
 	gcObjects.AddConstructor<CEmbeddedComplex>();
-
+	gcObjects.AddConstructor<CPointerContainer>();
 }
 
 
@@ -104,6 +104,7 @@ void TestEmbeddedObjectRemoveDistToRoot(void)
 	ObjectsKill();
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -112,18 +113,19 @@ void TestEmbeddedObjectKill(void)
 {
 	ObjectsInit();
 
-	Ptr<CRoot>				pRoot = ORoot();
-	Ptr<CGameWorld>			pWorld = OMalloc(CGameWorld)->Init();
+	Ptr<CRoot> pRoot = ORoot();
+	Ptr<CGameWorld> pWorld = OMalloc(CGameWorld)->Init();
 
 	pRoot->Add(pWorld);
 
-	Ptr<CClusterMissile>	pMissile = ONMalloc(CClusterMissile, "Frank")->Init(pWorld);
-	Ptr<CHarrier>			pHarrier = OMalloc(CHarrier)->Init(pWorld);
-	Ptr<CMissile>			pHolder = OMalloc(CMissile)->Init(pWorld);
+	Ptr<CClusterMissile> pClusterMissile = ONMalloc(CClusterMissile, "Anna")->Init(pWorld);
+	Ptr<CPointerContainer> pPointerPointer = OMalloc(CPointerContainer);
 
-	pWorld->AddTickable(pHolder);
-	pHolder->SetTarget(pHarrier);
+	pRoot->Add(pPointerPointer);
+	pPointerPointer->Init(&pClusterMissile->mcMissile1);
 
+	AssertInt(1, pClusterMissile->NumFroms());
+	AssertInt(1, pClusterMissile->mcMissile1.NumFroms());
 
 	ObjectsKill();
 }
