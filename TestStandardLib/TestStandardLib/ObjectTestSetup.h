@@ -123,6 +123,7 @@ BASE_FUNCTIONS(CMissile);
 protected:
 	Ptr<CGameWorld>		mpWorld;
 	CPointer			mpTarget;
+	char*				mszKillState;
 
 public:
 	Ptr<CMissile>	Init(Ptr<CGameWorld> pWorld);
@@ -133,6 +134,8 @@ public:
 
 	void			SetTarget(CPointer pTarget);
 	CPointer		GetTarget(void);
+
+	void			SetKillString(char* szKillString);
 };
 
 
@@ -140,15 +143,20 @@ class CClusterMissile : public CNamedObject
 {
 BASE_FUNCTIONS(CClusterMissile);
 public:
-	CMissile		mcMissile1;
-	CMissile		mcMissile2;
-	Ptr<CGameWorld>	mpWorld;
+	CMissile			mcMissile1;
+	CMissile			mcMissile2;
+protected:
+	Ptr<CGameWorld>		mpWorld;
+	char*				mszKillState;
 
+public:
 	Ptr<CClusterMissile> 	Init(Ptr<CGameWorld> pWorld);
 	void					KillData(void);
 
 	BOOL					Save(CObjectSerialiser* pcFile);
 	BOOL					Load(CObjectDeserialiser* pcFile);
+
+	void					SetKillString(char* szKillString);
 };
 
 

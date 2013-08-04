@@ -111,6 +111,9 @@ void TestEmbeddedObjectRemoveDistToRoot(void)
 //////////////////////////////////////////////////////////////////////////
 void TestEmbeddedObjectKill(void)
 {
+	char	szClusterMissileState[64];
+	char	szCMissile1State[64];
+
 	ObjectsInit();
 
 	Ptr<CRoot> pRoot = ORoot();
@@ -126,6 +129,14 @@ void TestEmbeddedObjectKill(void)
 
 	AssertInt(1, pClusterMissile->NumFroms());
 	AssertInt(1, pClusterMissile->mcMissile1.NumFroms());
+
+	strcpy(szClusterMissileState, "Alive");
+	strcpy(szCMissile1State, "Alive");
+
+	pPointerPointer->Clear();
+
+	AssertString("Killed", szClusterMissileState);
+	AssertString("Killed", szCMissile1State);
 
 	ObjectsKill();
 }

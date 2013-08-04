@@ -179,6 +179,8 @@ Ptr<CMissile> CMissile::Init(Ptr<CGameWorld> pWorld)
 	mpWorld = pWorld;
 	mpTarget = NULL;
 
+	mszKillState = NULL;
+
 	return Ptr<CMissile>(this);
 }
 
@@ -189,6 +191,10 @@ Ptr<CMissile> CMissile::Init(Ptr<CGameWorld> pWorld)
 //////////////////////////////////////////////////////////////////////////
 void CMissile::KillData(void)
 {
+	if (mszKillState)
+	{
+		strcpy(mszKillState, "Killed");
+	}
 }
 
 
@@ -233,6 +239,16 @@ BOOL CMissile::Load(CObjectDeserialiser* pcFile)
 	ReturnOnFalse(pcFile->ReadPointer(Pointer(mpWorld.This())));
 	ReturnOnFalse(pcFile->ReadPointer(Pointer(mpTarget.This())));
 	return TRUE; 
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CMissile::SetKillString(char* szKillString)
+{
+	mszKillState = szKillString;
 }
 
 
@@ -293,6 +309,16 @@ void CRedJet::SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeat
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void CClusterMissile::SetKillString(char* szKillString)
+{
+	mszKillState = szKillString;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 Ptr<CClusterMissile> CClusterMissile::Init(Ptr<CGameWorld> pWorld)
 {
 	Pointer(mpWorld.This());
@@ -301,6 +327,8 @@ Ptr<CClusterMissile> CClusterMissile::Init(Ptr<CGameWorld> pWorld)
 
 	mcMissile1.Init(pWorld);
 	mcMissile2.Init(pWorld);
+
+	mszKillState = NULL;
 
 	return Ptr<CClusterMissile>(this);
 }
@@ -314,6 +342,11 @@ void CClusterMissile::KillData(void)
 {
 	mcMissile1.Kill();
 	mcMissile2.Kill();
+
+	if (mszKillState)
+	{
+		strcpy(mszKillState, "Killed");
+	}
 }
 
 
@@ -324,6 +357,7 @@ void CClusterMissile::KillData(void)
 BOOL CClusterMissile::Save(CObjectSerialiser* pcFile)
 { 
 	ReturnOnFalse(mcMissile1.Save(pcFile));
+	ReturnOnFalse(mcMissile2.Save(pcFile));
 	ReturnOnFalse(pcFile->WritePointer(mpWorld));
 	return TRUE;
 }
@@ -339,6 +373,7 @@ BOOL CClusterMissile::Load(CObjectDeserialiser* pcFile)
 	Embedded(&mcMissile2);
 
 	ReturnOnFalse(mcMissile1.Load(pcFile));
+	ReturnOnFalse(mcMissile2.Load(pcFile));
 	ReturnOnFalse(pcFile->ReadPointer(Pointer(mpWorld.This())));
 	return TRUE; 
 }
