@@ -122,24 +122,57 @@ void TestEmbeddedObjectKill(void)
 	pRoot->Add(pWorld);
 
 	Ptr<CClusterMissile> pClusterMissile = ONMalloc(CClusterMissile, "Anna")->Init(pWorld);
-	Ptr<CPointerContainer> pPointerPointer = OMalloc(CPointerContainer);
 
+	Ptr<CPointerContainer> pPointerPointer = OMalloc(CPointerContainer);
 	pRoot->Add(pPointerPointer);
 	pPointerPointer->Init(&pClusterMissile->mcMissile1);
+
+	Ptr<CPointerContainer> pPointerPointer2 = OMalloc(CPointerContainer);
+	pRoot->Add(pPointerPointer2);
+	pPointerPointer2->Init(&pClusterMissile);
+
+	//The number of allocated object shouldn't change until all the froms are removed
+	//both from the embedded object and the 'normal' object.
+	AssertLongLongInt(7, gcObjects.GetMemory()->NumIndexed());
+	AssertLongLongInt(7, gcUnknowns.NumElements());
 
 	pClusterMissile->SetKillString(szClusterMissileState);
 	pClusterMissile->mcMissile1.SetKillString(szMissile1State);
 
-	AssertInt(1, pClusterMissile->NumFroms());
-	AssertInt(1, pClusterMissile->mcMissile1.NumFroms());
-
+	AssertInt(2, pClusterMissile->NumFroms());
+	AssertInt(2, pClusterMissile->mcMissile1.NumFroms());
 	strcpy(szClusterMissileState, "Alive");
 	strcpy(szMissile1State, "Alive");
 
 	pPointerPointer->Clear();
 
+	AssertInt(1, pClusterMissile->NumFroms());
+	AssertInt(1, pClusterMissile->mcMissile1.NumFroms());
+	AssertString("Alive", szClusterMissileState);
+	AssertString("Alive", szMissile1State);
+
+	pPointerPointer->mp = &pClusterMissile->mcMissile1;
+
+	AssertInt(2, pClusterMissile->NumFroms());
+	AssertInt(2, pClusterMissile->mcMissile1.NumFroms());
+
+	pPointerPointer2->Clear();
+
+	AssertInt(1, pClusterMissile->NumFroms());
+	AssertInt(1, pClusterMissile->mcMissile1.NumFroms());
+	AssertString("Alive", szClusterMissileState);
+	AssertString("Alive", szMissile1State);
+
+	//Make sure nothing has been de-allocated.
+	AssertLongLongInt(7, gcObjects.GetMemory()->NumIndexed());
+	AssertLongLongInt(7, gcUnknowns.NumElements());
+
+	pPointerPointer->Clear();
+
 	AssertString("Killed", szClusterMissileState);
 	AssertString("Killed", szMissile1State);
+
+	AssertLongLongInt(2, gcObjects.GetMemory()->NumIndexed());
 
 	ObjectsKill();
 }
@@ -335,12 +368,12 @@ void TestEmbedded(void)
 {
 	BeginTests();
 
-	TestEmbeddedObjectAddDistToRoot();
-	TestEmbeddedObjectRemoveDistToRoot();
+	//TestEmbeddedObjectAddDistToRoot();
+	//TestEmbeddedObjectRemoveDistToRoot();
 	TestEmbeddedObjectKill();
-	TestEmbeddedObjectContainerDehollowfication();
-	TestEmbeddedGetEmbeddedIndex();
-	TestEmbeddedGetEmbeddedObject();
+	//TestEmbeddedObjectContainerDehollowfication();
+	//TestEmbeddedGetEmbeddedIndex();
+	//TestEmbeddedGetEmbeddedObject();
 	TestEmbeddedObjectPointTo();
 
 	TestStatistics();
