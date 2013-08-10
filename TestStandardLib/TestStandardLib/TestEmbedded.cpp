@@ -170,9 +170,15 @@ void TestEmbeddedObjectKill(void)
 	pPointerPointer->Clear();
 
 	AssertString("Killed", szClusterMissileState);
-	AssertString("Killed", szMissile1State);
+	AssertString("Killed", szMissile1State);  //The problem is that KillThisGraph doesn't call KillData on embeddeds.
 
-	AssertLongLongInt(2, gcObjects.GetMemory()->NumIndexed());
+	AssertLongLongInt(6, gcObjects.GetMemory()->NumIndexed());
+	AssertLongLongInt(6, gcUnknowns.NumElements());
+
+	gcObjects.Flush(TRUE, FALSE);
+
+	AssertLongLongInt(0, gcObjects.GetMemory()->NumIndexed());
+	AssertLongLongInt(0, gcUnknowns.NumElements());
 
 	ObjectsKill();
 }
@@ -281,6 +287,7 @@ void TestEmbeddedObjectPointTo(void)
 	pContainer = pRoot->Get(0);
 	AssertTrue(pContainer.IsHollow());
 	AssertInt(6, pContainer.Object()->GetNumEmbedded());
+	AssertInt(-1, pContainer.GetIndex());
 
 	szClassName = pContainer->ClassName();
 	AssertString("CEmbeddedContainer", szClassName);
@@ -368,12 +375,12 @@ void TestEmbedded(void)
 {
 	BeginTests();
 
-	//TestEmbeddedObjectAddDistToRoot();
-	//TestEmbeddedObjectRemoveDistToRoot();
+	TestEmbeddedObjectAddDistToRoot();
+	TestEmbeddedObjectRemoveDistToRoot();
 	TestEmbeddedObjectKill();
-	//TestEmbeddedObjectContainerDehollowfication();
-	//TestEmbeddedGetEmbeddedIndex();
-	//TestEmbeddedGetEmbeddedObject();
+	TestEmbeddedObjectContainerDehollowfication();
+	TestEmbeddedGetEmbeddedIndex();
+	TestEmbeddedGetEmbeddedObject();
 	TestEmbeddedObjectPointTo();
 
 	TestStatistics();
