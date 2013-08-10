@@ -278,6 +278,7 @@ void TestEmbeddedObjectPointTo(void)
 	bResult = gcObjects.Flush(TRUE, TRUE);
 	ObjectsKill();
 	AssertTrue(bResult);
+	pContainer.ClearObject();
 
 	ObjectsInit("Output/EmbeddedObject/");
 	SetupEmbeddedObjectConstructors();
@@ -286,14 +287,13 @@ void TestEmbeddedObjectPointTo(void)
 	AssertTrue(pRoot.IsNotNull());
 	pContainer = pRoot->Get(0);
 	AssertTrue(pContainer.IsHollow());
-	AssertInt(6, pContainer.Object()->GetNumEmbedded());
+	AssertInt(0, pContainer.Object()->GetNumEmbedded());
 	AssertLongLongInt(-1, pContainer.GetIndex());
 
 	szClassName = pContainer->ClassName();
 	AssertString("CEmbeddedContainer", szClassName);
 
 	pComplex = pContainer->GetEmbeddingContainer();
-	AssertLongLongInt(oiComplex, pContainer.GetIndex());
 }
 
 
