@@ -21,6 +21,8 @@ void TestKillBestPractice(void)
 	Ptr<CGameWorld>		pWorld;
 
 	pRoot = ORoot();
+
+	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
 	pWorld = OMalloc(CGameWorld);
 	pWorld->Init();
 

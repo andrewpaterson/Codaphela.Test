@@ -56,6 +56,7 @@ void CPlayerVehicle::KillData(void)
 		memcpy(&mpsBeforeDeath->cPicture, &mcPicture, sizeof(CGraphicPicture));
 	}
 
+	mcPicture.Kill();
 	free(mpsPoint);
 	mpsPoint = NULL;
 
@@ -281,6 +282,7 @@ void CRedJet::KillData(void)
 	memcpy(&mpsBeforeDeath->sPoint, mpsPoint, sizeof(SPhysicsPoint));
 	memcpy(&mpsBeforeDeath->cPicture, &mcPicture, sizeof(CGraphicPicture));
 
+	mcPicture.Kill();
 	free(mpsPoint);
 	mpsPoint = NULL;
 

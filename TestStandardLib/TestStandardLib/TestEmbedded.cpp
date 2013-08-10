@@ -287,7 +287,7 @@ void TestEmbeddedObjectPointTo(void)
 	pContainer = pRoot->Get(0);
 	AssertTrue(pContainer.IsHollow());
 	AssertInt(6, pContainer.Object()->GetNumEmbedded());
-	AssertInt(-1, pContainer.GetIndex());
+	AssertLongLongInt(-1, pContainer.GetIndex());
 
 	szClassName = pContainer->ClassName();
 	AssertString("CEmbeddedContainer", szClassName);
