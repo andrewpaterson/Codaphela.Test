@@ -98,9 +98,7 @@ Ptr<CEmbeddedContainer> CEmbeddedContainer::Init(void)
 void CEmbeddedContainer::KillData(void)
 {
 	msz[0] = msz[1] = msz[2] = msz[3] = 0;
-	mcOne.Kill();
 	mi = 0;
-	mcTwo.Kill();
 	mf = 0.0f;
 }
 
@@ -174,11 +172,8 @@ Ptr<CEmbeddedComplex> CEmbeddedComplex::Init(void)
 //////////////////////////////////////////////////////////////////////////
 void CEmbeddedComplex::KillData(void)
 {
-	mcSimple.Kill();
 	mai[0] = 0;
 	mai[1] = 0;
-	ma.Kill();
-	mcContainer.Kill();
 }
 
 

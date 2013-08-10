@@ -58,7 +58,6 @@ void CPlayerVehicle::KillData(void)
 
 	free(mpsPoint);
 	mpsPoint = NULL;
-	mcPicture.Kill();
 
 	if (mpsAfterDeath)
 	{
@@ -284,7 +283,6 @@ void CRedJet::KillData(void)
 
 	free(mpsPoint);
 	mpsPoint = NULL;
-	mcPicture.Kill();
 
 	memset(&mpsAfterDeath->sPoint, 0, sizeof(SPhysicsPoint));
 	memcpy(&mpsAfterDeath->cPicture, &mcPicture, sizeof(CGraphicPicture));
@@ -340,9 +338,6 @@ Ptr<CClusterMissile> CClusterMissile::Init(Ptr<CGameWorld> pWorld)
 //////////////////////////////////////////////////////////////////////////
 void CClusterMissile::KillData(void)
 {
-	mcMissile1.Kill();
-	mcMissile2.Kill();
-
 	if (mszKillState)
 	{
 		strcpy(mszKillState, "Killed");
