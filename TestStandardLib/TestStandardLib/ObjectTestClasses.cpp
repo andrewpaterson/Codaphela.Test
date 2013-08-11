@@ -9,12 +9,24 @@
 //////////////////////////////////////////////////////////////////////////
 Ptr<CTestObject> CTestObject::Init(STestObjectKilledNotifier* psKilledNotifier)
 {
-	Pointer(mpObject.This());
-	Pointer(mpTest.This());
+	Class();
+
 	mpsKilledNotifier = psKilledNotifier;
 	mpsKilledNotifier->bKilled = FALSE;
 
 	return Ptr<CTestObject>(this);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestObject::Class(void)
+{
+	Pointer(mpObject.This());
+	Pointer(mpTest.This());
+
 }
 
 
@@ -44,6 +56,8 @@ BOOL CTestObject::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestObject::Load(CObjectDeserialiser* pcFile)
 {
+	Class();
+
 	return FALSE;
 }
 
@@ -54,13 +68,23 @@ BOOL CTestObject::Load(CObjectDeserialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CTestSaveableObject1> CTestSaveableObject1::Init()
 {
-	Pointer(mpObject.This());
+	Class();
 
 	miInt = 7;
 	mszString.Init();
 	mbSaved = FALSE;
 
 	return Ptr<CTestSaveableObject1>(this);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestSaveableObject1::Class(void)
+{
+	Pointer(mpObject.This());
 }
 
 
@@ -95,7 +119,9 @@ BOOL CTestSaveableObject1::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestSaveableObject1::Load(CObjectDeserialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->ReadPointer(Pointer(mpObject.This())));
+	Class();
+
+	ReturnOnFalse(pcFile->ReadPointer(mpObject.This()));
 	ReturnOnFalse(pcFile->ReadInt(&miInt));
 	ReturnOnFalse(pcFile->ReadString(&mszString));
 
@@ -110,12 +136,23 @@ BOOL CTestSaveableObject1::Load(CObjectDeserialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CTestSaveableObject2> CTestSaveableObject2::Init(char* psz)
 {
-	Pointer(mp1.This());
-	Pointer(mp2.This());
+	Class();
+
 	msz.Init(psz);
 	mbSaved = FALSE;
 
 	return Ptr<CTestSaveableObject2>(this);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestSaveableObject2::Class(void)
+{
+	Pointer(mp1.This());
+	Pointer(mp2.This());
 }
 
 
@@ -149,11 +186,12 @@ BOOL CTestSaveableObject2::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestSaveableObject2::Load(CObjectDeserialiser* pcFile)
 {
-	pcFile->ReadPointer(Pointer(mp1.This()));
-	pcFile->ReadPointer(Pointer(mp2.This()));
+	Class();
+
+	pcFile->ReadPointer(mp1.This());
+	pcFile->ReadPointer(mp2.This());
 	pcFile->ReadString(&msz);
 	mbSaved = FALSE;
 	return TRUE;
 }
-
 

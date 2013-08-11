@@ -44,6 +44,7 @@ protected:
 
 public:
 			Ptr<CPlayerVehicle>	Init(void);
+			void				Class(void);
 			void				KillData(void);
 
 			BOOL				Save(CObjectSerialiser* pcFile) { return FALSE; };
@@ -65,6 +66,7 @@ protected:
 
 public:
 	Ptr<CHarrier>		Init(Ptr<CGameWorld> pWorld);
+	void				Class(void);
 	void				KillData(void);
 
 	BOOL				Save(CObjectSerialiser* pcFile) { return FALSE; };
@@ -86,6 +88,7 @@ protected:
 
 public:
 	Ptr<CJeep>	Init(Ptr<CGameWorld> pWorld);
+	void		Class(void);
 	void		KillData(void);
 
 	BOOL		Save(CObjectSerialiser* pcFile) { return FALSE; };
@@ -108,6 +111,7 @@ protected:
 
 public:
 	Ptr<CRedJet>	Init(Ptr<CGameWorld> pWorld);
+	void			Class(void);
 	void			KillData(void);
 
 	BOOL			Save(CObjectSerialiser* pcFile) { return FALSE; };
@@ -127,6 +131,7 @@ protected:
 
 public:
 	Ptr<CMissile>	Init(Ptr<CGameWorld> pWorld);
+	void			Class(void);
 	void			KillData(void);
 
 	BOOL			Save(CObjectSerialiser* pcFile);
@@ -151,6 +156,7 @@ protected:
 
 public:
 	Ptr<CClusterMissile> 	Init(Ptr<CGameWorld> pWorld);
+	void					Class(void);
 	void					KillData(void);
 
 	BOOL					Save(CObjectSerialiser* pcFile);
@@ -167,6 +173,7 @@ public:
 	Ptr<CClusterMissile>	mpMissile;
 
 	Ptr<CClusterLauncher> 	Init(void);
+	void					Class(void);
 	void					KillData(void);
 
 	BOOL					Save(CObjectSerialiser* pcFile) { return FALSE; };
@@ -184,10 +191,11 @@ protected:
 
 public:
 	Ptr<CGameWorld> Init(void);
+	void			Class(void);
 	void			KillData(void);
 
-	BOOL			Save(CObjectSerialiser* pcFile) { return FALSE; };
-	BOOL			Load(CObjectDeserialiser* pcFile) { return FALSE; };
+	BOOL			Save(CObjectSerialiser* pcFile);
+	BOOL			Load(CObjectDeserialiser* pcFile);
 
 	void			Tick(void);
 	void			AddPlayer(Ptr<CPlayerVehicle> pPlayer);

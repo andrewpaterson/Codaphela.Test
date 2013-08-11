@@ -8,11 +8,12 @@ class CTestNamedObject : public CNamedObject
 {
 BASE_FUNCTIONS(CTestNamedObject);
 public:
-	Ptr<CTestNamedObject>		mpNamedTest1;
-	Ptr<CTestNamedObject>		mpNamedTest2;
-	int								miNum;
+	Ptr<CTestNamedObject>	mpNamedTest1;
+	Ptr<CTestNamedObject>	mpNamedTest2;
+	int						miNum;
 
 	void Init(int iNum);
+	void Class(void);
 	void KillData(void);
 
 	BOOL Save(CObjectSerialiser* pcFile);

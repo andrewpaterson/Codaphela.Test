@@ -16,6 +16,7 @@ public:
 	int			mx;
 
 	Ptr<CTestWithArray>	Init(char* szString, int x);
+	void				Class(void);
 	void				KillData(void);
 
 	void				Add(CPointer pcObject);
@@ -34,6 +35,7 @@ public:
 	int mz;
 
 	Ptr<CTestInteger>	Init(int x, int y, int z);
+	void				Class(void);
 	void				KillData(void);
 
 	BOOL				Save(CObjectSerialiser* pcFile);
@@ -50,6 +52,7 @@ public:
 	CChars					mszEmbedded;
 
 	Ptr<CTestNamedString>	Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, char* szEmbedded);
+	void					Class(void);
 	void					KillData(void);
 
 	BOOL					Save(CObjectSerialiser* pcFile);
@@ -67,6 +70,7 @@ public:
 
 	Ptr<CTestDoubleNamedString>	Init(void);
 	Ptr<CTestDoubleNamedString>	Init(Ptr<CString> szString, Ptr<CTestNamedString> pSplit2, Ptr<CTestNamedString> pSplit1);
+	void						Class(void);
 	void						KillData(void);
 
 	BOOL						Save(CObjectSerialiser* pcFile);
