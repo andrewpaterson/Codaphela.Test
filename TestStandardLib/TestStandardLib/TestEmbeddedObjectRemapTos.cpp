@@ -20,7 +20,6 @@ public:
 
 	Ptr<CTestObjectWithTwoEmbedded> Init(void) 
 	{
-		Class();
 		return this;
 	}
 
@@ -35,7 +34,6 @@ public:
 
 	BOOL Load(CObjectDeserialiser* pcFile)
 	{
-		Class();
 		return FALSE;
 	}
 };

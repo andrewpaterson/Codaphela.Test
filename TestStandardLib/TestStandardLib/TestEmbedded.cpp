@@ -72,13 +72,16 @@ void TestEmbeddedObjectRemoveDistToRoot(void)
 	Ptr<CMissile>			pHolder = OMalloc(CMissile)->Init(pWorld);
 	
 	pWorld->AddTickable(pHolder);
-	pHolder->SetTarget(pHarrier);
+	AssertInt(4, pHolder->DistToRoot());
 
+	pHolder->SetTarget(pHarrier);
 	AssertInt(5, pHarrier->DistToRoot());
 
 	Ptr<CClusterLauncher>	pLauncher = OMalloc(CClusterLauncher)->Init();
 
 	pRoot->Add(pLauncher);
+	AssertInt(2, pLauncher->DistToRoot());
+
 	pLauncher->mpMissile = pMissile;
 
 	AssertInt(3, pMissile->DistToRoot());

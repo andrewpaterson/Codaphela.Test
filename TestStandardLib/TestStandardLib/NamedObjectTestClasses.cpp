@@ -9,8 +9,6 @@
 //////////////////////////////////////////////////////////////////////////
 void CTestNamedObject::Init(int iNum)
 {
-	Class();
-
 	miNum = iNum;
 }
 
@@ -21,6 +19,7 @@ void CTestNamedObject::Init(int iNum)
 //////////////////////////////////////////////////////////////////////////
 void CTestNamedObject::Class(void)
 {
+	CObject::Class();
 	Pointer(mpNamedTest1.This());
 	Pointer(mpNamedTest2.This());
 }
@@ -54,8 +53,6 @@ BOOL CTestNamedObject::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestNamedObject::Load(CObjectDeserialiser* pcFile)
 {
-	Class();
-
 	ReturnOnFalse(pcFile->ReadPointer(mpNamedTest1.This()));
 	ReturnOnFalse(pcFile->ReadPointer(mpNamedTest2.This()));
 	ReturnOnFalse(pcFile->ReadInt(&miNum));

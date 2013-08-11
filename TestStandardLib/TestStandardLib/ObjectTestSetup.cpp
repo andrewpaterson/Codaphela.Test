@@ -50,7 +50,7 @@ Ptr<CPlayerVehicle> CPlayerVehicle::Init(void)
 //////////////////////////////////////////////////////////////////////////
 void CPlayerVehicle::Class(void)
 {
-	//Pretend there is a pointer here or something.
+	CObject::Class();
 }
 
 
@@ -95,8 +95,6 @@ void CPlayerVehicle::SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAf
 //////////////////////////////////////////////////////////////////////////
 Ptr<CHarrier> CHarrier::Init(Ptr<CGameWorld> pWorld)
 {
-	Class();
-
 	CPlayerVehicle::Init();
 	mpWorld = pWorld;
 	miSpeed = 7;
@@ -114,6 +112,7 @@ Ptr<CHarrier> CHarrier::Init(Ptr<CGameWorld> pWorld)
 //////////////////////////////////////////////////////////////////////////
 void CHarrier::Class(void)
 {
+	CPlayerVehicle::Class();
 	Pointer(mpWorld.This());
 	Pointer(maMissiles.This());
 }
@@ -162,8 +161,6 @@ Ptr<CArrayObject> CHarrier::GetMissiles(void)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CJeep> CJeep::Init(Ptr<CGameWorld> pWorld)
 {
-	Class();
-
 	CPlayerVehicle::Init();
 	mpWorld = pWorld;
 	mfBackWheel = 2.3f;
@@ -202,8 +199,6 @@ void CJeep::KillData(void)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CMissile> CMissile::Init(Ptr<CGameWorld> pWorld)
 {
-	Class();
-
 	mpWorld = pWorld;
 	mpTarget = NULL;
 
@@ -219,6 +214,7 @@ Ptr<CMissile> CMissile::Init(Ptr<CGameWorld> pWorld)
 //////////////////////////////////////////////////////////////////////////
 void CMissile::Class(void)
 {
+	CObject::Class();
 	Pointer(mpWorld.This());
 	Pointer(mpTarget.This());
 }
@@ -297,8 +293,6 @@ void CMissile::SetKillString(char* szKillString)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CRedJet> CRedJet::Init(Ptr<CGameWorld> pWorld)
 {
-	Class();
-
 	mpsPoint = (SPhysicsPoint*)malloc(sizeof(SPhysicsPoint));
 	mcPicture.Init();
 
@@ -318,6 +312,7 @@ Ptr<CRedJet> CRedJet::Init(Ptr<CGameWorld> pWorld)
 //////////////////////////////////////////////////////////////////////////
 void CRedJet::Class(void)
 {
+	CObject::Class();
 	Pointer(mpWorld.This());
 }
 
@@ -360,8 +355,6 @@ void CRedJet::SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeat
 //////////////////////////////////////////////////////////////////////////
 Ptr<CClusterMissile> CClusterMissile::Init(Ptr<CGameWorld> pWorld)
 {
-	Class();
-
 	mcMissile1.Init(pWorld);
 	mcMissile2.Init(pWorld);
 
@@ -378,6 +371,7 @@ Ptr<CClusterMissile> CClusterMissile::Init(Ptr<CGameWorld> pWorld)
 //////////////////////////////////////////////////////////////////////////
 void CClusterMissile::Class(void)
 {
+	CObject::Class();
 	Pointer(mpWorld.This());
 	Embedded(&mcMissile1);
 	Embedded(&mcMissile2);
@@ -427,8 +421,6 @@ BOOL CClusterMissile::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CClusterMissile::Load(CObjectDeserialiser* pcFile) 
 { 
-	Class();
-
 	ReturnOnFalse(mcMissile1.Load(pcFile));
 	ReturnOnFalse(mcMissile2.Load(pcFile));
 	ReturnOnFalse(pcFile->ReadPointer(mpWorld.This()));
@@ -442,8 +434,6 @@ BOOL CClusterMissile::Load(CObjectDeserialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CClusterLauncher> CClusterLauncher::Init(void)
 {
-	Class();
-
 	return Ptr<CClusterLauncher>(this);
 }
 
@@ -463,6 +453,7 @@ void CClusterLauncher::KillData(void)
 //////////////////////////////////////////////////////////////////////////
 void CClusterLauncher::Class(void)
 {
+	CObject::Class();
 	Pointer(mpMissile.This());
 }
 
@@ -473,8 +464,6 @@ void CClusterLauncher::Class(void)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CGameWorld> CGameWorld::Init(void)
 {
-	Class();
-
 	maTickables = OMalloc(CArrayObject);
 	maTickables->Init(128);
 
@@ -497,9 +486,10 @@ void CGameWorld::KillData(void)
 //////////////////////////////////////////////////////////////////////////
 void CGameWorld::Class(void)
 {
+	CObject::Class();
+	Pointer(maTickables.This());
 	Pointer(mpPlayer1.This());
 	Pointer(mpPlayer2.This());
-	Pointer(maTickables.This());
 }
 
 
@@ -576,8 +566,6 @@ BOOL CGameWorld::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CGameWorld::Load(CObjectDeserialiser* pcFile)
 {
-	Class();
-
 	ReturnOnFalse(pcFile->ReadPointer(maTickables.This()));
 	ReturnOnFalse(pcFile->ReadPointer(mpPlayer1.This()));
 	ReturnOnFalse(pcFile->ReadPointer(mpPlayer2.This()));

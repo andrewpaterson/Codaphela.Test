@@ -7,6 +7,7 @@
 //////////////////////////////////////////////////////////////////////////
 void CEmbeddedTest::Class(void)
 {
+	CObject::Class();
 	Pointer(mpTest.This());
 }
 
@@ -53,8 +54,6 @@ BOOL CEmbeddedTest::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CEmbeddedTest::Load(CObjectDeserialiser* pcFile)
 {
-	Class();
-
 	pcFile->ReadInt(&miAmANumber);
 	pcFile->ReadFloat(&mfSoAmI);
 	pcFile->ReadPointer(mpTest.This());
@@ -69,6 +68,7 @@ BOOL CEmbeddedTest::Load(CObjectDeserialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 void CEmbeddedContainer::Class(void)
 {
+	CObject::Class();
 	Pointer(mpTest.This());
 	Embedded(&mcOne);
 	Embedded(&mcTwo);
@@ -80,8 +80,6 @@ void CEmbeddedContainer::Class(void)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CEmbeddedContainer> CEmbeddedContainer::Init(void)
 {
-	Class();
-
 	strcpy(msz, "And");
 	mcOne.Init();
 	mi = 73;
@@ -124,8 +122,6 @@ BOOL CEmbeddedContainer::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CEmbeddedContainer::Load(CObjectDeserialiser* pcFile)
 {
-	Class();
-
 	pcFile->ReadData(msz, 4);
 	mcOne.Load(pcFile);
 	pcFile->ReadInt(&mi);
@@ -143,6 +139,7 @@ BOOL CEmbeddedContainer::Load(CObjectDeserialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 void CEmbeddedComplex::Class(void)
 {
+	CObject::Class();
 	Pointer(mpTest.This());
 	Embedded(&mcSimple);
 	Embedded(&ma);
@@ -155,8 +152,6 @@ void CEmbeddedComplex::Class(void)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CEmbeddedComplex> CEmbeddedComplex::Init(void)
 {
-	Class();
-
 	mcSimple.Init();
 	mai[0] = 1;
 	mai[1] = 2;
@@ -199,8 +194,6 @@ BOOL CEmbeddedComplex::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CEmbeddedComplex::Load(CObjectDeserialiser* pcFile)
 {
-	Class();
-
 	mcSimple.Load(pcFile);
 	pcFile->ReadInt(&mai[0]);
 	pcFile->ReadInt(&mai[1]);
