@@ -77,7 +77,7 @@ void TestKillBestPractice(void)
 	AssertInt(4, pMissile1.DistToRoot());
 	AssertInt(4, pMissile2.DistToRoot());
 	AssertInt(4, pMissile3.DistToRoot());
-	AssertInt(2, pRedJetMaverick->NumFroms());
+	AssertInt(2, pRedJetMaverick->NumHeapFroms());
 	AssertInt(3, pHarrier->GetMissiles()->NumElements());
 
 	OIndex oiMissile3 = pMissile3->GetOI();
@@ -99,7 +99,7 @@ void TestKillBestPractice(void)
 	AssertInt(4, pRedJetMaverick.DistToRoot());
 	AssertInt(4, pMissile1.DistToRoot());
 	AssertInt(4, pMissile2.DistToRoot());
-	AssertInt(1, pRedJetMaverick->NumFroms());
+	AssertInt(1, pRedJetMaverick->NumHeapFroms());
 	AssertInt(2, pHarrier->GetMissiles()->NumElements());
 
 	AssertString("Kill not called", sGooseBefore.cPicture.mszPretenedImAPicture);

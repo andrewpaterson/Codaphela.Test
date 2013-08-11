@@ -61,11 +61,11 @@ void TestObjectPointerRemapping(void)
 	pObject1->mpObject = pObject2;
 
 	AssertInt(1, pObject1->NumTos());
-	AssertInt(1, pObject1->NumFroms());
+	AssertInt(1, pObject1->NumHeapFroms());
 	AssertInt(0, pObject2->NumTos());
-	AssertInt(1, pObject2->NumFroms());
+	AssertInt(1, pObject2->NumHeapFroms());
 	AssertInt(0, pObject3->NumTos());
-	AssertInt(0, pObject3->NumFroms());
+	AssertInt(0, pObject3->NumHeapFroms());
 	
 	iNumRemapped = pObject3.RemapFrom(&pObject2);
 	AssertInt(1, iNumRemapped);
@@ -74,9 +74,9 @@ void TestObjectPointerRemapping(void)
 	AssertPointer(&pObject3, &pObject1->mpObject);
 
 	AssertInt(1, pObject1->NumTos());
-	AssertInt(1, pObject1->NumFroms());
+	AssertInt(1, pObject1->NumHeapFroms());
 	AssertInt(0, pObject3->NumTos());
-	AssertInt(1, pObject3->NumFroms());
+	AssertInt(1, pObject3->NumHeapFroms());
 	AssertTrue(sKillNotifier2.bKilled);
 
 	ObjectsKill();
@@ -288,7 +288,7 @@ void TestObjectPointerRemappingComplex(void)
 	AssertPointer(&pTest2, &pTest1->mpObject);
 	AssertPointer(&pTest10, &pTest1->mpTest);
 
-	AssertInt(1, pTest10->NumFroms());
+	AssertInt(1, pTest10->NumHeapFroms());
 	AssertPointer(&pTest1, pTest10->TestGetFrom(0));
 	AssertInt(2, pTest10->NumTos());
 	AssertPointer(&pTest11, pTest10->TestGetTo(0));
@@ -296,7 +296,7 @@ void TestObjectPointerRemappingComplex(void)
 	AssertPointer(&pTest11, &pTest10->mpObject);
 	AssertPointer(&pTest12, &pTest10->mpTest);
 
-	AssertInt(1, pTest2->NumFroms());
+	AssertInt(1, pTest2->NumHeapFroms());
 	AssertPointer(&pTest1, pTest2->TestGetFrom(0));
 	AssertInt(1, pTest2->NumTos());
 	AssertPointer(&pTest15, pTest2->TestGetTo(0));
@@ -319,7 +319,7 @@ void TestObjectPointerRemappingComplex(void)
 	AssertFalse(sKillNotifier14.bKilled);
 	AssertFalse(sKillNotifier15.bKilled);
 
-	AssertInt(1, pTest6->NumFroms());
+	AssertInt(1, pTest6->NumHeapFroms());
 	AssertPointer(&pTest4, pTest6->TestGetFrom(0));
 	AssertInt(2, pTest6->NumTos());
 

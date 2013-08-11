@@ -88,15 +88,15 @@ void TestEmbeddedObjectRemoveDistToRoot(void)
 	AssertInt(3, pMissile->mcMissile1.DistToRoot());
 	AssertInt(3, pMissile->mcMissile2.DistToRoot());
 	AssertInt(5, pHarrier->DistToRoot());
-	AssertInt(1, pHarrier->NumFroms());
+	AssertInt(1, pHarrier->NumHeapFroms());
 
 	pMissile->mcMissile1.SetTarget(pHarrier);
 	AssertInt(4, pHarrier->DistToRoot());
-	AssertInt(2, pHarrier->NumFroms());
+	AssertInt(2, pHarrier->NumHeapFroms());
 
 	pWorld->RemoveTickable(pHolder);
 	AssertInt(4, pHarrier->DistToRoot());
-	AssertInt(1, pHarrier->NumFroms());
+	AssertInt(1, pHarrier->NumHeapFroms());
 
 	pRoot->Add(pHarrier);
 	AssertInt(2, pHarrier->DistToRoot());
@@ -142,27 +142,27 @@ void TestEmbeddedObjectKill(void)
 	pClusterMissile->SetKillString(szClusterMissileState);
 	pClusterMissile->mcMissile1.SetKillString(szMissile1State);
 
-	AssertInt(2, pClusterMissile->NumFroms());
-	AssertInt(2, pClusterMissile->mcMissile1.NumFroms());
+	AssertInt(2, pClusterMissile->NumHeapFroms());
+	AssertInt(2, pClusterMissile->mcMissile1.NumHeapFroms());
 	strcpy(szClusterMissileState, "Alive");
 	strcpy(szMissile1State, "Alive");
 
 	pPointerPointer->Clear();
 
-	AssertInt(1, pClusterMissile->NumFroms());
-	AssertInt(1, pClusterMissile->mcMissile1.NumFroms());
+	AssertInt(1, pClusterMissile->NumHeapFroms());
+	AssertInt(1, pClusterMissile->mcMissile1.NumHeapFroms());
 	AssertString("Alive", szClusterMissileState);
 	AssertString("Alive", szMissile1State);
 
 	pPointerPointer->mp = &pClusterMissile->mcMissile1;
 
-	AssertInt(2, pClusterMissile->NumFroms());
-	AssertInt(2, pClusterMissile->mcMissile1.NumFroms());
+	AssertInt(2, pClusterMissile->NumHeapFroms());
+	AssertInt(2, pClusterMissile->mcMissile1.NumHeapFroms());
 
 	pPointerPointer2->Clear();
 
-	AssertInt(1, pClusterMissile->NumFroms());
-	AssertInt(1, pClusterMissile->mcMissile1.NumFroms());
+	AssertInt(1, pClusterMissile->NumHeapFroms());
+	AssertInt(1, pClusterMissile->mcMissile1.NumHeapFroms());
 	AssertString("Alive", szClusterMissileState);
 	AssertString("Alive", szMissile1State);
 

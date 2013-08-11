@@ -248,7 +248,7 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 
 	cShared = gcObjects.Get("Ow/Shared");
 	
-	AssertInt(3, cShared->NumFroms());
+	AssertInt(3, cShared->NumHeapFroms());
 	AssertPointer(&cOwStart1, cShared->TestGetFrom(0));
 	AssertPointer(&cOwStart2, cShared->TestGetFrom(1));
 	AssertPointer(&cShared, cShared->TestGetFrom(2));  //Remember: cShared->mpObject = cShared;
@@ -282,7 +282,7 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	cShared = gcObjects.Get("Ow/Shared");
 
 	//Make sure the pointed 'froms' are correctly setup after loading.
-	AssertInt(2, cShared->NumFroms());
+	AssertInt(2, cShared->NumHeapFroms());
 	AssertPointer(&cOwStart1, cShared->TestGetFrom(0));
 	AssertPointer(&cShared, cShared->TestGetFrom(1));
 	AssertInt(2, cOwStart1->NumTos());
