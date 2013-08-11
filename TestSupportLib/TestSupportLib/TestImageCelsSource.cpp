@@ -4,6 +4,7 @@
 #include "BaseLib/NaiveFile.h"
 #include "CoreLib/TypeConverter.h"
 #include "StandardLib/Unknowns.h"
+#include "StandardLib/Objects.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/ImageCelsSource.h"
@@ -22,12 +23,13 @@
 //////////////////////////////////////////////////////////////////////////
 void TestImageCelsSourceStarControl(void)
 {
+	ObjectsInit();
+
 	CImageCelSourceSingle	cSingle;
 	CImageCombiner			cCombiner;
-	CImage					cImage;
+	Ptr<CImage>				pcImage;
 	CImageCelsSource		cSource;
 	CImageSourceDiskFile	cDiskFile;
-	BOOL					bResult;
 
 	cSingle.Init();
 
@@ -66,21 +68,23 @@ void TestImageCelsSourceStarControl(void)
 
 	cSource.Load();
 
-	cCombiner.Init(&cImage, ICL_Best, ICS_Arbitrary, ICC_FromCels);
+	cCombiner.Init(ICL_Best, ICS_Arbitrary, ICC_FromCels);
 	cCombiner.AddCels(cSource.GetCels());
-	bResult = cCombiner.Combine();
+	pcImage = cCombiner.Combine();
 
-	if (bResult)
+	if (pcImage.IsNotNull())
 	{
-		cImage.BeginChange();
-		cImage.RemoveChannel(IMAGE_OPACITY);
-		cImage.EndChange();
-		WriteImage(&cImage, "C:\\Work\\Star Control\\Frames\\StarControl All.rad");
+		pcImage->BeginChange();
+		pcImage->RemoveChannel(IMAGE_OPACITY);
+		pcImage->EndChange();
+		WriteImage(&pcImage, "C:\\Work\\Star Control\\Frames\\StarControl All.rad");
 	}
 
-	cImage.Kill();
+	pcImage->Kill();
 	cCombiner.Kill();
 	cSource.Kill();
+
+	ObjectsKill();
 }
 
 
@@ -90,14 +94,15 @@ void TestImageCelsSourceStarControl(void)
 //////////////////////////////////////////////////////////////////////////
 void TestImageCelGroupSourceCombine(void)
 {
+	ObjectsInit();
+
 	CImageCelSourceSingle	cSingle;
 	CImageDividerNumbers	cGridNumbers;
 	CImageCelSourceGrid		cGrid;
 	CImageCombiner			cCombiner;
-	CImage					cImage;
-	CImageCelsSource	cSource;
+	Ptr<CImage>				pcImage;
+	CImageCelsSource		cSource;
 	CImageSourceDiskFile	cDiskFile;
-	BOOL					bResult;
 
 	cSingle.Init();
 	cGridNumbers.InitFromRowsColumns(72, 1);
@@ -110,19 +115,25 @@ void TestImageCelGroupSourceCombine(void)
 
 	cSource.Load();
 
-	cCombiner.Init(&cImage, ICL_Best, ICS_Arbitrary, ICC_FromCels);
+	cCombiner.Init(ICL_Best, ICS_Arbitrary, ICC_FromCels);
 	cCombiner.AddCels(cSource.GetCels());
-	bResult = cCombiner.Combine();
+	pcImage = cCombiner.Combine();
 
-	if (bResult)
+	if (pcImage.IsNotNull())
 	{
-		WriteImage(&cImage, "Output\\StarControl.raw");
-		AssertFileMemory("input\\StarControl.raw", cImage.mcChannels.GetData(), cImage.GetByteSize());
+		WriteImage(&pcImage, "Output\\StarControl.raw");
+		AssertFileMemory("input\\StarControl.raw", pcImage->mcChannels.GetData(), pcImage->GetByteSize());
+	}
+	else
+	{
+		AssertTrue(FALSE);
 	}
 
-	cImage.Kill();
+	pcImage->Kill();
 	cCombiner.Kill();
 	cSource.Kill();
+
+	ObjectsKill();
 }
 
 

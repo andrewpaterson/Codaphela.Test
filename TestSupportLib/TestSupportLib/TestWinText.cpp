@@ -20,7 +20,7 @@ void TestWinText(void)
 
 	CWinText			cWinText;
 	SWinFontInstance*	psWinFont;
-	CFont*				pcFont;
+	Ptr<CFont>			pcFont;
 	CGlyph*				pcCel;
 	CImage				cDestImage;
 
@@ -28,7 +28,7 @@ void TestWinText(void)
 	psWinFont = cWinText.Create("Fixedsys", 0, 0, FW_DONTCARE);
 	pcFont = cWinText.GenerateFont(psWinFont, "Fixedsys");
 
-	WriteImage(pcFont->GetImage(), "Output/Fixedsys.bmp");
+	WriteImage(&pcFont->GetImage(), "Output/Fixedsys.bmp");
 	AssertFile("Input/Fixedsys.bmp", "Output/Fixedsys.bmp");
 
 	pcCel = pcFont->GetGlyph('H');

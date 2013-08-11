@@ -24,7 +24,7 @@ void TestImageCombinerMask(void)
 
 	CImageCelSourceBorders	cBorder;
 	CImageCombiner			cCombiner;
-	CImage					cImage;
+	Ptr<CImage>				pcImage;
 	CImageCelsSource		cSource;
 	SImageColour			sColour;
 
@@ -43,15 +43,15 @@ void TestImageCombinerMask(void)
 
 	cSource.Load();
 
-	cCombiner.Init(&cImage, ICL_Best, ICS_Arbitrary, ICC_FromCels);
+	cCombiner.Init(ICL_Best, ICS_Arbitrary, ICC_FromCels);
 	cCombiner.AddCels(cSource.GetCels());
-	cCombiner.Combine();
+	pcImage = cCombiner.Combine();
 
-	WriteImage(&cImage, "Output\\CombineMask.png");
-	WriteImage(&cImage, "Output\\CombineMask.raw");
-	AssertFileMemory("input\\CombineMask.raw", cImage.mcChannels.GetData(), cImage.GetByteSize());
+	WriteImage(&pcImage, "Output\\CombineMask.png");
+	WriteImage(&pcImage, "Output\\CombineMask.raw");
+	AssertFileMemory("input\\CombineMask.raw", pcImage->mcChannels.GetData(), pcImage->GetByteSize());
 
-	cImage.Kill();
+	pcImage->Kill();
 	cCombiner.Kill();
 	cSource.Kill();
 

@@ -5,6 +5,7 @@
 #include "CoreLib/Operators.h"
 #include "CoreLib/TypeConverter.h"
 #include "StandardLib/Unknowns.h"
+#include "StandardLib/Objects.h"
 #include "SupportLib/Image.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageAccessorCreator.h"
@@ -34,7 +35,6 @@ void TestDrawImage(void)
 	char					szDestRGBDifferentType[36] = "AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQ";
 	char					szDestRGBDifferentType2[18] = "`abcdefghijklmnop";
 	CImageColourRGB			cRGB;
-
 
 	//Same format, Same types ------------------------------------------
 	cImageDest.Init(3, 2, PT_uchar, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
