@@ -73,7 +73,7 @@ public:
 	BOOL				Load(CObjectDeserialiser* pcFile) { return FALSE; };
 
 	void				PlayerInput(void) {};
-	Ptr<CMissile>		FireMissile(CPointer pTarget);
+	Ptr<CMissile>		FireMissile(CPointer& pTarget);
 	Ptr<CArrayObject>	GetMissiles(void);
 };
 
@@ -137,7 +137,7 @@ public:
 	BOOL			Save(CObjectSerialiser* pcFile);
 	BOOL			Load(CObjectDeserialiser* pcFile);
 
-	void			SetTarget(CPointer pTarget);
+	void			SetTarget(CPointer& pTarget);
 	CPointer		GetTarget(void);
 
 	void			SetKillString(char* szKillString);
@@ -199,7 +199,7 @@ public:
 
 	void			Tick(void);
 	void			AddPlayer(Ptr<CPlayerVehicle> pPlayer);
-	void			AddTickable(CPointer pTickable);
-	void			RemoveTickable(CPointer pTickable);
+	void			AddTickable(CPointer& pTickable);
+	void			RemoveTickable(CPointer& pTickable);
 };
 

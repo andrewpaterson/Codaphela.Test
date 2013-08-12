@@ -19,7 +19,7 @@ public:
 	void				Class(void);
 	void				KillData(void);
 
-	void				Add(CPointer pcObject);
+	void				Add(CPointer& pcObject);
 
 	BOOL				Save(CObjectSerialiser* pcFile);
 	BOOL				Load(CObjectDeserialiser* pcFile);

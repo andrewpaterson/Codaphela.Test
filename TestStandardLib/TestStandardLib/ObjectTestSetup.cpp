@@ -132,7 +132,7 @@ void CHarrier::KillData(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CMissile> CHarrier::FireMissile(CPointer pTarget)
+Ptr<CMissile> CHarrier::FireMissile(CPointer& pTarget)
 {
 	Ptr<CMissile> pMissile = OMalloc(CMissile);
 	pMissile->Init(mpWorld);
@@ -247,7 +247,7 @@ CPointer CMissile::GetTarget(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CMissile::SetTarget(CPointer pTarget)
+void CMissile::SetTarget(CPointer& pTarget)
 {
 	mpTarget = pTarget;
 }
@@ -525,7 +525,7 @@ void CGameWorld::AddPlayer(Ptr<CPlayerVehicle> pPlayer)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CGameWorld::AddTickable(CPointer pTickable)
+void CGameWorld::AddTickable(CPointer& pTickable)
 {
 	if (pTickable.IsNotNull())
 	{
@@ -538,7 +538,7 @@ void CGameWorld::AddTickable(CPointer pTickable)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CGameWorld::RemoveTickable(CPointer pTickable)
+void CGameWorld::RemoveTickable(CPointer& pTickable)
 {
 	if (pTickable.IsNotNull())
 	{
