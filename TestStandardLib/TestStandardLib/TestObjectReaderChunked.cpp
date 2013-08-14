@@ -108,7 +108,7 @@ void TestObjectReaderChunkedDeserialised(void)
 {
 	CObjectReaderChunkFileDisk	cReader;
 	CObjectGraphDeserialiser	cGraphDeserialiser;
-	CPointer				cBase;
+	CPointer					cBase;
 	Ptr<CTestWithArray>			cA1;
 	Ptr<CTestWithArray>			cA2;
 	Ptr<CTestNamedString>		cNS1;
@@ -118,7 +118,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	Ptr<CString>				sz1;
 	Ptr<CString>				sz2;
 	Ptr<CString>				sz3;
-	CPointer				cTemp;
+	CPointer					cTemp;
 	Ptr<CTestInteger>			cI1;
 	Ptr<CTestInteger>			cI2;
 	Ptr<CTestInteger>			cI3;

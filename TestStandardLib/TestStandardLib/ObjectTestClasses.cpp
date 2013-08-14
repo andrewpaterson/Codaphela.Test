@@ -12,7 +12,7 @@ Ptr<CTestObject> CTestObject::Init(STestObjectKilledNotifier* psKilledNotifier)
 	mpsKilledNotifier = psKilledNotifier;
 	mpsKilledNotifier->bKilled = FALSE;
 
-	return Ptr<CTestObject>(this);
+	return this;
 }
 
 
