@@ -46,13 +46,17 @@ void TestObjectStackPointersSingleWithRoot(void)
 	Ptr<CRoot>	pRoot = ORoot();
 	pRoot->Add(ptr);
 
+	CTestObject*	pcTest;
+	pcTest = &ptr;
 	ptr = NULL;
 
 	AssertFalse(sNotifier.bKilled);
 
-	pRoot->Remove(ptr);
+	pRoot->Remove(pcTest);
 
 	AssertTrue(sNotifier.bKilled);
+
+	pRoot = NULL;
 
 	ObjectsKill();
 }
