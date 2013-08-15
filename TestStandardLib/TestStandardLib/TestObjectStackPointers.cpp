@@ -42,13 +42,21 @@ void TestObjectStackPointersSingleWithRoot(void)
 
 	AssertInt(1, ptr->NumStackFroms());
 	AssertFalse(sNotifier.bKilled);
-	proot;
+	
+	Ptr<CRoot>	pRoot = ORoot();
+	pRoot->Add(ptr);
+
 	ptr = NULL;
+
+	AssertFalse(sNotifier.bKilled);
+
+	pRoot->Remove(ptr);
 
 	AssertTrue(sNotifier.bKilled);
 
 	ObjectsKill();
 }
+
 
 //////////////////////////////////////////////////////////////////////////
 //
