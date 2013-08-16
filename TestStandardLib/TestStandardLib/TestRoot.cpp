@@ -48,7 +48,7 @@ void TestRootDistance(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestStackPointers(void)
+void TestRootStackPointers(void)
 {
 	STestObjectKilledNotifier	sKilled1;
 	STestObjectKilledNotifier	sKilled2;
@@ -1211,7 +1211,7 @@ void TestRoot(void)
 	BeginTests();
 
 	TestRootDistance();
-	TestStackPointers();
+	TestRootStackPointers();
 	TestRootGraphRemoveSimple();
 	TestRootGraphRemoveComplex();
 	TestRootGraphRemoveUnbalancedLarge();

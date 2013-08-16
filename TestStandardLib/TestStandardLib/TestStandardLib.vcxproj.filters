@@ -228,6 +228,9 @@
     <ClCompile Include="TestObjectStackPointers.cpp">
       <Filter>Source\Object\Object\Pointer</Filter>
     </ClCompile>
+    <ClCompile Include="TestStackPointers.cpp">
+      <Filter>Source\Object\Object\Pointer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectTestClasses.h">
