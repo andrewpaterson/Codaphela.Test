@@ -391,14 +391,43 @@ void TestObjectPointerRemappingComplex(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectGetObjects(void)
+{
+	CTestObject					cObject;
+	CObjects*					pcObjects;
+	Ptr<CTestObject>			pObject1;
+	STestObjectKilledNotifier	sKillNotifier1;
+
+	ObjectsInit();
+
+	pcObjects = cObject.GetObjects();
+	AssertNull(pcObjects);
+
+	pObject1 = OMalloc(CTestObject);
+	pObject1->Init(&sKillNotifier1);
+
+	pcObjects = pObject1->GetObjects();
+	AssertPointer(&gcObjects, pcObjects);
+
+	pObject1 = NULL;
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObject(void)
 {
 	BeginTests();
 
 	TestObjectSize();
-	TestObjectPointerRemapping();
-	TestObjectPointerRemappingKilling();
-	TestObjectPointerRemappingComplex();
+	TestObjectGetObjects();
+	//TestObjectPointerRemapping();
+	//TestObjectPointerRemappingKilling();
+	//TestObjectPointerRemappingComplex();
 
 	TestStatistics();
 }
