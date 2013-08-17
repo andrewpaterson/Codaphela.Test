@@ -6,7 +6,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestStackPointers(void)
+void TestStackPointersAdd(void)
 {
 	CStackPointers	cStackPointes;
 	CPointer		cPointer1;
@@ -97,5 +97,74 @@ void TestStackPointers(void)
 	AssertInt(6, cStackPointes.UsedPointers());
 
 	cStackPointes.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestStackPointersFindUnused(void)
+{
+	CStackPointers	cStackPointes;
+	
+	cStackPointes.Init(3);
+
+	AssertInt(2, cStackPointes.TestFindUnusedIndex(2));
+	AssertInt(0, cStackPointes.TestFindUnusedIndex(0));
+	AssertInt(1, cStackPointes.TestFindUnusedIndex(1));
+
+	cStackPointes.TestAdd(2);
+	AssertInt(0, cStackPointes.TestFindUnusedIndex(2));
+	cStackPointes.TestKill(2);
+
+	cStackPointes.TestAdd(0);
+	AssertInt(1, cStackPointes.TestFindUnusedIndex(0));
+	cStackPointes.TestKill(0);
+
+	cStackPointes.TestAdd(1);
+	AssertInt(2, cStackPointes.TestFindUnusedIndex(1));
+	cStackPointes.TestKill(1);
+
+	cStackPointes.TestAdd(2);
+	cStackPointes.TestAdd(0);
+	AssertInt(1, cStackPointes.TestFindUnusedIndex(2));
+	AssertInt(1, cStackPointes.TestFindUnusedIndex(0));
+	AssertInt(1, cStackPointes.TestFindUnusedIndex(1));
+	cStackPointes.TestKill(2);
+	cStackPointes.TestKill(0);
+
+	cStackPointes.TestAdd(0);
+	cStackPointes.TestAdd(1);
+	AssertInt(2, cStackPointes.TestFindUnusedIndex(0));
+	AssertInt(2, cStackPointes.TestFindUnusedIndex(1));
+	AssertInt(2, cStackPointes.TestFindUnusedIndex(2));
+	cStackPointes.TestKill(0);
+	cStackPointes.TestKill(1);
+
+	cStackPointes.TestAdd(1);
+	cStackPointes.TestAdd(2);
+	AssertInt(0, cStackPointes.TestFindUnusedIndex(1));
+	AssertInt(0, cStackPointes.TestFindUnusedIndex(2));
+	AssertInt(0, cStackPointes.TestFindUnusedIndex(0));
+	cStackPointes.TestKill(1);
+	cStackPointes.TestKill(2);
+
+	cStackPointes.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestStackPointers(void)
+{
+	BeginTests();
+
+	TestStackPointersFindUnused();
+	TestStackPointersAdd();
+
+	TestStatistics();
 }
 
