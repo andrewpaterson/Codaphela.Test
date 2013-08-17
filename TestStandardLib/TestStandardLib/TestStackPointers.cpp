@@ -1,4 +1,5 @@
 #include "StandardLib/StackPointers.h"
+#include "StandardLib/Pointer.h"
 #include "TestLib/Assert.h"
 
 
@@ -65,7 +66,7 @@ void TestStackPointersAdd(void)
 
 	AssertInt(6, cStackPointes.UsedPointers());
 
-	cStackPointes.Remove(pcStackPointer21);
+	cStackPointes.RemoveAll(pcStackPointer21);
 
 	AssertInt(3, cStackPointes.UsedPointers());
 

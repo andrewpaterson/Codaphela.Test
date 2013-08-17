@@ -343,6 +343,7 @@ void TestDehollowfication(void)
 {
 	BeginTests();
 
+	XXX
 	TestDehollowficationFromDatabase();
 	TestDehollowficationFromDatabaseOfTwoPointers();
 	TestDehollowficationFromChunkFileSource();
