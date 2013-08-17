@@ -54,10 +54,10 @@ void TestRootStackPointers(void)
 	STestObjectKilledNotifier	sKilled2;
 	STestObjectKilledNotifier	sKilled3;
 
-	Ptr<CRoot>				pcRoot;
-	Ptr<CTestObject>		pTest1;
-	Ptr<CTestObject>		pTest2;
-	Ptr<CTestObject>		pTest3;
+	Ptr<CRoot>					pcRoot;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
 	int							iFroms;
 
 	CObject*					pcTest1;
@@ -108,12 +108,17 @@ void TestRootStackPointers(void)
 	iFroms = pcTest3->NumHeapFroms();
 	AssertInt(1, iFroms);
 
+	//Stop the stack from pointing.
+	pTest1 = NULL;
+	pTest2 = NULL;
+	pTest3 = NULL;
+
 	AssertFalse(sKilled1.bKilled);
 	AssertFalse(sKilled3.bKilled);
 	AssertFalse(sKilled2.bKilled);
 
 	pcTest2 = &pTest2;
-	pcRoot->Remove(pTest3);
+	pcRoot->Remove(pcTest3);
 
 	AssertFalse(sKilled1.bKilled);
 	AssertTrue( sKilled3.bKilled);
@@ -129,20 +134,20 @@ void TestRootStackPointers(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveSimple(void)
 {
-	Ptr<CRoot>				pRoot;
+	Ptr<CRoot>					pRoot;
 	STestObjectKilledNotifier	sKilled2;
 	STestObjectKilledNotifier	sKilled3;
 	STestObjectKilledNotifier	sKilled4;
 	STestObjectKilledNotifier	sKilled5;
 	STestObjectKilledNotifier	sKilledTop1;
 	STestObjectKilledNotifier	sKilledTop2;
-	Ptr<CTestObject>		pTest2;
-	Ptr<CTestObject>		pTest3;
-	Ptr<CTestObject>		pTest4;
-	Ptr<CTestObject>		pTest5;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
+	Ptr<CTestObject>			pTest4;
+	Ptr<CTestObject>			pTest5;
 	Ptr<CSetObject>				pSet;
-	Ptr<CTestObject>		pTop1;
-	Ptr<CTestObject>		pTop2;
+	Ptr<CTestObject>			pTop1;
+	Ptr<CTestObject>			pTop2;
 
 	ObjectsInit();
 	pRoot = ORoot();
@@ -309,6 +314,7 @@ void TestRootGraphRemoveSimple(void)
 	AssertInt(1, pTest2->NumHeapFroms());
 	AssertPointer(pRoot->TestGetSet(), pTest2->TestGetFrom(0));
 
+	pTest3 = NULL;
 	pTest2->mpTest = NULL;
 	AssertFalse(sKilled2.bKilled);
 	AssertTrue( sKilled3.bKilled);
@@ -369,7 +375,7 @@ void TestRootGraphRemoveSimple(void)
 	//         ...
 	//        Root(0)
 
-
+	pTest4 = NULL;
 	pTest2->mpTest = NULL;
 	AssertFalse(sKilled2.bKilled);
 	AssertTrue( sKilled4.bKilled);
@@ -396,6 +402,8 @@ void TestRootGraphRemoveSimple(void)
 	pTop2->mpTest = pTop1;
 	AssertInt(4, pTop1->DistToRoot());
 	AssertInt(4, pTop2->DistToRoot());
+
+	pTop1 = NULL;
 	pTest2->mpObject = NULL;
 	AssertFalse(sKilled2.bKilled);
 	AssertTrue(sKilledTop1.bKilled);
@@ -422,20 +430,20 @@ void TestRootGraphRemoveSimple(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveComplex(void)
 {
-	Ptr<CRoot>				pRoot;
+	Ptr<CRoot>					pRoot;
 	STestObjectKilledNotifier	sKilled2;
 	STestObjectKilledNotifier	sKilled3;
 	STestObjectKilledNotifier	sKilled4;
 	STestObjectKilledNotifier	sKilled5;
 	STestObjectKilledNotifier	sKilledTop1;
 	STestObjectKilledNotifier	sKilledTop2;
-	Ptr<CTestObject>		pTest2;
-	Ptr<CTestObject>		pTest3;
-	Ptr<CTestObject>		pTest4;
-	Ptr<CTestObject>		pTest5;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
+	Ptr<CTestObject>			pTest4;
+	Ptr<CTestObject>			pTest5;
 	Ptr<CSetObject>				pSet;
-	Ptr<CTestObject>		pTop1;
-	Ptr<CTestObject>		pTop2;
+	Ptr<CTestObject>			pTop1;
+	Ptr<CTestObject>			pTop2;
 
 	ObjectsInit();
 	pRoot = ORoot();
