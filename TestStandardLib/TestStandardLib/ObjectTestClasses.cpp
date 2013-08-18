@@ -10,7 +10,10 @@
 Ptr<CTestObject> CTestObject::Init(STestObjectKilledNotifier* psKilledNotifier)
 {
 	mpsKilledNotifier = psKilledNotifier;
-	mpsKilledNotifier->bKilled = FALSE;
+	if (mpsKilledNotifier)
+	{
+		mpsKilledNotifier->bKilled = FALSE;
+	}
 
 	return this;
 }
@@ -35,7 +38,10 @@ void CTestObject::Class(void)
 //////////////////////////////////////////////////////////////////////////
 void CTestObject::KillData(void)
 {
-	mpsKilledNotifier->bKilled = TRUE;
+	if (mpsKilledNotifier)
+	{
+		mpsKilledNotifier->bKilled = TRUE;
+	}
 }
 
 

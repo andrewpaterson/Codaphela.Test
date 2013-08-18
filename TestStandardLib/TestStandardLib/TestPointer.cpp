@@ -16,12 +16,14 @@ void TestPointerNegation(void)
 	CPointer			pcBase;
 
 	pcObject = OMalloc(CTestObject);
+	pcObject->Init(NULL);
 	AssertFalse(!pcObject);
 
 	pcObject = NULL;
 	AssertTrue(!pcObject);
 
 	pcBase = OMalloc(CTestObject);
+	((CTestObject*)&pcBase)->Init(NULL);
 	AssertFalse(!pcBase);
 
 	pcBase = NULL;
@@ -39,8 +41,75 @@ void TestPointerConstructor(void)
 {
 	ObjectsInit();
 
-	CClusterMissile	cCluster;
+	CEmbeddedContainer	cCluster;
 
+	cCluster.Init();
+	AssertNull(cCluster.mpTest.Object());
+	AssertPointer(&cCluster, cCluster.mpTest.Embedding());
+
+	ObjectsKill();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPointerDestructorDestruct(STestObjectKilledNotifier* psKillNotifier)
+{
+	CTestObject					cTestObject;
+
+	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+
+	cTestObject.Init(NULL);
+	cTestObject.mpTest = OMalloc(CTestObject)->Init(psKillNotifier);
+
+	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
+	//cTestObject Destructor called here.  It should cause the allocated object it points to to be destroyed too.
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPointerDestructor(void)
+{
+	ObjectsInit();
+
+	STestObjectKilledNotifier	sKillNotifier;
+
+	TestPointerDestructorDestruct(&sKillNotifier);
+	
+	AssertTrue(sKillNotifier.bKilled);
+	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPointerStackToEmbeddedDestruct(void)
+{
+	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	Ptr<CEmbeddedContainer> pMissile = OMalloc(CEmbeddedContainer);
+
+	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPointerStackToEmbedded(void)
+{
+	ObjectsInit();
+
+	TestPointerStackToEmbeddedDestruct();
+	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
 }
@@ -53,12 +122,12 @@ void TestPointerConstructor(void)
 void TestPointer(void)
 {
 	BeginTests();
-	ObjectsInit();
 
 	TestPointerConstructor();
+	TestPointerDestructor();
+	TestPointerStackToEmbedded();
 	TestPointerNegation();
 
-	ObjectsKill();
 	TestStatistics();
 }
 

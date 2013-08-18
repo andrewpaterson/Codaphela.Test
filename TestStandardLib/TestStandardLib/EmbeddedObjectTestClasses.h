@@ -15,12 +15,12 @@ public:
 	float	mfSoAmI;
 	Ptr<>	mpTest;
 
-	void	Class(void);
-	Ptr<CEmbeddedTest> Init(void);
-	void	KillData(void);
+	void				Class(void);
+	Ptr<CEmbeddedTest>	Init(void);
+	void				KillData(void);
 
-	BOOL	Save(CObjectSerialiser* pcFile);
-	BOOL	Load(CObjectDeserialiser* pcFile);
+	BOOL				Save(CObjectSerialiser* pcFile);
+	BOOL				Load(CObjectDeserialiser* pcFile);
 };
 
 
