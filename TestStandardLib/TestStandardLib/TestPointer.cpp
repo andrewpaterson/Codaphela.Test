@@ -1,6 +1,7 @@
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
+#include "EmbeddedObjectTestClasses.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -9,6 +10,8 @@
 //////////////////////////////////////////////////////////////////////////
 void TestPointerNegation(void)
 {
+	ObjectsInit();
+
 	Ptr<CTestObject>	pcObject;
 	CPointer			pcBase;
 
@@ -23,6 +26,8 @@ void TestPointerNegation(void)
 
 	pcBase = NULL;
 	AssertTrue(!pcBase);
+
+	ObjectsKill();
 }
 
 
@@ -32,6 +37,12 @@ void TestPointerNegation(void)
 //////////////////////////////////////////////////////////////////////////
 void TestPointerConstructor(void)
 {
+	ObjectsInit();
+
+	CClusterMissile	cCluster;
+
+
+	ObjectsKill();
 }
 
 

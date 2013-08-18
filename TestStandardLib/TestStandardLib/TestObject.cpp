@@ -167,22 +167,23 @@ void TestObjectPointerRemappingComplex(void)
 	Ptr<CTestObject>			pTest13;
 	Ptr<CTestObject>			pTest14;
 	Ptr<CTestObject>			pTest15;
-	STestObjectKilledNotifier		sKillNotifier1;
-	STestObjectKilledNotifier		sKillNotifier2;
-	STestObjectKilledNotifier		sKillNotifier3;
-	STestObjectKilledNotifier		sKillNotifier4;
-	STestObjectKilledNotifier		sKillNotifier5;
-	STestObjectKilledNotifier		sKillNotifier6;
-	STestObjectKilledNotifier		sKillNotifier7;
-	STestObjectKilledNotifier		sKillNotifier8;
-	STestObjectKilledNotifier		sKillNotifier9;
-	STestObjectKilledNotifier		sKillNotifier10;
-	STestObjectKilledNotifier		sKillNotifier11;
-	STestObjectKilledNotifier		sKillNotifier12;
-	STestObjectKilledNotifier		sKillNotifier13;
-	STestObjectKilledNotifier		sKillNotifier14;
-	STestObjectKilledNotifier		sKillNotifier15;
-	int								iNumRemapped;
+	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectKilledNotifier	sKillNotifier2;
+	STestObjectKilledNotifier	sKillNotifier3;
+	STestObjectKilledNotifier	sKillNotifier4;
+	STestObjectKilledNotifier	sKillNotifier5;
+	STestObjectKilledNotifier	sKillNotifier6;
+	STestObjectKilledNotifier	sKillNotifier7;
+	STestObjectKilledNotifier	sKillNotifier8;
+	STestObjectKilledNotifier	sKillNotifier9;
+	STestObjectKilledNotifier	sKillNotifier10;
+	STestObjectKilledNotifier	sKillNotifier11;
+	STestObjectKilledNotifier	sKillNotifier12;
+	STestObjectKilledNotifier	sKillNotifier13;
+	STestObjectKilledNotifier	sKillNotifier14;
+	STestObjectKilledNotifier	sKillNotifier15;
+	int							iNumRemapped;
+	CTestObject*				pcTest1;
 
 	ObjectsInit();
 
@@ -359,7 +360,24 @@ void TestObjectPointerRemappingComplex(void)
 	//       ...
 	//     Root(0)
 
-	pRoot->Remove(pTest1);
+	pcTest1 = &pTest1;
+	pTest1 = NULL;
+	pTest2 = NULL;
+	pTest3 = NULL;
+	pTest4 = NULL;
+	pTest5 = NULL;
+	pTest6 = NULL;
+	pTest7 = NULL;
+	pTest8 = NULL;
+	pTest9 = NULL;
+	pTest10 = NULL;
+	pTest11 = NULL;
+	pTest12 = NULL;
+	pTest13 = NULL;
+	pTest14 = NULL;
+	pTest15 = NULL;
+
+	pRoot->Remove(pcTest1);
 
 	AssertTrue(sKillNotifier1.bKilled);
 	AssertTrue(sKillNotifier2.bKilled);

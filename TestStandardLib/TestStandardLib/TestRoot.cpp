@@ -404,7 +404,11 @@ void TestRootGraphRemoveSimple(void)
 	AssertInt(4, pTop2->DistToRoot());
 
 	pTop1 = NULL;
+	pTop2 = NULL;
+	pSet = NULL;
+
 	pTest2->mpObject = NULL;
+
 	AssertFalse(sKilled2.bKilled);
 	AssertTrue(sKilledTop1.bKilled);
 	AssertTrue(sKilledTop2.bKilled);
@@ -415,6 +419,7 @@ void TestRootGraphRemoveSimple(void)
 	//     ...
 	//    Root(0)
 
+	pTest2 = NULL;
 
 	pRoot->RemoveAll();
 	AssertTrue(sKilled2.bKilled);
@@ -442,6 +447,7 @@ void TestRootGraphRemoveComplex(void)
 	Ptr<CTestObject>			pTest4;
 	Ptr<CTestObject>			pTest5;
 	Ptr<CSetObject>				pSet;
+	CSetObject*					pcSet;
 	Ptr<CTestObject>			pTop1;
 	Ptr<CTestObject>			pTop2;
 
@@ -508,6 +514,7 @@ void TestRootGraphRemoveComplex(void)
 	//         ...
 	//        Root(0)
 
+	pTest5 = NULL;
 
 	pTest4->mpTest = NULL;
 	AssertFalse(sKilled2.bKilled);
@@ -594,8 +601,13 @@ void TestRootGraphRemoveComplex(void)
 	//       ...
 	//      Root(0)
 
+	pTest2 = NULL;
+	pTest3 = NULL;
+	pTest4 = NULL;
+	pcSet = &pSet;
+	pSet = NULL;
 
-	pRoot->Remove(pSet);
+	pRoot->Remove(pcSet);
 	AssertTrue(sKilled2.bKilled);
 	AssertTrue(sKilled3.bKilled);
 	AssertTrue(sKilled4.bKilled);
@@ -614,7 +626,7 @@ void TestRootGraphRemoveComplex(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveUnbalancedLarge(void)
 {
-	Ptr<CRoot>				pRoot;
+	Ptr<CRoot>					pRoot;
 	STestObjectKilledNotifier	sKilled1;
 	STestObjectKilledNotifier	sKilled2;
 	STestObjectKilledNotifier	sKilled3;
@@ -622,14 +634,14 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	STestObjectKilledNotifier	sKilled5;
 	STestObjectKilledNotifier	sKilledTop1;
 	STestObjectKilledNotifier	sKilledTop2;
-	Ptr<CTestObject>		pTest1;
-	Ptr<CTestObject>		pTest2;
-	Ptr<CTestObject>		pTest3;
-	Ptr<CTestObject>		pTest4;
-	Ptr<CTestObject>		pTest5;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
+	Ptr<CTestObject>			pTest4;
+	Ptr<CTestObject>			pTest5;
 	Ptr<CSetObject>				pSet;
-	Ptr<CTestObject>		pTop1;
-	Ptr<CTestObject>		pTop2;
+	Ptr<CTestObject>			pTop1;
+	Ptr<CTestObject>			pTop2;
 
 	ObjectsInit();
 	pRoot = ORoot();
@@ -694,6 +706,8 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	//      Root(0)
 
 	pSet->Remove(pTest2);
+	pTest2 = NULL;
+
 	AssertInt(2, pSet->DistToRoot());
 	AssertInt(3, pTop2->DistToRoot());
 	AssertInt(4, pTest1->DistToRoot());
@@ -859,7 +873,7 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveMostlyBalanced(void)
 {
-	Ptr<CRoot>				pRoot;
+	Ptr<CRoot>					pRoot;
 	STestObjectKilledNotifier	sKilled1;
 	STestObjectKilledNotifier	sKilled2;
 	STestObjectKilledNotifier	sKilled3;
@@ -868,15 +882,15 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	STestObjectKilledNotifier	sKilled6;
 	STestObjectKilledNotifier	sKilledTop1;
 	STestObjectKilledNotifier	sKilledTop2;
-	Ptr<CTestObject>		pTest1;
-	Ptr<CTestObject>		pTest2;
-	Ptr<CTestObject>		pTest3;
-	Ptr<CTestObject>		pTest4;
-	Ptr<CTestObject>		pTest5;
-	Ptr<CTestObject>		pTest6;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
+	Ptr<CTestObject>			pTest4;
+	Ptr<CTestObject>			pTest5;
+	Ptr<CTestObject>			pTest6;
 	Ptr<CSetObject>				pSet;
-	Ptr<CTestObject>		pTop1;
-	Ptr<CTestObject>		pTop2;
+	Ptr<CTestObject>			pTop1;
+	Ptr<CTestObject>			pTop2;
 
 	ObjectsInit();
 	pRoot = ORoot();
@@ -946,6 +960,8 @@ void TestRootGraphRemoveMostlyBalanced(void)
 
 
 	pSet->Remove(pTest2);
+	pTest2 = NULL;
+
 	AssertInt(2, pSet->DistToRoot());
 	AssertInt(3, pTest3->DistToRoot());
 	AssertInt(4, pTest4->DistToRoot());
@@ -1007,16 +1023,16 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 	Ptr<CTestObject>			pTest8;
 	Ptr<CTestObject>			pTest9;
 	Ptr<CTestObject>			pTest15;
-	STestObjectKilledNotifier		sKillNotifier1;
-	STestObjectKilledNotifier		sKillNotifier2;
-	STestObjectKilledNotifier		sKillNotifier3;
-	STestObjectKilledNotifier		sKillNotifier4;
-	STestObjectKilledNotifier		sKillNotifier5;
-	STestObjectKilledNotifier		sKillNotifier6;
-	STestObjectKilledNotifier		sKillNotifier7;
-	STestObjectKilledNotifier		sKillNotifier8;
-	STestObjectKilledNotifier		sKillNotifier9;
-	STestObjectKilledNotifier		sKillNotifier15;
+	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectKilledNotifier	sKillNotifier2;
+	STestObjectKilledNotifier	sKillNotifier3;
+	STestObjectKilledNotifier	sKillNotifier4;
+	STestObjectKilledNotifier	sKillNotifier5;
+	STestObjectKilledNotifier	sKillNotifier6;
+	STestObjectKilledNotifier	sKillNotifier7;
+	STestObjectKilledNotifier	sKillNotifier8;
+	STestObjectKilledNotifier	sKillNotifier9;
+	STestObjectKilledNotifier	sKillNotifier15;
 
 	ObjectsInit();
 
@@ -1096,6 +1112,7 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 	//        ...
 	//      Root(0)
 
+	pTest3 = NULL;
 	pTest1->mpTest = NULL;
 
 	AssertTrue(sKillNotifier3.bKilled);
