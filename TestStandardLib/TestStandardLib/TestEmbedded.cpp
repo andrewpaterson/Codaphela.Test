@@ -281,7 +281,8 @@ void TestEmbeddedObjectPointTo(void)
 	bResult = gcObjects.Flush(TRUE, TRUE);
 	ObjectsKill();
 	AssertTrue(bResult);
-	pContainer.ClearObject();
+
+	AssertNull(&pContainer);
 
 	ObjectsInit("Output/EmbeddedObject/");
 	SetupEmbeddedObjectConstructors();
@@ -404,7 +405,7 @@ void TestEmbedded(void)
 {
 	BeginTests();
 
-	//TestEmbeddedOjectIsAllocatedInObjects();
+	TestEmbeddedOjectIsAllocatedInObjects();
 	TestEmbeddedObjectAddDistToRoot();
 	TestEmbeddedObjectRemoveDistToRoot();
 	TestEmbeddedObjectKill();
