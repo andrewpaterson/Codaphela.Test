@@ -374,10 +374,37 @@ void TestEmbeddedGetEmbeddedObject(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestEmbeddedOjectFlagAllocated()
+{
+
+	ObjectsInit();
+
+	Ptr<CClusterMissile> pClusterMissile = ONMalloc(CClusterMissile, "Gerbil")->Init(NULL);
+	AssertTrue(pClusterMissile->IsAllocatedInObjects());
+	AssertTrue(pClusterMissile->mcMissile1.IsAllocatedInObjects());
+	AssertTrue(pClusterMissile->mcMissile2.IsAllocatedInObjects());
+
+	pClusterMissile = NULL;
+
+	CClusterMissile cClusterMissile;
+	cClusterMissile.Init(NULL);
+	AssertFalse(cClusterMissile.IsAllocatedInObjects());
+	AssertFalse(cClusterMissile.mcMissile1.IsAllocatedInObjects());
+	AssertFalse(cClusterMissile.mcMissile2.IsAllocatedInObjects());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestEmbedded(void)
 {
 	BeginTests();
 
+	TestEmbeddedOjectFlagAllocated();
 	TestEmbeddedObjectAddDistToRoot();
 	TestEmbeddedObjectRemoveDistToRoot();
 	TestEmbeddedObjectKill();
