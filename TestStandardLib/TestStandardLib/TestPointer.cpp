@@ -1,6 +1,7 @@
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
+#include "ObjectWriterChunkedTestClasses.h"
 #include "EmbeddedObjectTestClasses.h"
 
 
@@ -120,6 +121,25 @@ void TestPointerStackToEmbedded(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestAssignment()
+{
+	ObjectsInit();
+
+	Ptr<CTestWithArray>	pcObject1;
+	pcObject1 = ONMalloc(CTestWithArray, "Urgle-burgle");
+	pcObject1->Init("Warning", 17);
+
+	AssertNotNull(&pcObject1);
+	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestPointer(void)
 {
 	BeginTests();
@@ -127,6 +147,7 @@ void TestPointer(void)
 	TestPointerConstructor();
 	TestPointerDestructor();
 	TestPointerStackToEmbedded();
+	TestAssignment();
 	TestPointerNegation();
 
 	TestStatistics();

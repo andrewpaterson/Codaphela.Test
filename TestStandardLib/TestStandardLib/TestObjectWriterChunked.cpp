@@ -12,6 +12,9 @@
 //////////////////////////////////////////////////////////////////////////
 void TestObjectWriterChunkedWrite(void)
 {
+	ObjectsInit();
+
+	ObjectsKill();
 }
 
 
@@ -20,7 +23,9 @@ void TestObjectWriterChunkedWrite(void)
 //
 //////////////////////////////////////////////////////////////////////////
 void TestObjectWriterChunkedSerialised(void)
-{
+{	
+	ObjectsInit();
+
 	CObjectWriterChunked		cWriter;
 	CObjectGraphSerialiser		cGraphSerialiser;
 
@@ -102,6 +107,8 @@ void TestObjectWriterChunkedSerialised(void)
 
 	AssertTrue(cChunkFile.ReadClose());
 	cChunkFile.Kill();
+
+	ObjectsKill();
 }
 
 
@@ -115,14 +122,12 @@ void TestObjectWriterChunked(void)
 
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output/ObjectWriterChunked");
-	ObjectsInit();
 	BeginTests();
 
 	TestObjectWriterChunkedWrite();
 	TestObjectWriterChunkedSerialised();
 
 	TestStatistics();
-	ObjectsKill();
 
 	cFileUtil.RemoveDir("Output");
 }
