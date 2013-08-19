@@ -87,7 +87,12 @@ void TestNamedObjectName(void)
 
 	gcObjects.Flush(FALSE, FALSE);
 	ObjectsKill();
-	pcSet = NULL;
+
+	AssertNull(pNamed1.Object());
+	AssertNull(pNamed2.Object());
+	AssertNull(pNamed3.Object());
+	AssertNull(pRoot.Object());
+	AssertNull(pSet.Object());
 
 	ObjectsInit("Output/NamedObject");
 	TestNamedObjectAddConstructors();

@@ -43,8 +43,7 @@ void TestPointerConstructor(void)
 
 	CEmbeddedContainer	cCluster;
 
-	cCluster.PreInit(NULL);
-
+	cCluster.PreInit();
 	cCluster.Init();
 	AssertNull(cCluster.mpTest.Object());
 	AssertPointer(&cCluster, cCluster.mpTest.Embedding());
