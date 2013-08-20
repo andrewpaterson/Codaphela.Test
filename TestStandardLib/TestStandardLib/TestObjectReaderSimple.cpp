@@ -71,7 +71,7 @@ void TestObjectReaderSimpleDeserialised(void)
 	WriteObjectReaderSimpleFile();
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());  //Should be 0 expected because the object created in WriteObjectReaderSimpleFile is destroyed on the stack.
 
 	ObjectsKill();
 	ObjectsInit();
@@ -97,7 +97,6 @@ void TestObjectReaderSimpleDeserialised(void)
 	cNS2 = gcObjects.Get("Dog");
 	AssertTrue(cNS2.IsNotNull());
 	AssertString("NS2", cNS2->mszEmbedded.Text());
-
 
 	AssertTrue(cBase.IsNotNull());
 	AssertString("CTestNamedString", cBase->ClassName());

@@ -121,7 +121,7 @@ void TestPointerStackToEmbedded(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAssignment()
+void TestPointerAssignment()
 {
 	ObjectsInit();
 
@@ -130,7 +130,7 @@ void TestAssignment()
 	pcObject1->Init("Warning", 17);
 
 	AssertNotNull(&pcObject1);
-	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
 }
@@ -147,7 +147,7 @@ void TestPointer(void)
 	TestPointerConstructor();
 	TestPointerDestructor();
 	TestPointerStackToEmbedded();
-	TestAssignment();
+	TestPointerAssignment();
 	TestPointerNegation();
 
 	TestStatistics();

@@ -137,7 +137,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	WriteObjectReaderChunkedFile();
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
-	AssertLongLongInt(14, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(13, gcObjects.NumMemoryIndexes());  //Should be 0 expected because the object created in WriteObjectReaderSimpleFile is destroyed on the stack.
 
 	ObjectsKill();
 	ObjectsInit();

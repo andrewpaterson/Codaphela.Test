@@ -173,7 +173,7 @@ void TestEmbeddedObjectKill(void)
 	pPointerPointer->Clear();
 
 	AssertString("Killed", szClusterMissileState);
-	AssertString("Killed", szMissile1State);  //The problem is that KillThisGraph doesn't call KillData on embeddeds.
+	AssertString("Killed", szMissile1State);
 
 	AssertLongLongInt(6, gcObjects.GetMemory()->NumIndexed());
 	AssertLongLongInt(6, gcUnknowns.NumElements());

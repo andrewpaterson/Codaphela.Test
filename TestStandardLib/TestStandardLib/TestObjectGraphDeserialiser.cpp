@@ -105,6 +105,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	TestObjectGraphDeserialiserBuildGraph1();
 
 	cBase = gcObjects.Get("Ow/Start 1");
+	AssertTrue(cBase.IsNotNull());
 	AssertLongLongInt(3, cBase->GetOI());
 	cString1 = gcObjects.Get(6LL);
 	AssertString("Black", cString1->Text());
