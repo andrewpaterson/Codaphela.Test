@@ -177,7 +177,10 @@ void TestDehollowficationFromDatabase(void)
 	AssertString("6789", pTest->mpSplit1->mszString->Text());
 	AssertFalse(pTest->mpSplit1->mszString.IsHollow());
 
+	AssertInt(2, gcObjects.GetStackPointers()->UsedPointers());
+
 	Ptr<CTestNamedString> pDiamond = pTest->mpSplit1->mpAnother;
+	AssertInt(3, gcObjects.GetStackPointers()->UsedPointers());
 	AssertTrue(pTest->mpSplit1->mpAnother.IsHollow());
 	AssertTrue(pDiamond.IsHollow());
 
@@ -217,6 +220,13 @@ void TestDehollowficationFromDatabase(void)
 	AssertLongLongInt(11, gcObjects.NumDatabaseObjects());
 
 	ObjectsKill();
+
+	AssertTrue(pRoot.IsNull());
+	AssertTrue(pTest.IsNull());
+	AssertTrue(pDiamond.IsNull());
+	AssertTrue(pRandom.IsNull());
+
+	pDiamond.UnsafeClearObject();
 }
 
 
