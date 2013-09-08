@@ -121,7 +121,7 @@ void TestPointerStackToEmbedded(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestPointerAssignment()
+void TestPointerAssignmentSimple()
 {
 	ObjectsInit();
 
@@ -140,6 +140,62 @@ void TestPointerAssignment()
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestPointerAssignmentStackToObjectPointer()
+{
+	ObjectsInit();
+
+	Ptr<CTestNamedString>	pObject = ONMalloc(CTestNamedString, "Urgle-burgle");
+	Ptr<CTestInteger>		pInteger = OMalloc(CTestInteger);
+
+	pInteger->Init(6, 7, 6);
+	pObject->Init(NULL, pInteger, "Embedded");
+
+	AssertLongLongInt(2, gcObjects.GetStackPointers()->UsedPointers());
+
+	Ptr<CTestInteger> ptr = pObject->mpAnother;
+
+	AssertLongLongInt(3, gcObjects.GetStackPointers()->UsedPointers());
+
+	ObjectsKill();
+
+	AssertTrue(pObject.IsNull());
+	AssertTrue(pInteger.IsNull());
+	AssertTrue(ptr.IsNull());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPointerAssignmentObjectToObjectPointer()
+{
+	ObjectsInit();
+
+	Ptr<CTestNamedString>	pObject = ONMalloc(CTestNamedString, "Urgle-burgle");
+	Ptr<CTestInteger>		pInteger = OMalloc(CTestInteger);
+
+	pInteger->Init(6, 7, 6);
+	pObject->Init(NULL, pInteger, "Embedded");
+
+	AssertLongLongInt(2, gcObjects.GetStackPointers()->UsedPointers());
+
+	Ptr<CTestInteger> ptr = pObject->mpAnother;
+
+	AssertLongLongInt(3, gcObjects.GetStackPointers()->UsedPointers());
+
+	ObjectsKill();
+
+	AssertTrue(pObject.IsNull());
+	AssertTrue(pInteger.IsNull());
+	AssertTrue(ptr.IsNull());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestPointer(void)
 {
 	BeginTests();
@@ -147,7 +203,9 @@ void TestPointer(void)
 	TestPointerConstructor();
 	TestPointerDestructor();
 	TestPointerStackToEmbedded();
-	TestPointerAssignment();
+	TestPointerAssignmentSimple();
+	TestPointerAssignmentStackToObjectPointer();
+	TestPointerAssignmentObjectToObjectPointer();
 	TestPointerNegation();
 
 	TestStatistics();

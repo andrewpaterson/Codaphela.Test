@@ -258,5 +258,6 @@
   <ItemGroup>
     <None Include="Log.txt" />
     <None Include="EmbeddedTodo.txt" />
+    <None Include="DebugDefines.txt" />
   </ItemGroup>
 </Project>

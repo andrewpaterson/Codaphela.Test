@@ -1,6 +1,70 @@
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
+#include "NamedObjectTestClasses.h"
 #include "ObjectTestSetup.h"
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestKillSelfPointer(void)
+{
+	ObjectsInit();
+
+	Ptr<CRoot>				pRoot;
+	Ptr<CTestNamedObject>	pObject;
+	BOOL					bResult;
+
+	pRoot = ORoot();
+
+	pObject = OMalloc(CTestNamedObject);
+	pObject->Init(1);
+	pObject->mpNamedTest1 = pObject;
+
+	pRoot->Add(pObject);
+	AssertInt(1, pRoot->NumObjects())
+
+	//pObject should be destroyed here and not cause a stack overflow.
+	bResult = pRoot->Remove(pObject);
+	AssertTrue(bResult);
+	AssertInt(0, pRoot->NumObjects())
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestKillLongCyclicSelfPointer(void)
+{
+	ObjectsInit();
+
+	Ptr<CRoot>				pRoot;
+	Ptr<CTestNamedObject>	pObject1;
+	Ptr<CTestNamedObject>	pObject2;
+	Ptr<CTestNamedObject>	pObjectBase;
+	BOOL					bResult;
+
+	pRoot = ORoot();
+
+	pObjectBase = OMalloc(CTestNamedObject);
+	pObject1 = OMalloc(CTestNamedObject);
+	pObjectBase->Init(0);
+	pObject1->Init(1);
+	pObjectBase->mpNamedTest1 = pObject1;
+	pObject1->mpNamedTest1 = pObjectBase;
+
+	pRoot->Add(pObjectBase);
+
+	//pObject should be destroyed here and not cause a stack overflow.
+	bResult = pRoot->Remove(pObjectBase);
+	AssertTrue(bResult);
+
+	ObjectsKill();
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -157,6 +221,8 @@ void TestKill(void)
 {
 	BeginTests();
 
+	TestKillSelfPointer();
+	TestKillLongCyclicSelfPointer();
 	TestKillBestPractice();
 
 	TestStatistics();
