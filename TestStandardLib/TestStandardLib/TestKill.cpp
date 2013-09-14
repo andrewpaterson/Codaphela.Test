@@ -8,13 +8,14 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestKillSelfPointer(void)
+void TestKillSelfPointer1(void)
 {
 	ObjectsInit();
 
 	Ptr<CRoot>				pRoot;
 	Ptr<CTestNamedObject>	pObject;
 	BOOL					bResult;
+	CBaseObject*			pvObject;
 
 	pRoot = ORoot();
 
@@ -23,16 +24,66 @@ void TestKillSelfPointer(void)
 	pObject->mpNamedTest1 = pObject;
 
 	pRoot->Add(pObject);
-	AssertInt(1, pRoot->NumObjects())
+	AssertInt(1, pRoot->NumObjects());
+
+	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
+
+	pvObject = pObject.BaseObject();
+	pObject = NULL;
 
 	//pObject should be destroyed here and not cause a stack overflow.
-	bResult = pRoot->Remove(pObject);
+	bResult = pRoot->Remove(pvObject);
 	AssertTrue(bResult);
-	AssertInt(0, pRoot->NumObjects())
+	AssertInt(0, pRoot->NumObjects());
+
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestKillSelfPointer2(void)
+{
+	ObjectsInit();
+
+	Ptr<CRoot>				pRoot;
+	Ptr<CTestNamedObject>	pObject;
+	BOOL					bResult;
+	CBaseObject*			pvObject;
+
+	pRoot = ORoot();
+
+	pObject = OMalloc(CTestNamedObject);
+	pObject->Init(1);
+	pObject->mpNamedTest1 = pObject;
+
+	pRoot->Add(pObject);
+	AssertInt(1, pRoot->NumObjects());
+
+	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
+
+	//pObject should be destroyed here and not cause a stack overflow.
+	bResult = pRoot->Remove(pObject);
+	AssertTrue(bResult);
+	AssertInt(0, pRoot->NumObjects());
+
+	//If there were cyclic pointers then the object cannot tell it should be freed when a stack pointer is removed.
+	pvObject = pObject.BaseObject();
+	pObject = NULL;
+	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
+	AssertFalse(pvObject->HasStackPointers());
+
+	//The object must be told that an attempt to kill it is being made.  ie: ClearObject.
+	pObject = pvObject;
+	pObject.ClearObject();
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+
+	ObjectsKill();
+}
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -221,7 +272,8 @@ void TestKill(void)
 {
 	BeginTests();
 
-	TestKillSelfPointer();
+	TestKillSelfPointer1();
+	TestKillSelfPointer2();
 	TestKillLongCyclicSelfPointer();
 	TestKillBestPractice();
 
