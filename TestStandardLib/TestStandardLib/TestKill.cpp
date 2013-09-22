@@ -244,8 +244,9 @@ void TestKillBestPractice(void)
 	pMissile2->Kill();
 	AssertInt(0, pHarrier->GetMissiles()->NumElements());
 
-
 	pRoot->Remove(pWorld);
+	AssertLongLongInt(8, gcObjects.NumMemoryIndexes());
+	pWorld.ClearObject();
 
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
