@@ -40,6 +40,7 @@ void TestObjectPointerRemapping(void)
 	STestObjectKilledNotifier	sKillNotifier2;
 	STestObjectKilledNotifier	sKillNotifier3;
 	int							iNumRemapped;
+	CTestObject*				pcObject2;
 
 	ObjectsInit();
 
@@ -67,17 +68,20 @@ void TestObjectPointerRemapping(void)
 	AssertInt(0, pObject3->NumTos());
 	AssertInt(0, pObject3->NumHeapFroms());
 	
-	iNumRemapped = pObject3.RemapFrom(&pObject2);
+	pcObject2 = (CTestObject*)pObject2.Object();
+	iNumRemapped = pObject3.Remap(&pObject2);
 	AssertInt(1, iNumRemapped);
-	pObject2.Kill();
+	pcObject2->Kill();  //We have to use pcObject2 because the pointer pObject2 now points to oject 3.
+	AssertTrue(sKillNotifier2.bKilled);
+	AssertFalse(sKillNotifier3.bKilled);
 
 	AssertPointer(&pObject3, &pObject1->mpObject);
+	AssertPointer(&pObject3, &pObject2);
 
 	AssertInt(1, pObject1->NumTos());
+	AssertPointer(&pObject3, pObject1->TestGetTo(0));
 	AssertInt(1, pObject1->NumHeapFroms());
-	AssertInt(0, pObject3->NumTos());
-	AssertInt(1, pObject3->NumHeapFroms());
-	AssertTrue(sKillNotifier2.bKilled);
+	AssertPointer(pRoot->TestGetSet(), pObject1->TestGetFrom(0));
 
 	ObjectsKill();
 }
@@ -95,12 +99,17 @@ void TestObjectPointerRemappingKilling(void)
 	Ptr<CTestObject>			pObject3;
 	Ptr<CTestObject>			pObject4;
 	Ptr<CTestObject>			pObject5;
-	STestObjectKilledNotifier		sKillNotifier1;
-	STestObjectKilledNotifier		sKillNotifier2;
-	STestObjectKilledNotifier		sKillNotifier3;
-	STestObjectKilledNotifier		sKillNotifier4;
-	STestObjectKilledNotifier		sKillNotifier5;
-	int								iNumRemapped;
+	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectKilledNotifier	sKillNotifier2;
+	STestObjectKilledNotifier	sKillNotifier3;
+	STestObjectKilledNotifier	sKillNotifier4;
+	STestObjectKilledNotifier	sKillNotifier5;
+	int							iNumRemapped;
+	CTestObject*				pcObject1;
+	CTestObject*				pcObject2;
+	CTestObject*				pcObject3;
+	CTestObject*				pcObject4;
+	CTestObject*				pcObject5;
 
 	ObjectsInit();
 
@@ -124,25 +133,140 @@ void TestObjectPointerRemappingKilling(void)
 	pObject4->Init(&sKillNotifier4);
 	pObject5->Init(&sKillNotifier5);
 
+	pcObject1 = (CTestObject*)pObject1.Object();
+	pcObject2 = (CTestObject*)pObject2.Object();
+	pcObject3 = (CTestObject*)pObject3.Object();
+	pcObject4 = (CTestObject*)pObject4.Object();
+	pcObject5 = (CTestObject*)pObject5.Object();
+
 	pRoot->Add(pObject1);
 	pObject1->mpObject = pObject2;
 	pObject2->mpObject = pObject3;
+	pObject3 = NULL;
 
+	AssertInt(0, pObject4->NumTos());
 	pObject4->mpObject = pObject5;
+	AssertInt(1, pObject4->NumTos());
+	AssertPointer(pcObject3, &pObject2->mpObject);  //XXX Why doesn't remap maintain &pObject2->mpObject when queried as &pObject4->mpObject?
 
-	iNumRemapped = pObject4.RemapFrom(&pObject2);
+	iNumRemapped = pObject4.Remap(&pObject2);
 	AssertInt(1, iNumRemapped);
-	pObject2.Kill();
+	pcObject2->Kill();  //We have to use pcObject2 because the pointer pObject2 now points to oject 3.
 
+	AssertPointer(pcObject4, &pObject4);
+	AssertPointer(&pObject4, &pObject2);
 	AssertPointer(&pObject4, &pObject1->mpObject);
+
+	AssertInt(1, pObject4->NumTos());
 	AssertPointer(&pObject5, &pObject4->mpObject);
+	AssertPointer(pcObject3, &pObject4->mpObject);  //XXX Why doesn't remap maintain &pObject2->mpObject when queried as &pObject4->mpObject?
 
 	AssertTrue(sKillNotifier2.bKilled);
-	AssertTrue(sKillNotifier3.bKilled);
+	AssertFalse(sKillNotifier4.bKilled);
+	AssertFalse(sKillNotifier3.bKilled);
 
 	ObjectsKill();
 }
 
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectPointerRemappingSimplerComplex(void)
+{
+	Ptr<CRoot>					pRoot;
+	Ptr<CTestObject>			pTest10;
+	Ptr<CTestObject>			pTest11;
+	Ptr<CTestObject>			pTest12;
+	Ptr<CTestObject>			pTest13;
+	Ptr<CTestObject>			pTest14;
+	STestObjectKilledNotifier	sKillNotifier10;
+	STestObjectKilledNotifier	sKillNotifier11;
+	STestObjectKilledNotifier	sKillNotifier12;
+	STestObjectKilledNotifier	sKillNotifier13;
+	STestObjectKilledNotifier	sKillNotifier14;
+	CTestObject*				pcTest10;
+
+	ObjectsInit();
+
+	pRoot = ORoot();
+
+	pTest10 = OMalloc(CTestObject);
+	pTest11 = OMalloc(CTestObject);
+	pTest12 = OMalloc(CTestObject);
+	pTest13 = OMalloc(CTestObject);
+	pTest14 = OMalloc(CTestObject);
+
+	pTest10->Init(&sKillNotifier10);
+	pTest11->Init(&sKillNotifier11);
+	pTest12->Init(&sKillNotifier12);
+	pTest13->Init(&sKillNotifier13);
+	pTest14->Init(&sKillNotifier14);
+
+	pRoot->Add(pTest10);
+	pTest10->mpObject = pTest11;
+	pTest10->mpTest = pTest12;
+	pTest11->mpObject = pTest13;
+	pTest11->mpTest = pTest14;
+	pTest12->mpObject = pTest13;
+	pTest12->mpTest = pTest14;
+
+	AssertInt(4, pTest13->DistToRoot());
+	AssertInt(4, pTest14->DistToRoot());
+	AssertInt(3, pTest11->DistToRoot());
+	AssertInt(3, pTest12->DistToRoot());
+	AssertInt(2, pTest10->DistToRoot());
+
+	AssertLongLongInt(7, gcObjects.NumMemoryIndexes());
+
+
+	//   Test13  Test14
+	//	   |  \  /  |	
+	//	   |   \/   |	
+	//	   |   /\   |	
+	//	   |  /  \  |	
+	//   Test11  Test12
+	//       \   /
+	//      Test10
+	//        |
+	//        |
+	//       ...
+	//     Root(0)
+
+	pcTest10 = &pTest10;
+	pTest10 = NULL;
+	pTest11 = NULL;
+	pTest12 = NULL;
+	pTest13 = NULL;
+	pTest14 = NULL;
+
+	AssertFalse(sKillNotifier10.bKilled);
+	AssertFalse(sKillNotifier11.bKilled);
+	AssertFalse(sKillNotifier12.bKilled);
+	AssertFalse(sKillNotifier13.bKilled);
+	AssertFalse(sKillNotifier14.bKilled);
+
+	pRoot->Remove(pcTest10);
+
+	AssertTrue(sKillNotifier10.bKilled);
+	AssertTrue(sKillNotifier11.bKilled);
+	AssertTrue(sKillNotifier12.bKilled);
+	AssertTrue(sKillNotifier13.bKilled);
+	AssertTrue(sKillNotifier14.bKilled);
+
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+
+	//       ---
+	//        -
+	//        |
+	//       ...
+	//     Root(0)
+
+
+	ObjectsKill();
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -184,6 +308,9 @@ void TestObjectPointerRemappingComplex(void)
 	STestObjectKilledNotifier	sKillNotifier15;
 	int							iNumRemapped;
 	CTestObject*				pcTest1;
+	CTestObject*				pcTest3;
+	CArrayPointerPtr			pappStack3;
+	CArrayPointerPtr			pappStack10;
 
 	ObjectsInit();
 
@@ -282,9 +409,19 @@ void TestObjectPointerRemappingComplex(void)
 	//       ---
 	//        -
 	
-	iNumRemapped = pTest10.RemapFrom(&pTest3);
+	pappStack3.Init();
+	pappStack10.Init();
+	pTest3->GetStackFroms(&pappStack3);
+	pTest10->GetStackFroms(&pappStack10);
+	
+	pcTest3 = (CTestObject*)pTest3.Object();
+	iNumRemapped = pTest10.Remap(&pTest3);
 	AssertInt(1, iNumRemapped);
-	pTest3.Kill();
+	pappStack3.Kill();
+	pappStack10.Kill();
+	pcTest3->Kill();  //We have to use pcTest3 because the pointer pTest3 now points to oject 10.
+	pTest5.ClearObject();
+	pTest7.ClearObject();
 
 	AssertPointer(&pTest2, &pTest1->mpObject);
 	AssertPointer(&pTest10, &pTest1->mpTest);
@@ -471,6 +608,7 @@ void TestObject(void)
 	TestObjectStackKill();
 	TestObjectPointerRemapping();
 	TestObjectPointerRemappingKilling();
+	TestObjectPointerRemappingSimplerComplex();
 	TestObjectPointerRemappingComplex();
 
 	TestStatistics();

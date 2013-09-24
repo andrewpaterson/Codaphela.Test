@@ -375,6 +375,7 @@ void TestRootGraphRemoveSimple(void)
 	//         ...
 	//        Root(0)
 
+	pTest5 = NULL;
 	pTest4 = NULL;
 	pTest2->mpTest = NULL;
 	AssertFalse(sKilled2.bKilled);
@@ -603,7 +604,10 @@ void TestRootGraphRemoveComplex(void)
 
 	pTest2 = NULL;
 	pTest3 = NULL;
+	pTest5 = NULL;
 	pTest4 = NULL;
+	pTop1 = NULL;
+	pTop2 = NULL;
 	pcSet = &pSet;
 	pSet = NULL;
 
@@ -704,6 +708,10 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	//        |
 	//       ...
 	//      Root(0)
+
+	pTest3 = NULL;
+	pTest4 = NULL;
+	pTest5 = NULL;
 
 	pSet->Remove(pTest2);
 	pTest2 = NULL;
@@ -1112,6 +1120,8 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 	//        ...
 	//      Root(0)
 
+	pTest5 = NULL;
+	pTest7 = NULL;
 	pTest3 = NULL;
 	pTest1->mpTest = NULL;
 

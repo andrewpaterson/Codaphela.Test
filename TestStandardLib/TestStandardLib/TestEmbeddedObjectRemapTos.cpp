@@ -69,7 +69,7 @@ void TestEmbeddedObjectRemapTosActual(void)
 	Ptr<CTestObjectWithTwoEmbedded> pObject = gcObjects.Add<CTestObjectWithTwoEmbedded>("Name2")->Init();
 	AssertInt(3, pObject.Object()->GetNumEmbedded());
 
-	pObject.RemapFrom(pHollow.Object());
+	pObject.Remap(pHollow.Object());
 
 	AssertPointer(pObject.Object(), pPointerHollow->mp.Object());
 	AssertPointer(pEmbedded1.Object(), pPointerEmbedded1->mp.Object());
