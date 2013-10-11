@@ -69,9 +69,9 @@ void TestObjectPointerRemapping(void)
 	AssertInt(0, pObject3->NumHeapFroms());
 	
 	pcObject2 = (CTestObject*)pObject2.Object();
-	iNumRemapped = pObject3.Remap(&pObject2);
+	iNumRemapped = pObject2.MorphInto(&pObject3);
 	AssertInt(1, iNumRemapped);
-	pcObject2->Kill();  //We have to use pcObject2 because the pointer pObject2 now points to oject 3.
+	pcObject2->Kill();  //We have to use pcObject2 because the pointer pObject2 now points to object 3.
 	AssertTrue(sKillNotifier2.bKilled);
 	AssertFalse(sKillNotifier3.bKilled);
 
@@ -147,11 +147,10 @@ void TestObjectPointerRemappingKilling(void)
 	AssertInt(0, pObject4->NumTos());
 	pObject4->mpObject = pObject5;
 	AssertInt(1, pObject4->NumTos());
-	AssertPointer(pcObject3, &pObject2->mpObject);  //XXX Why doesn't remap maintain &pObject2->mpObject when queried as &pObject4->mpObject?
 
-	iNumRemapped = pObject4.Remap(&pObject2);
+	iNumRemapped = pObject2.MorphInto(&pObject4);
 	AssertInt(1, iNumRemapped);
-	pcObject2->Kill();  //We have to use pcObject2 because the pointer pObject2 now points to oject 3.
+	pcObject2->Kill();  //We have to use pcObject2 because the pointer pObject2 now points to object 3.
 
 	AssertPointer(pcObject4, &pObject4);
 	AssertPointer(&pObject4, &pObject2);
@@ -159,7 +158,6 @@ void TestObjectPointerRemappingKilling(void)
 
 	AssertInt(1, pObject4->NumTos());
 	AssertPointer(&pObject5, &pObject4->mpObject);
-	AssertPointer(pcObject3, &pObject4->mpObject);  //XXX Why doesn't remap maintain &pObject2->mpObject when queried as &pObject4->mpObject?
 
 	AssertTrue(sKillNotifier2.bKilled);
 	AssertFalse(sKillNotifier4.bKilled);
@@ -415,11 +413,11 @@ void TestObjectPointerRemappingComplex(void)
 	pTest10->GetStackFroms(&pappStack10);
 	
 	pcTest3 = (CTestObject*)pTest3.Object();
-	iNumRemapped = pTest10.Remap(&pTest3);
+	iNumRemapped = pTest3.MorphInto(&pTest10);
 	AssertInt(1, iNumRemapped);
 	pappStack3.Kill();
 	pappStack10.Kill();
-	pcTest3->Kill();  //We have to use pcTest3 because the pointer pTest3 now points to oject 10.
+	pcTest3->Kill();  //We have to use pcTest3 because the pointer pTest3 now points to object 10.
 	pTest5.ClearObject();
 	pTest7.ClearObject();
 

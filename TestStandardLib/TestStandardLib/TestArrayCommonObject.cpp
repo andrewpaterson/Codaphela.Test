@@ -39,6 +39,7 @@ void TestArrayCommonPointerRemapping(void)
 	pArray->Add(pObject1);
 	pArray->Add(pObject2);
 	AssertInt(6, pArray->NumElements());
+	AssertInt(5, pArray->NonNullElements());
 
 	sKillNotifier.bKilled = FALSE;
 	pObject1->Init(&sKillNotifier);
@@ -54,12 +55,13 @@ void TestArrayCommonPointerRemapping(void)
 	AssertInt(0, pObject3->NumHeapFroms());
 	AssertInt(0, pObject3->NumTos());
 
-	pcObject1 = (CTestObject*)pObject2.Object();
-	iNumRemapped = pObject3.Remap(&pObject1);
+	pcObject1 = (CTestObject*)pObject1.Object();
+	iNumRemapped = pObject1.MorphInto(&pObject3);
 	AssertInt(2, iNumRemapped);
-	pcObject1->Kill();  //We have to use pcObject2 because the pointer pObject2 now points to oject 3.
+	pcObject1->Kill();  //We have to use pcObject2 because the pointer pObject2 now points to object 3.
 
 	AssertInt(6, pArray->NumElements());
+	AssertInt(5, pArray->NonNullElements());
 	AssertNull(pArray->UnsafeGet(0));
 	AssertPointer(&pObject2, pArray->UnsafeGet(1));
 	AssertPointer(&pObject3, pArray->UnsafeGet(2));
