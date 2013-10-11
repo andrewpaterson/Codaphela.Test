@@ -84,9 +84,9 @@ CPointer SetupObjectReaderChunkedChunkFile(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void WriteObjectReaderChunkedFile(void)
+int WriteObjectReaderChunkedFile(void)
 {
-	CPointer			cBase;
+	CPointer				cBase;
 	CObjectWriterChunked	cWriter;
 	CObjectGraphSerialiser	cGraphSerialiser;
 
@@ -97,6 +97,8 @@ void WriteObjectReaderChunkedFile(void)
 	AssertTrue(cGraphSerialiser.Write(cBase.BaseObject()));
 	cGraphSerialiser.Kill();
 	cWriter.Kill();
+
+	return gcObjects.NumMemoryIndexes();
 }
 
 
@@ -127,6 +129,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	OIndex						oiI1;
 	OIndex						oiI2;
 	OIndex						oiI3;
+	int							iNumMemoryIndexes;
 
 	gcObjects.AddConstructor<CTestWithArray>();
 	gcObjects.AddConstructor<CTestInteger>();
@@ -134,10 +137,10 @@ void TestObjectReaderChunkedDeserialised(void)
 	gcObjects.AddConstructor<CString>();
 	gcObjects.AddConstructor<CArrayObject>();
 
-	WriteObjectReaderChunkedFile();
+	iNumMemoryIndexes = WriteObjectReaderChunkedFile();
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
-	AssertLongLongInt(13, gcObjects.NumMemoryIndexes());  //Should be 0 expected because the object created in WriteObjectReaderSimpleFile is destroyed on the stack.
+	AssertLongLongInt(14, iNumMemoryIndexes);
 
 	ObjectsKill();
 	ObjectsInit();

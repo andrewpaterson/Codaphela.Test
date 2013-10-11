@@ -341,11 +341,13 @@ void TestObjectsEvict(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectsObjectKillInGraph(void)
 {
-	Ptr<CTestNamedString>			cNS1;
-	Ptr<CTestNamedString>			cNS2;
-	Ptr<CRoot>						cRoot;
-	Ptr<CString>					cS1;
-	Ptr<CString>					cS2;
+	Ptr<CTestNamedString>	cNS1;
+	Ptr<CTestNamedString>	cNS2;
+	Ptr<CRoot>				cRoot;
+	Ptr<CString>			cS1;
+	Ptr<CString>			cS2;
+	CTestNamedString*		pcNS2;
+	CString*				pcS2;
 
 	ObjectsInit();
 
@@ -365,12 +367,19 @@ void TestObjectsObjectKillInGraph(void)
 	
 	AssertPointer(cNS2->mpAnother.Object(), cNS1.Object());
 	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	pcNS2 = &cNS2;
+	cNS2 = NULL;
+	cRoot = NULL;
+	cS1 = NULL;
+	pcS2 = &cS2;
+	cS2 = NULL;
+	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
 
 	cNS1->Kill();
 
-	AssertNull(cNS2->mpAnother.Object());
+	AssertNull(pcNS2->mpAnother.Object());
 	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
-	AssertPointer(cNS2->mszString.Object(), cS2.Object());
+	AssertPointer(pcNS2->mszString.Object(), pcS2);
 
 	ObjectsKill();
 }
@@ -382,11 +391,11 @@ void TestObjectsObjectKillInGraph(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectsArrayKillInGraph(void)
 {
-	Ptr<CTestNamedString>			cNS1;
-	Ptr<CArrayObject>					cA1;
-	Ptr<CArrayObject>					cA2;
-	Ptr<CRoot>						cRoot;
-	Ptr<CString>					cS1;
+	Ptr<CTestNamedString>	cNS1;
+	Ptr<CArrayObject>		cA1;
+	Ptr<CArrayObject>		cA2;
+	Ptr<CRoot>				cRoot;
+	Ptr<CString>			cS1;
 
 	ObjectsInit();
 
@@ -411,6 +420,10 @@ void TestObjectsArrayKillInGraph(void)
 
 	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
 
+	cNS1 = NULL;
+	cRoot = NULL;
+	cS1 = NULL;
+
 	cA1->Kill();
 	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
 
@@ -427,11 +440,11 @@ void TestObjectsArrayKillInGraph(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectsObjectKillInArrayInGraph(void)
 {
-	Ptr<CTestNamedString>			cNS1;
-	Ptr<CArrayObject>					cA1;
-	Ptr<CArrayObject>					cA2;
-	Ptr<CRoot>						cRoot;
-	Ptr<CString>					cS1;
+	Ptr<CTestNamedString>	cNS1;
+	Ptr<CArrayObject>		cA1;
+	Ptr<CArrayObject>		cA2;
+	Ptr<CRoot>				cRoot;
+	Ptr<CString>			cS1;
 
 	ObjectsInit();
 
@@ -456,6 +469,9 @@ void TestObjectsObjectKillInArrayInGraph(void)
 
 	AssertInt(1, cA1->NumTos());
 	AssertInt(1, cA2->NumTos());
+	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	cRoot = NULL;
+	cS1 = NULL;
 	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
 
 	cNS1->Kill();

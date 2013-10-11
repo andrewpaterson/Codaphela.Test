@@ -148,6 +148,7 @@ void TestDehollowficationFromDatabase(void)
 
 	ObjectsInit(&cConfig);
 	SetupDehollowficationConstructors();
+	AssertInt(0, gcObjects.GetStackPointers()->UsedPointers());
 
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(0, gcObjects.NumMemoryNames());
@@ -163,13 +164,16 @@ void TestDehollowficationFromDatabase(void)
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
 	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
+	AssertInt(1, gcObjects.GetStackPointers()->UsedPointers());
 
 	Ptr<CTestDoubleNamedString> pTest = pRoot->Get<CTestDoubleNamedString>("Double Start");
+	AssertInt(2, gcObjects.GetStackPointers()->UsedPointers());
 	AssertFalse(pRoot->IsSetHollow());
 	AssertTrue(pTest.IsNotNull());
 	AssertTrue(pTest.IsHollow());
 	
 	AssertString("12345", pTest->mpSplit1->mszEmbedded.Text());
+	AssertInt(2, gcObjects.GetStackPointers()->UsedPointers());
 	AssertTrue(pTest->mpSplit1->mpAnother.IsHollow());
 	AssertTrue(pTest->mpSplit2.IsHollow());
 	AssertTrue(pTest->mpSplit1->mszString.IsHollow());

@@ -71,7 +71,7 @@ void TestObjectReaderSimpleDeserialised(void)
 	WriteObjectReaderSimpleFile();
 
 	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
-	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());  //Should be 0 expected because the object created in WriteObjectReaderSimpleFile is destroyed on the stack.
+	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
 	ObjectsInit();
