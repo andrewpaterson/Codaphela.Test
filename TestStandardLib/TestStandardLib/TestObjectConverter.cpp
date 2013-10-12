@@ -73,15 +73,15 @@ Ptr<CTestDoubleNamedString> SetupObjectConverterChunkFile(void)
 
 	cRoot->Add(cDouble);
 
-	AssertInt(2, cDouble->DistToRoot());
-	AssertInt(3, cNS1->DistToRoot());
-	AssertInt(4, cDiamond->DistToRoot());
-	AssertInt(UNATTACHED_DIST_TO_ROOT, cNS2->DistToRoot());
+	AssertInt(2, cDouble->GetDistToRoot());
+	AssertInt(3, cNS1->GetDistToRoot());
+	AssertInt(4, cDiamond->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, cNS2->GetDistToRoot());
 
 	cDouble->mpSplit1 = cNS2;
 
-	AssertInt(3, cNS2->DistToRoot());
-	AssertInt(4, cDiamond->DistToRoot());
+	AssertInt(3, cNS2->GetDistToRoot());
+	AssertInt(4, cDiamond->GetDistToRoot());
 
 	return cDouble;
 }
@@ -162,22 +162,22 @@ void TestObjectConverterDragonExistingHollows(void)
 	AssertNotNull(&pcDoubleNamedString->mszString);
 	AssertFalse(pcDoubleNamedString->mszString->IsHollow());
 	AssertString("Start", pcDoubleNamedString->mszString->Text());
-	AssertInt(UNATTACHED_DIST_TO_ROOT, pcDoubleNamedString->mszString->DistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcDoubleNamedString->mszString->GetDistToRoot());
 
 	pcObject = pcDoubleNamedString->mpSplit1;
 	AssertTrue(pcObject.IsNotNull());
 	AssertTrue(pcObject.IsHollow());
-	AssertInt(UNATTACHED_DIST_TO_ROOT, pcObject.DistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcObject.GetDistToRoot());
 	AssertString("NamedString 2", pcObject.GetName());
 
 	pcRoot = ORoot();
 
 	pcRoot->Add(pcDoubleNamedString);
-	AssertInt(2, pcDoubleNamedString->DistToRoot());
-	AssertInt(3, pcDoubleNamedString->mszString->DistToRoot());
+	AssertInt(2, pcDoubleNamedString->GetDistToRoot());
+	AssertInt(3, pcDoubleNamedString->mszString->GetDistToRoot());
 	AssertTrue(pcObject.IsNotNull());
 	AssertTrue(pcObject.IsHollow());
-	AssertInt(3, pcObject.DistToRoot());
+	AssertInt(3, pcObject.GetDistToRoot());
 	AssertString("NamedString 2", pcObject.GetName());
 
 	oiNew = cChunkedConverter.TestGetNewIndexFromOld(6LL);
@@ -186,7 +186,7 @@ void TestObjectConverterDragonExistingHollows(void)
 	AssertString("NamedString 1", pcDoubleNamedString->mpSplit2.GetName());
 	AssertTrue(pcDoubleNamedString->mpSplit2.IsNotNull());
 	AssertTrue(pcDoubleNamedString->mpSplit2.IsHollow());
-	AssertInt(3, pcDoubleNamedString->mpSplit2.DistToRoot());
+	AssertInt(3, pcDoubleNamedString->mpSplit2.GetDistToRoot());
 	
 	pcTestNamedString2 = (CTestNamedString*)gcObjects.TestGetFromMemory(oiNew).Object();
 	AssertNotNull(pcTestNamedString2);
@@ -202,7 +202,7 @@ void TestObjectConverterDragonExistingHollows(void)
 	pcObject = pcDoubleNamedString->mpSplit1;
 	AssertPointer(pcObject.Object(), pcObject2.Object());
 	AssertFalse(pcObject2.IsHollow());
-	AssertInt(3, pcObject2.DistToRoot());
+	AssertInt(3, pcObject2.GetDistToRoot());
 	AssertString("NamedString 2", pcObject2.GetName());
 	pcTestNamedString2 = (CTestNamedString*)pcObject2.Object();
 	AssertString("6789", pcTestNamedString2->mszString->Text());
@@ -367,20 +367,20 @@ void TestObjectConverterDragonRootDistance(void)
 	AssertPointer(&pcNS1, &pcNS3->mpAnother);
 	AssertPointer(&pcNS3, &pcDouble->mpSplit1);
 
-	AssertInt(2, pcDouble->DistToRoot());
-	AssertInt(3, pcNS3->DistToRoot());
-	AssertInt(4, pcNS1->DistToRoot());
+	AssertInt(2, pcDouble->GetDistToRoot());
+	AssertInt(3, pcNS3->GetDistToRoot());
+	AssertInt(4, pcNS1->GetDistToRoot());
 
 	pcDiamond = pcObjectSource->Convert("Diamond");
 	AssertPointer(&pcDiamond, &pcNS1->mpAnother);
-	AssertInt(5, pcDiamond->DistToRoot());
+	AssertInt(5, pcDiamond->GetDistToRoot());
 
 	pcNS2 = pcObjectSource->Convert("NS2");
 	AssertPointer(&pcNS2, &pcDouble->mpSplit2);
-	AssertInt(3, pcNS2->DistToRoot());
+	AssertInt(3, pcNS2->GetDistToRoot());
 
 	AssertPointer(&pcDiamond, &pcNS2->mpAnother);
-	AssertInt(4, pcDiamond->DistToRoot());
+	AssertInt(4, pcDiamond->GetDistToRoot());
 
 	pcObjectSource->Kill();
 	cChunkedConverter.Kill();

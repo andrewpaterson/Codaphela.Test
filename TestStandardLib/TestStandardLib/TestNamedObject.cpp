@@ -107,13 +107,13 @@ void TestNamedObjectName(void)
 	AssertString("CSetObject", pSet.ClassName());
 
 	AssertTrue(pSet.IsNotNull());
-	AssertInt(UNATTACHED_DIST_TO_ROOT, pSet.DistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pSet.GetDistToRoot());
 
 	AssertInt(1, pSet->NumElements());
 	pResult3 = pSet->UnsafeGet(0);
 	AssertTrue(pResult3.IsNotNull());
 	AssertLongLongInt(oiNamed3, pResult3.GetIndex());
-	AssertInt(UNATTACHED_DIST_TO_ROOT, pResult3.DistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pResult3.GetDistToRoot());
 
 	ObjectsKill();
 }

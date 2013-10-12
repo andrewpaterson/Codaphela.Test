@@ -211,11 +211,11 @@ void TestObjectPointerRemappingSimplerComplex(void)
 	pTest12->mpObject = pTest13;
 	pTest12->mpTest = pTest14;
 
-	AssertInt(4, pTest13->DistToRoot());
-	AssertInt(4, pTest14->DistToRoot());
-	AssertInt(3, pTest11->DistToRoot());
-	AssertInt(3, pTest12->DistToRoot());
-	AssertInt(2, pTest10->DistToRoot());
+	AssertInt(4, pTest13->GetDistToRoot());
+	AssertInt(4, pTest14->GetDistToRoot());
+	AssertInt(3, pTest11->GetDistToRoot());
+	AssertInt(3, pTest12->GetDistToRoot());
+	AssertInt(2, pTest10->GetDistToRoot());
 
 	AssertLongLongInt(7, gcObjects.NumMemoryIndexes());
 
@@ -366,9 +366,9 @@ void TestObjectPointerRemappingComplex(void)
 	pTest12->mpObject = pTest13;
 	pTest12->mpTest = pTest14;
 
-	AssertInt(5, pTest6->DistToRoot());
-	AssertInt(6, pTest8->DistToRoot());
-	AssertInt(6, pTest9->DistToRoot());
+	AssertInt(5, pTest6->GetDistToRoot());
+	AssertInt(6, pTest8->GetDistToRoot());
+	AssertInt(6, pTest9->GetDistToRoot());
 
 	AssertLongLongInt(17, gcObjects.NumMemoryIndexes());
 
@@ -459,15 +459,15 @@ void TestObjectPointerRemappingComplex(void)
 	AssertPointer(&pTest4, pTest6->TestGetFrom(0));
 	AssertInt(2, pTest6->NumTos());
 
-	AssertInt(6, pTest6->DistToRoot());
-	AssertInt(7, pTest8->DistToRoot());
-	AssertInt(7, pTest9->DistToRoot());
+	AssertInt(6, pTest6->GetDistToRoot());
+	AssertInt(7, pTest8->GetDistToRoot());
+	AssertInt(7, pTest9->GetDistToRoot());
 
-	AssertInt(3, pTest10->DistToRoot());
-	AssertInt(4, pTest11->DistToRoot());
-	AssertInt(4, pTest12->DistToRoot());
-	AssertInt(5, pTest13->DistToRoot());
-	AssertInt(5, pTest14->DistToRoot());
+	AssertInt(3, pTest10->GetDistToRoot());
+	AssertInt(4, pTest11->GetDistToRoot());
+	AssertInt(4, pTest12->GetDistToRoot());
+	AssertInt(5, pTest13->GetDistToRoot());
+	AssertInt(5, pTest14->GetDistToRoot());
 
 	AssertLongLongInt(14, gcObjects.NumMemoryIndexes());
 

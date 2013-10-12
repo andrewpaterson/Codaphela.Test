@@ -38,17 +38,17 @@ void TestEmbeddedObjectAddDistToRoot(void)
 	Ptr<CHarrier>			pHarrier = OMalloc(CHarrier)->Init(pWorld);
 	
 	pWorld->AddPlayer(pHarrier);
-	AssertInt(3, pHarrier->DistToRoot());
+	AssertInt(3, pHarrier->GetDistToRoot());
 
 	pRoot->Add(pMissile);
 
-	AssertInt(2, pMissile->DistToRoot());
-	AssertInt(2, pMissile->mcMissile1.DistToRoot());
-	AssertInt(2, pMissile->mcMissile2.DistToRoot());
+	AssertInt(2, pMissile->GetDistToRoot());
+	AssertInt(2, pMissile->mcMissile1.GetDistToRoot());
+	AssertInt(2, pMissile->mcMissile2.GetDistToRoot());
 
 	pMissile->mcMissile1.SetTarget(pHarrier);
 
-	AssertInt(3, pHarrier->DistToRoot());
+	AssertInt(3, pHarrier->GetDistToRoot());
 
 	ObjectsKill();
 }
@@ -72,37 +72,37 @@ void TestEmbeddedObjectRemoveDistToRoot(void)
 	Ptr<CMissile>			pHolder = OMalloc(CMissile)->Init(pWorld);
 	
 	pWorld->AddTickable(pHolder);
-	AssertInt(4, pHolder->DistToRoot());
+	AssertInt(4, pHolder->GetDistToRoot());
 
 	pHolder->SetTarget(pHarrier);
-	AssertInt(5, pHarrier->DistToRoot());
+	AssertInt(5, pHarrier->GetDistToRoot());
 
 	Ptr<CClusterLauncher>	pLauncher = OMalloc(CClusterLauncher)->Init();
 
 	pRoot->Add(pLauncher);
-	AssertInt(2, pLauncher->DistToRoot());
+	AssertInt(2, pLauncher->GetDistToRoot());
 
 	pLauncher->mpMissile = pMissile;
 
-	AssertInt(3, pMissile->DistToRoot());
-	AssertInt(3, pMissile->mcMissile1.DistToRoot());
-	AssertInt(3, pMissile->mcMissile2.DistToRoot());
-	AssertInt(5, pHarrier->DistToRoot());
+	AssertInt(3, pMissile->GetDistToRoot());
+	AssertInt(3, pMissile->mcMissile1.GetDistToRoot());
+	AssertInt(3, pMissile->mcMissile2.GetDistToRoot());
+	AssertInt(5, pHarrier->GetDistToRoot());
 	AssertInt(1, pHarrier->NumHeapFroms());
 
 	pMissile->mcMissile1.SetTarget(pHarrier);
-	AssertInt(4, pHarrier->DistToRoot());
+	AssertInt(4, pHarrier->GetDistToRoot());
 	AssertInt(2, pHarrier->NumHeapFroms());
 
 	pWorld->RemoveTickable(pHolder);
-	AssertInt(4, pHarrier->DistToRoot());
+	AssertInt(4, pHarrier->GetDistToRoot());
 	AssertInt(1, pHarrier->NumHeapFroms());
 
 	pRoot->Add(pHarrier);
-	AssertInt(2, pHarrier->DistToRoot());
+	AssertInt(2, pHarrier->GetDistToRoot());
 
 	pRoot->Remove(pHarrier);
-	AssertInt(4, pHarrier->DistToRoot());
+	AssertInt(4, pHarrier->GetDistToRoot());
 
 	ObjectsKill();
 }

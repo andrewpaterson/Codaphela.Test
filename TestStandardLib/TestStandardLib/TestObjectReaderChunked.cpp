@@ -98,7 +98,7 @@ int WriteObjectReaderChunkedFile(void)
 	cGraphSerialiser.Kill();
 	cWriter.Kill();
 
-	return gcObjects.NumMemoryIndexes();
+	return (int)gcObjects.NumMemoryIndexes();
 }
 
 

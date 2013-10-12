@@ -257,8 +257,8 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	AssertPointer(&cShared, cOwStart1->TestGetTo(0));
 	AssertPointer(&cOwStart1->mp1, cOwStart1->TestGetTo(0));
 	AssertPointer(&cOwStart1->mp2, cOwStart1->TestGetTo(1));
-	AssertInt(2, cOwStart1->DistToRoot());
-	AssertInt(3, cShared->DistToRoot());
+	AssertInt(2, cOwStart1->GetDistToRoot());
+	AssertInt(3, cShared->GetDistToRoot());
 
 	ObjectsKill();
 
@@ -276,7 +276,7 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	cAllocator.Kill();
 	cReaderStart1.Kill();
 
-	AssertInt(-1, cOwStart1->DistToRoot());
+	AssertInt(-1, cOwStart1->GetDistToRoot());
 	
 	cRoot->Add(cOwStart1);
 
@@ -290,8 +290,8 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	AssertPointer(&cShared, cOwStart1->TestGetTo(0));
 	AssertPointer(&cOwStart1->mp1, cOwStart1->TestGetTo(0));
 	AssertPointer(&cOwStart1->mp2, cOwStart1->TestGetTo(1));
-	AssertInt(2, cOwStart1->DistToRoot());
-	AssertInt(3, cShared->DistToRoot());
+	AssertInt(2, cOwStart1->GetDistToRoot());
+	AssertInt(3, cShared->GetDistToRoot());
 
 	AssertInt(89, cOwStart1->mp1->miInt);
 	cOwStart1->mp1->miInt = 66;
