@@ -298,6 +298,7 @@ void TestEmbeddedObjectPointTo(void)
 	AssertString("CEmbeddedContainer", szClassName);
 
 	pComplex = pContainer->GetEmbeddingContainer();
+	//Kinda feel this test just stopped...
 }
 
 
