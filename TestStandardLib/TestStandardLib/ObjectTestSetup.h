@@ -190,16 +190,17 @@ protected:
 	Ptr<CPlayerVehicle>	mpPlayer2;
 
 public:
-	Ptr<CGameWorld> Init(void);
-	void			Class(void);
-	void			KillData(void);
+	Ptr<CGameWorld>		Init(void);
+	void				Class(void);
+	void				KillData(void);
 
-	BOOL			Save(CObjectSerialiser* pcFile);
-	BOOL			Load(CObjectDeserialiser* pcFile);
+	BOOL				Save(CObjectSerialiser* pcFile);
+	BOOL				Load(CObjectDeserialiser* pcFile);
 
-	void			Tick(void);
-	void			AddPlayer(Ptr<CPlayerVehicle> pPlayer);
-	void			AddTickable(CPointer& pTickable);
-	void			RemoveTickable(CPointer& pTickable);
+	void				Tick(void);
+	void				AddPlayer(Ptr<CPlayerVehicle> pPlayer);
+	void				AddTickable(CPointer& pTickable);
+	void				RemoveTickable(CPointer& pTickable);
+	Ptr<CArrayObject>	GetTickables(void);
 };
 

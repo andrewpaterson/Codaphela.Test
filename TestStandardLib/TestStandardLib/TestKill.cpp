@@ -85,6 +85,7 @@ void TestKillSelfPointer2(void)
 	ObjectsKill();
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -129,7 +130,7 @@ void TestKillBestPractice(void)
 	//Generally an object will be killed if all pointers to it a removed.
 	//Sometimes we'd rather not try and remove all the pointers we just want the object to die.
 	//In the example below if a missile hits a jet then both objects should be removed;
-	//regardless of wether anything else points to them.
+	//regardless of whether anything else points to them.
 	//Those objects that did point to them will be updated to point to NULL.
 
 	Ptr<CRoot>			pRoot;
@@ -243,6 +244,12 @@ void TestKillBestPractice(void)
 	pMissile1->Kill();
 	pMissile2->Kill();
 	AssertInt(0, pHarrier->GetMissiles()->NumElements());
+	AssertTrue(pMissile1.IsNull());
+	AssertTrue(pMissile2.IsNull());
+
+	pJeep = NULL;
+	pRedJetMaverick = NULL;
+	pHarrier = NULL;
 
 	pRoot->Remove(pWorld);
 	AssertLongLongInt(8, gcObjects.NumMemoryIndexes());
@@ -269,6 +276,109 @@ void TestKillBestPractice(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestKillCanFindRoot(void)
+{
+	ObjectsInit();
+
+	Ptr<CRoot>			pRoot;
+	Ptr<CGameWorld>		pWorld;
+
+	pRoot = ORoot();
+
+	pWorld = OMalloc(CGameWorld);
+	pWorld->Init();
+
+	pRoot->Add(pWorld);
+
+	Ptr<CHarrier> pHarrier = ONMalloc(CHarrier, "Harrier");
+	pHarrier->Init(pWorld);
+
+	Ptr<CJeep> pJeep = ONMalloc(CJeep, "Jeep");
+	pJeep->Init(pWorld);
+
+	pWorld->AddPlayer(pHarrier);
+	pWorld->AddPlayer(pJeep);
+
+	SStateOnKill	sHarrierBefore;
+	SStateOnKill	sHarrierAfter;
+	SStateOnKill	sJeepBefore;
+	SStateOnKill	sJeepAfter;
+
+	pHarrier->SetKillHook(&sHarrierBefore, &sHarrierAfter);
+	pJeep->SetKillHook(&sJeepBefore, &sJeepAfter);
+
+	SStateOnKill	sGooseBefore;
+	SStateOnKill	sGooseAfter;
+	SStateOnKill	sMaverickBefore;
+	SStateOnKill	sMaverickAfter;
+
+	Ptr<CRedJet>	pRedJetGoose = ONMalloc(CRedJet, "Goose");
+	Ptr<CRedJet>	pRedJetMaverick = ONMalloc(CRedJet, "Maverick");
+
+	pRedJetGoose->Init(pWorld);
+	pRedJetMaverick->Init(pWorld);
+
+	pRedJetGoose->SetKillHook(&sGooseBefore, &sGooseAfter);
+	pRedJetMaverick->SetKillHook(&sMaverickBefore, &sMaverickAfter);
+
+	AssertTrue(pJeep->TestCanFindRoot());
+	AssertTrue(pRedJetMaverick->TestCanFindRoot());
+	AssertTrue(pHarrier->TestCanFindRoot());
+	AssertTrue(pHarrier->GetMissiles()->TestCanFindRoot());
+	AssertTrue(pRedJetGoose->TestCanFindRoot());
+	AssertTrue(pWorld->TestCanFindRoot());
+	AssertTrue(pWorld->GetTickables()->TestCanFindRoot());
+	AssertTrue(pRoot->TestCanFindRoot());
+	AssertTrue(pRoot->TestGetSet()->TestCanFindRoot());
+	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
+
+	pRoot->Remove(pWorld);
+	AssertFalse(pJeep->TestCanFindRoot());
+	AssertFalse(pRedJetMaverick->TestCanFindRoot());
+	AssertFalse(pHarrier->TestCanFindRoot());
+	AssertFalse(pHarrier->GetMissiles()->TestCanFindRoot());
+	AssertFalse(pRedJetGoose->TestCanFindRoot());
+	AssertFalse(pWorld->TestCanFindRoot());
+	AssertFalse(pWorld->GetTickables()->TestCanFindRoot());
+	AssertTrue(pRoot->TestCanFindRoot());
+	AssertTrue(pRoot->TestGetSet()->TestCanFindRoot());
+	AssertInt(-1, pJeep->DistToRoot());
+	AssertInt(-1, pRedJetMaverick->DistToRoot());
+	AssertInt(-1, pHarrier->DistToRoot());
+	AssertInt(-1, pHarrier->GetMissiles()->DistToRoot());
+	AssertInt(-1, pRedJetGoose->DistToRoot());
+	AssertInt(-1, pWorld->DistToRoot());
+	AssertInt(-1, pWorld->GetTickables()->DistToRoot());
+	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(5, gcObjects.NumMemoryNames());
+	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
+
+	pJeep = NULL;
+	pRedJetMaverick = NULL;
+	pHarrier = NULL;
+	pRedJetGoose = NULL;
+	pWorld = NULL;
+
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(0, gcObjects.NumMemoryNames());
+
+	AssertInt('X', sHarrierBefore.sPoint.x);
+	AssertInt('Y', sHarrierBefore.sPoint.y);
+	AssertInt('Z', sHarrierBefore.sPoint.z);
+	AssertString("012345678901234", sHarrierBefore.cPicture.mszPretenedImAPicture);
+	AssertString("Alas I am Dead!", sHarrierAfter.cPicture.mszPretenedImAPicture);
+	AssertString("012345678901234", sJeepBefore.cPicture.mszPretenedImAPicture);
+	AssertString("Alas I am Dead!", sJeepAfter.cPicture.mszPretenedImAPicture);
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestKill(void)
 {
 	BeginTests();
@@ -277,6 +387,7 @@ void TestKill(void)
 	TestKillSelfPointer2();
 	TestKillLongCyclicSelfPointer();
 	TestKillBestPractice();
+	TestKillCanFindRoot();
 
 	TestStatistics();
 }
