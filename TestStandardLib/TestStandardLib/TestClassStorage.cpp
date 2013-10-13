@@ -1,4 +1,4 @@
-#include "BaseLib/Logger.h"
+#include "BaseLib/Log.h"
 #include "BaseLib/FastFunctions.h"
 #include "CoreLib/FunctionCaller.h"
 #include "CoreLib/TypeConverter.h"

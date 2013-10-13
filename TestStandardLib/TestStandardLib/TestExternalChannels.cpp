@@ -1,5 +1,5 @@
 #include "BaseLib/FastFunctions.h"
-#include "BaseLib/Logger.h"
+#include "BaseLib/Log.h"
 #include "CoreLib/TypeConverter.h"
 #include "StandardLib/Channels.h"
 #include "StandardLib/ChannelsAccessorCreator.h"

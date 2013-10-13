@@ -5,7 +5,7 @@
 #include "CoreLib/TypeConverter.h"
 
 
-#define AssertCacheConsistency(t)	EmbreakFailure(PrivateAssertCacheConsistency(t, __LINE__, __FILE__))
+#define AssertCacheConsistency(t)	Validate(PrivateAssertCacheConsistency(t, __LINE__, __FILE__))
 
 
 //////////////////////////////////////////////////////////////////////////

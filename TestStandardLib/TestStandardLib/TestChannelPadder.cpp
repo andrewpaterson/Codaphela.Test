@@ -1,5 +1,5 @@
 #include "BaseLib/FastFunctions.h"
-#include "BaseLib/Logger.h"
+#include "BaseLib/Log.h"
 #include "StandardLib/ClassStorage.h"
 #include "StandardLib/ChannelPadder.h"
 #include "TestLib/Assert.h"
