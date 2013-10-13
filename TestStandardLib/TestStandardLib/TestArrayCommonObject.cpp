@@ -58,7 +58,6 @@ void TestArrayCommonPointerRemapping(void)
 	pcObject1 = (CTestObject*)pObject1.Object();
 	iNumRemapped = pObject1.MorphInto(&pObject3);
 	AssertInt(2, iNumRemapped);
-	pcObject1->Kill();  //We have to use pcObject2 because the pointer pObject2 now points to object 3.
 
 	AssertInt(6, pArray->NumElements());
 	AssertInt(5, pArray->NonNullElements());

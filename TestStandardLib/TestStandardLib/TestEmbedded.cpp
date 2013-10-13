@@ -95,6 +95,8 @@ void TestEmbeddedObjectRemoveDistToRoot(void)
 	AssertInt(2, pHarrier->NumHeapFroms());
 
 	pWorld->RemoveTickable(pHolder);
+	pHolder = NULL;
+
 	AssertInt(4, pHarrier->GetDistToRoot());
 	AssertInt(1, pHarrier->NumHeapFroms());
 
@@ -125,6 +127,7 @@ void TestEmbeddedObjectKill(void)
 	pRoot->Add(pWorld);
 
 	Ptr<CClusterMissile> pClusterMissile = ONMalloc(CClusterMissile, "Anna")->Init(pWorld);
+	pWorld = NULL;
 
 	Ptr<CPointerContainer> pPointerPointer = OMalloc(CPointerContainer);
 	pRoot->Add(pPointerPointer);
@@ -143,28 +146,34 @@ void TestEmbeddedObjectKill(void)
 	pClusterMissile->mcMissile1.SetKillString(szMissile1State);
 
 	AssertInt(2, pClusterMissile->NumHeapFroms());
-	AssertInt(2, pClusterMissile->mcMissile1.NumHeapFroms());
+	AssertInt(1, pClusterMissile->CEmbeddedObject::NumHeapFroms());
+	AssertInt(1, pClusterMissile->mcMissile1.NumHeapFroms());
 	strcpy(szClusterMissileState, "Alive");
 	strcpy(szMissile1State, "Alive");
 
 	pPointerPointer->Clear();
 
 	AssertInt(1, pClusterMissile->NumHeapFroms());
-	AssertInt(1, pClusterMissile->mcMissile1.NumHeapFroms());
+	AssertInt(1, pClusterMissile->CEmbeddedObject::NumHeapFroms());
+	AssertInt(0, pClusterMissile->mcMissile1.NumHeapFroms());
 	AssertString("Alive", szClusterMissileState);
 	AssertString("Alive", szMissile1State);
 
 	pPointerPointer->mp = &pClusterMissile->mcMissile1;
 
 	AssertInt(2, pClusterMissile->NumHeapFroms());
-	AssertInt(2, pClusterMissile->mcMissile1.NumHeapFroms());
+	AssertInt(1, pClusterMissile->CEmbeddedObject::NumHeapFroms());
+	AssertInt(1, pClusterMissile->mcMissile1.NumHeapFroms());
 
 	pPointerPointer2->Clear();
 
 	AssertInt(1, pClusterMissile->NumHeapFroms());
+	AssertInt(0, pClusterMissile->CEmbeddedObject::NumHeapFroms());
 	AssertInt(1, pClusterMissile->mcMissile1.NumHeapFroms());
 	AssertString("Alive", szClusterMissileState);
 	AssertString("Alive", szMissile1State);
+
+	pClusterMissile = NULL;
 
 	//Make sure nothing has been de-allocated.
 	AssertLongLongInt(7, gcObjects.GetMemory()->NumIndexed());

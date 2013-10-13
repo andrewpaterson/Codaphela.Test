@@ -41,6 +41,8 @@ void TestObjectPointerRemapping(void)
 	STestObjectKilledNotifier	sKillNotifier3;
 	int							iNumRemapped;
 	CTestObject*				pcObject2;
+	CPointer					p4;
+	CPointer					p5;
 
 	ObjectsInit();
 
@@ -67,21 +69,34 @@ void TestObjectPointerRemapping(void)
 	AssertInt(1, pObject2->NumHeapFroms());
 	AssertInt(0, pObject3->NumTos());
 	AssertInt(0, pObject3->NumHeapFroms());
-	
+	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(5, gcUnknowns.NumElements());
+	AssertLongLongInt(4LL, pObject2.GetIndex());
+	AssertLongLongInt(5LL, pObject3.GetIndex());
+
 	pcObject2 = (CTestObject*)pObject2.Object();
 	iNumRemapped = pObject2.MorphInto(&pObject3);
 	AssertInt(1, iNumRemapped);
-	pcObject2->Kill();  //We have to use pcObject2 because the pointer pObject2 now points to object 3.
 	AssertTrue(sKillNotifier2.bKilled);
 	AssertFalse(sKillNotifier3.bKilled);
 
 	AssertPointer(&pObject3, &pObject1->mpObject);
 	AssertPointer(&pObject3, &pObject2);
+	AssertTrue(&pObject2 != pcObject2);
+	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(4, gcUnknowns.NumElements());
+	AssertLongLongInt(5LL, pObject3.GetIndex());  //Index of 5 because Pointer.MorphInto does not swap indicies.  ObjectAllocator.ReplaceExisting does and we're not testing it.
 
 	AssertInt(1, pObject1->NumTos());
 	AssertPointer(&pObject3, pObject1->TestGetTo(0));
 	AssertInt(1, pObject1->NumHeapFroms());
 	AssertPointer(pRoot->TestGetSet(), pObject1->TestGetFrom(0));
+
+	p4 = gcObjects.Get(4LL);
+	p5 = gcObjects.Get(5LL);
+
+	AssertNull(&p4);
+	AssertPointer(&pObject3, &p5);
 
 	ObjectsKill();
 }
@@ -150,7 +165,6 @@ void TestObjectPointerRemappingKilling(void)
 
 	iNumRemapped = pObject2.MorphInto(&pObject4);
 	AssertInt(1, iNumRemapped);
-	pcObject2->Kill();  //We have to use pcObject2 because the pointer pObject2 now points to object 3.
 
 	AssertPointer(pcObject4, &pObject4);
 	AssertPointer(&pObject4, &pObject2);
@@ -417,9 +431,8 @@ void TestObjectPointerRemappingComplex(void)
 	AssertInt(1, iNumRemapped);
 	pappStack3.Kill();
 	pappStack10.Kill();
-	pcTest3->Kill();  //We have to use pcTest3 because the pointer pTest3 now points to object 10.
-	pTest5.ClearObject();
-	pTest7.ClearObject();
+	pTest5 = NULL;
+	pTest7 = NULL;
 
 	AssertPointer(&pTest2, &pTest1->mpObject);
 	AssertPointer(&pTest10, &pTest1->mpTest);

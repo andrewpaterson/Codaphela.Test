@@ -53,7 +53,6 @@ void TestKillSelfPointer2(void)
 	Ptr<CRoot>				pRoot;
 	Ptr<CTestNamedObject>	pObject;
 	BOOL					bResult;
-	CBaseObject*			pvObject;
 
 	pRoot = ORoot();
 
@@ -66,20 +65,13 @@ void TestKillSelfPointer2(void)
 
 	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
 
-	//pObject should be destroyed here and not cause a stack overflow.
+	//pObject should not be destroyed here and not cause a stack overflow.
 	bResult = pRoot->Remove(pObject);
 	AssertTrue(bResult);
 	AssertInt(0, pRoot->NumObjects());
 
 	//If there were cyclic pointers then the object cannot tell it should be freed when a stack pointer is removed.
-	pvObject = pObject.BaseObject();
 	pObject = NULL;
-	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
-	AssertFalse(pvObject->HasStackPointers());
-
-	//The object must be told that an attempt to kill it is being made.  ie: ClearObject.
-	pObject = pvObject;
-	pObject.ClearObject();
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
@@ -253,7 +245,7 @@ void TestKillBestPractice(void)
 
 	pRoot->Remove(pWorld);
 	AssertLongLongInt(8, gcObjects.NumMemoryIndexes());
-	pWorld.ClearObject();
+	pWorld = NULL;
 
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
@@ -282,6 +274,7 @@ void TestKillCanFindRoot(void)
 
 	Ptr<CRoot>			pRoot;
 	Ptr<CGameWorld>		pWorld;
+	CGameWorld*			pcWorld;
 
 	pRoot = ORoot();
 
@@ -358,10 +351,11 @@ void TestKillCanFindRoot(void)
 	pRedJetMaverick = NULL;
 	pHarrier = NULL;
 	pRedJetGoose = NULL;
+	pcWorld = &pWorld;
 	pWorld = NULL;
 
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(0, gcObjects.NumMemoryNames());
+	AssertLongLongInt(1, gcObjects.NumMemoryNames());
 
 	AssertInt('X', sHarrierBefore.sPoint.x);
 	AssertInt('Y', sHarrierBefore.sPoint.y);
