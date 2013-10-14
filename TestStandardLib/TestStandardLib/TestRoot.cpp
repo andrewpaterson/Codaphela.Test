@@ -29,15 +29,15 @@ void TestRootDistance(void)
 
 	pcRoot->Add(pcTest1);
 	AssertInt(1, pcTest1->NumHeapFroms());
-	pcFrom = pcTest1->TestGetFrom(0);  //RootSet.
-	pcFrom = pcFrom->TestGetFrom(0);  //Root
+	pcFrom = pcTest1->GetHeapFrom(0);  //RootSet.
+	pcFrom = pcFrom->GetHeapFrom(0);  //Root
 
 	AssertTrue(pcFrom->IsRoot());
 	iDist = pcTest1->GetDistToRoot();
 	AssertInt(2, iDist);
-	pcFrom = pcTest1->TestGetFrom(0);  //RootSet.
+	pcFrom = pcTest1->GetHeapFrom(0);  //RootSet.
 	AssertInt(1, pcFrom->GetDistToRoot());
-	pcFrom = pcFrom->TestGetFrom(0);  //Root
+	pcFrom = pcFrom->GetHeapFrom(0);  //Root
 	AssertInt(0, pcFrom->GetDistToRoot());
 
 	ObjectsKill();
@@ -91,9 +91,9 @@ void TestRootStackPointers(void)
 
 	iFroms = pTest2->NumHeapFroms();
 	AssertInt(2, iFroms);
-	pcTest1 = (CObject*)pTest2->TestGetFrom(0);
+	pcTest1 = (CObject*)pTest2->GetHeapFrom(0);
 	AssertPointer(&pTest1, pcTest1);
-	pcTest3 = (CObject*)pTest2->TestGetFrom(1);
+	pcTest3 = (CObject*)pTest2->GetHeapFrom(1);
 	AssertPointer(&pTest3, pcTest3);
 	AssertInt(0, pTest2->NumTos());
 	AssertInt(3, pTest2->GetDistToRoot());
@@ -312,7 +312,7 @@ void TestRootGraphRemoveSimple(void)
 	AssertPointer(&pTest4, &pTest2->mpObject);
 	AssertPointer(&pTest3, &pTest2->mpTest);
 	AssertInt(1, pTest2->NumHeapFroms());
-	AssertPointer(pRoot->TestGetSet(), pTest2->TestGetFrom(0));
+	AssertPointer(pRoot->TestGetSet(), pTest2->GetHeapFrom(0));
 
 	pTest3 = NULL;
 	pTest2->mpTest = NULL;
@@ -333,7 +333,7 @@ void TestRootGraphRemoveSimple(void)
 	AssertPointer(&pTest4, pTest2->TestGetTo(0));
 	AssertPointer(&pTest4, &pTest2->mpObject);
 	AssertInt(1, pTest2->NumHeapFroms());
-	AssertPointer(pRoot->TestGetSet(), pTest2->TestGetFrom(0));
+	AssertPointer(pRoot->TestGetSet(), pTest2->GetHeapFrom(0));
 
 	//   Top1(6)  Top2(6)
 	//     \     / 
@@ -482,18 +482,18 @@ void TestRootGraphRemoveComplex(void)
 	pTest3->mpTest = pTop2;
 
 	AssertInt(2, pTop1->NumHeapFroms());
-	AssertPointer(&pTop2, pTop1->TestGetFrom(0));
-	AssertPointer(&pTest5, pTop1->TestGetFrom(1));
+	AssertPointer(&pTop2, pTop1->GetHeapFrom(0));
+	AssertPointer(&pTest5, pTop1->GetHeapFrom(1));
 	AssertInt(2, pTop2->NumHeapFroms());
-	AssertPointer(&pTop1, pTop2->TestGetFrom(0));
-	AssertPointer(&pTest3, pTop2->TestGetFrom(1));
+	AssertPointer(&pTop1, pTop2->GetHeapFrom(0));
+	AssertPointer(&pTest3, pTop2->GetHeapFrom(1));
 	AssertInt(2, pSet->NumTos());
 	AssertPointer(&pTest4, pSet->TestGetTo(0));
 	AssertPointer(&pTest2, pSet->TestGetTo(1));
 	AssertInt(1, pTest4->NumTos());
 	AssertPointer(&pTest5, pTest4->TestGetTo(0));
 	AssertInt(1, pTest4->NumHeapFroms());
-	AssertPointer(&pSet, pTest4->TestGetFrom(0));
+	AssertPointer(&pSet, pTest4->GetHeapFrom(0));
 	AssertInt(5, pTop1->GetDistToRoot());
 	AssertInt(5, pTop2->GetDistToRoot());
 	AssertInt(4, pTest5->GetDistToRoot());
@@ -525,17 +525,17 @@ void TestRootGraphRemoveComplex(void)
 	AssertFalse(sKilledTop1.bKilled);
 	AssertFalse(sKilledTop2.bKilled);
 	AssertInt(1, pTop1->NumHeapFroms());
-	AssertPointer(&pTop2, pTop1->TestGetFrom(0));
+	AssertPointer(&pTop2, pTop1->GetHeapFrom(0));
 	AssertInt(2, pTop2->NumHeapFroms());
-	AssertPointer(&pTop1, pTop2->TestGetFrom(0));
-	AssertPointer(&pTest3, pTop2->TestGetFrom(1));
+	AssertPointer(&pTop1, pTop2->GetHeapFrom(0));
+	AssertPointer(&pTest3, pTop2->GetHeapFrom(1));
 	AssertInt(2, pSet->NumTos());
 	AssertPointer(&pTest4, pSet->TestGetTo(0));
 	AssertPointer(&pTest2, pSet->TestGetTo(1));
 	AssertInt(0, pTest4->NumTos());
 	AssertPointer(NULL, pTest4->TestGetTo(0));
 	AssertInt(1, pTest4->NumHeapFroms());
-	AssertPointer(&pSet, pTest4->TestGetFrom(0));
+	AssertPointer(&pSet, pTest4->GetHeapFrom(0));
 
 	//Tested for root should never be true (outside of the CanFindRoot method).
 	AssertFalse(pSet->TestedForRoot());
@@ -563,18 +563,18 @@ void TestRootGraphRemoveComplex(void)
 	pTest4->mpTest = pTest5;
 	pTest5->mpTest = pTop1;
 	AssertInt(2, pTop1->NumHeapFroms());
-	AssertPointer(&pTop2, pTop1->TestGetFrom(0));
-	AssertPointer(&pTest5, pTop1->TestGetFrom(1));
+	AssertPointer(&pTop2, pTop1->GetHeapFrom(0));
+	AssertPointer(&pTest5, pTop1->GetHeapFrom(1));
 	AssertInt(2, pTop2->NumHeapFroms());
-	AssertPointer(&pTop1, pTop2->TestGetFrom(0));
-	AssertPointer(&pTest3, pTop2->TestGetFrom(1));
+	AssertPointer(&pTop1, pTop2->GetHeapFrom(0));
+	AssertPointer(&pTest3, pTop2->GetHeapFrom(1));
 	AssertInt(2, pSet->NumTos());
 	AssertPointer(&pTest4, pSet->TestGetTo(0));
 	AssertPointer(&pTest2, pSet->TestGetTo(1));
 	AssertInt(1, pTest4->NumTos());
 	AssertPointer(&pTest5, pTest4->TestGetTo(0));
 	AssertInt(1, pTest4->NumHeapFroms());
-	AssertPointer(&pSet, pTest4->TestGetFrom(0));
+	AssertPointer(&pSet, pTest4->GetHeapFrom(0));
 	AssertInt(5, pTop1->GetDistToRoot());
 	AssertInt(5, pTop2->GetDistToRoot());
 	AssertInt(4, pTest5->GetDistToRoot());
@@ -1138,7 +1138,7 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 	AssertFalse(sKillNotifier15.bKilled);
 
 	AssertInt(1, pTest6->NumHeapFroms());
-	AssertPointer(&pTest4, pTest6->TestGetFrom(0));
+	AssertPointer(&pTest4, pTest6->GetHeapFrom(0));
 	AssertInt(2, pTest6->NumTos());
 
 	AssertInt(2, pTest1->GetDistToRoot());

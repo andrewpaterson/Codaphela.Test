@@ -89,9 +89,6 @@ void TestEmbeddedObjectRemapTosActual(void)
 	AssertString("CHollowEmbeddedObject", pPointerHollowEmbedded1->mp.ClassName());
 	AssertString("CHollowEmbeddedObject", pPointerHollowEmbedded2->mp.ClassName());
 
-	AssertInt(1, pHollow.Object()->CEmbeddedObject::NumHeapFroms());
-	AssertInt(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumHeapFroms());
-	AssertInt(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumHeapFroms());
 
 	pHollow.MorphInto(&pObject);
 
@@ -107,6 +104,16 @@ void TestEmbeddedObjectRemapTosActual(void)
 	AssertPointer(pObject.Object(), pPointerHollow->mp.Object());
 	AssertPointer(pHollowEmbedded1.Object(), pPointerHollowEmbedded1->mp.Object());
 	AssertPointer(pHollowEmbedded2.Object(), pPointerHollowEmbedded2->mp.Object());
+
+	AssertInt(4, pHollow.Object()->NumHeapFroms());
+	AssertInt(2, pHollow.Object()->CEmbeddedObject::NumHeapFroms());
+	AssertInt(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumHeapFroms());
+	AssertInt(1, pHollowEmbedded2.Object()->CEmbeddedObject::NumHeapFroms());
+
+	AssertInt(3, pHollow.Object()->NumStackFroms());
+	AssertInt(1, pHollow.Object()->CEmbeddedObject::NumStackFroms());
+	AssertInt(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumStackFroms());
+	AssertInt(1, pHollowEmbedded2.Object()->CEmbeddedObject::NumStackFroms());
 
 	cAllocator.Kill();
 	ObjectsKill();
