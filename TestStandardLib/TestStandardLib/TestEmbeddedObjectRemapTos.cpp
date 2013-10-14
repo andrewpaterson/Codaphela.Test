@@ -9,17 +9,19 @@ class CTestObjectWithTwoEmbedded : public CNamedObject
 {
 BASE_FUNCTIONS(CTestObjectWithTwoEmbedded);
 public:
-	CString		mpString1;
-	CString		mpString2;
+	CString		mString1;
+	CString		mString2;
 
 	void Class(void)
 	{
-		Embedded(&mpString1);
-		Embedded(&mpString2);
+		Embedded(&mString1);
+		Embedded(&mString2);
 	}
 
 	Ptr<CTestObjectWithTwoEmbedded> Init(void) 
 	{
+		mString1.Init("String1");
+		mString2.Init("String2");
 		return this;
 	}
 
@@ -55,25 +57,56 @@ void TestEmbeddedObjectRemapTosActual(void)
 	Ptr<CNamedHollowObject>	pHollow = cAllocator.AddHollow("Name", gcObjects.GetIndexGenerator()->PopIndex(), 3);
 	AssertInt(3, pHollow.Object()->GetNumEmbedded());
 
-	Ptr<CEmbeddedObject> pEmbedded0 = pHollow.Object()->GetEmbeddedObject(0);
-	Ptr<CEmbeddedObject> pEmbedded1 = pHollow.Object()->GetEmbeddedObject(1);
-	Ptr<CEmbeddedObject> pEmbedded2 = pHollow.Object()->GetEmbeddedObject(2);
-	AssertPointer(pHollow.Object(), pEmbedded0.Object());
+	Ptr<CEmbeddedObject> pHollowEmbedded1 = pHollow.Object()->GetEmbeddedObject(1);
+	Ptr<CEmbeddedObject> pHollowEmbedded2 = pHollow.Object()->GetEmbeddedObject(2);
+	AssertPointer(pHollow.Object(), pHollow.Object()->GetEmbeddedObject(0));
+	AssertInt(3, pHollow.Object()->GetNumEmbedded());
 
 	Ptr<CPointerContainer>	pPointerHollow = gcObjects.Add<CPointerContainer>()->Init(pHollow);
-	Ptr<CPointerContainer>	pPointerEmbedded1 = gcObjects.Add<CPointerContainer>()->Init(pEmbedded1);
-	Ptr<CPointerContainer>	pPointerEmbedded2 = gcObjects.Add<CPointerContainer>()->Init(pEmbedded2);
+	Ptr<CPointerContainer>	pPointerHollowEmbedded1 = gcObjects.Add<CPointerContainer>()->Init(pHollowEmbedded1);
+	Ptr<CPointerContainer>	pPointerHollowEmbedded2 = gcObjects.Add<CPointerContainer>()->Init(pHollowEmbedded2);
+
+	AssertInt(3, pHollow.Object()->NumHeapFroms());
+	AssertInt(1, pHollow.Object()->CEmbeddedObject::NumHeapFroms());
+	AssertInt(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumHeapFroms());
+	AssertInt(1, pHollowEmbedded2.Object()->CEmbeddedObject::NumHeapFroms());
+
+	AssertInt(3, pHollow.Object()->NumStackFroms());
+	AssertInt(1, pHollow.Object()->CEmbeddedObject::NumStackFroms());
+	AssertInt(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumStackFroms());
+	AssertInt(1, pHollowEmbedded2.Object()->CEmbeddedObject::NumStackFroms());
 
 	pRoot->Add(pHollow);
 
 	Ptr<CTestObjectWithTwoEmbedded> pObject = gcObjects.Add<CTestObjectWithTwoEmbedded>("Name2")->Init();
 	AssertInt(3, pObject.Object()->GetNumEmbedded());
 
+	AssertString("CNamedHollowObject", pHollow.ClassName());
+	AssertString("CHollowEmbeddedObject", pHollowEmbedded1.ClassName());
+	AssertString("CHollowEmbeddedObject", pHollowEmbedded2.ClassName());
+
+	AssertString("CNamedHollowObject", pPointerHollow->mp.ClassName());
+	AssertString("CHollowEmbeddedObject", pPointerHollowEmbedded1->mp.ClassName());
+	AssertString("CHollowEmbeddedObject", pPointerHollowEmbedded2->mp.ClassName());
+
+	AssertInt(1, pHollow.Object()->CEmbeddedObject::NumHeapFroms());
+	AssertInt(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumHeapFroms());
+	AssertInt(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumHeapFroms());
+
 	pHollow.MorphInto(&pObject);
 
+	AssertString("CTestObjectWithTwoEmbedded", pHollow.ClassName());
+	AssertString("CString", pHollowEmbedded1.ClassName());
+	AssertString("CString", pHollowEmbedded2.ClassName());
+
+	AssertString("CTestObjectWithTwoEmbedded", pPointerHollow->mp.ClassName());
+	AssertString("CString", pPointerHollowEmbedded1->mp.ClassName());
+	AssertString("CString", pPointerHollowEmbedded2->mp.ClassName());
+
+	AssertPointer(pObject.Object(), pHollow.Object());
 	AssertPointer(pObject.Object(), pPointerHollow->mp.Object());
-	AssertPointer(pEmbedded1.Object(), pPointerEmbedded1->mp.Object());
-	AssertPointer(pEmbedded2.Object(), pPointerEmbedded2->mp.Object());
+	AssertPointer(pHollowEmbedded1.Object(), pPointerHollowEmbedded1->mp.Object());
+	AssertPointer(pHollowEmbedded2.Object(), pPointerHollowEmbedded2->mp.Object());
 
 	cAllocator.Kill();
 	ObjectsKill();
