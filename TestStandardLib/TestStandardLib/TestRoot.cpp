@@ -13,33 +13,34 @@
 void TestRootDistance(void)
 {
 	STestObjectKilledNotifier	sKilled1;
-	Ptr<CRoot>					pcRoot;
-	Ptr<CTestObject>			pcTest1;
+	Ptr<CRoot>					pRoot;
+	Ptr<CTestObject>			pTest1;
 	int							iDist;
 	CBaseObject*				pcFrom;
 
 	ObjectsInit();
-	pcRoot = ORoot();
-	AssertInt(ROOT_DIST_TO_ROOT, pcRoot->GetDistToRoot());
-	AssertInt(ROOT_DIST_TO_ROOT+1, pcRoot->TestGetSet()->GetDistToRoot());
+	pRoot = ORoot();
+	AssertInt(ROOT_DIST_TO_ROOT, pRoot->GetDistToRoot());
+	AssertInt(ROOT_DIST_TO_ROOT+1, pRoot->TestGetSet()->GetDistToRoot());
 	
-	pcTest1 = OMalloc(CTestObject);
-	pcTest1->Init(&sKilled1);
-	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest1->GetDistToRoot());
+	pTest1 = OMalloc(CTestObject);
+	pTest1->Init(&sKilled1);
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest1->GetDistToRoot());
 
-	pcRoot->Add(pcTest1);
-	AssertInt(1, pcTest1->NumHeapFroms());
-	pcFrom = pcTest1->GetHeapFrom(0);  //RootSet.
+	pRoot->Add(pTest1);
+	AssertInt(1, pTest1->NumHeapFroms());
+	pcFrom = pTest1->GetHeapFrom(0);  //RootSet.
 	pcFrom = pcFrom->GetHeapFrom(0);  //Root
 
 	AssertTrue(pcFrom->IsRoot());
-	iDist = pcTest1->GetDistToRoot();
+	iDist = pTest1->GetDistToRoot();
 	AssertInt(2, iDist);
-	pcFrom = pcTest1->GetHeapFrom(0);  //RootSet.
+	pcFrom = pTest1->GetHeapFrom(0);  //RootSet.
 	AssertInt(1, pcFrom->GetDistToRoot());
 	pcFrom = pcFrom->GetHeapFrom(0);  //Root
 	AssertInt(0, pcFrom->GetDistToRoot());
 
+	pRoot->Kill();
 	ObjectsKill();
 }
 
@@ -739,7 +740,6 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	//     |
 	//    ...
 	//   Root(0)
-
 
 	pRoot->Kill();
 	ObjectsKill();

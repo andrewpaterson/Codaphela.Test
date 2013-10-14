@@ -4,6 +4,7 @@
 #include "StandardLib/Objects.h"
 #include "StandardLib/Pointer.h"
 #include "StandardLib/Root.h"
+#include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
 
@@ -610,6 +611,149 @@ void TestObjectStackKill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectRootUnattachment(void)
+{
+	ObjectsInit();
+
+	Ptr<CPointerContainer>		pContainer1;
+	Ptr<CPointerContainer>		pContainer2;
+	Ptr<CTestObject>			pObject;
+	Ptr<CRoot>					pRoot;
+	STestObjectKilledNotifier	sKillNotifier1;
+	CTestObject*				pcObject;
+	CPointerContainer*			pcContainer1;
+	CPointerContainer*			pcContainer2;
+
+	pObject = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
+	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
+	pRoot = ORoot();
+	pRoot->Add(pContainer1);
+
+	pcObject = &pObject;
+	pcContainer1 = &pContainer1;
+	pcContainer2 = &pContainer2;
+
+	pContainer2 = NULL;
+	pObject = NULL;
+	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(5, gcUnknowns.NumElements());
+
+	pRoot->Remove(pContainer1);
+	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(5, gcUnknowns.NumElements());
+
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer1->GetDistToRoot());
+	AssertFalse(pcContainer1->TestCanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer2->GetDistToRoot());
+	AssertFalse(pcContainer2->TestCanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcObject->GetDistToRoot());
+	AssertFalse(pcObject->TestCanFindRoot());
+
+	pContainer1 = NULL;
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(2, gcUnknowns.NumElements());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectKill(void)
+{
+	ObjectsInit();
+
+	Ptr<CPointerContainer>		pContainer1;
+	Ptr<CPointerContainer>		pContainer2;
+	Ptr<CTestObject>			pObject;
+	Ptr<CRoot>					pRoot;
+	STestObjectKilledNotifier	sKillNotifier1;
+	CTestObject*				pcObject;
+	CPointerContainer*			pcContainer1;
+	CPointerContainer*			pcContainer2;
+
+	pObject = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
+	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
+	pRoot = ORoot();
+	pRoot->Add(pContainer1);
+
+	pcObject = &pObject;
+	pcContainer1 = &pContainer1;
+	pcContainer2 = &pContainer2;
+
+	pContainer2 = NULL;
+	pObject = NULL;
+	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+
+	pRoot->TestGetSet()->Kill();
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer1->GetDistToRoot());
+	AssertFalse(pcContainer1->TestCanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer2->GetDistToRoot());
+	AssertFalse(pcContainer2->TestCanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcObject->GetDistToRoot());
+	AssertFalse(pcObject->TestCanFindRoot());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectSetUnattachment(void)
+{
+	ObjectsInit();
+
+	Ptr<CPointerContainer>		pContainer1;
+	Ptr<CPointerContainer>		pContainer2;
+	Ptr<CTestObject>			pObject;
+	Ptr<CRoot>					pRoot;
+	STestObjectKilledNotifier	sKillNotifier1;
+	CTestObject*				pcObject;
+	CPointerContainer*			pcContainer1;
+	CPointerContainer*			pcContainer2;
+
+	pObject = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
+	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
+	pRoot = ORoot();
+	pRoot->Add(pContainer1);
+
+	pcObject = &pObject;
+	pcContainer1 = &pContainer1;
+	pcContainer2 = &pContainer2;
+
+	pContainer2 = NULL;
+	pObject = NULL;
+	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+
+	pRoot->NullifySet();
+	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(4, gcUnknowns.NumElements());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer1->GetDistToRoot());
+	AssertFalse(pcContainer1->TestCanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer2->GetDistToRoot());
+	AssertFalse(pcContainer2->TestCanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcObject->GetDistToRoot());
+	AssertFalse(pcObject->TestCanFindRoot());
+
+	pContainer1 = NULL;
+	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(1, gcUnknowns.NumElements());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObject(void)
 {
 	BeginTests();
@@ -621,6 +765,9 @@ void TestObject(void)
 	TestObjectPointerRemappingKilling();
 	TestObjectPointerRemappingSimplerComplex();
 	TestObjectPointerRemappingComplex();
+	TestObjectKill();
+	TestObjectRootUnattachment();
+	TestObjectSetUnattachment();
 
 	TestStatistics();
 }
