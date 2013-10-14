@@ -1343,32 +1343,32 @@ void TestRootKill(void)
 {
 	ObjectsInit();
 
-	Ptr<CPointerContainer>		pContainer1;
-	Ptr<CPointerContainer>		pContainer2;
-	Ptr<CTestObject>			pObject;
-	Ptr<CRoot>					pRoot;
-	STestObjectKilledNotifier	sKillNotifier1;
-	CTestObject*				pcObject;
-	CPointerContainer*			pcContainer1;
-	CPointerContainer*			pcContainer2;
+	//Ptr<CPointerContainer>		pContainer1;
+	//Ptr<CPointerContainer>		pContainer2;
+	//Ptr<CTestObject>			pObject;
+	//Ptr<CRoot>					pRoot;
+	//STestObjectKilledNotifier	sKillNotifier1;
+	//CTestObject*				pcObject;
+	//CPointerContainer*			pcContainer1;
+	//CPointerContainer*			pcContainer2;
 
-	pObject = OMalloc(CTestObject)->Init(&sKillNotifier1);
-	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
-	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
-	pRoot = ORoot();
-	pRoot->Add(pContainer1);
+	//pObject = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	//pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
+	//pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
+	//pRoot = ORoot();
+	//pRoot->Add(pContainer1);
 
-	pcObject = &pObject;
-	pcContainer1 = &pContainer1;
-	pcContainer2 = &pContainer2;
+	//pcObject = &pObject;
+	//pcContainer1 = &pContainer1;
+	//pcContainer2 = &pContainer2;
 
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(5, gcUnknowns.NumElements());
+	//AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	//AssertLongLongInt(5, gcUnknowns.NumElements());
 
-	pRoot->Kill();
+	//pRoot->Kill();
 
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(0, gcUnknowns.NumElements());
+	//AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	//AssertLongLongInt(0, gcUnknowns.NumElements());
 
 	ObjectsKill();
 }
