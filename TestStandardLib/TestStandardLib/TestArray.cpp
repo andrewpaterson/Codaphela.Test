@@ -124,7 +124,7 @@ void TestArrayRemove(void)
 	AssertInt(5, pacStuff->Get(0)->miInt);
 	AssertInt(7, pacStuff->Get(1)->miInt);
 
-	pacStuff->RemoveAll();
+	pacStuff->KillAll();
 
 	AssertInt(0, pacStuff->NumElements());
 

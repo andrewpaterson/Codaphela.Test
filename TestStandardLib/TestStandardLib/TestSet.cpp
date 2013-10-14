@@ -102,7 +102,7 @@ void TestSetRemove(void)
 	AssertInt(7, pacStuff->Get(0)->miInt);
 	AssertInt(3, pacStuff->Get(1)->miInt);
 
-	pacStuff->RemoveAll();
+	pacStuff->KillAll();
 
 	AssertInt(0, pacStuff->NumElements());
 
