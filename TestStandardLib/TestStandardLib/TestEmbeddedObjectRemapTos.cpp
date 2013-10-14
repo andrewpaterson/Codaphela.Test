@@ -89,6 +89,7 @@ void TestEmbeddedObjectRemapTosActual(void)
 	AssertString("CHollowEmbeddedObject", pPointerHollowEmbedded1->mp.ClassName());
 	AssertString("CHollowEmbeddedObject", pPointerHollowEmbedded2->mp.ClassName());
 
+	Ptr<CPointerContainer>	pPointerObject = gcObjects.Add<CPointerContainer>()->Init(pObject);
 
 	pHollow.MorphInto(&pObject);
 
@@ -102,16 +103,17 @@ void TestEmbeddedObjectRemapTosActual(void)
 
 	AssertPointer(pObject.Object(), pHollow.Object());
 	AssertPointer(pObject.Object(), pPointerHollow->mp.Object());
+	AssertPointer(pObject.Object(), pPointerObject->mp.Object());
 	AssertPointer(pHollowEmbedded1.Object(), pPointerHollowEmbedded1->mp.Object());
 	AssertPointer(pHollowEmbedded2.Object(), pPointerHollowEmbedded2->mp.Object());
 
-	AssertInt(4, pHollow.Object()->NumHeapFroms());
-	AssertInt(2, pHollow.Object()->CEmbeddedObject::NumHeapFroms());
+	AssertInt(5, pHollow.Object()->NumHeapFroms());  //pPointerObject and pPointerHollow now both point to the same object.  pRoot.Set is the fifth.
+	AssertInt(3, pHollow.Object()->CEmbeddedObject::NumHeapFroms());
 	AssertInt(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumHeapFroms());
 	AssertInt(1, pHollowEmbedded2.Object()->CEmbeddedObject::NumHeapFroms());
 
-	AssertInt(3, pHollow.Object()->NumStackFroms());
-	AssertInt(1, pHollow.Object()->CEmbeddedObject::NumStackFroms());
+	AssertInt(4, pHollow.Object()->NumStackFroms());  //pObject and pHollow now both point to the same object.
+	AssertInt(2, pHollow.Object()->CEmbeddedObject::NumStackFroms());
 	AssertInt(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumStackFroms());
 	AssertInt(1, pHollowEmbedded2.Object()->CEmbeddedObject::NumStackFroms());
 
