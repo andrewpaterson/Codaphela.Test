@@ -729,7 +729,15 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	AssertFalse(sKilledTop1.bKilled);
 	AssertFalse(sKilledTop2.bKilled);
 	AssertFalse(sKilled1.bKilled);
+	AssertTrue(pSet->TestCanFindRoot());
+	AssertTrue(pTop2->TestCanFindRoot());
+	AssertTrue(pTest1->TestCanFindRoot());
+	AssertTrue(pTop1->TestCanFindRoot());
 	AssertInt(1, pSet->NumElements());
+	AssertInt(1, pSet->NumTos());
+	AssertInt(1, pTop2->NumTos());
+	AssertInt(1, pTest1->NumTos());
+	AssertInt(0, pTop1->NumTos());
 
 	//   Top1(5)
 	//     |
@@ -741,6 +749,10 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	//     |
 	//    ...
 	//   Root(0)
+
+	pSet.DumpTos();
+
+	gcObjects.DumpGraph();
 
 	pRoot->Kill();
 	ObjectsKill();
@@ -1339,36 +1351,69 @@ void TestRootSetKillAll(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestRootKillWithStackPointers(void)
+{
+	ObjectsInit();
+
+	Ptr<CPointerContainer>		pContainer1;
+	Ptr<CPointerContainer>		pContainer2;
+	Ptr<CTestObject>			pObject;
+	Ptr<CRoot>					pRoot;
+	STestObjectKilledNotifier	sKillNotifier1;
+
+	pObject = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
+	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
+	pRoot = ORoot();
+	pRoot->Add(pContainer1);
+
+	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(5, gcUnknowns.NumElements());
+
+	pRoot->Kill();
+	AssertNull(&pRoot);
+	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(3, gcUnknowns.NumElements());
+
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pObject->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pContainer1->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pContainer2->GetDistToRoot());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestRootKill(void)
 {
 	ObjectsInit();
 
-	//Ptr<CPointerContainer>		pContainer1;
-	//Ptr<CPointerContainer>		pContainer2;
-	//Ptr<CTestObject>			pObject;
-	//Ptr<CRoot>					pRoot;
-	//STestObjectKilledNotifier	sKillNotifier1;
-	//CTestObject*				pcObject;
-	//CPointerContainer*			pcContainer1;
-	//CPointerContainer*			pcContainer2;
+	Ptr<CPointerContainer>		pContainer1;
+	Ptr<CPointerContainer>		pContainer2;
+	Ptr<CTestObject>			pObject;
+	Ptr<CRoot>					pRoot;
+	STestObjectKilledNotifier	sKillNotifier1;
 
-	//pObject = OMalloc(CTestObject)->Init(&sKillNotifier1);
-	//pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
-	//pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
-	//pRoot = ORoot();
-	//pRoot->Add(pContainer1);
+	pObject = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
+	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
+	pRoot = ORoot();
+	pRoot->Add(pContainer1);
 
-	//pcObject = &pObject;
-	//pcContainer1 = &pContainer1;
-	//pcContainer2 = &pContainer2;
+	pObject = NULL;
+	pContainer1 = NULL;
+	pContainer2 = NULL;
 
-	//AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
-	//AssertLongLongInt(5, gcUnknowns.NumElements());
+	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(5, gcUnknowns.NumElements());
 
-	//pRoot->Kill();
+	pRoot->Kill();
 
-	//AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
-	//AssertLongLongInt(0, gcUnknowns.NumElements());
+	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(0, gcUnknowns.NumElements());
 
 	ObjectsKill();
 }
@@ -1382,6 +1427,8 @@ void TestRoot(void)
 {
 	BeginTests();
 
+	TestRootKill();
+	TestRootKillWithStackPointers();
 	TestRootDistance();
 	TestRootStackPointers();
 	TestRootGraphRemoveSimple();
@@ -1393,7 +1440,6 @@ void TestRoot(void)
 	TestRootGraphRemoveErrorFromObjectConverter();
 	TestRootSetKillAll();
 	TestRootSetRemoveAll();
-	TestRootKill();
 
 	TestStatistics();
 }
