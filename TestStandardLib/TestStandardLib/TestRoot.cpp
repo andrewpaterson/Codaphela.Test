@@ -691,6 +691,8 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	AssertInt(4, pTest1->GetDistToRoot());
 	AssertInt(5, pTop1->GetDistToRoot());
 	AssertInt(3, pTop2->GetDistToRoot());
+	AssertInt(2, pSet->NumElements());
+	AssertInt(2, pSet->NumTos());
 
 	//       Test1(4)  
 	//       //\\      
@@ -736,13 +738,13 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	AssertInt(1, pSet->NumElements());
 	AssertInt(1, pSet->NumTos());
 	AssertInt(1, pTop2->NumTos());
-	AssertInt(1, pTest1->NumTos());
-	AssertInt(0, pTop1->NumTos());
+	AssertInt(2, pTest1->NumTos());
+	AssertInt(1, pTop1->NumTos());
 
 	//   Top1(5)
-	//     |
+	//     ||
 	//   Test1(4)  
-	//     |
+	//     ||
 	//    Top2(3)
 	//     |
 	//    Set(2)
@@ -864,9 +866,9 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 	AssertFalse(sKilled1.bKilled);
 
 	//   Top2(9)
-	//     |
+	//     ||
 	//   Test1(8)  
-	//     |  
+	//     ||  
 	//   Top1(7)
 	//     |    
 	//   Test5(6)

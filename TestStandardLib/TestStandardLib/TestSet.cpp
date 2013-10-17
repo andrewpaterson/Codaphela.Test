@@ -115,32 +115,38 @@ void TestSetRemove(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSetKill(void)
+void TestSetKillCyclic(void)
 {
 	ObjectsInit();
 
-	Ptr<CPointerContainer>		pContainer1;
-	Ptr<CPointerContainer>		pContainer2;
-	Ptr<CTestObject>			pObject;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
 	Ptr<CRoot>					pRoot;
 	Ptr<CSetObject>				pSet;
 
-	pObject = OMalloc(CTestObject)->Init(NULL);
-	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
-	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
+	pTest1 = OMalloc(CTestObject)->Init(NULL);
+	pTest2 = OMalloc(CTestObject)->Init(NULL);
+	pTest1->mpTest = pTest2;
+	pTest2->mpTest = pTest1;
+	pTest3 = OMalloc(CTestObject)->Init(NULL);
+	pTest3->mpTest = pTest2;
 	pSet = OMalloc(CSetObject)->Init();
 	pRoot = ORoot();
 	pRoot->Add(pSet);
-	pSet->Add(pContainer1);
+	pSet->Add(pTest3);
 
 	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	AssertInt(5, pTest1->GetDistToRoot());
+	AssertInt(4, pTest2->GetDistToRoot());
+	AssertInt(3, pTest3->GetDistToRoot());
 
 	pSet->Kill();
 	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
 	AssertNull(&pSet);
-	AssertInt(UNATTACHED_DIST_TO_ROOT, pContainer1->GetDistToRoot());
-	AssertInt(UNATTACHED_DIST_TO_ROOT, pContainer2->GetDistToRoot());
-	AssertInt(UNATTACHED_DIST_TO_ROOT, pObject->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest1->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest2->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest3->GetDistToRoot());
 
 	ObjectsKill();
 }
@@ -236,7 +242,7 @@ void TestSet(void)
 	TestSetGet();
 	TestSetAddAll();
 	TestSetRemove();
-	TestSetKill();
+	TestSetKillCyclic();
 	TestSetKillAll();
 	TestSetRemoveAll();
 

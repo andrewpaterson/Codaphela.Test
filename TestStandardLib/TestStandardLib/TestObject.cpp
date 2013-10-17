@@ -754,6 +754,48 @@ void TestObjectSetUnattachment(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectKillCyclic(void)
+{
+	ObjectsInit();
+
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
+	Ptr<CTestObject>			pTest4;
+	Ptr<CRoot>					pRoot;
+
+	pTest1 = OMalloc(CTestObject)->Init(NULL);
+	pTest2 = OMalloc(CTestObject)->Init(NULL);
+	pTest1->mpTest = pTest2;
+	pTest2->mpTest = pTest1;
+	pTest3 = OMalloc(CTestObject)->Init(NULL);
+	pTest3->mpTest = pTest2;
+	pTest4 = OMalloc(CTestObject)->Init(NULL);
+	pTest4->mpTest = pTest3;
+	pRoot = ORoot();
+	pRoot->Add(pTest4);
+
+	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	AssertInt(5, pTest1->GetDistToRoot());
+	AssertInt(4, pTest2->GetDistToRoot());
+	AssertInt(3, pTest3->GetDistToRoot());
+	AssertInt(2, pTest4->GetDistToRoot());
+
+	pTest4->Kill();
+	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertNull(&pTest4);
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest1->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest2->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest3->GetDistToRoot());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObject(void)
 {
 	BeginTests();
@@ -766,6 +808,7 @@ void TestObject(void)
 	TestObjectPointerRemappingSimplerComplex();
 	TestObjectPointerRemappingComplex();
 	TestObjectKill();
+	TestObjectKillCyclic();
 	TestObjectRootUnattachment();
 	TestObjectSetUnattachment();
 
