@@ -866,9 +866,9 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 	AssertFalse(sKilled1.bKilled);
 
 	//   Top2(9)
-	//     ||
+	//     |
 	//   Test1(8)  
-	//     ||  
+	//     |  
 	//   Top1(7)
 	//     |    
 	//   Test5(6)

@@ -116,16 +116,19 @@ void TestObjectConverterDragonExistingHollows(void)
 	CObjectConverterNative				cChunkedConverter;
 	CObjectSource*						pcObjectSource;
 	CObjectSourceChunked*				pcObjectMultipleSource;
-	CPointer						pcObject;
+	CPointer							pcObject;
 	CDiskFile*							pcDiskFile;
-	Ptr<CTestDoubleNamedString>	pcDoubleNamedString;
-	Ptr<CRoot>						pcRoot;
-	Ptr<CTestNamedString>			pcObject2;
+	Ptr<CTestDoubleNamedString>			pcDoubleNamedString;
+	Ptr<CRoot>							pcRoot;
+	Ptr<CTestNamedString>				pcObject2;
 	CTestNamedString*					pcEnd;
-	Ptr<CTestNamedString>			pcObject3;
+	Ptr<CTestNamedString>				pcObject3;
 	CTestNamedString*					pcTestNamedString3;
 	CTestNamedString*					pcTestNamedString2;
 	OIndex								oiNew;
+	CFileUtil							cFileUtil;
+
+	cFileUtil.RemoveDir("Output\\ObjectConverter\\");
 
 	ObjectsInit();
 	WriteObjectConverterChunkedFile();
