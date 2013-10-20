@@ -75,7 +75,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestObjectsSimple();
 	TestRoot();
 	TestObject();
-	TestPointer(); //<- You're working here.
+	TestPointer();
 	TestArrayCommonObject();
 	TestNamedObject();
 	TestObjectAllocator();

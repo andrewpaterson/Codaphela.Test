@@ -84,7 +84,11 @@ void TestArrayAddAll(void)
 	Ptr<CArray<CTestSaveableObject1>> pacMore = OMalloc(CArray<CTestSaveableObject1>)->Init();
 	pSaveable = OMalloc(CTestSaveableObject1)->Init();
 	pSaveable->miInt = 5;
+
+	AssertInt(0, pSaveable->NumHeapFroms());
 	pacStuff->Insert(0, pSaveable);
+	AssertInt(1, pSaveable->NumHeapFroms());
+	gcObjects.ValidateConsistency();
 
 	pacMore->AddAll(pacStuff);
 

@@ -28,7 +28,6 @@ void CTestObject::Class(void)
 	CObject::Class();
 	Pointer(mpObject.This());
 	Pointer(mpTest.This());
-
 }
 
 
