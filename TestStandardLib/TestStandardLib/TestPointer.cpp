@@ -1,4 +1,5 @@
 #include "StandardLib/Objects.h"
+#include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
 #include "ObjectWriterChunkedTestClasses.h"
@@ -196,6 +197,54 @@ void TestPointerAssignmentObjectToObjectPointer()
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestPointerHeapNotInGraphFreeStack(void)
+{
+	ObjectsInit();
+
+	STestObjectKilledNotifier	sNotifier1;
+	STestObjectKilledNotifier	sNotifier2;
+
+	Ptr<CTestObject> pTest1 = OMalloc(CTestObject)->Init(&sNotifier1);
+	Ptr<CTestObject> pTest2 = OMalloc(CTestObject)->Init(&sNotifier2);
+
+	AssertInt(0, pTest1->NumHeapFroms());
+	AssertInt(1, pTest1->NumStackFroms());
+	AssertInt(0, pTest1->NumTos());
+	AssertInt(0, pTest2->NumHeapFroms());
+	AssertInt(1, pTest2->NumStackFroms());
+	AssertInt(0, pTest2->NumTos());
+	AssertFalse(sNotifier1.bKilled);
+	AssertFalse(sNotifier2.bKilled);
+
+	pTest2->mpObject = pTest1;
+
+	AssertInt(1, pTest1->NumHeapFroms());
+	AssertInt(1, pTest1->NumStackFroms());
+	AssertInt(0, pTest1->NumTos());
+	AssertInt(0, pTest2->NumHeapFroms());
+	AssertInt(1, pTest2->NumStackFroms());
+	AssertInt(1, pTest2->NumTos());
+
+	pTest1 = NULL;  //pTest1 should not be killed here, even though it has no stack froms.  It still has a heap from.
+
+	AssertFalse(sNotifier1.bKilled);
+	AssertFalse(sNotifier2.bKilled);
+	AssertInt(1, pTest1->NumHeapFroms());
+	AssertInt(0, pTest1->NumStackFroms());
+	AssertInt(0, pTest1->NumTos());
+	AssertInt(0, pTest2->NumHeapFroms());
+	AssertInt(1, pTest2->NumStackFroms());
+	AssertInt(1, pTest2->NumTos());
+
+	ObjectsKill();
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestPointer(void)
 {
 	BeginTests();
@@ -207,6 +256,7 @@ void TestPointer(void)
 	TestPointerAssignmentStackToObjectPointer();
 	TestPointerAssignmentObjectToObjectPointer();
 	TestPointerNegation();
+	TestPointerHeapNotInGraphFreeStack();
 
 	TestStatistics();
 }
