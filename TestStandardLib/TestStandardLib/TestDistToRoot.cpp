@@ -38,6 +38,9 @@ void TestClearDistToRootToValidDist(void)
 	Ptr<CPointerContainer>		p8c;
 	Ptr<CPointerContainer>		p9c;
 
+	CDistToRootCalculator		cRootDistCalc;
+
+
 	pRoot = ORoot();
 	p1 = OMalloc(CPointerContainer)->Init();
 	pRoot->Add(p1);
@@ -91,8 +94,6 @@ void TestClearDistToRootToValidDist(void)
 	p8c->mp = p9c;
 	p9c->mp = pTest1c;
 
-	gcObjects.DumpGraph();
-    
 	//       pTest2d(7)  pTest2e(7)
 	//       //   \\     //   \\
 	//      //     \\   //     \\
@@ -149,6 +150,29 @@ void TestClearDistToRootToValidDist(void)
 	AssertInt(10,p8c->GetDistToRoot());
 	AssertInt(11,p9c->GetDistToRoot());
 
+	AssertInt(3, pTest1b->NumHeapFroms());
+	AssertInt(24, (int)gcObjects.NumMemoryIndexes());
+	p3b->mp.UnsafeClearObject();
+	pTest1b->TestRemoveHeapFrom(p3b.BaseObject());
+	AssertInt(24, (int)gcObjects.NumMemoryIndexes());
+	AssertInt(2, pTest1b->NumHeapFroms());
+
+	cRootDistCalc.Init();
+
+	pTest1b->ClearDistToRootToValidDist(NULL, &cRootDistCalc);
+
+	AssertInt(CLEARED_DIST_TO_ROOT, pTest1a->GetDistToRoot());
+	AssertInt(CLEARED_DIST_TO_ROOT, pTest1b->GetDistToRoot());
+	AssertInt(CLEARED_DIST_TO_ROOT, pTest1c->GetDistToRoot());
+	AssertInt(CLEARED_DIST_TO_ROOT, pTest2d->GetDistToRoot());
+	AssertInt(CLEARED_DIST_TO_ROOT, pTest2e->GetDistToRoot());
+
+	AssertInt(2, cRootDistCalc.NumElements());
+	AssertPointer(pTest1a.BaseObject(), cRootDistCalc.Get(0)->pcObject);
+	AssertPointer(pTest1c.BaseObject(), cRootDistCalc.Get(1)->pcObject);
+	AssertInt(9, cRootDistCalc.Get(0)->iExpectedDist);
+	AssertInt(12, cRootDistCalc.Get(1)->iExpectedDist);
+
 	ObjectsKill();
 }
 
@@ -165,3 +189,4 @@ void TestDistToRoot(void)
 
 	TestStatistics();
 }
+
