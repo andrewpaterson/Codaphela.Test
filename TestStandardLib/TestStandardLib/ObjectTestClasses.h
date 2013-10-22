@@ -19,12 +19,32 @@ public:
 	Ptr<CTestObject>			mpTest;
 	STestObjectKilledNotifier*	mpsKilledNotifier;
 
+	Ptr<CTestObject>	Init(void);
 	Ptr<CTestObject>	Init(STestObjectKilledNotifier* psKilledNotifier);
 	void				Class(void);
 	void				KillData(void);
 
 	BOOL				Save(CObjectSerialiser* pcFile);
 	BOOL				Load(CObjectDeserialiser* pcFile);
+};
+
+
+class CTestTriPointerObject : public CObject
+{
+BASE_FUNCTIONS(CTestTriPointerObject);
+public:
+	CPointer					mpObject1;
+	CPointer					mpObject2;
+	CPointer					mpObject3;
+	STestObjectKilledNotifier*	mpsKilledNotifier;
+
+	Ptr<CTestTriPointerObject>	Init(void);
+	Ptr<CTestTriPointerObject>	Init(STestObjectKilledNotifier* psKilledNotifier);
+	void						Class(void);
+	void						KillData(void);
+
+	BOOL						Save(CObjectSerialiser* pcFile);
+	BOOL						Load(CObjectDeserialiser* pcFile);
 };
 
 
