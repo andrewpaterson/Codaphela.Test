@@ -9,12 +9,12 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestClearDistToRootToValidDist(void)
+void TestClearDistToRootToValidDistComplex(void)
 {
 	ObjectsInit();
 
 	Ptr<CRoot>					pRoot;
-	Ptr<CPointerContainer>		p1;
+	Ptr<CNamedPointerContainer>	p1;
 	Ptr<CTestTriPointerObject>	pTri;
 	Ptr<CPointerContainer>		p2a;
 	Ptr<CPointerContainer>		p2b;
@@ -42,7 +42,7 @@ void TestClearDistToRootToValidDist(void)
 
 
 	pRoot = ORoot();
-	p1 = OMalloc(CPointerContainer)->Init();
+	p1 = ONMalloc(CNamedPointerContainer, "Fred's")->Init();
 	pRoot->Add(p1);
 	pTri = OMalloc(CTestTriPointerObject)->Init();
 	p1->mp = pTri;
@@ -181,11 +181,146 @@ void TestClearDistToRootToValidDist(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestClearDistToRootToValidDistSimpleLeft(void)
+{
+	ObjectsInit();
+
+	Ptr<CRoot>					pRoot;
+	Ptr<CNamedPointerContainer>	p1;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
+
+	CDistToRootCalculator		cRootDistCalc;
+
+	pRoot = ORoot();
+	p1 = ONMalloc(CNamedPointerContainer, "Back")->Init();
+	pRoot->Add(p1);
+	pTest1 = OMalloc(CTestObject)->Init();
+	p1->mp = pTest1;
+	pTest2 = OMalloc(CTestObject)->Init();
+	pTest3 = OMalloc(CTestObject)->Init();
+	pTest1->mpTest = pTest2;
+	pTest1->mpObject = pTest3;
+	pTest2->mpTest = pTest3;
+
+	//     pTest3(4)
+	//       | \
+	//       |  \
+	//       |   \
+	//       |  pTest2(4)
+	//       |   /
+	//       |  /
+	//       | /
+	//     pTest1(3)
+	//        |
+	//        |
+	//       p1(2)
+	//        |
+	//       ...
+	//      Root(0)
+
+	AssertInt(2, p1->GetDistToRoot());
+	AssertInt(3, pTest1->GetDistToRoot());
+	AssertInt(4, pTest2->GetDistToRoot());
+	AssertInt(4, pTest3->GetDistToRoot());
+
+	AssertInt(1, pTest2->NumHeapFroms());
+	pTest1->mpTest.UnsafeClearObject();
+	pTest2->TestRemoveHeapFrom(pTest1.BaseObject());
+	AssertInt(0, pTest2->NumHeapFroms());
+
+	cRootDistCalc.Init();
+
+	pTest2->ClearDistToRootToValidDist(NULL, &cRootDistCalc);
+
+	AssertInt(CLEARED_DIST_TO_ROOT, pTest2->GetDistToRoot());
+	AssertInt(4, pTest3->GetDistToRoot());
+
+	AssertInt(0, cRootDistCalc.NumElements());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestClearDistToRootToValidDistSimpleRight(void)
+{
+	ObjectsInit();
+
+	Ptr<CRoot>					pRoot;
+	Ptr<CNamedPointerContainer>	p1;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
+
+	CDistToRootCalculator		cRootDistCalc;
+
+	pRoot = ORoot();
+	p1 = ONMalloc(CNamedPointerContainer, "III")->Init();
+	pRoot->Add(p1);
+	pTest1 = OMalloc(CTestObject)->Init();
+	p1->mp = pTest1;
+	pTest2 = OMalloc(CTestObject)->Init();
+	pTest3 = OMalloc(CTestObject)->Init();
+	pTest1->mpTest = pTest2;
+	pTest1->mpObject = pTest3;
+	pTest2->mpTest = pTest3;
+
+	//     pTest3(4)
+	//       | \
+	//       |  \
+	//       |   \
+	//       |  pTest2(4)
+	//       |   /
+	//       |  /
+	//       | /
+	//     pTest1(3)
+	//        |
+	//        |
+	//       p1(2)
+	//        |
+	//       ...
+	//      Root(0)
+
+	AssertInt(2, p1->GetDistToRoot());
+	AssertInt(3, pTest1->GetDistToRoot());
+	AssertInt(4, pTest2->GetDistToRoot());
+	AssertInt(4, pTest3->GetDistToRoot());
+
+	AssertInt(2, pTest3->NumHeapFroms());
+	pTest1->mpObject.UnsafeClearObject();
+	pTest3->TestRemoveHeapFrom(pTest1.BaseObject());
+	AssertInt(1, pTest3->NumHeapFroms());
+
+	cRootDistCalc.Init();
+
+	pTest3->ClearDistToRootToValidDist(NULL, &cRootDistCalc);
+
+	AssertInt(CLEARED_DIST_TO_ROOT, pTest3->GetDistToRoot());
+
+	AssertInt(1, cRootDistCalc.NumElements());
+	AssertPointer(pTest3.BaseObject(), cRootDistCalc.Get(0)->pcObject);
+	AssertInt(5, cRootDistCalc.Get(0)->iExpectedDist);
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestDistToRoot(void)
 {
 	BeginTests();
 
-	TestClearDistToRootToValidDist();
+	TestClearDistToRootToValidDistComplex();
+	TestClearDistToRootToValidDistSimpleLeft();
+	TestClearDistToRootToValidDistSimpleRight();
 
 	TestStatistics();
 }
