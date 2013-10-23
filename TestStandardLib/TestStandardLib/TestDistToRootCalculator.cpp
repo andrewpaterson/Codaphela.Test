@@ -350,7 +350,6 @@ void TestUpdateTosDistToRootComplex(void)
 	Ptr<CPointerContainer>		p9c;
 
 	CDistToRootCalculator		cDistToRootCalculator;
-	CDistToRootEffectedFroms	cEffectedFroms;
 
 	pRoot = ORoot();
 	p1 = ONMalloc(CNamedPointerContainer, "Fred's")->Init();
@@ -409,12 +408,10 @@ void TestUpdateTosDistToRootComplex(void)
 	pTest1b->TestRemoveHeapFrom(p3b.BaseObject());
 
 	cDistToRootCalculator.Init();
-	cEffectedFroms.Init();
 
 	cDistToRootCalculator.AddFromChanged(pTest1b.BaseObject());
-	cDistToRootCalculator.Calculate(&cEffectedFroms);
+	cDistToRootCalculator.Calculate();
 
-	cEffectedFroms.Kill();
 	cDistToRootCalculator.Kill();
 
 	//       pTest2d(10)  pTest2e(12)
@@ -454,7 +451,6 @@ void TestUpdateTosDistToRootSimpleLeft(void)
 	Ptr<CTestObject>			pTest2;
 	Ptr<CTestObject>			pTest3;
 
-	CDistToRootEffectedFroms	cEffectedFroms;
 	CDistToRootCalculator		cDistToRootCalculator;
 
 	pRoot = ORoot();
@@ -484,12 +480,10 @@ void TestUpdateTosDistToRootSimpleLeft(void)
 	//    Root(0)
 
 	cDistToRootCalculator.Init();
-	cEffectedFroms.Init();
 
 	cDistToRootCalculator.AddFromChanged(pTest2.BaseObject());
-	cDistToRootCalculator.Calculate(&cEffectedFroms);
+	cDistToRootCalculator.Calculate();
 
-	cEffectedFroms.Kill();
 	cDistToRootCalculator.Kill();
 
 	AssertInt(3, pTest1->GetDistToRoot());
@@ -516,7 +510,6 @@ void TestUpdateTosDistToRootSimpleRight(void)
 	Ptr<CTestObject>			pTest2;
 	Ptr<CTestObject>			pTest3;
 
-	CDistToRootEffectedFroms	cEffectedFroms;
 	CDistToRootCalculator		cDistToRootCalculator;
 
 	pRoot = ORoot();
@@ -547,12 +540,10 @@ void TestUpdateTosDistToRootSimpleRight(void)
 	//        Root(0)
 
 	cDistToRootCalculator.Init();
-	cEffectedFroms.Init();
 
 	cDistToRootCalculator.AddFromChanged(pTest2.BaseObject());
-	cDistToRootCalculator.Calculate(&cEffectedFroms);
+	cDistToRootCalculator.Calculate();
 
-	cEffectedFroms.Kill();
 	cDistToRootCalculator.Kill();
 
 	AssertInt(3, pTest1->GetDistToRoot());
