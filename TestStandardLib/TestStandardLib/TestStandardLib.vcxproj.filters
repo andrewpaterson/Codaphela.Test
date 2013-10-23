@@ -82,6 +82,9 @@
     <Filter Include="Source\Object\Object\Collection\Set">
       <UniqueIdentifier>{a0b7fbe2-0aba-4aec-a99d-b55664c9dc19}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Object\Object\Distance">
+      <UniqueIdentifier>{c71ff53c-ed92-4c82-9370-616a46a484a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestStandardLib.cpp">
@@ -231,8 +234,8 @@
     <ClCompile Include="TestStackPointers.cpp">
       <Filter>Source\Object\Object\Pointer</Filter>
     </ClCompile>
-    <ClCompile Include="TestDistToRoot.cpp">
-      <Filter>Source\Object\Object</Filter>
+    <ClCompile Include="TestDistToRootCalculator.cpp">
+      <Filter>Source\Object\Object\Distance</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
