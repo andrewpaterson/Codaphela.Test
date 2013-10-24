@@ -555,6 +555,904 @@ void TestUpdateTosDistToRootSimpleRight(void)
 	ObjectsKill();
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestUpdateTosDistToRootChildTriangleKindaBalanced(void)
+{
+	ObjectsInit();
+
+	Ptr<CNamedPointerContainer>	p1a;
+	Ptr<CNamedPointerContainer>	p1b;
+	Ptr<CPointerContainer>		p2a;
+	Ptr<CPointerContainer>		p2b;
+	Ptr<CPointerContainer>		p3a;
+	Ptr<CPointerContainer>		p3b;
+	Ptr<CPointerContainer>		p4a;
+	Ptr<CPointerContainer>		p4b;
+	Ptr<CPointerContainer>		p5a;
+	Ptr<CPointerContainer>		p5b;
+	Ptr<CPointerContainer>		p6b;
+	Ptr<CNamedPointerContainer>	p1c;
+	Ptr<CPointerContainer>		p6c;
+	Ptr<CRoot>					pRoot;
+	Ptr<CTestObject>			pTest1a;
+	Ptr<CTestObject>			pTest1b;
+	Ptr<CTestObject>			pTest1c;
+	Ptr<CTestObject>			pTest2a;
+	Ptr<CTestObject>			pTest2b;
+	Ptr<CTestObject>			pTest3a;
+
+	CDistToRootCalculator	cDistToRootCalculator;
+
+	pRoot = ORoot();
+
+	p6b = OMalloc(CPointerContainer)->Init();
+	p6c = OMalloc(CPointerContainer)->Init();
+	p5a = OMalloc(CPointerContainer)->Init();
+	p5b = OMalloc(CPointerContainer)->Init(p6b);
+	p4a = OMalloc(CPointerContainer)->Init(p5a);
+	p4b = OMalloc(CPointerContainer)->Init(p5b);
+	p3a = OMalloc(CPointerContainer)->Init(p4a);
+	p3b	= OMalloc(CPointerContainer)->Init(p4b);
+	p2a = OMalloc(CPointerContainer)->Init(p3a);
+	p2b = OMalloc(CPointerContainer)->Init(p3b);
+	p1a = ONMalloc(CNamedPointerContainer, "R.")->Init(p2a);
+	p1b = ONMalloc(CNamedPointerContainer, "E.")->Init(p2b);
+	p1c = ONMalloc(CNamedPointerContainer, "B.")->Init(p6c);
+	pRoot->Add(p1a);
+	pRoot->Add(p1b);
+	pRoot->Add(p1c);
+
+	pTest1a = OMalloc(CTestObject)->Init();
+	pTest1b = OMalloc(CTestObject)->Init();
+	pTest1c = OMalloc(CTestObject)->Init();
+	pTest2a = OMalloc(CTestObject)->Init();
+	pTest2b = OMalloc(CTestObject)->Init();
+	pTest3a = OMalloc(CTestObject)->Init();
+	p5a->mp = pTest1a;
+	p6b->mp = pTest1c;
+	p6c->mp = pTest1b;
+	pTest1a->mpTest = pTest1b;
+	pTest1c->mpTest = pTest1b;
+	pTest1a->mpObject = pTest2a;
+	pTest1c->mpObject = pTest2b;
+	pTest1b->mpObject = pTest2a;
+	pTest1b->mpTest = pTest2b;
+	pTest2a->mpTest = pTest3a;
+	pTest2b->mpTest = pTest3a;
+	pTest2a->mpObject = pTest2b;
+
+	//                            
+	//                 pTest3a(6)
+	//                  /   \
+	//                 /     \
+	//                /       \
+	//               /         \
+	//              /           \
+	//         pTest2a(5)-->pTest2b(5)
+	//            |  \         /  |
+	//            |   \       /   |
+	//            |    \     /    |
+	//            |     \   /     |
+	//            |  pTest1b(4)   |
+	//            |   /   |   \   |
+	//            |  /    |    \  |
+	//            | /     |     \ |
+	//         pTest1a(7) |     pTest1c(8)
+	//            |       |       |
+	//            |       |       |
+	//            |      p6c(3)  p6b(7)
+	//            |       |       |
+	//            |       |       |
+	//           p5a(6)   |      p5b(6)
+	//            |       |       |
+	//            |       |       |
+	//           p4a(5)   |      p4b(5)
+	//            |       |       |
+	//            |       |       |
+	//           p3a(4)   |      p3b(4)
+	//            |       |       |
+	//            |       |       |
+	//           p2a(3)   |      p2b(3)
+	//            |       |       |
+	//            |       |       |
+	//           p1a(2)  p1c(2)  p1b(2)
+	//             \      |      /           
+	//              \     |     /           
+	//               \    |    /           
+	//                \   |   /             
+	//                 \  |  /            
+	//                  \ | /            
+	//                   ...
+	//                  Root(0)
+	//                         
+
+	AssertInt(2, p1a->GetDistToRoot());
+	AssertInt(2, p1c->GetDistToRoot());
+	AssertInt(2, p1b->GetDistToRoot());
+	AssertInt(3, p2a->GetDistToRoot());
+	AssertInt(3, p2b->GetDistToRoot());
+	AssertInt(4, p3a->GetDistToRoot());
+	AssertInt(4, p3b->GetDistToRoot());
+	AssertInt(5, p4a->GetDistToRoot());
+	AssertInt(5, p4b->GetDistToRoot());
+	AssertInt(6, p5a->GetDistToRoot());
+	AssertInt(6, p5b->GetDistToRoot());
+	AssertInt(7, p6b->GetDistToRoot());
+	AssertInt(3, p6c->GetDistToRoot());
+	AssertInt(7, pTest1a->GetDistToRoot());
+	AssertInt(4, pTest1b->GetDistToRoot());
+	AssertInt(8, pTest1c->GetDistToRoot());
+	AssertInt(5, pTest2a->GetDistToRoot());
+	AssertInt(5, pTest2b->GetDistToRoot());
+	AssertInt(6, pTest3a->GetDistToRoot());
+
+	p6c->mp.UnsafeClearObject();
+	pTest1b->TestRemoveHeapFrom(p6c.BaseObject());
+
+	cDistToRootCalculator.Init();
+
+	cDistToRootCalculator.AddFromChanged(pTest1b.BaseObject());
+	cDistToRootCalculator.Calculate();
+
+	cDistToRootCalculator.Kill();
+
+	//                            
+	//                 pTest3a(9)
+	//                  /   \
+	//                 /     \
+	//                /       \
+	//               /         \
+	//              /           \
+	//         pTest2a(8)-->pTest2b(9)
+	//            |  \         /  |
+	//            |   \       /   |
+	//            |    \     /    |
+	//            |     \   /     |
+	//            |  pTest1b(8)   |
+	//            |   /   |   \   |
+	//            |  /    |    \  |
+	//            | /     |     \ |
+	//         pTest1a(7) |     pTest1c(8)
+	//            |       |       |
+	//            .       .       .
+	//            .       .       .
+
+	AssertInt(7, pTest1a->GetDistToRoot());
+	AssertInt(8, pTest1b->GetDistToRoot());
+	AssertInt(8, pTest1c->GetDistToRoot());
+	AssertInt(8, pTest2a->GetDistToRoot());
+	AssertInt(9, pTest2b->GetDistToRoot());
+	AssertInt(9, pTest3a->GetDistToRoot());
+
+	gcObjects.ValidateConsistency();
+
+	ObjectsKill();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestUpdateTosDistToRootChildTriangleShortLeft(void)
+{
+	ObjectsInit();
+
+	Ptr<CNamedPointerContainer>	p1a;
+	Ptr<CNamedPointerContainer>	p1b;
+	Ptr<CPointerContainer>		p2a;
+	Ptr<CPointerContainer>		p2b;
+	Ptr<CPointerContainer>		p3a;
+	Ptr<CPointerContainer>		p3b;
+	Ptr<CPointerContainer>		p4b;
+	Ptr<CPointerContainer>		p5b;
+	Ptr<CPointerContainer>		p6b;
+	Ptr<CNamedPointerContainer>	p1c;
+	Ptr<CPointerContainer>		p6c;
+	Ptr<CRoot>					pRoot;
+	Ptr<CTestObject>			pTest1a;
+	Ptr<CTestObject>			pTest1b;
+	Ptr<CTestObject>			pTest1c;
+	Ptr<CTestObject>			pTest2a;
+	Ptr<CTestObject>			pTest2b;
+	Ptr<CTestObject>			pTest3a;
+
+	CDistToRootCalculator	cDistToRootCalculator;
+
+	pRoot = ORoot();
+
+	p6b = OMalloc(CPointerContainer)->Init();
+	p6c = OMalloc(CPointerContainer)->Init();
+	p5b = OMalloc(CPointerContainer)->Init(p6b);
+	p4b = OMalloc(CPointerContainer)->Init(p5b);
+	p3a = OMalloc(CPointerContainer)->Init();
+	p3b	= OMalloc(CPointerContainer)->Init(p4b);
+	p2a = OMalloc(CPointerContainer)->Init(p3a);
+	p2b = OMalloc(CPointerContainer)->Init(p3b);
+	p1a = ONMalloc(CNamedPointerContainer, "E.")->Init(p2a);
+	p1b = ONMalloc(CNamedPointerContainer, "L.")->Init(p2b);
+	p1c = ONMalloc(CNamedPointerContainer, "!!")->Init(p6c);
+	pRoot->Add(p1a);
+	pRoot->Add(p1b);
+	pRoot->Add(p1c);
+
+	pTest1a = OMalloc(CTestObject)->Init();
+	pTest1b = OMalloc(CTestObject)->Init();
+	pTest1c = OMalloc(CTestObject)->Init();
+	pTest2a = OMalloc(CTestObject)->Init();
+	pTest2b = OMalloc(CTestObject)->Init();
+	pTest3a = OMalloc(CTestObject)->Init();
+	p3a->mp = pTest1a;
+	p6b->mp = pTest1c;
+	p6c->mp = pTest1b;
+	pTest1a->mpTest = pTest1b;
+	pTest1c->mpTest = pTest1b;
+	pTest1a->mpObject = pTest2a;
+	pTest1c->mpObject = pTest2b;
+	pTest1b->mpObject = pTest2a;
+	pTest1b->mpTest = pTest2b;
+	pTest2a->mpTest = pTest3a;
+	pTest2b->mpTest = pTest3a;
+	pTest2a->mpObject = pTest2b;
+
+	AssertInt(2, p1a->GetDistToRoot());
+	AssertInt(2, p1c->GetDistToRoot());
+	AssertInt(2, p1b->GetDistToRoot());
+	AssertInt(3, p2a->GetDistToRoot());
+	AssertInt(3, p2b->GetDistToRoot());
+	AssertInt(4, p3a->GetDistToRoot());
+	AssertInt(4, p3b->GetDistToRoot());
+	AssertInt(5, p4b->GetDistToRoot());
+	AssertInt(6, p5b->GetDistToRoot());
+	AssertInt(7, p6b->GetDistToRoot());
+	AssertInt(3, p6c->GetDistToRoot());
+	AssertInt(5, pTest1a->GetDistToRoot());
+	AssertInt(4, pTest1b->GetDistToRoot());
+	AssertInt(8, pTest1c->GetDistToRoot());
+	AssertInt(5, pTest2a->GetDistToRoot());
+	AssertInt(5, pTest2b->GetDistToRoot());
+	AssertInt(6, pTest3a->GetDistToRoot());
+
+	p6c->mp.UnsafeClearObject();
+	pTest1b->TestRemoveHeapFrom(p6c.BaseObject());
+
+	cDistToRootCalculator.Init();
+
+	cDistToRootCalculator.AddFromChanged(pTest1b.BaseObject());
+	cDistToRootCalculator.Calculate();
+
+	cDistToRootCalculator.Kill();
+
+	//                            
+	//                 pTest3a(8)
+	//                  /   \
+	//                 /     \
+	//                /       \
+	//               /         \
+	//              /           \
+	//         pTest2a(6)-->pTest2b(7)
+	//            |  \         /  |
+	//            |   \       /   |
+	//            |    \     /    |
+	//            |     \   /     |
+	//            |  pTest1b(6)   |
+	//            |   /   |   \   |
+	//            |  /    |    \  |
+	//            | /     |     \ |
+	//         pTest1a(5) |     pTest1c(8)
+	//            |       |       |
+	//            .       .       .
+	//            .       .       .
+
+	AssertInt(5, pTest1a->GetDistToRoot());
+	AssertInt(6, pTest1b->GetDistToRoot());
+	AssertInt(8, pTest1c->GetDistToRoot());
+	AssertInt(6, pTest2a->GetDistToRoot());
+	AssertInt(7, pTest2b->GetDistToRoot());
+	AssertInt(8, pTest3a->GetDistToRoot());
+
+	gcObjects.ValidateConsistency();
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestUpdateEmbeddedObjectTosDetachedSetupDistance(void)
+{
+	ObjectsInit();
+
+	Ptr<CTestObject>	pTest1;
+	Ptr<CTestObject>	pLTest2;
+	Ptr<CTestObject>	pRTest2;
+	Ptr<CTestObject>	pLTest3;
+	Ptr<CTestObject>	pRTest3l;
+	Ptr<CTestObject>	pRTest3r;
+	Ptr<CTestObject>	pRTest4l;
+	Ptr<CTestObject>	pRTest4r;
+	Ptr<CTestObject>	pRTest5l;
+	Ptr<CTestObject>	pRTest5r;
+	Ptr<CTestObject>	pRTest6l;
+	Ptr<CTestObject>	pRTest6r;
+	Ptr<CTestObject>	pRTest7l;
+	Ptr<CTestObject>	pRTest8;
+	Ptr<CRoot>			pRoot;
+
+	pRoot = ORoot();
+	pTest1 = OMalloc(CTestObject)->Init();
+	pTest1 = OMalloc(CTestObject)->Init();
+	pLTest2 = OMalloc(CTestObject)->Init();
+	pRTest2 = OMalloc(CTestObject)->Init();
+	pLTest3 = OMalloc(CTestObject)->Init();
+	pRTest3l = OMalloc(CTestObject)->Init();
+	pRTest3r = OMalloc(CTestObject)->Init();
+	pRTest4l = OMalloc(CTestObject)->Init();
+	pRTest4r = OMalloc(CTestObject)->Init();
+	pRTest5l = OMalloc(CTestObject)->Init();
+	pRTest5r = OMalloc(CTestObject)->Init();
+	pRTest6l = OMalloc(CTestObject)->Init();
+	pRTest6r = OMalloc(CTestObject)->Init();
+	pRTest7l = OMalloc(CTestObject)->Init();
+	pRTest8 = OMalloc(CTestObject)->Init();
+
+	pRoot->Add(pTest1);
+
+	pTest1->mpObject = pLTest2;
+	pLTest2->mpObject = pLTest3;
+
+	pTest1->mpTest = pRTest2;
+	pRTest2->mpObject = pRTest3l;
+	pRTest3l->mpObject = pRTest4l;
+	pRTest4l->mpObject = pRTest5l;
+	pRTest5l->mpObject = pRTest6l;
+	pRTest6l->mpObject = pRTest7l;
+
+	pLTest3->mpObject = pRTest6l;
+
+	pRTest2->mpTest = pRTest3r;
+	pRTest3r->mpTest = pRTest4r;
+	pRTest4r->mpTest = pRTest5r;
+	pRTest5r->mpTest = pRTest6r;
+
+	pRTest7l->mpObject = pRTest8;
+	pRTest6r->mpTest = pRTest8;
+
+	//                             
+	//                          pRTest8(7)
+	//                           /   \
+	//                          /     \
+	//                         /       \
+	//                        /         \
+	//                       /           \
+	//                 pRTest7l(6)     pRTest6r(7)
+	//                      |             |
+	//                      |             |
+	//                 pRTest6l(5)        |
+	//                   /   |            |
+	//                  /    |            |
+	//                 /  pRTest5l(6)  pRTest5r(6)
+	//                /      |            |
+	//               /       |            |
+	//              /     pRTest4l(5)  pRTest4r(5)
+	//             /         |            |
+	//            /          |            |
+	//        pLTest3(4)  pRTest3l(4)  pRTest3r(4)
+	//           |            \          /
+	//           |             \        /
+	//           |              \      /
+	//           |               \    /
+	//           |                \  /
+	//        pLTest2(3)       pRTest2(3)
+	//             \             /
+	//              \           /
+	//               \         /
+	//                \       /
+	//                 \     /
+	//                  \   /
+	//                 pTest1(2)
+	//                   |
+	//                  ...
+	//                 Root(0)
+	//                       
+
+	AssertInt(2, pTest1->GetDistToRoot());
+	AssertInt(3, pLTest2->GetDistToRoot());
+	AssertInt(3, pRTest2->GetDistToRoot());
+	AssertInt(4, pLTest3->GetDistToRoot());
+	AssertInt(4, pRTest3l->GetDistToRoot());
+	AssertInt(4, pRTest3r->GetDistToRoot());
+	AssertInt(5, pRTest4l->GetDistToRoot());
+	AssertInt(5, pRTest4r->GetDistToRoot());
+	AssertInt(6, pRTest5l->GetDistToRoot());
+	AssertInt(6, pRTest5r->GetDistToRoot());
+	AssertInt(5, pRTest6l->GetDistToRoot());
+	AssertInt(7, pRTest6r->GetDistToRoot());
+	AssertInt(6, pRTest7l->GetDistToRoot());
+	AssertInt(7, pRTest8->GetDistToRoot());
+	
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
+{
+	ObjectsInit();
+
+	Ptr<CTestObject>		pTest1;
+	Ptr<CTestObject>		pLTest2;
+	Ptr<CTestObject>		pRTest2;
+	Ptr<CTestObject>		pLTest3;
+	Ptr<CTestObject>		pRTest3l;
+	Ptr<CTestObject>		pRTest3r;
+	Ptr<CTestObject>		pRTest4l;
+	Ptr<CTestObject>		pRTest4r;
+	Ptr<CTestObject>		pRTest5l;
+	Ptr<CTestObject>		pRTest5r;
+	Ptr<CTestObject>		pRTest6l;
+	Ptr<CTestObject>		pRTest6r;
+	Ptr<CTestObject>		pRTest7l;
+	Ptr<CTestObject>		pRTest8;
+	Ptr<CRoot>				pRoot;
+
+	CDistToRootCalculator	cDistToRootCalculator;
+
+	pRoot = ORoot();
+	pTest1 = OMalloc(CTestObject)->Init();
+	pTest1 = OMalloc(CTestObject)->Init();
+	pLTest2 = OMalloc(CTestObject)->Init();
+	pRTest2 = OMalloc(CTestObject)->Init();
+	pLTest3 = OMalloc(CTestObject)->Init();
+	pRTest3l = OMalloc(CTestObject)->Init();
+	pRTest3r = OMalloc(CTestObject)->Init();
+	pRTest4l = OMalloc(CTestObject)->Init();
+	pRTest4r = OMalloc(CTestObject)->Init();
+	pRTest5l = OMalloc(CTestObject)->Init();
+	pRTest5r = OMalloc(CTestObject)->Init();
+	pRTest6l = OMalloc(CTestObject)->Init();
+	pRTest6r = OMalloc(CTestObject)->Init();
+	pRTest7l = OMalloc(CTestObject)->Init();
+	pRTest8 = OMalloc(CTestObject)->Init();
+
+	pRoot->Add(pTest1);
+
+	pTest1->mpObject = pLTest2;
+	pLTest2->mpObject = pLTest3;
+
+	pTest1->mpTest = pRTest2;
+	pRTest2->mpObject = pRTest3l;
+	pRTest3l->mpObject = pRTest4l;
+	pRTest4l->mpObject = pRTest5l;
+	pRTest5l->mpObject = pRTest6l;
+	pRTest6l->mpObject = pRTest7l;
+
+	pLTest3->mpObject = pRTest6l;
+
+	pRTest2->mpTest = pRTest3r;
+	pRTest3r->mpTest = pRTest4r;
+	pRTest4r->mpTest = pRTest5r;
+	pRTest5r->mpTest = pRTest6r;
+
+	pRTest7l->mpObject = pRTest8;
+	pRTest6r->mpTest = pRTest8;
+
+	pTest1->mpObject.UnsafeClearObject();
+	pLTest2->TestRemoveHeapFrom(pTest1.BaseObject());
+
+	cDistToRootCalculator.Init();
+
+	cDistToRootCalculator.AddFromChanged(pLTest2.BaseObject());
+	cDistToRootCalculator.Calculate();
+
+	cDistToRootCalculator.Kill();
+
+	//                             
+	//                          pRTest8(9)
+	//                           /   \
+	//                          /     \
+	//                         /       \
+	//                        /         \
+	//                       /           \
+	//                 pRTest7l(8)     pRTest6r(7)
+	//                      |             |
+	//                      |             |
+	//                 pRTest6l(7)        |
+	//                   .   |            |
+	//                  .    |            |
+	//                 .  pRTest5l(6)  pRTest5r(6)
+	//                .      |            |
+	//               .       |            |
+	//              .     pRTest4l(5)  pRTest4r(5)
+	//             .         |            |
+	//            .          |            |
+	//        pLTest3(X)  pRTest3l(4)  pRTest3r(4)
+	//           .            \          /
+	//           .             \        /
+	//           .              \      /
+	//           .               \    /
+	//           .                \  /
+	//        pLTest2(X)       pRTest2(3)
+	//             .             /
+	//              .           /
+	//               .         /
+	//                .       /
+	//                 .     /
+	//                  .   /
+	//                 pTest1(2)
+	//                    |
+	//                   ...
+	//                  Root(0)
+	//                       
+
+
+	ObjectsKill();
+}
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
+{
+	ObjectsInit();
+
+	Ptr<CTestObject>		pTest1;
+	Ptr<CTestObject>		pLTest2;
+	Ptr<CTestObject>		pRTest2;
+	Ptr<CTestObject>		pLTest3;
+	Ptr<CTestObject>		pRTest3l;
+	Ptr<CTestObject>		pRTest3r;
+	Ptr<CTestObject>		pRTest4l;
+	Ptr<CTestObject>		pRTest4r;
+	Ptr<CTestObject>		pRTest5l;
+	Ptr<CTestObject>		pRTest5r;
+	Ptr<CTestObject>		pRTest6l;
+	Ptr<CTestObject>		pRTest6r;
+	Ptr<CTestObject>		pRTest7l;
+	Ptr<CTestObject>		pRTest8;
+	Ptr<CRoot>				pRoot;
+
+	CDistToRootCalculator	cDistToRootCalculator;
+
+	pRoot = ORoot();
+	pTest1 = OMalloc(CTestObject)->Init();
+	pTest1 = OMalloc(CTestObject)->Init();
+	pLTest2 = OMalloc(CTestObject)->Init();
+	pRTest2 = OMalloc(CTestObject)->Init();
+	pLTest3 = OMalloc(CTestObject)->Init();
+	pRTest3l = OMalloc(CTestObject)->Init();
+	pRTest3r = OMalloc(CTestObject)->Init();
+	pRTest4l = OMalloc(CTestObject)->Init();
+	pRTest4r = OMalloc(CTestObject)->Init();
+	pRTest5l = OMalloc(CTestObject)->Init();
+	pRTest5r = OMalloc(CTestObject)->Init();
+	pRTest6l = OMalloc(CTestObject)->Init();
+	pRTest6r = OMalloc(CTestObject)->Init();
+	pRTest7l = OMalloc(CTestObject)->Init();
+	pRTest8 = OMalloc(CTestObject)->Init();
+
+	pRoot->Add(pTest1);
+
+	pTest1->mpObject = pLTest2;
+	pLTest2->mpObject = pLTest3;
+
+	pTest1->mpTest = pRTest2;
+	pRTest2->mpObject = pRTest3l;
+	pRTest3l->mpObject = pRTest4l;
+	pRTest4l->mpObject = pRTest5l;
+	pRTest5l->mpObject = pRTest6l;
+	pRTest6l->mpObject = pRTest7l;
+
+	pLTest3->mpObject = pRTest6l;
+
+	pRTest2->mpTest = pRTest3r;
+	pRTest3r->mpTest = pRTest4r;
+	pRTest4r->mpTest = pRTest5r;
+	pRTest5r->mpTest = pRTest6r;
+
+	pRTest7l->mpObject = pRTest8;
+	pRTest6r->mpTest = pRTest8;
+
+	pTest1->mpTest.UnsafeClearObject();
+	pRTest2->TestRemoveHeapFrom(pTest1.BaseObject());
+
+	cDistToRootCalculator.Init();
+
+	cDistToRootCalculator.AddFromChanged(pRTest2.BaseObject());
+	cDistToRootCalculator.Calculate();
+
+	cDistToRootCalculator.Kill();
+
+	//                             
+	//                          pRTest8(7)
+	//                           /   .
+	//                          /     .
+	//                         /       .
+	//                        /         .
+	//                       /           .
+	//                 pRTest7l(6)     pRTest6r(X)
+	//                      |             .
+	//                      |             .
+	//                 pRTest6l(5)        .
+	//                   /   .            .
+	//                  /    .            .
+	//                 /  pRTest5l(X)  pRTest5r(X)
+	//                /      .            .
+	//               /       .            .
+	//              /     pRTest4l(X)  pRTest4r(X)
+	//             /         .            .
+	//            /          .            .
+	//        pLTest3(4)  pRTest3l(X)  pRTest3r(x)
+	//           |            .          .
+	//           |             .        .
+	//           |              .      .
+	//           |               .    .
+	//           |                .  .
+	//        pLTest2(3)       pRTest2(X)
+	//             \             .
+	//              \           .
+	//               \         .
+	//                \       .
+	//                 \     .
+	//                  \   .
+	//                 pTest1(2)
+	//                    |
+	//                   ...
+	//                  Root(0)
+	//                       
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
+{
+	ObjectsInit();
+
+	Ptr<CTestObject>		pTest1;
+	Ptr<CTestObject>		pLTest2;
+	Ptr<CTestObject>		pRTest2;
+	Ptr<CTestObject>		pLTest3;
+	Ptr<CTestObject>		pRTest3l;
+	Ptr<CTestObject>		pRTest3r;
+	Ptr<CTestObject>		pRTest4l;
+	Ptr<CTestObject>		pRTest4r;
+	Ptr<CTestObject>		pRTest5l;
+	Ptr<CTestObject>		pRTest5r;
+	Ptr<CTestObject>		pRTest6l;
+	Ptr<CTestObject>		pRTest6r;
+	Ptr<CTestObject>		pRTest7l;
+	Ptr<CTestObject>		pRTest8;
+	Ptr<CRoot>				pRoot;
+
+	CDistToRootCalculator	cDistToRootCalculator;
+
+	pRoot = ORoot();
+	pTest1 = OMalloc(CTestObject)->Init();
+	pTest1 = OMalloc(CTestObject)->Init();
+	pLTest2 = OMalloc(CTestObject)->Init();
+	pRTest2 = OMalloc(CTestObject)->Init();
+	pLTest3 = OMalloc(CTestObject)->Init();
+	pRTest3l = OMalloc(CTestObject)->Init();
+	pRTest3r = OMalloc(CTestObject)->Init();
+	pRTest4l = OMalloc(CTestObject)->Init();
+	pRTest4r = OMalloc(CTestObject)->Init();
+	pRTest5l = OMalloc(CTestObject)->Init();
+	pRTest5r = OMalloc(CTestObject)->Init();
+	pRTest6l = OMalloc(CTestObject)->Init();
+	pRTest6r = OMalloc(CTestObject)->Init();
+	pRTest7l = OMalloc(CTestObject)->Init();
+	pRTest8 = OMalloc(CTestObject)->Init();
+
+	pRoot->Add(pTest1);
+
+	pTest1->mpObject = pLTest2;
+	pLTest2->mpObject = pLTest3;
+
+	pTest1->mpTest = pRTest2;
+	pRTest2->mpObject = pRTest3l;
+	pRTest3l->mpObject = pRTest4l;
+	pRTest4l->mpObject = pRTest5l;
+	pRTest5l->mpObject = pRTest6l;
+	pRTest6l->mpObject = pRTest7l;
+
+	pLTest3->mpObject = pRTest6l;
+
+	pRTest2->mpTest = pRTest3r;
+	pRTest3r->mpTest = pRTest4r;
+	pRTest4r->mpTest = pRTest5r;
+	pRTest5r->mpTest = pRTest6r;
+
+	pRTest7l->mpObject = pRTest8;
+	pRTest6r->mpTest = pRTest8;
+
+	pRTest2->mpObject.UnsafeClearObject();
+	pRTest3l->TestRemoveHeapFrom(pRTest2.BaseObject());
+
+	cDistToRootCalculator.Init();
+
+	cDistToRootCalculator.AddFromChanged(pRTest3l.BaseObject());
+	cDistToRootCalculator.Calculate();
+
+	cDistToRootCalculator.Kill();
+
+	//                             
+	//                          pRTest8(7)
+	//                           /   \
+	//                          /     \
+	//                         /       \
+	//                        /         \
+	//                       /           \
+	//                 pRTest7l(6)     pRTest6r(7)
+	//                      |             |
+	//                      |             |
+	//                 pRTest6l(5)        |
+	//                   /   .            |
+	//                  /    .            |
+	//                 /  pRTest5l(X)  pRTest5r(6)
+	//                /      .            |
+	//               /       .            |
+	//              /     pRTest4l(X)  pRTest4r(5)
+	//             /         .            |
+	//            /          .            |
+	//        pLTest3(4)  pRTest3l(X)  pRTest3r(4)
+	//           |            .          /
+	//           |             .        /
+	//           |              .      /
+	//           |               .    /
+	//           |                .  /
+	//        pLTest2(3)       pRTest2(3)
+	//             \             /
+	//              \           /
+	//               \         /
+	//                \       /
+	//                 \     /
+	//                  \   /
+	//                 pTest1(2)
+	//                    |
+	//                   ...
+	//                  Root(0)
+	//                       
+
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
+{
+	ObjectsInit();
+
+	Ptr<CTestObject>		pTest1;
+	Ptr<CTestObject>		pLTest2;
+	Ptr<CTestObject>		pRTest2;
+	Ptr<CTestObject>		pLTest3;
+	Ptr<CTestObject>		pRTest3l;
+	Ptr<CTestObject>		pRTest3r;
+	Ptr<CTestObject>		pRTest4l;
+	Ptr<CTestObject>		pRTest4r;
+	Ptr<CTestObject>		pRTest5l;
+	Ptr<CTestObject>		pRTest5r;
+	Ptr<CTestObject>		pRTest6l;
+	Ptr<CTestObject>		pRTest6r;
+	Ptr<CTestObject>		pRTest7l;
+	Ptr<CTestObject>		pRTest8;
+	Ptr<CRoot>				pRoot;
+
+	CDistToRootCalculator	cDistToRootCalculator;
+
+	pRoot = ORoot();
+	pTest1 = OMalloc(CTestObject)->Init();
+	pTest1 = OMalloc(CTestObject)->Init();
+	pLTest2 = OMalloc(CTestObject)->Init();
+	pRTest2 = OMalloc(CTestObject)->Init();
+	pLTest3 = OMalloc(CTestObject)->Init();
+	pRTest3l = OMalloc(CTestObject)->Init();
+	pRTest3r = OMalloc(CTestObject)->Init();
+	pRTest4l = OMalloc(CTestObject)->Init();
+	pRTest4r = OMalloc(CTestObject)->Init();
+	pRTest5l = OMalloc(CTestObject)->Init();
+	pRTest5r = OMalloc(CTestObject)->Init();
+	pRTest6l = OMalloc(CTestObject)->Init();
+	pRTest6r = OMalloc(CTestObject)->Init();
+	pRTest7l = OMalloc(CTestObject)->Init();
+	pRTest8 = OMalloc(CTestObject)->Init();
+
+	pRoot->Add(pTest1);
+
+	pTest1->mpObject = pLTest2;
+	pLTest2->mpObject = pLTest3;
+
+	pTest1->mpTest = pRTest2;
+	pRTest2->mpObject = pRTest3l;
+	pRTest3l->mpObject = pRTest4l;
+	pRTest4l->mpObject = pRTest5l;
+	pRTest5l->mpObject = pRTest6l;
+	pRTest6l->mpObject = pRTest7l;
+
+	pLTest3->mpObject = pRTest6l;
+
+	pRTest2->mpTest = pRTest3r;
+	pRTest3r->mpTest = pRTest4r;
+	pRTest4r->mpTest = pRTest5r;
+	pRTest5r->mpTest = pRTest6r;
+
+	pRTest7l->mpObject = pRTest8;
+	pRTest6r->mpTest = pRTest8;
+
+	pRTest2->mpTest.UnsafeClearObject();
+	pRTest3r->TestRemoveHeapFrom(pRTest2.BaseObject());
+
+	cDistToRootCalculator.Init();
+
+	cDistToRootCalculator.AddFromChanged(pRTest3r.BaseObject());
+	cDistToRootCalculator.Calculate();
+
+	cDistToRootCalculator.Kill();
+
+	//                             
+	//                          pRTest8(7)
+	//                           /   .
+	//                          /     .
+	//                         /       .
+	//                        /         .
+	//                       /           .
+	//                 pRTest7l(6)     pRTest6r(X)
+	//                      |             .
+	//                      |             .
+	//                 pRTest6l(5)        .
+	//                   /   |            .
+	//                  /    |            .
+	//                 /  pRTest5l(6)  pRTest5r(X)
+	//                /      |            .
+	//               /       |            .
+	//              /     pRTest4l(5)  pRTest4r(X)
+	//             /         |            .
+	//            /          |            .
+	//        pLTest3(4)  pRTest3l(4)  pRTest3r(X)
+	//           |            \          .
+	//           |             \        .
+	//           |              \      .
+	//           |               \    .
+	//           |                \  .
+	//        pLTest2(3)       pRTest2(3)
+	//             \             /
+	//              \           /
+	//               \         /
+	//                \       /
+	//                 \     /
+	//                  \   /
+	//                 pTest1(2)
+	//                    |
+	//                   ...
+	//                  Root(0)
+	//                       
+
+
+	ObjectsKill();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -569,6 +1467,13 @@ void TestDistToRoot(void)
 	TestUpdateTosDistToRootComplex();
 	TestUpdateTosDistToRootSimpleRight();
 	TestUpdateTosDistToRootSimpleLeft();
+	TestUpdateTosDistToRootChildTriangleKindaBalanced();
+	TestUpdateTosDistToRootChildTriangleShortLeft();
+	TestUpdateEmbeddedObjectTosDetachedSetupDistance();
+	TestUpdateEmbeddedObjectTosDetachedScenarioA();
+	TestUpdateEmbeddedObjectTosDetachedScenarioB();
+	TestUpdateEmbeddedObjectTosDetachedScenarioC();
+	TestUpdateEmbeddedObjectTosDetachedScenarioD();
 
 	TestStatistics();
 }
