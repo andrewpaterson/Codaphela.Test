@@ -203,6 +203,8 @@ void TestPointerHeapNotInGraphFreeStack(void)
 
 	STestObjectKilledNotifier	sNotifier1;
 	STestObjectKilledNotifier	sNotifier2;
+	CTestObject*				pcTest1;
+	CTestObject*				pcTest2;
 
 	Ptr<CTestObject> pTest1 = OMalloc(CTestObject)->Init(&sNotifier1);
 	Ptr<CTestObject> pTest2 = OMalloc(CTestObject)->Init(&sNotifier2);
@@ -225,16 +227,18 @@ void TestPointerHeapNotInGraphFreeStack(void)
 	AssertInt(1, pTest2->NumStackFroms());
 	AssertInt(1, pTest2->NumTos());
 
+	pcTest2 = (CTestObject*)pTest2.Object();
+	pcTest1 = (CTestObject*)pTest1.Object();
 	pTest1 = NULL;  //pTest1 should not be killed here, even though it has no stack froms.  It still has a heap from.
 
 	AssertFalse(sNotifier1.bKilled);
 	AssertFalse(sNotifier2.bKilled);
-	AssertInt(1, pTest1->NumHeapFroms());
-	AssertInt(0, pTest1->NumStackFroms());
-	AssertInt(0, pTest1->NumTos());
-	AssertInt(0, pTest2->NumHeapFroms());
-	AssertInt(1, pTest2->NumStackFroms());
-	AssertInt(1, pTest2->NumTos());
+	AssertInt(1, pcTest1->NumHeapFroms());
+	AssertInt(0, pcTest1->NumStackFroms());
+	AssertInt(0, pcTest1->NumTos());
+	AssertInt(0, pcTest2->NumHeapFroms());
+	AssertInt(1, pcTest2->NumStackFroms());
+	AssertInt(1, pcTest2->NumTos());
 
 	ObjectsKill();
 
