@@ -237,6 +237,9 @@
     <ClCompile Include="TestDistToRootCalculator.cpp">
       <Filter>Source\Object\Object\Distance</Filter>
     </ClCompile>
+    <ClCompile Include="TestDistToStack.cpp">
+      <Filter>Source\Object\Object\Distance</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectTestClasses.h">

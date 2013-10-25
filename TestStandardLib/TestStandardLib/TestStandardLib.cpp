@@ -29,6 +29,7 @@ void TestNamedObject(void);
 void TestObjectsSimple(void);
 void TestRoot(void);
 void TestDistToRoot(void);
+void TestDistToStack(void);
 void TestArrayCommonObject(void);
 void TestParameters(void);
 void TestObjectAllocator(void);
@@ -75,7 +76,8 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	//TestParameters();
 	//TestObjectsSimple();
 	//TestRoot();
-	TestDistToRoot();
+	//TestDistToRoot();
+	TestDistToStack();
 	//TestObject();
 	//TestPointer();
 	//TestArrayCommonObject();
