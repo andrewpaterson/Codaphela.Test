@@ -412,6 +412,7 @@ void TestUpdateTosDistToRootComplex(void)
 
 	cDistToRootCalculator.Kill();
 
+	//
 	//       pTest2d(10)  pTest2e(12)
 	//       //   \\     //   \\
 	//      //     \\   //     \\
@@ -420,6 +421,10 @@ void TestUpdateTosDistToRootComplex(void)
 	//     |                      |
 	//     |                      |
 	//   p6a(8)                  p9c(11)
+	//     |                      |
+	//     .                      .
+	//     .                      .
+	//
 
 	AssertInt(8, p6a->GetDistToRoot());
 	AssertInt(11, p9c->GetDistToRoot());
@@ -1004,6 +1009,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 	Ptr<CRoot>				pRoot;
 
 	CDistToRootCalculator	cDistToRootCalculator;
+	CDistDetachedFroms		cDetached;
 
 	pRoot = ORoot();
 	pTest1 = OMalloc(CTestObject)->Init();
@@ -1048,14 +1054,15 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 	pLTest2->TestRemoveHeapFrom(pTest1.BaseObject());
 
 	cDistToRootCalculator.Init();
+	cDetached.Init();
 
 	cDistToRootCalculator.AddFromChanged(pLTest2.BaseObject());
-	cDistToRootCalculator.Calculate();
+	cDistToRootCalculator.Calculate(&cDetached);
 
 	cDistToRootCalculator.Kill();
 
 	//                             
-	//                          pRTest8(9)
+	//                          pRTest8(8)
 	//                           /   \
 	//                          /     \
 	//                         /       \
@@ -1092,12 +1099,22 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 	//                  Root(0)
 	//                       
 
-	AssertFalse(pLTest2->CanFindRoot())
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pLTest2->GetDistToRoot());
+	AssertFalse(pLTest2->CanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pLTest3->GetDistToRoot());
+	AssertFalse(pLTest3->CanFindRoot());
+	AssertInt(7, pRTest6l->GetDistToRoot());
+	AssertInt(8, pRTest7l->GetDistToRoot());
+	AssertInt(8, pRTest8->GetDistToRoot());
+
+	AssertInt(2, cDetached.Num());
+	AssertPointer(pLTest2.BaseObject(), cDetached.Get(0));
+	AssertPointer(pLTest3.BaseObject(), cDetached.Get(1));
+
+	cDetached.Kill();
 
 	ObjectsKill();
 }
-
-
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -1125,6 +1142,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 	Ptr<CRoot>				pRoot;
 
 	CDistToRootCalculator	cDistToRootCalculator;
+	CDistDetachedFroms		cDetached;
 
 	pRoot = ORoot();
 	pTest1 = OMalloc(CTestObject)->Init();
@@ -1169,9 +1187,10 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 	pRTest2->TestRemoveHeapFrom(pTest1.BaseObject());
 
 	cDistToRootCalculator.Init();
+	cDetached.Init();
 
 	cDistToRootCalculator.AddFromChanged(pRTest2.BaseObject());
-	cDistToRootCalculator.Calculate();
+	cDistToRootCalculator.Calculate(&cDetached);
 
 	cDistToRootCalculator.Kill();
 
@@ -1213,6 +1232,38 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 	//                  Root(0)
 	//                       
 
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pRTest2->GetDistToRoot());
+	AssertFalse(pRTest2->CanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pRTest3l->GetDistToRoot());
+	AssertFalse(pRTest3l->CanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pRTest3r->GetDistToRoot());
+	AssertFalse(pRTest3r->CanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pRTest4l->GetDistToRoot());
+	AssertFalse(pRTest4l->CanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pRTest4r->GetDistToRoot());
+	AssertFalse(pRTest4r->CanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pRTest5l->GetDistToRoot());
+	AssertFalse(pRTest5l->CanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pRTest5r->GetDistToRoot());
+	AssertFalse(pRTest5r->CanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pRTest6r->GetDistToRoot());
+	AssertFalse(pRTest6r->CanFindRoot());
+
+	AssertInt(6, pRTest7l->GetDistToRoot());
+	AssertInt(7, pRTest8->GetDistToRoot());
+
+	AssertInt(8, cDetached.Num());
+	AssertPointer(pRTest2.BaseObject(), cDetached.Get(0));
+	AssertPointer(pRTest3l.BaseObject(), cDetached.Get(1));
+	AssertPointer(pRTest4l.BaseObject(), cDetached.Get(2));
+	AssertPointer(pRTest5l.BaseObject(), cDetached.Get(3));
+	AssertPointer(pRTest3r.BaseObject(), cDetached.Get(4));
+	AssertPointer(pRTest4r.BaseObject(), cDetached.Get(5));
+	AssertPointer(pRTest5r.BaseObject(), cDetached.Get(6));
+	AssertPointer(pRTest6r.BaseObject(), cDetached.Get(7));
+
+	cDetached.Kill();
+
 	ObjectsKill();
 }
 
@@ -1242,6 +1293,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 	Ptr<CRoot>				pRoot;
 
 	CDistToRootCalculator	cDistToRootCalculator;
+	CDistDetachedFroms		cDetached;
 
 	pRoot = ORoot();
 	pTest1 = OMalloc(CTestObject)->Init();
@@ -1286,9 +1338,10 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 	pRTest3l->TestRemoveHeapFrom(pRTest2.BaseObject());
 
 	cDistToRootCalculator.Init();
+	cDetached.Init();
 
 	cDistToRootCalculator.AddFromChanged(pRTest3l.BaseObject());
-	cDistToRootCalculator.Calculate();
+	cDistToRootCalculator.Calculate(&cDetached);
 
 	cDistToRootCalculator.Kill();
 
@@ -1330,6 +1383,22 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 	//                  Root(0)
 	//                       
 
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pRTest3l->GetDistToRoot());
+	AssertFalse(pRTest3l->CanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pRTest4l->GetDistToRoot());
+	AssertFalse(pRTest4l->CanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pRTest5l->GetDistToRoot());
+	AssertFalse(pRTest5l->CanFindRoot());
+
+	AssertInt(5, pRTest6l->GetDistToRoot());
+	AssertInt(4, pRTest3r->GetDistToRoot());
+
+	AssertInt(3, cDetached.Num());
+	AssertPointer(pRTest3l.BaseObject(), cDetached.Get(0));
+	AssertPointer(pRTest4l.BaseObject(), cDetached.Get(1));
+	AssertPointer(pRTest5l.BaseObject(), cDetached.Get(2));
+
+	cDetached.Kill();
 
 	ObjectsKill();
 }
@@ -1360,6 +1429,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 	Ptr<CRoot>				pRoot;
 
 	CDistToRootCalculator	cDistToRootCalculator;
+	CDistDetachedFroms		cDetached;
 
 	pRoot = ORoot();
 	pTest1 = OMalloc(CTestObject)->Init();
@@ -1404,9 +1474,10 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 	pRTest3r->TestRemoveHeapFrom(pRTest2.BaseObject());
 
 	cDistToRootCalculator.Init();
+	cDetached.Init();
 
 	cDistToRootCalculator.AddFromChanged(pRTest3r.BaseObject());
-	cDistToRootCalculator.Calculate();
+	cDistToRootCalculator.Calculate(&cDetached);
 
 	cDistToRootCalculator.Kill();
 
@@ -1448,6 +1519,25 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 	//                  Root(0)
 	//                       
 
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pRTest3r->GetDistToRoot());
+	AssertFalse(pRTest3r->CanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pRTest4r->GetDistToRoot());
+	AssertFalse(pRTest4r->CanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pRTest5r->GetDistToRoot());
+	AssertFalse(pRTest5r->CanFindRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pRTest6r->GetDistToRoot());
+	AssertFalse(pRTest6r->CanFindRoot());
+
+	AssertInt(7, pRTest8->GetDistToRoot());
+	AssertInt(4, pRTest3l->GetDistToRoot());
+
+	AssertInt(4, cDetached.Num());
+	AssertPointer(pRTest3r.BaseObject(), cDetached.Get(0));
+	AssertPointer(pRTest4r.BaseObject(), cDetached.Get(1));
+	AssertPointer(pRTest5r.BaseObject(), cDetached.Get(2));
+	AssertPointer(pRTest6r.BaseObject(), cDetached.Get(3));
+
+	cDetached.Kill();
 
 	ObjectsKill();
 }
