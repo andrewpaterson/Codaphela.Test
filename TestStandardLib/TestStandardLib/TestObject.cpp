@@ -644,11 +644,11 @@ void TestObjectRootUnattachment(void)
 	AssertLongLongInt(5, gcUnknowns.NumElements());
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer1->GetDistToRoot());
-	AssertFalse(pcContainer1->TestCanFindRoot());
+	AssertFalse(pcContainer1->CanFindRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer2->GetDistToRoot());
-	AssertFalse(pcContainer2->TestCanFindRoot());
+	AssertFalse(pcContainer2->CanFindRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcObject->GetDistToRoot());
-	AssertFalse(pcObject->TestCanFindRoot());
+	AssertFalse(pcObject->CanFindRoot());
 
 	pContainer1 = NULL;
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
@@ -691,11 +691,11 @@ void TestObjectKill(void)
 
 	pRoot->TestGetSet()->Kill();
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer1->GetDistToRoot());
-	AssertFalse(pcContainer1->TestCanFindRoot());
+	AssertFalse(pcContainer1->CanFindRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer2->GetDistToRoot());
-	AssertFalse(pcContainer2->TestCanFindRoot());
+	AssertFalse(pcContainer2->CanFindRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcObject->GetDistToRoot());
-	AssertFalse(pcObject->TestCanFindRoot());
+	AssertFalse(pcObject->CanFindRoot());
 
 	ObjectsKill();
 }
@@ -736,11 +736,11 @@ void TestObjectSetUnattachment(void)
 	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(4, gcUnknowns.NumElements());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer1->GetDistToRoot());
-	AssertFalse(pcContainer1->TestCanFindRoot());
+	AssertFalse(pcContainer1->CanFindRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer2->GetDistToRoot());
-	AssertFalse(pcContainer2->TestCanFindRoot());
+	AssertFalse(pcContainer2->CanFindRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcObject->GetDistToRoot());
-	AssertFalse(pcObject->TestCanFindRoot());
+	AssertFalse(pcObject->CanFindRoot());
 
 	pContainer1 = NULL;
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());

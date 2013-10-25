@@ -731,10 +731,10 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	AssertFalse(sKilledTop1.bKilled);
 	AssertFalse(sKilledTop2.bKilled);
 	AssertFalse(sKilled1.bKilled);
-	AssertTrue(pSet->TestCanFindRoot());
-	AssertTrue(pTop2->TestCanFindRoot());
-	AssertTrue(pTest1->TestCanFindRoot());
-	AssertTrue(pTop1->TestCanFindRoot());
+	AssertTrue(pSet->CanFindRoot());
+	AssertTrue(pTop2->CanFindRoot());
+	AssertTrue(pTest1->CanFindRoot());
+	AssertTrue(pTop1->CanFindRoot());
 	AssertInt(1, pSet->NumElements());
 	AssertInt(1, pSet->NumTos());
 	AssertInt(1, pTop2->NumTos());
@@ -1287,11 +1287,11 @@ void TestRootSetRemoveAll(void)
 	AssertLongLongInt(5, gcUnknowns.NumElements());
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer1->GetDistToRoot());
-	AssertFalse(pcContainer1->TestCanFindRoot());
+	AssertFalse(pcContainer1->CanFindRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer2->GetDistToRoot());
-	AssertFalse(pcContainer2->TestCanFindRoot());
+	AssertFalse(pcContainer2->CanFindRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcObject->GetDistToRoot());
-	AssertFalse(pcObject->TestCanFindRoot());
+	AssertFalse(pcObject->CanFindRoot());
 
 	ObjectsKill();
 }
@@ -1339,9 +1339,9 @@ void TestRootSetKillAll(void)
 	AssertNull(&pTemp->mp);
 	AssertNull(&pContainer1);
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer2->GetDistToRoot());
-	AssertFalse(pcContainer2->TestCanFindRoot());
+	AssertFalse(pcContainer2->CanFindRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcObject->GetDistToRoot());
-	AssertFalse(pcObject->TestCanFindRoot());
+	AssertFalse(pcObject->CanFindRoot());
 
 	ObjectsKill();
 }

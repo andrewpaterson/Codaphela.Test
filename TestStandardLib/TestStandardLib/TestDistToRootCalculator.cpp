@@ -1092,6 +1092,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 	//                  Root(0)
 	//                       
 
+	AssertFalse(pLTest2->CanFindRoot())
 
 	ObjectsKill();
 }
