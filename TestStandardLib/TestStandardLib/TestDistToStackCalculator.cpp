@@ -13,12 +13,13 @@ void TestDistToStackCyclicWithStackPointerA(void)
 {
 	ObjectsInit();
 
-	CDistToRootCalculator	cDistToRootCalculator;
-	CDistToStackCalculator	cDistToStackCalculator;
-	CDistDetachedFroms		cDetached;
-	CNamedPointerContainer*	pc1;
-	CNamedPointerContainer*	pc2;
-	CNamedPointerContainer*	pc3;
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistToStackCalculator		cDistToStackCalculator;
+	CDistDetachedFroms			cDetached;
+	CDistToRootEffectedFroms	cEffectedFroms;
+	CNamedPointerContainer*		pc1;
+	CNamedPointerContainer*		pc2;
+	CNamedPointerContainer*		pc3;
 
 	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
 	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
@@ -51,9 +52,10 @@ void TestDistToStackCyclicWithStackPointerA(void)
 	pc1->TestRemoveHeapFrom(p0.BaseObject());
 
 	cDetached.Init();
+	cEffectedFroms.Init();
 	cDistToRootCalculator.Init();
 	cDistToRootCalculator.AddFromChanged(pc1);
-	cDistToRootCalculator.Calculate(&cDetached);
+	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
 	cDistToRootCalculator.Kill();
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc1->GetDistToRoot());
@@ -68,6 +70,7 @@ void TestDistToStackCyclicWithStackPointerA(void)
 	AssertInt(0, cDetached.NumCompletelyDetached());
 
 	cDistToStackCalculator.Kill();
+	cEffectedFroms.Kill();
 	cDetached.Kill();
 
 	gcObjects.ValidateConsistency();
@@ -84,12 +87,13 @@ void TestDistToStackCyclicWithStackPointerB(void)
 {
 	ObjectsInit();
 
-	CDistToRootCalculator	cDistToRootCalculator;
-	CDistToStackCalculator	cDistToStackCalculator;
-	CDistDetachedFroms		cDetached;
-	CNamedPointerContainer*	pc1;
-	CNamedPointerContainer*	pc2;
-	CNamedPointerContainer*	pc3;
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistToStackCalculator		cDistToStackCalculator;
+	CDistDetachedFroms			cDetached;
+	CDistToRootEffectedFroms	cEffectedFroms;
+	CNamedPointerContainer*		pc1;
+	CNamedPointerContainer*		pc2;
+	CNamedPointerContainer*		pc3;
 
 	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
 	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
@@ -122,9 +126,10 @@ void TestDistToStackCyclicWithStackPointerB(void)
 	pc1->TestRemoveHeapFrom(p0.BaseObject());
 
 	cDetached.Init();
+	cEffectedFroms.Init();
 	cDistToRootCalculator.Init();
 	cDistToRootCalculator.AddFromChanged(pc1);
-	cDistToRootCalculator.Calculate(&cDetached);
+	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
 	cDistToRootCalculator.Kill();
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc1->GetDistToRoot());
@@ -139,6 +144,7 @@ void TestDistToStackCyclicWithStackPointerB(void)
 	AssertInt(0, cDetached.NumCompletelyDetached());
 
 	cDistToStackCalculator.Kill();
+	cEffectedFroms.Kill();
 	cDetached.Kill();
 
 	gcObjects.ValidateConsistency();
@@ -155,12 +161,13 @@ void TestDistToStackCyclicWithStackPointerC(void)
 {
 	ObjectsInit();
 
-	CDistToRootCalculator	cDistToRootCalculator;
-	CDistToStackCalculator	cDistToStackCalculator;
-	CDistDetachedFroms		cDetached;
-	CNamedPointerContainer*	pc1;
-	CNamedPointerContainer*	pc2;
-	CNamedPointerContainer*	pc3;
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistToStackCalculator		cDistToStackCalculator;
+	CDistDetachedFroms			cDetached;
+	CDistToRootEffectedFroms	cEffectedFroms;
+	CNamedPointerContainer*		pc1;
+	CNamedPointerContainer*		pc2;
+	CNamedPointerContainer*		pc3;
 
 	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
 	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
@@ -193,9 +200,10 @@ void TestDistToStackCyclicWithStackPointerC(void)
 	pc1->TestRemoveHeapFrom(p0.BaseObject());
 
 	cDetached.Init();
+	cEffectedFroms.Init();
 	cDistToRootCalculator.Init();
 	cDistToRootCalculator.AddFromChanged(pc1);
-	cDistToRootCalculator.Calculate(&cDetached);
+	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
 	cDistToRootCalculator.Kill();
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc1->GetDistToRoot());
@@ -210,6 +218,7 @@ void TestDistToStackCyclicWithStackPointerC(void)
 	AssertInt(0, cDetached.NumCompletelyDetached());
 
 	cDistToStackCalculator.Kill();
+	cEffectedFroms.Kill();
 	cDetached.Kill();
 
 	gcObjects.ValidateConsistency();
@@ -226,12 +235,13 @@ void TestDistToStackCyclicWithoutStackPointer(void)
 {
 	ObjectsInit();
 
-	CDistToRootCalculator	cDistToRootCalculator;
-	CDistToStackCalculator	cDistToStackCalculator;
-	CDistDetachedFroms		cDetached;
-	CNamedPointerContainer*	pc1;
-	CNamedPointerContainer*	pc2;
-	CNamedPointerContainer*	pc3;
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistToStackCalculator		cDistToStackCalculator;
+	CDistDetachedFroms			cDetached;
+	CDistToRootEffectedFroms	cEffectedFroms;
+	CNamedPointerContainer*		pc1;
+	CNamedPointerContainer*		pc2;
+	CNamedPointerContainer*		pc3;
 
 	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
 	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
@@ -260,9 +270,10 @@ void TestDistToStackCyclicWithoutStackPointer(void)
 	pc1->TestRemoveHeapFrom(p0.BaseObject());
 
 	cDetached.Init();
+	cEffectedFroms.Init();
 	cDistToRootCalculator.Init();
 	cDistToRootCalculator.AddFromChanged(pc1);
-	cDistToRootCalculator.Calculate(&cDetached);
+	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
 	cDistToRootCalculator.Kill();
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc1->GetDistToRoot());
@@ -279,6 +290,7 @@ void TestDistToStackCyclicWithoutStackPointer(void)
 	AssertPointer(pc3, cDetached.GetCompletelyDetached(2));
 
 	cDistToStackCalculator.Kill();
+	cEffectedFroms.Kill();
 	cDetached.Kill();
 
 	gcObjects.ValidateConsistency();
@@ -298,6 +310,7 @@ void TestDistToStackSplitRootAndStack(void)
 	CDistToRootCalculator		cDistToRootCalculator;
 	CDistToStackCalculator		cDistToStackCalculator;
 	CDistDetachedFroms			cDetached;
+	CDistToRootEffectedFroms	cEffectedFroms;
 	CTestObject*				pcTestC;
 	CTestObject*				pcTestL1;
 	CTestObject*				pcTestL2;
@@ -352,9 +365,10 @@ void TestDistToStackSplitRootAndStack(void)
 	pcTestC->TestRemoveHeapFrom(pcC);
 
 	cDetached.Init();
+	cEffectedFroms.Init();
 	cDistToRootCalculator.Init();
 	cDistToRootCalculator.AddFromChanged(pcTestC);
-	cDistToRootCalculator.Calculate(&cDetached);
+	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
 	cDistToRootCalculator.Kill();
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTestC->GetDistToRoot());
@@ -376,6 +390,7 @@ void TestDistToStackSplitRootAndStack(void)
 	AssertPointer(pcTestC, cDetached.GetCompletelyDetached(0));
 
 	cDistToStackCalculator.Kill();
+	cEffectedFroms.Kill();
 	cDetached.Kill();
 
 	gcObjects.ValidateConsistency();

@@ -1131,24 +1131,25 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 {
 	ObjectsInit();
 
-	Ptr<CTestObject>		pTest1;
-	Ptr<CTestObject>		pLTest2;
-	Ptr<CTestObject>		pRTest2;
-	Ptr<CTestObject>		pLTest3;
-	Ptr<CTestObject>		pRTest3l;
-	Ptr<CTestObject>		pRTest3r;
-	Ptr<CTestObject>		pRTest4l;
-	Ptr<CTestObject>		pRTest4r;
-	Ptr<CTestObject>		pRTest5l;
-	Ptr<CTestObject>		pRTest5r;
-	Ptr<CTestObject>		pRTest6l;
-	Ptr<CTestObject>		pRTest6r;
-	Ptr<CTestObject>		pRTest7l;
-	Ptr<CTestObject>		pRTest8;
-	Ptr<CRoot>				pRoot;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pLTest2;
+	Ptr<CTestObject>			pRTest2;
+	Ptr<CTestObject>			pLTest3;
+	Ptr<CTestObject>			pRTest3l;
+	Ptr<CTestObject>			pRTest3r;
+	Ptr<CTestObject>			pRTest4l;
+	Ptr<CTestObject>			pRTest4r;
+	Ptr<CTestObject>			pRTest5l;
+	Ptr<CTestObject>			pRTest5r;
+	Ptr<CTestObject>			pRTest6l;
+	Ptr<CTestObject>			pRTest6r;
+	Ptr<CTestObject>			pRTest7l;
+	Ptr<CTestObject>			pRTest8;
+	Ptr<CRoot>					pRoot;
 
-	CDistToRootCalculator	cDistToRootCalculator;
-	CDistDetachedFroms		cDetached;
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistDetachedFroms			cDetached;
+	CDistToRootEffectedFroms	cEffectedFroms;
 
 	pRoot = ORoot();
 	pTest1 = OMalloc(CTestObject)->Init();
@@ -1194,9 +1195,10 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 
 	cDistToRootCalculator.Init();
 	cDetached.Init();
+	cEffectedFroms.Init();
 
 	cDistToRootCalculator.AddFromChanged(pLTest2.BaseObject());
-	cDistToRootCalculator.Calculate(&cDetached);
+	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
 
 	cDistToRootCalculator.Kill();
 
@@ -1250,6 +1252,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 	AssertPointer(pLTest2.BaseObject(), cDetached.GetDetachedFromRoot(0));
 	AssertPointer(pLTest3.BaseObject(), cDetached.GetDetachedFromRoot(1));
 
+	cEffectedFroms.Kill();
 	cDetached.Kill();
 
 	ObjectsKill();
@@ -1264,24 +1267,25 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 {
 	ObjectsInit();
 
-	Ptr<CTestObject>		pTest1;
-	Ptr<CTestObject>		pLTest2;
-	Ptr<CTestObject>		pRTest2;
-	Ptr<CTestObject>		pLTest3;
-	Ptr<CTestObject>		pRTest3l;
-	Ptr<CTestObject>		pRTest3r;
-	Ptr<CTestObject>		pRTest4l;
-	Ptr<CTestObject>		pRTest4r;
-	Ptr<CTestObject>		pRTest5l;
-	Ptr<CTestObject>		pRTest5r;
-	Ptr<CTestObject>		pRTest6l;
-	Ptr<CTestObject>		pRTest6r;
-	Ptr<CTestObject>		pRTest7l;
-	Ptr<CTestObject>		pRTest8;
-	Ptr<CRoot>				pRoot;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pLTest2;
+	Ptr<CTestObject>			pRTest2;
+	Ptr<CTestObject>			pLTest3;
+	Ptr<CTestObject>			pRTest3l;
+	Ptr<CTestObject>			pRTest3r;
+	Ptr<CTestObject>			pRTest4l;
+	Ptr<CTestObject>			pRTest4r;
+	Ptr<CTestObject>			pRTest5l;
+	Ptr<CTestObject>			pRTest5r;
+	Ptr<CTestObject>			pRTest6l;
+	Ptr<CTestObject>			pRTest6r;
+	Ptr<CTestObject>			pRTest7l;
+	Ptr<CTestObject>			pRTest8;
+	Ptr<CRoot>					pRoot;
 
-	CDistToRootCalculator	cDistToRootCalculator;
-	CDistDetachedFroms		cDetached;
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistDetachedFroms			cDetached;
+	CDistToRootEffectedFroms	cEffectedFroms;
 
 	pRoot = ORoot();
 	pTest1 = OMalloc(CTestObject)->Init();
@@ -1327,9 +1331,10 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 
 	cDistToRootCalculator.Init();
 	cDetached.Init();
+	cEffectedFroms.Init();
 
 	cDistToRootCalculator.AddFromChanged(pRTest2.BaseObject());
-	cDistToRootCalculator.Calculate(&cDetached);
+	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
 
 	cDistToRootCalculator.Kill();
 
@@ -1401,6 +1406,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 	AssertPointer(pRTest5r.BaseObject(), cDetached.GetDetachedFromRoot(6));
 	AssertPointer(pRTest6r.BaseObject(), cDetached.GetDetachedFromRoot(7));
 
+	cEffectedFroms.Kill();
 	cDetached.Kill();
 
 	ObjectsKill();
@@ -1415,24 +1421,25 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 {
 	ObjectsInit();
 
-	Ptr<CTestObject>		pTest1;
-	Ptr<CTestObject>		pLTest2;
-	Ptr<CTestObject>		pRTest2;
-	Ptr<CTestObject>		pLTest3;
-	Ptr<CTestObject>		pRTest3l;
-	Ptr<CTestObject>		pRTest3r;
-	Ptr<CTestObject>		pRTest4l;
-	Ptr<CTestObject>		pRTest4r;
-	Ptr<CTestObject>		pRTest5l;
-	Ptr<CTestObject>		pRTest5r;
-	Ptr<CTestObject>		pRTest6l;
-	Ptr<CTestObject>		pRTest6r;
-	Ptr<CTestObject>		pRTest7l;
-	Ptr<CTestObject>		pRTest8;
-	Ptr<CRoot>				pRoot;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pLTest2;
+	Ptr<CTestObject>			pRTest2;
+	Ptr<CTestObject>			pLTest3;
+	Ptr<CTestObject>			pRTest3l;
+	Ptr<CTestObject>			pRTest3r;
+	Ptr<CTestObject>			pRTest4l;
+	Ptr<CTestObject>			pRTest4r;
+	Ptr<CTestObject>			pRTest5l;
+	Ptr<CTestObject>			pRTest5r;
+	Ptr<CTestObject>			pRTest6l;
+	Ptr<CTestObject>			pRTest6r;
+	Ptr<CTestObject>			pRTest7l;
+	Ptr<CTestObject>			pRTest8;
+	Ptr<CRoot>					pRoot;
 
-	CDistToRootCalculator	cDistToRootCalculator;
-	CDistDetachedFroms		cDetached;
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistDetachedFroms			cDetached;
+	CDistToRootEffectedFroms	cEffectedFroms;
 
 	pRoot = ORoot();
 	pTest1 = OMalloc(CTestObject)->Init();
@@ -1478,9 +1485,10 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 
 	cDistToRootCalculator.Init();
 	cDetached.Init();
+	cEffectedFroms.Init();
 
 	cDistToRootCalculator.AddFromChanged(pRTest3l.BaseObject());
-	cDistToRootCalculator.Calculate(&cDetached);
+	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
 
 	cDistToRootCalculator.Kill();
 
@@ -1537,6 +1545,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 	AssertPointer(pRTest4l.BaseObject(), cDetached.GetDetachedFromRoot(1));
 	AssertPointer(pRTest5l.BaseObject(), cDetached.GetDetachedFromRoot(2));
 
+	cEffectedFroms.Kill();
 	cDetached.Kill();
 
 	ObjectsKill();
@@ -1551,24 +1560,25 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 {
 	ObjectsInit();
 
-	Ptr<CTestObject>		pTest1;
-	Ptr<CTestObject>		pLTest2;
-	Ptr<CTestObject>		pRTest2;
-	Ptr<CTestObject>		pLTest3;
-	Ptr<CTestObject>		pRTest3l;
-	Ptr<CTestObject>		pRTest3r;
-	Ptr<CTestObject>		pRTest4l;
-	Ptr<CTestObject>		pRTest4r;
-	Ptr<CTestObject>		pRTest5l;
-	Ptr<CTestObject>		pRTest5r;
-	Ptr<CTestObject>		pRTest6l;
-	Ptr<CTestObject>		pRTest6r;
-	Ptr<CTestObject>		pRTest7l;
-	Ptr<CTestObject>		pRTest8;
-	Ptr<CRoot>				pRoot;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pLTest2;
+	Ptr<CTestObject>			pRTest2;
+	Ptr<CTestObject>			pLTest3;
+	Ptr<CTestObject>			pRTest3l;
+	Ptr<CTestObject>			pRTest3r;
+	Ptr<CTestObject>			pRTest4l;
+	Ptr<CTestObject>			pRTest4r;
+	Ptr<CTestObject>			pRTest5l;
+	Ptr<CTestObject>			pRTest5r;
+	Ptr<CTestObject>			pRTest6l;
+	Ptr<CTestObject>			pRTest6r;
+	Ptr<CTestObject>			pRTest7l;
+	Ptr<CTestObject>			pRTest8;
+	Ptr<CRoot>					pRoot;
 
-	CDistToRootCalculator	cDistToRootCalculator;
-	CDistDetachedFroms		cDetached;
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistDetachedFroms			cDetached;
+	CDistToRootEffectedFroms	cEffectedFroms;
 
 	pRoot = ORoot();
 	pTest1 = OMalloc(CTestObject)->Init();
@@ -1614,9 +1624,10 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 
 	cDistToRootCalculator.Init();
 	cDetached.Init();
+	cEffectedFroms.Init();
 
 	cDistToRootCalculator.AddFromChanged(pRTest3r.BaseObject());
-	cDistToRootCalculator.Calculate(&cDetached);
+	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
 
 	cDistToRootCalculator.Kill();
 
@@ -1676,6 +1687,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 	AssertPointer(pRTest5r.BaseObject(), cDetached.GetDetachedFromRoot(2));
 	AssertPointer(pRTest6r.BaseObject(), cDetached.GetDetachedFromRoot(3));
 
+	cEffectedFroms.Kill();
 	cDetached.Kill();
 
 	ObjectsKill();
@@ -1957,8 +1969,9 @@ void TestDistToRootCyclic(void)
 {
 	ObjectsInit();
 
-	CDistToRootCalculator	cDistToRootCalculator;
-	CDistDetachedFroms		cDetached;
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistDetachedFroms			cDetached;
+	CDistToRootEffectedFroms	cEffectedFroms;
 
 	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
 	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
@@ -1995,9 +2008,10 @@ void TestDistToRootCyclic(void)
 	p1->TestRemoveHeapFrom(p0.BaseObject());
 
 	cDetached.Init();
+	cEffectedFroms.Init();
 	cDistToRootCalculator.Init();
 	cDistToRootCalculator.AddFromChanged(p1.BaseObject());
-	cDistToRootCalculator.Calculate(&cDetached);
+	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
 	cDistToRootCalculator.Kill();
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p1->GetDistToRoot());
@@ -2006,6 +2020,7 @@ void TestDistToRootCyclic(void)
 
 	gcObjects.ValidateConsistency();
 
+	cEffectedFroms.Kill();
 	cDetached.Kill();
 
 	ObjectsKill();
