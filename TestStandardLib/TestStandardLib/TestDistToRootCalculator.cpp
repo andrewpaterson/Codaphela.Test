@@ -1246,9 +1246,9 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 	AssertInt(8, pRTest7l->GetDistToRoot());
 	AssertInt(8, pRTest8->GetDistToRoot());
 
-	AssertInt(2, cDetached.Num());
-	AssertPointer(pLTest2.BaseObject(), cDetached.Get(0));
-	AssertPointer(pLTest3.BaseObject(), cDetached.Get(1));
+	AssertInt(2, cDetached.NumDetachedFromRoot());
+	AssertPointer(pLTest2.BaseObject(), cDetached.GetDetachedFromRoot(0));
+	AssertPointer(pLTest3.BaseObject(), cDetached.GetDetachedFromRoot(1));
 
 	cDetached.Kill();
 
@@ -1391,15 +1391,15 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 	AssertInt(6, pRTest7l->GetDistToRoot());
 	AssertInt(7, pRTest8->GetDistToRoot());
 
-	AssertInt(8, cDetached.Num());
-	AssertPointer(pRTest2.BaseObject(), cDetached.Get(0));
-	AssertPointer(pRTest3l.BaseObject(), cDetached.Get(1));
-	AssertPointer(pRTest4l.BaseObject(), cDetached.Get(2));
-	AssertPointer(pRTest5l.BaseObject(), cDetached.Get(3));
-	AssertPointer(pRTest3r.BaseObject(), cDetached.Get(4));
-	AssertPointer(pRTest4r.BaseObject(), cDetached.Get(5));
-	AssertPointer(pRTest5r.BaseObject(), cDetached.Get(6));
-	AssertPointer(pRTest6r.BaseObject(), cDetached.Get(7));
+	AssertInt(8, cDetached.NumDetachedFromRoot());
+	AssertPointer(pRTest2.BaseObject(), cDetached.GetDetachedFromRoot(0));
+	AssertPointer(pRTest3l.BaseObject(), cDetached.GetDetachedFromRoot(1));
+	AssertPointer(pRTest4l.BaseObject(), cDetached.GetDetachedFromRoot(2));
+	AssertPointer(pRTest5l.BaseObject(), cDetached.GetDetachedFromRoot(3));
+	AssertPointer(pRTest3r.BaseObject(), cDetached.GetDetachedFromRoot(4));
+	AssertPointer(pRTest4r.BaseObject(), cDetached.GetDetachedFromRoot(5));
+	AssertPointer(pRTest5r.BaseObject(), cDetached.GetDetachedFromRoot(6));
+	AssertPointer(pRTest6r.BaseObject(), cDetached.GetDetachedFromRoot(7));
 
 	cDetached.Kill();
 
@@ -1532,10 +1532,10 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 	AssertInt(5, pRTest6l->GetDistToRoot());
 	AssertInt(4, pRTest3r->GetDistToRoot());
 
-	AssertInt(3, cDetached.Num());
-	AssertPointer(pRTest3l.BaseObject(), cDetached.Get(0));
-	AssertPointer(pRTest4l.BaseObject(), cDetached.Get(1));
-	AssertPointer(pRTest5l.BaseObject(), cDetached.Get(2));
+	AssertInt(3, cDetached.NumDetachedFromRoot());
+	AssertPointer(pRTest3l.BaseObject(), cDetached.GetDetachedFromRoot(0));
+	AssertPointer(pRTest4l.BaseObject(), cDetached.GetDetachedFromRoot(1));
+	AssertPointer(pRTest5l.BaseObject(), cDetached.GetDetachedFromRoot(2));
 
 	cDetached.Kill();
 
@@ -1670,11 +1670,11 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 	AssertInt(7, pRTest8->GetDistToRoot());
 	AssertInt(4, pRTest3l->GetDistToRoot());
 
-	AssertInt(4, cDetached.Num());
-	AssertPointer(pRTest3r.BaseObject(), cDetached.Get(0));
-	AssertPointer(pRTest4r.BaseObject(), cDetached.Get(1));
-	AssertPointer(pRTest5r.BaseObject(), cDetached.Get(2));
-	AssertPointer(pRTest6r.BaseObject(), cDetached.Get(3));
+	AssertInt(4, cDetached.NumDetachedFromRoot());
+	AssertPointer(pRTest3r.BaseObject(), cDetached.GetDetachedFromRoot(0));
+	AssertPointer(pRTest4r.BaseObject(), cDetached.GetDetachedFromRoot(1));
+	AssertPointer(pRTest5r.BaseObject(), cDetached.GetDetachedFromRoot(2));
+	AssertPointer(pRTest6r.BaseObject(), cDetached.GetDetachedFromRoot(3));
 
 	cDetached.Kill();
 
@@ -1938,9 +1938,9 @@ void TestDistToRootLinear(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p2->GetDistToRoot());
 	AssertInt(1, cEffectedFroms.GetLowestFroms()->NumElements());
 
-	AssertInt(2, cDetached.Num());
-	AssertPointer(&p1, cDetached.Get(0));
-	AssertPointer(&p2, cDetached.Get(1));
+	AssertInt(2, cDetached.NumDetachedFromRoot());
+	AssertPointer(&p1, cDetached.GetDetachedFromRoot(0));
+	AssertPointer(&p2, cDetached.GetDetachedFromRoot(1));
 
 	cEffectedFroms.Kill();
 	cDetached.Kill();
