@@ -18,6 +18,8 @@ void TestObjectSize(void)
 	ObjectsInit();
 
 	AssertInt(12, sizeof(CUnknown));
+	AssertInt(56, sizeof(CEmbeddedObject));
+	AssertInt(80, sizeof(CBaseObject));
 	AssertInt(144, sizeof(CObject));
 	AssertInt(184, sizeof(CRoot));
 	AssertInt(128, sizeof(CSetObject));

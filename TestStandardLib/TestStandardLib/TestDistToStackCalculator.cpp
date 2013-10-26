@@ -52,6 +52,9 @@ void TestDistToStack1(void)
 
 	cDistToStackCalculator.Init();
 	cDistToStackCalculator.Calculate(&cDetached);
+
+
+
 	cDistToStackCalculator.Kill();
 	cDetached.Kill();
 
