@@ -237,7 +237,7 @@
     <ClCompile Include="TestDistToRootCalculator.cpp">
       <Filter>Source\Object\Object\Distance</Filter>
     </ClCompile>
-    <ClCompile Include="TestDistToStack.cpp">
+    <ClCompile Include="TestDistToStackCalculator.cpp">
       <Filter>Source\Object\Object\Distance</Filter>
     </ClCompile>
   </ItemGroup>

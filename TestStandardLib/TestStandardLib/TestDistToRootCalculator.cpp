@@ -455,6 +455,7 @@ void TestUpdateTosDistToRootSimpleLeft(void)
 	Ptr<CTestObject>			pTest3;
 
 	CDistToRootCalculator		cDistToRootCalculator;
+	int							iFlags;
 
 	pRoot = ORoot();
 	p1 = ONMalloc(CNamedPointerContainer, "Back")->Init();
@@ -467,9 +468,26 @@ void TestUpdateTosDistToRootSimpleLeft(void)
 	pTest1->mpObject = pTest3;
 	pTest2->mpTest = pTest3;
 
+	//
+	// pTest3(4)<--pTest2(4)
+	//      ^       ^
+	//       \     /
+	//        \   /
+	//         \ /
+	//       pTest1(3)
+	//          ^
+	//          |
+	//         p1(2)
+	//          ^
+	//          |
+	//         ...
+	//        Root(0)
+	//
+
 	pTest1->mpTest.UnsafeClearObject();
 	pTest2->TestRemoveHeapFrom(pTest1.BaseObject());
 
+	//
 	//   pTest3(4)
 	//      | 
 	//      |
@@ -479,8 +497,10 @@ void TestUpdateTosDistToRootSimpleLeft(void)
 	//      |
 	//     p1(2)
 	//      |
+	//      |
 	//     ...
 	//    Root(0)
+	//
 
 	cDistToRootCalculator.Init();
 
@@ -492,6 +512,11 @@ void TestUpdateTosDistToRootSimpleLeft(void)
 	AssertInt(3, pTest1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest2->GetDistToRoot());
 	AssertInt(4, pTest3->GetDistToRoot());
+
+	iFlags = pTest3->GetFlags();
+	AssertFalse(iFlags & OBJECT_FLAGS_CLEARED_TO_ROOT);
+	AssertFalse(iFlags & OBJECT_FLAGS_UPDATED_TOS_DIST_TO_ROOT);
+	AssertFalse(iFlags & OBJECT_FLAGS_UPDATED_TOS_DETACHED);
 
 	gcObjects.ValidateConsistency();
 
@@ -526,9 +551,30 @@ void TestUpdateTosDistToRootSimpleRight(void)
 	pTest1->mpObject = pTest3;
 	pTest2->mpTest = pTest3;
 
-	pTest1->mpObject.UnsafeClearObject();
-	pTest3->TestRemoveHeapFrom(pTest1.BaseObject());
+	//
+	// pTest3(4)<--pTest2(4)
+	//      ^       ^
+	//       \     /
+	//        \   /
+	//         \ /
+	//       pTest1(3)
+	//          ^
+	//          |
+	//         p1(2)
+	//          ^
+	//          |
+	//         ...
+	//        Root(0)
+	//
 
+	AssertLongLongInt(4, pTest1->GetOI());
+	AssertLongLongInt(5, pTest2->GetOI());
+	AssertLongLongInt(6, pTest3->GetOI());
+
+	pTest2->mpTest.UnsafeClearObject();
+	pTest3->TestRemoveHeapFrom(pTest2.BaseObject());
+
+	//
 	// pTest3(4)    pTest2(4)
 	//      \       /
 	//       \     /
@@ -539,8 +585,10 @@ void TestUpdateTosDistToRootSimpleRight(void)
 	//          |
 	//         p1(2)
 	//          |
+	//          |
 	//         ...
 	//        Root(0)
+	//
 
 	cDistToRootCalculator.Init();
 
@@ -557,6 +605,97 @@ void TestUpdateTosDistToRootSimpleRight(void)
 
 	ObjectsKill();
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestUpdateTosDistToRootSimpleRightBroken(void)
+{
+	ObjectsInit();
+
+	Ptr<CRoot>					pRoot;
+	Ptr<CNamedPointerContainer>	p1;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
+
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistToRootEffectedFroms	cEffectedFroms;
+	CDistDetachedFroms			cDetached;
+
+	pRoot = ORoot();
+	p1 = ONMalloc(CNamedPointerContainer, "III")->Init();
+	pRoot->Add(p1);
+	pTest1 = OMalloc(CTestObject)->Init();
+	p1->mp = pTest1;
+	pTest2 = OMalloc(CTestObject)->Init();
+	pTest3 = OMalloc(CTestObject)->Init();
+	pTest1->mpTest = pTest2;
+	pTest1->mpObject = pTest3;
+	pTest2->mpTest = pTest3;
+
+	//
+	// pTest3(4)<--pTest2(4)
+	//      ^       ^
+	//       \     /
+	//        \   /
+	//         \ /
+	//       pTest1(3)
+	//          ^
+	//          |
+	//         p1(2)
+	//          ^
+	//          |
+	//         ...
+	//        Root(0)
+	//
+
+	AssertLongLongInt(4, pTest1->GetOI());
+	AssertLongLongInt(5, pTest2->GetOI());
+	AssertLongLongInt(6, pTest3->GetOI());
+
+	pTest1->mpObject.UnsafeClearObject();
+	pTest3->TestRemoveHeapFrom(pTest1.BaseObject());
+
+	//
+	// pTest3(5)<--pTest2(4)
+	//              ^
+	//             /
+	//            /
+	//           /
+	//       pTest1(3)
+	//          ^
+	//          |
+	//         p1(2)
+	//          ^
+	//          |
+	//         ...
+	//        Root(0)
+	//
+
+	cDistToRootCalculator.Init();
+	cEffectedFroms.Init();
+	cDetached.Init();
+
+	cDistToRootCalculator.AddFromChanged(pTest3.BaseObject());
+	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
+
+	cDistToRootCalculator.Kill();
+
+	AssertInt(3, pTest1->GetDistToRoot());
+	AssertInt(4, pTest2->GetDistToRoot());
+	AssertInt(5, pTest3->GetDistToRoot());
+
+	cDetached.Kill();
+	cEffectedFroms.Kill();
+
+	gcObjects.ValidateConsistency();
+
+	ObjectsKill();
+}
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -1750,6 +1889,133 @@ void TestClearDistToRootToValidDistBroken(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestDistToRootLinear(void)
+{
+	ObjectsInit();
+
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistDetachedFroms			cDetached;
+	CDistToRootEffectedFroms	cEffectedFroms;
+
+	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
+	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
+	p1->mp = p2;
+
+	Ptr<CRoot> pRoot = ORoot();
+	Ptr<CNamedPointerContainer>	p0 = ONMalloc(CNamedPointerContainer, "Test Helper")->Init(p1);
+	pRoot->Add(p0);
+
+	//
+	//               p2(4)
+	//                |
+	//                |
+	//               p1(3)
+	//                |
+	//                |
+	//               p0(2)
+	//                |
+	//                |
+	//               ...
+	//              Root(0)
+	//                         
+
+	AssertInt(2, p0->GetDistToRoot());
+	AssertInt(3, p1->GetDistToRoot());
+	AssertInt(4, p2->GetDistToRoot());
+
+	p0->mp.UnsafeClearObject();
+	p1->TestRemoveHeapFrom(p0.BaseObject());
+
+	cDetached.Init();
+	cEffectedFroms.Init();
+	cDistToRootCalculator.Init();
+	cDistToRootCalculator.AddFromChanged(p1.BaseObject());
+	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
+	cDistToRootCalculator.Kill();
+
+	AssertInt(2, p0->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, p1->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, p2->GetDistToRoot());
+	AssertInt(1, cEffectedFroms.GetLowestFroms()->NumElements());
+
+	AssertInt(2, cDetached.Num());
+	AssertPointer(&p1, cDetached.Get(0));
+	AssertPointer(&p2, cDetached.Get(1));
+
+	cEffectedFroms.Kill();
+	cDetached.Kill();
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToRootCyclic(void)
+{
+	ObjectsInit();
+
+	CDistToRootCalculator	cDistToRootCalculator;
+	CDistDetachedFroms		cDetached;
+
+	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
+	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
+	Ptr<CNamedPointerContainer>	p3 = ONMalloc(CNamedPointerContainer, "Pointer C")->Init();
+	p1->mp = p2;
+	p2->mp = p3;
+	p3->mp = p1;
+
+	Ptr<CRoot> pRoot = ORoot();
+	Ptr<CNamedPointerContainer>	p0 = ONMalloc(CNamedPointerContainer, "Test Helper")->Init(p1);
+	pRoot->Add(p0);
+
+	//
+	//           p3(5)<--p2(4)
+	//             \     ^
+	//              \   /
+	//               v /
+	//               p1(3)
+	//                ^
+	//                |
+	//               p0(2)
+	//                ^
+	//                |
+	//               ...
+	//              Root(0)
+	//                         
+
+	AssertInt(2, p0->GetDistToRoot());
+	AssertInt(3, p1->GetDistToRoot());
+	AssertInt(4, p2->GetDistToRoot());
+	AssertInt(5, p3->GetDistToRoot());
+
+	p0->mp.UnsafeClearObject();
+	p1->TestRemoveHeapFrom(p0.BaseObject());
+
+	cDetached.Init();
+	cDistToRootCalculator.Init();
+	cDistToRootCalculator.AddFromChanged(p1.BaseObject());
+	cDistToRootCalculator.Calculate(&cDetached);
+	cDistToRootCalculator.Kill();
+
+	AssertInt(UNATTACHED_DIST_TO_ROOT, p1->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, p2->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, p3->GetDistToRoot());
+
+	gcObjects.ValidateConsistency();
+
+	cDetached.Kill();
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestDistToRoot(void)
 {
 	BeginTests();
@@ -1761,6 +2027,7 @@ void TestDistToRoot(void)
 	TestUpdateTosDistToRootBroken();
 	TestUpdateTosDistToRootComplex();
 	TestUpdateTosDistToRootSimpleRight();
+	TestUpdateTosDistToRootSimpleRightBroken();
 	TestUpdateTosDistToRootSimpleLeft();
 	TestUpdateTosDistToRootChildTriangleKindaBalanced();
 	TestUpdateTosDistToRootChildTriangleShortLeft();
@@ -1769,6 +2036,8 @@ void TestDistToRoot(void)
 	TestUpdateEmbeddedObjectTosDetachedScenarioB();
 	TestUpdateEmbeddedObjectTosDetachedScenarioC();
 	TestUpdateEmbeddedObjectTosDetachedScenarioD();
+	TestDistToRootLinear();
+	TestDistToRootCyclic();
 
 	TestStatistics();
 }

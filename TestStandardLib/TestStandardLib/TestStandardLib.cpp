@@ -76,7 +76,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	//TestParameters();
 	//TestObjectsSimple();
 	//TestRoot();
-	//TestDistToRoot();
+	TestDistToRoot();
 	TestDistToStack();
 	//TestObject();
 	//TestPointer();
