@@ -21,6 +21,7 @@ public:
 
 	Ptr<CTestObject>	Init(void);
 	Ptr<CTestObject>	Init(STestObjectKilledNotifier* psKilledNotifier);
+	Ptr<CTestObject>	Init(CPointer pObject, Ptr<CTestObject> pTest);
 	void				Class(void);
 	void				KillData(void);
 
