@@ -139,12 +139,6 @@ void TestObjectPointerRemappingKilling(void)
 	pObject4 = OMalloc(CTestObject);
 	pObject5 = OMalloc(CTestObject);
 
-	sKillNotifier1.bKilled = FALSE;
-	sKillNotifier2.bKilled = FALSE;
-	sKillNotifier3.bKilled = FALSE;
-	sKillNotifier4.bKilled = FALSE;
-	sKillNotifier5.bKilled = FALSE;
-
 	pObject1->Init(&sKillNotifier1);
 	pObject2->Init(&sKillNotifier2);
 	pObject3->Init(&sKillNotifier3);
@@ -160,7 +154,10 @@ void TestObjectPointerRemappingKilling(void)
 	pRoot->Add(pObject1);
 	pObject1->mpObject = pObject2;
 	pObject2->mpObject = pObject3;
+	
 	pObject3 = NULL;
+	AssertFalse(pcObject3->HasStackPointers());
+	AssertTrue(pcObject3->HasHeapPointers());
 
 	AssertInt(0, pObject4->NumTos());
 	pObject4->mpObject = pObject5;
@@ -176,9 +173,11 @@ void TestObjectPointerRemappingKilling(void)
 	AssertInt(1, pObject4->NumTos());
 	AssertPointer(&pObject5, &pObject4->mpObject);
 
-	AssertTrue(sKillNotifier2.bKilled);
 	AssertFalse(sKillNotifier4.bKilled);
-	AssertFalse(sKillNotifier3.bKilled);
+	AssertTrue(sKillNotifier2.bKilled);
+	AssertTrue(sKillNotifier3.bKilled);
+
+	gcObjects.ValidateConsistency();
 
 	ObjectsKill();
 }

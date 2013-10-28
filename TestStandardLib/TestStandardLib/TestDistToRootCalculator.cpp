@@ -1,6 +1,7 @@
 #include "StandardLib/Objects.h"
 #include "StandardLib/Root.h"
 #include "StandardLib/PointerContainer.h"
+#include "StandardLib/String.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
 
@@ -165,11 +166,11 @@ void TestClearDistToRootToValidDistComplex(void)
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest2d->GetDistToRoot());
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest2e->GetDistToRoot());
 
-	AssertInt(2, cEffectedFroms.NumElements());
-	AssertPointer(pTest1a.BaseObject(), cEffectedFroms.Get(0)->pcObject);
-	AssertPointer(pTest1c.BaseObject(), cEffectedFroms.Get(1)->pcObject);
-	AssertInt(9, cEffectedFroms.Get(0)->iExpectedDist);
-	AssertInt(12, cEffectedFroms.Get(1)->iExpectedDist);
+	AssertInt(2, cEffectedFroms.NumExpectedDists());
+	AssertPointer(pTest1a.BaseObject(), cEffectedFroms.GetExpectedDist(0)->pcObject);
+	AssertPointer(pTest1c.BaseObject(), cEffectedFroms.GetExpectedDist(1)->pcObject);
+	AssertInt(9, cEffectedFroms.GetExpectedDist(0)->iExpectedDist);
+	AssertInt(12, cEffectedFroms.GetExpectedDist(1)->iExpectedDist);
 
 	cEffectedFroms.Kill();
 
@@ -237,7 +238,7 @@ void TestClearDistToRootToValidDistSimpleLeft(void)
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest2->GetDistToRoot());
 	AssertInt(4, pTest3->GetDistToRoot());
 
-	AssertInt(0, cEffectedFroms.NumElements());
+	AssertInt(0, cEffectedFroms.NumExpectedDists());
 
 	cEffectedFroms.Kill();
 
@@ -304,9 +305,9 @@ void TestClearDistToRootToValidDistSimpleRight(void)
 
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest3->GetDistToRoot());
 
-	AssertInt(1, cEffectedFroms.NumElements());
-	AssertPointer(pTest3.BaseObject(), cEffectedFroms.Get(0)->pcObject);
-	AssertInt(5, cEffectedFroms.Get(0)->iExpectedDist);
+	AssertInt(1, cEffectedFroms.NumExpectedDists());
+	AssertPointer(pTest3.BaseObject(), cEffectedFroms.GetExpectedDist(0)->pcObject);
+	AssertInt(5, cEffectedFroms.GetExpectedDist(0)->iExpectedDist);
 
 	cEffectedFroms.Kill();
 
@@ -1878,7 +1879,7 @@ void TestClearDistToRootToValidDistBroken(void)
 	cEffectedFroms.Init();
 	pTest1b->ClearDistToRootToValidDist(NULL, &cEffectedFroms);
 
-	AssertInt(1, cEffectedFroms.NumElements());
+	AssertInt(1, cEffectedFroms.NumExpectedDists());
 	psDistToRoot = cEffectedFroms.GetLowest();
 	AssertLongLongInt(6LL, psDistToRoot->pcObject->GetOI());
 	AssertInt(4, psDistToRoot->iExpectedDist);
@@ -1949,6 +1950,7 @@ void TestDistToRootLinear(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p2->GetDistToRoot());
 	AssertInt(1, cEffectedFroms.GetLowestFroms()->NumElements());
+	AssertPointer(&p1, *cEffectedFroms.GetLowestFroms()->Get(0));
 
 	AssertInt(2, cDetached.NumDetachedFromRoot());
 	AssertPointer(&p1, cDetached.GetDetachedFromRoot(0));
@@ -2031,6 +2033,44 @@ void TestDistToRootCyclic(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestDistToRootWithStackPointers(void)
+{
+	Ptr<CTestObject>			cNS1;
+	Ptr<CTestObject>			cNS2;
+	Ptr<CTestObject>			cNS3;
+	Ptr<CString>				sz1;
+	Ptr<CString>				sz2;
+
+	ObjectsInit();
+
+	cNS3 = OMalloc(CTestObject);
+	cNS1 = OMalloc(CTestObject);
+	sz1 = OMalloc(CString);
+	cNS2 = OMalloc(CTestObject);
+	sz2 = OMalloc(CString);
+
+	AssertLongLongInt(1, cNS3.GetIndex());
+	AssertLongLongInt(2, cNS1.GetIndex());
+	AssertLongLongInt(3, sz1.GetIndex());
+	AssertLongLongInt(4, cNS2.GetIndex());
+	AssertLongLongInt(5, sz2.GetIndex());
+
+	sz1->Init("Back");
+	cNS1->Init(sz1, cNS3);
+
+	sz2->Init("Down");
+	cNS2->Init(sz2, cNS3);
+
+	gcObjects.ValidateConsistency();
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestDistToRoot(void)
 {
 	BeginTests();
@@ -2053,6 +2093,8 @@ void TestDistToRoot(void)
 	TestUpdateEmbeddedObjectTosDetachedScenarioD();
 	TestDistToRootLinear();
 	TestDistToRootCyclic();
+	TestDistToRootWithStackPointers();
+
 
 	TestStatistics();
 }

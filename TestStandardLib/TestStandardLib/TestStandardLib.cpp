@@ -75,11 +75,11 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestChunkFileNames();
 	TestParameters();
 	TestObjectsSimple();
-//	TestRoot();
+	TestRoot();
 	TestDistToRoot();
 	TestDistToStack();
 	TestObject();
-//	TestPointer();
+	TestPointer();
 	TestArrayCommonObject();
 	TestNamedObject();
 	TestObjectAllocator();

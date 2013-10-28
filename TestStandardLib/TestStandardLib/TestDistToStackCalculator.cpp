@@ -1,8 +1,95 @@
 #include "StandardLib/Objects.h"
 #include "StandardLib/Root.h"
 #include "StandardLib/PointerContainer.h"
+#include "StandardLib/Set.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToStackSimpleOneStep(void)
+{
+	ObjectsInit();
+
+	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
+	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
+	Ptr<CNamedPointerContainer> p3 = ONMalloc(CNamedPointerContainer, "Pointer C")->Init();
+	AssertInt(0, p2->NumHeapFroms());
+
+	//  
+	//  x   x   x
+	//  |   |   |
+	//  |   |   |
+	//  p1  p2  p3
+	//  .   .   .
+	//  .   .   .
+	//
+
+	p3->mp = p2;
+	AssertInt(1, p2->NumHeapFroms());
+
+	//  
+	//      x
+	//      |
+	//      |
+	//  x   p2
+	//  |   . \
+	//  |   .  \
+	//  p1  .   p3
+	//  .   .   .
+	//  .   .   .
+	//
+
+	p3 = NULL;
+	AssertInt(0, p2->NumHeapFroms());
+
+	//  
+	//  x   x 
+	//  |   | 
+	//  |   | 
+	//  p1  p2
+	//  .   . 
+	//  .   . 
+	//
+
+	gcObjects.ValidateConsistency();
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToStackSimpleTwoStep(void)
+{
+	ObjectsInit();
+
+	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
+	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
+	Ptr<CNamedPointerContainer> p3 = ONMalloc(CNamedPointerContainer, "Pointer C")->Init();
+	AssertInt(0, p2->NumHeapFroms());
+
+	p3->mp = p2;
+	AssertInt(1, p2->NumHeapFroms());
+
+	p3->mp = NULL;
+	AssertInt(0, p2->NumHeapFroms());
+	AssertInt(3, (int)gcObjects.NumMemoryIndexes());
+	p3 = NULL;
+
+	AssertInt(2, (int)gcObjects.NumMemoryIndexes());
+	AssertTrue(gcObjects.Contains("Pointer A"));
+	AssertTrue(gcObjects.Contains("Pointer B"));
+
+	gcObjects.ValidateConsistency();
+
+	ObjectsKill();
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -48,6 +135,8 @@ void TestDistToStackCyclicWithStackPointerA(void)
 	p2 = NULL;
 	p3 = NULL;
 
+	gcObjects.ValidateConsistency();
+
 	p0->mp.UnsafeClearObject();
 	pc1->TestRemoveHeapFrom(p0.BaseObject());
 
@@ -62,6 +151,8 @@ void TestDistToStackCyclicWithStackPointerA(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc2->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc3->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pStack->GetDistToRoot());
+
+	gcObjects.ValidateConsistency();
 
 	cDistToStackCalculator.Init();
 	cDistToStackCalculator.Calculate(&cDetached);
@@ -403,15 +494,155 @@ void TestDistToStackSplitRootAndStack(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestDistToStackSetWithoutStackPointers(void)
+{
+	ObjectsInit();
+
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistToStackCalculator		cDistToStackCalculator;
+	CDistDetachedFroms			cDetached;
+	CDistToRootEffectedFroms	cEffectedFroms;
+	STestObjectKilledNotifier	sKillNotifier;
+	Ptr<CSet<CTestObject>>		pSet;
+	Ptr<CRoot>					pRoot;
+	Ptr<CPointerContainer>		pContainer;
+	Ptr<CTestObject>			pTest;
+	CSet<CTestObject>*			pcSet;
+	CPointerContainer*			pcContainer;
+	CTestObject*				pcTest;
+
+	pTest = OMalloc(CTestObject)->Init(&sKillNotifier);
+	pSet = OMalloc(CSet<CTestObject>)->Init();
+	pSet->Add(pTest);
+
+	pContainer = OMalloc(CPointerContainer)->Init();
+	pContainer->mp = pSet;
+	pRoot = ORoot();
+	pRoot->Add(pContainer);
+
+	pcSet = &pSet;
+	pcContainer = &pContainer;
+	pcTest = &pTest;
+	pSet = NULL;
+	pContainer = NULL;
+	pTest = NULL;
+
+	pcContainer->mp.UnsafeClearObject();
+	pcSet->TestRemoveHeapFrom(pcContainer);
+
+	cDetached.Init();
+	cEffectedFroms.Init();
+	cDistToRootCalculator.Init();
+	cDistToRootCalculator.AddFromChanged(pcSet);
+	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
+	cDistToRootCalculator.Kill();
+	cDistToStackCalculator.Init();
+	cDistToStackCalculator.Calculate(&cDetached);
+
+	AssertInt(2, cDetached.NumDetachedFromRoot());
+	AssertInt(2, cDetached.NumCompletelyDetached());
+	AssertPointer(pcSet, cDetached.GetCompletelyDetached(0));
+	AssertPointer(pcTest, cDetached.GetCompletelyDetached(1));
+
+	cDistToStackCalculator.Kill();
+	cEffectedFroms.Kill();
+
+	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	gcObjects.Remove(cDetached.GetCompletelyDetachedArray());
+	cDetached.Kill();
+	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
+
+	gcObjects.ValidateConsistency();
+
+	ObjectsKill();
+}
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToStackSetWithStackPointers(void)
+{
+	ObjectsInit();
+
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistToStackCalculator		cDistToStackCalculator;
+	CDistDetachedFroms			cDetached;
+	CDistToRootEffectedFroms	cEffectedFroms;
+	STestObjectKilledNotifier	sKillNotifier;
+	Ptr<CSet<CTestObject>>		pSet;
+	Ptr<CRoot>					pRoot;
+	Ptr<CPointerContainer>		pContainer;
+	Ptr<CTestObject>			pTest;
+	CSet<CTestObject>*			pcSet;
+	CPointerContainer*			pcContainer;
+	CTestObject*				pcTest;
+
+	pTest = OMalloc(CTestObject)->Init(&sKillNotifier);
+	pSet = OMalloc(CSet<CTestObject>)->Init();
+	pSet->Add(pTest);
+
+	pContainer = OMalloc(CPointerContainer)->Init();
+	pContainer->mp = pSet;
+	pRoot = ORoot();
+	pRoot->Add(pContainer);
+
+	pcSet = &pSet;
+	pcContainer = &pContainer;
+	pcTest = &pTest;
+	pSet = NULL;
+	pContainer = NULL;
+
+	pcContainer->mp.UnsafeClearObject();
+	pcSet->TestRemoveHeapFrom(pcContainer);
+
+	cDetached.Init();
+	cEffectedFroms.Init();
+	cDistToRootCalculator.Init();
+	cDistToRootCalculator.AddFromChanged(pcSet);
+	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
+	cDistToRootCalculator.Kill();
+	cDistToStackCalculator.Init();
+	cDistToStackCalculator.Calculate(&cDetached);
+
+	AssertInt(2, cDetached.NumDetachedFromRoot());
+	AssertInt(1, cDetached.NumCompletelyDetached());
+	AssertPointer(pcSet, cDetached.GetCompletelyDetached(0));
+
+	cDistToStackCalculator.Kill();
+	cEffectedFroms.Kill();
+
+	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	gcObjects.Remove(cDetached.GetCompletelyDetachedArray());
+	cDetached.Kill();
+	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
+
+	gcObjects.ValidateConsistency();
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestDistToStack(void)
 {
 	BeginTests();
 
+	TestDistToStackSimpleTwoStep();
+	TestDistToStackSimpleOneStep();
 	TestDistToStackCyclicWithStackPointerA();
 	TestDistToStackCyclicWithStackPointerB();
 	TestDistToStackCyclicWithStackPointerC();
 	TestDistToStackCyclicWithoutStackPointer();
 	TestDistToStackSplitRootAndStack();
+	TestDistToStackSetWithoutStackPointers();
+	TestDistToStackSetWithStackPointers();
 
 	TestStatistics();
 }
