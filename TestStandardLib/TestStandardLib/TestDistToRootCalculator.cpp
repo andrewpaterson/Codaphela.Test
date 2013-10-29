@@ -39,7 +39,7 @@ void TestClearDistToRootToValidDistComplex(void)
 	Ptr<CPointerContainer>		p8c;
 	Ptr<CPointerContainer>		p9c;
 
-	CDistToRootEffectedFroms	cEffectedFroms;
+	CDistCalculatorParameters	cDistParameters;
 
 	pRoot = ORoot();
 	p1 = ONMalloc(CNamedPointerContainer, "Fred's")->Init();
@@ -157,8 +157,8 @@ void TestClearDistToRootToValidDistComplex(void)
 	AssertInt(24, (int)gcObjects.NumMemoryIndexes());
 	AssertInt(2, pTest1b->NumHeapFroms());
 
-	cEffectedFroms.Init();
-	pTest1b->CollectStartingObjects(NULL, &cEffectedFroms);
+	cDistParameters.Init();
+	pTest1b->CollectStartingObjects(NULL, &cDistParameters);
 
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest1a->GetDistToRoot());
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest1b->GetDistToRoot());
@@ -166,13 +166,13 @@ void TestClearDistToRootToValidDistComplex(void)
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest2d->GetDistToRoot());
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest2e->GetDistToRoot());
 
-	AssertInt(2, cEffectedFroms.NumExpectedDists());
-	AssertPointer(pTest1a.BaseObject(), cEffectedFroms.GetExpectedDist(0)->pcObject);
-	AssertPointer(pTest1c.BaseObject(), cEffectedFroms.GetExpectedDist(1)->pcObject);
-	AssertInt(9, cEffectedFroms.GetExpectedDist(0)->iExpectedDist);
-	AssertInt(12, cEffectedFroms.GetExpectedDist(1)->iExpectedDist);
+	AssertInt(2, cDistParameters.NumExpectedDists());
+	AssertPointer(pTest1a.BaseObject(), cDistParameters.GetExpectedDist(0)->pcObject);
+	AssertPointer(pTest1c.BaseObject(), cDistParameters.GetExpectedDist(1)->pcObject);
+	AssertInt(9, cDistParameters.GetExpectedDist(0)->iExpectedDist);
+	AssertInt(12, cDistParameters.GetExpectedDist(1)->iExpectedDist);
 
-	cEffectedFroms.Kill();
+	cDistParameters.Kill();
 
 	ObjectsKill();
 }
@@ -192,7 +192,7 @@ void TestClearDistToRootToValidDistSimpleLeft(void)
 	Ptr<CTestObject>			pTest2;
 	Ptr<CTestObject>			pTest3;
 
-	CDistToRootEffectedFroms		cEffectedFroms;
+	CDistCalculatorParameters		cDistParameters;
 
 	pRoot = ORoot();
 	p1 = ONMalloc(CNamedPointerContainer, "Back")->Init();
@@ -231,16 +231,16 @@ void TestClearDistToRootToValidDistSimpleLeft(void)
 	pTest2->TestRemoveHeapFrom(pTest1.BaseObject());
 	AssertInt(0, pTest2->NumHeapFroms());
 
-	cEffectedFroms.Init();
+	cDistParameters.Init();
 
-	pTest2->CollectStartingObjects(NULL, &cEffectedFroms);
+	pTest2->CollectStartingObjects(NULL, &cDistParameters);
 
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest2->GetDistToRoot());
 	AssertInt(4, pTest3->GetDistToRoot());
 
-	AssertInt(0, cEffectedFroms.NumExpectedDists());
+	AssertInt(0, cDistParameters.NumExpectedDists());
 
-	cEffectedFroms.Kill();
+	cDistParameters.Kill();
 
 	ObjectsKill();
 }
@@ -260,7 +260,7 @@ void TestClearDistToRootToValidDistSimpleRight(void)
 	Ptr<CTestObject>			pTest2;
 	Ptr<CTestObject>			pTest3;
 
-	CDistToRootEffectedFroms		cEffectedFroms;
+	CDistCalculatorParameters		cDistParameters;
 
 	pRoot = ORoot();
 	p1 = ONMalloc(CNamedPointerContainer, "III")->Init();
@@ -299,17 +299,17 @@ void TestClearDistToRootToValidDistSimpleRight(void)
 	pTest3->TestRemoveHeapFrom(pTest1.BaseObject());
 	AssertInt(1, pTest3->NumHeapFroms());
 
-	cEffectedFroms.Init();
+	cDistParameters.Init();
 
-	pTest3->CollectStartingObjects(NULL, &cEffectedFroms);
+	pTest3->CollectStartingObjects(NULL, &cDistParameters);
 
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest3->GetDistToRoot());
 
-	AssertInt(1, cEffectedFroms.NumExpectedDists());
-	AssertPointer(pTest3.BaseObject(), cEffectedFroms.GetExpectedDist(0)->pcObject);
-	AssertInt(5, cEffectedFroms.GetExpectedDist(0)->iExpectedDist);
+	AssertInt(1, cDistParameters.NumExpectedDists());
+	AssertPointer(pTest3.BaseObject(), cDistParameters.GetExpectedDist(0)->pcObject);
+	AssertInt(5, cDistParameters.GetExpectedDist(0)->iExpectedDist);
 
-	cEffectedFroms.Kill();
+	cDistParameters.Kill();
 
 	ObjectsKill();
 }
@@ -623,8 +623,7 @@ void TestUpdateTosDistToRootSimpleRightBroken(void)
 	Ptr<CTestObject>			pTest3;
 
 	CDistToRootCalculator		cDistToRootCalculator;
-	CDistToRootEffectedFroms	cEffectedFroms;
-	CDistDetachedFroms			cDetached;
+	CDistCalculatorParameters	cDistParameters;
 
 	pRoot = ORoot();
 	p1 = ONMalloc(CNamedPointerContainer, "III")->Init();
@@ -677,11 +676,10 @@ void TestUpdateTosDistToRootSimpleRightBroken(void)
 	//
 
 	cDistToRootCalculator.Init();
-	cEffectedFroms.Init();
-	cDetached.Init();
+	cDistParameters.Init();
 
 	cDistToRootCalculator.AddFromChanged(pTest3.BaseObject());
-	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
+	cDistToRootCalculator.Calculate(&cDistParameters);
 
 	cDistToRootCalculator.Kill();
 
@@ -689,8 +687,7 @@ void TestUpdateTosDistToRootSimpleRightBroken(void)
 	AssertInt(4, pTest2->GetDistToRoot());
 	AssertInt(5, pTest3->GetDistToRoot());
 
-	cDetached.Kill();
-	cEffectedFroms.Kill();
+	cDistParameters.Kill();
 
 	gcObjects.ValidateConsistency();
 
@@ -1149,8 +1146,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 	Ptr<CRoot>					pRoot;
 
 	CDistToRootCalculator		cDistToRootCalculator;
-	CDistDetachedFroms			cDetached;
-	CDistToRootEffectedFroms	cEffectedFroms;
+	CDistCalculatorParameters	cDistParameters;
 
 	pRoot = ORoot();
 	pTest1 = OMalloc(CTestObject)->Init();
@@ -1195,11 +1191,10 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 	pLTest2->TestRemoveHeapFrom(pTest1.BaseObject());
 
 	cDistToRootCalculator.Init();
-	cDetached.Init();
-	cEffectedFroms.Init();
+	cDistParameters.Init();
 
 	cDistToRootCalculator.AddFromChanged(pLTest2.BaseObject());
-	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
+	cDistToRootCalculator.Calculate(&cDistParameters);
 
 	cDistToRootCalculator.Kill();
 
@@ -1249,12 +1244,11 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 	AssertInt(8, pRTest7l->GetDistToRoot());
 	AssertInt(8, pRTest8->GetDistToRoot());
 
-	AssertInt(2, cDetached.NumDetachedFromRoot());
-	AssertPointer(pLTest2.BaseObject(), cDetached.GetDetachedFromRoot(0));
-	AssertPointer(pLTest3.BaseObject(), cDetached.GetDetachedFromRoot(1));
+	AssertInt(2, cDistParameters.NumDetachedFromRoot());
+	AssertPointer(pLTest2.BaseObject(), cDistParameters.GetDetachedFromRoot(0));
+	AssertPointer(pLTest3.BaseObject(), cDistParameters.GetDetachedFromRoot(1));
 
-	cEffectedFroms.Kill();
-	cDetached.Kill();
+	cDistParameters.Kill();
 
 	ObjectsKill();
 }
@@ -1285,8 +1279,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 	Ptr<CRoot>					pRoot;
 
 	CDistToRootCalculator		cDistToRootCalculator;
-	CDistDetachedFroms			cDetached;
-	CDistToRootEffectedFroms	cEffectedFroms;
+	CDistCalculatorParameters	cDistParameters;
 
 	pRoot = ORoot();
 	pTest1 = OMalloc(CTestObject)->Init();
@@ -1331,11 +1324,10 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 	pRTest2->TestRemoveHeapFrom(pTest1.BaseObject());
 
 	cDistToRootCalculator.Init();
-	cDetached.Init();
-	cEffectedFroms.Init();
+	cDistParameters.Init();
 
 	cDistToRootCalculator.AddFromChanged(pRTest2.BaseObject());
-	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
+	cDistToRootCalculator.Calculate(&cDistParameters);
 
 	cDistToRootCalculator.Kill();
 
@@ -1397,18 +1389,17 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 	AssertInt(6, pRTest7l->GetDistToRoot());
 	AssertInt(7, pRTest8->GetDistToRoot());
 
-	AssertInt(8, cDetached.NumDetachedFromRoot());
-	AssertPointer(pRTest2.BaseObject(), cDetached.GetDetachedFromRoot(0));
-	AssertPointer(pRTest3l.BaseObject(), cDetached.GetDetachedFromRoot(1));
-	AssertPointer(pRTest4l.BaseObject(), cDetached.GetDetachedFromRoot(2));
-	AssertPointer(pRTest5l.BaseObject(), cDetached.GetDetachedFromRoot(3));
-	AssertPointer(pRTest3r.BaseObject(), cDetached.GetDetachedFromRoot(4));
-	AssertPointer(pRTest4r.BaseObject(), cDetached.GetDetachedFromRoot(5));
-	AssertPointer(pRTest5r.BaseObject(), cDetached.GetDetachedFromRoot(6));
-	AssertPointer(pRTest6r.BaseObject(), cDetached.GetDetachedFromRoot(7));
+	AssertInt(8, cDistParameters.NumDetachedFromRoot());
+	AssertPointer(pRTest2.BaseObject(), cDistParameters.GetDetachedFromRoot(0));
+	AssertPointer(pRTest3l.BaseObject(), cDistParameters.GetDetachedFromRoot(1));
+	AssertPointer(pRTest4l.BaseObject(), cDistParameters.GetDetachedFromRoot(2));
+	AssertPointer(pRTest5l.BaseObject(), cDistParameters.GetDetachedFromRoot(3));
+	AssertPointer(pRTest3r.BaseObject(), cDistParameters.GetDetachedFromRoot(4));
+	AssertPointer(pRTest4r.BaseObject(), cDistParameters.GetDetachedFromRoot(5));
+	AssertPointer(pRTest5r.BaseObject(), cDistParameters.GetDetachedFromRoot(6));
+	AssertPointer(pRTest6r.BaseObject(), cDistParameters.GetDetachedFromRoot(7));
 
-	cEffectedFroms.Kill();
-	cDetached.Kill();
+	cDistParameters.Kill();
 
 	ObjectsKill();
 }
@@ -1439,8 +1430,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 	Ptr<CRoot>					pRoot;
 
 	CDistToRootCalculator		cDistToRootCalculator;
-	CDistDetachedFroms			cDetached;
-	CDistToRootEffectedFroms	cEffectedFroms;
+	CDistCalculatorParameters	cDistParameters;
 
 	pRoot = ORoot();
 	pTest1 = OMalloc(CTestObject)->Init();
@@ -1485,11 +1475,10 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 	pRTest3l->TestRemoveHeapFrom(pRTest2.BaseObject());
 
 	cDistToRootCalculator.Init();
-	cDetached.Init();
-	cEffectedFroms.Init();
+	cDistParameters.Init();
 
 	cDistToRootCalculator.AddFromChanged(pRTest3l.BaseObject());
-	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
+	cDistToRootCalculator.Calculate(&cDistParameters);
 
 	cDistToRootCalculator.Kill();
 
@@ -1541,13 +1530,12 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 	AssertInt(5, pRTest6l->GetDistToRoot());
 	AssertInt(4, pRTest3r->GetDistToRoot());
 
-	AssertInt(3, cDetached.NumDetachedFromRoot());
-	AssertPointer(pRTest3l.BaseObject(), cDetached.GetDetachedFromRoot(0));
-	AssertPointer(pRTest4l.BaseObject(), cDetached.GetDetachedFromRoot(1));
-	AssertPointer(pRTest5l.BaseObject(), cDetached.GetDetachedFromRoot(2));
+	AssertInt(3, cDistParameters.NumDetachedFromRoot());
+	AssertPointer(pRTest3l.BaseObject(), cDistParameters.GetDetachedFromRoot(0));
+	AssertPointer(pRTest4l.BaseObject(), cDistParameters.GetDetachedFromRoot(1));
+	AssertPointer(pRTest5l.BaseObject(), cDistParameters.GetDetachedFromRoot(2));
 
-	cEffectedFroms.Kill();
-	cDetached.Kill();
+	cDistParameters.Kill();
 
 	ObjectsKill();
 }
@@ -1578,8 +1566,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 	Ptr<CRoot>					pRoot;
 
 	CDistToRootCalculator		cDistToRootCalculator;
-	CDistDetachedFroms			cDetached;
-	CDistToRootEffectedFroms	cEffectedFroms;
+	CDistCalculatorParameters	cDistParameters;
 
 	pRoot = ORoot();
 	pTest1 = OMalloc(CTestObject)->Init();
@@ -1624,11 +1611,10 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 	pRTest3r->TestRemoveHeapFrom(pRTest2.BaseObject());
 
 	cDistToRootCalculator.Init();
-	cDetached.Init();
-	cEffectedFroms.Init();
+	cDistParameters.Init();
 
 	cDistToRootCalculator.AddFromChanged(pRTest3r.BaseObject());
-	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
+	cDistToRootCalculator.Calculate(&cDistParameters);
 
 	cDistToRootCalculator.Kill();
 
@@ -1682,14 +1668,13 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 	AssertInt(7, pRTest8->GetDistToRoot());
 	AssertInt(4, pRTest3l->GetDistToRoot());
 
-	AssertInt(4, cDetached.NumDetachedFromRoot());
-	AssertPointer(pRTest3r.BaseObject(), cDetached.GetDetachedFromRoot(0));
-	AssertPointer(pRTest4r.BaseObject(), cDetached.GetDetachedFromRoot(1));
-	AssertPointer(pRTest5r.BaseObject(), cDetached.GetDetachedFromRoot(2));
-	AssertPointer(pRTest6r.BaseObject(), cDetached.GetDetachedFromRoot(3));
+	AssertInt(4, cDistParameters.NumDetachedFromRoot());
+	AssertPointer(pRTest3r.BaseObject(), cDistParameters.GetDetachedFromRoot(0));
+	AssertPointer(pRTest4r.BaseObject(), cDistParameters.GetDetachedFromRoot(1));
+	AssertPointer(pRTest5r.BaseObject(), cDistParameters.GetDetachedFromRoot(2));
+	AssertPointer(pRTest6r.BaseObject(), cDistParameters.GetDetachedFromRoot(3));
 
-	cEffectedFroms.Kill();
-	cDetached.Kill();
+	cDistParameters.Kill();
 
 	ObjectsKill();
 }
@@ -1812,7 +1797,7 @@ void TestClearDistToRootToValidDistBroken(void)
 	Ptr<CTestObject>			pTest3a;
 
 
-	CDistToRootEffectedFroms	cEffectedFroms;
+	CDistCalculatorParameters	cDistParameters;
 	SDistToRoot*				psDistToRoot;
 
 	pRoot = ORoot();
@@ -1876,11 +1861,11 @@ void TestClearDistToRootToValidDistBroken(void)
 	p6c->mp.UnsafeClearObject();
 	pTest1b->TestRemoveHeapFrom(p6c.BaseObject());
 
-	cEffectedFroms.Init();
-	pTest1b->CollectStartingObjects(NULL, &cEffectedFroms);
+	cDistParameters.Init();
+	pTest1b->CollectStartingObjects(NULL, &cDistParameters);
 
-	AssertInt(1, cEffectedFroms.NumExpectedDists());
-	psDistToRoot = cEffectedFroms.GetLowest();
+	AssertInt(1, cDistParameters.NumExpectedDists());
+	psDistToRoot = cDistParameters.GetLowest();
 	AssertLongLongInt(6LL, psDistToRoot->pcObject->GetOI());
 	AssertInt(4, psDistToRoot->iExpectedDist);
 
@@ -1892,7 +1877,7 @@ void TestClearDistToRootToValidDistBroken(void)
 	AssertInt(4, pTest2b->GetDistToRoot());
 	AssertInt(5, pTest3a->GetDistToRoot());
 
-	cEffectedFroms.Kill();
+	cDistParameters.Kill();
 
 	ObjectsKill();
 }
@@ -1907,8 +1892,7 @@ void TestDistToRootLinear(void)
 	ObjectsInit();
 
 	CDistToRootCalculator		cDistToRootCalculator;
-	CDistDetachedFroms			cDetached;
-	CDistToRootEffectedFroms	cEffectedFroms;
+	CDistCalculatorParameters	cDistParameters;
 
 	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
 	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
@@ -1939,25 +1923,23 @@ void TestDistToRootLinear(void)
 	p0->mp.UnsafeClearObject();
 	p1->TestRemoveHeapFrom(p0.BaseObject());
 
-	cDetached.Init();
-	cEffectedFroms.Init();
+	cDistParameters.Init();
 	cDistToRootCalculator.Init();
 	cDistToRootCalculator.AddFromChanged(p1.BaseObject());
-	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
+	cDistToRootCalculator.Calculate(&cDistParameters);
 	cDistToRootCalculator.Kill();
 
 	AssertInt(2, p0->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p2->GetDistToRoot());
-	AssertInt(1, cEffectedFroms.GetLowestFroms()->NumElements());
-	AssertPointer(&p1, *cEffectedFroms.GetLowestFroms()->Get(0));
+	AssertInt(1, cDistParameters.GetLowestFroms()->NumElements());
+	AssertPointer(&p1, *cDistParameters.GetLowestFroms()->Get(0));
 
-	AssertInt(2, cDetached.NumDetachedFromRoot());
-	AssertPointer(&p1, cDetached.GetDetachedFromRoot(0));
-	AssertPointer(&p2, cDetached.GetDetachedFromRoot(1));
+	AssertInt(2, cDistParameters.NumDetachedFromRoot());
+	AssertPointer(&p1, cDistParameters.GetDetachedFromRoot(0));
+	AssertPointer(&p2, cDistParameters.GetDetachedFromRoot(1));
 
-	cEffectedFroms.Kill();
-	cDetached.Kill();
+	cDistParameters.Kill();
 
 	ObjectsKill();
 }
@@ -1972,8 +1954,7 @@ void TestDistToRootCyclic(void)
 	ObjectsInit();
 
 	CDistToRootCalculator		cDistToRootCalculator;
-	CDistDetachedFroms			cDetached;
-	CDistToRootEffectedFroms	cEffectedFroms;
+	CDistCalculatorParameters	cDistParameters;
 
 	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
 	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
@@ -2009,11 +1990,10 @@ void TestDistToRootCyclic(void)
 	p0->mp.UnsafeClearObject();
 	p1->TestRemoveHeapFrom(p0.BaseObject());
 
-	cDetached.Init();
-	cEffectedFroms.Init();
+	cDistParameters.Init();
 	cDistToRootCalculator.Init();
 	cDistToRootCalculator.AddFromChanged(p1.BaseObject());
-	cDistToRootCalculator.Calculate(&cEffectedFroms, &cDetached);
+	cDistToRootCalculator.Calculate(&cDistParameters);
 	cDistToRootCalculator.Kill();
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p1->GetDistToRoot());
@@ -2022,8 +2002,7 @@ void TestDistToRootCyclic(void)
 
 	gcObjects.ValidateConsistency();
 
-	cEffectedFroms.Kill();
-	cDetached.Kill();
+	cDistParameters.Kill();
 
 	ObjectsKill();
 }
