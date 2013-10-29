@@ -158,7 +158,7 @@ void TestClearDistToRootToValidDistComplex(void)
 	AssertInt(2, pTest1b->NumHeapFroms());
 
 	cDistParameters.Init();
-	pTest1b->CollectStartingObjects(NULL, &cDistParameters);
+	pTest1b->CollectStartingObjectsAndSetClearedToRoot(NULL, &cDistParameters);
 
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest1a->GetDistToRoot());
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest1b->GetDistToRoot());
@@ -233,7 +233,7 @@ void TestClearDistToRootToValidDistSimpleLeft(void)
 
 	cDistParameters.Init();
 
-	pTest2->CollectStartingObjects(NULL, &cDistParameters);
+	pTest2->CollectStartingObjectsAndSetClearedToRoot(NULL, &cDistParameters);
 
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest2->GetDistToRoot());
 	AssertInt(4, pTest3->GetDistToRoot());
@@ -301,7 +301,7 @@ void TestClearDistToRootToValidDistSimpleRight(void)
 
 	cDistParameters.Init();
 
-	pTest3->CollectStartingObjects(NULL, &cDistParameters);
+	pTest3->CollectStartingObjectsAndSetClearedToRoot(NULL, &cDistParameters);
 
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest3->GetDistToRoot());
 
@@ -1862,7 +1862,7 @@ void TestClearDistToRootToValidDistBroken(void)
 	pTest1b->TestRemoveHeapFrom(p6c.BaseObject());
 
 	cDistParameters.Init();
-	pTest1b->CollectStartingObjects(NULL, &cDistParameters);
+	pTest1b->CollectStartingObjectsAndSetClearedToRoot(NULL, &cDistParameters);
 
 	AssertInt(1, cDistParameters.NumExpectedDists());
 	psDistToRoot = cDistParameters.GetLowest();
