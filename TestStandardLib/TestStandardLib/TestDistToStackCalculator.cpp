@@ -455,7 +455,7 @@ void TestDistToStackSplitRootAndStack(void)
 	AssertInt(4, pcTestL2->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTestR2->GetDistToRoot());
 
-	AssertInt(5, cDistParameters.NumTouched());
+	AssertInt(3, cDistParameters.NumTouched());
 
 	cDistToStackCalculator.Init();
 	cDistToStackCalculator.Calculate(&cDistParameters);

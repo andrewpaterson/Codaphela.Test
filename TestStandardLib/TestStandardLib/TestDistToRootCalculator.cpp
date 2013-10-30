@@ -1386,8 +1386,6 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 	AssertInt(6, pRTest7l->GetDistToRoot());
 	AssertInt(7, pRTest8->GetDistToRoot());
 
-	AssertInt(11, cDistParameters.NumTouched());
-
 	cDistParameters.Kill();
 
 	ObjectsKill();
@@ -1518,8 +1516,6 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 
 	AssertInt(5, pRTest6l->GetDistToRoot());
 	AssertInt(4, pRTest3r->GetDistToRoot());
-
-	AssertInt(6, cDistParameters.NumTouched());
 
 	cDistParameters.Kill();
 
@@ -1653,8 +1649,6 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 
 	AssertInt(7, pRTest8->GetDistToRoot());
 	AssertInt(4, pRTest3l->GetDistToRoot());
-
-	AssertInt(5, cDistParameters.NumTouched());
 
 	cDistParameters.Kill();
 
