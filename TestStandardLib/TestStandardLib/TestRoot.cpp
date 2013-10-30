@@ -56,7 +56,7 @@ void TestRootStackPointers(void)
 	STestObjectKilledNotifier	sKilled2;
 	STestObjectKilledNotifier	sKilled3;
 
-	Ptr<CRoot>					pcRoot;
+	Ptr<CRoot>					pRoot;
 	Ptr<CTestObject>			pTest1;
 	Ptr<CTestObject>			pTest2;
 	Ptr<CTestObject>			pTest3;
@@ -74,10 +74,10 @@ void TestRootStackPointers(void)
 	pTest3 = OMalloc(CTestObject);
 	pTest3->Init(&sKilled3);
 
-	pcRoot = ORoot();
+	pRoot = ORoot();
 	
-	pcRoot->Add(pTest1);
-	pcRoot->Add(pTest3);
+	pRoot->Add(pTest1);
+	pRoot->Add(pTest3);
 
 	pTest2 = OMalloc(CTestObject);
 	pTest2->Init(&sKilled2);
@@ -88,8 +88,23 @@ void TestRootStackPointers(void)
 	pTest3->mpTest = pTest2;
 	AssertInt(3, pTest2->GetDistToRoot());
 
-	AssertInt(0, pcRoot->NumHeapFroms());
-	AssertInt(1, pcRoot->NumTos());
+	//        
+	//        pTest2[5]
+	//         ^ ^
+	//        /   \
+	//       /     \
+	//      /       \
+	// pTest1[1]   pTest3[2]
+	//      ^       ^
+	//       \     /
+	//        \   /
+	//         \ /
+	//         ...
+	//        pRoot[3] 
+	//  
+
+	AssertInt(0, pRoot->NumHeapFroms());
+	AssertInt(1, pRoot->NumTos());
 
 	iFroms = pTest2->NumHeapFroms();
 	AssertInt(2, iFroms);
@@ -106,9 +121,12 @@ void TestRootStackPointers(void)
 	iFroms = pTest3->NumHeapFroms();
 	AssertInt(1, iFroms);
 
-	pcTest3 = &pTest3;  //Cheating to hang onto the object.
-	iFroms = pcTest3->NumHeapFroms();
+	pcTest3 = &pTest3;
+	pcTest2 = &pTest2;
+
+	iFroms = pTest3->NumHeapFroms();
 	AssertInt(1, iFroms);
+	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
 
 	//Stop the stack from pointing.
 	pTest1 = NULL;
@@ -118,9 +136,9 @@ void TestRootStackPointers(void)
 	AssertFalse(sKilled1.bKilled);
 	AssertFalse(sKilled3.bKilled);
 	AssertFalse(sKilled2.bKilled);
+	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
 
-	pcTest2 = &pTest2;
-	pcRoot->Remove(pcTest3);
+	pRoot->Remove(pcTest3);
 
 	AssertFalse(sKilled1.bKilled);
 	AssertTrue( sKilled3.bKilled);

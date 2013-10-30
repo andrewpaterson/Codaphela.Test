@@ -30,8 +30,8 @@ void TestObjectFreeing(void)
 {
 	Ptr<CTestObject>			pTest1;
 	Ptr<CTestObject>			pTest2;
-	STestObjectKilledNotifier		sKillNotifier1;
-	STestObjectKilledNotifier		sKillNotifier2;
+	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectKilledNotifier	sKillNotifier2;
 
 	ObjectsInit();
 

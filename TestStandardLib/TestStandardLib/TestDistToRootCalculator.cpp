@@ -319,7 +319,7 @@ void TestClearDistToRootToValidDistSimpleRight(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestUpdateTosDistToRootComplex(void)
+void TestUpdateAttachedTosDistToRootComplex(void)
 {
 	ObjectsInit();
 
@@ -445,7 +445,7 @@ void TestUpdateTosDistToRootComplex(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestUpdateTosDistToRootSimpleLeft(void)
+void TestUpdateAttachedTosDistToRootSimpleLeft(void)
 {
 	ObjectsInit();
 
@@ -515,9 +515,8 @@ void TestUpdateTosDistToRootSimpleLeft(void)
 	AssertInt(4, pTest3->GetDistToRoot());
 
 	iFlags = pTest3->GetFlags();
-	AssertFalse(iFlags & OBJECT_FLAGS_CLEARED_TO_ROOT);
+	AssertFalse(iFlags & OBJECT_FLAGS_CLEARED_DIST_TO_ROOT);
 	AssertFalse(iFlags & OBJECT_FLAGS_UPDATED_TOS_DIST_TO_ROOT);
-	AssertFalse(iFlags & OBJECT_FLAGS_UPDATED_TOS_DETACHED);
 
 	gcObjects.ValidateConsistency();
 
@@ -529,7 +528,7 @@ void TestUpdateTosDistToRootSimpleLeft(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestUpdateTosDistToRootSimpleRight(void)
+void TestUpdateAttachedTosDistToRootSimpleRight(void)
 {
 	ObjectsInit();
 
@@ -612,7 +611,7 @@ void TestUpdateTosDistToRootSimpleRight(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestUpdateTosDistToRootSimpleRightBroken(void)
+void TestUpdateAttachedTosDistToRootSimpleRightBroken(void)
 {
 	ObjectsInit();
 
@@ -700,7 +699,7 @@ void TestUpdateTosDistToRootSimpleRightBroken(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestUpdateTosDistToRootChildTriangleKindaBalanced(void)
+void TestUpdateAttachedTosDistToRootChildTriangleKindaBalanced(void)
 {
 	ObjectsInit();
 
@@ -878,7 +877,7 @@ void TestUpdateTosDistToRootChildTriangleKindaBalanced(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestUpdateTosDistToRootChildTriangleShortLeft(void)
+void TestUpdateAttachedTosDistToRootChildTriangleShortLeft(void)
 {
 	ObjectsInit();
 
@@ -1244,9 +1243,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 	AssertInt(8, pRTest7l->GetDistToRoot());
 	AssertInt(8, pRTest8->GetDistToRoot());
 
-	AssertInt(2, cDistParameters.NumDetachedFromRoot());
-	AssertPointer(pLTest2.BaseObject(), cDistParameters.GetDetachedFromRoot(0));
-	AssertPointer(pLTest3.BaseObject(), cDistParameters.GetDetachedFromRoot(1));
+	AssertInt(5, cDistParameters.NumTouched());
 
 	cDistParameters.Kill();
 
@@ -1389,15 +1386,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 	AssertInt(6, pRTest7l->GetDistToRoot());
 	AssertInt(7, pRTest8->GetDistToRoot());
 
-	AssertInt(8, cDistParameters.NumDetachedFromRoot());
-	AssertPointer(pRTest2.BaseObject(), cDistParameters.GetDetachedFromRoot(0));
-	AssertPointer(pRTest3l.BaseObject(), cDistParameters.GetDetachedFromRoot(1));
-	AssertPointer(pRTest4l.BaseObject(), cDistParameters.GetDetachedFromRoot(2));
-	AssertPointer(pRTest5l.BaseObject(), cDistParameters.GetDetachedFromRoot(3));
-	AssertPointer(pRTest3r.BaseObject(), cDistParameters.GetDetachedFromRoot(4));
-	AssertPointer(pRTest4r.BaseObject(), cDistParameters.GetDetachedFromRoot(5));
-	AssertPointer(pRTest5r.BaseObject(), cDistParameters.GetDetachedFromRoot(6));
-	AssertPointer(pRTest6r.BaseObject(), cDistParameters.GetDetachedFromRoot(7));
+	AssertInt(11, cDistParameters.NumTouched());
 
 	cDistParameters.Kill();
 
@@ -1530,10 +1519,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 	AssertInt(5, pRTest6l->GetDistToRoot());
 	AssertInt(4, pRTest3r->GetDistToRoot());
 
-	AssertInt(3, cDistParameters.NumDetachedFromRoot());
-	AssertPointer(pRTest3l.BaseObject(), cDistParameters.GetDetachedFromRoot(0));
-	AssertPointer(pRTest4l.BaseObject(), cDistParameters.GetDetachedFromRoot(1));
-	AssertPointer(pRTest5l.BaseObject(), cDistParameters.GetDetachedFromRoot(2));
+	AssertInt(6, cDistParameters.NumTouched());
 
 	cDistParameters.Kill();
 
@@ -1668,11 +1654,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 	AssertInt(7, pRTest8->GetDistToRoot());
 	AssertInt(4, pRTest3l->GetDistToRoot());
 
-	AssertInt(4, cDistParameters.NumDetachedFromRoot());
-	AssertPointer(pRTest3r.BaseObject(), cDistParameters.GetDetachedFromRoot(0));
-	AssertPointer(pRTest4r.BaseObject(), cDistParameters.GetDetachedFromRoot(1));
-	AssertPointer(pRTest5r.BaseObject(), cDistParameters.GetDetachedFromRoot(2));
-	AssertPointer(pRTest6r.BaseObject(), cDistParameters.GetDetachedFromRoot(3));
+	AssertInt(5, cDistParameters.NumTouched());
 
 	cDistParameters.Kill();
 
@@ -1684,7 +1666,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestUpdateTosDistToRootBroken(void)
+void TestUpdateAttachedTosDistToRootBroken(void)
 {
 	ObjectsInit();
 
@@ -1865,7 +1847,7 @@ void TestClearDistToRootToValidDistBroken(void)
 	pTest1b->CollectStartingObjectsAndSetClearedToRoot(NULL, &cDistParameters);
 
 	AssertInt(1, cDistParameters.NumExpectedDists());
-	psDistToRoot = cDistParameters.GetLowest();
+	psDistToRoot = cDistParameters.GetLowestExpectedDist();
 	AssertLongLongInt(6LL, psDistToRoot->pcObject->GetOI());
 	AssertInt(4, psDistToRoot->iExpectedDist);
 
@@ -1933,9 +1915,7 @@ void TestDistToRootLinear(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p2->GetDistToRoot());
 
-	AssertInt(2, cDistParameters.NumDetachedFromRoot());
-	AssertPointer(&p1, cDistParameters.GetDetachedFromRoot(0));
-	AssertPointer(&p2, cDistParameters.GetDetachedFromRoot(1));
+	AssertInt(2, cDistParameters.NumTouched());
 
 	cDistParameters.Kill();
 
@@ -2235,13 +2215,13 @@ void TestDistToRoot(void)
 	TestClearDistToRootToValidDistComplex();
 	TestClearDistToRootToValidDistSimpleLeft();
 	TestClearDistToRootToValidDistSimpleRight();
-	TestUpdateTosDistToRootBroken();
-	TestUpdateTosDistToRootComplex();
-	TestUpdateTosDistToRootSimpleRight();
-	TestUpdateTosDistToRootSimpleRightBroken();
-	TestUpdateTosDistToRootSimpleLeft();
-	TestUpdateTosDistToRootChildTriangleKindaBalanced();
-	TestUpdateTosDistToRootChildTriangleShortLeft();
+	TestUpdateAttachedTosDistToRootBroken();
+	TestUpdateAttachedTosDistToRootComplex();
+	TestUpdateAttachedTosDistToRootSimpleRight();
+	TestUpdateAttachedTosDistToRootSimpleRightBroken();
+	TestUpdateAttachedTosDistToRootSimpleLeft();
+	TestUpdateAttachedTosDistToRootChildTriangleKindaBalanced();
+	TestUpdateAttachedTosDistToRootChildTriangleShortLeft();
 	TestUpdateEmbeddedObjectTosDetachedSetupDistance();
 	TestUpdateEmbeddedObjectTosDetachedScenarioA();
 	TestUpdateEmbeddedObjectTosDetachedScenarioB();
