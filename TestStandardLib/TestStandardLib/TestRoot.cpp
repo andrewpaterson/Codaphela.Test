@@ -765,7 +765,7 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveUnbalancedSmall(void)
 {
-	Ptr<CRoot>				pRoot;
+	Ptr<CRoot>					pRoot;
 	STestObjectKilledNotifier	sKilled1;
 	STestObjectKilledNotifier	sKilled2;
 	STestObjectKilledNotifier	sKilled3;
@@ -773,14 +773,14 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 	STestObjectKilledNotifier	sKilled5;
 	STestObjectKilledNotifier	sKilledTop1;
 	STestObjectKilledNotifier	sKilledTop2;
-	Ptr<CTestObject>		pTest1;
-	Ptr<CTestObject>		pTest2;
-	Ptr<CTestObject>		pTest3;
-	Ptr<CTestObject>		pTest4;
-	Ptr<CTestObject>		pTest5;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
+	Ptr<CTestObject>			pTest4;
+	Ptr<CTestObject>			pTest5;
 	Ptr<CSetObject>				pSet;
-	Ptr<CTestObject>		pTop1;
-	Ptr<CTestObject>		pTop2;
+	Ptr<CTestObject>			pTop1;
+	Ptr<CTestObject>			pTop2;
 
 	ObjectsInit();
 	pRoot = ORoot();

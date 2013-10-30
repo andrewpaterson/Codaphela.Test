@@ -325,11 +325,36 @@ void TestKillCanFindRoot(void)
 	AssertTrue(pRoot->TestGetSet()->CanFindRoot());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 
+	//     
+	// 4        ArrayObject[6](4)
+	// 4                 ^
+	// 4                 |                     pRedJetGoose[8,Goose](4)
+	// 4                 |                            ^/
+	//                   |                           //  pRedJetMaverick[9,Maverick](4)
+	// 3  pHarrier[5,Harrier](3)   pJeep[7,Jeep](3) //   ^/  
+	// 3                |^     ^   /^     ^        //   //
+	// 3                ||      \ //      |       //   //
+	// 3                ||       //       |      //   //
+	// 3                ||      //\       |     //   //
+	// 3                ||     //  \      |    /.   //
+	// 3                ||    //   ArrayObject[4](3)/
+	//                  ||   //    ^          .    /
+	// 2                ||  //    /          /    /
+	// 2                v| v/    /          v    v 
+	// 2               pWorld[3](2)---------------
+	//                   ^
+	// 1                 |
+	// 1             SetObject[2](1)
+	//                   ^
+	// 0                 |
+	// 0              pRoot[1,GraphRoot](0)
+	//  
+
 	pRoot->Remove(pWorld);
 	AssertFalse(pJeep->CanFindRoot());
 	AssertFalse(pRedJetMaverick->CanFindRoot());
 	AssertFalse(pHarrier->CanFindRoot());
-	AssertFalse(pHarrier->GetMissiles()->CanFindRoot());
+	AssertFalse(pHarrier->GetMissiles()->CanFindRoot());  //The destruction of the pointer created by pHarrier->GetMissiles() set a lot of the root distances to -2.
 	AssertFalse(pRedJetGoose->CanFindRoot());
 	AssertFalse(pWorld->CanFindRoot());
 	AssertFalse(pWorld->GetTickables()->CanFindRoot());

@@ -94,8 +94,8 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestObjects();
 	TestDehollowfication();
 	TestUsage();
-//	TestArray();
-//	TestSet();
+	TestArray();
+	TestSet();
 	TestKill();
 	TestEmbedded();
 	TestEmbeddedObjectRemapTos();
