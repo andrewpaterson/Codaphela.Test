@@ -2201,32 +2201,130 @@ void TestDistToRootLinearToStackScenarioB(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestDistToRootTosNotUpdated(void)
+{
+	ObjectsInit();
+
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistCalculatorParameters	cDistParameters;
+
+	CTestObject*		pcTest1;
+	CTestObject*		pcTest2;
+	CTestObject*		pcTest3;
+	CTestObject*		pcTest4;
+	CSetObject*			pcSet;
+
+	Ptr<CTestObject>	pTest1;
+	Ptr<CTestObject>	pTest2;
+	Ptr<CTestObject>	pTest3;
+	Ptr<CTestObject>	pTest4;
+	Ptr<CRoot>			pRoot;
+
+	pRoot = ORoot();
+	pTest1 = OMalloc(CTestObject);
+	pTest2 = OMalloc(CTestObject);
+	pTest3 = OMalloc(CTestObject);
+	pTest4 = OMalloc(CTestObject);
+
+	pTest1->mpTest = pTest2;
+	pTest2->mpTest = pTest3;
+	pTest2->mpObject = pTest1;
+	pTest3->mpTest = pTest4;
+
+	pRoot->Add(pTest1);
+	
+	AssertInt(2, pTest1->GetDistToRoot());
+	AssertInt(3, pTest2->GetDistToRoot());
+	AssertInt(4, pTest3->GetDistToRoot());
+	AssertInt(5, pTest4->GetDistToRoot());
+
+	pcTest1 = &pTest1;
+	pcTest2	= &pTest2;
+	pcTest3	= &pTest3;
+	pcTest4	= &pTest4;
+
+	pTest2 = NULL;
+	pTest3 = NULL;
+	pTest4 = NULL;
+
+	//
+	//   pTest4[5](4)
+	//       ^
+	//       |      
+	//       |      
+	//   pTest3[4](4)
+	//       ^
+	//       |      
+	//       |      
+	//   pTest2[3](3)
+	//      |^
+	//      ||
+	//      v|
+	//   pTest1[2](2)
+	//   ^   ^
+	//  .    |
+	// .     |
+	//   SetObject[1](1)
+	//       ^
+	//       |
+	//       |
+	//    pRoot[1,GraphRoot](0)
+	//  
+
+	pcSet = pRoot->TestGetSet();
+	pcSet->UnsafeRemove(pcTest1);
+	pcTest1->TestRemoveHeapFrom(pcSet);
+
+	cDistParameters.Init();
+
+	cDistToRootCalculator.Init();
+	cDistToRootCalculator.AddFromChanged(pcTest3);
+	cDistToRootCalculator.Calculate(&cDistParameters);
+	
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest1->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest2->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest3->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest4->GetDistToRoot());
+
+	cDistToRootCalculator.Kill();
+	cDistParameters.Kill();
+
+	gcObjects.ValidateConsistency();
+
+	ObjectsKill();
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestDistToRoot(void)
 {
 	BeginTests();
 
-	TestClearDistToRootToValidDistBroken();
-	TestClearDistToRootToValidDistComplex();
-	TestClearDistToRootToValidDistSimpleLeft();
-	TestClearDistToRootToValidDistSimpleRight();
-	TestUpdateAttachedTosDistToRootBroken();
-	TestUpdateAttachedTosDistToRootComplex();
-	TestUpdateAttachedTosDistToRootSimpleRight();
-	TestUpdateAttachedTosDistToRootSimpleRightBroken();
-	TestUpdateAttachedTosDistToRootSimpleLeft();
-	TestUpdateAttachedTosDistToRootChildTriangleKindaBalanced();
-	TestUpdateAttachedTosDistToRootChildTriangleShortLeft();
-	TestUpdateEmbeddedObjectTosDetachedSetupDistance();
-	TestUpdateEmbeddedObjectTosDetachedScenarioA();
-	TestUpdateEmbeddedObjectTosDetachedScenarioB();
-	TestUpdateEmbeddedObjectTosDetachedScenarioC();
-	TestUpdateEmbeddedObjectTosDetachedScenarioD();
-	TestDistToRootLinear();
-	TestDistToRootCyclic();
-	TestDistToRootWithStackPointers();
-	TestDistToRootLinearToStackScenarioA();
-	TestDistToRootLinearToStackScenarioB();
-
+	//TestClearDistToRootToValidDistBroken();
+	//TestClearDistToRootToValidDistComplex();
+	//TestClearDistToRootToValidDistSimpleLeft();
+	//TestClearDistToRootToValidDistSimpleRight();
+	//TestUpdateAttachedTosDistToRootBroken();
+	//TestUpdateAttachedTosDistToRootComplex();
+	//TestUpdateAttachedTosDistToRootSimpleRight();
+	//TestUpdateAttachedTosDistToRootSimpleRightBroken();
+	//TestUpdateAttachedTosDistToRootSimpleLeft();
+	//TestUpdateAttachedTosDistToRootChildTriangleKindaBalanced();
+	//TestUpdateAttachedTosDistToRootChildTriangleShortLeft();
+	//TestUpdateEmbeddedObjectTosDetachedSetupDistance();
+	//TestUpdateEmbeddedObjectTosDetachedScenarioA();
+	//TestUpdateEmbeddedObjectTosDetachedScenarioB();
+	//TestUpdateEmbeddedObjectTosDetachedScenarioC();
+	//TestUpdateEmbeddedObjectTosDetachedScenarioD();
+	//TestDistToRootLinear();
+	//TestDistToRootCyclic();
+	//TestDistToRootWithStackPointers();
+	//TestDistToRootLinearToStackScenarioA();
+	//TestDistToRootLinearToStackScenarioB();
+	TestDistToRootTosNotUpdated();
 
 	TestStatistics();
 }

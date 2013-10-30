@@ -244,7 +244,17 @@ void TestKillBestPractice(void)
 	pRedJetMaverick = NULL;
 	pHarrier = NULL;
 
+	//pHarrier.maMissiles.moi == 6
+	//pWorld.maTickables.moi == 4
+	//pWorld is pointed to from:
+	//  pRoot.mpObjects
+	//  pHarrier
+	//  pJeep
+	//  pRedJetMaverick
+
 	pRoot->Remove(pWorld);
+	//ERROR: (baseobject.cpp:1159) void __thiscall CBaseObject::ValidateCanFindRoot(void) Object {02596128 [ 4]:CArrayObject(128) 6} has a positive dist to root and should be able to find the Root object.
+
 	AssertLongLongInt(8, gcObjects.NumMemoryIndexes());
 	pWorld = NULL;
 
