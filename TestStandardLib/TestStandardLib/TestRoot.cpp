@@ -752,8 +752,6 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	//    ...
 	//   Root(0)
 
-	pSet.DumpTos();
-
 	pRoot->Kill();
 	ObjectsKill();
 }

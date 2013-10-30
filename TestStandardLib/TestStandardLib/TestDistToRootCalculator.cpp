@@ -1932,8 +1932,6 @@ void TestDistToRootLinear(void)
 	AssertInt(2, p0->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p2->GetDistToRoot());
-	AssertInt(1, cDistParameters.GetLowestFroms()->NumElements());
-	AssertPointer(&p1, *cDistParameters.GetLowestFroms()->Get(0));
 
 	AssertInt(2, cDistParameters.NumDetachedFromRoot());
 	AssertPointer(&p1, cDistParameters.GetDetachedFromRoot(0));
@@ -2050,6 +2048,185 @@ void TestDistToRootWithStackPointers(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestDistToRootLinearToStackScenarioA(void)
+{
+	ObjectsInit();
+
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistCalculatorParameters	cDistParameters;
+	CNamedPointerContainer*		pc1;
+	CNamedPointerContainer*		pc0;
+	CNamedPointerContainer*		pc2;
+
+	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
+	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
+	p1->mp = p2;
+
+	Ptr<CRoot> pRoot = ORoot();
+	Ptr<CNamedPointerContainer>	p0 = ONMalloc(CNamedPointerContainer, "Test Helper")->Init(p1);
+	pRoot->Add(p0);
+
+	pc1 = &p1;
+	pc2 = &p2;
+	pc0 = &p0;
+
+	p0 = NULL;
+	p1 = NULL;
+
+	//
+	//               p2(4)
+	//                ^  ^
+	//                |   .
+	//                |    .
+	//               p1(3)
+	//                ^
+	//                |
+	//                |
+	//               p0(2)
+	//                ^
+	//                |
+	//                |
+	//               ...
+	//              Root(0)
+	//                         
+
+	AssertInt(2, pc0->GetDistToRoot());
+	AssertInt(3, pc1->GetDistToRoot());
+	AssertInt(4, pc2->GetDistToRoot());
+
+	pc0->mp.UnsafeClearObject();
+	pc1->TestRemoveHeapFrom(pc0);
+
+	cDistParameters.Init();
+	cDistToRootCalculator.Init();
+	cDistToRootCalculator.AddFromChanged(pc1);
+	cDistToRootCalculator.Calculate(&cDistParameters);
+	cDistToRootCalculator.Kill();
+
+	//
+	//                    p2(-1)
+	//                    ^  ^
+	//                   /   .
+	//              p1(-1)   .
+	//                       .
+	//                   
+	//               p0(2)
+	//                ^
+	//                |
+	//                |
+	//               ...
+	//              Root(0)
+	//             
+	// p1 is completely unattached but the DistCaclulator doesn't kill it.
+
+	AssertInt(2, pc0->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pc1->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pc2->GetDistToRoot());
+	AssertFalse(pc1->CanFindRoot());
+	AssertFalse(pc1->CanFindRootThroughValidPath());
+	AssertFalse(pc2->CanFindRoot());
+	AssertFalse(pc2->CanFindRootThroughValidPath());
+
+	cDistParameters.Kill();
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToRootLinearToStackScenarioB(void)
+{
+	ObjectsInit();
+
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistCalculatorParameters	cDistParameters;
+	CNamedPointerContainer*		pc1;
+	CNamedPointerContainer*		pc0;
+	CNamedPointerContainer*		pc2;
+
+	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
+	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
+	p1->mp = p2;
+
+	Ptr<CRoot> pRoot = ORoot();
+	Ptr<CNamedPointerContainer>	p0 = ONMalloc(CNamedPointerContainer, "Test Helper")->Init(p1);
+	pRoot->Add(p0);
+
+	pc1 = &p1;
+	pc2 = &p2;
+	pc0 = &p0;
+
+	p0 = NULL;
+	p2 = NULL;
+
+	//
+	//               p2(4)
+	//                ^  
+	//                |  
+	//                |  
+	//               p1(3)
+	//                ^  ^
+	//                |	  .
+	//                |	   .
+	//               p0(2)
+	//                ^
+	//                |
+	//                |
+	//               ...
+	//              Root(0)
+	//                         
+
+	AssertInt(2, pc0->GetDistToRoot());
+	AssertInt(3, pc1->GetDistToRoot());
+	AssertInt(4, pc2->GetDistToRoot());
+
+	pc0->mp.UnsafeClearObject();
+	pc1->TestRemoveHeapFrom(pc0);
+
+	cDistParameters.Init();
+	cDistToRootCalculator.Init();
+	cDistToRootCalculator.AddFromChanged(pc1);
+	cDistToRootCalculator.Calculate(&cDistParameters);
+	cDistToRootCalculator.Kill();
+
+	//
+	//                      p2(-2)
+	//                       ^  
+	//                       |  
+	//                       |  
+	//                      p1(-1)
+	//                       ^
+	//                       .
+	//                       .
+	//               p0(2)
+	//                ^
+	//                |
+	//                |
+	//               ...
+	//              Root(0)
+	//     
+
+	AssertInt(2, pc0->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pc1->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pc2->GetDistToRoot());
+	AssertFalse(pc1->CanFindRoot());
+	AssertFalse(pc1->CanFindRootThroughValidPath());
+	AssertFalse(pc2->CanFindRoot());
+	AssertFalse(pc2->CanFindRootThroughValidPath());
+
+	cDistParameters.Kill();
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestDistToRoot(void)
 {
 	BeginTests();
@@ -2073,6 +2250,8 @@ void TestDistToRoot(void)
 	TestDistToRootLinear();
 	TestDistToRootCyclic();
 	TestDistToRootWithStackPointers();
+	TestDistToRootLinearToStackScenarioA();
+	TestDistToRootLinearToStackScenarioB();
 
 
 	TestStatistics();
