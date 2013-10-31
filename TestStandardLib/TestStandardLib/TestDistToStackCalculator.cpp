@@ -335,6 +335,23 @@ void TestDistToStackCyclicWithoutStackPointer(void)
 	Ptr<CNamedPointerContainer>	p0 = ONMalloc(CNamedPointerContainer, "Test Helper")->Init(p1);
 	pRoot->Add(p0);
 
+	//
+	// p2 --> p3
+	//  ^     /
+	//   \   /
+	//    \ v
+	//    p1
+	//     ^
+	//     |
+	//     |
+	//    p0
+	//     ^
+	//     |
+	//     |
+	//    ...
+	//   pRoot
+	//
+
 	AssertInt(2, p0->GetDistToRoot());
 	AssertInt(3, p1->GetDistToRoot());
 	AssertInt(4, p2->GetDistToRoot());
@@ -346,6 +363,9 @@ void TestDistToStackCyclicWithoutStackPointer(void)
 	p1 = NULL;
 	p2 = NULL;
 	p3 = NULL;
+
+	AssertInt(2, pc1->NumHeapFroms());
+	AssertInt(0, pc1->NumStackFroms());
 
 	p0->mp.UnsafeClearObject();
 	pc1->TestRemoveHeapFrom(p0.BaseObject());
