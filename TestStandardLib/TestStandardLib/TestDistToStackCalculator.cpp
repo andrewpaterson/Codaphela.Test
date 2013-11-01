@@ -153,7 +153,7 @@ void TestDistToStackCyclicWithStackPointerA(void)
 	gcObjects.ValidateConsistency();
 
 	cDistToStackCalculator.Init();
-	cDistToStackCalculator.Calculate(&cDistParameters);
+	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 
 	AssertInt(3, cDistParameters.NumDetachedFromRoot());
 	AssertInt(0, cDistParameters.NumCompletelyDetached());
@@ -224,7 +224,7 @@ void TestDistToStackCyclicWithStackPointerB(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pStack->GetDistToRoot());
 
 	cDistToStackCalculator.Init();
-	cDistToStackCalculator.Calculate(&cDistParameters);
+	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 
 	AssertInt(3, cDistParameters.NumDetachedFromRoot());
 	AssertInt(0, cDistParameters.NumCompletelyDetached());
@@ -295,7 +295,7 @@ void TestDistToStackCyclicWithStackPointerC(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pStack->GetDistToRoot());
 
 	cDistToStackCalculator.Init();
-	cDistToStackCalculator.Calculate(&cDistParameters);
+	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 
 	AssertInt(3, cDistParameters.NumDetachedFromRoot());
 	AssertInt(0, cDistParameters.NumCompletelyDetached());
@@ -381,13 +381,13 @@ void TestDistToStackCyclicWithoutStackPointer(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc3->GetDistToRoot());
 
 	cDistToStackCalculator.Init();
-	cDistToStackCalculator.Calculate(&cDistParameters);
+	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 
 	AssertInt(3, cDistParameters.NumDetachedFromRoot());
 	AssertInt(3, cDistParameters.NumCompletelyDetached());
 	AssertPointer(pc1, cDistParameters.GetCompletelyDetached(0));
-	AssertPointer(pc3, cDistParameters.GetCompletelyDetached(1));
-	AssertPointer(pc2, cDistParameters.GetCompletelyDetached(2));
+	AssertPointer(pc2, cDistParameters.GetCompletelyDetached(1));
+	AssertPointer(pc3, cDistParameters.GetCompletelyDetached(2));
 
 	cDistToStackCalculator.Kill();
 	cDistParameters.Kill();
@@ -478,7 +478,7 @@ void TestDistToStackSplitRootAndStack(void)
 	AssertInt(3, cDistParameters.NumTouched());
 
 	cDistToStackCalculator.Init();
-	cDistToStackCalculator.Calculate(&cDistParameters);
+	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 
 	AssertInt(3, cDistParameters.NumDetachedFromRoot());
 	AssertInt(1, cDistParameters.NumCompletelyDetached());
@@ -538,7 +538,7 @@ void TestDistToStackSetWithoutStackPointers(void)
 	cDistToRootCalculator.Calculate(&cDistParameters);
 	cDistToRootCalculator.Kill();
 	cDistToStackCalculator.Init();
-	cDistToStackCalculator.Calculate(&cDistParameters);
+	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 
 	AssertInt(2, cDistParameters.NumDetachedFromRoot());
 	AssertInt(2, cDistParameters.NumCompletelyDetached());
@@ -605,7 +605,7 @@ void TestDistToStackSetWithStackPointers(void)
 	cDistToRootCalculator.Calculate(&cDistParameters);
 	cDistToRootCalculator.Kill();
 	cDistToStackCalculator.Init();
-	cDistToStackCalculator.Calculate(&cDistParameters);
+	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 
 	AssertInt(2, cDistParameters.NumDetachedFromRoot());
 	AssertInt(1, cDistParameters.NumCompletelyDetached());
@@ -712,7 +712,7 @@ void TestDistToStackSetBroken(void)
 	cDistToRootCalculator.Kill();
 
 	cDistToStackCalculator.Init();
-	cDistToStackCalculator.Calculate(&cDistParameters);
+	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 
 	AssertInt(1, cDistParameters.NumDetachedFromRoot());
 	AssertInt(1, cDistParameters.NumCompletelyDetached());

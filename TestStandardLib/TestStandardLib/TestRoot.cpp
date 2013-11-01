@@ -997,7 +997,6 @@ void TestRootGraphRemoveMostlyBalanced(void)
 
 
 	pSet->Remove(pTest2);
-	pTest2 = NULL;
 
 	AssertInt(2, pSet->GetDistToRoot());
 	AssertInt(3, pTest3->GetDistToRoot());
@@ -1007,6 +1006,9 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	AssertInt(7, pTest1->GetDistToRoot());
 	AssertInt(8, pTop2->GetDistToRoot());
 	AssertInt(9, pTest6->GetDistToRoot());
+
+	pTest2 = NULL;
+
 	AssertTrue( sKilled2.bKilled);
 	AssertFalse(sKilled3.bKilled);
 	AssertFalse(sKilled4.bKilled);
@@ -1123,31 +1125,37 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 
 	AssertLongLongInt(12, gcObjects.NumMemoryIndexes());
 
-	//   Test8(6)  Test9(6)
+	//
+	// Test8[10](6) Test9[11](6)
+	//	   |       / |
 	//	   |      /  |
 	//	   |     /   |
 	//	   |    /    |
 	//	   |   /     |
-	//   Test6(5)  Test7(5)
+	// Test6[8](5)  Test7[9](5)
 	//	   |   \     |	
 	//	   |    \    |	
 	//	   |     \   |	
 	//	   |      \  |	
-	//   Test4(5)  Test5(4)
+	//	   |       \ |	
+	// Test4[6](5)  Test5[7](4)
 	//	   |         |	
 	//	   |         |	
-	//	 Test15(4)   |	
+	//	   |         |	
+	// Test15[12](4) |	
 	//	   |         |	
 	//	   |         |	
-	//   Test2(3)  Test3(3)
-	//      \      /
-	//       \    /
-	//        \  /
-	//       Test1(2)
+	//	   |         |	
+	// Test2[4](3)  Test3[5](3)
+	//      \       /
+	//       \     X  <---- Broken here
+	//        \   /
+	//       Test1[3](2)
 	//         |
 	//         |
 	//        ...
 	//      Root(0)
+	//
 
 	pTest5 = NULL;
 	pTest7 = NULL;
@@ -1178,24 +1186,24 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 	AssertInt(7, pTest8->GetDistToRoot());
 	AssertInt(7, pTest9->GetDistToRoot());
 	       
-	//  Test8(7)  Test9(7)
+	// pTest8(7) pTest9(7)
 	//	   \       /  
 	//      \     /   
 	//	     \   /    
-	//      Test6(6)  
+	//     pTest6(6)  
 	//	       |  
 	//	       |  
-	//      Test4(5)  
+	//     pTest4(5)  
 	//	       |       
 	//	       |       	
-	//	    Test15(4)
+	//	   pTest15(4)
 	//	       |      
 	//	       |      
-	//      Test2(3) 
+	//     pTest2(3) 
 	//         |     
 	//         |    
 	//         |  
-	//      Test1(2)
+	//     pTest1(2)
 	//         |
 	//         |
 	//        ...

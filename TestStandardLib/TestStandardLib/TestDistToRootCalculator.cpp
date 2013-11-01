@@ -158,7 +158,7 @@ void TestClearDistToRootToValidDistComplex(void)
 	AssertInt(2, pTest1b->NumHeapFroms());
 
 	cDistParameters.Init();
-	pTest1b->CollectStartingObjectsAndSetClearedToRoot(NULL, &cDistParameters);
+	pTest1b->CollectValidDistStartingObjectsAndSetClearedToRoot(NULL, &cDistParameters);
 
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest1a->GetDistToRoot());
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest1b->GetDistToRoot());
@@ -186,13 +186,14 @@ void TestClearDistToRootToValidDistSimpleLeft(void)
 {
 	ObjectsInit();
 
-	Ptr<CRoot>					pRoot;
-	Ptr<CNamedPointerContainer>	p1;
-	Ptr<CTestObject>			pTest1;
-	Ptr<CTestObject>			pTest2;
-	Ptr<CTestObject>			pTest3;
+	Ptr<CRoot>						pRoot;
+	Ptr<CNamedPointerContainer>		p1;
+	Ptr<CTestObject>				pTest1;
+	Ptr<CTestObject>				pTest2;
+	Ptr<CTestObject>				pTest3;
 
 	CDistCalculatorParameters		cDistParameters;
+	CDistToRootCalculator			cDistCalculator;
 
 	pRoot = ORoot();
 	p1 = ONMalloc(CNamedPointerContainer, "Back")->Init();
@@ -206,14 +207,15 @@ void TestClearDistToRootToValidDistSimpleLeft(void)
 	pTest2->mpTest = pTest3;
 
 	//     pTest3(4)
-	//       | \
+	//       ^ ^
 	//       |  \
 	//       |   \
 	//       |  pTest2(4)
-	//       |   /
+	//       |   ^
 	//       |  /
 	//       | /
 	//     pTest1(3)
+	//        ^
 	//        |
 	//        |
 	//       p1(2)
@@ -232,14 +234,16 @@ void TestClearDistToRootToValidDistSimpleLeft(void)
 	AssertInt(0, pTest2->NumHeapFroms());
 
 	cDistParameters.Init();
+	cDistCalculator.Init();
+	cDistCalculator.AddFromChanged(&pTest2);
+	cDistCalculator.Calculate(&cDistParameters);
 
-	pTest2->CollectStartingObjectsAndSetClearedToRoot(NULL, &cDistParameters);
-
-	AssertInt(CLEARED_DIST_TO_ROOT, pTest2->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest2->GetDistToRoot());
 	AssertInt(4, pTest3->GetDistToRoot());
 
 	AssertInt(0, cDistParameters.NumExpectedDists());
 
+	cDistCalculator.Kill();
 	cDistParameters.Kill();
 
 	ObjectsKill();
@@ -301,7 +305,7 @@ void TestClearDistToRootToValidDistSimpleRight(void)
 
 	cDistParameters.Init();
 
-	pTest3->CollectStartingObjectsAndSetClearedToRoot(NULL, &cDistParameters);
+	pTest3->CollectValidDistStartingObjectsAndSetClearedToRoot(NULL, &cDistParameters);
 
 	AssertInt(CLEARED_DIST_TO_ROOT, pTest3->GetDistToRoot());
 
@@ -563,6 +567,7 @@ void TestUpdateAttachedTosDistToRootSimpleRight(void)
 	//         p1(2)
 	//          ^
 	//          |
+	//          |
 	//         ...
 	//        Root(0)
 	//
@@ -576,14 +581,16 @@ void TestUpdateAttachedTosDistToRootSimpleRight(void)
 
 	//
 	// pTest3(4)    pTest2(4)
-	//      \       /
+	//      ^       ^
 	//       \     /
 	//        \   /
 	//         \ /
 	//       pTest1(3)
+	//          ^
 	//          |
 	//          |
 	//         p1(2)
+	//          ^
 	//          |
 	//          |
 	//         ...
@@ -592,7 +599,7 @@ void TestUpdateAttachedTosDistToRootSimpleRight(void)
 
 	cDistToRootCalculator.Init();
 
-	cDistToRootCalculator.AddFromChanged(pTest2.BaseObject());
+	cDistToRootCalculator.AddFromChanged(pTest3.BaseObject());
 	cDistToRootCalculator.Calculate();
 
 	cDistToRootCalculator.Kill();
@@ -1026,7 +1033,6 @@ void TestUpdateEmbeddedObjectTosDetachedSetupDistance(void)
 
 	pRoot = ORoot();
 	pTest1 = OMalloc(CTestObject)->Init();
-	pTest1 = OMalloc(CTestObject)->Init();
 	pLTest2 = OMalloc(CTestObject)->Init();
 	pRTest2 = OMalloc(CTestObject)->Init();
 	pLTest3 = OMalloc(CTestObject)->Init();
@@ -1149,7 +1155,6 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 
 	pRoot = ORoot();
 	pTest1 = OMalloc(CTestObject)->Init();
-	pTest1 = OMalloc(CTestObject)->Init();
 	pLTest2 = OMalloc(CTestObject)->Init();
 	pRTest2 = OMalloc(CTestObject)->Init();
 	pLTest3 = OMalloc(CTestObject)->Init();
@@ -1243,7 +1248,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 	AssertInt(8, pRTest7l->GetDistToRoot());
 	AssertInt(8, pRTest8->GetDistToRoot());
 
-	AssertInt(5, cDistParameters.NumTouched());
+	AssertInt(8, cDistParameters.NumTouched());
 
 	cDistParameters.Kill();
 
@@ -1279,7 +1284,6 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 	CDistCalculatorParameters	cDistParameters;
 
 	pRoot = ORoot();
-	pTest1 = OMalloc(CTestObject)->Init();
 	pTest1 = OMalloc(CTestObject)->Init();
 	pLTest2 = OMalloc(CTestObject)->Init();
 	pRTest2 = OMalloc(CTestObject)->Init();
@@ -1421,7 +1425,6 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 
 	pRoot = ORoot();
 	pTest1 = OMalloc(CTestObject)->Init();
-	pTest1 = OMalloc(CTestObject)->Init();
 	pLTest2 = OMalloc(CTestObject)->Init();
 	pRTest2 = OMalloc(CTestObject)->Init();
 	pLTest3 = OMalloc(CTestObject)->Init();
@@ -1551,7 +1554,6 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 	CDistCalculatorParameters	cDistParameters;
 
 	pRoot = ORoot();
-	pTest1 = OMalloc(CTestObject)->Init();
 	pTest1 = OMalloc(CTestObject)->Init();
 	pLTest2 = OMalloc(CTestObject)->Init();
 	pRTest2 = OMalloc(CTestObject)->Init();
@@ -1838,7 +1840,7 @@ void TestClearDistToRootToValidDistBroken(void)
 	pTest1b->TestRemoveHeapFrom(p6c.BaseObject());
 
 	cDistParameters.Init();
-	pTest1b->CollectStartingObjectsAndSetClearedToRoot(NULL, &cDistParameters);
+	pTest1b->CollectValidDistStartingObjectsAndSetClearedToRoot(NULL, &cDistParameters);
 
 	AssertInt(1, cDistParameters.NumExpectedDists());
 	psDistToRoot = cDistParameters.GetLowestExpectedDist();
@@ -2211,47 +2213,38 @@ void TestDistToRootTosNotUpdated(void)
 	CTestObject*		pcTest1;
 	CTestObject*		pcTest2;
 	CTestObject*		pcTest3;
-	CTestObject*		pcTest4;
 	CSetObject*			pcSet;
 
 	Ptr<CTestObject>	pTest1;
 	Ptr<CTestObject>	pTest2;
 	Ptr<CTestObject>	pTest3;
-	Ptr<CTestObject>	pTest4;
 	Ptr<CRoot>			pRoot;
 
 	pRoot = ORoot();
 	pTest1 = OMalloc(CTestObject);
 	pTest2 = OMalloc(CTestObject);
 	pTest3 = OMalloc(CTestObject);
-	pTest4 = OMalloc(CTestObject);
 
 	pTest1->mpTest = pTest2;
 	pTest2->mpTest = pTest3;
 	pTest2->mpObject = pTest1;
-	pTest3->mpTest = pTest4;
 
 	pRoot->Add(pTest1);
 	
 	AssertInt(2, pTest1->GetDistToRoot());
 	AssertInt(3, pTest2->GetDistToRoot());
 	AssertInt(4, pTest3->GetDistToRoot());
-	AssertInt(5, pTest4->GetDistToRoot());
 
 	pcTest1 = &pTest1;
 	pcTest2	= &pTest2;
 	pcTest3	= &pTest3;
-	pcTest4	= &pTest4;
+
+	AssertTrue(pTest3->CanFindRootThroughValidPath());
 
 	pTest2 = NULL;
 	pTest3 = NULL;
-	pTest4 = NULL;
 
 	//
-	//   pTest4[5](4)
-	//       ^
-	//       |      
-	//       |      
 	//   pTest3[4](4)
 	//       ^
 	//       |      
@@ -2275,16 +2268,19 @@ void TestDistToRootTosNotUpdated(void)
 	pcSet->UnsafeRemove(pcTest1);
 	pcTest1->TestRemoveHeapFrom(pcSet);
 
+	AssertInt(0, pcSet->NumElements());
+	AssertInt(1, pcTest1->NumHeapFroms()); //pointed to from pTest2
+	AssertInt(1, pcTest1->NumStackFroms());
+
 	cDistParameters.Init();
 
 	cDistToRootCalculator.Init();
-	cDistToRootCalculator.AddFromChanged(pcTest3);
+	cDistToRootCalculator.AddFromChanged(pcTest1);
 	cDistToRootCalculator.Calculate(&cDistParameters);
 	
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest2->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest3->GetDistToRoot());
-	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest4->GetDistToRoot());
 
 	cDistToRootCalculator.Kill();
 	cDistParameters.Kill();
@@ -2303,28 +2299,28 @@ void TestDistToRoot(void)
 {
 	BeginTests();
 
-	//TestClearDistToRootToValidDistBroken();
-	//TestClearDistToRootToValidDistComplex();
-	//TestClearDistToRootToValidDistSimpleLeft();
-	//TestClearDistToRootToValidDistSimpleRight();
-	//TestUpdateAttachedTosDistToRootBroken();
-	//TestUpdateAttachedTosDistToRootComplex();
-	//TestUpdateAttachedTosDistToRootSimpleRight();
-	//TestUpdateAttachedTosDistToRootSimpleRightBroken();
-	//TestUpdateAttachedTosDistToRootSimpleLeft();
-	//TestUpdateAttachedTosDistToRootChildTriangleKindaBalanced();
-	//TestUpdateAttachedTosDistToRootChildTriangleShortLeft();
-	//TestUpdateEmbeddedObjectTosDetachedSetupDistance();
-	//TestUpdateEmbeddedObjectTosDetachedScenarioA();
-	//TestUpdateEmbeddedObjectTosDetachedScenarioB();
-	//TestUpdateEmbeddedObjectTosDetachedScenarioC();
-	//TestUpdateEmbeddedObjectTosDetachedScenarioD();
-	//TestDistToRootLinear();
-	//TestDistToRootCyclic();
-	//TestDistToRootWithStackPointers();
-	//TestDistToRootLinearToStackScenarioA();
-	//TestDistToRootLinearToStackScenarioB();
 	TestDistToRootTosNotUpdated();
+	TestClearDistToRootToValidDistBroken();
+	TestClearDistToRootToValidDistComplex();
+	TestClearDistToRootToValidDistSimpleLeft();
+	TestClearDistToRootToValidDistSimpleRight();
+	TestUpdateAttachedTosDistToRootBroken();
+	TestUpdateAttachedTosDistToRootComplex();
+	TestUpdateAttachedTosDistToRootSimpleRight();
+	TestUpdateAttachedTosDistToRootSimpleRightBroken();
+	TestUpdateAttachedTosDistToRootSimpleLeft();
+	TestUpdateAttachedTosDistToRootChildTriangleKindaBalanced();
+	TestUpdateAttachedTosDistToRootChildTriangleShortLeft();
+	TestUpdateEmbeddedObjectTosDetachedSetupDistance();
+	TestUpdateEmbeddedObjectTosDetachedScenarioA();
+	TestUpdateEmbeddedObjectTosDetachedScenarioB();
+	TestUpdateEmbeddedObjectTosDetachedScenarioC();
+	TestUpdateEmbeddedObjectTosDetachedScenarioD();
+	TestDistToRootLinear();
+	TestDistToRootCyclic();
+	TestDistToRootWithStackPointers();
+	TestDistToRootLinearToStackScenarioA();
+	TestDistToRootLinearToStackScenarioB();
 
 	TestStatistics();
 }
