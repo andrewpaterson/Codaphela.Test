@@ -241,7 +241,6 @@ void TestPointerHeapNotInGraphFreeStack(void)
 	AssertInt(1, pcTest2->NumTos());
 
 	ObjectsKill();
-
 }
 
 
