@@ -754,7 +754,7 @@ void TestDistToStackNowWhatTheFuckIsWrong(void)
 	Ptr<CTestObject> pTest1 = OMalloc(CTestObject)->Init(&sNotifier1);
 	Ptr<CTestObject> pTest2 = OMalloc(CTestObject)->Init(&sNotifier2);
 
-	pTest2->mpObject = pTest1;
+	pTest2->mpTest = pTest1;
 
 	//
 	//    pTest1
@@ -771,7 +771,8 @@ void TestDistToStackNowWhatTheFuckIsWrong(void)
 	pcTest2 = (CTestObject*)pTest2.Object();
 	pcTest1 = (CTestObject*)pTest1.Object();
 
-	pTest1 = NULL;  //pTest1 should not be killed here, even though it has no stack froms.  It still has a heap from (with a stack from).
+	pTest1 = NULL;  //pTest1 should not be killed here, even though it has no stack froms.  
+					//It still has a heap from (with a stack from).
 
 	AssertFalse(sNotifier1.bKilled);
 	AssertFalse(sNotifier2.bKilled);
@@ -784,7 +785,6 @@ void TestDistToStackNowWhatTheFuckIsWrong(void)
 
 	ObjectsKill();
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////

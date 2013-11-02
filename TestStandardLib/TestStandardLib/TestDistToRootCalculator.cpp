@@ -2295,6 +2295,285 @@ void TestDistToRootTosNotUpdated(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestDistToRootComplex(void)
+{
+	ObjectsInit();
+
+	CDistToRootCalculator		cDistToRootCalculator;
+	CDistCalculatorParameters	cDistParameters;
+
+	Ptr<CRoot> pRoot = ORoot();
+
+	Ptr<CTestObject> pTest3  = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest4  = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest5  = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest6  = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest7  = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest8  = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest9  = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest10 = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest11 = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest12 = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest13 = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest14 = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest15 = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest16 = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest17 = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest18 = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest19 = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest20 = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest21 = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest22 = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest23 = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest24 = OMalloc(CTestObject)->Init();
+
+	CTestObject* pcTest3  = &pTest3;
+	CTestObject* pcTest4  = &pTest4;
+	CTestObject* pcTest5  = &pTest5;
+	CTestObject* pcTest6  = &pTest6;
+	CTestObject* pcTest7  = &pTest7;
+	CTestObject* pcTest8  = &pTest8;
+	CTestObject* pcTest9  = &pTest9;
+	CTestObject* pcTest10 = &pTest10;
+	CTestObject* pcTest11 = &pTest11;
+	CTestObject* pcTest12 = &pTest12;
+	CTestObject* pcTest13 = &pTest13;
+	CTestObject* pcTest14 = &pTest14;
+	CTestObject* pcTest15 = &pTest15;
+	CTestObject* pcTest16 = &pTest16;
+	CTestObject* pcTest17 = &pTest17;
+	CTestObject* pcTest18 = &pTest18;
+	CTestObject* pcTest19 = &pTest19;
+	CTestObject* pcTest20 = &pTest20;
+	CTestObject* pcTest21 = &pTest21;
+	CTestObject* pcTest22 = &pTest22;
+	CTestObject* pcTest23 = &pTest23;
+	CTestObject* pcTest24 = &pTest24;
+
+	pRoot->Add(pTest3);
+	pRoot->Add(pTest4);
+
+	pTest4->mpTest = pTest5;
+	pTest5->mpTest = pTest6;
+	pTest6->mpTest = pTest7;
+	pTest7->mpTest = pTest8;
+	pTest8->mpTest = pTest9;
+	pTest9->mpTest = pTest10;
+	pTest10->mpTest = pTest11;
+	pTest11->mpTest = pTest12;
+	pTest12->mpTest = pTest14;
+	
+	pTest3->mpTest = pTest13;
+	pTest3->mpObject = pTest14;
+
+	pTest13->mpTest = pTest15;
+	pTest14->mpTest = pTest15;
+	pTest14->mpObject = pTest19;
+
+	pTest15->mpTest = pTest16;
+	pTest16->mpTest = pTest17;
+	pTest17->mpTest = pTest18;
+
+	pTest18->mpTest = pTest20;
+	pTest18->mpObject = pTest21;
+
+	pTest19->mpTest = pTest21;
+	pTest19->mpObject = pTest22;
+
+	pTest20->mpTest = pTest23;
+	pTest20->mpObject = pTest18;
+	pTest21->mpTest = pTest18;
+	pTest21->mpObject = pTest19;
+	pTest22->mpTest = pTest24;
+	pTest22->mpObject = pTest19;
+
+	AssertInt(3, pTest18->NumHeapFroms());
+	AssertInt(3, pTest19->NumHeapFroms());
+
+	pTest3 = NULL;
+	pTest4  = NULL;
+	pTest5  = NULL;
+	pTest6  = NULL;
+	pTest7  = NULL;
+	pTest8  = NULL;
+	pTest9  = NULL;
+	pTest10 = NULL;
+	pTest11 = NULL;
+	pTest12 = NULL;
+	pTest13 = NULL;
+	pTest14 = NULL;
+	pTest15 = NULL;
+	pTest16 = NULL;
+	pTest17 = NULL;
+	pTest18 = NULL;
+	pTest19 = NULL;
+	pTest20 = NULL;
+	pTest21 = NULL;
+	pTest22 = NULL;
+	pTest23 = NULL;
+	pTest24 = NULL;
+
+	AssertLongLongInt(24, gcObjects.NumMemoryIndexes());
+	AssertInt( 2,  pcTest3->GetDistToRoot());
+	AssertInt( 2,  pcTest4->GetDistToRoot());
+	AssertInt( 3,  pcTest5->GetDistToRoot());
+	AssertInt( 4,  pcTest6->GetDistToRoot());
+	AssertInt( 5,  pcTest7->GetDistToRoot());
+	AssertInt( 6,  pcTest8->GetDistToRoot());
+	AssertInt( 7,  pcTest9->GetDistToRoot());
+	AssertInt( 8, pcTest10->GetDistToRoot());
+	AssertInt( 9, pcTest11->GetDistToRoot());
+	AssertInt(10, pcTest12->GetDistToRoot());
+	AssertInt( 3, pcTest13->GetDistToRoot());
+	AssertInt( 3, pcTest14->GetDistToRoot());
+	AssertInt( 4, pcTest15->GetDistToRoot());
+	AssertInt( 5, pcTest16->GetDistToRoot());
+	AssertInt( 6, pcTest17->GetDistToRoot());
+	AssertInt( 6, pcTest18->GetDistToRoot());
+	AssertInt( 4, pcTest19->GetDistToRoot());
+	AssertInt( 7, pcTest20->GetDistToRoot());
+	AssertInt( 5, pcTest21->GetDistToRoot());
+	AssertInt( 5, pcTest22->GetDistToRoot());
+	AssertInt( 8, pcTest23->GetDistToRoot());
+	AssertInt( 6, pcTest24->GetDistToRoot());
+
+	//                    
+	//          pTest23(8)                 pTest24(6)
+	//              ^                         ^
+	//              |                         |
+	//              |                         |
+	//          pTest20(7)    pTest21(5)   pTest22(5)
+	//               ^\       ^/   ^\       ^/
+	//                \\     //     \\ 	  // 
+	//                 \v   /v       \v   /v  
+	//                pTest18(6)    pTest19(4)
+	//                     ^             ^
+	//                     |             |
+	//                pTest17(6)         |
+	//                     ^             |
+	//                     |             |
+	//                pTest16(5)         |
+	//                     ^             |
+	//                     |             |
+	//                pTest15(4)         |
+	//                   ^     ^         |
+	//                   |      \       / 
+	//                   |       \     /
+	//                pTest13(3)  pTest14(3)
+	//                   ^          ^   ^ 
+	//                   |         /     \ 
+	//                   |        /       \ 
+	//                   |       /       pTest12(10)
+	//                   |      |           ^
+	//                   |      |           |
+	//                   |      |        pTest11(9)
+	// Break this one ---|----> X        pTest10(8) 
+	//                    \     |        pTest9(7)
+	//                     \    |        pTest8(6)
+	//                      \   |        pTest7(5)
+	//                       \  |        pTest6(4)
+	//                        \ |        pTest5(3)
+	//                      pTest3(2)    pTest4(2)
+	//                           ^         ^
+	//                            \       /  
+	//                             \     /  
+	//                              \   /  
+	//                               ...
+	//                              pRoot(0)
+	//                    
+
+	pcTest3->mpObject.UnsafeClearObject();
+	pcTest14->TestRemoveHeapFrom(pcTest3);
+
+	cDistParameters.Init();
+	cDistToRootCalculator.Init();
+	cDistToRootCalculator.AddFromChanged(pcTest14);
+	cDistToRootCalculator.Calculate(&cDistParameters);
+
+	//                    
+	//          pTest23(9)                 pTest24(11)
+	//              ^                         ^
+	//              |                         |
+	//              |                         |
+	//          pTest20(8)    pTest21(8)   pTest22(10)
+	//               ^\       ^/   ^\       ^/
+	//                \\     //     \\ 	  // 
+	//                 \v   /v       \v   /v  
+	//                pTest18(7)    pTest19(9)
+	//                     ^             ^
+	//                     |             |
+	//                pTest17(6)         |
+	//                     ^             |
+	//                     |             |
+	//                pTest16(5)         |
+	//                     ^             |
+	//                     |             |
+	//                pTest15(4)         |
+	//                   ^     ^         |
+	//                   |      \       / 
+	//                   |       \     /
+	//                pTest13(3)  pTest14(11)
+	//                   ^              ^ 
+	//                   |               \ 
+	//                   |                \ 
+	//                   |               pTest12(10)
+	//                   |                  ^
+	//                   |                  |
+	//                   |               pTest11(9)
+	//                   |               pTest10(8) 
+	//                    \              pTest9(7)
+	//                     \             pTest8(6)
+	//                      \            pTest7(5)
+	//                       \           pTest6(4)
+	//                        \          pTest5(3)
+	//                      pTest3(2)    pTest4(2)
+	//                           ^         ^
+	//                            \       /  
+	//                             \     /  
+	//                              \   /  
+	//                               ...
+	//                              pRoot(0)
+	//                    
+
+	AssertLongLongInt(24, gcObjects.NumMemoryIndexes());
+	AssertInt( 2,  pcTest3->GetDistToRoot());
+	AssertInt( 2,  pcTest4->GetDistToRoot());
+	AssertInt( 3,  pcTest5->GetDistToRoot());
+	AssertInt( 4,  pcTest6->GetDistToRoot());
+	AssertInt( 5,  pcTest7->GetDistToRoot());
+	AssertInt( 6,  pcTest8->GetDistToRoot());
+	AssertInt( 7,  pcTest9->GetDistToRoot());
+	AssertInt( 8, pcTest10->GetDistToRoot());
+	AssertInt( 9, pcTest11->GetDistToRoot());
+	AssertInt(10, pcTest12->GetDistToRoot());
+	AssertInt( 3, pcTest13->GetDistToRoot());
+	AssertInt(11, pcTest14->GetDistToRoot());
+	AssertInt( 4, pcTest15->GetDistToRoot());
+	AssertInt( 5, pcTest16->GetDistToRoot());
+	AssertInt( 6, pcTest17->GetDistToRoot());
+	AssertInt( 7, pcTest18->GetDistToRoot());
+	AssertInt( 9, pcTest19->GetDistToRoot());
+	AssertInt( 8, pcTest20->GetDistToRoot());
+	AssertInt( 8, pcTest21->GetDistToRoot());
+	AssertInt(10, pcTest22->GetDistToRoot());
+	AssertInt( 9, pcTest23->GetDistToRoot());
+	AssertInt(11, pcTest24->GetDistToRoot());
+
+	cDistToRootCalculator.Kill();
+	cDistParameters.Kill();
+
+	gcObjects.ValidateConsistency();
+
+	//[ 2]:CTestObject(168) 3} pointing to object {[11]:CTestObject(168) 14} does not have a from pointing to.
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestDistToRoot(void)
 {
 	BeginTests();
@@ -2321,6 +2600,7 @@ void TestDistToRoot(void)
 	TestDistToRootWithStackPointers();
 	TestDistToRootLinearToStackScenarioA();
 	TestDistToRootLinearToStackScenarioB();
+	TestDistToRootComplex();
 
 	TestStatistics();
 }
