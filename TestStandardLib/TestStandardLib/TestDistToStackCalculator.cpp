@@ -386,8 +386,8 @@ void TestDistToStackCyclicWithoutStackPointer(void)
 	AssertInt(3, cDistParameters.NumDetachedFromRoot());
 	AssertInt(3, cDistParameters.NumCompletelyDetached());
 	AssertPointer(pc1, cDistParameters.GetCompletelyDetached(0));
-	AssertPointer(pc2, cDistParameters.GetCompletelyDetached(1));
-	AssertPointer(pc3, cDistParameters.GetCompletelyDetached(2));
+	AssertPointer(pc3, cDistParameters.GetCompletelyDetached(1));
+	AssertPointer(pc2, cDistParameters.GetCompletelyDetached(2));
 
 	cDistToStackCalculator.Kill();
 	cDistParameters.Kill();
@@ -758,21 +758,21 @@ void TestDistToStackNowWhatTheFuckIsWrong(void)
 
 	//
 	//    pTest1
-	//     ^ ^
-	//     |  .
-	//     |   .
-	//     |
+	//      ^ ^
+	//      |  .
+	//      |   .
+	//      |
 	//    pTest2
-	//       ^
-	//        .
+	//        ^
 	//         .
+	//          .
 	//
 
 	pcTest2 = (CTestObject*)pTest2.Object();
 	pcTest1 = (CTestObject*)pTest1.Object();
 
 	pTest1 = NULL;  //pTest1 should not be killed here, even though it has no stack froms.  
-					//It still has a heap from (with a stack from).
+					//It still has a heap from that has a stack from.
 
 	AssertFalse(sNotifier1.bKilled);
 	AssertFalse(sNotifier2.bKilled);

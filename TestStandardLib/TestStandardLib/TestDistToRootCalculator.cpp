@@ -2499,8 +2499,8 @@ void TestDistToRootComplex(void)
 	//               ^\       ^/   ^\       ^/
 	//                \\     //     \\ 	  // 
 	//                 \v   /v       \v   /v  
-	//                pTest18(7)    pTest19(9)
-	//                     ^             ^
+	//                pTest18(7)    pTest19(9) <-- pTest19 changing to (9) and 
+	//                     ^             ^         not (12) is important.
 	//                     |             |
 	//                pTest17(6)         |
 	//                     ^             |
@@ -2563,8 +2563,6 @@ void TestDistToRootComplex(void)
 	cDistParameters.Kill();
 
 	gcObjects.ValidateConsistency();
-
-	//[ 2]:CTestObject(168) 3} pointing to object {[11]:CTestObject(168) 14} does not have a from pointing to.
 
 	ObjectsKill();
 }
