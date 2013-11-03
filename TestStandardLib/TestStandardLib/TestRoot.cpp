@@ -41,7 +41,6 @@ void TestRootDistance(void)
 	pcFrom = pcFrom->GetHeapFrom(0);  //Root
 	AssertInt(0, pcFrom->GetDistToRoot());
 
-	pRoot->Kill();
 	ObjectsKill();
 }
 
@@ -445,7 +444,6 @@ void TestRootGraphRemoveSimple(void)
 	pRoot->RemoveAll();
 	AssertTrue(sKilled2.bKilled);
 
-	pRoot->Kill();
 	ObjectsKill();
 }
 
@@ -639,7 +637,6 @@ void TestRootGraphRemoveComplex(void)
 	AssertTrue(sKilledTop1.bKilled);
 	AssertTrue(sKilledTop2.bKilled);
 
-	pRoot->Kill();
 	ObjectsKill();
 }
 
@@ -666,6 +663,7 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	Ptr<CSetObject>				pSet;
 	Ptr<CTestObject>			pTop1;
 	Ptr<CTestObject>			pTop2;
+	CTestObject*				pcTest2;
 
 	ObjectsInit();
 	pRoot = ORoot();
@@ -735,8 +733,11 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	pTest4 = NULL;
 	pTest5 = NULL;
 
-	pSet->Remove(pTest2);
+	pcTest2 = &pTest2;
 	pTest2 = NULL;
+
+	pSet->Remove(pcTest2);
+
 
 	AssertInt(2, pSet->GetDistToRoot());
 	AssertInt(3, pTop2->GetDistToRoot());
@@ -770,7 +771,6 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	//    ...
 	//   Root(0)
 
-	pRoot->Kill();
 	ObjectsKill();
 }
 
@@ -841,6 +841,7 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 	AssertInt(5, pTop1->GetDistToRoot());
 	AssertInt(3, pTop2->GetDistToRoot());
 
+	//
 	//       Test1(4)  
 	//       //\\      
 	//      //  \\       
@@ -859,7 +860,7 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 	//        |
 	//       ...
 	//      Root(0)
-
+	//
 
 	pSet->Remove(pTop2);
 	AssertInt(1, pSet->NumElements());
@@ -898,8 +899,6 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 	//    ...
 	//   Root(0)
 
-
-	pRoot->Kill();
 	ObjectsKill();
 }
 
@@ -928,6 +927,7 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	Ptr<CSetObject>				pSet;
 	Ptr<CTestObject>			pTop1;
 	Ptr<CTestObject>			pTop2;
+	CTestObject*				pcTest2;
 
 	ObjectsInit();
 	pRoot = ORoot();
@@ -995,8 +995,9 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	//       ...
 	//      Root(0)
 
-
-	pSet->Remove(pTest2);
+	pcTest2 = &pTest2;
+	pTest2 = NULL;
+	pSet->Remove(pcTest2);
 
 	AssertInt(2, pSet->GetDistToRoot());
 	AssertInt(3, pTest3->GetDistToRoot());
@@ -1006,8 +1007,6 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	AssertInt(7, pTest1->GetDistToRoot());
 	AssertInt(8, pTop2->GetDistToRoot());
 	AssertInt(9, pTest6->GetDistToRoot());
-
-	pTest2 = NULL;
 
 	AssertTrue( sKilled2.bKilled);
 	AssertFalse(sKilled3.bKilled);
@@ -1019,6 +1018,7 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	AssertFalse(sKilled1.bKilled);
 	AssertInt(1, pSet->NumElements());
 
+	//
 	//   Test6(9)       
 	//     ||     
 	//   Top2(8)
@@ -1037,9 +1037,8 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	//     |
 	//    ...
 	//   Root(0)
+	//
 
-
-	pRoot->Kill();
 	ObjectsKill();
 }
 
