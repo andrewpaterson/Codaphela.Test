@@ -351,6 +351,7 @@ void TestUpdateAttachedTosDistToRootComplex(void)
 	Ptr<CPointerContainer>		p8c;
 	Ptr<CPointerContainer>		p9c;
 
+	CDistCalculatorParameters	cParameters;
 	CDistToRootCalculator		cDistToRootCalculator;
 
 	pRoot = ORoot();
@@ -409,8 +410,9 @@ void TestUpdateAttachedTosDistToRootComplex(void)
 	p3b->mp.UnsafeClearObject();
 	pTest1b->TestRemoveHeapFrom(p3b.BaseObject());
 
-
-	cDistToRootCalculator.Calculate(pTest1b.BaseObject());
+	cParameters.Init();
+	cDistToRootCalculator.Calculate(pTest1b.BaseObject(), &cParameters);
+	cParameters.Kill();
 
 
 	//
@@ -455,6 +457,7 @@ void TestUpdateAttachedTosDistToRootSimpleLeft(void)
 	Ptr<CTestObject>			pTest2;
 	Ptr<CTestObject>			pTest3;
 
+	CDistCalculatorParameters	cParameters;
 	CDistToRootCalculator		cDistToRootCalculator;
 	int							iFlags;
 
@@ -503,9 +506,9 @@ void TestUpdateAttachedTosDistToRootSimpleLeft(void)
 	//    Root(0)
 	//
 
-
-	cDistToRootCalculator.Calculate(pTest2.BaseObject());
-
+	cParameters.Init();
+	cDistToRootCalculator.Calculate(pTest2.BaseObject(), &cParameters);
+	cParameters.Kill();
 
 	AssertInt(3, pTest1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest2->GetDistToRoot());
@@ -535,6 +538,7 @@ void TestUpdateAttachedTosDistToRootSimpleRight(void)
 	Ptr<CTestObject>			pTest2;
 	Ptr<CTestObject>			pTest3;
 
+	CDistCalculatorParameters	cParameters;
 	CDistToRootCalculator		cDistToRootCalculator;
 
 	pRoot = ORoot();
@@ -590,9 +594,9 @@ void TestUpdateAttachedTosDistToRootSimpleRight(void)
 	//        Root(0)
 	//
 
-
-	cDistToRootCalculator.Calculate(pTest3.BaseObject());
-
+	cParameters.Init();
+	cDistToRootCalculator.Calculate(pTest3.BaseObject(), &cParameters);
+	cParameters.Kill();
 
 	AssertInt(3, pTest1->GetDistToRoot());
 	AssertInt(4, pTest2->GetDistToRoot());
@@ -720,7 +724,8 @@ void TestUpdateAttachedTosDistToRootChildTriangleKindaBalanced(void)
 	Ptr<CTestObject>			pTest2b;
 	Ptr<CTestObject>			pTest3a;
 
-	CDistToRootCalculator	cDistToRootCalculator;
+	CDistCalculatorParameters	cParameters;
+	CDistToRootCalculator		cDistToRootCalculator;
 
 	pRoot = ORoot();
 
@@ -828,9 +833,9 @@ void TestUpdateAttachedTosDistToRootChildTriangleKindaBalanced(void)
 	p6c->mp.UnsafeClearObject();
 	pTest1b->TestRemoveHeapFrom(p6c.BaseObject());
 
-
-	cDistToRootCalculator.Calculate(pTest1b.BaseObject());
-
+	cParameters.Init();
+	cDistToRootCalculator.Calculate(pTest1b.BaseObject(), &cParameters);
+	cParameters.Kill();
 
 	//                            
 	//                 pTest3a(9)
@@ -893,7 +898,8 @@ void TestUpdateAttachedTosDistToRootChildTriangleShortLeft(void)
 	Ptr<CTestObject>			pTest2b;
 	Ptr<CTestObject>			pTest3a;
 
-	CDistToRootCalculator	cDistToRootCalculator;
+	CDistCalculatorParameters	cParameters;
+	CDistToRootCalculator		cDistToRootCalculator;
 
 	pRoot = ORoot();
 
@@ -952,9 +958,9 @@ void TestUpdateAttachedTosDistToRootChildTriangleShortLeft(void)
 	p6c->mp.UnsafeClearObject();
 	pTest1b->TestRemoveHeapFrom(p6c.BaseObject());
 
-
-	cDistToRootCalculator.Calculate(pTest1b.BaseObject());
-
+	cParameters.Init();
+	cDistToRootCalculator.Calculate(pTest1b.BaseObject(), &cParameters);
+	cParameters.Kill();
 
 	//                            
 	//                 pTest3a(7)
@@ -1644,7 +1650,8 @@ void TestUpdateAttachedTosDistToRootBroken(void)
 	Ptr<CTestObject>			pTest1b;
 	Ptr<CTestObject>			pTest2a;
 
-	CDistToRootCalculator	cDistToRootCalculator;
+	CDistCalculatorParameters	cParameters;
+	CDistToRootCalculator		cDistToRootCalculator;
 
 	pRoot = ORoot();
 	p6b = OMalloc(CPointerContainer)->Init();
@@ -1691,9 +1698,9 @@ void TestUpdateAttachedTosDistToRootBroken(void)
 	p6c->mp.UnsafeClearObject();
 	pTest1b->TestRemoveHeapFrom(p6c.BaseObject());
 
-
-	cDistToRootCalculator.Calculate(pTest1b.BaseObject());
-
+	cParameters.Init();
+	cDistToRootCalculator.Calculate(pTest1b.BaseObject(), &cParameters);
+	cParameters.Kill();
 
 	//
 	//         pTest2a(4)
