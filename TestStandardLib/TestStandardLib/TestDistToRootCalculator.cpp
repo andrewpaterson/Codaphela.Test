@@ -235,8 +235,7 @@ void TestClearDistToRootToValidDistSimpleLeft(void)
 
 	cDistParameters.Init();
 	cDistCalculator.Init();
-	cDistCalculator.AddFromChanged(&pTest2);
-	cDistCalculator.Calculate(&cDistParameters);
+	cDistCalculator.Calculate(&pTest2, &cDistParameters);
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest2->GetDistToRoot());
 	AssertInt(4, pTest3->GetDistToRoot());
@@ -411,10 +410,7 @@ void TestUpdateAttachedTosDistToRootComplex(void)
 	pTest1b->TestRemoveHeapFrom(p3b.BaseObject());
 
 	cDistToRootCalculator.Init();
-
-	cDistToRootCalculator.AddFromChanged(pTest1b.BaseObject());
-	cDistToRootCalculator.Calculate();
-
+	cDistToRootCalculator.Calculate(pTest1b.BaseObject());
 	cDistToRootCalculator.Kill();
 
 	//
@@ -508,10 +504,7 @@ void TestUpdateAttachedTosDistToRootSimpleLeft(void)
 	//
 
 	cDistToRootCalculator.Init();
-
-	cDistToRootCalculator.AddFromChanged(pTest2.BaseObject());
-	cDistToRootCalculator.Calculate();
-
+	cDistToRootCalculator.Calculate(pTest2.BaseObject());
 	cDistToRootCalculator.Kill();
 
 	AssertInt(3, pTest1->GetDistToRoot());
@@ -598,10 +591,7 @@ void TestUpdateAttachedTosDistToRootSimpleRight(void)
 	//
 
 	cDistToRootCalculator.Init();
-
-	cDistToRootCalculator.AddFromChanged(pTest3.BaseObject());
-	cDistToRootCalculator.Calculate();
-
+	cDistToRootCalculator.Calculate(pTest3.BaseObject());
 	cDistToRootCalculator.Kill();
 
 	AssertInt(3, pTest1->GetDistToRoot());
@@ -684,8 +674,7 @@ void TestUpdateAttachedTosDistToRootSimpleRightBroken(void)
 	cDistToRootCalculator.Init();
 	cDistParameters.Init();
 
-	cDistToRootCalculator.AddFromChanged(pTest3.BaseObject());
-	cDistToRootCalculator.Calculate(&cDistParameters);
+	cDistToRootCalculator.Calculate(pTest3.BaseObject(), &cDistParameters);
 
 	cDistToRootCalculator.Kill();
 
@@ -840,10 +829,7 @@ void TestUpdateAttachedTosDistToRootChildTriangleKindaBalanced(void)
 	pTest1b->TestRemoveHeapFrom(p6c.BaseObject());
 
 	cDistToRootCalculator.Init();
-
-	cDistToRootCalculator.AddFromChanged(pTest1b.BaseObject());
-	cDistToRootCalculator.Calculate();
-
+	cDistToRootCalculator.Calculate(pTest1b.BaseObject());
 	cDistToRootCalculator.Kill();
 
 	//                            
@@ -967,10 +953,7 @@ void TestUpdateAttachedTosDistToRootChildTriangleShortLeft(void)
 	pTest1b->TestRemoveHeapFrom(p6c.BaseObject());
 
 	cDistToRootCalculator.Init();
-
-	cDistToRootCalculator.AddFromChanged(pTest1b.BaseObject());
-	cDistToRootCalculator.Calculate();
-
+	cDistToRootCalculator.Calculate(pTest1b.BaseObject());
 	cDistToRootCalculator.Kill();
 
 	//                            
@@ -1196,10 +1179,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 
 	cDistToRootCalculator.Init();
 	cDistParameters.Init();
-
-	cDistToRootCalculator.AddFromChanged(pLTest2.BaseObject());
-	cDistToRootCalculator.Calculate(&cDistParameters);
-
+	cDistToRootCalculator.Calculate(pLTest2.BaseObject(), &cDistParameters);
 	cDistToRootCalculator.Kill();
 
 	//                             
@@ -1326,10 +1306,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 
 	cDistToRootCalculator.Init();
 	cDistParameters.Init();
-
-	cDistToRootCalculator.AddFromChanged(pRTest2.BaseObject());
-	cDistToRootCalculator.Calculate(&cDistParameters);
-
+	cDistToRootCalculator.Calculate(pRTest2.BaseObject(), &cDistParameters);
 	cDistToRootCalculator.Kill();
 
 	//                             
@@ -1466,10 +1443,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 
 	cDistToRootCalculator.Init();
 	cDistParameters.Init();
-
-	cDistToRootCalculator.AddFromChanged(pRTest3l.BaseObject());
-	cDistToRootCalculator.Calculate(&cDistParameters);
-
+	cDistToRootCalculator.Calculate(pRTest3l.BaseObject(), &cDistParameters);
 	cDistToRootCalculator.Kill();
 
 	//                             
@@ -1596,10 +1570,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 
 	cDistToRootCalculator.Init();
 	cDistParameters.Init();
-
-	cDistToRootCalculator.AddFromChanged(pRTest3r.BaseObject());
-	cDistToRootCalculator.Calculate(&cDistParameters);
-
+	cDistToRootCalculator.Calculate(pRTest3r.BaseObject(), &cDistParameters);
 	cDistToRootCalculator.Kill();
 
 	//                             
@@ -1721,10 +1692,7 @@ void TestUpdateAttachedTosDistToRootBroken(void)
 	pTest1b->TestRemoveHeapFrom(p6c.BaseObject());
 
 	cDistToRootCalculator.Init();
-
-	cDistToRootCalculator.AddFromChanged(pTest1b.BaseObject());
-	cDistToRootCalculator.Calculate();
-
+	cDistToRootCalculator.Calculate(pTest1b.BaseObject());
 	cDistToRootCalculator.Kill();
 
 	//
@@ -1903,8 +1871,7 @@ void TestDistToRootLinear(void)
 
 	cDistParameters.Init();
 	cDistToRootCalculator.Init();
-	cDistToRootCalculator.AddFromChanged(p1.BaseObject());
-	cDistToRootCalculator.Calculate(&cDistParameters);
+	cDistToRootCalculator.Calculate(p1.BaseObject(), &cDistParameters);
 	cDistToRootCalculator.Kill();
 
 	AssertInt(2, p0->GetDistToRoot());
@@ -1966,8 +1933,7 @@ void TestDistToRootCyclic(void)
 
 	cDistParameters.Init();
 	cDistToRootCalculator.Init();
-	cDistToRootCalculator.AddFromChanged(p1.BaseObject());
-	cDistToRootCalculator.Calculate(&cDistParameters);
+	cDistToRootCalculator.Calculate(p1.BaseObject(), &cDistParameters);
 	cDistToRootCalculator.Kill();
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p1->GetDistToRoot());
@@ -2075,8 +2041,7 @@ void TestDistToRootLinearToStackScenarioA(void)
 
 	cDistParameters.Init();
 	cDistToRootCalculator.Init();
-	cDistToRootCalculator.AddFromChanged(pc1);
-	cDistToRootCalculator.Calculate(&cDistParameters);
+	cDistToRootCalculator.Calculate(pc1, &cDistParameters);
 	cDistToRootCalculator.Kill();
 
 	//
@@ -2164,8 +2129,7 @@ void TestDistToRootLinearToStackScenarioB(void)
 
 	cDistParameters.Init();
 	cDistToRootCalculator.Init();
-	cDistToRootCalculator.AddFromChanged(pc1);
-	cDistToRootCalculator.Calculate(&cDistParameters);
+	cDistToRootCalculator.Calculate(pc1, &cDistParameters);
 	cDistToRootCalculator.Kill();
 
 	//
@@ -2275,8 +2239,7 @@ void TestDistToRootTosNotUpdated(void)
 	cDistParameters.Init();
 
 	cDistToRootCalculator.Init();
-	cDistToRootCalculator.AddFromChanged(pcTest1);
-	cDistToRootCalculator.Calculate(&cDistParameters);
+	cDistToRootCalculator.Calculate(pcTest1, &cDistParameters);
 	
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest2->GetDistToRoot());
@@ -2487,8 +2450,7 @@ void TestDistToRootComplex(void)
 
 	cDistParameters.Init();
 	cDistToRootCalculator.Init();
-	cDistToRootCalculator.AddFromChanged(pcTest14);
-	cDistToRootCalculator.Calculate(&cDistParameters);
+	cDistToRootCalculator.Calculate(pcTest14, &cDistParameters);
 
 	//                    
 	//          pTest23(9)                 pTest24(11)
