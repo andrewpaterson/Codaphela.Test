@@ -412,6 +412,7 @@ void TestUpdateAttachedTosDistToRootComplex(void)
 
 	cParameters.Init();
 	cDistToRootCalculator.Calculate(pTest1b.BaseObject(), &cParameters);
+	cParameters.ClearTouchedFlags();
 	cParameters.Kill();
 
 
@@ -508,6 +509,7 @@ void TestUpdateAttachedTosDistToRootSimpleLeft(void)
 
 	cParameters.Init();
 	cDistToRootCalculator.Calculate(pTest2.BaseObject(), &cParameters);
+	cParameters.ClearTouchedFlags();
 	cParameters.Kill();
 
 	AssertInt(3, pTest1->GetDistToRoot());
@@ -596,6 +598,7 @@ void TestUpdateAttachedTosDistToRootSimpleRight(void)
 
 	cParameters.Init();
 	cDistToRootCalculator.Calculate(pTest3.BaseObject(), &cParameters);
+	cParameters.ClearTouchedFlags();
 	cParameters.Kill();
 
 	AssertInt(3, pTest1->GetDistToRoot());
@@ -677,10 +680,8 @@ void TestUpdateAttachedTosDistToRootSimpleRightBroken(void)
 
 
 	cDistParameters.Init();
-
 	cDistToRootCalculator.Calculate(pTest3.BaseObject(), &cDistParameters);
-
-
+	cDistParameters.ClearTouchedFlags();
 
 	AssertInt(3, pTest1->GetDistToRoot());
 	AssertInt(4, pTest2->GetDistToRoot());
@@ -835,6 +836,7 @@ void TestUpdateAttachedTosDistToRootChildTriangleKindaBalanced(void)
 
 	cParameters.Init();
 	cDistToRootCalculator.Calculate(pTest1b.BaseObject(), &cParameters);
+	cParameters.ClearTouchedFlags();
 	cParameters.Kill();
 
 	//                            
@@ -960,6 +962,7 @@ void TestUpdateAttachedTosDistToRootChildTriangleShortLeft(void)
 
 	cParameters.Init();
 	cDistToRootCalculator.Calculate(pTest1b.BaseObject(), &cParameters);
+	cParameters.ClearTouchedFlags();
 	cParameters.Kill();
 
 	//                            
@@ -1186,7 +1189,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 
 	cDistParameters.Init();
 	cDistToRootCalculator.Calculate(pLTest2.BaseObject(), &cDistParameters);
-
+	cDistParameters.ClearTouchedFlags();
 
 	//                             
 	//                          pRTest8(8)
@@ -1313,7 +1316,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 
 	cDistParameters.Init();
 	cDistToRootCalculator.Calculate(pRTest2.BaseObject(), &cDistParameters);
-
+	cDistParameters.ClearTouchedFlags();
 
 	//                             
 	//                          pRTest8(7)
@@ -1450,7 +1453,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 
 	cDistParameters.Init();
 	cDistToRootCalculator.Calculate(pRTest3l.BaseObject(), &cDistParameters);
-
+	cDistParameters.ClearTouchedFlags();
 
 	//                             
 	//                          pRTest8(7)
@@ -1577,7 +1580,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 
 	cDistParameters.Init();
 	cDistToRootCalculator.Calculate(pRTest3r.BaseObject(), &cDistParameters);
-
+	cDistParameters.ClearTouchedFlags();
 
 	//                             
 	//                          pRTest8(7)
@@ -1700,6 +1703,7 @@ void TestUpdateAttachedTosDistToRootBroken(void)
 
 	cParameters.Init();
 	cDistToRootCalculator.Calculate(pTest1b.BaseObject(), &cParameters);
+	cParameters.ClearTouchedFlags();
 	cParameters.Kill();
 
 	//
@@ -1877,9 +1881,8 @@ void TestDistToRootLinear(void)
 	p1->TestRemoveHeapFrom(p0.BaseObject());
 
 	cDistParameters.Init();
-
 	cDistToRootCalculator.Calculate(p1.BaseObject(), &cDistParameters);
-
+	cDistParameters.ClearTouchedFlags();
 
 	AssertInt(2, p0->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p1->GetDistToRoot());
@@ -1939,9 +1942,8 @@ void TestDistToRootCyclic(void)
 	p1->TestRemoveHeapFrom(p0.BaseObject());
 
 	cDistParameters.Init();
-
 	cDistToRootCalculator.Calculate(p1.BaseObject(), &cDistParameters);
-
+	cDistParameters.ClearTouchedFlags();
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p2->GetDistToRoot());
@@ -2049,7 +2051,7 @@ void TestDistToRootLinearToStackScenarioA(void)
 	cDistParameters.Init();
 
 	cDistToRootCalculator.Calculate(pc1, &cDistParameters);
-
+	cDistParameters.ClearTouchedFlags();
 
 	//
 	//                    p2(-1)
@@ -2135,9 +2137,8 @@ void TestDistToRootLinearToStackScenarioB(void)
 	pc1->TestRemoveHeapFrom(pc0);
 
 	cDistParameters.Init();
-
 	cDistToRootCalculator.Calculate(pc1, &cDistParameters);
-
+	cDistParameters.ClearTouchedFlags();
 
 	//
 	//                      p2(-2)
@@ -2247,6 +2248,7 @@ void TestDistToRootTosNotUpdated(void)
 
 
 	cDistToRootCalculator.Calculate(pcTest1, &cDistParameters);
+	cDistParameters.ClearTouchedFlags();
 	
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest2->GetDistToRoot());
@@ -2458,6 +2460,7 @@ void TestDistToRootComplex(void)
 	cDistParameters.Init();
 
 	cDistToRootCalculator.Calculate(pcTest14, &cDistParameters);
+	cDistParameters.ClearTouchedFlags();
 
 	//                    
 	//          pTest23(9)                 pTest24(11)

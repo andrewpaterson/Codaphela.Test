@@ -738,7 +738,6 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 
 	pSet->Remove(pcTest2);
 
-
 	AssertInt(2, pSet->GetDistToRoot());
 	AssertInt(3, pTop2->GetDistToRoot());
 	AssertInt(4, pTest1->GetDistToRoot());

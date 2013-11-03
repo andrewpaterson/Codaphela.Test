@@ -69,6 +69,7 @@ void TestKillSelfPointer2(void)
 	bResult = pRoot->Remove(pObject);
 	AssertTrue(bResult);
 	AssertInt(0, pRoot->NumObjects());
+	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
 
 	//If there were cyclic pointers then the object cannot tell it should be freed when a stack pointer is removed.
 	pObject = NULL;

@@ -252,13 +252,12 @@ void TestDistToStackRootCyclicWithStackPointerA(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc3->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pStack->GetDistToRoot());
 
-	gcObjects.ValidateConsistency();
-
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 
 	AssertInt(3, cDistParameters.NumDetachedFromRoot());
 	AssertInt(0, cDistParameters.NumCompletelyDetached());
 
+	cDistParameters.ClearTouchedFlags();
 	cDistParameters.Kill();
 
 	gcObjects.ValidateConsistency();
@@ -321,6 +320,7 @@ void TestDistToStackRootCyclicWithStackPointerB(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pStack->GetDistToRoot());
 
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
+	cDistParameters.ClearTouchedFlags();
 
 	AssertInt(3, cDistParameters.NumDetachedFromRoot());
 	AssertInt(0, cDistParameters.NumCompletelyDetached());
@@ -387,6 +387,7 @@ void TestDistToStackRootCyclicWithStackPointerC(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pStack->GetDistToRoot());
 	
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
+	cDistParameters.ClearTouchedFlags();
 
 	AssertInt(3, cDistParameters.NumDetachedFromRoot());
 	AssertInt(0, cDistParameters.NumCompletelyDetached());
@@ -461,15 +462,14 @@ void TestDistToStackRootCyclicWithoutStackPointer(void)
 	pc1->TestRemoveHeapFrom(p0.BaseObject());
 
 	cDistParameters.Init();
-	
 	cDistToRootCalculator.Calculate(pc1, &cDistParameters);
-	
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc2->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc3->GetDistToRoot());
 	
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
+	cDistParameters.ClearTouchedFlags();
 
 	AssertInt(3, cDistParameters.NumDetachedFromRoot());
 	AssertInt(3, cDistParameters.NumCompletelyDetached());
@@ -560,8 +560,8 @@ void TestDistToStackSplitRootAndStack(void)
 
 	AssertInt(3, cDistParameters.NumTouched());
 
-	
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
+	cDistParameters.ClearTouchedFlags();
 
 	AssertInt(3, cDistParameters.NumDetachedFromRoot());
 	AssertInt(1, cDistParameters.NumCompletelyDetached());
@@ -618,6 +618,7 @@ void TestDistToStackSetWithoutStackPointers(void)
 	cDistParameters.Init();
 	cDistToRootCalculator.Calculate(pcSet, &cDistParameters);
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
+	cDistParameters.ClearTouchedFlags();
 
 	AssertInt(2, cDistParameters.NumDetachedFromRoot());
 	AssertInt(2, cDistParameters.NumCompletelyDetached());
@@ -679,9 +680,8 @@ void TestDistToStackSetWithStackPointers(void)
 	cDistParameters.Init();
 	
 	cDistToRootCalculator.Calculate(pcSet, &cDistParameters);
-	
-	
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
+	cDistParameters.ClearTouchedFlags();
 
 	AssertInt(2, cDistParameters.NumDetachedFromRoot());
 	AssertInt(1, cDistParameters.NumCompletelyDetached());
@@ -780,20 +780,15 @@ void TestDistToStackSetBroken(void)
 	AssertInt(2, pcTest2->NumHeapFroms());
 
 	cDistParameters.Init();
-
-	
 	cDistToRootCalculator.Calculate(pcTest3, &cDistParameters);
 	AssertInt(3, pcTest2->GetDistToRoot());
-	
 
-	
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
+	cDistParameters.ClearTouchedFlags();
 
 	AssertInt(1, cDistParameters.NumDetachedFromRoot());
 	AssertInt(1, cDistParameters.NumCompletelyDetached());
 	AssertPointer(pcTest3, cDistParameters.GetCompletelyDetached(0));
-
-
 
 	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
 	gcObjects.Remove(cDistParameters.GetCompletelyDetachedArray());
@@ -990,7 +985,7 @@ void TestDistToStackCyclicWithScenarioA(void)
 	AssertInt(1, pcTest2->GetDistToStack());
 	AssertInt(1, pcTest3->GetDistToStack());
 	AssertInt(2, pcTest4->GetDistToStack());
-	AssertInt(2, pcTest5->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest5->GetDistToStack());  //Removing a stack pointer to 4 should be unable to effect 5 in any way.
 
 	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
 	cParameters.Kill();
@@ -1008,10 +1003,145 @@ void TestDistToStackCyclicWithScenarioA(void)
 	AssertInt(0, pcTest1->GetDistToStack());
 	AssertInt(1, pcTest2->GetDistToStack());
 	AssertInt(1, pcTest3->GetDistToStack());
-	AssertInt(2, pcTest4->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest4->GetDistToStack());  //Removing a stack pointer to 5 should be unable to effect 4 in any way.
 	AssertInt(2, pcTest5->GetDistToStack());
 
 	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
+	cParameters.Kill();
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToStackRemoveUnbalancedLargeBroken(void)
+{
+	CDistCalculatorParameters	cParameters;
+	CDistToStackCalculator		cDistToStackCalculator;
+
+	Ptr<CRoot>					pRoot;
+	STestObjectKilledNotifier	sKilled1;
+	STestObjectKilledNotifier	sKilled2;
+	STestObjectKilledNotifier	sKilled3;
+	STestObjectKilledNotifier	sKilled4;
+	STestObjectKilledNotifier	sKilled5;
+	STestObjectKilledNotifier	sKilledTop1;
+	STestObjectKilledNotifier	sKilledTop2;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
+	Ptr<CTestObject>			pTest4;
+	Ptr<CTestObject>			pTest5;
+	Ptr<CSetObject>				pSet;
+	Ptr<CTestObject>			pTop1;
+	Ptr<CTestObject>			pTop2;
+	CTestObject*				pcTest2;
+	CTestObject*				pcTest3;
+	CTestObject*				pcTest4;
+	CTestObject*				pcTest5;
+	CArrayBaseObjectPtr*		papcKilled;
+
+	ObjectsInit();
+	pRoot = ORoot();
+
+	pTest1 = OMalloc(CTestObject);
+	pTest2 = OMalloc(CTestObject);
+	pTest3 = OMalloc(CTestObject);
+	pTest4 = OMalloc(CTestObject);
+	pTest5 = OMalloc(CTestObject);
+	pSet = OMalloc(CSetObject);
+	pTop1 = OMalloc(CTestObject);
+	pTop2 = OMalloc(CTestObject);
+
+	pTest1->Init(&sKilled1);
+	pTest2->Init(&sKilled2);
+	pTest3->Init(&sKilled3);
+	pTest4->Init(&sKilled4);
+	pTest5->Init(&sKilled5);
+	pSet->Init();
+	pTop1->Init(&sKilledTop1);
+	pTop2->Init(&sKilledTop2);
+
+	pRoot->Add(pSet);
+	pSet->Add(pTest2);
+	pSet->Add(pTop2);
+
+	pTest2->mpTest = pTest3;
+	pTest5->mpTest = pTop1;
+	pTest4->mpTest = pTest5;
+	pTest3->mpTest = pTest4;
+	pTop1->mpTest = pTest1;
+	pTop2->mpTest = pTest1;
+	pTest1->mpTest = pTop1;
+	pTest1->mpObject = pTop2;
+
+	AssertInt(2, pSet->GetDistToRoot());
+	AssertInt(3, pTest2->GetDistToRoot());
+	AssertInt(4, pTest3->GetDistToRoot());
+	AssertInt(5, pTest4->GetDistToRoot());
+	AssertInt(6, pTest5->GetDistToRoot());
+	AssertInt(4, pTest1->GetDistToRoot());
+	AssertInt(5, pTop1->GetDistToRoot());
+	AssertInt(3, pTop2->GetDistToRoot());
+	AssertInt(2, pSet->NumElements());
+	AssertInt(2, pSet->NumTos());
+
+	pcTest2 = &pTest2;
+	pcTest3 = &pTest3;
+	pcTest4 = &pTest4;
+	pcTest5 = &pTest5;
+
+	pTest3 = NULL;
+	pTest4 = NULL;
+	pTest5 = NULL;
+
+	//
+	//     Test1[3](4)  
+	//       // \\      
+	//      //   \\       
+	//   Top1(5) Top2(3)
+	//     |       |
+	//   Test5(6)  |
+	//     |       |
+	//   Test4(5)  |
+	//     |       |
+	//   Test3(4)  |
+	//     |	   |
+	// Test2[4](3) |
+	//      \     /
+	//       \   /
+	//       Set(2)
+	//        |
+	//       ...
+	//      Root(0)
+	//
+
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest4->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest5->GetDistToStack());
+
+	pSet->Remove(pcTest2);
+
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest4->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest5->GetDistToStack());
+
+	gcObjects.ValidateConsistency();
+
+	pcTest2->TestRemoveStackFrom(pTest2.This());
+	pTest2.UnsafeClearObject();
+
+	cParameters.Init();
+	cDistToStackCalculator.Calculate(pcTest2, &cParameters);
+
+	papcKilled = cParameters.GetCompletelyDetachedArray();
+	AssertInt(4, papcKilled->NumElements());
+
 	cParameters.Kill();
 
 	ObjectsKill();
@@ -1026,19 +1156,20 @@ void TestDistToStack(void)
 {
 	BeginTests();
 
-	//TestDistToStackSimpleTwoStep();
-	//TestDistToStackSimpleOneStep();
-	//TestDistToStackSimpleHeap();
-	//TestDistToStackNoStackHeapFromBroken();
-	//TestDistToStackRootCyclicWithStackPointerA();
-	//TestDistToStackRootCyclicWithStackPointerB();
-	//TestDistToStackRootCyclicWithStackPointerC();
-	//TestDistToStackRootCyclicWithoutStackPointer();
-	//TestDistToStackSplitRootAndStack();
-	//TestDistToStackSetWithoutStackPointers();
-	//TestDistToStackSetWithStackPointers();
+	TestDistToStackSimpleTwoStep();
+	TestDistToStackSimpleOneStep();
+	TestDistToStackSimpleHeap();
+	TestDistToStackNoStackHeapFromBroken();
+	TestDistToStackRootCyclicWithStackPointerA();
+	TestDistToStackRootCyclicWithStackPointerB();
+	TestDistToStackRootCyclicWithStackPointerC();
+	TestDistToStackRootCyclicWithoutStackPointer();
+	TestDistToStackSplitRootAndStack();
+	TestDistToStackSetWithoutStackPointers();
+	TestDistToStackSetWithStackPointers();
 	TestDistToStackCyclicWithScenarioA();
 	TestDistToStackSetBroken();
+	TestDistToStackRemoveUnbalancedLargeBroken();
 
 	TestStatistics();
 }
