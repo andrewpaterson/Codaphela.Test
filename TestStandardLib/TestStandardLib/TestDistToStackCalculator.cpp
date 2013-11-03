@@ -70,17 +70,49 @@ void TestDistToStackSimpleTwoStep(void)
 	ObjectsInit();
 
 	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
+
 	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
 	Ptr<CNamedPointerContainer> p3 = ONMalloc(CNamedPointerContainer, "Pointer C")->Init();
+	AssertInt(3, (int)gcObjects.NumMemoryIndexes());
 	AssertInt(0, p2->NumHeapFroms());
+
+	//  x
+	//  |
+	//  |
+	//  p2     x 
+	//  | .	   | 
+	//  |  .   | 
+	//  p3	   p1
+	//  . 	   . 
+	//  . 	   . 
+	//
 
 	p3->mp = p2;
 	AssertInt(1, p2->NumHeapFroms());
 
 	p3->mp = NULL;
+
+	//  
+	//  x   x   x
+	//  |   |   |
+	//  |   |   |
+	//  p1  p2  p3
+	//  .   .   .
+	//  .   .   .
+	//
+
 	AssertInt(0, p2->NumHeapFroms());
 	AssertInt(3, (int)gcObjects.NumMemoryIndexes());
 	p3 = NULL;
+
+	//  
+	//  x   x 
+	//  |   | 
+	//  |   | 
+	//  p1  p2
+	//  .   . 
+	//  .   . 
+	//
 
 	AssertInt(2, (int)gcObjects.NumMemoryIndexes());
 	AssertTrue(gcObjects.Contains("Pointer A"));
@@ -96,7 +128,80 @@ void TestDistToStackSimpleTwoStep(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestDistToStackCyclicWithStackPointerA(void)
+void TestDistToStackSimpleHeap(void)
+{
+	ObjectsInit();
+
+	CNamedPointerContainer*		pc2;
+	CNamedPointerContainer*		pc3;
+
+	CDistCalculatorParameters	cParameters;
+	CDistToStackCalculator		cDistToStackCalculator;
+
+	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
+
+	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
+	Ptr<CNamedPointerContainer> p3 = ONMalloc(CNamedPointerContainer, "Pointer C")->Init();
+	AssertInt(3, (int)gcObjects.NumMemoryIndexes());
+	AssertInt(0, p2->NumHeapFroms());
+
+	//
+	//  x
+	//  |
+	//  |
+	//  p2     x 
+	//  | .	   | 
+	//  |  .   | 
+	//  p3	   p1
+	//  . 	   . 
+	//  . 	   . 
+	//
+
+	p3->mp = p2;
+	AssertInt(1, p2->NumHeapFroms());
+	AssertInt(1, p2->NumStackFroms());
+
+	pc3 = &p3;
+	pc2 = &p2;
+
+	AssertInt(UNKNOWN_DIST_TO_STACK, pc2->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pc3->GetDistToStack());
+
+	p2.BaseObject()->TestRemoveStackFrom(p2.This());
+	p2.UnsafeClearObject();
+
+	AssertInt(1, pc2->NumHeapFroms());
+	AssertInt(0, pc2->NumStackFroms());
+
+	cParameters.Init();
+	cDistToStackCalculator.Calculate(pc2, &cParameters);
+
+	//
+	//  x
+	//  |
+	//  |
+	//  p2     x 
+	//  |      | 
+	//  |      | 
+	//  p3	   p1
+	//  . 	   . 
+	//  . 	   . 
+	//
+
+	AssertInt(1, pc2->GetDistToStack());
+	AssertInt(0, pc3->GetDistToStack());
+
+	cParameters.Kill();
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToStackRootCyclicWithStackPointerA(void)
 {
 	ObjectsInit();
 
@@ -166,7 +271,7 @@ void TestDistToStackCyclicWithStackPointerA(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestDistToStackCyclicWithStackPointerB(void)
+void TestDistToStackRootCyclicWithStackPointerB(void)
 {
 	ObjectsInit();
 
@@ -232,7 +337,7 @@ void TestDistToStackCyclicWithStackPointerB(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestDistToStackCyclicWithStackPointerC(void)
+void TestDistToStackRootCyclicWithStackPointerC(void)
 {
 	ObjectsInit();
 
@@ -274,21 +379,17 @@ void TestDistToStackCyclicWithStackPointerC(void)
 	pc1->TestRemoveHeapFrom(p0.BaseObject());
 
 	cDistParameters.Init();
-	
 	cDistToRootCalculator.Calculate(pc1, &cDistParameters);
 	
-
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc2->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc3->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pStack->GetDistToRoot());
-
 	
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 
 	AssertInt(3, cDistParameters.NumDetachedFromRoot());
 	AssertInt(0, cDistParameters.NumCompletelyDetached());
-
 
 	cDistParameters.Kill();
 
@@ -302,7 +403,7 @@ void TestDistToStackCyclicWithStackPointerC(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestDistToStackCyclicWithoutStackPointer(void)
+void TestDistToStackRootCyclicWithoutStackPointer(void)
 {
 	ObjectsInit();
 
@@ -367,7 +468,6 @@ void TestDistToStackCyclicWithoutStackPointer(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc2->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pc3->GetDistToRoot());
-
 	
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 
@@ -377,8 +477,6 @@ void TestDistToStackCyclicWithoutStackPointer(void)
 	AssertPointer(pc3, cDistParameters.GetCompletelyDetached(1));
 	AssertPointer(pc2, cDistParameters.GetCompletelyDetached(2));
 
-
-	cDistParameters.Kill();
 	cDistParameters.Kill();
 
 	gcObjects.ValidateConsistency();
@@ -452,9 +550,7 @@ void TestDistToStackSplitRootAndStack(void)
 	pcTestC->TestRemoveHeapFrom(pcC);
 
 	cDistParameters.Init();
-	
 	cDistToRootCalculator.Calculate(pcTestC, &cDistParameters);
-	
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTestC->GetDistToRoot());
 	AssertInt(3, pcTestL1->GetDistToRoot());
@@ -520,18 +616,13 @@ void TestDistToStackSetWithoutStackPointers(void)
 	pcSet->TestRemoveHeapFrom(pcContainer);
 
 	cDistParameters.Init();
-	
 	cDistToRootCalculator.Calculate(pcSet, &cDistParameters);
-	
-	
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 
 	AssertInt(2, cDistParameters.NumDetachedFromRoot());
 	AssertInt(2, cDistParameters.NumCompletelyDetached());
 	AssertPointer(pcSet, cDistParameters.GetCompletelyDetached(0));
 	AssertPointer(pcTest, cDistParameters.GetCompletelyDetached(1));
-
-
 
 	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
 	gcObjects.Remove(cDistParameters.GetCompletelyDetachedArray());
@@ -720,13 +811,11 @@ void TestDistToStackSetBroken(void)
 }
 
 
-
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestDistToStackNowWhatTheFuckIsWrong(void)
+void TestDistToStackNoStackHeapFromBroken(void)
 {
 	ObjectsInit();
 
@@ -770,6 +859,164 @@ void TestDistToStackNowWhatTheFuckIsWrong(void)
 	ObjectsKill();
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToStackCyclicWithScenarioA(void)
+{
+	ObjectsInit();
+
+	CTestObject*				pcTest1;
+	CTestTriPointerObject*		pcTest2;
+	CTestTriPointerObject*		pcTest3;
+	CTestObject*				pcTest4;
+	CTestObject*				pcTest5;
+
+	CDistCalculatorParameters	cParameters;
+	CDistToStackCalculator		cDistToStackCalculator;
+
+	Ptr<CTestObject> pTest1 = OMalloc(CTestObject)->Init();
+	Ptr<CTestTriPointerObject> pTest2 = OMalloc(CTestTriPointerObject)->Init();
+	Ptr<CTestTriPointerObject> pTest3 = OMalloc(CTestTriPointerObject)->Init();
+	Ptr<CTestObject> pTest4 = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest5 = OMalloc(CTestObject)->Init();
+
+	pcTest1 = &pTest1;
+	pcTest2 = &pTest2;
+	pcTest3 = &pTest3;
+	pcTest4 = &pTest4;
+	pcTest5 = &pTest5;
+
+	pTest1->mpTest = pTest2;
+	pTest1->mpObject = pTest3;
+	pTest2->mpObject1 = pTest1;
+	pTest2->mpObject2 = pTest3;
+	pTest2->mpObject3 = pTest4;
+	pTest3->mpObject1 = pTest1;
+	pTest3->mpObject2 = pTest2;
+	pTest3->mpObject3 = pTest5;
+
+	pcTest2->TestRemoveStackFrom(pTest2.This());
+	pcTest3->TestRemoveStackFrom(pTest3.This());
+	pcTest4->TestRemoveStackFrom(pTest4.This());
+	pcTest5->TestRemoveStackFrom(pTest5.This());
+	pTest2.UnsafeClearObject();
+	pTest3.UnsafeClearObject();
+	pTest4.UnsafeClearObject();
+	pTest5.UnsafeClearObject();
+
+	//
+	//  pTest4   pTest5
+	//    |         |
+	//    |         |
+	//  pTest2===pTest3
+	//     \\     //
+	//      \\   //
+	//       \\ //
+	//       pTest1
+	//         . 
+	//         . 
+	//
+
+	//Test from pTest1
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest1->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest4->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest5->GetDistToStack());
+
+	cParameters.Init();
+	cDistToStackCalculator.Calculate(pcTest1, &cParameters);
+	
+	AssertInt(0, pcTest1->GetDistToStack());
+	AssertInt(1, pcTest2->GetDistToStack());
+	AssertInt(1, pcTest3->GetDistToStack());
+	AssertInt(2, pcTest4->GetDistToStack());
+	AssertInt(2, pcTest5->GetDistToStack());
+
+	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
+	cParameters.Kill();
+
+	//Test from pTest2
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest1->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest4->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest5->GetDistToStack());
+
+	cParameters.Init();
+	cDistToStackCalculator.Calculate(pcTest2, &cParameters);
+
+	AssertInt(0, pcTest1->GetDistToStack());
+	AssertInt(1, pcTest2->GetDistToStack());
+	AssertInt(1, pcTest3->GetDistToStack());
+	AssertInt(2, pcTest4->GetDistToStack());
+	AssertInt(2, pcTest5->GetDistToStack());
+
+	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
+	cParameters.Kill();
+
+	//Test from pTest3
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest1->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest4->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest5->GetDistToStack());
+
+	cParameters.Init();
+	cDistToStackCalculator.Calculate(pcTest3, &cParameters);
+
+	AssertInt(0, pcTest1->GetDistToStack());
+	AssertInt(1, pcTest2->GetDistToStack());
+	AssertInt(1, pcTest3->GetDistToStack());
+	AssertInt(2, pcTest4->GetDistToStack());
+	AssertInt(2, pcTest5->GetDistToStack());
+
+	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
+	cParameters.Kill();
+
+	//Test from pTest4
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest1->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest4->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest5->GetDistToStack());
+
+	cParameters.Init();
+	cDistToStackCalculator.Calculate(pcTest4, &cParameters);
+
+	AssertInt(0, pcTest1->GetDistToStack());
+	AssertInt(1, pcTest2->GetDistToStack());
+	AssertInt(1, pcTest3->GetDistToStack());
+	AssertInt(2, pcTest4->GetDistToStack());
+	AssertInt(2, pcTest5->GetDistToStack());
+
+	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
+	cParameters.Kill();
+
+	//Test from pTest5
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest1->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest4->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest5->GetDistToStack());
+
+	cParameters.Init();
+	cDistToStackCalculator.Calculate(pcTest5, &cParameters);
+
+	AssertInt(0, pcTest1->GetDistToStack());
+	AssertInt(1, pcTest2->GetDistToStack());
+	AssertInt(1, pcTest3->GetDistToStack());
+	AssertInt(2, pcTest4->GetDistToStack());
+	AssertInt(2, pcTest5->GetDistToStack());
+
+	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
+	cParameters.Kill();
+
+	ObjectsKill();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -779,16 +1026,18 @@ void TestDistToStack(void)
 {
 	BeginTests();
 
-	TestDistToStackNowWhatTheFuckIsWrong();
-	TestDistToStackSimpleTwoStep();
-	TestDistToStackSimpleOneStep();
-	TestDistToStackCyclicWithStackPointerA();
-	TestDistToStackCyclicWithStackPointerB();
-	TestDistToStackCyclicWithStackPointerC();
-	TestDistToStackCyclicWithoutStackPointer();
-	TestDistToStackSplitRootAndStack();
-	TestDistToStackSetWithoutStackPointers();
-	TestDistToStackSetWithStackPointers();
+	//TestDistToStackSimpleTwoStep();
+	//TestDistToStackSimpleOneStep();
+	//TestDistToStackSimpleHeap();
+	//TestDistToStackNoStackHeapFromBroken();
+	//TestDistToStackRootCyclicWithStackPointerA();
+	//TestDistToStackRootCyclicWithStackPointerB();
+	//TestDistToStackRootCyclicWithStackPointerC();
+	//TestDistToStackRootCyclicWithoutStackPointer();
+	//TestDistToStackSplitRootAndStack();
+	//TestDistToStackSetWithoutStackPointers();
+	//TestDistToStackSetWithStackPointers();
+	TestDistToStackCyclicWithScenarioA();
 	TestDistToStackSetBroken();
 
 	TestStatistics();
