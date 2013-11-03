@@ -157,7 +157,7 @@ void TestObjectPointerRemappingKilling(void)
 	
 	pObject3 = NULL;
 	AssertFalse(pcObject3->HasStackPointers());
-	AssertTrue(pcObject3->HasHeapPointers());
+	AssertTrue(pcObject3->HasHeapFroms());
 
 	AssertInt(0, pObject4->NumTos());
 	pObject4->mpObject = pObject5;
@@ -323,8 +323,6 @@ void TestObjectPointerRemappingComplex(void)
 	int							iNumRemapped;
 	CTestObject*				pcTest1;
 	CTestObject*				pcTest3;
-	CArrayPointerPtr			pappStack3;
-	CArrayPointerPtr			pappStack10;
 
 	ObjectsInit();
 
@@ -423,18 +421,14 @@ void TestObjectPointerRemappingComplex(void)
 	//       ---
 	//        -
 	
-	pappStack3.Init();
-	pappStack10.Init();
-	pTest3->GetStackFroms(&pappStack3);
-	pTest10->GetStackFroms(&pappStack10);
-	
+	pTest5 = NULL;
+	pTest7 = NULL;
+
+	AssertLongLongInt(17, gcObjects.NumMemoryIndexes());
+
 	pcTest3 = (CTestObject*)pTest3.Object();
 	iNumRemapped = pTest3.MorphInto(&pTest10);
 	AssertInt(1, iNumRemapped);
-	pappStack3.Kill();
-	pappStack10.Kill();
-	pTest5 = NULL;
-	pTest7 = NULL;
 
 	AssertPointer(&pTest2, &pTest1->mpObject);
 	AssertPointer(&pTest10, &pTest1->mpTest);
