@@ -286,7 +286,7 @@ Ptr<CTestDoubleNamedString> SetupObjectConverterChunkFile2(void)
 	Ptr<CTestNamedString>			cNS2;
 	Ptr<CTestNamedString>			cNS3;
 	Ptr<CTestNamedString>			cDiamond;
-	Ptr<CTestDoubleNamedString>	cDouble;
+	Ptr<CTestDoubleNamedString>		cDouble;
 	Ptr<CRoot>						cRoot;
 
 	cRoot = ORoot();
@@ -308,6 +308,23 @@ Ptr<CTestDoubleNamedString> SetupObjectConverterChunkFile2(void)
 	cDouble->Init(ONull, cNS2, cNS3);
 
 	cRoot->Add(cDouble);
+
+	//  
+	//      Diamond
+	//        / \
+	//       /   \
+	//      /     \
+	//    NS1     NS2
+	//     |      /
+	//    NS3    /
+	//      \   /
+	//       \ /
+	//      Double
+	//        |
+	//       ...
+	//     GraphRoot
+	//
+
 	return cDouble;
 }
 
@@ -318,9 +335,9 @@ Ptr<CTestDoubleNamedString> SetupObjectConverterChunkFile2(void)
 //////////////////////////////////////////////////////////////////////////
 void WriteObjectConverterChunkedFile2(void)
 {
-	Ptr<CTestDoubleNamedString>	cDouble;
-	CObjectWriterChunked				cWriter;
-	CObjectGraphSerialiser				cGraphSerialiser;
+	Ptr<CTestDoubleNamedString>		cDouble;
+	CObjectWriterChunked			cWriter;
+	CObjectGraphSerialiser			cGraphSerialiser;
 
 	cDouble = SetupObjectConverterChunkFile2();
 
@@ -338,15 +355,19 @@ void WriteObjectConverterChunkedFile2(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectConverterDragonRootDistance(void)
 {
-	CObjectConverterNative				cChunkedConverter;
-	CObjectSource*						pcObjectSource;
-	Ptr<CTestDoubleNamedString>	pcDouble;
+	CObjectConverterNative			cChunkedConverter;
+	CObjectSource*					pcObjectSource;
+	Ptr<CTestDoubleNamedString>		pcDouble;
 	Ptr<CTestNamedString>			pcNS1;
 	Ptr<CTestNamedString>			pcNS2;
 	Ptr<CTestNamedString>			pcNS3;
 	Ptr<CTestNamedString>			pcDiamond;
-	CDiskFile*							pcDiskFile;
+	CDiskFile*						pcDiskFile;
 	Ptr<CRoot>						pcRoot;
+	Ptr<CTestNamedString>			pcNS1InMemory;
+	Ptr<CTestNamedString>			pcNS2InMemory;
+	Ptr<CTestNamedString>			pcNS3InMemory;
+	Ptr<CTestNamedString>			pcDiamondInMemory;
 
 	ObjectsInit();
 	WriteObjectConverterChunkedFile2();
@@ -364,11 +385,16 @@ void TestObjectConverterDragonRootDistance(void)
 	pcRoot->Add(pcDouble);
 
 	pcNS1 = pcObjectSource->Convert("NS1");
+	pcNS1InMemory = gcObjects.TestGetFromMemory("NS1");
+	AssertPointer(&pcNS1, &pcNS1InMemory);
+
 	pcNS3 = pcObjectSource->Convert("NS3");
 	AssertNotNull(pcNS1.Object());
 	AssertNotNull(pcNS3.Object());
 	AssertPointer(&pcNS1, &pcNS3->mpAnother);
 	AssertPointer(&pcNS3, &pcDouble->mpSplit1);
+	pcNS3InMemory = gcObjects.TestGetFromMemory("NS3");
+	AssertPointer(&pcNS3, &pcNS3InMemory);
 
 	AssertInt(2, pcDouble->GetDistToRoot());
 	AssertInt(3, pcNS3->GetDistToRoot());
@@ -377,10 +403,14 @@ void TestObjectConverterDragonRootDistance(void)
 	pcDiamond = pcObjectSource->Convert("Diamond");
 	AssertPointer(&pcDiamond, &pcNS1->mpAnother);
 	AssertInt(5, pcDiamond->GetDistToRoot());
+	pcDiamondInMemory = gcObjects.TestGetFromMemory("Diamond");
+	AssertPointer(&pcDiamond, &pcDiamondInMemory);
 
 	pcNS2 = pcObjectSource->Convert("NS2");
 	AssertPointer(&pcNS2, &pcDouble->mpSplit2);
 	AssertInt(3, pcNS2->GetDistToRoot());
+	pcNS2InMemory = gcObjects.TestGetFromMemory("NS2");
+	AssertPointer(&pcNS2, &pcNS3InMemory);
 
 	AssertPointer(&pcDiamond, &pcNS2->mpAnother);
 	AssertInt(4, pcDiamond->GetDistToRoot());
