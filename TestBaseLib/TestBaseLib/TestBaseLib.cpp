@@ -53,10 +53,10 @@ int main(int argc, char* argv[])
 	TestMapPtr();
 	TestLinkListAligned();
 	TestFreeList();
-	TestASCIITree();
 	TestStringHelper();
 	TestNumbers();
 	TestArrayTemplate();
+	TestASCIITree();
 	TestArrayDenseTemplate();
 	TestArraySparseTemplate();
 	TestFileUtil();
