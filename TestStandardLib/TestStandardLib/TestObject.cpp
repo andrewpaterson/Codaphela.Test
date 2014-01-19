@@ -51,17 +51,13 @@ void TestObjectPointerRemapping(void)
 
 	pRoot = ORoot();
 
-	pObject1 = OMalloc(CTestObject);
-	pObject2 = OMalloc(CTestObject);
-	pObject3 = OMalloc(CTestObject);
-
 	sKillNotifier1.bKilled = FALSE;
 	sKillNotifier2.bKilled = FALSE;
 	sKillNotifier3.bKilled = FALSE;
 
-	pObject1->Init(&sKillNotifier1);
-	pObject2->Init(&sKillNotifier2);
-	pObject3->Init(&sKillNotifier3);
+	pObject1 = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pObject2 = OMalloc(CTestObject)->Init(&sKillNotifier2);
+	pObject3 = OMalloc(CTestObject)->Init(&sKillNotifier3);
 
 	pRoot->Add(pObject1);
 	pObject1->mpObject = pObject2;
@@ -76,6 +72,8 @@ void TestObjectPointerRemapping(void)
 	AssertLongLongInt(5, gcUnknowns.NumElements());
 	AssertLongLongInt(4LL, pObject2.GetIndex());
 	AssertLongLongInt(5LL, pObject3.GetIndex());
+	AssertInt(1, pObject2->GetNumEmbedded());
+	AssertInt(1, pObject3->GetNumEmbedded());
 
 	pcObject2 = (CTestObject*)pObject2.Object();
 	iNumRemapped = pObject2.MorphInto(&pObject3);
@@ -88,7 +86,7 @@ void TestObjectPointerRemapping(void)
 	AssertTrue(&pObject2 != pcObject2);
 	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(4, gcUnknowns.NumElements());
-	AssertLongLongInt(5LL, pObject3.GetIndex());  //Index of 5 because Pointer.MorphInto does not swap indicies.  ObjectAllocator.ReplaceExisting does and we're not testing it.
+	AssertLongLongInt(5LL, pObject3.GetIndex());  //Index of 5 because Pointer.MorphInto does not swap indices.  ObjectAllocator.ReplaceExisting does and we're not testing it.
 
 	AssertInt(1, pObject1->NumTos());
 	AssertPointer(&pObject3, pObject1->TestGetTo(0));
@@ -133,17 +131,11 @@ void TestObjectPointerRemappingKilling(void)
 
 	pRoot = ORoot();
 
-	pObject1 = OMalloc(CTestObject);
-	pObject2 = OMalloc(CTestObject);
-	pObject3 = OMalloc(CTestObject);
-	pObject4 = OMalloc(CTestObject);
-	pObject5 = OMalloc(CTestObject);
-
-	pObject1->Init(&sKillNotifier1);
-	pObject2->Init(&sKillNotifier2);
-	pObject3->Init(&sKillNotifier3);
-	pObject4->Init(&sKillNotifier4);
-	pObject5->Init(&sKillNotifier5);
+	pObject1 = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pObject2 = OMalloc(CTestObject)->Init(&sKillNotifier2);
+	pObject3 = OMalloc(CTestObject)->Init(&sKillNotifier3);
+	pObject4 = OMalloc(CTestObject)->Init(&sKillNotifier4);
+	pObject5 = OMalloc(CTestObject)->Init(&sKillNotifier5);
 
 	pcObject1 = (CTestObject*)pObject1.Object();
 	pcObject2 = (CTestObject*)pObject2.Object();
@@ -207,17 +199,11 @@ void TestObjectPointerRemappingSimplerComplex(void)
 
 	pRoot = ORoot();
 
-	pTest10 = OMalloc(CTestObject);
-	pTest11 = OMalloc(CTestObject);
-	pTest12 = OMalloc(CTestObject);
-	pTest13 = OMalloc(CTestObject);
-	pTest14 = OMalloc(CTestObject);
-
-	pTest10->Init(&sKillNotifier10);
-	pTest11->Init(&sKillNotifier11);
-	pTest12->Init(&sKillNotifier12);
-	pTest13->Init(&sKillNotifier13);
-	pTest14->Init(&sKillNotifier14);
+	pTest10 = OMalloc(CTestObject)->Init(&sKillNotifier10);
+	pTest11 = OMalloc(CTestObject)->Init(&sKillNotifier11);
+	pTest12 = OMalloc(CTestObject)->Init(&sKillNotifier12);
+	pTest13 = OMalloc(CTestObject)->Init(&sKillNotifier13);
+	pTest14 = OMalloc(CTestObject)->Init(&sKillNotifier14);
 
 	pRoot->Add(pTest10);
 	pTest10->mpObject = pTest11;
@@ -328,37 +314,21 @@ void TestObjectPointerRemappingComplex(void)
 
 	pRoot = ORoot();
 
-	pTest1 = OMalloc(CTestObject);
-	pTest2 = OMalloc(CTestObject);
-	pTest3 = OMalloc(CTestObject);
-	pTest4 = OMalloc(CTestObject);
-	pTest5 = OMalloc(CTestObject);
-	pTest6 = OMalloc(CTestObject);
-	pTest7 = OMalloc(CTestObject);
-	pTest8 = OMalloc(CTestObject);
-	pTest9 = OMalloc(CTestObject);
-	pTest10 = OMalloc(CTestObject);
-	pTest11 = OMalloc(CTestObject);
-	pTest12 = OMalloc(CTestObject);
-	pTest13 = OMalloc(CTestObject);
-	pTest14 = OMalloc(CTestObject);
-	pTest15 = OMalloc(CTestObject);
-
-	pTest1->Init(&sKillNotifier1);
-	pTest2->Init(&sKillNotifier2);
-	pTest3->Init(&sKillNotifier3);
-	pTest4->Init(&sKillNotifier4);
-	pTest5->Init(&sKillNotifier5);
-	pTest6->Init(&sKillNotifier6);
-	pTest7->Init(&sKillNotifier7);
-	pTest8->Init(&sKillNotifier8);
-	pTest9->Init(&sKillNotifier9);
-	pTest10->Init(&sKillNotifier10);
-	pTest11->Init(&sKillNotifier11);
-	pTest12->Init(&sKillNotifier12);
-	pTest13->Init(&sKillNotifier13);
-	pTest14->Init(&sKillNotifier14);
-	pTest15->Init(&sKillNotifier15);
+	pTest1 = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pTest2 = OMalloc(CTestObject)->Init(&sKillNotifier2);
+	pTest3 = OMalloc(CTestObject)->Init(&sKillNotifier3);
+	pTest4 = OMalloc(CTestObject)->Init(&sKillNotifier4);
+	pTest5 = OMalloc(CTestObject)->Init(&sKillNotifier5);
+	pTest6 = OMalloc(CTestObject)->Init(&sKillNotifier6);
+	pTest7 = OMalloc(CTestObject)->Init(&sKillNotifier7);
+	pTest8 = OMalloc(CTestObject)->Init(&sKillNotifier8);
+	pTest9 = OMalloc(CTestObject)->Init(&sKillNotifier9);
+	pTest10 = OMalloc(CTestObject)->Init(&sKillNotifier10);
+	pTest11 = OMalloc(CTestObject)->Init(&sKillNotifier11);
+	pTest12 = OMalloc(CTestObject)->Init(&sKillNotifier12);
+	pTest13 = OMalloc(CTestObject)->Init(&sKillNotifier13);
+	pTest14 = OMalloc(CTestObject)->Init(&sKillNotifier14);
+	pTest15 = OMalloc(CTestObject)->Init(&sKillNotifier15);
 
 	pRoot->Add(pTest1);
 	pTest1->mpObject = pTest2;
@@ -588,8 +558,7 @@ void TestObjectStackKill(void)
 	Ptr<CTestObject>			pObject2;
 	STestObjectKilledNotifier	sKillNotifier1;
 
-	pObject1 = OMalloc(CTestObject);
-	pObject1->Init(&sKillNotifier1);
+	pObject1 = OMalloc(CTestObject)->Init(&sKillNotifier1);
 
 	pObject2 = pObject1;
 

@@ -47,33 +47,25 @@ void TestObjectGraphDeserialiserBuildGraph1(void)
 	Ptr<CTestInteger>			cIgnored;
 
 	cRoot = ORoot();
-	cStart1 = ONMalloc(CTestSaveableObject2, "Ow/Start 1");
-	cStart2 = ONMalloc(CTestSaveableObject2, "Ow/Start 2");
-	cShared = ONMalloc(CTestSaveableObject1, "Ow/Shared");
-	cString1 = OMalloc(CString);
-	cString2 = OMalloc(CString);
-	cIgnored = OMalloc(CTestInteger);
+	cStart1 = ONMalloc(CTestSaveableObject2, "Ow/Start 1")->Init("Battery");
+	cStart2 = ONMalloc(CTestSaveableObject2, "Ow/Start 2")->Init("Charger");
+	cShared = ONMalloc(CTestSaveableObject1, "Ow/Shared")->Init();
+	cString1 = OMalloc(CString)->Init("Black");
+	cString2 = OMalloc(CString)->Init("Jack");
+	cIgnored = OMalloc(CTestInteger)->Init(0, 1, 0);
 	
-	cStart1->Init("Battery");
-	cStart2->Init("Charger");
-
 	cRoot->Add(cStart1);
 	cRoot->Add(cStart2);
 
 	cStart1->mp1 = cShared;
 	cStart2->mp1 = cShared;
 
-	cShared->Init();
 	cShared->miInt = 89;
 	cShared->mpObject = cShared;
-
-	cString1->Init("Black");
-	cString2->Init("Jack");
 
 	cStart1->mp2 = cString1;
 	cStart2->mp2 = cString2;
 
-	cIgnored->Init(0, 1, 0);
 	cRoot->Add(cIgnored);
 }
 

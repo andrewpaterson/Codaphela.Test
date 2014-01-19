@@ -54,15 +54,12 @@ void TestNamedObjectName(void)
 	ObjectsInit("Output/NamedObject");
 	TestNamedObjectAddConstructors(); //This is only important if an object is being loaded.
 
-	pNamed1 = ONMalloc(CTestNamedObject, "Frank");
-	pNamed1->Init(1);
+	pNamed1 = ONMalloc(CTestNamedObject, "Frank")->Init(1);
 
-	pNamed2 = ONMalloc(CTestNamedObject, "Zappa");
-	pNamed2->Init(2);
+	pNamed2 = ONMalloc(CTestNamedObject, "Zappa")->Init(2);
 	pNamed2->mpNamedTest1 = pNamed1;
 
-	pNamed3 = ONMalloc(CTestNamedObject, NULL);
-	pNamed3->Init(3);
+	pNamed3 = ONMalloc(CTestNamedObject, NULL)->Init(3);
 	pNamed3->mpNamedTest1 = pNamed1;
 	pNamed3->mpNamedTest2 = pNamed2;
 	oiNamed3 = pNamed3->GetOI();

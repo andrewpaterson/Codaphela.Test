@@ -51,6 +51,7 @@ public:
 	Ptr<CTestNamedString>	mpAnother;
 	CChars					mszEmbedded;
 
+	Ptr<CTestNamedString>	Init(void);
 	Ptr<CTestNamedString>	Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, char* szEmbedded);
 	void					Class(void);
 	void					KillData(void);

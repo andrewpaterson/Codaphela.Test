@@ -17,6 +17,19 @@ Ptr<CTestObject> CTestObject::Init(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+Ptr<CTestObject> CTestObject::Init(CPointer pObject, Ptr<CTestObject> pTest)
+{
+	mpObject = pObject;
+	mpTest = pTest;
+	return Init(NULL);
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 Ptr<CTestObject> CTestObject::Init(STestObjectKilledNotifier* psKilledNotifier)
 {
 	mpsKilledNotifier = psKilledNotifier;
@@ -25,19 +38,8 @@ Ptr<CTestObject> CTestObject::Init(STestObjectKilledNotifier* psKilledNotifier)
 		mpsKilledNotifier->bKilled = FALSE;
 	}
 
+	CBaseObject::Init();
 	return this;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-Ptr<CTestObject> CTestObject::Init(CPointer pObject, Ptr<CTestObject> pTest)
-{
-	mpObject = pObject;
-	mpTest = pTest;
-	return Init(NULL);
 }
 
 
@@ -108,6 +110,7 @@ Ptr<CTestTriPointerObject> CTestTriPointerObject::Init(STestObjectKilledNotifier
 		mpsKilledNotifier->bKilled = FALSE;
 	}
 
+	CBaseObject::Init();
 	return this;
 }
 
@@ -162,12 +165,13 @@ BOOL CTestTriPointerObject::Load(CObjectDeserialiser* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CTestSaveableObject1> CTestSaveableObject1::Init()
+Ptr<CTestSaveableObject1> CTestSaveableObject1::Init(void)
 {
 	miInt = 7;
 	mszString.Init();
 	mbSaved = FALSE;
 
+	CBaseObject::Init();
 	return Ptr<CTestSaveableObject1>(this);
 }
 
@@ -232,6 +236,7 @@ Ptr<CTestSaveableObject2> CTestSaveableObject2::Init(char* psz)
 	msz.Init(psz);
 	mbSaved = FALSE;
 
+	CBaseObject::Init();
 	return Ptr<CTestSaveableObject2>(this);
 }
 

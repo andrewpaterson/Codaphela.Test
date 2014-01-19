@@ -12,7 +12,7 @@ public:
 	Ptr<CTestNamedObject>	mpNamedTest2;
 	int						miNum;
 
-	void Init(int iNum);
+	Ptr<CTestNamedObject> Init(int iNum);
 	void Class(void);
 	void KillData(void);
 

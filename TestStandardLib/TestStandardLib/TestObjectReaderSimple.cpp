@@ -19,11 +19,9 @@ CPointer SetupObjectReaderSimpleFile(void)
 	Ptr<CTestNamedString>	cNS1;
 	Ptr<CTestNamedString>	cNS2;
 
-	cNS1 = ONMalloc(CTestNamedString, "Waggy");
-	cNS2 = ONMalloc(CTestNamedString, "Dog");
+	cNS2 = ONMalloc(CTestNamedString, "Dog")->Init(ONull, ONull, "NS2");
+	cNS1 = ONMalloc(CTestNamedString, "Waggy")->Init(ONull, cNS2, "NS1");
 
-	cNS1->Init(ONull, cNS2, "NS1");
-	cNS2->Init(ONull, ONull, "NS2");
 
 	return cNS1;
 }

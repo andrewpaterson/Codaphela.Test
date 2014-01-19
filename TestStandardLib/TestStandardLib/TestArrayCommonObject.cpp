@@ -23,13 +23,12 @@ void TestArrayCommonPointerRemapping(void)
 	ObjectsInit();
 
 	pRoot = ORoot();
-	pArray = OMalloc(CArrayCommonObject);
-	pArray->Init(FALSE, FALSE, TRUE, 1);
+	pArray = OMalloc(CArrayCommonObject)->Init(FALSE, FALSE, TRUE, 1);
 	pRoot->Add(pArray);
 
-	pObject1 = OMalloc(CTestObject);
-	pObject2 = ONMalloc(CTestSaveableObject1, "Fred");
-	pObject3 = ONMalloc(CTestSaveableObject1, "Barney");
+	pObject1 = OMalloc(CTestObject)->Init(&sKillNotifier);
+	pObject2 = ONMalloc(CTestSaveableObject1, "Fred")->Init();
+	pObject3 = ONMalloc(CTestSaveableObject1, "Barney")->Init();
 	pNull = NULL;
 
 	pArray->Add(pNull);
@@ -42,9 +41,6 @@ void TestArrayCommonPointerRemapping(void)
 	AssertInt(5, pArray->NonNullElements());
 
 	sKillNotifier.bKilled = FALSE;
-	pObject1->Init(&sKillNotifier);
-	pObject2->Init();
-	pObject3->Init();
 
 	AssertInt(5, pArray->NumTos());
 	AssertInt(1, pArray->NumHeapFroms());

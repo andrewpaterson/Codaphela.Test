@@ -28,41 +28,30 @@ CPointer SetupObjectReaderChunkedChunkFile(void)
 	Ptr<CString>			sz2;
 	Ptr<CString>			sz3;
 
-	cNS1 = ONMalloc(CTestNamedString, "NamedString 1");
-	cNS2 = ONMalloc(CTestNamedString, "NamedString 2");
-	cNS3 = ONMalloc(CTestNamedString, "NamedString 3");
-	cNS4 = ONMalloc(CTestNamedString, "NamedString 4");
+	cNS1 = ONMalloc(CTestNamedString, "NamedString 1")->Init();
+	cNS2 = ONMalloc(CTestNamedString, "NamedString 2")->Init();
+	cNS3 = ONMalloc(CTestNamedString, "NamedString 3")->Init();
+	cNS4 = ONMalloc(CTestNamedString, "NamedString 4")->Init();
 
-	cI1 = OMalloc(CTestInteger);
+	cI1 = OMalloc(CTestInteger)->Init(3, 2, 1);
 	AssertLongLongInt(5LL, cI1->GetOI());
-	cI2 = OMalloc(CTestInteger);
+	cI2 = OMalloc(CTestInteger)->Init(543, 3, 4);
 	AssertLongLongInt(6LL, cI2->GetOI());
-	cI3 = OMalloc(CTestInteger);
+	cI3 = OMalloc(CTestInteger)->Init(10, 8192, 7);
 	AssertLongLongInt(7LL, cI3->GetOI());
 
-	cA1 = ONMalloc(CTestWithArray, "Array 1");
-	cA2 = ONMalloc(CTestWithArray, "Array X");
+	cA1 = ONMalloc(CTestWithArray, "Array 1")->Init("Something with One", 1);
+	cA2 = ONMalloc(CTestWithArray, "Array X")->Init("An with 2", 2);
 
-	sz1 = OMalloc(CString);
-	sz2 = OMalloc(CString);
-	sz3 = OMalloc(CString);
+	sz1 = OMalloc(CString)->Init("String 1");
+	sz2 = OMalloc(CString)->Init("Ye!");
+	sz3 = OMalloc(CString)->Init("3");
 
-	sz1->Init("String 1");
 	cNS1->Init(sz1, cNS2, "In Named 1");
-
 	cNS2->Init(sz1, cNS3, "Another in 2");
-
-	sz3->Init("3");
 	cNS3->Init(sz3, cNS1, "Three");
-
 	cNS4->Init(ONull, ONull, "Nulloid!");
 
-	cI1->Init(3, 2, 1);
-	cI2->Init(543, 3, 4);
-	cI3->Init(10, 8192, 7);
-
-	sz2->Init("Ye!");
-	cA1->Init("Something with One", 1);
 	cA1->Add(sz2);
 	cA1->Add(cNS1);
 	cA1->Add(cI1);
@@ -70,7 +59,6 @@ CPointer SetupObjectReaderChunkedChunkFile(void)
 	cA1->Add(cI2);
 	cA1->Add(cA2);
 
-	cA2->Init("An with 2", 2);
 	cA2->Add(cI3);
 	cA2->Add(cNS2);
 	cA2->Add(cI1);

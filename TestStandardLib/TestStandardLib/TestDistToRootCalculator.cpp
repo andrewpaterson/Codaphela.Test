@@ -1971,23 +1971,17 @@ void TestDistToRootWithStackPointers(void)
 
 	ObjectsInit();
 
-	cNS3 = OMalloc(CTestObject);
-	cNS1 = OMalloc(CTestObject);
-	sz1 = OMalloc(CString);
-	cNS2 = OMalloc(CTestObject);
-	sz2 = OMalloc(CString);
+	cNS3 = OMalloc(CTestObject)->Init();
+	cNS1 = OMalloc(CTestObject)->Init(sz1, cNS3);
+	sz1 = OMalloc(CString)->Init("Back");
+	cNS2 = OMalloc(CTestObject)->Init(sz2, cNS3);
+	sz2 = OMalloc(CString)->Init("Down");
 
 	AssertLongLongInt(1, cNS3.GetIndex());
 	AssertLongLongInt(2, cNS1.GetIndex());
 	AssertLongLongInt(3, sz1.GetIndex());
 	AssertLongLongInt(4, cNS2.GetIndex());
 	AssertLongLongInt(5, sz2.GetIndex());
-
-	sz1->Init("Back");
-	cNS1->Init(sz1, cNS3);
-
-	sz2->Init("Down");
-	cNS2->Init(sz2, cNS3);
 
 	gcObjects.ValidateConsistency();
 
@@ -2193,9 +2187,9 @@ void TestDistToRootTosNotUpdated(void)
 	Ptr<CRoot>			pRoot;
 
 	pRoot = ORoot();
-	pTest1 = OMalloc(CTestObject);
-	pTest2 = OMalloc(CTestObject);
-	pTest3 = OMalloc(CTestObject);
+	pTest1 = OMalloc(CTestObject)->Init();
+	pTest2 = OMalloc(CTestObject)->Init();
+	pTest3 = OMalloc(CTestObject)->Init();
 
 	pTest1->mpTest = pTest2;
 	pTest2->mpTest = pTest3;

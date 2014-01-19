@@ -7,9 +7,12 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestNamedObject::Init(int iNum)
+Ptr<CTestNamedObject> CTestNamedObject::Init(int iNum)
 {
 	miNum = iNum;
+
+	CBaseObject::Init();
+	return this;
 }
 
 

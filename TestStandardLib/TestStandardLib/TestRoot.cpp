@@ -1233,28 +1233,18 @@ void TestRootGraphRemoveErrorFromObjectConverter(void)
 
 	cRoot = ORoot();
 
-	cDiamond = ONMalloc(CTestNamedString, "Diamond End");
+	sz3 = OMalloc(CString)->Init("End");
+	cDiamond = ONMalloc(CTestNamedString, "Diamond End")->Init(sz3, ONull, "1234");
 
-	cNS1 = ONMalloc(CTestNamedString, "NamedString 1");
-	sz1 = OMalloc(CString);
+	sz1 = OMalloc(CString)->Init("World");
+	cNS1 = ONMalloc(CTestNamedString, "NamedString 1")->Init(sz1, cDiamond, "Hello");
 
-	cNS1->Init(sz1, cDiamond, "Hello");
-	sz1->Init("World");
+	sz2 = OMalloc(CString)->Init("World");
+	cNS2 = ONMalloc(CTestNamedString, "NamedString 2")->Init(sz2, cDiamond, "Hello");
 
-	cNS2 = ONMalloc(CTestNamedString, "NamedString 2");
-	sz2 = OMalloc(CString);
 
-	cNS2->Init(sz2, cDiamond, "Hello");
-	sz2->Init("World");
-
-	sz3 = OMalloc(CString);
-	sz3->Init("End");
-	cDiamond->Init(sz3, ONull, "1234");
-
-	sz4 = OMalloc(CString);
-	sz4->Init("Start");
-	cDouble = ONMalloc(CTestDoubleNamedString, "Double Start");
-	cDouble->Init(sz4, cNS1, ONull);
+	sz4 = OMalloc(CString)->Init("Start");
+	cDouble = ONMalloc(CTestDoubleNamedString, "Double Start")->Init(sz4, cNS1, ONull);
 
 	cRoot->Add(cDouble);
 
