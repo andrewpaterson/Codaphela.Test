@@ -100,8 +100,7 @@ Ptr<CHarrier> CHarrier::Init(Ptr<CGameWorld> pWorld)
 	mpWorld = pWorld;
 	miSpeed = 7;
 
-	maMissiles = OMalloc(CArrayObject);
-	maMissiles->Init();
+	maMissiles = OMalloc(CArrayObject)->Init();
 
 	CBaseObject::Init();
 	return Ptr<CHarrier>(this);
@@ -136,8 +135,7 @@ void CHarrier::KillData(void)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CMissile> CHarrier::FireMissile(CPointer& pTarget)
 {
-	Ptr<CMissile> pMissile = OMalloc(CMissile);
-	pMissile->Init(mpWorld);
+	Ptr<CMissile> pMissile = OMalloc(CMissile)->Init(mpWorld);
 	maMissiles->Add(pMissile);
 	pMissile->SetTarget(pTarget);
 

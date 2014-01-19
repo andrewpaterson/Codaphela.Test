@@ -49,7 +49,7 @@ void TestObjectWriterChunkedSerialised(void)
 	pcObject1->Add(pcObject3);
 
 	pcObject4 = OMalloc(CTestInteger);
-	pcObject4->Init(4, 5, 6);
+	pcObject4->Init(0xab, 0xbc, 0xcd);
 	pcObject1->Add(pcObject4);
 
 	cWriter.Init("Output\\ObjectWriterChunked\\Test\\", "Base/Level 1", "ChunkFile");
