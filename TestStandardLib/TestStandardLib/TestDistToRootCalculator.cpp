@@ -438,7 +438,7 @@ void TestUpdateAttachedTosDistToRootComplex(void)
 	AssertInt(10, pTest2d->GetDistToRoot());
 	AssertInt(12, pTest2e->GetDistToRoot());
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -520,7 +520,7 @@ void TestUpdateAttachedTosDistToRootSimpleLeft(void)
 	AssertFalse(iFlags & OBJECT_FLAGS_CLEARED_DIST_TO_ROOT);
 	AssertFalse(iFlags & OBJECT_FLAGS_UPDATED_TOS_DIST_TO_ROOT);
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -605,7 +605,7 @@ void TestUpdateAttachedTosDistToRootSimpleRight(void)
 	AssertInt(4, pTest2->GetDistToRoot());
 	AssertInt(4, pTest3->GetDistToRoot());
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -689,7 +689,7 @@ void TestUpdateAttachedTosDistToRootSimpleRightBroken(void)
 
 	cDistParameters.Kill();
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -867,7 +867,7 @@ void TestUpdateAttachedTosDistToRootChildTriangleKindaBalanced(void)
 	AssertInt(9, pTest2b->GetDistToRoot());
 	AssertInt(9, pTest3a->GetDistToRoot());
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -993,7 +993,7 @@ void TestUpdateAttachedTosDistToRootChildTriangleShortLeft(void)
 	AssertInt(7, pTest2b->GetDistToRoot());
 	AssertInt(7, pTest3a->GetDistToRoot());
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -1730,7 +1730,7 @@ void TestUpdateAttachedTosDistToRootBroken(void)
 	AssertInt(4, pTest1b->GetDistToRoot());
 	AssertInt(4, pTest2a->GetDistToRoot());
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -1949,7 +1949,7 @@ void TestDistToRootCyclic(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p2->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, p3->GetDistToRoot());
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	cDistParameters.Kill();
 
@@ -1983,7 +1983,7 @@ void TestDistToRootWithStackPointers(void)
 	AssertLongLongInt(4, cNS2.GetIndex());
 	AssertLongLongInt(5, sz2.GetIndex());
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -2251,7 +2251,7 @@ void TestDistToRootTosNotUpdated(void)
 
 	cDistParameters.Kill();
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 };
@@ -2528,7 +2528,7 @@ void TestDistToRootComplex(void)
 
 	cDistParameters.Kill();
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }

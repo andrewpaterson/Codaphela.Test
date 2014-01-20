@@ -55,7 +55,7 @@ void TestDistToStackSimpleOneStep(void)
 	//  .   . 
 	//
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -118,7 +118,7 @@ void TestDistToStackSimpleTwoStep(void)
 	AssertTrue(gcObjects.Contains("Pointer A"));
 	AssertTrue(gcObjects.Contains("Pointer B"));
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -239,7 +239,7 @@ void TestDistToStackRootCyclicWithStackPointerA(void)
 	p2 = NULL;
 	p3 = NULL;
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	p0->mp.UnsafeClearObject();
 	pc1->TestRemoveHeapFrom(p0.BaseObject());
@@ -260,7 +260,7 @@ void TestDistToStackRootCyclicWithStackPointerA(void)
 	cDistParameters.ClearTouchedFlags();
 	cDistParameters.Kill();
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -327,7 +327,7 @@ void TestDistToStackRootCyclicWithStackPointerB(void)
 
 	cDistParameters.Kill();
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -394,7 +394,7 @@ void TestDistToStackRootCyclicWithStackPointerC(void)
 
 	cDistParameters.Kill();
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -479,7 +479,7 @@ void TestDistToStackRootCyclicWithoutStackPointer(void)
 
 	cDistParameters.Kill();
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -570,7 +570,7 @@ void TestDistToStackSplitRootAndStack(void)
 
 	cDistParameters.Kill();
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -631,7 +631,7 @@ void TestDistToStackSetWithoutStackPointers(void)
 
 	cDistParameters.Kill();
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -695,7 +695,7 @@ void TestDistToStackSetWithStackPointers(void)
 
 	cDistParameters.Kill();
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -800,7 +800,7 @@ void TestDistToStackSetBroken(void)
 	AssertTrue( sKilled3.bKilled);
 	AssertFalse(sKilled2.bKilled);
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }
@@ -1131,7 +1131,7 @@ void TestDistToStackRemoveUnbalancedLargeBroken(void)
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest4->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest5->GetDistToStack());
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	pcTest2->TestRemoveStackFrom(pTest2.This());
 	pTest2.UnsafeClearObject();

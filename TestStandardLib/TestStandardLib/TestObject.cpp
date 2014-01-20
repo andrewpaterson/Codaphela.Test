@@ -169,7 +169,7 @@ void TestObjectPointerRemappingKilling(void)
 	AssertTrue(sKillNotifier2.bKilled);
 	AssertTrue(sKillNotifier3.bKilled);
 
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	ObjectsKill();
 }

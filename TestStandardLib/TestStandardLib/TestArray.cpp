@@ -88,7 +88,7 @@ void TestArrayAddAll(void)
 	AssertInt(0, pSaveable->NumHeapFroms());
 	pacStuff->Insert(0, pSaveable);
 	AssertInt(1, pSaveable->NumHeapFroms());
-	gcObjects.ValidateConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	pacMore->AddAll(pacStuff);
 
