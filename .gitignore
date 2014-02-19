@@ -65,3 +65,5 @@ TestInputLib/TestInputLib/Debug/*
 TestInputLib/Debug/*
 TestInputLib/TestInputLib/TestInputLib.sdf
 TestInputLib/TestInputLib/TestInputLib.suo
+TestBaseLib/Release/*
+TestBaseLib/TestBaseLib/Release/*
