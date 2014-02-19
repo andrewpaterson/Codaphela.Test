@@ -12,6 +12,7 @@
 #include "TestFileUtil.h"
 #include "TestFreeList.h"
 #include "TestASCIITree.h"
+#include "TestIndexTree.h"
 #include "TestMemory.h"
 #include "TestLinkListAligned.h"
 #include "TestArrayInt2D.h"
@@ -57,6 +58,7 @@ int main(int argc, char* argv[])
 	TestNumbers();
 	TestArrayTemplate();
 	TestASCIITree();
+	TestIndexTree();
 	TestArrayDenseTemplate();
 	TestArraySparseTemplate();
 	TestFileUtil();

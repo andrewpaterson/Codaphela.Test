@@ -120,12 +120,34 @@ void TestNamedObjectName(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestNamedOjectKill(void)
+{
+	Ptr<CTestNamedObject>	pNamedObject;
+	char*					pszName;
+
+	ObjectsInit();
+	pNamedObject = ONMalloc(CTestNamedObject, "This is my Name")->Init(7);
+
+	pszName = pNamedObject->GetName();
+
+	//Trying to test that KillIdentifiers is called and that mon is freed.
+	pNamedObject->Kill();
+
+	gcObjects.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestNamedObject(void)
 {
 	BeginTests();
 
 	TestNamedObjectSize();
 	TestNamedObjectName();
+	TestNamedOjectKill();
 
 	TestStatistics();
 }
