@@ -20,7 +20,7 @@ void TestBumpMapper(void)
 	CImage			cSource;
 	CImage			cDest;
 
-	ReadImage(&cSource, "Input\\Heightmap.png");
+	ReadImage(&cSource, "Input\\HeightMap.png");
 
 	cDest.Init();
 
@@ -32,7 +32,7 @@ void TestBumpMapper(void)
 	cDest.RenameChannel(IMAGE_NORMAL_Z, IMAGE_DIFFUSE_BLUE);
 	cDest.EndChange();
 
-	WriteImage(&cDest, "Output\\Normals.png", IT_PNG);
+	WriteImage(&cDest, "Output\\NormalMap.png", IT_PNG);
 
 	cDest.BeginChange();
 	cDest.RenameChannel(IMAGE_DIFFUSE_RED, IMAGE_NORMAL_X);
@@ -44,7 +44,7 @@ void TestBumpMapper(void)
 
 	WriteImage(&cDest, "Output\\Bump.png", IT_PNG);
 
-	AssertFile("Input\\NormalMap.png", "Output\\Normals.png");
+	AssertFile("Input\\NormalMap.png", "Output\\NormalMap.png");
 
 	cSource.Kill();
 
