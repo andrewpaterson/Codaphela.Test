@@ -113,6 +113,7 @@
     <ClCompile Include="TestObjectReaderSimple.cpp" />
     <ClCompile Include="TestObjects.cpp" />
     <ClCompile Include="TestObjectsSimple.cpp" />
+    <ClCompile Include="TestObjectStack.cpp" />
     <ClCompile Include="TestObjectStackPointers.cpp" />
     <ClCompile Include="TestObjectWriterChunked.cpp" />
     <ClCompile Include="TestPointer.cpp" />
