@@ -319,7 +319,7 @@ void TestEmbeddedGetEmbeddedIndex(void)
 {
 	CEmbeddedComplex	cComplex;
 
-	cComplex.PreInit(NULL);
+	cComplex.PreInit();
 	cComplex.Init();
 
 	AssertInt(0, cComplex.TestGetNumEmbeddedFromFlags());
@@ -351,7 +351,7 @@ void TestEmbeddedGetEmbeddedObject(void)
 	CEmbeddedComplex	cComplex;
 	CEmbeddedObject*	pcEmbedded;
 
-	cComplex.PreInit(NULL);
+	cComplex.PreInit();
 	cComplex.Init();
 
 	pcEmbedded = cComplex.GetEmbeddedObject(0);
