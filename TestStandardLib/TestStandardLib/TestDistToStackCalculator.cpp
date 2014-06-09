@@ -78,15 +78,16 @@ void TestDistToStackSimpleTwoStep(void)
 	AssertInt(3, (int)gcObjects.NumMemoryIndexes());
 	AssertInt(0, p2->NumHeapFroms());
 
-	//  x
-	//  |
-	//  |
-	//  p2     x 
-	//  | .	   | 
-	//  |  .   | 
-	//  p3	   p1
-	//  . 	   . 
-	//  . 	   . 
+	//
+	//     x
+	//     |
+	//     |
+	//     p2      x 
+	//    /  .     | 
+	//   /    .    | 
+	//  p3	  .    p1
+	//  . 	  .    .  
+	//  . 	  .    . 
 	//
 
 	p3->mp = p2;
@@ -196,8 +197,8 @@ void TestDistToStackSimpleHeap(void)
 	//  . 	   . 
 	//
 
-	AssertInt(1, pc2->GetDistToStack());
-	AssertInt(0, pc3->GetDistToStack());
+	AssertInt(2, pc2->GetDistToStack());
+	AssertInt(1, pc3->GetDistToStack());
 
 	cParameters.Kill();
 
@@ -932,11 +933,11 @@ void TestDistToStackCyclicWithScenarioA(void)
 	cParameters.Init();
 	cDistToStackCalculator.Calculate(pcTest1, &cParameters);
 	
-	AssertInt(0, pcTest1->GetDistToStack());
-	AssertInt(1, pcTest2->GetDistToStack());
-	AssertInt(1, pcTest3->GetDistToStack());
-	AssertInt(2, pcTest4->GetDistToStack());
-	AssertInt(2, pcTest5->GetDistToStack());
+	AssertInt(1, pcTest1->GetDistToStack());
+	AssertInt(2, pcTest2->GetDistToStack());
+	AssertInt(2, pcTest3->GetDistToStack());
+	AssertInt(3, pcTest4->GetDistToStack());
+	AssertInt(3, pcTest5->GetDistToStack());
 
 	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
 	cParameters.Kill();
@@ -951,11 +952,11 @@ void TestDistToStackCyclicWithScenarioA(void)
 	cParameters.Init();
 	cDistToStackCalculator.Calculate(pcTest2, &cParameters);
 
-	AssertInt(0, pcTest1->GetDistToStack());
-	AssertInt(1, pcTest2->GetDistToStack());
-	AssertInt(1, pcTest3->GetDistToStack());
-	AssertInt(2, pcTest4->GetDistToStack());
-	AssertInt(2, pcTest5->GetDistToStack());
+	AssertInt(1, pcTest1->GetDistToStack());
+	AssertInt(2, pcTest2->GetDistToStack());
+	AssertInt(2, pcTest3->GetDistToStack());
+	AssertInt(3, pcTest4->GetDistToStack());
+	AssertInt(3, pcTest5->GetDistToStack());
 
 	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
 	cParameters.Kill();
@@ -970,11 +971,11 @@ void TestDistToStackCyclicWithScenarioA(void)
 	cParameters.Init();
 	cDistToStackCalculator.Calculate(pcTest3, &cParameters);
 
-	AssertInt(0, pcTest1->GetDistToStack());
-	AssertInt(1, pcTest2->GetDistToStack());
-	AssertInt(1, pcTest3->GetDistToStack());
-	AssertInt(2, pcTest4->GetDistToStack());
-	AssertInt(2, pcTest5->GetDistToStack());
+	AssertInt(1, pcTest1->GetDistToStack());
+	AssertInt(2, pcTest2->GetDistToStack());
+	AssertInt(2, pcTest3->GetDistToStack());
+	AssertInt(3, pcTest4->GetDistToStack());
+	AssertInt(3, pcTest5->GetDistToStack());
 
 	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
 	cParameters.Kill();
@@ -989,10 +990,10 @@ void TestDistToStackCyclicWithScenarioA(void)
 	cParameters.Init();
 	cDistToStackCalculator.Calculate(pcTest4, &cParameters);
 
-	AssertInt(0, pcTest1->GetDistToStack());
-	AssertInt(1, pcTest2->GetDistToStack());
-	AssertInt(1, pcTest3->GetDistToStack());
-	AssertInt(2, pcTest4->GetDistToStack());
+	AssertInt(1, pcTest1->GetDistToStack());
+	AssertInt(2, pcTest2->GetDistToStack());
+	AssertInt(2, pcTest3->GetDistToStack());
+	AssertInt(3, pcTest4->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest5->GetDistToStack());  //Removing a stack pointer to 4 should be unable to effect 5 in any way.
 
 	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
@@ -1008,11 +1009,11 @@ void TestDistToStackCyclicWithScenarioA(void)
 	cParameters.Init();
 	cDistToStackCalculator.Calculate(pcTest5, &cParameters);
 
-	AssertInt(0, pcTest1->GetDistToStack());
-	AssertInt(1, pcTest2->GetDistToStack());
-	AssertInt(1, pcTest3->GetDistToStack());
+	AssertInt(1, pcTest1->GetDistToStack());
+	AssertInt(2, pcTest2->GetDistToStack());
+	AssertInt(2, pcTest3->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest4->GetDistToStack());  //Removing a stack pointer to 5 should be unable to effect 4 in any way.
-	AssertInt(2, pcTest5->GetDistToStack());
+	AssertInt(3, pcTest5->GetDistToStack());
 
 	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
 	cParameters.Kill();
