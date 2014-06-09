@@ -18,6 +18,8 @@ void TestDistToStackSimpleOneStep(void)
 	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
 	Ptr<CNamedPointerContainer> p3 = ONMalloc(CNamedPointerContainer, "Pointer C")->Init();
 	AssertInt(0, p2->NumHeapFroms());
+	AssertInt(0, p1->NumHeapFroms());
+	AssertInt(0, p3->NumHeapFroms());
 
 	//  
 	//  x   x   x
@@ -145,16 +147,20 @@ void TestDistToStackSimpleHeap(void)
 	AssertInt(3, (int)gcObjects.NumMemoryIndexes());
 	AssertInt(0, p2->NumHeapFroms());
 
+	AssertInt(1, p2->NumStackFroms());
+	AssertInt(1, p1->NumStackFroms());
+	AssertInt(1, p3->NumStackFroms());
+
 	//
-	//  x
-	//  |
-	//  |
-	//  p2     x 
-	//  | .	   | 
-	//  |  .   | 
-	//  p3	   p1
-	//  . 	   . 
-	//  . 	   . 
+	//     x
+	//     |
+	//     |
+	//     p2      x 
+	//    /  .     | 
+	//   /    .    | 
+	//  p3	  .    p1
+	//  . 	  .    .  
+	//  . 	  .    . 
 	//
 
 	p3->mp = p2;
@@ -172,6 +178,8 @@ void TestDistToStackSimpleHeap(void)
 
 	AssertInt(1, pc2->NumHeapFroms());
 	AssertInt(0, pc2->NumStackFroms());
+	AssertInt(1, p1->NumStackFroms());
+	AssertInt(1, p3->NumStackFroms());
 
 	cParameters.Init();
 	cDistToStackCalculator.Calculate(pc2, &cParameters);
