@@ -14,7 +14,7 @@ void TestObjectStackInit(void)
 	CTestObject					cObject;
 	STestObjectKilledNotifier	sKillNotifier;
 
-	cObject.PreInit();
+	cObject.Class();
 	cObject.Init(&sKillNotifier);
 
 	ObjectsKill();
