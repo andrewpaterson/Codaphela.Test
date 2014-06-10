@@ -20,6 +20,9 @@ void TestDistToStackSimpleOneStep(void)
 	AssertInt(0, p2->NumHeapFroms());
 	AssertInt(0, p1->NumHeapFroms());
 	AssertInt(0, p3->NumHeapFroms());
+	AssertInt(UNKNOWN_DIST_TO_STACK, p1.Object()->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, p2.Object()->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, p3.Object()->GetDistToStack());
 
 	//  
 	//  x   x   x
