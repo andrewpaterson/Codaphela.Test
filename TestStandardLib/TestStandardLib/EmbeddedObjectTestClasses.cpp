@@ -17,8 +17,6 @@ void CEmbeddedTest::Class(void)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CEmbeddedTest> CEmbeddedTest::Init(void)
 {
-	Pointer(mpTest.This());
-	
 	miAmANumber = 85;
 	mfSoAmI = 58.0f;
 

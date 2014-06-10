@@ -273,8 +273,8 @@ BOOL CMissile::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CMissile::Load(CObjectDeserialiser* pcFile) 
 { 
-	ReturnOnFalse(pcFile->ReadPointer(Pointer(mpWorld.This())));
-	ReturnOnFalse(pcFile->ReadPointer(Pointer(mpTarget.This())));
+	ReturnOnFalse(pcFile->ReadPointer(mpWorld.This()));
+	ReturnOnFalse(pcFile->ReadPointer(mpTarget.This()));
 	return TRUE; 
 }
 

@@ -317,6 +317,8 @@ void TestEmbeddedObjectPointTo(void)
 //////////////////////////////////////////////////////////////////////////
 void TestEmbeddedGetEmbeddedIndex(void)
 {
+	ObjectsInit();
+
 	CEmbeddedComplex	cComplex;
 
 	cComplex.Class();
@@ -339,6 +341,8 @@ void TestEmbeddedGetEmbeddedIndex(void)
 	AssertInt(4, cComplex.GetEmbeddedIndex(&cComplex.mcContainer.mcOne));
 	AssertInt(5, cComplex.GetEmbeddedIndex(&cComplex.mcContainer.mcTwo));
 	AssertInt(-1, cComplex.GetEmbeddedIndex(NULL));
+
+	ObjectsKill();
 }
 
 
@@ -348,6 +352,8 @@ void TestEmbeddedGetEmbeddedIndex(void)
 //////////////////////////////////////////////////////////////////////////
 void TestEmbeddedGetEmbeddedObject(void)
 {
+	ObjectsInit();
+
 	CEmbeddedComplex	cComplex;
 	CEmbeddedObject*	pcEmbedded;
 
@@ -378,6 +384,8 @@ void TestEmbeddedGetEmbeddedObject(void)
 	AssertPointer(&cComplex.ma, pcEmbedded);
 	pcEmbedded = cComplex.ma.GetEmbeddedObject(1);
 	AssertNull(pcEmbedded);
+
+	ObjectsKill();
 }
 
 
