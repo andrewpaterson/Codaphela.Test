@@ -1,0 +1,39 @@
+#include "StandardLib/Objects.h"
+#include "StandardLib/PointerContainer.h"
+#include "TestLib/Assert.h"
+#include "ObjectTestSetup.h"
+#include "EmbeddedObjectTestClasses.h"
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestEmbeddedStackPointersEmbeddedDist(void)
+{
+	ObjectsInit();
+
+	CEmbeddedComplex	cComplex;
+
+	cComplex.ClearFlagNumEmbedded();
+	cComplex.Class();
+
+
+	ObjectsKill();
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestEmbeddedStackPointers(void)
+{
+	BeginTests();
+
+	TestEmbeddedStackPointersEmbeddedDist();
+
+	TestStatistics();
+}
+

@@ -243,6 +243,9 @@
     <ClCompile Include="TestObjectStack.cpp">
       <Filter>Source\Object\Object</Filter>
     </ClCompile>
+    <ClCompile Include="TestEmbeddedStackPointers.cpp">
+      <Filter>Source\Object\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectTestClasses.h">
