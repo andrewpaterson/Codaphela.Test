@@ -63,6 +63,7 @@ void TestPointerDestructorDestruct(STestObjectKilledNotifier* psKillNotifier)
 
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
+	cTestObject.Class();
 	cTestObject.Init(NULL);
 	cTestObject.mpTest = OMalloc(CTestObject)->Init(psKillNotifier);
 

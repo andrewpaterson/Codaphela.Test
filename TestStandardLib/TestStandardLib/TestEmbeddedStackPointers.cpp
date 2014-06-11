@@ -15,9 +15,10 @@ void TestEmbeddedStackPointersEmbeddedDist(void)
 
 	CEmbeddedComplex	cComplex;
 
-	cComplex.ClearFlagNumEmbedded();
 	cComplex.Class();
+	cComplex.Init();
 
+	cComplex.Kill();
 
 	ObjectsKill();
 }

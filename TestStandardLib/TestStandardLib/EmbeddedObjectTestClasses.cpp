@@ -20,6 +20,7 @@ Ptr<CEmbeddedTest> CEmbeddedTest::Init(void)
 	miAmANumber = 85;
 	mfSoAmI = 58.0f;
 
+	CObject::Init();
 	return Ptr<CEmbeddedTest>(this);
 }
 
@@ -84,6 +85,7 @@ Ptr<CEmbeddedContainer> CEmbeddedContainer::Init(void)
 	mcTwo.Init();
 	mf = 666.0f;
 
+	CObject::Init();
 	return Ptr<CEmbeddedContainer>(this);
 }
 
@@ -156,6 +158,7 @@ Ptr<CEmbeddedComplex> CEmbeddedComplex::Init(void)
 	ma.Init();
 	mcContainer.Init();
 
+	CObject::Init();
 	return Ptr<CEmbeddedComplex>(this);
 }
 

@@ -40,7 +40,7 @@ Ptr<CPlayerVehicle> CPlayerVehicle::Init(void)
 	mpsBeforeDeath = NULL;
 	mpsAfterDeath = NULL;
 
-	CBaseObject::Init();
+	CObject::Init();
 	return Ptr<CPlayerVehicle>(this);
 }
 
@@ -102,7 +102,7 @@ Ptr<CHarrier> CHarrier::Init(Ptr<CGameWorld> pWorld)
 
 	maMissiles = OMalloc(CArrayObject)->Init();
 
-	CBaseObject::Init();
+	CObject::Init();
 	return Ptr<CHarrier>(this);
 }
 
@@ -166,7 +166,7 @@ Ptr<CJeep> CJeep::Init(Ptr<CGameWorld> pWorld)
 	mfBackWheel = 2.3f;
 	mfFrontWheel = 2.1f;
 
-	CBaseObject::Init();
+	CObject::Init();
 	return Ptr<CJeep>(this);
 }
 
@@ -205,7 +205,7 @@ Ptr<CMissile> CMissile::Init(Ptr<CGameWorld> pWorld)
 
 	mszKillState = NULL;
 
-	CBaseObject::Init();
+	CObject::Init();
 	return Ptr<CMissile>(this);
 }
 
@@ -304,7 +304,7 @@ Ptr<CRedJet> CRedJet::Init(Ptr<CGameWorld> pWorld)
 	pThis = this;
 	mpWorld->AddTickable(pThis);
 
-	CBaseObject::Init();
+	CObject::Init();
 	return Ptr<CRedJet>(this);
 }
 
@@ -363,7 +363,7 @@ Ptr<CClusterMissile> CClusterMissile::Init(Ptr<CGameWorld> pWorld)
 
 	mszKillState = NULL;
 
-	CBaseObject::Init();
+	CObject::Init();
 	return Ptr<CClusterMissile>(this);
 }
 
@@ -438,7 +438,7 @@ BOOL CClusterMissile::Load(CObjectDeserialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CClusterLauncher> CClusterLauncher::Init(void)
 {
-	CBaseObject::Init();
+	CObject::Init();
 	return Ptr<CClusterLauncher>(this);
 }
 
@@ -471,7 +471,7 @@ Ptr<CGameWorld> CGameWorld::Init(void)
 {
 	maTickables = OMalloc(CArrayObject)->Init(128);
 
-	CBaseObject::Init();
+	CObject::Init();
 	return Ptr<CGameWorld>(this);
 }
 

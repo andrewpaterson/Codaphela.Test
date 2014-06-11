@@ -11,7 +11,7 @@ Ptr<CTestNamedObject> CTestNamedObject::Init(int iNum)
 {
 	miNum = iNum;
 
-	CBaseObject::Init();
+	CObject::Init();
 	return this;
 }
 

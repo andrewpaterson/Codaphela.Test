@@ -10,7 +10,7 @@ Ptr<CTestWithArray> CTestWithArray::Init(char* szString, int x)
 	mszString.Init(szString);
 	mx = x;
 
-	CBaseObject::Init();
+	CObject::Init();
 	return Ptr<CTestWithArray>(this);
 }
 
@@ -53,7 +53,7 @@ Ptr<CTestInteger> CTestInteger::Init(int x, int y, int z)
 	my = y;
 	mz = z;
 
-	CBaseObject::Init();
+	CObject::Init();
 	return Ptr<CTestInteger>(this);
 }
 
@@ -90,7 +90,7 @@ Ptr<CTestNamedString> CTestNamedString::Init(void)
 	mpAnother = NULL;
 	mszEmbedded.Zero();
 
-	CBaseObject::Init();
+	CObject::Init();
 	return Ptr<CTestNamedString>(this);
 }
 
@@ -101,7 +101,7 @@ Ptr<CTestNamedString> CTestNamedString::Init(Ptr<CString> szString, Ptr<CTestNam
 	mpAnother = pAnother;
 	mszEmbedded.Init(szEmbedded);
 
-	CBaseObject::Init();
+	CObject::Init();
 	return Ptr<CTestNamedString>(this);
 }
 
@@ -139,7 +139,7 @@ Ptr<CTestDoubleNamedString> CTestDoubleNamedString::Init(void)
 	mpSplit1 = ONull;
 	mpSplit2 = ONull;
 
-	CBaseObject::Init();
+	CObject::Init();
 	return Ptr<CTestDoubleNamedString>(this);
 }
 
@@ -149,7 +149,7 @@ Ptr<CTestDoubleNamedString> CTestDoubleNamedString::Init(Ptr<CString> szString, 
 	mpSplit1 = pSplit1;
 	mpSplit2 = pSplit2;
 
-	CBaseObject::Init();
+	CObject::Init();
 	return Ptr<CTestDoubleNamedString>(this);
 }
 

@@ -25,6 +25,65 @@ void SetupEmbeddedObjectConstructors(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestEmbeddedFlags(void)
+{
+	ObjectsInit();
+
+	CEmbeddedComplex	cComplex;
+
+	AssertFalse(cComplex.HasClass());
+	AssertFalse(cComplex.ma.HasClass());
+	AssertFalse(cComplex.mcSimple.HasClass());
+	AssertFalse(cComplex.mcContainer.HasClass());
+	AssertFalse(cComplex.mcContainer.mcOne.HasClass());
+	AssertFalse(cComplex.mcContainer.mcTwo.HasClass());
+	AssertFalse(cComplex.IsInitialised());
+	AssertFalse(cComplex.ma.IsInitialised());
+	AssertFalse(cComplex.mcSimple.IsInitialised());
+	AssertFalse(cComplex.mcContainer.IsInitialised());
+	AssertFalse(cComplex.mcContainer.mcOne.IsInitialised());
+	AssertFalse(cComplex.mcContainer.mcTwo.IsInitialised());
+
+	cComplex.Class();
+
+	AssertTrue(cComplex.HasClass());
+	AssertTrue(cComplex.ma.HasClass());
+	AssertTrue(cComplex.mcSimple.HasClass());
+	AssertTrue(cComplex.mcContainer.HasClass());
+	AssertTrue(cComplex.mcContainer.mcOne.HasClass());
+	AssertTrue(cComplex.mcContainer.mcTwo.HasClass());
+	AssertFalse(cComplex.IsInitialised());
+	AssertFalse(cComplex.ma.IsInitialised());
+	AssertFalse(cComplex.mcSimple.IsInitialised());
+	AssertFalse(cComplex.mcContainer.IsInitialised());
+	AssertFalse(cComplex.mcContainer.mcOne.IsInitialised());
+	AssertFalse(cComplex.mcContainer.mcTwo.IsInitialised());
+
+	cComplex.Init();
+
+	AssertTrue(cComplex.HasClass());
+	AssertTrue(cComplex.ma.HasClass());
+	AssertTrue(cComplex.mcSimple.HasClass());
+	AssertTrue(cComplex.mcContainer.HasClass());
+	AssertTrue(cComplex.mcContainer.mcOne.HasClass());
+	AssertTrue(cComplex.mcContainer.mcTwo.HasClass());
+	AssertTrue(cComplex.IsInitialised());
+	AssertTrue(cComplex.ma.IsInitialised());
+	AssertTrue(cComplex.mcSimple.IsInitialised());
+	AssertTrue(cComplex.mcContainer.IsInitialised());
+	AssertTrue(cComplex.mcContainer.mcOne.IsInitialised());
+	AssertTrue(cComplex.mcContainer.mcTwo.IsInitialised());
+
+	cComplex.Kill();
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestEmbeddedObjectAddDistToRoot(void)
 {
 	ObjectsInit();
@@ -473,6 +532,7 @@ void TestEmbedded(void)
 {
 	BeginTests();
 
+	TestEmbeddedFlags();
 	TestEmbeddedOjectIsAllocatedInObjects();
 	TestEmbeddedObjectAddDistToRoot();
 	TestEmbeddedObjectRemoveDistToRoot();

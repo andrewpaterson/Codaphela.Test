@@ -101,7 +101,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	//TestSet();
 	//TestKill();
 	//TestEmbedded();
-	//TestEmbeddedObjectRemapTos();
+	TestEmbeddedObjectRemapTos();
 	TestEmbeddedStackPointers();
 
 	FastFunctionsKill();

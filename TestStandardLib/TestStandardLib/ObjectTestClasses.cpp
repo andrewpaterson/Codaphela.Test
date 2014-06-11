@@ -38,7 +38,7 @@ Ptr<CTestObject> CTestObject::Init(STestObjectKilledNotifier* psKilledNotifier)
 		mpsKilledNotifier->bKilled = FALSE;
 	}
 
-	CBaseObject::Init();
+	CObject::Init();
 	return this;
 }
 
@@ -110,7 +110,7 @@ Ptr<CTestTriPointerObject> CTestTriPointerObject::Init(STestObjectKilledNotifier
 		mpsKilledNotifier->bKilled = FALSE;
 	}
 
-	CBaseObject::Init();
+	CObject::Init();
 	return this;
 }
 
@@ -171,7 +171,7 @@ Ptr<CTestSaveableObject1> CTestSaveableObject1::Init(void)
 	mszString.Init();
 	mbSaved = FALSE;
 
-	CBaseObject::Init();
+	CObject::Init();
 	return Ptr<CTestSaveableObject1>(this);
 }
 
@@ -236,7 +236,7 @@ Ptr<CTestSaveableObject2> CTestSaveableObject2::Init(char* psz)
 	msz.Init(psz);
 	mbSaved = FALSE;
 
-	CBaseObject::Init();
+	CObject::Init();
 	return Ptr<CTestSaveableObject2>(this);
 }
 
