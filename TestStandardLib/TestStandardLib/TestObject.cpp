@@ -541,6 +541,7 @@ void TestObjectGetObjects(void)
 	pcObjects = pObject1->GetObjects();
 	AssertPointer(&gcObjects, pcObjects);
 
+	cObject.Class();
 	ObjectsKill();
 }
 
@@ -553,7 +554,6 @@ void TestObjectStackKill(void)
 {
 	ObjectsInit();
 
-	CTestObject					cObject;
 	Ptr<CTestObject>			pObject1;
 	Ptr<CTestObject>			pObject2;
 	STestObjectKilledNotifier	sKillNotifier1;
