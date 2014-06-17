@@ -6,11 +6,11 @@
 
 Ptr<CTestWithArray> CTestWithArray::Init(char* szString, int x)
 {
+	PreInit();
 	mcArray = OMalloc(CArrayObject)->Init();
 	mszString.Init(szString);
 	mx = x;
-
-	CObject::Init();
+	PostInit();
 	return Ptr<CTestWithArray>(this);
 }
 
@@ -49,11 +49,12 @@ BOOL CTestWithArray::Load(CObjectDeserialiser* pcFile)
 
 Ptr<CTestInteger> CTestInteger::Init(int x, int y, int z)
 {
+	PreInit();
 	mx = x;
 	my = y;
 	mz = z;
 
-	CObject::Init();
+	PreInit();
 	return Ptr<CTestInteger>(this);
 }
 
@@ -86,22 +87,24 @@ BOOL CTestInteger::Load(CObjectDeserialiser* pcFile)
 
 Ptr<CTestNamedString> CTestNamedString::Init(void)
 {
+	PreInit();
 	mszString = NULL;
 	mpAnother = NULL;
 	mszEmbedded.Zero();
 
-	CObject::Init();
+	PostInit();
 	return Ptr<CTestNamedString>(this);
 }
 
 
 Ptr<CTestNamedString> CTestNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, char* szEmbedded)
 {
+	PreInit();
 	mszString = szString;
 	mpAnother = pAnother;
 	mszEmbedded.Init(szEmbedded);
 
-	CObject::Init();
+	PostInit();
 	return Ptr<CTestNamedString>(this);
 }
 
@@ -135,21 +138,23 @@ BOOL CTestNamedString::Load(CObjectDeserialiser* pcFile)
 
 Ptr<CTestDoubleNamedString> CTestDoubleNamedString::Init(void)
 {
+	PreInit();
 	mszString = ONull;
 	mpSplit1 = ONull;
 	mpSplit2 = ONull;
 
-	CObject::Init();
+	PostInit();
 	return Ptr<CTestDoubleNamedString>(this);
 }
 
 Ptr<CTestDoubleNamedString> CTestDoubleNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pSplit2, Ptr<CTestNamedString> pSplit1)
 {
+	PreInit();
 	mszString = szString;
 	mpSplit1 = pSplit1;
 	mpSplit2 = pSplit2;
 
-	CObject::Init();
+	PostInit();
 	return Ptr<CTestDoubleNamedString>(this);
 }
 

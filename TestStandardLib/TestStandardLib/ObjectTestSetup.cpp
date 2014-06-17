@@ -30,6 +30,7 @@ void CGraphicPicture::Kill(void)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CPlayerVehicle> CPlayerVehicle::Init(void)
 {
+	PreInit();
 	mpsPoint = (SPhysicsPoint*)malloc(sizeof(SPhysicsPoint));
 	mcPicture.Init();
 
@@ -40,7 +41,7 @@ Ptr<CPlayerVehicle> CPlayerVehicle::Init(void)
 	mpsBeforeDeath = NULL;
 	mpsAfterDeath = NULL;
 
-	CObject::Init();
+	PostInit();
 	return Ptr<CPlayerVehicle>(this);
 }
 
@@ -96,13 +97,15 @@ void CPlayerVehicle::SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAf
 //////////////////////////////////////////////////////////////////////////
 Ptr<CHarrier> CHarrier::Init(Ptr<CGameWorld> pWorld)
 {
+	PreInit();
+
 	CPlayerVehicle::Init();
 	mpWorld = pWorld;
 	miSpeed = 7;
 
 	maMissiles = OMalloc(CArrayObject)->Init();
 
-	CObject::Init();
+	PostInit();
 	return Ptr<CHarrier>(this);
 }
 
@@ -161,12 +164,14 @@ Ptr<CArrayObject> CHarrier::GetMissiles(void)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CJeep> CJeep::Init(Ptr<CGameWorld> pWorld)
 {
+	PreInit();
+
 	CPlayerVehicle::Init();
 	mpWorld = pWorld;
 	mfBackWheel = 2.3f;
 	mfFrontWheel = 2.1f;
 
-	CObject::Init();
+	PostInit();
 	return Ptr<CJeep>(this);
 }
 
@@ -200,12 +205,13 @@ void CJeep::KillData(void)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CMissile> CMissile::Init(Ptr<CGameWorld> pWorld)
 {
+	PreInit();
 	mpWorld = pWorld;
 	mpTarget = NULL;
 
 	mszKillState = NULL;
 
-	CObject::Init();
+	PostInit();
 	return Ptr<CMissile>(this);
 }
 
@@ -295,6 +301,8 @@ void CMissile::SetKillString(char* szKillString)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CRedJet> CRedJet::Init(Ptr<CGameWorld> pWorld)
 {
+	PreInit();
+
 	mpsPoint = (SPhysicsPoint*)malloc(sizeof(SPhysicsPoint));
 	mcPicture.Init();
 
@@ -304,7 +312,7 @@ Ptr<CRedJet> CRedJet::Init(Ptr<CGameWorld> pWorld)
 	pThis = this;
 	mpWorld->AddTickable(pThis);
 
-	CObject::Init();
+	PostInit();
 	return Ptr<CRedJet>(this);
 }
 
@@ -358,12 +366,14 @@ void CRedJet::SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeat
 //////////////////////////////////////////////////////////////////////////
 Ptr<CClusterMissile> CClusterMissile::Init(Ptr<CGameWorld> pWorld)
 {
+	PreInit();
+
 	mcMissile1.Init(pWorld);
 	mcMissile2.Init(pWorld);
 
 	mszKillState = NULL;
 
-	CObject::Init();
+	PostInit();
 	return Ptr<CClusterMissile>(this);
 }
 
@@ -438,7 +448,8 @@ BOOL CClusterMissile::Load(CObjectDeserialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CClusterLauncher> CClusterLauncher::Init(void)
 {
-	CObject::Init();
+	PreInit();
+	PostInit();
 	return Ptr<CClusterLauncher>(this);
 }
 
@@ -469,9 +480,9 @@ void CClusterLauncher::Class(void)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CGameWorld> CGameWorld::Init(void)
 {
+	PreInit();
 	maTickables = OMalloc(CArrayObject)->Init(128);
-
-	CObject::Init();
+	PostInit();
 	return Ptr<CGameWorld>(this);
 }
 

@@ -9,9 +9,10 @@
 //////////////////////////////////////////////////////////////////////////
 Ptr<CTestNamedObject> CTestNamedObject::Init(int iNum)
 {
+	PreInit();
 	miNum = iNum;
 
-	CObject::Init();
+	PostInit();
 	return this;
 }
 

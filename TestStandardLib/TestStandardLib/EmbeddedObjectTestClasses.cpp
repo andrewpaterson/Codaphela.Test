@@ -17,10 +17,11 @@ void CEmbeddedTest::Class(void)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CEmbeddedTest> CEmbeddedTest::Init(void)
 {
+	PreInit();
 	miAmANumber = 85;
 	mfSoAmI = 58.0f;
 
-	CObject::Init();
+	PostInit();
 	return Ptr<CEmbeddedTest>(this);
 }
 
@@ -79,13 +80,14 @@ void CEmbeddedContainer::Class(void)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CEmbeddedContainer> CEmbeddedContainer::Init(void)
 {
+	PreInit();
 	strcpy(msz, "And");
 	mcOne.Init();
 	mi = 73;
 	mcTwo.Init();
 	mf = 666.0f;
 
-	CObject::Init();
+	PostInit();
 	return Ptr<CEmbeddedContainer>(this);
 }
 
@@ -152,13 +154,14 @@ void CEmbeddedComplex::Class(void)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CEmbeddedComplex> CEmbeddedComplex::Init(void)
 {
+	PreInit();
 	mcSimple.Init();
 	mai[0] = 1;
 	mai[1] = 2;
 	ma.Init();
 	mcContainer.Init();
 
-	CObject::Init();
+	PostInit();
 	return Ptr<CEmbeddedComplex>(this);
 }
 
