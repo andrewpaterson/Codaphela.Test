@@ -245,10 +245,10 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	AssertPointer(&cOwStart1, cShared->GetHeapFrom(0));
 	AssertPointer(&cOwStart2, cShared->GetHeapFrom(1));
 	AssertPointer(&cShared, cShared->GetHeapFrom(2));  //Remember: cShared->mpObject = cShared;
-	AssertInt(2, cOwStart1->NumTos());
-	AssertPointer(&cShared, cOwStart1->TestGetTo(0));
-	AssertPointer(&cOwStart1->mp1, cOwStart1->TestGetTo(0));
-	AssertPointer(&cOwStart1->mp2, cOwStart1->TestGetTo(1));
+	AssertInt(2, cOwStart1->NumPointerTos());
+	AssertPointer(&cShared, cOwStart1->TestGetPointerTo(0));
+	AssertPointer(&cOwStart1->mp1, cOwStart1->TestGetPointerTo(0));
+	AssertPointer(&cOwStart1->mp2, cOwStart1->TestGetPointerTo(1));
 	AssertInt(2, cOwStart1->GetDistToRoot());
 	AssertInt(3, cShared->GetDistToRoot());
 
@@ -278,10 +278,10 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	AssertInt(2, cShared->NumHeapFroms());
 	AssertPointer(&cOwStart1, cShared->GetHeapFrom(0));
 	AssertPointer(&cShared, cShared->GetHeapFrom(1));
-	AssertInt(2, cOwStart1->NumTos());
-	AssertPointer(&cShared, cOwStart1->TestGetTo(0));
-	AssertPointer(&cOwStart1->mp1, cOwStart1->TestGetTo(0));
-	AssertPointer(&cOwStart1->mp2, cOwStart1->TestGetTo(1));
+	AssertInt(2, cOwStart1->NumPointerTos());
+	AssertPointer(&cShared, cOwStart1->TestGetPointerTo(0));
+	AssertPointer(&cOwStart1->mp1, cOwStart1->TestGetPointerTo(0));
+	AssertPointer(&cOwStart1->mp2, cOwStart1->TestGetPointerTo(1));
 	AssertInt(2, cOwStart1->GetDistToRoot());
 	AssertInt(3, cShared->GetDistToRoot());
 

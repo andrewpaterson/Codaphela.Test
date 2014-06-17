@@ -207,10 +207,10 @@ void TestPointerHeapNotInGraphFreeStack(void)
 
 	AssertInt(0, pTest1->NumHeapFroms());
 	AssertInt(1, pTest1->NumStackFroms());
-	AssertInt(0, pTest1->NumTos());
+	AssertInt(0, pTest1->NumPointerTos());
 	AssertInt(0, pTest2->NumHeapFroms());
 	AssertInt(1, pTest2->NumStackFroms());
-	AssertInt(0, pTest2->NumTos());
+	AssertInt(0, pTest2->NumPointerTos());
 	AssertFalse(sNotifier1.bKilled);
 	AssertFalse(sNotifier2.bKilled);
 
@@ -218,10 +218,10 @@ void TestPointerHeapNotInGraphFreeStack(void)
 
 	AssertInt(1, pTest1->NumHeapFroms());
 	AssertInt(1, pTest1->NumStackFroms());
-	AssertInt(0, pTest1->NumTos());
+	AssertInt(0, pTest1->NumPointerTos());
 	AssertInt(0, pTest2->NumHeapFroms());
 	AssertInt(1, pTest2->NumStackFroms());
-	AssertInt(1, pTest2->NumTos());
+	AssertInt(1, pTest2->NumPointerTos());
 
 	pcTest2 = (CTestObject*)pTest2.Object();
 	pcTest1 = (CTestObject*)pTest1.Object();
@@ -231,10 +231,10 @@ void TestPointerHeapNotInGraphFreeStack(void)
 	AssertFalse(sNotifier2.bKilled);
 	AssertInt(1, pcTest1->NumHeapFroms());
 	AssertInt(0, pcTest1->NumStackFroms());
-	AssertInt(0, pcTest1->NumTos());
+	AssertInt(0, pcTest1->NumPointerTos());
 	AssertInt(0, pcTest2->NumHeapFroms());
 	AssertInt(1, pcTest2->NumStackFroms());
-	AssertInt(1, pcTest2->NumTos());
+	AssertInt(1, pcTest2->NumPointerTos());
 
 	ObjectsKill();
 }

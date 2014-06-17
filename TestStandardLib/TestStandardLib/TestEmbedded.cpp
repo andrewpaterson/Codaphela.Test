@@ -465,20 +465,20 @@ void TestEmbeddedObjectClass(void)
 	CPointer*			pcPtr5;
 
 	//Class not yet called.  Always call Class.
-	AssertInt(0, cComplex.GetNumFieldPointers());
+	AssertInt(0, cComplex.GetNumFieldPointerTos());
 	AssertInt(1, cComplex.GetNumEmbedded());
 
 	cComplex.ClearFlagNumEmbedded();
 	cComplex.Class();
-	AssertInt(5, cComplex.GetNumFieldPointers());
+	AssertInt(5, cComplex.GetNumFieldPointerTos());
 	AssertInt(6, cComplex.GetNumEmbedded());
 
-	pcPtr0 = cComplex.GetFieldPointer(0);
-	pcPtr1 = cComplex.GetFieldPointer(1);
-	pcPtr2 = cComplex.GetFieldPointer(2);
-	pcPtr3 = cComplex.GetFieldPointer(3);
-	pcPtr4 = cComplex.GetFieldPointer(4);
-	pcPtr5 = cComplex.GetFieldPointer(5);
+	pcPtr0 = cComplex.GetFieldPointerTo(0);
+	pcPtr1 = cComplex.GetFieldPointerTo(1);
+	pcPtr2 = cComplex.GetFieldPointerTo(2);
+	pcPtr3 = cComplex.GetFieldPointerTo(3);
+	pcPtr4 = cComplex.GetFieldPointerTo(4);
+	pcPtr5 = cComplex.GetFieldPointerTo(5);
 
 	AssertPointer(cComplex.mpTest.This(), pcPtr0);
 	AssertPointer(cComplex.mcSimple.mpTest.This(), pcPtr1);
@@ -487,12 +487,12 @@ void TestEmbeddedObjectClass(void)
 	AssertPointer(cComplex.mcContainer.mcTwo.mpTest.This(), pcPtr4);
 	AssertNull(pcPtr5);
 
-	AssertInt(0, cComplex.GetFieldPointerIndex(pcPtr0));
-	AssertInt(1, cComplex.GetFieldPointerIndex(pcPtr1));
-	AssertInt(2, cComplex.GetFieldPointerIndex(pcPtr2));
-	AssertInt(3, cComplex.GetFieldPointerIndex(pcPtr3));
-	AssertInt(4, cComplex.GetFieldPointerIndex(pcPtr4));
-	AssertInt(-1, cComplex.GetFieldPointerIndex(NULL));
+	AssertInt(0, cComplex.GetFieldPointerToIndex(pcPtr0));
+	AssertInt(1, cComplex.GetFieldPointerToIndex(pcPtr1));
+	AssertInt(2, cComplex.GetFieldPointerToIndex(pcPtr2));
+	AssertInt(3, cComplex.GetFieldPointerToIndex(pcPtr3));
+	AssertInt(4, cComplex.GetFieldPointerToIndex(pcPtr4));
+	AssertInt(-1, cComplex.GetFieldPointerToIndex(NULL));
 
 	ObjectsKill();
 }

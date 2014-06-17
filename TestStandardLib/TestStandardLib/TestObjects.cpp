@@ -448,8 +448,8 @@ void TestObjectsObjectKillInArrayInGraph(void)
 	pRoot->Add(cA1);
 	pRoot->Add(cA2);
 
-	AssertInt(1, cA1->NumTos());
-	AssertInt(1, cA2->NumTos());
+	AssertInt(1, cA1->NumPointerTos());
+	AssertInt(1, cA2->NumPointerTos());
 	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
 	pRoot = NULL;
 	cS1 = NULL;
@@ -458,8 +458,8 @@ void TestObjectsObjectKillInArrayInGraph(void)
 	cNS1->Kill();
 	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
 
-	AssertInt(0, cA1->NumTos());
-	AssertInt(0, cA2->NumTos());
+	AssertInt(0, cA1->NumPointerTos());
+	AssertInt(0, cA2->NumPointerTos());
 
 
 	ObjectsKill();

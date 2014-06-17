@@ -858,10 +858,10 @@ void TestDistToStackNoStackHeapFromBroken(void)
 	AssertFalse(sNotifier2.bKilled);
 	AssertInt(1, pcTest1->NumHeapFroms());
 	AssertInt(0, pcTest1->NumStackFroms());
-	AssertInt(0, pcTest1->NumTos());
+	AssertInt(0, pcTest1->NumPointerTos());
 	AssertInt(0, pcTest2->NumHeapFroms());
 	AssertInt(1, pcTest2->NumStackFroms());
-	AssertInt(1, pcTest2->NumTos());
+	AssertInt(1, pcTest2->NumPointerTos());
 
 	ObjectsKill();
 }
@@ -1099,7 +1099,7 @@ void TestDistToStackRemoveUnbalancedLargeBroken(void)
 	AssertInt(5, pTop1->GetDistToRoot());
 	AssertInt(3, pTop2->GetDistToRoot());
 	AssertInt(2, pSet->NumElements());
-	AssertInt(2, pSet->NumTos());
+	AssertInt(2, pSet->NumPointerTos());
 
 	pcTest2 = &pTest2;
 	pcTest3 = &pTest3;

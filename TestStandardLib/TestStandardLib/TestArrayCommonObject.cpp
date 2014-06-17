@@ -42,14 +42,14 @@ void TestArrayCommonPointerRemapping(void)
 
 	sKillNotifier.bKilled = FALSE;
 
-	AssertInt(5, pArray->NumTos());
+	AssertInt(5, pArray->NumPointerTos());
 	AssertInt(1, pArray->NumHeapFroms());
 	AssertInt(2, pObject1->NumHeapFroms());
-	AssertInt(0, pObject1->NumTos());
+	AssertInt(0, pObject1->NumPointerTos());
 	AssertInt(3, pObject2->NumHeapFroms());
-	AssertInt(0, pObject2->NumTos());
+	AssertInt(0, pObject2->NumPointerTos());
 	AssertInt(0, pObject3->NumHeapFroms());
-	AssertInt(0, pObject3->NumTos());
+	AssertInt(0, pObject3->NumPointerTos());
 
 	pcObject1 = (CTestObject*)pObject1.Object();
 	iNumRemapped = pObject1.MorphInto(&pObject3);
@@ -64,13 +64,13 @@ void TestArrayCommonPointerRemapping(void)
 	AssertPointer(&pObject3, pArray->UnsafeGet(4));
 	AssertPointer(&pObject2, pArray->UnsafeGet(5));
 
-	AssertInt(5, pArray->NumTos());
+	AssertInt(5, pArray->NumPointerTos());
 	AssertInt(1, pArray->NumHeapFroms());
 	AssertTrue(sKillNotifier.bKilled);
 	AssertInt(3, pObject2->NumHeapFroms());
-	AssertInt(0, pObject2->NumTos());
+	AssertInt(0, pObject2->NumPointerTos());
 	AssertInt(2, pObject3->NumHeapFroms());
-	AssertInt(0, pObject3->NumTos());
+	AssertInt(0, pObject3->NumPointerTos());
 
 	ObjectsKill();
 }

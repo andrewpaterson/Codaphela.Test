@@ -208,10 +208,10 @@ void TestKillBestPractice(void)
 	pRedJetGoose->Kill();
 	AssertString("012345678901234", sGooseBefore.cPicture.mszPretenedImAPicture);
 	AssertString("Alas I am Dead!", sGooseAfter.cPicture.mszPretenedImAPicture);
-	AssertInt(1, pMissile1->NumTos());
+	AssertInt(1, pMissile1->NumPointerTos());
 	CPointer pTarget1(pMissile1->GetTarget());
 	AssertTrue(pTarget1.IsNull());
-	AssertInt(1, pMissile2->NumTos());
+	AssertInt(1, pMissile2->NumPointerTos());
 	CPointer pTarget2 = pMissile2->GetTarget();
 	AssertTrue(pTarget2.IsNull());
 	AssertLongLongInt(10, gcObjects.NumMemoryIndexes());
