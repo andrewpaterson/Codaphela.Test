@@ -1,6 +1,8 @@
 #include "StandardLib/StackPointers.h"
 #include "StandardLib/Pointer.h"
+#include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
+#include "ObjectTestClasses.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -159,12 +161,168 @@ void TestStackPointersFindUnused(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestStackPointersHeapKill(void)
+{
+	ObjectsInit();
+
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
+	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectKilledNotifier	sKillNotifier2;
+
+	pTest1 = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pTest2 = OMalloc(CTestObject)->Init(&sKillNotifier2);
+	AssertLongLongInt(1LL, pTest1.GetIndex());
+	AssertLongLongInt(2LL, pTest2.GetIndex());
+	pTest3 = pTest2;
+
+	pTest1->mpTest = pTest2;
+
+	//
+	//        O[2]
+	//        / ^ ^
+	//       /  .  .
+	//      /   .   .
+	//     /    .    .
+	//  O[1]  pTest2 pTest3
+	//    ^     ^     ^  
+	//    |     .     .  
+	//  pTest1  .     .  
+	//    ^     .     .  
+	//    .     .     . 
+	//
+
+	AssertInt(UNKNOWN_DIST_TO_STACK, pTest1->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pTest2->GetDistToStack());
+	AssertInt(2, pTest2->NumStackFroms());
+	AssertInt(1, pTest2->NumHeapFroms());
+	AssertInt(1, pTest1->NumStackFroms());
+	AssertInt(0, pTest1->NumHeapFroms());
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+
+	pTest3 = NULL;
+
+	//
+	//       O[2]
+	//       / ^ 
+	//      /   . 
+	//     /     . 
+	//  O[1]   pTest2
+	//    ^       ^      -
+	//    .       .      .
+	//  pTest1    .    pTest3
+	//    ^       .      ^  
+	//    .       .      .    
+	//
+
+	AssertFalse(sKillNotifier1.bKilled);
+	AssertFalse(sKillNotifier2.bKilled);
+	AssertInt(UNKNOWN_DIST_TO_STACK, pTest1->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pTest2->GetDistToStack());
+	AssertInt(1, pTest2->NumStackFroms());
+	AssertInt(1, pTest2->NumHeapFroms());
+	AssertInt(1, pTest1->NumStackFroms());
+	AssertInt(0, pTest1->NumHeapFroms());
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+
+	pTest1 = NULL;
+
+	//      O[2]
+	//        ^      -      -
+	//        .      .	    .
+	//     pTest2  pTest2  pTest3
+	//        ^      ^      ^  
+	//        .      .      .  
+
+	AssertTrue(sKillNotifier1.bKilled);
+	AssertFalse(sKillNotifier2.bKilled);
+	AssertInt(UNKNOWN_DIST_TO_STACK, pTest2->GetDistToStack());
+	AssertInt(1, pTest2->NumStackFroms());
+	AssertInt(0, pTest2->NumHeapFroms());
+	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
+
+	pTest1 = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	AssertLongLongInt(3LL, pTest1.GetIndex());
+	AssertLongLongInt(2LL, pTest2.GetIndex());
+	pTest1->mpTest = pTest2;
+
+	//
+	//      O[2]
+	//       / ^ 
+	//      /   . 
+	//     /     . 
+	//  O[3]   pTest2
+	//    ^       ^      -
+	//    .       .      .
+	//  pTest1    .    pTest3
+	//    ^       .      ^  
+	//    .       .      .  
+	//
+
+	AssertFalse(sKillNotifier1.bKilled);
+	AssertFalse(sKillNotifier2.bKilled);
+	AssertInt(UNKNOWN_DIST_TO_STACK, pTest1->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pTest2->GetDistToStack());
+	AssertInt(1, pTest2->NumStackFroms());
+	AssertInt(1, pTest2->NumHeapFroms());
+	AssertInt(1, pTest1->NumStackFroms());
+	AssertInt(0, pTest1->NumHeapFroms());
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+
+	pTest2 = NULL;
+
+	//
+	//   O[2]
+	//    ^
+	//    |  
+	//   O[3]  
+	//    ^        -      -
+	//    |   	   .      .
+	//  pTest1	 pTest2  pTest3
+	//    ^   	   ^       ^  
+	//    .   	   .       .  
+	//
+
+	AssertFalse(sKillNotifier1.bKilled);
+	AssertFalse(sKillNotifier2.bKilled);
+	AssertInt(UNKNOWN_DIST_TO_STACK, pTest1->GetDistToStack());
+	AssertInt(UNKNOWN_DIST_TO_STACK, pTest1->mpTest->GetDistToStack());
+	AssertInt(0, pTest1->mpTest->NumStackFroms());
+	AssertInt(1, pTest1->mpTest->NumHeapFroms());
+	AssertInt(1, pTest1->NumStackFroms());
+	AssertInt(0, pTest1->NumHeapFroms());
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+
+	pTest1 = NULL;
+
+	//
+	//    -       -       -
+	//    .       .       .
+	//  pTest1  pTest2  pTest3
+	//    ^       ^       ^  
+	//    .       .       .  
+	//
+
+	AssertTrue(sKillNotifier1.bKilled);
+	AssertTrue(sKillNotifier2.bKilled);
+	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestStackPointers(void)
 {
 	BeginTests();
 
 	TestStackPointersFindUnused();
 	TestStackPointersAdd();
+	TestStackPointersHeapKill();
 
 	TestStatistics();
 }

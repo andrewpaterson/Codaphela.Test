@@ -182,7 +182,7 @@ void TestKillBestPractice(void)
 	OIndex oiMissile3 = pMissile3->GetOI();
 	AssertLongLongInt(12LL, oiMissile3);
 
-	pMissile3->Kill();  //<-- This is what is being tested.
+	pMissile3->Kill();  //<-- This is what is being tested -----------------------------------.
 	pMissile3 = gcObjects.TestGetFromMemory(oiMissile3);
 	AssertTrue(pMissile3.IsNull());
 
