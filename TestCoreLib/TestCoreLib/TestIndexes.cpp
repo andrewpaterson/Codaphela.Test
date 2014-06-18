@@ -1,4 +1,5 @@
 #include "BaseLib/FastFunctions.h"
+#include "BaseLib/Logger.h"
 #include "CoreLib/Indexes.h"
 #include "TestLib/Assert.h"
 
@@ -45,7 +46,11 @@ void TestIndexesSomething(void)
 	szTemp = (char*)cIndexes.Get(268472648234LL);
 	AssertString(szTwo, szTemp);
 
+	SLogConfig	sLogConfig;
+	gcLogger.GetConfig(&sLogConfig);
+	gcLogger.SetSilent();;
 	bResult = cIndexes.Add(17LL, szFour);
+	gcLogger.SetConfig(&sLogConfig);
 	AssertFalse(bResult);
 	szTemp = (char*)cIndexes.Get(17LL);
 	AssertString(szOne, szTemp);

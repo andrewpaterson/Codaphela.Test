@@ -254,7 +254,7 @@ void TestXMLParserErrors(void)
 
 	cMemory.Init();
 	cLogger.Init(&cMemory, NULL);
-	cLogger.SetEngineOutput(FALSE);
+	cLogger.SetSilent();
 	cMarkup.Init();
 	cXMLParser.Init(&cMarkup, &cLogger);
 	tResult = cXMLParser.Parse(szXML, "InMemory");
