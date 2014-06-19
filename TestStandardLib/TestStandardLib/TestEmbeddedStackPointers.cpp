@@ -38,6 +38,44 @@ void TestEmbeddedStackPointersKill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestEmbeddedStackPointersDestructor(STestObjectKilledNotifier* psKillNotifier2, Ptr<CTestObject> pTest1)
+{
+	CTestObject					cTest2;
+
+	cTest2.Class();
+	cTest2.Init(psKillNotifier2);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestEmbeddedStackPointersDestructor(void)
+{
+	ObjectsInit();
+
+	CTestObject					cTest1;
+	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectKilledNotifier	sKillNotifier2;
+
+	cTest1.Class();
+	cTest1.Init(&sKillNotifier1);
+	sKillNotifier2.bKilled = FALSE;
+
+	TestEmbeddedStackPointersDestructor(&sKillNotifier2, &cTest1);
+
+	AssertTrue(sKillNotifier2.bKilled);
+	AssertFalse(sKillNotifier1.bKilled);
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestEmbeddedStackPointersEmbeddedDistPassThruPointer(void)
 {
 	ObjectsInit();
@@ -131,7 +169,7 @@ void TestEmbeddedStackPointersEmbeddedDistDirect(void)
 }
 
 
-void TestEmbeddedStackPointersMoreStack(Ptr<CEmbeddedComplex> pComplexOnStack1, Ptr<CEmbeddedComplex> pComplexOnStack2)
+void TestEmbeddedStackPointersComplex(Ptr<CEmbeddedComplex> pComplexOnStack1, Ptr<CEmbeddedComplex> pComplexOnStack2)
 {
 
 }
@@ -181,7 +219,7 @@ void TestEmbeddedStackPointersComplex(void)
 
 	AssertFalse(sKillNotifier1.bKilled);
 	AssertFalse(sKillNotifier2.bKilled);
-	TestEmbeddedStackPointersMoreStack(&cComplexOnStack1, &cComplexOnStack2);
+	TestEmbeddedStackPointersComplex(&cComplexOnStack1, &cComplexOnStack2);
 	AssertFalse(sKillNotifier1.bKilled);
 	AssertFalse(sKillNotifier2.bKilled);
 
@@ -203,6 +241,7 @@ void TestEmbeddedStackPointers(void)
 	BeginTests();
 
 	TestEmbeddedStackPointersKill();
+	TestEmbeddedStackPointersDestructor();
 	TestEmbeddedStackPointersEmbeddedDistPassThruPointer();
 	TestEmbeddedStackPointersEmbeddedDistDirect();
 	TestEmbeddedStackPointersComplex();
