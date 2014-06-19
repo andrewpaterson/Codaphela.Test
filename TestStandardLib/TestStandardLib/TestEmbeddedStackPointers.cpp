@@ -202,9 +202,9 @@ void TestEmbeddedStackPointers(void)
 {
 	BeginTests();
 
-	//TestEmbeddedStackPointersKill();
-	//TestEmbeddedStackPointersEmbeddedDistPassThruPointer();
-	//TestEmbeddedStackPointersEmbeddedDistDirect();
+	TestEmbeddedStackPointersKill();
+	TestEmbeddedStackPointersEmbeddedDistPassThruPointer();
+	TestEmbeddedStackPointersEmbeddedDistDirect();
 	TestEmbeddedStackPointersComplex();
 
 	TestStatistics();
