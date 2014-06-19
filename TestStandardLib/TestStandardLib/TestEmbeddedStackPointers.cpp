@@ -131,6 +131,69 @@ void TestEmbeddedStackPointersEmbeddedDistDirect(void)
 }
 
 
+void TestEmbeddedStackPointersMoreStack(Ptr<CEmbeddedComplex> pComplexOnStack1, Ptr<CEmbeddedComplex> pComplexOnStack2)
+{
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestEmbeddedStackPointersComplex(void)
+{
+	ObjectsInit();
+
+	CEmbeddedComplex			cComplexOnStack1;
+	CEmbeddedComplex			cComplexOnStack2;
+	Ptr<CTestObject>			pTestObject1;
+	STestObjectKilledNotifier	sKillNotifier1;
+	Ptr<CTestObject>			pTestObject2;
+	STestObjectKilledNotifier	sKillNotifier2;
+
+	cComplexOnStack1.Class();
+	cComplexOnStack2.Class();
+	cComplexOnStack1.Init();
+	cComplexOnStack2.Init();
+
+	pTestObject1 = OMalloc(CTestObject);
+	pTestObject1->Init(&sKillNotifier1);
+	pTestObject2 = OMalloc(CTestObject);
+	pTestObject2->Init(&sKillNotifier2);
+
+	AssertInt(0, cComplexOnStack1.GetDistToStack());
+	AssertInt(0, cComplexOnStack1.NumStackFroms());
+	AssertInt(0, cComplexOnStack2.GetDistToStack());
+	AssertInt(0, cComplexOnStack2.NumStackFroms());
+
+	cComplexOnStack1.mpTest = &cComplexOnStack2;
+	cComplexOnStack1.mcSimple.mpTest = &cComplexOnStack2;
+	cComplexOnStack1.mcContainer.mcOne.mpTest = pTestObject1;
+	cComplexOnStack2.mcContainer.mcOne.mpTest = pTestObject1;
+
+	AssertInt(0, cComplexOnStack1.GetDistToStack());
+	AssertInt(0, cComplexOnStack1.NumStackFroms());
+	AssertInt(3, cComplexOnStack1.NumPointerTos());
+	AssertInt(0, cComplexOnStack2.GetDistToStack());
+	AssertInt(2, cComplexOnStack2.NumStackFroms());
+	AssertInt(1, cComplexOnStack2.NumPointerTos());
+
+	AssertFalse(sKillNotifier1.bKilled);
+	AssertFalse(sKillNotifier2.bKilled);
+	TestEmbeddedStackPointersMoreStack(&cComplexOnStack1, &cComplexOnStack2);
+	AssertFalse(sKillNotifier1.bKilled);
+	AssertFalse(sKillNotifier2.bKilled);
+
+	AssertInt(0, cComplexOnStack1.GetDistToStack());
+	AssertInt(0, cComplexOnStack1.NumStackFroms());
+	AssertInt(0, cComplexOnStack2.GetDistToStack());
+	AssertInt(2, cComplexOnStack2.NumStackFroms());
+
+	ObjectsKill();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -139,9 +202,10 @@ void TestEmbeddedStackPointers(void)
 {
 	BeginTests();
 
-	TestEmbeddedStackPointersKill();
-	TestEmbeddedStackPointersEmbeddedDistPassThruPointer();
-	TestEmbeddedStackPointersEmbeddedDistDirect();
+	//TestEmbeddedStackPointersKill();
+	//TestEmbeddedStackPointersEmbeddedDistPassThruPointer();
+	//TestEmbeddedStackPointersEmbeddedDistDirect();
+	TestEmbeddedStackPointersComplex();
 
 	TestStatistics();
 }
