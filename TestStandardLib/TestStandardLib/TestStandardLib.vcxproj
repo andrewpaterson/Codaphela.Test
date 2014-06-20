@@ -156,7 +156,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="DebugDefines.txt" />
-    <None Include="Kill.txt" />
     <None Include="Log.txt" />
   </ItemGroup>
   <ItemGroup>

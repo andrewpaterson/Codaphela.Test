@@ -273,6 +273,5 @@
   <ItemGroup>
     <None Include="Log.txt" />
     <None Include="DebugDefines.txt" />
-    <None Include="Kill.txt" />
   </ItemGroup>
 </Project>

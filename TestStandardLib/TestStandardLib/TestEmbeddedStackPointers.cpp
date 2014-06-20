@@ -44,6 +44,8 @@ void TestEmbeddedStackPointersDestructor(STestObjectKilledNotifier* psKillNotifi
 
 	cTest2.Class();
 	cTest2.Init(psKillNotifier2);
+	cTest2.mpTest = pTest1;
+	cTest2.Kill();  //Kill has to be called manually - it's difficult to make the destructor call the right kill.
 }
 
 
@@ -67,6 +69,8 @@ void TestEmbeddedStackPointersDestructor(void)
 
 	AssertTrue(sKillNotifier2.bKilled);
 	AssertFalse(sKillNotifier1.bKilled);
+
+	cTest1.Kill();
 
 	ObjectsKill();
 }
