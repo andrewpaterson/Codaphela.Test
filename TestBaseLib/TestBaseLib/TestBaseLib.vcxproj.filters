@@ -192,6 +192,9 @@
     <ClCompile Include="TestIndexTreeObject.cpp">
       <Filter>Source\Data\Index</Filter>
     </ClCompile>
+    <ClCompile Include="TestIndexTreeNode.cpp">
+      <Filter>Source\Data\Index</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestSorting.h">
@@ -306,6 +309,9 @@
       <Filter>Source\Data\Index</Filter>
     </ClInclude>
     <ClInclude Include="TestIndexTreeObject.h">
+      <Filter>Source\Data\Index</Filter>
+    </ClInclude>
+    <ClInclude Include="TestIndexTreeNode.h">
       <Filter>Source\Data\Index</Filter>
     </ClInclude>
   </ItemGroup>

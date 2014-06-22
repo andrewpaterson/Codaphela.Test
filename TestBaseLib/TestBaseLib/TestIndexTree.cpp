@@ -180,8 +180,37 @@ void TestIndexTreeValidateInternalConsistency(void)
 	cIndex.Put(&cObject, "tutor");
 	cIndex.Put(&cObject, "tutorship");
 
+	AssertPointer(&cObject, cIndex.Get("tonic"));
+	AssertPointer(&cObject, cIndex.Get("topia"));
+	AssertPointer(&cObject, cIndex.Get("topic"));
+	AssertPointer(&cObject, cIndex.Get("totem"));
+	AssertPointer(&cObject, cIndex.Get("tower"));
+	AssertPointer(&cObject, cIndex.Get("tracter"));
+	AssertPointer(&cObject, cIndex.Get("traction"));
+	AssertPointer(&cObject, cIndex.Get("trahend"));
+	AssertPointer(&cObject, cIndex.Get("translucence"));
+	AssertPointer(&cObject, cIndex.Get("translucency"));
+	AssertPointer(&cObject, cIndex.Get("transparentness"));
+	AssertPointer(&cObject, cIndex.Get("tread"));
+	AssertPointer(&cObject, cIndex.Get("treasurer"));
+	AssertPointer(&cObject, cIndex.Get("treasurership"));
+	AssertPointer(&cObject, cIndex.Get("treasury"));
+	AssertPointer(&cObject, cIndex.Get("trench"));
+	AssertPointer(&cObject, cIndex.Get("triangularity"));
+	AssertPointer(&cObject, cIndex.Get("tribe"));
+	AssertPointer(&cObject, cIndex.Get("triplication"));
+	AssertPointer(&cObject, cIndex.Get("truncation"));
+	AssertPointer(&cObject, cIndex.Get("trunk"));
+	AssertPointer(&cObject, cIndex.Get("tunic"));
+	AssertPointer(&cObject, cIndex.Get("tunnel"));
+	AssertPointer(&cObject, cIndex.Get("tutor"));
+	AssertPointer(&cObject, cIndex.Get("tutorship"));
+
 	cType.Init("type");
 	cIndex.Put(&cType, cType.GetName());
+
+	AssertPointer(&cType, cIndex.Get("type"));
+	
 
 	cIndex.Kill();
 }
@@ -198,6 +227,7 @@ void TestIndexTreeCountAllocatedNodes(void)
 	CTestIndexTreeObject	cAardvark;
 	CTestIndexTreeObject	cAardvar;
 	CTestIndexTreeObject	cAardvarc;
+	void*					pvResult;
 
 	cIndex.Init();
 
@@ -209,15 +239,23 @@ void TestIndexTreeCountAllocatedNodes(void)
 	cAardvarc.Init("Aardvarc");
 
 	cIndex.Put(&cZebra, cZebra.GetName());
+	pvResult = cIndex.Get("Zebra");
+	AssertPointer(&cZebra, pvResult);
 	AssertInt(6, cIndex.CountAllocatedNodes());
 
 	cIndex.Put(&cAardvark, cAardvark.GetName());
+	pvResult = cIndex.Get("Aardvark");
+	AssertPointer(&cAardvark, pvResult);
 	AssertInt(14, cIndex.CountAllocatedNodes());
 
 	cIndex.Put(&cAardvar, cAardvar.GetName());
+	pvResult = cIndex.Get("Aardvar");
+	AssertPointer(&cAardvar, pvResult);
 	AssertInt(14, cIndex.CountAllocatedNodes());
 
 	cIndex.Put(&cAardvarc, cAardvarc.GetName());
+	pvResult = cIndex.Get("Aardvarc");
+	AssertPointer(&cAardvarc, pvResult);
 	AssertInt(15, cIndex.CountAllocatedNodes());
 
 	cIndex.Kill();

@@ -94,6 +94,7 @@
     <ClCompile Include="TestChunkFileFile.cpp" />
     <ClCompile Include="TestCSVFileEditable.cpp" />
     <ClCompile Include="TestIndexTree.cpp" />
+    <ClCompile Include="TestIndexTreeNode.cpp" />
     <ClCompile Include="TestIndexTreeObject.cpp" />
     <ClCompile Include="TestLinkListTemplate.cpp" />
     <ClCompile Include="TestMemoryCache.cpp" />
@@ -134,6 +135,7 @@
     <ClInclude Include="TestChunkFileFile.h" />
     <ClInclude Include="TestCSVFileEditable.h" />
     <ClInclude Include="TestIndexTree.h" />
+    <ClInclude Include="TestIndexTreeNode.h" />
     <ClInclude Include="TestIndexTreeObject.h" />
     <ClInclude Include="TestLinkListTemplate.h" />
     <ClInclude Include="TestMemoryCache.h" />
