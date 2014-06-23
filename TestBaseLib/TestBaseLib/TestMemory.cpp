@@ -109,11 +109,11 @@ void TestMemoryLargeAdd(void)
 	CFreeListBlock*		pcList;
 
 	cMemory.Init();
-	pcList = cMemory.mcFreeLists.GetHead();
+	pcList = cMemory.TestGetFreeListsHead();
 	AssertNull(pcList);
 
 	pv = cMemory.Add(2032);
-	pcList = cMemory.mcFreeLists.GetHead();
+	pcList = cMemory.TestGetFreeListsHead();
 	AssertNotNull(pcList);
 	AssertInt(34899, cMemory.ByteSize());
 	cMemory.Kill();
@@ -121,11 +121,11 @@ void TestMemoryLargeAdd(void)
 	cMemory.Init();
 
 	pv = cMemory.Add(2033);
-	pcList = cMemory.mcFreeLists.GetHead();
+	pcList = cMemory.TestGetFreeListsHead();
 	AssertNull(pcList);
 	AssertInt(2088, cMemory.ByteSize());
 
-	cMemory.mcLargeList.GetHead();
+	cMemory.TestGetLargeListsHead();
 
 	cMemory.Kill();
 }
