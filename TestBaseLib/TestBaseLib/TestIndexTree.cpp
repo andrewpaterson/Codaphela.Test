@@ -1,7 +1,6 @@
 #include "BaseLib/IndexTree.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
-#include "TestIndexTree.h"
 
 
 //////////////////////////////////////////////////////////////////////////

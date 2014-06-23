@@ -2,7 +2,6 @@
 #include "BaseLib/FileIO.h"
 #include "BaseLib/MemoryFile.h"
 #include "TestLib/Assert.h"
-#include "TestMD5File.h"
 
 
 //////////////////////////////////////////////////////////////////////////

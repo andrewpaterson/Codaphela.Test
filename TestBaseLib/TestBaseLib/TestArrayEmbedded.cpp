@@ -1,6 +1,5 @@
 #include "BaseLib/ArrayEmbedded.h"
 #include "TestLib/Assert.h"
-#include "TestArrayEmbedded.h"
 
 
 //////////////////////////////////////////////////////////////////////////

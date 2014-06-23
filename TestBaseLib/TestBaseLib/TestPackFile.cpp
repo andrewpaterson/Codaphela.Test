@@ -4,7 +4,6 @@
 #include "BaseLib/DiskFile.h"
 #include "BaseLib/MemoryFile.h"
 #include "TestLib/Assert.h"
-#include "TestPackFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

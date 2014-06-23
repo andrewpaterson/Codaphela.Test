@@ -1,6 +1,5 @@
 #include "BaseLib/MemoryCache.h"
 #include "TestLib/Assert.h"
-#include "TestMemoryCache.h"
 
 //////////////////////////////////////////////////////////////////////////
 //

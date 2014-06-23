@@ -2,7 +2,6 @@
 #include "BaseLib/ChunkFileFile.h"
 #include "BaseLib/MemoryFile.h"
 #include "TestLib/Assert.h"
-#include "TestChunkFileFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

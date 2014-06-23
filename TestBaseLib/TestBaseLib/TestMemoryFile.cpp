@@ -1,6 +1,5 @@
 #include "BaseLib/MemoryFile.h"
 #include "TestLib/Assert.h"
-#include "TestMemoryFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

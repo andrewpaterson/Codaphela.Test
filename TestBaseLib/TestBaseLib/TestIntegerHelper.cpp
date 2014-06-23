@@ -1,6 +1,5 @@
 #include "BaseLib/IntegerHelper.h"
 #include "TestLib/Assert.h"
-#include "TestIntegerHelper.h"
 
 
 //////////////////////////////////////////////////////////////////////////

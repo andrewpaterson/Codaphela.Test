@@ -1,4 +1,3 @@
-#include "TestDenseArrayTemplate.h"
 #include "TestLib/Assert.h"
 #include "BaseLib/ArrayDenseTemplate.h"
 

@@ -1,6 +1,5 @@
 #include "BaseLib/ASCIITree.h"
 #include "TestLib/Assert.h"
-#include "TestASCIITree.h"
 
 
 //////////////////////////////////////////////////////////////////////////

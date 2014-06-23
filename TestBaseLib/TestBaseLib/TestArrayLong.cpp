@@ -1,6 +1,5 @@
 #include "BaseLib/ArrayLong.h"
 #include "TestLib/Assert.h"
-#include "TestArrayLong.h"
 
 
 //////////////////////////////////////////////////////////////////////////

@@ -3,7 +3,6 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TextFile.h"
 #include "TestLib/Assert.h"
-#include "TestBufferedFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

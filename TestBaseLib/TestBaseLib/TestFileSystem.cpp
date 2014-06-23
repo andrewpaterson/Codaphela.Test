@@ -2,7 +2,6 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TextFile.h"
 #include "TestLib/Assert.h"
-#include "TestFileSystem.h"
 
 
 //////////////////////////////////////////////////////////////////////////

@@ -1,7 +1,6 @@
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/TreeTemplate.h"
 #include "TestLib/Assert.h"
-#include "TestTreeTemplate.h"
 
 
 struct STestTreeTemplateItem

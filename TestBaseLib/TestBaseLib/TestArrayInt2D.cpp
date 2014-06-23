@@ -1,6 +1,5 @@
 #include "BaseLib/ArrayInt2D.h"
 #include "TestLib/Assert.h"
-#include "TestArrayInt2D.h"
 
 
 //////////////////////////////////////////////////////////////////////////

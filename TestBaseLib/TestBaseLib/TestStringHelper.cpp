@@ -1,6 +1,5 @@
 #include "TestLib/Assert.h"
 #include "BaseLib/StringHelper.h"
-#include "TestStringHelper.h"
 
 
 //////////////////////////////////////////////////////////////////////////

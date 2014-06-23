@@ -1,4 +1,3 @@
-#include "TestSparseArrayTemplate.h"
 #include "TestLib/Assert.h"
 #include "BaseLib/ArraySparseTemplate.h"
 

@@ -1,7 +1,6 @@
 #include "BaseLib/DiskFile.h"
 #include "BaseLib/FileUtil.h"
 #include "TestLib/Assert.h"
-#include "TestDiskFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

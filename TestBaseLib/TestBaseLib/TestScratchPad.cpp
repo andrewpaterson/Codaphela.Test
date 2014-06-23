@@ -1,6 +1,5 @@
 #include "BaseLib/ScratchPad.h"
 #include "TestLib/Assert.h"
-#include "TestScratchPad.h"
 
 
 //////////////////////////////////////////////////////////////////////////

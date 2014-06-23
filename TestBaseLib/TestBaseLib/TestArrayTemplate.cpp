@@ -1,6 +1,5 @@
 #include "BaseLib/ArrayTemplate.h"
 #include "TestLib/Assert.h"
-#include "TestArrayTemplate.h"
 
 
 struct STestArrayTemplateItem

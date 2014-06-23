@@ -132,45 +132,7 @@
     <ClCompile Include="TestTreeTemplate.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TestChunkFileFile.h" />
-    <ClInclude Include="TestCSVFileEditable.h" />
-    <ClInclude Include="TestIndexTree.h" />
-    <ClInclude Include="TestIndexTreeNode.h" />
     <ClInclude Include="TestIndexTreeObject.h" />
-    <ClInclude Include="TestLinkListTemplate.h" />
-    <ClInclude Include="TestMemoryCache.h" />
-    <ClInclude Include="TestMemoryStack.h" />
-    <ClInclude Include="TestScratchPad.h" />
-    <ClInclude Include="TestSorting.h" />
-    <ClInclude Include="TestArrayBit.h" />
-    <ClInclude Include="TestArrayEmbedded.h" />
-    <ClInclude Include="TestArrayInt.h" />
-    <ClInclude Include="TestArrayInt2D.h" />
-    <ClInclude Include="TestArrayLong.h" />
-    <ClInclude Include="TestArrayPrimitiveTemplate.h" />
-    <ClInclude Include="TestArrayTemplate.h" />
-    <ClInclude Include="TestDenseArrayTemplate.h" />
-    <ClInclude Include="TestSparseArrayTemplate.h" />
-    <ClInclude Include="TestStringHelper.h" />
-    <ClInclude Include="TestDate.h" />
-    <ClInclude Include="TestMapInt.h" />
-    <ClInclude Include="TestMapPtr.h" />
-    <ClInclude Include="TestASCIITree.h" />
-    <ClInclude Include="TestBufferedFile.h" />
-    <ClInclude Include="TestDiskFile.h" />
-    <ClInclude Include="TestFileFinder.h" />
-    <ClInclude Include="TestFileUtil.h" />
-    <ClInclude Include="TestMD5File.h" />
-    <ClInclude Include="TestMemoryFile.h" />
-    <ClInclude Include="TestChunkFile.h" />
-    <ClInclude Include="TestPackFile.h" />
-    <ClInclude Include="TestFileSystem.h" />
-    <ClInclude Include="TestIntegerHelper.h" />
-    <ClInclude Include="TestNumbers.h" />
-    <ClInclude Include="TestFreeList.h" />
-    <ClInclude Include="TestLinkListAligned.h" />
-    <ClInclude Include="TestMemory.h" />
-    <ClInclude Include="TestTreeTemplate.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

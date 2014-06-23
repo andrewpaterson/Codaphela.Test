@@ -3,7 +3,6 @@
 #include "BaseLib/ArrayChar.h"
 #include "BaseLib/ArrayLong.h"
 #include "TestLib/Assert.h"
-#include "TestArrayPrimitiveTemplate.h"
 
 
 //////////////////////////////////////////////////////////////////////////
