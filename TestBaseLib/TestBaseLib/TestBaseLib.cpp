@@ -6,6 +6,7 @@ void TestArrayLong(void);
 void TestArrayTemplate(void);
 void TestMapInt(void);
 void TestMapPtr(void);
+void TestDate(void);
 void TestNumbers(void);
 void TestArrayDenseTemplate(void);
 void TestArraySparseTemplate(void);
@@ -57,6 +58,7 @@ int main(int argc, char* argv[])
 	TestLinkListAligned();
 	TestFreeList();
 	TestStringHelper();
+	TestDate();
 	TestNumbers();
 	TestArrayTemplate();
 	TestIndexTreeNode();
