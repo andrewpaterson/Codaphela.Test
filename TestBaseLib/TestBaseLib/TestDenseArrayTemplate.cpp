@@ -31,34 +31,34 @@ void TestArrayDenseTemplateInsertion(void)
 
 	psItem0 = cArray.Add();
 	psItem0->i1 = 0;
-	AssertPointer(psItem0, cArray.mpsRoot->GetLeft());
+	AssertPointer(psItem0, cArray.TestGetRoot()->GetLeft());
 
 	psItem1 = cArray.Add();
 	psItem1->i1 = 1;
-	AssertPointer(psItem1, cArray.mpsRoot->GetRight());
-	AssertInt(2, cArray.miUsedElements);
+	AssertPointer(psItem1, cArray.TestGetRoot()->GetRight());
+	AssertInt(2, cArray.NumUsedElements());
 
 	psItem2 = cArray.Add();
 	psItem2->i1 = 2;
 
 	psItem3 = cArray.Add();
 	psItem3->i1 = 3;
-	AssertInt(4, cArray.miUsedElements);
-	AssertInt(3, cArray.miUsedNodes);
+	AssertInt(4, cArray.NumUsedElements());
+	AssertInt(3, cArray.NumUsedNodes());
 
-	for (i = 0; i < cArray.miUsedElements; i++)
+	for (i = 0; i < cArray.NumUsedElements(); i++)
 	{
 		psItem = cArray.Get(i);
 		AssertInt(i, psItem->i1);
 	}
 
-	iEnd = cArray.miUsedElements+100;
-	for (i = cArray.miUsedElements; i < iEnd; i++)
+	iEnd = cArray.NumUsedElements()+100;
+	for (i = cArray.NumUsedElements(); i < iEnd; i++)
 	{
 		psItem = cArray.Add();
 		psItem->i1 = i;
 	}
-	for (i = 0; i < cArray.miUsedElements; i++)
+	for (i = 0; i < cArray.NumUsedElements(); i++)
 	{
 		psItem = cArray.Get(i);
 		AssertInt(i, psItem->i1);
@@ -77,16 +77,16 @@ void TestArrayDenseTemplateInsertion(void)
 	psItem = cArray.Get(1);
 	AssertInt(0, psItem->i1);
 
-	iEnd = cArray.miUsedElements+100;
-	for (i = cArray.miUsedElements; i < iEnd; i++)
+	iEnd = cArray.NumUsedElements()+100;
+	for (i = cArray.NumUsedElements(); i < iEnd; i++)
 	{
 		psItem = cArray.InsertAt(0);
 		psItem->i1 = -i;
 	}
-	for (i = 0; i < cArray.miUsedElements; i++)
+	for (i = 0; i < cArray.NumUsedElements(); i++)
 	{
 		psItem = cArray.Get(i);
-		AssertInt(i-(cArray.miUsedElements-1), psItem->i1);
+		AssertInt(i-(cArray.NumUsedElements()-1), psItem->i1);
 	}
 
 	cArray.Kill();
@@ -112,7 +112,7 @@ void TestArrayDenseTemplateInsertion(void)
 	psItem = cArray.InsertAt(5);
 	psItem->i1 = 104;
 
-	AssertInt(9, cArray.miUsedElements);
+	AssertInt(9, cArray.NumUsedElements());
 
 	psItem = cArray.Get(0);
 	AssertInt(101, psItem->i1);
@@ -202,7 +202,7 @@ void TestArrayDenseTemplateRemoval(void)
 	AssertInt(4, psItem->i1);
 
 	cArray.RemoveAt(0);
-	AssertInt(0, cArray.miUsedElements);
+	AssertInt(0, cArray.NumUsedElements());
 
 	cArray.Kill();
 }
