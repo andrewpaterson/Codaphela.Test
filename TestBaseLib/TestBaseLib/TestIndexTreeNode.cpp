@@ -47,6 +47,32 @@ void TestIndexTreeNodeInit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+CIndexTreeNode* TestIndexTreeNodeMalloc(void)
+{
+	int					iSize;
+	CIndexTreeNode*		pcNode;
+
+	iSize = sizeof(CIndexTreeNode) + (MAX_UCHAR-1) * sizeof(CIndexTreeNode*);
+	pcNode = (CIndexTreeNode*)malloc(iSize);
+	memset(pcNode, 0xfffefdfc, iSize);
+	return pcNode;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeNodeFree(CIndexTreeNode* pcNode)
+{
+	free(pcNode);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeNodeContain(void)
 {
 	CIndexTreeNode*	pcNode1;
@@ -55,21 +81,13 @@ void TestIndexTreeNodeContain(void)
 	CIndexTreeNode*	pcNode4;
 	CIndexTreeNode*	pcNode5;
 	CIndexTreeNode*	pcNode6;
-	int				iSize;
 
-	iSize = sizeof(CIndexTreeNode) + (MAX_UCHAR-1) * sizeof(CIndexTreeNode*);
-	pcNode1 = (CIndexTreeNode*)malloc(iSize);
-	pcNode2 = (CIndexTreeNode*)malloc(iSize);
-	pcNode3 = (CIndexTreeNode*)malloc(iSize);
-	pcNode4 = (CIndexTreeNode*)malloc(iSize);
-	pcNode5 = (CIndexTreeNode*)malloc(iSize);
-	pcNode6 = (CIndexTreeNode*)malloc(iSize);
-	memset(pcNode1, 0xfffefdfc, iSize);
-	memset(pcNode2, 0xfffefdfc, iSize);
-	memset(pcNode3, 0xfffefdfc, iSize);
-	memset(pcNode4, 0xfffefdfc, iSize);
-	memset(pcNode5, 0xfffefdfc, iSize);
-	memset(pcNode6, 0xfffefdfc, iSize);
+	pcNode1 = TestIndexTreeNodeMalloc();
+	pcNode2 = TestIndexTreeNodeMalloc();
+	pcNode3 = TestIndexTreeNodeMalloc();
+	pcNode4 = TestIndexTreeNodeMalloc();
+	pcNode5 = TestIndexTreeNodeMalloc();
+	pcNode6 = TestIndexTreeNodeMalloc();
 
 	pcNode1->Init(NULL);
 	pcNode1->Contain(8);
@@ -173,12 +191,12 @@ void TestIndexTreeNodeContain(void)
 	AssertNull(pcNode1->Get(13));
 	AssertPointer(pcNode6, pcNode1->Get(14));
 
-	free(pcNode6);
-	free(pcNode5);
-	free(pcNode4);
-	free(pcNode3);
-	free(pcNode2);
-	free(pcNode1);
+	TestIndexTreeNodeFree(pcNode6);
+	TestIndexTreeNodeFree(pcNode5);
+	TestIndexTreeNodeFree(pcNode4);
+	TestIndexTreeNodeFree(pcNode3);
+	TestIndexTreeNodeFree(pcNode2);
+	TestIndexTreeNodeFree(pcNode1);
 }
 
 
