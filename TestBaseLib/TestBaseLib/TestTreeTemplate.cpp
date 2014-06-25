@@ -43,7 +43,7 @@ void TestTreeTemplateFileHelper(void)
 
 	cFileBasic.Init(pcMemoryFile);
 	cFileBasic.Open(EFM_Write_Create);
-	bResult = cFileBasic.WriteTreeTemplate(&cTree);
+	bResult = cTree.WriteTreeTemplate(&cFileBasic);
 	AssertTrue(bResult);
 	cFileBasic.Close();
 	cFileBasic.Kill();
@@ -52,7 +52,7 @@ void TestTreeTemplateFileHelper(void)
 
 	cFileBasic.Init(pcMemoryFile);
 	cFileBasic.Open(EFM_Read);
-	bResult = cFileBasic.ReadTreeTemplate(&cTree);
+	bResult = cTree.ReadTreeTemplate(&cFileBasic);
 	AssertTrue(bResult);
 	cFileBasic.Close();
 	cFileBasic.Kill();
