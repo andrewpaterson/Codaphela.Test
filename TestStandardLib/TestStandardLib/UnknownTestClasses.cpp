@@ -16,12 +16,12 @@ BOOL CTestUnknown::Load(CFileReader* pcFile)
 BOOL CTestUnknownJobbie::Save(CFileWriter* pcFile)
 {
 	ReturnOnFalse(pcFile->WriteInt(miANumber));
-	ReturnOnFalse(pcFile->WriteString(&mszText));
+	ReturnOnFalse(mszText.WriteString(pcFile));
 	return TRUE;
 }
 BOOL CTestUnknownJobbie::Load(CFileReader* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadInt(&miANumber));
-	ReturnOnFalse(pcFile->ReadString(&mszText));
+	ReturnOnFalse(mszText.ReadString(pcFile));
 	return TRUE;
 }

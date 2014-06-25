@@ -208,7 +208,7 @@ BOOL CTestSaveableObject1::Save(CObjectSerialiser* pcFile)
 {
 	ReturnOnFalse(pcFile->WritePointer(mpObject));
 	ReturnOnFalse(pcFile->WriteInt(miInt));
-	ReturnOnFalse(pcFile->WriteString(&mszString));
+	ReturnOnFalse(mszString.WriteString(pcFile));
 
 	mbSaved = TRUE;
 	return TRUE;
@@ -223,7 +223,7 @@ BOOL CTestSaveableObject1::Load(CObjectDeserialiser* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadPointer(mpObject.This()));
 	ReturnOnFalse(pcFile->ReadInt(&miInt));
-	ReturnOnFalse(pcFile->ReadString(&mszString));
+	ReturnOnFalse(mszString.ReadString(pcFile));
 
 	mbSaved = FALSE;
 	return TRUE;
@@ -275,7 +275,7 @@ BOOL CTestSaveableObject2::Save(CObjectSerialiser* pcFile)
 {
 	pcFile->WritePointer(mp1);
 	pcFile->WritePointer(mp2);
-	pcFile->WriteString(&msz);
+	msz.WriteString(pcFile);
 	mbSaved = TRUE;
 	return TRUE;
 }
@@ -289,7 +289,7 @@ BOOL CTestSaveableObject2::Load(CObjectDeserialiser* pcFile)
 {
 	pcFile->ReadPointer(mp1.This());
 	pcFile->ReadPointer(mp2.This());
-	pcFile->ReadString(&msz);
+	msz.ReadString(pcFile);
 	mbSaved = FALSE;
 	return TRUE;
 }

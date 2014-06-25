@@ -33,7 +33,7 @@ void CTestWithArray::Add(CPointer& pcObject)
 BOOL CTestWithArray::Save(CObjectSerialiser* pcFile)
 {
 	ReturnOnFalse(pcFile->WritePointer(mcArray));
-	ReturnOnFalse(pcFile->WriteString(&mszString));
+	ReturnOnFalse(mszString.WriteString(pcFile));
 	ReturnOnFalse(pcFile->WriteInt(mx));
 	return TRUE;
 }
@@ -41,7 +41,7 @@ BOOL CTestWithArray::Save(CObjectSerialiser* pcFile)
 BOOL CTestWithArray::Load(CObjectDeserialiser* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadPointer(mcArray.This()));
-	ReturnOnFalse(pcFile->ReadString(&mszString));
+	ReturnOnFalse(mszString.ReadString(pcFile));
 	ReturnOnFalse(pcFile->ReadInt(&mx));
 	return TRUE;
 }
@@ -123,7 +123,7 @@ BOOL CTestNamedString::Save(CObjectSerialiser* pcFile)
 {
 	ReturnOnFalse(pcFile->WritePointer(mszString));
 	ReturnOnFalse(pcFile->WritePointer(mpAnother));
-	ReturnOnFalse(pcFile->WriteString(&mszEmbedded));
+	ReturnOnFalse(mszEmbedded.WriteString(pcFile));
 	return TRUE;
 }
 
@@ -131,7 +131,7 @@ BOOL CTestNamedString::Load(CObjectDeserialiser* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadPointer(mszString.This()));
 	ReturnOnFalse(pcFile->ReadPointer(mpAnother.This()));
-	ReturnOnFalse(pcFile->ReadString(&mszEmbedded));
+	ReturnOnFalse(mszEmbedded.ReadString(pcFile));
 	return TRUE;
 }
 
