@@ -26,6 +26,7 @@ void TestMemoryFile(void);
 void TestChunkFile(void);
 void TestChunkFileFile(void);
 void TestPackFile(void);
+void TestFileIO(void);
 void TestFileSystem(void);
 void TestSorting(void);
 void TestIntegerHelper(void);
@@ -75,6 +76,7 @@ int main(int argc, char* argv[])
 	TestChunkFile();
 	TestChunkFileFile();
 	TestPackFile();
+	TestFileIO();
 	TestFileSystem();
 	TestSorting();
 	TestArrayBit();

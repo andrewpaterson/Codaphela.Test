@@ -93,6 +93,7 @@
     <ClCompile Include="TestBaseLib.cpp" />
     <ClCompile Include="TestChunkFileFile.cpp" />
     <ClCompile Include="TestCSVFileEditable.cpp" />
+    <ClCompile Include="TestFileIO.cpp" />
     <ClCompile Include="TestIndexTree.cpp" />
     <ClCompile Include="TestIndexTreeNode.cpp" />
     <ClCompile Include="TestIndexTreeObject.cpp" />
