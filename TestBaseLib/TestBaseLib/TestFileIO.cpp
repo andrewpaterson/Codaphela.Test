@@ -176,9 +176,6 @@ void TestFileIOEnumerator(void)
 
 	cEnumeratorIn.Kill();
 	TestFileIOEnd(&cMemory, &cFile);
-
-	//template<class M>	BOOL	ReadEnumeratorTemplate(CEnumeratorTemplate<M>* pcEnumerator);
-	//BOOL	ReadEnumeratorBlock(CEnumeratorBlock* pcEnumerator);
 }
 
 
