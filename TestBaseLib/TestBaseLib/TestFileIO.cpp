@@ -59,6 +59,15 @@ void TestFileIOHelpers(void)
 	CFileBasic		cFile;
 	unsigned char	ab[7] = {0x5e, 0xe1, 0x9e, 0x03, 0x32, 0x1f, 0x93};
 	int				ai[3] = {0x7deb74f3, 0x41b0f58c, 0x5cbf05d8};
+	int				i;
+	long long int	l;
+	float			f;
+	double			d;
+	char			c;
+	unsigned char	uc;
+	BOOL			b;
+	short			s;
+	unsigned short	us;
 	unsigned char	abi[7];
 	int				aii[3];
 
@@ -86,16 +95,6 @@ void TestFileIOHelpers(void)
 	AssertTrue(cFile.WriteShort((unsigned short)0xffff));
 
 	TestFileIOMiddle(&cFile);
-	
-	int				i;
-	long long int	l;
-	float			f;
-	double			d;
-	char			c;
-	unsigned char	uc;
-	BOOL			b;
-	short			s;
-	unsigned short	us;
 	
 	AssertTrue(cFile.ReadInt(&i));
 	AssertInt(0xf48e33a9, i);
@@ -150,15 +149,16 @@ void TestFileIOHelpers(void)
 void TestFileIOEnumerator(void)
 {
 	CMemoryFile		cMemory;
+	CFileBasic		cFile;
 
-	cMemory.Init();
-	cMemory.Open(EFM_ReadWrite_Create);
+	TestFileIOBegin(&cMemory, &cFile);
+
+	TestFileIOMiddle(&cFile);
+
+	TestFileIOEnd(&cMemory, &cFile);
 
 	//template<class M>	BOOL	ReadEnumeratorTemplate(CEnumeratorTemplate<M>* pcEnumerator);
 	//BOOL	ReadEnumeratorBlock(CEnumeratorBlock* pcEnumerator);
-
-	cMemory.Close();
-	cMemory.Kill();
 }
 
 
@@ -169,15 +169,16 @@ void TestFileIOEnumerator(void)
 void TestFileIOTree(void)
 {
 	CMemoryFile		cMemory;
+	CFileBasic		cFile;
 
-	cMemory.Init();
-	cMemory.Open(EFM_ReadWrite_Create);
+	TestFileIOBegin(&cMemory, &cFile);
+
+	TestFileIOMiddle(&cFile);
+
+	TestFileIOEnd(&cMemory, &cFile);
 
 	//template<class M>	BOOL	ReadTreeTemplate(CTreeTemplate<M>* pcTree);
 	//BOOL	ReadTreeUnknown(CTreeBlock* pcTree);
-
-	cMemory.Close();
-	cMemory.Kill();
 }
 
 
@@ -188,18 +189,19 @@ void TestFileIOTree(void)
 void TestFileIOArray(void)
 {
 	CMemoryFile		cMemory;
+	CFileBasic		cFile;
 
-	cMemory.Init();
-	cMemory.Open(EFM_ReadWrite_Create);
+	TestFileIOBegin(&cMemory, &cFile);
+
+	TestFileIOMiddle(&cFile);
+
+	TestFileIOEnd(&cMemory, &cFile);
 
 	//template<class M>	BOOL	ReadArrayTemplate(CArrayTemplate<M>* pcArray);
 	//template<class M>	BOOL	ReadArrayTemplateHeader(CArrayTemplate<M>* pcArray);
 	//BOOL	ReadArrayInt(CArrayInt* pcArray);
 	//BOOL	ReadArrayUnknown(CArrayBlock* pcArray);
 	//template<class M>	BOOL	ReadArraySimple(CArraySimple<M>* pcArray);
-
-	cMemory.Close();
-	cMemory.Kill();
 }
 
 
@@ -210,17 +212,18 @@ void TestFileIOArray(void)
 void TestFileIOString(void)
 {
 	CMemoryFile		cMemory;
+	CFileBasic		cFile;
 
-	cMemory.Init();
-	cMemory.Open(EFM_ReadWrite_Create);
+	TestFileIOBegin(&cMemory, &cFile);
+
+	TestFileIOMiddle(&cFile);
+
+	TestFileIOEnd(&cMemory, &cFile);
 
 	//BOOL	ReadStringLength(int* piLength);
 	//BOOL	ReadStringChars(char* szString, int iLength);
 	//BOOL	ReadString(CChars* szString);  //Call this one if the string was saved from a CChars
 	//BOOL	ReadString(CChars* szString, BOOL bDoesntMatter);  //Or this one if the string was saved from a char*
-
-	cMemory.Close();
-	cMemory.Kill();
 }
 
 
