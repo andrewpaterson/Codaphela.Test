@@ -1,5 +1,7 @@
 #include "BaseLib/FileIO.h"
 #include "BaseLib/MemoryFile.h"
+#include "BaseLib/EnumeratorTemplate.h"
+#include "BaseLib/EnumeratorBlock.h"
 #include "TestLib/Assert.h"
 #include "FileIOTestObjects.h"
 
@@ -150,13 +152,29 @@ void TestFileIOHelpers(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFileIOEnumerator(void)
 {
-	CMemoryFile		cMemory;
-	CFileBasic		cFile;
+	CMemoryFile							cMemory;
+	CFileBasic							cFile;
+	CEnumeratorTemplate<CFileIOTest>	cEnumerator;
+	CFileIOTest							cTest;
+	CFileIOTest*						pcTestIn;
+	CEnumeratorTemplate<CFileIOTest>	cEnumeratorIn;
 
 	TestFileIOBegin(&cMemory, &cFile);
 
+	cTest.Init(83);
+	cEnumerator.Init();
+	cEnumerator.Add("I Dunno", &cTest, 2);
+
+	AssertTrue(cEnumerator.WriteEnumeratorTemplate(&cFile));
+
+	cEnumerator.Kill();
 	TestFileIOMiddle(&cFile);
 
+	AssertTrue(cEnumeratorIn.ReadEnumeratorTemplate(&cFile));
+	AssertInt(2, cEnumeratorIn.Get("I Dunno", &pcTestIn));
+	AssertTrue(pcTestIn->IsOkay(83));
+
+	cEnumeratorIn.Kill();
 	TestFileIOEnd(&cMemory, &cFile);
 
 	//template<class M>	BOOL	ReadEnumeratorTemplate(CEnumeratorTemplate<M>* pcEnumerator);
@@ -181,6 +199,25 @@ void TestFileIOTree(void)
 
 	//template<class M>	BOOL	ReadTreeTemplate(CTreeTemplate<M>* pcTree);
 	//BOOL	ReadTreeUnknown(CTreeBlock* pcTree);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFileIOLinkList(void)
+{
+	CMemoryFile		cMemory;
+	CFileBasic		cFile;
+
+	TestFileIOBegin(&cMemory, &cFile);
+
+	TestFileIOMiddle(&cFile);
+
+	TestFileIOEnd(&cMemory, &cFile);
+
+	//BOOL	ReadLinkListBlock(CFileReader* pcFileReader);
 }
 
 
@@ -333,6 +370,7 @@ void TestFileIO(void)
 	TestFileIOString();
 	TestFileIOEnumerator();
 	TestFileIOTree();
+	TestFileIOLinkList();
 
 	TestStatistics();
 }
