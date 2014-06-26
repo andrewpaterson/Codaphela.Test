@@ -1,6 +1,7 @@
 #include "BaseLib/FileIO.h"
 #include "BaseLib/MemoryFile.h"
 #include "TestLib/Assert.h"
+#include "FileIOTestObjects.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -84,6 +85,7 @@ void TestFileIOHelpers(void)
 	AssertTrue(cFile.WriteShort((unsigned short)0x6be4));
 	AssertTrue(cFile.WriteBits(ab, 7));
 	AssertTrue(cFile.WriteIntArray(ai, 3));
+
 	AssertTrue(cFile.WriteInt(0x091bfe25));
 	AssertTrue(cFile.WriteLong(0xe98ebf36c079e63aLL));
 	AssertTrue(cFile.WriteFloat(6.478389585938f));
@@ -188,20 +190,94 @@ void TestFileIOTree(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFileIOArray(void)
 {
-	CMemoryFile		cMemory;
-	CFileBasic		cFile;
+	CMemoryFile						cMemory;
+	CFileBasic						cFile;
+	CArrayTemplate<CFileIOTest>		acTest;
+	int								i;
+	CFileIOTest*					pcTest;
+	CArrayTemplate<CFileIOTest>		acTestIn;
+	CArrayInt						ai;
+	CArrayInt						aii;
+	int								ii;
+	CArrayBlock						av;
+	CArrayBlock						avi;
+	CArraySimple<CFileIOTest>		asTest;
+	CArraySimple<CFileIOTest>		asTestIn;
 
 	TestFileIOBegin(&cMemory, &cFile);
 
+	acTest.Init(5);
+	for (i = 0; i <= 8; i++)
+	{
+		pcTest = acTest.Add();
+		pcTest->Init(i);
+	}
+	ai.Init();
+	for (i = 0; i <= 5; i++)
+	{
+		ai.Add(8-i);
+	}
+	av.Allocate(1, 7, 12);
+	memcpy(av.GetData(), "ABCDEFGHIJK\0", 12);
+	asTest.Init();
+	for (i = 0; i <= 10; i++)
+	{
+		pcTest = asTest.Add();
+		pcTest->Init(i*3-2);
+	}
+
+	AssertInt(9, acTest.NumElements());
+	AssertInt(10, acTest.AllocatedElements());
+	AssertInt(6, ai.NumElements());
+	AssertInt(6, ai.AllocatedElements());
+	AssertInt(12, av.NumElements());
+	AssertInt(14, av.AllocatedElements());
+	AssertInt(11, asTest.NumElements());
+	AssertTrue(acTest.WriteArrayTemplate(&cFile));
+	AssertTrue(ai.WriteArrayInt(&cFile));
+	AssertTrue(av.WriteArrayUnknown(&cFile));
+	AssertTrue(asTest.WriteArraySimple(&cFile));
+
+	asTest.Kill();
+	av.Kill();
+	ai.Kill();
+	acTest.Kill();
 	TestFileIOMiddle(&cFile);
 
-	TestFileIOEnd(&cMemory, &cFile);
+	AssertTrue(acTestIn.ReadArrayTemplate(&cFile));
+	AssertInt(9, acTestIn.NumElements());
+	AssertInt(10, acTestIn.AllocatedElements());
+	for (i = 0; i <= 8; i++)
+	{
+		pcTest = acTestIn.Get(i);
+		AssertTrue(pcTest->IsOkay(i));
+	}
+	AssertTrue(aii.ReadArrayInt(&cFile));
+	AssertInt(6, aii.NumElements());
+	AssertInt(6, aii.AllocatedElements());
+	for (i = 0; i <= 5; i++)
+	{
+		ii = aii.GetValue(i);
+		AssertInt(8-i, ii);
+	}
+	AssertTrue(avi.ReadArrayUnknown(&cFile));
+	AssertInt(12, avi.NumElements());
+	AssertInt(14, avi.AllocatedElements());
+	AssertString("ABCDEFGHIJK", (char*)avi.GetData());
+	AssertTrue(asTestIn.ReadArraySimple(&cFile));
+	AssertInt(11, asTestIn.NumElements());
+	for (i = 0; i <= 10; i++)
+	{
+		pcTest = asTestIn.Get(i);
+		AssertTrue(pcTest->IsOkay(i*3-2));
+	}
 
-	//template<class M>	BOOL	ReadArrayTemplate(CArrayTemplate<M>* pcArray);
-	//template<class M>	BOOL	ReadArrayTemplateHeader(CArrayTemplate<M>* pcArray);
-	//BOOL	ReadArrayInt(CArrayInt* pcArray);
-	//BOOL	ReadArrayUnknown(CArrayBlock* pcArray);
-	//template<class M>	BOOL	ReadArraySimple(CArraySimple<M>* pcArray);
+	asTestIn.Kill();
+	avi.Kill();
+	aii.Kill();
+	acTestIn.Kill();
+
+	TestFileIOEnd(&cMemory, &cFile);
 }
 
 

@@ -90,6 +90,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FileIOTestObjects.cpp" />
     <ClCompile Include="TestBaseLib.cpp" />
     <ClCompile Include="TestChunkFileFile.cpp" />
     <ClCompile Include="TestCSVFileEditable.cpp" />
@@ -133,6 +134,7 @@
     <ClCompile Include="TestTreeTemplate.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FileIOTestObjects.h" />
     <ClInclude Include="TestIndexTreeObject.h" />
   </ItemGroup>
   <ItemGroup>
