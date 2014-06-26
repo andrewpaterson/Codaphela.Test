@@ -289,17 +289,34 @@ void TestFileIOString(void)
 {
 	CMemoryFile		cMemory;
 	CFileBasic		cFile;
+	CChars			sz;
+	CChars			szi;
+	CChars			szi2;
+	char			szc[4];
+	int				i;
 
 	TestFileIOBegin(&cMemory, &cFile);
 
+	sz.Init("You, flock of seagulls, you know why we're here?");
+	AssertTrue(sz.WriteString(&cFile));
+	AssertTrue(cFile.WriteString("That means they only eat vegetables, but for you, I think they'd make an exception."));
+	AssertTrue(cFile.WriteString("123"));
+
+	sz.Kill();
 	TestFileIOMiddle(&cFile);
 
-	TestFileIOEnd(&cMemory, &cFile);
+	AssertTrue(szi.ReadString(&cFile));
+	AssertString("You, flock of seagulls, you know why we're here?", szi.Text());
+	AssertTrue(szi2.ReadChars(&cFile));
+	AssertString("That means they only eat vegetables, but for you, I think they'd make an exception.", szi2.Text());
+	AssertTrue(cFile.ReadStringLength(&i));
+	AssertInt(4, i);
+	AssertTrue(cFile.ReadStringChars(szc, i));
+	AssertString("123", szc);
 
-	//BOOL	ReadStringLength(int* piLength);
-	//BOOL	ReadStringChars(char* szString, int iLength);
-	//BOOL	ReadString(CChars* szString);  //Call this one if the string was saved from a CChars
-	//BOOL	ReadString(CChars* szString, BOOL bDoesntMatter);  //Or this one if the string was saved from a char*
+	szi2.Kill();
+	szi.Kill();
+	TestFileIOEnd(&cMemory, &cFile);
 }
 
 
