@@ -299,13 +299,13 @@ void TestFileIOLinkList(void)
 
 	cBlock.Init();
 	strcpy(sz, "Lurching Larch");
-	pv = cBlock.InsertAfterTail(strlen(sz)+1, 2);
+	pv = cBlock.InsertAfterTail(strlen(sz)+1);
 	strcpy((char*)pv, sz);
 	strcpy(sz, "Black Larch");
-	pv = cBlock.InsertAfterTail(strlen(sz)+1, 7);
+	pv = cBlock.InsertAfterTail(strlen(sz)+1);
 	strcpy((char*)pv, sz);
 	strcpy(sz, "Wheeling Willow");
-	pv = cBlock.InsertAfterTail(strlen(sz)+1, -3);
+	pv = cBlock.InsertAfterTail(strlen(sz)+1);
 	strcpy((char*)pv, sz);
 	AssertInt(cBlock.NumElements(), 3);
 	AssertTrue(cBlock.WriteLinkListBlock(&cFile));
