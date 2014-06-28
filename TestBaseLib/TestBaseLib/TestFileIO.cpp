@@ -4,6 +4,8 @@
 #include "BaseLib/EnumeratorBlock.h"
 #include "BaseLib/LinkListAligned.h"
 #include "BaseLib/LinkListBlock.h"
+#include "BaseLib/TreeTemplate.h"
+#include "BaseLib/TreeBlock.h"
 #include "TestLib/Assert.h"
 #include "FileIOTestObjects.h"
 
@@ -187,13 +189,82 @@ void TestFileIOEnumerator(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFileIOTree(void)
 {
-	CMemoryFile		cMemory;
-	CFileBasic		cFile;
+	CMemoryFile					cMemory;
+	CFileBasic					cFile;
+	CTreeTemplate<CFileIOTest>	cTree;
+	CTreeBlock					cBlock;
+	CTreeBlock					cBlockIn;
+	CFileIOTest*				pcRoot;
+	CFileIOTest*				pcChild;
+	CFileIOTest*				pcGrandChild;
+	CTreeTemplate<CFileIOTest>	cTreeIn;
+	CFileIOTest*				pcRootIn;
+	CFileIOTest*				pcChildIn;
+	CFileIOTest*				pcGrandChildIn;
+	CFileIOTest*				pcBlockRoot;
+	CFileIOTest*				pcBlockChild;
 
 	TestFileIOBegin(&cMemory, &cFile);
 
+	cTree.Init();
+	pcRoot = cTree.InsertRoot();
+	pcRoot->Init(672);
+	pcChild = cTree.InsertOnRightOfChildren(pcRoot);
+	pcChild->Init(720);
+	pcGrandChild = cTree.InsertOnRightOfChildren(pcChild);
+	pcGrandChild->Init(666);
+	pcChild = cTree.InsertOnRightOfChildren(pcRoot);
+	pcChild->Init(8);
+	pcChild = cTree.InsertOnRightOfChildren(pcRoot);
+	pcChild->Init(99);
+	AssertInt(5, cTree.NumElements());
+	AssertTrue(cTree.WriteTreeTemplate(&cFile));
+	pcRoot = cTree.GetRoot();
+	AssertTrue(pcRoot->IsOkay(672));
+	pcChild = cTree.GetUp(pcRoot);
+	AssertTrue(pcChild->IsOkay(720));
+	AssertNull(cTree.GetDown(pcRoot));
+
+	cBlock.Init();
+	pcBlockRoot = (CFileIOTest*)cBlock.InsertRoot(sizeof(CFileIOTest), -3);
+	pcBlockRoot->Init(1337);
+	pcBlockChild = (CFileIOTest*)cBlock.InsertOnRightOfChildren(pcBlockRoot, sizeof(CFileIOTest), 100000000);
+	pcChild->Init(54321);
+	AssertInt(2, cBlock.NumElements());
+	AssertTrue(cBlock.WriteTreeUnknown(&cFile));
+
+	cBlock.Kill();
+	cTree.Kill();
 	TestFileIOMiddle(&cFile);
 
+	AssertTrue(cTreeIn.ReadTreeTemplate(&cFile));
+	AssertInt(5, cTreeIn.NumElements());
+	pcRootIn = cTreeIn.GetRoot();
+	AssertTrue(pcRootIn->IsOkay(672));
+	pcChildIn = cTreeIn.GetUp(pcRootIn);
+	AssertTrue(pcChildIn->IsOkay(720));
+	pcGrandChildIn = cTreeIn.GetUp(pcChildIn);
+	AssertTrue(pcGrandChildIn->IsOkay(666));
+	pcChildIn = cTreeIn.GetRight(pcChildIn);
+	AssertTrue(pcChildIn->IsOkay(8));
+	pcChildIn = cTreeIn.GetRight(pcChildIn);
+	AssertTrue(pcChildIn->IsOkay(99));
+	pcChildIn = cTreeIn.GetRight(pcChildIn);
+	AssertNull(pcChildIn);
+	pcChildIn = cTreeIn.GetUp(pcRootIn);
+	pcChildIn = cTreeIn.GetRight(pcChildIn);
+	pcGrandChildIn = cTreeIn.GetUp(pcChildIn);
+	AssertNull(pcGrandChildIn);
+	AssertNull(cTreeIn.GetDown(pcRootIn));
+
+	AssertTrue(cBlockIn.ReadTreeUnknown(&cFile));
+	AssertInt(2, cBlockIn.NumElements());
+	pcBlockRoot = (CFileIOTest*)cBlockIn.GetRoot();
+	AssertTrue(pcBlockRoot->IsOkay(1337));
+	pcBlockChild = (CFileIOTest*)cBlockIn.GetUp(pcBlockRoot);
+	AssertTrue(pcBlockChild->IsOkay(54321));
+
+	cTreeIn.Kill();
 	TestFileIOEnd(&cMemory, &cFile);
 
 	//template<class M>	BOOL	ReadTreeTemplate(CTreeTemplate<M>* pcTree);
