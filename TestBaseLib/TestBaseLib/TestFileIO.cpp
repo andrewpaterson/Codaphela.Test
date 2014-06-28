@@ -229,7 +229,7 @@ void TestFileIOTree(void)
 	pcBlockRoot = (CFileIOTest*)cBlock.InsertRoot(sizeof(CFileIOTest), -3);
 	pcBlockRoot->Init(1337);
 	pcBlockChild = (CFileIOTest*)cBlock.InsertOnRightOfChildren(pcBlockRoot, sizeof(CFileIOTest), 100000000);
-	pcChild->Init(54321);
+	pcBlockChild->Init(54321);
 	AssertInt(2, cBlock.NumElements());
 	AssertTrue(cBlock.WriteTreeUnknown(&cFile));
 
@@ -266,9 +266,6 @@ void TestFileIOTree(void)
 
 	cTreeIn.Kill();
 	TestFileIOEnd(&cMemory, &cFile);
-
-	//template<class M>	BOOL	ReadTreeTemplate(CTreeTemplate<M>* pcTree);
-	//BOOL	ReadTreeUnknown(CTreeBlock* pcTree);
 }
 
 
@@ -531,6 +528,59 @@ void TestFileIOString(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFileIOMap(void)
+{
+	CMemoryFile						cMemory;
+	CFileBasic						cFile;
+	CMapTemplate<int, long double>	cMap;
+	int								i;
+	long double						ld;
+	CMapTemplate<int, long double>	cMapIn;
+	CMapStringInt					mssi;
+	CMapStringInt					mssii;
+
+	TestFileIOBegin(&cMemory, &cFile);
+	
+	cMap.Init(10, &CompareInt);
+	i = 9;	ld = 1.4783409838732098273349;
+	cMap.Put(&i, &ld);
+	i = 22;	ld = 1.7983487629380598763752;
+	cMap.Put(&i, &ld);
+	i = 4;	ld = 1.9237643187634765139872;
+	cMap.Put(&i, &ld);
+	AssertInt(3, cMap.NumElements());
+	AssertTrue(cMap.WriteMapHeader(&cFile));
+
+	mssi.Init(10, TRUE);
+	mssi.Put("lion", 7);
+	mssi.Put("eat", 1);
+	mssi.Put("zebra", 12);
+	mssi.Put("for real!", -1);
+	AssertInt(4, mssi.NumElements());
+	AssertTrue(mssi.WriteMapHeader(&cFile));
+
+	mssi.Kill();
+	cMap.Kill();
+	TestFileIOMiddle(&cFile);
+
+	AssertTrue(cMapIn.ReadMapHeader(&cFile));
+	AssertInt(3, cMapIn.NumElements());
+	//CMapTemplate doesn't actually have full read and write methods.
+
+	AssertTrue(mssii.ReadMapHeader(&cFile));
+	AssertInt(4, mssii.NumElements());
+	//CMapStringInt doesn't actually have full read and write methods.
+
+	mssii.KillArray();
+	cMapIn.KillArray();
+	TestFileIOEnd(&cMemory, &cFile);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFileIO(void)
 {
 	BeginTests();
@@ -542,6 +592,7 @@ void TestFileIO(void)
 	TestFileIOTree();
 	TestFileIOLinkList();
 	TestFileIOLinkListAligned();
+	TestFileIOMap();
 
 	TestStatistics();
 }
