@@ -226,9 +226,9 @@ void TestFileIOTree(void)
 	AssertNull(cTree.GetDown(pcRoot));
 
 	cBlock.Init();
-	pcBlockRoot = (CFileIOTest*)cBlock.InsertRoot(sizeof(CFileIOTest), -3);
+	pcBlockRoot = (CFileIOTest*)cBlock.InsertRoot(sizeof(CFileIOTest));
 	pcBlockRoot->Init(1337);
-	pcBlockChild = (CFileIOTest*)cBlock.InsertOnRightOfChildren(pcBlockRoot, sizeof(CFileIOTest), 100000000);
+	pcBlockChild = (CFileIOTest*)cBlock.InsertOnRightOfChildren(pcBlockRoot, sizeof(CFileIOTest));
 	pcBlockChild->Init(54321);
 	AssertInt(2, cBlock.NumElements());
 	AssertTrue(cBlock.WriteTreeUnknown(&cFile));
