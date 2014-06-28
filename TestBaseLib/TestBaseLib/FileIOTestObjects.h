@@ -16,6 +16,19 @@ public:
 	BOOL IsOkay(int iNumber);
 };
 
+class CFileIOAlignedTest
+{
+protected:
+	char	b[16];
+
+public:
+	void Init(char bShunt);
+	void Kill(void);
+
+	BOOL IsAligned(int iAlignment);
+	BOOL IsOkay(char bShunt);
+};
+
 
 #endif // __FILE_IO_TEST_OBJECTS_H__
 

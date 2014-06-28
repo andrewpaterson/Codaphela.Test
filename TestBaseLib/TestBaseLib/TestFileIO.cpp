@@ -2,6 +2,8 @@
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/EnumeratorTemplate.h"
 #include "BaseLib/EnumeratorBlock.h"
+#include "BaseLib/LinkListAligned.h"
+#include "BaseLib/LinkListBlock.h"
 #include "TestLib/Assert.h"
 #include "FileIOTestObjects.h"
 
@@ -205,16 +207,116 @@ void TestFileIOTree(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFileIOLinkList(void)
 {
-	CMemoryFile		cMemory;
-	CFileBasic		cFile;
+	CMemoryFile						cMemory;
+	CFileBasic						cFile;
+	CLinkListTemplate<CFileIOTest>	cLinkList;
+	CFileIOTest*					pcTest1;
+	CFileIOTest*					pcTest2;
+	CLinkListTemplate<CFileIOTest>	cLinkListIn;
+	CFileIOTest*					pcTestIn;
+	CLinkListBlock					cBlock;
+	char							sz[20];
+	void*							pv;
+	CLinkListBlock					cBlockIn;
 
 	TestFileIOBegin(&cMemory, &cFile);
 
+	cLinkList.Init();
+	pcTest1 = cLinkList.Add();
+	pcTest1->Init(3);
+	pcTest2 = cLinkList.Add();
+	pcTest2->Init(887);
+	AssertInt(cLinkList.NumElements(), 2);
+	AssertTrue(cLinkList.WriteLinkListTemplate(&cFile));
+
+	cBlock.Init();
+	strcpy(sz, "Lurching Larch");
+	pv = cBlock.InsertAfterTail(strlen(sz)+1, 2);
+	strcpy((char*)pv, sz);
+	strcpy(sz, "Black Larch");
+	pv = cBlock.InsertAfterTail(strlen(sz)+1, 7);
+	strcpy((char*)pv, sz);
+	strcpy(sz, "Wheeling Willow");
+	pv = cBlock.InsertAfterTail(strlen(sz)+1, -3);
+	strcpy((char*)pv, sz);
+	AssertInt(cBlock.NumElements(), 3);
+	AssertTrue(cBlock.WriteLinkListBlock(&cFile));
+
+	cBlock.Kill();
+	cLinkList.Kill();
 	TestFileIOMiddle(&cFile);
 
-	TestFileIOEnd(&cMemory, &cFile);
+	AssertTrue(cLinkListIn.ReadLinkListTemplate(&cFile));
+	AssertInt(cLinkListIn.NumElements(), 2);
+	pcTestIn = cLinkListIn.GetHead();
+	AssertNotNull(pcTestIn);
+	AssertTrue(pcTestIn->IsOkay(3));
+	pcTestIn = cLinkListIn.GetNext(pcTestIn);
+	AssertTrue(pcTestIn->IsOkay(887));
+	pcTestIn = cLinkListIn.GetNext(pcTestIn);
+	AssertNull(pcTestIn);
 
-	//BOOL	ReadLinkListBlock(CFileReader* pcFileReader);
+	AssertTrue(cBlockIn.ReadLinkListBlock(&cFile));
+	AssertInt(cBlockIn.NumElements(), 3);
+	pv = cBlockIn.GetHead();
+	AssertString("Lurching Larch", (char*)pv);
+	pv = cBlockIn.GetNext(pv);
+	AssertString("Black Larch", (char*)pv);
+	pv = cBlockIn.GetNext(pv);
+	AssertString("Wheeling Willow", (char*)pv);
+	pv = cBlockIn.GetNext(pv);
+	AssertNull(pv);
+
+	cBlockIn.Kill();
+	cLinkListIn.Kill();
+	TestFileIOEnd(&cMemory, &cFile);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFileIOLinkListAligned(void)
+{
+	//CMemoryFile						cMemory;
+	//CFileBasic						cFile;
+	//CFileIOTest*					pcTestIn;
+	//CLinkListAligned				cAligned;
+	//CLinkListAligned				cAlignedIn;
+	//CFileIOAlignedTest*				pcAli1;
+	//CFileIOAlignedTest*				pcAli2;
+	//CFileIOAlignedTest*				pcAliIn;
+
+	//TestFileIOBegin(&cMemory, &cFile);
+
+	//cAligned.Init();
+	//pcAli1 = (CFileIOAlignedTest*)cAligned.Add(sizeof(CFileIOAlignedTest), 13);
+	//AssertTrue(pcAli1->IsAligned(13));
+	//pcAli1->Init(56);
+	//pcAli2 = (CFileIOAlignedTest*)cAligned.Add(sizeof(CFileIOAlignedTest), 17);
+	//AssertTrue(pcAli2->IsAligned(17));
+	//pcAli2->Init(-7);
+	//AssertInt(cAligned.NumElements(), 2);
+	//AssertTrue(cAligned.WriteLinkListAligned(&cFile));
+
+	//cAligned.Kill();
+	//TestFileIOMiddle(&cFile);
+
+	//AssertTrue(cAlignedIn.ReadLinkListAligned(&cFile));
+	//AssertInt(cAlignedIn.NumElements(), 2);
+	//pcAliIn = (CFileIOAlignedTest*)cAlignedIn.GetHead();
+	//AssertNotNull(pcAliIn);
+	//AssertTrue(pcAliIn->IsAligned(13));
+	//AssertTrue(pcAliIn->IsOkay(56));
+	//pcAliIn = (CFileIOAlignedTest*)cAlignedIn.GetNext(pcTestIn);
+	//AssertNotNull(pcAliIn);
+	//AssertTrue(pcAliIn->IsAligned(17));
+	//AssertTrue(pcAliIn->IsOkay(-7));
+	//pcAliIn = (CFileIOAlignedTest*)cAlignedIn.GetNext(pcTestIn);
+	//AssertNull(pcAliIn);
+
+	//TestFileIOEnd(&cMemory, &cFile);
 }
 
 
@@ -368,6 +470,7 @@ void TestFileIO(void)
 	TestFileIOEnumerator();
 	TestFileIOTree();
 	TestFileIOLinkList();
+	TestFileIOLinkListAligned();
 
 	TestStatistics();
 }

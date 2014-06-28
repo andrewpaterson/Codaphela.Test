@@ -11,7 +11,7 @@ void TestLinkListAlignedAdd(void)
 	CLinkListAligned	cLinkListAligned;
 	void*				pv;
 	int					k;
-	int					i;
+	int					iAlignment;
 	SDANode*			psNode;
 	void*				pvAllocatedEnd;
 	void*				pvObjectEnd;
@@ -20,20 +20,20 @@ void TestLinkListAlignedAdd(void)
 	cLinkListAligned.Init();
 
 	iPrevTotalSize = 0;
-	for (i = 2; i <= 48; i++)
+	for (iAlignment = 2; iAlignment <= 48; iAlignment++)
 	{
 		for (k = 0; k < 5; k++)
 		{
-			pv = cLinkListAligned.InsertAfterTail(65, i, 0);
-			AssertInt(0, ((int)(ENGINE_SIZE_T) pv) % i);
+			pv = cLinkListAligned.InsertAfterTail(65, iAlignment, 0);
+			AssertInt(0, ((int)(ENGINE_SIZE_T) pv) % iAlignment);
 
 			psNode = cLinkListAligned.GetNode(pv);
-			pvAllocatedEnd = (void*)(ENGINE_SIZE_T) ((int)(ENGINE_SIZE_T) psNode->sAligned.pvAlloc + sizeof(SDANode) + 65 + i -1);
+			pvAllocatedEnd = (void*)(ENGINE_SIZE_T) ((int)(ENGINE_SIZE_T) psNode->sAligned.pvAlloc + sizeof(SDANode) + 65 + iAlignment -1);
 			pvObjectEnd = (void*)(ENGINE_SIZE_T) ((int)(ENGINE_SIZE_T) pv + 65);
 			AssertTrue(pvAllocatedEnd >= pvObjectEnd);
-			AssertInt(iPrevTotalSize + ((sizeof(SDANode) + 65 + i-1) * (k + 1)), cLinkListAligned.ByteSize());
+			AssertInt(iPrevTotalSize + ((sizeof(SDANode) + 65 + iAlignment-1) * (k + 1)), cLinkListAligned.ByteSize());
 		}
-		iPrevTotalSize += ((sizeof(SDANode) + 65 + i-1) * k);
+		iPrevTotalSize += ((sizeof(SDANode) + 65 + iAlignment-1) * k);
 	}
 	AssertInt(26555, iPrevTotalSize);
 
