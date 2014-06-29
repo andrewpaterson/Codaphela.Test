@@ -61,9 +61,11 @@ TestCppParserLib/Debug/*
 TestCppParserLib/TestCppParserLib.sdf
 TestCppParserLib/TestCppParserLib.suo
 TestCppParserLib/TestCppParserLib/Log.txt
+TestCppParserLib/ipch/*
 TestInputLib/TestInputLib/Debug/*
 TestInputLib/Debug/*
 TestInputLib/TestInputLib/TestInputLib.sdf
 TestInputLib/TestInputLib/TestInputLib.suo
+TestInputLib/TestInputLib/ipch/*
 TestBaseLib/Release/*
 TestBaseLib/TestBaseLib/Release/*
