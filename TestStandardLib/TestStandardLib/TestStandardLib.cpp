@@ -3,8 +3,6 @@
 
 
 void TestStackPointers(void);
-void TestClass(void);
-void TestClassStorage(void);
 void TestArrayType(void);
 void TestArrayUnknown(void);
 void TestUnknowns(void);
@@ -59,8 +57,6 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	FastFunctionsInit();
 
 	TestStackPointers();
-	TestClass();
-	TestClassStorage();
 	TestUnknowns();
 	TestArrayUnknown();
 	TestSetUnknown();

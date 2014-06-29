@@ -1,3 +1,4 @@
+#include "CoreLib/TypeNames.h"
 #include "CoreLib/TypeConverter.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/Channels.h"
@@ -412,7 +413,7 @@ void TestChannelsAccessorWorstCase(void)
 void TestChannelsAccessor(void)
 {
 	BeginTests();
-	ClassStorageInit();
+	TypesInit();
 	TypeConverterInit();
 	UnknownsInit();
 
@@ -425,7 +426,7 @@ void TestChannelsAccessor(void)
 
 	UnknownsKill();
 	TypeConverterKill();
-	ClassStorageKill();
+	TypesKill();
 	TestStatistics();
 }
 

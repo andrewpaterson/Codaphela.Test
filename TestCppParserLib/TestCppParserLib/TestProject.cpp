@@ -1,8 +1,8 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/PointerRemapper.h"
 #include "CoreLib/Operators.h"
+#include "CoreLib/TypeNames.h"
 #include "CoreLib/TypeConverter.h"
-#include "StandardLib/ClassStorage.h"
 #include "CppParserLib/Project.h"
 #include "TestLib/Assert.h"
 #include "TestPreprocessor.h"
@@ -15,7 +15,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestReinclude(void)
 {
-	ClassStorageInit();
+	TypesInit();
 	FastFunctionsInit();
 	TypeConverterInit();
 	OperatorsInit();
@@ -105,30 +105,7 @@ TestUnit2.cpp (Parsing): 2, 0\n\
 	OperatorsKill();
 	TypeConverterKill();
 	FastFunctionsKill();
-	ClassStorageKill();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void TestXXX(void)
-{
-	ClassStorageInit();
-	FastFunctionsInit();
-	TypeConverterInit();
-	OperatorsInit();
-	InitTokenMemory();
-	NumberInit();
-
-	
-	NumberKill();
-	KillTokenMemory();
-	OperatorsKill();
-	TypeConverterKill();
-	FastFunctionsKill();
-	ClassStorageKill();
+	TypesKill();
 }
 
 
@@ -141,7 +118,6 @@ void TestProject(void)
 	BeginTests();
 
 	TestReinclude();
-	TestXXX();
 
 	TestStatistics();
 }

@@ -2,8 +2,8 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/PointerRemapper.h"
 #include "CoreLib/Operators.h"
+#include "CoreLib/TypeNames.h"
 #include "CoreLib/TypeConverter.h"
-#include "StandardLib/ClassStorage.h"
 #include "CppParserLib/Preprocessor.h"
 #include "TestLib/Assert.h"
 #include "TestPreprocessor.h"
@@ -15,7 +15,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorReplacement(void)
 {
-	ClassStorageInit();
+	TypesInit();
 	FastFunctionsInit();
 	TypeConverterInit();
 	OperatorsInit();
@@ -105,7 +105,7 @@ __nothrow;\n\
 	OperatorsKill();
 	TypeConverterKill();
 	FastFunctionsKill();
-	ClassStorageKill();
+	TypesKill();
 }
 
 
@@ -115,7 +115,7 @@ __nothrow;\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorConditionals(void)
 {
-	ClassStorageInit();
+	TypesInit();
 	FastFunctionsInit();
 	TypeConverterInit();
 	OperatorsInit();
@@ -160,7 +160,7 @@ Dick\n\
 	OperatorsKill();
 	TypeConverterKill();
 	FastFunctionsKill();
-	ClassStorageKill();
+	TypesKill();
 }
 
 
@@ -170,7 +170,7 @@ Dick\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorOperatorPrecedence(void)
 {
-	ClassStorageInit();
+	TypesInit();
 	FastFunctionsInit();
 	TypeConverterInit();
 	OperatorsInit();
@@ -302,7 +302,7 @@ Passed\n\
 	OperatorsKill();
 	TypeConverterKill();
 	FastFunctionsKill();
-	ClassStorageKill();
+	TypesKill();
 }
 
 
@@ -312,7 +312,7 @@ Passed\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorBlockSkipping(void)
 {
-	ClassStorageInit();
+	TypesInit();
 	FastFunctionsInit();
 	TypeConverterInit();
 	OperatorsInit();
@@ -388,7 +388,7 @@ void TestPreprocessorBlockSkipping(void)
 	OperatorsKill();
 	TypeConverterKill();
 	FastFunctionsKill();
-	ClassStorageKill();
+	TypesKill();
 }
 
 

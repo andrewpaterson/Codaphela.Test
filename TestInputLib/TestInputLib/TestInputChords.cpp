@@ -1,4 +1,5 @@
 #include "BaseLib/Logger.h"
+#include "CoreLib/TypeNames.h"
 #include "CoreLib/TypeConverter.h"
 #include "CoreLib/Operators.h"
 #include "InputLib/Input.h"
@@ -102,8 +103,8 @@ CProgramDeviceDetail* AddProgrammaticDevice(CProgramInput*	pcProgram)
 void TestInputChords(void)
 {
 	FastFunctionsInit();
+	TypesInit();
 	TypeConverterInit();
-	gcClassStorage.Init();
 	gcOperators.Init();
 	UnknownsInit();
 
@@ -244,8 +245,8 @@ void TestInputChords(void)
 
 	UnknownsKill();
 	gcOperators.Kill();
-	gcClassStorage.Kill();
 	TypeConverterKill();
+	TypesKill();
 	FastFunctionsKill();
 }
 

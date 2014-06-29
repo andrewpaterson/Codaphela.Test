@@ -142,8 +142,6 @@
     <ClCompile Include="TestSetType.cpp" />
     <ClCompile Include="TestSetUnknown.cpp" />
     <ClCompile Include="TestMapStringUnknown.cpp" />
-    <ClCompile Include="TestClass.cpp" />
-    <ClCompile Include="TestClassStorage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EmbeddedObjectTestClasses.h" />

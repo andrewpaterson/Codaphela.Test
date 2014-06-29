@@ -37,9 +37,6 @@
     <Filter Include="Source\Object\Unknown\Collections\Map">
       <UniqueIdentifier>{70a210e2-6ce8-432d-912d-c741299b97ce}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Types">
-      <UniqueIdentifier>{ac58e05e-2c9d-48ab-b106-780776e339c2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\File">
       <UniqueIdentifier>{cb579f2f-752d-4b2b-8499-fff8106bb181}</UniqueIdentifier>
     </Filter>
@@ -146,12 +143,6 @@
     </ClCompile>
     <ClCompile Include="TestMapStringUnknown.cpp">
       <Filter>Source\Object\Unknown\Collections\Map</Filter>
-    </ClCompile>
-    <ClCompile Include="TestClass.cpp">
-      <Filter>Source\Types</Filter>
-    </ClCompile>
-    <ClCompile Include="TestClassStorage.cpp">
-      <Filter>Source\Types</Filter>
     </ClCompile>
     <ClCompile Include="TestNamedIndexes.cpp">
       <Filter>Source\File\Indexed\Named</Filter>

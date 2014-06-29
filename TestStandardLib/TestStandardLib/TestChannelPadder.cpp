@@ -1,6 +1,6 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/Log.h"
-#include "StandardLib/ClassStorage.h"
+#include "CoreLib/TypeNames.h"
 #include "StandardLib/ChannelPadder.h"
 #include "TestLib/Assert.h"
 
@@ -15,7 +15,7 @@ void TestOptimalPadding(void)
 	CChannelPadder	cPadder;
 	CChannel*		cChannel;
 
-	ClassStorageInit();
+	TypesInit();
 
 	cChannels.Init();
 	cChannels.BeginChange();
@@ -158,7 +158,7 @@ void TestOptimalPadding(void)
 
 	cChannels.Kill();
 
-	ClassStorageKill();
+	TypesKill();
 }
 
 
