@@ -12,8 +12,9 @@ void TestMapIntTemplate(void)
 
 	double	d;
 	double	e;
+	int		i;
 
-	cMap.Init(1);
+	cMap.Init(2);
 
 	d = 1.0; cMap.Put((int)d, &d);
 	d = 2.0; cMap.Put((int)d, &d);
@@ -24,7 +25,9 @@ void TestMapIntTemplate(void)
 	d = -3.0; cMap.Put((int)d, &d);
 	d = -4.0; cMap.Put((int)d, &d);
 	d = 0.0; cMap.Put((int)d, &d);
+	AssertInt(9, cMap.NumElements());
 
+	AssertNull(cMap.GetWithKey(-5));
 	e = -4.0; d = *cMap.GetWithKey((int)e);
 	AssertDouble(e, d, 2);
 	e = -3.0; d = *cMap.GetWithKey((int)e);
@@ -47,6 +50,61 @@ void TestMapIntTemplate(void)
 	AssertDouble(e, d, 2);
 	e = 1.0; d = *cMap.GetWithKey((int)e);
 	AssertDouble(e, d, 2);
+	AssertNull(cMap.GetWithKey(5));
+
+	i = -4;
+	AssertTrue(cMap.Remove(i));
+	AssertInt(8, cMap.NumElements());
+	AssertNull(cMap.GetWithKey(i));
+	e = -3.0; 
+	d = *cMap.GetWithKey((int)e);
+	AssertDouble(e, d, 2);
+	AssertFalse(cMap.Remove(i));
+
+	i = -3;
+	AssertTrue(cMap.Remove(i));
+	AssertInt(7, cMap.NumElements());
+	AssertNull(cMap.GetWithKey(i));
+	e = -2.0; 
+	d = *cMap.GetWithKey((int)e);
+	AssertDouble(e, d, 2);
+	AssertFalse(cMap.Remove(i));
+
+	i = 3;
+	AssertTrue(cMap.Remove(i));
+	AssertInt(6, cMap.NumElements());
+	AssertNull(cMap.GetWithKey(i));
+	e = 4.0; 
+	d = *cMap.GetWithKey((int)e);
+	AssertDouble(e, d, 2);
+	AssertFalse(cMap.Remove(i));
+
+	i = 0;
+	AssertTrue(cMap.Remove(i));
+	AssertInt(5, cMap.NumElements());
+	AssertNull(cMap.GetWithKey(i));
+	e = 4.0; 
+	d = *cMap.GetWithKey((int)e);
+	AssertDouble(e, d, 2);
+	i = 0;
+	AssertFalse(cMap.Remove(i));
+
+	i = 1;
+	AssertTrue(cMap.Remove(i));
+	AssertInt(4, cMap.NumElements());
+	AssertNull(cMap.GetWithKey(i));
+	e = -2.0; 
+	d = *cMap.GetWithKey((int)e);
+	AssertDouble(e, d, 2);
+	AssertFalse(cMap.Remove(i));
+
+	AssertTrue(cMap.Remove(-2));
+	AssertTrue(cMap.Remove(-1));
+	AssertTrue(cMap.Remove(4));
+	AssertInt(1, cMap.NumElements());
+	AssertTrue(cMap.Remove(2));
+	AssertInt(0, cMap.NumElements());
+	AssertFalse(cMap.Remove(2));
 
 	cMap.Kill();
 }
