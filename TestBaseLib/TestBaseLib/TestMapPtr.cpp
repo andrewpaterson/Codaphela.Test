@@ -1,3 +1,4 @@
+#include "BaseLib/MapIntInt.h"
 #include "BaseLib/MapPtrPtr.h"
 #include "TestLib/Assert.h"
 
@@ -65,10 +66,43 @@ void TestMapPtrPtr(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMapPtrTemplate(void)
+{
+	CMapPtrTemplate<int>	cMap;
+	char					c1;
+	char					c2;
+	int						i1;
+	int						i2;
+	int*					piTest;
+	
+	c1 = 'A';
+	c2 = 'A';
+	i1 = 1;
+	i2 = 2;
+
+	cMap.Init(10);
+	cMap.Put(&c1, &i1);
+	cMap.Put(&c2, &i2);
+
+	AssertInt(2, cMap.NumElements());
+	piTest = cMap.GetWithKey(&c1);
+	AssertInt(i1, *piTest);
+	piTest = cMap.GetWithKey(&c2);
+	AssertInt(i2, *piTest);
+
+	cMap.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMapPtr(void)
 {
 	BeginTests();
 
+	TestMapPtrTemplate();
 	TestMapPtrPtr();
 
 	TestStatistics();
