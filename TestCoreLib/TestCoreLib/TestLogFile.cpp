@@ -239,7 +239,7 @@ void TestLogFileFindHoles(void)
 	int				iInt1;
 	int				iInt2;
 	int				iInt3;
-	CArrayPointer	apvOverlapping;
+	CArrayIntAndPointer	apvOverlapping;
 	int				i;
 	int				iSize;
 

@@ -40,7 +40,7 @@ void AssertLinkOrder(CMemoryCache* pcCache)
 {
 	SMemoryCacheDescriptor*	psCacheDesc;
 	SMemoryCacheDescriptor*	psCacheDescReverse;
-	CArrayPointer			cPointers;
+	CArrayIntAndPointer			cPointers;
 	int						i;
 
 	AssertPointer(pcCache->TestGetFirst()->psPrev, pcCache->TestGetLast());
