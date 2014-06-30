@@ -49,8 +49,8 @@ void TestASCIITreeGetZeroTerminated(void)
 
 	cTree.Init();
 
-	cTree.Add("Andrew");
-	cTree.Add("Andre");
+	cTree.AddIndex("Andrew");
+	cTree.AddIndex("Andre");
 
 	cTree.PrivateGetZeroTerminated(&pcNode, &pcWord, &iNode, &iWord, "Andrew");
 	AssertNotNull(pcNode);
@@ -80,7 +80,7 @@ void TestASCIITreeGetZeroTerminated(void)
 	AssertNull(pcWord);
 	AssertInt(-1, iWord);
 
-	cTree.Add("An");
+	cTree.AddIndex("An");
 	cTree.PrivateGetZeroTerminated(&pcNode, &pcWord, &iNode, &iWord, "Andr");
 	AssertNotNull(pcWord);
 	AssertInt(1, iWord);
@@ -158,8 +158,8 @@ void TestASCIITreeGetLengthTerminated(void)
 
 	cTree.Init();
 
-	cTree.Add("Andrew");
-	cTree.Add("Andre");
+	cTree.AddIndex("Andrew");
+	cTree.AddIndex("Andre");
 
 	cTree.PrivateGetLengthTerminated(&pcNode, &pcWord, &iNode, &iWord, &szAndrewicus[0], &szAndrewicus[5]);
 	AssertNotNull(pcNode);
@@ -189,7 +189,7 @@ void TestASCIITreeGetLengthTerminated(void)
 	AssertNull(pcWord);
 	AssertInt(-1, iWord);
 
-	cTree.Add("An");
+	cTree.AddIndex("An");
 	cTree.PrivateGetLengthTerminated(&pcNode, &pcWord, &iNode, &iWord, &szAndrewicus[0], &szAndrewicus[3]);
 	AssertNotNull(pcWord);
 	AssertInt(1, iWord);
@@ -250,56 +250,56 @@ void TestASCIITreeAdd(void)
 	int				iIndex;
 
 	cTree.Init();
-	iIndex = cTree.Add("");
+	iIndex = cTree.AddIndex("");
 	AssertInt(-1, iIndex);
-	iIndex = cTree.Add("A");
+	iIndex = cTree.AddIndex("A");
 	AssertInt(0, iIndex);
-	iIndex = cTree.Add("An");
+	iIndex = cTree.AddIndex("An");
 	AssertInt(1, iIndex);
-	iIndex = cTree.Add("And");
+	iIndex = cTree.AddIndex("And");
 	AssertInt(2, iIndex);
-	iIndex = cTree.Add("Andr");
+	iIndex = cTree.AddIndex("Andr");
 	AssertInt(3, iIndex);
-	iIndex = cTree.Add("Andre");
+	iIndex = cTree.AddIndex("Andre");
 	AssertInt(4, iIndex);
-	iIndex = cTree.Add("Andrew");
+	iIndex = cTree.AddIndex("Andrew");
 	AssertInt(5, iIndex);
 	iIndex = cTree.GetIndex("And");
 	AssertInt(2, iIndex);
 	cTree.Kill();
 
 	cTree.Init();
-	iIndex = cTree.Add("Andrew");
+	iIndex = cTree.AddIndex("Andrew");
 	AssertInt(0, iIndex);
-	iIndex = cTree.Add("Andre");
+	iIndex = cTree.AddIndex("Andre");
 	AssertInt(1, iIndex);
-	iIndex = cTree.Add("Andr");
+	iIndex = cTree.AddIndex("Andr");
 	AssertInt(2, iIndex);
-	iIndex = cTree.Add("And");
+	iIndex = cTree.AddIndex("And");
 	AssertInt(3, iIndex);
-	iIndex = cTree.Add("An");
+	iIndex = cTree.AddIndex("An");
 	AssertInt(4, iIndex);
-	iIndex = cTree.Add("A");
+	iIndex = cTree.AddIndex("A");
 	AssertInt(5, iIndex);
 	iIndex = cTree.GetIndex("And");
 	AssertInt(3, iIndex);
 	cTree.Kill();
 
 	cTree.Init();
-	cTree.Add("A");
-	cTree.Add("AA");
-	cTree.Add("AB");
-	cTree.Add("AAA");
-	cTree.Add("AAB");
-	cTree.Add("ABA");
-	cTree.Add("ABB");
-	cTree.Add("B");
-	cTree.Add("BA");
-	cTree.Add("BB");
-	cTree.Add("BAA");
-	cTree.Add("BAB");
-	cTree.Add("BBA");
-	cTree.Add("BBB");
+	cTree.AddIndex("A");
+	cTree.AddIndex("AA");
+	cTree.AddIndex("AB");
+	cTree.AddIndex("AAA");
+	cTree.AddIndex("AAB");
+	cTree.AddIndex("ABA");
+	cTree.AddIndex("ABB");
+	cTree.AddIndex("B");
+	cTree.AddIndex("BA");
+	cTree.AddIndex("BB");
+	cTree.AddIndex("BAA");
+	cTree.AddIndex("BAB");
+	cTree.AddIndex("BBA");
+	cTree.AddIndex("BBB");
 
 	iIndex = cTree.GetIndex("A");
 	AssertInt(0, iIndex);
@@ -345,20 +345,20 @@ void TestASCIITreeRemove(void)
 	BOOL			bResult;
 
 	cTree.Init();
-	cTree.Add("A");
-	cTree.Add("AA");
-	cTree.Add("AB");
-	cTree.Add("AAA");
-	cTree.Add("AAB");
-	cTree.Add("ABA");
-	cTree.Add("ABB");
-	cTree.Add("B");
-	cTree.Add("BA");
-	cTree.Add("BB");
-	cTree.Add("BAA");
-	cTree.Add("BAB");
-	cTree.Add("BBA");
-	cTree.Add("BBB");
+	cTree.AddIndex("A");
+	cTree.AddIndex("AA");
+	cTree.AddIndex("AB");
+	cTree.AddIndex("AAA");
+	cTree.AddIndex("AAB");
+	cTree.AddIndex("ABA");
+	cTree.AddIndex("ABB");
+	cTree.AddIndex("B");
+	cTree.AddIndex("BA");
+	cTree.AddIndex("BB");
+	cTree.AddIndex("BAA");
+	cTree.AddIndex("BAB");
+	cTree.AddIndex("BBA");
+	cTree.AddIndex("BBB");
 
 	iNumWords = cTree.mcWords.NumElements();
 	AssertInt(14, iNumWords);
@@ -401,20 +401,20 @@ void TestASCIITreeRemove(void)
 	iNumWords = cTree.mcWords.NumElements();
 	AssertInt(14, iNumWords);
 
-	cTree.Add("A");
-	cTree.Add("AA");
-	cTree.Add("AB");
-	cTree.Add("AAA");
-	cTree.Add("AAB");
-	cTree.Add("ABA");
-	cTree.Add("ABB");
-	cTree.Add("B");
-	cTree.Add("BA");
-	cTree.Add("BB");
-	cTree.Add("BAA");
-	cTree.Add("BAB");
-	cTree.Add("BBA");
-	cTree.Add("BBB");
+	cTree.AddIndex("A");
+	cTree.AddIndex("AA");
+	cTree.AddIndex("AB");
+	cTree.AddIndex("AAA");
+	cTree.AddIndex("AAB");
+	cTree.AddIndex("ABA");
+	cTree.AddIndex("ABB");
+	cTree.AddIndex("B");
+	cTree.AddIndex("BA");
+	cTree.AddIndex("BB");
+	cTree.AddIndex("BAA");
+	cTree.AddIndex("BAB");
+	cTree.AddIndex("BBA");
+	cTree.AddIndex("BBB");
 
 	iNumWords = cTree.mcWords.NumElements();
 	AssertInt(14, iNumWords);
@@ -442,20 +442,20 @@ void TestASCIITreeGetBetween(void)
 	CArrayInt		caiIndicies;
 
 	cTree.Init();
-	cTree.Add("A");
-	cTree.Add("AA");
-	cTree.Add("AAA");
-	cTree.Add("AAB");
-	cTree.Add("AB");
-	cTree.Add("ABA");
-	cTree.Add("ABB");
-	cTree.Add("B");
-	cTree.Add("BA");
-	cTree.Add("BAA");
-	cTree.Add("BAB");
-	cTree.Add("BB");
-	cTree.Add("BBA");
-	cTree.Add("BBB");
+	cTree.AddIndex("A");
+	cTree.AddIndex("AA");
+	cTree.AddIndex("AAA");
+	cTree.AddIndex("AAB");
+	cTree.AddIndex("AB");
+	cTree.AddIndex("ABA");
+	cTree.AddIndex("ABB");
+	cTree.AddIndex("B");
+	cTree.AddIndex("BA");
+	cTree.AddIndex("BAA");
+	cTree.AddIndex("BAB");
+	cTree.AddIndex("BB");
+	cTree.AddIndex("BBA");
+	cTree.AddIndex("BBB");
 
 	//ASCIINodes need to know their parents.
 
@@ -545,7 +545,7 @@ void TestASCIITreeIterate(void)
 	for (i = 0; i < casz.NumElements(); i++)
 	{
 		sz = casz.GetText(i);
-		cTree.Add(sz);
+		cTree.AddIndex(sz);
 	}
 
 	i = 0;
