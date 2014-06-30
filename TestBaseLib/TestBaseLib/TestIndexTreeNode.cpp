@@ -20,10 +20,6 @@ void TestIndexTreeNodeInit(void)
 	AssertTrue(cNode.IsEmpty());
 	AssertFalse(cObject.HasNodes());
 
-	cObject.Init(&cNode, &uiObject);
-	AssertFalse(cObject.IsEmpty());
-	AssertFalse(cObject.HasNodes());
-
 	cNode.Contain(33);
 	AssertTrue(cNode.IsEmpty());
 	AssertTrue(cNode.HasNodes());

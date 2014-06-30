@@ -1,3 +1,4 @@
+#include "BaseLib/IntegerHelper.h"
 #include "BaseLib/LinkListTemplate.h"
 #include "TestLib/Assert.h"
 

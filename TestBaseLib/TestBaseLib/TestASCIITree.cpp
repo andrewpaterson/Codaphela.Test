@@ -23,14 +23,14 @@ void TestASCIITreeAdd(void)
 	cTree.Init();
 
 	lli1 = 237489LL;
-	cTree.Add(lli1, "Seven/Hundred");
+	cTree.AddIndex(lli1, "Seven/Hundred");
 	lliID = cTree.Get("Seven/Hundred");
 	AssertLongLongInt(lli1, lliID);
 
-	lli2 = 237222LL; cTree.Add(lli2, "Seven/Battalion");
-	lli3 = 7328423132LL; cTree.Add(lli3, "Creating");
-	lli4 = 28LL; cTree.Add(lli4, "Nineteen/O/Five");
-	lli5 = 8993992939LL; cTree.Add(lli5, "Creative");
+	lli2 = 237222LL; cTree.AddIndex(lli2, "Seven/Battalion");
+	lli3 = 7328423132LL; cTree.AddIndex(lli3, "Creating");
+	lli4 = 28LL; cTree.AddIndex(lli4, "Nineteen/O/Five");
+	lli5 = 8993992939LL; cTree.AddIndex(lli5, "Creative");
 
 	AssertLongLongInt(lli1, cTree.Get("Seven/Hundred"));
 	AssertLongLongInt(lli2, cTree.Get("Seven/Battalion"));
@@ -38,10 +38,10 @@ void TestASCIITreeAdd(void)
 	AssertLongLongInt(lli4, cTree.Get("Nineteen/O/Five"));
 	AssertLongLongInt(lli5, cTree.Get("Creative"));
 
-	lli6 = 27LL; cTree.Add(lli6, "Seven/Aardvarks");
-	lli7 = 874289234LL; cTree.Add(lli7, "Nineteen/O/Four");
-	lli8 = 882191919LL; cTree.Add(lli8, "Squiggly");
-	lli9 = 8993992938LL; cTree.Add(lli9, "Puff");
+	lli6 = 27LL; cTree.AddIndex(lli6, "Seven/Aardvarks");
+	lli7 = 874289234LL; cTree.AddIndex(lli7, "Nineteen/O/Four");
+	lli8 = 882191919LL; cTree.AddIndex(lli8, "Squiggly");
+	lli9 = 8993992938LL; cTree.AddIndex(lli9, "Puff");
 
 	AssertLongLongInt(lli1, cTree.Get("Seven/Hundred"));
 	AssertLongLongInt(lli2, cTree.Get("Seven/Battalion"));
@@ -78,15 +78,15 @@ void TestASCIITreeRemove(void)
 
 	cTree.Init();
 
-	lli1 = 237489LL; cTree.Add(lli1, "Seven/Hundred");
-	lli2 = 237222LL; cTree.Add(lli2, "Seven/Battalion");
-	lli3 = 7328423132LL; cTree.Add(lli3, "Creating");
-	lli4 = 28LL; cTree.Add(lli4, "Nineteen/O/Five");
-	lli5 = 8993992939LL; cTree.Add(lli5, "Creative");
-	lli6 = 27LL; cTree.Add(lli6, "Seven/Aardvarks");
-	lli7 = 874289234LL; cTree.Add(lli7, "Nineteen/O/Four");
-	lli8 = 882191919LL; cTree.Add(lli8, "Squiggly");
-	lli9 = 8993992938LL; cTree.Add(lli9, "Puff");
+	lli1 = 237489LL; cTree.AddIndex(lli1, "Seven/Hundred");
+	lli2 = 237222LL; cTree.AddIndex(lli2, "Seven/Battalion");
+	lli3 = 7328423132LL; cTree.AddIndex(lli3, "Creating");
+	lli4 = 28LL; cTree.AddIndex(lli4, "Nineteen/O/Five");
+	lli5 = 8993992939LL; cTree.AddIndex(lli5, "Creative");
+	lli6 = 27LL; cTree.AddIndex(lli6, "Seven/Aardvarks");
+	lli7 = 874289234LL; cTree.AddIndex(lli7, "Nineteen/O/Four");
+	lli8 = 882191919LL; cTree.AddIndex(lli8, "Squiggly");
+	lli9 = 8993992938LL; cTree.AddIndex(lli9, "Puff");
 
 	AssertInt(9, cTree.NumElements());
 
@@ -165,29 +165,29 @@ void TestASCIITreeDiamondError(void)
 
 	cTree.Init();
 	
-	AssertInt(0, cTree.Add(1, "GraphRoot"));
-	AssertInt(1, cTree.Add(3, "Diamond End"));
-	AssertInt(2, cTree.Add(5, "NamedString 1"));
-	AssertInt(3, cTree.Add(6, "NamedString 2"));
-	AssertInt(4, cTree.Add(10, "Double Start"));
-	AssertInt(5, cTree.Add(11, "NamedString 3"));
+	AssertInt(0, cTree.AddIndex(1, "GraphRoot"));
+	AssertInt(1, cTree.AddIndex(3, "Diamond End"));
+	AssertInt(2, cTree.AddIndex(5, "NamedString 1"));
+	AssertInt(3, cTree.AddIndex(6, "NamedString 2"));
+	AssertInt(4, cTree.AddIndex(10, "Double Start"));
+	AssertInt(5, cTree.AddIndex(11, "NamedString 3"));
 	AssertTrue(cTree.TestConsistency());
 
 	cTree.Kill();
 	cTree.Init();
 
-	AssertInt(0, cTree.Add(1, "GraphRoot"));
-	AssertInt(1, cTree.Add(10, "Double Start"));
-	AssertInt(2, cTree.Add(11, "NamedString 3"));
+	AssertInt(0, cTree.AddIndex(1, "GraphRoot"));
+	AssertInt(1, cTree.AddIndex(10, "Double Start"));
+	AssertInt(2, cTree.AddIndex(11, "NamedString 3"));
 	AssertTrue(cTree.Remove(ATRS_MoveLastToRemoved, "Double Start"));
 	AssertTrue(cTree.TestConsistency());
-	AssertInt(2, cTree.Add(10, "Double Start"));
-	AssertInt(3, cTree.Add(6, "NamedString 2"));
-	AssertInt(4, cTree.Add(5, "NamedString 1"));
+	AssertInt(2, cTree.AddIndex(10, "Double Start"));
+	AssertInt(3, cTree.AddIndex(6, "NamedString 2"));
+	AssertInt(4, cTree.AddIndex(5, "NamedString 1"));
 	AssertTrue(cTree.Remove(ATRS_MoveLastToRemoved, "NamedString 2"));
 	AssertTrue(cTree.TestConsistency());
-	AssertInt(4, cTree.Add(6, "NamedString 2"));
-	AssertInt(5, cTree.Add(3, "Diamond End"));
+	AssertInt(4, cTree.AddIndex(6, "NamedString 2"));
+	AssertInt(5, cTree.AddIndex(3, "Diamond End"));
 	AssertTrue(cTree.TestConsistency());
 
 	cTree.Kill();
