@@ -9,33 +9,34 @@
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeNodeInit(void)
 {
-	CIndexTreeNode	cNode;
+	CIndexTreeNode*	pcNode;
 	CIndexTreeNode	cObject;
 	long long int	uiObject;
 	CIndexTreeNode*	pcObject;
 
 	uiObject = 0xA27384234FFLL;
 
-	cNode.Init(NULL);
-	AssertTrue(cNode.IsEmpty());
+	pcNode = (CIndexTreeNode*)malloc(sizeof(CIndexTreeNode) + sizeof(CIndexTreeNode*));
+	pcNode->Init(NULL);
+	AssertTrue(pcNode->IsEmpty());
 	AssertFalse(cObject.HasNodes());
 
-	cNode.Contain(33);
-	AssertTrue(cNode.IsEmpty());
-	AssertTrue(cNode.HasNodes());
-	AssertInt(33, cNode.GetFirstIndex());
-	AssertInt(33, cNode.GetLastIndex());
+	pcNode->Contain(33);
+	AssertTrue(pcNode->IsEmpty());
+	AssertTrue(pcNode->HasNodes());
+	AssertInt(33, pcNode->GetFirstIndex());
+	AssertInt(33, pcNode->GetLastIndex());
 
-	cNode.Set(33, &cObject);
-	AssertFalse(cNode.IsEmpty());
-	AssertTrue(cNode.HasNodes());
+	pcNode->Set(33, &cObject);
+	AssertFalse(pcNode->IsEmpty());
+	AssertTrue(pcNode->HasNodes());
 
-	pcObject = cNode.Get(33);
+	pcObject = pcNode->Get(33);
 	AssertPointer(&cObject, pcObject);
 
-	AssertFalse(cNode.ContainsIndex(32));
-	AssertTrue(cNode.ContainsIndex(33));
-	AssertFalse(cNode.ContainsIndex(34));
+	AssertFalse(pcNode->ContainsIndex(32));
+	AssertTrue(pcNode->ContainsIndex(33));
+	AssertFalse(pcNode->ContainsIndex(34));
 }
 
 
