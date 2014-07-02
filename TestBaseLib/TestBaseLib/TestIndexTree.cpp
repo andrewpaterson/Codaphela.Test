@@ -15,6 +15,10 @@ void TestIndexTreeAdd(void)
 	CTestIndexTreeObject	temp;
 	CArrayVoidPtr			avp;
 	BOOL					bResult;
+	CIndexTreeNode*			pcNode;
+	CTestIndexTreeObject**	ppvTest;
+	CTestIndexTreeObject***	ppvTestA;
+	CTestIndexTreeObject***	ppvTestAA;
 
 	cIndex.Init();
 	a.Init("A");
@@ -25,13 +29,19 @@ void TestIndexTreeAdd(void)
 	bResult = cIndex.Put(&aa, aa.GetName());
 	AssertTrue(bResult);
 
+	pcNode = cIndex.GetIndexNode("AA");
+	ppvTest = (CTestIndexTreeObject**)pcNode->GetObjectPtr();
+	AssertPointer(&aa, *ppvTest);
+
 	avp.Init();
 	cIndex.FindAll(&avp);
 	AssertInt(2, avp.NumElements());
-	AssertPointer(&a, *avp.Get(0));
-	AssertPointer(&aa, *avp.Get(1));
-	AssertString("A", ((CTestIndexTreeObject*)*avp.Get(0))->mszName);
-	AssertString("AA", ((CTestIndexTreeObject*)*avp.Get(1))->mszName);
+	ppvTestA = (CTestIndexTreeObject***)avp.Get(0);
+	ppvTestAA = (CTestIndexTreeObject***)avp.Get(1);
+	AssertPointer(&a, **ppvTestA);
+	AssertPointer(&aa, **ppvTestAA);
+	AssertString("A", (**ppvTestA)->mszName);
+	AssertString("AA", (**ppvTestAA)->mszName);
 
 	avp.Kill();
 	cIndex.Kill();
@@ -54,18 +64,20 @@ void TestIndexTreeGet(void)
 {
 	CIndexTree				cIndex;
 	CTestIndexTreeObject	andrew;
-	CTestIndexTreeObject*	pcResult;
+	CTestIndexTreeObject**	pcResult;
 	CArrayVoidPtr			avp;
 	CTestIndexTreeObject	batman;
 	CTestIndexTreeObject	batmam;
 	CTestIndexTreeObject	andre;
+	CIndexTreeNode*			pcNodeBatman;
+	CIndexTreeNode*			pcNodeBatmam;
 
 	cIndex.Init();
 
 	andrew.Init("Andrew");
 	cIndex.Put(&andrew, andrew.GetName());
-	pcResult = (CTestIndexTreeObject*)cIndex.Get("Andrew");
-	AssertPointer(pcResult, &andrew);
+	pcResult = (CTestIndexTreeObject**)cIndex.Get("Andrew");
+	AssertPointer(*pcResult, &andrew);
 	avp.Init();
 	cIndex.FindAll(&avp);
 	AssertInt(1, avp.NumElements());
@@ -73,24 +85,28 @@ void TestIndexTreeGet(void)
 
 	batman.Init("Batman");
 	cIndex.Put(&batman, batman.GetName());
-	pcResult = (CTestIndexTreeObject*)cIndex.Get("Batman");
-	AssertPointer(pcResult, &batman);
+	pcNodeBatman = cIndex.GetIndexNode("Batman");
+	AssertInt(0, pcNodeBatman->GetNumIndexes());
+	pcResult = (CTestIndexTreeObject**)cIndex.Get("Batman");
+	AssertPointer(*pcResult, &batman);
 	cIndex.FindAll(&avp);
 	AssertInt(2, avp.NumElements());
 	avp.Kill();
 
 	batmam.Init("Batmam");
 	cIndex.Put(&batmam, batmam.GetName());
-	pcResult = (CTestIndexTreeObject*)cIndex.Get("Batmam");
-	AssertPointer(pcResult, &batmam);
+	pcNodeBatman = cIndex.GetIndexNode("Batman");
+	pcNodeBatmam = cIndex.GetIndexNode("Batmam");
+	pcResult = (CTestIndexTreeObject**)cIndex.Get("Batmam");
+	AssertPointer(*pcResult, &batmam);
 	cIndex.FindAll(&avp);
 	AssertInt(3, avp.NumElements());
 	avp.Kill();
 
 	andre.Init("Andre");
 	cIndex.Put(&andre, andre.GetName());
-	pcResult = (CTestIndexTreeObject*)cIndex.Get("Andre");
-	AssertPointer(pcResult, &andre);
+	pcResult = (CTestIndexTreeObject**)cIndex.Get("Andre");
+	AssertPointer(*pcResult, &andre);
 	cIndex.FindAll(&avp);
 	AssertInt(4, avp.NumElements());
 
