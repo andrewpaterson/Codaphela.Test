@@ -1,4 +1,5 @@
 #include "BaseLib/Chars.h"
+#include "BaseLib/ArrayString.h"
 #include "TestLib/Assert.h"
 
 
