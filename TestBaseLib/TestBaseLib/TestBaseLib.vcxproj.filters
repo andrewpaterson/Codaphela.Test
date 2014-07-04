@@ -123,9 +123,6 @@
     <ClCompile Include="TestMapPtr.cpp">
       <Filter>Source\Data\Map</Filter>
     </ClCompile>
-    <ClCompile Include="TestASCIITree.cpp">
-      <Filter>Source\Data\ASCII</Filter>
-    </ClCompile>
     <ClCompile Include="TestBufferedFile.cpp">
       <Filter>Source\File</Filter>
     </ClCompile>
