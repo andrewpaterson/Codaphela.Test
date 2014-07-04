@@ -22,7 +22,7 @@ void TestIndexTreeAdd(void)
 
 	cIndex.Init();
 	a.Init("A");
-	bResult = cIndex.Put(&a, sizeof(void*), a.GetName());
+	bResult = cIndex.PutPtr(&a, a.GetName());
 	AssertTrue(bResult);
 
 	pcNode = cIndex.GetIndexNode("A");
@@ -30,7 +30,7 @@ void TestIndexTreeAdd(void)
 	AssertPointer(&a, *ppvTest);
 
 	aa.Init("AA");
-	bResult = cIndex.Put(&aa, sizeof(void*), aa.GetName());
+	bResult = cIndex.PutPtr(&aa, aa.GetName());
 	AssertTrue(bResult);
 
 	pcNode = cIndex.GetIndexNode("A");
@@ -55,9 +55,9 @@ void TestIndexTreeAdd(void)
 	cIndex.Kill();
 
 	cIndex.Init();
-	bResult = cIndex.Put(&temp, sizeof(void*), NULL);
+	bResult = cIndex.PutPtr(&temp, NULL);
 	AssertFalse(bResult);
-	bResult = cIndex.Put(&temp, sizeof(void*), "");
+	bResult = cIndex.PutPtr(&temp, "");
 	AssertFalse(bResult);
 
 	cIndex.Kill();
@@ -84,7 +84,7 @@ void TestIndexTreeGet(void)
 	cIndex.Init();
 
 	andrew.Init("Andrew");
-	cIndex.Put(&andrew, sizeof(void*), andrew.GetName());
+	cIndex.PutPtr(&andrew, andrew.GetName());
 	pcResult = (CTestIndexTreeObject**)cIndex.Get("Andrew");
 	AssertPointer(*pcResult, &andrew);
 	avp.Init();
@@ -93,7 +93,7 @@ void TestIndexTreeGet(void)
 	avp.Kill();
 
 	batman.Init("Batman");
-	cIndex.Put(&batman, sizeof(void*), batman.GetName());
+	cIndex.PutPtr(&batman, batman.GetName());
 	pcNodeBatman = cIndex.GetIndexNode("Batman");
 	AssertInt(0, pcNodeBatman->GetNumIndexes());
 	pcResult = (CTestIndexTreeObject**)cIndex.Get("Batman");
@@ -104,7 +104,7 @@ void TestIndexTreeGet(void)
 
 	szBatmam = "Batmam";
 	batmam.Init(szBatmam);
-	cIndex.Put(&batmam, sizeof(void*), szBatmam);
+	cIndex.PutPtr(&batmam, szBatmam);
 	pcNodeBatman = cIndex.GetIndexNode("Batman");
 	pcNodeBatmam = cIndex.GetIndexNode(szBatmam);
 	pcResult = (CTestIndexTreeObject**)cIndex.Get(szBatmam);
@@ -114,7 +114,7 @@ void TestIndexTreeGet(void)
 	avp.Kill();
 
 	andre.Init("Andre");
-	cIndex.Put(&andre, sizeof(void*), andre.GetName());
+	cIndex.PutPtr(&andre, andre.GetName());
 	pcResult = (CTestIndexTreeObject**)cIndex.Get("Andre");
 	AssertPointer(&andre, *pcResult);
 	cIndex.FindAll(&avp);
@@ -146,11 +146,11 @@ void TestIndexTreePutDuplicate(void)
 	cIndex.Init();
 
 	andrew.Init("Andrew");
-	bResult = cIndex.Put(&andrew, sizeof(void*), andrew.mszName);
+	bResult = cIndex.PutPtr(&andrew, andrew.mszName);
 	AssertTrue(bResult);
 
 	andrewToo.Init("Andrew");
-	bResult = cIndex.Put(&andrewToo, sizeof(void*), andrewToo.GetName());
+	bResult = cIndex.PutPtr(&andrewToo, andrewToo.GetName());
 	AssertFalse(bResult);
 
 	pcResult = (CTestIndexTreeObject**)cIndex.Get("Andrew");
@@ -180,31 +180,31 @@ void TestIndexTreeValidateInternalConsistency(void)
 
 	cObject.Init("");
 
-	cIndex.Put(&cObject, sizeof(void*), "tonic");
-	cIndex.Put(&cObject, sizeof(void*), "topia");
-	cIndex.Put(&cObject, sizeof(void*), "topic");
-	cIndex.Put(&cObject, sizeof(void*), "totem");
-	cIndex.Put(&cObject, sizeof(void*), "tower");
-	cIndex.Put(&cObject, sizeof(void*), "tracter");
-	cIndex.Put(&cObject, sizeof(void*), "traction");
-	cIndex.Put(&cObject, sizeof(void*), "trahend");
-	cIndex.Put(&cObject, sizeof(void*), "translucence");
-	cIndex.Put(&cObject, sizeof(void*), "translucency");
-	cIndex.Put(&cObject, sizeof(void*), "transparentness");
-	cIndex.Put(&cObject, sizeof(void*), "tread");
-	cIndex.Put(&cObject, sizeof(void*), "treasurer");
-	cIndex.Put(&cObject, sizeof(void*), "treasurership");
-	cIndex.Put(&cObject, sizeof(void*), "treasury");
-	cIndex.Put(&cObject, sizeof(void*), "trench");
-	cIndex.Put(&cObject, sizeof(void*), "triangularity");
-	cIndex.Put(&cObject, sizeof(void*), "tribe");
-	cIndex.Put(&cObject, sizeof(void*), "triplication");
-	cIndex.Put(&cObject, sizeof(void*), "truncation");
-	cIndex.Put(&cObject, sizeof(void*), "trunk");
-	cIndex.Put(&cObject, sizeof(void*), "tunic");
-	cIndex.Put(&cObject, sizeof(void*), "tunnel");
-	cIndex.Put(&cObject, sizeof(void*), "tutor");
-	cIndex.Put(&cObject, sizeof(void*), "tutorship");
+	cIndex.PutPtr(&cObject, "tonic");
+	cIndex.PutPtr(&cObject, "topia");
+	cIndex.PutPtr(&cObject, "topic");
+	cIndex.PutPtr(&cObject, "totem");
+	cIndex.PutPtr(&cObject, "tower");
+	cIndex.PutPtr(&cObject, "tracter");
+	cIndex.PutPtr(&cObject, "traction");
+	cIndex.PutPtr(&cObject, "trahend");
+	cIndex.PutPtr(&cObject, "translucence");
+	cIndex.PutPtr(&cObject, "translucency");
+	cIndex.PutPtr(&cObject, "transparentness");
+	cIndex.PutPtr(&cObject, "tread");
+	cIndex.PutPtr(&cObject, "treasurer");
+	cIndex.PutPtr(&cObject, "treasurership");
+	cIndex.PutPtr(&cObject, "treasury");
+	cIndex.PutPtr(&cObject, "trench");
+	cIndex.PutPtr(&cObject, "triangularity");
+	cIndex.PutPtr(&cObject, "tribe");
+	cIndex.PutPtr(&cObject, "triplication");
+	cIndex.PutPtr(&cObject, "truncation");
+	cIndex.PutPtr(&cObject, "trunk");
+	cIndex.PutPtr(&cObject, "tunic");
+	cIndex.PutPtr(&cObject, "tunnel");
+	cIndex.PutPtr(&cObject, "tutor");
+	cIndex.PutPtr(&cObject, "tutorship");
 
 	AssertPointer(&cObject, *(CTestIndexTreeObject**)cIndex.Get("tonic"));
 	AssertPointer(&cObject, *(CTestIndexTreeObject**)cIndex.Get("topia"));
@@ -233,7 +233,7 @@ void TestIndexTreeValidateInternalConsistency(void)
 	AssertPointer(&cObject, *(CTestIndexTreeObject**)cIndex.Get("tutorship"));
 
 	cType.Init("type");
-	cIndex.Put(&cType, sizeof(void*), cType.GetName());
+	cIndex.PutPtr(&cType, cType.GetName());
 
 	AssertPointer(&cType, *(CTestIndexTreeObject**)cIndex.Get("type"));
 
@@ -268,22 +268,22 @@ void TestIndexTreeCountAllocatedNodes(void)
 	cAardvar.Init("Aardvar");
 	cAardvarc.Init("Aardvarc");
 
-	cIndex.Put(&cZebra, sizeof(void*), cZebra.GetName());
+	cIndex.PutPtr(&cZebra, cZebra.GetName());
 	pvResult = (CTestIndexTreeObject**)cIndex.Get("Zebra");
 	AssertPointer(&cZebra, *pvResult);
 	AssertInt(6, cIndex.CountAllocatedNodes());
 
-	cIndex.Put(&cAardvark, sizeof(void*), cAardvark.GetName());
+	cIndex.PutPtr(&cAardvark, cAardvark.GetName());
 	pvResult = (CTestIndexTreeObject**)cIndex.Get("Aardvark");
 	AssertPointer(&cAardvark, *pvResult);
 	AssertInt(14, cIndex.CountAllocatedNodes());
 
-	cIndex.Put(&cAardvar, sizeof(void*), cAardvar.GetName());
+	cIndex.PutPtr(&cAardvar, cAardvar.GetName());
 	pvResult = (CTestIndexTreeObject**)cIndex.Get("Aardvar");
 	AssertPointer(&cAardvar, *pvResult);
 	AssertInt(14, cIndex.CountAllocatedNodes());
 
-	cIndex.Put(&cAardvarc, sizeof(void*), cAardvarc.GetName());
+	cIndex.PutPtr(&cAardvarc, cAardvarc.GetName());
 	pvResult = (CTestIndexTreeObject**)cIndex.Get("Aardvarc");
 	AssertPointer(&cAardvarc, *pvResult);
 	AssertInt(15, cIndex.CountAllocatedNodes());
@@ -309,14 +309,14 @@ void TestIndexTreeRemoveByObject(void)
 	AssertInt(1, cIndex.CountAllocatedNodes());
 
 	object1.Init("denarii");
-	cIndex.Put(&object1, sizeof(void*), object1.GetName());
+	cIndex.PutPtr(&object1, object1.GetName());
 	AssertInt(8, cIndex.CountAllocatedNodes());
 
 	object2.Init("dendrodra");
-	cIndex.Put(&object2, sizeof(void*), object2.GetName());
+	cIndex.PutPtr(&object2, object2.GetName());
 
 	object3.Init("dendrons");
-	cIndex.Put(&object3, sizeof(void*), object3.GetName());
+	cIndex.PutPtr(&object3, object3.GetName());
 
 	AssertInt(3, cIndex.GetSize());
 	ppcRemoved = (CTestIndexTreeObject**)cIndex.Remove(object2.GetName());
@@ -331,7 +331,7 @@ void TestIndexTreeRemoveByObject(void)
 	AssertInt(1, cIndex.GetSize());
 	AssertInt(8, cIndex.CountAllocatedNodes());
 
-	cIndex.Put(&object3, sizeof(void*), object3.GetName());
+	cIndex.PutPtr(&object3, object3.GetName());
 	AssertInt(13, cIndex.CountAllocatedNodes());
 
 	AssertInt(2, cIndex.GetSize());
@@ -361,18 +361,18 @@ void TestIndexTreeHasKey(void)
 	cIndex.Init();
 	cObject.Init("Not Important");
 
-	cIndex.Put(&cObject, sizeof(void*), "fabaceous");
-	cIndex.Put(&cObject, sizeof(void*), "fabled");
-	cIndex.Put(&cObject, sizeof(void*), "fabricative");
-	cIndex.Put(&cObject, sizeof(void*), "fabulous");
-	cIndex.Put(&cObject, sizeof(void*), "face-centered");
-	cIndex.Put(&cObject, sizeof(void*), "face-centred");
-	cIndex.Put(&cObject, sizeof(void*), "face-saving");
-	cIndex.Put(&cObject, sizeof(void*), "faceable");
-	cIndex.Put(&cObject, sizeof(void*), "faceless");
-	cIndex.Put(&cObject, sizeof(void*), "facete");
-	cIndex.Put(&cObject, sizeof(void*), "facetious");
-	cIndex.Put(&cObject, sizeof(void*), "facile");
+	cIndex.PutPtr(&cObject, "fabaceous");
+	cIndex.PutPtr(&cObject, "fabled");
+	cIndex.PutPtr(&cObject, "fabricative");
+	cIndex.PutPtr(&cObject, "fabulous");
+	cIndex.PutPtr(&cObject, "face-centered");
+	cIndex.PutPtr(&cObject, "face-centred");
+	cIndex.PutPtr(&cObject, "face-saving");
+	cIndex.PutPtr(&cObject, "faceable");
+	cIndex.PutPtr(&cObject, "faceless");
+	cIndex.PutPtr(&cObject, "facete");
+	cIndex.PutPtr(&cObject, "facetious");
+	cIndex.PutPtr(&cObject, "facile");
 
 	AssertFalse(cIndex.HasKey(NULL));
 	AssertFalse(cIndex.HasKey(""));
@@ -409,8 +409,8 @@ void TestIndexTreeRemoveNullNode(void)
 	cIndex.Init();
 	cObject.Init("Not Important");
 
-	cIndex.Put(&cObject, sizeof(void*), "aaa");
-	cIndex.Put(&cObject, sizeof(void*), "aab");
+	cIndex.PutPtr(&cObject, "aaa");
+	cIndex.PutPtr(&cObject, "aab");
 
 	AssertInt(2, cIndex.GetSize());
 	AssertInt(2, cIndex.RecurseSize());
@@ -438,6 +438,27 @@ void TestIndexTreeRemoveNullNode(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeAddLongLong(void)
+{
+	CIndexTree		cIndex;
+	long long		li;
+	long long*		pli;
+
+	cIndex.Init();
+
+	li = 0x88LL;
+	cIndex.Add("GraphRoot", &li, sizeof(long long));
+	pli = (long long*)cIndex.Get("GraphRoot");
+	AssertLongLongInt(li, *pli);
+
+	cIndex.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTree(void)
 {
 	BeginTests();
@@ -450,6 +471,7 @@ void TestIndexTree(void)
 	TestIndexTreeRemoveByObject();
 	TestIndexTreeHasKey();
 	TestIndexTreeRemoveNullNode();
+	TestIndexTreeAddLongLong();
 
 	TestStatistics();
 }
