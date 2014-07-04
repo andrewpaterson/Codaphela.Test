@@ -25,7 +25,7 @@ void TestIndexTreeAdd(void)
 	bResult = cIndex.PutPtr(&a, a.GetName());
 	AssertTrue(bResult);
 
-	pcNode = cIndex.GetIndexNode("A");
+	pcNode = cIndex.GetIndexNode("A", 1);
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetObjectPtr();
 	AssertPointer(&a, *ppvTest);
 
@@ -33,11 +33,11 @@ void TestIndexTreeAdd(void)
 	bResult = cIndex.PutPtr(&aa, aa.GetName());
 	AssertTrue(bResult);
 
-	pcNode = cIndex.GetIndexNode("A");
+	pcNode = cIndex.GetIndexNode("A", 1);
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetObjectPtr();
 	AssertPointer(&a, *ppvTest);
 
-	pcNode = cIndex.GetIndexNode("AA");
+	pcNode = cIndex.GetIndexNode("AA", 2);
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetObjectPtr();
 	AssertPointer(&aa, *ppvTest);
 
@@ -94,7 +94,7 @@ void TestIndexTreeGet(void)
 
 	batman.Init("Batman");
 	cIndex.PutPtr(&batman, batman.GetName());
-	pcNodeBatman = cIndex.GetIndexNode("Batman");
+	pcNodeBatman = cIndex.GetIndexNode("Batman", 6);
 	AssertInt(0, pcNodeBatman->GetNumIndexes());
 	pcResult = (CTestIndexTreeObject**)cIndex.Get("Batman");
 	AssertPointer(*pcResult, &batman);
@@ -105,8 +105,8 @@ void TestIndexTreeGet(void)
 	szBatmam = "Batmam";
 	batmam.Init(szBatmam);
 	cIndex.PutPtr(&batmam, szBatmam);
-	pcNodeBatman = cIndex.GetIndexNode("Batman");
-	pcNodeBatmam = cIndex.GetIndexNode(szBatmam);
+	pcNodeBatman = cIndex.GetIndexNode("Batman", 6);
+	pcNodeBatmam = cIndex.GetIndexNode(szBatmam, 6);
 	pcResult = (CTestIndexTreeObject**)cIndex.Get(szBatmam);
 	AssertPointer(&batmam, *pcResult);
 	cIndex.FindAll(&avp);
@@ -318,29 +318,29 @@ void TestIndexTreeRemoveByObject(void)
 	object3.Init("dendrons");
 	cIndex.PutPtr(&object3, object3.GetName());
 
-	AssertInt(3, cIndex.GetSize());
+	AssertInt(3, cIndex.NumElements());
 	ppcRemoved = (CTestIndexTreeObject**)cIndex.Remove(object2.GetName());
 	AssertPointer(&object2, *ppcRemoved);
-	AssertInt(2, cIndex.GetSize());
+	AssertInt(2, cIndex.NumElements());
 	AssertNull(cIndex.Remove(object2.GetName()));
-	AssertInt(2, cIndex.GetSize());
+	AssertInt(2, cIndex.NumElements());
 
 	AssertInt(13, cIndex.CountAllocatedNodes());
 	cIndex.Remove(object3.GetName());
 
-	AssertInt(1, cIndex.GetSize());
+	AssertInt(1, cIndex.NumElements());
 	AssertInt(8, cIndex.CountAllocatedNodes());
 
 	cIndex.PutPtr(&object3, object3.GetName());
 	AssertInt(13, cIndex.CountAllocatedNodes());
 
-	AssertInt(2, cIndex.GetSize());
+	AssertInt(2, cIndex.NumElements());
 	ppcRemoved = (CTestIndexTreeObject**)cIndex.Remove(object3.GetName());
 	AssertPointer(&object3, *ppcRemoved);
-	AssertInt(1, cIndex.GetSize());
+	AssertInt(1, cIndex.NumElements());
 	ppcRemoved = (CTestIndexTreeObject**)cIndex.Remove(object1.GetName());
 	AssertPointer(&object1, *ppcRemoved);
-	AssertInt(0, cIndex.GetSize());
+	AssertInt(0, cIndex.NumElements());
 
 	AssertNull(cIndex.Remove(NULL));
 	AssertNull(cIndex.Remove(""));
@@ -412,22 +412,22 @@ void TestIndexTreeRemoveNullNode(void)
 	cIndex.PutPtr(&cObject, "aaa");
 	cIndex.PutPtr(&cObject, "aab");
 
-	AssertInt(2, cIndex.GetSize());
+	AssertInt(2, cIndex.NumElements());
 	AssertInt(2, cIndex.RecurseSize());
 
 	cIndex.Remove("a");
 
-	AssertInt(2, cIndex.GetSize());
+	AssertInt(2, cIndex.NumElements());
 	AssertInt(2, cIndex.RecurseSize());
 
 	cIndex.Remove("aaa");
 
-	AssertInt(1, cIndex.GetSize());
+	AssertInt(1, cIndex.NumElements());
 	AssertInt(1, cIndex.RecurseSize());
 
 	cIndex.Remove("aaa");
 
-	AssertInt(1, cIndex.GetSize());
+	AssertInt(1, cIndex.NumElements());
 	AssertInt(1, cIndex.RecurseSize());
 
 	cIndex.Kill();
@@ -447,7 +447,7 @@ void TestIndexTreeAddLongLong(void)
 	cIndex.Init();
 
 	li = 0x88LL;
-	cIndex.Add("GraphRoot", &li, sizeof(long long));
+	cIndex.Put(&li, sizeof(long long), "GraphRoot");
 	pli = (long long*)cIndex.Get("GraphRoot");
 	AssertLongLongInt(li, *pli);
 
