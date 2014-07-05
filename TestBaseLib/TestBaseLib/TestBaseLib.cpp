@@ -16,7 +16,7 @@ void TestFileUtil(void);
 void TestFreeList(void);
 void TestIndexTreeNode(void);
 void TestIndexTree(void);
-void TestASCIITree(void);
+void TestIndexTreeTemplate(void);
 void TestMemory(void);
 void TestLinkListAligned(void);
 void TestArrayInt2D(void);
@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 	TestArrayTemplate();
 	TestIndexTreeNode();
 	TestIndexTree();
-	TestASCIITree();
+	TestIndexTreeTemplate();
 	TestArrayDenseTemplate();
 	TestArraySparseTemplate();
 	TestFileUtil();

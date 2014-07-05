@@ -204,6 +204,9 @@
     <ClCompile Include="TestMapString.cpp">
       <Filter>Source\Data\Map</Filter>
     </ClCompile>
+    <ClCompile Include="TestIndexTreeTemplate.cpp">
+      <Filter>Source\Data\Index</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

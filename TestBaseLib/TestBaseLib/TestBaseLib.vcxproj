@@ -98,6 +98,7 @@
     <ClCompile Include="TestIndexTree.cpp" />
     <ClCompile Include="TestIndexTreeNode.cpp" />
     <ClCompile Include="TestIndexTreeObject.cpp" />
+    <ClCompile Include="TestIndexTreeTemplate.cpp" />
     <ClCompile Include="TestLinkListTemplate.cpp" />
     <ClCompile Include="TestMapString.cpp" />
     <ClCompile Include="TestMemoryCache.cpp" />

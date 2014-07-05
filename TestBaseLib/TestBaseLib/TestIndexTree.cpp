@@ -319,10 +319,13 @@ void TestIndexTreeRemoveByObject(void)
 	cIndex.PutPtr(&object3, object3.GetName());
 
 	AssertInt(3, cIndex.NumElements());
-	ppcRemoved = (CTestIndexTreeObject**)cIndex.Remove(object2.GetName());
+	ppcRemoved = (CTestIndexTreeObject**)cIndex.Get(object2.GetName());
 	AssertPointer(&object2, *ppcRemoved);
+	AssertTrue(cIndex.Remove(object2.GetName()));
+	ppcRemoved = (CTestIndexTreeObject**)cIndex.Get(object2.GetName());
+	AssertNull(ppcRemoved);
 	AssertInt(2, cIndex.NumElements());
-	AssertNull(cIndex.Remove(object2.GetName()));
+	AssertFalse(cIndex.Remove(object2.GetName()));
 	AssertInt(2, cIndex.NumElements());
 
 	AssertInt(13, cIndex.CountAllocatedNodes());
@@ -335,15 +338,21 @@ void TestIndexTreeRemoveByObject(void)
 	AssertInt(13, cIndex.CountAllocatedNodes());
 
 	AssertInt(2, cIndex.NumElements());
-	ppcRemoved = (CTestIndexTreeObject**)cIndex.Remove(object3.GetName());
+	ppcRemoved = (CTestIndexTreeObject**)cIndex.Get(object3.GetName());
 	AssertPointer(&object3, *ppcRemoved);
+	AssertTrue(cIndex.Remove(object3.GetName()));
+	ppcRemoved = (CTestIndexTreeObject**)cIndex.Get(object3.GetName());
+	AssertNull(ppcRemoved);
 	AssertInt(1, cIndex.NumElements());
-	ppcRemoved = (CTestIndexTreeObject**)cIndex.Remove(object1.GetName());
+	ppcRemoved = (CTestIndexTreeObject**)cIndex.Get(object1.GetName());
 	AssertPointer(&object1, *ppcRemoved);
+	AssertTrue(cIndex.Remove(object1.GetName()));
+	ppcRemoved = (CTestIndexTreeObject**)cIndex.Get(object1.GetName());
+	AssertNull(ppcRemoved);
 	AssertInt(0, cIndex.NumElements());
 
-	AssertNull(cIndex.Remove(NULL));
-	AssertNull(cIndex.Remove(""));
+	AssertFalse(cIndex.Remove(NULL));
+	AssertFalse(cIndex.Remove(""));
 
 	cIndex.Kill();
 }
