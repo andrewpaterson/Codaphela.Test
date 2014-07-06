@@ -22,9 +22,6 @@
     <Filter Include="Source\Data\Map">
       <UniqueIdentifier>{081ad5e5-dc91-469d-9ac0-faa9db4c3b8f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Data\ASCII">
-      <UniqueIdentifier>{ad81a583-cc63-48f1-a1f6-ce6a5a6d0512}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\File">
       <UniqueIdentifier>{15a52ed0-48f1-4cda-95ea-1e198afe6da6}</UniqueIdentifier>
     </Filter>

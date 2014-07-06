@@ -4,8 +4,8 @@
 #include "stdafx.h"
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
+#include "CoreLib/TypeNames.h"
 #include "CoreLib/TypeConverter.h"
-#include "StandardLib/ClassStorage.h"
 #include "StandardLib/Unknowns.h"
 #include "TestLib/Assert.h"
 #include "TestImage.h"
@@ -46,7 +46,7 @@ int main(int argc, _TCHAR* argv[])
 	InitTotalStatistics();
 
 	FastFunctionsInit();
-	ClassStorageInit();
+	TypesInit();
 	TypeConverterInit();
 	UnknownsInit();
 
@@ -87,7 +87,7 @@ int main(int argc, _TCHAR* argv[])
 
 	UnknownsKill();
 	TypeConverterKill();
-	ClassStorageKill();
+	TypesKill();
 	FastFunctionsKill();
 	return TestTotalStatistics();
 }

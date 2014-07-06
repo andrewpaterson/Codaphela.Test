@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "BaseLib/FastFunctions.h"
-#include "StandardLib/ClassStorage.h"
 #include "SupportLib/ImageCel.h"
 #include "SupportLib/ImageCelMask.h"
 #include "SupportLib/ImageCelTransparent.h"

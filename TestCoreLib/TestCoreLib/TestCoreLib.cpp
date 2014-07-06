@@ -4,7 +4,7 @@
 void TestFloatHelper(void);
 void TestIntegerHelper(void);
 void TestFastFunctions(void);
-void TestArraySimple(void);
+void TestArrayMinimalTemplate(void);
 void TestChars(void);
 void TestMap(void);
 void TestTextParser(void);
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 	TestFloatHelper();
 	TestIntegerHelper();
 	TestFastFunctions();
-	TestArraySimple();
+	TestArrayMinimalTemplate();
 	TestChars();
 	TestMap();
 	TestTextParser();

@@ -100,7 +100,7 @@
     <ClCompile Include="TestLogFile.cpp" />
     <ClCompile Include="TestMap.cpp" />
     <ClCompile Include="TestChars.cpp" />
-    <ClCompile Include="TestArraySimple.cpp" />
+    <ClCompile Include="TestArrayTemplateMinimal.cpp" />
     <ClCompile Include="TestIndexedData.cpp" />
     <ClCompile Include="TestIndexedDataSmart.cpp" />
     <ClCompile Include="TestIndexedHuge.cpp" />

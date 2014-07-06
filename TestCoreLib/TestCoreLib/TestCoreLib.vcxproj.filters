@@ -66,9 +66,6 @@
     <ClCompile Include="TestChars.cpp">
       <Filter>Source\Data\String</Filter>
     </ClCompile>
-    <ClCompile Include="TestArraySimple.cpp">
-      <Filter>Source\Data\Array</Filter>
-    </ClCompile>
     <ClCompile Include="TestIndexedData.cpp">
       <Filter>Source\File\Indexed</Filter>
     </ClCompile>
@@ -134,6 +131,9 @@
     </ClCompile>
     <ClCompile Include="TestLogFile.cpp">
       <Filter>Source\File\Log</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayTemplateMinimal.cpp">
+      <Filter>Source\Data\Array</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
