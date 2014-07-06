@@ -1,4 +1,4 @@
-#include "BaseLib/AdditionalTypes.h"
+#include "BaseLib/ArraySimpleInt.h"
 #include "BaseLib/ArraySimpleChar.h"
 #include "TestLib/Assert.h"
 
