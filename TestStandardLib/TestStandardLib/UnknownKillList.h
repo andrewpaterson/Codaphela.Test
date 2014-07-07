@@ -1,10 +1,10 @@
 #ifndef __DEATH_TRACKER_H__
 #define __DEATH_TRACKER_H__
-#include "BaseLib/ArraySimple.h"
+#include "BaseLib/ArrayTemplateMinimal.h"
 
 
 class CUnknownTestHelper;
-class CKillList : public CArraySimple<CUnknownTestHelper*>
+class CKillList : public CArrayTemplateMinimal<CUnknownTestHelper*>
 {
 public:
 	void AddKill(CUnknownTestHelper* pcKilled);

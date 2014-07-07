@@ -1,5 +1,5 @@
-#include "BaseLib/ArraySimpleInt.h"
-#include "BaseLib/ArraySimpleChar.h"
+#include "BaseLib/ArrayIntMinimal.h"
+#include "BaseLib/ArrayCharMinimal.h"
 #include "TestLib/Assert.h"
 
 
@@ -11,7 +11,7 @@ void TestArraySimple(void)
 {
 	BeginTests();
 
-	CArraySimpleChar	cac;
+	CArrayCharMinimal	cac;
 
 	cac.Init("aabbc");
 	AssertString("aabbc", cac.GetArray());

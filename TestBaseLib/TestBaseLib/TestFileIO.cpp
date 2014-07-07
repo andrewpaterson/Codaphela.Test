@@ -405,8 +405,8 @@ void TestFileIOArray(void)
 	int								ii;
 	CArrayBlock						av;
 	CArrayBlock						avi;
-	CArraySimple<CFileIOTest>		asTest;
-	CArraySimple<CFileIOTest>		asTestIn;
+	CArrayTemplateMinimal<CFileIOTest>	asTest;
+	CArrayTemplateMinimal<CFileIOTest>	asTestIn;
 
 	TestFileIOBegin(&cMemory, &cFile);
 
