@@ -7,8 +7,6 @@ void TestArrayMinimalTemplateChar(void)
 {
 	CArrayCharMinimal	cac;
 
-	CArrayCharMinimal	cac;
-
 	cac.Init("aabbc");
 	AssertString("aabbc", cac.GetArray());
 
