@@ -403,8 +403,8 @@ void TestFileIOArray(void)
 	CArrayInt							ai;
 	CArrayInt							aii;
 	int									ii;
-	CArrayBase							av;
-	CArrayBase							avi;
+	CArrayBlock							av;
+	CArrayBlock							avi;
 	CArrayTemplateMinimal<CFileIOTest>	asTest;
 	CArrayTemplateMinimal<CFileIOTest>	asTestIn;
 
