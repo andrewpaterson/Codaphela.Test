@@ -314,6 +314,28 @@ void TestArrayRemove(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestArrayFake(void)
+{
+	CArrayTemplate<char>	cac;
+	char*					szTest;
+	char*					pc;
+
+	szTest = (char*)malloc(5);
+	strcpy(szTest, "Test");
+
+	cac.Fake(szTest, 2, 5);
+	pc = cac.Add();
+	*pc = 'x';
+
+	AssertString("Text", cac.GetData());
+	free(szTest);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestArrayTemplate(void)
 {
 	BeginTests();
@@ -323,6 +345,7 @@ void TestArrayTemplate(void)
 	TestArrayCopy();
 	TestArraySorting();
 	TestArrayRemove();
+	TestArrayFake();
 
 	TestStatistics();
 }
