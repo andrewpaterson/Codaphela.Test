@@ -122,7 +122,7 @@ void TestMemoryLargeAdd(void)
 	pv = cMemory.Add(2033);
 	pcList = cMemory.TestGetFreeListsHead();
 	AssertNull(pcList);
-	AssertInt(2088, cMemory.ByteSize());
+	AssertInt(2092, cMemory.ByteSize());
 
 	cMemory.TestGetLargeListsHead();
 

@@ -35,7 +35,7 @@ void TestLinkListAlignedAdd(void)
 		}
 		iPrevTotalSize += ((sizeof(SDANode) + 65 + iAlignment-1) * k);
 	}
-	AssertInt(26555, iPrevTotalSize);
+	AssertInt(27495, iPrevTotalSize);
 
 	cLinkListAligned.Kill();
 }
