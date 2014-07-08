@@ -3,7 +3,7 @@
 #include "BaseLib/EnumeratorTemplate.h"
 #include "BaseLib/EnumeratorBlock.h"
 #include "BaseLib/LinkListAligned.h"
-#include "BaseLib/LinkListBlock.h"
+#include "BaseLib/LinkedListBlock.h"
 #include "BaseLib/TreeTemplate.h"
 #include "BaseLib/TreeBlock.h"
 #include "TestLib/Assert.h"
@@ -282,10 +282,10 @@ void TestFileIOLinkList(void)
 	CFileIOTest*					pcTest2;
 	CLinkListTemplate<CFileIOTest>	cLinkListIn;
 	CFileIOTest*					pcTestIn;
-	CLinkListBlock					cBlock;
+	CLinkedListBlock					cBlock;
 	char							sz[20];
 	void*							pv;
-	CLinkListBlock					cBlockIn;
+	CLinkedListBlock					cBlockIn;
 
 	TestFileIOBegin(&cMemory, &cFile);
 
