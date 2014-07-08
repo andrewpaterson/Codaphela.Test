@@ -394,17 +394,17 @@ void TestFileIOLinkListAligned(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFileIOArray(void)
 {
-	CMemoryFile						cMemory;
-	CFileBasic						cFile;
-	CArrayTemplate<CFileIOTest>		acTest;
-	int								i;
-	CFileIOTest*					pcTest;
-	CArrayTemplate<CFileIOTest>		acTestIn;
-	CArrayInt						ai;
-	CArrayInt						aii;
-	int								ii;
-	CArrayBlock						av;
-	CArrayBlock						avi;
+	CMemoryFile							cMemory;
+	CFileBasic							cFile;
+	CArrayTemplate<CFileIOTest>			acTest;
+	int									i;
+	CFileIOTest*						pcTest;
+	CArrayTemplate<CFileIOTest>			acTestIn;
+	CArrayInt							ai;
+	CArrayInt							aii;
+	int									ii;
+	CArrayBase							av;
+	CArrayBase							avi;
 	CArrayTemplateMinimal<CFileIOTest>	asTest;
 	CArrayTemplateMinimal<CFileIOTest>	asTestIn;
 
