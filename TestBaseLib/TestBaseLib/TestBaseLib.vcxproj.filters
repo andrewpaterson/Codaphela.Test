@@ -73,6 +73,9 @@
     <Filter Include="Source\File\IO">
       <UniqueIdentifier>{27e203b8-7b92-4e93-9f2f-cbdc59c5c99f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Memory\Allocator">
+      <UniqueIdentifier>{c32a2f17-43d1-4528-8c14-b1da112fe835}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -203,6 +206,9 @@
     </ClCompile>
     <ClCompile Include="TestIndexTreeTemplate.cpp">
       <Filter>Source\Data\Index</Filter>
+    </ClCompile>
+    <ClCompile Include="TestAllocator.cpp">
+      <Filter>Source\Memory\Allocator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
