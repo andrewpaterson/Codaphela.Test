@@ -2,7 +2,7 @@
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/EnumeratorTemplate.h"
 #include "BaseLib/EnumeratorBlock.h"
-#include "BaseLib/LinkListAligned.h"
+#include "BaseLib/LinkedListBlockAligned.h"
 #include "BaseLib/LinkedListBlock.h"
 #include "BaseLib/TreeTemplate.h"
 #include "BaseLib/TreeBlock.h"
@@ -277,10 +277,10 @@ void TestFileIOLinkList(void)
 {
 	CMemoryFile						cMemory;
 	CFileBasic						cFile;
-	CLinkListTemplate<CFileIOTest>	cLinkList;
+	CLinkedListTemplate<CFileIOTest>	cLinkList;
 	CFileIOTest*					pcTest1;
 	CFileIOTest*					pcTest2;
-	CLinkListTemplate<CFileIOTest>	cLinkListIn;
+	CLinkedListTemplate<CFileIOTest>	cLinkListIn;
 	CFileIOTest*					pcTestIn;
 	CLinkedListBlock					cBlock;
 	char							sz[20];
@@ -295,7 +295,7 @@ void TestFileIOLinkList(void)
 	pcTest2 = cLinkList.Add();
 	pcTest2->Init(887);
 	AssertInt(cLinkList.NumElements(), 2);
-	AssertTrue(cLinkList.WriteLinkListTemplate(&cFile));
+	AssertTrue(cLinkList.WriteLinkedListTemplate(&cFile));
 
 	cBlock.Init();
 	strcpy(sz, "Lurching Larch");
@@ -314,7 +314,7 @@ void TestFileIOLinkList(void)
 	cLinkList.Kill();
 	TestFileIOMiddle(&cFile);
 
-	AssertTrue(cLinkListIn.ReadLinkListTemplate(&cFile));
+	AssertTrue(cLinkListIn.ReadLinkedListTemplate(&cFile));
 	AssertInt(cLinkListIn.NumElements(), 2);
 	pcTestIn = cLinkListIn.GetHead();
 	AssertNotNull(pcTestIn);
@@ -345,13 +345,13 @@ void TestFileIOLinkList(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFileIOLinkListAligned(void)
+void TestFileIOLinkedListBlockAligned(void)
 {
 	//CMemoryFile						cMemory;
 	//CFileBasic						cFile;
 	//CFileIOTest*					pcTestIn;
-	//CLinkListAligned				cAligned;
-	//CLinkListAligned				cAlignedIn;
+	//CLinkedListBlockAligned				cAligned;
+	//CLinkedListBlockAligned				cAlignedIn;
 	//CFileIOAlignedTest*				pcAli1;
 	//CFileIOAlignedTest*				pcAli2;
 	//CFileIOAlignedTest*				pcAliIn;
@@ -366,12 +366,12 @@ void TestFileIOLinkListAligned(void)
 	//AssertTrue(pcAli2->IsAligned(17));
 	//pcAli2->Init(-7);
 	//AssertInt(cAligned.NumElements(), 2);
-	//AssertTrue(cAligned.WriteLinkListAligned(&cFile));
+	//AssertTrue(cAligned.WriteLinkedListBlockAligned(&cFile));
 
 	//cAligned.Kill();
 	//TestFileIOMiddle(&cFile);
 
-	//AssertTrue(cAlignedIn.ReadLinkListAligned(&cFile));
+	//AssertTrue(cAlignedIn.ReadLinkedListBlockAligned(&cFile));
 	//AssertInt(cAlignedIn.NumElements(), 2);
 	//pcAliIn = (CFileIOAlignedTest*)cAlignedIn.GetHead();
 	//AssertNotNull(pcAliIn);
@@ -591,7 +591,7 @@ void TestFileIO(void)
 	TestFileIOEnumerator();
 	TestFileIOTree();
 	TestFileIOLinkList();
-	TestFileIOLinkListAligned();
+	TestFileIOLinkedListBlockAligned();
 	TestFileIOMap();
 
 	TestStatistics();

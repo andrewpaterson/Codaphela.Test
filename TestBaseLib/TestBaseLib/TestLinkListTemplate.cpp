@@ -1,5 +1,5 @@
 #include "BaseLib/IntegerHelper.h"
-#include "BaseLib/LinkListTemplate.h"
+#include "BaseLib/LinkedListTemplate.h"
 #include "TestLib/Assert.h"
 
 
@@ -7,9 +7,9 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestLinkListTemplateIndexOf(void)
+void TestLinkedListTemplateIndexOf(void)
 {
-	CLinkListTemplate<int>	cLinkList;
+	CLinkedListTemplate<int>	cLinkList;
 	int*					pi1;
 	int*					pi2;
 	int*					pi3;
@@ -44,11 +44,11 @@ void TestLinkListTemplateIndexOf(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestLinkListTemplate(void)
+void TestLinkedListTemplate(void)
 {
 	BeginTests();
 
-	TestLinkListTemplateIndexOf();
+	TestLinkedListTemplateIndexOf();
 
 	TestStatistics();
 }

@@ -1,5 +1,5 @@
 #include "BaseLib/ArrayInt.h"
-#include "BaseLib/LinkListTemplate.h"
+#include "BaseLib/LinkedListTemplate.h"
 #include "TestLib/Assert.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ void TestArraySorting2(void)
 //////////////////////////////////////////////////////////////////////////
 void TestListSorting(void)
 {
-	CLinkListTemplate<int>	cInts;
+	CLinkedListTemplate<int>	cInts;
 	int*					pi;
 
 	cInts.Init();
