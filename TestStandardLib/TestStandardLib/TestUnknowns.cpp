@@ -11,7 +11,7 @@ void TestUnknownListAddKill(void)
 {
 	CUnknowns			cList;
 	CTestUnknown*		pcTest;
-	CFreeListBlock*		pcFreeList;
+	CFreeList*		pcFreeList;
 
 	cList.Init("Test1");
 

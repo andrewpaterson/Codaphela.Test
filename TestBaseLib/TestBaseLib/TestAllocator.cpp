@@ -57,7 +57,7 @@ void TestAllocatorNull(void)
 //////////////////////////////////////////////////////////////////////////
 void TestAllocatorFreeList(void)
 {
-	CFreeListBlock		cBlock;
+	CFreeList		cBlock;
 	CFreeListAllocator	cAlloc;
 	void*				pv1;
 	void*				pv2;

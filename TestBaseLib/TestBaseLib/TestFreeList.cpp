@@ -1,4 +1,4 @@
-#include "BaseLib/FreeListBlock.h"
+#include "BaseLib/FreeList.h"
 #include "TestLib/Assert.h"
 
 
@@ -6,7 +6,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertIteration(CFreeListBlock* pcFreeList, void* pvFirst, ...)
+void AssertIteration(CFreeList* pcFreeList, void* pvFirst, ...)
 {
 	va_list				vaMarker;
 	void*				pv;
@@ -42,7 +42,7 @@ void AssertIteration(CFreeListBlock* pcFreeList, void* pvFirst, ...)
 //////////////////////////////////////////////////////////////////////////
 void TestFreeListAllocation(void)
 {
-	CFreeListBlock	cFreeList;
+	CFreeList	cFreeList;
 	void*				pv1;
 	void*				pv2;
 	void*				pv3;
@@ -110,7 +110,7 @@ void TestFreeListAllocation(void)
 }
 
 
-typedef CArrayTemplate<CFreeListBlock>	CArrayFreeList;
+typedef CArrayTemplate<CFreeList>	CArrayFreeList;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -122,10 +122,10 @@ void TestFreeListAlignment(void)
 	CArrayFreeList		cArray;
 	int					i;
 	int					j;
-	CFreeListBlock*	pcFreeList;
+	CFreeList*	pcFreeList;
 	void*				pv;
 	int					k;
-	CFreeListBlock	cFreeList;
+	CFreeList	cFreeList;
 	SFNode*				psNode;
 
 	cArray.Init();
@@ -211,7 +211,7 @@ void TestFreeListOffsetAlignment(void)
 	CArrayFreeList		cArray;
 	int					iElementSize;
 	int					iOffset;
-	CFreeListBlock*	pcFreeList;
+	CFreeList*	pcFreeList;
 	void*				pv;
 	int					i;
 	int					iAlignment;

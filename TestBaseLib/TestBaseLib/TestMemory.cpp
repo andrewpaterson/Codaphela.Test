@@ -21,8 +21,8 @@ void TestMemoryAdd(void)
 	void*				pv9;
 	void*				pv;
 	SMemoryAllocation*	psAlloc;
-	CFreeListBlock*		pcList;
-	CFreeListBlock*		pcListSame;
+	CFreeList*		pcList;
+	CFreeList*		pcListSame;
 	SFreeListIterator	sIter;
 	int*				piBits;
 
@@ -105,7 +105,7 @@ void TestMemoryLargeAdd(void)
 {
 	CMemory				cMemory;
 	void*				pv;
-	CFreeListBlock*		pcList;
+	CFreeList*		pcList;
 
 	cMemory.Init();
 	pcList = cMemory.TestGetFreeListsHead();
