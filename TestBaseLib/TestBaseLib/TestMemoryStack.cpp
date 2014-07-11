@@ -24,24 +24,24 @@ void TestMemoryStackAdd(void)
 	sz2 = (char*)cStack.Add(11);
 	memcpy(sz2, szLetters, 11);
 	
-	AssertString("0123456789ABCDEFGHIJ", (char*)cStack.mpvMemory);
+	AssertString("0123456789ABCDEFGHIJ", (char*)cStack.GetData());
 	
 	cStack.Remove();  //Removing doesn't do anything unless every item is removed.
-	AssertString("0123456789ABCDEFGHIJ", (char*)cStack.mpvMemory);
-	((char*)cStack.mpvMemory)[20] = '.';
+	AssertString("0123456789ABCDEFGHIJ", (char*)cStack.GetData());
+	((char*)cStack.GetData())[20] = '.';
 
 	sz3 = (char*)cStack.Add(4);
 	memcpy(sz3, szStuff, 4);	
-	AssertString("0123456789ABCDEFGHIJ.%^&", (char*)cStack.mpvMemory);
+	AssertString("0123456789ABCDEFGHIJ.%^&", (char*)cStack.GetData());
 
 	cStack.Remove(2);
 	sz4 = (char*)cStack.Add(4);
 	memcpy(sz4, szStuff, 4);	
-	AssertString("%^&", (char*)cStack.mpvMemory);
+	AssertString("%^&", (char*)cStack.GetData());
 	
 	cStack.Kill();
 
-	AssertNull(cStack.mpvMemory);
+	AssertNull(cStack.GetData());
 }
 
 
