@@ -100,7 +100,7 @@
     <ClCompile Include="TestIndexTreeNode.cpp" />
     <ClCompile Include="TestIndexTreeObject.cpp" />
     <ClCompile Include="TestIndexTreeTemplate.cpp" />
-    <ClCompile Include="TestLinkListTemplate.cpp" />
+    <ClCompile Include="TestLinkedListTemplate.cpp" />
     <ClCompile Include="TestMapString.cpp" />
     <ClCompile Include="TestMemoryCache.cpp" />
     <ClCompile Include="TestMemoryStack.cpp" />
@@ -131,7 +131,7 @@
     <ClCompile Include="TestIntegerHelper.cpp" />
     <ClCompile Include="TestNumbers.cpp" />
     <ClCompile Include="TestFreeList.cpp" />
-    <ClCompile Include="TestLinkListAligned.cpp" />
+    <ClCompile Include="TestLinkedListAligned.cpp" />
     <ClCompile Include="TestMemory.cpp" />
     <ClCompile Include="TestTreeTemplate.cpp" />
   </ItemGroup>

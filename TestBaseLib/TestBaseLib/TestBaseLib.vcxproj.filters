@@ -159,17 +159,11 @@
     <ClCompile Include="TestMemory.cpp">
       <Filter>Source\Memory\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="TestLinkListTemplate.cpp">
-      <Filter>Source\Data\LinkList</Filter>
-    </ClCompile>
     <ClCompile Include="TestTreeTemplate.cpp">
       <Filter>Source\Data\Tree</Filter>
     </ClCompile>
     <ClCompile Include="TestCSVFileEditable.cpp">
       <Filter>Source\File\CSV</Filter>
-    </ClCompile>
-    <ClCompile Include="TestLinkListAligned.cpp">
-      <Filter>Source\Data\LinkList</Filter>
     </ClCompile>
     <ClCompile Include="TestFreeList.cpp">
       <Filter>Source\Memory\FreeList</Filter>
@@ -209,6 +203,12 @@
     </ClCompile>
     <ClCompile Include="TestAllocator.cpp">
       <Filter>Source\Memory\Allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLinkedListAligned.cpp">
+      <Filter>Source\Data\LinkList</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLinkedListTemplate.cpp">
+      <Filter>Source\Data\LinkList</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
