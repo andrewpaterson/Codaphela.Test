@@ -37,7 +37,7 @@ void TestMemoryAdd(void)
 	AssertPointer(pcList, psAlloc->psFreeListNode->pcList);
 	pcListSame = cMemory.GetFreeList(8, 4, 0);
 	AssertPointer(pcList, pcListSame);
-	AssertInt(24807, cMemory.ByteSize());
+	AssertInt(24815, cMemory.ByteSize());
 
 	pv2 = cMemory.Grow(pv1, 2);
 	psAlloc = MEMORY_GET_ALLOCATION(pv2);
@@ -45,7 +45,7 @@ void TestMemoryAdd(void)
 	AssertInt(2, cMemory.GetSize(pv2));
 	AssertPointer(pcList, psAlloc->psFreeListNode->pcList);
 	AssertPointer(pv1, pv2);
-	AssertInt(24807, cMemory.ByteSize());
+	AssertInt(24815, cMemory.ByteSize());
 
 	pv4 = cMemory.Grow(pv2, 4);
 	psAlloc = MEMORY_GET_ALLOCATION(pv4);
@@ -80,7 +80,7 @@ void TestMemoryAdd(void)
 	pcList = cMemory.GetFreeList(8, 4, 0);
 	pv = pcList->StartIteration(&sIter);
 	AssertNull(pv);
-	AssertInt(28935, cMemory.ByteSize());
+	AssertInt(28947, cMemory.ByteSize());
 
 	cMemory.Kill();
 
@@ -116,7 +116,7 @@ void TestMemoryLargeAdd(void)
 	pv = cMemory.Add(2032);
 	pcList = cMemory.TestGetFreeListsHead();
 	AssertNotNull(pcList);
-	AssertInt(34895, cMemory.ByteSize());
+	AssertInt(34903, cMemory.ByteSize());
 	cMemory.Kill();
 
 	cMemory.Init();
@@ -124,7 +124,7 @@ void TestMemoryLargeAdd(void)
 	pv = cMemory.Add(2033);
 	pcList = cMemory.TestGetFreeListsHead();
 	AssertNull(pcList);
-	AssertInt(2092, cMemory.ByteSize());
+	AssertInt(2096, cMemory.ByteSize());
 
 	cMemory.TestGetLargeListsHead();
 
