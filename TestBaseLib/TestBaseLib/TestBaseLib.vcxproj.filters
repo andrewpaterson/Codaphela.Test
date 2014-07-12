@@ -87,9 +87,6 @@
     <ClCompile Include="TestArrayBit.cpp">
       <Filter>Source\Data\Array</Filter>
     </ClCompile>
-    <ClCompile Include="TestArrayEmbedded.cpp">
-      <Filter>Source\Data\Array</Filter>
-    </ClCompile>
     <ClCompile Include="TestArrayInt.cpp">
       <Filter>Source\Data\Array</Filter>
     </ClCompile>
@@ -97,9 +94,6 @@
       <Filter>Source\Data\Array</Filter>
     </ClCompile>
     <ClCompile Include="TestArrayLong.cpp">
-      <Filter>Source\Data\Array</Filter>
-    </ClCompile>
-    <ClCompile Include="TestArrayPrimitiveTemplate.cpp">
       <Filter>Source\Data\Array</Filter>
     </ClCompile>
     <ClCompile Include="TestArrayTemplate.cpp">
@@ -212,6 +206,12 @@
     </ClCompile>
     <ClCompile Include="TestMemoryBlock.cpp">
       <Filter>Source\Memory\Allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayTemplateEmbedded.cpp">
+      <Filter>Source\Data\Array</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayTemplatePrimitive.cpp">
+      <Filter>Source\Data\Array</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

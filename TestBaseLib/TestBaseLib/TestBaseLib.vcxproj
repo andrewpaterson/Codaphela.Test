@@ -108,11 +108,11 @@
     <ClCompile Include="TestScratchPad.cpp" />
     <ClCompile Include="TestSorting.cpp" />
     <ClCompile Include="TestArrayBit.cpp" />
-    <ClCompile Include="TestArrayEmbedded.cpp" />
+    <ClCompile Include="TestArrayTemplateEmbedded.cpp" />
     <ClCompile Include="TestArrayInt.cpp" />
     <ClCompile Include="TestArrayInt2D.cpp" />
     <ClCompile Include="TestArrayLong.cpp" />
-    <ClCompile Include="TestArrayPrimitiveTemplate.cpp" />
+    <ClCompile Include="TestArrayTemplatePrimitive.cpp" />
     <ClCompile Include="TestArrayTemplate.cpp" />
     <ClCompile Include="TestDenseArrayTemplate.cpp" />
     <ClCompile Include="TestSparseArrayTemplate.cpp" />

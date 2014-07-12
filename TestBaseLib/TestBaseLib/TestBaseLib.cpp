@@ -1,6 +1,6 @@
 #include "TestLib/Assert.h"
 
-void TestArrayPrimitiveTemplate(void);
+void TestArrayTemplatePrimitive(void);
 void TestArrayInt(void);
 void TestArrayLong(void);
 void TestArrayTemplate(void);
@@ -34,7 +34,7 @@ void TestFileSystem(void);
 void TestSorting(void);
 void TestIntegerHelper(void);
 void TestFileFinder(void);
-void TestArrayEmbedded(void);
+void TestArrayTemplateEmbedded(void);
 void TestArrayBit(void);
 void TestLinkedListTemplate(void);
 void TestTreeTemplate(void);
@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
 	TestArrayInt();
 	TestArrayLong();
 	TestArrayInt2D();
-	TestArrayPrimitiveTemplate();
+	TestArrayTemplatePrimitive();
 	TestMapInt();
 	TestMapPtr();
 	TestMapString();
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
 	TestFileSystem();
 	TestSorting();
 	TestArrayBit();
-	TestArrayEmbedded();
+	TestArrayTemplateEmbedded();
 	TestLinkedListTemplate();
 	TestTreeTemplate();
 	TestCSVFileEditable();

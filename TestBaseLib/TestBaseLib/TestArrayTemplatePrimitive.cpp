@@ -9,7 +9,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayPrimitiveTemplate(void)
+void TestArrayTemplatePrimitive(void)
 {
 	CArrayChar		aChars;
 	CArrayFloat		aFloats;

@@ -1,4 +1,4 @@
-#include "BaseLib/ArrayEmbedded.h"
+#include "BaseLib/ArrayTemplateEmbedded.h"
 #include "TestLib/Assert.h"
 
 
@@ -6,9 +6,9 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayEmbeddedAdd(void)
+void TestArrayTemplateEmbeddedAdd(void)
 {
-	CArrayEmbedded<int, 5>	cArray;
+	CArrayTemplateEmbedded<int, 5>	cArray;
 	int*					pi;
 	int*					piEmbeddedData;
 
@@ -58,9 +58,9 @@ void TestArrayEmbeddedAdd(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayEmbeddedRemoveAt(void)
+void TestArrayTemplateEmbeddedRemoveAt(void)
 {
-	CArrayEmbedded<int, 5>	cArray;
+	CArrayTemplateEmbedded<int, 5>	cArray;
 	int*					piEmbeddedData;
 	int*					pi;
 	int						i;
@@ -147,9 +147,9 @@ void TestArrayEmbeddedRemoveAt(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayEmbeddedRemove(void)
+void TestArrayTemplateEmbeddedRemove(void)
 {
-	CArrayEmbedded<int*, 2>	cArray;
+	CArrayTemplateEmbedded<int*, 2>	cArray;
 
 	int						i1;
 	int						i2;
@@ -205,14 +205,14 @@ void TestArrayEmbeddedRemove(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayEmbedded(void)
+void TestArrayTemplateEmbedded(void)
 {
 	BeginTests();
 	FastFunctionsInit();
 
-	TestArrayEmbeddedAdd();
-	TestArrayEmbeddedRemoveAt();
-	TestArrayEmbeddedRemove();
+	TestArrayTemplateEmbeddedAdd();
+	TestArrayTemplateEmbeddedRemoveAt();
+	TestArrayTemplateEmbeddedRemove();
 
 	FastFunctionsKill();
 	TestStatistics();
