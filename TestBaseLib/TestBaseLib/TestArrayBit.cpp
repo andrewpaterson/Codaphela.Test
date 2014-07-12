@@ -63,6 +63,10 @@ void TestArrayBitAdd(void)
 	AssertInt(97, cArrayBit.NumElements());
 	AssertTrue(cArrayBit.Get(96));
 
+	AssertIntHex(0xcbb78e55, ((int*)cArrayBit.GetData())[0]);
+	AssertIntHex(0x011861ff, ((int*)cArrayBit.GetData())[1]);
+	AssertIntHex(0x82d97e18, ((int*)cArrayBit.GetData())[2]);
+
 	cArrayBit.Add(FALSE);
 	cArrayBit.Add(TRUE);
 	cArrayBit.Add(FALSE);
@@ -76,6 +80,15 @@ void TestArrayBitAdd(void)
 	cArrayBit.Add(TRUE);
 
 	AssertInt(105, cArrayBit.NumElements());
+	AssertTrue(cArrayBit.Get(104));
+
+	AssertFalse(cArrayBit.Get(97));
+	AssertTrue(cArrayBit.Get(98));
+	AssertFalse(cArrayBit.Get(99));
+	AssertTrue(cArrayBit.Get(100));
+	AssertFalse(cArrayBit.Get(101));
+	AssertTrue(cArrayBit.Get(102));
+	AssertFalse(cArrayBit.Get(103));
 	AssertTrue(cArrayBit.Get(104));
 
 	cArrayBit.Kill();
