@@ -43,16 +43,16 @@ void AssertIteration(CFreeList* pcFreeList, void* pvFirst, ...)
 void TestFreeListAllocation(void)
 {
 	CFreeList	cFreeList;
-	void*				pv1;
-	void*				pv2;
-	void*				pv3;
-	void*				pv4;
-	void*				pv5;
-	void*				pv6;
-	void*				pv7;
-	SFNode*				psNode0;
-	SFNode*				psNode1;
-	SFNode*				psNode2;
+	void*		pv1;
+	void*		pv2;
+	void*		pv3;
+	void*		pv4;
+	void*		pv5;
+	void*		pv6;
+	void*		pv7;
+	SFNode*		psNode0;
+	SFNode*		psNode1;
+	SFNode*		psNode2;
 
 	cFreeList.Init(2, 7, 1);
 	AssertInt(0, cFreeList.GetNumAllocatedChunks());
@@ -119,14 +119,14 @@ typedef CArrayTemplate<CFreeList>	CArrayFreeList;
 //////////////////////////////////////////////////////////////////////////
 void TestFreeListAlignment(void)
 {
-	CArrayFreeList		cArray;
-	int					i;
-	int					j;
-	CFreeList*	pcFreeList;
-	void*				pv;
-	int					k;
-	CFreeList	cFreeList;
-	SFNode*				psNode;
+	CArrayFreeList	cArray;
+	int				i;
+	int				j;
+	CFreeList*		pcFreeList;
+	void*			pv;
+	int				k;
+	CFreeList		cFreeList;
+	SFNode*			psNode;
 
 	cArray.Init();
 
@@ -208,13 +208,13 @@ void TestFreeListAlignment(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFreeListOffsetAlignment(void)
 {
-	CArrayFreeList		cArray;
-	int					iElementSize;
-	int					iOffset;
-	CFreeList*	pcFreeList;
-	void*				pv;
-	int					i;
-	int					iAlignment;
+	CArrayFreeList	cArray;
+	int				iElementSize;
+	int				iOffset;
+	CFreeList*		pcFreeList;
+	void*			pv;
+	int				i;
+	int				iAlignment;
 
 	cArray.Init();
 

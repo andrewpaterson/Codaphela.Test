@@ -14,6 +14,7 @@ void TestArraySparseTemplate(void);
 void TestStringHelper(void);
 void TestFileUtil(void);
 void TestAllocator(void);
+void TestMemoryBlock(void);
 void TestFreeList(void);
 void TestIndexTreeNode(void);
 void TestIndexTree(void);
@@ -92,6 +93,7 @@ int main(int argc, char* argv[])
 	TestScratchPad();
 	TestMemoryStack();
 	TestMemoryCache();
+	TestMemoryBlock();
 
 	return TestTotalStatistics();
 }

@@ -102,6 +102,7 @@
     <ClCompile Include="TestIndexTreeTemplate.cpp" />
     <ClCompile Include="TestLinkedListTemplate.cpp" />
     <ClCompile Include="TestMapString.cpp" />
+    <ClCompile Include="TestMemoryBlock.cpp" />
     <ClCompile Include="TestMemoryCache.cpp" />
     <ClCompile Include="TestMemoryStack.cpp" />
     <ClCompile Include="TestScratchPad.cpp" />

@@ -21,8 +21,8 @@ void TestMemoryAdd(void)
 	void*				pv9;
 	void*				pv;
 	SMemoryAllocation*	psAlloc;
-	CFreeList*		pcList;
-	CFreeList*		pcListSame;
+	CFreeList*			pcList;
+	CFreeList*			pcListSame;
 	SFreeListIterator	sIter;
 	int*				piBits;
 
@@ -32,6 +32,7 @@ void TestMemoryAdd(void)
 	psAlloc = MEMORY_GET_ALLOCATION(pv1);
 	piBits = psAlloc->psFreeListNode->GetBitArray();
 	AssertInt(1, psAlloc->uiSize);
+	AssertInt(1, cMemory.GetSize(pv1));
 	pcList = cMemory.GetFreeList(1, 4, 0);
 	AssertPointer(pcList, psAlloc->psFreeListNode->pcList);
 	pcListSame = cMemory.GetFreeList(8, 4, 0);
@@ -41,6 +42,7 @@ void TestMemoryAdd(void)
 	pv2 = cMemory.Grow(pv1, 2);
 	psAlloc = MEMORY_GET_ALLOCATION(pv2);
 	AssertInt(2, psAlloc->uiSize);
+	AssertInt(2, cMemory.GetSize(pv2));
 	AssertPointer(pcList, psAlloc->psFreeListNode->pcList);
 	AssertPointer(pv1, pv2);
 	AssertInt(24807, cMemory.ByteSize());
@@ -103,9 +105,9 @@ void TestMemoryAdd(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMemoryLargeAdd(void)
 {
-	CMemory				cMemory;
-	void*				pv;
-	CFreeList*		pcList;
+	CMemory		cMemory;
+	void*		pv;
+	CFreeList*	pcList;
 
 	cMemory.Init();
 	pcList = cMemory.TestGetFreeListsHead();
@@ -136,7 +138,7 @@ void TestMemoryLargeAdd(void)
 //////////////////////////////////////////////////////////////////////////
 void SetupTestMemoryRemove(CMemory* pcMemory)
 {
-	void*				pv;
+	void*	pv;
 
 	pcMemory->Init(4, FALSE);
 	pcMemory->AddParamBlock(8, 0, 4);
@@ -240,8 +242,8 @@ void TestMemoryRemoveHalfByArray(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMemoryRemoveNoneByArray(void)
 {
-	CMemory				cMemory;
-	CArrayVoidPtr		apv;
+	CMemory			cMemory;
+	CArrayVoidPtr	apv;
 
 	SetupTestMemoryRemove(&cMemory);
 
@@ -259,12 +261,39 @@ void TestMemoryRemoveNoneByArray(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMemoryGrow(void)
+{
+	CMemory			cMemory;
+	char			sz[27] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
+	char*			sz1;
+	char*			sz2;
+
+	cMemory.Init();
+
+	sz1 = (char*)cMemory.Add(16);
+	memcpy(sz1, sz, 15);
+	sz1[15] = 0;
+	AssertString("ABCDEFGHIJKLMNO", sz1);
+
+	sz2 = (char*)cMemory.Grow(sz1, 20);
+	AssertFalse(sz1 == sz2);
+	AssertString("ABCDEFGHIJKLMNO", sz2);
+
+	cMemory.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMemory(void)
 {
 	BeginTests();
 
 	TestMemoryLargeAdd();
 	TestMemoryAdd();
+	TestMemoryGrow();
 	TestMemoryRemoveAllByArray();
 	TestMemoryRemoveHalfByArray();
 	TestMemoryRemoveNoneByArray();

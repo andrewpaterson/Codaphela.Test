@@ -210,6 +210,9 @@
     <ClCompile Include="TestLinkedListTemplate.cpp">
       <Filter>Source\Data\LinkList</Filter>
     </ClCompile>
+    <ClCompile Include="TestMemoryBlock.cpp">
+      <Filter>Source\Memory\Allocator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">
