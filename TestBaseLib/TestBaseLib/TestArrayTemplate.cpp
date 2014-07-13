@@ -127,7 +127,7 @@ void TestArrayCopy(void)
 	psItem = asTestArray.Add();
 	psItem->i1 = psItem->i2 = 1;
 
-	asDestArray.Init();
+	asDestArray.Init(1);
 	bResult = asDestArray.Copy(&asTestArray);
 	AssertTrue(bResult);
 	pvDest1 = asDestArray.GetData();
@@ -257,14 +257,14 @@ void TestArrayRemove(void)
 	STestArrayTemplateItem*		psTest1;
 	STestArrayTemplateItem*		psTest2;
 
-	cArray.Init();
+	cArray.Init(1);
 	psTest1 = cArray.Add();
 	psTest1->i1 = 0; psTest1->i2 = 0;
 	cArray.RemoveAt(0, TRUE);
 	AssertInt(0, cArray.NumElements());
 	cArray.Kill();
 
-	cArray.Init();
+	cArray.Init(1);
 	psTest1 = cArray.Add();
 	psTest2 = cArray.Add();
 	psTest1->i1 = 0; psTest1->i2 = 0;
@@ -275,7 +275,7 @@ void TestArrayRemove(void)
 	AssertInt(1, cArray.NumElements());
 	cArray.Kill();
 
-	cArray.Init();
+	cArray.Init(1);
 	psTest1 = cArray.Add();
 	psTest2 = cArray.Add();
 	psTest1->i1 = 0; psTest1->i2 = 0;
@@ -286,7 +286,7 @@ void TestArrayRemove(void)
 	AssertInt(1, cArray.NumElements());
 	cArray.Kill();
 
-	cArray.Init();
+	cArray.Init(1);
 	psTest1 = cArray.Add();
 	psTest2 = cArray.Add();
 	psTest1->i1 = 0; psTest1->i2 = 0;
@@ -297,7 +297,7 @@ void TestArrayRemove(void)
 	AssertInt(1, cArray.NumElements());
 	cArray.Kill();
 
-	cArray.Init();
+	cArray.Init(1);
 	psTest1 = cArray.Add();
 	psTest2 = cArray.Add();
 	psTest1->i1 = 0; psTest1->i2 = 0;

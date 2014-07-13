@@ -113,7 +113,7 @@ void TestFileSystemGetFiles(void)
 	CArraySystemFilePtrs				cArrayFiles;
 
 	cSystem.Init("Finder");
-	cArrayFiles.Init();
+	cArrayFiles.Init(1);
 
 	cSystem.GetFiles(&cArrayFiles);
 

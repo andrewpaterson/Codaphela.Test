@@ -1,5 +1,6 @@
 #include "BaseLib/TextFile.h"
 #include "BaseLib/DebugOutput.h"
+#include "BaseLib/GlobalMemory.h"
 #include "CoreLib/Files.h"
 #include "CoreLib/TypeConverter.h"
 #include "TestLib/Assert.h"
@@ -260,12 +261,14 @@ void TestFiles(void)
 	
 	FastFunctionsInit();
 	TypeConverterInit();
+	MemoryInit();
 
 	TestFilesSimple();
 	TestFilesIteration();
 	TestGetFileNames();
 	TestFilesWholeDirectory();
 
+	MemoryKill();
 	FastFunctionsKill();
 	TypeConverterKill();
 

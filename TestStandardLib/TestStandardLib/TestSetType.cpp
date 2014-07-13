@@ -60,7 +60,7 @@ void TestSetTypeInstantiation(void)
 	AssertInt(0, cSet.NumElements());
 
 	iSize = cSet.ClassSize();
-	AssertInt(40, iSize);
+	AssertInt(44, iSize);
 
 	szName = cSet.ClassName();
 	AssertString("CSetType", szName);

@@ -418,7 +418,7 @@ void TestFileIOArray(void)
 		pcTest = acTest.Add();
 		pcTest->Init(i);
 	}
-	ai.Init();
+	ai.Init(1);
 	for (i = 0; i <= 5; i++)
 	{
 		ai.Add(8-i);
@@ -439,9 +439,9 @@ void TestFileIOArray(void)
 	AssertInt(12, av.NumElements());
 	AssertInt(14, av.AllocatedElements());
 	AssertInt(11, asTest.NumElements());
-	AssertTrue(acTest.WriteArrayUnknown(&cFile));
-	AssertTrue(ai.WriteArrayUnknown(&cFile));
-	AssertTrue(av.WriteArrayUnknown(&cFile));
+	AssertTrue(acTest.Write(&cFile));
+	AssertTrue(ai.Write(&cFile));
+	AssertTrue(av.Write(&cFile));
 	AssertTrue(asTest.WriteArraySimple(&cFile));
 
 	asTest.Kill();
@@ -450,7 +450,7 @@ void TestFileIOArray(void)
 	acTest.Kill();
 	TestFileIOMiddle(&cFile);
 
-	AssertTrue(acTestIn.ReadArrayUnknown(&cFile));
+	AssertTrue(acTestIn.Read(&cFile));
 	AssertInt(9, acTestIn.NumElements());
 	AssertInt(10, acTestIn.AllocatedElements());
 	for (i = 0; i <= 8; i++)
@@ -458,7 +458,7 @@ void TestFileIOArray(void)
 		pcTest = acTestIn.Get(i);
 		AssertTrue(pcTest->IsOkay(i));
 	}
-	AssertTrue(aii.ReadArrayUnknown(&cFile));
+	AssertTrue(aii.Read(&cFile));
 	AssertInt(6, aii.NumElements());
 	AssertInt(6, aii.AllocatedElements());
 	for (i = 0; i <= 5; i++)
@@ -466,7 +466,7 @@ void TestFileIOArray(void)
 		ii = aii.GetValue(i);
 		AssertInt(8-i, ii);
 	}
-	AssertTrue(avi.ReadArrayUnknown(&cFile));
+	AssertTrue(avi.Read(&cFile));
 	AssertInt(12, avi.NumElements());
 	AssertInt(14, avi.AllocatedElements());
 	AssertString("ABCDEFGHIJK", (char*)avi.GetData());
