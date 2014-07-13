@@ -72,3 +72,4 @@ TestBaseLib/TestBaseLib/Release/*
 TestInputLib/TestInputLib/Log.txt
 TestInputLib/TestInputLib/TestInputLib.opensdf
 TestCppParserLib/TestCppParserLib.opensdf
+TestCoreLib/TestCoreLib/Output/Packer

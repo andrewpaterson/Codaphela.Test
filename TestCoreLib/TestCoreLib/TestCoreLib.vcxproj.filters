@@ -135,6 +135,9 @@
     <ClCompile Include="TestArrayTemplateMinimal.cpp">
       <Filter>Source\Data\Array</Filter>
     </ClCompile>
+    <ClCompile Include="TestPackFilesPacker.cpp">
+      <Filter>Source\File\Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

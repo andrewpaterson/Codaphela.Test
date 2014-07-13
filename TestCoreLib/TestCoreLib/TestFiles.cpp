@@ -20,6 +20,9 @@ void TestFilesSimple(void)
 	CAbstractFile*	pcFile;
 	CTextFile		cTextFile;
 
+	//If this test fails you probably need to re-generate the source PAK files.
+	//Use TestPackFilesPackerSimple to do this.
+
 	cFiles.Init("Game", "PAK");
 	AssertInt(6, cFiles.GetNumPackFiles());
 

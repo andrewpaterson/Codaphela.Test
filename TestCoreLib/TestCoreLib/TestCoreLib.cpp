@@ -25,6 +25,7 @@ void TestOperators(void);
 void TestFunctionCaller(void);
 void TestNumber(void);
 void TestFiles(void);
+void TestPackFilesPacker(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -59,6 +60,7 @@ int main(int argc, char* argv[])
 	TestFunctionCaller();
 	TestNumber();
 	TestFiles();
+	TestPackFilesPacker();
 
 	return TestTotalStatistics();
 }
