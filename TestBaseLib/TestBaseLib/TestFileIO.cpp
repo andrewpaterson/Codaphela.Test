@@ -6,6 +6,8 @@
 #include "BaseLib/LinkedListBlock.h"
 #include "BaseLib/TreeTemplate.h"
 #include "BaseLib/TreeBlock.h"
+#include "BaseLib/SystemAllocator.h"
+#include "BaseLib/GlobalMemory.h"
 #include "TestLib/Assert.h"
 #include "FileIOTestObjects.h"
 
@@ -421,7 +423,7 @@ void TestFileIOArray(void)
 	{
 		ai.Add(8-i);
 	}
-	av.Allocate(1, 7, 12);
+	av.Allocate(&gcSystemAllocator, 1, 7, 12);
 	memcpy(av.GetData(), "ABCDEFGHIJK\0", 12);
 	asTest.Init();
 	for (i = 0; i <= 10; i++)
@@ -437,8 +439,8 @@ void TestFileIOArray(void)
 	AssertInt(12, av.NumElements());
 	AssertInt(14, av.AllocatedElements());
 	AssertInt(11, asTest.NumElements());
-	AssertTrue(acTest.WriteArrayTemplate(&cFile));
-	AssertTrue(ai.WriteArrayInt(&cFile));
+	AssertTrue(acTest.WriteArrayUnknown(&cFile));
+	AssertTrue(ai.WriteArrayUnknown(&cFile));
 	AssertTrue(av.WriteArrayUnknown(&cFile));
 	AssertTrue(asTest.WriteArraySimple(&cFile));
 
@@ -448,7 +450,7 @@ void TestFileIOArray(void)
 	acTest.Kill();
 	TestFileIOMiddle(&cFile);
 
-	AssertTrue(acTestIn.ReadArrayTemplate(&cFile));
+	AssertTrue(acTestIn.ReadArrayUnknown(&cFile));
 	AssertInt(9, acTestIn.NumElements());
 	AssertInt(10, acTestIn.AllocatedElements());
 	for (i = 0; i <= 8; i++)
@@ -456,7 +458,7 @@ void TestFileIOArray(void)
 		pcTest = acTestIn.Get(i);
 		AssertTrue(pcTest->IsOkay(i));
 	}
-	AssertTrue(aii.ReadArrayInt(&cFile));
+	AssertTrue(aii.ReadArrayUnknown(&cFile));
 	AssertInt(6, aii.NumElements());
 	AssertInt(6, aii.AllocatedElements());
 	for (i = 0; i <= 5; i++)
@@ -584,6 +586,8 @@ void TestFileIOMap(void)
 void TestFileIO(void)
 {
 	BeginTests();
+	FastFunctionsInit();
+	MemoryInit();
 
 	TestFileIOHelpers();
 	TestFileIOArray();
@@ -594,5 +598,7 @@ void TestFileIO(void)
 	TestFileIOLinkedListBlockAligned();
 	TestFileIOMap();
 
+	MemoryKill();
+	FastFunctionsKill();
 	TestStatistics();
 }

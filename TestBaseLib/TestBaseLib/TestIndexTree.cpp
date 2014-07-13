@@ -1,4 +1,5 @@
 #include "BaseLib/IndexTree.h"
+#include "BaseLib/GlobalMemory.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
 
@@ -98,6 +99,7 @@ void TestIndexTreeGet(void)
 	AssertInt(0, pcNodeBatman->GetNumIndexes());
 	pcResult = (CTestIndexTreeObject**)cIndex.Get("Batman");
 	AssertPointer(*pcResult, &batman);
+	avp.Init();
 	cIndex.FindAll(&avp);
 	AssertInt(2, avp.NumElements());
 	avp.Kill();
@@ -109,6 +111,7 @@ void TestIndexTreeGet(void)
 	pcNodeBatmam = cIndex.GetIndexNode(szBatmam, 6);
 	pcResult = (CTestIndexTreeObject**)cIndex.Get(szBatmam);
 	AssertPointer(&batmam, *pcResult);
+	avp.Init();
 	cIndex.FindAll(&avp);
 	AssertInt(3, avp.NumElements());
 	avp.Kill();
@@ -117,8 +120,10 @@ void TestIndexTreeGet(void)
 	cIndex.PutPtr(&andre, andre.GetName());
 	pcResult = (CTestIndexTreeObject**)cIndex.Get("Andre");
 	AssertPointer(&andre, *pcResult);
+	avp.Init();
 	cIndex.FindAll(&avp);
 	AssertInt(4, avp.NumElements());
+	avp.Kill();
 
 	AssertNull(cIndex.Get(NULL));
 	AssertNull(cIndex.Get(""));
@@ -471,6 +476,8 @@ void TestIndexTreeAddLongLong(void)
 void TestIndexTree(void)
 {
 	BeginTests();
+	FastFunctionsInit();
+	MemoryInit();
 
 	TestIndexTreeAdd();
 	TestIndexTreeGet();
@@ -482,6 +489,8 @@ void TestIndexTree(void)
 	TestIndexTreeRemoveNullNode();
 	TestIndexTreeAddLongLong();
 
+	MemoryKill();
+	FastFunctionsKill();
 	TestStatistics();
 }
 
