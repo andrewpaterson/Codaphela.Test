@@ -442,7 +442,7 @@ void TestFileIOArray(void)
 	AssertTrue(acTest.Write(&cFile));
 	AssertTrue(ai.Write(&cFile));
 	AssertTrue(av.Write(&cFile));
-	AssertTrue(asTest.WriteArraySimple(&cFile));
+	AssertTrue(asTest.Write(&cFile));
 
 	asTest.Kill();
 	av.Kill();
@@ -470,7 +470,7 @@ void TestFileIOArray(void)
 	AssertInt(12, avi.NumElements());
 	AssertInt(14, avi.AllocatedElements());
 	AssertString("ABCDEFGHIJK", (char*)avi.GetData());
-	AssertTrue(asTestIn.ReadArraySimple(&cFile));
+	AssertTrue(asTestIn.Read(&cFile));
 	AssertInt(11, asTestIn.NumElements());
 	for (i = 0; i <= 10; i++)
 	{
