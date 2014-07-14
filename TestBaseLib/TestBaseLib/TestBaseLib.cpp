@@ -11,6 +11,7 @@ void TestDate(void);
 void TestNumbers(void);
 void TestArrayDenseTemplate(void);
 void TestArraySparseTemplate(void);
+void TestArrayBlockSorted(void);
 void TestStringHelper(void);
 void TestFileUtil(void);
 void TestAllocator(void);
@@ -67,6 +68,7 @@ int main(int argc, char* argv[])
 	TestDate();
 	TestNumbers();
 	TestArrayTemplate();
+	TestArrayBlockSorted();
 	TestIndexTreeNode();
 	TestIndexTree();
 	TestIndexTreeTemplate();

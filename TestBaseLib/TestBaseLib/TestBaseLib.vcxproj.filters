@@ -76,6 +76,9 @@
     <Filter Include="Source\Memory\Allocator">
       <UniqueIdentifier>{c32a2f17-43d1-4528-8c14-b1da112fe835}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Data\Array\Sorted">
+      <UniqueIdentifier>{2f227715-abeb-4689-9d45-8fa38a6d84d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -212,6 +215,9 @@
     </ClCompile>
     <ClCompile Include="TestArrayTemplatePrimitive.cpp">
       <Filter>Source\Data\Array</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayBlockSorted.cpp">
+      <Filter>Source\Data\Array\Sorted</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
