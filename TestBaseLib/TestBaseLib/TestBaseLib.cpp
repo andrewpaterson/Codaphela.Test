@@ -7,6 +7,7 @@ void TestArrayTemplate(void);
 void TestMapInt(void);
 void TestMapPtr(void);
 void TestMapString(void);
+void TestMapBlock(void);
 void TestDate(void);
 void TestNumbers(void);
 void TestArrayDenseTemplate(void);
@@ -61,6 +62,7 @@ int main(int argc, char* argv[])
 	TestMapInt();
 	TestMapPtr();
 	TestMapString();
+	TestMapBlock();
 	TestLinkedListBlockAligned();
 	TestAllocator();
 	TestFreeList();
