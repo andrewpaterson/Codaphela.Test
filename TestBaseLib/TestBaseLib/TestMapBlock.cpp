@@ -213,6 +213,59 @@ void TestMapBlockAddDuplicate(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMapBlockRemove(void)
+{
+	CMapBlock	cMapBlock;
+	int			ia = 'a';
+	int			ib = 'b';
+	int			ic = 'c';
+	BOOL		bResult;
+	char*		szData;
+
+	cMapBlock.Init(&gcSystemAllocator, 1024, &CompareInt);
+	bResult = cMapBlock.Put(&ia, sizeof(int), "Hello", strlen("Hello") + 1);
+	bResult = cMapBlock.Put(&ib, sizeof(int), "World", strlen("World") + 1);
+	bResult = cMapBlock.Put(&ic, sizeof(int), "Rogue", strlen("Rogue") + 1);
+	AssertInt(3, cMapBlock.NumElements());
+
+	cMapBlock.Remove(&ib);
+	AssertInt(2, cMapBlock.NumElements());
+	bResult = cMapBlock.Get(&ia, (void**)&szData, NULL);
+	AssertTrue(bResult);
+	AssertString(szData, "Hello");
+	bResult = cMapBlock.Get(&ic, (void**)&szData, NULL);
+	AssertTrue(bResult);
+	AssertString(szData, "Rogue");
+	bResult = cMapBlock.Get(&ib, (void**)&szData, NULL);
+	AssertFalse(bResult);
+
+	cMapBlock.Remove(&ia);
+	AssertInt(1, cMapBlock.NumElements());
+	bResult = cMapBlock.Get(&ia, (void**)&szData, NULL);
+	AssertFalse(bResult);
+	bResult = cMapBlock.Get(&ic, (void**)&szData, NULL);
+	AssertTrue(bResult);
+	AssertString(szData, "Rogue");
+	bResult = cMapBlock.Get(&ib, (void**)&szData, NULL);
+	AssertFalse(bResult);
+
+	cMapBlock.Remove(&ic);
+	AssertInt(0, cMapBlock.NumElements());
+	bResult = cMapBlock.Get(&ia, (void**)&szData, NULL);
+	AssertFalse(bResult);
+	bResult = cMapBlock.Get(&ic, (void**)&szData, NULL);
+	AssertFalse(bResult);
+	bResult = cMapBlock.Get(&ib, (void**)&szData, NULL);
+	AssertFalse(bResult);
+
+	cMapBlock.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMapBlock(void)
 {
 	BeginTests();
@@ -220,8 +273,8 @@ void TestMapBlock(void)
 	TestMapBlockInternals();
 	TestMapBlockGet();
 	TestMapBlockAddDuplicate();
+	TestMapBlockRemove();
 
 	TestStatistics();
 }
-
 
