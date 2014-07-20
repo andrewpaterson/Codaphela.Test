@@ -5,6 +5,7 @@ void TestFloatHelper(void);
 void TestIntegerHelper(void);
 void TestFastFunctions(void);
 void TestArrayMinimalTemplate(void);
+void TestPropertiesFile(void);
 void TestChars(void);
 void TestMap(void);
 void TestTextParser(void);
@@ -40,6 +41,7 @@ int main(int argc, char* argv[])
 	TestIntegerHelper();
 	TestFastFunctions();
 	TestArrayMinimalTemplate();
+	TestPropertiesFile();
 	TestChars();
 	TestMap();
 	TestTextParser();
@@ -58,9 +60,9 @@ int main(int argc, char* argv[])
 	TestDurableSet();
 	TestOperators();
 	TestFunctionCaller();
-	TestNumber();
 	TestFiles();
 	TestPackFilesPacker();
+	TestNumber();
 
 	return TestTotalStatistics();
 }

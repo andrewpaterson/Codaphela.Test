@@ -74,3 +74,4 @@ TestInputLib/TestInputLib/TestInputLib.opensdf
 TestCppParserLib/TestCppParserLib.opensdf
 TestCoreLib/TestCoreLib/Output/Packer
 TestBaseLib/TestBaseLib/Output/ChunkFile.bin
+TestCoreLib/TestCoreLib/Output/Properties.txt

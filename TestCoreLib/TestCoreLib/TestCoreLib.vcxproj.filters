@@ -52,6 +52,9 @@
     <Filter Include="Source\File\Log">
       <UniqueIdentifier>{a1c6c4b3-af17-46af-b893-e26bf8ffb45f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\File\Properties">
+      <UniqueIdentifier>{b1fc7489-6b26-48f0-8339-35db8cd71235}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -137,6 +140,9 @@
     </ClCompile>
     <ClCompile Include="TestPackFilesPacker.cpp">
       <Filter>Source\File\Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPropertiesFile.cpp">
+      <Filter>Source\File\Properties</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

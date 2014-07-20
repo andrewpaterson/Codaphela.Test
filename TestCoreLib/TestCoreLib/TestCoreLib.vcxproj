@@ -106,6 +106,7 @@
     <ClCompile Include="TestIndexedHuge.cpp" />
     <ClCompile Include="TestIndexes.cpp" />
     <ClCompile Include="TestPackFilesPacker.cpp" />
+    <ClCompile Include="TestPropertiesFile.cpp" />
     <ClCompile Include="TestTransientIndexedFile.cpp" />
     <ClCompile Include="TestDurableFile.cpp" />
     <ClCompile Include="TestDurableFileController.cpp" />
