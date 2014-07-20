@@ -735,6 +735,8 @@ void TestArrayBlockSortedAddDuplicate(void)
 	cObject.Init(3, "Tom");
 	avBlock.Add(&cObject);
 
+	AssertInt(4, avBlock.NumElements());
+
 	i = 3;
 	pcObject = (CSortedTestObject*)avBlock.Get(&i);
 	AssertInt(3, pcObject->miValue);

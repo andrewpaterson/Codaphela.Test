@@ -30,8 +30,7 @@ void TestMapStringString(void)
 	cMapStringSting.Put("Michelle", "Megan");
 
 	sz1 = cMapStringSting.Get("Michelle");
-	//AssertString("Megan", sz1);  //Should have overwritten.
-	AssertString("Bridget", sz1);
+	AssertString("Megan", sz1);
 
 	cMapStringSting.Kill();
 };
@@ -52,7 +51,7 @@ void TestMapStringInt(void)
 	cMapStringInt.Put("Hello", 324);
 
 	px = cMapStringInt.Get("Hello");
-	AssertInt(73, *px);
+	AssertInt(324, *px);
 	px = cMapStringInt.Get("World");
 	AssertInt(12, *px);
 	px = cMapStringInt.Get("Miner");

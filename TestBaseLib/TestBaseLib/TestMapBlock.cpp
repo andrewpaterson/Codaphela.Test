@@ -207,10 +207,12 @@ void TestMapBlockAddDuplicate(void)
 	bResult = cMapBlock.Put(&ia, sizeof(int), "Hello", iHelloLen + 1);
 	AssertTrue(bResult);
 	AssertInt(1, cMapBlock.NumElements());
+	AssertString("Hello", (char*)cMapBlock.Get(&ia));
 
 	bResult = cMapBlock.Put(&ib, sizeof(int), "World", iWorldLen + 1);
-	AssertFalse(bResult);
+	AssertTrue(bResult);
 	AssertInt(1, cMapBlock.NumElements());
+	AssertString("World", (char*)cMapBlock.Get(&ia));
 
 	cMapBlock.Kill();
 }
