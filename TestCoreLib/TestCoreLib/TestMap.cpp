@@ -20,9 +20,7 @@ typedef CTreeTemplate<int> CTreeInt;
 void TestMapStringString(void)
 {
 	CMapStringString	cMapStringSting;
-	CChars*				sz1;
-	CChars				szKey;
-	char*				sz2;
+	char*				sz1;
 
 	cMapStringSting.Init(11);
 
@@ -31,13 +29,9 @@ void TestMapStringString(void)
 	cMapStringSting.Put("Number", "String");
 	cMapStringSting.Put("Michelle", "Megan");
 
-	szKey.Init("Michelle");
-	sz1 = cMapStringSting.GetWithKey(&szKey);
-	AssertString("Megan", sz1->Text());
-	szKey.Kill();
-
-	sz2 = cMapStringSting.GetWithKey("Michelle");
-	AssertString("Megan", sz2);
+	sz1 = cMapStringSting.Get("Michelle");
+	//AssertString("Megan", sz1);  //Should have overwritten.
+	AssertString("Bridget", sz1);
 
 	cMapStringSting.Kill();
 };
@@ -50,26 +44,19 @@ void TestMapStringString(void)
 void TestMapStringInt(void)
 {
 	CMapStringInt	cMapStringInt;
-	CChars			sz;
-	int				x;
 	int*			px;
 
 	cMapStringInt.Init(11);
+	cMapStringInt.Put("Hello", 73);
+	cMapStringInt.Put("World", 12);
+	cMapStringInt.Put("Hello", 324);
 
-	sz.Init("Hello");  x = 73;
-	cMapStringInt.Put(&sz, x);
-	sz.Kill();
-
-	sz.Init("World");  x = 12;
-	cMapStringInt.Put(&sz, x);
-	sz.Kill();
-
-	x = 324;
-	cMapStringInt.Put("Hello", x);
-
-	px = cMapStringInt.GetWithKey("Hello");
-	px = cMapStringInt.GetWithKey("World");
-	px = cMapStringInt.GetWithKey("Miner");
+	px = cMapStringInt.Get("Hello");
+	AssertInt(73, *px);
+	px = cMapStringInt.Get("World");
+	AssertInt(12, *px);
+	px = cMapStringInt.Get("Miner");
+	AssertNull(px);
 
 	cMapStringInt.Kill();
 }
@@ -81,11 +68,13 @@ void TestMapStringInt(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapIntInt(void)
 {
-	CMapIntInt	cMapIntInt;
-	int			x, y, i;
-	int			*px, *py, *pz;
+	CMapIntInt		cMapIntInt;
+	int				*px, *py, *pz;
+	SMapIterator	sIter;
+	BOOL			bResult;
+	int				x, y;
 
-	cMapIntInt.Init(11, CompareInt);
+	cMapIntInt.Init(&gcSystemAllocator, 11, CompareInt);
 
 	x = 10; y = 73;
 	cMapIntInt.Put(&x, &y);
@@ -99,11 +88,12 @@ void TestMapIntInt(void)
 	x = 5; y = 99;
 	cMapIntInt.Put(&x, &y);
 
-	for (i = 0; i < cMapIntInt.NumElements(); i++)
+	bResult = cMapIntInt.StartIteration(&sIter, (void**)&px, (void**)&py);
+	while (bResult)
 	{
-		cMapIntInt.GetAtIndex(i, &px, &py);
-		pz = cMapIntInt.GetWithKey(px);
+		pz = cMapIntInt.Get(px);
 		AssertInt(*py, *pz);
+		bResult = cMapIntInt.Iterate(&sIter, (void**)&px, (void**)&py);
 	}
 
 	cMapIntInt.Kill();

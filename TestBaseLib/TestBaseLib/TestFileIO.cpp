@@ -5,6 +5,7 @@
 #include "BaseLib/LinkedListBlockAligned.h"
 #include "BaseLib/LinkedListBlock.h"
 #include "BaseLib/TreeTemplate.h"
+#include "BaseLib/MapTemplate.h"
 #include "BaseLib/TreeBlock.h"
 #include "BaseLib/SystemAllocator.h"
 #include "BaseLib/GlobalMemory.h"
@@ -543,7 +544,7 @@ void TestFileIOMap(void)
 
 	TestFileIOBegin(&cMemory, &cFile);
 	
-	cMap.Init(10, &CompareInt);
+	cMap.Init(&gcSystemAllocator, 10, &CompareInt);
 	i = 9;	ld = 1.4783409838732098273349;
 	cMap.Put(&i, &ld);
 	i = 22;	ld = 1.7983487629380598763752;
@@ -551,7 +552,7 @@ void TestFileIOMap(void)
 	i = 4;	ld = 1.9237643187634765139872;
 	cMap.Put(&i, &ld);
 	AssertInt(3, cMap.NumElements());
-	AssertTrue(cMap.WriteMapHeader(&cFile));
+	AssertTrue(cMap.Write(&cFile));
 
 	mssi.Init(10, TRUE);
 	mssi.Put("lion", 7);
@@ -559,22 +560,22 @@ void TestFileIOMap(void)
 	mssi.Put("zebra", 12);
 	mssi.Put("for real!", -1);
 	AssertInt(4, mssi.NumElements());
-	AssertTrue(mssi.WriteMapHeader(&cFile));
+	AssertTrue(mssi.Write(&cFile));
 
 	mssi.Kill();
 	cMap.Kill();
 	TestFileIOMiddle(&cFile);
 
-	AssertTrue(cMapIn.ReadMapHeader(&cFile));
+	AssertTrue(cMapIn.Read(&cFile, &CompareInt));
 	AssertInt(3, cMapIn.NumElements());
 	//CMapTemplate doesn't actually have full read and write methods.
 
-	AssertTrue(mssii.ReadMapHeader(&cFile));
+	AssertTrue(mssii.Read(&cFile));
 	AssertInt(4, mssii.NumElements());
 	//CMapStringInt doesn't actually have full read and write methods.
 
-	mssii.KillArray();
-	cMapIn.KillArray();
+	mssii.Kill();
+	cMapIn.Kill();
 	TestFileIOEnd(&cMemory, &cFile);
 }
 

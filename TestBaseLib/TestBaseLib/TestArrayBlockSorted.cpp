@@ -1,3 +1,4 @@
+#include "BaseLib/MemoryFile.h"
 #include "BaseLib/IntegerHelper.h"
 #include "BaseLib/ArrayBlockSorted.h"
 #include "TestLib/Assert.h"
@@ -633,6 +634,58 @@ void TestArrayBlockSortedMultipleBuffers(void)
 	avBlock.Kill();
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayBlockReadWrite(void)
+{
+	CArrayBlockSorted	avBlock;
+	CFileBasic			cFile;
+	CArrayBlockSorted	avBlockIn;
+	int					iKey;
+	int*				piData;
+
+	avBlock.Init(sizeof(int), 10, 4, 4, CompareInt);
+
+	ListAddInt(&avBlock, 9);
+	ListAddInt(&avBlock, 10);
+	ListAddInt(&avBlock, 11);
+	ListAddInt(&avBlock, 12);
+
+	iKey = 9; piData = (int*)avBlock.Get(&iKey);  
+	AssertNotNull(piData); AssertInt(iKey, *piData);
+	iKey = 10; piData = (int*)avBlock.Get(&iKey);  
+	AssertNotNull(piData); AssertInt(iKey, *piData);
+	iKey = 11; piData = (int*)avBlock.Get(&iKey);  
+	AssertNotNull(piData); AssertInt(iKey, *piData);
+	iKey = 12; piData = (int*)avBlock.Get(&iKey);  
+	AssertNotNull(piData); AssertInt(iKey, *piData);
+
+	cFile.Init(MemoryFile());
+	cFile.Open(EFM_Write_Create);
+	AssertTrue(avBlock.Write(&cFile));
+	avBlock.Kill();
+
+	cFile.Close();
+	cFile.Open(EFM_Read);
+
+	AssertTrue(avBlockIn.Read(&cFile, CompareInt));
+
+	iKey = 9; piData = (int*)avBlockIn.Get(&iKey);  
+	AssertNotNull(piData); AssertInt(iKey, *piData);
+	iKey = 10; piData = (int*)avBlockIn.Get(&iKey);  
+	AssertNotNull(piData); AssertInt(iKey, *piData);
+	iKey = 11; piData = (int*)avBlockIn.Get(&iKey);  
+	AssertNotNull(piData); AssertInt(iKey, *piData);
+	iKey = 12; piData = (int*)avBlockIn.Get(&iKey);  
+	AssertNotNull(piData); AssertInt(iKey, *piData);
+
+	avBlockIn.Kill();
+	cFile.Close();
+	cFile.Kill();
+}
+	
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -662,6 +715,7 @@ void TestArrayBlockSorted(void)
 	TestArrayBlockSortedStaggeredLeftDouble();
 	TestArrayBlockSortedStaggeredRightDouble();
 	TestArrayBlockSortedMultipleBuffers();
+	TestArrayBlockReadWrite();
 
 	TestStatistics();
 }

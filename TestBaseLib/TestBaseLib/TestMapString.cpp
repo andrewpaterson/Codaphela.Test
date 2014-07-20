@@ -39,25 +39,38 @@ void TestMapStringInt(void)
 {
 	CMapStringInt	cMap;
 	int				iResult;
+	int*			piResult;
+	SMapIterator	sIter;
+	char*			szKey;
 
 	cMap.Init(16);
 
-	cMap.Put("EZ", 15);
-	cMap.Put("Dock", 17);
+	AssertTrue(cMap.Put("EZ", 15));
+	AssertInt(1, cMap.NumElements());
+	AssertTrue(cMap.Put("Dock", 17));
+	AssertInt(2, cMap.NumElements());
 
-	iResult = *cMap.GetWithKey("EZ");
+	AssertTrue(cMap.StartIteration(&sIter, (void**)&szKey, (void**)&piResult));
+	AssertNotNull(szKey);
+	AssertNotNull(piResult);
+	AssertString("Dock", szKey);
+	AssertInt(17, *piResult);
+
+	piResult = cMap.Get("EZ");
+	AssertNotNull(piResult);
+	iResult = *piResult;
 	AssertInt(15, iResult);
 
 	cMap.Put("KingWin", 13);
 	AssertInt(3, cMap.NumElements());
 
-	iResult = *cMap.GetWithKey("EZ");
+	iResult = *cMap.Get("EZ");
 	AssertInt(15, iResult);
-	iResult = *cMap.GetWithKey("KingWin");
+	iResult = *cMap.Get("KingWin");
 	AssertInt(13, iResult);
-	iResult = *cMap.GetWithKey("Dock");
+	iResult = *cMap.Get("Dock");
 	AssertInt(17, iResult);
-	AssertNull(cMap.GetWithKey("KWM"));
+	AssertNull(cMap.Get("KWM"));
 
 	cMap.Kill();
 }

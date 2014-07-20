@@ -1,7 +1,43 @@
+#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/ChunkFile.h"
 #include "BaseLib/FileUtil.h"
+#include "BaseLib/DiskFile.h"
 #include "BaseLib/MemoryFile.h"
 #include "TestLib/Assert.h"
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestChunkFileSimple(void)
+{
+	CChunkFile	cChunkFile;
+	CFileUtil	cFileUtil;
+	int			iChunkNum;
+	
+	cFileUtil.MakeDir("Output");
+	cFileUtil.Delete("Output/ChunkFile.bin");
+	cChunkFile.Init(DiskFile("Output/ChunkFile.bin"));
+	AssertFalse(cChunkFile.IsOpen());
+	AssertTrue(cChunkFile.WriteOpen());
+	AssertTrue(cChunkFile.IsOpen());
+	AssertTrue(cChunkFile.WriteChunkBegin());
+	AssertTrue(cChunkFile.WriteChunkEnd("ThisChunk"));
+	AssertTrue(cChunkFile.WriteClose());
+	AssertFalse(cChunkFile.IsOpen());
+	cChunkFile.Kill();
+
+	cChunkFile.Init(DiskFile("Output/ChunkFile.bin"));
+	AssertFalse(cChunkFile.IsOpen());
+	AssertTrue(cChunkFile.ReadOpen());
+	AssertTrue(cChunkFile.IsOpen());
+	iChunkNum = cChunkFile.FindFirstChunkWithName("ThisChunk");
+	AssertInt(0, iChunkNum);
+	AssertTrue(cChunkFile.ReadChunkBegin(iChunkNum));
+	AssertTrue(cChunkFile.ReadClose());
+	AssertFalse(cChunkFile.IsOpen());
+	cChunkFile.Kill();
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -22,19 +58,19 @@ void TestChunkFileMD5ing(void)
 	iLoremLen = (int)strlen(szLorem);
 
 	cChunkFile.Init(MemoryFile());
-	cChunkFile.WriteOpen();
-	cChunkFile.WriteChunkBegin();
-	cChunkFile.Write(szFox, 1, iFoxLen);
-	cChunkFile.WriteChunkEnd("ChunkName");
-	cChunkFile.Write(szLorem, 1, iLoremLen);
-	cChunkFile.WriteClose();
+	AssertTrue(cChunkFile.WriteOpen());
+	AssertTrue(cChunkFile.WriteChunkBegin());
+	AssertTrue(cChunkFile.Write(szFox, 1, iFoxLen) > 0);
+	AssertTrue(cChunkFile.WriteChunkEnd("ChunkName"));
+	AssertTrue(cChunkFile.Write(szLorem, 1, iLoremLen) > 0);
+	AssertTrue(cChunkFile.WriteClose());
 
-	cChunkFile.ReadOpen();
+	AssertTrue(cChunkFile.ReadOpen());
 	AssertMD5(ucLoremMD5, (unsigned char *)cChunkFile.GetMD5Hash());
-	cChunkFile.ReadChunkBegin(0);
+	AssertTrue(cChunkFile.ReadChunkBegin(0));
 	AssertMD5(ucFoxMD5, (unsigned char *)cChunkFile.GetMD5Hash());
-	cChunkFile.ReadChunkEnd();
-	cChunkFile.ReadClose();
+	AssertTrue(cChunkFile.ReadChunkEnd());
+	AssertTrue(cChunkFile.ReadClose());
 
 	cChunkFile.Kill();
 }
@@ -102,10 +138,13 @@ void TestChunkFile(void)
 {
 	BeginTests();
 	FastFunctionsInit();
+	MemoryInit();
 	
+	TestChunkFileSimple();
 	TestChunkFileMD5ing();
 	TestChunkFileNameing();
 
+	MemoryKill();
 	FastFunctionsKill();
 	TestStatistics();
 }

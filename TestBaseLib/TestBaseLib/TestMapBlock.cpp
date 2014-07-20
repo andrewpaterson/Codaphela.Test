@@ -1,6 +1,8 @@
 #include "BaseLib/MapBlock.h"
 #include "BaseLib/SystemAllocator.h"
 #include "BaseLib/IntegerHelper.h"
+#include "BaseLib/MapStringString.h"
+#include "BaseLib/MemoryFile.h"
 #include "TestLib/Assert.h"
 
 
@@ -108,7 +110,7 @@ void TestMapBlockGet(void)
 		lli = ((lli + 0x336b265cfdd8a7a6) / 2) * 3;
 	}
 
-	cMapBlock.Init(&gcSystemAllocator, 16, (int (*)(const void *,const void *))&strcmp);
+	cMapBlock.Init(&gcSystemAllocator, 16, (CompareFunc)&strcmp);
 	AddToMapBlock(&cMapBlock, "cocker", llia[0]);
 	AddToMapBlock(&cMapBlock, "cock", llia[1]);
 	AddToMapBlock(&cMapBlock, "cockerel", llia[2]);
@@ -195,13 +197,18 @@ void TestMapBlockAddDuplicate(void)
 	int			ia = 'a';
 	int			ib = 'a';
 	BOOL		bResult;
+	int			iWorldLen;
+	int			iHelloLen;
+
+	iWorldLen = strlen("World");
+	iHelloLen = strlen("Hello");
 
 	cMapBlock.Init(&gcSystemAllocator, 1024, &CompareInt);
-	bResult = cMapBlock.Put(&ia, sizeof(int), "Hello", strlen("Hello") + 1);
+	bResult = cMapBlock.Put(&ia, sizeof(int), "Hello", iHelloLen + 1);
 	AssertTrue(bResult);
 	AssertInt(1, cMapBlock.NumElements());
 
-	bResult = cMapBlock.Put(&ib, sizeof(int), "World", strlen("World") + 1);
+	bResult = cMapBlock.Put(&ib, sizeof(int), "World", iWorldLen + 1);
 	AssertFalse(bResult);
 	AssertInt(1, cMapBlock.NumElements());
 
@@ -266,6 +273,49 @@ void TestMapBlockRemove(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMapBlockReadWrite(void)
+{
+	CMapStringString	mszsz;
+	CFileBasic			cFile;
+	CMapStringString	mszszIn;
+
+	mszsz.Init(16);
+
+	mszsz.Put("ABC", "XYZ");
+	mszsz.Put("Collision", "Detection");
+	mszsz.Put("Retro", "Evolved");
+	mszsz.Put("Blame", "Canada");
+
+	AssertString("XYZ", mszsz.Get("ABC"));
+	AssertString("Detection", mszsz.Get("Collision"));
+	AssertString("Evolved", mszsz.Get("Retro"));
+	AssertString("Canada", mszsz.Get("Blame"));
+
+	cFile.Init(MemoryFile());
+	cFile.Open(EFM_Write_Create);
+	AssertTrue(mszsz.Write(&cFile));
+	mszsz.Kill();
+
+	cFile.Close();
+	cFile.Open(EFM_Read);
+
+	AssertTrue(mszszIn.Read(&cFile));
+
+	AssertString("XYZ", mszszIn.Get("ABC"));
+	AssertString("Detection", mszszIn.Get("Collision"));
+	AssertString("Evolved", mszszIn.Get("Retro"));
+	AssertString("Canada", mszszIn.Get("Blame"));
+
+	mszszIn.Kill();
+	cFile.Close();
+	cFile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMapBlock(void)
 {
 	BeginTests();
@@ -274,6 +324,7 @@ void TestMapBlock(void)
 	TestMapBlockGet();
 	TestMapBlockAddDuplicate();
 	TestMapBlockRemove();
+	TestMapBlockReadWrite();
 
 	TestStatistics();
 }
