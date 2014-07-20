@@ -222,6 +222,9 @@
     <ClCompile Include="TestMapBlock.cpp">
       <Filter>Source\Data\Map</Filter>
     </ClCompile>
+    <ClCompile Include="SortedTestObject.cpp">
+      <Filter>Source\Data\Array\Sorted</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">
@@ -229,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="FileIOTestObjects.h">
       <Filter>Source\File\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="SortedTestObject.h">
+      <Filter>Source\Data\Array\Sorted</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

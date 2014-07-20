@@ -2,6 +2,7 @@
 #include "BaseLib/IntegerHelper.h"
 #include "BaseLib/ArrayBlockSorted.h"
 #include "TestLib/Assert.h"
+#include "SortedTestObject.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -685,7 +686,63 @@ void TestArrayBlockReadWrite(void)
 	cFile.Close();
 	cFile.Kill();
 }
-	
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayBlockSortedAddDuplicate(void)
+{
+	CArrayBlockSorted	avBlock;
+	CFileBasic			cFile;
+	CSortedTestObject	cObject;
+	CSortedTestObject*	pcObject;
+	int					i;
+
+	avBlock.Init(&gcSystemAllocator, sizeof(CSortedTestObject), 4, 0, 0, &CompareSortedTestObject);
+
+	cObject.Init(1, "One");
+	avBlock.Add(&cObject);
+
+	cObject.Init(2, "Two");
+	avBlock.Add(&cObject);
+
+	cObject.Init(3, "Bug");
+	avBlock.Add(&cObject);
+
+	cObject.Init(4, "Ger");
+	avBlock.Add(&cObject);
+
+	AssertInt(4, avBlock.NumElements());
+
+	i = 3;
+	pcObject = (CSortedTestObject*)avBlock.Get(&i);
+	AssertInt(3, pcObject->miValue);
+	AssertString("Bug", pcObject->mszThreeChars);
+
+	cObject.Init(3, "Tom");
+	avBlock.Add(&cObject);
+
+	AssertInt(4, avBlock.NumElements());
+
+	i = 3;
+	pcObject = (CSortedTestObject*)avBlock.Get(&i);
+	AssertInt(3, pcObject->miValue);
+	AssertString("Bug", pcObject->mszThreeChars);
+
+	avBlock.SetOverwrite(TRUE);
+	cObject.Init(3, "Tom");
+	avBlock.Add(&cObject);
+
+	i = 3;
+	pcObject = (CSortedTestObject*)avBlock.Get(&i);
+	AssertInt(3, pcObject->miValue);
+	AssertString("Tom", pcObject->mszThreeChars);
+
+	avBlock.Kill();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -715,6 +772,7 @@ void TestArrayBlockSorted(void)
 	TestArrayBlockSortedStaggeredLeftDouble();
 	TestArrayBlockSortedStaggeredRightDouble();
 	TestArrayBlockSortedMultipleBuffers();
+	TestArrayBlockSortedAddDuplicate();
 	TestArrayBlockReadWrite();
 
 	TestStatistics();

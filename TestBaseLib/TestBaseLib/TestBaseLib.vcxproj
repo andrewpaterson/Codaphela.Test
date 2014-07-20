@@ -91,6 +91,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="FileIOTestObjects.cpp" />
+    <ClCompile Include="SortedTestObject.cpp" />
     <ClCompile Include="TestAllocator.cpp" />
     <ClCompile Include="TestArrayBlockSorted.cpp" />
     <ClCompile Include="TestBaseLib.cpp" />
@@ -140,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileIOTestObjects.h" />
+    <ClInclude Include="SortedTestObject.h" />
     <ClInclude Include="TestIndexTreeObject.h" />
   </ItemGroup>
   <ItemGroup>
