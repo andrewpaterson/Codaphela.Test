@@ -544,7 +544,7 @@ void TestFileIOMap(void)
 
 	TestFileIOBegin(&cMemory, &cFile);
 	
-	cMap.Init(&gcSystemAllocator, 10, &CompareInt);
+	cMap.Init(&gcSystemAllocator, 10, &CompareInt, TRUE);
 	i = 9;	ld = 1.4783409838732098273349;
 	cMap.Put(&i, &ld);
 	i = 22;	ld = 1.7983487629380598763752;

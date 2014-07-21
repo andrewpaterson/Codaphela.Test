@@ -65,6 +65,7 @@ void TestMapStringUnknownGet(void)
 	pcTest->Init(19, "A pony");
 	pcTest = cMap.Put<CTestUnknownJobbie>("Aardvark");
 	pcTest->Init(4, "Restore");
+	AssertInt(3, cMap.NumElements());
 
 	pcTest = (CTestUnknownJobbie*)cMap.Get("World");
 	AssertInt(19, pcTest->miANumber);

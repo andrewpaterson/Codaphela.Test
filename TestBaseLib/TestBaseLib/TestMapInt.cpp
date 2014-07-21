@@ -14,7 +14,7 @@ void TestMapIntTemplate(void)
 	double	e;
 	int		i;
 
-	cMap.Init(&gcSystemAllocator, 2);
+	cMap.Init(&gcSystemAllocator, 2, TRUE);
 
 	d = 1.0; cMap.Put((int)d, &d);
 	d = 2.0; cMap.Put((int)d, &d);
@@ -120,7 +120,7 @@ void TestMapIntInt(void)
 	int*		piKey;
 	int*		piValue;
 
-	cMap.Init(&gcSystemAllocator, 16);
+	cMap.Init(&gcSystemAllocator, 16, TRUE);
 
 	cMap.Put(5, 15);
 	cMap.Put(7, 17);

@@ -73,7 +73,7 @@ void TestMapIntInt(void)
 	BOOL			bResult;
 	int				x, y;
 
-	cMapIntInt.Init(&gcSystemAllocator, 11, CompareInt);
+	cMapIntInt.Init(&gcSystemAllocator, 11, CompareInt, TRUE);
 
 	x = 10; y = 73;
 	cMapIntInt.Put(&x, &y);
