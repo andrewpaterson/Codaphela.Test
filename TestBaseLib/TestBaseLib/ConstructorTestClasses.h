@@ -1,0 +1,39 @@
+#ifndef __CONSTRUCTOR_TEST_CLASSES_H__
+#define __CONSTRUCTOR_TEST_CLASSES_H__
+
+
+class CConstructorTestSuper1
+{
+public:
+	int		i;
+
+	virtual char*	GetName(void) = 0;
+	virtual int		GetSize(void) = 0;
+	virtual int		Method1(void);
+};
+
+
+class CConstructorTestSuper2
+{
+public:
+	int		j;
+
+	virtual char*	GetName(void);
+	virtual int		GetSize(void);
+	virtual int		Method2(void);
+};
+
+
+class CConstructorTestClass : public CConstructorTestSuper1, public CConstructorTestSuper2
+{
+public:
+	int		k;
+
+	char*	GetName(void);
+	int		GetSize(void);
+	int		Method1(void);
+};
+
+
+#endif // __CONSTRUCTOR_TEST_CLASSES_H__
+

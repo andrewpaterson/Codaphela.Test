@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectReaderSimpleDisk.h"
@@ -33,6 +34,10 @@ CPointer SetupObjectReaderSimpleFile(void)
 //////////////////////////////////////////////////////////////////////////
 void WriteObjectReaderSimpleFile(void)
 {
+	MemoryInit();
+	ObjectsInit();
+	gcObjects.AddConstructor<CTestNamedString>();
+
 	CPointer				cBase;
 	CObjectWriterSimple		cWriter;
 	CObjectGraphSerialiser	cGraphSerialiser;
@@ -44,6 +49,9 @@ void WriteObjectReaderSimpleFile(void)
 	AssertTrue(cGraphSerialiser.Write(cBase.BaseObject()));
 	cGraphSerialiser.Kill();
 	cWriter.Kill();
+
+	ObjectsKill();
+	MemoryKill();
 }
 
 
@@ -53,25 +61,20 @@ void WriteObjectReaderSimpleFile(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectReaderSimpleDeserialised(void)
 {
+	WriteObjectReaderSimpleFile();
+
 	CObjectReaderSimpleDisk		cReader;
 	CObjectGraphDeserialiser	cGraphDeserialiser;
-	CPointer				cBase;
+	CPointer					cBase;
 
-	Ptr<CTestNamedString>	cNS1;
-	Ptr<CTestNamedString>	cNS2;
-	CPointer				cTemp;
+	Ptr<CTestNamedString>		cNS1;
+	Ptr<CTestNamedString>		cNS2;
+	CPointer					cTemp;
 
 	CObjectAllocator			cAllocator;
 	CDependentReadObjects		cDependentReadObjects;
 
-	gcObjects.AddConstructor<CTestNamedString>();
-
-	WriteObjectReaderSimpleFile();
-
-	AssertLongLongInt(0, gcObjects.NumDatabaseObjects());
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
-
-	ObjectsKill();
+	MemoryInit();
 	ObjectsInit();
 
 	gcObjects.AddConstructor<CTestNamedString>();
@@ -107,6 +110,8 @@ void TestObjectReaderSimpleDeserialised(void)
 	cDependentReadObjects.Kill();
 	cAllocator.Kill();
 	cReader.Kill();
+
+	ObjectsKill();
 }
 
 
@@ -120,13 +125,11 @@ void TestObjectReaderSimple(void)
 
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output/ObjectReaderSimple");
-	ObjectsInit();
 	BeginTests();
 
 	TestObjectReaderSimpleDeserialised();
 
 	TestStatistics();
-	ObjectsKill();
 
 	cFileUtil.RemoveDir("Output");
 }

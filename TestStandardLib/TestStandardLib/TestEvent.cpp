@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/Chars.h"
 #include "StandardLib/Listener.h"
 #include "StandardLib/Unknowns.h"
@@ -205,6 +206,7 @@ void CTestObjectIsListener::Style2(CUnknown* pcSource, void* pvContext)
 
 void TestVirtualCall(void)
 {
+	MemoryInit();
 	UnknownsInit();
 
 	CTestObjectIsListenerWithEvent*		pcTest;
@@ -253,6 +255,7 @@ void TestVirtualCall(void)
 	pcTest->Kill();
 
 	UnknownsKill();
+	MemoryKill();
 }
 
 

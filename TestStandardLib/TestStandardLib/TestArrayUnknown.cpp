@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/DiskFile.h"
 #include "TestLib/Assert.h"
@@ -12,6 +13,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestArrayAllocation(void)
 {
+	MemoryInit();
 	UnknownsInit();
 
 	CArrayUnknown							cArray;
@@ -63,6 +65,7 @@ void TestArrayAllocation(void)
 	AssertNull(pcTest);
 
 	UnknownsKill();
+	MemoryKill();
 }
 
 
@@ -72,6 +75,7 @@ void TestArrayAllocation(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRemoval(void)
 {
+	MemoryInit();
 	UnknownsInit();
 
 	CArrayUnknown							cArray;
@@ -149,6 +153,7 @@ void TestRemoval(void)
 	cArray.Kill();
 
 	UnknownsKill();
+	MemoryKill();
 }
 
 
@@ -158,6 +163,7 @@ void TestRemoval(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIteration(void)
 {
+	MemoryInit();
 	UnknownsInit();
 
 	CArrayUnknown			cArray;
@@ -198,6 +204,7 @@ void TestIteration(void)
 	cArray.Kill();
 
 	UnknownsKill();
+	MemoryKill();
 }
 
 
@@ -208,6 +215,7 @@ void TestIteration(void)
 //////////////////////////////////////////////////////////////////////////
 void TestArrayUnknownLoad(void)
 {
+	MemoryInit();
 	UnknownsInit();
 
 	CArrayUnknown		cArray;
@@ -218,10 +226,12 @@ void TestArrayUnknownLoad(void)
 	BOOL				bResult;
 	CUnknown*			pcUnknown;
 
+	AssertInt(0, gcConstructors.NumConstructors());
 	AssertInt(0, gcUnknowns.NumElements());
 	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
 	gcUnknowns.AddConstructor<CTestUnknown>();
-	AssertInt(2, gcUnknowns.NumElements());
+	AssertInt(0, gcUnknowns.NumElements());
+	AssertInt(2, gcConstructors.NumConstructors());
 
 	cFileUtil.RemoveDir("ArrayUnknown");
 	cFileUtil.MakeDir("ArrayUnknown");
@@ -249,7 +259,7 @@ void TestArrayUnknownLoad(void)
 	cFile.Kill();
 	cArray.Kill();
 
-	AssertInt(2, gcUnknowns.NumElements());
+	AssertInt(0, gcUnknowns.NumElements());
 
 	cFile.Init(DiskFile("ArrayUnknown/Array.dat"));
 	bResult = cFile.ReadOpen();
@@ -264,7 +274,7 @@ void TestArrayUnknownLoad(void)
 	cFile.Kill();
 
 	AssertInt(4, cArray.NumElements());
-	AssertInt(6, gcUnknowns.NumElements());
+	AssertInt(4, gcUnknowns.NumElements());
 
 	pcUnknown = cArray.Get(0);
 	AssertString("CTestUnknown", pcUnknown->ClassName());
@@ -286,11 +296,12 @@ void TestArrayUnknownLoad(void)
 
 	cArray.Kill();
 
-	AssertInt(2, gcUnknowns.NumElements());
+	AssertInt(0, gcUnknowns.NumElements());
 
 	cFileUtil.RemoveDir("ArrayUnknown");
 
 	UnknownsKill();
+	MemoryKill();
 }
 
 

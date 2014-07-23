@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "CoreLib/TypeNames.h"
 #include "CoreLib/TypeConverter.h"
 #include "StandardLib/Unknowns.h"
@@ -13,6 +14,8 @@
 void TestSingleChannelAccessor(void)
 {
 	BeginTests();
+
+	MemoryInit();
 	TypesInit();
 	TypeConverterInit();
 	UnknownsInit();
@@ -66,6 +69,8 @@ void TestSingleChannelAccessor(void)
 	UnknownsKill();
 	TypeConverterKill();
 	TypesKill();
+	MemoryKill();
+
 	TestStatistics();
 }
 

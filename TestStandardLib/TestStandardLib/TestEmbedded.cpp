@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
@@ -268,6 +269,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 
 	cFileUtil.RemoveDir("Output/EmbeddedObject");
 
+	MemoryInit();
 	ObjectsInit("Output/EmbeddedObject/");
 	SetupEmbeddedObjectConstructors();
 
@@ -278,13 +280,16 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	pRoot->Add(pComplex);
 
 	bResult = gcObjects.Flush(TRUE, TRUE);
-	ObjectsKill();
 	AssertTrue(bResult);
+
+	ObjectsKill();
+	MemoryKill();
 
 	AssertInt(176, sizeof(CEmbeddedTest));
 	AssertInt(544, sizeof(CEmbeddedContainer));
 	AssertInt(1032, sizeof(CEmbeddedComplex));
 
+	MemoryInit();
 	ObjectsInit("Output/EmbeddedObject/");
 	SetupEmbeddedObjectConstructors();
 
@@ -320,6 +325,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
+	MemoryKill();
 }
 
 
@@ -336,6 +342,7 @@ void TestEmbeddedObjectPointTo(void)
 	
 	cFileUtil.RemoveDir("Output/EmbeddedObject");
 
+	MemoryInit();
 	ObjectsInit("Output/EmbeddedObject/");
 	SetupEmbeddedObjectConstructors();
 
@@ -347,11 +354,14 @@ void TestEmbeddedObjectPointTo(void)
 	pRoot->Add(pContainer);
 
 	bResult = gcObjects.Flush(TRUE, TRUE);
-	ObjectsKill();
 	AssertTrue(bResult);
+
+	ObjectsKill();
+	MemoryKill();
 
 	AssertNull(&pContainer);
 
+	MemoryInit();
 	ObjectsInit("Output/EmbeddedObject/");
 	SetupEmbeddedObjectConstructors();
 
@@ -367,6 +377,9 @@ void TestEmbeddedObjectPointTo(void)
 
 	pComplex = pContainer->GetEmbeddingContainer();
 	//Kinda feels like this test just stopped...
+
+	ObjectsKill();
+	MemoryKill();
 }
 
 
@@ -376,6 +389,7 @@ void TestEmbeddedObjectPointTo(void)
 //////////////////////////////////////////////////////////////////////////
 void TestEmbeddedGetEmbeddedIndex(void)
 {
+	MemoryInit();
 	ObjectsInit();
 
 	CEmbeddedComplex	cComplex;
@@ -402,6 +416,7 @@ void TestEmbeddedGetEmbeddedIndex(void)
 	AssertInt(-1, cComplex.GetEmbeddedIndex(NULL));
 
 	ObjectsKill();
+	MemoryKill();
 }
 
 
@@ -411,6 +426,7 @@ void TestEmbeddedGetEmbeddedIndex(void)
 //////////////////////////////////////////////////////////////////////////
 void TestEmbeddedGetEmbeddedObject(void)
 {
+	MemoryInit();
 	ObjectsInit();
 
 	CEmbeddedComplex	cComplex;
@@ -445,6 +461,7 @@ void TestEmbeddedGetEmbeddedObject(void)
 	AssertNull(pcEmbedded);
 
 	ObjectsKill();
+	MemoryKill();
 }
 
 
@@ -454,6 +471,7 @@ void TestEmbeddedGetEmbeddedObject(void)
 //////////////////////////////////////////////////////////////////////////
 void TestEmbeddedObjectClass(void)
 {
+	MemoryInit();
 	ObjectsInit();
 
 	CEmbeddedComplex	cComplex;
@@ -495,6 +513,7 @@ void TestEmbeddedObjectClass(void)
 	AssertInt(-1, cComplex.GetFieldPointerToIndex(NULL));
 
 	ObjectsKill();
+	MemoryKill();
 }
 
 
@@ -504,7 +523,7 @@ void TestEmbeddedObjectClass(void)
 //////////////////////////////////////////////////////////////////////////
 void TestEmbeddedOjectIsAllocatedInObjects()
 {
-
+	MemoryInit();
 	ObjectsInit();
 
 	Ptr<CClusterMissile> pClusterMissile = ONMalloc(CClusterMissile, "Gerbil")->Init(NULL);
@@ -521,6 +540,7 @@ void TestEmbeddedOjectIsAllocatedInObjects()
 	AssertFalse(cClusterMissile.mcMissile2.IsAllocatedInObjects());
 
 	ObjectsKill();
+	MemoryKill();
 }
 
 

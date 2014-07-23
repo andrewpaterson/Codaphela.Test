@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/MemoryFile.h"
 #include "StandardLib/Objects.h"
@@ -144,14 +145,18 @@ void TestDehollowficationFromDatabase(void)
 					FALSE);
 
 	cFileUtil.RemoveDir("Output\\Dehollowfication\\Database");
+
+	MemoryInit();
 	ObjectsInit(&cConfig);
 	SetupDehollowficationScene();
 	gcObjects.Flush(FALSE, FALSE);
 	ObjectsKill();
+	MemoryKill();
 
+	MemoryInit();
 	ObjectsInit(&cConfig);
 	SetupDehollowficationConstructors();
-	AssertLongLongInt(0, gcUnknowns.NumElements()-8);
+	AssertLongLongInt(0, gcUnknowns.NumElements());
 	AssertInt(0, gcObjects.GetStackPointers()->UsedPointers());
 
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
@@ -164,7 +169,7 @@ void TestDehollowficationFromDatabase(void)
 
 	AssertTrue(pRoot->IsSetHollow());
 
-	AssertLongLongInt(2, gcUnknowns.NumElements()-8);
+	AssertLongLongInt(2, gcUnknowns.NumElements());
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
 	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached());
@@ -177,11 +182,11 @@ void TestDehollowficationFromDatabase(void)
 	AssertTrue(pTest.IsNotNull());
 	AssertTrue(pTest.IsHollow());
 	AssertLongLongInt(10, pTest.GetIndex());
-	AssertLongLongInt(4, gcUnknowns.NumElements()-8);
+	AssertLongLongInt(4, gcUnknowns.NumElements());
 	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
 	
 	AssertString("12345", pTest->mpSplit1->mszEmbedded.Text()); //This will cause pTest and pTest.Split1 to be dehollowed.
-	AssertLongLongInt(9, gcUnknowns.NumElements()-8);
+	AssertLongLongInt(9, gcUnknowns.NumElements());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertFalse(pTest.IsHollow());
 	AssertLongLongInt(10, pTest.GetIndex());
@@ -196,18 +201,18 @@ void TestDehollowficationFromDatabase(void)
 	AssertInt(2, gcObjects.GetStackPointers()->UsedPointers());
 
 	Ptr<CTestNamedString> pDiamond = pTest->mpSplit1->mpAnother;
-	AssertLongLongInt(9, gcUnknowns.NumElements()-8);
+	AssertLongLongInt(9, gcUnknowns.NumElements());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertInt(3, gcObjects.GetStackPointers()->UsedPointers());
 	AssertTrue(pTest->mpSplit1->mpAnother.IsHollow());
 	AssertTrue(pDiamond.IsHollow());
 
-	pDiamond->ClassName(); //This will cause pDiamond to be dehollowed
+	pDiamond->ClassName(); //This will cause pDiamond to be de-hollowed
 
 	AssertFalse(pDiamond.IsHollow());
 	AssertFalse(pTest->mpSplit1->mpAnother.IsHollow());
 
-	AssertLongLongInt(10, gcUnknowns.NumElements()-8);
+	AssertLongLongInt(10, gcUnknowns.NumElements());
 	AssertLongLongInt(10, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 	AssertLongLongInt(3, gcObjects.NumDatabaseObjectsCached());
@@ -247,6 +252,8 @@ void TestDehollowficationFromDatabase(void)
 	AssertTrue(pRandom.IsNull());
 
 	pDiamond.UnsafeClearObject();
+
+	MemoryKill();
 }
 
 
@@ -272,11 +279,15 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 		FALSE);
 
 	cFileUtil.RemoveDir("Output\\Dehollowfication\\Database");
+
+	MemoryInit();
 	ObjectsInit(&cConfig);
 	SetupDehollowficationScene();
 	gcObjects.Flush(FALSE, FALSE);
 	ObjectsKill();
+	MemoryKill();
 
+	MemoryInit();
 	ObjectsInit(&cConfig);
 	SetupDehollowficationConstructors();
 
@@ -312,6 +323,7 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 	AssertPointer(pString1->mpAnother.Object(), pString2->mpAnother.Object());
 
 	ObjectsKill();
+	MemoryKill();
 }
 
 
@@ -324,9 +336,12 @@ void TestDehollowficationFromChunkFileSource(void)
 	CFileUtil		cFileUtil;
 
 	cFileUtil.RemoveDir("Output\\Dehollowfication\\ChunkFile");
+
+	MemoryInit();
 	ObjectsInit("Output\\Dehollowfication\\Temp");
 	WriteDehollowficationChunkedFile();
 	ObjectsKill();
+	MemoryKill();
 	cFileUtil.RemoveDir("Output\\Dehollowfication\\Temp");
 
 	CObjectSourceChunked* pcObjectSourceChunked;
@@ -334,6 +349,7 @@ void TestDehollowficationFromChunkFileSource(void)
 
 	CDiskFile*	pcDiskFile = DiskFile("Output\\Dehollowfication\\ChunkFile\\Double.DRG");
 
+	MemoryInit();
 	ObjectsInit("Output\\Dehollowfication\\Temp");
 	SetupDehollowficationConstructors();
 
@@ -361,6 +377,7 @@ void TestDehollowficationFromChunkFileSource(void)
 	AssertString("CTestNamedString", pStart->mpSplit1.ClassName());
 
 	ObjectsKill();
+	MemoryKill();
 }
 
 

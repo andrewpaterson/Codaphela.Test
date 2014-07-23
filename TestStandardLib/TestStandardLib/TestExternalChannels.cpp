@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/Log.h"
 #include "CoreLib/TypeNames.h"
@@ -27,6 +28,7 @@ void TestExternalChannelsSubBytePositions(void)
 // 8 8 77777777 7 76666666 6 66555555 5 55544444 4 44443333 3 33333222 2 22222211 1 11111110 0 00000000
 // 1 0 98765432 1 09876543 2 10987654 3 21098765 4 32109876 5 43210987 6 54321098 7 65432109 8 76543210
 
+	MemoryInit();
 	TypesInit();
 	TypeConverterInit();
 	UnknownsInit();
@@ -102,6 +104,7 @@ void TestExternalChannelsSubBytePositions(void)
 	UnknownsKill();
 	TypesKill();
 	TypeConverterKill();
+	MemoryKill();
 }
 
 
@@ -119,6 +122,7 @@ void TestContiguousExternalChannels(void)
 	int					iExpected2;
 	int					iExpected3;
 
+	MemoryInit();
 	TypeConverterInit();
 	TypesInit();
 	UnknownsInit();
@@ -169,6 +173,7 @@ void TestContiguousExternalChannels(void)
 	UnknownsKill();
 	TypesKill();
 	TypeConverterKill();
+	MemoryKill();
 }
 
 

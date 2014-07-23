@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/DiskFile.h"
 #include "StandardLib/Unknowns.h"
@@ -12,6 +13,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestMapStringUnknownPut(void)
 {
+	MemoryInit();
 	UnknownsInit();
 
 	CMapStringUnknown	cMap;
@@ -40,6 +42,7 @@ void TestMapStringUnknownPut(void)
 	cMap.Kill();
 
 	UnknownsKill();
+	MemoryKill();
 }
 
 
@@ -49,6 +52,7 @@ void TestMapStringUnknownPut(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapStringUnknownGet(void)
 {
+	MemoryInit();
 	UnknownsInit();
 
 	CMapStringUnknown	cMap;
@@ -105,6 +109,7 @@ void TestMapStringUnknownGet(void)
 	AssertInt(0, gcUnknowns.NumElements());
 
 	UnknownsKill();
+	MemoryKill();
 }
 
 
@@ -114,6 +119,7 @@ void TestMapStringUnknownGet(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapStringUnknownNoOverwrite(void)
 {
+	MemoryInit();
 	UnknownsInit();
 
 	CMapStringUnknown	cMap;
@@ -137,6 +143,7 @@ void TestMapStringUnknownNoOverwrite(void)
 	AssertInt(0, gcUnknowns.NumElements());
 
 	UnknownsKill();
+	MemoryKill();
 }
 
 
@@ -146,6 +153,7 @@ void TestMapStringUnknownNoOverwrite(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapStringUnknownLoad(void)
 {
+	MemoryInit();
 	UnknownsInit();
 
 	CMapStringUnknown	cMap;
@@ -154,9 +162,8 @@ void TestMapStringUnknownLoad(void)
 	CFileUtil			cFileUtil;
 	BOOL				bResult;
 
-	AssertInt(0, gcUnknowns.NumElements());
 	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
-	AssertInt(1, gcUnknowns.NumElements());
+	AssertInt(0, gcUnknowns.NumElements());
 
 	cFileUtil.RemoveDir("MapStringUnknown");
 	cFileUtil.MakeDir("MapStringUnknown");
@@ -185,7 +192,7 @@ void TestMapStringUnknownLoad(void)
 	cFile.Kill();
 	cMap.Kill();
 
-	AssertInt(1, gcUnknowns.NumElements());
+	AssertInt(0, gcUnknowns.NumElements());
 
 	cFile.Init(DiskFile("MapStringUnknown/Map.dat"));
 	bResult = cFile.ReadOpen();
@@ -200,7 +207,7 @@ void TestMapStringUnknownLoad(void)
 	cFile.Kill();
 
 	AssertInt(4, cMap.NumElements());
-	AssertInt(5, gcUnknowns.NumElements());
+	AssertInt(4, gcUnknowns.NumElements());
 
 	pcTest = (CTestUnknownJobbie*)cMap.Get("Hello");
 	AssertInt(7, pcTest->miANumber);
@@ -220,11 +227,12 @@ void TestMapStringUnknownLoad(void)
 
 	cMap.Kill();
 
-	AssertInt(1, gcUnknowns.NumElements());
+	AssertInt(0, gcUnknowns.NumElements());
 
 	cFileUtil.RemoveDir("MapStringUnknown");
 
 	UnknownsKill();
+	MemoryKill();
 }
 
 

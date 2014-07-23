@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectAllocator.h"
 #include "TestLib/Assert.h"
@@ -25,6 +26,7 @@ void TestObjectAllocatorSimpleAdd(void)
 	Ptr<CTestNamedObject>	pNamed;
 	Ptr<CTestNamedObject>	pTemp;
 
+	MemoryInit();
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
@@ -42,6 +44,7 @@ void TestObjectAllocatorSimpleAdd(void)
 	AssertPointer(pNamed.Object(), pTemp.Object());
 
 	ObjectsKill();
+	MemoryKill();
 }
 
 
@@ -56,6 +59,7 @@ void TestObjectAllocatorNamedAdd(void)
 	Ptr<CTestNamedObject>	pNamed2;
 	Ptr<CTestNamedObject>	pTemp;
 
+	MemoryInit();
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
@@ -76,6 +80,7 @@ void TestObjectAllocatorNamedAdd(void)
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
+	MemoryKill();
 }
 
 
@@ -91,6 +96,7 @@ void TestObjectAllocatorNamedOverwrite(void)
 	Ptr<CTestNamedObject>	pTemp;
 	long long int				oiExisting;
 
+	MemoryInit();
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
@@ -120,6 +126,7 @@ void TestObjectAllocatorNamedOverwrite(void)
 	AssertPointer(pNamed2.Object(), pTemp.Object());
 
 	ObjectsKill();
+	MemoryKill();
 }
 
 

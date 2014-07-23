@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "TestLib/Assert.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/SetType.h"
@@ -10,6 +11,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestSetTypeInstantiation(void)
 {
+	MemoryInit();
 	UnknownsInit();
 
 	CSetType<CTestUnknown>	cSet;
@@ -66,7 +68,9 @@ void TestSetTypeInstantiation(void)
 	AssertString("CSetType", szName);
 
 	cSet.Kill();
+
 	UnknownsKill();
+	MemoryKill();
 }
 
 
@@ -76,6 +80,7 @@ void TestSetTypeInstantiation(void)
 //////////////////////////////////////////////////////////////////////////
 void TestSetTypeAddAll(void)
 {
+	MemoryInit();
 	UnknownsInit();
 
 	CSetType<CTestNamedUnknown>	cSet;
@@ -133,7 +138,9 @@ void TestSetTypeAddAll(void)
 	}
 
 	cDest.Kill();
+
 	UnknownsKill();
+	MemoryKill();
 }
 
 

@@ -79,6 +79,9 @@
     <Filter Include="Source\Data\Array\Sorted">
       <UniqueIdentifier>{2f227715-abeb-4689-9d45-8fa38a6d84d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Construtor">
+      <UniqueIdentifier>{546164f4-50b2-4d8b-a1d6-6219fb5039e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -225,6 +228,12 @@
     <ClCompile Include="SortedTestObject.cpp">
       <Filter>Source\Data\Array\Sorted</Filter>
     </ClCompile>
+    <ClCompile Include="TestConstructors.cpp">
+      <Filter>Source\Construtor</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstructorTestClasses.cpp">
+      <Filter>Source\Construtor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">
@@ -235,6 +244,9 @@
     </ClInclude>
     <ClInclude Include="SortedTestObject.h">
       <Filter>Source\Data\Array\Sorted</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstructorTestClasses.h">
+      <Filter>Source\Construtor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

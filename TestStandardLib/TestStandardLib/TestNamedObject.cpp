@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/NamedObject.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/Pointer.h"
@@ -51,6 +52,8 @@ void TestNamedObjectName(void)
 
 	cFileUtil.RemoveDir("Output/NamedObject");
 	cFileUtil.MakeDir("Output/NamedObject");
+
+	MemoryInit();
 	ObjectsInit("Output/NamedObject");
 	TestNamedObjectAddConstructors(); //This is only important if an object is being loaded.
 
@@ -113,6 +116,7 @@ void TestNamedObjectName(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pResult3.GetDistToRoot());
 
 	ObjectsKill();
+	MemoryKill();
 }
 
 
@@ -125,7 +129,9 @@ void TestNamedOjectKill(void)
 	Ptr<CTestNamedObject>	pNamedObject;
 	char*					pszName;
 
+	MemoryInit();
 	ObjectsInit();
+
 	pNamedObject = ONMalloc(CTestNamedObject, "This is my Name")->Init(7);
 
 	pszName = pNamedObject->GetName();
@@ -133,7 +139,8 @@ void TestNamedOjectKill(void)
 	//Trying to test that KillIdentifiers is called and that mon is freed.
 	pNamedObject->Kill();
 
-	gcObjects.Kill();
+	ObjectsKill();
+	MemoryKill();
 }
 
 

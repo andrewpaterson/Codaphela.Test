@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "TestLib/Assert.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/SetUnknown.h"
@@ -10,6 +11,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestSetStuffs(void)
 {
+	MemoryInit();
 	UnknownsInit();
 
 	CSetUnknown								cSet;
@@ -71,6 +73,7 @@ void TestSetStuffs(void)
 	AssertNull(pcTest);
 
 	UnknownsKill();
+	MemoryKill();
 }
 
 
@@ -81,6 +84,7 @@ void TestSetStuffs(void)
 //////////////////////////////////////////////////////////////////////////
 void TestSetRemoval(void)
 {
+	MemoryInit();
 	UnknownsInit();
 
 	CSetUnknown								cSet;
@@ -158,6 +162,7 @@ void TestSetRemoval(void)
 	cSet.Kill();
 
 	UnknownsKill();
+	MemoryKill();
 }
 
 
@@ -167,6 +172,7 @@ void TestSetRemoval(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCleanNulls(void)
 {
+	MemoryInit();
 	UnknownsInit();
 
 	CSetUnknown			cSet;
@@ -282,6 +288,7 @@ void TestCleanNulls(void)
 	cSet.Kill();
 
 	UnknownsKill();
+	MemoryKill();
 }
 
 

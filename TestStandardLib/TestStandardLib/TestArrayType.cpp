@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/DiskFile.h"
 #include "TestLib/Assert.h"
@@ -12,6 +13,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestArrayTypeInstantiation(void)
 {
+	MemoryInit();
 	UnknownsInit();
 	
 	CArrayType<CTestUnknown>	cArray;
@@ -63,7 +65,9 @@ void TestArrayTypeInstantiation(void)
 	AssertString("CArrayType", szName);
 
 	cArray.Kill();
+
 	UnknownsKill();
+	MemoryKill();
 }
 
 

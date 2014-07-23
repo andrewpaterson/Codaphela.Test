@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Unknowns.h"
 #include "TestLib/Assert.h"
 #include "UnknownTestClasses.h"
@@ -9,21 +10,25 @@
 //////////////////////////////////////////////////////////////////////////
 void TestUnknownListAddKill(void)
 {
-	CUnknowns			cList;
-	CTestUnknown*		pcTest;
+	MemoryInit();
+
+	CUnknowns		cUnknowns;
+	CTestUnknown*	pcTest;
 	CFreeList*		pcFreeList;
 
-	cList.Init("Test1");
+	cUnknowns.Init("Test1", &gcConstructors);
 
-	pcTest = cList.Add<CTestUnknown>();
-	AssertPointer(&cList, pcTest->GetUnknownsThisIn());
-	pcFreeList = cList.GetFreeList(sizeof(CTestUnknown));
+	pcTest = cUnknowns.Add<CTestUnknown>();
+	AssertPointer(&cUnknowns, pcTest->GetUnknownsThisIn());
+	pcFreeList = cUnknowns.GetFreeList(sizeof(CTestUnknown));
 	AssertInt(1, pcFreeList->NumElements());
 	pcTest->Init();
 	pcTest->Kill();
 	AssertInt(0, pcFreeList->NumElements());
 
-	cList.Kill();
+	cUnknowns.Kill();
+
+	MemoryKill();
 }
 
 
@@ -33,7 +38,9 @@ void TestUnknownListAddKill(void)
 //////////////////////////////////////////////////////////////////////////
 void TestUnknownListIterables(void)
 {
-	CUnknowns									cList;
+	MemoryInit();
+
+	CUnknowns									cUnknowns;
 	CTestIterableUnknown*						pcTest7;
 	CTestIterableUnknown*						pcTest5;
 	CTestIterableUnknown*						pcTest3;
@@ -42,60 +49,62 @@ void TestUnknownListIterables(void)
 	CTestIterableUnknown*						pcTest;
 	SIteratorTemplate<CTestIterableUnknown>		sIter; 
 
-	cList.Init("Test2");
+	cUnknowns.Init("Test2", &gcConstructors);
 
-	pcTest7 = cList.Add<CTestIterableUnknown>();
+	pcTest7 = cUnknowns.Add<CTestIterableUnknown>();
 	pcTest7->Init(7);
-	pcTest5 = cList.Add<CTestIterableUnknown>();
+	pcTest5 = cUnknowns.Add<CTestIterableUnknown>();
 	pcTest5->Init(5);
-	pcTest3 = cList.Add<CTestIterableUnknown>();
+	pcTest3 = cUnknowns.Add<CTestIterableUnknown>();
 	pcTest3->Init(3);
-	pcTest4 = cList.Add<CTestIterableUnknown>();
+	pcTest4 = cUnknowns.Add<CTestIterableUnknown>();
 	pcTest4->Init(4);
-	pcTest1 = cList.Add<CTestIterableUnknown>();
+	pcTest1 = cUnknowns.Add<CTestIterableUnknown>();
 	pcTest1->Init(1);
 
-	pcTest = cList.StartIteration(&sIter);
+	pcTest = cUnknowns.StartIteration(&sIter);
 	AssertInt(7, pcTest->miID);
-	pcTest = cList.Iterate(&sIter);
+	pcTest = cUnknowns.Iterate(&sIter);
 	AssertInt(5, pcTest->miID);
-	pcTest = cList.Iterate(&sIter);
+	pcTest = cUnknowns.Iterate(&sIter);
 	AssertInt(3, pcTest->miID);
-	pcTest = cList.Iterate(&sIter);
+	pcTest = cUnknowns.Iterate(&sIter);
 	AssertInt(4, pcTest->miID);
-	pcTest = cList.Iterate(&sIter);
+	pcTest = cUnknowns.Iterate(&sIter);
 	AssertInt(1, pcTest->miID);
-	pcTest = cList.Iterate(&sIter);
+	pcTest = cUnknowns.Iterate(&sIter);
 	AssertNull(pcTest);
 
 	pcTest7->Kill();
 	pcTest1->Kill();
 
-	pcTest = cList.StartIteration(&sIter);
+	pcTest = cUnknowns.StartIteration(&sIter);
 	AssertInt(5, pcTest->miID);
-	pcTest = cList.Iterate(&sIter);
+	pcTest = cUnknowns.Iterate(&sIter);
 	AssertInt(3, pcTest->miID);
-	pcTest = cList.Iterate(&sIter);
+	pcTest = cUnknowns.Iterate(&sIter);
 	AssertInt(4, pcTest->miID);
-	pcTest = cList.Iterate(&sIter);
+	pcTest = cUnknowns.Iterate(&sIter);
 	AssertNull(pcTest);
 
 	pcTest3->Kill();
 
-	pcTest = cList.StartIteration(&sIter);
+	pcTest = cUnknowns.StartIteration(&sIter);
 	AssertInt(5, pcTest->miID);
-	pcTest = cList.Iterate(&sIter);
+	pcTest = cUnknowns.Iterate(&sIter);
 	AssertInt(4, pcTest->miID);
-	pcTest = cList.Iterate(&sIter);
+	pcTest = cUnknowns.Iterate(&sIter);
 	AssertNull(pcTest);
 
 	pcTest5->Kill();
 	pcTest4->Kill();
 
-	pcTest = cList.StartIteration(&sIter);
+	pcTest = cUnknowns.StartIteration(&sIter);
 	AssertNull(pcTest);
 
-	cList.Kill();
+	cUnknowns.Kill();
+
+	MemoryKill();
 }
 
 
@@ -105,7 +114,9 @@ void TestUnknownListIterables(void)
 //////////////////////////////////////////////////////////////////////////
 void TestUnknownListRemoveDuringIteration(void)
 {
-	CUnknowns									cList;
+	MemoryInit();
+
+	CUnknowns									cUnknowns;
 	CTestIterableUnknown*						pcTest7;
 	CTestIterableUnknown*						pcTest5;
 	CTestIterableUnknown*						pcTest3;
@@ -114,37 +125,39 @@ void TestUnknownListRemoveDuringIteration(void)
 	CTestIterableUnknown*						pcTest;
 	SIteratorTemplate<CTestIterableUnknown>		sIter; 
 
-	cList.Init("Test3");
+	cUnknowns.Init("Test3", &gcConstructors);
 
-	pcTest7 = cList.Add<CTestIterableUnknown>();
+	pcTest7 = cUnknowns.Add<CTestIterableUnknown>();
 	pcTest7->Init(7);
-	pcTest5 = cList.Add<CTestIterableUnknown>();
+	pcTest5 = cUnknowns.Add<CTestIterableUnknown>();
 	pcTest5->Init(5);
-	pcTest3 = cList.Add<CTestIterableUnknown>();
+	pcTest3 = cUnknowns.Add<CTestIterableUnknown>();
 	pcTest3->Init(3);
-	pcTest4 = cList.Add<CTestIterableUnknown>();
+	pcTest4 = cUnknowns.Add<CTestIterableUnknown>();
 	pcTest4->Init(4);
-	pcTest1 = cList.Add<CTestIterableUnknown>();
+	pcTest1 = cUnknowns.Add<CTestIterableUnknown>();
 	pcTest1->Init(1);
 
-	pcTest = cList.StartIteration(&sIter);
+	pcTest = cUnknowns.StartIteration(&sIter);
 	AssertInt(7, pcTest->miID);
-	cList.RemoveDuringIteration(&sIter);
+	cUnknowns.RemoveDuringIteration(&sIter);
 
-	pcTest = cList.Iterate(&sIter);
+	pcTest = cUnknowns.Iterate(&sIter);
 	AssertInt(5, pcTest->miID);
-	cList.RemoveDuringIteration(&sIter);
-	cList.RemoveDuringIteration(&sIter);
+	cUnknowns.RemoveDuringIteration(&sIter);
+	cUnknowns.RemoveDuringIteration(&sIter);
 
-	pcTest = cList.Iterate(&sIter);
+	pcTest = cUnknowns.Iterate(&sIter);
 	AssertInt(4, pcTest->miID);
-	cList.RemoveDuringIteration(&sIter);
-	cList.RemoveDuringIteration(&sIter);
-	AssertInt(0, cList.GetIterableListsHeadNumElements());
-	cList.RemoveDuringIteration(&sIter);
-	AssertInt(0, cList.GetIterableListsHeadNumElements());
+	cUnknowns.RemoveDuringIteration(&sIter);
+	cUnknowns.RemoveDuringIteration(&sIter);
+	AssertInt(0, cUnknowns.GetIterableListsHeadNumElements());
+	cUnknowns.RemoveDuringIteration(&sIter);
+	AssertInt(0, cUnknowns.GetIterableListsHeadNumElements());
 
-	cList.Kill();
+	cUnknowns.Kill();
+
+	MemoryKill();
 }
 
 
