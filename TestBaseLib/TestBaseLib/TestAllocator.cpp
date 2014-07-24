@@ -57,7 +57,7 @@ void TestAllocatorNull(void)
 //////////////////////////////////////////////////////////////////////////
 void TestAllocatorFreeList(void)
 {
-	CFreeList			cBlock;
+	CFreeList*			pcBlock;
 	CFreeListAllocator	cAlloc;
 	void*				pv1;
 	void*				pv2;
@@ -65,48 +65,48 @@ void TestAllocatorFreeList(void)
 	void*				pv4;
 	void*				pv;
 
-	cBlock.Init(3, 256);
-	cAlloc.Init(&cBlock);
-	AssertInt(0, cBlock.NumElements());
+	cAlloc.Init(3, 256);
+	pcBlock = cAlloc.GetFreeList();
+	AssertInt(0, pcBlock->NumElements());
 
 	pv1 = cAlloc.Malloc(256);
 	AssertNotNull(pv1);
-	AssertInt(1, cBlock.NumElements());
-	AssertPointer(cBlock.Get(0), pv1);
+	AssertInt(1, pcBlock->NumElements());
+	AssertPointer(pcBlock->Get(0), pv1);
 
 	pv2 = cAlloc.Malloc(255);
 	AssertNotNull(pv2);
-	AssertInt(2, cBlock.NumElements());
-	AssertPointer(cBlock.Get(1), pv2);
+	AssertInt(2, pcBlock->NumElements());
+	AssertPointer(pcBlock->Get(1), pv2);
 
 	pv3 = cAlloc.Malloc(1);
 	AssertNotNull(pv3);
-	AssertInt(3, cBlock.NumElements());
-	AssertPointer(cBlock.Get(2), pv3);
+	AssertInt(3, pcBlock->NumElements());
+	AssertPointer(pcBlock->Get(2), pv3);
 
 	pv4 = cAlloc.Malloc(256);
 	AssertNotNull(pv4);
-	AssertInt(4, cBlock.NumElements());
-	AssertPointer(cBlock.Get(3), pv4);
+	AssertInt(4, pcBlock->NumElements());
+	AssertPointer(pcBlock->Get(3), pv4);
 
 	pv = cAlloc.Realloc(pv1, 255);
 	AssertPointer(pv1, pv);
-	AssertInt(4, cBlock.NumElements());
+	AssertInt(4, pcBlock->NumElements());
 
 	pv = cAlloc.Malloc(257);
 	AssertNull(pv);
-	AssertInt(4, cBlock.NumElements());
+	AssertInt(4, pcBlock->NumElements());
 
 	cAlloc.Free(pv2);
-	AssertInt(3, cBlock.NumElements());
+	AssertInt(3, pcBlock->NumElements());
 	cAlloc.Free(pv1);
-	AssertInt(2, cBlock.NumElements());
+	AssertInt(2, pcBlock->NumElements());
 	cAlloc.Free(pv4);
-	AssertInt(1, cBlock.NumElements());
+	AssertInt(1, pcBlock->NumElements());
 	cAlloc.Free(pv3);
-	AssertInt(0, cBlock.NumElements());
+	AssertInt(0, pcBlock->NumElements());
 
-	cBlock.Kill();
+	cAlloc.Kill();
 }
 
 
