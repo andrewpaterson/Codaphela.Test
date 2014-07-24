@@ -66,7 +66,7 @@ void TestAllocatorFreeList(void)
 	void*				pv;
 
 	cBlock.Init(3, 256);
-	cAlloc.Init(&cBlock, "CFreeListAllocator");
+	cAlloc.Init(&cBlock);
 	AssertInt(0, cBlock.NumElements());
 
 	pv1 = cAlloc.Malloc(256);
