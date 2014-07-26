@@ -15,15 +15,21 @@ void TestMemoryAllocatorFree(void)
 	CMemoryAllocator		cAlloc;
 	CConstructorTestClass*	pcTest;
 
-	cAlloc.Init();
-
 	gcConstructors.Add<CConstructorTestClass>("CConstructorTestClass");
-	pcTest = (CConstructorTestClass*)gcConstructors.Construct("CConstructorTestClass", &cAlloc);
-	pcTest->k = 7;
 
+	cAlloc.Init();
+	AssertInt(0, cAlloc.GetMemory()->NumElements());
+
+	pcTest = (CConstructorTestClass*)gcConstructors.Construct("CConstructorTestClass", &cAlloc);
+	AssertInt(1, cAlloc.GetMemory()->NumElements());
+
+	pcTest->k = 7;
 	AssertInt(3, pcTest->Method1());
 	AssertInt(7, pcTest->k);
 	
+	cAlloc.Free(pcTest);
+	AssertInt(0, cAlloc.GetMemory()->NumElements());
+
 	cAlloc.Kill();
 
 	MemoryKill();
