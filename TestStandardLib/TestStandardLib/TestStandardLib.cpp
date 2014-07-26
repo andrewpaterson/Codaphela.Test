@@ -56,7 +56,6 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	InitEmptyString();
 	FastFunctionsInit();
 
-	TestStackPointers();
 	TestUnknowns();
 	TestArrayUnknown();
 	TestSetUnknown();
@@ -91,6 +90,7 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestObjectGraphDeserialiser();
 	TestObjectConverter();
 	TestObjects();
+	TestStackPointers();
 	TestDehollowfication();
 	TestUsage();
 	TestArray();
