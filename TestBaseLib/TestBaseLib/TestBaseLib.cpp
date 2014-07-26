@@ -1,5 +1,6 @@
 #include "TestLib/Assert.h"
 
+
 void TestArrayTemplatePrimitive(void);
 void TestArrayInt(void);
 void TestArrayLong(void);
@@ -42,9 +43,11 @@ void TestArrayBit(void);
 void TestLinkedListTemplate(void);
 void TestTreeTemplate(void);
 void TestCSVFileEditable(void);
+void TestMemoryAllocator(void);
 void TestMemoryStack(void);
 void TestMemoryCache(void);
 void TestScratchPad(void);
+void TestScratchPadAllocator(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -96,7 +99,9 @@ int main(int argc, char* argv[])
 	TestTreeTemplate();
 	TestCSVFileEditable();
 	TestMemory();
+	TestMemoryAllocator();
 	TestScratchPad();
+	TestScratchPadAllocator();
 	TestMemoryStack();
 	TestMemoryCache();
 	TestMemoryBlock();

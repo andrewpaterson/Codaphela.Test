@@ -234,6 +234,12 @@
     <ClCompile Include="ConstructorTestClasses.cpp">
       <Filter>Source\Construtor</Filter>
     </ClCompile>
+    <ClCompile Include="TestMemoryAllocator.cpp">
+      <Filter>Source\Memory\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScratchPadAllocator.cpp">
+      <Filter>Source\Memory\ScratchPad</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

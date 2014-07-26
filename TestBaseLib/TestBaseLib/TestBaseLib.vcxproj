@@ -107,10 +107,12 @@
     <ClCompile Include="TestLinkedListTemplate.cpp" />
     <ClCompile Include="TestMapBlock.cpp" />
     <ClCompile Include="TestMapString.cpp" />
+    <ClCompile Include="TestMemoryAllocator.cpp" />
     <ClCompile Include="TestMemoryBlock.cpp" />
     <ClCompile Include="TestMemoryCache.cpp" />
     <ClCompile Include="TestMemoryStack.cpp" />
     <ClCompile Include="TestScratchPad.cpp" />
+    <ClCompile Include="TestScratchPadAllocator.cpp" />
     <ClCompile Include="TestSorting.cpp" />
     <ClCompile Include="TestArrayBit.cpp" />
     <ClCompile Include="TestArrayTemplateEmbedded.cpp" />
