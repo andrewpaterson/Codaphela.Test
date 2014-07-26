@@ -11,32 +11,32 @@ void TestScratchPadAdd(void)
 	CScratchPad		cPad;
 	void*			pvData;
 
-	cPad.Init(10);
+	cPad.Init(10 + sizeof(SSPNode));
 
 	pvData = cPad.Add(10);
 	AssertNotNull(pvData);
-	AssertInt(10, cPad.GetMemorySize());
-	AssertInt(10, cPad.GetUsedSize());
+	AssertInt(18, cPad.GetMemorySize());
+	AssertInt(18, cPad.GetUsedSize());
 
 	pvData = cPad.Add(9);
 	AssertNotNull(pvData);
-	AssertInt(20, cPad.GetMemorySize());
-	AssertInt(19, cPad.GetUsedSize());
+	AssertInt(36, cPad.GetMemorySize());
+	AssertInt(35, cPad.GetUsedSize());
 
 	pvData = cPad.Add(5);
 	AssertNotNull(pvData);
-	AssertInt(30, cPad.GetMemorySize());
-	AssertInt(24, cPad.GetUsedSize());
+	AssertInt(54, cPad.GetMemorySize());
+	AssertInt(48, cPad.GetUsedSize());
 
 	pvData = cPad.Add(5);
 	AssertNotNull(pvData);
-	AssertInt(30, cPad.GetMemorySize());
-	AssertInt(29, cPad.GetUsedSize());
+	AssertInt(72, cPad.GetMemorySize());
+	AssertInt(61, cPad.GetUsedSize());
 
 	pvData = cPad.Add(11);
 	AssertNotNull(pvData);
-	AssertInt(41, cPad.GetMemorySize());
-	AssertInt(40, cPad.GetUsedSize());
+	AssertInt(91, cPad.GetMemorySize());
+	AssertInt(80, cPad.GetUsedSize());
 	
 	cPad.Kill();
 }

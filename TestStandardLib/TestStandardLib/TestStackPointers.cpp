@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/StackPointers.h"
 #include "StandardLib/Pointer.h"
 #include "StandardLib/Objects.h"
@@ -316,12 +317,41 @@ void TestStackPointersHeapKill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestStackPointersHeapKillSimple(void)
+{
+	MemoryInit();
+	ObjectsInit();
+
+	Ptr<CTestObject>			pTest1;
+	STestObjectKilledNotifier	sKillNotifier1;
+
+	pTest1 = OMalloc(CTestObject)->Init(&sKillNotifier1);
+
+	AssertInt(UNKNOWN_DIST_TO_STACK, pTest1->GetDistToStack());
+	AssertInt(1, pTest1->NumStackFroms());
+	AssertInt(0, pTest1->NumHeapFroms());
+	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
+
+	pTest1 = NULL;
+
+	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+
+	ObjectsKill();
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestStackPointers(void)
 {
 	BeginTests();
 
 	TestStackPointersFindUnused();
 	TestStackPointersAdd();
+	TestStackPointersHeapKillSimple();
 	TestStackPointersHeapKill();
 
 	TestStatistics();
