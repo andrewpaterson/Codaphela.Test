@@ -37,14 +37,6 @@ void TestScratchPadAllocatorPop(void)
 	cAlloc.Free(pcTest2);
 	AssertInt(56, cAlloc.GetScratchPad()->GetUsedSize());
 
-	cAlloc.GetScratchPad()->Pop();
-	AssertInt(56, cAlloc.GetScratchPad()->GetUsedSize());
-	AssertInt(6 MB, cAlloc.GetScratchPad()->GetMemorySize());
-
-	cAlloc.GetScratchPad()->Pop();
-	AssertInt(0, cAlloc.GetScratchPad()->GetUsedSize());
-	AssertInt(6 MB, cAlloc.GetScratchPad()->GetMemorySize());
-
 	cAlloc.Kill();
 
 	MemoryKill();
