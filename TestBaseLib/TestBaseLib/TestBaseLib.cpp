@@ -20,6 +20,7 @@ void TestFileUtil(void);
 void TestAllocator(void);
 void TestMemoryBlock(void);
 void TestFreeList(void);
+void TestFreeListAllocator(void);
 void TestIndexTreeNode(void);
 void TestIndexTree(void);
 void TestIndexTreeTemplate(void);
@@ -71,6 +72,7 @@ int main(int argc, char* argv[])
 	TestLinkedListBlockAligned();
 	TestAllocator();
 	TestFreeList();
+	TestFreeListAllocator();
 	TestStringHelper();
 	TestDate();
 	TestNumbers();

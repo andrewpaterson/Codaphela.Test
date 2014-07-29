@@ -240,6 +240,9 @@
     <ClCompile Include="TestScratchPadAllocator.cpp">
       <Filter>Source\Memory\ScratchPad</Filter>
     </ClCompile>
+    <ClCompile Include="TestFreeListAllocator.cpp">
+      <Filter>Source\Memory\FreeList</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

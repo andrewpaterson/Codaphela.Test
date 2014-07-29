@@ -1,4 +1,5 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/MemoryFile.h"
 #include "BaseLib/ScratchPadAllocator.h"
 #include "TestLib/Assert.h"
 #include "ConstructorTestClasses.h"
@@ -54,11 +55,58 @@ void TestScratchPadAllocatorPop(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestScratchPadAllocatorReadWrite(void)
+{
+	MemoryInit();
+
+	CScratchPadAllocator	cAlloc;
+	CFileBasic				cFile;
+	CScratchPadAllocator	cAllocIn;
+	int						i;
+	SScratchPadParams		sParams;
+
+	cFile.Init(MemoryFile());
+	cFile.Open(EFM_ReadWrite_Create);
+
+	cFile.WriteInt(789);
+
+	cAlloc.Init(32 KB);
+	AssertTrue(cAlloc.Write(&cFile));
+
+	cFile.WriteInt(124);
+
+	cFile.Close();
+	cAlloc.Kill();
+
+	cFile.Open(EFM_Read);
+
+	cFile.ReadInt(&i);
+	AssertInt(789, i);
+
+	AssertTrue(cAllocIn.Read(&cFile));
+
+	cFile.ReadInt(&i);
+	AssertInt(124, i);
+
+	AssertInt(0, cAllocIn.GetScratchPad()->GetMemorySize());
+	AssertInt(0, cAllocIn.GetScratchPad()->GetUsedSize());
+	cAllocIn.GetScratchPad()->GetParams(&sParams);
+	AssertInt(32 KB, sParams.iChunkSize);
+
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestScratchPadAllocator(void)
 {
 	BeginTests();
 
 	TestScratchPadAllocatorPop();
+	TestScratchPadAllocatorReadWrite();
 
 	TestStatistics();
 }
