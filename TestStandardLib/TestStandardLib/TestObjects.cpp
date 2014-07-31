@@ -190,17 +190,33 @@ void TestObjectsFlushNoClear(void)
 
 	ObjectsKill();
 
-	AssertFile("Input/Dehollowfication/32_0.NAM",     "Output/Flush1/32_0.NAM");
-	AssertFile("Input/Dehollowfication/44_0.DAT",     "Output/Flush1/44_0.DAT");
-	AssertFile("Input/Dehollowfication/56_0.DAT",     "Output/Flush1/56_0.DAT");
-	AssertFile("Input/Dehollowfication/78_0.DAT",     "Output/Flush1/78_0.DAT");
-	AssertFile("Input/Dehollowfication/89_0.DAT",     "Output/Flush1/89_0.DAT");
-	AssertFile("Input/Dehollowfication/93_0.DAT",     "Output/Flush1/93_0.DAT");
-	AssertFile("Input/Dehollowfication/105_0.DAT",    "Output/Flush1/105_0.DAT");
-	AssertFile("Input/Dehollowfication/106_0.DAT",    "Output/Flush1/106_0.DAT");
-	AssertFile("Input/Dehollowfication/Files.DAT",    "Output/Flush1/Files.DAT");
-	AssertFile("Input/Dehollowfication/Indicies.DAT", "Output/Flush1/Indicies.DAT");
-	AssertFile("Input/Dehollowfication/Files.NAM",    "Output/Flush1/Files.NAM");
+	CArrayString	aszFileNames;
+	int				i;
+	CChars*			psz;
+	CChars			szOutput;
+	CChars			szFileName;
+
+	aszFileNames.Init(8);
+	cFileUtil.FindAllFiles("Input/Dehollowfication", &aszFileNames, FALSE, FALSE);
+
+	for (i = 0; i < aszFileNames.NumElements(); i++)
+	{
+		psz = aszFileNames.Get(i);
+		
+		szFileName.Init(psz->Text());
+		cFileUtil.RemovePath(&szFileName);
+		szOutput.Init();
+		cFileUtil.CurrentDirectory(&szOutput);
+		cFileUtil.AppendToPath(&szOutput, "Output/Flush1");
+		cFileUtil.AppendToPath(&szOutput, szFileName.Text());
+
+		AssertFile(psz->Text(), szOutput.Text());
+
+		szOutput.Kill();
+		szFileName.Kill();
+	}
+
+	aszFileNames.Kill();
 }
 
 

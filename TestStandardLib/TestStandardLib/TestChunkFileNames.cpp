@@ -1,5 +1,6 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/DiskFile.h"
+#include "BaseLib/GlobalMemory.h"
 #include "TestLib/Assert.h"
 #include "StandardLib/ChunkFileNames.h"
 
@@ -414,11 +415,13 @@ void TestChunkFileNames(void)
 	cFileUtil.MakeDir("Output/ChunkFileNames");
 
 	BeginTests();
+	MemoryInit();
 
 	TestWriting();
 	TestReading();
 	TestNameIteration();
 
+	MemoryKill();
 	TestStatistics();
 	cFileUtil.RemoveDir("Output");
 }

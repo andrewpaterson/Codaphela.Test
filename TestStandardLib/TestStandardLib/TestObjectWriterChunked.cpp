@@ -1,4 +1,5 @@
 #include "BaseLib/FileUtil.h"
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectWriterChunked.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
@@ -12,9 +13,11 @@
 //////////////////////////////////////////////////////////////////////////
 void TestObjectWriterChunkedWrite(void)
 {
+	MemoryInit();
 	ObjectsInit();
 
 	ObjectsKill();
+	MemoryKill();
 }
 
 
@@ -24,6 +27,7 @@ void TestObjectWriterChunkedWrite(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectWriterChunkedSerialised(void)
 {	
+	MemoryInit();
 	ObjectsInit();
 
 	CObjectWriterChunked		cWriter;
@@ -68,7 +72,7 @@ void TestObjectWriterChunkedSerialised(void)
 	//CTestWithArray pcObject1
 	AssertTrue(cChunkFile.ReadChunkBegin("Warning"));
 	AssertTrue(cChunkFile.ReadInt(&iLength));
-	AssertInt(106, iLength);
+	AssertInt(127, iLength);
 	AssertTrue(cChunkFile.ReadData(szTest, 4));
 	AssertString("NAM", szTest);
 	AssertTrue(cChunkFile.ReadChunkEnd());
@@ -109,6 +113,7 @@ void TestObjectWriterChunkedSerialised(void)
 	cChunkFile.Kill();
 
 	ObjectsKill();
+	MemoryKill();
 }
 
 

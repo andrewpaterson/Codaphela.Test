@@ -1,4 +1,5 @@
 #include "BaseLib/FileUtil.h"
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "StandardLib/ObjectWriterSimple.h"
@@ -86,6 +87,7 @@ void TestObjectGraphSerialiser(void)
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output/GraphWriter");
 
+	MemoryInit();
 	ObjectsInit();
 	BeginTests();
 
@@ -93,6 +95,7 @@ void TestObjectGraphSerialiser(void)
 
 	TestStatistics();
 	ObjectsKill();
+	MemoryKill();
 
 	cFileUtil.RemoveDir("Output");
 }
