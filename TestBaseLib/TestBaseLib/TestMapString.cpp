@@ -9,12 +9,35 @@
 void TestMapStringTemplate(void)
 {
 	CMapStringTemplate<double>	cMap;
+	double						d;
+	double*						pd;
+	char*						szKey;
 
 	cMap.Init(1, FALSE);
 	cMap.Kill();
 
 	cMap.Init(2, TRUE);
 	cMap.Kill();
+
+	cMap.Init(8, TRUE, TRUE);
+	d = 1.0; cMap.Put("A", &d);
+	d = 2.0; cMap.Put("B", &d);
+	d = 3.0; cMap.Put("C", &d);
+
+	pd = cMap.Get("B");
+	AssertDouble(2.0, *pd, 2);
+	szKey = cMap.GetKeyForData(pd);
+	AssertString("B", szKey);
+
+	pd = cMap.Get("C");
+	AssertDouble(3.0, *pd, 2);
+	szKey = cMap.GetKeyForData(pd);
+	AssertString("C", szKey);
+
+	pd = cMap.Get("A");
+	AssertDouble(1.0, *pd, 2);
+	szKey = cMap.GetKeyForData(pd);
+	AssertString("A", szKey);
 }
 
 
