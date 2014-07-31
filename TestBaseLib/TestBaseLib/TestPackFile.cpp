@@ -3,6 +3,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/DiskFile.h"
 #include "BaseLib/MemoryFile.h"
+#include "BaseLib/GlobalMemory.h"
 #include "TestLib/Assert.h"
 
 
@@ -305,6 +306,7 @@ void TestPackFile(void)
 {
 	BeginTests();
 	FastFunctionsInit();
+	MemoryInit();
 
 	TestPackFileReadWriteSingleFile();
 	TestPackFileReadWriteMultipleFiles();
@@ -313,6 +315,7 @@ void TestPackFile(void)
 	TestPackFileGetFiles();
 	TestPackFileIterate();
 
+	MemoryKill();
 	FastFunctionsKill();
 	TestStatistics();
 }

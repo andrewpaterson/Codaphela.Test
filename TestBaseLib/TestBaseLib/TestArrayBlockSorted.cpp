@@ -1,6 +1,7 @@
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/IntegerHelper.h"
 #include "BaseLib/ArrayBlockSorted.h"
+#include "BaseLib/GlobalMemory.h"
 #include "TestLib/Assert.h"
 #include "SortedTestObject.h"
 
@@ -647,6 +648,8 @@ void TestArrayBlockReadWrite(void)
 	int					iKey;
 	int*				piData;
 
+	MemoryInit();
+
 	avBlock.Init(sizeof(int), 10, 4, 4, CompareInt);
 
 	ListAddInt(&avBlock, 9);
@@ -685,6 +688,8 @@ void TestArrayBlockReadWrite(void)
 	avBlockIn.Kill();
 	cFile.Close();
 	cFile.Kill();
+
+	MemoryKill();
 }
 
 

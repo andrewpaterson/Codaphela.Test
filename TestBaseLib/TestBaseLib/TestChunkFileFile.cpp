@@ -1,6 +1,7 @@
 #include "BaseLib/ChunkFile.h"
 #include "BaseLib/ChunkFileFile.h"
 #include "BaseLib/MemoryFile.h"
+#include "BaseLib/GlobalMemory.h"
 #include "TestLib/Assert.h"
 
 
@@ -69,9 +70,11 @@ void TestChunkFileFile(void)
 {
 	BeginTests();
 	FastFunctionsInit();
+	MemoryInit();
 
 	TestChunkFileFileRead();
 
+	MemoryKill();
 	FastFunctionsKill();
 	TestStatistics();
 }
