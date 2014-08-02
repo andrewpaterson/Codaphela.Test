@@ -705,7 +705,7 @@ void TestArrayBlockSortedAddDuplicate(void)
 	CSortedTestObject*	pcObject;
 	int					i;
 
-	avBlock.Init(&gcSystemAllocator, sizeof(CSortedTestObject), 4, 0, 0, &CompareSortedTestObject);
+	avBlock.Init(sizeof(CSortedTestObject), 4, 0, 0, &CompareSortedTestObject);
 
 	cObject.Init(1, "One");
 	avBlock.Add(&cObject);

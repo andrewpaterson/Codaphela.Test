@@ -14,7 +14,7 @@ void TestMemoryBlockAllocate(void)
 	CMemoryBlock	cBlock;
 	void*			pvMem;
 
-	cBlock.Init(&gcSystemAllocator);
+	cBlock.Init();
 	pvMem = cBlock.Allocate(10);
 	AssertNotNull(pvMem);
 	AssertPointer(pvMem, cBlock.GetMemory());
