@@ -3,6 +3,7 @@
 #include "BaseLib/IntegerHelper.h"
 #include "BaseLib/MapStringString.h"
 #include "BaseLib/MemoryFile.h"
+#include "BaseLib/GlobalMemory.h"
 #include "TestLib/Assert.h"
 
 
@@ -321,6 +322,7 @@ void TestMapBlockReadWrite(void)
 void TestMapBlock(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestMapBlockInternals();
 	TestMapBlockGet();
@@ -328,6 +330,7 @@ void TestMapBlock(void)
 	TestMapBlockRemove();
 	TestMapBlockReadWrite();
 
+	MemoryKill();
 	TestStatistics();
 }
 

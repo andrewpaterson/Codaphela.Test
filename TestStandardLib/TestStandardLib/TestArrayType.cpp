@@ -77,6 +77,7 @@ void TestArrayTypeInstantiation(void)
 //////////////////////////////////////////////////////////////////////////
 void TestArrayTypeLoad(void)
 {
+	MemoryInit();
 	UnknownsInit();
 
 	CArrayType<CTestUnknown>	cArray;
@@ -140,6 +141,7 @@ void TestArrayTypeLoad(void)
 	cFileUtil.RemoveDir("ArrayType");
 
 	UnknownsKill();
+	MemoryKill();
 }
 
 
