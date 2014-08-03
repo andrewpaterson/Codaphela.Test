@@ -510,25 +510,35 @@ void TestIndexTreeBlockRemoveResize(void)
 	AssertInt(4, cIndex.RecurseSize());
 	AssertInt(1104, cTrackingAlloc.AllocatedSize());
 
+	li = 0xbbLL; cIndex.Put(&li, sizeof(long long), "MBP");
+	AssertInt(6, cIndex.CountAllocatedNodes());
+	AssertInt(5, cIndex.RecurseSize());
+	AssertInt(1124, cTrackingAlloc.AllocatedSize());
+
 	cIndex.Remove("MB");
+	AssertInt(6, cIndex.CountAllocatedNodes());
+	AssertInt(4, cIndex.RecurseSize());
+	AssertInt(1124, cTrackingAlloc.AllocatedSize());
+
+	cIndex.Remove("MBP");
 	AssertInt(4, cIndex.CountAllocatedNodes());
 	AssertInt(3, cIndex.RecurseSize());
-	//AssertInt(1088, cTrackingAlloc.AllocatedSize());
+	AssertInt(1088, cTrackingAlloc.AllocatedSize());
 
 	cIndex.Remove("MA");
 	AssertInt(3, cIndex.CountAllocatedNodes());
 	AssertInt(2, cIndex.RecurseSize());
-	//AssertInt(1064, cTrackingAlloc.AllocatedSize());
+	AssertInt(1072, cTrackingAlloc.AllocatedSize());
 
 	cIndex.Remove("MC");
 	AssertInt(2, cIndex.CountAllocatedNodes());
 	AssertInt(1, cIndex.RecurseSize());
-	//AssertInt(1044, cTrackingAlloc.AllocatedSize());
+	AssertInt(1056, cTrackingAlloc.AllocatedSize());
 
 	cIndex.Remove("M");
 	AssertInt(1, cIndex.CountAllocatedNodes());
 	AssertInt(0, cIndex.RecurseSize());
-	//AssertInt(1028, cTrackingAlloc.AllocatedSize());
+	AssertInt(1028, cTrackingAlloc.AllocatedSize());
 
 	cIndex.Kill();
 	cTrackingAlloc.Kill();
@@ -546,15 +556,15 @@ void TestIndexTreeBlock(void)
 	FastFunctionsInit();
 	MemoryInit();
 
-	//TestIndexTreeBlockAdd();
-	//TestIndexTreeBlockGet();
-	//TestIndexTreeBlockPutDuplicate();
-	//TestIndexTreeBlockValidateInternalConsistency();
-	//TestIndexTreeBlockCountAllocatedNodes();
-	//TestIndexTreeBlockRemoveByObject();
-	//TestIndexTreeBlockHasKey();
-	//TestIndexTreeBlockRemoveNullNode();
-	//TestIndexTreeBlockAddLongLong();
+	TestIndexTreeBlockAdd();
+	TestIndexTreeBlockGet();
+	TestIndexTreeBlockPutDuplicate();
+	TestIndexTreeBlockValidateInternalConsistency();
+	TestIndexTreeBlockCountAllocatedNodes();
+	TestIndexTreeBlockRemoveByObject();
+	TestIndexTreeBlockHasKey();
+	TestIndexTreeBlockRemoveNullNode();
+	TestIndexTreeBlockAddLongLong();
 	TestIndexTreeBlockRemoveResize();
 
 	MemoryKill();
