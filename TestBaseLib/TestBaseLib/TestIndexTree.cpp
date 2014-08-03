@@ -561,11 +561,11 @@ void TestIndexTreeBlock(void)
 	TestIndexTreeBlockPutDuplicate();
 	TestIndexTreeBlockValidateInternalConsistency();
 	TestIndexTreeBlockCountAllocatedNodes();
+	TestIndexTreeBlockRemoveResize();
 	TestIndexTreeBlockRemoveByObject();
 	TestIndexTreeBlockHasKey();
 	TestIndexTreeBlockRemoveNullNode();
 	TestIndexTreeBlockAddLongLong();
-	TestIndexTreeBlockRemoveResize();
 
 	MemoryKill();
 	FastFunctionsKill();

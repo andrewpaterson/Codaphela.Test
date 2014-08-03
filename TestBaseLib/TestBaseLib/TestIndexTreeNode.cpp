@@ -7,7 +7,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockNodeInit(void)
+void TestIndexTreeNodeInit(void)
 {
 	CIndexTreeNode*	pcNode;
 	CIndexTreeNode	cObject;
@@ -44,7 +44,7 @@ void TestIndexTreeBlockNodeInit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CIndexTreeNode* TestIndexTreeBlockNodeMalloc(void)
+CIndexTreeNode* TestIndexTreeNodeMalloc(void)
 {
 	int					iSize;
 	CIndexTreeNode*		pcNode;
@@ -60,7 +60,7 @@ CIndexTreeNode* TestIndexTreeBlockNodeMalloc(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockNodeFree(CIndexTreeNode* pcNode)
+void TestIndexTreeNodeFree(CIndexTreeNode* pcNode)
 {
 	free(pcNode);
 }
@@ -70,7 +70,7 @@ void TestIndexTreeBlockNodeFree(CIndexTreeNode* pcNode)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockNodeContain(void)
+void TestIndexTreeNodeContain(void)
 {
 	CIndexTreeNode*	pcNode1;
 	CIndexTreeNode*	pcNode2;
@@ -79,12 +79,12 @@ void TestIndexTreeBlockNodeContain(void)
 	CIndexTreeNode*	pcNode5;
 	CIndexTreeNode*	pcNode6;
 
-	pcNode1 = TestIndexTreeBlockNodeMalloc();
-	pcNode2 = TestIndexTreeBlockNodeMalloc();
-	pcNode3 = TestIndexTreeBlockNodeMalloc();
-	pcNode4 = TestIndexTreeBlockNodeMalloc();
-	pcNode5 = TestIndexTreeBlockNodeMalloc();
-	pcNode6 = TestIndexTreeBlockNodeMalloc();
+	pcNode1 = TestIndexTreeNodeMalloc();
+	pcNode2 = TestIndexTreeNodeMalloc();
+	pcNode3 = TestIndexTreeNodeMalloc();
+	pcNode4 = TestIndexTreeNodeMalloc();
+	pcNode5 = TestIndexTreeNodeMalloc();
+	pcNode6 = TestIndexTreeNodeMalloc();
 
 	pcNode1->Init(NULL);
 	pcNode1->Contain(8);
@@ -188,12 +188,12 @@ void TestIndexTreeBlockNodeContain(void)
 	AssertNull(pcNode1->Get(13));
 	AssertPointer(pcNode6, pcNode1->Get(14));
 
-	TestIndexTreeBlockNodeFree(pcNode6);
-	TestIndexTreeBlockNodeFree(pcNode5);
-	TestIndexTreeBlockNodeFree(pcNode4);
-	TestIndexTreeBlockNodeFree(pcNode3);
-	TestIndexTreeBlockNodeFree(pcNode2);
-	TestIndexTreeBlockNodeFree(pcNode1);
+	TestIndexTreeNodeFree(pcNode6);
+	TestIndexTreeNodeFree(pcNode5);
+	TestIndexTreeNodeFree(pcNode4);
+	TestIndexTreeNodeFree(pcNode3);
+	TestIndexTreeNodeFree(pcNode2);
+	TestIndexTreeNodeFree(pcNode1);
 }
 
 
@@ -201,12 +201,59 @@ void TestIndexTreeBlockNodeContain(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockNode(void)
+void TestIndexTreeNodeFindNotEmpty(void)
+{
+	CIndexTreeNode*	pcNode1;
+	CIndexTreeNode*	pcNode2;
+	CIndexTreeNode*	pcNode3;
+	CIndexTreeNode*	pcNode4;
+	CIndexTreeNode*	pcNode5;
+
+	pcNode1 = TestIndexTreeNodeMalloc();
+	pcNode2 = TestIndexTreeNodeMalloc();
+	pcNode3 = TestIndexTreeNodeMalloc();
+	pcNode4 = TestIndexTreeNodeMalloc();
+	pcNode5 = TestIndexTreeNodeMalloc();
+
+	pcNode1->Init(NULL);
+	pcNode1->Contain(8);
+	pcNode1->Contain(22);
+	AssertInt(8, pcNode1->GetFirstIndex());
+	AssertInt(15, pcNode1->GetNumIndexes());
+	AssertInt(22, pcNode1->GetLastIndex());
+	AssertTrue(pcNode1->IsEmpty());
+
+	pcNode1->Set(8, pcNode2);
+	pcNode1->Set(10, pcNode3);
+	pcNode1->Set(20, pcNode4);
+	pcNode1->Set(22, pcNode5);
+	AssertFalse(pcNode1->IsEmpty());
+
+	AssertInt(10, pcNode1->FindNextFirstIndex());
+	AssertInt(20, pcNode1->FindPrevLastIndex());
+
+	pcNode1->Set(8, NULL);
+	pcNode1->Uncontain(8);
+	
+	TestIndexTreeNodeFree(pcNode5);
+	TestIndexTreeNodeFree(pcNode4);
+	TestIndexTreeNodeFree(pcNode3);
+	TestIndexTreeNodeFree(pcNode2);
+	TestIndexTreeNodeFree(pcNode1);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeNode(void)
 {
 	BeginTests();
 
-	TestIndexTreeBlockNodeInit();
-	TestIndexTreeBlockNodeContain();
+	TestIndexTreeNodeInit();
+	TestIndexTreeNodeContain();
+	TestIndexTreeNodeFindNotEmpty();
 
 	TestStatistics();
 }

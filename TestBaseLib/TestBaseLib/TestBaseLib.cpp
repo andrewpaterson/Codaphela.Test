@@ -21,7 +21,7 @@ void TestAllocator(void);
 void TestMemoryBlock(void);
 void TestFreeList(void);
 void TestFreeListAllocator(void);
-void TestIndexTreeBlockNode(void);
+void TestIndexTreeNode(void);
 void TestIndexTreeBlock(void);
 void TestIndexTreeTemplate(void);
 void TestMemory(void);
@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
 	TestNumbers();
 	TestArrayTemplate();
 	TestArrayBlockSorted();
-	TestIndexTreeBlockNode();
+	TestIndexTreeNode();
 	TestIndexTreeBlock();
 	TestIndexTreeTemplate();
 	TestArrayDenseTemplate();
