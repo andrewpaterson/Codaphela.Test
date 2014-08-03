@@ -1,4 +1,5 @@
 #include "BaseLib/IndexTreeBlock.h"
+#include "BaseLib/TrackingAllocator.h"
 #include "BaseLib/GlobalMemory.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
@@ -473,21 +474,88 @@ void TestIndexTreeBlockAddLongLong(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeBlockRemoveResize(void)
+{
+	CIndexTreeBlock		cIndex;
+	long long			li;
+	CMemoryAllocator	cMemoryAlloc;
+	CTrackingAllocator	cTrackingAlloc;
+	int					iExpectedRootSize;
+
+	cMemoryAlloc.Init();
+	cTrackingAlloc.Init(&cMemoryAlloc);
+
+	cIndex.Init(&cTrackingAlloc);
+	AssertInt(1, cIndex.CountAllocatedNodes());
+	AssertInt(0, cIndex.RecurseSize());
+	iExpectedRootSize = sizeof(CIndexTreeNode*) * MAX_UCHAR + sizeof(CIndexTreeNode);
+	AssertInt(1028, iExpectedRootSize);
+	AssertInt(iExpectedRootSize, cTrackingAlloc.AllocatedSize());
+
+	li = 0x77LL; cIndex.Put(&li, sizeof(long long), "M");
+	AssertInt(2, cIndex.CountAllocatedNodes());
+	AssertInt(1, cIndex.RecurseSize());
+	AssertInt(1044, iExpectedRootSize + sizeof(CIndexTreeNode) + sizeof(long long));
+	AssertInt(1044, cTrackingAlloc.AllocatedSize());
+
+	li = 0x88LL; cIndex.Put(&li, sizeof(long long), "MA");
+	AssertInt(1064, cTrackingAlloc.AllocatedSize());
+	li = 0x99LL; cIndex.Put(&li, sizeof(long long), "MC");
+	AssertInt(4, cIndex.CountAllocatedNodes());
+	AssertInt(3, cIndex.RecurseSize());
+	AssertInt(1088, cTrackingAlloc.AllocatedSize());
+
+	li = 0xaaLL; cIndex.Put(&li, sizeof(long long), "MB");
+	AssertInt(5, cIndex.CountAllocatedNodes());
+	AssertInt(4, cIndex.RecurseSize());
+	AssertInt(1104, cTrackingAlloc.AllocatedSize());
+
+	cIndex.Remove("MB");
+	AssertInt(4, cIndex.CountAllocatedNodes());
+	AssertInt(3, cIndex.RecurseSize());
+	//AssertInt(1088, cTrackingAlloc.AllocatedSize());
+
+	cIndex.Remove("MA");
+	AssertInt(3, cIndex.CountAllocatedNodes());
+	AssertInt(2, cIndex.RecurseSize());
+	//AssertInt(1064, cTrackingAlloc.AllocatedSize());
+
+	cIndex.Remove("MC");
+	AssertInt(2, cIndex.CountAllocatedNodes());
+	AssertInt(1, cIndex.RecurseSize());
+	//AssertInt(1044, cTrackingAlloc.AllocatedSize());
+
+	cIndex.Remove("M");
+	AssertInt(1, cIndex.CountAllocatedNodes());
+	AssertInt(0, cIndex.RecurseSize());
+	//AssertInt(1028, cTrackingAlloc.AllocatedSize());
+
+	cIndex.Kill();
+	cTrackingAlloc.Kill();
+	cMemoryAlloc.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlock(void)
 {
 	BeginTests();
 	FastFunctionsInit();
 	MemoryInit();
 
-	TestIndexTreeBlockAdd();
-	TestIndexTreeBlockGet();
-	TestIndexTreeBlockPutDuplicate();
-	TestIndexTreeBlockValidateInternalConsistency();
-	TestIndexTreeBlockCountAllocatedNodes();
-	TestIndexTreeBlockRemoveByObject();
-	TestIndexTreeBlockHasKey();
-	TestIndexTreeBlockRemoveNullNode();
-	TestIndexTreeBlockAddLongLong();
+	//TestIndexTreeBlockAdd();
+	//TestIndexTreeBlockGet();
+	//TestIndexTreeBlockPutDuplicate();
+	//TestIndexTreeBlockValidateInternalConsistency();
+	//TestIndexTreeBlockCountAllocatedNodes();
+	//TestIndexTreeBlockRemoveByObject();
+	//TestIndexTreeBlockHasKey();
+	//TestIndexTreeBlockRemoveNullNode();
+	//TestIndexTreeBlockAddLongLong();
+	TestIndexTreeBlockRemoveResize();
 
 	MemoryKill();
 	FastFunctionsKill();

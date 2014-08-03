@@ -45,6 +45,7 @@ void TestLinkedListTemplate(void);
 void TestTreeTemplate(void);
 void TestCSVFileEditable(void);
 void TestMemoryAllocator(void);
+void TestTrackingAllocator(void);
 void TestMemoryStack(void);
 void TestMemoryCache(void);
 void TestScratchPad(void);
@@ -102,6 +103,7 @@ int main(int argc, char* argv[])
 	TestCSVFileEditable();
 	TestMemory();
 	TestMemoryAllocator();
+	TestTrackingAllocator();
 	TestScratchPad();
 	TestScratchPadAllocator();
 	TestMemoryStack();

@@ -219,9 +219,6 @@
     <ClCompile Include="TestArrayBlockSorted.cpp">
       <Filter>Source\Data\Array\Sorted</Filter>
     </ClCompile>
-    <ClCompile Include="TestMapPtrPtr.cpp">
-      <Filter>Source\Data\Map</Filter>
-    </ClCompile>
     <ClCompile Include="TestMapBlock.cpp">
       <Filter>Source\Data\Map</Filter>
     </ClCompile>
@@ -242,6 +239,12 @@
     </ClCompile>
     <ClCompile Include="TestFreeListAllocator.cpp">
       <Filter>Source\Memory\FreeList</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMapPtr.cpp">
+      <Filter>Source\Data\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTrackingAllocator.cpp">
+      <Filter>Source\Memory\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

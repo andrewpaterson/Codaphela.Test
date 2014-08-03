@@ -127,7 +127,7 @@
     <ClCompile Include="TestStringHelper.cpp" />
     <ClCompile Include="TestDate.cpp" />
     <ClCompile Include="TestMapInt.cpp" />
-    <ClCompile Include="TestMapPtrPtr.cpp" />
+    <ClCompile Include="TestMapPtr.cpp" />
     <ClCompile Include="TestBufferedFile.cpp" />
     <ClCompile Include="TestDiskFile.cpp" />
     <ClCompile Include="TestFileFinder.cpp" />
@@ -142,6 +142,7 @@
     <ClCompile Include="TestFreeList.cpp" />
     <ClCompile Include="TestLinkedListAligned.cpp" />
     <ClCompile Include="TestMemory.cpp" />
+    <ClCompile Include="TestTrackingAllocator.cpp" />
     <ClCompile Include="TestTreeTemplate.cpp" />
   </ItemGroup>
   <ItemGroup>
