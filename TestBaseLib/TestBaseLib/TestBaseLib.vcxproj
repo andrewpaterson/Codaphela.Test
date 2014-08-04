@@ -101,7 +101,7 @@
     <ClCompile Include="TestCSVFileEditable.cpp" />
     <ClCompile Include="TestFileIO.cpp" />
     <ClCompile Include="TestFreeListAllocator.cpp" />
-    <ClCompile Include="TestIndexTree.cpp" />
+    <ClCompile Include="TestIndexTreeBlock.cpp" />
     <ClCompile Include="TestIndexTreeNode.cpp" />
     <ClCompile Include="TestIndexTreeObject.cpp" />
     <ClCompile Include="TestIndexTreeTemplate.cpp" />

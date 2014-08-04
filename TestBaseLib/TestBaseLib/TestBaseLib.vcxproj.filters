@@ -177,9 +177,6 @@
     <ClCompile Include="TestChunkFileFile.cpp">
       <Filter>Source\File\Chunk\File</Filter>
     </ClCompile>
-    <ClCompile Include="TestIndexTree.cpp">
-      <Filter>Source\Data\Index</Filter>
-    </ClCompile>
     <ClCompile Include="TestIndexTreeObject.cpp">
       <Filter>Source\Data\Index</Filter>
     </ClCompile>
@@ -245,6 +242,9 @@
     </ClCompile>
     <ClCompile Include="TestTrackingAllocator.cpp">
       <Filter>Source\Memory\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexTreeBlock.cpp">
+      <Filter>Source\Data\Index</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
