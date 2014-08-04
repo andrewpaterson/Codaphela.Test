@@ -513,32 +513,49 @@ void TestIndexTreeBlockRemoveResize(void)
 	li = 0xbbLL; cIndex.Put(&li, sizeof(long long), "MBP");
 	AssertInt(6, cIndex.CountAllocatedNodes());
 	AssertInt(5, cIndex.RecurseSize());
+	AssertInt(5, cIndex.NumElements());
 	AssertInt(1124, cTrackingAlloc.AllocatedSize());
 
+	AssertLongLongInt(0xaaLL, *((long long*)cIndex.Get("MB")));
 	cIndex.Remove("MB");
 	AssertInt(6, cIndex.CountAllocatedNodes());
 	AssertInt(4, cIndex.RecurseSize());
+	AssertInt(4, cIndex.NumElements());
 	AssertInt(1124, cTrackingAlloc.AllocatedSize());
+	AssertNull(cIndex.Get("MB"));
 
+	AssertLongLongInt(0xbbLL, *((long long*)cIndex.Get("MBP")));
 	cIndex.Remove("MBP");
 	AssertInt(4, cIndex.CountAllocatedNodes());
 	AssertInt(3, cIndex.RecurseSize());
+	AssertInt(3, cIndex.NumElements());
 	AssertInt(1088, cTrackingAlloc.AllocatedSize());
+	AssertNull(cIndex.Get("MBP"));
 
+	AssertLongLongInt(0x99LL, *((long long*)cIndex.Get("MC")));
+	AssertLongLongInt(0x88LL, *((long long*)cIndex.Get("MA")));
 	cIndex.Remove("MA");
 	AssertInt(3, cIndex.CountAllocatedNodes());
 	AssertInt(2, cIndex.RecurseSize());
-	AssertInt(1072, cTrackingAlloc.AllocatedSize());
+	AssertInt(2, cIndex.NumElements());
+	AssertInt(1064, cTrackingAlloc.AllocatedSize());
+	AssertNull(cIndex.Get("MA"));
 
+	AssertLongLongInt(0x99LL, *((long long*)cIndex.Get("MC")));
 	cIndex.Remove("MC");
 	AssertInt(2, cIndex.CountAllocatedNodes());
 	AssertInt(1, cIndex.RecurseSize());
-	AssertInt(1056, cTrackingAlloc.AllocatedSize());
+	AssertInt(1, cIndex.NumElements());
+	AssertInt(1044, cTrackingAlloc.AllocatedSize());
+	AssertNull(cIndex.Get("MC"));
 
+	AssertLongLongInt(0x77LL, *((long long*)cIndex.Get("M")));
 	cIndex.Remove("M");
 	AssertInt(1, cIndex.CountAllocatedNodes());
 	AssertInt(0, cIndex.RecurseSize());
+	AssertInt(0, cIndex.NumElements());
 	AssertInt(1028, cTrackingAlloc.AllocatedSize());
+	AssertNull(cIndex.Get("M"));
 
 	cIndex.Kill();
 	cTrackingAlloc.Kill();
