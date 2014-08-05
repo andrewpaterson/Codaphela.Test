@@ -1,6 +1,7 @@
 #include "BaseLib/IndexTreeBlock.h"
 #include "BaseLib/TrackingAllocator.h"
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/MemoryFile.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
 
@@ -72,7 +73,7 @@ void TestIndexTreeBlockAdd(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockGet(void)
 {
-	CIndexTreeBlock				cIndex;
+	CIndexTreeBlock			cIndex;
 	CTestIndexTreeObject	andrew;
 	CTestIndexTreeObject**	pcResult;
 	CArrayVoidPtr			avp;
@@ -142,7 +143,7 @@ void TestIndexTreeBlockGet(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockPutDuplicate(void)
 {
-	CIndexTreeBlock				cIndex;
+	CIndexTreeBlock			cIndex;
 	CTestIndexTreeObject	andrew;
 	CTestIndexTreeObject	andrewToo;
 	CTestIndexTreeObject**	pcResult;
@@ -177,7 +178,7 @@ void TestIndexTreeBlockPutDuplicate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockValidateInternalConsistency(void)
 {
-	CIndexTreeBlock				cIndex;
+	CIndexTreeBlock			cIndex;
 	CTestIndexTreeObject	cObject;
 	CTestIndexTreeObject	cType;
 	CArrayVoidPtr			avp;
@@ -258,7 +259,7 @@ void TestIndexTreeBlockValidateInternalConsistency(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockCountAllocatedNodes(void)
 {
-	CIndexTreeBlock				cIndex;
+	CIndexTreeBlock			cIndex;
 	CTestIndexTreeObject	cZebra;
 	CTestIndexTreeObject	cAardvark;
 	CTestIndexTreeObject	cAardvar;
@@ -304,7 +305,7 @@ void TestIndexTreeBlockCountAllocatedNodes(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockRemoveByObject(void)
 {
-	CIndexTreeBlock cIndex;
+	CIndexTreeBlock			cIndex;
 	CTestIndexTreeObject	object1;
 	CTestIndexTreeObject	object2;
 	CTestIndexTreeObject	object3;
@@ -370,7 +371,7 @@ void TestIndexTreeBlockRemoveByObject(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockHasKey(void)
 {
-	CIndexTreeBlock				cIndex;
+	CIndexTreeBlock			cIndex;
 	CTestIndexTreeObject	cObject;
 
 	cIndex.Init();
@@ -418,7 +419,7 @@ void TestIndexTreeBlockHasKey(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockRemoveNullNode(void)
 {
-	CIndexTreeBlock				cIndex;
+	CIndexTreeBlock			cIndex;
 	CTestIndexTreeObject	cObject;
 
 	cIndex.Init();
@@ -456,8 +457,8 @@ void TestIndexTreeBlockRemoveNullNode(void)
 void TestIndexTreeBlockAddLongLong(void)
 {
 	CIndexTreeBlock		cIndex;
-	long long		li;
-	long long*		pli;
+	long long			li;
+	long long*			pli;
 
 	cIndex.Init();
 
@@ -567,6 +568,94 @@ void TestIndexTreeBlockRemoveResize(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeBlockIterate(void)
+{
+	CFileBasic			cFile;
+	CIndexTreeBlock		cIndex;
+	SIndexTreeIterator	sIter;
+	char*				szData;
+	int					iDataSize;
+
+	cIndex.Init();
+	cIndex.Put("DENISA", 7, "AAA");
+	cIndex.Put("FATJETA", 8, "AA");
+	cIndex.Put("ARIANA", 7, "AAB");
+	cIndex.Put("GEORGE", 7, "AAC");
+	cIndex.Put("IRMA", 5, "AB");
+	cIndex.Put("JULIANA", 8, "ABA");
+	cIndex.Put("LULE", 5, "ABB");
+	cIndex.Put("VENERA", 7, "C");
+	cIndex.Put("PRANVERA", 9, "DDDD");
+	cIndex.Put("PRIMERA", 8, "DD");
+	AssertInt(14, cIndex.CountAllocatedNodes());
+	AssertInt(10, cIndex.RecurseSize());
+	AssertInt(10, cIndex.NumElements());
+
+	AssertTrue(cIndex.StartIteration(&sIter, (void**)&szData, &iDataSize));
+	AssertInt(7, iDataSize);
+	AssertString("DENISA", szData);
+
+	cIndex.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeBlockReadWrite(void)
+{
+	CFileBasic			cFile;
+	CIndexTreeBlock		cIndex;
+	CIndexTreeBlock		cIndexIn;
+
+	cIndex.Init();
+	cIndex.Put("DENISA", 7, "AAA");
+	cIndex.Put("FATJETA", 8, "AA");
+	cIndex.Put("ARIANA", 7, "AAB");
+	cIndex.Put("GEORGE", 7, "AAC");
+	cIndex.Put("IRMA", 5, "AB");
+	cIndex.Put("JULIANA", 8, "ABA");
+	cIndex.Put("LULE", 5, "ABB");
+	cIndex.Put("VENERA", 7, "C");
+	cIndex.Put("PRANVERA", 9, "DDDD");
+	cIndex.Put("PRIMERA", 8, "DD");
+	AssertInt(14, cIndex.CountAllocatedNodes());
+	AssertInt(10, cIndex.RecurseSize());
+	AssertInt(10, cIndex.NumElements());
+
+	cFile.Init(MemoryFile());
+	cFile.Open(EFM_Write_Create);
+	AssertTrue(cIndex.Write(&cFile));
+	cIndex.Kill();
+	cFile.Close();
+
+	cFile.Open(EFM_Read);
+	AssertTrue(cIndexIn.Read(&cFile));
+	cFile.Close();
+
+	AssertInt(14, cIndex.CountAllocatedNodes());
+	AssertInt(10, cIndex.RecurseSize());
+	AssertInt(10, cIndex.NumElements());
+	AssertString("DENISA", (char*)cIndexIn.Get("AAA"));
+	AssertString("FATJETA", (char*)cIndexIn.Get("AA"));
+	AssertString("ARIANA", (char*)cIndexIn.Get("AAB"));
+	AssertString("GEORGE", (char*)cIndexIn.Get("AAC"));
+	AssertString("IRMA", (char*)cIndexIn.Get("AB"));
+	AssertString("JULIANA", (char*)cIndexIn.Get("ABA"));
+	AssertString("LULE", (char*)cIndexIn.Get("ABB"));
+	AssertString("VENERA", (char*)cIndexIn.Get("C"));
+	AssertString("PRANVERA", (char*)cIndexIn.Get("DDDD"));
+	AssertString("PRIMERA", (char*)cIndexIn.Get("DD"));
+
+	cIndexIn.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlock(void)
 {
 	BeginTests();
@@ -583,6 +672,8 @@ void TestIndexTreeBlock(void)
 	TestIndexTreeBlockHasKey();
 	TestIndexTreeBlockRemoveNullNode();
 	TestIndexTreeBlockAddLongLong();
+	TestIndexTreeBlockIterate();
+	TestIndexTreeBlockReadWrite();
 
 	MemoryKill();
 	FastFunctionsKill();
