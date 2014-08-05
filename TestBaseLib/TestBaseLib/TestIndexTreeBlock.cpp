@@ -575,6 +575,7 @@ void TestIndexTreeBlockIterate(void)
 	SIndexTreeIterator	sIter;
 	char*				szData;
 	int					iDataSize;
+	unsigned char		c;
 
 	cIndex.Init();
 	cIndex.Put("DENISA", 7, "AAA");
@@ -592,9 +593,69 @@ void TestIndexTreeBlockIterate(void)
 	AssertInt(10, cIndex.NumElements());
 
 	AssertTrue(cIndex.StartIteration(&sIter, (void**)&szData, &iDataSize));
+	AssertInt(8, iDataSize);
+	AssertString("FATJETA", szData);
+
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(7, iDataSize);
 	AssertString("DENISA", szData);
 
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
+	AssertInt(7, iDataSize);
+	AssertString("ARIANA", szData);
+
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
+	AssertInt(7, iDataSize);
+	AssertString("GEORGE", szData);
+
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
+	AssertInt(5, iDataSize);
+	AssertString("IRMA", szData);
+
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
+	AssertInt(8, iDataSize);
+	AssertString("JULIANA", szData);
+
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
+	AssertInt(5, iDataSize);
+	AssertString("LULE", szData);
+
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
+	AssertInt(7, iDataSize);
+	AssertString("VENERA", szData);
+
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
+	AssertInt(8, iDataSize);
+	AssertString("PRIMERA", szData);
+
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
+	AssertInt(9, iDataSize);
+	AssertString("PRANVERA", szData);
+
+	AssertFalse(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
+	cIndex.Kill();
+
+	cIndex.Init();
+	AssertInt(1, cIndex.CountAllocatedNodes());
+	AssertInt(0, cIndex.RecurseSize());
+	AssertInt(0, cIndex.NumElements());
+
+	AssertFalse(cIndex.StartIteration(&sIter, (void**)&szData, &iDataSize));
+	cIndex.Kill();
+
+	cIndex.Init();
+	AssertInt(1, cIndex.CountAllocatedNodes());
+	AssertInt(0, cIndex.RecurseSize());
+	AssertInt(0, cIndex.NumElements());
+
+	c = 255;
+	cIndex.Put("Banks", 6, &c, 1);
+	AssertString("Banks", (char*)cIndex.Get(&c, 1));
+	AssertTrue(cIndex.StartIteration(&sIter, (void**)&szData, &iDataSize));
+	AssertInt(6, iDataSize);
+	AssertString("Banks", szData);
+
+	AssertFalse(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	cIndex.Kill();
 }
 
