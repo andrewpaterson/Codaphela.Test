@@ -699,50 +699,52 @@ void TestIndexTreeBlockIterate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockReadWrite(void)
 {
-	//CFileBasic			cFile;
-	//CIndexTreeBlock		cIndex;
-	//CIndexTreeBlock		cIndexIn;
+	CFileBasic			cFile;
+	CIndexTreeBlock		cIndex;
+	CIndexTreeBlock		cIndexIn;
 
-	//cIndex.Init();
-	//cIndex.Put("AAA", "DENISA", 7);
-	//cIndex.Put("AA", "FATJETA", 8);
-	//cIndex.Put("AAB", "ARIANA", 7);
-	//cIndex.Put("AAC", "GEORGE", 7);
-	//cIndex.Put("AB", "IRMA", 5);
-	//cIndex.Put("ABA", "JULIANA", 8);
-	//cIndex.Put("ABB", "LULE", 5);
-	//cIndex.Put("C", "VENERA", 7);
-	//cIndex.Put("DDDD", "PRANVERA", 9);
-	//cIndex.Put("DD", "PRIMERA", 8);
-	//AssertInt(14, cIndex.CountAllocatedNodes());
-	//AssertInt(10, cIndex.RecurseSize());
-	//AssertInt(10, cIndex.NumElements());
+	cIndex.Init();
+	cIndex.Put("AAA", "DENISA", 7);
+	cIndex.Put("AA", "FATJETA", 8);
+	cIndex.Put("AAB", "ARIANA", 7);
+	cIndex.Put("AAC", "GEORGE", 7);
+	cIndex.Put("AB", "IRMA", 5);
+	cIndex.Put("ABA", "JULIANA", 8);
+	cIndex.Put("ABB", "LULE", 5);
+	cIndex.Put("C", "VENERA", 7);
+	cIndex.Put("DDDD", "PRANVERA", 9);
+	cIndex.Put("DD", "PRIMERA", 8);
+	AssertInt(14, cIndex.CountAllocatedNodes());
+	AssertInt(10, cIndex.RecurseSize());
+	AssertInt(10, cIndex.NumElements());
+	AssertInt(4, cIndex.GetLargestKeySize());
 
-	//cFile.Init(MemoryFile());
-	//cFile.Open(EFM_Write_Create);
-	//AssertTrue(cIndex.Write(&cFile));
-	//cIndex.Kill();
-	//cFile.Close();
+	cFile.Init(MemoryFile());
+	cFile.Open(EFM_Write_Create);
+	AssertTrue(cIndex.Write(&cFile));
+	cIndex.Kill();
+	cFile.Close();
 
-	//cFile.Open(EFM_Read);
-	//AssertTrue(cIndexIn.Read(&cFile));
-	//cFile.Close();
+	cFile.Open(EFM_Read);
+	AssertTrue(cIndexIn.Read(&cFile));
+	cFile.Close();
 
-	//AssertInt(14, cIndex.CountAllocatedNodes());
-	//AssertInt(10, cIndex.RecurseSize());
-	//AssertInt(10, cIndex.NumElements());
-	//AssertString("DENISA", (char*)cIndexIn.Get("AAA"));
-	//AssertString("FATJETA", (char*)cIndexIn.Get("AA"));
-	//AssertString("ARIANA", (char*)cIndexIn.Get("AAB"));
-	//AssertString("GEORGE", (char*)cIndexIn.Get("AAC"));
-	//AssertString("IRMA", (char*)cIndexIn.Get("AB"));
-	//AssertString("JULIANA", (char*)cIndexIn.Get("ABA"));
-	//AssertString("LULE", (char*)cIndexIn.Get("ABB"));
-	//AssertString("VENERA", (char*)cIndexIn.Get("C"));
-	//AssertString("PRANVERA", (char*)cIndexIn.Get("DDDD"));
-	//AssertString("PRIMERA", (char*)cIndexIn.Get("DD"));
+	AssertInt(14, cIndexIn.CountAllocatedNodes());
+	AssertInt(10, cIndexIn.RecurseSize());
+	AssertInt(10, cIndexIn.NumElements());
+	AssertInt(4, cIndexIn.GetLargestKeySize());
+	AssertString("DENISA", (char*)cIndexIn.Get("AAA"));
+	AssertString("FATJETA", (char*)cIndexIn.Get("AA"));
+	AssertString("ARIANA", (char*)cIndexIn.Get("AAB"));
+	AssertString("GEORGE", (char*)cIndexIn.Get("AAC"));
+	AssertString("IRMA", (char*)cIndexIn.Get("AB"));
+	AssertString("JULIANA", (char*)cIndexIn.Get("ABA"));
+	AssertString("LULE", (char*)cIndexIn.Get("ABB"));
+	AssertString("VENERA", (char*)cIndexIn.Get("C"));
+	AssertString("PRANVERA", (char*)cIndexIn.Get("DDDD"));
+	AssertString("PRIMERA", (char*)cIndexIn.Get("DD"));
 
-	//cIndexIn.Kill();
+	cIndexIn.Kill();
 }
 
 
