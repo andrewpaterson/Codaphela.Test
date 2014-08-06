@@ -251,11 +251,33 @@ void TestFindLastSetBit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestReverseBytes(void)
+{
+	char szAuto[9] = "Autobody";
+	char szAutoDash[10] = "Auto-Body";
+	char szOne[2] = "1";
+
+	ReverseBytes(szAuto, 8);
+	AssertString("ydobotuA", szAuto);
+	ReverseBytes(szAutoDash, 9);
+	AssertString("ydoB-otuA", szAutoDash);
+	ReverseBytes(szOne, 1);
+	AssertString("1", szOne);
+	ReverseBytes(szOne, 0);
+	AssertString("1", szOne);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIntegerHelper(void)
 {
 	TestFindFirstClearBit();
 	TestFindFirstSetBit();
 	TestFindLastClearBit();
 	TestFindLastSetBit();
+	TestReverseBytes();
 }
 

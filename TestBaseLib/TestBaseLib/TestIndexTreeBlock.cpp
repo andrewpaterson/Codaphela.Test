@@ -578,6 +578,8 @@ void TestIndexTreeBlockIterate(void)
 	char*				szData;
 	int					iDataSize;
 	unsigned char		c;
+	char				szKey[1024];
+	int					iKeySize;
 
 	cIndex.Init();
 	cIndex.Put("AAA", "DENISA", 7);
@@ -598,42 +600,63 @@ void TestIndexTreeBlockIterate(void)
 	AssertTrue(cIndex.StartIteration(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(8, iDataSize);
 	AssertString("FATJETA", szData);
+	iKeySize = cIndex.GetKey(szKey, szData, TRUE);
+	AssertInt(2, iKeySize);
+	AssertString("AA", szKey);
 
 	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(7, iDataSize);
 	AssertString("DENISA", szData);
+	AssertInt(3, cIndex.GetKey(szKey, szData, TRUE));
+	AssertString("AAA", szKey);
 
 	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(7, iDataSize);
 	AssertString("ARIANA", szData);
+	AssertInt(3, cIndex.GetKey(szKey, szData, TRUE));
+	AssertString("AAB", szKey);
 
 	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(7, iDataSize);
 	AssertString("GEORGE", szData);
+	AssertInt(3, cIndex.GetKey(szKey, szData, TRUE));
+	AssertString("AAC", szKey);
 
 	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(5, iDataSize);
 	AssertString("IRMA", szData);
+	AssertInt(2, cIndex.GetKey(szKey, szData, TRUE));
+	AssertString("AB", szKey);
 
 	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(8, iDataSize);
 	AssertString("JULIANA", szData);
+	AssertInt(3, cIndex.GetKey(szKey, szData, TRUE));
+	AssertString("ABA", szKey);
 
 	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(5, iDataSize);
 	AssertString("LULE", szData);
+	AssertInt(3, cIndex.GetKey(szKey, szData, TRUE));
+	AssertString("ABB", szKey);
 
 	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(7, iDataSize);
 	AssertString("VENERA", szData);
+	AssertInt(1, cIndex.GetKey(szKey, szData, TRUE));
+	AssertString("C", szKey);
 
 	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(8, iDataSize);
 	AssertString("PRIMERA", szData);
+	AssertInt(2, cIndex.GetKey(szKey, szData, TRUE));
+	AssertString("DD", szKey);
 
 	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(9, iDataSize);
 	AssertString("PRANVERA", szData);
+	AssertInt(4, cIndex.GetKey(szKey, szData, TRUE));
+	AssertString("DDDD", szKey);
 
 	AssertFalse(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	cIndex.Kill();
