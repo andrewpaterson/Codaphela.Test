@@ -1,6 +1,7 @@
 #include "TestLib/Assert.h"
 
 
+void TestFloat4(void);
 void TestArrayTemplatePrimitive(void);
 void TestArrayInt(void);
 void TestArrayLong(void);
@@ -61,6 +62,7 @@ int main(int argc, char* argv[])
 	InitTotalStatistics();
 
 	TestIntegerHelper();
+	TestFloat4();
 	TestArrayInt();
 	TestArrayLong();
 	TestArrayInt2D();

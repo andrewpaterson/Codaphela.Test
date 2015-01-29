@@ -57,6 +57,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <IgnoreSpecificDefaultLibraries>LIBCMTD;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
@@ -100,6 +101,7 @@
     <ClCompile Include="TestConstructors.cpp" />
     <ClCompile Include="TestCSVFileEditable.cpp" />
     <ClCompile Include="TestFileIO.cpp" />
+    <ClCompile Include="TestFloat4.cpp" />
     <ClCompile Include="TestFreeListAllocator.cpp" />
     <ClCompile Include="TestIndexTreeBlock.cpp" />
     <ClCompile Include="TestIndexTreeNode.cpp" />

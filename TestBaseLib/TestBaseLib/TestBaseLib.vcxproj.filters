@@ -82,6 +82,9 @@
     <Filter Include="Source\Construtor">
       <UniqueIdentifier>{546164f4-50b2-4d8b-a1d6-6219fb5039e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Data\Geometric">
+      <UniqueIdentifier>{69bf5285-37f5-433b-92ae-29c47514319c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -245,6 +248,9 @@
     </ClCompile>
     <ClCompile Include="TestIndexTreeBlock.cpp">
       <Filter>Source\Data\Index</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFloat4.cpp">
+      <Filter>Source\Data\Geometric</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
