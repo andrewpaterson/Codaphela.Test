@@ -85,6 +85,9 @@
     <Filter Include="Source\Data\Geometric">
       <UniqueIdentifier>{69bf5285-37f5-433b-92ae-29c47514319c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Memory\Temporary">
+      <UniqueIdentifier>{f7a8393f-19d8-44ac-84b0-41766b30c4c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -251,6 +254,9 @@
     </ClCompile>
     <ClCompile Include="TestFloat4.cpp">
       <Filter>Source\Data\Geometric</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTemporaryMemory.cpp">
+      <Filter>Source\Memory\Temporary</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

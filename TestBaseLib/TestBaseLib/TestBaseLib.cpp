@@ -51,6 +51,7 @@ void TestMemoryStack(void);
 void TestMemoryCache(void);
 void TestScratchPad(void);
 void TestScratchPadAllocator(void);
+void TestTemporaryMemory(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -111,6 +112,7 @@ int main(int argc, char* argv[])
 	TestMemoryStack();
 	TestMemoryCache();
 	TestMemoryBlock();
+	TestTemporaryMemory();
 
 	return TestTotalStatistics();
 }

@@ -144,6 +144,7 @@
     <ClCompile Include="TestFreeList.cpp" />
     <ClCompile Include="TestLinkedListAligned.cpp" />
     <ClCompile Include="TestMemory.cpp" />
+    <ClCompile Include="TestTemporaryMemory.cpp" />
     <ClCompile Include="TestTrackingAllocator.cpp" />
     <ClCompile Include="TestTreeTemplate.cpp" />
   </ItemGroup>
