@@ -9,14 +9,14 @@
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeNodeInit(void)
 {
-	CIndexTreeNode*	pcNode;
-	CIndexTreeNode	cObject;
+	CIndexTreeNodeMemory*	pcNode;
+	CIndexTreeNodeMemory	cObject;
 	long long int	uiObject;
-	CIndexTreeNode*	pcObject;
+	CIndexTreeNodeMemory*	pcObject;
 
 	uiObject = 0xA27384234FFLL;
 
-	pcNode = (CIndexTreeNode*)malloc(sizeof(CIndexTreeNode) + sizeof(CIndexTreeNode*));
+	pcNode = (CIndexTreeNodeMemory*)malloc(sizeof(CIndexTreeNodeMemory) + sizeof(CIndexTreeNodeMemory*));
 	pcNode->Init(NULL);
 	AssertTrue(pcNode->IsEmpty());
 	AssertFalse(cObject.HasNodes());
@@ -44,13 +44,13 @@ void TestIndexTreeNodeInit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CIndexTreeNode* TestIndexTreeNodeMalloc(void)
+CIndexTreeNodeMemory* TestIndexTreeNodeMalloc(void)
 {
 	int					iSize;
-	CIndexTreeNode*		pcNode;
+	CIndexTreeNodeMemory*		pcNode;
 
-	iSize = sizeof(CIndexTreeNode) + (MAX_UCHAR-1) * sizeof(CIndexTreeNode*);
-	pcNode = (CIndexTreeNode*)malloc(iSize);
+	iSize = sizeof(CIndexTreeNodeMemory) + (MAX_UCHAR-1) * sizeof(CIndexTreeNodeMemory*);
+	pcNode = (CIndexTreeNodeMemory*)malloc(iSize);
 	memset(pcNode, 0xfffefdfc, iSize);
 	return pcNode;
 }
@@ -60,7 +60,7 @@ CIndexTreeNode* TestIndexTreeNodeMalloc(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeNodeFree(CIndexTreeNode* pcNode)
+void TestIndexTreeNodeFree(CIndexTreeNodeMemory* pcNode)
 {
 	free(pcNode);
 }
@@ -72,12 +72,12 @@ void TestIndexTreeNodeFree(CIndexTreeNode* pcNode)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeNodeContain(void)
 {
-	CIndexTreeNode*	pcNode1;
-	CIndexTreeNode*	pcNode2;
-	CIndexTreeNode*	pcNode3;
-	CIndexTreeNode*	pcNode4;
-	CIndexTreeNode*	pcNode5;
-	CIndexTreeNode*	pcNode6;
+	CIndexTreeNodeMemory*	pcNode1;
+	CIndexTreeNodeMemory*	pcNode2;
+	CIndexTreeNodeMemory*	pcNode3;
+	CIndexTreeNodeMemory*	pcNode4;
+	CIndexTreeNodeMemory*	pcNode5;
+	CIndexTreeNodeMemory*	pcNode6;
 
 	pcNode1 = TestIndexTreeNodeMalloc();
 	pcNode2 = TestIndexTreeNodeMalloc();
@@ -203,11 +203,11 @@ void TestIndexTreeNodeContain(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeNodeFindNotEmpty(void)
 {
-	CIndexTreeNode*	pcNode1;
-	CIndexTreeNode*	pcNode2;
-	CIndexTreeNode*	pcNode3;
-	CIndexTreeNode*	pcNode4;
-	CIndexTreeNode*	pcNode5;
+	CIndexTreeNodeMemory*	pcNode1;
+	CIndexTreeNodeMemory*	pcNode2;
+	CIndexTreeNodeMemory*	pcNode3;
+	CIndexTreeNodeMemory*	pcNode4;
+	CIndexTreeNodeMemory*	pcNode5;
 
 	pcNode1 = TestIndexTreeNodeMalloc();
 	pcNode2 = TestIndexTreeNodeMalloc();

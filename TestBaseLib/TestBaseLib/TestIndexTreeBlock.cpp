@@ -12,13 +12,13 @@
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockAdd(void)
 {
-	CIndexTreeBlock			cIndex;
+	CIndexTreeBlockMemory	cIndex;
 	CTestIndexTreeObject	a;
 	CTestIndexTreeObject	aa;
 	CTestIndexTreeObject	temp;
 	CArrayVoidPtr			avp;
 	BOOL					bResult;
-	CIndexTreeNode*			pcNode;
+	CIndexTreeNodeMemory*	pcNode;
 	CTestIndexTreeObject**	ppvTest;
 	CTestIndexTreeObject***	ppvTestA;
 	CTestIndexTreeObject***	ppvTestAA;
@@ -73,15 +73,15 @@ void TestIndexTreeBlockAdd(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockGet(void)
 {
-	CIndexTreeBlock			cIndex;
+	CIndexTreeBlockMemory	cIndex;
 	CTestIndexTreeObject	andrew;
 	CTestIndexTreeObject**	pcResult;
 	CArrayVoidPtr			avp;
 	CTestIndexTreeObject	batman;
 	CTestIndexTreeObject	batmam;
 	CTestIndexTreeObject	andre;
-	CIndexTreeNode*			pcNodeBatman;
-	CIndexTreeNode*			pcNodeBatmam;
+	CIndexTreeNodeMemory*	pcNodeBatman;
+	CIndexTreeNodeMemory*	pcNodeBatmam;
 	char*					szBatmam;
 
 	cIndex.Init();
@@ -143,7 +143,7 @@ void TestIndexTreeBlockGet(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockPutDuplicate(void)
 {
-	CIndexTreeBlock			cIndex;
+	CIndexTreeBlockMemory	cIndex;
 	CTestIndexTreeObject	andrew;
 	CTestIndexTreeObject	andrewToo;
 	CTestIndexTreeObject**	pcResult;
@@ -178,7 +178,7 @@ void TestIndexTreeBlockPutDuplicate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockValidateInternalConsistency(void)
 {
-	CIndexTreeBlock			cIndex;
+	CIndexTreeBlockMemory	cIndex;
 	CTestIndexTreeObject	cObject;
 	CTestIndexTreeObject	cType;
 	CArrayVoidPtr			avp;
@@ -259,7 +259,7 @@ void TestIndexTreeBlockValidateInternalConsistency(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockCountAllocatedNodes(void)
 {
-	CIndexTreeBlock			cIndex;
+	CIndexTreeBlockMemory	cIndex;
 	CTestIndexTreeObject	cZebra;
 	CTestIndexTreeObject	cAardvark;
 	CTestIndexTreeObject	cAardvar;
@@ -305,7 +305,7 @@ void TestIndexTreeBlockCountAllocatedNodes(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockRemoveByObject(void)
 {
-	CIndexTreeBlock			cIndex;
+	CIndexTreeBlockMemory	cIndex;
 	CTestIndexTreeObject	object1;
 	CTestIndexTreeObject	object2;
 	CTestIndexTreeObject	object3;
@@ -371,7 +371,7 @@ void TestIndexTreeBlockRemoveByObject(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockHasKey(void)
 {
-	CIndexTreeBlock			cIndex;
+	CIndexTreeBlockMemory	cIndex;
 	CTestIndexTreeObject	cObject;
 
 	cIndex.Init();
@@ -421,7 +421,7 @@ void TestIndexTreeBlockHasKey(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockRemoveNullNode(void)
 {
-	CIndexTreeBlock			cIndex;
+	CIndexTreeBlockMemory	cIndex;
 	CTestIndexTreeObject	cObject;
 
 	cIndex.Init();
@@ -458,9 +458,9 @@ void TestIndexTreeBlockRemoveNullNode(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockAddLongLong(void)
 {
-	CIndexTreeBlock		cIndex;
-	long long			li;
-	long long*			pli;
+	CIndexTreeBlockMemory	cIndex;
+	long long				li;
+	long long*				pli;
 
 	cIndex.Init();
 
@@ -479,11 +479,11 @@ void TestIndexTreeBlockAddLongLong(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockRemoveResize(void)
 {
-	CIndexTreeBlock		cIndex;
-	long long			li;
-	CMemoryAllocator	cMemoryAlloc;
-	CTrackingAllocator	cTrackingAlloc;
-	int					iExpectedRootSize;
+	CIndexTreeBlockMemory	cIndex;
+	long long				li;
+	CMemoryAllocator		cMemoryAlloc;
+	CTrackingAllocator		cTrackingAlloc;
+	int						iExpectedRootSize;
 
 	cMemoryAlloc.Init();
 	cTrackingAlloc.Init(&cMemoryAlloc);
@@ -491,14 +491,14 @@ void TestIndexTreeBlockRemoveResize(void)
 	cIndex.Init(&cTrackingAlloc);
 	AssertInt(1, cIndex.CountAllocatedNodes());
 	AssertInt(0, cIndex.RecurseSize());
-	iExpectedRootSize = sizeof(CIndexTreeNode*) * MAX_UCHAR + sizeof(CIndexTreeNode);
+	iExpectedRootSize = sizeof(CIndexTreeNodeMemory*) * MAX_UCHAR + sizeof(CIndexTreeNodeMemory);
 	AssertInt(1028, iExpectedRootSize);
 	AssertInt(iExpectedRootSize, cTrackingAlloc.AllocatedSize());
 
 	li = 0x77LL; cIndex.Put("M", &li, sizeof(long long));
 	AssertInt(2, cIndex.CountAllocatedNodes());
 	AssertInt(1, cIndex.RecurseSize());
-	AssertInt(1044, iExpectedRootSize + sizeof(CIndexTreeNode) + sizeof(long long));
+	AssertInt(1044, iExpectedRootSize + sizeof(CIndexTreeNodeMemory) + sizeof(long long));
 	AssertInt(1044, cTrackingAlloc.AllocatedSize());
 
 	li = 0x88LL; cIndex.Put("MA", &li, sizeof(long long));
@@ -572,14 +572,14 @@ void TestIndexTreeBlockRemoveResize(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockIterate(void)
 {
-	CFileBasic			cFile;
-	CIndexTreeBlock		cIndex;
-	SIndexTreeIterator	sIter;
-	char*				szData;
-	int					iDataSize;
-	unsigned char		c;
-	char				szKey[1024];
-	int					iKeySize;
+	CFileBasic				cFile;
+	CIndexTreeBlockMemory	cIndex;
+	SIndexTreeIterator		sIter;
+	char*					szData;
+	int						iDataSize;
+	unsigned char			c;
+	char					szKey[1024];
+	int						iKeySize;
 
 	cIndex.Init();
 	cIndex.Put("AAA", "DENISA", 7);
@@ -699,9 +699,9 @@ void TestIndexTreeBlockIterate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockReadWrite(void)
 {
-	CFileBasic			cFile;
-	CIndexTreeBlock		cIndex;
-	CIndexTreeBlock		cIndexIn;
+	CFileBasic				cFile;
+	CIndexTreeBlockMemory	cIndex;
+	CIndexTreeBlockMemory	cIndexIn;
 
 	cIndex.Init();
 	cIndex.Put("AAA", "DENISA", 7);

@@ -1,4 +1,4 @@
-#include "BaseLib/IndexTreeTemplate.h"
+#include "BaseLib/IndexTreeTemplateMemory.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
 
@@ -9,11 +9,11 @@
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeTemplatePut(void)
 {
-	CIndexTreeTemplate<long long int>	cIndex;
-	long long int						lliLarry;
-	long long int						lliThe;
-	long long int						lliLamb;
-	long long int*						plliResult;
+	CIndexTreeTemplateMemory<long long int>	cIndex;
+	long long int							lliLarry;
+	long long int							lliThe;
+	long long int							lliLamb;
+	long long int*							plliResult;
 
 	cIndex.Init();
 
