@@ -96,6 +96,7 @@
     <ClCompile Include="SortedTestObject.cpp" />
     <ClCompile Include="TestAllocator.cpp" />
     <ClCompile Include="TestArrayBlockSorted.cpp" />
+    <ClCompile Include="TestArrayVoidPtr.cpp" />
     <ClCompile Include="TestBaseLib.cpp" />
     <ClCompile Include="TestChunkFileFile.cpp" />
     <ClCompile Include="TestConstructors.cpp" />

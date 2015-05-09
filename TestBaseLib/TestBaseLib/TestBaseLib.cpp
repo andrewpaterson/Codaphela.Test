@@ -6,6 +6,7 @@ void TestArrayTemplatePrimitive(void);
 void TestArrayInt(void);
 void TestArrayLong(void);
 void TestArrayTemplate(void);
+void TestArrayVoidPtrGet(void);
 void TestMapBlock(void);
 void TestMapInt(void);
 void TestMapPtr(void);
@@ -67,6 +68,7 @@ int main(int argc, char* argv[])
 	TestArrayInt();
 	TestArrayLong();
 	TestArrayInt2D();
+	TestArrayVoidPtrGet();
 	TestArrayTemplatePrimitive();
 	TestMapBlock();
 	TestMapString();
