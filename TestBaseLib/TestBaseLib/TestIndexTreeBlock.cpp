@@ -1,4 +1,4 @@
-#include "BaseLib/IndexTreeBlock.h"
+#include "BaseLib/IndexTreeBlockMemory.h"
 #include "BaseLib/TrackingAllocator.h"
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/MemoryFile.h"
@@ -10,7 +10,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockAdd(void)
+void TestIndexTreeBlockMemoryAdd(void)
 {
 	CIndexTreeBlockMemory	cIndex;
 	CTestIndexTreeObject	a;
@@ -71,7 +71,7 @@ void TestIndexTreeBlockAdd(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockGet(void)
+void TestIndexTreeBlockMemoryGet(void)
 {
 	CIndexTreeBlockMemory	cIndex;
 	CTestIndexTreeObject	andrew;
@@ -141,7 +141,7 @@ void TestIndexTreeBlockGet(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockPutDuplicate(void)
+void TestIndexTreeBlockMemoryPutDuplicate(void)
 {
 	CIndexTreeBlockMemory	cIndex;
 	CTestIndexTreeObject	andrew;
@@ -176,7 +176,7 @@ void TestIndexTreeBlockPutDuplicate(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockValidateInternalConsistency(void)
+void TestIndexTreeBlockMemoryValidateInternalConsistency(void)
 {
 	CIndexTreeBlockMemory	cIndex;
 	CTestIndexTreeObject	cObject;
@@ -257,7 +257,7 @@ void TestIndexTreeBlockValidateInternalConsistency(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockCountAllocatedNodes(void)
+void TestIndexTreeBlockMemoryCountAllocatedNodes(void)
 {
 	CIndexTreeBlockMemory	cIndex;
 	CTestIndexTreeObject	cZebra;
@@ -303,7 +303,7 @@ void TestIndexTreeBlockCountAllocatedNodes(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockRemoveByObject(void)
+void TestIndexTreeBlockMemoryRemoveByObject(void)
 {
 	CIndexTreeBlockMemory	cIndex;
 	CTestIndexTreeObject	object1;
@@ -369,7 +369,7 @@ void TestIndexTreeBlockRemoveByObject(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockHasKey(void)
+void TestIndexTreeBlockMemoryHasKey(void)
 {
 	CIndexTreeBlockMemory	cIndex;
 	CTestIndexTreeObject	cObject;
@@ -419,7 +419,7 @@ void TestIndexTreeBlockHasKey(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockRemoveNullNode(void)
+void TestIndexTreeBlockMemoryRemoveNullNode(void)
 {
 	CIndexTreeBlockMemory	cIndex;
 	CTestIndexTreeObject	cObject;
@@ -456,7 +456,7 @@ void TestIndexTreeBlockRemoveNullNode(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockAddLongLong(void)
+void TestIndexTreeBlockMemoryAddLongLong(void)
 {
 	CIndexTreeBlockMemory	cIndex;
 	long long				li;
@@ -477,7 +477,7 @@ void TestIndexTreeBlockAddLongLong(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockRemoveResize(void)
+void TestIndexTreeBlockMemoryRemoveResize(void)
 {
 	CIndexTreeBlockMemory	cIndex;
 	long long				li;
@@ -570,7 +570,7 @@ void TestIndexTreeBlockRemoveResize(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockIterate(void)
+void TestIndexTreeBlockMemoryIterate(void)
 {
 	CFileBasic				cFile;
 	CIndexTreeBlockMemory	cIndex;
@@ -697,7 +697,7 @@ void TestIndexTreeBlockIterate(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockReadWrite(void)
+void TestIndexTreeBlockMemoryReadWrite(void)
 {
 	CFileBasic				cFile;
 	CIndexTreeBlockMemory	cIndex;
@@ -752,24 +752,24 @@ void TestIndexTreeBlockReadWrite(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlock(void)
+void TestIndexTreeBlockMemory(void)
 {
 	BeginTests();
 	FastFunctionsInit();
 	MemoryInit();
 
-	TestIndexTreeBlockAdd();
-	TestIndexTreeBlockGet();
-	TestIndexTreeBlockPutDuplicate();
-	TestIndexTreeBlockValidateInternalConsistency();
-	TestIndexTreeBlockCountAllocatedNodes();
-	TestIndexTreeBlockRemoveResize();
-	TestIndexTreeBlockRemoveByObject();
-	TestIndexTreeBlockHasKey();
-	TestIndexTreeBlockRemoveNullNode();
-	TestIndexTreeBlockAddLongLong();
-	TestIndexTreeBlockIterate();
-	TestIndexTreeBlockReadWrite();
+	TestIndexTreeBlockMemoryAdd();
+	TestIndexTreeBlockMemoryGet();
+	TestIndexTreeBlockMemoryPutDuplicate();
+	TestIndexTreeBlockMemoryValidateInternalConsistency();
+	TestIndexTreeBlockMemoryCountAllocatedNodes();
+	TestIndexTreeBlockMemoryRemoveResize();
+	TestIndexTreeBlockMemoryRemoveByObject();
+	TestIndexTreeBlockMemoryHasKey();
+	TestIndexTreeBlockMemoryRemoveNullNode();
+	TestIndexTreeBlockMemoryAddLongLong();
+	TestIndexTreeBlockMemoryIterate();
+	TestIndexTreeBlockMemoryReadWrite();
 
 	MemoryKill();
 	FastFunctionsKill();

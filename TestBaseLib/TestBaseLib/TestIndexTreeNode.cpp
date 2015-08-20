@@ -1,4 +1,4 @@
-#include "BaseLib/IndexTreeBlock.h"
+#include "BaseLib/IndexTreeBlockMemory.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
 
@@ -11,7 +11,7 @@ void TestIndexTreeNodeInit(void)
 {
 	CIndexTreeNodeMemory*	pcNode;
 	CIndexTreeNodeMemory	cObject;
-	long long int	uiObject;
+	long long int			uiObject;
 	CIndexTreeNodeMemory*	pcObject;
 
 	uiObject = 0xA27384234FFLL;
