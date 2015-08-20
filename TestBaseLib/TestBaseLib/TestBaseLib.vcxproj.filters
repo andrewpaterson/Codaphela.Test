@@ -249,9 +249,6 @@
     <ClCompile Include="TestTrackingAllocator.cpp">
       <Filter>Source\Memory\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="TestIndexTreeBlock.cpp">
-      <Filter>Source\Data\Index</Filter>
-    </ClCompile>
     <ClCompile Include="TestFloat4.cpp">
       <Filter>Source\Data\Geometric</Filter>
     </ClCompile>
@@ -260,6 +257,9 @@
     </ClCompile>
     <ClCompile Include="TestArrayVoidPtr.cpp">
       <Filter>Source\Data\Array</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexTreeBlockMemory.cpp">
+      <Filter>Source\Data\Index</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
