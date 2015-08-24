@@ -21,7 +21,7 @@ void TestMemoryFile(void)
 	bResult = cMemoryFile.Open(EFM_Read);
 	AssertTrue(bResult);
 
-	iResult = (int)cMemoryFile.Read(szResult, (filePos)strlen(szHello)+1, 1);
+	iResult = (int)cMemoryFile.Read(szResult, strlenFilePos(szHello)+1, 1);
 	AssertInt(1, iResult);
 	AssertString(szHello, szResult);
 	cMemoryFile.Seek(0, EFSO_SET);
