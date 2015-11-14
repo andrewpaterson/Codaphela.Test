@@ -97,6 +97,7 @@
     <ClCompile Include="TestCoreLib.cpp" />
     <ClCompile Include="TestFiles.cpp" />
     <ClCompile Include="TestIndexedFile.cpp" />
+    <ClCompile Include="TestIndexTreeBlockFile.cpp" />
     <ClCompile Include="TestLogFile.cpp" />
     <ClCompile Include="TestMap.cpp" />
     <ClCompile Include="TestChars.cpp" />

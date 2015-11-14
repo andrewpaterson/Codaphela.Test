@@ -60,3 +60,4 @@ void TestFileFinder(void)
 
 	TestStatistics();
 }
+

@@ -13,6 +13,7 @@ void TestXMLParser(void);
 void TestXMLFile(void);
 void TestLogFile(void);
 void TestDurableFile(void);
+void TestIndexTreeBlockFile(void);
 void TestIndexedFile(void);
 void TestIndexes(void);
 void TestIndexedHuge(void);
@@ -49,6 +50,7 @@ int main(int argc, char* argv[])
 	TestXMLFile();
 	TestLogFile();
 	TestDurableFile();
+	TestIndexTreeBlockFile();
 	TestIndexedFile();
 	TestIndexes();
 	TestIndexedHuge();
