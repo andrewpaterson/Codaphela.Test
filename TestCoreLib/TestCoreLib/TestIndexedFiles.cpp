@@ -27,7 +27,7 @@ void TestIndexedFilesWorkingDirectory(void)
 	cFileUtil.AppendToPath(&szRewrite, szDirectorty);
 
 	cController.Init(szName.Text(), szRewrite.Text(), TRUE);
-	cIndexedFiles.Init(&cController, "DAT");
+	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
 	cIndexedFiles.Open();
 
 	cIndexedFiles.Close();
@@ -60,7 +60,7 @@ void TestIndexedFilesInitAndKillWihtoutOpen(void)
 	cFileUtil.AppendToPath(&szRewrite, szDirectorty);
 
 	cController.Init(szName.Text(), szRewrite.Text(), TRUE);
-	cIndexedFiles.Init(&cController, "DAT");
+	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
 
 	cIndexedFiles.Kill();
 	cController.Kill();
