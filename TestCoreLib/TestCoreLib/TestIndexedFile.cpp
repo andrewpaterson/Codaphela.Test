@@ -40,7 +40,7 @@ void TestIndexedFile(void)
 	szRewrite.Append(FILE_SEPARATOR[0]);
 	szRewrite.Append("_File.DAT");
 
-	cDurableController.Init("IndexedFile", TRUE);
+	cDurableController.Init("IndexedFile", "IndexedFile", TRUE);
 	cDurableController.Begin();
 
 	cIndexedFile.Init(&cDurableController, 0, szWrite.Text(), szRewrite.Text(), 9, 0);
@@ -77,7 +77,7 @@ void TestIndexedFile(void)
 	cTextFile.Kill();
 
 
-	cDurableController.Init("IndexedFile", TRUE);
+	cDurableController.Init("IndexedFile", "IndexedFile", TRUE);
 	cDurableController.Begin();
 
 	cIndexedFile.Init(&cDurableController, 0, szWrite.Text(), szRewrite.Text(), 9, 0);

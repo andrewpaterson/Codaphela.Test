@@ -58,6 +58,9 @@
     <Filter Include="Source\File\Indexed\Index">
       <UniqueIdentifier>{38b1bd3a-d2a1-4b28-b6ad-40b77c5eebc4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\File\Indexed\Data">
+      <UniqueIdentifier>{a19d5601-6062-4edc-8b66-06492247b89e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -149,6 +152,9 @@
     </ClCompile>
     <ClCompile Include="TestIndexTreeBlockFile.cpp">
       <Filter>Source\File\Indexed\Index</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexedFiles.cpp">
+      <Filter>Source\File\Indexed\Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
