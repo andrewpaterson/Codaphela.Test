@@ -105,7 +105,7 @@
     <ClCompile Include="TestFloat4.cpp" />
     <ClCompile Include="TestFreeListAllocator.cpp" />
     <ClCompile Include="TestIndexTreeBlockMemory.cpp" />
-    <ClCompile Include="TestIndexTreeNode.cpp" />
+    <ClCompile Include="TestIndexTreeNodeMemory.cpp" />
     <ClCompile Include="TestIndexTreeObject.cpp" />
     <ClCompile Include="TestIndexTreeTemplate.cpp" />
     <ClCompile Include="TestLinkedListTemplate.cpp" />

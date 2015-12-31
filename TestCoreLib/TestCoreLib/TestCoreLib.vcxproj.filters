@@ -156,6 +156,9 @@
     <ClCompile Include="TestIndexedFiles.cpp">
       <Filter>Source\File\Indexed\Data</Filter>
     </ClCompile>
+    <ClCompile Include="TestIndexTreeNodeFile.cpp">
+      <Filter>Source\File\Indexed\Index</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

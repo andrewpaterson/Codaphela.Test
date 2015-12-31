@@ -52,6 +52,8 @@ void TestIndexTreeNodeMemoryInit(void)
 	AssertFalse(pcNode->ContainsIndex(32));
 	AssertTrue(pcNode->ContainsIndex(33));
 	AssertFalse(pcNode->ContainsIndex(34));
+
+	free(pcNode);
 }
 
 

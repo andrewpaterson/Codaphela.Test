@@ -186,9 +186,6 @@
     <ClCompile Include="TestIndexTreeObject.cpp">
       <Filter>Source\Data\Index</Filter>
     </ClCompile>
-    <ClCompile Include="TestIndexTreeNode.cpp">
-      <Filter>Source\Data\Index</Filter>
-    </ClCompile>
     <ClCompile Include="TestFileIO.cpp">
       <Filter>Source\File\IO</Filter>
     </ClCompile>
@@ -259,6 +256,9 @@
       <Filter>Source\Data\Array</Filter>
     </ClCompile>
     <ClCompile Include="TestIndexTreeBlockMemory.cpp">
+      <Filter>Source\Data\Index</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexTreeNodeMemory.cpp">
       <Filter>Source\Data\Index</Filter>
     </ClCompile>
   </ItemGroup>

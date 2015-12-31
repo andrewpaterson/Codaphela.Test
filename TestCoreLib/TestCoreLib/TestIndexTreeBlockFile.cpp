@@ -8,7 +8,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockFileSomething(void)
+void TestIndexTreeBlockFileInit(void)
 {
 	CIndexTreeBlockFile		cIndexFile;
 	CDurableFileController	cDurableController;
@@ -44,7 +44,7 @@ void TestIndexTreeBlockFile(void)
 {
 	BeginTests();
 
-	TestIndexTreeBlockFileSomething();
+	TestIndexTreeBlockFileInit();
 
 	TestStatistics();
 }
