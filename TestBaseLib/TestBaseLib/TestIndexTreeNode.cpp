@@ -8,7 +8,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeNodeInit(void)
+void TestIndexTreeNodeMemoryInit(void)
 {
 	CIndexTreeNodeMemory*	pcNode;
 	CIndexTreeNodeMemory	pcChildNode;
@@ -59,7 +59,7 @@ void TestIndexTreeNodeInit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CIndexTreeNodeMemory* TestIndexTreeNodeMalloc(void)
+CIndexTreeNodeMemory* TestIndexTreeNodeMemoryMalloc(void)
 {
 	int						iSize;
 	CIndexTreeNodeMemory*	pcNode;
@@ -75,7 +75,7 @@ CIndexTreeNodeMemory* TestIndexTreeNodeMalloc(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeNodeFree(CIndexTreeNodeMemory* pcNode)
+void TestIndexTreeNodeMemoryFree(CIndexTreeNodeMemory* pcNode)
 {
 	free(pcNode);
 }
@@ -85,7 +85,7 @@ void TestIndexTreeNodeFree(CIndexTreeNodeMemory* pcNode)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeNodeContain(void)
+void TestIndexTreeNodeMemoryContain(void)
 {
 	CIndexTreeNodeMemory*	pcNode1;
 	CIndexTreeNodeMemory*	pcNode2;
@@ -97,12 +97,12 @@ void TestIndexTreeNodeContain(void)
 
 	cTree.FakeInit();
 
-	pcNode1 = TestIndexTreeNodeMalloc();
-	pcNode2 = TestIndexTreeNodeMalloc();
-	pcNode3 = TestIndexTreeNodeMalloc();
-	pcNode4 = TestIndexTreeNodeMalloc();
-	pcNode5 = TestIndexTreeNodeMalloc();
-	pcNode6 = TestIndexTreeNodeMalloc();
+	pcNode1 = TestIndexTreeNodeMemoryMalloc();
+	pcNode2 = TestIndexTreeNodeMemoryMalloc();
+	pcNode3 = TestIndexTreeNodeMemoryMalloc();
+	pcNode4 = TestIndexTreeNodeMemoryMalloc();
+	pcNode5 = TestIndexTreeNodeMemoryMalloc();
+	pcNode6 = TestIndexTreeNodeMemoryMalloc();
 
 	pcNode1->Init(&cTree, NULL);
 	pcNode1->Contain(8);
@@ -206,12 +206,12 @@ void TestIndexTreeNodeContain(void)
 	AssertNull(pcNode1->Get(13));
 	AssertPointer(pcNode6, pcNode1->Get(14));
 
-	TestIndexTreeNodeFree(pcNode6);
-	TestIndexTreeNodeFree(pcNode5);
-	TestIndexTreeNodeFree(pcNode4);
-	TestIndexTreeNodeFree(pcNode3);
-	TestIndexTreeNodeFree(pcNode2);
-	TestIndexTreeNodeFree(pcNode1);
+	TestIndexTreeNodeMemoryFree(pcNode6);
+	TestIndexTreeNodeMemoryFree(pcNode5);
+	TestIndexTreeNodeMemoryFree(pcNode4);
+	TestIndexTreeNodeMemoryFree(pcNode3);
+	TestIndexTreeNodeMemoryFree(pcNode2);
+	TestIndexTreeNodeMemoryFree(pcNode1);
 }
 
 
@@ -219,7 +219,7 @@ void TestIndexTreeNodeContain(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeNodeFindNotEmpty(void)
+void TestIndexTreeNodeMemoryFindNotEmpty(void)
 {
 	CIndexTreeNodeMemory*	pcNode1;
 	CIndexTreeNodeMemory*	pcNode2;
@@ -230,11 +230,11 @@ void TestIndexTreeNodeFindNotEmpty(void)
 
 	cTree.FakeInit();
 
-	pcNode1 = TestIndexTreeNodeMalloc();
-	pcNode2 = TestIndexTreeNodeMalloc();
-	pcNode3 = TestIndexTreeNodeMalloc();
-	pcNode4 = TestIndexTreeNodeMalloc();
-	pcNode5 = TestIndexTreeNodeMalloc();
+	pcNode1 = TestIndexTreeNodeMemoryMalloc();
+	pcNode2 = TestIndexTreeNodeMemoryMalloc();
+	pcNode3 = TestIndexTreeNodeMemoryMalloc();
+	pcNode4 = TestIndexTreeNodeMemoryMalloc();
+	pcNode5 = TestIndexTreeNodeMemoryMalloc();
 
 	pcNode1->Init(&cTree, NULL);
 	pcNode1->Contain(8);
@@ -301,11 +301,11 @@ void TestIndexTreeNodeFindNotEmpty(void)
 	AssertNull(pcNode1->Get(22));
 	AssertTrue(pcNode1->IsEmpty());
 
-	TestIndexTreeNodeFree(pcNode5);
-	TestIndexTreeNodeFree(pcNode4);
-	TestIndexTreeNodeFree(pcNode3);
-	TestIndexTreeNodeFree(pcNode2);
-	TestIndexTreeNodeFree(pcNode1);
+	TestIndexTreeNodeMemoryFree(pcNode5);
+	TestIndexTreeNodeMemoryFree(pcNode4);
+	TestIndexTreeNodeMemoryFree(pcNode3);
+	TestIndexTreeNodeMemoryFree(pcNode2);
+	TestIndexTreeNodeMemoryFree(pcNode1);
 }
 
 
@@ -313,13 +313,13 @@ void TestIndexTreeNodeFindNotEmpty(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeNode(void)
+void TestIndexTreeNodeMemory(void)
 {
 	BeginTests();
 
-	TestIndexTreeNodeInit();
-	TestIndexTreeNodeContain();
-	TestIndexTreeNodeFindNotEmpty();
+	TestIndexTreeNodeMemoryInit();
+	TestIndexTreeNodeMemoryContain();
+	TestIndexTreeNodeMemoryFindNotEmpty();
 
 	TestStatistics();
 }
