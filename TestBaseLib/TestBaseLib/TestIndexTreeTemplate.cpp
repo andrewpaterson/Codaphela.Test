@@ -21,9 +21,9 @@ void TestIndexTreeTemplatePut(void)
 	lliThe = 0x392168ee06b4c0d0;
 	lliLamb = 0xf855181fab7e51e5;
 
-	AssertTrue(cIndex.Put("Larry", &lliLarry));
-	AssertTrue(cIndex.Put("The", &lliThe));
-	AssertTrue(cIndex.Put("Lamb", &lliLamb));
+	AssertNotNull(cIndex.Put("Larry", &lliLarry));
+	AssertNotNull(cIndex.Put("The", &lliThe));
+	AssertNotNull(cIndex.Put("Lamb", &lliLamb));
 
 	AssertInt(3, cIndex.NumElements());
 	AssertInt(3, cIndex.RecurseSize());

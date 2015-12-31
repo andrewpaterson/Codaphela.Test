@@ -1,3 +1,4 @@
+#include "BaseLib/Logger.h"
 #include "BaseLib/IndexTreeBlockMemory.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
@@ -10,29 +11,43 @@
 void TestIndexTreeNodeInit(void)
 {
 	CIndexTreeNodeMemory*	pcNode;
-	CIndexTreeNodeMemory	cObject;
+	CIndexTreeNodeMemory	pcChildNode;
 	long long int			uiObject;
-	CIndexTreeNodeMemory*	pcObject;
+	CIndexTreeNodeMemory*	pcResult;
+	CIndexTreeBlockMemory	cTree;
+	
+	cTree.FakeInit();
 
 	uiObject = 0xA27384234FFLL;
 
-	pcNode = (CIndexTreeNodeMemory*)malloc(sizeof(CIndexTreeNodeMemory) + sizeof(CIndexTreeNodeMemory*));
-	pcNode->Init(NULL);
+	pcNode = (CIndexTreeNodeMemory*)malloc(sizeof(CIndexTreeNodeMemory) + sizeof(CIndexTreeNodeMemory*));  //Node.  No object.  One child.
+	pcNode->Init(&cTree, NULL);
 	AssertTrue(pcNode->IsEmpty());
-	AssertFalse(cObject.HasNodes());
+	AssertFalse(pcNode->HasNodes());
+	AssertFalse(pcNode->HasObject());
+	AssertTrue(pcNode->ValidateNodesEmpty());
 
 	pcNode->Contain(33);
-	AssertTrue(pcNode->IsEmpty());
+	AssertFalse(pcNode->IsEmpty());
 	AssertTrue(pcNode->HasNodes());
+	AssertFalse(pcNode->HasObject());
+
+	gcLogger.SetBreakOnError(FALSE);
+	AssertFalse(pcNode->ValidateNodesEmpty());
+	gcLogger.SetBreakOnError(TRUE);
+
 	AssertInt(33, pcNode->GetFirstIndex());
 	AssertInt(33, pcNode->GetLastIndex());
 
-	pcNode->Set(33, &cObject);
+	pcNode->Set(33, &pcChildNode);
 	AssertFalse(pcNode->IsEmpty());
 	AssertTrue(pcNode->HasNodes());
+	AssertFalse(pcNode->HasObject());
+	AssertInt(1, pcNode->NumInitialisedIndexes());
+	AssertTrue(pcNode->ValidateNodesEmpty());
 
-	pcObject = pcNode->Get(33);
-	AssertPointer(&cObject, pcObject);
+	pcResult = pcNode->Get(33);
+	AssertPointer(&pcChildNode, pcResult);
 
 	AssertFalse(pcNode->ContainsIndex(32));
 	AssertTrue(pcNode->ContainsIndex(33));
@@ -46,8 +61,8 @@ void TestIndexTreeNodeInit(void)
 //////////////////////////////////////////////////////////////////////////
 CIndexTreeNodeMemory* TestIndexTreeNodeMalloc(void)
 {
-	int					iSize;
-	CIndexTreeNodeMemory*		pcNode;
+	int						iSize;
+	CIndexTreeNodeMemory*	pcNode;
 
 	iSize = sizeof(CIndexTreeNodeMemory) + (MAX_UCHAR-1) * sizeof(CIndexTreeNodeMemory*);
 	pcNode = (CIndexTreeNodeMemory*)malloc(iSize);
@@ -78,6 +93,9 @@ void TestIndexTreeNodeContain(void)
 	CIndexTreeNodeMemory*	pcNode4;
 	CIndexTreeNodeMemory*	pcNode5;
 	CIndexTreeNodeMemory*	pcNode6;
+	CIndexTreeBlockMemory	cTree;
+
+	cTree.FakeInit();
 
 	pcNode1 = TestIndexTreeNodeMalloc();
 	pcNode2 = TestIndexTreeNodeMalloc();
@@ -86,7 +104,7 @@ void TestIndexTreeNodeContain(void)
 	pcNode5 = TestIndexTreeNodeMalloc();
 	pcNode6 = TestIndexTreeNodeMalloc();
 
-	pcNode1->Init(NULL);
+	pcNode1->Init(&cTree, NULL);
 	pcNode1->Contain(8);
 	AssertInt(8, pcNode1->GetFirstIndex());
 	AssertInt(1, pcNode1->GetNumIndexes());
@@ -208,6 +226,9 @@ void TestIndexTreeNodeFindNotEmpty(void)
 	CIndexTreeNodeMemory*	pcNode3;
 	CIndexTreeNodeMemory*	pcNode4;
 	CIndexTreeNodeMemory*	pcNode5;
+	CIndexTreeBlockMemory	cTree;
+
+	cTree.FakeInit();
 
 	pcNode1 = TestIndexTreeNodeMalloc();
 	pcNode2 = TestIndexTreeNodeMalloc();
@@ -215,13 +236,13 @@ void TestIndexTreeNodeFindNotEmpty(void)
 	pcNode4 = TestIndexTreeNodeMalloc();
 	pcNode5 = TestIndexTreeNodeMalloc();
 
-	pcNode1->Init(NULL);
+	pcNode1->Init(&cTree, NULL);
 	pcNode1->Contain(8);
 	pcNode1->Contain(22);
 	AssertInt(8, pcNode1->GetFirstIndex());
 	AssertInt(15, pcNode1->GetNumIndexes());
 	AssertInt(22, pcNode1->GetLastIndex());
-	AssertTrue(pcNode1->IsEmpty());
+	AssertFalse(pcNode1->IsEmpty());
 
 	pcNode1->Set(8, pcNode2);
 	pcNode1->Set(10, pcNode3);
