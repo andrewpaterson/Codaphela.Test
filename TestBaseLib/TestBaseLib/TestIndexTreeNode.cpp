@@ -219,6 +219,89 @@ void TestIndexTreeNodeMemoryContain(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeNodeMemoryUncontain(void)
+{
+	CIndexTreeNodeMemory*	pcNode1;
+	CIndexTreeBlockMemory	cTree;
+
+	cTree.FakeInit();
+
+	pcNode1 = TestIndexTreeNodeMemoryMalloc();
+
+	pcNode1->Init(&cTree, NULL);
+
+	pcNode1->Contain(8);
+	AssertInt(8, pcNode1->GetFirstIndex());
+	AssertInt(1, pcNode1->GetNumIndexes());
+	AssertInt(8, pcNode1->GetLastIndex());
+	AssertFalse(pcNode1->IsEmpty());
+
+	pcNode1->Uncontain(8);
+	AssertTrue(pcNode1->IsEmpty());
+	AssertInt(0, pcNode1->GetFirstIndex());
+	AssertInt(0, pcNode1->GetNumIndexes());
+	AssertInt(0, pcNode1->GetLastIndex());
+
+	pcNode1->Contain(254);
+	AssertInt(254, pcNode1->GetFirstIndex());
+	AssertInt(1, pcNode1->GetNumIndexes());
+	AssertInt(254, pcNode1->GetLastIndex());
+	AssertFalse(pcNode1->IsEmpty());
+
+	pcNode1->Uncontain(254);
+	AssertTrue(pcNode1->IsEmpty());
+	AssertInt(0, pcNode1->GetFirstIndex());
+	AssertInt(0, pcNode1->GetNumIndexes());
+	AssertInt(0, pcNode1->GetLastIndex());
+
+	pcNode1->Contain(0);
+	AssertInt(0, pcNode1->GetFirstIndex());
+	AssertInt(1, pcNode1->GetNumIndexes());
+	AssertInt(0, pcNode1->GetLastIndex());
+	AssertFalse(pcNode1->IsEmpty());
+	pcNode1->Contain(1);
+	AssertInt(0, pcNode1->GetFirstIndex());
+	AssertInt(2, pcNode1->GetNumIndexes());
+	AssertInt(1, pcNode1->GetLastIndex());
+	AssertFalse(pcNode1->IsEmpty());
+	pcNode1->Uncontain(0);
+	AssertInt(1, pcNode1->GetFirstIndex());
+	AssertInt(1, pcNode1->GetNumIndexes());
+	AssertInt(1, pcNode1->GetLastIndex());
+	AssertFalse(pcNode1->IsEmpty());
+	pcNode1->Uncontain(1);
+	AssertInt(0, pcNode1->GetFirstIndex());
+	AssertInt(0, pcNode1->GetNumIndexes());
+	AssertInt(0, pcNode1->GetLastIndex());
+
+	pcNode1->Contain(1);
+	AssertInt(1, pcNode1->GetFirstIndex());
+	AssertInt(1, pcNode1->GetNumIndexes());
+	AssertInt(1, pcNode1->GetLastIndex());
+	AssertFalse(pcNode1->IsEmpty());
+	pcNode1->Contain(0);
+	AssertInt(0, pcNode1->GetFirstIndex());
+	AssertInt(2, pcNode1->GetNumIndexes());
+	AssertInt(1, pcNode1->GetLastIndex());
+	AssertFalse(pcNode1->IsEmpty());
+	pcNode1->Uncontain(1);
+	AssertInt(0, pcNode1->GetFirstIndex());
+	AssertInt(1, pcNode1->GetNumIndexes());
+	AssertInt(0, pcNode1->GetLastIndex());
+	AssertFalse(pcNode1->IsEmpty());
+	pcNode1->Uncontain(0);
+	AssertInt(0, pcNode1->GetFirstIndex());
+	AssertInt(0, pcNode1->GetNumIndexes());
+	AssertInt(0, pcNode1->GetLastIndex());
+
+	TestIndexTreeNodeMemoryFree(pcNode1);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeNodeMemoryFindNotEmpty(void)
 {
 	CIndexTreeNodeMemory*	pcNode1;
@@ -319,6 +402,7 @@ void TestIndexTreeNodeMemory(void)
 
 	TestIndexTreeNodeMemoryInit();
 	TestIndexTreeNodeMemoryContain();
+	TestIndexTreeNodeMemoryUncontain();
 	TestIndexTreeNodeMemoryFindNotEmpty();
 
 	TestStatistics();
