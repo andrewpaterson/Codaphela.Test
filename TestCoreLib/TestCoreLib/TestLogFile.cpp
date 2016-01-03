@@ -514,7 +514,7 @@ void TestLogFileDelete(void)
 	cFile.Kill();
 
 	AssertTrue(cFileUtil.Exists("Output/LogFile/File.txt"));
-	AssertInt(2, cFileUtil.Size("Output/LogFile/File.txt"));
+	AssertLongLongInt(2, cFileUtil.Size("Output/LogFile/File.txt"));
 
 	pcDiskFile = DiskFile("Output/LogFile/File.txt");
 	pcLogFile = LogFile(pcDiskFile);
@@ -589,7 +589,7 @@ void TestLogFileMultipleReadsAfterOpens(void)
 	cFile.Kill();
 
 	AssertTrue(cFileUtil.Exists("Output/LogFile2/OpenClose.txt"));
-	AssertInt(2, cFileUtil.Size("Output/LogFile2/OpenClose.txt"));
+	AssertLongLongInt(2, cFileUtil.Size("Output/LogFile2/OpenClose.txt"));
 
 	pcDiskFile = DiskFile("Output/LogFile2/OpenClose.txt");
 	pcLogFile = LogFile(pcDiskFile);

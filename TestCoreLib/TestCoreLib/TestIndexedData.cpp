@@ -18,7 +18,7 @@ void TestIndexedDataCacheEviction(void)
 	char			szSteam[] = "Stream";
 	char			szIn[7];
 	unsigned int	uiSize;
-	int				iFileSize;
+	filePos			iFileSize;
 	CFileUtil		cFileUtil;
 
 	cFileUtil.RemoveDir("Database1");
@@ -43,9 +43,9 @@ void TestIndexedDataCacheEviction(void)
 	cIndexedData.Kill();
 
 	iFileSize = cFileUtil.Size("Database1/6_0.DAT");
-	AssertInt(12, iFileSize);
+	AssertLongLongInt(12, iFileSize);
 	iFileSize = cFileUtil.Size("Database1/7_0.DAT");
-	AssertInt(7, iFileSize);
+	AssertLongLongInt(7, iFileSize);
 
 	cIndexedData.Init("Database1", 1024, FALSE);
 	AssertInt(2, cIndexedData.NumFiles());

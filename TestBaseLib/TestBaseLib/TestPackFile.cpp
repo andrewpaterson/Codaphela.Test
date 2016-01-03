@@ -195,7 +195,8 @@ void TestPackFileAdd(void)
 
 	pcDiskFile = DiskFile(szDir.Text());
 
-	cPak.Init(pcDiskFile, PFM_Write);
+	bResult = cPak.Init(pcDiskFile, PFM_Write);
+	AssertTrue(bResult);
 
 	bResult = cPak.AddDirectory("Finder");
 	AssertTrue(bResult);
