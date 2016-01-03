@@ -16,6 +16,7 @@ void TestIndexTreeBlockFileInit(void)
 	char					szWorkingDirectory[] = "Database9";
 	CChars					szDirectory;
 	CChars					szRewriteDirectory;
+	CChars					szRootFileName;
 
 	cFileUtil.RemoveDir(szWorkingDirectory);
 
@@ -23,15 +24,18 @@ void TestIndexTreeBlockFileInit(void)
 	cFileUtil.AppendToPath(&szDirectory, "primary");
 	szRewriteDirectory.Init(szWorkingDirectory);
 	cFileUtil.AppendToPath(&szRewriteDirectory, "backup");
+	szRootFileName.Init(szWorkingDirectory);
+	cFileUtil.AppendToPath(&szRootFileName, "RootFile.IDX");
 	cDurableController.Init(szDirectory.Text(), szRewriteDirectory.Text(), TRUE);
 
-	cIndexFile.Init(&cDurableController, &gcSystemAllocator);
+	cIndexFile.Init(&cDurableController, szRootFileName.Text(), &gcSystemAllocator);
 
 	cIndexFile.Kill();
 	cDurableController.Kill();
 
 	szDirectory.Kill();
 	szRewriteDirectory.Kill();
+	szRootFileName.Kill();
 	cFileUtil.RemoveDir(szWorkingDirectory);
 }
 
