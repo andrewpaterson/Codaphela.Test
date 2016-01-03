@@ -13,8 +13,8 @@
 void TestIndexTreeNodeFileSizeofs(void)
 {
 	AssertInt(4, sizeof(CIndexTreeNodeFile*));
-	AssertInt(16, sizeof(CFileIndex));  //Sizeof is 16 but only the first 12 bytes are used.
-	AssertInt(16, sizeof(SIndexTreeChildFile));  //Sizeof is 16 but only the last 4 bytes are used.
+	AssertInt(16, sizeof(CFileIndex));  //SizeOf is 16 but only the first 12 bytes are used.
+	AssertInt(16, sizeof(SIndexTreeChildFile));  //SizeOf is 16 but only the last 4 bytes are used.
 	AssertInt(16, sizeof(CIndexTreeChildNode));  //The above is why the union works 
 
 	AssertTrue(sizeof(CIndexTreeNodeFile*) <= 12);  //The size of a memory pointer may not be more than 12 bytes.
@@ -33,7 +33,7 @@ void TestIndexTreeNodeFileUnion(void)
 	cChild.u.mcFile.Init();
 	AssertInt(0, cChild.u.msType.iType);
 
-	cChild.u.mpvMemory = (CIndexTreeNodeFile*)0x80808080;
+	cChild.u.mpcMemory = (CIndexTreeNodeFile*)0x80808080;
 	AssertInt(0, cChild.u.msType.iType);
 	AssertFalse(cChild.IsValid());
 
@@ -53,12 +53,12 @@ void TestIndexTreeNodeFileUnion(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeNodeFileInit(void)
+void TestIndexTreeNodeFileRootMemory(void)
 {
 	CIndexTreeNodeFile*		pcNode;
 	CIndexTreeBlockFile		cIndex;
 	CIndexTreeNodeFile		cChildNode;
-	CIndexTreeNodeFile*		pcResult;
+	CIndexTreeChildNode*	pcResult;
 
 	cIndex.FakeInit();
 
@@ -90,7 +90,8 @@ void TestIndexTreeNodeFileInit(void)
 	AssertTrue(pcNode->ValidateNodesEmpty());
 
 	pcResult = pcNode->Get(33);
-	AssertPointer(&cChildNode, pcResult);
+	AssertTrue(pcResult->IsMemory());
+	AssertPointer(&cChildNode, pcResult->u.mpcMemory);
 
 	AssertFalse(pcNode->ContainsIndex(32));
 	AssertTrue(pcNode->ContainsIndex(33));
@@ -110,7 +111,7 @@ void TestIndexTreeNodeFile(void)
 
 	TestIndexTreeNodeFileSizeofs();
 	TestIndexTreeNodeFileUnion();
-	TestIndexTreeNodeFileInit();
+	TestIndexTreeNodeFileRootMemory();
 
 	TestStatistics();
 }
