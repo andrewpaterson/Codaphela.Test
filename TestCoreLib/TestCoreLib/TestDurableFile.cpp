@@ -107,24 +107,24 @@ void TestDurableFileWrite(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestComplexDurableFile(void)
+void TestDurableFileComplex(void)
 {
 	FastFunctionsInit();
 	TypeConverterInit();
 
 	CFileUtil		cFileUtil;
 	CDurableFile	cDurable;
-	filePos				iResult;
+	filePos			iResult;
 	CTextFile		cTextFile;
 
-	char			sz1[] = "BBBB";
-	char			sz2[] = "CCDD";
-	char			sz3[] = "EEEE";
-	char			sz4[] = "AAAA";
-	char			sz5[] = "FFFF";
+	char			szA[] = "AAAA";
+	char			szB[] = "BBBB";
+	char			szC[] = "CCDD";
+	char			szE[] = "EEEE";
+	char			szF[] = "FFFF";
 
 	char			szDest[5];
-	char			szAll[17];
+	char			szAll[18];
 
 	cFileUtil.RemoveDir("Durable3");
 	cFileUtil.MakeDir("Durable3");
@@ -134,12 +134,12 @@ void TestComplexDurableFile(void)
 
 	cDurable.Begin();
 
-	iResult = cDurable.Write(4, sz1, 2, 2);
+	iResult = cDurable.Write(4, szB, 2, 2);
 	AssertLongLongInt(2, iResult);
 	AssertLongLongInt(8, cDurable.miPosition);
 	AssertLongLongInt(8, cDurable.miLength);
 
-	iResult = cDurable.Write(10, sz2, 2, 2);
+	iResult = cDurable.Write(10, szC, 2, 2);
 	AssertLongLongInt(2, iResult);
 	AssertLongLongInt(14, cDurable.miPosition);
 	AssertLongLongInt(14, cDurable.miLength);
@@ -152,7 +152,7 @@ void TestComplexDurableFile(void)
 	AssertString("", szDest);
 	AssertString("CC", &szDest[2]);
 
-	iResult = cDurable.Write(12, sz3, 1, 4);
+	iResult = cDurable.Write(12, szE, 1, 4);
 	AssertLongLongInt(4, iResult);
 	AssertLongLongInt(16, cDurable.miPosition);
 	AssertLongLongInt(16, cDurable.miLength);
@@ -164,37 +164,46 @@ void TestComplexDurableFile(void)
 	AssertLongLongInt(16, cDurable.miLength);
 	AssertString("EE", szDest);
 	cDurable.End();
+	cDurable.Rewrite();
 
 	cDurable.Begin();
 	AssertLongLongInt(16, cDurable.miPosition);
 	AssertLongLongInt(16, cDurable.miLength);
 
-	iResult = cDurable.Write(0, sz4, 2, 2);
+	iResult = cDurable.Write(0, szA, 2, 2);
 	AssertLongLongInt(2, iResult);
 	AssertLongLongInt(4, cDurable.miPosition);
-	iResult = cDurable.Write(8, sz2, 2, 1);
+	iResult = cDurable.Write(8, szC, 2, 1);
 
-	memset(szAll, 0, 17);
+	memset(szAll, 0, 18);
 	iResult = cDurable.Read(0, szAll, 4, 4);
 	AssertLongLongInt(4, iResult);
 	AssertString("AAAABBBBCCCCEEEE", szAll);
 
+	memset(szAll, 0, 18);
 	iResult = cDurable.Read(11, szAll, 3, 2);
 	AssertLongLongInt(1, iResult);
+	AssertString("CEEEE", szAll);
 
-	iResult = cDurable.Write(16, sz5, 1, 1);
-	memset(szAll, 0, 17);
+	memset(szAll, 0, 18);
+	iResult = cDurable.Write(16, szF, 1, 1);
 	iResult = cDurable.Read(11, szAll, 3, 2);
 	AssertLongLongInt(2, iResult);
 	AssertString("CEEEEF", szAll);
 
 	cDurable.End();
+	cDurable.Rewrite();
 
 	cDurable.Close();
 	cDurable.Kill();
 
 	cTextFile.Init();
 	cTextFile.Read("Durable3\\WrittenFile.txt");
+	AssertString("AAAABBBBCCCCEEEEF", cTextFile.Text());
+	cTextFile.Kill();
+
+	cTextFile.Init();
+	cTextFile.Read("Durable3\\_WrittenFile.txt");
 	AssertString("AAAABBBBCCCCEEEEF", cTextFile.Text());
 	cTextFile.Kill();
 
@@ -215,9 +224,8 @@ void TestDurableFile(void)
 
 	TestDurableFileInit();
 	TestDurableFileWrite();
-	TestComplexDurableFile();
+	TestDurableFileComplex();
 
 	TestStatistics();
 }
-
 
