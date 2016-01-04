@@ -1,5 +1,6 @@
 #include "TestLib/Assert.h"
 #include "BaseLib/FastFunctions.h"
+#include "CoreLib/DurableFile.h"
 #include "CoreLib/DurableSet.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/FileBasic.h"
