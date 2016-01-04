@@ -34,12 +34,10 @@ void TestFileFinder(void)
 	aszFiles.Init(1);
 	cFileUtil.FindAllDirectories("Finder", &aszFiles);
 	aszFiles.QuickSort();
-	AssertInt(5, aszFiles.NumElements());
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\.", aszFiles.Get(0)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\..", aszFiles.Get(1)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Lord", aszFiles.Get(2)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Rising", aszFiles.Get(3)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Storm", aszFiles.Get(4)->Text(), FALSE);
+	AssertInt(3, aszFiles.NumElements());
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Lord", aszFiles.Get(0)->Text(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Rising", aszFiles.Get(1)->Text(), FALSE);
+	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Storm", aszFiles.Get(2)->Text(), FALSE);
 	aszFiles.Kill();
 
 	aszFiles.Init(1);

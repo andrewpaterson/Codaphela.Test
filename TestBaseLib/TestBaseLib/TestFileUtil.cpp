@@ -110,7 +110,7 @@ void TestFileUtilNaming(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFindExtension(void)
+void TestFileUtilFindExtension(void)
 {
 	CFileUtil	cFileUtil;
 	int			iIndex;
@@ -136,7 +136,7 @@ void TestFindExtension(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestRemoveExtension(void)
+void TestFileUtilRemoveExtension(void)
 {
 	CChars		szFileName;
 	CFileUtil	cFileUtil;
@@ -155,7 +155,7 @@ void TestRemoveExtension(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMakeNameFromDirectory(void)
+void TestFileUtilMakeNameFromDirectory(void)
 {
 	CFileUtil	cFileUtil;
 	CChars		szName;
@@ -178,6 +178,57 @@ void TestMakeNameFromDirectory(void)
 	szFileName.Kill();
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFileUtilMakeDirectory(void)
+{
+	CFileUtil		cFileUtil;
+	CChars			szDirectory;
+	CChars			szFileName;
+	CArrayString	aszFiles;
+	CChars			szParentDirectory;
+	CChars			szCurrentDirectory;
+	BOOL			bResult;
+
+	cFileUtil.RemoveDir("file_util");
+
+	szParentDirectory.Init("file_util"_FS_"directory"_FS_"make"_FS_"test");
+	szDirectory.Init(szParentDirectory);
+	szDirectory.Append(_FS_);
+	szDirectory.Append("GABBA");
+	szFileName.Init(szDirectory);
+	szFileName.Append(_FS_);
+	szFileName.Append("FileName.txt");
+
+	bResult = cFileUtil.Touch(szFileName.Text());
+	AssertFalse(bResult);
+
+	cFileUtil.MakeDir(szDirectory.Text());
+
+	szCurrentDirectory.Init();
+	cFileUtil.CurrentDirectory(&szCurrentDirectory);
+	szCurrentDirectory.Append(_FS_);
+	szCurrentDirectory.Append(szDirectory);
+
+	aszFiles.Init(1);
+	cFileUtil.FindAllDirectories(szParentDirectory.Text(), &aszFiles, FALSE);
+	AssertInt(1, aszFiles.NumElements());
+	AssertString(szCurrentDirectory.Text(), aszFiles.GetText(0));
+
+	bResult = cFileUtil.Touch(szFileName.Text());
+	AssertTrue(bResult);
+
+	szParentDirectory.Kill();
+	szDirectory.Kill();
+	szFileName.Kill();
+
+	cFileUtil.RemoveDir("file_util");
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -186,11 +237,12 @@ void TestFileUtil(void)
 {
 	BeginTests();
 
-	TestRemoveExtension();
-	TestFindExtension();
+	TestFileUtilRemoveExtension();
+	TestFileUtilFindExtension();
 	TestFileUtilNaming();
 	TestFileUtilMisc();
-	TestMakeNameFromDirectory();
+	TestFileUtilMakeNameFromDirectory();
+	TestFileUtilMakeDirectory();
 
 	TestStatistics();
 }
