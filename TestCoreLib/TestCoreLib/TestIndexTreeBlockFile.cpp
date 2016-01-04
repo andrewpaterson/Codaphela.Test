@@ -26,9 +26,12 @@ void TestIndexTreeBlockFileInit(void)
 	cFileUtil.AppendToPath(&szRewriteDirectory, "backup");
 	szRootFileName.Init(szWorkingDirectory);
 	cFileUtil.AppendToPath(&szRootFileName, "RootFile.IDX");
+
 	cDurableController.Init(szDirectory.Text(), szRewriteDirectory.Text(), TRUE);
 
+	cDurableController.Begin();
 	cIndexFile.Init(&cDurableController, szRootFileName.Text(), &gcSystemAllocator);
+	cDurableController.End();
 
 	cIndexFile.Kill();
 	cDurableController.Kill();

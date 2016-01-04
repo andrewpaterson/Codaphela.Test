@@ -23,7 +23,7 @@ void TestIndexedFile(void)
 	char						sz1[] = "12345678";
 	char						sz2[] = "ABCDEFGH";
 	char						sz3[] = "iopfghjk";
-	filePos						iIndex;
+	filePos						iFilePos;
 	CTextFile					cTextFile;
 	char						szTemp[16];
 
@@ -46,11 +46,11 @@ void TestIndexedFile(void)
 	cIndexedFile.Init(&cDurableController, 0, szWrite.Text(), szRewrite.Text(), 9, 0);
 	cIndexedFile.Open(&cDurableController);
 
-	iIndex = cIndexedFile.Write(sz3);
-	AssertLongLongInt(0, iIndex);
+	iFilePos = cIndexedFile.Write(sz3);
+	AssertLongLongInt(0, iFilePos / cIndexedFile.miDataSize);
 
-	iIndex = cIndexedFile.Write(sz2);
-	AssertLongLongInt(1, iIndex);
+	iFilePos = cIndexedFile.Write(sz2);
+	AssertLongLongInt(1, iFilePos / cIndexedFile.miDataSize);
 
 	bResult = cIndexedFile.Write(0, sz1);
 	AssertTrue(bResult);
