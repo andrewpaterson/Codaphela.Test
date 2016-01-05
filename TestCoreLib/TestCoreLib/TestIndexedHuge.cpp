@@ -30,7 +30,7 @@ void TestIndexedHugeStuff(void)
 	szRewrite.Append(FILE_SEPARATOR[0]);
 	szRewrite.Append("_Indices.DAT");
 
-	cDurableFile.Init(FALSE, szWrite.Text(), szRewrite.Text());
+	cDurableFile.Init(NULL, szWrite.Text(), szRewrite.Text());
 	cDurableFile.Open();
 
 	szWrite.Kill();
@@ -165,7 +165,7 @@ void TestIndexedHugeSmallCacheFailure(void)
 	szWrite.InitList("IndexedHuge", FILE_SEPARATOR, "Indices.DAT", NULL);
 	szRewrite.InitList("IndexedHuge", FILE_SEPARATOR, "_Indices.DAT", NULL);
 
-	cDurableFile.Init(FALSE, szWrite.Text(), szRewrite.Text());
+	cDurableFile.Init(NULL, szWrite.Text(), szRewrite.Text());
 	cDurableFile.Open();
 
 	cHuge.Init(&cDurableFile, FALSE, NULL, 6, 3, 4, 2);
@@ -245,7 +245,7 @@ Parent: 6 - 11 (0)\n\
 
 	CIndexedDataDescriptor	cIndex;
 
-	cDurableFile.Init(FALSE, szWrite.Text(), szRewrite.Text());
+	cDurableFile.Init(NULL, szWrite.Text(), szRewrite.Text());
 	cDurableFile.Open();
 
 	cHuge.Init(&cDurableFile, FALSE, NULL, 4, 2, 4, 2);

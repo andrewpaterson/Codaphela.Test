@@ -2,6 +2,7 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
 #include "CoreLib/DurableFile.h"
+#include "CoreLib/DurableFileController.h"
 #include "BaseLib/FileBasic.h"
 #include "BaseLib/PointerRemapper.h"
 #include "BaseLib/TextFile.h"
@@ -17,13 +18,16 @@ void TestDurableFileInit(void)
 	FastFunctionsInit();
 	TypeConverterInit();
 
-	CDurableFile	cDurable;
-	CFileUtil		cFileUtil;
+	CDurableFile			cDurable;
+	CFileUtil				cFileUtil;
+	CDurableFileController	cController;
 
 	cFileUtil.RemoveDir("Durable1");
 	cFileUtil.MakeDir("Durable1");
 
-	cDurable.Init(TRUE, "Durable1\\TestFile.txt", "Durable1\\_TestFile.txt");
+	cController.Init("Durable1", "Durable1", TRUE);
+
+	cDurable.Init(&cController, "Durable1\\TestFile.txt", "Durable1\\_TestFile.txt");
 	cDurable.Open();
 
 	cDurable.Begin();
@@ -31,6 +35,8 @@ void TestDurableFileInit(void)
 
 	cDurable.Close();
 	cDurable.Kill();
+
+	cController.Kill();
 
 	FastFunctionsKill();
 	TypeConverterKill();
@@ -48,10 +54,11 @@ void TestDurableFileWrite(void)
 	FastFunctionsInit();
 	TypeConverterInit();
 
-	CFileUtil		cFileUtil;
-	CDurableFile	cDurable;
-	filePos			iResult;
-	CTextFile		cTextFile;
+	CFileUtil				cFileUtil;
+	CDurableFile			cDurable;
+	filePos					iResult;
+	CTextFile				cTextFile;
+	CDurableFileController	cController;
 
 	char			sz1[] = "In the age of chaos";
 	char			sz2[] = " two factions battled";
@@ -61,7 +68,9 @@ void TestDurableFileWrite(void)
 	cFileUtil.RemoveDir("Durable2");
 	cFileUtil.MakeDir("Durable2");
 
-	cDurable.Init(TRUE, "Durable2\\WrittenFile.txt", "Durable2\\_WrittenFile.txt");
+	cController.Init("Durable2", "Durable2", TRUE);
+
+	cDurable.Init(&cController, "Durable2\\WrittenFile.txt", "Durable2\\_WrittenFile.txt");
 	cDurable.Open();
 	AssertLongLongInt(0, cDurable.miPosition);
 	AssertLongLongInt(0, cDurable.miLength);
@@ -91,6 +100,8 @@ void TestDurableFileWrite(void)
 	cDurable.Close();
 	cDurable.Kill();
 
+	cController.Kill();
+
 	cTextFile.Init();
 	cTextFile.Read("Durable2\\WrittenFile.txt");
 	AssertString(sz4, cTextFile.Text());
@@ -112,10 +123,11 @@ void TestDurableFileComplex(void)
 	FastFunctionsInit();
 	TypeConverterInit();
 
-	CFileUtil		cFileUtil;
-	CDurableFile	cDurable;
-	filePos			iResult;
-	CTextFile		cTextFile;
+	CFileUtil				cFileUtil;
+	CDurableFile			cDurable;
+	filePos					iResult;
+	CTextFile				cTextFile;
+	CDurableFileController	cController;
 
 	char			szA[] = "AAAA";
 	char			szB[] = "BBBB";
@@ -129,7 +141,9 @@ void TestDurableFileComplex(void)
 	cFileUtil.RemoveDir("Durable3");
 	cFileUtil.MakeDir("Durable3");
 
-	cDurable.Init(TRUE, "Durable3\\WrittenFile.txt", "Durable3\\_WrittenFile.txt");
+	cController.Init("Durable3", "Durable3", TRUE);
+
+	cDurable.Init(&cController, "Durable3\\WrittenFile.txt", "Durable3\\_WrittenFile.txt");
 	cDurable.Open();
 
 	cDurable.Begin();
@@ -196,6 +210,8 @@ void TestDurableFileComplex(void)
 
 	cDurable.Close();
 	cDurable.Kill();
+
+	cController.Kill();
 
 	cTextFile.Init();
 	cTextFile.Read("Durable3\\WrittenFile.txt");
