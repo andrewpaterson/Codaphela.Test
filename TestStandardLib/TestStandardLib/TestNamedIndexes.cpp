@@ -1,3 +1,4 @@
+#include "BaseLib/Define.h"
 #include "CoreLib/DurableFileController.h"
 #include "StandardLib/NamedIndexesFileDumper.h"
 #include "StandardLib/NamedIndexes.h"
@@ -16,7 +17,7 @@ void TestNamedIndexesAdd(void)
 	CDurableFileController	cController;
 	CFileUtil				cFileUtil;
 	BOOL					bResult;
-	char					szDirectory[] = "NamedIndexes/1";
+	char					szDirectory[] = "NamedIndexes"_FS_"1";
 
 	cFileUtil.MakeDir(szDirectory);
 
@@ -94,7 +95,7 @@ void TestNamedIndexesRemove(void)
 	CDurableFileController	cController;
 	CFileUtil				cFileUtil;
 	BOOL					bResult;
-	char					szDirectory[] = "NamedIndexes/2";
+	char					szDirectory[] = "NamedIndexes"_FS_"2";
 
 	cFileUtil.MakeDir(szDirectory);
 
@@ -190,7 +191,7 @@ void TestNamedIndexesCacheEviction(void)
 	CFileUtil					cFileUtil;
 	BOOL						bResult;
 	CArrayNamedIndexesBlockPtr	cBlockPtrs;
-	char						szDirectory[] = "NamedIndexes/3";
+	char						szDirectory[] = "NamedIndexes"_FS_"3";
 
 	cFileUtil.MakeDir(szDirectory);
 	cController.Init(szDirectory, szDirectory, TRUE);
@@ -200,19 +201,19 @@ void TestNamedIndexesCacheEviction(void)
 
 	AssertLongLongInt(0, cNamedIndexes.NumNames());
 
-	cNamedIndexes.Add(45LL, "Berty");
+	AssertTrue(cNamedIndexes.Add(45LL, "Berty"));
 	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
 	AssertLongLongInt(1, cNamedIndexes.NumNames());
 
-	cNamedIndexes.Add(73LL, "Alfred");
+	AssertTrue(cNamedIndexes.Add(73LL, "Alfred"));
 	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
 	AssertLongLongInt(73LL, cNamedIndexes.GetIndex("Alfred"));
 	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex(""));
 	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex("Ax"));
 	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex((char*)NULL));
 
-	cNamedIndexes.Add(19LL, "Camilla");
-	cNamedIndexes.Add(20LL, "Wordsworth");
+	AssertTrue(cNamedIndexes.Add(19LL, "Camilla"));
+	AssertTrue(cNamedIndexes.Add(20LL, "Wordsworth"));
 	AssertLongLongInt(4, cNamedIndexes.NumNames());
 	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
 	AssertLongLongInt(73LL, cNamedIndexes.GetIndex("Alfred"));
@@ -227,7 +228,7 @@ void TestNamedIndexesCacheEviction(void)
 	AssertTrue((*cBlockPtrs.Get(0))->IsCached());
 	cBlockPtrs.Kill();
 
-	cNamedIndexes.Add(66LL, "Alicia");
+	AssertTrue(cNamedIndexes.Add(66LL, "Alicia"));
 	AssertLongLongInt(5, cNamedIndexes.NumNames());
 
 	cBlockPtrs.Init(4);
@@ -295,7 +296,7 @@ void TestNamedIndexesLoad(void)
 	CNamedIndexesBlocks*		pcBlock32;
 	CNamedIndexesBlocks*		pcBlock64;
 	CNamedIndexesBlock*			pcBlock;
-	char						szDirectory[] = "NamedIndexes/4";
+	char						szDirectory[] = "NamedIndexes"_FS_"4";
 
 	cFileUtil.MakeDir(szDirectory);
 
@@ -367,9 +368,9 @@ void TestNamedIndexesLoad(void)
 	CChars	sz;
 
 	sz.Init();
-	DumpNamedIndexesFile(&sz, "NamedIndexes/4/32_0.NAM", 32, 6);
+	DumpNamedIndexesFile(&sz, "NamedIndexes"_FS_"4"_FS_"32_0.NAM", 32, 6);
 	AssertString("\
-NamedIndexes/4/32_0.NAM\n\
+NamedIndexes"_FS_"4"_FS_"32_0.NAM\n\
 -----------------------\n\
    0:      1 -> Arthur Miller\n\
    1:      5 -> asphyxiate\n\
@@ -395,10 +396,10 @@ NamedIndexes/4/32_0.NAM\n\
 	sz.Kill();
 
 	sz.Init();
-	DumpNamedIndexesFile(&sz, "NamedIndexes/4/64_0.NAM", 64, 6);
+	DumpNamedIndexesFile(&sz, "NamedIndexes"_FS_"4"_FS_"64_0.NAM", 64, 6);
 
 	AssertString("\
-NamedIndexes/4/64_0.NAM\n\
+NamedIndexes"_FS_"4"_FS_"64_0.NAM\n\
 -----------------------\n\
    0:     11 -> Chopin Dicranaceae transmountain insentient\n\
    1:     13 -> factor V domestic relations\n\
@@ -497,7 +498,7 @@ void TestNamedIndexesOptimise(void)
 	CFileUtil					cFileUtil;
 	BOOL						bResult;
 	CNamedIndexesOptimiser		cOptimiser;
-	char						szDirectory[] = "NamedIndexes/5";
+	char						szDirectory[] = "NamedIndexes"_FS_"5";
 
 	cFileUtil.MakeDir(szDirectory);
 
@@ -556,9 +557,9 @@ void TestNamedIndexesOptimise(void)
 	CChars sz;
 
 	sz.Init(); 
-	DumpNamedIndexesFile(&sz, "NamedIndexes/5/32_0.NAM", 32, 4); 
+	DumpNamedIndexesFile(&sz, "NamedIndexes"_FS_"5"_FS_"32_0.NAM", 32, 4); 
 	AssertString("\
-NamedIndexes/5/32_0.NAM\n\
+NamedIndexes"_FS_"5"_FS_"32_0.NAM\n\
 -----------------------\n\
    0: 5265267321786128702 -> beast\n\
    1: 4678979686897958483 -> Earthling/slave-shield\n\
@@ -578,9 +579,9 @@ NamedIndexes/5/32_0.NAM\n\
 	sz.Kill();
 
 	sz.Init(); 
-	DumpNamedIndexesFile(&sz, "NamedIndexes/5/64_0.NAM", 64, 4); 
+	DumpNamedIndexesFile(&sz, "NamedIndexes"_FS_"5"_FS_"64_0.NAM", 64, 4); 
 	AssertString("\
-NamedIndexes/5/64_0.NAM\n\
+NamedIndexes"_FS_"5"_FS_"64_0.NAM\n\
 -----------------------\n\
    0: 8352145325252165435 -> Earthling/portraits/Captain Zelnick\n\
    1: 1532564672346590234 -> Earthling/spaceships/Cruiser\n\
@@ -605,9 +606,9 @@ NamedIndexes/5/64_0.NAM\n\
 	sz.Kill();
 
 	sz.Init(); 
-	DumpNamedIndexesFile(&sz, "NamedIndexes/5/96_0.NAM", 96, 4); 
+	DumpNamedIndexesFile(&sz, "NamedIndexes"_FS_""_FS_"96_0.NAM", 96, 4); 
 	AssertString("\
-NamedIndexes/5/96_0.NAM\n\
+NamedIndexes"_FS_"5"_FS_"96_0.NAM\n\
 -----------------------\n\
    0: 3749816364128750931 -> Earthling/spaceships/surplus cold war nuclear war-heads\n\
    1: 2536710003746523782 -> Ur-Quan/Kzer-za/spaceships/Dreadnought/launch figters/HierachyCrew\n\
@@ -616,9 +617,9 @@ NamedIndexes/5/96_0.NAM\n\
 -----------------------\n", sz.Text());
 	sz.Kill();
 
-	AssertFalse(cFileUtil.Exists("NamedIndexes/5/32_0.NAM.TMP"));
-	AssertFalse(cFileUtil.Exists("NamedIndexes/5/64_0.NAM.TMP"));
-	AssertFalse(cFileUtil.Exists("NamedIndexes/5/96_0.NAM.TMP"));
+	AssertFalse(cFileUtil.Exists("NamedIndexes"_FS_"5"_FS_"32_0.NAM.TMP"));
+	AssertFalse(cFileUtil.Exists("NamedIndexes"_FS_"5"_FS_"64_0.NAM.TMP"));
+	AssertFalse(cFileUtil.Exists("NamedIndexes"_FS_"5"_FS_"96_0.NAM.TMP"));
 
 
 	cController.Init(szDirectory, szDirectory, TRUE);
@@ -664,9 +665,9 @@ NamedIndexes/5/96_0.NAM\n\
 	cController.Kill();
 
 	sz.Init(); 
-	DumpNamedIndexesFile(&sz, "NamedIndexes/5/64_0.NAM", 64, 4); 
+	DumpNamedIndexesFile(&sz, "NamedIndexes"_FS_"5"_FS_"64_0.NAM", 64, 4); 
 	AssertString("\
-NamedIndexes/5/64_0.NAM\n\
+NamedIndexes"_FS_"5"_FS_"64_0.NAM\n\
 -----------------------\n\
    0: 8352145325252165435 -> Earthling/portraits/Captain Zelnick\n\
    1: 1532564672346590234 -> Earthling/spaceships/Cruiser\n\

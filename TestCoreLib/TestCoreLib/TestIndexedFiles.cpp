@@ -18,7 +18,6 @@ void TestIndexedFilesWorkingDirectory(void)
 	CChars					szName;
 	CChars					szRewrite;
 
-
 	cFileUtil.RemoveDir(szDirectorty);
 	szName.Init();
 	szRewrite.Init();
