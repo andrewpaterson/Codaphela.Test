@@ -10,16 +10,17 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestAdd(void)
+void TestNamedIndexesAdd(void)
 {
 	CNamedIndexes			cNamedIndexes;
 	CDurableFileController	cController;
 	CFileUtil				cFileUtil;
 	BOOL					bResult;
+	char					szDirectory[] = "NamedIndexes/1";
 
-	cFileUtil.MakeDir("NamedIndexes/1");
+	cFileUtil.MakeDir(szDirectory);
 
-	cController.Init("NamedIndexes/1", TRUE);
+	cController.Init(szDirectory, szDirectory, TRUE);
 	cNamedIndexes.Init(&cController, 10 MB, 4);
 	cController.Begin();
 	cNamedIndexes.Open();
@@ -87,16 +88,17 @@ void TestAdd(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestRemove(void)
+void TestNamedIndexesRemove(void)
 {
 	CNamedIndexes			cNamedIndexes;
 	CDurableFileController	cController;
 	CFileUtil				cFileUtil;
 	BOOL					bResult;
+	char					szDirectory[] = "NamedIndexes/2";
 
-	cFileUtil.MakeDir("NamedIndexes/2");
+	cFileUtil.MakeDir(szDirectory);
 
-	cController.Init("NamedIndexes/2", TRUE);
+	cController.Init(szDirectory, szDirectory, TRUE);
 	cNamedIndexes.Init(&cController, 10 MB, 4);
 	cController.Begin();
 	cNamedIndexes.Open();
@@ -181,16 +183,17 @@ void TestRemove(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestCacheEviction(void)
+void TestNamedIndexesCacheEviction(void)
 {
 	CNamedIndexes				cNamedIndexes;
 	CDurableFileController		cController;
 	CFileUtil					cFileUtil;
 	BOOL						bResult;
 	CArrayNamedIndexesBlockPtr	cBlockPtrs;
+	char						szDirectory[] = "NamedIndexes/3";
 
-	cFileUtil.MakeDir("NamedIndexes/3");
-	cController.Init("NamedIndexes/3", TRUE);
+	cFileUtil.MakeDir(szDirectory);
+	cController.Init(szDirectory, szDirectory, TRUE);
 	cNamedIndexes.Init(&cController, 256, 4);
 	cController.Begin();
 	cNamedIndexes.Open();
@@ -284,7 +287,7 @@ void TestCacheEviction(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestLoad(void)
+void TestNamedIndexesLoad(void)
 {
 	CNamedIndexes				cNamedIndexes;
 	CDurableFileController		cController;
@@ -292,10 +295,11 @@ void TestLoad(void)
 	CNamedIndexesBlocks*		pcBlock32;
 	CNamedIndexesBlocks*		pcBlock64;
 	CNamedIndexesBlock*			pcBlock;
+	char						szDirectory[] = "NamedIndexes/4";
 
-	cFileUtil.MakeDir("NamedIndexes/4");
+	cFileUtil.MakeDir(szDirectory);
 
-	cController.Init("NamedIndexes/4", TRUE);
+	cController.Init(szDirectory, szDirectory, TRUE);
 	cNamedIndexes.Init(&cController, 512, 6);
 
 	AssertTrue(cController.Begin());
@@ -412,7 +416,7 @@ NamedIndexes/4/64_0.NAM\n\
 -----------------------\n", sz.Text());
 	sz.Kill();
 
-	cController.Init("NamedIndexes/4", TRUE);
+	cController.Init(szDirectory, szDirectory, TRUE);
 	cNamedIndexes.Init(&cController, 512, 6);
 
 	AssertTrue(cController.Begin());
@@ -486,17 +490,18 @@ NamedIndexes/4/64_0.NAM\n\
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestOptimise(void)
+void TestNamedIndexesOptimise(void)
 {
 	CNamedIndexes				cNamedIndexes;
 	CDurableFileController		cController;
 	CFileUtil					cFileUtil;
 	BOOL						bResult;
 	CNamedIndexesOptimiser		cOptimiser;
+	char						szDirectory[] = "NamedIndexes/5";
 
-	cFileUtil.MakeDir("NamedIndexes/5");
+	cFileUtil.MakeDir(szDirectory);
 
-	cController.Init("NamedIndexes/5", TRUE);
+	cController.Init(szDirectory, szDirectory, TRUE);
 	cNamedIndexes.Init(&cController, 20 MB, 4);
 	
 	AssertTrue(cController.Begin());
@@ -539,7 +544,7 @@ void TestOptimise(void)
 	cController.Kill();
 
 
-	cController.Init("NamedIndexes/5", FALSE);  //Not being durable during optimisation is important
+	cController.Init(szDirectory, szDirectory, FALSE);  //Not being durable during optimisation is important
 	cNamedIndexes.Init(&cController, 20 MB, 4);
 	cOptimiser.Init(&cNamedIndexes);
 	bResult = cOptimiser.Optimise();
@@ -616,7 +621,7 @@ NamedIndexes/5/96_0.NAM\n\
 	AssertFalse(cFileUtil.Exists("NamedIndexes/5/96_0.NAM.TMP"));
 
 
-	cController.Init("NamedIndexes/5", TRUE);
+	cController.Init(szDirectory, szDirectory, TRUE);
 	AssertTrue(cController.Begin());
 	cNamedIndexes.Init(&cController, 20 MB, 4);
 	AssertLongLongInt(26, cNamedIndexes.NumNames());
@@ -699,11 +704,11 @@ void TestNamedIndexes(void)
 
 	cFileUtil.RemoveDir("NamedIndexes");
 
-	TestAdd();
-	TestRemove();
-	TestCacheEviction();
-	TestLoad();
-	TestOptimise();
+	TestNamedIndexesAdd();
+	TestNamedIndexesRemove();
+	TestNamedIndexesCacheEviction();
+	TestNamedIndexesLoad();
+	TestNamedIndexesOptimise();
 
 	cFileUtil.RemoveDir("NamedIndexes");
 
