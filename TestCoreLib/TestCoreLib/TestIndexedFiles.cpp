@@ -27,9 +27,9 @@ void TestIndexedFilesWorkingDirectory(void)
 
 	cController.Init(szName.Text(), szRewrite.Text(), TRUE);
 	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
-	cIndexedFiles.Open();
+	cController.Begin();
 
-	cIndexedFiles.Close();
+	cController.End();
 	cIndexedFiles.Kill();
 	cController.Kill();
 

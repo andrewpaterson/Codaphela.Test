@@ -13,171 +13,58 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertFileContents(char* szFileName, char* szExpectedContents)
+void TestDurableSetAdd(void)
 {
-	CTextFile		cTextFile;
-
-	cTextFile.Init();
-	AssertBool(TRUE, cTextFile.Read(szFileName));
-	AssertString(szExpectedContents, cTextFile.Text());
-	cTextFile.Kill();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void TestDurableFileRecovery(void)
-{
-	CFileUtil cFileUtil;
-
-	FastFunctionsInit();
-	TypeConverterInit();
-	cFileUtil.RemoveDir("Durable");
-	cFileUtil.MakeDir("Durable");
-
+	CFileUtil				cFileUtil;
 	CDurableFileController	cController;
-	CDurableSet*			pcDurableSet;
 	CDurableFile			cDurableFile1;
 	CDurableFile			cDurableFile2;
 	CDurableFile			cDurableFile3;
 	CDurableFile			cDurableFile4;
+	char					szDirectory[] = "Durable2";
+	CDurableFile*			pcDurableFile;
 
-	//////////////////////////////////////////////////////////////////////////
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
 
-	cController.Init("Durable", "Durable", TRUE);
+	cController.Init(szDirectory, szDirectory, TRUE);
 
-	cDurableFile1.Init(&cController, "Durable"_FS_"1.txt", "Durable"_FS_"_1.txt");	cDurableFile1.Open();
-	cDurableFile2.Init(&cController, "Durable"_FS_"2.txt", "Durable"_FS_"_2.txt");	cDurableFile2.Open();
-	cDurableFile3.Init(&cController, "Durable"_FS_"3.txt", "Durable"_FS_"_3.txt");	cDurableFile3.Open();
-	cDurableFile4.Init(&cController, "Durable"_FS_"4.txt", "Durable"_FS_"_4.txt");	cDurableFile4.Open();
+	cDurableFile1.Init(&cController, "Durable"_FS_"1.txt", "Durable"_FS_"_1.txt");
+	cDurableFile2.Init(&cController, "Durable"_FS_"2.txt", "Durable"_FS_"_2.txt");
+	cDurableFile3.Init(&cController, "Durable"_FS_"3.txt", "Durable"_FS_"_3.txt");
+	cDurableFile4.Init(&cController, "Durable"_FS_"4.txt", "Durable"_FS_"_4.txt");
+	cController.Begin();
 
-	pcDurableSet = cController.GetDurableSet();
-	pcDurableSet->Add(&cDurableFile1);
-	pcDurableSet->Add(&cDurableFile2);
-	pcDurableSet->Add(&cDurableFile3);
-	pcDurableSet->Add(&cDurableFile4);
+	cController.AddFile(&cDurableFile1);
+	AssertInt(1, cController.NumFiles());
+	pcDurableFile = cController.GetFile(0);
+	AssertPointer(&cDurableFile1, pcDurableFile);
 
-	pcDurableSet->Begin();
-	cDurableFile1.Write("Dulcedo ", 8, 1);
-	cDurableFile1.Write("Cogitationis", 13, 1);
+	cController.AddFile(&cDurableFile1);
+	AssertInt(1, cController.NumFiles());
+	pcDurableFile = cController.GetFile(0);
+	AssertPointer(&cDurableFile1, pcDurableFile);
 
-	cDurableFile4.Write("Age ", 4, 1);
-	cDurableFile4.Write("Chaos ", 6, 1);
-	cDurableFile4.Write("Battle ", 7, 1);
-	cDurableFile4.Write("Orcs ", 5, 1);
-	cDurableFile4.Write("Humans", 7, 1);
+	cController.AddFile(&cDurableFile2);
+	AssertInt(2, cController.NumFiles());
+	cController.AddFile(&cDurableFile3);
+	AssertInt(3, cController.NumFiles());
+	cController.AddFile(&cDurableFile4);
+	AssertInt(4, cController.NumFiles());
 
-	cDurableFile3.Write(4, "BBBB", 4, 1);
-	cDurableFile3.Write(0, "AAAA", 4, 1);
-	cDurableFile3.Write(12, "DDDD", 4, 1);
-	cDurableFile3.Write(8, "CCCC", 4, 1);
+	cController.AddFile(&cDurableFile2);
+	AssertInt(4, cController.NumFiles());
+	cController.AddFile(&cDurableFile3);
+	AssertInt(4, cController.NumFiles());
+	cController.AddFile(&cDurableFile4);
+	AssertInt(4, cController.NumFiles());
 
 	cController.End();
+	cDurableFile1.Kill();
+	cDurableFile2.Kill();
+	cDurableFile3.Kill();
+	cDurableFile4.Kill();
 	cController.Kill();
-
-	cDurableFile1.Close(); 
-	cDurableFile2.Close(); 
-	cDurableFile3.Close(); 
-	cDurableFile4.Close(); 
-
-	AssertFileContents("Durable"_FS_"1.txt", "Dulcedo Cogitationis");
-	AssertFileContents("Durable"_FS_"_1.txt", "Dulcedo Cogitationis");
-	AssertFileContents("Durable"_FS_"3.txt", "AAAABBBBCCCCDDDD");
-	AssertFileContents("Durable"_FS_"_3.txt", "AAAABBBBCCCCDDDD");
-	AssertFileContents("Durable"_FS_"4.txt", "Age Chaos Battle Orcs Humans");
-	AssertFileContents("Durable"_FS_"_4.txt", "Age Chaos Battle Orcs Humans");
-
-	AssertBool(FALSE, cFileUtil.Exists("Durable"_FS_"2.txt"));
-	AssertBool(FALSE, cFileUtil.Exists("Durable"_FS_"_2.txt"));
-
-	AssertBool(FALSE, cFileUtil.Exists("Durable"_FS_"Mark1.Write"));
-	AssertBool(FALSE, cFileUtil.Exists("Durable"_FS_"Mark2.Rewrite"));
-
-	//////////////////////////////////////////////////////////////////////////
-
-	cFileUtil.Touch("Durable"_FS_"Mark1.Write");
-	cFileUtil.Delete("Durable"_FS_"3.txt");
-	cFileUtil.Delete("Durable"_FS_"4.txt");
-
-	cDurableFile1.Init(&cController, "Durable"_FS_"1.txt", "Durable"_FS_"_1.txt");	cDurableFile1.Open();
-	cDurableFile2.Init(&cController, "Durable"_FS_"2.txt", "Durable"_FS_"_2.txt");	cDurableFile2.Open();
-	cDurableFile3.Init(&cController, "Durable"_FS_"3.txt", "Durable"_FS_"_3.txt");	cDurableFile3.Open();
-	cDurableFile4.Init(&cController, "Durable"_FS_"4.txt", "Durable"_FS_"_4.txt");	cDurableFile4.Open();
-
-	pcDurableSet->Init("Durable"_FS_"Mark1.Write", "Durable"_FS_"Mark2.Rewrite");
-	pcDurableSet->Add(&cDurableFile1);
-	pcDurableSet->Add(&cDurableFile2);
-	pcDurableSet->Add(&cDurableFile3);
-	pcDurableSet->Add(&cDurableFile4);
-
-	pcDurableSet->Recover();
-	cController.Kill();
-
-
-	cDurableFile1.Close(); 
-	cDurableFile2.Close(); 
-	cDurableFile3.Close(); 
-	cDurableFile4.Close(); 
-
-	AssertFileContents("Durable"_FS_"1.txt", "Dulcedo Cogitationis");
-	AssertFileContents("Durable"_FS_"_1.txt", "Dulcedo Cogitationis");
-	AssertFileContents("Durable"_FS_"3.txt", "AAAABBBBCCCCDDDD");
-	AssertFileContents("Durable"_FS_"_3.txt", "AAAABBBBCCCCDDDD");
-	AssertFileContents("Durable"_FS_"4.txt", "Age Chaos Battle Orcs Humans");
-	AssertFileContents("Durable"_FS_"_4.txt", "Age Chaos Battle Orcs Humans");
-
-	AssertBool(FALSE, cFileUtil.Exists("Durable"_FS_"2.txt"));
-	AssertBool(FALSE, cFileUtil.Exists("Durable"_FS_"_2.txt"));
-
-	AssertBool(FALSE, cFileUtil.Exists("Durable"_FS_"Mark1.Write"));
-	AssertBool(FALSE, cFileUtil.Exists("Durable"_FS_"Mark2.Rewrite"));
-
-	//////////////////////////////////////////////////////////////////////////
-
-	cFileUtil.Touch("Durable"_FS_"Mark1.Write");
-	cFileUtil.Touch("Durable"_FS_"Mark2.Rewrite");
-	cFileUtil.Delete("Durable"_FS_"_1.txt");
-	cFileUtil.Delete("Durable"_FS_"_4.txt");
-
-	cDurableFile1.Init(&cController, "Durable"_FS_"1.txt", "Durable"_FS_"_1.txt");	cDurableFile1.Open();
-	cDurableFile2.Init(&cController, "Durable"_FS_"2.txt", "Durable"_FS_"_2.txt");	cDurableFile2.Open();
-	cDurableFile3.Init(&cController, "Durable"_FS_"3.txt", "Durable"_FS_"_3.txt");	cDurableFile3.Open();
-	cDurableFile4.Init(&cController, "Durable"_FS_"4.txt", "Durable"_FS_"_4.txt");	cDurableFile4.Open();
-
-	pcDurableSet->Init("Durable"_FS_"Mark1.Write", "Durable"_FS_"Mark2.Rewrite");
-	pcDurableSet->Add(&cDurableFile1);
-	pcDurableSet->Add(&cDurableFile2);
-	pcDurableSet->Add(&cDurableFile3);
-	pcDurableSet->Add(&cDurableFile4);
-
-	pcDurableSet->Recover();
-	cController.Kill();
-
-	cDurableFile1.Close(); 
-	cDurableFile2.Close(); 
-	cDurableFile3.Close(); 
-	cDurableFile4.Close(); 
-
-	AssertFileContents("Durable"_FS_"1.txt", "Dulcedo Cogitationis");
-	AssertFileContents("Durable"_FS_"_1.txt", "Dulcedo Cogitationis");
-	AssertFileContents("Durable"_FS_"3.txt", "AAAABBBBCCCCDDDD");
-	AssertFileContents("Durable"_FS_"_3.txt", "AAAABBBBCCCCDDDD");
-	AssertFileContents("Durable"_FS_"4.txt", "Age Chaos Battle Orcs Humans");
-	AssertFileContents("Durable"_FS_"_4.txt", "Age Chaos Battle Orcs Humans");
-
-	AssertBool(FALSE, cFileUtil.Exists("Durable"_FS_"2.txt"));
-	AssertBool(FALSE, cFileUtil.Exists("Durable"_FS_"_2.txt"));
-
-	AssertBool(FALSE, cFileUtil.Exists("Durable"_FS_"Mark1.Write"));
-	AssertBool(FALSE, cFileUtil.Exists("Durable"_FS_"Mark2.Rewrite"));
-
-	//////////////////////////////////////////////////////////////////////////
-
-	cFileUtil.RemoveDir("Durable");
-	FastFunctionsKill();
-	TypeConverterKill();
 }
 
 
@@ -187,10 +74,14 @@ void TestDurableFileRecovery(void)
 //////////////////////////////////////////////////////////////////////////
 void TestDurableSet(void)
 {
+	FastFunctionsInit();
+	TypeConverterInit();
 	BeginTests();
 
-	TestDurableFileRecovery();
+	TestDurableSetAdd();
 
 	TestStatistics();
+	FastFunctionsKill();
+	TypeConverterKill();
 }
 

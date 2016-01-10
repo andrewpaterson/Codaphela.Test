@@ -52,8 +52,8 @@ int main(int argc, char* argv[])
 	//TestXMLParser();
 	//TestXMLFile();
 	//TestLogFile();
-	TestDurableFile();
 	TestDurableSet();
+	TestDurableFile();
 	TestDurableFileController();
 	//TestIndexTreeNodeFile();
 	//TestIndexTreeBlockFile();

@@ -1,4 +1,5 @@
 #include "BaseLib/FileUtil.h"
+#include "CoreLib/DurableFileController.h"
 #include "CoreLib/IndexedHuge.h"
 #include "TestLib/Assert.h"
 
@@ -19,19 +20,19 @@ void TestIndexedHugeStuff(void)
 	int						i;
 	int						j;
 	BOOL					bResult;
+	CDurableFileController	cController;
+	char					szDirectory[] = "IndexedHuge";
 
-	cFileUtil.RemoveDir("IndexedHuge");
-	cFileUtil.MakeDir("IndexedHuge");
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
 
-	szWrite.Init("IndexedHuge");
-	szWrite.Append(FILE_SEPARATOR[0]);
-	szWrite.Append("Indices.DAT");
-	szRewrite.Init("IndexedHuge");
-	szRewrite.Append(FILE_SEPARATOR[0]);
-	szRewrite.Append("_Indices.DAT");
+	szWrite.InitList(szDirectory, FILE_SEPARATOR, "Indices.DAT", NULL);
+	szRewrite.InitList(szDirectory, FILE_SEPARATOR, "_Indices.DAT", NULL);
 
-	cDurableFile.Init(NULL, szWrite.Text(), szRewrite.Text());
-	cDurableFile.Open();
+	cController.Init(szDirectory, szDirectory, FALSE);
+
+	cDurableFile.Init(&cController, szWrite.Text(), szRewrite.Text());
+	cController.Begin();
 
 	szWrite.Kill();
 	szRewrite.Kill();
@@ -97,9 +98,9 @@ void TestIndexedHugeStuff(void)
 	AssertInt(1, cTest.GetDataSize());
 
 	cHuge.Kill();
-	cDurableFile.Close();
+	cController.End();
 
-	cDurableFile.Open();
+	cController.Begin();
 
 	cHuge.Init(&cDurableFile, FALSE, NULL, 12, 4, 2, 2);
 	AssertInt(8, cHuge.NumPossibleInMemoryIndexDescriptors());
@@ -140,10 +141,12 @@ void TestIndexedHugeStuff(void)
 	cHuge.UpdateFile();
 	AssertLongLongInt(48 * sizeof(CIndexedDataDescriptor), cDurableFile.Size());
 
-	cDurableFile.Close();
+	cController.End();
 	cDurableFile.Kill();
 
-	cFileUtil.RemoveDir("IndexedHuge");
+	cController.Kill();
+
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -153,20 +156,24 @@ void TestIndexedHugeStuff(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexedHugeSmallCacheFailure(void)
 {
-	CIndexedHuge		cHuge;
-	CDurableFile		cDurableFile;
-	CFileUtil			cFileUtil;
-	CChars				szWrite;
-	CChars				szRewrite;
-	CChars				szResult;
+	CIndexedHuge			cHuge;
+	CDurableFile			cDurableFile;
+	CFileUtil				cFileUtil;
+	CChars					szWrite;
+	CChars					szRewrite;
+	CChars					szResult;
+	CDurableFileController	cController;
+	char					szDirectory[] = "IndexedHuge";
 
-	cFileUtil.RemoveDir("IndexedHuge");
-	cFileUtil.MakeDir("IndexedHuge");
-	szWrite.InitList("IndexedHuge", FILE_SEPARATOR, "Indices.DAT", NULL);
-	szRewrite.InitList("IndexedHuge", FILE_SEPARATOR, "_Indices.DAT", NULL);
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
 
-	cDurableFile.Init(NULL, szWrite.Text(), szRewrite.Text());
-	cDurableFile.Open();
+	szWrite.InitList(szDirectory, FILE_SEPARATOR, "Indices.DAT", NULL);
+	szRewrite.InitList(szDirectory, FILE_SEPARATOR, "_Indices.DAT", NULL);
+
+	cController.Init(szDirectory, szDirectory, FALSE);
+	cDurableFile.Init(&cController, szWrite.Text(), szRewrite.Text());
+	cController.Begin();
 
 	cHuge.Init(&cDurableFile, FALSE, NULL, 6, 3, 4, 2);
 	AssertInt(6, cHuge.NumPossibleInMemoryIndexDescriptors());
@@ -240,13 +247,15 @@ Parent: 6 - 11 (0)\n\
 
 	cHuge.Save();
 	cHuge.Kill();
-	cDurableFile.Close();
+	cController.End();
 	cDurableFile.Kill();
+	cController.Kill();
 
 	CIndexedDataDescriptor	cIndex;
 
-	cDurableFile.Init(NULL, szWrite.Text(), szRewrite.Text());
-	cDurableFile.Open();
+	cController.Init(szDirectory, szDirectory, FALSE);
+	cDurableFile.Init(&cController, szWrite.Text(), szRewrite.Text());
+	cController.Begin();
 
 	cHuge.Init(&cDurableFile, FALSE, NULL, 4, 2, 4, 2);
 	cHuge.Load();
@@ -301,12 +310,14 @@ Parent: 6 - 11 (0)\n\
 
 	cHuge.Save();
 	cHuge.Kill();
-	cDurableFile.Close();
+	cController.End();
 	cDurableFile.Kill();
+
+	cController.Kill();
 
 	szWrite.Kill();
 	szRewrite.Kill();
-	cFileUtil.RemoveDir("IndexedHuge");
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 

@@ -26,25 +26,25 @@ void TestIndexedFile(void)
 	filePos						iFilePos;
 	CTextFile					cTextFile;
 	char						szTemp[16];
+	char						szDirectory[] = "IndexedFile";
 
-	bResult = cFileUtil.RemoveDir("IndexedFile");
+	bResult = cFileUtil.RemoveDir(szDirectory);
 	AssertTrue(bResult);
 
-	bResult = cFileUtil.MakeDir("IndexedFile");
+	bResult = cFileUtil.MakeDir(szDirectory);
 	AssertTrue(bResult);
 
-	szWrite.Init("IndexedFile");
+	szWrite.Init(szDirectory);
 	szWrite.Append(FILE_SEPARATOR[0]);
 	szWrite.Append("File.DAT");
-	szRewrite.Init("IndexedFile");
+	szRewrite.Init(szDirectory);
 	szRewrite.Append(FILE_SEPARATOR[0]);
 	szRewrite.Append("_File.DAT");
 
-	cDurableController.Init("IndexedFile", "IndexedFile", TRUE);
+	cDurableController.Init(szDirectory, szDirectory, TRUE);
 	cDurableController.Begin();
 
 	cIndexedFile.Init(&cDurableController, 0, szWrite.Text(), szRewrite.Text(), 9, 0);
-	cIndexedFile.Open(&cDurableController);
 
 	iFilePos = cIndexedFile.Write(sz3);
 	AssertLongLongInt(0, iFilePos / cIndexedFile.miDataSize);
@@ -57,8 +57,6 @@ void TestIndexedFile(void)
 	AssertLongLongInt(18, cIndexedFile.mcFile.Size());
 
 	bResult = cDurableController.End();
-	AssertTrue(bResult);
-	bResult = cIndexedFile.Close();
 	AssertTrue(bResult);
 	cIndexedFile.Kill();
 
@@ -77,11 +75,10 @@ void TestIndexedFile(void)
 	cTextFile.Kill();
 
 
-	cDurableController.Init("IndexedFile", "IndexedFile", TRUE);
+	cDurableController.Init(szDirectory, szDirectory, TRUE);
 	cDurableController.Begin();
 
 	cIndexedFile.Init(&cDurableController, 0, szWrite.Text(), szRewrite.Text(), 9, 0);
-	cIndexedFile.Open(&cDurableController);
 
 	bResult = cIndexedFile.Read(1, szTemp);
 	AssertTrue(bResult);
@@ -97,8 +94,6 @@ void TestIndexedFile(void)
 	AssertInt(18, (int)cIndexedFile.mcFile.Size());
 
 	bResult = cDurableController.End();
-	AssertTrue(bResult);
-	bResult = cIndexedFile.Close();
 	AssertTrue(bResult);
 	cIndexedFile.Kill();
 
