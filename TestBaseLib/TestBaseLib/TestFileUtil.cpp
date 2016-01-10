@@ -295,11 +295,18 @@ void TestFileUtilTouchDirectory(void)
 	AssertTrue(cFileUtil.Touch(szFileName.Text()));
 
 	szDirectory.Kill();
+	szFileName.Kill();
 
 	cFileUtil.RemoveDir("file_util");
 
-	AssertTrue(cFileUtil.TouchDir("C:\\Warthog.PIG"));
-	AssertTrue(cFileUtil.TouchDir("\\Warthog.PIG"));
+	AssertFalse(cFileUtil.TouchDir("C:\\Warthog.PIG"));
+	AssertFalse(cFileUtil.TouchDir("\\Warthog.PIG"));
+
+	szDirectory.Init();
+	cFileUtil.CurrentDirectory(&szDirectory);
+	szDirectory.Append("War-pig.hog");
+	AssertFalse(cFileUtil.TouchDir(szDirectory.Text()));
+	szDirectory.Kill();
 }
 
 
