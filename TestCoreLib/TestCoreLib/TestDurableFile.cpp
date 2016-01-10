@@ -1,12 +1,13 @@
-#include "TestLib/Assert.h"
+#include "BaseLib/Logger.h"
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
-#include "CoreLib/DurableFile.h"
-#include "CoreLib/DurableFileController.h"
 #include "BaseLib/FileBasic.h"
 #include "BaseLib/PointerRemapper.h"
 #include "BaseLib/TextFile.h"
+#include "CoreLib/DurableFile.h"
+#include "CoreLib/DurableFileController.h"
 #include "CoreLib/TypeConverter.h"
+#include "TestLib/Assert.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -387,6 +388,58 @@ void TestDurableFileWriteRound2(BOOL bDurable)
 }
 
 
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDurableFileReadRound2(BOOL bDurable)
+{
+	CFileUtil				cFileUtil;
+	CDurableFile			cDurableFile;
+	filePos					iResult;
+	CDurableFileController	cController;
+	char					szDirectory[] = "Durable6";
+	char					szDest[2048];
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	cController.Init(szDirectory, szDirectory, bDurable);
+	cDurableFile.Init(&cController, "Durable6"_FS_"ReadFile.txt", "Durable6"_FS_"_ReadFile.txt");
+	cController.Begin();
+	AssertFalse(cDurableFile.TestGetOpenedSinceBegin());
+	AssertInt(0, cController.NumFiles());
+
+	memset(szDest, 0, 10);
+	
+	iResult = cDurableFile.Read(szDest, 9, 1);
+	AssertLongLongInt(0, iResult);
+	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
+	AssertInt(0, cDurableFile.GetNumWrites());
+	AssertInt(1, cController.NumFiles());
+	AssertLongLongInt(0, cDurableFile.Tell());
+	AssertLongLongInt(0, cDurableFile.Size());
+
+	memset(szDest, 0, 10);
+
+	iResult = cDurableFile.Read(EFSO_SET, 0, szDest, 9, 1);
+	AssertLongLongInt(0, iResult);
+	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
+	AssertInt(0, cDurableFile.GetNumWrites());
+	AssertInt(1, cController.NumFiles());
+	AssertLongLongInt(0, cDurableFile.Tell());
+	AssertLongLongInt(0, cDurableFile.Size());
+
+	cController.End();
+	cDurableFile.Kill();
+	cController.Kill();
+
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -407,6 +460,8 @@ void TestDurableFile(void)
 	TestDurableFileRead(FALSE);
 	TestDurableFileWriteRound2(TRUE);
 	TestDurableFileWriteRound2(FALSE);
+	TestDurableFileReadRound2(TRUE);
+	TestDurableFileReadRound2(FALSE);
 
 	TestStatistics();
 	FastFunctionsKill();

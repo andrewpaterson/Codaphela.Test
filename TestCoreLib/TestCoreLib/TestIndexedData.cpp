@@ -27,6 +27,8 @@ void TestIndexedDataCacheEviction(void)
 
 	OI = 0LL;
 	cIndexedData.Init("Database1", 71, FALSE);  //A little more than two items in the cache...
+
+	cIndexedData.DurableBegin();
 	AssertTrue(cIndexedData.Add(OI, szHello, 6, 0));
 	AssertInt(1, cIndexedData.NumCached());
 	AssertInt(30, cIndexedData.TestGetCachedObjectSize(OI));
@@ -39,6 +41,7 @@ void TestIndexedDataCacheEviction(void)
 	AssertInt(1, cIndexedData.NumCached());
 	AssertInt(1, (int)cIndexedData.TestNumCachedIndexes());
 	AssertInt(31, cIndexedData.TestGetCachedObjectSize(OI));
+	cIndexedData.DurableEnd();
 
 	cIndexedData.Kill();
 
@@ -50,6 +53,7 @@ void TestIndexedDataCacheEviction(void)
 	cIndexedData.Init("Database1", 1024, FALSE);
 	AssertInt(2, cIndexedData.NumFiles());
 
+	cIndexedData.DurableBegin();
 	OI = 0LL;
 	uiSize = cIndexedData.Size(OI);
 	AssertInt(6, uiSize);
@@ -82,6 +86,7 @@ void TestIndexedDataCacheEviction(void)
 	AssertString("Hello", szIn);
 	AssertInt(3, cIndexedData.NumCached());
 	AssertInt(3, (int)cIndexedData.TestNumCachedIndexes());
+	cIndexedData.DurableEnd();
 
 	cIndexedData.Kill();
 
