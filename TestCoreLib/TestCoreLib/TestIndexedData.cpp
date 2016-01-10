@@ -27,24 +27,24 @@ void TestIndexedDataCacheEviction(void)
 
 	OI = 0LL;
 	cIndexedData.Init("Database1", 71, FALSE);  //A little more than two items in the cache...
-	cIndexedData.Add(OI, szHello, 6, 0);
+	AssertTrue(cIndexedData.Add(OI, szHello, 6, 0));
 	AssertInt(1, cIndexedData.NumCached());
 	AssertInt(30, cIndexedData.TestGetCachedObjectSize(OI));
 	OI = 1LL;
-	cIndexedData.Add(OI, szWorld, 6, 0);
+	AssertTrue(cIndexedData.Add(OI, szWorld, 6, 0));
 	AssertInt(2, cIndexedData.NumCached());
 	AssertInt(30, cIndexedData.TestGetCachedObjectSize(OI));
 	OI = 2LL;
-	cIndexedData.Add(OI, szSteam, 7, 0);
+	AssertTrue(cIndexedData.Add(OI, szSteam, 7, 0));
 	AssertInt(1, cIndexedData.NumCached());
 	AssertInt(1, (int)cIndexedData.TestNumCachedIndexes());
 	AssertInt(31, cIndexedData.TestGetCachedObjectSize(OI));
 
 	cIndexedData.Kill();
 
-	iFileSize = cFileUtil.Size("Database1/6_0.DAT");
+	iFileSize = cFileUtil.Size("Database1"_FS_"6_0.DAT");
 	AssertLongLongInt(12, iFileSize);
-	iFileSize = cFileUtil.Size("Database1/7_0.DAT");
+	iFileSize = cFileUtil.Size("Database1"_FS_"7_0.DAT");
 	AssertLongLongInt(7, iFileSize);
 
 	cIndexedData.Init("Database1", 1024, FALSE);
@@ -54,7 +54,7 @@ void TestIndexedDataCacheEviction(void)
 	uiSize = cIndexedData.Size(OI);
 	AssertInt(6, uiSize);
 	memset(szIn, 0, 7);
-	cIndexedData.Get(OI, szIn);
+	AssertTrue(cIndexedData.Get(OI, szIn));
 	AssertString("Hello", szIn);
 	AssertInt(1, cIndexedData.NumCached());
 
@@ -62,7 +62,7 @@ void TestIndexedDataCacheEviction(void)
 	uiSize = cIndexedData.Size(OI);
 	AssertInt(6, uiSize);
 	memset(szIn, 0, 7);
-	cIndexedData.Get(OI, szIn);
+	AssertTrue(cIndexedData.Get(OI, szIn));
 	AssertString("World", szIn);
 	AssertInt(2, cIndexedData.NumCached());
 
@@ -70,7 +70,7 @@ void TestIndexedDataCacheEviction(void)
 	uiSize = cIndexedData.Size(OI);
 	AssertInt(7, uiSize);
 	memset(szIn, 0, 7);
-	cIndexedData.Get(OI, szIn);
+	AssertTrue(cIndexedData.Get(OI, szIn));
 	AssertString("Stream", szIn);
 	AssertInt(3, cIndexedData.NumCached());
 
@@ -78,7 +78,7 @@ void TestIndexedDataCacheEviction(void)
 	uiSize = cIndexedData.Size(OI);
 	AssertInt(6, uiSize);
 	memset(szIn, 0, 7);
-	cIndexedData.Get(OI, szIn);
+	AssertTrue(cIndexedData.Get(OI, szIn));
 	AssertString("Hello", szIn);
 	AssertInt(3, cIndexedData.NumCached());
 	AssertInt(3, (int)cIndexedData.TestNumCachedIndexes());

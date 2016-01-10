@@ -27,7 +27,7 @@ void TestDurableFileInit(void)
 
 	cController.Init("Durable1", "Durable1", TRUE);
 
-	cDurable.Init(&cController, "Durable1\\TestFile.txt", "Durable1\\_TestFile.txt");
+	cDurable.Init(&cController, "Durable1"_FS_"TestFile.txt", "Durable1"_FS_"_TestFile.txt");
 	cDurable.Open();
 
 	cDurable.Begin();
@@ -70,7 +70,7 @@ void TestDurableFileWrite(void)
 
 	cController.Init("Durable2", "Durable2", TRUE);
 
-	cDurable.Init(&cController, "Durable2\\WrittenFile.txt", "Durable2\\_WrittenFile.txt");
+	cDurable.Init(&cController, "Durable2"_FS_"WrittenFile.txt", "Durable2"_FS_"_WrittenFile.txt");
 	cDurable.Open();
 	AssertLongLongInt(0, cDurable.miPosition);
 	AssertLongLongInt(0, cDurable.miLength);
@@ -103,7 +103,7 @@ void TestDurableFileWrite(void)
 	cController.Kill();
 
 	cTextFile.Init();
-	cTextFile.Read("Durable2\\WrittenFile.txt");
+	cTextFile.Read("Durable2"_FS_"WrittenFile.txt");
 	AssertString(sz4, cTextFile.Text());
 	cTextFile.Kill();
 
@@ -143,7 +143,7 @@ void TestDurableFileComplex(void)
 
 	cController.Init("Durable3", "Durable3", TRUE);
 
-	cDurable.Init(&cController, "Durable3\\WrittenFile.txt", "Durable3\\_WrittenFile.txt");
+	cDurable.Init(&cController, "Durable3"_FS_"WrittenFile.txt", "Durable3"_FS_"_WrittenFile.txt");
 	cDurable.Open();
 
 	cDurable.Begin();
@@ -214,12 +214,12 @@ void TestDurableFileComplex(void)
 	cController.Kill();
 
 	cTextFile.Init();
-	cTextFile.Read("Durable3\\WrittenFile.txt");
+	cTextFile.Read("Durable3"_FS_"WrittenFile.txt");
 	AssertString("AAAABBBBCCCCEEEEF", cTextFile.Text());
 	cTextFile.Kill();
 
 	cTextFile.Init();
-	cTextFile.Read("Durable3\\_WrittenFile.txt");
+	cTextFile.Read("Durable3"_FS_"_WrittenFile.txt");
 	AssertString("AAAABBBBCCCCEEEEF", cTextFile.Text());
 	cTextFile.Kill();
 
