@@ -233,6 +233,80 @@ void TestFileUtilMakeDirectory(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFileUtilRemoveLastFromPath(void)
+{
+	CFileUtil	cFileUtil;
+	CChars		szFileName;
+
+	szFileName.Init("home\\directory");
+	cFileUtil.RemoveLastFromPath(&szFileName);
+	AssertString("home", szFileName.Text());
+	szFileName.Kill();
+
+	szFileName.Init("\\directory");
+	cFileUtil.RemoveLastFromPath(&szFileName);
+	AssertString("\\", szFileName.Text());
+	szFileName.Kill();
+
+	szFileName.Init("\\home\\directory");
+	cFileUtil.RemoveLastFromPath(&szFileName);
+	AssertString("\\home", szFileName.Text());
+	szFileName.Kill();
+
+	szFileName.Init("C:\\directory");
+	cFileUtil.RemoveLastFromPath(&szFileName);
+	AssertString("C:\\", szFileName.Text());
+	szFileName.Kill();
+
+	szFileName.Init("C:\\home\\directory");
+	cFileUtil.RemoveLastFromPath(&szFileName);
+	AssertString("C:\\home", szFileName.Text());
+	szFileName.Kill();
+
+	szFileName.Init("directory");
+	cFileUtil.RemoveLastFromPath(&szFileName);
+	AssertString("", szFileName.Text());
+	szFileName.Kill();
+
+	szFileName.Init("");
+	cFileUtil.RemoveLastFromPath(&szFileName);
+	AssertString("", szFileName.Text());
+	szFileName.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFileUtilTouchDirectory(void)
+{
+	CFileUtil		cFileUtil;
+	CChars			szDirectory;
+	CChars			szFileName;
+
+	cFileUtil.RemoveDir("file_util");
+
+	szDirectory.Init("file_util"_FS_"directory"_FS_"make"_FS_"test");
+	cFileUtil.FullPath(&szDirectory);
+	szFileName.Init(szDirectory);
+	cFileUtil.AppendToPath(&szFileName, "Warthog.PIG");
+	AssertTrue(cFileUtil.TouchDir(szFileName.Text()));
+	AssertTrue(cFileUtil.Touch(szFileName.Text()));
+
+	szDirectory.Kill();
+
+	cFileUtil.RemoveDir("file_util");
+
+	AssertTrue(cFileUtil.TouchDir("C:\\Warthog.PIG"));
+	AssertTrue(cFileUtil.TouchDir("\\Warthog.PIG"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFileUtil(void)
 {
 	BeginTests();
@@ -243,6 +317,8 @@ void TestFileUtil(void)
 	TestFileUtilMisc();
 	TestFileUtilMakeNameFromDirectory();
 	TestFileUtilMakeDirectory();
+	TestFileUtilRemoveLastFromPath();
+	TestFileUtilTouchDirectory();
 
 	TestStatistics();
 }
