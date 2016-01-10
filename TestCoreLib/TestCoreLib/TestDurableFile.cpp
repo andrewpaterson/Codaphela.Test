@@ -72,28 +72,28 @@ void TestDurableFileWrite(void)
 
 	cDurable.Init(&cController, "Durable2"_FS_"WrittenFile.txt", "Durable2"_FS_"_WrittenFile.txt");
 	cDurable.Open();
-	AssertLongLongInt(0, cDurable.miPosition);
-	AssertLongLongInt(0, cDurable.miLength);
+	AssertLongLongInt(0, cDurable.TestGetPosition());
+	AssertLongLongInt(0, cDurable.TestGetLength());
 
 	cDurable.Begin();
 	iResult = cDurable.Write(sz1, (int)strlen(sz1), 1);
 	AssertLongLongInt(1, iResult);
-	AssertLongLongInt(19, cDurable.miPosition);
-	AssertLongLongInt(19, cDurable.miLength);
-	AssertInt(1, cDurable.mcWrites.NumElements());
+	AssertLongLongInt(19, cDurable.TestGetPosition());
+	AssertLongLongInt(19, cDurable.TestGetLength());
+	AssertInt(1, cDurable.GetNumWrites());
 
 	iResult = cDurable.Write(sz2, (int)strlen(sz2)+1, 1);
 	AssertLongLongInt(1, iResult);
-	AssertLongLongInt(41, cDurable.miPosition);
-	AssertLongLongInt(41, cDurable.miLength);
-	AssertInt(1, cDurable.mcWrites.NumElements());
+	AssertLongLongInt(41, cDurable.TestGetPosition());
+	AssertLongLongInt(41, cDurable.TestGetLength());
+	AssertInt(1, cDurable.GetNumWrites());
 
 	iResult = cDurable.Write(14, sz3, (int)strlen(sz3), 1);
 	AssertLongLongInt(1, iResult);
-	AssertLongLongInt(19, cDurable.miPosition);
-	AssertLongLongInt(41, cDurable.miLength);
-	AssertInt(1, cDurable.mcWrites.NumElements());
-	AssertString(sz4, (char*)RemapSinglePointer(cDurable.mcWrites.Get(0), sizeof(SDurableFileCommandWrite)));
+	AssertLongLongInt(19, cDurable.TestGetPosition());
+	AssertLongLongInt(41, cDurable.TestGetLength());
+	AssertInt(1, cDurable.GetNumWrites());
+	AssertString(sz4, (char*)cDurable.GetWriteData(0));
 
 	cDurable.End();
 
@@ -150,43 +150,43 @@ void TestDurableFileComplex(void)
 
 	iResult = cDurable.Write(4, szB, 2, 2);
 	AssertLongLongInt(2, iResult);
-	AssertLongLongInt(8, cDurable.miPosition);
-	AssertLongLongInt(8, cDurable.miLength);
+	AssertLongLongInt(8, cDurable.TestGetPosition());
+	AssertLongLongInt(8, cDurable.TestGetLength());
 
 	iResult = cDurable.Write(10, szC, 2, 2);
 	AssertLongLongInt(2, iResult);
-	AssertLongLongInt(14, cDurable.miPosition);
-	AssertLongLongInt(14, cDurable.miLength);
+	AssertLongLongInt(14, cDurable.TestGetPosition());
+	AssertLongLongInt(14, cDurable.TestGetLength());
 
 	memset(szDest, 0, 5);
 	iResult = cDurable.Read(8, szDest, 2, 2);
 	AssertLongLongInt(2, iResult);
-	AssertLongLongInt(12, cDurable.miPosition);
-	AssertLongLongInt(14, cDurable.miLength);
+	AssertLongLongInt(12, cDurable.TestGetPosition());
+	AssertLongLongInt(14, cDurable.TestGetLength());
 	AssertString("", szDest);
 	AssertString("CC", &szDest[2]);
 
 	iResult = cDurable.Write(12, szE, 1, 4);
 	AssertLongLongInt(4, iResult);
-	AssertLongLongInt(16, cDurable.miPosition);
-	AssertLongLongInt(16, cDurable.miLength);
+	AssertLongLongInt(16, cDurable.TestGetPosition());
+	AssertLongLongInt(16, cDurable.TestGetLength());
 
 	memset(szDest, 0, 5);
 	iResult = cDurable.Read(14, szDest, 2, 2);
 	AssertLongLongInt(1, iResult);
-	AssertLongLongInt(16, cDurable.miPosition);
-	AssertLongLongInt(16, cDurable.miLength);
+	AssertLongLongInt(16, cDurable.TestGetPosition());
+	AssertLongLongInt(16, cDurable.TestGetLength());
 	AssertString("EE", szDest);
 	cDurable.End();
 	cDurable.Rewrite();
 
 	cDurable.Begin();
-	AssertLongLongInt(16, cDurable.miPosition);
-	AssertLongLongInt(16, cDurable.miLength);
+	AssertLongLongInt(16, cDurable.TestGetPosition());
+	AssertLongLongInt(16, cDurable.TestGetLength());
 
 	iResult = cDurable.Write(0, szA, 2, 2);
 	AssertLongLongInt(2, iResult);
-	AssertLongLongInt(4, cDurable.miPosition);
+	AssertLongLongInt(4, cDurable.TestGetPosition());
 	iResult = cDurable.Write(8, szC, 2, 1);
 
 	memset(szAll, 0, 18);
