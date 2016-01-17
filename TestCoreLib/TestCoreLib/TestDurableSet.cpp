@@ -29,10 +29,10 @@ void TestDurableSetAdd(void)
 
 	cController.Init(szDirectory, szDirectory, TRUE);
 
-	cDurableFile1.Init(&cController, "Durable"_FS_"1.txt", "Durable"_FS_"_1.txt");
-	cDurableFile2.Init(&cController, "Durable"_FS_"2.txt", "Durable"_FS_"_2.txt");
-	cDurableFile3.Init(&cController, "Durable"_FS_"3.txt", "Durable"_FS_"_3.txt");
-	cDurableFile4.Init(&cController, "Durable"_FS_"4.txt", "Durable"_FS_"_4.txt");
+	cDurableFile1.Init(&cController, "Durable" _FS_ "1.txt", "Durable" _FS_ "_1.txt");
+	cDurableFile2.Init(&cController, "Durable" _FS_ "2.txt", "Durable" _FS_ "_2.txt");
+	cDurableFile3.Init(&cController, "Durable" _FS_ "3.txt", "Durable" _FS_ "_3.txt");
+	cDurableFile4.Init(&cController, "Durable" _FS_ "4.txt", "Durable" _FS_ "_4.txt");
 	cController.Begin();
 
 	cController.AddFile(&cDurableFile1);

@@ -45,9 +45,9 @@ void TestIndexedDataCacheEviction(void)
 
 	cIndexedData.Kill();
 
-	iFileSize = cFileUtil.Size("Database1"_FS_"6_0.DAT");
+	iFileSize = cFileUtil.Size("Database1" _FS_ "6_0.DAT");
 	AssertLongLongInt(12, iFileSize);
-	iFileSize = cFileUtil.Size("Database1"_FS_"7_0.DAT");
+	iFileSize = cFileUtil.Size("Database1" _FS_ "7_0.DAT");
 	AssertLongLongInt(7, iFileSize);
 
 	cIndexedData.Init("Database1", 1024, FALSE);
