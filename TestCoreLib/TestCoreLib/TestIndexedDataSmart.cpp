@@ -26,13 +26,13 @@ void TestIndexedDataMemoryToHugeIndices(void)
 	char			szIsleOfWars[] = "Isle Of Wars";
 	char			szMetalTechEarthSiege[] = "Metal Tech Earth Siege";
 	char			szOilImperium[] = "Oil Imperium";
-	char			iAlienCarnageLen = (int)strlen(szAlienCarnage);
-	char			iBattleArenaToshindenLen = (int)strlen(szBattleArenaToshinden);
-	char			iDragonRidersOfPernLen = (int)strlen(szDragonRidersOfPern);
-	char			iHorrorZombiesFromTheCryptLen = (int)strlen(szHorrorZombiesFromTheCrypt);
-	char			iIsleOfWarsLen = (int)strlen(szIsleOfWars);
-	char			iMetalTechEarthSiegeLen = (int)strlen(szMetalTechEarthSiege);
-	char			iOilImperiumLen = (int)strlen(szOilImperium);
+	char			iAlienCarnageLen = (char)strlen(szAlienCarnage);
+	char			iBattleArenaToshindenLen = (char)strlen(szBattleArenaToshinden);
+	char			iDragonRidersOfPernLen = (char)strlen(szDragonRidersOfPern);
+	char			iHorrorZombiesFromTheCryptLen = (char)strlen(szHorrorZombiesFromTheCrypt);
+	char			iIsleOfWarsLen = (char)strlen(szIsleOfWars);
+	char			iMetalTechEarthSiegeLen = (char)strlen(szMetalTechEarthSiege);
+	char			iOilImperiumLen = (char)strlen(szOilImperium);
 
 	cFileUtil.RemoveDir("Database7");
 
@@ -134,13 +134,13 @@ void TestIndexedDataWriteThrough(void)
 	char			szIsleOfWars[] = "Isle Of Wars";
 	char			szMetalTechEarthSiege[] = "Metal Tech Earth Siege";
 	char			szOilImperium[] = "Oil Imperium";
-	char			iAlienCarnageLen = (int)strlen(szAlienCarnage);
-	char			iBattleArenaToshindenLen = (int)strlen(szBattleArenaToshinden);
-	char			iDragonRidersOfPernLen = (int)strlen(szDragonRidersOfPern);
-	char			iHorrorZombiesFromTheCryptLen = (int)strlen(szHorrorZombiesFromTheCrypt);
-	char			iIsleOfWarsLen = (int)strlen(szIsleOfWars);
-	char			iMetalTechEarthSiegeLen = (int)strlen(szMetalTechEarthSiege);
-	char			iOilImperiumLen = (int)strlen(szOilImperium);
+	char			iAlienCarnageLen = (char)strlen(szAlienCarnage);
+	char			iBattleArenaToshindenLen = (char)strlen(szBattleArenaToshinden);
+	char			iDragonRidersOfPernLen = (char)strlen(szDragonRidersOfPern);
+	char			iHorrorZombiesFromTheCryptLen = (char)strlen(szHorrorZombiesFromTheCrypt);
+	char			iIsleOfWarsLen = (char)strlen(szIsleOfWars);
+	char			iMetalTechEarthSiegeLen = (char)strlen(szMetalTechEarthSiege);
+	char			iOilImperiumLen = (char)strlen(szOilImperium);
 
 	cFileUtil.RemoveDir("Database6");
 
@@ -245,13 +245,13 @@ void TestIndexedDataWriteDirtyTesting(void)
 	char			szIsleOfWars[] = "Isle Of Wars";
 	char			szMetalTechEarthSiege[] = "Metal Tech Earth Siege";
 	char			szOilImperium[] = "Oil Imperium";
-	char			iAlienCarnageLen = (int)strlen(szAlienCarnage);
-	char			iBattleArenaToshindenLen = (int)strlen(szBattleArenaToshinden);
-	char			iDragonRidersOfPernLen = (int)strlen(szDragonRidersOfPern);
-	char			iHorrorZombiesFromTheCryptLen = (int)strlen(szHorrorZombiesFromTheCrypt);
-	char			iIsleOfWarsLen = (int)strlen(szIsleOfWars);
-	char			iMetalTechEarthSiegeLen = (int)strlen(szMetalTechEarthSiege);
-	char			iOilImperiumLen = (int)strlen(szOilImperium);
+	char			iAlienCarnageLen = (char)strlen(szAlienCarnage);
+	char			iBattleArenaToshindenLen = (char)strlen(szBattleArenaToshinden);
+	char			iDragonRidersOfPernLen = (char)strlen(szDragonRidersOfPern);
+	char			iHorrorZombiesFromTheCryptLen = (char)strlen(szHorrorZombiesFromTheCrypt);
+	char			iIsleOfWarsLen = (char)strlen(szIsleOfWars);
+	char			iMetalTechEarthSiegeLen = (char)strlen(szMetalTechEarthSiege);
+	char			iOilImperiumLen = (char)strlen(szOilImperium);
 
 	cFileUtil.RemoveDir("Database8");
 
