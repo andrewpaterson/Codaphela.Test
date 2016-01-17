@@ -162,8 +162,8 @@ void TestFileUtilMakeNameFromDirectory(void)
 	CChars		szDirectory;
 	CChars		szFileName;
 
-	szDirectory.Init("c:"_FS_"Some"_FS_"Directory"_FS_"Or"_FS_"Other"_FS_);
-	szFileName.Init("c:"_FS_"Some"_FS_"Directory"_FS_"Or"_FS_"Other"_FS_"More"_FS_"Dir"_FS_"FileName.txt");
+	szDirectory.Init("c:" _FS_ "Some" _FS_ "Directory" _FS_ "Or" _FS_ "Other" _FS_);
+	szFileName.Init("c:" _FS_ "Some" _FS_ "Directory" _FS_ "Or" _FS_ "Other" _FS_ "More" _FS_ "Dir" _FS_ "FileName.txt");
 	cFileUtil.MakeNameFromDirectory(&szName, &szFileName, &szDirectory);
 
 	AssertString("More/Dir/FileName.txt", szName.Text());
@@ -195,7 +195,7 @@ void TestFileUtilMakeDirectory(void)
 
 	cFileUtil.RemoveDir("file_util");
 
-	szParentDirectory.Init("file_util"_FS_"directory"_FS_"make"_FS_"test");
+	szParentDirectory.Init("file_util" _FS_ "directory" _FS_ "make" _FS_ "test");
 	szDirectory.Init(szParentDirectory);
 	szDirectory.Append(_FS_);
 	szDirectory.Append("GABBA");
@@ -287,7 +287,7 @@ void TestFileUtilTouchDirectory(void)
 
 	cFileUtil.RemoveDir("file_util");
 
-	szDirectory.Init("file_util"_FS_"directory"_FS_"make"_FS_"test");
+	szDirectory.Init("file_util" _FS_ "directory" _FS_ "make" _FS_ "test");
 	cFileUtil.FullPath(&szDirectory);
 	szFileName.Init(szDirectory);
 	cFileUtil.AppendToPath(&szFileName, "Warthog.PIG");

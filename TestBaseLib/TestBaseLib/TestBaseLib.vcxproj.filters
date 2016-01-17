@@ -261,6 +261,9 @@
     <ClCompile Include="TestIndexTreeNodeMemory.cpp">
       <Filter>Source\Data\Index</Filter>
     </ClCompile>
+    <ClCompile Include="TestPrimitiveTypes.cpp">
+      <Filter>Source\Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

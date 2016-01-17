@@ -277,9 +277,13 @@ void TestArrayRemove(void)
 
 	cArray.Init(1);
 	psTest1 = cArray.Add();
-	psTest2 = cArray.Add();
 	psTest1->i1 = 0; psTest1->i2 = 0;
+	psTest2 = cArray.Add();
 	psTest2->i1 = 1; psTest2->i2 = 1;
+	psTest1 = cArray.Get(0);
+	AssertInt(0, psTest1->i1);
+	psTest2 = cArray.Get(1);
+	AssertInt(1, psTest2->i1);
 	cArray.RemoveAt(1, TRUE);
 	psTest1 = cArray.Get(0);
 	AssertInt(0, psTest1->i1);
@@ -288,8 +292,8 @@ void TestArrayRemove(void)
 
 	cArray.Init(1);
 	psTest1 = cArray.Add();
-	psTest2 = cArray.Add();
 	psTest1->i1 = 0; psTest1->i2 = 0;
+	psTest2 = cArray.Add();
 	psTest2->i1 = 1; psTest2->i2 = 1;
 	cArray.RemoveAt(0, FALSE);
 	psTest1 = cArray.Get(0);
@@ -299,8 +303,8 @@ void TestArrayRemove(void)
 
 	cArray.Init(1);
 	psTest1 = cArray.Add();
-	psTest2 = cArray.Add();
 	psTest1->i1 = 0; psTest1->i2 = 0;
+	psTest2 = cArray.Add();
 	psTest2->i1 = 1; psTest2->i2 = 1;
 	cArray.RemoveAt(1, FALSE);
 	psTest1 = cArray.Get(0);
