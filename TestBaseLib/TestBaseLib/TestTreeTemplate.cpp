@@ -5,20 +5,20 @@
 
 struct STestTreeTemplateItem
 {
-	int	i1;
-	int	i2;
+	int	mi1;
+	int	mi2;
 
 	void Init(int i1, int i2);
 	BOOL IsOkay(int i1, int i2);
 };
 void STestTreeTemplateItem::Init(int i1, int i2)
 {
-	this->i1 = i1;
-	this->i2 = i2;
+	mi1 = i1;
+	mi2 = i2;
 }
 BOOL STestTreeTemplateItem::IsOkay(int i1, int i2)
 {
-	return (this->i1 == i1) && (this->i2 == i2);
+	return (mi1 == i1) && (mi2 == i2);
 }
 
 
@@ -98,13 +98,13 @@ void TestTreeTemplateFileHelper(void)
 	cTree.Init();
 
 	psRoot = cTree.InsertRoot();
-	psRoot->i1 = 5; psRoot->i2 = 7;
+	psRoot->mi1 = 5; psRoot->mi2 = 7;
 
 	psChild1 = cTree.InsertOnRightOfChildren(psRoot);
-	psChild1->i1 = 1; psChild1->i2 = 2;
+	psChild1->mi1 = 1; psChild1->mi2 = 2;
 
 	psChild2 = cTree.InsertOnRightOfChildren(psRoot);
-	psChild2->i1 = 3; psChild2->i2 = 9;
+	psChild2->mi1 = 3; psChild2->mi2 = 9;
 
 	pcMemoryFile = MemoryFile();
 	pcMemoryFile->mbBasicFileMustFree = FALSE;
@@ -128,16 +128,16 @@ void TestTreeTemplateFileHelper(void)
 	free(pcMemoryFile);
 
 	psRoot = cTree.GetRoot();
-	AssertInt(5, psRoot->i1);
-	AssertInt(7, psRoot->i2);
+	AssertInt(5, psRoot->mi1);
+	AssertInt(7, psRoot->mi2);
 
 	psChild1 = cTree.GetUp(psRoot);
-	AssertInt(1, psChild1->i1);
-	AssertInt(2, psChild1->i2);
+	AssertInt(1, psChild1->mi1);
+	AssertInt(2, psChild1->mi2);
 
 	psChild2 = cTree.GetRight(psChild1);
-	AssertInt(3, psChild2->i1);
-	AssertInt(9, psChild2->i2);
+	AssertInt(3, psChild2->mi1);
+	AssertInt(9, psChild2->mi2);
 
 	cTree.Kill();
 }

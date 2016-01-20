@@ -50,8 +50,8 @@ void TestBufferedFileRead(void)
 		AssertFalse(cFile.IsEndOfFile());
 		memset(sz, 0, 20);
 		iCount = (int)cFile.Read(sz, 1, 2);
-		szExpected[0] = 'a' + i*2;
-		szExpected[1] = 'b' + i*2;
+		szExpected[0] = 'a' + (char)i * 2;
+		szExpected[1] = 'b' + (char)i * 2;
 		AssertString(szExpected, sz);
 		AssertInt(2, iCount);
 	}
@@ -70,9 +70,9 @@ void TestBufferedFileRead(void)
 		AssertFalse(cFile.IsEndOfFile());
 		memset(sz, 0, 20);
 		iCount = (int)cFile.Read(sz, 1, 3);
-		szExpected[0] = 'a' + i*3;
-		szExpected[1] = 'b' + i*3;
-		szExpected[2] = 'c' + i*3;
+		szExpected[0] = 'a' + (char)i * 3;
+		szExpected[1] = 'b' + (char)i * 3;
+		szExpected[2] = 'c' + (char)i * 3;
 		AssertString(szExpected, sz);
 		AssertInt(3, iCount);
 	}

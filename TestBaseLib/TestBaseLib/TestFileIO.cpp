@@ -118,7 +118,7 @@ void TestFileIOHelpers(void)
 	AssertTrue(cFile.ReadChar(&c));
 	AssertChar('g', c);
 	AssertTrue(cFile.ReadChar(&uc));
-	AssertChar((char)255, uc);
+	AssertChar((unsigned char)255, uc);
 	AssertTrue(cFile.ReadBool(&b));
 	AssertBool(TRUE, b);
 	AssertTrue(cFile.ReadShort(&s));
