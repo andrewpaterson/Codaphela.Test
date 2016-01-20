@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/MapIntInt.h"
 #include "TestLib/Assert.h"
 
@@ -167,10 +168,14 @@ void TestMapIntInt(void)
 void TestMapInt(void)
 {
 	BeginTests();
+	MemoryInit();
+	FastFunctionsInit();
 
 	TestMapIntTemplate();
 	TestMapIntInt();
 
+	FastFunctionsKill();
+	MemoryKill();
 	TestStatistics();
 }
 

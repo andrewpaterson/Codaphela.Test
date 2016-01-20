@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/ArrayTemplate.h"
 #include "TestLib/Assert.h"
 
@@ -343,6 +344,8 @@ void TestArrayFake(void)
 void TestArrayTemplate(void)
 {
 	BeginTests();
+	MemoryInit();
+	FastFunctionsInit();
 
 	TestMisc();
 	TestArrayAllocation();
@@ -351,6 +354,8 @@ void TestArrayTemplate(void)
 	TestArrayRemove();
 	TestArrayFake();
 
+	FastFunctionsKill();
+	MemoryKill();
 	TestStatistics();
 }
 

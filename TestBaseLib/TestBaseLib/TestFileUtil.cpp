@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "TestLib/Assert.h"
 
@@ -317,6 +318,8 @@ void TestFileUtilTouchDirectory(void)
 void TestFileUtil(void)
 {
 	BeginTests();
+	MemoryInit();
+	FastFunctionsInit();
 
 	TestFileUtilRemoveExtension();
 	TestFileUtilFindExtension();
@@ -327,6 +330,8 @@ void TestFileUtil(void)
 	TestFileUtilRemoveLastFromPath();
 	TestFileUtilTouchDirectory();
 
+	FastFunctionsKill();
+	MemoryKill();
 	TestStatistics();
 }
 

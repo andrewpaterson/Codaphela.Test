@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/MapIntInt.h"
 #include "BaseLib/MapPtrPtr.h"
 #include "BaseLib/MapPtrPrimitiveTemplate.h"
@@ -186,12 +187,16 @@ void TestMapPtrPrimitiveTemplateUnsignedChar(void)
 void TestMapPtr(void)
 {
 	BeginTests();
+	MemoryInit();
+	FastFunctionsInit();
 
 	TestMapPtrPtr();
 	TestMapPtrPrimitiveTemplateLong();
 	TestMapPtrPrimitiveTemplateInt();
 	TestMapPtrPrimitiveTemplateUnsignedChar();
 
+	FastFunctionsKill();
+	MemoryKill();
 	TestStatistics();
 }
 

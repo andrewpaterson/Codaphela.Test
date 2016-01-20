@@ -60,7 +60,7 @@ void TestTemporaryMemory(void);
 //
 //
 //////////////////////////////////////////////////////////////////////////
-int main(int argc, char* argv[])
+int main(void)
 {
 	InitTotalStatistics();
 
@@ -91,17 +91,10 @@ int main(int argc, char* argv[])
 	TestIndexTreeTemplate();
 	TestArrayDenseTemplate();
 	TestArraySparseTemplate();
-	TestFileUtil();
-	TestFileFinder();
 	TestMemoryFile();
 	TestDiskFile();
 	TestBufferedFile();
 	TestMD5File();
-	TestChunkFile();
-	TestChunkFileFile();
-	TestPackFile();
-	TestFileIO();
-	TestFileSystem();
 	TestSorting();
 	TestArrayBit();
 	TestArrayTemplateEmbedded();
@@ -117,6 +110,13 @@ int main(int argc, char* argv[])
 	TestMemoryCache();
 	TestMemoryBlock();
 	TestTemporaryMemory();
+	TestFileUtil();
+	TestFileFinder();
+	TestChunkFile();
+	TestChunkFileFile();
+	TestPackFile();
+	TestFileIO();
+	TestFileSystem();
 
 	return TestTotalStatistics();
 }

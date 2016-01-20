@@ -323,6 +323,7 @@ void TestMapBlock(void)
 {
 	BeginTests();
 	MemoryInit();
+	FastFunctionsInit();
 
 	TestMapBlockInternals();
 	TestMapBlockGet();
@@ -330,6 +331,7 @@ void TestMapBlock(void)
 	TestMapBlockRemove();
 	TestMapBlockReadWrite();
 
+	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }
