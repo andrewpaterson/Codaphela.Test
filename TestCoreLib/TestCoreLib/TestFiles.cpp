@@ -7,7 +7,7 @@
 
 
 void AssertPakFile(char* szFileName, char* szContents, CFiles* pcFiles);
-void AssertFileName(CMapStringInt* pcMap, int iIndex, int iCount, int iRank, char* szFileName);
+void AssertFileName(CMapStringInt* pcMap, int iCount, int iRank, char* szFileName);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -172,17 +172,17 @@ void TestGetFileNames(void)
 	iNumFiles = cFileNames.NumElements();
 	AssertInt(11, iNumFiles);
 	
-	AssertFileName(&cFileNames,  0, 2, FILE_SYSTEM_RANK, "Models/Cars.txt");
-	AssertFileName(&cFileNames,  1, 2, FILE_SYSTEM_RANK, "Models/Super/Barbie.txt");
-	AssertFileName(&cFileNames,  2, 2, FILE_SYSTEM_RANK, "Models/Super/Ken.txt");
-	AssertFileName(&cFileNames,  3, 2, FILE_SYSTEM_RANK, "Sounds/Ambient.txt");
-	AssertFileName(&cFileNames,  4, 2, 1,                "Sounds/Cheese/Moose.txt");
-	AssertFileName(&cFileNames,  5, 2, 1,                "Sounds/Cheese/Scream.txt");
-	AssertFileName(&cFileNames,  6, 1, 0,                "Sounds/General.txt");
-	AssertFileName(&cFileNames,  7, 3, FILE_SYSTEM_RANK, "Sounds/Santa/Seattle.txt");
-	AssertFileName(&cFileNames,  8, 1, 1,                "Sounds/Santa/Slay/Spelling.txt");
-	AssertFileName(&cFileNames,  9, 2, FILE_SYSTEM_RANK, "Videos/Intro.txt");
-	AssertFileName(&cFileNames, 10, 1, FILE_SYSTEM_RANK, "Videos/Outro.txt");
+	AssertFileName(&cFileNames, 2, FILE_SYSTEM_RANK, "Models/Cars.txt");
+	AssertFileName(&cFileNames, 2, FILE_SYSTEM_RANK, "Models/Super/Barbie.txt");
+	AssertFileName(&cFileNames, 2, FILE_SYSTEM_RANK, "Models/Super/Ken.txt");
+	AssertFileName(&cFileNames, 2, FILE_SYSTEM_RANK, "Sounds/Ambient.txt");
+	AssertFileName(&cFileNames, 2, 1,                "Sounds/Cheese/Moose.txt");
+	AssertFileName(&cFileNames, 2, 1,                "Sounds/Cheese/Scream.txt");
+	AssertFileName(&cFileNames, 1, 0,                "Sounds/General.txt");
+	AssertFileName(&cFileNames, 3, FILE_SYSTEM_RANK, "Sounds/Santa/Seattle.txt");
+	AssertFileName(&cFileNames, 1, 1,                "Sounds/Santa/Slay/Spelling.txt");
+	AssertFileName(&cFileNames, 2, FILE_SYSTEM_RANK, "Videos/Intro.txt");
+	AssertFileName(&cFileNames, 1, FILE_SYSTEM_RANK, "Videos/Outro.txt");
 
 	cFileNames.Kill();
 	
@@ -194,7 +194,7 @@ void TestGetFileNames(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertFileName(CMapStringInt* pcMap, int iIndex, int iCount, int iRank, char* szFileName)
+void AssertFileName(CMapStringInt* pcMap, int iCount, int iRank, char* szFileName)
 {
 	int*			piValue;
 

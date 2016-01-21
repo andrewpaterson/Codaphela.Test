@@ -17,8 +17,8 @@ void TestIndexedHugeStuff(void)
 	CChars					szRewrite;
 	CIndexedDataDescriptor	cIndex1;
 	CIndexedDataDescriptor	cTest;
-	int						i;
-	int						j;
+	unsigned int			i;
+	unsigned int			j;
 	BOOL					bResult;
 	CDurableFileController	cController;
 	char					szDirectory[] = "IndexedHuge";

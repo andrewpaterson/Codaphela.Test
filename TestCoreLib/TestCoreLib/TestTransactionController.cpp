@@ -340,8 +340,6 @@ void TestTransactionControllerTimestampFail(char* szDirectory, BOOL bDurable)
 	CTransaction*			pcTransaction2;
 
 	char					szFoo[] = "Foo";
-	char					szBar[] = "Bar";
-	char					szCat[] = "Cat";
 	char					szDog[] = "Dog";
 	char					szDest[4];
 	BOOL					bResult;

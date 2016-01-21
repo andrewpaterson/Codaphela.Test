@@ -37,7 +37,7 @@ void TestPackFilesPacker(void);
 //
 //
 //////////////////////////////////////////////////////////////////////////
-int main(int argc, char* argv[])
+int main(void)
 {
 	InitTotalStatistics();
 
@@ -61,15 +61,15 @@ int main(int argc, char* argv[])
 	TestIndexedFiles();
 	TestIndexes();
 	TestIndexedHuge();
+	TestOperators();
+	TestFunctionCaller();
+	TestFiles();
+	TestPackFilesPacker();
 	TestIndexedData();
 	TestIndexedDataSmart();
 	TestTransientIndexedFile();
 	TestTransactionData();
 	TestTransactionController();
-	TestOperators();
-	TestFunctionCaller();
-	TestFiles();
-	TestPackFilesPacker();
 	TestNumber();
 
 	return TestTotalStatistics();
