@@ -116,6 +116,8 @@ void TestIndexedDataLargeData(void)
 	cIndexedData.Init("Database2", 34, FALSE);
 	OI = 0LL;
 	AssertInt(0, cIndexedData.NumCached());
+
+	cIndexedData.DurableBegin();
 	cIndexedData.Add(OI, szBig, 14, 0);
 	AssertInt(0, cIndexedData.NumCached());
 	AssertInt(0, (int)cIndexedData.TestNumCachedIndexes());
@@ -141,6 +143,7 @@ void TestIndexedDataLargeData(void)
 	AssertInt(1, cIndexedData.NumCached());
 	AssertInt(1, (int)cIndexedData.TestNumCachedIndexes());
 	AssertString(szSmall, szIn);
+	cIndexedData.DurableEnd();
 
 	cIndexedData.Kill();
 
@@ -172,6 +175,7 @@ void TestIndexedDataIndexedAdd(void)
 
 	cIndexedData.Init("Database3", 98+12, FALSE);
 
+	cIndexedData.DurableBegin();
 	OI = 0LL;
 	bResult = cIndexedData.Add(OI, szBat, 4, 0);
 	AssertBool(TRUE, bResult);
@@ -226,6 +230,7 @@ void TestIndexedDataIndexedAdd(void)
 	AssertInt(1, (int)cIndexedData.NumInFile(5));
 	AssertInt(2, (int)cIndexedData.NumElements());
 	AssertInt(4, (int)cIndexedData.TestIndexedDescriptorsLength());
+	cIndexedData.DurableEnd();
 
 	cIndexedData.Kill();
 
@@ -248,6 +253,7 @@ void TestIndexedDataDescriptorCaching(void)
 	cFileUtil.RemoveDir("Database4");
 
 	cIndexedData.Init("Database4", 96, FALSE);  
+	cIndexedData.DurableBegin();
 
 	OI = 0LL;
 	iData = 77;
@@ -277,6 +283,7 @@ void TestIndexedDataDescriptorCaching(void)
 	iNumCached = cIndexedData.TestNumCachedIndexes();
 	AssertInt(3, (int)iNumCached);
 
+	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
 	cIndexedData.Init("Database4", 96, FALSE);  
@@ -366,15 +373,19 @@ void TestIndexedDataGet(void)
 	cFileUtil.RemoveDir("Database6");
 
 	cIndexedData.Init("Database6", 1 MB, FALSE);
+	cIndexedData.DurableBegin();
+
 	cIndexedData.Add(0x7634, szSmellsLikeTeenSpirit, (int)strlen(szSmellsLikeTeenSpirit)+1, 0);
 	cIndexedData.Add(0x3589, szSeizedPotPlants, (int)strlen(szSeizedPotPlants)+1, 0);
 	cIndexedData.Add(0x8743, szCallingFromWindows, (int)strlen(szCallingFromWindows)+1, 0);
 	
 	AssertLongLongInt(3, cIndexedData.NumElements());
 
+	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
 	cIndexedData.Init("Database6", 1 MB, FALSE);
+	cIndexedData.DurableBegin();
 
 	AssertLongLongInt(3, cIndexedData.NumElements());
 
@@ -387,13 +398,13 @@ void TestIndexedDataGet(void)
 	AssertInt((int)strlen(szSeizedPotPlants)+1, iSize);
 	AssertString(szSeizedPotPlants, szData);
 	free(szData);
-
 	
 	szData = (char*)cIndexedData.Get(0x8743, &iSize);
 	AssertInt((int)strlen(szCallingFromWindows)+1, iSize);
 	AssertString(szCallingFromWindows, szData);
 	free(szData);
 
+	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 	cFileUtil.RemoveDir("Database6");
 }
