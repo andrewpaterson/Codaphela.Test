@@ -28,6 +28,7 @@ void TestTransactionControllerWithDurableFile(char* szDirectory, BOOL bDurable)
 
 	cTransactionController.Init(szDirectory, 100, bDurable);
 	pcTransaction1 = cTransactionController.BeginTransaction(TRUE);
+
 	pcTransaction1->Add(4LL, szFourth, 7);
 	pcTransaction1->Add(32LL, szBlackJack, 11);
 	pcTransaction1->Add(6LL, szHenry, 6);
@@ -92,6 +93,7 @@ void TestTransactionControllerCommit(char* szDirectory, BOOL bDurable)
 
 	cTransactionController.Init(szDirectory, 100, bDurable);  //Used to descriptor cache
 	pcTransaction2 = cTransactionController.BeginTransaction();
+
 	pcTransaction2->Add(0LL, szABCDE, 6);
 	pcTransaction2->Add(1LL, szFGHIJ, 6);
 	pcTransaction2->Add(2LL, szKLNOP, 6);
@@ -101,6 +103,7 @@ void TestTransactionControllerCommit(char* szDirectory, BOOL bDurable)
 
 	cTransactionController.Init(szDirectory, 100, bDurable);  //Used to descriptor cache
 	pcTransaction1 = cTransactionController.BeginTransaction();
+
 	bResult = pcTransaction1->Get(1LL, szDest);
 	AssertBool(TRUE, bResult);
 	AssertString(szFGHIJ, szDest);
