@@ -86,3 +86,4 @@ TestCoreLib/Release/TestCoreLib.exe
 TestCoreLib/Release/TestCoreLib.pdb
 TestCoreLib/Release
 *.VC.db
+*.suo
