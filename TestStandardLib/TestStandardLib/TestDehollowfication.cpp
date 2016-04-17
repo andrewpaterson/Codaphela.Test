@@ -141,8 +141,7 @@ void TestDehollowficationFromDatabase(void)
 					4,
 					2,
 					4 * sizeof(CIndexedDataDescriptor),
-					1 MB,
-					FALSE);
+					1 MB);
 
 	cFileUtil.RemoveDir("Output\\Dehollowfication\\Database");
 
@@ -275,8 +274,7 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 		4,
 		2,
 		4 * sizeof(CIndexedDataDescriptor),
-		1 MB,
-		FALSE);
+		1 MB);
 
 	cFileUtil.RemoveDir("Output\\Dehollowfication\\Database");
 

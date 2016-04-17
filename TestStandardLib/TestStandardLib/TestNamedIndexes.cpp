@@ -17,7 +17,7 @@ void TestNamedIndexesAdd(void)
 	CDurableFileController	cController;
 	CFileUtil				cFileUtil;
 	BOOL					bResult;
-	char					szDirectory[] = "NamedIndexes"_FS_"1";
+	char					szDirectory[] = "NamedIndexes" _FS_ "1";
 
 	cFileUtil.MakeDir(szDirectory);
 
@@ -95,7 +95,7 @@ void TestNamedIndexesRemove(void)
 	CDurableFileController	cController;
 	CFileUtil				cFileUtil;
 	BOOL					bResult;
-	char					szDirectory[] = "NamedIndexes"_FS_"2";
+	char					szDirectory[] = "NamedIndexes" _FS_ "2";
 
 	cFileUtil.MakeDir(szDirectory);
 
@@ -191,7 +191,7 @@ void TestNamedIndexesCacheEviction(void)
 	CFileUtil					cFileUtil;
 	BOOL						bResult;
 	CArrayNamedIndexesBlockPtr	cBlockPtrs;
-	char						szDirectory[] = "NamedIndexes"_FS_"3";
+	char						szDirectory[] = "NamedIndexes" _FS_ "3";
 
 	cFileUtil.MakeDir(szDirectory);
 	cController.Init(szDirectory, szDirectory, TRUE);
@@ -296,7 +296,7 @@ void TestNamedIndexesLoad(void)
 	CNamedIndexesBlocks*		pcBlock32;
 	CNamedIndexesBlocks*		pcBlock64;
 	CNamedIndexesBlock*			pcBlock;
-	char						szDirectory[] = "NamedIndexes"_FS_"4";
+	char						szDirectory[] = "NamedIndexes" _FS_ "4";
 
 	cFileUtil.MakeDir(szDirectory);
 
@@ -368,9 +368,9 @@ void TestNamedIndexesLoad(void)
 	CChars	sz;
 
 	sz.Init();
-	DumpNamedIndexesFile(&sz, "NamedIndexes"_FS_"4"_FS_"32_0.NAM", 32, 6);
+	DumpNamedIndexesFile(&sz, "NamedIndexes" _FS_ "4" _FS_ "32_0.NAM", 32, 6);
 	AssertString("\
-NamedIndexes"_FS_"4"_FS_"32_0.NAM\n\
+NamedIndexes" _FS_ "4" _FS_ "32_0.NAM\n\
 -----------------------\n\
    0:      1 -> Arthur Miller\n\
    1:      5 -> asphyxiate\n\
@@ -396,10 +396,10 @@ NamedIndexes"_FS_"4"_FS_"32_0.NAM\n\
 	sz.Kill();
 
 	sz.Init();
-	DumpNamedIndexesFile(&sz, "NamedIndexes"_FS_"4"_FS_"64_0.NAM", 64, 6);
+	DumpNamedIndexesFile(&sz, "NamedIndexes" _FS_ "4" _FS_ "64_0.NAM", 64, 6);
 
 	AssertString("\
-NamedIndexes"_FS_"4"_FS_"64_0.NAM\n\
+NamedIndexes" _FS_ "4" _FS_ "64_0.NAM\n\
 -----------------------\n\
    0:     11 -> Chopin Dicranaceae transmountain insentient\n\
    1:     13 -> factor V domestic relations\n\
@@ -498,7 +498,7 @@ void TestNamedIndexesOptimise(void)
 	CFileUtil					cFileUtil;
 	BOOL						bResult;
 	CNamedIndexesOptimiser		cOptimiser;
-	char						szDirectory[] = "NamedIndexes"_FS_"5";
+	char						szDirectory[] = "NamedIndexes" _FS_ "5";
 
 	cFileUtil.MakeDir(szDirectory);
 
@@ -557,9 +557,9 @@ void TestNamedIndexesOptimise(void)
 	CChars sz;
 
 	sz.Init(); 
-	DumpNamedIndexesFile(&sz, "NamedIndexes"_FS_"5"_FS_"32_0.NAM", 32, 4); 
+	DumpNamedIndexesFile(&sz, "NamedIndexes" _FS_ "5" _FS_ "32_0.NAM", 32, 4); 
 	AssertString("\
-NamedIndexes"_FS_"5"_FS_"32_0.NAM\n\
+NamedIndexes" _FS_ "5" _FS_ "32_0.NAM\n\
 -----------------------\n\
    0: 5265267321786128702 -> beast\n\
    1: 4678979686897958483 -> Earthling/slave-shield\n\
@@ -579,9 +579,9 @@ NamedIndexes"_FS_"5"_FS_"32_0.NAM\n\
 	sz.Kill();
 
 	sz.Init(); 
-	DumpNamedIndexesFile(&sz, "NamedIndexes"_FS_"5"_FS_"64_0.NAM", 64, 4); 
+	DumpNamedIndexesFile(&sz, "NamedIndexes" _FS_ "5" _FS_ "64_0.NAM", 64, 4); 
 	AssertString("\
-NamedIndexes"_FS_"5"_FS_"64_0.NAM\n\
+NamedIndexes" _FS_ "5" _FS_ "64_0.NAM\n\
 -----------------------\n\
    0: 8352145325252165435 -> Earthling/portraits/Captain Zelnick\n\
    1: 1532564672346590234 -> Earthling/spaceships/Cruiser\n\
@@ -606,9 +606,9 @@ NamedIndexes"_FS_"5"_FS_"64_0.NAM\n\
 	sz.Kill();
 
 	sz.Init(); 
-	DumpNamedIndexesFile(&sz, "NamedIndexes"_FS_""_FS_"96_0.NAM", 96, 4); 
+	DumpNamedIndexesFile(&sz, "NamedIndexes" _FS_ "" _FS_ "96_0.NAM", 96, 4); 
 	AssertString("\
-NamedIndexes"_FS_"5"_FS_"96_0.NAM\n\
+NamedIndexes" _FS_ "5" _FS_ "96_0.NAM\n\
 -----------------------\n\
    0: 3749816364128750931 -> Earthling/spaceships/surplus cold war nuclear war-heads\n\
    1: 2536710003746523782 -> Ur-Quan/Kzer-za/spaceships/Dreadnought/launch figters/HierachyCrew\n\
@@ -617,9 +617,9 @@ NamedIndexes"_FS_"5"_FS_"96_0.NAM\n\
 -----------------------\n", sz.Text());
 	sz.Kill();
 
-	AssertFalse(cFileUtil.Exists("NamedIndexes"_FS_"5"_FS_"32_0.NAM.TMP"));
-	AssertFalse(cFileUtil.Exists("NamedIndexes"_FS_"5"_FS_"64_0.NAM.TMP"));
-	AssertFalse(cFileUtil.Exists("NamedIndexes"_FS_"5"_FS_"96_0.NAM.TMP"));
+	AssertFalse(cFileUtil.Exists("NamedIndexes" _FS_ "5" _FS_ "32_0.NAM.TMP"));
+	AssertFalse(cFileUtil.Exists("NamedIndexes" _FS_ "5" _FS_ "64_0.NAM.TMP"));
+	AssertFalse(cFileUtil.Exists("NamedIndexes" _FS_ "5" _FS_ "96_0.NAM.TMP"));
 
 
 	cController.Init(szDirectory, szDirectory, TRUE);
@@ -665,9 +665,9 @@ NamedIndexes"_FS_"5"_FS_"96_0.NAM\n\
 	cController.Kill();
 
 	sz.Init(); 
-	DumpNamedIndexesFile(&sz, "NamedIndexes"_FS_"5"_FS_"64_0.NAM", 64, 4); 
+	DumpNamedIndexesFile(&sz, "NamedIndexes" _FS_ "5" _FS_ "64_0.NAM", 64, 4); 
 	AssertString("\
-NamedIndexes"_FS_"5"_FS_"64_0.NAM\n\
+NamedIndexes" _FS_ "5" _FS_ "64_0.NAM\n\
 -----------------------\n\
    0: 8352145325252165435 -> Earthling/portraits/Captain Zelnick\n\
    1: 1532564672346590234 -> Earthling/spaceships/Cruiser\n\

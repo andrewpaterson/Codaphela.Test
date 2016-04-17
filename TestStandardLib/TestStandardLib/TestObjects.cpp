@@ -108,7 +108,6 @@ void TestObjectsObjectSave(void)
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output/ObjectSave");
 	cConfig.OptimiseForGameGraph("Output/ObjectSave");
-	cConfig.SetTransient(TRUE);
 	ObjectsInit(&cConfig);
 
 	pDouble = SetupObjectsForDehollowfication();
