@@ -1,9 +1,11 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SupportLib", "..\..\CommonLibraries\SupportLib\SupportLib.vcxproj", "{221022F1-B103-456A-8F55-721F33F2E26D}"
 	ProjectSection(ProjectDependencies) = postProject
-		{1F518043-B152-4B9C-9D61-DDD6400420ED} = {1F518043-B152-4B9C-9D61-DDD6400420ED}
 		{5918EC20-07C3-485F-80BB-BED4F96EA48F} = {5918EC20-07C3-485F-80BB-BED4F96EA48F}
+		{1F518043-B152-4B9C-9D61-DDD6400420ED} = {1F518043-B152-4B9C-9D61-DDD6400420ED}
 		{E25D2DAC-0E80-42B2-8FA7-99B837CF7588} = {E25D2DAC-0E80-42B2-8FA7-99B837CF7588}
 	EndProjectSection
 EndProject
@@ -19,6 +21,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CoreLib", "..\..\CommonLibr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestSupportLib", "TestSupportLib\TestSupportLib.vcxproj", "{9BA313F9-68F2-497D-85A6-39EA5B62003B}"
 	ProjectSection(ProjectDependencies) = postProject
+		{5918EC20-07C3-485F-80BB-BED4F96EA48F} = {5918EC20-07C3-485F-80BB-BED4F96EA48F}
 		{1F518043-B152-4B9C-9D61-DDD6400420ED} = {1F518043-B152-4B9C-9D61-DDD6400420ED}
 	EndProjectSection
 EndProject
