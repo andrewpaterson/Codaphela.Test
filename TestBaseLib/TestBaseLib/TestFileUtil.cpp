@@ -315,6 +315,52 @@ void TestFileUtilTouchDirectory(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFileUtilPrependToPath(void)
+{
+	CFileUtil		cFileUtil;
+	CChars			szPathName;
+
+	szPathName.Init("C:\\Games\\R\\Us\\");
+	cFileUtil.PrependToPath(&szPathName, "Extraordinary");
+	AssertString("C:\\Extraordinary\\Games\\R\\Us\\", szPathName.Text());
+	szPathName.Kill();
+
+	szPathName.Init("Games\\R\\Us\\");
+	cFileUtil.PrependToPath(&szPathName, "Extraordinary");
+	AssertString("Extraordinary\\Games\\R\\Us\\", szPathName.Text());
+	szPathName.Kill();
+
+	szPathName.Init("\\Games\\R\\Us\\");
+	cFileUtil.PrependToPath(&szPathName, "Extraordinary");
+	AssertString("\\Extraordinary\\Games\\R\\Us\\", szPathName.Text());
+	szPathName.Kill();
+
+	szPathName.Init("Games");
+	cFileUtil.PrependToPath(&szPathName, "Extraordinary");
+	AssertString("Extraordinary\\Games", szPathName.Text());
+	szPathName.Kill();
+
+	szPathName.Init("C:\\");
+	cFileUtil.PrependToPath(&szPathName, "Extraordinary");
+	AssertString("C:\\Extraordinary\\", szPathName.Text());
+	szPathName.Kill();
+
+	szPathName.Init("\\");
+	cFileUtil.PrependToPath(&szPathName, "");
+	AssertString("\\", szPathName.Text());
+	szPathName.Kill();
+
+	szPathName.Init("");
+	cFileUtil.PrependToPath(&szPathName, "Giana");
+	AssertString("Giana\\", szPathName.Text());
+	szPathName.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFileUtil(void)
 {
 	BeginTests();
@@ -329,6 +375,7 @@ void TestFileUtil(void)
 	TestFileUtilMakeDirectory();
 	TestFileUtilRemoveLastFromPath();
 	TestFileUtilTouchDirectory();
+	TestFileUtilPrependToPath();
 
 	FastFunctionsKill();
 	MemoryKill();

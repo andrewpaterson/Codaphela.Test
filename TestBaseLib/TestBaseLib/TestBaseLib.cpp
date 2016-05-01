@@ -18,6 +18,7 @@ void TestNumbers(void);
 void TestArrayDenseTemplate(void);
 void TestArraySparseTemplate(void);
 void TestArrayBlockSorted(void);
+void TestChars(void);
 void TestStringHelper(void);
 void TestFileUtil(void);
 void TestAllocator(void);
@@ -81,6 +82,7 @@ int main(void)
 	TestAllocator();
 	TestFreeList();
 	TestFreeListAllocator();
+	TestChars();
 	TestStringHelper();
 	TestDate();
 	TestNumbers();
