@@ -223,7 +223,7 @@ void TestPackFileAdd(void)
 	pcDiskFile = DiskFile(szDir.Text());
 	cPak.Init(pcDiskFile, PFM_Write);
 
-	bResult = cPak.AddDirectory("InFile/GianaIn");
+	bResult = cPak.AddDirectory("InFile/Giana", "Giana");
 	AssertTrue(bResult);
 
 	pcNode = cPak.GetNode("Giana/Brothers.PAK");
@@ -279,7 +279,7 @@ void TestPackFileIterate(void)
 void TestPackFileGetFiles(void)
 {
 #ifdef REBUILD_TEST_PACK_FILES
-	PackDirectory("Input/Test.Pak", "InFile/GianaIn");
+	PackDirectory("Input/Test.Pak", "InFile/Giana", "Giana");
 #endif // REBUILD_TEST_PACK_FILES
 
 	CPackFiles				cPak;
