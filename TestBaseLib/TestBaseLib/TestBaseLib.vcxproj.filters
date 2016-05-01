@@ -278,6 +278,9 @@
     <ClInclude Include="ConstructorTestClasses.h">
       <Filter>Source\Construtor</Filter>
     </ClInclude>
+    <ClInclude Include="TestPackFile.h">
+      <Filter>Source\File\Pack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

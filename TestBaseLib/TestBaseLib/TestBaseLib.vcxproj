@@ -168,6 +168,7 @@
     <ClInclude Include="FileIOTestObjects.h" />
     <ClInclude Include="SortedTestObject.h" />
     <ClInclude Include="TestIndexTreeObject.h" />
+    <ClInclude Include="TestPackFile.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

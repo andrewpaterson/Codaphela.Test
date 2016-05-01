@@ -5,6 +5,10 @@
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/GlobalMemory.h"
 #include "TestLib/Assert.h"
+#include "TestPackFile.h"
+#ifdef REBUILD_TEST_PACK_FILES
+#include "BaseLib/PackFilePacker.h"
+#endif // REBUILD_TEST_PACK_FILES
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -186,9 +190,7 @@ void TestPackFileAdd(void)
 	CPackFiles				cPak;
 	CPackFileNode*			pcFile;
 
-	szDir.Init("PackFile");
-	szDir.Append(FILE_SEPARATOR[0]);
-	szDir.Append("Test.PAK");
+	szDir.Init("PackFile" FILE_SEPARATOR "Test.PAK");
 
 	cFileUtil.RemoveDir("PackFile");
 	cFileUtil.MakeDir("PackFile");
@@ -221,7 +223,7 @@ void TestPackFileAdd(void)
 	pcDiskFile = DiskFile(szDir.Text());
 	cPak.Init(pcDiskFile, PFM_Write);
 
-	bResult = cPak.AddDirectory("InFile");
+	bResult = cPak.AddDirectory("InFile/GianaIn");
 	AssertTrue(bResult);
 
 	pcNode = cPak.GetNode("Giana/Brothers.PAK");
@@ -276,6 +278,10 @@ void TestPackFileIterate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestPackFileGetFiles(void)
 {
+#ifdef REBUILD_TEST_PACK_FILES
+	PackDirectory("Input/Test.Pak", "InFile/GianaIn");
+#endif // REBUILD_TEST_PACK_FILES
+
 	CPackFiles				cPak;
 	CDiskFile*				pcDiskFile;
 	CChars					sz;
