@@ -23,9 +23,6 @@ void TestIndexes(void);
 void TestIndexedHuge(void);
 void TestIndexedData(void);
 void TestIndexedDataSmart(void);
-void TestTransientIndexedFile(void);
-void TestTransactionData(void);
-void TestTransactionController(void);
 void TestOperators(void);
 void TestFunctionCaller(void);
 void TestNumber(void);
@@ -67,9 +64,6 @@ int main(void)
 	TestPackFilesPacker();
 	TestIndexedData();
 	TestIndexedDataSmart();
-	TestTransientIndexedFile();
-	TestTransactionData();
-	TestTransactionController();
 	TestNumber();
 
 	return TestTotalStatistics();

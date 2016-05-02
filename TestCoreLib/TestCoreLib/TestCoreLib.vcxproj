@@ -126,12 +126,9 @@
     <ClCompile Include="TestIndexes.cpp" />
     <ClCompile Include="TestPackFilesPacker.cpp" />
     <ClCompile Include="TestPropertiesFile.cpp" />
-    <ClCompile Include="TestTransientIndexedFile.cpp" />
     <ClCompile Include="TestDurableFile.cpp" />
     <ClCompile Include="TestDurableFileController.cpp" />
     <ClCompile Include="TestDurableSet.cpp" />
-    <ClCompile Include="TestTransactionController.cpp" />
-    <ClCompile Include="TestTransactionData.cpp" />
     <ClCompile Include="TestXMLFile.cpp" />
     <ClCompile Include="TestFunctionCaller.cpp" />
     <ClCompile Include="TestFloatHelper.cpp" />

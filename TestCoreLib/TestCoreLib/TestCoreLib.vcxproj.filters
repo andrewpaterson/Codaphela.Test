@@ -25,9 +25,6 @@
     <Filter Include="Source\File\Durable">
       <UniqueIdentifier>{73270a9f-ceb5-47ee-bf89-cb589fa8323b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\File\Transaction">
-      <UniqueIdentifier>{87d170e1-6980-4589-bec9-0d7fab8a9476}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\File\XML">
       <UniqueIdentifier>{72ca532d-bd99-4f61-acfb-b87bd33a0aa3}</UniqueIdentifier>
     </Filter>
@@ -87,9 +84,6 @@
     <ClCompile Include="TestIndexes.cpp">
       <Filter>Source\File\Indexed</Filter>
     </ClCompile>
-    <ClCompile Include="TestTransientIndexedFile.cpp">
-      <Filter>Source\File\Indexed</Filter>
-    </ClCompile>
     <ClCompile Include="TestDurableFile.cpp">
       <Filter>Source\File\Durable</Filter>
     </ClCompile>
@@ -98,12 +92,6 @@
     </ClCompile>
     <ClCompile Include="TestDurableSet.cpp">
       <Filter>Source\File\Durable</Filter>
-    </ClCompile>
-    <ClCompile Include="TestTransactionController.cpp">
-      <Filter>Source\File\Transaction</Filter>
-    </ClCompile>
-    <ClCompile Include="TestTransactionData.cpp">
-      <Filter>Source\File\Transaction</Filter>
     </ClCompile>
     <ClCompile Include="TestXMLFile.cpp">
       <Filter>Source\File\XML</Filter>
