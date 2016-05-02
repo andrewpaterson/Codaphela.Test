@@ -37,7 +37,7 @@ void TestIndexedDataMemoryToHugeIndices(void)
 	//Using smart index access we should be able to add 4 objects before the memory index access runs out of memory and has to switch to huge.
 
 	cConfig.Manual("Database7",
-					FALSE,
+					NULL,
 					FALSE,
 					FALSE,
 					4,
@@ -142,7 +142,7 @@ void TestIndexedDataWriteThrough(void)
 	//Using smart index access we should be able to add 4 objects before the memory index access runs out of memory and has to switch to huge.
 
 	cConfig.Manual("Database6",
-					FALSE,
+					NULL,
 					FALSE,
 					TRUE,
 					4,
@@ -236,7 +236,7 @@ void TestIndexedDataWriteDirtyTesting(void)
 	//Using smart index access we should be able to add 4 objects before the memory index access runs out of memory and has to switch to huge.
 
 	cConfig.Manual("Database8",
-					FALSE,
+					NULL,
 					TRUE,
 					FALSE,
 					4,

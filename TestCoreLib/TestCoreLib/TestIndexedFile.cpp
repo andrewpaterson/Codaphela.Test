@@ -27,21 +27,19 @@ void TestIndexedFile(void)
 	CTextFile					cTextFile;
 	char						szTemp[16];
 	char						szDirectory[] = "IndexedFile";
+	char						szRewriteDirectory[] = "_IndexedFile";
 
-	bResult = cFileUtil.RemoveDir(szDirectory);
-	AssertTrue(bResult);
-
-	bResult = cFileUtil.MakeDir(szDirectory);
+	bResult = cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 	AssertTrue(bResult);
 
 	szWrite.Init(szDirectory);
 	szWrite.Append(FILE_SEPARATOR[0]);
 	szWrite.Append("File.DAT");
-	szRewrite.Init(szDirectory);
+	szRewrite.Init(szRewriteDirectory);
 	szRewrite.Append(FILE_SEPARATOR[0]);
 	szRewrite.Append("_File.DAT");
 
-	cDurableController.Init(szDirectory, szDirectory, TRUE);
+	cDurableController.Init(szDirectory, szRewriteDirectory);
 	cDurableController.Begin();
 
 	cIndexedFile.Init(&cDurableController, 0, szWrite.Text(), szRewrite.Text(), 9, 0);
@@ -75,7 +73,7 @@ void TestIndexedFile(void)
 	cTextFile.Kill();
 
 
-	cDurableController.Init(szDirectory, szDirectory, TRUE);
+	cDurableController.Init(szDirectory, szRewriteDirectory);
 	cDurableController.Begin();
 
 	cIndexedFile.Init(&cDurableController, 0, szWrite.Text(), szRewrite.Text(), 9, 0);
@@ -102,7 +100,7 @@ void TestIndexedFile(void)
 	szWrite.Kill();
 	szRewrite.Kill();
 
-	bResult = cFileUtil.RemoveDir("IndexedFile");
+	bResult = cFileUtil.RemoveDirs(szDirectory, szRewriteDirectory, NULL);
 	AssertTrue(bResult);
 
 	FastFunctionsKill();

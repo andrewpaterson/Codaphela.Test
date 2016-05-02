@@ -15,17 +15,19 @@ void TestIndexedFilesWorkingDirectory(void)
 	CFileUtil				cFileUtil;
 	CDurableFileController	cController;
 	char					szDirectorty[] = "Files1";
+	char					szRewriteDirectorty[] = "_Files1";
 	CChars					szName;
 	CChars					szRewrite;
 
-	cFileUtil.RemoveDir(szDirectorty);
+	cFileUtil.RemoveDirs(szDirectorty, szRewriteDirectorty, NULL);
+
 	szName.Init();
 	szRewrite.Init();
 
 	cFileUtil.AppendToPath(&szName, szDirectorty);
-	cFileUtil.AppendToPath(&szRewrite, szDirectorty);
+	cFileUtil.AppendToPath(&szRewrite, szRewriteDirectorty);
 
-	cController.Init(szName.Text(), szRewrite.Text(), TRUE);
+	cController.Init(szName.Text(), szRewrite.Text());
 	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
 	cController.Begin();
 
@@ -33,7 +35,7 @@ void TestIndexedFilesWorkingDirectory(void)
 	cIndexedFiles.Kill();
 	cController.Kill();
 
-	cFileUtil.RemoveDir(szDirectorty);
+	cFileUtil.RemoveDirs(szDirectorty, szRewriteDirectorty, NULL);
 }
 
 
@@ -47,24 +49,26 @@ void TestIndexedFilesInitAndKillWihtoutOpen(void)
 	CFileUtil				cFileUtil;
 	CDurableFileController	cController;
 	char					szDirectorty[] = "Files2";
+	char					szRewriteDirectorty[] = "_Files2";
 	CChars					szName;
 	CChars					szRewrite;
 
 
-	cFileUtil.RemoveDir(szDirectorty);
+	cFileUtil.RemoveDirs(szDirectorty, szRewriteDirectorty, NULL);
+
 	szName.Init();
 	szRewrite.Init();
 
 	cFileUtil.AppendToPath(&szName, szDirectorty);
-	cFileUtil.AppendToPath(&szRewrite, szDirectorty);
+	cFileUtil.AppendToPath(&szRewrite, szRewriteDirectorty);
 
-	cController.Init(szName.Text(), szRewrite.Text(), TRUE);
+	cController.Init(szName.Text(), szRewrite.Text());
 	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
 
 	cIndexedFiles.Kill();
 	cController.Kill();
 
-	cFileUtil.RemoveDir(szDirectorty);
+	cFileUtil.RemoveDirs(szDirectorty, szRewriteDirectorty, NULL);
 }
 
 

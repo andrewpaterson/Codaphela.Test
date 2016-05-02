@@ -26,7 +26,7 @@ void TestIndexedDataCacheEviction(void)
 	AssertInt(40, sizeof(CIndexedDataDescriptor));
 
 	OI = 0LL;
-	cIndexedData.Init("Database1", 71, FALSE);  //A little more than two items in the cache...
+	cIndexedData.Init("Database1", NULL, 71);  //A little more than two items in the cache...
 
 	cIndexedData.DurableBegin();
 	AssertTrue(cIndexedData.Add(OI, szHello, 6, 0));
@@ -50,7 +50,7 @@ void TestIndexedDataCacheEviction(void)
 	iFileSize = cFileUtil.Size("Database1" _FS_ "7_0.DAT");
 	AssertLongLongInt(7, iFileSize);
 
-	cIndexedData.Init("Database1", 1024, FALSE);
+	cIndexedData.Init("Database1", NULL, 1024);
 	AssertInt(2, cIndexedData.NumFiles());
 
 	cIndexedData.DurableBegin();
@@ -90,7 +90,7 @@ void TestIndexedDataCacheEviction(void)
 
 	cIndexedData.Kill();
 
-	cIndexedData.Init("Database1", 1024, FALSE);
+	cIndexedData.Init("Database1", NULL, 1024);
 	AssertInt(0, (int)cIndexedData.TestNumCachedIndexes());
 	cIndexedData.Kill();
 
@@ -113,7 +113,7 @@ void TestIndexedDataLargeData(void)
 
 	cFileUtil.RemoveDir("Database2");
 
-	cIndexedData.Init("Database2", 34, FALSE);
+	cIndexedData.Init("Database2", NULL, 34);
 	OI = 0LL;
 	AssertInt(0, cIndexedData.NumCached());
 
@@ -173,7 +173,7 @@ void TestIndexedDataIndexedAdd(void)
 
 	cFileUtil.RemoveDir("Database3");
 
-	cIndexedData.Init("Database3", 98+12, FALSE);
+	cIndexedData.Init("Database3", NULL, 98+12);
 
 	cIndexedData.DurableBegin();
 	OI = 0LL;
@@ -252,7 +252,7 @@ void TestIndexedDataDescriptorCaching(void)
 
 	cFileUtil.RemoveDir("Database4");
 
-	cIndexedData.Init("Database4", 96, FALSE);  
+	cIndexedData.Init("Database4", NULL, 96);
 	cIndexedData.DurableBegin();
 
 	OI = 0LL;
@@ -286,7 +286,7 @@ void TestIndexedDataDescriptorCaching(void)
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
-	cIndexedData.Init("Database4", 96, FALSE);  
+	cIndexedData.Init("Database4", NULL, 96);
 
 	iNumCached = cIndexedData.TestNumCachedIndexes();
 	AssertInt(0, (int)iNumCached);
@@ -372,7 +372,7 @@ void TestIndexedDataGet(void)
 	
 	cFileUtil.RemoveDir("Database6");
 
-	cIndexedData.Init("Database6", 1 MB, FALSE);
+	cIndexedData.Init("Database6", NULL, 1 MB);
 	cIndexedData.DurableBegin();
 
 	cIndexedData.Add(0x7634, szSmellsLikeTeenSpirit, (int)strlen(szSmellsLikeTeenSpirit)+1, 0);
@@ -384,7 +384,7 @@ void TestIndexedDataGet(void)
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
-	cIndexedData.Init("Database6", 1 MB, FALSE);
+	cIndexedData.Init("Database6", NULL, 1 MB);
 	cIndexedData.DurableBegin();
 
 	AssertLongLongInt(3, cIndexedData.NumElements());

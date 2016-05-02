@@ -22,12 +22,15 @@ void TestDurableSetAdd(void)
 	CDurableFile			cDurableFile3;
 	CDurableFile			cDurableFile4;
 	char					szDirectory[] = "Durable2";
+	char					szRewrite[] = "_Durable2";
 	CDurableFile*			pcDurableFile;
 
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.MakeDir(szDirectory);
+	cFileUtil.RemoveDir(szRewrite);
+	cFileUtil.MakeDir(szRewrite);
 
-	cController.Init(szDirectory, szDirectory, TRUE);
+	cController.Init(szDirectory, szRewrite);
 
 	cDurableFile1.Init(&cController, "Durable" _FS_ "1.txt", "Durable" _FS_ "_1.txt");
 	cDurableFile2.Init(&cController, "Durable" _FS_ "2.txt", "Durable" _FS_ "_2.txt");

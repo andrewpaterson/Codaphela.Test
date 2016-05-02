@@ -107,7 +107,9 @@ void TestObjectsObjectSave(void)
 
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output/ObjectSave");
-	cConfig.OptimiseForGameGraph("Output/ObjectSave");
+	cConfig.OptimiseForStreaming("Output/ObjectSave");
+	cConfig.SetObjectCacheSize(128 MB);
+
 	ObjectsInit(&cConfig);
 
 	pDouble = SetupObjectsForDehollowfication();
@@ -233,7 +235,8 @@ void TestObjectsFlushDurable(void)
 	cFileUtil.MakeDir("Output/Flush2");
 	
 
-	cConfig.OptimiseForTransactions("Output/Flush2");
+	cConfig.OptimiseForStreaming("Output/Flush2");
+	cConfig.SetObjectCacheSize(128 MB);
 	//cConfig.SetWriteThrough(FALSE);
 
 	ObjectsInit(&cConfig);

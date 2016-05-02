@@ -18,10 +18,11 @@ void TestNamedIndexesAdd(void)
 	CFileUtil				cFileUtil;
 	BOOL					bResult;
 	char					szDirectory[] = "NamedIndexes" _FS_ "1";
+	char					szRewriteDirectory[] = "_NamedIndexes" _FS_ "1";
 
-	cFileUtil.MakeDir(szDirectory);
+	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
-	cController.Init(szDirectory, szDirectory, TRUE);
+	cController.Init(szDirectory, szRewriteDirectory);
 	cNamedIndexes.Init(&cController, 10 MB, 4);
 	cController.Begin();
 	cNamedIndexes.Open();
@@ -96,10 +97,11 @@ void TestNamedIndexesRemove(void)
 	CFileUtil				cFileUtil;
 	BOOL					bResult;
 	char					szDirectory[] = "NamedIndexes" _FS_ "2";
+	char					szRewriteDirectory[] = "_NamedIndexes" _FS_ "2";
 
-	cFileUtil.MakeDir(szDirectory);
+	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
-	cController.Init(szDirectory, szDirectory, TRUE);
+	cController.Init(szDirectory, szRewriteDirectory);
 	cNamedIndexes.Init(&cController, 10 MB, 4);
 	cController.Begin();
 	cNamedIndexes.Open();
@@ -192,9 +194,11 @@ void TestNamedIndexesCacheEviction(void)
 	BOOL						bResult;
 	CArrayNamedIndexesBlockPtr	cBlockPtrs;
 	char						szDirectory[] = "NamedIndexes" _FS_ "3";
+	char						szRewriteDirectory[] = "_NamedIndexes" _FS_ "3";
 
-	cFileUtil.MakeDir(szDirectory);
-	cController.Init(szDirectory, szDirectory, TRUE);
+	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
+
+	cController.Init(szDirectory, szRewriteDirectory);
 	cNamedIndexes.Init(&cController, 256, 4);
 	cController.Begin();
 	cNamedIndexes.Open();
@@ -290,17 +294,18 @@ void TestNamedIndexesCacheEviction(void)
 //////////////////////////////////////////////////////////////////////////
 void TestNamedIndexesLoad(void)
 {
-	CNamedIndexes				cNamedIndexes;
-	CDurableFileController		cController;
-	CFileUtil					cFileUtil;
-	CNamedIndexesBlocks*		pcBlock32;
-	CNamedIndexesBlocks*		pcBlock64;
-	CNamedIndexesBlock*			pcBlock;
-	char						szDirectory[] = "NamedIndexes" _FS_ "4";
+	CNamedIndexes			cNamedIndexes;
+	CDurableFileController	cController;
+	CFileUtil				cFileUtil;
+	CNamedIndexesBlocks*	pcBlock32;
+	CNamedIndexesBlocks*	pcBlock64;
+	CNamedIndexesBlock*		pcBlock;
+	char					szDirectory[] = "NamedIndexes" _FS_ "4";
+	char					szRewriteDirectory[] = "_NamedIndexes" _FS_ "4";
 
-	cFileUtil.MakeDir(szDirectory);
+	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
-	cController.Init(szDirectory, szDirectory, TRUE);
+	cController.Init(szDirectory, szRewriteDirectory);
 	cNamedIndexes.Init(&cController, 512, 6);
 
 	AssertTrue(cController.Begin());
@@ -417,7 +422,7 @@ NamedIndexes" _FS_ "4" _FS_ "64_0.NAM\n\
 -----------------------\n", sz.Text());
 	sz.Kill();
 
-	cController.Init(szDirectory, szDirectory, TRUE);
+	cController.Init(szDirectory, szRewriteDirectory);
 	cNamedIndexes.Init(&cController, 512, 6);
 
 	AssertTrue(cController.Begin());
@@ -493,16 +498,17 @@ NamedIndexes" _FS_ "4" _FS_ "64_0.NAM\n\
 //////////////////////////////////////////////////////////////////////////
 void TestNamedIndexesOptimise(void)
 {
-	CNamedIndexes				cNamedIndexes;
-	CDurableFileController		cController;
-	CFileUtil					cFileUtil;
-	BOOL						bResult;
-	CNamedIndexesOptimiser		cOptimiser;
-	char						szDirectory[] = "NamedIndexes" _FS_ "5";
+	CNamedIndexes			cNamedIndexes;
+	CDurableFileController	cController;
+	CFileUtil				cFileUtil;
+	BOOL					bResult;
+	CNamedIndexesOptimiser	cOptimiser;
+	char					szDirectory[] = "NamedIndexes" _FS_ "5";
+	char					szRewriteDirectory[] = "_NamedIndexes" _FS_ "5";
 
-	cFileUtil.MakeDir(szDirectory);
+	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
-	cController.Init(szDirectory, szDirectory, TRUE);
+	cController.Init(szDirectory, szRewriteDirectory);
 	cNamedIndexes.Init(&cController, 20 MB, 4);
 	
 	AssertTrue(cController.Begin());
@@ -545,7 +551,7 @@ void TestNamedIndexesOptimise(void)
 	cController.Kill();
 
 
-	cController.Init(szDirectory, szDirectory, FALSE);  //Not being durable during optimisation is important
+	cController.Init(szDirectory, NULL);  //Not being durable during optimisation is important
 	cNamedIndexes.Init(&cController, 20 MB, 4);
 	cOptimiser.Init(&cNamedIndexes);
 	bResult = cOptimiser.Optimise();
@@ -622,7 +628,7 @@ NamedIndexes" _FS_ "5" _FS_ "96_0.NAM\n\
 	AssertFalse(cFileUtil.Exists("NamedIndexes" _FS_ "5" _FS_ "96_0.NAM.TMP"));
 
 
-	cController.Init(szDirectory, szDirectory, TRUE);
+	cController.Init(szDirectory, szRewriteDirectory);
 	AssertTrue(cController.Begin());
 	cNamedIndexes.Init(&cController, 20 MB, 4);
 	AssertLongLongInt(26, cNamedIndexes.NumNames());
