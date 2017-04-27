@@ -21,3 +21,4 @@ char* CTestIndexTreeObject::GetName(void)
 {
 	return mszName;
 }
+
