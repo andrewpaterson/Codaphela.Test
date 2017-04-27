@@ -3,7 +3,7 @@
 #include "BaseLib/SystemAllocator.h"
 #include "TestLib/Assert.h"
 #include "CoreLib/IndexTreeNodeFile.h"
-#include "CoreLib/IndexTreeBlockFile.h"
+#include "CoreLib/IndexTreeFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ void TestIndexTreeNodeFileUnion(void)
 void TestIndexTreeNodeFileRootMemory(void)
 {
 	CIndexTreeNodeFile*		pcNode;
-	CIndexTreeBlockFile		cIndex;
+	CIndexTreeFile		cIndex;
 	CIndexTreeNodeFile		cChildNode;
 	CIndexTreeChildNode*	pcResult;
 

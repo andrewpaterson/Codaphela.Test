@@ -1,8 +1,8 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/SystemAllocator.h"
 #include "TestLib/Assert.h"
-#include "CoreLib/IndexTreeBlockFileHelper.h"
-#include "CoreLib/IndexTreeBlockFile.h"
+#include "CoreLib/IndexTreeHelper.h"
+#include "CoreLib/IndexTreeFile.h"
 #include "TestIndexTreeObject.h"
 
 
@@ -12,8 +12,8 @@
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockFileInit(void)
 {
-	CIndexTreeBlockFileHelper	cHelper;
-	CIndexTreeBlockFile			cIndexFile;
+	CIndexTreeHelper	cHelper;
+	CIndexTreeFile			cIndexFile;
 	CDurableFileController		cDurableController;
 
 	cHelper.Init("Database9", "primary", "backup", "RootFile.IDX", TRUE);
@@ -37,9 +37,9 @@ void TestIndexTreeBlockFileInit(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockFileAdd(void)
 {
-	CIndexTreeBlockFileHelper	cHelper;
+	CIndexTreeHelper	cHelper;
 	CDurableFileController		cDurableController;
-	CIndexTreeBlockFile			cIndexFile;
+	CIndexTreeFile			cIndexFile;
 
 	CTestIndexTreeObject		a;
 	CTestIndexTreeObject		aa;
