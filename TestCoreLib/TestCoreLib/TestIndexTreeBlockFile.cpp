@@ -112,4 +112,3 @@ void TestIndexTreeBlockFile(void)
 	TestStatistics();
 }
 
-
