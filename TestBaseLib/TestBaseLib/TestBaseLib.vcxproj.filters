@@ -88,6 +88,9 @@
     <Filter Include="Source\Memory\Temporary">
       <UniqueIdentifier>{f7a8393f-19d8-44ac-84b0-41766b30c4c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Data\List">
+      <UniqueIdentifier>{81324991-7985-488a-ad2c-09f43ba48034}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -266,6 +269,9 @@
     </ClCompile>
     <ClCompile Include="TestChars.cpp">
       <Filter>Source\Data\String</Filter>
+    </ClCompile>
+    <ClCompile Include="TestListBlock.cpp">
+      <Filter>Source\Data\List</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

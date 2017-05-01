@@ -26,6 +26,38 @@ void TestArrayVoidPtrGet(void)
 	cArray.Kill();
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayVoidPtrFind(void)
+{
+	CArrayVoidPtr	cArray;
+	int				aiValue[5];
+	int*			pi1;
+	int*			pi2;
+	int*			pi3;
+	int*			pi4;
+	int*			pi5;
+
+	aiValue[0] = 55;
+	aiValue[1] = 66;
+	aiValue[2] = 77;
+	aiValue[3] = 88;
+	aiValue[4] = 99;
+
+	cArray.Init();
+	cArray.Add(&aiValue[4]);
+	cArray.Add(&aiValue[3]);
+	cArray.Add(&aiValue[2]);
+	cArray.Add(&aiValue[1]);
+	cArray.Add(&aiValue[0]);
+
+	AssertInt(55, *((int*)cArray.GetPtr(0)));
+
+	cArray.Kill();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -36,6 +68,7 @@ void TestArrayVoidPtr(void)
 	BeginTests();
 
 	TestArrayVoidPtrGet();
+	TestArrayVoidPtrFind();
 
 	TestStatistics();
 }

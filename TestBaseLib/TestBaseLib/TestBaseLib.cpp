@@ -12,6 +12,7 @@ void TestMapBlock(void);
 void TestMapInt(void);
 void TestMapPtr(void);
 void TestMapString(void);
+void TestListBlock(void);
 void TestConstructors(void);
 void TestDate(void);
 void TestNumbers(void);
@@ -77,6 +78,7 @@ int main(void)
 	TestMapString();
 	TestMapInt();
 	TestMapPtr();
+	TestListBlock();
 	TestConstructors();
 	TestLinkedListBlockAligned();
 	TestAllocator();
