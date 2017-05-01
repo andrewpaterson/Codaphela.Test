@@ -1,5 +1,5 @@
 #include "BaseLib/Logger.h"
-#include "BaseLib/IndexTreeBlockMemory.h"
+#include "BaseLib/IndexTreeMemory.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
 
@@ -14,7 +14,7 @@ void TestIndexTreeNodeMemoryInit(void)
 	CIndexTreeNodeMemory	pcChildNode;
 	long long int			uiObject;
 	CIndexTreeNodeMemory*	pcResult;
-	CIndexTreeBlockMemory	cTree;
+	CIndexTreeMemory	cTree;
 	
 	cTree.FakeInit();
 
@@ -95,7 +95,7 @@ void TestIndexTreeNodeMemoryContain(void)
 	CIndexTreeNodeMemory*	pcNode4;
 	CIndexTreeNodeMemory*	pcNode5;
 	CIndexTreeNodeMemory*	pcNode6;
-	CIndexTreeBlockMemory	cTree;
+	CIndexTreeMemory	cTree;
 
 	cTree.FakeInit();
 
@@ -224,7 +224,7 @@ void TestIndexTreeNodeMemoryContain(void)
 void TestIndexTreeNodeMemoryUncontain(void)
 {
 	CIndexTreeNodeMemory*	pcNode1;
-	CIndexTreeBlockMemory	cTree;
+	CIndexTreeMemory	cTree;
 
 	cTree.FakeInit();
 
@@ -311,7 +311,7 @@ void TestIndexTreeNodeMemoryFindNotEmpty(void)
 	CIndexTreeNodeMemory*	pcNode3;
 	CIndexTreeNodeMemory*	pcNode4;
 	CIndexTreeNodeMemory*	pcNode5;
-	CIndexTreeBlockMemory	cTree;
+	CIndexTreeMemory	cTree;
 
 	cTree.FakeInit();
 
