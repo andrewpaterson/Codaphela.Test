@@ -225,6 +225,72 @@ void TestListBlockRemoveRange(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestListBlockPushPop(void)
+{
+	CListBlock				cList;
+	STestListBlockItem*		psItem1;
+	STestListBlockItem*		psItem2;
+	STestListBlockItem*		psItem3;
+	STestListBlockItem*		psItem4;
+	STestListBlockItem*		psItem5;
+	STestListBlockItem*		psItem6;
+
+	STestListBlockItem		sItem;
+
+	cList.Init(3, sizeof(STestListBlockItem));
+	AssertInt(0, cList.NumElements());
+	AssertInt(0, cList.NumElementsFromFreeList());
+	AssertInt(0, cList.NumBlocks());
+
+	psItem1 = (STestListBlockItem*)cList.Add(); psItem1->Init(1, 101);
+	psItem2 = (STestListBlockItem*)cList.Add(); psItem2->Init(2, 202);
+	psItem3 = (STestListBlockItem*)cList.Add(); psItem3->Init(3, 303);
+	psItem4 = (STestListBlockItem*)cList.Add(); psItem4->Init(4, 404);
+	psItem5 = (STestListBlockItem*)cList.Add(); psItem5->Init(5, 505);
+	psItem6 = (STestListBlockItem*)cList.Add(); psItem6->Init(6, 606);
+	AssertInt(6, cList.NumElements());
+	AssertInt(6, cList.NumElementsFromFreeList());
+
+	cList.Pop(&sItem);
+	AssertInt(5, cList.NumElements());
+	AssertInt(5, cList.NumElementsFromFreeList());
+	AssertInt(6, sItem.mi1);
+	AssertInt(606, sItem.mi2);
+
+	cList.Pop();
+	cList.Pop(&sItem);
+	AssertInt(3, cList.NumElements());
+	AssertInt(3, cList.NumElementsFromFreeList());
+	AssertInt(4, sItem.mi1);
+	AssertInt(404, sItem.mi2);
+
+	psItem4 = (STestListBlockItem*)cList.InsertAt(0); psItem4->Init(4, 404);
+	AssertInt(4, cList.NumElements());
+	AssertInt(4, cList.NumElementsFromFreeList());
+	AssertPointer(psItem4, cList.Get(0));
+	AssertPointer(psItem1, cList.Get(1));
+	AssertPointer(psItem2, cList.Get(2));
+	AssertPointer(psItem3, cList.Get(3));
+
+	psItem5 = (STestListBlockItem*)cList.Push(); psItem5->Init(5, 505);
+	psItem6 = (STestListBlockItem*)cList.Push(); psItem6->Init(6, 606);
+	AssertInt(6, cList.NumElements());
+	AssertInt(6, cList.NumElementsFromFreeList());
+	AssertPointer(psItem4, cList.Get(0));
+	AssertPointer(psItem1, cList.Get(1));
+	AssertPointer(psItem2, cList.Get(2));
+	AssertPointer(psItem3, cList.Get(3));
+	AssertPointer(psItem5, cList.Get(4));
+	AssertPointer(psItem6, cList.Get(5));
+
+	cList.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestListBlock(void)
 {
 	BeginTests();
@@ -234,6 +300,7 @@ void TestListBlock(void)
 	TestListBlockAdd();
 	TestListBlockRemove();
 	TestListBlockRemoveRange();
+	TestListBlockPushPop();
 
 	FastFunctionsKill();
 	MemoryKill();
