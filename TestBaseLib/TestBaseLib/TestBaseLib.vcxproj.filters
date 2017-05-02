@@ -273,6 +273,9 @@
     <ClCompile Include="TestListBlock.cpp">
       <Filter>Source\Data\List</Filter>
     </ClCompile>
+    <ClCompile Include="TestListTemplate.cpp">
+      <Filter>Source\Data\List</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

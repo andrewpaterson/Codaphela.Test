@@ -124,6 +124,7 @@
     <ClCompile Include="TestIndexTreeTemplate.cpp" />
     <ClCompile Include="TestLinkedListTemplate.cpp" />
     <ClCompile Include="TestListBlock.cpp" />
+    <ClCompile Include="TestListTemplate.cpp" />
     <ClCompile Include="TestMapBlock.cpp" />
     <ClCompile Include="TestMapString.cpp" />
     <ClCompile Include="TestMemoryAllocator.cpp" />
