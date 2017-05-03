@@ -30,6 +30,7 @@ void TestFreeListAllocator(void);
 void TestIndexTreeNodeMemory(void);
 void TestIndexTreeMemory(void);
 void TestIndexTreeTemplate(void);
+void TestIndexTreeIterator(void);
 void TestMemory(void);
 void TestLinkedListBlockAligned(void);
 void TestArrayInt2D(void);
@@ -95,6 +96,7 @@ int main(void)
 	TestIndexTreeNodeMemory();
 	TestIndexTreeMemory();
 	TestIndexTreeTemplate();
+	TestIndexTreeIterator();
 	TestArrayDenseTemplate();
 	TestArraySparseTemplate();
 	TestMemoryFile();

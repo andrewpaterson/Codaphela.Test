@@ -191,7 +191,7 @@ void TestIndexTreeMemoryPutDuplicate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryValidateInternalConsistency(void)
 {
-	CIndexTreeMemory	cIndex;
+	CIndexTreeMemory		cIndex;
 	CTestIndexTreeObject	cObject;
 	CTestIndexTreeObject	cType;
 	CArrayVoidPtr			avp;
