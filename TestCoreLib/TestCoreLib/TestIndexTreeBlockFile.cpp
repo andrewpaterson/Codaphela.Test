@@ -12,9 +12,9 @@
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockFileInit(void)
 {
-	CIndexTreeHelper	cHelper;
+	CIndexTreeHelper		cHelper;
 	CIndexTreeFile			cIndexFile;
-	CDurableFileController		cDurableController;
+	CDurableFileController	cDurableController;
 
 	cHelper.Init("Database9", "primary", "backup", "RootFile.IDX", TRUE);
 
@@ -37,9 +37,9 @@ void TestIndexTreeBlockFileInit(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockFileAdd(void)
 {
-	CIndexTreeHelper	cHelper;
+	CIndexTreeHelper			cHelper;
 	CDurableFileController		cDurableController;
-	CIndexTreeFile			cIndexFile;
+	CIndexTreeFile				cIndexFile;
 
 	CTestIndexTreeObject		a;
 	CTestIndexTreeObject		aa;

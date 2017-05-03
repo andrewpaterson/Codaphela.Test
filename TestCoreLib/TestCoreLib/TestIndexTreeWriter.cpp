@@ -1,27 +1,27 @@
 #include "BaseLib/IndexTreeTemplateMemory.h"
 #include "BaseLib/MapStringString.h"
+#include "BaseLib/FileUtil.h"
 #include "TestLib/Assert.h"
+#include "CoreLib/IndexTreeWriter.h"
 
 
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeIteratorIterate(void)
+void TestIndexTreeWriterWrite(void)
 {
-	SIndexTreeIterator	sIter;
 	char*				pvData;
 	char*				pvKey;
 	int					iDataSize;
 	BOOL				bExists;
-	char				pacKey[9+1];
 	int					iKeyLength;
 	CIndexTreeMemory	cIndexTree;
 	CMapStringString	cMap;
 	SMapIterator		sMapIter;
-	char*				pacData;
-	int					iResult;
-	int					iMapDataSize;
+	CIndexTreeWriter	cWriter;
+	CFileUtil			cFileUtil;
+	char				szDirectory[] = "IndexTreeMemoryWriter";
 
 	cMap.Init(3);
 	cMap.Put("AA", "nutritious");
@@ -36,7 +36,7 @@ void TestIndexTreeIteratorIterate(void)
 	cMap.Put("BBC", "cycle");
 	cMap.Put("BBB", "waggish");
 	cMap.Put("BBA", "debt");
-
+	
 	AssertInt(12, cMap.NumElements());
 
 	cIndexTree.Init();
@@ -54,20 +54,9 @@ void TestIndexTreeIteratorIterate(void)
 	AssertInt(9, cIndexTree.GetLargestKeySize());
 	AssertInt(12, cIndexTree.NumElements());
 
-	bExists = cIndexTree.StartIteration(&sIter, (void**)&pvData, &iDataSize);
-	while (bExists)
-	{
-		iKeyLength = cIndexTree.GetKey(pacKey, pvData, TRUE);
+	cFileUtil.RemoveDir(szDirectory);
 
-		pacData = cMap.Get(pacKey);
-		iMapDataSize = strlen(pacData);
-		AssertInt(iMapDataSize, iDataSize);
-
-		iResult = memcmp_fast(pacData, pvData, iDataSize);
-		AssertInt(0, iResult);
-
-		bExists = cIndexTree.Iterate(&sIter, (void**)&pvData, &iDataSize);
-	}
+	cWriter.Write(&cIndexTree, szDirectory);
 
 	cIndexTree.Kill();
 	cMap.Kill();
@@ -78,13 +67,12 @@ void TestIndexTreeIteratorIterate(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeIterator(void)
+void TestIndexTreeWriter(void)
 {
 	BeginTests();
 
-	TestIndexTreeIteratorIterate();
+	TestIndexTreeWriterWrite();
 
 	TestStatistics();
 }
-
 

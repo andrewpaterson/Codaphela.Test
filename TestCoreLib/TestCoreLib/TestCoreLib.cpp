@@ -17,6 +17,7 @@ void TestDurableSet(void);
 void TestDurableFileController(void);
 void TestIndexTreeBlockFile(void);
 void TestIndexTreeNodeFile(void);
+void TestIndexTreeWriter(void);
 void TestIndexedFile(void);
 void TestIndexedFiles(void);
 void TestIndexes(void);
@@ -54,6 +55,7 @@ int main(void)
 	TestDurableFileController();
 	TestIndexTreeNodeFile();
 	TestIndexTreeBlockFile();
+	TestIndexTreeWriter();
 	TestIndexedFile();
 	TestIndexedFiles();
 	TestIndexes();
