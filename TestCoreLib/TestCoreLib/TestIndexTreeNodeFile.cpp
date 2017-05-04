@@ -56,7 +56,7 @@ void TestIndexTreeNodeFileUnion(void)
 void TestIndexTreeNodeFileRootMemory(void)
 {
 	CIndexTreeNodeFile*		pcNode;
-	CIndexTreeFile		cIndex;
+	CIndexTreeFile			cIndex;
 	CIndexTreeNodeFile		cChildNode;
 	CIndexTreeChildNode*	pcResult;
 
