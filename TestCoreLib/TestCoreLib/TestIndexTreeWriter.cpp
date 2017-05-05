@@ -60,6 +60,8 @@ void TestIndexTreeWriterWrite(void)
 
 	cIndexTree.Kill();
 	cMap.Kill();
+
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
