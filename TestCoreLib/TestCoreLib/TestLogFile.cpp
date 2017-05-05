@@ -2,6 +2,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/DiskFile.h"
+#include "BaseLib/TextFile.h"
 #include "CoreLib/TypeConverter.h"
 #include "CoreLib/LogFile.h"
 #include "TestLib/Assert.h"
@@ -103,7 +104,7 @@ void TestLogFileRead(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestLogFileWrite(void)
+void TestLogFileWriteMemory(void)
 {
 	CLogFile*		pcLogFile;
 	CMemoryFile*	pcMemoryFile;
@@ -224,6 +225,122 @@ void TestLogFileWrite(void)
 	AssertTrue(bResult);
 
 	cFile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLogFileWriteDiskSingle(void)
+{
+	CLogFile*		pcLogFile;
+	CDiskFile*		pcDiskFile;
+	CFileBasic		cFile;
+	BOOL			bResult;
+	CFileUtil		cFileUtil;
+	char			szDirectory[] = "Output/LogFile4";
+	char			szFileName[] = "Output/LogFile4/File.txt";
+	CTextFile		cTextFile;
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+	pcDiskFile = DiskFile(szFileName);
+
+	pcLogFile = LogFile(pcDiskFile);
+	cFile.Init(pcLogFile);
+
+	bResult = cFile.Open(EFM_ReadWrite_Create);
+	AssertTrue(bResult);
+
+	bResult = cFile.WriteString("The suspense is killing me!");
+	AssertTrue(bResult);
+
+	bResult = cFile.Close();  
+	AssertTrue(bResult);
+	AssertInt(3, pcLogFile->GetNumCommands());
+
+	bResult = pcLogFile->Commit();
+	AssertTrue(bResult);
+	AssertTrue(cFileUtil.Exists(szFileName));
+
+	cTextFile.Init();
+	cTextFile.Read(DiskFile(szFileName));
+	AssertString("The suspense is killing me!", cTextFile.Text(sizeof(int)));
+	cTextFile.Kill();
+
+	cFile.Kill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLogFileWriteDisk(void)
+{
+	CLogFile*		pcLogFile;
+	CDiskFile*		pcDiskFile;
+	CFileBasic		cFile;
+	BOOL			bResult;
+	int				iLength;
+	char			sz[200];
+	CFileUtil		cFileUtil;
+	char			szDirectory[] = "Output/LogFile3";
+	char			szFileName[] = "Output/LogFile3/File.txt";
+	CTextFile		cTextFile;
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+	pcDiskFile = DiskFile(szFileName);
+
+	pcLogFile = LogFile(pcDiskFile);
+	cFile.Init(pcLogFile);
+
+	bResult = cFile.Open(EFM_ReadWrite_Create);
+	AssertTrue(bResult);
+
+	bResult = cFile.WriteString("The suspense is killing me!");
+	AssertTrue(bResult);
+	AssertFalse(cFileUtil.Exists(szFileName));
+
+	AssertInt(1, pcLogFile->GetNumWrites());
+	AssertLongLongInt(32, pcLogFile->GetWriteSize(0));
+
+	bResult = cFile.Seek(8);
+	AssertTrue(bResult);
+
+	bResult = cFile.WriteData("camisole", 8);
+	AssertTrue(bResult);
+	AssertInt(1, pcLogFile->GetNumWrites());
+	AssertLongLongInt(32, pcLogFile->GetWriteSize(0));
+
+	AssertFalse(cFileUtil.Exists(szFileName));
+	cFile.Seek(0);
+	bResult = cFile.ReadStringLength(&iLength);
+	AssertTrue(bResult);
+	AssertInt(28, iLength);
+	AssertFalse(cFile.IsEndOfFile());
+	bResult = cFile.ReadStringChars(sz, iLength);
+	AssertString("The camisole is killing me!", sz);
+	AssertTrue(cFile.IsEndOfFile());
+
+	bResult = cFile.Close();  //This should go before Commit
+	AssertTrue(bResult);
+	AssertInt(3, pcLogFile->GetNumCommands());
+
+	bResult = pcLogFile->Commit();
+	AssertTrue(bResult);
+	AssertTrue(cFileUtil.Exists(szFileName));
+
+	cTextFile.Init();
+	cTextFile.Read(DiskFile(szFileName));
+	AssertString("The camisole is killing me!", cTextFile.Text(sizeof(int)));
+	cTextFile.Kill();
+
+	cFile.Kill();
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -475,15 +592,17 @@ void TestLogFileDelete(void)
 	char			szWrite[] = {"Cat Catt ct... "};
 	int				iWriteLen;
 	char			szA[] = {"A"};
+	char			szDirectory[] = "Output/LogFile";
+	char			szFileName[] = "Output/LogFile/File.txt";
 
-	cFileUtil.RemoveDir("Output/LogFile");
-	cFileUtil.MakeDir("Output/LogFile");
-	pcDiskFile = DiskFile("Output/LogFile/File.txt");
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+	pcDiskFile = DiskFile(szFileName);
 	pcDiskFile->Open(EFM_ReadWrite_Create);
 	iSourcelen = (int)strlen(szSource);
 	pcDiskFile->Write(szSource, iSourcelen + 1, 1);
 	pcDiskFile->Close();
-	AssertTrue(cFileUtil.Exists("Output/LogFile/File.txt"));
+	AssertTrue(cFileUtil.Exists(szFileName));
 
 	pcLogFile = LogFile(pcDiskFile);
 	cFile.Init(pcLogFile);
@@ -502,7 +621,7 @@ void TestLogFileDelete(void)
 	pcLogFile->Close();
 
 	cFile.Delete();
-	AssertTrue(cFileUtil.Exists("Output/LogFile/File.txt"));
+	AssertTrue(cFileUtil.Exists(szFileName));
 	AssertInt(0, (int)cFile.GetFileSize())l
 
 	cFile.Open(EFM_ReadWrite_Create);
@@ -513,10 +632,10 @@ void TestLogFileDelete(void)
 	pcLogFile->Commit();
 	cFile.Kill();
 
-	AssertTrue(cFileUtil.Exists("Output/LogFile/File.txt"));
-	AssertLongLongInt(2, cFileUtil.Size("Output/LogFile/File.txt"));
+	AssertTrue(cFileUtil.Exists(szFileName));
+	AssertLongLongInt(2, cFileUtil.Size(szFileName));
 
-	pcDiskFile = DiskFile("Output/LogFile/File.txt");
+	pcDiskFile = DiskFile(szFileName);
 	pcLogFile = LogFile(pcDiskFile);
 	cFile.Init(pcLogFile);
 	pcLogFile->Begin();
@@ -530,7 +649,8 @@ void TestLogFileDelete(void)
 	pcLogFile->Commit();
 	cFile.Kill();
 
-	AssertFalse(cFileUtil.Exists("Output/LogFile/File.txt"));
+	AssertFalse(cFileUtil.Exists(szFileName));
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -549,15 +669,17 @@ void TestLogFileMultipleReadsAfterOpens(void)
 	char			szWrite[] = {"Cat Catt ct... "};
 	int				iWriteLen;
 	char			szA[] = {"A"};
+	char			szDirectory[] = "Output/LogFile2";
+	char			szFileName[] = "Output/LogFile2/OpenClose.txt";
 
-	cFileUtil.RemoveDir("Output/LogFile2");
-	cFileUtil.MakeDir("Output/LogFile2");
-	pcDiskFile = DiskFile("Output/LogFile2/OpenClose.txt");
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+	pcDiskFile = DiskFile(szFileName);
 	pcDiskFile->Open(EFM_ReadWrite_Create);
 	iSourcelen = (int)strlen(szSource);
 	pcDiskFile->Write(szSource, iSourcelen + 1, 1);
 	pcDiskFile->Close();
-	AssertTrue(cFileUtil.Exists("Output/LogFile2/OpenClose.txt"));
+	AssertTrue(cFileUtil.Exists(szFileName));
 
 	pcLogFile = LogFile(pcDiskFile);
 	cFile.Init(pcLogFile);
@@ -576,7 +698,7 @@ void TestLogFileMultipleReadsAfterOpens(void)
 	pcLogFile->Close();
 
 	cFile.Delete();
-	AssertTrue(cFileUtil.Exists("Output/LogFile2/OpenClose.txt"));
+	AssertTrue(cFileUtil.Exists(szFileName));
 	AssertInt(0, (int)cFile.GetFileSize());
 
 	cFile.Open(EFM_ReadWrite_Create);
@@ -588,10 +710,10 @@ void TestLogFileMultipleReadsAfterOpens(void)
 	pcLogFile->Commit();
 	cFile.Kill();
 
-	AssertTrue(cFileUtil.Exists("Output/LogFile2/OpenClose.txt"));
-	AssertLongLongInt(2, cFileUtil.Size("Output/LogFile2/OpenClose.txt"));
+	AssertTrue(cFileUtil.Exists(szFileName));
+	AssertLongLongInt(2, cFileUtil.Size(szFileName));
 
-	pcDiskFile = DiskFile("Output/LogFile2/OpenClose.txt");
+	pcDiskFile = DiskFile(szFileName);
 	pcLogFile = LogFile(pcDiskFile);
 	cFile.Init(pcLogFile);
 	pcLogFile->Begin();
@@ -610,7 +732,9 @@ void TestLogFileMultipleReadsAfterOpens(void)
 	pcLogFile->Commit();
 	cFile.Kill();
 
-	AssertFalse(cFileUtil.Exists("Output/LogFile2/OpenClose.txt"));
+	AssertFalse(cFileUtil.Exists(szFileName));
+
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -627,7 +751,9 @@ void TestLogFile(void)
 
 	TestLogFileOpen();
 	TestLogFileRead();
-	TestLogFileWrite();
+	TestLogFileWriteMemory();
+	TestLogFileWriteDiskSingle();
+	TestLogFileWriteDisk();
 	TestLogFileFindHoles();
 	TestLogFileCommandsSimple();
 	TestLogFileCommandsComplex();
