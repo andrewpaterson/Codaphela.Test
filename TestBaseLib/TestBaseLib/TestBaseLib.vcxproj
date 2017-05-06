@@ -109,6 +109,7 @@
     <ClCompile Include="SortedTestObject.cpp" />
     <ClCompile Include="TestAllocator.cpp" />
     <ClCompile Include="TestArrayBlockSorted.cpp" />
+    <ClCompile Include="TestArrayTemplateMinimal.cpp" />
     <ClCompile Include="TestArrayVoidPtr.cpp" />
     <ClCompile Include="TestBaseLib.cpp" />
     <ClCompile Include="TestChars.cpp" />
@@ -126,6 +127,7 @@
     <ClCompile Include="TestLinkedListTemplate.cpp" />
     <ClCompile Include="TestListBlock.cpp" />
     <ClCompile Include="TestListTemplate.cpp" />
+    <ClCompile Include="TestMap.cpp" />
     <ClCompile Include="TestMapBlock.cpp" />
     <ClCompile Include="TestMapString.cpp" />
     <ClCompile Include="TestMemoryAllocator.cpp" />

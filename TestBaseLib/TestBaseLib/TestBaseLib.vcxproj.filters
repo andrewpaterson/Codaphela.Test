@@ -91,6 +91,9 @@
     <Filter Include="Source\Data\List">
       <UniqueIdentifier>{81324991-7985-488a-ad2c-09f43ba48034}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Data\Array\Minimal">
+      <UniqueIdentifier>{c435b4a6-eb92-474c-b822-3ecdddb6c426}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -278,6 +281,12 @@
     </ClCompile>
     <ClCompile Include="TestIndexTreeIterator.cpp">
       <Filter>Source\Data\Index</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMap.cpp">
+      <Filter>Source\Data\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayTemplateMinimal.cpp">
+      <Filter>Source\Data\Array\Minimal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

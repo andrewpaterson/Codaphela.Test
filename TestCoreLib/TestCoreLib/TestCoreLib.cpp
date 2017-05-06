@@ -4,10 +4,7 @@
 void TestFloatHelper(void);
 void TestIntegerHelper(void);
 void TestFastFunctions(void);
-void TestArrayMinimalTemplate(void);
 void TestPropertiesFile(void);
-void TestChars(void);
-void TestMap(void);
 void TestTextParser(void);
 void TestXMLParser(void);
 void TestXMLFile(void);
@@ -42,10 +39,7 @@ int main(void)
 	TestFloatHelper();
 	TestIntegerHelper();
 	TestFastFunctions();
-	TestArrayMinimalTemplate();
 	TestPropertiesFile();
-	TestChars();
-	TestMap();
 	TestTextParser();
 	TestXMLParser();
 	TestXMLFile();

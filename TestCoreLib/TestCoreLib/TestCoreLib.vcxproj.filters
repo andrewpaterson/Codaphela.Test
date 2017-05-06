@@ -4,18 +4,6 @@
     <Filter Include="Source">
       <UniqueIdentifier>{da1a14f7-1ec8-432b-9ce3-efb29ce8c400}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Data">
-      <UniqueIdentifier>{8975ad15-e994-4d2b-9034-b0167f9084f4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Data\Map">
-      <UniqueIdentifier>{ac04942c-b002-4be5-a772-9f05c539517b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Data\String">
-      <UniqueIdentifier>{af58e0f6-897a-409e-bd39-09309c3c3fbf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Data\Array">
-      <UniqueIdentifier>{14e936f3-35ac-4e04-98ab-0e9055bedc3f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\File">
       <UniqueIdentifier>{1aed9247-84de-40a0-9b09-766f117e7b11}</UniqueIdentifier>
     </Filter>
@@ -65,12 +53,6 @@
     </ClCompile>
     <ClCompile Include="TestCoreLib.cpp">
       <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="TestMap.cpp">
-      <Filter>Source\Data\Map</Filter>
-    </ClCompile>
-    <ClCompile Include="TestChars.cpp">
-      <Filter>Source\Data\String</Filter>
     </ClCompile>
     <ClCompile Include="TestIndexedData.cpp">
       <Filter>Source\File\Indexed</Filter>
@@ -128,9 +110,6 @@
     </ClCompile>
     <ClCompile Include="TestLogFile.cpp">
       <Filter>Source\File\Log</Filter>
-    </ClCompile>
-    <ClCompile Include="TestArrayTemplateMinimal.cpp">
-      <Filter>Source\Data\Array</Filter>
     </ClCompile>
     <ClCompile Include="TestPackFilesPacker.cpp">
       <Filter>Source\File\Files</Filter>
