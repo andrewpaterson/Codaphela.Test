@@ -239,8 +239,8 @@ void TestLogFileWriteDiskSingle(void)
 	CFileBasic		cFile;
 	BOOL			bResult;
 	CFileUtil		cFileUtil;
-	char			szDirectory[] = "Output/LogFile4";
-	char			szFileName[] = "Output/LogFile4/File.txt";
+	char			szDirectory[] = "Output" _FS_ "LogFile4";
+	char			szFileName[] = "Output" _FS_ "LogFile4" _FS_ "File.txt";
 	CTextFile		cTextFile;
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -287,8 +287,8 @@ void TestLogFileWriteDisk(void)
 	int				iLength;
 	char			sz[200];
 	CFileUtil		cFileUtil;
-	char			szDirectory[] = "Output/LogFile3";
-	char			szFileName[] = "Output/LogFile3/File.txt";
+	char			szDirectory[] = "Output" _FS_ "LogFile3";
+	char			szFileName[] = "Output" _FS_ "LogFile3" _FS_ "File.txt";
 	CTextFile		cTextFile;
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -592,8 +592,8 @@ void TestLogFileDelete(void)
 	char			szWrite[] = {"Cat Catt ct... "};
 	int				iWriteLen;
 	char			szA[] = {"A"};
-	char			szDirectory[] = "Output/LogFile";
-	char			szFileName[] = "Output/LogFile/File.txt";
+	char			szDirectory[] = "Output" _FS_ "LogFile";
+	char			szFileName[] = "Output" _FS_ "LogFile" _FS_ "File.txt";
 
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.MakeDir(szDirectory);
@@ -653,6 +653,7 @@ void TestLogFileDelete(void)
 	cFileUtil.RemoveDir(szDirectory);
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -669,8 +670,8 @@ void TestLogFileMultipleReadsAfterOpens(void)
 	char			szWrite[] = {"Cat Catt ct... "};
 	int				iWriteLen;
 	char			szA[] = {"A"};
-	char			szDirectory[] = "Output/LogFile2";
-	char			szFileName[] = "Output/LogFile2/OpenClose.txt";
+	char			szDirectory[] = "Output" _FS_ "LogFile2";
+	char			szFileName[] = "Output" _FS_ "LogFile2" _FS_ "OpenClose.txt";
 
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.MakeDir(szDirectory);
