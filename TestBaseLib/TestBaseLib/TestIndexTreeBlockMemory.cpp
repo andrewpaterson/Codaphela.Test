@@ -156,7 +156,7 @@ void TestIndexTreeMemoryGet(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryPutDuplicate(void)
 {
-	CIndexTreeMemory	cIndex;
+	CIndexTreeMemory		cIndex;
 	CTestIndexTreeObject	andrew;
 	CTestIndexTreeObject	andrewToo;
 	CTestIndexTreeObject**	pcResult;
@@ -168,13 +168,17 @@ void TestIndexTreeMemoryPutDuplicate(void)
 	andrew.Init("Andrew");
 	bResult = cIndex.PutPtr(andrew.mszName, &andrew);
 	AssertTrue(bResult);
+	AssertTrue(cIndex.ValidateSize());
+	AssertInt(1, cIndex.NumElements());
 
 	andrewToo.Init("Andrew");
 	bResult = cIndex.PutPtr(andrewToo.GetName(), &andrewToo);
-	AssertFalse(bResult);
+	AssertTrue(bResult);
+	AssertTrue(cIndex.ValidateSize());
+	AssertInt(1, cIndex.NumElements());
 
 	pcResult = (CTestIndexTreeObject**)cIndex.Get("Andrew");
-	AssertPointer(&andrew, *pcResult);
+	AssertPointer(&andrewToo, *pcResult);
 
 	avp.Init();
 	cIndex.FindAll(&avp);
