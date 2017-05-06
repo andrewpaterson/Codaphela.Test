@@ -96,9 +96,6 @@
     <ClCompile Include="TestOperators.cpp">
       <Filter>Source\Script</Filter>
     </ClCompile>
-    <ClCompile Include="TestTextParser.cpp">
-      <Filter>Source\Text</Filter>
-    </ClCompile>
     <ClCompile Include="TestXMLParser.cpp">
       <Filter>Source\Text</Filter>
     </ClCompile>

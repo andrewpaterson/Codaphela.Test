@@ -135,7 +135,6 @@
     <ClCompile Include="TestNumber.cpp" />
     <ClCompile Include="TestFastFunctions.cpp" />
     <ClCompile Include="TestOperators.cpp" />
-    <ClCompile Include="TestTextParser.cpp" />
     <ClCompile Include="TestXMLParser.cpp" />
   </ItemGroup>
   <ItemGroup>

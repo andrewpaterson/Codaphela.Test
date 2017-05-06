@@ -3,7 +3,7 @@
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/DiskFile.h"
 #include "BaseLib/TextFile.h"
-#include "CoreLib/TypeConverter.h"
+#include "BaseLib/TypeConverter.h"
 #include "CoreLib/LogFile.h"
 #include "TestLib/Assert.h"
 

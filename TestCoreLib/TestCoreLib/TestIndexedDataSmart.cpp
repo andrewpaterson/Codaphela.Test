@@ -1,7 +1,7 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
+#include "BaseLib/TypeConverter.h"
 #include "CoreLib/IndexedData.h"
-#include "CoreLib/TypeConverter.h"
 #include "TestLib/Assert.h"
 
 

@@ -1,9 +1,9 @@
+#include "stdio.h"
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/Define.h"
-#include "TestLib/Assert.h"
-#include "stdio.h"
+#include "BaseLib/TypeConverter.h"
 #include "CoreLib/Operators.h"
-#include "CoreLib/TypeConverter.h"
+#include "TestLib/Assert.h"
 
 
 //////////////////////////////////////////////////////////////////////////

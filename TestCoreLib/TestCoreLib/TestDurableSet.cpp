@@ -6,7 +6,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/FileBasic.h"
 #include "BaseLib/TextFile.h"
-#include "CoreLib/TypeConverter.h"
+#include "BaseLib/TypeConverter.h"
 
 
 //////////////////////////////////////////////////////////////////////////

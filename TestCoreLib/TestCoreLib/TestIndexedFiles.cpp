@@ -1,6 +1,6 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
-#include "CoreLib/TypeConverter.h"
+#include "BaseLib/TypeConverter.h"
 #include "CoreLib/IndexedFiles.h"
 #include "TestLib/Assert.h"
 

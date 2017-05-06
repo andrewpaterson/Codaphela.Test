@@ -4,9 +4,9 @@
 #include "BaseLib/FileBasic.h"
 #include "BaseLib/PointerRemapper.h"
 #include "BaseLib/TextFile.h"
+#include "BaseLib/TypeConverter.h"
 #include "CoreLib/DurableFile.h"
 #include "CoreLib/DurableFileController.h"
-#include "CoreLib/TypeConverter.h"
 #include "TestLib/Assert.h"
 
 //////////////////////////////////////////////////////////////////////////

@@ -94,6 +94,9 @@
     <Filter Include="Source\Data\Array\Minimal">
       <UniqueIdentifier>{c435b4a6-eb92-474c-b822-3ecdddb6c426}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Text">
+      <UniqueIdentifier>{cb4beb52-2e9f-4a7e-9966-059b5f77b0fa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -287,6 +290,9 @@
     </ClCompile>
     <ClCompile Include="TestArrayTemplateMinimal.cpp">
       <Filter>Source\Data\Array\Minimal</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTextParser.cpp">
+      <Filter>Source\Text</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

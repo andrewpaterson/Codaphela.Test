@@ -1,9 +1,9 @@
+#include "stdio.h"
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/Define.h"
+#include "BaseLib/TypeConverter.h"
 #include "TestLib/Assert.h"
-#include "stdio.h"
 #include "TestLib/IntelTimer.h"
-#include "CoreLib/TypeConverter.h"
 
 
 void SetupTestMemory(char* pc1, char* pc2)

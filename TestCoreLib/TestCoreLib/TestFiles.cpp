@@ -1,8 +1,8 @@
 #include "BaseLib/TextFile.h"
 #include "BaseLib/DebugOutput.h"
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/TypeConverter.h"
 #include "CoreLib/Files.h"
-#include "CoreLib/TypeConverter.h"
 #include "TestLib/Assert.h"
 
 
