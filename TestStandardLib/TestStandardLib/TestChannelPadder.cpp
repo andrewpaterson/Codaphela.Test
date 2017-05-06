@@ -1,6 +1,6 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/Log.h"
-#include "CoreLib/TypeNames.h"
+#include "BaseLib/TypeNames.h"
 #include "StandardLib/ChannelPadder.h"
 #include "TestLib/Assert.h"
 

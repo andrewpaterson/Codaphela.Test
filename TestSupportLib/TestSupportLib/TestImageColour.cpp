@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/GeometricTypes.h"
-#include "CoreLib/TypeConverter.h"
+#include "BaseLib/TypeConverter.h"
 #include "SupportLib/ImageColour.h"
 #include "SupportLib/ImageAccessor.h"
 #include "SupportLib/ImageAccessorCreator.h"

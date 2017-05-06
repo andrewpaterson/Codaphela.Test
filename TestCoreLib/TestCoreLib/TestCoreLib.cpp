@@ -5,7 +5,6 @@ void TestFloatHelper(void);
 void TestIntegerHelper(void);
 void TestFastFunctions(void);
 void TestPropertiesFile(void);
-void TestTextParser(void);
 void TestXMLParser(void);
 void TestXMLFile(void);
 void TestLogFile(void);
@@ -40,7 +39,6 @@ int main(void)
 	TestIntegerHelper();
 	TestFastFunctions();
 	TestPropertiesFile();
-	TestTextParser();
 	TestXMLParser();
 	TestXMLFile();
 	TestLogFile();

@@ -3,7 +3,7 @@
 #include "BaseLib/PointerRemapper.h"
 #include "BaseLib/FastFunctions.h"
 #include "CoreLib/Operators.h"
-#include "CoreLib/TypeConverter.h"
+#include "BaseLib/TypeConverter.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/Objects.h"
 #include "SupportLib/Image.h"

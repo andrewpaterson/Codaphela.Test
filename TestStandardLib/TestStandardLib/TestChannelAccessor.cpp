@@ -1,6 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
-#include "CoreLib/TypeNames.h"
-#include "CoreLib/TypeConverter.h"
+#include "BaseLib/TypeNames.h"
+#include "BaseLib/TypeConverter.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/Channels.h"
 #include "StandardLib/ChannelsAccessor.h"

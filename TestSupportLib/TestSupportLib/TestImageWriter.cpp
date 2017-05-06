@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SupportLib/Image.h"
 #include "BaseLib/FastFunctions.h"
-#include "CoreLib/TypeConverter.h"
+#include "BaseLib/TypeConverter.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
 #include "TestLib/Assert.h"

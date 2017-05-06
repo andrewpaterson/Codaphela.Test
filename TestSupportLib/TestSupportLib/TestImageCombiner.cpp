@@ -2,7 +2,7 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/NaiveFile.h"
-#include "CoreLib/TypeConverter.h"
+#include "BaseLib/TypeConverter.h"
 #include "StandardLib/Objects.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
