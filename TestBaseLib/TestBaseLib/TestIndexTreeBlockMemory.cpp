@@ -351,17 +351,19 @@ void TestIndexTreeMemoryRemoveByObject(void)
 	AssertInt(2, cIndex.NumElements());
 	AssertFalse(cIndex.Remove(object2.GetName()));
 	AssertInt(2, cIndex.NumElements());
-
+	AssertTrue(cIndex.ValidateIndexTree())
 	AssertInt(13, cIndex.CountAllocatedNodes());
-	cIndex.Remove(object3.GetName());
 
+	cIndex.Remove(object3.GetName());
 	AssertInt(1, cIndex.NumElements());
 	AssertInt(8, cIndex.CountAllocatedNodes());
+	AssertTrue(cIndex.ValidateIndexTree())
 
 	cIndex.PutPtr(object3.GetName(), &object3);
 	AssertInt(13, cIndex.CountAllocatedNodes());
-
+	AssertTrue(cIndex.ValidateIndexTree())
 	AssertInt(2, cIndex.NumElements());
+
 	ppcRemoved = (CTestIndexTreeObject**)cIndex.Get(object3.GetName());
 	AssertPointer(&object3, *ppcRemoved);
 	AssertTrue(cIndex.Remove(object3.GetName()));
@@ -376,7 +378,9 @@ void TestIndexTreeMemoryRemoveByObject(void)
 	AssertInt(0, cIndex.NumElements());
 
 	AssertFalse(cIndex.Remove(NULL));
+	AssertTrue(cIndex.ValidateIndexTree())
 	AssertFalse(cIndex.Remove(""));
+	AssertTrue(cIndex.ValidateIndexTree())
 
 	cIndex.Kill();
 }
