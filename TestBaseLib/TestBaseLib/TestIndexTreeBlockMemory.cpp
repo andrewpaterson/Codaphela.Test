@@ -154,7 +154,7 @@ void TestIndexTreeMemoryGet(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeMemoryPutDuplicate(void)
+void TestIndexTreeMemoryPutPtrDuplicate(void)
 {
 	CIndexTreeMemory		cIndex;
 	CTestIndexTreeObject	andrew;
@@ -186,6 +186,102 @@ void TestIndexTreeMemoryPutDuplicate(void)
 	avp.Kill();
 
 	cIndex.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
+{
+	CIndexTreeMemory		cIndex;
+	char					szOne[] = "1";
+	char					szTwo[] = "22";
+	char					szOtherTwo[] = "OT";
+	char					szThree[] = "333";
+	char					szKerfuffle[] = "kerfuffle";
+	char*					pvResult;
+	CTrackingAllocator		cAllocator;
+	int						iKeyLength;
+	CIndexTreeNodeMemory*	pcNode;
+	CIndexTreeNodeMemory*	pcChildNode;
+
+	cAllocator.Init(&gcSystemAllocator);
+	AssertInt(0, cAllocator.AllocatedSize());
+
+	cIndex.Init(&cAllocator);
+	AssertInt(0, cIndex.NumElements());
+	AssertInt(cIndex.ByteSize(), cAllocator.AllocatedSize());
+
+	iKeyLength = strlen("Spoedling");
+	AssertNull(cIndex.GetIndexNode("Spoedling", iKeyLength));
+
+	pvResult = (char*)cIndex.Put("SpoedlingZ", szKerfuffle, 10);
+	AssertString("kerfuffle", pvResult);
+	AssertInt(1, cIndex.NumElements());
+
+	AssertInt(cIndex.ByteSize(), cAllocator.AllocatedSize());
+	pcNode = cIndex.GetIndexNode("Spoedling", iKeyLength);
+	AssertNotNull(pcNode);
+	pcChildNode = pcNode->Get('Z');
+	AssertNotNull(pcChildNode);
+	AssertPointer(pcNode, pcChildNode->GetParent());
+
+	pvResult = (char*)cIndex.Put("Spoedling", szTwo, 3);
+	AssertString("22", pvResult);
+	AssertInt(2, cIndex.NumElements());
+	AssertInt(cIndex.ByteSize(), cAllocator.AllocatedSize());
+	AssertString("kerfuffle", (char*)cIndex.Get("SpoedlingZ"));
+	AssertString("22", (char*)cIndex.Get("Spoedling"));
+
+	pcNode = cIndex.GetIndexNode("Spoedling", iKeyLength);
+	AssertNotNull(pcNode);
+	pcChildNode = pcNode->Get('Z');
+	AssertNotNull(pcChildNode);
+	AssertPointer(pcNode, pcChildNode->GetParent());
+
+	pvResult = (char*)cIndex.Put("Spoedling", szOtherTwo, 3);
+	AssertString("OT", pvResult);
+	AssertInt(2, cIndex.NumElements());
+	AssertInt(cIndex.ByteSize(), cAllocator.AllocatedSize());
+	AssertString("kerfuffle", (char*)cIndex.Get("SpoedlingZ"));
+	AssertString("OT", (char*)cIndex.Get("Spoedling"));
+
+	pcNode = cIndex.GetIndexNode("Spoedling", iKeyLength);
+	AssertNotNull(pcNode);
+	pcChildNode = pcNode->Get('Z');
+	AssertNotNull(pcChildNode);
+	AssertPointer(pcNode, pcChildNode->GetParent());
+
+	pvResult = (char*)cIndex.Put("Spoedling", szThree, 4);
+	AssertString("333", pvResult);
+	AssertInt(2, cIndex.NumElements());
+	AssertInt(cIndex.ByteSize(), cAllocator.AllocatedSize());
+	AssertString("kerfuffle", (char*)cIndex.Get("SpoedlingZ"));
+	AssertString("333", (char*)cIndex.Get("Spoedling"));
+
+	pcNode = cIndex.GetIndexNode("Spoedling", iKeyLength);
+	AssertNotNull(pcNode);
+	pcChildNode = pcNode->Get('Z');
+	AssertNotNull(pcChildNode);
+	AssertPointer(pcNode, pcChildNode->GetParent());
+
+	pvResult = (char*)cIndex.Put("Spoedling", szOne, 2);
+	AssertString("1", pvResult);
+	AssertInt(2, cIndex.NumElements());
+	AssertInt(cIndex.ByteSize(), cAllocator.AllocatedSize());
+	AssertString("kerfuffle", (char*)cIndex.Get("SpoedlingZ"));
+	AssertString("1", (char*)cIndex.Get("Spoedling"));
+
+	pcNode = cIndex.GetIndexNode("Spoedling", iKeyLength);
+	AssertNotNull(pcNode);
+	pcChildNode = pcNode->Get('Z');
+	AssertNotNull(pcChildNode);
+	AssertPointer(pcNode, pcChildNode->GetParent());
+
+	cIndex.Kill();
+	AssertInt(0, cAllocator.AllocatedSize());
 }
 
 
@@ -784,7 +880,8 @@ void TestIndexTreeMemory(void)
 	TestIndexTreeMemoryKill();
 	TestIndexTreeMemoryAdd();
 	TestIndexTreeMemoryGet();
-	TestIndexTreeMemoryPutDuplicate();
+	TestIndexTreeMemoryPutPtrDuplicate();
+	TestIndexTreeMemoryPutDifferenceSizeDuplicates();
 	TestIndexTreeMemoryValidateInternalConsistency();
 	TestIndexTreeMemoryCountAllocatedNodes();
 	TestIndexTreeMemoryRemoveResize();
