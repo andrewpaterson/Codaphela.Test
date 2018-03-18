@@ -229,7 +229,6 @@ void TestIndexedDataIndexedAdd(void)
 	AssertInt(3, (int)cIndexedData.NumInFile(4));
 	AssertInt(1, (int)cIndexedData.NumInFile(5));
 	AssertInt(2, (int)cIndexedData.NumElements());
-	AssertInt(4, (int)cIndexedData.TestIndexedDescriptorsLength());
 	cIndexedData.DurableEnd();
 
 	cIndexedData.Kill();

@@ -17,9 +17,7 @@ void TestIndexTreeWriter(void);
 void TestIndexedFile(void);
 void TestIndexedFiles(void);
 void TestIndexes(void);
-void TestIndexedHuge(void);
 void TestIndexedData(void);
-void TestIndexedDataSmart(void);
 void TestOperators(void);
 void TestFunctionCaller(void);
 void TestNumber(void);
@@ -51,13 +49,11 @@ int main(void)
 	TestIndexedFile();
 	TestIndexedFiles();
 	TestIndexes();
-	TestIndexedHuge();
 	TestOperators();
 	TestFunctionCaller();
 	TestFiles();
 	TestPackFilesPacker();
 	TestIndexedData();
-	TestIndexedDataSmart();
 	TestNumber();
 
 	return TestTotalStatistics();

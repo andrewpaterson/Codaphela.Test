@@ -88,3 +88,6 @@ TestCoreLib/Release
 *.VC.db
 *.suo
 *.VC.opendb
+/TestCoreLib/TestCoreLib/_Durable3/_WrittenFile.txt
+/TestCoreLib/TestCoreLib/Durable2/WrittenFile.txt
+/TestCoreLib/TestCoreLib/Durable3/WrittenFile.txt

@@ -120,8 +120,6 @@
     <ClCompile Include="TestIndexTreeWriter.cpp" />
     <ClCompile Include="TestLogFile.cpp" />
     <ClCompile Include="TestIndexedData.cpp" />
-    <ClCompile Include="TestIndexedDataSmart.cpp" />
-    <ClCompile Include="TestIndexedHuge.cpp" />
     <ClCompile Include="TestIndexes.cpp" />
     <ClCompile Include="TestPackFilesPacker.cpp" />
     <ClCompile Include="TestPropertiesFile.cpp" />

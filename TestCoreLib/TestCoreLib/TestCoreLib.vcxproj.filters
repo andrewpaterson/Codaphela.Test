@@ -57,12 +57,6 @@
     <ClCompile Include="TestIndexedData.cpp">
       <Filter>Source\File\Indexed</Filter>
     </ClCompile>
-    <ClCompile Include="TestIndexedDataSmart.cpp">
-      <Filter>Source\File\Indexed</Filter>
-    </ClCompile>
-    <ClCompile Include="TestIndexedHuge.cpp">
-      <Filter>Source\File\Indexed</Filter>
-    </ClCompile>
     <ClCompile Include="TestIndexes.cpp">
       <Filter>Source\File\Indexed</Filter>
     </ClCompile>
