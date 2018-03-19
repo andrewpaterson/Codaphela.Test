@@ -92,3 +92,4 @@ TestCoreLib/Release
 /TestCoreLib/TestCoreLib/Durable2/WrittenFile.txt
 /TestCoreLib/TestCoreLib/Durable3/WrittenFile.txt
 /TestCoreLib/TestCoreLib/Durable*
+/TestCoreLib/TestCoreLib/_Durable4*

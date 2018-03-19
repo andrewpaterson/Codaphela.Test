@@ -230,6 +230,7 @@ void TestDurableFileComplex(BOOL bDurable)
 	AssertInt(2, cDurableFile.GetNumWrites());
 
 	AssertInt(1, cController.NumFiles());
+	AssertString("Durable3" _FS_ "WrittenFile.txt", cDurableFile.GetFileName());
 
 	cController.End();
 	AssertFalse(cDurableFile.TestGetOpenedSinceBegin());
@@ -238,8 +239,9 @@ void TestDurableFileComplex(BOOL bDurable)
 	AssertInt(0, cController.NumFiles());
 
 	cController.Begin();
+	AssertString("Durable3" _FS_ "WrittenFile.txt", cDurableFile.GetFileName());
 	AssertLongLongInt(0, cDurableFile.Tell());
-	AssertLongLongInt(0, cDurableFile.Size());
+	AssertLongLongInt(16, cDurableFile.Size());
 	AssertInt(0, cDurableFile.GetNumWrites());
 	AssertFalse(cDurableFile.TestGetOpenedSinceBegin());
 
@@ -344,7 +346,7 @@ void TestDurableFileRead(BOOL bDurable)
 	iResult = cDurableFile.Read(35, szDest, 4, 1);
 	AssertLongLongInt(0, iResult);
 	AssertString("see", szDest);
-	AssertLongLongInt(38, cDurableFile.Tell());
+	AssertLongLongInt(35, cDurableFile.Tell());
 	AssertLongLongInt(38, cDurableFile.Size());
 
 	cController.End();
