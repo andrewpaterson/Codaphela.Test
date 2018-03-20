@@ -302,7 +302,7 @@ void TestDurableFileRead(BOOL bDurable)
 
 	cTextFile.Init("Sea lions, like CLions of the holy see");
 	cTextFile.Write("Durable4" _FS_ "ReadFile.txt");
-	cTextFile.Write("Durable4" _FS_ "_ReadFile.txt");
+	cTextFile.Write("_Durable4" _FS_ "_ReadFile.txt");
 	cTextFile.Kill();
 
 	cController.Init(szDirectory, SetDurable(szRewrite, bDurable));
@@ -399,38 +399,43 @@ void TestDurableFileWriteRound2(BOOL bDurable)
 	AssertLongLongInt(14, cDurableFile.Tell());
 	AssertLongLongInt(14, cDurableFile.Size());
 	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
-	if (bDurable) AssertInt(1, cDurableFile.GetNumWrites());
-	AssertBool(!bDurable, cFileUtil.Exists(szFileName));
+	AssertInt(1, cDurableFile.GetNumWrites());
+	AssertFalse(cFileUtil.Exists(szFileName));
+	AssertFalse(cFileUtil.Exists(szRewriteName));
 
 	iResult = cDurableFile.Write(iLen1, sz2, 1, iLen2);
 	AssertLongLongInt(1, iResult);
 	AssertLongLongInt(5, cDurableFile.Tell());
 	AssertLongLongInt(14, cDurableFile.Size());
 	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
-	if (bDurable) AssertInt(1, cDurableFile.GetNumWrites());
+	AssertInt(1, cDurableFile.GetNumWrites());
 
 	iResult = cDurableFile.Write(0, sz1, 1, iLen1);
 	AssertLongLongInt(4, iResult);
 	AssertLongLongInt(4, cDurableFile.Tell());
 	AssertLongLongInt(14, cDurableFile.Size());
 	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
-	if (bDurable) AssertInt(1, cDurableFile.GetNumWrites());
+	AssertInt(1, cDurableFile.GetNumWrites());
 
 	iResult = cDurableFile.Write(iLen1 + iLen2 + iLen3 + iLen2, sz4, 1, iLen4);
 	AssertLongLongInt(8, iResult);
 	AssertLongLongInt(23, cDurableFile.Tell());
 	AssertLongLongInt(23, cDurableFile.Size());
 	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
-	if (bDurable) AssertInt(2, cDurableFile.GetNumWrites());
+	AssertInt(2, cDurableFile.GetNumWrites());
 
 	iResult = cDurableFile.Write(iLen1 + iLen2 + iLen3, sz2, 1, iLen2);
 	AssertLongLongInt(1, iResult);
 	AssertLongLongInt(15, cDurableFile.Tell());
 	AssertLongLongInt(23, cDurableFile.Size());
 	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
-	if (bDurable) AssertInt(1, cDurableFile.GetNumWrites());
+	AssertInt(1, cDurableFile.GetNumWrites());
+	AssertFalse(cFileUtil.Exists(szFileName));
+	AssertFalse(cFileUtil.Exists(szRewriteName));
 
 	cController.End();
+	AssertTrue(cFileUtil.Exists(szFileName));
+	AssertBool(bDurable, cFileUtil.Exists(szRewriteName));
 	AssertFileString(szFileName, "Lord Commander Mothball");
 	if (bDurable) AssertFileString(szRewriteName, "Lord Commander Mothball");
 
@@ -505,7 +510,7 @@ void TestDurableFile(void)
 	TestDurableFileInit(FALSE);
 	TestDurableFileWrite(TRUE);
 	TestDurableFileWrite(FALSE);
-	//TestDurableFileCloseOpen(TRUE);
+	TestDurableFileCloseOpen(TRUE);
 	TestDurableFileCloseOpen(FALSE);
 	TestDurableFileComplex(TRUE);
 	TestDurableFileComplex(FALSE);
