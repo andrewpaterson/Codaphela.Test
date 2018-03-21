@@ -493,7 +493,10 @@ void TestDurableFileReadRound2(BOOL bDurable)
 	AssertLongLongInt(0, cDurableFile.Tell());
 	AssertLongLongInt(0, cDurableFile.Size());
 
+	gcLogger.SetBreakOnError(FALSE);
 	cController.End();
+	gcLogger.SetBreakOnError(TRUE);
+
 	cDurableFile.Kill();
 	cController.Kill();
 
