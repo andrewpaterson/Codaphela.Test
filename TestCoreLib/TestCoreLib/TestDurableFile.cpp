@@ -458,15 +458,20 @@ void TestDurableFileReadRound2(BOOL bDurable)
 	CDurableFileController	cController;
 	char					szDirectory[] = "Durable6";
 	char					szRewrite[] = "_Durable6";
+	char					szFileName[] = "Durable6" _FS_ "ReadFile.txt";
+	char					szRewriteName[] = "_Durable6" _FS_ "_ReadFile.txt";
 	char					szDest[2048];
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
 
 	cController.Init(szDirectory, SetDurable(szRewrite, bDurable));
-	cDurableFile.Init(&cController, "Durable6" _FS_ "ReadFile.txt", "_Durable6" _FS_ "_ReadFile.txt");
-	cController.Begin();
+	cDurableFile.Init(&cController, szFileName, szRewriteName);
+
+	AssertFalse(cFileUtil.Exists(szFileName));
+	AssertFalse(cFileUtil.Exists(szRewriteName));
+	cController.Begin(&cDurableFile, NULL);
 	AssertFalse(cDurableFile.TestGetOpenedSinceBegin());
-	AssertInt(0, cController.NumFiles());
+	AssertInt(1, cController.NumFiles());
 
 	memset(szDest, 0, 10);
 	
