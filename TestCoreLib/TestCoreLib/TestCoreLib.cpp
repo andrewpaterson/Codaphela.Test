@@ -33,28 +33,28 @@ int main(void)
 {
 	InitTotalStatistics();
 
-	TestFloatHelper();
-	TestIntegerHelper();
-	TestFastFunctions();
-	TestPropertiesFile();
-	TestXMLParser();
-	TestXMLFile();
-	TestLogFile();
-	TestDurableSet();
-	TestDurableFile();
-	TestDurableFileController();
+	//TestFloatHelper();
+	//TestIntegerHelper();
+	//TestFastFunctions();
+	//TestPropertiesFile();
+	//TestXMLParser();
+	//TestXMLFile();
+	//TestLogFile();
+	//TestDurableSet();
+	//TestDurableFile();
+	//TestDurableFileController();
+	//TestIndexes();
+	//TestOperators();
+	//TestFunctionCaller();
+	//TestFiles();
+	//TestPackFilesPacker();
+	//TestNumber();
 	TestIndexTreeNodeFile();
 	TestIndexTreeBlockFile();
 	TestIndexTreeWriter();
 	TestIndexedFile();
 	TestIndexedFiles();
-	TestIndexes();
-	TestOperators();
-	TestFunctionCaller();
-	TestFiles();
-	TestPackFilesPacker();
 	TestIndexedData();
-	TestNumber();
 
 	return TestTotalStatistics();
 }

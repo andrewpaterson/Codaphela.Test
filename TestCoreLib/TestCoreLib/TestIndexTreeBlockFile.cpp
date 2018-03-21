@@ -1,5 +1,6 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/SystemAllocator.h"
+#include "BaseLib/TypeConverter.h"
 #include "TestLib/Assert.h"
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexTreeFile.h"
@@ -104,11 +105,15 @@ void TestIndexTreeBlockFileAdd(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeBlockFile(void)
 {
+	FastFunctionsInit();
+	TypeConverterInit();
 	BeginTests();
 
 	TestIndexTreeBlockFileInit();
 	TestIndexTreeBlockFileAdd();
 
 	TestStatistics();
+	FastFunctionsKill();
+	TypeConverterKill();
 }
 
