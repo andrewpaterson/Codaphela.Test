@@ -16,12 +16,18 @@ void TestIndexedFilesWorkingDirectory(void)
 	CDurableFileController	cController;
 	char					szDirectorty[] = "Files1";
 	char					szRewriteDirectorty[] = "_Files1";
+	char					cZero = 0;
+
+	CIndexedDataDescriptor	cDescriptor1;
 
 	cFileUtil.RemoveDirs(szDirectorty, szRewriteDirectorty, NULL);
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
 	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
 	cController.Begin();
+
+	cDescriptor1.Init(3LL, 1);
+	cIndexedFiles.Write(&cDescriptor1, &cZero);
 
 	cController.End();
 	cIndexedFiles.Kill();

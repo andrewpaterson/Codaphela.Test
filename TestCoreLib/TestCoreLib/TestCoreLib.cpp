@@ -49,7 +49,7 @@ int main(void)
 	//TestFiles();
 	//TestPackFilesPacker();
 	//TestNumber();
-	TestIndexTreeNodeFile();
+	//TestIndexTreeNodeFile();
 	TestIndexTreeBlockFile();
 	TestIndexTreeWriter();
 	TestIndexedFile();
