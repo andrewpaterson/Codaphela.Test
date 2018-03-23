@@ -207,7 +207,8 @@ void TestFileUtilMakeDirectory(void)
 	bResult = cFileUtil.Touch(szFileName.Text());
 	AssertFalse(bResult);
 
-	cFileUtil.MakeDir(szDirectory.Text());
+	bResult = cFileUtil.TouchDir(szDirectory.Text(), FALSE);
+	AssertTrue(bResult);
 
 	szCurrentDirectory.Init();
 	cFileUtil.CurrentDirectory(&szCurrentDirectory);
@@ -292,7 +293,7 @@ void TestFileUtilTouchDirectory(void)
 	cFileUtil.FullPath(&szDirectory);
 	szFileName.Init(szDirectory);
 	cFileUtil.AppendToPath(&szFileName, "Warthog.PIG");
-	AssertTrue(cFileUtil.TouchDir(szFileName.Text()));
+	AssertTrue(cFileUtil.TouchDir(szFileName.Text(), TRUE));
 	AssertTrue(cFileUtil.Touch(szFileName.Text()));
 
 	szDirectory.Kill();
@@ -300,16 +301,34 @@ void TestFileUtilTouchDirectory(void)
 
 	cFileUtil.RemoveDir("file_util");
 
-	AssertFalse(cFileUtil.TouchDir("C:\\Warthog.PIG"));
-	AssertFalse(cFileUtil.TouchDir("\\Warthog.PIG"));
+	AssertFalse(cFileUtil.TouchDir("C:\\Warthog.PIG", TRUE));
+	AssertFalse(cFileUtil.TouchDir("\\Warthog.PIG", TRUE));
 
 	szDirectory.Init();
 	cFileUtil.CurrentDirectory(&szDirectory);
 	szDirectory.Append("War-pig.hog");
-	AssertFalse(cFileUtil.TouchDir(szDirectory.Text()));
+	AssertFalse(cFileUtil.TouchDir(szDirectory.Text(), TRUE));
 	szDirectory.Kill();
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFileUtilTouchDirectoryOnlyFileName(void)
+{
+	CFileUtil		cFileUtil;
+	CChars			szDirectory;
+
+	szDirectory.Init("War-pig.hog");
+	AssertFalse(cFileUtil.TouchDir(szDirectory.Text(), TRUE));
+	szDirectory.Kill();
+
+	szDirectory.Init("C:\\War-pig.hog");
+	AssertFalse(cFileUtil.TouchDir(szDirectory.Text(), TRUE));
+	szDirectory.Kill();
+}
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -375,6 +394,7 @@ void TestFileUtil(void)
 	TestFileUtilMakeDirectory();
 	TestFileUtilRemoveLastFromPath();
 	TestFileUtilTouchDirectory();
+	TestFileUtilTouchDirectoryOnlyFileName();
 	TestFileUtilPrependToPath();
 
 	FastFunctionsKill();
