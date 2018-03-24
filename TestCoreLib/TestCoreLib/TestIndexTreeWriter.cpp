@@ -21,7 +21,7 @@ void TestIndexTreeWriterWrite(void)
 	SMapIterator		sMapIter;
 	CIndexTreeWriter	cWriter;
 	CFileUtil			cFileUtil;
-	char				szDirectory[] = "IndexTreeMemoryWriter";
+	char				szDirectory[] = "Output" _FS_ "IndexTreeMemoryWriter";
 
 	cMap.Init(3);
 	cMap.Put("AA", "nutritious");

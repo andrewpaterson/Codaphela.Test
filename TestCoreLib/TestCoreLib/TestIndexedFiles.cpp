@@ -14,22 +14,17 @@ void TestIndexedFilesWorkingDirectory(void)
 	CIndexedFiles			cIndexedFiles;
 	CFileUtil				cFileUtil;
 	CDurableFileController	cController;
-	char					szDirectorty[] = "Files1";
-	char					szRewriteDirectorty[] = "_Files1";
-	char					cZero = 0;
-
-	CIndexedDataDescriptor	cDescriptor1;
+	char					szDirectorty[] = "Output" _FS_ "Files1";
+	char					szRewriteDirectorty[] = "Output" _FS_ "_Files1";
 
 	cFileUtil.RemoveDirs(szDirectorty, szRewriteDirectorty, NULL);
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
-	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
 	cController.Begin();
-
-	cDescriptor1.Init(3LL, 1);
-	cIndexedFiles.Write(&cDescriptor1, &cZero);
-
+	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
+	cIndexedFiles.ReadIndexedFileDescriptors();
 	cController.End();
+
 	cIndexedFiles.Kill();
 	cController.Kill();
 
@@ -46,14 +41,19 @@ void TestIndexedFilesInitAndKillWihtoutOpen(void)
 	CIndexedFiles			cIndexedFiles;
 	CFileUtil				cFileUtil;
 	CDurableFileController	cController;
-	char					szDirectorty[] = "Files2";
-	char					szRewriteDirectorty[] = "_Files2";
-
+	char					szDirectorty[] = "Output" _FS_ "Files2";
+	char					szRewriteDirectorty[] = "Output" _FS_ "_Files2";
+	char					cZero = 0;
+	//CIndexedDataDescriptor	cDescriptor1;
 
 	cFileUtil.RemoveDirs(szDirectorty, szRewriteDirectorty, NULL);
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
 	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
+	AssertFalse(cIndexedFiles.ReadIndexedFileDescriptors());
+
+	//cDescriptor1.Init(3LL, 1);
+	//cIndexedFiles.Write(&cDescriptor1, &cZero);
 
 	cIndexedFiles.Kill();
 	cController.Kill();
@@ -71,8 +71,8 @@ void TestIndexedFilesWrite(void)
 	CIndexedFiles			cIndexedFiles;
 	CFileUtil				cFileUtil;
 	CDurableFileController	cController;
-	char					szDirectorty[] = "Files3";
-	char					szRewriteDirectorty[] = "_Files3";
+	char					szDirectorty[] = "Output" _FS_ "Files3";
+	char					szRewriteDirectorty[] = "Output" _FS_ "_Files3";
 	CIndexedDataDescriptor	cDescriptor1;
 	CIndexedDataDescriptor	cDescriptor2;
 	char					szData1[] = "For the single case of just one bed of a certain type, you use bed directly with a text.";

@@ -16,17 +16,18 @@ void TestIndexedDataCacheEviction(void)
 	char			szHello[] = "Hello";
 	char			szWorld[] = "World";
 	char			szSteam[] = "Stream";
+	char			szDirectory[] = "Output" _FS_ "Database1";
 	char			szIn[7];
 	unsigned int	uiSize;
 	filePos			iFileSize;
 	CFileUtil		cFileUtil;
 
-	cFileUtil.RemoveDir("Database1");
+	cFileUtil.RemoveDir(szDirectory);
 
 	AssertInt(40, sizeof(CIndexedDataDescriptor));
 
 	OI = 0LL;
-	cIndexedData.Init("Database1", NULL, 71);  //A little more than two items in the cache...
+	cIndexedData.Init(szDirectory, NULL, 71);  //A little more than two items in the cache...
 
 	cIndexedData.DurableBegin();
 	AssertTrue(cIndexedData.Add(OI, szHello, 6, 0));
@@ -45,12 +46,12 @@ void TestIndexedDataCacheEviction(void)
 
 	cIndexedData.Kill();
 
-	iFileSize = cFileUtil.Size("Database1" _FS_ "6_0.DAT");
+	iFileSize = cFileUtil.Size("Output" _FS_ "Database1" _FS_ "6_0.DAT");
 	AssertLongLongInt(12, iFileSize);
-	iFileSize = cFileUtil.Size("Database1" _FS_ "7_0.DAT");
+	iFileSize = cFileUtil.Size("Output" _FS_ "Database1" _FS_ "7_0.DAT");
 	AssertLongLongInt(7, iFileSize);
 
-	cIndexedData.Init("Database1", NULL, 1024);
+	cIndexedData.Init(szDirectory, NULL, 1024);
 	AssertInt(2, cIndexedData.NumFiles());
 
 	cIndexedData.DurableBegin();
@@ -90,11 +91,11 @@ void TestIndexedDataCacheEviction(void)
 
 	cIndexedData.Kill();
 
-	cIndexedData.Init("Database1", NULL, 1024);
+	cIndexedData.Init(szDirectory, NULL, 1024);
 	AssertInt(0, (int)cIndexedData.TestNumCachedIndexes());
 	cIndexedData.Kill();
 
-	cFileUtil.RemoveDir("Database1");
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 

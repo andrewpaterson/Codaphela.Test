@@ -49,11 +49,11 @@ int main(void)
 	//TestFiles();
 	//TestPackFilesPacker();
 	//TestNumber();
-	//TestIndexTreeNodeFile();
-	TestIndexTreeBlockFile();
-	TestIndexTreeWriter();
 	TestIndexedFile();
 	TestIndexedFiles();
+	TestIndexTreeNodeFile();
+	TestIndexTreeBlockFile();
+	TestIndexTreeWriter();
 	TestIndexedData();
 
 	return TestTotalStatistics();

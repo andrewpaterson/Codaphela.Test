@@ -35,13 +35,14 @@ void TestDurableFileInit(BOOL bDurable)
 	CDurableFile			cDurableFile;
 	CFileUtil				cFileUtil;
 	CDurableFileController	cController;
-	char					szDirectory[] = "Durable1";
-	char					szRewrite[] = "_Durable1";
+	char					szDirectory[] = "Output" _FS_ "Durable1";
+	char					szRewrite[] = "Output" _FS_ "_Durable1";
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
 
 	cController.Init(szDirectory, SetDurable(szRewrite, bDurable));
-	cDurableFile.Init(&cController, "Durable1" _FS_ "TestFile.txt", "_Durable1" _FS_ "_TestFile.txt");
+	cDurableFile.Init(&cController, "Output" _FS_ "Durable1" _FS_ "TestFile.txt", 
+									"Output" _FS_ "_Durable1" _FS_ "_TestFile.txt");
 	cController.Begin();
 
 	cController.End();
@@ -62,8 +63,8 @@ void TestDurableFileWrite(BOOL bDurable)
 	CDurableFile			cDurableFile;
 	filePos					iResult;
 	CDurableFileController	cController;
-	char					szDirectory[] = "Durable2";
-	char					szRewrite[] = "_Durable2";
+	char					szDirectory[] = "Output" _FS_ "Durable2";
+	char					szRewrite[] = "Output" _FS_ "_Durable2";
 
 	char			sz1[] = "In the age of chaos";
 	char			sz2[] = " two factions battled";
@@ -73,7 +74,8 @@ void TestDurableFileWrite(BOOL bDurable)
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
 
 	cController.Init(szDirectory, SetDurable(szRewrite, bDurable));
-	cDurableFile.Init(&cController, "Durable2" _FS_ "WrittenFile.txt", "_Durable2" _FS_ "_WrittenFile.txt");
+	cDurableFile.Init(&cController, "Output" _FS_ "Durable2" _FS_ "WrittenFile.txt", 
+									"Output" _FS_ "_Durable2" _FS_ "_WrittenFile.txt");
 	cController.Begin();
 
 	AssertTrue(cController.IsBegun());
@@ -112,7 +114,7 @@ void TestDurableFileWrite(BOOL bDurable)
 	cDurableFile.Kill();
 	cController.Kill();
 
-	AssertFileString("Durable2" _FS_ "WrittenFile.txt", sz4);
+	AssertFileString("Output" _FS_ "Durable2" _FS_ "WrittenFile.txt", sz4);
 
 	cFileUtil.RemoveDirs(szDirectory, szRewrite, NULL);
 }
@@ -128,8 +130,8 @@ void TestDurableFileCloseOpen(BOOL bDurable)
 	CDurableFile			cDurableFile;
 	filePos					iResult;
 	CDurableFileController	cController;
-	char					szDirectory[] = "Durable7";
-	char					szRewrite[] = "_Durable7";
+	char					szDirectory[] = "Output" _FS_ "Durable7";
+	char					szRewrite[] = "Output" _FS_ "_Durable7";
 
 	char			szA[] = "AAAA";
 	char			szB[] = "BBBB";
@@ -138,7 +140,8 @@ void TestDurableFileCloseOpen(BOOL bDurable)
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
 
 	cController.Init(szDirectory, SetDurable(szRewrite, bDurable));
-	cDurableFile.Init(&cController, "Durable7" _FS_ "WrittenFile.txt", "_Durable7" _FS_ "_WrittenFile.txt");
+	cDurableFile.Init(&cController, "Output" _FS_ "Durable7" _FS_ "WrittenFile.txt", 
+									"Output" _FS_ "_Durable7" _FS_ "_WrittenFile.txt");
 	cController.Begin();
 
 	iResult = cDurableFile.Write(4, szA, 4, 1);
@@ -150,7 +153,8 @@ void TestDurableFileCloseOpen(BOOL bDurable)
 	cController.End();
 	cDurableFile.Kill();
 
-	cDurableFile.Init(&cController, "Durable7" _FS_ "WrittenFile.txt", "_Durable7" _FS_ "_WrittenFile.txt");
+	cDurableFile.Init(&cController, "Output" _FS_ "Durable7" _FS_ "WrittenFile.txt", 
+									"Output" _FS_ "_Durable7" _FS_ "_WrittenFile.txt");
 	cController.Begin();
 
 	AssertLongLongInt(8, cDurableFile.Size());
@@ -173,8 +177,8 @@ void TestDurableFileComplex(BOOL bDurable)
 	CDurableFile			cDurableFile;
 	filePos					iResult;
 	CDurableFileController	cController;
-	char					szDirectory[] = "Durable3";
-	char					szRewrite[] = "_Durable3";
+	char					szDirectory[] = "Output" _FS_ "Durable3";
+	char					szRewrite[] = "Output" _FS_ "_Durable3";
 
 	char			szA[] = "AAAA";
 	char			szB[] = "BBBB";
@@ -188,7 +192,8 @@ void TestDurableFileComplex(BOOL bDurable)
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
 
 	cController.Init(szDirectory, SetDurable(szRewrite, bDurable));
-	cDurableFile.Init(&cController, "Durable3" _FS_ "WrittenFile.txt", "_Durable3" _FS_ "_WrittenFile.txt");
+	cDurableFile.Init(&cController, "Output" _FS_ "Durable3" _FS_ "WrittenFile.txt", 
+									"Output" _FS_ "_Durable3" _FS_ "_WrittenFile.txt");
 	cController.Begin();
 
 	iResult = cDurableFile.Write(4, szB, 2, 2);
@@ -230,7 +235,7 @@ void TestDurableFileComplex(BOOL bDurable)
 	AssertInt(2, cDurableFile.GetNumWrites());
 
 	AssertInt(1, cController.NumFiles());
-	AssertString("Durable3" _FS_ "WrittenFile.txt", cDurableFile.GetFileName());
+	AssertString("Output" _FS_ "Durable3" _FS_ "WrittenFile.txt", cDurableFile.GetFileName());
 
 	cController.End();
 	AssertFalse(cDurableFile.TestGetOpenedSinceBegin());
@@ -239,7 +244,7 @@ void TestDurableFileComplex(BOOL bDurable)
 	AssertInt(0, cController.NumFiles());
 
 	cController.Begin();
-	AssertString("Durable3" _FS_ "WrittenFile.txt", cDurableFile.GetFileName());
+	AssertString("Output" _FS_ "Durable3" _FS_ "WrittenFile.txt", cDurableFile.GetFileName());
 	AssertLongLongInt(0, cDurableFile.Tell());
 	AssertLongLongInt(16, cDurableFile.Size());
 	AssertInt(0, cDurableFile.GetNumWrites());
@@ -275,9 +280,9 @@ void TestDurableFileComplex(BOOL bDurable)
 	cDurableFile.Kill();
 	cController.Kill();
 
-	AssertFileString("Durable3" _FS_ "WrittenFile.txt", "AAAABBBBCCCCEEEEF");
+	AssertFileString("Output" _FS_ "Durable3" _FS_ "WrittenFile.txt", "AAAABBBBCCCCEEEEF");
 
-	if (bDurable) AssertFileString("_Durable3" _FS_ "_WrittenFile.txt", "AAAABBBBCCCCEEEEF");
+	if (bDurable) AssertFileString("Output" _FS_ "_Durable3" _FS_ "_WrittenFile.txt", "AAAABBBBCCCCEEEEF");
 
 	cFileUtil.RemoveDirs(szDirectory, szRewrite, NULL);
 }
@@ -294,19 +299,19 @@ void TestDurableFileRead(BOOL bDurable)
 	filePos					iResult;
 	CDurableFileController	cController;
 	CTextFile				cTextFile;
-	char					szDirectory[] = "Durable4";
-	char					szRewrite[] = "_Durable4";
+	char					szDirectory[] = "Output" _FS_ "Durable4";
+	char					szRewrite[] = "Output" _FS_ "_Durable4";
 	char					szDest[2048];
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
 
 	cTextFile.Init("Sea lions, like CLions of the holy see");
-	cTextFile.Write("Durable4" _FS_ "ReadFile.txt");
-	cTextFile.Write("_Durable4" _FS_ "_ReadFile.txt");
+	cTextFile.Write("Output" _FS_ "Durable4" _FS_ "ReadFile.txt");
+	cTextFile.Write("Output" _FS_ "_Durable4" _FS_ "_ReadFile.txt");
 	cTextFile.Kill();
 
 	cController.Init(szDirectory, SetDurable(szRewrite, bDurable));
-	cDurableFile.Init(&cController, "Durable4" _FS_ "ReadFile.txt", "_Durable4" _FS_ "_ReadFile.txt");
+	cDurableFile.Init(&cController, "Output" _FS_ "Durable4" _FS_ "ReadFile.txt", "Output" _FS_ "_Durable4" _FS_ "_ReadFile.txt");
 	cController.Begin();
 	AssertFalse(cDurableFile.TestGetOpenedSinceBegin());
 	AssertInt(0, cController.NumFiles());
@@ -371,10 +376,10 @@ void TestDurableFileWriteRound2(BOOL bDurable)
 	CDurableFile			cDurableFile;
 	filePos					iResult;
 	CDurableFileController	cController;
-	char					szDirectory[] = "Durable5";
-	char					szRewrite[] = "_Durable5";
-	char					szFileName[] = "Durable5" _FS_ "WrittenFile.txt";
-	char					szRewriteName[] = "_Durable5" _FS_ "_WrittenFile.txt";
+	char					szDirectory[] = "Output" _FS_ "Durable5";
+	char					szRewrite[] = "Output" _FS_ "_Durable5";
+	char					szFileName[] = "Output" _FS_ "Durable5" _FS_ "WrittenFile.txt";
+	char					szRewriteName[] = "Output" _FS_ "_Durable5" _FS_ "_WrittenFile.txt";
 
 	char					sz1[] = "Lord";
 	char					sz2[] = " ";
@@ -456,10 +461,10 @@ void TestDurableFileReadRound2(BOOL bDurable)
 	CDurableFile			cDurableFile;
 	filePos					iResult;
 	CDurableFileController	cController;
-	char					szDirectory[] = "Durable6";
-	char					szRewrite[] = "_Durable6";
-	char					szFileName[] = "Durable6" _FS_ "ReadFile.txt";
-	char					szRewriteName[] = "_Durable6" _FS_ "_ReadFile.txt";
+	char					szDirectory[] = "Output" _FS_ "Durable6";
+	char					szRewrite[] = "Output" _FS_ "_Durable6";
+	char					szFileName[] = "Output" _FS_ "Durable6" _FS_ "ReadFile.txt";
+	char					szRewriteName[] = "Output" _FS_ "_Durable6" _FS_ "_ReadFile.txt";
 	char					szDest[2048];
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);

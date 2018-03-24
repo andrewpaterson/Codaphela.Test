@@ -26,8 +26,8 @@ void TestIndexedFile(void)
 	filePos						iFilePos;
 	CTextFile					cTextFile;
 	char						szTemp[16];
-	char						szDirectory[] = "IndexedFile";
-	char						szRewriteDirectory[] = "_IndexedFile";
+	char						szDirectory[] = "Output" _FS_ "IndexedFile";
+	char						szRewriteDirectory[] = "Output" _FS_ "_IndexedFile";
 
 	bResult = cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 	AssertTrue(bResult);
@@ -107,3 +107,4 @@ void TestIndexedFile(void)
 
 	TestStatistics();
 }
+

@@ -17,7 +17,7 @@ void TestIndexTreeBlockFileInit(void)
 	CIndexTreeFile			cIndexFile;
 	CDurableFileController	cDurableController;
 
-	cHelper.Init("Database9", "primary", "backup", "RootFile.IDX", TRUE);
+	cHelper.Init("Output" _FS_"Database9", "primary", "backup", "RootFile.IDX", TRUE);
 
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
@@ -28,6 +28,7 @@ void TestIndexTreeBlockFileInit(void)
 	cIndexFile.Kill();
 	cDurableController.Kill();
 
+	cHelper.RemoveWorkingDirectory();
 	cHelper.Kill(TRUE);
 }
 
@@ -51,7 +52,7 @@ void TestIndexTreeBlockFileAdd(void)
 	CTestIndexTreeObject***		ppvTestA;
 	CTestIndexTreeObject***		ppvTestAA;
 
-	cHelper.Init("Database10", "primary", "backup", "RootFile.IDX", TRUE);
+	cHelper.Init("Output" _FS_"Database10", "primary", "backup", "RootFile.IDX", TRUE);
 
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
@@ -95,6 +96,7 @@ void TestIndexTreeBlockFileAdd(void)
 	cIndexFile.Kill();
 	cDurableController.Kill();
 
+	cHelper.RemoveWorkingDirectory();
 	cHelper.Kill(TRUE);
 }
 
