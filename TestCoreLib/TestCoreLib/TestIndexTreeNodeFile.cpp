@@ -1,6 +1,7 @@
 #include "BaseLib/Logger.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/SystemAllocator.h"
+#include "BaseLib/TypeConverter.h"
 #include "TestLib/Assert.h"
 #include "CoreLib/IndexTreeNodeFile.h"
 #include "CoreLib/IndexTreeFile.h"
@@ -107,6 +108,8 @@ void TestIndexTreeNodeFileRootMemory(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeNodeFile(void)
 {
+	FastFunctionsInit();
+	TypeConverterInit();
 	BeginTests();
 
 	TestIndexTreeNodeFileSizeofs();
@@ -114,5 +117,7 @@ void TestIndexTreeNodeFile(void)
 	TestIndexTreeNodeFileRootMemory();
 
 	TestStatistics();
+	FastFunctionsKill();
+	TypeConverterKill();
 }
 

@@ -108,9 +108,6 @@
     <ClCompile Include="TestPropertiesFile.cpp">
       <Filter>Source\File\Properties</Filter>
     </ClCompile>
-    <ClCompile Include="TestIndexTreeBlockFile.cpp">
-      <Filter>Source\File\Indexed\Index</Filter>
-    </ClCompile>
     <ClCompile Include="TestIndexedFiles.cpp">
       <Filter>Source\File\Indexed\Data</Filter>
     </ClCompile>
@@ -121,6 +118,12 @@
       <Filter>Source\File\Indexed\Index</Filter>
     </ClCompile>
     <ClCompile Include="TestIndexTreeWriter.cpp">
+      <Filter>Source\File\Indexed\Index</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexTreeMemory.cpp">
+      <Filter>Source\File\Indexed\Index</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexTreeFile.cpp">
       <Filter>Source\File\Indexed\Index</Filter>
     </ClCompile>
   </ItemGroup>

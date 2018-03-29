@@ -11,7 +11,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockFileInit(void)
+void TestIndexTreeFileInit(void)
 {
 	CIndexTreeHelper		cHelper;
 	CIndexTreeFile			cIndexFile;
@@ -37,7 +37,7 @@ void TestIndexTreeBlockFileInit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockFileAdd(void)
+void TestIndexTreeFileAdd(void)
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cDurableController;
@@ -105,14 +105,14 @@ void TestIndexTreeBlockFileAdd(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeBlockFile(void)
+void TestIndexTreeFile(void)
 {
 	FastFunctionsInit();
 	TypeConverterInit();
 	BeginTests();
 
-	TestIndexTreeBlockFileInit();
-	TestIndexTreeBlockFileAdd();
+	TestIndexTreeFileInit();
+	TestIndexTreeFileAdd();
 
 	TestStatistics();
 	FastFunctionsKill();
