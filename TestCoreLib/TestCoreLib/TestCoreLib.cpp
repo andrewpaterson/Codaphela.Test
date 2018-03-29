@@ -33,22 +33,22 @@ int main(void)
 {
 	InitTotalStatistics();
 
-	//TestFloatHelper();
-	//TestIntegerHelper();
-	//TestFastFunctions();
-	//TestPropertiesFile();
-	//TestXMLParser();
-	//TestXMLFile();
-	//TestLogFile();
-	//TestDurableSet();
-	//TestDurableFile();
-	//TestDurableFileController();
-	//TestIndexes();
-	//TestOperators();
-	//TestFunctionCaller();
-	//TestFiles();
-	//TestPackFilesPacker();
-	//TestNumber();
+	TestFloatHelper();
+	TestIntegerHelper();
+	TestFastFunctions();
+	TestPropertiesFile();
+	TestXMLParser();
+	TestXMLFile();
+	TestLogFile();
+	TestDurableSet();
+	TestDurableFile();
+	TestDurableFileController();
+	TestIndexes();
+	TestOperators();
+	TestFunctionCaller();
+	TestFiles();
+	TestPackFilesPacker();
+	TestNumber();
 	TestIndexedFile();
 	TestIndexedFiles();
 	TestIndexTreeNodeFile();

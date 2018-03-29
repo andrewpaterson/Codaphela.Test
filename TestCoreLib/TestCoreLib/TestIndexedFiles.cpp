@@ -97,11 +97,17 @@ void TestIndexedFilesWrite(void)
 	char					szRewriteDirectorty[] = "Output" _FS_ "_Files3";
 	CIndexedDataDescriptor	cDescriptor1;
 	CIndexedDataDescriptor	cDescriptor2;
+	CIndexedDataDescriptor	cDescriptor3;
+	CIndexedDataDescriptor	cDescriptor4;
 	char					szData1[] = "For the single case of just one bed of a certain type, you use bed directly with a text.";
 	char					szData2[] = "Text's trusty Rights and Export Coordinator, Khadija Caffoor, went to the London Book Fair in March.";
+	char					szData3[] = "Unpleasant nor diminution excellence apartments imprudence the met new.  Draw part them.";
+	char					szData4[] = "Nor hence hoped he after her other known to defer his. For county sister seasonal better had waited.";
 	int						iLen1;
 	int						iLen2;
-
+	int						iLen3;
+	int						iLen4;
+	CChars					szTemp;
 
 	iLen1 = strlen(szData1);
 	iLen2 = strlen(szData2);
@@ -113,17 +119,28 @@ void TestIndexedFilesWrite(void)
 	AssertFalse(cFileUtil.Exists(szRewriteDirectorty));
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
-	cController.Begin();
 	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
-	cController.End();
 
 	AssertTrue(cController.Begin());
+	AssertTrue(cIndexedFiles.ReadIndexedFileDescriptors());
+	AssertLongLongInt(0, cIndexedFiles.NumData());
+
 	cDescriptor1.Init(3LL, iLen1);
+	AssertFalse(cDescriptor1.HasFile());
 	AssertTrue(cIndexedFiles.Write(&cDescriptor1, szData1));
+	AssertTrue(cDescriptor1.HasFile());
+	AssertInt(0, cDescriptor1.GetFileIndex());
+	AssertLongLongInt(0, cDescriptor1.GetIndexInFile());
+	AssertLongLongInt(1, cIndexedFiles.NumData());
 
 	cDescriptor2.Init(5LL, iLen2);
 	AssertTrue(cIndexedFiles.Write(&cDescriptor2, szData2));
+	AssertInt(1, cDescriptor2.GetFileIndex());
+	AssertLongLongInt(0, cDescriptor2.GetIndexInFile());
+	AssertLongLongInt(2, cIndexedFiles.NumData());
+
 	AssertTrue(cController.End());
+	AssertLongLongInt(2, cIndexedFiles.NumData());
 
 	AssertTrue(cFileUtil.Exists(szDirectorty));
 	AssertTrue(cFileUtil.Exists(szRewriteDirectorty));
@@ -133,9 +150,81 @@ void TestIndexedFilesWrite(void)
 	AssertIndexedFile(szRewriteDirectorty, "_88_0.DAT", szData1, iLen1);
 	AssertIndexedFile(szRewriteDirectorty, "_100_0.DAT", szData2, iLen2);
 
-	cController.Begin();
 	cIndexedFiles.Kill();
-	cController.End();
+	cController.Kill();
+
+
+	iLen3 = strlen(szData3);
+	iLen4 = strlen(szData4);
+	AssertInt(88, iLen3);
+	AssertInt(100, iLen4);
+
+	cController.Init(szDirectorty, szRewriteDirectorty);
+	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
+
+	AssertFalse(cIndexedFiles.ReadIndexedFileDescriptors());  //Controller not begun.
+
+	AssertTrue(cController.Begin());
+	AssertTrue(cIndexedFiles.ReadIndexedFileDescriptors());
+	AssertFalse(cIndexedFiles.ReadIndexedFileDescriptors());  //Indices already read.
+	AssertTrue(cController.End());
+	AssertLongLongInt(2, cIndexedFiles.NumData());
+
+	AssertInt(2, cIndexedFiles.NumFiles());
+	AssertLongLongInt(1, cIndexedFiles.NumData(88));
+	AssertLongLongInt(0, cIndexedFiles.NumData(89));
+	AssertLongLongInt(1, cIndexedFiles.NumData(100));
+	AssertLongLongInt(0, cIndexedFiles.NumData(101));
+
+	AssertTrue(cController.Begin());
+	cDescriptor3.Init(7LL, iLen3);
+	AssertTrue(cIndexedFiles.Write(&cDescriptor3, szData3));
+	AssertInt(0, cDescriptor3.GetFileIndex());
+	AssertLongLongInt(1, cDescriptor3.GetIndexInFile());
+	AssertLongLongInt(3, cIndexedFiles.NumData());
+
+	cDescriptor4.Init(9LL, iLen4);
+	AssertTrue(cIndexedFiles.Write(&cDescriptor4, szData4));
+	AssertInt(1, cDescriptor4.GetFileIndex());
+	AssertLongLongInt(1, cDescriptor4.GetIndexInFile());
+	AssertLongLongInt(4, cIndexedFiles.NumData());
+
+	AssertTrue(cController.End());
+
+	szTemp.InitList(szData1, szData3, NULL);
+	AssertIndexedFile(szDirectorty, "88_0.DAT", szTemp.Text(), szTemp.Length());
+	AssertIndexedFile(szRewriteDirectorty, "_88_0.DAT", szTemp.Text(), szTemp.Length());
+	szTemp.Kill();
+	szTemp.InitList(szData2, szData4, NULL);
+	AssertIndexedFile(szDirectorty, "100_0.DAT", szTemp.Text(), szTemp.Length());
+	AssertIndexedFile(szRewriteDirectorty, "_100_0.DAT", szTemp.Text(), szTemp.Length());
+	cIndexedFiles.Kill();
+	cController.Kill();
+
+	cController.Init(szDirectorty, szRewriteDirectorty);
+	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
+	AssertTrue(cController.Begin());
+	cIndexedFiles.ReadIndexedFileDescriptors();
+	AssertTrue(cController.End());
+
+	AssertInt(2, cIndexedFiles.NumFiles());
+	AssertLongLongInt(2, cIndexedFiles.NumData(88));
+	AssertLongLongInt(0, cIndexedFiles.NumData(89));
+	AssertLongLongInt(2, cIndexedFiles.NumData(100));
+	AssertLongLongInt(0, cIndexedFiles.NumData(101));
+
+	cIndexedFiles.Kill();
+	cController.Kill();
+
+
+	cController.Init(szDirectorty, szRewriteDirectorty);
+	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
+	AssertTrue(cController.Begin());
+	AssertTrue(cIndexedFiles.ReadIndexedFileDescriptors());
+	AssertTrue(cController.End());
+	AssertLongLongInt(4, cIndexedFiles.NumData());
+
+	cIndexedFiles.Kill();
 	cController.Kill();
 
 	cFileUtil.RemoveDirs(szDirectorty, szRewriteDirectorty, NULL);

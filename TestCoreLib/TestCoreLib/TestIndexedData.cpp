@@ -181,9 +181,9 @@ void TestIndexedDataIndexedAdd(void)
 	bResult = cIndexedData.Add(OI, szBat, 4, 0);
 	AssertBool(TRUE, bResult);
 	AssertInt(1, (int)cIndexedData.NumCached());
-	AssertInt(0, (int)cIndexedData.NumInFile(4));
+	AssertInt(0, (int)cIndexedData.NumData(4));
 	cIndexedData.Flush(TRUE);
-	AssertInt(1, (int)cIndexedData.NumInFile(4));
+	AssertInt(1, (int)cIndexedData.NumData(4));
 	AssertInt(0, (int)cIndexedData.NumCached());
 
 	bResult = cIndexedData.Add(OI, szCat, 4, 0);
@@ -191,7 +191,7 @@ void TestIndexedDataIndexedAdd(void)
 	bResult = cIndexedData.Set(OI, szDog, 0);
 	AssertBool(TRUE, bResult);
 	AssertInt(1, (int)cIndexedData.NumCached());
-	AssertInt(1, (int)cIndexedData.NumInFile(4));
+	AssertInt(1, (int)cIndexedData.NumData(4));
 	AssertInt(0, (int)cIndexedData.TestNumIgnoredCacheElements());
 	cIndexedData.Get(OI, szIn);
 	AssertString(szDog, szIn);
@@ -204,15 +204,15 @@ void TestIndexedDataIndexedAdd(void)
 	AssertString(szFish, szIn);
 
 	cIndexedData.Flush(TRUE);
-	AssertInt(1, (int)cIndexedData.NumInFile(4));
-	AssertInt(1, (int)cIndexedData.NumInFile(5));
+	AssertInt(1, (int)cIndexedData.NumData(4));
+	AssertInt(1, (int)cIndexedData.NumData(5));
 	cIndexedData.Get(OI, szIn);
 	AssertString(szFish, szIn);
 
 	bResult = cIndexedData.Set(OI, szCat, 4, 0);
 	AssertBool(TRUE, bResult);
 	cIndexedData.Flush(TRUE);
-	AssertInt(2, (int)cIndexedData.NumInFile(4));  //One is ignored but they are both still in the file.
+	AssertInt(2, (int)cIndexedData.NumData(4));  //One is ignored but they are both still in the file.
 	AssertInt(1, (int)cIndexedData.NumElements());
 
 	OI = 3LL;
@@ -227,8 +227,8 @@ void TestIndexedDataIndexedAdd(void)
 	AssertInt(1, (int)cIndexedData.NumCached());
 	AssertInt(1, (int)cIndexedData.TestNumCachedIndexes());
 	cIndexedData.Flush(TRUE);
-	AssertInt(3, (int)cIndexedData.NumInFile(4));
-	AssertInt(1, (int)cIndexedData.NumInFile(5));
+	AssertInt(3, (int)cIndexedData.NumData(4));
+	AssertInt(1, (int)cIndexedData.NumData(5));
 	AssertInt(2, (int)cIndexedData.NumElements());
 	cIndexedData.DurableEnd();
 
