@@ -177,16 +177,16 @@ void TestMemoryRemoveAllByArray(void)
 	CMemory				cMemory;
 	CArrayVoidPtr		apv;
 	SMemoryIterator		sIter;
-	void*				pv;
+	SMemory				sMem;
 
 	SetupTestMemoryRemove(&cMemory);
 
 	apv.Init();
-	pv = cMemory.StartIteration(&sIter);
-	while (pv)
+	sMem = cMemory.StartIteration(&sIter);
+	while (sMem.bValid)
 	{
-		apv.Add(pv);
-		pv = cMemory.Iterate(&sIter);
+		apv.Add(sMem.pvMem);
+		sMem = cMemory.Iterate(&sIter);
 	}
 
 	AssertInt(9, apv.NumElements());
@@ -208,22 +208,22 @@ void TestMemoryRemoveHalfByArray(void)
 	CMemory				cMemory;
 	CArrayVoidPtr		apv;
 	SMemoryIterator		sIter;
-	void*				pv;
 	BOOL				bAdd;
+	SMemory				sMem;
 
 	SetupTestMemoryRemove(&cMemory);
 
 	apv.Init();
-	pv = cMemory.StartIteration(&sIter);
+	sMem = cMemory.StartIteration(&sIter);
 	bAdd = TRUE;
-	while (pv)
+	while (sMem.bValid)
 	{
 		if (bAdd)
 		{
-			apv.Add(pv);
+			apv.Add(sMem.pvMem);
 		}
 		bAdd = !bAdd;
-		pv = cMemory.Iterate(&sIter);
+		sMem = cMemory.Iterate(&sIter);
 	}
 
 	AssertInt(5, apv.NumElements());
