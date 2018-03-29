@@ -1,8 +1,26 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TypeConverter.h"
+#include "BaseLib/NaiveFile.h"
 #include "CoreLib/IndexedFiles.h"
 #include "TestLib/Assert.h"
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertIndexedFile(char* szDirectory, char* szFileName, void* pvExpectedData, int iExpectedLen)
+{
+	CChars		szTemp;
+	CFileUtil	cFileUtil;
+
+	szTemp.Init(szDirectory);
+	cFileUtil.AppendToPath(&szTemp, szFileName);
+	AssertTrue(cFileUtil.Exists(szTemp.Text()));
+	AssertInt(0, CompareFileToMemory(szTemp.Text(), pvExpectedData, iExpectedLen));
+	szTemp.Kill();
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -22,8 +40,13 @@ void TestIndexedFilesWorkingDirectory(void)
 	cController.Init(szDirectorty, szRewriteDirectorty);
 	cController.Begin();
 	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
-	cIndexedFiles.ReadIndexedFileDescriptors();
+	AssertTrue(cIndexedFiles.ReadIndexedFileDescriptors());
+	AssertFalse(cFileUtil.Exists(szDirectorty));
+	AssertFalse(cFileUtil.Exists(szRewriteDirectorty));
+
 	cController.End();
+	AssertTrue(cFileUtil.Exists(szDirectorty));
+	AssertTrue(cFileUtil.Exists(szRewriteDirectorty));
 
 	cIndexedFiles.Kill();
 	cController.Kill();
@@ -44,7 +67,6 @@ void TestIndexedFilesInitAndKillWihtoutOpen(void)
 	char					szDirectorty[] = "Output" _FS_ "Files2";
 	char					szRewriteDirectorty[] = "Output" _FS_ "_Files2";
 	char					cZero = 0;
-	//CIndexedDataDescriptor	cDescriptor1;
 
 	cFileUtil.RemoveDirs(szDirectorty, szRewriteDirectorty, NULL);
 
@@ -52,8 +74,8 @@ void TestIndexedFilesInitAndKillWihtoutOpen(void)
 	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
 	AssertFalse(cIndexedFiles.ReadIndexedFileDescriptors());
 
-	//cDescriptor1.Init(3LL, 1);
-	//cIndexedFiles.Write(&cDescriptor1, &cZero);
+	AssertFalse(cFileUtil.Exists(szDirectorty));
+	AssertFalse(cFileUtil.Exists(szRewriteDirectorty));
 
 	cIndexedFiles.Kill();
 	cController.Kill();
@@ -80,23 +102,36 @@ void TestIndexedFilesWrite(void)
 	int						iLen1;
 	int						iLen2;
 
+
 	iLen1 = strlen(szData1);
 	iLen2 = strlen(szData2);
+	AssertInt(88, iLen1);
+	AssertInt(100, iLen2);
 
 	cFileUtil.RemoveDirs(szDirectorty, szRewriteDirectorty, NULL);
+	AssertFalse(cFileUtil.Exists(szDirectorty));
+	AssertFalse(cFileUtil.Exists(szRewriteDirectorty));
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
 	cController.Begin();
 	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
 	cController.End();
 
-	cController.Begin();
+	AssertTrue(cController.Begin());
 	cDescriptor1.Init(3LL, iLen1);
-	cIndexedFiles.Write(&cDescriptor1, szData1);
+	AssertTrue(cIndexedFiles.Write(&cDescriptor1, szData1));
 
 	cDescriptor2.Init(5LL, iLen2);
-	cIndexedFiles.Write(&cDescriptor2, szData2);
-	cController.End();
+	AssertTrue(cIndexedFiles.Write(&cDescriptor2, szData2));
+	AssertTrue(cController.End());
+
+	AssertTrue(cFileUtil.Exists(szDirectorty));
+	AssertTrue(cFileUtil.Exists(szRewriteDirectorty));
+
+	AssertIndexedFile(szDirectorty, "88_0.DAT", szData1, iLen1);
+	AssertIndexedFile(szDirectorty, "100_0.DAT", szData2, iLen2);
+	AssertIndexedFile(szRewriteDirectorty, "_88_0.DAT", szData1, iLen1);
+	AssertIndexedFile(szRewriteDirectorty, "_100_0.DAT", szData2, iLen2);
 
 	cController.Begin();
 	cIndexedFiles.Kill();
