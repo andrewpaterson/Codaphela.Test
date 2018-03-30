@@ -286,7 +286,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 	AssertTrue(cAccess.RemoveLong(0x23BB45CC67DD89EELL));
 	AssertInt(0, cIndexTree.NumElements());
 	AssertFalse(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
-	AssertLongLongInt(24, pcMemory->GetTotalAllocations());
+	AssertLongLongInt(1, pcMemory->GetTotalAllocations());
 
 	cAccess.Kill();
 	cIndexTree.Kill();
