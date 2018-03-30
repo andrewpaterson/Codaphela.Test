@@ -46,6 +46,9 @@
     <Filter Include="Source\File\Indexed\Data">
       <UniqueIdentifier>{a19d5601-6062-4edc-8b66-06492247b89e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\File\Indexed\Index\Access">
+      <UniqueIdentifier>{cebbb15c-4c6b-411f-964c-01d19063e8b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -125,6 +128,9 @@
     </ClCompile>
     <ClCompile Include="TestIndexTreeFile.cpp">
       <Filter>Source\File\Indexed\Index</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexTreeAccess.cpp">
+      <Filter>Source\File\Indexed\Index\Access</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

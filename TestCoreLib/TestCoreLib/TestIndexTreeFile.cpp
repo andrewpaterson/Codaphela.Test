@@ -1,9 +1,10 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/SystemAllocator.h"
 #include "BaseLib/TypeConverter.h"
-#include "TestLib/Assert.h"
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexTreeFile.h"
+#include "CoreLib/IndexTreeFileAccess.h"
+#include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
 
 
@@ -42,6 +43,7 @@ void TestIndexTreeFileAdd(void)
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cDurableController;
 	CIndexTreeFile				cIndexFile;
+	CIndexTreeFileAccess		cAccess;
 
 	CTestIndexTreeObject		a;
 	CTestIndexTreeObject		aa;
@@ -58,9 +60,10 @@ void TestIndexTreeFileAdd(void)
 
 	cDurableController.Begin();
 	cIndexFile.Init(&cDurableController, cHelper.GetRootFileName(), &gcSystemAllocator);
+	cAccess.Init(&cIndexFile);
 
 	a.Init("A");
-	bResult = cIndexFile.PutPtr(a.GetName(), &a);
+	bResult = cAccess.PutStringPtr(a.GetName(), &a);
 	AssertTrue(bResult);
 
 	pcNode = cIndexFile.GetIndexNode("A", 1);
@@ -68,7 +71,7 @@ void TestIndexTreeFileAdd(void)
 	AssertPointer(&a, *ppvTest);
 
 	aa.Init("AA");
-	bResult = cIndexFile.PutPtr(aa.GetName(), &aa);
+	bResult = cAccess.PutStringPtr(aa.GetName(), &aa);
 	AssertTrue(bResult);
 
 	pcNode = cIndexFile.GetIndexNode("A", 1);
@@ -93,6 +96,7 @@ void TestIndexTreeFileAdd(void)
 	
 	cDurableController.End();
 
+	cAccess.Kill();
 	cIndexFile.Kill();
 	cDurableController.Kill();
 

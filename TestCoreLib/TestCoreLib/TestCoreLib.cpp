@@ -18,6 +18,7 @@ void TestIndexedFile(void);
 void TestIndexedFiles(void);
 void TestIndexes(void);
 void TestIndexedData(void);
+void TestIndexTreeAccess(void);
 void TestOperators(void);
 void TestFunctionCaller(void);
 void TestNumber(void);
@@ -53,6 +54,7 @@ int main(void)
 	//TestIndexedFiles();
 	TestIndexTreeMemory();
 	TestIndexTreeFile();
+	TestIndexTreeAccess();
 	TestIndexTreeWriter();
 	TestIndexedData();
 
