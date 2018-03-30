@@ -871,6 +871,79 @@ void TestIndexTreeMemoryReadWrite(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeMemoryRemoveOnRoot(void)
+{
+	CIndexTreeMemory		cIndex;
+	int						i;
+	unsigned char			cKey;
+	int						iData;
+	CIndexTreeNodeMemory*	pcRoot;
+	CIndexTreeNodeMemory*	pcOldRoot;
+	CArrayVoidPtr			avp;
+
+	cIndex.Init();
+	pcOldRoot = cIndex.GetRoot();
+	pcRoot = pcOldRoot;
+
+	AssertInt(0, pcRoot->GetFirstIndex());
+	AssertInt(255, pcRoot->GetLastIndex());
+	AssertInt(256, pcRoot->GetNumIndexes());
+	AssertInt(0, pcRoot->NumInitialisedIndexes());
+	AssertInt(0, cIndex.NumElements());
+	AssertPointer(pcOldRoot, pcRoot);
+	AssertInt(1, cIndex.CountAllocatedNodes());
+
+	for (i = 0; i <= UCHAR_MAX; i++)
+	{
+		cKey = (unsigned char)i;
+		memset(&iData, cKey, sizeof(int));
+		cIndex.Put(&cKey, 1, &iData, sizeof(int));
+
+		pcRoot = cIndex.GetRoot();
+		AssertPointer(pcOldRoot, pcRoot);
+
+		AssertInt(0, pcRoot->GetFirstIndex());
+		AssertInt(255, pcRoot->GetLastIndex());
+		AssertInt(256, pcRoot->GetNumIndexes());
+		AssertInt(i + 1, pcRoot->NumInitialisedIndexes());
+		AssertInt(i + 1, cIndex.NumElements());
+		AssertInt(i + 2, cIndex.CountAllocatedNodes());
+	}
+	AssertInt(256, cIndex.NumElements());
+
+	for (i = 0; i <= UCHAR_MAX; i++)
+	{
+		cKey = (unsigned char)(i / 2);
+		if (i % 2 == 1)
+		{
+			cKey = 255 - cKey;
+		}
+		cIndex.Remove(&cKey, 1);
+
+		pcRoot = cIndex.GetRoot();
+		AssertPointer(pcOldRoot, pcRoot);
+
+		AssertInt(0, pcRoot->GetFirstIndex());
+		AssertInt(255, pcRoot->GetLastIndex());
+		AssertInt(256, pcRoot->GetNumIndexes());
+		AssertInt(255 - i, pcRoot->NumInitialisedIndexes());
+		AssertInt(255 - i, cIndex.NumElements());
+		AssertInt(256 - i, cIndex.CountAllocatedNodes());
+
+		avp.Init();
+		cIndex.FindAll(&avp);
+		AssertInt(255 - i, avp.NumElements());
+		avp.Kill();
+	}
+
+	cIndex.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemory(void)
 {
 	BeginTests();
@@ -891,6 +964,7 @@ void TestIndexTreeMemory(void)
 	TestIndexTreeMemoryAddLongLong();
 	TestIndexTreeMemoryIterate();
 	TestIndexTreeMemoryReadWrite();
+	TestIndexTreeMemoryRemoveOnRoot();
 
 	MemoryKill();
 	FastFunctionsKill();

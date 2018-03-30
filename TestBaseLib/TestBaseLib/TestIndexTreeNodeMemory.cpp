@@ -14,7 +14,7 @@ void TestIndexTreeNodeMemoryInit(void)
 	CIndexTreeNodeMemory	pcChildNode;
 	long long int			uiObject;
 	CIndexTreeNodeMemory*	pcResult;
-	CIndexTreeMemory	cTree;
+	CIndexTreeMemory		cTree;
 	
 	cTree.FakeInit();
 
@@ -95,7 +95,7 @@ void TestIndexTreeNodeMemoryContain(void)
 	CIndexTreeNodeMemory*	pcNode4;
 	CIndexTreeNodeMemory*	pcNode5;
 	CIndexTreeNodeMemory*	pcNode6;
-	CIndexTreeMemory	cTree;
+	CIndexTreeMemory		cTree;
 
 	cTree.FakeInit();
 
@@ -224,7 +224,7 @@ void TestIndexTreeNodeMemoryContain(void)
 void TestIndexTreeNodeMemoryUncontain(void)
 {
 	CIndexTreeNodeMemory*	pcNode1;
-	CIndexTreeMemory	cTree;
+	CIndexTreeMemory		cTree;
 
 	cTree.FakeInit();
 
@@ -311,7 +311,7 @@ void TestIndexTreeNodeMemoryFindNotEmpty(void)
 	CIndexTreeNodeMemory*	pcNode3;
 	CIndexTreeNodeMemory*	pcNode4;
 	CIndexTreeNodeMemory*	pcNode5;
-	CIndexTreeMemory	cTree;
+	CIndexTreeMemory		cTree;
 
 	cTree.FakeInit();
 
