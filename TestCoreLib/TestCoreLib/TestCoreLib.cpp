@@ -52,7 +52,7 @@ int main(void)
 	//TestNumber();
 	//TestIndexedFile();
 	//TestIndexedFiles();
-	TestIndexTreeMemory();
+	//TestIndexTreeMemory();
 	TestIndexTreeFile();
 	TestIndexTreeAccess();
 	TestIndexTreeWriter();
