@@ -1,5 +1,6 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/SystemAllocator.h"
+#include"BaseLib/MemoryAllocator.h"
 #include "BaseLib/TypeConverter.h"
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexTreeFile.h"
@@ -18,7 +19,7 @@ void TestIndexTreeFileInit(void)
 	CIndexTreeFile			cIndexTree;
 	CDurableFileController	cDurableController;
 
-	cHelper.Init("Output" _FS_"Database9", "primary", "backup", "RootFile.IDX", TRUE);
+	cHelper.Init("Output" _FS_"QuakeMinusOne", "primary", "backup", "RootFile.IDX", TRUE);
 
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
@@ -44,16 +45,19 @@ void TestIndexTreeFileAdd(void)
 	CDurableFileController		cDurableController;
 	CIndexTreeFile				cIndexTree;
 	CIndexTreeFileAccess		cAccess;
-
 	CTestIndexTreeObject		a;
 	CTestIndexTreeObject		aa;
+	CTestIndexTreeObject		aaa;
+	CTestIndexTreeObject		ab;
+	CTestIndexTreeObject		aab;
 	BOOL						bResult;
 	CIndexTreeNodeFile*			pcNode;
 	CTestIndexTreeObject**		ppvTest;
-	//CTestIndexTreeObject***		ppvTestA;
-	//CTestIndexTreeObject***		ppvTestAA;
+	SIndexTreeFileIterator		sIter;
+	BOOL						bContinue;
+	int							iSize;
 
-	cHelper.Init("Output" _FS_"Database10", "primary", "backup", "RootFile.IDX", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree0", "primary", "backup", "RootFile.IDX", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
@@ -72,6 +76,19 @@ void TestIndexTreeFileAdd(void)
 	bResult = cAccess.PutStringPtr(aa.GetName(), &aa);
 	AssertTrue(bResult);
 
+	aaa.Init("AAA");
+	bResult = cAccess.PutStringPtr(aaa.GetName(), &aaa);
+	AssertTrue(bResult);
+
+	ab.Init("AB");
+	bResult = cAccess.PutStringPtr(ab.GetName(), &ab);
+	AssertTrue(bResult);
+
+	aab.Init("AAB");
+	bResult = cAccess.PutStringPtr(aab.GetName(), &aab);
+	AssertTrue(bResult);
+
+
 	pcNode = cIndexTree.GetNode("A", 1);
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetObjectPtr();
 	AssertPointer(&a, *ppvTest);
@@ -80,17 +97,34 @@ void TestIndexTreeFileAdd(void)
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetObjectPtr();
 	AssertPointer(&aa, *ppvTest);
 
-	//avp.Init();
-	//cIndexTree.FindAll(&avp);
-	//AssertInt(2, avp.NumElements());
-	//ppvTestA = (CTestIndexTreeObject***)avp.Get(0);
-	//ppvTestAA = (CTestIndexTreeObject***)avp.Get(1);
-	//AssertPointer(&a, **ppvTestA);
-	//AssertPointer(&aa, **ppvTestAA);
-	//AssertString("A", (**ppvTestA)->mszName);
-	//AssertString("AA", (**ppvTestAA)->mszName);
-	//avp.Kill();
-	
+	bContinue = cIndexTree.StartIteration(&sIter, (void**)(&ppvTest), &iSize);
+	AssertTrue(bContinue);
+	AssertInt(sizeof(CTestIndexTreeObject*), iSize);
+	AssertString("A", (*ppvTest)->mszName);
+
+	bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
+	AssertTrue(bContinue);
+	AssertInt(sizeof(CTestIndexTreeObject*), iSize);
+	AssertString("AA", (*ppvTest)->mszName);
+
+	bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
+	AssertTrue(bContinue);
+	AssertInt(sizeof(CTestIndexTreeObject*), iSize);
+	AssertString("AAA", (*ppvTest)->mszName);
+
+	bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
+	AssertTrue(bContinue);
+	AssertInt(sizeof(CTestIndexTreeObject*), iSize);
+	AssertString("AAB", (*ppvTest)->mszName);
+
+	bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
+	AssertTrue(bContinue);
+	AssertInt(sizeof(CTestIndexTreeObject*), iSize);
+	AssertString("AB", (*ppvTest)->mszName);
+
+	bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
+	AssertFalse(bContinue);
+
 	cDurableController.End();
 
 	cAccess.Kill();
@@ -149,21 +183,20 @@ void TestIndexTreeFileNoCacheEviction(void)
 	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", sz);
 
-	//bContinue = cIndexTree.StartIteration(&sIter, (void**)(&szData), &iSize);
-	//AssertTrue(bContinue);
-	//AssertInt(5, iSize);
-	//AssertString("Zero", szData);
-	//bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
-	//AssertTrue(bContinue);
-	//AssertInt(255, iSize);
-	//AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", szData);
-	//bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
-	//AssertFalse(bContinue);
+	bContinue = cIndexTree.StartIteration(&sIter, (void**)(&szData), &iSize);
+	AssertTrue(bContinue);
+	AssertInt(5, iSize);
+	AssertString("Zero", szData);
+	bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
+	AssertTrue(bContinue);
+	AssertInt(255, iSize);
+	AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", szData);
+	bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
+	AssertFalse(bContinue);
 
 	AssertTrue(cAccess.PutLongString(0x0098DD67CC45BB23LL, "MORE node DATA"));
 	AssertInt(3, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
-
 
 	AssertTrue(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 	AssertString("MORE node DATA", sz);
@@ -231,8 +264,8 @@ void TestIndexTreeFileNoCacheEviction(void)
 
 	bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
 	AssertTrue(bContinue);
-	AssertInt(21, iSize);
-	AssertString("", szData);
+	AssertInt(22, iSize);
+	AssertString("Another DATUM of doom", szData);
 
 	bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
 	AssertFalse(bContinue);
@@ -243,24 +276,105 @@ void TestIndexTreeFileNoCacheEviction(void)
 
 	bContinue = cIndexTree.StartIteration(&sIter, (void**)(&szData), &iSize);
 	AssertTrue(bContinue);
-	AssertInt(10, iSize);
-	AssertString("", szData);
+	AssertInt(21, iSize);
+	AssertString("Make the long short.", szData);
 
 	bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
 	AssertFalse(bContinue);
 
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Make the long short.", sz);
 
-	AssertTrue(cAccess.RemoveLong(0x23BB45CC67DD89EELL));
+	AssertTrue(cAccess.RemoveLong(0xEE89DD67CC45BB23LL));
 	AssertInt(0, cIndexTree.NumElements());
-	AssertFalse(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertFalse(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 
 	cDurableController.End();
 
 	cAccess.Kill();
 	cIndexTree.Kill();
 	cDurableController.Kill();
+
+	cHelper.RemoveWorkingDirectory();
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileResizeData(void)
+{
+	CIndexTreeNodeFile*		pcNode;
+	CIndexTreeNodeFile*		pcOldNode;
+	CIndexTreeNodeFile*		pcRoot;
+	char					szAAObject[] = "Hello";
+	char					szACObject[] = "Goodbye";
+	char					szAObject[] = "Centrist Policies";
+	int						iNodeMemoryOffset1;
+	int						iNodeMemoryOffset2;
+	CChars					sz;
+	CIndexTreeFile			cIndexTree;
+	CIndexTreeHelper		cHelper;
+	CDurableFileController	cDurableController;
+	CMemoryAllocator		cAllocator;
+	CMemory*				pcMemory;
+
+	cHelper.Init("Output" _FS_"IndexTree2", "primary", "backup", "RootFile.IDX", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cAllocator.Init();
+	pcMemory = cAllocator.GetMemory();
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), &cAllocator);
+
+	cIndexTree.Put("AA", szAAObject, (unsigned char)strlen(szAAObject) + 1);
+	cIndexTree.Put("AC", szACObject, (unsigned char)strlen(szACObject) + 1);
+
+	pcNode = cIndexTree.GetNode("A", 1);
+	pcOldNode = pcNode;
+	AssertInt(3, pcNode->GetNumIndexes());
+	AssertInt(2, pcNode->NumInitialisedIndexes());
+	AssertInt(0, pcNode->GetObjectSize());
+	iNodeMemoryOffset1 = (size_t)pcNode->GetNodesMemory() - (size_t)pcNode;
+	AssertInt(cIndexTree.SizeofNode(), iNodeMemoryOffset1);
+
+	cIndexTree.Put("A", szAObject, (unsigned char)strlen(szAObject) + 1);
+
+	pcNode = cIndexTree.GetNode("A", 1);
+	AssertFalse(pcNode == pcOldNode);
+	AssertInt(3, pcNode->GetNumIndexes());
+	AssertInt(2, pcNode->NumInitialisedIndexes());
+	AssertInt(18, pcNode->GetObjectSize());
+	iNodeMemoryOffset2 = (size_t)pcNode->GetNodesMemory() - (size_t)pcNode;
+	AssertInt(cIndexTree.SizeofNode() + pcNode->GetObjectSize(), iNodeMemoryOffset2);
+	AssertTrue(iNodeMemoryOffset2 > iNodeMemoryOffset1);
+
+	AssertString(szAAObject, (char*)cIndexTree.Get("AA"));
+	AssertString(szACObject, (char*)cIndexTree.Get("AC"));
+	AssertString(szAObject, (char*)cIndexTree.Get("A"));
+
+	pcRoot = cIndexTree.GetRoot();
+	sz.Init(); pcRoot->Print(&sz, FALSE);
+	AssertString("0:255 .................................................................x..............................................................................................................................................................................................", sz.Text()); sz.Kill();
+	pcNode = pcRoot->Get('A')->u.mpcMemory;
+	sz.Init(); pcNode->Print(&sz, FALSE);
+	AssertString("65:67 (18) x.x", sz.Text()); sz.Kill();
+	sz.Init(); pcNode->Get('A')->u.mpcMemory->Print(&sz, FALSE);
+	AssertString("0:0 (6)", sz.Text()); sz.Kill();
+	AssertFalse(pcNode->Get('B')->IsValid());
+	sz.Init(); pcNode->Get('C')->u.mpcMemory->Print(&sz, FALSE);
+	AssertString("0:0 (8)", sz.Text()); sz.Kill();
+
+	cDurableController.End();
+
+	cIndexTree.Kill();
+	cDurableController.Kill();
+
+	AssertLongLongInt(0, pcMemory->GetTotalAllocatedMemory());
+	cAllocator.Kill();
 
 	cHelper.RemoveWorkingDirectory();
 	cHelper.Kill(TRUE);
@@ -279,6 +393,7 @@ void TestIndexTreeFile(void)
 
 	TestIndexTreeFileInit();
 	TestIndexTreeFileAdd();
+	TestIndexTreeFileResizeData();
 	TestIndexTreeFileNoCacheEviction();
 
 	TestStatistics();
