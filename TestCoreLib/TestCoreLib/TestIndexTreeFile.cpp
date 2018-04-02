@@ -127,6 +127,7 @@ void TestIndexTreeFileNoCacheEviction(void)
 
 	AssertTrue(cAccess.PutLongString(0x0000000000000000LL, "Zero"));
 	AssertInt(1, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree())
 
 	AssertTrue(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
@@ -143,35 +144,40 @@ void TestIndexTreeFileNoCacheEviction(void)
 	AssertFalse(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sente."));
 	AssertTrue(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent."));
 	AssertInt(2, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree())
 
 	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", sz);
 
-	bContinue = cIndexTree.StartIteration(&sIter, (void**)(&szData), &iSize);
-	AssertTrue(bContinue);
-	AssertInt(5, iSize);
-	AssertString("Zero", szData);
-	bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
-	AssertTrue(bContinue);
-	AssertInt(255, iSize);
-	AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", szData);
-	bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
-	AssertFalse(bContinue);
+	//bContinue = cIndexTree.StartIteration(&sIter, (void**)(&szData), &iSize);
+	//AssertTrue(bContinue);
+	//AssertInt(5, iSize);
+	//AssertString("Zero", szData);
+	//bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
+	//AssertTrue(bContinue);
+	//AssertInt(255, iSize);
+	//AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", szData);
+	//bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
+	//AssertFalse(bContinue);
 
 	AssertTrue(cAccess.PutLongString(0x0098DD67CC45BB23LL, "MORE node DATA"));
 	AssertInt(3, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
+
 
 	AssertTrue(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 	AssertString("MORE node DATA", sz);
 
 	AssertTrue(cAccess.PutLongString(0x0000DD00CC54BB23LL, "Another DATUM of doom"));
 	AssertInt(4, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	AssertTrue(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	AssertTrue(cAccess.PutLongString(0x0098DD67CC45BB23LL, "Changed your data lengh"));
 	AssertInt(4, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	AssertTrue(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 	AssertString("Changed your data lengh", sz);
@@ -184,6 +190,7 @@ void TestIndexTreeFileNoCacheEviction(void)
 
 	AssertTrue(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Make the long short."));
 	AssertInt(4, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	AssertTrue(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 	AssertString("Changed your data lengh", sz);

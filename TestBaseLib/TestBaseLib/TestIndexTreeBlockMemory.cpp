@@ -84,6 +84,71 @@ void TestIndexTreeMemoryAdd(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeMemoryResizeData(void)
+{
+	CIndexTreeMemory		cIndex;
+	char*					szResult;
+	CIndexTreeNodeMemory*	pcNode;
+	CIndexTreeNodeMemory*	pcOldNode;
+	CIndexTreeNodeMemory*	pcRoot;
+	char					szAAObject[] = "Hello";
+	char					szACObject[] = "Goodbye";
+	char					szAObject[] = "Centrist Policies";
+	int						iNodeMemoryOffset1;
+	int						iNodeMemoryOffset2;
+	CChars					sz;
+
+	cIndex.Init();
+	szResult = (char*)cIndex.Put("AA", szAAObject, (unsigned char)strlen(szAAObject) + 1);
+	AssertString(szAAObject, szResult);
+
+	szResult = (char*)cIndex.Put("AC", szACObject, (unsigned char)strlen(szACObject) + 1);
+	AssertString(szACObject, szResult);
+
+	pcNode = cIndex.GetNode("A", 1);
+	pcOldNode = pcNode;
+	AssertInt(3, pcNode->GetNumIndexes());
+	AssertInt(2, pcNode->NumInitialisedIndexes());
+	AssertInt(0, pcNode->GetObjectSize());
+	iNodeMemoryOffset1 = (size_t)pcNode->GetNodesMemory() - (size_t)pcNode;
+	AssertInt(cIndex.SizeofNode(), iNodeMemoryOffset1);
+
+	szResult = (char*)cIndex.Put("A", szAObject, (unsigned char)strlen(szAObject) + 1);
+	AssertString(szAObject, szResult);
+
+	pcNode = cIndex.GetNode("A", 1);
+	AssertFalse(pcNode == pcOldNode);
+	AssertInt(3, pcNode->GetNumIndexes());
+	AssertInt(2, pcNode->NumInitialisedIndexes());
+	AssertInt(18, pcNode->GetObjectSize());
+	iNodeMemoryOffset2 = (size_t)pcNode->GetNodesMemory() - (size_t)pcNode;
+	AssertInt(cIndex.SizeofNode() + pcNode->GetObjectSize(), iNodeMemoryOffset2);
+	AssertTrue(iNodeMemoryOffset2 > iNodeMemoryOffset1);
+
+	AssertString(szAAObject, (char*)cIndex.Get("AA"));
+	AssertString(szACObject, (char*)cIndex.Get("AC"));
+	AssertString(szAObject, (char*)cIndex.Get("A"));
+
+	pcRoot = cIndex.GetRoot();
+	sz.Init(); pcRoot->Print(&sz, FALSE); 
+	AssertString("0:255 .................................................................x..............................................................................................................................................................................................", sz.Text()); sz.Kill();
+	pcNode = pcRoot->Get('A');
+	sz.Init(); pcNode->Print(&sz, FALSE);
+	AssertString("65:67 (18) x.x", sz.Text()); sz.Kill();
+	sz.Init(); pcNode->Get('A')->Print(&sz, FALSE);
+	AssertString("0:0 (6)", sz.Text()); sz.Kill();
+	AssertNull(pcNode->Get('B'));
+	sz.Init(); pcNode->Get('C')->Print(&sz, FALSE);
+	AssertString("0:0 (8)", sz.Text()); sz.Kill();
+
+	cIndex.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryGet(void)
 {
 	CIndexTreeMemory	cIndex;
@@ -968,6 +1033,7 @@ void TestIndexTreeMemory(void)
 	TestIndexTreeMemoryIterate();
 	TestIndexTreeMemoryReadWrite();
 	TestIndexTreeMemoryRemoveOnRoot();
+	TestIndexTreeMemoryResizeData();
 
 	MemoryKill();
 	FastFunctionsKill();
