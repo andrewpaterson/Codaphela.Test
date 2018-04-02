@@ -442,6 +442,9 @@ void TestIndexTreeMemoryRemoveByObject(void)
 	ppcRemoved = (CTestIndexTreeObject**)cIndex.Get(object2.GetName());
 	AssertPointer(&object2, *ppcRemoved);
 	AssertTrue(cIndex.Remove(object2.GetName()));
+	AssertInt(2, cIndex.NumElements());
+	AssertTrue(cIndex.ValidateIndexTree())
+	AssertInt(13, cIndex.CountAllocatedNodes());
 	ppcRemoved = (CTestIndexTreeObject**)cIndex.Get(object2.GetName());
 	AssertNull(ppcRemoved);
 	AssertInt(2, cIndex.NumElements());
