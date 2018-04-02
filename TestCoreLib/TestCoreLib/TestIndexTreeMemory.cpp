@@ -123,6 +123,7 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 	AssertFalse(cAccess.RemoveLong(0xFF00000000000000LL));
 	AssertTrue(cAccess.RemoveLong(0x0000000000000000LL));
 	AssertInt(3, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 	AssertString("Changed your data lengh", sz);
@@ -133,6 +134,7 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 
 	AssertTrue(cAccess.RemoveLong(0x23BB45CC67DD9800LL));
 	AssertInt(2, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 	AssertFalse(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 
 	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
@@ -149,6 +151,7 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 
 	AssertTrue(cAccess.RemoveLong(0x23BB54CC00DD0000LL));
 	AssertInt(1, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 	AssertFalse(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 
 	avp.Init();
@@ -162,12 +165,12 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 
 	AssertTrue(cAccess.RemoveLong(0x23BB45CC67DD89EELL));
 	AssertInt(0, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 	AssertFalse(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 
 	cAccess.Kill();
 	cIndexTree.Kill();
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -246,6 +249,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 	AssertFalse(cAccess.RemoveLong(0xFF00000000000000LL));
 	AssertTrue(cAccess.RemoveLong(0x0000000000000000LL));
 	AssertInt(3, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 	AssertString("Changed your data lengh", sz);
@@ -257,6 +261,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 
 	AssertTrue(cAccess.RemoveLong(0x23BB45CC67DD9800LL));
 	AssertInt(2, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 	AssertFalse(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 
 	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
@@ -272,6 +277,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 
 	AssertTrue(cAccess.RemoveLong(0x23BB54CC00DD0000LL));
 	AssertInt(1, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 	AssertFalse(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 
 	avp.Init();
@@ -285,6 +291,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 
 	AssertTrue(cAccess.RemoveLong(0x23BB45CC67DD89EELL));
 	AssertInt(0, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 	AssertFalse(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 	AssertLongLongInt(1, pcMemory->GetTotalAllocations());
 
@@ -375,6 +382,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 	AssertFalse(cAccess.RemoveLong(0x00000000000000FFLL));
 	AssertTrue(cAccess.RemoveLong(0x0000000000000000LL));
 	AssertInt(3, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	AssertTrue(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 	AssertString("Changed your data lengh", sz);
@@ -382,17 +390,18 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 	AssertString("Make the long short.", sz);
 	AssertTrue(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
-	AssertLongLongInt(24, pcMemory->GetTotalAllocations());
+	AssertLongLongInt(17, pcMemory->GetTotalAllocations());
 
 	AssertTrue(cAccess.RemoveLong(0x0098DD67CC45BB23LL));
 	AssertInt(2, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 	AssertFalse(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 
 	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Make the long short.", sz);
 	AssertTrue(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
-	AssertLongLongInt(17, pcMemory->GetTotalAllocations());
+	AssertLongLongInt(15, pcMemory->GetTotalAllocations());
 
 	avp.Init();
 	cIndexTree.FindAll(&avp);
@@ -400,6 +409,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 	avp.Kill();
 
 	AssertTrue(cAccess.RemoveLong(0x0000DD00CC54BB23LL));
+	AssertTrue(cIndexTree.ValidateIndexTree());
 	AssertInt(1, cIndexTree.NumElements());
 	AssertFalse(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 
@@ -408,14 +418,15 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 	AssertInt(1, avp.NumElements());
 	avp.Kill();
 
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Make the long short.", sz);
 	AssertLongLongInt(9, pcMemory->GetTotalAllocations());
 
-	AssertTrue(cAccess.RemoveLong(0x23BB45CC67DD89EELL));
+	AssertTrue(cAccess.RemoveLong(0xEE89DD67CC45BB23LL));
+	AssertTrue(cIndexTree.ValidateIndexTree());
 	AssertInt(0, cIndexTree.NumElements());
-	AssertFalse(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
-	AssertLongLongInt(24, pcMemory->GetTotalAllocations());
+	AssertFalse(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
+	AssertLongLongInt(1, pcMemory->GetTotalAllocations());
 
 	cAccess.Kill();
 	cIndexTree.Kill();
@@ -441,7 +452,7 @@ void TestIndexTreeMemory(void)
 
 	TestIndexTreeMemoryAllocation();
 	TestIndexTreeMemoryComplexGlobalAllocator();
-	//TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian();
+	TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian();
 	TestIndexTreeMemoryComplexMemoryAllocatorBigEndian();
 
 	TestStatistics();

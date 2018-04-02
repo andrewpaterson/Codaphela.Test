@@ -41,7 +41,7 @@ void TestIndexTreeMemoryAdd(void)
 	bResult = cIndex.PutPtr(a.GetName(), &a);
 	AssertTrue(bResult);
 
-	pcNode = cIndex.GetIndexNode("A", 1);
+	pcNode = cIndex.GetNode("A", 1);
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetObjectPtr();
 	AssertPointer(&a, *ppvTest);
 
@@ -49,11 +49,11 @@ void TestIndexTreeMemoryAdd(void)
 	bResult = cIndex.PutPtr(aa.GetName(), &aa);
 	AssertTrue(bResult);
 
-	pcNode = cIndex.GetIndexNode("A", 1);
+	pcNode = cIndex.GetNode("A", 1);
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetObjectPtr();
 	AssertPointer(&a, *ppvTest);
 
-	pcNode = cIndex.GetIndexNode("AA", 2);
+	pcNode = cIndex.GetNode("AA", 2);
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetObjectPtr();
 	AssertPointer(&aa, *ppvTest);
 
@@ -110,7 +110,7 @@ void TestIndexTreeMemoryGet(void)
 
 	batman.Init("Batman");
 	cIndex.PutPtr(batman.GetName(), &batman);
-	pcNodeBatman = cIndex.GetIndexNode("Batman", 6);
+	pcNodeBatman = cIndex.GetNode("Batman", 6);
 	AssertInt(0, pcNodeBatman->GetNumIndexes());
 	pcResult = (CTestIndexTreeObject**)cIndex.Get("Batman");
 	AssertPointer(*pcResult, &batman);
@@ -122,8 +122,8 @@ void TestIndexTreeMemoryGet(void)
 	szBatmam = "Batmam";
 	batmam.Init(szBatmam);
 	cIndex.PutPtr(szBatmam, &batmam);
-	pcNodeBatman = cIndex.GetIndexNode("Batman", 6);
-	pcNodeBatmam = cIndex.GetIndexNode(szBatmam, 6);
+	pcNodeBatman = cIndex.GetNode("Batman", 6);
+	pcNodeBatmam = cIndex.GetNode(szBatmam, 6);
 	pcResult = (CTestIndexTreeObject**)cIndex.Get(szBatmam);
 	AssertPointer(&batmam, *pcResult);
 	avp.Init();
@@ -215,14 +215,14 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 	AssertInt(cIndex.ByteSize(), cAllocator.AllocatedSize());
 
 	iKeyLength = strlen("Spoedling");
-	AssertNull(cIndex.GetIndexNode("Spoedling", iKeyLength));
+	AssertNull(cIndex.GetNode("Spoedling", iKeyLength));
 
 	pvResult = (char*)cIndex.Put("SpoedlingZ", szKerfuffle, 10);
 	AssertString("kerfuffle", pvResult);
 	AssertInt(1, cIndex.NumElements());
 
 	AssertInt(cIndex.ByteSize(), cAllocator.AllocatedSize());
-	pcNode = cIndex.GetIndexNode("Spoedling", iKeyLength);
+	pcNode = cIndex.GetNode("Spoedling", iKeyLength);
 	AssertNotNull(pcNode);
 	pcChildNode = pcNode->Get('Z');
 	AssertNotNull(pcChildNode);
@@ -235,7 +235,7 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 	AssertString("kerfuffle", (char*)cIndex.Get("SpoedlingZ"));
 	AssertString("22", (char*)cIndex.Get("Spoedling"));
 
-	pcNode = cIndex.GetIndexNode("Spoedling", iKeyLength);
+	pcNode = cIndex.GetNode("Spoedling", iKeyLength);
 	AssertNotNull(pcNode);
 	pcChildNode = pcNode->Get('Z');
 	AssertNotNull(pcChildNode);
@@ -248,7 +248,7 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 	AssertString("kerfuffle", (char*)cIndex.Get("SpoedlingZ"));
 	AssertString("OT", (char*)cIndex.Get("Spoedling"));
 
-	pcNode = cIndex.GetIndexNode("Spoedling", iKeyLength);
+	pcNode = cIndex.GetNode("Spoedling", iKeyLength);
 	AssertNotNull(pcNode);
 	pcChildNode = pcNode->Get('Z');
 	AssertNotNull(pcChildNode);
@@ -261,7 +261,7 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 	AssertString("kerfuffle", (char*)cIndex.Get("SpoedlingZ"));
 	AssertString("333", (char*)cIndex.Get("Spoedling"));
 
-	pcNode = cIndex.GetIndexNode("Spoedling", iKeyLength);
+	pcNode = cIndex.GetNode("Spoedling", iKeyLength);
 	AssertNotNull(pcNode);
 	pcChildNode = pcNode->Get('Z');
 	AssertNotNull(pcChildNode);
@@ -274,7 +274,7 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 	AssertString("kerfuffle", (char*)cIndex.Get("SpoedlingZ"));
 	AssertString("1", (char*)cIndex.Get("Spoedling"));
 
-	pcNode = cIndex.GetIndexNode("Spoedling", iKeyLength);
+	pcNode = cIndex.GetNode("Spoedling", iKeyLength);
 	AssertNotNull(pcNode);
 	pcChildNode = pcNode->Get('Z');
 	AssertNotNull(pcChildNode);
@@ -691,14 +691,14 @@ void TestIndexTreeMemoryRemoveResize(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryIterate(void)
 {
-	CFileBasic				cFile;
-	CIndexTreeMemory	cIndex;
-	SIndexTreeIterator		sIter;
-	char*					szData;
-	int						iDataSize;
-	unsigned char			c;
-	char					szKey[1024];
-	int						iKeySize;
+	CFileBasic					cFile;
+	CIndexTreeMemory			cIndex;
+	SIndexTreeMemoryIterator	sIter;
+	char*						szData;
+	int							iDataSize;
+	unsigned char				c;
+	char						szKey[1024];
+	int							iKeySize;
 
 	cIndex.Init();
 	cIndex.Put("AAA", "DENISA", 7);
