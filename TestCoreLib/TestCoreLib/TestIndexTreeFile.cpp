@@ -9,6 +9,30 @@
 #include "TestIndexTreeObject.h"
 
 
+char	gszIndexTreeString[257];
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+char* GetString(CIndexTreeFile* pcIndexTree, char* szKey)
+{
+	int		iKeySize;
+	BOOL	bResult;
+
+	iKeySize = strlen(szKey);
+	bResult = pcIndexTree->Get(szKey, iKeySize, &gszIndexTreeString, NULL);
+	if (bResult)
+	{
+		return gszIndexTreeString;
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -352,9 +376,9 @@ void TestIndexTreeFileResizeData(void)
 	AssertInt(cIndexTree.SizeofNode() + pcNode->GetObjectSize(), iNodeMemoryOffset2);
 	AssertTrue(iNodeMemoryOffset2 > iNodeMemoryOffset1);
 
-	AssertString(szAAObject, (char*)cIndexTree.Get("AA"));
-	AssertString(szACObject, (char*)cIndexTree.Get("AC"));
-	AssertString(szAObject, (char*)cIndexTree.Get("A"));
+	AssertString(szAAObject, GetString(&cIndexTree, "AA"));
+	AssertString(szACObject, GetString(&cIndexTree, "AC"));
+	AssertString(szAObject, GetString(&cIndexTree, "A"));
 
 	pcRoot = cIndexTree.GetRoot();
 	sz.Init(); pcRoot->Print(&sz, FALSE);
