@@ -24,10 +24,10 @@ void TestIndexedDataCacheEviction(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	AssertInt(40, sizeof(CIndexedDataDescriptor));
+	AssertInt(32, sizeof(CIndexedDataDescriptor));
 
 	OI = 0LL;
-	cIndexedData.Init(szDirectory, NULL, 71);  //A little more than two items in the cache...
+	cIndexedData.Init(szDirectory, NULL, 63);  //A little more than two items in the cache...
 
 	cIndexedData.DurableBegin();
 	AssertTrue(cIndexedData.Add(OI, szHello, 6, 0));
