@@ -409,6 +409,58 @@ void TestIndexTreeFileResizeData(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileRemove(void)
+{
+	char					szAA[] = "MEDIUM";
+	char					szAAA[] = "NEAR";
+	char					szA[] = "Florida";
+	CIndexTreeFile			cIndexTree;
+	CIndexTreeHelper		cHelper;
+	CDurableFileController	cDurableController;
+
+	cHelper.Init("Output" _FS_"IndexTree3", "primary", "backup", "RootFile.IDX", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName());
+
+	cIndexTree.Put("AA", szAA, (unsigned char)strlen(szAA) + 1);
+	cIndexTree.Put("AAA", szAAA, (unsigned char)strlen(szAAA) + 1);
+	cIndexTree.Put("A", szA, (unsigned char)strlen(szA) + 1);
+	AssertInt(3, cIndexTree.NumElements());
+
+	cIndexTree.Remove("A");
+	AssertString(NULL, GetString(&cIndexTree, "A"));
+	AssertString(szAA, GetString(&cIndexTree, "AA"));
+	AssertString(szAAA, GetString(&cIndexTree, "AAA"));
+	AssertInt(2, cIndexTree.NumElements());
+
+	cIndexTree.Remove("AA");
+	AssertString(NULL, GetString(&cIndexTree, "A"));
+	AssertString(NULL, GetString(&cIndexTree, "AA"));
+	AssertString(szAAA, GetString(&cIndexTree, "AAA"));
+	AssertInt(1, cIndexTree.NumElements());
+
+	cIndexTree.Remove("AAA");
+	AssertString(NULL, GetString(&cIndexTree, "A"));
+	AssertString(NULL, GetString(&cIndexTree, "AA"));
+	AssertString(NULL, GetString(&cIndexTree, "AAA"));
+	AssertInt(0, cIndexTree.NumElements());
+
+	cDurableController.End();
+
+	cIndexTree.Kill();
+	cDurableController.Kill();
+
+	cHelper.RemoveWorkingDirectory();
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFile(void)
 {
 	FastFunctionsInit();
@@ -418,6 +470,7 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileInit();
 	TestIndexTreeFileAdd();
 	TestIndexTreeFileResizeData();
+	TestIndexTreeFileRemove();
 	TestIndexTreeFileNoCacheEviction();
 
 	TestStatistics();
