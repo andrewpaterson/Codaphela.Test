@@ -107,6 +107,7 @@
       <FixedBaseAddress>false</FixedBaseAddress>
       <LinkTimeCodeGeneration />
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
