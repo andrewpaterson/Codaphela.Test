@@ -14,6 +14,31 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeMemorySizeOfs(void)
+{
+	CIndexTreeMemory	cIndexTree;
+	size_t				tRootNodeSize;
+	size_t				tNodeSize;
+	size_t				tNodePointer;
+
+
+	cIndexTree.Init();
+	tRootNodeSize = cIndexTree.CalculateRootNodeSize();
+	tNodeSize = cIndexTree.SizeofNode();
+	tNodePointer = cIndexTree.SizeofNodePtr();
+
+	AssertInt(1040, tRootNodeSize);
+	AssertInt(16, tNodeSize);
+	AssertInt(4, tNodePointer);
+
+	cIndexTree.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryAllocation(void)
 {
 	CMemoryAllocator	cMemoryAllocator;
@@ -450,6 +475,7 @@ void TestIndexTreeMemory(void)
 	TypeConverterInit();
 	BeginTests();
 
+	TestIndexTreeMemorySizeOfs();
 	TestIndexTreeMemoryAllocation();
 	TestIndexTreeMemoryComplexGlobalAllocator();
 	TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian();

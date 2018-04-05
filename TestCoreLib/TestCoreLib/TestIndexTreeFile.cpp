@@ -33,6 +33,28 @@ char* GetString(CIndexTreeFile* pcIndexTree, char* szKey)
 }
 
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileSizeOfs(void)
+{
+	CIndexTreeFile		cIndexTree;
+	size_t				tRootNodeSize;
+	size_t				tNodeSize;
+	size_t				tNodePointer;
+
+	cIndexTree.FakeInit();
+	tRootNodeSize = cIndexTree.CalculateRootNodeSize();
+	tNodeSize = cIndexTree.SizeofNode();
+	tNodePointer = cIndexTree.SizeofNodePtr();
+
+	AssertInt(4128, tRootNodeSize);
+	AssertInt(32, tNodeSize);
+	AssertInt(16, tNodePointer);
+}
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -467,6 +489,7 @@ void TestIndexTreeFile(void)
 	TypeConverterInit();
 	BeginTests();
 
+	TestIndexTreeFileSizeOfs();
 	TestIndexTreeFileInit();
 	TestIndexTreeFileAdd();
 	TestIndexTreeFileResizeData();
