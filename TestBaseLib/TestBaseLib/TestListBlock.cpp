@@ -250,6 +250,12 @@ void TestListBlockPushPop(void)
 	psItem6 = (STestListBlockItem*)cList.Add(); psItem6->Init(6, 606);
 	AssertInt(6, cList.NumElements());
 	AssertInt(6, cList.NumElementsFromFreeList());
+	AssertPointer(psItem1, cList.Get(0));
+	AssertPointer(psItem2, cList.Get(1));
+	AssertPointer(psItem3, cList.Get(2));
+	AssertPointer(psItem4, cList.Get(3));
+	AssertPointer(psItem5, cList.Get(4));
+	AssertPointer(psItem6, cList.Get(5));
 
 	cList.Pop(&sItem);
 	AssertInt(5, cList.NumElements());
