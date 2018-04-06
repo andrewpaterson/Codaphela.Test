@@ -33,7 +33,6 @@ char* GetString(CIndexTreeFile* pcIndexTree, char* szKey)
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -113,6 +112,7 @@ void TestIndexTreeFileAdd(void)
 	a.Init("A");
 	bResult = cAccess.PutStringPtr(a.GetName(), &a);
 	AssertTrue(bResult);
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	pcNode = cIndexTree.GetNode("A", 1);
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetObjectPtr();
@@ -121,18 +121,22 @@ void TestIndexTreeFileAdd(void)
 	aa.Init("AA");
 	bResult = cAccess.PutStringPtr(aa.GetName(), &aa);
 	AssertTrue(bResult);
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	aaa.Init("AAA");
 	bResult = cAccess.PutStringPtr(aaa.GetName(), &aaa);
 	AssertTrue(bResult);
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	ab.Init("AB");
 	bResult = cAccess.PutStringPtr(ab.GetName(), &ab);
 	AssertTrue(bResult);
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	aab.Init("AAB");
 	bResult = cAccess.PutStringPtr(aab.GetName(), &aab);
 	AssertTrue(bResult);
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 
 	pcNode = cIndexTree.GetNode("A", 1);
