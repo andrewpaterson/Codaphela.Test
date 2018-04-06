@@ -64,7 +64,7 @@ void TestIndexTreeNodeFileRootMemory(void)
 	cIndex.FakeInit();
 
 	pcNode = (CIndexTreeNodeFile*)malloc(sizeof(CIndexTreeNodeFile) + sizeof(CIndexTreeChildNode));  //Node.  No object.  One child.
-	pcNode->Init(&cIndex, NULL);
+	pcNode->Init(&cIndex, NULL, 0);
 
 	AssertTrue(pcNode->IsEmpty());
 	AssertFalse(pcNode->HasNodes());

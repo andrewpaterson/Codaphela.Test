@@ -21,7 +21,6 @@ void TestIndexTreeMemorySizeOfs(void)
 	size_t				tNodeSize;
 	size_t				tNodePointer;
 
-
 	cIndexTree.Init();
 	tRootNodeSize = cIndexTree.CalculateRootNodeSize();
 	tNodeSize = cIndexTree.SizeofNode();
@@ -30,7 +29,29 @@ void TestIndexTreeMemorySizeOfs(void)
 	AssertInt(1040, tRootNodeSize);
 	AssertInt(16, tNodeSize);
 	AssertInt(4, tNodePointer);
+}
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeMemoryPutValidation(void)
+{
+	CIndexTreeMemory		cIndexTree;
+	CIndexTreeMemoryAccess	cAccess;
+
+
+	cIndexTree.Init();
+	cAccess.Init(&cIndexTree);
+
+	AssertTrue(cAccess.PutStringString("\2\3", "Data"));
+	AssertTrue(cIndexTree.ValidateIndexTree());
+	AssertTrue(cAccess.PutStringString("\2\2", "Data"));
+	AssertTrue(cAccess.PutStringString("\2\4", "Data"));
+	AssertTrue(cIndexTree.ValidateIndexTree());
+
+	cAccess.Kill();
 	cIndexTree.Kill();
 }
 
@@ -95,6 +116,7 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 
 	AssertTrue(cAccess.PutLongString(0x0000000000000000LL, "Zero"));
 	AssertInt(1, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	AssertTrue(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
@@ -104,24 +126,28 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 	AssertFalse(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sente."));
 	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent."));
 	AssertInt(2, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 	AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", sz);
 
 	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD9800LL, "MORE node DATA"));
 	AssertInt(3, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 	AssertString("MORE node DATA", sz);
 
 	AssertTrue(cAccess.PutLongString(0x23BB54CC00DD0000LL, "Another DATUM of doom"));
 	AssertInt(4, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	AssertTrue(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD9800LL, "Changed your data lengh"));
 	AssertInt(4, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 	AssertString("Changed your data lengh", sz);
@@ -134,6 +160,7 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 
 	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Make the long short."));
 	AssertInt(4, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 	AssertString("Changed your data lengh", sz);
@@ -476,6 +503,7 @@ void TestIndexTreeMemory(void)
 	BeginTests();
 
 	TestIndexTreeMemorySizeOfs();
+	TestIndexTreeMemoryPutValidation();
 	TestIndexTreeMemoryAllocation();
 	TestIndexTreeMemoryComplexGlobalAllocator();
 	TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian();
