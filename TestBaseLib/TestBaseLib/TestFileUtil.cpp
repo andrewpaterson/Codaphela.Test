@@ -189,7 +189,7 @@ void TestFileUtilMakeDirectory(void)
 	CFileUtil		cFileUtil;
 	CChars			szDirectory;
 	CChars			szFileName;
-	CArrayString	aszFiles;
+	CArrayChars		aszFiles;
 	CChars			szParentDirectory;
 	CChars			szCurrentDirectory;
 	BOOL			bResult;

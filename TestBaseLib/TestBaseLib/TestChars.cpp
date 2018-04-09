@@ -1,5 +1,5 @@
 #include "BaseLib/Chars.h"
-#include "BaseLib/ArrayString.h"
+#include "BaseLib/ArrayChars.h"
 #include "TestLib/Assert.h"
 
 
@@ -145,7 +145,7 @@ void TestCharsInsert(void)
 void TestSplit(void)
 {
 	CChars			sz;
-	CArrayString	cStrings;
+	CArrayChars		cStrings;
 	CChars*			psz;
 	CChars			sz2;
 

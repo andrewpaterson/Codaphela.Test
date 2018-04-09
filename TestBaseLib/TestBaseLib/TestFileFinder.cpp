@@ -11,7 +11,7 @@ void TestFileFinder(void)
 	BeginTests();
 
 	CFileUtil		cFileUtil;
-	CArrayString	aszFiles;
+	CArrayChars		aszFiles;
 
 	aszFiles.Init(1);
 	cFileUtil.FindFilesWithExtension("Finder", "txt", &aszFiles);
