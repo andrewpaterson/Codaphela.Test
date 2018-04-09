@@ -51,7 +51,6 @@ void TestIndexTreeIteratorIterate(void)
 		bExists = cMap.Iterate(&sMapIter, (void**)&pvKey, (void**)&pvData);
 	}
 
-	AssertInt(9, cIndexTree.GetLargestKeySize());
 	AssertInt(12, cIndexTree.NumElements());
 
 	bExists = cIndexTree.StartIteration(&sIter, (void**)&pvData, &iDataSize);

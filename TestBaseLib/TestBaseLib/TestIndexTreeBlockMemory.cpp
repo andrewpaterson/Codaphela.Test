@@ -541,7 +541,7 @@ void TestIndexTreeMemoryRemoveByObject(void)
 	AssertNull(ppcRemoved);
 	AssertInt(0, cIndex.NumElements());
 
-	AssertFalse(cIndex.Remove(NULL));
+	AssertFalse(cIndex.Remove((char*)NULL));
 	AssertTrue(cIndex.ValidateIndexTree())
 	AssertFalse(cIndex.Remove(""));
 	AssertTrue(cIndex.ValidateIndexTree())
@@ -580,8 +580,6 @@ void TestIndexTreeMemoryHasKey(void)
 	AssertFalse(cIndex.HasKey(" "));
 	AssertFalse(cIndex.HasKey("fab"));
 	AssertFalse(cIndex.HasKey("facilee"));
-
-	AssertInt(13, cIndex.GetLargestKeySize());
 
 	AssertTrue(cIndex.HasKey("fabricative"));
 	AssertTrue(cIndex.HasKey("fabled"));
@@ -782,7 +780,6 @@ void TestIndexTreeMemoryIterate(void)
 	AssertInt(14, cIndex.CountAllocatedNodes());
 	AssertInt(10, cIndex.RecurseSize());
 	AssertInt(10, cIndex.NumElements());
-	AssertInt(4, cIndex.GetLargestKeySize());
 
 	AssertTrue(cIndex.StartIteration(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(8, iDataSize);
@@ -886,7 +883,7 @@ void TestIndexTreeMemoryIterate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryReadWrite(void)
 {
-	CFileBasic				cFile;
+	CFileBasic			cFile;
 	CIndexTreeMemory	cIndex;
 	CIndexTreeMemory	cIndexIn;
 
@@ -904,7 +901,6 @@ void TestIndexTreeMemoryReadWrite(void)
 	AssertInt(14, cIndex.CountAllocatedNodes());
 	AssertInt(10, cIndex.RecurseSize());
 	AssertInt(10, cIndex.NumElements());
-	AssertInt(4, cIndex.GetLargestKeySize());
 
 	cFile.Init(MemoryFile());
 	cFile.Open(EFM_Write_Create);
@@ -919,7 +915,6 @@ void TestIndexTreeMemoryReadWrite(void)
 	AssertInt(14, cIndexIn.CountAllocatedNodes());
 	AssertInt(10, cIndexIn.RecurseSize());
 	AssertInt(10, cIndexIn.NumElements());
-	AssertInt(4, cIndexIn.GetLargestKeySize());
 	AssertString("DENISA", (char*)cIndexIn.Get("AAA"));
 	AssertString("FATJETA", (char*)cIndexIn.Get("AA"));
 	AssertString("ARIANA", (char*)cIndexIn.Get("AAB"));

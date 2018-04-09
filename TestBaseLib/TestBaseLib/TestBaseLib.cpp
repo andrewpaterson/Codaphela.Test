@@ -16,6 +16,7 @@ void TestMapString(void);
 void TestMap(void);
 void TestListBlock(void);
 void TestListTemplate(void);
+void TestListCharsMinimal(void);
 void TestConstructors(void);
 void TestDate(void);
 void TestNumbers(void);
@@ -87,6 +88,7 @@ int main(void)
 	TestMap();
 	TestListBlock();
 	TestListTemplate();
+	TestListCharsMinimal();
 	TestConstructors();
 	TestLinkedListBlockAligned();
 	TestAllocator();

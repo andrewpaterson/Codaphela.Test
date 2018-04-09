@@ -97,6 +97,12 @@
     <Filter Include="Source\Text">
       <UniqueIdentifier>{cb4beb52-2e9f-4a7e-9966-059b5f77b0fa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Data\List\Minimal">
+      <UniqueIdentifier>{b3c55a73-adf4-4cb8-95fe-52d4b5b430af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\List\Minimal\Specific">
+      <UniqueIdentifier>{dd29202e-ad4c-4547-9581-101803d03b58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -293,6 +299,9 @@
     </ClCompile>
     <ClCompile Include="TestTextParser.cpp">
       <Filter>Source\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="TestListCharsMinimal.cpp">
+      <Filter>Source\Data\List\Minimal\Specific</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -129,6 +129,7 @@
     <ClCompile Include="TestIndexTreeTemplate.cpp" />
     <ClCompile Include="TestLinkedListTemplate.cpp" />
     <ClCompile Include="TestListBlock.cpp" />
+    <ClCompile Include="TestListCharsMinimal.cpp" />
     <ClCompile Include="TestListTemplate.cpp" />
     <ClCompile Include="TestMap.cpp" />
     <ClCompile Include="TestMapBlock.cpp" />
