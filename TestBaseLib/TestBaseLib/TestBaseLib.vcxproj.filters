@@ -303,6 +303,9 @@
     <ClCompile Include="TestListCharsMinimal.cpp">
       <Filter>Source\Data\List\Minimal\Specific</Filter>
     </ClCompile>
+    <ClCompile Include="TestCSVFileImmutable.cpp">
+      <Filter>Source\File\CSV</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

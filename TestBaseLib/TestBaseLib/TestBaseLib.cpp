@@ -62,6 +62,7 @@ void TestMemoryCache(void);
 void TestScratchPad(void);
 void TestScratchPadAllocator(void);
 void TestTemporaryMemory(void);
+void TestCSVFileImmutable(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -133,6 +134,7 @@ int main(void)
 	TestPackFile();
 	TestFileIO();
 	TestFileSystem();
+	TestCSVFileImmutable();
 
 	return TestTotalStatistics();
 }
