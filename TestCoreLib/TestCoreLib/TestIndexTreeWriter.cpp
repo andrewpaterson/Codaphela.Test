@@ -51,7 +51,6 @@ void TestIndexTreeWriterWrite(void)
 		bExists = cMap.Iterate(&sMapIter, (void**)&pvKey, (void**)&pvData);
 	}
 
-	AssertInt(9, cIndexTree.GetLargestKeySize());
 	AssertInt(12, cIndexTree.NumElements());
 
 	cFileUtil.RemoveDir(szDirectory);
