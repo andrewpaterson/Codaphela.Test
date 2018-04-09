@@ -518,6 +518,8 @@ void TestIndexTreeFileDelete(void)
 	AssertInt(2, cIndexTree.NumElements());
 	AssertInt(4, cIndexTree.NumNodes());
 
+	cIndexTree.Flush();
+	AssertInt(4, cIndexTree.NumNodes());
 
 	cAccess.DeleteString("A");
 	AssertString(NULL, GetString(&cIndexTree, "A"));
@@ -533,8 +535,8 @@ void TestIndexTreeFileDelete(void)
 	AssertInt(0, cIndexTree.NumElements());
 	AssertInt(4, cIndexTree.NumNodes());
 
-	//cIndexTree.Flush();
-	//AssertInt(4, cIndexTree.NumNodes());
+	cIndexTree.Flush();
+	AssertInt(0, cIndexTree.NumNodes());
 
 	cDurableController.End();
 
@@ -645,12 +647,17 @@ void TestIndexTreeFileFindKey(void)
 	apvNodes.Add(pcNode3);
 	apvNodes.Add(pcNode4);
 
-	paszKeyNames = cIndexTree.FindKeys(&apvNodes);
+	paszKeyNames = cIndexTree.FindStringKeys(&apvNodes);
 	AssertInt(4, paszKeyNames->NumElements());
 	AssertString(szKeyName, paszKeyNames->Get(0));
 	AssertString(szAmphibious, paszKeyNames->Get(1));
 	AssertString(szAmorphous, paszKeyNames->Get(2));
 	AssertString(szTestFly, paszKeyNames->Get(3));
+
+	paszKeyNames->Get(0, &iKeySize);  AssertInt(strlen(szKeyName) + 1, iKeySize);
+	paszKeyNames->Get(1, &iKeySize);  AssertInt(strlen(szAmphibious) + 1, iKeySize);
+	paszKeyNames->Get(2, &iKeySize);  AssertInt(strlen(szAmorphous) + 1, iKeySize);
+	paszKeyNames->Get(3, &iKeySize);  AssertInt(strlen(szTestFly) + 1, iKeySize);
 
 	free(paszKeyNames);
 	apvNodes.Kill();
