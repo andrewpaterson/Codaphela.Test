@@ -21,7 +21,7 @@ void TestIndexTreeNodeMemoryInit(void)
 	uiObject = 0xA27384234FFLL;
 
 	pcNode = (CIndexTreeNodeMemory*)malloc(sizeof(CIndexTreeNodeMemory) + sizeof(CIndexTreeNodeMemory*));  //Node.  No object.  One child.
-	pcNode->Init(&cTree, NULL);
+	pcNode->Init(&cTree, NULL, 0);
 	AssertTrue(pcNode->IsEmpty());
 	AssertFalse(pcNode->HasNodes());
 	AssertFalse(pcNode->HasObject());
@@ -106,7 +106,7 @@ void TestIndexTreeNodeMemoryContain(void)
 	pcNode5 = TestIndexTreeNodeMemoryMalloc();
 	pcNode6 = TestIndexTreeNodeMemoryMalloc();
 
-	pcNode1->Init(&cTree, NULL);
+	pcNode1->Init(&cTree, NULL, 0);
 	pcNode1->Contain(8);
 	AssertInt(8, pcNode1->GetFirstIndex());
 	AssertInt(1, pcNode1->GetNumIndexes());
@@ -230,7 +230,7 @@ void TestIndexTreeNodeMemoryUncontain(void)
 
 	pcNode1 = TestIndexTreeNodeMemoryMalloc();
 
-	pcNode1->Init(&cTree, NULL);
+	pcNode1->Init(&cTree, NULL, 0);
 
 	pcNode1->Contain(8);
 	AssertInt(8, pcNode1->GetFirstIndex());
@@ -321,7 +321,7 @@ void TestIndexTreeNodeMemoryFindNotEmpty(void)
 	pcNode4 = TestIndexTreeNodeMemoryMalloc();
 	pcNode5 = TestIndexTreeNodeMemoryMalloc();
 
-	pcNode1->Init(&cTree, NULL);
+	pcNode1->Init(&cTree, NULL, 0);
 	pcNode1->Contain(8);
 	pcNode1->Contain(22);
 	AssertInt(8, pcNode1->GetFirstIndex());
