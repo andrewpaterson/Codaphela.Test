@@ -4,16 +4,13 @@
 #include "TestLib/Assert.h"
 
 
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void TestIndexedFile(void)
-{
-	BeginTests();
 
-	FastFunctionsInit();
-	
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexedFileWrite(void)
+{
 	CIndexedFile				cIndexedFile;
 	CDurableFileController		cDurableController;
 	CFileUtil					cFileUtil;
@@ -23,7 +20,7 @@ void TestIndexedFile(void)
 	char						sz1[] = "12345678";
 	char						sz2[] = "ABCDEFGH";
 	char						sz3[] = "iopfghjk";
-	filePos						iFilePos;
+	filePos						iFileIndex;
 	CTextFile					cTextFile;
 	char						szTemp[16];
 	char						szDirectory[] = "Output" _FS_ "IndexedFile";
@@ -44,11 +41,13 @@ void TestIndexedFile(void)
 
 	cIndexedFile.Init(&cDurableController, 0, szWrite.Text(), szRewrite.Text(), 9, 0);
 
-	iFilePos = cIndexedFile.Write(sz3);
-	AssertLongLongInt(0, iFilePos / cIndexedFile.miDataSize);
+	iFileIndex = cIndexedFile.Write(sz3);
+	AssertLongLongInt(0, iFileIndex);
+	AssertLongLongInt(9, cIndexedFile.mcFile.Size());
 
-	iFilePos = cIndexedFile.Write(sz2);
-	AssertLongLongInt(1, iFilePos / cIndexedFile.miDataSize);
+	iFileIndex = cIndexedFile.Write(sz2);
+	AssertLongLongInt(1, iFileIndex);
+	AssertLongLongInt(18, cIndexedFile.mcFile.Size());
 
 	bResult = cIndexedFile.Write(0, sz1);
 	AssertTrue(bResult);
@@ -102,9 +101,21 @@ void TestIndexedFile(void)
 
 	bResult = cFileUtil.RemoveDirs(szDirectory, szRewriteDirectory, NULL);
 	AssertTrue(bResult);
+}
 
-	FastFunctionsKill();
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexedFile(void)
+{
+	FastFunctionsInit();
+	BeginTests();
+
+	TestIndexedFileWrite();
 
 	TestStatistics();
+	FastFunctionsKill();
 }
 

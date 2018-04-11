@@ -722,6 +722,57 @@ void TestIndexTreeFileDirty(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileReplaceData(void)
+{
+	CIndexTreeHelper			cHelper;
+	CDurableFileController		cDurableController;
+	CIndexTreeFile				cIndexTree;
+	CIndexTreeFileAccess		cAccess;
+	BOOL						bResult;
+	char						acData[5];
+	char						acResult[5];
+	int							iDataSize;
+
+	cHelper.Init("Output" _FS_"IndexTree7", "primary", "backup", "RootFile.IDX", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName());
+	cAccess.Init(&cIndexTree);
+
+	memset(acData, 5, 5);
+	bResult = cAccess.PutStringData("Quebc", acData, 5);
+	AssertTrue(bResult);
+
+	memset(acResult, 0, 5);
+	bResult = cAccess.GetStringData("Quebc", acResult, &iDataSize);
+	AssertTrue(bResult);
+	AssertInt(0, memcmp(acData, acResult, 5));
+
+	memset(acData, 0xfe, 5);
+	bResult = cAccess.PutStringData("Quebc", acData, 5);
+	AssertTrue(bResult);
+	
+	memset(acResult, 0, 5);
+	bResult = cAccess.GetStringData("Quebc", acResult, &iDataSize);
+	AssertTrue(bResult);
+	AssertInt(0, memcmp(acData, acResult, 5));
+
+	cDurableController.End();
+
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cDurableController.Kill();
+
+	cHelper.RemoveWorkingDirectory();
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFile(void)
 {
 	FastFunctionsInit();
@@ -731,6 +782,7 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileSizeOfs();
 	TestIndexTreeFileInit();
 	TestIndexTreeFileAdd();
+	TestIndexTreeFileReplaceData();
 	TestIndexTreeFileFindKey();
 	TestIndexTreeFileResizeData();
 	TestIndexTreeFileRemove();
