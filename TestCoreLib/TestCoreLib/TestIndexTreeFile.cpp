@@ -70,7 +70,7 @@ void TestIndexTreeFileInit(void)
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), &gcSystemAllocator);
+	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName());
 	cDurableController.End();
 
 	cIndexTree.Kill();
@@ -107,8 +107,8 @@ void TestIndexTreeFileAdd(void)
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), &gcSystemAllocator);
-	cAccess.Init(&cIndexTree, TRUE);
+	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName());
+	cAccess.Init(&cIndexTree);
 
 	a.Init("A");
 	bResult = cAccess.PutStringPtr(a.GetName(), &a);
@@ -207,8 +207,8 @@ void TestIndexTreeFileNoCacheEviction(void)
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), &gcSystemAllocator);
-	cAccess.Init(&cIndexTree, TRUE);
+	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName());
+	cAccess.Init(&cIndexTree);
 
 	AssertTrue(cAccess.PutLongString(0x0000000000000000LL, "Zero"));
 	AssertInt(1, cIndexTree.NumElements());
@@ -379,7 +379,7 @@ void TestIndexTreeFileResizeData(void)
 	pcMemory = cAllocator.GetMemory();
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), &cAllocator);
+	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), &cAllocator, TRUE);
 
 	cIndexTree.Put("AA", szAAObject, (unsigned char)strlen(szAAObject) + 1);
 	cIndexTree.Put("AC", szACObject, (unsigned char)strlen(szACObject) + 1);
@@ -484,7 +484,6 @@ void TestIndexTreeFileRemove(void)
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -503,13 +502,15 @@ void TestIndexTreeFileDelete(void)
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName());
-	cAccess.Init(&cIndexTree, FALSE);
+	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), TRUE);
+	cAccess.Init(&cIndexTree);
 
 	cIndexTree.Put("AA", szAA, (unsigned char)strlen(szAA) + 1);
 	cIndexTree.Put("AAA", szAAA, (unsigned char)strlen(szAAA) + 1);
 	cIndexTree.Put("A", szA, (unsigned char)strlen(szA) + 1);
 	AssertInt(3, cIndexTree.NumElements());
+
+	cIndexTree.SetWriteThrough(FALSE);
 
 	cAccess.DeleteString("AA");
 	AssertString(szA, GetString(&cIndexTree, "A"));
@@ -520,6 +521,7 @@ void TestIndexTreeFileDelete(void)
 
 	cIndexTree.Flush();
 	AssertInt(4, cIndexTree.NumNodes());
+	cIndexTree.ValidateIndexTree();
 
 	cAccess.DeleteString("A");
 	AssertString(NULL, GetString(&cIndexTree, "A"));
@@ -536,7 +538,8 @@ void TestIndexTreeFileDelete(void)
 	AssertInt(4, cIndexTree.NumNodes());
 
 	cIndexTree.Flush();
-	AssertInt(0, cIndexTree.NumNodes());
+	AssertInt(1, cIndexTree.NumNodes());  //Just the root node left.
+	cIndexTree.ValidateIndexTree();
 
 	cDurableController.End();
 
@@ -671,6 +674,50 @@ void TestIndexTreeFileFindKey(void)
 	cHelper.Kill(TRUE);
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileDirty(void)
+{
+	char					szFoot[] = "Foot";
+	char					szFork[] = "Fork";
+	char					szGemstone[] = "Gemstone";
+	CIndexTreeFile			cIndexTree;
+	CIndexTreeHelper		cHelper;
+	CDurableFileController	cDurableController;
+	CIndexTreeFileAccess	cAccess;
+
+	cHelper.Init("Output" _FS_"IndexTree6", "primary", "backup", "RootFile.IDX", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), FALSE);
+	cAccess.Init(&cIndexTree);
+
+	cIndexTree.Put("Foot", szFoot, (unsigned char)strlen(szFoot) + 1);
+	cIndexTree.Flush();
+	AssertInt(5, cIndexTree.NumNodes());
+	cIndexTree.ValidateIndexTree();
+
+	cIndexTree.Put("Fork", szFork, (unsigned char)strlen(szFork) + 1);
+	cIndexTree.Put("Gemstone", szGemstone, (unsigned char)strlen(szGemstone) + 1);
+	cIndexTree.Flush();
+	AssertInt(15, cIndexTree.NumNodes());
+	cIndexTree.ValidateIndexTree();
+
+	cDurableController.End();
+
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cDurableController.Kill();
+
+	cHelper.RemoveWorkingDirectory();
+	cHelper.Kill(TRUE);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -689,6 +736,7 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileRemove();
 	TestIndexTreeFileNoCacheEviction();
 	TestIndexTreeFileDelete();
+	TestIndexTreeFileDirty();
 
 	TestStatistics();
 	FastFunctionsKill();
