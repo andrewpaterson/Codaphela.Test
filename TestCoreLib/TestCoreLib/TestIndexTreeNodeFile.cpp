@@ -14,7 +14,7 @@
 void TestIndexTreeNodeFileSizeofs(void)
 {
 	AssertInt(4, sizeof(CIndexTreeNodeFile*));
-	AssertInt(16, sizeof(CFileIndex));  //SizeOf is 16 but only the first 12 bytes are used.
+	AssertInt(16, sizeof(CFileDataIndex));  //SizeOf is 16 but only the first 12 bytes are used.
 	AssertInt(16, sizeof(SIndexTreeChildFile));  //SizeOf is 16 but only the last 4 bytes are used.
 	AssertInt(16, sizeof(CIndexTreeChildNode));  //The above is why the union works 
 

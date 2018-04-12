@@ -49,8 +49,8 @@ void TestIndexTreeFileSizeOfs(void)
 	tNodeSize = cIndexTree.SizeofNode();
 	tNodePointer = cIndexTree.SizeofNodePtr();
 
-	AssertInt(4128, tRootNodeSize);
-	AssertInt(32, tNodeSize);
+	AssertInt(4120, tRootNodeSize);
+	AssertInt(24, tNodeSize);
 	AssertInt(16, tNodePointer);
 }
 
