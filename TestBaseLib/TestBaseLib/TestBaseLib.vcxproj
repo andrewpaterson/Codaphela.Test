@@ -152,6 +152,7 @@
     <ClCompile Include="TestArrayTemplate.cpp" />
     <ClCompile Include="TestDenseArrayTemplate.cpp" />
     <ClCompile Include="TestSparseArrayTemplate.cpp" />
+    <ClCompile Include="TestStackMemory.cpp" />
     <ClCompile Include="TestStringHelper.cpp" />
     <ClCompile Include="TestDate.cpp" />
     <ClCompile Include="TestMapInt.cpp" />

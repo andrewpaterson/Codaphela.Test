@@ -62,6 +62,7 @@ void TestMemoryCache(void);
 void TestScratchPad(void);
 void TestScratchPadAllocator(void);
 void TestTemporaryMemory(void);
+void TestStackMemoryCompilation(void);
 void TestCSVFileImmutable(void);
 
 
@@ -127,6 +128,7 @@ int main(void)
 	TestMemoryCache();
 	TestMemoryBlock();
 	TestTemporaryMemory();
+	TestStackMemoryCompilation();
 	TestFileUtil();
 	TestFileFinder();
 	TestChunkFile();

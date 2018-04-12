@@ -306,6 +306,9 @@
     <ClCompile Include="TestCSVFileImmutable.cpp">
       <Filter>Source\File\CSV</Filter>
     </ClCompile>
+    <ClCompile Include="TestStackMemory.cpp">
+      <Filter>Source\Memory\Temporary</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">
