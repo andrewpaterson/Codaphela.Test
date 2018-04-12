@@ -13,12 +13,18 @@
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeNodeFileSizeofs(void)
 {
-	AssertInt(4, sizeof(CIndexTreeNodeFile*));
-	AssertInt(16, sizeof(CFileDataIndex));  //SizeOf is 16 but only the first 12 bytes are used.
-	AssertInt(16, sizeof(SIndexTreeChildFile));  //SizeOf is 16 but only the last 4 bytes are used.
-	AssertInt(16, sizeof(CIndexTreeChildNode));  //The above is why the union works 
+	AssertInt(4, sizeof(CIndexTreeNodeFile*));  //The size of a memory pointer must be (at least) 4 bytes less than CIndexTreeChildNode.
+	AssertInt(8, sizeof(CFileDataIndex));  //SizeOf is 16 but only the first 12 bytes are used.
 
-	AssertTrue(sizeof(CIndexTreeNodeFile*) <= 12);  //The size of a memory pointer may not be more than 12 bytes.
+	AssertInt(sizeof(SIndexTreeChildFile), sizeof(CIndexTreeChildNode));
+	AssertInt(12, sizeof(SIndexTreeChildFile));  //SizeOf is 16 but only the last 4 bytes are used.
+	AssertInt(12, sizeof(CIndexTreeChildNode));  //The above is why the union works 
+
+	AssertInt(24, sizeof(CIndexTreeNodeFile)));  
+	AssertInt(16, sizeof(CIndexTreeNode)));
+	AssertTrue(sizeof(CIndexTreeNodeFile*) <= sizeof(CIndexTreeChildNode) - sizeof(int)));
+	AssertInt(4, sizeof(int));  //Just ot be sure.
+	
 }
 
 

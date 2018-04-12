@@ -16,6 +16,7 @@ void TestIndexTreeFile(void);
 void TestIndexTreeWriter(void);
 void TestIndexedFile(void);
 void TestIndexedFiles(void);
+void TestIndexTreeNodeFile(void);
 void TestIndexes(void);
 void TestIndexedData(void);
 void TestIndexTreeAccess(void);
@@ -34,29 +35,30 @@ int main(void)
 {
 	InitTotalStatistics();
 
-	TestFloatHelper();
-	TestIntegerHelper();
-	TestFastFunctions();
-	TestPropertiesFile();
-	TestXMLParser();
-	TestXMLFile();
-	TestLogFile();
-	TestDurableSet();
-	TestDurableFile();
-	TestDurableFileController();
+	//TestFloatHelper();
+	//TestIntegerHelper();
+	//TestFastFunctions();
+	//TestPropertiesFile();
+	//TestXMLParser();
+	//TestXMLFile();
+	//TestLogFile();
+	//TestDurableSet();
+	//TestDurableFile();
+	//TestDurableFileController();
 	TestIndexes();
-	TestOperators();
-	TestFunctionCaller();
-	TestFiles();
-	TestPackFilesPacker();
-	TestNumber();
+	//TestOperators();
+	//TestFunctionCaller();
+	//TestFiles();
+	//TestPackFilesPacker();
+	//TestNumber();
 	TestIndexedFile();
 	TestIndexedFiles();
 	TestIndexTreeMemory();
+	TestIndexTreeNodeFile();
 	TestIndexTreeFile();
 	TestIndexTreeAccess();
-	TestIndexTreeWriter();
-	TestIndexedData();
+	//TestIndexTreeWriter();
+	//TestIndexedData();
 
 	return TestTotalStatistics();
 }
