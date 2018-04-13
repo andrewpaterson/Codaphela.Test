@@ -824,8 +824,6 @@ void TestIndexTreeFileAddUnallocated(void)
 }
 
 
-
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -901,6 +899,52 @@ void TestIndexTreeFileRemoveThenDirty(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileRead(void)
+{
+	CIndexTreeHelper			cHelper;
+	CDurableFileController		cDurableController;
+	CIndexTreeFile				cIndexTree;
+	CIndexTreeFileAccess		cAccess;
+	char						sz[MAX_DATA_SIZE];
+
+	cHelper.Init("Output" _FS_"IndexTreeA", "primary", "backup", "RootFile.IDX", TRUE);
+
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), FALSE);
+	cAccess.Init(&cIndexTree);
+
+	cAccess.PutStringString("Hello", "World");
+
+	cAccess.Flush();
+	cDurableController.End();
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cDurableController.Kill();
+
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), FALSE);
+	cAccess.Init(&cIndexTree);
+
+	AssertTrue(cAccess.GetStringString("Hello", sz));
+	AssertString("World", sz)
+
+	cAccess.Flush();
+	cDurableController.End();
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cDurableController.Kill();
+
+	cHelper.RemoveWorkingDirectory();
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFile(void)
 {
 	FastFunctionsInit();
@@ -919,6 +963,7 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileDelete();
 	TestIndexTreeFileDirty();
 	TestIndexTreeFileRemoveThenDirty();
+	TestIndexTreeFileRead();
 
 	TestStatistics();
 	FastFunctionsKill();
