@@ -9,6 +9,7 @@ public:
 
 	void	Init(char* szName);
 	char*	GetName(void);
+	int		NameLength(void);
 };
 
 

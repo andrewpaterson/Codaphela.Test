@@ -195,7 +195,7 @@ void TestIndexTreeFileNoCacheEviction(void)
 {
 	CIndexTreeFile			cIndexTree;
 	CIndexTreeFileAccess	cAccess;
-	char					sz[MAX_UCHAR];
+	char					sz[MAX_DATA_SIZE];
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cDurableController;
 	SIndexTreeFileIterator	sIter;
@@ -456,19 +456,20 @@ void TestIndexTreeFileRemove(void)
 	cIndexTree.Put("A", szA, (unsigned char)strlen(szA) + 1);
 	AssertInt(3, cIndexTree.NumElements());
 
-	cIndexTree.Remove("A");
+	AssertTrue(cIndexTree.Remove("A"));
 	AssertString(NULL, GetString(&cIndexTree, "A"));
 	AssertString(szAA, GetString(&cIndexTree, "AA"));
 	AssertString(szAAA, GetString(&cIndexTree, "AAA"));
 	AssertInt(2, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	cIndexTree.Remove("AA");
+	AssertTrue(cIndexTree.Remove("AA"));
 	AssertString(NULL, GetString(&cIndexTree, "A"));
 	AssertString(NULL, GetString(&cIndexTree, "AA"));
 	AssertString(szAAA, GetString(&cIndexTree, "AAA"));
 	AssertInt(1, cIndexTree.NumElements());
 
-	cIndexTree.Remove("AAA");
+	AssertTrue(cIndexTree.Remove("AAA"));
 	AssertString(NULL, GetString(&cIndexTree, "A"));
 	AssertString(NULL, GetString(&cIndexTree, "AA"));
 	AssertString(NULL, GetString(&cIndexTree, "AAA"));
@@ -700,7 +701,9 @@ void TestIndexTreeFileDirty(void)
 	cIndexTree.Flush();
 	AssertInt(5, cIndexTree.NumNodes());
 	cIndexTree.ValidateIndexTree();
+	cDurableController.End();
 
+	cDurableController.Begin();
 	cIndexTree.Put("Fork", szFork, (unsigned char)strlen(szFork) + 1);
 	cIndexTree.Put("Gemstone", szGemstone, (unsigned char)strlen(szGemstone) + 1);
 	cIndexTree.Flush();
@@ -773,6 +776,131 @@ void TestIndexTreeFileReplaceData(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileAddUnallocated(void)
+{
+	CIndexTreeHelper			cHelper;
+	CDurableFileController		cDurableController;
+	CIndexTreeFile				cIndexTree;
+	CIndexTreeFileAccess		cAccess;
+	CTestIndexTreeObject		a;
+	CTestIndexTreeObject		b;
+	CTestIndexTreeObject		c;
+	BOOL						bResult;
+
+	cHelper.Init("Output" _FS_"IndexTree8", "primary", "backup", "RootFile.IDX", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName());
+	cAccess.Init(&cIndexTree);
+
+	a.Init("1A");
+	c.Init("1C");
+	b.Init("1B");
+
+	bResult = cAccess.PutStringPtr(a.GetName(), &a);
+	AssertTrue(bResult);
+	AssertPointer(&a, *((CTestIndexTreeObject**)cIndexTree.GetNode(a.GetName(), 2)->GetObjectPtr()));
+
+	bResult = cAccess.PutStringPtr(c.GetName(), &c);
+	AssertTrue(bResult);
+	AssertPointer(&a, *((CTestIndexTreeObject**)cIndexTree.GetNode(a.GetName(), 2)->GetObjectPtr()));
+	AssertPointer(&c, *((CTestIndexTreeObject**)cIndexTree.GetNode(c.GetName(), 2)->GetObjectPtr()));
+
+	bResult = cAccess.PutStringPtr(b.GetName(), &b);
+	AssertTrue(bResult);
+	AssertPointer(&a, *((CTestIndexTreeObject**)cIndexTree.GetNode(a.GetName(), 2)->GetObjectPtr()));
+	AssertPointer(&b, *((CTestIndexTreeObject**)cIndexTree.GetNode(b.GetName(), 2)->GetObjectPtr()));
+	AssertPointer(&c, *((CTestIndexTreeObject**)cIndexTree.GetNode(c.GetName(), 2)->GetObjectPtr()));
+
+	cDurableController.End();
+
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cDurableController.Kill();
+
+	cHelper.RemoveWorkingDirectory();
+	cHelper.Kill(TRUE);
+}
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileRemoveThenDirty(void)
+{
+	CIndexTreeHelper			cHelper;
+	CDurableFileController		cDurableController;
+	CIndexTreeFile				cIndexTree;
+	CIndexTreeFileAccess		cAccess;
+	CTestIndexTreeObject		a;
+	CTestIndexTreeObject		b;
+	CTestIndexTreeObject		c;
+	char						sz[MAX_DATA_SIZE];
+
+	cHelper.Init("Output" _FS_"IndexTree9", "primary", "backup", "RootFile.IDX", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), FALSE);
+	cAccess.Init(&cIndexTree);
+
+	a.Init("1A");
+	c.Init("1C");
+	b.Init("1B");
+
+	AssertTrue(cAccess.PutStringString(a.GetName(), a.GetName()));
+	AssertTrue(cAccess.GetStringString(a.GetName(), sz));
+	AssertString(a.GetName(), sz);
+
+	AssertTrue(cAccess.PutStringString(c.GetName(), c.GetName()));
+	AssertTrue(cAccess.GetStringString(c.GetName(), sz));
+	AssertString(c.GetName(), sz);
+
+	AssertTrue(cIndexTree.Flush());
+
+	AssertTrue(cAccess.DeleteString(a.GetName()));
+	AssertFalse(cAccess.GetStringString(a.GetName(), sz));
+
+	AssertTrue(cAccess.PutStringString(a.GetName(), b.GetName()));
+	AssertTrue(cAccess.GetStringString(a.GetName(), sz));
+	AssertString(b.GetName(), sz);
+
+	AssertTrue(cIndexTree.Flush());
+	AssertTrue(cAccess.GetStringString(a.GetName(), sz));
+	AssertString(b.GetName(), sz);
+
+	AssertTrue(cAccess.DeleteString(a.GetName()));
+	AssertFalse(cAccess.GetStringString(a.GetName(), sz));
+
+	AssertTrue(cAccess.PutStringString(a.GetName(), a.GetName()));
+	AssertTrue(cAccess.GetStringString(a.GetName(), sz));
+	AssertString(a.GetName(), sz);
+
+	AssertTrue(cAccess.DeleteString(a.GetName()));
+	AssertFalse(cAccess.GetStringString(a.GetName(), sz));
+
+	AssertTrue(cIndexTree.Flush());
+	AssertFalse(cAccess.GetStringString(a.GetName(), sz));
+
+	cDurableController.End();
+
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cDurableController.Kill();
+
+	cHelper.RemoveWorkingDirectory();
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFile(void)
 {
 	FastFunctionsInit();
@@ -782,6 +910,7 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileSizeOfs();
 	TestIndexTreeFileInit();
 	TestIndexTreeFileAdd();
+	TestIndexTreeFileAddUnallocated();
 	TestIndexTreeFileReplaceData();
 	TestIndexTreeFileFindKey();
 	TestIndexTreeFileResizeData();
@@ -789,6 +918,7 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileNoCacheEviction();
 	TestIndexTreeFileDelete();
 	TestIndexTreeFileDirty();
+	TestIndexTreeFileRemoveThenDirty();
 
 	TestStatistics();
 	FastFunctionsKill();
