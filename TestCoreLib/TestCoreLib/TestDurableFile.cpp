@@ -455,7 +455,7 @@ void TestDurableFileWriteRound2(BOOL bDurable)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestDurableFileReadRound2(BOOL bDurable)
+void TestDurableFileReadNonExistant(BOOL bDurable)
 {
 	CFileUtil				cFileUtil;
 	CDurableFile			cDurableFile;
@@ -498,12 +498,40 @@ void TestDurableFileReadRound2(BOOL bDurable)
 	AssertLongLongInt(0, cDurableFile.Tell());
 	AssertLongLongInt(0, cDurableFile.Size());
 
-	gcLogger.SetBreakOnError(FALSE);
 	cController.End();
-	gcLogger.SetBreakOnError(TRUE);
 
 	cDurableFile.Kill();
 	cController.Kill();
+
+	cFileUtil.RemoveDirs(szDirectory, szRewrite, NULL);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDurableFileNoController(void)
+{
+	CDurableFile	cDurableFile;
+	char			szDirectory[] = "Output" _FS_ "Durable7";
+	char			szRewrite[] = "Output" _FS_ "_Durable7";
+	char			szFileName[] = "Output" _FS_ "Durable7" _FS_ "ReadFile.txt";
+	char			szRewriteName[] = "Output" _FS_ "_Durable7" _FS_ "_ReadFile.txt";
+	CFileUtil		cFileUtil;
+	char			szDest[1024];
+
+	//Should probably actually test something...
+	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
+
+	cDurableFile.Init(NULL, szFileName, szRewriteName);
+
+	cDurableFile.Read(szDest, 16, 1);
+
+	cDurableFile.Commit();
+	cDurableFile.Recommit();
+
+	cDurableFile.Kill();
 
 	cFileUtil.RemoveDirs(szDirectory, szRewrite, NULL);
 }
@@ -531,8 +559,9 @@ void TestDurableFile(void)
 	TestDurableFileRead(FALSE);
 	TestDurableFileWriteRound2(TRUE);
 	TestDurableFileWriteRound2(FALSE);
-	TestDurableFileReadRound2(TRUE);
-	TestDurableFileReadRound2(FALSE);
+	TestDurableFileReadNonExistant(TRUE);
+	TestDurableFileReadNonExistant(FALSE);
+	TestDurableFileNoController();
 
 	TestStatistics();
 	FastFunctionsKill();
