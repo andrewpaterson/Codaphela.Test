@@ -18,6 +18,7 @@ void TestIndexesSomething(void)
 	char			szFour[] = "Four";
 	char*			szTemp;
 	BOOL			bResult;
+	SLogConfig		sLogConfig;
 
 	cIndexes.Init(512);
 
@@ -46,9 +47,7 @@ void TestIndexesSomething(void)
 	szTemp = (char*)cIndexes.Get(268472648234LL);
 	AssertString(szTwo, szTemp);
 
-	SLogConfig	sLogConfig;
-	gcLogger.GetConfig(&sLogConfig);
-	gcLogger.SetSilent();;
+	sLogConfig = gcLogger.SetSilent();;
 	bResult = cIndexes.Add(17LL, szFour);
 	gcLogger.SetConfig(&sLogConfig);
 	AssertFalse(bResult);

@@ -14,7 +14,16 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestDurableSetFileRecovery(void)
+void TestDurableFileControllerDirectoryCreation(void)
+{
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDurableFileControllerRecovery(void)
 {
 	CFileUtil				cFileUtil;
 	CDurableFileController	cController;
@@ -188,8 +197,8 @@ void TestDurableFileController(void)
 	TypeConverterInit();
 	BeginTests();
 
-	//Recovery is currently broken as the full list of files that should exist is no longer available.
-	TestDurableSetFileRecovery();
+	TestDurableFileControllerDirectoryCreation();
+	TestDurableFileControllerRecovery();
 
 	TestStatistics();
 	FastFunctionsKill();
