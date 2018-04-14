@@ -35,21 +35,21 @@ int main(void)
 {
 	InitTotalStatistics();
 
-	//TestFloatHelper();
-	//TestIntegerHelper();
-	//TestFastFunctions();
-	//TestPropertiesFile();
-	//TestXMLParser();
-	//TestXMLFile();
-	//TestLogFile();
-	//TestDurableSet();
-	//TestDurableFile();
-	//TestDurableFileController();
+	TestFloatHelper();
+	TestIntegerHelper();
+	TestFastFunctions();
+	TestPropertiesFile();
+	TestXMLParser();
+	TestXMLFile();
+	TestLogFile();
+	TestDurableSet();
+	TestDurableFile();
+	TestDurableFileController();
 	TestIndexes();
-	//TestOperators();
-	//TestFunctionCaller();
-	//TestFiles();
-	//TestPackFilesPacker();
+	TestOperators();
+	TestFunctionCaller();
+	TestFiles();
+	TestPackFilesPacker();
 	//TestNumber();
 	TestIndexedFile();
 	TestIndexedFiles();

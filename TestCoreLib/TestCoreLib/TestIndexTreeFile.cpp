@@ -65,12 +65,12 @@ void TestIndexTreeFileInit(void)
 	CIndexTreeFile			cIndexTree;
 	CDurableFileController	cDurableController;
 
-	cHelper.Init("Output" _FS_"QuakeMinusOne", "primary", "backup", "RootFile.IDX", TRUE);
+	cHelper.Init("Output" _FS_"QuakeMinusOne", "primary", "backup", TRUE);
 
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName());
+	cIndexTree.Init(&cDurableController);
 	cDurableController.End();
 
 	cIndexTree.Kill();
@@ -103,11 +103,11 @@ void TestIndexTreeFileAdd(void)
 	BOOL						bContinue;
 	int							iSize;
 
-	cHelper.Init("Output" _FS_"IndexTree0", "primary", "backup", "RootFile.IDX", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree0", "primary", "backup", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName());
+	cIndexTree.Init(&cDurableController);
 	cAccess.Init(&cIndexTree);
 
 	a.Init("A");
@@ -203,11 +203,11 @@ void TestIndexTreeFileNoCacheEviction(void)
 	char*					szData;
 	int						iSize;
 
-	cHelper.Init("Output" _FS_"IndexTree1", "primary", "backup", "RootFile.IDX", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree1", "primary", "backup", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName());
+	cIndexTree.Init(&cDurableController);
 	cAccess.Init(&cIndexTree);
 
 	AssertTrue(cAccess.PutLongString(0x0000000000000000LL, "Zero"));
@@ -372,14 +372,14 @@ void TestIndexTreeFileResizeData(void)
 	CMemoryAllocator		cAllocator;
 	CMemory*				pcMemory;
 
-	cHelper.Init("Output" _FS_"IndexTree2", "primary", "backup", "RootFile.IDX", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree2", "primary", "backup", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), &cAllocator, TRUE);
+	cIndexTree.Init(&cDurableController, &cAllocator, TRUE);
 
 	cIndexTree.Put("AA", szAAObject, (unsigned char)strlen(szAAObject) + 1);
 	cIndexTree.Put("AC", szACObject, (unsigned char)strlen(szACObject) + 1);
@@ -409,10 +409,10 @@ void TestIndexTreeFileResizeData(void)
 
 	pcRoot = cIndexTree.GetRoot();
 	sz.Init(); pcRoot->Print(&sz, FALSE);
-	AssertString("0:255 .................................................................x..............................................................................................................................................................................................", sz.Text()); sz.Kill();
+	AssertString("0:255 .................................................................X..............................................................................................................................................................................................", sz.Text()); sz.Kill();
 	pcNode = pcRoot->Get('A')->u.mpcMemory;
 	sz.Init(); pcNode->Print(&sz, FALSE);
-	AssertString("65:67 (18) x.x", sz.Text()); sz.Kill();
+	AssertString("65:67 (18) X.X", sz.Text()); sz.Kill();
 	sz.Init(); pcNode->Get('A')->u.mpcMemory->Print(&sz, FALSE);
 	AssertString("0:0 (6)", sz.Text()); sz.Kill();
 	AssertFalse(pcNode->Get('B')->IsValid());
@@ -445,11 +445,11 @@ void TestIndexTreeFileRemove(void)
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cDurableController;
 
-	cHelper.Init("Output" _FS_"IndexTree3", "primary", "backup", "RootFile.IDX", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree3", "primary", "backup", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName());
+	cIndexTree.Init(&cDurableController);
 
 	cIndexTree.Put("AA", szAA, (unsigned char)strlen(szAA) + 1);
 	cIndexTree.Put("AAA", szAAA, (unsigned char)strlen(szAAA) + 1);
@@ -499,11 +499,11 @@ void TestIndexTreeFileDelete(void)
 	CDurableFileController	cDurableController;
 	CIndexTreeFileAccess	cAccess;
 	
-	cHelper.Init("Output" _FS_"IndexTree4", "primary", "backup", "RootFile.IDX", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree4", "primary", "backup", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), TRUE);
+	cIndexTree.Init(&cDurableController, TRUE);
 	cAccess.Init(&cIndexTree);
 
 	cIndexTree.Put("AA", szAA, (unsigned char)strlen(szAA) + 1);
@@ -577,11 +577,11 @@ void TestIndexTreeFileFindKey(void)
 	CArrayVoidPtr			apvNodes;
 	CListCharsMinimal*		paszKeyNames;
 
-	cHelper.Init("Output" _FS_"IndexTree5", "primary", "backup", "RootFile.IDX", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree5", "primary", "backup", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName());
+	cIndexTree.Init(&cDurableController);
 
 	cIndexTree.Put(szKeyName, szData, 5);
 	cIndexTree.Put(szAmphibious, szData, 5);
@@ -690,11 +690,11 @@ void TestIndexTreeFileDirty(void)
 	CDurableFileController	cDurableController;
 	CIndexTreeFileAccess	cAccess;
 
-	cHelper.Init("Output" _FS_"IndexTree6", "primary", "backup", "RootFile.IDX", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree6", "primary", "backup", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), FALSE);
+	cIndexTree.Init(&cDurableController, FALSE);
 	cAccess.Init(&cIndexTree);
 
 	cIndexTree.Put("Foot", szFoot, (unsigned char)strlen(szFoot) + 1);
@@ -736,11 +736,11 @@ void TestIndexTreeFileReplaceData(void)
 	char						acResult[5];
 	int							iDataSize;
 
-	cHelper.Init("Output" _FS_"IndexTree7", "primary", "backup", "RootFile.IDX", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree7", "primary", "backup", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName());
+	cIndexTree.Init(&cDurableController);
 	cAccess.Init(&cIndexTree);
 
 	memset(acData, 5, 5);
@@ -787,11 +787,11 @@ void TestIndexTreeFileAddUnallocated(void)
 	CTestIndexTreeObject		c;
 	BOOL						bResult;
 
-	cHelper.Init("Output" _FS_"IndexTree8", "primary", "backup", "RootFile.IDX", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree8", "primary", "backup", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName());
+	cIndexTree.Init(&cDurableController);
 	cAccess.Init(&cIndexTree);
 
 	a.Init("1A");
@@ -839,11 +839,11 @@ void TestIndexTreeFileRemoveThenDirty(void)
 	CTestIndexTreeObject		c;
 	char						sz[MAX_DATA_SIZE];
 
-	cHelper.Init("Output" _FS_"IndexTree9", "primary", "backup", "RootFile.IDX", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree9", "primary", "backup", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), FALSE);
+	cIndexTree.Init(&cDurableController, FALSE);
 	cAccess.Init(&cIndexTree);
 
 	a.Init("1A");
@@ -907,11 +907,12 @@ void TestIndexTreeFileRead(void)
 	CIndexTreeFileAccess		cAccess;
 	char						sz[MAX_DATA_SIZE];
 
-	cHelper.Init("Output" _FS_"IndexTreeA", "primary", "backup", "RootFile.IDX", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeA", "primary", "backup", TRUE);
+	cHelper.RemoveWorkingDirectory();
 
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), FALSE);
+	cIndexTree.Init(&cDurableController, FALSE);
 	cAccess.Init(&cIndexTree);
 
 	cAccess.PutStringString("Hello", "World");
@@ -922,21 +923,20 @@ void TestIndexTreeFileRead(void)
 	cIndexTree.Kill();
 	cDurableController.Kill();
 
-	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
-	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, cHelper.GetRootFileName(), FALSE);
-	cAccess.Init(&cIndexTree);
+	AssertTrue(cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory()));
+	AssertTrue(cDurableController.Begin());
+	AssertTrue(cIndexTree.Init(&cDurableController, FALSE));
+	AssertTrue(cAccess.Init(&cIndexTree));
 
 	AssertTrue(cAccess.GetStringString("Hello", sz));
 	AssertString("World", sz)
 
-	cAccess.Flush();
-	cDurableController.End();
-	cAccess.Kill();
+	AssertTrue(cAccess.Flush());
+	AssertTrue(cDurableController.End());
+	AssertTrue(cAccess.Kill());
 	cIndexTree.Kill();
 	cDurableController.Kill();
 
-	cHelper.RemoveWorkingDirectory();
 	cHelper.Kill(TRUE);
 }
 
