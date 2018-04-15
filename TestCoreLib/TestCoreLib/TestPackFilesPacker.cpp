@@ -48,31 +48,16 @@ void TestPackFilesPackerSimple(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestPackFilesPackerCopyDir(void)
-{
-	CFileUtil	cFileUtil;
-
-	cFileUtil.CopyDir("Input/Game/files", "Output/Packer");
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 void TestPackFilesPacker(void)
 {
 	BeginTests();
-
 	FastFunctionsInit();
 	MemoryInit();
 
 	TestPackFilesPackerSimple();
-	TestPackFilesPackerCopyDir();
 
 	MemoryKill();
 	FastFunctionsKill();
-
 	TestStatistics();
 }
 

@@ -1,7 +1,11 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/SystemAllocator.h"
-#include"BaseLib/MemoryAllocator.h"
+#include "BaseLib/MemoryAllocator.h"
 #include "BaseLib/TypeConverter.h"
+#include "BaseLib/NaiveFile.h"
+#include "BaseLib/MapStringString.h"
+#include "BaseLib/Logger.h"
+#include "BaseLib/DebugOutput.h"
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexTreeFile.h"
 #include "CoreLib/IndexTreeFileAccess.h"
@@ -182,7 +186,6 @@ void TestIndexTreeFileAdd(void)
 	cIndexTree.Kill();
 	cDurableController.Kill();
 
-	cHelper.RemoveWorkingDirectory();
 	cHelper.Kill(TRUE);
 }
 
@@ -346,7 +349,6 @@ void TestIndexTreeFileNoCacheEviction(void)
 	cIndexTree.Kill();
 	cDurableController.Kill();
 
-	cHelper.RemoveWorkingDirectory();
 	cHelper.Kill(TRUE);
 }
 
@@ -427,7 +429,6 @@ void TestIndexTreeFileResizeData(void)
 	AssertLongLongInt(0, pcMemory->GetTotalAllocatedMemory());
 	cAllocator.Kill();
 
-	cHelper.RemoveWorkingDirectory();
 	cHelper.Kill(TRUE);
 }
 
@@ -480,7 +481,6 @@ void TestIndexTreeFileRemove(void)
 	cIndexTree.Kill();
 	cDurableController.Kill();
 
-	cHelper.RemoveWorkingDirectory();
 	cHelper.Kill(TRUE);
 }
 
@@ -489,7 +489,7 @@ void TestIndexTreeFileRemove(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeFileDelete(void)
+void TestIndexTreeFileDeleteInMemory(void)
 {
 	char					szAA[] = "MEDIUM";
 	char					szAAA[] = "NEAR";
@@ -548,7 +548,6 @@ void TestIndexTreeFileDelete(void)
 	cIndexTree.Kill();
 	cDurableController.Kill();
 
-	cHelper.RemoveWorkingDirectory();
 	cHelper.Kill(TRUE);
 }
 
@@ -671,7 +670,6 @@ void TestIndexTreeFileFindKey(void)
 	cIndexTree.Kill();
 	cDurableController.Kill();
 
-	cHelper.RemoveWorkingDirectory();
 	cHelper.Kill(TRUE);
 }
 
@@ -716,7 +714,6 @@ void TestIndexTreeFileDirty(void)
 	cIndexTree.Kill();
 	cDurableController.Kill();
 
-	cHelper.RemoveWorkingDirectory();
 	cHelper.Kill(TRUE);
 }
 
@@ -767,7 +764,6 @@ void TestIndexTreeFileReplaceData(void)
 	cIndexTree.Kill();
 	cDurableController.Kill();
 
-	cHelper.RemoveWorkingDirectory();
 	cHelper.Kill(TRUE);
 }
 
@@ -819,7 +815,6 @@ void TestIndexTreeFileAddUnallocated(void)
 	cIndexTree.Kill();
 	cDurableController.Kill();
 
-	cHelper.RemoveWorkingDirectory();
 	cHelper.Kill(TRUE);
 }
 
@@ -890,7 +885,6 @@ void TestIndexTreeFileRemoveThenDirty(void)
 	cIndexTree.Kill();
 	cDurableController.Kill();
 
-	cHelper.RemoveWorkingDirectory();
 	cHelper.Kill(TRUE);
 }
 
@@ -906,6 +900,10 @@ void TestIndexTreeFileRead(void)
 	CIndexTreeFile				cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	char						sz[MAX_DATA_SIZE];
+	CIndexTreeNodeFile*			pcHell;
+	int							iOldFile;
+	int							iNewFile;
+	CIndexedFile*				pcFile;
 
 	cHelper.Init("Output" _FS_"IndexTreeA", "primary", "backup", TRUE);
 	cHelper.RemoveWorkingDirectory();
@@ -932,10 +930,270 @@ void TestIndexTreeFileRead(void)
 	AssertString("World", sz)
 
 	AssertTrue(cAccess.Flush());
+	pcHell = cIndexTree.GetNode("Hell", 4);
+	iOldFile = pcHell->GetFileIndex()->miFile;
+	pcFile = cIndexTree.GetFile(iOldFile);
+	AssertNotNull(pcFile);
+	AssertInt(18, pcFile->GetDataSize());
 	AssertTrue(cDurableController.End());
-	AssertTrue(cAccess.Kill());
 	cIndexTree.Kill();
 	cDurableController.Kill();
+
+	AssertTrue(cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory()));
+	AssertTrue(cDurableController.Begin());
+	AssertTrue(cIndexTree.Init(&cDurableController, TRUE));
+	AssertTrue(cDurableController.End());
+
+	AssertTrue(cDurableController.Begin());
+	AssertTrue(cAccess.PutStringString("Hell", "Fuzz"));
+	pcHell = cIndexTree.GetNode("Hell", 4);
+	iNewFile = pcHell->GetFileIndex()->miFile;
+	AssertTrue(iOldFile != iNewFile);
+	pcFile = cIndexTree.GetFile(iNewFile);
+	AssertNotNull(pcFile);
+	AssertInt(23, pcFile->GetDataSize());
+	AssertTrue(cIndexTree.ValidateIndexTree());
+	AssertTrue(cDurableController.End());
+	iOldFile = iNewFile;
+
+	AssertTrue(cDurableController.Begin());
+	AssertTrue(cAccess.GetStringString("Hell", sz));
+	AssertString("Fuzz", sz);
+	AssertTrue(cAccess.GetStringString("Hello", sz));
+	AssertString("World", sz);
+	AssertTrue(cDurableController.End());
+
+	cIndexTree.Kill();
+
+	AssertTrue(cDurableController.Begin());
+	AssertTrue(cIndexTree.Init(&cDurableController, TRUE));
+	AssertTrue(cAccess.GetStringString("Hell", sz));
+	AssertString("Fuzz", sz);
+	pcHell = cIndexTree.GetNode("Hell", 4);
+	iNewFile = pcHell->GetFileIndex()->miFile;
+	AssertTrue(iOldFile == iNewFile);
+	AssertTrue(cDurableController.End());
+	cIndexTree.Kill();
+
+	AssertTrue(cDurableController.Begin());
+	AssertTrue(cIndexTree.Init(&cDurableController, TRUE));
+	AssertTrue(cDurableController.End());
+
+	AssertTrue(cDurableController.Begin());
+	AssertTrue(cAccess.PutStringString("HelloX", "3"));
+	AssertTrue(cDurableController.End());
+
+	AssertTrue(cDurableController.Begin());
+	AssertTrue(cAccess.GetStringString("Hell", sz));
+	AssertString("Fuzz", sz);
+	AssertTrue(cAccess.GetStringString("HelloX", sz));
+	AssertString("3", sz);
+	AssertTrue(cAccess.GetStringString("Hello", sz));
+	AssertString("World", sz);
+	AssertTrue(cDurableController.End());
+	cIndexTree.Kill();
+
+	AssertTrue(cAccess.Kill());
+	cDurableController.Kill();
+
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileDeleteOnDisk(void)
+{
+	CIndexTreeHelper			cHelper;
+	CDurableFileController		cDurableController;
+	CIndexTreeFile				cIndexTree;
+	CIndexTreeFileAccess		cAccess;
+	char						sz[MAX_DATA_SIZE];
+	CIndexTreeNodeFile*			pcNode;
+
+	cHelper.Init("Output" _FS_"IndexTreeB", "primary", "backup", TRUE);
+	cHelper.RemoveWorkingDirectory();
+
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, TRUE);
+	cAccess.Init(&cIndexTree);
+	cAccess.PutStringString("Hello", "World");
+	cDurableController.End();
+	cIndexTree.Kill();
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, TRUE);
+	cAccess.DeleteString("Hello");
+	cDurableController.End();
+	cIndexTree.Kill();
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, TRUE);
+	AssertFalse(cAccess.GetStringString("Hello", sz));
+	pcNode = cIndexTree.GetNode("H", 1);
+	cDurableController.End();
+	cIndexTree.Kill();
+
+	CNaiveFile	cNaiveFile;
+	int			i;
+	char*		pcFileMem;
+
+	cNaiveFile.Init();
+	AssertTrue(cNaiveFile.Read("Output/IndexTreeB/primary/16_0.IDAT"));
+	pcFileMem = (char*)cNaiveFile.Get();
+	for (i = 0; i < cNaiveFile.Size(); i++)
+	{
+		AssertChar(INDEX_FILE_EMPTY_CHAR, pcFileMem[i]);
+	}
+	cNaiveFile.Kill();
+
+	cNaiveFile.Init();
+	AssertTrue(cNaiveFile.Read("Output/IndexTreeB/primary/18_0.IDAT"));
+	pcFileMem = (char*)cNaiveFile.Get();
+	for (i = 0; i < cNaiveFile.Size(); i++)
+	{
+		AssertChar(INDEX_FILE_EMPTY_CHAR, pcFileMem[i]);
+	}
+	cNaiveFile.Kill();
+
+	cAccess.Kill();
+	cDurableController.Kill();
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileComplex(void)
+{
+	CIndexTreeHelper			cHelper;
+	CDurableFileController		cDurableController;
+	CIndexTreeFile				cIndexTree;
+	CIndexTreeFileAccess		cAccess;
+	char						sz[MAX_DATA_SIZE];
+	CMapStringString			cMap;
+	SMapIterator				sIter;
+	BOOL						bHasNext;
+	char*						szKey;
+	char*						szValue;
+	SLogConfig					sLogConfig;
+
+	cMap.Init(32);
+
+	cMap.Put("bane", "poison");
+	cMap.Put("baseborn", "of low birth or social standing");
+	cMap.Put("bedlam", "an asylum");
+	cMap.Put("behoo", "see or observe");
+	cMap.Put("behoof", "benefit or advantage");
+	cMap.Put("beldam", "an old woman");
+	cMap.Put("bethink oneself of", "remember; recollect");
+	cMap.Put("betimes", "in good time; early");
+	cMap.Put("bibliopole", "a dealer in books");
+	cMap.Put("bijoux", "jewellery; trinkets");
+	cMap.Put("billow", "a large sea wave");
+	cMap.Put("blackguard", "a scoundrel");
+	cMap.Put("blow", "produce flowers or be in flower");
+	cMap.Put("bodkin", "a dagger");
+	cMap.Put("bootless", "ineffectual; useless");
+	cMap.Put("breech", "a person's buttocks");
+	cMap.Put("bridewell", "a prison or reform school for petty offenders");
+	cMap.Put("brimstone", "sulphur");
+	cMap.Put("bruit", "a report or rumour");
+	cMap.Put("buck", "a fashionable and daring young man");
+	cMap.Put("bumper", "a generous glass of an alcoholic drink");
+	cMap.Put("burgess", "a full citizen of a town or borough");
+	cMap.Put("buss", "a kiss");
+
+	cMap.Put("dame", "an elderly or mature woman");
+	cMap.Put("damsel", "a young unmarried woman");
+	cMap.Put("dandiprat", "a young or insignificant person");
+	cMap.Put("darbies", "handcuffs");
+	cMap.Put("dark", "ignorant");
+	cMap.Put("degrade", "reduce to a lower rank, especially as a punishment");
+	cMap.Put("degree", "social or official rank");
+	cMap.Put("delate", "report(an offence)");
+	cMap.Put("demesne", "a region or domain");
+	cMap.Put("demit", "resign from(an office or position)");
+	cMap.Put("demoralize", "corrupt the morals of");
+	cMap.Put("dight", "clothed or equipped");
+	cMap.Put("discover", "divulge(a secret)");
+	cMap.Put("disport", "frolic");
+	cMap.Put("dispraise", "censure or criticize");
+	cMap.Put("divers", "of varying types; several");
+	cMap.Put("doti", "a very small amount of money");
+	cMap.Put("dot", "a dowry from which only the interest or annual income was available to the husband");
+	cMap.Put("doxy", "a lover or mistress");
+	cMap.Put("drab", "a slovenly woman");
+	cMap.Put("drought", "thirst");
+
+	cHelper.Init("Output" _FS_"IndexTreeC", "primary", "backup", TRUE);
+	cHelper.RemoveWorkingDirectory();
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, TRUE);
+	cAccess.Init(&cIndexTree);
+
+	bHasNext = cMap.StartIteration(&sIter, (void**)&szKey, (void**)&szValue);
+	while (bHasNext)
+	{
+		AssertTrue(cAccess.PutStringString(szKey, szValue));
+
+		bHasNext = cMap.Iterate(&sIter, (void**)&szKey, (void**)&szValue);
+	}
+	AssertInt(cMap.NumElements(), cIndexTree.NumElements());
+	AssertTrue(cIndexTree.ValidateIndexTree());
+
+	cIndexTree.Debug("buck", 4);
+
+	bHasNext = cMap.StartIteration(&sIter, (void**)&szKey, (void**)&szValue);
+	while (bHasNext)
+	{
+		AssertTrue(cAccess.GetStringString(szKey, sz));
+		szValue = cMap.Get(szKey);
+		AssertString(szValue, sz);
+
+		bHasNext = cMap.Iterate(&sIter, (void**)&szKey, (void**)&szValue);
+	}
+
+	cDurableController.End();
+	cIndexTree.Kill();
+	cAccess.Kill();
+	cDurableController.Kill();
+
+	//////////////////////////////////////////////////////////////////////////////////////
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, TRUE);
+	cAccess.Init(&cIndexTree);
+
+	EngineOutput("\n");
+	sLogConfig = gcLogger.SetSilent();
+	cIndexTree.Debug("buck", 4);
+	gcLogger.SetConfig(&sLogConfig);
+
+	bHasNext = cMap.StartIteration(&sIter, (void**)&szKey, (void**)&szValue);
+	while (bHasNext)
+	{
+		AssertTrue(cAccess.GetStringString(szKey, sz));
+		szValue = cMap.Get(szKey);
+		AssertString(szValue, sz);
+		
+		bHasNext = cMap.Iterate(&sIter, (void**)&szKey, (void**)&szValue);
+	}
+
+	cDurableController.End();
+	cIndexTree.Kill();
+	cAccess.Kill();
+	cDurableController.Kill();
+
+	cMap.Kill();
 
 	cHelper.Kill(TRUE);
 }
@@ -960,10 +1218,12 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileResizeData();
 	TestIndexTreeFileRemove();
 	TestIndexTreeFileNoCacheEviction();
-	TestIndexTreeFileDelete();
+	TestIndexTreeFileDeleteInMemory();
 	TestIndexTreeFileDirty();
 	TestIndexTreeFileRemoveThenDirty();
 	TestIndexTreeFileRead();
+	TestIndexTreeFileDeleteOnDisk();
+	TestIndexTreeFileComplex();
 
 	TestStatistics();
 	FastFunctionsKill();
