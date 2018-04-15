@@ -35,6 +35,12 @@ void TestPackFilesPackerSimple(void)
 
 	cPacker.Pack("Output/Packer/Videos.PAK", "Input/Game/PAK/Videos");
 	AssertFile("Game/Videos.PAK", "Output/Packer/Videos.PAK");
+
+	cPacker.Unpack("Output/Packer/Sounds/Cheese.PAK", "Output/Packer");
+	AssertFile("Input/Game/PAK/Cheese/Scream.txt", "Output/Packer/Scream.txt");
+	AssertFile("Input/Game/PAK/Cheese/Moose.txt", "Output/Packer/Moose.txt");
+
+	cFileUtil.RemoveDir("Output/Packer");
 }
 
 
