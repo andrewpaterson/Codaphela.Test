@@ -60,7 +60,7 @@ void TestIndexTreeWriterWrite(void)
 	cIndexTree.Kill();
 	cMap.Kill();
 
-	cFileUtil.RemoveDir(szDirectory);
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 }
 
 

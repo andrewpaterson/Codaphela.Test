@@ -21,18 +21,18 @@ void TestDurableSetAdd(void)
 	CDurableFile			cDurableFile2;
 	CDurableFile			cDurableFile3;
 	CDurableFile			cDurableFile4;
-	char					szDirectory[] = "Durable2";
-	char					szRewrite[] = "_Durable2";
+	char					szDirectory[] = "Output" _FS_ "ODurable2";
+	char					szRewrite[] = "Output" _FS_ "_Durable2";
 	CDurableFile*			pcDurableFile;
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
 
 	cController.Init(szDirectory, szRewrite);
 
-	cDurableFile1.Init(&cController, "Durable2" _FS_ "1.txt", "_Durable2" _FS_ "_1.txt");
-	cDurableFile2.Init(&cController, "Durable2" _FS_ "2.txt", "_Durable2" _FS_ "_2.txt");
-	cDurableFile3.Init(&cController, "Durable2" _FS_ "3.txt", "_Durable2" _FS_ "_3.txt");
-	cDurableFile4.Init(&cController, "Durable2" _FS_ "4.txt", "_Durable2" _FS_ "_4.txt");
+	cDurableFile1.Init(&cController, "Output" _FS_ "Durable2" _FS_ "1.txt", "Output" _FS_ "_Durable2" _FS_ "_1.txt");
+	cDurableFile2.Init(&cController, "Output" _FS_ "Durable2" _FS_ "2.txt", "Output" _FS_ "_Durable2" _FS_ "_2.txt");
+	cDurableFile3.Init(&cController, "Output" _FS_ "Durable2" _FS_ "3.txt", "Output" _FS_ "_Durable2" _FS_ "_3.txt");
+	cDurableFile4.Init(&cController, "Output" _FS_ "Durable2" _FS_ "4.txt", "Output" _FS_ "_Durable2" _FS_ "_4.txt");
 	cController.Begin();
 
 	cController.AddFile(&cDurableFile1);

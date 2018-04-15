@@ -57,8 +57,8 @@ int main(void)
 	TestIndexTreeNodeFile();
 	TestIndexTreeFile();
 	TestIndexTreeAccess();
-	//TestIndexTreeWriter();
-	//TestIndexedData();
+	TestIndexTreeWriter();
+	TestIndexedData();
 
 	return TestTotalStatistics();
 }
