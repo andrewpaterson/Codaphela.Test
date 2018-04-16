@@ -1081,7 +1081,6 @@ void TestIndexTreeFileComplex(void)
 	BOOL						bHasNext;
 	char*						szKey;
 	char*						szValue;
-	SLogConfig					sLogConfig;
 
 	cMap.Init(32);
 
@@ -1144,13 +1143,11 @@ void TestIndexTreeFileComplex(void)
 	while (bHasNext)
 	{
 		AssertTrue(cAccess.PutStringString(szKey, szValue));
-
+		cIndexTree.ValidateKey(szKey, strlen(szKey));
 		bHasNext = cMap.Iterate(&sIter, (void**)&szKey, (void**)&szValue);
 	}
 	AssertInt(cMap.NumElements(), cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
-
-	cIndexTree.Debug("buck", 4);
 
 	bHasNext = cMap.StartIteration(&sIter, (void**)&szKey, (void**)&szValue);
 	while (bHasNext)
@@ -1172,11 +1169,6 @@ void TestIndexTreeFileComplex(void)
 	cDurableController.Begin();
 	cIndexTree.Init(&cDurableController, TRUE);
 	cAccess.Init(&cIndexTree);
-
-	EngineOutput("\n");
-	sLogConfig = gcLogger.SetSilent();
-	cIndexTree.Debug("buck", 4);
-	gcLogger.SetConfig(&sLogConfig);
 
 	bHasNext = cMap.StartIteration(&sIter, (void**)&szKey, (void**)&szValue);
 	while (bHasNext)
@@ -1203,6 +1195,51 @@ void TestIndexTreeFileComplex(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileAddToRoot(void)
+{
+	CIndexTreeHelper			cHelper;
+	CDurableFileController		cDurableController;
+	CIndexTreeFile				cIndexTree;
+	CIndexTreeFileAccess		cAccess;
+	CTestIndexTreeObject		a;
+	CTestIndexTreeObject		b;
+	BOOL						bResult;
+
+	//This is supposed to be checking that the nodes indexed in file are in sync with the nodes pointed to in memory.
+	cHelper.Init("Output" _FS_"IndexTreeD", "primary", "backup", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController);
+	cAccess.Init(&cIndexTree);
+
+	a.Init("A1");
+	bResult = cAccess.PutStringPtr(a.GetName(), &a);
+	AssertTrue(bResult);
+	cIndexTree.ValidateKey(a.GetName(), a.NameLength());
+	AssertTrue(cIndexTree.ValidateIndexTree());
+
+	b.Init("D1");
+	bResult = cAccess.PutStringPtr(b.GetName(), &b);
+	cIndexTree.ValidateKey(a.GetName(), a.NameLength());
+	cIndexTree.ValidateKey(b.GetName(), b.NameLength());
+	AssertTrue(bResult);
+	AssertTrue(cIndexTree.ValidateIndexTree());
+
+	cDurableController.End();
+
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cDurableController.Kill();
+
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFile(void)
 {
 	FastFunctionsInit();
@@ -1212,6 +1249,7 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileSizeOfs();
 	TestIndexTreeFileInit();
 	TestIndexTreeFileAdd();
+	TestIndexTreeFileAddToRoot();
 	TestIndexTreeFileAddUnallocated();
 	TestIndexTreeFileReplaceData();
 	TestIndexTreeFileFindKey();
