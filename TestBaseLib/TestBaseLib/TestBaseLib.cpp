@@ -37,6 +37,7 @@ void TestIndexTreeTemplate(void);
 void TestIndexTreeIterator(void);
 void TestMemory(void);
 void TestLinkedListBlockAligned(void);
+void TestListVariable(void);
 void TestArrayInt2D(void);
 void TestMD5File(void);
 void TestDiskFile(void);
@@ -91,6 +92,7 @@ int main(void)
 	TestListBlock();
 	TestListTemplate();
 	TestListCharsMinimal();
+	TestListVariable();
 	TestConstructors();
 	TestLinkedListBlockAligned();
 	TestAllocator();

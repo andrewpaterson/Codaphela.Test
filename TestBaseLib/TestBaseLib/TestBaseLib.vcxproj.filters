@@ -309,6 +309,9 @@
     <ClCompile Include="TestStackMemory.cpp">
       <Filter>Source\Memory\Temporary</Filter>
     </ClCompile>
+    <ClCompile Include="TestListVariable.cpp">
+      <Filter>Source\Data\List</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

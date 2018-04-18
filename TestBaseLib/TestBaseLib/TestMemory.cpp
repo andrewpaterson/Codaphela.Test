@@ -141,9 +141,9 @@ void SetupTestMemoryRemove(CMemory* pcMemory)
 	void*	pv;
 
 	pcMemory->Init(4, FALSE);
-	pcMemory->AddParamBlock(8, 0, 4);
-	pcMemory->AddParamBlock(16, 8, 4);
-	pcMemory->AddParamBlock(24, 16, 4);
+	pcMemory->GetFreeListParams()->AddParamBlock(8, 0, 4);
+	pcMemory->GetFreeListParams()->AddParamBlock(16, 8, 4);
+	pcMemory->GetFreeListParams()->AddParamBlock(24, 16, 4);
 
 	pv = pcMemory->Add(10);
 	AssertInt(1, pcMemory->NumElements());
