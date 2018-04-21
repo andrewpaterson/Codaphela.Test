@@ -305,7 +305,7 @@ void TestCountBits(void)
 	AssertInt(32, CountBits(auc81, 32));
 	AssertInt(32, CountBitsSingly(auc81, 32));
 	AssertInt(32, CountBits(&(auc81[4]), 32));
-	AssertInt(17, CountBitsSingly(&(auc81[4]), 32));
+	AssertInt(32, CountBitsSingly(&(auc81[4]), 32));
 }
 
 
