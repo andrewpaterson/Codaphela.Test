@@ -78,7 +78,7 @@ void TestMemoryAllocatorReadWrite(void)
 	cFile.ReadInt(&i);
 	AssertInt(124, i);
 
-	AssertInt(16, cAllocIn.GetMemory()->ByteSize());
+	AssertInt(12, cAllocIn.GetMemory()->ByteSize());
 	AssertInt(16, cAllocIn.GetMemory()->GetDefaultAlignment());
 	AssertInt(56, cAllocIn.GetMemory()->GetFreeListParams()->GetFreeListSizeLimit());
 	AssertInt(3, cAllocIn.GetMemory()->GetFreeListParams()->NumParams());

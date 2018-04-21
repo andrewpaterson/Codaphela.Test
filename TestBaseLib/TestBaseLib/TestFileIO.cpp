@@ -278,16 +278,16 @@ void TestFileIOTree(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFileIOLinkList(void)
 {
-	CMemoryFile						cMemory;
-	CFileBasic						cFile;
+	CMemoryFile							cMemory;
+	CFileBasic							cFile;
 	CLinkedListTemplate<CFileIOTest>	cLinkList;
-	CFileIOTest*					pcTest1;
-	CFileIOTest*					pcTest2;
+	CFileIOTest*						pcTest1;
+	CFileIOTest*						pcTest2;
 	CLinkedListTemplate<CFileIOTest>	cLinkListIn;
-	CFileIOTest*					pcTestIn;
+	CFileIOTest*						pcTestIn;
 	CLinkedListBlock					cBlock;
-	char							sz[20];
-	void*							pv;
+	char								sz[20];
+	void*								pv;
 	CLinkedListBlock					cBlockIn;
 
 	TestFileIOBegin(&cMemory, &cFile);
@@ -298,7 +298,7 @@ void TestFileIOLinkList(void)
 	pcTest2 = cLinkList.Add();
 	pcTest2->Init(887);
 	AssertInt(cLinkList.NumElements(), 2);
-	AssertTrue(cLinkList.WriteLinkedListTemplate(&cFile));
+	AssertTrue(cLinkList.Write(&cFile));
 
 	cBlock.Init();
 	strcpy(sz, "Lurching Larch");
@@ -311,13 +311,13 @@ void TestFileIOLinkList(void)
 	pv = cBlock.InsertAfterTail(strlen(sz)+1);
 	strcpy((char*)pv, sz);
 	AssertInt(cBlock.NumElements(), 3);
-	AssertTrue(cBlock.WriteLinkListBlock(&cFile));
+	AssertTrue(cBlock.Write(&cFile));
 
 	cBlock.Kill();
 	cLinkList.Kill();
 	TestFileIOMiddle(&cFile);
 
-	AssertTrue(cLinkListIn.ReadLinkedListTemplate(&cFile));
+	AssertTrue(cLinkListIn.Read(&cFile));
 	AssertInt(cLinkListIn.NumElements(), 2);
 	pcTestIn = cLinkListIn.GetHead();
 	AssertNotNull(pcTestIn);
@@ -327,7 +327,7 @@ void TestFileIOLinkList(void)
 	pcTestIn = cLinkListIn.GetNext(pcTestIn);
 	AssertNull(pcTestIn);
 
-	AssertTrue(cBlockIn.ReadLinkListBlock(&cFile));
+	AssertTrue(cBlockIn.Read(&cFile));
 	AssertInt(cBlockIn.NumElements(), 3);
 	pv = cBlockIn.GetHead();
 	AssertString("Lurching Larch", (char*)pv);
