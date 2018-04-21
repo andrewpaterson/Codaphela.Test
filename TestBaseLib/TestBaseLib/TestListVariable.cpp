@@ -11,8 +11,6 @@ void TestListVariableAdd(void)
 	CListVariable	cList;
 	char*			pszData;
 	char*			pszResult;
-	int				i;
-	void*			pv;
 	CChars			sz;
 
 	cList.Init(32);

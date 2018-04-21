@@ -272,6 +272,47 @@ void TestReverseBytes(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestCountBits(void)
+{
+	unsigned char auc8a[] = { 0x6a, 0x83, 0x5d, 0x16, 0x42, 0x6e, 0x61, 0x80 };
+	unsigned char auc8b[] = { 0x54, 0xdc, 0x72, 0xf5, 0x78, 0xf9, 0x86, 0xa3 };
+	unsigned char auc80[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	unsigned char auc81[] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+
+	AssertInt(26, CountBits(auc8a, 64));
+	AssertInt(26, CountBitsSingly(auc8a, 64));
+	AssertInt(15, CountBits(auc8a, 32));
+	AssertInt(15, CountBitsSingly(auc8a, 32));
+	AssertInt(11, CountBits(&(auc8a[4]), 32));
+	AssertInt(11, CountBitsSingly(&(auc8a[4]), 32));
+
+	AssertInt(35, CountBits(auc8b, 64));
+	AssertInt(35, CountBitsSingly(auc8b, 64));
+	AssertInt(18, CountBits(auc8b, 32));
+	AssertInt(18, CountBitsSingly(auc8b, 32));
+	AssertInt(17, CountBits(&(auc8b[4]), 32));
+	AssertInt(17, CountBitsSingly(&(auc8b[4]), 32));
+
+	AssertInt(0, CountBits(auc80, 64));
+	AssertInt(0, CountBitsSingly(auc80, 64));
+	AssertInt(0, CountBits(auc80, 32));
+	AssertInt(0, CountBitsSingly(auc80, 32));
+	AssertInt(0, CountBits(&(auc80[4]), 32));
+	AssertInt(0, CountBitsSingly(&(auc80[4]), 32));
+
+	AssertInt(64, CountBits(auc81, 64));
+	AssertInt(64, CountBitsSingly(auc81, 64));
+	AssertInt(32, CountBits(auc81, 32));
+	AssertInt(32, CountBitsSingly(auc81, 32));
+	AssertInt(32, CountBits(&(auc81[4]), 32));
+	AssertInt(17, CountBitsSingly(&(auc81[4]), 32));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIntegerHelper(void)
 {
 	TestFindFirstClearBit();
@@ -279,5 +320,6 @@ void TestIntegerHelper(void)
 	TestFindLastClearBit();
 	TestFindLastSetBit();
 	TestReverseBytes();
+	TestCountBits();
 }
 
