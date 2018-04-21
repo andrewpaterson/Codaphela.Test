@@ -20,7 +20,7 @@ void TestMemoryAdd(void)
 	void*				pv8;
 	void*				pv9;
 	void*				pv;
-	SMemoryAllocation*	psAlloc;
+	SGeneralMemoryAllocation*	psAlloc;
 	CFreeList*			pcList;
 	CFreeList*			pcListSame;
 	SFreeListIterator	sIter;
