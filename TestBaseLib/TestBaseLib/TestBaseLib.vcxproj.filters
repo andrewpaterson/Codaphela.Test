@@ -312,6 +312,9 @@
     <ClCompile Include="TestGeneralMemory.cpp">
       <Filter>Source\Memory\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="TestDataMemory.cpp">
+      <Filter>Source\Memory\Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">
