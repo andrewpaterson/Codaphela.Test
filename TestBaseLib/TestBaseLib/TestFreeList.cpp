@@ -210,7 +210,7 @@ void TestFreeListOffsetAlignment(void)
 {
 	CArrayFreeList	cArray;
 	int				iElementSize;
-	int				iOffset;
+	char				iOffset;
 	CFreeList*		pcFreeList;
 	void*			pv;
 	int				i;
