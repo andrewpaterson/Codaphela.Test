@@ -12,25 +12,23 @@
 //////////////////////////////////////////////////////////////////////////
 void TestMemoryAdd(void)
 {
-	CMemory				cMemory;
-	void*				pv1;
-	void*				pv2;
-	void*				pv4;
-	void*				pv5;
-	void*				pv8;
-	void*				pv9;
-	void*				pv;
+	CMemory						cMemory;
+	void*						pv1;
+	void*						pv2;
+	void*						pv4;
+	void*						pv5;
+	void*						pv8;
+	void*						pv9;
+	void*						pv;
 	SGeneralMemoryAllocation*	psAlloc;
-	CFreeList*			pcList;
-	CFreeList*			pcListSame;
-	SFreeListIterator	sIter;
-	int*				piBits;
+	CFreeList*					pcList;
+	CFreeList*					pcListSame;
+	SFreeListIterator			sIter;
 
 	cMemory.Init();
 
 	pv1 = cMemory.Add(1);
 	psAlloc = MEMORY_GET_ALLOCATION(pv1);
-	piBits = psAlloc->psFreeListNode->GetBitArray();
 	AssertInt(1, psAlloc->uiSize);
 	AssertInt(1, cMemory.GetSize(pv1));
 	pcList = cMemory.GetFreeList(1, 4, 0);
