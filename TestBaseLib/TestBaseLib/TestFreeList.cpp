@@ -40,6 +40,17 @@ void AssertIteration(CFreeList* pcFreeList, void* pvFirst, ...)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFreeListSizeof(void)
+{
+	AssertInt(28, sizeof(CFreeList));
+	AssertInt(8, sizeof(SFNode));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFreeListAllocation(void)
 {
 	CFreeList	cFreeList;
@@ -219,7 +230,7 @@ void TestFreeListAlignment(void)
 void TestFreeListOffsetAlignment(void)
 {
 	CArrayFreeList	cArray;
-	int				iElementSize;
+	unsigned short	iElementSize;
 	char			iOffset;
 	CFreeList*		pcFreeList;
 	void*			pv;
@@ -271,6 +282,7 @@ void TestFreeList(void)
 {
 	BeginTests();
 
+	TestFreeListSizeof();
 	TestFreeListAllocation();
 	TestFreeListAlignment();
 	TestFreeListOffsetAlignment();
