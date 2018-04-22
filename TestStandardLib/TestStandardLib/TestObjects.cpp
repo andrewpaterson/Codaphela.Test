@@ -191,7 +191,7 @@ void TestObjectsFlushNoClear(void)
 
 	ObjectsKill();
 
-	CArrayString	aszFileNames;
+	CArrayChars	aszFileNames;
 	int				i;
 	CChars*			psz;
 	CChars			szOutput;

@@ -299,6 +299,8 @@ void TestCountBits(void)
 	AssertInt(0, CountBitsSingly(auc80, 32));
 	AssertInt(0, CountBits(&(auc80[4]), 32));
 	AssertInt(0, CountBitsSingly(&(auc80[4]), 32));
+	AssertInt(0, CountBits(auc80, 8));
+	AssertInt(0, CountBits(auc80, 16));
 
 	AssertInt(64, CountBits(auc81, 64));
 	AssertInt(64, CountBitsSingly(auc81, 64));
@@ -306,6 +308,22 @@ void TestCountBits(void)
 	AssertInt(32, CountBitsSingly(auc81, 32));
 	AssertInt(32, CountBits(&(auc81[4]), 32));
 	AssertInt(32, CountBitsSingly(&(auc81[4]), 32));
+	AssertInt(8, CountBits(auc81, 8));
+	AssertInt(16, CountBits(auc81, 16));
+
+	AssertInt(4, CountBits(auc8a, 8));
+	AssertInt(4, CountBitsSingly(auc8a, 8));
+	AssertInt(3, CountBits(auc8b, 8));
+	AssertInt(3, CountBitsSingly(auc8b, 8));
+
+	AssertInt(7, CountBits(auc8a, 16));
+	AssertInt(7, CountBitsSingly(auc8a, 16));
+	AssertInt(8, CountBits(&(auc8a[2]), 16));
+	AssertInt(8, CountBitsSingly(&(auc8a[2]), 16));
+	AssertInt(8, CountBits(auc8b, 16));
+	AssertInt(8, CountBitsSingly(auc8b, 16));
+	AssertInt(10, CountBits(&(auc8b[2]), 16));
+	AssertInt(10, CountBitsSingly(&(auc8b[2]), 16));
 }
 
 
