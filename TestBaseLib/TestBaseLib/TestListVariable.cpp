@@ -11,7 +11,8 @@ void TestListVariableAdd(void)
 	CListVariable	cList;
 	char*			pszData;
 	char*			pszResult;
-	CChars			sz;
+	int				i;
+	void*			pv;
 
 	cList.Init(32);
 	AssertInt(0, cList.NumElements());
@@ -26,19 +27,11 @@ void TestListVariableAdd(void)
 	cList.Kill();
 
 	cList.Init(32);
-	sz.Init();
-	//for (i = 1; i < 10000; i++)
-	//{
-	//	sz.Append(i);
-	//	sz.Append(" -> ");
-	//	sz.AppendNewLine();
-	//	sz.Dump();
-	//	sz.Clear();
-
-	//	pv = cList.Add(i);
-	//	memset(pv, i, i);
-	//}
-	sz.Kill();
+	for (i = 1; i < 65536; i += 4)
+	{
+		pv = cList.Add(i);
+		memset(pv, i, i);
+	}
 	
 	cList.Kill();
 }
@@ -52,9 +45,11 @@ void TestListVariable(void)
 {
 	BeginTests();
 	FastFunctionsInit();
+	DataMemoryInit();
 
 	TestListVariableAdd();
 
+	DataMemoryKill();
 	FastFunctionsKill();
 	TestStatistics();
 }
