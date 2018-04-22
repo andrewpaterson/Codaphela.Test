@@ -26,7 +26,7 @@ void TestArrayDenseTemplateInsertion(void)
 	int								i;
 	int								iEnd;
 
-	cArray.Init(1, 1);
+	cArray.Init();
 
 	psItem0 = cArray.Add();
 	psItem0->i1 = 0;
@@ -64,7 +64,7 @@ void TestArrayDenseTemplateInsertion(void)
 	}
 	cArray.Kill();
 
-	cArray.Init(100, 100);
+	cArray.Init();
 	psItem = cArray.Add();
 	psItem->i1 = 0;
 
@@ -90,7 +90,7 @@ void TestArrayDenseTemplateInsertion(void)
 
 	cArray.Kill();
 
-	cArray.Init(1, 1);
+	cArray.Init();
 	psItem = cArray.Add();
 	psItem->i1 = 0;
 
@@ -148,7 +148,7 @@ void TestArrayDenseTemplateRemoval(void)
 	int								i;
 	BOOL							bResult;
 
-	cArray.Init(1, 1);
+	cArray.Init();
 
 	for (i = 0; i < 10; i++)
 	{

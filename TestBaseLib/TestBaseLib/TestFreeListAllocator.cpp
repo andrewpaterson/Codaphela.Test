@@ -23,7 +23,7 @@ void TestFreeListAllocatorReadWrite(void)
 
 	cFile.WriteInt(789);
 
-	cAlloc.Init(128, 48, 16, 4);
+	cAlloc.Init(48, 16, 4);
 	AssertTrue(cAlloc.Write(&cFile));
 
 	cFile.WriteInt(124);
@@ -43,7 +43,6 @@ void TestFreeListAllocatorReadWrite(void)
 
 	AssertInt(16, cAllocIn.GetFreeList()->GetAlignment());
 	AssertInt(4, cAllocIn.GetFreeList()->GetOffset());
-	AssertInt(128, cAllocIn.GetFreeList()->GetChunkSize());
 	AssertInt(48, cAllocIn.GetFreeList()->GetElementSize());
 	AssertInt(0, cAllocIn.GetFreeList()->ByteSize());
 	cAllocIn.GetFreeList()->GetParams(&sParams);

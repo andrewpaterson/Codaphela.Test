@@ -37,13 +37,13 @@ void TestListTemplateMethods(void)
 	int										iIndex;
 	STestListTemplateItem					sItem;
 
-	cList.Init(128, 16);
+	cList.Init(16);
 	cList.Kill();
 
-	cList.Init(128, 16, 7);
+	cList.Init(16, 7);
 	cList.Kill();
 
-	cList.Init(128);
+	cList.Init();
 	psItem1 = cList.Add();
 	psItem1->Init(111, 8);
 

@@ -20,7 +20,7 @@ void TestIndexesSomething(void)
 	BOOL			bResult;
 	SLogConfig		sLogConfig;
 
-	cIndexes.Init(512);
+	cIndexes.Init();
 
 	AssertInt(0, cIndexes.TestNumLevels());
 
@@ -86,7 +86,7 @@ void TestIndexesIteration(void)
 	i = 15;
 	pvMem = &i;
 
-	cIndexes.Init(512);
+	cIndexes.Init();
 	cIndexes.Add(2, pvMem);
 	pvTest = cIndexes.Get(2);
 	AssertPointer(pvMem, pvTest);
@@ -131,7 +131,7 @@ void TestIndexesAddAndRemove(void)
 	i = 391287491;
 	pvMem = &i;
 
-	cIndexes.Init(512);
+	cIndexes.Init();
 	AssertInt(0, (int)cIndexes.NumIndexed());
 	
 	cIndexes.Add(1, pvMem);

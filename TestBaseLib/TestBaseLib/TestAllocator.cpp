@@ -65,7 +65,7 @@ void TestAllocatorFreeList(void)
 	void*				pv4;
 	void*				pv;
 
-	cAlloc.Init(3, 256);
+	cAlloc.Init(256);
 	pcBlock = cAlloc.GetFreeList();
 	AssertInt(0, pcBlock->NumElements());
 

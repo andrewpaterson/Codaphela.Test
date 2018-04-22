@@ -22,7 +22,7 @@ void TestArraySparseTemplateInsertion(void)
 	int								i;
 	int								iFound;
 
-	cArray.Init(1);
+	cArray.Init();
 
 	psItem = cArray.Set(50);
 	psItem->i1 = 500;
