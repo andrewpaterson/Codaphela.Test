@@ -120,31 +120,32 @@ typedef CArrayTemplate<CFreeList>	CArrayFreeList;
 void TestFreeListAlignment(void)
 {
 	CArrayFreeList	cArray;
-	int				i;
+	char			iAlignment;
 	int				j;
 	CFreeList*		pcFreeList;
 	void*			pv;
 	int				k;
 	CFreeList		cFreeList;
 	SFNode*			psNode;
+	int				i;
 
 	cArray.Init(1);
 
-	for (i = 2; i <= 48; i++)
+	for (iAlignment = 2; iAlignment <= 48; iAlignment++)
 	{
 		for (j = 1; j <= 4; j++)
 		{
 			pcFreeList = cArray.Add();
-			pcFreeList->Init(j, i, i);
-			AssertInt(i, pcFreeList->GetElementStride());
-			AssertInt(i, pcFreeList->GetElementSize());
+			pcFreeList->Init(j, iAlignment, iAlignment);
+			AssertInt((int)iAlignment, pcFreeList->GetElementStride());
+			AssertInt((int)iAlignment, pcFreeList->GetElementSize());
 
 			for (k = 0; k < 5; k++)
 			{
 				pv = pcFreeList->Add();
-				AssertInt(0, ((int)(ENGINE_SIZE_T) pv) % i);
+				AssertInt(0, ((int)(ENGINE_SIZE_T) pv) % iAlignment);
 				psNode = pcFreeList->FindNode(pv, FALSE);
-				AssertTrue(psNode->iOffset < i);
+				AssertTrue(psNode->iOffset < iAlignment);
 			}
 		}
 	}
@@ -210,11 +211,11 @@ void TestFreeListOffsetAlignment(void)
 {
 	CArrayFreeList	cArray;
 	int				iElementSize;
-	char				iOffset;
+	char			iOffset;
 	CFreeList*		pcFreeList;
 	void*			pv;
 	int				i;
-	int				iAlignment;
+	char			iAlignment;
 
 	cArray.Init(1);
 
