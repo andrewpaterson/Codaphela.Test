@@ -174,9 +174,6 @@
     <ClCompile Include="TestNumbers.cpp">
       <Filter>Source\Math</Filter>
     </ClCompile>
-    <ClCompile Include="TestMemory.cpp">
-      <Filter>Source\Memory\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="TestTreeTemplate.cpp">
       <Filter>Source\Data\Tree</Filter>
     </ClCompile>
@@ -311,6 +308,9 @@
     </ClCompile>
     <ClCompile Include="TestListVariable.cpp">
       <Filter>Source\Data\List</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGeneralMemory.cpp">
+      <Filter>Source\Memory\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

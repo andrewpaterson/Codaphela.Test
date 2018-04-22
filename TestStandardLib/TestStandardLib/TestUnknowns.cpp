@@ -15,7 +15,7 @@ void TestUnknownListAddKill(void)
 	CUnknowns		cUnknowns;
 	CTestUnknown*	pcTest;
 	CFreeList*		pcFreeList;
-	CMemory*		pcMemory;
+	CGeneralMemory*	pcMemory;
 
 	cUnknowns.Init("Test1", &gcConstructors);
 	pcMemory = cUnknowns.GetMemory();

@@ -1,4 +1,4 @@
-#include "BaseLib/Memory.h"
+#include "BaseLib/GeneralMemory.h"
 #include "TestLib/Assert.h"
 
 
@@ -10,9 +10,9 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMemoryAdd(void)
+void TestGeneralMemoryAdd(void)
 {
-	CMemory						cMemory;
+	CGeneralMemory						cMemory;
 	void*						pv1;
 	void*						pv2;
 	void*						pv4;
@@ -101,9 +101,9 @@ void TestMemoryAdd(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMemoryLargeAdd(void)
+void TestGeneralMemoryLargeAdd(void)
 {
-	CMemory		cMemory;
+	CGeneralMemory		cMemory;
 	void*		pv;
 	CFreeList*	pcList;
 
@@ -134,7 +134,7 @@ void TestMemoryLargeAdd(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void SetupTestMemoryRemove(CMemory* pcMemory)
+void SetupTestGeneralMemoryRemove(CGeneralMemory* pcMemory)
 {
 	void*	pv;
 
@@ -170,14 +170,14 @@ void SetupTestMemoryRemove(CMemory* pcMemory)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMemoryRemoveAllByArray(void)
+void TestGeneralMemoryRemoveAllByArray(void)
 {
-	CMemory				cMemory;
+	CGeneralMemory				cMemory;
 	CArrayVoidPtr		apv;
 	SMemoryIterator		sIter;
 	SMemory				sMem;
 
-	SetupTestMemoryRemove(&cMemory);
+	SetupTestGeneralMemoryRemove(&cMemory);
 
 	apv.Init();
 	sMem = cMemory.StartIteration(&sIter);
@@ -201,15 +201,15 @@ void TestMemoryRemoveAllByArray(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMemoryRemoveHalfByArray(void)
+void TestGeneralMemoryRemoveHalfByArray(void)
 {
-	CMemory				cMemory;
+	CGeneralMemory				cMemory;
 	CArrayVoidPtr		apv;
 	SMemoryIterator		sIter;
 	BOOL				bAdd;
 	SMemory				sMem;
 
-	SetupTestMemoryRemove(&cMemory);
+	SetupTestGeneralMemoryRemove(&cMemory);
 
 	apv.Init();
 	sMem = cMemory.StartIteration(&sIter);
@@ -238,12 +238,12 @@ void TestMemoryRemoveHalfByArray(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMemoryRemoveNoneByArray(void)
+void TestGeneralMemoryRemoveNoneByArray(void)
 {
-	CMemory			cMemory;
+	CGeneralMemory			cMemory;
 	CArrayVoidPtr	apv;
 
-	SetupTestMemoryRemove(&cMemory);
+	SetupTestGeneralMemoryRemove(&cMemory);
 
 	apv.Init();
 	
@@ -259,9 +259,9 @@ void TestMemoryRemoveNoneByArray(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMemoryGrow(void)
+void TestGeneralMemoryGrow(void)
 {
-	CMemory			cMemory;
+	CGeneralMemory	cMemory;
 	char			sz[27] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
 	char*			sz1;
 	char*			sz2;
@@ -285,16 +285,16 @@ void TestMemoryGrow(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMemory(void)
+void TestGeneralMemory(void)
 {
 	BeginTests();
 
-	TestMemoryLargeAdd();
-	TestMemoryAdd();
-	TestMemoryGrow();
-	TestMemoryRemoveAllByArray();
-	TestMemoryRemoveHalfByArray();
-	TestMemoryRemoveNoneByArray();
+	TestGeneralMemoryLargeAdd();
+	TestGeneralMemoryAdd();
+	TestGeneralMemoryGrow();
+	TestGeneralMemoryRemoveAllByArray();
+	TestGeneralMemoryRemoveHalfByArray();
+	TestGeneralMemoryRemoveNoneByArray();
 
 	TestStatistics();
 }

@@ -171,7 +171,7 @@
     <ClCompile Include="TestNumbers.cpp" />
     <ClCompile Include="TestFreeList.cpp" />
     <ClCompile Include="TestLinkedListAligned.cpp" />
-    <ClCompile Include="TestMemory.cpp" />
+    <ClCompile Include="TestGeneralMemory.cpp" />
     <ClCompile Include="TestTemporaryMemory.cpp" />
     <ClCompile Include="TestTextParser.cpp" />
     <ClCompile Include="TestTrackingAllocator.cpp" />

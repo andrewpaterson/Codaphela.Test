@@ -35,7 +35,7 @@ void TestIndexTreeNodeMemory(void);
 void TestIndexTreeMemory(void);
 void TestIndexTreeTemplate(void);
 void TestIndexTreeIterator(void);
-void TestMemory(void);
+void TestGeneralMemory(void);
 void TestLinkedListBlockAligned(void);
 void TestListVariable(void);
 void TestArrayInt2D(void);
@@ -121,7 +121,7 @@ int main(void)
 	TestLinkedListTemplate();
 	TestTreeTemplate();
 	TestCSVFileEditable();
-	TestMemory();
+	TestGeneralMemory();
 	TestMemoryAllocator();
 	TestTrackingAllocator();
 	TestScratchPad();

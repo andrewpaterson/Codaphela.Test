@@ -372,7 +372,7 @@ void TestIndexTreeFileResizeData(void)
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cDurableController;
 	CMemoryAllocator		cAllocator;
-	CMemory*				pcMemory;
+	CGeneralMemory*			pcMemory;
 
 	cHelper.Init("Output" _FS_"IndexTree2", "primary", "backup", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());

@@ -66,7 +66,7 @@ void TestIndexTreeMemoryAllocation(void)
 	CIndexTreeMemory	cIndexTree;
 	int64				lliKey1;
 	char*				pvData1;
-	CMemory*			pcMemory;
+	CGeneralMemory*		pcMemory;
 	size_t				tRootNodeSize;
 	size_t				tNodeSize;
 	size_t				tNoDataSize;
@@ -234,7 +234,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 	CMemoryAllocator		cMemoryAllocator;
 	CIndexTreeMemory		cIndexTree;
 	CIndexTreeMemoryAccess	cAccess;
-	CMemory*				pcMemory;
+	CGeneralMemory*			pcMemory;
 	char					sz[MAX_UCHAR];
 	CArrayVoidPtr			avp;
 
@@ -367,7 +367,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 	CMemoryAllocator		cMemoryAllocator;
 	CIndexTreeMemory		cIndexTree;
 	CIndexTreeMemoryAccess	cAccess;
-	CMemory*				pcMemory;
+	CGeneralMemory*			pcMemory;
 	char					sz[MAX_UCHAR];
 	CArrayVoidPtr			avp;
 
