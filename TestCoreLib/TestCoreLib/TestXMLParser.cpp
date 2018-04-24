@@ -244,6 +244,7 @@ void TestXMLParserErrors(void)
 	CMarkup			cMarkup;
 	CLogger			cLogger;
 	CMemoryFile		cMemory;
+	char			szZero[1] = { 0 };
 	char			szXML[] = "\
 <Root>\n\
   <Tag name=\"\" other\"\">\n\
@@ -258,9 +259,9 @@ void TestXMLParserErrors(void)
 	cMarkup.Init();
 	cXMLParser.Init(&cMarkup, &cLogger);
 	tResult = cXMLParser.Parse(szXML, "InMemory");
-	cMemory.cArray.Add((char)0);
+	cMemory.Write(szZero, 1, 1);
 
-	AssertString("ERROR: InMemory [2, 21]: '=' expected after attribute.\n", cMemory.cArray.GetData());
+	AssertString("ERROR: InMemory [2, 21]: '=' expected after attribute.\n", (char*)cMemory.GetBufferPointer());
 
 	cXMLParser.Kill();
 	cMarkup.Kill();

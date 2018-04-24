@@ -39,7 +39,7 @@ void TestMemoryFile(void)
 	cMemoryFile.Seek(0, EFSO_END);
 	iResult = (int)cMemoryFile.Write(szWorld, (int)strlen(szWorld)+1, 1);
 	AssertInt(1, iResult);
-	AssertString("Hello World", cMemoryFile.cArray.GetData());
+	AssertString("Hello World", (char*)cMemoryFile.GetBufferPointer());
 
 	bResult = cMemoryFile.Close();
 	AssertTrue(bResult);
