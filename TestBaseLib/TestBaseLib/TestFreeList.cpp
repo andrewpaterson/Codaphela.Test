@@ -164,7 +164,7 @@ void TestFreeListAlignment(void)
 		for (k = 0; k < 9; k++)
 		{
 			pv = pcFreeList->Add();
-			AssertInt(0, ((int)(ENGINE_SIZE_T) pv) % iAlignment);
+			AssertInt(0, ((int)(size_t) pv) % iAlignment);
 			psNode = pcFreeList->FindNode(pv, FALSE);
 			AssertTrue(psNode->iOffset < iAlignment);
 		}
@@ -253,11 +253,11 @@ void TestFreeListOffsetAlignment(void)
 					pv = pcFreeList->Add();
 					if (iOffset >= 0)
 					{
-						AssertInt(iOffset % iAlignment, ((int)(ENGINE_SIZE_T) pv) % iAlignment);
+						AssertInt(iOffset % iAlignment, ((int)(size_t) pv) % iAlignment);
 					}
 					else
 					{
-						AssertInt(iAlignment - (-iOffset % iAlignment), ((int)(ENGINE_SIZE_T) pv) % iAlignment);
+						AssertInt(iAlignment - (-iOffset % iAlignment), ((int)(size_t) pv) % iAlignment);
 					}
 				}
 			}

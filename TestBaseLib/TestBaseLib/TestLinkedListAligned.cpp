@@ -25,11 +25,11 @@ void TestLinkedListBlockAlignedAdd(void)
 		for (k = 0; k < 5; k++)
 		{
 			pv = cLinkedListBlockAligned.InsertAfterTail(65, iAlignment, 0);
-			AssertInt(0, ((int)(ENGINE_SIZE_T) pv) % iAlignment);
+			AssertInt(0, ((int)(size_t) pv) % iAlignment);
 
 			psNode = cLinkedListBlockAligned.GetNode(pv);
-			pvAllocatedEnd = (void*)(ENGINE_SIZE_T) ((int)(ENGINE_SIZE_T) psNode->sAligned.pvAlloc + sizeof(SLLANode) + 65 + iAlignment -1);
-			pvObjectEnd = (void*)(ENGINE_SIZE_T) ((int)(ENGINE_SIZE_T) pv + 65);
+			pvAllocatedEnd = (void*)(size_t) ((int)(size_t) psNode->sAligned.pvAlloc + sizeof(SLLANode) + 65 + iAlignment -1);
+			pvObjectEnd = (void*)(size_t) ((int)(size_t) pv + 65);
 			AssertTrue(pvAllocatedEnd >= pvObjectEnd);
 			AssertInt(iPrevTotalSize + ((sizeof(SLLANode) + 65 + iAlignment-1) * (k + 1)), cLinkedListBlockAligned.ByteSize());
 		}
