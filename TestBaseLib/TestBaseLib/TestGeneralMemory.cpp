@@ -33,7 +33,6 @@ void TestGeneralMemoryAdd(void)
 	SGeneralMemoryAllocation*	psAlloc;
 	CFreeList*					pcList;
 	CFreeList*					pcListSame;
-	SFreeListIterator			sIter;
 
 	cMemory.Init();
 
@@ -86,9 +85,8 @@ void TestGeneralMemoryAdd(void)
 	AssertInt(MEM_TEST_INT_1, *((int*)pv9));
 	AssertInt(MEM_TEST_INT_2, ((int*)pv9)[1]);
 	pcList = cMemory.GetFreeList(8, 4, 0);
-	pv = pcList->StartIteration(&sIter);
-	AssertNull(pv);
-	AssertInt(379, cMemory.ByteSize());
+	AssertNull(pcList);
+	AssertInt(351, cMemory.ByteSize());
 
 	cMemory.Kill();
 

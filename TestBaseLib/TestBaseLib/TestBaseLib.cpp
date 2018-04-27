@@ -18,6 +18,7 @@ void TestListBlock(void);
 void TestListTemplate(void);
 void TestListCharsMinimal(void);
 void TestConstructors(void);
+void TestConstructorCall(void);
 void TestDate(void);
 void TestNumbers(void);
 void TestArrayDenseTemplate(void);
@@ -95,6 +96,7 @@ int main(void)
 	TestListCharsMinimal();
 	TestListVariable();
 	TestConstructors();
+	TestConstructorCall();
 	TestLinkedListBlockAligned();
 	TestAllocator();
 	TestFreeList();

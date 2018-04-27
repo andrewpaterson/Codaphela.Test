@@ -107,7 +107,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ConstructorTestClasses.cpp" />
+    <ClCompile Include="ConstructorCallTestClasses.cpp" />
+    <ClCompile Include="ConstructorsTestClasses.cpp" />
     <ClCompile Include="FileIOTestObjects.cpp" />
     <ClCompile Include="SortedTestObject.cpp" />
     <ClCompile Include="TestAllocator.cpp" />
@@ -117,6 +118,7 @@
     <ClCompile Include="TestBaseLib.cpp" />
     <ClCompile Include="TestChars.cpp" />
     <ClCompile Include="TestChunkFileFile.cpp" />
+    <ClCompile Include="TestConstructorCall.cpp" />
     <ClCompile Include="TestConstructors.cpp" />
     <ClCompile Include="TestCSVFileEditable.cpp" />
     <ClCompile Include="TestCSVFileImmutable.cpp" />
@@ -179,7 +181,8 @@
     <ClCompile Include="TestTreeTemplate.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConstructorTestClasses.h" />
+    <ClInclude Include="ConstructorCallTestClasses.h" />
+    <ClInclude Include="ConstructorsTestClasses.h" />
     <ClInclude Include="FileIOTestObjects.h" />
     <ClInclude Include="SortedTestObject.h" />
     <ClInclude Include="TestIndexTreeObject.h" />

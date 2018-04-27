@@ -1,5 +1,5 @@
-#ifndef __CONSTRUCTOR_TEST_CLASSES_H__
-#define __CONSTRUCTOR_TEST_CLASSES_H__
+#ifndef __CONSTRUCTORS_TEST_CLASSES_H__
+#define __CONSTRUCTORS_TEST_CLASSES_H__
 
 
 class CConstructorTestSuper1
@@ -35,5 +35,5 @@ public:
 };
 
 
-#endif // __CONSTRUCTOR_TEST_CLASSES_H__
+#endif // __CONSTRUCTORS_TEST_CLASSES_H__
 

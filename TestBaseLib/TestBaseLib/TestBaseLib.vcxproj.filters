@@ -240,9 +240,6 @@
     <ClCompile Include="TestConstructors.cpp">
       <Filter>Source\Construtor</Filter>
     </ClCompile>
-    <ClCompile Include="ConstructorTestClasses.cpp">
-      <Filter>Source\Construtor</Filter>
-    </ClCompile>
     <ClCompile Include="TestMemoryAllocator.cpp">
       <Filter>Source\Memory\Manager</Filter>
     </ClCompile>
@@ -315,6 +312,15 @@
     <ClCompile Include="TestDataMemory.cpp">
       <Filter>Source\Memory\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="TestConstructorCall.cpp">
+      <Filter>Source\Construtor</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstructorsTestClasses.cpp">
+      <Filter>Source\Construtor</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstructorCallTestClasses.cpp">
+      <Filter>Source\Construtor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">
@@ -326,11 +332,14 @@
     <ClInclude Include="SortedTestObject.h">
       <Filter>Source\Data\Array\Sorted</Filter>
     </ClInclude>
-    <ClInclude Include="ConstructorTestClasses.h">
-      <Filter>Source\Construtor</Filter>
-    </ClInclude>
     <ClInclude Include="TestPackFile.h">
       <Filter>Source\File\Pack</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstructorsTestClasses.h">
+      <Filter>Source\Construtor</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstructorCallTestClasses.h">
+      <Filter>Source\Construtor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
