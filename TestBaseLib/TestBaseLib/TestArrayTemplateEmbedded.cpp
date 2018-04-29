@@ -1,5 +1,6 @@
 #include "BaseLib/ArrayTemplateEmbedded.h"
 #include "TestLib/Assert.h"
+#include "ArrayTemplateTestClasses.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -201,6 +202,67 @@ void TestArrayTemplateEmbeddedRemove(void)
 }
 
 
+typedef CArrayTemplateEmbedded<CTestOverridenArrayTemplateItem, 3> CTestArrayTemplateEmbedded;
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayTemplateEmbeddedSizeof(void)
+{
+	AssertInt(sizeof(SArrayTemplateHeader) + 3 * sizeof(CTestOverridenArrayTemplateItem), sizeof(CTestArrayTemplateEmbedded));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayTemplateEmbeddedAllocationWithVirtualClass(void)
+{
+	CTestArrayTemplateEmbedded			ac;
+	CTestOverridenArrayTemplateItem*	pc;
+
+	ac.Init();
+
+	pc = ac.Add();
+	pc->Init(5);
+	AssertInt(5, pc->i1);
+	AssertInt(33, pc->i2);
+
+	pc = ac.InsertAt(0);
+	pc->Init(6);
+	AssertInt(6, pc->i1);
+	AssertInt(33, pc->i2);
+
+	pc = ac.Add();
+	pc->Init(7);
+	AssertInt(7, pc->i1);
+	AssertInt(33, pc->i2);
+	AssertPointer(ac.Get(2), pc);
+
+	pc = ac.Add();
+	pc->Init(8);
+	AssertInt(8, pc->i1);
+	AssertInt(33, pc->i2);
+	AssertPointer(ac.Get(3), pc);
+
+	AssertInt(4, ac.NumElements());
+
+	pc = ac.InsertAt(3);
+	pc->Init(9);
+	AssertInt(9, pc->i1);
+	AssertInt(33, pc->i2);
+	AssertPointer(ac.Get(3), pc);
+	pc = ac.Get(4);
+	AssertInt(8, pc->i1);
+	AssertInt(33, pc->i2);
+
+	ac.Kill();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -213,6 +275,8 @@ void TestArrayTemplateEmbedded(void)
 	TestArrayTemplateEmbeddedAdd();
 	TestArrayTemplateEmbeddedRemoveAt();
 	TestArrayTemplateEmbeddedRemove();
+	TestArrayTemplateEmbeddedSizeof();
+	TestArrayTemplateEmbeddedAllocationWithVirtualClass();
 
 	FastFunctionsKill();
 	TestStatistics();
