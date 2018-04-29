@@ -133,7 +133,7 @@ void TestArrayAllocationWithVirtualClass(void)
 
 	AssertInt(12, ac.NumElements());
 
-	pc = ac.InsertNumElementsAt(3, 0);
+	pc = ac.InsertNumAt(3, 0);
 	pc[0].Init(20);
 	pc[1].Init(21);
 	pc[2].Init(22);

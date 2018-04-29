@@ -16,7 +16,7 @@ void TestArrayMinimalTemplateChar(void)
 	cac.GetArray()[5] = cac.GetArray()[6] = cac.GetArray()[7]='_';
 	AssertString("___aa___bbc", cac.GetArray());
 
-	cac.InsertNumElementsAt(2, 1);
+	cac.InsertNumAt(2, 1);
 
 	cac.GetArray()[1]=cac.GetArray()[2]='X';
 	AssertString("_XX__aa___bbc", cac.GetArray());
