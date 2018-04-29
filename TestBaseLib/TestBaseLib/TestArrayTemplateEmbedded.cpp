@@ -211,6 +211,9 @@ typedef CArrayTemplateEmbedded<CTestOverridenArrayTemplateItem, 3> CTestArrayTem
 //////////////////////////////////////////////////////////////////////////
 void TestArrayTemplateEmbeddedSizeof(void)
 {
+	AssertInt(36, 3 * sizeof(CTestOverridenArrayTemplateItem));
+	AssertInt(24, sizeof(CArrayTemplate<CTestOverridenArrayTemplateItem>));
+
 	AssertInt(sizeof(SArrayTemplateHeader) + 3 * sizeof(CTestOverridenArrayTemplateItem), sizeof(CTestArrayTemplateEmbedded));
 }
 
