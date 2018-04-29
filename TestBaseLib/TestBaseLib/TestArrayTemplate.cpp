@@ -1,16 +1,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/ArrayTemplate.h"
 #include "TestLib/Assert.h"
-
-
-struct STestArrayTemplateItem
-{
-	int	i1;
-	int	i2;
-};
-
-
-typedef CArrayTemplate<STestArrayTemplateItem> CTestArray;
+#include "ArrayTemplateTestClasses.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -53,6 +44,123 @@ void TestArrayAllocation(void)
 	asTestArray.Kill();
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayAllocationWithVirtualClass(void)
+{
+	CTestOverriddenArray				ac;
+	CTestOverridenArrayTemplateItem*	pc;
+	CTestOverridenArrayTemplateItem		c;
+	int									iIndex;
+	CTestOverridenArrayTemplateItem		av[5];
+
+	ac.Init(1);
+
+	pc = ac.Add();
+	pc->Init(1);
+	AssertInt(1, pc->i1);
+	AssertInt(33, pc->i2);
+
+	c.Init(4);
+	pc = ac.Add(&c);
+	AssertInt(4, pc->i1);
+	AssertInt(33, pc->i2);
+
+	pc->Init(1);
+	AssertInt(1, pc->i1);
+	AssertInt(33, pc->i2);
+
+	pc = ac.AddGetIndex(&iIndex);
+	AssertInt(2, iIndex);
+	pc->Init(47);
+	AssertInt(47, pc->i1);
+	AssertInt(33, pc->i2);
+	
+	pc = ac.InsertAt(1);
+	pc->Init(5);
+	AssertInt(5, pc->i1);
+	AssertInt(33, pc->i2);
+	AssertPointer(pc, ac.Get(1));
+	pc = ac.Get(2);
+	AssertInt(1, pc->i1);
+	AssertInt(33, pc->i2);
+
+	pc = ac.InsertAt(&c, 0);
+	AssertInt(4, pc->i1);
+	AssertInt(33, pc->i2);
+	AssertPointer(pc, ac.Get(0));
+	pc = ac.Get(1);
+	AssertInt(1, pc->i1);
+	AssertInt(33, pc->i2);
+
+	AssertInt(5, ac.NumElements());
+
+	av[0].Init(10);
+	av[1].Init(11);
+	av[2].Init(12);
+	av[3].Init(13);
+	av[4].Init(14);
+	pc = ac.InsertBlockAfterEnd(av, 5);
+	AssertInt(10, pc->i1);
+	AssertInt(33, pc->i2);
+	AssertInt(11, pc[1].i1);
+	AssertInt(33, pc[1].i2);
+	AssertInt(12, pc[2].i1);
+	AssertInt(33, pc[2].i2);
+	AssertInt(13, pc[3].i1);
+	AssertInt(33, pc[3].i2);
+	AssertInt(14, pc[4].i1);
+	AssertInt(33, pc[4].i2);
+	AssertPointer(pc, ac.Get(5));
+
+	AssertInt(10, ac.NumElements());
+
+	pc = ac.InsertBlockAt(av, 2, 8);
+	AssertInt(10, pc->i1);
+	AssertInt(33, pc->i2);
+	AssertInt(11, pc[1].i1);
+	AssertInt(33, pc[1].i2);
+	AssertPointer(pc, ac.Get(8));
+	pc = ac.Get(10);
+	AssertInt(13, pc->i1);
+	AssertInt(33, pc->i2);
+	pc = ac.Get(9);
+	AssertInt(11, pc->i1);
+	AssertInt(33, pc->i2);
+
+	AssertInt(12, ac.NumElements());
+
+	pc = ac.InsertNumElementsAt(3, 0);
+	pc[0].Init(20);
+	pc[1].Init(21);
+	pc[2].Init(22);
+	AssertInt(20, pc->i1);
+	AssertInt(33, pc->i2);
+	AssertInt(21, pc[1].i1);
+	AssertInt(33, pc[1].i2);
+	AssertInt(22, pc[2].i1);
+	AssertInt(33, pc[2].i2);
+
+	AssertInt(15, ac.NumElements());
+
+	pc = ac.Push();
+	pc->Init(84);
+	AssertInt(84, pc->i1);
+	AssertInt(33, pc->i2);
+	AssertPointer(pc, ac.Get(15));
+
+	pc = ac.PushCopy();
+	AssertInt(84, pc->i1);
+	AssertInt(33, pc->i2);
+	AssertPointer(pc, ac.Get(16));
+
+	AssertInt(17, ac.NumElements());
+
+	ac.Kill();
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -349,6 +457,7 @@ void TestArrayTemplate(void)
 
 	TestMisc();
 	TestArrayAllocation();
+	TestArrayAllocationWithVirtualClass();
 	TestArrayCopy();
 	TestArraySorting();
 	TestArrayRemove();

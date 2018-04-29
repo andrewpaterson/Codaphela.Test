@@ -107,6 +107,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ArrayTemplateTestClasses.cpp" />
     <ClCompile Include="ConstructorCallTestClasses.cpp" />
     <ClCompile Include="ConstructorsTestClasses.cpp" />
     <ClCompile Include="FileIOTestObjects.cpp" />
@@ -181,6 +182,7 @@
     <ClCompile Include="TestTreeTemplate.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ArrayTemplateTestClasses.h" />
     <ClInclude Include="ConstructorCallTestClasses.h" />
     <ClInclude Include="ConstructorsTestClasses.h" />
     <ClInclude Include="FileIOTestObjects.h" />
