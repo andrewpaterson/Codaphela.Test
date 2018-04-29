@@ -15,7 +15,7 @@ void TestArrayMinimalTemplateChar(void)
 	cac.Init("aabbc");
 	AssertString("aabbc", cac.GetArray());
 
-	cac.BatchInsertElements(0, 3, 2, 2);
+	cac.InsertBatch(0, 3, 2, 2);
 
 	cac.GetArray()[0] = cac.GetArray()[1] = cac.GetArray()[2]='_';
 	cac.GetArray()[5] = cac.GetArray()[6] = cac.GetArray()[7]='_';
@@ -29,7 +29,7 @@ void TestArrayMinimalTemplateChar(void)
 	cac.Kill();
 
 	cac.Init("ABCDEFGHIJK");
-	cac.BatchRemoveElements(2, 2, 3, 3);
+	cac.RemoveBatch(2, 2, 3, 3);
 	AssertString("ABEHK", cac.GetArray());
 
 	cac.Kill();
