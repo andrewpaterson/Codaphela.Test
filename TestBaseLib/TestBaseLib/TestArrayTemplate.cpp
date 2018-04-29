@@ -4,6 +4,10 @@
 #include "ArrayTemplateTestClasses.h"
 
 
+typedef CArrayTemplate<STestArrayTemplateItem> CTestArray;
+typedef CArrayTemplate<CTestOverridenArrayTemplateItem> CTestOverriddenArray;
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //

@@ -103,6 +103,21 @@
     <Filter Include="Source\Data\List\Minimal\Specific">
       <UniqueIdentifier>{dd29202e-ad4c-4547-9581-101803d03b58}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Data\Array\Basic">
+      <UniqueIdentifier>{eb5ee618-1971-466f-a5d8-c1baf42613fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Array\Primitive">
+      <UniqueIdentifier>{5564e44e-46f1-476c-8a5e-9e02a3f176bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Array\Basic\Specific">
+      <UniqueIdentifier>{0d4cd219-a6fe-4ac5-bbdb-5c9e5600efd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Array\Bit">
+      <UniqueIdentifier>{d9d2368e-e4c6-4128-a8bd-8cf685ce9d14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Array\Embedded">
+      <UniqueIdentifier>{54544f2f-36a6-4285-b327-8eb77f822792}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -110,21 +125,6 @@
     </ClCompile>
     <ClCompile Include="TestSorting.cpp">
       <Filter>Source\Data</Filter>
-    </ClCompile>
-    <ClCompile Include="TestArrayBit.cpp">
-      <Filter>Source\Data\Array</Filter>
-    </ClCompile>
-    <ClCompile Include="TestArrayInt.cpp">
-      <Filter>Source\Data\Array</Filter>
-    </ClCompile>
-    <ClCompile Include="TestArrayInt2D.cpp">
-      <Filter>Source\Data\Array</Filter>
-    </ClCompile>
-    <ClCompile Include="TestArrayLong.cpp">
-      <Filter>Source\Data\Array</Filter>
-    </ClCompile>
-    <ClCompile Include="TestArrayTemplate.cpp">
-      <Filter>Source\Data\Array</Filter>
     </ClCompile>
     <ClCompile Include="TestDenseArrayTemplate.cpp">
       <Filter>Source\Data\Array\Tree</Filter>
@@ -222,12 +222,6 @@
     <ClCompile Include="TestMemoryBlock.cpp">
       <Filter>Source\Memory\Allocator</Filter>
     </ClCompile>
-    <ClCompile Include="TestArrayTemplateEmbedded.cpp">
-      <Filter>Source\Data\Array</Filter>
-    </ClCompile>
-    <ClCompile Include="TestArrayTemplatePrimitive.cpp">
-      <Filter>Source\Data\Array</Filter>
-    </ClCompile>
     <ClCompile Include="TestArrayBlockSorted.cpp">
       <Filter>Source\Data\Array\Sorted</Filter>
     </ClCompile>
@@ -260,9 +254,6 @@
     </ClCompile>
     <ClCompile Include="TestTemporaryMemory.cpp">
       <Filter>Source\Memory\Temporary</Filter>
-    </ClCompile>
-    <ClCompile Include="TestArrayVoidPtr.cpp">
-      <Filter>Source\Data\Array</Filter>
     </ClCompile>
     <ClCompile Include="TestIndexTreeBlockMemory.cpp">
       <Filter>Source\Data\Index</Filter>
@@ -323,6 +314,30 @@
     </ClCompile>
     <ClCompile Include="ArrayTemplateTestClasses.cpp">
       <Filter>Source\Data\Array</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayInt.cpp">
+      <Filter>Source\Data\Array\Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayLong.cpp">
+      <Filter>Source\Data\Array\Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayInt2D.cpp">
+      <Filter>Source\Data\Array\Basic\Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayTemplatePrimitive.cpp">
+      <Filter>Source\Data\Array\Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayTemplate.cpp">
+      <Filter>Source\Data\Array\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayVoidPtr.cpp">
+      <Filter>Source\Data\Array\Basic\Specific</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayBit.cpp">
+      <Filter>Source\Data\Array\Bit</Filter>
+    </ClCompile>
+    <ClCompile Include="TestArrayTemplateEmbedded.cpp">
+      <Filter>Source\Data\Array\Embedded</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
