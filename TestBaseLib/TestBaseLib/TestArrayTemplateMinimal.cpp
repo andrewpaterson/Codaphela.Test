@@ -187,9 +187,13 @@ void TestArrayMinimalTemplateRemoveBatch()
 	}
 
 	as.RemoveBatch(0, 4, 2, 6);
-	AssertInt(2, as.NumElements());
+	AssertInt(6, as.NumElements());
 	AssertInt(4, as.Get(0)->i1);
 	AssertInt(5, as.Get(1)->i1);
+	AssertInt(6, as.Get(2)->i1);
+	AssertInt(7, as.Get(3)->i1);
+	AssertInt(8, as.Get(4)->i1);
+	AssertInt(9, as.Get(5)->i1);
 
 	as.Kill();
 }
