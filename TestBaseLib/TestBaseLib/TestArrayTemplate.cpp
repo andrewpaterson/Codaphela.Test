@@ -4,7 +4,7 @@
 #include "ArrayTemplateTestClasses.h"
 
 
-typedef CArrayTemplate<STestArrayTemplateItem> CTestArray;
+typedef CArrayTemplate<STestArrayTemplateItem> CTestArrayTemplate;
 typedef CArrayTemplate<CTestOverridenArrayTemplateItem> CTestOverriddenArray;
 
 
@@ -12,24 +12,24 @@ typedef CArrayTemplate<CTestOverridenArrayTemplateItem> CTestOverriddenArray;
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayAllocation(void)
+void TestArrayTemplateAllocation(void)
 {
-	CTestArray					asTestArray;
+	CTestArrayTemplate			asTestArrayTemplate;
 	STestArrayTemplateItem*		psItem;
 	int				i;
 
-	asTestArray.Init(10);
-	AssertInt(sizeof(STestArrayTemplateItem), asTestArray.ElementSize());
-	AssertInt(0, asTestArray.NumElements());
-	AssertInt(0, asTestArray.AllocatedElements());
-	AssertInt(10, asTestArray.ChunkSize());
-	AssertPointer(NULL, asTestArray.GetData());
+	asTestArrayTemplate.Init(10);
+	AssertInt(sizeof(STestArrayTemplateItem), asTestArrayTemplate.ElementSize());
+	AssertInt(0, asTestArrayTemplate.NumElements());
+	AssertInt(0, asTestArrayTemplate.AllocatedElements());
+	AssertInt(10, asTestArrayTemplate.ChunkSize());
+	AssertPointer(NULL, asTestArrayTemplate.GetData());
 
-	psItem = asTestArray.Add();
-	AssertInt(1, asTestArray.NumElements());
-	AssertInt(10, asTestArray.AllocatedElements());
-	AssertInt(10, asTestArray.ChunkSize());
-	AssertFalse(asTestArray.GetData() == NULL);
+	psItem = asTestArrayTemplate.Add();
+	AssertInt(1, asTestArrayTemplate.NumElements());
+	AssertInt(10, asTestArrayTemplate.AllocatedElements());
+	AssertInt(10, asTestArrayTemplate.ChunkSize());
+	AssertFalse(asTestArrayTemplate.GetData() == NULL);
 
 	psItem->i1 = 1;
 	psItem->i2 = 2;
@@ -37,15 +37,15 @@ void TestArrayAllocation(void)
 	//Add upto and including the eleventh element.  This will cause the array to be reallocated.
 	for (i = 0; i < 10; i++)
 	{
-		asTestArray.Add();
+		asTestArrayTemplate.Add();
 	}
 
 	//Make sure the elements haven't been corrupted on reallocation.
-	psItem = asTestArray.Get(0);
+	psItem = asTestArrayTemplate.Get(0);
 	AssertInt(1, psItem->i1);
 	AssertInt(2, psItem->i2);
 
-	asTestArray.Kill();
+	asTestArrayTemplate.Kill();
 }
 
 
@@ -53,7 +53,7 @@ void TestArrayAllocation(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayAllocationWithVirtualClass(void)
+void TestArrayTemplateAllocationWithVirtualClass(void)
 {
 	CTestOverriddenArray				ac;
 	CTestOverridenArrayTemplateItem*	pc;
@@ -171,7 +171,7 @@ void TestArrayAllocationWithVirtualClass(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-int SortTestArrayItemFunc(const void* pvItemLeft, const void* pvItemRight)
+int SortTestArrayTemplateItemFunc(const void* pvItemLeft, const void* pvItemRight)
 {
 	if (((STestArrayTemplateItem*)pvItemLeft)->i1 < ((STestArrayTemplateItem*)pvItemRight)->i1)
 	{
@@ -189,29 +189,29 @@ int SortTestArrayItemFunc(const void* pvItemLeft, const void* pvItemRight)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArraySorting(void)
+void TestArrayTemplateSorting(void)
 {
-	CTestArray					asTestArray;
+	CTestArrayTemplate					asTestArrayTemplate;
 	STestArrayTemplateItem*		psItem;
 
-	asTestArray.Init(10);
-	psItem = asTestArray.Add();
+	asTestArrayTemplate.Init(10);
+	psItem = asTestArrayTemplate.Add();
 	psItem->i1 = psItem->i2 = 8;
-	psItem = asTestArray.Add();
+	psItem = asTestArrayTemplate.Add();
 	psItem->i1 = psItem->i2 = 5;
-	psItem = asTestArray.Add();
+	psItem = asTestArrayTemplate.Add();
 	psItem->i1 = psItem->i2 = 7;
-	psItem = asTestArray.Add();
+	psItem = asTestArrayTemplate.Add();
 	psItem->i1 = psItem->i2 = 2;
 
-	asTestArray.QuickSort(&SortTestArrayItemFunc);
+	asTestArrayTemplate.QuickSort(&SortTestArrayTemplateItemFunc);
 
-	AssertInt(2, asTestArray[0].i1);
-	AssertInt(5, asTestArray[1].i1);
-	AssertInt(7, asTestArray[2].i1);
-    AssertInt(8, asTestArray[3].i1);
+	AssertInt(2, asTestArrayTemplate[0].i1);
+	AssertInt(5, asTestArrayTemplate[1].i1);
+	AssertInt(7, asTestArrayTemplate[2].i1);
+    AssertInt(8, asTestArrayTemplate[3].i1);
 
-	asTestArray.Kill();
+	asTestArrayTemplate.Kill();
 }
 
 
@@ -219,41 +219,41 @@ void TestArraySorting(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayCopy(void)
+void TestArrayTemplateCopy(void)
 {
-	CTestArray					asTestArray;
-	CTestArray					asDestArray;
+	CTestArrayTemplate					asTestArrayTemplate;
+	CTestArrayTemplate					asDestArray;
 	STestArrayTemplateItem*		psItem;
 	void*						pvDest1;
 	void*						pvDest2;
 	BOOL						bResult;
 
-	asTestArray.Init(5);
-	psItem = asTestArray.Add();
+	asTestArrayTemplate.Init(5);
+	psItem = asTestArrayTemplate.Add();
 	psItem->i1 = psItem->i2 = 8;
-	psItem = asTestArray.Add();
+	psItem = asTestArrayTemplate.Add();
 	psItem->i1 = psItem->i2 = 5;
-	psItem = asTestArray.Add();
+	psItem = asTestArrayTemplate.Add();
 	psItem->i1 = psItem->i2 = 7;
-	psItem = asTestArray.Add();
+	psItem = asTestArrayTemplate.Add();
 	psItem->i1 = psItem->i2 = 2;
-	psItem = asTestArray.Add();
+	psItem = asTestArrayTemplate.Add();
 	psItem->i1 = psItem->i2 = 1;
 
 	asDestArray.Init(1);
-	bResult = asDestArray.Copy(&asTestArray);
+	bResult = asDestArray.Copy(&asTestArrayTemplate);
 	AssertTrue(bResult);
 	pvDest1 = asDestArray.GetData();
 
-	bResult = asDestArray.Copy(&asTestArray);
+	bResult = asDestArray.Copy(&asTestArrayTemplate);
 	AssertFalse(bResult);
 	pvDest2 = asDestArray.GetData();
 	AssertTrue(pvDest1 == pvDest2);
 
-	psItem = asTestArray.Add();
+	psItem = asTestArrayTemplate.Add();
 	psItem->i1 = psItem->i2 = 3;
 
-	bResult = asDestArray.Copy(&asTestArray);
+	bResult = asDestArray.Copy(&asTestArrayTemplate);
 	AssertTrue(bResult);
 	
 	AssertInt(10, asDestArray.AllocatedElements());
@@ -272,7 +272,7 @@ void TestArrayCopy(void)
 	psItem = asDestArray.Get(5);
 	AssertInt(3, psItem->i1);
 
-	asTestArray.Kill();
+	asTestArrayTemplate.Kill();
 	asDestArray.Kill();
 }
 
@@ -280,9 +280,9 @@ void TestArrayCopy(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMisc(void)
+void TestArrayTemplateMisc(void)
 {
-	CTestArray				cArray;
+	CTestArrayTemplate				cArray;
 	STestArrayTemplateItem	sStack;
 	int						iIndex;
 	STestArrayTemplateItem*	psHeap;
@@ -364,9 +364,9 @@ void TestMisc(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayRemove(void)
+void TestArrayTemplateRemove(void)
 {
-	CTestArray					cArray;
+	CTestArrayTemplate					cArray;
 	STestArrayTemplateItem*		psTest1;
 	STestArrayTemplateItem*		psTest2;
 
@@ -431,7 +431,7 @@ void TestArrayRemove(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayFake(void)
+void TestArrayTemplateFake(void)
 {
 	CArrayTemplate<char>	cac;
 	char*					szTest;
@@ -448,6 +448,143 @@ void TestArrayFake(void)
 	free(szTest);
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayTemplateInsertBatch()
+{
+	CTestArrayTemplate			as;
+	int							i;
+	STestArrayTemplateItem*		ps;
+
+
+	as.Init(2);
+
+	for (i = 0; i < 10; i++)
+	{
+		ps = as.Add();
+		ps->i1 = i;
+		ps->i2 = 255;
+	}
+	AssertInt(10, as.NumElements());
+
+	as.InsertBatch(1, 2, 3, 1);
+	AssertInt(16, as.NumElements());
+	AssertInt(0, as.Get(0)->i1);
+	AssertInt(1, as.Get(3)->i1);
+	AssertInt(2, as.Get(6)->i1);
+	AssertInt(3, as.Get(9)->i1);
+	AssertInt(4, as.Get(10)->i1);
+	AssertInt(5, as.Get(11)->i1);
+	AssertInt(6, as.Get(12)->i1);
+	AssertInt(7, as.Get(13)->i1);
+	AssertInt(8, as.Get(14)->i1);
+	AssertInt(9, as.Get(15)->i1);
+
+	as.ReInit();
+
+	for (i = 0; i < 3; i++)
+	{
+		ps = as.Add();
+		ps->i1 = i;
+		ps->i2 = 255;
+	}
+	AssertInt(3, as.NumElements());
+
+	as.InsertBatch(0, 1, 3, 1);
+	AssertInt(6, as.NumElements());
+	AssertInt(0, as.Get(1)->i1);
+	AssertInt(1, as.Get(3)->i1);
+	AssertInt(2, as.Get(5)->i1);
+
+	as.ReInit();
+
+	for (i = 0; i < 3; i++)
+	{
+		ps = as.Add();
+		ps->i1 = i;
+		ps->i2 = 255;
+	}
+	AssertInt(3, as.NumElements());
+
+	as.InsertBatch(0, 1, 3, 2);
+	AssertInt(6, as.NumElements());
+	AssertInt(0, as.Get(1)->i1);
+	AssertInt(1, as.Get(2)->i1);
+	AssertInt(2, as.Get(4)->i1);
+
+	as.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayTemplateRemoveBatch(void)
+{
+	CTestArrayTemplate			as;
+	int							i;
+	STestArrayTemplateItem*		ps;
+
+
+	as.Init(2);
+	for (i = 0; i < 10; i++)
+	{
+		ps = as.Add();
+		ps->i1 = i;
+		ps->i2 = 255;
+	}
+	AssertInt(10, as.NumElements());
+
+	as.RemoveBatch(1, 1, 5, 1);
+	AssertInt(5, as.NumElements()));
+	AssertInt(0, as.Get(0)->i1);
+	AssertInt(2, as.Get(1)->i1);
+	AssertInt(4, as.Get(2)->i1);
+	AssertInt(6, as.Get(3)->i1);
+	AssertInt(8, as.Get(4)->i1);
+
+	as.Kill();
+
+	as.Init(2);
+	for (i = 0; i < 10; i++)
+	{
+		ps = as.Add();
+		ps->i1 = i;
+		ps->i2 = 255;
+	}
+
+	as.RemoveBatch(0, 3, 2, 2);
+	AssertInt(4, as.NumElements());
+	AssertInt(3, as.Get(0)->i1);
+	AssertInt(4, as.Get(1)->i1);
+	AssertInt(8, as.Get(2)->i1);
+	AssertInt(9, as.Get(3)->i1);
+
+	as.Kill();
+
+	as.Init(2);
+	for (i = 0; i < 10; i++)
+	{
+		ps = as.Add();
+		ps->i1 = i;
+		ps->i2 = 255;
+	}
+
+	as.RemoveBatch(0, 4, 2, 6);
+	AssertInt(6, as.NumElements());
+	AssertInt(4, as.Get(0)->i1);
+	AssertInt(5, as.Get(1)->i1);
+	AssertInt(6, as.Get(2)->i1);
+	AssertInt(7, as.Get(3)->i1);
+	AssertInt(8, as.Get(4)->i1);
+	AssertInt(9, as.Get(5)->i1);
+
+	as.Kill();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -459,13 +596,15 @@ void TestArrayTemplate(void)
 	MemoryInit();
 	FastFunctionsInit();
 
-	TestMisc();
-	TestArrayAllocation();
-	TestArrayAllocationWithVirtualClass();
-	TestArrayCopy();
-	TestArraySorting();
-	TestArrayRemove();
-	TestArrayFake();
+	TestArrayTemplateMisc();
+	TestArrayTemplateAllocation();
+	TestArrayTemplateAllocationWithVirtualClass();
+	TestArrayTemplateCopy();
+	TestArrayTemplateSorting();
+	TestArrayTemplateRemove();
+	TestArrayTemplateFake();
+	TestArrayTemplateInsertBatch();
+	TestArrayTemplateRemoveBatch();
 
 	FastFunctionsKill();
 	MemoryKill();
