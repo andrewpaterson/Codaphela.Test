@@ -424,7 +424,8 @@ void TestFileIOArray(void)
 	{
 		ai.Add(8-i);
 	}
-	av.Allocate(&gcSystemAllocator, 1, 7, 12);
+	av.Init(&gcSystemAllocator, 1, 7);
+	av.Resize(12);
 	memcpy(av.GetData(), "ABCDEFGHIJK\0", 12);
 	asTest.Init();
 	for (i = 0; i <= 10; i++)

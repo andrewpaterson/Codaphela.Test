@@ -86,7 +86,7 @@ void TestArrayTemplateEmbeddedRemoveAt(void)
 	AssertInt(22, *cArray.Get(4));
 	AssertInt(20, *cArray.Get(5));
 	
-	cArray.GrowToNumElements(5);
+	cArray.Resize(5);
 	AssertPointer(piEmbeddedData, cArray.GetData());
 	AssertInt(5, cArray.NumElements());
 
