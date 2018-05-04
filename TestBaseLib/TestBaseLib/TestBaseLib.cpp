@@ -3,6 +3,7 @@
 
 void TestPrimitiveTypes(void);
 void TestFloat4(void);
+void TestArraySizer(void);
 void TestArrayTemplatePrimitive(void);
 void TestArrayInt(void);
 void TestArrayLong(void);
@@ -80,6 +81,7 @@ int main(void)
 	TestPrimitiveTypes();
 	TestIntegerHelper();
 	TestFloat4();
+	TestArraySizer();
 	TestArrayInt();
 	TestArrayLong();
 	TestArrayInt2D();
