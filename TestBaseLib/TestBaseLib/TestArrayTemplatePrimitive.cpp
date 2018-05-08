@@ -27,7 +27,8 @@ void TestArrayTemplatePrimitive(void)
 	aFloats.Init(2);
 	aFloats.InsertAt(5.1f, 0);
 	AssertFloat(5.1f, aFloats.GetValue(0), 2);
-	AssertInt(2, aFloats.AllocatedElements());
+	AssertInt(1, aFloats.AllocatedElements());
+	AssertInt(1, aFloats.ChunkSize());
 	AssertInt(1, aFloats.NumElements());
 	aFloats.Kill();
 

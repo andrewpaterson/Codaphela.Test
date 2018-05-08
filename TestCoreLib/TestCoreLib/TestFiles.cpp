@@ -54,6 +54,54 @@ void TestFilesSimple(void)
 }
 
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFileSystemIteration(void)
+{
+	CFileSystem				cFileSystem;
+	CFileSystemIterator		cIter;
+	CSystemFileNode*		pcSystemFile;
+	CChars					szName;
+	int						i;
+	CArrayChars				aszExpected;
+	CChars*					pszExpected;
+
+	aszExpected.Init(10);
+	aszExpected.AddList("Models/Super/Barbie.txt",
+		"Models/Super/Ken.txt",
+		"Models/Cars.txt",
+		"Sounds/Santa/Seattle.txt",
+		"Sounds/Ambient.txt",
+		"Sounds/Cheese.PAK",
+		"Sounds/Santa.PAK",
+		"Videos/Intro.txt",
+		"Videos/Outro.txt",
+		"Models.PAK",
+		"Sounds.PAK",
+		"Textures.PAK",
+		"Videos.PAK",
+		NULL);
+
+	cFileSystem.Init("Game");
+
+	i = 0;
+	pcSystemFile = cFileSystem.StartIteration(&cIter);
+	while (pcSystemFile)
+	{ 
+		szName.Init();
+		pcSystemFile->GetFullName(&szName);
+		pszExpected = aszExpected.Get(i);
+		AssertString(pszExpected->Text(), szName.Text());
+		szName.Kill();
+
+		i++;
+		pcSystemFile = cFileSystem.Iterate(&cIter);
+	}
+	aszExpected.Kill();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -65,6 +113,13 @@ void TestFilesIteration(void)
 	CFileIterator	cIter;
 
 	cFiles.Init("Game", "PAK");
+	AssertInt(6, cFiles.GetNumPackFiles());
+	AssertString("C:\\gameengine\\Test\\TestCoreLib\\TestCoreLib\\Game\\Sounds\\Cheese.PAK", cFiles.GetPackFiles(0)->GetFileName());
+	AssertString("C:\\gameengine\\Test\\TestCoreLib\\TestCoreLib\\Game\\Sounds\\Santa.PAK", cFiles.GetPackFiles(1)->GetFileName());
+	AssertString("C:\\gameengine\\Test\\TestCoreLib\\TestCoreLib\\Game\\Textures.PAK", cFiles.GetPackFiles(2)->GetFileName());
+	AssertString("C:\\gameengine\\Test\\TestCoreLib\\TestCoreLib\\Game\\Models.PAK", cFiles.GetPackFiles(3)->GetFileName());
+	AssertString("C:\\gameengine\\Test\\TestCoreLib\\TestCoreLib\\Game\\Sounds.PAK", cFiles.GetPackFiles(4)->GetFileName());
+	AssertString("C:\\gameengine\\Test\\TestCoreLib\\TestCoreLib\\Game\\Videos.PAK", cFiles.GetPackFiles(5)->GetFileName());
 
 	AssertStringCase("Sounds/Cheese/Moose.txt", cFiles.StartIteration(&cIter)->GetFullName(), FALSE);
 	AssertInt(1, cIter.GetCurrent()->GetFileRank());
@@ -264,6 +319,7 @@ void TestFiles(void)
 	MemoryInit();
 
 	TestFilesSimple();
+	TestFileSystemIteration();
 	TestFilesIteration();
 	TestGetFileNames();
 	TestFilesWholeDirectory();

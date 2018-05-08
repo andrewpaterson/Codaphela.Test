@@ -81,13 +81,14 @@ int main(void)
 	TestPrimitiveTypes();
 	TestIntegerHelper();
 	TestFloat4();
-	TestArraySizer();
 	TestArrayInt();
 	TestArrayLong();
 	TestArrayInt2D();
 	TestArrayVoidPtrGet();
 	TestArrayTemplatePrimitive();
 	TestArrayMinimalTemplate();
+	TestArrayBlockSorted();
+	TestArraySizer();
 	TestMapBlock();
 	TestMapString();
 	TestMapInt();
@@ -109,7 +110,6 @@ int main(void)
 	TestDate();
 	TestNumbers();
 	TestArrayTemplate();
-	TestArrayBlockSorted();
 	TestIndexTreeNodeMemory();
 	TestIndexTreeMemory();
 	TestIndexTreeTemplate();

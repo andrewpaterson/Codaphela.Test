@@ -353,8 +353,8 @@ void TestFileIOLinkedListBlockAligned(void)
 	//CMemoryFile						cMemory;
 	//CFileBasic						cFile;
 	//CFileIOTest*					pcTestIn;
-	//CLinkedListBlockAligned				cAligned;
-	//CLinkedListBlockAligned				cAlignedIn;
+	//CLinkedListBlockAligned			cAligned;
+	//CLinkedListBlockAligned			cAlignedIn;
 	//CFileIOAlignedTest*				pcAli1;
 	//CFileIOAlignedTest*				pcAli2;
 	//CFileIOAlignedTest*				pcAliIn;
@@ -435,11 +435,11 @@ void TestFileIOArray(void)
 	}
 
 	AssertInt(9, acTest.NumElements());
-	AssertInt(10, acTest.AllocatedElements());
+	AssertInt(16, acTest.AllocatedElements());
 	AssertInt(6, ai.NumElements());
-	AssertInt(6, ai.AllocatedElements());
+	AssertInt(8, ai.AllocatedElements());
 	AssertInt(12, av.NumElements());
-	AssertInt(14, av.AllocatedElements());
+	AssertInt(16, av.AllocatedElements());
 	AssertInt(11, asTest.NumElements());
 	AssertTrue(acTest.Write(&cFile));
 	AssertTrue(ai.Write(&cFile));
@@ -454,7 +454,7 @@ void TestFileIOArray(void)
 
 	AssertTrue(acTestIn.Read(&cFile));
 	AssertInt(9, acTestIn.NumElements());
-	AssertInt(10, acTestIn.AllocatedElements());
+	AssertInt(16, acTestIn.AllocatedElements());
 	for (i = 0; i <= 8; i++)
 	{
 		pcTest = acTestIn.Get(i);
@@ -462,7 +462,7 @@ void TestFileIOArray(void)
 	}
 	AssertTrue(aii.Read(&cFile));
 	AssertInt(6, aii.NumElements());
-	AssertInt(6, aii.AllocatedElements());
+	AssertInt(8, aii.AllocatedElements());
 	for (i = 0; i <= 5; i++)
 	{
 		ii = aii.GetValue(i);
@@ -470,7 +470,7 @@ void TestFileIOArray(void)
 	}
 	AssertTrue(avi.Read(&cFile));
 	AssertInt(12, avi.NumElements());
-	AssertInt(14, avi.AllocatedElements());
+	AssertInt(16, avi.AllocatedElements());
 	AssertString("ABCDEFGHIJK", (char*)avi.GetData());
 	AssertTrue(asTestIn.Read(&cFile));
 	AssertInt(11, asTestIn.NumElements());

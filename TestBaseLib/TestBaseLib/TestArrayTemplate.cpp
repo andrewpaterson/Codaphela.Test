@@ -22,13 +22,13 @@ void TestArrayTemplateAllocation(void)
 	AssertInt(sizeof(STestArrayTemplateItem), asTestArrayTemplate.ElementSize());
 	AssertInt(0, asTestArrayTemplate.NumElements());
 	AssertInt(0, asTestArrayTemplate.AllocatedElements());
-	AssertInt(10, asTestArrayTemplate.ChunkSize());
+	AssertInt(1, asTestArrayTemplate.ChunkSize());
 	AssertPointer(NULL, asTestArrayTemplate.GetData());
 
 	psItem = asTestArrayTemplate.Add();
 	AssertInt(1, asTestArrayTemplate.NumElements());
-	AssertInt(10, asTestArrayTemplate.AllocatedElements());
-	AssertInt(10, asTestArrayTemplate.ChunkSize());
+	AssertInt(1, asTestArrayTemplate.AllocatedElements());
+	AssertInt(1, asTestArrayTemplate.ChunkSize());
 	AssertFalse(asTestArrayTemplate.GetData() == NULL);
 
 	psItem->i1 = 1;
@@ -221,8 +221,8 @@ void TestArrayTemplateSorting(void)
 //////////////////////////////////////////////////////////////////////////
 void TestArrayTemplateCopy(void)
 {
-	CTestArrayTemplate					asTestArrayTemplate;
-	CTestArrayTemplate					asDestArray;
+	CTestArrayTemplate			asTestArrayTemplate;
+	CTestArrayTemplate			asDestArray;
 	STestArrayTemplateItem*		psItem;
 	void*						pvDest1;
 	void*						pvDest2;
@@ -252,12 +252,18 @@ void TestArrayTemplateCopy(void)
 
 	psItem = asTestArrayTemplate.Add();
 	psItem->i1 = psItem->i2 = 3;
+	psItem = asTestArrayTemplate.Add();
+	psItem->i1 = psItem->i2 = 4;
+	psItem = asTestArrayTemplate.Add();
+	psItem->i1 = psItem->i2 = 6;
+	psItem = asTestArrayTemplate.Add();
+	psItem->i1 = psItem->i2 = 9;
 
 	bResult = asDestArray.Copy(&asTestArrayTemplate);
 	AssertTrue(bResult);
 	
-	AssertInt(10, asDestArray.AllocatedElements());
-	AssertInt(6, asDestArray.NumElements());
+	AssertInt(16, asDestArray.AllocatedElements());
+	AssertInt(9, asDestArray.NumElements());
 
 	psItem = asDestArray.Get(0);
 	AssertInt(8, psItem->i1);
