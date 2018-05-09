@@ -11,7 +11,7 @@ void TestArraySorting2(void)
 {
 	CArrayInt	cInts;
 
-	cInts.Init(1);
+	cInts.Init();
 	cInts.Add(4);
 	cInts.Add(3);
 	cInts.Add(2);
@@ -26,7 +26,7 @@ void TestArraySorting2(void)
 
 	cInts.Kill();
 
-	cInts.Init(1);
+	cInts.Init();
 	cInts.Add(4);
 	cInts.Add(3);
 	cInts.Add(2);

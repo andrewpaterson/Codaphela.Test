@@ -481,7 +481,7 @@ void CClusterLauncher::Class(void)
 Ptr<CGameWorld> CGameWorld::Init(void)
 {
 	PreInit();
-	maTickables = OMalloc(CArrayObject)->Init(128);
+	maTickables = OMalloc(CArrayObject)->Init();
 	PostInit();
 	return Ptr<CGameWorld>(this);
 }

@@ -33,7 +33,7 @@ void TestRectanglePow2PackerStuff(void)
 
 	cPacker.Pack();
 
-	macRects.Init(3);
+	macRects.Init();
 	cPacker.GetPackedRectangles(&macRects);
 
 	AssertInt(3, macRects.NumElements());
@@ -73,7 +73,7 @@ void TestRectanglePow2PackerStuff(void)
 
 	cPacker.Pack();
 
-	macRects.Init(3);
+	macRects.Init();
 	cPacker.GetPackedRectangles(&macRects);
 
 	AssertInt(3, macRects.NumElements());

@@ -80,7 +80,7 @@ void TestPolygonFindIndiciesFacing(void)
 	{
 		sTest.Init(sinf(Deg2Rad(fDeg)) * fLen, cosf(Deg2Rad(fDeg)) * fLen, 0.0f);
 
-		cIndicies.Init(4);
+		cIndicies.Init();
 		cPolygon.FindIndicesOfVisibleHalfSpaces(&sTest, &cIndicies);
 
 		//sz.Init();

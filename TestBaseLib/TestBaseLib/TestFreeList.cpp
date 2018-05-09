@@ -152,7 +152,7 @@ void TestFreeListAlignment(void)
 	SFNode*			psNode;
 	int				i;
 
-	cArray.Init(1);
+	cArray.Init();
 
 	for (iAlignment = 2; iAlignment <= 48; iAlignment++)
 	{
@@ -237,7 +237,7 @@ void TestFreeListOffsetAlignment(void)
 	int				i;
 	char			iAlignment;
 
-	cArray.Init(1);
+	cArray.Init();
 
 	for (iAlignment = 2; iAlignment <= 6; iAlignment++)
 	{

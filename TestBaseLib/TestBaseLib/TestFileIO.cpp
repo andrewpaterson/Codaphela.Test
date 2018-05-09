@@ -413,18 +413,18 @@ void TestFileIOArray(void)
 
 	TestFileIOBegin(&cMemory, &cFile);
 
-	acTest.Init(5);
+	acTest.Init();
 	for (i = 0; i <= 8; i++)
 	{
 		pcTest = acTest.Add();
 		pcTest->Init(i);
 	}
-	ai.Init(1);
+	ai.Init();
 	for (i = 0; i <= 5; i++)
 	{
 		ai.Add(8-i);
 	}
-	av.Init(&gcSystemAllocator, 1, 7);
+	av.Init(&gcSystemAllocator, 1);
 	av.Resize(12);
 	memcpy(av.GetData(), "ABCDEFGHIJK\0", 12);
 	asTest.Init();

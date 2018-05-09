@@ -19,12 +19,12 @@ void TestArrayTemplatePrimitive(void)
 
 	BeginTests();
 
-	aChars.Init(1);
+	aChars.Init();
 	aChars.Add('A');
 	AssertChar('A', aChars.GetValue(0));
 	aChars.Kill();
 
-	aFloats.Init(2);
+	aFloats.Init();
 	aFloats.InsertAt(5.1f, 0);
 	AssertFloat(5.1f, aFloats.GetValue(0), 2);
 	AssertInt(1, aFloats.AllocatedElements());
@@ -32,7 +32,7 @@ void TestArrayTemplatePrimitive(void)
 	AssertInt(1, aFloats.NumElements());
 	aFloats.Kill();
 
-	aDoubles.Init(3);
+	aDoubles.Init();
 	aDoubles.Add(0.0);
 	aDoubles.Add(0.1);
 	aDoubles.Add(0.2);
@@ -43,7 +43,7 @@ void TestArrayTemplatePrimitive(void)
 	AssertFalse(aDoubles.IsSorted());
 	aDoubles.Kill();
 
-	aLongs.Init(4);
+	aLongs.Init();
 	aLongs.AddList(0LL, 4LL, 0x3122345482773411LL, 2LL, 1LL, 0LL);
 	iIndex = aLongs.Find(0x3122345482773411LL);
 	AssertInt(1, iIndex);

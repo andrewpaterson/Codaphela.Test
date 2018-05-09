@@ -29,7 +29,7 @@ void TestReadExternalReference(void)
 	cXMLFile.Init();
 	cXMLFile.Read("First.xml", ".");
 
-	szDoc.Init(16);
+	szDoc.Init();
 	iLine = cXMLFile.mcMarkup.mpcDoc->ToString(&szDoc);
 	AssertInt(10, iLine);
 	AssertString(szExpected, szDoc.Text());
@@ -96,7 +96,7 @@ void TestRepeatedExternalTags(void)
 	cXMLFile.Init();
 	cXMLFile.Read("File.xml", ".");
 
-	szDoc.Init(16);
+	szDoc.Init();
 	iLine = cXMLFile.mcMarkup.mpcDoc->ToString(&szDoc);
 	AssertInt(18, iLine);
 	AssertString(szExpected, szDoc.Text());

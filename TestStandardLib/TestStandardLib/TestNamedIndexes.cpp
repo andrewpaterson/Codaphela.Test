@@ -224,7 +224,7 @@ void TestNamedIndexesCacheEviction(void)
 	AssertLongLongInt(19LL, cNamedIndexes.GetIndex("Camilla"));
 	AssertLongLongInt(20LL, cNamedIndexes.GetIndex("Wordsworth"));
 
-	cBlockPtrs.Init(4);
+	cBlockPtrs.Init();
 	cNamedIndexes.TestGetPotentialContainingBlocks("Berty", &cBlockPtrs);
 	AssertLongLongInt(1, cBlockPtrs.NumElements());
 	AssertString("Alfred", (*cBlockPtrs.Get(0))->GetFirst());
@@ -235,7 +235,7 @@ void TestNamedIndexesCacheEviction(void)
 	AssertTrue(cNamedIndexes.Add(66LL, "Alicia"));
 	AssertLongLongInt(5, cNamedIndexes.NumNames());
 
-	cBlockPtrs.Init(4);
+	cBlockPtrs.Init();
 	cNamedIndexes.TestGetPotentialContainingBlocks("Alicia", &cBlockPtrs);
 	AssertLongLongInt(2, cBlockPtrs.NumElements());
 	AssertString("Alfred", (*cBlockPtrs.Get(0))->GetFirst());

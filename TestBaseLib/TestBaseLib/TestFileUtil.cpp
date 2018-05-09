@@ -215,7 +215,7 @@ void TestFileUtilMakeDirectory(void)
 	szCurrentDirectory.Append(_FS_);
 	szCurrentDirectory.Append(szDirectory);
 
-	aszFiles.Init(1);
+	aszFiles.Init();
 	cFileUtil.FindAllDirectories(szParentDirectory.Text(), &aszFiles, FALSE);
 	AssertInt(1, aszFiles.NumElements());
 	AssertString(szCurrentDirectory.Text(), aszFiles.GetText(0));

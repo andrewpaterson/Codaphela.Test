@@ -182,7 +182,7 @@ void TestCleanNulls(void)
 	SSetIterator		sSetIter;
 	BOOL				bResult;
 
-	cSet.Init(4);
+	cSet.Init();
 
 	for (int i = 0; i < 32; i++)
 	{

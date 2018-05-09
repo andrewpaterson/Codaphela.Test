@@ -364,7 +364,7 @@ void TestRectanglePackerGetPackedRectangles(void)
 	cPacker.Pack();
 
 	pcBestAttempt = cPacker.GetBestAttempt();
-	macRects.Init(3);
+	macRects.Init();
 	pcBestAttempt->GetPackedRectangles(&macRects);
 
 	AssertInt(3, macRects.NumElements());
@@ -424,7 +424,7 @@ void TestRectanglePackerGetPackedRectanglesWithEdges(void)
 	cPacker.Pack();
 
 	pcBestAttempt = cPacker.GetBestAttempt();
-	macRects.Init(3);
+	macRects.Init();
 	pcBestAttempt->GetPackedRectangles(&macRects);
 
 	AssertInt(3, macRects.NumElements());

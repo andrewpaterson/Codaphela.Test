@@ -592,37 +592,37 @@ void TestIndexTreeFileFindKey(void)
 	pcNode3 = cIndexTree.GetNode("Amorphous", strlen(szAmorphous));
 	pcNode4 = cIndexTree.GetNode("Test Fly", strlen(szTestFly));
 
-	acKey.Init(8);
+	acKey.Init();
 	cIndexTree.FindKey(pcNode1, &acKey);
 	AssertInt(8, acKey.NumElements());
 	acKey.Add(0);
 	AssertString(szKeyName, acKey.GetData());
 	acKey.Kill();
 
-	acKey.Init(8);
+	acKey.Init();
 	cIndexTree.FindKey(pcNode2, &acKey);
 	acKey.Add(0);
 	AssertString(szAmphibious, acKey.GetData());
 	acKey.Kill();
 
-	acKey.Init(8);
+	acKey.Init();
 	cIndexTree.FindKey(pcNode3, &acKey);
 	acKey.Add(0);
 	AssertString(szAmorphous, acKey.GetData());
 	acKey.Kill();
 
-	acKey.Init(8);
+	acKey.Init();
 	cIndexTree.FindKey(pcNode4, &acKey);
 	acKey.Add(0);
 	AssertString(szTestFly, acKey.GetData());
 	acKey.Kill();
 
-	acKey.Init(8);
+	acKey.Init();
 	cIndexTree.FindKey(cIndexTree.GetRoot(), &acKey);
 	AssertInt(0, acKey.NumElements());
 	acKey.Kill();
 
-	acKey.Init(8);
+	acKey.Init();
 	cIndexTree.FindKey(NULL, &acKey);
 	AssertInt(0, acKey.NumElements());
 	acKey.Kill();

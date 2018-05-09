@@ -394,7 +394,7 @@ void TestLogFileFindHoles(void)
 	iInt3 = 158723346;
 	iSize = sizeof(int);
 
-	apvOverlapping.Init(1);
+	apvOverlapping.Init();
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, 1);
 	AssertTrue(bResult);
 	AssertInt(0, apvOverlapping.NumElements());
@@ -451,13 +451,13 @@ void TestLogFileFindHoles(void)
 	AssertInt(1, apvOverlapping.NumElements());
 	apvOverlapping.Kill();
 
-	apvOverlapping.Init(1);
+	apvOverlapping.Init();
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 8, 1);
 	AssertTrue(bResult);
 	AssertInt(0, apvOverlapping.NumElements());
 	apvOverlapping.Kill();
 
-	apvOverlapping.Init(1);
+	apvOverlapping.Init();
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 8, 4);
 	AssertTrue(bResult);
 	AssertInt(0, apvOverlapping.NumElements());

@@ -197,7 +197,7 @@ void TestObjectsFlushNoClear(void)
 	CChars			szOutput;
 	CChars			szFileName;
 
-	aszFileNames.Init(8);
+	aszFileNames.Init();
 	cFileUtil.FindAllFiles("Input/Dehollowfication", &aszFileNames, FALSE, FALSE);
 
 	for (i = 0; i < aszFileNames.NumElements(); i++)

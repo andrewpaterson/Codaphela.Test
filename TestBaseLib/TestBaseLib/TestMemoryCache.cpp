@@ -47,7 +47,7 @@ void AssertLinkOrder(CMemoryCache* pcCache)
 	AssertPointer(pcCache->TestGetFirst()->psPrev, pcCache->TestGetLast());
 	AssertPointer(pcCache->TestGetLast()->psNext, pcCache->TestGetFirst());
 
-	cPointers.Init(10);
+	cPointers.Init();
 	psCacheDesc = pcCache->TestGetFirst();
 
 	for (;;)

@@ -68,7 +68,7 @@ void TestFileSystemIteration(void)
 	CArrayChars				aszExpected;
 	CChars*					pszExpected;
 
-	aszExpected.Init(10);
+	aszExpected.Init();
 	aszExpected.AddList("Models/Super/Barbie.txt",
 		"Models/Super/Ken.txt",
 		"Models/Cars.txt",

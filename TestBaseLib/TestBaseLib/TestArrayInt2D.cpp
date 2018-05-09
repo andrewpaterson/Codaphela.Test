@@ -12,7 +12,7 @@ void TestArrayInt2DRemoval(void)
 	int				iValue;
 	int				i;
 
-	cArray.Init(1);
+	cArray.Init();
 	cArray.SetSize(10, 10);
 	cArray.CountFill(0, 0, 10, 10);
 
@@ -28,7 +28,7 @@ void TestArrayInt2DRemoval(void)
 	AssertInt(60, iValue);
 	cArray.Kill();
 
-	cArray.Init(1);
+	cArray.Init();
 	cArray.SetSize(10, 10);
 	cArray.CountFill(0, 0, 10, 10);
 
@@ -78,7 +78,7 @@ void TestArrayInt2DInsertion(void)
 	int				y;
 	int				iValue;
 
-	cArray.Init(1);
+	cArray.Init();
 	cArray.SetSize(10, 10);
 	cArray.Fill(0, 0, 10, 10, 0);
 	for (y = 0; y < 10; y++)

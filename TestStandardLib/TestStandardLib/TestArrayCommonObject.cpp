@@ -23,7 +23,7 @@ void TestArrayCommonPointerRemapping(void)
 	ObjectsInit();
 
 	pRoot = ORoot();
-	pArray = OMalloc(CArrayCommonObject)->Init(FALSE, FALSE, TRUE, 1);
+	pArray = OMalloc(CArrayCommonObject)->Init(FALSE, FALSE, TRUE);
 	pRoot->Add(pArray);
 
 	pObject1 = OMalloc(CTestObject)->Init(&sKillNotifier);

@@ -145,7 +145,7 @@ void TestMeshPolygonAdjacency(void)
 
 	cMeshEditor.Collapse();
 
-	aiAdjacent.Init(4);
+	aiAdjacent.Init();
 	cMeshEditor.mcPolygons.GetAdjacentPolygons(cMesh.GetConnectivity(), 4, &aiAdjacent);
 
 	AssertInt(4, aiAdjacent.NumElements());
@@ -156,7 +156,7 @@ void TestMeshPolygonAdjacency(void)
 
 	aiAdjacent.Kill();
 
-	aiAdjacent.Init(4);
+	aiAdjacent.Init();
 	cMeshEditor.mcPolygons.GetAdjacentPolygons(cMesh.GetConnectivity(), 0, &aiAdjacent);
 
 	AssertInt(2, aiAdjacent.NumElements());

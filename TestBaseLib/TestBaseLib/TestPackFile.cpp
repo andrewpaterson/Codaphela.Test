@@ -290,7 +290,7 @@ void TestPackFileGetFiles(void)
 	pcDiskFile = DiskFile("Input/Test.Pak");
 	AssertNotNull(pcDiskFile);
 	cPak.Init(pcDiskFile, PFM_Read);
-	cArrayFiles.Init(8);
+	cArrayFiles.Init();
 
 	cPak.GetFiles(&cArrayFiles);
 

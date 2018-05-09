@@ -86,7 +86,7 @@ void TestFileSystemFindExtension(void)
 
 	cSystem.Init("Finder");
 
-	aFileNodePtrs.Init(8);
+	aFileNodePtrs.Init();
 	cSystem.GetFiles(&aFileNodePtrs, "rar");
 
 	AssertInt(6, aFileNodePtrs.NumElements());
@@ -113,7 +113,7 @@ void TestFileSystemGetFiles(void)
 	CArraySystemFilePtrs				cArrayFiles;
 
 	cSystem.Init("Finder");
-	cArrayFiles.Init(1);
+	cArrayFiles.Init();
 
 	cSystem.GetFiles(&cArrayFiles);
 

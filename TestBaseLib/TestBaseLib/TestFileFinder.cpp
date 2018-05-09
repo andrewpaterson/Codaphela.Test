@@ -13,7 +13,7 @@ void TestFileFinder(void)
 	CFileUtil		cFileUtil;
 	CArrayChars		aszFiles;
 
-	aszFiles.Init(1);
+	aszFiles.Init();
 	cFileUtil.FindFilesWithExtension("Finder", "txt", &aszFiles);
 	AssertInt(5, aszFiles.NumElements());
 	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ants.txt", aszFiles.Get(0)->Text(), FALSE);
@@ -23,7 +23,7 @@ void TestFileFinder(void)
 	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ninja.txt", aszFiles.Get(4)->Text(), FALSE);
 	aszFiles.Kill();
 
-	aszFiles.Init(1);
+	aszFiles.Init();
 	cFileUtil.FindFilesWithNameContaining("Finder", "Mar", &aszFiles);
 	AssertInt(3, aszFiles.NumElements());
 	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Glenmark.wav", aszFiles.Get(0)->Text(), FALSE);
@@ -31,7 +31,7 @@ void TestFileFinder(void)
 	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Marching.txt", aszFiles.Get(2)->Text(), FALSE);
 	aszFiles.Kill();
 
-	aszFiles.Init(1);
+	aszFiles.Init();
 	cFileUtil.FindAllDirectories("Finder", &aszFiles);
 	aszFiles.QuickSort();
 	AssertInt(3, aszFiles.NumElements());
@@ -40,7 +40,7 @@ void TestFileFinder(void)
 	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Storm", aszFiles.Get(2)->Text(), FALSE);
 	aszFiles.Kill();
 
-	aszFiles.Init(1);
+	aszFiles.Init();
 	cFileUtil.FindFilesWithExtension("Finder", "rar", &aszFiles, TRUE);
 	AssertInt(6, aszFiles.NumElements());
 	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Lord\\1.rar", aszFiles.Get(0)->Text(), FALSE);
@@ -51,7 +51,7 @@ void TestFileFinder(void)
 	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\March.rar", aszFiles.Get(5)->Text(), FALSE);
 	aszFiles.Kill();
 
-	aszFiles.Init(1);
+	aszFiles.Init();
 	cFileUtil.FindAllFiles("Finder", &aszFiles, TRUE);
 	AssertInt(12, aszFiles.NumElements());
 	aszFiles.Kill();

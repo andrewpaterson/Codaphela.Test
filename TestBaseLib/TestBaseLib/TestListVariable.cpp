@@ -14,7 +14,7 @@ void TestListVariableAdd(void)
 	int				i;
 	void*			pv;
 
-	cList.Init(32);
+	cList.Init();
 	AssertInt(0, cList.NumElements());
 
 	pszData = (char*)cList.Add(5);
@@ -26,7 +26,7 @@ void TestListVariableAdd(void)
 	AssertPointer(pszData, pszResult);
 	cList.Kill();
 
-	cList.Init(32);
+	cList.Init();
 	for (i = 1; i < 65536; i += 4)
 	{
 		pv = cList.Add(i);
