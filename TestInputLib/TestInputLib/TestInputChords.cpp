@@ -1,6 +1,6 @@
 #include "BaseLib/Logger.h"
-#include "CoreLib/TypeNames.h"
-#include "CoreLib/TypeConverter.h"
+#include "BaseLib/TypeNames.h"
+#include "BaseLib/TypeConverter.h"
 #include "CoreLib/Operators.h"
 #include "InputLib/Input.h"
 #include "TestLib/Assert.h"
@@ -33,7 +33,7 @@ void AssertEvents(CInput* pcInput, CProgramDeviceDetail* pcDetail, CPlayer* pcPl
 	int							i;
 	STestEventValue*			pcEvent;
 
-	cArray.Init(16);
+	cArray.Init();
 	pcPlayer->GetEvents()->ReInit();
 
 	iCount = 0;

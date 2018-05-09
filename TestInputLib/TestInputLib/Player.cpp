@@ -6,7 +6,7 @@
 //////////////////////////////////////////////////////////////////////////
 void CPlayer::Init(void)
 {
-	maszEvents.Init(1);
+	maszEvents.Init();
 }
 
 
@@ -88,5 +88,5 @@ void CPlayer::RecordAction(CAction* pcAction, char* szText, void* pvContext)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CArrayString* CPlayer::GetEvents(void) { return &maszEvents; }
+CArrayChars* CPlayer::GetEvents(void) { return &maszEvents; }
 

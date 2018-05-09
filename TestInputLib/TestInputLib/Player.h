@@ -1,6 +1,6 @@
 #ifndef __TEST_PLAYER_H__
 #define __TEST_PLAYER_H__
-#include "BaseLib/ArrayString.h"
+#include "BaseLib/ArrayChars.h"
 #include "StandardLib/Action.h"
 #include "PlayerListener.h"
 
@@ -9,7 +9,7 @@ class CPlayer : public CPlayerListener
 {
 BASE_FUNCTIONS(CPlayer);
 protected:
-	CArrayString	maszEvents;
+	CArrayChars		maszEvents;
 
 public:
 	void 			Init(void);
@@ -20,7 +20,7 @@ public:
 	void 			Right(CUnknown* pcSource, void* pvContext);
 	void 			Fire(CUnknown* pcSource, void* pvContext);
 	void 			RecordAction(CAction* pcAction, char* szText, void* pvContext);
-	CArrayString*	GetEvents(void);
+	CArrayChars*	GetEvents(void);
 };
 
 

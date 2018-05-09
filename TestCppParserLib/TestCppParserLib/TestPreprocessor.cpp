@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/PointerRemapper.h"
+#include "BaseLib/TypeNames.h"
+#include "BaseLib/TypeConverter.h"
 #include "CoreLib/Operators.h"
-#include "CoreLib/TypeNames.h"
-#include "CoreLib/TypeConverter.h"
 #include "CppParserLib/Preprocessor.h"
 #include "TestLib/Assert.h"
 #include "TestPreprocessor.h"
@@ -328,7 +328,7 @@ void TestPreprocessorBlockSkipping(void)
 
 	szName.Init("None.cpp");
 
-	cFile.Init(8, szName.Text(), NULL, FALSE, FALSE);
+	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
 	cFile.SetContents("\
 					   Start\n\
 					   #if 1\n\
@@ -344,7 +344,7 @@ void TestPreprocessorBlockSkipping(void)
 	cConfig.Init("DEBUG");
 	cPreprocessor.Init(&cConfig, &cFile.mcStack);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
-	szDest.Init(64);
+	szDest.Init();
 	cFile.Append(&szDest);
 
 	AssertString("Start\nPassed\nEnd\n", szDest.Text());
@@ -354,7 +354,7 @@ void TestPreprocessorBlockSkipping(void)
 	cConfig.Kill();
 	cFile.Kill();
 
-	cFile.Init(8, szName.Text(), NULL, FALSE, FALSE);
+	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
 	cFile.SetContents("\
 					  Start\n\
 					  #if 0\n\
@@ -371,7 +371,7 @@ void TestPreprocessorBlockSkipping(void)
 	cConfig.Init("DEBUG");
 	cPreprocessor.Init(&cConfig, &cFile.mcStack);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
-	szDest.Init(64);
+	szDest.Init();
 	cFile.Append(&szDest);
 
 	AssertString("Start\nPassed\nEnd\nTest\n", szDest.Text());

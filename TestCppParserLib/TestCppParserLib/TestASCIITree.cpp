@@ -459,47 +459,47 @@ void TestASCIITreeGetBetween(void)
 
 	//ASCIINodes need to know their parents.
 
-	caiIndicies.Init(1);
+	caiIndicies.Init();
 	cTree.GetBetween(&caiIndicies, "A", "B");
 	AssertTreeIndicies(&caiIndicies, 1,2,3,4,5,6,-1);
 	caiIndicies.Kill();
 
-	caiIndicies.Init(1);
+	caiIndicies.Init();
 	cTree.GetBetween(&caiIndicies, "AB", "BA");
 	AssertTreeIndicies(&caiIndicies, 5, 6, 7, -1);
 	caiIndicies.Kill();
 
-	caiIndicies.Init(1);
+	caiIndicies.Init();
 	cTree.GetBetween(&caiIndicies, "A", "ABB");
 	AssertTreeIndicies(&caiIndicies, 1, 2, 3, 4, 5, -1);
 	caiIndicies.Kill();
 
-	caiIndicies.Init(1);
+	caiIndicies.Init();
 	cTree.GetBetween(&caiIndicies, "AAB", "BB");
 	AssertTreeIndicies(&caiIndicies, 4, 5, 6, 7, 8, 9, 10, -1);
 	caiIndicies.Kill();
 
-	caiIndicies.Init(1);
+	caiIndicies.Init();
 	cTree.GetBetween(&caiIndicies, "BAA", "BBB");
 	AssertTreeIndicies(&caiIndicies, 10, 11, 12, -1);
 	caiIndicies.Kill();
 
-	caiIndicies.Init(1);
+	caiIndicies.Init();
 	cTree.GetBetween(&caiIndicies, "A", "A");
 	AssertInt(0, caiIndicies.NumElements());
 	caiIndicies.Kill();
 
-	caiIndicies.Init(1);
+	caiIndicies.Init();
 	cTree.GetBetween(&caiIndicies, NULL, "AB");
 	AssertTreeIndicies(&caiIndicies, 0, 1, 2, 3, -1);
 	caiIndicies.Kill();
 
-	caiIndicies.Init(1);
+	caiIndicies.Init();
 	cTree.GetBetween(&caiIndicies, "BBA", NULL);
 	AssertTreeIndicies(&caiIndicies, 13, -1);
 	caiIndicies.Kill();
 
-	caiIndicies.Init(1);
+	caiIndicies.Init();
 	cTree.GetBetween(&caiIndicies, NULL, NULL);
 	AssertTreeIndicies(&caiIndicies, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, -1);
 	caiIndicies.Kill();
@@ -517,10 +517,10 @@ void TestASCIITreeIterate(void)
 	long long int	iWordEnd;
 	char*			sz;
 	char*			sz2;
-	CArrayString	casz;
+	CArrayChars	casz;
 	int				i;
 
-	casz.Init(1);
+	casz.Init();
 	casz.Add("A");
 	casz.Add("AA");
 	casz.Add("AAA");
