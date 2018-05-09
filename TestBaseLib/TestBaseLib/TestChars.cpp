@@ -177,7 +177,7 @@ the Free Software Foundation, either version 3 of the License, or\n\
 
 	cStrings.Kill();
 
-	cStrings.Init(TRUE);
+	cStrings.Fake();
 	sz2.SplitLines(&cStrings);
 
 	AssertInt(4, cStrings.NumElements());
@@ -211,7 +211,7 @@ the Free Software Foundation, either version 3 of the License, or\n\
 	AssertString("", cStrings.Get(4)->Text());
 
 	sz.Init("\\Names\\Of\\Doom\\");
-	cStrings.Init(TRUE);
+	cStrings.Fake();
 	sz.Split(&cStrings, '\\');
 
 	AssertInt(5, cStrings.NumElements());
