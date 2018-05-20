@@ -117,6 +117,7 @@
     <ClCompile Include="TestFiles.cpp" />
     <ClCompile Include="TestIndexedFile.cpp" />
     <ClCompile Include="TestIndexedFiles.cpp" />
+    <ClCompile Include="TestIndexTemplateFile.cpp" />
     <ClCompile Include="TestIndexTreeAccess.cpp" />
     <ClCompile Include="TestIndexTreeFile.cpp" />
     <ClCompile Include="TestIndexTreeNodeFile.cpp" />

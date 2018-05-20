@@ -132,6 +132,9 @@
     <ClCompile Include="TestIndexTreeAccess.cpp">
       <Filter>Source\File\Indexed\Index\Access</Filter>
     </ClCompile>
+    <ClCompile Include="TestIndexTemplateFile.cpp">
+      <Filter>Source\File\Indexed\Index</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
