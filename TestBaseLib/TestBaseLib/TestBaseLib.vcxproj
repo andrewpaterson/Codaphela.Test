@@ -122,6 +122,7 @@
     <ClCompile Include="TestChunkFileFile.cpp" />
     <ClCompile Include="TestConstructorCall.cpp" />
     <ClCompile Include="TestConstructors.cpp" />
+    <ClCompile Include="TestCountingAllocator.cpp" />
     <ClCompile Include="TestCSVFileEditable.cpp" />
     <ClCompile Include="TestCSVFileImmutable.cpp" />
     <ClCompile Include="TestDataMemory.cpp" />

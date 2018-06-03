@@ -210,6 +210,7 @@ void TestIndexedDataIndexedAdd(void)
 	AssertString(szFish, szIn);
 
 	bResult = cIndexedData.Set(OI, szCat, 4, 0);
+	AssertInt(1, (int)cIndexedData.NumElements());
 	AssertBool(TRUE, bResult);
 	cIndexedData.Flush(TRUE);
 	AssertInt(2, (int)cIndexedData.NumData(4));  //One is ignored but they are both still in the file.
@@ -287,10 +288,12 @@ void TestIndexedDataDescriptorCaching(void)
 	cIndexedData.Kill();
 
 	cIndexedData.Init("Database4", NULL, 96);
+	cIndexedData.DurableBegin();
 
 	iNumCached = cIndexedData.TestNumCachedIndexes();
 	AssertInt(0, (int)iNumCached);
 
+	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
 	cFileUtil.RemoveDir("Database4");
@@ -420,8 +423,8 @@ void TestIndexedData(void)
 	TypeConverterInit();
 	BeginTests();
 
-	TestIndexedDataCacheEviction();
-	TestIndexedDataLargeData();
+	//TestIndexedDataCacheEviction();
+	//TestIndexedDataLargeData();
 	TestIndexedDataIndexedAdd();
 	TestIndexedDataDescriptorCaching();
 	TestIndexedDataNoCaching(FALSE);

@@ -99,3 +99,5 @@ TestCoreLib/Release
 /TestCoreLib/TestCoreLib/_Files3*
 /TestCoreLib/TestCoreLib/Files3*
 /TestCoreLib/TestCoreLib/Output/*
+/TestCoreLib/TestCoreLib/Database3/Files.IDX
+/TestCoreLib/TestCoreLib/Database3/Index.IDX

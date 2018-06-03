@@ -1240,6 +1240,38 @@ void TestIndexTreeFileAddToRoot(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileEviction(void)
+{
+	CIndexTreeHelper			cHelper;
+	CDurableFileController		cDurableController;
+	CIndexTreeFile				cIndexTree;
+	CIndexTreeFileAccess		cAccess;
+
+	//This is supposed to be checking that the nodes indexed in file are in sync with the nodes pointed to in memory.
+	cHelper.Init("Output" _FS_"IndexTreeE", "primary", "backup", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController);
+	cAccess.Init(&cIndexTree);
+
+	//cIndexTree.
+
+
+	cDurableController.End();
+
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cDurableController.Kill();
+
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFile(void)
 {
 	FastFunctionsInit();
@@ -1262,6 +1294,7 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileRead();
 	TestIndexTreeFileDeleteOnDisk();
 	TestIndexTreeFileComplex();
+	TestIndexTreeFileEviction();
 
 	TestStatistics();
 	FastFunctionsKill();

@@ -61,6 +61,7 @@ void TestTreeTemplate(void);
 void TestCSVFileEditable(void);
 void TestMemoryAllocator(void);
 void TestTrackingAllocator(void);
+void TestCountingAllocator(void);
 void TestMemoryStack(void);
 void TestMemoryCache(void);
 void TestScratchPad(void);
@@ -129,6 +130,7 @@ int main(void)
 	TestGeneralMemory();
 	TestDataMemory();
 	TestMemoryAllocator();
+	TestCountingAllocator();
 	TestTrackingAllocator();
 	TestScratchPad();
 	TestScratchPadAllocator();
