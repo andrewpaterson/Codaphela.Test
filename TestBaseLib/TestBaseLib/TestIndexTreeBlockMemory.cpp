@@ -1,5 +1,6 @@
 #include "BaseLib/IndexTreeMemory.h"
 #include "BaseLib/TrackingAllocator.h"
+#include "BaseLib/CountingAllocator.h"
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/MemoryFile.h"
 #include "TestLib/Assert.h"
@@ -267,7 +268,7 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 	char					szThree[] = "333";
 	char					szKerfuffle[] = "kerfuffle";
 	char*					pvResult;
-	CTrackingAllocator		cAllocator;
+	CCountingAllocator		cAllocator;
 	int						iKeyLength;
 	CIndexTreeNodeMemory*	pcNode;
 	CIndexTreeNodeMemory*	pcChildNode;
@@ -665,7 +666,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 	CIndexTreeMemory	cIndex;
 	long long			li;
 	CMemoryAllocator	cMemoryAlloc;
-	CTrackingAllocator	cTrackingAlloc;
+	CCountingAllocator	cTrackingAlloc;
 	int					iExpectedRootSize;
 
 	cMemoryAlloc.Init();

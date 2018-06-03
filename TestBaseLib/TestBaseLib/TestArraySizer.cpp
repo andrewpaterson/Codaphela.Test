@@ -22,7 +22,7 @@ void TestArraySizer(void)
 	int			iCount;
 	int			iOldChunkSize;
 
-	miiExpected.Init(1, TRUE);
+	miiExpected.Init(TRUE);
 	miiExpected.Put(0, 1);
 	miiExpected.Put(1, 1);
 	miiExpected.Put(2, 2);

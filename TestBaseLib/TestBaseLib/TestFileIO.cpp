@@ -545,7 +545,7 @@ void TestFileIOMap(void)
 
 	TestFileIOBegin(&cMemory, &cFile);
 	
-	cMap.Init(10, &CompareInt, TRUE);
+	cMap.Init(&CompareInt, TRUE);
 	i = 9;	ld = 1.4783409838732098273349;
 	cMap.Put(&i, &ld);
 	i = 22;	ld = 1.7983487629380598763752;
@@ -555,7 +555,7 @@ void TestFileIOMap(void)
 	AssertInt(3, cMap.NumElements());
 	AssertTrue(cMap.Write(&cFile));
 
-	mssi.Init(10, TRUE);
+	mssi.Init(TRUE);
 	mssi.Put("lion", 7);
 	mssi.Put("eat", 1);
 	mssi.Put("zebra", 12);

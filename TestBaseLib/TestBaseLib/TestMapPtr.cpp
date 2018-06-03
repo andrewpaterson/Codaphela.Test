@@ -32,7 +32,7 @@ void TestMapPtrPtr(void)
 	pvv3 = (void*)0x00198201;
 
 
-	cMap.Init(&gcSystemAllocator, 16);
+	cMap.Init(&gcSystemAllocator);
 
 	cMap.Put(pvk1, pvv1);
 	cMap.Put(pvk2, pvv2);

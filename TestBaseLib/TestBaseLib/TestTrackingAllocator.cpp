@@ -7,7 +7,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestTrackingAllocatorSize(void)
+void TestTrackingAllocatorCount(void)
 {
 	CTrackingAllocator	cTracking;
 	CMemoryAllocator	cMemory;
@@ -18,28 +18,28 @@ void TestTrackingAllocatorSize(void)
 
 	cMemory.Init();
 	cTracking.Init(&cMemory);
-	AssertInt(0, cTracking.AllocatedSize());
+	AssertInt(0, cTracking.AllocatedCount());
 
 	pv1 = cTracking.Malloc(100);
-	AssertInt(100, cTracking.AllocatedSize());
+	AssertInt(1, cTracking.AllocatedCount());
 
 	pv2 = cTracking.Malloc(200);
-	AssertInt(300, cTracking.AllocatedSize());
+	AssertInt(2, cTracking.AllocatedCount());
 
 	pv3 = cTracking.Malloc(50);
-	AssertInt(350, cTracking.AllocatedSize());
+	AssertInt(3, cTracking.AllocatedCount());
 
 	pv4 = cTracking.Realloc(pv3, 1000);
-	AssertInt(1300, cTracking.AllocatedSize());
+	AssertInt(3, cTracking.AllocatedCount());
 
 	cTracking.Free(pv1);
-	AssertInt(1200, cTracking.AllocatedSize());
+	AssertInt(2, cTracking.AllocatedCount());
 
 	cTracking.Free(pv2);
-	AssertInt(1000, cTracking.AllocatedSize());
+	AssertInt(1, cTracking.AllocatedCount());
 
 	cTracking.Free(pv4);
-	AssertInt(0, cTracking.AllocatedSize());
+	AssertInt(0, cTracking.AllocatedCount());
 
 	cTracking.Kill();
 	cMemory.Kill();
@@ -55,7 +55,7 @@ void TestTrackingAllocator(void)
 	BeginTests();
 	FastFunctionsInit();
 
-	TestTrackingAllocatorSize();
+	TestTrackingAllocatorCount();
 
 	FastFunctionsKill();
 	TestStatistics();

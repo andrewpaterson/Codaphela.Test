@@ -23,7 +23,7 @@ void TestMapBlockInternals(void)
 	SMNode**			psNode2;
 	int*				piKey;
 
-	cMapBlock.Init(1024, &CompareInt, TRUE);
+	cMapBlock.Init(&CompareInt, TRUE);
 	i = 7; j = 43;
 	cMapBlock.Put(&i, sizeof(int), &j, sizeof(int));
 
@@ -111,7 +111,7 @@ void TestMapBlockGet(void)
 		lli = ((lli + 0x336b265cfdd8a7a6) / 2) * 3;
 	}
 
-	cMapBlock.Init(16, (CompareFunc)&strcmp, TRUE);
+	cMapBlock.Init((CompareFunc)&strcmp, TRUE);
 	AddToMapBlock(&cMapBlock, "cocker", llia[0]);
 	AddToMapBlock(&cMapBlock, "cock", llia[1]);
 	AddToMapBlock(&cMapBlock, "cockerel", llia[2]);
@@ -204,7 +204,7 @@ void TestMapBlockAddDuplicate(void)
 	iWorldLen = strlen("World");
 	iHelloLen = strlen("Hello");
 
-	cMapBlock.Init(1024, &CompareInt, TRUE);
+	cMapBlock.Init(&CompareInt, TRUE);
 	bResult = cMapBlock.Put(&ia, sizeof(int), "Hello", iHelloLen + 1);
 	AssertTrue(bResult);
 	AssertInt(1, cMapBlock.NumElements());
@@ -232,7 +232,7 @@ void TestMapBlockRemove(void)
 	BOOL		bResult;
 	char*		szData;
 
-	cMapBlock.Init(1024, &CompareInt, TRUE);
+	cMapBlock.Init(&CompareInt, TRUE);
 	bResult = cMapBlock.Put(&ia, sizeof(int), "Hello", strlen("Hello") + 1);
 	bResult = cMapBlock.Put(&ib, sizeof(int), "World", strlen("World") + 1);
 	bResult = cMapBlock.Put(&ic, sizeof(int), "Rogue", strlen("Rogue") + 1);

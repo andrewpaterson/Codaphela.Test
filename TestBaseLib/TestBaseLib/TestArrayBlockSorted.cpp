@@ -51,7 +51,7 @@ void TestArrayBlockSortedAddBasic(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 	AssertInt(0, avBlock.NumElements());
 	AssertInt(0, avBlock.GetSortedSize());
 	AssertInt(0, avBlock.GetHoldingSize());
@@ -88,7 +88,7 @@ void TestArrayBlockSortedAdd(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 	ListAddInt(&avBlock, 2);
 	ListAddInt(&avBlock, 4);
 	ListAddInt(&avBlock, 8);
@@ -108,7 +108,7 @@ void TestArrayBlockSortedAddAfter(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 	ListAddInt(&avBlock, 2);
 	ListAddInt(&avBlock, 4);
 	ListAddInt(&avBlock, 8);
@@ -138,7 +138,7 @@ void TestArrayBlockSortedAddBefore(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 	ListAddInt(&avBlock, 5);
 	ListAddInt(&avBlock, 6);
 	ListAddInt(&avBlock, 7);
@@ -168,7 +168,7 @@ void TestArrayBlockSortedAddAfterAndMiddle(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 	ListAddInt(&avBlock, 2);
 	ListAddInt(&avBlock, 4);
 	ListAddInt(&avBlock, 8);
@@ -198,7 +198,7 @@ void TestArrayBlockSortedAddBeforeAndMiddle(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 	ListAddInt(&avBlock, 5);
 	ListAddInt(&avBlock, 6);
 	ListAddInt(&avBlock, 9);
@@ -228,7 +228,7 @@ void TestArrayBlockSortedAddBeforeAndMiddleAndEnd(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 	ListAddInt(&avBlock, 1);
 	ListAddInt(&avBlock, 2);
 	ListAddInt(&avBlock, 4);
@@ -258,7 +258,7 @@ void TestArrayBlockSortedAddMiddleAndMiddle(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 6, 1, CompareInt);
+	avBlock.Init(sizeof(int), 6, 1, CompareInt);
 	ListAddInt(&avBlock, 2);
 	ListAddInt(&avBlock, 4);
 	ListAddInt(&avBlock, 8);
@@ -292,7 +292,7 @@ void TestArrayBlockSortedToListSmallList(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 	ListAddInt(&avBlock, 2);
 	ListAddInt(&avBlock, 4);
 	ListAddInt(&avBlock, 8);
@@ -317,7 +317,7 @@ void TestArrayBlockSortedToListBigList1After(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 	ListAddInt(&avBlock, 2);
 	ListAddInt(&avBlock, 4);
 	ListAddInt(&avBlock, 8);
@@ -346,7 +346,7 @@ void TestArrayBlockSortedToListBigList2After(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 	ListAddInt(&avBlock, 2);
 	ListAddInt(&avBlock, 4);
 	ListAddInt(&avBlock, 8);
@@ -374,7 +374,7 @@ void TestArrayBlockSortedToListBigList3After(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 	ListAddInt(&avBlock, 2);
 	ListAddInt(&avBlock, 4);
 	ListAddInt(&avBlock, 8);
@@ -401,7 +401,7 @@ void TestArrayBlockSortedToListBigList1Before(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 	ListAddInt(&avBlock, 10);
 	ListAddInt(&avBlock, 12);
 	ListAddInt(&avBlock, 14);
@@ -430,7 +430,7 @@ void TestArrayBlockSortedToListBigList2Before(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 	ListAddInt(&avBlock, 8);
 	ListAddInt(&avBlock, 10);
 	ListAddInt(&avBlock, 12);
@@ -458,7 +458,7 @@ void TestArrayBlockSortedToListBigList3Before(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 	ListAddInt(&avBlock, 4);
 	ListAddInt(&avBlock, 8);
 	ListAddInt(&avBlock, 10);
@@ -485,7 +485,7 @@ void TestArrayBlockSortedStaggeredLeftSingle(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 
 	ListAddInt(&avBlock, 2);
 	ListAddInt(&avBlock, 4);
@@ -515,7 +515,7 @@ void TestArrayBlockSortedStaggeredRightSingle(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 
 	ListAddInt(&avBlock, 2);
 	ListAddInt(&avBlock, 4);
@@ -545,7 +545,7 @@ void TestArrayBlockSortedStaggeredLeftDouble(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 
 	ListAddInt(&avBlock, 1);
 	ListAddInt(&avBlock, 2);
@@ -575,7 +575,7 @@ void TestArrayBlockSortedStaggeredRightDouble(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 1, CompareInt);
+	avBlock.Init(sizeof(int), 4, 1, CompareInt);
 
 	ListAddInt(&avBlock, 5);
 	ListAddInt(&avBlock, 6);
@@ -605,7 +605,7 @@ void TestArrayBlockSortedMultipleBuffers(void)
 {
 	CArrayBlockSorted	avBlock;
 
-	avBlock.Init(sizeof(int), 10, 4, 4, CompareInt);
+	avBlock.Init(sizeof(int), 4, 4, CompareInt);
 
 	ListAddInt(&avBlock, 9);
 	ListAddInt(&avBlock, 10);
@@ -654,7 +654,7 @@ void TestArrayBlockReadWrite(void)
 
 	MemoryInit();
 
-	avBlock.Init(sizeof(int), 10, 4, 4, CompareInt);
+	avBlock.Init(sizeof(int), 4, 4, CompareInt);
 
 	ListAddInt(&avBlock, 9);
 	ListAddInt(&avBlock, 10);
@@ -709,7 +709,7 @@ void TestArrayBlockSortedAddDuplicate(void)
 	CSortedTestObject*	pcObject;
 	int					i;
 
-	avBlock.Init(sizeof(CSortedTestObject), 4, 0, 0, &CompareSortedTestObject);
+	avBlock.Init(sizeof(CSortedTestObject), 0, 0, &CompareSortedTestObject);
 
 	cObject.Init(1, "One");
 	avBlock.Add(&cObject);

@@ -15,7 +15,7 @@ void TestMapIntTemplate(void)
 	double	e;
 	int		i;
 
-	cMap.Init(2, TRUE);
+	cMap.Init(TRUE);
 
 	d = 1.0; cMap.Put((int)d, &d);
 	d = 2.0; cMap.Put((int)d, &d);
@@ -121,7 +121,7 @@ void TestMapIntInt(void)
 	int*		piKey;
 	int*		piValue;
 
-	cMap.Init(16, TRUE);
+	cMap.Init(TRUE);
 
 	cMap.Put(5, 15);
 	cMap.Put(7, 17);

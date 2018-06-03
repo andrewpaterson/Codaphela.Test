@@ -73,7 +73,7 @@ void TestMapIntInt2(void)
 	BOOL			bResult;
 	int				x, y;
 
-	cMapIntInt.Init(11, CompareInt, TRUE);
+	cMapIntInt.Init(CompareInt, TRUE);
 
 	x = 10; y = 73;
 	cMapIntInt.Put(&x, &y);
