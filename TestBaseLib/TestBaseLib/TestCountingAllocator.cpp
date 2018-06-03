@@ -124,7 +124,6 @@ void TestCountingAllocatorSizeScratchPadAllocator(void)
 	void*					pv1;
 	void*					pv2;
 	void*					pv3;
-	void*					pv4;
 
 	cScratchPad.Init();
 	cCounting.Init(&cScratchPad);
@@ -138,18 +137,8 @@ void TestCountingAllocatorSizeScratchPadAllocator(void)
 
 	pv3 = cCounting.Malloc(50);
 	AssertInt(350, cCounting.AllocatedUserSize());
-
-	pv4 = cCounting.Realloc(pv3, 1000);
-	AssertInt(1300, cCounting.AllocatedUserSize());
-
-	cCounting.Free(pv1);
-	AssertInt(1200, cCounting.AllocatedUserSize());
-
-	cCounting.Free(pv2);
-	AssertInt(1000, cCounting.AllocatedUserSize());
-
-	cCounting.Free(pv4);
-	AssertInt(0, cCounting.AllocatedUserSize());
+	AssertInt(350 + sizeof(SSPNode) * 3, cCounting.AllocatedSystemSize());
+	AssertInt(350 + sizeof(SSPNode) * 3, cScratchPad.GetScratchPad()->GetUsedSize());
 
 	cCounting.Kill();
 	cScratchPad.Kill();
