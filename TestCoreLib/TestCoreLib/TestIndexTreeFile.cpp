@@ -1297,25 +1297,61 @@ void TestIndexTreeFileEvict(void)
 	CDurableFileController		cDurableController;
 	CIndexTreeFile				cIndexTree;
 	CIndexTreeFileAccess		cAccess;
+	char						szAAA[] = "North";
+	char						szAAAAA[] = "Volcano";
+	char						szA[] = "Tier";
+	char						szAAAB[] = "Abland";
+	CMemoryAllocator			cAllocator;
+	CGeneralMemory*				pcMemory;
 
-	//This is supposed to be checking that the nodes indexed in file are in sync with the nodes pointed to in memory.
+	cAllocator.Init();
+	pcMemory = cAllocator.GetMemory();
+
 	cHelper.Init("Output" _FS_"IndexTreeF", "primary", "backup", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController);
+	cIndexTree.Init(&cDurableController, &cAllocator, TRUE);
 	cAccess.Init(&cIndexTree);
 
 	AssertInt(0, cIndexTree.NumElements());
 	AssertInt(1, cIndexTree.NumNodes());
 	AssertInt(0, cIndexTree.NumMemoryElements());
-	AssertInt(1, cIndexTree.NumMemoryNodes())
+	AssertInt(1, cIndexTree.NumMemoryNodes());
+	AssertLongLongInt(3096, pcMemory->GetTotalAllocatedMemory());
+
+	cIndexTree.Put("AAA", szAAA, (unsigned char)strlen(szAAA) + 1);
+	cIndexTree.Put("AAAAA", szAAAAA, (unsigned char)strlen(szAAAAA) + 1);
+	cIndexTree.Put("A", szA, (unsigned char)strlen(szA) + 1);
+	cIndexTree.Put("AAAB", szAAAB, (unsigned char)strlen(szAAAB) + 1);
+	AssertLongLongInt(3326, pcMemory->GetTotalAllocatedMemory());
+	AssertInt(4, cIndexTree.NumElements());
+	AssertInt(7, cIndexTree.NumNodes());
+	AssertInt(4, cIndexTree.NumMemoryElements());
+	AssertInt(7, cIndexTree.NumMemoryNodes());
+
+	AssertTrue(cIndexTree.Evict("AAAAA"));
+	AssertLongLongInt(3258, pcMemory->GetTotalAllocatedMemory());
+	AssertInt(3, cIndexTree.NumMemoryElements());
+	AssertInt(5, cIndexTree.NumMemoryNodes());
+
+	AssertTrue(cIndexTree.Evict("AAAB"));
+	AssertLongLongInt(3096, pcMemory->GetTotalAllocatedMemory());
+	AssertInt(0, cIndexTree.NumMemoryElements());
+	AssertInt(1, cIndexTree.NumMemoryNodes());
+
+	AssertTrue(cIndexTree.ValidateIndexTree());
+	AssertInt(4, cIndexTree.NumMemoryElements());
+	AssertInt(7, cIndexTree.NumMemoryNodes());
+	AssertInt(4, cIndexTree.NumElements());
+	AssertInt(7, cIndexTree.NumNodes());
 
 	cDurableController.End();
 
 	cAccess.Kill();
 	cIndexTree.Kill();
 	cDurableController.Kill();
+	cAllocator.Kill();
 
 	cHelper.Kill(TRUE);
 }
