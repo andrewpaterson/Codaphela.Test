@@ -293,6 +293,115 @@ void TestGeneralMemoryGrow(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestGeneralMemoryIteration(void)
+{
+	CGeneralMemory		cMemory;
+	void*				pv8192;
+	void*				pv48;
+	void*				pv64;
+	void*				pv9036;
+	SMemoryIterator		sIterator;
+	SMemory				sResult;
+
+	cMemory.Init();
+	
+	sResult = cMemory.StartIteration(&sIterator);
+	AssertFalse(sResult.bValid);
+
+
+	pv8192 = cMemory.Add(8192);
+	sResult = cMemory.StartIteration(&sIterator);
+	AssertTrue(sResult.bValid);
+	AssertInt(8192, sResult.uiSize);
+	AssertPointer(pv8192, sResult.pvMem);
+
+	sResult = cMemory.Iterate(&sIterator);
+	AssertFalse(sResult.bValid);
+
+
+	pv48 = cMemory.Add(48);
+	sResult = cMemory.StartIteration(&sIterator);
+	AssertTrue(sResult.bValid);
+	AssertInt(48, sResult.uiSize);
+	AssertPointer(pv48, sResult.pvMem);
+
+	sResult = cMemory.Iterate(&sIterator);
+	AssertTrue(sResult.bValid);
+	AssertInt(8192, sResult.uiSize);
+	AssertPointer(pv8192, sResult.pvMem);
+
+	sResult = cMemory.Iterate(&sIterator);
+	AssertFalse(sResult.bValid);
+
+
+	pv64 = cMemory.Add(64);
+	sResult = cMemory.StartIteration(&sIterator);
+	AssertTrue(sResult.bValid);
+	AssertInt(48, sResult.uiSize);
+	AssertPointer(pv48, sResult.pvMem);
+
+	sResult = cMemory.Iterate(&sIterator);
+	AssertTrue(sResult.bValid);
+	AssertInt(64, sResult.uiSize);
+	AssertPointer(pv64, sResult.pvMem);
+
+	sResult = cMemory.Iterate(&sIterator);
+	AssertTrue(sResult.bValid);
+	AssertInt(8192, sResult.uiSize);
+	AssertPointer(pv8192, sResult.pvMem);
+
+	sResult = cMemory.Iterate(&sIterator);
+	AssertFalse(sResult.bValid);
+
+
+	cMemory.Remove(pv8192);
+	sResult = cMemory.StartIteration(&sIterator);
+	AssertTrue(sResult.bValid);
+	AssertInt(48, sResult.uiSize);
+	AssertPointer(pv48, sResult.pvMem);
+
+	sResult = cMemory.Iterate(&sIterator);
+	AssertTrue(sResult.bValid);
+	AssertInt(64, sResult.uiSize);
+	AssertPointer(pv64, sResult.pvMem);
+
+	sResult = cMemory.Iterate(&sIterator);
+	AssertFalse(sResult.bValid);
+
+
+	pv8192 = cMemory.Add(8192);
+	pv9036 = cMemory.Add(9036);
+	sResult = cMemory.StartIteration(&sIterator);
+	AssertTrue(sResult.bValid);
+	AssertInt(48, sResult.uiSize);
+	AssertPointer(pv48, sResult.pvMem);
+
+	sResult = cMemory.Iterate(&sIterator);
+	AssertTrue(sResult.bValid);
+	AssertInt(64, sResult.uiSize);
+	AssertPointer(pv64, sResult.pvMem);
+
+	sResult = cMemory.Iterate(&sIterator);
+	AssertTrue(sResult.bValid);
+	AssertInt(8192, sResult.uiSize);
+	AssertPointer(pv8192, sResult.pvMem);
+
+	sResult = cMemory.Iterate(&sIterator);
+	AssertTrue(sResult.bValid);
+	AssertInt(9036, sResult.uiSize);
+	AssertPointer(pv9036, sResult.pvMem);
+
+	sResult = cMemory.Iterate(&sIterator);
+	AssertFalse(sResult.bValid);
+
+	cMemory.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestGeneralMemory(void)
 {
 	BeginTests();
@@ -304,6 +413,7 @@ void TestGeneralMemory(void)
 	TestGeneralMemoryRemoveAllByArray();
 	TestGeneralMemoryRemoveHalfByArray();
 	TestGeneralMemoryRemoveNoneByArray();
+	TestGeneralMemoryIteration();
 
 	TestStatistics();
 }
