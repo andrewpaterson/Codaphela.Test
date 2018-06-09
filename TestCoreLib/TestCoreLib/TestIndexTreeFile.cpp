@@ -1240,14 +1240,16 @@ void TestIndexTreeFileAddToRoot(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeFileEviction(void)
+void TestIndexTreeFileMemorySize(void)
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cDurableController;
 	CIndexTreeFile				cIndexTree;
 	CIndexTreeFileAccess		cAccess;
+	CTestIndexTreeObject		aaa;
+	CTestIndexTreeObject		aab;
+	BOOL						bResult;
 
-	//This is supposed to be checking that the nodes indexed in file are in sync with the nodes pointed to in memory.
 	cHelper.Init("Output" _FS_"IndexTreeE", "primary", "backup", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
@@ -1255,8 +1257,59 @@ void TestIndexTreeFileEviction(void)
 	cIndexTree.Init(&cDurableController);
 	cAccess.Init(&cIndexTree);
 
-	//cIndexTree.
+	AssertInt(3096, cIndexTree.ByteSize());
+	AssertInt(3096, cIndexTree.GetUserMemorySize());
+	AssertInt(3100, cIndexTree.GetSystemMemorySize());
 
+	aaa.Init("AAA");
+	bResult = cAccess.PutStringPtr(aaa.GetName(), &aaa);
+	AssertTrue(bResult);
+
+	AssertInt(3196, cIndexTree.ByteSize());
+	AssertInt(3196, cIndexTree.GetUserMemorySize());
+	AssertInt(3212, cIndexTree.GetSystemMemorySize());
+
+	aab.Init("AAB");
+	bResult = cAccess.PutStringPtr(aab.GetName(), &aab);
+	AssertTrue(bResult);
+
+	AssertInt(3236, cIndexTree.ByteSize());
+	AssertInt(3236, cIndexTree.GetUserMemorySize());
+	AssertInt(3256, cIndexTree.GetSystemMemorySize());
+
+	cDurableController.End();
+
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cDurableController.Kill();
+
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileEvict(void)
+{
+	CIndexTreeHelper			cHelper;
+	CDurableFileController		cDurableController;
+	CIndexTreeFile				cIndexTree;
+	CIndexTreeFileAccess		cAccess;
+
+	//This is supposed to be checking that the nodes indexed in file are in sync with the nodes pointed to in memory.
+	cHelper.Init("Output" _FS_"IndexTreeF", "primary", "backup", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController);
+	cAccess.Init(&cIndexTree);
+
+	AssertInt(0, cIndexTree.NumElements());
+	AssertInt(1, cIndexTree.NumNodes());
+	AssertInt(0, cIndexTree.NumMemoryElements());
+	AssertInt(1, cIndexTree.NumMemoryNodes())
 
 	cDurableController.End();
 
@@ -1281,6 +1334,7 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileSizeOfs();
 	TestIndexTreeFileInit();
 	TestIndexTreeFileAdd();
+	TestIndexTreeFileMemorySize();
 	TestIndexTreeFileAddToRoot();
 	TestIndexTreeFileAddUnallocated();
 	TestIndexTreeFileReplaceData();
@@ -1294,7 +1348,7 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileRead();
 	TestIndexTreeFileDeleteOnDisk();
 	TestIndexTreeFileComplex();
-	TestIndexTreeFileEviction();
+	TestIndexTreeFileEvict();
 
 	TestStatistics();
 	FastFunctionsKill();
