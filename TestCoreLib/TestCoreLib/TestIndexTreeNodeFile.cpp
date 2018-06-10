@@ -16,8 +16,6 @@ void TestIndexTreeNodeFileSizeofs(void)
 	AssertInt(4, sizeof(CIndexTreeNodeFile*));  //The size of a memory pointer must be (at least) 4 bytes less than CIndexTreeChildNode.
 	AssertInt(8, sizeof(CFileDataIndex));  //SizeOf is 16 but only the first 12 bytes are used.
 
-	AssertInt(sizeof(SIndexTreeChildFile), sizeof(CIndexTreeChildNode));
-	AssertInt(12, sizeof(SIndexTreeChildFile));  //SizeOf is 16 but only the last 4 bytes are used.
 	AssertInt(12, sizeof(CIndexTreeChildNode));  //The above is why the union works 
 
 	AssertInt(24, sizeof(CIndexTreeNodeFile)));  
@@ -38,10 +36,10 @@ void TestIndexTreeNodeFileUnion(void)
 
 	memset(&cChild, 0, sizeof(CIndexTreeChildNode));
 	cChild.u.mcFile.Init();
-	AssertInt(0, cChild.u.msType.iType);
+	AssertInt(0, cChild.iType);
 
 	cChild.u.mpcMemory = (CIndexTreeNodeFile*)0x80808080;
-	AssertInt(0, cChild.u.msType.iType);
+	AssertInt(0, cChild.iType);
 	AssertFalse(cChild.IsValid());
 
 	memset(&cChild, 1, sizeof(CIndexTreeChildNode));
