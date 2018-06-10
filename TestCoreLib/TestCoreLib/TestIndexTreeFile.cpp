@@ -658,6 +658,98 @@ void TestIndexTreeFileRemove(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileRemoveAndEvict(void)
+{
+	char					szAAAA[] = "One and Ony";
+	CIndexTreeFile			cIndexTree;
+	CIndexTreeHelper		cHelper;
+	CDurableFileController	cDurableController;
+	CIndexTreeFileAccess	cAccess;
+	CArrayIndexedFilePtr	apc;
+	CIndexedFile*			pcFile;
+	CArrayBit				ab;
+
+	cHelper.Init("Output" _FS_"IndexTree3c", "primary", "backup", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, FALSE);
+	cAccess.Init(&cIndexTree);
+
+	cIndexTree.Put("AAAA", szAAAA, (unsigned char)strlen(szAAAA) + 1);
+	AssertInt(1, cIndexTree.NumElements());
+	AssertTrue(cIndexTree.Evict("AAAA"));
+
+	apc.Init();
+	cIndexTree.GetFiles(&apc);
+	AssertInt(3, apc.NumElements());
+
+	pcFile = *apc.Get(0);
+	AssertInt(22, pcFile->GetDataSize());
+	ab.Init();
+	AssertInt(1, pcFile->GetUsedDataIndices(&ab));
+	AssertInt(1, ab.NumElements());
+	ab.Kill();
+
+	pcFile = *apc.Get(1);
+	AssertInt(18, pcFile->GetDataSize());
+	ab.Init();
+	AssertInt(3, pcFile->GetUsedDataIndices(&ab));
+	AssertInt(3, ab.NumElements());
+	ab.Kill();
+
+	pcFile = *apc.Get(2);
+	AssertInt(2058, pcFile->GetDataSize());
+	ab.Init();
+	AssertInt(1, pcFile->GetUsedDataIndices(&ab));
+	AssertInt(1, ab.NumElements());
+	ab.Kill();
+	apc.Kill();
+
+
+	AssertTrue(cIndexTree.Remove("AAAA"));
+	AssertTrue(cIndexTree.Evict("AAAA"));
+
+	apc.Init();
+	cIndexTree.GetFiles(&apc);
+	AssertInt(3, apc.NumElements());
+
+	pcFile = *apc.Get(0);
+	AssertInt(22, pcFile->GetDataSize());
+	ab.Init();
+	AssertInt(0, pcFile->GetUsedDataIndices(&ab));
+	AssertInt(1, ab.NumElements());
+	ab.Kill();
+
+	pcFile = *apc.Get(1);
+	AssertInt(18, pcFile->GetDataSize());
+	ab.Init();
+	AssertInt(0, pcFile->GetUsedDataIndices(&ab));
+	AssertInt(3, ab.NumElements());
+	ab.Kill();
+
+	pcFile = *apc.Get(2);
+	AssertInt(2058, pcFile->GetDataSize());
+	ab.Init();
+	AssertInt(1, pcFile->GetUsedDataIndices(&ab));
+	AssertInt(1, ab.NumElements());
+	ab.Kill();
+	apc.Kill();
+
+	cDurableController.End();
+
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cDurableController.Kill();
+
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileDeleteInMemory(void)
 {
 	char					szAA[] = "MEDIUM";
@@ -1712,6 +1804,7 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileFindKey();
 	TestIndexTreeFileResizeData();
 	TestIndexTreeFileRemove();
+	TestIndexTreeFileRemoveAndEvict();
 	TestIndexTreeFileRemoveNearestFirst(TRUE);
 	TestIndexTreeFileRemoveNearestFirst(FALSE);
 	TestIndexTreeFileRemoveFurthestFirst(TRUE);
