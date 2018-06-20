@@ -1810,9 +1810,12 @@ void TestIndexTreeFileEvictComplex(void)
 	AssertTrue(cAccess.DeleteString(szAACAA));
 	AssertTrue(cAccess.DeleteString(szAACBB));
 	AssertLongLongInt(3801, pcMemory->GetTotalAllocatedMemory());
-	cIndexTree.Dump();
 
 	AssertTrue(cIndexTree.Evict(szAABBB));
+	cIndexTree.Dump();
+
+	//cIndexTree.ValidateKey
+
 	AssertTrue(cIndexTree.Evict(szAAAAA));
 	AssertTrue(cIndexTree.Evict(szAAABB));
 	AssertTrue(cIndexTree.Evict(szAABAA));
@@ -1821,7 +1824,7 @@ void TestIndexTreeFileEvictComplex(void)
 	//AssertLongLongInt(3120, pcMemory->GetTotalAllocatedMemory());
 	AssertInt(0, cIndexTree.NumMemoryElements());
 	AssertInt(1, cIndexTree.NumMemoryNodes());
-	cIndexTree.DebugKey("AAAA", 4);
+	cIndexTree.DebugKey("AAAA", 4, FALSE);
 
 	//Also test to make sure that the CIndexedFiles in the tree reflect the correct number of allocated and deleted nodes.
 
