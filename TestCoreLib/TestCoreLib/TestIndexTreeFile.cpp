@@ -725,9 +725,12 @@ void TestIndexTreeFileRemoveAndEvict(void)
 	cIndexTree.Init(&cDurableController, FALSE);
 	cAccess.Init(&cIndexTree);
 
+	AssertTrue(cIndexTree.IsFlushed());
 	cIndexTree.Put("AAAA", szAAAA, (unsigned char)strlen(szAAAA) + 1);
-	AssertInt(1, cIndexTree.NumElements());
+	AssertInt(1, cIndexTree.NumMemoryElements());
+	AssertFalse(cIndexTree.IsFlushed());
 	AssertTrue(cIndexTree.Evict("AAAA"));
+	AssertTrue(cIndexTree.IsFlushed());
 
 	apc.Init();
 	cIndexTree.GetFiles(&apc);
@@ -785,11 +788,13 @@ void TestIndexTreeFileRemoveAndEvict(void)
 	ab.Kill();
 	apc.Kill();
 
+	Flush // doesn't clear the deleted path.
+	cIndexTree.Flush();
+	cIndexTree.ValidateIndexTree();
 	cDurableController.End();
-
-	cAccess.Kill();
 	cIndexTree.Kill();
 	cDurableController.Kill();
+	cAccess.Kill();
 
 	cHelper.Kill(TRUE);
 }
@@ -1732,7 +1737,7 @@ void TestIndexTreeFileMemorySize(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeFileEvict(BOOL bWriteThrough)
+void TestIndexTreeFileEvictNew(BOOL bWriteThrough)
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cDurableController;
@@ -1804,6 +1809,72 @@ void TestIndexTreeFileEvict(BOOL bWriteThrough)
 
 
 //////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileEvictDirty(BOOL bWriteThrough)
+{
+	CIndexTreeHelper			cHelper;
+	CDurableFileController		cDurableController;
+	CIndexTreeFile				cIndexTree;
+	CIndexTreeFileAccess		cAccess;
+	char						szAAA[] = "North";
+	char						szAAAAA[] = "Volcano";
+	char						szA[] = "Tier";
+	char						szAAAB[] = "Abland";
+	CMemoryAllocator			cAllocator;
+	CGeneralMemory*				pcMemory;
+	SLogConfig					sLogConfig;
+
+	cAllocator.Init();
+	pcMemory = cAllocator.GetMemory();
+
+	cHelper.Init("Output" _FS_"IndexTreeFa", "primary", "backup", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, &cAllocator, bWriteThrough);
+	cAccess.Init(&cIndexTree);
+
+	cAccess.PutStringString("AAA", "North");
+	cAccess.PutStringString("AAAAA", "Volcano");
+	cAccess.PutStringString("A", "Tier");
+	cAccess.PutStringString("AAAB", "Abland");
+	AssertTrue(cAccess.Flush());
+	AssertInt(4, cIndexTree.NumMemoryElements());
+	AssertTrue(cIndexTree.ValidateIndexTree(FALSE));
+
+	cAccess.PutStringString("AAA", "South");
+	cAccess.PutStringString("AAAAA", "Dome");
+
+	gcLogger.GetConfig(&sLogConfig);
+	gcLogger.SetBreakOnError(FALSE);
+	AssertFalse(cIndexTree.Evict("AAA"));
+	gcLogger.SetConfig(&sLogConfig);
+	AssertInt(4, cIndexTree.NumMemoryElements());
+	AssertTrue(cIndexTree.Evict("AAAAA"));
+	AssertInt(3, cIndexTree.NumMemoryElements());
+	AssertTrue(cIndexTree.Evict("AAAB"));
+	AssertInt(2, cIndexTree.NumMemoryElements());
+	AssertTrue(cIndexTree.Evict("AAA"));
+	AssertTrue(cIndexTree.ValidateIndexTree(FALSE));
+	AssertInt(1, cIndexTree.NumMemoryElements());
+	AssertTrue(cIndexTree.Evict("A"));
+	AssertInt(0, cIndexTree.NumMemoryElements());
+	AssertTrue(cIndexTree.ValidateIndexTree(FALSE));
+
+	cDurableController.End();
+
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cDurableController.Kill();
+	cAllocator.Kill();
+
+	cHelper.Kill(TRUE);
+}
+
+
+/////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
@@ -1880,7 +1951,7 @@ void TestIndexTreeFileEvictComplexSetup(CDurableFileController* pcDurableControl
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeFileEvictComplex(void)
+void TestIndexTreeFileEvictComplexEvictCloseGet(void)
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cDurableController;
@@ -1906,8 +1977,6 @@ void TestIndexTreeFileEvictComplex(void)
 	AssertLongLongInt(3801, pcMemory->GetTotalAllocatedMemory());
 
 	AssertTrue(cIndexTree.Evict(szAABBB));
-	AssertTrue(cIndexTree.ValidateKey(szAABBB));
-
 	AssertTrue(cIndexTree.Evict(szAAAAA));
 	AssertTrue(cIndexTree.Evict(szAAABB));
 	AssertTrue(cIndexTree.Evict(szAABAA));
@@ -1940,12 +2009,142 @@ void TestIndexTreeFileEvictComplex(void)
 	AssertFalse(cAccess.GetStringString(szAACAA, szDest));
 	AssertFalse(cAccess.GetStringString(szAACBB, szDest));
 	AssertTrue(cIndexTree.ValidateIndexTree());
-	cIndexTree.Dump();
 	cDurableController.End();
 	cIndexTree.Kill();
 
 	cDurableController.Kill();
 	cAllocator.Kill();
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileEvictComplexEvictGetClose(void)
+{
+	CIndexTreeHelper			cHelper;
+	CDurableFileController		cDurableController;
+	CGeneralMemory*				pcMemory;
+	CIndexTreeFile				cIndexTree;
+	CMemoryAllocator			cAllocator;
+	char						szAAAAA[] = "AAAAA";
+	char						szAAABB[] = "AAABB";
+	char						szAABAA[] = "AABAA";
+	char						szAABBB[] = "AABBB";
+	char						szAACAA[] = "AACAA";
+	char						szAACBB[] = "AACBB";
+	CIndexTreeFileAccess		cAccess;
+	char						szDest[16];
+
+	cAllocator.Init();
+	pcMemory = cAllocator.GetMemory();
+
+	cHelper.Init("Output" _FS_"IndexTreeG", "primary", "backup", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	TestIndexTreeFileEvictComplexSetup(&cDurableController, &cIndexTree, &cAllocator);
+	AssertLongLongInt(3801, pcMemory->GetTotalAllocatedMemory());
+
+	AssertTrue(cIndexTree.Evict(szAABBB));
+	AssertTrue(cIndexTree.Evict(szAAAAA));
+	AssertTrue(cIndexTree.Evict(szAAABB));
+	AssertTrue(cIndexTree.Evict(szAABAA));
+	AssertTrue(cIndexTree.Evict(szAACAA));
+	AssertTrue(cIndexTree.Evict(szAACBB));
+
+	AssertInt(0, cIndexTree.NumMemoryElements());
+	AssertInt(3, cIndexTree.NumMemoryNodes());
+	AssertInt(3, cIndexTree.NumElements());
+	AssertInt(11, cIndexTree.NumNodes());
+
+	cAccess.Init(&cIndexTree);
+	AssertTrue(cAccess.GetStringString(szAAAAA, szDest));
+	AssertTrue(cAccess.GetStringString(szAAABB, szDest));
+	AssertTrue(cAccess.GetStringString(szAABAA, szDest));
+	AssertFalse(cAccess.GetStringString(szAABBB, szDest));
+	AssertFalse(cAccess.GetStringString(szAACAA, szDest));
+	AssertFalse(cAccess.GetStringString(szAACBB, szDest));
+
+	cDurableController.End();
+	cIndexTree.Kill();
+	cDurableController.Kill();
+	cAllocator.Kill();
+	cAccess.Kill();
+
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileEvictComplex1(void)
+{
+	CIndexTreeHelper			cHelper;
+	CDurableFileController		cDurableController;
+	CGeneralMemory*				pcMemory;
+	CIndexTreeFile				cIndexTree;
+	CMemoryAllocator			cAllocator;
+	char						szAAAAA[] = "AAAAA";
+	char						szAAABB[] = "AAABB";
+	char						szAABAA[] = "AABAA";
+	char						szAABBB[] = "AABBB";
+	char						szAACAA[] = "AACAA";
+	char						szAACBB[] = "AACBB";
+	CIndexTreeFileAccess		cAccess;
+	char						szDest[16];
+
+	cAllocator.Init();
+	pcMemory = cAllocator.GetMemory();
+
+	cHelper.Init("Output" _FS_"IndexTreeG", "primary", "backup", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	TestIndexTreeFileEvictComplexSetup(&cDurableController, &cIndexTree, &cAllocator);
+	AssertLongLongInt(3801, pcMemory->GetTotalAllocatedMemory());
+
+	AssertTrue(cIndexTree.Evict(szAABBB));
+	AssertTrue(cIndexTree.Evict(szAAABB));
+	AssertTrue(cIndexTree.Evict(szAACAA));
+
+	AssertInt(2, cIndexTree.NumMemoryElements());
+	AssertInt(12, cIndexTree.NumMemoryNodes());
+
+	cAccess.Init(&cIndexTree);
+	AssertTrue(cAccess.GetStringString(szAAAAA, szDest));
+	AssertTrue(cAccess.GetStringString(szAAABB, szDest));
+	AssertTrue(cAccess.GetStringString(szAABAA, szDest));
+	AssertFalse(cAccess.GetStringString(szAABBB, szDest));
+	AssertFalse(cAccess.GetStringString(szAACAA, szDest));
+	AssertFalse(cAccess.GetStringString(szAACBB, szDest));
+
+	cAccess.Flush();
+	cDurableController.End();
+	cIndexTree.Kill();
+	cDurableController.Kill();
+	cAllocator.Kill();
+	cAccess.Kill();
+
+	cAllocator.Init();
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, &cAllocator, FALSE);
+	cAccess.Init(&cIndexTree);
+	AssertTrue(cAccess.GetStringString(szAAAAA, szDest));
+	AssertTrue(cAccess.GetStringString(szAAABB, szDest));
+	AssertTrue(cAccess.GetStringString(szAABAA, szDest));
+	AssertFalse(cAccess.GetStringString(szAABBB, szDest));
+	AssertFalse(cAccess.GetStringString(szAACAA, szDest));
+	AssertFalse(cAccess.GetStringString(szAACBB, szDest));
+	cDurableController.End();
+	cIndexTree.Kill();
+	cDurableController.Kill();
+	cAllocator.Kill();
+	cAccess.Kill();
+
 	cHelper.Kill(TRUE);
 }
 
@@ -1985,9 +2184,13 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileRead();
 	TestIndexTreeFileDeleteOnDisk();
 	TestIndexTreeFileComplex();
-	TestIndexTreeFileEvict(TRUE);
-	TestIndexTreeFileEvict(FALSE);
-	TestIndexTreeFileEvictComplex();
+	TestIndexTreeFileEvictNew(TRUE);
+	TestIndexTreeFileEvictNew(FALSE);
+	TestIndexTreeFileEvictDirty(TRUE);
+	TestIndexTreeFileEvictDirty(FALSE);
+	TestIndexTreeFileEvictComplexEvictCloseGet();
+	TestIndexTreeFileEvictComplexEvictGetClose();
+	TestIndexTreeFileEvictComplex1();
 
 	TestStatistics();
 	FastFunctionsKill();
