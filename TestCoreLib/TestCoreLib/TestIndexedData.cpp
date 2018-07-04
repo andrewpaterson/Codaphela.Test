@@ -423,8 +423,8 @@ void TestIndexedData(void)
 	TypeConverterInit();
 	BeginTests();
 
-	//TestIndexedDataCacheEviction();
-	//TestIndexedDataLargeData();
+	TestIndexedDataCacheEviction();
+	TestIndexedDataLargeData();
 	TestIndexedDataIndexedAdd();
 	TestIndexedDataDescriptorCaching();
 	TestIndexedDataNoCaching(FALSE);
