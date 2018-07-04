@@ -611,7 +611,7 @@ void TestIndexTreeFileRemoveFurthestFirst(BOOL bWriteThrough)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeFileRemove(void)
+void TestIndexTreeFileRemove(BOOL bWriteThrough)
 {
 	char					szAAAA[] = "One and Ony";
 	CIndexTreeFile			cIndexTree;
@@ -622,7 +622,7 @@ void TestIndexTreeFileRemove(void)
 	CIndexedFile*			pcFile;
 	CArrayBit				ab;
 
-	cHelper.Init("Output" _FS_"IndexTree3b", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree3b", "primary", "backup", bWriteThrough);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
@@ -709,7 +709,7 @@ void TestIndexTreeFileRemove(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileRemoveAndEvict(void)
 {
-	char					szAAAA[] = "One and Ony";
+	char					szAAAA[] = "One and Only";
 	CIndexTreeFile			cIndexTree;
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cDurableController;
@@ -737,7 +737,7 @@ void TestIndexTreeFileRemoveAndEvict(void)
 	AssertInt(3, apc.NumElements());
 
 	pcFile = *apc.Get(0);
-	AssertInt(22, pcFile->GetDataSize());
+	AssertInt(23, pcFile->GetDataSize());
 	ab.Init();
 	AssertInt(1, pcFile->GetUsedDataIndices(&ab));
 	AssertInt(1, ab.NumElements());
@@ -767,7 +767,7 @@ void TestIndexTreeFileRemoveAndEvict(void)
 	AssertInt(3, apc.NumElements());
 
 	pcFile = *apc.Get(0);
-	AssertInt(22, pcFile->GetDataSize());
+	AssertInt(23, pcFile->GetDataSize());
 	ab.Init();
 	AssertInt(0, pcFile->GetUsedDataIndices(&ab));
 	AssertInt(1, ab.NumElements());
@@ -788,8 +788,6 @@ void TestIndexTreeFileRemoveAndEvict(void)
 	ab.Kill();
 	apc.Kill();
 
-	Flush // doesn't clear the deleted path.
-	cIndexTree.Flush();
 	cIndexTree.ValidateIndexTree();
 	cDurableController.End();
 	cIndexTree.Kill();
@@ -1782,6 +1780,14 @@ void TestIndexTreeFileEvictNew(BOOL bWriteThrough)
 	AssertInt(5, cIndexTree.NumMemoryNodes());
 
 	AssertTrue(cIndexTree.Evict("AAAB"));
+	AssertLongLongInt(3227, pcMemory->GetTotalAllocatedMemory());
+	AssertInt(2, cIndexTree.NumMemoryElements());
+	AssertInt(4, cIndexTree.NumMemoryNodes());
+	AssertTrue(cIndexTree.Evict("AAA"));
+	AssertLongLongInt(3137, pcMemory->GetTotalAllocatedMemory());
+	AssertInt(1, cIndexTree.NumMemoryElements());
+	AssertInt(2, cIndexTree.NumMemoryNodes());
+	AssertTrue(cIndexTree.Evict("A"));
 	AssertLongLongInt(3096, pcMemory->GetTotalAllocatedMemory());
 	AssertInt(0, cIndexTree.NumMemoryElements());
 	AssertInt(1, cIndexTree.NumMemoryNodes());
@@ -2169,7 +2175,8 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileReplaceData();
 	TestIndexTreeFileFindKey();
 	TestIndexTreeFileResizeData();
-	TestIndexTreeFileRemove();
+	TestIndexTreeFileRemove(TRUE);
+	TestIndexTreeFileRemove(FALSE);
 	TestIndexTreeFileRemoveAndEvict();
 	TestIndexTreeFileRemoveNearestFirst(TRUE);
 	TestIndexTreeFileRemoveNearestFirst(FALSE);
