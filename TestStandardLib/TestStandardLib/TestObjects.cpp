@@ -677,7 +677,7 @@ void TestObjects(void)
 	TestObjectsFlushNoClear();
 	TestObjectsFlushClearGetByOid();
 	TestObjectsFlushClearGetByName();
-//	TestObjectsFlushDurable();
+	TestObjectsFlushDurable();
 	TestObjectsEvict();
 	TestObjectDehollowfication();
 

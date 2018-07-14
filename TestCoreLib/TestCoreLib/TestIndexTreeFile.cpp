@@ -191,8 +191,6 @@ void TestIndexTreeFileAdd(void)
 }
 
 
-
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -438,9 +436,9 @@ void TestIndexTreeFileResizeData(void)
 
 	pcNode = cIndexTree.GetNode("A", 1);
 	pcOldNode = pcNode;
-	AssertInt(3, pcNode->GetNumIndexes());
-	AssertInt(2, pcNode->NumInitialisedIndexes());
-	AssertInt(0, pcNode->GetObjectSize());
+	AssertInt(3, pcNode->NumIndexes());
+	AssertInt(2, pcNode->NumValidIndexes());
+	AssertInt(0, pcNode->ObjectSize());
 	iNodeMemoryOffset1 = (size_t)pcNode->GetNodesMemory() - (size_t)pcNode;
 	AssertInt(cIndexTree.SizeofNode(), iNodeMemoryOffset1);
 
@@ -448,11 +446,11 @@ void TestIndexTreeFileResizeData(void)
 
 	pcNode = cIndexTree.GetNode("A", 1);
 	AssertFalse(pcNode == pcOldNode);
-	AssertInt(3, pcNode->GetNumIndexes());
-	AssertInt(2, pcNode->NumInitialisedIndexes());
-	AssertInt(18, pcNode->GetObjectSize());
+	AssertInt(3, pcNode->NumIndexes());
+	AssertInt(2, pcNode->NumValidIndexes());
+	AssertInt(18, pcNode->ObjectSize());
 	iNodeMemoryOffset2 = (size_t)pcNode->GetNodesMemory() - (size_t)pcNode;
-	AssertInt(cIndexTree.SizeofNode() + pcNode->GetObjectSize(), iNodeMemoryOffset2);
+	AssertInt(cIndexTree.SizeofNode() + pcNode->ObjectSize(), iNodeMemoryOffset2);
 	AssertTrue(iNodeMemoryOffset2 > iNodeMemoryOffset1);
 
 	AssertString(szAAObject, GetString(&cIndexTree, "AA"));
