@@ -7,6 +7,7 @@
 #include "CoreLib/IndexTreeEvictedNodeList.h"
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexTreeEvictingAccess.h"
+#include "CoreLib/IndexTreeEvictionStrategyRandom.h"
 #include "TestLib/Assert.h"
 
 
@@ -16,15 +17,16 @@
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeEvictingPut(BOOL bWriteThrough)
 {
-	CIndexTreeEvicting			cIndexTree;
-	CIndexTreeEvictedNodeList	cEvictedNodes;
-	CIndexTreeHelper			cHelper;
-	CDurableFileController		cDurableController;
-	CIndexTreeEvictingAccess	cAccess;
-	CMemoryAllocator			cAllocator;
-	CGeneralMemory*				pcMemory;
-	int							x;
-	int							y;
+	CIndexTreeEvicting					cIndexTree;
+	CIndexTreeEvictedNodeList			cEvictedNodes;
+	CIndexTreeHelper					cHelper;
+	CDurableFileController				cDurableController;
+	CIndexTreeEvictingAccess			cAccess;
+	CMemoryAllocator					cAllocator;
+	CGeneralMemory*						pcMemory;
+	int									x;
+	int									y;
+	CIndexTreeEvictionStrategyRandom	cStrategy;
 	
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
@@ -33,7 +35,8 @@ void TestIndexTreeEvictingPut(BOOL bWriteThrough)
 
 	cDurableController.Begin();
 	cEvictedNodes.Init();
-	cIndexTree.Init(&cDurableController, 3656, &cEvictedNodes, &cAllocator, bWriteThrough);
+	cStrategy.Init();
+	cIndexTree.Init(&cDurableController, 3656, &cEvictedNodes, &cStrategy, &cAllocator, bWriteThrough);
 	cAccess.Init(&cIndexTree);
 
 	AssertLongLongInt(3096, pcMemory->GetTotalAllocatedMemory());
@@ -72,6 +75,7 @@ void TestIndexTreeEvictingPut(BOOL bWriteThrough)
 	cAccess.Kill();
 	cIndexTree.Kill();
 	cEvictedNodes.Kill();
+	cStrategy.Kill();
 	cDurableController.Kill();
 	cHelper.Kill(TRUE);
 }
