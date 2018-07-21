@@ -11,7 +11,7 @@ void TestStackMemoryCompilation(void)
 	CStackMemory<>	cTemp;
 	void*			pv;
 
-	pv = cTemp.Init(5 KB);
+	pv = cTemp.Init(3 KB);
 	AssertPointer(&cTemp, pv);
 	cTemp.Kill();
 

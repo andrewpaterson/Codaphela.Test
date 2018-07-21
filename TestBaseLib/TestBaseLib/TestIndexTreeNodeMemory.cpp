@@ -43,7 +43,7 @@ void TestIndexTreeNodeMemoryInit(void)
 	AssertFalse(pcNode->IsEmpty());
 	AssertTrue(pcNode->HasNodes());
 	AssertFalse(pcNode->HasObject());
-	AssertInt(1, pcNode->NumInitialisedIndexes());
+	AssertInt(1, pcNode->NumValidIndexes());
 	AssertTrue(pcNode->ValidateNodesEmpty());
 
 	pcResult = pcNode->Get(33);
@@ -109,7 +109,7 @@ void TestIndexTreeNodeMemoryContain(void)
 	pcNode1->Init(&cTree, NULL, 0);
 	pcNode1->Contain(8);
 	AssertInt(8, pcNode1->GetFirstIndex());
-	AssertInt(1, pcNode1->GetNumIndexes());
+	AssertInt(1, pcNode1->NumIndexes());
 	AssertInt(8, pcNode1->GetLastIndex());
 	AssertTrue(pcNode1->ContainsIndex(8));
 	AssertNull(pcNode1->Get(8));
@@ -118,7 +118,7 @@ void TestIndexTreeNodeMemoryContain(void)
 
 	pcNode1->Contain(9);
 	AssertInt(8, pcNode1->GetFirstIndex());
-	AssertInt(2, pcNode1->GetNumIndexes());
+	AssertInt(2, pcNode1->NumIndexes());
 	AssertInt(9, pcNode1->GetLastIndex());
 	AssertNull(pcNode1->Get(9));
 	pcNode1->Set(9, pcNode3);
@@ -126,7 +126,7 @@ void TestIndexTreeNodeMemoryContain(void)
 	
 	pcNode1->Contain(7);
 	AssertInt(7, pcNode1->GetFirstIndex());
-	AssertInt(3, pcNode1->GetNumIndexes());
+	AssertInt(3, pcNode1->NumIndexes());
 	AssertInt(9, pcNode1->GetLastIndex());
 	AssertNull(pcNode1->Get(7));
 	pcNode1->Set(7, pcNode4);
@@ -134,7 +134,7 @@ void TestIndexTreeNodeMemoryContain(void)
 
 	pcNode1->Contain(2);
 	AssertInt(2, pcNode1->GetFirstIndex());
-	AssertInt(8, pcNode1->GetNumIndexes());
+	AssertInt(8, pcNode1->NumIndexes());
 	AssertInt(9, pcNode1->GetLastIndex());
 	AssertNull(pcNode1->Get(2));
 	AssertNull(pcNode1->Get(3));
@@ -152,7 +152,7 @@ void TestIndexTreeNodeMemoryContain(void)
 
 	pcNode1->Contain(14);
 	AssertInt(2, pcNode1->GetFirstIndex());
-	AssertInt(13, pcNode1->GetNumIndexes());
+	AssertInt(13, pcNode1->NumIndexes());
 	AssertInt(14, pcNode1->GetLastIndex());
 	AssertNotNull(pcNode1->Get(9));
 	AssertNull(pcNode1->Get(10));
@@ -234,66 +234,66 @@ void TestIndexTreeNodeMemoryUncontain(void)
 
 	pcNode1->Contain(8);
 	AssertInt(8, pcNode1->GetFirstIndex());
-	AssertInt(1, pcNode1->GetNumIndexes());
+	AssertInt(1, pcNode1->NumIndexes());
 	AssertInt(8, pcNode1->GetLastIndex());
 	AssertFalse(pcNode1->IsEmpty());
 
 	pcNode1->Uncontain(8);
 	AssertTrue(pcNode1->IsEmpty());
 	AssertInt(0, pcNode1->GetFirstIndex());
-	AssertInt(0, pcNode1->GetNumIndexes());
+	AssertInt(0, pcNode1->NumIndexes());
 	AssertInt(0, pcNode1->GetLastIndex());
 
 	pcNode1->Contain(254);
 	AssertInt(254, pcNode1->GetFirstIndex());
-	AssertInt(1, pcNode1->GetNumIndexes());
+	AssertInt(1, pcNode1->NumIndexes());
 	AssertInt(254, pcNode1->GetLastIndex());
 	AssertFalse(pcNode1->IsEmpty());
 
 	pcNode1->Uncontain(254);
 	AssertTrue(pcNode1->IsEmpty());
 	AssertInt(0, pcNode1->GetFirstIndex());
-	AssertInt(0, pcNode1->GetNumIndexes());
+	AssertInt(0, pcNode1->NumIndexes());
 	AssertInt(0, pcNode1->GetLastIndex());
 
 	pcNode1->Contain(0);
 	AssertInt(0, pcNode1->GetFirstIndex());
-	AssertInt(1, pcNode1->GetNumIndexes());
+	AssertInt(1, pcNode1->NumIndexes());
 	AssertInt(0, pcNode1->GetLastIndex());
 	AssertFalse(pcNode1->IsEmpty());
 	pcNode1->Contain(1);
 	AssertInt(0, pcNode1->GetFirstIndex());
-	AssertInt(2, pcNode1->GetNumIndexes());
+	AssertInt(2, pcNode1->NumIndexes());
 	AssertInt(1, pcNode1->GetLastIndex());
 	AssertFalse(pcNode1->IsEmpty());
 	pcNode1->Uncontain(0);
 	AssertInt(1, pcNode1->GetFirstIndex());
-	AssertInt(1, pcNode1->GetNumIndexes());
+	AssertInt(1, pcNode1->NumIndexes());
 	AssertInt(1, pcNode1->GetLastIndex());
 	AssertFalse(pcNode1->IsEmpty());
 	pcNode1->Uncontain(1);
 	AssertInt(0, pcNode1->GetFirstIndex());
-	AssertInt(0, pcNode1->GetNumIndexes());
+	AssertInt(0, pcNode1->NumIndexes());
 	AssertInt(0, pcNode1->GetLastIndex());
 
 	pcNode1->Contain(1);
 	AssertInt(1, pcNode1->GetFirstIndex());
-	AssertInt(1, pcNode1->GetNumIndexes());
+	AssertInt(1, pcNode1->NumIndexes());
 	AssertInt(1, pcNode1->GetLastIndex());
 	AssertFalse(pcNode1->IsEmpty());
 	pcNode1->Contain(0);
 	AssertInt(0, pcNode1->GetFirstIndex());
-	AssertInt(2, pcNode1->GetNumIndexes());
+	AssertInt(2, pcNode1->NumIndexes());
 	AssertInt(1, pcNode1->GetLastIndex());
 	AssertFalse(pcNode1->IsEmpty());
 	pcNode1->Uncontain(1);
 	AssertInt(0, pcNode1->GetFirstIndex());
-	AssertInt(1, pcNode1->GetNumIndexes());
+	AssertInt(1, pcNode1->NumIndexes());
 	AssertInt(0, pcNode1->GetLastIndex());
 	AssertFalse(pcNode1->IsEmpty());
 	pcNode1->Uncontain(0);
 	AssertInt(0, pcNode1->GetFirstIndex());
-	AssertInt(0, pcNode1->GetNumIndexes());
+	AssertInt(0, pcNode1->NumIndexes());
 	AssertInt(0, pcNode1->GetLastIndex());
 
 	TestIndexTreeNodeMemoryFree(pcNode1);
@@ -325,7 +325,7 @@ void TestIndexTreeNodeMemoryFindNotEmpty(void)
 	pcNode1->Contain(8);
 	pcNode1->Contain(22);
 	AssertInt(8, pcNode1->GetFirstIndex());
-	AssertInt(15, pcNode1->GetNumIndexes());
+	AssertInt(15, pcNode1->NumIndexes());
 	AssertInt(22, pcNode1->GetLastIndex());
 	AssertFalse(pcNode1->IsEmpty());
 
@@ -346,7 +346,7 @@ void TestIndexTreeNodeMemoryFindNotEmpty(void)
 	pcNode1->Set(8, NULL);
 	pcNode1->Uncontain(8);
 	AssertInt(10, pcNode1->GetFirstIndex());
-	AssertInt(13, pcNode1->GetNumIndexes());
+	AssertInt(13, pcNode1->NumIndexes());
 	AssertInt(22, pcNode1->GetLastIndex());
 	AssertNull(pcNode1->Get(8));
 	AssertPointer(pcNode3, pcNode1->Get(10));
@@ -357,7 +357,7 @@ void TestIndexTreeNodeMemoryFindNotEmpty(void)
 	pcNode1->Set(22, NULL);
 	pcNode1->Uncontain(22);
 	AssertInt(10, pcNode1->GetFirstIndex());
-	AssertInt(11, pcNode1->GetNumIndexes());
+	AssertInt(11, pcNode1->NumIndexes());
 	AssertInt(20, pcNode1->GetLastIndex());
 	AssertNull(pcNode1->Get(8));
 	AssertPointer(pcNode3, pcNode1->Get(10));
@@ -367,7 +367,7 @@ void TestIndexTreeNodeMemoryFindNotEmpty(void)
 	pcNode1->Set(10, NULL);
 	pcNode1->Uncontain(10);
 	AssertInt(20, pcNode1->GetFirstIndex());
-	AssertInt(1, pcNode1->GetNumIndexes());
+	AssertInt(1, pcNode1->NumIndexes());
 	AssertInt(20, pcNode1->GetLastIndex());
 	AssertNull(pcNode1->Get(8));
 	AssertNull(pcNode1->Get(10));
@@ -378,7 +378,7 @@ void TestIndexTreeNodeMemoryFindNotEmpty(void)
 	pcNode1->Set(20, NULL);
 	pcNode1->Uncontain(20);
 	AssertInt(0, pcNode1->GetFirstIndex());
-	AssertInt(0, pcNode1->GetNumIndexes());
+	AssertInt(0, pcNode1->NumIndexes());
 	AssertInt(0, pcNode1->GetLastIndex());
 	AssertNull(pcNode1->Get(8));
 	AssertNull(pcNode1->Get(10));
