@@ -52,6 +52,9 @@
     <Filter Include="Source\File\Indexed\Index\Evicting">
       <UniqueIdentifier>{b6091621-d2d2-4478-824b-42c9c5c04a7b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\File\Indexed\Cache">
+      <UniqueIdentifier>{7e26f353-db33-4d82-aaf3-a30a528aedea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -102,9 +105,6 @@
     <ClCompile Include="TestFiles.cpp">
       <Filter>Source\File\Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestIndexedFile.cpp">
-      <Filter>Source\File\Indexed</Filter>
-    </ClCompile>
     <ClCompile Include="TestLogFile.cpp">
       <Filter>Source\File\Log</Filter>
     </ClCompile>
@@ -140,6 +140,12 @@
     </ClCompile>
     <ClCompile Include="TestIndexTreeEvicting.cpp">
       <Filter>Source\File\Indexed\Index\Evicting</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexedFilesCache.cpp">
+      <Filter>Source\File\Indexed\Cache</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexedFile.cpp">
+      <Filter>Source\File\Indexed\Data</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
