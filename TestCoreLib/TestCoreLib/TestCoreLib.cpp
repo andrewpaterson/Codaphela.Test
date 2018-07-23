@@ -26,7 +26,7 @@ void TestFunctionCaller(void);
 void TestNumber(void);
 void TestFiles(void);
 void TestPackFilesPacker(void);
-void TestIndexedFilesCache(void);
+void TestIndexedFilesEvicting(void);
 void TestIndexTreeEvicting(void);
 
 
@@ -63,7 +63,7 @@ int main(void)
 	TestIndexTreeAccess();
 	TestIndexTreeWriter();
 	TestIndexTreeEvicting();
-	TestIndexedFilesCache();
+	TestIndexedFilesEvicting();
 	TestIndexedData();
 
 	return TestTotalStatistics();

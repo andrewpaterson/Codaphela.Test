@@ -1,7 +1,7 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TypeConverter.h"
-#include "CoreLib/IndexedFilesCache.h"
+#include "CoreLib/IndexedFilesEvicting.h"
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexedFilesEvictedDescriptorList.h"
 #include "TestLib/Assert.h"
@@ -12,9 +12,9 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexedFilesCacheSomething(BOOL bWriteThrough)
+void TestIndexedFilesEvictingSomething(BOOL bWriteThrough)
 {
-	CIndexedFilesCache						mcFileCache;
+	CIndexedFilesEvicting						mcFileCache;
 	CDurableFileController					cDurableController;
 	CIndexTreeHelper						cHelper;
 	CIndexedFilesEvictedDescriptorList		cCallback;
@@ -73,14 +73,14 @@ void TestIndexedFilesCacheSomething(BOOL bWriteThrough)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexedFilesCache(void)
+void TestIndexedFilesEvicting(void)
 {
 	FastFunctionsInit();
 	TypeConverterInit();
 	BeginTests();
 
-	TestIndexedFilesCacheSomething(FALSE);
-	TestIndexedFilesCacheSomething(TRUE);
+	TestIndexedFilesEvictingSomething(FALSE);
+	TestIndexedFilesEvictingSomething(TRUE);
 
 	TestStatistics();
 	FastFunctionsKill();
