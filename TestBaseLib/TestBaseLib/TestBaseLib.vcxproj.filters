@@ -118,6 +118,12 @@
     <Filter Include="Source\Data\Array\Embedded">
       <UniqueIdentifier>{54544f2f-36a6-4285-b327-8eb77f822792}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Data\Map\String">
+      <UniqueIdentifier>{41ea07bd-fab8-4567-82da-4369d44d629a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Map\Primitive">
+      <UniqueIdentifier>{75ee2fe2-6f73-4a20-ad84-62e1b62491d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -137,9 +143,6 @@
     </ClCompile>
     <ClCompile Include="TestDate.cpp">
       <Filter>Source\Data\Time</Filter>
-    </ClCompile>
-    <ClCompile Include="TestMapInt.cpp">
-      <Filter>Source\Data\Map</Filter>
     </ClCompile>
     <ClCompile Include="TestBufferedFile.cpp">
       <Filter>Source\File</Filter>
@@ -203,9 +206,6 @@
     </ClCompile>
     <ClCompile Include="FileIOTestObjects.cpp">
       <Filter>Source\File\IO</Filter>
-    </ClCompile>
-    <ClCompile Include="TestMapString.cpp">
-      <Filter>Source\Data\Map</Filter>
     </ClCompile>
     <ClCompile Include="TestIndexTreeTemplate.cpp">
       <Filter>Source\Data\Index</Filter>
@@ -344,6 +344,15 @@
     </ClCompile>
     <ClCompile Include="TestCountingAllocator.cpp">
       <Filter>Source\Memory\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMapString.cpp">
+      <Filter>Source\Data\Map\String</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMapInt.cpp">
+      <Filter>Source\Data\Map\Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMapLong.cpp">
+      <Filter>Source\Data\Map\Primitive</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

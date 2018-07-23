@@ -65,7 +65,7 @@ void TestIndexedFilesCacheSomething(BOOL bWriteThrough)
 	cDurableController.Kill();
 	cHelper.Kill(TRUE);
 
-	XXX // Actually test shit for eviction.
+	// Actually test shit for eviction.
 }
 
 

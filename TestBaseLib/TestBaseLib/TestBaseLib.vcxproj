@@ -141,6 +141,7 @@
     <ClCompile Include="TestListVariable.cpp" />
     <ClCompile Include="TestMap.cpp" />
     <ClCompile Include="TestMapBlock.cpp" />
+    <ClCompile Include="TestMapLong.cpp" />
     <ClCompile Include="TestMapString.cpp" />
     <ClCompile Include="TestMemoryAllocator.cpp" />
     <ClCompile Include="TestMemoryBlock.cpp" />
