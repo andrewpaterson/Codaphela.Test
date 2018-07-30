@@ -1,3 +1,7 @@
+#define _CRTDBG_MAP_ALLOC  
+#include <stdlib.h>  
+#include <crtdbg.h>  
+
 #include "TestLib/Assert.h"
 
 
@@ -78,6 +82,8 @@ void TestCSVFileImmutable(void);
 //////////////////////////////////////////////////////////////////////////
 int main(void)
 {
+	int iResult;
+
 	InitTotalStatistics();
 
 	TestPrimitiveTypes();
@@ -100,21 +106,22 @@ int main(void)
 	TestListBlock();
 	TestListTemplate();
 	TestListCharsMinimal();
-	TestListVariable();
-	TestConstructors();
+	//_CrtSetBreakAlloc(830);
+	TestListVariable();  // <-- Memory Leak
+	TestConstructors();  // <-- Memory Leak
 	TestConstructorCall();
 	TestLinkedListBlockAligned();
 	TestAllocator();
 	TestFreeList();
-	TestFreeListAllocator();
-	TestChars();
+	TestFreeListAllocator();  // <-- Memory Leak
+	TestChars();  // <-- Memory Leak
 	TestStringHelper();
 	TestTextParser();
 	TestDate();
 	TestNumbers();
-	TestArrayTemplate();
+	TestArrayTemplate();  // <-- Memory Leak
 	TestIndexTreeNodeMemory();
-	TestIndexTreeMemory();
+	TestIndexTreeMemory();  // <-- Memory Leak
 	TestIndexTreeTemplate();
 	TestIndexTreeIterator();
 	TestArrayDenseTemplate();
@@ -124,32 +131,34 @@ int main(void)
 	TestBufferedFile();
 	TestMD5File();
 	TestSorting();
-	TestArrayBit();
-	TestArrayTemplateEmbedded();
+	TestArrayBit();  // <-- Memory Leak
+	TestArrayTemplateEmbedded();  // <-- Memory Leak
 	TestLinkedListTemplate();
-	TestTreeTemplate();
-	TestCSVFileEditable();
-	TestGeneralMemory();
-	TestDataMemory();
-	TestMemoryAllocator();
+	TestTreeTemplate();  // <-- Memory Leak
+	TestCSVFileEditable();  // <-- Memory Leak
+	TestGeneralMemory();  // <-- Memory Leak
+	TestDataMemory();  // <-- Memory Leak
+	TestMemoryAllocator();  // <-- Memory Leak
 	TestCountingAllocator();
 	TestTrackingAllocator();
 	TestScratchPad();
-	TestScratchPadAllocator();
+	TestScratchPadAllocator();  // <-- Memory Leak
 	TestMemoryStack();
 	TestMemoryCache();
 	TestMemoryBlock();
-	TestTemporaryMemory();
+	TestTemporaryMemory();  // <-- Memory Leak
 	TestStackMemoryCompilation();
-	TestFileUtil();
+	TestFileUtil();  // <-- Memory Leak
 	TestFileFinder();
-	TestChunkFile();
-	TestChunkFileFile();
-	TestPackFile();
-	TestFileIO();
-	TestFileSystem();
+	TestChunkFile();  // <-- Memory Leak
+	TestChunkFileFile();  // <-- Memory Leak
+	TestPackFile();  // <-- Memory Leak
+	TestFileIO();  // <-- Memory Leak
+	TestFileSystem();  // <-- Memory Leak
 	TestCSVFileImmutable();
 
-	return TestTotalStatistics();
+	iResult = TestTotalStatistics();
+	_CrtDumpMemoryLeaks();
+	return iResult;
 }
 

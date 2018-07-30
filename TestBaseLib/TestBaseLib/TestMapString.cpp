@@ -38,6 +38,8 @@ void TestMapStringTemplate(void)
 	AssertDouble(1.0, *pd, 2);
 	szKey = cMap.GetKeyForData(pd);
 	AssertString("A", szKey);
+
+	cMap.Kill();
 }
 
 
