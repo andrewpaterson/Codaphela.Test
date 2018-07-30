@@ -31,13 +31,16 @@ void TestIndexedFilesEvictingFlush(BOOL bWriteThrough)
 	AssertTrue(cDurableController.Begin());
 	iLenMoreover = strlen(szMoreover) + 1;
 	oi = 45;
+	AssertInt(0, cCallback.NumCached());
 
 	AssertTrue(cCallback.Add(oi, szMoreover, iLenMoreover, 0));
 	AssertTrue(cCallback.TestGetDescriptor(oi, NULL));
+	AssertInt(1, cCallback.NumCached());
 
 	AssertTrue(cCallback.Get(oi, &uiSize, sz, 200));
 	AssertInt(iLenMoreover, uiSize);
 	AssertString(szMoreover, sz);
+	AssertInt(1, cCallback.NumCached());
 	AssertTrue(cCallback.Flush(TRUE));
 
 	AssertTrue(cDurableController.End());

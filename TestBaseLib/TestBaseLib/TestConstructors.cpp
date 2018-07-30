@@ -30,6 +30,9 @@ void TestConstructorsAdd(void)
 	AssertInt(2, pcSuper2->Method2());
 	AssertInt(0, pcSuper2->j);
 
+	gcSystemAllocator.Free(pcClass);
+	gcSystemAllocator.Free(pcSuper2);
+
 	cConstructors.Kill();
 }
 
