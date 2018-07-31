@@ -363,6 +363,7 @@ void TestArrayTemplateMisc(void)
 	AssertInt(3, psReturn->i1);
 	AssertInt(4, psReturn->i2);
 
+	cArray.Kill();
 }
 
 

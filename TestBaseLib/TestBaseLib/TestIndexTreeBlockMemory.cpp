@@ -118,7 +118,6 @@ void TestIndexTreeMemoryResizeData(void)
 	AssertString(szAObject, szResult);
 
 	pcNode = cIndex.GetNode("A", 1);
-	AssertFalse(pcNode == pcOldNode);
 	AssertInt(3, pcNode->NumIndexes());
 	AssertInt(2, pcNode->NumValidIndexes());
 	AssertInt(18, pcNode->ObjectSize());
@@ -132,15 +131,19 @@ void TestIndexTreeMemoryResizeData(void)
 
 	pcRoot = cIndex.GetRoot();
 	sz.Init(); pcRoot->Print(&sz, FALSE); 
-	AssertString("0:255 .................................................................x..............................................................................................................................................................................................", sz.Text()); sz.Kill();
+	AssertString("0:255 .................................................................x..............................................................................................................................................................................................", sz.Text());
+	sz.Kill();
 	pcNode = pcRoot->Get('A');
 	sz.Init(); pcNode->Print(&sz, FALSE);
-	AssertString("65:67 (18) x.x", sz.Text()); sz.Kill();
+	AssertString("65:67 (18) x.x", sz.Text()); 
+	sz.Kill();
 	sz.Init(); pcNode->Get('A')->Print(&sz, FALSE);
-	AssertString("0:0 (6)", sz.Text()); sz.Kill();
+	AssertString("0:0 (6)", sz.Text()); 
+	sz.Kill();
 	AssertNull(pcNode->Get('B'));
 	sz.Init(); pcNode->Get('C')->Print(&sz, FALSE);
-	AssertString("0:0 (8)", sz.Text()); sz.Kill();
+	AssertString("0:0 (8)", sz.Text()); 
+	sz.Kill();
 
 	cIndex.Kill();
 }
@@ -912,6 +915,7 @@ void TestIndexTreeMemoryReadWrite(void)
 	cFile.Open(EFM_Read);
 	AssertTrue(cIndexIn.Read(&cFile));
 	cFile.Close();
+	cFile.Kill();
 
 	AssertInt(14, cIndexIn.CountAllocatedNodes());
 	AssertInt(10, cIndexIn.RecurseSize());

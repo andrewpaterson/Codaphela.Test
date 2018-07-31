@@ -175,6 +175,7 @@ void TestArrayBitReadWrite(void)
 
 	cArrayBitIn.Kill();
 	cFile.Close();
+	cFile.Kill();
 }
 
 

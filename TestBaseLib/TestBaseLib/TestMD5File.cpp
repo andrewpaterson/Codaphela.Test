@@ -33,6 +33,7 @@ void TestMD5FileWrite(void)
 	cFile.Close();
 	AssertMD5(ucFoxMD5, cHashFile.msMD5Context.digest);
 	cFile.Kill();
+	cHashFile.Kill();
 
 	cHashFile.Init(MemoryFile());
 	cFile.Init(&cHashFile);
@@ -61,6 +62,7 @@ void TestMD5FileWrite(void)
 	bEndOfFile = cFile.IsEndOfFile();
 	AssertTrue(bEndOfFile);
 	cFile.Kill();
+	cHashFile.Kill();
 
 	cHashFile.Init(MemoryFile());
 	cFile.Init(&cHashFile);
@@ -69,6 +71,7 @@ void TestMD5FileWrite(void)
 	cFile.Close();
 	AssertMD5(ucLoremMD5, cHashFile.msMD5Context.digest);
 	cFile.Kill();
+	cHashFile.Kill();
 }
 
 
