@@ -152,12 +152,12 @@ void TestSplit(void)
 	cStrings.Init();
 	sz.Init("A.B");
 	sz.Split(&cStrings, '.');
-
+	sz.Kill();
 	AssertInt(2, cStrings.NumElements());
 	AssertString("A", cStrings.Get(0)->Text());
 	AssertString("B", cStrings.Get(1)->Text());
-
-
+	cStrings.Kill();
+	
 	sz.Init("\
 Turburust CoreLib is free software: you can redistribute it and/or modify\n\
 it under the terms of the GNU Lesser General Public License as published by\n\
@@ -174,7 +174,6 @@ the Free Software Foundation, either version 3 of the License, or\n\
 	AssertString("it under the terms of the GNU Lesser General Public License as published by", cStrings.Get(1)->Text());
 	AssertString("the Free Software Foundation, either version 3 of the License, or", cStrings.Get(2)->Text());
 	AssertString("(at your option) any later version.", cStrings.Get(3)->Text());
-
 	cStrings.Kill();
 
 	cStrings.Fake();
@@ -209,6 +208,7 @@ the Free Software Foundation, either version 3 of the License, or\n\
 	AssertString("Of", cStrings.Get(2)->Text());
 	AssertString("Doom", cStrings.Get(3)->Text());
 	AssertString("", cStrings.Get(4)->Text());
+	cStrings.Kill();
 
 	sz.Init("\\Names\\Of\\Doom\\");
 	cStrings.Fake();

@@ -108,13 +108,13 @@ int main(void)
 	//TestListCharsMinimal();
 	//TestListVariable();
 	//TestConstructors();
-	_CrtSetBreakAlloc(88);
 	//TestConstructorCall();
 	//TestLinkedListBlockAligned();
 	//TestAllocator();
 	//TestFreeList();
-	TestFreeListAllocator();  // <-- Memory Leak
-	//TestChars();  // <-- Memory Leak
+	//TestFreeListAllocator();
+	//_CrtSetBreakAlloc(128);
+	TestChars();  // <-- Memory Leak
 	//TestStringHelper();
 	//TestTextParser();
 	//TestDate();
