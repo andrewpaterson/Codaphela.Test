@@ -125,6 +125,7 @@ void TestTreeTemplateFileHelper(void)
 	cFileBasic.Close();
 	cFileBasic.Kill();
 
+	pcMemoryFile->Kill();
 	free(pcMemoryFile);
 
 	psRoot = cTree.GetRoot();

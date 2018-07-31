@@ -52,6 +52,7 @@ void TestArrayTemplateEmbeddedAdd(void)
 	AssertInt(20, *cArray.Get(5));
 
 	AssertTrue(cArray.TestInternalConsistency());
+	cArray.Kill();
 }
 
 

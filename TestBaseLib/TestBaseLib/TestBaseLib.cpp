@@ -86,76 +86,76 @@ int main(void)
 
 	InitTotalStatistics();
 
-	//TestPrimitiveTypes();
-	//TestIntegerHelper();
-	//TestFloat4();
-	//TestArrayInt();
-	//TestArrayLong();
-	//TestArrayInt2D();
-	//TestArrayVoidPtrGet();
-	//TestArrayTemplatePrimitive();
-	//TestArrayMinimalTemplate();
-	//TestArrayBlockSorted();
-	//TestArraySizer();
-	//TestMapBlock();
-	//TestMapString();
-	//TestMapInt();
-	//TestMapLong();
-	//TestMapPtr();
-	//TestMap();
-	//TestListBlock();
-	//TestListTemplate();
-	//TestListCharsMinimal();
-	//TestListVariable();
-	//TestConstructors();
-	//TestConstructorCall();
-	//TestLinkedListBlockAligned();
-	//TestAllocator();
-	//TestFreeList();
-	//TestFreeListAllocator();
-	//_CrtSetBreakAlloc(128);
-	TestChars();  // <-- Memory Leak
-	//TestStringHelper();
-	//TestTextParser();
-	//TestDate();
-	//TestNumbers();
-	//TestArrayTemplate();  // <-- Memory Leak
-	//TestIndexTreeNodeMemory();
-	//TestIndexTreeMemory();  // <-- Memory Leak
-	//TestIndexTreeTemplate();
-	//TestIndexTreeIterator();
-	//TestArrayDenseTemplate();
-	//TestArraySparseTemplate();
-	//TestMemoryFile();
-	//TestDiskFile();
-	//TestBufferedFile();
-	//TestMD5File();
-	//TestSorting();
-	//TestArrayBit();  // <-- Memory Leak
-	//TestArrayTemplateEmbedded();  // <-- Memory Leak
-	//TestLinkedListTemplate();
-	//TestTreeTemplate();  // <-- Memory Leak
-	//TestCSVFileEditable();  // <-- Memory Leak
-	//TestGeneralMemory();  // <-- Memory Leak
-	//TestDataMemory();  // <-- Memory Leak
-	//TestMemoryAllocator();  // <-- Memory Leak
-	//TestCountingAllocator();
-	//TestTrackingAllocator();
-	//TestScratchPad();
-	//TestScratchPadAllocator();  // <-- Memory Leak
-	//TestMemoryStack();
-	//TestMemoryCache();
-	//TestMemoryBlock();
-	//TestTemporaryMemory();  // <-- Memory Leak
-	//TestStackMemoryCompilation();
-	//TestFileUtil();  // <-- Memory Leak
-	//TestFileFinder();
-	//TestChunkFile();  // <-- Memory Leak
-	//TestChunkFileFile();  // <-- Memory Leak
-	//TestPackFile();  // <-- Memory Leak
-	//TestFileIO();  // <-- Memory Leak
-	//TestFileSystem();  // <-- Memory Leak
-	//TestCSVFileImmutable();
+	TestPrimitiveTypes();
+	TestIntegerHelper();
+	TestFloat4();
+	TestArrayInt();
+	TestArrayLong();
+	TestArrayInt2D();
+	TestArrayVoidPtrGet();
+	TestArrayTemplatePrimitive();
+	TestArrayMinimalTemplate();
+	TestArrayBlockSorted();
+	TestArraySizer();
+	TestMapBlock();
+	TestMapString();
+	TestMapInt();
+	TestMapLong();
+	TestMapPtr();
+	TestMap();
+	TestListBlock();
+	TestListTemplate();
+	TestListCharsMinimal();
+	TestListVariable();
+	TestConstructors();
+	TestConstructorCall();
+	TestLinkedListBlockAligned();
+	TestAllocator();
+	TestFreeList();
+	TestFreeListAllocator();
+	TestChars();
+	TestStringHelper();
+	TestTextParser();
+	TestDate();
+	TestNumbers();
+	TestArrayTemplate();
+	TestIndexTreeNodeMemory();
+	TestIndexTreeMemory();
+	TestIndexTreeTemplate();
+	TestIndexTreeIterator();
+	TestArrayDenseTemplate();
+	TestArraySparseTemplate();
+	TestMemoryFile();
+	TestDiskFile();
+	TestBufferedFile();
+	TestMD5File();
+	TestSorting();
+	TestArrayBit();
+	TestArrayTemplateEmbedded();
+	TestLinkedListTemplate();
+	TestTreeTemplate();
+	TestCSVFileEditable();
+	//_CrtSetBreakAlloc(98);
+	TestGeneralMemory();  // <-- Memory Leak
+	TestDataMemory();  // <-- Memory Leak
+	TestMemoryAllocator();  // <-- Memory Leak
+	TestCountingAllocator();
+	TestTrackingAllocator();
+	TestScratchPad();
+	TestScratchPadAllocator();  // <-- Memory Leak
+	TestMemoryStack();
+	TestMemoryCache();
+	TestMemoryBlock();
+	TestTemporaryMemory();  // <-- Memory Leak
+	TestStackMemoryCompilation();
+	TestFileUtil();  // <-- Memory Leak
+	TestFileFinder();
+	TestChunkFile();  // <-- Memory Leak
+	TestChunkFileFile();  // <-- Memory Leak
+	TestPackFile();  // <-- Memory Leak
+	TestFileIO();  // <-- Memory Leak
+	TestFileSystem();  // <-- Memory Leak
+	TestCSVFileImmutable();
 
 	iResult = TestTotalStatistics();
 	_CrtDumpMemoryLeaks();
