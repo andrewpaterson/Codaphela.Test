@@ -144,11 +144,11 @@ void TestIndexedFilesEvictingEviction(BOOL bWriteThrough)
 
 	AssertTrue(cDurableController.Begin());
 
-	XXX //You didn't clear the CACHE_DESCRIPTOR_FLAG_DIRTY on SIndexedCacheDescriptor.iFlags when you wrote them above.
 	AssertTrue(cCallback.TestGetDescriptor(oiMoreover, &cDescriptor));
 	AssertFalse(cDescriptor.IsCached());
 	AssertTrue(cDescriptor.HasFile());
 	AssertInt(0, cCallback.TestGetCachedObjectSize(oiMoreover));
+
 	AssertTrue(cCallback.TestGetDescriptor(oiIndulged, &cDescriptor));
 	AssertFalse(cDescriptor.IsCached());
 	AssertTrue(cDescriptor.HasFile());
@@ -166,18 +166,28 @@ void TestIndexedFilesEvictingEviction(BOOL bWriteThrough)
 	AssertString(szIndulged, sz);
 	AssertInt(1, cCallback.NumCached());
 	AssertInt(0, cCallback.NumEvicted());
+	AssertTrue(cCallback.Get(oiIndulged, &uiSize, sz, 200));
+	AssertFalse(cCallback.IsDirty(oiMoreover));
+	AssertFalse(cCallback.IsDirty(oiSeparate));
+	AssertFalse(cCallback.IsDirty(oiMoreover));
 
 	AssertTrue(cCallback.Get(oiSeparate, &uiSize, sz, 200));
 	AssertInt(iLenSeparate, uiSize);
 	AssertString(szSeparate, sz);
 	AssertInt(2, cCallback.NumCached());
 	AssertInt(0, cCallback.NumEvicted());
+	AssertFalse(cCallback.IsDirty(oiMoreover));
+	AssertFalse(cCallback.IsDirty(oiSeparate));
+	AssertFalse(cCallback.IsDirty(oiMoreover));
 
 	AssertTrue(cCallback.Get(oiMoreover, &uiSize, sz, 200));
 	AssertInt(iLenMoreover, uiSize);
 	AssertString(szMoreover, sz);
 	AssertInt(2, cCallback.NumCached());
 	AssertInt(1, cCallback.NumEvicted());
+	AssertFalse(cCallback.IsDirty(oiMoreover));
+	AssertFalse(cCallback.IsDirty(oiSeparate));
+	AssertFalse(cCallback.IsDirty(oiMoreover));
 
 	AssertTrue(cDurableController.End());
 
