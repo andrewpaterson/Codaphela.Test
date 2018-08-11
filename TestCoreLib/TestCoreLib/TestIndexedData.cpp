@@ -421,6 +421,7 @@ void TestIndexedData(void)
 {
 	FastFunctionsInit();
 	TypeConverterInit();
+	DataMemoryInit();
 	BeginTests();
 
 	TestIndexedDataCacheEviction();
@@ -432,6 +433,7 @@ void TestIndexedData(void)
 	TestIndexedDataGet();
 
 	TestStatistics();
+	DataMemoryKill();
 	FastFunctionsKill();
 	TypeConverterKill();
 }
