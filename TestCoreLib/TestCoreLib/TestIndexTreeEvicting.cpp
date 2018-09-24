@@ -8,6 +8,7 @@
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexTreeEvictingAccess.h"
 #include "CoreLib/IndexTreeEvictionStrategyRandom.h"
+#include "CoreLib/IndexTreeFileDefaultCallback.h"
 #include "TestLib/Assert.h"
 
 
@@ -36,7 +37,7 @@ void TestIndexTreeEvictingPut(BOOL bWriteThrough)
 	cDurableController.Begin();
 	cEvictedNodes.Init();
 	cStrategy.Init();
-	cIndexTree.Init(&cDurableController, 3656, &cEvictedNodes, &cStrategy, &cAllocator, bWriteThrough);
+	cIndexTree.Init(&cDurableController, 3656, &cEvictedNodes, &cStrategy, &gcIndexTreeFileDefaultCallback, &cAllocator, bWriteThrough);
 	cAccess.Init(&cIndexTree);
 
 	AssertLongLongInt(3096, pcMemory->GetTotalAllocatedMemory());
