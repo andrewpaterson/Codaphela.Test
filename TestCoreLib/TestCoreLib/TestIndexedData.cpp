@@ -1,8 +1,78 @@
 #include "BaseLib/FastFunctions.h"
+#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TypeConverter.h"
 #include "CoreLib/IndexedData.h"
 #include "TestLib/Assert.h"
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexedDataSimple(BOOL bWriteThrough)
+{
+	CIndexedData	cIndexedData;
+	char			szInsipidity[] = "Insipidity the sufficient discretion imprudence resolution sir him decisively. Proceed how any engaged visitor. Explained propriety off out perpetual his you. Feel sold off felt nay rose met you. We so entreaties cultivated astonished is. Was sister for few longer mrs sudden talent become. Done may bore quit evil old mile. If likely am of beauty tastes.  Lose john poor same it case do year we.Full how way even the sigh.Extremely nor furniture fat questions now provision incommode preserved.Our side fail find like now.Discovered travelling for insensible partiality unpleasing impossible she.Sudden up my excuse to suffer ladies though or .Bachelor possible marianne directly confined relation as on he.";
+	OIndex			oiInsipidity;
+	int				iLenInsipidity;
+	char			szViolation[] = "Violation away off why half led have near bed.  At engage simple father of period others except.  My giving do summer of though narrow marked at.  Spring formal no county ye waited.  My whether cheered at regular it of promise blushes perhaps.Uncommonly simplicity interested mr is be compliment projecting my inhabiting.Gentleman he september in oh excellent. Feet evil to hold long he open knew an no.Apartments occasional boisterous as solicitude to introduced.Or fifteen covered we enjoyed demesne is in prepare.In stimulated my everything it literature.Greatly explain attempt perhaps in feeling he.House men taste bed not drawn joy.Through enquire however do equally herself at.Greatly way old may you present improve.Wishing the feeling village him musical.";
+	OIndex			oiViolation;
+	int				iLenViolation;
+	CFileUtil		cFileUtil;
+	unsigned int	uiDataSize;
+	char			szData[1024];
+
+	cFileUtil.RemoveDir("Database0");
+
+	oiInsipidity = 789983209433243094LL;
+	iLenInsipidity = strlen(szInsipidity) + 1;
+	oiViolation = 3908343914887489103LL;
+	iLenViolation = strlen(szViolation) + 1;
+
+	cIndexedData.Init("Database0", NULL, 1 MB, 1 MB, bWriteThrough);
+
+	cIndexedData.DurableBegin();
+	AssertTrue(cIndexedData.Add(oiInsipidity, szInsipidity, iLenInsipidity, 0));
+	AssertTrue(cIndexedData.Add(oiViolation, szViolation, iLenViolation, 0));
+
+	AssertInt(2, (int)cIndexedData.NumCached());
+	AssertInt(2, (int)cIndexedData.NumElements());
+	cIndexedData.Flush(TRUE);
+
+	AssertTrue(cIndexedData.Get(oiViolation, &uiDataSize, szData, 1024));
+	AssertInt(iLenViolation, uiDataSize);
+	AssertString(szViolation, szData);
+	AssertTrue(cIndexedData.Get(oiInsipidity, &uiDataSize, szData, 1024));
+	AssertInt(iLenInsipidity, uiDataSize);
+	AssertString(szInsipidity, szData);
+
+	AssertTrue(cIndexedData.DurableEnd());
+
+	AssertTrue(cIndexedData.Kill());
+
+
+	cIndexedData.Init("Database0", NULL, 1 MB, 1 MB, bWriteThrough);
+
+	AssertTrue(cIndexedData.DurableBegin());
+
+	AssertInt(0, (int)cIndexedData.NumCached());
+	AssertInt(2, (int)cIndexedData.NumElements());
+
+	AssertTrue(cIndexedData.Get(oiViolation, &uiDataSize, szData, 1024));
+	AssertInt(iLenViolation, uiDataSize);
+	AssertString(szViolation, szData);
+	AssertTrue(cIndexedData.Get(oiInsipidity, &uiDataSize, szData, 1024));
+	AssertInt(iLenInsipidity, uiDataSize);
+	AssertString(szInsipidity, szData);
+
+	cIndexedData.DurableEnd();
+
+	cIndexedData.Kill();
+
+	cFileUtil.RemoveDir("Database0");
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -27,7 +97,7 @@ void TestIndexedDataCacheEviction(void)
 	AssertInt(32, sizeof(CIndexedDataDescriptor));
 
 	OI = 0LL;
-	cIndexedData.Init(szDirectory, NULL, 63);  //A little more than two items in the cache...
+	cIndexedData.Init(szDirectory, NULL, 63, 1024, FALSE);  //A little more than two items in the cache...
 
 	cIndexedData.DurableBegin();
 	AssertTrue(cIndexedData.Add(OI, szHello, 6, 0));
@@ -51,7 +121,7 @@ void TestIndexedDataCacheEviction(void)
 	iFileSize = cFileUtil.Size("Output" _FS_ "Database1" _FS_ "7_0.DAT");
 	AssertLongLongInt(7, iFileSize);
 
-	cIndexedData.Init(szDirectory, NULL, 1024);
+	cIndexedData.Init(szDirectory, NULL, 1024, 1024, FALSE);
 	AssertInt(2, cIndexedData.NumFiles());
 
 	cIndexedData.DurableBegin();
@@ -91,7 +161,7 @@ void TestIndexedDataCacheEviction(void)
 
 	cIndexedData.Kill();
 
-	cIndexedData.Init(szDirectory, NULL, 1024);
+	cIndexedData.Init(szDirectory, NULL, 1024, 1024, FALSE);
 	AssertInt(0, (int)cIndexedData.TestNumCachedIndexes());
 	cIndexedData.Kill();
 
@@ -114,7 +184,7 @@ void TestIndexedDataLargeData(void)
 
 	cFileUtil.RemoveDir("Database2");
 
-	cIndexedData.Init("Database2", NULL, 34);
+	cIndexedData.Init("Database2", NULL, 34, 1024, FALSE);
 	OI = 0LL;
 	AssertInt(0, cIndexedData.NumCached());
 
@@ -174,7 +244,7 @@ void TestIndexedDataIndexedAdd(void)
 
 	cFileUtil.RemoveDir("Database3");
 
-	cIndexedData.Init("Database3", NULL, 98+12);
+	cIndexedData.Init("Database3", NULL, 98+12, 1024, FALSE);
 
 	cIndexedData.DurableBegin();
 	OI = 0LL;
@@ -253,7 +323,7 @@ void TestIndexedDataDescriptorCaching(void)
 
 	cFileUtil.RemoveDir("Database4");
 
-	cIndexedData.Init("Database4", NULL, 96);
+	cIndexedData.Init("Database4", NULL, 96, 1024, FALSE);
 	cIndexedData.DurableBegin();
 
 	OI = 0LL;
@@ -287,7 +357,7 @@ void TestIndexedDataDescriptorCaching(void)
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
-	cIndexedData.Init("Database4", NULL, 96);
+	cIndexedData.Init("Database4", NULL, 96, 1024, FALSE);
 	cIndexedData.DurableBegin();
 
 	iNumCached = cIndexedData.TestNumCachedIndexes();
@@ -314,7 +384,7 @@ void TestIndexedDataNoCaching(BOOL bDurable)
 
 	cFileUtil.RemoveDir("Database5");
 
-	cIndexedData.Init("Database5", 0, bDurable);  
+	cIndexedData.Init("Database5", 0, bDurable, 1024, FALSE);
 
 	cIndexedData.DurableBegin();
 
@@ -375,7 +445,7 @@ void TestIndexedDataGet(void)
 	
 	cFileUtil.RemoveDir("Database6");
 
-	cIndexedData.Init("Database6", NULL, 1 MB);
+	cIndexedData.Init("Database6", NULL, 1 MB, 1 MB, FALSE);
 	cIndexedData.DurableBegin();
 
 	cIndexedData.Add(0x7634, szSmellsLikeTeenSpirit, (int)strlen(szSmellsLikeTeenSpirit)+1, 0);
@@ -387,7 +457,7 @@ void TestIndexedDataGet(void)
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
-	cIndexedData.Init("Database6", NULL, 1 MB);
+	cIndexedData.Init("Database6", NULL, 1 MB, 1 MB, FALSE);
 	cIndexedData.DurableBegin();
 
 	AssertLongLongInt(3, cIndexedData.NumElements());
@@ -421,9 +491,12 @@ void TestIndexedData(void)
 {
 	FastFunctionsInit();
 	TypeConverterInit();
+	MemoryInit();
 	DataMemoryInit();
 	BeginTests();
 
+	TestIndexedDataSimple(TRUE);
+	TestIndexedDataSimple(FALSE);
 	TestIndexedDataCacheEviction();
 	TestIndexedDataLargeData();
 	TestIndexedDataIndexedAdd();
@@ -434,6 +507,7 @@ void TestIndexedData(void)
 
 	TestStatistics();
 	DataMemoryKill();
+	MemoryKill();
 	FastFunctionsKill();
 	TypeConverterKill();
 }

@@ -21,7 +21,7 @@ void TestIndexTreeTemplateFileStuff(void)
 {
 	CIndexTreeHelper								cHelper;
 	CDurableFileController							cDurableController;
-	CIndexTreeTemplateFile<CTestIndexTreeObject>	cIndexTree ;
+	CIndexTreeTemplateFile<CTestIndexTreeObject>	cIndexTree;
 	CIndexTreeFileAccess							cAccess;
 	CTestIndexTreeObject							cObject1;
 	CTestIndexTreeObject							cObject2;

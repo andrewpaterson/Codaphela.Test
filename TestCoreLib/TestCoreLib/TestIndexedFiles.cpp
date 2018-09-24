@@ -130,13 +130,13 @@ void TestIndexedFilesWrite(void)
 	AssertTrue(cIndexedFiles.Write(&cDescriptor1, szData1));
 	AssertTrue(cDescriptor1.HasFile());
 	AssertInt(0, cDescriptor1.GetFileIndex());
-	AssertLongLongInt(0, cDescriptor1.GetIndexInFile());
+	AssertLongLongInt(0, cDescriptor1.GetPositionInFile());
 	AssertLongLongInt(1, cIndexedFiles.NumData());
 
 	cDescriptor2.Init(iLen2);
 	AssertTrue(cIndexedFiles.Write(&cDescriptor2, szData2));
 	AssertInt(1, cDescriptor2.GetFileIndex());
-	AssertLongLongInt(0, cDescriptor2.GetIndexInFile());
+	AssertLongLongInt(0, cDescriptor2.GetPositionInFile());
 	AssertLongLongInt(2, cIndexedFiles.NumData());
 
 	AssertTrue(cController.End());
@@ -180,13 +180,13 @@ void TestIndexedFilesWrite(void)
 	cDescriptor3.Init(iLen3);
 	AssertTrue(cIndexedFiles.Write(&cDescriptor3, szData3));
 	AssertInt(0, cDescriptor3.GetFileIndex());
-	AssertLongLongInt(1, cDescriptor3.GetIndexInFile());
+	AssertLongLongInt(1, cDescriptor3.GetPositionInFile());
 	AssertLongLongInt(3, cIndexedFiles.NumData());
 
 	cDescriptor4.Init(iLen4);
 	AssertTrue(cIndexedFiles.Write(&cDescriptor4, szData4));
 	AssertInt(1, cDescriptor4.GetFileIndex());
-	AssertLongLongInt(1, cDescriptor4.GetIndexInFile());
+	AssertLongLongInt(1, cDescriptor4.GetPositionInFile());
 	AssertLongLongInt(4, cIndexedFiles.NumData());
 
 	AssertTrue(cController.End());

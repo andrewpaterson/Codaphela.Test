@@ -101,3 +101,4 @@ TestCoreLib/Release
 /TestCoreLib/TestCoreLib/Output/*
 /TestCoreLib/TestCoreLib/Database3/Files.IDX
 /TestCoreLib/TestCoreLib/Database3/Index.IDX
+/TestCoreLib/TestCoreLib/Database*
