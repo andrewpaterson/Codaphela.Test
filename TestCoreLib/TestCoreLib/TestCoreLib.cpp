@@ -54,16 +54,16 @@ int main(void)
 	//TestFiles();
 	//TestPackFilesPacker();
 	//TestNumber();
-	TestIndexedFile();
-	TestIndexedFiles();
-	TestIndexTreeMemory();
-	TestIndexTreeNodeFile();
-	TestIndexTreeFile();
-	TestIndexTreeTemplateFile();
-	TestIndexTreeAccess();
-	TestIndexTreeWriter();
-	TestIndexTreeEvicting();
-	TestIndexedFilesEvicting();
+	//TestIndexedFile();
+	//TestIndexedFiles();
+	//TestIndexTreeMemory();
+	//TestIndexTreeNodeFile();
+	//TestIndexTreeFile();
+	//TestIndexTreeTemplateFile();
+	//TestIndexTreeAccess();
+	//TestIndexTreeWriter();
+	//TestIndexTreeEvicting();
+	//TestIndexedFilesEvicting();
 	TestIndexedData();
 
 	return TestTotalStatistics();
