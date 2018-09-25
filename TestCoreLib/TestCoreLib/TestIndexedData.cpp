@@ -97,18 +97,19 @@ void TestIndexedDataCacheEviction(void)
 	AssertInt(32, sizeof(CIndexedDataDescriptor));
 
 	OI = 0LL;
-	cIndexedData.Init(szDirectory, NULL, 63, 3600, FALSE);  //A little more than two items in the cache...
+	cIndexedData.Init(szDirectory, NULL, 63, 3780, FALSE);  //A little more than two items in the cache...
 
 	cIndexedData.DurableBegin();
 	AssertTrue(cIndexedData.Add(OI, szHello, 6, 0));
 	AssertInt(1, cIndexedData.NumCached());
-	AssertInt(30, cIndexedData.TestGetCachedObjectSize(OI));
+	AssertInt(sizeof(SIndexedCacheDescriptor) + 6, cIndexedData.TestGetCachedObjectSize(OI));
 	OI = 1LL;
 	AssertTrue(cIndexedData.Add(OI, szWorld, 6, 0));
 	AssertInt(2, cIndexedData.NumCached());
-	AssertInt(30, cIndexedData.TestGetCachedObjectSize(OI));
+	AssertInt(2, cIndexedData.TestNumCachedIndexes());
+	AssertInt(sizeof(SIndexedCacheDescriptor) + 6, cIndexedData.TestGetCachedObjectSize(OI));
 	OI = 2LL;
-	AssertTrue(cIndexedData.Add(OI, szSteam, 7, 0));
+	AssertTrue(cIndexedData.Add(OI, szSteam, 7, 0));  //Two items should have been evicted but for some reason 0LL had no data?!?
 	AssertInt(1, cIndexedData.NumCached());
 	AssertInt(1, (int)cIndexedData.TestNumCachedIndexes());
 	AssertInt(31, cIndexedData.TestGetCachedObjectSize(OI));
@@ -156,8 +157,8 @@ void TestIndexedDataCacheEviction(void)
 	memset(szIn, 0, 7);
 	AssertTrue(cIndexedData.Get(OI, szIn));
 	AssertString("Hello", szIn);
-	AssertInt(3, cIndexedData.NumCached());
-	AssertInt(1, (int)cIndexedData.TestNumCachedIndexes());
+	AssertInt(1, cIndexedData.NumCached());
+	AssertInt(1, cIndexedData.TestNumCachedIndexes());
 	cIndexedData.DurableEnd();
 
 	cIndexedData.Kill();
