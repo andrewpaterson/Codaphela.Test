@@ -789,3 +789,4 @@ void TestLogFile(void)
 
 	TestStatistics();
 }
+
