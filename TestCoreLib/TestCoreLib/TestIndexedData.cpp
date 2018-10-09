@@ -80,6 +80,42 @@ void TestIndexedDataSimple(BOOL bWriteThrough)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexedExplicitKeyEviction(void)
+{
+	CIndexedData	cIndexedData;
+	char			szHello[] = "Hello";
+	char			szWorld[] = "World";
+	char			szSteam[] = "Stream";
+	char			szDirectory[] = "Output" _FS_ "Database1a";
+	CFileUtil		cFileUtil;
+
+	cFileUtil.RemoveDir(szDirectory);
+
+	AssertInt(32, sizeof(CIndexedDataDescriptor));
+
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+
+	cIndexedData.DurableBegin();
+	AssertTrue(cIndexedData.Add(0LL, szHello, 6, 0));
+	AssertTrue(cIndexedData.Add(2LL, szSteam, 7, 0));
+	AssertTrue(cIndexedData.Add(4LL, szHello, 6, 0));
+	AssertInt(3, cIndexedData.NumIndicesCached());
+	AssertInt(3, cIndexedData.NumDataCached());
+	AssertInt(4120, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(0, cIndexedData.GetDataSystemMemorySize());
+
+	AssertTrue(cIndexedData.EvictKey(0LL));
+	AssertInt(2, cIndexedData.NumIndicesCached());
+	AssertInt(2, cIndexedData.NumDataCached());
+	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(0, cIndexedData.GetDataSystemMemorySize());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexedDataCacheEviction(void)
 {
 	CIndexedData	cIndexedData;
@@ -87,7 +123,7 @@ void TestIndexedDataCacheEviction(void)
 	char			szHello[] = "Hello";
 	char			szWorld[] = "World";
 	char			szSteam[] = "Stream";
-	char			szDirectory[] = "Output" _FS_ "Database1";
+	char			szDirectory[] = "Output" _FS_ "Database1b";
 	char			szIn[7];
 	unsigned int	uiSize;
 	filePos			iFileSize;
@@ -108,16 +144,16 @@ void TestIndexedDataCacheEviction(void)
 	OI = 1LL;
 	AssertTrue(cIndexedData.Add(OI, szWorld, 6, 0));
 	AssertInt(2, cIndexedData.NumDataCached());
-	AssertInt(2, cIndexedData.TestNumCachedIndexes());
+	AssertInt(2, cIndexedData.NumIndicesCached());
 	AssertInt(sizeof(SIndexedCacheDescriptor) + 6, cIndexedData.TestGetCachedObjectSize(OI));
 	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
 	OI = 2LL;
 	AssertTrue(cIndexedData.Add(OI, szSteam, 7, 0));  //Two items should have been evicted but for some reason 0LL had no data?!?
 	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
 
-	XXX The data on the evicted node was not removed from the cache.
+	//XXX The data on the evicted node was not removed from the cache.
 	AssertInt(2, cIndexedData.NumDataCached());
-	AssertInt(2, (int)cIndexedData.TestNumCachedIndexes());
+	AssertInt(2, (int)cIndexedData.NumIndicesCached());
 	AssertInt(31, cIndexedData.TestGetCachedObjectSize(OI));
 	cIndexedData.Flush(TRUE);
 	cIndexedData.DurableEnd();
@@ -164,13 +200,13 @@ void TestIndexedDataCacheEviction(void)
 	AssertTrue(cIndexedData.Get(OI, szIn));
 	AssertString("Hello", szIn);
 	AssertInt(1, cIndexedData.NumDataCached());
-	AssertInt(1, cIndexedData.TestNumCachedIndexes());
+	AssertInt(1, cIndexedData.NumIndicesCached());
 	cIndexedData.DurableEnd();
 
 	cIndexedData.Kill();
 
 	cIndexedData.Init(szDirectory, NULL, 1024, 3600, FALSE);
-	AssertInt(0, (int)cIndexedData.TestNumCachedIndexes());
+	AssertInt(0, (int)cIndexedData.NumIndicesCached());
 	cIndexedData.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -199,28 +235,28 @@ void TestIndexedDataLargeData(void)
 	cIndexedData.DurableBegin();
 	cIndexedData.Add(OI, szBig, 14, 0);
 	AssertInt(0, cIndexedData.NumDataCached());
-	AssertInt(0, (int)cIndexedData.TestNumCachedIndexes());
+	AssertInt(0, (int)cIndexedData.NumIndicesCached());
 	
 	cIndexedData.Get(OI, szIn);
 	AssertInt(0, cIndexedData.NumDataCached());
-	AssertInt(0, (int)cIndexedData.TestNumCachedIndexes());
+	AssertInt(0, (int)cIndexedData.NumIndicesCached());
 	AssertString(szBig, szIn);
 
 	OI = 1LL;
 	cIndexedData.Add(OI, szSmall, 4, 0);
 	AssertInt(1, cIndexedData.NumDataCached());
-	AssertInt(1, (int)cIndexedData.TestNumCachedIndexes());
+	AssertInt(1, (int)cIndexedData.NumIndicesCached());
 
 	OI = 0LL;
 	cIndexedData.Get(OI, szIn);
 	AssertInt(1, cIndexedData.NumDataCached());
-	AssertInt(1, (int)cIndexedData.TestNumCachedIndexes());
+	AssertInt(1, (int)cIndexedData.NumIndicesCached());
 	AssertString(szBig, szIn);
 
 	OI = 1LL;
 	cIndexedData.Get(OI, szIn);
 	AssertInt(1, cIndexedData.NumDataCached());
-	AssertInt(1, (int)cIndexedData.TestNumCachedIndexes());
+	AssertInt(1, (int)cIndexedData.NumIndicesCached());
 	AssertString(szSmall, szIn);
 	cIndexedData.DurableEnd();
 
@@ -298,13 +334,13 @@ void TestIndexedDataIndexedAdd(void)
 	bResult = cIndexedData.Add(OI, szHell, 5, 0);
 	AssertBool(TRUE, bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
-	AssertInt(1, (int)cIndexedData.TestNumCachedIndexes());
+	AssertInt(1, (int)cIndexedData.NumIndicesCached());
 	bResult = cIndexedData.Add(OI, szMutt, 5, 0);
 	AssertBool(FALSE, bResult);
 	bResult = cIndexedData.Set(OI, szEve, 4, 0);
 	AssertBool(TRUE, bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
-	AssertInt(1, (int)cIndexedData.TestNumCachedIndexes());
+	AssertInt(1, (int)cIndexedData.NumIndicesCached());
 	cIndexedData.Flush(TRUE);
 	AssertInt(3, (int)cIndexedData.NumData(4));
 	AssertInt(1, (int)cIndexedData.NumData(5));
@@ -359,7 +395,7 @@ void TestIndexedDataDescriptorCaching(void)
 	iData = 0; OI = 0LL; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(77, iData);
 
-	iNumCached = cIndexedData.TestNumCachedIndexes();
+	iNumCached = cIndexedData.NumIndicesCached();
 	AssertInt(3, (int)iNumCached);
 
 	cIndexedData.DurableEnd();
@@ -368,7 +404,7 @@ void TestIndexedDataDescriptorCaching(void)
 	cIndexedData.Init("Database4", NULL, 96, 1024, FALSE);
 	cIndexedData.DurableBegin();
 
-	iNumCached = cIndexedData.TestNumCachedIndexes();
+	iNumCached = cIndexedData.NumIndicesCached();
 	AssertInt(0, (int)iNumCached);
 
 	cIndexedData.DurableEnd();
@@ -403,7 +439,7 @@ void TestIndexedDataNoCaching(BOOL bDurable)
 	iData = 0; OI = 0LL; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(77, iData);
 
-	iNumCached = cIndexedData.TestNumCachedIndexes();
+	iNumCached = cIndexedData.NumIndicesCached();
 	AssertInt(0, (int)iNumCached);
 
 	OI = 2LL;
@@ -411,7 +447,7 @@ void TestIndexedDataNoCaching(BOOL bDurable)
 	iData = 0; OI = 0LL; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(77, iData);
 
-	iNumCached = cIndexedData.TestNumCachedIndexes();
+	iNumCached = cIndexedData.NumIndicesCached();
 	AssertInt(0, (int)iNumCached);
 
 	OI = 2LL;
@@ -427,7 +463,7 @@ void TestIndexedDataNoCaching(BOOL bDurable)
 	iData = 0; OI = 0LL; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(77, iData);
 
-	iNumCached = cIndexedData.TestNumCachedIndexes();
+	iNumCached = cIndexedData.NumIndicesCached();
 	AssertInt(0, (int)iNumCached);
 
 	cIndexedData.DurableEnd();
@@ -505,6 +541,7 @@ void TestIndexedData(void)
 
 	TestIndexedDataSimple(TRUE);
 	TestIndexedDataSimple(FALSE);
+	TestIndexedExplicitKeyEviction();
 	TestIndexedDataCacheEviction();
 	TestIndexedDataLargeData();
 	TestIndexedDataIndexedAdd();
