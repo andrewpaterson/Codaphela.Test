@@ -1,6 +1,6 @@
-#define _CRTDBG_MAP_ALLOC  
+//#define _CRTDBG_MAP_ALLOC  
 #include <stdlib.h>  
-#include <crtdbg.h>  
+//#include <crtdbg.h>  
 
 #include "TestLib/Assert.h"
 
@@ -158,7 +158,7 @@ int main(void)
 	TestCSVFileImmutable();
 
 	iResult = TestTotalStatistics();
-	_CrtDumpMemoryLeaks();
+	//_CrtDumpMemoryLeaks();
 	return iResult;
 }
 

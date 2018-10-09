@@ -321,16 +321,97 @@ void TestMemoryCacheEvictRightmost(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMemoryCacheDeallocate(void)
+{
+	CMemoryCache	cCache;
+	void*			pvA;
+	void*			pvB;
+	void*			pvC;
+
+	cCache.Init(128);
+
+	pvA = cCache.QuickAllocate(8);
+	FillCachedElement(pvA, 8, 'A');
+	pvB = cCache.QuickAllocate(9);
+	FillCachedElement(pvB, 9, 'B');
+	pvC = cCache.QuickAllocate(8);
+	FillCachedElement(pvC, 8, 'C');
+
+	AssertCache(&cCache, 8, 'A', 9, 'B', 8, 'C');
+	AssertInt(73, cCache.GetAllocatedSize());
+
+	cCache.Deallocate(pvA);
+	AssertCache(&cCache, 9, 'B', 8, 'C');
+	AssertInt(49, cCache.GetAllocatedSize());
+
+	cCache.Deallocate(pvC);
+	AssertCache(&cCache, 9, 'B');
+	AssertInt(25, cCache.GetAllocatedSize());
+
+	cCache.Deallocate(pvB);
+	AssertInt(0, cCache.GetAllocatedSize());
+
+	pvA = cCache.QuickAllocate(8);
+	FillCachedElement(pvA, 8, 'A');
+	pvB = cCache.QuickAllocate(9);
+	FillCachedElement(pvB, 9, 'B');
+	pvC = cCache.QuickAllocate(8);
+	FillCachedElement(pvC, 8, 'C');
+
+	AssertCache(&cCache, 8, 'A', 9, 'B', 8, 'C');
+	AssertInt(73, cCache.GetAllocatedSize());
+
+	cCache.Deallocate(pvB);
+	AssertCache(&cCache, 8, 'A', 8, 'C');
+	AssertInt(48, cCache.GetAllocatedSize());
+
+	cCache.Deallocate(pvA);
+	AssertCache(&cCache, 8, 'C');
+	AssertInt(24, cCache.GetAllocatedSize());
+
+	cCache.Deallocate(pvC);
+	AssertInt(0, cCache.GetAllocatedSize());
+
+	pvA = cCache.QuickAllocate(8);
+	FillCachedElement(pvA, 8, 'A');
+	pvB = cCache.QuickAllocate(9);
+	FillCachedElement(pvB, 9, 'B');
+	pvC = cCache.QuickAllocate(8);
+	FillCachedElement(pvC, 8, 'C');
+
+	AssertCache(&cCache, 8, 'A', 9, 'B', 8, 'C');
+	AssertInt(73, cCache.GetAllocatedSize());
+
+	cCache.Deallocate(pvB);
+	AssertCache(&cCache, 8, 'A', 8, 'C');
+	AssertInt(48, cCache.GetAllocatedSize());
+
+	cCache.Deallocate(pvC);
+	AssertCache(&cCache, 8, 'A');
+	AssertInt(24, cCache.GetAllocatedSize());
+
+	cCache.Deallocate(pvA);
+	AssertInt(0, cCache.GetAllocatedSize());
+
+	cCache.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMemoryCache(void)
 {
 	BeginTests();
 	FastFunctionsInit();
 
-	TestMemoryCacheSimple();
-	TestMemoryCacheBrokenExample();
-	TestMemoryCacheEvictAll();
-	TestMemoryCacheEvictLeftmost();
-	TestMemoryCacheEvictRightmost();
+	//TestMemoryCacheSimple();
+	//TestMemoryCacheBrokenExample();
+	//TestMemoryCacheEvictAll();
+	//TestMemoryCacheEvictLeftmost();
+	//TestMemoryCacheEvictRightmost();
+	TestMemoryCacheDeallocate();
 
 	FastFunctionsKill();
 	TestStatistics();
