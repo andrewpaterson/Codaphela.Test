@@ -23,7 +23,6 @@ void AssertCacheElement(CMemoryCache* pcCache, SMemoryCacheDescriptor* psCacheDe
 	CChars						szExpected;
 
 	AssertInt(iDataSize, psCacheDesc->iDataSize);
-	AssertInt(1, psCacheDesc->iFlags);
 
 	szData = (char*)pcCache->GetData(psCacheDesc);
 	szExpected.Init();
@@ -338,15 +337,15 @@ void TestMemoryCacheDeallocate(void)
 	FillCachedElement(pvC, 8, 'C');
 
 	AssertCache(&cCache, 8, 'A', 9, 'B', 8, 'C');
-	AssertInt(73, cCache.GetAllocatedSize());
+	AssertInt(61, cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvA);
 	AssertCache(&cCache, 9, 'B', 8, 'C');
-	AssertInt(49, cCache.GetAllocatedSize());
+	AssertInt(41, cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvC);
 	AssertCache(&cCache, 9, 'B');
-	AssertInt(25, cCache.GetAllocatedSize());
+	AssertInt(21, cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvB);
 	AssertInt(0, cCache.GetAllocatedSize());
@@ -359,15 +358,15 @@ void TestMemoryCacheDeallocate(void)
 	FillCachedElement(pvC, 8, 'C');
 
 	AssertCache(&cCache, 8, 'A', 9, 'B', 8, 'C');
-	AssertInt(73, cCache.GetAllocatedSize());
+	AssertInt(61, cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvB);
 	AssertCache(&cCache, 8, 'A', 8, 'C');
-	AssertInt(48, cCache.GetAllocatedSize());
+	AssertInt(40, cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvA);
 	AssertCache(&cCache, 8, 'C');
-	AssertInt(24, cCache.GetAllocatedSize());
+	AssertInt(20, cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvC);
 	AssertInt(0, cCache.GetAllocatedSize());
@@ -380,15 +379,15 @@ void TestMemoryCacheDeallocate(void)
 	FillCachedElement(pvC, 8, 'C');
 
 	AssertCache(&cCache, 8, 'A', 9, 'B', 8, 'C');
-	AssertInt(73, cCache.GetAllocatedSize());
+	AssertInt(61, cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvB);
 	AssertCache(&cCache, 8, 'A', 8, 'C');
-	AssertInt(48, cCache.GetAllocatedSize());
+	AssertInt(40, cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvC);
 	AssertCache(&cCache, 8, 'A');
-	AssertInt(24, cCache.GetAllocatedSize());
+	AssertInt(20, cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvA);
 	AssertInt(0, cCache.GetAllocatedSize());

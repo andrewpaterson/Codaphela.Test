@@ -102,13 +102,15 @@ void TestIndexedExplicitKeyEviction(void)
 	AssertInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
 	AssertInt(4120, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(0, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
 
 	AssertTrue(cIndexedData.EvictKey(0LL));
 	AssertInt(2, cIndexedData.NumIndicesCached());
 	AssertInt(2, cIndexedData.NumDataCached());
 	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(0, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(37, cIndexedData.GetDataSystemMemorySize());
+
+	XXX Need more tests.
 }
 
 
@@ -148,10 +150,9 @@ void TestIndexedDataCacheEviction(void)
 	AssertInt(sizeof(SIndexedCacheDescriptor) + 6, cIndexedData.TestGetCachedObjectSize(OI));
 	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
 	OI = 2LL;
-	AssertTrue(cIndexedData.Add(OI, szSteam, 7, 0));  //Two items should have been evicted but for some reason 0LL had no data?!?
+	AssertTrue(cIndexedData.Add(OI, szSteam, 7, 0));
 	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
 
-	//XXX The data on the evicted node was not removed from the cache.
 	AssertInt(2, cIndexedData.NumDataCached());
 	AssertInt(2, (int)cIndexedData.NumIndicesCached());
 	AssertInt(31, cIndexedData.TestGetCachedObjectSize(OI));
@@ -306,14 +307,12 @@ void TestIndexedDataIndexedAdd(void)
 	AssertBool(TRUE, bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
 	AssertInt(1, (int)cIndexedData.NumData(4));
-	AssertInt(0, (int)cIndexedData.TestNumIgnoredCacheElements());
 	cIndexedData.Get(OI, szIn);
 	AssertString(szDog, szIn);
 
 	bResult = cIndexedData.Set(OI, szFish, 5, 0);
 	AssertBool(TRUE, bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
-	AssertInt(1, (int)cIndexedData.TestNumIgnoredCacheElements());
 	cIndexedData.Get(OI, szIn);
 	AssertString(szFish, szIn);
 
