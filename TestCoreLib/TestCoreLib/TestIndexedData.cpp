@@ -386,7 +386,6 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 void TestIndexedDataCacheEviction(void)
 {
 	CIndexedData	cIndexedData;
-	OIndex			OI;
 	char			szHello[] = "Hello";
 	char			szWorld[] = "World";
 	char			szStream[] = "Stream";
@@ -400,27 +399,28 @@ void TestIndexedDataCacheEviction(void)
 
 	AssertInt(32, sizeof(CIndexedDataDescriptor));
 
-	OI = 0LL;
 	cIndexedData.Init(szDirectory, NULL, 1024, 3780, FALSE);  //A little more than two items in the cache...
 
 	cIndexedData.DurableBegin();
-	AssertTrue(cIndexedData.Add(OI, szHello, 6, 0));
+	AssertTrue(cIndexedData.Add(0LL, szHello, 6, 0));
 	AssertInt(1, cIndexedData.NumDataCached());
-	AssertInt(sizeof(SIndexedCacheDescriptor) + 6, cIndexedData.TestGetCachedObjectSize(OI));
+	AssertInt(sizeof(SIndexedCacheDescriptor) + 6, cIndexedData.TestGetCachedObjectSize(0LL));
 	AssertInt(3440, cIndexedData.GetIndiciesSystemMemorySize());
-	OI = 1LL;
-	AssertTrue(cIndexedData.Add(OI, szWorld, 6, 0));
+
+	AssertTrue(cIndexedData.Add(1LL, szWorld, 6, 0));
 	AssertInt(2, cIndexedData.NumDataCached());
 	AssertInt(2, cIndexedData.NumIndicesCached());
-	AssertInt(sizeof(SIndexedCacheDescriptor) + 6, cIndexedData.TestGetCachedObjectSize(OI));
+	AssertInt(sizeof(SIndexedCacheDescriptor) + 6, cIndexedData.TestGetCachedObjectSize(1LL));
 	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
-	OI = 2LL;
-	AssertTrue(cIndexedData.Add(OI, szStream, 7, 0));
+
+	AssertTrue(cIndexedData.Add(2LL, szStream, 7, 0));
 	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
 
 	AssertInt(2, cIndexedData.NumDataCached());
 	AssertInt(2, (int)cIndexedData.NumIndicesCached());
-	AssertInt(31, cIndexedData.TestGetCachedObjectSize(OI));
+	AssertInt(sizeof(SIndexedCacheDescriptor) + 7, cIndexedData.TestGetCachedObjectSize(2LL));
+	AssertInt(0, cIndexedData.TestGetCachedObjectSize(0LL));
+	AssertInt(sizeof(SIndexedCacheDescriptor) + 6, cIndexedData.TestGetCachedObjectSize(1LL));
 	cIndexedData.Flush(TRUE);
 	cIndexedData.DurableEnd();
 
@@ -435,35 +435,33 @@ void TestIndexedDataCacheEviction(void)
 	AssertInt(2, cIndexedData.NumFiles());
 
 	cIndexedData.DurableBegin();
-	OI = 0LL;
-	uiSize = cIndexedData.Size(OI);
+	cIndexedData.DumpIndex();
+
+	uiSize = cIndexedData.Size(0LL);
 	AssertInt(6, uiSize);
 	memset(szIn, 0, 7);
-	AssertTrue(cIndexedData.Get(OI, szIn));
+	AssertTrue(cIndexedData.Get(0LL, szIn));
 	AssertString("Hello", szIn);
 	AssertInt(1, cIndexedData.NumDataCached());
 
-	OI = 1LL;
-	uiSize = cIndexedData.Size(OI);
+	uiSize = cIndexedData.Size(1LL);
 	AssertInt(6, uiSize);
 	memset(szIn, 0, 7);
-	AssertTrue(cIndexedData.Get(OI, szIn));
+	AssertTrue(cIndexedData.Get(1LL, szIn));
 	AssertString("World", szIn);
 	AssertInt(2, cIndexedData.NumDataCached());
 
-	OI = 2LL;
-	uiSize = cIndexedData.Size(OI);
+	uiSize = cIndexedData.Size(2LL);
 	AssertInt(7, uiSize);
 	memset(szIn, 0, 7);
-	AssertTrue(cIndexedData.Get(OI, szIn));
+	AssertTrue(cIndexedData.Get(2LL, szIn));
 	AssertString("Stream", szIn);
 	AssertInt(3, cIndexedData.NumDataCached());
 
-	OI = 0LL;
-	uiSize = cIndexedData.Size(OI);
+	uiSize = cIndexedData.Size(0LL);
 	AssertInt(6, uiSize);
 	memset(szIn, 0, 7);
-	AssertTrue(cIndexedData.Get(OI, szIn));
+	AssertTrue(cIndexedData.Get(0LL, szIn));
 	AssertString("Hello", szIn);
 	AssertInt(1, cIndexedData.NumDataCached());
 	AssertInt(1, cIndexedData.NumIndicesCached());
