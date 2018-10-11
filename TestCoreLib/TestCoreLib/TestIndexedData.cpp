@@ -24,15 +24,16 @@ void TestIndexedDataSimple(BOOL bWriteThrough)
 	CFileUtil			cFileUtil;
 	unsigned int		uiDataSize;
 	char				szData[1024];
+	char				szDirectory[] = "Output" _FS_ "Database0";
 
-	cFileUtil.RemoveDir("Database0");
+	cFileUtil.RemoveDir("szDirectory");
 
 	oiInsipidity = 789983209433243094LL;
 	iLenInsipidity = strlen(szInsipidity) + 1;
 	oiViolation = 3908343914887489103LL;
 	iLenViolation = strlen(szViolation) + 1;
 
-	cIndexedData.Init("Database0", NULL, 1 MB, 1 MB, bWriteThrough);
+	cIndexedData.Init("szDirectory", NULL, 1 MB, 1 MB, bWriteThrough);
 	cIndexedData.DurableBegin();
 
 	AssertTrue(cIndexedData.Add(oiInsipidity, szInsipidity, iLenInsipidity, 0));
@@ -54,7 +55,7 @@ void TestIndexedDataSimple(BOOL bWriteThrough)
 	AssertTrue(cIndexedData.Kill());
 
 
-	cIndexedData.Init("Database0", NULL, 1 MB, 1 MB, bWriteThrough);
+	cIndexedData.Init("szDirectory", NULL, 1 MB, 1 MB, bWriteThrough);
 
 	AssertTrue(cIndexedData.DurableBegin());
 
@@ -71,7 +72,7 @@ void TestIndexedDataSimple(BOOL bWriteThrough)
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
-	cFileUtil.RemoveDir("Database0");
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -167,6 +168,8 @@ void TestIndexedDataFlushClearCache(void)
 
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
+
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -235,6 +238,8 @@ void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
+
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -489,10 +494,11 @@ void TestIndexedDataLargeData(void)
 	char			szSmall[] = "Cat";
 	char			szIn[14];
 	CFileUtil		cFileUtil;
+	char			szDirectory[] = "Output" _FS_ "Database2";
 
-	cFileUtil.RemoveDir("Database2");
+	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init("Database2", NULL, 34, 1024, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 34, 1024, FALSE);
 	OI = 0LL;
 	AssertInt(0, cIndexedData.NumDataCached());
 
@@ -526,7 +532,7 @@ void TestIndexedDataLargeData(void)
 
 	cIndexedData.Kill();
 
-	cFileUtil.RemoveDir("Database2");
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -549,10 +555,11 @@ void TestIndexedDataIndexedAdd(void)
 	char			szIn[64];
 	CFileUtil		cFileUtil;
 	BOOL			bResult;
+	char			szDirectory[] = "Output" _FS_ "Database3";
 
-	cFileUtil.RemoveDir("Database3");
+	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init("Database3", NULL, 98+12, 1024, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 98+12, 1024, FALSE);
 
 	cIndexedData.DurableBegin();
 	OI = 0LL;
@@ -611,7 +618,7 @@ void TestIndexedDataIndexedAdd(void)
 
 	cIndexedData.Kill();
 
-	cFileUtil.RemoveDir("Database3");
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -626,10 +633,11 @@ void TestIndexedDataDescriptorCaching(void)
 	CFileUtil		cFileUtil;
 	int				iData;
 	OIndex			iNumCached;
+	char			szDirectory[] = "Output" _FS_ "Database4";
 
-	cFileUtil.RemoveDir("Database4");
+	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init("Database4", NULL, 96, 1024, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 96, 1024, FALSE);
 	cIndexedData.DurableBegin();
 
 	OI = 0LL;
@@ -663,7 +671,7 @@ void TestIndexedDataDescriptorCaching(void)
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
-	cIndexedData.Init("Database4", NULL, 96, 1024, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 96, 1024, FALSE);
 	cIndexedData.DurableBegin();
 
 	iNumCached = cIndexedData.NumIndicesCached();
@@ -672,7 +680,7 @@ void TestIndexedDataDescriptorCaching(void)
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
-	cFileUtil.RemoveDir("Database4");
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -687,10 +695,11 @@ void TestIndexedDataNoCaching(BOOL bDurable)
 	CFileUtil		cFileUtil;
 	int				iData;
 	OIndex			iNumCached;
+	char			szDirectory[] = "Output" _FS_ "Database5";
 
-	cFileUtil.RemoveDir("Database5");
+	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init("Database5", 0, bDurable, 1024, FALSE);
+	cIndexedData.Init(szDirectory, 0, bDurable, 1024, FALSE);
 
 	cIndexedData.DurableBegin();
 
@@ -731,7 +740,7 @@ void TestIndexedDataNoCaching(BOOL bDurable)
 	cIndexedData.DurableEnd();
 
 	cIndexedData.Kill();
-	cFileUtil.RemoveDir("Database5");
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -748,10 +757,11 @@ void TestIndexedDataGet(void)
 	char			szSmellsLikeTeenSpirit[] = {"Smells Like Teen Spirit"};
 	char			szSeizedPotPlants[] = {"Seized pot plants turn out to be daisies"};
 	char			szCallingFromWindows[] = {"I am calling you from Windows"};
-	
-	cFileUtil.RemoveDir("Database6");
+	char			szDirectory[] = "Output" _FS_ "Database6";
 
-	cIndexedData.Init("Database6", NULL, 1 MB, 1 MB, FALSE);
+	cFileUtil.RemoveDir(szDirectory);
+
+	cIndexedData.Init(szDirectory, NULL, 1 MB, 1 MB, FALSE);
 	cIndexedData.DurableBegin();
 
 	cIndexedData.Add(0x7634, szSmellsLikeTeenSpirit, (int)strlen(szSmellsLikeTeenSpirit)+1, 0);
@@ -763,7 +773,7 @@ void TestIndexedDataGet(void)
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
-	cIndexedData.Init("Database6", NULL, 1 MB, 1 MB, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 1 MB, 1 MB, FALSE);
 	cIndexedData.DurableBegin();
 
 	AssertLongLongInt(3, cIndexedData.NumElements());
@@ -785,7 +795,7 @@ void TestIndexedDataGet(void)
 
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
-	cFileUtil.RemoveDir("Database6");
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
