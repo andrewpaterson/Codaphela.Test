@@ -3,6 +3,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TypeConverter.h"
 #include "CoreLib/IndexedData.h"
+#include "CoreLib/IndexedDataAccess.h"
 #include "TestLib/Assert.h"
 
 
@@ -13,16 +14,16 @@
 //////////////////////////////////////////////////////////////////////////
 void TestIndexedDataSimple(BOOL bWriteThrough)
 {
-	CIndexedData	cIndexedData;
-	char			szInsipidity[] = "Insipidity the sufficient discretion imprudence resolution sir him decisively. Proceed how any engaged visitor. Explained propriety off out perpetual his you. Feel sold off felt nay rose met you. We so entreaties cultivated astonished is. Was sister for few longer mrs sudden talent become. Done may bore quit evil old mile. If likely am of beauty tastes.  Lose john poor same it case do year we.Full how way even the sigh.Extremely nor furniture fat questions now provision incommode preserved.Our side fail find like now.Discovered travelling for insensible partiality unpleasing impossible she.Sudden up my excuse to suffer ladies though or .Bachelor possible marianne directly confined relation as on he.";
-	OIndex			oiInsipidity;
-	int				iLenInsipidity;
-	char			szViolation[] = "Violation away off why half led have near bed.  At engage simple father of period others except.  My giving do summer of though narrow marked at.  Spring formal no county ye waited.  My whether cheered at regular it of promise blushes perhaps.Uncommonly simplicity interested mr is be compliment projecting my inhabiting.Gentleman he september in oh excellent. Feet evil to hold long he open knew an no.Apartments occasional boisterous as solicitude to introduced.Or fifteen covered we enjoyed demesne is in prepare.In stimulated my everything it literature.Greatly explain attempt perhaps in feeling he.House men taste bed not drawn joy.Through enquire however do equally herself at.Greatly way old may you present improve.Wishing the feeling village him musical.";
-	OIndex			oiViolation;
-	int				iLenViolation;
-	CFileUtil		cFileUtil;
-	unsigned int	uiDataSize;
-	char			szData[1024];
+	CIndexedData		cIndexedData;
+	char				szInsipidity[] = "Insipidity the sufficient discretion imprudence resolution sir him decisively. Proceed how any engaged visitor. Explained propriety off out perpetual his you. Feel sold off felt nay rose met you. We so entreaties cultivated astonished is. Was sister for few longer mrs sudden talent become. Done may bore quit evil old mile. If likely am of beauty tastes.  Lose john poor same it case do year we.Full how way even the sigh.Extremely nor furniture fat questions now provision incommode preserved.Our side fail find like now.Discovered travelling for insensible partiality unpleasing impossible she.Sudden up my excuse to suffer ladies though or .Bachelor possible marianne directly confined relation as on he.";
+	OIndex				oiInsipidity;
+	int					iLenInsipidity;
+	char				szViolation[] = "Violation away off why half led have near bed.  At engage simple father of period others except.  My giving do summer of though narrow marked at.  Spring formal no county ye waited.  My whether cheered at regular it of promise blushes perhaps.Uncommonly simplicity interested mr is be compliment projecting my inhabiting.Gentleman he september in oh excellent. Feet evil to hold long he open knew an no.Apartments occasional boisterous as solicitude to introduced.Or fifteen covered we enjoyed demesne is in prepare.In stimulated my everything it literature.Greatly explain attempt perhaps in feeling he.House men taste bed not drawn joy.Through enquire however do equally herself at.Greatly way old may you present improve.Wishing the feeling village him musical.";
+	OIndex				oiViolation;
+	int					iLenViolation;
+	CFileUtil			cFileUtil;
+	unsigned int		uiDataSize;
+	char				szData[1024];
 
 	cFileUtil.RemoveDir("Database0");
 
@@ -32,7 +33,6 @@ void TestIndexedDataSimple(BOOL bWriteThrough)
 	iLenViolation = strlen(szViolation) + 1;
 
 	cIndexedData.Init("Database0", NULL, 1 MB, 1 MB, bWriteThrough);
-
 	cIndexedData.DurableBegin();
 
 	AssertTrue(cIndexedData.Add(oiInsipidity, szInsipidity, iLenInsipidity, 0));
@@ -69,7 +69,6 @@ void TestIndexedDataSimple(BOOL bWriteThrough)
 	AssertString(szInsipidity, szData);
 
 	cIndexedData.DurableEnd();
-
 	cIndexedData.Kill();
 
 	cFileUtil.RemoveDir("Database0");
@@ -80,14 +79,111 @@ void TestIndexedDataSimple(BOOL bWriteThrough)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexedExplicitKeyEviction(void)
+void TestIndexedDataFlushClearCache(void)
 {
 	CIndexedData	cIndexedData;
 	char			szHello[] = "Hello";
 	char			szWorld[] = "World";
-	char			szSteam[] = "Stream";
+	char			szStream[] = "Stream";
 	char			szDirectory[] = "Output" _FS_ "Database1a";
 	CFileUtil		cFileUtil;
+	unsigned int	uiDataSize;
+	char			szData[7];
+
+	cFileUtil.RemoveDir(szDirectory);
+
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.DurableBegin();
+	AssertInt(0, cIndexedData.NumIndicesCached());
+	AssertInt(0, cIndexedData.NumDataCached());
+	AssertInt(3100, cIndexedData.GetIndiciesSystemMemorySize());
+
+	AssertTrue(cIndexedData.Add(0LL, szHello, 6, 0));
+	AssertTrue(cIndexedData.Add(2LL, szStream, 7, 0));
+	AssertTrue(cIndexedData.Add(4LL, szWorld, 6, 0));
+	AssertInt(3, cIndexedData.NumIndicesCached());
+	AssertInt(3, cIndexedData.NumDataCached());
+	AssertInt(4120, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
+
+	cIndexedData.Flush(FALSE);
+	AssertInt(3, cIndexedData.NumIndicesCached());
+	AssertInt(3, cIndexedData.NumDataCached());
+	AssertInt(4120, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
+
+	cIndexedData.DurableEnd();
+	cIndexedData.Kill();
+
+
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.DurableBegin();
+	AssertInt(0, cIndexedData.NumIndicesCached());
+	AssertInt(0, cIndexedData.NumDataCached());
+	AssertInt(3100 + 24, cIndexedData.GetIndiciesSystemMemorySize());
+
+	AssertTrue(cIndexedData.Get(0LL, &uiDataSize, szData, 7));
+	AssertTrue(cIndexedData.Get(2LL, &uiDataSize, szData, 7));
+	AssertTrue(cIndexedData.Get(4LL, &uiDataSize, szData, 7));
+	AssertInt(3, cIndexedData.NumIndicesCached());
+	AssertInt(3, cIndexedData.NumDataCached());
+	AssertInt(4180, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
+
+	cIndexedData.Flush(TRUE);
+	AssertInt(3, cIndexedData.NumIndicesCached());
+	AssertInt(0, cIndexedData.NumDataCached());
+	AssertInt(4180, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(00, cIndexedData.GetDataSystemMemorySize());
+
+
+	cIndexedData.DurableEnd();
+	cIndexedData.Kill();
+
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.DurableBegin();
+	AssertInt(0, cIndexedData.NumIndicesCached());
+	AssertInt(0, cIndexedData.NumDataCached());
+	AssertInt(3100 + 24, cIndexedData.GetIndiciesSystemMemorySize());
+
+	AssertFalse(cIndexedData.Add(0LL, szWorld, 6, 0));
+	AssertFalse(cIndexedData.Add(2LL, szStream, 7, 0));
+	AssertFalse(cIndexedData.Add(4LL, szHello, 6, 0));
+	AssertInt(3, cIndexedData.NumIndicesCached());
+	AssertInt(0, cIndexedData.NumDataCached());
+	AssertInt(4180, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(0, cIndexedData.GetDataSystemMemorySize());
+
+	AssertTrue(cIndexedData.Get(0LL, &uiDataSize, szData, 7));
+	AssertString(szHello, szData);
+	AssertTrue(cIndexedData.Get(2LL, &uiDataSize, szData, 7));
+	AssertString(szStream, szData);
+	AssertTrue(cIndexedData.Get(4LL, &uiDataSize, szData, 7));
+	AssertString(szWorld, szData);
+	AssertInt(3, cIndexedData.NumIndicesCached());
+	AssertInt(3, cIndexedData.NumDataCached());
+	AssertInt(4180, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
+
+	cIndexedData.DurableEnd();
+	cIndexedData.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexedDataExplicitKeyEvictionAllKeys(void)
+{
+	CIndexedData	cIndexedData;
+	char			szHello[] = "Hello";
+	char			szWorld[] = "World";
+	char			szStream[] = "Stream";
+	char			szDirectory[] = "Output" _FS_ "Database1b";
+	CFileUtil		cFileUtil;
+	unsigned int	uiDataSize;
+	char			szData[7];
 
 	cFileUtil.RemoveDir(szDirectory);
 
@@ -96,9 +192,14 @@ void TestIndexedExplicitKeyEviction(void)
 	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
 
 	cIndexedData.DurableBegin();
+	AssertInt(0, cIndexedData.NumIndicesCached());
+	AssertInt(0, cIndexedData.NumDataCached());
+	AssertInt(3100, cIndexedData.GetIndiciesSystemMemorySize());
+
 	AssertTrue(cIndexedData.Add(0LL, szHello, 6, 0));
-	AssertTrue(cIndexedData.Add(2LL, szSteam, 7, 0));
-	AssertTrue(cIndexedData.Add(4LL, szHello, 6, 0));
+	AssertTrue(cIndexedData.Add(2LL, szStream, 7, 0));
+	AssertTrue(cIndexedData.Add(4LL, szWorld, 6, 0));
+	cIndexedData.Flush(FALSE);
 	AssertInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
 	AssertInt(4120, cIndexedData.GetIndiciesSystemMemorySize());
@@ -110,7 +211,171 @@ void TestIndexedExplicitKeyEviction(void)
 	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(37, cIndexedData.GetDataSystemMemorySize());
 
-	XXX Need more tests.
+	AssertTrue(cIndexedData.EvictKey(2LL));
+	AssertInt(1, cIndexedData.NumIndicesCached());
+	AssertInt(1, cIndexedData.NumDataCached());
+	AssertInt(3440, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(18, cIndexedData.GetDataSystemMemorySize());
+
+	AssertTrue(cIndexedData.EvictKey(4LL));
+	AssertInt(0, cIndexedData.NumIndicesCached());
+	AssertInt(0, cIndexedData.NumDataCached());
+	AssertInt(3100, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(0, cIndexedData.GetDataSystemMemorySize());
+
+	AssertTrue(cIndexedData.Get(0LL, &uiDataSize, szData, 7));
+	AssertString(szHello, szData);
+	AssertTrue(cIndexedData.Get(2LL, &uiDataSize, szData, 7));
+	AssertString(szStream, szData);
+	AssertTrue(cIndexedData.Get(4LL, &uiDataSize, szData, 7));
+	AssertString(szWorld, szData);
+	AssertInt(3, cIndexedData.NumIndicesCached());
+	AssertInt(3, cIndexedData.NumDataCached());
+	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
+
+	cIndexedData.DurableEnd();
+	cIndexedData.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexedDataExplicitKeyEvictionDataChanged(void)
+{
+	CIndexedData		cIndexedData;
+	CIndexedDataAccess	cAccess;
+	char				szLongText[] = "Wrote water woman of heart it total other. By in entirely securing suitable graceful at families improved. Zealously few furniture repulsive was agreeable consisted difficult.";
+	char				szShortText1[] = "No painful between.";
+	char				szShortText2[] = "Barnyard feedback .";
+	char				szDirectory[] = "Output" _FS_ "Database1c";
+	CFileUtil			cFileUtil;
+	char				szData[256];
+	OIndex				oi;
+
+	cFileUtil.RemoveDir(szDirectory);
+	cAccess.Init(&cIndexedData);
+	oi = 0x7752890759012357LL;
+
+	//New Data
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.DurableBegin();
+
+	AssertTrue(cAccess.PutLongString(oi, szShortText1));
+	AssertTrue(cIndexedData.EvictKey(oi));
+	AssertInt(0, cIndexedData.NumIndicesCached());
+	AssertInt(0, cIndexedData.NumDataCached());
+
+	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertString(szShortText1, szData);
+
+	cIndexedData.DurableEnd();
+	cIndexedData.Kill();
+
+
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.DurableBegin();
+
+	//Data not cached.  File exists.
+	//Descriptor size same as Set size.
+	AssertTrue(cAccess.PutLongString(oi, szShortText2));
+	AssertTrue(cIndexedData.EvictKey(oi));
+	AssertInt(0, cIndexedData.NumIndicesCached());
+	AssertInt(0, cIndexedData.NumDataCached());
+
+	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertString(szShortText2, szData);
+	AssertInt(1, cIndexedData.NumIndicesCached());
+	AssertInt(1, cIndexedData.NumDataCached());
+
+	cIndexedData.DurableEnd();
+	cIndexedData.Kill();
+
+
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.DurableBegin();
+
+	//Data not cached.  File exists.
+	//Descriptor size different to Set size.
+	AssertTrue(cAccess.PutLongString(oi, szLongText));
+	AssertTrue(cIndexedData.EvictKey(oi));
+	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertString(szLongText, szData);
+
+	cIndexedData.DurableEnd();
+	cIndexedData.Kill();
+
+
+	cFileUtil.RemoveDir(szDirectory);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.DurableBegin();
+
+	//Cached data.  File not written.
+	//Descriptor size same as Set size.
+	AssertTrue(cAccess.PutLongString(oi, szShortText1));
+	AssertTrue(cAccess.PutLongString(oi, szShortText2));
+	AssertTrue(cIndexedData.EvictKey(oi));
+	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertString(szShortText2, szData);
+
+	cIndexedData.DurableEnd();
+	cIndexedData.Kill();
+
+
+	cFileUtil.RemoveDir(szDirectory);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.DurableBegin();
+
+	//Cached data.  File not written.
+	//Descriptor size different to Set size.
+	AssertTrue(cAccess.PutLongString(oi, szLongText));
+	AssertTrue(cAccess.PutLongString(oi, szShortText1));
+	AssertTrue(cIndexedData.EvictKey(oi));
+	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertString(szShortText1, szData);
+
+	cIndexedData.DurableEnd();
+	cIndexedData.Kill();
+
+
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.DurableBegin();
+
+	//Cached data.  File exists.
+	//Descriptor size same as Set size.
+	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertString(szShortText1, szData);
+	AssertTrue(cAccess.PutLongString(oi, szShortText2));
+	AssertTrue(cIndexedData.EvictKey(oi));
+	AssertInt(0, cIndexedData.NumIndicesCached());
+	AssertInt(0, cIndexedData.NumDataCached());
+	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertString(szShortText2, szData);
+
+	cIndexedData.DurableEnd();
+	cIndexedData.Kill();
+
+
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.DurableBegin();
+
+	//Cached data.  File exists.
+	//Descriptor size different to Set size.
+	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertString(szShortText2, szData);
+	AssertTrue(cAccess.PutLongString(oi, szLongText));
+	AssertTrue(cIndexedData.EvictKey(oi));
+	AssertInt(0, cIndexedData.NumIndicesCached());
+	AssertInt(0, cIndexedData.NumDataCached());
+	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertString(szLongText, szData);
+
+	cIndexedData.DurableEnd();
+	cIndexedData.Kill();
+
+	cFileUtil.RemoveDir(szDirectory);
+	cAccess.Kill();
 }
 
 
@@ -124,8 +389,8 @@ void TestIndexedDataCacheEviction(void)
 	OIndex			OI;
 	char			szHello[] = "Hello";
 	char			szWorld[] = "World";
-	char			szSteam[] = "Stream";
-	char			szDirectory[] = "Output" _FS_ "Database1b";
+	char			szStream[] = "Stream";
+	char			szDirectory[] = "Output" _FS_ "Database1d";
 	char			szIn[7];
 	unsigned int	uiSize;
 	filePos			iFileSize;
@@ -150,7 +415,7 @@ void TestIndexedDataCacheEviction(void)
 	AssertInt(sizeof(SIndexedCacheDescriptor) + 6, cIndexedData.TestGetCachedObjectSize(OI));
 	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
 	OI = 2LL;
-	AssertTrue(cIndexedData.Add(OI, szSteam, 7, 0));
+	AssertTrue(cIndexedData.Add(OI, szStream, 7, 0));
 	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
 
 	AssertInt(2, cIndexedData.NumDataCached());
@@ -161,9 +426,9 @@ void TestIndexedDataCacheEviction(void)
 
 	cIndexedData.Kill();
 
-	iFileSize = cFileUtil.Size("Output" _FS_ "Database1" _FS_ "6_0.DAT");
+	iFileSize = cFileUtil.Size("Output" _FS_ "Database1d" _FS_ "6_0.DAT");
 	AssertLongLongInt(12, iFileSize);
-	iFileSize = cFileUtil.Size("Output" _FS_ "Database1" _FS_ "7_0.DAT");
+	iFileSize = cFileUtil.Size("Output" _FS_ "Database1d" _FS_ "7_0.DAT");
 	AssertLongLongInt(7, iFileSize);
 
 	cIndexedData.Init(szDirectory, NULL, 120, 3600, FALSE);
@@ -540,7 +805,9 @@ void TestIndexedData(void)
 
 	TestIndexedDataSimple(TRUE);
 	TestIndexedDataSimple(FALSE);
-	TestIndexedExplicitKeyEviction();
+	TestIndexedDataFlushClearCache();
+	TestIndexedDataExplicitKeyEvictionAllKeys();
+	TestIndexedDataExplicitKeyEvictionDataChanged();
 	TestIndexedDataCacheEviction();
 	TestIndexedDataLargeData();
 	TestIndexedDataIndexedAdd();

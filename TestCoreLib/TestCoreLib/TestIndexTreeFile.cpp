@@ -1110,7 +1110,7 @@ void TestIndexTreeFileReplaceData(void)
 	BOOL						bResult;
 	char						acData[5];
 	char						acResult[5];
-	int							iDataSize;
+	unsigned int				iDataSize;
 
 	cHelper.Init("Output" _FS_"IndexTree7", "primary", "backup", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
