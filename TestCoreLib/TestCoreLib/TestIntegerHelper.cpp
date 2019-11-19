@@ -1,5 +1,6 @@
-#include "TestLib/Assert.h"
+#include "BaseLib/PrimitiveTypes.h"
 #include "BaseLib/IntegerHelper.h"
+#include "TestLib/Assert.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -60,12 +61,36 @@ void TestMisc(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestEndianness(void)
+{
+	int64	i64;
+	int8*	pi8;
+
+	i64 = 0x0102030405060708LL;
+	pi8 = (int8*)&i64;
+
+	AssertChar(pi8[0], 0x08);
+	AssertChar(pi8[1], 0x07);
+	AssertChar(pi8[2], 0x06);
+	AssertChar(pi8[3], 0x05);
+	AssertChar(pi8[4], 0x04);
+	AssertChar(pi8[5], 0x03);
+	AssertChar(pi8[6], 0x02);
+	AssertChar(pi8[7], 0x01);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIntegerHelper(void)
 {
 	BeginTests();
 
 	TestBitFunctions();
 	TestMisc();
+	TestEndianness();
 
 	TestStatistics();
 }

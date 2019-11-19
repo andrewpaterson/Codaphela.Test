@@ -70,6 +70,9 @@ void TestIndexedDataSimple(BOOL bWriteThrough)
 	AssertInt(iLenInsipidity, uiDataSize);
 	AssertString(szInsipidity, szData);
 
+	AssertInt(2, (int)cIndexedData.NumDataCached());
+	AssertInt(2, (int)cIndexedData.NumElements());
+
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
@@ -384,6 +387,109 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	cAccess.Kill();
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexedDataEvictKey(void)
+{
+	CIndexedData	cIndexedData;
+	char			szHello[] = "Hello";
+	char			szWorld[] = "World";
+	char			szStream[] = "Stream";
+	char			szDirectory[] = "Output" _FS_ "Database1d";
+	CFileUtil		cFileUtil;
+	unsigned int	uiDataSize;
+	char			szData[1024];
+	unsigned int	uiSize;
+
+	cFileUtil.RemoveDir(szDirectory);
+
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.DurableBegin();
+	AssertInt(0, cIndexedData.NumIndicesCached());
+	AssertInt(0, cIndexedData.NumDataCached());
+	AssertInt(3100, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(0, cIndexedData.GetDataSystemMemorySize());
+
+	AssertTrue(cIndexedData.Add(0LL, szHello, 6, 0));
+	AssertTrue(cIndexedData.Add(2LL, szStream, 7, 0));
+	AssertTrue(cIndexedData.Add(4LL, szWorld, 6, 0));
+	AssertInt(3, cIndexedData.NumIndicesCached());
+	AssertInt(3, cIndexedData.NumDataCached());
+	AssertInt(4120, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
+
+	cIndexedData.EvictKey(0LL);
+	AssertInt(2, cIndexedData.NumIndicesCached());
+	AssertInt(2, cIndexedData.NumDataCached());
+	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(37, cIndexedData.GetDataSystemMemorySize());
+
+	cIndexedData.EvictKey(4LL);
+	AssertInt(1, cIndexedData.NumIndicesCached());
+	AssertInt(1, cIndexedData.NumDataCached());
+	AssertInt(3440, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(19, cIndexedData.GetDataSystemMemorySize());
+	
+	cIndexedData.EvictKey(2LL);
+	AssertInt(0, cIndexedData.NumIndicesCached());
+	AssertInt(0, cIndexedData.NumDataCached());
+	AssertInt(3100, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(0, cIndexedData.GetDataSystemMemorySize());
+
+	AssertTrue(cIndexedData.Get(0LL, &uiDataSize, szData, 1024));
+	AssertInt(6, uiDataSize);
+	AssertString(szHello, szData);
+	AssertInt(1, cIndexedData.NumIndicesCached());
+	AssertInt(1, cIndexedData.NumDataCached());
+	AssertInt(3452, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(18, cIndexedData.GetDataSystemMemorySize());
+
+	AssertTrue(cIndexedData.Get(2LL, &uiDataSize, szData, 1024));
+	AssertInt(7, uiDataSize);
+	AssertString(szStream, szData);
+	AssertInt(2, cIndexedData.NumIndicesCached());
+	AssertInt(2, cIndexedData.NumDataCached());
+	AssertInt(3804, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(37, cIndexedData.GetDataSystemMemorySize());
+
+	AssertTrue(cIndexedData.Get(4LL, &uiDataSize, szData, 1024));
+	AssertInt(6, uiDataSize);
+	AssertString(szWorld, szData);
+	AssertInt(3, cIndexedData.NumIndicesCached());
+	AssertInt(3, cIndexedData.NumDataCached());
+	AssertInt(4156, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
+
+	uiSize = cIndexedData.Size(0LL);
+	AssertInt(6, uiSize);
+	uiSize = cIndexedData.Size(2LL);
+	AssertInt(7, uiSize);
+	uiSize = cIndexedData.Size(4LL);
+	AssertInt(6, uiSize);
+
+	cIndexedData.DurableEnd();
+	cIndexedData.Kill();
+
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	AssertInt(2, cIndexedData.NumFiles());
+
+	cIndexedData.DurableBegin();
+	AssertInt(0, cIndexedData.NumIndicesCached());
+	AssertInt(0, cIndexedData.NumDataCached());
+
+	uiSize = cIndexedData.Size(0LL);
+	AssertInt(6, uiSize);
+	uiSize = cIndexedData.Size(2LL);
+	AssertInt(7, uiSize);
+	uiSize = cIndexedData.Size(4LL);
+	AssertInt(6, uiSize);
+
+	cIndexedData.DurableEnd();
+	cIndexedData.Kill();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -396,7 +502,7 @@ void TestIndexedDataCacheEviction(void)
 	char						szHello[] = "Hello";
 	char						szWorld[] = "World";
 	char						szStream[] = "Stream";
-	char						szDirectory[] = "Output" _FS_ "Database1d";
+	char						szDirectory[] = "Output" _FS_ "Database1e";
 	char						szIn[7];
 	unsigned int				uiSize;
 	filePos						iFileSize;
@@ -421,8 +527,42 @@ void TestIndexedDataCacheEviction(void)
 	AssertInt(sizeof(SIndexedCacheDescriptor) + 6, cIndexedData.TestGetCachedObjectSize(1LL));
 	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
 
-	AssertTrue(cIndexedData.Add(2LL, szStream, 7, 0));
+	//Good looking tree!
+
+	//= [IndexTreeFile] ================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
+	//	Both: root: 1:6 1:13 1:20 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+	//	Key : ------------ - [0x00 00 00 00 00 00 00 00] ------------ -
+	//	Both : 0 -> 1 : 5
+	//	Both : 0 -> 1 : 4
+	//	Both : 0 -> 1 : 3
+	//	Both : 0 -> 1 : 2
+	//	Both : 0 -> 1 : 1
+	//	Both : 0 -> 1 : 0
+	//	Both : 0 -> 0 : 0
+	//	Both : 0 ->
+	//	Key : ------------ - [0x01 00 00 00 00 00 00 00] ------------ -
+	//	Both : 1 -> 1 : 12
+	//	Both : 0 -> 1 : 11
+	//	Both : 0 -> 1 : 10
+	//	Both : 0 -> 1 : 9
+	//	Both : 0 -> 1 : 8
+	//	Both : 0 -> 1 : 7
+	//	Both : 0 -> 0 : 1
+	//	Both : 0 ->
+	//	Key : ------------ - [0x02 00 00 00 00 00 00 00] ------------ -
+	//	Both : 2 -> 1 : 19
+	//	Both : 0 -> 1 : 18
+	//	Both : 0 -> 1 : 17
+	//	Both : 0 -> 1 : 16
+	//	Both : 0 -> 1 : 15
+	//	Both : 0 -> 1 : 14
+	//	Both : 0 -> 0 : 2
+	//	Both : 0 ->
+
+	AssertInt(0, cEvictedList.NumElements());
+	AssertTrue(cIndexedData.Add(2LL, szStream, 7, 0));  //Node 0LL evicted here.
 	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(1, cEvictedList.NumElements());
 
 	AssertInt(2, cIndexedData.NumDataCached());
 	AssertInt(2, (int)cIndexedData.NumIndicesCached());
@@ -434,24 +574,26 @@ void TestIndexedDataCacheEviction(void)
 
 	cEvictedList.Clear();
 	cIndexedData.Flush(TRUE);
-	AssertInt(0, cEvictedList.NumElements())
+	AssertInt(0, cEvictedList.NumElements());
 	AssertInt(2, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
 	uiSize = cIndexedData.Size(1LL);
+	AssertInt(1, cEvictedList.NumElements());
 	AssertInt(6, uiSize);
-	AssertInt(2, cIndexedData.NumIndicesCached());
+	AssertInt(1, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
 
-	cIndexedData.DurableEnd();
+	AssertTrue(cIndexedData.DurableEnd());
 	cIndexedData.Kill();
 	cEvictedList.Kill();
 
-	iFileSize = cFileUtil.Size("Output" _FS_ "Database1d" _FS_ "6_0.DAT");
+	iFileSize = cFileUtil.Size("Output" _FS_ "Database1e" _FS_ "6_0.DAT");
 	AssertLongLongInt(12, iFileSize);
-	iFileSize = cFileUtil.Size("Output" _FS_ "Database1d" _FS_ "7_0.DAT");
+	iFileSize = cFileUtil.Size("Output" _FS_ "Database1e" _FS_ "7_0.DAT");
 	AssertLongLongInt(7, iFileSize);
 
-	cIndexedData.Init(szDirectory, NULL, 120, 3600, FALSE);
+	cEvictedList.Init();
+	cIndexedData.Init(szDirectory, NULL, 120, 3600, FALSE, &cEvictedList);
 	AssertInt(2, cIndexedData.NumFiles());
 
 	cIndexedData.DurableBegin();
@@ -462,6 +604,7 @@ void TestIndexedDataCacheEviction(void)
 	AssertInt(6, uiSize);
 	memset(szIn, 0, 7);
 	AssertTrue(cIndexedData.Get(0LL, szIn));
+	cIndexedData.DumpIndex();
 	AssertString("Hello", szIn);
 	AssertInt(1, cIndexedData.NumDataCached());
 
@@ -489,11 +632,65 @@ void TestIndexedDataCacheEviction(void)
 	cIndexedData.DurableEnd();
 
 	cIndexedData.Kill();
+	cEvictedList.Kill();
 
 	cIndexedData.Init(szDirectory, NULL, 1024, 3600, FALSE);
 	AssertInt(0, (int)cIndexedData.NumIndicesCached());
 	cIndexedData.Kill();
 
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexedDataEvictAndFlush(void)
+{
+	CIndexedData				cIndexedData;
+	char						szWorld[] = "World";
+	char						szStream[] = "Stream";
+	char						szDirectory[] = "Output" _FS_ "Database1f";
+	char						szIn[8];
+	unsigned int				uiSize;
+	CFileUtil					cFileUtil;
+
+	cFileUtil.RemoveDir(szDirectory);
+
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);  //A little more than two items in the cache...
+
+	cIndexedData.DurableBegin();
+	AssertTrue(cIndexedData.Add(198732178239018792LL, szStream, 7, 0));
+	AssertTrue(cIndexedData.Add(573107892314634784LL, szWorld, 6, 0));
+
+	cIndexedData.EvictKey(198732178239018792LL);
+	cIndexedData.Flush(TRUE);
+	cIndexedData.DumpIndex();
+
+	AssertTrue(cIndexedData.DurableEnd());
+	cIndexedData.Kill();
+
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.DurableBegin();
+
+	uiSize = cIndexedData.Size(573107892314634784LL);
+	AssertInt(6, uiSize);
+	memset(szIn, 0, 8);
+	AssertTrue(cIndexedData.Get(573107892314634784LL, szIn));
+	AssertString("World", szIn);
+	cIndexedData.DumpIndex();
+
+	uiSize = cIndexedData.Size(198732178239018792LL);
+	AssertInt(7, uiSize);
+	memset(szIn, 0, 8);
+	AssertTrue(cIndexedData.Get(198732178239018792LL, szIn));
+	AssertString("Stream", szIn);
+	cIndexedData.DumpIndex();
+
+	cIndexedData.DurableEnd();
+	cIndexedData.Kill();
+	
 	cFileUtil.RemoveDir(szDirectory);
 }
 
@@ -827,11 +1024,13 @@ void TestIndexedData(void)
 	DataMemoryInit();
 	BeginTests();
 
-	TestIndexedDataSimple(TRUE);
-	TestIndexedDataSimple(FALSE);
-	TestIndexedDataFlushClearCache();
-	TestIndexedDataExplicitKeyEvictionAllKeys();
-	TestIndexedDataExplicitKeyEvictionDataChanged();
+	//TestIndexedDataSimple(TRUE);
+	//TestIndexedDataSimple(FALSE);
+	//TestIndexedDataFlushClearCache();
+	//TestIndexedDataEvictKey();
+	//TestIndexedDataExplicitKeyEvictionAllKeys();
+	//TestIndexedDataExplicitKeyEvictionDataChanged();
+	TestIndexedDataEvictAndFlush();
 	TestIndexedDataCacheEviction();
 	TestIndexedDataLargeData();
 	TestIndexedDataIndexedAdd();
