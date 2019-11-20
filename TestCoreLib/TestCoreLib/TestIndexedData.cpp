@@ -593,7 +593,7 @@ void TestIndexedDataCacheEviction(void)
 	AssertLongLongInt(7, iFileSize);
 
 	cEvictedList.Init();
-	cIndexedData.Init(szDirectory, NULL, 120, 3600, FALSE, &cEvictedList);
+	cIndexedData.Init(szDirectory, NULL, 1024, 3780, FALSE, &cEvictedList);
 	AssertInt(2, cIndexedData.NumFiles());
 
 	cIndexedData.DurableBegin();
@@ -604,7 +604,6 @@ void TestIndexedDataCacheEviction(void)
 	AssertInt(6, uiSize);
 	memset(szIn, 0, 7);
 	AssertTrue(cIndexedData.Get(0LL, szIn));
-	cIndexedData.DumpIndex();
 	AssertString("Hello", szIn);
 	AssertInt(1, cIndexedData.NumDataCached());
 
@@ -634,7 +633,7 @@ void TestIndexedDataCacheEviction(void)
 	cIndexedData.Kill();
 	cEvictedList.Kill();
 
-	cIndexedData.Init(szDirectory, NULL, 1024, 3600, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 1024, 3780, FALSE);
 	AssertInt(0, (int)cIndexedData.NumIndicesCached());
 	cIndexedData.Kill();
 
@@ -655,6 +654,7 @@ void TestIndexedDataEvictAndFlush(void)
 	char						szIn[8];
 	unsigned int				uiSize;
 	CFileUtil					cFileUtil;
+	unsigned char				ucFlags;
 
 	cFileUtil.RemoveDir(szDirectory);
 
@@ -665,8 +665,10 @@ void TestIndexedDataEvictAndFlush(void)
 	AssertTrue(cIndexedData.Add(573107892314634784LL, szWorld, 6, 0));
 
 	cIndexedData.EvictKey(198732178239018792LL);
+	ucFlags = cIndexedData.GetRootFlags();
+	AssertChar(INDEX_TREE_NODE_FLAG_DIRTY_PATH, ucFlags);
+
 	cIndexedData.Flush(TRUE);
-	cIndexedData.DumpIndex();
 
 	AssertTrue(cIndexedData.DurableEnd());
 	cIndexedData.Kill();
@@ -679,18 +681,73 @@ void TestIndexedDataEvictAndFlush(void)
 	memset(szIn, 0, 8);
 	AssertTrue(cIndexedData.Get(573107892314634784LL, szIn));
 	AssertString("World", szIn);
-	cIndexedData.DumpIndex();
 
 	uiSize = cIndexedData.Size(198732178239018792LL);
 	AssertInt(7, uiSize);
 	memset(szIn, 0, 8);
 	AssertTrue(cIndexedData.Get(198732178239018792LL, szIn));
 	AssertString("Stream", szIn);
-	cIndexedData.DumpIndex();
 
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 	
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexedDataFlushAndFlush(void)
+{
+	CIndexedData				cIndexedData;
+	char						szWorld[] = "World";
+	char						szStream[] = "Stream";
+	char						szDirectory[] = "Output" _FS_ "Database1f";
+	char						szIn[8];
+	unsigned int				uiSize;
+	CFileUtil					cFileUtil;
+
+	cFileUtil.RemoveDir(szDirectory);
+
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);  //A little more than two items in the cache...
+
+	cIndexedData.DurableBegin();
+	
+	AssertTrue(cIndexedData.Add(198732178239018792LL, szStream, 7, 0));
+	cIndexedData.Flush(TRUE);
+
+	AssertTrue(cIndexedData.DurableEnd());
+	cIndexedData.Kill();
+
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.DurableBegin();
+
+	AssertTrue(cIndexedData.Add(573107892314634784LL, szWorld, 6, 0));
+	cIndexedData.Flush(TRUE);
+
+	cIndexedData.DurableEnd();
+	cIndexedData.Kill();
+
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.DurableBegin();
+
+	uiSize = cIndexedData.Size(573107892314634784LL);
+	AssertInt(6, uiSize);
+	memset(szIn, 0, 8);
+	AssertTrue(cIndexedData.Get(573107892314634784LL, szIn));
+	AssertString("World", szIn);
+
+	uiSize = cIndexedData.Size(198732178239018792LL);
+	AssertInt(7, uiSize);
+	memset(szIn, 0, 8);
+	AssertTrue(cIndexedData.Get(198732178239018792LL, szIn));
+	AssertString("Stream", szIn);
+
+	cIndexedData.DurableEnd();
+	cIndexedData.Kill();
+
 	cFileUtil.RemoveDir(szDirectory);
 }
 
@@ -1024,13 +1081,14 @@ void TestIndexedData(void)
 	DataMemoryInit();
 	BeginTests();
 
-	//TestIndexedDataSimple(TRUE);
-	//TestIndexedDataSimple(FALSE);
-	//TestIndexedDataFlushClearCache();
-	//TestIndexedDataEvictKey();
-	//TestIndexedDataExplicitKeyEvictionAllKeys();
-	//TestIndexedDataExplicitKeyEvictionDataChanged();
+	TestIndexedDataSimple(TRUE);
+	TestIndexedDataSimple(FALSE);
+	TestIndexedDataFlushClearCache();
+	TestIndexedDataEvictKey();
+	TestIndexedDataExplicitKeyEvictionAllKeys();
+	TestIndexedDataExplicitKeyEvictionDataChanged();
 	TestIndexedDataEvictAndFlush();
+	TestIndexedDataFlushAndFlush();
 	TestIndexedDataCacheEviction();
 	TestIndexedDataLargeData();
 	TestIndexedDataIndexedAdd();
