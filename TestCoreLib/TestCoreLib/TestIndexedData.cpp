@@ -593,7 +593,7 @@ void TestIndexedDataCacheEviction(void)
 	AssertLongLongInt(7, iFileSize);
 
 	cEvictedList.Init();
-	cIndexedData.Init(szDirectory, NULL, 1024, 3780, FALSE, &cEvictedList);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE, &cEvictedList);
 	AssertInt(2, cIndexedData.NumFiles());
 
 	cIndexedData.DurableBegin();
@@ -626,14 +626,14 @@ void TestIndexedDataCacheEviction(void)
 	memset(szIn, 0, 7);
 	AssertTrue(cIndexedData.Get(0LL, szIn));
 	AssertString("Hello", szIn);
-	AssertInt(1, cIndexedData.NumDataCached());
-	AssertInt(1, cIndexedData.NumIndicesCached());
+	AssertInt(3, cIndexedData.NumDataCached());
+	AssertInt(3, cIndexedData.NumIndicesCached());
 	cIndexedData.DurableEnd();
 
 	cIndexedData.Kill();
 	cEvictedList.Kill();
 
-	cIndexedData.Init(szDirectory, NULL, 1024, 3780, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
 	AssertInt(0, (int)cIndexedData.NumIndicesCached());
 	cIndexedData.Kill();
 
@@ -773,11 +773,11 @@ void TestIndexedDataLargeData(void)
 	AssertInt(0, cIndexedData.NumDataCached());
 
 	cIndexedData.DurableBegin();
-	cIndexedData.Add(OI, szBig, 14, 0);
+	AssertTrue(cIndexedData.Add(OI, szBig, 14, 0));
 	AssertInt(0, cIndexedData.NumDataCached());
 	AssertInt(0, (int)cIndexedData.NumIndicesCached());
 	
-	cIndexedData.Get(OI, szIn);
+	AssertTrue(cIndexedData.Get(OI, szIn));
 	AssertInt(0, cIndexedData.NumDataCached());
 	AssertInt(0, (int)cIndexedData.NumIndicesCached());
 	AssertString(szBig, szIn);
@@ -829,7 +829,7 @@ void TestIndexedDataIndexedAdd(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init(szDirectory, NULL, 98+12, 1024, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 98+12, 8192, FALSE);
 
 	cIndexedData.DurableBegin();
 	OI = 0LL;
@@ -1090,12 +1090,12 @@ void TestIndexedData(void)
 	TestIndexedDataEvictAndFlush();
 	TestIndexedDataFlushAndFlush();
 	TestIndexedDataCacheEviction();
-	TestIndexedDataLargeData();
 	TestIndexedDataIndexedAdd();
 	TestIndexedDataDescriptorCaching();
 	TestIndexedDataNoCaching(FALSE);
 	TestIndexedDataNoCaching(TRUE);
 	TestIndexedDataGet();
+	TestIndexedDataLargeData();
 
 	TestStatistics();
 	DataMemoryKill();
