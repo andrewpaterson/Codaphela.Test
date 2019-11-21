@@ -27,14 +27,14 @@ void TestIndexedDataSimple(BOOL bWriteThrough)
 	char				szData[1024];
 	char				szDirectory[] = "Output" _FS_ "Database0";
 
-	cFileUtil.RemoveDir("szDirectory");
+	cFileUtil.RemoveDir(szDirectory);
 
 	oiInsipidity = 789983209433243094LL;
 	iLenInsipidity = strlen(szInsipidity) + 1;
 	oiViolation = 3908343914887489103LL;
 	iLenViolation = strlen(szViolation) + 1;
 
-	cIndexedData.Init("szDirectory", NULL, 1 MB, 1 MB, bWriteThrough);
+	cIndexedData.Init(szDirectory, NULL, 1 MB, 1 MB, bWriteThrough);
 	cIndexedData.DurableBegin();
 
 	AssertTrue(cIndexedData.Add(oiInsipidity, szInsipidity, iLenInsipidity, 0));
@@ -56,7 +56,7 @@ void TestIndexedDataSimple(BOOL bWriteThrough)
 	AssertTrue(cIndexedData.Kill());
 
 
-	cIndexedData.Init("szDirectory", NULL, 1 MB, 1 MB, bWriteThrough);
+	cIndexedData.Init(szDirectory, NULL, 1 MB, 1 MB, bWriteThrough);
 
 	AssertTrue(cIndexedData.DurableBegin());
 
@@ -262,6 +262,11 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	CFileUtil			cFileUtil;
 	char				szData[256];
 	OIndex				oi;
+
+
+	AssertInt(20, strlen(szShortText1) + 1);
+	AssertInt(20, strlen(szShortText2) + 1);
+	AssertInt(176, strlen(szLongText) + 1);
 
 	cFileUtil.RemoveDir(szDirectory);
 	cAccess.Init(&cIndexedData);
