@@ -147,6 +147,15 @@
     <ClCompile Include="TestIndexedFile.cpp">
       <Filter>Source\File\Indexed\Data</Filter>
     </ClCompile>
+    <ClCompile Include="TestIndexTreeFileCallback.cpp">
+      <Filter>Source\File\Indexed\Index</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexTreeFileTestCallback.cpp">
+      <Filter>Source\File\Indexed\Index</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexTreeCallbackTestObject.cpp">
+      <Filter>Source\File\Indexed\Index</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -159,6 +168,12 @@
       <Filter>Source\Function</Filter>
     </ClInclude>
     <ClInclude Include="TestIndexTreeObject.h">
+      <Filter>Source\File\Indexed\Index</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexTreeFileTestCallback.h">
+      <Filter>Source\File\Indexed\Index</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexTreeCallbackTestObject.h">
       <Filter>Source\File\Indexed\Index</Filter>
     </ClInclude>
   </ItemGroup>
