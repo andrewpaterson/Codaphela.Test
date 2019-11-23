@@ -22,7 +22,6 @@ void TestIndexTreeNodeFileSizeofs(void)
 	AssertInt(16, sizeof(CIndexTreeNode)));
 	AssertTrue(sizeof(CIndexTreeNodeFile*) <= sizeof(CIndexTreeChildNode) - sizeof(int)));
 	AssertInt(4, sizeof(int));  //Just ot be sure.
-	
 }
 
 

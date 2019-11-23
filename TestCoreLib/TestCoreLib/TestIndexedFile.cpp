@@ -43,15 +43,15 @@ void TestIndexedFileWrite(void)
 
 	iFileIndex = cIndexedFile.Write(sz3);
 	AssertLongLongInt(0, iFileIndex);
-	AssertLongLongInt(9, cIndexedFile.mcFile.Size());
+	AssertLongLongInt(9, cIndexedFile.GetFileSize());
 
 	iFileIndex = cIndexedFile.Write(sz2);
 	AssertLongLongInt(1, iFileIndex);
-	AssertLongLongInt(18, cIndexedFile.mcFile.Size());
+	AssertLongLongInt(18, cIndexedFile.GetFileSize());
 
 	bResult = cIndexedFile.Write(0, sz1);
 	AssertTrue(bResult);
-	AssertLongLongInt(18, cIndexedFile.mcFile.Size());
+	AssertLongLongInt(18, cIndexedFile.GetFileSize());
 
 	bResult = cDurableController.End();
 	AssertTrue(bResult);
@@ -88,7 +88,7 @@ void TestIndexedFileWrite(void)
 	bResult = cIndexedFile.Read(1, szTemp);
 	AssertTrue(bResult);
 	AssertString(sz2, szTemp);
-	AssertInt(18, (int)cIndexedFile.mcFile.Size());
+	AssertInt(18, (int)cIndexedFile.GetFileSize());
 
 	bResult = cDurableController.End();
 	AssertTrue(bResult);

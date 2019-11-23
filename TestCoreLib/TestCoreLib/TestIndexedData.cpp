@@ -1086,11 +1086,11 @@ void TestIndexedData(void)
 	DataMemoryInit();
 	BeginTests();
 
-	//TestIndexedDataSimple(TRUE);
-	//TestIndexedDataSimple(FALSE);
-	//TestIndexedDataFlushClearCache();
-	//TestIndexedDataEvictKey();
-	//TestIndexedDataExplicitKeyEvictionAllKeys();
+	TestIndexedDataSimple(TRUE);
+	TestIndexedDataSimple(FALSE);
+	TestIndexedDataFlushClearCache();
+	TestIndexedDataEvictKey();
+	TestIndexedDataExplicitKeyEvictionAllKeys();
 	TestIndexedDataExplicitKeyEvictionDataChanged();
 	TestIndexedDataEvictAndFlush();
 	TestIndexedDataFlushAndFlush();
