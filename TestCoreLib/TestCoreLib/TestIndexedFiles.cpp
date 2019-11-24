@@ -108,6 +108,9 @@ void TestIndexedFilesWrite(void)
 	int						iLen3;
 	int						iLen4;
 	CChars					szTemp;
+	CFileDataIndex			cDataIndex;
+	unsigned int			uiDataSize;
+	char					szData[1024];
 
 	iLen1 = strlen(szData1);
 	iLen2 = strlen(szData2);
@@ -224,6 +227,41 @@ void TestIndexedFilesWrite(void)
 	AssertTrue(cController.End());
 	AssertLongLongInt(4, cIndexedFiles.NumData());
 
+	cIndexedFiles.Kill();
+	cController.Kill();
+
+	cController.Init(szDirectorty, szRewriteDirectorty);
+	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
+	cController.Begin();
+	cIndexedFiles.ReadIndexedFileDescriptors();
+
+	uiDataSize = cIndexedFiles.GetFileDataSize(0);
+	AssertInt(88, uiDataSize);
+
+	cDataIndex.Init(0, 0);
+	memset(szData, 0, 1024);
+	AssertTrue(cIndexedFiles.Read(&cDataIndex, szData));
+	AssertString(szData1, szData);
+
+	cDataIndex.Init(0, 1);
+	memset(szData, 0, 1024);
+	AssertTrue(cIndexedFiles.Read(&cDataIndex, szData));
+	AssertString(szData3, szData);
+
+	uiDataSize = cIndexedFiles.GetFileDataSize(1);
+	AssertInt(100, uiDataSize);
+
+	cDataIndex.Init(1, 0);
+	memset(szData, 0, 1024);
+	AssertTrue(cIndexedFiles.Read(&cDataIndex, szData));
+	AssertString(szData2, szData);
+
+	cDataIndex.Init(1, 1);
+	memset(szData, 0, 1024);
+	AssertTrue(cIndexedFiles.Read(&cDataIndex, szData));
+	AssertString(szData4, szData);
+
+	AssertTrue(cController.End());
 	cIndexedFiles.Kill();
 	cController.Kill();
 
