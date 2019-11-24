@@ -351,6 +351,7 @@ void TestIndexedFilesEvictingSetDataNoCacheNoFile(void)
 	char									sz6[] = "6Six6\0";
 	BOOL									bWriteThrough;
 
+	AssertInt(32, sizeof(CIndexedDataDescriptor));
 	bWriteThrough = FALSE;
 	cHelper.Init("Output" _FS_ "TestEvicting3", "primary", "backup", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
