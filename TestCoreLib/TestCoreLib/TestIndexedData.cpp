@@ -37,6 +37,7 @@ void TestIndexedDataSimple(BOOL bWriteThrough)
 	cIndexedData.Init(szDirectory, NULL, 1 MB, 1 MB, bWriteThrough);
 	cIndexedData.DurableBegin();
 
+	//When bWriteThrough == FALSE then the CIndexedDataDescriptor is written with the muiCacheDataSize != 0 and msFileDescriptor not set.
 	AssertTrue(cIndexedData.Add(oiInsipidity, szInsipidity, iLenInsipidity, 0));
 	AssertTrue(cIndexedData.Add(oiViolation, szViolation, iLenViolation, 0));
 
