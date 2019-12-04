@@ -795,21 +795,20 @@ void TestIndexedFilesEvicting(void)
 	BeginTests();
 
 	//None of these tests work because cDescriptors.Flush(TRUE) does not update the CIndexedDataDescriptor
+	TestIndexedFilesEvictingSetDataNoCacheNoFile();
+	TestIndexedFilesEvictingSetDataCacheSameSizeNoFile();
+	TestIndexedFilesEvictingSetDataCacheDiffSizeNoFile();
+	TestIndexedFilesEvictingSetDataNoCacheFileSameSize();
+	TestIndexedFilesEvictingSetDataNoCacheFileDiffSize();
+	TestIndexedFilesEvictingSetDataCacheSameSizeFile();
+	TestIndexedFilesEvictingSetDataCacheDiffSizeFile();
 
-	//TestIndexedFilesEvictingSetDataNoCacheNoFile();
-	//TestIndexedFilesEvictingSetDataCacheSameSizeNoFile();
-	//TestIndexedFilesEvictingSetDataCacheDiffSizeNoFile();
-	//TestIndexedFilesEvictingSetDataNoCacheFileSameSize();
-	//TestIndexedFilesEvictingSetDataNoCacheFileDiffSize();
-	//TestIndexedFilesEvictingSetDataCacheSameSizeFile();
-	//TestIndexedFilesEvictingSetDataCacheDiffSizeFile();
-
-	//TestIndexedFilesEvictingFlush(FALSE, TRUE);
-	//TestIndexedFilesEvictingFlush(TRUE, TRUE);
-	//TestIndexedFilesEvictingFlush(FALSE, FALSE);
-	//TestIndexedFilesEvictingFlush(TRUE, FALSE);
-	//TestIndexedFilesEvictingEviction(FALSE);
-	//TestIndexedFilesEvictingEviction(TRUE);
+	TestIndexedFilesEvictingFlush(FALSE, TRUE);
+	TestIndexedFilesEvictingFlush(TRUE, TRUE);
+	TestIndexedFilesEvictingFlush(FALSE, FALSE);
+	TestIndexedFilesEvictingFlush(TRUE, FALSE);
+	TestIndexedFilesEvictingEviction(FALSE);
+	TestIndexedFilesEvictingEviction(TRUE);
 
 	TestStatistics();
 	DataMemoryKill();

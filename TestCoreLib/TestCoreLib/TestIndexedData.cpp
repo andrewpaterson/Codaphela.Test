@@ -37,7 +37,6 @@ void TestIndexedDataSimple(BOOL bWriteThrough)
 	cIndexedData.Init(szDirectory, NULL, 1 MB, 1 MB, bWriteThrough);
 	cIndexedData.DurableBegin();
 
-	//When bWriteThrough == FALSE then the CIndexedDataDescriptor is written with the muiCacheDataSize != 0 and msFileDescriptor not set.
 	AssertTrue(cIndexedData.Add(oiInsipidity, szInsipidity, iLenInsipidity, 0));
 	AssertTrue(cIndexedData.Add(oiViolation, szViolation, iLenViolation, 0));
 
@@ -299,6 +298,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	AssertInt(0, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
 
+	memset(szData, 0, 256);
 	AssertTrue(cAccess.GetLongString(oi, szData));
 	AssertString(szShortText2, szData);
 	AssertInt(1, cIndexedData.NumIndicesCached());

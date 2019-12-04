@@ -65,7 +65,7 @@ int main(void)
 	TestIndexTreeAccess();
 	TestIndexTreeWriter();
 	TestIndexTreeEvicting();
-	TestIndexedFilesEvicting();
+	//TestIndexedFilesEvicting();
 	TestIndexedData();
 
 	return TestTotalStatistics();
