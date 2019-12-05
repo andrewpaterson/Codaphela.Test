@@ -743,38 +743,39 @@ void TestIndexedDataLargeData(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init(szDirectory, NULL, 34, 1024, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 34, 8192, FALSE);
 	OI = 0LL;
 	AssertInt(0, cIndexedData.NumDataCached());
 
 	cIndexedData.DurableBegin();
 	AssertTrue(cIndexedData.Add(OI, szBig, 14, 0));
 	AssertInt(0, cIndexedData.NumDataCached());
-	AssertInt(0, (int)cIndexedData.NumIndicesCached());
+	AssertInt(1, (int)cIndexedData.NumIndicesCached());
 	
 	AssertTrue(cIndexedData.Get(OI, szIn));
 	AssertInt(0, cIndexedData.NumDataCached());
-	AssertInt(0, (int)cIndexedData.NumIndicesCached());
+	AssertInt(1, (int)cIndexedData.NumIndicesCached());
 	AssertString(szBig, szIn);
 
 	OI = 1LL;
 	cIndexedData.Add(OI, szSmall, 4, 0);
 	AssertInt(1, cIndexedData.NumDataCached());
-	AssertInt(1, (int)cIndexedData.NumIndicesCached());
+	AssertInt(2, (int)cIndexedData.NumIndicesCached());
 
 	OI = 0LL;
 	cIndexedData.Get(OI, szIn);
 	AssertInt(1, cIndexedData.NumDataCached());
-	AssertInt(1, (int)cIndexedData.NumIndicesCached());
+	AssertInt(2, (int)cIndexedData.NumIndicesCached());
 	AssertString(szBig, szIn);
 
 	OI = 1LL;
 	cIndexedData.Get(OI, szIn);
 	AssertInt(1, cIndexedData.NumDataCached());
-	AssertInt(1, (int)cIndexedData.NumIndicesCached());
+	AssertInt(2, (int)cIndexedData.NumIndicesCached());
 	AssertString(szSmall, szIn);
-	cIndexedData.DurableEnd();
 
+	cIndexedData.Flush(TRUE);
+	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -885,7 +886,7 @@ void TestIndexedDataDescriptorCaching(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init(szDirectory, NULL, 96, 1024, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 96, 4150, FALSE);
 	cIndexedData.DurableBegin();
 
 	OI = 0LL;
@@ -916,10 +917,11 @@ void TestIndexedDataDescriptorCaching(void)
 	iNumCached = cIndexedData.NumIndicesCached();
 	AssertInt(3, (int)iNumCached);
 
+	cIndexedData.Flush(TRUE);
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
-	cIndexedData.Init(szDirectory, NULL, 96, 1024, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 96, 8192, FALSE);
 	cIndexedData.DurableBegin();
 
 	iNumCached = cIndexedData.NumIndicesCached();
@@ -936,18 +938,20 @@ void TestIndexedDataDescriptorCaching(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexedDataNoCaching(BOOL bDurable)
+void TestIndexedDataNoCaching(void)
 {
 	CIndexedData	cIndexedData;
 	OIndex			OI;
 	CFileUtil		cFileUtil;
 	int				iData;
-	OIndex			iNumCached;
+	int				iNumIndicesCached;
+	OIndex			iNumDataCached;
+
 	char			szDirectory[] = "Output" _FS_ "Database5";
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init(szDirectory, 0, bDurable, 1024, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 0, 4150, FALSE);
 
 	cIndexedData.DurableBegin();
 
@@ -958,16 +962,20 @@ void TestIndexedDataNoCaching(BOOL bDurable)
 	iData = 0; OI = 0LL; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(77, iData);
 
-	iNumCached = cIndexedData.NumIndicesCached();
-	AssertInt(0, (int)iNumCached);
+	iNumIndicesCached = cIndexedData.NumIndicesCached();
+	AssertInt(2, (int)iNumIndicesCached);
+	iNumDataCached = cIndexedData.NumDataCached();
+	AssertLongLongInt(0, iNumDataCached);
 
 	OI = 2LL;
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
 	iData = 0; OI = 0LL; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(77, iData);
 
-	iNumCached = cIndexedData.NumIndicesCached();
-	AssertInt(0, (int)iNumCached);
+	iNumIndicesCached = cIndexedData.NumIndicesCached();
+	AssertInt(3, (int)iNumIndicesCached);
+	iNumDataCached = cIndexedData.NumDataCached();
+	AssertLongLongInt(0, iNumDataCached);
 
 	OI = 2LL;
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
@@ -982,8 +990,10 @@ void TestIndexedDataNoCaching(BOOL bDurable)
 	iData = 0; OI = 0LL; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(77, iData);
 
-	iNumCached = cIndexedData.NumIndicesCached();
-	AssertInt(0, (int)iNumCached);
+	iNumIndicesCached = cIndexedData.NumIndicesCached();
+	AssertInt(3, (int)iNumIndicesCached);
+	iNumDataCached = cIndexedData.NumDataCached();
+	AssertLongLongInt(0, iNumDataCached);
 
 	cIndexedData.DurableEnd();
 
@@ -1000,8 +1010,8 @@ void TestIndexedDataGet(void)
 {
 	CIndexedData	cIndexedData;
 	CFileUtil		cFileUtil;
-	char*			szData;
-	int				iSize;
+	char			szData[256];
+	unsigned int	uiSize;
 	char			szSmellsLikeTeenSpirit[] = {"Smells Like Teen Spirit"};
 	char			szSeizedPotPlants[] = {"Seized pot plants turn out to be daisies"};
 	char			szCallingFromWindows[] = {"I am calling you from Windows"};
@@ -1018,6 +1028,7 @@ void TestIndexedDataGet(void)
 	
 	AssertLongLongInt(3, cIndexedData.NumElements());
 
+	cIndexedData.Flush(TRUE);
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
@@ -1026,20 +1037,17 @@ void TestIndexedDataGet(void)
 
 	AssertLongLongInt(3, cIndexedData.NumElements());
 
-	szData = (char*)cIndexedData.Get(0x7634, &iSize);
-	AssertInt((int)strlen(szSmellsLikeTeenSpirit)+1, iSize);
+	AssertTrue(cIndexedData.Get(0x7634, &uiSize, szData, 256));
+	AssertInt((int)strlen(szSmellsLikeTeenSpirit)+1, uiSize);
 	AssertString(szSmellsLikeTeenSpirit, szData);
-	free(szData);
 
-	szData = (char*)cIndexedData.Get(0x3589, &iSize);
-	AssertInt((int)strlen(szSeizedPotPlants)+1, iSize);
+	AssertTrue(cIndexedData.Get(0x3589, &uiSize, szData, 256));
+	AssertInt((int)strlen(szSeizedPotPlants)+1, uiSize);
 	AssertString(szSeizedPotPlants, szData);
-	free(szData);
 	
-	szData = (char*)cIndexedData.Get(0x8743, &iSize);
-	AssertInt((int)strlen(szCallingFromWindows)+1, iSize);
+	AssertTrue(cIndexedData.Get(0x8743, &uiSize, szData, 256));
+	AssertInt((int)strlen(szCallingFromWindows)+1, uiSize);
 	AssertString(szCallingFromWindows, szData);
-	free(szData);
 
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
@@ -1070,8 +1078,7 @@ void TestIndexedData(void)
 	TestIndexedDataCacheEviction();
 	TestIndexedDataIndexedAdd();
 	TestIndexedDataDescriptorCaching();
-	TestIndexedDataNoCaching(FALSE);
-	TestIndexedDataNoCaching(TRUE);
+	TestIndexedDataNoCaching();
 	TestIndexedDataGet();
 	TestIndexedDataLargeData();
 
