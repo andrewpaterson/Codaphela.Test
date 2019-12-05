@@ -350,6 +350,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	AssertTrue(cAccess.GetLongString(oi, szData));
 	AssertString(szShortText1, szData);
 
+	cIndexedData.Flush(TRUE);
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
@@ -787,7 +788,8 @@ void TestIndexedDataLargeData(void)
 void TestIndexedDataIndexedAdd(void)
 {
 	CIndexedData	cIndexedData;
-	OIndex			OI;
+	OIndex			oIndex1;
+	OIndex			oIndex2;
 	char			szBat[] = "Bat";
 	char			szCat[] = "Cat";
 	char			szDog[] = "Dog";
@@ -806,8 +808,8 @@ void TestIndexedDataIndexedAdd(void)
 	cIndexedData.Init(szDirectory, NULL, 98+12, 8192, FALSE);
 
 	cIndexedData.DurableBegin();
-	OI = 0LL;
-	bResult = cIndexedData.Add(OI, szBat, 4, 0);
+	oIndex1 = 0LL;
+	bResult = cIndexedData.Add(oIndex1, szBat, 4, 0);
 	AssertBool(TRUE, bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
 	AssertInt(0, (int)cIndexedData.NumData(4));
@@ -815,45 +817,47 @@ void TestIndexedDataIndexedAdd(void)
 	AssertInt(1, (int)cIndexedData.NumData(4));
 	AssertInt(0, (int)cIndexedData.NumDataCached());
 
-	bResult = cIndexedData.Add(OI, szCat, 4, 0);
+	bResult = cIndexedData.Add(oIndex1, szCat, 4, 0);
 	AssertBool(FALSE, bResult);
-	bResult = cIndexedData.Set(OI, szDog, 0);
+	bResult = cIndexedData.Set(oIndex1, szDog, 0);
 	AssertBool(TRUE, bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
 	AssertInt(1, (int)cIndexedData.NumData(4));
-	cIndexedData.Get(OI, szIn);
+	cIndexedData.Get(oIndex1, szIn);
 	AssertString(szDog, szIn);
 
-	bResult = cIndexedData.Set(OI, szFish, 5, 0);
+	bResult = cIndexedData.Set(oIndex1, szFish, 5, 0);
 	AssertBool(TRUE, bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
-	cIndexedData.Get(OI, szIn);
+	cIndexedData.Get(oIndex1, szIn);
 	AssertString(szFish, szIn);
 
 	cIndexedData.Flush(TRUE);
 	AssertInt(1, (int)cIndexedData.NumData(4));
 	AssertInt(1, (int)cIndexedData.NumData(5));
-	cIndexedData.Get(OI, szIn);
+	cIndexedData.Get(oIndex1, szIn);
 	AssertString(szFish, szIn);
 
-	bResult = cIndexedData.Set(OI, szCat, 4, 0);
+	bResult = cIndexedData.Set(oIndex1, szCat, 4, 0);
 	AssertInt(1, (int)cIndexedData.NumElements());
+	AssertInt(1, (int)cIndexedData.NumIndicesCached());
 	AssertBool(TRUE, bResult);
 	cIndexedData.Flush(TRUE);
 	AssertInt(2, (int)cIndexedData.NumData(4));  //One is ignored but they are both still in the file.
 	AssertInt(1, (int)cIndexedData.NumElements());
+	AssertInt(1, (int)cIndexedData.NumIndicesCached());
 
-	OI = 3LL;
-	bResult = cIndexedData.Add(OI, szHell, 5, 0);
+	oIndex2 = 3LL;
+	bResult = cIndexedData.Add(oIndex2, szHell, 5, 0);
 	AssertBool(TRUE, bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
-	AssertInt(1, (int)cIndexedData.NumIndicesCached());
-	bResult = cIndexedData.Add(OI, szMutt, 5, 0);
+	AssertInt(2, (int)cIndexedData.NumIndicesCached());
+	bResult = cIndexedData.Add(oIndex2, szMutt, 5, 0);
 	AssertBool(FALSE, bResult);
-	bResult = cIndexedData.Set(OI, szEve, 4, 0);
+	bResult = cIndexedData.Set(oIndex2, szEve, 4, 0);
 	AssertBool(TRUE, bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
-	AssertInt(1, (int)cIndexedData.NumIndicesCached());
+	AssertInt(2, (int)cIndexedData.NumIndicesCached());
 	cIndexedData.Flush(TRUE);
 	AssertInt(3, (int)cIndexedData.NumData(4));
 	AssertInt(1, (int)cIndexedData.NumData(5));
