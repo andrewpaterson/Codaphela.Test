@@ -172,10 +172,10 @@ void TestIndexedFilesEvictingEviction(BOOL bWriteThrough)
 	AssertTrue(cDescriptors.Add(oiSeparate, szSeparate, iLenSeparate, 0));
 	AssertTrue(cDescriptors.TestGetDescriptor(oiSeparate, NULL));
 	AssertInt(1, cDescriptors.NumDataCached());
-	AssertInt(2, cDescriptors.NumEvicted());  //Two were evicted because eviction wrapped back to the start of the cache
-	                                       //and the first element size szMoreover is smaller than szSeparate size
-										   //which means that the second element szIndulged needed to be evicted too
-										   //to ensure there was enough contiguous space in the cache.
+	AssertInt(2, cDescriptors.NumEvicted());	//Two were evicted because eviction wrapped back to the start of the cache
+												//and the first element size szMoreover is smaller than szSeparate size
+												//which means that the second element szIndulged needed to be evicted too
+												//to ensure there was enough contiguous space in the cache.
 	AssertString(szMoreover, (char*)cDescriptors.GetEvicted(0));
 	AssertString(szIndulged, (char*)cDescriptors.GetEvicted(1));
 
