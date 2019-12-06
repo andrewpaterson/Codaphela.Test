@@ -366,12 +366,14 @@ void TestIndexedFilesEvictingSetDataNoCacheNoFile(void)
 	AssertTrue(cDescriptors.TestGetDescriptor(0LL, &cResult));
 	AssertInt(6, cResult.GetCacheDataSize());
 	AssertInt(0, cResult.GetFileDataSize());
+	AssertNotNull(cResult.GetCache());
+	AssertFalse(cResult.HasFile());
 	AssertInt(1, cDescriptors.NumDataCached());
 
 	AssertInt(0, cDescriptors.NumFiles());
 	AssertTrue(cDescriptors.Flush(TRUE));
 	AssertTrue(cDescriptors.TestGetDescriptor(0LL, &cResult));
-	AssertInt(0, cResult.GetCacheDataSize());
+	AssertInt(6, cResult.GetCacheDataSize());
 	AssertInt(6, cResult.GetFileDataSize());
 	AssertInt(0, cDescriptors.NumDataCached());
 
