@@ -4,7 +4,7 @@
 #include "BaseLib/SystemAllocator.h"
 #include "BaseLib/MemoryAllocator.h"
 #include "CoreLib/IndexTreeEvicting.h"
-#include "CoreLib/IndexTreeEvictedNodeList.h"
+#include "CoreLib/EvictedList.h"
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexTreeEvictingAccess.h"
 #include "CoreLib/IndexTreeEvictionStrategyRandom.h"
@@ -19,7 +19,7 @@
 void TestIndexTreeEvictingPut(BOOL bWriteThrough)
 {
 	CIndexTreeEvicting					cIndexTree;
-	CIndexTreeEvictedNodeList			cEvictedNodes;
+	CEvictedList			cEvictedNodes;
 	CIndexTreeHelper					cHelper;
 	CDurableFileController				cDurableController;
 	CIndexTreeEvictingAccess			cAccess;

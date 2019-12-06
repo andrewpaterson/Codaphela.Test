@@ -4,7 +4,7 @@
 #include "BaseLib/TypeConverter.h"
 #include "CoreLib/IndexedData.h"
 #include "CoreLib/IndexedDataAccess.h"
-#include "CoreLib/IndexTreeEvictedNodeList.h"
+#include "CoreLib/EvictedList.h"
 #include "TestLib/Assert.h"
 
 
@@ -504,16 +504,16 @@ void TestIndexedDataEvictKey(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexedDataCacheEviction(void)
 {
-	CIndexTreeEvictedNodeList	cEvictedList;
-	CIndexedData				cIndexedData;
-	char						szHello[] = "Hello";
-	char						szWorld[] = "World";
-	char						szStream[] = "Stream";
-	char						szDirectory[] = "Output" _FS_ "Database1e";
-	char						szIn[7];
-	unsigned int				uiSize;
-	filePos						iFileSize;
-	CFileUtil					cFileUtil;
+	CEvictedList	cEvictedList;
+	CIndexedData	cIndexedData;
+	char			szHello[] = "Hello";
+	char			szWorld[] = "World";
+	char			szStream[] = "Stream";
+	char			szDirectory[] = "Output" _FS_ "Database1e";
+	char			szIn[7];
+	unsigned int	uiSize;
+	filePos			iFileSize;
+	CFileUtil		cFileUtil;
 
 	cFileUtil.RemoveDir(szDirectory);
 
