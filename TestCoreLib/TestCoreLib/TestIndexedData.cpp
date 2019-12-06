@@ -42,7 +42,7 @@ void TestIndexedDataSimple(BOOL bWriteThrough)
 
 	AssertInt(2, (int)cIndexedData.NumDataCached());
 	AssertInt(2, (int)cIndexedData.NumElements());
-	cIndexedData.Flush(TRUE);
+	AssertTrue(cIndexedData.Flush(TRUE));
 
 	AssertTrue(cIndexedData.Get(oiViolation, &uiDataSize, szData, 1024));
 	AssertInt(iLenViolation, uiDataSize);
@@ -135,7 +135,7 @@ void TestIndexedDataFlushClearCache(void)
 	AssertInt(4180, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
 
-	cIndexedData.Flush(TRUE);
+	AssertTrue(cIndexedData.Flush(TRUE));
 	AssertInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
 	AssertInt(4180, cIndexedData.GetIndiciesSystemMemorySize());
@@ -350,7 +350,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	AssertTrue(cAccess.GetLongString(oi, szData));
 	AssertString(szShortText1, szData);
 
-	cIndexedData.Flush(TRUE);
+	AssertTrue(cIndexedData.Flush(TRUE));
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
@@ -548,7 +548,7 @@ void TestIndexedDataCacheEviction(void)
 	AssertInt(2, cIndexedData.NumDataCached());
 
 	cEvictedList.Clear();
-	cIndexedData.Flush(TRUE);
+	AssertTrue(cIndexedData.Flush(TRUE));
 	AssertInt(0, cEvictedList.NumElements());
 	AssertInt(2, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
@@ -643,7 +643,7 @@ void TestIndexedDataEvictAndFlush(void)
 	ucFlags = cIndexedData.GetRootFlags();
 	AssertChar(INDEX_TREE_NODE_FLAG_DIRTY_PATH, ucFlags);
 
-	cIndexedData.Flush(TRUE);
+	AssertTrue(cIndexedData.Flush(TRUE));
 
 	AssertTrue(cIndexedData.DurableEnd());
 	cIndexedData.Kill();
@@ -691,7 +691,7 @@ void TestIndexedDataFlushAndFlush(void)
 	cIndexedData.DurableBegin();
 	
 	AssertTrue(cIndexedData.Add(198732178239018792LL, szStream, 7, 0));
-	cIndexedData.Flush(TRUE);
+	AssertTrue(cIndexedData.Flush(TRUE));
 
 	AssertTrue(cIndexedData.DurableEnd());
 	cIndexedData.Kill();
@@ -700,7 +700,7 @@ void TestIndexedDataFlushAndFlush(void)
 	cIndexedData.DurableBegin();
 
 	AssertTrue(cIndexedData.Add(573107892314634784LL, szWorld, 6, 0));
-	cIndexedData.Flush(TRUE);
+	AssertTrue(cIndexedData.Flush(TRUE));
 
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
@@ -774,7 +774,7 @@ void TestIndexedDataLargeData(void)
 	AssertInt(2, (int)cIndexedData.NumIndicesCached());
 	AssertString(szSmall, szIn);
 
-	cIndexedData.Flush(TRUE);
+	AssertTrue(cIndexedData.Flush(TRUE));
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
@@ -814,7 +814,7 @@ void TestIndexedDataIndexedAdd(void)
 	AssertBool(TRUE, bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
 	AssertInt(0, (int)cIndexedData.NumData(4));
-	cIndexedData.Flush(TRUE);
+	AssertTrue(cIndexedData.Flush(TRUE));
 	AssertInt(1, (int)cIndexedData.NumData(4));
 	AssertInt(0, (int)cIndexedData.NumDataCached());
 
@@ -833,7 +833,7 @@ void TestIndexedDataIndexedAdd(void)
 	cIndexedData.Get(oIndex1, szIn);
 	AssertString(szFish, szIn);
 
-	cIndexedData.Flush(TRUE);
+	AssertTrue(cIndexedData.Flush(TRUE));
 	AssertInt(1, (int)cIndexedData.NumData(4));
 	AssertInt(1, (int)cIndexedData.NumData(5));
 	cIndexedData.Get(oIndex1, szIn);
@@ -843,7 +843,7 @@ void TestIndexedDataIndexedAdd(void)
 	AssertInt(1, (int)cIndexedData.NumElements());
 	AssertInt(1, (int)cIndexedData.NumIndicesCached());
 	AssertBool(TRUE, bResult);
-	cIndexedData.Flush(TRUE);
+	AssertTrue(cIndexedData.Flush(TRUE));
 	AssertInt(2, (int)cIndexedData.NumData(4));  //One is ignored but they are both still in the file.
 	AssertInt(1, (int)cIndexedData.NumElements());
 	AssertInt(1, (int)cIndexedData.NumIndicesCached());
@@ -859,7 +859,7 @@ void TestIndexedDataIndexedAdd(void)
 	AssertBool(TRUE, bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
 	AssertInt(2, (int)cIndexedData.NumIndicesCached());
-	cIndexedData.Flush(TRUE);
+	AssertTrue(cIndexedData.Flush(TRUE));
 	AssertInt(3, (int)cIndexedData.NumData(4));
 	AssertInt(1, (int)cIndexedData.NumData(5));
 	AssertInt(2, (int)cIndexedData.NumElements());
@@ -917,7 +917,7 @@ void TestIndexedDataDescriptorCaching(void)
 	iNumCached = cIndexedData.NumIndicesCached();
 	AssertInt(3, (int)iNumCached);
 
-	cIndexedData.Flush(TRUE);
+	AssertTrue(cIndexedData.Flush(TRUE));
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
@@ -1028,7 +1028,7 @@ void TestIndexedDataGet(void)
 	
 	AssertLongLongInt(3, cIndexedData.NumElements());
 
-	cIndexedData.Flush(TRUE);
+	AssertTrue(cIndexedData.Flush(TRUE));
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
