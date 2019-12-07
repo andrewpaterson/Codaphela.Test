@@ -3,7 +3,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TypeConverter.h"
 #include "CoreLib/IndexTreeHelper.h"
-#include "CoreLib/IndexedFilesEvictedDescriptorList.h"
+#include "CoreLib/IndexedMap.h"
 #include "CoreLib/EvictedList.h"
 #include "TestLib/Assert.h"
 
@@ -16,7 +16,7 @@ void TestIndexedFilesEvictingFlush(BOOL bWriteThrough, BOOL bClearCache)
 {
 	CDurableFileController					cDurableController;
 	CIndexTreeHelper						cHelper;
-	CIndexedFilesEvictedDescriptorList		cDescriptors;
+	CIndexedMap		cDescriptors;
 	char									szMoreover[] = "Although moreover mistaken kindness me feelings do be marianne.  Cordial village and settled she ability law herself.";
 	char									szMudpuppy[] = "Although mudpuppy mistaken kindness me feelings do be marianne.  Cordial village and settled she ability law herself.";
 	char									szForsaken[] = "Although mudpuppy forsaken kindness me feelings do be marianne.  Cordial village and settled she ability law herself.";
@@ -127,7 +127,7 @@ void TestIndexedFilesEvictingEviction(BOOL bWriteThrough)
 {
 	CDurableFileController					cDurableController;
 	CIndexTreeHelper						cHelper;
-	CIndexedFilesEvictedDescriptorList		cDescriptors;
+	CIndexedMap		cDescriptors;
 	CEvictedList							cKeyDataEvictedList;
 	char									szMoreover[] = "Although moreover mistaken kindness me feelings do be marianne.  Cordial village and settled she ability law herself.";
 	char									szIndulged[] = "Concerns greatest margaret him absolute entrance nay.  Door neat week do find past he.Be no surprise he honoured indulged.";
@@ -354,7 +354,7 @@ void TestIndexedFilesEvictingSetDataNoCacheNoFile(void)
 {
 	CDurableFileController					cDurableController;
 	CIndexTreeHelper						cHelper;
-	CIndexedFilesEvictedDescriptorList		cDescriptors;
+	CIndexedMap		cDescriptors;
 	char									sz[200];
 	char									sz6[] = "6Six6\0";
 	BOOL									bWriteThrough;
@@ -412,7 +412,7 @@ void TestIndexedFilesEvictingSetDataCacheSameSizeNoFile(void)
 {
 	CDurableFileController					cDurableController;
 	CIndexTreeHelper						cHelper;
-	CIndexedFilesEvictedDescriptorList		cDescriptors;
+	CIndexedMap		cDescriptors;
 	char									sz[200];
 	char									sz6a[] = "6Six6\0";
 	char									sz6b[] = "xisix\0";
@@ -465,7 +465,7 @@ void TestIndexedFilesEvictingSetDataCacheDiffSizeNoFile(void)
 {
 	CDurableFileController					cDurableController;
 	CIndexTreeHelper						cHelper;
-	CIndexedFilesEvictedDescriptorList		cDescriptors;
+	CIndexedMap		cDescriptors;
 	char									sz[200];
 	char									sz6[] = "6Six6\0";
 	char									sz5[] = "5ive\0";
@@ -518,7 +518,7 @@ void TestIndexedFilesEvictingSetDataNoCacheFileSameSize(void)
 {
 	CDurableFileController					cDurableController;
 	CIndexTreeHelper						cHelper;
-	CIndexedFilesEvictedDescriptorList		cDescriptors;
+	CIndexedMap		cDescriptors;
 	char									sz[200];
 	char									sz6a[] = "6Six6\0";
 	char									sz6b[] = "xisix\0";
@@ -581,7 +581,7 @@ void TestIndexedFilesEvictingSetDataNoCacheFileDiffSize(void)
 {
 	CDurableFileController					cDurableController;
 	CIndexTreeHelper						cHelper;
-	CIndexedFilesEvictedDescriptorList		cDescriptors;
+	CIndexedMap		cDescriptors;
 	char									sz[200];
 	char									sz6[] = "6Six6\0";
 	char									sz5[] = "5ive\0";
@@ -644,7 +644,7 @@ void TestIndexedFilesEvictingSetDataCacheSameSizeFile(void)
 {
 	CDurableFileController					cDurableController;
 	CIndexTreeHelper						cHelper;
-	CIndexedFilesEvictedDescriptorList		cDescriptors;
+	CIndexedMap		cDescriptors;
 	char									sz[200];
 	char									sz6a[] = "6Six6\0";
 	char									sz6b[] = "xisix\0";
@@ -722,7 +722,7 @@ void TestIndexedFilesEvictingSetDataCacheDiffSizeFile(void)
 {
 	CDurableFileController					cDurableController;
 	CIndexTreeHelper						cHelper;
-	CIndexedFilesEvictedDescriptorList		cDescriptors;
+	CIndexedMap		cDescriptors;
 	char									sz[200];
 	char									sz6[] = "6Six6\0";
 	char									sz5[] = "5ive\0";
