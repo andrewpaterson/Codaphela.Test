@@ -6,7 +6,7 @@
 #include "BaseLib/IndexTreeMemory.h"
 #include "BaseLib/MemoryAllocator.h"
 #include "BaseLib/PrimitiveTypes.h"
-#include "CoreLib/IndexTreeMemoryAccess.h"
+#include "BaseLib/IndexTreeMemoryAccess.h"
 #include "TestLib/Assert.h"
 
 
