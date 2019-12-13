@@ -15,7 +15,7 @@ void TestIndexTreeTemplatePut(void)
 	long long int							lliLarry;
 	long long int							lliThe;
 	long long int							lliLamb;
-	long long int*							plliResult;
+	long long int							lliResult;
 
 	cIndex.Init();
 	cAccess.Init(&cIndex);
@@ -31,16 +31,16 @@ void TestIndexTreeTemplatePut(void)
 	AssertInt(3, cIndex.NumElements());
 	AssertInt(3, cIndex.RecurseSize());
 
-	plliResult = cIndex.Get("Lamb");
-	AssertLongLongInt(lliLamb, *plliResult);
-	plliResult = cIndex.Get("The");
-	AssertLongLongInt(lliThe, *plliResult);
-	plliResult = cIndex.Get("Larry");
-	AssertLongLongInt(lliLarry, *plliResult);
+	lliResult = cAccess.GetStringLong("Lamb");
+	AssertLongLongInt(lliLamb, lliResult);
+	lliResult = cAccess.GetStringLong("The");
+	AssertLongLongInt(lliThe, lliResult);
+	lliResult = cAccess.GetStringLong("Larry");
+	AssertLongLongInt(lliLarry, lliResult);
 
-	AssertTrue(cIndex.Remove("The"));
-	plliResult = cIndex.Get("The");
-	AssertNull(plliResult);
+	AssertTrue(cAccess.DeleteString("The"));
+	lliResult = cAccess.GetStringLong("The");
+	AssertLongLongInt(0, lliResult);
 
 	AssertInt(2, cIndex.NumElements());
 	AssertInt(2, cIndex.RecurseSize());
