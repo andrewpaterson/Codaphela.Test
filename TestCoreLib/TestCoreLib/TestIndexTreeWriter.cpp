@@ -1,4 +1,5 @@
 #include "BaseLib/IndexTreeTemplateMemory.h"
+#include "BaseLib/IndexTreeMemoryAccess.h"
 #include "BaseLib/MapStringString.h"
 #include "BaseLib/FileUtil.h"
 #include "TestLib/Assert.h"
@@ -11,17 +12,18 @@
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeWriterWrite(void)
 {
-	char*				pvData;
-	char*				pvKey;
-	int					iDataSize;
-	BOOL				bExists;
-	int					iKeyLength;
-	CIndexTreeMemory	cIndexTree;
-	CMapStringString	cMap;
-	SMapIterator		sMapIter;
-	CIndexTreeWriter	cWriter;
-	CFileUtil			cFileUtil;
-	char				szDirectory[] = "Output" _FS_ "IndexTreeMemoryWriter";
+	char*					pvData;
+	char*					pvKey;
+	int						iDataSize;
+	BOOL					bExists;
+	int						iKeyLength;
+	CIndexTreeMemory		cIndexTree;
+	CIndexTreeMemoryAccess	cAccess;
+	CMapStringString		cMap;
+	SMapIterator			sMapIter;
+	CIndexTreeWriter		cWriter;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "IndexTreeMemoryWriter";
 
 	cMap.Init(3);
 	cMap.Put("AA", "nutritious");
@@ -40,13 +42,14 @@ void TestIndexTreeWriterWrite(void)
 	AssertInt(12, cMap.NumElements());
 
 	cIndexTree.Init();
+	cAccess.Init(&cIndexTree);
 
 	bExists = cMap.StartIteration(&sMapIter, (void**)&pvKey, (void**)&pvData);
 	while (bExists)
 	{
 		iKeyLength = strlen((char*)pvKey);
 		iDataSize = strlen((char*)pvData);
-		cIndexTree.Put(pvKey, iKeyLength, pvData, (unsigned char)iDataSize);
+		cAccess.PutKeyData(pvKey, iKeyLength, pvData, iDataSize);
 
 		bExists = cMap.Iterate(&sMapIter, (void**)&pvKey, (void**)&pvData);
 	}
@@ -57,6 +60,7 @@ void TestIndexTreeWriterWrite(void)
 
 	cWriter.Write(&cIndexTree, szDirectory);
 
+	cAccess.Kill();
 	cIndexTree.Kill();
 	cMap.Kill();
 

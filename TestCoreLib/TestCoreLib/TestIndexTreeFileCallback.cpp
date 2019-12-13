@@ -23,6 +23,7 @@ void TestIndexTreeFileCallbackWorks(void)
 	CIndexTreeHelper									cHelper;
 	CDurableFileController								cDurableController;
 	CIndexTreeTemplateFile<CTestIndexTreeMemoryObject>	cIndexTree;
+	CIndexTreeFileAccess								cAccess;
 	CIndexTreeFileTestCallback							cDataCallback;
 	CTestIndexTreeMemoryObject							cTestObject1;
 	char												szKey1[3] = "AB";
@@ -36,9 +37,10 @@ void TestIndexTreeFileCallbackWorks(void)
 
 	cDurableController.Begin();
 	cIndexTree.Init(&cDurableController, &cDataCallback, TRUE);
+	cAccess.Init(&cIndexTree);
 
 	cTestObject1.Init(1, 2, 3, 4);
-	AssertTrue(cIndexTree.Put(szKey1, 2, &cTestObject1));
+	AssertTrue(cAccess.PutStringData(szKey1, &cTestObject1, sizeof(CTestIndexTreeMemoryObject)));
 
 	cDurableController.End();
 	cIndexTree.Kill();
@@ -60,9 +62,9 @@ void TestIndexTreeFileCallbackWorks(void)
 	cIndexTree.Init(&cDurableController, &cDataCallback, FALSE);
 
 	cTestObject1.Init(5, 6, 7, 8);
-	AssertTrue(cIndexTree.Put(szKey1, 2, &cTestObject1));
+	AssertTrue(cAccess.PutStringData(szKey1, &cTestObject1, sizeof(CTestIndexTreeMemoryObject)));
 	cTestObject2.Init(9, 10, 11, 12);
-	AssertTrue(cIndexTree.Put(szKey2, 2, &cTestObject2));
+	AssertTrue(cAccess.PutStringData(szKey2, &cTestObject2, sizeof(CTestIndexTreeMemoryObject)));
 	
 	cIndexTree.Flush();
 	cDurableController.End();
@@ -86,6 +88,7 @@ void TestIndexTreeFileCallbackWorks(void)
 	AssertInt(12, cResult.mi4);
 
 	cDurableController.End();
+	cAccess.Kill();
 	cIndexTree.Kill();
 
 	cDurableController.Kill();

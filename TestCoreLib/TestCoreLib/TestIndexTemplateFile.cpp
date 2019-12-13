@@ -37,8 +37,8 @@ void TestIndexTreeTemplateFileStuff(void)
 	cObject1.Init("Hello");
 	cObject2.Init("Haplo");
 
-	AssertTrue(cIndexTree.Put(cObject1.GetName(), cObject1.NameLength(), &cObject1));
-	AssertTrue(cIndexTree.Put(cObject2.GetName(), cObject2.NameLength(), &cObject2));
+	AssertTrue(cAccess.PutKeyData(cObject1.GetName(), cObject1.NameLength(), &cObject1, sizeof(CTestIndexTreeObject)));
+	AssertTrue(cAccess.PutKeyData(cObject2.GetName(), cObject2.NameLength(), &cObject2, sizeof(CTestIndexTreeObject)));
 	AssertInt(2, cIndexTree.NumElements());
 		
 	AssertTrue(cIndexTree.Get(cObject1.GetName(), cObject1.NameLength(), &cResult));

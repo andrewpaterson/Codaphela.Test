@@ -85,7 +85,7 @@ void TestIndexTreeMemoryAllocation(void)
 	AssertLongLongInt(tRootNodeSize, pcMemory->GetTotalAllocatedMemory());
 	
 	lliKey1 = 1;
-	pvData1 = (char*)cIndexTree.Put(&lliKey1, sizeof(int64), 103);
+	pvData1 = (char*)cIndexTree.Put(&lliKey1, sizeof(int64), NULL, 103);
 	AssertLongLongInt(1 /* root node (256 children) */ + 7 /* empty nodes with child */ + 1 /* node with no children but with data */, pcMemory->GetTotalAllocations());
 	AssertLongLongInt(tRootNodeSize + (tNodeSize + tNoDataSize) * 7 + (tNodeSize + 103), pcMemory->GetTotalAllocatedMemory());
 
