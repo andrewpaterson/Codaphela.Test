@@ -5,7 +5,7 @@
 class CTestIndexTreeObject
 {
 public:
-	char mszName[1024];
+	char mszName[128];
 
 	void	Init(char* szName);
 	char*	GetName(void);

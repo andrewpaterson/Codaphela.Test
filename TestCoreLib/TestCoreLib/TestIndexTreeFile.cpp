@@ -302,7 +302,7 @@ void TestIndexTreeFileNoCacheEviction(void)
 	AssertInt(1, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree())
 
-	AssertTrue(cAccess.GetLongString(0x0000000000000000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
 
 	bContinue = cIndexTree.StartIteration(&sIter, (void**)(&szData), &iSize);
@@ -312,14 +312,14 @@ void TestIndexTreeFileNoCacheEviction(void)
 	bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
 	AssertFalse(bContinue);
 
-	AssertFalse(cAccess.GetLongString(0x0100000000000000LL, sz));
+	AssertNull(cAccess.GetLongString(0x0100000000000000LL, sz));
 
 	AssertFalse(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sente."));
 	AssertTrue(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent."));
 	AssertInt(2, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree())
 
-	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", sz);
 
 	bContinue = cIndexTree.StartIteration(&sIter, (void**)(&szData), &iSize);
@@ -337,40 +337,40 @@ void TestIndexTreeFileNoCacheEviction(void)
 	AssertInt(3, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	AssertTrue(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 	AssertString("MORE node DATA", sz);
 
 	AssertTrue(cAccess.PutLongString(0x0000DD00CC54BB23LL, "Another DATUM of doom"));
 	AssertInt(4, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	AssertTrue(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	AssertTrue(cAccess.PutLongString(0x0098DD67CC45BB23LL, "Changed your data lengh"));
 	AssertInt(4, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	AssertTrue(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 	AssertString("Changed your data lengh", sz);
-	AssertTrue(cAccess.GetLongString(0x0000000000000000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
-	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", sz);
-	AssertTrue(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	AssertTrue(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Make the long short."));
 	AssertInt(4, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	AssertTrue(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 	AssertString("Changed your data lengh", sz);
-	AssertTrue(cAccess.GetLongString(0x0000000000000000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
-	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Make the long short.", sz);
-	AssertTrue(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	AssertFalse(cAccess.DeleteLong(0x0100000000000000LL));
@@ -379,21 +379,21 @@ void TestIndexTreeFileNoCacheEviction(void)
 	AssertInt(3, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	AssertTrue(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 	AssertString("Changed your data lengh", sz);
-	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Make the long short.", sz);
-	AssertTrue(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	AssertTrue(cAccess.DeleteLong(0x0098DD67CC45BB23LL));
 	AssertInt(2, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
-	AssertFalse(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
+	AssertNull(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 
-	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Make the long short.", sz);
-	AssertTrue(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	bContinue = cIndexTree.StartIteration(&sIter, (void**)(&szData), &iSize);
@@ -411,7 +411,7 @@ void TestIndexTreeFileNoCacheEviction(void)
 
 	AssertTrue(cAccess.DeleteLong(0x0000DD00CC54BB23LL));
 	AssertInt(1, cIndexTree.NumElements());
-	AssertFalse(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
+	AssertNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 
 	bContinue = cIndexTree.StartIteration(&sIter, (void**)(&szData), &iSize);
 	AssertTrue(bContinue);
@@ -421,12 +421,12 @@ void TestIndexTreeFileNoCacheEviction(void)
 	bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
 	AssertFalse(bContinue);
 
-	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Make the long short.", sz);
 
 	AssertTrue(cAccess.DeleteLong(0xEE89DD67CC45BB23LL));
 	AssertInt(0, cIndexTree.NumElements());
-	AssertFalse(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
+	AssertNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 
 	cDurableController.End();
 
@@ -873,10 +873,10 @@ void TestIndexTreeFileRemoveAndFlush(void)
 	cAccess.Init(&cIndexTree);
 	AssertInt(0, cIndexTree.NumMemoryElements());
 	AssertInt(1, cIndexTree.NumMemoryNodes());
-	AssertTrue(cAccess.GetStringString(szAABAA, szDest));
-	AssertTrue(cAccess.GetStringString(szAABBB, szDest));
-	AssertTrue(cAccess.GetStringString(szAACAA, szDest));
-	AssertTrue(cAccess.GetStringString(szAACBB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAABAA, szDest));
+	AssertNotNull(cAccess.GetStringString(szAABBB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAACAA, szDest));
+	AssertNotNull(cAccess.GetStringString(szAACBB, szDest));
 	AssertInt(4, cIndexTree.NumElements());
 	AssertInt(13, cIndexTree.NumNodes());
 	AssertInt(4, cIndexTree.NumMemoryElements());
@@ -1267,38 +1267,38 @@ void TestIndexTreeFileRemoveThenDirty(void)
 	b.Init("1B");
 
 	AssertTrue(cAccess.PutStringString(a.GetName(), a.GetName()));
-	AssertTrue(cAccess.GetStringString(a.GetName(), sz));
+	AssertNotNull(cAccess.GetStringString(a.GetName(), sz));
 	AssertString(a.GetName(), sz);
 
 	AssertTrue(cAccess.PutStringString(c.GetName(), c.GetName()));
-	AssertTrue(cAccess.GetStringString(c.GetName(), sz));
+	AssertNotNull(cAccess.GetStringString(c.GetName(), sz));
 	AssertString(c.GetName(), sz);
 
 	AssertTrue(cIndexTree.Flush());
 
 	AssertTrue(cAccess.DeleteString(a.GetName()));
-	AssertFalse(cAccess.GetStringString(a.GetName(), sz));
+	AssertNull(cAccess.GetStringString(a.GetName(), sz));
 
 	AssertTrue(cAccess.PutStringString(a.GetName(), b.GetName()));
-	AssertTrue(cAccess.GetStringString(a.GetName(), sz));
+	AssertNotNull(cAccess.GetStringString(a.GetName(), sz));
 	AssertString(b.GetName(), sz);
 
 	AssertTrue(cIndexTree.Flush());
-	AssertTrue(cAccess.GetStringString(a.GetName(), sz));
+	AssertNotNull(cAccess.GetStringString(a.GetName(), sz));
 	AssertString(b.GetName(), sz);
 
 	AssertTrue(cAccess.DeleteString(a.GetName()));
-	AssertFalse(cAccess.GetStringString(a.GetName(), sz));
+	AssertNull(cAccess.GetStringString(a.GetName(), sz));
 
 	AssertTrue(cAccess.PutStringString(a.GetName(), a.GetName()));
-	AssertTrue(cAccess.GetStringString(a.GetName(), sz));
+	AssertNotNull(cAccess.GetStringString(a.GetName(), sz));
 	AssertString(a.GetName(), sz);
 
 	AssertTrue(cAccess.DeleteString(a.GetName()));
-	AssertFalse(cAccess.GetStringString(a.GetName(), sz));
+	AssertNull(cAccess.GetStringString(a.GetName(), sz));
 
 	AssertTrue(cIndexTree.Flush());
-	AssertFalse(cAccess.GetStringString(a.GetName(), sz));
+	AssertNull(cAccess.GetStringString(a.GetName(), sz));
 
 	cDurableController.End();
 
@@ -1357,9 +1357,9 @@ void TestIndexTreeFileAddThenAdd(void)
 	cIndexTree.Init(&cDurableController, FALSE);
 	cAccess.Init(&cIndexTree);
 
-	AssertTrue(cAccess.GetStringString(a.GetName(), sz));
+	AssertNotNull(cAccess.GetStringString(a.GetName(), sz));
 	AssertString(a.GetName(), sz);
-	AssertTrue(cAccess.GetStringString(b.GetName(), sz));
+	AssertNotNull(cAccess.GetStringString(b.GetName(), sz));
 	AssertString(b.GetName(), sz);
 
 	cIndexTree.Flush();
@@ -1410,7 +1410,7 @@ void TestIndexTreeFileRead(void)
 	AssertTrue(cIndexTree.Init(&cDurableController, FALSE));
 	AssertTrue(cAccess.Init(&cIndexTree));
 
-	AssertTrue(cAccess.GetStringString("Hello", sz));
+	AssertNotNull(cAccess.GetStringString("Hello", sz));
 	AssertString("World", sz)
 
 	AssertTrue(cAccess.Flush());
@@ -1441,9 +1441,9 @@ void TestIndexTreeFileRead(void)
 	iOldFile = iNewFile;
 
 	AssertTrue(cDurableController.Begin());
-	AssertTrue(cAccess.GetStringString("Hell", sz));
+	AssertNotNull(cAccess.GetStringString("Hell", sz));
 	AssertString("Fuzz", sz);
-	AssertTrue(cAccess.GetStringString("Hello", sz));
+	AssertNotNull(cAccess.GetStringString("Hello", sz));
 	AssertString("World", sz);
 	AssertTrue(cDurableController.End());
 
@@ -1451,7 +1451,7 @@ void TestIndexTreeFileRead(void)
 
 	AssertTrue(cDurableController.Begin());
 	AssertTrue(cIndexTree.Init(&cDurableController, TRUE));
-	AssertTrue(cAccess.GetStringString("Hell", sz));
+	AssertNotNull(cAccess.GetStringString("Hell", sz));
 	AssertString("Fuzz", sz);
 	pcHell = cIndexTree.GetNode("Hell", 4);
 	iNewFile = pcHell->GetFileIndex()->miFile;
@@ -1468,11 +1468,11 @@ void TestIndexTreeFileRead(void)
 	AssertTrue(cDurableController.End());
 
 	AssertTrue(cDurableController.Begin());
-	AssertTrue(cAccess.GetStringString("Hell", sz));
+	AssertNotNull(cAccess.GetStringString("Hell", sz));
 	AssertString("Fuzz", sz);
-	AssertTrue(cAccess.GetStringString("HelloX", sz));
+	AssertNotNull(cAccess.GetStringString("HelloX", sz));
 	AssertString("3", sz);
-	AssertTrue(cAccess.GetStringString("Hello", sz));
+	AssertNotNull(cAccess.GetStringString("Hello", sz));
 	AssertString("World", sz);
 	AssertTrue(cDurableController.End());
 	cIndexTree.Kill();
@@ -1516,7 +1516,7 @@ void TestIndexTreeFileDeleteOnDisk(void)
 
 	cDurableController.Begin();
 	cIndexTree.Init(&cDurableController, TRUE);
-	AssertFalse(cAccess.GetStringString("Hello", sz));
+	AssertNull(cAccess.GetStringString("Hello", sz));
 	pcNode = cIndexTree.GetNode("H", 1);
 	cDurableController.End();
 	cIndexTree.Kill();
@@ -1636,7 +1636,7 @@ void TestIndexTreeFileComplex(void)
 	bHasNext = cMap.StartIteration(&sIter, (void**)&szKey, (void**)&szValue);
 	while (bHasNext)
 	{
-		AssertTrue(cAccess.GetStringString(szKey, sz));
+		AssertNotNull(cAccess.GetStringString(szKey, sz));
 		szValue = cMap.Get(szKey);
 		AssertString(szValue, sz);
 
@@ -1657,7 +1657,7 @@ void TestIndexTreeFileComplex(void)
 	bHasNext = cMap.StartIteration(&sIter, (void**)&szKey, (void**)&szValue);
 	while (bHasNext)
 	{
-		AssertTrue(cAccess.GetStringString(szKey, sz));
+		AssertNotNull(cAccess.GetStringString(szKey, sz));
 		szValue = cMap.Get(szKey);
 		AssertString(szValue, sz);
 		
@@ -1834,10 +1834,10 @@ void TestIndexTreeFileEvictNew(BOOL bWriteThrough)
 
 	AssertTrue(cAccess.Flush());
 	AssertTrue(cIndexTree.ValidateIndexTree());
-	AssertTrue(cAccess.ContainsString("A"));
-	AssertTrue(cAccess.ContainsString("AAA"));
-	AssertTrue(cAccess.ContainsString("AAAB"));
-	AssertTrue(cAccess.ContainsString("AAAAA"));
+	AssertTrue(cAccess.HasString("A"));
+	AssertTrue(cAccess.HasString("AAA"));
+	AssertTrue(cAccess.HasString("AAAB"));
+	AssertTrue(cAccess.HasString("AAAAA"));
 	AssertInt(4, cIndexTree.NumMemoryElements());
 	AssertInt(7, cIndexTree.NumMemoryNodes());
 	AssertInt(4, cIndexTree.NumElements());
@@ -1975,12 +1975,12 @@ void TestIndexTreeFileEvictComplexSetup(CDurableFileController* pcDurableControl
 	AssertInt(6, pcIndexTree->NumMemoryElements());
 	AssertInt(18, pcIndexTree->NumMemoryNodes());
 	AssertLongLongInt(3828, pcMemory->GetTotalAllocatedMemory());
-	AssertTrue(cAccess.GetStringString(szAAAAA, szDest));
-	AssertTrue(cAccess.GetStringString(szAAABB, szDest));
-	AssertTrue(cAccess.GetStringString(szAABAA, szDest));
-	AssertTrue(cAccess.GetStringString(szAABBB, szDest));
-	AssertTrue(cAccess.GetStringString(szAACAA, szDest));
-	AssertTrue(cAccess.GetStringString(szAACBB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAAAAA, szDest));
+	AssertNotNull(cAccess.GetStringString(szAAABB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAABAA, szDest));
+	AssertNotNull(cAccess.GetStringString(szAABBB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAACAA, szDest));
+	AssertNotNull(cAccess.GetStringString(szAACBB, szDest));
 
 	AssertTrue(cAccess.PutStringString(szAAAAA, "Update 1"));
 	AssertTrue(cAccess.PutStringString(szAAABB, "Update 2"));
@@ -2048,12 +2048,12 @@ void TestIndexTreeFileEvictComplexEvictCloseGet(void)
 	cDurableController.Begin();
 	cIndexTree.Init(&cDurableController, &cAllocator, FALSE);
 	cAccess.Init(&cIndexTree);
-	AssertTrue(cAccess.GetStringString(szAAAAA, szDest));
-	AssertTrue(cAccess.GetStringString(szAAABB, szDest));
-	AssertTrue(cAccess.GetStringString(szAABAA, szDest));
-	AssertFalse(cAccess.GetStringString(szAABBB, szDest));
-	AssertFalse(cAccess.GetStringString(szAACAA, szDest));
-	AssertFalse(cAccess.GetStringString(szAACBB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAAAAA, szDest));
+	AssertNotNull(cAccess.GetStringString(szAAABB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAABAA, szDest));
+	AssertNull(cAccess.GetStringString(szAABBB, szDest));
+	AssertNull(cAccess.GetStringString(szAACAA, szDest));
+	AssertNull(cAccess.GetStringString(szAACBB, szDest));
 	AssertTrue(cIndexTree.ValidateIndexTree());
 	cDurableController.End();
 	cIndexTree.Kill();
@@ -2106,12 +2106,12 @@ void TestIndexTreeFileEvictComplexEvictGetClose(void)
 	AssertInt(11, cIndexTree.NumNodes());
 
 	cAccess.Init(&cIndexTree);
-	AssertTrue(cAccess.GetStringString(szAAAAA, szDest));
-	AssertTrue(cAccess.GetStringString(szAAABB, szDest));
-	AssertTrue(cAccess.GetStringString(szAABAA, szDest));
-	AssertFalse(cAccess.GetStringString(szAABBB, szDest));
-	AssertFalse(cAccess.GetStringString(szAACAA, szDest));
-	AssertFalse(cAccess.GetStringString(szAACBB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAAAAA, szDest));
+	AssertNotNull(cAccess.GetStringString(szAAABB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAABAA, szDest));
+	AssertNull(cAccess.GetStringString(szAABBB, szDest));
+	AssertNull(cAccess.GetStringString(szAACAA, szDest));
+	AssertNull(cAccess.GetStringString(szAACBB, szDest));
 
 	cDurableController.End();
 	cIndexTree.Kill();
@@ -2160,12 +2160,12 @@ void TestIndexTreeFileEvictComplexEvictOdd(void)
 	AssertInt(12, cIndexTree.NumMemoryNodes());
 
 	cAccess.Init(&cIndexTree);
-	AssertTrue(cAccess.GetStringString(szAAAAA, szDest));
-	AssertTrue(cAccess.GetStringString(szAAABB, szDest));
-	AssertTrue(cAccess.GetStringString(szAABAA, szDest));
-	AssertFalse(cAccess.GetStringString(szAABBB, szDest));
-	AssertFalse(cAccess.GetStringString(szAACAA, szDest));
-	AssertFalse(cAccess.GetStringString(szAACBB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAAAAA, szDest));
+	AssertNotNull(cAccess.GetStringString(szAAABB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAABAA, szDest));
+	AssertNull(cAccess.GetStringString(szAABBB, szDest));
+	AssertNull(cAccess.GetStringString(szAACAA, szDest));
+	AssertNull(cAccess.GetStringString(szAACBB, szDest));
 
 	cAccess.Flush();
 	cDurableController.End();
@@ -2179,12 +2179,12 @@ void TestIndexTreeFileEvictComplexEvictOdd(void)
 	cDurableController.Begin();
 	cIndexTree.Init(&cDurableController, &cAllocator, FALSE);
 	cAccess.Init(&cIndexTree);
-	AssertTrue(cAccess.GetStringString(szAAAAA, szDest));
-	AssertTrue(cAccess.GetStringString(szAAABB, szDest));
-	AssertTrue(cAccess.GetStringString(szAABAA, szDest));
-	AssertFalse(cAccess.GetStringString(szAABBB, szDest));
-	AssertFalse(cAccess.GetStringString(szAACAA, szDest));
-	AssertFalse(cAccess.GetStringString(szAACBB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAAAAA, szDest));
+	AssertNotNull(cAccess.GetStringString(szAAABB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAABAA, szDest));
+	AssertNull(cAccess.GetStringString(szAABBB, szDest));
+	AssertNull(cAccess.GetStringString(szAACAA, szDest));
+	AssertNull(cAccess.GetStringString(szAACBB, szDest));
 	cDurableController.End();
 	cIndexTree.Kill();
 	cDurableController.Kill();
@@ -2232,12 +2232,12 @@ void TestIndexTreeFileEvictComplexEvictEven(void)
 	AssertInt(12, cIndexTree.NumMemoryNodes());
 
 	cAccess.Init(&cIndexTree);
-	AssertTrue(cAccess.GetStringString(szAAAAA, szDest));
-	AssertTrue(cAccess.GetStringString(szAAABB, szDest));
-	AssertTrue(cAccess.GetStringString(szAABAA, szDest));
-	AssertFalse(cAccess.GetStringString(szAABBB, szDest));
-	AssertFalse(cAccess.GetStringString(szAACAA, szDest));
-	AssertFalse(cAccess.GetStringString(szAACBB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAAAAA, szDest));
+	AssertNotNull(cAccess.GetStringString(szAAABB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAABAA, szDest));
+	AssertNull(cAccess.GetStringString(szAABBB, szDest));
+	AssertNull(cAccess.GetStringString(szAACAA, szDest));
+	AssertNull(cAccess.GetStringString(szAACBB, szDest));
 
 	cAccess.Flush();
 	cDurableController.End();
@@ -2251,12 +2251,12 @@ void TestIndexTreeFileEvictComplexEvictEven(void)
 	cDurableController.Begin();
 	cIndexTree.Init(&cDurableController, &cAllocator, FALSE);
 	cAccess.Init(&cIndexTree);
-	AssertTrue(cAccess.GetStringString(szAAAAA, szDest));
-	AssertTrue(cAccess.GetStringString(szAAABB, szDest));
-	AssertTrue(cAccess.GetStringString(szAABAA, szDest));
-	AssertFalse(cAccess.GetStringString(szAABBB, szDest));
-	AssertFalse(cAccess.GetStringString(szAACAA, szDest));
-	AssertFalse(cAccess.GetStringString(szAACBB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAAAAA, szDest));
+	AssertNotNull(cAccess.GetStringString(szAAABB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAABAA, szDest));
+	AssertNull(cAccess.GetStringString(szAABBB, szDest));
+	AssertNull(cAccess.GetStringString(szAACAA, szDest));
+	AssertNull(cAccess.GetStringString(szAACBB, szDest));
 	cDurableController.End();
 	cIndexTree.Kill();
 	cDurableController.Kill();
@@ -2313,12 +2313,12 @@ void TestIndexTreeFileFlushNodes(void)
 	cDurableController.Begin();
 	cIndexTree.Init(&cDurableController, &cAllocator, FALSE);
 	cAccess.Init(&cIndexTree);
-	AssertTrue(cAccess.GetStringString(szAAAAA, szDest));
-	AssertTrue(cAccess.GetStringString(szAAABB, szDest));
-	AssertTrue(cAccess.GetStringString(szAABAA, szDest));
-	AssertFalse(cAccess.GetStringString(szAABBB, szDest));
-	AssertFalse(cAccess.GetStringString(szAACAA, szDest));
-	AssertFalse(cAccess.GetStringString(szAACBB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAAAAA, szDest));
+	AssertNotNull(cAccess.GetStringString(szAAABB, szDest));
+	AssertNotNull(cAccess.GetStringString(szAABAA, szDest));
+	AssertNull(cAccess.GetStringString(szAABBB, szDest));
+	AssertNull(cAccess.GetStringString(szAACAA, szDest));
+	AssertNull(cAccess.GetStringString(szAACBB, szDest));
 	cDurableController.End();
 	cIndexTree.Kill();
 	cDurableController.Kill();

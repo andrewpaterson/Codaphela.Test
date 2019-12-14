@@ -118,57 +118,56 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 	AssertInt(1, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	AssertTrue(cAccess.GetLongString(0x0000000000000000LL, sz));
-	AssertString("Zero", sz);
+	AssertString("Zero", cAccess.GetLongString(0x0000000000000000LL, sz));
 
-	AssertFalse(cAccess.GetLongString(1LL, sz));
+	AssertNull(cAccess.GetLongString(1LL, sz));
 
 	AssertFalse(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sente."));
 	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent."));
 	AssertInt(2, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 	AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", sz);
 
 	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD9800LL, "MORE node DATA"));
 	AssertInt(3, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 	AssertString("MORE node DATA", sz);
 
 	AssertTrue(cAccess.PutLongString(0x23BB54CC00DD0000LL, "Another DATUM of doom"));
 	AssertInt(4, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	AssertTrue(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD9800LL, "Changed your data lengh"));
 	AssertInt(4, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 	AssertString("Changed your data lengh", sz);
-	AssertTrue(cAccess.GetLongString(0x0000000000000000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 	AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", sz);
-	AssertTrue(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Make the long short."));
 	AssertInt(4, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 	AssertString("Changed your data lengh", sz);
-	AssertTrue(cAccess.GetLongString(0x0000000000000000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 	AssertString("Make the long short.", sz);
-	AssertTrue(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	AssertFalse(cAccess.DeleteLong(0x0000000000000001LL));
@@ -177,21 +176,21 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 	AssertInt(3, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 	AssertString("Changed your data lengh", sz);
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 	AssertString("Make the long short.", sz);
-	AssertTrue(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	AssertTrue(cAccess.DeleteLong(0x23BB45CC67DD9800LL));
 	AssertInt(2, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
-	AssertFalse(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
+	AssertNull(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 	AssertString("Make the long short.", sz);
-	AssertTrue(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	avp.Init();
@@ -204,7 +203,7 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 	AssertTrue(cAccess.DeleteLong(0x23BB54CC00DD0000LL));
 	AssertInt(1, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
-	AssertFalse(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
+	AssertNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 
 	avp.Init();
 	cIndexTree.FindAll(&avp);
@@ -212,13 +211,13 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 	AssertString("Make the long short.", (char*)avp[0]);
 	avp.Kill();
 
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 	AssertString("Make the long short.", sz);
 
 	AssertTrue(cAccess.DeleteLong(0x23BB45CC67DD89EELL));
 	AssertInt(0, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
-	AssertFalse(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 
 	cAccess.Kill();
 	cIndexTree.Kill();
@@ -247,54 +246,54 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 	AssertTrue(cAccess.PutLongString(0x0000000000000000LL, "Zero"));
 	AssertInt(1, cIndexTree.NumElements());
 
-	AssertTrue(cAccess.GetLongString(0x0000000000000000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
 
-	AssertFalse(cAccess.GetLongString(1LL, sz));
+	AssertNull(cAccess.GetLongString(1LL, sz));
 
 	AssertFalse(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sente."));
 	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent."));
 	AssertInt(2, cIndexTree.NumElements());
 
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 	AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", sz);
 
 	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD9800LL, "MORE node DATA"));
 	AssertInt(3, cIndexTree.NumElements());
 
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 	AssertString("MORE node DATA", sz);
 
 	AssertTrue(cAccess.PutLongString(0x23BB54CC00DD0000LL, "Another DATUM of doom"));
 	AssertInt(4, cIndexTree.NumElements());
 
-	AssertTrue(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD9800LL, "Changed your data lengh"));
 	AssertInt(4, cIndexTree.NumElements());
 	AssertLongLongInt(30, pcMemory->GetTotalAllocations());
 
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 	AssertString("Changed your data lengh", sz);
-	AssertTrue(cAccess.GetLongString(0x0000000000000000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 	AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", sz);
-	AssertTrue(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Make the long short."));
 	AssertInt(4, cIndexTree.NumElements());
 	AssertLongLongInt(30, pcMemory->GetTotalAllocations());
 
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 	AssertString("Changed your data lengh", sz);
-	AssertTrue(cAccess.GetLongString(0x0000000000000000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 	AssertString("Make the long short.", sz);
-	AssertTrue(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	AssertFalse(cAccess.DeleteLong(0x0000000000000001LL));
@@ -303,22 +302,22 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 	AssertInt(3, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 	AssertString("Changed your data lengh", sz);
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 	AssertString("Make the long short.", sz);
-	AssertTrue(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 	AssertLongLongInt(24, pcMemory->GetTotalAllocations());
 
 	AssertTrue(cAccess.DeleteLong(0x23BB45CC67DD9800LL));
 	AssertInt(2, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
-	AssertFalse(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
+	AssertNull(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 	AssertString("Make the long short.", sz);
-	AssertTrue(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 	AssertLongLongInt(17, pcMemory->GetTotalAllocations());
 
@@ -330,21 +329,21 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 	AssertTrue(cAccess.DeleteLong(0x23BB54CC00DD0000LL));
 	AssertInt(1, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
-	AssertFalse(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
+	AssertNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 
 	avp.Init();
 	cIndexTree.FindAll(&avp);
 	AssertInt(1, avp.NumElements());
 	avp.Kill();
 
-	AssertTrue(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 	AssertString("Make the long short.", sz);
 	AssertLongLongInt(9, pcMemory->GetTotalAllocations());
 
 	AssertTrue(cAccess.DeleteLong(0x23BB45CC67DD89EELL));
 	AssertInt(0, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
-	AssertFalse(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
+	AssertNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
 	AssertLongLongInt(1, pcMemory->GetTotalAllocations());
 
 	cAccess.Kill();
@@ -380,54 +379,54 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 	AssertTrue(cAccess.PutLongString(0x0000000000000000LL, "Zero"));
 	AssertInt(1, cIndexTree.NumElements());
 
-	AssertTrue(cAccess.GetLongString(0x0000000000000000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
 
-	AssertFalse(cAccess.GetLongString(0x0100000000000000LL, sz));
+	AssertNull(cAccess.GetLongString(0x0100000000000000LL, sz));
 		
 	AssertFalse(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sente."));
 	AssertTrue(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent."));
 	AssertInt(2, cIndexTree.NumElements());
 
-	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", sz);
 	
 	AssertTrue(cAccess.PutLongString(0x0098DD67CC45BB23LL, "MORE node DATA"));
 	AssertInt(3, cIndexTree.NumElements());
 
-	AssertTrue(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 	AssertString("MORE node DATA", sz);
 	
 	AssertTrue(cAccess.PutLongString(0x0000DD00CC54BB23LL, "Another DATUM of doom"));
 	AssertInt(4, cIndexTree.NumElements());
 
-	AssertTrue(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	AssertTrue(cAccess.PutLongString(0x0098DD67CC45BB23LL, "Changed your data lengh"));
 	AssertInt(4, cIndexTree.NumElements());
 	AssertLongLongInt(25, pcMemory->GetTotalAllocations());
 
-	AssertTrue(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 	AssertString("Changed your data lengh", sz);
-	AssertTrue(cAccess.GetLongString(0x0000000000000000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
-	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", sz);
-	AssertTrue(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	AssertTrue(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Make the long short."));
 	AssertInt(4, cIndexTree.NumElements());
 	AssertLongLongInt(25, pcMemory->GetTotalAllocations());
 
-	AssertTrue(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 	AssertString("Changed your data lengh", sz);
-	AssertTrue(cAccess.GetLongString(0x0000000000000000LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
-	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Make the long short.", sz);
-	AssertTrue(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	AssertFalse(cAccess.DeleteLong(0x0100000000000000LL));
@@ -436,22 +435,22 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 	AssertInt(3, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	AssertTrue(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 	AssertString("Changed your data lengh", sz);
-	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Make the long short.", sz);
-	AssertTrue(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 	AssertLongLongInt(17, pcMemory->GetTotalAllocations());
 
 	AssertTrue(cAccess.DeleteLong(0x0098DD67CC45BB23LL));
 	AssertInt(2, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
-	AssertFalse(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
+	AssertNull(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 
-	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Make the long short.", sz);
-	AssertTrue(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 	AssertLongLongInt(15, pcMemory->GetTotalAllocations());
 
@@ -463,21 +462,21 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 	AssertTrue(cAccess.DeleteLong(0x0000DD00CC54BB23LL));
 	AssertTrue(cIndexTree.ValidateIndexTree());
 	AssertInt(1, cIndexTree.NumElements());
-	AssertFalse(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
+	AssertNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 
 	avp.Init();
 	cIndexTree.FindAll(&avp);
 	AssertInt(1, avp.NumElements());
 	avp.Kill();
 
-	AssertTrue(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
+	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Make the long short.", sz);
 	AssertLongLongInt(9, pcMemory->GetTotalAllocations());
 
 	AssertTrue(cAccess.DeleteLong(0xEE89DD67CC45BB23LL));
 	AssertTrue(cIndexTree.ValidateIndexTree());
 	AssertInt(0, cIndexTree.NumElements());
-	AssertFalse(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
+	AssertNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertLongLongInt(1, pcMemory->GetTotalAllocations());
 
 	cAccess.Kill();

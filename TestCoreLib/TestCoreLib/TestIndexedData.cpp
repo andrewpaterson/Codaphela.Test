@@ -280,7 +280,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	AssertInt(0, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
 
-	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertNotNull(cAccess.GetLongString(oi, szData));
 	AssertString(szShortText1, szData);
 
 	cIndexedData.DurableEnd();
@@ -298,7 +298,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	AssertInt(0, cIndexedData.NumDataCached());
 
 	memset(szData, 0, 256);
-	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertNotNull(cAccess.GetLongString(oi, szData));
 	AssertString(szShortText2, szData);
 	AssertInt(1, cIndexedData.NumIndicesCached());
 	AssertInt(1, cIndexedData.NumDataCached());
@@ -314,7 +314,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	//Descriptor size different to Set size.
 	AssertTrue(cAccess.PutLongString(oi, szLongText));
 	AssertTrue(cIndexedData.EvictKey(oi));
-	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertNotNull(cAccess.GetLongString(oi, szData));
 	AssertString(szLongText, szData);
 
 	cIndexedData.DurableEnd();
@@ -330,7 +330,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	AssertTrue(cAccess.PutLongString(oi, szShortText1));
 	AssertTrue(cAccess.PutLongString(oi, szShortText2));
 	AssertTrue(cIndexedData.EvictKey(oi));
-	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertNotNull(cAccess.GetLongString(oi, szData));
 	AssertString(szShortText2, szData);
 
 	cIndexedData.DurableEnd();
@@ -346,7 +346,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	AssertTrue(cAccess.PutLongString(oi, szLongText));
 	AssertTrue(cAccess.PutLongString(oi, szShortText1));
 	AssertTrue(cIndexedData.EvictKey(oi));
-	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertNotNull(cAccess.GetLongString(oi, szData));
 	AssertString(szShortText1, szData);
 
 	AssertTrue(cIndexedData.Flush(TRUE));
@@ -359,13 +359,13 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 
 	//Cached data.  File exists.
 	//Descriptor size same as Set size.
-	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertNotNull(cAccess.GetLongString(oi, szData));
 	AssertString(szShortText1, szData);
 	AssertTrue(cAccess.PutLongString(oi, szShortText2));
 	AssertTrue(cIndexedData.EvictKey(oi));
 	AssertInt(0, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
-	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertNotNull(cAccess.GetLongString(oi, szData));
 	AssertString(szShortText2, szData);
 
 	cIndexedData.DurableEnd();
@@ -377,13 +377,13 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 
 	//Cached data.  File exists.
 	//Descriptor size different to Set size.
-	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertNotNull(cAccess.GetLongString(oi, szData));
 	AssertString(szShortText2, szData);
 	AssertTrue(cAccess.PutLongString(oi, szLongText));
 	AssertTrue(cIndexedData.EvictKey(oi));
 	AssertInt(0, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
-	AssertTrue(cAccess.GetLongString(oi, szData));
+	AssertNotNull(cAccess.GetLongString(oi, szData));
 	AssertString(szLongText, szData);
 
 	cIndexedData.DurableEnd();
