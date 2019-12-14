@@ -1,4 +1,4 @@
-#include "BaseLib/IndexTreeTemplateMemory.h"
+#include "BaseLib/IndexTreeMemory.h"
 #include "BaseLib/MapStringString.h"
 #include "TestLib/Assert.h"
 

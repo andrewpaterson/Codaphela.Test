@@ -1,4 +1,4 @@
-#include "BaseLib/IndexTreeTemplateMemory.h"
+#include "BaseLib/IndexTreeMemory.h"
 #include "BaseLib/IndexTreeMemoryAccess.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
@@ -10,7 +10,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeTemplatePut(void)
 {
-	CIndexTreeTemplateMemory<long long int>	cIndex;
+	CIndexTreeMemory						cIndex;
 	CIndexTreeMemoryAccess					cAccess;
 	long long int							lliLarry;
 	long long int							lliThe;
