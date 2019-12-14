@@ -7,7 +7,7 @@
 #include "BaseLib/Logger.h"
 #include "BaseLib/DebugOutput.h"
 #include "CoreLib/IndexTreeHelper.h"
-#include "CoreLib/IndexTreeTemplateFile.h"
+#include "CoreLib/IndexTreeFile.h"
 #include "CoreLib/IndexTreeFileAccess.h"
 #include "TestLib/Assert.h"
 #include "IndexTreeFileTestCallback.h"
@@ -22,7 +22,7 @@ void TestIndexTreeFileCallbackWorks(void)
 {
 	CIndexTreeHelper									cHelper;
 	CDurableFileController								cDurableController;
-	CIndexTreeTemplateFile<CTestIndexTreeMemoryObject>	cIndexTree;
+	CIndexTreeFile										cIndexTree;
 	CIndexTreeFileAccess								cAccess;
 	CIndexTreeFileTestCallback							cDataCallback;
 	CTestIndexTreeMemoryObject							cTestObject1;
@@ -49,7 +49,7 @@ void TestIndexTreeFileCallbackWorks(void)
 	cIndexTree.Init(&cDurableController, &cDataCallback, TRUE);
 
 	memset(&cResult, 0, sizeof(CTestIndexTreeMemoryObject));
-	AssertTrue(cIndexTree.Get(szKey1, 2, &cResult));
+	AssertTrue(cIndexTree.Get(szKey1, 2, &cResult, NULL));
 	AssertInt(17, cResult.mi1);
 	AssertInt(2, cResult.mi2);
 	AssertInt(56, cResult.mi3);
@@ -74,14 +74,14 @@ void TestIndexTreeFileCallbackWorks(void)
 	cIndexTree.Init(&cDurableController, &cDataCallback, FALSE);
 
 	memset(&cResult, 0, sizeof(CTestIndexTreeMemoryObject));
-	AssertTrue(cIndexTree.Get(szKey1, 2, &cResult));
+	AssertTrue(cIndexTree.Get(szKey1, 2, &cResult, NULL));
 	AssertInt(17, cResult.mi1);
 	AssertInt(6, cResult.mi2);
 	AssertInt(56, cResult.mi3);
 	AssertInt(8, cResult.mi4);
 
 	memset(&cResult, 0, sizeof(CTestIndexTreeMemoryObject));
-	AssertTrue(cIndexTree.Get(szKey2, 2, &cResult));
+	AssertTrue(cIndexTree.Get(szKey2, 2, &cResult, NULL));
 	AssertInt(17, cResult.mi1);
 	AssertInt(10, cResult.mi2);
 	AssertInt(56, cResult.mi3);

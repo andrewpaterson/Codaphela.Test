@@ -1,4 +1,4 @@
-#include "BaseLib/IndexTreeTemplateMemory.h"
+#include "BaseLib/IndexTreeMemory.h"
 #include "BaseLib/IndexTreeMemoryAccess.h"
 #include "BaseLib/MapStringString.h"
 #include "BaseLib/FileUtil.h"

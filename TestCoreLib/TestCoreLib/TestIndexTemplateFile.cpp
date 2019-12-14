@@ -7,7 +7,7 @@
 #include "BaseLib/Logger.h"
 #include "BaseLib/DebugOutput.h"
 #include "CoreLib/IndexTreeHelper.h"
-#include "CoreLib/IndexTreeTemplateFile.h"
+#include "CoreLib/IndexTreeFile.h"
 #include "CoreLib/IndexTreeFileAccess.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
@@ -21,7 +21,7 @@ void TestIndexTreeTemplateFileStuff(void)
 {
 	CIndexTreeHelper								cHelper;
 	CDurableFileController							cDurableController;
-	CIndexTreeTemplateFile<CTestIndexTreeObject>	cIndexTree;
+	CIndexTreeFile									cIndexTree;
 	CIndexTreeFileAccess							cAccess;
 	CTestIndexTreeObject							cObject1;
 	CTestIndexTreeObject							cObject2;
@@ -41,22 +41,22 @@ void TestIndexTreeTemplateFileStuff(void)
 	AssertTrue(cAccess.PutKeyData(cObject2.GetName(), cObject2.NameLength(), &cObject2, sizeof(CTestIndexTreeObject)));
 	AssertInt(2, cIndexTree.NumElements());
 		
-	AssertTrue(cIndexTree.Get(cObject1.GetName(), cObject1.NameLength(), &cResult));
+	AssertTrue(cIndexTree.Get(cObject1.GetName(), cObject1.NameLength(), &cResult, NULL));
 	AssertString("Hello", cResult.GetName());
-	AssertTrue(cIndexTree.Get(cObject2.GetName(), cObject2.NameLength(), &cResult));
+	AssertTrue(cIndexTree.Get(cObject2.GetName(), cObject2.NameLength(), &cResult, NULL));
 	AssertString("Haplo", cResult.GetName());
-	AssertFalse(cIndexTree.Get("Help", 4, &cResult));
+	AssertFalse(cIndexTree.Get("Help", 4, &cResult, NULL));
 
 	AssertTrue(cIndexTree.Remove(cObject1.GetName(), cObject1.NameLength()));
-	AssertTrue(cIndexTree.Get(cObject2.GetName(), cObject2.NameLength(), &cResult));
+	AssertTrue(cIndexTree.Get(cObject2.GetName(), cObject2.NameLength(), &cResult, NULL));
 	AssertString("Haplo", cResult.GetName());
-	AssertFalse(cIndexTree.Get(cObject1.GetName(), cObject1.NameLength(), &cResult));
-	AssertFalse(cIndexTree.Get("Hap", 3, &cResult));
+	AssertFalse(cIndexTree.Get(cObject1.GetName(), cObject1.NameLength(), &cResult, NULL));
+	AssertFalse(cIndexTree.Get("Hap", 3, &cResult, NULL));
 	AssertInt(1, cIndexTree.NumElements());
 
 	AssertTrue(cIndexTree.Remove(cObject2.GetName(), cObject2.NameLength()));
-	AssertFalse(cIndexTree.Get(cObject2.GetName(), cObject2.NameLength(), &cResult));
-	AssertFalse(cIndexTree.Get(cObject1.GetName(), cObject1.NameLength(), &cResult));
+	AssertFalse(cIndexTree.Get(cObject2.GetName(), cObject2.NameLength(), &cResult, NULL));
+	AssertFalse(cIndexTree.Get(cObject1.GetName(), cObject1.NameLength(), &cResult, NULL));
 	AssertInt(0, cIndexTree.NumElements());
 
 	cDurableController.End();
