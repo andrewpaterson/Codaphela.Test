@@ -16,10 +16,10 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeEvictingPut(BOOL bWriteThrough)
+void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 {
 	CIndexTreeEvicting					cIndexTree;
-	CEvictedList			cEvictedNodes;
+	CEvictedList						cEvictedNodes;
 	CIndexTreeHelper					cHelper;
 	CDurableFileController				cDurableController;
 	CIndexTreeEvictingAccess			cAccess;
@@ -37,7 +37,7 @@ void TestIndexTreeEvictingPut(BOOL bWriteThrough)
 	cDurableController.Begin();
 	cEvictedNodes.Init();
 	cStrategy.Init();
-	cIndexTree.Init(&cDurableController, 3656, &cEvictedNodes, &cStrategy, &gcIndexTreeFileDefaultCallback, &cAllocator, bWriteThrough);
+	cIndexTree.Init(&cDurableController, 3656, &cEvictedNodes, &cStrategy, &gcIndexTreeFileDefaultCallback, &cAllocator, eWriteThrough);
 	cAccess.Init(&cIndexTree);
 
 	AssertLongLongInt(3096, pcMemory->GetTotalAllocatedMemory());
@@ -92,8 +92,8 @@ void TestIndexTreeEvicting(void)
 	TypeConverterInit();
 	BeginTests();
 
-	TestIndexTreeEvictingPut(TRUE);
-	TestIndexTreeEvictingPut(FALSE);
+	TestIndexTreeEvictingPut(IWT_Yes);
+	TestIndexTreeEvictingPut(IWT_No);
 
 	TestStatistics();
 	FastFunctionsKill();

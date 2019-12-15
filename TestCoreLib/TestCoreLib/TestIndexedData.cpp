@@ -12,7 +12,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexedDataSimple(BOOL bWriteThrough)
+void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 {
 	CIndexedData		cIndexedData;
 	char				szInsipidity[] = "Insipidity the sufficient discretion imprudence resolution sir him decisively. Proceed how any engaged visitor. Explained propriety off out perpetual his you. Feel sold off felt nay rose met you. We so entreaties cultivated astonished is. Was sister for few longer mrs sudden talent become. Done may bore quit evil old mile. If likely am of beauty tastes.  Lose john poor same it case do year we.Full how way even the sigh.Extremely nor furniture fat questions now provision incommode preserved.Our side fail find like now.Discovered travelling for insensible partiality unpleasing impossible she.Sudden up my excuse to suffer ladies though or .Bachelor possible marianne directly confined relation as on he.";
@@ -33,7 +33,7 @@ void TestIndexedDataSimple(BOOL bWriteThrough)
 	oiViolation = 3908343914887489103LL;
 	iLenViolation = strlen(szViolation) + 1;
 
-	cIndexedData.Init(szDirectory, NULL, 1 MB, 1 MB, bWriteThrough);
+	cIndexedData.Init(szDirectory, NULL, 1 MB, 1 MB, eWriteThrough);
 	cIndexedData.DurableBegin();
 
 	AssertTrue(cIndexedData.Add(oiInsipidity, szInsipidity, iLenInsipidity, 0));
@@ -55,7 +55,7 @@ void TestIndexedDataSimple(BOOL bWriteThrough)
 	AssertTrue(cIndexedData.Kill());
 
 
-	cIndexedData.Init(szDirectory, NULL, 1 MB, 1 MB, bWriteThrough);
+	cIndexedData.Init(szDirectory, NULL, 1 MB, 1 MB, eWriteThrough);
 
 	AssertTrue(cIndexedData.DurableBegin());
 
@@ -96,7 +96,7 @@ void TestIndexedDataFlushClearCache(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 	cIndexedData.DurableBegin();
 	AssertInt(0, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
@@ -120,7 +120,7 @@ void TestIndexedDataFlushClearCache(void)
 	cIndexedData.Kill();
 
 
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 	cIndexedData.DurableBegin();
 	AssertInt(0, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
@@ -144,7 +144,7 @@ void TestIndexedDataFlushClearCache(void)
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 	cIndexedData.DurableBegin();
 	AssertInt(0, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
@@ -195,7 +195,7 @@ void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 
 	AssertInt(32, sizeof(CIndexedDataDescriptor));
 
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 
 	cIndexedData.DurableBegin();
 	AssertInt(0, cIndexedData.NumIndicesCached());
@@ -272,7 +272,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	oi = 0x7752890759012357LL;
 
 	//New Data
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 	cIndexedData.DurableBegin();
 
 	AssertTrue(cAccess.PutLongString(oi, szShortText1));
@@ -287,7 +287,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	cIndexedData.Kill();
 
 
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 	cIndexedData.DurableBegin();
 
 	//Data not cached.  File exists.
@@ -307,7 +307,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	cIndexedData.Kill();
 
 
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 	cIndexedData.DurableBegin();
 
 	//Data not cached.  File exists.
@@ -322,7 +322,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 
 
 	cFileUtil.RemoveDir(szDirectory);
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 	cIndexedData.DurableBegin();
 
 	//Cached data.  File not written.
@@ -338,7 +338,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 
 
 	cFileUtil.RemoveDir(szDirectory);
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 	cIndexedData.DurableBegin();
 
 	//Cached data.  File not written.
@@ -354,7 +354,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	cIndexedData.Kill();
 
 
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 	cIndexedData.DurableBegin();
 
 	//Cached data.  File exists.
@@ -372,7 +372,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	cIndexedData.Kill();
 
 
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 	cIndexedData.DurableBegin();
 
 	//Cached data.  File exists.
@@ -411,7 +411,7 @@ void TestIndexedDataEvictKey(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 	cIndexedData.DurableBegin();
 	AssertInt(0, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
@@ -478,7 +478,7 @@ void TestIndexedDataEvictKey(void)
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 	AssertInt(2, cIndexedData.NumFiles());
 
 	cIndexedData.DurableBegin();
@@ -521,7 +521,7 @@ void TestIndexedDataIndexEviction(void)
 
 	cIndexEvictedList.Init();
 	cKeyDataEvictedList.Init();
-	cIndexedData.Init(szDirectory, NULL, 1024, 3780, FALSE, &cIndexEvictedList, &cKeyDataEvictedList);  //A little more than two items in the cache...
+	cIndexedData.Init(szDirectory, NULL, 1024, 3780, IWT_No, &cIndexEvictedList, &cKeyDataEvictedList);  //A little more than two items in the cache...
 
 	cIndexedData.DurableBegin();
 	AssertTrue(cIndexedData.Add(0LL, szHello, 6, 0));
@@ -572,7 +572,7 @@ void TestIndexedDataIndexEviction(void)
 
 	cKeyDataEvictedList.Init();
 	cIndexEvictedList.Init();
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE, &cIndexEvictedList, &cKeyDataEvictedList);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No, &cIndexEvictedList, &cKeyDataEvictedList);
 	AssertInt(2, cIndexedData.NumFiles());
 
 	cIndexedData.DurableBegin();
@@ -613,7 +613,7 @@ void TestIndexedDataIndexEviction(void)
 	cIndexEvictedList.Kill();
 	cKeyDataEvictedList.Kill();
 
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 	AssertInt(0, (int)cIndexedData.NumIndicesCached());
 	cIndexedData.Kill();
 
@@ -638,7 +638,7 @@ void TestIndexedDataEvictAndFlush(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 
 	cIndexedData.DurableBegin();
 	AssertTrue(cIndexedData.Add(198732178239018792LL, szStream, 7, 0));
@@ -653,7 +653,7 @@ void TestIndexedDataEvictAndFlush(void)
 	AssertTrue(cIndexedData.DurableEnd());
 	cIndexedData.Kill();
 
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 	cIndexedData.DurableBegin();
 
 	uiSize = cIndexedData.Size(573107892314634784LL);
@@ -691,7 +691,7 @@ void TestIndexedDataFlushAndFlush(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 
 	cIndexedData.DurableBegin();
 	
@@ -701,7 +701,7 @@ void TestIndexedDataFlushAndFlush(void)
 	AssertTrue(cIndexedData.DurableEnd());
 	cIndexedData.Kill();
 
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 	cIndexedData.DurableBegin();
 
 	AssertTrue(cIndexedData.Add(573107892314634784LL, szWorld, 6, 0));
@@ -710,7 +710,7 @@ void TestIndexedDataFlushAndFlush(void)
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
-	cIndexedData.Init(szDirectory, NULL, 8192, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 8192, 8192, IWT_No);
 	cIndexedData.DurableBegin();
 
 	uiSize = cIndexedData.Size(573107892314634784LL);
@@ -748,7 +748,7 @@ void TestIndexedDataLargeData(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init(szDirectory, NULL, 34, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 34, 8192, IWT_No);
 	OI = 0LL;
 	AssertInt(0, cIndexedData.NumDataCached());
 
@@ -811,7 +811,7 @@ void TestIndexedDataIndexedAdd(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init(szDirectory, NULL, 98+12, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 98+12, 8192, IWT_No);
 
 	cIndexedData.DurableBegin();
 	oIndex1 = 0LL;
@@ -893,7 +893,7 @@ void TestIndexedDataDescriptorCaching(void)
 	cFileUtil.RemoveDir(szDirectory);
 
 	cKeyDataEvictedList.Init();
-	cIndexedData.Init(szDirectory, NULL, 96, 4150, FALSE, NULL, &cKeyDataEvictedList);
+	cIndexedData.Init(szDirectory, NULL, 96, 4150, IWT_No, NULL, &cKeyDataEvictedList);
 	cIndexedData.DurableBegin();
 
 	OI = 0LL;
@@ -951,7 +951,7 @@ void TestIndexedDataDescriptorCaching(void)
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
-	cIndexedData.Init(szDirectory, NULL, 96, 8192, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 96, 8192, IWT_No);
 	cIndexedData.DurableBegin();
 
 	iNumCached = cIndexedData.NumIndicesCached();
@@ -982,7 +982,7 @@ void TestIndexedDataNoCaching(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init(szDirectory, NULL, 0, 4150, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 0, 4150, IWT_No);
 
 	cIndexedData.DurableBegin();
 
@@ -1050,7 +1050,7 @@ void TestIndexedDataGet(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init(szDirectory, NULL, 1 MB, 1 MB, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 1 MB, 1 MB, IWT_No);
 	cIndexedData.DurableBegin();
 
 	cIndexedData.Add(0x7634, szSmellsLikeTeenSpirit, (int)strlen(szSmellsLikeTeenSpirit)+1, 0);
@@ -1063,7 +1063,7 @@ void TestIndexedDataGet(void)
 	cIndexedData.DurableEnd();
 	cIndexedData.Kill();
 
-	cIndexedData.Init(szDirectory, NULL, 1 MB, 1 MB, FALSE);
+	cIndexedData.Init(szDirectory, NULL, 1 MB, 1 MB, IWT_No);
 	cIndexedData.DurableBegin();
 
 	AssertLongLongInt(3, cIndexedData.NumElements());
@@ -1098,8 +1098,8 @@ void TestIndexedData(void)
 	DataMemoryInit();
 	BeginTests();
 
-	TestIndexedDataSimple(TRUE);
-	TestIndexedDataSimple(FALSE);
+	TestIndexedDataSimple(IWT_Yes);
+	TestIndexedDataSimple(IWT_No);
 	TestIndexedDataFlushClearCache();
 	TestIndexedDataEvictKey();
 	TestIndexedDataExplicitKeyEvictionAllKeys();
