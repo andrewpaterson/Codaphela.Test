@@ -107,13 +107,13 @@ void TestIndexedDataFlushClearCache(void)
 	AssertTrue(cIndexedData.Add(4LL, szWorld, 6, 0));
 	AssertInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
-	AssertInt(4120, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3608, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
 
 	cIndexedData.Flush(FALSE);
 	AssertInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
-	AssertInt(4120, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3608, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
 
 	cIndexedData.DurableEnd();
@@ -131,13 +131,13 @@ void TestIndexedDataFlushClearCache(void)
 	AssertTrue(cIndexedData.Get(4LL, &uiDataSize, szData, 7));
 	AssertInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
-	AssertInt(4180, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3668, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
 
 	AssertTrue(cIndexedData.Flush(TRUE));
 	AssertInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
-	AssertInt(4180, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3668, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(00, cIndexedData.GetDataSystemMemorySize());
 
 
@@ -155,7 +155,7 @@ void TestIndexedDataFlushClearCache(void)
 	AssertFalse(cIndexedData.Add(4LL, szHello, 6, 0));
 	AssertInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
-	AssertInt(4180, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3668, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(0, cIndexedData.GetDataSystemMemorySize());
 
 	AssertTrue(cIndexedData.Get(0LL, &uiDataSize, szData, 7));
@@ -166,7 +166,7 @@ void TestIndexedDataFlushClearCache(void)
 	AssertString(szWorld, szData);
 	AssertInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
-	AssertInt(4180, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3668, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
 
 	cIndexedData.DurableEnd();
@@ -208,19 +208,19 @@ void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 	cIndexedData.Flush(FALSE);
 	AssertInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
-	AssertInt(4120, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3608, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
 
 	AssertTrue(cIndexedData.EvictKey(0LL));
 	AssertInt(2, cIndexedData.NumIndicesCached());
 	AssertInt(2, cIndexedData.NumDataCached());
-	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3548, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(37, cIndexedData.GetDataSystemMemorySize());
 
 	AssertTrue(cIndexedData.EvictKey(2LL));
 	AssertInt(1, cIndexedData.NumIndicesCached());
 	AssertInt(1, cIndexedData.NumDataCached());
-	AssertInt(3440, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3488, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(18, cIndexedData.GetDataSystemMemorySize());
 
 	AssertTrue(cIndexedData.EvictKey(4LL));
@@ -423,19 +423,19 @@ void TestIndexedDataEvictKey(void)
 	AssertTrue(cIndexedData.Add(4LL, szWorld, 6, 0));
 	AssertInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
-	AssertInt(4120, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3608, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
 
 	cIndexedData.EvictKey(0LL);
 	AssertInt(2, cIndexedData.NumIndicesCached());
 	AssertInt(2, cIndexedData.NumDataCached());
-	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3548, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(37, cIndexedData.GetDataSystemMemorySize());
 
 	cIndexedData.EvictKey(4LL);
 	AssertInt(1, cIndexedData.NumIndicesCached());
 	AssertInt(1, cIndexedData.NumDataCached());
-	AssertInt(3440, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3488, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(19, cIndexedData.GetDataSystemMemorySize());
 	
 	cIndexedData.EvictKey(2LL);
@@ -449,7 +449,7 @@ void TestIndexedDataEvictKey(void)
 	AssertString(szHello, szData);
 	AssertInt(1, cIndexedData.NumIndicesCached());
 	AssertInt(1, cIndexedData.NumDataCached());
-	AssertInt(3452, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3500, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(18, cIndexedData.GetDataSystemMemorySize());
 
 	AssertTrue(cIndexedData.Get(2LL, &uiDataSize, szData, 1024));
@@ -457,7 +457,7 @@ void TestIndexedDataEvictKey(void)
 	AssertString(szStream, szData);
 	AssertInt(2, cIndexedData.NumIndicesCached());
 	AssertInt(2, cIndexedData.NumDataCached());
-	AssertInt(3804, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3572, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(37, cIndexedData.GetDataSystemMemorySize());
 
 	AssertTrue(cIndexedData.Get(4LL, &uiDataSize, szData, 1024));
@@ -465,7 +465,7 @@ void TestIndexedDataEvictKey(void)
 	AssertString(szWorld, szData);
 	AssertInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
-	AssertInt(4156, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3644, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
 
 	uiSize = cIndexedData.Size(0LL);
@@ -521,7 +521,7 @@ void TestIndexedDataIndexEviction(void)
 
 	cIndexEvictedList.Init();
 	cKeyDataEvictedList.Init();
-	cIndexedData.Init(szDirectory, NULL, 1024, 3780, IWT_No, &cIndexEvictedList, &cKeyDataEvictedList);  //A little more than two items in the cache...
+	cIndexedData.Init(szDirectory, NULL, 1024, 3570, IWT_No, &cIndexEvictedList, &cKeyDataEvictedList);  //A little more than two items in the cache...
 
 	cIndexedData.DurableBegin();
 	AssertTrue(cIndexedData.Add(0LL, szHello, 6, 0));
@@ -533,11 +533,11 @@ void TestIndexedDataIndexEviction(void)
 	AssertInt(2, cIndexedData.NumDataCached());
 	AssertInt(2, cIndexedData.NumIndicesCached());
 	AssertInt(sizeof(SIndexedCacheDescriptor) + 6, cIndexedData.TestGetCachedObjectSize(1LL));
-	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3512, cIndexedData.GetIndiciesSystemMemorySize());
 
 	AssertInt(0, cIndexEvictedList.NumElements());
 	AssertTrue(cIndexedData.Add(2LL, szStream, 7, 0));  //Node 0LL evicted here.
-	AssertInt(3780, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3524, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(1, cIndexEvictedList.NumElements());
 
 	AssertInt(2, cIndexedData.NumDataCached());
@@ -552,12 +552,12 @@ void TestIndexedDataIndexEviction(void)
 	cKeyDataEvictedList.Clear();
 	AssertTrue(cIndexedData.Flush(TRUE));
 	AssertInt(0, cIndexEvictedList.NumElements());
-	AssertInt(2, cIndexedData.NumIndicesCached());
+	AssertInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
 	uiSize = cIndexedData.Size(1LL);
 	AssertInt(1, cIndexEvictedList.NumElements());
 	AssertInt(6, uiSize);
-	AssertInt(1, cIndexedData.NumIndicesCached());
+	AssertInt(2, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
 
 	AssertTrue(cIndexedData.DurableEnd());
@@ -893,7 +893,7 @@ void TestIndexedDataDescriptorCaching(void)
 	cFileUtil.RemoveDir(szDirectory);
 
 	cKeyDataEvictedList.Init();
-	cIndexedData.Init(szDirectory, NULL, 96, 4150, IWT_No, NULL, &cKeyDataEvictedList);
+	cIndexedData.Init(szDirectory, NULL, 96, 3650, IWT_No, NULL, &cKeyDataEvictedList);
 	cIndexedData.DurableBegin();
 
 	OI = 0LL;
@@ -945,7 +945,7 @@ void TestIndexedDataDescriptorCaching(void)
 	AssertInt(0, cKeyDataEvictedList.NumElements());
 
 	iNumCached = cIndexedData.NumIndicesCached();
-	AssertInt(3, (int)iNumCached);
+	AssertInt(2, (int)iNumCached);
 
 	AssertTrue(cIndexedData.Flush(TRUE));
 	cIndexedData.DurableEnd();
@@ -982,7 +982,7 @@ void TestIndexedDataNoCaching(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	cIndexedData.Init(szDirectory, NULL, 0, 4150, IWT_No);
+	cIndexedData.Init(szDirectory, NULL, 0, 3670, IWT_No);
 
 	cIndexedData.DurableBegin();
 
