@@ -37,7 +37,7 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	cDurableController.Begin();
 	cEvictedNodes.Init();
 	cStrategy.Init();
-	cIndexTree.Init(&cDurableController, 3656, &cEvictedNodes, &cStrategy, &gcIndexTreeFileDefaultCallback, &cAllocator, eWriteThrough);
+	cIndexTree.Init(&cDurableController, 3656, &cEvictedNodes, &cStrategy, &gcIndexTreeFileDefaultCallback, &cAllocator, eWriteThrough, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	AssertLongLongInt(3096, pcMemory->GetTotalAllocatedMemory());
