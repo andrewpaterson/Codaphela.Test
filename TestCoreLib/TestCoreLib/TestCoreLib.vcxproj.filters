@@ -55,6 +55,9 @@
     <Filter Include="Source\File\Indexed\Cache">
       <UniqueIdentifier>{7e26f353-db33-4d82-aaf3-a30a528aedea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\File\Indexed\Named">
+      <UniqueIdentifier>{b6fba6c0-b21c-4582-9e3b-0fff5b46d58e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -155,6 +158,9 @@
     </ClCompile>
     <ClCompile Include="IndexTreeCallbackTestObject.cpp">
       <Filter>Source\File\Indexed\Index</Filter>
+    </ClCompile>
+    <ClCompile Include="TestNamedIndexes.cpp">
+      <Filter>Source\File\Indexed\Named</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

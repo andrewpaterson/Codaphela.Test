@@ -1,9 +1,7 @@
 #include "BaseLib/Define.h"
 #include "CoreLib/DurableFileController.h"
-#include "StandardLib/NamedIndexesFileDumper.h"
-#include "StandardLib/NamedIndexes.h"
+#include "CoreLib/NamedIndexes.h"
 #include "StandardLib/BaseObject.h"
-#include "StandardLib/NamedIndexesOptimiser.h"
 #include "TestLib/Assert.h"
 
 
@@ -23,7 +21,7 @@ void TestNamedIndexesAdd(void)
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
-	cNamedIndexes.Init(&cController, 10 MB, 4);
+	cNamedIndexes.Init(&cController, 10 MB, IWT_No);
 	cController.Begin();
 	cNamedIndexes.Open();
 
@@ -102,7 +100,7 @@ void TestNamedIndexesRemove(void)
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
-	cNamedIndexes.Init(&cController, 10 MB, 4);
+	cNamedIndexes.Init(&cController, 10 MB, IWT_No);
 	cController.Begin();
 	cNamedIndexes.Open();
 
@@ -199,7 +197,7 @@ void TestNamedIndexesCacheEviction(void)
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
-	cNamedIndexes.Init(&cController, 256, 4);
+	cNamedIndexes.Init(&cController, 256, IWT_No);
 	cController.Begin();
 	cNamedIndexes.Open();
 

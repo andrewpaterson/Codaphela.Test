@@ -6,7 +6,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-unsigned short	CIndexTreeFileTestCallback::DataBufferSize(unsigned short uiSourceSize)
+unsigned short	CIndexTreeFileTestCallback::IndexTreeDataSize(unsigned short uiSourceSize)
 {
 	if (uiSourceSize != 0)
 	{
@@ -23,7 +23,7 @@ unsigned short	CIndexTreeFileTestCallback::DataBufferSize(unsigned short uiSourc
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CIndexTreeFileTestCallback::WriteData(void* pvDataBuffer, void* pvSource, int iFileDataSize, unsigned short uiSourceDataSize)
+BOOL CIndexTreeFileTestCallback::IndexTreeWriteData(void* pvDataBuffer, void* pvSource, int iFileDataSize, unsigned short uiSourceDataSize)
 {
 	STestIndexTreeFileObject*		psFileObject;
 	CTestIndexTreeMemoryObject*		pcMemoryObject;
@@ -41,7 +41,7 @@ BOOL CIndexTreeFileTestCallback::WriteData(void* pvDataBuffer, void* pvSource, i
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CIndexTreeFileTestCallback::ReadData(void* pvDest, void* pvDataBuffer, unsigned short uiDestDataSize, int iFileDataSize)
+BOOL CIndexTreeFileTestCallback::IndexTreeReadData(void* pvDest, void* pvDataBuffer, unsigned short uiDestDataSize, int iFileDataSize)
 {
 	STestIndexTreeFileObject*		psFileObject;
 	CTestIndexTreeMemoryObject*		pcMemoryObject;

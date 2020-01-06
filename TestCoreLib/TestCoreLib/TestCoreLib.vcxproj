@@ -132,6 +132,7 @@
     <ClCompile Include="TestLogFile.cpp" />
     <ClCompile Include="TestIndexedData.cpp" />
     <ClCompile Include="TestIndexes.cpp" />
+    <ClCompile Include="TestNamedIndexes.cpp" />
     <ClCompile Include="TestPackFilesPacker.cpp" />
     <ClCompile Include="TestPropertiesFile.cpp" />
     <ClCompile Include="TestDurableFile.cpp" />

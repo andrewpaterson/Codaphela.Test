@@ -40,12 +40,6 @@
     <Filter Include="Source\File">
       <UniqueIdentifier>{cb579f2f-752d-4b2b-8499-fff8106bb181}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\File\Indexed">
-      <UniqueIdentifier>{3d183a11-1714-4d48-80a7-3c2b35c9bcd7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\File\Indexed\Named">
-      <UniqueIdentifier>{0d6c9829-eb63-4814-8a81-2a50d93c5599}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Object\Object\Source">
       <UniqueIdentifier>{281e95c5-5992-4e41-b811-83942989cce3}</UniqueIdentifier>
     </Filter>
@@ -143,9 +137,6 @@
     </ClCompile>
     <ClCompile Include="TestMapStringUnknown.cpp">
       <Filter>Source\Object\Unknown\Collections\Map</Filter>
-    </ClCompile>
-    <ClCompile Include="TestNamedIndexes.cpp">
-      <Filter>Source\File\Indexed\Named</Filter>
     </ClCompile>
     <ClCompile Include="TestObjects.cpp">
       <Filter>Source\Object\Object</Filter>

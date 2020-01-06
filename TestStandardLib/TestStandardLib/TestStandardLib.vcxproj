@@ -107,7 +107,6 @@
     <ClCompile Include="TestEmbeddedObjectRemapTos.cpp" />
     <ClCompile Include="TestEmbeddedStackPointers.cpp" />
     <ClCompile Include="TestKill.cpp" />
-    <ClCompile Include="TestNamedIndexes.cpp" />
     <ClCompile Include="TestNamedObject.cpp" />
     <ClCompile Include="TestObjectAllocator.cpp" />
     <ClCompile Include="TestObjectConverter.cpp" />
