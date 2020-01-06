@@ -29,6 +29,7 @@ void TestFiles(void);
 void TestPackFilesPacker(void);
 void TestIndexedFilesEvicting(void);
 void TestIndexTreeEvicting(void);
+void TestNamedIndexes(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -67,6 +68,7 @@ int main(void)
 	TestIndexTreeEvicting();
 	TestIndexedFilesEvicting();
 	TestIndexedData();
+	TestNamedIndexes();
 
 	return TestTotalStatistics();
 }
