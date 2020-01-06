@@ -22,7 +22,7 @@ void AssertCacheElement(CMemoryCache* pcCache, SMemoryCacheDescriptor* psCacheDe
 	char*						szData;
 	CChars						szExpected;
 
-	AssertInt(iDataSize, psCacheDesc->iDataSize);
+	AssertInt(iDataSize, psCacheDesc->uiSize);
 
 	szData = (char*)pcCache->GetData(psCacheDesc);
 	szExpected.Init();

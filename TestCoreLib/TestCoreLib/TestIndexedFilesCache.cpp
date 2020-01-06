@@ -4,7 +4,7 @@
 #include "BaseLib/TypeConverter.h"
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexedMap.h"
-#include "CoreLib/EvictedList.h"
+#include "CoreLib/IndexedEvictedList.h"
 #include "TestLib/Assert.h"
 
 
@@ -127,8 +127,8 @@ void TestIndexedFilesEvictingEviction(EIndexWriteThrough eWriteThrough)
 {
 	CDurableFileController					cDurableController;
 	CIndexTreeHelper						cHelper;
-	CIndexedMap		cDescriptors;
-	CEvictedList							cKeyDataEvictedList;
+	CIndexedMap								cDescriptors;
+	CIndexedEvictedList						cKeyDataEvictedList;
 	char									szMoreover[] = "Although moreover mistaken kindness me feelings do be marianne.  Cordial village and settled she ability law herself.";
 	char									szIndulged[] = "Concerns greatest margaret him absolute entrance nay.  Door neat week do find past he.Be no surprise he honoured indulged.";
 	char									szSeparate[] = "To they four in love.  Settling you has separate supplied bed.  Concluded resembled suspected his resources curiosity joy.";
