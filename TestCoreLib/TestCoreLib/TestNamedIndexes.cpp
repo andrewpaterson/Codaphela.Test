@@ -76,8 +76,8 @@ void TestNamedIndexesAdd(void)
 
 	AssertLongLongInt(9, cNamedIndexes.NumElements());
 
+	cNamedIndexes.Flush();
 	cController.End();
-
 	cNamedIndexes.Kill();
 	cController.Kill();
 }
@@ -99,8 +99,8 @@ void TestNamedIndexesRemove(void)
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
-	cNamedIndexes.Init(&cController, 10 MB, IWT_No);
 	cController.Begin();
+	cNamedIndexes.Init(&cController, 10 MB, IWT_No);
 
 	cNamedIndexes.Add(45LL, "Berty");
 	cNamedIndexes.Add(73LL, "Alfred");
@@ -171,8 +171,9 @@ void TestNamedIndexesRemove(void)
 	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex("Berty"));
 	AssertLongLongInt(0, cNamedIndexes.NumElements());
 
-	cNamedIndexes.Kill();
+	cNamedIndexes.Flush();
 	cController.End();
+	cNamedIndexes.Kill();
 	cController.Kill();
 }
 
@@ -393,6 +394,7 @@ void TestNamedIndexes(void)
 {
 	CFileUtil	cFileUtil;
 
+	FastFunctionsInit();
 	BeginTests();
 
 	cFileUtil.RemoveDir("NamedIndexes");
@@ -405,5 +407,6 @@ void TestNamedIndexes(void)
 	cFileUtil.RemoveDir("NamedIndexes");
 
 	TestStatistics();
+	FastFunctionsKill();
 }
 
