@@ -3,6 +3,7 @@
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/SystemAllocator.h"
 #include "BaseLib/MemoryAllocator.h"
+#include "BaseLib/Logger.h"
 #include "CoreLib/IndexTreeEvicting.h"
 #include "CoreLib/EvictedList.h"
 #include "CoreLib/IndexTreeHelper.h"
@@ -86,6 +87,106 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeEvictingEvictWithChildren(void)
+{
+	CIndexTreeEvictingAccess	cAccess;
+	CIndexTreeHelper			cHelper;
+	char						szAlbatros[] = "albatros";
+	char						szAlba[] = "alba";
+	char						szAlbaquerque[] = "albaquerque";
+	CGeneralMemory*				pcMemory;
+	CMemoryAllocator			cAllocator;
+	CDurableFileController		cDurableController;
+	CIndexTreeEvicting			cIndexTree;
+	SLogConfig					sLogConfig;
+
+	cAllocator.Init();
+	pcMemory = cAllocator.GetMemory();
+	cHelper.Init("Output" _FS_"IndexTreeEvicting2", "primary", "backup", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
+	cAccess.Init(&cIndexTree);
+
+	AssertTrue(cAccess.PutStringString(szAlbatros, szAlbatros));
+	AssertTrue(cAccess.PutStringString(szAlba, szAlba));
+	AssertTrue(cAccess.PutStringString(szAlbaquerque, szAlbaquerque));
+	AssertLongLongInt(3674, pcMemory->GetTotalAllocatedMemory());
+
+	gcLogger.GetConfig(&sLogConfig);
+	gcLogger.SetBreakOnError(FALSE);
+	AssertFalse(cAccess.EvictString(szAlba));
+	gcLogger.SetConfig(&sLogConfig);
+	AssertLongLongInt(3674, pcMemory->GetTotalAllocatedMemory());
+
+	AssertTrue(cAccess.EvictString(szAlbatros));
+	AssertLongLongInt(3533, pcMemory->GetTotalAllocatedMemory());
+
+	gcLogger.GetConfig(&sLogConfig);
+	gcLogger.SetBreakOnError(FALSE);
+	AssertFalse(cAccess.EvictString(szAlba));
+	gcLogger.SetConfig(&sLogConfig);
+	AssertLongLongInt(3533, pcMemory->GetTotalAllocatedMemory());
+
+	AssertTrue(cAccess.EvictString(szAlbaquerque));
+	AssertLongLongInt(3281, pcMemory->GetTotalAllocatedMemory());
+
+	AssertTrue(cAccess.EvictString(szAlba));
+	AssertLongLongInt(3096, pcMemory->GetTotalAllocatedMemory());
+
+	cDurableController.End();
+	cIndexTree.Kill();
+	AssertLongLongInt(0, pcMemory->GetTotalAllocatedMemory());
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeEvictingFlushWithChildren(void)
+{
+	CIndexTreeEvictingAccess	cAccess;
+	CIndexTreeHelper			cHelper;
+	char						szAlbatros[] = "albatros";
+	char						szAlba[] = "alba";
+	char						szAlbaquerque[] = "albaquerque";
+	CGeneralMemory*				pcMemory;
+	CMemoryAllocator			cAllocator;
+	CDurableFileController		cDurableController;
+	CIndexTreeEvicting			cIndexTree;
+
+	cAllocator.Init();
+	pcMemory = cAllocator.GetMemory();
+	cHelper.Init("Output" _FS_"IndexTreeEvicting3", "primary", "backup", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
+	cAccess.Init(&cIndexTree);
+
+	AssertTrue(cAccess.PutStringString(szAlbatros, szAlbatros));
+	AssertTrue(cAccess.PutStringString(szAlba, szAlba));
+	AssertTrue(cAccess.PutStringString(szAlbaquerque, szAlbaquerque));
+	AssertLongLongInt(3674, pcMemory->GetTotalAllocatedMemory());
+
+	AssertTrue(cAccess.FlushString(szAlba));
+	AssertTrue(cAccess.FlushString(szAlbatros));
+	AssertTrue(cAccess.FlushString(szAlbaquerque));
+
+	cDurableController.End();
+	cIndexTree.Kill();
+	AssertLongLongInt(0, pcMemory->GetTotalAllocatedMemory());
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeEvicting(void)
 {
 	FastFunctionsInit();
@@ -94,6 +195,8 @@ void TestIndexTreeEvicting(void)
 
 	TestIndexTreeEvictingPut(IWT_Yes);
 	TestIndexTreeEvictingPut(IWT_No);
+	TestIndexTreeEvictingEvictWithChildren();
+	TestIndexTreeEvictingFlushWithChildren();
 
 	TestStatistics();
 	FastFunctionsKill();

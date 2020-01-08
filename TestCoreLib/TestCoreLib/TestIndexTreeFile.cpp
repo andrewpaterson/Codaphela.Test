@@ -2289,12 +2289,12 @@ void TestIndexTreeFileFlushNodes(void)
 	TestIndexTreeFileEvictComplexSetup(&cDurableController, &cIndexTree, &cAllocator);
 	AssertLongLongInt(3801, pcMemory->GetTotalAllocatedMemory());
 
-	AssertTrue(cIndexTree.Flush(szAAAAA));
-	AssertTrue(cIndexTree.Flush(szAAABB));
-	AssertTrue(cIndexTree.Flush(szAABAA));
-	AssertTrue(cIndexTree.Flush(szAABBB));
-	AssertTrue(cIndexTree.Flush(szAACAA));
-	AssertTrue(cIndexTree.Flush(szAACBB));
+	AssertTrue(cAccess.FlushString(szAAAAA));
+	AssertTrue(cAccess.FlushString(szAAABB));
+	AssertTrue(cAccess.FlushString(szAABAA));
+	AssertTrue(cAccess.FlushString(szAABBB));
+	AssertTrue(cAccess.FlushString(szAACAA));
+	AssertTrue(cAccess.FlushString(szAACBB));
 
 	cDurableController.End();
 	cIndexTree.Kill();
