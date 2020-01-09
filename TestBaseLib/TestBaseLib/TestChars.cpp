@@ -142,7 +142,7 @@ void TestCharsInsert(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSplit(void)
+void TestCharsSplit(void)
 {
 	CChars			sz;
 	CArrayChars		cStrings;
@@ -236,6 +236,31 @@ the Free Software Foundation, either version 3 of the License, or\n\
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestCharsMakeCPlusPlus(void)
+{
+	CChars sz;
+
+	sz.Init("Hello World");
+	sz.MakeCPlusPlus();
+	AssertString("\"Hello World\"", sz.Text());
+	sz.Kill();
+
+	sz.Init("Hello World");
+	sz.AppendNewLine();
+	sz.Append("Goodbye");
+	sz.MakeCPlusPlus();
+	sz.Dump();
+	AssertString("\"Hello World\\n\"\n\"Goodbye\"", sz.Text());
+	sz.Kill();
+
+	xxx
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestChars(void)
 {
 	BeginTests();
@@ -243,8 +268,9 @@ void TestChars(void)
 	TestCharsSubStringEquals();
 	TestCharsReplace();
 	TestCharsInsert();
-	TestSplit();
-
+	TestCharsSplit();
+	TestCharsMakeCPlusPlus();
+	
 	TestStatistics();
 
 }

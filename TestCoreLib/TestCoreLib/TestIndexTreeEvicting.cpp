@@ -13,6 +13,9 @@
 #include "TestLib/Assert.h"
 
 
+void AssertTree(char* szExpected, CIndexTreeEvicting* pcTree);
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -172,14 +175,96 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 	AssertTrue(cAccess.PutStringString(szAlbaquerque, szAlbaquerque));
 	AssertLongLongInt(3674, pcMemory->GetTotalAllocatedMemory());
 
+	AssertTree(
+		"= [IndexTreeFile]  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================\n" 
+		" Memory:   root -> . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . o . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . \n" 
+		"Key: ------------- [alba] -------------\n"
+		" Memory:   a    -> o \n"
+		" Memory:   l    -> o \n"
+		" Memory:   b    -> o \n"
+		" Memory:   a(X) -> o . . o\n"
+		"Key: ------------- [albaquerque] -------------\n"
+		" Memory:   a    -> o \n" 
+		" Memory:   l    -> o \n" 
+		" Memory:   b    -> o \n" 
+		" Memory:   a(X) -> o . . o \n" 
+		" Memory:   q    -> o \n" 
+		" Memory:   u    -> o \n" 
+		" Memory:   e    -> o \n" 
+		" Memory:   r    -> o \n" 
+		" Memory:   q    -> o \n" 
+		" Memory:   u    -> o \n" 
+		" Memory:   e(X)\n" 
+		"Key: ------------- [albatros] -------------\n" 
+		" Memory:   a    -> o \n" 
+		" Memory:   l    -> o \n" 
+		" Memory:   b    -> o \n" 
+		" Memory:   a(X) -> o . . o \n" 
+		" Memory:   t    -> o \n" 
+		" Memory:   r    -> o \n" 
+		" Memory:   o    -> o \n" 
+		" Memory:   s(X)", 
+		&cIndexTree);
+
 	AssertTrue(cAccess.FlushString(szAlba));
+	AssertTree(
+		"= [IndexTreeFile]  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================\n"
+		"   Both:   root -> . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 1:2 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . \n"
+		"Key: ------------- [alba] -------------\n"
+		"   Both:   a    -> 1:1 \n"
+		"   Both:   l    -> 1:0 \n"
+		"   Both:   b    -> 0:0 \n"
+		"   Both:   a(X) -> 1:11 . . 1:5 \n"
+		"Key: ------------- [albaquerque] -------------\n"
+		"   Both:   a    -> 1:1 \n"
+		"   Both:   l    -> 1:0 \n"
+		"   Both:   b    -> 0:0 \n"
+		"   Both:   a(X) -> 1:11 . . 1:5 \n"
+		"   Both:   q    -> 1:10 \n"
+		"   Both:   u    -> 1:9 \n"
+		"   Both:   e    -> 1:8 \n"
+		"   Both:   r    -> 1:7 \n"
+		"   Both:   q    -> 1:6 \n"
+		"   Both:   u    -> 4:0 \n"
+		"   Both:   e(X)\n"
+		"Key: ------------- [albatros] -------------\n"
+		"   Both:   a    -> 1:1 \n"
+		"   Both:   l    -> 1:0 \n"
+		"   Both:   b    -> 0:0 \n"
+		"   Both:   a(X) -> 1:11 . . 1:5 \n"
+		"   Both:   t    -> 1:4 \n"
+		"   Both:   r    -> 1:3 \n"
+		"   Both:   o    -> 3:0 \n"
+		"   Both:   s(X)",
+		&cIndexTree);
+
 	AssertTrue(cAccess.FlushString(szAlbatros));
 	AssertTrue(cAccess.FlushString(szAlbaquerque));
 
+	cIndexTree.Flush();
+	cIndexTree.Dump();
 	cDurableController.End();
 	cIndexTree.Kill();
 	AssertLongLongInt(0, pcMemory->GetTotalAllocatedMemory());
 	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertTree(char* szExpected, CIndexTreeEvicting* pcTree)
+{
+	CChars	sz;
+
+	sz.Init();
+	pcTree->Print(&sz);
+	sz.MakeCPlusPlus();
+
+	AssertStringApproximate(szExpected, sz.Text());
+
+	sz.Kill();
 }
 
 
@@ -193,9 +278,9 @@ void TestIndexTreeEvicting(void)
 	TypeConverterInit();
 	BeginTests();
 
-	TestIndexTreeEvictingPut(IWT_Yes);
-	TestIndexTreeEvictingPut(IWT_No);
-	TestIndexTreeEvictingEvictWithChildren();
+	//TestIndexTreeEvictingPut(IWT_Yes);
+	//TestIndexTreeEvictingPut(IWT_No);
+	//TestIndexTreeEvictingEvictWithChildren();
 	TestIndexTreeEvictingFlushWithChildren();
 
 	TestStatistics();
