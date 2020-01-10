@@ -249,11 +249,21 @@ void TestCharsMakeCPlusPlus(void)
 	sz.AppendNewLine();
 	sz.Append("Goodbye");
 	sz.MakeCPlusPlus();
-	sz.Dump();
 	AssertString("\"Hello World\\n\"\n\"Goodbye\"", sz.Text());
 	sz.Kill();
 
-	xxx
+	sz.Init("Hello World");
+	sz.AppendNewLine();
+	sz.Append("Goodbye");
+	sz.AppendNewLine();
+	sz.MakeCPlusPlus();
+	AssertString("\"Hello World\\n\"\n\"Goodbye\\n\"", sz.Text());
+	sz.Kill();
+
+	sz.Init("");
+	sz.MakeCPlusPlus();
+	AssertString("\"\"", sz.Text());
+	sz.Kill();
 }
 
 
