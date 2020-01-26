@@ -1247,6 +1247,7 @@ void TestIndexTreeFileRemoveThenDirty(void)
 	CTestIndexTreeObject		b;
 	CTestIndexTreeObject		c;
 	char						sz[MAX_DATA_SIZE];
+	CIndexTreeNodeFile*			pcNode;
 
 	cHelper.Init("Output" _FS_"IndexTree9", "primary", "backup", TRUE);
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
@@ -1273,6 +1274,9 @@ void TestIndexTreeFileRemoveThenDirty(void)
 	AssertNull(cAccess.GetStringString(a.GetName(), sz));
 
 	AssertTrue(cAccess.PutStringString(a.GetName(), b.GetName()));
+	pcNode = cIndexTree.GetNode(a.GetName(), a.NameLength());
+	AssertNotNull(pcNode);
+	AssertFalse(pcNode->IsDeleted());
 	AssertNotNull(cAccess.GetStringString(a.GetName(), sz));
 	AssertString(b.GetName(), sz);
 
@@ -1360,6 +1364,89 @@ void TestIndexTreeFileAddThenAdd(void)
 
 	cAccess.Kill();
 	cDurableController.Kill();
+
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertContainsFiles(CArrayChars* pacFiles, char* szFirstFile, ...)
+{
+	va_list			vaMarker;
+	char*			szFile;
+	CArrayChars		asz;
+	int				i;
+
+	szFile = szFirstFile;
+	asz.Init();
+
+	va_start(vaMarker, szFirstFile);
+	while (szFile != NULL)
+	{
+		asz.Add(szFile);
+		szFile = va_arg(vaMarker, char*);
+	}
+	va_end(vaMarker);
+
+	AssertInt(pacFiles->NumElements(), asz.NumElements());
+	for (i = 0; i < asz.NumElements(); i++)
+	{
+		szFile = asz.GetText(i);
+		AssertTrue(pacFiles->ContainsSubString(szFile));
+	}
+	
+	asz.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileRemoveBeforeFlush(void)
+{
+	CIndexTreeHelper			cHelper;
+	CDurableFileController		cDurableController;
+	CIndexTreeFile				cIndexTree;
+	CIndexTreeFileAccess		cAccess;
+	CTestIndexTreeObject		a;
+	char						sz[MAX_DATA_SIZE];
+	char*						szDirectory;
+	CFileUtil					cFileUtil;
+	CArrayChars					acFiles;
+
+	cHelper.Init("Output" _FS_"IndexTree9b", "primary", "backup", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, IWT_No, IKR_No);
+	cAccess.Init(&cIndexTree);
+
+	a.Init("A");
+
+	AssertTrue(cAccess.PutStringString(a.GetName(), a.GetName()));
+	AssertNotNull(cAccess.GetStringString(a.GetName(), sz));
+	AssertString(a.GetName(), sz);
+
+	AssertTrue(cAccess.DeleteString(a.GetName()));
+	AssertNull(cAccess.GetStringString(a.GetName(), sz));
+
+	cAccess.Flush();
+
+	cDurableController.End();
+
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cDurableController.Kill();
+
+	szDirectory = cHelper.GetPrimaryDirectory();
+	acFiles.Init();
+	cFileUtil.FindFilesWithExtension(szDirectory, "IDAT", &acFiles);
+	AssertContainsFiles(&acFiles, "2062", NULL);
+	acFiles.Kill();
 
 	cHelper.Kill(TRUE);
 }
@@ -2353,6 +2440,7 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileNoCacheEviction();
 	TestIndexTreeFileDeleteInMemory();
 	TestIndexTreeFileDirty();
+	TestIndexTreeFileRemoveBeforeFlush();
 	TestIndexTreeFileRemoveThenDirty();
 	TestIndexTreeFileAddThenAdd();
 	TestIndexTreeFileRead();
