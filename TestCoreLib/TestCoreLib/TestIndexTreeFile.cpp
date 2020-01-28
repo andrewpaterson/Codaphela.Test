@@ -1395,7 +1395,10 @@ void AssertContainsFiles(CArrayChars* pacFiles, char* szFirstFile, ...)
 	for (i = 0; i < asz.NumElements(); i++)
 	{
 		szFile = asz.GetText(i);
-		AssertTrue(pacFiles->ContainsSubString(szFile));
+		if (!pacFiles->ContainsSubString(szFile))
+		{
+			AssertString(szFile, "");
+		}
 	}
 	
 	asz.Kill();
@@ -1419,17 +1422,18 @@ void TestIndexTreeFileRemoveBeforeFlush(void)
 	CArrayChars					acFiles;
 
 	cHelper.Init("Output" _FS_"IndexTree9b", "primary", "backup", TRUE);
+	szDirectory = cHelper.GetPrimaryDirectory();
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cAccess.Init(&cIndexTree);
 
 	cDurableController.Begin();
 	cIndexTree.Init(&cDurableController, IWT_No, IKR_No);
-	cAccess.Init(&cIndexTree);
 
 	a.Init("A");
 
-	AssertTrue(cAccess.PutStringString(a.GetName(), a.GetName()));
+	AssertTrue(cAccess.PutStringString(a.GetName(), "Onomatopoeia"));
 	AssertNotNull(cAccess.GetStringString(a.GetName(), sz));
-	AssertString(a.GetName(), sz);
+	AssertString("Onomatopoeia", sz);
 
 	AssertTrue(cAccess.DeleteString(a.GetName()));
 	AssertNull(cAccess.GetStringString(a.GetName(), sz));
@@ -1438,15 +1442,131 @@ void TestIndexTreeFileRemoveBeforeFlush(void)
 
 	cDurableController.End();
 
-	cAccess.Kill();
-	cIndexTree.Kill();
-	cDurableController.Kill();
-
-	szDirectory = cHelper.GetPrimaryDirectory();
 	acFiles.Init();
 	cFileUtil.FindFilesWithExtension(szDirectory, "IDAT", &acFiles);
 	AssertContainsFiles(&acFiles, "2062", NULL);
 	acFiles.Kill();
+
+
+	cDurableController.Begin();
+
+	AssertTrue(cAccess.PutStringString(a.GetName(), "Zootopic"));
+	AssertNotNull(cAccess.GetStringString(a.GetName(), sz));
+	AssertString("Zootopic", sz);
+
+	AssertTrue(cAccess.PutStringString(a.GetName(), "Franschhoek"));
+	AssertNotNull(cAccess.GetStringString(a.GetName(), sz));
+	AssertString("Franschhoek", sz);
+
+	AssertTrue(cAccess.DeleteString(a.GetName()));
+	AssertNull(cAccess.GetStringString(a.GetName(), sz));
+
+	cAccess.Flush();
+
+	cDurableController.End();
+
+	acFiles.Init();
+	cFileUtil.FindFilesWithExtension(szDirectory, "IDAT", &acFiles);
+	AssertContainsFiles(&acFiles, "2062", NULL);
+	acFiles.Kill();
+
+
+	cDurableController.Begin();
+
+	AssertTrue(cAccess.PutStringString(a.GetName(), "Blobfish"));
+	AssertNotNull(cAccess.GetStringString(a.GetName(), sz));
+	AssertString("Blobfish", sz);
+
+	cAccess.Flush();
+	cDurableController.End();
+
+	acFiles.Init();
+	cFileUtil.FindFilesWithExtension(szDirectory, "IDAT", &acFiles);
+	AssertContainsFiles(&acFiles, "2062", "23", NULL);
+	acFiles.Kill();
+
+	cDurableController.Begin();
+
+	AssertTrue(cAccess.DeleteString(a.GetName()));
+	AssertNull(cAccess.GetStringString(a.GetName(), sz));
+
+	cAccess.Flush();
+	cDurableController.End();
+	
+	acFiles.Init();
+	cFileUtil.FindFilesWithExtension(szDirectory, "IDAT", &acFiles);
+	AssertContainsFiles(&acFiles, "2062", "23", NULL);
+	acFiles.Kill();
+
+
+	cDurableController.Begin();
+
+	AssertTrue(cAccess.PutStringString(a.GetName(), "Blobfish"));
+	AssertNotNull(cAccess.GetStringString(a.GetName(), sz));
+	AssertString("Blobfish", sz);
+
+	cAccess.Flush();
+	cDurableController.End();
+
+	acFiles.Init();
+	cFileUtil.FindFilesWithExtension(szDirectory, "IDAT", &acFiles);
+	AssertContainsFiles(&acFiles, "2062", "23", NULL);
+	acFiles.Kill();
+
+	cDurableController.Begin();
+
+	AssertTrue(cAccess.PutStringString(a.GetName(), "Avagadrocardo"));
+	AssertNotNull(cAccess.GetStringString(a.GetName(), sz));
+	AssertString("Avagadrocardo", sz);
+
+	AssertTrue(cAccess.DeleteString(a.GetName()));
+	AssertNull(cAccess.GetStringString(a.GetName(), sz));
+
+	cAccess.Flush();
+	cDurableController.End();
+
+	acFiles.Init();
+	cFileUtil.FindFilesWithExtension(szDirectory, "IDAT", &acFiles);
+	AssertContainsFiles(&acFiles, "2062", "23", NULL);
+	acFiles.Kill();
+
+
+	cDurableController.Begin();
+
+	AssertTrue(cAccess.PutStringString(a.GetName(), "Escape"));
+	AssertNotNull(cAccess.GetStringString(a.GetName(), sz));
+	AssertString("Escape", sz);
+
+	cAccess.Flush();
+	cDurableController.End();
+
+	acFiles.Init();
+	cFileUtil.FindFilesWithExtension(szDirectory, "IDAT", &acFiles);
+	AssertContainsFiles(&acFiles, "2062", "23", "21", NULL);
+	acFiles.Kill();
+
+	cDurableController.Begin();
+
+	AssertTrue(cAccess.DeleteString(a.GetName()));
+	AssertNull(cAccess.GetStringString(a.GetName(), sz));
+
+	AssertTrue(cAccess.PutStringString(a.GetName(), "Pentatonix"));
+	AssertNotNull(cAccess.GetStringString(a.GetName(), sz));
+	AssertString("Pentatonix", sz);
+
+	cAccess.Flush();
+	cDurableController.End();
+
+	acFiles.Init();
+	cFileUtil.FindFilesWithExtension(szDirectory, "IDAT", &acFiles);
+	AssertContainsFiles(&acFiles, "2062", "23", "21", "25", NULL);
+	acFiles.Kill();
+
+	cIndexTree.Kill();
+	cDurableController.Kill();
+	cAccess.Kill();
+
+	xxx Check that deleted files are INDEX_FILE_EMPTY_CHAR
 
 	cHelper.Kill(TRUE);
 }
