@@ -29,6 +29,29 @@ char* GetString(CIndexTreeFileAccess* pcAccess, char* szKey)
 }
 
 
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertIndexFileEmpty(char* szFileName)
+{
+	CNaiveFile	cNaiveFile;
+	int			i;
+	char*		pcFileMem;
+
+	cNaiveFile.Init();
+	AssertTrue(cNaiveFile.Read(szFileName));
+	pcFileMem = (char*)cNaiveFile.Get();
+	for (i = 0; i < cNaiveFile.Size(); i++)
+	{
+		AssertChar(INDEX_FILE_EMPTY_CHAR, pcFileMem[i]);
+	}
+	cNaiveFile.Kill();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -1566,7 +1589,8 @@ void TestIndexTreeFileRemoveBeforeFlush(void)
 	cDurableController.Kill();
 	cAccess.Kill();
 
-	xxx Check that deleted files are INDEX_FILE_EMPTY_CHAR
+	AssertIndexFileEmpty("Output/IndexTree9b/primary/23_0.IDAT");
+	AssertIndexFileEmpty("Output/IndexTree9b/primary/21_0.IDAT");
 
 	cHelper.Kill(TRUE);
 }
@@ -1720,27 +1744,8 @@ void TestIndexTreeFileDeleteOnDisk(void)
 	cDurableController.End();
 	cIndexTree.Kill();
 
-	CNaiveFile	cNaiveFile;
-	int			i;
-	char*		pcFileMem;
-
-	cNaiveFile.Init();
-	AssertTrue(cNaiveFile.Read("Output/IndexTreeB/primary/20_0.IDAT"));
-	pcFileMem = (char*)cNaiveFile.Get();
-	for (i = 0; i < cNaiveFile.Size(); i++)
-	{
-		AssertChar(INDEX_FILE_EMPTY_CHAR, pcFileMem[i]);
-	}
-	cNaiveFile.Kill();
-
-	cNaiveFile.Init();
-	AssertTrue(cNaiveFile.Read("Output/IndexTreeB/primary/22_0.IDAT"));
-	pcFileMem = (char*)cNaiveFile.Get();
-	for (i = 0; i < cNaiveFile.Size(); i++)
-	{
-		AssertChar(INDEX_FILE_EMPTY_CHAR, pcFileMem[i]);
-	}
-	cNaiveFile.Kill();
+	AssertIndexFileEmpty("Output/IndexTreeB/primary/20_0.IDAT");
+	AssertIndexFileEmpty("Output/IndexTreeB/primary/22_0.IDAT");
 
 	cAccess.Kill();
 	cDurableController.Kill();
