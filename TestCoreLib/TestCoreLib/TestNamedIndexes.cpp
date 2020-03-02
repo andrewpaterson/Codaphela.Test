@@ -1,4 +1,8 @@
+#include "BaseLib/TypeConverter.h"
+#include "BaseLib/SystemAllocator.h"
+#include "BaseLib/MemoryAllocator.h"
 #include "BaseLib/Define.h"
+#include "BaseLib/GlobalMemory.h"
 #include "CoreLib/DurableFileController.h"
 #include "CoreLib/NamedIndexes.h"
 #include "StandardLib/BaseObject.h"
@@ -395,6 +399,9 @@ void TestNamedIndexes(void)
 	CFileUtil	cFileUtil;
 
 	FastFunctionsInit();
+	TypeConverterInit();
+	MemoryInit();
+	DataMemoryInit();
 	BeginTests();
 
 	cFileUtil.RemoveDir("NamedIndexes");
@@ -407,6 +414,9 @@ void TestNamedIndexes(void)
 	cFileUtil.RemoveDir("NamedIndexes");
 
 	TestStatistics();
+	DataMemoryKill();
+	MemoryKill();
 	FastFunctionsKill();
+	TypeConverterKill();
 }
 

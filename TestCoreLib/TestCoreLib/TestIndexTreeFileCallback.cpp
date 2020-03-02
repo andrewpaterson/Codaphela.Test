@@ -6,6 +6,7 @@
 #include "BaseLib/MapStringString.h"
 #include "BaseLib/Logger.h"
 #include "BaseLib/DebugOutput.h"
+#include "BaseLib/GlobalMemory.h"
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexTreeFile.h"
 #include "CoreLib/IndexTreeFileAccess.h"
@@ -105,11 +106,15 @@ void TestIndexTreeFileCallback(void)
 {
 	FastFunctionsInit();
 	TypeConverterInit();
+	MemoryInit();
+	DataMemoryInit();
 	BeginTests();
 
 	TestIndexTreeFileCallbackWorks();
 
 	TestStatistics();
+	DataMemoryKill();
+	MemoryKill();
 	FastFunctionsKill();
 	TypeConverterKill();
 }

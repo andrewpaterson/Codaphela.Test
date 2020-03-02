@@ -6,6 +6,7 @@
 #include "BaseLib/MapStringString.h"
 #include "BaseLib/Logger.h"
 #include "BaseLib/DebugOutput.h"
+#include "BaseLib/GlobalMemory.h"
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexTreeFile.h"
 #include "CoreLib/IndexTreeFileAccess.h"
@@ -2500,6 +2501,7 @@ void TestIndexTreeFileFlushNodes(void)
 	TestIndexTreeFileEvictComplexSetup(&cDurableController, &cIndexTree, &cAllocator);
 	AssertLongLongInt(3801, pcMemory->GetTotalAllocatedMemory());
 
+	cAccess.Init(&cIndexTree);
 	AssertTrue(cAccess.FlushString(szAAAAA));
 	AssertTrue(cAccess.FlushString(szAAABB));
 	AssertTrue(cAccess.FlushString(szAABAA));
@@ -2511,6 +2513,7 @@ void TestIndexTreeFileFlushNodes(void)
 	cIndexTree.Kill();
 	cDurableController.Kill();
 	cAllocator.Kill();
+	cAccess.Kill();
 
 	cAllocator.Init();
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
@@ -2541,6 +2544,8 @@ void TestIndexTreeFile(void)
 {
 	FastFunctionsInit();
 	TypeConverterInit();
+	MemoryInit();
+	DataMemoryInit();
 	BeginTests();
 
 	TestIndexTreeFileSizeOfs();
@@ -2582,6 +2587,8 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileFlushNodes();
 
 	TestStatistics();
+	DataMemoryKill();
+	MemoryKill();
 	FastFunctionsKill();
 	TypeConverterKill();
 }

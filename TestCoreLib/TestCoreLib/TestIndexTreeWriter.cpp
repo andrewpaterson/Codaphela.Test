@@ -2,6 +2,8 @@
 #include "BaseLib/IndexTreeMemoryAccess.h"
 #include "BaseLib/MapStringString.h"
 #include "BaseLib/FileUtil.h"
+#include "BaseLib/TypeConverter.h"
+#include "BaseLib/GlobalMemory.h"
 #include "TestLib/Assert.h"
 #include "CoreLib/IndexTreeWriter.h"
 
@@ -74,10 +76,18 @@ void TestIndexTreeWriterWrite(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeWriter(void)
 {
+	FastFunctionsInit();
+	TypeConverterInit();
+	MemoryInit();
+	DataMemoryInit();
 	BeginTests();
 
 	TestIndexTreeWriterWrite();
 
 	TestStatistics();
+	DataMemoryKill();
+	MemoryKill();
+	FastFunctionsKill();
+	TypeConverterKill();
 }
 

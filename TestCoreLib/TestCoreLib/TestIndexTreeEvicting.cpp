@@ -4,6 +4,7 @@
 #include "BaseLib/SystemAllocator.h"
 #include "BaseLib/MemoryAllocator.h"
 #include "BaseLib/Logger.h"
+#include "BaseLib/GlobalMemory.h"
 #include "CoreLib/IndexTreeEvicting.h"
 #include "CoreLib/EvictedList.h"
 #include "CoreLib/IndexTreeHelper.h"
@@ -479,6 +480,8 @@ void TestIndexTreeEvicting(void)
 {
 	FastFunctionsInit();
 	TypeConverterInit();
+	MemoryInit();
+	DataMemoryInit();
 	BeginTests();
 
 	TestIndexTreeEvictingPut(IWT_Yes);
@@ -487,6 +490,8 @@ void TestIndexTreeEvicting(void)
 	TestIndexTreeEvictingFlushWithChildren();
 
 	TestStatistics();
+	DataMemoryKill();
+	MemoryKill();
 	FastFunctionsKill();
 	TypeConverterKill();
 }
