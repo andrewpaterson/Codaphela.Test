@@ -492,6 +492,110 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeMemoryPutResize(void)
+{
+	CIndexTreeMemory		cIndexTree;
+	CIndexTreeMemoryAccess	cAccess;
+	char					sz120[] = "A0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567";
+	char					sz100[] = "B01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567";
+	char					sz80[] =  "C012345678901234567890123456789012345678901234567890123456789012345678901234567";
+	char					sz60[] =  "D0123456789012345678901234567890123456789012345678901234567";
+	char					szStuff[] = "Stuff";
+	char					szResult[256];
+	char*					pszEmpty;
+
+	cIndexTree.Init(IKR_Yes);
+	cAccess.Init(&cIndexTree);
+
+	cAccess.PutStringString("555", sz120);
+	cAccess.GetStringString("555", szResult);
+	AssertString(sz120, szResult);
+
+	cAccess.PutStringString("555", sz100);
+	cAccess.GetStringString("555", szResult);
+	AssertString(sz100, szResult);
+
+	cAccess.PutStringString("555", sz80);
+	cAccess.GetStringString("555", szResult);
+	AssertString(sz80, szResult);
+
+	cAccess.PutStringString("555", sz60);
+	cAccess.GetStringString("555", szResult);
+	AssertString(sz60, szResult);
+
+	cAccess.PutStringString("555", sz80);
+	cAccess.GetStringString("555", szResult);
+	AssertString(sz80, szResult);
+
+	cAccess.PutStringString("555", sz100);
+	cAccess.GetStringString("555", szResult);
+	AssertString(sz100, szResult);
+
+	cAccess.PutStringString("555", sz120);
+	cAccess.GetStringString("555", szResult);
+	AssertString(sz120, szResult);
+
+
+	cAccess.PutStringString("5555", szStuff);
+	cAccess.GetStringString("5555", szResult);
+	AssertString(szStuff, szResult);
+
+	cAccess.PutStringString("555", sz100);
+	cAccess.GetStringString("555", szResult);
+	AssertString(sz100, szResult);
+
+	cAccess.PutStringString("555", sz80);
+	cAccess.GetStringString("555", szResult);
+	AssertString(sz80, szResult);
+
+	cAccess.PutStringString("555", sz60);
+	cAccess.GetStringString("555", szResult);
+	AssertString(sz60, szResult);
+
+	cAccess.GetStringString("5555", szResult);
+	AssertString(szStuff, szResult);
+
+
+	cAccess.PutStringString("555", sz80);
+	cAccess.GetStringString("555", szResult);
+	AssertString(sz80, szResult);
+
+	cAccess.PutStringString("555", sz100);
+	cAccess.GetStringString("555", szResult);
+	AssertString(sz100, szResult);
+
+	cAccess.PutStringString("555", sz120);
+	cAccess.GetStringString("555", szResult);
+	AssertString(sz120, szResult);
+
+	cAccess.GetStringString("5555", szResult);
+	AssertString(szStuff, szResult);
+
+	cAccess.DeleteString("5555");
+	pszEmpty = cAccess.GetStringString("5555", szResult);
+	AssertNull(pszEmpty);
+
+	cAccess.PutStringString("555", sz100);
+	cAccess.GetStringString("555", szResult);
+	AssertString(sz100, szResult);
+
+	cAccess.PutStringString("555", sz80);
+	cAccess.GetStringString("555", szResult);
+	AssertString(sz80, szResult);
+
+	cAccess.PutStringString("555", sz60);
+	cAccess.GetStringString("555", szResult);
+	AssertString(sz60, szResult);
+
+	cAccess.Kill();
+	cIndexTree.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemory(void)
 {
 	//Most of the tests for IndexTreeMemory are done in the BaseLib.
@@ -507,6 +611,7 @@ void TestIndexTreeMemory(void)
 	TestIndexTreeMemoryComplexGlobalAllocator();
 	TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian();
 	TestIndexTreeMemoryComplexMemoryAllocatorBigEndian();
+	TestIndexTreeMemoryPutResize();
 
 	TestStatistics();
 	FastFunctionsKill();
