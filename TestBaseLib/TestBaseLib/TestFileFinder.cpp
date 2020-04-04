@@ -1,5 +1,5 @@
 #include "BaseLib/FileUtil.h"
-#include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -12,43 +12,44 @@ void TestFileFinder(void)
 
 	CFileUtil		cFileUtil;
 	CArrayChars		aszFiles;
-
+	
 	aszFiles.Init();
 	cFileUtil.FindFilesWithExtension("Finder", "txt", &aszFiles);
 	AssertInt(5, aszFiles.NumElements());
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ants.txt", aszFiles.Get(0)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\File.txt", aszFiles.Get(1)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Last.txt", aszFiles.Get(2)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Marching.txt", aszFiles.Get(3)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ninja.txt", aszFiles.Get(4)->Text(), FALSE);
+
+	AssertFilePath("Finder" _FS_ "Ants.txt", aszFiles.Get(0)->Text());
+	AssertFilePath("Finder" _FS_ "File.txt", aszFiles.Get(1)->Text());
+	AssertFilePath("Finder" _FS_ "Last.txt", aszFiles.Get(2)->Text());
+	AssertFilePath("Finder" _FS_ "Marching.txt", aszFiles.Get(3)->Text());
+	AssertFilePath("Finder" _FS_ "Ninja.txt", aszFiles.Get(4)->Text());
 	aszFiles.Kill();
 
 	aszFiles.Init();
 	cFileUtil.FindFilesWithNameContaining("Finder", "Mar", &aszFiles);
 	AssertInt(3, aszFiles.NumElements());
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Glenmark.wav", aszFiles.Get(0)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\March.rar", aszFiles.Get(1)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Marching.txt", aszFiles.Get(2)->Text(), FALSE);
+	AssertFilePath("Finder" _FS_ "Glenmark.wav", aszFiles.Get(0)->Text());
+	AssertFilePath("Finder" _FS_ "March.rar", aszFiles.Get(1)->Text());
+	AssertFilePath("Finder" _FS_ "Marching.txt", aszFiles.Get(2)->Text());
 	aszFiles.Kill();
 
 	aszFiles.Init();
 	cFileUtil.FindAllDirectories("Finder", &aszFiles);
 	aszFiles.QuickSort();
 	AssertInt(3, aszFiles.NumElements());
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Lord", aszFiles.Get(0)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Rising", aszFiles.Get(1)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Storm", aszFiles.Get(2)->Text(), FALSE);
+	AssertFilePath("Finder" _FS_ "Lord", aszFiles.Get(0)->Text());
+	AssertFilePath("Finder" _FS_ "Rising", aszFiles.Get(1)->Text());
+	AssertFilePath("Finder" _FS_ "Storm", aszFiles.Get(2)->Text());
 	aszFiles.Kill();
 
 	aszFiles.Init();
 	cFileUtil.FindFilesWithExtension("Finder", "rar", &aszFiles, TRUE);
 	AssertInt(6, aszFiles.NumElements());
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Lord\\1.rar", aszFiles.Get(0)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Rising\\2.rar", aszFiles.Get(1)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Storm\\3.rar", aszFiles.Get(2)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ants.rar", aszFiles.Get(3)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Echo.rar", aszFiles.Get(4)->Text(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\March.rar", aszFiles.Get(5)->Text(), FALSE);
+	AssertFilePath("Finder" _FS_ "Lord" _FS_ "1.rar", aszFiles.Get(0)->Text());
+	AssertFilePath("Finder" _FS_ "Rising" _FS_ "2.rar", aszFiles.Get(1)->Text());
+	AssertFilePath("Finder" _FS_ "Storm" _FS_ "3.rar", aszFiles.Get(2)->Text());
+	AssertFilePath("Finder" _FS_ "Ants.rar", aszFiles.Get(3)->Text());
+	AssertFilePath("Finder" _FS_ "Echo.rar", aszFiles.Get(4)->Text());
+	AssertFilePath("Finder" _FS_ "March.rar", aszFiles.Get(5)->Text());
 	aszFiles.Kill();
 
 	aszFiles.Init();

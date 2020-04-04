@@ -46,7 +46,7 @@ void TestIndexTreeMemoryAdd(void)
 	AssertTrue(bResult);
 
 	pcNode = cIndex.GetNode("A", 1);
-	ppvTest = (CTestIndexTreeObject**)pcNode->GetObjectPtr();
+	ppvTest = (CTestIndexTreeObject**)pcNode->GetDataPtr();
 	AssertPointer(&a, *ppvTest);
 
 	aa.Init("AA");
@@ -54,11 +54,11 @@ void TestIndexTreeMemoryAdd(void)
 	AssertTrue(bResult);
 
 	pcNode = cIndex.GetNode("A", 1);
-	ppvTest = (CTestIndexTreeObject**)pcNode->GetObjectPtr();
+	ppvTest = (CTestIndexTreeObject**)pcNode->GetDataPtr();
 	AssertPointer(&a, *ppvTest);
 
 	pcNode = cIndex.GetNode("AA", 2);
-	ppvTest = (CTestIndexTreeObject**)pcNode->GetObjectPtr();
+	ppvTest = (CTestIndexTreeObject**)pcNode->GetDataPtr();
 	AssertPointer(&aa, *ppvTest);
 
 	avp.Init();

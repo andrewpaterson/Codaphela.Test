@@ -1,7 +1,7 @@
 #include "BaseLib/FileSystem.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TextFile.h"
-#include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -90,13 +90,13 @@ void TestFileSystemFindExtension(void)
 	cSystem.GetFiles(&aFileNodePtrs, "rar");
 
 	AssertInt(6, aFileNodePtrs.NumElements());
-
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Lord\\1.rar", (*aFileNodePtrs.Get(0))->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Rising\\2.rar", (*aFileNodePtrs.Get(1))->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Storm\\3.rar", (*aFileNodePtrs.Get(2))->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ants.rar", (*aFileNodePtrs.Get(3))->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Echo.rar", (*aFileNodePtrs.Get(4))->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\March.rar", (*aFileNodePtrs.Get(5))->File()->GetFullName(), FALSE);
+	
+	AssertFilePath("Finder" _FS_ "Lord" _FS_ "1.rar", (*aFileNodePtrs.Get(0))->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Rising" _FS_ "2.rar", (*aFileNodePtrs.Get(1))->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Storm" _FS_ "3.rar", (*aFileNodePtrs.Get(2))->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Ants.rar", (*aFileNodePtrs.Get(3))->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Echo.rar", (*aFileNodePtrs.Get(4))->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "March.rar", (*aFileNodePtrs.Get(5))->File()->GetFullName());
 
 	aFileNodePtrs.Kill();
 	cSystem.Kill();
@@ -119,18 +119,18 @@ void TestFileSystemGetFiles(void)
 
 	AssertInt(12, cArrayFiles.NumElements());
 
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Lord\\1.rar", (*cArrayFiles.Get(0))->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Rising\\2.rar", (*cArrayFiles.Get(1))->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Storm\\3.rar", (*cArrayFiles.Get(2))->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ants.rar", (*cArrayFiles.Get(3))->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ants.txt", (*cArrayFiles.Get(4))->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Echo.rar", (*cArrayFiles.Get(5))->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\File.txt", (*cArrayFiles.Get(6))->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Glenmark.wav", (*cArrayFiles.Get(7))->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Last.txt", (*cArrayFiles.Get(8))->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\March.rar", (*cArrayFiles.Get(9))->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Marching.txt", (*cArrayFiles.Get(10))->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ninja.txt", (*cArrayFiles.Get(11))->File()->GetFullName(), FALSE);
+	AssertFilePath("Finder" _FS_ "Lord" _FS_ "1.rar", (*cArrayFiles.Get(0))->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Rising" _FS_ "2.rar", (*cArrayFiles.Get(1))->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Storm" _FS_ "3.rar", (*cArrayFiles.Get(2))->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Ants.rar", (*cArrayFiles.Get(3))->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Ants.txt", (*cArrayFiles.Get(4))->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Echo.rar", (*cArrayFiles.Get(5))->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "File.txt", (*cArrayFiles.Get(6))->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Glenmark.wav", (*cArrayFiles.Get(7))->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Last.txt", (*cArrayFiles.Get(8))->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "March.rar", (*cArrayFiles.Get(9))->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Marching.txt", (*cArrayFiles.Get(10))->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Ninja.txt", (*cArrayFiles.Get(11))->File()->GetFullName());
 
 	cArrayFiles.Kill();
 	cSystem.Kill();
@@ -148,18 +148,18 @@ void TestFileSystemIterator(void)
 
 	cSystem.Init("Finder");
 
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Lord\\1.rar", cSystem.StartIteration(&cIter)->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Rising\\2.rar", cSystem.Iterate(&cIter)->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Storm\\3.rar", cSystem.Iterate(&cIter)->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ants.rar", cSystem.Iterate(&cIter)->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ants.txt", cSystem.Iterate(&cIter)->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Echo.rar", cSystem.Iterate(&cIter)->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\File.txt", cSystem.Iterate(&cIter)->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Glenmark.wav", cSystem.Iterate(&cIter)->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Last.txt", cSystem.Iterate(&cIter)->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\March.rar", cSystem.Iterate(&cIter)->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Marching.txt", cSystem.Iterate(&cIter)->File()->GetFullName(), FALSE);
-	AssertStringCase("C:\\gameengine\\Test\\TestBaseLib\\TestBaseLib\\Finder\\Ninja.txt", cSystem.Iterate(&cIter)->File()->GetFullName(), FALSE);
+	AssertFilePath("Finder" _FS_ "Lord" _FS_ "1.rar", cSystem.StartIteration(&cIter)->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Rising" _FS_ "2.rar", cSystem.Iterate(&cIter)->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Storm" _FS_ "3.rar", cSystem.Iterate(&cIter)->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Ants.rar", cSystem.Iterate(&cIter)->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Ants.txt", cSystem.Iterate(&cIter)->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Echo.rar", cSystem.Iterate(&cIter)->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "File.txt", cSystem.Iterate(&cIter)->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Glenmark.wav", cSystem.Iterate(&cIter)->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Last.txt", cSystem.Iterate(&cIter)->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "March.rar", cSystem.Iterate(&cIter)->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Marching.txt", cSystem.Iterate(&cIter)->File()->GetFullName());
+	AssertFilePath("Finder" _FS_ "Ninja.txt", cSystem.Iterate(&cIter)->File()->GetFullName());
 	AssertNull(cSystem.Iterate(&cIter));
 	cSystem.StopIteration(&cIter);
 

@@ -44,6 +44,7 @@ void TestFileUtilMisc(void)
 	cFileUtil.RemoveDir(szPath.Text());
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -57,7 +58,7 @@ void TestFileUtilNaming(void)
 	sz.Init();
 	cFileUtil.FullPath(&sz);
 	sz.LowerCase();
-	szExpected.Init("C:\\GameEngine\\Test\\TestBaseLib\\TestBaseLib");
+	szExpected.Init("D:\\GameEngine\\Test\\TestBaseLib\\TestBaseLib");
 	szExpected.LowerCase();
 	AssertString(szExpected.Text(), sz.Text());
 	szExpected.Kill();
