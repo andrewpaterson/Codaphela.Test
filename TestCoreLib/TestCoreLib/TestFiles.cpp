@@ -3,7 +3,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/TypeConverter.h"
 #include "CoreLib/Files.h"
-#include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 
 
 void AssertPakFile(char* szFileName, char* szContents, CFiles* pcFiles);
@@ -114,12 +114,12 @@ void TestFilesIteration(void)
 
 	cFiles.Init("Game", "PAK");
 	AssertInt(6, cFiles.GetNumPackFiles());
-	AssertString("C:\\gameengine\\Test\\TestCoreLib\\TestCoreLib\\Game\\Sounds\\Cheese.PAK", cFiles.GetPackFiles(0)->GetFileName());
-	AssertString("C:\\gameengine\\Test\\TestCoreLib\\TestCoreLib\\Game\\Sounds\\Santa.PAK", cFiles.GetPackFiles(1)->GetFileName());
-	AssertString("C:\\gameengine\\Test\\TestCoreLib\\TestCoreLib\\Game\\Textures.PAK", cFiles.GetPackFiles(2)->GetFileName());
-	AssertString("C:\\gameengine\\Test\\TestCoreLib\\TestCoreLib\\Game\\Models.PAK", cFiles.GetPackFiles(3)->GetFileName());
-	AssertString("C:\\gameengine\\Test\\TestCoreLib\\TestCoreLib\\Game\\Sounds.PAK", cFiles.GetPackFiles(4)->GetFileName());
-	AssertString("C:\\gameengine\\Test\\TestCoreLib\\TestCoreLib\\Game\\Videos.PAK", cFiles.GetPackFiles(5)->GetFileName());
+	AssertFilePath("Game" _FS_ "Sounds" _FS_ "Cheese.PAK", cFiles.GetPackFiles(0)->GetFileName());
+	AssertFilePath("Game" _FS_ "Sounds" _FS_ "Santa.PAK", cFiles.GetPackFiles(1)->GetFileName());
+	AssertFilePath("Game" _FS_ "Textures.PAK", cFiles.GetPackFiles(2)->GetFileName());
+	AssertFilePath("Game" _FS_ "Models.PAK", cFiles.GetPackFiles(3)->GetFileName());
+	AssertFilePath("Game" _FS_ "Sounds.PAK", cFiles.GetPackFiles(4)->GetFileName());
+	AssertFilePath("Game" _FS_ "Videos.PAK", cFiles.GetPackFiles(5)->GetFileName());
 
 	AssertStringCase("Sounds/Cheese/Moose.txt", cFiles.StartIteration(&cIter)->GetFullName(), FALSE);
 	AssertInt(1, cIter.GetCurrent()->GetFileRank());
