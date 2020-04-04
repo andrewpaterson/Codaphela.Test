@@ -540,7 +540,6 @@ void TestIndexTreeFileResizeData(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileRemoveNearestFirst(EIndexWriteThrough eWriteThrough)
 {
-	char					szAA[] = "MEDIUM";
 	char					szAAA[] = "NEAR";
 	char					szA[] = "Florida";
 	CIndexTreeFile			cIndexTree;
@@ -555,7 +554,6 @@ void TestIndexTreeFileRemoveNearestFirst(EIndexWriteThrough eWriteThrough)
 	cIndexTree.Init(&cDurableController, eWriteThrough, IKR_No);
 	cAccess.Init(&cIndexTree);
 
-	//cAccess.PutStringData("AA", szAA, (unsigned char)strlen(szAA) + 1);
 	cAccess.PutStringData("AAA", szAAA, (unsigned char)strlen(szAAA) + 1);
 	cAccess.PutStringData("A", szA, (unsigned char)strlen(szA) + 1);
 	AssertInt(2, cIndexTree.NumElements());
@@ -564,15 +562,12 @@ void TestIndexTreeFileRemoveNearestFirst(EIndexWriteThrough eWriteThrough)
 
 	AssertTrue(cAccess.DeleteString("A"));
 	AssertString(NULL, GetString(&cAccess, "A"));
-	AssertString(szAA, GetString(&cAccess, "AA"));
 	AssertString(szAAA, GetString(&cAccess, "AAA"));
 	AssertInt(2, cIndexTree.NumElements());
 	AssertTrue(cAccess.Flush());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	AssertTrue(cAccess.DeleteString("AA"));cAccess
 	AssertString(NULL, GetString(&cAccess, "A"));
-	AssertString(NULL, GetString(&cAccess, "AA"));
 	AssertString(szAAA, GetString(&cAccess, "AAA"));
 	AssertInt(1, cIndexTree.NumElements());
 	AssertTrue(cAccess.Flush());
@@ -580,7 +575,6 @@ void TestIndexTreeFileRemoveNearestFirst(EIndexWriteThrough eWriteThrough)
 
 	AssertTrue(cAccess.DeleteString("AAA"));
 	AssertString(NULL, GetString(&cAccess, "A"));
-	AssertString(NULL, GetString(&cAccess, "AA"));
 	AssertString(NULL, GetString(&cAccess, "AAA"));
 	AssertInt(0, cIndexTree.NumElements());
 	AssertTrue(cAccess.Flush());
@@ -2561,20 +2555,20 @@ void TestIndexTreeFile(void)
 	DataMemoryInit();
 	BeginTests();
 
-	//TestIndexTreeFileSizeOfs();
-	//TestIndexTreeFileInit();
-	//TestIndexTreeFileAdd();
-	//TestIndexTreeFileAddLongKeys();
-	//TestIndexTreeFileGetNodeKey();
-	//TestIndexTreeFileMemorySize();
-	//TestIndexTreeFileAddToRoot();
-	//TestIndexTreeFileAddUnallocated();
-	//TestIndexTreeFileReplaceData();
-	//TestIndexTreeFileFindKey();
-	//TestIndexTreeFileResizeData();
-	//TestIndexTreeFileRemove(IWT_Yes);
-	//TestIndexTreeFileRemove(IWT_No);
-	//TestIndexTreeFileRemoveAndEvict();
+	TestIndexTreeFileSizeOfs();
+	TestIndexTreeFileInit();
+	TestIndexTreeFileAdd();
+	TestIndexTreeFileAddLongKeys();
+	TestIndexTreeFileGetNodeKey();
+	TestIndexTreeFileMemorySize();
+	TestIndexTreeFileAddToRoot();
+	TestIndexTreeFileAddUnallocated();
+	TestIndexTreeFileReplaceData();
+	TestIndexTreeFileFindKey();
+	TestIndexTreeFileResizeData();
+	TestIndexTreeFileRemove(IWT_Yes);
+	TestIndexTreeFileRemove(IWT_No);
+	TestIndexTreeFileRemoveAndEvict();
 	TestIndexTreeFileRemoveNearestFirst(IWT_Yes);
 	TestIndexTreeFileRemoveNearestFirst(IWT_No);
 	TestIndexTreeFileRemoveFurthestFirst(IWT_Yes);
