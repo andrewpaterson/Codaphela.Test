@@ -86,7 +86,7 @@ void TestIndexTreeNodeFileRootMemory(void)
 	AssertInt(33, pcNode->GetFirstIndex());
 	AssertInt(33, pcNode->GetLastIndex());
 
-	pcNode->Set(33, &cChildNode);
+	pcNode->SetMemory(33, &cChildNode);
 	AssertFalse(pcNode->IsEmpty());
 	AssertTrue(pcNode->HasNodes());
 	AssertFalse(pcNode->HasObject());
