@@ -168,7 +168,10 @@ void TestNamedIndexesRemove(void)
 	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex("Zynaps"));
 	AssertLongLongInt(0, cNamedIndexes.NumElements());
 
+	cNamedIndexes.Dump();
 	cNamedIndexes.Add(45LL, "Berty");
+	cNamedIndexes.Dump();
+
 	AssertLongLongInt(1, cNamedIndexes.NumElements());
 	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
 	AssertTrue(cNamedIndexes.Remove("Berty"));
@@ -176,7 +179,7 @@ void TestNamedIndexesRemove(void)
 	AssertLongLongInt(0, cNamedIndexes.NumElements());
 
 	cNamedIndexes.Flush();
-	cController.End();
+	AssertTrue(cController.End());
 	cNamedIndexes.Kill();
 	cController.Kill();
 }
@@ -199,7 +202,7 @@ void TestNamedIndexesCacheEviction(void)
 
 	cController.Init(szDirectory, szRewriteDirectory);
 	cController.Begin();
-	cNamedIndexes.Init(&cController, 256, IWT_No);
+	cNamedIndexes.Init(&cController, 8192, IWT_No);
 
 	AssertLongLongInt(0, cNamedIndexes.NumElements());
 
@@ -261,9 +264,9 @@ void TestNamedIndexesCacheEviction(void)
 
 	AssertLongLongInt(9, cNamedIndexes.NumElements());
 
+	cNamedIndexes.Flush();
+	AssertTrue(cController.End());
 	cNamedIndexes.Kill();
-
-	cController.End();
 	cController.Kill();
 }
 
@@ -384,8 +387,8 @@ void TestNamedIndexesLoad(void)
 	AssertLongLongInt(2LL, cNamedIndexes.GetIndex("systema skeletale"));
 	AssertLongLongInt(19LL, cNamedIndexes.GetIndex("otoscope"));
 
-	cNamedIndexes.Kill();
 	AssertTrue(cController.End());
+	cNamedIndexes.Kill();
 	cController.Kill();
 }
 

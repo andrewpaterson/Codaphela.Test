@@ -102,3 +102,5 @@ TestCoreLib/Release
 /TestCoreLib/TestCoreLib/Database3/Files.IDX
 /TestCoreLib/TestCoreLib/Database3/Index.IDX
 /TestCoreLib/TestCoreLib/Database*
+/TestCoreLib/TestCoreLib/_NamedIndexes
+/TestCoreLib/TestCoreLib/NamedIndexes

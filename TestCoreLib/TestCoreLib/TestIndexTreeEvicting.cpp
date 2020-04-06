@@ -466,7 +466,7 @@ void AssertTree(char* szExpected, CIndexTreeEvicting* pcTree)
 	CChars	sz;
 
 	sz.Init();
-	pcTree->Print(&sz);
+	pcTree->Print(&sz, FALSE);
 	AssertStringApproximate(szExpected, sz.Text());
 	sz.Kill();
 }

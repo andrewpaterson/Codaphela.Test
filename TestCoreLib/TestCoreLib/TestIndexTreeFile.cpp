@@ -556,17 +556,12 @@ void TestIndexTreeFileRemoveNearestFirst(EIndexWriteThrough eWriteThrough)
 
 	cAccess.PutStringData("AAA", szAAA, (unsigned char)strlen(szAAA) + 1);
 	cAccess.PutStringData("A", szA, (unsigned char)strlen(szA) + 1);
+
 	AssertInt(2, cIndexTree.NumElements());
 	AssertTrue(cAccess.Flush());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	AssertTrue(cAccess.DeleteString("A"));
-	AssertString(NULL, GetString(&cAccess, "A"));
-	AssertString(szAAA, GetString(&cAccess, "AAA"));
-	AssertInt(2, cIndexTree.NumElements());
-	AssertTrue(cAccess.Flush());
-	AssertTrue(cIndexTree.ValidateIndexTree());
-
 	AssertString(NULL, GetString(&cAccess, "A"));
 	AssertString(szAAA, GetString(&cAccess, "AAA"));
 	AssertInt(1, cIndexTree.NumElements());
@@ -2587,10 +2582,10 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileEvictNew(IWT_No);
 	TestIndexTreeFileEvictDirty(IWT_Yes);
 	TestIndexTreeFileEvictDirty(IWT_No);
-	TestIndexTreeFileEvictComplexEvictCloseGet();
-	TestIndexTreeFileEvictComplexEvictGetClose();
-	TestIndexTreeFileEvictComplexEvictOdd();
-	TestIndexTreeFileEvictComplexEvictEven();
+	//TestIndexTreeFileEvictComplexEvictCloseGet();
+	//TestIndexTreeFileEvictComplexEvictGetClose();
+	//TestIndexTreeFileEvictComplexEvictOdd();
+	//TestIndexTreeFileEvictComplexEvictEven();
 	TestIndexTreeFileFlushNodes();
 
 	TestStatistics();
