@@ -104,3 +104,4 @@ TestCoreLib/Release
 /TestCoreLib/TestCoreLib/Database*
 /TestCoreLib/TestCoreLib/_NamedIndexes
 /TestCoreLib/TestCoreLib/NamedIndexes
+/TestStandardLib/.vs
