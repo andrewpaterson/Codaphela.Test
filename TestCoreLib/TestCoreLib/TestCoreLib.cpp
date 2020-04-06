@@ -46,7 +46,7 @@ int main(void)
 	TestPropertiesFile();
 	TestXMLParser();
 	TestXMLFile();
-	//TestNumber();
+	TestNumber();
 	TestOperators();
 	TestFunctionCaller();
 	TestLogFile();

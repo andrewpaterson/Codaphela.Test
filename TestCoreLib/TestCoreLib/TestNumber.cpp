@@ -512,8 +512,8 @@ void TestNumber(void)
 	TestMultiply();
 	TestDivide();
 	TestNumbersErrors();
-	TestArithmeticGeometricMean();
-	TestNaturalLogarithm();
+	//TestArithmeticGeometricMean();
+	//TestNaturalLogarithm();
 	//TestExponential();
 	//TestRoot();
 	//TestPower();

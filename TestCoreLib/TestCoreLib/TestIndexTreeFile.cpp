@@ -2227,6 +2227,7 @@ void TestIndexTreeFileEvictComplexEvictCloseGet(void)
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	TestIndexTreeFileEvictComplexSetup(&cDurableController, &cIndexTree, &cAllocator);
+	cAccess.Init(&cIndexTree);
 	AssertLongLongInt(3801, pcMemory->GetTotalAllocatedMemory());
 
 	AssertTrue(cAccess.EvictString(szAABBB));
@@ -2248,6 +2249,7 @@ void TestIndexTreeFileEvictComplexEvictCloseGet(void)
 	cIndexTree.Kill();
 	cDurableController.Kill();
 	cAllocator.Kill();
+	cAccess.Kill();
 
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
@@ -2298,6 +2300,7 @@ void TestIndexTreeFileEvictComplexEvictGetClose(void)
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	TestIndexTreeFileEvictComplexSetup(&cDurableController, &cIndexTree, &cAllocator);
+	cAccess.Init(&cIndexTree);
 	AssertLongLongInt(3801, pcMemory->GetTotalAllocatedMemory());
 
 	AssertTrue(cAccess.EvictString(szAABBB));
@@ -2357,6 +2360,7 @@ void TestIndexTreeFileEvictComplexEvictOdd(void)
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	TestIndexTreeFileEvictComplexSetup(&cDurableController, &cIndexTree, &cAllocator);
+	cAccess.Init(&cIndexTree);
 	AssertLongLongInt(3801, pcMemory->GetTotalAllocatedMemory());
 
 	AssertTrue(cAccess.EvictString(szAABBB));
@@ -2429,6 +2433,7 @@ void TestIndexTreeFileEvictComplexEvictEven(void)
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	TestIndexTreeFileEvictComplexSetup(&cDurableController, &cIndexTree, &cAllocator);
+	cAccess.Init(&cIndexTree);
 	AssertLongLongInt(3801, pcMemory->GetTotalAllocatedMemory());
 
 	AssertTrue(cAccess.EvictString(szAABAA));
@@ -2501,6 +2506,7 @@ void TestIndexTreeFileFlushNodes(void)
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	TestIndexTreeFileEvictComplexSetup(&cDurableController, &cIndexTree, &cAllocator);
+	cAccess.Init(&cIndexTree);
 	AssertLongLongInt(3801, pcMemory->GetTotalAllocatedMemory());
 
 	cAccess.Init(&cIndexTree);
@@ -2582,10 +2588,10 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileEvictNew(IWT_No);
 	TestIndexTreeFileEvictDirty(IWT_Yes);
 	TestIndexTreeFileEvictDirty(IWT_No);
-	//TestIndexTreeFileEvictComplexEvictCloseGet();
-	//TestIndexTreeFileEvictComplexEvictGetClose();
-	//TestIndexTreeFileEvictComplexEvictOdd();
-	//TestIndexTreeFileEvictComplexEvictEven();
+	TestIndexTreeFileEvictComplexEvictCloseGet();
+	TestIndexTreeFileEvictComplexEvictGetClose();
+	TestIndexTreeFileEvictComplexEvictOdd();
+	TestIndexTreeFileEvictComplexEvictEven();
 	TestIndexTreeFileFlushNodes();
 
 	TestStatistics();

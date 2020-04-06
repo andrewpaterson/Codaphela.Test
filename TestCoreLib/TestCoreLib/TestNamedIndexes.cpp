@@ -286,9 +286,8 @@ void TestNamedIndexesLoad(void)
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
-	cNamedIndexes.Init(&cController, 512, IWT_No);
-
 	AssertTrue(cController.Begin());
+	cNamedIndexes.Init(&cController, 10 MB, IWT_No);
 
 	cNamedIndexes.Add(1LL, "Arthur Miller");
 	cNamedIndexes.Add(2LL, "systema skeletale");
@@ -334,14 +333,14 @@ void TestNamedIndexesLoad(void)
 	AssertLongLongInt(20LL, cNamedIndexes.GetIndex("impel Christmas"));
 	AssertLongLongInt(21LL, cNamedIndexes.GetIndex("universalise rose fever IL59 Europe"));
 
-	cNamedIndexes.Kill();
-
+	cNamedIndexes.Flush();
 	AssertTrue(cController.End());
+	cNamedIndexes.Kill();
 	cController.Kill();
 
 	cController.Init(szDirectory, szRewriteDirectory);
 	AssertTrue(cController.Begin());
-	cNamedIndexes.Init(&cController, 512, IWT_No);
+	cNamedIndexes.Init(&cController, 10 MB, IWT_No);
 
 	AssertLongLongInt(1LL, cNamedIndexes.GetIndex("Arthur Miller"));
 	AssertLongLongInt(2LL, cNamedIndexes.GetIndex("systema skeletale"));
@@ -387,6 +386,7 @@ void TestNamedIndexesLoad(void)
 	AssertLongLongInt(2LL, cNamedIndexes.GetIndex("systema skeletale"));
 	AssertLongLongInt(19LL, cNamedIndexes.GetIndex("otoscope"));
 
+	cNamedIndexes.Flush();
 	AssertTrue(cController.End());
 	cNamedIndexes.Kill();
 	cController.Kill();
