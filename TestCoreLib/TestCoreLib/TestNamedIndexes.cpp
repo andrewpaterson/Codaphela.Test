@@ -168,10 +168,7 @@ void TestNamedIndexesRemove(void)
 	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.GetIndex("Zynaps"));
 	AssertLongLongInt(0, cNamedIndexes.NumElements());
 
-	cNamedIndexes.Dump();
 	cNamedIndexes.Add(45LL, "Berty");
-	cNamedIndexes.Dump();
-
 	AssertLongLongInt(1, cNamedIndexes.NumElements());
 	AssertLongLongInt(45LL, cNamedIndexes.GetIndex("Berty"));
 	AssertTrue(cNamedIndexes.Remove("Berty"));

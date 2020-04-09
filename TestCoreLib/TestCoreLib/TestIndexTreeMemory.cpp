@@ -109,9 +109,9 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 	CIndexTreeMemoryAccess	cAccess;
 	char					sz[MAX_UCHAR];
 	CArrayVoidPtr			avp;
+	SLogConfig				sLogConfig;
 
-
-	cIndexTree.Init();
+	cIndexTree.Init(&gcSystemAllocator, IKR_No, 255, MAX_KEY_SIZE);
 	cAccess.Init(&cIndexTree);
 
 	AssertTrue(cAccess.PutLongString(0x0000000000000000LL, "Zero"));
@@ -122,7 +122,10 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 
 	AssertNull(cAccess.GetLongString(1LL, sz));
 
+	gcLogger.GetConfig(&sLogConfig);
+	gcLogger.SetBreakOnError(FALSE);
 	AssertFalse(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sente."));
+	gcLogger.SetConfig(&sLogConfig);
 	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent."));
 	AssertInt(2, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
@@ -236,11 +239,12 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 	CGeneralMemory*			pcMemory;
 	char					sz[MAX_UCHAR];
 	CArrayVoidPtr			avp;
+	SLogConfig				sLogConfig;
 
 	cMemoryAllocator.Init(16);
 	pcMemory = cMemoryAllocator.GetMemory();
 
-	cIndexTree.Init(&cMemoryAllocator, IKR_Yes);
+	cIndexTree.Init(&cMemoryAllocator, IKR_Yes, 255, MAX_KEY_SIZE);
 	cAccess.Init(&cIndexTree);
 
 	AssertTrue(cAccess.PutLongString(0x0000000000000000LL, "Zero"));
@@ -251,7 +255,10 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 
 	AssertNull(cAccess.GetLongString(1LL, sz));
 
+	gcLogger.GetConfig(&sLogConfig);
+	gcLogger.SetBreakOnError(FALSE);
 	AssertFalse(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sente."));
+	gcLogger.SetConfig(&sLogConfig);
 	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent."));
 	AssertInt(2, cIndexTree.NumElements());
 
@@ -369,11 +376,12 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 	CGeneralMemory*			pcMemory;
 	char					sz[MAX_UCHAR];
 	CArrayVoidPtr			avp;
+	SLogConfig				sLogConfig;
 
 	cMemoryAllocator.Init(16);
 	pcMemory = cMemoryAllocator.GetMemory();
 
-	cIndexTree.Init(&cMemoryAllocator, IKR_Yes);
+	cIndexTree.Init(&cMemoryAllocator, IKR_Yes, 255, MAX_KEY_SIZE);
 	cAccess.Init(&cIndexTree);
 
 	AssertTrue(cAccess.PutLongString(0x0000000000000000LL, "Zero"));
@@ -384,7 +392,10 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 
 	AssertNull(cAccess.GetLongString(0x0100000000000000LL, sz));
 		
+	gcLogger.GetConfig(&sLogConfig);
+	gcLogger.SetBreakOnError(FALSE);
 	AssertFalse(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sente."));
+	gcLogger.SetConfig(&sLogConfig);
 	AssertTrue(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent."));
 	AssertInt(2, cIndexTree.NumElements());
 
