@@ -70,7 +70,6 @@ void TestIndexesSomething(void)
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -168,3 +167,4 @@ void TestIndexes(void)
 	TestStatistics();
 	FastFunctionsKill();
 }
+

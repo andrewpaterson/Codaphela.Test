@@ -2,6 +2,7 @@
 #include "BaseLib/SystemAllocator.h"
 #include "BaseLib/MemoryAllocator.h"
 #include "BaseLib/Define.h"
+#include "BaseLib/Logger.h"
 #include "BaseLib/GlobalMemory.h"
 #include "CoreLib/DurableFileController.h"
 #include "CoreLib/NamedIndexes.h"
@@ -23,7 +24,8 @@ void TestNamedIndexesAdd(void)
 	char								szDirectory[] = "NamedIndexes" _FS_ "1";
 	char								szRewriteDirectory[] = "_NamedIndexes" _FS_ "1";
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
-	CValueNamedIndexesConfig			cConfig;
+	CValueNamedIndexesConfig			cDataConfig;
+	SLogConfig							sLogConfig;
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
@@ -31,25 +33,25 @@ void TestNamedIndexesAdd(void)
 	cController.Begin();
 
 	cEvictionStrategy.Init();
-	cConfig.Init(&cController, 10 MB, &cEvictionStrategy, IWT_No);
-	cNamedIndexes.Init(&cConfig);
-	cConfig.Kill();
+	cDataConfig.Init(&cController, 10 MB, &cEvictionStrategy, IWT_No);
+	cNamedIndexes.Init(&cDataConfig);
+	cDataConfig.Kill();
 
 	AssertLongLongInt(0, cNamedIndexes.NumElements());
 
-	cNamedIndexes.Put("Berty", 45LL);
+	cNamedIndexes.Add("Berty", 45LL);
 	AssertLongLongInt(45LL, cNamedIndexes.Get("Berty"));
 	AssertLongLongInt(1, cNamedIndexes.NumElements());
 
-	cNamedIndexes.Put("Alfred", 73LL);
+	cNamedIndexes.Add("Alfred", 73LL);
 	AssertLongLongInt(45LL, cNamedIndexes.Get("Berty"));
 	AssertLongLongInt(73LL, cNamedIndexes.Get("Alfred"));
 	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.Get(""));
 	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.Get("Ax"));
 	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.Get((char*)NULL));
 
-	cNamedIndexes.Put("Camilla", 19LL);
-	cNamedIndexes.Put("Wordsworth", 20LL);
+	cNamedIndexes.Add("Camilla", 19LL);
+	cNamedIndexes.Add("Wordsworth", 20LL);
 	AssertLongLongInt(45LL, cNamedIndexes.Get("Berty"));
 	AssertLongLongInt(73LL, cNamedIndexes.Get("Alfred"));
 	AssertLongLongInt(19LL, cNamedIndexes.Get("Camilla"));
@@ -57,7 +59,7 @@ void TestNamedIndexesAdd(void)
 	AssertLongLongInt(4, cNamedIndexes.NumElements());
 
 
-	cNamedIndexes.Put("Alicia", 66LL);
+	cNamedIndexes.Add("Alicia", 66LL);
 	AssertLongLongInt(66LL, cNamedIndexes.Get("Alicia"));
 	AssertLongLongInt(45LL, cNamedIndexes.Get("Berty"));
 	AssertLongLongInt(73LL, cNamedIndexes.Get("Alfred"));
@@ -66,10 +68,10 @@ void TestNamedIndexesAdd(void)
 	AssertLongLongInt(5, cNamedIndexes.NumElements());
 
 
-	cNamedIndexes.Put("Aardvark", 67LL);
-	cNamedIndexes.Put("Alfredo", 68LL);
-	bResult = cNamedIndexes.Put("Play-dough", 69LL);
-	cNamedIndexes.Put("Zynaps", 01LL);
+	cNamedIndexes.Add("Aardvark", 67LL);
+	cNamedIndexes.Add("Alfredo", 68LL);
+	bResult = cNamedIndexes.Add("Play-dough", 69LL);
+	cNamedIndexes.Add("Zynaps", 01LL);
 	AssertTrue(bResult);
 	AssertLongLongInt(66LL, cNamedIndexes.Get("Alicia"));
 	AssertLongLongInt(45LL, cNamedIndexes.Get("Berty"));
@@ -82,8 +84,10 @@ void TestNamedIndexesAdd(void)
 	AssertLongLongInt(01LL, cNamedIndexes.Get("Zynaps"));
 	AssertLongLongInt(9, cNamedIndexes.NumElements());
 
-	bResult = cNamedIndexes.Put("Play-dough", 88LL);
+	sLogConfig = gcLogger.SetSilent();
+	bResult = cNamedIndexes.Add("Play-dough", 88LL);
 	AssertFalse(bResult);
+	gcLogger.SetConfig(&sLogConfig);
 
 	AssertLongLongInt(9, cNamedIndexes.NumElements());
 
@@ -108,7 +112,7 @@ void TestNamedIndexesRemove(void)
 	char								szDirectory[] = "NamedIndexes" _FS_ "2";
 	char								szRewriteDirectory[] = "_NamedIndexes" _FS_ "2";
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
-	CValueNamedIndexesConfig			cConfig;
+	CValueNamedIndexesConfig			cDataConfig;
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
@@ -116,21 +120,21 @@ void TestNamedIndexesRemove(void)
 	cController.Begin();
 	
 	cEvictionStrategy.Init();
-	cConfig.Init(&cController, 10 MB, &cEvictionStrategy, IWT_No);
-	cNamedIndexes.Init(&cConfig);
-	cConfig.Kill();
+	cDataConfig.Init(&cController, 10 MB, &cEvictionStrategy, IWT_No);
+	cNamedIndexes.Init(&cDataConfig);
+	cDataConfig.Kill();
 
-	cNamedIndexes.Put("Berty", 45LL);
-	cNamedIndexes.Put("Alfred", 73LL);
-	cNamedIndexes.Put("Camilla", 19LL);
-	cNamedIndexes.Put("Wordsworth", 20LL);
+	cNamedIndexes.Add("Berty", 45LL);
+	cNamedIndexes.Add("Alfred", 73LL);
+	cNamedIndexes.Add("Camilla", 19LL);
+	cNamedIndexes.Add("Wordsworth", 20LL);
 
-	cNamedIndexes.Put("Alicia", 66LL);
-	cNamedIndexes.Put("Aardvark", 67LL);
-	cNamedIndexes.Put("Alfredo", 68LL);
-	cNamedIndexes.Put("Play-dough", 69LL);
+	cNamedIndexes.Add("Alicia", 66LL);
+	cNamedIndexes.Add("Aardvark", 67LL);
+	cNamedIndexes.Add("Alfredo", 68LL);
+	cNamedIndexes.Add("Play-dough", 69LL);
 
-	cNamedIndexes.Put("Zynaps", 01LL);
+	cNamedIndexes.Add("Zynaps", 01LL);
 
 	AssertLongLongInt(9, cNamedIndexes.NumElements());
 
@@ -182,7 +186,7 @@ void TestNamedIndexesRemove(void)
 	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.Get("Zynaps"));
 	AssertLongLongInt(0, cNamedIndexes.NumElements());
 
-	cNamedIndexes.Put("Berty", 45LL);
+	cNamedIndexes.Add("Berty", 45LL);
 	AssertLongLongInt(1, cNamedIndexes.NumElements());
 	AssertLongLongInt(45LL, cNamedIndexes.Get("Berty"));
 	AssertTrue(cNamedIndexes.Remove("Berty"));
@@ -210,7 +214,8 @@ void TestNamedIndexesCacheEviction(void)
 	char								szDirectory[] = "NamedIndexes" _FS_ "3";
 	char								szRewriteDirectory[] = "_NamedIndexes" _FS_ "3";
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
-	CValueNamedIndexesConfig			cConfig;
+	CValueNamedIndexesConfig			cDataConfig;
+	SLogConfig							sLogConfig;
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
@@ -218,26 +223,26 @@ void TestNamedIndexesCacheEviction(void)
 	cController.Begin();
 
 	cEvictionStrategy.Init();
-	cConfig.Init(&cController, 8192, &cEvictionStrategy, IWT_No);
-	cNamedIndexes.Init(&cConfig);
-	cConfig.Kill();
+	cDataConfig.Init(&cController, 8192, &cEvictionStrategy, IWT_No);
+	cNamedIndexes.Init(&cDataConfig);
+	cDataConfig.Kill();
 
 
 	AssertLongLongInt(0, cNamedIndexes.NumElements());
 
-	AssertTrue(cNamedIndexes.Put("Berty", 45LL));
+	AssertTrue(cNamedIndexes.Add("Berty", 45LL));
 	AssertLongLongInt(45LL, cNamedIndexes.Get("Berty"));
 	AssertLongLongInt(1, cNamedIndexes.NumElements());
 
-	AssertTrue(cNamedIndexes.Put("Alfred", 73LL));
+	AssertTrue(cNamedIndexes.Add("Alfred", 73LL));
 	AssertLongLongInt(45LL, cNamedIndexes.Get("Berty"));
 	AssertLongLongInt(73LL, cNamedIndexes.Get("Alfred"));
 	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.Get(""));
 	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.Get("Ax"));
 	AssertLongLongInt(INVALID_O_INDEX, cNamedIndexes.Get((char*)NULL));
 
-	AssertTrue(cNamedIndexes.Put("Camilla", 19LL));
-	AssertTrue(cNamedIndexes.Put("Wordsworth", 20LL));
+	AssertTrue(cNamedIndexes.Add("Camilla", 19LL));
+	AssertTrue(cNamedIndexes.Add("Wordsworth", 20LL));
 	AssertLongLongInt(4, cNamedIndexes.NumElements());
 	AssertLongLongInt(45LL, cNamedIndexes.Get("Berty"));
 	AssertLongLongInt(73LL, cNamedIndexes.Get("Alfred"));
@@ -245,7 +250,7 @@ void TestNamedIndexesCacheEviction(void)
 	AssertLongLongInt(20LL, cNamedIndexes.Get("Wordsworth"));
 
 
-	AssertTrue(cNamedIndexes.Put("Alicia", 66LL));
+	AssertTrue(cNamedIndexes.Add("Alicia", 66LL));
 	AssertLongLongInt(5, cNamedIndexes.NumElements());
 
 	AssertLongLongInt(66LL, cNamedIndexes.Get("Alicia"));
@@ -254,9 +259,9 @@ void TestNamedIndexesCacheEviction(void)
 	AssertLongLongInt(19LL, cNamedIndexes.Get("Camilla"));
 	AssertLongLongInt(20LL, cNamedIndexes.Get("Wordsworth"));
 
-	AssertTrue(cNamedIndexes.Put("Aardvark", 67LL));
-	AssertTrue(cNamedIndexes.Put("Alfredo", 68LL));
-	AssertTrue(cNamedIndexes.Put("Play-dough", 69LL));
+	AssertTrue(cNamedIndexes.Add("Aardvark", 67LL));
+	AssertTrue(cNamedIndexes.Add("Alfredo", 68LL));
+	AssertTrue(cNamedIndexes.Add("Play-dough", 69LL));
 	AssertLongLongInt(67LL, cNamedIndexes.Get("Aardvark"));
 	AssertLongLongInt(66LL, cNamedIndexes.Get("Alicia"));
 	AssertLongLongInt(68LL, cNamedIndexes.Get("Alfredo"));
@@ -266,7 +271,7 @@ void TestNamedIndexesCacheEviction(void)
 	AssertLongLongInt(19LL, cNamedIndexes.Get("Camilla"));
 	AssertLongLongInt(20LL, cNamedIndexes.Get("Wordsworth"));
 
-	AssertTrue(cNamedIndexes.Put("Zynaps", 01LL));
+	AssertTrue(cNamedIndexes.Add("Zynaps", 01LL));
 	AssertLongLongInt(66LL, cNamedIndexes.Get("Alicia"));
 	AssertLongLongInt(45LL, cNamedIndexes.Get("Berty"));
 	AssertLongLongInt(73LL, cNamedIndexes.Get("Alfred"));
@@ -278,8 +283,10 @@ void TestNamedIndexesCacheEviction(void)
 	AssertLongLongInt(01LL, cNamedIndexes.Get("Zynaps"));
 	AssertLongLongInt(9, cNamedIndexes.NumElements());
 
-	bResult = cNamedIndexes.Put("Play-dough", 88LL);
+	sLogConfig = gcLogger.SetSilent();
+	bResult = cNamedIndexes.Add("Play-dough", 88LL);
 	AssertFalse(bResult);
+	gcLogger.SetConfig(&sLogConfig);
 
 	AssertLongLongInt(9, cNamedIndexes.NumElements());
 
@@ -303,7 +310,7 @@ void TestNamedIndexesLoad(void)
 	char								szDirectory[] = "NamedIndexes" _FS_ "4";
 	char								szRewriteDirectory[] = "_NamedIndexes" _FS_ "4";
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
-	CValueNamedIndexesConfig			cConfig;
+	CValueNamedIndexesConfig			cDataConfig;
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
@@ -311,30 +318,30 @@ void TestNamedIndexesLoad(void)
 	AssertTrue(cController.Begin());
 
 	cEvictionStrategy.Init();
-	cConfig.Init(&cController, 10 MB, &cEvictionStrategy, IWT_No);
-	cNamedIndexes.Init(&cConfig);
+	cDataConfig.Init(&cController, 10 MB, &cEvictionStrategy, IWT_No);
+	cNamedIndexes.Init(&cDataConfig);
 
-	cNamedIndexes.Put("Arthur Miller", 1LL);
-	cNamedIndexes.Put("systema skeletale", 2LL);
-	cNamedIndexes.Put("roe", 3LL);
-	cNamedIndexes.Put("order Plumbaginales Melba aldicarb", 4LL);
-	cNamedIndexes.Put("asphyxiate", 5LL);
-	cNamedIndexes.Put("Fonseca Bay Piaget Salt tomato plant", 6LL);
-	cNamedIndexes.Put("thoracic vertebra", 7LL);
-	cNamedIndexes.Put("LL75", 8LL);
-	cNamedIndexes.Put("Calendrer", 9LL);
-	cNamedIndexes.Put("zone refining refashion butter up", 10LL);
-	cNamedIndexes.Put("Chopin Dicranaceae transmountain insentient", 11LL);
-	cNamedIndexes.Put("Recipes Kerchiefs 32TX", 12LL);
-	cNamedIndexes.Put("factor V domestic relations", 13LL);
-	cNamedIndexes.Put("bedum ?", 14LL);
-	cNamedIndexes.Put("gauche", 15LL);
-	cNamedIndexes.Put("takeoff breakup value Tenuifolious magnitude", 16LL);
-	cNamedIndexes.Put("Forisfamiliated", 17LL);
-	cNamedIndexes.Put("amphibious bulk liquid transfer system", 18LL);
-	cNamedIndexes.Put("otoscope", 19LL);
-	cNamedIndexes.Put("impel Christmas", 20LL);
-	cNamedIndexes.Put("universalise rose fever IL59 Europe", 21LL);
+	cNamedIndexes.Add("Arthur Miller", 1LL);
+	cNamedIndexes.Add("systema skeletale", 2LL);
+	cNamedIndexes.Add("roe", 3LL);
+	cNamedIndexes.Add("order Plumbaginales Melba aldicarb", 4LL);
+	cNamedIndexes.Add("asphyxiate", 5LL);
+	cNamedIndexes.Add("Fonseca Bay Piaget Salt tomato plant", 6LL);
+	cNamedIndexes.Add("thoracic vertebra", 7LL);
+	cNamedIndexes.Add("LL75", 8LL);
+	cNamedIndexes.Add("Calendrer", 9LL);
+	cNamedIndexes.Add("zone refining refashion butter up", 10LL);
+	cNamedIndexes.Add("Chopin Dicranaceae transmountain insentient", 11LL);
+	cNamedIndexes.Add("Recipes Kerchiefs 32TX", 12LL);
+	cNamedIndexes.Add("factor V domestic relations", 13LL);
+	cNamedIndexes.Add("bedum ?", 14LL);
+	cNamedIndexes.Add("gauche", 15LL);
+	cNamedIndexes.Add("takeoff breakup value Tenuifolious magnitude", 16LL);
+	cNamedIndexes.Add("Forisfamiliated", 17LL);
+	cNamedIndexes.Add("amphibious bulk liquid transfer system", 18LL);
+	cNamedIndexes.Add("otoscope", 19LL);
+	cNamedIndexes.Add("impel Christmas", 20LL);
+	cNamedIndexes.Add("universalise rose fever IL59 Europe", 21LL);
 
 	AssertLongLongInt(1LL, cNamedIndexes.Get("Arthur Miller"));
 	AssertLongLongInt(2LL, cNamedIndexes.Get("systema skeletale"));
@@ -365,7 +372,7 @@ void TestNamedIndexesLoad(void)
 
 	cController.Init(szDirectory, szRewriteDirectory);
 	AssertTrue(cController.Begin());
-	cNamedIndexes.Init(&cConfig);
+	cNamedIndexes.Init(&cDataConfig);
 
 	AssertLongLongInt(1LL, cNamedIndexes.Get("Arthur Miller"));
 	AssertLongLongInt(2LL, cNamedIndexes.Get("systema skeletale"));
@@ -411,7 +418,7 @@ void TestNamedIndexesLoad(void)
 	AssertLongLongInt(2LL, cNamedIndexes.Get("systema skeletale"));
 	AssertLongLongInt(19LL, cNamedIndexes.Get("otoscope"));
 	
-	cConfig.Kill();
+	cDataConfig.Kill();
 	cNamedIndexes.Flush();
 	AssertTrue(cController.End());
 	cNamedIndexes.Kill();
