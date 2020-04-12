@@ -1,7 +1,9 @@
+#include "BaseLib/Logger.h"
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TypeConverter.h"
+#include "BaseLib/Logger.h"
 #include "CoreLib/IndexedData.h"
 #include "CoreLib/IndexedDataAccess.h"
 #include "CoreLib/EvictedList.h"
@@ -90,15 +92,16 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexedDataFlushClearCache(void)
 {
-	CIndexedData		cIndexedData;
-	char				szHello[] = "Hello";
-	char				szWorld[] = "World";
-	char				szStream[] = "Stream";
-	char				szDirectory[] = "Output" _FS_ "Database1a";
-	CFileUtil			cFileUtil;
-	unsigned int		uiDataSize;
-	char				szData[7];
-	CSimpleIndexConfig	cConfig;
+	CIndexedData			cIndexedData;
+	char					szHello[] = "Hello";
+	char					szWorld[] = "World";
+	char					szStream[] = "Stream";
+	char					szDirectory[] = "Output" _FS_ "Database1a";
+	CFileUtil				cFileUtil;
+	unsigned int			uiDataSize;
+	char					szData[7];
+	CSimpleIndexConfig		cConfig;
+	SLogConfig				sLogConfig;
 
 	cFileUtil.RemoveDir(szDirectory);
 
@@ -160,9 +163,11 @@ void TestIndexedDataFlushClearCache(void)
 	AssertInt(0, cIndexedData.NumDataCached());
 	AssertInt(3100 + 24, cIndexedData.GetIndiciesSystemMemorySize());
 
+	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(cIndexedData.Add(0LL, szWorld, 6, 0));
 	AssertFalse(cIndexedData.Add(2LL, szStream, 7, 0));
 	AssertFalse(cIndexedData.Add(4LL, szHello, 6, 0));
+	gcLogger.SetConfig(&sLogConfig);
 	AssertInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
 	AssertInt(3668, cIndexedData.GetIndiciesSystemMemorySize());
@@ -850,22 +855,23 @@ void TestIndexedDataLargeData(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexedDataIndexedAdd(void)
 {
-	CIndexedData		cIndexedData;
-	OIndex				oIndex1;
-	OIndex				oIndex2;
-	char				szBat[] = "Bat";
-	char				szCat[] = "Cat";
-	char				szDog[] = "Dog";
-	char				szFish[] = "Fish";
+	CIndexedData			cIndexedData;
+	OIndex					oIndex1;
+	OIndex					oIndex2;
+	char					szBat[] = "Bat";
+	char					szCat[] = "Cat";
+	char					szDog[] = "Dog";
+	char					szFish[] = "Fish";
 
-	char				szHell[] = "Hell";
-	char				szMutt[] = "Mutt";
-	char				szEve[] = "Eve";
-	char				szIn[64];
-	CFileUtil			cFileUtil;
-	BOOL				bResult;
-	char				szDirectory[] = "Output" _FS_ "Database3";
-	CSimpleIndexConfig	cConfig;
+	char					szHell[] = "Hell";
+	char					szMutt[] = "Mutt";
+	char					szEve[] = "Eve";
+	char					szIn[64];
+	CFileUtil				cFileUtil;
+	BOOL					bResult;
+	char					szDirectory[] = "Output" _FS_ "Database3";
+	CSimpleIndexConfig		cConfig;
+	SLogConfig				sLogConfig;
 
 	cFileUtil.RemoveDir(szDirectory);
 
@@ -875,24 +881,26 @@ void TestIndexedDataIndexedAdd(void)
 	cIndexedData.DurableBegin();
 	oIndex1 = 0LL;
 	bResult = cIndexedData.Add(oIndex1, szBat, 4, 0);
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
 	AssertInt(0, (int)cIndexedData.NumData(4));
 	AssertTrue(cIndexedData.Flush(TRUE));
 	AssertInt(1, (int)cIndexedData.NumData(4));
 	AssertInt(0, (int)cIndexedData.NumDataCached());
 
+	sLogConfig = gcLogger.SetSilent();
 	bResult = cIndexedData.Add(oIndex1, szCat, 4, 0);
-	AssertBool(FALSE, bResult);
+	AssertFalse(bResult);
+	gcLogger.SetConfig(&sLogConfig);
 	bResult = cIndexedData.Set(oIndex1, szDog, 0);
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
 	AssertInt(1, (int)cIndexedData.NumData(4));
 	cIndexedData.Get(oIndex1, szIn);
 	AssertString(szDog, szIn);
 
 	bResult = cIndexedData.Set(oIndex1, szFish, 5, 0);
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
 	cIndexedData.Get(oIndex1, szIn);
 	AssertString(szFish, szIn);
@@ -906,7 +914,7 @@ void TestIndexedDataIndexedAdd(void)
 	bResult = cIndexedData.Set(oIndex1, szCat, 4, 0);
 	AssertInt(1, (int)cIndexedData.NumElements());
 	AssertInt(1, (int)cIndexedData.NumIndicesCached());
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 	AssertTrue(cIndexedData.Flush(TRUE));
 	AssertInt(2, (int)cIndexedData.NumData(4));  //One is ignored but they are both still in the file.
 	AssertInt(1, (int)cIndexedData.NumElements());
@@ -914,13 +922,15 @@ void TestIndexedDataIndexedAdd(void)
 
 	oIndex2 = 3LL;
 	bResult = cIndexedData.Add(oIndex2, szHell, 5, 0);
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
 	AssertInt(2, (int)cIndexedData.NumIndicesCached());
+	sLogConfig = gcLogger.SetSilent();
 	bResult = cIndexedData.Add(oIndex2, szMutt, 5, 0);
-	AssertBool(FALSE, bResult);
+	AssertFalse(bResult);
+	gcLogger.SetConfig(&sLogConfig);
 	bResult = cIndexedData.Set(oIndex2, szEve, 4, 0);
-	AssertBool(TRUE, bResult);
+	AssertTrue(bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
 	AssertInt(2, (int)cIndexedData.NumIndicesCached());
 	AssertTrue(cIndexedData.Flush(TRUE));
@@ -942,14 +952,15 @@ void TestIndexedDataIndexedAdd(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexedDataDescriptorCaching(void)
 {
-	CIndexedEvictedList	cKeyDataEvictedList;
-	CIndexedData		cIndexedData;
-	OIndex				OI;
-	CFileUtil			cFileUtil;
-	int					iData;
-	OIndex				iNumCached;
-	char				szDirectory[] = "Output" _FS_ "Database4";
-	CSimpleIndexConfig	cConfig;
+	CIndexedEvictedList		cKeyDataEvictedList;
+	CIndexedData			cIndexedData;
+	OIndex					OI;
+	CFileUtil				cFileUtil;
+	int						iData;
+	OIndex					iNumCached;
+	char					szDirectory[] = "Output" _FS_ "Database4";
+	CSimpleIndexConfig		cConfig;
+	SLogConfig				sLogConfig;
 
 	cFileUtil.RemoveDir(szDirectory);
 
@@ -973,10 +984,12 @@ void TestIndexedDataDescriptorCaching(void)
 	AssertInt(77, iData);
 	AssertInt(0, cKeyDataEvictedList.NumElements());
 
+	sLogConfig = gcLogger.SetSilent();
 	OI = 2LL;
 	iData = 80;
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;  iData++;
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;  iData++;
+	gcLogger.SetConfig(&sLogConfig);
 	AssertInt(1, cKeyDataEvictedList.NumElements());
 	AssertLongLongInt(0, cKeyDataEvictedList.GetKey(0));
 	AssertInt(77, *(int*)cKeyDataEvictedList.GetData(0));
@@ -1037,14 +1050,15 @@ void TestIndexedDataDescriptorCaching(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexedDataNoCaching(void)
 {
-	CIndexedData		cIndexedData;
-	OIndex				OI;
-	CFileUtil			cFileUtil;
-	int					iData;
-	int					iNumIndicesCached;
-	OIndex				iNumDataCached;
-	CSimpleIndexConfig	cConfig;
-	char				szDirectory[] = "Output" _FS_ "Database5";
+	CIndexedData			cIndexedData;
+	OIndex					OI;
+	CFileUtil				cFileUtil;
+	int						iData;
+	int						iNumIndicesCached;
+	OIndex					iNumDataCached;
+	CSimpleIndexConfig		cConfig;
+	SLogConfig				sLogConfig;
+	char					szDirectory[] = "Output" _FS_ "Database5";
 
 	cFileUtil.RemoveDir(szDirectory);
 
@@ -1075,6 +1089,7 @@ void TestIndexedDataNoCaching(void)
 	iNumDataCached = cIndexedData.NumDataCached();
 	AssertLongLongInt(0, iNumDataCached);
 
+	sLogConfig = gcLogger.SetSilent();
 	OI = 2LL;
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
@@ -1082,6 +1097,7 @@ void TestIndexedDataNoCaching(void)
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
 	cIndexedData.Add(OI, &iData, 4, 0); OI++;
+	gcLogger.SetConfig(&sLogConfig);
 	iData = 0; OI--; cIndexedData.Get(OI, (void*)&iData);;
 
 	AssertInt(77, iData);

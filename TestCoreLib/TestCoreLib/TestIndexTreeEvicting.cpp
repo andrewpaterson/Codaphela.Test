@@ -118,8 +118,7 @@ void TestIndexTreeEvictingEvictWithChildren(void)
 	AssertTrue(cAccess.PutStringString(szAlbaquerque, szAlbaquerque));
 	AssertLongLongInt(3674, pcMemory->GetTotalAllocatedMemory());
 
-	gcLogger.GetConfig(&sLogConfig);
-	gcLogger.SetBreakOnError(FALSE);
+	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(cAccess.EvictString(szAlba));
 	gcLogger.SetConfig(&sLogConfig);
 	AssertLongLongInt(3674, pcMemory->GetTotalAllocatedMemory());
@@ -127,8 +126,7 @@ void TestIndexTreeEvictingEvictWithChildren(void)
 	AssertTrue(cAccess.EvictString(szAlbatros));
 	AssertLongLongInt(3533, pcMemory->GetTotalAllocatedMemory());
 
-	gcLogger.GetConfig(&sLogConfig);
-	gcLogger.SetBreakOnError(FALSE);
+	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(cAccess.EvictString(szAlba));
 	gcLogger.SetConfig(&sLogConfig);
 	AssertLongLongInt(3533, pcMemory->GetTotalAllocatedMemory());

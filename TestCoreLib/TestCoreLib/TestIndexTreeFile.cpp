@@ -329,8 +329,7 @@ void TestIndexTreeFileNoCacheEviction(void)
 
 	AssertNull(cAccess.GetLongString(0x0100000000000000LL, sz));
 
-	gcLogger.GetConfig(&sLogConfig);
-	gcLogger.SetBreakOnError(FALSE);
+	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sente."));
 	gcLogger.SetConfig(&sLogConfig);
 	AssertTrue(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent."));
@@ -2104,8 +2103,7 @@ void TestIndexTreeFileEvictDirty(EIndexWriteThrough eWriteThrough)
 	cAccess.PutStringString("AAA", "South");
 	cAccess.PutStringString("AAAAA", "Dome");
 
-	gcLogger.GetConfig(&sLogConfig);
-	gcLogger.SetBreakOnError(FALSE);
+	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(cAccess.EvictString("AAA"));
 	gcLogger.SetConfig(&sLogConfig);
 	AssertInt(4, cIndexTree.NumMemoryElements());
