@@ -1,6 +1,7 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TypeConverter.h"
+#include "BaseLib/Logger.h"
 #include "BaseLib/NaiveFile.h"
 #include "CoreLib/IndexedFiles.h"
 #include "TestLib/Assert.h"
@@ -67,12 +68,15 @@ void TestIndexedFilesInitAndKillWihtoutOpen(void)
 	char					szDirectorty[] = "Output" _FS_ "Files2";
 	char					szRewriteDirectorty[] = "Output" _FS_ "_Files2";
 	char					cZero = 0;
+	SLogConfig				sLogConfig;
 
 	cFileUtil.RemoveDirs(szDirectorty, szRewriteDirectorty, NULL);
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
 	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
+	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(cIndexedFiles.ReadIndexedFileDescriptors());
+	gcLogger.SetConfig(&sLogConfig);
 
 	AssertFalse(cFileUtil.Exists(szDirectorty));
 	AssertFalse(cFileUtil.Exists(szRewriteDirectorty));
@@ -111,6 +115,7 @@ void TestIndexedFilesWrite(void)
 	CFileDataIndex			cDataIndex4;
 	unsigned int			uiDataSize;
 	char					szData[1024];
+	SLogConfig				sLogConfig;
 
 	iLen1 = strlen(szData1);
 	iLen2 = strlen(szData2);
@@ -163,7 +168,9 @@ void TestIndexedFilesWrite(void)
 	cController.Init(szDirectorty, szRewriteDirectorty);
 	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
 
+	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(cIndexedFiles.ReadIndexedFileDescriptors());  //Controller not begun.
+	gcLogger.SetConfig(&sLogConfig);
 
 	AssertTrue(cController.Begin());
 	AssertTrue(cIndexedFiles.ReadIndexedFileDescriptors());
