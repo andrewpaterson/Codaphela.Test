@@ -126,22 +126,22 @@ void TestIndexedFilesWrite(void)
 
 	AssertTrue(cController.Begin());
 	AssertTrue(cIndexedFiles.ReadIndexedFileDescriptors());
-	AssertLongLongInt(0, cIndexedFiles.NumData());
+	AssertLongLongInt(0, cIndexedFiles.NumDatas());
 
 	cDataIndex1 = cIndexedFiles.WriteNew(szData1, iLen1);
 	AssertTrue(cDataIndex1.HasFile());
 	AssertInt(0, cDataIndex1.miFile);
 	AssertLongLongInt(0, cDataIndex1.muiIndex);
-	AssertLongLongInt(1, cIndexedFiles.NumData());
+	AssertLongLongInt(1, cIndexedFiles.NumDatas());
 
 	cDataIndex2 = cIndexedFiles.WriteNew(szData2, iLen2);
 	AssertTrue(cDataIndex2.HasFile());
 	AssertInt(1, cDataIndex2.miFile);
 	AssertLongLongInt(0, cDataIndex2.muiIndex);
-	AssertLongLongInt(2, cIndexedFiles.NumData());
+	AssertLongLongInt(2, cIndexedFiles.NumDatas());
 	
 	AssertTrue(cController.End());
-	AssertLongLongInt(2, cIndexedFiles.NumData());
+	AssertLongLongInt(2, cIndexedFiles.NumDatas());
 
 	AssertTrue(cFileUtil.Exists(szDirectorty));
 	AssertTrue(cFileUtil.Exists(szRewriteDirectorty));
@@ -169,13 +169,13 @@ void TestIndexedFilesWrite(void)
 	AssertTrue(cIndexedFiles.ReadIndexedFileDescriptors());
 	AssertFalse(cIndexedFiles.ReadIndexedFileDescriptors());  //Indices already read.
 	AssertTrue(cController.End());
-	AssertLongLongInt(2, cIndexedFiles.NumData());
+	AssertLongLongInt(2, cIndexedFiles.NumDatas());
 
 	AssertInt(2, cIndexedFiles.NumFiles());
-	AssertLongLongInt(1, cIndexedFiles.NumData(88));
-	AssertLongLongInt(0, cIndexedFiles.NumData(89));
-	AssertLongLongInt(1, cIndexedFiles.NumData(100));
-	AssertLongLongInt(0, cIndexedFiles.NumData(101));
+	AssertLongLongInt(1, cIndexedFiles.NumDatas(88));
+	AssertLongLongInt(0, cIndexedFiles.NumDatas(89));
+	AssertLongLongInt(1, cIndexedFiles.NumDatas(100));
+	AssertLongLongInt(0, cIndexedFiles.NumDatas(101));
 
 	AssertTrue(cController.Begin());
 
@@ -183,13 +183,13 @@ void TestIndexedFilesWrite(void)
 	AssertTrue(cDataIndex3.HasFile());
 	AssertInt(0, cDataIndex3.miFile);
 	AssertLongLongInt(1, cDataIndex3.muiIndex);
-	AssertLongLongInt(3, cIndexedFiles.NumData());
+	AssertLongLongInt(3, cIndexedFiles.NumDatas());
 
 	cDataIndex4 = cIndexedFiles.WriteNew(szData4, iLen4);
 	AssertTrue(cDataIndex4.HasFile());
 	AssertInt(1, cDataIndex4.miFile);
 	AssertLongLongInt(1, cDataIndex4.muiIndex);
-	AssertLongLongInt(4, cIndexedFiles.NumData());
+	AssertLongLongInt(4, cIndexedFiles.NumDatas());
 	
 	AssertTrue(cController.End());
 
@@ -210,10 +210,10 @@ void TestIndexedFilesWrite(void)
 	AssertTrue(cController.End());
 
 	AssertInt(2, cIndexedFiles.NumFiles());
-	AssertLongLongInt(2, cIndexedFiles.NumData(88));
-	AssertLongLongInt(0, cIndexedFiles.NumData(89));
-	AssertLongLongInt(2, cIndexedFiles.NumData(100));
-	AssertLongLongInt(0, cIndexedFiles.NumData(101));
+	AssertLongLongInt(2, cIndexedFiles.NumDatas(88));
+	AssertLongLongInt(0, cIndexedFiles.NumDatas(89));
+	AssertLongLongInt(2, cIndexedFiles.NumDatas(100));
+	AssertLongLongInt(0, cIndexedFiles.NumDatas(101));
 
 	cIndexedFiles.Kill();
 	cController.Kill();
@@ -224,7 +224,7 @@ void TestIndexedFilesWrite(void)
 	AssertTrue(cController.Begin());
 	AssertTrue(cIndexedFiles.ReadIndexedFileDescriptors());
 	AssertTrue(cController.End());
-	AssertLongLongInt(4, cIndexedFiles.NumData());
+	AssertLongLongInt(4, cIndexedFiles.NumDatas());
 
 	cIndexedFiles.Kill();
 	cController.Kill();
