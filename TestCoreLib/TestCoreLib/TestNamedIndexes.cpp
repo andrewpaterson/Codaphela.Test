@@ -5,6 +5,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "CoreLib/DurableFileController.h"
 #include "CoreLib/NamedIndexes.h"
+#include "CoreLib/ValueNamedIndexesConfig.h"
 #include "StandardLib/BaseObject.h"
 #include "TestLib/Assert.h"
 
@@ -15,18 +16,24 @@
 //////////////////////////////////////////////////////////////////////////
 void TestNamedIndexesAdd(void)
 {
-	CNamedIndexes			cNamedIndexes;
-	CDurableFileController	cController;
-	CFileUtil				cFileUtil;
-	BOOL					bResult;
-	char					szDirectory[] = "NamedIndexes" _FS_ "1";
-	char					szRewriteDirectory[] = "_NamedIndexes" _FS_ "1";
+	CNamedIndexes						cNamedIndexes;
+	CDurableFileController				cController;
+	CFileUtil							cFileUtil;
+	BOOL								bResult;
+	char								szDirectory[] = "NamedIndexes" _FS_ "1";
+	char								szRewriteDirectory[] = "_NamedIndexes" _FS_ "1";
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	CValueNamedIndexesConfig			cConfig;
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
 	cController.Begin();
-	cNamedIndexes.Init(&cController, 10 MB, IWT_No);
+
+	cEvictionStrategy.Init();
+	cConfig.Init(&cController, 10 MB, &cEvictionStrategy, IWT_No);
+	cNamedIndexes.Init(&cConfig);
+	cConfig.Kill();
 
 	AssertLongLongInt(0, cNamedIndexes.NumElements());
 
@@ -83,6 +90,7 @@ void TestNamedIndexesAdd(void)
 	cNamedIndexes.Flush();
 	cController.End();
 	cNamedIndexes.Kill();
+	cEvictionStrategy.Kill();
 	cController.Kill();
 }
 
@@ -93,18 +101,24 @@ void TestNamedIndexesAdd(void)
 //////////////////////////////////////////////////////////////////////////
 void TestNamedIndexesRemove(void)
 {
-	CNamedIndexes			cNamedIndexes;
-	CDurableFileController	cController;
-	CFileUtil				cFileUtil;
-	BOOL					bResult;
-	char					szDirectory[] = "NamedIndexes" _FS_ "2";
-	char					szRewriteDirectory[] = "_NamedIndexes" _FS_ "2";
+	CNamedIndexes						cNamedIndexes;
+	CDurableFileController				cController;
+	CFileUtil							cFileUtil;
+	BOOL								bResult;
+	char								szDirectory[] = "NamedIndexes" _FS_ "2";
+	char								szRewriteDirectory[] = "_NamedIndexes" _FS_ "2";
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	CValueNamedIndexesConfig			cConfig;
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
 	cController.Begin();
-	cNamedIndexes.Init(&cController, 10 MB, IWT_No);
+	
+	cEvictionStrategy.Init();
+	cConfig.Init(&cController, 10 MB, &cEvictionStrategy, IWT_No);
+	cNamedIndexes.Init(&cConfig);
+	cConfig.Kill();
 
 	cNamedIndexes.Put("Berty", 45LL);
 	cNamedIndexes.Put("Alfred", 73LL);
@@ -178,6 +192,7 @@ void TestNamedIndexesRemove(void)
 	cNamedIndexes.Flush();
 	AssertTrue(cController.End());
 	cNamedIndexes.Kill();
+	cEvictionStrategy.Kill();
 	cController.Kill();
 }
 
@@ -188,18 +203,25 @@ void TestNamedIndexesRemove(void)
 //////////////////////////////////////////////////////////////////////////
 void TestNamedIndexesCacheEviction(void)
 {
-	CNamedIndexes				cNamedIndexes;
-	CDurableFileController		cController;
-	CFileUtil					cFileUtil;
-	BOOL						bResult;
-	char						szDirectory[] = "NamedIndexes" _FS_ "3";
-	char						szRewriteDirectory[] = "_NamedIndexes" _FS_ "3";
+	CNamedIndexes						cNamedIndexes;
+	CDurableFileController				cController;
+	CFileUtil							cFileUtil;
+	BOOL								bResult;
+	char								szDirectory[] = "NamedIndexes" _FS_ "3";
+	char								szRewriteDirectory[] = "_NamedIndexes" _FS_ "3";
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	CValueNamedIndexesConfig			cConfig;
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
 	cController.Begin();
-	cNamedIndexes.Init(&cController, 8192, IWT_No);
+
+	cEvictionStrategy.Init();
+	cConfig.Init(&cController, 8192, &cEvictionStrategy, IWT_No);
+	cNamedIndexes.Init(&cConfig);
+	cConfig.Kill();
+
 
 	AssertLongLongInt(0, cNamedIndexes.NumElements());
 
@@ -264,6 +286,7 @@ void TestNamedIndexesCacheEviction(void)
 	cNamedIndexes.Flush();
 	AssertTrue(cController.End());
 	cNamedIndexes.Kill();
+	cEvictionStrategy.Kill();
 	cController.Kill();
 }
 
@@ -274,17 +297,22 @@ void TestNamedIndexesCacheEviction(void)
 //////////////////////////////////////////////////////////////////////////
 void TestNamedIndexesLoad(void)
 {
-	CNamedIndexes			cNamedIndexes;
-	CDurableFileController	cController;
-	CFileUtil				cFileUtil;
-	char					szDirectory[] = "NamedIndexes" _FS_ "4";
-	char					szRewriteDirectory[] = "_NamedIndexes" _FS_ "4";
+	CNamedIndexes						cNamedIndexes;
+	CDurableFileController				cController;
+	CFileUtil							cFileUtil;
+	char								szDirectory[] = "NamedIndexes" _FS_ "4";
+	char								szRewriteDirectory[] = "_NamedIndexes" _FS_ "4";
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	CValueNamedIndexesConfig			cConfig;
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
 	AssertTrue(cController.Begin());
-	cNamedIndexes.Init(&cController, 10 MB, IWT_No);
+
+	cEvictionStrategy.Init();
+	cConfig.Init(&cController, 10 MB, &cEvictionStrategy, IWT_No);
+	cNamedIndexes.Init(&cConfig);
 
 	cNamedIndexes.Put("Arthur Miller", 1LL);
 	cNamedIndexes.Put("systema skeletale", 2LL);
@@ -337,7 +365,7 @@ void TestNamedIndexesLoad(void)
 
 	cController.Init(szDirectory, szRewriteDirectory);
 	AssertTrue(cController.Begin());
-	cNamedIndexes.Init(&cController, 10 MB, IWT_No);
+	cNamedIndexes.Init(&cConfig);
 
 	AssertLongLongInt(1LL, cNamedIndexes.Get("Arthur Miller"));
 	AssertLongLongInt(2LL, cNamedIndexes.Get("systema skeletale"));
@@ -382,10 +410,12 @@ void TestNamedIndexesLoad(void)
 	AssertLongLongInt(11LL, cNamedIndexes.Get("Chopin Dicranaceae transmountain insentient"));
 	AssertLongLongInt(2LL, cNamedIndexes.Get("systema skeletale"));
 	AssertLongLongInt(19LL, cNamedIndexes.Get("otoscope"));
-
+	
+	cConfig.Kill();
 	cNamedIndexes.Flush();
 	AssertTrue(cController.End());
 	cNamedIndexes.Kill();
+	cEvictionStrategy.Kill();
 	cController.Kill();
 }
 

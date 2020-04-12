@@ -5,6 +5,7 @@
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/Logger.h"
 #include "CoreLib/IndexedData.h"
+#include "CoreLib/ValueIndexedDataConfig.h"
 #include "CoreLib/IndexedDataAccess.h"
 #include "CoreLib/EvictedList.h"
 #include "CoreLib/IndexedEvictedList.h"
@@ -17,18 +18,18 @@
 //////////////////////////////////////////////////////////////////////////
 void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 {
-	CIndexedData		cIndexedData;
-	char				szInsipidity[] = "Insipidity the sufficient discretion imprudence resolution sir him decisively. Proceed how any engaged visitor. Explained propriety off out perpetual his you. Feel sold off felt nay rose met you. We so entreaties cultivated astonished is. Was sister for few longer mrs sudden talent become. Done may bore quit evil old mile. If likely am of beauty tastes.  Lose john poor same it case do year we.Full how way even the sigh.Extremely nor furniture fat questions now provision incommode preserved.Our side fail find like now.Discovered travelling for insensible partiality unpleasing impossible she.Sudden up my excuse to suffer ladies though or .Bachelor possible marianne directly confined relation as on he.";
-	OIndex				oiInsipidity;
-	int					iLenInsipidity;
-	char				szViolation[] = "Violation away off why half led have near bed.  At engage simple father of period others except.  My giving do summer of though narrow marked at.  Spring formal no county ye waited.  My whether cheered at regular it of promise blushes perhaps.Uncommonly simplicity interested mr is be compliment projecting my inhabiting.Gentleman he september in oh excellent. Feet evil to hold long he open knew an no.Apartments occasional boisterous as solicitude to introduced.Or fifteen covered we enjoyed demesne is in prepare.In stimulated my everything it literature.Greatly explain attempt perhaps in feeling he.House men taste bed not drawn joy.Through enquire however do equally herself at.Greatly way old may you present improve.Wishing the feeling village him musical.";
-	OIndex				oiViolation;
-	int					iLenViolation;
-	CFileUtil			cFileUtil;
-	unsigned int		uiDataSize;
-	char				szData[1024];
-	char				szDirectory[] = "Output" _FS_ "Database0";
-	CSimpleIndexConfig	cConfig;
+	CIndexedData			cIndexedData;
+	char					szInsipidity[] = "Insipidity the sufficient discretion imprudence resolution sir him decisively. Proceed how any engaged visitor. Explained propriety off out perpetual his you. Feel sold off felt nay rose met you. We so entreaties cultivated astonished is. Was sister for few longer mrs sudden talent become. Done may bore quit evil old mile. If likely am of beauty tastes.  Lose john poor same it case do year we.Full how way even the sigh.Extremely nor furniture fat questions now provision incommode preserved.Our side fail find like now.Discovered travelling for insensible partiality unpleasing impossible she.Sudden up my excuse to suffer ladies though or .Bachelor possible marianne directly confined relation as on he.";
+	OIndex					oiInsipidity;
+	int						iLenInsipidity;
+	char					szViolation[] = "Violation away off why half led have near bed.  At engage simple father of period others except.  My giving do summer of though narrow marked at.  Spring formal no county ye waited.  My whether cheered at regular it of promise blushes perhaps.Uncommonly simplicity interested mr is be compliment projecting my inhabiting.Gentleman he september in oh excellent. Feet evil to hold long he open knew an no.Apartments occasional boisterous as solicitude to introduced.Or fifteen covered we enjoyed demesne is in prepare.In stimulated my everything it literature.Greatly explain attempt perhaps in feeling he.House men taste bed not drawn joy.Through enquire however do equally herself at.Greatly way old may you present improve.Wishing the feeling village him musical.";
+	OIndex					oiViolation;
+	int						iLenViolation;
+	CFileUtil				cFileUtil;
+	unsigned int			uiDataSize;
+	char					szData[1024];
+	char					szDirectory[] = "Output" _FS_ "Database0";
+	CValueIndexedDataConfig	cConfig;
 
 	cFileUtil.RemoveDir(szDirectory);
 
@@ -100,7 +101,7 @@ void TestIndexedDataFlushClearCache(void)
 	CFileUtil				cFileUtil;
 	unsigned int			uiDataSize;
 	char					szData[7];
-	CSimpleIndexConfig		cConfig;
+	CValueIndexedDataConfig		cConfig;
 	SLogConfig				sLogConfig;
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -206,7 +207,7 @@ void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 	CFileUtil		cFileUtil;
 	unsigned int	uiDataSize;
 	char			szData[7];
-	CSimpleIndexConfig	cConfig;
+	CValueIndexedDataConfig	cConfig;
 
 	cFileUtil.RemoveDir(szDirectory);
 
@@ -279,7 +280,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	CFileUtil			cFileUtil;
 	char				szData[256];
 	OIndex				oi;
-	CSimpleIndexConfig	cConfig;
+	CValueIndexedDataConfig	cConfig;
 
 	AssertInt(20, strlen(szShortText1) + 1);
 	AssertInt(20, strlen(szShortText2) + 1);
@@ -440,7 +441,7 @@ void TestIndexedDataEvictKey(void)
 	unsigned int		uiDataSize;
 	char				szData[1024];
 	unsigned int		uiSize;
-	CSimpleIndexConfig	cConfig;
+	CValueIndexedDataConfig	cConfig;
 
 	cFileUtil.RemoveDir(szDirectory);
 
@@ -552,7 +553,7 @@ void TestIndexedDataIndexEviction(void)
 	unsigned int		uiSize;
 	filePos				iFileSize;
 	CFileUtil			cFileUtil;
-	CSimpleIndexConfig	cConfig;
+	CValueIndexedDataConfig	cConfig;
 
 	cFileUtil.RemoveDir(szDirectory);
 
@@ -681,7 +682,7 @@ void TestIndexedDataEvictAndFlush(void)
 	unsigned int		uiSize;
 	CFileUtil			cFileUtil;
 	unsigned char		ucFlags;
-	CSimpleIndexConfig	cConfig;
+	CValueIndexedDataConfig	cConfig;
 
 	cFileUtil.RemoveDir(szDirectory);
 
@@ -740,7 +741,7 @@ void TestIndexedDataFlushAndFlush(void)
 	char				szIn[8];
 	unsigned int		uiSize;
 	CFileUtil			cFileUtil;
-	CSimpleIndexConfig	cConfig;
+	CValueIndexedDataConfig	cConfig;
 
 	cFileUtil.RemoveDir(szDirectory);
 
@@ -804,7 +805,7 @@ void TestIndexedDataLargeData(void)
 	char				szIn[14];
 	CFileUtil			cFileUtil;
 	char				szDirectory[] = "Output" _FS_ "Database2";
-	CSimpleIndexConfig	cConfig;
+	CValueIndexedDataConfig	cConfig;
 
 	cFileUtil.RemoveDir(szDirectory);
 
@@ -870,7 +871,7 @@ void TestIndexedDataIndexedAdd(void)
 	CFileUtil				cFileUtil;
 	BOOL					bResult;
 	char					szDirectory[] = "Output" _FS_ "Database3";
-	CSimpleIndexConfig		cConfig;
+	CValueIndexedDataConfig		cConfig;
 	SLogConfig				sLogConfig;
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -959,7 +960,7 @@ void TestIndexedDataDescriptorCaching(void)
 	int						iData;
 	OIndex					iNumCached;
 	char					szDirectory[] = "Output" _FS_ "Database4";
-	CSimpleIndexConfig		cConfig;
+	CValueIndexedDataConfig		cConfig;
 	SLogConfig				sLogConfig;
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -1056,7 +1057,7 @@ void TestIndexedDataNoCaching(void)
 	int						iData;
 	int						iNumIndicesCached;
 	OIndex					iNumDataCached;
-	CSimpleIndexConfig		cConfig;
+	CValueIndexedDataConfig		cConfig;
 	SLogConfig				sLogConfig;
 	char					szDirectory[] = "Output" _FS_ "Database5";
 
@@ -1132,7 +1133,7 @@ void TestIndexedDataGet(void)
 	char				szSeizedPotPlants[] = {"Seized pot plants turn out to be daisies"};
 	char				szCallingFromWindows[] = {"I am calling you from Windows"};
 	char				szDirectory[] = "Output" _FS_ "Database6";
-	CSimpleIndexConfig	cConfig;
+	CValueIndexedDataConfig	cConfig;
 
 	cFileUtil.RemoveDir(szDirectory);
 
