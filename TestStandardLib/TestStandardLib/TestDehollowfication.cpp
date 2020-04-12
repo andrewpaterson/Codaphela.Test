@@ -115,7 +115,7 @@ void WriteDehollowficationChunkedFile(void)
 
 	cDouble = SetupDehollowficationScene();
 
-	cWriter.Init("Output\\Dehollowfication\\ChunkFile", "", "Double");
+	cWriter.Init("Output" _FS_ "Dehollowfication" _FS_ "ChunkFile", "", "Double");
 	cGraphSerialiser.Init(&cWriter);
 	AssertTrue(cGraphSerialiser.Write(&cDouble));
 	cGraphSerialiser.Kill();
@@ -132,13 +132,13 @@ void TestDehollowficationFromDatabase(void)
 	CIndexedConfig	cConfig;
 	CFileUtil		cFileUtil;
 
-	cConfig.Manual("Output\\Dehollowfication\\Database",
+	cConfig.Manual("Output" _FS_ "Dehollowfication" _FS_ "Database",
 					FALSE,
 					TRUE,
 					FALSE,
 					1 MB);
 
-	cFileUtil.RemoveDir("Output\\Dehollowfication\\Database");
+	cFileUtil.RemoveDir("Output" _FS_ "Dehollowfication" _FS_ "Database");
 
 	MemoryInit();
 	ObjectsInit(&cConfig);
@@ -155,8 +155,8 @@ void TestDehollowficationFromDatabase(void)
 
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(0, gcObjects.NumMemoryNames());
-	AssertLongLongInt(11, gcObjects.NumDatabaseObjects());
-	AssertLongLongInt(0, gcObjects.NumDatabaseObjectsCached());
+	AssertLongLongInt(11, gcObjects.NumIndicies());
+	AssertLongLongInt(0, gcObjects.NumIndiciesCached());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 
 	Ptr<CRoot> pRoot = ORoot();
@@ -166,7 +166,7 @@ void TestDehollowficationFromDatabase(void)
 	AssertLongLongInt(2, gcUnknowns.NumElements());
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
-	AssertLongLongInt(1, gcObjects.NumDatabaseObjectsCached());
+	AssertLongLongInt(1, gcObjects.NumIndiciesCached());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 	AssertInt(1, gcObjects.GetStackPointers()->UsedPointers());
 
@@ -209,7 +209,7 @@ void TestDehollowficationFromDatabase(void)
 	AssertLongLongInt(10, gcUnknowns.NumElements());
 	AssertLongLongInt(10, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
-	AssertLongLongInt(3, gcObjects.NumDatabaseObjectsCached());
+	AssertLongLongInt(3, gcObjects.NumIndiciesCached());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 
 	AssertTrue(pTest->mpSplit2.IsHollow());
@@ -220,7 +220,7 @@ void TestDehollowficationFromDatabase(void)
 
 	AssertLongLongInt(11, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
-	AssertLongLongInt(2, gcObjects.NumDatabaseObjectsCached());
+	AssertLongLongInt(2, gcObjects.NumIndiciesCached());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 
 	Ptr<CTestNamedString> pRandom = pRoot->Get<CTestNamedString>("NamedString 3");
@@ -236,7 +236,7 @@ void TestDehollowficationFromDatabase(void)
 	AssertFalse(pTest->mpSplit2->mszString.IsHollow());
 	AssertPointer(pRandom->mszString.Object(), pTest->mpSplit2->mszString.Object());
 
-	AssertLongLongInt(11, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(11, gcObjects.NumIndicies());
 
 	ObjectsKill();
 
@@ -260,13 +260,13 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 	CIndexedConfig	cConfig;
 	CFileUtil		cFileUtil;
 
-	cConfig.Manual("Output\\Dehollowfication\\Database",
+	cConfig.Manual("Output" _FS_ "Dehollowfication" _FS_ "Database",
 		FALSE,
 		TRUE,
 		FALSE,
 		1 MB);
 
-	cFileUtil.RemoveDir("Output\\Dehollowfication\\Database");
+	cFileUtil.RemoveDir("Output" _FS_ "Dehollowfication" _FS_ "Database");
 
 	MemoryInit();
 	ObjectsInit(&cConfig);
@@ -322,22 +322,22 @@ void TestDehollowficationFromChunkFileSource(void)
 {
 	CFileUtil		cFileUtil;
 
-	cFileUtil.RemoveDir("Output\\Dehollowfication\\ChunkFile");
+	cFileUtil.RemoveDir("Output" _FS_ "Dehollowfication" _FS_ "ChunkFile");
 
 	MemoryInit();
-	ObjectsInit("Output\\Dehollowfication\\Temp");
+	ObjectsInit("Output" _FS_ "Dehollowfication" _FS_ "Temp");
 	WriteDehollowficationChunkedFile();
 	ObjectsKill();
 	MemoryKill();
-	cFileUtil.RemoveDir("Output\\Dehollowfication\\Temp");
+	cFileUtil.RemoveDir("Output" _FS_ "Dehollowfication" _FS_ "Temp");
 
 	CObjectSourceChunked* pcObjectSourceChunked;
 
 
-	CDiskFile*	pcDiskFile = DiskFile("Output\\Dehollowfication\\ChunkFile\\Double.DRG");
+	CDiskFile*	pcDiskFile = DiskFile("Output" _FS_ "Dehollowfication" _FS_ "ChunkFile" _FS_ "Double.DRG");
 
 	MemoryInit();
-	ObjectsInit("Output\\Dehollowfication\\Temp");
+	ObjectsInit("Output" _FS_ "Dehollowfication" _FS_ "Temp");
 	SetupDehollowficationConstructors();
 
 	pcObjectSourceChunked = (CObjectSourceChunked*)gcObjects.AddSource<CObjectConverterNative>(pcDiskFile, "Double");  //Note the .DRG is intentionally dropped.

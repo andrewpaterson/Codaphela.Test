@@ -98,7 +98,7 @@ void TestNamedObjectName(void)
 	TestNamedObjectAddConstructors();
 
 	AssertLongLongInt(3, gcObjects.NumDatabaseNames());
-	AssertLongLongInt(5, gcObjects.NumDatabaseObjects());
+	AssertLongLongInt(5, gcObjects.NumIndicies());
 	AssertLongLongInt(0, gcObjects.NumMemoryNames());
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
