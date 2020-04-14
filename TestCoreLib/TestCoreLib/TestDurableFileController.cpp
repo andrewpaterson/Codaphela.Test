@@ -16,6 +16,37 @@
 //////////////////////////////////////////////////////////////////////////
 void TestDurableFileControllerDirectoryCreation(void)
 {
+	CDurableFileController	cController;
+	CDurableFile			cDurableFile;
+	char					szDirectory[] = "Output" _FS_ "Durable2";
+	char					szRewrite[] = "Output" _FS_ "_Durable2";
+	CFileUtil				cFileUtil;
+
+	cFileUtil.RemoveDir("Output" _FS_ "Durable2");
+
+	cController.Init(szDirectory, szRewrite);
+
+	cDurableFile.Init(&cController, "Output" _FS_ "Durable2" _FS_ "Write" _FS_ "Sub" _FS_ "Test.txt", "Output" _FS_ "Durable2" _FS_ "Rewrite" _FS_ "Sub" _FS_ "Test.txt");
+
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable2" _FS_ "Write" _FS_ "Sub" _FS_ "Test.txt"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable2" _FS_ "Rewrite" _FS_ "Sub" _FS_ "Test.txt"));
+
+	cController.Begin();
+	cController.End();
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable2" _FS_ "Write" _FS_ "Sub" _FS_ "Test.txt"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable2" _FS_ "Rewrite" _FS_ "Sub" _FS_ "Test.txt"));
+
+
+	cController.Begin();
+	cDurableFile.Write("Conan", 5, 1);
+	cController.End();
+	AssertBool(TRUE, cFileUtil.Exists("Output" _FS_ "Durable2" _FS_ "Write" _FS_ "Sub" _FS_ "Test.txt"));
+	AssertBool(TRUE, cFileUtil.Exists("Output" _FS_ "Durable2" _FS_ "Rewrite" _FS_ "Sub" _FS_ "Test.txt"));
+
+	cDurableFile.Kill();
+	cController.Kill();
+
+	cFileUtil.RemoveDir("Output" _FS_ "Durable2");
 }
 
 
@@ -32,17 +63,17 @@ void TestDurableFileControllerRecovery(void)
 	CDurableFile			cDurableFile3;
 	CDurableFile			cDurableFile4;
 	BOOL					bResult;
-	char					szDirectory[] = "Durable";
-	char					szRewrite[] = "_Durable";
+	char					szDirectory[] = "Output" _FS_ "Durable1" _FS_ "Write";
+	char					szRewrite[] = "Output" _FS_ "Durable1" _FS_ "Rewrite";
 
-	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
+	cFileUtil.RemoveDir("Output" _FS_ "Durable1");
 
 	cController.Init(szDirectory, szRewrite);
 
-	cDurableFile1.Init(&cController, "Durable" _FS_ "1.txt", "_Durable" _FS_ "1.txt");
-	cDurableFile2.Init(&cController, "Durable" _FS_ "2.txt", "_Durable" _FS_ "2.txt");
-	cDurableFile3.Init(&cController, "Durable" _FS_ "3.txt", "_Durable" _FS_ "3.txt");
-	cDurableFile4.Init(&cController, "Durable" _FS_ "4.txt", "_Durable" _FS_ "4.txt");
+	cDurableFile1.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write" _FS_ "1.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite" _FS_ "1.txt");
+	cDurableFile2.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write" _FS_ "2.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite" _FS_ "2.txt");
+	cDurableFile3.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write" _FS_ "3.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite" _FS_ "3.txt");
+	cDurableFile4.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write" _FS_ "4.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite" _FS_ "4.txt");
 
 	cController.Begin();
 	cDurableFile1.Write("Dulcedo ", 8, 1);
@@ -67,27 +98,27 @@ void TestDurableFileControllerRecovery(void)
 	cDurableFile4.Kill();
 	cController.Kill();
 
-	AssertFileString("Durable" _FS_ "1.txt", "Dulcedo Cogitationis");
-	AssertFileString("_Durable" _FS_ "1.txt", "Dulcedo Cogitationis");
-	AssertFileString("Durable" _FS_ "3.txt", "AAAABBBBCCCCDDDD");
-	AssertFileString("_Durable" _FS_ "3.txt", "AAAABBBBCCCCDDDD");
-	AssertFileString("Durable" _FS_ "4.txt", "Age Chaos Battle Orcs Humans");
-	AssertFileString("_Durable" _FS_ "4.txt", "Age Chaos Battle Orcs Humans");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Write" _FS_ "1.txt", "Dulcedo Cogitationis");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "1.txt", "Dulcedo Cogitationis");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Write" _FS_ "3.txt", "AAAABBBBCCCCDDDD");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "3.txt", "AAAABBBBCCCCDDDD");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Write" _FS_ "4.txt", "Age Chaos Battle Orcs Humans");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "4.txt", "Age Chaos Battle Orcs Humans");
 
-	AssertBool(FALSE, cFileUtil.Exists("Durable" _FS_ "2.txt"));
-	AssertBool(FALSE, cFileUtil.Exists("_Durable" _FS_ "2.txt"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Write" _FS_ "2.txt"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "2.txt"));
 
-	AssertBool(FALSE, cFileUtil.Exists("Durable" _FS_ "Mark1.Write"));
-	AssertBool(FALSE, cFileUtil.Exists("_Durable" _FS_ "Mark2.Rewrite"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Write" _FS_ "Mark1.Write"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "Mark2.Rewrite"));
 
 	//////////////////////////////////////////////////////////////////////////
 
-	cController.Init("Durable", "_Durable");
+	cController.Init(szDirectory, szRewrite);
 
-	cDurableFile1.Init(&cController, "Durable" _FS_ "1.txt", "_Durable" _FS_ "1.txt");
-	cDurableFile2.Init(&cController, "Durable" _FS_ "2.txt", "_Durable" _FS_ "2.txt");
-	cDurableFile3.Init(&cController, "Durable" _FS_ "3.txt", "_Durable" _FS_ "3.txt");
-	cDurableFile4.Init(&cController, "Durable" _FS_ "4.txt", "_Durable" _FS_ "4.txt");
+	cDurableFile1.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "1.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "1.txt");
+	cDurableFile2.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "2.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "2.txt");
+	cDurableFile3.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "3.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "3.txt");
+	cDurableFile4.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "4.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "4.txt");
 
 	//Recovery should do nothing as the files are consistent.
 	bResult = cController.Recover(&cDurableFile1, &cDurableFile2, &cDurableFile3, &cDurableFile4, NULL);
@@ -99,31 +130,31 @@ void TestDurableFileControllerRecovery(void)
 	cDurableFile4.Kill();
 	cController.Kill();
 
-	AssertFileString("Durable" _FS_ "1.txt", "Dulcedo Cogitationis");
-	AssertFileString("_Durable" _FS_ "1.txt", "Dulcedo Cogitationis");
-	AssertFileString("Durable" _FS_ "3.txt", "AAAABBBBCCCCDDDD");
-	AssertFileString("_Durable" _FS_ "3.txt", "AAAABBBBCCCCDDDD");
-	AssertFileString("Durable" _FS_ "4.txt", "Age Chaos Battle Orcs Humans");
-	AssertFileString("_Durable" _FS_ "4.txt", "Age Chaos Battle Orcs Humans");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Write" _FS_ "1.txt", "Dulcedo Cogitationis");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "1.txt", "Dulcedo Cogitationis");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Write" _FS_ "3.txt", "AAAABBBBCCCCDDDD");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "3.txt", "AAAABBBBCCCCDDDD");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Write" _FS_ "4.txt", "Age Chaos Battle Orcs Humans");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "4.txt", "Age Chaos Battle Orcs Humans");
 
-	AssertBool(FALSE, cFileUtil.Exists("Durable" _FS_ "2.txt"));
-	AssertBool(FALSE, cFileUtil.Exists("_Durable" _FS_ "2.txt"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Write" _FS_ "2.txt"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "2.txt"));
 
-	AssertBool(FALSE, cFileUtil.Exists("Durable" _FS_ "Mark1.Write"));
-	AssertBool(FALSE, cFileUtil.Exists("_Durable" _FS_ "Mark2.Rewrite"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Write" _FS_ "Mark1.Write"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "Mark2.Rewrite"));
 
 	//////////////////////////////////////////////////////////////////////////
 
-	cFileUtil.Touch("Durable" _FS_ "Mark1.Write");
-	cFileUtil.Delete("Durable" _FS_ "3.txt");
-	cFileUtil.Delete("Durable" _FS_ "4.txt");
+	cFileUtil.Touch("Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "Mark1.Write");
+	cFileUtil.Delete("Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "3.txt");
+	cFileUtil.Delete("Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "4.txt");
 
-	cController.Init("Durable", "_Durable");
+	cController.Init(szDirectory, szRewrite);
 
-	cDurableFile1.Init(&cController, "Durable" _FS_ "1.txt", "_Durable" _FS_ "1.txt");
-	cDurableFile2.Init(&cController, "Durable" _FS_ "2.txt", "_Durable" _FS_ "2.txt");
-	cDurableFile3.Init(&cController, "Durable" _FS_ "3.txt", "_Durable" _FS_ "3.txt");
-	cDurableFile4.Init(&cController, "Durable" _FS_ "4.txt", "_Durable" _FS_ "4.txt");
+	cDurableFile1.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "1.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "1.txt");
+	cDurableFile2.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "2.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "2.txt");
+	cDurableFile3.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "3.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "3.txt");
+	cDurableFile4.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "4.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "4.txt");
 
 	//Recovery should copy 3.txt and 4.txt back again.
 	bResult = cController.Recover(&cDurableFile1, &cDurableFile2, &cDurableFile3, &cDurableFile4, NULL);
@@ -135,32 +166,32 @@ void TestDurableFileControllerRecovery(void)
 	cDurableFile4.Kill();
 	cController.Kill();
 
-	AssertFileString("Durable" _FS_ "1.txt", "Dulcedo Cogitationis");
-	AssertFileString("_Durable" _FS_ "1.txt", "Dulcedo Cogitationis");
-	AssertFileString("Durable" _FS_ "3.txt", "AAAABBBBCCCCDDDD");
-	AssertFileString("_Durable" _FS_ "3.txt", "AAAABBBBCCCCDDDD");
-	AssertFileString("Durable" _FS_ "4.txt", "Age Chaos Battle Orcs Humans");
-	AssertFileString("_Durable" _FS_ "4.txt", "Age Chaos Battle Orcs Humans");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "1.txt", "Dulcedo Cogitationis");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "1.txt", "Dulcedo Cogitationis");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "3.txt", "AAAABBBBCCCCDDDD");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "3.txt", "AAAABBBBCCCCDDDD");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "4.txt", "Age Chaos Battle Orcs Humans");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "4.txt", "Age Chaos Battle Orcs Humans");
 
-	AssertBool(FALSE, cFileUtil.Exists("Durable" _FS_ "2.txt"));
-	AssertBool(FALSE, cFileUtil.Exists("_Durable" _FS_ "2.txt"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "2.txt"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "2.txt"));
 
-	AssertBool(FALSE, cFileUtil.Exists("Durable" _FS_ "Mark1.Write"));
-	AssertBool(FALSE, cFileUtil.Exists("_Durable" _FS_ "Mark2.Rewrite"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "Mark1.Write"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "Mark2.Rewrite"));
 
 	//////////////////////////////////////////////////////////////////////////
 
-	cFileUtil.Touch("Durable" _FS_ "Mark1.Write");
-	cFileUtil.Touch("_Durable" _FS_ "Mark2.Rewrite");
-	cFileUtil.Delete("_Durable" _FS_ "1.txt");
-	cFileUtil.Delete("_Durable" _FS_ "4.txt");
+	cFileUtil.Touch("Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "Mark1.Write");
+	cFileUtil.Touch("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "Mark2.Rewrite");
+	cFileUtil.Delete("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "1.txt");
+	cFileUtil.Delete("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "4.txt");
 
-	cController.Init("Durable", "_Durable");
+	cController.Init(szDirectory, szRewrite);
 
-	cDurableFile1.Init(&cController, "Durable" _FS_ "1.txt", "_Durable" _FS_ "1.txt");
-	cDurableFile2.Init(&cController, "Durable" _FS_ "2.txt", "_Durable" _FS_ "2.txt");
-	cDurableFile3.Init(&cController, "Durable" _FS_ "3.txt", "_Durable" _FS_ "3.txt");
-	cDurableFile4.Init(&cController, "Durable" _FS_ "4.txt", "_Durable" _FS_ "4.txt");
+	cDurableFile1.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "1.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "1.txt");
+	cDurableFile2.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "2.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "2.txt");
+	cDurableFile3.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "3.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "3.txt");
+	cDurableFile4.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "4.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "4.txt");
 
 	//Recovery should copy _1.txt and _4.txt back again.
 	bResult = cController.Recover(&cDurableFile1, &cDurableFile2, &cDurableFile3, &cDurableFile4, NULL);
@@ -168,22 +199,22 @@ void TestDurableFileControllerRecovery(void)
 
 	cController.Kill();
 
-	AssertFileString("Durable" _FS_ "1.txt", "Dulcedo Cogitationis");
-	AssertFileString("_Durable" _FS_ "1.txt", "Dulcedo Cogitationis");
-	AssertFileString("Durable" _FS_ "3.txt", "AAAABBBBCCCCDDDD");
-	AssertFileString("_Durable" _FS_ "3.txt", "AAAABBBBCCCCDDDD");
-	AssertFileString("Durable" _FS_ "4.txt", "Age Chaos Battle Orcs Humans");
-	AssertFileString("_Durable" _FS_ "4.txt", "Age Chaos Battle Orcs Humans");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "1.txt", "Dulcedo Cogitationis");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "1.txt", "Dulcedo Cogitationis");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "3.txt", "AAAABBBBCCCCDDDD");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "3.txt", "AAAABBBBCCCCDDDD");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "4.txt", "Age Chaos Battle Orcs Humans");
+	AssertFileString("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "4.txt", "Age Chaos Battle Orcs Humans");
 
-	AssertBool(FALSE, cFileUtil.Exists("Durable" _FS_ "2.txt"));
-	AssertBool(FALSE, cFileUtil.Exists("_Durable" _FS_ "2.txt"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "2.txt"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "2.txt"));
 
-	AssertBool(FALSE, cFileUtil.Exists("Durable" _FS_ "Mark1.Write"));
-	AssertBool(FALSE, cFileUtil.Exists("_Durable" _FS_ "Mark2.Rewrite"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "Mark1.Write"));
+	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "Mark2.Rewrite"));
 
 	//////////////////////////////////////////////////////////////////////////
 
-	cFileUtil.RemoveDir("Durable");
+	cFileUtil.RemoveDir("Output" _FS_ "Durable1");
 }
 
 

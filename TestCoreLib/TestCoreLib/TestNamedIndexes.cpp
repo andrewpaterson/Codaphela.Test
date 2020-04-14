@@ -33,7 +33,7 @@ void TestNamedIndexesAdd(void)
 	cController.Begin();
 
 	cEvictionStrategy.Init();
-	cDataConfig.Init(&cController, 10 MB, &cEvictionStrategy, IWT_No);
+	cDataConfig.Init(&cController, NULL, 16 KB, &cEvictionStrategy, IWT_No);
 	cNamedIndexes.Init(&cDataConfig);
 	cDataConfig.Kill();
 
@@ -120,7 +120,7 @@ void TestNamedIndexesRemove(void)
 	cController.Begin();
 	
 	cEvictionStrategy.Init();
-	cDataConfig.Init(&cController, 10 MB, &cEvictionStrategy, IWT_No);
+	cDataConfig.Init(&cController, NULL, 16 KB, &cEvictionStrategy, IWT_No);
 	cNamedIndexes.Init(&cDataConfig);
 	cDataConfig.Kill();
 
@@ -223,7 +223,7 @@ void TestNamedIndexesCacheEviction(void)
 	cController.Begin();
 
 	cEvictionStrategy.Init();
-	cDataConfig.Init(&cController, 8192, &cEvictionStrategy, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8192, &cEvictionStrategy, IWT_No);
 	cNamedIndexes.Init(&cDataConfig);
 	cDataConfig.Kill();
 
@@ -318,7 +318,7 @@ void TestNamedIndexesLoad(void)
 	AssertTrue(cController.Begin());
 
 	cEvictionStrategy.Init();
-	cDataConfig.Init(&cController, 10 MB, &cEvictionStrategy, IWT_No);
+	cDataConfig.Init(&cController, NULL, 16 KB, &cEvictionStrategy, IWT_No);
 	cNamedIndexes.Init(&cDataConfig);
 
 	cNamedIndexes.Add("Arthur Miller", 1LL);

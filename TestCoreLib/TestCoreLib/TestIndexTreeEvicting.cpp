@@ -42,7 +42,7 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	cDurableController.Begin();
 	cEvictedNodes.Init();
 	cStrategy.Init();
-	cIndexTree.Init(&cDurableController, 3656, &cEvictedNodes, &cStrategy, &gcIndexTreeFileDefaultCallback, &cAllocator, eWriteThrough, IKR_No);
+	cIndexTree.Init(&cDurableController, "Here", 3656, &cEvictedNodes, &cStrategy, &gcIndexTreeFileDefaultCallback, &cAllocator, eWriteThrough, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	AssertLongLongInt(3096, pcMemory->GetTotalAllocatedMemory());
@@ -110,7 +110,7 @@ void TestIndexTreeEvictingEvictWithChildren(void)
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
+	cIndexTree.Init(&cDurableController, NULL, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	AssertTrue(cAccess.PutStringString(szAlbatros, szAlbatros));
@@ -170,7 +170,7 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
+	cIndexTree.Init(&cDurableController, NULL, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
 	AssertLongLongInt(3096, pcMemory->GetTotalAllocatedMemory());
 
@@ -436,7 +436,7 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 	AssertLongLongInt(0, pcMemory->GetTotalAllocatedMemory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
+	cIndexTree.Init(&cDurableController, NULL, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
 	AssertLongLongInt(3120, pcMemory->GetTotalAllocatedMemory());
 

@@ -40,7 +40,7 @@ void TestIndexedFilesWorkingDirectory(void)
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
 	cController.Begin();
-	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
+	cIndexedFiles.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX");
 	AssertTrue(cIndexedFiles.ReadIndexedFileDescriptors());
 	AssertFalse(cFileUtil.Exists(szDirectorty));
 	AssertFalse(cFileUtil.Exists(szRewriteDirectorty));
@@ -73,7 +73,7 @@ void TestIndexedFilesInitAndKillWihtoutOpen(void)
 	cFileUtil.RemoveDirs(szDirectorty, szRewriteDirectorty, NULL);
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
-	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
+	cIndexedFiles.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX");
 	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(cIndexedFiles.ReadIndexedFileDescriptors());
 	gcLogger.SetConfig(&sLogConfig);
@@ -127,7 +127,7 @@ void TestIndexedFilesWrite(void)
 	AssertFalse(cFileUtil.Exists(szRewriteDirectorty));
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
-	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
+	cIndexedFiles.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX");
 
 	AssertTrue(cController.Begin());
 	AssertTrue(cIndexedFiles.ReadIndexedFileDescriptors());
@@ -166,7 +166,7 @@ void TestIndexedFilesWrite(void)
 	AssertInt(100, iLen4);
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
-	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
+	cIndexedFiles.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX");
 
 	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(cIndexedFiles.ReadIndexedFileDescriptors());  //Controller not begun.
@@ -211,7 +211,7 @@ void TestIndexedFilesWrite(void)
 	cController.Kill();
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
-	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
+	cIndexedFiles.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX");
 	AssertTrue(cController.Begin());
 	cIndexedFiles.ReadIndexedFileDescriptors();
 	AssertTrue(cController.End());
@@ -227,7 +227,7 @@ void TestIndexedFilesWrite(void)
 
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
-	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
+	cIndexedFiles.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX");
 	AssertTrue(cController.Begin());
 	AssertTrue(cIndexedFiles.ReadIndexedFileDescriptors());
 	AssertTrue(cController.End());
@@ -237,7 +237,7 @@ void TestIndexedFilesWrite(void)
 	cController.Kill();
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
-	cIndexedFiles.Init(&cController, "DAT", "Files.IDX", "_Files.IDX");
+	cIndexedFiles.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX");
 	cController.Begin();
 	cIndexedFiles.ReadIndexedFileDescriptors();
 
