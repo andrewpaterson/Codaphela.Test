@@ -15,6 +15,7 @@ void TestIndexTreeNodeMemoryInit(void)
 	long long int			uiObject;
 	CIndexTreeNodeMemory*	pcResult;
 	CIndexTreeMemory		cTree;
+	SLogConfig				sLogConfig;
 	
 	cTree.FakeInit(IKR_No);
 
@@ -32,9 +33,9 @@ void TestIndexTreeNodeMemoryInit(void)
 	AssertTrue(pcNode->HasNodes());
 	AssertFalse(pcNode->HasObject());
 
-	gcLogger.SetBreakOnError(FALSE);
+	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(pcNode->ValidateNodesEmpty());
-	gcLogger.SetBreakOnError(TRUE);
+	gcLogger.SetConfig(&sLogConfig);
 
 	AssertInt(33, pcNode->GetFirstIndex());
 	AssertInt(33, pcNode->GetLastIndex());
