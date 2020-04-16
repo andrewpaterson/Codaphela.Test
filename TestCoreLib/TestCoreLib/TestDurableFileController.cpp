@@ -18,15 +18,15 @@ void TestDurableFileControllerDirectoryCreation(void)
 {
 	CDurableFileController	cController;
 	CDurableFile			cDurableFile;
-	char					szDirectory[] = "Output" _FS_ "Durable2";
-	char					szRewrite[] = "Output" _FS_ "_Durable2";
+	char					szDirectory[] = "Output" _FS_ "Durable2" _FS_ "Write";
+	char					szRewrite[] = "Output" _FS_ "Durable2" _FS_ "Rewrite";
 	CFileUtil				cFileUtil;
 
 	cFileUtil.RemoveDir("Output" _FS_ "Durable2");
 
 	cController.Init(szDirectory, szRewrite);
 
-	cDurableFile.Init(&cController, "Output" _FS_ "Durable2" _FS_ "Write" _FS_ "Sub" _FS_ "Test.txt", "Output" _FS_ "Durable2" _FS_ "Rewrite" _FS_ "Sub" _FS_ "Test.txt");
+	cDurableFile.Init(&cController, "Sub" _FS_ "Test.txt", "Sub" _FS_ "Test.txt");
 
 	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable2" _FS_ "Write" _FS_ "Sub" _FS_ "Test.txt"));
 	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable2" _FS_ "Rewrite" _FS_ "Sub" _FS_ "Test.txt"));
@@ -70,10 +70,10 @@ void TestDurableFileControllerRecovery(void)
 
 	cController.Init(szDirectory, szRewrite);
 
-	cDurableFile1.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write" _FS_ "1.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite" _FS_ "1.txt");
-	cDurableFile2.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write" _FS_ "2.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite" _FS_ "2.txt");
-	cDurableFile3.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write" _FS_ "3.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite" _FS_ "3.txt");
-	cDurableFile4.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write" _FS_ "4.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite" _FS_ "4.txt");
+	cDurableFile1.Init(&cController, "1.txt", "1.txt");
+	cDurableFile2.Init(&cController, "2.txt", "2.txt");
+	cDurableFile3.Init(&cController, "3.txt", "3.txt");
+	cDurableFile4.Init(&cController, "4.txt", "4.txt");
 
 	cController.Begin();
 	cDurableFile1.Write("Dulcedo ", 8, 1);
@@ -115,10 +115,10 @@ void TestDurableFileControllerRecovery(void)
 
 	cController.Init(szDirectory, szRewrite);
 
-	cDurableFile1.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "1.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "1.txt");
-	cDurableFile2.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "2.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "2.txt");
-	cDurableFile3.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "3.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "3.txt");
-	cDurableFile4.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "4.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "4.txt");
+	cDurableFile1.Init(&cController, "1.txt", "1.txt");
+	cDurableFile2.Init(&cController, "2.txt", "2.txt");
+	cDurableFile3.Init(&cController, "3.txt", "3.txt");
+	cDurableFile4.Init(&cController, "4.txt", "4.txt");
 
 	//Recovery should do nothing as the files are consistent.
 	bResult = cController.Recover(&cDurableFile1, &cDurableFile2, &cDurableFile3, &cDurableFile4, NULL);
@@ -151,10 +151,10 @@ void TestDurableFileControllerRecovery(void)
 
 	cController.Init(szDirectory, szRewrite);
 
-	cDurableFile1.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "1.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "1.txt");
-	cDurableFile2.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "2.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "2.txt");
-	cDurableFile3.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "3.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "3.txt");
-	cDurableFile4.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "4.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "4.txt");
+	cDurableFile1.Init(&cController, "1.txt", "1.txt");
+	cDurableFile2.Init(&cController, "2.txt", "2.txt");
+	cDurableFile3.Init(&cController, "3.txt", "3.txt");
+	cDurableFile4.Init(&cController, "4.txt", "4.txt");
 
 	//Recovery should copy 3.txt and 4.txt back again.
 	bResult = cController.Recover(&cDurableFile1, &cDurableFile2, &cDurableFile3, &cDurableFile4, NULL);
@@ -188,10 +188,10 @@ void TestDurableFileControllerRecovery(void)
 
 	cController.Init(szDirectory, szRewrite);
 
-	cDurableFile1.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "1.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "1.txt");
-	cDurableFile2.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "2.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "2.txt");
-	cDurableFile3.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "3.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "3.txt");
-	cDurableFile4.Init(&cController, "Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "4.txt", "Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "4.txt");
+	cDurableFile1.Init(&cController, "1.txt", "1.txt");
+	cDurableFile2.Init(&cController, "2.txt", "2.txt");
+	cDurableFile3.Init(&cController, "3.txt", "3.txt");
+	cDurableFile4.Init(&cController, "4.txt", "4.txt");
 
 	//Recovery should copy _1.txt and _4.txt back again.
 	bResult = cController.Recover(&cDurableFile1, &cDurableFile2, &cDurableFile3, &cDurableFile4, NULL);

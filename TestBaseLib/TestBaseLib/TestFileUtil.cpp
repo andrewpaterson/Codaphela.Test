@@ -14,6 +14,8 @@ void TestFileUtilMisc(void)
 	CChars		szPath;
 
 	szPath.Init("TestFileUtil");
+	cFileUtil.RemoveDir(szPath.Text());
+
 	bResult = cFileUtil.MakeDir(szPath.Text());
 	AssertTrue(bResult);
 
@@ -331,6 +333,7 @@ void TestFileUtilTouchDirectoryOnlyFileName(void)
 	szDirectory.Kill();
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -381,6 +384,25 @@ void TestFileUtilPrependToPath(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFileUtilRootDirectory(void)
+{
+	CFileUtil		cFileUtil;
+	AssertTrue(cFileUtil.IsRootDirectory("C:\\"));
+	AssertFalse(cFileUtil.IsRootDirectory("C:\\A"));
+	AssertTrue(cFileUtil.IsRootDirectory("\\"));
+	AssertFalse(cFileUtil.IsRootDirectory("\\A"));
+	AssertFalse(cFileUtil.IsRootDirectory("C:\\A\\"));
+	AssertFalse(cFileUtil.IsRootDirectory("\\A\\"));
+	AssertFalse(cFileUtil.IsRootDirectory("A\\"));
+
+	AssertFalse(cFileUtil.IsRootDirectory(""));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFileUtil(void)
 {
 	BeginTests();
@@ -397,6 +419,7 @@ void TestFileUtil(void)
 	TestFileUtilTouchDirectory();
 	TestFileUtilTouchDirectoryOnlyFileName();
 	TestFileUtilPrependToPath();
+	TestFileUtilRootDirectory();
 
 	FastFunctionsKill();
 	MemoryKill();

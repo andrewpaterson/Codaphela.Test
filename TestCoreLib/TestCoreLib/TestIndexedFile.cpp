@@ -29,12 +29,8 @@ void TestIndexedFileWrite(void)
 	bResult = cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 	AssertTrue(bResult);
 
-	szWrite.Init(szDirectory);
-	szWrite.Append(FILE_SEPARATOR[0]);
-	szWrite.Append("File.DAT");
-	szRewrite.Init(szRewriteDirectory);
-	szRewrite.Append(FILE_SEPARATOR[0]);
-	szRewrite.Append("_File.DAT");
+	szWrite.Init("File.DAT");
+	szRewrite.Init("_File.DAT");
 
 	cDurableController.Init(szDirectory, szRewriteDirectory);
 	cDurableController.Begin();

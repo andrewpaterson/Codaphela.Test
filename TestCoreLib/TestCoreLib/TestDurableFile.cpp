@@ -41,8 +41,7 @@ void TestDurableFileInit(BOOL bDurable)
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
 
 	cController.Init(szDirectory, SetDurable(szRewrite, bDurable));
-	cDurableFile.Init(&cController, "Output" _FS_ "Durable1" _FS_ "TestFile.txt", 
-									"Output" _FS_ "_Durable1" _FS_ "_TestFile.txt");
+	cDurableFile.Init(&cController, "TestFile.txt", "_TestFile.txt");
 	cController.Begin();
 
 	cController.End();
@@ -74,8 +73,7 @@ void TestDurableFileWrite(BOOL bDurable)
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
 
 	cController.Init(szDirectory, SetDurable(szRewrite, bDurable));
-	cDurableFile.Init(&cController, "Output" _FS_ "Durable2" _FS_ "WrittenFile.txt", 
-									"Output" _FS_ "_Durable2" _FS_ "_WrittenFile.txt");
+	cDurableFile.Init(&cController, "WrittenFile.txt", "_WrittenFile.txt");
 	cController.Begin();
 
 	AssertTrue(cController.IsBegun());
@@ -140,8 +138,7 @@ void TestDurableFileCloseOpen(BOOL bDurable)
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
 
 	cController.Init(szDirectory, SetDurable(szRewrite, bDurable));
-	cDurableFile.Init(&cController, "Output" _FS_ "Durable7" _FS_ "WrittenFile.txt", 
-									"Output" _FS_ "_Durable7" _FS_ "_WrittenFile.txt");
+	cDurableFile.Init(&cController, "WrittenFile.txt", "_WrittenFile.txt");
 	cController.Begin();
 
 	iResult = cDurableFile.Write(4, szA, 4, 1);
@@ -153,8 +150,7 @@ void TestDurableFileCloseOpen(BOOL bDurable)
 	cController.End();
 	cDurableFile.Kill();
 
-	cDurableFile.Init(&cController, "Output" _FS_ "Durable7" _FS_ "WrittenFile.txt", 
-									"Output" _FS_ "_Durable7" _FS_ "_WrittenFile.txt");
+	cDurableFile.Init(&cController, "WrittenFile.txt", "_WrittenFile.txt");
 	cController.Begin();
 
 	AssertLongLongInt(8, cDurableFile.Size());
@@ -192,8 +188,7 @@ void TestDurableFileComplex(BOOL bDurable)
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
 
 	cController.Init(szDirectory, SetDurable(szRewrite, bDurable));
-	cDurableFile.Init(&cController, "Output" _FS_ "Durable3" _FS_ "WrittenFile.txt", 
-									"Output" _FS_ "_Durable3" _FS_ "_WrittenFile.txt");
+	cDurableFile.Init(&cController, "WrittenFile.txt", "_WrittenFile.txt");
 	cController.Begin();
 
 	iResult = cDurableFile.Write(4, szB, 2, 2);
@@ -311,7 +306,7 @@ void TestDurableFileRead(BOOL bDurable)
 	cTextFile.Kill();
 
 	cController.Init(szDirectory, SetDurable(szRewrite, bDurable));
-	cDurableFile.Init(&cController, "Output" _FS_ "Durable4" _FS_ "ReadFile.txt", "Output" _FS_ "_Durable4" _FS_ "_ReadFile.txt");
+	cDurableFile.Init(&cController, "ReadFile.txt", "_ReadFile.txt");
 	cController.Begin();
 	AssertFalse(cDurableFile.TestGetOpenedSinceBegin());
 	AssertInt(0, cController.NumFiles());
@@ -393,7 +388,7 @@ void TestDurableFileWriteRound2(BOOL bDurable)
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
 
 	cController.Init(szDirectory, SetDurable(szRewrite, bDurable));
-	cDurableFile.Init(&cController, szFileName, szRewriteName);
+	cDurableFile.Init(&cController, "WrittenFile.txt", "_WrittenFile.txt");
 	cController.Begin();
 
 	AssertFalse(cFileUtil.Exists(szFileName));
@@ -470,7 +465,7 @@ void TestDurableFileReadNonExistant(BOOL bDurable)
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
 
 	cController.Init(szDirectory, SetDurable(szRewrite, bDurable));
-	cDurableFile.Init(&cController, szFileName, szRewriteName);
+	cDurableFile.Init(&cController, "ReadFile.txt", "_ReadFile.txt");
 
 	AssertFalse(cFileUtil.Exists(szFileName));
 	AssertFalse(cFileUtil.Exists(szRewriteName));
@@ -516,15 +511,13 @@ void TestDurableFileNoController(void)
 	CDurableFile	cDurableFile;
 	char			szDirectory[] = "Output" _FS_ "Durable7";
 	char			szRewrite[] = "Output" _FS_ "_Durable7";
-	char			szFileName[] = "Output" _FS_ "Durable7" _FS_ "ReadFile.txt";
-	char			szRewriteName[] = "Output" _FS_ "_Durable7" _FS_ "_ReadFile.txt";
 	CFileUtil		cFileUtil;
 	char			szDest[1024];
 
 	//Should probably actually test something...
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
 
-	cDurableFile.Init(NULL, szFileName, szRewriteName);
+	cDurableFile.Init(NULL, "ReadFile.txt", "_ReadFile.txt");
 
 	cDurableFile.Read(szDest, 16, 1);
 
