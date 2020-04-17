@@ -804,7 +804,6 @@ void TestIndexedFilesEvicting(void)
 	DataMemoryInit();
 	BeginTests();
 
-	//None of these tests work because cDescriptors.Flush(TRUE) does not update the CIndexedDataDescriptor
 	TestIndexedFilesEvictingSetDataNoCacheNoFile();
 	TestIndexedFilesEvictingSetDataCacheSameSizeNoFile();
 	TestIndexedFilesEvictingSetDataCacheDiffSizeNoFile();
