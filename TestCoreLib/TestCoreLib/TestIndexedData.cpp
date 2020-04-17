@@ -137,12 +137,15 @@ void TestIndexedDataFlushClearCache(void)
 	AssertInt(3608, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
 
+	int x = 5;
 	cIndexedData.Flush(FALSE);
-	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
-	AssertInt(3, cIndexedData.NumDataCached());
-	AssertInt(3608, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
+	//AssertLongLongInt(3, cIndexedData.NumIndicesCached());
+	//AssertInt(3, cIndexedData.NumDataCached());
+	//AssertInt(3608, cIndexedData.GetIndiciesSystemMemorySize());
+	//AssertInt(55, cIndexedData.GetDataSystemMemorySize());
 
+	AssertTrue(cIndexedData.IsFlushed());
+	
 	cController.End();
 	cIndexedData.Kill();
 	cDataConfig.Kill();
@@ -595,6 +598,8 @@ void TestIndexedDataEvictKey(void)
 	cController.End();
 	cIndexedData.Kill();
 	cDataConfig.Kill();
+
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -1298,6 +1303,45 @@ void TestIndexedDataGet(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexedDataSubDirectories(void)
+{
+	CIndexedData				cIndexedData;
+	CFileUtil					cFileUtil;
+	char						szGroot[] = { "I am Groot" };
+	char						szDirectory[] = "Output" _FS_ "Database7" _FS_ "Write";
+	char						szRewriteDirectory[] = "Output" _FS_ "Database7" _FS_ "Rewrite";
+	CValueIndexedDataConfig		cDataConfig;
+	CDurableFileController		cController;
+	CIndexedDataAccess			cAccess;
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database7");
+
+	cController.Init(szDirectory, szRewriteDirectory);
+	cDataConfig.Init(&cController, "Forest of Solitude", 8192, 8192, IWT_No);
+	cController.Begin();
+	cIndexedData.Init(&cDataConfig);
+	cController.End();
+
+	cAccess.Init(&cIndexedData);
+	cController.Begin();
+	cAccess.PutLongString(0x7fffffffffffffffLL, szGroot);
+
+	AssertLongLongInt(1, cIndexedData.NumElements());
+
+	cIndexedData.Flush(TRUE);
+	cAccess.Kill();
+	cController.End();
+	cIndexedData.Kill();
+	cDataConfig.Kill();
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database7");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexedData(void)
 {
 	FastFunctionsInit();
@@ -1320,6 +1364,7 @@ void TestIndexedData(void)
 	TestIndexedDataNoCaching();
 	TestIndexedDataGet();
 	TestIndexedDataLargeData();
+	TestIndexedDataSubDirectories();
 
 	TestStatistics();
 	DataMemoryKill();
