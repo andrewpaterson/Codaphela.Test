@@ -513,11 +513,16 @@ void TestDurableFileNoController(void)
 	char			szRewrite[] = "Output" _FS_ "_Durable7";
 	CFileUtil		cFileUtil;
 	char			szDest[1024];
+	SLogConfig		sLogConfig;
+	BOOL			bResult;
 
 	//Should probably actually test something...
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
 
-	cDurableFile.Init(NULL, "ReadFile.txt", "_ReadFile.txt");
+	sLogConfig = gcLogger.SetSilent();
+	bResult = cDurableFile.Init(NULL, "ReadFile.txt", "_ReadFile.txt");
+	gcLogger.SetConfig(&sLogConfig);
+	AssertFalse(bResult);
 
 	cDurableFile.Read(szDest, 16, 1);
 
