@@ -137,15 +137,14 @@ void TestIndexedDataFlushClearCache(void)
 	AssertInt(3608, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
 
-	int x = 5;
 	cIndexedData.Flush(FALSE);
-	//AssertLongLongInt(3, cIndexedData.NumIndicesCached());
-	//AssertInt(3, cIndexedData.NumDataCached());
-	//AssertInt(3608, cIndexedData.GetIndiciesSystemMemorySize());
-	//AssertInt(55, cIndexedData.GetDataSystemMemorySize());
-
+	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
+	AssertInt(3, cIndexedData.NumDataCached());
+	AssertInt(3608, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
 	AssertTrue(cIndexedData.IsFlushed());
 	
+	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
 	cDataConfig.Kill();
@@ -176,6 +175,7 @@ void TestIndexedDataFlushClearCache(void)
 	AssertInt(3668, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(00, cIndexedData.GetDataSystemMemorySize());
 
+	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
 	cDataConfig.Kill();
@@ -213,6 +213,7 @@ void TestIndexedDataFlushClearCache(void)
 	AssertInt(3668, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
 
+	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
 	cDataConfig.Kill();
@@ -290,6 +291,7 @@ void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 	AssertInt(3, cIndexedData.NumDataCached());
 	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
 
+	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
 	cDataConfig.Kill();
@@ -341,6 +343,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	AssertNotNull(cAccess.GetLongString(oi, szData));
 	AssertString(szShortText1, szData);
 
+	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
 	cDataConfig.Kill();
@@ -366,6 +369,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	AssertLongLongInt(1, cIndexedData.NumIndicesCached());
 	AssertInt(1, cIndexedData.NumDataCached());
 
+	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
 	cDataConfig.Kill();
@@ -385,6 +389,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	AssertNotNull(cAccess.GetLongString(oi, szData));
 	AssertString(szLongText, szData);
 
+	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
 	cDataConfig.Kill();
@@ -406,6 +411,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	AssertNotNull(cAccess.GetLongString(oi, szData));
 	AssertString(szShortText2, szData);
 
+	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
 	cDataConfig.Kill();
@@ -451,6 +457,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	AssertNotNull(cAccess.GetLongString(oi, szData));
 	AssertString(szShortText2, szData);
 
+	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
 	cDataConfig.Kill();
@@ -474,6 +481,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	AssertNotNull(cAccess.GetLongString(oi, szData));
 	AssertString(szLongText, szData);
 
+	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
 	cDataConfig.Kill();
@@ -571,6 +579,7 @@ void TestIndexedDataEvictKey(void)
 	uiSize = cIndexedData.Size(4LL);
 	AssertInt(6, uiSize);
 
+	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
 	cDataConfig.Kill();
@@ -673,6 +682,7 @@ void TestIndexedDataIndexEviction(void)
 	AssertLongLongInt(2, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
 
+	AssertTrue(cIndexedData.Flush());
 	AssertTrue(cController.End());
 	cIndexedData.Kill();
 	cDataConfig.Kill();
@@ -725,7 +735,8 @@ void TestIndexedDataIndexEviction(void)
 	AssertString("Hello", szIn);
 	AssertInt(3, cIndexedData.NumDataCached());
 	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
-	cController.End();
+	AssertTrue(cIndexedData.Flush());
+	AssertTrue(cController.End());
 
 	cIndexedData.Kill();
 	cDataConfig.Kill();
@@ -1223,7 +1234,8 @@ void TestIndexedDataNoCaching(void)
 	iNumDataCached = cIndexedData.NumDataCached();
 	AssertLongLongInt(0, iNumDataCached);
 
-	cController.End();
+	AssertTrue(cIndexedData.Flush());
+	AssertTrue(cController.End());
 
 	cIndexedData.Kill();
 	cDataConfig.Kill();
@@ -1328,7 +1340,7 @@ void TestIndexedDataSubDirectories(void)
 
 	AssertLongLongInt(1, cIndexedData.NumElements());
 
-	cIndexedData.Flush(TRUE);
+	cIndexedData.Flush();
 	cAccess.Kill();
 	cController.End();
 	cIndexedData.Kill();
