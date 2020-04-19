@@ -162,6 +162,12 @@
     <ClCompile Include="TestNamedIndexes.cpp">
       <Filter>Source\File\Indexed\Named</Filter>
     </ClCompile>
+    <ClCompile Include="TestNamedIndexedData.cpp">
+      <Filter>Source\File\Indexed\Named</Filter>
+    </ClCompile>
+    <ClCompile Include="NamedIndexedDataObject.cpp">
+      <Filter>Source\File\Indexed\Named</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -181,6 +187,9 @@
     </ClInclude>
     <ClInclude Include="IndexTreeCallbackTestObject.h">
       <Filter>Source\File\Indexed\Index</Filter>
+    </ClInclude>
+    <ClInclude Include="NamedIndexedDataObject.h">
+      <Filter>Source\File\Indexed\Named</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

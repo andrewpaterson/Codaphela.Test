@@ -30,6 +30,7 @@ void TestPackFilesPacker(void);
 void TestIndexedFilesEvicting(void);
 void TestIndexTreeEvicting(void);
 void TestNamedIndexes(void);
+void TestNamedIndexedData(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,35 +41,36 @@ int main(void)
 {
 	InitTotalStatistics();
 
-	TestFloatHelper();
-	TestIntegerHelper();
-	TestFastFunctions();
-	TestPropertiesFile();
-	TestXMLParser();
-	TestXMLFile();
-	TestNumber();
-	TestOperators();
-	TestFunctionCaller();
-	TestLogFile();
-	TestDurableSet();
-	TestDurableFile();
-	TestDurableFileController();
-	TestIndexes();
-	TestFiles();
-	TestPackFilesPacker();
-	TestIndexedFile();
-	TestIndexedFiles();
-	TestIndexTreeMemory();
-	TestIndexTreeNodeFile();
-	TestIndexTreeFile();
-	TestIndexTreeFileCallback();
-	TestIndexTreeTemplateFile();
-	TestIndexTreeAccess();
-	TestIndexTreeWriter();
-	TestIndexTreeEvicting();
-	TestIndexedFilesEvicting();
-	TestIndexedData();
-	TestNamedIndexes();
+	//TestFloatHelper();
+	//TestIntegerHelper();
+	//TestFastFunctions();
+	//TestPropertiesFile();
+	//TestXMLParser();
+	//TestXMLFile();
+	//TestNumber();
+	//TestOperators();
+	//TestFunctionCaller();
+	//TestLogFile();
+	//TestDurableSet();
+	//TestDurableFile();
+	//TestDurableFileController();
+	//TestIndexes();
+	//TestFiles();
+	//TestPackFilesPacker();
+	//TestIndexedFile();
+	//TestIndexedFiles();
+	//TestIndexTreeMemory();
+	//TestIndexTreeNodeFile();
+	//TestIndexTreeFile();
+	//TestIndexTreeFileCallback();
+	//TestIndexTreeTemplateFile();
+	//TestIndexTreeAccess();
+	//TestIndexTreeWriter();
+	//TestIndexTreeEvicting();
+	//TestIndexedFilesEvicting();
+	//TestIndexedData();
+	//TestNamedIndexes();
+	TestNamedIndexedData();
 
 	return TestTotalStatistics();
 }
