@@ -23,7 +23,7 @@ void TestFilesSimple(void)
 	//If this test fails you probably need to re-generate the source PAK files.
 	//Use TestPackFilesPackerSimple to do this.
 
-	cFiles.Init("Game", "PAK");
+	cFiles.Init("Input" _FS_ "Game2", "PAK");
 	AssertInt(6, cFiles.GetNumPackFiles());
 
 	pcFile = cFiles.GetFile("Sounds/Santa/Seattle.txt");
@@ -84,7 +84,7 @@ void TestFileSystemIteration(void)
 		"Videos.PAK",
 		NULL);
 
-	cFileSystem.Init("Game");
+	cFileSystem.Init("Game2");
 
 	i = 0;
 	pcSystemFile = cFileSystem.StartIteration(&cIter);
@@ -112,14 +112,14 @@ void TestFilesIteration(void)
 	CFiles			cFiles;
 	CFileIterator	cIter;
 
-	cFiles.Init("Game", "PAK");
+	cFiles.Init("Input" _FS_ "Game2", "PAK");
 	AssertInt(6, cFiles.GetNumPackFiles());
-	AssertFilePath("Game" _FS_ "Sounds" _FS_ "Cheese.PAK", cFiles.GetPackFiles(0)->GetFileName());
-	AssertFilePath("Game" _FS_ "Sounds" _FS_ "Santa.PAK", cFiles.GetPackFiles(1)->GetFileName());
-	AssertFilePath("Game" _FS_ "Textures.PAK", cFiles.GetPackFiles(2)->GetFileName());
-	AssertFilePath("Game" _FS_ "Models.PAK", cFiles.GetPackFiles(3)->GetFileName());
-	AssertFilePath("Game" _FS_ "Sounds.PAK", cFiles.GetPackFiles(4)->GetFileName());
-	AssertFilePath("Game" _FS_ "Videos.PAK", cFiles.GetPackFiles(5)->GetFileName());
+	AssertFilePath("Input" _FS_ "Game2" _FS_ "Sounds" _FS_ "Cheese.PAK", cFiles.GetPackFiles(0)->GetFileName());
+	AssertFilePath("Input" _FS_ "Game2" _FS_ "Sounds" _FS_ "Santa.PAK", cFiles.GetPackFiles(1)->GetFileName());
+	AssertFilePath("Input" _FS_ "Game2" _FS_ "Textures.PAK", cFiles.GetPackFiles(2)->GetFileName());
+	AssertFilePath("Input" _FS_ "Game2" _FS_ "Models.PAK", cFiles.GetPackFiles(3)->GetFileName());
+	AssertFilePath("Input" _FS_ "Game2" _FS_ "Sounds.PAK", cFiles.GetPackFiles(4)->GetFileName());
+	AssertFilePath("Input" _FS_ "Game2" _FS_ "Videos.PAK", cFiles.GetPackFiles(5)->GetFileName());
 
 	AssertStringCase("Sounds/Cheese/Moose.txt", cFiles.StartIteration(&cIter)->GetFullName(), FALSE);
 	AssertInt(1, cIter.GetCurrent()->GetFileRank());
@@ -219,7 +219,7 @@ void TestGetFileNames(void)
 	CMapStringInt	cFileNames;
 	int				iNumFiles;
 
-	cFiles.Init("Game", "PAK");
+	cFiles.Init("Input" _FS_ "Game2", "PAK");
 
 	cFileNames.Init(2, TRUE);
 	cFiles.GetFileNames(&cFileNames);
@@ -269,7 +269,7 @@ void TestFilesWholeDirectory(void)
 {
 	CFiles			cFiles;
 
-	cFiles.Init("Game", "PAK");
+	cFiles.Init("Input" _FS_ "Game2", "PAK");
 
 	AssertPakFile("Models/Super/Barbie.txt",		"Barbie",				&cFiles);
 	AssertPakFile("Models/Super/Ken.txt",			"Ken",					&cFiles);

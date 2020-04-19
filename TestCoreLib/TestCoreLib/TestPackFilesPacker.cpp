@@ -14,33 +14,33 @@ void TestPackFilesPackerSimple(void)
 	CFileUtil			cFileUtil;
 	CPackFilePacker		cPacker;
 	
-	cFileUtil.RemoveDir("Output/Packer");
-	cFileUtil.MakeDir("Output/Packer");
-	cFileUtil.MakeDir("Output/Packer/Sounds");
+	cFileUtil.RemoveDir("Output" _FS_ "Packer");
+	cFileUtil.MakeDir("Output" _FS_ "Packer");
+	cFileUtil.MakeDir("Output" _FS_ "Packer" _FS_ "Sounds");
 
-	cPacker.Pack("Output/Packer/Sounds/Cheese.PAK", "Input/Game/PAK/Cheese");
-	AssertFile("Game/Sounds/Cheese.PAK", "Output/Packer/Sounds/Cheese.PAK");
+	cPacker.Pack("Output" _FS_ "Packer" _FS_ "Sounds" _FS_ "Cheese.PAK", "Input" _FS_ "Game1" _FS_ "PAK" _FS_ "Cheese");
+	AssertFile("Input" _FS_ "Game2" _FS_ "Sounds" _FS_ "Cheese.PAK", "Output" _FS_ "Packer" _FS_ "Sounds" _FS_ "Cheese.PAK");
 
-	cPacker.Pack("Output/Packer/Sounds/Santa.PAK", "Input/Game/PAK/Santa");
-	AssertFile("Game/Sounds/Santa.PAK", "Output/Packer/Sounds/Santa.PAK");
+	cPacker.Pack("Output" _FS_ "Packer" _FS_ "Sounds" _FS_ "Santa.PAK", "Input" _FS_ "Game1" _FS_ "PAK" _FS_ "Santa");
+	AssertFile("Input" _FS_ "Game2" _FS_ "Sounds" _FS_ "Santa.PAK", "Output" _FS_ "Packer" _FS_ "Sounds" _FS_ "Santa.PAK");
 
-	cPacker.Pack("Output/Packer/Models.PAK", "Input/Game/PAK/Models");
-	AssertFile("Game/Models.PAK", "Output/Packer/Models.PAK");
+	cPacker.Pack("Output" _FS_ "Packer" _FS_ "Models.PAK", "Input" _FS_ "Game1" _FS_ "PAK" _FS_ "Models");
+	AssertFile("Input" _FS_ "Game2" _FS_ "Models.PAK", "Output" _FS_ "Packer" _FS_ "Models.PAK");
 
-	cPacker.Pack("Output/Packer/Sounds.PAK", "Input/Game/PAK/Sounds");
-	AssertFile("Game/Sounds.PAK", "Output/Packer/Sounds.PAK");
+	cPacker.Pack("Output" _FS_ "Packer" _FS_ "Sounds.PAK", "Input" _FS_ "Game1" _FS_ "PAK" _FS_ "Sounds");
+	AssertFile("Input" _FS_ "Game2" _FS_ "Sounds.PAK", "Output" _FS_ "Packer" _FS_ "Sounds.PAK");
 
-	cPacker.Pack("Output/Packer/Textures.PAK", "Input/Game/PAK/Textures");
-	AssertFile("Game/Textures.PAK", "Output/Packer/Textures.PAK");
+	cPacker.Pack("Output" _FS_ "Packer" _FS_ "Textures.PAK", "Input" _FS_ "Game1" _FS_ "PAK" _FS_ "Textures");
+	AssertFile("Input" _FS_ "Game2" _FS_ "Textures.PAK", "Output" _FS_ "Packer" _FS_ "Textures.PAK");
 
-	cPacker.Pack("Output/Packer/Videos.PAK", "Input/Game/PAK/Videos");
-	AssertFile("Game/Videos.PAK", "Output/Packer/Videos.PAK");
+	cPacker.Pack("Output" _FS_ "Packer" _FS_ "Videos.PAK", "Input" _FS_ "Game1" _FS_ "PAK" _FS_ "Videos");
+	AssertFile("Input" _FS_ "Game2" _FS_ "Videos.PAK", "Output" _FS_ "Packer" _FS_ "Videos.PAK");
 
-	cPacker.Unpack("Output/Packer/Sounds/Cheese.PAK", "Output/Packer");
-	AssertFile("Input/Game/PAK/Cheese/Scream.txt", "Output/Packer/Scream.txt");
-	AssertFile("Input/Game/PAK/Cheese/Moose.txt", "Output/Packer/Moose.txt");
+	cPacker.Unpack("Output" _FS_ "Packer" _FS_ "Sounds" _FS_ "Cheese.PAK", "Output" _FS_ "Packer");
+	AssertFile("Input" _FS_ "Game1" _FS_ "PAK" _FS_ "Cheese" _FS_ "Scream.txt", "Output" _FS_ "Packer" _FS_ "Scream.txt");
+	AssertFile("Input" _FS_ "Game1" _FS_ "PAK" _FS_ "Cheese" _FS_ "Moose.txt", "Output" _FS_ "Packer" _FS_ "Moose.txt");
 
-	cFileUtil.RemoveDir("Output/Packer");
+	cFileUtil.RemoveDir("Output" _FS_ "Packer");
 }
 
 
