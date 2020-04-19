@@ -77,12 +77,12 @@ void TestNamedIndexedDataAdd(void)
 
 	cController.Begin();
 	cObject1.Init("Rutherford", 1871, 1937);
-	cDatabase.Add(0x0102, "Ernest", &cObject1, cObject1.Size(), 0);
+	cDatabase.Add(0x0102, "Ernest", &cObject1, cObject1.Size());
 	cController.End();
 
 	cController.Begin();
 	cObject2.Init("Bohr", 1885, 1962);
-	cDatabase.Add(0x0203, "Niels", &cObject2, cObject2.Size(), 0);
+	cDatabase.Add(0x0203, "Niels", &cObject2, cObject2.Size());
 	cController.End();
 
 	cDatabase.Kill();
