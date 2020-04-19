@@ -21,8 +21,8 @@ void TestNamedIndexesAdd(void)
 	CDurableFileController				cController;
 	CFileUtil							cFileUtil;
 	BOOL								bResult;
-	char								szDirectory[] = "NamedIndexes" _FS_ "1";
-	char								szRewriteDirectory[] = "_NamedIndexes" _FS_ "1";
+	char								szDirectory[] = "Output" _FS_ "NamedIndexes" _FS_ "1";
+	char								szRewriteDirectory[] = "Output" _FS_ "_NamedIndexes" _FS_ "1";
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 	CValueNamedIndexesConfig			cDataConfig;
 	SLogConfig							sLogConfig;
@@ -109,8 +109,8 @@ void TestNamedIndexesRemove(void)
 	CDurableFileController				cController;
 	CFileUtil							cFileUtil;
 	BOOL								bResult;
-	char								szDirectory[] = "NamedIndexes" _FS_ "2";
-	char								szRewriteDirectory[] = "_NamedIndexes" _FS_ "2";
+	char								szDirectory[] = "Output" _FS_ "NamedIndexes" _FS_ "2";
+	char								szRewriteDirectory[] = "Output" _FS_ "_NamedIndexes" _FS_ "2";
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 	CValueNamedIndexesConfig			cDataConfig;
 
@@ -211,8 +211,8 @@ void TestNamedIndexesCacheEviction(void)
 	CDurableFileController				cController;
 	CFileUtil							cFileUtil;
 	BOOL								bResult;
-	char								szDirectory[] = "NamedIndexes" _FS_ "3";
-	char								szRewriteDirectory[] = "_NamedIndexes" _FS_ "3";
+	char								szDirectory[] = "Output" _FS_ "NamedIndexes" _FS_ "3";
+	char								szRewriteDirectory[] = "Output" _FS_ "_NamedIndexes" _FS_ "3";
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 	CValueNamedIndexesConfig			cDataConfig;
 	SLogConfig							sLogConfig;
@@ -307,8 +307,8 @@ void TestNamedIndexesLoad(void)
 	CNamedIndexes						cNamedIndexes;
 	CDurableFileController				cController;
 	CFileUtil							cFileUtil;
-	char								szDirectory[] = "NamedIndexes" _FS_ "4";
-	char								szRewriteDirectory[] = "_NamedIndexes" _FS_ "4";
+	char								szDirectory[] = "Output" _FS_ "NamedIndexes" _FS_ "4";
+	char								szRewriteDirectory[] = "Output" _FS_"_NamedIndexes" _FS_ "4";
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 	CValueNamedIndexesConfig			cDataConfig;
 
@@ -441,14 +441,13 @@ void TestNamedIndexes(void)
 	DataMemoryInit();
 	BeginTests();
 
-	cFileUtil.RemoveDir("NamedIndexes");
 
 	TestNamedIndexesAdd();
 	TestNamedIndexesRemove();
 	TestNamedIndexesCacheEviction();
 	TestNamedIndexesLoad();
 
-	cFileUtil.RemoveDir("NamedIndexes");
+	cFileUtil.RemoveDirs("Output" _FS_ "NamedIndexes", "Output" _FS_ "_NamedIndexes", NULL);
 
 	TestStatistics();
 	DataMemoryKill();

@@ -42,6 +42,8 @@ void TestPropertiesFileWrite(void)
 	AssertNull(cFile.Get("Camps"));
 
 	cFile.Kill();
+
+	cFileUtil.Delete("Output/Properties.txt");
 }
 
 
@@ -73,6 +75,8 @@ void TestPropertiesFileRead(void)
 	AssertNull(cFile.Get("Calypso"));
 
 	cFile.Kill();
+
+	cFileUtil.Delete("Output/Properties.txt");
 }
 
 
