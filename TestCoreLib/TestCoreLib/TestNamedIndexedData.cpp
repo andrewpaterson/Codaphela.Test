@@ -158,7 +158,8 @@ void TestNamedIndexedDataAddString(void)
 	cController.Begin();
 	AssertInt(sizeof(CTestNamedIndexedDataObject), cDatabase.Size(0x0203));
 	AssertInt(sizeof(CTestNamedIndexedDataObject), cDatabase.Size(0x0102));
-	
+	AssertLongLongInt(2, cDatabase.NumIndices());
+	AssertLongLongInt(2, cDatabase.NumNames());
 	cController.End();
 
 
@@ -168,7 +169,6 @@ void TestNamedIndexedDataAddString(void)
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database2");
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -231,6 +231,8 @@ void TestNamedIndexedDataAddChars(void)
 	AssertString("Rutherford", cResult.mszString);
 	AssertLongLongInt(1871, cResult.miNumberX);
 	AssertLongLongInt(1937, cResult.miNumberY);
+	AssertLongLongInt(1, cDatabase.NumIndices());
+	AssertLongLongInt(1, cDatabase.NumNames());
 	cController.End();
 
 	cDatabase.Kill();
@@ -285,6 +287,8 @@ void TestNamedIndexedDataAddBad(void)
 	AssertFalse(cDatabase.Add(1LL, NULL, 0));
 	gcLogger.SetConfig(&sLogConfig);
 	szName.Kill();
+	AssertLongLongInt(0, cDatabase.NumIndices());
+	AssertLongLongInt(0, cDatabase.NumNames());
 	cController.End();
 
 	
@@ -293,6 +297,72 @@ void TestNamedIndexedDataAddBad(void)
 	cController.Kill();
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database2b");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestNamedIndexedDataAddIndex(void)
+{
+	CNamedIndexedData					cDatabase;
+	CValueIndexedDataConfig				cIndexConfig;
+	CValueNamedIndexesConfig			cNamedConfig;
+	CNamedIndexedDataConfig				cConfig;
+	CDurableFileController				cController;
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	CFileUtil							cFileUtil;
+	CTestNamedIndexedDataObject			cObject1;
+	CTestNamedIndexedDataObject			cResult;
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database2c");
+
+	/// Add Index
+	cController.Init("Output" _FS_ "Database2c" _FS_ "R", "Output" _FS_ "Database2c" _FS_ "W");
+
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cConfig.Init(&cIndexConfig, &cNamedConfig);
+
+	cController.Begin();
+	cDatabase.Init(&cConfig);
+	cController.End();
+	cConfig.Kill();
+
+	cController.Begin();
+	cObject1.Init("Rutherford", 1871, 1937);
+	cDatabase.Add(0x56788435450563LL, &cObject1, cObject1.Size());
+	cController.End();
+
+
+	//Get by Index
+	cController.Init("Output" _FS_ "Database2c" _FS_ "R", "Output" _FS_ "Database2c" _FS_ "W");
+
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cConfig.Init(&cIndexConfig, &cNamedConfig);
+
+	cController.Begin();
+	cDatabase.Init(&cConfig);
+	cController.End();
+	cConfig.Kill();
+
+	cController.Begin();
+	AssertFalse(cDatabase.Get("Ernest", &cResult));
+	AssertTrue(cDatabase.Get(0x56788435450563LL, &cResult));
+	AssertString("Rutherford", cResult.mszString);
+	AssertLongLongInt(1871, cResult.miNumberX);
+	AssertLongLongInt(1937, cResult.miNumberY);
+	AssertLongLongInt(1, cDatabase.NumIndices());
+	AssertLongLongInt(0, cDatabase.NumNames());
+	cController.End();
+
+
+	cDatabase.Kill();
+	cController.Kill();
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database2c");
 }
 
 
@@ -361,6 +431,7 @@ void TestNamedIndexedData(void)
 	TestNamedIndexedDataInit();
 	TestNamedIndexedDataAddString();
 	TestNamedIndexedDataAddChars();
+	TestNamedIndexedDataAddIndex();
 	TestNamedIndexedDataAddBad();
 	TestNamedIndexedDataGetName();
 
