@@ -47,7 +47,7 @@ void TestNamedIndexedDataInit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestNamedIndexedDataAdd(void)
+void TestNamedIndexedDataAddString(void)
 {
 	CNamedIndexedData					cDatabase;
 	CValueIndexedDataConfig				cIndexConfig;
@@ -143,11 +143,203 @@ void TestNamedIndexedDataAdd(void)
 	cController.End();
 
 
+	//Size by Index
+	cController.Init("Output" _FS_ "Database2" _FS_ "R", "Output" _FS_ "Database2" _FS_ "W");
+
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cConfig.Init(&cIndexConfig, &cNamedConfig);
+
+	cController.Begin();
+	cDatabase.Init(&cConfig);
+	cController.End();
+	cConfig.Kill();
+
+	cController.Begin();
+	AssertInt(sizeof(CTestNamedIndexedDataObject), cDatabase.Size(0x0203));
+	AssertInt(sizeof(CTestNamedIndexedDataObject), cDatabase.Size(0x0102));
+	
+	cController.End();
+
+
 	cDatabase.Kill();
 	cController.Kill();
 
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database2");
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestNamedIndexedDataAddChars(void)
+{
+	CNamedIndexedData					cDatabase;
+	CValueIndexedDataConfig				cIndexConfig;
+	CValueNamedIndexesConfig			cNamedConfig;
+	CNamedIndexedDataConfig				cConfig;
+	CDurableFileController				cController;
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	CFileUtil							cFileUtil;
+	CTestNamedIndexedDataObject			cObject1;
+	CTestNamedIndexedDataObject			cResult;
+	BOOL								bResult;
+	CChars								szName;
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database2a");
+
+	/// Add Name and Index
+	cController.Init("Output" _FS_ "Database2a" _FS_ "R", "Output" _FS_ "Database2a" _FS_ "W");
+
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cConfig.Init(&cIndexConfig, &cNamedConfig);
+
+	cController.Begin();
+	cDatabase.Init(&cConfig);
+	cController.End();
+	cConfig.Kill();
+
+	cController.Begin();
+	szName.Init("Ernest");
+	cObject1.Init("Rutherford", 1871, 1937);
+	cDatabase.Add(1, &szName, &cObject1, cObject1.Size());
+	szName.Kill();
+	cController.End();
+
+
+	//Get by Name
+	cController.Init("Output" _FS_ "Database2a" _FS_ "R", "Output" _FS_ "Database2a" _FS_ "W");
+
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cConfig.Init(&cIndexConfig, &cNamedConfig);
+
+	cController.Begin();
+	cDatabase.Init(&cConfig);
+	cController.End();
+	cConfig.Kill();
+
+	cController.Begin();
+	szName.Init("Ernest");
+	bResult = cDatabase.Get(&szName, &cResult);
+	szName.Kill();
+	AssertTrue(bResult);
+	AssertString("Rutherford", cResult.mszString);
+	AssertLongLongInt(1871, cResult.miNumberX);
+	AssertLongLongInt(1937, cResult.miNumberY);
+	cController.End();
+
+	cDatabase.Kill();
+	cController.Kill();
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database2a");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestNamedIndexedDataAddBad(void)
+{
+	CNamedIndexedData					cDatabase;
+	CValueIndexedDataConfig				cIndexConfig;
+	CValueNamedIndexesConfig			cNamedConfig;
+	CNamedIndexedDataConfig				cConfig;
+	CDurableFileController				cController;
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	CFileUtil							cFileUtil;
+	CTestNamedIndexedDataObject			cObject1;
+	SLogConfig							sLogConfig;
+	CChars								szName;
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database2b");
+
+	/// Add Name and Index
+	cController.Init("Output" _FS_ "Database2b" _FS_ "R", "Output" _FS_ "Database2b" _FS_ "W");
+
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cConfig.Init(&cIndexConfig, &cNamedConfig);
+
+	cController.Begin();
+	cDatabase.Init(&cConfig);
+	cController.End();
+	cConfig.Kill();
+
+	cController.Begin();
+	cObject1.Init("Wild Butterfly", 1871, 1937);
+	szName.Init("Hello");
+	sLogConfig = gcLogger.SetSilent();
+	AssertFalse(cDatabase.Add(1, (char*)NULL, &cObject1, cObject1.Size()));
+	AssertFalse(cDatabase.Add(1, (CChars*)NULL, &cObject1, cObject1.Size()));
+	AssertFalse(cDatabase.Add(INVALID_O_INDEX, "Hello", &cObject1, cObject1.Size()));
+	AssertFalse(cDatabase.Add(INVALID_O_INDEX, &szName, &cObject1, cObject1.Size()));
+	AssertFalse(cDatabase.Add(0, &cObject1, cObject1.Size()));
+	gcLogger.SetConfig(&sLogConfig);
+	szName.Kill();
+	cController.End();
+
+	
+
+	cDatabase.Kill();
+	cController.Kill();
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database2b");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestNamedIndexedDataGetName(void)
+{
+	CNamedIndexedData					cDatabase;
+	CValueIndexedDataConfig				cIndexConfig;
+	CValueNamedIndexesConfig			cNamedConfig;
+	CNamedIndexedDataConfig				cConfig;
+	CDurableFileController				cController;
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	CFileUtil							cFileUtil;
+	int									pai[512];
+	CChars								szName;
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database3");
+
+	cController.Init("Output" _FS_ "Database3" _FS_ "R", "Output" _FS_ "Database3" _FS_ "W");
+
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cConfig.Init(&cIndexConfig, &cNamedConfig);
+
+	cController.Begin();
+	cDatabase.Init(&cConfig);
+	cController.End();
+	cConfig.Kill();
+
+	cController.Begin();
+	memset_fast(pai, 0x04, sizeof(pai));
+	cDatabase.Add(0x89072fc3, "graphics/world/city1.3ds", pai, sizeof(pai));
+
+	szName.Init();
+	AssertTrue(cDatabase.GetName(0x89072fc3, &szName));
+	AssertString("graphics/world/city1.3ds", szName.Text());
+	szName.Kill();
+	szName.Init();
+	AssertFalse(cDatabase.GetName(0x89072fc4, &szName));
+	szName.Kill();
+
+	cController.End();
+
+	cDatabase.Kill();
+	cController.Kill();
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database3");
 }
 
 
@@ -164,7 +356,10 @@ void TestNamedIndexedData(void)
 	BeginTests();
 
 	TestNamedIndexedDataInit();
-	TestNamedIndexedDataAdd();
+	TestNamedIndexedDataAddString();
+	TestNamedIndexedDataAddChars();
+	TestNamedIndexedDataAddBad();
+	TestNamedIndexedDataGetName();
 
 	TestStatistics();
 	DataMemoryKill();

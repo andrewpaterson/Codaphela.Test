@@ -441,7 +441,6 @@ void TestNamedIndexes(void)
 	DataMemoryInit();
 	BeginTests();
 
-
 	TestNamedIndexesAdd();
 	TestNamedIndexesRemove();
 	TestNamedIndexesCacheEviction();
