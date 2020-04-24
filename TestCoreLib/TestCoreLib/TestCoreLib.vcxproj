@@ -66,6 +66,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <BrowseInformation>true</BrowseInformation>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>

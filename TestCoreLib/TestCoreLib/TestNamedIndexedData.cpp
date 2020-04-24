@@ -77,12 +77,12 @@ void TestNamedIndexedDataAddString(void)
 
 	cController.Begin();
 	cObject1.Init("Rutherford", 1871, 1937);
-	cDatabase.Add(0x0102, "Ernest", &cObject1, cObject1.Size());
+	cDatabase.Add(0x0102LL, "Ernest", &cObject1, cObject1.Size());
 	cController.End();
 
 	cController.Begin();
 	cObject2.Init("Bohr", 1885, 1962);
-	cDatabase.Add(0x0203, "Niels", &cObject2, cObject2.Size());
+	cDatabase.Add(0x0203LL, "Niels", &cObject2, cObject2.Size());
 	cController.End();
 
 	cDatabase.Kill();
@@ -129,7 +129,7 @@ void TestNamedIndexedDataAddString(void)
 	cConfig.Kill();
 
 	cController.Begin();
-	bResult = cDatabase.Get(0x0203, &cResult);
+	bResult = cDatabase.Get(0x0203LL, &cResult);
 	AssertTrue(bResult);
 	AssertString("Bohr", cResult.mszString);
 	AssertLongLongInt(1885, cResult.miNumberX);
@@ -206,7 +206,7 @@ void TestNamedIndexedDataAddChars(void)
 	cController.Begin();
 	szName.Init("Ernest");
 	cObject1.Init("Rutherford", 1871, 1937);
-	cDatabase.Add(1, &szName, &cObject1, cObject1.Size());
+	cDatabase.Add(1LL, &szName, &cObject1, cObject1.Size());
 	szName.Kill();
 	cController.End();
 
@@ -259,7 +259,6 @@ void TestNamedIndexedDataAddBad(void)
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database2b");
 
-	/// Add Name and Index
 	cController.Init("Output" _FS_ "Database2b" _FS_ "R", "Output" _FS_ "Database2b" _FS_ "W");
 
 	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
@@ -275,11 +274,15 @@ void TestNamedIndexedDataAddBad(void)
 	cObject1.Init("Wild Butterfly", 1871, 1937);
 	szName.Init("Hello");
 	sLogConfig = gcLogger.SetSilent();
-	AssertFalse(cDatabase.Add(1, (char*)NULL, &cObject1, cObject1.Size()));
-	AssertFalse(cDatabase.Add(1, (CChars*)NULL, &cObject1, cObject1.Size()));
+	AssertFalse(cDatabase.Add(1LL, (char*)NULL, &cObject1, cObject1.Size()));
+	AssertFalse(cDatabase.Add(1LL, (CChars*)NULL, &cObject1, cObject1.Size()));
 	AssertFalse(cDatabase.Add(INVALID_O_INDEX, "Hello", &cObject1, cObject1.Size()));
 	AssertFalse(cDatabase.Add(INVALID_O_INDEX, &szName, &cObject1, cObject1.Size()));
-	AssertFalse(cDatabase.Add(0, &cObject1, cObject1.Size()));
+	AssertFalse(cDatabase.Add(NULL_O_INDEX, &cObject1, cObject1.Size()));
+	AssertFalse(cDatabase.Add(INVALID_O_INDEX, &cObject1, cObject1.Size()));
+	AssertFalse(cDatabase.Add(1LL, "Hello", NULL, 0));
+	AssertFalse(cDatabase.Add(1LL, &szName, NULL, 0));
+	AssertFalse(cDatabase.Add(1LL, NULL, 0));
 	gcLogger.SetConfig(&sLogConfig);
 	szName.Kill();
 	cController.End();
