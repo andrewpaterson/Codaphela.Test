@@ -420,6 +420,150 @@ void TestNamedIndexedDataGetName(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestNamedIndexedDataSetIndex(void)
+{
+	CNamedIndexedData					cDatabase;
+	CValueIndexedDataConfig				cIndexConfig;
+	CValueNamedIndexesConfig			cNamedConfig;
+	CNamedIndexedDataConfig				cConfig;
+	CDurableFileController				cController;
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	CFileUtil							cFileUtil;
+	CTestNamedIndexedDataObject			cObject1;
+	CTestNamedIndexedDataObject			cResult;
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database4");
+
+	/// Add Name and Index
+	cController.Init("Output" _FS_ "Database4" _FS_ "R", "Output" _FS_ "Database4" _FS_ "W");
+
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cConfig.Init(&cIndexConfig, &cNamedConfig);
+
+	cController.Begin();
+	cDatabase.Init(&cConfig);
+	cController.End();
+	cConfig.Kill();
+
+	cController.Begin();
+	cObject1.Init("Those an equal point no years do.", 456754674567, 192345324532);
+	cDatabase.Add(0xf97f3227894f783eLL, "Depend warmth fat but her but played", &cObject1, cObject1.Size());
+	cController.End();
+
+	cController.Begin();
+	AssertTrue(cDatabase.Set(0xf97f3227894f783eLL, &cObject1));
+	cController.End();
+
+	cController.Begin();
+	AssertTrue(cDatabase.Get("Depend warmth fat but her but played", &cResult));
+	AssertString("Those an equal point no years do.", cResult.mszString);
+	AssertLongLongInt(456754674567, cResult.miNumberX);
+	AssertLongLongInt(192345324532, cResult.miNumberY);
+	AssertTrue(cDatabase.Get(0xf97f3227894f783eLL, &cResult));
+	AssertString("Those an equal point no years do.", cResult.mszString);
+	AssertLongLongInt(456754674567, cResult.miNumberX);
+	AssertLongLongInt(192345324532, cResult.miNumberY);
+	cController.End();
+
+	cDatabase.Kill();
+	cController.Kill();
+
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database4");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestNamedIndexedDataSet(void)
+{
+	CNamedIndexedData					cDatabase;
+	CValueIndexedDataConfig				cIndexConfig;
+	CValueNamedIndexesConfig			cNamedConfig;
+	CNamedIndexedDataConfig				cConfig;
+	CDurableFileController				cController;
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	CFileUtil							cFileUtil;
+	CTestNamedIndexedDataObject			cObject1;
+	CTestNamedIndexedDataObject			cObject2;
+	CTestNamedIndexedDataObject			cObject3;
+	CTestNamedIndexedDataObject			cResult;
+	CChars								sz;
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database4a");
+
+	/// Add Name and Index
+	cController.Init("Output" _FS_ "Database4a" _FS_ "R", "Output" _FS_ "Database4a" _FS_ "W");
+
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cConfig.Init(&cIndexConfig, &cNamedConfig);
+
+	cController.Begin();
+	cDatabase.Init(&cConfig);
+	cController.End();
+	cConfig.Kill();
+
+	cController.Begin();
+	cObject1.Init("Those an equal point no years do.", 456754674567, 192345324532);
+	cDatabase.Add(0xf97f3227894f783eLL, "Depend warmth fat but her but played", &cObject1, cObject1.Size());
+	cObject2.Init("Shy and subjects wondered trifling.", 7682493597, 328476355);
+	cDatabase.Add(0xd678f6989c68234aLL, "Prudent cordial comfort do no on colonel as assured chicken", &cObject2, cObject2.Size());
+	cObject3.Init("Terminated uncommonly at at estimating.", 87632234423, 3948765293847);
+	cDatabase.Add(0xf9786d986987bcd1LL, "Ten behaviour met moonlight extremity acuteness direction", &cObject3, cObject2.Size());
+	cController.End();
+
+	cController.Begin();
+	AssertTrue(cDatabase.Get(0xf97f3227894f783eLL, &cResult));
+	AssertTrue(cDatabase.Get(0xd678f6989c68234aLL, &cResult));
+	AssertTrue(cDatabase.Get(0xf9786d986987bcd1LL, &cResult));
+	AssertFalse(cDatabase.Get(0xf97f3227894f783fLL, &cResult));
+	AssertFalse(cDatabase.Get(0xe678f6989c68234aLL, &cResult));
+	AssertFalse(cDatabase.Get(0xf9786d996987bcd1LL, &cResult));
+	AssertString("Terminated uncommonly at at estimating.", cResult.mszString);
+	AssertLongLongInt(87632234423, cResult.miNumberX);
+	AssertLongLongInt(3948765293847, cResult.miNumberY);
+
+	cObject1.Init("Certainty listening no no behaviour.", 192345324532, 456754674567);
+	AssertTrue(cDatabase.Set("Ten behaviour met moonlight extremity acuteness direction", &cObject1));
+	cObject2.Init("Because add why not esteems amiable him.", 867575634, 75684567698873423);
+	sz.Init("Prudent cordial comfort do no on colonel as assured chicken");
+	AssertTrue(cDatabase.Set(&sz, &cObject2));
+	cObject3.Init("Answer living law things either sir bed length.", 4657587587534, 327649823);
+	AssertTrue(cDatabase.Set(0xf97f3227894f783eLL, &cObject3));
+	cController.End();
+
+	cController.Begin();
+	AssertTrue(cDatabase.Get(0xf97f3227894f783eLL, &cResult));
+	AssertString("Answer living law things either sir bed length.", cResult.mszString);
+	AssertLongLongInt(4657587587534, cResult.miNumberX);
+	AssertLongLongInt(327649823, cResult.miNumberY);
+	AssertTrue(cDatabase.Get(&sz, &cResult));
+	AssertString("Because add why not esteems amiable him.", cResult.mszString);
+	AssertLongLongInt(867575634, cResult.miNumberX);
+	AssertLongLongInt(75684567698873423, cResult.miNumberY);
+	AssertTrue(cDatabase.Get("Prudent cordial comfort do no on colonel as assured chicken", &cResult));
+	AssertString("Because add why not esteems amiable him.", cResult.mszString);
+	AssertLongLongInt(867575634, cResult.miNumberX);
+	AssertLongLongInt(75684567698873423, cResult.miNumberY);
+	sz.Kill();
+	cController.End();
+
+	cDatabase.Kill();
+	cController.Kill();
+
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database4a");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestNamedIndexedData(void)
 {
 	FastFunctionsInit();
@@ -434,6 +578,8 @@ void TestNamedIndexedData(void)
 	TestNamedIndexedDataAddIndex();
 	TestNamedIndexedDataAddBad();
 	TestNamedIndexedDataGetName();
+	TestNamedIndexedDataSetIndex();
+	TestNamedIndexedDataSet();
 
 	TestStatistics();
 	DataMemoryKill();
