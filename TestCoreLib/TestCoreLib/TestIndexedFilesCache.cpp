@@ -78,12 +78,14 @@ void TestIndexedFilesEvictingFlush(EIndexWriteThrough eWriteThrough, BOOL bClear
 	AssertTrue(cDescriptor.IsCached());
 	AssertInt(1, cDescriptors.NumDataCached());
 	AssertTrue(cDescriptors.Get(oi, &uiSize, sz, 200));
+	
 	AssertString(szMudpuppy, sz);
 	AssertTrue(cDescriptors.TestGetDescriptor(oi, &cDescriptor));
 	AssertTrue(cDescriptor.IsCached());
 	AssertTrue(cDescriptor.HasFile());
  	AssertInt(1, cDescriptors.NumDataCached());
 	AssertTrue(cDescriptors.Flush(bClearCache));
+	
 	AssertInt(bClearCache ? 0 : 1, cDescriptors.NumDataCached());
 	AssertTrue(cDescriptors.Get(oi, &uiSize, sz, 200));
 	AssertString(szMudpuppy, sz);
