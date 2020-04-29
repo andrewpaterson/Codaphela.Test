@@ -2546,6 +2546,113 @@ void TestIndexTreeFileFlushNodes(void)
 }
 
 
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileFlushRemoveComplex(EIndexWriteThrough eWriteThrough)
+{
+	CIndexTreeHelper			cHelper;
+	CDurableFileController		cDurableController;
+	CIndexTreeFile				cIndexTree;
+	char						szData[256];
+	int							uiSize;
+	char						szSmellsLikeTeenSpirit[] = { "Smells Like Teen Spirit" };
+	char						szSeizedPotPlants[] = { "Seized pot plants turn out to be daisies" };
+	char						szCallingFromWindows[] = { "I am calling you from Windows" };
+	char						szDirectory[] = "Output" _FS_ "Database8";
+	CIndexTreeFileAccess		cAccess;
+
+
+	cHelper.Init("Output" _FS_"IndexTreeI", "primary", "backup", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, NULL, eWriteThrough, IKR_Yes);
+	cAccess.Init(&cIndexTree);
+	cDurableController.End();
+
+	cDurableController.Begin();
+	cAccess.PutLongString(0x7634, szSmellsLikeTeenSpirit);
+	cAccess.PutLongString(0x3589, szSeizedPotPlants);
+	cAccess.PutLongString(0x8743, szCallingFromWindows);
+	AssertLongLongInt(3, cIndexTree.NumElements());
+	AssertTrue(cAccess.HasLong(0x7634));
+	AssertTrue(cAccess.HasLong(0x3589));
+	AssertTrue(cAccess.HasLong(0x8743));
+
+	AssertTrue(cAccess.Flush());
+	cDurableController.End();
+	cIndexTree.Kill();
+	cAccess.Kill();
+
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, NULL, eWriteThrough, IKR_Yes);
+	cAccess.Init(&cIndexTree);
+	cDurableController.End();
+
+	cDurableController.Begin();
+	AssertTrue(cAccess.HasLong(0x7634));
+	AssertTrue(cAccess.HasLong(0x3589));
+	AssertTrue(cAccess.HasLong(0x8743));
+
+	cDurableController.End();
+	cIndexTree.Kill();
+	cAccess.Kill();
+
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, NULL, eWriteThrough, IKR_Yes);
+	cAccess.Init(&cIndexTree);
+	cDurableController.End();
+
+	cDurableController.Begin();
+	AssertTrue(cAccess.DeleteLong(0x7634));
+	AssertLongLongInt(2, cIndexTree.NumElements());
+	AssertFalse(cAccess.HasLong(0x7634));
+	AssertTrue(cAccess.HasLong(0x3589));
+	AssertTrue(cAccess.HasLong(0x8743));
+	AssertFalse(cAccess.GetLongData(0x7634, szData, &uiSize));
+
+	AssertTrue(cAccess.Flush());
+	cDurableController.End();
+	cIndexTree.Kill();
+	cAccess.Kill();
+
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, NULL, eWriteThrough, IKR_Yes);
+	cAccess.Init(&cIndexTree);
+	cDurableController.End();
+
+	cDurableController.Begin();
+	AssertTrue(cAccess.DeleteLong(0x3589));
+	AssertTrue(cAccess.DeleteLong(0x8743));
+	AssertFalse(cAccess.HasLong(0x7634));
+	AssertFalse(cAccess.HasLong(0x3589));
+	AssertFalse(cAccess.HasLong(0x8743));
+	AssertLongLongInt(0, cIndexTree.NumElements());
+	AssertFalse(cAccess.DeleteLong(0x7634));
+	AssertFalse(cAccess.DeleteLong(0x3589));
+	AssertFalse(cAccess.DeleteLong(0x8743));
+
+	AssertTrue(cAccess.Flush());
+	AssertFalse(cAccess.DeleteLong(0x7634));
+	AssertFalse(cAccess.DeleteLong(0x3589));
+	AssertFalse(cAccess.DeleteLong(0x8743));
+
+	cDurableController.End();
+	cIndexTree.Kill();
+	cAccess.Kill();
+
+
+	cHelper.Kill(TRUE);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -2595,6 +2702,8 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileEvictComplexEvictOdd();
 	TestIndexTreeFileEvictComplexEvictEven();
 	TestIndexTreeFileFlushNodes();
+	TestIndexTreeFileFlushRemoveComplex(IWT_No);
+	TestIndexTreeFileFlushRemoveComplex(IWT_Yes);
 
 	TestStatistics();
 	DataMemoryKill();

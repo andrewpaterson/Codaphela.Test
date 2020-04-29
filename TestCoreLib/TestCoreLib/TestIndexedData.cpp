@@ -41,7 +41,7 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 	iLenViolation = strlen(szViolation) + 1;
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, szSubDirectory, 8192, 8192, eWriteThrough);
+	cDataConfig.Init(&cController, szSubDirectory, 8 KB, 8 KB, eWriteThrough);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -69,7 +69,7 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, szSubDirectory, 8192, 8192, eWriteThrough);
+	cDataConfig.Init(&cController, szSubDirectory, 8 KB, 8 KB, eWriteThrough);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -119,7 +119,7 @@ void TestIndexedDataFlushClearCache(void)
 	cFileUtil.RemoveDir(szDirectory);
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -151,7 +151,7 @@ void TestIndexedDataFlushClearCache(void)
 
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -244,7 +244,7 @@ void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 	AssertInt(32, sizeof(CIndexedDataDescriptor));
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -328,7 +328,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 
 	//New Data
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -350,7 +350,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -376,7 +376,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -397,7 +397,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -419,7 +419,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -440,7 +440,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -464,7 +464,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -511,7 +511,7 @@ void TestIndexedDataEvictKey(void)
 	cFileUtil.RemoveDir(szDirectory);
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -586,7 +586,7 @@ void TestIndexedDataEvictKey(void)
 
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -697,7 +697,7 @@ void TestIndexedDataIndexEviction(void)
 	cKeyDataEvictedList.Init();
 	cIndexEvictedList.Init();
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No, &cIndexEvictedList, &cKeyDataEvictedList);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No, &cIndexEvictedList, &cKeyDataEvictedList);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -744,7 +744,7 @@ void TestIndexedDataIndexEviction(void)
 	cKeyDataEvictedList.Kill();
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -777,7 +777,7 @@ void TestIndexedDataEvictAndFlush(void)
 	cFileUtil.RemoveDir(szDirectory);
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -798,7 +798,7 @@ void TestIndexedDataEvictAndFlush(void)
 
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -843,7 +843,7 @@ void TestIndexedDataFlushAndFlush(void)
 	cFileUtil.RemoveDir(szDirectory);
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -858,7 +858,7 @@ void TestIndexedDataFlushAndFlush(void)
 
 	
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -872,7 +872,7 @@ void TestIndexedDataFlushAndFlush(void)
 	cDataConfig.Kill();
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -917,7 +917,7 @@ void TestIndexedDataLargeData(void)
 	cFileUtil.RemoveDir(szDirectory);
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 34, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 34, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -988,7 +988,7 @@ void TestIndexedDataIndexedAdd(void)
 	cFileUtil.RemoveDir(szDirectory);
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 98 + 12, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 98 + 12, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -1148,7 +1148,7 @@ void TestIndexedDataDescriptorCaching(void)
 
 	
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 96, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 96, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -1264,7 +1264,7 @@ void TestIndexedDataGet(void)
 	cFileUtil.RemoveDir(szDirectory);
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -1283,7 +1283,7 @@ void TestIndexedDataGet(void)
 
 
 	cController.Init(szDirectory, NULL);
-	cDataConfig.Init(&cController, NULL, 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -1329,7 +1329,7 @@ void TestIndexedDataSubDirectories(void)
 	cFileUtil.RemoveDir("Output" _FS_ "Database7");
 
 	cController.Init(szDirectory, szRewriteDirectory);
-	cDataConfig.Init(&cController, "Forest of Solitude", 8192, 8192, IWT_No);
+	cDataConfig.Init(&cController, "Forest of Solitude", 8 KB, 8 KB, IWT_No);
 	cController.Begin();
 	cIndexedData.Init(&cDataConfig);
 	cController.End();
@@ -1347,6 +1347,114 @@ void TestIndexedDataSubDirectories(void)
 	cDataConfig.Kill();
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database7");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexedDataRemove(EIndexWriteThrough eWriteThrough)
+{
+	CIndexedData				cIndexedData;
+	CFileUtil					cFileUtil;
+	char						szData[256];
+	unsigned int				uiSize;
+	char						szSmellsLikeTeenSpirit[] = { "Smells Like Teen Spirit" };
+	char						szSeizedPotPlants[] = { "Seized pot plants turn out to be daisies" };
+	char						szCallingFromWindows[] = { "I am calling you from Windows" };
+	char						szDirectory[] = "Output" _FS_ "Database8";
+	CValueIndexedDataConfig		cDataConfig;
+	CDurableFileController		cController;
+
+	cFileUtil.RemoveDir(szDirectory);
+
+
+	cController.Init(szDirectory, NULL);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, eWriteThrough);
+	cController.Begin();
+	cIndexedData.Init(&cDataConfig);
+	cController.End();
+
+	cController.Begin();
+	cIndexedData.Add(0x7634, szSmellsLikeTeenSpirit, (int)strlen(szSmellsLikeTeenSpirit) + 1);
+	cIndexedData.Add(0x3589, szSeizedPotPlants, (int)strlen(szSeizedPotPlants) + 1);
+	cIndexedData.Add(0x8743, szCallingFromWindows, (int)strlen(szCallingFromWindows) + 1);
+	AssertLongLongInt(3, cIndexedData.NumElements());
+	AssertTrue(cIndexedData.Contains(0x7634));
+	AssertTrue(cIndexedData.Contains(0x3589));
+	AssertTrue(cIndexedData.Contains(0x8743));
+
+	AssertTrue(cIndexedData.Flush(TRUE));
+	cController.End();
+	cIndexedData.Kill();
+	cDataConfig.Kill();
+
+
+	cController.Init(szDirectory, NULL);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, eWriteThrough);
+	cController.Begin();
+	cIndexedData.Init(&cDataConfig);
+	cController.End();
+
+	cController.Begin();
+	AssertTrue(cIndexedData.Contains(0x7634));
+	AssertTrue(cIndexedData.Contains(0x3589));
+	AssertTrue(cIndexedData.Contains(0x8743));
+
+	cController.End();
+	cIndexedData.Kill();
+	cDataConfig.Kill();
+
+
+	cController.Init(szDirectory, NULL);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, eWriteThrough);
+	cController.Begin();
+	cIndexedData.Init(&cDataConfig);
+	cController.End();
+
+	cController.Begin();
+	AssertTrue(cIndexedData.Remove(0x7634));
+	AssertLongLongInt(2, cIndexedData.NumElements());
+	AssertFalse(cIndexedData.Contains(0x7634));
+	AssertTrue(cIndexedData.Contains(0x3589));
+	AssertTrue(cIndexedData.Contains(0x8743));
+	AssertFalse(cIndexedData.Get(0x7634, &uiSize, szData, 256));
+
+	AssertTrue(cIndexedData.Flush(TRUE));
+	cController.End();
+	cIndexedData.Kill();
+	cDataConfig.Kill();
+
+
+	cController.Init(szDirectory, NULL);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, eWriteThrough);
+	cController.Begin();
+	cIndexedData.Init(&cDataConfig);
+	cController.End();
+
+	cController.Begin();
+	AssertTrue(cIndexedData.Remove(0x3589));
+	AssertTrue(cIndexedData.Remove(0x8743));
+	AssertFalse(cIndexedData.Contains(0x7634));
+	AssertFalse(cIndexedData.Contains(0x3589));
+	AssertFalse(cIndexedData.Contains(0x8743));
+	AssertLongLongInt(0, cIndexedData.NumElements());
+	AssertFalse(cIndexedData.Remove(0x7634));
+	AssertFalse(cIndexedData.Remove(0x3589));
+	AssertFalse(cIndexedData.Remove(0x8743));
+
+	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertFalse(cIndexedData.Remove(0x7634));
+	AssertFalse(cIndexedData.Remove(0x3589));
+	AssertFalse(cIndexedData.Remove(0x8743));
+
+	cController.End();
+	cIndexedData.Kill();
+	cDataConfig.Kill();
+
+
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -1377,6 +1485,8 @@ void TestIndexedData(void)
 	TestIndexedDataGet();
 	TestIndexedDataLargeData();
 	TestIndexedDataSubDirectories();
+	TestIndexedDataRemove(IWT_Yes);
+	TestIndexedDataRemove(IWT_No);
 
 	TestStatistics();
 	DataMemoryKill();
