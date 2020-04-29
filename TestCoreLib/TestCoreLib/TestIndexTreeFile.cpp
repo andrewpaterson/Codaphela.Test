@@ -2552,7 +2552,7 @@ void TestIndexTreeFileFlushNodes(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeFileFlushRemoveComplex(EIndexWriteThrough eWriteThrough)
+void TestIndexTreeFileRemoveComplex(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse)
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cDurableController;
@@ -2570,7 +2570,7 @@ void TestIndexTreeFileFlushRemoveComplex(EIndexWriteThrough eWriteThrough)
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, NULL, eWriteThrough, IKR_Yes);
+	cIndexTree.Init(&cDurableController, NULL, eWriteThrough, eKeyReverse);
 	cAccess.Init(&cIndexTree);
 	cDurableController.End();
 
@@ -2579,6 +2579,7 @@ void TestIndexTreeFileFlushRemoveComplex(EIndexWriteThrough eWriteThrough)
 	cAccess.PutLongString(0x3589, szSeizedPotPlants);
 	cAccess.PutLongString(0x8743, szCallingFromWindows);
 	AssertLongLongInt(3, cIndexTree.NumElements());
+	cIndexTree.Dump();
 	AssertTrue(cAccess.HasLong(0x7634));
 	AssertTrue(cAccess.HasLong(0x3589));
 	AssertTrue(cAccess.HasLong(0x8743));
@@ -2590,7 +2591,7 @@ void TestIndexTreeFileFlushRemoveComplex(EIndexWriteThrough eWriteThrough)
 
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, NULL, eWriteThrough, IKR_Yes);
+	cIndexTree.Init(&cDurableController, NULL, eWriteThrough, eKeyReverse);
 	cAccess.Init(&cIndexTree);
 	cDurableController.End();
 
@@ -2598,14 +2599,13 @@ void TestIndexTreeFileFlushRemoveComplex(EIndexWriteThrough eWriteThrough)
 	AssertTrue(cAccess.HasLong(0x7634));
 	AssertTrue(cAccess.HasLong(0x3589));
 	AssertTrue(cAccess.HasLong(0x8743));
-
 	cDurableController.End();
 	cIndexTree.Kill();
 	cAccess.Kill();
 
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, NULL, eWriteThrough, IKR_Yes);
+	cIndexTree.Init(&cDurableController, NULL, eWriteThrough, eKeyReverse);
 	cAccess.Init(&cIndexTree);
 	cDurableController.End();
 
@@ -2624,7 +2624,7 @@ void TestIndexTreeFileFlushRemoveComplex(EIndexWriteThrough eWriteThrough)
 
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, NULL, eWriteThrough, IKR_Yes);
+	cIndexTree.Init(&cDurableController, NULL, eWriteThrough, eKeyReverse);
 	cAccess.Init(&cIndexTree);
 	cDurableController.End();
 
@@ -2702,8 +2702,8 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileEvictComplexEvictOdd();
 	TestIndexTreeFileEvictComplexEvictEven();
 	TestIndexTreeFileFlushNodes();
-	TestIndexTreeFileFlushRemoveComplex(IWT_No);
-	TestIndexTreeFileFlushRemoveComplex(IWT_Yes);
+	TestIndexTreeFileRemoveComplex(IWT_No, IKR_No);
+	TestIndexTreeFileRemoveComplex(IWT_Yes, IKR_No);
 
 	TestStatistics();
 	DataMemoryKill();
