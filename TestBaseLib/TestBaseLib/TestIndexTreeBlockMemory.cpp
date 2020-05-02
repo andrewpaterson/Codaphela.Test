@@ -25,7 +25,7 @@ void TestIndexTreeMemoryKill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeMemoryAdd(void)
+void TestIndexTreeMemoryAdd(EIndexKeyReverse eKeyReverse)
 {
 	CIndexTreeMemory		cIndex;
 	CIndexTreeMemoryAccess	cAccess;
@@ -39,7 +39,7 @@ void TestIndexTreeMemoryAdd(void)
 	CTestIndexTreeObject***	ppvTestA;
 	CTestIndexTreeObject***	ppvTestAA;
 
-	cIndex.Init();
+	cIndex.Init(eKeyReverse);
 	cAccess.Init(&cIndex);
 	a.Init("A");
 	bResult = cAccess.PutStringPtr(a.GetName(), &a);
@@ -49,7 +49,7 @@ void TestIndexTreeMemoryAdd(void)
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetDataPtr();
 	AssertPointer(&a, *ppvTest);
 
-	aa.Init("AA");
+	aa.Init("AB");
 	bResult = cAccess.PutStringPtr(aa.GetName(), &aa);
 	AssertTrue(bResult);
 
@@ -57,7 +57,7 @@ void TestIndexTreeMemoryAdd(void)
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetDataPtr();
 	AssertPointer(&a, *ppvTest);
 
-	pcNode = cIndex.GetNode("AA", 2);
+	pcNode = cIndex.GetNode("AB", 2);
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetDataPtr();
 	AssertPointer(&aa, *ppvTest);
 
@@ -69,12 +69,14 @@ void TestIndexTreeMemoryAdd(void)
 	AssertPointer(&a, **ppvTestA);
 	AssertPointer(&aa, **ppvTestAA);
 	AssertString("A", (**ppvTestA)->mszName);
-	AssertString("AA", (**ppvTestAA)->mszName);
+	AssertString("AB", (**ppvTestAA)->mszName);
+
+	cIndex.ValidateIndexTree();
 
 	avp.Kill();
 	cIndex.Kill();
 
-	cIndex.Init();
+	cIndex.Init(eKeyReverse);
 	bResult = cAccess.PutStringPtr(NULL, &temp);
 	AssertFalse(bResult);
 	bResult = cAccess.PutStringPtr("", &temp);
@@ -1064,7 +1066,8 @@ void TestIndexTreeMemory(void)
 	MemoryInit();
 
 	TestIndexTreeMemoryKill();
-	TestIndexTreeMemoryAdd();
+	TestIndexTreeMemoryAdd(IKR_Yes);
+	TestIndexTreeMemoryAdd(IKR_No);
 	TestIndexTreeMemoryGet();
 	TestIndexTreeMemoryPutPtrDuplicate();
 	TestIndexTreeMemoryPutDifferenceSizeDuplicates();

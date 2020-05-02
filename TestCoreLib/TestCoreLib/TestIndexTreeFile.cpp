@@ -104,7 +104,7 @@ void TestIndexTreeFileInit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeFileAdd(void)
+void TestIndexTreeFileAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse)
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cDurableController;
@@ -126,12 +126,13 @@ void TestIndexTreeFileAdd(void)
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, NULL);
+	cIndexTree.Init(&cDurableController, NULL, eWriteThrough, eKeyReverse);
 	cAccess.Init(&cIndexTree);
 
 	a.Init("A");
 	bResult = cAccess.PutStringPtr(a.GetName(), &a);
 	AssertTrue(bResult);
+	AssertTrue(cIndexTree.Flush());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	pcNode = cIndexTree.GetNode("A", 1);
@@ -141,21 +142,26 @@ void TestIndexTreeFileAdd(void)
 	aa.Init("AA");
 	bResult = cAccess.PutStringPtr(aa.GetName(), &aa);
 	AssertTrue(bResult);
+	AssertTrue(cIndexTree.Flush());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	aaa.Init("AAA");
 	bResult = cAccess.PutStringPtr(aaa.GetName(), &aaa);
 	AssertTrue(bResult);
+	AssertTrue(cIndexTree.Flush());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	ab.Init("AB");
 	bResult = cAccess.PutStringPtr(ab.GetName(), &ab);
 	AssertTrue(bResult);
+	cIndexTree.Dump();
+	AssertTrue(cIndexTree.Flush());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	aab.Init("AAB");
 	bResult = cAccess.PutStringPtr(aab.GetName(), &aab);
 	AssertTrue(bResult);
+	AssertTrue(cIndexTree.Flush());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
 
@@ -255,7 +261,7 @@ void TestIndexTreeFileGetNodeKey(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeFileAddLongKeys(void)
+void TestIndexTreeFileAddLongKeys(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse)
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cDurableController;
@@ -268,7 +274,7 @@ void TestIndexTreeFileAddLongKeys(void)
 	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, NULL);
+	cIndexTree.Init(&cDurableController, NULL, eWriteThrough, eKeyReverse);
 	cAccess.Init(&cIndexTree);
 
 	szAmicable.Init("Amicable");
@@ -276,9 +282,54 @@ void TestIndexTreeFileAddLongKeys(void)
 
 	szAmigo.Init("Amigo");
 	AssertTrue(cAccess.PutStringPtr(szAmigo.GetName(), NULL));
+	AssertTrue(cAccess.PutLongPtr(0x4142434430313233ll, NULL));
 
-	cAccess.PutLongPtr(0x4142434430313233ll, NULL);
-	
+	AssertTrue(cAccess.Flush());
+	AssertTrue(cIndexTree.ValidateIndexTree());
+
+	cDurableController.End();
+
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cDurableController.Kill();
+
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileAddSimple(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse)
+{
+	CIndexTreeHelper			cHelper;
+	CDurableFileController		cDurableController;
+	CIndexTreeFile				cIndexTree;
+	CIndexTreeFileAccess		cAccess;
+	CTestIndexTreeObject		ab;
+	BOOL						bResult;
+	CIndexTreeNodeFile*			pcNode;
+	CTestIndexTreeObject**		ppvTest;
+
+	cHelper.Init("Output" _FS_"IndexTree0c", "primary", "backup", TRUE);
+	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cDurableController.Begin();
+	cIndexTree.Init(&cDurableController, NULL, eWriteThrough, eKeyReverse);
+	cAccess.Init(&cIndexTree);
+
+	ab.Init("AB");
+	bResult = cAccess.PutStringPtr(ab.GetName(), &ab);
+	AssertTrue(bResult);
+	pcNode = cIndexTree.GetNode("AB", 2);
+	ppvTest = (CTestIndexTreeObject**)pcNode->GetDataPtr();
+	AssertPointer(&ab, *ppvTest);
+	cIndexTree.Dump();
+	AssertTrue(cIndexTree.Flush());
+	AssertTrue(cIndexTree.ValidateIndexTree());
+
+
 	cDurableController.End();
 
 	cAccess.Kill();
@@ -2667,8 +2718,18 @@ void TestIndexTreeFile(void)
 
 	TestIndexTreeFileSizeOfs();
 	TestIndexTreeFileInit();
-	TestIndexTreeFileAdd();
-	TestIndexTreeFileAddLongKeys();
+	TestIndexTreeFileAddSimple(IWT_No, IKR_No);
+	TestIndexTreeFileAddSimple(IWT_No, IKR_Yes);
+	TestIndexTreeFileAddSimple(IWT_Yes, IKR_Yes);
+	TestIndexTreeFileAddSimple(IWT_Yes, IKR_No);
+	TestIndexTreeFileAdd(IWT_No, IKR_No);
+	TestIndexTreeFileAdd(IWT_No, IKR_Yes);
+	TestIndexTreeFileAdd(IWT_Yes, IKR_Yes);
+	TestIndexTreeFileAdd(IWT_Yes, IKR_No);
+	TestIndexTreeFileAddLongKeys(IWT_No, IKR_Yes);
+	TestIndexTreeFileAddLongKeys(IWT_Yes, IKR_Yes);
+	TestIndexTreeFileAddLongKeys(IWT_No, IKR_No);
+	TestIndexTreeFileAddLongKeys(IWT_Yes, IKR_No);
 	TestIndexTreeFileGetNodeKey();
 	TestIndexTreeFileMemorySize();
 	TestIndexTreeFileAddToRoot();
