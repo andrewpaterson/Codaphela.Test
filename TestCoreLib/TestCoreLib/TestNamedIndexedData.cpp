@@ -679,6 +679,7 @@ void TestNamedIndexedDataRemove(void)
 	AssertTrue(bResult);
 	AssertFalse(cDatabase.Contains(0x0203LL));
 	AssertFalse(cDatabase.Contains("Niels"));
+	bResult = cDatabase.Contains(0x0304LL);
 	bResult = cDatabase.Remove(0x0304LL);
 	AssertTrue(bResult);
 	AssertFalse(cDatabase.Contains(0x0304LL));

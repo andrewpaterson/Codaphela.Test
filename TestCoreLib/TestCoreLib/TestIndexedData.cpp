@@ -9,6 +9,7 @@
 #include "CoreLib/IndexedDataAccess.h"
 #include "CoreLib/EvictedList.h"
 #include "CoreLib/IndexedEvictedList.h"
+#include "NamedIndexedDataObject.h"
 #include "TestLib/Assert.h"
 
 
@@ -1462,6 +1463,63 @@ void TestIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexedDataRemove2(EIndexWriteThrough eWriteThrough)
+{
+	CIndexedData					cIndexedData;
+	CFileUtil						cFileUtil;
+	CTestNamedIndexedDataObject		cObject1;
+	CTestNamedIndexedDataObject		cObject2;
+	CTestNamedIndexedDataObject		cObject3;
+	CTestNamedIndexedDataObject		cResult;
+	char							szDirectory[] = "Output" _FS_ "Database8a";
+	CValueIndexedDataConfig			cDataConfig;
+	CDurableFileController			cController;
+	BOOL							bResult;
+
+	cFileUtil.RemoveDir(szDirectory);
+
+
+	cController.Init(szDirectory, NULL);
+	cDataConfig.Init(&cController, NULL, 8 KB, 8 KB, eWriteThrough);
+	cController.Begin();
+	cIndexedData.Init(&cDataConfig);
+	cController.End();
+
+	cController.Begin();
+	cObject1.Init("Rutherford", 1871, 1937);
+	cIndexedData.Add(0x0102LL, &cObject1, cObject1.Size());
+	cObject2.Init("Bohr", 1885, 1962);
+	cIndexedData.Add(0x0203LL, &cObject2, cObject2.Size());
+	cObject2.Init("Planck", 1858, 1947);
+	cIndexedData.Add(0x0304LL, &cObject3, cObject3.Size());
+	AssertLongLongInt(3, cIndexedData.NumIndices());
+	AssertTrue(cIndexedData.Contains(0x0102LL));
+	AssertTrue(cIndexedData.Contains(0x0203LL));
+	AssertTrue(cIndexedData.Contains(0x0304LL));
+
+	cResult.Init();
+	bResult = cIndexedData.Get(0x0102LL, &cResult);
+	bResult = cIndexedData.Remove(0x0102LL);
+	AssertTrue(bResult);
+	AssertFalse(cIndexedData.Contains(0x0102LL));
+	AssertTrue(cIndexedData.Contains(0x0203LL));
+	AssertTrue(cIndexedData.Contains(0x0304LL));
+	if (eWriteThrough == IWT_No) cIndexedData.Flush();
+	cController.End();
+
+	cIndexedData.Kill();
+	cController.Kill();
+	cDataConfig.Kill();
+
+
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexedData(void)
 {
 	FastFunctionsInit();
@@ -1487,6 +1545,8 @@ void TestIndexedData(void)
 	TestIndexedDataSubDirectories();
 	TestIndexedDataRemove(IWT_Yes);
 	TestIndexedDataRemove(IWT_No);
+	TestIndexedDataRemove2(IWT_Yes);
+	TestIndexedDataRemove2(IWT_No);
 
 	TestStatistics();
 	DataMemoryKill();
