@@ -15,7 +15,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestNamedIndexedDataInit(void)
+void TestNamedIndexedDataInit(EIndexWriteThrough eWriteThrough)
 {
 	CNamedIndexedData					cDatabase;
 	CValueIndexedDataConfig				cIndexConfig;
@@ -29,8 +29,8 @@ void TestNamedIndexedDataInit(void)
 
 	cController.Init("Output" _FS_ "Database1" _FS_ "R", "Output" _FS_ "Database1" _FS_ "W");
 
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 	
 	cController.Begin();
@@ -47,7 +47,7 @@ void TestNamedIndexedDataInit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestNamedIndexedDataAddString(void)
+void TestNamedIndexedDataAddString(EIndexWriteThrough eWriteThrough)
 {
 	CNamedIndexedData					cDatabase;
 	CValueIndexedDataConfig				cIndexConfig;
@@ -66,8 +66,8 @@ void TestNamedIndexedDataAddString(void)
 	/// Add Name and Index
 	cController.Init("Output" _FS_ "Database2" _FS_ "R", "Output" _FS_ "Database2" _FS_ "W");
 
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 
 	cController.Begin();
@@ -78,11 +78,13 @@ void TestNamedIndexedDataAddString(void)
 	cController.Begin();
 	cObject1.Init("Rutherford", 1871, 1937);
 	cDatabase.Add(0x0102LL, "Ernest", &cObject1, cObject1.Size());
+	if (eWriteThrough == IWT_No) cDatabase.Flush();
 	cController.End();
 
 	cController.Begin();
 	cObject2.Init("Bohr", 1885, 1962);
 	cDatabase.Add(0x0203LL, "Niels", &cObject2, cObject2.Size());
+	if (eWriteThrough == IWT_No) cDatabase.Flush();
 	cController.End();
 
 	cDatabase.Kill();
@@ -92,8 +94,8 @@ void TestNamedIndexedDataAddString(void)
 	//Get by Name
 	cController.Init("Output" _FS_ "Database2" _FS_ "R", "Output" _FS_ "Database2" _FS_ "W");
 
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 
 	cController.Begin();
@@ -119,8 +121,8 @@ void TestNamedIndexedDataAddString(void)
 	//Get by Index
 	cController.Init("Output" _FS_ "Database2" _FS_ "R", "Output" _FS_ "Database2" _FS_ "W");
 
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 
 	cController.Begin();
@@ -146,8 +148,8 @@ void TestNamedIndexedDataAddString(void)
 	//Size by Index
 	cController.Init("Output" _FS_ "Database2" _FS_ "R", "Output" _FS_ "Database2" _FS_ "W");
 
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 
 	cController.Begin();
@@ -175,7 +177,7 @@ void TestNamedIndexedDataAddString(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestNamedIndexedDataAddChars(void)
+void TestNamedIndexedDataAddChars(EIndexWriteThrough eWriteThrough)
 {
 	CNamedIndexedData					cDatabase;
 	CValueIndexedDataConfig				cIndexConfig;
@@ -194,8 +196,8 @@ void TestNamedIndexedDataAddChars(void)
 	/// Add Name and Index
 	cController.Init("Output" _FS_ "Database2a" _FS_ "R", "Output" _FS_ "Database2a" _FS_ "W");
 
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 
 	cController.Begin();
@@ -208,14 +210,15 @@ void TestNamedIndexedDataAddChars(void)
 	cObject1.Init("Rutherford", 1871, 1937);
 	cDatabase.Add(1LL, &szName, &cObject1, cObject1.Size());
 	szName.Kill();
+	if (eWriteThrough == IWT_No) cDatabase.Flush();
 	cController.End();
 
 
 	//Get by Name
 	cController.Init("Output" _FS_ "Database2a" _FS_ "R", "Output" _FS_ "Database2a" _FS_ "W");
 
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 
 	cController.Begin();
@@ -246,7 +249,7 @@ void TestNamedIndexedDataAddChars(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestNamedIndexedDataAddBad(void)
+void TestNamedIndexedDataAddBad(EIndexWriteThrough eWriteThrough)
 {
 	CNamedIndexedData					cDatabase;
 	CValueIndexedDataConfig				cIndexConfig;
@@ -263,8 +266,8 @@ void TestNamedIndexedDataAddBad(void)
 
 	cController.Init("Output" _FS_ "Database2b" _FS_ "R", "Output" _FS_ "Database2b" _FS_ "W");
 
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 
 	cController.Begin();
@@ -304,7 +307,7 @@ void TestNamedIndexedDataAddBad(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestNamedIndexedDataAddIndex(void)
+void TestNamedIndexedDataAddIndex(EIndexWriteThrough eWriteThrough)
 {
 	CNamedIndexedData					cDatabase;
 	CValueIndexedDataConfig				cIndexConfig;
@@ -321,8 +324,8 @@ void TestNamedIndexedDataAddIndex(void)
 	/// Add Index
 	cController.Init("Output" _FS_ "Database2c" _FS_ "R", "Output" _FS_ "Database2c" _FS_ "W");
 
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 
 	cController.Begin();
@@ -333,14 +336,15 @@ void TestNamedIndexedDataAddIndex(void)
 	cController.Begin();
 	cObject1.Init("Rutherford", 1871, 1937);
 	cDatabase.Add(0x56788435450563LL, &cObject1, cObject1.Size());
+	if (eWriteThrough == IWT_No) cDatabase.Flush();
 	cController.End();
 
 
 	//Get by Index
 	cController.Init("Output" _FS_ "Database2c" _FS_ "R", "Output" _FS_ "Database2c" _FS_ "W");
 
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 
 	cController.Begin();
@@ -370,7 +374,7 @@ void TestNamedIndexedDataAddIndex(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestNamedIndexedDataGetName(void)
+void TestNamedIndexedDataGetName(EIndexWriteThrough eWriteThrough)
 {
 	CNamedIndexedData					cDatabase;
 	CValueIndexedDataConfig				cIndexConfig;
@@ -386,8 +390,8 @@ void TestNamedIndexedDataGetName(void)
 
 	cController.Init("Output" _FS_ "Database3" _FS_ "R", "Output" _FS_ "Database3" _FS_ "W");
 
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 
 	cController.Begin();
@@ -407,6 +411,7 @@ void TestNamedIndexedDataGetName(void)
 	AssertFalse(cDatabase.GetName(0x89072fc4, &szName));
 	szName.Kill();
 
+	if (eWriteThrough == IWT_No) cDatabase.Flush();
 	cController.End();
 
 	cDatabase.Kill();
@@ -420,7 +425,7 @@ void TestNamedIndexedDataGetName(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestNamedIndexedDataSetIndex(void)
+void TestNamedIndexedDataSetIndex(EIndexWriteThrough eWriteThrough)
 {
 	CNamedIndexedData					cDatabase;
 	CValueIndexedDataConfig				cIndexConfig;
@@ -436,8 +441,8 @@ void TestNamedIndexedDataSetIndex(void)
 
 	cController.Init("Output" _FS_ "Database4" _FS_ "R", "Output" _FS_ "Database4" _FS_ "W");
 
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 
 	cController.Begin();
@@ -448,10 +453,12 @@ void TestNamedIndexedDataSetIndex(void)
 	cController.Begin();
 	cObject1.Init("Those an equal point no years do.", 456754674567, 192345324532);
 	cDatabase.Add(0xf97f3227894f783eLL, "Depend warmth fat but her but played", &cObject1, cObject1.Size());
+	if (eWriteThrough == IWT_No) cDatabase.Flush();
 	cController.End();
 
 	cController.Begin();
 	AssertTrue(cDatabase.Set(0xf97f3227894f783eLL, &cObject1));
+	if (eWriteThrough == IWT_No) cDatabase.Flush();
 	cController.End();
 
 	cController.Begin();
@@ -476,7 +483,7 @@ void TestNamedIndexedDataSetIndex(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestNamedIndexedDataSet(void)
+void TestNamedIndexedDataSet(EIndexWriteThrough eWriteThrough)
 {
 	CNamedIndexedData					cDatabase;
 	CValueIndexedDataConfig				cIndexConfig;
@@ -495,8 +502,8 @@ void TestNamedIndexedDataSet(void)
 
 	cController.Init("Output" _FS_ "Database4a" _FS_ "R", "Output" _FS_ "Database4a" _FS_ "W");
 
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 
 	cController.Begin();
@@ -511,6 +518,7 @@ void TestNamedIndexedDataSet(void)
 	cDatabase.Add(0xd678f6989c68234aLL, "Prudent cordial comfort do no on colonel as assured chicken", &cObject2, cObject2.Size());
 	cObject3.Init("Terminated uncommonly at at estimating.", 87632234423, 3948765293847);
 	cDatabase.Add(0xf9786d986987bcd1LL, "Ten behaviour met moonlight extremity acuteness direction", &cObject3, cObject2.Size());
+	if (eWriteThrough == IWT_No) cDatabase.Flush();
 	cController.End();
 
 	cController.Begin();
@@ -531,6 +539,7 @@ void TestNamedIndexedDataSet(void)
 	AssertTrue(cDatabase.Set(&sz, &cObject2));
 	cObject3.Init("Answer living law things either sir bed length.", 4657587587534, 327649823);
 	AssertTrue(cDatabase.Set(0xf97f3227894f783eLL, &cObject3));
+	if (eWriteThrough == IWT_No) cDatabase.Flush();
 	cController.End();
 
 	cController.Begin();
@@ -560,7 +569,7 @@ void TestNamedIndexedDataSet(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestNamedIndexedDataSetBad(void)
+void TestNamedIndexedDataSetBad(EIndexWriteThrough eWriteThrough)
 {
 }
 
@@ -569,7 +578,7 @@ void TestNamedIndexedDataSetBad(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestNamedIndexedDataPut(void)
+void TestNamedIndexedDataPut(EIndexWriteThrough eWriteThrough)
 {
 }
 
@@ -578,7 +587,7 @@ void TestNamedIndexedDataPut(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestNamedIndexedDataRemove(void)
+void TestNamedIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 {
 	CNamedIndexedData					cDatabase;
 	CValueIndexedDataConfig				cIndexConfig;
@@ -596,8 +605,8 @@ void TestNamedIndexedDataRemove(void)
 
 
 	cController.Init("Output" _FS_ "Database7" _FS_ "R", "Output" _FS_ "Database7" _FS_ "W");
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 
 	cController.Begin();
@@ -616,14 +625,15 @@ void TestNamedIndexedDataRemove(void)
 	AssertTrue(cDatabase.Contains(0x0203LL));
 	AssertTrue(cDatabase.Contains("Niels"));
 	AssertTrue(cDatabase.Contains(0x0304LL));
+	if (eWriteThrough == IWT_No) cDatabase.Flush();
 	cController.End();
 	cDatabase.Kill();
 	cController.Kill();
 
 
 	cController.Init("Output" _FS_ "Database7" _FS_ "R", "Output" _FS_ "Database7" _FS_ "W");
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 
 	cController.Begin();
@@ -643,8 +653,8 @@ void TestNamedIndexedDataRemove(void)
 
 
 	cController.Init("Output" _FS_ "Database7" _FS_ "R", "Output" _FS_ "Database7" _FS_ "W");
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 
 	cController.Begin();
@@ -657,14 +667,15 @@ void TestNamedIndexedDataRemove(void)
 	AssertTrue(bResult);
 	AssertFalse(cDatabase.Contains(0x0102LL));
 	AssertFalse(cDatabase.Contains("Ernest"));
+	if (eWriteThrough == IWT_No) cDatabase.Flush();
 	cController.End();
 	cDatabase.Kill();
 	cController.Kill();
 
 
 	cController.Init("Output" _FS_ "Database7" _FS_ "R", "Output" _FS_ "Database7" _FS_ "W");
-	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, IWT_Yes);
-	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, IWT_Yes);
+	cIndexConfig.Init(&cController, "IndexData", 8 KB, 8 KB, eWriteThrough);
+	cNamedConfig.Init(&cController, "Names", 16 KB, &cEvictionStrategy, eWriteThrough);
 	cConfig.Init(&cIndexConfig, &cNamedConfig);
 
 	cController.Begin();
@@ -683,7 +694,7 @@ void TestNamedIndexedDataRemove(void)
 	bResult = cDatabase.Remove(0x0304LL);
 	AssertTrue(bResult);
 	AssertFalse(cDatabase.Contains(0x0304LL));
-
+	if (eWriteThrough == IWT_No) cDatabase.Flush();
 	cController.End();
 
 	cDatabase.Kill();
@@ -705,17 +716,28 @@ void TestNamedIndexedData(void)
 	DataMemoryInit();
 	BeginTests();
 
-	TestNamedIndexedDataInit();
-	TestNamedIndexedDataAddString();
-	TestNamedIndexedDataAddChars();
-	TestNamedIndexedDataAddIndex();
-	TestNamedIndexedDataAddBad();
-	TestNamedIndexedDataGetName();
-	TestNamedIndexedDataSetIndex();
-	TestNamedIndexedDataSet();
-	TestNamedIndexedDataSetBad();
-	TestNamedIndexedDataPut();
-	TestNamedIndexedDataRemove();
+	TestNamedIndexedDataInit(IWT_Yes);
+	TestNamedIndexedDataInit(IWT_No);
+	TestNamedIndexedDataAddString(IWT_Yes);
+	TestNamedIndexedDataAddString(IWT_No);
+	TestNamedIndexedDataAddChars(IWT_Yes);
+	TestNamedIndexedDataAddChars(IWT_No);
+	TestNamedIndexedDataAddIndex(IWT_Yes);
+	TestNamedIndexedDataAddIndex(IWT_No);
+	TestNamedIndexedDataAddBad(IWT_Yes);
+	TestNamedIndexedDataAddBad(IWT_No);
+	TestNamedIndexedDataGetName(IWT_Yes);
+	TestNamedIndexedDataGetName(IWT_No);
+	TestNamedIndexedDataSetIndex(IWT_Yes);
+	TestNamedIndexedDataSetIndex(IWT_No);
+	TestNamedIndexedDataSet(IWT_Yes);
+	TestNamedIndexedDataSet(IWT_No);
+	TestNamedIndexedDataSetBad(IWT_Yes);
+	TestNamedIndexedDataSetBad(IWT_No);
+	TestNamedIndexedDataPut(IWT_Yes);
+	TestNamedIndexedDataPut(IWT_No);
+	TestNamedIndexedDataRemove(IWT_Yes);
+	TestNamedIndexedDataRemove(IWT_No);
 
 	TestStatistics();
 	DataMemoryKill();
