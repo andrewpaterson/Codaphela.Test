@@ -44,16 +44,16 @@ void TestObjectFreeing(void)
 	pTest1->Init(&sKillNotifier1);
 	pTest2->Init(&sKillNotifier2);
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(0, gcObjects.NumIndiciesCached());
+	AssertLongLongInt(0, gcObjects.NumIndicesCached());
 
 	pTest1->Kill();
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(0, gcObjects.NumIndiciesCached());
+	AssertLongLongInt(0, gcObjects.NumIndicesCached());
 	AssertTrue(sKillNotifier1.bKilled);
 
 	pTest2->Kill();
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(0, gcObjects.NumIndiciesCached());
+	AssertLongLongInt(0, gcObjects.NumIndicesCached());
 	AssertTrue(sKillNotifier2.bKilled);
 
 	ObjectsKill();

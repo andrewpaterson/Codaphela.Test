@@ -1,6 +1,8 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/MemoryFile.h"
+#include "CoreLib/ValueIndexedDataConfig.h"
+#include "CoreLib/ValueNamedIndexesConfig.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectConverterText.h"
 #include "StandardLib/ObjectConverterNative.h"
@@ -129,16 +131,19 @@ void WriteDehollowficationChunkedFile(void)
 //////////////////////////////////////////////////////////////////////////
 void TestDehollowficationFromDatabase(void)
 {
-	CIndexedConfig	cConfig;
-	CFileUtil		cFileUtil;
+	CNamedIndexedDataConfig				cConfig;
+	CFileUtil							cFileUtil;
+	CValueIndexedDataConfig				cIndexConfig;
+	CValueNamedIndexesConfig			cNamedConfig;
+	CDurableFileController				cDurableController;
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	char								szDirectory[] = "Output" _FS_ "Dehollowfication" _FS_ "Database1";
 
-	cConfig.Manual("Output" _FS_ "Dehollowfication" _FS_ "Database",
-					FALSE,
-					TRUE,
-					FALSE,
-					1 MB);
-
-	cFileUtil.RemoveDir("Output" _FS_ "Dehollowfication" _FS_ "Database");
+	cDurableController.Init(szDirectory);
+	cIndexConfig.Init(&cDurableController, "IndexedData", 1 MB, 1 MB, IWT_Yes);
+	cNamedConfig.Init(&cDurableController, "Names", 2 MB, &cEvictionStrategy, IWT_Yes);
+	cConfig.Init(&cIndexConfig, &cNamedConfig);
+	cFileUtil.RemoveDir(szDirectory);
 
 	MemoryInit();
 	ObjectsInit(&cConfig);
@@ -155,8 +160,8 @@ void TestDehollowficationFromDatabase(void)
 
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(0, gcObjects.NumMemoryNames());
-	AssertLongLongInt(11, gcObjects.NumIndicies());
-	AssertLongLongInt(0, gcObjects.NumIndiciesCached());
+	AssertLongLongInt(11, gcObjects.NumIndices());
+	AssertLongLongInt(0, gcObjects.NumIndicesCached());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 
 	Ptr<CRoot> pRoot = ORoot();
@@ -166,7 +171,7 @@ void TestDehollowficationFromDatabase(void)
 	AssertLongLongInt(2, gcUnknowns.NumElements());
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
-	AssertLongLongInt(1, gcObjects.NumIndiciesCached());
+	AssertLongLongInt(1, gcObjects.NumIndicesCached());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 	AssertInt(1, gcObjects.GetStackPointers()->UsedPointers());
 
@@ -209,7 +214,7 @@ void TestDehollowficationFromDatabase(void)
 	AssertLongLongInt(10, gcUnknowns.NumElements());
 	AssertLongLongInt(10, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
-	AssertLongLongInt(3, gcObjects.NumIndiciesCached());
+	AssertLongLongInt(3, gcObjects.NumIndicesCached());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 
 	AssertTrue(pTest->mpSplit2.IsHollow());
@@ -220,7 +225,7 @@ void TestDehollowficationFromDatabase(void)
 
 	AssertLongLongInt(11, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
-	AssertLongLongInt(2, gcObjects.NumIndiciesCached());
+	AssertLongLongInt(2, gcObjects.NumIndicesCached());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 
 	Ptr<CTestNamedString> pRandom = pRoot->Get<CTestNamedString>("NamedString 3");
@@ -236,7 +241,7 @@ void TestDehollowficationFromDatabase(void)
 	AssertFalse(pTest->mpSplit2->mszString.IsHollow());
 	AssertPointer(pRandom->mszString.Object(), pTest->mpSplit2->mszString.Object());
 
-	AssertLongLongInt(11, gcObjects.NumIndicies());
+	AssertLongLongInt(11, gcObjects.NumIndices());
 
 	ObjectsKill();
 
@@ -246,7 +251,8 @@ void TestDehollowficationFromDatabase(void)
 	AssertTrue(pRandom.IsNull());
 
 	pDiamond.UnsafeClearObject();
-
+	
+	cFileUtil.RemoveDir(szDirectory);
 	MemoryKill();
 }
 
@@ -257,16 +263,19 @@ void TestDehollowficationFromDatabase(void)
 //////////////////////////////////////////////////////////////////////////
 void TestDehollowficationFromDatabaseOfTwoPointers(void)
 {
-	CIndexedConfig	cConfig;
-	CFileUtil		cFileUtil;
+	CNamedIndexedDataConfig				cConfig;
+	CFileUtil							cFileUtil;
+	CValueIndexedDataConfig				cIndexConfig;
+	CValueNamedIndexesConfig			cNamedConfig;
+	CDurableFileController				cDurableController;
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	char								szDirectory[] = "Output" _FS_ "Dehollowfication" _FS_ "Database2";
 
-	cConfig.Manual("Output" _FS_ "Dehollowfication" _FS_ "Database",
-		FALSE,
-		TRUE,
-		FALSE,
-		1 MB);
-
-	cFileUtil.RemoveDir("Output" _FS_ "Dehollowfication" _FS_ "Database");
+	cDurableController.Init(szDirectory);
+	cIndexConfig.Init(&cDurableController, "IndexedData", 1 MB, 1 MB, IWT_Yes);
+	cNamedConfig.Init(&cDurableController, "Names", 2 MB, &cEvictionStrategy, IWT_Yes);
+	cConfig.Init(&cIndexConfig, &cNamedConfig);
+	cFileUtil.RemoveDir(szDirectory);
 
 	MemoryInit();
 	ObjectsInit(&cConfig);
@@ -310,6 +319,7 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 	AssertPointer(pString1->mpAnother.Object(), pString2->mpAnother.Object());
 
 	ObjectsKill();
+	cFileUtil.RemoveDir(szDirectory);
 	MemoryKill();
 }
 
@@ -366,7 +376,6 @@ void TestDehollowficationFromChunkFileSource(void)
 	ObjectsKill();
 	MemoryKill();
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////

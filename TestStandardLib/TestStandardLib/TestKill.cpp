@@ -166,7 +166,7 @@ void TestKillBestPractice(void)
 	AssertString("Kill not called", sMaverickAfter.cPicture.mszPretenedImAPicture);
 	AssertLongLongInt(12, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(5, gcObjects.NumMemoryNames());
-	AssertLongLongInt(0, gcObjects.NumIndicies());
+	AssertLongLongInt(0, gcObjects.NumIndices());
 	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
 	AssertInt(2, pWorld.GetDistToRoot());
 	AssertInt(3, pHarrier.GetDistToRoot());
@@ -190,7 +190,7 @@ void TestKillBestPractice(void)
 	AssertString("Kill not called", sMaverickAfter.cPicture.mszPretenedImAPicture);
 	AssertLongLongInt(11, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(5, gcObjects.NumMemoryNames());
-	AssertLongLongInt(0, gcObjects.NumIndicies());
+	AssertLongLongInt(0, gcObjects.NumIndices());
 	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
 	AssertInt(2, pWorld.GetDistToRoot());
 	AssertInt(3, pHarrier.GetDistToRoot());
@@ -216,7 +216,7 @@ void TestKillBestPractice(void)
 	AssertTrue(pTarget2.IsNull());
 	AssertLongLongInt(10, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(4, gcObjects.NumMemoryNames());
-	AssertLongLongInt(0, gcObjects.NumIndicies());
+	AssertLongLongInt(0, gcObjects.NumIndices());
 	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
 	AssertInt(2, pWorld.GetDistToRoot());
 	AssertInt(3, pHarrier.GetDistToRoot());
@@ -251,7 +251,7 @@ void TestKillBestPractice(void)
 
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
-	AssertLongLongInt(0, gcObjects.NumIndicies());
+	AssertLongLongInt(0, gcObjects.NumIndices());
 	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
 
 	AssertInt('X', sHarrierBefore.sPoint.x);
@@ -365,7 +365,7 @@ void TestKillCanFindRoot(void)
 	AssertInt(-1, pWorld->GetTickables()->GetDistToRoot());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(5, gcObjects.NumMemoryNames());
-	AssertLongLongInt(0, gcObjects.NumIndicies());
+	AssertLongLongInt(0, gcObjects.NumIndices());
 	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
 
 	pJeep = NULL;

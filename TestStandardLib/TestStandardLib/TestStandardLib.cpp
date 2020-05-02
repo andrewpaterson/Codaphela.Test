@@ -17,7 +17,6 @@ void TestSingleChannelAccessor(void);
 void TestActionEvent(void);
 void TestEvent(void);
 void TestChunkFileNames(void);
-void TestNamedIndexes(void);
 void TestObjectGraphSerialiser(void);
 void TestPointer(void);
 void TestObjectConverter(void);
@@ -51,7 +50,7 @@ void TestEmbeddedStackPointers(void);
 //
 //
 //////////////////////////////////////////////////////////////////////////
-int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
+int main(void)
 {
 	InitTotalStatistics();
 	InitEmptyString();
@@ -87,7 +86,6 @@ int FAR PASCAL WinMain(HINSTANCE hInstance,	HINSTANCE hPrevInstance, LPTSTR lpCm
 	TestObjectReaderSimple();
 	TestObjectReaderChunked();
 	TestObjectStackPointers();
-	TestNamedIndexes();
 	TestObjectGraphDeserialiser();
 	TestObjectConverter();
 	TestObjects();

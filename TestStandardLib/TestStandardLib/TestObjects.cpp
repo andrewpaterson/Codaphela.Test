@@ -1,4 +1,6 @@
 #include "StandardLib/Objects.h"
+#include "CoreLib/ValueIndexedDataConfig.h"
+#include "CoreLib/ValueNamedIndexesConfig.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
 #include "ObjectWriterChunkedTestClasses.h"
@@ -100,21 +102,28 @@ void TestObjectsInMemoryIteration()
 //////////////////////////////////////////////////////////////////////////
 void TestObjectsObjectSave(void)
 {
-	CFileUtil						cFileUtil;
-	Ptr<CTestDoubleNamedString>		pDouble;
-	BOOL							bResult;
-	CIndexedConfig					cConfig;
+	Ptr<CTestDoubleNamedString>			pDouble;
+	BOOL								bResult;
+	CNamedIndexedDataConfig				cConfig;
+	CFileUtil							cFileUtil;
+	CValueIndexedDataConfig				cIndexConfig;
+	CValueNamedIndexesConfig			cNamedConfig;
+	CDurableFileController				cDurableController;
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	char								szDirectory[] = "Output" _FS_ "ObjectSave";
 
-	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output/ObjectSave");
-	cConfig.OptimiseForStreaming("Output/ObjectSave");
-	cConfig.SetObjectCacheSize(128 MB);
+	cDurableController.Init(szDirectory);
+	cIndexConfig.Init(&cDurableController, "IndexedData", 1 MB, 1 MB, IWT_Yes);
+	cNamedConfig.Init(&cDurableController, "Names", 2 MB, &cEvictionStrategy, IWT_Yes);
+	cConfig.Init(&cIndexConfig, &cNamedConfig);
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
 
 	ObjectsInit(&cConfig);
 
 	pDouble = SetupObjectsForDehollowfication();
 
-	AssertLongLongInt(0, gcObjects.NumIndicies());
+	AssertLongLongInt(0, gcObjects.NumIndices());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 	AssertTrue(pDouble.IsDirty());
@@ -123,29 +132,29 @@ void TestObjectsObjectSave(void)
 	AssertTrue(bResult);
 	AssertTrue(pDouble.IsDirty());  //This object is *still* dirty after save.  Almost no objects will answer true to IsDirty.
 
-	AssertLongLongInt(1, gcObjects.NumIndicies());
+	AssertLongLongInt(1, gcObjects.NumIndices());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 	AssertInt(106, pDouble->SerialisedSize());
-	AssertLongLongInt(1, gcObjects.NumIndiciesCached(106));
-	AssertLongLongInt(0, gcObjects.NumIndiciesCached(118));
+	AssertLongLongInt(1, gcObjects.NumIndicesCached(106));
+	AssertLongLongInt(0, gcObjects.NumIndicesCached(118));
 
 	bResult = gcObjects.Save(pDouble.BaseObject());
 	AssertTrue(bResult);
-	AssertLongLongInt(1, gcObjects.NumIndicies());
+	AssertLongLongInt(1, gcObjects.NumIndices());
 	AssertInt(106, pDouble->SerialisedSize());
-	AssertLongLongInt(1, gcObjects.NumIndiciesCached(106));
-	AssertLongLongInt(0, gcObjects.NumIndiciesCached(118));
+	AssertLongLongInt(1, gcObjects.NumIndicesCached(106));
+	AssertLongLongInt(0, gcObjects.NumIndicesCached(118));
 	
 	pDouble->mszString = OMalloc(CString);
 	pDouble->mszString->Init("A String");
 
 	bResult = gcObjects.Save(pDouble.BaseObject());
 	AssertTrue(bResult);
-	AssertLongLongInt(1, gcObjects.NumIndicies());
+	AssertLongLongInt(1, gcObjects.NumIndices());
 	AssertInt(118, pDouble->SerialisedSize());
-	AssertLongLongInt(0, gcObjects.NumIndiciesCached(106));
-	AssertLongLongInt(1, gcObjects.NumIndiciesCached(118));
+	AssertLongLongInt(0, gcObjects.NumIndicesCached(106));
+	AssertLongLongInt(1, gcObjects.NumIndicesCached(118));
 
 	pDouble->mszString = OMalloc(CString);
 	pDouble->mszString->Init("Different Object");
@@ -153,12 +162,13 @@ void TestObjectsObjectSave(void)
 	AssertInt(118, pDouble->SerialisedSize());
 	bResult = gcObjects.Save(pDouble.BaseObject());
 	AssertTrue(bResult);
-	AssertLongLongInt(1, gcObjects.NumIndicies());
+	AssertLongLongInt(1, gcObjects.NumIndices());
 	AssertInt(118, pDouble->SerialisedSize());
-	AssertLongLongInt(0, gcObjects.NumIndiciesCached(106));
-	AssertLongLongInt(1, gcObjects.NumIndiciesCached(118));
+	AssertLongLongInt(0, gcObjects.NumIndicesCached(106));
+	AssertLongLongInt(1, gcObjects.NumIndicesCached(118));
 
 	ObjectsKill();
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -176,7 +186,7 @@ void TestObjectsFlushNoClear(void)
 	ObjectsInit("Output/Flush1");
 	SetupObjectsForDehollowfication();
 
-	AssertLongLongInt(0, gcObjects.NumIndicies());
+	AssertLongLongInt(0, gcObjects.NumIndices());
 	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
@@ -184,7 +194,7 @@ void TestObjectsFlushNoClear(void)
 	bResult = gcObjects.Flush(FALSE, FALSE);
 	AssertTrue(bResult);
 
-	AssertLongLongInt(9, gcObjects.NumIndicies());
+	AssertLongLongInt(9, gcObjects.NumIndices());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
@@ -227,22 +237,26 @@ void TestObjectsFlushNoClear(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectsFlushDurable(void)
 {
-	CFileUtil		cFileUtil;
-	BOOL			bResult;
-	CIndexedConfig	cConfig;
+	BOOL								bResult;
+	CNamedIndexedDataConfig				cConfig;
+	CFileUtil							cFileUtil;
+	CValueIndexedDataConfig				cIndexConfig;
+	CValueNamedIndexesConfig			cNamedConfig;
+	CDurableFileController				cDurableController;
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	char								szDirectory[] = "Output" _FS_ "Flush2";
 
-	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output/Flush2");
-	
-
-	cConfig.OptimiseForStreaming("Output/Flush2");
-	cConfig.SetObjectCacheSize(128 MB);
-	//cConfig.SetWriteThrough(FALSE);
+	cDurableController.Init(szDirectory);
+	cIndexConfig.Init(&cDurableController, "IndexedData", 1 MB, 1 MB, IWT_Yes);
+	cNamedConfig.Init(&cDurableController, "Names", 2 MB, &cEvictionStrategy, IWT_Yes);
+	cConfig.Init(&cIndexConfig, &cNamedConfig);
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
 
 	ObjectsInit(&cConfig);
 	SetupObjectsForDehollowfication();
 
-	AssertLongLongInt(0, gcObjects.NumIndicies());
+	AssertLongLongInt(0, gcObjects.NumIndices());
 	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
@@ -250,7 +264,7 @@ void TestObjectsFlushDurable(void)
 	bResult = gcObjects.Flush(FALSE, FALSE);
 	AssertTrue(bResult);
 
-	AssertLongLongInt(9, gcObjects.NumIndicies());
+	AssertLongLongInt(9, gcObjects.NumIndices());
 	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
@@ -268,6 +282,8 @@ void TestObjectsFlushDurable(void)
 	AssertFile("Input/Dehollowfication/Indicies.DAT", "Output/Flush2/Indicies.DAT");
 	AssertFile("Input/Dehollowfication/32_0.NAM",     "Output/Flush2/32_0.NAM");
 	AssertFile("Input/Dehollowfication/Files.NAM",    "Output/Flush2/Files.NAM");
+
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -285,16 +301,16 @@ void TestObjectsEvict(void)
 	ObjectsInit("Output/Eviction");
 	SetupObjectsForDehollowfication();
 
-	AssertLongLongInt(0, gcObjects.NumIndicies());
-	AssertLongLongInt(0, gcObjects.NumIndiciesCached());
+	AssertLongLongInt(0, gcObjects.NumIndices());
+	AssertLongLongInt(0, gcObjects.NumIndicesCached());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 
 	bResult = gcObjects.Flush(FALSE, FALSE);
 	AssertTrue(bResult);
 
-	AssertLongLongInt(9, gcObjects.NumIndicies());
-	AssertLongLongInt(9, gcObjects.NumIndiciesCached());
+	AssertLongLongInt(9, gcObjects.NumIndices());
+	AssertLongLongInt(9, gcObjects.NumIndicesCached());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 
@@ -308,8 +324,8 @@ void TestObjectsEvict(void)
 	bResult = gcObjects.Flush(FALSE, TRUE);
 	AssertTrue(bResult);
 
-	AssertLongLongInt(9, gcObjects.NumIndicies());
-	AssertLongLongInt(0, gcObjects.NumIndiciesCached());
+	AssertLongLongInt(9, gcObjects.NumIndices());
+	AssertLongLongInt(0, gcObjects.NumIndicesCached());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 
@@ -323,8 +339,8 @@ void TestObjectsEvict(void)
 	bResult = gcObjects.Flush(TRUE, FALSE);
 	AssertTrue(bResult);
 
-	AssertLongLongInt(9, gcObjects.NumIndicies());
-	AssertLongLongInt(9, gcObjects.NumIndiciesCached());
+	AssertLongLongInt(9, gcObjects.NumIndices());
+	AssertLongLongInt(9, gcObjects.NumIndicesCached());
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(0, gcObjects.NumMemoryNames());
 
@@ -338,8 +354,8 @@ void TestObjectsEvict(void)
 	bResult = gcObjects.Flush(TRUE, TRUE);
 	AssertTrue(bResult);
 
-	AssertLongLongInt(9, gcObjects.NumIndicies());
-	AssertLongLongInt(0, gcObjects.NumIndiciesCached());
+	AssertLongLongInt(9, gcObjects.NumIndices());
+	AssertLongLongInt(0, gcObjects.NumIndicesCached());
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(0, gcObjects.NumMemoryNames());
 
@@ -504,12 +520,12 @@ void TestObjectDehollowfication(void)
 	ObjectsInit("Output/Dehollowfication");
 	SetupObjectsForDehollowfication();
 	gcObjects.Flush(TRUE, TRUE);
-	AssertLongLongInt(9, gcObjects.NumIndicies());
+	AssertLongLongInt(9, gcObjects.NumIndices());
 	ObjectsKill();
 
 	ObjectsInit("Output/Dehollowfication");
 	SetupObjectsConstructors();
-	AssertLongLongInt(9, gcObjects.NumIndicies());
+	AssertLongLongInt(9, gcObjects.NumIndices());
 
 	AssertTrue(gcObjects.Contains("Double"));
 
@@ -565,13 +581,13 @@ void TestObjectsFlushClearGetByOid(void)
 	pRoot = ORoot();
 	pDouble = ONMalloc(CTestDoubleNamedString, "Double")->Init();
 	pRoot->Add(pDouble);
-	AssertLongLongInt(0, gcObjects.NumIndicies());
+	AssertLongLongInt(0, gcObjects.NumIndices());
 	pObject = gcObjects.Get(3);
 	AssertNotNull(pObject.Object());
 	AssertString("CTestDoubleNamedString", pObject.ClassName());
 
 	gcObjects.Flush(TRUE, TRUE);
-	AssertLongLongInt(3, gcObjects.NumIndicies());
+	AssertLongLongInt(3, gcObjects.NumIndices());
 
 	pObject = gcObjects.Get(3);
 	AssertNotNull(pObject.Object());
@@ -609,14 +625,14 @@ void TestObjectsFlushClearGetByName(void)
 	pRoot = ORoot();
 	pDouble = ONMalloc(CTestDoubleNamedString, "Double")->Init();
 	pRoot->Add(pDouble);
-	AssertLongLongInt(0, gcObjects.NumIndicies());
+	AssertLongLongInt(0, gcObjects.NumIndices());
 	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
 	pObject = gcObjects.Get(3);
 	AssertNotNull(pObject.Object());
 	AssertString("CTestDoubleNamedString", pObject.ClassName());
 
 	gcObjects.Flush(TRUE, TRUE);
-	AssertLongLongInt(3, gcObjects.NumIndicies());
+	AssertLongLongInt(3, gcObjects.NumIndices());
 	AssertLongLongInt(2, gcObjects.NumDatabaseNames());
 
 	pObject = gcObjects.Get("Double");
@@ -646,7 +662,7 @@ void TestObjectsFlushRemovesStackPointers(void)
 	pRoot = ORoot();
 
 	gcObjects.Flush(TRUE, TRUE);
-	AssertLongLongInt(2, gcObjects.NumIndicies());
+	AssertLongLongInt(2, gcObjects.NumIndices());
 
 	AssertNull(&pRoot);
 
