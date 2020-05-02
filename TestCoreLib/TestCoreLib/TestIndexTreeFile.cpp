@@ -116,8 +116,8 @@ void TestIndexTreeFileAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKe
 	CTestIndexTreeObject		ab;
 	CTestIndexTreeObject		aab;
 	BOOL						bResult;
-	CIndexTreeNodeFile*			pcNode;
-	CTestIndexTreeObject**		ppvTest;
+	CIndexTreeNodeFile* pcNode;
+	CTestIndexTreeObject** ppvTest;
 	SIndexTreeFileIterator		sIter;
 	BOOL						bContinue;
 	int							iSize;
@@ -132,7 +132,7 @@ void TestIndexTreeFileAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKe
 	a.Init("A");
 	bResult = cAccess.PutStringPtr(a.GetName(), &a);
 	AssertTrue(bResult);
-	AssertTrue(cIndexTree.Flush());
+	AssertTrue(cAccess.Flush());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	pcNode = cIndexTree.GetNode("A", 1);
@@ -142,26 +142,25 @@ void TestIndexTreeFileAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKe
 	aa.Init("AA");
 	bResult = cAccess.PutStringPtr(aa.GetName(), &aa);
 	AssertTrue(bResult);
-	AssertTrue(cIndexTree.Flush());
+	AssertTrue(cAccess.Flush());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	aaa.Init("AAA");
 	bResult = cAccess.PutStringPtr(aaa.GetName(), &aaa);
 	AssertTrue(bResult);
-	AssertTrue(cIndexTree.Flush());
+	AssertTrue(cAccess.Flush());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	ab.Init("AB");
 	bResult = cAccess.PutStringPtr(ab.GetName(), &ab);
 	AssertTrue(bResult);
-	cIndexTree.Dump();
-	AssertTrue(cIndexTree.Flush());
+	AssertTrue(cAccess.Flush());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	aab.Init("AAB");
 	bResult = cAccess.PutStringPtr(aab.GetName(), &aab);
 	AssertTrue(bResult);
-	AssertTrue(cIndexTree.Flush());
+	AssertTrue(cAccess.Flush());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
 
@@ -188,15 +187,30 @@ void TestIndexTreeFileAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKe
 	AssertInt(sizeof(CTestIndexTreeObject*), iSize);
 	AssertString("AAA", (*ppvTest)->mszName);
 
-	bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
-	AssertTrue(bContinue);
-	AssertInt(sizeof(CTestIndexTreeObject*), iSize);
-	AssertString("AAB", (*ppvTest)->mszName);
+	if (eKeyReverse == IKR_No)
+	{
+		bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
+		AssertTrue(bContinue);
+		AssertInt(sizeof(CTestIndexTreeObject*), iSize);
+		AssertString("AAB", (*ppvTest)->mszName);
 
-	bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
-	AssertTrue(bContinue);
-	AssertInt(sizeof(CTestIndexTreeObject*), iSize);
-	AssertString("AB", (*ppvTest)->mszName);
+		bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
+		AssertTrue(bContinue);
+		AssertInt(sizeof(CTestIndexTreeObject*), iSize);
+		AssertString("AB", (*ppvTest)->mszName);
+	}
+	else if (eKeyReverse == IKR_Yes)
+	{
+		bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
+		AssertTrue(bContinue);
+		AssertInt(sizeof(CTestIndexTreeObject*), iSize);
+		AssertString("AB", (*ppvTest)->mszName);
+
+		bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
+		AssertTrue(bContinue);
+		AssertInt(sizeof(CTestIndexTreeObject*), iSize);
+		AssertString("AAB", (*ppvTest)->mszName);
+	}
 
 	bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
 	AssertFalse(bContinue);
@@ -325,8 +339,7 @@ void TestIndexTreeFileAddSimple(EIndexWriteThrough eWriteThrough, EIndexKeyRever
 	pcNode = cIndexTree.GetNode("AB", 2);
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetDataPtr();
 	AssertPointer(&ab, *ppvTest);
-	cIndexTree.Dump();
-	AssertTrue(cIndexTree.Flush());
+	AssertTrue(cAccess.Flush());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
 
@@ -2630,7 +2643,6 @@ void TestIndexTreeFileRemoveComplex(EIndexWriteThrough eWriteThrough, EIndexKeyR
 	cAccess.PutLongString(0x3589, szSeizedPotPlants);
 	cAccess.PutLongString(0x8743, szCallingFromWindows);
 	AssertLongLongInt(3, cIndexTree.NumElements());
-	cIndexTree.Dump();
 	AssertTrue(cAccess.HasLong(0x7634));
 	AssertTrue(cAccess.HasLong(0x3589));
 	AssertTrue(cAccess.HasLong(0x8743));
