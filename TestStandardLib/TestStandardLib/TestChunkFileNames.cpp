@@ -16,11 +16,15 @@ void TestWriting(void)
 	CChunkFile			cTestFile;
 	int					iIndex;
 	CChars				szText;
+	CFileUtil			cFileUtil;
 
-	pcDiskFile = DiskFile("Output/ChunkFileNames/FrenchToast.DRG");
+	cFileUtil.RemoveDir("Output" _FS_ "ChunkFileNames");
+	AssertTrue(cFileUtil.MakeDir("Output" _FS_ "ChunkFileNames"));
+
+	pcDiskFile = DiskFile("Output" _FS_ "ChunkFileNames" _FS_ "FrenchToast.DRG");
 	cChunkFile.Init(pcDiskFile);
 
-	cChunkFile.WriteOpen();
+	AssertTrue(cChunkFile.WriteOpen());
 
 	cChunkFile.WriteChunkBegin("new/age/violet/Tempest");
 	cChunkFile.WriteString("No man, Mr. President, thinks more highly than I do of the patriotism");
@@ -66,7 +70,7 @@ void TestWriting(void)
 	cChunkFile.WriteString("Seriously, how is it not possible to find text on the internet.");
 	cChunkFile.WriteChunkEnd();
 
-	cChunkFile.WriteClose();
+	AssertTrue(cChunkFile.WriteClose());
 	cChunkFile.Kill();
 
 	//What's expected:
@@ -82,7 +86,7 @@ void TestWriting(void)
 	// 4:   Final
 	// 5:   new/really/Final
 
-	pcDiskFile = DiskFile("Output/ChunkFileNames/FrenchToast.DRG");
+	pcDiskFile = DiskFile("Output" _FS_ "ChunkFileNames" _FS_ "FrenchToast.DRG");
 	cTestFile.Init(pcDiskFile);
 	AssertTrue(cTestFile.ReadOpen());
 
@@ -201,6 +205,8 @@ void TestWriting(void)
 
 	cTestFile.ReadClose();
 	cTestFile.Kill();
+
+	cFileUtil.RemoveDir("Output" _FS_ "ChunkFileNames");
 }
 
 

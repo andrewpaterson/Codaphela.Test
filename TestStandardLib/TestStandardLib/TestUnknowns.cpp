@@ -21,20 +21,21 @@ void TestUnknownListAddKill(void)
 	pcMemory = cUnknowns.GetMemory();
 	AssertNotNull(pcMemory);
 	AssertInt(0, pcMemory->NumElements());
-	AssertInt(16, pcMemory->ByteSize());
+	AssertTrue(pcMemory->ByteSize() <= 64);
 
 	pcTest = cUnknowns.Add<CTestUnknown>();
 	AssertPointer(&cUnknowns, pcTest->GetUnknownsThisIn());
 	pcFreeList = cUnknowns.GetFreeList(sizeof(CTestUnknown));
 	AssertInt(1, pcFreeList->NumElements());
 	AssertInt(1, pcMemory->NumElements());
-	AssertInt(28907, pcMemory->ByteSize());
+	AssertInt(351, pcMemory->ByteSize());
 
 	pcTest->Init();
 	pcTest->Kill();
-	AssertInt(0, pcFreeList->NumElements());
+	pcFreeList = cUnknowns.GetFreeList(sizeof(CTestUnknown));
+	AssertNull(pcFreeList);
 	AssertInt(0, pcMemory->NumElements());
-	AssertInt(64, pcMemory->ByteSize());
+	AssertTrue(pcMemory->ByteSize() <= 64);
 
 	cUnknowns.Kill();
 

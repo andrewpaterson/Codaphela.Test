@@ -182,7 +182,7 @@ void TestCleanNulls(void)
 	SSetIterator		sSetIter;
 	BOOL				bResult;
 
-	cSet.Init();
+	cSet.Init(4);
 
 	for (int i = 0; i < 32; i++)
 	{
@@ -192,6 +192,8 @@ void TestCleanNulls(void)
 		apUnknowns[i]->Init(sz.Text());
 		sz.Kill();
 	}
+
+	cSet.SetChunkSize(4);
 
 	AssertInt(32, cSet.NumElements());
 	AssertInt(32, cSet.UnsafeNumElements());

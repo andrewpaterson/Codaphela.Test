@@ -597,6 +597,55 @@ void TestArrayTemplateRemoveBatch(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestArrayTemplateSetChunkSize(void)
+{
+	CTestArrayTemplate			as;
+	int							i;
+	STestArrayTemplateItem*		ps;
+	SArrayTemplateHeader		sHeader;
+
+
+	as.Init(&gcSystemAllocator, 4);
+	for (i = 0; i < 32; i++)
+	{
+		ps = as.Add();
+		ps->i1 = i;
+		ps->i2 = 255;
+	}
+	AssertInt(32, as.NumElements());
+
+	as.GetHeader(&sHeader);
+	AssertInt(16, sHeader.miChunkSize);
+
+	AssertTrue(as.SetChunkSize(4));
+
+	as.GetHeader(&sHeader);
+	AssertInt(4, sHeader.miChunkSize);
+
+	ps = as.Add();
+	ps->i1 = 32;
+	ps->i2 = 255;
+
+	//Chunk size is calculated on the number of elements not the chunksize so it will just be reset to 16 after the array is grown again.
+	as.GetHeader(&sHeader);
+	AssertInt(16, sHeader.miChunkSize);
+
+	for (i = 0; i < 64; i++)
+	{
+		ps = as.Add();
+		ps->i1 = 32 + i;
+		ps->i2 = 255;
+	}
+
+	as.GetHeader(&sHeader);
+	AssertInt(32, sHeader.miChunkSize);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestArrayTemplate(void)
 {
 	BeginTests();
@@ -612,6 +661,7 @@ void TestArrayTemplate(void)
 	TestArrayTemplateFake();
 	TestArrayTemplateInsertBatch();
 	TestArrayTemplateRemoveBatch();
+	TestArrayTemplateSetChunkSize();
 
 	FastFunctionsKill();
 	MemoryKill();

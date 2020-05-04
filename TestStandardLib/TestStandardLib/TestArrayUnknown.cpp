@@ -246,7 +246,7 @@ void TestArrayUnknownLoad(void)
 	pcTest = cArray.Add<CTestUnknown>();
 	pcTest->Init(0);
 
-	cFile.Init(DiskFile("ArrayUnknown/Array.dat"));
+	cFile.Init(DiskFile("ArrayUnknown" _FS_ "Array.dat"));
 	bResult = cFile.WriteOpen();
 	AssertTrue(bResult);
 
@@ -261,7 +261,7 @@ void TestArrayUnknownLoad(void)
 
 	AssertInt(0, gcUnknowns.NumElements());
 
-	cFile.Init(DiskFile("ArrayUnknown/Array.dat"));
+	cFile.Init(DiskFile("ArrayUnknown" _FS_ "Array.dat"));
 	bResult = cFile.ReadOpen();
 	AssertTrue(bResult);
 
