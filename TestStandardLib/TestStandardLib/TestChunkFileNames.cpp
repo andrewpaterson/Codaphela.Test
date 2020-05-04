@@ -19,7 +19,7 @@ void TestWriting(void)
 	CFileUtil			cFileUtil;
 
 	cFileUtil.RemoveDir("Output" _FS_ "ChunkFileNames");
-	AssertTrue(cFileUtil.MakeDir("Output" _FS_ "ChunkFileNames"));
+	AssertTrue(cFileUtil.TouchDir("Output" _FS_ "ChunkFileNames"));
 
 	pcDiskFile = DiskFile("Output" _FS_ "ChunkFileNames" _FS_ "FrenchToast.DRG");
 	cChunkFile.Init(pcDiskFile);
@@ -220,10 +220,10 @@ void TestReading(void)
 	CDiskFile*			pcDiskFile;
 	CChars				szText;
 
-	pcDiskFile = DiskFile("Input/FrenchToast.DRG");
+	pcDiskFile = DiskFile("Input" _FS_ "FrenchToast.DRG");
 	cChunkFile.Init(pcDiskFile);
 
-	cChunkFile.ReadOpen();
+	AssertTrue(cChunkFile.ReadOpen());
 
 	AssertTrue(cChunkFile.ReadChunkBegin("new/age/violet/Tempest"));
 	AssertTrue(szText.ReadChars(&cChunkFile));
@@ -360,7 +360,7 @@ void TestNameIteration(void)
 	SChunkFileNameIterator	sIter;
 	char*					szName;
 
-	pcDiskFile = DiskFile("Input/FrenchToast.DRG");
+	pcDiskFile = DiskFile("Input" _FS_ "FrenchToast.DRG");
 	cChunkFile.Init(pcDiskFile);
 
 	cChunkFile.ReadOpen();
@@ -415,11 +415,6 @@ void TestNameIteration(void)
 //////////////////////////////////////////////////////////////////////////
 void TestChunkFileNames(void)
 {
-	CFileUtil	cFileUtil;
-
-	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output/ChunkFileNames");
-
 	BeginTests();
 	MemoryInit();
 
@@ -429,5 +424,4 @@ void TestChunkFileNames(void)
 
 	MemoryKill();
 	TestStatistics();
-	cFileUtil.RemoveDir("Output");
 }

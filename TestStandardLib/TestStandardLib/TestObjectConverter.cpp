@@ -431,7 +431,7 @@ void TestObjectConverter(void)
 	CFileUtil	cFileUtil;
 
 	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output/ObjectConverter");
+	cFileUtil.TouchDir("Output" _FS_ "ObjectConverter");
 
 	BeginTests();
 
@@ -441,6 +441,6 @@ void TestObjectConverter(void)
 
 	TestStatistics();
 
-	cFileUtil.RemoveDir("Output");
+	cFileUtil.RemoveDir("Output" _FS_ "ObjectConverter");
 }
 

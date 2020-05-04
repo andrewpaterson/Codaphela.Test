@@ -50,11 +50,11 @@ void TestNamedObjectName(void)
 	OIndex					oiSet;
 	OIndex					oiNamed3;
 
-	cFileUtil.RemoveDir("Output/NamedObject");
-	cFileUtil.MakeDir("Output/NamedObject");
+	cFileUtil.RemoveDir("Output" _FS_ "NamedObject");
+	cFileUtil.TouchDir("Output" _FS_ "NamedObject");
 
 	MemoryInit();
-	ObjectsInit("Output/NamedObject");
+	ObjectsInit("Output" _FS_ "NamedObject");
 	TestNamedObjectAddConstructors(); //This is only important if an object is being loaded.
 
 	pNamed1 = ONMalloc(CTestNamedObject, "Frank")->Init(1);
@@ -94,7 +94,7 @@ void TestNamedObjectName(void)
 	AssertNull(pRoot.Object());
 	AssertNull(pSet.Object());
 
-	ObjectsInit("Output/NamedObject");
+	ObjectsInit("Output" _FS_ "NamedObject");
 	TestNamedObjectAddConstructors();
 
 	AssertLongLongInt(3, gcObjects.NumDatabaseNames());

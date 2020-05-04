@@ -165,8 +165,8 @@ void TestMapStringUnknownLoad(void)
 	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
 	AssertInt(0, gcUnknowns.NumElements());
 
-	cFileUtil.RemoveDir("MapStringUnknown");
-	cFileUtil.MakeDir("MapStringUnknown");
+	cFileUtil.RemoveDir("Output" _FS_ "MapStringUnknown");
+	cFileUtil.MakeDir("Output" _FS_ "MapStringUnknown");
 
 	cMap.Init();
 
@@ -179,7 +179,7 @@ void TestMapStringUnknownLoad(void)
 	pcTest = cMap.Put<CTestUnknownJobbie>("Yurk");
 	pcTest->Init(8, "Yurk");
 
-	cFile.Init(DiskFile("MapStringUnknown/Map.dat"));
+	cFile.Init(DiskFile("Output" _FS_ "MapStringUnknown" _FS_ "Map.dat"));
 	bResult = cFile.WriteOpen();
 	AssertTrue(bResult);
 
@@ -194,7 +194,7 @@ void TestMapStringUnknownLoad(void)
 
 	AssertInt(0, gcUnknowns.NumElements());
 
-	cFile.Init(DiskFile("MapStringUnknown/Map.dat"));
+	cFile.Init(DiskFile("Output" _FS_ "MapStringUnknown" _FS_ "Map.dat"));
 	bResult = cFile.ReadOpen();
 	AssertTrue(bResult);
 
@@ -229,7 +229,7 @@ void TestMapStringUnknownLoad(void)
 
 	AssertInt(0, gcUnknowns.NumElements());
 
-	cFileUtil.RemoveDir("MapStringUnknown");
+	cFileUtil.RemoveDir("Output" _FS_ "MapStringUnknown");
 
 	UnknownsKill();
 	MemoryKill();

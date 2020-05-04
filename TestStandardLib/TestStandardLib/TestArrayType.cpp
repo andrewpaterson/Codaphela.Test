@@ -98,8 +98,8 @@ void TestArrayTypeLoad(void)
 	pcTest = cArray.Add();
 	pcTest->Init(0);
 
-	cFileUtil.MakeDir("ArrayType");
-	cFile.Init(DiskFile("ArrayType/Array.dat"));
+	cFileUtil.TouchDir("Output" _FS_ "ArrayType");
+	cFile.Init(DiskFile("Output" _FS_ "ArrayType" _FS_ "Array.dat"));
 	bResult = cFile.WriteOpen();
 	AssertTrue(bResult);
 
@@ -114,7 +114,7 @@ void TestArrayTypeLoad(void)
 
 	AssertInt(0, gcUnknowns.NumElements());
 
-	cFile.Init(DiskFile("ArrayType/Array.dat"));
+	cFile.Init(DiskFile("Output" _FS_ "ArrayType" _FS_ "Array.dat"));
 	bResult = cFile.ReadOpen();
 	AssertTrue(bResult);
 
@@ -138,7 +138,7 @@ void TestArrayTypeLoad(void)
 
 	AssertInt(0, gcUnknowns.NumElements());
 
-	cFileUtil.RemoveDir("ArrayType");
+	cFileUtil.RemoveDir("Output" _FS_ "ArrayType");
 
 	UnknownsKill();
 	MemoryKill();

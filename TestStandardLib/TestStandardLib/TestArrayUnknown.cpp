@@ -233,8 +233,8 @@ void TestArrayUnknownLoad(void)
 	AssertInt(0, gcUnknowns.NumElements());
 	AssertInt(2, gcConstructors.NumConstructors());
 
-	cFileUtil.RemoveDir("ArrayUnknown");
-	cFileUtil.MakeDir("ArrayUnknown");
+	cFileUtil.RemoveDir("Output" _FS_ "ArrayUnknown");
+	cFileUtil.TouchDir("Output" _FS_ "ArrayUnknown");
 
 	cArray.Init();
 	pcTest = cArray.Add<CTestUnknown>();
@@ -246,7 +246,7 @@ void TestArrayUnknownLoad(void)
 	pcTest = cArray.Add<CTestUnknown>();
 	pcTest->Init(0);
 
-	cFile.Init(DiskFile("ArrayUnknown" _FS_ "Array.dat"));
+	cFile.Init(DiskFile("Output" _FS_ "ArrayUnknown" _FS_ "Array.dat"));
 	bResult = cFile.WriteOpen();
 	AssertTrue(bResult);
 
@@ -261,7 +261,7 @@ void TestArrayUnknownLoad(void)
 
 	AssertInt(0, gcUnknowns.NumElements());
 
-	cFile.Init(DiskFile("ArrayUnknown" _FS_ "Array.dat"));
+	cFile.Init(DiskFile("Output" _FS_ "ArrayUnknown" _FS_ "Array.dat"));
 	bResult = cFile.ReadOpen();
 	AssertTrue(bResult);
 
@@ -298,7 +298,7 @@ void TestArrayUnknownLoad(void)
 
 	AssertInt(0, gcUnknowns.NumElements());
 
-	cFileUtil.RemoveDir("ArrayUnknown");
+	cFileUtil.RemoveDir("Output" _FS_ "ArrayUnknown");
 
 	UnknownsKill();
 	MemoryKill();
