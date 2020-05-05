@@ -26,7 +26,7 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	CIndexTreeEvicting					cIndexTree;
 	CEvictedList						cEvictedNodes;
 	CIndexTreeHelper					cHelper;
-	CDurableFileController				cDurableController;
+	CDurableFileController				cController;
 	CIndexTreeEvictingAccess			cAccess;
 	CMemoryAllocator					cAllocator;
 	CGeneralMemory*						pcMemory;
@@ -37,12 +37,12 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
 	cHelper.Init("Output" _FS_"IndexTreeEvicting1", "primary", "backup", TRUE);
-	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
-	cDurableController.Begin();
+	cController.Begin();
 	cEvictedNodes.Init();
 	cStrategy.Init();
-	cIndexTree.Init(&cDurableController, "Here", 3656, &cEvictedNodes, &cStrategy, &gcIndexTreeFileDefaultCallback, &cAllocator, eWriteThrough, IKR_No);
+	cIndexTree.Init(&cController, "Here", 3656, &cEvictedNodes, &cStrategy, &gcIndexTreeFileDefaultCallback, &cAllocator, eWriteThrough, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	AssertLongLongInt(3096, pcMemory->GetTotalAllocatedMemory());
@@ -76,13 +76,13 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	AssertInt(1, cIndexTree.NumMemoryElements());
 	AssertInt(7, cIndexTree.NumMemoryNodes());
 
-	cDurableController.End();
+	cController.End();
 
 	cAccess.Kill();
 	cIndexTree.Kill();
 	cEvictedNodes.Kill();
 	cStrategy.Kill();
-	cDurableController.Kill();
+	cController.Kill();
 	cHelper.Kill(TRUE);
 }
 
@@ -100,17 +100,17 @@ void TestIndexTreeEvictingEvictWithChildren(void)
 	char						szAlbaquerque[] = "albaquerque";
 	CGeneralMemory*				pcMemory;
 	CMemoryAllocator			cAllocator;
-	CDurableFileController		cDurableController;
+	CDurableFileController		cController;
 	CIndexTreeEvicting			cIndexTree;
 	SLogConfig					sLogConfig;
 
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
 	cHelper.Init("Output" _FS_"IndexTreeEvicting2", "primary", "backup", TRUE);
-	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
-	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, NULL, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
+	cController.Begin();
+	cIndexTree.Init(&cController, NULL, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	AssertTrue(cAccess.PutStringString(szAlbatros, szAlbatros));
@@ -137,7 +137,7 @@ void TestIndexTreeEvictingEvictWithChildren(void)
 	AssertTrue(cAccess.EvictString(szAlba));
 	AssertLongLongInt(3096, pcMemory->GetTotalAllocatedMemory());
 
-	cDurableController.End();
+	cController.End();
 	cIndexTree.Kill();
 	AssertLongLongInt(0, pcMemory->GetTotalAllocatedMemory());
 	cHelper.Kill(TRUE);
@@ -157,7 +157,7 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 	char						szAlbaquerque[] = "albaquerque";
 	CGeneralMemory*				pcMemory;
 	CMemoryAllocator			cAllocator;
-	CDurableFileController		cDurableController;
+	CDurableFileController		cController;
 	CIndexTreeEvicting			cIndexTree;
 	char						szBatmobile[] = "batmobile";
 	char						szBatcave[] = "batcave";
@@ -167,10 +167,10 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
 	cHelper.Init("Output" _FS_"IndexTreeEvicting3", "primary", "backup", TRUE);
-	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
-	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, NULL, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
+	cController.Begin();
+	cIndexTree.Init(&cController, NULL, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
 	AssertLongLongInt(3096, pcMemory->GetTotalAllocatedMemory());
 
@@ -430,13 +430,13 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 		"   Both:   s(X)\n",
 		&cIndexTree);
 
-	cDurableController.End();
+	cController.End();
 	cIndexTree.Kill();
 	cAccess.Kill();
 	AssertLongLongInt(0, pcMemory->GetTotalAllocatedMemory());
 
-	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, NULL, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
+	cController.Begin();
+	cIndexTree.Init(&cController, NULL, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
 	AssertLongLongInt(3120, pcMemory->GetTotalAllocatedMemory());
 
@@ -447,7 +447,7 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 	szResult = cAccess.GetStringString(szAlbaquerque);
 	AssertString(szBatmobile, szResult.Text());	szResult.Kill();
 
-	cDurableController.End();
+	cController.End();
 	cIndexTree.Kill();
 	cAccess.Kill();
 	AssertLongLongInt(0, pcMemory->GetTotalAllocatedMemory());

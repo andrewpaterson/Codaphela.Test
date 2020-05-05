@@ -12,7 +12,7 @@
 void TestIndexedFileWrite(void)
 {
 	CIndexedFile				cIndexedFile;
-	CDurableFileController		cDurableController;
+	CDurableFileController		cController;
 	CFileUtil					cFileUtil;
 	CChars						szWrite;
 	CChars						szRewrite;
@@ -32,10 +32,10 @@ void TestIndexedFileWrite(void)
 	szWrite.Init("Output" _FS_ "IndexedFile" _FS_ "File.DAT");
 	szRewrite.Init("Output" _FS_ "_IndexedFile" _FS_ "_File.DAT");
 
-	cDurableController.Init(szDirectory, szRewriteDirectory);
-	cDurableController.Begin();
+	cController.Init(szDirectory, szRewriteDirectory);
+	cController.Begin();
 
-	cIndexedFile.Init(&cDurableController, 0, "File.DAT", "_File.DAT", 9, 0);
+	cIndexedFile.Init(&cController, 0, "File.DAT", "_File.DAT", 9, 0);
 
 	iFileIndex = cIndexedFile.Write(sz3);
 	AssertLongLongInt(0, iFileIndex);
@@ -49,11 +49,11 @@ void TestIndexedFileWrite(void)
 	AssertTrue(bResult);
 	AssertLongLongInt(18, cIndexedFile.GetFileSize());
 
-	bResult = cDurableController.End();
+	bResult = cController.End();
 	AssertTrue(bResult);
 	cIndexedFile.Kill();
 
-	cDurableController.Kill();
+	cController.Kill();
 
 	cTextFile.Init();
 	cTextFile.Read(szWrite.Text());
@@ -68,10 +68,10 @@ void TestIndexedFileWrite(void)
 	cTextFile.Kill();
 
 
-	cDurableController.Init(szDirectory, szRewriteDirectory);
-	cDurableController.Begin();
+	cController.Init(szDirectory, szRewriteDirectory);
+	cController.Begin();
 
-	cIndexedFile.Init(&cDurableController, 0, "File.DAT", "_File.DAT", 9, 0);
+	cIndexedFile.Init(&cController, 0, "File.DAT", "_File.DAT", 9, 0);
 
 	bResult = cIndexedFile.Read(1, szTemp);
 	AssertTrue(bResult);
@@ -86,11 +86,11 @@ void TestIndexedFileWrite(void)
 	AssertString(sz2, szTemp);
 	AssertInt(18, (int)cIndexedFile.GetFileSize());
 
-	bResult = cDurableController.End();
+	bResult = cController.End();
 	AssertTrue(bResult);
 	cIndexedFile.Kill();
 
-	cDurableController.Kill();
+	cController.Kill();
 
 	szWrite.Kill();
 	szRewrite.Kill();

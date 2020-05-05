@@ -21,7 +21,7 @@
 void TestIndexTreeTemplateFileStuff(void)
 {
 	CIndexTreeHelper								cHelper;
-	CDurableFileController							cDurableController;
+	CDurableFileController							cController;
 	CIndexTreeFile									cIndexTree;
 	CIndexTreeFileAccess							cAccess;
 	CTestIndexTreeObject							cObject1;
@@ -29,10 +29,10 @@ void TestIndexTreeTemplateFileStuff(void)
 	CTestIndexTreeObject							cResult;
 
 	cHelper.Init("Output" _FS_"IndexTree0", "primary", "backup", TRUE);
-	cDurableController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
-	cDurableController.Begin();
-	cIndexTree.Init(&cDurableController, NULL);
+	cController.Begin();
+	cIndexTree.Init(&cController, NULL);
 	cAccess.Init(&cIndexTree);
 	
 	cObject1.Init("Hello");
@@ -60,11 +60,11 @@ void TestIndexTreeTemplateFileStuff(void)
 	AssertFalse(cIndexTree.Get(cObject1.GetName(), cObject1.NameLength(), &cResult, NULL));
 	AssertInt(0, cIndexTree.NumElements());
 
-	cDurableController.End();
+	cController.End();
 
 	cAccess.Kill();
 	cIndexTree.Kill();
-	cDurableController.Kill();
+	cController.Kill();
 
 	cHelper.Kill(TRUE);
 }
