@@ -24,7 +24,7 @@ void TestNamedIndexesAdd(void)
 	char								szDirectory[] = "Output" _FS_ "NamedIndexes" _FS_ "1";
 	char								szRewriteDirectory[] = "Output" _FS_ "_NamedIndexes" _FS_ "1";
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
-	CValueNamedIndexesConfig			cDataConfig;
+	CValueNamedIndexesConfig			cConfig;
 	SLogConfig							sLogConfig;
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
@@ -33,9 +33,9 @@ void TestNamedIndexesAdd(void)
 	cController.Begin();
 
 	cEvictionStrategy.Init();
-	cDataConfig.Init(&cController, NULL, 16 KB, &cEvictionStrategy, IWT_No);
-	cNamedIndexes.Init(&cDataConfig);
-	cDataConfig.Kill();
+	cConfig.Init(NULL, 16 KB, &cEvictionStrategy, IWT_No);
+	cNamedIndexes.Init(&cController, &cConfig);
+	cConfig.Kill();
 
 	AssertLongLongInt(0, cNamedIndexes.NumElements());
 
@@ -112,7 +112,7 @@ void TestNamedIndexesRemove(void)
 	char								szDirectory[] = "Output" _FS_ "NamedIndexes" _FS_ "2";
 	char								szRewriteDirectory[] = "Output" _FS_ "_NamedIndexes" _FS_ "2";
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
-	CValueNamedIndexesConfig			cDataConfig;
+	CValueNamedIndexesConfig			cConfig;
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
@@ -120,9 +120,9 @@ void TestNamedIndexesRemove(void)
 	cController.Begin();
 	
 	cEvictionStrategy.Init();
-	cDataConfig.Init(&cController, NULL, 16 KB, &cEvictionStrategy, IWT_No);
-	cNamedIndexes.Init(&cDataConfig);
-	cDataConfig.Kill();
+	cConfig.Init(NULL, 16 KB, &cEvictionStrategy, IWT_No);
+	cNamedIndexes.Init(&cController, &cConfig);
+	cConfig.Kill();
 
 	cNamedIndexes.Add("Berty", 45LL);
 	cNamedIndexes.Add("Alfred", 73LL);
@@ -214,7 +214,7 @@ void TestNamedIndexesCacheEviction(void)
 	char								szDirectory[] = "Output" _FS_ "NamedIndexes" _FS_ "3";
 	char								szRewriteDirectory[] = "Output" _FS_ "_NamedIndexes" _FS_ "3";
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
-	CValueNamedIndexesConfig			cDataConfig;
+	CValueNamedIndexesConfig			cConfig;
 	SLogConfig							sLogConfig;
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
@@ -223,9 +223,9 @@ void TestNamedIndexesCacheEviction(void)
 	cController.Begin();
 
 	cEvictionStrategy.Init();
-	cDataConfig.Init(&cController, NULL, 8192, &cEvictionStrategy, IWT_No);
-	cNamedIndexes.Init(&cDataConfig);
-	cDataConfig.Kill();
+	cConfig.Init(NULL, 8192, &cEvictionStrategy, IWT_No);
+	cNamedIndexes.Init(&cController, &cConfig);
+	cConfig.Kill();
 
 
 	AssertLongLongInt(0, cNamedIndexes.NumElements());
@@ -310,7 +310,7 @@ void TestNamedIndexesLoad(void)
 	char								szDirectory[] = "Output" _FS_ "NamedIndexes" _FS_ "4";
 	char								szRewriteDirectory[] = "Output" _FS_"_NamedIndexes" _FS_ "4";
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
-	CValueNamedIndexesConfig			cDataConfig;
+	CValueNamedIndexesConfig			cConfig;
 
 	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
 
@@ -318,8 +318,8 @@ void TestNamedIndexesLoad(void)
 	AssertTrue(cController.Begin());
 
 	cEvictionStrategy.Init();
-	cDataConfig.Init(&cController, NULL, 16 KB, &cEvictionStrategy, IWT_No);
-	cNamedIndexes.Init(&cDataConfig);
+	cConfig.Init(NULL, 16 KB, &cEvictionStrategy, IWT_No);
+	cNamedIndexes.Init(&cController, &cConfig);
 
 	cNamedIndexes.Add("Arthur Miller", 1LL);
 	cNamedIndexes.Add("systema skeletale", 2LL);
@@ -372,7 +372,7 @@ void TestNamedIndexesLoad(void)
 
 	cController.Init(szDirectory, szRewriteDirectory);
 	AssertTrue(cController.Begin());
-	cNamedIndexes.Init(&cDataConfig);
+	cNamedIndexes.Init(&cController, &cConfig);
 
 	AssertLongLongInt(1LL, cNamedIndexes.Get("Arthur Miller"));
 	AssertLongLongInt(2LL, cNamedIndexes.Get("systema skeletale"));
@@ -418,7 +418,7 @@ void TestNamedIndexesLoad(void)
 	AssertLongLongInt(2LL, cNamedIndexes.Get("systema skeletale"));
 	AssertLongLongInt(19LL, cNamedIndexes.Get("otoscope"));
 	
-	cDataConfig.Kill();
+	cConfig.Kill();
 	cNamedIndexes.Flush();
 	AssertTrue(cController.End());
 	cNamedIndexes.Kill();
