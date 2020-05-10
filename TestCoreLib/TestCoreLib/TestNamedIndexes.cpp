@@ -369,7 +369,10 @@ void TestNamedIndexesLoad(void)
 	AssertTrue(cController.End());
 	cNamedIndexes.Kill();
 	cController.Kill();
+	cEvictionStrategy.Kill();
 
+
+	cEvictionStrategy.Init();
 	cController.Init(szDirectory, szRewriteDirectory);
 	AssertTrue(cController.Begin());
 	cNamedIndexes.Init(&cController, &cConfig);
