@@ -7,8 +7,8 @@
 #include "CoreLib/IndexedData.h"
 #include "CoreLib/ValueIndexedDataConfig.h"
 #include "CoreLib/IndexedDataAccess.h"
-#include "CoreLib/EvictedList.h"
-#include "CoreLib/IndexedEvictedList.h"
+#include "CoreLib/IndexTreeEvictedList.h"
+#include "CoreLib/IndexedDataEvictedList.h"
 #include "CoreLib/IndexTreeEvictionStrategyRandom.h"
 #include "NamedIndexedDataObject.h"
 #include "TestLib/Assert.h"
@@ -657,8 +657,8 @@ void TestIndexedDataEvictKey(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexedDataIndexEviction(void)
 {
-	CEvictedList						cIndexEvictedList;
-	CIndexedEvictedList					cKeyDataEvictedList;
+	CIndexTreeEvictedList				cIndexEvictedList;   // CIndexTreeEvictionCallback
+	CIndexedDataEvictedList				cKeyDataEvictedList; // CIndexedDataEvictionCallback
 	CIndexedData						cIndexedData;
 	char								szHello[] = "Hello";
 	char								szWorld[] = "World";
@@ -691,17 +691,21 @@ void TestIndexedDataIndexEviction(void)
 	AssertInt(1, cIndexedData.NumDataCached());
 	AssertInt(sizeof(SIndexedCacheDescriptor) + 6, cIndexedData.TestGetCachedObjectSize(4LL));
 	AssertInt(3440, cIndexedData.GetIndiciesSystemMemorySize());
+	Pass();
 
 	AssertTrue(cIndexedData.Add(1LL, szWorld, 6));
 	AssertInt(2, cIndexedData.NumDataCached());
 	AssertLongLongInt(2, cIndexedData.NumIndicesCached());
 	AssertInt(sizeof(SIndexedCacheDescriptor) + 6, cIndexedData.TestGetCachedObjectSize(1LL));
 	AssertInt(3536, cIndexedData.GetIndiciesSystemMemorySize());
+	Pass();
 
 	AssertInt(0, cIndexEvictedList.NumElements());
 	AssertTrue(cIndexedData.Add(2LL, szStream, 7));  //Node 4LL evicted here.
 	AssertInt(3536, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(1, cIndexEvictedList.NumElements());
+	AssertLongLongInt(4LL, *((int64*)(cIndexEvictedList.GetKey(0))));
+	Pass();
 
 	AssertInt(2, cIndexedData.NumDataCached());
 	AssertInt(2, (int)cIndexedData.NumIndicesCached());
@@ -710,6 +714,7 @@ void TestIndexedDataIndexEviction(void)
 	AssertInt(sizeof(SIndexedCacheDescriptor) + 6, cIndexedData.TestGetCachedObjectSize(1LL));
 	AssertLongLongInt(2, cIndexedData.NumIndicesCached());
 	AssertInt(2, cIndexedData.NumDataCached());
+	Pass();
 
 	cIndexEvictedList.Clear();
 	cKeyDataEvictedList.Clear();
@@ -722,6 +727,7 @@ void TestIndexedDataIndexEviction(void)
 	AssertInt(6, uiSize);
 	AssertLongLongInt(2, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
+	Pass();
 
 	AssertTrue(cIndexedData.Flush());
 	AssertTrue(cController.End());
@@ -757,6 +763,7 @@ void TestIndexedDataIndexEviction(void)
 	AssertTrue(cIndexedData.Get(4LL, szIn));
 	AssertString("Hello", szIn);
 	AssertInt(1, cIndexedData.NumDataCached());
+	Pass();
 
 	uiSize = cIndexedData.Size(1LL);
 	AssertInt(6, uiSize);
@@ -764,6 +771,7 @@ void TestIndexedDataIndexEviction(void)
 	AssertTrue(cIndexedData.Get(1LL, szIn));
 	AssertString("World", szIn);
 	AssertInt(2, cIndexedData.NumDataCached());
+	Pass();
 
 	uiSize = cIndexedData.Size(2LL);
 	AssertInt(7, uiSize);
@@ -771,6 +779,7 @@ void TestIndexedDataIndexEviction(void)
 	AssertTrue(cIndexedData.Get(2LL, szIn));
 	AssertString("Stream", szIn);
 	AssertInt(3, cIndexedData.NumDataCached());
+	Pass();
 
 	uiSize = cIndexedData.Size(4LL);
 	AssertInt(6, uiSize);
@@ -781,6 +790,7 @@ void TestIndexedDataIndexEviction(void)
 	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
 	AssertTrue(cIndexedData.Flush());
 	AssertTrue(cController.End());
+	Pass();
 
 	cIndexedData.Kill();
 	cIndexConfig.Kill();
@@ -1143,7 +1153,8 @@ void TestIndexedDataIndexedAdd(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexedDataDescriptorCaching(void)
 {
-	CIndexedEvictedList					cKeyDataEvictedList;
+	CIndexTreeEvictedList				cIndexTreeEvictedList;   // CIndexTreeEvictionCallback
+	CIndexedDataEvictedList				cIndexedDataEvictedList; // CIndexedDataEvictionCallback
 	CIndexedData						cIndexedData;
 	OIndex								OI;
 	CFileUtil							cFileUtil;
@@ -1154,13 +1165,15 @@ void TestIndexedDataDescriptorCaching(void)
 	CDurableFileController				cController;
 	SLogConfig							sLogConfig;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	BOOL								bResult;
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	cEvictionStrategy.Init();
-	cKeyDataEvictedList.Init();
+	cEvictionStrategy.Init(0);
+	cIndexedDataEvictedList.Init();
+	cIndexTreeEvictedList.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 96, 3650, IWT_No, &cEvictionStrategy, NULL, &cKeyDataEvictedList);
+	cIndexConfig.Init(NULL, 8 KB, 3650, IWT_No, &cEvictionStrategy, &cIndexTreeEvictedList, &cIndexedDataEvictedList);
 	cController.Begin();
 	cIndexedData.Init(&cController, &cIndexConfig);
 	cController.End();
@@ -1169,52 +1182,77 @@ void TestIndexedDataDescriptorCaching(void)
 	OI = 1LL;
 	iData = 77;
 	cIndexedData.Add(OI, &iData, 4); OI++;  iData++; 
+	
 	cIndexedData.Add(OI, &iData, 4); OI++;  iData++;
 	iData = 0; OI = 1LL; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(77, iData);
-	AssertInt(0, cKeyDataEvictedList.NumElements());
-
+	AssertInt(0, cIndexedDataEvictedList.NumElements());
+	
 	OI = 3LL;
 	iData = 79;
 	cIndexedData.Add(OI, &iData, 4); OI++;  iData++;
 	iData = 0; OI = 1LL; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(77, iData);
-	AssertInt(0, cKeyDataEvictedList.NumElements());
+	AssertInt(0, cIndexedDataEvictedList.NumElements());
+	AssertInt(3584, cIndexedData.GetIndiciesSystemMemorySize());
 
 	sLogConfig = gcLogger.SetSilent();
 	OI = 3LL;
 	iData = 80;
-	cIndexedData.Add(OI, &iData, 4); OI++;  iData++;
-	cIndexedData.Add(OI, &iData, 4); OI++;  iData++;
+	bResult = cIndexedData.Add(OI, &iData, 4); OI++;  iData++;
+	AssertFalse(bResult);
+	AssertInt(3584, cIndexedData.GetIndiciesSystemMemorySize());
+
+	bResult = cIndexedData.Add(OI, &iData, 4); OI++;  iData++;
+	AssertTrue(bResult);
 	gcLogger.SetConfig(&sLogConfig);
-	AssertInt(1, cKeyDataEvictedList.NumElements());
-	AssertLongLongInt(1LL, cKeyDataEvictedList.GetKey(0));
-	AssertInt(77, *(int*)cKeyDataEvictedList.GetData(0));
-	cKeyDataEvictedList.Clear();
+	AssertInt(1, cIndexedDataEvictedList.NumElements());
+	AssertLongLongInt(2LL, cIndexedDataEvictedList.GetKey(0));
+	AssertInt(78, *(int*)cIndexedDataEvictedList.GetData(0));
+	AssertInt(3596, cIndexedData.GetIndiciesSystemMemorySize());
+	cIndexedDataEvictedList.Clear();
+	cIndexTreeEvictedList.Clear();
 
 	cIndexedData.Add(OI, &iData, 4); OI++;  iData++;
-	AssertInt(1, cKeyDataEvictedList.NumElements());
-	AssertLongLongInt(2LL, cKeyDataEvictedList.GetKey(0));
-	AssertInt(78, *(int*)cKeyDataEvictedList.GetData(0));
-	cKeyDataEvictedList.Clear();
+	AssertInt(1, cIndexedDataEvictedList.NumElements());
+	AssertLongLongInt(1LL, cIndexedDataEvictedList.GetKey(0));
+	AssertInt(77, *(int*)cIndexedDataEvictedList.GetData(0));
+	AssertInt(3608, cIndexedData.GetIndiciesSystemMemorySize());
+	cIndexedDataEvictedList.Clear();
+	cIndexTreeEvictedList.Clear();
 
 	cIndexedData.Add(OI, &iData, 4); OI++;  iData++;
-	AssertInt(1, cKeyDataEvictedList.NumElements());
-	AssertLongLongInt(3LL, cKeyDataEvictedList.GetKey(0));
-	AssertInt(79, *(int*)cKeyDataEvictedList.GetData(0));
-	cKeyDataEvictedList.Clear();
+	AssertInt(1, cIndexedDataEvictedList.NumElements());
+	AssertLongLongInt(4LL, cIndexedDataEvictedList.GetKey(0));
+	AssertInt(81, *(int*)cIndexedDataEvictedList.GetData(0));
+	AssertInt(3620, cIndexedData.GetIndiciesSystemMemorySize());
+	cIndexedDataEvictedList.Clear();
+	cIndexTreeEvictedList.Clear();
 
 	cIndexedData.Add(OI, &iData, 4); OI++;  iData++;
-	AssertInt(0, cKeyDataEvictedList.NumElements());
+	AssertInt(1, cIndexedDataEvictedList.NumElements());
+	AssertLongLongInt(5LL, cIndexedDataEvictedList.GetKey(0));
+	AssertInt(82, *(int*)cIndexedDataEvictedList.GetData(0));
+	AssertInt(3632, cIndexedData.GetIndiciesSystemMemorySize());
+	cIndexedDataEvictedList.Clear();
+	cIndexTreeEvictedList.Clear();
+
 	cIndexedData.Add(OI, &iData, 4); OI++;  iData++;
-	AssertInt(0, cKeyDataEvictedList.NumElements());
+	AssertInt(1, cIndexedDataEvictedList.NumElements());
+	AssertLongLongInt(6LL, cIndexedDataEvictedList.GetKey(0));
+	AssertInt(83, *(int*)cIndexedDataEvictedList.GetData(0));
+	AssertInt(3644, cIndexedData.GetIndiciesSystemMemorySize());
+	cIndexedDataEvictedList.Clear();
+	cIndexTreeEvictedList.Clear();
+
 	iData = 0; OI--; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(85, iData);
-	AssertInt(0, cKeyDataEvictedList.NumElements());
+	AssertInt(0, cIndexedDataEvictedList.NumElements());
+	AssertInt(3644, cIndexedData.GetIndiciesSystemMemorySize());
 
 	iData = 0; OI = 1LL; cIndexedData.Get(OI, (void*)&iData);
 	AssertInt(77, iData);
-	AssertInt(0, cKeyDataEvictedList.NumElements());
+	AssertInt(0, cIndexedDataEvictedList.NumElements());
 
 	iNumCached = cIndexedData.NumIndicesCached();
 	AssertInt(2, (int)iNumCached);
@@ -1240,7 +1278,8 @@ void TestIndexedDataDescriptorCaching(void)
 	cController.End();
 	cIndexedData.Kill();
 	cIndexConfig.Kill();
-	cKeyDataEvictedList.Kill();
+	cIndexedDataEvictedList.Kill();
+	cIndexTreeEvictedList.Kill();
 	cEvictionStrategy.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);

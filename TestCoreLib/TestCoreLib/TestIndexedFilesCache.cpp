@@ -4,7 +4,7 @@
 #include "BaseLib/TypeConverter.h"
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexedMap.h"
-#include "CoreLib/IndexedEvictedList.h"
+#include "CoreLib/IndexedDataEvictedList.h"
 #include "TestLib/Assert.h"
 
 
@@ -16,7 +16,7 @@ void TestIndexedFilesEvictingFlush(EIndexWriteThrough eWriteThrough, BOOL bClear
 {
 	CDurableFileController					cController;
 	CIndexTreeHelper						cHelper;
-	CIndexedMap		cDescriptors;
+	CIndexedMap								cDescriptors;
 	char									szMoreover[] = "Although moreover mistaken kindness me feelings do be marianne.  Cordial village and settled she ability law herself.";
 	char									szMudpuppy[] = "Although mudpuppy mistaken kindness me feelings do be marianne.  Cordial village and settled she ability law herself.";
 	char									szForsaken[] = "Although mudpuppy forsaken kindness me feelings do be marianne.  Cordial village and settled she ability law herself.";
@@ -128,7 +128,7 @@ void TestIndexedFilesEvictingEviction(EIndexWriteThrough eWriteThrough)
 	CDurableFileController					cController;
 	CIndexTreeHelper						cHelper;
 	CIndexedMap								cDescriptors;
-	CIndexedEvictedList						cKeyDataEvictedList;
+	CIndexedDataEvictedList					cKeyDataEvictedList;
 	char									szMoreover[] = "Although moreover mistaken kindness me feelings do be marianne.  Cordial village and settled she ability law herself.";
 	char									szIndulged[] = "Concerns greatest margaret him absolute entrance nay.  Door neat week do find past he.Be no surprise he honoured indulged.";
 	char									szSeparate[] = "To they four in love.  Settling you has separate supplied bed.  Concluded resembled suspected his resources curiosity joy.";

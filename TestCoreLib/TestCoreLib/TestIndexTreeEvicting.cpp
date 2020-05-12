@@ -6,7 +6,7 @@
 #include "BaseLib/Logger.h"
 #include "BaseLib/GlobalMemory.h"
 #include "CoreLib/IndexTreeEvicting.h"
-#include "CoreLib/EvictedList.h"
+#include "CoreLib/IndexTreeEvictedList.h"
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexTreeEvictingAccess.h"
 #include "CoreLib/IndexTreeEvictionStrategyRandom.h"
@@ -21,10 +21,109 @@ void AssertTree(char* szExpected, CIndexTreeEvicting* pcTree);
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeEvictingAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse)
+{
+	CIndexTreeEvicting			cIndexTree;
+	CIndexTreeEvictingAccess	cAccess;
+	CDurableFileController		cController;
+	CIndexTreeHelper			cHelper;
+	int							iData;
+	CChars						sz;
+
+	cHelper.Init("Output" _FS_"IndexTreeEvicting0", "primary", "backup", TRUE);
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cController.Begin();
+	cIndexTree.Init(&cController, NULL, 8 KB, NULL, NULL, &gcIndexTreeFileDefaultCallback, eWriteThrough, eKeyReverse);
+	cAccess.Init(&cIndexTree);
+
+	iData = 78;
+	cAccess.PutLongData(1LL, &iData, sizeof(int));
+	sz.Init();
+	cIndexTree.Print(&sz, TRUE);
+	if (eWriteThrough == IWT_Yes && eKeyReverse == IKR_Yes)
+	{
+		AssertStringApproximate(
+			"= [IndexTreeFile]  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================\n"
+			"   Both:   root -> 1:6 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  ()\n"
+			"Key: ------------- [0x01 00 00 00 00 00 00 00] -------------\n"
+			"   Both:   0    -> 1:5  ()\n"
+			"   Both:   0    -> 1:4  ()\n"
+			"   Both:   0    -> 1:3  ()\n"
+			"   Both:   0    -> 1:2  ()\n"
+			"   Both:   0    -> 1:1  ()\n"
+			"   Both:   0    -> 1:0  ()\n"
+			"   Both:   0    -> 0:0  ()\n"
+			"   Both:   1(X) ()\n"
+			, sz.Text());
+	}
+	else if (eWriteThrough == IWT_Yes && eKeyReverse == IKR_No)
+	{
+		AssertStringApproximate(
+			"= [IndexTreeFile]  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================\n"
+			"   Both:   root -> . 1:6 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  ()\n"
+			"Key: ------------- [0x01 00 00 00 00 00 00 00] -------------\n"
+			"   Both:   1    -> 1:5  ()\n"
+			"   Both:   0    -> 1:4  ()\n"
+			"   Both:   0    -> 1:3  ()\n"
+			"   Both:   0    -> 1:2  ()\n"
+			"   Both:   0    -> 1:1  ()\n"
+			"   Both:   0    -> 1:0  ()\n"
+			"   Both:   0    -> 0:0  ()\n"
+			"   Both:   0(X) ()\n"
+			, sz.Text());
+	}
+	else if (eWriteThrough == IWT_No && eKeyReverse == IKR_Yes)
+	{
+		AssertStringApproximate(
+			"= [IndexTreeFile]  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================\n"
+			" Memory:   root -> o . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  (DIRTY_NODE, DIRTY_PATH)\n"
+			"Key: ------------- [0x01 00 00 00 00 00 00 00] -------------\n"
+			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   1(X) (DIRTY_NODE, DIRTY_PATH)\n"
+			, sz.Text());
+	}
+	else if (eWriteThrough == IWT_No && eKeyReverse == IKR_No)
+	{
+		AssertStringApproximate(
+			"= [IndexTreeFile]  ===============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================\n"
+			" Memory:   root -> . o . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  (DIRTY_NODE, DIRTY_PATH)\n"
+			"Key: ------------- [0x01 00 00 00 00 00 00 00] -------------\n"
+			" Memory:   1    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   0(X) (DIRTY_NODE, DIRTY_PATH)\n"
+			, sz.Text());
+	}
+	sz.Kill();
+
+	cAccess.Flush();
+	cController.End();
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cController.Kill();
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 {
 	CIndexTreeEvicting					cIndexTree;
-	CEvictedList						cEvictedNodes;
+	CIndexTreeEvictedList				cEvictedNodes;
 	CIndexTreeHelper					cHelper;
 	CDurableFileController				cController;
 	CIndexTreeEvictingAccess			cAccess;
@@ -482,6 +581,10 @@ void TestIndexTreeEvicting(void)
 	DataMemoryInit();
 	BeginTests();
 
+	TestIndexTreeEvictingAdd(IWT_Yes, IKR_Yes);
+	TestIndexTreeEvictingAdd(IWT_Yes, IKR_No);
+	TestIndexTreeEvictingAdd(IWT_No, IKR_Yes);
+	TestIndexTreeEvictingAdd(IWT_No, IKR_No);
 	TestIndexTreeEvictingPut(IWT_Yes);
 	TestIndexTreeEvictingPut(IWT_No);
 	TestIndexTreeEvictingEvictWithChildren();
