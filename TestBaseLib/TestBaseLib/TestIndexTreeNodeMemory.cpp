@@ -25,13 +25,13 @@ void TestIndexTreeNodeMemoryInit(void)
 	pcNode->Init(&cTree, NULL, 0);
 	AssertTrue(pcNode->IsEmpty());
 	AssertFalse(pcNode->HasNodes());
-	AssertFalse(pcNode->HasObject());
+	AssertFalse(pcNode->HasData());
 	AssertTrue(pcNode->ValidateNodesEmpty());
 
 	pcNode->Contain(33);
 	AssertFalse(pcNode->IsEmpty());
 	AssertTrue(pcNode->HasNodes());
-	AssertFalse(pcNode->HasObject());
+	AssertFalse(pcNode->HasData());
 
 	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(pcNode->ValidateNodesEmpty());
@@ -43,7 +43,7 @@ void TestIndexTreeNodeMemoryInit(void)
 	pcNode->Set(33, &pcChildNode);
 	AssertFalse(pcNode->IsEmpty());
 	AssertTrue(pcNode->HasNodes());
-	AssertFalse(pcNode->HasObject());
+	AssertFalse(pcNode->HasData());
 	AssertInt(1, pcNode->NumValidIndexes());
 	AssertTrue(pcNode->ValidateNodesEmpty());
 

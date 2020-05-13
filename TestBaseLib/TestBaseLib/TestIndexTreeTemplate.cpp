@@ -40,7 +40,7 @@ void TestIndexTreeTemplatePut(void)
 
 	AssertTrue(cAccess.DeleteString("The"));
 	lliResult = cAccess.GetStringLong("The");
-	AssertLongLongInt(0, lliResult);
+	AssertLongLongInt(-1LL, lliResult);
 
 	AssertInt(2, cIndex.NumElements());
 	AssertInt(2, cIndex.RecurseSize());
