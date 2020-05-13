@@ -7,6 +7,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "CoreLib/IndexTreeEvicting.h"
 #include "CoreLib/IndexTreeEvictedList.h"
+#include "CoreLib/IndexedDataEvictedList.h"
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexTreeEvictingAccess.h"
 #include "CoreLib/IndexTreeEvictionStrategyRandom.h"
@@ -112,6 +113,65 @@ void TestIndexTreeEvictingAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse
 	cAccess.Kill();
 	cIndexTree.Kill();
 	cController.Kill();
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeEvictingEvict(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse)
+{
+	CIndexTreeEvicting					cIndexTree;
+	CIndexTreeHelper					cHelper;
+	CDurableFileController				cController;
+	CIndexTreeEvictingAccess			cAccess;
+	CMemoryAllocator					cAllocator;
+	CIndexTreeEvictionStrategyRandom	cStrategy;
+	CIndexTreeEvictedList				cIndexTreeEvictedList;   // CIndexTreeEvictionCallback
+	size_t								sSize;
+	CIndexTreeFileDefaultCallback		cWriterCallback;
+
+	cHelper.Init("Output" _FS_"IndexTreeEvicting0a", "primary", "backup", TRUE);
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cIndexTreeEvictedList.Init();
+	cController.Begin();
+	cStrategy.Init();
+	cIndexTree.Init(&cController, "Sub", 8 KB, &cIndexTreeEvictedList, &cStrategy, &cWriterCallback, eWriteThrough, eKeyReverse);
+	cAccess.Init(&cIndexTree);
+
+	sSize = cIndexTree.GetRoot()->CalculateNodeSize();
+	AssertInt(2062, sSize);
+	sSize = cIndexTree.GetSystemMemorySize();
+	AssertInt(3100, sSize);
+
+	cAccess.PutLongInt(1LL, 57);
+	sSize = cIndexTree.GetRoot()->CalculateNodeSize();
+	AssertInt(2062, sSize);
+	sSize = cIndexTree.GetSystemMemorySize();
+	AssertInt(3412, sSize);
+
+	cAccess.Flush();
+	sSize = cIndexTree.GetRoot()->CalculateNodeSize();
+	AssertInt(2062, sSize);
+	sSize = cIndexTree.GetSystemMemorySize();
+	AssertInt(3412, sSize);
+
+	cAccess.DeleteLong(1LL);
+	cAccess.Flush();
+	sSize = cIndexTree.GetRoot()->CalculateNodeSize();
+	AssertInt(2062, sSize);
+	sSize = cIndexTree.GetSystemMemorySize();
+	AssertInt(3100, sSize);
+
+
+	cController.End();
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cIndexTreeEvictedList.Kill();
+	cController.Kill();
+	cStrategy.Kill();
 	cHelper.Kill(TRUE);
 }
 
@@ -589,7 +649,11 @@ void TestIndexTreeEvicting(void)
 	TestIndexTreeEvictingPut(IWT_No);
 	TestIndexTreeEvictingEvictWithChildren();
 	TestIndexTreeEvictingFlushWithChildren();
-
+	TestIndexTreeEvictingEvict(IWT_Yes, IKR_Yes);
+	TestIndexTreeEvictingEvict(IWT_Yes, IKR_No);
+	TestIndexTreeEvictingEvict(IWT_No, IKR_Yes);
+	TestIndexTreeEvictingEvict(IWT_No, IKR_No);
+	
 	TestStatistics();
 	DataMemoryKill();
 	MemoryKill();
