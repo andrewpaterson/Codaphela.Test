@@ -71,13 +71,13 @@ void TestIndexTreeNodeFileRootMemory(void)
 
 	AssertTrue(pcNode->IsEmpty());
 	AssertFalse(pcNode->HasNodes());
-	AssertFalse(pcNode->HasObject());
+	AssertFalse(pcNode->HasData());
 	AssertTrue(pcNode->ValidateNodesEmpty());
 
 	pcNode->Contain(33);
 	AssertFalse(pcNode->IsEmpty());
 	AssertTrue(pcNode->HasNodes());
-	AssertFalse(pcNode->HasObject());
+	AssertFalse(pcNode->HasData());
 
 	gcLogger.SetBreakOnError(FALSE);
 	AssertFalse(pcNode->ValidateNodesEmpty());
@@ -89,7 +89,7 @@ void TestIndexTreeNodeFileRootMemory(void)
 	pcNode->SetMemory(33, &cChildNode);
 	AssertFalse(pcNode->IsEmpty());
 	AssertTrue(pcNode->HasNodes());
-	AssertFalse(pcNode->HasObject());
+	AssertFalse(pcNode->HasData());
 	AssertInt(1, pcNode->NumValidIndexes());
 	AssertTrue(pcNode->ValidateNodesEmpty());
 

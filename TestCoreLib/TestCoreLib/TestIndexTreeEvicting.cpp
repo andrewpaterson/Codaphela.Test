@@ -141,6 +141,7 @@ void TestIndexTreeEvictingEvict(EIndexWriteThrough eWriteThrough, EIndexKeyRever
 	cIndexTree.Init(&cController, "Sub", 8 KB, &cIndexTreeEvictedList, &cStrategy, &cWriterCallback, eWriteThrough, eKeyReverse);
 	cAccess.Init(&cIndexTree);
 
+
 	sSize = cIndexTree.GetRoot()->CalculateNodeSize();
 	AssertInt(2062, sSize);
 	sSize = cIndexTree.GetSystemMemorySize();
