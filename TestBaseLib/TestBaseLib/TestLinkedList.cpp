@@ -40,6 +40,92 @@ void Free(SLLNodeInt* psNode)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestLinkedListInsert(void)
+{
+	SLLNodeInt*		psNode0;
+	SLLNodeInt*		psNode1;
+	SLLNodeInt*		psNode2;
+	SLLNodeInt*		psNode3;
+	SLLNodeInt*		psNode4;
+	SLLNodeInt*		psNode5;
+	SLLNodeInt*		psNode6;
+	SLLNode*		psNode;
+	CLinkedList		cList;
+
+	psNode1 = Malloc(1);
+	psNode2 = Malloc(2);
+	psNode3 = Malloc(3);
+	psNode4 = Malloc(4);
+	psNode0 = Malloc(0);
+	psNode5 = Malloc(5);
+	psNode6 = Malloc(6);
+
+	cList.Init();
+	cList.InsertBeforeHead(psNode1);
+	cList.InsertBeforeHead(psNode2);
+	AssertInt(2, cList.NumElements());
+	psNode = cList.GetHead();
+	AssertPointer(psNode2, psNode);
+	psNode = cList.GetNext(psNode);
+	AssertPointer(psNode1, psNode);
+	psNode = cList.GetNext(psNode);
+	AssertNull(psNode);
+	cList.Kill();
+	Pass();
+
+	cList.Init();
+	cList.InsertAfterTail(psNode1);
+	cList.InsertAfterTail(psNode2);
+	AssertInt(2, cList.NumElements());
+	psNode = cList.GetHead();
+	AssertPointer(psNode1, psNode);
+	psNode = cList.GetNext(psNode);
+	AssertPointer(psNode2, psNode);
+	psNode = cList.GetNext(psNode);
+	AssertNull(psNode);
+	cList.Kill();
+	Pass();
+
+	cList.Init();
+	cList.InsertAfterTail(psNode2);
+	cList.InsertAfterTail(psNode3);
+	cList.InsertBeforeHead(psNode1);
+	AssertInt(3, cList.NumElements());
+	psNode = cList.GetHead();
+	AssertPointer(psNode1, psNode);
+	psNode = cList.GetNext(psNode);
+	AssertPointer(psNode2, psNode);
+	psNode = cList.GetNext(psNode);
+	AssertPointer(psNode3, psNode);
+	psNode = cList.GetNext(psNode);
+	AssertNull(psNode);
+	Pass();
+
+	psNode = cList.GetTail();
+	AssertPointer(psNode3, psNode);
+	psNode = cList.GetPrev(psNode);
+	AssertPointer(psNode2, psNode);
+	psNode = cList.GetPrev(psNode);
+	AssertPointer(psNode1, psNode);
+	psNode = cList.GetPrev(psNode);
+	AssertNull(psNode);
+	cList.Kill();
+	Pass();
+
+	Free(psNode0);
+	Free(psNode1);
+	Free(psNode2);
+	Free(psNode3);
+	Free(psNode4);
+	Free(psNode5);
+	Free(psNode6);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestLinkedListSwap(void)
 {
 	SLLNodeInt*		psNode1;
@@ -261,6 +347,7 @@ void TestLinkedList(void)
 {
 	BeginTests();
 
+	TestLinkedListInsert();
 	TestLinkedListIndexOf();
 	TestLinkedListSwap();
 
