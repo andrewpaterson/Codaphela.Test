@@ -216,13 +216,17 @@ void TestLinkedListIndexOf(void)
 	AssertInt(-1, cList.IndexOf(NULL));
 
 	cList.InsertBeforeHead(psNode0);
-
+	Pass();
 	AssertInt(5, cList.NumElements());
 	AssertInt(0, cList.IndexOf(psNode0));
 	AssertInt(1, cList.IndexOf(psNode1));
+	AssertInt(2, cList.IndexOf(psNode2));
+	AssertInt(3, cList.IndexOf(psNode3));
+	AssertInt(4, cList.IndexOf(psNode4));
+	AssertInt(-1, cList.IndexOf(NULL));
 
 	cList.BubbleSort(CompareIntReverse, sizeof(SLLNode));
-
+	Pass();
 	AssertInt(5, cList.NumElements());
 	AssertInt(0, cList.IndexOf(psNode4));
 	AssertInt(1, cList.IndexOf(psNode3));
@@ -231,9 +235,9 @@ void TestLinkedListIndexOf(void)
 	AssertInt(4, cList.IndexOf(psNode0));
 	AssertInt(-1, cList.IndexOf(NULL));
 
-	//cList.InsertIntoSorted(CompareIntReverse, psNode6, sizeof(SLLNode));
-
-	AssertInt(5, cList.NumElements());
+	cList.InsertIntoSorted(CompareIntReverse, psNode6, sizeof(SLLNode));
+	Pass();
+	AssertInt(6, cList.NumElements());
 	AssertInt(0, cList.IndexOf(psNode6));
 	AssertInt(-1, cList.IndexOf(psNode5));
 
@@ -257,7 +261,7 @@ void TestLinkedList(void)
 {
 	BeginTests();
 
-	//TestLinkedListIndexOf();
+	TestLinkedListIndexOf();
 	TestLinkedListSwap();
 
 	TestStatistics();
