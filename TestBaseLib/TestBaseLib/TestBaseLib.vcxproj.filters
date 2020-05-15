@@ -43,9 +43,6 @@
     <Filter Include="Source\File\Chunk">
       <UniqueIdentifier>{3d2b4f47-88cf-40b5-8e30-774ef8a32f21}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Data\LinkList">
-      <UniqueIdentifier>{84a720a1-3862-4dc3-b246-4fccae290aa8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Data\Tree">
       <UniqueIdentifier>{0a997eac-2375-4e68-9dbf-316388a222c1}</UniqueIdentifier>
     </Filter>
@@ -123,6 +120,9 @@
     </Filter>
     <Filter Include="Source\Data\Map\Primitive">
       <UniqueIdentifier>{75ee2fe2-6f73-4a20-ad84-62e1b62491d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\LinkedList">
+      <UniqueIdentifier>{84a720a1-3862-4dc3-b246-4fccae290aa8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -214,10 +214,10 @@
       <Filter>Source\Memory\Allocator</Filter>
     </ClCompile>
     <ClCompile Include="TestLinkedListAligned.cpp">
-      <Filter>Source\Data\LinkList</Filter>
+      <Filter>Source\Data\LinkedList</Filter>
     </ClCompile>
     <ClCompile Include="TestLinkedListTemplate.cpp">
-      <Filter>Source\Data\LinkList</Filter>
+      <Filter>Source\Data\LinkedList</Filter>
     </ClCompile>
     <ClCompile Include="TestMemoryBlock.cpp">
       <Filter>Source\Memory\Allocator</Filter>
@@ -353,6 +353,9 @@
     </ClCompile>
     <ClCompile Include="TestMapLong.cpp">
       <Filter>Source\Data\Map\Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLinkedList.cpp">
+      <Filter>Source\Data\LinkedList</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

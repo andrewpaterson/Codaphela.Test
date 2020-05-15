@@ -12,7 +12,7 @@ void TestLinkedListBlockAlignedAdd(void)
 	void*				pv;
 	int					k;
 	int					iAlignment;
-	SLLANode*			psNode;
+	SLLAlignedNode*		psNode;
 	void*				pvAllocatedEnd;
 	void*				pvObjectEnd;
 	int					iPrevTotalSize;
@@ -28,12 +28,12 @@ void TestLinkedListBlockAlignedAdd(void)
 			AssertInt(0, ((int)(size_t) pv) % iAlignment);
 
 			psNode = cLinkedListBlockAligned.GetNode(pv);
-			pvAllocatedEnd = (void*)(size_t) ((int)(size_t) psNode->sAligned.pvAlloc + sizeof(SLLANode) + 65 + iAlignment -1);
+			pvAllocatedEnd = (void*)(size_t) ((int)(size_t) psNode->sAligned.pvAlloc + sizeof(SLLAlignedNode) + 65 + iAlignment -1);
 			pvObjectEnd = (void*)(size_t) ((int)(size_t) pv + 65);
 			AssertTrue(pvAllocatedEnd >= pvObjectEnd);
-			AssertInt(iPrevTotalSize + ((sizeof(SLLANode) + 65 + iAlignment-1) * (k + 1)), cLinkedListBlockAligned.ByteSize());
+			AssertInt(iPrevTotalSize + ((sizeof(SLLAlignedNode) + 65 + iAlignment-1) * (k + 1)), cLinkedListBlockAligned.ByteSize());
 		}
-		iPrevTotalSize += ((sizeof(SLLANode) + 65 + iAlignment-1) * k);
+		iPrevTotalSize += ((sizeof(SLLAlignedNode) + 65 + iAlignment-1) * k);
 	}
 	AssertInt(27495, iPrevTotalSize);
 
@@ -47,11 +47,11 @@ void TestLinkedListBlockAlignedAdd(void)
 //////////////////////////////////////////////////////////////////////////
 void TestLinkedListBlockAlignedRemove(void)
 {
-	CLinkedListBlockAligned	cLinkedListBlockAligned;
-	void*				pv1;
-	void*				pv2;
-	void*				pv3;
-	void*				pv;
+	CLinkedListBlockAligned		cLinkedListBlockAligned;
+	void*						pv1;
+	void*						pv2;
+	void*						pv3;
+	void*						pv;
 
 	cLinkedListBlockAligned.Init();
 	pv1 = cLinkedListBlockAligned.InsertAfterTail(1, 4, 0);
@@ -80,10 +80,10 @@ void TestLinkedListBlockAlignedRemove(void)
 //////////////////////////////////////////////////////////////////////////
 void TestLinkedListBlockAlignedGrow(void)
 {
-	CLinkedListBlockAligned	cLinkedListBlockAligned;
-	int*				pi;
-	void*				pvOld;
-	void*				pvNew;
+	CLinkedListBlockAligned		cLinkedListBlockAligned;
+	int*						pi;
+	void*						pvOld;
+	void*						pvNew;
 
 	cLinkedListBlockAligned.Init();
 	pi = (int*)cLinkedListBlockAligned.InsertAfterTail(20, 4, 0);
