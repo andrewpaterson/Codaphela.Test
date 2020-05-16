@@ -45,6 +45,7 @@ void TestIndexTreeIterator(void);
 void TestGeneralMemory(void);
 void TestDataMemory(void);
 void TestLinkedList(void);
+void TestLinkedListBlock(void);
 void TestLinkedListTemplate(void);
 void TestLinkedListBlockAligned(void);
 void TestListVariable(void);
@@ -133,6 +134,7 @@ int main(void)
 	TestArrayBit();
 	TestArrayTemplateEmbedded();
 	TestLinkedList();
+	TestLinkedListBlock();
 	TestLinkedListTemplate();
 	TestLinkedListBlockAligned();
 	TestTreeTemplate();

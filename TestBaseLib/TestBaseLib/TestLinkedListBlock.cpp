@@ -1,5 +1,5 @@
 #include "BaseLib/IntegerHelper.h"
-#include "BaseLib/LinkedListTemplate.h"
+#include "BaseLib/LinkedListBlock.h"
 #include "BaseLib/DiskFile.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/GlobalMemory.h"
@@ -10,23 +10,23 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestLinkedListTemplateIndexOf(void)
+void TestLinkedListBlockIndexOf(void)
 {
-	CLinkedListTemplate<int>	cList;
-	int*						pi1;
-	int*						pi2;
-	int*						pi3;
+	CLinkedListBlock	cList;
+	int* pi1;
+	int* pi2;
+	int* pi3;
 
 	pi1 = NULL;
 	pi2 = NULL;
 	pi3 = NULL;
 
 	cList.Init();
-	pi1 = cList.InsertAfterTail();
+	pi1 = (int*)cList.InsertAfterTail(sizeof(int));
 	*pi1 = 3;
-	pi2 = cList.InsertAfterTail();
+	pi2 = (int*)cList.InsertAfterTail(sizeof(int));
 	*pi2 = 2;
-	pi3 = cList.InsertAfterTail();
+	pi3 = (int*)cList.InsertAfterTail(sizeof(int));
 	*pi3 = 1;
 
 	AssertInt(0, cList.IndexOf(pi1));
@@ -47,24 +47,30 @@ void TestLinkedListTemplateIndexOf(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestLinkedListTemplateWrite(void)
+void TestLinkedListBlockWrite(void)
 {
-	CLinkedListTemplate<int64>	cList;
-	CFileBasic					cFile;
-	CDiskFile*					pcDisk;
-	CFileUtil					cFileUtil;
-	char						szDirectory[] = "Output" _FS_ "LinkedListTemplate";
-	char						szFile[] = "Output" _FS_ "LinkedListTemplate" _FS_ "Test.DAT";
-	BOOL						b;
-	int64*						plli;
+	CLinkedListBlock	cList;
+	char				szHello[] = "Hello";
+	char				szWorld[] = "World";
+	char				szLog[] = "Logytech";
+	char*				sz;
+	CFileBasic			cFile;
+	CDiskFile*			pcDisk;
+	CFileUtil			cFileUtil;
+	char				szDirectory[] = "Output" _FS_ "LinkedListBlock";
+	char				szFile[] = "Output" _FS_ "LinkedListBlock" _FS_ "Test.DAT";
+	BOOL				b;
 
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.TouchDir(szDirectory);
 
 	cList.Init();
-	(*cList.Add()) = 3498489579023845LL;
-	(*cList.Add()) = 9837459843598451LL;
-	(*cList.Add()) = 6409377732684332LL;
+	sz = (char*)cList.InsertAfterTail(strlen(szHello) + 1);
+	strcpy(sz, szHello);
+	sz = (char*)cList.InsertAfterTail(strlen(szWorld) + 1);
+	strcpy(sz, szWorld);
+	sz = (char*)cList.InsertAfterTail(strlen(szLog) + 1);
+	strcpy(sz, szLog);
 	AssertInt(3, cList.NumElements());
 
 	pcDisk = DiskFile(szFile);
@@ -87,14 +93,14 @@ void TestLinkedListTemplateWrite(void)
 	AssertTrue(pcDisk->Close());
 	cFile.Kill();
 
-	plli = cList.GetHead();
-	AssertLongLongInt(3498489579023845LL, *plli);
-	plli = cList.GetNext(plli);
-	AssertLongLongInt(9837459843598451LL, *plli);
-	plli = cList.GetNext(plli);
-	AssertLongLongInt(6409377732684332LL, *plli);
-	plli = cList.GetNext(plli);
-	AssertNull(plli);
+	sz = (char*)cList.GetHead();
+	AssertString(szHello, sz);
+	sz = (char*)cList.GetNext(sz);
+	AssertString(szWorld, sz);
+	sz = (char*)cList.GetNext(sz);
+	AssertString(szLog, sz);
+	sz = (char*)cList.GetNext(sz);
+	AssertNull(sz);
 	cList.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -105,14 +111,14 @@ void TestLinkedListTemplateWrite(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestLinkedListTemplate(void)
+void TestLinkedListBlock(void)
 {
 	BeginTests();
 	MemoryInit();
 	FastFunctionsInit();
 
-	TestLinkedListTemplateIndexOf();
-	TestLinkedListTemplateWrite();
+	TestLinkedListBlockIndexOf();
+	TestLinkedListBlockWrite();
 
 	FastFunctionsKill();
 	MemoryKill();

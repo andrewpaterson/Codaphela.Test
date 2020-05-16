@@ -357,6 +357,9 @@
     <ClCompile Include="TestLinkedList.cpp">
       <Filter>Source\Data\LinkedList</Filter>
     </ClCompile>
+    <ClCompile Include="TestLinkedListBlock.cpp">
+      <Filter>Source\Data\LinkedList</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

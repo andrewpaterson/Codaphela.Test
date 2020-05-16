@@ -137,6 +137,7 @@
     <ClCompile Include="TestIndexTreeObject.cpp" />
     <ClCompile Include="TestIndexTreeTemplate.cpp" />
     <ClCompile Include="TestLinkedList.cpp" />
+    <ClCompile Include="TestLinkedListBlock.cpp" />
     <ClCompile Include="TestLinkedListTemplate.cpp" />
     <ClCompile Include="TestListBlock.cpp" />
     <ClCompile Include="TestListCharsMinimal.cpp" />
