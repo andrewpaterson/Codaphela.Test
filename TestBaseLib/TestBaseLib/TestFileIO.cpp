@@ -350,44 +350,45 @@ void TestFileIOLinkList(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFileIOLinkedListBlockAligned(void)
 {
-	//CMemoryFile						cMemory;
-	//CFileBasic						cFile;
-	//CFileIOTest*					pcTestIn;
-	//CLinkedListBlockAligned			cAligned;
-	//CLinkedListBlockAligned			cAlignedIn;
-	//CFileIOAlignedTest*				pcAli1;
-	//CFileIOAlignedTest*				pcAli2;
-	//CFileIOAlignedTest*				pcAliIn;
+	CMemoryFile						cMemory;
+	CFileBasic						cFile;
+	CLinkedListBlockAligned			cAligned;
+	CLinkedListBlockAligned			cAlignedIn;
+	CFileIOAlignedTest*				pcAli1;
+	CFileIOAlignedTest*				pcAli2;
+	CFileIOAlignedTest*				pcAliIn;
 
-	//TestFileIOBegin(&cMemory, &cFile);
+	TestFileIOBegin(&cMemory, &cFile);
 
-	//cAligned.Init();
-	//pcAli1 = (CFileIOAlignedTest*)cAligned.Add(sizeof(CFileIOAlignedTest), 13);
-	//AssertTrue(pcAli1->IsAligned(13));
-	//pcAli1->Init(56);
-	//pcAli2 = (CFileIOAlignedTest*)cAligned.Add(sizeof(CFileIOAlignedTest), 17);
-	//AssertTrue(pcAli2->IsAligned(17));
-	//pcAli2->Init(-7);
-	//AssertInt(cAligned.NumElements(), 2);
-	//AssertTrue(cAligned.WriteLinkedListBlockAligned(&cFile));
+	cAligned.Init();
+	pcAli1 = (CFileIOAlignedTest*)cAligned.Add(sizeof(CFileIOAlignedTest), 13);
+	AssertTrue(pcAli1->IsAligned(13));
+	pcAli1->Init(56);
+	pcAli2 = (CFileIOAlignedTest*)cAligned.Add(sizeof(CFileIOAlignedTest), 17);
+	AssertTrue(pcAli2->IsAligned(17));
+	pcAli2->Init(-7);
+	AssertInt(cAligned.NumElements(), 2);
+	AssertTrue(cAligned.Write(&cFile));
 
-	//cAligned.Kill();
-	//TestFileIOMiddle(&cFile);
+	cAligned.Kill();
+	TestFileIOMiddle(&cFile);
 
-	//AssertTrue(cAlignedIn.ReadLinkedListBlockAligned(&cFile));
-	//AssertInt(cAlignedIn.NumElements(), 2);
-	//pcAliIn = (CFileIOAlignedTest*)cAlignedIn.GetHead();
-	//AssertNotNull(pcAliIn);
-	//AssertTrue(pcAliIn->IsAligned(13));
-	//AssertTrue(pcAliIn->IsOkay(56));
-	//pcAliIn = (CFileIOAlignedTest*)cAlignedIn.GetNext(pcTestIn);
-	//AssertNotNull(pcAliIn);
-	//AssertTrue(pcAliIn->IsAligned(17));
-	//AssertTrue(pcAliIn->IsOkay(-7));
-	//pcAliIn = (CFileIOAlignedTest*)cAlignedIn.GetNext(pcTestIn);
-	//AssertNull(pcAliIn);
+	AssertTrue(cAlignedIn.Read(&cFile));
+	AssertInt(cAlignedIn.NumElements(), 2);
+	pcAliIn = (CFileIOAlignedTest*)cAlignedIn.GetHead();
+	AssertNotNull(pcAliIn);
+	AssertTrue(pcAliIn->IsAligned(13));
+	AssertTrue(pcAliIn->IsOkay(56));
+	pcAliIn = (CFileIOAlignedTest*)cAlignedIn.GetNext(pcAliIn);
+	AssertNotNull(pcAliIn);
+	AssertTrue(pcAliIn->IsAligned(17));
+	AssertTrue(pcAliIn->IsOkay(-7));
+	pcAliIn = (CFileIOAlignedTest*)cAlignedIn.GetNext(pcAliIn);
+	AssertNull(pcAliIn);
 
-	//TestFileIOEnd(&cMemory, &cFile);
+	TestFileIOEnd(&cMemory, &cFile);
+
+	cAlignedIn.Kill();
 }
 
 
