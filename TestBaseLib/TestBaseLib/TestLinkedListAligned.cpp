@@ -35,7 +35,7 @@ void TestLinkedListBlockAlignedAdd(void)
 		}
 		iPrevTotalSize += ((sizeof(SLLAlignedNode) + 65 + iAlignment-1) * k);
 	}
-	AssertInt(27495, iPrevTotalSize);
+	AssertInt(26555, iPrevTotalSize);
 
 	cLinkedListBlockAligned.Kill();
 }
