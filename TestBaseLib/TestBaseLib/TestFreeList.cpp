@@ -42,7 +42,7 @@ void AssertIteration(CFreeList* pcFreeList, void* pvFirst, ...)
 //////////////////////////////////////////////////////////////////////////
 void TestFreeListSizeof(void)
 {
-	AssertInt(28, sizeof(CFreeList));
+	AssertInt(32, sizeof(CFreeList));
 	AssertInt(8, sizeof(SFNode));
 }
 

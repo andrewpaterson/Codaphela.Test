@@ -10,7 +10,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestDataMemorySizeof(void)
 {
-	AssertInt(40, sizeof(CDataMemory));
+	AssertInt(48, sizeof(CDataMemory));
 }
 
 
@@ -29,7 +29,7 @@ void TestDataMemoryAdd(void)
 
 	cMemory.Init(&gcDataMemoryFreeListParams);
 	AssertInt(0, cMemory.NumElements());
-	AssertInt(12, cMemory.ByteSize());
+	AssertInt(16, cMemory.ByteSize());
 	AssertInt(0, cMemory.NumFreeLists());
 
 
@@ -47,7 +47,7 @@ void TestDataMemoryAdd(void)
 
 	AssertInt(433, gacArchaicWords.NumElements());
 	AssertInt(gacArchaicWords.NumElements(), cMemory.NumElements());
-	AssertInt(29777, cMemory.ByteSize());
+	AssertInt(29813, cMemory.ByteSize());
 	AssertInt(8, cMemory.NumFreeLists());
 	AssertInt(13665, iAllocated);
 
@@ -58,7 +58,7 @@ void TestDataMemoryAdd(void)
 	}
 
 	AssertInt(216, cMemory.NumElements());
-	AssertInt(29777, cMemory.ByteSize());
+	AssertInt(29813, cMemory.ByteSize());
 	AssertInt(8, cMemory.NumFreeLists());
 
 	for (i = 1; i < apv.NumElements(); i += 2)
@@ -68,7 +68,7 @@ void TestDataMemoryAdd(void)
 	}
 
 	AssertInt(0, cMemory.NumElements());
-	AssertInt(12, cMemory.ByteSize());
+	AssertInt(16, cMemory.ByteSize());
 	AssertInt(0, cMemory.NumFreeLists());
 
 	apv.Kill();
