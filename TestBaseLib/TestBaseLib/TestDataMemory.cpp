@@ -10,7 +10,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestDataMemorySizeof(void)
 {
-	AssertInt(48, sizeof(CDataMemory));
+	AssertInt(52, sizeof(CDataMemory));
 }
 
 

@@ -13,9 +13,9 @@
 void TestLinkedListBlockIndexOf(void)
 {
 	CLinkedListBlock	cList;
-	int* pi1;
-	int* pi2;
-	int* pi3;
+	int*				pi1;
+	int*				pi2;
+	int*				pi3;
 
 	pi1 = NULL;
 	pi2 = NULL;

@@ -12,7 +12,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestGeneralMemorySizeof(void)
 {
-	AssertInt(104, sizeof(CGeneralMemory));
+	AssertInt(108, sizeof(CGeneralMemory));
 }
 
 
