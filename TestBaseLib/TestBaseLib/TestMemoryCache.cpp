@@ -280,37 +280,55 @@ void TestMemoryCacheEvictRightmost(void)
 	void*			pvData;
 
 	cCache.Init(64+12);
+	AssertInt(0, cCache.GetAllocatedSize());
 
 	pvData = cCache.QuickAllocate(8);
 	FillCachedElement(pvData, 8, 'A');
+	AssertInt(8 + sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+
 	pvData = cCache.QuickAllocate(9);
 	FillCachedElement(pvData, 9, 'B');
+	AssertInt(8 + 9 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+
 	pvData = cCache.QuickAllocate(8);
 	FillCachedElement(pvData, 8, 'C');
+	AssertInt(8 + 9 + 8 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertInt(61, cCache.GetAllocatedSize());
 	AssertCache(&cCache, 8, 'A', 9, 'B', 8, 'C');
 
 	pvData = cCache.QuickAllocate(7);
 	FillCachedElement(pvData, 7, 'D');
+	AssertInt(7 + 9 + 8 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertInt(60, cCache.GetAllocatedSize());
 	AssertCache(&cCache, 9, 'B', 8, 'C', 7, 'D');
 
 	pvData = cCache.QuickAllocate(6);
 	FillCachedElement(pvData, 6, 'E');
+	AssertInt(8 + 7 + 6 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 	AssertCache(&cCache, 8, 'C', 7, 'D', 6, 'E');
 
 	pvData = cCache.QuickAllocate(9);
 	FillCachedElement(pvData, 9, 'F');
+	AssertInt(7 + 6 + 9 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertCache(&cCache, 7, 'D', 6, 'E', 9, 'F');
 
 	pvData = cCache.QuickAllocate(8);
 	FillCachedElement(pvData, 8, 'A');
+	AssertInt(9 + 8 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertInt(41, cCache.GetAllocatedSize());  // out of 76 (35 remain)
 	AssertCache(&cCache, 9, 'F', 8, 'A');
+	AssertInt(56, cCache.RemainingAfterLast());
 
 	pvData = cCache.QuickAllocate(17);
 	FillCachedElement(pvData, 17, 'B');
+	AssertInt(17 + 8 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertInt(49, cCache.GetAllocatedSize());  // out of 76 (27 remain)
 	AssertCache(&cCache, 8, 'A', 17, 'B');
+	AssertInt(27, cCache.RemainingAfterLast());  
 
 	pvData = cCache.QuickAllocate(9);
 	FillCachedElement(pvData, 9, 'Z');
-	AssertCache(&cCache, 9, 'Z');
+	AssertCache(&cCache, 8, 'A', 17, 'B', 9, 'Z');
 
 	cCache.Kill();
 }
@@ -405,15 +423,14 @@ void TestMemoryCache(void)
 	BeginTests();
 	FastFunctionsInit();
 
-	//TestMemoryCacheSimple();
-	//TestMemoryCacheBrokenExample();
-	//TestMemoryCacheEvictAll();
-	//TestMemoryCacheEvictLeftmost();
-	//TestMemoryCacheEvictRightmost();
+	TestMemoryCacheSimple();
+	TestMemoryCacheBrokenExample();
+	TestMemoryCacheEvictAll();
+	TestMemoryCacheEvictLeftmost();
+	TestMemoryCacheEvictRightmost();
 	TestMemoryCacheDeallocate();
 
 	FastFunctionsKill();
 	TestStatistics();
 }
-
 
