@@ -1,4 +1,7 @@
 #include "BaseLib/LinkedListBlockAligned.h"
+#include "BaseLib/FileUtil.h"
+#include "BaseLib/GlobalMemory.h"
+#include "BaseLib/DiskFile.h"
 #include "TestLib/Assert.h"
 
 
@@ -8,36 +11,36 @@
 //////////////////////////////////////////////////////////////////////////
 void TestLinkedListBlockAlignedAdd(void)
 {
-	CLinkedListBlockAligned	cLinkedListBlockAligned;
-	void*				pv;
-	int					k;
-	int					iAlignment;
-	SLLAlignedNode*		psNode;
-	void*				pvAllocatedEnd;
-	void*				pvObjectEnd;
-	int					iPrevTotalSize;
+	CLinkedListBlockAligned	cList;
+	void*					pv;
+	int						k;
+	int						iAlignment;
+	SLLAlignedNode*			psNode;
+	void*					pvAllocatedEnd;
+	void*					pvObjectEnd;
+	int						iPrevTotalSize;
 
-	cLinkedListBlockAligned.Init();
+	cList.Init();
 
 	iPrevTotalSize = 0;
 	for (iAlignment = 2; iAlignment <= 48; iAlignment++)
 	{
 		for (k = 0; k < 5; k++)
 		{
-			pv = cLinkedListBlockAligned.InsertAfterTail(65, iAlignment, 0);
+			pv = cList.InsertAfterTail(65, iAlignment, 0);
 			AssertInt(0, ((int)(size_t) pv) % iAlignment);
 
-			psNode = cLinkedListBlockAligned.GetNode(pv);
+			psNode = cList.GetNode(pv);
 			pvAllocatedEnd = (void*)(size_t) ((int)(size_t) psNode->sAligned.pvAlloc + sizeof(SLLAlignedNode) + 65 + iAlignment -1);
 			pvObjectEnd = (void*)(size_t) ((int)(size_t) pv + 65);
 			AssertTrue(pvAllocatedEnd >= pvObjectEnd);
-			AssertInt(iPrevTotalSize + ((sizeof(SLLAlignedNode) + 65 + iAlignment-1) * (k + 1)), cLinkedListBlockAligned.ByteSize());
+			AssertInt(iPrevTotalSize + ((sizeof(SLLAlignedNode) + 65 + iAlignment-1) * (k + 1)), cList.ByteSize());
 		}
 		iPrevTotalSize += ((sizeof(SLLAlignedNode) + 65 + iAlignment-1) * k);
 	}
 	AssertInt(26555, iPrevTotalSize);
 
-	cLinkedListBlockAligned.Kill();
+	cList.Kill();
 }
 
 
@@ -47,29 +50,29 @@ void TestLinkedListBlockAlignedAdd(void)
 //////////////////////////////////////////////////////////////////////////
 void TestLinkedListBlockAlignedRemove(void)
 {
-	CLinkedListBlockAligned		cLinkedListBlockAligned;
+	CLinkedListBlockAligned		cList;
 	void*						pv1;
 	void*						pv2;
 	void*						pv3;
 	void*						pv;
 
-	cLinkedListBlockAligned.Init();
-	pv1 = cLinkedListBlockAligned.InsertAfterTail(1, 4, 0);
-	pv2 = cLinkedListBlockAligned.InsertAfterTail(2, 4, 0);
-	pv3 = cLinkedListBlockAligned.InsertAfterTail(3, 4, 0);
-	cLinkedListBlockAligned.Remove(pv2);
+	cList.Init();
+	pv1 = cList.InsertAfterTail(1, 4, 0);
+	pv2 = cList.InsertAfterTail(2, 4, 0);
+	pv3 = cList.InsertAfterTail(3, 4, 0);
+	cList.Remove(pv2);
 
-	pv = cLinkedListBlockAligned.GetHead();
+	pv = cList.GetHead();
 	AssertPointer(pv1, pv);
-	pv = cLinkedListBlockAligned.GetNext(pv);
+	pv = cList.GetNext(pv);
 	AssertPointer(pv3, pv);
-	pv = cLinkedListBlockAligned.GetNext(pv);
+	pv = cList.GetNext(pv);
 	AssertNull(pv);
 
-	cLinkedListBlockAligned.Remove(pv1);
-	cLinkedListBlockAligned.Remove(pv3);
+	cList.Remove(pv1);
+	cList.Remove(pv3);
 
-	pv = cLinkedListBlockAligned.GetHead();
+	pv = cList.GetHead();
 	AssertNull(pv);
 }
 
@@ -80,20 +83,20 @@ void TestLinkedListBlockAlignedRemove(void)
 //////////////////////////////////////////////////////////////////////////
 void TestLinkedListBlockAlignedGrow(void)
 {
-	CLinkedListBlockAligned		cLinkedListBlockAligned;
+	CLinkedListBlockAligned		cList;
 	int*						pi;
 	void*						pvOld;
 	void*						pvNew;
 
-	cLinkedListBlockAligned.Init();
-	pi = (int*)cLinkedListBlockAligned.InsertAfterTail(20, 4, 0);
+	cList.Init();
+	pi = (int*)cList.InsertAfterTail(20, 4, 0);
 	pi[0] = 0;
 	pi[1] = 1;
 	pi[2] = 2;
 	pi[3] = 3;
 	pi[4] = 4;
 	
-	pi = (int*)cLinkedListBlockAligned.Grow(pi, 24);
+	pi = (int*)cList.Grow(pi, 24);
 	AssertInt(0, pi[0]);
 	AssertInt(1, pi[1]);
 	AssertInt(2, pi[2]);
@@ -102,27 +105,224 @@ void TestLinkedListBlockAlignedGrow(void)
 
 	pi[5] = 5;
 
-	pi = (int*)cLinkedListBlockAligned.Grow(pi, 8);
+	pi = (int*)cList.Grow(pi, 8);
 	AssertInt(0, pi[0]);
 	AssertInt(1, pi[1]);
 
-	pi = (int*)cLinkedListBlockAligned.Grow(pi, 0);
+	pi = (int*)cList.Grow(pi, 0);
 	AssertNull(pi);
-	cLinkedListBlockAligned.Kill();
+	cList.Kill();
 
-	cLinkedListBlockAligned.Init();
-	pvOld = cLinkedListBlockAligned.InsertAfterTail(1, 4, 0);
-	pvNew = cLinkedListBlockAligned.Grow(pvOld, 2);
+	cList.Init();
+	pvOld = cList.InsertAfterTail(1, 4, 0);
+	pvNew = cList.Grow(pvOld, 2);
 	AssertPointer(pvOld, pvNew);
-	pvNew = cLinkedListBlockAligned.Grow(pvOld, 3);
+	pvNew = cList.Grow(pvOld, 3);
 	AssertPointer(pvOld, pvNew);
-	pvNew = cLinkedListBlockAligned.Grow(pvOld, 3);
+	pvNew = cList.Grow(pvOld, 3);
 	AssertPointer(pvOld, pvNew);
-	pvNew = cLinkedListBlockAligned.Grow(pvOld, 4);
+	pvNew = cList.Grow(pvOld, 4);
 	AssertPointer(pvOld, pvNew);
-	pvNew = cLinkedListBlockAligned.Grow(pvOld, 8);
+	pvNew = cList.Grow(pvOld, 8);
 	AssertFalse(pvOld == pvNew);
-	cLinkedListBlockAligned.Kill();
+	cList.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLinkedListBlockAlignedExhaustive(void)
+{
+	CLinkedListBlockAligned		cList;
+	unsigned char				pv[1 KB];
+	int							iAlignment;
+	unsigned int				uiDataSize;
+	void*						pvNew;
+	void*						pvData;
+	int							i;
+	int							iExpectedElements;
+	SLLAlignedNode*				psNode;
+	int							iResult;
+	CDiskFile					cDiskFile;
+	CFileBasic					cFile;
+	CFileUtil					cFileUtil;
+	char						szDirectory[] = "Output" _FS_ "LinkedListBlockAligned";
+	char						szFile[] = "Output" _FS_ "LinkedListBlockAligned" _FS_ "Test.DAT";
+	BOOL						bResult;
+	char						sz[256];
+	void*						pvNext;
+	void*						pvPrev;
+
+	memset_fast(pv, 0, 1 KB);
+	for (i = 0; i < 256; i++)
+	{
+		pv[i] = (unsigned char)i;
+	}
+
+	cList.Init();
+
+	iExpectedElements = 0;
+	for (iAlignment = 1; iAlignment <= 64; iAlignment++)
+	{
+		for (uiDataSize = 1; uiDataSize <= 128; uiDataSize++)
+		{
+			pvNew = cList.Add(uiDataSize, iAlignment);
+			memcpy_fast(pvNew, pv, uiDataSize);
+
+			iExpectedElements++;
+		}
+
+		AssertInt(iExpectedElements, cList.NumElements());
+	}
+
+	AssertInt(8192, cList.NumElements());
+
+	uiDataSize = 1;
+
+	pvData = cList.GetHead();
+	for (i = 0; i < 8192; i++)
+	{
+		iAlignment = (i + 1) / 128 + 1;
+		uiDataSize = (i + 1) % 128 + 1;
+		pvData = cList.GetNext(pvData);
+		psNode = cList.GetNode(pvData);
+
+		if (i != 8191)
+		{
+			if (iAlignment != psNode->sAligned.iAlignment)
+			{
+				AssertInt(iAlignment, psNode->sAligned.iAlignment);
+			}
+
+			iResult = ((size_t)pvData) % iAlignment;
+			if (iResult != 0)
+			{
+				AssertInt(0, iResult);
+			}
+
+			if (uiDataSize != psNode->sAligned.uiSize)
+			{
+				AssertInt(uiDataSize, psNode->sAligned.uiSize);
+			}
+
+			iResult = memcmp_fast(pv, pvData, uiDataSize);
+			if (iResult != 0)
+			{
+				AssertMemory(pv, pvData, uiDataSize);
+			}
+
+			if (uiDataSize == 64)
+			{
+				Pass();
+			}
+		}
+	}
+	AssertNull(pvData);
+	AssertNull(psNode);
+
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.TouchDir(szDirectory);
+
+	cDiskFile.Init(szFile);
+	cFile.Init(&cDiskFile);
+
+	AssertTrue(cFile.Open(EFM_Write_Create));
+	AssertTrue(cFile.WriteString("StartMagic"));
+	bResult = cList.Write(&cFile);
+	AssertTrue(bResult);
+	AssertTrue(cFile.WriteString("EndMagic"));
+	AssertTrue(cDiskFile.Close());
+	cFile.Kill();
+	cDiskFile.Kill();
+	cList.Kill();
+
+	cDiskFile.Init(szFile);
+	cFile.Init(&cDiskFile);
+
+	AssertTrue(cFile.Open(EFM_ReadWrite));
+	AssertTrue(cFile.ReadString(sz, 256));
+	AssertString("StartMagic", sz);
+
+	cList.Init();
+	bResult = cList.Read(&cFile);
+	AssertTrue(bResult);
+	AssertTrue(cFile.ReadString(sz, 256));
+	AssertString("EndMagic", sz);
+	AssertTrue(cDiskFile.Close());
+	cFile.Kill();
+	cDiskFile.Kill();
+
+	AssertInt(8192, cList.NumElements());
+
+	uiDataSize = 1;
+
+	pvData = cList.GetHead();
+	for (i = 0; i < 8192; i++)
+	{
+		iAlignment = (i + 1) / 128 + 1;
+		uiDataSize = (i + 1) % 128 + 1;
+		pvData = cList.GetNext(pvData);
+		psNode = cList.GetNode(pvData);
+
+		if (i != 8191)
+		{
+			if (iAlignment != psNode->sAligned.iAlignment)
+			{
+				AssertInt(iAlignment, psNode->sAligned.iAlignment);
+			}
+
+			iResult = ((size_t)pvData) % iAlignment;
+			if (iResult != 0)
+			{
+				AssertInt(0, iResult);
+			}
+
+			if (uiDataSize != psNode->sAligned.uiSize)
+			{
+				AssertInt(uiDataSize, psNode->sAligned.uiSize);
+			}
+
+			iResult = memcmp_fast(pv, pvData, uiDataSize);
+			if (iResult != 0)
+			{
+				AssertMemory(pv, pvData, uiDataSize);
+			}
+
+			if (uiDataSize == 64)
+			{
+				Pass();
+			}
+		}
+	}
+	AssertNull(pvData);
+	AssertNull(psNode);
+
+	pvData = cList.GetHead();
+	while (pvData)
+	{
+		pvNext = cList.GetNext(pvData);
+		cList.Remove(pvData);
+		pvData = cList.GetNext(pvNext);
+	}
+
+	AssertInt(4096, cList.NumElements());
+
+	pvData = cList.GetTail();
+	while (pvData)
+	{
+		pvPrev = cList.GetPrev(pvData);
+		cList.Remove(pvData);
+		pvData = pvPrev;
+	}
+
+	AssertInt(0, cList.NumElements());
+
+	cList.Kill();
+
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -133,11 +333,16 @@ void TestLinkedListBlockAlignedGrow(void)
 void TestLinkedListBlockAligned(void)
 {
 	BeginTests();
+	FastFunctionsInit();
+	MemoryInit();
 
 	TestLinkedListBlockAlignedAdd();
 	TestLinkedListBlockAlignedRemove();
 	TestLinkedListBlockAlignedGrow();
+	TestLinkedListBlockAlignedExhaustive();
 
+	MemoryKill();
+	FastFunctionsKill();
 	TestStatistics();
 }
 
