@@ -317,18 +317,35 @@ void TestMemoryCacheEvictRightmost(void)
 	AssertInt(9 + 8 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 	AssertInt(41, cCache.GetAllocatedSize());  // out of 76 (35 remain)
 	AssertCache(&cCache, 9, 'F', 8, 'A');
-	AssertInt(56, cCache.RemainingAfterLast());
 
 	pvData = cCache.QuickAllocate(17);
 	FillCachedElement(pvData, 17, 'B');
 	AssertInt(17 + 8 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 	AssertInt(49, cCache.GetAllocatedSize());  // out of 76 (27 remain)
 	AssertCache(&cCache, 8, 'A', 17, 'B');
-	AssertInt(27, cCache.RemainingAfterLast());  
 
 	pvData = cCache.QuickAllocate(9);
 	FillCachedElement(pvData, 9, 'Z');
+	AssertInt(8 + 17 + 9 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 	AssertCache(&cCache, 8, 'A', 17, 'B', 9, 'Z');
+
+	pvData = cCache.QuickAllocate(64);
+	FillCachedElement(pvData, 64, 'Q');
+	AssertInt(64 + sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertCache(&cCache, 64, 'Q');
+
+	pvData = cCache.QuickAllocate(65);
+	AssertNull(pvData);
+
+	pvData = cCache.QuickAllocate(32);
+	FillCachedElement(pvData, 32, 'P');
+	AssertInt(32 + sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertCache(&cCache, 32, 'P');
+
+	pvData = cCache.QuickAllocate(16);
+	FillCachedElement(pvData, 16, 'R');
+	AssertInt(32 + 16 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertCache(&cCache, 32, 'P', 16, 'R');
 
 	cCache.Kill();
 }
