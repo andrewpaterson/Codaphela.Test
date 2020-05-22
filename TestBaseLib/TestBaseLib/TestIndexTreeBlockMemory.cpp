@@ -160,7 +160,7 @@ void TestIndexTreeMemoryAddDataOnExistingKey(void)
 
 	cAccess.DeleteString("z");
 	AssertString("Jackrabbit", cAccess.GetStringString("zx", sz));
-	//AssertString("", cAccess.GetStringString("z", sz));
+	AssertNull(cAccess.GetStringString("z", sz));
 	pcNode = cIndex.GetNode("z", 1);
 	AssertFalse(pcNode->HasData());
 	AssertTrue(pcNode->HasNodes());
