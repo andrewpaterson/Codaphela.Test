@@ -166,6 +166,22 @@ void TestIndexTreeMemoryAddDataOnExistingKey(void)
 	AssertTrue(pcNode->HasNodes());
 	Pass();
 
+	cAccess.PutStringString("z", "Dukeling");
+	AssertString("Jackrabbit", cAccess.GetStringString("zx", sz));
+	AssertString("Dukeling", cAccess.GetStringString("z", sz));
+	pcNode = cIndex.GetNode("z", 1);
+	AssertTrue(pcNode->HasData());
+	AssertTrue(pcNode->HasNodes());
+	Pass();
+
+	cAccess.DeleteString("z");
+	cAccess.DeleteString("zx");
+	AssertNull(cAccess.GetStringString("zx", sz));
+	pcNode = cIndex.GetNode("z", 1);
+	AssertNull(pcNode);
+	AssertInt(0, cIndex.NumElements());
+	Pass();
+
 	cIndex.Kill();
 	cAccess.Kill();
 }
