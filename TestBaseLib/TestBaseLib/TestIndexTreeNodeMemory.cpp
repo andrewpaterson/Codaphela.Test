@@ -232,11 +232,17 @@ void TestIndexTreeNodeMemoryUncontain(void)
 	pcNode1 = TestIndexTreeNodeMemoryMalloc();
 
 	pcNode1->Init(&cTree, NULL, 0);
+	AssertFalse(pcNode1->HasNodes());
+	AssertNull(pcNode1->GetNodesMemory());
 
 	pcNode1->Contain(8);
+	AssertTrue(pcNode1->HasNodes());
+	AssertFalse(pcNode1->IsEmpty());
+	AssertNotNull(pcNode1->GetNodesMemory());
 	AssertInt(8, pcNode1->GetFirstIndex());
 	AssertInt(1, pcNode1->NumIndexes());
 	AssertInt(8, pcNode1->GetLastIndex());
+	AssertTrue(pcNode1->HasNodes());
 	AssertFalse(pcNode1->IsEmpty());
 
 	pcNode1->Uncontain(8);

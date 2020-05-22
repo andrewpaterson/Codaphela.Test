@@ -25,6 +25,38 @@ void TestIndexTreeMemoryKill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeMemoryDescribeNode(void)
+{
+	CIndexTreeMemory		cIndex;
+	CIndexTreeMemoryAccess	cAccess;
+	CIndexTreeNodeMemory**	pcChildNodes;
+	CIndexTreeNodeMemory*	pcNode;
+
+	cIndex.Init();
+	cAccess.Init(&cIndex);
+
+	cAccess.PutStringString("zx", "Jackrabbit");
+
+	pcNode = cIndex.GetNode("zx", 2);
+	AssertNotNull(pcNode);
+	AssertFalse(pcNode->HasNodes());
+	AssertTrue(pcNode->HasData());
+	Pass();
+
+	AssertShort(11, pcNode->GetDataSize());
+	AssertString("Jackrabbit", (char*)pcNode->GetDataPtr());
+	pcChildNodes = (CIndexTreeNodeMemory**)pcNode->GetNodesMemory();
+	AssertNull(pcChildNodes);
+
+	cIndex.Kill();
+	cAccess.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryAdd(EIndexKeyReverse eKeyReverse)
 {
 	CIndexTreeMemory		cIndex;
@@ -91,11 +123,63 @@ void TestIndexTreeMemoryAdd(EIndexKeyReverse eKeyReverse)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeMemoryAddDataOnExistingKey(void)
+{
+	CIndexTreeMemory		cIndex;
+	CIndexTreeMemoryAccess	cAccess;
+	char					sz[256];
+	CIndexTreeNodeMemory*	pcNode;
+
+	cIndex.Init();
+	cAccess.Init(&cIndex);
+
+	cAccess.PutStringString("zx", "Jackrabbit");
+	cAccess.PutStringString("z", "Dukeling");
+	AssertString("Jackrabbit", cAccess.GetStringString("zx", sz));
+	AssertString("Dukeling", cAccess.GetStringString("z", sz));
+	pcNode = cIndex.GetNode("z", 1);
+	AssertTrue(pcNode->HasData());
+	AssertTrue(pcNode->HasNodes());
+	Pass();
+
+	cAccess.PutStringString("z", "Big Dukeling of Doom");
+	AssertString("Jackrabbit", cAccess.GetStringString("zx", sz));
+	AssertString("Big Dukeling of Doom", cAccess.GetStringString("z", sz));
+	pcNode = cIndex.GetNode("z", 1);
+	AssertTrue(pcNode->HasData());
+	AssertTrue(pcNode->HasNodes());
+	Pass();
+
+	cAccess.PutStringString("z", "o");
+	AssertString("Jackrabbit", cAccess.GetStringString("zx", sz));
+	AssertString("o", cAccess.GetStringString("z", sz));
+	pcNode = cIndex.GetNode("z", 1);
+	AssertTrue(pcNode->HasData());
+	AssertTrue(pcNode->HasNodes());
+	Pass();
+
+	cAccess.DeleteString("z");
+	AssertString("Jackrabbit", cAccess.GetStringString("zx", sz));
+	//AssertString("", cAccess.GetStringString("z", sz));
+	pcNode = cIndex.GetNode("z", 1);
+	AssertFalse(pcNode->HasData());
+	AssertTrue(pcNode->HasNodes());
+	Pass();
+
+	cIndex.Kill();
+	cAccess.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryGet(void)
 {
 	CIndexTreeMemory		cIndex;
 	CIndexTreeMemoryAccess	cAccess;
-	CTestIndexTreeObject	andrew;
+	CTestIndexTreeObject	cAndrew;
 	CTestIndexTreeObject*	pcResult;
 	CArrayVoidPtr			avp;
 	CTestIndexTreeObject	batman;
@@ -104,18 +188,31 @@ void TestIndexTreeMemoryGet(void)
 	CIndexTreeNodeMemory*	pcNodeBatman;
 	CIndexTreeNodeMemory*	pcNodeBatmam;
 	char*					szBatmam;
+	CIndexTreeNodeMemory*	pcNodeAndre;
+	CIndexTreeNodeMemory*	pcNodeAndrew;
+	CIndexTreeNodeMemory*	pcNode;
+	CIndexTreeNodeMemory**	pcNodes;
 
 	cIndex.Init();
 	cAccess.Init(&cIndex);
 
-	andrew.Init("Andrew");
-	cAccess.PutStringPtr(andrew.GetName(), &andrew);
+	cAndrew.Init("Andrew");
+	cAccess.PutStringPtr(cAndrew.GetName(), &cAndrew);
 	pcResult = (CTestIndexTreeObject*)cAccess.GetStringPtr("Andrew");
-	AssertPointer(&andrew, pcResult);
+	AssertPointer(&cAndrew, pcResult);
 	avp.Init();
 	cIndex.FindAll(&avp);
 	AssertInt(1, avp.NumElements());
 	avp.Kill();
+
+	pcNodeAndrew = cIndex.GetNode("Andrew", 6);
+	pcNodes = (CIndexTreeNodeMemory**)pcNodeAndrew->GetNodesMemory();
+	AssertNull(pcNodes);
+
+	pcNodeAndre = cIndex.GetNode("Andre", 5);
+	pcNodes = (CIndexTreeNodeMemory**)pcNodeAndre->GetNodesMemory();
+	pcNode = pcNodes[0];
+	AssertPointer(pcNodeAndrew, pcNode);
 
 	batman.Init("Batman");
 	cAccess.PutStringPtr(batman.GetName(), &batman);
@@ -139,6 +236,12 @@ void TestIndexTreeMemoryGet(void)
 	cIndex.FindAll(&avp);
 	AssertInt(3, avp.NumElements());
 	avp.Kill();
+
+	pcNodeAndre = cIndex.GetNode("Andre", 5);
+	AssertTrue(pcNodeAndre->HasNodes());
+	AssertFalse(pcNodeAndre->HasData());
+	pcNodes = (CIndexTreeNodeMemory**)pcNodeAndre->GetNodesMemory();
+	AssertNotNull(pcNodes);
 
 	andre.Init("Andre");
 	cAccess.PutStringPtr(andre.GetName(), &andre);
@@ -652,32 +755,32 @@ void TestIndexTreeMemoryRemoveResize(void)
 	AssertInt(2, cIndex.NumAllocatedNodes());
 	AssertInt(1, cIndex.RecurseSize());
 	AssertInt(1064, iExpectedRootSize + sizeof(CIndexTreeNodeMemory) + sizeof(long long));
-	AssertInt(1064, cTrackingAlloc.AllocatedUserSize());
+	AssertInt(1076, cTrackingAlloc.AllocatedUserSize());
 
 	li = 0x88LL; cAccess.PutStringLong("MA", li);
-	AssertInt(1092, cTrackingAlloc.AllocatedUserSize());
+	AssertInt(1116, cTrackingAlloc.AllocatedUserSize());
 	li = 0x99LL; cAccess.PutStringLong("MC", li);
 	AssertInt(4, cIndex.NumAllocatedNodes());
 	AssertInt(3, cIndex.RecurseSize());
-	AssertInt(1124, cTrackingAlloc.AllocatedUserSize());
+	AssertInt(1160, cTrackingAlloc.AllocatedUserSize());
 
 	li = 0xaaLL; cAccess.PutStringLong("MB", li);
 	AssertInt(5, cIndex.NumAllocatedNodes());
 	AssertInt(4, cIndex.RecurseSize());
-	AssertInt(1148, cTrackingAlloc.AllocatedUserSize());
+	AssertInt(1196, cTrackingAlloc.AllocatedUserSize());
 
 	li = 0xbbLL; cAccess.PutStringLong("MBP", li);
 	AssertInt(6, cIndex.NumAllocatedNodes());
 	AssertInt(5, cIndex.RecurseSize());
 	AssertInt(5, cIndex.NumElements());
-	AssertInt(1176, cTrackingAlloc.AllocatedUserSize());
+	AssertInt(1236, cTrackingAlloc.AllocatedUserSize());
 
 	AssertLongLongInt(0xaaLL, cAccess.GetStringLong("MB")));
 	cAccess.DeleteString("MB");
 	AssertInt(6, cIndex.NumAllocatedNodes());
 	AssertInt(4, cIndex.RecurseSize());
 	AssertInt(4, cIndex.NumElements());
-	AssertInt(1176, cTrackingAlloc.AllocatedUserSize());
+	AssertInt(1216, cTrackingAlloc.AllocatedUserSize());
 	AssertFalse(cAccess.HasString("MB"));
 
 	AssertLongLongInt(0xbbLL, cAccess.GetStringLong("MBP")));
@@ -685,7 +788,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 	AssertInt(4, cIndex.NumAllocatedNodes());
 	AssertInt(3, cIndex.RecurseSize());
 	AssertInt(3, cIndex.NumElements());
-	AssertInt(1124, cTrackingAlloc.AllocatedUserSize());
+	AssertInt(1160, cTrackingAlloc.AllocatedUserSize());
 	AssertFalse(cAccess.HasString("MBP"));
 
 	AssertLongLongInt(0x99LL, cAccess.GetStringLong("MC")));
@@ -694,7 +797,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 	AssertInt(3, cIndex.NumAllocatedNodes());
 	AssertInt(2, cIndex.RecurseSize());
 	AssertInt(2, cIndex.NumElements());
-	AssertInt(1092, cTrackingAlloc.AllocatedUserSize());
+	AssertInt(1124, cTrackingAlloc.AllocatedUserSize());
 	AssertFalse(cAccess.HasString("MA"));
 
 	AssertLongLongInt(0x99LL, cAccess.GetStringLong("MC")));
@@ -702,7 +805,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 	AssertInt(2, cIndex.NumAllocatedNodes());
 	AssertInt(1, cIndex.RecurseSize());
 	AssertInt(1, cIndex.NumElements());
-	AssertInt(1064, cTrackingAlloc.AllocatedUserSize());
+	AssertInt(1088, cTrackingAlloc.AllocatedUserSize());
 	AssertFalse(cAccess.HasString("MC"));
 
 	AssertLongLongInt(0x77LL, cAccess.GetStringLong("M")));
@@ -756,6 +859,8 @@ void TestIndexTreeMemoryIterate(void)
 	AssertTrue(cIndex.StartIteration(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(8, iDataSize);
 	AssertString("FATJETA", szData);
+	Pass();
+
 	iKeySize = cIndex.GetKey(szKey, szData, TRUE);
 	AssertInt(2, iKeySize);
 	AssertString("AA", szKey);
@@ -996,9 +1101,9 @@ void TestIndexTreeMemoryResizeData(void)
 {
 	CIndexTreeMemory		cIndex;
 	CIndexTreeMemoryAccess	cAccess;
-	CIndexTreeNodeMemory*	 pcNode;
-	CIndexTreeNodeMemory*	 pcOldNode;
-	CIndexTreeNodeMemory*	 pcRoot;
+	CIndexTreeNodeMemory*	pcNode;
+	CIndexTreeNodeMemory*	pcOldNode;
+	CIndexTreeNodeMemory*	pcRoot;
 	char					szAAObject[] = "Hello";
 	char					szACObject[] = "Goodbye";
 	char					szAObject[] = "Centrist Policies";
@@ -1027,7 +1132,7 @@ void TestIndexTreeMemoryResizeData(void)
 	AssertInt(2, pcNode->NumValidIndexes());
 	AssertInt(18, pcNode->GetDataSize());
 	iNodeMemoryOffset2 = (size_t)pcNode->GetNodesMemory() - (size_t)pcNode;
-	AssertInt(cIndex.SizeofNode() + pcNode->GetDataSize(), iNodeMemoryOffset2);
+	AssertInt(cIndex.SizeofDataNode() + pcNode->GetDataSize(), iNodeMemoryOffset2);
 	AssertTrue(iNodeMemoryOffset2 > iNodeMemoryOffset1);
 
 	AssertString(szAAObject, cAccess.GetStringString("AA", szResult));
@@ -1100,8 +1205,10 @@ void TestIndexTreeMemory(void)
 	MemoryInit();
 
 	TestIndexTreeMemoryKill();
+	TestIndexTreeMemoryDescribeNode();
 	TestIndexTreeMemoryAdd(IKR_Yes);
 	TestIndexTreeMemoryAdd(IKR_No);
+	TestIndexTreeMemoryAddDataOnExistingKey();
 	TestIndexTreeMemoryGet();
 	TestIndexTreeMemoryPutPtrDuplicate();
 	TestIndexTreeMemoryPutDifferenceSizeDuplicates();
