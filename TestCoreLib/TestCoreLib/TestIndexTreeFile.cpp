@@ -570,7 +570,7 @@ void TestIndexTreeFileResizeData(void)
 	AssertInt(2, pcNode->NumValidIndexes());
 	AssertInt(18, pcNode->GetDataSize());
 	iNodeMemoryOffset2 = (size_t)pcNode->GetNodesMemory() - (size_t)pcNode;
-	AssertInt(cIndexTree.SizeofNode() + pcNode->GetDataSize(), iNodeMemoryOffset2);
+	AssertInt(cIndexTree.SizeofDataNode() + pcNode->GetDataSize(), iNodeMemoryOffset2);
 	AssertTrue(iNodeMemoryOffset2 > iNodeMemoryOffset1);
 
 	AssertString(szAAObject, GetString(&cAccess, "AA"));
@@ -2004,6 +2004,13 @@ void TestIndexTreeFileMemorySize(void)
 	CTestIndexTreeObject		aaa;
 	CTestIndexTreeObject		aab;
 	BOOL						bResult;
+	size_t						tNodeSize;
+	size_t						tDataNodeSize;
+	size_t						tNodePtrSize;
+	size_t						tRootNodeSize;
+	size_t						tFourNodesSize;
+	size_t						tFiveNodesSize;
+	int							iNumNodes;
 
 	cHelper.Init("Output" _FS_"IndexTreeE", "primary", "backup", TRUE);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
@@ -2012,28 +2019,41 @@ void TestIndexTreeFileMemorySize(void)
 	cIndexTree.Init(&cController, NULL);
 	cAccess.Init(&cIndexTree);
 
+	tNodeSize = cIndexTree.SizeofNode();
+	AssertInt(sizeof(CIndexTreeNodeFile), tNodeSize);
+	tDataNodeSize = cIndexTree.SizeofDataNode();
+	AssertInt(sizeof(CIndexTreeNodeFile) + sizeof(CIndexTreeDataNode), tDataNodeSize);
+	tNodePtrSize = cIndexTree.SizeofNodePtr();
+	AssertInt(sizeof(CIndexTreeChildNode), tNodePtrSize);
+
 	AssertInt(1, cIndexTree.NumMemoryNodes());
-	AssertInt(3096, cIndexTree.ByteSize());
-	AssertInt(3096, cIndexTree.GetUserMemorySize());
-	AssertInt(3096 + 4, cIndexTree.GetSystemMemorySize());
+	tRootNodeSize = tNodeSize + 256 * tNodePtrSize;
+	AssertInt(tRootNodeSize, cIndexTree.ByteSize());
+	AssertInt(tRootNodeSize, cIndexTree.GetUserMemorySize());
+	AssertInt(tRootNodeSize + sizeof(SCountingMemoryAllocation), cIndexTree.GetSystemMemorySize());
 
 	aaa.Init("AAA");
 	bResult = cAccess.PutStringPtr(aaa.GetName(), &aaa);
 	AssertTrue(bResult);
+	Pass();
 
-	AssertInt(4, cIndexTree.NumMemoryNodes());
-	AssertInt(3196, cIndexTree.ByteSize());
-	AssertInt(3196, cIndexTree.GetUserMemorySize());
-	AssertInt(3196 + 16, cIndexTree.GetSystemMemorySize());
+	iNumNodes = cIndexTree.NumMemoryNodes();
+	tFourNodesSize = tRootNodeSize + 2 * (tNodeSize + tNodePtrSize) + (tDataNodeSize + sizeof(void*));
+	AssertInt(4, iNumNodes);
+	AssertInt(tRootNodeSize + (tNodeSize + tNodePtrSize) * 2 + (tDataNodeSize + sizeof(void*)), cIndexTree.ByteSize());
+	AssertInt(tFourNodesSize, cIndexTree.GetUserMemorySize());
+	AssertInt(tFourNodesSize + iNumNodes * sizeof(SCountingMemoryAllocation), cIndexTree.GetSystemMemorySize());
 
 	aab.Init("AAB");
 	bResult = cAccess.PutStringPtr(aab.GetName(), &aab);
 	AssertTrue(bResult);
 
-	AssertInt(5, cIndexTree.NumMemoryNodes());
-	AssertInt(3236, cIndexTree.ByteSize());
-	AssertInt(3236, cIndexTree.GetUserMemorySize());
-	AssertInt(3236 + 20, cIndexTree.GetSystemMemorySize());
+	iNumNodes = cIndexTree.NumMemoryNodes();
+	tFiveNodesSize = tRootNodeSize + (tNodeSize + tNodePtrSize) + (tNodeSize + tNodePtrSize + tNodePtrSize) + 2 * (tDataNodeSize + sizeof(void*));
+	AssertInt(5, iNumNodes);
+	AssertInt(tFiveNodesSize, cIndexTree.ByteSize());
+	AssertInt(tFiveNodesSize, cIndexTree.GetUserMemorySize());
+	AssertInt(tFiveNodesSize + iNumNodes * sizeof(SCountingMemoryAllocation), cIndexTree.GetSystemMemorySize());
 
 	cController.End();
 

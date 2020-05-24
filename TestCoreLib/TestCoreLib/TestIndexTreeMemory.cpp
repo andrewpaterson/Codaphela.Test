@@ -69,6 +69,7 @@ void TestIndexTreeMemoryAllocation(void)
 	CGeneralMemory*		pcMemory;
 	size_t				tRootNodeSize;
 	size_t				tNodeSize;
+	size_t				tDataNodeSize;
 	size_t				tNoDataSize;
 
 	cMemoryAllocator.Init(16);
@@ -79,6 +80,7 @@ void TestIndexTreeMemoryAllocation(void)
 	cIndexTree.Init(&cMemoryAllocator, IKR_No);
 	tRootNodeSize = cIndexTree.CalculateRootNodeSize();
 	tNodeSize = cIndexTree.SizeofNode();
+	tDataNodeSize = cIndexTree.SizeofDataNode();
 	tNoDataSize = cIndexTree.SizeofNodePtr();
 
 	AssertLongLongInt(1 /* root node (256 children) */, pcMemory->GetTotalAllocations());
@@ -87,9 +89,11 @@ void TestIndexTreeMemoryAllocation(void)
 	lliKey1 = 1;
 	pvData1 = (char*)cIndexTree.Put(&lliKey1, sizeof(int64), NULL, 103);
 	AssertLongLongInt(1 /* root node (256 children) */ + 7 /* empty nodes with child */ + 1 /* node with no children but with data */, pcMemory->GetTotalAllocations());
-	AssertLongLongInt(tRootNodeSize + (tNodeSize + tNoDataSize) * 7 + (tNodeSize + 103), pcMemory->GetTotalAllocatedMemory());
-
-	AssertInt(tNodeSize + 103, pcMemory->GetSize(cIndexTree.GetNodeForData(pvData1)));
+	Pass();
+	AssertLongLongInt(tRootNodeSize + (tNodeSize + tNoDataSize) * 7 + (tDataNodeSize + 103), pcMemory->GetTotalAllocatedMemory());
+	Pass();
+	AssertInt(tDataNodeSize + 103, pcMemory->GetSize(cIndexTree.GetNodeForData(pvData1)));
+	Pass();
 
 	cIndexTree.Kill();
 	AssertLongLongInt(0, pcMemory->GetTotalAllocations());
