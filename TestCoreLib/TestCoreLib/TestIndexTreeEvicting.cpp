@@ -55,7 +55,7 @@ void TestIndexTreeEvictingAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse
 			"   Both:   0    -> 1:1  ()\n"
 			"   Both:   0    -> 1:0  ()\n"
 			"   Both:   0    -> 0:0  ()\n"
-			"   Both:   1(X) ()\n"
+			"   Both:   1(X) (HAS_DATA, NODES_EMPTY)\n"
 			, sz.Text());
 	}
 	else if (eWriteThrough == IWT_Yes && eKeyReverse == IKR_No)
@@ -71,7 +71,7 @@ void TestIndexTreeEvictingAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse
 			"   Both:   0    -> 1:1  ()\n"
 			"   Both:   0    -> 1:0  ()\n"
 			"   Both:   0    -> 0:0  ()\n"
-			"   Both:   0(X) ()\n"
+			"   Both:   0(X) (HAS_DATA, NODES_EMPTY)\n"
 			, sz.Text());
 	}
 	else if (eWriteThrough == IWT_No && eKeyReverse == IKR_Yes)
@@ -87,7 +87,7 @@ void TestIndexTreeEvictingAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse
 			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
 			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
 			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
-			" Memory:   1(X) (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   1(X) (DIRTY_NODE, DIRTY_PATH, HAS_DATA, NODES_EMPTY)\n"
 			, sz.Text());
 	}
 	else if (eWriteThrough == IWT_No && eKeyReverse == IKR_No)
@@ -103,7 +103,7 @@ void TestIndexTreeEvictingAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse
 			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
 			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
 			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
-			" Memory:   0(X) (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   0(X) (DIRTY_NODE, DIRTY_PATH, HAS_DATA, NODES_EMPTY)\n"
 			, sz.Text());
 	}
 	sz.Kill();
@@ -208,7 +208,7 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	AssertLongLongInt(3096, pcMemory->GetTotalAllocatedMemory());
 	x = 1234;
 	cAccess.PutStringInt("Tomato", x);
-	AssertLongLongInt(3304, pcMemory->GetTotalAllocatedMemory());
+	AssertLongLongInt(3316LL, pcMemory->GetTotalAllocatedMemory());
 	AssertInt(1, cIndexTree.NumMemoryElements());
 	AssertInt(7, cIndexTree.NumMemoryNodes());
 	AssertInt(7, strlen("Tomato") + 1);  //6 nodes for Tomato + the root node.
@@ -218,7 +218,7 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	y = 567890;
 	cAccess.PutStringInt("Plantation", y);
 
-	AssertLongLongInt(3448, pcMemory->GetTotalAllocatedMemory());
+	AssertLongLongInt(3460LL, pcMemory->GetTotalAllocatedMemory());
 	AssertInt(1, cEvictedNodes.NumElements());
 	AssertString("Tomato", (char*)cEvictedNodes.GetKey(0));
 	AssertInt(x, *((int*)cEvictedNodes.GetData(0)));

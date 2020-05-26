@@ -57,6 +57,8 @@ void TestIndexTreeWriterWrite(void)
 	}
 
 	AssertInt(12, cIndexTree.NumElements());
+	Pass();
+	AssertTrue(cIndexTree.ValidateIndexTree());
 
 	cFileUtil.RemoveDir(szDirectory);
 
