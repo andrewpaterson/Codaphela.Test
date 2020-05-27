@@ -1187,7 +1187,7 @@ void TestIndexedDataDescriptorCaching(void)
 	cIndexedDataEvictedList.Init();
 	cIndexTreeEvictedList.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 3670, IWT_No, &cEvictionStrategy, &cIndexTreeEvictedList, &cIndexedDataEvictedList);
+	cIndexConfig.Init(NULL, 8 KB, 3690, IWT_No, &cEvictionStrategy, &cIndexTreeEvictedList, &cIndexedDataEvictedList);
 	cController.Begin();
 	cIndexedData.Init(&cController, &cIndexConfig);
 	cController.End();
@@ -1232,8 +1232,8 @@ void TestIndexedDataDescriptorCaching(void)
 
 	cIndexedData.Add(OI, &iData, 4); OI++;  iData++;
 	AssertInt(1, cIndexedDataEvictedList.NumElements());
-	AssertLongLongInt(1LL, cIndexedDataEvictedList.GetKey(0));
-	AssertInt(77, *(int*)cIndexedDataEvictedList.GetData(0));
+	AssertLongLongInt(4LL, cIndexedDataEvictedList.GetKey(0));
+	AssertInt(81, *(int*)cIndexedDataEvictedList.GetData(0));
 	Pass();
 	AssertLongLongInt(3644LL, cIndexedData.GetIndiciesSystemMemorySize());
 	cIndexedDataEvictedList.Clear();
@@ -1241,8 +1241,8 @@ void TestIndexedDataDescriptorCaching(void)
 
 	cIndexedData.Add(OI, &iData, 4); OI++;  iData++;
 	AssertInt(1, cIndexedDataEvictedList.NumElements());
-	AssertLongLongInt(4LL, cIndexedDataEvictedList.GetKey(0));
-	AssertInt(81, *(int*)cIndexedDataEvictedList.GetData(0));
+	AssertLongLongInt(3LL, cIndexedDataEvictedList.GetKey(0));
+	AssertInt(79, *(int*)cIndexedDataEvictedList.GetData(0));
 	Pass();
 	AssertLongLongInt(3656LL, cIndexedData.GetIndiciesSystemMemorySize());
 	cIndexedDataEvictedList.Clear();
@@ -1262,22 +1262,36 @@ void TestIndexedDataDescriptorCaching(void)
 	AssertLongLongInt(6LL, cIndexedDataEvictedList.GetKey(0));
 	AssertInt(83, *(int*)cIndexedDataEvictedList.GetData(0));
 	Pass();
-	AssertLongLongInt(3644, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertLongLongInt(3680LL, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3, (int)cIndexedData.NumIndicesCached());
 	cIndexedDataEvictedList.Clear();
 	cIndexTreeEvictedList.Clear();
 
-	iData = 0; OI--; cIndexedData.Get(OI, (void*)&iData);
-	AssertInt(85, iData);
+	iData = 0; OI = 7LL; cIndexedData.Get(OI, (void*)&iData);
+	AssertInt(84, iData);
 	AssertInt(0, cIndexedDataEvictedList.NumElements());
-	AssertLongLongInt(3644, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertLongLongInt(3680LL, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertInt(3, (int)cIndexedData.NumIndicesCached());
+	Pass();
 
-	//xxx;
-	//iData = 0; OI = 1LL; cIndexedData.Get(OI, (void*)&iData);
-	//AssertInt(77, iData);
-	//AssertInt(0, cIndexedDataEvictedList.NumElements());
-
-	//iNumCached = cIndexedData.NumIndicesCached();
-	//AssertInt(2, (int)iNumCached);
+	iData = 0; OI = 3LL; cIndexedData.Get(OI, (void*)&iData);
+	AssertInt(79, iData);
+	AssertInt(2, cIndexedDataEvictedList.NumElements());
+	AssertInt(2, cIndexTreeEvictedList.NumElements());
+	AssertLongLongInt(3620LL, cIndexedData.GetIndiciesSystemMemorySize());
+	Pass();
+	AssertLongLongInt(8LL, cIndexedDataEvictedList.GetKey(0));
+	AssertInt(85, *(int*)cIndexedDataEvictedList.GetData(0));
+	AssertLongLongInt(1LL, cIndexedDataEvictedList.GetKey(1));
+	AssertInt(77, *(int*)cIndexedDataEvictedList.GetData(1));
+	Pass();
+	AssertLongLongInt(8LL, *(int64*)cIndexTreeEvictedList.GetKey(0));
+	AssertLongLongInt(-1LL, ((CIndexedDataDescriptor*)cIndexTreeEvictedList.GetData(0))->GetFilePosIndex()->mulliFilePos);
+	AssertLongLongInt(1LL, *(int64*)cIndexTreeEvictedList.GetKey(1));
+	AssertLongLongInt(-1LL, ((CIndexedDataDescriptor*)cIndexTreeEvictedList.GetData(1))->GetFilePosIndex()->mulliFilePos);
+	Pass();
+	AssertInt(2, (int)cIndexedData.NumIndicesCached());
+	Pass();
 
 	AssertTrue(cIndexedData.Flush(TRUE));
 	cController.End();
@@ -1375,7 +1389,7 @@ void TestIndexedDataNoCaching(void)
 	AssertInt(77, iData);
 
 	iNumIndicesCached = cIndexedData.NumIndicesCached();
-	AssertInt(3, (int)iNumIndicesCached);
+	AssertInt(2, (int)iNumIndicesCached);
 	iNumDataCached = cIndexedData.NumDataCached();
 	AssertLongLongInt(0, iNumDataCached);
 
