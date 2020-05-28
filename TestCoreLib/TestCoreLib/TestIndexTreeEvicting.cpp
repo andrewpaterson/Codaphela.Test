@@ -35,7 +35,7 @@ void TestIndexTreeEvictingAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL, 8 KB, NULL, NULL, &gcIndexTreeFileDefaultCallback, eWriteThrough, eKeyReverse);
+	cIndexTree.Init(&cController, NULL, 8 KB, NULL, NULL, NULL, eWriteThrough, eKeyReverse);
 	cAccess.Init(&cIndexTree);
 
 	iData = 78;
@@ -202,7 +202,7 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	cController.Begin();
 	cEvictedNodes.Init();
 	cStrategy.Init();
-	cIndexTree.Init(&cController, "Here", 3656, &cEvictedNodes, &cStrategy, &gcIndexTreeFileDefaultCallback, &cAllocator, eWriteThrough, IKR_No);
+	cIndexTree.Init(&cController, "Here", 3656, &cEvictedNodes, &cStrategy, NULL, &cAllocator, eWriteThrough, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	AssertLongLongInt(3096, pcMemory->GetTotalAllocatedMemory());
@@ -270,7 +270,7 @@ void TestIndexTreeEvictingEvictWithChildren(void)
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
+	cIndexTree.Init(&cController, NULL, 8192, NULL, NULL, NULL, &cAllocator, IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	AssertTrue(cAccess.PutStringString(szAlbatros, szAlbatros));
@@ -333,7 +333,7 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
+	cIndexTree.Init(&cController, NULL, 8192, NULL, NULL, NULL, &cAllocator, IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
 	AssertLongLongInt(3096LL, pcMemory->GetTotalAllocatedMemory());
 	Pass();
@@ -603,7 +603,7 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 	AssertLongLongInt(0, pcMemory->GetTotalAllocatedMemory());
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL, 8192, NULL, NULL, &gcIndexTreeFileDefaultCallback, &cAllocator, IWT_No, IKR_No);
+	cIndexTree.Init(&cController, NULL, 8192, NULL, NULL, NULL, &cAllocator, IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
 	AssertLongLongInt(3120, pcMemory->GetTotalAllocatedMemory());
 

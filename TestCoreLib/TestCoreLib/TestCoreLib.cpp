@@ -21,7 +21,6 @@ void TestIndexedFiles(void);
 void TestIndexTreeNodeFile(void);
 void TestIndexes(void);
 void TestIndexedData(void);
-void TestIndexTreeAccess(void);
 void TestOperators(void);
 void TestFunctionCaller(void);
 void TestNumber(void);
@@ -29,6 +28,7 @@ void TestFiles(void);
 void TestPackFilesPacker(void);
 void TestIndexedFilesEvicting(void);
 void TestIndexTreeEvicting(void);
+void TestIndexTreeAccess(void);
 void TestNamedIndexes(void);
 void TestNamedIndexedData(void);
 
@@ -64,13 +64,13 @@ int main(void)
 	TestIndexTreeFile();
 	TestIndexTreeFileCallback();
 	TestIndexTreeTemplateFile();
-	TestIndexTreeAccess();
 	TestIndexTreeWriter();
 	TestIndexTreeEvicting();
 	TestIndexedFilesEvicting();
 	TestIndexedData();
 	TestNamedIndexes();
 	TestNamedIndexedData();
+	TestIndexTreeAccess();
 
 	return TestTotalStatistics();
 }
