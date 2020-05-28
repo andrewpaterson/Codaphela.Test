@@ -35,9 +35,9 @@ void TestDataMemoryAdd(void)
 
 	apv.Init();
 	iAllocated = 0;
-	for (i = 0; i < gacArchaicWords.NumElements(); i++)
+	for (i = 0; i < gaszArchaicDefinitions.NumElements(); i++)
 	{
-		psz = gacArchaicWords.Get(i);
+		psz = gaszArchaicDefinitions.Get(i);
 		pv = cMemory.Add(psz->Length());
 		strcpy((char*)pv, psz->Text());
 		apv.Add(pv);
@@ -45,8 +45,8 @@ void TestDataMemoryAdd(void)
 		iAllocated += psz->Length() + 1;
 	}
 
-	AssertInt(433, gacArchaicWords.NumElements());
-	AssertInt(gacArchaicWords.NumElements(), cMemory.NumElements());
+	AssertInt(433, gaszArchaicDefinitions.NumElements());
+	AssertInt(gaszArchaicDefinitions.NumElements(), cMemory.NumElements());
 	AssertInt(29813, cMemory.ByteSize());
 	AssertInt(8, cMemory.NumFreeLists());
 	AssertInt(13665, iAllocated);
