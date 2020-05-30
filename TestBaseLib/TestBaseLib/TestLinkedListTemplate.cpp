@@ -105,6 +105,124 @@ void TestLinkedListTemplateWrite(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void AssertLinkedListString(CLinkedListTemplate<char>* pcList, char* szExpected)
+{
+	CChars	sz;
+	char*	pc;
+
+
+	sz.Init();
+	pc = pcList->GetHead();
+	while (pc)
+	{
+		sz.Append(*pc);
+		pc = pcList->GetNext(pc);
+	}
+
+	AssertString(szExpected, sz.Text())
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLinkedListTemplateMoveTo(void)
+{
+	CLinkedListTemplate<char>	cList;
+	int							i;
+	char*						pc;
+
+	cList.Init();
+
+	for (i = 0; i < 26; i++)
+	{
+		(*cList.Add()) = 'A' + (char)i;
+	}
+	AssertLinkedListString(&cList, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+
+	pc = cList.GetTail();
+	cList.MoveToHead(pc);
+	AssertLinkedListString(&cList, "ZABCDEFGHIJKLMNOPQRSTUVWXY");
+
+	pc = cList.GetTail();
+	pc = cList.GetPrev(pc);
+	cList.MoveToHead(pc);
+	AssertLinkedListString(&cList, "XZABCDEFGHIJKLMNOPQRSTUVWY");
+
+	pc = cList.GetHead();
+	cList.MoveToHead(pc);
+	AssertLinkedListString(&cList, "XZABCDEFGHIJKLMNOPQRSTUVWY");
+
+	pc = cList.GetHead();
+	pc = cList.GetNext(pc);
+	cList.MoveToHead(pc);
+	AssertLinkedListString(&cList, "ZXABCDEFGHIJKLMNOPQRSTUVWY");
+
+	pc = cList.GetHead();
+	pc = cList.GetNext(pc);
+	pc = cList.GetNext(pc);
+	cList.MoveToTTail(pc);
+	AssertLinkedListString(&cList, "ZXBCDEFGHIJKLMNOPQRSTUVWYA");
+
+	pc = cList.GetHead();
+	cList.MoveToTTail(pc);
+	AssertLinkedListString(&cList, "XBCDEFGHIJKLMNOPQRSTUVWYAZ");
+
+	pc = cList.GetTail();
+	pc = cList.GetPrev(pc);
+	cList.MoveToTTail(pc);
+	AssertLinkedListString(&cList, "XBCDEFGHIJKLMNOPQRSTUVWYZA");
+
+	pc = cList.GetTail();
+	cList.MoveToTTail(pc);
+	AssertLinkedListString(&cList, "XBCDEFGHIJKLMNOPQRSTUVWYZA");
+
+	for (i = 0; i < 11; i++)
+	{
+		pc = cList.GetTail();
+		pc = cList.GetPrev(pc);
+		cList.Remove(pc);
+
+		pc = cList.GetHead();
+		pc = cList.GetNext(pc);
+		cList.Remove(pc);
+	}
+	AssertLinkedListString(&cList, "XMNA");
+
+	pc = cList.GetTail();
+	cList.Remove(pc);
+	pc = cList.GetHead();
+	cList.Remove(pc);
+	AssertLinkedListString(&cList, "MN");
+
+	pc = cList.GetTail();
+	cList.MoveToHead(pc);
+	AssertLinkedListString(&cList, "NM");
+
+	pc = cList.GetHead();
+	cList.MoveToTTail(pc);
+	AssertLinkedListString(&cList, "MN");
+
+	pc = cList.GetHead();
+	cList.Remove(pc);
+	AssertLinkedListString(&cList, "N");
+
+	pc = cList.GetTail();
+	cList.MoveToHead(pc);
+	AssertLinkedListString(&cList, "N");
+
+	pc = cList.GetHead();
+	cList.MoveToTTail(pc);
+	AssertLinkedListString(&cList, "N");
+
+	cList.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestLinkedListTemplate(void)
 {
 	BeginTests();
@@ -113,6 +231,7 @@ void TestLinkedListTemplate(void)
 
 	TestLinkedListTemplateIndexOf();
 	TestLinkedListTemplateWrite();
+	TestLinkedListTemplateMoveTo();
 
 	FastFunctionsKill();
 	MemoryKill();
