@@ -131,11 +131,10 @@
     <ClCompile Include="TestFileIO.cpp" />
     <ClCompile Include="TestFloat4.cpp" />
     <ClCompile Include="TestFreeListAllocator.cpp" />
-    <ClCompile Include="TestIndexTreeBlockMemory.cpp" />
+    <ClCompile Include="TestIndexTreeMemory.cpp" />
     <ClCompile Include="TestIndexTreeIterator.cpp" />
     <ClCompile Include="TestIndexTreeNodeMemory.cpp" />
     <ClCompile Include="TestIndexTreeObject.cpp" />
-    <ClCompile Include="TestIndexTreeTemplate.cpp" />
     <ClCompile Include="TestLinkedList.cpp" />
     <ClCompile Include="TestLinkedListBlock.cpp" />
     <ClCompile Include="TestLinkedListTemplate.cpp" />

@@ -207,9 +207,6 @@
     <ClCompile Include="FileIOTestObjects.cpp">
       <Filter>Source\File\IO</Filter>
     </ClCompile>
-    <ClCompile Include="TestIndexTreeTemplate.cpp">
-      <Filter>Source\Data\Index</Filter>
-    </ClCompile>
     <ClCompile Include="TestAllocator.cpp">
       <Filter>Source\Memory\Allocator</Filter>
     </ClCompile>
@@ -254,9 +251,6 @@
     </ClCompile>
     <ClCompile Include="TestTemporaryMemory.cpp">
       <Filter>Source\Memory\Temporary</Filter>
-    </ClCompile>
-    <ClCompile Include="TestIndexTreeBlockMemory.cpp">
-      <Filter>Source\Data\Index</Filter>
     </ClCompile>
     <ClCompile Include="TestIndexTreeNodeMemory.cpp">
       <Filter>Source\Data\Index</Filter>
@@ -359,6 +353,9 @@
     </ClCompile>
     <ClCompile Include="TestLinkedListBlock.cpp">
       <Filter>Source\Data\LinkedList</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexTreeMemory.cpp">
+      <Filter>Source\Data\Index</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

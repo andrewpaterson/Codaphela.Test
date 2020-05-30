@@ -122,6 +122,7 @@ void AssertLinkedListString(CLinkedListTemplate<char>* pcList, char* szExpected)
 	AssertString(szExpected, sz.Text())
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
