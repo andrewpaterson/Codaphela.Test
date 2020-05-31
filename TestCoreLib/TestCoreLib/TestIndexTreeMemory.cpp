@@ -92,8 +92,6 @@ void TestIndexTreeMemoryAllocation(void)
 	Pass();
 	AssertLongLongInt(tRootNodeSize + (tNodeSize + tNoDataSize) * 7 + (tDataNodeSize + 103), pcMemory->GetTotalAllocatedMemory());
 	Pass();
-	AssertInt(tDataNodeSize + 103, pcMemory->GetSize(cIndexTree.GetNodeForData(pvData1)));
-	Pass();
 
 	cIndexTree.Kill();
 	AssertLongLongInt(0, pcMemory->GetTotalAllocations());

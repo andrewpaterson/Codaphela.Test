@@ -8,6 +8,26 @@
 #include "TestIndexTreeObject.h"
 
 
+class CTestIndexTreeMemory : public CIndexTreeMemory
+{
+public:
+	CIndexTreeNodeMemory* GetRoot(void)
+	{
+		return CIndexTreeMemory::GetRoot();
+	}
+
+	CIndexTreeNodeMemory* GetNode(void* pvKey, int iKeySize)
+	{
+		return CIndexTreeMemory::GetNode(pvKey, iKeySize);
+	}
+
+	BOOL ValidateSize(void)
+	{
+		return CIndexTreeMemory::ValidateSize();
+	}
+};
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -27,7 +47,7 @@ void TestIndexTreeMemoryKill(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryDescribeNode(void)
 {
-	CIndexTreeMemory		cIndex;
+	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	CIndexTreeNodeMemory**	pcChildNodes;
 	CIndexTreeNodeMemory*	pcNode;
@@ -59,7 +79,7 @@ void TestIndexTreeMemoryDescribeNode(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryAdd(EIndexKeyReverse eKeyReverse)
 {
-	CIndexTreeMemory		cIndex;
+	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	CTestIndexTreeObject	a;
 	CTestIndexTreeObject	aa;
@@ -125,7 +145,7 @@ void TestIndexTreeMemoryAdd(EIndexKeyReverse eKeyReverse)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryAddDataOnExistingKey(void)
 {
-	CIndexTreeMemory		cIndex;
+	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	char					sz[256];
 	CIndexTreeNodeMemory*	pcNode;
@@ -193,7 +213,7 @@ void TestIndexTreeMemoryAddDataOnExistingKey(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryGet(void)
 {
-	CIndexTreeMemory		cIndex;
+	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	CTestIndexTreeObject	cAndrew;
 	CTestIndexTreeObject*	pcResult;
@@ -285,7 +305,7 @@ void TestIndexTreeMemoryGet(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryPutPtrDuplicate(void)
 {
-	CIndexTreeMemory		cIndex;
+	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	CTestIndexTreeObject	andrew;
 	CTestIndexTreeObject	andrewToo;
@@ -327,7 +347,7 @@ void TestIndexTreeMemoryPutPtrDuplicate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 {
-	CIndexTreeMemory		cIndex;
+	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	char					szOne[] = "1";
 	char					szTwo[] = "22";
@@ -1039,7 +1059,7 @@ void TestIndexTreeMemoryReadWrite(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryRemoveOnRoot(void)
 {
-	CIndexTreeMemory		cIndex;
+	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	int						i;
 	unsigned char			cKey;
@@ -1115,7 +1135,7 @@ void TestIndexTreeMemoryRemoveOnRoot(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryResizeData(void)
 {
-	CIndexTreeMemory		cIndex;
+	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	CIndexTreeNodeMemory*	pcNode;
 	CIndexTreeNodeMemory*	pcOldNode;
@@ -1181,7 +1201,7 @@ void TestIndexTreeMemoryResizeData(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryDescribeData()
 {
-	CIndexTreeMemory		cIndex;
+	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	char					szObject1[] = "Sharp Dressed Man";
 	char					szObject2[] = "Built this City";
