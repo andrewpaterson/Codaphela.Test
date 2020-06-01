@@ -20,6 +20,11 @@ public:
 	{
 		return CIndexTreeEvicting::NumMemoryNodes();
 	}
+
+	int NumMemoryElements(void)
+	{
+		return CIndexTreeEvicting::NumMemoryElements();
+	}
 };
 
 
