@@ -12,6 +12,7 @@
 #include "CoreLib/IndexTreeFileAccess.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
+#include "TestIndexTreeFile.h"
 
 
 char	gszIndexTreeString[257];
@@ -58,12 +59,12 @@ void AssertIndexFileEmpty(char* szFileName)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileSizeOfs(void)
 {
-	CIndexTreeFile		cIndexTree;
+	CTestIndexTreeFile	cIndexTree;
 	size_t				tRootNodeSize;
 	size_t				tNodeSize;
 	size_t				tNodePointer;
 
-	cIndexTree.FakeInit();
+	cIndexTree.FakeInit(IKR_No);
 	tRootNodeSize = cIndexTree.CalculateRootNodeSize();
 	tNodeSize = cIndexTree.SizeofNode();
 	tNodePointer = cIndexTree.SizeofNodePtr();
@@ -721,7 +722,7 @@ void TestIndexTreeFileRemoveFurthestFirst(EIndexWriteThrough eWriteThrough)
 void TestIndexTreeFileRemove(EIndexWriteThrough eWriteThrough)
 {
 	char					szAAAA[] = "One and Ony";
-	CIndexTreeFile			cIndexTree;
+	CTestIndexTreeFile		cIndexTree;
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
 	CIndexTreeFileAccess	cAccess;
@@ -819,7 +820,7 @@ void TestIndexTreeFileRemove(EIndexWriteThrough eWriteThrough)
 void TestIndexTreeFileRemoveAndEvict(void)
 {
 	char					szABCD[] = "One and Only";
-	CIndexTreeFile			cIndexTree;
+	CTestIndexTreeFile		cIndexTree;
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
 	CIndexTreeFileAccess	cAccess;
@@ -915,7 +916,7 @@ void TestIndexTreeFileRemoveAndFlush(void)
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
-	CIndexTreeFile				cIndexTree;
+	CTestIndexTreeFile			cIndexTree;
 	CMemoryAllocator			cAllocator;
 	char						szAABAA[] = "AABAA";
 	char						szAABBB[] = "AABBB";
@@ -990,7 +991,7 @@ void TestIndexTreeFileDeleteInMemory(void)
 	char					szAA[] = "MEDIUM";
 	char					szAAA[] = "NEAR";
 	char					szA[] = "Florida";
-	CIndexTreeFile			cIndexTree;
+	CTestIndexTreeFile		cIndexTree;
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
 	CIndexTreeFileAccess	cAccess;
@@ -1182,7 +1183,7 @@ void TestIndexTreeFileDirty(void)
 	char					szFoot[] = "Foot";
 	char					szFork[] = "Fork";
 	char					szGemstone[] = "Gemstone";
-	CIndexTreeFile			cIndexTree;
+	CTestIndexTreeFile		cIndexTree;
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
 	CIndexTreeFileAccess	cAccess;
@@ -1677,7 +1678,7 @@ void TestIndexTreeFileRead(void)
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
-	CIndexTreeFile				cIndexTree;
+	CTestIndexTreeFile			cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	char						sz[MAX_DATA_SIZE];
 	CIndexTreeNodeFile*			pcHell;
@@ -2005,7 +2006,7 @@ void TestIndexTreeFileMemorySize(void)
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
-	CIndexTreeFile				cIndexTree;
+	CTestIndexTreeFile			cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	CTestIndexTreeObject		aaa;
 	CTestIndexTreeObject		aab;
@@ -2079,7 +2080,7 @@ void TestIndexTreeFileEvictNew(EIndexWriteThrough eWriteThrough)
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
-	CIndexTreeFile				cIndexTree;
+	CTestIndexTreeFile			cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	char						szAAA[] = "North";
 	char						szAAAAA[] = "Volcano";
@@ -2166,7 +2167,7 @@ void TestIndexTreeFileEvictDirty(EIndexWriteThrough eWriteThrough)
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
-	CIndexTreeFile				cIndexTree;
+	CTestIndexTreeFile			cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	char						szAAA[] = "North";
 	char						szAAAAA[] = "Volcano";
@@ -2227,7 +2228,7 @@ void TestIndexTreeFileEvictDirty(EIndexWriteThrough eWriteThrough)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeFileEvictComplexSetup(CDurableFileController* pcDurableController, CIndexTreeFile* pcIndexTree, CMemoryAllocator* pcAllocator)
+void TestIndexTreeFileEvictComplexSetup(CDurableFileController* pcDurableController, CTestIndexTreeFile* pcIndexTree, CMemoryAllocator* pcAllocator)
 {
 	CIndexTreeFileAccess		cAccess;
 	char						szAAAAA[] = "AAAAA";
@@ -2315,7 +2316,7 @@ void TestIndexTreeFileEvictComplexEvictCloseGet(void)
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
 	CGeneralMemory*				pcMemory;
-	CIndexTreeFile				cIndexTree;
+	CTestIndexTreeFile			cIndexTree;
 	CMemoryAllocator			cAllocator;
 	char						szAAAAA[] = "AAAAA";
 	char						szAAABB[] = "AAABB";
@@ -2395,7 +2396,7 @@ void TestIndexTreeFileEvictComplexEvictGetClose(void)
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
 	CGeneralMemory*				pcMemory;
-	CIndexTreeFile				cIndexTree;
+	CTestIndexTreeFile			cIndexTree;
 	CMemoryAllocator			cAllocator;
 	char						szAAAAA[] = "AAAAA";
 	char						szAAABB[] = "AAABB";
@@ -2458,7 +2459,7 @@ void TestIndexTreeFileEvictComplexEvictOdd(void)
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
 	CGeneralMemory*				pcMemory;
-	CIndexTreeFile				cIndexTree;
+	CTestIndexTreeFile			cIndexTree;
 	CMemoryAllocator			cAllocator;
 	char						szAAAAA[] = "AAAAA";
 	char						szAAABB[] = "AAABB";
@@ -2540,7 +2541,7 @@ void TestIndexTreeFileEvictComplexEvictEven(void)
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
 	CGeneralMemory*				pcMemory;
-	CIndexTreeFile				cIndexTree;
+	CTestIndexTreeFile			cIndexTree;
 	CMemoryAllocator			cAllocator;
 	char						szAAAAA[] = "AAAAA";
 	char						szAAABB[] = "AAABB";
@@ -2617,7 +2618,7 @@ void TestIndexTreeFileFlushNodes(void)
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
 	CGeneralMemory*				pcMemory;
-	CIndexTreeFile				cIndexTree;
+	CTestIndexTreeFile			cIndexTree;
 	CMemoryAllocator			cAllocator;
 	char						szAAAAA[] = "AAAAA";
 	char						szAAABB[] = "AAABB";

@@ -5,6 +5,7 @@
 #include "TestLib/Assert.h"
 #include "CoreLib/IndexTreeNodeFile.h"
 #include "CoreLib/IndexTreeFile.h"
+#include "TestIndexTreeFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -60,11 +61,11 @@ void TestIndexTreeNodeFileUnion(void)
 void TestIndexTreeNodeFileRootMemory(void)
 {
 	CIndexTreeNodeFile*		pcNode;
-	CIndexTreeFile			cIndex;
+	CTestIndexTreeFile		cIndex;
 	CIndexTreeNodeFile		cChildNode;
 	CIndexTreeChildNode*	pcResult;
 
-	cIndex.FakeInit();
+	cIndex.FakeInit(IKR_No);
 
 	pcNode = (CIndexTreeNodeFile*)malloc(sizeof(CIndexTreeNodeFile) + sizeof(CIndexTreeChildNode));  //Node.  No object.  One child.
 	pcNode->Init(&cIndex, NULL, 0);

@@ -191,6 +191,9 @@
     <ClInclude Include="NamedIndexedDataObject.h">
       <Filter>Source\File\Indexed\Named</Filter>
     </ClInclude>
+    <ClInclude Include="TestIndexTreeFile.h">
+      <Filter>Source\File\Indexed\Index</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="External.xml">
