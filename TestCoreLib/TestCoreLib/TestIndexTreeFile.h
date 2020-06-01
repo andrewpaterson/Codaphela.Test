@@ -54,6 +54,61 @@ public:
 	{
 		return CIndexTreeFile::NumMemoryElements();
 	}
+
+	void SetWriteThrough(EIndexWriteThrough eWriteThrough)
+	{
+		CIndexTreeFile::SetWriteThrough(eWriteThrough);
+	}
+
+	BOOL ValidateIndexTree(BOOL bReadNodes)
+	{
+		return CIndexTreeFile::ValidateIndexTree(bReadNodes);
+	}
+
+	BOOL ValidateIndexTree(void)
+	{
+		return CIndexTreeFile::ValidateIndexTree();
+	}
+
+	BOOL ValidateKey(void* pvKey, int iKeySize)
+	{
+		return CIndexTreeFile::ValidateKey(pvKey, iKeySize);
+	}
+
+	CIndexTreeNodeFile* GetNode(void* pvKey, int iKeySize)
+	{
+		return CIndexTreeFile::GetNode(pvKey, iKeySize);
+	}
+
+	int GetNodeKeySize(CIndexTreeNodeFile* pcNode)
+	{
+		return CIndexTreeFile::GetNodeKeySize(pcNode);
+	}
+
+	BOOL GetNodeKey(CIndexTreeNodeFile* pcNode, unsigned char* pvDestKey, int iDestSize)
+	{
+		return CIndexTreeFile::GetNodeKey(pcNode, pvDestKey, iDestSize);
+	}
+
+	CIndexTreeNodeFile* GetRoot(void)
+	{
+		return CIndexTreeFile::GetRoot();
+	}
+
+	void FindKey(CIndexTreeNodeFile* pcNode, CArrayChar* pacKey)
+	{
+		CIndexTreeFile::FindKey(pcNode, pacKey);
+	}
+
+	void FindKey(CIndexTreeNodeFile* pcNode, unsigned char* uiKey, int* piKeySize)
+	{
+		CIndexTreeFile::FindKey(pcNode, uiKey, piKeySize);
+	}
+
+	CListCharsMinimal* FindStringKeys(CArrayVoidPtr* apvNodes)
+	{
+		return CIndexTreeFile::FindStringKeys(apvNodes);
+	}
 };
 
 

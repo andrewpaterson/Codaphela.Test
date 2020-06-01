@@ -109,7 +109,7 @@ void TestIndexTreeFileAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKe
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
-	CIndexTreeFile				cIndexTree;
+	CTestIndexTreeFile			cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	CTestIndexTreeObject		a;
 	CTestIndexTreeObject		aa;
@@ -234,7 +234,7 @@ void TestIndexTreeFileGetNodeKey(void)
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
-	CIndexTreeFile				cIndexTree;
+	CTestIndexTreeFile			cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	CTestIndexTreeObject		a;
 	BOOL						bResult;
@@ -320,7 +320,7 @@ void TestIndexTreeFileAddSimple(EIndexWriteThrough eWriteThrough, EIndexKeyRever
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
-	CIndexTreeFile				cIndexTree;
+	CTestIndexTreeFile			cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	CTestIndexTreeObject		ab;
 	BOOL						bResult;
@@ -535,7 +535,7 @@ void TestIndexTreeFileResizeData(void)
 	int						iNodeMemoryOffset1;
 	int						iNodeMemoryOffset2;
 	CChars					sz;
-	CIndexTreeFile			cIndexTree;
+	CTestIndexTreeFile		cIndexTree;
 	CIndexTreeFileAccess	cAccess;
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
@@ -1056,7 +1056,7 @@ void TestIndexTreeFileDeleteInMemory(void)
 void TestIndexTreeFileFindKey(void)
 {
 	char					szData[] = "Data";
-	CIndexTreeFile			cIndexTree;
+	CTestIndexTreeFile		cIndexTree;
 	CIndexTreeFileAccess	cAccess;
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
@@ -1276,7 +1276,7 @@ void TestIndexTreeFileAddUnallocated(void)
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
-	CIndexTreeFile				cIndexTree;
+	CTestIndexTreeFile			cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	CTestIndexTreeObject		a;
 	CTestIndexTreeObject		b;
@@ -1325,15 +1325,15 @@ void TestIndexTreeFileAddUnallocated(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileRemoveThenDirty(void)
 {
-	CIndexTreeFile				cIndexTree;
-	CIndexTreeHelper			cHelper;
-	CDurableFileController		cController;
-	CIndexTreeFileAccess		cAccess;
-	CTestIndexTreeObject		a;
-	CTestIndexTreeObject		b;
-	CTestIndexTreeObject		c;
-	char						sz[MAX_DATA_SIZE];
-	CIndexTreeNodeFile*			pcNode;
+	CTestIndexTreeFile		cIndexTree;
+	CIndexTreeHelper		cHelper;
+	CDurableFileController	cController;
+	CIndexTreeFileAccess	cAccess;
+	CTestIndexTreeObject	a;
+	CTestIndexTreeObject	b;
+	CTestIndexTreeObject	c;
+	char					sz[MAX_DATA_SIZE];
+	CIndexTreeNodeFile*		pcNode;
 
 	cHelper.Init("Output" _FS_"IndexTree9", "primary", "backup", TRUE);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
@@ -1497,16 +1497,16 @@ void AssertContainsFiles(CArrayChars* pacFiles, char* szFirstFile, ...)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileRemoveBeforeFlush(void)
 {
-	CIndexTreeHelper			cHelper;
-	CDurableFileController		cController;
-	CIndexTreeFile				cIndexTree;
-	CIndexTreeFileAccess		cAccess;
-	CTestIndexTreeObject		a;
-	char						sz[MAX_DATA_SIZE];
-	char*						szDirectory;
-	CFileUtil					cFileUtil;
-	CArrayChars					acFiles;
-	CIndexTreeNodeFile*			pcNode;
+	CIndexTreeHelper		cHelper;
+	CDurableFileController	cController;
+	CTestIndexTreeFile		cIndexTree;
+	CIndexTreeFileAccess	cAccess;
+	CTestIndexTreeObject	a;
+	char					sz[MAX_DATA_SIZE];
+	char*					szDirectory;
+	CFileUtil				cFileUtil;
+	CArrayChars				acFiles;
+	CIndexTreeNodeFile*		pcNode;
 
 	cHelper.Init("Output" _FS_"IndexTree9b", "primary", "backup", TRUE);
 	szDirectory = cHelper.GetPrimaryDirectory();
@@ -1787,12 +1787,12 @@ void TestIndexTreeFileRead(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileDeleteOnDisk(void)
 {
-	CIndexTreeHelper			cHelper;
-	CDurableFileController		cController;
-	CIndexTreeFile				cIndexTree;
-	CIndexTreeFileAccess		cAccess;
-	char						sz[MAX_DATA_SIZE];
-	CIndexTreeNodeFile*			pcNode;
+	CIndexTreeHelper		cHelper;
+	CDurableFileController	cController;
+	CTestIndexTreeFile		cIndexTree;
+	CIndexTreeFileAccess	cAccess;
+	char					sz[MAX_DATA_SIZE];
+	CIndexTreeNodeFile*		pcNode;
 
 	cHelper.Init("Output" _FS_"IndexTreeB", "primary", "backup", TRUE);
 	cHelper.RemoveWorkingDirectory();
@@ -1835,7 +1835,7 @@ void TestIndexTreeFileComplex(void)
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
-	CIndexTreeFile				cIndexTree;
+	CTestIndexTreeFile			cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	char						sz[MAX_DATA_SIZE];
 	CMapStringString			cMap;
@@ -1961,7 +1961,7 @@ void TestIndexTreeFileAddToRoot(void)
 {
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
-	CIndexTreeFile				cIndexTree;
+	CTestIndexTreeFile				cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	CTestIndexTreeObject		a;
 	CTestIndexTreeObject		b;
