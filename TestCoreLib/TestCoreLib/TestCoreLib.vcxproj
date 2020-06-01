@@ -159,6 +159,7 @@
     <ClInclude Include="NamedIndexedDataObject.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestFunctionCaller.h" />
+    <ClInclude Include="TestIndexTreeEvicting.h" />
     <ClInclude Include="TestIndexTreeFile.h" />
     <ClInclude Include="TestIndexTreeObject.h" />
     <ClInclude Include="TestXMLFile.h" />

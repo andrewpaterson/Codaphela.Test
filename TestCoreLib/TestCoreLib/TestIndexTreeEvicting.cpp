@@ -13,6 +13,7 @@
 #include "CoreLib/IndexTreeEvictionStrategyRandom.h"
 #include "CoreLib/IndexTreeFileDefaultCallback.h"
 #include "TestLib/Assert.h"
+#include "TestIndexTreeEvicting.h"
 
 
 void AssertTree(char* szExpected, CIndexTreeEvicting* pcTree);
@@ -123,7 +124,7 @@ void TestIndexTreeEvictingAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeEvictingEvict(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse)
 {
-	CIndexTreeEvicting					cIndexTree;
+	CTestIndexTreeEvicting				cIndexTree;
 	CIndexTreeHelper					cHelper;
 	CDurableFileController				cController;
 	CIndexTreeEvictingAccess			cAccess;
@@ -183,7 +184,7 @@ void TestIndexTreeEvictingEvict(EIndexWriteThrough eWriteThrough, EIndexKeyRever
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 {
-	CIndexTreeEvicting					cIndexTree;
+	CTestIndexTreeEvicting				cIndexTree;
 	CIndexTreeEvictedList				cEvictedNodes;
 	CIndexTreeHelper					cHelper;
 	CDurableFileController				cController;

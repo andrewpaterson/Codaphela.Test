@@ -194,6 +194,9 @@
     <ClInclude Include="TestIndexTreeFile.h">
       <Filter>Source\File\Indexed\Index</Filter>
     </ClInclude>
+    <ClInclude Include="TestIndexTreeEvicting.h">
+      <Filter>Source\File\Indexed\Index\Evicting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="External.xml">
