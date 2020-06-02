@@ -8,7 +8,7 @@ class CTestIndexTreeFile : public CIndexTreeFile
 public:
 	void FakeInit(EIndexKeyReverse eKeyReverse)
 	{
-		CIndexTree::Init(&gcSystemAllocator, eKeyReverse, sizeof(CIndexTreeNodeFile), sizeof(CIndexTreeNodeFile) + sizeof(CIndexTreeDataNode), sizeof(CIndexTreeChildNode), MAX_DATA_SIZE, MAX_KEY_SIZE);
+		CIndexTree::Init(&gcSystemAllocator, eKeyReverse, sizeof(CIndexTreeNodeFile), sizeof(CIndexTreeNodeFile) + sizeof(CIndexTreeDataNode), sizeof(CIndexTreeChildNode), MAX_DATA_SIZE, MAX_KEY_SIZE, NULL);
 		mpcRoot = NULL;
 		mpcDurableFileControl = NULL;
 	}
