@@ -6,26 +6,7 @@
 #include "BaseLib/MemoryFile.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
-
-
-class CTestIndexTreeMemory : public CIndexTreeMemory
-{
-public:
-	CIndexTreeNodeMemory* GetRoot(void)
-	{
-		return CIndexTreeMemory::GetRoot();
-	}
-
-	CIndexTreeNodeMemory* GetNode(void* pvKey, int iKeySize)
-	{
-		return CIndexTreeMemory::GetNode(pvKey, iKeySize);
-	}
-
-	BOOL ValidateSize(void)
-	{
-		return CIndexTreeMemory::ValidateSize();
-	}
-};
+#include "TestIndexTreeMemory.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -525,7 +506,7 @@ void TestIndexTreeMemoryValidateInternalConsistency(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryCountAllocatedNodes(void)
 {
-	CIndexTreeMemory		cIndex;
+	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	CTestIndexTreeObject	cZebra;
 	CTestIndexTreeObject	cAardvark;
@@ -574,7 +555,7 @@ void TestIndexTreeMemoryCountAllocatedNodes(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryRemoveByObject(void)
 {
-	CIndexTreeMemory		cIndex;
+	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	CTestIndexTreeObject	object1;
 	CTestIndexTreeObject	object2;
@@ -702,7 +683,7 @@ void TestIndexTreeMemoryHasKey(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryRemoveNullNode(void)
 {
-	CIndexTreeMemory		cIndex;
+	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	CTestIndexTreeObject	cObject;
 
@@ -766,7 +747,7 @@ void TestIndexTreeMemoryAddLongLong(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryRemoveResize(void)
 {
-	CIndexTreeMemory		cIndex;
+	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	long long				li;
 	CMemoryAllocator		cMemoryAlloc;
@@ -866,7 +847,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 void TestIndexTreeMemoryIterate(void)
 {
 	CFileBasic					cFile;
-	CIndexTreeMemory			cIndex;
+	CTestIndexTreeMemory		cIndex;
 	CIndexTreeMemoryAccess		cAccess;
 	SIndexTreeMemoryIterator	sIter;
 	char*						szData;
@@ -998,9 +979,9 @@ void TestIndexTreeMemoryIterate(void)
 void TestIndexTreeMemoryReadWrite(void)
 {
 	CFileBasic				cFile;
-	CIndexTreeMemory		cIndex;
+	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
-	CIndexTreeMemory		cIndexIn;
+	CTestIndexTreeMemory	cIndexIn;
 	CIndexTreeMemoryAccess	cAccessIn;
 	char					szResult[256];
 
@@ -1235,7 +1216,7 @@ void TestIndexTreeMemoryDescribeData()
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryPut(void)
 {
-	CIndexTreeMemory		cIndex;
+	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	long long int			lliLarry;
 	long long int			lliThe;

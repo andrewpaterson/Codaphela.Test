@@ -2,6 +2,7 @@
 #include "BaseLib/IndexTreeMemory.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
+#include "TestIndexTreeMemory.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -14,7 +15,7 @@ void TestIndexTreeNodeMemoryInit(void)
 	CIndexTreeNodeMemory	pcChildNode;
 	long long int			uiObject;
 	CIndexTreeNodeMemory*	pcResult;
-	CIndexTreeMemory		cTree;
+	CTestIndexTreeMemory	cTree;
 	SLogConfig				sLogConfig;
 	
 	cTree.FakeInit(IKR_No);
@@ -96,7 +97,7 @@ void TestIndexTreeNodeMemoryContain(void)
 	CIndexTreeNodeMemory*	pcNode4;
 	CIndexTreeNodeMemory*	pcNode5;
 	CIndexTreeNodeMemory*	pcNode6;
-	CIndexTreeMemory		cTree;
+	CTestIndexTreeMemory	cTree;
 
 	cTree.FakeInit(IKR_No);
 
@@ -225,7 +226,7 @@ void TestIndexTreeNodeMemoryContain(void)
 void TestIndexTreeNodeMemoryUncontain(void)
 {
 	CIndexTreeNodeMemory*	pcNode1;
-	CIndexTreeMemory		cTree;
+	CTestIndexTreeMemory	cTree;
 
 	cTree.FakeInit(IKR_No);
 
@@ -318,7 +319,7 @@ void TestIndexTreeNodeMemoryFindNotEmpty(void)
 	CIndexTreeNodeMemory*	pcNode3;
 	CIndexTreeNodeMemory*	pcNode4;
 	CIndexTreeNodeMemory*	pcNode5;
-	CIndexTreeMemory		cTree;
+	CTestIndexTreeMemory	cTree;
 
 	cTree.FakeInit(IKR_No);
 

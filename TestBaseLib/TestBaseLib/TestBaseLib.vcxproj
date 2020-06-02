@@ -193,6 +193,7 @@
     <ClInclude Include="ConstructorsTestClasses.h" />
     <ClInclude Include="FileIOTestObjects.h" />
     <ClInclude Include="SortedTestObject.h" />
+    <ClInclude Include="TestIndexTreeMemory.h" />
     <ClInclude Include="TestIndexTreeObject.h" />
     <ClInclude Include="TestPackFile.h" />
   </ItemGroup>

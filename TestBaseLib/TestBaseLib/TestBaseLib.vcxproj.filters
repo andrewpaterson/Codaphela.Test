@@ -380,6 +380,9 @@
     <ClInclude Include="ArrayTemplateTestClasses.h">
       <Filter>Source\Data\Array</Filter>
     </ClInclude>
+    <ClInclude Include="TestIndexTreeMemory.h">
+      <Filter>Source\Data\Index</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
