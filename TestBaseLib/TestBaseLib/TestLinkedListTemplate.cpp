@@ -119,7 +119,8 @@ void AssertLinkedListString(CLinkedListTemplate<char>* pcList, char* szExpected)
 		pc = pcList->GetNext(pc);
 	}
 
-	AssertString(szExpected, sz.Text())
+	AssertString(szExpected, sz.Text());
+	sz.Kill();
 }
 
 

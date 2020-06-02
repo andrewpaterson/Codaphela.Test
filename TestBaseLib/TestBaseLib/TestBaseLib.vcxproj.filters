@@ -357,6 +357,9 @@
     <ClCompile Include="TestIndexTreeMemory.cpp">
       <Filter>Source\Data\Index</Filter>
     </ClCompile>
+    <ClCompile Include="TestIndexTreeDataOrderer.cpp">
+      <Filter>Source\Data\Index</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

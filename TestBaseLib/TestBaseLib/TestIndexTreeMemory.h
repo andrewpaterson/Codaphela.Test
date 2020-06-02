@@ -10,7 +10,7 @@ public:
 	{
 		//This exists so that TreeNodes can be tested without a full tree.  All they need to do is query the size of their child nodes.
 		//Kill should not be called.
-		CIndexTree::Init(NULL, eKeyReverse, sizeof(CIndexTreeNodeMemory), sizeof(CIndexTreeNodeMemory) + sizeof(CIndexTreeDataNode), sizeof(CIndexTreeNodeMemory*), MAX_DATA_SIZE, MAX_KEY_SIZE);
+		CIndexTree::Init(NULL, eKeyReverse, sizeof(CIndexTreeNodeMemory), sizeof(CIndexTreeNodeMemory) + sizeof(CIndexTreeDataNode), sizeof(CIndexTreeNodeMemory*), MAX_DATA_SIZE, MAX_KEY_SIZE, NULL);
 		mpcRoot = NULL;
 		miSize = 0;
 	}
