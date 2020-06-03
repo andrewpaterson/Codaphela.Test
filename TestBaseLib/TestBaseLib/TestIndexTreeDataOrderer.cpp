@@ -110,6 +110,62 @@ void TestIndexTreeDataOrdererAccess(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeDataOrdererRemapListNodes(void)
+{
+	CIndexTreeMemory			cIndexTree;
+	CIndexTreeMemoryAccess		cAccess;
+	CAccessDataOrderer			cOrderer;
+	int							i;
+
+	cOrderer.Init();
+	cIndexTree.Init(IKR_Yes, &cOrderer);
+	cAccess.Init(&cIndexTree);
+
+	AssertIndexTreeDataOrdererString(&cOrderer, "");
+
+	for (i = 60; i >= 0; i--)
+	{
+		cAccess.PutIntLong(i << 8, i);
+	}
+	for (i = 60; i >= 0; i--)
+	{
+		cAccess.PutIntChar(i << 8, 'A' + (char)i);
+	}
+	AssertIndexTreeDataOrdererString(&cOrderer, "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}");
+
+	for (i = 0; i <= 60; i+=2)
+	{
+		AssertTrue(cAccess.HasInt(i << 8));
+	}
+	AssertIndexTreeDataOrdererString(&cOrderer, "}{ywusqomkigeca_][YWUSQOMKIGECABDFHJLNPRTVXZ\\^`bdfhjlnprtvxz|");
+
+	for (i = 0; i <= 60; i++)
+	{
+		cAccess.PutIntLong(i << 8, i);
+	}
+	for (i = 0; i <= 60; i++)
+	{
+		cAccess.PutIntChar(i << 8, 'A' + (char)i);
+	}
+	AssertIndexTreeDataOrdererString(&cOrderer, "}|{zyxwvutsrqponmlkjihgfedcba`_^]\\[ZYXWVUTSRQPONMLKJIHGFEDCBA");
+
+	for (i = 60; i >= 0; i-=2)
+	{
+		AssertTrue(cAccess.HasInt(i << 8));
+	}
+	AssertIndexTreeDataOrdererString(&cOrderer, "ACEGIKMOQSUWY[]_acegikmoqsuwy{}|zxvtrpnljhfdb`^\\ZXVTRPNLJHFDB");
+
+
+	cIndexTree.Kill();
+	cAccess.Kill();
+	cOrderer.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeDataOrderer(void)
 {
 	BeginTests();
@@ -117,6 +173,7 @@ void TestIndexTreeDataOrderer(void)
 	MemoryInit();
 
 	TestIndexTreeDataOrdererAccess();
+	TestIndexTreeDataOrdererRemapListNodes();
 
 	MemoryKill();
 	FastFunctionsKill();
