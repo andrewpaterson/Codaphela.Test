@@ -58,6 +58,9 @@
     <Filter Include="Source\File\Indexed\Named">
       <UniqueIdentifier>{b6fba6c0-b21c-4582-9e3b-0fff5b46d58e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\File\Indexed\Index\DataOrderer">
+      <UniqueIdentifier>{fdd1e6a8-4b7d-4361-be11-8a352dc87d56}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -167,6 +170,9 @@
     </ClCompile>
     <ClCompile Include="NamedIndexedDataObject.cpp">
       <Filter>Source\File\Indexed\Named</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexTreeFileDataOrderer.cpp">
+      <Filter>Source\File\Indexed\Index\DataOrderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
