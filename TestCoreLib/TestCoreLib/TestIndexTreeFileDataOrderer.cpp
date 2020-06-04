@@ -37,11 +37,14 @@ void DumpDataOrdererString(CIndexTreeDataOrderer* pcOrderer)
 {
 	CChars	sz;
 
-	sz.Init();
-	PrintOrdererString(pcOrderer, &sz);
-	sz.AppendNewLine();
-	sz.Dump();
-	sz.Kill();
+	if (pcOrderer)
+	{
+		sz.Init();
+		PrintOrdererString(pcOrderer, &sz);
+		sz.AppendNewLine();
+		sz.Dump();
+		sz.Kill();
+	}
 }
 
 
@@ -153,7 +156,7 @@ void TestIndexTreeDataOrdererAccess(EIndexWriteThrough eWriteThrough)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeDataOrdererRemapListNodes(EIndexWriteThrough eWriteThrough)
 {
-	CIndexTreeFile			cIndexTree;
+	CIndexTreeFile				cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	CAccessDataOrderer			cOrderer;
 	int							i;
@@ -295,7 +298,7 @@ void TestIndexTreeDataOrdererModification(EIndexWriteThrough eWriteThrough)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeDataOrdererCreation(EIndexWriteThrough eWriteThrough)
 {
-	CIndexTreeFile			cIndexTree;
+	CIndexTreeFile				cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	CCreationDataOrderer		cOrderer;
 	CIndexTreeHelper			cHelper;
@@ -338,6 +341,67 @@ void TestIndexTreeDataOrdererCreation(EIndexWriteThrough eWriteThrough)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeDataOrdererEviction(EIndexWriteThrough eWriteThrough)
+{
+	CIndexTreeFile				cIndexTree;
+	CIndexTreeFileAccess		cAccess;
+	CAccessDataOrderer			cOrderer;
+	CIndexTreeHelper			cHelper;
+	CDurableFileController		cController;
+	int							i;
+	char						c;
+
+	cHelper.Init("Output" _FS_"IndexTreeDataOrderer4", "primary", "backup", TRUE);
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cController.Begin();
+	cOrderer.Init();
+	cIndexTree.Init(&cController, "Index", eWriteThrough, IKR_No, &cOrderer);
+	cAccess.Init(&cIndexTree);
+
+
+	AssertIndexTreeDataOrdererString(&cOrderer, "");
+
+	for (i = 25; i >= 0; i--)
+	{
+		cAccess.PutIntChar(i, 'a' + (char)i);
+	}
+	AssertIndexTreeDataOrdererString(&cOrderer, "abcdefghijklmnopqrstuvwxyz");
+
+	cAccess.EvictInt(12);
+	AssertIndexTreeDataOrdererString(&cOrderer, "abcdefghijklnopqrstuvwxyz");
+
+	cAccess.EvictInt(13);
+	AssertIndexTreeDataOrdererString(&cOrderer, "abcdefghijklopqrstuvwxyz");
+
+	c = cAccess.GetIntChar(12);
+	AssertChar('m', c);
+	AssertIndexTreeDataOrdererString(&cOrderer, "mabcdefghijklopqrstuvwxyz");
+
+	c = cAccess.GetIntChar(25);
+	AssertChar('z', c);
+	AssertIndexTreeDataOrdererString(&cOrderer, "zmabcdefghijklopqrstuvwxy");
+
+	c = cAccess.GetIntChar(13);
+	AssertChar('n', c);
+	AssertIndexTreeDataOrdererString(&cOrderer, "nzmabcdefghijklopqrstuvwxy");
+
+	cAccess.Flush();
+	cController.End();
+
+	cIndexTree.Kill();
+	cAccess.Kill();
+	cOrderer.Kill();
+	cController.Kill();
+
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeDataOrderer(void)
 {
 	FastFunctionsInit();
@@ -354,6 +418,8 @@ void TestIndexTreeDataOrderer(void)
 	TestIndexTreeDataOrdererModification(IWT_Yes);
 	TestIndexTreeDataOrdererCreation(IWT_No);
 	TestIndexTreeDataOrdererCreation(IWT_Yes);
+	TestIndexTreeDataOrdererEviction(IWT_No);
+	TestIndexTreeDataOrdererEviction(IWT_Yes);
 
 	TestStatistics();
 	DataMemoryKill();

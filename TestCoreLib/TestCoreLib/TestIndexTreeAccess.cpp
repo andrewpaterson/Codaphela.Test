@@ -222,6 +222,88 @@ void TestIndexTreeMemoryAccess(EIndexKeyReverse eKeyReverse)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileAccessFlushBug()
+{
+	CIndexTreeFileAccess	cAccess;
+	CIndexTreeFile			cIndexTree;
+	CIndexTreeHelper		cHelper;
+	CDurableFileController	cController;
+	int						iData;
+	char*					pszData;
+	char*					pszKey;
+	int						i;
+	CChars*					pszKey2;
+	CChars*					pszData2;
+	int						iArchaicIndex;
+	int						iFlush;
+	int						iFlushFrequency;
+	int						iCount;
+
+	iFlushFrequency = -1;
+
+	cHelper.Init("Output" _FS_ "IndexTreeFileAccess", "primary", "backup", TRUE);
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cController.Begin();
+	cIndexTree.Init(&cController, NULL, IWT_No, IKR_Yes);
+	cAccess.Init(&cIndexTree);
+
+	iFlush = 0;
+	iCount = 230;  //Lowest value causing Kill(void) Flush must called before Kill. bug.
+	for (i = 0; i < iCount; i++)
+	{
+		pszKey2 = gaszCommonWords.Get(i);
+		pszKey = pszKey2->Text();
+		iData = i;
+		cAccess.PutStringInt(pszKey, iData);
+		Flush(&cAccess, iFlushFrequency, &iFlush);
+	}
+	AssertLongLongInt(iCount, cAccess.NumElements());
+
+	iArchaicIndex = 0;
+	for (i = 0; i < iCount; i++)
+	{
+		pszKey2 = gaszCommonWords.Get(i);
+		pszKey = pszKey2->Text();
+
+		if (i % 2 == 1)
+		{
+			cAccess.DeleteString(pszKey);
+		}
+		else
+		{
+			pszData2 = gaszArchaicDefinitions.Get(iArchaicIndex);
+			pszData = pszData2->Text();
+
+			iArchaicIndex++;
+			if (iArchaicIndex >= gaszArchaicDefinitions.NumElements())
+			{
+				iArchaicIndex = 0;
+			}
+
+			cAccess.PutStringString(pszKey, pszData);
+		}
+		Flush(&cAccess, iFlushFrequency, &iFlush);
+	}
+	AssertLongLongInt(iCount / 2, cAccess.NumElements());
+	Pass();
+
+	cAccess.Flush();
+	cIndexTree.ValidateIndexTree();
+
+	cController.End();
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cController.Kill();
+
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileAccess(char* szSubirectory, EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse, int iFlushFrequency)
 {
 	CIndexTreeFileAccess	cAccess;
@@ -239,6 +321,7 @@ void TestIndexTreeFileAccess(char* szSubirectory, EIndexWriteThrough eWriteThrou
 	TestIndexTreeAccessString(&cAccess, iFlushFrequency);
 
 	cAccess.Flush();
+	cIndexTree.ValidateIndexTree();
 
 	cController.End();
 	cAccess.Kill();
@@ -272,6 +355,7 @@ void TestIndexTreeEvictingAccess(char* szSubirectory, size_t sCacheSize, EIndexW
 	TestIndexTreeAccessString(&cAccess, iFlushFrequency);
 
 	cAccess.Flush();
+	cIndexTree.ValidateIndexTree();
 
 	cController.End();
 	cAccess.Kill();
@@ -295,6 +379,8 @@ void TestIndexTreeAccess(void)
 	DataMemoryInit();
 	WordsInit();
 	BeginTests();
+
+	TestIndexTreeFileAccessFlushBug();
 
 	TestIndexTreeMemoryAccess(IKR_No);
 	TestIndexTreeMemoryAccess(IKR_Yes);

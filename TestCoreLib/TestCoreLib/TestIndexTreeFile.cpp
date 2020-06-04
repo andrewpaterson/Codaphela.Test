@@ -606,6 +606,80 @@ void TestIndexTreeFileResizeData(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileRemoveNearestFirstFlushed(void)
+{
+	char					szAAA[] = "NEAR";
+	char					szA[] = "Florida";
+	CIndexTreeFile			cIndexTree;
+	CIndexTreeHelper		cHelper;
+	CDurableFileController	cController;
+	CIndexTreeFileAccess	cAccess;
+
+	cHelper.Init("Output" _FS_"IndexTree3", "primary", "backup", TRUE);
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cController.Begin();
+	cIndexTree.Init(&cController, NULL, IWT_No, IKR_Yes);
+	cAccess.Init(&cIndexTree);
+
+
+	cAccess.PutStringLong("cover", 0x7373737339393939LL);
+	cAccess.PutStringLong("discover", 0x5858585890909090LL);
+	AssertTrue(cAccess.Flush());
+
+
+	AssertTrue(cAccess.DeleteString("cover"));
+	Pass();
+	cAccess.PutStringLong("discover", 0x5858585890909090LL);
+	AssertTrue(cAccess.Flush());
+	AssertTrue(cIndexTree.ValidateIndexTree());
+
+
+	cAccess.PutStringLong("cover", 0x7373737339393939LL);
+	cAccess.PutStringLong("discover", 0x5858585890909090LL);
+	AssertTrue(cAccess.Flush());
+	AssertTrue(cAccess.DeleteString("cover"));
+	Pass();
+	cAccess.PutStringLong("discover", 0x5858585890909090LL);
+	cAccess.PutStringLong("cover", 0x7373737339393939LL);
+	AssertTrue(cAccess.Flush());
+	AssertTrue(cIndexTree.ValidateIndexTree());
+
+
+	cAccess.PutStringLong("cover", 0x7373737339393939LL);
+	cAccess.PutStringLong("discover", 0x5858585890909090LL);
+	AssertTrue(cAccess.Flush());
+	AssertTrue(cAccess.DeleteString("cover"));
+	AssertTrue(cAccess.DeleteString("discover"));
+	cAccess.PutStringLong("cover", 0x7373737339393939LL);
+	AssertTrue(cAccess.Flush());
+	AssertTrue(cIndexTree.ValidateIndexTree());
+
+
+	cAccess.PutStringLong("cover", 0x7373737339393939LL);
+	cAccess.PutStringLong("discover", 0x5858585890909090LL);
+	AssertTrue(cAccess.Flush());
+	AssertTrue(cAccess.DeleteString("cover"));
+	AssertTrue(cAccess.DeleteString("discover"));
+	cAccess.PutStringLong("discover", 0x7373737339393939LL);
+	AssertTrue(cAccess.Flush());
+	AssertTrue(cIndexTree.ValidateIndexTree());
+
+
+	cController.End();
+
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cController.Kill();
+
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileRemoveNearestFirst(EIndexWriteThrough eWriteThrough)
 {
 	char					szAAA[] = "NEAR";
@@ -2814,6 +2888,7 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileRemove(IWT_Yes);
 	TestIndexTreeFileRemove(IWT_No);
 	TestIndexTreeFileRemoveAndEvict();
+	TestIndexTreeFileRemoveNearestFirstFlushed();
 	TestIndexTreeFileRemoveNearestFirst(IWT_Yes);
 	TestIndexTreeFileRemoveNearestFirst(IWT_No);
 	TestIndexTreeFileRemoveFurthestFirst(IWT_Yes);
