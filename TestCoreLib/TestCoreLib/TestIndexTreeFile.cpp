@@ -259,7 +259,7 @@ void TestIndexTreeFileGetNodeKey(void)
 	iSize = cIndexTree.GetNodeKeySize(pcNode);
 	AssertInt(a.NameLength(), iSize);
 
-	cIndexTree.GetNodeKey(pcNode, (unsigned char*)szKey, 7);
+	cIndexTree.GetNodeKey(pcNode, szKey, 7);
 	AssertString(a.GetName(), szKey);
 
 	cController.End();
@@ -1143,7 +1143,7 @@ void TestIndexTreeFileFindKey(void)
 	CIndexTreeNodeFile*		pcNode3;
 	CIndexTreeNodeFile*		pcNode4;
 	CArrayChar				acKey;
-	unsigned char			auiKey[MAX_KEY_SIZE];
+	char					auiKey[MAX_KEY_SIZE];
 	int						iKeySize;
 	CArrayVoidPtr			apvNodes;
 	CListCharsMinimal*		paszKeyNames;
@@ -1166,54 +1166,54 @@ void TestIndexTreeFileFindKey(void)
 	pcNode4 = cIndexTree.GetNode("Test Fly", strlen(szTestFly));
 
 	acKey.Init();
-	cIndexTree.FindKey(pcNode1, &acKey);
+	cIndexTree.GetNodeKey(pcNode1, &acKey);
 	AssertInt(8, acKey.NumElements());
 	acKey.Add(0);
 	AssertString(szKeyName, acKey.GetData());
 	acKey.Kill();
 
 	acKey.Init();
-	cIndexTree.FindKey(pcNode2, &acKey);
+	cIndexTree.GetNodeKey(pcNode2, &acKey);
 	acKey.Add(0);
 	AssertString(szAmphibious, acKey.GetData());
 	acKey.Kill();
 
 	acKey.Init();
-	cIndexTree.FindKey(pcNode3, &acKey);
+	cIndexTree.GetNodeKey(pcNode3, &acKey);
 	acKey.Add(0);
 	AssertString(szAmorphous, acKey.GetData());
 	acKey.Kill();
 
 	acKey.Init();
-	cIndexTree.FindKey(pcNode4, &acKey);
+	cIndexTree.GetNodeKey(pcNode4, &acKey);
 	acKey.Add(0);
 	AssertString(szTestFly, acKey.GetData());
 	acKey.Kill();
 
 	acKey.Init();
-	cIndexTree.FindKey(cIndexTree.GetRoot(), &acKey);
+	cIndexTree.GetNodeKey(cIndexTree.GetRoot(), &acKey);
 	AssertInt(0, acKey.NumElements());
 	acKey.Kill();
 
 	acKey.Init();
-	cIndexTree.FindKey(NULL, &acKey);
+	cIndexTree.GetNodeKey(NULL, &acKey);
 	AssertInt(0, acKey.NumElements());
 	acKey.Kill();
 
 	memset(auiKey, 0, MAX_KEY_SIZE);
-	cIndexTree.FindKey(pcNode1, auiKey, &iKeySize);
+	iKeySize = cIndexTree.GetNodeKey(pcNode1, auiKey, MAX_KEY_SIZE);
 	AssertInt(8, iKeySize);
 	AssertString(szKeyName, (char*)auiKey);
 
-	cIndexTree.FindKey(pcNode4, auiKey, &iKeySize);
+	iKeySize = cIndexTree.GetNodeKey(pcNode4, auiKey, MAX_KEY_SIZE);
 	AssertInt(8, iKeySize);
 	AssertString(szTestFly, (char*)auiKey);
 
-	cIndexTree.FindKey(pcNode3, auiKey, &iKeySize);
+	iKeySize = cIndexTree.GetNodeKey(pcNode3, auiKey, MAX_KEY_SIZE);
 	AssertInt(9, iKeySize);
 	AssertString(szAmorphous, (char*)auiKey);
 
-	cIndexTree.FindKey(pcNode2, auiKey, &iKeySize);
+	iKeySize = cIndexTree.GetNodeKey(pcNode2, auiKey, MAX_KEY_SIZE);
 	AssertInt(10, iKeySize);
 	AssertString(szAmphibious, (char*)auiKey);
 
@@ -1223,7 +1223,7 @@ void TestIndexTreeFileFindKey(void)
 	apvNodes.Add(pcNode3);
 	apvNodes.Add(pcNode4);
 
-	paszKeyNames = cIndexTree.FindStringKeys(&apvNodes);
+	paszKeyNames = cIndexTree.GetNodesStringKeys(&apvNodes);
 	AssertInt(4, paszKeyNames->NumElements());
 	AssertString(szKeyName, paszKeyNames->Get(0));
 	AssertString(szAmphibious, paszKeyNames->Get(1));

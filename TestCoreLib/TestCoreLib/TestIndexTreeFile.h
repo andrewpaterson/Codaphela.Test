@@ -87,9 +87,9 @@ public:
 		return CIndexTreeFile::GetNodeKeySize(pcNode);
 	}
 
-	BOOL GetNodeKey(CIndexTreeNodeFile* pcNode, unsigned char* pvDestKey, int iDestSize)
+	int GetNodeKey(CIndexTreeNodeFile* pcNode, char* pvDestKey, int iDestKeySize)
 	{
-		return CIndexTreeFile::GetNodeKey(pcNode, pvDestKey, iDestSize);
+		return CIndexTreeFile::GetNodeKey(pcNode, pvDestKey, iDestKeySize);
 	}
 
 	CIndexTreeNodeFile* GetRoot(void)
@@ -97,19 +97,14 @@ public:
 		return CIndexTreeFile::GetRoot();
 	}
 
-	void FindKey(CIndexTreeNodeFile* pcNode, CArrayChar* pacKey)
+	void GetNodeKey(CIndexTreeNodeFile* pcNode, CArrayChar* pacKey)
 	{
-		CIndexTreeFile::FindKey(pcNode, pacKey);
+		CIndexTreeFile::GetNodeKey(pcNode, pacKey);
 	}
 
-	void FindKey(CIndexTreeNodeFile* pcNode, unsigned char* uiKey, int* piKeySize)
+	CListCharsMinimal* GetNodesStringKeys(CArrayVoidPtr* apvNodes)
 	{
-		CIndexTreeFile::FindKey(pcNode, uiKey, piKeySize);
-	}
-
-	CListCharsMinimal* FindStringKeys(CArrayVoidPtr* apvNodes)
-	{
-		return CIndexTreeFile::FindStringKeys(apvNodes);
+		return CIndexTreeFile::GetNodesStringKeys(apvNodes);
 	}
 };
 

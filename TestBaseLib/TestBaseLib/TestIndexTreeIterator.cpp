@@ -56,7 +56,7 @@ void TestIndexTreeIteratorIterate(void)
 	bExists = cIndexTree.StartIteration(&sIter, (void**)&pvData, &iDataSize);
 	while (bExists)
 	{
-		iKeyLength = cIndexTree.GetKey(pacKey, pvData, TRUE);
+		iKeyLength = cIndexTree.GetKey(pvData, pacKey, 9+1);
 
 		pacData = cMap.Get(pacKey);
 		iMapDataSize = strlen(pacData);
