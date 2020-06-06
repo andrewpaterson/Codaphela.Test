@@ -222,6 +222,54 @@ void TestIndexTreeMemoryAccess(EIndexKeyReverse eKeyReverse)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileAccessEvictBug()
+{
+	CIndexTreeFileAccess	cAccess;
+	CIndexTreeFile			cIndexTree;
+	CIndexTreeHelper		cHelper;
+	CDurableFileController	cController;
+	int						iFlushFrequency;
+	BOOL					bResult;
+
+	iFlushFrequency = -1;
+
+	cHelper.Init("Output" _FS_ "IndexTreeFileAccessEvictBug", "primary", "backup", TRUE);
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cController.Begin();
+	cIndexTree.Init(&cController, NULL, IWT_No, IKR_No);
+	cAccess.Init(&cIndexTree);
+
+	AssertTrue(cAccess.PutStringLong("nonen", 0x7486498577436958LL));
+	AssertTrue(cAccess.PutStringLong("non",   0x9234794843954732LL));
+
+	bResult = cAccess.Flush();
+	AssertTrue(bResult);
+
+	AssertTrue(cAccess.PutStringLong("nonen", 0x5708237808346701LL));
+	AssertTrue(cAccess.DeleteString("non"));
+	Pass();
+
+	bResult = cAccess.EvictString("nonen");
+	AssertTrue(bResult);
+	Pass();
+
+	cAccess.Flush();
+	cIndexTree.ValidateIndexTree();
+
+	cController.End();
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cController.Kill();
+
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileAccessFlushBug()
 {
 	CIndexTreeFileAccess	cAccess;
@@ -241,7 +289,7 @@ void TestIndexTreeFileAccessFlushBug()
 
 	iFlushFrequency = -1;
 
-	cHelper.Init("Output" _FS_ "IndexTreeFileAccess", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "IndexTreeFileAccessFlushBug", "primary", "backup", TRUE);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -381,6 +429,7 @@ void TestIndexTreeAccess(void)
 	BeginTests();
 
 	TestIndexTreeFileAccessFlushBug();
+	TestIndexTreeFileAccessEvictBug();
 
 	TestIndexTreeMemoryAccess(IKR_No);
 	TestIndexTreeMemoryAccess(IKR_Yes);
@@ -399,19 +448,19 @@ void TestIndexTreeAccess(void)
 	TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_Yes, 100);
 	TestIndexTreeFileAccess(NULL, IWT_No, IKR_Yes, 100);
 
-	TestIndexTreeEvictingAccess(NULL, 32 KB, IWT_Yes, IKR_No, -1);
-	TestIndexTreeEvictingAccess("Sub", 32 KB, IWT_Yes, IKR_No, -1);
-	TestIndexTreeEvictingAccess(NULL, 32 KB, IWT_No, IKR_No, -1);
-	TestIndexTreeEvictingAccess(NULL, 32 KB, IWT_Yes, IKR_Yes, -1);
-	TestIndexTreeEvictingAccess(NULL, 32 KB, IWT_No, IKR_Yes, -1);
-	TestIndexTreeEvictingAccess("Sub", 32 KB, IWT_No, IKR_Yes, -1);
+	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_Yes, IKR_No, -1);
+	TestIndexTreeEvictingAccess("Sub", 64 KB, IWT_Yes, IKR_No, -1);
+	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_No, IKR_No, -1);
+	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_Yes, IKR_Yes, -1);
+	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_No, IKR_Yes, -1);
+	TestIndexTreeEvictingAccess("Sub", 64 KB, IWT_No, IKR_Yes, -1);
 
-	TestIndexTreeEvictingAccess(NULL, 32 KB, IWT_No, IKR_No, 1);
+	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_No, IKR_No, 1);
 
-	TestIndexTreeEvictingAccess(NULL, 32 KB, IWT_Yes, IKR_No, 100);
-	TestIndexTreeEvictingAccess(NULL, 32 KB, IWT_No, IKR_No, 100);
-	TestIndexTreeEvictingAccess(NULL, 32 KB, IWT_Yes, IKR_Yes, 100);
-	TestIndexTreeEvictingAccess(NULL, 32 KB, IWT_No, IKR_Yes, 100);
+	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_Yes, IKR_No, 100);
+	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_No, IKR_No, 100);
+	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_Yes, IKR_Yes, 100);
+	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_No, IKR_Yes, 100);
 
 	TestStatistics();
 	WordsKill();
