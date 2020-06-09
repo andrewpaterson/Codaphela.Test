@@ -246,9 +246,13 @@ void TestIndexTreeFileAccessEvictBug()
 	bResult = cAccess.Flush();
 	AssertTrue(bResult);
 
+	cIndexTree.ValidateParentIndex();
+
 	AssertTrue(cAccess.PutStringLong("nonen", 0x5708237808346701LL));
 	AssertTrue(cAccess.DeleteString("non"));
 	Pass();
+
+	cIndexTree.ValidateParentIndex();
 
 	bResult = cAccess.EvictString("nonen");
 	AssertTrue(bResult);

@@ -91,8 +91,11 @@ void TestIndexTreeNodeFileRootMemory(void)
 	AssertFalse(pcNode->IsEmpty());
 	AssertTrue(pcNode->HasNodes());
 	AssertFalse(pcNode->HasData());
+	Pass();
 	AssertInt(1, pcNode->NumValidIndexes());
+	Pass();
 	AssertTrue(pcNode->ValidateNodesEmpty());
+	Pass();
 
 	pcResult = pcNode->Get(33);
 	AssertTrue(pcResult->IsMemory());
