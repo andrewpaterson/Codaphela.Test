@@ -99,7 +99,7 @@ public:
 
 	void GetNodeKey(CIndexTreeNodeFile* pcNode, CArrayChar* pacKey)
 	{
-		CIndexTreeFile::GetNodeKey(pcNode, pacKey);
+		CIndexTree::GetNodeKey(pcNode, pacKey);
 	}
 
 	CListCharsMinimal* GetNodesStringKeys(CArrayVoidPtr* apvNodes)

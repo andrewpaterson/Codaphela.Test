@@ -9,6 +9,7 @@
 #include "CoreLib/IndexTreeEvictionStrategyRandom.h"
 #include "TestLib/Words.h"
 #include "TestLib/Assert.h"
+#include "TestIndexTreeFile.h"
 
 
 
@@ -59,6 +60,9 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
 	AssertLongLongInt(1000, pcAccess->NumElements());
+	Pass();
+	AssertTrue(pcAccess->ValidateIndex());
+	Pass();
 
 	bPassed = TRUE;
 	for (i = 0; i < gaszCommonWords.NumElements(); i++)
@@ -74,6 +78,9 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
 	AssertTrue(bPassed);
+	Pass();
+	AssertTrue(pcAccess->ValidateIndex());
+	Pass();
 
 	iArchaicIndex = 0;
 	for (i = 0; i < gaszCommonWords.NumElements(); i++)
@@ -101,6 +108,9 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
 	AssertLongLongInt(500, pcAccess->NumElements());
+	Pass();
+	AssertTrue(pcAccess->ValidateIndex());
+	Pass();
 
 	iArchaicIndex = 0;
 	bPassed = TRUE;
@@ -129,6 +139,9 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
 	AssertTrue(bPassed);
+	Pass();
+	AssertTrue(pcAccess->ValidateIndex());
+	Pass();
 
 	for (i = gaszCommonWords.NumElements() - 1; i >= 0; i--)
 	{
@@ -139,6 +152,9 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
 	AssertLongLongInt(1000, pcAccess->NumElements());
+	Pass();
+	AssertTrue(pcAccess->ValidateIndex());
+	Pass();
 
 	bPassed = TRUE;
 	for (i = 0; i < gaszCommonWords.NumElements(); i++)
@@ -154,6 +170,9 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
 	AssertTrue(bPassed);
+	Pass();
+	AssertTrue(pcAccess->ValidateIndex());
+	Pass();
 
 	for (i = 0; i < gaszCommonWords.NumElements(); i += 3)
 	{
@@ -163,6 +182,9 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
 	AssertLongLongInt(666, pcAccess->NumElements());
+	Pass();
+	AssertTrue(pcAccess->ValidateIndex());
+	Pass();
 
 	for (i = 1; i < gaszCommonWords.NumElements(); i += 3)
 	{
@@ -172,6 +194,9 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
 	AssertLongLongInt(333, pcAccess->NumElements());
+	Pass();
+	AssertTrue(pcAccess->ValidateIndex());
+	Pass();
 
 	for (i = 2; i < gaszCommonWords.NumElements(); i += 3)
 	{
@@ -180,6 +205,9 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 		pcAccess->PutStringInt(pszKey, i);
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
+	Pass();
+	AssertTrue(pcAccess->ValidateIndex());
+	Pass();
 
 	bPassed = TRUE;
 	for (i = 2; i < gaszCommonWords.NumElements(); i += 3)
@@ -196,6 +224,9 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
 	AssertTrue(bPassed);
+	Pass();
+	AssertTrue(pcAccess->ValidateIndex());
+	Pass();
 }
 
 
@@ -215,6 +246,65 @@ void TestIndexTreeMemoryAccess(EIndexKeyReverse eKeyReverse)
 
 	cAccess.Kill();
 	cIndexTree.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileAccessFlushEvictBug()
+{
+	CIndexTreeFileAccess	cAccess;
+	CTestIndexTreeFile		cIndexTree;
+	CIndexTreeHelper		cHelper;
+	CDurableFileController	cController;
+	int						iFlushFrequency;
+	BOOL					bResult;
+
+	iFlushFrequency = -1;
+
+	cHelper.Init("Output" _FS_ "IndexTreeFileAccessFlushEvictBug", "primary", "backup", TRUE);
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cController.Begin();
+	cIndexTree.Init(&cController, NULL, IWT_No, IKR_No);
+	cAccess.Init(&cIndexTree);
+
+	AssertTrue(cAccess.PutStringLong("clearly", 0x7486498577436958LL));
+	AssertTrue(cAccess.PutStringLong("clear", 0x9234794843954732LL));
+
+	bResult = cAccess.Flush();
+	AssertTrue(bResult);
+
+	cIndexTree.ValidateParentIndex();
+	 
+	AssertTrue(cAccess.DeleteString("clear"));
+	Pass();
+	cIndexTree.Dump();
+
+	bResult = cAccess.EvictString("clearly");
+	AssertTrue(bResult);
+	Pass();
+	cIndexTree.Dump();
+
+	bResult = cAccess.FlushString("clear");
+	AssertTrue(bResult);
+	Pass();
+	cIndexTree.Dump();
+
+	AssertFalse(cAccess.HasString("clear"));
+	Pass();
+	AssertTrue(cAccess.HasString("clearly"));
+	Pass();
+	cIndexTree.Dump();
+
+	cController.End();
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cController.Kill();
+
+	cHelper.Kill(TRUE);
 }
 
 
@@ -434,6 +524,7 @@ void TestIndexTreeAccess(void)
 
 	TestIndexTreeFileAccessFlushBug();
 	TestIndexTreeFileAccessEvictBug();
+	TestIndexTreeFileAccessFlushEvictBug();
 
 	TestIndexTreeMemoryAccess(IKR_No);
 	TestIndexTreeMemoryAccess(IKR_Yes);
