@@ -295,6 +295,7 @@ void TestIndexTreeFileAccessFlushEvictBug()
 
 	AssertFalse(cAccess.HasString("clear"));
 	Pass();
+	cIndexTree.Dump();
 	AssertTrue(cAccess.HasString("clearly"));
 	Pass();
 	cIndexTree.Dump();
