@@ -40,7 +40,7 @@ void TestFreeList(void);
 void TestFreeListAllocator(void);
 void TestIndexTreeNodeMemory(void);
 void TestIndexTreeMemory(void);
-void TestIndexTreeIterator(void);
+void TestIndexTreeMemoryIterator(void);
 void TestGeneralMemory(void);
 void TestDataMemory(void);
 void TestLinkedList(void);
@@ -122,7 +122,7 @@ int main(void)
 	TestNumbers();
 	TestArrayTemplate();
 	TestIndexTreeNodeMemory();
-	TestIndexTreeIterator();
+	TestIndexTreeMemoryIterator();
 	TestArrayDenseTemplate();
 	TestArraySparseTemplate();
 	TestMemoryFile();

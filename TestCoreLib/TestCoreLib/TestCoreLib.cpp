@@ -18,6 +18,7 @@ void TestIndexTreeFileCallback(void);
 void TestIndexTreeTemplateFile(void);
 void TestIndexTreeWriter(void);
 void TestIndexedFile(void);
+void TestIndexTreeFileIterator(void);
 void TestIndexedFiles(void);
 void TestIndexTreeNodeFile(void);
 void TestIndexes(void);
@@ -65,6 +66,7 @@ int main(void)
 	TestIndexTreeFile();
 	TestIndexTreeDataOrderer();
 	TestIndexTreeFileCallback();
+	TestIndexTreeFileIterator();
 	TestIndexTreeTemplateFile();
 	TestIndexTreeWriter();
 	TestIndexTreeEvicting();

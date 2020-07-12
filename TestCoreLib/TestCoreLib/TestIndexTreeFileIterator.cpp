@@ -1,10 +1,11 @@
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/DebugOutput.h"
 #include "BaseLib/GlobalMemory.h"
-#include "BaseLib/IndexTreeMemory.h"
 #include "BaseLib/MapStringString.h"
-#include "BaseLib/IndexTreeMemoryIterator.h"
-#include "BaseLib/IndexTreeMemoryAccess.h"
+#include "CoreLib/IndexTreeFile.h"
+#include "CoreLib/IndexTreeHelper.h"
+#include "CoreLib/IndexTreeFileIterator.h"
+#include "CoreLib/IndexTreeFileAccess.h"
 #include "TestLib/Words.h"
 #include "TestLib/Assert.h"
 
@@ -13,21 +14,31 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeIteratorUnsafeIterate(void)
+void TestIndexTreeFileIteratorUnsafeIterate(void)
 {
-	SIndexTreeMemoryIterator	sIter;
-	char*						pvData;
-	char*						pvKey;
-	int							iDataSize;
-	BOOL						bExists;
-	char						pacKey[9+1];
-	int							iKeyLength;
-	CIndexTreeMemory			cIndexTree;
-	CMapStringString			cMap;
-	SMapIterator				sMapIter;
-	char*						pacData;
-	int							iResult;
-	int							iMapDataSize;
+	SIndexTreeFileIterator	sIter;
+	char*					pvData;
+	char*					pvKey;
+	int						iDataSize;
+	BOOL					bExists;
+	char					pacKey[9 + 1];
+	int						iKeyLength;
+	CIndexTreeFile			cIndexTree;
+	CMapStringString		cMap;
+	SMapIterator			sMapIter;
+	char*					pacData;
+	int						iResult;
+	int						iMapDataSize;
+	CIndexTreeFileAccess	cAccess;
+	CIndexTreeHelper		cHelper;
+	CDurableFileController	cController;
+
+	cHelper.Init("Output" _FS_ "IndexTreeIterator1", "primary", "backup", TRUE);
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cController.Begin();
+	cIndexTree.Init(&cController, NULL, IWT_No, IKR_No);
+	cAccess.Init(&cIndexTree);
 
 	cMap.Init(3);
 	cMap.Put("AA", "nutritious");
@@ -45,8 +56,6 @@ void TestIndexTreeIteratorUnsafeIterate(void)
 
 	AssertInt(12, cMap.NumElements());
 
-	cIndexTree.Init();
-
 	bExists = cMap.StartIteration(&sMapIter, (void**)&pvKey, (void**)&pvData);
 	while (bExists)
 	{
@@ -62,8 +71,6 @@ void TestIndexTreeIteratorUnsafeIterate(void)
 	bExists = cIndexTree.StartUnsafeIteration(&sIter, (void**)&pvData, &iDataSize);
 	while (bExists)
 	{
-		iKeyLength = cIndexTree.GetKey(pvData, pacKey, 9+1);
-
 		pacData = cMap.Get(pacKey);
 		iMapDataSize = strlen(pacData);
 		AssertInt(iMapDataSize, iDataSize);
@@ -74,7 +81,14 @@ void TestIndexTreeIteratorUnsafeIterate(void)
 		bExists = cIndexTree.UnsafeIterate(&sIter, (void**)&pvData, &iDataSize);
 	}
 
+	cIndexTree.Flush();
+	cController.End();
+
+	cAccess.Kill();
 	cIndexTree.Kill();
+	cController.Kill();
+
+	cHelper.Kill(TRUE);
 	cMap.Kill();
 }
 
@@ -83,19 +97,25 @@ void TestIndexTreeIteratorUnsafeIterate(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeIteratorIterate(void)
+void TestIndexTreeFileIteratorIterate(void)
 {
 	int						iData;
 	char*					pszKey;
 	int						i;
 	CChars*					pszKey2;
-	CIndexTreeMemory		cIndex;
-	CIndexTreeMemoryAccess	cAccess;
+	CIndexTreeFile			cIndexTree;
+	CIndexTreeFileAccess	cAccess;
 	CIndexTreeIterator*		pcIter;
 	BOOL					bExists;
+	CIndexTreeHelper		cHelper;
+	CDurableFileController	cController;
 
-	cIndex.Init();
-	cAccess.Init(&cIndex);
+	cHelper.Init("Output" _FS_ "IndexTreeIterator2", "primary", "backup", TRUE);
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cController.Begin();
+	cIndexTree.Init(&cController, NULL, IWT_No, IKR_No);
+	cAccess.Init(&cIndexTree);
 
 	for (i = 0; i < gaszCommonWords.NumElements(); i++)
 	{
@@ -123,8 +143,14 @@ void TestIndexTreeIteratorIterate(void)
 
 	cAccess.FreeIterator(pcIter);
 
-	cIndex.Kill();
+	cIndexTree.Flush();
+	cController.End();
+
 	cAccess.Kill();
+	cIndexTree.Kill();
+	cController.Kill();
+
+	cHelper.Kill(TRUE);
 }
 
 
@@ -132,19 +158,20 @@ void TestIndexTreeIteratorIterate(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeMemoryIterator(void)
+void TestIndexTreeFileIterator(void)
 {
 	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	WordsInit();
+	DataMemoryInit();
 	BeginTests();
 
-
-	TestIndexTreeIteratorUnsafeIterate();
-	TestIndexTreeIteratorIterate();
+	TestIndexTreeFileIteratorUnsafeIterate();
+	TestIndexTreeFileIteratorIterate();
 
 	TestStatistics();
+	DataMemoryKill();
 	WordsKill();
 	MemoryKill();
 	FastFunctionsKill();
