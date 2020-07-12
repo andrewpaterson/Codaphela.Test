@@ -87,19 +87,19 @@ void TestIndexTreeDataOrdererAccess(void)
 	cAccess.HasString("0110");
 	AssertIndexTreeDataOrdererString(&cOrderer, "dbca");
 
-	bExists = cIndexTree.StartIteration(&sIter, NULL, NULL);
+	bExists = cIndexTree.StartUnsafeIteration(&sIter, NULL, NULL);
 	AssertTrue(bExists);
 	AssertIndexTreeDataOrdererString(&cOrderer, "adbc");
-	bExists = cIndexTree.Iterate(&sIter, NULL, NULL);
+	bExists = cIndexTree.UnsafeIterate(&sIter, NULL, NULL);
 	AssertTrue(bExists);
 	AssertIndexTreeDataOrdererString(&cOrderer, "cadb");
-	bExists = cIndexTree.Iterate(&sIter, NULL, NULL);
+	bExists = cIndexTree.UnsafeIterate(&sIter, NULL, NULL);
 	AssertTrue(bExists);
 	AssertIndexTreeDataOrdererString(&cOrderer, "bcad");
-	bExists = cIndexTree.Iterate(&sIter, NULL, NULL);
+	bExists = cIndexTree.UnsafeIterate(&sIter, NULL, NULL);
 	AssertTrue(bExists);
 	AssertIndexTreeDataOrdererString(&cOrderer, "dbca");
-	bExists = cIndexTree.Iterate(&sIter, NULL, NULL);
+	bExists = cIndexTree.UnsafeIterate(&sIter, NULL, NULL);
 	AssertFalse(bExists);
 
 	cIndexTree.Kill();
