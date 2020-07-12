@@ -1,5 +1,11 @@
+#include "BaseLib/TypeConverter.h"
+#include "BaseLib/DebugOutput.h"
+#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/IndexTreeMemory.h"
 #include "BaseLib/MapStringString.h"
+#include "BaseLib/IndexTreeMemoryIterator.h"
+#include "BaseLib/IndexTreeMemoryAccess.h"
+#include "TestLib/Words.h"
 #include "TestLib/Assert.h"
 
 
@@ -7,7 +13,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeIteratorIterate(void)
+void TestIndexTreeIteratorUnsafeIterate(void)
 {
 	SIndexTreeMemoryIterator	sIter;
 	char*						pvData;
@@ -77,13 +83,72 @@ void TestIndexTreeIteratorIterate(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeIteratorIterate(void)
+{
+	int						iData;
+	char*					pszKey;
+	int						i;
+	CChars*					pszKey2;
+	CIndexTreeMemory		cIndex;
+	CIndexTreeMemoryAccess	cAccess;
+	CIndexTreeIterator*		pcIter;
+	BOOL					bExists;
+
+	cIndex.Init();
+	cAccess.Init(&cIndex);
+
+	for (i = 0; i < gaszCommonWords.NumElements(); i++)
+	{
+		pszKey2 = gaszCommonWords.Get(i);
+		pszKey = pszKey2->Text();
+		iData = i;
+
+		cAccess.PutStringInt(pszKey, iData);
+	}
+
+	AssertLongLongInt(1000, cAccess.NumElements());
+
+	pcIter = cAccess.CreateIterator();
+
+	for (i = 0; i < gaszCommonWords.NumElements(); i++)
+	{
+		pszKey2 = gaszCommonWords.Get(i);
+		pszKey = pszKey2->Text();
+
+		bExists = pcIter->Iterate();
+		AssertString(pszKey, pcIter->GetKey());
+	}
+	bExists = pcIter->Iterate();
+	AssertFalse(bExists);
+
+	cAccess.FreeIterator(pcIter);
+
+	cIndex.Kill();
+	cAccess.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeIterator(void)
 {
+	FastFunctionsInit();
+	TypeConverterInit();
+	MemoryInit();
+	WordsInit();
 	BeginTests();
 
+
+	TestIndexTreeIteratorUnsafeIterate();
 	TestIndexTreeIteratorIterate();
 
 	TestStatistics();
+	WordsKill();
+	MemoryKill();
+	FastFunctionsKill();
+	TypeConverterKill();
 }
 
 

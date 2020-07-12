@@ -1262,6 +1262,7 @@ void TestIndexTreeMemoryPut(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemory(void)
 {
+
 	BeginTests();
 	FastFunctionsInit();
 	MemoryInit();
