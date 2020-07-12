@@ -286,17 +286,14 @@ void TestIndexTreeFileAccessFlushEvictBug()
 	AssertTrue(bResult);
 	Pass();
 
-	bResult = cAccess.FlushString("clear");  //Flushed clear but it didn't mark the path to clear as not DELETED.
+	bResult = cAccess.FlushString("clear");
 	AssertTrue(bResult);
 	Pass();
-	cIndexTree.Dump();
 
 	AssertFalse(cAccess.HasString("clear"));
 	Pass();
-	cIndexTree.Dump();
 	AssertTrue(cAccess.HasString("clearly"));
 	Pass();
-	cIndexTree.Dump();
 
 	cController.End();
 	cAccess.Kill();

@@ -173,47 +173,47 @@ void TestIndexTreeFileAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKe
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetDataPtr();
 	AssertPointer(&aa, *ppvTest);
 
-	bContinue = cIndexTree.StartIteration(&sIter, (void**)(&ppvTest), &iSize);
+	bContinue = cIndexTree.StartUnsafeIteration(&sIter, (void**)(&ppvTest), &iSize);
 	AssertTrue(bContinue);
 	AssertInt(sizeof(CTestIndexTreeObject*), iSize);
 	AssertString("A", (*ppvTest)->mszName);
 
-	bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
+	bContinue = cIndexTree.UnsafeIterate(&sIter, (void**)(&ppvTest), &iSize);
 	AssertTrue(bContinue);
 	AssertInt(sizeof(CTestIndexTreeObject*), iSize);
 	AssertString("AA", (*ppvTest)->mszName);
 
-	bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
+	bContinue = cIndexTree.UnsafeIterate(&sIter, (void**)(&ppvTest), &iSize);
 	AssertTrue(bContinue);
 	AssertInt(sizeof(CTestIndexTreeObject*), iSize);
 	AssertString("AAA", (*ppvTest)->mszName);
 
 	if (eKeyReverse == IKR_No)
 	{
-		bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
+		bContinue = cIndexTree.UnsafeIterate(&sIter, (void**)(&ppvTest), &iSize);
 		AssertTrue(bContinue);
 		AssertInt(sizeof(CTestIndexTreeObject*), iSize);
 		AssertString("AAB", (*ppvTest)->mszName);
 
-		bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
+		bContinue = cIndexTree.UnsafeIterate(&sIter, (void**)(&ppvTest), &iSize);
 		AssertTrue(bContinue);
 		AssertInt(sizeof(CTestIndexTreeObject*), iSize);
 		AssertString("AB", (*ppvTest)->mszName);
 	}
 	else if (eKeyReverse == IKR_Yes)
 	{
-		bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
+		bContinue = cIndexTree.UnsafeIterate(&sIter, (void**)(&ppvTest), &iSize);
 		AssertTrue(bContinue);
 		AssertInt(sizeof(CTestIndexTreeObject*), iSize);
 		AssertString("AB", (*ppvTest)->mszName);
 
-		bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
+		bContinue = cIndexTree.UnsafeIterate(&sIter, (void**)(&ppvTest), &iSize);
 		AssertTrue(bContinue);
 		AssertInt(sizeof(CTestIndexTreeObject*), iSize);
 		AssertString("AAB", (*ppvTest)->mszName);
 	}
 
-	bContinue = cIndexTree.Iterate(&sIter, (void**)(&ppvTest), &iSize);
+	bContinue = cIndexTree.UnsafeIterate(&sIter, (void**)(&ppvTest), &iSize);
 	AssertFalse(bContinue);
 
 	cController.End();
@@ -385,11 +385,11 @@ void TestIndexTreeFileNoCacheEviction(void)
 	AssertNotNull(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
 
-	bContinue = cIndexTree.StartIteration(&sIter, (void**)(&szData), &iSize);
+	bContinue = cIndexTree.StartUnsafeIteration(&sIter, (void**)(&szData), &iSize);
 	AssertTrue(bContinue);
 	AssertInt(5, iSize);
 	AssertString("Zero", szData);
-	bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
+	bContinue = cIndexTree.UnsafeIterate(&sIter, (void**)(&szData), &iSize);
 	AssertFalse(bContinue);
 
 	AssertNull(cAccess.GetLongString(0x0100000000000000LL, sz));
@@ -404,15 +404,15 @@ void TestIndexTreeFileNoCacheEviction(void)
 	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
 	AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", sz);
 
-	bContinue = cIndexTree.StartIteration(&sIter, (void**)(&szData), &iSize);
+	bContinue = cIndexTree.StartUnsafeIteration(&sIter, (void**)(&szData), &iSize);
 	AssertTrue(bContinue);
 	AssertInt(5, iSize);
 	AssertString("Zero", szData);
-	bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
+	bContinue = cIndexTree.UnsafeIterate(&sIter, (void**)(&szData), &iSize);
 	AssertTrue(bContinue);
 	AssertInt(255, iSize);
 	AssertString("Character Count & Word Count Tool is a free character counter tool that provides instant character count & word count statistics for a given text. The tool reports the number of character with spaces and without spaces, also the number of words and sent.", szData);
-	bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
+	bContinue = cIndexTree.UnsafeIterate(&sIter, (void**)(&szData), &iSize);
 	AssertFalse(bContinue);
 
 	AssertTrue(cAccess.PutLongString(0x0098DD67CC45BB23LL, "MORE node DATA"));
@@ -478,29 +478,29 @@ void TestIndexTreeFileNoCacheEviction(void)
 	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
-	bContinue = cIndexTree.StartIteration(&sIter, (void**)(&szData), &iSize);
+	bContinue = cIndexTree.StartUnsafeIteration(&sIter, (void**)(&szData), &iSize);
 	AssertTrue(bContinue);
 	AssertInt(21, iSize);
 	AssertString("Make the long short.", szData);
 
-	bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
+	bContinue = cIndexTree.UnsafeIterate(&sIter, (void**)(&szData), &iSize);
 	AssertTrue(bContinue);
 	AssertInt(22, iSize);
 	AssertString("Another DATUM of doom", szData);
 
-	bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
+	bContinue = cIndexTree.UnsafeIterate(&sIter, (void**)(&szData), &iSize);
 	AssertFalse(bContinue);
 
 	AssertTrue(cAccess.DeleteLong(0x0000DD00CC54BB23LL));
 	AssertInt(1, cIndexTree.NumElements());
 	AssertNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 
-	bContinue = cIndexTree.StartIteration(&sIter, (void**)(&szData), &iSize);
+	bContinue = cIndexTree.StartUnsafeIteration(&sIter, (void**)(&szData), &iSize);
 	AssertTrue(bContinue);
 	AssertInt(21, iSize);
 	AssertString("Make the long short.", szData);
 
-	bContinue = cIndexTree.Iterate(&sIter, (void**)(&szData), &iSize);
+	bContinue = cIndexTree.UnsafeIterate(&sIter, (void**)(&szData), &iSize);
 	AssertFalse(bContinue);
 
 	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
