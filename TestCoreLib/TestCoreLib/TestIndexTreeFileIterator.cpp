@@ -68,7 +68,7 @@ void TestIndexTreeFileIteratorUnsafeIterate(void)
 
 	AssertInt(12, cIndexTree.NumElements());
 
-	bExists = cIndexTree.StartUnsafeIteration(&sIter, (void**)&pvData, &iDataSize);
+	bExists = cIndexTree.StartUnsafeIteration(&sIter, pacKey, &iKeyLength, (void**)&pvData, &iDataSize);
 	while (bExists)
 	{
 		pacData = cMap.Get(pacKey);
@@ -78,7 +78,7 @@ void TestIndexTreeFileIteratorUnsafeIterate(void)
 		iResult = memcmp_fast(pacData, pvData, iDataSize);
 		AssertInt(0, iResult);
 
-		bExists = cIndexTree.UnsafeIterate(&sIter, (void**)&pvData, &iDataSize);
+		bExists = cIndexTree.UnsafeIterate(&sIter, pacKey, &iKeyLength, (void**)&pvData, &iDataSize);
 	}
 
 	cIndexTree.Flush();
