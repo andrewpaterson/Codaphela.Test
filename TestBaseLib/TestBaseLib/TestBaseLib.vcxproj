@@ -121,6 +121,7 @@
     <ClCompile Include="TestArrayVoidPtr.cpp" />
     <ClCompile Include="TestBaseLib.cpp" />
     <ClCompile Include="TestChars.cpp" />
+    <ClCompile Include="TestCharsHelper.cpp" />
     <ClCompile Include="TestChunkFileFile.cpp" />
     <ClCompile Include="TestConstructorCall.cpp" />
     <ClCompile Include="TestConstructors.cpp" />

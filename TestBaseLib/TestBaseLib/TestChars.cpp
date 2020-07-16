@@ -282,6 +282,5 @@ void TestChars(void)
 	TestCharsMakeCPlusPlus();
 	
 	TestStatistics();
-
 }
 

@@ -2,6 +2,7 @@
 #include "BaseLib/DebugOutput.h"
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/IndexTreeMemoryAccess.h"
+#include "BaseLib/CharsHelper.h"
 #include "CoreLib/LogFile.h"
 #include "CoreLib/IndexTreeFileAccess.h"
 #include "CoreLib/IndexTreeEvictingAccess.h"
@@ -49,6 +50,11 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 	BOOL					bPassed;
 	int						iArchaicIndex;
 	int						iFlush;
+	CIndexTreeIterator*		pcIter;
+	BOOL					bHasData;
+	CArrayChars				aszKeys;
+	CArrayChars				aszExpected;
+	CArrayChars				aszIntersection;
 
 	iFlush = 0;
 	for (i = 0; i < gaszCommonWords.NumElements(); i++)
@@ -82,6 +88,8 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 	AssertTrue(pcAccess->ValidateIndex());
 	Pass();
 
+	aszExpected.Init();
+	aszKeys.Init();
 	iArchaicIndex = 0;
 	for (i = 0; i < gaszCommonWords.NumElements(); i++)
 	{
@@ -104,9 +112,25 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 			}
 
 			pcAccess->PutStringString(pszKey, pszData);
+			aszExpected.Add(pszKey);
 		}
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
+
+	pcIter = pcAccess->CreateIterator();
+	bHasData = pcIter->Iterate();
+	while (bHasData)
+	{
+		pszKey = pcIter->GetKey();
+		aszKeys.Add(pszKey);
+		bHasData = pcIter->Iterate();
+	}
+
+	aszIntersection.Init();
+	CCharsHelper::Intersect(&aszIntersection, &aszExpected, &aszKeys);
+	aszIntersection.Dump();
+	aszIntersection.Kill();
+
 	AssertLongLongInt(500, pcAccess->NumElements());
 	Pass();
 	AssertTrue(pcAccess->ValidateIndex());
