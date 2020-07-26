@@ -8,6 +8,7 @@
 #include "CoreLib/IndexTreeEvictingAccess.h"
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexTreeEvictionStrategyRandom.h"
+#include "CoreLib/KeyEvictedCountingCallback.h"
 #include "TestLib/Words.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeFile.h"
@@ -89,7 +90,6 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 	Pass();
 
 	aszExpected.Init();
-	aszKeys.Init();
 	iArchaicIndex = 0;
 	for (i = 0; i < gaszCommonWords.NumElements(); i++)
 	{
@@ -98,6 +98,10 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 
 		if (i % 2 == 1)
 		{
+			if (pszKey2->Equals("any"))
+			{
+				int xxx = 0;
+			}
 			pcAccess->DeleteString(pszKey);
 		}
 		else
@@ -117,6 +121,7 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
 
+	aszKeys.Init();
 	pcIter = pcAccess->CreateIterator();
 	bHasData = pcIter->Iterate();
 	while (bHasData)
@@ -127,9 +132,14 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 	}
 
 	aszIntersection.Init();
-	CCharsHelper::Intersect(&aszIntersection, &aszExpected, &aszKeys);
-	aszIntersection.Dump();
+	CCharsHelper::InverseIntersect(&aszIntersection, &aszExpected, &aszKeys);
+	if (aszIntersection.NumElements() > 0)
+	{
+		aszIntersection.Dump();
+		pcAccess->Dump();
+	}
 	aszIntersection.Kill();
+	aszKeys.Kill();
 
 	AssertLongLongInt(500, pcAccess->NumElements());
 	Pass();
@@ -505,13 +515,15 @@ void TestIndexTreeEvictingAccess(char* szSubirectory, size_t sCacheSize, EIndexW
 	CIndexTreeHelper					cHelper;
 	CDurableFileController				cController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	CKeyEvictedCoutingCallback			cCallback;
 
 	cHelper.Init("Output" _FS_ "IndexTreeEvictingAccess", "primary", "backup", TRUE);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cEvictionStrategy.Init();
 	cController.Begin();
-	cIndexTree.Init(&cController, szSubirectory, sCacheSize, NULL, &cEvictionStrategy, NULL,  eWriteThrough, eKeyReverse);
+	cCallback.Init("any");
+	cIndexTree.Init(&cController, szSubirectory, sCacheSize, &cCallback, &cEvictionStrategy, NULL,  eWriteThrough, eKeyReverse);
 	cAccess.Init(&cIndexTree);
 
 	TestIndexTreeAccessString(&cAccess, iFlushFrequency);
@@ -522,6 +534,7 @@ void TestIndexTreeEvictingAccess(char* szSubirectory, size_t sCacheSize, EIndexW
 	cController.End();
 	cAccess.Kill();
 	cIndexTree.Kill();
+	cCallback.Kill();
 	cController.Kill();
 	cEvictionStrategy.Kill();
 
@@ -542,29 +555,29 @@ void TestIndexTreeAccess(void)
 	WordsInit();
 	BeginTests();
 
-	TestIndexTreeFileAccessFlushBug();
-	TestIndexTreeFileAccessEvictBug();
-	TestIndexTreeFileAccessFlushEvictBug();
+	//TestIndexTreeFileAccessFlushBug();
+	//TestIndexTreeFileAccessEvictBug();
+	//TestIndexTreeFileAccessFlushEvictBug();
 
-	TestIndexTreeMemoryAccess(IKR_No);
-	TestIndexTreeMemoryAccess(IKR_Yes);
+	//TestIndexTreeMemoryAccess(IKR_No);
+	//TestIndexTreeMemoryAccess(IKR_Yes);
 
-	TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_No, -1);
-	TestIndexTreeFileAccess("Sub", IWT_Yes, IKR_No, -1);
-	TestIndexTreeFileAccess(NULL, IWT_No, IKR_No, -1);
-	TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_Yes, -1);
-	TestIndexTreeFileAccess(NULL, IWT_No, IKR_Yes, -1);
-	TestIndexTreeFileAccess("Sub", IWT_No, IKR_Yes, -1);
+	//TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_No, -1);
+	//TestIndexTreeFileAccess("Sub", IWT_Yes, IKR_No, -1);
+	//TestIndexTreeFileAccess(NULL, IWT_No, IKR_No, -1);
+	//TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_Yes, -1);
+	//TestIndexTreeFileAccess(NULL, IWT_No, IKR_Yes, -1);
+	//TestIndexTreeFileAccess("Sub", IWT_No, IKR_Yes, -1);
 
-	TestIndexTreeFileAccess(NULL, IWT_No, IKR_No, 1);
+	//TestIndexTreeFileAccess(NULL, IWT_No, IKR_No, 1);
 
-	TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_No, 100);
-	TestIndexTreeFileAccess(NULL, IWT_No, IKR_No, 100);
-	TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_Yes, 100);
-	TestIndexTreeFileAccess(NULL, IWT_No, IKR_Yes, 100);
+	//TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_No, 100);
+	//TestIndexTreeFileAccess(NULL, IWT_No, IKR_No, 100);
+	//TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_Yes, 100);
+	//TestIndexTreeFileAccess(NULL, IWT_No, IKR_Yes, 100);
 
-	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_Yes, IKR_No, -1);
-	TestIndexTreeEvictingAccess("Sub", 64 KB, IWT_Yes, IKR_No, -1);
+	//TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_Yes, IKR_No, -1);
+	//TestIndexTreeEvictingAccess("Sub", 64 KB, IWT_Yes, IKR_No, -1);
 	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_No, IKR_No, -1);
 	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_Yes, IKR_Yes, -1);
 	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_No, IKR_Yes, -1);
