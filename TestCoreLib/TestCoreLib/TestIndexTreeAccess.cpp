@@ -98,10 +98,6 @@ void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
 
 		if (i % 2 == 1)
 		{
-			if (pszKey2->Equals("any"))
-			{
-				int xxx = 0;
-			}
 			pcAccess->DeleteString(pszKey);
 		}
 		else
