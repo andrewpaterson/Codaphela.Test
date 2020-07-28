@@ -156,9 +156,6 @@
     <ClCompile Include="TestIndexTreeFileCallback.cpp">
       <Filter>Source\File\Indexed\Index</Filter>
     </ClCompile>
-    <ClCompile Include="IndexTreeFileTestCallback.cpp">
-      <Filter>Source\File\Indexed\Index</Filter>
-    </ClCompile>
     <ClCompile Include="IndexTreeCallbackTestObject.cpp">
       <Filter>Source\File\Indexed\Index</Filter>
     </ClCompile>
@@ -177,6 +174,9 @@
     <ClCompile Include="TestIndexTreeFileIterator.cpp">
       <Filter>Source\File\Indexed\Index</Filter>
     </ClCompile>
+    <ClCompile Include="IndexTreeFileDataTestCallback.cpp">
+      <Filter>Source\File\Indexed\Index</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -191,9 +191,6 @@
     <ClInclude Include="TestIndexTreeObject.h">
       <Filter>Source\File\Indexed\Index</Filter>
     </ClInclude>
-    <ClInclude Include="IndexTreeFileTestCallback.h">
-      <Filter>Source\File\Indexed\Index</Filter>
-    </ClInclude>
     <ClInclude Include="IndexTreeCallbackTestObject.h">
       <Filter>Source\File\Indexed\Index</Filter>
     </ClInclude>
@@ -205,6 +202,9 @@
     </ClInclude>
     <ClInclude Include="TestIndexTreeEvicting.h">
       <Filter>Source\File\Indexed\Index\Evicting</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexTreeFileDataTestCallback.h">
+      <Filter>Source\File\Indexed\Index</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

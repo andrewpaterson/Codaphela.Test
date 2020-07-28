@@ -117,7 +117,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="IndexTreeCallbackTestObject.cpp" />
-    <ClCompile Include="IndexTreeFileTestCallback.cpp" />
+    <ClCompile Include="IndexTreeFileDataTestCallback.cpp" />
     <ClCompile Include="NamedIndexedDataObject.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="TestCoreLib.cpp" />
@@ -157,7 +157,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="IndexTreeCallbackTestObject.h" />
-    <ClInclude Include="IndexTreeFileTestCallback.h" />
+    <ClInclude Include="IndexTreeFileDataTestCallback.h" />
     <ClInclude Include="NamedIndexedDataObject.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestFunctionCaller.h" />

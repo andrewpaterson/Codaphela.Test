@@ -1,9 +1,9 @@
 #ifndef __INDEX_TREE_FILE_TEST_CALLBACK_H__
 #define __INDEX_TREE_FILE_TEST_CALLBACK_H__
-#include "CoreLib/IndexTreeFileCallback.h"
+#include "CoreLib/IndexTreeFileDataCallback.h"
 
 
-class CIndexTreeFileTestCallback : public CIndexTreeFileCallback
+class CIndexTreeFileDataTestCallback : public CIndexTreeFileDataCallback
 {
 public:
 	unsigned short	IndexTreeDataSize(unsigned short uiSourceSize);

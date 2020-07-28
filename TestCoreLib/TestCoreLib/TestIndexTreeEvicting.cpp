@@ -11,7 +11,7 @@
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexTreeEvictingAccess.h"
 #include "CoreLib/IndexTreeEvictionStrategyRandom.h"
-#include "CoreLib/IndexTreeFileDefaultCallback.h"
+#include "CoreLib/IndexTreeFileDefaultDataCallback.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeEvicting.h"
 
@@ -132,7 +132,7 @@ void TestIndexTreeEvictingEvict(EIndexWriteThrough eWriteThrough, EIndexKeyRever
 	CIndexTreeEvictionStrategyRandom	cStrategy;
 	CIndexTreeEvictedList				cIndexTreeEvictedList;   // CIndexTreeEvictionCallback
 	size_t								sSize;
-	CIndexTreeFileDefaultCallback		cWriterCallback;
+	CIndexTreeFileDefaultDataCallback		cWriterCallback;
 
 	cHelper.Init("Output" _FS_"IndexTreeEvicting0a", "primary", "backup", TRUE);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());

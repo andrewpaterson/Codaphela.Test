@@ -11,7 +11,7 @@
 #include "CoreLib/IndexTreeFile.h"
 #include "CoreLib/IndexTreeFileAccess.h"
 #include "TestLib/Assert.h"
-#include "IndexTreeFileTestCallback.h"
+#include "IndexTreeFileDataTestCallback.h"
 #include "IndexTreeCallbackTestObject.h"
 
 
@@ -25,7 +25,7 @@ void TestIndexTreeFileCallbackWorks(void)
 	CDurableFileController								cController;
 	CIndexTreeFile										cIndexTree;
 	CIndexTreeFileAccess								cAccess;
-	CIndexTreeFileTestCallback							cDataCallback;
+	CIndexTreeFileDataTestCallback							cDataCallback;
 	CTestIndexTreeMemoryObject							cTestObject1;
 	char												szKey1[3] = "AB";
 	CTestIndexTreeMemoryObject							cTestObject2;
