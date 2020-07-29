@@ -128,6 +128,7 @@
     <ClCompile Include="TestIndexTemplateFile.cpp" />
     <ClCompile Include="TestIndexTreeAccess.cpp" />
     <ClCompile Include="TestIndexTreeEvicting.cpp" />
+    <ClCompile Include="TestIndexTreeEvictingDiagnosticCallback.cpp" />
     <ClCompile Include="TestIndexTreeFile.cpp" />
     <ClCompile Include="TestIndexTreeFileCallback.cpp" />
     <ClCompile Include="TestIndexTreeFileDataOrderer.cpp" />

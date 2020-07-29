@@ -177,6 +177,9 @@
     <ClCompile Include="IndexTreeFileDataTestCallback.cpp">
       <Filter>Source\File\Indexed\Index</Filter>
     </ClCompile>
+    <ClCompile Include="TestIndexTreeEvictingDiagnosticCallback.cpp">
+      <Filter>Source\File\Indexed\Index\Evicting</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
