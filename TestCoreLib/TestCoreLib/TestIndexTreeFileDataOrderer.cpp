@@ -15,16 +15,19 @@
 //////////////////////////////////////////////////////////////////////////
 void PrintOrdererString(CIndexTreeDataOrderer* pcOrderer, CChars* psz)
 {
-	SDataOrderIterator	sIter;
-	char*				pc;
-	int					iSize;
-	BOOL				bExists;
+	SDataOrderIterator		sIter;
+	char					szData[MAX_DATA_SIZE];
+	char					szKey[MAX_KEY_SIZE];
+	int						iDataSize;
+	int						iKeySize;
+	BOOL					bExists;
 
-	bExists = pcOrderer->StartIteration(&sIter, (void**)&pc, &iSize);
+	bExists = pcOrderer->StartIteration(&sIter, szKey, &iKeySize, MAX_KEY_SIZE, szData, &iDataSize, MAX_DATA_SIZE);
 	while (bExists)
 	{
-		psz->Append(*pc);
-		bExists = pcOrderer->Iterate(&sIter, (void**)&pc, &iSize);
+		szData[iDataSize] = '\0';
+		psz->Append(szData);
+		bExists = pcOrderer->Iterate(&sIter, szKey, &iKeySize, MAX_KEY_SIZE, szData, &iDataSize, MAX_DATA_SIZE);
 	}
 }
 

@@ -32,14 +32,14 @@ void TestIndexTreeEvictingDiagnosticCallbackStuff(void)
 	cEvictionStrategy.Init(&cDataOrderer);
 	cController.Begin();
 	cCallback.Init("any");
-	cIndexTree.Init(&cController, NULL, 8 KB, NULL, &cEvictionStrategy, NULL, IWT_No, IKR_No);
+	cIndexTree.Init(&cController, NULL, 8 KB, NULL, &cEvictionStrategy, NULL, IWT_No, IKR_No, &cDataOrderer);
 	cIndexTree.SetDiagnosticCallback(&cCallback);
 	cAccess.Init(&cIndexTree);
 
 
 
 	cAccess.Flush();
-	cIndexTree.ValidateIndexTree();
+	cAccess.ValidateIndex();
 
 	cController.End();
 	cAccess.Kill();

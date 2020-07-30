@@ -5,12 +5,14 @@
 #include "BaseLib/MemoryAllocator.h"
 #include "BaseLib/Logger.h"
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/AccessDataOrderer.h"
 #include "CoreLib/IndexTreeEvicting.h"
 #include "CoreLib/IndexTreeEvictedList.h"
 #include "CoreLib/IndexedDataEvictedList.h"
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexTreeEvictingAccess.h"
 #include "CoreLib/IndexTreeEvictionStrategyRandom.h"
+#include "CoreLib/IndexTreeEvictionStrategyDataOrderer.h"
 #include "CoreLib/IndexTreeFileDefaultDataCallback.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeEvicting.h"
@@ -122,7 +124,7 @@ void TestIndexTreeEvictingAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeEvictingEvict(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse)
+void TestIndexTreeEvictingEvictRandom(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse)
 {
 	CTestIndexTreeEvicting				cIndexTree;
 	CIndexTreeHelper					cHelper;
@@ -132,7 +134,7 @@ void TestIndexTreeEvictingEvict(EIndexWriteThrough eWriteThrough, EIndexKeyRever
 	CIndexTreeEvictionStrategyRandom	cStrategy;
 	CIndexTreeEvictedList				cIndexTreeEvictedList;   // CIndexTreeEvictionCallback
 	size_t								sSize;
-	CIndexTreeFileDefaultDataCallback		cWriterCallback;
+	CIndexTreeFileDefaultDataCallback	cWriterCallback;
 
 	cHelper.Init("Output" _FS_"IndexTreeEvicting0a", "primary", "backup", TRUE);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
@@ -627,6 +629,96 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeEvictingEvictLastAccessed(void)
+{
+	CTestIndexTreeEvicting					cIndexTree;
+	CIndexTreeHelper						cHelper;
+	CDurableFileController					cController;
+	CIndexTreeEvictingAccess				cAccess;
+	CMemoryAllocator						cAllocator;
+	CIndexTreeEvictionStrategyDataOrderer	cStrategy;
+	CIndexTreeEvictedList					cIndexTreeEvictedList;
+	CAccessDataOrderer						cOrderer;
+	char									szData[1024];
+	int										i;
+	size_t									sSize;
+	char*									szEvictedKey;
+
+	for (i = 0; i < 1023; i++)
+	{
+		szData[i] = (char)('A' + i % 26);
+	}
+	szData[1023] = '\0';
+
+	cHelper.Init("Output" _FS_"IndexTreeEvicting4", "primary", "backup", TRUE);
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cIndexTreeEvictedList.Init();
+	cController.Begin();
+	cOrderer.Init();
+	cStrategy.Init(&cOrderer);
+	cIndexTree.Init(&cController, "Sub", 8 KB, &cIndexTreeEvictedList, &cStrategy, NULL, IWT_No, IKR_No, &cOrderer);
+	cAccess.Init(&cIndexTree);
+
+	sSize = cIndexTree.GetSystemMemorySize();
+	AssertLongLongInt(3100LL, sSize);
+	AssertInt(0, cIndexTreeEvictedList.NumElements());
+
+	cAccess.PutStringString("A0000001", szData);
+	sSize = cIndexTree.GetSystemMemorySize();
+	AssertLongLongInt(4444LL, sSize);
+	AssertInt(0, cIndexTreeEvictedList.NumElements());
+
+	cAccess.PutStringString("B0000002", szData);
+	sSize = cIndexTree.GetSystemMemorySize();
+	AssertLongLongInt(5788LL, sSize);
+	AssertInt(0, cIndexTreeEvictedList.NumElements());
+
+	cAccess.PutStringString("C0000003", szData);
+	sSize = cIndexTree.GetSystemMemorySize();
+	AssertLongLongInt(7132LL, sSize);
+	AssertInt(0, cIndexTreeEvictedList.NumElements());
+
+	cAccess.PutStringString("D0000004", szData);
+	sSize = cIndexTree.GetSystemMemorySize();
+	AssertLongLongInt(7132LL, sSize);
+	AssertInt(1, cIndexTreeEvictedList.NumElements());
+	szEvictedKey = (char*)cIndexTreeEvictedList.GetKey(0);
+	AssertString("A0000001", szEvictedKey);
+	cIndexTreeEvictedList.Clear();
+
+	cAccess.PutStringString("E0000005", szData);
+	sSize = cIndexTree.GetSystemMemorySize();
+	AssertLongLongInt(7132LL, sSize);
+	AssertInt(1, cIndexTreeEvictedList.NumElements());
+	szEvictedKey = (char*)cIndexTreeEvictedList.GetKey(0);
+	AssertString("B0000002", szEvictedKey);
+	cIndexTreeEvictedList.Clear();
+
+	cAccess.PutStringString("G0000006", szData);
+	sSize = cIndexTree.GetSystemMemorySize();
+	AssertLongLongInt(7132LL, sSize);
+	AssertInt(1, cIndexTreeEvictedList.NumElements());
+	szEvictedKey = (char*)cIndexTreeEvictedList.GetKey(0);
+	AssertString("C0000003", szEvictedKey);
+
+	cAccess.Flush();
+	cAccess.ValidateIndex();
+
+	cController.End();
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cIndexTreeEvictedList.Kill();
+	cController.Kill();
+	cStrategy.Kill();
+	cOrderer.Kill();
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void AssertTree(char* szExpected, CIndexTreeEvicting* pcTree)
 {
 	CChars	sz;
@@ -658,10 +750,11 @@ void TestIndexTreeEvicting(void)
 	TestIndexTreeEvictingPut(IWT_No);
 	TestIndexTreeEvictingEvictWithChildren();
 	TestIndexTreeEvictingFlushWithChildren();
-	TestIndexTreeEvictingEvict(IWT_Yes, IKR_Yes);
-	TestIndexTreeEvictingEvict(IWT_Yes, IKR_No);
-	TestIndexTreeEvictingEvict(IWT_No, IKR_Yes);
-	TestIndexTreeEvictingEvict(IWT_No, IKR_No);
+	TestIndexTreeEvictingEvictRandom(IWT_Yes, IKR_Yes);
+	TestIndexTreeEvictingEvictRandom(IWT_Yes, IKR_No);
+	TestIndexTreeEvictingEvictRandom(IWT_No, IKR_Yes);
+	TestIndexTreeEvictingEvictRandom(IWT_No, IKR_No);
+	TestIndexTreeEvictingEvictLastAccessed();
 	
 	TestStatistics();
 	DataMemoryKill();
