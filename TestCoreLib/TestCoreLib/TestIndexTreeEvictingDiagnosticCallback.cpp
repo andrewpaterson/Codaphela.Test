@@ -7,7 +7,7 @@
 #include "CoreLib/IndexTreeEvicting.h"
 #include "CoreLib/IndexTreeEvictingAccess.h"
 #include "CoreLib/IndexTreeEvictionStrategyDataOrderer.h"
-#include "CoreLib/IndexTreeFileKeyDiagnosticLoggingCallback.h"
+#include "CoreLib/IndexTreeFileDiagnosticLoggingCallback.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
 
@@ -24,9 +24,10 @@ void TestIndexTreeFileKeyDiagnosticCallbackStuff(void)
 	CDurableFileController							cController;
 	CIndexTreeEvictionStrategyDataOrderer			cEvictionStrategy;
 	CAccessDataOrderer								cDataOrderer;
-	CIndexTreeFileKeyDiagnosticLoggingCallback		cCallback;
+	CIndexTreeFileDiagnosticLoggingCallback		cCallback;
 	char											szData[1024];
 	int												i;
+	CChars											sz;
 
 	for (i = 0; i < 1023; i++)
 	{
@@ -62,14 +63,39 @@ void TestIndexTreeFileKeyDiagnosticCallbackStuff(void)
 	cAccess.PutStringString("G0000007", szData);
 
 	cAccess.Flush();
-	cAccess.ValidateIndex();
-
 
 	cController.End();
 	cAccess.Kill();
 	cIndexTree.Kill();
 	
-	cCallback.Dump();
+	sz.Init();
+	cCallback.Print(&sz);
+	AssertString(
+		"Put:    A0000001 [1024]\n" 
+		"Put:    B0000002 [1024]\n" 
+		"Put:    C0000003 [1024]\n" 
+		"Put:    D0000004 [1024]\n" 
+		"Flush:  A0000001 [1024]\n" 
+		"Evict:  A0000001 [1024]\n" 
+		"Put:    E0000005 [1024]\n" 
+		"Flush:  B0000002 [1024]\n" 
+		"Evict:  B0000002 [1024]\n" 
+		"Put:    F0000006 [1024]\n" 
+		"Flush:  C0000003 [1024]\n" 
+		"Evict:  C0000003 [1024]\n" 
+		"Remove: B0000002 [1024]\n" 
+		"Flush:  D0000004 [1024]\n" 
+		"Evict:  D0000004 [1024]\n" 
+		"Put:    G0000007 [1024]\n" 
+		"Flush:  E0000005 [1024]\n" 
+		"Evict:  E0000005 [1024]\n" 
+		"Flush:  B0000002 [0]\n" 
+		"Flush:  F0000006 [1024]\n" 
+		"Flush:  G0000007 [1024]\n" 
+		"Evict:  F0000006 [1024]\n" 
+		"Evict:  G0000007 [1024]\n", 
+		sz.Text());
+
 	cCallback.Kill();
 	cController.Kill();
 	cEvictionStrategy.Kill();
