@@ -61,6 +61,9 @@
     <Filter Include="Source\File\Indexed\Index\DataOrderer">
       <UniqueIdentifier>{fdd1e6a8-4b7d-4361-be11-8a352dc87d56}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\File\Indexed\Index\Diagnostic">
+      <UniqueIdentifier>{d84d5a8b-05b6-4b6b-8a65-c8eb0ac903b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -178,7 +181,7 @@
       <Filter>Source\File\Indexed\Index</Filter>
     </ClCompile>
     <ClCompile Include="TestIndexTreeEvictingDiagnosticCallback.cpp">
-      <Filter>Source\File\Indexed\Index\Evicting</Filter>
+      <Filter>Source\File\Indexed\Index\Diagnostic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -719,6 +719,38 @@ void TestIndexTreeEvictingEvictLastAccessed(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeEvictingEmpty(void)
+{
+	CIndexTreeEvictingAccess 				cAccess;
+	CIndexTreeEvicting						cIndexTree;
+	CIndexTreeHelper						cHelper;
+	CDurableFileController					cController;
+	CIndexTreeEvictionStrategyDataOrderer	cEvictionStrategy;
+
+	cHelper.Init("Output" _FS_ "IndexTreeEvicting5", "primary", "backup", TRUE);
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cController.Begin();
+	cIndexTree.Init(&cController, NULL, 8 KB, NULL, NULL, NULL, IWT_No, IKR_No);
+	cAccess.Init(&cIndexTree);
+
+	cAccess.Flush();
+	cAccess.ValidateIndex();
+
+	cController.End();
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cController.Kill();
+	cEvictionStrategy.Kill();
+
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void AssertTree(char* szExpected, CIndexTreeEvicting* pcTree)
 {
 	CChars	sz;
@@ -742,6 +774,7 @@ void TestIndexTreeEvicting(void)
 	DataMemoryInit();
 	BeginTests();
 
+	TestIndexTreeEvictingEmpty();
 	TestIndexTreeEvictingAdd(IWT_Yes, IKR_Yes);
 	TestIndexTreeEvictingAdd(IWT_Yes, IKR_No);
 	TestIndexTreeEvictingAdd(IWT_No, IKR_Yes);

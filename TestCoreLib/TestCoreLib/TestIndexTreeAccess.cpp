@@ -8,11 +8,10 @@
 #include "CoreLib/IndexTreeEvictingAccess.h"
 #include "CoreLib/IndexTreeHelper.h"
 #include "CoreLib/IndexTreeEvictionStrategyRandom.h"
-#include "CoreLib/KeyEvictedCountingCallback.h"
+#include "CoreLib/IndexTreeFileKeyDiagnosticCountingCallback.h"
 #include "TestLib/Words.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeFile.h"
-
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -511,7 +510,7 @@ void TestIndexTreeEvictingAccess(char* szSubirectory, size_t sCacheSize, EIndexW
 	CIndexTreeHelper					cHelper;
 	CDurableFileController				cController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
-	CKeyEvictedCoutingCallback			cCallback;
+	CIndexTreeFileKeyDiagnosticCountingCallback			cCallback;
 
 	cHelper.Init("Output" _FS_ "IndexTreeEvictingAccess", "primary", "backup", TRUE);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());

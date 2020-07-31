@@ -33,7 +33,7 @@ void TestIndexTreeEvicting(void);
 void TestIndexTreeAccess(void);
 void TestNamedIndexes(void);
 void TestNamedIndexedData(void);
-void TestIndexTreeEvictingDiagnosticCallback(void);
+void TestIndexTreeFileKeyDiagnosticCallback(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -75,7 +75,7 @@ int main(void)
 	TestIndexedData();
 	TestNamedIndexes();
 	TestNamedIndexedData();
-	TestIndexTreeEvictingDiagnosticCallback();
+	TestIndexTreeFileKeyDiagnosticCallback();
 	TestIndexTreeAccess();
 
 	return TestTotalStatistics();
