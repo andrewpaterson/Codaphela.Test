@@ -282,7 +282,7 @@ void TestIndexTreeMemoryAccess(EIndexKeyReverse eKeyReverse)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeFileAccessFlushEvictBug()
+void TestIndexTreeFileAccessFlushEvictBug(void)
 {
 	CIndexTreeFileAccess	cAccess;
 	CTestIndexTreeFile		cIndexTree;
@@ -322,6 +322,67 @@ void TestIndexTreeFileAccessFlushEvictBug()
 	AssertFalse(cAccess.HasString("clear"));
 	Pass();
 	AssertTrue(cAccess.HasString("clearly"));
+	Pass();
+
+	cController.End();
+	cAccess.Kill();
+	cIndexTree.Kill();
+	cController.Kill();
+
+	cHelper.Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileAccessRemoveEvictBug(void)
+{
+	CIndexTreeFileAccess	cAccess;
+	CTestIndexTreeFile		cIndexTree;
+	CIndexTreeHelper		cHelper;
+	CDurableFileController	cController;
+	int						iFlushFrequency;
+
+	iFlushFrequency = -1;
+
+	cHelper.Init("Output" _FS_ "TestIndexTreeFileAccessRemoveEvictBug", "primary", "backup", TRUE);
+	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+
+	cController.Begin();
+	cIndexTree.Init(&cController, NULL, IWT_No, IKR_No);
+	cAccess.Init(&cIndexTree);
+	
+	AssertTrue(cAccess.PutStringInt("any", 0x03));
+	AssertTrue(cAccess.PutStringInt("anyone", 0x04));
+	AssertTrue(cAccess.PutStringInt("anything", 0x05));
+
+	AssertLongLongInt(3, cAccess.NumElements());
+	Pass();
+	AssertTrue(cAccess.ValidateIndex());
+	Pass();
+
+	AssertInt(0x03, cAccess.GetStringInt("any"));
+	AssertInt(0x04, cAccess.GetStringInt("anyone"));
+	AssertInt(0x05, cAccess.GetStringInt("anything"));
+	Pass();
+	AssertTrue(cAccess.ValidateIndex());
+	Pass();
+
+	AssertTrue(cAccess.PutStringString("anyone", "when they have pay and thus the first amount will be less"));
+	AssertTrue(cAccess.DeleteString("any"));
+	AssertTrue(cAccess.DeleteString("anyone"));
+	AssertTrue(cAccess.DeleteString("anything"));
+
+	AssertFalse(cAccess.HasString("any"));
+	cAccess.EvictString("anything");
+	cAccess.EvictString("anyone");
+	AssertFalse(cAccess.HasString("any"));
+
+	AssertLongLongInt(0, cAccess.NumElements());
+	Pass();
+	AssertTrue(cAccess.ValidateIndex());
 	Pass();
 
 	cController.End();
@@ -554,6 +615,7 @@ void TestIndexTreeAccess(void)
 	//TestIndexTreeFileAccessFlushBug();
 	//TestIndexTreeFileAccessEvictBug();
 	//TestIndexTreeFileAccessFlushEvictBug();
+	TestIndexTreeFileAccessRemoveEvictBug();
 
 	//TestIndexTreeMemoryAccess(IKR_No);
 	//TestIndexTreeMemoryAccess(IKR_Yes);
