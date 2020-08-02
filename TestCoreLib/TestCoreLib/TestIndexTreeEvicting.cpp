@@ -60,6 +60,7 @@ void TestIndexTreeEvictingAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse
 			"   Both:   0    -> 0:0  ()\n"
 			"   Both:   1(X) (HAS_DATA, NODES_EMPTY)\n"
 			, sz.Text());
+		Pass();
 	}
 	else if (eWriteThrough == IWT_Yes && eKeyReverse == IKR_No)
 	{
@@ -81,33 +82,35 @@ void TestIndexTreeEvictingAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse
 	{
 		AssertStringApproximate(
 			"= [IndexTreeEvicting]  =============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================\n"
-			" Memory:   root -> o . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   root -> o . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  (DIRTY_PATH)\n"
 			"Key: ------------- [0x01 00 00 00 00 00 00 00] -------------\n"
-			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
-			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
-			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
-			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
-			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
-			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
-			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_PATH)\n"
 			" Memory:   1(X) (DIRTY_NODE, DIRTY_PATH, HAS_DATA, NODES_EMPTY)\n"
 			, sz.Text());
+		Pass();
 	}
 	else if (eWriteThrough == IWT_No && eKeyReverse == IKR_No)
 	{
 		AssertStringApproximate(
 			"= [IndexTreeEvicting]  =============================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================\n"
-			" Memory:   root -> . o . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   root -> . o . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .  (DIRTY_PATH)\n"
 			"Key: ------------- [0x01 00 00 00 00 00 00 00] -------------\n"
-			" Memory:   1    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
-			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
-			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
-			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
-			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
-			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
-			" Memory:   0    -> o  (DIRTY_NODE, DIRTY_PATH)\n"
+			" Memory:   1    -> o  (DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_PATH)\n"
+			" Memory:   0    -> o  (DIRTY_PATH)\n"
 			" Memory:   0(X) (DIRTY_NODE, DIRTY_PATH, HAS_DATA, NODES_EMPTY)\n"
 			, sz.Text());
+		Pass();
 	}
 	sz.Kill();
 

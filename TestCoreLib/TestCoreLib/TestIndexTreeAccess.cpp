@@ -370,15 +370,19 @@ void TestIndexTreeFileAccessRemoveEvictBug(void)
 	AssertTrue(cAccess.ValidateIndex());
 	Pass();
 
-	AssertTrue(cAccess.PutStringString("anyone", "when they have pay and thus the first amount will be less"));
 	AssertTrue(cAccess.DeleteString("any"));
 	AssertTrue(cAccess.DeleteString("anyone"));
-	AssertTrue(cAccess.DeleteString("anything"));
+	//AssertTrue(cAccess.DeleteString("anything"));
+	Pass();
+	//XXX //The problem is marking every node as dirty when a new node is added.  Try and only set the path dirty and it will dirty nodes when it is written.
 
 	AssertFalse(cAccess.HasString("any"));
+	Pass();
 	cAccess.EvictString("anything");
+	AssertFalse(cAccess.HasString("any"));
 	cAccess.EvictString("anyone");
 	AssertFalse(cAccess.HasString("any"));
+	Pass();
 
 	AssertLongLongInt(0, cAccess.NumElements());
 	Pass();
@@ -612,30 +616,30 @@ void TestIndexTreeAccess(void)
 	WordsInit();
 	BeginTests();
 
-	//TestIndexTreeFileAccessFlushBug();
-	//TestIndexTreeFileAccessEvictBug();
-	//TestIndexTreeFileAccessFlushEvictBug();
+	TestIndexTreeFileAccessFlushBug();
+	TestIndexTreeFileAccessEvictBug();
+	TestIndexTreeFileAccessFlushEvictBug();
 	TestIndexTreeFileAccessRemoveEvictBug();
 
-	//TestIndexTreeMemoryAccess(IKR_No);
-	//TestIndexTreeMemoryAccess(IKR_Yes);
+	TestIndexTreeMemoryAccess(IKR_No);
+	TestIndexTreeMemoryAccess(IKR_Yes);
 
-	//TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_No, -1);
-	//TestIndexTreeFileAccess("Sub", IWT_Yes, IKR_No, -1);
-	//TestIndexTreeFileAccess(NULL, IWT_No, IKR_No, -1);
-	//TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_Yes, -1);
-	//TestIndexTreeFileAccess(NULL, IWT_No, IKR_Yes, -1);
-	//TestIndexTreeFileAccess("Sub", IWT_No, IKR_Yes, -1);
+	TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_No, -1);
+	TestIndexTreeFileAccess("Sub", IWT_Yes, IKR_No, -1);
+	TestIndexTreeFileAccess(NULL, IWT_No, IKR_No, -1);
+	TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_Yes, -1);
+	TestIndexTreeFileAccess(NULL, IWT_No, IKR_Yes, -1);
+	TestIndexTreeFileAccess("Sub", IWT_No, IKR_Yes, -1);
 
-	//TestIndexTreeFileAccess(NULL, IWT_No, IKR_No, 1);
+	TestIndexTreeFileAccess(NULL, IWT_No, IKR_No, 1);
 
-	//TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_No, 100);
-	//TestIndexTreeFileAccess(NULL, IWT_No, IKR_No, 100);
-	//TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_Yes, 100);
-	//TestIndexTreeFileAccess(NULL, IWT_No, IKR_Yes, 100);
+	TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_No, 100);
+	TestIndexTreeFileAccess(NULL, IWT_No, IKR_No, 100);
+	TestIndexTreeFileAccess(NULL, IWT_Yes, IKR_Yes, 100);
+	TestIndexTreeFileAccess(NULL, IWT_No, IKR_Yes, 100);
 
-	//TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_Yes, IKR_No, -1);
-	//TestIndexTreeEvictingAccess("Sub", 64 KB, IWT_Yes, IKR_No, -1);
+	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_Yes, IKR_No, -1);
+	TestIndexTreeEvictingAccess("Sub", 64 KB, IWT_Yes, IKR_No, -1);
 	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_No, IKR_No, -1);
 	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_Yes, IKR_Yes, -1);
 	TestIndexTreeEvictingAccess(NULL, 64 KB, IWT_No, IKR_Yes, -1);
