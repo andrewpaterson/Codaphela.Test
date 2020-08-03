@@ -374,21 +374,21 @@ void TestIndexTreeFileAccessRemoveEvictBug(void)
 	AssertTrue(cAccess.DeleteString("anyone"));
 	//AssertTrue(cAccess.DeleteString("anything"));
 	Pass();
-	//XXX //The problem is marking every node as dirty when a new node is added.  Try and only set the path dirty and it will dirty nodes when it is written.
 
 	AssertFalse(cAccess.HasString("any"));
-	Pass();
 	cAccess.EvictString("anything");
 	AssertFalse(cAccess.HasString("any"));
+	Pass();
 	cAccess.EvictString("anyone");
 	AssertFalse(cAccess.HasString("any"));
 	Pass();
 
-	AssertLongLongInt(0, cAccess.NumElements());
+	AssertLongLongInt(1, cAccess.NumElements());
 	Pass();
 	AssertTrue(cAccess.ValidateIndex());
 	Pass();
 
+	cAccess.Flush();
 	cController.End();
 	cAccess.Kill();
 	cIndexTree.Kill();

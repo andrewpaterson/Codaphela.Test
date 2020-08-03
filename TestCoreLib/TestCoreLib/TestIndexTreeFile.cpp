@@ -891,6 +891,126 @@ void TestIndexTreeFileRemove(EIndexWriteThrough eWriteThrough)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void InitTestIndexTreeFileFlushDirtyAndDeleted(CIndexTreeHelper* pcHelper, CIndexTreeFileAccess* pcAccess, CTestIndexTreeFile* pcIndexTree, CDurableFileController* pcController)
+{
+	pcHelper->Init("Output" _FS_"IndexTree3c", "primary", "backup", TRUE);
+	pcController->Init(pcHelper->GetPrimaryDirectory(), pcHelper->GetBackupDirectory());
+
+	pcController->Begin();
+	pcIndexTree->Init(pcController, NULL, IWT_No, IKR_No);
+	pcAccess->Init(pcIndexTree);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void KillTestIndexTreeFileFlushDirtyAndDeleted(CIndexTreeHelper* pcHelper, CIndexTreeFileAccess* pcAccess)
+{
+	CIndexTreeFile*				pcIndexTree;
+	CDurableFileController*		pcController;
+
+	pcIndexTree = pcAccess->GetTree();
+	pcController = pcIndexTree->GetController();
+
+	AssertTrue(pcIndexTree->ValidateIndexTree());
+	pcController->End();
+	pcIndexTree->Kill();
+	pcController->Kill();
+	pcAccess->Kill();
+
+	pcHelper->Kill(TRUE);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeFileFlushDirtyAndDeleted(void)
+{
+	CTestIndexTreeFile		cIndexTree;
+	CIndexTreeHelper		cHelper;
+	CDurableFileController	cController;
+	CIndexTreeFileAccess	cAccess;
+
+	InitTestIndexTreeFileFlushDirtyAndDeleted(&cHelper, &cAccess, &cIndexTree, &cController);
+	cAccess.PutStringString("Hello", "12345");
+	cAccess.PutStringString("Hel", "54321");
+	cAccess.FlushString("Hello");
+	cAccess.FlushString("Hel");
+	AssertTrue(cAccess.HasString("Hello"));
+	AssertTrue(cAccess.HasString("Hel"));
+	KillTestIndexTreeFileFlushDirtyAndDeleted(&cHelper, &cAccess);
+
+	InitTestIndexTreeFileFlushDirtyAndDeleted(&cHelper, &cAccess, &cIndexTree, &cController);
+	cAccess.PutStringString("Hello", "12345");
+	cAccess.PutStringString("Hel", "54321");
+	cAccess.FlushString("Hel");
+	cAccess.FlushString("Hello");
+	AssertTrue(cAccess.HasString("Hello"));
+	AssertTrue(cAccess.HasString("Hel"));
+	KillTestIndexTreeFileFlushDirtyAndDeleted(&cHelper, &cAccess);
+
+	InitTestIndexTreeFileFlushDirtyAndDeleted(&cHelper, &cAccess, &cIndexTree, &cController);
+	cAccess.PutStringString("Hello", "12345");
+	cAccess.PutStringString("Hel", "54321");
+	cAccess.DeleteString("Hel");
+	cAccess.FlushString("Hello");
+	cAccess.FlushString("Hel");
+	AssertTrue(cAccess.HasString("Hello"));
+	AssertFalse(cAccess.HasString("Hel"));
+	KillTestIndexTreeFileFlushDirtyAndDeleted(&cHelper, &cAccess);
+
+	InitTestIndexTreeFileFlushDirtyAndDeleted(&cHelper, &cAccess, &cIndexTree, &cController);
+	cAccess.PutStringString("Hello", "12345");
+	cAccess.PutStringString("Hel", "54321");
+	cAccess.DeleteString("Hel");
+	cAccess.FlushString("Hel");
+	cAccess.FlushString("Hello");
+	AssertTrue(cAccess.HasString("Hello"));
+	AssertFalse(cAccess.HasString("Hel"));
+	KillTestIndexTreeFileFlushDirtyAndDeleted(&cHelper, &cAccess);
+
+	InitTestIndexTreeFileFlushDirtyAndDeleted(&cHelper, &cAccess, &cIndexTree, &cController);
+	cAccess.PutStringString("Hello", "12345");
+	cAccess.PutStringString("Hel", "54321");
+	cAccess.DeleteString("Hello");
+	cAccess.FlushString("Hello");
+	cAccess.FlushString("Hel");
+	AssertFalse(cAccess.HasString("Hello"));
+	AssertTrue(cAccess.HasString("Hel"));
+	KillTestIndexTreeFileFlushDirtyAndDeleted(&cHelper, &cAccess);
+
+	InitTestIndexTreeFileFlushDirtyAndDeleted(&cHelper, &cAccess, &cIndexTree, &cController);
+	cAccess.PutStringString("Hello", "12345");
+	cAccess.PutStringString("Hel", "54321");
+	cAccess.DeleteString("Hello");
+	cAccess.FlushString("Hel");
+	cAccess.FlushString("Hello");
+	AssertFalse(cAccess.HasString("Hello"));
+	AssertTrue(cAccess.HasString("Hel"));
+	KillTestIndexTreeFileFlushDirtyAndDeleted(&cHelper, &cAccess);
+
+	InitTestIndexTreeFileFlushDirtyAndDeleted(&cHelper, &cAccess, &cIndexTree, &cController);
+	cAccess.PutStringString("Hello", "12345");
+	cAccess.PutStringString("Hel", "54321");
+	cAccess.DeleteString("Hello");
+	cAccess.DeleteString("Hel");
+	cAccess.FlushString("Hello");
+	cAccess.FlushString("Hel");
+	AssertFalse(cAccess.HasString("Hello"));
+	AssertFalse(cAccess.HasString("Hel"));
+	KillTestIndexTreeFileFlushDirtyAndDeleted(&cHelper, &cAccess);
+
+	Pass();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileRemoveAndEvict(void)
 {
 	char					szABCD[] = "One and Only";
@@ -902,7 +1022,7 @@ void TestIndexTreeFileRemoveAndEvict(void)
 	CIndexedFile*			pcFile;
 	CArrayBit				ab;
 
-	cHelper.Init("Output" _FS_"IndexTree3c", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree3d", "primary", "backup", TRUE);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -944,7 +1064,9 @@ void TestIndexTreeFileRemoveAndEvict(void)
 
 
 	AssertTrue(cAccess.DeleteString("ABCD"));
+	Pass();
 	AssertTrue(cAccess.EvictString("ABCD"));
+	Pass();
 
 	apc.Init();
 	cIndexTree.GetFiles(&apc);
@@ -1000,7 +1122,7 @@ void TestIndexTreeFileRemoveAndFlush(void)
 	char						szDest[16];
 
 	cAllocator.Init();
-	cHelper.Init("Output" _FS_"IndexTree3d", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree3e", "primary", "backup", TRUE);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -2412,6 +2534,14 @@ void TestIndexTreeFileEvictComplexEvictCloseGet(void)
 	AssertLongLongInt(3873LL, pcMemory->GetTotalAllocatedMemory());
 	Pass();
 
+	//TestIndexTreeFileEvictComplexSetup does the following
+	//PutStringString(szAAAAA, "Update 1")
+	//PutStringString(szAAABB, "Update 2")
+	//PutStringString(szAABAA, "Update 3")
+	//DeleteString(szAABBB)
+	//DeleteString(szAACAA)
+	//DeleteString(szAACBB)
+
 	AssertTrue(cAccess.EvictString(szAABBB));
 	AssertTrue(cAccess.EvictString(szAAAAA));
 	AssertTrue(cAccess.EvictString(szAAABB));
@@ -2887,6 +3017,7 @@ void TestIndexTreeFile(void)
 	TestIndexTreeFileResizeData();
 	TestIndexTreeFileRemove(IWT_Yes);
 	TestIndexTreeFileRemove(IWT_No);
+	TestIndexTreeFileFlushDirtyAndDeleted();
 	TestIndexTreeFileRemoveAndEvict();
 	TestIndexTreeFileRemoveNearestFirstFlushed();
 	TestIndexTreeFileRemoveNearestFirst(IWT_Yes);
