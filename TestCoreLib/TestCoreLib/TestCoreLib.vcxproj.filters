@@ -75,9 +75,6 @@
     <ClCompile Include="TestIndexedData.cpp">
       <Filter>Source\File\Indexed</Filter>
     </ClCompile>
-    <ClCompile Include="TestIndexes.cpp">
-      <Filter>Source\File\Indexed</Filter>
-    </ClCompile>
     <ClCompile Include="TestDurableFile.cpp">
       <Filter>Source\File\Durable</Filter>
     </ClCompile>

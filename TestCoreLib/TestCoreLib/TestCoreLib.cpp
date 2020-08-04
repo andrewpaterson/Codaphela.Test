@@ -21,7 +21,6 @@ void TestIndexedFile(void);
 void TestIndexTreeFileIterator(void);
 void TestIndexedFiles(void);
 void TestIndexTreeNodeFile(void);
-void TestIndexes(void);
 void TestIndexedData(void);
 void TestOperators(void);
 void TestFunctionCaller(void);
@@ -57,7 +56,6 @@ int main(void)
 	TestDurableSet();
 	TestDurableFile();
 	TestDurableFileController();
-	TestIndexes();
 	TestFiles();
 	TestPackFilesPacker();
 	TestIndexedFile();

@@ -139,7 +139,6 @@
     <ClCompile Include="TestIndexTreeWriter.cpp" />
     <ClCompile Include="TestLogFile.cpp" />
     <ClCompile Include="TestIndexedData.cpp" />
-    <ClCompile Include="TestIndexes.cpp" />
     <ClCompile Include="TestNamedIndexedData.cpp" />
     <ClCompile Include="TestNamedIndexes.cpp" />
     <ClCompile Include="TestPackFilesPacker.cpp" />
