@@ -33,6 +33,7 @@ void TestIndexTreeAccess(void);
 void TestNamedIndexes(void);
 void TestNamedIndexedData(void);
 void TestIndexTreeFileKeyDiagnosticCallback(void);
+void TestCodabase(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -75,6 +76,7 @@ int main(void)
 	TestNamedIndexedData();
 	TestIndexTreeFileKeyDiagnosticCallback();
 	TestIndexTreeAccess();
+	TestCodabase();
 
 	return TestTotalStatistics();
 }

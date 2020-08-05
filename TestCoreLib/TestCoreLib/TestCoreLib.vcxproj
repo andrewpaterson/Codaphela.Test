@@ -120,6 +120,7 @@
     <ClCompile Include="IndexTreeFileDataTestCallback.cpp" />
     <ClCompile Include="NamedIndexedDataObject.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="TestCodabase.cpp" />
     <ClCompile Include="TestCoreLib.cpp" />
     <ClCompile Include="TestFiles.cpp" />
     <ClCompile Include="TestIndexedFile.cpp" />

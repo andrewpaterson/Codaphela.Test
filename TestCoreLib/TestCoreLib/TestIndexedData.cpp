@@ -694,7 +694,7 @@ void TestIndexedDataIndexEviction(void)
 	cIndexEvictedList.Init();
 	cKeyDataEvictedList.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 1024, 3580, IWT_No, &cEvictionStrategy, &cIndexEvictedList, &cKeyDataEvictedList);  //A little more than two items in the cache...
+	cIndexConfig.Init(NULL, 1024, 3580, IWT_No, &cEvictionStrategy, &cIndexEvictedList, &cKeyDataEvictedList, NULL);  //A little more than two items in the cache...
 	cController.Begin();
 	cIndexedData.Init(&cController, &cIndexConfig);
 	cController.End();
@@ -761,7 +761,7 @@ void TestIndexedDataIndexEviction(void)
 	cIndexEvictedList.Init();
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy, &cIndexEvictedList, &cKeyDataEvictedList);
+	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy, &cIndexEvictedList, &cKeyDataEvictedList, NULL);
 	cController.Begin();
 	cIndexedData.Init(&cController, &cIndexConfig);
 	cController.End();
@@ -1187,7 +1187,7 @@ void TestIndexedDataDescriptorCaching(void)
 	cIndexedDataEvictedList.Init();
 	cIndexTreeEvictedList.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 3690, IWT_No, &cEvictionStrategy, &cIndexTreeEvictedList, &cIndexedDataEvictedList);
+	cIndexConfig.Init(NULL, 8 KB, 3690, IWT_No, &cEvictionStrategy, &cIndexTreeEvictedList, &cIndexedDataEvictedList, NULL);
 	cController.Begin();
 	cIndexedData.Init(&cController, &cIndexConfig);
 	cController.End();
