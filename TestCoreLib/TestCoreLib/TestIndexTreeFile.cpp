@@ -340,6 +340,7 @@ void TestIndexTreeFileAddSimple(EIndexWriteThrough eWriteThrough, EIndexKeyRever
 	pcNode = cIndexTree.GetNode("AB", 2);
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetDataPtr();
 	AssertPointer(&ab, *ppvTest);
+	Pass();
 	AssertTrue(cAccess.Flush());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
@@ -821,24 +822,24 @@ void TestIndexTreeFileRemove(EIndexWriteThrough eWriteThrough)
 	AssertInt(3, apc.NumElements());
 
 	pcFile = *apc.Get(0);
-	AssertInt(26, pcFile->GetDataSize());
+	AssertInt(2062, pcFile->GetDataSize());
 	ab.Init();
 	AssertInt(1, pcFile->GetUsedDataIndices(&ab));
 	AssertInt(1, ab.NumElements());
 	ab.Kill();
 
 	pcFile = *apc.Get(1);
+	AssertInt(26, pcFile->GetDataSize());
+	ab.Init();
+	AssertInt(1, pcFile->GetUsedDataIndices(&ab));
+	AssertInt(1, ab.NumElements());
+	ab.Kill();
+
+	pcFile = *apc.Get(2);
 	AssertInt(22, pcFile->GetDataSize());
 	ab.Init();
 	AssertInt(3, pcFile->GetUsedDataIndices(&ab));
 	AssertInt(3, ab.NumElements());
-	ab.Kill();
-
-	pcFile = *apc.Get(2);
-	AssertInt(2062, pcFile->GetDataSize());
-	ab.Init();
-	AssertInt(1, pcFile->GetUsedDataIndices(&ab));
-	AssertInt(1, ab.NumElements());
 	ab.Kill();
 	apc.Kill();
 
@@ -856,24 +857,24 @@ void TestIndexTreeFileRemove(EIndexWriteThrough eWriteThrough)
 	AssertInt(3, apc.NumElements());
 
 	pcFile = *apc.Get(0);
+	AssertInt(2062, pcFile->GetDataSize());
+	ab.Init();
+	AssertInt(1, pcFile->GetUsedDataIndices(&ab));
+	AssertInt(1, ab.NumElements());
+	ab.Kill();
+
+	pcFile = *apc.Get(1);
 	AssertInt(26, pcFile->GetDataSize());
 	ab.Init();
 	AssertInt(0, pcFile->GetUsedDataIndices(&ab));
 	AssertInt(1, ab.NumElements());
 	ab.Kill();
 
-	pcFile = *apc.Get(1);
+	pcFile = *apc.Get(2);
 	AssertInt(22, pcFile->GetDataSize());
 	ab.Init();
 	AssertInt(0, pcFile->GetUsedDataIndices(&ab));
 	AssertInt(3, ab.NumElements());
-	ab.Kill();
-
-	pcFile = *apc.Get(2);
-	AssertInt(2062, pcFile->GetDataSize());
-	ab.Init();
-	AssertInt(1, pcFile->GetUsedDataIndices(&ab));
-	AssertInt(1, ab.NumElements());
 	ab.Kill();
 	apc.Kill();
 
@@ -1041,24 +1042,24 @@ void TestIndexTreeFileRemoveAndEvict(void)
 	AssertInt(3, apc.NumElements());
 
 	pcFile = *apc.Get(0);
-	AssertInt(27, pcFile->GetDataSize());
+	AssertInt(2062, pcFile->GetDataSize());
 	ab.Init();
 	AssertInt(1, pcFile->GetUsedDataIndices(&ab));
 	AssertInt(1, ab.NumElements());
 	ab.Kill();
 
 	pcFile = *apc.Get(1);
+	AssertInt(27, pcFile->GetDataSize());
+	ab.Init();
+	AssertInt(1, pcFile->GetUsedDataIndices(&ab));
+	AssertInt(1, ab.NumElements());
+	ab.Kill();
+
+	pcFile = *apc.Get(2);
 	AssertInt(22, pcFile->GetDataSize());
 	ab.Init();
 	AssertInt(3, pcFile->GetUsedDataIndices(&ab));
 	AssertInt(3, ab.NumElements());
-	ab.Kill();
-
-	pcFile = *apc.Get(2);
-	AssertInt(2062, pcFile->GetDataSize());
-	ab.Init();
-	AssertInt(1, pcFile->GetUsedDataIndices(&ab));
-	AssertInt(1, ab.NumElements());
 	ab.Kill();
 	apc.Kill();
 
@@ -1073,24 +1074,24 @@ void TestIndexTreeFileRemoveAndEvict(void)
 	AssertInt(3, apc.NumElements());
 
 	pcFile = *apc.Get(0);
+	AssertInt(2062, pcFile->GetDataSize());
+	ab.Init();
+	AssertInt(1, pcFile->GetUsedDataIndices(&ab));
+	AssertInt(1, ab.NumElements());
+	ab.Kill();
+
+	pcFile = *apc.Get(1);
 	AssertInt(27, pcFile->GetDataSize());
 	ab.Init();
 	AssertInt(0, pcFile->GetUsedDataIndices(&ab));
 	AssertInt(1, ab.NumElements());
 	ab.Kill();
 
-	pcFile = *apc.Get(1);
+	pcFile = *apc.Get(2);
 	AssertInt(22, pcFile->GetDataSize());
 	ab.Init();
 	AssertInt(0, pcFile->GetUsedDataIndices(&ab));
 	AssertInt(3, ab.NumElements());
-	ab.Kill();
-
-	pcFile = *apc.Get(2);
-	AssertInt(2062, pcFile->GetDataSize());
-	ab.Init();
-	AssertInt(1, pcFile->GetUsedDataIndices(&ab));
-	AssertInt(1, ab.NumElements());
 	ab.Kill();
 	apc.Kill();
 
