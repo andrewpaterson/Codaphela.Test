@@ -90,7 +90,7 @@ void TestIndexTreeFileInit(void)
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL);
+	cIndexTree.Init(&cController, NULL, IWT_Yes, IKR_No);
 	cController.End();
 
 	cIndexTree.Kill();
@@ -246,7 +246,7 @@ void TestIndexTreeFileGetNodeKey(void)
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL);
+	cIndexTree.Init(&cController, NULL, IWT_Yes, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	a.Init("Helper");
@@ -1275,7 +1275,7 @@ void TestIndexTreeFileFindKey(void)
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL);
+	cIndexTree.Init(&cController, NULL, IWT_Yes, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	cAccess.PutStringData(szKeyName, szData, 5);
@@ -1434,7 +1434,7 @@ void TestIndexTreeFileReplaceData(void)
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL);
+	cIndexTree.Init(&cController, NULL, IWT_Yes, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	memset(acData, 5, 5);
@@ -1484,7 +1484,7 @@ void TestIndexTreeFileAddUnallocated(void)
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL);
+	cIndexTree.Init(&cController, NULL, IWT_Yes, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	a.Init("1A");
@@ -2169,7 +2169,7 @@ void TestIndexTreeFileAddToRoot(void)
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL);
+	cIndexTree.Init(&cController, NULL, IWT_Yes, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	a.Init("A1");
@@ -2220,7 +2220,7 @@ void TestIndexTreeFileMemorySize(void)
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL);
+	cIndexTree.Init(&cController, NULL, IWT_Yes, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	tNodeSize = cIndexTree.SizeofNode();

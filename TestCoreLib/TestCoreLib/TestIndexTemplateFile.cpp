@@ -32,7 +32,7 @@ void TestIndexTreeTemplateFileStuff(void)
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL);
+	cIndexTree.Init(&cController, NULL, IWT_Yes, IKR_No);
 	cAccess.Init(&cIndexTree);
 	
 	cObject1.Init("Hello");
