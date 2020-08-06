@@ -15,17 +15,17 @@
 void AssertIndexTreeDataOrdererString(CIndexTreeDataOrderer* pcOrderer, char* szExpected)
 {
 	SDataOrderIterator	sIter;
-	char*				pc;
 	int					iSize;
 	BOOL				bExists;
 	CChars				sz;
+	char				pc[256];
 
 	sz.Init();
-	bExists = pcOrderer->StartIteration(&sIter, (void**)&pc, &iSize);
+	bExists = pcOrderer->StartIteration(&sIter, NULL, 0, 0, pc, &iSize, 256);
 	while (bExists)
 	{
 		sz.Append(*pc);
-		bExists = pcOrderer->Iterate(&sIter, (void**)&pc, &iSize);
+		bExists = pcOrderer->Iterate(&sIter, NULL, 0, 0, pc, &iSize, 256);
 	}
 
 	AssertString(szExpected, sz.Text());
