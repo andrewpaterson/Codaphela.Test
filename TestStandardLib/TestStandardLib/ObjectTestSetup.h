@@ -34,7 +34,7 @@ struct SStateOnKill
 
 class CPlayerVehicle : public CNamedObject
 {
-BASE_FUNCTIONS(CPlayerVehicle);
+CONSTRUCTABLE(CPlayerVehicle);
 protected:
 	CGraphicPicture		mcPicture;
 	SPhysicsPoint*		mpsPoint;
@@ -58,7 +58,7 @@ public:
 
 class CHarrier : public CPlayerVehicle
 {
-BASE_FUNCTIONS(CHarrier);
+CONSTRUCTABLE(CHarrier);
 protected:
 	Ptr<CArrayObject>	maMissiles;
 	Ptr<CGameWorld>		mpWorld;
@@ -80,7 +80,7 @@ public:
 
 class CJeep : public CPlayerVehicle
 {
-BASE_FUNCTIONS(CJeep);
+CONSTRUCTABLE(CJeep);
 protected:
 	Ptr<CGameWorld>		mpWorld;
 	float				mfFrontWheel;
@@ -100,7 +100,7 @@ public:
 
 class CRedJet : public CNamedObject
 {
-BASE_FUNCTIONS(CRedJet);
+CONSTRUCTABLE(CRedJet);
 protected:
 	CGraphicPicture		mcPicture;
 	Ptr<CGameWorld>		mpWorld;
@@ -123,7 +123,7 @@ public:
 
 class CMissile : public CObject
 {
-BASE_FUNCTIONS(CMissile);
+CONSTRUCTABLE(CMissile);
 protected:
 	Ptr<CGameWorld>		mpWorld;
 	CPointer			mpTarget;
@@ -146,7 +146,7 @@ public:
 
 class CClusterMissile : public CNamedObject
 {
-BASE_FUNCTIONS(CClusterMissile);
+CONSTRUCTABLE(CClusterMissile);
 public:
 	CMissile			mcMissile1;
 	CMissile			mcMissile2;
@@ -168,7 +168,7 @@ public:
 
 class CClusterLauncher : public CObject
 {
-BASE_FUNCTIONS(CClusterLauncher);
+CONSTRUCTABLE(CClusterLauncher);
 public:
 	Ptr<CClusterMissile>	mpMissile;
 
@@ -183,7 +183,7 @@ public:
 
 class CGameWorld : public CObject
 {
-BASE_FUNCTIONS(CGameWorld);
+CONSTRUCTABLE(CGameWorld);
 protected:
 	Ptr<CArrayObject>	maTickables;
 	Ptr<CPlayerVehicle>	mpPlayer1;

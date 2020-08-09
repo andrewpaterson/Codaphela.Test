@@ -6,7 +6,7 @@
 
 class CTestClassFunctionParams : public CUnknown
 {
-BASE_FUNCTIONS(CTestClassFunctionParams);
+CONSTRUCTABLE(CTestClassFunctionParams);
 public:
 	PARAM4(SFuncParams, int,q, char,c, unsigned long long int,ulli, char,c2);
 	void Func(SFuncParams* s);

@@ -13,7 +13,7 @@ struct STestObjectKilledNotifier
 
 class CTestObject : public CObject
 {
-BASE_FUNCTIONS(CTestObject);
+CONSTRUCTABLE(CTestObject);
 public:
 	CPointer					mpObject;
 	Ptr<CTestObject>			mpTest;
@@ -32,7 +32,7 @@ public:
 
 class CTestTriPointerObject : public CObject
 {
-BASE_FUNCTIONS(CTestTriPointerObject);
+CONSTRUCTABLE(CTestTriPointerObject);
 public:
 	CPointer					mpObject1;
 	CPointer					mpObject2;
@@ -51,7 +51,7 @@ public:
 
 class CTestSaveableObject1 : public CNamedObject
 {
-BASE_FUNCTIONS(CTestSaveableObject1);
+CONSTRUCTABLE(CTestSaveableObject1);
 public:
 	CPointer	mpObject;
 	int			miInt;
@@ -69,7 +69,7 @@ public:
 
 class CTestSaveableObject2 : public CNamedObject
 {
-BASE_FUNCTIONS(CTestSaveableObject2);
+CONSTRUCTABLE(CTestSaveableObject2);
 public:
 	CChars						msz;
 	Ptr<CTestSaveableObject1>	mp1;

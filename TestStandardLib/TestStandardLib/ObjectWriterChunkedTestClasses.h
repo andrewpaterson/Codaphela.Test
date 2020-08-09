@@ -8,7 +8,7 @@
 
 class CTestWithArray : public CNamedObject
 {
-BASE_FUNCTIONS(CTestWithArray);
+CONSTRUCTABLE(CTestWithArray);
 public:
 	Ptr<CArrayObject>	mcArray;
 
@@ -28,7 +28,7 @@ public:
 
 class CTestInteger : public CObject
 {
-BASE_FUNCTIONS(CTestInteger);
+CONSTRUCTABLE(CTestInteger);
 public:
 	int mx;
 	int my; 
@@ -45,7 +45,7 @@ public:
 
 class CTestNamedString : public CNamedObject
 {
-BASE_FUNCTIONS(CTestNamedString);
+CONSTRUCTABLE(CTestNamedString);
 public:
 	Ptr<CString>			mszString;
 	Ptr<CTestNamedString>	mpAnother;
@@ -63,7 +63,7 @@ public:
 
 class CTestDoubleNamedString : public CNamedObject
 {
-BASE_FUNCTIONS(CTestDoubleNamedString);
+CONSTRUCTABLE(CTestDoubleNamedString);
 public:
 	Ptr<CString>			mszString;
 	Ptr<CTestNamedString>	mpSplit2;

@@ -7,7 +7,7 @@
 
 class CPlayer : public CPlayerListener
 {
-BASE_FUNCTIONS(CPlayer);
+CONSTRUCTABLE(CPlayer);
 protected:
 	CArrayChars		maszEvents;
 

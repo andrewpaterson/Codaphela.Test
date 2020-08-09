@@ -6,7 +6,7 @@
 
 class CTestNamedObject : public CNamedObject
 {
-BASE_FUNCTIONS(CTestNamedObject);
+CONSTRUCTABLE(CTestNamedObject);
 public:
 	Ptr<CTestNamedObject>	mpNamedTest1;
 	Ptr<CTestNamedObject>	mpNamedTest2;

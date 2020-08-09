@@ -6,7 +6,7 @@
 
 class CPlayerListener : public CListener
 {
-BASE_FUNCTIONS(CPlayerListener);
+CONSTRUCTABLE(CPlayerListener);
 public:
 
 	virtual void Up(CUnknown* pcSource, void* pvContext) {};

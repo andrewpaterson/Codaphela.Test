@@ -3,7 +3,7 @@
 
 class CTestUnknown : public CUnknown
 {
-BASE_FUNCTIONS(CTestUnknown)
+CONSTRUCTABLE(CTestUnknown)
 public:
 
 	int	miCount;
@@ -31,7 +31,7 @@ public:
 
 class CTestNamedUnknown : public CUnknown
 {
-BASE_FUNCTIONS(CTestNamedUnknown)
+CONSTRUCTABLE(CTestNamedUnknown)
 public:
 	CChars	mszName;
 
@@ -60,7 +60,7 @@ public:
 
 class CTestIterableUnknown : public CTestUnknown
 {
-BASE_FUNCTIONS(CTestIterableUnknown)
+CONSTRUCTABLE(CTestIterableUnknown)
 public:
 	int	miID;
 
@@ -84,7 +84,7 @@ public:
 
 class CTestUnknownJobbie : public CUnknown
 {
-BASE_FUNCTIONS(CTestUnknownJobbie);
+CONSTRUCTABLE(CTestUnknownJobbie);
 public:
 	int		miANumber;
 	CChars	mszText;

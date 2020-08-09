@@ -5,7 +5,7 @@
 class CTargetForAction : public CListener
 {
 public:
-	BASE_FUNCTIONS(CTargetForAction)
+	CONSTRUCTABLE(CTargetForAction)
 
 	int		miCorrectCode;
 

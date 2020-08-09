@@ -9,7 +9,7 @@
 
 class CEmbeddedTest : public CObject
 {
-BASE_FUNCTIONS(CEmbeddedTest);
+CONSTRUCTABLE(CEmbeddedTest);
 public:
 	int		miAmANumber;
 	float	mfSoAmI;
@@ -26,7 +26,7 @@ public:
 
 class CEmbeddedContainer : public CObject
 {
-BASE_FUNCTIONS(CEmbeddedContainer);
+CONSTRUCTABLE(CEmbeddedContainer);
 public:
 	char				msz[4];
 	CEmbeddedTest		mcOne;
@@ -46,7 +46,7 @@ public:
 
 class CEmbeddedComplex : public CObject
 {
-BASE_FUNCTIONS(CEmbeddedComplex);
+CONSTRUCTABLE(CEmbeddedComplex);
 public:
 	CEmbeddedTest		mcSimple;
 	int					mai[2];

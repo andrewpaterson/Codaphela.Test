@@ -105,3 +105,5 @@ TestCoreLib/Release
 /TestCoreLib/TestCoreLib/_NamedIndexes
 /TestCoreLib/TestCoreLib/NamedIndexes
 /TestStandardLib/.vs
+/TestInputLib/TestInputLib/.vs
+/TestSupportLib/.vs/*

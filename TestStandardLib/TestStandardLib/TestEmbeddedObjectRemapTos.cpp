@@ -7,7 +7,7 @@
 
 class CTestObjectWithTwoEmbedded : public CNamedObject
 {
-BASE_FUNCTIONS(CTestObjectWithTwoEmbedded);
+CONSTRUCTABLE(CTestObjectWithTwoEmbedded);
 public:
 	CString		mString1;
 	CString		mString2;
