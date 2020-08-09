@@ -132,6 +132,7 @@
     <ClCompile Include="TestFileIO.cpp" />
     <ClCompile Include="TestFloat4.cpp" />
     <ClCompile Include="TestFreeListAllocator.cpp" />
+    <ClCompile Include="TestIndexTreeConfig.cpp" />
     <ClCompile Include="TestIndexTreeDataOrderer.cpp" />
     <ClCompile Include="TestIndexTreeMemory.cpp" />
     <ClCompile Include="TestIndexTreeIterator.cpp" />

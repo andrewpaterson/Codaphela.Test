@@ -363,6 +363,9 @@
     <ClCompile Include="TestCharsHelper.cpp">
       <Filter>Source\Data\String</Filter>
     </ClCompile>
+    <ClCompile Include="TestIndexTreeConfig.cpp">
+      <Filter>Source\Data\Index</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">
