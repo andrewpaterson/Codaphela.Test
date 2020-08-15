@@ -77,7 +77,7 @@ void TestTemporaryMemory(void);
 void TestStackMemoryCompilation(void);
 void TestCSVFileImmutable(void);
 void TestIndexTreeDataOrderer(void);
-void TestIndexTreeConfig(void);
+void TestIndexTreeMemoryConfig(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -163,7 +163,7 @@ int main(void)
 	TestFileSystem();  // <-- Memory Leak
 	TestCSVFileImmutable();
 	TestIndexTreeDataOrderer();
-	TestIndexTreeConfig();
+	TestIndexTreeMemoryConfig();
 
 	iResult = TestTotalStatistics();
 	//_CrtDumpMemoryLeaks();

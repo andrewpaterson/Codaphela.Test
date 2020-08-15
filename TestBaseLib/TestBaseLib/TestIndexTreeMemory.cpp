@@ -984,6 +984,7 @@ void TestIndexTreeMemoryReadWrite(void)
 	CTestIndexTreeMemory	cIndexIn;
 	CIndexTreeMemoryAccess	cAccessIn;
 	char					szResult[256];
+	BOOL					bResult;
 
 	cIndex.Init();
 	cAccess.Init(&cIndex);
@@ -1009,8 +1010,10 @@ void TestIndexTreeMemoryReadWrite(void)
 	cIndex.Kill();
 	cFile.Close();
 
+	cIndexIn.Init();
 	cFile.Open(EFM_Read);
-	AssertTrue(cIndexIn.Read(&cFile, IKR_No));
+	bResult = cIndexIn.Read(&cFile);
+	AssertTrue(bResult);
 	cAccessIn.Init(&cIndexIn);
 	cFile.Close();
 	cFile.Kill();
