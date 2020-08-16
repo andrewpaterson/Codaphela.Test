@@ -32,7 +32,7 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 	char								szData[1024];
 	char								szDirectory[] = "Output" _FS_ "Database0";
 	char								szSubDirectory[] = "Data";
-	CValueIndexedDataConfig				cIndexConfig;
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	CDurableFileController				cController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 
@@ -45,9 +45,9 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(szSubDirectory, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(szSubDirectory, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 	
 	AssertTrue(cController.Begin());
@@ -69,14 +69,13 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 	AssertTrue(cController.End());
 
 	AssertTrue(cIndexedData.Kill());
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(szSubDirectory, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(szSubDirectory, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	AssertTrue(cController.Begin());
@@ -96,7 +95,6 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 	cIndexedData.Flush(TRUE);
 	AssertTrue(cController.End());
 	AssertTrue(cIndexedData.Kill());
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -118,7 +116,7 @@ void TestIndexedDataFlushClearCache(void)
 	CFileUtil							cFileUtil;
 	unsigned int						uiDataSize;
 	char								szData[7];
-	CValueIndexedDataConfig				cIndexConfig;
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	SLogConfig							sLogConfig;
 	CDurableFileController				cController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
@@ -127,9 +125,9 @@ void TestIndexedDataFlushClearCache(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -156,15 +154,14 @@ void TestIndexedDataFlushClearCache(void)
 	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -189,15 +186,14 @@ void TestIndexedDataFlushClearCache(void)
 	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 1 MB, 1 MB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 1 MB, 1 MB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -229,7 +225,6 @@ void TestIndexedDataFlushClearCache(void)
 	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -250,7 +245,7 @@ void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 	CFileUtil					cFileUtil;
 	unsigned int				uiDataSize;
 	char						szData[7];
-	CValueIndexedDataConfig		cIndexConfig;
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	CDurableFileController		cController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 
@@ -260,9 +255,9 @@ void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -315,7 +310,6 @@ void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -337,7 +331,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	CFileUtil							cFileUtil;
 	char								szData[256];
 	OIndex								oi;
-	CValueIndexedDataConfig				cIndexConfig;
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	CDurableFileController				cController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 
@@ -353,9 +347,9 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	//New Data
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -371,15 +365,14 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -399,15 +392,14 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -421,16 +413,15 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
 	cFileUtil.RemoveDir(szDirectory);
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -445,16 +436,15 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
 	cFileUtil.RemoveDir(szDirectory);
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -469,15 +459,14 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	AssertTrue(cIndexedData.Flush(TRUE));
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -495,15 +484,14 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -521,7 +509,6 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -535,17 +522,17 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexedDataEvictKey(void)
 {
-	CIndexedData				cIndexedData;
-	char						szHello[] = "Hello";
-	char						szWorld[] = "World";
-	char						szStream[] = "Stream";
-	char						szDirectory[] = "Output" _FS_ "Database1d";
-	CFileUtil					cFileUtil;
-	unsigned int				uiDataSize;
-	char						szData[1024];
-	unsigned int				uiSize;
-	CValueIndexedDataConfig		cIndexConfig;
-	CDurableFileController		cController;
+	CIndexedData						cIndexedData;
+	char								szHello[] = "Hello";
+	char								szWorld[] = "World";
+	char								szStream[] = "Stream";
+	char								szDirectory[] = "Output" _FS_ "Database1d";
+	CFileUtil							cFileUtil;
+	unsigned int						uiDataSize;
+	char								szData[1024];
+	unsigned int						uiSize;
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
+	CDurableFileController				cController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -553,9 +540,9 @@ void TestIndexedDataEvictKey(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -632,15 +619,14 @@ void TestIndexedDataEvictKey(void)
 	cIndexedData.Flush();
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	AssertInt(2, cIndexedData.NumFiles());
@@ -658,7 +644,6 @@ void TestIndexedDataEvictKey(void)
 
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -682,7 +667,7 @@ void TestIndexedDataIndexEviction(void)
 	unsigned int						uiSize;
 	filePos								iFileSize;
 	CFileUtil							cFileUtil;
-	CValueIndexedDataConfig				cIndexConfig;
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	CDurableFileController				cController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 
@@ -694,9 +679,9 @@ void TestIndexedDataIndexEviction(void)
 	cIndexEvictedList.Init();
 	cKeyDataEvictedList.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 1024, 3580, IWT_No, &cEvictionStrategy, &cIndexEvictedList, &cKeyDataEvictedList, NULL);  //A little more than two items in the cache...
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 1024, 3580, IWT_No, &cEvictionStrategy, &cIndexEvictedList, &cKeyDataEvictedList, NULL);  //A little more than two items in the cache...
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 
@@ -746,7 +731,6 @@ void TestIndexedDataIndexEviction(void)
 	AssertTrue(cIndexedData.Flush());
 	AssertTrue(cController.End());
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cIndexEvictedList.Kill();
 	cKeyDataEvictedList.Kill();
 	cEvictionStrategy.Kill();
@@ -761,9 +745,9 @@ void TestIndexedDataIndexEviction(void)
 	cIndexEvictedList.Init();
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy, &cIndexEvictedList, &cKeyDataEvictedList, NULL);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy, &cIndexEvictedList, &cKeyDataEvictedList, NULL);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 	AssertInt(2, cIndexedData.NumFiles());
 
@@ -807,7 +791,6 @@ void TestIndexedDataIndexEviction(void)
 	Pass();
 
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cIndexEvictedList.Kill();
 	cKeyDataEvictedList.Kill();
 	cEvictionStrategy.Kill();
@@ -815,14 +798,13 @@ void TestIndexedDataIndexEviction(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	AssertInt(0, (int)cIndexedData.NumIndicesCached());
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -843,7 +825,7 @@ void TestIndexedDataEvictAndFlush(void)
 	unsigned int						uiSize;
 	CFileUtil							cFileUtil;
 	unsigned char						ucFlags;
-	CValueIndexedDataConfig				cIndexConfig;
+	CLifeInit<CIndexedDataConfig>				cIndexConfig;
 	CDurableFileController				cController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 
@@ -852,9 +834,9 @@ void TestIndexedDataEvictAndFlush(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -869,15 +851,14 @@ void TestIndexedDataEvictAndFlush(void)
 
 	AssertTrue(cController.End());
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -896,7 +877,6 @@ void TestIndexedDataEvictAndFlush(void)
 
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -916,7 +896,7 @@ void TestIndexedDataFlushAndFlush(void)
 	char								szIn[8];
 	unsigned int						uiSize;
 	CFileUtil							cFileUtil;
-	CValueIndexedDataConfig				cIndexConfig;
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	CDurableFileController				cController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 
@@ -925,9 +905,9 @@ void TestIndexedDataFlushAndFlush(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -936,15 +916,14 @@ void TestIndexedDataFlushAndFlush(void)
 
 	AssertTrue(cController.End());
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 	
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -953,15 +932,14 @@ void TestIndexedDataFlushAndFlush(void)
 
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -980,7 +958,6 @@ void TestIndexedDataFlushAndFlush(void)
 
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
@@ -994,15 +971,15 @@ void TestIndexedDataFlushAndFlush(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexedDataLargeData(void)
 {
-	CIndexedData				cIndexedData;
-	OIndex						OI;
-	char						szBig[] = "A Long String";
-	char						szSmall[] = "Cat";
-	char						szIn[14];
-	CFileUtil					cFileUtil;
-	char						szDirectory[] = "Output" _FS_ "Database2";
-	CValueIndexedDataConfig		cIndexConfig;
-	CDurableFileController		cController;
+	CIndexedData						cIndexedData;
+	OIndex								OI;
+	char								szBig[] = "A Long String";
+	char								szSmall[] = "Cat";
+	char								szIn[14];
+	CFileUtil							cFileUtil;
+	char								szDirectory[] = "Output" _FS_ "Database2";
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
+	CDurableFileController				cController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 
 
@@ -1011,9 +988,9 @@ void TestIndexedDataLargeData(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 34, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 34, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 	OI = 4LL;
 	AssertInt(0, cIndexedData.NumDataCached());
@@ -1048,7 +1025,6 @@ void TestIndexedDataLargeData(void)
 	AssertTrue(cIndexedData.Flush(TRUE));
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -1076,7 +1052,7 @@ void TestIndexedDataIndexedAdd(void)
 	CFileUtil							cFileUtil;
 	BOOL								bResult;
 	char								szDirectory[] = "Output" _FS_ "Database3";
-	CValueIndexedDataConfig				cIndexConfig;
+	CLifeInit<CIndexedDataConfig>				cIndexConfig;
 	CDurableFileController				cController;
 	SLogConfig							sLogConfig;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
@@ -1086,9 +1062,9 @@ void TestIndexedDataIndexedAdd(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 98 + 12, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 98 + 12, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -1154,7 +1130,6 @@ void TestIndexedDataIndexedAdd(void)
 
 
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -1175,7 +1150,7 @@ void TestIndexedDataDescriptorCaching(void)
 	int									iData;
 	OIndex								iNumCached;
 	char								szDirectory[] = "Output" _FS_ "Database4";
-	CValueIndexedDataConfig				cIndexConfig;
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	CDurableFileController				cController;
 	SLogConfig							sLogConfig;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
@@ -1187,9 +1162,9 @@ void TestIndexedDataDescriptorCaching(void)
 	cIndexedDataEvictedList.Init();
 	cIndexTreeEvictedList.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 3690, IWT_No, &cEvictionStrategy, &cIndexTreeEvictedList, &cIndexedDataEvictedList, NULL);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 3690, IWT_No, &cEvictionStrategy, &cIndexTreeEvictedList, &cIndexedDataEvictedList, NULL);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -1296,15 +1271,14 @@ void TestIndexedDataDescriptorCaching(void)
 	AssertTrue(cIndexedData.Flush(TRUE));
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 	
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 96, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 96, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -1313,7 +1287,6 @@ void TestIndexedDataDescriptorCaching(void)
 
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cIndexedDataEvictedList.Kill();
 	cIndexTreeEvictedList.Kill();
 	cEvictionStrategy.Kill();
@@ -1334,7 +1307,7 @@ void TestIndexedDataNoCaching(void)
 	int									iData;
 	int64								iNumIndicesCached;
 	int64								iNumDataCached;
-	CValueIndexedDataConfig				cIndexConfig;
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	CDurableFileController				cController;
 	SLogConfig							sLogConfig;
 	char								szDirectory[] = "Output" _FS_ "Database5";
@@ -1345,9 +1318,9 @@ void TestIndexedDataNoCaching(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 0, 3670, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 0, 3670, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -1398,7 +1371,6 @@ void TestIndexedDataNoCaching(void)
 
 
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -1419,7 +1391,7 @@ void TestIndexedDataGet(void)
 	char								szSeizedPotPlants[] = {"Seized pot plants turn out to be daisies"};
 	char								szCallingFromWindows[] = {"I am calling you from Windows"};
 	char								szDirectory[] = "Output" _FS_ "Database6";
-	CValueIndexedDataConfig				cIndexConfig;
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	CDurableFileController				cController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 
@@ -1429,9 +1401,9 @@ void TestIndexedDataGet(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -1444,15 +1416,14 @@ void TestIndexedDataGet(void)
 	AssertTrue(cIndexedData.Flush(TRUE));
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -1473,7 +1444,6 @@ void TestIndexedDataGet(void)
 
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -1491,7 +1461,8 @@ void TestIndexedDataSubDirectories(void)
 	char								szGroot[] = { "I am Groot" };
 	char								szDirectory[] = "Output" _FS_ "Database7" _FS_ "Write";
 	char								szRewriteDirectory[] = "Output" _FS_ "Database7" _FS_ "Rewrite";
-	CValueIndexedDataConfig				cIndexConfig;
+	CLifeInit<CIndexedDataConfig>				cIndexConfig;
+
 	CDurableFileController				cController;
 	CIndexedDataAccess					cAccess;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
@@ -1500,9 +1471,9 @@ void TestIndexedDataSubDirectories(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, szRewriteDirectory);
-	cIndexConfig.Init("Forest of Solitude", 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create("Forest of Solitude", 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cAccess.Init(&cIndexedData);
@@ -1515,7 +1486,6 @@ void TestIndexedDataSubDirectories(void)
 	cAccess.Kill();
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database7");
@@ -1536,7 +1506,7 @@ void TestIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 	char								szSeizedPotPlants[] = { "Seized pot plants turn out to be daisies" };
 	char								szCallingFromWindows[] = { "I am calling you from Windows" };
 	char								szDirectory[] = "Output" _FS_ "Database8";
-	CValueIndexedDataConfig				cIndexConfig;
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	CDurableFileController				cController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 
@@ -1545,9 +1515,9 @@ void TestIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -1562,15 +1532,14 @@ void TestIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 	AssertTrue(cIndexedData.Flush(TRUE));
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -1580,15 +1549,14 @@ void TestIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -1602,15 +1570,14 @@ void TestIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 	AssertTrue(cIndexedData.Flush(TRUE));
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -1631,7 +1598,6 @@ void TestIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 
 	cController.End();
 	cIndexedData.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 
@@ -1652,7 +1618,7 @@ void TestIndexedDataRemove2(EIndexWriteThrough eWriteThrough)
 	CTestNamedIndexedDataObject			cObject3;
 	CTestNamedIndexedDataObject			cResult;
 	char								szDirectory[] = "Output" _FS_ "Database8a";
-	CValueIndexedDataConfig				cIndexConfig;
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	CDurableFileController				cController;
 	BOOL								bResult;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
@@ -1662,9 +1628,9 @@ void TestIndexedDataRemove2(EIndexWriteThrough eWriteThrough)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig.Init(NULL, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
 	cController.Begin();
-	cIndexedData.Init(&cController, &cIndexConfig);
+	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
 
 	cController.Begin();
@@ -1691,7 +1657,6 @@ void TestIndexedDataRemove2(EIndexWriteThrough eWriteThrough)
 
 	cIndexedData.Kill();
 	cController.Kill();
-	cIndexConfig.Kill();
 	cEvictionStrategy.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -1736,4 +1701,5 @@ void TestIndexedData(void)
 	FastFunctionsKill();
 	TypeConverterKill();
 }
+
 
