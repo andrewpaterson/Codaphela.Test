@@ -13,14 +13,28 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestCodabaseFactory(void)
+void TestCodabaseFactoryCreate(void)
 {
 	CCodabase*	pcDatabase;
+	CFileUtil	cFileUtil;
 
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "CodabaseFactory", IWT_No);
+	cFileUtil.RemoveDir("Output" _FS_ "CodabaseFactory1");
+
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "CodabaseFactory1", IWT_No);
+
+	AssertTrue(cFileUtil.Exists("Output" _FS_ "CodabaseFactory1" _FS_ "Primary" _FS_ "Index"));
+	AssertTrue(cFileUtil.Exists("Output" _FS_ "CodabaseFactory1" _FS_ "Primary" _FS_ "Names"));
+	AssertTrue(pcDatabase->ValidateConfigInitialised());
+	Pass();
 
 	pcDatabase->Kill();
+	AssertTrue(pcDatabase->ValidateConfigKilled()); 
 	Pass();
+	
+	SafeFree(pcDatabase);
+	Pass();
+
+	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "CodabaseFactory1"));
 }
 
 
@@ -37,7 +51,7 @@ void TestCodabase(void)
 	WordsInit();
 	BeginTests();
 
-	TestCodabaseFactory();
+	TestCodabaseFactoryCreate();
 
 	TestStatistics();
 	WordsKill();
