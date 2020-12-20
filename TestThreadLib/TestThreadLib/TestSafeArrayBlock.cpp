@@ -1,0 +1,28 @@
+#include "ThreadLib/SafeArrayBlock.h"
+#include "BaseLib/GlobalMemory.h"
+#include "TestLib/Assert.h"
+
+
+
+void TestSafeArrayBlockAdd(void)
+{
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSafeArrayBlock(void)
+{
+	BeginTests();
+	MemoryInit();
+	FastFunctionsInit();
+
+	TestSafeArrayBlockAdd();
+
+	FastFunctionsKill();
+	MemoryKill();
+	TestStatistics();
+}
+

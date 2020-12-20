@@ -4,19 +4,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CoreLib", "..\..\CommonLibraries\CoreLib\CoreLib.vcxproj", "{5918EC20-07C3-485F-80BB-BED4F96EA48F}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D06D265E-A503-42F8-A93A-A0A1C0B058FF} = {D06D265E-A503-42F8-A93A-A0A1C0B058FF}
-		{E25D2DAC-0E80-42B2-8FA7-99B837CF7588} = {E25D2DAC-0E80-42B2-8FA7-99B837CF7588}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestLib", "..\..\CommonLibraries\TestLib\TestLib.vcxproj", "{D06D265E-A503-42F8-A93A-A0A1C0B058FF}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E25D2DAC-0E80-42B2-8FA7-99B837CF7588} = {E25D2DAC-0E80-42B2-8FA7-99B837CF7588}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestCoreLib", "TestCoreLib\TestCoreLib.vcxproj", "{293EAEA8-5D52-48B0-81E6-388B506F807D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5918EC20-07C3-485F-80BB-BED4F96EA48F} = {5918EC20-07C3-485F-80BB-BED4F96EA48F}
+		{D06D265E-A503-42F8-A93A-A0A1C0B058FF} = {D06D265E-A503-42F8-A93A-A0A1C0B058FF}
+		{E25D2DAC-0E80-42B2-8FA7-99B837CF7588} = {E25D2DAC-0E80-42B2-8FA7-99B837CF7588}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BaseLib", "..\..\CommonLibraries\BaseLib\BaseLib.vcxproj", "{E25D2DAC-0E80-42B2-8FA7-99B837CF7588}"

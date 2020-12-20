@@ -107,3 +107,9 @@ TestCoreLib/Release
 /TestStandardLib/.vs
 /TestInputLib/TestInputLib/.vs
 /TestSupportLib/.vs/*
+/TestThreadLib/.vs/*
+/TestThreadLib/Debug/*
+/TestThreadLib/Release/*
+/TestThreadLib/TestThreadLib/Debug/*
+/TestThreadLib/TestThreadLib/Release/*
+/TestThreadLib/TestThreadLib/Log.txt
