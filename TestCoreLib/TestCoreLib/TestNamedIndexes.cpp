@@ -421,6 +421,8 @@ void TestNamedIndexesLoad(void)
 	
 	cNamedIndexes.Flush();
 	AssertTrue(cController.End());
+	Pass();
+
 	cNamedIndexes.Kill();
 	cEvictionStrategy.Kill();
 	cController.Kill();
