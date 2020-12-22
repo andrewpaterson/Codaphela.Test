@@ -108,6 +108,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="TestThread.cpp" />
     <ClCompile Include="VitaliyVitsentiyExample.cpp" />
     <ClCompile Include="TestReferences.cpp" />
     <ClCompile Include="TestSafeArrayBlock.cpp" />
@@ -124,6 +125,10 @@
     <ProjectReference Include="..\..\..\CommonLibraries\ThreadLib\ThreadLib.vcxproj">
       <Project>{7269d64f-994a-4233-9add-bad415a07b64}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Consumer.h" />
+    <ClInclude Include="Producer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

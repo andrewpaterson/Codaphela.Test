@@ -33,5 +33,16 @@
     <ClCompile Include="VitaliyVitsentiyExample.cpp">
       <Filter>Source\Thread</Filter>
     </ClCompile>
+    <ClCompile Include="TestThread.cpp">
+      <Filter>Source\Thread</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Producer.h">
+      <Filter>Source\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Consumer.h">
+      <Filter>Source\Thread</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
