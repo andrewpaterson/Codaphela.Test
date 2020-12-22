@@ -5,7 +5,9 @@
 #include "TestLib/Assert.h"
 
 
+void TestReferences(void);
 void TestSafeArrayBlock(void);
+void TestThreadPool(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -18,6 +20,8 @@ int main(void)
 
 	InitTotalStatistics();
 
+	TestReferences();
+	TestThreadPool();
 	TestSafeArrayBlock();
 
 	iResult = TestTotalStatistics();

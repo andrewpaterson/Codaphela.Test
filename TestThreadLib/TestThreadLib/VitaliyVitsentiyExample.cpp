@@ -1,0 +1,129 @@
+#include <ThreadLib/ThreadPool.h>
+#include <iostream>
+#include <string>
+
+
+
+void first(int id) {
+    std::cout << "hello from " << id << ", function\n";
+}
+
+void aga(int id, int par) {
+    std::cout << "hello from " << id << ", function with parameter " << par << '\n';
+}
+
+struct Third {
+    Third(int v) { this->v = v; std::cout << "Third ctor " << this->v << '\n'; }
+    Third(Third&& c) { this->v = c.v; std::cout << "Third move ctor\n"; }
+    Third(const Third& c) { this->v = c.v; std::cout << "Third copy ctor\n"; }
+    ~Third() { std::cout << "Third dtor\n"; }
+    int v;
+};
+
+void mmm(int id, const std::string& s) {
+    std::cout << "mmm function " << id << ' ' << s << '\n';
+}
+
+void ugu(int id, Third& t) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+    std::cout << "hello from " << id << ", function with parameter Third " << t.v << '\n';
+}
+
+int NotMain(void) 
+{
+    CThreadPool cThreadPool(2 /* two threads in the pool */);
+
+    std::future<void> qw = cThreadPool.Push(std::ref(first));  // function
+    cThreadPool.Push(first);  // function
+    cThreadPool.Push(aga, 7);  // function
+
+    {
+        struct Second 
+        {
+        private:
+            std::string s;
+
+        public:
+            Second(const std::string& s) { std::cout << "Second ctor\n"; this->s = s; }
+            Second(Second&& c) { std::cout << "Second move ctor\n"; s = std::move(c.s); }
+            Second(const Second& c) { std::cout << "Second copy ctor\n"; this->s = c.s; };
+            ~Second() { std::cout << "Second dtor\n"; }
+            void operator()(int id) const 
+            {
+                std::cout << "hello from " << id << ' ' << this->s << '\n';
+            }
+        } 
+        second(", functor");
+
+        cThreadPool.Push(std::ref(second));  // functor, reference
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        cThreadPool.Push(const_cast<const Second&>(second));  // functor, copy ctor
+        cThreadPool.Push(std::move(second));  // functor, move ctor
+        cThreadPool.Push(second);  // functor, move ctor
+        cThreadPool.Push(Second(", functor"));  // functor, move ctor
+    }
+    {
+        Third t(100);
+
+        cThreadPool.Push(ugu, std::ref(t));  // function. reference
+        cThreadPool.Push(ugu, t);  // function. copy ctor, move ctor
+        cThreadPool.Push(ugu, std::move(t));  // function. move ctor, move ctor
+
+    }
+    cThreadPool.Push(ugu, Third(200));  // function
+
+
+
+    std::string s = ", lambda";
+    cThreadPool.Push([s](int id)
+    {  // lambda
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        std::cout << "hello from " << id << ' ' << s << '\n';
+    });
+
+    cThreadPool.Push([s](int id)
+    {  // lambda
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        std::cout << "hello from " << id << ' ' << s << '\n';
+    });
+
+    cThreadPool.Push(mmm, "worked");
+
+    auto f = cThreadPool.Pop();
+    if (f) 
+    {
+        std::cout << "poped function from the pool ";
+        f(0);
+    }
+    // change the number of treads in the pool
+
+    cThreadPool.Resize(1);
+
+    std::string s2 = "result";
+    auto f1 = cThreadPool.Push([s2](int)
+    {
+      return s2;
+    });
+    // other code here
+    //...
+    std::cout << "returned " << f1.get() << '\n';
+
+    auto f2 = cThreadPool.Push([](int)
+    {
+      throw std::exception();
+    });
+    // other code here
+    //...
+    try 
+    {
+        f2.get();
+    }
+    catch (std::exception& e) 
+    {
+        std::cout << "caught exception" << e.what() << "\n";
+        
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+    return 0;
+}

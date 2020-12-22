@@ -13,6 +13,9 @@
     <Filter Include="Source\Data\Array\Basic">
       <UniqueIdentifier>{3f591bfe-5c6a-4509-941f-c90248c25111}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Thread">
+      <UniqueIdentifier>{5351bd9d-09f4-4df7-b2cc-0b64747995c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestThreadLib.cpp">
@@ -20,6 +23,15 @@
     </ClCompile>
     <ClCompile Include="TestSafeArrayBlock.cpp">
       <Filter>Source\Data\Array\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="TestReferences.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="TestThreadPool.cpp">
+      <Filter>Source\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="VitaliyVitsentiyExample.cpp">
+      <Filter>Source\Thread</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

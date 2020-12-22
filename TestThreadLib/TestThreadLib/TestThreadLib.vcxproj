@@ -108,8 +108,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="VitaliyVitsentiyExample.cpp" />
+    <ClCompile Include="TestReferences.cpp" />
     <ClCompile Include="TestSafeArrayBlock.cpp" />
     <ClCompile Include="TestThreadLib.cpp" />
+    <ClCompile Include="TestThreadPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\CommonLibraries\BaseLib\BaseLib.vcxproj">
