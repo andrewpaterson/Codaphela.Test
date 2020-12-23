@@ -27,13 +27,13 @@
     <ClCompile Include="TestReferences.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestThreadPool.cpp">
-      <Filter>Source\Thread</Filter>
-    </ClCompile>
     <ClCompile Include="VitaliyVitsentiyExample.cpp">
       <Filter>Source\Thread</Filter>
     </ClCompile>
     <ClCompile Include="TestThread.cpp">
+      <Filter>Source\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="TestVitsenityThreadPool.cpp">
       <Filter>Source\Thread</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,4 +1,4 @@
-#include <ThreadLib/ThreadPool.h>
+#include <ThreadLib/VitsenityThreadPool.h>
 #include <iostream>
 #include <string>
 
@@ -31,8 +31,9 @@ void ugu(int id, Third& t) {
 
 int NotMain(void) 
 {
-    CThreadPool cThreadPool(2 /* two threads in the pool */);
+    CVitsenityThreadPool cThreadPool;
 
+    cThreadPool.Init(2);
     std::future<void> qw = cThreadPool.Push(std::ref(first));  // function
     cThreadPool.Push(first);  // function
     cThreadPool.Push(aga, 7);  // function
@@ -125,5 +126,8 @@ int NotMain(void)
     }
 
     std::this_thread::sleep_for(std::chrono::milliseconds(10000));
+
+    cThreadPool.Kill();
     return 0;
 }
+

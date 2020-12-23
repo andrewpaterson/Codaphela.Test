@@ -1,6 +1,7 @@
 #include <thread>
 #include "BaseLib/GlobalMemory.h"
 #include "ThreadLib/SafeArrayBlock.h"
+#include "ThreadLib/VitsenityThreadPool.h"
 #include "TestLib/Assert.h"
 #include "Producer.h"
 #include "Consumer.h"
@@ -81,6 +82,28 @@ void TestThreadStandAlone(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestThreadInThreadPool(void)
+{
+	int							iTotalResult;
+	CSafeArrayBlock				cQueue;
+	CVitsenityThreadPool		cPool;
+	int							iNumHardwareTheads;
+
+	iNumHardwareTheads = std::thread::hardware_concurrency();
+	cQueue.Init(sizeof(int));
+	cPool.Init();
+
+	iTotalResult = 0;
+
+
+	cPool.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestThread(void)
 {
 	BeginTests();
@@ -88,6 +111,7 @@ void TestThread(void)
 	FastFunctionsInit();
 
 	TestThreadStandAlone();
+	TestThreadInThreadPool();
 
 	FastFunctionsKill();
 	MemoryKill();

@@ -7,7 +7,7 @@
 
 void TestReferences(void);
 void TestSafeArrayBlock(void);
-void TestThreadPool(void);
+void TestVitsenityThreadPool(void);
 void TestThread(void);
 
 
@@ -21,10 +21,10 @@ int main(void)
 
 	InitTotalStatistics();
 
-	//TestReferences();
+	TestReferences();
 	TestThread();
-	//TestThreadPool();
-	//TestSafeArrayBlock();
+	TestVitsenityThreadPool();
+	TestSafeArrayBlock();
 
 	iResult = TestTotalStatistics();
 	return iResult;
