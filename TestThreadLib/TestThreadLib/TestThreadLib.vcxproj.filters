@@ -19,6 +19,9 @@
     <Filter Include="Source\Data\LinkedList">
       <UniqueIdentifier>{5082bab5-5125-48b8-85d3-64b0aba42ab7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Thread\Pool">
+      <UniqueIdentifier>{d0b0c5d6-b137-40eb-b2b6-5a9f0da9bf4f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestThreadLib.cpp">
@@ -30,17 +33,20 @@
     <ClCompile Include="TestReferences.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="VitaliyVitsentiyExample.cpp">
-      <Filter>Source\Thread</Filter>
-    </ClCompile>
     <ClCompile Include="TestThread.cpp">
-      <Filter>Source\Thread</Filter>
-    </ClCompile>
-    <ClCompile Include="TestVitsenityThreadPool.cpp">
       <Filter>Source\Thread</Filter>
     </ClCompile>
     <ClCompile Include="TestSafeLinkedListBlock.cpp">
       <Filter>Source\Data\LinkedList</Filter>
+    </ClCompile>
+    <ClCompile Include="TestThreadPool.cpp">
+      <Filter>Source\Thread\Pool</Filter>
+    </ClCompile>
+    <ClCompile Include="TestVitsenityThreadPool.cpp">
+      <Filter>Source\Thread\Pool</Filter>
+    </ClCompile>
+    <ClCompile Include="VitaliyVitsentiyExample.cpp">
+      <Filter>Source\Thread\Pool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

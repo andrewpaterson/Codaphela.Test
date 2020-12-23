@@ -13,12 +13,16 @@ private:
 	int					miProductionValue;
 
 public:
-	void Init(CSafeArrayBlock* pcQueue, int iProductionCount, int iProductionValue)
+	CProducer(void) : CThread() {}
+	CProducer(CThreadStarter* pcStarter, CThreadStateNotifer* pcNotify) : CThread(pcStarter, pcNotify) {}
+
+	CProducer* Init(CSafeArrayBlock* pcQueue, int iProductionCount, int iProductionValue)
 	{
 		CThread::Init();
 		mpcQueue = pcQueue;
 		miProductionCount = iProductionCount;
 		miProductionValue = iProductionValue;
+		return this;
 	}
 
 	virtual void Run(void)
@@ -28,6 +32,7 @@ public:
 		{
 			mpcQueue->Push(&miProductionValue);
 		}
+		i = 0;
 	}
 };
 

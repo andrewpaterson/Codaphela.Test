@@ -12,11 +12,15 @@ private:
 	int					miResult;
 
 public:
-	void Init(CSafeArrayBlock* pcQueue)
+	CConsumer(void) : CThread() {}
+	CConsumer(CThreadStarter* pcStarter, CThreadStateNotifer* pcNotify) : CThread(pcStarter, pcNotify)	{}
+
+	CConsumer* Init(CSafeArrayBlock* pcQueue)
 	{
 		CThread::Init();
 		mpcQueue = pcQueue;
 		miResult = 0;
+		return this;
 	}
 
 	virtual void Run(void)

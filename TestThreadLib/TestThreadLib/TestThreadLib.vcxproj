@@ -110,6 +110,7 @@
   <ItemGroup>
     <ClCompile Include="TestSafeLinkedListBlock.cpp" />
     <ClCompile Include="TestThread.cpp" />
+    <ClCompile Include="TestThreadPool.cpp" />
     <ClCompile Include="VitaliyVitsentiyExample.cpp" />
     <ClCompile Include="TestReferences.cpp" />
     <ClCompile Include="TestSafeArrayBlock.cpp" />
