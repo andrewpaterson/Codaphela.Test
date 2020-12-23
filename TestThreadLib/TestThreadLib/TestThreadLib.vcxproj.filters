@@ -16,6 +16,9 @@
     <Filter Include="Source\Thread">
       <UniqueIdentifier>{5351bd9d-09f4-4df7-b2cc-0b64747995c6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Data\LinkedList">
+      <UniqueIdentifier>{5082bab5-5125-48b8-85d3-64b0aba42ab7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestThreadLib.cpp">
@@ -35,6 +38,9 @@
     </ClCompile>
     <ClCompile Include="TestVitsenityThreadPool.cpp">
       <Filter>Source\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSafeLinkedListBlock.cpp">
+      <Filter>Source\Data\LinkedList</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

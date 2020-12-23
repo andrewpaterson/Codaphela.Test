@@ -108,6 +108,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="TestSafeLinkedListBlock.cpp" />
     <ClCompile Include="TestThread.cpp" />
     <ClCompile Include="VitaliyVitsentiyExample.cpp" />
     <ClCompile Include="TestReferences.cpp" />
