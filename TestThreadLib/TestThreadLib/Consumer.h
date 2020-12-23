@@ -6,6 +6,7 @@
 
 class CConsumer : public CThread
 {
+CONSTRUCTABLE(CConsumer);
 private:
 	CSafeArrayBlock*	mpcQueue;
 	int					miResult;

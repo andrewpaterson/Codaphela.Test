@@ -6,6 +6,7 @@
 
 class CProducer : public CThread
 {
+CONSTRUCTABLE(CProducer);
 private:
 	CSafeArrayBlock*	mpcQueue;
 	int					miProductionCount;
