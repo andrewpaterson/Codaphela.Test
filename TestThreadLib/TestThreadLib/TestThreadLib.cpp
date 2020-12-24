@@ -7,7 +7,8 @@
 #include "ThreadLib/MainProcessDirector.h"
 #include "TestLib/Assert.h"
 
-int ClientMain(int argc, char* argv[]);
+int TestClientProcessMain(int argc, char* argv[]);
+int TestSharedMemoryProcessMain(int argc, char* argv[]);
 
 void TestMainProcessDirector(int argc, char* argv[]);
 void TestReferences(void);
@@ -15,7 +16,8 @@ void TestSafeArrayBlock(void);
 void TestVitsenityThreadPool(void);
 void TestThread(void);
 void TestThreadPool(void);
-void TestProcess(void);
+void TestProcessFork(void);
+void TestSharedMemory(void);
 
 
 int TestThreadLib(int argc, char* argv[])
@@ -30,7 +32,8 @@ int TestThreadLib(int argc, char* argv[])
 	TestVitsenityThreadPool();
 	TestSafeArrayBlock();
 	TestThreadPool();
-	TestProcess();
+	TestProcessFork();
+	TestSharedMemory();
 
 	iResult = TestTotalStatistics();
 	return iResult;
@@ -47,8 +50,9 @@ int main(int argc, char* argv[])
 	BOOL					bMainRan;
 
 	cDirector.Init();
-	cDirector.AddRedirect("Client", ClientMain);
-	cDirector.AddRedirect("Test", TestThreadLib);
+	cDirector.AddRedirect("test", TestThreadLib);
+	cDirector.AddRedirect("test-client-process", TestClientProcessMain);
+	cDirector.AddRedirect("test-shared-memory", TestSharedMemoryProcessMain);
 	bMainRan = cDirector.Run(argc, argv);
 	if (!bMainRan)
 	{

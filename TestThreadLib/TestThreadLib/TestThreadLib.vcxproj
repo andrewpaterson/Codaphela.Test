@@ -108,10 +108,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ClientMain.cpp" />
+    <ClCompile Include="TestClientProcess.cpp" />
     <ClCompile Include="TestMainProcessDirector.cpp" />
-    <ClCompile Include="TestProcess.cpp" />
+    <ClCompile Include="TestProcessFork.cpp" />
     <ClCompile Include="TestSafeLinkedListBlock.cpp" />
+    <ClCompile Include="TestSharedMemory.cpp" />
+    <ClCompile Include="TestSharedMemoryProcess.cpp" />
     <ClCompile Include="TestThread.cpp" />
     <ClCompile Include="TestThreadPool.cpp" />
     <ClCompile Include="VitaliyVitsentiyExample.cpp" />

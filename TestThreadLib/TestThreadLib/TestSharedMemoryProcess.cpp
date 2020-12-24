@@ -1,15 +1,16 @@
-#include <windows.h>
+#include "ThreadLib/SharedMemory.h"
+#include "TestLib/Assert.h"
+
+
 
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-int ClientMain(int argc, char* argv[])
+int TestSharedMemoryProcessMain(int argc, char* argv[])
 {
-	argc = 0;
-	argv = 0;
-
-	MessageBox(NULL, "ClientMain invoked", "Client Pop-up", MB_OK);
+	argc;
+	argv;
 
 	return 22;
 }
