@@ -1,3 +1,5 @@
+//#include "BaseLib/WindowsHeaders.h"
+//MessageBox(NULL, sz.Text(), "ClientMain invoked", MB_OK);
 #include "BaseLib/Logger.h"
 #include "BaseLib/TextFile.h"
 #include "BaseLib/FileUtil.h"

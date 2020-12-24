@@ -1,4 +1,6 @@
+#include <thread>
 #include "ThreadLib/SharedMemory.h"
+#include "ThreadLib/ProcessFork.h"
 #include "TestLib/Assert.h"
 
 
@@ -29,7 +31,7 @@ void TestSharedMemoryOneProcess(void)
 	bResult = cSharedClient.Connect("Local\\TestSharedMemoryOneProcess", 256);
 	AssertTrue(bResult);
 
-	pcClient = (char*)cSharedOwner.GetMemory();
+	pcClient = (char*)cSharedClient.GetMemory();
 	AssertNotNull(pcClient);
 
 	for (i = 0; i < 256; i++)
@@ -46,11 +48,76 @@ void TestSharedMemoryOneProcess(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestSharedMemoryTwoProcesses(void)
+{
+	CSharedMemory	cSharedOwner;
+	BOOL			bResult;
+	unsigned char*	pcOwner;
+	int				i, j;
+	CChars			szCommandLineParameters;
+	char			szSharedMemoryName[] = {"Local\\TestSharedMemoryTwoProcesses"};
+	BOOL			bAllMatch;
+
+	bResult = cSharedOwner.Create(szSharedMemoryName, 256);
+	AssertTrue(bResult);
+
+	pcOwner = (unsigned char*)cSharedOwner.GetMemory();
+	AssertNotNull(pcOwner);
+
+	for (i = 0; i < 256; i++)
+	{
+		pcOwner[i] = (char)i;
+	}
+
+
+	szCommandLineParameters.Init("--test-shared-memory");
+	szCommandLineParameters.Append(" ");
+	szCommandLineParameters.Append(szSharedMemoryName);
+	szCommandLineParameters.Append(" ");
+	szCommandLineParameters.Append("256");
+	ForkProcess(szCommandLineParameters.Text(), FALSE);
+	szCommandLineParameters.Kill();
+
+	for (j = 0; j < 50; j++)
+	{
+		bAllMatch = TRUE;
+		for (i = 0; i < 256; i++)
+		{
+			if (255 - (unsigned char)i != pcOwner[i])
+			{
+				bAllMatch = FALSE;
+				break;
+			}
+		}
+
+		if (bAllMatch)
+		{
+			Pass();
+			break;
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+	}
+	AssertTrue(bAllMatch);
+
+	for (i = 0; i < 256; i++)
+	{
+		AssertChar(255 - (unsigned char)i, pcOwner[i]);
+	}
+
+	cSharedOwner.Close();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestSharedMemory(void)
 {
 	BeginTests();
 
 	TestSharedMemoryOneProcess();
+	TestSharedMemoryTwoProcesses();
 
 	TestStatistics();
 }

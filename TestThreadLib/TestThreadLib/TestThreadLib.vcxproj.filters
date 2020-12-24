@@ -60,14 +60,14 @@
     <ClCompile Include="TestSharedMemory.cpp">
       <Filter>Source\SharedMemory</Filter>
     </ClCompile>
-    <ClCompile Include="TestSharedMemoryProcess.cpp">
-      <Filter>Source\SharedMemory</Filter>
-    </ClCompile>
-    <ClCompile Include="TestClientProcess.cpp">
-      <Filter>Source\Process</Filter>
-    </ClCompile>
     <ClCompile Include="TestProcessFork.cpp">
       <Filter>Source\Process</Filter>
+    </ClCompile>
+    <ClCompile Include="TestProcessForkMain.cpp">
+      <Filter>Source\Process</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSharedMemoryMain.cpp">
+      <Filter>Source\SharedMemory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
