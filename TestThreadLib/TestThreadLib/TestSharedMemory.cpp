@@ -54,7 +54,6 @@ void TestSharedMemoryTwoProcesses(void)
 	BOOL			bResult;
 	unsigned char*	pcOwner;
 	int				i, j;
-	CChars			szCommandLineParameters;
 	char			szSharedMemoryName[] = {"Local\\TestSharedMemoryTwoProcesses"};
 	BOOL			bAllMatch;
 
@@ -69,14 +68,7 @@ void TestSharedMemoryTwoProcesses(void)
 		pcOwner[i] = (char)i;
 	}
 
-
-	szCommandLineParameters.Init("--test-shared-memory");
-	szCommandLineParameters.Append(" ");
-	szCommandLineParameters.Append(szSharedMemoryName);
-	szCommandLineParameters.Append(" ");
-	szCommandLineParameters.Append("256");
-	ForkProcess(szCommandLineParameters.Text(), FALSE);
-	szCommandLineParameters.Kill();
+	ForkProcess("--test-shared-memory", szSharedMemoryName, "256", FALSE);
 
 	for (j = 0; j < 50; j++)
 	{

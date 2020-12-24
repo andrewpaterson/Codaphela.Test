@@ -19,16 +19,12 @@ void TestProcessFork(void)
 	BOOL			bFileExists;
 	char			szFileName[] = {"Output" _FS_ "test-client-process.txt"};
 	CTextFile		cTextFile;
-	CChars			szCommandLineParameters;
 
 	cFileUtil.MakeDir("Output");
 	cFileUtil.Delete(szFileName);
 	AssertFalse(cFileUtil.Exists(szFileName));
 
-	szCommandLineParameters.Init("--test-client-process ");
-	szCommandLineParameters.Append(szFileName);
-	ForkProcess(szCommandLineParameters.Text(), FALSE);
-	szCommandLineParameters.Kill();
+	ForkProcess("--test-client-process", szFileName, FALSE);
 
 	bFileExists = FALSE;
 	for (i = 0; i < 50; i++)
