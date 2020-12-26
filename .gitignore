@@ -41,3 +41,4 @@ TestCoreLib/Release
 /TestThreadLib/TestThreadLib/Debug
 /TestThreadLib/TestThreadLib/Release
 /TestThreadLib/TestThreadLib/Log.txt
+/TestBaseLib/TestBaseLib/Output/*

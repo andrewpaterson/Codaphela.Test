@@ -435,6 +435,67 @@ void TestMemoryCacheDeallocate(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMemoryCachePreallocate(void)
+{
+	CMemoryCache			cCache;
+	void*					pvA;
+	void*					pvB;
+	void*					pvC;
+	void*					pvD;
+	CMemoryCacheAllocation	cPreAllocation;
+	SMemoryCacheDescriptor* psDescriptor;
+	void*					pv;
+
+	cCache.Init(128);
+
+	cPreAllocation.Init(40);
+	cCache.PreAllocate(&cPreAllocation);
+	AssertFalse(cPreAllocation.HasOverlaps());
+	pvA = cCache.Allocate(&cPreAllocation);
+	FillCachedElement(pvA, 40, 'A');
+	cPreAllocation.Kill();
+
+	cPreAllocation.Init(40);
+	cCache.PreAllocate(&cPreAllocation);
+	AssertFalse(cPreAllocation.HasOverlaps());
+	pvB = cCache.Allocate(&cPreAllocation);
+	FillCachedElement(pvB, 40, 'B');
+	cPreAllocation.Kill();
+
+	cPreAllocation.Init(38);
+	cCache.PreAllocate(&cPreAllocation);
+	AssertInt(1, cPreAllocation.NumElements());
+	psDescriptor = cPreAllocation.Get(0);
+	pv = cCache.GetData(psDescriptor);
+	AssertPointer(pvA, pv);
+	AssertCacheElement(&cCache, psDescriptor, 40, 'A');
+	pvC = cCache.Allocate(&cPreAllocation);
+	FillCachedElement(pvC, 38, 'C');
+	cPreAllocation.Kill();
+	psDescriptor = cCache.GetDescriptor(pvC);
+	AssertCacheElement(&cCache, psDescriptor, 38, 'C');
+
+	cPreAllocation.Init(38);
+	cCache.PreAllocate(&cPreAllocation);
+	AssertInt(1, cPreAllocation.NumElements());
+	psDescriptor = cPreAllocation.Get(0);
+	pv = cCache.GetData(psDescriptor);
+	AssertPointer(pvB, pv);
+	AssertCacheElement(&cCache, psDescriptor, 40, 'B');
+	pvD = cCache.Allocate(&cPreAllocation);
+	FillCachedElement(pvC, 38, 'D');
+	cPreAllocation.Kill();
+	psDescriptor = cCache.GetDescriptor(pvC);
+	AssertCacheElement(&cCache, psDescriptor, 38, 'D');
+
+	cCache.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMemoryCache(void)
 {
 	BeginTests();
@@ -446,6 +507,7 @@ void TestMemoryCache(void)
 	TestMemoryCacheEvictLeftmost();
 	TestMemoryCacheEvictRightmost();
 	TestMemoryCacheDeallocate();
+	TestMemoryCachePreallocate();
 
 	FastFunctionsKill();
 	TestStatistics();
