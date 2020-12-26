@@ -39,6 +39,7 @@ int TestThreadLib(int argc, char* argv[])
 	return iResult;
 }
 
+https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/fast-mutexes-and-guarded-mutexes#:~:text=Starting%20with%20Windows%202000%2C%20drivers,the%20thread%20acquires%20the%20mutex.
 
 //////////////////////////////////////////////////////////////////////////
 //

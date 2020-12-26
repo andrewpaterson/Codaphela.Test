@@ -226,7 +226,6 @@ void TestArrayTemplateCopy(void)
 	STestArrayTemplateItem*		psItem;
 	void*						pvDest1;
 	void*						pvDest2;
-	BOOL						bResult;
 
 	asTestArrayTemplate.Init();
 	psItem = asTestArrayTemplate.Add();
@@ -241,12 +240,10 @@ void TestArrayTemplateCopy(void)
 	psItem->i1 = psItem->i2 = 1;
 
 	asDestArray.Init();
-	bResult = asDestArray.Copy(&asTestArrayTemplate);
-	AssertTrue(bResult);
+	asDestArray.Copy(&asTestArrayTemplate);
 	pvDest1 = asDestArray.GetData();
 
-	bResult = asDestArray.Copy(&asTestArrayTemplate);
-	AssertFalse(bResult);
+	asDestArray.Copy(&asTestArrayTemplate);
 	pvDest2 = asDestArray.GetData();
 	AssertTrue(pvDest1 == pvDest2);
 
@@ -259,9 +256,8 @@ void TestArrayTemplateCopy(void)
 	psItem = asTestArrayTemplate.Add();
 	psItem->i1 = psItem->i2 = 9;
 
-	bResult = asDestArray.Copy(&asTestArrayTemplate);
-	AssertTrue(bResult);
-	
+	asDestArray.Copy(&asTestArrayTemplate);
+
 	AssertInt(16, asDestArray.AllocatedElements());
 	AssertInt(9, asDestArray.NumElements());
 

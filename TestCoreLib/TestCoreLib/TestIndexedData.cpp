@@ -142,13 +142,13 @@ void TestIndexedDataFlushClearCache(void)
 	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
 	AssertLongLongInt(3632LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(91, cIndexedData.GetDataSystemMemorySize());
 
 	cIndexedData.Flush(FALSE);
 	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
 	AssertLongLongInt(3632LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(91, cIndexedData.GetDataSystemMemorySize());
 	AssertTrue(cIndexedData.IsFlushed());
 	
 	cIndexedData.Flush();
@@ -175,13 +175,13 @@ void TestIndexedDataFlushClearCache(void)
 	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
 	AssertLongLongInt(3692LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(91, cIndexedData.GetDataSystemMemorySize());
 
 	AssertTrue(cIndexedData.Flush(TRUE));
 	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
 	AssertLongLongInt(3692LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(00, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(0, cIndexedData.GetDataSystemMemorySize());
 
 	cIndexedData.Flush();
 	cController.End();
@@ -210,6 +210,7 @@ void TestIndexedDataFlushClearCache(void)
 	AssertInt(0, cIndexedData.NumDataCached());
 	AssertLongLongInt(3692LL, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(0, cIndexedData.GetDataSystemMemorySize());
+	Pass();
 
 	AssertTrue(cIndexedData.Get(1LL, &uiDataSize, szData, 7));
 	AssertString(szHello, szData);
@@ -220,7 +221,8 @@ void TestIndexedDataFlushClearCache(void)
 	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
 	AssertLongLongInt(3692LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(91, cIndexedData.GetDataSystemMemorySize());
+	Pass();
 
 	cIndexedData.Flush();
 	cController.End();
@@ -272,21 +274,21 @@ void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
 	AssertLongLongInt(3632LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(91, cIndexedData.GetDataSystemMemorySize());
 	Pass();
 
 	AssertTrue(cIndexedData.EvictKey(1LL));
 	AssertLongLongInt(2, cIndexedData.NumIndicesCached());
 	AssertInt(2, cIndexedData.NumDataCached());
 	AssertLongLongInt(3560LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(37, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(61, cIndexedData.GetDataSystemMemorySize());
 	Pass();
 
 	AssertTrue(cIndexedData.EvictKey(2LL));
 	AssertLongLongInt(1, cIndexedData.NumIndicesCached());
 	AssertInt(1, cIndexedData.NumDataCached());
 	AssertLongLongInt(3488LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(18, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(30, cIndexedData.GetDataSystemMemorySize());
 	Pass();
 
 	AssertTrue(cIndexedData.EvictKey(4LL));
@@ -304,7 +306,7 @@ void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 	AssertString(szWorld, szData);
 	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
-	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(91, cIndexedData.GetDataSystemMemorySize());
 	Pass();
 
 	cIndexedData.Flush();
@@ -558,21 +560,21 @@ void TestIndexedDataEvictKey(void)
 	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
 	AssertLongLongInt(3632LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(91, cIndexedData.GetDataSystemMemorySize());
 	Pass();
 
 	cIndexedData.EvictKey(1LL);
 	AssertLongLongInt(2, cIndexedData.NumIndicesCached());
 	AssertInt(2, cIndexedData.NumDataCached());
 	AssertLongLongInt(3560LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(37, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(61, cIndexedData.GetDataSystemMemorySize());
 	Pass();
 
 	cIndexedData.EvictKey(4LL);
 	AssertLongLongInt(1, cIndexedData.NumIndicesCached());
 	AssertInt(1, cIndexedData.NumDataCached());
 	AssertLongLongInt(3488LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(19, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(31, cIndexedData.GetDataSystemMemorySize());
 	Pass();
 
 	cIndexedData.EvictKey(2LL);
@@ -588,7 +590,7 @@ void TestIndexedDataEvictKey(void)
 	AssertLongLongInt(1, cIndexedData.NumIndicesCached());
 	AssertInt(1, cIndexedData.NumDataCached());
 	AssertLongLongInt(3500LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(18, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(30, cIndexedData.GetDataSystemMemorySize());
 	Pass();
 
 	AssertTrue(cIndexedData.Get(2LL, &uiDataSize, szData, 1024));
@@ -597,7 +599,7 @@ void TestIndexedDataEvictKey(void)
 	AssertLongLongInt(2, cIndexedData.NumIndicesCached());
 	AssertInt(2, cIndexedData.NumDataCached());
 	AssertLongLongInt(3584LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(37, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(61, cIndexedData.GetDataSystemMemorySize());
 	Pass();
 
 	AssertTrue(cIndexedData.Get(4LL, &uiDataSize, szData, 1024));
@@ -606,7 +608,7 @@ void TestIndexedDataEvictKey(void)
 	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
 	AssertLongLongInt(3668LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(55, cIndexedData.GetDataSystemMemorySize());
+	AssertInt(91, cIndexedData.GetDataSystemMemorySize());
 	Pass();
 
 	uiSize = cIndexedData.Size(1LL);

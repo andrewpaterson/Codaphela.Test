@@ -43,23 +43,23 @@ void AssertLinkOrder(CMemoryCache* pcCache)
 	CArrayVoidPtr			cPointers;
 	int						i;
 
-	AssertPointer(pcCache->TestGetFirst()->psPrev, pcCache->TestGetLast());
-	AssertPointer(pcCache->TestGetLast()->psNext, pcCache->TestGetFirst());
+	AssertPointer(pcCache->GetFirst()->psPrev, pcCache->GetLast());
+	AssertPointer(pcCache->GetLast()->psNext, pcCache->GetFirst());
 
 	cPointers.Init();
-	psCacheDesc = pcCache->TestGetFirst();
+	psCacheDesc = pcCache->GetFirst();
 
 	for (;;)
 	{
 		cPointers.Add(psCacheDesc);
 		psCacheDesc = psCacheDesc->psNext;
-		if (psCacheDesc == pcCache->TestGetFirst())
+		if (psCacheDesc == pcCache->GetFirst())
 		{
 			break;
 		}
 	}
 
-	psCacheDesc = pcCache->TestGetLast();
+	psCacheDesc = pcCache->GetLast();
 	for (i = cPointers.NumElements() - 1; i >= 0; i--)
 	{
 		psCacheDescReverse = (SMemoryCacheDescriptor*)cPointers.GetPtr(i);
@@ -82,7 +82,7 @@ void AssertCache(CMemoryCache* pcCache, int iFirstLength, char cFirstChar)
 	SMemoryCacheDescriptor*		psFirst;
 	SMemoryCacheDescriptor*		psLast;
 
-	AssertInt(1, pcCache->NumCached());
+	AssertInt(1, pcCache->NumElements());
 	
 	psFirst = pcCache->GetFirst();
 	AssertNotNull(psFirst);
@@ -108,7 +108,7 @@ void AssertCache(CMemoryCache* pcCache, int iFirstLength, char cFirstChar, int i
 	SMemoryCacheDescriptor*		psFirst;
 	SMemoryCacheDescriptor*		psLast;
 
-	AssertInt(2, pcCache->NumCached());
+	AssertInt(2, pcCache->NumElements());
 
 	psFirst = pcCache->GetFirst();
 	psLast = pcCache->GetLast();
@@ -132,7 +132,7 @@ void AssertCache(CMemoryCache* pcCache, int iLen1, char c1, int iLen2, char c2, 
 	SMemoryCacheDescriptor*		psFirst;
 	SMemoryCacheDescriptor*		psLast;
 
-	AssertInt(3, pcCache->NumCached());
+	AssertInt(3, pcCache->NumElements());
 
 	psFirst = pcCache->GetFirst();
 	psLast = pcCache->GetLast();
