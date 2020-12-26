@@ -496,6 +496,108 @@ void TestMemoryCachePreallocate(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMemoryCacheReallocate(void)
+{
+	CMemoryCache			cCache;
+	void*					pvA;
+	void*					pvB;
+	void*					pvC;
+	void*					pvD;
+	void*					pvE;
+	void*					pvF;
+	void*					pvG;
+	void*					pvH;
+	SMemoryCacheDescriptor* psIter;
+
+	cCache.Init(128);
+
+	pvA = cCache.QuickAllocate(20);
+	FillCachedElement(pvA, 20, 'A');
+
+	pvB = cCache.QuickAllocate(24);
+	FillCachedElement(pvB, 24, 'B');
+
+	pvC = cCache.QuickAllocate(28);
+	FillCachedElement(pvC, 28, 'C');
+
+	pvD = cCache.QuickAllocate(18);
+	FillCachedElement(pvD, 18, 'D');
+
+	AssertInt(3, cCache.NumElements());
+	AssertInt(106, cCache.GetAllocatedSize());
+	AssertCacheElement(&cCache, cCache.GetDescriptor(pvB), 24, 'B');
+	AssertCacheElement(&cCache, cCache.GetDescriptor(pvC), 28, 'C');
+	AssertCacheElement(&cCache, cCache.GetDescriptor(pvD), 18, 'D');
+
+	cCache.Resize(256);
+
+	AssertInt(3, cCache.NumElements());
+	AssertInt(106, cCache.GetAllocatedSize());
+
+	psIter = cCache.StartIteration();
+	AssertTrue(cCache.GetDescriptor(pvB) != psIter);
+	AssertCacheElement(&cCache, psIter, 24, 'B');
+
+	psIter = cCache.Iterate(psIter);
+	AssertTrue(cCache.GetDescriptor(pvC) != psIter);
+	AssertCacheElement(&cCache, psIter, 28, 'C');
+
+	psIter = cCache.Iterate(psIter);
+	AssertTrue(cCache.GetDescriptor(pvD) != psIter);
+	AssertCacheElement(&cCache, psIter, 18, 'D');
+
+	psIter = cCache.Iterate(psIter);
+	AssertNull(psIter);
+	Pass();
+
+	pvE = cCache.QuickAllocate(20);
+	FillCachedElement(pvE, 20, 'E');
+
+	//Resize needs to repack the queue from head to tail otherwise head will get overwritten by tail if head is after it.
+	Fuck
+
+	AssertInt(4, cCache.NumElements());
+	AssertInt(168, cCache.GetAllocatedSize());
+
+	pvF = cCache.QuickAllocate(24);
+	FillCachedElement(pvF, 24, 'F');
+
+	pvG = cCache.QuickAllocate(28);
+	FillCachedElement(pvG, 28, 'G');
+
+	pvH = cCache.QuickAllocate(18);
+	FillCachedElement(pvH, 18, 'H');
+
+	AssertInt(5, cCache.NumElements());
+	AssertInt(168, cCache.GetAllocatedSize());
+
+	psIter = cCache.StartIteration();
+	AssertCacheElement(&cCache, psIter, 18, 'D');
+
+	psIter = cCache.Iterate(psIter);
+	AssertCacheElement(&cCache, psIter, 20, 'E');
+
+	psIter = cCache.Iterate(psIter);
+	AssertCacheElement(&cCache, psIter, 24, 'F');
+
+	psIter = cCache.Iterate(psIter);
+	AssertCacheElement(&cCache, psIter, 28, 'G');
+
+	psIter = cCache.Iterate(psIter);
+	AssertCacheElement(&cCache, psIter, 18, 'H');
+
+	psIter = cCache.Iterate(psIter);
+	AssertNull(psIter);
+	Pass();
+
+	cCache.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMemoryCache(void)
 {
 	BeginTests();
@@ -508,6 +610,7 @@ void TestMemoryCache(void)
 	TestMemoryCacheEvictRightmost();
 	TestMemoryCacheDeallocate();
 	TestMemoryCachePreallocate();
+	TestMemoryCacheReallocate();
 
 	FastFunctionsKill();
 	TestStatistics();
