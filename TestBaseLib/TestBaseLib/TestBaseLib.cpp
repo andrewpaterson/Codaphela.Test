@@ -71,6 +71,7 @@ void TestTrackingAllocator(void);
 void TestCountingAllocator(void);
 void TestMemoryStack(void);
 void TestMemoryCache(void);
+void TestMemoryQueue(void);
 void TestScratchPad(void);
 void TestScratchPadAllocator(void);
 void TestTemporaryMemory(void);
@@ -151,6 +152,7 @@ int main(void)
 	TestScratchPadAllocator();  // <-- Memory Leak
 	TestMemoryStack();
 	TestMemoryCache();
+	TestMemoryQueue();
 	TestMemoryBlock();
 	TestTemporaryMemory();  // <-- Memory Leak
 	TestStackMemoryCompilation();

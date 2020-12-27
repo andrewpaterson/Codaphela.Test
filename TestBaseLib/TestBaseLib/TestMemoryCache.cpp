@@ -507,6 +507,7 @@ void TestMemoryCacheReallocate(void)
 	void*					pvF;
 	void*					pvG;
 	void*					pvH;
+	void*					pvI;
 	SMemoryCacheDescriptor* psIter;
 
 	cCache.Init(128);
@@ -530,6 +531,7 @@ void TestMemoryCacheReallocate(void)
 	AssertCacheElement(&cCache, cCache.GetDescriptor(pvD), 18, 'D');
 
 	cCache.Resize(256);
+	Pass();
 
 	AssertInt(3, cCache.NumElements());
 	AssertInt(106, cCache.GetAllocatedSize());
@@ -553,11 +555,8 @@ void TestMemoryCacheReallocate(void)
 	pvE = cCache.QuickAllocate(20);
 	FillCachedElement(pvE, 20, 'E');
 
-	//Resize needs to repack the queue from head to tail otherwise head will get overwritten by tail if head is after it.
-	Fuck
-
 	AssertInt(4, cCache.NumElements());
-	AssertInt(168, cCache.GetAllocatedSize());
+	AssertInt(138, cCache.GetAllocatedSize());
 
 	pvF = cCache.QuickAllocate(24);
 	FillCachedElement(pvF, 24, 'F');
@@ -568,8 +567,39 @@ void TestMemoryCacheReallocate(void)
 	pvH = cCache.QuickAllocate(18);
 	FillCachedElement(pvH, 18, 'H');
 
-	AssertInt(5, cCache.NumElements());
-	AssertInt(168, cCache.GetAllocatedSize());
+	AssertInt(7, cCache.NumElements());
+	AssertInt(244, cCache.GetAllocatedSize());
+
+	psIter = cCache.StartIteration();
+	AssertCacheElement(&cCache, psIter, 24, 'B');
+
+	psIter = cCache.Iterate(psIter);
+	AssertCacheElement(&cCache, psIter, 28, 'C');
+
+	psIter = cCache.Iterate(psIter);
+	AssertCacheElement(&cCache, psIter, 18, 'D');
+
+	psIter = cCache.Iterate(psIter);
+	AssertCacheElement(&cCache, psIter, 20, 'E');
+
+	psIter = cCache.Iterate(psIter);
+	AssertCacheElement(&cCache, psIter, 24, 'F');
+
+	psIter = cCache.Iterate(psIter);
+	AssertCacheElement(&cCache, psIter, 28, 'G');
+
+	psIter = cCache.Iterate(psIter);
+	AssertCacheElement(&cCache, psIter, 18, 'H');
+
+	psIter = cCache.Iterate(psIter);
+	AssertNull(psIter);
+	Pass();
+
+	pvI = cCache.QuickAllocate(32);
+	FillCachedElement(pvI, 32, 'I');
+
+	AssertInt(6, cCache.NumElements());
+	AssertInt(212, cCache.GetAllocatedSize());
 
 	psIter = cCache.StartIteration();
 	AssertCacheElement(&cCache, psIter, 18, 'D');
@@ -585,6 +615,9 @@ void TestMemoryCacheReallocate(void)
 
 	psIter = cCache.Iterate(psIter);
 	AssertCacheElement(&cCache, psIter, 18, 'H');
+
+	psIter = cCache.Iterate(psIter);
+	AssertCacheElement(&cCache, psIter, 32, 'I');
 
 	psIter = cCache.Iterate(psIter);
 	AssertNull(psIter);
