@@ -16,7 +16,8 @@ int TestSharedMemoryProcessMain(int argc, char* argv[])
 	if (argc == 2)
 	{
 		iMemorySize = atoi(argv[1]);
-		bResult = cSharedClient.Connect(argv[0], 256);
+		cSharedClient.Init(argv[0]);
+		bResult = cSharedClient.Connect();
 		if (!bResult)
 		{
 			return 1;
@@ -35,6 +36,7 @@ int TestSharedMemoryProcessMain(int argc, char* argv[])
 		}
 		
 		cSharedClient.Close();
+		cSharedClient.Kill();
 		return 0;
 	}
 	else

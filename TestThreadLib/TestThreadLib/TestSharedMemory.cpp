@@ -17,7 +17,8 @@ void TestSharedMemoryOneProcess(void)
 	char*			pcClient;
 	int				i;
 
-	bResult = cSharedOwner.Create("Local\\TestSharedMemoryOneProcess", 256);
+	cSharedOwner.Init("Local\\TestSharedMemoryOneProcess");
+	bResult = cSharedOwner.Create(256);
 	AssertTrue(bResult);
 
 	pcOwner = (char*)cSharedOwner.GetMemory();
@@ -28,7 +29,8 @@ void TestSharedMemoryOneProcess(void)
 		pcOwner[i] = (char)i;
 	}
 
-	bResult = cSharedClient.Connect("Local\\TestSharedMemoryOneProcess", 256);
+	cSharedClient.Init("Local\\TestSharedMemoryOneProcess");
+	bResult = cSharedClient.Connect();
 	AssertTrue(bResult);
 
 	pcClient = (char*)cSharedClient.GetMemory();
@@ -40,7 +42,10 @@ void TestSharedMemoryOneProcess(void)
 	}
 
 	cSharedOwner.Close();
+	cSharedOwner.Kill();
+
 	cSharedClient.Close();
+	cSharedClient.Kill();
 }
 
 
@@ -57,7 +62,8 @@ void TestSharedMemoryTwoProcesses(void)
 	char			szSharedMemoryName[] = {"Local\\TestSharedMemoryTwoProcesses"};
 	BOOL			bAllMatch;
 
-	bResult = cSharedOwner.Create(szSharedMemoryName, 256);
+	cSharedOwner.Init(szSharedMemoryName);
+	bResult = cSharedOwner.Create(256);
 	AssertTrue(bResult);
 
 	pcOwner = (unsigned char*)cSharedOwner.GetMemory();
@@ -97,6 +103,7 @@ void TestSharedMemoryTwoProcesses(void)
 	}
 
 	cSharedOwner.Close();
+	cSharedOwner.Kill();
 }
 
 
