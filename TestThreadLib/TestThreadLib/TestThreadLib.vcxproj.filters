@@ -77,5 +77,8 @@
     <ClInclude Include="Consumer.h">
       <Filter>Source\Thread</Filter>
     </ClInclude>
+    <ClInclude Include="SharedMemoryThread.h">
+      <Filter>Source\SharedMemory</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

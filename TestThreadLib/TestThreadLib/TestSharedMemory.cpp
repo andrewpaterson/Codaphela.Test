@@ -1,8 +1,11 @@
 #include <thread>
+#include "BaseLib/Logger.h"
 #include "ThreadLib/SharedMemory.h"
 #include "ThreadLib/InterProcessMutex.h"
 #include "ThreadLib/ProcessFork.h"
+#include "ThreadLib/Thread.h"
 #include "TestLib/Assert.h"
+#include "SharedMemoryThread.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -60,9 +63,10 @@ void TestSharedMemoryResizeOneProcess(void)
 	CSharedMemory	cSharedClient;
 	CSharedMemory	cSharedNewOwner;
 	BOOL			bResult;
-	char* pcOwner;
-	char* pcClient;
+	char*			pcOwner;
+	char*			pcClient;
 	int				i;
+	int				iStillMapped;
 
 	cSharedOwner.Init("Local\\TestSharedMemoryResizeOneProcess");
 	bResult = cSharedOwner.Create(3940);
@@ -82,7 +86,6 @@ void TestSharedMemoryResizeOneProcess(void)
 
 	pcClient = (char*)cSharedClient.GetMemory();
 	AssertNotNull(pcClient);
-
 	for (i = 0; i < 3940; i++)
 	{
 		AssertChar((char)i, pcClient[i]);
@@ -91,26 +94,41 @@ void TestSharedMemoryResizeOneProcess(void)
 	cSharedOwner.Close();
 
 	cSharedNewOwner.Init("Local\\TestSharedMemoryResizeOneProcess");
+	gcLogger.SetBreakOnError(FALSE);
 	bResult = cSharedNewOwner.Create(3940 + 16);
-	AssertTrue(bResult);
-
+	gcLogger.SetBreakOnError(TRUE);
+	AssertFalse(bResult);
+	cSharedNewOwner.Kill();
 
 	cSharedClient.Resize(3940 + 16);
-	bResult = cSharedClient.Connect();
-	AssertTrue(bResult);
-
 	pcClient = (char*)cSharedClient.GetMemory();
 	AssertNotNull(pcClient);
-
 	for (i = 0; i < 3940; i++)
 	{
 		AssertChar((char)i, pcClient[i]);
 	}
 
-	cSharedOwner.Close();
-	cSharedOwner.Kill();
+	bResult = cSharedOwner.Connect();
+	AssertTrue(bResult);
 
-	cSharedClient.Close();
+	pcOwner = (char*)cSharedOwner.GetMemory();
+	AssertNotNull(pcOwner);
+	for (i = 0; i < 3940; i++)
+	{
+		AssertChar((char)i, pcOwner[i]);
+	}
+
+	iStillMapped = cSharedOwner.Close();
+	AssertInt(1, iStillMapped);
+	iStillMapped = cSharedClient.Close();
+	AssertInt(0, iStillMapped);
+
+	cSharedNewOwner.Init("Local\\TestSharedMemoryResizeOneProcess");
+	bResult = cSharedNewOwner.Connect();
+	AssertFalse(bResult);
+	cSharedNewOwner.Kill();
+
+	cSharedOwner.Kill();
 	cSharedClient.Kill();
 }
 
@@ -177,13 +195,82 @@ void TestSharedMemoryTwoProcesses(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestSharedMemoryResizeMultiThread(void)
+{
+	CSharedMemory			cSharedOwner;
+	CInterProcessMutex		cMutex;
+	BOOL					bResult;
+	char					szSharedMemoryName[] = { "Local\\TestSharedMemoryResizeMultiThread" };
+	char					szMutexName[] = { "Local\\TestMutexResizeMultiThread" };
+	unsigned int*			puiPosition;
+	unsigned int			uiPosition;
+	CSharedMemoryThread		cThreadA;
+	CSharedMemoryThread		cThreadB;
+	CSharedMemoryThread		cThreadC;
+	CSharedMemoryThread		cThreadD;
+
+	cMutex.Init(szMutexName);
+	bResult = cMutex.Create();
+	AssertTrue(bResult);
+
+	cSharedOwner.Init(szSharedMemoryName);
+	bResult = cSharedOwner.Create(4 + 16);
+	AssertTrue(bResult);
+
+	puiPosition = (unsigned int*)cSharedOwner.GetMemory();
+	AssertNotNull(puiPosition);
+
+	memset(puiPosition, 0, 4 + 16);
+	*puiPosition = 4;
+
+	cThreadA.Init(szSharedMemoryName, szMutexName, "A");
+	cThreadB.Init(szSharedMemoryName, szMutexName, "B");
+	cThreadC.Init(szSharedMemoryName, szMutexName, "C");
+	cThreadD.Init(szSharedMemoryName, szMutexName, "D");
+
+	cThreadA.Start();
+	cThreadB.Start();
+	cThreadC.Start();
+	cThreadD.Start();
+
+	for (;;)
+	{
+		bResult = cMutex.Lock();
+		cSharedOwner.Touch();
+
+		puiPosition = (unsigned int*)cSharedOwner.GetMemory();
+		AssertNotNull(puiPosition);
+		uiPosition = *puiPosition;
+		bResult = cMutex.Unlock();
+
+		if (uiPosition == 4 + 16 * 1000)
+		{
+			break;
+		}
+		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+	}
+
+	cThreadA.Kill();
+	cThreadB.Kill();
+	cThreadC.Kill();
+	cThreadD.Kill();
+
+	cSharedOwner.Close();
+	cSharedOwner.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestSharedMemoryResizeMultiProcess(void)
 {
 	CSharedMemory		cSharedOwner;
 	CInterProcessMutex	cMutex;
 	BOOL				bResult;
-	char				szSharedMemoryName[] = { "Local\\TestSharedMemoryTwoProcesses" };
-	char				szMutexName[] = { "Local\\TestMutexTwoProcesses" };
+	char				szSharedMemoryName[] = { "Local\\TestSharedMemoryResizeMultiProcess" };
+	char				szMutexName[] = { "Local\\TestMutexResizeMultiProcess" };
 	unsigned int*		puiPosition;
 	unsigned int		uiPosition;
 
@@ -208,13 +295,13 @@ void TestSharedMemoryResizeMultiProcess(void)
 	
 	for (;;)
 	{
-		cMutex.Lock();
+		bResult = cMutex.Lock();
 		cSharedOwner.Touch();
 
 		puiPosition = (unsigned int*)cSharedOwner.GetMemory();
 		AssertNotNull(puiPosition);
 		uiPosition = *puiPosition;
-		cMutex.Unlock();
+		bResult = cMutex.Unlock();
 
 		if (uiPosition == 4 + 16 * 1000)
 		{
@@ -236,10 +323,11 @@ void TestSharedMemory(void)
 {
 	BeginTests();
 
-	TestSharedMemoryOneProcess();
-	TestSharedMemoryTwoProcesses();
-	TestSharedMemoryResizeOneProcess();
-	TestSharedMemoryResizeMultiProcess();
+	//TestSharedMemoryOneProcess();
+	//TestSharedMemoryTwoProcesses();
+	//TestSharedMemoryResizeOneProcess();
+	TestSharedMemoryResizeMultiThread();
+	//TestSharedMemoryResizeMultiProcess();
 
 	TestStatistics();
 }
