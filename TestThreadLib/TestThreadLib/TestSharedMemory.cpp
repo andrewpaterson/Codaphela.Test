@@ -208,25 +208,27 @@ void TestSharedMemoryResizeMultiThread(void)
 	CSharedMemoryThread		cThreadB;
 	CSharedMemoryThread		cThreadC;
 	CSharedMemoryThread		cThreadD;
+	int						iChunkSize;
 
 	cMutex.Init(szMutexName);
 	bResult = cMutex.Create();
 	AssertTrue(bResult);
+	iChunkSize = 128;
 
 	cSharedOwner.Init(szSharedMemoryName);
-	bResult = cSharedOwner.Create(4 + 16);
+	bResult = cSharedOwner.Create(4 + iChunkSize);
 	AssertTrue(bResult);
 
 	puiPosition = (unsigned int*)cSharedOwner.GetMemory();
 	AssertNotNull(puiPosition);
 
-	memset(puiPosition, 0, 4 + 16);
+	memset(puiPosition, 0, 4 + iChunkSize);
 	*puiPosition = 4;
 
-	cThreadA.Init(szSharedMemoryName, szMutexName, "A");
-	cThreadB.Init(szSharedMemoryName, szMutexName, "B");
-	cThreadC.Init(szSharedMemoryName, szMutexName, "C");
-	cThreadD.Init(szSharedMemoryName, szMutexName, "D");
+	cThreadA.Init(szSharedMemoryName, szMutexName, "A", iChunkSize);
+	cThreadB.Init(szSharedMemoryName, szMutexName, "B", iChunkSize);
+	cThreadC.Init(szSharedMemoryName, szMutexName, "C", iChunkSize);
+	cThreadD.Init(szSharedMemoryName, szMutexName, "D", iChunkSize);
 
 	cThreadA.Start();
 	cThreadB.Start();
@@ -243,7 +245,7 @@ void TestSharedMemoryResizeMultiThread(void)
 		uiPosition = *puiPosition;
 		bResult = cMutex.Unlock();
 
-		if (uiPosition == 4 + 16 * 1000)
+		if (uiPosition == 16004)
 		{
 			break;
 		}
@@ -273,19 +275,21 @@ void TestSharedMemoryResizeMultiProcess(void)
 	char				szMutexName[] = { "Local\\TestMutexResizeMultiProcess" };
 	unsigned int*		puiPosition;
 	unsigned int		uiPosition;
+	int					iChunkSize;
 
 	cMutex.Init(szMutexName);
 	bResult = cMutex.Create();
 	AssertTrue(bResult);
+	iChunkSize = 16;
 
 	cSharedOwner.Init(szSharedMemoryName);
-	bResult = cSharedOwner.Create(4 + 16);
+	bResult = cSharedOwner.Create(4 + iChunkSize);
 	AssertTrue(bResult);
 
 	puiPosition = (unsigned int*)cSharedOwner.GetMemory();
 	AssertNotNull(puiPosition);
 
-	memset(puiPosition, 0, 4 + 16);
+	memset(puiPosition, 0, 4 + iChunkSize);
 	*puiPosition = 4;
 
 	ForkProcess("--test-shared-memory", szSharedMemoryName, szMutexName, "A", FALSE);
@@ -303,7 +307,7 @@ void TestSharedMemoryResizeMultiProcess(void)
 		uiPosition = *puiPosition;
 		bResult = cMutex.Unlock();
 
-		if (uiPosition == 4 + 16 * 1000)
+		if (uiPosition == 16004)
 		{
 			break;
 		}

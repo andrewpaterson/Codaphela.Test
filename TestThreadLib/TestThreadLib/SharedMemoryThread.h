@@ -13,20 +13,23 @@ private:
 	char*	mszMutexName;
 	char*	mszFillChar;
 	int		miResult;
+	int		miChunkSize;
 
 public:
 	CSharedMemoryThread(void) : CThread() {}
 	CSharedMemoryThread(CThreadStarter* pcStarter, CThreadStateNotifer* pcNotify) : CThread(pcStarter, pcNotify) {}
 
-	CSharedMemoryThread* Init(char* szSharedMemoryName, char* szMutexName, char* szFillChar)
+	CSharedMemoryThread* Init(char* szSharedMemoryName, char* szMutexName, char* szFillChar, int iChunkSize)
 	{
 		CThread::Init();
 		this->mszSharedMemoryName = szSharedMemoryName;
 		this->mszMutexName = szMutexName;
 		this->mszFillChar = szFillChar;
 		miResult = 0;
+		miChunkSize = iChunkSize;
 		return this;
 	}
+
 
 	virtual void Run(void)
 	{
@@ -34,6 +37,10 @@ public:
 		BOOL					bResult;
 		CInterProcessMutex		cMutex;
 		unsigned int*			puiPosition;
+		unsigned int			uiStop;
+		void*					pvDest;
+
+		uiStop = 16004;
 
 		cMutex.Init(mszMutexName);
 		cMutex.Connect();
@@ -43,7 +50,7 @@ public:
 		for (;;)
 		{
 			cMutex.Lock();
-			bResult = cSharedClient.Connect();
+			bResult = cSharedClient.Touch();
 			if (!bResult)
 			{
 				cSharedClient.Close();
@@ -63,7 +70,7 @@ public:
 				return;
 			}
 
-			if ((*puiPosition) == 4 + 16 * 1000)
+			if ((*puiPosition) == uiStop)
 			{
 				cSharedClient.Close();
 				cSharedClient.Kill();
@@ -71,12 +78,29 @@ public:
 
 				miResult = 0;
 				return;
-
 			}
 
-			memset(RemapSinglePointer(puiPosition, (*puiPosition)), *mszFillChar, 16);
+			pvDest = RemapSinglePointer(puiPosition, (*puiPosition));
+			CChars sz;
+			sz.Init("Memset [");
+			sz.Append(mszFillChar);
+			sz.Append("] into ");
+			sz.AppendHexHiLo(&puiPosition, 4);
+			sz.Append(" + ");
+			sz.Append(*puiPosition);
+			sz.Dump();
+			sz.Kill();
+			
+			memset(pvDest, *mszFillChar, miChunkSize);
 
-			(*puiPosition) = (*puiPosition) + 16;
+			sz.Init(".  Done\n");
+			sz.Dump();
+			sz.Kill();
+
+			(*puiPosition) = (*puiPosition) + miChunkSize;
+
+			cSharedClient.Resize((*puiPosition) + miChunkSize);
+
 			cMutex.Unlock();
 		}
 	}
