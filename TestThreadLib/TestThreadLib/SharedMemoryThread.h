@@ -34,7 +34,6 @@ public:
 	virtual void Run(void)
 	{
 		CSharedMemory			cSharedClient;
-		BOOL					bResult;
 		CInterProcessMutex		cMutex;
 		unsigned int*			puiPosition;
 		unsigned int			uiStop;
@@ -45,27 +44,19 @@ public:
 		cMutex.Init(mszMutexName);
 		cMutex.Connect();
 
-		cSharedClient.Init(mszSharedMemoryName);
+		cSharedClient.Init(mszSharedMemoryName, mszFillChar);
 
 		for (;;)
 		{
 			cMutex.Lock();
-			bResult = cSharedClient.Touch();
-			if (!bResult)
-			{
-				cSharedClient.Close();
-				cSharedClient.Kill();
-				cMutex.Unlock();
-				miResult = 1;
-				return;
-			}
-
-			puiPosition = (unsigned int*)cSharedClient.GetMemory();
+	
+			puiPosition = (unsigned int*)cSharedClient.Touch();
 			if (puiPosition == NULL)
 			{
 				cSharedClient.Close();
 				cSharedClient.Kill();
 				cMutex.Unlock();
+
 				miResult = 1;
 				return;
 			}

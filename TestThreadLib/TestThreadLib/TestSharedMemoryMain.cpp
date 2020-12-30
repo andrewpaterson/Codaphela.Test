@@ -11,18 +11,12 @@
 int TestSharedMemoryProcessReverse(char* szSharedMemoryName, int iMemorySize)
 {
 	CSharedMemory	cSharedClient;
-	BOOL			bResult;
 	unsigned char* pcClient;
 	int				i;
 	
 	cSharedClient.Init(szSharedMemoryName);
-	bResult = cSharedClient.Connect();
-	if (!bResult)
-	{
-		return 1;
-	}
 
-	pcClient = (unsigned char*)cSharedClient.GetMemory();
+	pcClient = (unsigned char*)cSharedClient.Touch();
 	if (pcClient == NULL)
 	{
 		cSharedClient.Close();
@@ -48,7 +42,6 @@ int TestSharedMemoryProcessReverse(char* szSharedMemoryName, int iMemorySize)
 int TestSharedMemoryProcessFill(char* szSharedMemoryName, char* szMutexName, char* szFillChar)
 {
 	CSharedMemory			cSharedClient;
-	BOOL					bResult;
 	CInterProcessMutex		cMutex;
 	unsigned int*			puiPosition;
 
@@ -60,16 +53,8 @@ int TestSharedMemoryProcessFill(char* szSharedMemoryName, char* szMutexName, cha
 	for (;;)
 	{
 		cMutex.Lock();
-		bResult = cSharedClient.Connect();
-		if (!bResult)
-		{
-			cSharedClient.Close();
-			cSharedClient.Kill();
-			cMutex.Unlock();
-			return 1;
-		}
 
-		puiPosition = (unsigned int*)cSharedClient.GetMemory();
+		puiPosition = (unsigned int*)cSharedClient.Touch();
 		if (puiPosition == NULL)
 		{
 			cSharedClient.Close();

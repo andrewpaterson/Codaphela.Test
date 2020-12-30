@@ -26,7 +26,7 @@ void TestSharedMemoryOneProcess(void)
 	bResult = cSharedOwner.Create(256);
 	AssertTrue(bResult);
 
-	pcOwner = (char*)cSharedOwner.GetMemory();
+	pcOwner = (char*)cSharedOwner.Touch();
 	AssertNotNull(pcOwner);
 
 	for (i = 0; i < 256; i++)
@@ -38,7 +38,7 @@ void TestSharedMemoryOneProcess(void)
 	bResult = cSharedClient.Connect();
 	AssertTrue(bResult);
 
-	pcClient = (char*)cSharedClient.GetMemory();
+	pcClient = (char*)cSharedClient.Touch();
 	AssertNotNull(pcClient);
 
 	for (i = 0; i < 256; i++)
@@ -73,7 +73,7 @@ void TestSharedMemoryResizeOneProcess(void)
 	bResult = cSharedOwner.Create(3940);
 	AssertTrue(bResult);
 
-	pcOwner = (char*)cSharedOwner.GetMemory();
+	pcOwner = (char*)cSharedOwner.Touch();
 	AssertNotNull(pcOwner);
 
 	for (i = 0; i < 3940; i++)
@@ -82,10 +82,9 @@ void TestSharedMemoryResizeOneProcess(void)
 	}
 
 	cSharedClient.Init("Local\\TestSharedMemoryResizeOneProcess");
-	bResult = cSharedClient.Connect();
-	AssertTrue(bResult);
+	pcClient = (char*)cSharedClient.Touch();
+	AssertNotNull(pcClient);
 
-	pcClient = (char*)cSharedClient.GetMemory();
 	AssertNotNull(pcClient);
 	for (i = 0; i < 3940; i++)
 	{
@@ -101,18 +100,14 @@ void TestSharedMemoryResizeOneProcess(void)
 	AssertFalse(bResult);
 	cSharedNewOwner.Kill();
 
-	cSharedClient.Resize(3940 + 16);
-	pcClient = (char*)cSharedClient.GetMemory();
+	pcClient = (char*)cSharedClient.Resize(3940 + 16);
 	AssertNotNull(pcClient);
 	for (i = 0; i < 3940; i++)
 	{
 		AssertChar((char)i, pcClient[i]);
 	}
 
-	bResult = cSharedOwner.Connect();
-	AssertTrue(bResult);
-
-	pcOwner = (char*)cSharedOwner.GetMemory();
+	pcOwner = (char*)cSharedOwner.Touch();
 	AssertNotNull(pcOwner);
 	for (i = 0; i < 3940; i++)
 	{
@@ -138,123 +133,6 @@ void TestSharedMemoryResizeOneProcess(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSharedMemoryResizeOneProcessFill(void)
-{
-	CSharedMemory	cSharedOwner;
-	CSharedMemory	cSharedClient[4];
-	CSharedMemory*	pcSharedClient;
-	BOOL			bResult;
-	char*			pcMemory;
-	int				i;
-	int				iChunkSize;
-	unsigned int*	puiPosition;
-	char			szMemoryName[] = {"Local\\TestSharedMemoryResizeOneProcess"};
-	CRandom			cRandom;
-	unsigned int	uiStop;
-	char			cFillChar;
-	void*			pvDest;
-
-	iChunkSize = 128;
-	uiStop = 16000 + sizeof(int);
-
-	cSharedOwner.Init(szMemoryName);
-	bResult = cSharedOwner.Create(sizeof(int) + iChunkSize);
-	AssertTrue(bResult);
-
-	pcMemory = (char*)cSharedOwner.GetMemory();
-	memset(pcMemory, 0, sizeof(int) + iChunkSize);
-	puiPosition = (unsigned int*)pcMemory;
-	*puiPosition = 4;
-
-	for (i = 0; i < 4; i++)
-	{
-		cSharedClient[i].Init(szMemoryName);
-	}
-
-	cSharedClient[0].Connect();
-	cSharedOwner.Close();
-
-	cRandom.Init(77);
-
-	for (;;)
-	{
-		i = cRandom.Next(0, 3);
-		pcSharedClient = &cSharedClient[i];
-		cFillChar = 'A' + (char)i;
-
-		bResult = pcSharedClient->Touch();
-		if (!bResult)
-		{
-			pcSharedClient->Close();
-			pcSharedClient->Kill();
-			AssertTrue(FALSE);
-			break;
-		}
-
-		puiPosition = (unsigned int*)pcSharedClient->GetMemory();
-		if (puiPosition == NULL)
-		{
-			pcSharedClient->Close();
-			pcSharedClient->Kill();
-			AssertTrue(FALSE);
-			break;
-		}
-
-		if ((*puiPosition) == uiStop)
-		{
-			pcSharedClient->Close();
-			pcSharedClient->Kill();
-			break;
-		}
-
-		pvDest = RemapSinglePointer(puiPosition, (*puiPosition));
-		memset(pvDest, cFillChar, iChunkSize);
-
-		(*puiPosition) = (*puiPosition) + iChunkSize;
-
-		pcSharedClient->Resize((*puiPosition) + iChunkSize);
-	}
-
-	cSharedOwner.Connect();
-	for (i = 0; i < 4; i++)
-	{
-		cSharedClient[i].Close();
-		cSharedClient[i].Kill();
-	}
-
-	CChars	sz;
-	int		iA;
-	int		iB;
-	int		iC;
-	int		iD;
-	pcMemory = (char*)RemapSinglePointer(cSharedOwner.GetMemory(), sizeof(int));
-	for (i = 0; i < 16000 / iChunkSize; i++)
-	{
-		sz.Init();
-		sz.Append(pcMemory, iChunkSize);
-		sz.AppendNewLine();
-
-		iA = sz.Count('A');
-		iB = sz.Count('B');
-		iC = sz.Count('C');
-		iD = sz.Count('D');
-
-		AssertTrue(iA == iChunkSize || iB == iChunkSize || iC == iChunkSize || iD == iChunkSize);
-		AssertTrue(iA + iB + iC + iD == iChunkSize);
-
-		sz.Kill();
-		pcMemory = (char*)RemapSinglePointer(pcMemory, iChunkSize);
-	}
-
-	cSharedOwner.Close();
-	cSharedOwner.Kill();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 void TestSharedMemoryTwoProcesses(void)
 {
 	CSharedMemory	cSharedOwner;
@@ -268,7 +146,7 @@ void TestSharedMemoryTwoProcesses(void)
 	bResult = cSharedOwner.Create(256);
 	AssertTrue(bResult);
 
-	pcOwner = (unsigned char*)cSharedOwner.GetMemory();
+	pcOwner = (unsigned char*)cSharedOwner.Touch();
 	AssertNotNull(pcOwner);
 
 	for (i = 0; i < 256; i++)
@@ -313,6 +191,114 @@ void TestSharedMemoryTwoProcesses(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestSharedMemoryResizeOneProcessFill(void)
+{
+	CSharedMemory	cSharedOwner;
+	CSharedMemory	cSharedClient[4];
+	CSharedMemory* pcSharedClient;
+	BOOL			bResult;
+	char* pcMemory;
+	int				i;
+	int				iChunkSize;
+	unsigned int* puiPosition;
+	char			szMemoryName[] = { "Local\\TestSharedMemoryResizeOneProcessFill" };
+	CRandom			cRandom;
+	unsigned int	uiStop;
+	char			cFillChar;
+	void* pvDest;
+
+	iChunkSize = 128;
+	uiStop = 16000 + sizeof(int);
+
+	cSharedOwner.Init(szMemoryName);
+	bResult = cSharedOwner.Create(sizeof(int) + iChunkSize);
+	AssertTrue(bResult);
+
+	pcMemory = (char*)cSharedOwner.Touch();
+	memset(pcMemory, 0, sizeof(int) + iChunkSize);
+	puiPosition = (unsigned int*)pcMemory;
+	*puiPosition = 4;
+
+	for (i = 0; i < 4; i++)
+	{
+		cSharedClient[i].Init(szMemoryName);
+	}
+
+	cSharedClient[0].Connect();
+	cSharedOwner.Close();
+
+	cRandom.Init(77);
+
+	for (;;)
+	{
+		i = cRandom.Next(0, 3);
+		pcSharedClient = &cSharedClient[i];
+		cFillChar = 'A' + (char)i;
+
+		puiPosition = (unsigned int*)pcSharedClient->Touch();
+		if (puiPosition == NULL)
+		{
+			pcSharedClient->Close();
+			pcSharedClient->Kill();
+			AssertTrue(FALSE);
+			break;
+		}
+
+		if ((*puiPosition) == uiStop)
+		{
+			pcSharedClient->Close();
+			pcSharedClient->Kill();
+			break;
+		}
+
+		pvDest = RemapSinglePointer(puiPosition, (*puiPosition));
+		memset(pvDest, cFillChar, iChunkSize);
+
+		(*puiPosition) = (*puiPosition) + iChunkSize;
+
+		pcSharedClient->Resize((*puiPosition) + iChunkSize);
+	}
+
+	cSharedOwner.Connect();
+	for (i = 0; i < 4; i++)
+	{
+		cSharedClient[i].Close();
+		cSharedClient[i].Kill();
+	}
+
+	CChars	sz;
+	int		iA;
+	int		iB;
+	int		iC;
+	int		iD;
+	pcMemory = (char*)RemapSinglePointer(cSharedOwner.Touch(), sizeof(int));
+	for (i = 0; i < 16000 / iChunkSize; i++)
+	{
+		sz.Init();
+		sz.Append(pcMemory, iChunkSize);
+		sz.AppendNewLine();
+
+		iA = sz.Count('A');
+		iB = sz.Count('B');
+		iC = sz.Count('C');
+		iD = sz.Count('D');
+
+		AssertTrue(iA == iChunkSize || iB == iChunkSize || iC == iChunkSize || iD == iChunkSize);
+		AssertTrue(iA + iB + iC + iD == iChunkSize);
+
+		sz.Kill();
+		pcMemory = (char*)RemapSinglePointer(pcMemory, iChunkSize);
+	}
+
+	cSharedOwner.Close();
+	cSharedOwner.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestSharedMemoryResizeMultiThread(void)
 {
 	CSharedMemory			cSharedOwner;
@@ -327,17 +313,18 @@ void TestSharedMemoryResizeMultiThread(void)
 	CSharedMemoryThread		cThreadC;
 	CSharedMemoryThread		cThreadD;
 	int						iChunkSize;
+	int						i;
 
 	cMutex.Init(szMutexName);
 	bResult = cMutex.Create();
 	AssertTrue(bResult);
-	iChunkSize = 128;
+	iChunkSize = 129;
 
-	cSharedOwner.Init(szSharedMemoryName);
+	cSharedOwner.Init(szSharedMemoryName, "Owner");
 	bResult = cSharedOwner.Create(sizeof(int) + iChunkSize);
 	AssertTrue(bResult);
 
-	puiPosition = (unsigned int*)cSharedOwner.GetMemory();
+	puiPosition = (unsigned int*)cSharedOwner.Touch();
 	AssertNotNull(puiPosition);
 
 	memset(puiPosition, 0, sizeof(int) + iChunkSize);
@@ -353,27 +340,55 @@ void TestSharedMemoryResizeMultiThread(void)
 	cThreadC.Start();
 	cThreadD.Start();
 
+
 	for (;;)
 	{
 		bResult = cMutex.Lock();
-		cSharedOwner.Touch();
 
-		puiPosition = (unsigned int*)cSharedOwner.GetMemory();
+		puiPosition = (unsigned int*)cSharedOwner.Touch();
 		AssertNotNull(puiPosition);
 		uiPosition = *puiPosition;
+
 		bResult = cMutex.Unlock();
 
 		if (uiPosition == 16000 + sizeof(int))
 		{
 			break;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+
+		std::this_thread::sleep_for(std::chrono::microseconds(1));
 	}
 
 	cThreadA.Kill();
 	cThreadB.Kill();
 	cThreadC.Kill();
 	cThreadD.Kill();
+
+	CChars	sz;
+	int		iA;
+	int		iB;
+	int		iC;
+	int		iD;
+	char*	pcMemory;
+
+	pcMemory = (char*)RemapSinglePointer(cSharedOwner.Touch(), sizeof(int));
+	for (i = 0; i < 16000 / iChunkSize; i++)
+	{
+		sz.Init();
+		sz.Append(pcMemory, iChunkSize);
+		sz.AppendNewLine();
+
+		iA = sz.Count('A');
+		iB = sz.Count('B');
+		iC = sz.Count('C');
+		iD = sz.Count('D');
+
+		AssertTrue(iA == iChunkSize || iB == iChunkSize || iC == iChunkSize || iD == iChunkSize);
+		AssertTrue(iA + iB + iC + iD == iChunkSize);
+
+		sz.Kill();
+		pcMemory = (char*)RemapSinglePointer(pcMemory, iChunkSize);
+	}
 
 	cSharedOwner.Close();
 	cSharedOwner.Kill();
@@ -404,7 +419,7 @@ void TestSharedMemoryResizeMultiProcess(void)
 	bResult = cSharedOwner.Create(sizeof(int) + iChunkSize);
 	AssertTrue(bResult);
 
-	puiPosition = (unsigned int*)cSharedOwner.GetMemory();
+	puiPosition = (unsigned int*)cSharedOwner.Touch();
 	AssertNotNull(puiPosition);
 
 	memset(puiPosition, 0, sizeof(int) + iChunkSize);
@@ -418,9 +433,8 @@ void TestSharedMemoryResizeMultiProcess(void)
 	for (;;)
 	{
 		bResult = cMutex.Lock();
-		cSharedOwner.Touch();
 
-		puiPosition = (unsigned int*)cSharedOwner.GetMemory();
+		puiPosition = (unsigned int*)cSharedOwner.Touch();
 		AssertNotNull(puiPosition);
 		uiPosition = *puiPosition;
 		bResult = cMutex.Unlock();
@@ -445,11 +459,11 @@ void TestSharedMemory(void)
 {
 	BeginTests();
 
-	//TestSharedMemoryOneProcess();
-	//TestSharedMemoryTwoProcesses();
-	//TestSharedMemoryResizeOneProcess();
+	TestSharedMemoryOneProcess();
+	TestSharedMemoryTwoProcesses();
+	TestSharedMemoryResizeOneProcess();
 	TestSharedMemoryResizeOneProcessFill();
-	//TestSharedMemoryResizeMultiThread();
+	TestSharedMemoryResizeMultiThread();
 	//TestSharedMemoryResizeMultiProcess();
 
 	TestStatistics();
