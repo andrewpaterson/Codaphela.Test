@@ -40,7 +40,7 @@ public:
 		unsigned int			uiStop;
 		void*					pvDest;
 
-		uiStop = 16004;
+		uiStop = 16000 + sizeof(int);
 
 		cMutex.Init(mszMutexName);
 		cMutex.Connect();

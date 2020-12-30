@@ -1,5 +1,6 @@
 #include <thread>
 #include "BaseLib/Logger.h"
+#include "BaseLib/StdRandom.h"
 #include "ThreadLib/SharedMemory.h"
 #include "ThreadLib/InterProcessMutex.h"
 #include "ThreadLib/ProcessFork.h"
@@ -137,6 +138,123 @@ void TestSharedMemoryResizeOneProcess(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestSharedMemoryResizeOneProcessFill(void)
+{
+	CSharedMemory	cSharedOwner;
+	CSharedMemory	cSharedClient[4];
+	CSharedMemory*	pcSharedClient;
+	BOOL			bResult;
+	char*			pcMemory;
+	int				i;
+	int				iChunkSize;
+	unsigned int*	puiPosition;
+	char			szMemoryName[] = {"Local\\TestSharedMemoryResizeOneProcess"};
+	CRandom			cRandom;
+	unsigned int	uiStop;
+	char			cFillChar;
+	void*			pvDest;
+
+	iChunkSize = 128;
+	uiStop = 16000 + sizeof(int);
+
+	cSharedOwner.Init(szMemoryName);
+	bResult = cSharedOwner.Create(sizeof(int) + iChunkSize);
+	AssertTrue(bResult);
+
+	pcMemory = (char*)cSharedOwner.GetMemory();
+	memset(pcMemory, 0, sizeof(int) + iChunkSize);
+	puiPosition = (unsigned int*)pcMemory;
+	*puiPosition = 4;
+
+	for (i = 0; i < 4; i++)
+	{
+		cSharedClient[i].Init(szMemoryName);
+	}
+
+	cSharedClient[0].Connect();
+	cSharedOwner.Close();
+
+	cRandom.Init(77);
+
+	for (;;)
+	{
+		i = cRandom.Next(0, 3);
+		pcSharedClient = &cSharedClient[i];
+		cFillChar = 'A' + (char)i;
+
+		bResult = pcSharedClient->Touch();
+		if (!bResult)
+		{
+			pcSharedClient->Close();
+			pcSharedClient->Kill();
+			AssertTrue(FALSE);
+			break;
+		}
+
+		puiPosition = (unsigned int*)pcSharedClient->GetMemory();
+		if (puiPosition == NULL)
+		{
+			pcSharedClient->Close();
+			pcSharedClient->Kill();
+			AssertTrue(FALSE);
+			break;
+		}
+
+		if ((*puiPosition) == uiStop)
+		{
+			pcSharedClient->Close();
+			pcSharedClient->Kill();
+			break;
+		}
+
+		pvDest = RemapSinglePointer(puiPosition, (*puiPosition));
+		memset(pvDest, cFillChar, iChunkSize);
+
+		(*puiPosition) = (*puiPosition) + iChunkSize;
+
+		pcSharedClient->Resize((*puiPosition) + iChunkSize);
+	}
+
+	cSharedOwner.Connect();
+	for (i = 0; i < 4; i++)
+	{
+		cSharedClient[i].Close();
+		cSharedClient[i].Kill();
+	}
+
+	CChars	sz;
+	int		iA;
+	int		iB;
+	int		iC;
+	int		iD;
+	pcMemory = (char*)RemapSinglePointer(cSharedOwner.GetMemory(), sizeof(int));
+	for (i = 0; i < 16000 / iChunkSize; i++)
+	{
+		sz.Init();
+		sz.Append(pcMemory, iChunkSize);
+		sz.AppendNewLine();
+
+		iA = sz.Count('A');
+		iB = sz.Count('B');
+		iC = sz.Count('C');
+		iD = sz.Count('D');
+
+		AssertTrue(iA == iChunkSize || iB == iChunkSize || iC == iChunkSize || iD == iChunkSize);
+		AssertTrue(iA + iB + iC + iD == iChunkSize);
+
+		sz.Kill();
+		pcMemory = (char*)RemapSinglePointer(pcMemory, iChunkSize);
+	}
+
+	cSharedOwner.Close();
+	cSharedOwner.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestSharedMemoryTwoProcesses(void)
 {
 	CSharedMemory	cSharedOwner;
@@ -216,14 +334,14 @@ void TestSharedMemoryResizeMultiThread(void)
 	iChunkSize = 128;
 
 	cSharedOwner.Init(szSharedMemoryName);
-	bResult = cSharedOwner.Create(4 + iChunkSize);
+	bResult = cSharedOwner.Create(sizeof(int) + iChunkSize);
 	AssertTrue(bResult);
 
 	puiPosition = (unsigned int*)cSharedOwner.GetMemory();
 	AssertNotNull(puiPosition);
 
-	memset(puiPosition, 0, 4 + iChunkSize);
-	*puiPosition = 4;
+	memset(puiPosition, 0, sizeof(int) + iChunkSize);
+	*puiPosition = sizeof(int);
 
 	cThreadA.Init(szSharedMemoryName, szMutexName, "A", iChunkSize);
 	cThreadB.Init(szSharedMemoryName, szMutexName, "B", iChunkSize);
@@ -245,7 +363,7 @@ void TestSharedMemoryResizeMultiThread(void)
 		uiPosition = *puiPosition;
 		bResult = cMutex.Unlock();
 
-		if (uiPosition == 16004)
+		if (uiPosition == 16000 + sizeof(int))
 		{
 			break;
 		}
@@ -283,14 +401,14 @@ void TestSharedMemoryResizeMultiProcess(void)
 	iChunkSize = 16;
 
 	cSharedOwner.Init(szSharedMemoryName);
-	bResult = cSharedOwner.Create(4 + iChunkSize);
+	bResult = cSharedOwner.Create(sizeof(int) + iChunkSize);
 	AssertTrue(bResult);
 
 	puiPosition = (unsigned int*)cSharedOwner.GetMemory();
 	AssertNotNull(puiPosition);
 
-	memset(puiPosition, 0, 4 + iChunkSize);
-	*puiPosition = 4;
+	memset(puiPosition, 0, sizeof(int) + iChunkSize);
+	*puiPosition = sizeof(int);
 
 	ForkProcess("--test-shared-memory", szSharedMemoryName, szMutexName, "A", FALSE);
 	ForkProcess("--test-shared-memory", szSharedMemoryName, szMutexName, "B", FALSE);
@@ -307,7 +425,7 @@ void TestSharedMemoryResizeMultiProcess(void)
 		uiPosition = *puiPosition;
 		bResult = cMutex.Unlock();
 
-		if (uiPosition == 16004)
+		if (uiPosition == 16000 + sizeof(int))
 		{
 			break;
 		}
@@ -330,9 +448,11 @@ void TestSharedMemory(void)
 	//TestSharedMemoryOneProcess();
 	//TestSharedMemoryTwoProcesses();
 	//TestSharedMemoryResizeOneProcess();
-	TestSharedMemoryResizeMultiThread();
+	TestSharedMemoryResizeOneProcessFill();
+	//TestSharedMemoryResizeMultiThread();
 	//TestSharedMemoryResizeMultiProcess();
 
 	TestStatistics();
 }
+
 
