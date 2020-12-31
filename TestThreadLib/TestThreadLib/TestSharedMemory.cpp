@@ -5,6 +5,7 @@
 #include "ThreadLib/InterProcessMutex.h"
 #include "ThreadLib/ProcessFork.h"
 #include "ThreadLib/Thread.h"
+#include "ThreadLib/ThreadsDone.h"
 #include "TestLib/Assert.h"
 #include "SharedMemoryThread.h"
 
@@ -167,10 +168,9 @@ void TestSharedMemoryResizeOneProcess(void)
 	AssertInt(0, iStillMapped);
 
 	cSharedNewOwner.Init("Local\\TestSharedMemoryResizeOneProcess");
-	gcLogger.SetBreakOnError(FALSE);
 	bResult = cSharedNewOwner.Connect();
-	gcLogger.SetBreakOnError(TRUE);
-	AssertFalse(bResult);
+	AssertTrue(bResult);
+	cSharedNewOwner.Close();
 	cSharedNewOwner.Kill();
 
 	cSharedOwner.Kill();
@@ -273,7 +273,6 @@ void TestSharedMemoryResizeOneProcessFill(void)
 		cSharedClient[i].Init(szMemoryName);
 	}
 
-	cSharedClient[0].Connect();
 	cSharedOwner.Close();
 
 	cRandom.Init(77);
@@ -408,6 +407,7 @@ void TestSharedMemoryResizeMultiThread(void)
 	CSharedMemoryThread		cThreadD;
 	int						iChunkSize;
 	int						i;
+	CThreadsDone			cThreadsDone;
 
 	cMutex.Init(szMutexName);
 	bResult = cMutex.Create();
@@ -424,10 +424,11 @@ void TestSharedMemoryResizeMultiThread(void)
 	memset(puiPosition, 0, sizeof(int) + iChunkSize);
 	*puiPosition = sizeof(int);
 
-	cThreadA.Init(szSharedMemoryName, szMutexName, "A", iChunkSize);
-	cThreadB.Init(szSharedMemoryName, szMutexName, "B", iChunkSize);
-	cThreadC.Init(szSharedMemoryName, szMutexName, "C", iChunkSize);
-	cThreadD.Init(szSharedMemoryName, szMutexName, "D", iChunkSize);
+	cThreadsDone.Init();
+	cThreadA.Init(szSharedMemoryName, szMutexName, "A", iChunkSize)->AddNotifier(&cThreadsDone);
+	cThreadB.Init(szSharedMemoryName, szMutexName, "B", iChunkSize)->AddNotifier(&cThreadsDone);
+	cThreadC.Init(szSharedMemoryName, szMutexName, "C", iChunkSize)->AddNotifier(&cThreadsDone);
+	cThreadD.Init(szSharedMemoryName, szMutexName, "D", iChunkSize)->AddNotifier(&cThreadsDone);
 
 	cThreadA.Start();
 	cThreadB.Start();
@@ -451,6 +452,11 @@ void TestSharedMemoryResizeMultiThread(void)
 		}
 
 		std::this_thread::sleep_for(std::chrono::microseconds(1));
+	}
+
+	while (cThreadsDone.miThreadsStopped < 4)
+	{
+		std::this_thread::yield();
 	}
 
 	cThreadA.Kill();
@@ -565,5 +571,4 @@ void TestSharedMemory(void)
 
 	TestStatistics();
 }
-
 

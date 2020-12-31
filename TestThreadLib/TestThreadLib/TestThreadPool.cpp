@@ -77,7 +77,7 @@ void TestThreadPoolThreadDestroyed(void)
 
 	while(cProducersDone.miThreadsStopped < 32)
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+		std::this_thread::yield();
 	}
 
 	for (i = 0; i < apcConsumers.NumElements(); i++)
@@ -88,7 +88,7 @@ void TestThreadPoolThreadDestroyed(void)
 
 	while (cConsumersDone.miThreadsStopped < 3)
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+		std::this_thread::yield();
 	}
 
 	AssertInt(32000, cTotal.miTotal);

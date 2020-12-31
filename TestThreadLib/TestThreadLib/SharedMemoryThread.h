@@ -64,6 +64,10 @@ public:
 			if ((*puiPosition) == uiStop)
 			{
 				cSharedClient.Close();
+				cMutex.Unlock();
+
+				std::this_thread::sleep_for(std::chrono::milliseconds(16));
+				cMutex.Lock();
 				cSharedClient.Kill();
 				cMutex.Unlock();
 
