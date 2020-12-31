@@ -1,6 +1,6 @@
 #ifndef __SHARED_MEMORY_THREAD_H__
 #define __SHARED_MEMORY_THREAD_H__
-#include "ThreadLib/SharedMemory.h"
+#include "ThreadLib/ResizableSharedMemory.h"
 #include "ThreadLib/InterProcessMutex.h"
 #include "ThreadLib/Thread.h"
 
@@ -33,7 +33,7 @@ public:
 
 	virtual void Run(void)
 	{
-		CSharedMemory			cSharedClient;
+		CResizableSharedMemory			cSharedClient;
 		CInterProcessMutex		cMutex;
 		unsigned int*			puiPosition;
 		unsigned int			uiStop;

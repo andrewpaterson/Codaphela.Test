@@ -1,7 +1,7 @@
 #include <thread>
 #include "BaseLib/Logger.h"
 #include "BaseLib/StdRandom.h"
-#include "ThreadLib/SharedMemory.h"
+#include "ThreadLib/ResizableSharedMemory.h"
 #include "ThreadLib/InterProcessMutex.h"
 #include "ThreadLib/ProcessFork.h"
 #include "ThreadLib/Thread.h"
@@ -17,7 +17,7 @@
 void AssertMappedFile(char* szName, int iExpectedMappedCount)
 {
 	HANDLE			hMapFile;
-	SSharedMemory* psDescriptor;
+	SResizableSharedMemory* psDescriptor;
 
 	hMapFile = OpenFileMapping(
 		FILE_MAP_ALL_ACCESS,
@@ -32,12 +32,12 @@ void AssertMappedFile(char* szName, int iExpectedMappedCount)
 		}
 		else
 		{
-			psDescriptor = (SSharedMemory*)MapViewOfFile(
+			psDescriptor = (SResizableSharedMemory*)MapViewOfFile(
 				hMapFile,
 				FILE_MAP_ALL_ACCESS,
 				0,
 				0,
-				sizeof(SSharedMemory));
+				sizeof(SResizableSharedMemory));
 			AssertInt(psDescriptor->iMapCount, iExpectedMappedCount);
 			UnmapViewOfFile(psDescriptor);
 			CloseHandle(hMapFile);
@@ -60,8 +60,8 @@ void AssertMappedFile(char* szName, int iExpectedMappedCount)
 //////////////////////////////////////////////////////////////////////////
 void TestSharedMemoryOneProcess(void)
 {
-	CSharedMemory	cSharedOwner;
-	CSharedMemory	cSharedClient;
+	CResizableSharedMemory	cSharedOwner;
+	CResizableSharedMemory	cSharedClient;
 	BOOL			bResult;
 	char*			pcOwner;
 	char*			pcClient;
@@ -108,9 +108,9 @@ void TestSharedMemoryOneProcess(void)
 //////////////////////////////////////////////////////////////////////////
 void TestSharedMemoryResizeOneProcess(void)
 {
-	CSharedMemory	cSharedOwner;
-	CSharedMemory	cSharedClient;
-	CSharedMemory	cSharedNewOwner;
+	CResizableSharedMemory	cSharedOwner;
+	CResizableSharedMemory	cSharedClient;
+	CResizableSharedMemory	cSharedNewOwner;
 	BOOL			bResult;
 	char*			pcOwner;
 	char*			pcClient;
@@ -184,7 +184,7 @@ void TestSharedMemoryResizeOneProcess(void)
 //////////////////////////////////////////////////////////////////////////
 void TestSharedMemoryTwoProcesses(void)
 {
-	CSharedMemory	cSharedOwner;
+	CResizableSharedMemory	cSharedOwner;
 	BOOL			bResult;
 	unsigned char*	pcOwner;
 	int				i, j;
@@ -242,9 +242,9 @@ void TestSharedMemoryTwoProcesses(void)
 //////////////////////////////////////////////////////////////////////////
 void TestSharedMemoryResizeOneProcessFill(void)
 {
-	CSharedMemory	cSharedOwner;
-	CSharedMemory	cSharedClient[4];
-	CSharedMemory*	pcSharedClient;
+	CResizableSharedMemory	cSharedOwner;
+	CResizableSharedMemory	cSharedClient[4];
+	CResizableSharedMemory*	pcSharedClient;
 	BOOL			bResult;
 	char*			pcMemory;
 	int				i;
@@ -349,8 +349,8 @@ void TestSharedMemoryResizeOneProcessFill(void)
 //////////////////////////////////////////////////////////////////////////
 void TestSharedMemoryResizeOneProcessResizeAndRelease(void)
 {
-	CSharedMemory	cSharedOwner;
-	CSharedMemory	cSharedClient[4];
+	CResizableSharedMemory	cSharedOwner;
+	CResizableSharedMemory	cSharedClient[4];
 	BOOL			bResult;
 	int				i;
 	char			szMemoryName[] = { "Local\\TestSharedMemoryResizeOneProcessResizeAndRelease" };
@@ -394,7 +394,7 @@ void TestSharedMemoryResizeOneProcessResizeAndRelease(void)
 //////////////////////////////////////////////////////////////////////////
 void TestSharedMemoryResizeMultiThread(void)
 {
-	CSharedMemory			cSharedOwner;
+	CResizableSharedMemory			cSharedOwner;
 	CInterProcessMutex		cMutex;
 	BOOL					bResult;
 	char					szSharedMemoryName[] = { "Local\\TestSharedMemoryResizeMultiThread" };
@@ -501,7 +501,7 @@ void TestSharedMemoryResizeMultiThread(void)
 //////////////////////////////////////////////////////////////////////////
 void TestSharedMemoryResizeMultiProcess(void)
 {
-	CSharedMemory		cSharedOwner;
+	CResizableSharedMemory		cSharedOwner;
 	CInterProcessMutex	cMutex;
 	BOOL				bResult;
 	char				szSharedMemoryName[] = { "Local\\TestSharedMemoryResizeMultiProcess" };

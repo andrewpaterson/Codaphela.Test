@@ -1,6 +1,6 @@
 #include "BaseLib/DebugOutput.h"
 #include "BaseLib/Logger.h"
-#include "ThreadLib/SharedMemory.h"
+#include "ThreadLib/ResizableSharedMemory.h"
 #include "ThreadLib/InterProcessMutex.h"
 
 
@@ -10,7 +10,7 @@
 //////////////////////////////////////////////////////////////////////////
 int TestSharedMemoryProcessReverse(char* szSharedMemoryName, char* szMemorySize)
 {
-	CSharedMemory	cSharedClient;
+	CResizableSharedMemory	cSharedClient;
 	unsigned char*	pcClient;
 	int				i;
 	int				iMemorySize;
@@ -43,7 +43,7 @@ int TestSharedMemoryProcessReverse(char* szSharedMemoryName, char* szMemorySize)
 //////////////////////////////////////////////////////////////////////////
 int TestSharedMemoryProcessFill(char* szSharedMemoryName, char* szMutexName, char* szFillChar, char* szChunkSize, char* szMaxBuffers)
 {
-	CSharedMemory			cSharedClient;
+	CResizableSharedMemory			cSharedClient;
 	CInterProcessMutex		cMutex;
 	unsigned int*			puiPosition;
 	int						iChunkSize;
