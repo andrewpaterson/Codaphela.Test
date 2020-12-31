@@ -17,7 +17,7 @@
 void AssertMappedFile(char* szName, int iExpectedMappedCount)
 {
 	HANDLE			hMapFile;
-	SResizableSharedMemory* psDescriptor;
+	SSharedMemoryDescriptor* psDescriptor;
 
 	hMapFile = OpenFileMapping(
 		FILE_MAP_ALL_ACCESS,
@@ -32,12 +32,12 @@ void AssertMappedFile(char* szName, int iExpectedMappedCount)
 		}
 		else
 		{
-			psDescriptor = (SResizableSharedMemory*)MapViewOfFile(
+			psDescriptor = (SSharedMemoryDescriptor*)MapViewOfFile(
 				hMapFile,
 				FILE_MAP_ALL_ACCESS,
 				0,
 				0,
-				sizeof(SResizableSharedMemory));
+				sizeof(SSharedMemoryDescriptor));
 			AssertInt(psDescriptor->iMapCount, iExpectedMappedCount);
 			UnmapViewOfFile(psDescriptor);
 			CloseHandle(hMapFile);
@@ -245,16 +245,16 @@ void TestSharedMemoryResizeOneProcessFill(void)
 	CResizableSharedMemory	cSharedOwner;
 	CResizableSharedMemory	cSharedClient[4];
 	CResizableSharedMemory*	pcSharedClient;
-	BOOL			bResult;
-	char*			pcMemory;
-	int				i;
-	int				iChunkSize;
-	unsigned int*	puiPosition;
-	char			szMemoryName[] = { "Local\\TestSharedMemoryResizeOneProcessFill" };
-	CRandom			cRandom;
-	unsigned int	uiStop;
-	char			cFillChar;
-	void*			pvDest;
+	BOOL					bResult;
+	char*					pcMemory;
+	int						i;
+	int						iChunkSize;
+	unsigned int*			puiPosition;
+	char					szMemoryName[] = { "Local\\TestSharedMemoryResizeOneProcessFill" };
+	CRandom					cRandom;
+	unsigned int			uiStop;
+	char					cFillChar;
+	void*					pvDest;
 
 	iChunkSize = 128;
 	uiStop = 16000 + sizeof(int);
@@ -351,10 +351,10 @@ void TestSharedMemoryResizeOneProcessResizeAndRelease(void)
 {
 	CResizableSharedMemory	cSharedOwner;
 	CResizableSharedMemory	cSharedClient[4];
-	BOOL			bResult;
-	int				i;
-	char			szMemoryName[] = { "Local\\TestSharedMemoryResizeOneProcessResizeAndRelease" };
-	CRandom			cRandom;
+	BOOL					bResult;
+	int						i;
+	char					szMemoryName[] = { "Local\\TestSharedMemoryResizeOneProcessResizeAndRelease" };
+	CRandom					cRandom;
 
 	cSharedOwner.Init(szMemoryName);
 	bResult = cSharedOwner.Create(3000);
@@ -388,13 +388,14 @@ void TestSharedMemoryResizeOneProcessResizeAndRelease(void)
 	cSharedOwner.Kill();
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
 void TestSharedMemoryResizeMultiThread(void)
 {
-	CResizableSharedMemory			cSharedOwner;
+	CResizableSharedMemory	cSharedOwner;
 	CInterProcessMutex		cMutex;
 	BOOL					bResult;
 	char					szSharedMemoryName[] = { "Local\\TestSharedMemoryResizeMultiThread" };
