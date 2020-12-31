@@ -8,12 +8,14 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-int TestSharedMemoryProcessReverse(char* szSharedMemoryName, int iMemorySize)
+int TestSharedMemoryProcessReverse(char* szSharedMemoryName, char* szMemorySize)
 {
 	CSharedMemory	cSharedClient;
-	unsigned char* pcClient;
+	unsigned char*	pcClient;
 	int				i;
+	int				iMemorySize;
 	
+	iMemorySize = atoi(szMemorySize);
 	cSharedClient.Init(szSharedMemoryName);
 
 	pcClient = (unsigned char*)cSharedClient.Touch();
@@ -39,11 +41,16 @@ int TestSharedMemoryProcessReverse(char* szSharedMemoryName, int iMemorySize)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-int TestSharedMemoryProcessFill(char* szSharedMemoryName, char* szMutexName, char* szFillChar)
+int TestSharedMemoryProcessFill(char* szSharedMemoryName, char* szMutexName, char* szFillChar, char* szChunkSize, char* szMaxBuffers)
 {
 	CSharedMemory			cSharedClient;
 	CInterProcessMutex		cMutex;
 	unsigned int*			puiPosition;
+	int						iChunkSize;
+	int						iMaxBuffers;
+
+	iChunkSize = atoi(szChunkSize);
+	iMaxBuffers = atoi(szMaxBuffers);
 
 	cMutex.Init(szMutexName);
 	cMutex.Connect();
@@ -63,7 +70,7 @@ int TestSharedMemoryProcessFill(char* szSharedMemoryName, char* szMutexName, cha
 			return 1;
 		}
 
-		if ((*puiPosition) == 4 + 16 * 1000)
+		if ((*puiPosition) == 16000 + sizeof(int))
 		{
 			cSharedClient.Close();
 			cSharedClient.Kill();
@@ -72,9 +79,9 @@ int TestSharedMemoryProcessFill(char* szSharedMemoryName, char* szMutexName, cha
 			return 0;
 		}
 
-		memset(RemapSinglePointer(puiPosition, (*puiPosition)), *szFillChar, 16);
+		memset(RemapSinglePointer(puiPosition, (*puiPosition)), *szFillChar, iChunkSize);
 
-		(*puiPosition) = (*puiPosition) + 16;
+		(*puiPosition) = (*puiPosition) + iChunkSize;
 		cMutex.Unlock();
 	}
 }
@@ -88,11 +95,11 @@ int TestSharedMemoryProcessMain(int argc, char* argv[])
 {
 	if (argc == 2)
 	{
-		return TestSharedMemoryProcessReverse(argv[0], atoi(argv[1]));
+		return TestSharedMemoryProcessReverse(argv[0], argv[1]);
 	}
-	else if (argc == 3)
+	else if (argc == 5)
 	{
-		return TestSharedMemoryProcessFill(argv[0], argv[1], argv[2]);
+		return TestSharedMemoryProcessFill(argv[0], argv[1], argv[2], argv[3], argv[4]);
 	}
 	else
 	{
