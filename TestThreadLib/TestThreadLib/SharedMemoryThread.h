@@ -2,6 +2,7 @@
 #define __SHARED_MEMORY_THREAD_H__
 #include "ThreadLib/ResizableSharedMemory.h"
 #include "ThreadLib/InterProcessMutex.h"
+#include "ThreadLib/InterProcessWait.h"
 #include "ThreadLib/Thread.h"
 
 
@@ -22,9 +23,9 @@ public:
 	CSharedMemoryThread* Init(char* szSharedMemoryName, char* szMutexName, char* szFillChar, int iChunkSize)
 	{
 		CThread::Init();
-		this->mszSharedMemoryName = szSharedMemoryName;
-		this->mszMutexName = szMutexName;
-		this->mszFillChar = szFillChar;
+		mszSharedMemoryName = szSharedMemoryName;
+		mszMutexName = szMutexName;
+		mszFillChar = szFillChar;
 		miResult = 0;
 		miChunkSize = iChunkSize;
 		return this;
@@ -33,16 +34,22 @@ public:
 
 	virtual void Run(void)
 	{
-		CResizableSharedMemory			cSharedClient;
+		CResizableSharedMemory	cSharedClient;
 		CInterProcessMutex		cMutex;
 		unsigned int*			puiPosition;
 		unsigned int			uiStop;
 		void*					pvDest;
+		CInterProcessWait		cWait;
+		CChars					sz;
 
 		uiStop = 16000 + sizeof(int);
 
 		cMutex.Init(mszMutexName);
 		cMutex.Connect();
+
+		sz.Init(mszSharedMemoryName)->Append(":W");
+		cWait.Init(sz.Text());
+		sz.Kill();
 
 		cSharedClient.Init(mszSharedMemoryName, mszFillChar);
 
@@ -56,6 +63,7 @@ public:
 				cSharedClient.Close();
 				cSharedClient.Kill();
 				cMutex.Unlock();
+				cWait.Kill();
 
 				miResult = 1;
 				return;
@@ -66,7 +74,9 @@ public:
 				cSharedClient.Close();
 				cMutex.Unlock();
 
-				std::this_thread::sleep_for(std::chrono::milliseconds(16));
+				cWait.Wait();
+				cWait.Kill();
+
 				cMutex.Lock();
 				cSharedClient.Kill();
 				cMutex.Unlock();
@@ -76,21 +86,8 @@ public:
 			}
 
 			pvDest = RemapSinglePointer(puiPosition, (*puiPosition));
-			CChars sz;
-			sz.Init("Memset [");
-			sz.Append(mszFillChar);
-			sz.Append("] into ");
-			sz.AppendHexHiLo(&puiPosition, 4);
-			sz.Append(" + ");
-			sz.Append(*puiPosition);
-			sz.Dump();
-			sz.Kill();
-			
-			memset(pvDest, *mszFillChar, miChunkSize);
 
-			sz.Init(".  Done\n");
-			sz.Dump();
-			sz.Kill();
+			memset(pvDest, *mszFillChar, miChunkSize);
 
 			(*puiPosition) = (*puiPosition) + miChunkSize;
 
