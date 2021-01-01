@@ -4,6 +4,8 @@
 #include "ThreadLib/ResizableSharedMemory.h"
 #include "ThreadLib/InterProcessMutex.h"
 #include "ThreadLib/ProcessFork.h"
+#include "ThreadLib/InterProcessHold.h"
+#include "ThreadLib/InterProcessDone.h"
 #include "ThreadLib/Thread.h"
 #include "ThreadLib/ThreadsDone.h"
 #include "TestLib/Assert.h"
@@ -240,6 +242,53 @@ void TestSharedMemoryTwoProcesses(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void AssertFilledMemory(char* pcMemory, int iChunkSize)
+{
+	int		iA;
+	int		iB;
+	int		iC;
+	int		iD;
+	BOOL	bOneEqualsChunkSize;
+	BOOL	bSumEqualsChunkSize;
+	int		i;
+	CChars	sz;
+
+	bOneEqualsChunkSize = TRUE;
+	bSumEqualsChunkSize = TRUE;
+
+	for (i = 0; i < 16000 / iChunkSize; i++)
+	{
+		sz.Init();
+		sz.Append(pcMemory, iChunkSize);
+		sz.AppendNewLine();
+
+		iA = sz.Count('A');
+		iB = sz.Count('B');
+		iC = sz.Count('C');
+		iD = sz.Count('D');
+		sz.Kill();
+
+		bOneEqualsChunkSize = (iA == iChunkSize || iB == iChunkSize || iC == iChunkSize || iD == iChunkSize);
+		bSumEqualsChunkSize = (iA + iB + iC + iD == iChunkSize);
+
+		if (!bOneEqualsChunkSize || !bSumEqualsChunkSize)
+		{
+			break;
+		}
+
+		pcMemory = (char*)RemapSinglePointer(pcMemory, iChunkSize);
+	}
+
+	AssertTrue(bOneEqualsChunkSize);
+	AssertTrue(bSumEqualsChunkSize);
+	Pass();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestSharedMemoryResizeOneProcessFill(void)
 {
 	CResizableSharedMemory	cSharedOwner;
@@ -314,29 +363,8 @@ void TestSharedMemoryResizeOneProcessFill(void)
 		cSharedClient[i].Kill();
 	}
 
-	CChars	sz;
-	int		iA;
-	int		iB;
-	int		iC;
-	int		iD;
 	pcMemory = (char*)RemapSinglePointer(cSharedOwner.Touch(), sizeof(int));
-	for (i = 0; i < 16000 / iChunkSize; i++)
-	{
-		sz.Init();
-		sz.Append(pcMemory, iChunkSize);
-		sz.AppendNewLine();
-
-		iA = sz.Count('A');
-		iB = sz.Count('B');
-		iC = sz.Count('C');
-		iD = sz.Count('D');
-
-		AssertTrue(iA == iChunkSize || iB == iChunkSize || iC == iChunkSize || iD == iChunkSize);
-		AssertTrue(iA + iB + iC + iD == iChunkSize);
-
-		sz.Kill();
-		pcMemory = (char*)RemapSinglePointer(pcMemory, iChunkSize);
-	}
+	AssertFilledMemory(pcMemory, iChunkSize);
 
 	cSharedOwner.Close();
 	cSharedOwner.Kill();
@@ -407,12 +435,9 @@ void TestSharedMemoryResizeMultiThread(void)
 	CSharedMemoryThread		cThreadC;
 	CSharedMemoryThread		cThreadD;
 	int						iChunkSize;
-	int						i;
-	CThreadsDone			cThreadsDone;
-	CInterProcessWait		cWait;
-	CChars					sz;
-	BOOL					bOneEqualsChunkSize;
-	BOOL					bSumEqualsChunkSize;
+	CInterProcessHold		cHold;
+	CInterProcessDone		cDone;
+	char*					pcMemory;
 
 	cMutex.Init(szMutexName);
 	bResult = cMutex.Create();
@@ -429,17 +454,16 @@ void TestSharedMemoryResizeMultiThread(void)
 	memset(puiPosition, 0, sizeof(int) + iChunkSize);
 	*puiPosition = sizeof(int);
 
-	cThreadsDone.Init();
-	cThreadA.Init(szSharedMemoryName, szMutexName, "A", iChunkSize)->AddNotifier(&cThreadsDone);
-	cThreadB.Init(szSharedMemoryName, szMutexName, "B", iChunkSize)->AddNotifier(&cThreadsDone);
-	cThreadC.Init(szSharedMemoryName, szMutexName, "C", iChunkSize)->AddNotifier(&cThreadsDone);
-	cThreadD.Init(szSharedMemoryName, szMutexName, "D", iChunkSize)->AddNotifier(&cThreadsDone);
+	cThreadA.Init(szSharedMemoryName, szMutexName, "A", iChunkSize);
+	cThreadB.Init(szSharedMemoryName, szMutexName, "B", iChunkSize);
+	cThreadC.Init(szSharedMemoryName, szMutexName, "C", iChunkSize);
+	cThreadD.Init(szSharedMemoryName, szMutexName, "D", iChunkSize);
 
-	sz.Init(szSharedMemoryName)->Append(":W");
-	cWait.Init(sz.Text());
-	sz.Kill();
+	cHold.Init(szSharedMemoryName, ":H");
+	cHold.Start();
 
-	cWait.Start();
+	cDone.Init(szSharedMemoryName, ":D");
+	cDone.Start();
 
 	cThreadA.Start();
 	cThreadB.Start();
@@ -451,7 +475,10 @@ void TestSharedMemoryResizeMultiThread(void)
 		bResult = cMutex.Lock();
 
 		puiPosition = (unsigned int*)cSharedOwner.Touch();
-		AssertNotNull(puiPosition);
+		if (!puiPosition)
+		{
+			AssertNotNull(puiPosition);
+		}
 		uiPosition = *puiPosition;
 
 		bResult = cMutex.Unlock();
@@ -461,57 +488,21 @@ void TestSharedMemoryResizeMultiThread(void)
 			break;
 		}
 
-		std::this_thread::sleep_for(std::chrono::microseconds(1));
-	}
-
-	cWait.Stop();
-	while (cThreadsDone.miThreadsStopped < 4)
-	{
 		std::this_thread::yield();
 	}
-	cWait.Kill();
+
+	cHold.Stop();
+	cDone.Wait(4);
+	cHold.Kill();
+	cDone.Kill();
 
 	cThreadA.Kill();
 	cThreadB.Kill();
 	cThreadC.Kill();
 	cThreadD.Kill();
 
-	int		iA;
-	int		iB;
-	int		iC;
-	int		iD;
-	char*	pcMemory;
-
 	pcMemory = (char*)RemapSinglePointer(cSharedOwner.Touch(), sizeof(int));
-
-	bOneEqualsChunkSize = TRUE;
-	bSumEqualsChunkSize = TRUE;
-
-	for (i = 0; i < 16000 / iChunkSize; i++)
-	{
-		sz.Init();
-		sz.Append(pcMemory, iChunkSize);
-		sz.AppendNewLine();
-
-		iA = sz.Count('A');
-		iB = sz.Count('B');
-		iC = sz.Count('C');
-		iD = sz.Count('D');
-		sz.Kill();
-
-		bOneEqualsChunkSize = (iA == iChunkSize || iB == iChunkSize || iC == iChunkSize || iD == iChunkSize);
-		bSumEqualsChunkSize = (iA + iB + iC + iD == iChunkSize);
-
-		if (!bOneEqualsChunkSize || !bSumEqualsChunkSize)
-		{
-			break;
-		}
-
-		pcMemory = (char*)RemapSinglePointer(pcMemory, iChunkSize);
-	}
-
-	AssertTrue(bOneEqualsChunkSize);
-	AssertTrue(bSumEqualsChunkSize);
+	AssertFilledMemory(pcMemory, iChunkSize);
 
 	cSharedOwner.Close();
 	cSharedOwner.Kill();
@@ -540,14 +531,17 @@ void TestSharedMemoryResizeMultiThreadRepeat(int iIterations)
 void TestSharedMemoryResizeMultiProcess(void)
 {
 	CResizableSharedMemory		cSharedOwner;
-	CInterProcessMutex	cMutex;
-	BOOL				bResult;
-	char				szSharedMemoryName[] = { "Local\\TestSharedMemoryResizeMultiProcess" };
-	char				szMutexName[] = { "Local\\TestMutexResizeMultiProcess" };
-	unsigned int*		puiPosition;
-	unsigned int		uiPosition;
-	int					iChunkSize;
-	char				szChunkSize[16];
+	CInterProcessMutex			cMutex;
+	BOOL						bResult;
+	char						szSharedMemoryName[] = { "Local\\TestSharedMemoryResizeMultiProcess" };
+	char						szMutexName[] = { "Local\\TestMutexResizeMultiProcess" };
+	unsigned int*				puiPosition;
+	unsigned int				uiPosition;
+	int							iChunkSize;
+	char						szChunkSize[16];
+	CInterProcessHold			cHold;
+	CInterProcessDone			cDone;
+	char*						pcMemory;
 
 	cMutex.Init(szMutexName);
 	bResult = cMutex.Create();
@@ -555,7 +549,7 @@ void TestSharedMemoryResizeMultiProcess(void)
 	iChunkSize = 16;
 	IToA(iChunkSize, szChunkSize);
 
-	cSharedOwner.Init(szSharedMemoryName);
+	cSharedOwner.Init(szSharedMemoryName, "Owner");
 	bResult = cSharedOwner.Create(sizeof(int) + iChunkSize);
 	AssertTrue(bResult);
 
@@ -564,6 +558,12 @@ void TestSharedMemoryResizeMultiProcess(void)
 
 	memset(puiPosition, 0, sizeof(int) + iChunkSize);
 	*puiPosition = sizeof(int);
+
+	cHold.Init(szSharedMemoryName, ":H");
+	cHold.Start();
+
+	cDone.Init(szSharedMemoryName, ":D");
+	cDone.Start();
 
 	ForkProcess("--test-shared-memory", szSharedMemoryName, szMutexName, "A", szChunkSize, FALSE);
 	ForkProcess("--test-shared-memory", szSharedMemoryName, szMutexName, "B", szChunkSize, FALSE);
@@ -575,19 +575,48 @@ void TestSharedMemoryResizeMultiProcess(void)
 		bResult = cMutex.Lock();
 
 		puiPosition = (unsigned int*)cSharedOwner.Touch();
-		AssertNotNull(puiPosition);
+		if (!puiPosition)
+		{
+			AssertNotNull(puiPosition);
+		}
 		uiPosition = *puiPosition;
+
 		bResult = cMutex.Unlock();
 
 		if (uiPosition == 16000 + sizeof(int))
 		{
 			break;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+
+		std::this_thread::yield();
 	}
+
+	cHold.Stop();
+	cDone.Wait(4);
+
+	cHold.Kill();
+	cDone.Kill();
+
+	pcMemory = (char*)RemapSinglePointer(cSharedOwner.Touch(), sizeof(int));
+	AssertFilledMemory(pcMemory, iChunkSize);
 
 	cSharedOwner.Close();
 	cSharedOwner.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSharedMemoryResizeMultiProcessRepeat(int iIterations)
+{
+	int i;
+
+	for (i = 0; i < iIterations; i++)
+	{
+		TestSharedMemoryResizeMultiProcess();
+	}
 }
 
 
@@ -599,13 +628,14 @@ void TestSharedMemory(void)
 {
 	BeginTests();
 
-	TestSharedMemoryOneProcess();
-	TestSharedMemoryTwoProcesses();
-	TestSharedMemoryResizeOneProcess();
-	TestSharedMemoryResizeOneProcessFill();
-	TestSharedMemoryResizeOneProcessResizeAndRelease();
+	//TestSharedMemoryOneProcess();
+	//TestSharedMemoryTwoProcesses();
+	//TestSharedMemoryResizeOneProcess();
+	//TestSharedMemoryResizeOneProcessFill();
+	//TestSharedMemoryResizeOneProcessResizeAndRelease();
 	TestSharedMemoryResizeMultiThreadRepeat(100);
-	//TestSharedMemoryResizeMultiProcess();
+	std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	TestSharedMemoryResizeMultiProcessRepeat(100);
 
 	TestStatistics();
 }

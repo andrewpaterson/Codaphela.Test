@@ -69,6 +69,9 @@
     <ClCompile Include="TestSharedMemoryMain.cpp">
       <Filter>Source\SharedMemory</Filter>
     </ClCompile>
+    <ClCompile Include="SharedMemoryFill.cpp">
+      <Filter>Source\SharedMemory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Producer.h">
@@ -78,6 +81,9 @@
       <Filter>Source\Thread</Filter>
     </ClInclude>
     <ClInclude Include="SharedMemoryThread.h">
+      <Filter>Source\SharedMemory</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedMemoryFill.h">
       <Filter>Source\SharedMemory</Filter>
     </ClInclude>
   </ItemGroup>

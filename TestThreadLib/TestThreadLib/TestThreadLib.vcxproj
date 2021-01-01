@@ -108,6 +108,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SharedMemoryFill.cpp" />
     <ClCompile Include="TestProcessForkMain.cpp" />
     <ClCompile Include="TestMainProcessDirector.cpp" />
     <ClCompile Include="TestProcessFork.cpp" />
@@ -136,6 +137,7 @@
   <ItemGroup>
     <ClInclude Include="Consumer.h" />
     <ClInclude Include="Producer.h" />
+    <ClInclude Include="SharedMemoryFill.h" />
     <ClInclude Include="SharedMemoryThread.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,7 +1,8 @@
 #include "BaseLib/DebugOutput.h"
 #include "BaseLib/Logger.h"
 #include "ThreadLib/ResizableSharedMemory.h"
-#include "ThreadLib/InterProcessMutex.h"
+#include "ThreadLib/InterProcessDone.h"
+#include "SharedMemoryFill.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -41,49 +42,14 @@ int TestSharedMemoryProcessReverse(char* szSharedMemoryName, char* szMemorySize)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-int TestSharedMemoryProcessFill(char* szSharedMemoryName, char* szMutexName, char* szFillChar, char* szChunkSize, char* szMaxBuffers)
+int TestSharedMemoryProcessFill(char* szSharedMemoryName, char* szMutexName, char* szFillChar, char* szChunkSize)
 {
-	CResizableSharedMemory			cSharedClient;
-	CInterProcessMutex		cMutex;
-	unsigned int*			puiPosition;
-	int						iChunkSize;
-	int						iMaxBuffers;
+	CSharedMemoryFill	cFill;
+	
+	cFill.Init(szSharedMemoryName, szMutexName, szFillChar, atoi(szChunkSize));
+	cFill.Run();
 
-	iChunkSize = atoi(szChunkSize);
-	iMaxBuffers = atoi(szMaxBuffers);
-
-	cMutex.Init(szMutexName);
-	cMutex.Connect();
-
-	cSharedClient.Init(szSharedMemoryName);
-
-	for (;;)
-	{
-		cMutex.Lock();
-
-		puiPosition = (unsigned int*)cSharedClient.Touch();
-		if (puiPosition == NULL)
-		{
-			cSharedClient.Close();
-			cSharedClient.Kill();
-			cMutex.Unlock();
-			return 1;
-		}
-
-		if ((*puiPosition) == 16000 + sizeof(int))
-		{
-			cSharedClient.Close();
-			cSharedClient.Kill();
-			cMutex.Unlock();
-
-			return 0;
-		}
-
-		memset(RemapSinglePointer(puiPosition, (*puiPosition)), *szFillChar, iChunkSize);
-
-		(*puiPosition) = (*puiPosition) + iChunkSize;
-		cMutex.Unlock();
-	}
+	return cFill.miResult;
 }
 
 
@@ -97,9 +63,9 @@ int TestSharedMemoryProcessMain(int argc, char* argv[])
 	{
 		return TestSharedMemoryProcessReverse(argv[0], argv[1]);
 	}
-	else if (argc == 5)
+	else if (argc == 4)
 	{
-		return TestSharedMemoryProcessFill(argv[0], argv[1], argv[2], argv[3], argv[4]);
+		return TestSharedMemoryProcessFill(argv[0], argv[1], argv[2], argv[3]);
 	}
 	else
 	{
