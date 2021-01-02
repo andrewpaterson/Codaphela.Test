@@ -72,6 +72,9 @@
     <ClCompile Include="SharedMemoryFill.cpp">
       <Filter>Source\SharedMemory</Filter>
     </ClCompile>
+    <ClCompile Include="TestSharedMemoryQueue.cpp">
+      <Filter>Source\SharedMemory</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Producer.h">

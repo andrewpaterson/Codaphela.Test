@@ -150,7 +150,7 @@ void TestSharedMemoryResizeOneProcess(void)
 	AssertFalse(bResult);
 	cSharedNewOwner.Kill();
 
-	pcClient = (char*)cSharedClient.Resize(3940 + 16);
+	pcClient = (char*)cSharedClient.Resize(3940 + 16).pvMemory;
 	AssertNotNull(pcClient);
 	for (i = 0; i < 3940; i++)
 	{
@@ -628,11 +628,11 @@ void TestSharedMemory(void)
 {
 	BeginTests();
 
-	//TestSharedMemoryOneProcess();
-	//TestSharedMemoryTwoProcesses();
-	//TestSharedMemoryResizeOneProcess();
-	//TestSharedMemoryResizeOneProcessFill();
-	//TestSharedMemoryResizeOneProcessResizeAndRelease();
+	TestSharedMemoryOneProcess();
+	TestSharedMemoryTwoProcesses();
+	TestSharedMemoryResizeOneProcess();
+	TestSharedMemoryResizeOneProcessFill();
+	TestSharedMemoryResizeOneProcessResizeAndRelease();
 	TestSharedMemoryResizeMultiThreadRepeat(100);
 	std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	TestSharedMemoryResizeMultiProcessRepeat(100);

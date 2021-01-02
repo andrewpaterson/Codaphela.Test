@@ -115,6 +115,7 @@
     <ClCompile Include="TestSafeLinkedListBlock.cpp" />
     <ClCompile Include="TestSharedMemory.cpp" />
     <ClCompile Include="TestSharedMemoryMain.cpp" />
+    <ClCompile Include="TestSharedMemoryQueue.cpp" />
     <ClCompile Include="TestThread.cpp" />
     <ClCompile Include="TestThreadPool.cpp" />
     <ClCompile Include="VitaliyVitsentiyExample.cpp" />

@@ -18,6 +18,7 @@ void TestThread(void);
 void TestThreadPool(void);
 void TestProcessFork(void);
 void TestSharedMemory(void);
+void TestSharedMemoryQueue(void);
 
 
 int TestThreadLib(int argc, char* argv[])
@@ -27,13 +28,14 @@ int TestThreadLib(int argc, char* argv[])
 	InitTotalStatistics();
 
 	TestMainProcessDirector(argc, argv);
-	TestReferences();
-	TestThread();
-	TestVitsenityThreadPool();
-	TestSafeArrayBlock();
-	TestThreadPool();
-	TestProcessFork();
-	TestSharedMemory();
+	//TestReferences();
+	//TestThread();
+	//TestVitsenityThreadPool();
+	//TestSafeArrayBlock();
+	//TestThreadPool();
+	//TestProcessFork();
+	//TestSharedMemory();
+	TestSharedMemoryQueue();
 
 	iResult = TestTotalStatistics();
 	return iResult;

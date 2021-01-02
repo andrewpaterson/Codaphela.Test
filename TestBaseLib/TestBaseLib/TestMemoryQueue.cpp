@@ -201,6 +201,103 @@ void TestMemoryQueuePeek(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMemoryQueueRemap(void)
+{
+	CMemoryQueue	cQueue;
+	void*			pvQueue;
+	void*			pvA;
+	char			c;
+	size_t			uiQueueSize;
+	void*			pv;
+	int				iExpectedCount;
+	size_t			uiExpectedAllocatedSize;
+	int				i;
+
+	pvQueue = malloc(8 KB);
+	cQueue.Init(pvQueue, 32);
+
+	pvA = PushElement(&cQueue, 20, 'A');
+	cQueue.Remap(pvQueue, 96);
+	AssertTrue(cQueue.ValidateCache());
+	AssertInt(1, cQueue.NumElements());
+
+	PushElement(&cQueue, 20, 'B');
+	AssertTrue(cQueue.ValidateCache());
+	AssertInt(2, cQueue.NumElements());
+
+	cQueue.Remap(pvQueue, 128);
+	AssertTrue(cQueue.ValidateCache());
+	AssertInt(2, cQueue.NumElements());
+
+	cQueue.Drop(pvA);
+	PushElement(&cQueue, 20, 'C');
+	cQueue.Remap(pvQueue, 160);
+
+	PushElement(&cQueue, 20, 'D');
+	PushElement(&cQueue, 20, 'E');
+	PushElement(&cQueue, 20, 'F');
+	AssertInt(5, cQueue.NumElements());
+	Pass();
+
+	cQueue.Remap(pvQueue, 256);
+	cQueue.ValidateCache();
+	AssertInt(5, cQueue.NumElements());
+	AssertInt(256, cQueue.GetCacheSize());
+	AssertInt(160, cQueue.GetAllocatedSize());
+
+	iExpectedCount = 5;
+	uiExpectedAllocatedSize = 160;
+	c = 'F' + 1;
+	uiQueueSize = 256 + 32;
+	for (;;)
+	{
+		cQueue.Pop();
+		if (!PushElement(&cQueue, 20, c))
+		{
+			break;
+		}
+		if (!PushElement(&cQueue, 20, c + 1))
+		{
+			break;
+		}
+		AssertTrue(cQueue.ValidateCache());
+		uiExpectedAllocatedSize += 32;
+		iExpectedCount++;
+
+		cQueue.Remap(pvQueue, uiQueueSize);
+		AssertTrue(cQueue.ValidateCache());
+
+		AssertInt(iExpectedCount, cQueue.NumElements());
+		AssertInt(uiExpectedAllocatedSize, cQueue.GetAllocatedSize());
+
+		c = c + 2;
+		uiQueueSize += 16;
+	}
+
+	AssertInt(368, cQueue.GetCacheSize());
+	AssertInt(11, cQueue.NumElements());
+
+	for (i = 0; i < 11; i++)
+	{
+		pv = cQueue.Peek(NULL);
+		AssertQueueElement(&cQueue, pv, 20, 'I' + (char)i);
+		cQueue.Drop(pv);
+
+		AssertTrue(cQueue.ValidateCache());
+	}
+
+	pv = cQueue.Peek(NULL);
+	AssertNull(pv);
+
+	cQueue.Kill();
+	free(pvQueue);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMemoryQueue(void)
 {
 	BeginTests();
@@ -208,6 +305,7 @@ void TestMemoryQueue(void)
 
 	TestMemoryQueuePush();
 	TestMemoryQueuePeek();
+	TestMemoryQueueRemap();
 
 	FastFunctionsKill();
 	TestStatistics();
