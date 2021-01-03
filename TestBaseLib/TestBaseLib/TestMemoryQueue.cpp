@@ -20,15 +20,13 @@ void FillQueueElement(void* pvData, size_t uiSize, char c)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertQueueElement(CMemoryQueue* pcQueue, void* pvData, int iDataSize, char cExpected)
+void AssertQueueElement(CMemoryQueue* pcQueue, void* pvData, size_t iDataSize, char cExpected)
 {
 	char*						szData;
 	CChars						szExpected;
-	SMemoryCacheDescriptor*		psDescriptor;
 
-	psDescriptor = pcQueue->GetDescriptor(pvData);
 
-	AssertInt(iDataSize, psDescriptor->uiSize);
+	AssertInt(iDataSize, pcQueue->GetSize(pvData));
 
 	szData = (char*)pvData;
 	szExpected.Init();

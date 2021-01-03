@@ -3,7 +3,6 @@
 #include "BaseLib/Define.h"
 #include "BaseLib/TypeConverter.h"
 #include "TestLib/Assert.h"
-#include "TestLib/IntelTimer.h"
 
 
 //////////////////////////////////////////////////////////////////////////
