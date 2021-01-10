@@ -499,17 +499,17 @@ void TestMemoryCachePreallocate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMemoryCacheReallocate(void)
 {
-	CMemoryCache			cCache;
-	void*					pvA;
-	void*					pvB;
-	void*					pvC;
-	void*					pvD;
-	void*					pvE;
-	void*					pvF;
-	void*					pvG;
-	void*					pvH;
-	void*					pvI;
-	void*					psIter;
+	CMemoryCache	cCache;
+	void*			pvA;
+	void*			pvB;
+	void*			pvC;
+	void*			pvD;
+	void*			pvE;
+	void*			pvF;
+	void*			pvG;
+	void*			pvH;
+	void*			pvI;
+	void*			psIter;
 
 	cCache.Init(128, NULL);
 
