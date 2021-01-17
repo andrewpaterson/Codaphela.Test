@@ -5,8 +5,11 @@
 #include "ThreadLib/InterProcessMutex.h"
 #include "ThreadLib/ProcessFork.h"
 #include "ThreadLib/SharedMemoryQueue.h"
+#include "ThreadLib/ThreadPool.h"
+#include "ThreadLib/ThreadsDone.h"
 #include "TestLib/Assert.h"
-//#include "SharedMemoryQueueThread.h"
+#include "SharedMemoryQueueProducerThread.h"
+#include "SharedMemoryQueueConsumerThread.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -21,7 +24,7 @@ void TestSharedMemoryQueueBasic(void)
 	char				szData[4 KB];
 	size_t				uiDataSize;
 
-	bResult = cQueue.Init("Test", 20 + sizeof(SMemoryCacheDescriptor));
+	bResult = cQueue.Init("TestSharedMemoryQueueBasic", 20 + sizeof(SMemoryCacheDescriptor));
 	AssertTrue(bResult);
 	AssertTrue(cQueue.IsEmpty());
 	AssertInt(32, cQueue.GetCacheSize());
@@ -101,7 +104,6 @@ void TestSharedMemoryQueueOne(void)
 	int					iTaken;
 	CChars				szExpected;
 	CChars				szActual;
-
 
 	cQueueProducer.Init("TestSharedMemoryQueueOne", 0);
 	for (i = 0; i < 4; i++)
@@ -210,6 +212,45 @@ void TestSharedMemoryQueueOne(void)
 //////////////////////////////////////////////////////////////////////////
 void TestSharedMemoryQueueMultiThread(void)
 {
+	CSharedMemoryQueueProducerThread*	pcProducer;
+	CSharedMemoryQueueConsumerThread*	pcConsumer1;
+	CSharedMemoryQueueConsumerThread*	pcConsumer2;
+	CSharedMemoryQueueConsumerThread*	pcConsumer3;
+	CSharedMemoryQueueConsumerThread*	pcConsumer4;
+	CThreadPool							cPool;
+	CThreadsDone						cProducersDone;
+	CThreadsDone						cConsumersDone;
+
+	cPool.Init();
+
+	cProducersDone.Init();
+	cConsumersDone.Init();
+
+	pcProducer = cPool.Add<CSharedMemoryQueueProducerThread>()->Init("TestSharedMemoryQueueMultiThread");
+	pcProducer->AddNotifier(&cProducersDone);
+
+	pcConsumer1 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init("TestSharedMemoryQueueMultiThread", &cProducersDone);
+	pcConsumer1->AddNotifier(&cConsumersDone);
+	pcConsumer2 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init("TestSharedMemoryQueueMultiThread", &cProducersDone);
+	pcConsumer2->AddNotifier(&cConsumersDone);
+	pcConsumer3 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init("TestSharedMemoryQueueMultiThread", &cProducersDone);
+	pcConsumer3->AddNotifier(&cConsumersDone);
+	pcConsumer4 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init("TestSharedMemoryQueueMultiThread", &cProducersDone);
+	pcConsumer4->AddNotifier(&cConsumersDone);
+
+	pcProducer->Start();
+	pcConsumer1->Start();
+	pcConsumer2->Start();
+	pcConsumer3->Start();
+	pcConsumer4->Start();
+	
+
+	while ((cProducersDone.miThreadsStopped < 1) && (cConsumersDone.miThreadsStopped < 4))
+	{
+		std::this_thread::yield();
+	}
+
+	cPool.Kill();
 }
 
 
@@ -230,8 +271,8 @@ void TestSharedMemoryQueue(void)
 {
 	BeginTests();
 
-	TestSharedMemoryQueueBasic();
-	TestSharedMemoryQueueOne();
+	//TestSharedMemoryQueueBasic();
+	//TestSharedMemoryQueueOne();
 	TestSharedMemoryQueueMultiThread();
 	TestSharedMemoryQueueMultiProcess();
 

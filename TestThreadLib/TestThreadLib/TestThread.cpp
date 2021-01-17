@@ -95,6 +95,7 @@ void TestThreadInThreadPool(void)
 
 	iTotalResult = 0;
 
+	//You should probably write this test.
 
 	cPool.Kill();
 }

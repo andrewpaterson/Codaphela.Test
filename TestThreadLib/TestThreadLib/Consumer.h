@@ -1,5 +1,5 @@
-#ifndef __CONSUMER_H__
-#define __CONSUMER_H__
+#ifndef __POOL_CONSUMER_THREAD_H__
+#define __POOL_CONSUMER_THREAD_H__
 #include "ThreadLib/Thread.h"
 #include "ThreadLib/SafeArrayBlock.h"
 
@@ -45,5 +45,5 @@ public:
 };
 
 
-#endif // __CONSUMER_H__
+#endif // __POOL_CONSUMER_THREAD_H__
 

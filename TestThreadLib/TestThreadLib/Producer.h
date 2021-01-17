@@ -1,5 +1,5 @@
-#ifndef __PRODUCER_H__
-#define __PRODUCER_H__
+#ifndef __POOL_PRODUCER_THREAD_H__
+#define __POOL_PRODUCER_THREAD_H__
 #include "ThreadLib/Thread.h"
 #include "ThreadLib/SafeArrayBlock.h"
 
@@ -37,5 +37,5 @@ public:
 };
 
 
-#endif // __PRODUCER_H__
+#endif // __POOL_PRODUCER_THREAD_H__
 

@@ -89,5 +89,11 @@
     <ClInclude Include="SharedMemoryFill.h">
       <Filter>Source\SharedMemory</Filter>
     </ClInclude>
+    <ClInclude Include="SharedMemoryQueueProducerThread.h">
+      <Filter>Source\SharedMemory</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedMemoryQueueConsumerThread.h">
+      <Filter>Source\SharedMemory</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
