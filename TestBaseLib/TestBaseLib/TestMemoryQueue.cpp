@@ -69,8 +69,8 @@ void TestMemoryQueuePush(void)
 	void*			pv;
 	char			c;
 
-	pvQueue = malloc(128);
-	cQueue.Init(pvQueue, 128);
+	pvQueue = malloc(128 + sizeof(SCircularMemoryList));
+	cQueue.Init(pvQueue, 128 + sizeof(SCircularMemoryList));
 
 	AssertInt(0, cQueue.NumElements());
 
@@ -169,8 +169,8 @@ void TestMemoryQueuePeek(void)
 	void*			pv;
 	size_t			uiDataSize;
 
-	pvQueue = malloc(128);
-	cQueue.Init(pvQueue, 128);
+	pvQueue = malloc(128 + sizeof(SCircularMemoryList));
+	cQueue.Init(pvQueue, 128 + sizeof(SCircularMemoryList));
 
 	AssertInt(0, cQueue.NumElements());
 
@@ -212,10 +212,10 @@ void TestMemoryQueueRemap(void)
 	int				i;
 
 	pvQueue = malloc(8 KB);
-	cQueue.Init(pvQueue, 32);
+	cQueue.Init(pvQueue, 32 + sizeof(SCircularMemoryList));
 
 	pvA = PushElement(&cQueue, 20, 'A');
-	cQueue.Remap(pvQueue, 96);
+	cQueue.Remap(pvQueue, 96 + sizeof(SCircularMemoryList));
 	AssertTrue(cQueue.ValidateCache());
 	AssertInt(1, cQueue.NumElements());
 
@@ -223,13 +223,13 @@ void TestMemoryQueueRemap(void)
 	AssertTrue(cQueue.ValidateCache());
 	AssertInt(2, cQueue.NumElements());
 
-	cQueue.Remap(pvQueue, 128);
+	cQueue.Remap(pvQueue, 128 + sizeof(SCircularMemoryList));
 	AssertTrue(cQueue.ValidateCache());
 	AssertInt(2, cQueue.NumElements());
 
 	cQueue.Drop(pvA);
 	PushElement(&cQueue, 20, 'C');
-	cQueue.Remap(pvQueue, 160);
+	cQueue.Remap(pvQueue, 160 + sizeof(SCircularMemoryList));
 
 	PushElement(&cQueue, 20, 'D');
 	PushElement(&cQueue, 20, 'E');
@@ -237,7 +237,7 @@ void TestMemoryQueueRemap(void)
 	AssertInt(5, cQueue.NumElements());
 	Pass();
 
-	cQueue.Remap(pvQueue, 256);
+	cQueue.Remap(pvQueue, 256 + sizeof(SCircularMemoryList));
 	cQueue.ValidateCache();
 	AssertInt(5, cQueue.NumElements());
 	AssertInt(256, cQueue.GetCacheSize());
@@ -262,7 +262,7 @@ void TestMemoryQueueRemap(void)
 		uiExpectedAllocatedSize += 32;
 		iExpectedCount++;
 
-		cQueue.Remap(pvQueue, uiQueueSize);
+		cQueue.Remap(pvQueue, uiQueueSize + sizeof(SCircularMemoryList));
 		AssertTrue(cQueue.ValidateCache());
 
 		AssertInt(iExpectedCount, cQueue.NumElements());

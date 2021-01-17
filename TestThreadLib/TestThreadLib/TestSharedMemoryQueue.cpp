@@ -1,12 +1,12 @@
 #include <thread>
 #include "BaseLib/Logger.h"
+#include "BaseLib/Chars.h"
 #include "BaseLib/StdRandom.h"
 #include "ThreadLib/InterProcessMutex.h"
 #include "ThreadLib/ProcessFork.h"
 #include "ThreadLib/SharedMemoryQueue.h"
 #include "TestLib/Assert.h"
 //#include "SharedMemoryQueueThread.h"
-x
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ void TestSharedMemoryQueueBasic(void)
 	sz.Init('C', 19);
 	bResult = cQueue.Push(sz.Text(), sz.Length() + 1);  sz.Kill();
 	AssertTrue(bResult);
-	AssertInt(78, cQueue.GetCacheSize());
+	AssertInt(84, cQueue.GetCacheSize());
 	Pass();
 
 	bResult = cQueue.Pop(szData, &uiDataSize, 4 KB);
@@ -65,7 +65,7 @@ void TestSharedMemoryQueueBasic(void)
 	AssertInt(20, uiDataSize);
 	AssertString("BBBBBBBBBBBBBBBBBBB", szData);
 	AssertFalse(cQueue.IsEmpty());
-	AssertInt(78, cQueue.GetCacheSize());
+	AssertInt(84, cQueue.GetCacheSize());
 	Pass();
 
 
@@ -74,7 +74,7 @@ void TestSharedMemoryQueueBasic(void)
 	AssertInt(20, uiDataSize);
 	AssertString("CCCCCCCCCCCCCCCCCCC", szData);
 	AssertTrue(cQueue.IsEmpty());
-	AssertInt(78, cQueue.GetCacheSize());
+	AssertInt(84, cQueue.GetCacheSize());
 	Pass();
 
 	cQueue.Kill();
@@ -91,12 +91,14 @@ void TestSharedMemoryQueueOne(void)
 	CSharedMemoryQueue	acQueueConsumer[4];
 	int					i;
 	CRandom				cRandom;
-	char				aacData[5][256];
+	char				acProducerData[256];
+	char				aacData[4][256];
 	int					iSize;
 	char				c;
 	size_t				uiSize;
 	BOOL				bResult;
 	int					iProduce;
+	int					iTaken;
 
 	cQueueProducer.Init("TestSharedMemoryQueueOne", 0);
 	for (i = 0; i < 4; i++)
@@ -105,14 +107,14 @@ void TestSharedMemoryQueueOne(void)
 	}
 
 	iSize = 100;
-	c = 32;
+	c = 33;
 	iProduce = 1000;
 	cRandom.Init(723);
 
 	for (i = 0; i < 200; i++)
 	{
-		memset(aacData, c, iSize);
-		cQueueProducer.Push(aacData[0], iSize);
+		memset(acProducerData, c, iSize);
+		cQueueProducer.Push(acProducerData, iSize);
 		iProduce--;
 
 		iSize++;
@@ -120,15 +122,24 @@ void TestSharedMemoryQueueOne(void)
 		{
 			iSize = 100;
 		}
+
+		c++;
+		if (c == 128)
+		{
+			c = 33;
+		}
 	}
+	Pass();
 
 	AssertFalse(cQueueProducer.IsEmpty());
+	Pass();
 	AssertFalse(acQueueConsumer[0].IsEmpty());
 	AssertFalse(acQueueConsumer[1].IsEmpty());
 	AssertFalse(acQueueConsumer[2].IsEmpty());
 	AssertFalse(acQueueConsumer[3].IsEmpty());
 	Pass();
 
+	iTaken = 0;
 	for (;;)
 	{
 		i = cRandom.Next(0, 4);
@@ -136,8 +147,8 @@ void TestSharedMemoryQueueOne(void)
 		{
 			if (iProduce > 0)
 			{
-				memset(aacData, c, iSize);
-				cQueueProducer.Push(aacData[0], iSize);
+				memset(acProducerData, c, iSize);
+				cQueueProducer.Push(acProducerData, iSize);
 				iProduce--;
 
 				iSize++;
@@ -145,21 +156,39 @@ void TestSharedMemoryQueueOne(void)
 				{
 					iSize = 100;
 				}
+
+				c++;
+				if (c == 128)
+				{
+					c = 33;
+				}
 			}
 		}
 		else
 		{
-			bResult = acQueueConsumer[i - 1].Pop(aacData[i], &uiSize, 256);
-			if (!bResult)
+			bResult = acQueueConsumer[i - 1].Pop(aacData[i - 1], &uiSize, 256);
+
+			if (bResult)
 			{
-				break;
+				CChars sz;
+				sz.Init("\"");
+				sz.AppendData(aacData[i - 1], uiSize, uiSize);
+				sz.Append("\"");
+				sz.AppendNewLine();
+				sz.Dump();
+				sz.Kill();
+				iTaken++;
+				if (iTaken == 1000)
+				{
+					break;
+				}
 			}
 		}
 	}
 
 	for (i = 0; i < 4; i++)
 	{
-		acQueueConsumer[i].Init("TestSharedMemoryQueueOne");
+		acQueueConsumer[i].Kill();
 	}
 	cQueueProducer.Kill();
 }
