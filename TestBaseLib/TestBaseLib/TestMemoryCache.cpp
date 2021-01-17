@@ -515,15 +515,19 @@ void TestMemoryCacheReallocate(void)
 
 	pvA = cCache.Allocate(20);
 	FillCachedElement(pvA, 20, 'A');
+	AssertTrue(cCache.ValidateCache());
 
 	pvB = cCache.Allocate(24);
 	FillCachedElement(pvB, 24, 'B');
+	AssertTrue(cCache.ValidateCache());
 
 	pvC = cCache.Allocate(28);
 	FillCachedElement(pvC, 28, 'C');
+	AssertTrue(cCache.ValidateCache());
 
 	pvD = cCache.Allocate(18);
 	FillCachedElement(pvD, 18, 'D');
+	AssertTrue(cCache.ValidateCache());
 
 	AssertInt(3, cCache.NumElements());
 	AssertInt(106, cCache.GetAllocatedSize());

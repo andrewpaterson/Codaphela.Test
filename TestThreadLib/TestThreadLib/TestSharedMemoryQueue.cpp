@@ -99,6 +99,9 @@ void TestSharedMemoryQueueOne(void)
 	BOOL				bResult;
 	int					iProduce;
 	int					iTaken;
+	int					iNumElements;
+	CChars sz;
+
 
 	cQueueProducer.Init("TestSharedMemoryQueueOne", 0);
 	for (i = 0; i < 4; i++)
@@ -113,8 +116,15 @@ void TestSharedMemoryQueueOne(void)
 
 	for (i = 0; i < 200; i++)
 	{
+		iNumElements = cQueueProducer.NumElements();
+		sz.Init()->Append(iNumElements)->AppendNewLine()->DumpKill();
+
 		memset(acProducerData, c, iSize);
 		cQueueProducer.Push(acProducerData, iSize);
+
+		iNumElements = cQueueProducer.NumElements();
+		sz.Init()->Append(iNumElements)->AppendNewLine()->DumpKill();
+
 		iProduce--;
 
 		iSize++;
@@ -124,7 +134,7 @@ void TestSharedMemoryQueueOne(void)
 		}
 
 		c++;
-		if (c == 128)
+		if (c == 122)
 		{
 			c = 33;
 		}
@@ -147,9 +157,15 @@ void TestSharedMemoryQueueOne(void)
 		{
 			if (iProduce > 0)
 			{
+				iNumElements = cQueueProducer.NumElements();
+				sz.Init()->Append(iNumElements)->AppendNewLine()->DumpKill();
+
 				memset(acProducerData, c, iSize);
 				cQueueProducer.Push(acProducerData, iSize);
 				iProduce--;
+
+				iNumElements = cQueueProducer.NumElements();
+				sz.Init()->Append(iNumElements)->AppendNewLine()->DumpKill();
 
 				iSize++;
 				if (iSize == 256)
@@ -158,7 +174,7 @@ void TestSharedMemoryQueueOne(void)
 				}
 
 				c++;
-				if (c == 128)
+				if (c == 122)
 				{
 					c = 33;
 				}
@@ -170,18 +186,17 @@ void TestSharedMemoryQueueOne(void)
 
 			if (bResult)
 			{
-				CChars sz;
-				sz.Init("\"");
-				sz.AppendData(aacData[i - 1], uiSize, uiSize);
-				sz.Append("\"");
-				sz.AppendNewLine();
-				sz.Dump();
-				sz.Kill();
+				sz.Init("\"")->AppendData(aacData[i - 1], uiSize, uiSize)->Append("\"")->AppendNewLine()->DumpKill();
+
 				iTaken++;
 				if (iTaken == 1000)
 				{
 					break;
 				}
+			}
+			else
+			{
+
 			}
 		}
 	}
