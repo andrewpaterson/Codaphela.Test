@@ -2,6 +2,7 @@
 #define __SHARED_MEMORY_QUEUE_PRODUCER_THREAD_H__
 #include "ThreadLib/SharedMemoryQueue.h"
 #include "ThreadLib/Thread.h"
+#include "SharedMemoryQueueTheadElement.h"
 
 
 class CSharedMemoryQueueProducerThread : public CThread
@@ -11,6 +12,10 @@ private:
 	CSharedMemoryQueue	mcQueue;
 
 public:
+	//////////////////////////////////////////////////////////////////////////
+	//
+	//
+	//////////////////////////////////////////////////////////////////////////
 	CSharedMemoryQueueProducerThread(void) : CThread() {}
 	CSharedMemoryQueueProducerThread(CThreadStarter* pcStarter, CThreadStateNotifer* pcNotify) : CThread(pcStarter, pcNotify) {}
 
@@ -31,19 +36,22 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	virtual void Run(void)
 	{
-		int		iProduce;
-		char	acProducerData[256];
-		int		iSize;
-		char	c;
-		BOOL	bDone;
+		int								iProduce;
+		SSharedMemoryQueueThreadElement	sProducerData;
+		int								iSize;
+		char							c;
+		BOOL							bDone;
 
 		bDone = FALSE;
 		iSize = 100;
 		c = 33;
-		for (iProduce = 1000; iProduce >= 0; iProduce--)
+		for (iProduce = 0; iProduce < 1000; iProduce++)
 		{
-			memset(acProducerData, c, iSize);
-			mcQueue.Push(acProducerData, iSize);
+			memset(sProducerData.sz, c, iSize);
+			sProducerData.sz[iSize] = '\0';
+			sProducerData.sHeader.miIndex = iProduce;
+			sProducerData.sHeader.muiSize = iSize + 1 + sizeof(SSharedMemoryQueueThreadElementHeader);
+			mcQueue.Push(&sProducerData, sProducerData.sHeader.muiSize);
 
 			iSize++;
 			if (iSize == 256)

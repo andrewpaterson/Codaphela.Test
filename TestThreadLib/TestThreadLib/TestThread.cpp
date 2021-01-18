@@ -3,8 +3,8 @@
 #include "ThreadLib/SafeArrayBlock.h"
 #include "ThreadLib/VitsenityThreadPool.h"
 #include "TestLib/Assert.h"
-#include "Producer.h"
-#include "Consumer.h"
+#include "PoolProducerThread.h"
+#include "PoolConsumerThread.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -13,14 +13,14 @@
 //////////////////////////////////////////////////////////////////////////
 void TestThreadStandAlone(void)
 {
-	CProducer		cProducer1;
-	CProducer		cProducer2;
-	CProducer		cProducer3;
-	CProducer		cProducer4;
-	CProducer		cProducer5;
+	CPoolProducerThread		cProducer1;
+	CPoolProducerThread		cProducer2;
+	CPoolProducerThread		cProducer3;
+	CPoolProducerThread		cProducer4;
+	CPoolProducerThread		cProducer5;
 
-	CConsumer		cConsumer1;
-	CConsumer		cConsumer2;
+	CPoolConsumerThread		cConsumer1;
+	CPoolConsumerThread		cConsumer2;
 
 	int				iTotalResult;
 	CSafeArrayBlock cQueue;

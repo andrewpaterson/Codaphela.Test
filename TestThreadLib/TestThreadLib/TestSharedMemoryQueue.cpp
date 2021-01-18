@@ -88,6 +88,41 @@ void TestSharedMemoryQueueBasic(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void CreateExpectedString(CChars* psz, int iProduce)
+{
+	int		i;
+	char	c;
+	char	acProducerData[256];
+	int		iSize;
+
+	iSize = 100;
+	c = 33;
+
+	for (i = 0; i < iProduce; i++)
+	{
+		memset(acProducerData, c, iSize);
+
+		psz->Append((char*)acProducerData, iSize)->AppendNewLine();
+
+		iSize++;
+		if (iSize == 256)
+		{
+			iSize = 100;
+		}
+
+		c++;
+		if (c == 122)
+		{
+			c = 33;
+		}
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestSharedMemoryQueueOne(void)
 {
 	CSharedMemoryQueue	cQueueProducer;
@@ -118,13 +153,12 @@ void TestSharedMemoryQueueOne(void)
 
 	szExpected.Init();
 	szActual.Init();
+	CreateExpectedString(&szExpected, 1000);
 
 	for (i = 0; i < 200; i++)
 	{
 		memset(acProducerData, c, iSize);
 		cQueueProducer.Push(acProducerData, iSize);
-
-		szActual.Append((char*)acProducerData, iSize)->AppendNewLine();
 		iProduce--;
 
 		iSize++;
@@ -159,8 +193,6 @@ void TestSharedMemoryQueueOne(void)
 			{
 				memset(acProducerData, c, iSize);
 				cQueueProducer.Push(acProducerData, iSize);
-
-				szActual.Append((char*)acProducerData, iSize)->AppendNewLine();
 				iProduce--;
 
 				iSize++;
@@ -182,7 +214,7 @@ void TestSharedMemoryQueueOne(void)
 
 			if (bResult)
 			{
-				szExpected.Append(aacData[i - 1], uiSize)->AppendNewLine();
+				szActual.Append(aacData[i - 1], uiSize)->AppendNewLine();
 
 				iTaken++;
 				if (iTaken == 1000)
@@ -220,6 +252,10 @@ void TestSharedMemoryQueueMultiThread(void)
 	CThreadPool							cPool;
 	CThreadsDone						cProducersDone;
 	CThreadsDone						cConsumersDone;
+	char								maszData[1000][257];
+	CChars								szExpected;
+	CChars								szActual;
+	int									i;
 
 	cPool.Init();
 
@@ -229,14 +265,18 @@ void TestSharedMemoryQueueMultiThread(void)
 	pcProducer = cPool.Add<CSharedMemoryQueueProducerThread>()->Init("TestSharedMemoryQueueMultiThread");
 	pcProducer->AddNotifier(&cProducersDone);
 
-	pcConsumer1 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init("TestSharedMemoryQueueMultiThread", &cProducersDone);
+	pcConsumer1 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init("TestSharedMemoryQueueMultiThread", &cProducersDone, &maszData);
 	pcConsumer1->AddNotifier(&cConsumersDone);
-	pcConsumer2 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init("TestSharedMemoryQueueMultiThread", &cProducersDone);
+	pcConsumer2 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init("TestSharedMemoryQueueMultiThread", &cProducersDone, &maszData);
 	pcConsumer2->AddNotifier(&cConsumersDone);
-	pcConsumer3 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init("TestSharedMemoryQueueMultiThread", &cProducersDone);
+	pcConsumer3 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init("TestSharedMemoryQueueMultiThread", &cProducersDone, &maszData);
 	pcConsumer3->AddNotifier(&cConsumersDone);
-	pcConsumer4 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init("TestSharedMemoryQueueMultiThread", &cProducersDone);
+	pcConsumer4 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init("TestSharedMemoryQueueMultiThread", &cProducersDone, &maszData);
 	pcConsumer4->AddNotifier(&cConsumersDone);
+
+	szExpected.Init();
+	szActual.Init();
+	CreateExpectedString(&szExpected, 1000);
 
 	pcProducer->Start();
 	pcConsumer1->Start();
@@ -245,12 +285,21 @@ void TestSharedMemoryQueueMultiThread(void)
 	pcConsumer4->Start();
 	
 
-	while ((cProducersDone.miThreadsStopped < 1) && (cConsumersDone.miThreadsStopped < 4))
+	while ((cProducersDone.miThreadsStopped < 1) || (cConsumersDone.miThreadsStopped < 4))
 	{
 		std::this_thread::yield();
 	}
 
+	for (i = 0; i < 1000; i++)
+	{
+		szActual.Append(maszData[i])->AppendNewLine();
+	}
+
+	AssertString(szExpected.Text(), szActual.Text());
+
 	cPool.Kill();
+	szExpected.Kill();
+	szActual.Kill();
 }
 
 
@@ -271,8 +320,8 @@ void TestSharedMemoryQueue(void)
 {
 	BeginTests();
 
-	//TestSharedMemoryQueueBasic();
-	//TestSharedMemoryQueueOne();
+	TestSharedMemoryQueueBasic();
+	TestSharedMemoryQueueOne();
 	TestSharedMemoryQueueMultiThread();
 	TestSharedMemoryQueueMultiProcess();
 

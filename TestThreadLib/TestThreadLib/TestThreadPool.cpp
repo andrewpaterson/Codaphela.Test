@@ -6,8 +6,8 @@
 #include "ThreadLib/ThreadsDone.h"
 #include "ThreadLib/SafeArrayBlock.h"
 #include "TestLib/Assert.h"
-#include "Producer.h"
-#include "Consumer.h"
+#include "PoolProducerThread.h"
+#include "PoolConsumerThread.h"
 
 
 class CConsumerTotal : public CThreadStateNotifer
@@ -22,11 +22,11 @@ public:
 
 	void ThreadStateChanged(CThread* pcThread, EThreadState eState)
 	{
-		CConsumer* pcConsumer;
+		CPoolConsumerThread* pcConsumer;
 
 		if (eState == TS_Stopped)
 		{
-			pcConsumer = (CConsumer*)pcThread;
+			pcConsumer = (CPoolConsumerThread*)pcThread;
 			miTotal +=  pcConsumer->GetResult();
 		}
 	}
@@ -40,8 +40,8 @@ public:
 void TestThreadPoolThreadDestroyed(void)
 {
 	CThreadPool			cPool;
-	CProducer*			pcProducer;
-	CConsumer*			pcConsumer;
+	CPoolProducerThread*			pcProducer;
+	CPoolConsumerThread*			pcConsumer;
 	CSafeArrayBlock		cQueue;
 	int					i;
 	CArrayVoidPtr		apcConsumers;
@@ -59,7 +59,7 @@ void TestThreadPoolThreadDestroyed(void)
 
 	for (i = 0; i < 32; i++)
 	{
-		pcProducer = cPool.Add<CProducer>()->Init(&cQueue, 1000, 1);
+		pcProducer = cPool.Add<CPoolProducerThread>()->Init(&cQueue, 1000, 1);
 		pcProducer->AddNotifier(&cProducersDone);
 		pcProducer->Start();
 	}
@@ -67,7 +67,7 @@ void TestThreadPoolThreadDestroyed(void)
 
 	for (i = 0; i < 3; i++)
 	{
-		pcConsumer = cPool.Add<CConsumer>()->Init(&cQueue);
+		pcConsumer = cPool.Add<CPoolConsumerThread>()->Init(&cQueue);
 		pcConsumer->AddNotifier(&cConsumersDone);
 		pcConsumer->AddNotifier(&cTotal);
 		apcConsumers.Add(pcConsumer);
@@ -82,7 +82,7 @@ void TestThreadPoolThreadDestroyed(void)
 
 	for (i = 0; i < apcConsumers.NumElements(); i++)
 	{
-		pcConsumer = (CConsumer*)apcConsumers.GetPtr(i);
+		pcConsumer = (CPoolConsumerThread*)apcConsumers.GetPtr(i);
 		pcConsumer->TryStop();
 	}
 

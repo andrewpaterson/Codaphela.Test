@@ -77,12 +77,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Producer.h">
-      <Filter>Source\Thread</Filter>
-    </ClInclude>
-    <ClInclude Include="Consumer.h">
-      <Filter>Source\Thread</Filter>
-    </ClInclude>
     <ClInclude Include="SharedMemoryThread.h">
       <Filter>Source\SharedMemory</Filter>
     </ClInclude>
@@ -93,6 +87,15 @@
       <Filter>Source\SharedMemory</Filter>
     </ClInclude>
     <ClInclude Include="SharedMemoryQueueConsumerThread.h">
+      <Filter>Source\SharedMemory</Filter>
+    </ClInclude>
+    <ClInclude Include="PoolConsumerThread.h">
+      <Filter>Source\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="PoolProducerThread.h">
+      <Filter>Source\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedMemoryQueueTheadElement.h">
       <Filter>Source\SharedMemory</Filter>
     </ClInclude>
   </ItemGroup>

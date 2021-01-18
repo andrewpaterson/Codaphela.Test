@@ -136,11 +136,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Consumer.h" />
-    <ClInclude Include="Producer.h" />
+    <ClInclude Include="PoolConsumerThread.h" />
+    <ClInclude Include="PoolProducerThread.h" />
     <ClInclude Include="SharedMemoryFill.h" />
     <ClInclude Include="SharedMemoryQueueConsumerThread.h" />
     <ClInclude Include="SharedMemoryQueueProducerThread.h" />
+    <ClInclude Include="SharedMemoryQueueTheadElement.h" />
     <ClInclude Include="SharedMemoryThread.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
