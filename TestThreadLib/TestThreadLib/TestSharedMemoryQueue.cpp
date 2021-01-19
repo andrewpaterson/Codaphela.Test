@@ -280,12 +280,12 @@ void TestSharedMemoryQueueMultiThread(void)
 	szActual.Init();
 	CreateExpectedString(&szExpected, THREADED_SHARED_QUEUE_PRODUCE_SIZE);
 
-	pcProducer->Start();
 	pcConsumer1->Start();
 	pcConsumer2->Start();
 	pcConsumer3->Start();
 	pcConsumer4->Start();
-	
+	pcProducer->Start();
+
 
 	while ((cProducersDone.miThreadsStopped < 1) || (cConsumersDone.miThreadsStopped < 4))
 	{
@@ -343,7 +343,8 @@ void TestSharedMemoryQueueMultiProcess(void)
 	ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, "2", FALSE);
 	ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, "3", FALSE);
 
-	//std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	//Why do queue elements pushed into the queue before the processes start get lost?
+	std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
 	iSize = 100;
 	c = 33;
