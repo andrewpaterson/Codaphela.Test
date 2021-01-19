@@ -30,7 +30,7 @@ int TestClientProcessMain(int argc, char* argv[])
 		bResult = cTextFile.Write(szFileName);
 		if (!bResult)
 		{
-			return 1;
+			return -1;
 		}
 		else
 		{
@@ -39,7 +39,7 @@ int TestClientProcessMain(int argc, char* argv[])
 	}
 	else
 	{
-		return 1;
+		return -1;
 	}
 }
 

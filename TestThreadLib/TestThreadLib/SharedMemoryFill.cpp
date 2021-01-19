@@ -41,7 +41,7 @@ void CSharedMemoryFill::Run(void)
 	cHold.Init(mszSharedMemoryName, ":H");
 	cHold.Touch();
 	cDone.Init(mszSharedMemoryName, ":D");
-	cDone.Touch();
+	cDone.Open();
 
 	cSharedClient.Init(mszSharedMemoryName, mszFillChar);
 

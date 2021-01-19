@@ -2,17 +2,17 @@
 #define __SHARED_MEMORY_QUEUE_THREAD_ELEMENT_H__
 
 
-struct SSharedMemoryQueueThreadElementHeader
+struct SSharedMemoryQueueElementHeader
 {
 	unsigned int	muiSize;
 	int				miIndex;
 };
 
 
-struct SSharedMemoryQueueThreadElement
+struct SSharedMemoryQueueElement
 {
-	SSharedMemoryQueueThreadElementHeader	sHeader;
-	char									sz[256 + 1];
+	SSharedMemoryQueueElementHeader		sHeader;
+	char								sz[256 + 1];
 };
 
 

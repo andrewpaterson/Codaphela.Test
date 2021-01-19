@@ -3,6 +3,7 @@
 #include "ThreadLib/SharedMemoryQueue.h"
 #include "ThreadLib/Thread.h"
 #include "SharedMemoryQueueTheadElement.h"
+#include "SharedMemoryQueueConsumerThread.h"
 
 
 class CSharedMemoryQueueProducerThread : public CThread
@@ -30,14 +31,26 @@ public:
 		return this;
 	}
 
+
 	//////////////////////////////////////////////////////////////////////////
 	//
 	//
 	//////////////////////////////////////////////////////////////////////////
-	virtual void Run(void)
+	void Kill()
+	{
+		mcQueue.Kill();
+		CThread::Kill();
+	}
+
+
+	//////////////////////////////////////////////////////////////////////////
+	//
+	//
+	//////////////////////////////////////////////////////////////////////////
+	void Run(void)
 	{
 		int								iProduce;
-		SSharedMemoryQueueThreadElement	sProducerData;
+		SSharedMemoryQueueElement		sProducerData;
 		int								iSize;
 		char							c;
 		BOOL							bDone;
@@ -45,12 +58,12 @@ public:
 		bDone = FALSE;
 		iSize = 100;
 		c = 33;
-		for (iProduce = 0; iProduce < 1000; iProduce++)
+		for (iProduce = 0; iProduce < THREADED_SHARED_QUEUE_PRODUCE_SIZE; iProduce++)
 		{
 			memset(sProducerData.sz, c, iSize);
 			sProducerData.sz[iSize] = '\0';
 			sProducerData.sHeader.miIndex = iProduce;
-			sProducerData.sHeader.muiSize = iSize + 1 + sizeof(SSharedMemoryQueueThreadElementHeader);
+			sProducerData.sHeader.muiSize = iSize + 1 + sizeof(SSharedMemoryQueueElementHeader);
 			mcQueue.Push(&sProducerData, sProducerData.sHeader.muiSize);
 
 			iSize++;

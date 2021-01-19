@@ -70,6 +70,7 @@
       <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OptimizeReferences>false</OptimizeReferences>
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <StackReserveSize>10485760</StackReserveSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -116,6 +117,7 @@
     <ClCompile Include="TestSharedMemory.cpp" />
     <ClCompile Include="TestSharedMemoryMain.cpp" />
     <ClCompile Include="TestSharedMemoryQueue.cpp" />
+    <ClCompile Include="TestSharedQueueMain.cpp" />
     <ClCompile Include="TestThread.cpp" />
     <ClCompile Include="TestThreadPool.cpp" />
     <ClCompile Include="VitaliyVitsentiyExample.cpp" />
@@ -143,6 +145,7 @@
     <ClInclude Include="SharedMemoryQueueProducerThread.h" />
     <ClInclude Include="SharedMemoryQueueTheadElement.h" />
     <ClInclude Include="SharedMemoryThread.h" />
+    <ClInclude Include="TestSharedMemoryQueue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
