@@ -19,7 +19,7 @@ int TestSharedMemoryProcessReverse(char* szSharedMemoryName, char* szMemorySize)
 	iMemorySize = atoi(szMemorySize);
 	cSharedClient.Init(szSharedMemoryName);
 
-	pcClient = (unsigned char*)cSharedClient.Touch();
+	pcClient = (unsigned char*)cSharedClient.Touch().pvMemory;
 	if (pcClient == NULL)
 	{
 		cSharedClient.Close();

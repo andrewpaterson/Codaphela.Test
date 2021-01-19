@@ -49,7 +49,7 @@ void CSharedMemoryFill::Run(void)
 	{
 		cMutex.Lock();
 
-		puiPosition = (unsigned int*)cSharedClient.Touch();
+		puiPosition = (unsigned int*)cSharedClient.Touch().pvMemory;
 		if (puiPosition == NULL)
 		{
 			cSharedClient.Close();

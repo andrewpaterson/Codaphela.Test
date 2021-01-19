@@ -403,9 +403,9 @@ void TestSharedMemoryQueue(void)
 {
 	BeginTests();
 
-	//TestSharedMemoryQueueBasic();
-	//TestSharedMemoryQueueOne();
-	//TestSharedMemoryQueueMultiThread();
+	TestSharedMemoryQueueBasic();
+	TestSharedMemoryQueueOne();
+	TestSharedMemoryQueueMultiThread();
 	TestSharedMemoryQueueMultiProcess();
 
 	TestStatistics();

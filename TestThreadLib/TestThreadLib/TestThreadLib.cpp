@@ -29,13 +29,13 @@ int TestThreadLib(int argc, char* argv[])
 	InitTotalStatistics();
 
 	TestMainProcessDirector(argc, argv);
-	//TestReferences();
-	//TestThread();
-	//TestVitsenityThreadPool();
-	//TestSafeArrayBlock();
-	//TestThreadPool();
-	//TestProcessFork();
-	//TestSharedMemory();
+	TestReferences();
+	TestThread();
+	TestVitsenityThreadPool();
+	TestSafeArrayBlock();
+	TestThreadPool();
+	TestProcessFork();
+	TestSharedMemory();
 	TestSharedMemoryQueue();
 
 	iResult = TestTotalStatistics();
