@@ -254,37 +254,42 @@ void TestSharedMemoryQueueMultiThread(void)
 	CThreadPool							cPool;
 	CThreadsDone						cProducersDone;
 	CThreadsDone						cConsumersDone;
-	char								maszData[THREADED_SHARED_QUEUE_PRODUCE_SIZE][257];
 	CChars								szExpected;
 	CChars								szActual;
 	int									i;
+	SThreadedSharedQueueResult*			psResult;
+	char								szSharedMemoryName[] = { "TestSharedMemoryQueueMultiThread" };
+	CSharedMemoryQueue					cQueue;
+	int									iTotalTaken;
+
+	psResult = (SThreadedSharedQueueResult*)malloc(sizeof(SThreadedSharedQueueResult));
+	memset(psResult, 0, sizeof(SThreadedSharedQueueResult));
 
 	cPool.Init();
 
 	cProducersDone.Init();
 	cConsumersDone.Init();
 
-	pcProducer = cPool.Add<CSharedMemoryQueueProducerThread>()->Init("TestSharedMemoryQueueMultiThread");
+	cQueue.Init(szSharedMemoryName, 0);
+
+	pcProducer = cPool.Add<CSharedMemoryQueueProducerThread>()->Init(szSharedMemoryName);
 	pcProducer->AddNotifier(&cProducersDone);
 
-	pcConsumer1 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init("TestSharedMemoryQueueMultiThread", &cProducersDone, &maszData);
-	pcConsumer1->AddNotifier(&cConsumersDone);
-	pcConsumer2 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init("TestSharedMemoryQueueMultiThread", &cProducersDone, &maszData);
-	pcConsumer2->AddNotifier(&cConsumersDone);
-	pcConsumer3 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init("TestSharedMemoryQueueMultiThread", &cProducersDone, &maszData);
-	pcConsumer3->AddNotifier(&cConsumersDone);
-	pcConsumer4 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init("TestSharedMemoryQueueMultiThread", &cProducersDone, &maszData);
-	pcConsumer4->AddNotifier(&cConsumersDone);
+	pcProducer->Start();
 
-	szExpected.Init();
-	szActual.Init();
-	CreateExpectedString(&szExpected, THREADED_SHARED_QUEUE_PRODUCE_SIZE);
+	pcConsumer1 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init(szSharedMemoryName, &cProducersDone, psResult, 0);
+	pcConsumer1->AddNotifier(&cConsumersDone);
+	pcConsumer2 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init(szSharedMemoryName, &cProducersDone, psResult, 1);
+	pcConsumer2->AddNotifier(&cConsumersDone);
+	pcConsumer3 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init(szSharedMemoryName, &cProducersDone, psResult, 2);
+	pcConsumer3->AddNotifier(&cConsumersDone);
+	pcConsumer4 = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init(szSharedMemoryName, &cProducersDone, psResult, 3);
+	pcConsumer4->AddNotifier(&cConsumersDone);
 
 	pcConsumer1->Start();
 	pcConsumer2->Start();
 	pcConsumer3->Start();
 	pcConsumer4->Start();
-	pcProducer->Start();
 
 
 	while ((cProducersDone.miThreadsStopped < 1) || (cConsumersDone.miThreadsStopped < 4))
@@ -292,9 +297,16 @@ void TestSharedMemoryQueueMultiThread(void)
 		std::this_thread::yield();
 	}
 
+	iTotalTaken = psResult->aiTaken[0] + psResult->aiTaken[1] + psResult->aiTaken[2] + psResult->aiTaken[3];
+	AssertInt(THREADED_SHARED_QUEUE_PRODUCE_SIZE, iTotalTaken);
+
+	szExpected.Init();
+	CreateExpectedString(&szExpected, THREADED_SHARED_QUEUE_PRODUCE_SIZE);
+
+	szActual.Init();
 	for (i = 0; i < THREADED_SHARED_QUEUE_PRODUCE_SIZE; i++)
 	{
-		szActual.Append(maszData[i])->AppendNewLine();
+		szActual.Append(psResult->aszData[i])->AppendNewLine();
 	}
 
 	AssertString(szExpected.Text(), szActual.Text());
@@ -302,6 +314,10 @@ void TestSharedMemoryQueueMultiThread(void)
 	cPool.Kill();
 	szExpected.Kill();
 	szActual.Kill();
+
+	cQueue.Kill();
+
+	free(psResult);
 }
 
 
@@ -309,7 +325,103 @@ void TestSharedMemoryQueueMultiThread(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSharedMemoryQueueMultiProcess(void)
+void TestSharedMemoryQueueMultiThreadThisProducer(void)
+{
+	CSharedMemoryQueue					cQueue;
+	CSharedMemoryQueueConsumerThread*	pcConsumer;
+	CThreadPool							cPool;
+	CThreadsDone						cProducersDone;
+	CThreadsDone						cConsumersDone;
+	SThreadedSharedQueueResult*			psResult;
+	CChars								szExpected;
+	CChars								szActual;
+	int									i;
+	int									iProcess;
+	int									iSize;
+	char								c;
+	BOOL								bDone;
+	int									iProduce;
+	SSharedMemoryQueueElement			sProducerData;
+	char								szQueueName[] = "TestMultiThreadThisProducer";
+	int									iTotalTaken;
+
+	psResult = (SThreadedSharedQueueResult*)malloc(sizeof(SThreadedSharedQueueResult));
+	memset(psResult, 0, sizeof(SThreadedSharedQueueResult));
+
+	cPool.Init();
+
+	cProducersDone.Init();
+	cConsumersDone.Init();
+
+	cQueue.Init(szQueueName, 0);
+
+	iProcess = 0;
+
+	bDone = FALSE;
+	iSize = 100;
+	c = 33;
+	for (iProduce = 0; iProduce < THREADED_SHARED_QUEUE_PRODUCE_SIZE; iProduce++)
+	{
+		memset(sProducerData.sz, c, iSize);
+		sProducerData.sz[iSize] = '\0';
+		sProducerData.sHeader.miIndex = iProduce;
+		sProducerData.sHeader.muiSize = iSize + 1 + sizeof(SSharedMemoryQueueElementHeader);
+		cQueue.Push(&sProducerData, sProducerData.sHeader.muiSize);
+
+		iSize++;
+		if (iSize == 256)
+		{
+			iSize = 100;
+		}
+
+		c++;
+		if (c == 122)
+		{
+			c = 33;
+		}
+
+		if ((iProduce % 1000 == 999) && (iProcess < 4))
+		{
+			pcConsumer = cPool.Add<CSharedMemoryQueueConsumerThread>()->Init(szQueueName, &cProducersDone, psResult, iProcess);
+			pcConsumer->AddNotifier(&cConsumersDone);
+			pcConsumer->Start();
+			iProcess++;
+		}
+	}
+	bDone = TRUE;
+	cProducersDone.miThreadsStopped++;
+
+	while (cConsumersDone.miThreadsStopped < 4)
+	{
+		std::this_thread::yield();
+	}
+
+	iTotalTaken = psResult->aiTaken[0] + psResult->aiTaken[1] + psResult->aiTaken[2] + psResult->aiTaken[3];
+	AssertInt(THREADED_SHARED_QUEUE_PRODUCE_SIZE, iTotalTaken);
+
+	szExpected.Init();
+	CreateExpectedString(&szExpected, THREADED_SHARED_QUEUE_PRODUCE_SIZE);
+
+	szActual.Init();
+	for (i = 0; i < THREADED_SHARED_QUEUE_PRODUCE_SIZE; i++)
+	{
+		szActual.Append(psResult->aszData[i])->AppendNewLine();
+	}
+	AssertString(szExpected.Text(), szActual.Text());
+
+	cPool.Kill();
+	szExpected.Kill();
+	szActual.Kill();
+
+	free(psResult);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSharedMemoryQueueMultiProcessForkDuring(void)
 {
 	CSharedMemoryQueue				cQueue;
 	char							szQueueName[] = "TestSharedMemoryQueueMultiProcess";
@@ -326,6 +438,99 @@ void TestSharedMemoryQueueMultiProcess(void)
 	CChars							szExpected;
 	CChars							szActual;
 	int								i;
+	int								iProcess;
+	char							szProcess[16];
+	int								iTotalTaken;
+
+	cResult.Init(szSharedResultName);
+	psResult = (SProcessSharedQueueResult*)cResult.Create(sizeof(SProcessSharedQueueResult));
+	memset(psResult, 0, sizeof(SProcessSharedQueueResult));
+
+	cProcessesDone.Init(szDoneName);
+	cProcessesDone.Start();
+	iProcess = 0;
+
+	cQueue.Init(szQueueName, 0);
+
+	iSize = 100;
+	c = 33;
+	bDone = FALSE;
+	for (iProduce = 0; iProduce < PROCESS_SHARED_QUEUE_PRODUCE_SIZE; iProduce++)
+	{
+		memset(sProducerData.sz, c, iSize);
+		sProducerData.sz[iSize] = '\0';
+		sProducerData.sHeader.miIndex = iProduce;
+		sProducerData.sHeader.muiSize = iSize + 1 + sizeof(SSharedMemoryQueueElementHeader);
+		cQueue.Push(&sProducerData, sProducerData.sHeader.muiSize);
+
+		iSize++;
+		if (iSize == 256)
+		{
+			iSize = 100;
+		}
+
+		c++;
+		if (c == 122)
+		{
+			c = 33;
+		}
+
+		if ((iProduce % 1000 == 999) && (iProcess < 4))
+		{
+			ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, IToA(iProcess, szProcess), FALSE);
+			iProcess++;
+		}
+	}
+	bDone = TRUE;
+
+	cProcessesDone.Stop();
+	cProcessesDone.Wait(5);
+
+	cQueue.Kill();
+	cProcessesDone.Kill();
+
+	iTotalTaken = psResult->aiTaken[0] + psResult->aiTaken[1] + psResult->aiTaken[2] + psResult->aiTaken[3];
+	AssertInt(PROCESS_SHARED_QUEUE_PRODUCE_SIZE, iTotalTaken);
+
+	szExpected.Init();
+	CreateExpectedString(&szExpected, PROCESS_SHARED_QUEUE_PRODUCE_SIZE);
+
+	szActual.Init();
+	for (i = 0; i < PROCESS_SHARED_QUEUE_PRODUCE_SIZE; i++)
+	{
+		szActual.Append(psResult->aszData[i])->AppendNewLine();
+	}
+	AssertString(szExpected.Text(), szActual.Text());
+
+	szActual.Kill();
+	szExpected.Kill();
+	
+	cResult.Close();
+	cResult.Kill();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSharedMemoryQueueMultiProcessForkEarly(void)
+{
+	CSharedMemoryQueue				cQueue;
+	char							szQueueName[] = "TestSharedMemoryQueueMultiProcess";
+	char							szSharedResultName[] = "TestSharedMemoryQueueMultiProcessResult";
+	char							szDoneName[] = "TestSharedMemoryQueueMultiProcessDone";
+	int								iProduce;
+	SSharedMemoryQueueElement		sProducerData;
+	int								iSize;
+	char							c;
+	BOOL							bDone;
+	CSharedMemory					cResult;
+	SProcessSharedQueueResult* psResult;
+	CInterProcessDone				cProcessesDone;
+	CChars							szExpected;
+	CChars							szActual;
+	int								i;
+	int								iTotalTaken;
 
 	cResult.Init(szSharedResultName);
 	psResult = (SProcessSharedQueueResult*)cResult.Create(sizeof(SProcessSharedQueueResult));
@@ -334,20 +539,15 @@ void TestSharedMemoryQueueMultiProcess(void)
 	cProcessesDone.Init(szDoneName);
 	cProcessesDone.Start();
 
-	szExpected.Init();
-	CreateExpectedString(&szExpected, PROCESS_SHARED_QUEUE_PRODUCE_SIZE);
-
 	cQueue.Init(szQueueName, 0);
 	ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, "0", FALSE);
 	ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, "1", FALSE);
 	ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, "2", FALSE);
 	ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, "3", FALSE);
 
-	//Why do queue elements pushed into the queue before the processes start get lost?
-	std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
 	iSize = 100;
 	c = 33;
+	bDone = FALSE;
 	for (iProduce = 0; iProduce < PROCESS_SHARED_QUEUE_PRODUCE_SIZE; iProduce++)
 	{
 		memset(sProducerData.sz, c, iSize);
@@ -376,8 +576,11 @@ void TestSharedMemoryQueueMultiProcess(void)
 	cQueue.Kill();
 	cProcessesDone.Kill();
 
-	int iTotalTaken = psResult->aiTaken[0] + psResult->aiTaken[1] + psResult->aiTaken[2] + psResult->aiTaken[3];
+	iTotalTaken = psResult->aiTaken[0] + psResult->aiTaken[1] + psResult->aiTaken[2] + psResult->aiTaken[3];
 	AssertInt(PROCESS_SHARED_QUEUE_PRODUCE_SIZE, iTotalTaken);
+
+	szExpected.Init();
+	CreateExpectedString(&szExpected, PROCESS_SHARED_QUEUE_PRODUCE_SIZE);
 
 	szActual.Init();
 	for (i = 0; i < PROCESS_SHARED_QUEUE_PRODUCE_SIZE; i++)
@@ -388,11 +591,9 @@ void TestSharedMemoryQueueMultiProcess(void)
 
 	szActual.Kill();
 	szExpected.Kill();
-	
+
 	cResult.Close();
 	cResult.Kill();
-
-	
 }
 
 
@@ -407,7 +608,9 @@ void TestSharedMemoryQueue(void)
 	TestSharedMemoryQueueBasic();
 	TestSharedMemoryQueueOne();
 	TestSharedMemoryQueueMultiThread();
-	TestSharedMemoryQueueMultiProcess();
+	TestSharedMemoryQueueMultiThreadThisProducer();
+	TestSharedMemoryQueueMultiProcessForkDuring();
+	TestSharedMemoryQueueMultiProcessForkEarly();
 
 	TestStatistics();
 }

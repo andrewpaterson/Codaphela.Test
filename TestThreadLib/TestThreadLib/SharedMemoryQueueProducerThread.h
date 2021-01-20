@@ -10,7 +10,7 @@ class CSharedMemoryQueueProducerThread : public CThread
 {
 CONSTRUCTABLE(CSharedMemoryQueueProducerThread);
 private:
-	CSharedMemoryQueue	mcQueue;
+	CChars				mszName;
 
 public:
 	//////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ public:
 	CSharedMemoryQueueProducerThread* Init(char* szName)
 	{
 		CThread::Init();
-		mcQueue.Init(szName, 0);
+		mszName.Init(szName);
 		return this;
 	}
 
@@ -38,7 +38,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	void Kill()
 	{
-		mcQueue.Kill();
+		mszName.Kill();
 		CThread::Kill();
 	}
 
@@ -54,6 +54,14 @@ public:
 		int								iSize;
 		char							c;
 		BOOL							bDone;
+		CSharedMemoryQueue				cQueue;
+		BOOL							bResult;
+
+		bResult = cQueue.Init(mszName.Text());
+		if (!bResult)
+		{
+			return;
+		}
 
 		bDone = FALSE;
 		iSize = 100;
@@ -64,7 +72,7 @@ public:
 			sProducerData.sz[iSize] = '\0';
 			sProducerData.sHeader.miIndex = iProduce;
 			sProducerData.sHeader.muiSize = iSize + 1 + sizeof(SSharedMemoryQueueElementHeader);
-			mcQueue.Push(&sProducerData, sProducerData.sHeader.muiSize);
+			cQueue.Push(&sProducerData, sProducerData.sHeader.muiSize);
 
 			iSize++;
 			if (iSize == 256)
@@ -79,6 +87,8 @@ public:
 			}
 		}
 		bDone = TRUE;
+
+		cQueue.Kill();
 	}
 };
 

@@ -4,16 +4,17 @@
 #include "ThreadLib/SharedMemoryQueue.h"
 #include "ThreadLib/Thread.h"
 #include "SharedMemoryQueueTheadElement.h"
+#include "TestSharedMemoryQueue.h"
 
 
-#define THREADED_SHARED_QUEUE_PRODUCE_SIZE 20000
 class CSharedMemoryQueueConsumerThread : public CThread
 {
 CONSTRUCTABLE(CSharedMemoryQueueConsumerThread);
 private:
-	CSharedMemoryQueue	mcQueue;
-	CThreadsDone*		mpcProducersDone;
-	char(*				maszData)[THREADED_SHARED_QUEUE_PRODUCE_SIZE][257];
+	CThreadsDone*				mpcProducersDone;
+	SThreadedSharedQueueResult*	mpsResult;
+	int							miProcessNum;
+	CChars						mszName;
 
 public:
 	//////////////////////////////////////////////////////////////////////////
@@ -28,12 +29,13 @@ public:
 	//
 	//
 	//////////////////////////////////////////////////////////////////////////
-	CSharedMemoryQueueConsumerThread* Init(char* szName, CThreadsDone* pcProducersDone, char(* aszData)[THREADED_SHARED_QUEUE_PRODUCE_SIZE][257])
+	CSharedMemoryQueueConsumerThread* Init(char* szName, CThreadsDone* pcProducersDone, SThreadedSharedQueueResult* psResult, int iProcessNum)
 	{
 		mpcProducersDone = pcProducersDone;
 		CThread::Init();
-		mcQueue.Init(szName);
-		maszData = aszData;
+		mszName.Init(szName);
+		mpsResult = psResult;
+		miProcessNum = iProcessNum;
 		return this;
 	}
 
@@ -44,7 +46,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	void Kill()
 	{
-		mcQueue.Kill();
+		mszName.Kill();
 		CThread::Kill();
 	}
 
@@ -57,19 +59,32 @@ public:
 		BOOL						bResult;
 		SSharedMemoryQueueElement	sConsumerData;
 		size_t						uiSize;
+		int							iTaken;
+		CSharedMemoryQueue			cQueue;
 
+		bResult = cQueue.Init(mszName.Text());
+		if (!bResult)
+		{
+			return;
+		}
+
+		iTaken = 0;
 		do
 		{
-			bResult = mcQueue.Pop(&sConsumerData, &uiSize, sizeof(SSharedMemoryQueueElement));
+			bResult = cQueue.Pop(&sConsumerData, &uiSize, sizeof(SSharedMemoryQueueElement));
 			if (bResult)
 			{
-				strcpy((*maszData)[sConsumerData.sHeader.miIndex], sConsumerData.sz);
+				iTaken++;
+				strcpy(mpsResult->aszData[sConsumerData.sHeader.miIndex], sConsumerData.sz);
 			}
 			else
 			{
 				std::this_thread::yield();
 			}
 		} while ((mpcProducersDone->miThreadsStopped < 1) || bResult);
+		mpsResult->aiTaken[miProcessNum] = iTaken;
+
+		cQueue.Kill();
 	}
 };
 
