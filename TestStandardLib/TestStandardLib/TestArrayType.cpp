@@ -23,7 +23,7 @@ void TestArrayTypeInstantiation(void)
 	CTestUnknown*				pcTest4;
 	CTestUnknown*				pcTest;
 	int							iSize;
-	char*						szName;
+	const char*					szName;
 	
 	cArray.Init();
 
