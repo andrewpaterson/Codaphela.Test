@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "CoreLib/Codabase.h"
+#include "CoreLib/CodabaseFactory.h"
 #include "StandardLib/NamedObject.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/Pointer.h"
@@ -49,12 +51,15 @@ void TestNamedObjectName(void)
 	CSetObject*				pcSet;
 	OIndex					oiSet;
 	OIndex					oiNamed3;
+	CCodabase*				pcDatabase;
 
 	cFileUtil.RemoveDir("Output" _FS_ "NamedObject");
 	cFileUtil.TouchDir("Output" _FS_ "NamedObject");
 
 	MemoryInit();
-	ObjectsInit("Output" _FS_ "NamedObject");
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "NamedObject", IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 	TestNamedObjectAddConstructors(); //This is only important if an object is being loaded.
 
 	pNamed1 = ONMalloc(CTestNamedObject, "Frank")->Init(1);
@@ -86,6 +91,8 @@ void TestNamedObjectName(void)
 	oiSet = pcSet->GetOI();
 
 	gcObjects.Flush(FALSE, FALSE);
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
 
 	AssertNull(pNamed1.Object());
@@ -94,11 +101,13 @@ void TestNamedObjectName(void)
 	AssertNull(pRoot.Object());
 	AssertNull(pSet.Object());
 
-	ObjectsInit("Output" _FS_ "NamedObject");
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "NamedObject", IWT_Yes);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 	TestNamedObjectAddConstructors();
 
-	AssertLongLongInt(3, gcObjects.NumDatabaseNames());
-	AssertLongLongInt(5, gcObjects.NumIndices());
+	AssertLongLongInt(3, pcDatabase->NumNames());
+	AssertLongLongInt(5, pcDatabase->NumIndices());
 	AssertLongLongInt(0, gcObjects.NumMemoryNames());
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
@@ -115,6 +124,8 @@ void TestNamedObjectName(void)
 	AssertLongLongInt(oiNamed3, pResult3.GetIndex());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pResult3.GetDistToRoot());
 
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
 	MemoryKill();
 }

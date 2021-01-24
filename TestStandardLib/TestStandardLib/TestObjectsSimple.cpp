@@ -1,3 +1,5 @@
+#include "CoreLib/Codabase.h"
+#include "CoreLib/CodabaseFactory.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
@@ -32,8 +34,15 @@ void TestObjectFreeing(void)
 	Ptr<CTestObject>			pTest2;
 	STestObjectKilledNotifier	sKillNotifier1;
 	STestObjectKilledNotifier	sKillNotifier2;
+	CCodabase*					pcDatabase;
+	char						szDirectory[] = "Output" _FS_ "TestObjectFreeing";
+	CFileUtil					cFileUtil;
+			
+	cFileUtil.RemoveDir(szDirectory);
 
-	ObjectsInit();
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 
 	pTest1 = OMalloc(CTestObject);
 	pTest2 = OMalloc(CTestObject);
@@ -44,19 +53,23 @@ void TestObjectFreeing(void)
 	pTest1->Init(&sKillNotifier1);
 	pTest2->Init(&sKillNotifier2);
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(0, gcObjects.NumIndicesCached());
+	AssertLongLongInt(0, pcDatabase->NumIndicesCached());
 
 	pTest1->Kill();
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(0, gcObjects.NumIndicesCached());
+	AssertLongLongInt(0, pcDatabase->NumIndicesCached());
 	AssertTrue(sKillNotifier1.bKilled);
 
 	pTest2->Kill();
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(0, gcObjects.NumIndicesCached());
+	AssertLongLongInt(0, pcDatabase->NumIndicesCached());
 	AssertTrue(sKillNotifier2.bKilled);
 
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
+
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 

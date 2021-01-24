@@ -1,4 +1,6 @@
 #include "BaseLib/FileUtil.h"
+#include "CoreLib/Codabase.h"
+#include "CoreLib/CodabaseFactory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectReaderChunkFileDisk.h"
 #include "StandardLib/ObjectGraphDeserialiser.h"
@@ -118,20 +120,31 @@ void TestObjectReaderChunkedDeserialised(void)
 	OIndex						oiI2;
 	OIndex						oiI3;
 	int							iNumMemoryIndexes;
+	CCodabase*					pcDatabase;
+	char						szDirectory[] = "Output" _FS_ "ObjectReaderChunked";
 
 	gcObjects.AddConstructor<CTestWithArray>();
 	gcObjects.AddConstructor<CTestInteger>();
 	gcObjects.AddConstructor<CTestNamedString>();
 	gcObjects.AddConstructor<CString>();
 	gcObjects.AddConstructor<CArrayObject>();
+
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 
 	iNumMemoryIndexes = WriteObjectReaderChunkedFile();
 
-	AssertLongLongInt(0, gcObjects.NumIndices());
+	AssertLongLongInt(0, pcDatabase->NumIndices());
 	AssertLongLongInt(14, iNumMemoryIndexes);
 
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
-	ObjectsInit();
+
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 
 	gcObjects.AddConstructor<CTestWithArray>();
 	gcObjects.AddConstructor<CTestInteger>();
@@ -139,18 +152,18 @@ void TestObjectReaderChunkedDeserialised(void)
 	gcObjects.AddConstructor<CString>();
 	gcObjects.AddConstructor<CArrayObject>();
 
-	AssertLongLongInt(0, gcObjects.NumIndices());
+	AssertLongLongInt(0, pcDatabase->NumIndices());
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
 	cAllocator.Init(&gcObjects);
 	cDependentReadObjects.Init();
-	cReader.Init("Output\\ObjectReaderChunked\\Test\\", "Reader");
+	cReader.Init("Output" _FS_ "ObjectReaderChunked" _FS_ "Test" _FS_ , "Reader");
 	cGraphDeserialiser.Init(&cReader, FALSE, &cAllocator, &cDependentReadObjects, gcObjects.GetMemory());
 	cBase = cGraphDeserialiser.Read("Array 1");
 	AssertTrue(cBase.IsNotNull());
 	AssertString("CTestWithArray", cBase.ClassName());
 
-	AssertLongLongInt(0, gcObjects.NumIndices());
+	AssertLongLongInt(0, pcDatabase->NumIndices());
 	AssertLongLongInt(14, gcObjects.NumMemoryIndexes());
 
 	cA1 = gcObjects.Get("Array 1");
@@ -232,6 +245,10 @@ void TestObjectReaderChunkedDeserialised(void)
 	cDependentReadObjects.Kill();
 	cAllocator.Kill();
 	cReader.Kill();
+
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	ObjectsKill();
 }
 
 

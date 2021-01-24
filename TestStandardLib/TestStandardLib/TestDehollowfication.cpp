@@ -1,8 +1,8 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/MemoryFile.h"
-#include "CoreLib/ValueIndexedDataConfig.h"
-#include "CoreLib/ValueNamedIndexesConfig.h"
+#include "CoreLib/Codabase.h"
+#include "CoreLib/CodabaseFactory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectConverterText.h"
 #include "StandardLib/ObjectConverterNative.h"
@@ -112,8 +112,8 @@ Ptr<CTestDoubleNamedString> SetupDehollowficationScene(void)
 void WriteDehollowficationChunkedFile(void)
 {
 	Ptr<CTestDoubleNamedString>	cDouble;
-	CObjectWriterChunked				cWriter;
-	CObjectGraphSerialiser				cGraphSerialiser;
+	CObjectWriterChunked		cWriter;
+	CObjectGraphSerialiser		cGraphSerialiser;
 
 	cDouble = SetupDehollowficationScene();
 
@@ -131,38 +131,37 @@ void WriteDehollowficationChunkedFile(void)
 //////////////////////////////////////////////////////////////////////////
 void TestDehollowficationFromDatabase(void)
 {
-	CNamedIndexedDataConfig				cConfig;
 	CFileUtil							cFileUtil;
-	CValueIndexedDataConfig				cIndexConfig;
-	CValueNamedIndexesConfig			cNamedConfig;
-	CDurableFileController				cDurableController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	CCodabase*							pcDatabase;
 	char								szDirectory[] = "Output" _FS_ "Dehollowfication" _FS_ "Database1";
 
-	cDurableController.Init(szDirectory);
-	cIndexConfig.Init(&cDurableController, "IndexedData", 1 MB, 1 MB, IWT_Yes);
-	cNamedConfig.Init(&cDurableController, "Names", 2 MB, &cEvictionStrategy, IWT_Yes);
-	cConfig.Init(&cIndexConfig, &cNamedConfig);
 	cFileUtil.RemoveDir(szDirectory);
 
 	MemoryInit();
-	ObjectsInit(&cConfig);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 	SetupDehollowficationScene();
 	gcObjects.Flush(FALSE, FALSE);
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
 	MemoryKill();
 
 	MemoryInit();
-	ObjectsInit(&cConfig);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 	SetupDehollowficationConstructors();
 	AssertLongLongInt(0, gcUnknowns.NumElements());
 	AssertInt(0, gcObjects.GetStackPointers()->UsedPointers());
 
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(0, gcObjects.NumMemoryNames());
-	AssertLongLongInt(11, gcObjects.NumIndices());
-	AssertLongLongInt(0, gcObjects.NumIndicesCached());
-	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
+	AssertLongLongInt(11, pcDatabase->NumIndices());
+	AssertLongLongInt(0, pcDatabase->NumIndicesCached());
+	AssertLongLongInt(6, pcDatabase->NumNames());
 
 	Ptr<CRoot> pRoot = ORoot();
 
@@ -171,8 +170,8 @@ void TestDehollowficationFromDatabase(void)
 	AssertLongLongInt(2, gcUnknowns.NumElements());
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
-	AssertLongLongInt(1, gcObjects.NumIndicesCached());
-	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
+	AssertLongLongInt(1, pcDatabase->NumIndicesCached());
+	AssertLongLongInt(6, pcDatabase->NumNames());
 	AssertInt(1, gcObjects.GetStackPointers()->UsedPointers());
 
 	Ptr<CTestDoubleNamedString> pTest = pRoot->Get<CTestDoubleNamedString>("Double Start");  //This will cause pRoot.Set to be dehollowed.
@@ -214,8 +213,8 @@ void TestDehollowficationFromDatabase(void)
 	AssertLongLongInt(10, gcUnknowns.NumElements());
 	AssertLongLongInt(10, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
-	AssertLongLongInt(3, gcObjects.NumIndicesCached());
-	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
+	AssertLongLongInt(3, pcDatabase->NumIndicesCached());
+	AssertLongLongInt(6, pcDatabase->NumNames());
 
 	AssertTrue(pTest->mpSplit2.IsHollow());
 	pTest->mpSplit2->ClassSize();
@@ -225,8 +224,8 @@ void TestDehollowficationFromDatabase(void)
 
 	AssertLongLongInt(11, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
-	AssertLongLongInt(2, gcObjects.NumIndicesCached());
-	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
+	AssertLongLongInt(2, pcDatabase->NumIndicesCached());
+	AssertLongLongInt(6, pcDatabase->NumNames());
 
 	Ptr<CTestNamedString> pRandom = pRoot->Get<CTestNamedString>("NamedString 3");
 	AssertTrue(pRandom.IsNotNull());
@@ -241,8 +240,10 @@ void TestDehollowficationFromDatabase(void)
 	AssertFalse(pTest->mpSplit2->mszString.IsHollow());
 	AssertPointer(pRandom->mszString.Object(), pTest->mpSplit2->mszString.Object());
 
-	AssertLongLongInt(11, gcObjects.NumIndices());
+	AssertLongLongInt(11, pcDatabase->NumIndices());
 
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
 
 	AssertTrue(pRoot.IsNull());
@@ -263,29 +264,28 @@ void TestDehollowficationFromDatabase(void)
 //////////////////////////////////////////////////////////////////////////
 void TestDehollowficationFromDatabaseOfTwoPointers(void)
 {
-	CNamedIndexedDataConfig				cConfig;
 	CFileUtil							cFileUtil;
-	CValueIndexedDataConfig				cIndexConfig;
-	CValueNamedIndexesConfig			cNamedConfig;
-	CDurableFileController				cDurableController;
+	CCodabase*							pcDatabase;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 	char								szDirectory[] = "Output" _FS_ "Dehollowfication" _FS_ "Database2";
 
-	cDurableController.Init(szDirectory);
-	cIndexConfig.Init(&cDurableController, "IndexedData", 1 MB, 1 MB, IWT_Yes);
-	cNamedConfig.Init(&cDurableController, "Names", 2 MB, &cEvictionStrategy, IWT_Yes);
-	cConfig.Init(&cIndexConfig, &cNamedConfig);
 	cFileUtil.RemoveDir(szDirectory);
 
 	MemoryInit();
-	ObjectsInit(&cConfig);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 	SetupDehollowficationScene();
 	gcObjects.Flush(FALSE, FALSE);
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
 	MemoryKill();
 
 	MemoryInit();
-	ObjectsInit(&cConfig);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 	SetupDehollowficationConstructors();
 
 	Ptr<CRoot> pRoot = ORoot();
@@ -318,7 +318,10 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 	AssertFalse(pString2->mpAnother.IsHollow());
 	AssertPointer(pString1->mpAnother.Object(), pString2->mpAnother.Object());
 
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
+
 	cFileUtil.RemoveDir(szDirectory);
 	MemoryKill();
 }
@@ -331,12 +334,17 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 void TestDehollowficationFromChunkFileSource(void)
 {
 	CFileUtil		cFileUtil;
+	CCodabase*		pcDatabase;
 
 	cFileUtil.RemoveDir("Output" _FS_ "Dehollowfication" _FS_ "ChunkFile");
 
 	MemoryInit();
-	ObjectsInit("Output" _FS_ "Dehollowfication" _FS_ "Temp");
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Dehollowfication" _FS_ "Temp", IWT_Yes);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 	WriteDehollowficationChunkedFile();
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
 	MemoryKill();
 	cFileUtil.RemoveDir("Output" _FS_ "Dehollowfication" _FS_ "Temp");
@@ -347,7 +355,9 @@ void TestDehollowficationFromChunkFileSource(void)
 	CDiskFile*	pcDiskFile = DiskFile("Output" _FS_ "Dehollowfication" _FS_ "ChunkFile" _FS_ "Double.DRG");
 
 	MemoryInit();
-	ObjectsInit("Output" _FS_ "Dehollowfication" _FS_ "Temp");
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Dehollowfication" _FS_ "Temp", IWT_Yes);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 	SetupDehollowficationConstructors();
 
 	pcObjectSourceChunked = (CObjectSourceChunked*)gcObjects.AddSource<CObjectConverterNative>(pcDiskFile, "Double");  //Note the .DRG is intentionally dropped.
@@ -373,6 +383,8 @@ void TestDehollowficationFromChunkFileSource(void)
 	AssertFalse(pStart->mpSplit1.IsHollow());
 	AssertString("CTestNamedString", pStart->mpSplit1.ClassName());
 
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
 	MemoryKill();
 }

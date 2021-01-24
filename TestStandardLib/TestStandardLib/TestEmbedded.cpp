@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "CoreLib/Codabase.h"
+#include "CoreLib/CodabaseFactory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
@@ -262,15 +264,19 @@ void TestEmbeddedObjectKill(void)
 //////////////////////////////////////////////////////////////////////////
 void TestEmbeddedObjectContainerDehollowfication(void)
 {
-	BOOL		bResult;
-	CFileUtil	cFileUtil;
-	char*		szClassName;
-	OIndex		oiComplex;
+	BOOL			bResult;
+	CFileUtil		cFileUtil;
+	const char*		szClassName;
+	OIndex			oiComplex;
+	CCodabase*		pcDatabase;
+	char			szDirectory[] = "Output" _FS_ "EmbeddedObject";
 
-	cFileUtil.RemoveDir("Output/EmbeddedObject");
+	cFileUtil.RemoveDir(szDirectory);
 
 	MemoryInit();
-	ObjectsInit("Output/EmbeddedObject/");
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 	SetupEmbeddedObjectConstructors();
 
 	Ptr<CRoot> pRoot = ORoot();
@@ -282,6 +288,8 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	bResult = gcObjects.Flush(TRUE, TRUE);
 	AssertTrue(bResult);
 
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
 	MemoryKill();
 
@@ -290,7 +298,9 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	AssertInt(1032, sizeof(CEmbeddedComplex));
 
 	MemoryInit();
-	ObjectsInit("Output/EmbeddedObject/");
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 	SetupEmbeddedObjectConstructors();
 
 	pRoot = gcObjects.GetRoot();
@@ -324,6 +334,8 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 
 	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
 
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
 	MemoryKill();
 }
@@ -338,12 +350,16 @@ void TestEmbeddedObjectPointTo(void)
 	BOOL		bResult;
 	CFileUtil	cFileUtil;
 	OIndex		oiComplex;
-	char*		szClassName;
-	
-	cFileUtil.RemoveDir("Output/EmbeddedObject");
+	const char*	szClassName;
+	CCodabase*	pcDatabase;
+	char		szDirectory[] = "Output" _FS_ "EmbeddedObject";
+
+	cFileUtil.RemoveDir(szDirectory);
 
 	MemoryInit();
-	ObjectsInit("Output/EmbeddedObject/");
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 	SetupEmbeddedObjectConstructors();
 
 	Ptr<CRoot> pRoot = ORoot();
@@ -356,13 +372,17 @@ void TestEmbeddedObjectPointTo(void)
 	bResult = gcObjects.Flush(TRUE, TRUE);
 	AssertTrue(bResult);
 
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
 	MemoryKill();
 
 	AssertNull(&pContainer);
 
 	MemoryInit();
-	ObjectsInit("Output/EmbeddedObject/");
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 	SetupEmbeddedObjectConstructors();
 
 	pRoot = gcObjects.GetRoot();
@@ -378,6 +398,8 @@ void TestEmbeddedObjectPointTo(void)
 	pComplex = pContainer->GetEmbeddingContainer();
 	//Kinda feels like this test just stopped...
 
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
 	MemoryKill();
 }

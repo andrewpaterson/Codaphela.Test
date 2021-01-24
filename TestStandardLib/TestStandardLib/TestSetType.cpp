@@ -19,7 +19,7 @@ void TestSetTypeInstantiation(void)
 	CTestUnknown*			pcTest2;
 	CTestUnknown*			pcTest;
 	int						iSize;
-	char*					szName;
+	const char*				szName;
 	SSetIterator			sIter;
 	int						iCount;
 

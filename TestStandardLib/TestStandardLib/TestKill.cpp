@@ -1,3 +1,5 @@
+#include "CoreLib/Codabase.h"
+#include "CoreLib/CodabaseFactory.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "NamedObjectTestClasses.h"
@@ -114,7 +116,11 @@ void TestKillLongCyclicSelfPointer(void)
 //////////////////////////////////////////////////////////////////////////
 void TestKillBestPractice(void)
 {
-	ObjectsInit();
+	CCodabase* pcDatabase;
+
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "TestKillBestPractice", IWT_Yes);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 
 	//Generally an object will be killed if all pointers to it a removed.
 	//Sometimes we'd rather not try and remove all the pointers we just want the object to die.
@@ -127,7 +133,7 @@ void TestKillBestPractice(void)
 
 	pRoot = ORoot();
 
-	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
+	AssertLongLongInt(0, pcDatabase->NumNames());
 	pWorld = OMalloc(CGameWorld)->Init();
 
 	pRoot->Add(pWorld);
@@ -166,8 +172,8 @@ void TestKillBestPractice(void)
 	AssertString("Kill not called", sMaverickAfter.cPicture.mszPretenedImAPicture);
 	AssertLongLongInt(12, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(5, gcObjects.NumMemoryNames());
-	AssertLongLongInt(0, gcObjects.NumIndices());
-	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
+	AssertLongLongInt(0, pcDatabase->NumIndices());
+	AssertLongLongInt(0, pcDatabase->NumNames());
 	AssertInt(2, pWorld.GetDistToRoot());
 	AssertInt(3, pHarrier.GetDistToRoot());
 	AssertInt(3, pJeep.GetDistToRoot());
@@ -190,8 +196,8 @@ void TestKillBestPractice(void)
 	AssertString("Kill not called", sMaverickAfter.cPicture.mszPretenedImAPicture);
 	AssertLongLongInt(11, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(5, gcObjects.NumMemoryNames());
-	AssertLongLongInt(0, gcObjects.NumIndices());
-	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
+	AssertLongLongInt(0, pcDatabase->NumIndices());
+	AssertLongLongInt(0, pcDatabase->NumNames());
 	AssertInt(2, pWorld.GetDistToRoot());
 	AssertInt(3, pHarrier.GetDistToRoot());
 	AssertInt(3, pJeep.GetDistToRoot());
@@ -216,8 +222,8 @@ void TestKillBestPractice(void)
 	AssertTrue(pTarget2.IsNull());
 	AssertLongLongInt(10, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(4, gcObjects.NumMemoryNames());
-	AssertLongLongInt(0, gcObjects.NumIndices());
-	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
+	AssertLongLongInt(0, pcDatabase->NumIndices());
+	AssertLongLongInt(0, pcDatabase->NumNames());
 	AssertInt(2, pWorld.GetDistToRoot());
 	AssertInt(3, pHarrier.GetDistToRoot());
 	AssertInt(3, pJeep.GetDistToRoot());
@@ -251,8 +257,8 @@ void TestKillBestPractice(void)
 
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
-	AssertLongLongInt(0, gcObjects.NumIndices());
-	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
+	AssertLongLongInt(0, pcDatabase->NumIndices());
+	AssertLongLongInt(0, pcDatabase->NumNames());
 
 	AssertInt('X', sHarrierBefore.sPoint.x);
 	AssertInt('Y', sHarrierBefore.sPoint.y);
@@ -262,6 +268,8 @@ void TestKillBestPractice(void)
 	AssertString("012345678901234", sJeepBefore.cPicture.mszPretenedImAPicture);
 	AssertString("Alas I am Dead!", sJeepAfter.cPicture.mszPretenedImAPicture);
 
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
 }
 
@@ -272,7 +280,11 @@ void TestKillBestPractice(void)
 //////////////////////////////////////////////////////////////////////////
 void TestKillCanFindRoot(void)
 {
-	ObjectsInit();
+	CCodabase* pcDatabase;
+
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "TestKillCanFindRoot", IWT_Yes);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 
 	Ptr<CRoot>			pRoot;
 	Ptr<CGameWorld>		pWorld;
@@ -330,7 +342,7 @@ void TestKillCanFindRoot(void)
 	// 3  pHarrier[5,Harrier](3)   pJeep[7,Jeep](3) //   ^/  
 	// 3                |^     ^   /^     ^        //   //
 	// 3                ||      \ //      |       //   //
-	// 3                ||       //       |      //   //
+	// 3                ||       X/       |      //   //
 	// 3                ||      //\       |     //   //
 	// 3                ||     //  \      |    /.   //
 	// 3                ||    //   ArrayObject[4](3)/
@@ -365,8 +377,8 @@ void TestKillCanFindRoot(void)
 	AssertInt(-1, pWorld->GetTickables()->GetDistToRoot());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(5, gcObjects.NumMemoryNames());
-	AssertLongLongInt(0, gcObjects.NumIndices());
-	AssertLongLongInt(0, gcObjects.NumDatabaseNames());
+	AssertLongLongInt(0, pcDatabase->NumIndices());
+	AssertLongLongInt(0, pcDatabase->NumNames());
 
 	pJeep = NULL;
 	pRedJetMaverick = NULL;
@@ -386,6 +398,9 @@ void TestKillCanFindRoot(void)
 	AssertString("012345678901234", sJeepBefore.cPicture.mszPretenedImAPicture);
 	AssertString("Alas I am Dead!", sJeepAfter.cPicture.mszPretenedImAPicture);
 
+
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
 }
 

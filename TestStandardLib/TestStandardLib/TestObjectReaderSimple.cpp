@@ -1,5 +1,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
+#include "CoreLib/Codabase.h"
+#include "CoreLib/CodabaseFactory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectReaderSimpleDisk.h"
 #include "StandardLib/ObjectGraphDeserialiser.h"
@@ -73,22 +75,29 @@ void TestObjectReaderSimpleDeserialised(void)
 
 	CObjectAllocator			cAllocator;
 	CDependentReadObjects		cDependentReadObjects;
+	CCodabase*					pcDatabase;
+	char						szDirectory[] = "Output" _FS_ "ObjectReaderSimple";
+	CFileUtil					cFileUtil;
+
+	cFileUtil.RemoveDir(szDirectory);
 
 	MemoryInit();
-	ObjectsInit();
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 
 	gcObjects.AddConstructor<CTestNamedString>();
 
-	AssertLongLongInt(0, gcObjects.NumIndices());
+	AssertLongLongInt(0, pcDatabase->NumIndices());
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
 	cAllocator.Init(&gcObjects);
 	cDependentReadObjects.Init();
-	cReader.Init("Output\\ObjectReaderSimple\\Test\\");
+	cReader.Init("Output" _FS_ "ObjectReaderSimple" _FS_ "Test" _FS_);
 	cGraphDeserialiser.Init(&cReader, FALSE, &cAllocator, &cDependentReadObjects, gcObjects.GetMemory());
 	cBase = cGraphDeserialiser.Read("Waggy");
 
-	AssertLongLongInt(0, gcObjects.NumIndices());
+	AssertLongLongInt(0, pcDatabase->NumIndices());
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 
 	cNS1 = gcObjects.Get("Waggy");
@@ -111,7 +120,10 @@ void TestObjectReaderSimpleDeserialised(void)
 	cAllocator.Kill();
 	cReader.Kill();
 
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
 	ObjectsKill();
+	MemoryKill();
 }
 
 
@@ -124,7 +136,7 @@ void TestObjectReaderSimple(void)
 	CFileUtil	cFileUtil;
 
 	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output/ObjectReaderSimple");
+	cFileUtil.MakeDir("Output" _FS_ "ObjectReaderSimple");
 	BeginTests();
 
 	TestObjectReaderSimpleDeserialised();
