@@ -46,7 +46,7 @@ void WriteObjectReaderSimpleFile(void)
 
 	cBase = SetupObjectReaderSimpleFile();
 
-	cWriter.Init("Output\\ObjectReaderSimple\\Test\\", "");
+	cWriter.Init("Output" _FS_ "ObjectReaderSimple" _FS_ "Test" _FS_, "");
 	cGraphSerialiser.Init(&cWriter);
 	AssertTrue(cGraphSerialiser.Write(cBase.BaseObject()));
 	cGraphSerialiser.Kill();

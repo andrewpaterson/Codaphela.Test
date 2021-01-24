@@ -82,7 +82,7 @@ int WriteObjectReaderChunkedFile(void)
 
 	cBase = SetupObjectReaderChunkedChunkFile();
 
-	cWriter.Init("Output\\ObjectReaderChunked\\Test\\", "", "Reader");
+	cWriter.Init("Output" _FS_ "ObjectReaderChunked" _FS_ "Test" _FS_, "", "Reader");
 	cGraphSerialiser.Init(&cWriter);
 	AssertTrue(cGraphSerialiser.Write(cBase.BaseObject()));
 	cGraphSerialiser.Kill();
@@ -261,7 +261,7 @@ void TestObjectReaderChunked(void)
 	CFileUtil	cFileUtil;
 
 	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output/ObjectReaderChunked");
+	cFileUtil.MakeDir("Output" _FS_ "ObjectReaderChunked");
 	ObjectsInit();
 	BeginTests();
 

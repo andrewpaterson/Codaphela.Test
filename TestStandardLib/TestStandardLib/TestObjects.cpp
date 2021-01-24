@@ -182,8 +182,8 @@
 //	BOOL		bResult;
 //
 //	cFileUtil.RemoveDir("Output");
-//	cFileUtil.MakeDir("Output/Flush1");
-//	ObjectsInit("Output/Flush1");
+//	cFileUtil.MakeDir("Output" _FS_ "Flush1");
+//	ObjectsInit("Output" _FS_ "Flush1");
 //	SetupObjectsForDehollowfication();
 //
 //	AssertLongLongInt(0, pcDatabase->NumIndices());
@@ -218,7 +218,7 @@
 //		cFileUtil.RemovePath(&szFileName);
 //		szOutput.Init();
 //		cFileUtil.CurrentDirectory(&szOutput);
-//		cFileUtil.AppendToPath(&szOutput, "Output/Flush1");
+//		cFileUtil.AppendToPath(&szOutput, "Output" _FS_ "Flush1");
 //		cFileUtil.AppendToPath(&szOutput, szFileName.Text());
 //
 //		AssertFile(psz->Text(), szOutput.Text());
@@ -271,17 +271,17 @@
 //
 //	ObjectsKill();
 //
-//	AssertFile("Input/Dehollowfication/48_0.DAT",     "Output/Flush2/48_0.DAT");
-//	AssertFile("Input/Dehollowfication/56_0.DAT",     "Output/Flush2/56_0.DAT");
-//	AssertFile("Input/Dehollowfication/68_0.DAT",     "Output/Flush2/68_0.DAT");
-//	AssertFile("Input/Dehollowfication/89_0.DAT",     "Output/Flush2/89_0.DAT");
-//	AssertFile("Input/Dehollowfication/93_0.DAT",     "Output/Flush2/93_0.DAT");
-//	AssertFile("Input/Dehollowfication/101_0.DAT",    "Output/Flush2/101_0.DAT");
-//	AssertFile("Input/Dehollowfication/102_0.DAT",    "Output/Flush2/102_0.DAT");
-//	AssertFile("Input/Dehollowfication/Files.DAT",    "Output/Flush2/Files.DAT");
-//	AssertFile("Input/Dehollowfication/Indicies.DAT", "Output/Flush2/Indicies.DAT");
-//	AssertFile("Input/Dehollowfication/32_0.NAM",     "Output/Flush2/32_0.NAM");
-//	AssertFile("Input/Dehollowfication/Files.NAM",    "Output/Flush2/Files.NAM");
+//	AssertFile("Input" _FS_ "Dehollowfication" _FS_ "48_0.DAT",     "Output" _FS_ "Flush2" _FS_ "48_0.DAT");
+//	AssertFile("Input" _FS_ "Dehollowfication" _FS_ "56_0.DAT",     "Output" _FS_ "Flush2" _FS_ "56_0.DAT");
+//	AssertFile("Input" _FS_ "Dehollowfication" _FS_ "68_0.DAT",     "Output" _FS_ "Flush2" _FS_ "68_0.DAT");
+//	AssertFile("Input" _FS_ "Dehollowfication" _FS_ "89_0.DAT",     "Output" _FS_ "Flush2" _FS_ "89_0.DAT");
+//	AssertFile("Input" _FS_ "Dehollowfication" _FS_ "93_0.DAT",     "Output" _FS_ "Flush2" _FS_ "93_0.DAT");
+//	AssertFile("Input" _FS_ "Dehollowfication" _FS_ "101_0.DAT",    "Output" _FS_ "Flush2" _FS_ "101_0.DAT");
+//	AssertFile("Input" _FS_ "Dehollowfication" _FS_ "102_0.DAT",    "Output" _FS_ "Flush2" _FS_ "102_0.DAT");
+//	AssertFile("Input" _FS_ "Dehollowfication" _FS_ "Files.DAT",    "Output" _FS_ "Flush2" _FS_ "Files.DAT");
+//	AssertFile("Input" _FS_ "Dehollowfication" _FS_ "Indicies.DAT", "Output" _FS_ "Flush2" _FS_ "Indicies.DAT");
+//	AssertFile("Input" _FS_ "Dehollowfication" _FS_ "32_0.NAM",     "Output" _FS_ "Flush2" _FS_ "32_0.NAM");
+//	AssertFile("Input" _FS_ "Dehollowfication" _FS_ "Files.NAM",    "Output" _FS_ "Flush2" _FS_ "Files.NAM");
 //
 //	cFileUtil.RemoveDir(szDirectory);
 //}
@@ -297,8 +297,8 @@
 //	BOOL		bResult;
 //
 //	cFileUtil.RemoveDir("Output");
-//	cFileUtil.MakeDir("Output/Eviction");
-//	ObjectsInit("Output/Eviction");
+//	cFileUtil.MakeDir("Output" _FS_ "Eviction");
+//	ObjectsInit("Output" _FS_ "Eviction");
 //	SetupObjectsForDehollowfication();
 //
 //	AssertLongLongInt(0, pcDatabase->NumIndices());
@@ -317,8 +317,8 @@
 //	ObjectsKill();
 //
 //	cFileUtil.RemoveDir("Output");
-//	cFileUtil.MakeDir("Output/Eviction");
-//	ObjectsInit("Output/Eviction");
+//	cFileUtil.MakeDir("Output" _FS_ "Eviction");
+//	ObjectsInit("Output" _FS_ "Eviction");
 //	SetupObjectsForDehollowfication();
 //
 //	bResult = gcObjects.Flush(FALSE, TRUE);
@@ -332,8 +332,8 @@
 //	ObjectsKill();
 //
 //	cFileUtil.RemoveDir("Output");
-//	cFileUtil.MakeDir("Output/Eviction");
-//	ObjectsInit("Output/Eviction");
+//	cFileUtil.MakeDir("Output" _FS_ "Eviction");
+//	ObjectsInit("Output" _FS_ "Eviction");
 //	SetupObjectsForDehollowfication();
 //
 //	bResult = gcObjects.Flush(TRUE, FALSE);
@@ -347,8 +347,8 @@
 //	ObjectsKill();
 //
 //	cFileUtil.RemoveDir("Output");
-//	cFileUtil.MakeDir("Output/Eviction");
-//	ObjectsInit("Output/Eviction");
+//	cFileUtil.MakeDir("Output" _FS_ "Eviction");
+//	ObjectsInit("Output" _FS_ "Eviction");
 //	SetupObjectsForDehollowfication();
 //
 //	bResult = gcObjects.Flush(TRUE, TRUE);
@@ -516,14 +516,14 @@
 //	OIndex							oiNew;
 //
 //	cFileUtil.RemoveDir("Output");
-//	cFileUtil.MakeDir("Output/Dehollowfication");
-//	ObjectsInit("Output/Dehollowfication");
+//	cFileUtil.MakeDir("Output" _FS_ "Dehollowfication");
+//	ObjectsInit("Output" _FS_ "Dehollowfication");
 //	SetupObjectsForDehollowfication();
 //	gcObjects.Flush(TRUE, TRUE);
 //	AssertLongLongInt(9, pcDatabase->NumIndices());
 //	ObjectsKill();
 //
-//	ObjectsInit("Output/Dehollowfication");
+//	ObjectsInit("Output" _FS_ "Dehollowfication");
 //	SetupObjectsConstructors();
 //	AssertLongLongInt(9, pcDatabase->NumIndices());
 //
@@ -573,9 +573,9 @@
 //	Ptr<CRoot>						pRoot;
 //
 //	cFileUtil.RemoveDir("Output");
-//	cFileUtil.MakeDir("Output/Dehollowfication");
+//	cFileUtil.MakeDir("Output" _FS_ "Dehollowfication");
 //
-//	ObjectsInit("Output/Dehollowfication");
+//	ObjectsInit("Output" _FS_ "Dehollowfication");
 //	SetupObjectsConstructors();
 //	
 //	pRoot = ORoot();
@@ -617,9 +617,9 @@
 //	Ptr<CRoot>						pRoot;
 //
 //	cFileUtil.RemoveDir("Output");
-//	cFileUtil.MakeDir("Output/Dehollowfication");
+//	cFileUtil.MakeDir("Output" _FS_ "Dehollowfication");
 //
-//	ObjectsInit("Output/Dehollowfication");
+//	ObjectsInit("Output" _FS_ "Dehollowfication");
 //	SetupObjectsConstructors();
 //
 //	pRoot = ORoot();
@@ -654,9 +654,9 @@
 //	Ptr<CRoot>						pRoot;
 //
 //	cFileUtil.RemoveDir("Output");
-//	cFileUtil.MakeDir("Output/ClearPointers");
+//	cFileUtil.MakeDir("Output" _FS_ "ClearPointers");
 //
-//	ObjectsInit("Output/ClearPointers");
+//	ObjectsInit("Output" _FS_ "ClearPointers");
 //	SetupObjectsConstructors();
 //
 //	pRoot = ORoot();

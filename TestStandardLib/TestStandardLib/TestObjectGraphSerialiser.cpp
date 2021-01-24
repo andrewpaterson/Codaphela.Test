@@ -24,7 +24,7 @@ void TestObjectGraphSerialiserReachability(void)
 
 	BOOL							bResult;
 
-	cFileUtil.MakeDir("Output/GraphWriter/Data");
+	cFileUtil.MakeDir("Output" _FS_ "GraphWriter" _FS_ "Data");
 
 	pTest1a = ONMalloc(CTestSaveableObject1, "Test1/OneA");
 	pTest1a->Init();
@@ -56,7 +56,7 @@ void TestObjectGraphSerialiserReachability(void)
 	AssertInt(224, sizeof(CTestSaveableObject1));  //If these sizes change the input test files will be wrong.
 	AssertInt(232, sizeof(CTestSaveableObject2));
 
-	cSimpleWriter.Init("Output/GraphWriter/Data", "");
+	cSimpleWriter.Init("Output" _FS_ "GraphWriter" _FS_ "Data", "");
 	cGraphSerialiser.Init(&cSimpleWriter);
 	bResult = cGraphSerialiser.Write(&pTest2a);
 	AssertTrue(bResult);
@@ -68,11 +68,11 @@ void TestObjectGraphSerialiserReachability(void)
 	AssertTrue(pTest2a->mbSaved);
 	AssertTrue(pTest2b->mbSaved);
 
-	AssertFile("Input/OneA.DRG", "Output/GraphWriter/Data/Test1/OneA.DRG");
-	AssertFile("Input/OneB.DRG", "Output/GraphWriter/Data/Test1/OneB.DRG");
-	AssertFile("Input/OneC.DRG", "Output/GraphWriter/Data/Test1/Miscellaneous/OneC.DRG");
-	AssertFile("Input/TwoAye.DRG", "Output/GraphWriter/Data/Test2/TwoAye.DRG");
-	AssertFile("Input/TowBee.DRG", "Output/GraphWriter/Data/Test2/TowBee.DRG");
+	AssertFile("Input" _FS_ "OneA.DRG", "Output" _FS_ "GraphWriter" _FS_ "Data" _FS_ "Test1" _FS_ "OneA.DRG");
+	AssertFile("Input" _FS_ "OneB.DRG", "Output" _FS_ "GraphWriter" _FS_ "Data" _FS_ "Test1" _FS_ "OneB.DRG");
+	AssertFile("Input" _FS_ "OneC.DRG", "Output" _FS_ "GraphWriter" _FS_ "Data" _FS_ "Test1" _FS_ "Miscellaneous" _FS_ "OneC.DRG");
+	AssertFile("Input" _FS_ "TwoAye.DRG", "Output" _FS_ "GraphWriter" _FS_ "Data" _FS_ "Test2" _FS_ "TwoAye.DRG");
+	AssertFile("Input" _FS_ "TowBee.DRG", "Output" _FS_ "GraphWriter" _FS_ "Data" _FS_ "Test2" _FS_ "TowBee.DRG");
 }
 
 
@@ -85,7 +85,7 @@ void TestObjectGraphSerialiser(void)
 	CFileUtil	cFileUtil;
 
 	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output/GraphWriter");
+	cFileUtil.MakeDir("Output" _FS_ "GraphWriter");
 
 	MemoryInit();
 	ObjectsInit();

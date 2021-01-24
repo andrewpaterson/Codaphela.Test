@@ -56,7 +56,7 @@ void TestObjectWriterChunkedSerialised(void)
 	pcObject4->Init(0xab, 0xbc, 0xcd);
 	pcObject1->Add(pcObject4);
 
-	cWriter.Init("Output\\ObjectWriterChunked\\Test\\", "Base/Level 1", "ChunkFile");
+	cWriter.Init("Output" _FS_ "ObjectWriterChunked" _FS_ "Test" _FS_, "Base/Level 1", "ChunkFile");
 
 	cGraphSerialiser.Init(&cWriter);
 	AssertTrue(cGraphSerialiser.Write(&pcObject1));
@@ -64,9 +64,9 @@ void TestObjectWriterChunkedSerialised(void)
 
 	cWriter.Kill();
 
-	AssertFile("Input/ChunkFile.DRG", "Output/ObjectWriterChunked/Test/Base/Level 1/ChunkFile.DRG");
+	AssertFile("Input" _FS_ "ChunkFile.DRG", "Output" _FS_ "ObjectWriterChunked" _FS_ "Test" _FS_ "Base" _FS_ "Level 1" _FS_ "ChunkFile.DRG");
 
-	cChunkFile.Init(DiskFile("Output/ObjectWriterChunked/Test/Base/Level 1/ChunkFile.DRG"));
+	cChunkFile.Init(DiskFile("Output" _FS_ "ObjectWriterChunked" _FS_ "Test" _FS_ "Base" _FS_ "Level 1" _FS_ "ChunkFile.DRG"));
 	AssertTrue(cChunkFile.ReadOpen());
 
 	//CTestWithArray pcObject1
@@ -126,7 +126,7 @@ void TestObjectWriterChunked(void)
 	CFileUtil	cFileUtil;
 
 	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output/ObjectWriterChunked");
+	cFileUtil.MakeDir("Output" _FS_ "ObjectWriterChunked");
 	BeginTests();
 
 	TestObjectWriterChunkedWrite();

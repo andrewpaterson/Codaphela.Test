@@ -99,7 +99,7 @@ void WriteObjectConverterChunkedFile(void)
 
 	cDouble = SetupObjectConverterChunkFile();
 
-	cWriter.Init("Output\\ObjectConverter\\", "", "Double");
+	cWriter.Init("Output" _FS_ "ObjectConverter" _FS_, "", "Double");
 	cGraphSerialiser.Init(&cWriter);
 	AssertTrue(cGraphSerialiser.Write(&cDouble));
 	cGraphSerialiser.Kill();
@@ -128,7 +128,7 @@ void TestObjectConverterDragonExistingHollows(void)
 	OIndex								oiNew;
 	CFileUtil							cFileUtil;
 
-	cFileUtil.RemoveDir("Output\\ObjectConverter\\");
+	cFileUtil.RemoveDir("Output" _FS_ "ObjectConverter" _FS_);
 
 	ObjectsInit();
 	WriteObjectConverterChunkedFile();
@@ -137,7 +137,7 @@ void TestObjectConverterDragonExistingHollows(void)
 	ObjectsInit();
 	SetupObjectConverterConstructors();
 
-	pcDiskFile = DiskFile("Output\\ObjectConverter\\Double.DRG");
+	pcDiskFile = DiskFile("Output" _FS_ "ObjectConverter" _FS_ "Double.DRG");
 	cChunkedConverter.Init();
 	pcObjectSource = cChunkedConverter.CreateSource(pcDiskFile, "Double");
 	AssertNotNull(pcObjectSource);
@@ -341,7 +341,7 @@ void WriteObjectConverterChunkedFile2(void)
 
 	cDouble = SetupObjectConverterChunkFile2();
 
-	cWriter.Init("Output\\ObjectConverter\\", "", "Trouble");
+	cWriter.Init("Output" _FS_ "ObjectConverter" _FS_ , "", "Trouble");
 	cGraphSerialiser.Init(&cWriter);
 	AssertTrue(cGraphSerialiser.Write(&cDouble));
 	cGraphSerialiser.Kill();
@@ -376,7 +376,7 @@ void TestObjectConverterDragonRootDistance(void)
 	ObjectsInit();
 	SetupObjectConverterConstructors();
 
-	pcDiskFile = DiskFile("Output\\ObjectConverter\\Trouble.DRG");
+	pcDiskFile = DiskFile("Output" _FS_ "ObjectConverter" _FS_ "Trouble.DRG");
 	cChunkedConverter.Init();
 	pcObjectSource = cChunkedConverter.CreateSource(pcDiskFile, "Trouble");
 

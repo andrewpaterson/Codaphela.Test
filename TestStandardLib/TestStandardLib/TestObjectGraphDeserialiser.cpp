@@ -92,7 +92,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	CObjectAllocator			cAllocator;
 	CDependentReadObjects		cDependentReadObjects;
 	CCodabase*					pcDatabase;
-	char						szDirectory[] = "Output/GraphDeserialiser/Simple/Remapping";
+	char						szDirectory[] = "Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping";
 
 	cFileUtil.MakeDir(szDirectory);
 
@@ -185,8 +185,8 @@ void TestRemappingOfSimpleFilesOIs(void)
 	CObjectWriterSimple			cWriter;
 	CObjectReaderSimpleDisk		cReader;
 
-	cWriter.Init("Output/GraphDeserialiser/Simple/Remapping", "");
-	cReader.Init("Output/GraphDeserialiser/Simple/Remapping");
+	cWriter.Init("Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping", "");
+	cReader.Init("Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping");
 
 	TestRemappingOfOIs(&cWriter, &cReader);
 }
@@ -201,8 +201,8 @@ void TestRemappingOfChunkedFilesOIs(void)
 	CObjectWriterChunked		cWriter;
 	CObjectReaderChunkFileDisk	cReader;
 
-	cWriter.Init("Output/GraphDeserialiser/Simple/Remapping", "", "GraphFile");
-	cReader.Init("Output/GraphDeserialiser/Simple/Remapping", "GraphFile");
+	cWriter.Init("Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping", "", "GraphFile");
+	cReader.Init("Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping", "GraphFile");
 
 	TestRemappingOfOIs(&cWriter, &cReader);
 }
@@ -232,7 +232,7 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	CObjectAllocator				cAllocator;
 	CDependentReadObjects			cDependentReadObjects;
 	CCodabase*						pcDatabase;
-	char							szDirectory[] = "Output/GraphDeserialiser/Simple/Remapping";
+	char							szDirectory[] = "Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping";
 
 	cWriterStart1.Init(szDirectory, "", "Start1");
 	cWriterStart2.Init(szDirectory, "", "Start2");
@@ -285,7 +285,7 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 
 	cAllocator.Init(&gcObjects);
 	cDependentReadObjects.Init();
-	cReaderStart1.Init("Output/GraphDeserialiser/Simple/Remapping", "Start1");
+	cReaderStart1.Init("Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping", "Start1");
 	cGraphDeserialiser.Init(&cReaderStart1, FALSE, &cAllocator, &cDependentReadObjects, gcObjects.GetMemory());
 	cOwStart1 = cGraphDeserialiser.Read("Ow/Start 1");
 	cGraphDeserialiser.Kill();
@@ -319,7 +319,7 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 
 	cAllocator.Init(&gcObjects);
 	cDependentReadObjects.Init();
-	cReaderStart2.Init("Output/GraphDeserialiser/Simple/Remapping", "Start2");
+	cReaderStart2.Init("Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping", "Start2");
 	cGraphDeserialiser.Init(&cReaderStart2, FALSE, &cAllocator, &cDependentReadObjects, gcObjects.GetMemory());
 	cOwStart2 = cGraphDeserialiser.Read("Ow/Start 2");
 	cGraphDeserialiser.Kill();
