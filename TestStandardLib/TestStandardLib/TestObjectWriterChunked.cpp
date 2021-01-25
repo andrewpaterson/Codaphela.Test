@@ -40,6 +40,10 @@ void TestObjectWriterChunkedSerialised(void)
 	CChunkFileNames				cChunkFile;
 	int							iLength;
 	char						szTest[4];
+	CFileUtil					cFileUtil;
+
+	cFileUtil.RemoveDir("Output" _FS_ "ObjectWriterChunked");
+	AssertTrue(cFileUtil.TouchDir("Output" _FS_ "ObjectWriterChunked" _FS_ "Test"));
 
 	pcObject1 = ONMalloc(CTestWithArray, "Base/Level 1/Warning");
 	pcObject1->Init("Talking Clock", 17);
@@ -56,7 +60,7 @@ void TestObjectWriterChunkedSerialised(void)
 	pcObject4->Init(0xab, 0xbc, 0xcd);
 	pcObject1->Add(pcObject4);
 
-	cWriter.Init("Output" _FS_ "ObjectWriterChunked" _FS_ "Test" _FS_, "Base/Level 1", "ChunkFile");
+	cWriter.Init("Output" _FS_ "ObjectWriterChunked" _FS_ "Test", "Base" _FS_ "Level 1", "ChunkFile");
 
 	cGraphSerialiser.Init(&cWriter);
 	AssertTrue(cGraphSerialiser.Write(&pcObject1));
@@ -114,6 +118,8 @@ void TestObjectWriterChunkedSerialised(void)
 
 	ObjectsKill();
 	MemoryKill();
+
+	cFileUtil.RemoveDir("Output" _FS_ "ObjectWriterChunked");
 }
 
 
@@ -123,17 +129,11 @@ void TestObjectWriterChunkedSerialised(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectWriterChunked(void)
 {
-	CFileUtil	cFileUtil;
-
-	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output" _FS_ "ObjectWriterChunked");
 	BeginTests();
 
 	TestObjectWriterChunkedWrite();
 	TestObjectWriterChunkedSerialised();
 
 	TestStatistics();
-
-	cFileUtil.RemoveDir("Output");
 }
 
