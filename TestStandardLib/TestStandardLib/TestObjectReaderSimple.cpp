@@ -63,6 +63,12 @@ void WriteObjectReaderSimpleFile(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectReaderSimpleDeserialised(void)
 {
+	CFileUtil					cFileUtil;
+	char						szDirectory[] = "Output" _FS_ "ObjectReaderSimple";
+
+	cFileUtil.RemoveDir(szDirectory);
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
 	WriteObjectReaderSimpleFile();
 
 	CObjectReaderSimpleDisk		cReader;
@@ -76,10 +82,6 @@ void TestObjectReaderSimpleDeserialised(void)
 	CObjectAllocator			cAllocator;
 	CDependentReadObjects		cDependentReadObjects;
 	CCodabase*					pcDatabase;
-	char						szDirectory[] = "Output" _FS_ "ObjectReaderSimple";
-	CFileUtil					cFileUtil;
-
-	cFileUtil.RemoveDir(szDirectory);
 
 	MemoryInit();
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
@@ -124,6 +126,8 @@ void TestObjectReaderSimpleDeserialised(void)
 	SafeKill(pcDatabase);
 	ObjectsKill();
 	MemoryKill();
+
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -133,16 +137,10 @@ void TestObjectReaderSimpleDeserialised(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectReaderSimple(void)
 {
-	CFileUtil	cFileUtil;
-
-	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output" _FS_ "ObjectReaderSimple");
 	BeginTests();
 
 	TestObjectReaderSimpleDeserialised();
 
 	TestStatistics();
-
-	cFileUtil.RemoveDir("Output");
 }
 

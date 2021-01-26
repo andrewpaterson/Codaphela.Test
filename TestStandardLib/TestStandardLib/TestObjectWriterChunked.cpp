@@ -1,5 +1,6 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/NaiveFile.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectWriterChunked.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
@@ -42,7 +43,7 @@ void TestObjectWriterChunkedSerialised(void)
 	char						szTest[4];
 	CFileUtil					cFileUtil;
 
-	cFileUtil.RemoveDir("Output" _FS_ "ObjectWriterChunked");
+	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "ObjectWriterChunked"));
 	AssertTrue(cFileUtil.TouchDir("Output" _FS_ "ObjectWriterChunked" _FS_ "Test"));
 
 	pcObject1 = ONMalloc(CTestWithArray, "Base/Level 1/Warning");
@@ -68,7 +69,27 @@ void TestObjectWriterChunkedSerialised(void)
 
 	cWriter.Kill();
 
+	CNaiveFile			cInputFile;
+	CNaiveFile			cOutputFile;
+	CChunkFileHeader*	psInputHeader;
+	CChunkFileHeader*	psOutputHeader;
+
+	AssertTrue(cInputFile.Init()->Read("Input" _FS_ "ChunkFile.DRG"));
+	AssertTrue(cOutputFile.Init()->Read("Output" _FS_ "ObjectWriterChunked" _FS_ "Test" _FS_ "Base" _FS_ "Level 1" _FS_ "ChunkFile.DRG"));
+	
+	AssertLongLongInt(1158LL, cInputFile.Size());
+	AssertLongLongInt(1158LL, cOutputFile.Size());
+	psInputHeader = (CChunkFileHeader*)cInputFile.Get();
+	psOutputHeader = (CChunkFileHeader*)cOutputFile.Get();
+	AssertInt(CHUNK_HEADER_MAGIC, psInputHeader->miMagic);
+	AssertInt(CHUNK_HEADER_MAGIC, psOutputHeader->miMagic);
+	//Why does the hash sometimes change?
+
 	AssertFile("Input" _FS_ "ChunkFile.DRG", "Output" _FS_ "ObjectWriterChunked" _FS_ "Test" _FS_ "Base" _FS_ "Level 1" _FS_ "ChunkFile.DRG");
+	Pass();
+
+	cOutputFile.Kill();
+	cInputFile.Kill();
 
 	cChunkFile.Init(DiskFile("Output" _FS_ "ObjectWriterChunked" _FS_ "Test" _FS_ "Base" _FS_ "Level 1" _FS_ "ChunkFile.DRG"));
 	AssertTrue(cChunkFile.ReadOpen());

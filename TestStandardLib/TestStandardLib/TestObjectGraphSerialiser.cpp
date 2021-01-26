@@ -85,11 +85,6 @@ void TestObjectGraphSerialiserReachability(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectGraphSerialiser(void)
 {
-	CFileUtil	cFileUtil;
-
-	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output" _FS_ "GraphWriter");
-
 	MemoryInit();
 	ObjectsInit();
 	BeginTests();
@@ -99,7 +94,5 @@ void TestObjectGraphSerialiser(void)
 	TestStatistics();
 	ObjectsKill();
 	MemoryKill();
-
-	cFileUtil.RemoveDir("Output");
 }
 
