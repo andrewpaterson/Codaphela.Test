@@ -21,10 +21,11 @@ void TestObjectGraphSerialiserReachability(void)
 	Ptr<CTestSaveableObject2>	pTest2b;
 	CObjectGraphSerialiser			cGraphSerialiser;
 	CObjectWriterSimple				cSimpleWriter;
-
+	char							szDirectory[] = "Output" _FS_ "GraphWriter" _FS_ "Data";
 	BOOL							bResult;
 
-	cFileUtil.MakeDir("Output" _FS_ "GraphWriter" _FS_ "Data");
+	cFileUtil.RemoveDir(szDirectory);
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
 	pTest1a = ONMalloc(CTestSaveableObject1, "Test1/OneA");
 	pTest1a->Init();
@@ -56,7 +57,7 @@ void TestObjectGraphSerialiserReachability(void)
 	AssertInt(224, sizeof(CTestSaveableObject1));  //If these sizes change the input test files will be wrong.
 	AssertInt(232, sizeof(CTestSaveableObject2));
 
-	cSimpleWriter.Init("Output" _FS_ "GraphWriter" _FS_ "Data", "");
+	cSimpleWriter.Init(szDirectory, "");
 	cGraphSerialiser.Init(&cSimpleWriter);
 	bResult = cGraphSerialiser.Write(&pTest2a);
 	AssertTrue(bResult);
@@ -73,6 +74,8 @@ void TestObjectGraphSerialiserReachability(void)
 	AssertFile("Input" _FS_ "OneC.DRG", "Output" _FS_ "GraphWriter" _FS_ "Data" _FS_ "Test1" _FS_ "Miscellaneous" _FS_ "OneC.DRG");
 	AssertFile("Input" _FS_ "TwoAye.DRG", "Output" _FS_ "GraphWriter" _FS_ "Data" _FS_ "Test2" _FS_ "TwoAye.DRG");
 	AssertFile("Input" _FS_ "TowBee.DRG", "Output" _FS_ "GraphWriter" _FS_ "Data" _FS_ "Test2" _FS_ "TowBee.DRG");
+
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
