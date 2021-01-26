@@ -319,7 +319,6 @@ void TestStackPointersHeapKill(void)
 //////////////////////////////////////////////////////////////////////////
 void TestStackPointersHeapKillSingle(void)
 {
-	MemoryInit();
 	ObjectsInit();
 
 	Ptr<CTestObject>			pTest1;
@@ -337,7 +336,6 @@ void TestStackPointersHeapKillSingle(void)
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
-	MemoryKill();
 }
 
 
@@ -347,7 +345,6 @@ void TestStackPointersHeapKillSingle(void)
 //////////////////////////////////////////////////////////////////////////
 void TestStackPointersKillSingle(void)
 {
-	MemoryInit();
 	ObjectsInit();
 
 	Ptr<CTestObject>			pTest1;
@@ -365,7 +362,6 @@ void TestStackPointersKillSingle(void)
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
-	MemoryKill();
 }
 
 
@@ -376,6 +372,7 @@ void TestStackPointersKillSingle(void)
 void TestStackPointers(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestStackPointersFindUnused();
 	TestStackPointersAdd();
@@ -383,6 +380,7 @@ void TestStackPointers(void)
 	TestStackPointersHeapKillSingle();
 	TestStackPointersHeapKill();
 
+	MemoryKill();
 	TestStatistics();
 }
 

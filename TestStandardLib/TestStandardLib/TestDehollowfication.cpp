@@ -139,7 +139,7 @@ void TestDehollowficationFromDatabase(void)
 	cFileUtil.RemoveDir(szDirectory);
 
 	MemoryInit();
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase);
 	SetupDehollowficationScene();
@@ -150,7 +150,7 @@ void TestDehollowficationFromDatabase(void)
 	MemoryKill();
 
 	MemoryInit();
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase);
 	SetupDehollowficationConstructors();
@@ -272,7 +272,7 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 	cFileUtil.RemoveDir(szDirectory);
 
 	MemoryInit();
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase);
 	SetupDehollowficationScene();
@@ -283,7 +283,7 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 	MemoryKill();
 
 	MemoryInit();
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase);
 	SetupDehollowficationConstructors();
@@ -339,7 +339,7 @@ void TestDehollowficationFromChunkFileSource(void)
 	cFileUtil.RemoveDir("Output" _FS_ "Dehollowfication" _FS_ "ChunkFile");
 
 	MemoryInit();
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Dehollowfication" _FS_ "Temp", IWT_Yes);
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Dehollowfication" _FS_ "Temp", IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase);
 	WriteDehollowficationChunkedFile();
@@ -355,7 +355,7 @@ void TestDehollowficationFromChunkFileSource(void)
 	CDiskFile*	pcDiskFile = DiskFile("Output" _FS_ "Dehollowfication" _FS_ "ChunkFile" _FS_ "Double.DRG");
 
 	MemoryInit();
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Dehollowfication" _FS_ "Temp", IWT_Yes);
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Dehollowfication" _FS_ "Temp", IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase);
 	SetupDehollowficationConstructors();
