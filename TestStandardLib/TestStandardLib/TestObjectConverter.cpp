@@ -1,4 +1,5 @@
 #include "BaseLib/FileUtil.h"
+#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/MemoryFile.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectConverterText.h"
@@ -434,11 +435,13 @@ void TestObjectConverter(void)
 	cFileUtil.TouchDir("Output" _FS_ "ObjectConverter");
 
 	BeginTests();
+	MemoryInit();
 
 	TestObjectConverterText();
 	TestObjectConverterDragonExistingHollows();
 	TestObjectConverterDragonRootDistance();
 
+	MemoryKill();
 	TestStatistics();
 
 	cFileUtil.RemoveDir("Output" _FS_ "ObjectConverter");

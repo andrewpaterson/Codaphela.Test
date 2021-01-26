@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
 #include "CoreLib/ValueIndexedDataConfig.h"
 #include "CoreLib/ValueNamedIndexesConfig.h"
@@ -683,6 +684,7 @@
 void TestObjects(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	//TestObjectsObjectKillInGraph();
 	//TestObjectsArrayKillInGraph();
@@ -697,6 +699,7 @@ void TestObjects(void)
 	//TestObjectsEvict();
 	//TestObjectDehollowfication();
 
+	MemoryKill();
 	TestStatistics();
 }
 

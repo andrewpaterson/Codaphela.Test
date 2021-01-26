@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
@@ -37,8 +38,10 @@ void TestObjectStackInit(void)
 void TestObjectStack(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestObjectStackInit();
 
+	MemoryKill();
 	TestStatistics();
 }

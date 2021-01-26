@@ -36,7 +36,6 @@ CPointer SetupObjectReaderSimpleFile(void)
 //////////////////////////////////////////////////////////////////////////
 void WriteObjectReaderSimpleFile(void)
 {
-	MemoryInit();
 	ObjectsInit();
 	gcObjects.AddConstructor<CTestNamedString>();
 
@@ -53,7 +52,6 @@ void WriteObjectReaderSimpleFile(void)
 	cWriter.Kill();
 
 	ObjectsKill();
-	MemoryKill();
 }
 
 
@@ -83,7 +81,6 @@ void TestObjectReaderSimpleDeserialised(void)
 	CDependentReadObjects		cDependentReadObjects;
 	CCodabase*					pcDatabase;
 
-	MemoryInit();
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase);
@@ -125,7 +122,6 @@ void TestObjectReaderSimpleDeserialised(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();
-	MemoryKill();
 
 	cFileUtil.RemoveDir(szDirectory);
 }
@@ -138,9 +134,11 @@ void TestObjectReaderSimpleDeserialised(void)
 void TestObjectReaderSimple(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestObjectReaderSimpleDeserialised();
 
+	MemoryKill();
 	TestStatistics();
 }
 

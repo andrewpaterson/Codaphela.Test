@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
@@ -247,6 +248,7 @@ void TestPointerHeapNotInGraphFreeStack(void)
 void TestPointer(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestPointerConstructor();
 	TestPointerDestructor();
@@ -257,6 +259,7 @@ void TestPointer(void)
 	TestPointerNegation();
 	TestPointerHeapNotInGraphFreeStack();
 
+	MemoryKill();
 	TestStatistics();
 }
 

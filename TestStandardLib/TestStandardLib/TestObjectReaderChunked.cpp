@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
@@ -98,6 +99,13 @@ int WriteObjectReaderChunkedFile(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectReaderChunkedDeserialised(void)
 {
+	CFileUtil	cFileUtil;
+
+	cFileUtil.RemoveDir("Output");
+	cFileUtil.MakeDir("Output" _FS_ "ObjectReaderChunked");
+
+	ObjectsInit();
+
 	CObjectReaderChunkFileDisk	cReader;
 	CObjectGraphDeserialiser	cGraphDeserialiser;
 	CPointer					cBase;
@@ -249,6 +257,8 @@ void TestObjectReaderChunkedDeserialised(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();
+
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -258,18 +268,12 @@ void TestObjectReaderChunkedDeserialised(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectReaderChunked(void)
 {
-	CFileUtil	cFileUtil;
-
-	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output" _FS_ "ObjectReaderChunked");
-	ObjectsInit();
 	BeginTests();
+	MemoryInit();
 
 	TestObjectReaderChunkedDeserialised();
 
+	MemoryKill();
 	TestStatistics();
-	ObjectsKill();
-
-	cFileUtil.RemoveDir("Output");
 }
 

@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/Root.h"
 #include "StandardLib/PointerContainer.h"
@@ -1167,6 +1168,7 @@ void TestDistToStackRemoveUnbalancedLargeBroken(void)
 void TestDistToStack(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestDistToStackSimpleTwoStep();
 	TestDistToStackSimpleOneStep();
@@ -1183,6 +1185,7 @@ void TestDistToStack(void)
 	TestDistToStackSetBroken();
 	TestDistToStackRemoveUnbalancedLargeBroken();
 
+	MemoryKill();
 	TestStatistics();
 }
 

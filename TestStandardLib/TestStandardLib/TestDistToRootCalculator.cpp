@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/Root.h"
 #include "StandardLib/PointerContainer.h"
@@ -2541,6 +2542,7 @@ void TestDistToRootComplex(void)
 void TestDistToRoot(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestDistToRootTosNotUpdated();
 	TestClearDistToRootToValidDistBroken();
@@ -2566,6 +2568,7 @@ void TestDistToRoot(void)
 	TestDistToRootLinearToStackScenarioB();
 	TestDistToRootComplex();
 
+	MemoryKill();
 	TestStatistics();
 }
 

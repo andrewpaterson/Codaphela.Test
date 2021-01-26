@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/ArrayCommonObject.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
@@ -83,9 +84,11 @@ void TestArrayCommonPointerRemapping(void)
 void TestArrayCommonObject(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestArrayCommonPointerRemapping();
 
+	MemoryKill();
 	TestStatistics();
 }
 

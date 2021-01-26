@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
@@ -68,7 +69,13 @@ void TestObjectStackPointersSingleWithRoot(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectStackPointers(void)
 {
+	BeginTests();
+	MemoryInit();
+
 	TestObjectStackPointersSingle();
 	TestObjectStackPointersSingleWithRoot();
+
+	MemoryKill();
+	TestStatistics();
 }
 

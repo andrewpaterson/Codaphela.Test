@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/String.h"
 #include "StandardLib/Root.h"
@@ -1438,6 +1439,7 @@ void TestRootKill(void)
 void TestRoot(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestRootKill();
 	TestRootKillWithStackPointers();
@@ -1453,6 +1455,7 @@ void TestRoot(void)
 	//TestRootSetKillAll();
 	TestRootSetRemoveAll();
 
+	MemoryKill();
 	TestStatistics();
 }
 

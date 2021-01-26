@@ -152,8 +152,8 @@ void TestObjectWriterChunked(void)
 {
 	BeginTests();
 
-	TestObjectWriterChunkedWrite();
-	TestObjectWriterChunkedSerialised();
+	//TestObjectWriterChunkedWrite();
+	//TestObjectWriterChunkedSerialised();
 
 	TestStatistics();
 }

@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "CoreLib/FunctionCaller.h"
 #include "StandardLib/Parameters.h"
 #include "StandardLib/Object.h"
@@ -763,6 +764,7 @@ void TestObjectKillCyclic(void)
 void TestObject(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestObjectSize();
 	TestObjectGetObjects();
@@ -776,6 +778,7 @@ void TestObject(void)
 	TestObjectRootUnattachment();
 	TestObjectSetUnattachment();
 
+	MemoryKill();
 	TestStatistics();
 }
 
