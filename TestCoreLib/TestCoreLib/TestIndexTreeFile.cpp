@@ -2549,7 +2549,7 @@ void TestIndexTreeFileEvictComplexEvictCloseGet(void)
 	AssertTrue(cAccess.EvictString(szAABAA));
 	AssertTrue(cAccess.EvictString(szAACAA));
 	AssertTrue(cAccess.EvictString(szAACBB));
-	AssertLongLongInt(3216LL, pcMemory->GetTotalAllocatedMemory());
+	AssertLongLongInt(3204LL, pcMemory->GetTotalAllocatedMemory());
 	Pass();
 
 	AssertInt(0, cIndexTree.NumMemoryElements());

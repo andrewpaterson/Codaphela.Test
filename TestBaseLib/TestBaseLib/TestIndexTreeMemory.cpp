@@ -814,7 +814,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 	AssertInt(3, cIndex.NumAllocatedNodes());
 	AssertInt(2, cIndex.RecurseSize());
 	AssertInt(2, cIndex.NumElements());
-	AssertInt(1124, cTrackingAlloc.AllocatedUserSize());
+	AssertInt(1116, cTrackingAlloc.AllocatedUserSize());
 	AssertFalse(cAccess.HasString("MA"));
 
 	AssertLongLongInt(0x99LL, cAccess.GetStringLong("MC")));
@@ -822,7 +822,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 	AssertInt(2, cIndex.NumAllocatedNodes());
 	AssertInt(1, cIndex.RecurseSize());
 	AssertInt(1, cIndex.NumElements());
-	AssertInt(1088, cTrackingAlloc.AllocatedUserSize());
+	AssertInt(1076, cTrackingAlloc.AllocatedUserSize());
 	AssertFalse(cAccess.HasString("MC"));
 
 	AssertLongLongInt(0x77LL, cAccess.GetStringLong("M")));
