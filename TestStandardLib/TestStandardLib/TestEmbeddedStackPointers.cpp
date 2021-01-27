@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
@@ -243,6 +244,7 @@ void TestEmbeddedStackPointersComplex(void)
 void TestEmbeddedStackPointers(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestEmbeddedStackPointersKill();
 	TestEmbeddedStackPointersDestructor();
@@ -250,6 +252,7 @@ void TestEmbeddedStackPointers(void)
 	TestEmbeddedStackPointersEmbeddedDistDirect();
 	TestEmbeddedStackPointersComplex();
 
+	MemoryKill();
 	TestStatistics();
 }
 

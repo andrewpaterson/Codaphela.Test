@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestSetup.h"
@@ -57,10 +58,12 @@ void TestUsageDefaultPointer(void)
 void TestUsage(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestUsageNullPointers();
 	TestUsageDefaultPointer();
 
+	MemoryKill(); 
 	TestStatistics();
 }
 

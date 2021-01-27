@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectAllocator.h"
 #include "StandardLib/String.h"
@@ -129,9 +130,11 @@ void TestEmbeddedObjectRemapTosActual(void)
 void TestEmbeddedObjectRemapTos(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestEmbeddedObjectRemapTosActual();
 
+	MemoryKill();
 	TestStatistics();
 }
 

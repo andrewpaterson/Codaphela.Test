@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Set.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/PointerContainer.h"
@@ -233,6 +234,7 @@ void TestSetRemoveAll(void)
 void TestSet(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestSetAdd();
 	TestSetGet();
@@ -242,6 +244,7 @@ void TestSet(void)
 	//TestSetKillAll();
 	TestSetRemoveAll();
 
+	MemoryKill();
 	TestStatistics();
 }
 

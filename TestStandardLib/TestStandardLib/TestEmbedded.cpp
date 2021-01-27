@@ -273,8 +273,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	MemoryInit();
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase);
 	SetupEmbeddedObjectConstructors();
@@ -291,14 +290,12 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();
-	MemoryKill();
 
 	AssertInt(176, sizeof(CEmbeddedTest));
 	AssertInt(544, sizeof(CEmbeddedContainer));
 	AssertInt(1032, sizeof(CEmbeddedComplex));
 
-	MemoryInit();
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase);
 	SetupEmbeddedObjectConstructors();
@@ -337,7 +334,6 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();
-	MemoryKill();
 }
 
 
@@ -356,8 +352,7 @@ void TestEmbeddedObjectPointTo(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	MemoryInit();
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase);
 	SetupEmbeddedObjectConstructors();
@@ -375,12 +370,10 @@ void TestEmbeddedObjectPointTo(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();
-	MemoryKill();
 
 	AssertNull(&pContainer);
 
-	MemoryInit();
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase);
 	SetupEmbeddedObjectConstructors();
@@ -401,7 +394,6 @@ void TestEmbeddedObjectPointTo(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();
-	MemoryKill();
 }
 
 
@@ -411,7 +403,6 @@ void TestEmbeddedObjectPointTo(void)
 //////////////////////////////////////////////////////////////////////////
 void TestEmbeddedGetEmbeddedIndex(void)
 {
-	MemoryInit();
 	ObjectsInit();
 
 	CEmbeddedComplex	cComplex;
@@ -438,7 +429,6 @@ void TestEmbeddedGetEmbeddedIndex(void)
 	AssertInt(-1, cComplex.GetEmbeddedIndex(NULL));
 
 	ObjectsKill();
-	MemoryKill();
 }
 
 
@@ -448,7 +438,6 @@ void TestEmbeddedGetEmbeddedIndex(void)
 //////////////////////////////////////////////////////////////////////////
 void TestEmbeddedGetEmbeddedObject(void)
 {
-	MemoryInit();
 	ObjectsInit();
 
 	CEmbeddedComplex	cComplex;
@@ -483,7 +472,6 @@ void TestEmbeddedGetEmbeddedObject(void)
 	AssertNull(pcEmbedded);
 
 	ObjectsKill();
-	MemoryKill();
 }
 
 
@@ -493,7 +481,6 @@ void TestEmbeddedGetEmbeddedObject(void)
 //////////////////////////////////////////////////////////////////////////
 void TestEmbeddedObjectClass(void)
 {
-	MemoryInit();
 	ObjectsInit();
 
 	CEmbeddedComplex	cComplex;
@@ -535,7 +522,6 @@ void TestEmbeddedObjectClass(void)
 	AssertInt(-1, cComplex.GetFieldPointerToIndex(NULL));
 
 	ObjectsKill();
-	MemoryKill();
 }
 
 
@@ -545,7 +531,6 @@ void TestEmbeddedObjectClass(void)
 //////////////////////////////////////////////////////////////////////////
 void TestEmbeddedOjectIsAllocatedInObjects()
 {
-	MemoryInit();
 	ObjectsInit();
 
 	Ptr<CClusterMissile> pClusterMissile = ONMalloc(CClusterMissile, "Gerbil")->Init(NULL);
@@ -562,7 +547,6 @@ void TestEmbeddedOjectIsAllocatedInObjects()
 	AssertFalse(cClusterMissile.mcMissile2.IsAllocatedInObjects());
 
 	ObjectsKill();
-	MemoryKill();
 }
 
 
@@ -573,6 +557,7 @@ void TestEmbeddedOjectIsAllocatedInObjects()
 void TestEmbedded(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestEmbeddedFlags();
 	TestEmbeddedOjectIsAllocatedInObjects();
@@ -585,6 +570,7 @@ void TestEmbedded(void)
 	TestEmbeddedGetEmbeddedObject();
 	TestEmbeddedObjectPointTo();
 
+	MemoryKill();
 	TestStatistics();
 }
 

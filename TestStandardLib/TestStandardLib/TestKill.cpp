@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
 #include "StandardLib/Objects.h"
@@ -412,6 +413,7 @@ void TestKillCanFindRoot(void)
 void TestKill(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestKillSelfPointer1();
 	TestKillSelfPointer2();
@@ -419,6 +421,7 @@ void TestKill(void)
 	TestKillBestPractice();
 	TestKillCanFindRoot();
 
+	MemoryKill();
 	TestStatistics();
 }
 

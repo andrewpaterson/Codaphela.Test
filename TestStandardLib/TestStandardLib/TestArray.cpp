@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Array.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
@@ -139,6 +140,7 @@ void TestArrayRemove(void)
 void TestArray(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestArrayAdd();
 	TestArrayGet();
@@ -146,6 +148,7 @@ void TestArray(void)
 	TestArrayAddAll();
 	TestArrayRemove();
 
+	MemoryKill();
 	TestStatistics();
 }
 
