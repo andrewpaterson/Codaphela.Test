@@ -12,20 +12,6 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectWriterChunkedWrite(void)
-{
-	MemoryInit();
-	ObjectsInit();
-
-	ObjectsKill();
-	MemoryKill();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 void TestObjectWriterChunkedSerialised(void)
 {	
 	MemoryInit();
@@ -152,8 +138,7 @@ void TestObjectWriterChunked(void)
 {
 	BeginTests();
 
-	//TestObjectWriterChunkedWrite();
-	//TestObjectWriterChunkedSerialised();
+	TestObjectWriterChunkedSerialised();
 
 	TestStatistics();
 }

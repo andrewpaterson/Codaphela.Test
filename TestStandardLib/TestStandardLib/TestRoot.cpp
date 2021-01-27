@@ -1384,9 +1384,11 @@ void TestRootKillWithStackPointers(void)
 	AssertLongLongInt(5, gcUnknowns.NumElements());
 
 	pRoot->Kill();
+
+	//Shouldn't these be 3?  Why doesn't killing the root remove the root object?
 	AssertNull(&pRoot);
-	//AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
-	//AssertLongLongInt(3, gcUnknowns.NumElements());
+	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(4, gcUnknowns.NumElements());
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pObject->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pContainer1->GetDistToRoot());
@@ -1410,6 +1412,9 @@ void TestRootKill(void)
 	Ptr<CRoot>					pRoot;
 	STestObjectKilledNotifier	sKillNotifier1;
 
+	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(0, gcUnknowns.NumElements());
+
 	pObject = OMalloc(CTestObject)->Init(&sKillNotifier1);
 	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
 	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
@@ -1422,11 +1427,20 @@ void TestRootKill(void)
 
 	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(5, gcUnknowns.NumElements());
+	Pass();
 
 	pRoot->Kill();
 
-	//AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
-	//AssertLongLongInt(0, gcUnknowns.NumElements());
+	//Shouldn't these be 0?  Why doesn't killing the root remove the root object?
+	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(1, gcUnknowns.NumElements());
+	Pass();
+
+	pRoot = ORoot();
+	AssertString(ROOT_NAME, pRoot->GetName());
+	AssertLongLongInt(4LL, pRoot->GetOI());
+	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(1, gcUnknowns.NumElements());
 
 	ObjectsKill();
 }

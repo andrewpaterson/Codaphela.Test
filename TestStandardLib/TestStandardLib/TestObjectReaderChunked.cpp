@@ -100,11 +100,10 @@ int WriteObjectReaderChunkedFile(void)
 void TestObjectReaderChunkedDeserialised(void)
 {
 	CFileUtil	cFileUtil;
+	char		szDirectory[] = "Output" _FS_ "ObjectReaderChunked";
 
-	cFileUtil.RemoveDir("Output");
-	cFileUtil.MakeDir("Output" _FS_ "ObjectReaderChunked");
-
-	ObjectsInit();
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
 	CObjectReaderChunkFileDisk	cReader;
 	CObjectGraphDeserialiser	cGraphDeserialiser;
@@ -129,17 +128,16 @@ void TestObjectReaderChunkedDeserialised(void)
 	OIndex						oiI3;
 	int							iNumMemoryIndexes;
 	CCodabase*					pcDatabase;
-	char						szDirectory[] = "Output" _FS_ "ObjectReaderChunked";
+
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase);
 
 	gcObjects.AddConstructor<CTestWithArray>();
 	gcObjects.AddConstructor<CTestInteger>();
 	gcObjects.AddConstructor<CTestNamedString>();
 	gcObjects.AddConstructor<CString>();
 	gcObjects.AddConstructor<CArrayObject>();
-
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
-	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
 
 	iNumMemoryIndexes = WriteObjectReaderChunkedFile();
 

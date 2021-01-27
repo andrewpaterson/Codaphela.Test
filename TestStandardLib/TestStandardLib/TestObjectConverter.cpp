@@ -430,9 +430,10 @@ void TestObjectConverterDragonRootDistance(void)
 void TestObjectConverter(void)
 {
 	CFileUtil	cFileUtil;
+	char		szDirectory[] = "Output" _FS_ "ObjectConverter";
 
-	cFileUtil.RemoveDir("Output");
-	cFileUtil.TouchDir("Output" _FS_ "ObjectConverter");
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
 	BeginTests();
 	MemoryInit();
