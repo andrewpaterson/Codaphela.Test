@@ -76,6 +76,7 @@ void TestMemoryAllocatorReadWrite(void)
 	AssertTrue(cAllocIn.Read(&cFile));
 
 	cFile.ReadInt(&i);
+	cFile.Kill();
 	AssertInt(124, i);
 
 	AssertInt(16, cAllocIn.GetMemory()->ByteSize());
@@ -104,6 +105,7 @@ void TestMemoryAllocatorReadWrite(void)
 	psBlockParams = cAllocIn.GetMemory()->GetFreeListParams()->GetFreeListParams(3);
 	AssertNull(psBlockParams);
 
+	cAllocIn.Kill();
 	MemoryKill();
 }
 

@@ -30,11 +30,14 @@ void TestChunkFileSimple(void)
 	cChunkFile.Init(DiskFile("Output/ChunkFile.bin"));
 	AssertFalse(cChunkFile.IsOpen());
 	AssertTrue(cChunkFile.ReadOpen());
+	Pass();
 	AssertTrue(cChunkFile.IsOpen());
 	iChunkNum = cChunkFile.FindFirstChunkWithName("ThisChunk");
 	AssertInt(0, iChunkNum);
 	AssertTrue(cChunkFile.ReadChunkBegin(iChunkNum));
+	Pass();
 	AssertTrue(cChunkFile.ReadClose());
+	Pass();
 	AssertFalse(cChunkFile.IsOpen());
 	cChunkFile.Kill();
 }

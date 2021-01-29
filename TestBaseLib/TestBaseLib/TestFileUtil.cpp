@@ -44,6 +44,7 @@ void TestFileUtilMisc(void)
 
 	cFileUtil.RemoveLastFromPath(&szPath);
 	cFileUtil.RemoveDir(szPath.Text());
+	szPath.Kill();
 }
 
 
@@ -222,10 +223,12 @@ void TestFileUtilMakeDirectory(void)
 	cFileUtil.FindAllDirectories(szParentDirectory.Text(), &aszFiles, FALSE);
 	AssertInt(1, aszFiles.NumElements());
 	AssertString(szCurrentDirectory.Text(), aszFiles.GetText(0));
+	aszFiles.Kill();
 
 	bResult = cFileUtil.Touch(szFileName.Text());
 	AssertTrue(bResult);
 
+	szCurrentDirectory.Kill();
 	szParentDirectory.Kill();
 	szDirectory.Kill();
 	szFileName.Kill();

@@ -635,6 +635,7 @@ void TestArrayTemplateSetChunkSize(void)
 
 	as.GetHeader(&sHeader);
 	AssertInt(32, sHeader.miChunkSize);
+	as.Kill();
 }
 
 

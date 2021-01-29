@@ -1,6 +1,6 @@
-//#define _CRTDBG_MAP_ALLOC  
+#define _CRTDBG_MAP_ALLOC  
 #include <stdlib.h>  
-//#include <crtdbg.h>  
+#include <crtdbg.h>  
 
 #include "TestLib/Assert.h"
 
@@ -142,33 +142,33 @@ int main(void)
 	TestLinkedListBlockAligned();
 	TestIndexTreeMemory();
 	TestCSVFileEditable();
-	//_CrtSetBreakAlloc(0);
-	TestGeneralMemory();  // <-- Memory Leak
-	TestDataMemory();  // <-- Memory Leak
-	TestMemoryAllocator();  // <-- Memory Leak
+	TestGeneralMemory();
+	TestDataMemory();
+	TestMemoryAllocator();
 	TestCountingAllocator();
 	TestTrackingAllocator();
 	TestScratchPad();
-	TestScratchPadAllocator();  // <-- Memory Leak
+	TestScratchPadAllocator();
 	TestMemoryStack();
 	TestMemoryCache();
 	TestMemoryQueue();
 	TestMemoryBlock();
-	TestTemporaryMemory();  // <-- Memory Leak
+	TestTemporaryMemory();
 	TestStackMemoryCompilation();
-	TestFileUtil();  // <-- Memory Leak
+	TestFileUtil();
 	TestFileFinder();
-	TestChunkFile();  // <-- Memory Leak
-	TestChunkFileFile();  // <-- Memory Leak
-	TestPackFile();  // <-- Memory Leak
-	TestFileIO();  // <-- Memory Leak
-	TestFileSystem();  // <-- Memory Leak
-	TestCSVFileImmutable();
-	TestIndexTreeDataOrderer();
-	TestIndexTreeMemoryConfig();
+	TestChunkFile();
+	TestChunkFileFile();
+	_CrtSetBreakAlloc(59695);
+	TestPackFile();
+	//TestFileIO();
+	//TestFileSystem();  // <-- Memory Leak
+	//TestCSVFileImmutable();
+	//TestIndexTreeDataOrderer();
+	//TestIndexTreeMemoryConfig();
 
 	iResult = TestTotalStatistics();
-	//_CrtDumpMemoryLeaks();
+	_CrtDumpMemoryLeaks();
 	return iResult;
 }
 

@@ -25,7 +25,11 @@ void TestTemporaryMemorySize(void)
 
 	cTemp.Kill();
 	AssertNull(cTemp.Get());
+
+	cTemp.Init();
 	pv = cTemp.Size(10);
+	AssertNotNull(pv);
+	cTemp.Kill();
 }
 
 
