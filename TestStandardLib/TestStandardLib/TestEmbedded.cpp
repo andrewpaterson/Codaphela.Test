@@ -407,7 +407,6 @@ void TestEmbeddedGetEmbeddedIndex(void)
 
 	CEmbeddedComplex	cComplex;
 
-	cComplex.Class();
 	cComplex.Init();
 
 	AssertInt(0, cComplex.TestGetNumEmbeddedFromFlags());
@@ -443,7 +442,6 @@ void TestEmbeddedGetEmbeddedObject(void)
 	CEmbeddedComplex	cComplex;
 	CEmbeddedObject*	pcEmbedded;
 
-	cComplex.Class();
 	cComplex.Init();
 
 	pcEmbedded = cComplex.GetEmbeddedObject(0);
@@ -496,7 +494,7 @@ void TestEmbeddedObjectClass(void)
 	AssertInt(1, cComplex.GetNumEmbedded());
 
 	cComplex.ClearFlagNumEmbedded();
-	cComplex.Class();
+	cComplex.Init();
 	AssertInt(5, cComplex.GetNumFieldPointerTos());
 	AssertInt(6, cComplex.GetNumEmbedded());
 
@@ -540,7 +538,6 @@ void TestEmbeddedOjectIsAllocatedInObjects()
 	pClusterMissile = NULL;
 
 	CClusterMissile cClusterMissile;
-	cClusterMissile.Class();
 	cClusterMissile.Init(NULL);
 	AssertFalse(cClusterMissile.IsAllocatedInObjects());
 	AssertFalse(cClusterMissile.mcMissile1.IsAllocatedInObjects());

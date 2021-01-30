@@ -536,13 +536,14 @@ void TestObjectGetObjects(void)
 	pcObjects = cObject.GetObjects();
 	AssertNull(pcObjects);
 
+	cObject.Init();
+
 	pObject1 = OMalloc(CTestObject);
 	pObject1->Init(&sKillNotifier1);
 
 	pcObjects = pObject1->GetObjects();
 	AssertPointer(&gcObjects, pcObjects);
 
-	cObject.Class();
 	ObjectsKill();
 }
 

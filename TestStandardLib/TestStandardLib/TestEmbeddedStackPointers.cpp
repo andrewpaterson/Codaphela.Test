@@ -18,7 +18,6 @@ void TestEmbeddedStackPointersKill(void)
 	CEmbeddedComplex			cComplex;
 	STestObjectKilledNotifier	sKillNotifier;
 
-	cComplex.Class();
 	cComplex.Init();
 	cComplex.mai[0] = 1234;
 	cComplex.mai[1] = 7890;
@@ -43,7 +42,6 @@ void TestEmbeddedStackPointersDestructor(STestObjectKilledNotifier* psKillNotifi
 {
 	CTestObject					cTest2;
 
-	cTest2.Class();
 	cTest2.Init(psKillNotifier2);
 	cTest2.mpTest = pTest1;
 	cTest2.Kill();  //Kill has to be called manually - it's difficult to make the destructor call the right kill.
@@ -89,7 +87,6 @@ void TestEmbeddedStackPointersEmbeddedDistPassThruPointer(void)
 	CEmbeddedComplex	cComplex;
 	Ptr<CEmbeddedTest>	pTest;
 	
-	cComplex.Class();
 	cComplex.Init();
 	cComplex.mai[0] = 1234;
 	cComplex.mai[1] = 7890;
@@ -141,7 +138,6 @@ void TestEmbeddedStackPointersEmbeddedDistDirect(void)
 	CEmbeddedTest*		pcTest;
 	CEmbeddedComplex	cComplex;
 
-	cComplex.Class();
 	cComplex.Init();
 	cComplex.mai[0] = 1234;
 	cComplex.mai[1] = 7890;
@@ -174,6 +170,10 @@ void TestEmbeddedStackPointersEmbeddedDistDirect(void)
 }
 
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestEmbeddedStackPointersComplex(Ptr<CEmbeddedComplex> pComplexOnStack1, Ptr<CEmbeddedComplex> pComplexOnStack2)
 {
 
@@ -195,8 +195,6 @@ void TestEmbeddedStackPointersComplex(void)
 	Ptr<CTestObject>			pTestObject2;
 	STestObjectKilledNotifier	sKillNotifier2;
 
-	cComplexOnStack1.Class();
-	cComplexOnStack2.Class();
 	cComplexOnStack1.Init();
 	cComplexOnStack2.Init();
 
