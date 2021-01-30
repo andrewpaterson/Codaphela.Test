@@ -542,7 +542,7 @@ void TestArrayTemplateRemoveBatch(void)
 	AssertInt(10, as.NumElements());
 
 	as.RemoveBatch(1, 1, 5, 1);
-	AssertInt(5, as.NumElements()));
+	AssertInt(5, as.NumElements());
 	AssertInt(0, as.Get(0)->i1);
 	AssertInt(2, as.Get(1)->i1);
 	AssertInt(4, as.Get(2)->i1);

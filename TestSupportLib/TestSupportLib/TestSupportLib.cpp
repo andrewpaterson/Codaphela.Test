@@ -6,6 +6,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
+#include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Unknowns.h"
 #include "TestLib/Assert.h"
 #include "TestImage.h"
@@ -48,10 +49,11 @@ int main(int argc, _TCHAR* argv[])
 	FastFunctionsInit();
 	TypesInit();
 	TypeConverterInit();
+	MemoryInit();
 	UnknownsInit();
 
 	cFileUtil.MakeDir("Output");
-
+	
 	TestImage();
 	TestImageColour();
 	TestImageImport();
@@ -86,6 +88,7 @@ int main(int argc, _TCHAR* argv[])
 	cFileUtil.RemoveDir("Output");
 
 	UnknownsKill();
+	MemoryKill();
 	TypeConverterKill();
 	TypesKill();
 	FastFunctionsKill();

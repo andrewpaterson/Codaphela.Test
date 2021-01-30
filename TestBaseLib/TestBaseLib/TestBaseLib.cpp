@@ -159,13 +159,13 @@ int main(void)
 	TestFileFinder();
 	TestChunkFile();
 	TestChunkFileFile();
-	_CrtSetBreakAlloc(59695);
+	//_CrtSetBreakAlloc(59695);
 	TestPackFile();
-	//TestFileIO();
-	//TestFileSystem();  // <-- Memory Leak
-	//TestCSVFileImmutable();
-	//TestIndexTreeDataOrderer();
-	//TestIndexTreeMemoryConfig();
+	TestFileIO();
+	TestFileSystem();
+	TestCSVFileImmutable();
+	TestIndexTreeDataOrderer();
+	TestIndexTreeMemoryConfig();
 
 	iResult = TestTotalStatistics();
 	_CrtDumpMemoryLeaks();

@@ -121,7 +121,7 @@ void TestIndexTreeFileAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKe
 	CTestIndexTreeObject** ppvTest;
 	SIndexTreeFileIterator		sIter;
 	BOOL						bContinue;
-	int							iSize;
+	size_t						iSize;
 
 	cHelper.Init("Output" _FS_"IndexTree0", "primary", "backup", TRUE);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
@@ -369,7 +369,7 @@ void TestIndexTreeFileNoCacheEviction(void)
 	SIndexTreeFileIterator	sIter;
 	BOOL					bContinue;
 	char*					szData;
-	int						iSize;
+	size_t					iSize;
 	SLogConfig				sLogConfig;
 
 	cHelper.Init("Output" _FS_"IndexTree1", "primary", "backup", TRUE);
@@ -1353,10 +1353,10 @@ void TestIndexTreeFileFindKey(void)
 	AssertString(szAmorphous, paszKeyNames->Get(2));
 	AssertString(szTestFly, paszKeyNames->Get(3));
 
-	paszKeyNames->Get(0, &iKeySize);  AssertInt(strlen(szKeyName) + 1, iKeySize);
-	paszKeyNames->Get(1, &iKeySize);  AssertInt(strlen(szAmphibious) + 1, iKeySize);
-	paszKeyNames->Get(2, &iKeySize);  AssertInt(strlen(szAmorphous) + 1, iKeySize);
-	paszKeyNames->Get(3, &iKeySize);  AssertInt(strlen(szTestFly) + 1, iKeySize);
+	paszKeyNames->Get(0, (size_t*)&iKeySize);  AssertInt(strlen(szKeyName) + 1, iKeySize);
+	paszKeyNames->Get(1, (size_t*)&iKeySize);  AssertInt(strlen(szAmphibious) + 1, iKeySize);
+	paszKeyNames->Get(2, (size_t*)&iKeySize);  AssertInt(strlen(szAmorphous) + 1, iKeySize);
+	paszKeyNames->Get(3, (size_t*)&iKeySize);  AssertInt(strlen(szTestFly) + 1, iKeySize);
 
 	free(paszKeyNames);
 	apvNodes.Kill();
@@ -1428,7 +1428,7 @@ void TestIndexTreeFileReplaceData(void)
 	BOOL						bResult;
 	char						acData[5];
 	char						acResult[5];
-	int							iDataSize;
+	size_t						iDataSize;
 
 	cHelper.Init("Output" _FS_"IndexTree7", "primary", "backup", TRUE);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
@@ -2889,7 +2889,7 @@ void TestIndexTreeFileRemoveComplex(EIndexWriteThrough eWriteThrough, EIndexKeyR
 	CDurableFileController		cController;
 	CIndexTreeFile				cIndexTree;
 	char						szData[256];
-	int							uiSize;
+	size_t						uiSize;
 	char						szSmellsLikeTeenSpirit[] = { "Smells Like Teen Spirit" };
 	char						szSeizedPotPlants[] = { "Seized pot plants turn out to be daisies" };
 	char						szCallingFromWindows[] = { "I am calling you from Windows" };

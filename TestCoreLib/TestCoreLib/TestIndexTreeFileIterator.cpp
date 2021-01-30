@@ -19,7 +19,7 @@ void TestIndexTreeFileIteratorUnsafeIterate(void)
 	SIndexTreeFileIterator	sIter;
 	char*					pvData;
 	char*					pvKey;
-	int						iDataSize;
+	size_t					iDataSize;
 	BOOL					bExists;
 	char					pacKey[9 + 1];
 	int						iKeyLength;
@@ -99,7 +99,7 @@ void TestIndexTreeFileIteratorUnsafeIterate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileIteratorIterate(void)
 {
-	int						iData;
+	size_t					iData;
 	char*					pszKey;
 	int						i;
 	CChars*					pszKey2;

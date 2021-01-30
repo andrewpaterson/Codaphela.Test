@@ -792,7 +792,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 	AssertInt(5, cIndex.NumElements());
 	AssertInt(1236, cTrackingAlloc.AllocatedUserSize());
 
-	AssertLongLongInt(0xaaLL, cAccess.GetStringLong("MB")));
+	AssertLongLongInt(0xaaLL, cAccess.GetStringLong("MB"));
 	cAccess.DeleteString("MB");
 	AssertInt(6, cIndex.NumAllocatedNodes());
 	AssertInt(4, cIndex.RecurseSize());
@@ -800,7 +800,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 	AssertInt(1216, cTrackingAlloc.AllocatedUserSize());
 	AssertFalse(cAccess.HasString("MB"));
 
-	AssertLongLongInt(0xbbLL, cAccess.GetStringLong("MBP")));
+	AssertLongLongInt(0xbbLL, cAccess.GetStringLong("MBP"));
 	cAccess.DeleteString("MBP");
 	AssertInt(4, cIndex.NumAllocatedNodes());
 	AssertInt(3, cIndex.RecurseSize());
@@ -808,8 +808,8 @@ void TestIndexTreeMemoryRemoveResize(void)
 	AssertInt(1160, cTrackingAlloc.AllocatedUserSize());
 	AssertFalse(cAccess.HasString("MBP"));
 
-	AssertLongLongInt(0x99LL, cAccess.GetStringLong("MC")));
-	AssertLongLongInt(0x88LL, cAccess.GetStringLong("MA")));
+	AssertLongLongInt(0x99LL, cAccess.GetStringLong("MC"));
+	AssertLongLongInt(0x88LL, cAccess.GetStringLong("MA"));
 	cAccess.DeleteString("MA");
 	AssertInt(3, cIndex.NumAllocatedNodes());
 	AssertInt(2, cIndex.RecurseSize());
@@ -817,7 +817,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 	AssertInt(1116, cTrackingAlloc.AllocatedUserSize());
 	AssertFalse(cAccess.HasString("MA"));
 
-	AssertLongLongInt(0x99LL, cAccess.GetStringLong("MC")));
+	AssertLongLongInt(0x99LL, cAccess.GetStringLong("MC"));
 	cAccess.DeleteString("MC");
 	AssertInt(2, cIndex.NumAllocatedNodes());
 	AssertInt(1, cIndex.RecurseSize());
@@ -825,7 +825,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 	AssertInt(1076, cTrackingAlloc.AllocatedUserSize());
 	AssertFalse(cAccess.HasString("MC"));
 
-	AssertLongLongInt(0x77LL, cAccess.GetStringLong("M")));
+	AssertLongLongInt(0x77LL, cAccess.GetStringLong("M"));
 	cAccess.DeleteString("M");
 	AssertInt(1, cIndex.NumAllocatedNodes());
 	AssertInt(0, cIndex.RecurseSize());
@@ -851,10 +851,10 @@ void TestIndexTreeMemoryIterate(void)
 	CIndexTreeMemoryAccess		cAccess;
 	SIndexTreeMemoryIterator	sIter;
 	char*						szData;
-	int							iDataSize;
+	size_t						iDataSize;
 	unsigned char				c;
 	char						szKey[1024];
-	int							iKeySize;
+	size_t						iKeySize;
 	char						szResult[256];
 
 	cIndex.Init();

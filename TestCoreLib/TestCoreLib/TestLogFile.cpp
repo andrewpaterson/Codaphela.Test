@@ -640,16 +640,16 @@ void TestLogFileDelete(void)
 	
 	pcLogFile->Close();
 	AssertInt(5, pcLogFile->GetNumCommands());
-	AssertInt(25, (int)cFile.GetFileSize())l
+	AssertInt(25, (int)cFile.GetFileSize());
 
 	cFile.Delete();
 	AssertTrue(cFileUtil.Exists(szFileName));
 	AssertInt(1, pcLogFile->GetNumCommands());
-	AssertInt(0, (int)cFile.GetFileSize())l
+	AssertInt(0, (int)cFile.GetFileSize());
 
 	cFile.Open(EFM_ReadWrite_Create);
 	cFile.Write(szA, 2, 1);
-	AssertInt(2, (int)cFile.GetFileSize())l
+	AssertInt(2, (int)cFile.GetFileSize());
 	cFile.Close();
 
 	pcLogFile->Commit();

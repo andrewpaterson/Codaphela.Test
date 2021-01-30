@@ -19,9 +19,9 @@ void TestIndexTreeNodeFileSizeofs(void)
 
 	AssertInt(12, sizeof(CIndexTreeChildNode));  //The above is why the union works 
 
-	AssertInt(24, sizeof(CIndexTreeNodeFile)));  
-	AssertInt(16, sizeof(CIndexTreeNode)));
-	AssertTrue(sizeof(CIndexTreeNodeFile*) <= sizeof(CIndexTreeChildNode) - sizeof(int)));
+	AssertInt(24, sizeof(CIndexTreeNodeFile));  
+	AssertInt(16, sizeof(CIndexTreeNode));
+	AssertTrue(sizeof(CIndexTreeNodeFile*) <= sizeof(CIndexTreeChildNode) - sizeof(int));
 	AssertInt(4, sizeof(int));  //Just ot be sure.
 }
 
