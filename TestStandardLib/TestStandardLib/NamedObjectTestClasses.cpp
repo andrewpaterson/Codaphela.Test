@@ -33,7 +33,7 @@ void CTestNamedObject::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestNamedObject::KillData(void)
+void CTestNamedObject::Free(void)
 {
 }
 

@@ -30,13 +30,13 @@ Ptr<CTestObject> CTestObject::Init(CPointer pObject, Ptr<CTestObject> pTest)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CTestObject> CTestObject::Init(STestObjectKilledNotifier* psKilledNotifier)
+Ptr<CTestObject> CTestObject::Init(STestObjectFreedNotifier* psKilledNotifier)
 {
 	PreInit();
 	mpsKilledNotifier = psKilledNotifier;
 	if (mpsKilledNotifier)
 	{
-		mpsKilledNotifier->bKilled = FALSE;
+		mpsKilledNotifier->bFreed= FALSE;
 	}
 
 	PostInit();
@@ -60,11 +60,11 @@ void CTestObject::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestObject::KillData(void)
+void CTestObject::Free(void)
 {
 	if (mpsKilledNotifier)
 	{
-		mpsKilledNotifier->bKilled = TRUE;
+		mpsKilledNotifier->bFreed = TRUE;
 	}
 }
 
@@ -93,6 +93,15 @@ BOOL CTestObject::Load(CObjectDeserialiser* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void CTestObject::SomeMethod(void)
+{
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 Ptr<CTestTriPointerObject> CTestTriPointerObject::Init(void)
 {
 	return Init(NULL);
@@ -103,13 +112,13 @@ Ptr<CTestTriPointerObject> CTestTriPointerObject::Init(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CTestTriPointerObject> CTestTriPointerObject::Init(STestObjectKilledNotifier* psKilledNotifier)
+Ptr<CTestTriPointerObject> CTestTriPointerObject::Init(STestObjectFreedNotifier* psKilledNotifier)
 {
 	PreInit();
 	mpsKilledNotifier = psKilledNotifier;
 	if (mpsKilledNotifier)
 	{
-		mpsKilledNotifier->bKilled = FALSE;
+		mpsKilledNotifier->bFreed = FALSE;
 	}
 
 	PostInit();
@@ -134,11 +143,11 @@ void CTestTriPointerObject::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestTriPointerObject::KillData(void)
+void CTestTriPointerObject::Free(void)
 {
 	if (mpsKilledNotifier)
 	{
-		mpsKilledNotifier->bKilled = TRUE;
+		mpsKilledNotifier->bFreed = TRUE;
 	}
 }
 
@@ -194,7 +203,7 @@ void CTestSaveableObject1::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestSaveableObject1::KillData(void)
+void CTestSaveableObject1::Free(void)
 {
 	mszString.Kill();
 }
@@ -261,7 +270,7 @@ void CTestSaveableObject2::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestSaveableObject2::KillData(void)
+void CTestSaveableObject2::Free(void)
 {
 	msz.Kill();
 }

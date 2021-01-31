@@ -5,9 +5,9 @@
 #include "StandardLib/Pointer.h"
 
 
-struct STestObjectKilledNotifier
+struct STestObjectFreedNotifier
 {
-	BOOL bKilled;
+	BOOL bFreed;
 };
 
 
@@ -17,16 +17,18 @@ CONSTRUCTABLE(CTestObject);
 public:
 	CPointer					mpObject;
 	Ptr<CTestObject>			mpTest;
-	STestObjectKilledNotifier*	mpsKilledNotifier;
+	STestObjectFreedNotifier*	mpsKilledNotifier;
 
 	Ptr<CTestObject>	Init(void);
-	Ptr<CTestObject>	Init(STestObjectKilledNotifier* psKilledNotifier);
+	Ptr<CTestObject>	Init(STestObjectFreedNotifier* psKilledNotifier);
 	Ptr<CTestObject>	Init(CPointer pObject, Ptr<CTestObject> pTest);
 	void				Class(void);
-	void				KillData(void);
+	void				Free(void);
 
 	BOOL				Save(CObjectSerialiser* pcFile);
 	BOOL				Load(CObjectDeserialiser* pcFile);
+
+	void				SomeMethod(void);
 };
 
 
@@ -37,12 +39,12 @@ public:
 	CPointer					mpObject1;
 	CPointer					mpObject2;
 	CPointer					mpObject3;
-	STestObjectKilledNotifier*	mpsKilledNotifier;
+	STestObjectFreedNotifier*	mpsKilledNotifier;
 
 	Ptr<CTestTriPointerObject>	Init(void);
-	Ptr<CTestTriPointerObject>	Init(STestObjectKilledNotifier* psKilledNotifier);
+	Ptr<CTestTriPointerObject>	Init(STestObjectFreedNotifier* psKilledNotifier);
 	void						Class(void);
-	void						KillData(void);
+	void						Free(void);
 
 	BOOL						Save(CObjectSerialiser* pcFile);
 	BOOL						Load(CObjectDeserialiser* pcFile);
@@ -60,7 +62,7 @@ public:
 
 	Ptr<CTestSaveableObject1>	Init(void);
 	void						Class(void);
-	void						KillData(void);
+	void						Free(void);
 
 	BOOL						Save(CObjectSerialiser* pcFile);
 	BOOL						Load(CObjectDeserialiser* pcFile);
@@ -78,7 +80,7 @@ public:
 
 	Ptr<CTestSaveableObject2>	Init(char* psz);
 	void						Class(void);
-	void						KillData(void);
+	void						Free(void);
 
 	BOOL						Save(CObjectSerialiser* pcFile);
 	BOOL						Load(CObjectDeserialiser* pcFile);

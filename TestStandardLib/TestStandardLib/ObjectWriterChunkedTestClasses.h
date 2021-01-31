@@ -17,7 +17,7 @@ public:
 
 	Ptr<CTestWithArray>	Init(char* szString, int x);
 	void				Class(void);
-	void				KillData(void);
+	void				Free(void);
 
 	void				Add(CPointer& pcObject);
 
@@ -36,7 +36,7 @@ public:
 
 	Ptr<CTestInteger>	Init(int x, int y, int z);
 	void				Class(void);
-	void				KillData(void);
+	void				Free(void);
 
 	BOOL				Save(CObjectSerialiser* pcFile);
 	BOOL				Load(CObjectDeserialiser* pcFile);
@@ -54,7 +54,7 @@ public:
 	Ptr<CTestNamedString>	Init(void);
 	Ptr<CTestNamedString>	Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, char* szEmbedded);
 	void					Class(void);
-	void					KillData(void);
+	void					Free(void);
 
 	BOOL					Save(CObjectSerialiser* pcFile);
 	BOOL					Load(CObjectDeserialiser* pcFile);
@@ -72,7 +72,7 @@ public:
 	Ptr<CTestDoubleNamedString>	Init(void);
 	Ptr<CTestDoubleNamedString>	Init(Ptr<CString> szString, Ptr<CTestNamedString> pSplit2, Ptr<CTestNamedString> pSplit1);
 	void						Class(void);
-	void						KillData(void);
+	void						Free(void);
 
 	BOOL						Save(CObjectSerialiser* pcFile);
 	BOOL						Load(CObjectDeserialiser* pcFile);

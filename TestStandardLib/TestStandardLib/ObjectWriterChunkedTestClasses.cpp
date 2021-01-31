@@ -20,7 +20,7 @@ void CTestWithArray::Class(void)
 	Pointer(mcArray.This());
 }
 
-void CTestWithArray::KillData(void)
+void CTestWithArray::Free(void)
 {
 	mszString.Kill();
 }
@@ -64,7 +64,7 @@ void CTestInteger::Class(void)
 }
 
 
-void CTestInteger::KillData(void)
+void CTestInteger::Free(void)
 {
 }
 
@@ -115,7 +115,7 @@ void CTestNamedString::Class(void)
 	Pointer(mpAnother.This());
 }
 
-void CTestNamedString::KillData(void)
+void CTestNamedString::Free(void)
 {
 }
 
@@ -166,7 +166,7 @@ void CTestDoubleNamedString::Class(void)
 	Pointer(mpSplit2.This());
 }
 
-void CTestDoubleNamedString::KillData(void)
+void CTestDoubleNamedString::Free(void)
 {
 }
 

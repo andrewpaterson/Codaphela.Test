@@ -40,9 +40,9 @@ void TestObjectPointerRemapping(void)
 	Ptr<CTestObject>			pObject1;
 	Ptr<CTestObject>			pObject2;
 	Ptr<CTestObject>			pObject3;
-	STestObjectKilledNotifier	sKillNotifier1;
-	STestObjectKilledNotifier	sKillNotifier2;
-	STestObjectKilledNotifier	sKillNotifier3;
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier3;
 	int							iNumRemapped;
 	CTestObject*				pcObject2;
 	CPointer					p4;
@@ -52,13 +52,9 @@ void TestObjectPointerRemapping(void)
 
 	pRoot = ORoot();
 
-	sKillNotifier1.bKilled = FALSE;
-	sKillNotifier2.bKilled = FALSE;
-	sKillNotifier3.bKilled = FALSE;
-
-	pObject1 = OMalloc(CTestObject)->Init(&sKillNotifier1);
-	pObject2 = OMalloc(CTestObject)->Init(&sKillNotifier2);
-	pObject3 = OMalloc(CTestObject)->Init(&sKillNotifier3);
+	pObject1 = OMalloc(CTestObject)->Init(&sFreedNotifier1);
+	pObject2 = OMalloc(CTestObject)->Init(&sFreedNotifier2);
+	pObject3 = OMalloc(CTestObject)->Init(&sFreedNotifier3);
 
 	pRoot->Add(pObject1);
 	pObject1->mpObject = pObject2;
@@ -79,8 +75,8 @@ void TestObjectPointerRemapping(void)
 	pcObject2 = (CTestObject*)pObject2.Object();
 	iNumRemapped = pObject2.MorphInto(&pObject3);
 	AssertInt(1, iNumRemapped);
-	AssertTrue(sKillNotifier2.bKilled);
-	AssertFalse(sKillNotifier3.bKilled);
+	AssertTrue(sFreedNotifier2.bFreed);
+	AssertFalse(sFreedNotifier3.bFreed);
 
 	AssertPointer(&pObject3, &pObject1->mpObject);
 	AssertPointer(&pObject3, &pObject2);
@@ -116,11 +112,11 @@ void TestObjectPointerRemappingKilling(void)
 	Ptr<CTestObject>			pObject3;
 	Ptr<CTestObject>			pObject4;
 	Ptr<CTestObject>			pObject5;
-	STestObjectKilledNotifier	sKillNotifier1;
-	STestObjectKilledNotifier	sKillNotifier2;
-	STestObjectKilledNotifier	sKillNotifier3;
-	STestObjectKilledNotifier	sKillNotifier4;
-	STestObjectKilledNotifier	sKillNotifier5;
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier3;
+	STestObjectFreedNotifier	sFreedNotifier4;
+	STestObjectFreedNotifier	sFreedNotifier5;
 	int							iNumRemapped;
 	CTestObject*				pcObject1;
 	CTestObject*				pcObject2;
@@ -132,11 +128,11 @@ void TestObjectPointerRemappingKilling(void)
 
 	pRoot = ORoot();
 
-	pObject1 = OMalloc(CTestObject)->Init(&sKillNotifier1);
-	pObject2 = OMalloc(CTestObject)->Init(&sKillNotifier2);
-	pObject3 = OMalloc(CTestObject)->Init(&sKillNotifier3);
-	pObject4 = OMalloc(CTestObject)->Init(&sKillNotifier4);
-	pObject5 = OMalloc(CTestObject)->Init(&sKillNotifier5);
+	pObject1 = OMalloc(CTestObject)->Init(&sFreedNotifier1);
+	pObject2 = OMalloc(CTestObject)->Init(&sFreedNotifier2);
+	pObject3 = OMalloc(CTestObject)->Init(&sFreedNotifier3);
+	pObject4 = OMalloc(CTestObject)->Init(&sFreedNotifier4);
+	pObject5 = OMalloc(CTestObject)->Init(&sFreedNotifier5);
 
 	pcObject1 = (CTestObject*)pObject1.Object();
 	pcObject2 = (CTestObject*)pObject2.Object();
@@ -166,9 +162,9 @@ void TestObjectPointerRemappingKilling(void)
 	AssertInt(1, pObject4->NumPointerTos());
 	AssertPointer(&pObject5, &pObject4->mpObject);
 
-	AssertFalse(sKillNotifier4.bKilled);
-	AssertTrue(sKillNotifier2.bKilled);
-	AssertTrue(sKillNotifier3.bKilled);
+	AssertFalse(sFreedNotifier4.bFreed);
+	AssertTrue(sFreedNotifier2.bFreed);
+	AssertTrue(sFreedNotifier3.bFreed);
 
 	gcObjects.ValidateObjectsConsistency();
 
@@ -189,22 +185,22 @@ void TestObjectPointerRemappingSimplerComplex(void)
 	Ptr<CTestObject>			pTest12;
 	Ptr<CTestObject>			pTest13;
 	Ptr<CTestObject>			pTest14;
-	STestObjectKilledNotifier	sKillNotifier10;
-	STestObjectKilledNotifier	sKillNotifier11;
-	STestObjectKilledNotifier	sKillNotifier12;
-	STestObjectKilledNotifier	sKillNotifier13;
-	STestObjectKilledNotifier	sKillNotifier14;
+	STestObjectFreedNotifier	sFreedNotifier10;
+	STestObjectFreedNotifier	sFreedNotifier11;
+	STestObjectFreedNotifier	sFreedNotifier12;
+	STestObjectFreedNotifier	sFreedNotifier13;
+	STestObjectFreedNotifier	sFreedNotifier14;
 	CTestObject*				pcTest10;
 
 	ObjectsInit();
 
 	pRoot = ORoot();
 
-	pTest10 = OMalloc(CTestObject)->Init(&sKillNotifier10);
-	pTest11 = OMalloc(CTestObject)->Init(&sKillNotifier11);
-	pTest12 = OMalloc(CTestObject)->Init(&sKillNotifier12);
-	pTest13 = OMalloc(CTestObject)->Init(&sKillNotifier13);
-	pTest14 = OMalloc(CTestObject)->Init(&sKillNotifier14);
+	pTest10 = OMalloc(CTestObject)->Init(&sFreedNotifier10);
+	pTest11 = OMalloc(CTestObject)->Init(&sFreedNotifier11);
+	pTest12 = OMalloc(CTestObject)->Init(&sFreedNotifier12);
+	pTest13 = OMalloc(CTestObject)->Init(&sFreedNotifier13);
+	pTest14 = OMalloc(CTestObject)->Init(&sFreedNotifier14);
 
 	pRoot->Add(pTest10);
 	pTest10->mpObject = pTest11;
@@ -243,19 +239,19 @@ void TestObjectPointerRemappingSimplerComplex(void)
 	pTest13 = NULL;
 	pTest14 = NULL;
 
-	AssertFalse(sKillNotifier10.bKilled);
-	AssertFalse(sKillNotifier11.bKilled);
-	AssertFalse(sKillNotifier12.bKilled);
-	AssertFalse(sKillNotifier13.bKilled);
-	AssertFalse(sKillNotifier14.bKilled);
+	AssertFalse(sFreedNotifier10.bFreed);
+	AssertFalse(sFreedNotifier11.bFreed);
+	AssertFalse(sFreedNotifier12.bFreed);
+	AssertFalse(sFreedNotifier13.bFreed);
+	AssertFalse(sFreedNotifier14.bFreed);
 
 	pRoot->Remove(pcTest10);
 
-	AssertTrue(sKillNotifier10.bKilled);
-	AssertTrue(sKillNotifier11.bKilled);
-	AssertTrue(sKillNotifier12.bKilled);
-	AssertTrue(sKillNotifier13.bKilled);
-	AssertTrue(sKillNotifier14.bKilled);
+	AssertTrue(sFreedNotifier10.bFreed);
+	AssertTrue(sFreedNotifier11.bFreed);
+	AssertTrue(sFreedNotifier12.bFreed);
+	AssertTrue(sFreedNotifier13.bFreed);
+	AssertTrue(sFreedNotifier14.bFreed);
 
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 
@@ -292,21 +288,21 @@ void TestObjectPointerRemappingComplex(void)
 	Ptr<CTestObject>			pTest13;
 	Ptr<CTestObject>			pTest14;
 	Ptr<CTestObject>			pTest15;
-	STestObjectKilledNotifier	sKillNotifier1;
-	STestObjectKilledNotifier	sKillNotifier2;
-	STestObjectKilledNotifier	sKillNotifier3;
-	STestObjectKilledNotifier	sKillNotifier4;
-	STestObjectKilledNotifier	sKillNotifier5;
-	STestObjectKilledNotifier	sKillNotifier6;
-	STestObjectKilledNotifier	sKillNotifier7;
-	STestObjectKilledNotifier	sKillNotifier8;
-	STestObjectKilledNotifier	sKillNotifier9;
-	STestObjectKilledNotifier	sKillNotifier10;
-	STestObjectKilledNotifier	sKillNotifier11;
-	STestObjectKilledNotifier	sKillNotifier12;
-	STestObjectKilledNotifier	sKillNotifier13;
-	STestObjectKilledNotifier	sKillNotifier14;
-	STestObjectKilledNotifier	sKillNotifier15;
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier3;
+	STestObjectFreedNotifier	sFreedNotifier4;
+	STestObjectFreedNotifier	sFreedNotifier5;
+	STestObjectFreedNotifier	sFreedNotifier6;
+	STestObjectFreedNotifier	sFreedNotifier7;
+	STestObjectFreedNotifier	sFreedNotifier8;
+	STestObjectFreedNotifier	sFreedNotifier9;
+	STestObjectFreedNotifier	sFreedNotifier10;
+	STestObjectFreedNotifier	sFreedNotifier11;
+	STestObjectFreedNotifier	sFreedNotifier12;
+	STestObjectFreedNotifier	sFreedNotifier13;
+	STestObjectFreedNotifier	sFreedNotifier14;
+	STestObjectFreedNotifier	sFreedNotifier15;
 	int							iNumRemapped;
 	CTestObject*				pcTest1;
 	CTestObject*				pcTest3;
@@ -315,21 +311,21 @@ void TestObjectPointerRemappingComplex(void)
 
 	pRoot = ORoot();
 
-	pTest1 = OMalloc(CTestObject)->Init(&sKillNotifier1);
-	pTest2 = OMalloc(CTestObject)->Init(&sKillNotifier2);
-	pTest3 = OMalloc(CTestObject)->Init(&sKillNotifier3);
-	pTest4 = OMalloc(CTestObject)->Init(&sKillNotifier4);
-	pTest5 = OMalloc(CTestObject)->Init(&sKillNotifier5);
-	pTest6 = OMalloc(CTestObject)->Init(&sKillNotifier6);
-	pTest7 = OMalloc(CTestObject)->Init(&sKillNotifier7);
-	pTest8 = OMalloc(CTestObject)->Init(&sKillNotifier8);
-	pTest9 = OMalloc(CTestObject)->Init(&sKillNotifier9);
-	pTest10 = OMalloc(CTestObject)->Init(&sKillNotifier10);
-	pTest11 = OMalloc(CTestObject)->Init(&sKillNotifier11);
-	pTest12 = OMalloc(CTestObject)->Init(&sKillNotifier12);
-	pTest13 = OMalloc(CTestObject)->Init(&sKillNotifier13);
-	pTest14 = OMalloc(CTestObject)->Init(&sKillNotifier14);
-	pTest15 = OMalloc(CTestObject)->Init(&sKillNotifier15);
+	pTest1 = OMalloc(CTestObject)->Init(&sFreedNotifier1);
+	pTest2 = OMalloc(CTestObject)->Init(&sFreedNotifier2);
+	pTest3 = OMalloc(CTestObject)->Init(&sFreedNotifier3);
+	pTest4 = OMalloc(CTestObject)->Init(&sFreedNotifier4);
+	pTest5 = OMalloc(CTestObject)->Init(&sFreedNotifier5);
+	pTest6 = OMalloc(CTestObject)->Init(&sFreedNotifier6);
+	pTest7 = OMalloc(CTestObject)->Init(&sFreedNotifier7);
+	pTest8 = OMalloc(CTestObject)->Init(&sFreedNotifier8);
+	pTest9 = OMalloc(CTestObject)->Init(&sFreedNotifier9);
+	pTest10 = OMalloc(CTestObject)->Init(&sFreedNotifier10);
+	pTest11 = OMalloc(CTestObject)->Init(&sFreedNotifier11);
+	pTest12 = OMalloc(CTestObject)->Init(&sFreedNotifier12);
+	pTest13 = OMalloc(CTestObject)->Init(&sFreedNotifier13);
+	pTest14 = OMalloc(CTestObject)->Init(&sFreedNotifier14);
+	pTest15 = OMalloc(CTestObject)->Init(&sFreedNotifier15);
 
 	pRoot->Add(pTest1);
 	pTest1->mpObject = pTest2;
@@ -418,22 +414,22 @@ void TestObjectPointerRemappingComplex(void)
 	AssertPointer(&pTest15, pTest2->TestGetPointerTo(0));
 	AssertPointer(&pTest15, &pTest2->mpObject);
 
-	AssertTrue(sKillNotifier3.bKilled);
-	AssertTrue(sKillNotifier5.bKilled);
-	AssertTrue(sKillNotifier7.bKilled);
-	AssertFalse(sKillNotifier9.bKilled);
+	AssertTrue(sFreedNotifier3.bFreed);
+	AssertTrue(sFreedNotifier5.bFreed);
+	AssertTrue(sFreedNotifier7.bFreed);
+	AssertFalse(sFreedNotifier9.bFreed);
 
-	AssertFalse(sKillNotifier1.bKilled);
-	AssertFalse(sKillNotifier2.bKilled);
-	AssertFalse(sKillNotifier4.bKilled);
-	AssertFalse(sKillNotifier6.bKilled);
-	AssertFalse(sKillNotifier8.bKilled);
-	AssertFalse(sKillNotifier10.bKilled);
-	AssertFalse(sKillNotifier11.bKilled);
-	AssertFalse(sKillNotifier12.bKilled);
-	AssertFalse(sKillNotifier13.bKilled);
-	AssertFalse(sKillNotifier14.bKilled);
-	AssertFalse(sKillNotifier15.bKilled);
+	AssertFalse(sFreedNotifier1.bFreed);
+	AssertFalse(sFreedNotifier2.bFreed);
+	AssertFalse(sFreedNotifier4.bFreed);
+	AssertFalse(sFreedNotifier6.bFreed);
+	AssertFalse(sFreedNotifier8.bFreed);
+	AssertFalse(sFreedNotifier10.bFreed);
+	AssertFalse(sFreedNotifier11.bFreed);
+	AssertFalse(sFreedNotifier12.bFreed);
+	AssertFalse(sFreedNotifier13.bFreed);
+	AssertFalse(sFreedNotifier14.bFreed);
+	AssertFalse(sFreedNotifier15.bFreed);
 
 	AssertInt(1, pTest6->NumHeapFroms());
 	AssertPointer(&pTest4, pTest6->GetHeapFrom(0));
@@ -494,18 +490,18 @@ void TestObjectPointerRemappingComplex(void)
 
 	pRoot->Remove(pcTest1);
 
-	AssertTrue(sKillNotifier1.bKilled);
-	AssertTrue(sKillNotifier2.bKilled);
-	AssertTrue(sKillNotifier3.bKilled);
-	AssertTrue(sKillNotifier4.bKilled);
-	AssertTrue(sKillNotifier6.bKilled);
-	AssertTrue(sKillNotifier8.bKilled);
-	AssertTrue(sKillNotifier10.bKilled);
-	AssertTrue(sKillNotifier11.bKilled);
-	AssertTrue(sKillNotifier12.bKilled);
-	AssertTrue(sKillNotifier13.bKilled);
-	AssertTrue(sKillNotifier14.bKilled);
-	AssertTrue(sKillNotifier15.bKilled);
+	AssertTrue(sFreedNotifier1.bFreed);
+	AssertTrue(sFreedNotifier2.bFreed);
+	AssertTrue(sFreedNotifier3.bFreed);
+	AssertTrue(sFreedNotifier4.bFreed);
+	AssertTrue(sFreedNotifier6.bFreed);
+	AssertTrue(sFreedNotifier8.bFreed);
+	AssertTrue(sFreedNotifier10.bFreed);
+	AssertTrue(sFreedNotifier11.bFreed);
+	AssertTrue(sFreedNotifier12.bFreed);
+	AssertTrue(sFreedNotifier13.bFreed);
+	AssertTrue(sFreedNotifier14.bFreed);
+	AssertTrue(sFreedNotifier15.bFreed);
 
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 
@@ -531,7 +527,7 @@ void TestObjectGetObjects(void)
 	CTestObject					cObject;
 	CObjects*					pcObjects;
 	Ptr<CTestObject>			pObject1;
-	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier1;
 
 	pcObjects = cObject.GetObjects();
 	AssertNull(pcObjects);
@@ -539,12 +535,16 @@ void TestObjectGetObjects(void)
 	cObject.Init();
 
 	pObject1 = OMalloc(CTestObject);
-	pObject1->Init(&sKillNotifier1);
+	pObject1->Init(&sFreedNotifier1);
 
 	pcObjects = pObject1->GetObjects();
 	AssertPointer(&gcObjects, pcObjects);
+	AssertFalse(sFreedNotifier1.bFreed);
+	AssertFalse(gcObjects.HasRoot());
 
 	ObjectsKill();
+
+	AssertTrue(sFreedNotifier1.bFreed);
 }
 
 
@@ -558,9 +558,10 @@ void TestObjectStackKill(void)
 
 	Ptr<CTestObject>			pObject1;
 	Ptr<CTestObject>			pObject2;
-	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier;
 
-	pObject1 = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pObject1 = OMalloc(CTestObject)->Init(&sFreedNotifier);
+	AssertFalse(sFreedNotifier.bFreed);
 
 	pObject2 = pObject1;
 
@@ -568,6 +569,7 @@ void TestObjectStackKill(void)
 
 	AssertNull(&pObject1);
 	AssertNull(&pObject2);
+	AssertTrue(sFreedNotifier.bFreed);
 
 	ObjectsKill();
 }
@@ -585,12 +587,12 @@ void TestObjectRootUnattachment(void)
 	Ptr<CPointerContainer>		pContainer2;
 	Ptr<CTestObject>			pObject;
 	Ptr<CRoot>					pRoot;
-	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier;
 	CTestObject*				pcObject;
 	CPointerContainer*			pcContainer1;
 	CPointerContainer*			pcContainer2;
 
-	pObject = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pObject = OMalloc(CTestObject)->Init(&sFreedNotifier);
 	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
 	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
 	pRoot = ORoot();
@@ -600,10 +602,13 @@ void TestObjectRootUnattachment(void)
 	pcContainer1 = &pContainer1;
 	pcContainer2 = &pContainer2;
 
+	AssertFalse(sFreedNotifier.bFreed);
+
 	pContainer2 = NULL;
 	pObject = NULL;
 	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(5, gcUnknowns.NumElements());
+	AssertFalse(sFreedNotifier.bFreed);
 
 	pRoot->Remove(pContainer1);
 	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
@@ -615,10 +620,12 @@ void TestObjectRootUnattachment(void)
 	AssertFalse(pcContainer2->CanFindRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcObject->GetDistToRoot());
 	AssertFalse(pcObject->CanFindRoot());
+	AssertFalse(sFreedNotifier.bFreed);
 
 	pContainer1 = NULL;
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(2, gcUnknowns.NumElements());
+	AssertTrue(sFreedNotifier.bFreed);
 
 	ObjectsKill();
 }
@@ -628,7 +635,7 @@ void TestObjectRootUnattachment(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectKill(void)
+void TestObjectKillOnHeap(void)
 {
 	ObjectsInit();
 
@@ -636,12 +643,12 @@ void TestObjectKill(void)
 	Ptr<CPointerContainer>		pContainer2;
 	Ptr<CTestObject>			pObject;
 	Ptr<CRoot>					pRoot;
-	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier;
 	CTestObject*				pcObject;
 	CPointerContainer*			pcContainer1;
 	CPointerContainer*			pcContainer2;
 
-	pObject = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pObject = OMalloc(CTestObject)->Init(&sFreedNotifier);
 	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
 	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
 	pRoot = ORoot();
@@ -671,6 +678,46 @@ void TestObjectKill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectKillPointerOnStack(void)
+{
+	ObjectsInit();
+
+	Ptr<CTestObject>			pObject;
+	STestObjectFreedNotifier	sFreedNotifier;
+
+	pObject = OMalloc(CTestObject)->Init(&sFreedNotifier);
+	pObject.Kill();
+
+	AssertTrue(sFreedNotifier.bFreed);
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectKillObjectOnStack(void)
+{
+	ObjectsInit();
+
+	CTestObject					cObject;
+	STestObjectFreedNotifier	sFreedNotifier;
+
+	cObject.Init(&sFreedNotifier);
+	cObject.Kill();
+
+	AssertTrue(sFreedNotifier.bFreed);
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectSetUnattachment(void)
 {
 	ObjectsInit();
@@ -679,12 +726,12 @@ void TestObjectSetUnattachment(void)
 	Ptr<CPointerContainer>		pContainer2;
 	Ptr<CTestObject>			pObject;
 	Ptr<CRoot>					pRoot;
-	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier1;
 	CTestObject*				pcObject;
 	CPointerContainer*			pcContainer1;
 	CPointerContainer*			pcContainer2;
 
-	pObject = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pObject = OMalloc(CTestObject)->Init(&sFreedNotifier1);
 	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
 	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
 	pRoot = ORoot();
@@ -774,7 +821,9 @@ void TestObject(void)
 	TestObjectPointerRemappingKilling();
 	TestObjectPointerRemappingSimplerComplex();
 	TestObjectPointerRemappingComplex();
-	TestObjectKill();
+	TestObjectKillOnHeap();
+	TestObjectKillPointerOnStack();
+	TestObjectKillObjectOnStack();
 	TestObjectKillCyclic();
 	TestObjectRootUnattachment();
 	TestObjectSetUnattachment();

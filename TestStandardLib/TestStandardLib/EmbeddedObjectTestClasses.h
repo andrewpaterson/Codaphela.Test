@@ -17,7 +17,7 @@ public:
 
 	void				Class(void);
 	Ptr<CEmbeddedTest>	Init(void);
-	void				KillData(void);
+	void				Free(void);
 
 	BOOL				Save(CObjectSerialiser* pcFile);
 	BOOL				Load(CObjectDeserialiser* pcFile);
@@ -37,7 +37,7 @@ public:
 
 	void	Class(void);
 	Ptr<CEmbeddedContainer> Init(void);
-	void	KillData(void);
+	void	Free(void);
 
 	BOOL	Save(CObjectSerialiser* pcFile);
 	BOOL	Load(CObjectDeserialiser* pcFile);
@@ -56,7 +56,7 @@ public:
 
 	void	Class(void);
 	Ptr<CEmbeddedComplex> Init(void);
-	void	KillData(void);
+	void	Free(void);
 
 	BOOL	Save(CObjectSerialiser* pcFile);
 	BOOL	Load(CObjectDeserialiser* pcFile);

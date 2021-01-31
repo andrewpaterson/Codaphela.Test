@@ -169,11 +169,11 @@ void TestStackPointersHeapKill(void)
 	Ptr<CTestObject>			pTest1;
 	Ptr<CTestObject>			pTest2;
 	Ptr<CTestObject>			pTest3;
-	STestObjectKilledNotifier	sKillNotifier1;
-	STestObjectKilledNotifier	sKillNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
 
-	pTest1 = OMalloc(CTestObject)->Init(&sKillNotifier1);
-	pTest2 = OMalloc(CTestObject)->Init(&sKillNotifier2);
+	pTest1 = OMalloc(CTestObject)->Init(&sFreedNotifier1);
+	pTest2 = OMalloc(CTestObject)->Init(&sFreedNotifier2);
 	AssertLongLongInt(1LL, pTest1.GetIndex());
 	AssertLongLongInt(2LL, pTest2.GetIndex());
 	pTest3 = pTest2;
@@ -217,8 +217,8 @@ void TestStackPointersHeapKill(void)
 	//    .       .      .    
 	//
 
-	AssertFalse(sKillNotifier1.bKilled);
-	AssertFalse(sKillNotifier2.bKilled);
+	AssertFalse(sFreedNotifier1.bFreed);
+	AssertFalse(sFreedNotifier2.bFreed);
 	AssertInt(UNKNOWN_DIST_TO_STACK, pTest1->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, pTest2->GetDistToStack());
 	AssertInt(1, pTest2->NumStackFroms());
@@ -236,14 +236,14 @@ void TestStackPointersHeapKill(void)
 	//        ^      ^      ^  
 	//        .      .      .  
 
-	AssertTrue(sKillNotifier1.bKilled);
-	AssertFalse(sKillNotifier2.bKilled);
+	AssertTrue(sFreedNotifier1.bFreed);
+	AssertFalse(sFreedNotifier2.bFreed);
 	AssertInt(UNKNOWN_DIST_TO_STACK, pTest2->GetDistToStack());
 	AssertInt(1, pTest2->NumStackFroms());
 	AssertInt(0, pTest2->NumHeapFroms());
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 
-	pTest1 = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pTest1 = OMalloc(CTestObject)->Init(&sFreedNotifier1);
 	AssertLongLongInt(3LL, pTest1.GetIndex());
 	AssertLongLongInt(2LL, pTest2.GetIndex());
 	pTest1->mpTest = pTest2;
@@ -261,8 +261,8 @@ void TestStackPointersHeapKill(void)
 	//    .       .      .  
 	//
 
-	AssertFalse(sKillNotifier1.bKilled);
-	AssertFalse(sKillNotifier2.bKilled);
+	AssertFalse(sFreedNotifier1.bFreed);
+	AssertFalse(sFreedNotifier2.bFreed);
 	AssertInt(UNKNOWN_DIST_TO_STACK, pTest1->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, pTest2->GetDistToStack());
 	AssertInt(1, pTest2->NumStackFroms());
@@ -285,8 +285,8 @@ void TestStackPointersHeapKill(void)
 	//    .   	   .       .  
 	//
 
-	AssertFalse(sKillNotifier1.bKilled);
-	AssertFalse(sKillNotifier2.bKilled);
+	AssertFalse(sFreedNotifier1.bFreed);
+	AssertFalse(sFreedNotifier2.bFreed);
 	AssertInt(UNKNOWN_DIST_TO_STACK, pTest1->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, pTest1->mpTest->GetDistToStack());
 	AssertInt(0, pTest1->mpTest->NumStackFroms());
@@ -305,8 +305,8 @@ void TestStackPointersHeapKill(void)
 	//    .       .       .  
 	//
 
-	AssertTrue(sKillNotifier1.bKilled);
-	AssertTrue(sKillNotifier2.bKilled);
+	AssertTrue(sFreedNotifier1.bFreed);
+	AssertTrue(sFreedNotifier2.bFreed);
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
@@ -322,9 +322,9 @@ void TestStackPointersHeapKillSingle(void)
 	ObjectsInit();
 
 	Ptr<CTestObject>			pTest1;
-	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier1;
 
-	pTest1 = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pTest1 = OMalloc(CTestObject)->Init(&sFreedNotifier1);
 
 	AssertInt(UNKNOWN_DIST_TO_STACK, pTest1->GetDistToStack());
 	AssertInt(1, pTest1->NumStackFroms());
@@ -348,9 +348,9 @@ void TestStackPointersKillSingle(void)
 	ObjectsInit();
 
 	Ptr<CTestObject>			pTest1;
-	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier1;
 
-	pTest1 = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pTest1 = OMalloc(CTestObject)->Init(&sFreedNotifier1);
 
 	AssertInt(UNKNOWN_DIST_TO_STACK, pTest1->GetDistToStack());
 	AssertInt(1, pTest1->NumStackFroms());

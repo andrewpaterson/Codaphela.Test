@@ -14,7 +14,7 @@ public:
 
 	Ptr<CTestNamedObject> Init(int iNum);
 	void Class(void);
-	void KillData(void);
+	void Free(void);
 
 	BOOL Save(CObjectSerialiser* pcFile);
 	BOOL Load(CObjectDeserialiser* pcFile);

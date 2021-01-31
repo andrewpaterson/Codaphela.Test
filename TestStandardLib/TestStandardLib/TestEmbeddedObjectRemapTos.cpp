@@ -26,7 +26,7 @@ public:
 		return this;
 	}
 
-	void KillData(void)
+	void Free(void)
 	{
 	}
 

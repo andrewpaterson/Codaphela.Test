@@ -16,7 +16,7 @@ void TestArrayCommonPointerRemapping(void)
 	Ptr<CTestObject>			pObject1;
 	Ptr<CTestSaveableObject1>	pObject2;
 	Ptr<CTestSaveableObject1>	pObject3;
-	STestObjectKilledNotifier	sKillNotifier;
+	STestObjectFreedNotifier	sFreedNotifier;
 	CPointer					pNull;
 	int							iNumRemapped;
 	CTestObject*				pcObject1;
@@ -27,7 +27,7 @@ void TestArrayCommonPointerRemapping(void)
 	pArray = OMalloc(CArrayCommonObject)->Init(FALSE, FALSE, TRUE);
 	pRoot->Add(pArray);
 
-	pObject1 = OMalloc(CTestObject)->Init(&sKillNotifier);
+	pObject1 = OMalloc(CTestObject)->Init(&sFreedNotifier);
 	pObject2 = ONMalloc(CTestSaveableObject1, "Fred")->Init();
 	pObject3 = ONMalloc(CTestSaveableObject1, "Barney")->Init();
 	pNull = NULL;
@@ -41,7 +41,7 @@ void TestArrayCommonPointerRemapping(void)
 	AssertInt(6, pArray->NumElements());
 	AssertInt(5, pArray->NonNullElements());
 
-	sKillNotifier.bKilled = FALSE;
+	sFreedNotifier.bFreed = FALSE;
 
 	AssertInt(5, pArray->NumPointerTos());
 	AssertInt(1, pArray->NumHeapFroms());
@@ -67,7 +67,7 @@ void TestArrayCommonPointerRemapping(void)
 
 	AssertInt(5, pArray->NumPointerTos());
 	AssertInt(1, pArray->NumHeapFroms());
-	AssertTrue(sKillNotifier.bKilled);
+	AssertTrue(sFreedNotifier.bFreed);
 	AssertInt(3, pObject2->NumHeapFroms());
 	AssertInt(0, pObject2->NumPointerTos());
 	AssertInt(2, pObject3->NumHeapFroms());

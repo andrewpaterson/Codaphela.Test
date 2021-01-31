@@ -60,7 +60,7 @@ void CPlayerVehicle::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CPlayerVehicle::KillData(void)
+void CPlayerVehicle::Free(void)
 {
 	if (mpsBeforeDeath)
 	{
@@ -126,9 +126,9 @@ void CHarrier::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CHarrier::KillData(void)
+void CHarrier::Free(void)
 {
-	CPlayerVehicle::KillData();
+	CPlayerVehicle::Free();
 }
 
 
@@ -191,9 +191,9 @@ void CJeep::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CJeep::KillData(void)
+void CJeep::Free(void)
 {
-	CPlayerVehicle::KillData();
+	CPlayerVehicle::Free();
 	mfBackWheel = 0.0f;
 	mfFrontWheel = 0.0f;
 }
@@ -232,7 +232,7 @@ void CMissile::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CMissile::KillData(void)
+void CMissile::Free(void)
 {
 	if (mszKillState)
 	{
@@ -332,7 +332,7 @@ void CRedJet::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CRedJet::KillData(void)
+void CRedJet::Free(void)
 {
 	memcpy(&mpsBeforeDeath->sPoint, mpsPoint, sizeof(SPhysicsPoint));
 	memcpy(&mpsBeforeDeath->cPicture, &mcPicture, sizeof(CGraphicPicture));
@@ -397,7 +397,7 @@ void CClusterMissile::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CClusterMissile::KillData(void)
+void CClusterMissile::Free(void)
 {
 	if (mszKillState)
 	{
@@ -458,7 +458,7 @@ Ptr<CClusterLauncher> CClusterLauncher::Init(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CClusterLauncher::KillData(void)
+void CClusterLauncher::Free(void)
 {
 }
 
@@ -491,7 +491,7 @@ Ptr<CGameWorld> CGameWorld::Init(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CGameWorld::KillData(void)
+void CGameWorld::Free(void)
 {
 }
 

@@ -14,7 +14,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestRootDistance(void)
 {
-	STestObjectKilledNotifier	sKilled1;
+	STestObjectFreedNotifier	sKilled1;
 	Ptr<CRoot>					pRoot;
 	Ptr<CTestObject>			pTest1;
 	int							iDist;
@@ -52,9 +52,9 @@ void TestRootDistance(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootStackPointers(void)
 {
-	STestObjectKilledNotifier	sKilled1;
-	STestObjectKilledNotifier	sKilled2;
-	STestObjectKilledNotifier	sKilled3;
+	STestObjectFreedNotifier	sKilled1;
+	STestObjectFreedNotifier	sKilled2;
+	STestObjectFreedNotifier	sKilled3;
 
 	Ptr<CRoot>					pRoot;
 	Ptr<CTestObject>			pTest1;
@@ -133,16 +133,16 @@ void TestRootStackPointers(void)
 	pTest2 = NULL;
 	pTest3 = NULL;
 
-	AssertFalse(sKilled1.bKilled);
-	AssertFalse(sKilled3.bKilled);
-	AssertFalse(sKilled2.bKilled);
+	AssertFalse(sKilled1.bFreed);
+	AssertFalse(sKilled3.bFreed);
+	AssertFalse(sKilled2.bFreed);
 	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
 
 	pRoot->Remove(pcTest3);
 
-	AssertFalse(sKilled1.bKilled);
-	AssertTrue( sKilled3.bKilled);
-	AssertFalse(sKilled2.bKilled);
+	AssertFalse(sKilled1.bFreed);
+	AssertTrue( sKilled3.bFreed);
+	AssertFalse(sKilled2.bFreed);
 
 	ObjectsKill();
 }
@@ -155,12 +155,12 @@ void TestRootStackPointers(void)
 void TestRootGraphRemoveSimple(void)
 {
 	Ptr<CRoot>					pRoot;
-	STestObjectKilledNotifier	sKilled2;
-	STestObjectKilledNotifier	sKilled3;
-	STestObjectKilledNotifier	sKilled4;
-	STestObjectKilledNotifier	sKilled5;
-	STestObjectKilledNotifier	sKilledTop1;
-	STestObjectKilledNotifier	sKilledTop2;
+	STestObjectFreedNotifier	sKilled2;
+	STestObjectFreedNotifier	sKilled3;
+	STestObjectFreedNotifier	sKilled4;
+	STestObjectFreedNotifier	sKilled5;
+	STestObjectFreedNotifier	sKilledTop1;
+	STestObjectFreedNotifier	sKilledTop2;
 	Ptr<CTestObject>			pTest2;
 	Ptr<CTestObject>			pTest3;
 	Ptr<CTestObject>			pTest4;
@@ -319,12 +319,12 @@ void TestRootGraphRemoveSimple(void)
 	//      Root(0)
 
 
-	AssertFalse(sKilled2.bKilled);
-	AssertFalse(sKilled3.bKilled);
-	AssertFalse(sKilled4.bKilled);
-	AssertFalse(sKilled5.bKilled);
-	AssertFalse(sKilledTop1.bKilled);
-	AssertFalse(sKilledTop2.bKilled);
+	AssertFalse(sKilled2.bFreed);
+	AssertFalse(sKilled3.bFreed);
+	AssertFalse(sKilled4.bFreed);
+	AssertFalse(sKilled5.bFreed);
+	AssertFalse(sKilledTop1.bFreed);
+	AssertFalse(sKilledTop2.bFreed);
 
 	AssertInt(2, pTest2->NumPointerTos());
 	AssertPointer(&pTest4, pTest2->TestGetPointerTo(0));
@@ -336,12 +336,12 @@ void TestRootGraphRemoveSimple(void)
 
 	pTest3 = NULL;
 	pTest2->mpTest = NULL;
-	AssertFalse(sKilled2.bKilled);
-	AssertTrue( sKilled3.bKilled);
-	AssertFalse(sKilled4.bKilled);
-	AssertFalse(sKilled5.bKilled);
-	AssertFalse(sKilledTop1.bKilled);
-	AssertFalse(sKilledTop2.bKilled);
+	AssertFalse(sKilled2.bFreed);
+	AssertTrue( sKilled3.bFreed);
+	AssertFalse(sKilled4.bFreed);
+	AssertFalse(sKilled5.bFreed);
+	AssertFalse(sKilledTop1.bFreed);
+	AssertFalse(sKilledTop2.bFreed);
 	AssertInt(2, pTest2->GetDistToRoot());
 	AssertInt(3, pTest4->GetDistToRoot());
 	AssertInt(4, pTest5->GetDistToRoot());
@@ -398,11 +398,11 @@ void TestRootGraphRemoveSimple(void)
 	pTest5 = NULL;
 	pTest4 = NULL;
 	pTest2->mpTest = NULL;
-	AssertFalse(sKilled2.bKilled);
-	AssertTrue( sKilled4.bKilled);
-	AssertTrue( sKilled5.bKilled);
-	AssertFalse(sKilledTop1.bKilled);
-	AssertFalse(sKilledTop2.bKilled);
+	AssertFalse(sKilled2.bFreed);
+	AssertTrue( sKilled4.bFreed);
+	AssertTrue( sKilled5.bFreed);
+	AssertFalse(sKilledTop1.bFreed);
+	AssertFalse(sKilledTop2.bFreed);
 	AssertInt(2, pTest2->GetDistToRoot());
 	AssertInt(3, pSet->GetDistToRoot());
 	AssertInt(4, pTop1->GetDistToRoot());
@@ -430,9 +430,9 @@ void TestRootGraphRemoveSimple(void)
 
 	pTest2->mpObject = NULL;
 
-	AssertFalse(sKilled2.bKilled);
-	AssertTrue(sKilledTop1.bKilled);
-	AssertTrue(sKilledTop2.bKilled);
+	AssertFalse(sKilled2.bFreed);
+	AssertTrue(sKilledTop1.bFreed);
+	AssertTrue(sKilledTop2.bFreed);
 	AssertInt(2, pTest2->GetDistToRoot());
 
 	//   Test2(2)
@@ -443,7 +443,7 @@ void TestRootGraphRemoveSimple(void)
 	pTest2 = NULL;
 
 	pRoot->RemoveAll();
-	AssertTrue(sKilled2.bKilled);
+	AssertTrue(sKilled2.bFreed);
 
 	ObjectsKill();
 }
@@ -456,12 +456,12 @@ void TestRootGraphRemoveSimple(void)
 void TestRootGraphRemoveComplex(void)
 {
 	Ptr<CRoot>					pRoot;
-	STestObjectKilledNotifier	sKilled2;
-	STestObjectKilledNotifier	sKilled3;
-	STestObjectKilledNotifier	sKilled4;
-	STestObjectKilledNotifier	sKilled5;
-	STestObjectKilledNotifier	sKilledTop1;
-	STestObjectKilledNotifier	sKilledTop2;
+	STestObjectFreedNotifier	sKilled2;
+	STestObjectFreedNotifier	sKilled3;
+	STestObjectFreedNotifier	sKilled4;
+	STestObjectFreedNotifier	sKilled5;
+	STestObjectFreedNotifier	sKilledTop1;
+	STestObjectFreedNotifier	sKilledTop2;
 	Ptr<CTestObject>			pTest2;
 	Ptr<CTestObject>			pTest3;
 	Ptr<CTestObject>			pTest4;
@@ -537,12 +537,12 @@ void TestRootGraphRemoveComplex(void)
 	pTest5 = NULL;
 
 	pTest4->mpTest = NULL;
-	AssertFalse(sKilled2.bKilled);
-	AssertFalse(sKilled3.bKilled);
-	AssertFalse(sKilled4.bKilled);
-	AssertTrue( sKilled5.bKilled);
-	AssertFalse(sKilledTop1.bKilled);
-	AssertFalse(sKilledTop2.bKilled);
+	AssertFalse(sKilled2.bFreed);
+	AssertFalse(sKilled3.bFreed);
+	AssertFalse(sKilled4.bFreed);
+	AssertTrue( sKilled5.bFreed);
+	AssertFalse(sKilledTop1.bFreed);
+	AssertFalse(sKilledTop2.bFreed);
 	AssertInt(1, pTop1->NumHeapFroms());
 	AssertPointer(&pTop2, pTop1->GetHeapFrom(0));
 	AssertInt(2, pTop2->NumHeapFroms());
@@ -631,12 +631,12 @@ void TestRootGraphRemoveComplex(void)
 	pSet = NULL;
 
 	pRoot->Remove(pcSet);
-	AssertTrue(sKilled2.bKilled);
-	AssertTrue(sKilled3.bKilled);
-	AssertTrue(sKilled4.bKilled);
-	AssertTrue(sKilled5.bKilled);
-	AssertTrue(sKilledTop1.bKilled);
-	AssertTrue(sKilledTop2.bKilled);
+	AssertTrue(sKilled2.bFreed);
+	AssertTrue(sKilled3.bFreed);
+	AssertTrue(sKilled4.bFreed);
+	AssertTrue(sKilled5.bFreed);
+	AssertTrue(sKilledTop1.bFreed);
+	AssertTrue(sKilledTop2.bFreed);
 
 	ObjectsKill();
 }
@@ -649,13 +649,13 @@ void TestRootGraphRemoveComplex(void)
 void TestRootGraphRemoveUnbalancedLarge(void)
 {
 	Ptr<CRoot>					pRoot;
-	STestObjectKilledNotifier	sKilled1;
-	STestObjectKilledNotifier	sKilled2;
-	STestObjectKilledNotifier	sKilled3;
-	STestObjectKilledNotifier	sKilled4;
-	STestObjectKilledNotifier	sKilled5;
-	STestObjectKilledNotifier	sKilledTop1;
-	STestObjectKilledNotifier	sKilledTop2;
+	STestObjectFreedNotifier	sKilled1;
+	STestObjectFreedNotifier	sKilled2;
+	STestObjectFreedNotifier	sKilled3;
+	STestObjectFreedNotifier	sKilled4;
+	STestObjectFreedNotifier	sKilled5;
+	STestObjectFreedNotifier	sKilledTop1;
+	STestObjectFreedNotifier	sKilledTop2;
 	Ptr<CTestObject>			pTest1;
 	Ptr<CTestObject>			pTest2;
 	Ptr<CTestObject>			pTest3;
@@ -743,13 +743,13 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	AssertInt(3, pTop2->GetDistToRoot());
 	AssertInt(4, pTest1->GetDistToRoot());
 	AssertInt(5, pTop1->GetDistToRoot());
-	AssertTrue(sKilled2.bKilled);
-	AssertTrue(sKilled3.bKilled);
-	AssertTrue(sKilled4.bKilled);
-	AssertTrue(sKilled5.bKilled);
-	AssertFalse(sKilledTop1.bKilled);
-	AssertFalse(sKilledTop2.bKilled);
-	AssertFalse(sKilled1.bKilled);
+	AssertTrue(sKilled2.bFreed);
+	AssertTrue(sKilled3.bFreed);
+	AssertTrue(sKilled4.bFreed);
+	AssertTrue(sKilled5.bFreed);
+	AssertFalse(sKilledTop1.bFreed);
+	AssertFalse(sKilledTop2.bFreed);
+	AssertFalse(sKilled1.bFreed);
 	AssertTrue(pSet->CanFindRoot());
 	AssertTrue(pTop2->CanFindRoot());
 	AssertTrue(pTest1->CanFindRoot());
@@ -782,13 +782,13 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 void TestRootGraphRemoveUnbalancedSmall(void)
 {
 	Ptr<CRoot>					pRoot;
-	STestObjectKilledNotifier	sKilled1;
-	STestObjectKilledNotifier	sKilled2;
-	STestObjectKilledNotifier	sKilled3;
-	STestObjectKilledNotifier	sKilled4;
-	STestObjectKilledNotifier	sKilled5;
-	STestObjectKilledNotifier	sKilledTop1;
-	STestObjectKilledNotifier	sKilledTop2;
+	STestObjectFreedNotifier	sKilled1;
+	STestObjectFreedNotifier	sKilled2;
+	STestObjectFreedNotifier	sKilled3;
+	STestObjectFreedNotifier	sKilled4;
+	STestObjectFreedNotifier	sKilled5;
+	STestObjectFreedNotifier	sKilledTop1;
+	STestObjectFreedNotifier	sKilledTop2;
 	Ptr<CTestObject>			pTest1;
 	Ptr<CTestObject>			pTest2;
 	Ptr<CTestObject>			pTest3;
@@ -872,13 +872,13 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 	AssertInt(7, pTop1->GetDistToRoot());
 	AssertInt(8, pTest1->GetDistToRoot());
 	AssertInt(9, pTop2->GetDistToRoot());
-	AssertFalse(sKilled2.bKilled);
-	AssertFalse(sKilled3.bKilled);
-	AssertFalse(sKilled4.bKilled);
-	AssertFalse(sKilled5.bKilled);
-	AssertFalse(sKilledTop1.bKilled);
-	AssertFalse(sKilledTop2.bKilled);
-	AssertFalse(sKilled1.bKilled);
+	AssertFalse(sKilled2.bFreed);
+	AssertFalse(sKilled3.bFreed);
+	AssertFalse(sKilled4.bFreed);
+	AssertFalse(sKilled5.bFreed);
+	AssertFalse(sKilledTop1.bFreed);
+	AssertFalse(sKilledTop2.bFreed);
+	AssertFalse(sKilled1.bFreed);
 
 	//   Top2(9)
 	//     |
@@ -910,14 +910,14 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 void TestRootGraphRemoveMostlyBalanced(void)
 {
 	Ptr<CRoot>					pRoot;
-	STestObjectKilledNotifier	sKilled1;
-	STestObjectKilledNotifier	sKilled2;
-	STestObjectKilledNotifier	sKilled3;
-	STestObjectKilledNotifier	sKilled4;
-	STestObjectKilledNotifier	sKilled5;
-	STestObjectKilledNotifier	sKilled6;
-	STestObjectKilledNotifier	sKilledTop1;
-	STestObjectKilledNotifier	sKilledTop2;
+	STestObjectFreedNotifier	sKilled1;
+	STestObjectFreedNotifier	sKilled2;
+	STestObjectFreedNotifier	sKilled3;
+	STestObjectFreedNotifier	sKilled4;
+	STestObjectFreedNotifier	sKilled5;
+	STestObjectFreedNotifier	sKilled6;
+	STestObjectFreedNotifier	sKilledTop1;
+	STestObjectFreedNotifier	sKilledTop2;
 	Ptr<CTestObject>			pTest1;
 	Ptr<CTestObject>			pTest2;
 	Ptr<CTestObject>			pTest3;
@@ -1008,14 +1008,14 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	AssertInt(8, pTop2->GetDistToRoot());
 	AssertInt(9, pTest6->GetDistToRoot());
 
-	AssertTrue( sKilled2.bKilled);
-	AssertFalse(sKilled3.bKilled);
-	AssertFalse(sKilled4.bKilled);
-	AssertFalse(sKilled5.bKilled);
-	AssertFalse(sKilled6.bKilled);
-	AssertFalse(sKilledTop1.bKilled);
-	AssertFalse(sKilledTop2.bKilled);
-	AssertFalse(sKilled1.bKilled);
+	AssertTrue( sKilled2.bFreed);
+	AssertFalse(sKilled3.bFreed);
+	AssertFalse(sKilled4.bFreed);
+	AssertFalse(sKilled5.bFreed);
+	AssertFalse(sKilled6.bFreed);
+	AssertFalse(sKilledTop1.bFreed);
+	AssertFalse(sKilledTop2.bFreed);
+	AssertFalse(sKilled1.bFreed);
 	AssertInt(1, pSet->NumElements());
 
 	//
@@ -1061,16 +1061,16 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 	Ptr<CTestObject>			pTest8;
 	Ptr<CTestObject>			pTest9;
 	Ptr<CTestObject>			pTest15;
-	STestObjectKilledNotifier	sKillNotifier1;
-	STestObjectKilledNotifier	sKillNotifier2;
-	STestObjectKilledNotifier	sKillNotifier3;
-	STestObjectKilledNotifier	sKillNotifier4;
-	STestObjectKilledNotifier	sKillNotifier5;
-	STestObjectKilledNotifier	sKillNotifier6;
-	STestObjectKilledNotifier	sKillNotifier7;
-	STestObjectKilledNotifier	sKillNotifier8;
-	STestObjectKilledNotifier	sKillNotifier9;
-	STestObjectKilledNotifier	sKillNotifier15;
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier3;
+	STestObjectFreedNotifier	sFreedNotifier4;
+	STestObjectFreedNotifier	sFreedNotifier5;
+	STestObjectFreedNotifier	sFreedNotifier6;
+	STestObjectFreedNotifier	sFreedNotifier7;
+	STestObjectFreedNotifier	sFreedNotifier8;
+	STestObjectFreedNotifier	sFreedNotifier9;
+	STestObjectFreedNotifier	sFreedNotifier15;
 
 	ObjectsInit();
 
@@ -1087,16 +1087,16 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 	pTest9 = OMalloc(CTestObject);
 	pTest15 = OMalloc(CTestObject);
 
-	pTest1->Init(&sKillNotifier1);
-	pTest2->Init(&sKillNotifier2);
-	pTest3->Init(&sKillNotifier3);
-	pTest4->Init(&sKillNotifier4);
-	pTest5->Init(&sKillNotifier5);
-	pTest6->Init(&sKillNotifier6);
-	pTest7->Init(&sKillNotifier7);
-	pTest8->Init(&sKillNotifier8);
-	pTest9->Init(&sKillNotifier9);
-	pTest15->Init(&sKillNotifier15);
+	pTest1->Init(&sFreedNotifier1);
+	pTest2->Init(&sFreedNotifier2);
+	pTest3->Init(&sFreedNotifier3);
+	pTest4->Init(&sFreedNotifier4);
+	pTest5->Init(&sFreedNotifier5);
+	pTest6->Init(&sFreedNotifier6);
+	pTest7->Init(&sFreedNotifier7);
+	pTest8->Init(&sFreedNotifier8);
+	pTest9->Init(&sFreedNotifier9);
+	pTest15->Init(&sFreedNotifier15);
 
 	pRoot->Add(pTest1);
 	pTest1->mpObject = pTest2;
@@ -1161,17 +1161,17 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 	pTest3 = NULL;
 	pTest1->mpTest = NULL;
 
-	AssertTrue(sKillNotifier3.bKilled);
-	AssertTrue(sKillNotifier5.bKilled);
-	AssertTrue(sKillNotifier7.bKilled);
-	AssertFalse(sKillNotifier9.bKilled);
+	AssertTrue(sFreedNotifier3.bFreed);
+	AssertTrue(sFreedNotifier5.bFreed);
+	AssertTrue(sFreedNotifier7.bFreed);
+	AssertFalse(sFreedNotifier9.bFreed);
 
-	AssertFalse(sKillNotifier1.bKilled);
-	AssertFalse(sKillNotifier2.bKilled);
-	AssertFalse(sKillNotifier4.bKilled);
-	AssertFalse(sKillNotifier6.bKilled);
-	AssertFalse(sKillNotifier8.bKilled);
-	AssertFalse(sKillNotifier15.bKilled);
+	AssertFalse(sFreedNotifier1.bFreed);
+	AssertFalse(sFreedNotifier2.bFreed);
+	AssertFalse(sFreedNotifier4.bFreed);
+	AssertFalse(sFreedNotifier6.bFreed);
+	AssertFalse(sFreedNotifier8.bFreed);
+	AssertFalse(sFreedNotifier15.bFreed);
 
 	AssertInt(1, pTest6->NumHeapFroms());
 	AssertPointer(&pTest4, pTest6->GetHeapFrom(0));
@@ -1275,12 +1275,12 @@ void TestRootSetRemoveAll(void)
 	Ptr<CPointerContainer>		pContainer2;
 	Ptr<CTestObject>			pObject;
 	Ptr<CRoot>					pRoot;
-	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier1;
 	CTestObject*				pcObject;
 	CPointerContainer*			pcContainer1;
 	CPointerContainer*			pcContainer2;
 
-	pObject = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pObject = OMalloc(CTestObject)->Init(&sFreedNotifier1);
 	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
 	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
 	pRoot = ORoot();
@@ -1322,13 +1322,13 @@ void TestRootSetRemoveAll(void)
 //	Ptr<CPointerContainer>		pContainer2;
 //	Ptr<CTestObject>			pObject;
 //	Ptr<CRoot>					pRoot;
-//	STestObjectKilledNotifier	sKillNotifier1;
+//	STestObjectFreedNotifier	sFreedNotifier1;
 //	CTestObject*				pcObject;
 //	CPointerContainer*			pcContainer1;
 //	CPointerContainer*			pcContainer2;
 //	Ptr<CPointerContainer>		pTemp;
 //
-//	pObject = OMalloc(CTestObject)->Init(&sKillNotifier1);
+//	pObject = OMalloc(CTestObject)->Init(&sFreedNotifier1);
 //	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
 //	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
 //	pRoot = ORoot();
@@ -1372,9 +1372,9 @@ void TestRootKillWithStackPointers(void)
 	Ptr<CPointerContainer>		pContainer2;
 	Ptr<CTestObject>			pObject;
 	Ptr<CRoot>					pRoot;
-	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier1;
 
-	pObject = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pObject = OMalloc(CTestObject)->Init(&sFreedNotifier1);
 	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
 	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
 	pRoot = ORoot();
@@ -1410,12 +1410,12 @@ void TestRootKill(void)
 	Ptr<CPointerContainer>		pContainer2;
 	Ptr<CTestObject>			pObject;
 	Ptr<CRoot>					pRoot;
-	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier1;
 
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(0, gcUnknowns.NumElements());
 
-	pObject = OMalloc(CTestObject)->Init(&sKillNotifier1);
+	pObject = OMalloc(CTestObject)->Init(&sFreedNotifier1);
 	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
 	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
 	pRoot = ORoot();

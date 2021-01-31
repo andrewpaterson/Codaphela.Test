@@ -13,7 +13,7 @@ void TestObjectStackInit(void)
 	ObjectsInit();
 
 	CTestObject					cObject;
-	STestObjectKilledNotifier	sKillNotifier;
+	STestObjectFreedNotifier	sFreedNotifier;
 
 	AssertFalse(cObject.IsAllocatedInObjects());
 	AssertTrue(cObject.GetFlags() & OBJECT_FLAGS_CALLED_CONSTRUCTOR);
@@ -22,7 +22,7 @@ void TestObjectStackInit(void)
 	AssertInt(0, cObject.GetDistToStack());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, cObject.GetDistToRoot());
 
-	cObject.Init(&sKillNotifier);
+	cObject.Init(&sFreedNotifier);
 
 	AssertTrue(cObject.GetFlags() & OBJECT_FLAGS_CALLED_INIT);
 

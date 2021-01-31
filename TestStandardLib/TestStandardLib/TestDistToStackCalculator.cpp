@@ -600,7 +600,7 @@ void TestDistToStackSetWithoutStackPointers(void)
 	CDistToRootCalculator		cDistToRootCalculator;
 	CDistToStackCalculator		cDistToStackCalculator;
 	CDistCalculatorParameters	cDistParameters;
-	STestObjectKilledNotifier	sKillNotifier;
+	STestObjectFreedNotifier	sFreedNotifier;
 	Ptr<CSet<CTestObject>>		pSet;
 	Ptr<CRoot>					pRoot;
 	Ptr<CPointerContainer>		pContainer;
@@ -609,7 +609,7 @@ void TestDistToStackSetWithoutStackPointers(void)
 	CPointerContainer*			pcContainer;
 	CTestObject*				pcTest;
 
-	pTest = OMalloc(CTestObject)->Init(&sKillNotifier);
+	pTest = OMalloc(CTestObject)->Init(&sFreedNotifier);
 	pSet = OMalloc(CSet<CTestObject>)->Init();
 	pSet->Add(pTest);
 
@@ -661,7 +661,7 @@ void TestDistToStackSetWithStackPointers(void)
 	CDistToRootCalculator		cDistToRootCalculator;
 	CDistToStackCalculator		cDistToStackCalculator;
 	CDistCalculatorParameters	cDistParameters;
-	STestObjectKilledNotifier	sKillNotifier;
+	STestObjectFreedNotifier	sFreedNotifier;
 	Ptr<CSet<CTestObject>>		pSet;
 	Ptr<CRoot>					pRoot;
 	Ptr<CPointerContainer>		pContainer;
@@ -670,7 +670,7 @@ void TestDistToStackSetWithStackPointers(void)
 	CPointerContainer*			pcContainer;
 	CTestObject*				pcTest;
 
-	pTest = OMalloc(CTestObject)->Init(&sKillNotifier);
+	pTest = OMalloc(CTestObject)->Init(&sFreedNotifier);
 	pSet = OMalloc(CSet<CTestObject>)->Init();
 	pSet->Add(pTest);
 
@@ -722,9 +722,9 @@ void TestDistToStackSetBroken(void)
 	CDistToStackCalculator		cDistToStackCalculator;
 	CDistCalculatorParameters	cDistParameters;
 
-	STestObjectKilledNotifier	sKilled1;
-	STestObjectKilledNotifier	sKilled2;
-	STestObjectKilledNotifier	sKilled3;
+	STestObjectFreedNotifier	sKilled1;
+	STestObjectFreedNotifier	sKilled2;
+	STestObjectFreedNotifier	sKilled3;
 
 	Ptr<CRoot>					pRoot;
 	Ptr<CTestObject>			pTest1;
@@ -807,9 +807,9 @@ void TestDistToStackSetBroken(void)
 
 	cDistParameters.Kill();
 
-	AssertFalse(sKilled1.bKilled);
-	AssertTrue( sKilled3.bKilled);
-	AssertFalse(sKilled2.bKilled);
+	AssertFalse(sKilled1.bFreed);
+	AssertTrue( sKilled3.bFreed);
+	AssertFalse(sKilled2.bFreed);
 
 	gcObjects.ValidateObjectsConsistency();
 
@@ -825,8 +825,8 @@ void TestDistToStackNoStackHeapFromBroken(void)
 {
 	ObjectsInit();
 
-	STestObjectKilledNotifier	sNotifier1;
-	STestObjectKilledNotifier	sNotifier2;
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
 	CTestObject*				pcTest1;
 	CTestObject*				pcTest2;
 
@@ -853,14 +853,187 @@ void TestDistToStackNoStackHeapFromBroken(void)
 	pTest1 = NULL;  //pTest1 should not be killed here, even though it has no stack froms.  
 					//It still has a heap from that has a stack from.
 
-	AssertFalse(sNotifier1.bKilled);
-	AssertFalse(sNotifier2.bKilled);
+	AssertFalse(sNotifier1.bFreed);
+	AssertFalse(sNotifier2.bFreed);
 	AssertInt(1, pcTest1->NumHeapFroms());
 	AssertInt(0, pcTest1->NumStackFroms());
 	AssertInt(0, pcTest1->NumPointerTos());
 	AssertInt(0, pcTest2->NumHeapFroms());
 	AssertInt(1, pcTest2->NumStackFroms());
 	AssertInt(1, pcTest2->NumPointerTos());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToStackNoHeapA(void)
+{
+	ObjectsInit();
+
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+	CTestObject*				pcTest1;
+	CTestObject*				pcTest2;
+	CTestObject					cTest1;
+
+	Ptr<CTestObject> pTest2 = OMalloc(CTestObject)->Init(&sNotifier2);
+	
+	cTest1.Init(&sNotifier1);
+	pTest2->mpTest = &cTest1;
+
+	//
+	//    cTest1
+	//      ^ 
+	//      |  
+	//      |   
+	//      |
+	//    pTest2
+	//        ^
+	//         .
+	//          .
+	//
+
+	AssertFalse(pTest2->mpTest.IsNull());
+	AssertTrue(cTest1.mpTest.IsNull());
+
+	pcTest2 = (CTestObject*)pTest2.Object();
+	pcTest1 = &cTest1;
+
+	AssertLongLongInt(INVALID_O_INDEX, pcTest1->GetOI());
+	AssertLongLongInt(1, pcTest2->GetOI());
+
+	cTest1.Kill();
+
+	AssertTrue(sNotifier1.bFreed);
+	AssertFalse(sNotifier2.bFreed);
+	Pass();
+
+	AssertTrue(pTest2->mpTest.IsNull());
+	Pass();
+
+	AssertInt(0, pcTest1->NumHeapFroms());
+	AssertInt(0, pcTest1->NumStackFroms());
+	AssertInt(0, pcTest1->NumPointerTos());
+	AssertInt(0, pcTest2->NumHeapFroms());
+	AssertInt(1, pcTest2->NumStackFroms());
+	AssertInt(0, pcTest2->NumPointerTos());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToStackNoHeapB(void)
+{
+	ObjectsInit();
+
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+	CTestObject*				pcTest1;
+	CTestObject*				pcTest2;
+	CTestObject					cTest1;
+
+	Ptr<CTestObject> pTest2 = OMalloc(CTestObject)->Init(&sNotifier2);
+
+	cTest1.Init(&sNotifier1);
+	cTest1.mpTest = pTest2;
+
+	//
+	//    pTest2
+	//      ^ ^ 
+	//      |  .
+	//      |   .
+	//      |    .
+	//    cTest1
+	//
+
+	AssertTrue(pTest2->mpTest.IsNull());
+	AssertFalse(cTest1.mpTest.IsNull());
+	Pass();
+
+	pcTest2 = (CTestObject*)pTest2.Object();
+	pcTest1 = &cTest1;
+
+	AssertLongLongInt(INVALID_O_INDEX, pcTest1->GetOI());
+	AssertLongLongInt(1, pcTest2->GetOI());
+
+	cTest1.Kill();
+
+	AssertTrue(sNotifier1.bFreed);
+	AssertFalse(sNotifier2.bFreed);
+	Pass();
+
+	AssertInt(0, pcTest1->NumHeapFroms());
+	AssertInt(0, pcTest1->NumStackFroms());
+	AssertInt(0, pcTest1->NumPointerTos());
+	AssertInt(0, pcTest2->NumHeapFroms());
+	AssertInt(1, pcTest2->NumStackFroms());
+	AssertInt(0, pcTest2->NumPointerTos());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToStackNoHeapC(void)
+{
+	ObjectsInit();
+
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+	CTestObject*				pcTest1;
+	CTestObject*				pcTest2;
+	CTestObject					cTest1;
+
+	Ptr<CTestObject> pTest2 = OMalloc(CTestObject)->Init(&sNotifier2);
+
+	cTest1.Init(&sNotifier1);
+	cTest1.mpTest = pTest2;
+
+	//
+	//    pTest2
+	//      ^ ^ 
+	//      |  .
+	//      |   .
+	//      |    .
+	//    cTest1
+	//
+
+	AssertTrue(pTest2->mpTest.IsNull());
+	AssertFalse(cTest1.mpTest.IsNull());
+	Pass();
+
+	pcTest2 = (CTestObject*)pTest2.Object();
+	pcTest1 = &cTest1;
+
+	AssertLongLongInt(INVALID_O_INDEX, pcTest1->GetOI());
+	AssertLongLongInt(1, pcTest2->GetOI());
+
+	pTest2->Kill();
+
+	AssertFalse(sNotifier1.bFreed);
+	AssertTrue(sNotifier2.bFreed);
+	Pass();
+
+	AssertTrue(cTest1.mpTest.IsNull());
+	Pass();
+
+	AssertInt(0, pcTest1->NumHeapFroms());
+	AssertInt(0, pcTest1->NumStackFroms());
+	AssertInt(0, pcTest1->NumPointerTos());
+	AssertInt(0, pcTest2->NumHeapFroms());
+	AssertInt(0, pcTest2->NumStackFroms());
+	AssertInt(0, pcTest2->NumPointerTos());
 
 	ObjectsKill();
 }
@@ -1035,13 +1208,13 @@ void TestDistToStackRemoveUnbalancedLargeBroken(void)
 	CDistToStackCalculator		cDistToStackCalculator;
 
 	Ptr<CRoot>					pRoot;
-	STestObjectKilledNotifier	sKilled1;
-	STestObjectKilledNotifier	sKilled2;
-	STestObjectKilledNotifier	sKilled3;
-	STestObjectKilledNotifier	sKilled4;
-	STestObjectKilledNotifier	sKilled5;
-	STestObjectKilledNotifier	sKilledTop1;
-	STestObjectKilledNotifier	sKilledTop2;
+	STestObjectFreedNotifier	sKilled1;
+	STestObjectFreedNotifier	sKilled2;
+	STestObjectFreedNotifier	sKilled3;
+	STestObjectFreedNotifier	sKilled4;
+	STestObjectFreedNotifier	sKilled5;
+	STestObjectFreedNotifier	sKilledTop1;
+	STestObjectFreedNotifier	sKilledTop2;
 	Ptr<CTestObject>			pTest1;
 	Ptr<CTestObject>			pTest2;
 	Ptr<CTestObject>			pTest3;
@@ -1173,6 +1346,9 @@ void TestDistToStack(void)
 	TestDistToStackSimpleOneStep();
 	TestDistToStackSimpleHeap();
 	TestDistToStackNoStackHeapFromBroken();
+	TestDistToStackNoHeapA();
+	TestDistToStackNoHeapB();
+	TestDistToStackNoHeapC();
 	TestDistToStackRootCyclicWithStackPointerA();
 	TestDistToStackRootCyclicWithStackPointerB();
 	TestDistToStackRootCyclicWithStackPointerC();

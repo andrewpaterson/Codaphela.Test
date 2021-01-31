@@ -12,17 +12,17 @@ void TestObjectStackPointersSingle(void)
 {
 	ObjectsInit();
 
-	STestObjectKilledNotifier	sNotifier;
+	STestObjectFreedNotifier	sNotifier;
 
 	Ptr<CTestObject> ptr = OMalloc(CTestObject);
 	ptr->Init(&sNotifier);
 
 	AssertInt(1, ptr->NumStackFroms());
-	AssertFalse(sNotifier.bKilled);
+	AssertFalse(sNotifier.bFreed);
 
 	ptr = NULL;
 
-	AssertTrue(sNotifier.bKilled);
+	AssertTrue(sNotifier.bFreed);
 
 	ObjectsKill();
 }
@@ -36,13 +36,13 @@ void TestObjectStackPointersSingleWithRoot(void)
 {
 	ObjectsInit();
 
-	STestObjectKilledNotifier	sNotifier;
+	STestObjectFreedNotifier	sNotifier;
 
 	Ptr<CTestObject> ptr = OMalloc(CTestObject);
 	ptr->Init(&sNotifier);
 
 	AssertInt(1, ptr->NumStackFroms());
-	AssertFalse(sNotifier.bKilled);
+	AssertFalse(sNotifier.bFreed);
 	
 	Ptr<CRoot>	pRoot = ORoot();
 	pRoot->Add(ptr);
@@ -51,11 +51,11 @@ void TestObjectStackPointersSingleWithRoot(void)
 	pcTest = &ptr;
 	ptr = NULL;
 
-	AssertFalse(sNotifier.bKilled);
+	AssertFalse(sNotifier.bFreed);
 
 	pRoot->Remove(pcTest);
 
-	AssertTrue(sNotifier.bKilled);
+	AssertTrue(sNotifier.bFreed);
 
 	pRoot = NULL;
 

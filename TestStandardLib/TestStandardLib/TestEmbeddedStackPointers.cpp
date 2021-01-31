@@ -16,20 +16,20 @@ void TestEmbeddedStackPointersKill(void)
 	ObjectsInit();
 
 	CEmbeddedComplex			cComplex;
-	STestObjectKilledNotifier	sKillNotifier;
+	STestObjectFreedNotifier	sFreedNotifier;
 
 	cComplex.Init();
 	cComplex.mai[0] = 1234;
 	cComplex.mai[1] = 7890;
 
-	cComplex.mpTest = OMalloc(CTestObject)->Init(&sKillNotifier);
+	cComplex.mpTest = OMalloc(CTestObject)->Init(&sFreedNotifier);
 	AssertInt(0, cComplex.NumStackFroms());
 	AssertInt(1, cComplex.mpTest->NumStackFroms());
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 
 	cComplex.Kill();
 
-	AssertTrue(sKillNotifier.bKilled);
+	AssertTrue(sFreedNotifier.bFreed);
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 }
 
@@ -38,11 +38,11 @@ void TestEmbeddedStackPointersKill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestEmbeddedStackPointersDestructor(STestObjectKilledNotifier* psKillNotifier2, Ptr<CTestObject> pTest1)
+void TestEmbeddedStackPointersDestructor(STestObjectFreedNotifier* psFreedNotifier2, Ptr<CTestObject> pTest1)
 {
 	CTestObject					cTest2;
 
-	cTest2.Init(psKillNotifier2);
+	cTest2.Init(psFreedNotifier2);
 	cTest2.mpTest = pTest1;
 	cTest2.Kill();  //Kill has to be called manually - it's difficult to make the destructor call the right kill.
 }
@@ -57,17 +57,17 @@ void TestEmbeddedStackPointersDestructor(void)
 	ObjectsInit();
 
 	CTestObject					cTest1;
-	STestObjectKilledNotifier	sKillNotifier1;
-	STestObjectKilledNotifier	sKillNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
 
 	cTest1.Class();
-	cTest1.Init(&sKillNotifier1);
-	sKillNotifier2.bKilled = FALSE;
+	cTest1.Init(&sFreedNotifier1);
+	sFreedNotifier2.bFreed = FALSE;
 
-	TestEmbeddedStackPointersDestructor(&sKillNotifier2, &cTest1);
+	TestEmbeddedStackPointersDestructor(&sFreedNotifier2, &cTest1);
 
-	AssertTrue(sKillNotifier2.bKilled);
-	AssertFalse(sKillNotifier1.bKilled);
+	AssertTrue(sFreedNotifier2.bFreed);
+	AssertFalse(sFreedNotifier1.bFreed);
 
 	cTest1.Kill();
 
@@ -191,17 +191,17 @@ void TestEmbeddedStackPointersComplex(void)
 	CEmbeddedComplex			cComplexOnStack1;
 	CEmbeddedComplex			cComplexOnStack2;
 	Ptr<CTestObject>			pTestObject1;
-	STestObjectKilledNotifier	sKillNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier1;
 	Ptr<CTestObject>			pTestObject2;
-	STestObjectKilledNotifier	sKillNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier2;
 
 	cComplexOnStack1.Init();
 	cComplexOnStack2.Init();
 
 	pTestObject1 = OMalloc(CTestObject);
-	pTestObject1->Init(&sKillNotifier1);
+	pTestObject1->Init(&sFreedNotifier1);
 	pTestObject2 = OMalloc(CTestObject);
-	pTestObject2->Init(&sKillNotifier2);
+	pTestObject2->Init(&sFreedNotifier2);
 
 	AssertInt(0, cComplexOnStack1.GetDistToStack());
 	AssertInt(0, cComplexOnStack1.NumStackFroms());
@@ -220,11 +220,11 @@ void TestEmbeddedStackPointersComplex(void)
 	AssertInt(2, cComplexOnStack2.NumStackFroms());
 	AssertInt(1, cComplexOnStack2.NumPointerTos());
 
-	AssertFalse(sKillNotifier1.bKilled);
-	AssertFalse(sKillNotifier2.bKilled);
+	AssertFalse(sFreedNotifier1.bFreed);
+	AssertFalse(sFreedNotifier2.bFreed);
 	TestEmbeddedStackPointersComplex(&cComplexOnStack1, &cComplexOnStack2);
-	AssertFalse(sKillNotifier1.bKilled);
-	AssertFalse(sKillNotifier2.bKilled);
+	AssertFalse(sFreedNotifier1.bFreed);
+	AssertFalse(sFreedNotifier2.bFreed);
 
 	AssertInt(0, cComplexOnStack1.GetDistToStack());
 	AssertInt(0, cComplexOnStack1.NumStackFroms());

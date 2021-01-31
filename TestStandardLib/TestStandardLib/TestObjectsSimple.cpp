@@ -33,8 +33,8 @@ void TestObjectFreeing(void)
 {
 	Ptr<CTestObject>			pTest1;
 	Ptr<CTestObject>			pTest2;
-	STestObjectKilledNotifier	sKillNotifier1;
-	STestObjectKilledNotifier	sKillNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
 	CCodabase*					pcDatabase;
 	char						szDirectory[] = "Output" _FS_ "TestObjectFreeing";
 	CFileUtil					cFileUtil;
@@ -51,20 +51,20 @@ void TestObjectFreeing(void)
 	AssertNotNull(&pTest1);
 	AssertNotNull(&pTest2);
 
-	pTest1->Init(&sKillNotifier1);
-	pTest2->Init(&sKillNotifier2);
+	pTest1->Init(&sFreedNotifier1);
+	pTest2->Init(&sFreedNotifier2);
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(0, pcDatabase->NumIndicesCached());
 
 	pTest1->Kill();
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(0, pcDatabase->NumIndicesCached());
-	AssertTrue(sKillNotifier1.bKilled);
+	AssertTrue(sFreedNotifier1.bFreed);
 
 	pTest2->Kill();
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(0, pcDatabase->NumIndicesCached());
-	AssertTrue(sKillNotifier2.bKilled);
+	AssertTrue(sFreedNotifier2.bFreed);
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);

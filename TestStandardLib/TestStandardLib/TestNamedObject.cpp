@@ -90,7 +90,7 @@ void TestNamedObjectName(void)
 	pcSet = pRoot->TestGetSet();
 	oiSet = pcSet->GetOI();
 
-	gcObjects.Flush(FALSE, FALSE);
+	gcObjects.Flush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();
@@ -147,7 +147,7 @@ void TestNamedOjectKill(void)
 
 	pszName = pNamedObject->GetName();
 
-	//Trying to test that KillIdentifiers is called and that mon is freed.
+	//Trying to test that FreeIdentifiers is called and that mon is freed.
 	pNamedObject->Kill();
 
 	ObjectsKill();

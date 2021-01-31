@@ -249,7 +249,8 @@ void TestEmbeddedObjectKill(void)
 	AssertLongLongInt(6, gcObjects.GetMemory()->NumIndexed());
 	AssertLongLongInt(6, gcUnknowns.NumElements());
 
-	gcObjects.Flush(TRUE, FALSE);
+	gcObjects.Flush();
+	gcObjects.EvictInMemory();
 
 	AssertLongLongInt(0, gcObjects.GetMemory()->NumIndexed());
 	AssertLongLongInt(0, gcUnknowns.NumElements());
@@ -284,7 +285,9 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 
 	pRoot->Add(pComplex);
 
-	bResult = gcObjects.Flush(TRUE, TRUE);
+	bResult = gcObjects.Flush();
+	AssertTrue(bResult);
+	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
 
 	pcDatabase->Close();
@@ -364,7 +367,9 @@ void TestEmbeddedObjectPointTo(void)
 	Ptr<CEmbeddedContainer> pContainer = &pComplex->mcContainer;
 	pRoot->Add(pContainer);
 
-	bResult = gcObjects.Flush(TRUE, TRUE);
+	bResult = gcObjects.Flush();
+	AssertTrue(bResult);
+	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
 
 	pcDatabase->Close();

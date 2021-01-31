@@ -29,11 +29,12 @@ Ptr<CEmbeddedTest> CEmbeddedTest::Init(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CEmbeddedTest::KillData(void)
+void CEmbeddedTest::Free(void)
 {
 	miAmANumber = 0;
 	mfSoAmI = 0.0f;
 }
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -95,7 +96,7 @@ Ptr<CEmbeddedContainer> CEmbeddedContainer::Init(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CEmbeddedContainer::KillData(void)
+void CEmbeddedContainer::Free(void)
 {
 	msz[0] = msz[1] = msz[2] = msz[3] = 0;
 	mi = 0;
@@ -169,7 +170,7 @@ Ptr<CEmbeddedComplex> CEmbeddedComplex::Init(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CEmbeddedComplex::KillData(void)
+void CEmbeddedComplex::Free(void)
 {
 	mai[0] = 0;
 	mai[1] = 0;

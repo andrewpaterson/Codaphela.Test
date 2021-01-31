@@ -211,7 +211,7 @@ void TestObjectsFlushNoClear(void)
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 	
-	bResult = gcObjects.Flush(FALSE, FALSE);
+	bResult = gcObjects.Flush();
 	AssertTrue(bResult);
 
 	AssertLongLongInt(9, pcDatabase->NumIndices());
@@ -288,7 +288,7 @@ void TestObjectsFlushDurable(void)
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 
-	bResult = gcObjects.Flush(FALSE, FALSE);
+	bResult = gcObjects.Flush();
 	AssertTrue(bResult);
 
 	AssertLongLongInt(9, pcDatabase->NumIndices());
@@ -340,7 +340,7 @@ void TestObjectsEvict(void)
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 
-	bResult = gcObjects.Flush(FALSE, FALSE);
+	bResult = gcObjects.Flush();
 	AssertTrue(bResult);
 
 	AssertLongLongInt(9, pcDatabase->NumIndices());
@@ -361,7 +361,7 @@ void TestObjectsEvict(void)
 	SetupObjectsForDehollowfication();
 
 	//This flush's clear cache does not work.
-	bResult = gcObjects.Flush(FALSE, TRUE);
+	bResult = gcObjects.Flush();
 	AssertTrue(bResult);
 
 	//AssertLongLongInt(0, pcDatabase->NumIndicesCached());
@@ -381,7 +381,7 @@ void TestObjectsEvict(void)
 	ObjectsInit(pcDatabase);
 	SetupObjectsForDehollowfication();
 
-	bResult = gcObjects.Flush(TRUE, FALSE);
+	bResult = gcObjects.Flush();
 	AssertTrue(bResult);
 
 	AssertLongLongInt(9, pcDatabase->NumIndices());
@@ -402,7 +402,9 @@ void TestObjectsEvict(void)
 	SetupObjectsForDehollowfication();
 
 	//This flush's clear cache does not work.
-	bResult = gcObjects.Flush(TRUE, TRUE);
+	bResult = gcObjects.Flush();
+	AssertTrue(bResult);
+	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
 
 	//AssertLongLongInt(0, pcDatabase->NumIndicesCached());
@@ -569,6 +571,7 @@ void TestObjectDehollowfication(void)
 	OIndex							oiNew;
 	CCodabase*						pcDatabase;
 	char							szDirectory[] = "Output" _FS_ "Dehollowfication";
+	BOOL							bResult;
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
@@ -576,7 +579,12 @@ void TestObjectDehollowfication(void)
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase);
 	SetupObjectsForDehollowfication();
-	gcObjects.Flush(TRUE, TRUE);
+	
+	bResult = gcObjects.Flush();
+	AssertTrue(bResult);
+	bResult = gcObjects.EvictInMemory();
+	AssertTrue(bResult);
+
 	AssertLongLongInt(9, pcDatabase->NumIndices());
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
@@ -636,6 +644,7 @@ void TestObjectsFlushClearGetByOid(void)
 	Ptr<CRoot>						pRoot;
 	CCodabase*						pcDatabase;
 	char							szDirectory[] = "Output" _FS_ "Dehollowfication";
+	BOOL							bResult;
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
@@ -652,7 +661,10 @@ void TestObjectsFlushClearGetByOid(void)
 	AssertNotNull(pObject.Object());
 	AssertString("CTestDoubleNamedString", pObject.ClassName());
 
-	gcObjects.Flush(TRUE, TRUE);
+	bResult = gcObjects.Flush();
+	AssertTrue(bResult);
+	bResult = gcObjects.EvictInMemory();
+	AssertTrue(bResult);
 	AssertLongLongInt(3, pcDatabase->NumIndices());
 
 	pObject = gcObjects.Get(3);
@@ -685,6 +697,7 @@ void TestObjectsFlushClearGetByName(void)
 	Ptr<CRoot>						pRoot;
 	CCodabase*						pcDatabase;
 	char							szDirectory[] = "Output" _FS_ "Dehollowfication";
+	BOOL							bResult;
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
@@ -702,7 +715,10 @@ void TestObjectsFlushClearGetByName(void)
 	AssertNotNull(pObject.Object());
 	AssertString("CTestDoubleNamedString", pObject.ClassName());
 
-	gcObjects.Flush(TRUE, TRUE);
+	bResult = gcObjects.Flush();
+	AssertTrue(bResult);
+	bResult = gcObjects.EvictInMemory();
+	AssertTrue(bResult);
 	AssertLongLongInt(3, pcDatabase->NumIndices());
 	AssertLongLongInt(2, pcDatabase->NumNames());
 
@@ -727,6 +743,7 @@ void TestObjectsFlushRemovesStackPointers(void)
 	Ptr<CRoot>						pRoot;
 	CCodabase*						pcDatabase;
 	char							szDirectory[] = "Output" _FS_ "ClearPointers";
+	BOOL							bResult;
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
@@ -739,7 +756,10 @@ void TestObjectsFlushRemovesStackPointers(void)
 
 	pRoot = ORoot();
 
-	gcObjects.Flush(TRUE, TRUE);
+	bResult = gcObjects.Flush();
+	AssertTrue(bResult);
+	bResult = gcObjects.EvictInMemory();
+	AssertTrue(bResult);
 	AssertLongLongInt(2, pcDatabase->NumIndices());
 
 	AssertNull(&pRoot);

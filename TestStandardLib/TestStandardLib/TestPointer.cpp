@@ -57,14 +57,14 @@ void TestPointerConstructor(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestPointerDestructorDestruct(STestObjectKilledNotifier* psKillNotifier)
+void TestPointerDestructorDestruct(STestObjectFreedNotifier* psFreedNotifier)
 {
 	CTestObject					cTestObject;
 
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
 	cTestObject.Init(NULL);
-	cTestObject.mpTest = OMalloc(CTestObject)->Init(psKillNotifier);
+	cTestObject.mpTest = OMalloc(CTestObject)->Init(psFreedNotifier);
 
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 	//cTestObject Destructor called here.  It should cause the allocated object it points to to be destroyed too.
@@ -79,11 +79,11 @@ void TestPointerDestructor(void)
 {
 	ObjectsInit();
 
-	STestObjectKilledNotifier	sKillNotifier;
+	STestObjectFreedNotifier	sFreedNotifier;
 
-	TestPointerDestructorDestruct(&sKillNotifier);
+	TestPointerDestructorDestruct(&sFreedNotifier);
 	
-	AssertTrue(sKillNotifier.bKilled);
+	AssertTrue(sFreedNotifier.bFreed);
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
@@ -196,8 +196,8 @@ void TestPointerHeapNotInGraphFreeStack(void)
 {
 	ObjectsInit();
 
-	STestObjectKilledNotifier	sNotifier1;
-	STestObjectKilledNotifier	sNotifier2;
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
 	CTestObject*				pcTest1;
 	CTestObject*				pcTest2;
 
@@ -210,8 +210,8 @@ void TestPointerHeapNotInGraphFreeStack(void)
 	AssertInt(0, pTest2->NumHeapFroms());
 	AssertInt(1, pTest2->NumStackFroms());
 	AssertInt(0, pTest2->NumPointerTos());
-	AssertFalse(sNotifier1.bKilled);
-	AssertFalse(sNotifier2.bKilled);
+	AssertFalse(sNotifier1.bFreed);
+	AssertFalse(sNotifier2.bFreed);
 
 	pTest2->mpObject = pTest1;
 
@@ -226,8 +226,8 @@ void TestPointerHeapNotInGraphFreeStack(void)
 	pcTest1 = (CTestObject*)pTest1.Object();
 	pTest1 = NULL;  //pTest1 should not be killed here, even though it has no stack froms.  It still has a heap from.
 
-	AssertFalse(sNotifier1.bKilled);
-	AssertFalse(sNotifier2.bKilled);
+	AssertFalse(sNotifier1.bFreed);
+	AssertFalse(sNotifier2.bFreed);
 	AssertInt(1, pcTest1->NumHeapFroms());
 	AssertInt(0, pcTest1->NumStackFroms());
 	AssertInt(0, pcTest1->NumPointerTos());
