@@ -23,7 +23,7 @@ void TestChannelsAccessorContiguous(void)
 	CChannelsAccessorCreator	cCreator;
 	void*						pvData;
 	int							iData;
-	short						sData;
+	uint16						sData;
 
 	pcChannels = UMalloc(CChannels);
 	pcChannels->Init();
@@ -65,7 +65,7 @@ void TestChannelsAccessorContiguous(void)
 	sData = 602;
 	pcAccessor->Set(1, &sData);
 	pvData = pcAccessor->Get(1);
-	AssertShort(602, *(short*)pvData);
+	AssertShort(602, *(uint16*)pvData);
 	pcAccessor->Kill();
 
 	cCreator.Init(pcChannels);
@@ -76,7 +76,7 @@ void TestChannelsAccessorContiguous(void)
 	pvData = pcAccessor->Get(1);
 	AssertInt(784, *(int*)pvData);
 	pvData = RemapSinglePointer(pvData, 4);
-	AssertInt(602, *(short*)pvData);
+	AssertInt(602, *(uint16*)pvData);
 	pcAccessor->Kill();
 }
 
@@ -90,8 +90,8 @@ void TestChannelsAccessorByteAligned(void)
 	CChannels*					pcChannels;
 	CChannelsAccessor*			pcAccessor;
 	CChannelsAccessorCreator	cCreator;
-	short*						psData;
-	short						sData[3];
+	uint16*						psData;
+	uint16						sData[3];
 	int							iData;
 
 	pcChannels = UMalloc(CChannels);
@@ -111,9 +111,9 @@ void TestChannelsAccessorByteAligned(void)
 	sData[0] = 784;
 	sData[1] = 602;
 	pcAccessor->Set(1, &sData);
-	AssertShort(784, *(short*)RemapSinglePointer(pcChannels->GetData(), 8 + 0));
-	AssertShort(602, *(short*)RemapSinglePointer(pcChannels->GetData(), 8 + 6));
-	psData = (short*)pcAccessor->Get(1);
+	AssertShort(784, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 8 + 0));
+	AssertShort(602, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 8 + 6));
+	psData = (uint16*)pcAccessor->Get(1);
 	AssertShort(784, psData[0]);
 	AssertShort(602, psData[1]);
 	pcAccessor->Kill();
@@ -130,7 +130,7 @@ void TestChannelsAccessorByteAligned(void)
 	cCreator.AddAccess(CHANNEL_NAME_BOB, PT_Undefined);
 	pcAccessor = cCreator.CreateAndKill();
 	AssertString("CChannelsAccessorByteAligned", pcAccessor->ClassName());
-	psData = (short*)pcAccessor->Get(1);
+	psData = (uint16*)pcAccessor->Get(1);
 	AssertShort(602, psData[0]);
 	AssertInt(999999, *(int*)&psData[1]);
 	sData[0] = 22172;
@@ -138,7 +138,7 @@ void TestChannelsAccessorByteAligned(void)
 	sData[2] = 30812;
 	pcAccessor->Set(0, sData);
 	AssertInt(2019313664, *(int*)RemapSinglePointer(pcChannels->GetData(), 2));
-	AssertShort(22172, *(short*)RemapSinglePointer(pcChannels->GetData(), 6));
+	AssertShort(22172, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 6));
 	pcAccessor->Kill();
 }
 
@@ -173,7 +173,7 @@ void TestChannelsAccessorTypeConvert(void)
 	afData[0] = 1.0f;
 	afData[1] = 0.34f;
 	pcAccessor->Set(1, afData);
-	AssertShortHex((short)0xffff, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 8 + 0));
+	AssertShortHex((uint16)0xffff, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 8 + 0));
 	AssertShortHex(0x5709, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 8 + 6));
 	pfData = (float*)pcAccessor->Get(1);
 	AssertFloat(1.0f, pfData[0], 2);
