@@ -294,9 +294,9 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	SafeKill(pcDatabase);
 	ObjectsKill();
 
-	AssertInt(176, sizeof(CEmbeddedTest));
-	AssertInt(544, sizeof(CEmbeddedContainer));
-	AssertInt(1032, sizeof(CEmbeddedComplex));
+	AssertInt(184, sizeof(CEmbeddedTest));
+	AssertInt(568, sizeof(CEmbeddedContainer));
+	AssertInt(1088, sizeof(CEmbeddedComplex));
 
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();

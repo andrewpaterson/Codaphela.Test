@@ -57,9 +57,8 @@ void TestArrayTypeInstantiation(void)
 	pcTest = cArray.Get(1);
 	AssertPointer(pcTest1, pcTest);
 
-	//This is a stupid assertion.  Why do you assert this?
 	iSize = cArray.ClassSize();
-	AssertInt(44, iSize);
+	AssertInt(48, iSize);
 
 	szName = cArray.ClassName();
 	AssertString("CArrayType", szName);

@@ -28,7 +28,7 @@ void TestUnknownListAddKill(void)
 	pcFreeList = cUnknowns.GetFreeList(sizeof(CTestUnknown));
 	AssertInt(1, pcFreeList->NumElements());
 	AssertInt(1, pcMemory->NumElements());
-	AssertInt(359, pcMemory->ByteSize());
+	AssertInt(431, pcMemory->ByteSize());
 
 	pcTest->Init();
 	pcTest->Kill();

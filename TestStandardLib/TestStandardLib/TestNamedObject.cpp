@@ -29,7 +29,7 @@ void TestNamedObjectAddConstructors(void)
 //////////////////////////////////////////////////////////////////////////
 void TestNamedObjectSize(void)
 {
-	AssertInt(184, sizeof(CNamedObject));
+	AssertInt(192, sizeof(CNamedObject));
 }
 
 
