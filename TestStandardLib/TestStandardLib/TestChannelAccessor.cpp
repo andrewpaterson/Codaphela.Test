@@ -173,8 +173,8 @@ void TestChannelsAccessorTypeConvert(void)
 	afData[0] = 1.0f;
 	afData[1] = 0.34f;
 	pcAccessor->Set(1, afData);
-	AssertShortHex((short)0xffff, *(unsigned short*)RemapSinglePointer(pcChannels->GetData(), 8 + 0));
-	AssertShortHex(0x5709, *(unsigned short*)RemapSinglePointer(pcChannels->GetData(), 8 + 6));
+	AssertShortHex((short)0xffff, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 8 + 0));
+	AssertShortHex(0x5709, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 8 + 6));
 	pfData = (float*)pcAccessor->Get(1);
 	AssertFloat(1.0f, pfData[0], 2);
 	AssertFloat(0.34f, pfData[1], 2);
@@ -319,11 +319,11 @@ void TestChannelsAccessorAccessBitty(void)
 	aucData[0] = 0xa3;
 	aucData[1] = 0x2c;
 	pcAccessor->Set(0, aucData);
-	AssertShortHex((unsigned short)0x8e38, *(unsigned short*)RemapSinglePointer(pcChannels->GetData(), 0 + 0));
-	AssertShortHex((unsigned short)0xcb2b, *(unsigned short*)RemapSinglePointer(pcChannels->GetData(), 0 + 2));
-	AssertShortHex((unsigned short)0x2222, *(unsigned short*)RemapSinglePointer(pcChannels->GetData(), 0 + 4));
+	AssertShortHex((uint16)0x8e38, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 0 + 0));
+	AssertShortHex((uint16)0xcb2b, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 0 + 2));
+	AssertShortHex((uint16)0x2222, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 0 + 4));
 	pucData = (unsigned char*)pcAccessor->Get(0);
-	AssertShortHex((unsigned short)0x2ca3, *(unsigned short*)pucData);
+	AssertShortHex((uint16)0x2ca3, *(uint16*)pucData);
 	pcAccessor->Kill();
 }
 

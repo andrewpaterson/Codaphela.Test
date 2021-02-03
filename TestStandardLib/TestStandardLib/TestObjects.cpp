@@ -383,11 +383,17 @@ void TestObjectsEvict(void)
 
 	bResult = gcObjects.Flush();
 	AssertTrue(bResult);
-
+	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 	AssertLongLongInt(9, pcDatabase->NumIndices());
+	AssertLongLongInt(6, pcDatabase->NumNames());
 	AssertLongLongInt(9, pcDatabase->NumIndicesCached());
+
+	bResult = gcObjects.EvictInMemory();
+	AssertTrue(bResult);
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(0, gcObjects.NumMemoryNames());
+
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);

@@ -35,12 +35,12 @@ public:
 	float				mf;
 	Ptr<>				mpTest;
 
-	void	Class(void);
-	Ptr<CEmbeddedContainer> Init(void);
-	void	Free(void);
+	void						Class(void);
+	Ptr<CEmbeddedContainer>		Init(void);
+	void						Free(void);
 
-	BOOL	Save(CObjectSerialiser* pcFile);
-	BOOL	Load(CObjectDeserialiser* pcFile);
+	BOOL						Save(CObjectSerialiser* pcFile);
+	BOOL						Load(CObjectDeserialiser* pcFile);
 };
 
 

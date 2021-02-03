@@ -49,8 +49,6 @@ void TestPointerConstructor(void)
 	cCluster.Init();
 	AssertNull(cCluster.mpTest.Object());
 	AssertPointer(&cCluster, cCluster.mpTest.Embedding());
-
-	ObjectsKill();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -248,7 +246,7 @@ void TestPointer(void)
 	BeginTests();
 	MemoryInit();
 
-	TestPointerConstructor();
+	TestPointerConstructor();  	ObjectsKill();
 	TestPointerDestructor();
 	TestPointerStackToEmbedded();
 	TestPointerAssignmentSimple();

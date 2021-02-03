@@ -264,7 +264,7 @@ void TestObjectConverterText(void)
 	pcString = pcObjectSource->Convert("TextFile");
 	AssertTrue(pcString.IsNotNull());
 	AssertString(szTextInFile, pcString->Text());
-	pcString->Kill();
+	pcString->CBaseObject::Kill();
 
 	pcString = pcObjectSource->Convert("");
 	AssertNull(&pcString);
