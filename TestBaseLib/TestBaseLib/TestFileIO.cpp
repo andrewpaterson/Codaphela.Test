@@ -77,7 +77,7 @@ void TestFileIOHelpers(void)
 	unsigned char	uc;
 	BOOL			b;
 	short			s;
-	unsigned short	us;
+	uint16	us;
 	unsigned char	abi[7];
 	int				aii[3];
 
@@ -91,7 +91,7 @@ void TestFileIOHelpers(void)
 	AssertTrue(cFile.WriteChar((unsigned char)255));
 	AssertTrue(cFile.WriteBool(TRUE));
 	AssertTrue(cFile.WriteShort((short)0x5a0a));
-	AssertTrue(cFile.WriteShort((unsigned short)0x6be4));
+	AssertTrue(cFile.WriteShort((uint16)0x6be4));
 	AssertTrue(cFile.WriteBits(ab, 7));
 	AssertTrue(cFile.WriteIntArray(ai, 3));
 
@@ -103,7 +103,7 @@ void TestFileIOHelpers(void)
 	AssertTrue(cFile.WriteChar((unsigned char)1));
 	AssertTrue(cFile.WriteBool(FALSE));
 	AssertTrue(cFile.WriteShort((short)0x0001));
-	AssertTrue(cFile.WriteShort((unsigned short)0xffff));
+	AssertTrue(cFile.WriteShort((uint16)0xffff));
 
 	TestFileIOMiddle(&cFile);
 	
@@ -123,8 +123,8 @@ void TestFileIOHelpers(void)
 	AssertBool(TRUE, b);
 	AssertTrue(cFile.ReadShort(&s));
 	AssertShort((short)0x5a0a, s);
-	AssertTrue(cFile.ReadShort((unsigned short*)&us));
-	AssertShort((unsigned short)0x6be4, us);
+	AssertTrue(cFile.ReadShort((uint16*)&us));
+	AssertShort((uint16)0x6be4, us);
 	AssertTrue(cFile.ReadBits(abi, 7));
 	AssertMemory(ab, abi, 7);
 	AssertTrue(cFile.ReadIntArray(aii, 3));
@@ -146,8 +146,8 @@ void TestFileIOHelpers(void)
 	AssertBool(FALSE, b);
 	AssertTrue(cFile.ReadShort(&s));
 	AssertShort((short)0x0001, s);
-	AssertTrue(cFile.ReadShort((unsigned short*)&us));
-	AssertShort((unsigned short)0xffff, us);
+	AssertTrue(cFile.ReadShort((uint16*)&us));
+	AssertShort((uint16)0xffff, us);
 
 	TestFileIOEnd(&cMemory, &cFile);
 }
