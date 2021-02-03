@@ -161,7 +161,7 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
-	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Make the long short."));
+	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Make the long int16."));
 	AssertInt(4, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
@@ -170,7 +170,7 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 	AssertNotNull(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
 	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
-	AssertString("Make the long short.", sz);
+	AssertString("Make the long int16.", sz);
 	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
@@ -183,7 +183,7 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 	AssertString("Changed your data lengh", sz);
 	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
-	AssertString("Make the long short.", sz);
+	AssertString("Make the long int16.", sz);
 	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
@@ -193,14 +193,14 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 	AssertNull(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 
 	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
-	AssertString("Make the long short.", sz);
+	AssertString("Make the long int16.", sz);
 	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	avp.Init();
 	cIndexTree.FindAll(&avp);
 	AssertString("Another DATUM of doom", (char*)avp[0]);
-	AssertString("Make the long short.", (char*)avp[1]);
+	AssertString("Make the long int16.", (char*)avp[1]);
 	AssertInt(2, avp.NumElements());
 	avp.Kill();
 
@@ -212,11 +212,11 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 	avp.Init();
 	cIndexTree.FindAll(&avp);
 	AssertInt(1, avp.NumElements());
-	AssertString("Make the long short.", (char*)avp[0]);
+	AssertString("Make the long int16.", (char*)avp[0]);
 	avp.Kill();
 
 	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
-	AssertString("Make the long short.", sz);
+	AssertString("Make the long int16.", sz);
 
 	AssertTrue(cAccess.DeleteLong(0x23BB45CC67DD89EELL));
 	AssertInt(0, cIndexTree.NumElements());
@@ -290,7 +290,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
-	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Make the long short."));
+	AssertTrue(cAccess.PutLongString(0x23BB45CC67DD89EELL, "Make the long int16."));
 	AssertInt(4, cIndexTree.NumElements());
 	AssertLongLongInt(25, pcMemory->GetTotalAllocations());
 
@@ -299,7 +299,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 	AssertNotNull(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
 	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
-	AssertString("Make the long short.", sz);
+	AssertString("Make the long int16.", sz);
 	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
@@ -312,7 +312,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 	AssertString("Changed your data lengh", sz);
 	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
-	AssertString("Make the long short.", sz);
+	AssertString("Make the long int16.", sz);
 	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 	AssertLongLongInt(17, pcMemory->GetTotalAllocations());
@@ -323,7 +323,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 	AssertNull(cAccess.GetLongString(0x23BB45CC67DD9800LL, sz));
 
 	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
-	AssertString("Make the long short.", sz);
+	AssertString("Make the long int16.", sz);
 	AssertNotNull(cAccess.GetLongString(0x23BB54CC00DD0000LL, sz));
 	AssertString("Another DATUM of doom", sz);
 	AssertLongLongInt(15, pcMemory->GetTotalAllocations());
@@ -344,7 +344,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 	avp.Kill();
 
 	AssertNotNull(cAccess.GetLongString(0x23BB45CC67DD89EELL, sz));
-	AssertString("Make the long short.", sz);
+	AssertString("Make the long int16.", sz);
 	AssertLongLongInt(9, pcMemory->GetTotalAllocations());
 
 	AssertTrue(cAccess.DeleteLong(0x23BB45CC67DD89EELL));
@@ -426,7 +426,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
-	AssertTrue(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Make the long short."));
+	AssertTrue(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Make the long int16."));
 	AssertInt(4, cIndexTree.NumElements());
 	AssertLongLongInt(30, pcMemory->GetTotalAllocations());
 
@@ -435,7 +435,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 	AssertNotNull(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
 	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
-	AssertString("Make the long short.", sz);
+	AssertString("Make the long int16.", sz);
 	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
@@ -448,7 +448,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 	AssertNotNull(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 	AssertString("Changed your data lengh", sz);
 	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
-	AssertString("Make the long short.", sz);
+	AssertString("Make the long int16.", sz);
 	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 	AssertLongLongInt(24, pcMemory->GetTotalAllocations());
@@ -459,7 +459,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 	AssertNull(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 
 	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
-	AssertString("Make the long short.", sz);
+	AssertString("Make the long int16.", sz);
 	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 	AssertLongLongInt(17, pcMemory->GetTotalAllocations());
@@ -480,7 +480,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 	avp.Kill();
 
 	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
-	AssertString("Make the long short.", sz);
+	AssertString("Make the long int16.", sz);
 	AssertLongLongInt(9, pcMemory->GetTotalAllocations());
 
 	AssertTrue(cAccess.DeleteLong(0xEE89DD67CC45BB23LL));

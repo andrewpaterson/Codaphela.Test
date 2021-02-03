@@ -443,7 +443,7 @@ void TestIndexTreeFileNoCacheEviction(void)
 	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
-	AssertTrue(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Make the long short."));
+	AssertTrue(cAccess.PutLongString(0xEE89DD67CC45BB23LL, "Make the long int16."));
 	AssertInt(4, cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
@@ -452,7 +452,7 @@ void TestIndexTreeFileNoCacheEviction(void)
 	AssertNotNull(cAccess.GetLongString(0x0000000000000000LL, sz));
 	AssertString("Zero", sz);
 	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
-	AssertString("Make the long short.", sz);
+	AssertString("Make the long int16.", sz);
 	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
@@ -465,7 +465,7 @@ void TestIndexTreeFileNoCacheEviction(void)
 	AssertNotNull(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 	AssertString("Changed your data lengh", sz);
 	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
-	AssertString("Make the long short.", sz);
+	AssertString("Make the long int16.", sz);
 	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
@@ -475,14 +475,14 @@ void TestIndexTreeFileNoCacheEviction(void)
 	AssertNull(cAccess.GetLongString(0x0098DD67CC45BB23LL, sz));
 
 	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
-	AssertString("Make the long short.", sz);
+	AssertString("Make the long int16.", sz);
 	AssertNotNull(cAccess.GetLongString(0x0000DD00CC54BB23LL, sz));
 	AssertString("Another DATUM of doom", sz);
 
 	bContinue = cIndexTree.StartUnsafeIteration(&sIter, (void**)(&szData), &iSize);
 	AssertTrue(bContinue);
 	AssertInt(21, iSize);
-	AssertString("Make the long short.", szData);
+	AssertString("Make the long int16.", szData);
 
 	bContinue = cIndexTree.UnsafeIterate(&sIter, (void**)(&szData), &iSize);
 	AssertTrue(bContinue);
@@ -499,13 +499,13 @@ void TestIndexTreeFileNoCacheEviction(void)
 	bContinue = cIndexTree.StartUnsafeIteration(&sIter, (void**)(&szData), &iSize);
 	AssertTrue(bContinue);
 	AssertInt(21, iSize);
-	AssertString("Make the long short.", szData);
+	AssertString("Make the long int16.", szData);
 
 	bContinue = cIndexTree.UnsafeIterate(&sIter, (void**)(&szData), &iSize);
 	AssertFalse(bContinue);
 
 	AssertNotNull(cAccess.GetLongString(0xEE89DD67CC45BB23LL, sz));
-	AssertString("Make the long short.", sz);
+	AssertString("Make the long int16.", sz);
 
 	AssertTrue(cAccess.DeleteLong(0xEE89DD67CC45BB23LL));
 	AssertInt(0, cIndexTree.NumElements());
