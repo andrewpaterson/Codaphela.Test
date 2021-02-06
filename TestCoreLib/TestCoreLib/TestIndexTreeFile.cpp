@@ -550,7 +550,7 @@ void TestIndexTreeFileResizeData(void)
 	pcMemory = cAllocator.GetMemory();
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL, &cAllocator, IWT_Yes, IKR_No);
+	cIndexTree.Init(&cController, NULL, LifeLocal<CMallocator>(&cAllocator), IWT_Yes, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	cAccess.PutStringData("AA", szAAObject, (unsigned char)strlen(szAAObject) + 1);
@@ -1127,7 +1127,7 @@ void TestIndexTreeFileRemoveAndFlush(void)
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL, &cAllocator, IWT_Yes, IKR_No);
+	cIndexTree.Init(&cController, NULL, LifeLocal<CMallocator>(&cAllocator), IWT_Yes, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	AssertTrue(cAccess.PutStringString(szAABAA, szAABAA));
@@ -1144,7 +1144,7 @@ void TestIndexTreeFileRemoveAndFlush(void)
 	cIndexTree.Kill();
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL, &cAllocator, IWT_No, IKR_No);
+	cIndexTree.Init(&cController, NULL, LifeLocal<CMallocator>(&cAllocator), IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
 	AssertInt(0, cIndexTree.NumMemoryElements());
 	AssertInt(1, cIndexTree.NumMemoryNodes());
@@ -2293,7 +2293,7 @@ void TestIndexTreeFileEvictNew(EIndexWriteThrough eWriteThrough)
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL, &cAllocator, eWriteThrough, IKR_No);
+	cIndexTree.Init(&cController, NULL, LifeLocal<CMallocator>(&cAllocator), eWriteThrough, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	AssertInt(0, cIndexTree.NumElements());
@@ -2381,7 +2381,7 @@ void TestIndexTreeFileEvictDirty(EIndexWriteThrough eWriteThrough)
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL, &cAllocator, eWriteThrough, IKR_No);
+	cIndexTree.Init(&cController, NULL, LifeLocal<CMallocator>(&cAllocator), eWriteThrough, IKR_No);
 	cAccess.Init(&cIndexTree);
 
 	cAccess.PutStringString("AAA", "North");
@@ -2442,7 +2442,7 @@ void TestIndexTreeFileEvictComplexSetup(CDurableFileController* pcDurableControl
 	pcMemory = pcAllocator->GetMemory();
 
 	pcDurableController->Begin();
-	pcIndexTree->Init(pcDurableController, NULL, pcAllocator, eWriteThrough, IKR_No);
+	pcIndexTree->Init(pcDurableController, NULL, LifeLocal<CMallocator>(pcAllocator), eWriteThrough, IKR_No);
 	cAccess.Init(pcIndexTree);
 
 	AssertTrue(cAccess.PutStringString(szAAAAA, szAAAAA));
@@ -2470,7 +2470,7 @@ void TestIndexTreeFileEvictComplexSetup(CDurableFileController* pcDurableControl
 
 
 	pcDurableController->Begin();
-	pcIndexTree->Init(pcDurableController, NULL, pcAllocator, eWriteThrough, IKR_No);
+	pcIndexTree->Init(pcDurableController, NULL, LifeLocal<CMallocator>(pcAllocator), eWriteThrough, IKR_No);
 	cAccess.Init(pcIndexTree);
 	AssertLongLongInt(3120LL, pcMemory->GetTotalAllocatedMemory());
 	Pass();
@@ -2570,7 +2570,7 @@ void TestIndexTreeFileEvictComplexEvictCloseGet(void)
 	pcMemory = cAllocator.GetMemory();
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL, &cAllocator, IWT_No, IKR_No);
+	cIndexTree.Init(&cController, NULL, LifeLocal<CMallocator>(&cAllocator), IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
 	AssertNotNull(cAccess.GetStringString(szAAAAA, szDest));
 	AssertNotNull(cAccess.GetStringString(szAAABB, szDest));
@@ -2715,7 +2715,7 @@ void TestIndexTreeFileEvictComplexEvictOdd(void)
 	cAllocator.Init();
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL, &cAllocator, IWT_No, IKR_No);
+	cIndexTree.Init(&cController, NULL, LifeLocal<CMallocator>(&cAllocator), IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
 	AssertNotNull(cAccess.GetStringString(szAAAAA, szDest));
 	AssertNotNull(cAccess.GetStringString(szAAABB, szDest));
@@ -2796,7 +2796,7 @@ void TestIndexTreeFileEvictComplexEvictEven(void)
 	cAllocator.Init();
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL, &cAllocator, IWT_No, IKR_No);
+	cIndexTree.Init(&cController, NULL, LifeLocal<CMallocator>(&cAllocator), IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
 	AssertNotNull(cAccess.GetStringString(szAAAAA, szDest));
 	AssertNotNull(cAccess.GetStringString(szAAABB, szDest));
@@ -2861,7 +2861,7 @@ void TestIndexTreeFileFlushNodes(void)
 	cAllocator.Init();
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 	cController.Begin();
-	cIndexTree.Init(&cController, NULL, &cAllocator, IWT_No, IKR_No);
+	cIndexTree.Init(&cController, NULL, LifeLocal<CMallocator>(&cAllocator), IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
 	AssertNotNull(cAccess.GetStringString(szAAAAA, szDest));
 	AssertNotNull(cAccess.GetStringString(szAAABB, szDest));

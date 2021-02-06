@@ -67,7 +67,7 @@ void SetupObjectsConstructors(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectsInMemoryIteration()
+void TestObjectsInMemoryIteration(void)
 {
 	SIndexesIterator	sIter;
 	OIndex				oi;
@@ -109,15 +109,11 @@ void TestObjectsObjectSave(void)
 	Ptr<CTestDoubleNamedString>			pDouble;
 	BOOL								bResult;
 	CFileUtil							cFileUtil;
-	CValueIndexedDataConfig				cIndexConfig;
-	CValueNamedIndexesConfig			cNamedConfig;
-	CDurableFileController				cDurableController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 	char								szDirectory[] = "Output" _FS_ "ObjectSave";
 	CCodabase*							pcDatabase;
 	int									iSerialisedSize;
 
-	cDurableController.Init(szDirectory);
 	cFileUtil.RemoveDir(szDirectory);
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
@@ -360,11 +356,10 @@ void TestObjectsEvict(void)
 	ObjectsInit(pcDatabase);
 	SetupObjectsForDehollowfication();
 
-	//This flush's clear cache does not work.
 	bResult = gcObjects.Flush();
 	AssertTrue(bResult);
 
-	//AssertLongLongInt(0, pcDatabase->NumIndicesCached());
+	AssertLongLongInt(9, pcDatabase->NumIndicesCached());
 	AssertLongLongInt(9, pcDatabase->NumIndices());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());

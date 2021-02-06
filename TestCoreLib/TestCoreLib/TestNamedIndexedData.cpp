@@ -33,8 +33,8 @@ void TestNamedIndexedDataInit(EIndexWriteThrough eWriteThrough)
 	cNamedEvictionStrategy.Init();
 	cIndexEvictionStrategy.Init();
 
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 	
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -71,8 +71,8 @@ void TestNamedIndexedDataAddString(EIndexWriteThrough eWriteThrough)
 	cController.Init("Output" _FS_ "Database2" _FS_ "R", "Output" _FS_ "Database2" _FS_ "W");
 	cIndexEvictionStrategy.Init();
 	cNamedEvictionStrategy.Init();
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -101,8 +101,8 @@ void TestNamedIndexedDataAddString(EIndexWriteThrough eWriteThrough)
 	cController.Init("Output" _FS_ "Database2" _FS_ "R", "Output" _FS_ "Database2" _FS_ "W");
 	cNamedEvictionStrategy.Init();
 	cIndexEvictionStrategy.Init();
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -130,8 +130,8 @@ void TestNamedIndexedDataAddString(EIndexWriteThrough eWriteThrough)
 	cController.Init("Output" _FS_ "Database2" _FS_ "R", "Output" _FS_ "Database2" _FS_ "W");
 	cNamedEvictionStrategy.Init();
 	cIndexEvictionStrategy.Init();
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -158,8 +158,8 @@ void TestNamedIndexedDataAddString(EIndexWriteThrough eWriteThrough)
 	cController.Init("Output" _FS_ "Database2" _FS_ "R", "Output" _FS_ "Database2" _FS_ "W");
 	cNamedEvictionStrategy.Init();
 	cIndexEvictionStrategy.Init();
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -207,8 +207,8 @@ void TestNamedIndexedDataAddChars(EIndexWriteThrough eWriteThrough)
 	cController.Init("Output" _FS_ "Database2a" _FS_ "R", "Output" _FS_ "Database2a" _FS_ "W");
 	cIndexEvictionStrategy.Init();
 	cNamedEvictionStrategy.Init();
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -229,8 +229,8 @@ void TestNamedIndexedDataAddChars(EIndexWriteThrough eWriteThrough)
 	cController.Init("Output" _FS_ "Database2a" _FS_ "R", "Output" _FS_ "Database2a" _FS_ "W");
 	cIndexEvictionStrategy.Init();
 	cNamedEvictionStrategy.Init();
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -280,8 +280,8 @@ void TestNamedIndexedDataAddBad(EIndexWriteThrough eWriteThrough)
 	cController.Init("Output" _FS_ "Database2b" _FS_ "R", "Output" _FS_ "Database2b" _FS_ "W");
 	cNamedEvictionStrategy.Init();
 	cIndexEvictionStrategy.Init();
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -338,8 +338,8 @@ void TestNamedIndexedDataAddIndex(EIndexWriteThrough eWriteThrough)
 	cController.Init("Output" _FS_ "Database2c" _FS_ "R", "Output" _FS_ "Database2c" _FS_ "W");
 	cNamedEvictionStrategy.Init();
 	cIndexEvictionStrategy.Init();
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -358,8 +358,8 @@ void TestNamedIndexedDataAddIndex(EIndexWriteThrough eWriteThrough)
 	cController.Init("Output" _FS_ "Database2c" _FS_ "R", "Output" _FS_ "Database2c" _FS_ "W");
 	cNamedEvictionStrategy.Init();
 	cIndexEvictionStrategy.Init();
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -406,8 +406,8 @@ void TestNamedIndexedDataGetName(EIndexWriteThrough eWriteThrough)
 	cController.Init("Output" _FS_ "Database3" _FS_ "R", "Output" _FS_ "Database3" _FS_ "W");
 	cNamedEvictionStrategy.Init();
 	cIndexEvictionStrategy.Init();
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -458,8 +458,8 @@ void TestNamedIndexedDataSetIndex(EIndexWriteThrough eWriteThrough)
 	cController.Init("Output" _FS_ "Database4" _FS_ "R", "Output" _FS_ "Database4" _FS_ "W");
 	cIndexEvictionStrategy.Init();
 	cNamedEvictionStrategy.Init();
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -520,8 +520,8 @@ void TestNamedIndexedDataSet(EIndexWriteThrough eWriteThrough)
 	cController.Init("Output" _FS_ "Database4a" _FS_ "R", "Output" _FS_ "Database4a" _FS_ "W");
 	cIndexEvictionStrategy.Init();
 	cNamedEvictionStrategy.Init();
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -624,8 +624,8 @@ void TestNamedIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 	cIndexEvictionStrategy.Init();
 	cNamedEvictionStrategy.Init();
 	cController.Init("Output" _FS_ "Database7" _FS_ "R", "Output" _FS_ "Database7" _FS_ "W");
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -653,8 +653,8 @@ void TestNamedIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 	cIndexEvictionStrategy.Init();
 	cNamedEvictionStrategy.Init();
 	cController.Init("Output" _FS_ "Database7" _FS_ "R", "Output" _FS_ "Database7" _FS_ "W");
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -676,8 +676,8 @@ void TestNamedIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 	cIndexEvictionStrategy.Init();
 	cNamedEvictionStrategy.Init();
 	cController.Init("Output" _FS_ "Database7" _FS_ "R", "Output" _FS_ "Database7" _FS_ "W");
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -699,8 +699,8 @@ void TestNamedIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 	cIndexEvictionStrategy.Init();
 	cNamedEvictionStrategy.Init();
 	cController.Init("Output" _FS_ "Database7" _FS_ "R", "Output" _FS_ "Database7" _FS_ "W");
-	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, &cIndexEvictionStrategy);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, &cNamedEvictionStrategy, eWriteThrough);
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy));
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough);
 
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);

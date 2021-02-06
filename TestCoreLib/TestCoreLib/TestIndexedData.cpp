@@ -45,7 +45,7 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(szSubDirectory, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(szSubDirectory, 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -73,7 +73,7 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(szSubDirectory, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(szSubDirectory, 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -125,7 +125,7 @@ void TestIndexedDataFlushClearCache(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -159,7 +159,7 @@ void TestIndexedDataFlushClearCache(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -191,7 +191,7 @@ void TestIndexedDataFlushClearCache(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 1 MB, 1 MB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 1 MB, 1 MB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -257,7 +257,7 @@ void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -349,7 +349,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	//New Data
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -372,7 +372,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -399,7 +399,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -421,7 +421,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	cFileUtil.RemoveDir(szDirectory);
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -444,7 +444,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	cFileUtil.RemoveDir(szDirectory);
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -466,7 +466,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -491,7 +491,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -542,7 +542,7 @@ void TestIndexedDataEvictKey(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -626,7 +626,7 @@ void TestIndexedDataEvictKey(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -681,7 +681,7 @@ void TestIndexedDataIndexEviction(void)
 	cIndexEvictedList.Init();
 	cKeyDataEvictedList.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 1024, 3580, IWT_No, &cEvictionStrategy, &cIndexEvictedList, &cKeyDataEvictedList, NULL);  //A little more than two items in the cache...
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 1024, 3580, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), &cIndexEvictedList, &cKeyDataEvictedList, LifeNull<CIndexTreeDataOrderer>());  //A little more than two items in the cache...
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -747,7 +747,7 @@ void TestIndexedDataIndexEviction(void)
 	cIndexEvictedList.Init();
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy, &cIndexEvictedList, &cKeyDataEvictedList, NULL);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), &cIndexEvictedList, &cKeyDataEvictedList, LifeNull<CIndexTreeDataOrderer>());
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -800,7 +800,7 @@ void TestIndexedDataIndexEviction(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -836,7 +836,7 @@ void TestIndexedDataEvictAndFlush(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -858,7 +858,7 @@ void TestIndexedDataEvictAndFlush(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -907,7 +907,7 @@ void TestIndexedDataFlushAndFlush(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -923,7 +923,7 @@ void TestIndexedDataFlushAndFlush(void)
 	
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -939,7 +939,7 @@ void TestIndexedDataFlushAndFlush(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -990,7 +990,7 @@ void TestIndexedDataLargeData(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 34, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 34, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -1064,7 +1064,7 @@ void TestIndexedDataIndexedAdd(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 98 + 12, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 98 + 12, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -1164,7 +1164,7 @@ void TestIndexedDataDescriptorCaching(void)
 	cIndexedDataEvictedList.Init();
 	cIndexTreeEvictedList.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 3690, IWT_No, &cEvictionStrategy, &cIndexTreeEvictedList, &cIndexedDataEvictedList, NULL);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 3690, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), &cIndexTreeEvictedList, &cIndexedDataEvictedList, LifeNull<CIndexTreeDataOrderer>());
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -1278,7 +1278,7 @@ void TestIndexedDataDescriptorCaching(void)
 	
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 96, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 96, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -1320,7 +1320,7 @@ void TestIndexedDataNoCaching(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 0, 3670, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 0, 3670, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -1403,7 +1403,7 @@ void TestIndexedDataGet(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -1423,7 +1423,7 @@ void TestIndexedDataGet(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -1473,7 +1473,7 @@ void TestIndexedDataSubDirectories(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, szRewriteDirectory);
-	cIndexConfig = CValueIndexedDataConfig::Create("Forest of Solitude", 8 KB, 8 KB, IWT_No, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create("Forest of Solitude", 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -1517,7 +1517,7 @@ void TestIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -1539,7 +1539,7 @@ void TestIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -1556,7 +1556,7 @@ void TestIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -1577,7 +1577,7 @@ void TestIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();
@@ -1630,7 +1630,7 @@ void TestIndexedDataRemove2(EIndexWriteThrough eWriteThrough)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, NULL);
-	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, eWriteThrough, &cEvictionStrategy);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
 	cController.Begin();
 	cIndexedData.Init(&cController, cIndexConfig);
 	cController.End();

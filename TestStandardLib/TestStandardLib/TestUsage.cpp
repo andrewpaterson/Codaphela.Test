@@ -48,6 +48,7 @@ void TestUsageDefaultPointer(void)
 	CPointer			pObject;
 
 	AssertString("This code must compile", "This code must compile");
+	Pass();
 }
 
 

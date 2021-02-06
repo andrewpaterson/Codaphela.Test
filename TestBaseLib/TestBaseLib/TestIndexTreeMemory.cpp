@@ -344,7 +344,7 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 	cAllocator.Init(&gcSystemAllocator);
 	AssertInt(0, cAllocator.AllocatedUserSize());
 
-	cIndex.Init(&cAllocator, IKR_No);
+	cIndex.Init(LifeLocal<CMallocator>(&cAllocator), IKR_No);
 	cAccess.Init(&cIndex);
 	AssertInt(0, cIndex.NumElements());
 	AssertInt(cIndex.ByteSize(), cAllocator.AllocatedUserSize());
@@ -757,7 +757,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 	cMemoryAlloc.Init();
 	cTrackingAlloc.Init(&cMemoryAlloc);
 
-	cIndex.Init(&cTrackingAlloc, IKR_No);
+	cIndex.Init(LifeLocal<CMallocator>(&cTrackingAlloc) , IKR_No);
 	cAccess.Init(&cIndex);
 
 	AssertInt(1, cIndex.NumAllocatedNodes());

@@ -47,7 +47,7 @@ void TestIndexTreeDataOrdererAccess(void)
 	BOOL						bExists;
 
 	cOrderer.Init();
-	cIndexTree.Init(IKR_No, &cOrderer);
+	cIndexTree.Init(IKR_No, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
 	cAccess.Init(&cIndexTree);
 
 	AssertIndexTreeDataOrdererString(&cOrderer, "");
@@ -120,7 +120,7 @@ void TestIndexTreeDataOrdererRemapListNodes(void)
 	int							i;
 
 	cOrderer.Init();
-	cIndexTree.Init(IKR_Yes, &cOrderer);
+	cIndexTree.Init(IKR_Yes, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
 	cAccess.Init(&cIndexTree);
 
 	AssertIndexTreeDataOrdererString(&cOrderer, "");
@@ -178,7 +178,7 @@ void TestIndexTreeDataOrdererModification(void)
 	char						c;
 
 	cOrderer.Init();
-	cIndexTree.Init(IKR_Yes, &cOrderer);
+	cIndexTree.Init(IKR_Yes, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
 	cAccess.Init(&cIndexTree);
 
 	AssertIndexTreeDataOrdererString(&cOrderer, "");
@@ -236,7 +236,7 @@ void TestIndexTreeDataOrdererCreation(void)
 	CCreationDataOrderer		cOrderer;
 
 	cOrderer.Init();
-	cIndexTree.Init(IKR_Yes, &cOrderer);
+	cIndexTree.Init(IKR_Yes, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
 	cAccess.Init(&cIndexTree);
 
 	AssertIndexTreeDataOrdererString(&cOrderer, "");

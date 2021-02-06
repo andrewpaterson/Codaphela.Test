@@ -86,7 +86,7 @@ void TestIndexTreeDataOrdererAccess(EIndexWriteThrough eWriteThrough)
 
 	cController.Begin();
 	cOrderer.Init();
-	cIndexTree.Init(&cController, "Index", eWriteThrough, IKR_No, &cOrderer);
+	cIndexTree.Init(&cController, "Index", eWriteThrough, IKR_No, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
 	cAccess.Init(&cIndexTree);
 
 	AssertIndexTreeDataOrdererString(&cOrderer, "");
@@ -171,7 +171,7 @@ void TestIndexTreeDataOrdererRemapListNodes(EIndexWriteThrough eWriteThrough)
 
 	cController.Begin();
 	cOrderer.Init();
-	cIndexTree.Init(&cController, "Index", eWriteThrough, IKR_No, &cOrderer);
+	cIndexTree.Init(&cController, "Index", eWriteThrough, IKR_No, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
 	cAccess.Init(&cIndexTree);
 
 	AssertIndexTreeDataOrdererString(&cOrderer, "");
@@ -241,7 +241,7 @@ void TestIndexTreeDataOrdererModification(EIndexWriteThrough eWriteThrough)
 
 	cController.Begin();
 	cOrderer.Init();
-	cIndexTree.Init(&cController, "Index", eWriteThrough, IKR_No, &cOrderer);
+	cIndexTree.Init(&cController, "Index", eWriteThrough, IKR_No, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
 	cAccess.Init(&cIndexTree);
 
 
@@ -312,7 +312,7 @@ void TestIndexTreeDataOrdererCreation(EIndexWriteThrough eWriteThrough)
 
 	cController.Begin();
 	cOrderer.Init();
-	cIndexTree.Init(&cController, "Index", eWriteThrough, IKR_No, &cOrderer);
+	cIndexTree.Init(&cController, "Index", eWriteThrough, IKR_No, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
 	cAccess.Init(&cIndexTree);
 
 
@@ -359,7 +359,7 @@ void TestIndexTreeDataOrdererEviction(EIndexWriteThrough eWriteThrough)
 
 	cController.Begin();
 	cOrderer.Init();
-	cIndexTree.Init(&cController, "Index", eWriteThrough, IKR_No, &cOrderer);
+	cIndexTree.Init(&cController, "Index", eWriteThrough, IKR_No, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
 	cAccess.Init(&cIndexTree);
 
 

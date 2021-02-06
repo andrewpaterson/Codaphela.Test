@@ -36,6 +36,7 @@ void TestObjectReaderChunked(void);
 void TestObjectGraphDeserialiser(void);
 void TestObjectReaderSimple(void);
 void TestObjects(void);
+void TestObjectsEvictVsKill(void);
 void TestDehollowfication(void);
 void TestKill(void);
 void TestUsage(void);
@@ -91,6 +92,7 @@ int main(void)
 	TestObjects();
 	TestStackPointers();
 	TestDehollowfication();
+	TestObjectsEvictVsKill();
 	TestUsage();
 	TestArray();
 	TestSet();

@@ -583,7 +583,7 @@ void TestIndexTreeEvictingAccess(char* szSubirectory, size_t sCacheSize, EIndexW
 	cEvictionStrategy.Init();
 	cController.Begin();
 	cCallback.Init("any");
-	cIndexTree.Init(&cController, szSubirectory, sCacheSize, NULL, &cEvictionStrategy, NULL,  eWriteThrough, eKeyReverse);
+	cIndexTree.Init(&cController, szSubirectory, sCacheSize, NULL, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), NULL,  eWriteThrough, eKeyReverse);
 	cIndexTree.SetDiagnosticCallback(&cCallback);
 	cAccess.Init(&cIndexTree);
 

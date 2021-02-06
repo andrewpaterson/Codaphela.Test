@@ -150,6 +150,7 @@ CONSTRUCTABLE(CClusterMissile);
 public:
 	CMissile			mcMissile1;
 	CMissile			mcMissile2;
+
 protected:
 	Ptr<CGameWorld>		mpWorld;
 	char*				mszKillState;

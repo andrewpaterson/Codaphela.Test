@@ -77,7 +77,7 @@ void TestIndexTreeMemoryAllocation(void)
 	AssertLongLongInt(0, pcMemory->GetTotalAllocatedMemory());
 	AssertLongLongInt(0, pcMemory->GetTotalAllocations());
 
-	cIndexTree.Init(&cMemoryAllocator, IKR_No);
+	cIndexTree.Init(LifeLocal<CMallocator>(&cMemoryAllocator), IKR_No);
 	tRootNodeSize = cIndexTree.CalculateRootNodeSize();
 	tNodeSize = cIndexTree.SizeofNode();
 	tDataNodeSize = cIndexTree.SizeofDataNode();
@@ -113,7 +113,7 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 	CArrayVoidPtr			avp;
 	SLogConfig				sLogConfig;
 
-	cIndexTree.Init(&gcSystemAllocator, IKR_No, 255, MAX_KEY_SIZE);
+	cIndexTree.Init(LifeLocal<CMallocator>(&gcSystemAllocator), IKR_No, 255, MAX_KEY_SIZE);
 	cAccess.Init(&cIndexTree);
 
 	AssertTrue(cAccess.PutLongString(0x0000000000000000LL, "Zero"));
@@ -245,7 +245,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 	cMemoryAllocator.Init(16);
 	pcMemory = cMemoryAllocator.GetMemory();
 
-	cIndexTree.Init(&cMemoryAllocator, IKR_Yes, 255, MAX_KEY_SIZE);
+	cIndexTree.Init(LifeLocal<CMallocator>(&cMemoryAllocator), IKR_Yes, 255, MAX_KEY_SIZE);
 	cAccess.Init(&cIndexTree);
 
 	AssertTrue(cAccess.PutLongString(0x0000000000000000LL, "Zero"));
@@ -381,7 +381,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 	cMemoryAllocator.Init(16);
 	pcMemory = cMemoryAllocator.GetMemory();
 
-	cIndexTree.Init(&cMemoryAllocator, IKR_Yes, 255, MAX_KEY_SIZE);
+	cIndexTree.Init(LifeLocal<CMallocator>(&cMemoryAllocator), IKR_Yes, 255, MAX_KEY_SIZE);
 	cAccess.Init(&cIndexTree);
 
 	AssertTrue(cAccess.PutLongString(0x0000000000000000LL, "Zero"));

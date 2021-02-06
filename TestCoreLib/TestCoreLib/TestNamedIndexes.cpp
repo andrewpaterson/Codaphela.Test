@@ -33,7 +33,7 @@ void TestNamedIndexesAdd(void)
 	cController.Begin();
 
 	cEvictionStrategy.Init();
-	cConfig = CValueNamedIndexesConfig::Create(NULL, 16 KB, &cEvictionStrategy, IWT_No);
+	cConfig = CValueNamedIndexesConfig::Create(NULL, 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), IWT_No);
 	cNamedIndexes.Init(&cController, cConfig);
 
 	AssertLongLongInt(0, cNamedIndexes.NumElements());
@@ -119,7 +119,7 @@ void TestNamedIndexesRemove(void)
 	cController.Begin();
 	
 	cEvictionStrategy.Init();
-	cConfig = CValueNamedIndexesConfig::Create(NULL, 16 KB, &cEvictionStrategy, IWT_No);
+	cConfig = CValueNamedIndexesConfig::Create(NULL, 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), IWT_No);
 	cNamedIndexes.Init(&cController, cConfig);
 
 	cNamedIndexes.Add("Berty", 45LL);
@@ -221,7 +221,7 @@ void TestNamedIndexesCacheEviction(void)
 	cController.Begin();
 
 	cEvictionStrategy.Init();
-	cConfig = CValueNamedIndexesConfig::Create(NULL, 8192, &cEvictionStrategy, IWT_No);
+	cConfig = CValueNamedIndexesConfig::Create(NULL, 8192, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), IWT_No);
 	cNamedIndexes.Init(&cController, cConfig);
 
 
@@ -315,7 +315,7 @@ void TestNamedIndexesLoad(void)
 	AssertTrue(cController.Begin());
 
 	cEvictionStrategy.Init();
-	cConfig = CValueNamedIndexesConfig::Create(NULL, 16 KB, &cEvictionStrategy, IWT_No);
+	cConfig = CValueNamedIndexesConfig::Create(NULL, 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), IWT_No);
 	cNamedIndexes.Init(&cController, cConfig);
 
 	cNamedIndexes.Add("Arthur Miller", 1LL);
@@ -372,7 +372,7 @@ void TestNamedIndexesLoad(void)
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, szRewriteDirectory);
 	AssertTrue(cController.Begin());
-	cConfig = CValueNamedIndexesConfig::Create(NULL, 16 KB, &cEvictionStrategy, IWT_No);
+	cConfig = CValueNamedIndexesConfig::Create(NULL, 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), IWT_No);
 	cNamedIndexes.Init(&cController, cConfig);
 
 	AssertLongLongInt(1LL, cNamedIndexes.Get("Arthur Miller"));

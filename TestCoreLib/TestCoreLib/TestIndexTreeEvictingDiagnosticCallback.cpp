@@ -23,8 +23,8 @@ void TestIndexTreeFileKeyDiagnosticCallbackStuff(void)
 	CIndexTreeHelper								cHelper;
 	CDurableFileController							cController;
 	CIndexTreeEvictionStrategyDataOrderer			cEvictionStrategy;
-	CAccessDataOrderer								cDataOrderer;
-	CIndexTreeFileDiagnosticLoggingCallback		cCallback;
+	CAccessDataOrderer								cOrderer;
+	CIndexTreeFileDiagnosticLoggingCallback			cCallback;
 	char											szData[1024];
 	int												i;
 	CChars											sz;
@@ -38,11 +38,11 @@ void TestIndexTreeFileKeyDiagnosticCallbackStuff(void)
 	cHelper.Init("Output" _FS_ "IndexTreeEvictingDiagnostic", "primary", "backup", TRUE);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
-	cDataOrderer.Init();
-	cEvictionStrategy.Init(&cDataOrderer);
+	cOrderer.Init();
+	cEvictionStrategy.Init(LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
 	cController.Begin();
 	cCallback.Init();
-	cIndexTree.Init(&cController, NULL, 8 KB, NULL, &cEvictionStrategy, NULL, IWT_No, IKR_No, &cDataOrderer);
+	cIndexTree.Init(&cController, NULL, 8 KB, NULL, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), NULL, IWT_No, IKR_No, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
 	cIndexTree.SetDiagnosticCallback(&cCallback);
 	cAccess.Init(&cIndexTree);
 
@@ -99,7 +99,7 @@ void TestIndexTreeFileKeyDiagnosticCallbackStuff(void)
 	cCallback.Kill();
 	cController.Kill();
 	cEvictionStrategy.Kill();
-	cDataOrderer.Kill();
+	cOrderer.Kill();
 
 	cHelper.Kill(TRUE);
 }

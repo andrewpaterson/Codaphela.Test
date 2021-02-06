@@ -10,7 +10,10 @@ public:
 	{
 		//This exists so that TreeNodes can be tested without a full tree.  All they need to do is query the size of their child nodes.
 		//Kill should not be called.
-		CIndexTree::Init(NULL, eKeyReverse, sizeof(CIndexTreeNodeMemory), sizeof(CIndexTreeNodeMemory) + sizeof(CIndexTreeDataNode), sizeof(CIndexTreeNodeMemory*), MAX_DATA_SIZE, MAX_KEY_SIZE, NULL);
+		CLifeInit<CMallocator> cMalloc;
+
+		cMalloc.Init(&gcSystemAllocator, FALSE, FALSE);
+		CIndexTree::Init(cMalloc, eKeyReverse, sizeof(CIndexTreeNodeMemory), sizeof(CIndexTreeNodeMemory) + sizeof(CIndexTreeDataNode), sizeof(CIndexTreeNodeMemory*), MAX_DATA_SIZE, MAX_KEY_SIZE, LifeNull<CIndexTreeDataOrderer>());
 		mpcRoot = NULL;
 		miSize = 0;
 	}
