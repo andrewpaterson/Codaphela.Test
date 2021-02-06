@@ -24,12 +24,12 @@ void TestArrayCommonPointerRemapping(void)
 	ObjectsInit();
 
 	pRoot = ORoot();
-	pArray = OMalloc(CArrayCommonObject)->Init(FALSE, FALSE, TRUE);
+	pArray = OMalloc<CArrayCommonObject>(FALSE, FALSE, TRUE);
 	pRoot->Add(pArray);
 
-	pObject1 = OMalloc(CTestObject)->Init(&sFreedNotifier);
-	pObject2 = ONMalloc(CTestSaveableObject1, "Fred")->Init();
-	pObject3 = ONMalloc(CTestSaveableObject1, "Barney")->Init();
+	pObject1 = OMalloc<CTestObject>(&sFreedNotifier);
+	pObject2 = ONMalloc<CTestSaveableObject1>("Fred");
+	pObject3 = ONMalloc<CTestSaveableObject1>("Barney");
 	pNull = NULL;
 
 	pArray->Add(pNull);

@@ -92,12 +92,12 @@ void TestEmbeddedObjectAddDistToRoot(void)
 	ObjectsInit();
 
 	Ptr<CRoot>				pRoot = ORoot();
-	Ptr<CGameWorld>			pWorld = OMalloc(CGameWorld)->Init();
+	Ptr<CGameWorld>			pWorld = OMalloc<CGameWorld>();
 
 	pRoot->Add(pWorld);
 
-	Ptr<CClusterMissile>	pMissile = ONMalloc(CClusterMissile, "Frank")->Init(pWorld);
-	Ptr<CHarrier>			pHarrier = OMalloc(CHarrier)->Init(pWorld);
+	Ptr<CClusterMissile>	pMissile = ONMalloc<CClusterMissile>("Frank", pWorld);
+	Ptr<CHarrier>			pHarrier = OMalloc<CHarrier>(pWorld);
 	
 	pWorld->AddPlayer(pHarrier);
 	AssertInt(3, pHarrier->GetDistToRoot());
@@ -125,13 +125,13 @@ void TestEmbeddedObjectRemoveDistToRoot(void)
 	ObjectsInit();
 
 	Ptr<CRoot>				pRoot = ORoot();
-	Ptr<CGameWorld>			pWorld = OMalloc(CGameWorld)->Init();
+	Ptr<CGameWorld>			pWorld = OMalloc<CGameWorld>();
 
 	pRoot->Add(pWorld);
 
-	Ptr<CClusterMissile>	pMissile = ONMalloc(CClusterMissile, "Frank")->Init(pWorld);
-	Ptr<CHarrier>			pHarrier = OMalloc(CHarrier)->Init(pWorld);
-	Ptr<CMissile>			pHolder = OMalloc(CMissile)->Init(pWorld);
+	Ptr<CClusterMissile>	pMissile = ONMalloc<CClusterMissile>("Frank", pWorld);
+	Ptr<CHarrier>			pHarrier = OMalloc<CHarrier>(pWorld);
+	Ptr<CMissile>			pHolder = OMalloc<CMissile>(pWorld);
 	
 	pWorld->AddTickable(pHolder);
 	AssertInt(4, pHolder->GetDistToRoot());
@@ -139,7 +139,7 @@ void TestEmbeddedObjectRemoveDistToRoot(void)
 	pHolder->SetTarget(pHarrier);
 	AssertInt(5, pHarrier->GetDistToRoot());
 
-	Ptr<CClusterLauncher>	pLauncher = OMalloc(CClusterLauncher)->Init();
+	Ptr<CClusterLauncher>	pLauncher = OMalloc<CClusterLauncher>();
 
 	pRoot->Add(pLauncher);
 	AssertInt(2, pLauncher->GetDistToRoot());
@@ -184,18 +184,18 @@ void TestEmbeddedObjectKill(void)
 	ObjectsInit();
 
 	Ptr<CRoot> pRoot = ORoot();
-	Ptr<CGameWorld> pWorld = OMalloc(CGameWorld)->Init();
+	Ptr<CGameWorld> pWorld = OMalloc<CGameWorld>();
 
 	pRoot->Add(pWorld);
 
-	Ptr<CClusterMissile> pClusterMissile = ONMalloc(CClusterMissile, "Anna")->Init(pWorld);
+	Ptr<CClusterMissile> pClusterMissile = ONMalloc<CClusterMissile>("Anna", pWorld);
 	pWorld = NULL;
 
-	Ptr<CPointerContainer> pPointerPointer = OMalloc(CPointerContainer);
+	Ptr<CPointerContainer> pPointerPointer = OMalloc<CPointerContainer>();
 	pRoot->Add(pPointerPointer);
 	pPointerPointer->Init(&pClusterMissile->mcMissile1);
 
-	Ptr<CPointerContainer> pPointerPointer2 = OMalloc(CPointerContainer);
+	Ptr<CPointerContainer> pPointerPointer2 = OMalloc<CPointerContainer>();
 	pRoot->Add(pPointerPointer2);
 	pPointerPointer2->Init(&pClusterMissile);
 
@@ -280,7 +280,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	SetupEmbeddedObjectConstructors();
 
 	Ptr<CRoot> pRoot = ORoot();
-	Ptr<CEmbeddedComplex> pComplex = OMalloc(CEmbeddedComplex)->Init();
+	Ptr<CEmbeddedComplex> pComplex = OMalloc<CEmbeddedComplex>();
 	oiComplex = pComplex->GetOI();
 
 	pRoot->Add(pComplex);
@@ -361,7 +361,7 @@ void TestEmbeddedObjectPointTo(void)
 	SetupEmbeddedObjectConstructors();
 
 	Ptr<CRoot> pRoot = ORoot();
-	Ptr<CEmbeddedComplex> pComplex = OMalloc(CEmbeddedComplex)->Init();
+	Ptr<CEmbeddedComplex> pComplex = OMalloc<CEmbeddedComplex>();
 	oiComplex = pComplex->GetOI();
 
 	Ptr<CEmbeddedContainer> pContainer = &pComplex->mcContainer;
@@ -536,7 +536,7 @@ void TestEmbeddedOjectIsAllocatedInObjects()
 {
 	ObjectsInit();
 
-	Ptr<CClusterMissile> pClusterMissile = ONMalloc(CClusterMissile, "Gerbil")->Init(NULL);
+	Ptr<CClusterMissile> pClusterMissile = ONMalloc<CClusterMissile>("Gerbil", ONull);
 	AssertTrue(pClusterMissile->IsAllocatedInObjects());
 	AssertTrue(pClusterMissile->mcMissile1.IsAllocatedInObjects());
 	AssertTrue(pClusterMissile->mcMissile2.IsAllocatedInObjects());

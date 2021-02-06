@@ -27,19 +27,19 @@ Ptr<CTestDoubleNamedString> SetupObjectsForDehollowfication(void)
 
 	pRoot = ORoot();
 
-	cDiamond = ONMalloc(CTestNamedString, "Diamond")->Init();
+	cDiamond = ONMalloc<CTestNamedString>("Diamond");
 
-	cS1 = OMalloc(CString)->Init("CS1");
-	cNS1 = ONMalloc(CTestNamedString, "NS1")->Init(cS1, cDiamond, "NS1");
+	cS1 = OMalloc<CString>("CS1");
+	cNS1 = ONMalloc<CTestNamedString>("NS1", cS1, cDiamond, "NS1");
 
-	cNS2 = ONMalloc(CTestNamedString, "NS2")->Init(ONull, cDiamond, "NS2");
+	cNS2 = ONMalloc<CTestNamedString>("NS2", ONull, cDiamond, "NS2");
 
-	cNS3 = ONMalloc(CTestNamedString, "NS3")->Init(ONull, cNS1, "NS3");
+	cNS3 = ONMalloc<CTestNamedString>("NS3", ONull, cNS1, "NS3");
 
-	cS2 = OMalloc(CString)->Init("CS2");
+	cS2 = OMalloc<CString>("CS2");
 	cDiamond->Init(cS2, ONull, "Diamond");
 
-	pDouble = ONMalloc(CTestDoubleNamedString, "Double")->Init(ONull, cNS2, cNS3);
+	pDouble = ONMalloc<CTestDoubleNamedString>("Double", ONull, cNS2, cNS3);
 
 	pRoot->Add(pDouble);
 	return pDouble;
@@ -150,7 +150,7 @@ void TestObjectsObjectSave(void)
 	AssertLongLongInt(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLongLongInt(1, pcDatabase->NumDataCached());
 	
-	pDouble->mszString = OMalloc(CString);
+	pDouble->mszString = OMalloc<CString>();
 	pDouble->mszString->Init("A String");
 
 	bResult = gcObjects.Save(pDouble.BaseObject());
@@ -161,7 +161,7 @@ void TestObjectsObjectSave(void)
 	AssertLongLongInt(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLongLongInt(1, pcDatabase->NumDataCached());
 
-	pDouble->mszString = OMalloc(CString);
+	pDouble->mszString = OMalloc<CString>();
 	pDouble->mszString->Init("Different Object");
 
 	iSerialisedSize = pDouble->SerialisedSize();
@@ -437,12 +437,12 @@ void TestObjectsObjectKillInGraph(void)
 
 	pRoot = ORoot();
 
-	cS1 = OMalloc(CString);
+	cS1 = OMalloc<CString>();
 	cS1->Init("CS1");
-	cNS1 = ONMalloc(CTestNamedString, "NS1")->Init(cS1, ONull, "NS1");
+	cNS1 = ONMalloc<CTestNamedString>("NS1", cS1, ONull, "NS1");
 
-	cS2 = OMalloc(CString)->Init("CS2");
-	cNS2 = ONMalloc(CTestNamedString, "NS2")->Init(cS2, cNS1, "NS2");
+	cS2 = OMalloc<CString>("CS2");
+	cNS2 = ONMalloc<CTestNamedString>("NS2", cS2, cNS1, "NS2");
 
 	pRoot->Add(cNS2);
 	
@@ -482,11 +482,11 @@ void TestObjectsArrayKillInGraph(void)
 
 	pRoot = ORoot();
 
-	cS1 = OMalloc(CString)->Init("CS1");
-	cNS1 = ONMalloc(CTestNamedString, "NS1")->Init(cS1, ONull, "NS1");
+	cS1 = OMalloc<CString>("CS1");
+	cNS1 = ONMalloc<CTestNamedString>("NS1", cS1, ONull, "NS1");
 
-	cA1 = OMalloc(CArrayObject)->Init();
-	cA2 = OMalloc(CArrayObject)->Init();
+	cA1 = OMalloc<CArrayObject>();
+	cA2 = OMalloc<CArrayObject>();
 
 	cA1->Add(cNS1);
 	cA2->Add(cNS1);
@@ -526,11 +526,11 @@ void TestObjectsObjectKillInArrayInGraph(void)
 
 	pRoot = ORoot();
 
-	cS1 = OMalloc(CString)->Init("CS1");
-	cNS1 = ONMalloc(CTestNamedString, "NS1")->Init(cS1, ONull, "NS1");
+	cS1 = OMalloc<CString>("CS1");
+	cNS1 = ONMalloc<CTestNamedString>("NS1", cS1, ONull, "NS1");
 
-	cA1 = OMalloc(CArrayObject)->Init();
-	cA2 = OMalloc(CArrayObject)->Init();
+	cA1 = OMalloc<CArrayObject>();
+	cA2 = OMalloc<CArrayObject>();
 
 	cA1->Add(cNS1);
 	cA2->Add(cNS1);
@@ -655,7 +655,7 @@ void TestObjectsFlushClearGetByOid(void)
 	SetupObjectsConstructors();
 	
 	pRoot = ORoot();
-	pDouble = ONMalloc(CTestDoubleNamedString, "Double")->Init();
+	pDouble = ONMalloc<CTestDoubleNamedString>("Double");
 	pRoot->Add(pDouble);
 	AssertLongLongInt(0, pcDatabase->NumIndices());
 	pObject = gcObjects.Get(3);
@@ -708,7 +708,7 @@ void TestObjectsFlushClearGetByName(void)
 	SetupObjectsConstructors();
 
 	pRoot = ORoot();
-	pDouble = ONMalloc(CTestDoubleNamedString, "Double")->Init();
+	pDouble = ONMalloc<CTestDoubleNamedString>("Double");
 	pRoot->Add(pDouble);
 	AssertLongLongInt(0, pcDatabase->NumIndices());
 	AssertLongLongInt(0, pcDatabase->NumNames());
@@ -765,7 +765,7 @@ void TestObjectsFlushRemovesStackPointers(void)
 
 	AssertNull(&pRoot);
 
-	pDouble = ONMalloc(CTestDoubleNamedString, "Double")->Init();
+	pDouble = ONMalloc<CTestDoubleNamedString>("Double");
 	AssertString("CTestDoubleNamedString", pDouble.ClassName());
 
 	pRoot = ORoot();

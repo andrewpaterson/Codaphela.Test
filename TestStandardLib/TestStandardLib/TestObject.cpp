@@ -52,9 +52,9 @@ void TestObjectPointerRemapping(void)
 
 	pRoot = ORoot();
 
-	pObject1 = OMalloc(CTestObject)->Init(&sFreedNotifier1);
-	pObject2 = OMalloc(CTestObject)->Init(&sFreedNotifier2);
-	pObject3 = OMalloc(CTestObject)->Init(&sFreedNotifier3);
+	pObject1 = OMalloc<CTestObject>(&sFreedNotifier1);
+	pObject2 = OMalloc<CTestObject>(&sFreedNotifier2);
+	pObject3 = OMalloc<CTestObject>(&sFreedNotifier3);
 
 	pRoot->Add(pObject1);
 	pObject1->mpObject = pObject2;
@@ -128,11 +128,11 @@ void TestObjectPointerRemappingKilling(void)
 
 	pRoot = ORoot();
 
-	pObject1 = OMalloc(CTestObject)->Init(&sFreedNotifier1);
-	pObject2 = OMalloc(CTestObject)->Init(&sFreedNotifier2);
-	pObject3 = OMalloc(CTestObject)->Init(&sFreedNotifier3);
-	pObject4 = OMalloc(CTestObject)->Init(&sFreedNotifier4);
-	pObject5 = OMalloc(CTestObject)->Init(&sFreedNotifier5);
+	pObject1 = OMalloc<CTestObject>(&sFreedNotifier1);
+	pObject2 = OMalloc<CTestObject>(&sFreedNotifier2);
+	pObject3 = OMalloc<CTestObject>(&sFreedNotifier3);
+	pObject4 = OMalloc<CTestObject>(&sFreedNotifier4);
+	pObject5 = OMalloc<CTestObject>(&sFreedNotifier5);
 
 	pcObject1 = (CTestObject*)pObject1.Object();
 	pcObject2 = (CTestObject*)pObject2.Object();
@@ -196,11 +196,11 @@ void TestObjectPointerRemappingSimplerComplex(void)
 
 	pRoot = ORoot();
 
-	pTest10 = OMalloc(CTestObject)->Init(&sFreedNotifier10);
-	pTest11 = OMalloc(CTestObject)->Init(&sFreedNotifier11);
-	pTest12 = OMalloc(CTestObject)->Init(&sFreedNotifier12);
-	pTest13 = OMalloc(CTestObject)->Init(&sFreedNotifier13);
-	pTest14 = OMalloc(CTestObject)->Init(&sFreedNotifier14);
+	pTest10 = OMalloc<CTestObject>(&sFreedNotifier10);
+	pTest11 = OMalloc<CTestObject>(&sFreedNotifier11);
+	pTest12 = OMalloc<CTestObject>(&sFreedNotifier12);
+	pTest13 = OMalloc<CTestObject>(&sFreedNotifier13);
+	pTest14 = OMalloc<CTestObject>(&sFreedNotifier14);
 
 	pRoot->Add(pTest10);
 	pTest10->mpObject = pTest11;
@@ -311,21 +311,21 @@ void TestObjectPointerRemappingComplex(void)
 
 	pRoot = ORoot();
 
-	pTest1 = OMalloc(CTestObject)->Init(&sFreedNotifier1);
-	pTest2 = OMalloc(CTestObject)->Init(&sFreedNotifier2);
-	pTest3 = OMalloc(CTestObject)->Init(&sFreedNotifier3);
-	pTest4 = OMalloc(CTestObject)->Init(&sFreedNotifier4);
-	pTest5 = OMalloc(CTestObject)->Init(&sFreedNotifier5);
-	pTest6 = OMalloc(CTestObject)->Init(&sFreedNotifier6);
-	pTest7 = OMalloc(CTestObject)->Init(&sFreedNotifier7);
-	pTest8 = OMalloc(CTestObject)->Init(&sFreedNotifier8);
-	pTest9 = OMalloc(CTestObject)->Init(&sFreedNotifier9);
-	pTest10 = OMalloc(CTestObject)->Init(&sFreedNotifier10);
-	pTest11 = OMalloc(CTestObject)->Init(&sFreedNotifier11);
-	pTest12 = OMalloc(CTestObject)->Init(&sFreedNotifier12);
-	pTest13 = OMalloc(CTestObject)->Init(&sFreedNotifier13);
-	pTest14 = OMalloc(CTestObject)->Init(&sFreedNotifier14);
-	pTest15 = OMalloc(CTestObject)->Init(&sFreedNotifier15);
+	pTest1 = OMalloc<CTestObject>(&sFreedNotifier1);
+	pTest2 = OMalloc<CTestObject>(&sFreedNotifier2);
+	pTest3 = OMalloc<CTestObject>(&sFreedNotifier3);
+	pTest4 = OMalloc<CTestObject>(&sFreedNotifier4);
+	pTest5 = OMalloc<CTestObject>(&sFreedNotifier5);
+	pTest6 = OMalloc<CTestObject>(&sFreedNotifier6);
+	pTest7 = OMalloc<CTestObject>(&sFreedNotifier7);
+	pTest8 = OMalloc<CTestObject>(&sFreedNotifier8);
+	pTest9 = OMalloc<CTestObject>(&sFreedNotifier9);
+	pTest10 = OMalloc<CTestObject>(&sFreedNotifier10);
+	pTest11 = OMalloc<CTestObject>(&sFreedNotifier11);
+	pTest12 = OMalloc<CTestObject>(&sFreedNotifier12);
+	pTest13 = OMalloc<CTestObject>(&sFreedNotifier13);
+	pTest14 = OMalloc<CTestObject>(&sFreedNotifier14);
+	pTest15 = OMalloc<CTestObject>(&sFreedNotifier15);
 
 	pRoot->Add(pTest1);
 	pTest1->mpObject = pTest2;
@@ -534,7 +534,7 @@ void TestObjectGetObjects(void)
 
 	cObject.Init();
 
-	pObject1 = OMalloc(CTestObject);
+	pObject1 = OMalloc<CTestObject>();
 	pObject1->Init(&sFreedNotifier1);
 
 	pcObjects = pObject1->GetObjects();
@@ -560,7 +560,7 @@ void TestObjectStackKill(void)
 	Ptr<CTestObject>			pObject2;
 	STestObjectFreedNotifier	sFreedNotifier;
 
-	pObject1 = OMalloc(CTestObject)->Init(&sFreedNotifier);
+	pObject1 = OMalloc<CTestObject>(&sFreedNotifier);
 	AssertFalse(sFreedNotifier.bFreed);
 
 	pObject2 = pObject1;
@@ -592,9 +592,9 @@ void TestObjectRootUnattachment(void)
 	CPointerContainer*			pcContainer1;
 	CPointerContainer*			pcContainer2;
 
-	pObject = OMalloc(CTestObject)->Init(&sFreedNotifier);
-	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
-	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
+	pObject = OMalloc<CTestObject>(&sFreedNotifier);
+	pContainer2 = OMalloc<CPointerContainer>(pObject);
+	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
 	pRoot = ORoot();
 	pRoot->Add(pContainer1);
 
@@ -648,9 +648,9 @@ void TestObjectKillOnHeap(void)
 	CPointerContainer*			pcContainer1;
 	CPointerContainer*			pcContainer2;
 
-	pObject = OMalloc(CTestObject)->Init(&sFreedNotifier);
-	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
-	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
+	pObject = OMalloc<CTestObject>(&sFreedNotifier);
+	pContainer2 = OMalloc<CPointerContainer>(pObject);
+	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
 	pRoot = ORoot();
 	pRoot->Add(pContainer1);
 
@@ -685,7 +685,7 @@ void TestObjectKillPointerOnStack(void)
 	Ptr<CTestObject>			pObject;
 	STestObjectFreedNotifier	sFreedNotifier;
 
-	pObject = OMalloc(CTestObject)->Init(&sFreedNotifier);
+	pObject = OMalloc<CTestObject>(&sFreedNotifier);
 	pObject.Kill();
 
 	AssertTrue(sFreedNotifier.bFreed);
@@ -731,9 +731,9 @@ void TestObjectSetUnattachment(void)
 	CPointerContainer*			pcContainer1;
 	CPointerContainer*			pcContainer2;
 
-	pObject = OMalloc(CTestObject)->Init(&sFreedNotifier1);
-	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
-	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
+	pObject = OMalloc<CTestObject>(&sFreedNotifier1);
+	pContainer2 = OMalloc<CPointerContainer>(pObject);
+	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
 	pRoot = ORoot();
 	pRoot->Add(pContainer1);
 
@@ -777,13 +777,13 @@ void TestObjectKillCyclic(void)
 	Ptr<CTestObject>			pTest4;
 	Ptr<CRoot>					pRoot;
 
-	pTest1 = OMalloc(CTestObject)->Init(NULL);
-	pTest2 = OMalloc(CTestObject)->Init(NULL);
+	pTest1 = OMalloc<CTestObject>();
+	pTest2 = OMalloc<CTestObject>();
 	pTest1->mpTest = pTest2;
 	pTest2->mpTest = pTest1;
-	pTest3 = OMalloc(CTestObject)->Init(NULL);
+	pTest3 = OMalloc<CTestObject>();
 	pTest3->mpTest = pTest2;
-	pTest4 = OMalloc(CTestObject)->Init(NULL);
+	pTest4 = OMalloc<CTestObject>();
 	pTest4->mpTest = pTest3;
 	pRoot = ORoot();
 	pRoot->Add(pTest4);

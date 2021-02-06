@@ -14,8 +14,8 @@ void TestSetAdd(void)
 {
 	ObjectsInit();
 
-	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc(CSet<CTestSaveableObject1>)->Init();
-	pacStuff->Add(OMalloc(CTestSaveableObject1)->Init());
+	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc<CSet<CTestSaveableObject1>>();
+	pacStuff->Add(OMalloc<CTestSaveableObject1>());
 
 	Ptr<CTestSaveableObject1> pSaveable = pacStuff->Get(0);
 	AssertTrue(pSaveable.IsNotNull());
@@ -33,9 +33,9 @@ void TestSetGet(void)
 {
 	ObjectsInit();
 
-	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc(CSet<CTestSaveableObject1>)->Init();
-	pacStuff->Add(OMalloc(CTestSaveableObject1)->Init());
-	Ptr<CTestSaveableObject1> pSaveable = OMalloc(CTestSaveableObject1)->Init();
+	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc<CSet<CTestSaveableObject1>>();
+	pacStuff->Add(OMalloc<CTestSaveableObject1>());
+	Ptr<CTestSaveableObject1> pSaveable = OMalloc<CTestSaveableObject1>();
 	pSaveable->miInt = 3;
 	pacStuff->Add(pSaveable);
 
@@ -55,14 +55,14 @@ void TestSetAddAll(void)
 {
 	ObjectsInit();
 
-	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc(CSet<CTestSaveableObject1>)->Init();
-	pacStuff->Add(OMalloc(CTestSaveableObject1)->Init());
-	Ptr<CTestSaveableObject1> pSaveable = OMalloc(CTestSaveableObject1)->Init();
+	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc<CSet<CTestSaveableObject1>>();
+	pacStuff->Add(OMalloc<CTestSaveableObject1>());
+	Ptr<CTestSaveableObject1> pSaveable = OMalloc<CTestSaveableObject1>();
 	pSaveable->miInt = 3;
 	pacStuff->Add(pSaveable);
 
-	Ptr<CSet<CTestSaveableObject1>> pacMore = OMalloc(CSet<CTestSaveableObject1>)->Init();
-	pSaveable = OMalloc(CTestSaveableObject1)->Init();
+	Ptr<CSet<CTestSaveableObject1>> pacMore = OMalloc<CSet<CTestSaveableObject1>>();
+	pSaveable = OMalloc<CTestSaveableObject1>();
 	pSaveable->miInt = 5;
 	pacStuff->Add(pSaveable);
 
@@ -87,14 +87,14 @@ void TestSetRemove(void)
 
 	Ptr<CRoot> pRoot = ORoot();
 
-	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc(CSet<CTestSaveableObject1>)->Init();
+	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc<CSet<CTestSaveableObject1>>();
 	pRoot->Add(pacStuff);
 
-	pacStuff->Add(OMalloc(CTestSaveableObject1)->Init());
-	Ptr<CTestSaveableObject1> pSaveable = OMalloc(CTestSaveableObject1)->Init();
+	pacStuff->Add(OMalloc<CTestSaveableObject1>());
+	Ptr<CTestSaveableObject1> pSaveable = OMalloc<CTestSaveableObject1>();
 	pSaveable->miInt = 3;
 	pacStuff->Add(pSaveable);
-	pSaveable = OMalloc(CTestSaveableObject1)->Init();
+	pSaveable = OMalloc<CTestSaveableObject1>();
 	pSaveable->miInt = 5;
 	pacStuff->Add(pSaveable);
 
@@ -122,13 +122,13 @@ void TestSetKillCyclic(void)
 	Ptr<CRoot>					pRoot;
 	Ptr<CSetObject>				pSet;
 
-	pTest1 = OMalloc(CTestObject)->Init(NULL);
-	pTest2 = OMalloc(CTestObject)->Init(NULL);
+	pTest1 = OMalloc<CTestObject>();
+	pTest2 = OMalloc<CTestObject>();
 	pTest1->mpTest = pTest2;
 	pTest2->mpTest = pTest1;
-	pTest3 = OMalloc(CTestObject)->Init(NULL);
+	pTest3 = OMalloc<CTestObject>();
 	pTest3->mpTest = pTest2;
-	pSet = OMalloc(CSetObject)->Init();
+	pSet = OMalloc<CSetObject>();
 	pRoot = ORoot();
 	pRoot->Add(pSet);
 	pSet->Add(pTest3);
@@ -163,10 +163,10 @@ void TestSetKillCyclic(void)
 //	Ptr<CRoot>					pRoot;
 //	Ptr<CSetObject>				pSet;
 //
-//	pObject = OMalloc(CTestObject)->Init(NULL);
-//	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
-//	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
-//	pSet = OMalloc(CSetObject)->Init();
+//	pObject = OMalloc<CTestObject>();
+//	pContainer2 = OMalloc<CPointerContainer>(pObject);
+//	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
+//	pSet = OMalloc<CSetObject>();
 //	pRoot = ORoot();
 //	pRoot->Add(pSet);
 //	pSet->Add(pContainer1);
@@ -202,10 +202,10 @@ void TestSetRemoveAll(void)
 	Ptr<CRoot>					pRoot;
 	Ptr<CSetObject>				pSet;
 
-	pObject = OMalloc(CTestObject)->Init(NULL);
-	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
-	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
-	pSet = OMalloc(CSetObject)->Init();
+	pObject = OMalloc<CTestObject>();
+	pContainer2 = OMalloc<CPointerContainer>(pObject);
+	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
+	pSet = OMalloc<CSetObject>();
 	pRoot = ORoot();
 	pRoot->Add(pSet);
 	pSet->Add(pContainer1);

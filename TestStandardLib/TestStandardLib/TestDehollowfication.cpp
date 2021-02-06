@@ -49,33 +49,33 @@ Ptr<CTestDoubleNamedString> SetupDehollowficationScene(void)
 
 	cRoot = ORoot();
 
-	cDiamond = ONMalloc(CTestNamedString, "Diamond End");
-	sz1 = OMalloc(CString);
+	cDiamond = ONMalloc<CTestNamedString>("Diamond End");
+	sz1 = OMalloc<CString>();
 
-	cNS1 = ONMalloc(CTestNamedString, "NamedString 1");
+	cNS1 = ONMalloc<CTestNamedString>("NamedString 1");
 	cNS1->Init(sz1, cDiamond, "Hello");
 	sz1->Init("World");
 
-	cNS2 = ONMalloc(CTestNamedString, "NamedString 2");
-	sz2 = OMalloc(CString);
+	cNS2 = ONMalloc<CTestNamedString>("NamedString 2");
+	sz2 = OMalloc<CString>();
 
 	cNS2->Init(sz2, cDiamond, "12345");
 	sz2->Init("6789");
 
-	sz3 = OMalloc(CString);
+	sz3 = OMalloc<CString>();
 	sz3->Init("End");
 	cDiamond->Init(sz3, ONull, "Before Swine");
 
-	sz4 = OMalloc(CString);
+	sz4 = OMalloc<CString>();
 	sz4->Init("Start");
-	cDouble = ONMalloc(CTestDoubleNamedString, "Double Start");
+	cDouble = ONMalloc<CTestDoubleNamedString>("Double Start");
 	cDouble->Init(sz4, cNS1, ONull);
 
 	cRoot->Add(cDouble);
 
 	cDouble->mpSplit1 = cNS2;
 
-	cNS3 = ONMalloc(CTestNamedString, "NamedString 3");
+	cNS3 = ONMalloc<CTestNamedString>("NamedString 3");
 	cNS3->Init(sz1, ONull, "Random");
 
 	cRoot->Add(cNS3);

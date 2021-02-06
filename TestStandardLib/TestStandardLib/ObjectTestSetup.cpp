@@ -103,7 +103,7 @@ Ptr<CHarrier> CHarrier::Init(Ptr<CGameWorld> pWorld)
 	mpWorld = pWorld;
 	miSpeed = 7;
 
-	maMissiles = OMalloc(CArrayObject)->Init();
+	maMissiles = OMalloc<CArrayObject>();
 
 	PostInit();
 	return Ptr<CHarrier>(this);
@@ -138,7 +138,7 @@ void CHarrier::Free(void)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CMissile> CHarrier::FireMissile(CPointer& pTarget)
 {
-	Ptr<CMissile> pMissile = OMalloc(CMissile)->Init(mpWorld);
+	Ptr<CMissile> pMissile = OMalloc<CMissile>(mpWorld);
 	maMissiles->Add(pMissile);
 	pMissile->SetTarget(pTarget);
 
@@ -481,7 +481,7 @@ void CClusterLauncher::Class(void)
 Ptr<CGameWorld> CGameWorld::Init(void)
 {
 	PreInit();
-	maTickables = OMalloc(CArrayObject)->Init();
+	maTickables = OMalloc<CArrayObject>();
 	PostInit();
 	return Ptr<CGameWorld>(this);
 }

@@ -32,19 +32,15 @@ void TestObjectWriterChunkedSerialised(void)
 	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "ObjectWriterChunked"));
 	AssertTrue(cFileUtil.TouchDir("Output" _FS_ "ObjectWriterChunked" _FS_ "Test"));
 
-	pcObject1 = ONMalloc(CTestWithArray, "Base/Level 1/Warning");
-	pcObject1->Init("Talking Clock", 17);
+	pcObject1 = ONMalloc<CTestWithArray>("Base/Level 1/Warning", "Talking Clock", 17);
 
-	pcObject2 = OMalloc(CTestInteger);
-	pcObject2->Init(2, 9, 937);
+	pcObject2 = OMalloc<CTestInteger>(2, 9, 937);
 	pcObject1->Add(pcObject2);
 
-	pcObject3 = OMalloc(CTestInteger);
-	pcObject3->Init(3, 7321, 7);
+	pcObject3 = OMalloc<CTestInteger>(3, 7321, 7);
 	pcObject1->Add(pcObject3);
 
-	pcObject4 = OMalloc(CTestInteger);
-	pcObject4->Init(0xab, 0xbc, 0xcd);
+	pcObject4 = OMalloc<CTestInteger>(0xab, 0xbc, 0xcd);
 	pcObject1->Add(pcObject4);
 
 	cWriter.Init("Output" _FS_ "ObjectWriterChunked" _FS_ "Test", "Base" _FS_ "Level 1", "ChunkFile");

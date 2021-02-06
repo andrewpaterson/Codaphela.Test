@@ -19,16 +19,16 @@ public:
 	Ptr<CTestObject>			mpTest;
 	STestObjectFreedNotifier*	mpsKilledNotifier;
 
-	Ptr<CTestObject>	Init(void);
-	Ptr<CTestObject>	Init(STestObjectFreedNotifier* psKilledNotifier);
-	Ptr<CTestObject>	Init(CPointer pObject, Ptr<CTestObject> pTest);
-	void				Class(void);
-	void				Free(void);
+	void	Init(void);
+	void	Init(STestObjectFreedNotifier* psKilledNotifier);
+	void	Init(CPointer pObject, Ptr<CTestObject> pTest);
+	void	Class(void);
+	void	Free(void);
 
-	BOOL				Save(CObjectSerialiser* pcFile);
-	BOOL				Load(CObjectDeserialiser* pcFile);
+	BOOL	Save(CObjectSerialiser* pcFile);
+	BOOL	Load(CObjectDeserialiser* pcFile);
 
-	void				SomeMethod(void);
+	void	SomeMethod(void);
 };
 
 
@@ -41,13 +41,13 @@ public:
 	CPointer					mpObject3;
 	STestObjectFreedNotifier*	mpsKilledNotifier;
 
-	Ptr<CTestTriPointerObject>	Init(void);
-	Ptr<CTestTriPointerObject>	Init(STestObjectFreedNotifier* psKilledNotifier);
-	void						Class(void);
-	void						Free(void);
+	void	Init(void);
+	void	Init(STestObjectFreedNotifier* psKilledNotifier);
+	void	Class(void);
+	void	Free(void);
 
-	BOOL						Save(CObjectSerialiser* pcFile);
-	BOOL						Load(CObjectDeserialiser* pcFile);
+	BOOL	Save(CObjectSerialiser* pcFile);
+	BOOL	Load(CObjectDeserialiser* pcFile);
 };
 
 
@@ -60,12 +60,12 @@ public:
 	CChars		mszString;
 	BOOL		mbSaved;
 
-	Ptr<CTestSaveableObject1>	Init(void);
-	void						Class(void);
-	void						Free(void);
+	void		Init(void);
+	void		Class(void);
+	void		Free(void);
 
-	BOOL						Save(CObjectSerialiser* pcFile);
-	BOOL						Load(CObjectDeserialiser* pcFile);
+	BOOL		Save(CObjectSerialiser* pcFile);
+	BOOL		Load(CObjectDeserialiser* pcFile);
 };
 
 
@@ -78,12 +78,12 @@ public:
 	CPointer					mp2;
 	BOOL						mbSaved;
 
-	Ptr<CTestSaveableObject2>	Init(char* psz);
-	void						Class(void);
-	void						Free(void);
+	void	Init(const char* psz);
+	void	Class(void);
+	void	Free(void);
 
-	BOOL						Save(CObjectSerialiser* pcFile);
-	BOOL						Load(CObjectDeserialiser* pcFile);
+	BOOL	Save(CObjectSerialiser* pcFile);
+	BOOL	Load(CObjectDeserialiser* pcFile);
 };
 
 

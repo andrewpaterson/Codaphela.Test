@@ -43,43 +43,43 @@ void TestClearDistToRootToValidDistComplex(void)
 	CDistCalculatorParameters	cDistParameters;
 
 	pRoot = ORoot();
-	p1 = ONMalloc(CNamedPointerContainer, "Fred's")->Init();
+	p1 = ONMalloc<CNamedPointerContainer>("Fred's");
 	pRoot->Add(p1);
-	pTri = OMalloc(CTestTriPointerObject)->Init();
+	pTri = OMalloc<CTestTriPointerObject>();
 	p1->mp = pTri;
-	p2a = OMalloc(CPointerContainer)->Init();
-	p2b = OMalloc(CPointerContainer)->Init();
-	p2c = OMalloc(CPointerContainer)->Init();
+	p2a = OMalloc<CPointerContainer>();
+	p2b = OMalloc<CPointerContainer>();
+	p2c = OMalloc<CPointerContainer>();
 	pTri->mpObject1 = p2a;
 	pTri->mpObject2 = p2b;
 	pTri->mpObject3 = p2c;
-	p3a = OMalloc(CPointerContainer)->Init();
-	p3b = OMalloc(CPointerContainer)->Init();
-	p3c = OMalloc(CPointerContainer)->Init();
+	p3a = OMalloc<CPointerContainer>();
+	p3b = OMalloc<CPointerContainer>();
+	p3c = OMalloc<CPointerContainer>();
 	p2a->mp = p3a;
 	p2b->mp = p3b;
 	p2c->mp = p3c;
 
-	pTest1b = OMalloc(CTestObject)->Init();
-	p4a = OMalloc(CPointerContainer)->Init();
-	p4c = OMalloc(CPointerContainer)->Init();
+	pTest1b = OMalloc<CTestObject>();
+	p4a = OMalloc<CPointerContainer>();
+	p4c = OMalloc<CPointerContainer>();
 	p3a->mp = p4a;
 	p3b->mp = pTest1b;
 	p3c->mp = p4c;
-	pTest2d = OMalloc(CTestObject)->Init();
-	pTest2e = OMalloc(CTestObject)->Init();
-	p5a = OMalloc(CPointerContainer)->Init();
-	p5c = OMalloc(CPointerContainer)->Init();
+	pTest2d = OMalloc<CTestObject>();
+	pTest2e = OMalloc<CTestObject>();
+	p5a = OMalloc<CPointerContainer>();
+	p5c = OMalloc<CPointerContainer>();
 	p4a->mp = p5a;
 	pTest1b->mpObject = pTest2d;
 	pTest1b->mpTest = pTest2e;
 	p4c->mp = p5c;
 	pTest2d->mpTest = pTest1b;
 	pTest2e->mpTest = pTest1b;
-	pTest1a = OMalloc(CTestObject)->Init();
-	pTest1c = OMalloc(CTestObject)->Init();
-	p6a = OMalloc(CPointerContainer)->Init();
-	p6c = OMalloc(CPointerContainer)->Init();
+	pTest1a = OMalloc<CTestObject>();
+	pTest1c = OMalloc<CTestObject>();
+	p6a = OMalloc<CPointerContainer>();
+	p6c = OMalloc<CPointerContainer>();
 	p5a->mp = p6a;
 	pTest1a->mpTest = pTest2d;
 	pTest1c->mpTest = pTest2e;
@@ -87,9 +87,9 @@ void TestClearDistToRootToValidDistComplex(void)
 	pTest2e->mpObject = pTest1c;
 	p5c->mp = p6c;
 	p6a->mp = pTest1a;
-	p7c = OMalloc(CPointerContainer)->Init();
-	p8c = OMalloc(CPointerContainer)->Init();
-	p9c = OMalloc(CPointerContainer)->Init();
+	p7c = OMalloc<CPointerContainer>();
+	p8c = OMalloc<CPointerContainer>();
+	p9c = OMalloc<CPointerContainer>();
 	p6c->mp = p7c;
 	p7c->mp = p8c;
 	p8c->mp = p9c;
@@ -197,12 +197,12 @@ void TestClearDistToRootToValidDistSimpleLeft(void)
 	CDistToRootCalculator			cDistCalculator;
 
 	pRoot = ORoot();
-	p1 = ONMalloc(CNamedPointerContainer, "Back")->Init();
+	p1 = ONMalloc<CNamedPointerContainer>("Back");
 	pRoot->Add(p1);
-	pTest1 = OMalloc(CTestObject)->Init();
+	pTest1 = OMalloc<CTestObject>();
 	p1->mp = pTest1;
-	pTest2 = OMalloc(CTestObject)->Init();
-	pTest3 = OMalloc(CTestObject)->Init();
+	pTest2 = OMalloc<CTestObject>();
+	pTest3 = OMalloc<CTestObject>();
 	pTest1->mpTest = pTest2;
 	pTest1->mpObject = pTest3;
 	pTest2->mpTest = pTest3;
@@ -267,12 +267,12 @@ void TestClearDistToRootToValidDistSimpleRight(void)
 	CDistCalculatorParameters		cDistParameters;
 
 	pRoot = ORoot();
-	p1 = ONMalloc(CNamedPointerContainer, "III")->Init();
+	p1 = ONMalloc<CNamedPointerContainer>("III");
 	pRoot->Add(p1);
-	pTest1 = OMalloc(CTestObject)->Init();
+	pTest1 = OMalloc<CTestObject>();
 	p1->mp = pTest1;
-	pTest2 = OMalloc(CTestObject)->Init();
-	pTest3 = OMalloc(CTestObject)->Init();
+	pTest2 = OMalloc<CTestObject>();
+	pTest3 = OMalloc<CTestObject>();
 	pTest1->mpTest = pTest2;
 	pTest1->mpObject = pTest3;
 	pTest2->mpTest = pTest3;
@@ -356,43 +356,43 @@ void TestUpdateAttachedTosDistToRootComplex(void)
 	CDistToRootCalculator		cDistToRootCalculator;
 
 	pRoot = ORoot();
-	p1 = ONMalloc(CNamedPointerContainer, "Fred's")->Init();
+	p1 = ONMalloc<CNamedPointerContainer>("Fred's");
 	pRoot->Add(p1);
-	pTri = OMalloc(CTestTriPointerObject)->Init();
+	pTri = OMalloc<CTestTriPointerObject>();
 	p1->mp = pTri;
-	p2a = OMalloc(CPointerContainer)->Init();
-	p2b = OMalloc(CPointerContainer)->Init();
-	p2c = OMalloc(CPointerContainer)->Init();
+	p2a = OMalloc<CPointerContainer>();
+	p2b = OMalloc<CPointerContainer>();
+	p2c = OMalloc<CPointerContainer>();
 	pTri->mpObject1 = p2a;
 	pTri->mpObject2 = p2b;
 	pTri->mpObject3 = p2c;
-	p3a = OMalloc(CPointerContainer)->Init();
-	p3b = OMalloc(CPointerContainer)->Init();
-	p3c = OMalloc(CPointerContainer)->Init();
+	p3a = OMalloc<CPointerContainer>();
+	p3b = OMalloc<CPointerContainer>();
+	p3c = OMalloc<CPointerContainer>();
 	p2a->mp = p3a;
 	p2b->mp = p3b;
 	p2c->mp = p3c;
 
-	pTest1b = OMalloc(CTestObject)->Init();
-	p4a = OMalloc(CPointerContainer)->Init();
-	p4c = OMalloc(CPointerContainer)->Init();
+	pTest1b = OMalloc<CTestObject>();
+	p4a = OMalloc<CPointerContainer>();
+	p4c = OMalloc<CPointerContainer>();
 	p3a->mp = p4a;
 	p3b->mp = pTest1b;
 	p3c->mp = p4c;
-	pTest2d = OMalloc(CTestObject)->Init();
-	pTest2e = OMalloc(CTestObject)->Init();
-	p5a = OMalloc(CPointerContainer)->Init();
-	p5c = OMalloc(CPointerContainer)->Init();
+	pTest2d = OMalloc<CTestObject>();
+	pTest2e = OMalloc<CTestObject>();
+	p5a = OMalloc<CPointerContainer>();
+	p5c = OMalloc<CPointerContainer>();
 	p4a->mp = p5a;
 	pTest1b->mpObject = pTest2d;
 	pTest1b->mpTest = pTest2e;
 	p4c->mp = p5c;
 	pTest2d->mpTest = pTest1b;
 	pTest2e->mpTest = pTest1b;
-	pTest1a = OMalloc(CTestObject)->Init();
-	pTest1c = OMalloc(CTestObject)->Init();
-	p6a = OMalloc(CPointerContainer)->Init();
-	p6c = OMalloc(CPointerContainer)->Init();
+	pTest1a = OMalloc<CTestObject>();
+	pTest1c = OMalloc<CTestObject>();
+	p6a = OMalloc<CPointerContainer>();
+	p6c = OMalloc<CPointerContainer>();
 	p5a->mp = p6a;
 	pTest1a->mpTest = pTest2d;
 	pTest1c->mpTest = pTest2e;
@@ -400,9 +400,9 @@ void TestUpdateAttachedTosDistToRootComplex(void)
 	pTest2e->mpObject = pTest1c;
 	p5c->mp = p6c;
 	p6a->mp = pTest1a;
-	p7c = OMalloc(CPointerContainer)->Init();
-	p8c = OMalloc(CPointerContainer)->Init();
-	p9c = OMalloc(CPointerContainer)->Init();
+	p7c = OMalloc<CPointerContainer>();
+	p8c = OMalloc<CPointerContainer>();
+	p9c = OMalloc<CPointerContainer>();
 	p6c->mp = p7c;
 	p7c->mp = p8c;
 	p8c->mp = p9c;
@@ -464,12 +464,12 @@ void TestUpdateAttachedTosDistToRootSimpleLeft(void)
 	int							iFlags;
 
 	pRoot = ORoot();
-	p1 = ONMalloc(CNamedPointerContainer, "Back")->Init();
+	p1 = ONMalloc<CNamedPointerContainer>("Back")->Init();
 	pRoot->Add(p1);
-	pTest1 = OMalloc(CTestObject)->Init();
+	pTest1 = OMalloc<CTestObject>();
 	p1->mp = pTest1;
-	pTest2 = OMalloc(CTestObject)->Init();
-	pTest3 = OMalloc(CTestObject)->Init();
+	pTest2 = OMalloc<CTestObject>();
+	pTest3 = OMalloc<CTestObject>();
 	pTest1->mpTest = pTest2;
 	pTest1->mpObject = pTest3;
 	pTest2->mpTest = pTest3;
@@ -545,12 +545,12 @@ void TestUpdateAttachedTosDistToRootSimpleRight(void)
 	CDistToRootCalculator		cDistToRootCalculator;
 
 	pRoot = ORoot();
-	p1 = ONMalloc(CNamedPointerContainer, "III")->Init();
+	p1 = ONMalloc<CNamedPointerContainer>("III");
 	pRoot->Add(p1);
-	pTest1 = OMalloc(CTestObject)->Init();
+	pTest1 = OMalloc<CTestObject>();
 	p1->mp = pTest1;
-	pTest2 = OMalloc(CTestObject)->Init();
-	pTest3 = OMalloc(CTestObject)->Init();
+	pTest2 = OMalloc<CTestObject>();
+	pTest3 = OMalloc<CTestObject>();
 	pTest1->mpTest = pTest2;
 	pTest1->mpObject = pTest3;
 	pTest2->mpTest = pTest3;
@@ -630,12 +630,12 @@ void TestUpdateAttachedTosDistToRootSimpleRightBroken(void)
 	CDistCalculatorParameters	cDistParameters;
 
 	pRoot = ORoot();
-	p1 = ONMalloc(CNamedPointerContainer, "III")->Init();
+	p1 = ONMalloc<CNamedPointerContainer>("III");
 	pRoot->Add(p1);
-	pTest1 = OMalloc(CTestObject)->Init();
+	pTest1 = OMalloc<CTestObject>();
 	p1->mp = pTest1;
-	pTest2 = OMalloc(CTestObject)->Init();
-	pTest3 = OMalloc(CTestObject)->Init();
+	pTest2 = OMalloc<CTestObject>();
+	pTest3 = OMalloc<CTestObject>();
 	pTest1->mpTest = pTest2;
 	pTest1->mpObject = pTest3;
 	pTest2->mpTest = pTest3;
@@ -731,29 +731,29 @@ void TestUpdateAttachedTosDistToRootChildTriangleKindaBalanced(void)
 
 	pRoot = ORoot();
 
-	p6b = OMalloc(CPointerContainer)->Init();
-	p6c = OMalloc(CPointerContainer)->Init();
-	p5a = OMalloc(CPointerContainer)->Init();
-	p5b = OMalloc(CPointerContainer)->Init(p6b);
-	p4a = OMalloc(CPointerContainer)->Init(p5a);
-	p4b = OMalloc(CPointerContainer)->Init(p5b);
-	p3a = OMalloc(CPointerContainer)->Init(p4a);
-	p3b	= OMalloc(CPointerContainer)->Init(p4b);
-	p2a = OMalloc(CPointerContainer)->Init(p3a);
-	p2b = OMalloc(CPointerContainer)->Init(p3b);
-	p1a = ONMalloc(CNamedPointerContainer, "R.")->Init(p2a);
-	p1b = ONMalloc(CNamedPointerContainer, "E.")->Init(p2b);
-	p1c = ONMalloc(CNamedPointerContainer, "B.")->Init(p6c);
+	p6b = OMalloc<CPointerContainer>();
+	p6c = OMalloc<CPointerContainer>();
+	p5a = OMalloc<CPointerContainer>();
+	p5b = OMalloc<CPointerContainer>(p6b);
+	p4a = OMalloc<CPointerContainer>(p5a);
+	p4b = OMalloc<CPointerContainer>(p5b);
+	p3a = OMalloc<CPointerContainer>(p4a);
+	p3b	= OMalloc<CPointerContainer>(p4b);
+	p2a = OMalloc<CPointerContainer>(p3a);
+	p2b = OMalloc<CPointerContainer>(p3b);
+	p1a = ONMalloc<CNamedPointerContainer>("R.", p2a);
+	p1b = ONMalloc<CNamedPointerContainer>("E.", p2b);
+	p1c = ONMalloc<CNamedPointerContainer>("B.", p6c);
 	pRoot->Add(p1a);
 	pRoot->Add(p1b);
 	pRoot->Add(p1c);
 
-	pTest1a = OMalloc(CTestObject)->Init();
-	pTest1b = OMalloc(CTestObject)->Init();
-	pTest1c = OMalloc(CTestObject)->Init();
-	pTest2a = OMalloc(CTestObject)->Init();
-	pTest2b = OMalloc(CTestObject)->Init();
-	pTest3a = OMalloc(CTestObject)->Init();
+	pTest1a = OMalloc<CTestObject>();
+	pTest1b = OMalloc<CTestObject>();
+	pTest1c = OMalloc<CTestObject>();
+	pTest2a = OMalloc<CTestObject>();
+	pTest2b = OMalloc<CTestObject>();
+	pTest3a = OMalloc<CTestObject>();
 	p5a->mp = pTest1a;
 	p6b->mp = pTest1c;
 	p6c->mp = pTest1b;
@@ -906,27 +906,27 @@ void TestUpdateAttachedTosDistToRootChildTriangleShortLeft(void)
 
 	pRoot = ORoot();
 
-	p6b = OMalloc(CPointerContainer)->Init();
-	p6c = OMalloc(CPointerContainer)->Init();
-	p5b = OMalloc(CPointerContainer)->Init(p6b);
-	p4b = OMalloc(CPointerContainer)->Init(p5b);
-	p3a = OMalloc(CPointerContainer)->Init();
-	p3b	= OMalloc(CPointerContainer)->Init(p4b);
-	p2a = OMalloc(CPointerContainer)->Init(p3a);
-	p2b = OMalloc(CPointerContainer)->Init(p3b);
-	p1a = ONMalloc(CNamedPointerContainer, "E.")->Init(p2a);
-	p1b = ONMalloc(CNamedPointerContainer, "L.")->Init(p2b);
-	p1c = ONMalloc(CNamedPointerContainer, "!!")->Init(p6c);
+	p6b = OMalloc<CPointerContainer>();
+	p6c = OMalloc<CPointerContainer>();
+	p5b = OMalloc<CPointerContainer>(p6b);
+	p4b = OMalloc<CPointerContainer>(p5b);
+	p3a = OMalloc<CPointerContainer>();
+	p3b	= OMalloc<CPointerContainer>(p4b);
+	p2a = OMalloc<CPointerContainer>(p3a);
+	p2b = OMalloc<CPointerContainer>(p3b);
+	p1a = ONMalloc<CNamedPointerContainer>("E.", p2a);
+	p1b = ONMalloc<CNamedPointerContainer>("L.", p2b);
+	p1c = ONMalloc<CNamedPointerContainer>("!!", p6c);
 	pRoot->Add(p1a);
 	pRoot->Add(p1b);
 	pRoot->Add(p1c);
 
-	pTest1a = OMalloc(CTestObject)->Init();
-	pTest1b = OMalloc(CTestObject)->Init();
-	pTest1c = OMalloc(CTestObject)->Init();
-	pTest2a = OMalloc(CTestObject)->Init();
-	pTest2b = OMalloc(CTestObject)->Init();
-	pTest3a = OMalloc(CTestObject)->Init();
+	pTest1a = OMalloc<CTestObject>();
+	pTest1b = OMalloc<CTestObject>();
+	pTest1c = OMalloc<CTestObject>();
+	pTest2a = OMalloc<CTestObject>();
+	pTest2b = OMalloc<CTestObject>();
+	pTest3a = OMalloc<CTestObject>();
 	p3a->mp = pTest1a;
 	p6b->mp = pTest1c;
 	p6c->mp = pTest1b;
@@ -1025,20 +1025,20 @@ void TestUpdateEmbeddedObjectTosDetachedSetupDistance(void)
 	Ptr<CRoot>			pRoot;
 
 	pRoot = ORoot();
-	pTest1 = OMalloc(CTestObject)->Init();
-	pLTest2 = OMalloc(CTestObject)->Init();
-	pRTest2 = OMalloc(CTestObject)->Init();
-	pLTest3 = OMalloc(CTestObject)->Init();
-	pRTest3l = OMalloc(CTestObject)->Init();
-	pRTest3r = OMalloc(CTestObject)->Init();
-	pRTest4l = OMalloc(CTestObject)->Init();
-	pRTest4r = OMalloc(CTestObject)->Init();
-	pRTest5l = OMalloc(CTestObject)->Init();
-	pRTest5r = OMalloc(CTestObject)->Init();
-	pRTest6l = OMalloc(CTestObject)->Init();
-	pRTest6r = OMalloc(CTestObject)->Init();
-	pRTest7l = OMalloc(CTestObject)->Init();
-	pRTest8 = OMalloc(CTestObject)->Init();
+	pTest1 = OMalloc<CTestObject>();
+	pLTest2 = OMalloc<CTestObject>();
+	pRTest2 = OMalloc<CTestObject>();
+	pLTest3 = OMalloc<CTestObject>();
+	pRTest3l = OMalloc<CTestObject>();
+	pRTest3r = OMalloc<CTestObject>();
+	pRTest4l = OMalloc<CTestObject>();
+	pRTest4r = OMalloc<CTestObject>();
+	pRTest5l = OMalloc<CTestObject>();
+	pRTest5r = OMalloc<CTestObject>();
+	pRTest6l = OMalloc<CTestObject>();
+	pRTest6r = OMalloc<CTestObject>();
+	pRTest7l = OMalloc<CTestObject>();
+	pRTest8 = OMalloc<CTestObject>();
 
 	pRoot->Add(pTest1);
 
@@ -1147,20 +1147,20 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 	CDistCalculatorParameters	cDistParameters;
 
 	pRoot = ORoot();
-	pTest1 = OMalloc(CTestObject)->Init();
-	pLTest2 = OMalloc(CTestObject)->Init();
-	pRTest2 = OMalloc(CTestObject)->Init();
-	pLTest3 = OMalloc(CTestObject)->Init();
-	pRTest3l = OMalloc(CTestObject)->Init();
-	pRTest3r = OMalloc(CTestObject)->Init();
-	pRTest4l = OMalloc(CTestObject)->Init();
-	pRTest4r = OMalloc(CTestObject)->Init();
-	pRTest5l = OMalloc(CTestObject)->Init();
-	pRTest5r = OMalloc(CTestObject)->Init();
-	pRTest6l = OMalloc(CTestObject)->Init();
-	pRTest6r = OMalloc(CTestObject)->Init();
-	pRTest7l = OMalloc(CTestObject)->Init();
-	pRTest8 = OMalloc(CTestObject)->Init();
+	pTest1 = OMalloc<CTestObject>();
+	pLTest2 = OMalloc<CTestObject>();
+	pRTest2 = OMalloc<CTestObject>();
+	pLTest3 = OMalloc<CTestObject>();
+	pRTest3l = OMalloc<CTestObject>();
+	pRTest3r = OMalloc<CTestObject>();
+	pRTest4l = OMalloc<CTestObject>();
+	pRTest4r = OMalloc<CTestObject>();
+	pRTest5l = OMalloc<CTestObject>();
+	pRTest5r = OMalloc<CTestObject>();
+	pRTest6l = OMalloc<CTestObject>();
+	pRTest6r = OMalloc<CTestObject>();
+	pRTest7l = OMalloc<CTestObject>();
+	pRTest8 = OMalloc<CTestObject>();
 
 	pRoot->Add(pTest1);
 
@@ -1274,20 +1274,20 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 	CDistCalculatorParameters	cDistParameters;
 
 	pRoot = ORoot();
-	pTest1 = OMalloc(CTestObject)->Init();
-	pLTest2 = OMalloc(CTestObject)->Init();
-	pRTest2 = OMalloc(CTestObject)->Init();
-	pLTest3 = OMalloc(CTestObject)->Init();
-	pRTest3l = OMalloc(CTestObject)->Init();
-	pRTest3r = OMalloc(CTestObject)->Init();
-	pRTest4l = OMalloc(CTestObject)->Init();
-	pRTest4r = OMalloc(CTestObject)->Init();
-	pRTest5l = OMalloc(CTestObject)->Init();
-	pRTest5r = OMalloc(CTestObject)->Init();
-	pRTest6l = OMalloc(CTestObject)->Init();
-	pRTest6r = OMalloc(CTestObject)->Init();
-	pRTest7l = OMalloc(CTestObject)->Init();
-	pRTest8 = OMalloc(CTestObject)->Init();
+	pTest1 = OMalloc<CTestObject>();
+	pLTest2 = OMalloc<CTestObject>();
+	pRTest2 = OMalloc<CTestObject>();
+	pLTest3 = OMalloc<CTestObject>();
+	pRTest3l = OMalloc<CTestObject>();
+	pRTest3r = OMalloc<CTestObject>();
+	pRTest4l = OMalloc<CTestObject>();
+	pRTest4r = OMalloc<CTestObject>();
+	pRTest5l = OMalloc<CTestObject>();
+	pRTest5r = OMalloc<CTestObject>();
+	pRTest6l = OMalloc<CTestObject>();
+	pRTest6r = OMalloc<CTestObject>();
+	pRTest7l = OMalloc<CTestObject>();
+	pRTest8 = OMalloc<CTestObject>();
 
 	pRoot->Add(pTest1);
 
@@ -1411,20 +1411,20 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 	CDistCalculatorParameters	cDistParameters;
 
 	pRoot = ORoot();
-	pTest1 = OMalloc(CTestObject)->Init();
-	pLTest2 = OMalloc(CTestObject)->Init();
-	pRTest2 = OMalloc(CTestObject)->Init();
-	pLTest3 = OMalloc(CTestObject)->Init();
-	pRTest3l = OMalloc(CTestObject)->Init();
-	pRTest3r = OMalloc(CTestObject)->Init();
-	pRTest4l = OMalloc(CTestObject)->Init();
-	pRTest4r = OMalloc(CTestObject)->Init();
-	pRTest5l = OMalloc(CTestObject)->Init();
-	pRTest5r = OMalloc(CTestObject)->Init();
-	pRTest6l = OMalloc(CTestObject)->Init();
-	pRTest6r = OMalloc(CTestObject)->Init();
-	pRTest7l = OMalloc(CTestObject)->Init();
-	pRTest8 = OMalloc(CTestObject)->Init();
+	pTest1 = OMalloc<CTestObject>();
+	pLTest2 = OMalloc<CTestObject>();
+	pRTest2 = OMalloc<CTestObject>();
+	pLTest3 = OMalloc<CTestObject>();
+	pRTest3l = OMalloc<CTestObject>();
+	pRTest3r = OMalloc<CTestObject>();
+	pRTest4l = OMalloc<CTestObject>();
+	pRTest4r = OMalloc<CTestObject>();
+	pRTest5l = OMalloc<CTestObject>();
+	pRTest5r = OMalloc<CTestObject>();
+	pRTest6l = OMalloc<CTestObject>();
+	pRTest6r = OMalloc<CTestObject>();
+	pRTest7l = OMalloc<CTestObject>();
+	pRTest8 = OMalloc<CTestObject>();
 
 	pRoot->Add(pTest1);
 
@@ -1538,20 +1538,20 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 	CDistCalculatorParameters	cDistParameters;
 
 	pRoot = ORoot();
-	pTest1 = OMalloc(CTestObject)->Init();
-	pLTest2 = OMalloc(CTestObject)->Init();
-	pRTest2 = OMalloc(CTestObject)->Init();
-	pLTest3 = OMalloc(CTestObject)->Init();
-	pRTest3l = OMalloc(CTestObject)->Init();
-	pRTest3r = OMalloc(CTestObject)->Init();
-	pRTest4l = OMalloc(CTestObject)->Init();
-	pRTest4r = OMalloc(CTestObject)->Init();
-	pRTest5l = OMalloc(CTestObject)->Init();
-	pRTest5r = OMalloc(CTestObject)->Init();
-	pRTest6l = OMalloc(CTestObject)->Init();
-	pRTest6r = OMalloc(CTestObject)->Init();
-	pRTest7l = OMalloc(CTestObject)->Init();
-	pRTest8 = OMalloc(CTestObject)->Init();
+	pTest1 = OMalloc<CTestObject>();
+	pLTest2 = OMalloc<CTestObject>();
+	pRTest2 = OMalloc<CTestObject>();
+	pLTest3 = OMalloc<CTestObject>();
+	pRTest3l = OMalloc<CTestObject>();
+	pRTest3r = OMalloc<CTestObject>();
+	pRTest4l = OMalloc<CTestObject>();
+	pRTest4r = OMalloc<CTestObject>();
+	pRTest5l = OMalloc<CTestObject>();
+	pRTest5r = OMalloc<CTestObject>();
+	pRTest6l = OMalloc<CTestObject>();
+	pRTest6r = OMalloc<CTestObject>();
+	pRTest7l = OMalloc<CTestObject>();
+	pRTest8 = OMalloc<CTestObject>();
 
 	pRoot->Add(pTest1);
 
@@ -1658,14 +1658,14 @@ void TestUpdateAttachedTosDistToRootBroken(void)
 	CDistToRootCalculator		cDistToRootCalculator;
 
 	pRoot = ORoot();
-	p6b = OMalloc(CPointerContainer)->Init();
-	p6c = OMalloc(CPointerContainer)->Init();
+	p6b = OMalloc<CPointerContainer>();
+	p6c = OMalloc<CPointerContainer>();
 	pRoot->Add(p6b);
 	pRoot->Add(p6c);
 
-	pTest1a = OMalloc(CTestObject)->Init();
-	pTest1b = OMalloc(CTestObject)->Init();
-	pTest2a = OMalloc(CTestObject)->Init();
+	pTest1a = OMalloc<CTestObject>();
+	pTest1b = OMalloc<CTestObject>();
+	pTest2a = OMalloc<CTestObject>();
 	p6b->mp = pTest1a;
 	p6c->mp = pTest1b;
 	pTest1a->mpTest = pTest1b;
@@ -1759,16 +1759,16 @@ void TestClearDistToRootToValidDistBroken(void)
 	SDistToRoot*				psDistToRoot;
 
 	pRoot = ORoot();
-	p6b = OMalloc(CPointerContainer)->Init();
-	p6c = OMalloc(CPointerContainer)->Init();
+	p6b = OMalloc<CPointerContainer>();
+	p6c = OMalloc<CPointerContainer>();
 	pRoot->Add(p6b);
 	pRoot->Add(p6c);
 
-	pTest1a = OMalloc(CTestObject)->Init();
-	pTest1b = OMalloc(CTestObject)->Init();
-	pTest2a = OMalloc(CTestObject)->Init();
-	pTest2b = OMalloc(CTestObject)->Init();
-	pTest3a = OMalloc(CTestObject)->Init();
+	pTest1a = OMalloc<CTestObject>();
+	pTest1b = OMalloc<CTestObject>();
+	pTest2a = OMalloc<CTestObject>();
+	pTest2b = OMalloc<CTestObject>();
+	pTest3a = OMalloc<CTestObject>();
 	p6b->mp = pTest1a;
 	p6c->mp = pTest1b;
 	pTest1a->mpTest = pTest1b;
@@ -1852,12 +1852,12 @@ void TestDistToRootLinear(void)
 	CDistToRootCalculator		cDistToRootCalculator;
 	CDistCalculatorParameters	cDistParameters;
 
-	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
-	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
+	Ptr<CNamedPointerContainer>	p1 = ONMalloc<CNamedPointerContainer>("Pointer A");
+	Ptr<CNamedPointerContainer>	p2 = ONMalloc<CNamedPointerContainer>("Pointer B");
 	p1->mp = p2;
 
 	Ptr<CRoot> pRoot = ORoot();
-	Ptr<CNamedPointerContainer>	p0 = ONMalloc(CNamedPointerContainer, "Test Helper")->Init(p1);
+	Ptr<CNamedPointerContainer>	p0 = ONMalloc<CNamedPointerContainer>("Test Helper", p1);
 	pRoot->Add(p0);
 
 	//
@@ -1908,15 +1908,15 @@ void TestDistToRootCyclic(void)
 	CDistToRootCalculator		cDistToRootCalculator;
 	CDistCalculatorParameters	cDistParameters;
 
-	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
-	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
-	Ptr<CNamedPointerContainer>	p3 = ONMalloc(CNamedPointerContainer, "Pointer C")->Init();
+	Ptr<CNamedPointerContainer>	p1 = ONMalloc<CNamedPointerContainer>("Pointer A");
+	Ptr<CNamedPointerContainer>	p2 = ONMalloc<CNamedPointerContainer>("Pointer B");
+	Ptr<CNamedPointerContainer>	p3 = ONMalloc<CNamedPointerContainer>("Pointer C");
 	p1->mp = p2;
 	p2->mp = p3;
 	p3->mp = p1;
 
 	Ptr<CRoot> pRoot = ORoot();
-	Ptr<CNamedPointerContainer>	p0 = ONMalloc(CNamedPointerContainer, "Test Helper")->Init(p1);
+	Ptr<CNamedPointerContainer>	p0 = ONMalloc<CNamedPointerContainer>("Test Helper", p1);
 	pRoot->Add(p0);
 
 	//
@@ -1972,11 +1972,11 @@ void TestDistToRootWithStackPointers(void)
 
 	ObjectsInit();
 
-	cNS3 = OMalloc(CTestObject)->Init();
-	cNS1 = OMalloc(CTestObject)->Init(sz1, cNS3);
-	sz1 = OMalloc(CString)->Init("Back");
-	cNS2 = OMalloc(CTestObject)->Init(sz2, cNS3);
-	sz2 = OMalloc(CString)->Init("Down");
+	cNS3 = OMalloc<CTestObject>();
+	cNS1 = OMalloc<CTestObject>(sz1, cNS3);
+	sz1 = OMalloc<CString>("Back");
+	cNS2 = OMalloc<CTestObject>(sz2, cNS3);
+	sz2 = OMalloc<CString>("Down");
 
 	AssertLongLongInt(1, cNS3.GetIndex());
 	AssertLongLongInt(2, cNS1.GetIndex());
@@ -2004,12 +2004,12 @@ void TestDistToRootLinearToStackScenarioA(void)
 	CNamedPointerContainer*		pc0;
 	CNamedPointerContainer*		pc2;
 
-	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
-	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
+	Ptr<CNamedPointerContainer>	p1 = ONMalloc<CNamedPointerContainer>("Pointer A");
+	Ptr<CNamedPointerContainer>	p2 = ONMalloc<CNamedPointerContainer>("Pointer B");
 	p1->mp = p2;
 
 	Ptr<CRoot> pRoot = ORoot();
-	Ptr<CNamedPointerContainer>	p0 = ONMalloc(CNamedPointerContainer, "Test Helper")->Init(p1);
+	Ptr<CNamedPointerContainer>	p0 = ONMalloc<CNamedPointerContainer>("Test Helper", p1);
 	pRoot->Add(p0);
 
 	pc1 = &p1;
@@ -2092,12 +2092,12 @@ void TestDistToRootLinearToStackScenarioB(void)
 	CNamedPointerContainer*		pc0;
 	CNamedPointerContainer*		pc2;
 
-	Ptr<CNamedPointerContainer>	p1 = ONMalloc(CNamedPointerContainer, "Pointer A")->Init();
-	Ptr<CNamedPointerContainer>	p2 = ONMalloc(CNamedPointerContainer, "Pointer B")->Init();
+	Ptr<CNamedPointerContainer>	p1 = ONMalloc<CNamedPointerContainer>("Pointer A");
+	Ptr<CNamedPointerContainer>	p2 = ONMalloc<CNamedPointerContainer>("Pointer B");
 	p1->mp = p2;
 
 	Ptr<CRoot> pRoot = ORoot();
-	Ptr<CNamedPointerContainer>	p0 = ONMalloc(CNamedPointerContainer, "Test Helper")->Init(p1);
+	Ptr<CNamedPointerContainer>	p0 = ONMalloc<CNamedPointerContainer>("Test Helper", p1);
 	pRoot->Add(p0);
 
 	pc1 = &p1;
@@ -2188,9 +2188,9 @@ void TestDistToRootTosNotUpdated(void)
 	Ptr<CRoot>			pRoot;
 
 	pRoot = ORoot();
-	pTest1 = OMalloc(CTestObject)->Init();
-	pTest2 = OMalloc(CTestObject)->Init();
-	pTest3 = OMalloc(CTestObject)->Init();
+	pTest1 = OMalloc<CTestObject>();
+	pTest2 = OMalloc<CTestObject>();
+	pTest3 = OMalloc<CTestObject>();
 
 	pTest1->mpTest = pTest2;
 	pTest2->mpTest = pTest3;
@@ -2271,28 +2271,28 @@ void TestDistToRootComplex(void)
 
 	Ptr<CRoot> pRoot = ORoot();
 
-	Ptr<CTestObject> pTest3  = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest4  = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest5  = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest6  = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest7  = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest8  = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest9  = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest10 = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest11 = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest12 = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest13 = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest14 = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest15 = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest16 = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest17 = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest18 = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest19 = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest20 = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest21 = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest22 = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest23 = OMalloc(CTestObject)->Init();
-	Ptr<CTestObject> pTest24 = OMalloc(CTestObject)->Init();
+	Ptr<CTestObject> pTest3  = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest4  = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest5  = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest6  = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest7  = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest8  = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest9  = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest10 = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest11 = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest12 = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest13 = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest14 = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest15 = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest16 = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest17 = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest18 = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest19 = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest20 = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest21 = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest22 = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest23 = OMalloc<CTestObject>();
+	Ptr<CTestObject> pTest24 = OMalloc<CTestObject>();
 
 	CTestObject* pcTest3  = &pTest3;
 	CTestObject* pcTest4  = &pTest4;

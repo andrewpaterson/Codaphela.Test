@@ -22,7 +22,7 @@ void TestKillSelfPointer1(void)
 
 	pRoot = ORoot();
 
-	pObject = OMalloc(CTestNamedObject)->Init(1);
+	pObject = OMalloc<CTestNamedObject>(1);
 	pObject->mpNamedTest1 = pObject;
 
 	pRoot->Add(pObject);
@@ -58,7 +58,7 @@ void TestKillSelfPointer2(void)
 
 	pRoot = ORoot();
 
-	pObject = OMalloc(CTestNamedObject)->Init(1);
+	pObject = OMalloc<CTestNamedObject>(1);
 	pObject->mpNamedTest1 = pObject;
 
 	pRoot->Add(pObject);
@@ -96,8 +96,8 @@ void TestKillLongCyclicSelfPointer(void)
 
 	pRoot = ORoot();
 
-	pObjectBase = OMalloc(CTestNamedObject)->Init(0);
-	pObject1 = OMalloc(CTestNamedObject)->Init(1);
+	pObjectBase = OMalloc<CTestNamedObject>(0);
+	pObject1 = OMalloc<CTestNamedObject>(1);
 	pObjectBase->mpNamedTest1 = pObject1;
 	pObject1->mpNamedTest1 = pObjectBase;
 
@@ -135,13 +135,13 @@ void TestKillBestPractice(void)
 	pRoot = ORoot();
 
 	AssertLongLongInt(0, pcDatabase->NumNames());
-	pWorld = OMalloc(CGameWorld)->Init();
+	pWorld = OMalloc<CGameWorld>();
 
 	pRoot->Add(pWorld);
 
-	Ptr<CHarrier> pHarrier = ONMalloc(CHarrier, "Harrier")->Init(pWorld);
+	Ptr<CHarrier> pHarrier = ONMalloc<CHarrier>("Harrier", pWorld);
 
-	Ptr<CJeep> pJeep = ONMalloc(CJeep, "Jeep")->Init(pWorld);
+	Ptr<CJeep> pJeep = ONMalloc<CJeep>("Jeep", pWorld);
 
 	pWorld->AddPlayer(pHarrier);
 	pWorld->AddPlayer(pJeep);
@@ -159,8 +159,8 @@ void TestKillBestPractice(void)
 	SStateOnKill	sMaverickBefore;
 	SStateOnKill	sMaverickAfter;
 
-	Ptr<CRedJet>	pRedJetGoose = ONMalloc(CRedJet, "Goose")->Init(pWorld);
-	Ptr<CRedJet>	pRedJetMaverick = ONMalloc(CRedJet, "Maverick")->Init(pWorld);
+	Ptr<CRedJet>	pRedJetGoose = ONMalloc<CRedJet>("Goose", pWorld);
+	Ptr<CRedJet>	pRedJetMaverick = ONMalloc<CRedJet>("Maverick", pWorld);
 
 	pRedJetGoose->SetKillHook(&sGooseBefore, &sGooseAfter);
 	pRedJetMaverick->SetKillHook(&sMaverickBefore, &sMaverickAfter);
@@ -293,13 +293,13 @@ void TestKillCanFindRoot(void)
 
 	pRoot = ORoot();
 
-	pWorld = OMalloc(CGameWorld)->Init();
+	pWorld = OMalloc<CGameWorld>();
 
 	pRoot->Add(pWorld);
 
-	Ptr<CHarrier> pHarrier = ONMalloc(CHarrier, "Harrier")->Init(pWorld);
+	Ptr<CHarrier> pHarrier = ONMalloc<CHarrier>("Harrier", pWorld);
 
-	Ptr<CJeep> pJeep = ONMalloc(CJeep, "Jeep")->Init(pWorld);
+	Ptr<CJeep> pJeep = ONMalloc<CJeep>("Jeep", pWorld);
 
 	pWorld->AddPlayer(pHarrier);
 	pWorld->AddPlayer(pJeep);
@@ -317,8 +317,8 @@ void TestKillCanFindRoot(void)
 	SStateOnKill	sMaverickBefore;
 	SStateOnKill	sMaverickAfter;
 
-	Ptr<CRedJet>	pRedJetGoose = ONMalloc(CRedJet, "Goose")->Init(pWorld);
-	Ptr<CRedJet>	pRedJetMaverick = ONMalloc(CRedJet, "Maverick")->Init(pWorld);
+	Ptr<CRedJet>	pRedJetGoose = ONMalloc<CRedJet>("Goose", pWorld);
+	Ptr<CRedJet>	pRedJetMaverick = ONMalloc<CRedJet>("Maverick", pWorld);
 
 	pRedJetGoose->SetKillHook(&sGooseBefore, &sGooseAfter);
 	pRedJetMaverick->SetKillHook(&sMaverickBefore, &sMaverickAfter);

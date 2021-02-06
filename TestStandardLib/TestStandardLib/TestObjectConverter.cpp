@@ -46,30 +46,30 @@ Ptr<CTestDoubleNamedString> SetupObjectConverterChunkFile(void)
 
 	cRoot = ORoot();
 
-	cDiamond = ONMalloc(CTestNamedString, "Diamond End");
+	cDiamond = ONMalloc<CTestNamedString>("Diamond End");
 	AssertLongLongInt(3LL, cDiamond->GetOI());
 
-	cNS1 = ONMalloc(CTestNamedString, "NamedString 1");
+	cNS1 = ONMalloc<CTestNamedString>("NamedString 1");
 	AssertLongLongInt(4, cNS1->GetOI());
-	sz1 = OMalloc(CString);
+	sz1 = OMalloc<CString>();
 
 	cNS1->Init(sz1, cDiamond, "Hello");
 	sz1->Init("World");
 
-	cNS2 = ONMalloc(CTestNamedString, "NamedString 2");
+	cNS2 = ONMalloc<CTestNamedString>("NamedString 2");
 	AssertLongLongInt(6LL, cNS2->GetOI());
-	sz2 = OMalloc(CString);
+	sz2 = OMalloc<CString>();
 
 	cNS2->Init(sz2, cDiamond, "12345");
 	sz2->Init("6789");
 
-	sz3 = OMalloc(CString);
+	sz3 = OMalloc<CString>();
 	sz3->Init("End");
 	cDiamond->Init(sz3, ONull, "Before Swine");
 
-	sz4 = OMalloc(CString);
+	sz4 = OMalloc<CString>();
 	sz4->Init("Start");
-	cDouble = ONMalloc(CTestDoubleNamedString, "Double Start");
+	cDouble = ONMalloc<CTestDoubleNamedString>("Double Start");
 	cDouble->Init(sz4, cNS1, ONull);
 
 	cRoot->Add(cDouble);
@@ -292,20 +292,20 @@ Ptr<CTestDoubleNamedString> SetupObjectConverterChunkFile2(void)
 
 	cRoot = ORoot();
 
-	cDiamond = ONMalloc(CTestNamedString, "Diamond");
+	cDiamond = ONMalloc<CTestNamedString>("Diamond");
 
-	cNS1 = ONMalloc(CTestNamedString, "NS1");
+	cNS1 = ONMalloc<CTestNamedString>("NS1");
 	cNS1->Init(ONull, cDiamond, "NS1");
 
-	cNS2 = ONMalloc(CTestNamedString, "NS2");
+	cNS2 = ONMalloc<CTestNamedString>("NS2");
 	cNS2->Init(ONull, cDiamond, "NS2");
 
-	cNS3 = ONMalloc(CTestNamedString, "NS3");
+	cNS3 = ONMalloc<CTestNamedString>("NS3");
 	cNS3->Init(ONull, cNS1, "NS3");
 
 	cDiamond->Init(ONull, ONull, "Diamond");
 
-	cDouble = ONMalloc(CTestDoubleNamedString, "Double");
+	cDouble = ONMalloc<CTestDoubleNamedString>("Double");
 	cDouble->Init(ONull, cNS2, cNS3);
 
 	cRoot->Add(cDouble);

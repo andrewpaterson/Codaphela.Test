@@ -15,14 +15,14 @@ public:
 	CChars		mszString;
 	int			mx;
 
-	Ptr<CTestWithArray>	Init(char* szString, int x);
-	void				Class(void);
-	void				Free(void);
+	void	Init(const char* szString, int x);
+	void	Class(void);
+	void	Free(void);
 
-	void				Add(CPointer& pcObject);
+	void	Add(CPointer& pcObject);
 
-	BOOL				Save(CObjectSerialiser* pcFile);
-	BOOL				Load(CObjectDeserialiser* pcFile);
+	BOOL	Save(CObjectSerialiser* pcFile);
+	BOOL	Load(CObjectDeserialiser* pcFile);
 };
 
 
@@ -34,12 +34,12 @@ public:
 	int my; 
 	int mz;
 
-	Ptr<CTestInteger>	Init(int x, int y, int z);
-	void				Class(void);
-	void				Free(void);
+	void	Init(int x, int y, int z);
+	void	Class(void);
+	void	Free(void);
 
-	BOOL				Save(CObjectSerialiser* pcFile);
-	BOOL				Load(CObjectDeserialiser* pcFile);
+	BOOL	Save(CObjectSerialiser* pcFile);
+	BOOL	Load(CObjectDeserialiser* pcFile);
 };
 
 
@@ -51,13 +51,13 @@ public:
 	Ptr<CTestNamedString>	mpAnother;
 	CChars					mszEmbedded;
 
-	Ptr<CTestNamedString>	Init(void);
-	Ptr<CTestNamedString>	Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, char* szEmbedded);
-	void					Class(void);
-	void					Free(void);
+	void	Init(void);
+	void	Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, const char* szEmbedded);
+	void	Class(void);
+	void	Free(void);
 
-	BOOL					Save(CObjectSerialiser* pcFile);
-	BOOL					Load(CObjectDeserialiser* pcFile);
+	BOOL	Save(CObjectSerialiser* pcFile);
+	BOOL	Load(CObjectDeserialiser* pcFile);
 };
 
 
@@ -69,13 +69,13 @@ public:
 	Ptr<CTestNamedString>	mpSplit2;
 	Ptr<CTestNamedString>	mpSplit1;
 
-	Ptr<CTestDoubleNamedString>	Init(void);
-	Ptr<CTestDoubleNamedString>	Init(Ptr<CString> szString, Ptr<CTestNamedString> pSplit2, Ptr<CTestNamedString> pSplit1);
-	void						Class(void);
-	void						Free(void);
+	void	Init(void);
+	void	Init(Ptr<CString> szString, Ptr<CTestNamedString> pSplit2, Ptr<CTestNamedString> pSplit1);
+	void	Class(void);
+	void	Free(void);
 
-	BOOL						Save(CObjectSerialiser* pcFile);
-	BOOL						Load(CObjectDeserialiser* pcFile);
+	BOOL	Save(CObjectSerialiser* pcFile);
+	BOOL	Load(CObjectDeserialiser* pcFile);
 };
 
 

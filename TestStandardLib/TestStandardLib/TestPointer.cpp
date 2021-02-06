@@ -18,14 +18,14 @@ void TestPointerNegation(void)
 	Ptr<CTestObject>	pcObject;
 	CPointer			pcBase;
 
-	pcObject = OMalloc(CTestObject);
+	pcObject = OMalloc<CTestObject>();
 	pcObject->Init(NULL);
 	AssertFalse(!pcObject);
 
 	pcObject = NULL;
 	AssertTrue(!pcObject);
 
-	pcBase = OMalloc(CTestObject);
+	pcBase = OMalloc<CTestObject>();
 	((CTestObject*)&pcBase)->Init(NULL);
 	AssertFalse(!pcBase);
 
@@ -62,7 +62,7 @@ void TestPointerDestructorDestruct(STestObjectFreedNotifier* psFreedNotifier)
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
 	cTestObject.Init(NULL);
-	cTestObject.mpTest = OMalloc(CTestObject)->Init(psFreedNotifier);
+	cTestObject.mpTest = OMalloc<CTestObject>(psFreedNotifier);
 
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 	//cTestObject Destructor called here.  It should cause the allocated object it points to to be destroyed too.
@@ -95,7 +95,7 @@ void TestPointerDestructor(void)
 void TestPointerStackToEmbeddedDestruct(void)
 {
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
-	Ptr<CEmbeddedContainer> pMissile = OMalloc(CEmbeddedContainer);
+	Ptr<CEmbeddedContainer> pMissile = OMalloc<CEmbeddedContainer>();
 
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 }
@@ -124,7 +124,7 @@ void TestPointerAssignmentSimple()
 {
 	ObjectsInit();
 
-	Ptr<CTestWithArray>	pcObject1 = ONMalloc(CTestWithArray, "Urgle-burgle")->Init("Warning", 17);
+	Ptr<CTestWithArray>	pcObject1 = ONMalloc<CTestWithArray>("Urgle-burgle", "Warning", 17);
 
 	AssertNotNull(&pcObject1);
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
@@ -141,8 +141,8 @@ void TestPointerAssignmentStackToObjectPointer()
 {
 	ObjectsInit();
 
-	Ptr<CTestInteger>		pInteger = OMalloc(CTestInteger)->Init(6, 7, 6);
-	Ptr<CTestNamedString>	pObject = ONMalloc(CTestNamedString, "Urgle-burgle")->Init(NULL, pInteger, "Embedded");
+	Ptr<CTestInteger>		pInteger = OMalloc<CTestInteger>(6, 7, 6);
+	Ptr<CTestNamedString>	pObject = ONMalloc<CTestNamedString>("Urgle-burgle", ONull, pInteger, "Embedded");
 
 	AssertLongLongInt(2, gcObjects.GetStackPointers()->UsedPointers());
 
@@ -166,10 +166,9 @@ void TestPointerAssignmentObjectToObjectPointer()
 {
 	ObjectsInit();
 
-	Ptr<CTestNamedString>	pObject = ONMalloc(CTestNamedString, "Urgle-burgle");
-	Ptr<CTestInteger>		pInteger = OMalloc(CTestInteger);
+	Ptr<CTestNamedString>	pObject = ONMalloc<CTestNamedString>("Urgle-burgle");
+	Ptr<CTestInteger>		pInteger = OMalloc<CTestInteger>(6, 7, 6);
 
-	pInteger->Init(6, 7, 6);
 	pObject->Init(NULL, pInteger, "Embedded");
 
 	AssertLongLongInt(2, gcObjects.GetStackPointers()->UsedPointers());
@@ -199,8 +198,8 @@ void TestPointerHeapNotInGraphFreeStack(void)
 	CTestObject*				pcTest1;
 	CTestObject*				pcTest2;
 
-	Ptr<CTestObject> pTest1 = OMalloc(CTestObject)->Init(&sNotifier1);
-	Ptr<CTestObject> pTest2 = OMalloc(CTestObject)->Init(&sNotifier2);
+	Ptr<CTestObject> pTest1 = OMalloc<CTestObject>(&sNotifier1);
+	Ptr<CTestObject> pTest2 = OMalloc<CTestObject>(&sNotifier2);
 
 	AssertInt(0, pTest1->NumHeapFroms());
 	AssertInt(1, pTest1->NumStackFroms());

@@ -45,8 +45,8 @@ void TestObjectFreeing(void)
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase);
 
-	pTest1 = OMalloc(CTestObject);
-	pTest2 = OMalloc(CTestObject);
+	pTest1 = OMalloc<CTestObject>();
+	pTest2 = OMalloc<CTestObject>();
 
 	AssertNotNull(&pTest1);
 	AssertNotNull(&pTest2);

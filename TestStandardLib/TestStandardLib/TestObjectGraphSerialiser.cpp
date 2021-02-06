@@ -19,34 +19,29 @@ void TestObjectGraphSerialiserReachability(void)
 	Ptr<CTestSaveableObject1>	pTest1c;
 	Ptr<CTestSaveableObject2>	pTest2a;
 	Ptr<CTestSaveableObject2>	pTest2b;
-	CObjectGraphSerialiser			cGraphSerialiser;
-	CObjectWriterSimple				cSimpleWriter;
-	char							szDirectory[] = "Output" _FS_ "GraphWriter" _FS_ "Data";
-	BOOL							bResult;
+	CObjectGraphSerialiser		cGraphSerialiser;
+	CObjectWriterSimple			cSimpleWriter;
+	char						szDirectory[] = "Output" _FS_ "GraphWriter" _FS_ "Data";
+	BOOL						bResult;
 
 	cFileUtil.RemoveDir(szDirectory);
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	pTest1a = ONMalloc(CTestSaveableObject1, "Test1/OneA");
-	pTest1a->Init();
+	pTest1a = ONMalloc<CTestSaveableObject1>("Test1/OneA");
 	pTest1a->mszString.Append("I'm a real string now.");
 	pTest1a->miInt = 19;
 
-	pTest1b = ONMalloc(CTestSaveableObject1, "Test1/OneB");
-	pTest1b->Init();
+	pTest1b = ONMalloc<CTestSaveableObject1>("Test1/OneB");
 	pTest1b->mszString.Append("More Testing!");
 	pTest1b->miInt = 2;
 
-	pTest1c = ONMalloc(CTestSaveableObject1, "Test1/Miscellaneous/OneC");
-	pTest1c->Init();
+	pTest1c = ONMalloc<CTestSaveableObject1>("Test1/Miscellaneous/OneC");
 	pTest1c->mszString.Append("Ur-Quan");
 	pTest1c->miInt = -1;
 
-	pTest2a = ONMalloc(CTestSaveableObject2, "Test2/TwoAye");
-	pTest2a->Init("Hello");
+	pTest2a = ONMalloc<CTestSaveableObject2>("Test2/TwoAye", "Hello");
 
-	pTest2b = ONMalloc(CTestSaveableObject2, "Test2/TowBee");
-	pTest2b->Init("World");
+	pTest2b = ONMalloc<CTestSaveableObject2>("Test2/TowBee", "World");
 
 	pTest2a->mp1 = pTest1a;
 	pTest2a->mp2 = pTest2b;

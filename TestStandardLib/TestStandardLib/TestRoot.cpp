@@ -25,7 +25,7 @@ void TestRootDistance(void)
 	AssertInt(ROOT_DIST_TO_ROOT, pRoot->GetDistToRoot());
 	AssertInt(ROOT_DIST_TO_ROOT+1, pRoot->TestGetSet()->GetDistToRoot());
 	
-	pTest1 = OMalloc(CTestObject);
+	pTest1 = OMalloc<CTestObject>();
 	pTest1->Init(&sKilled1);
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest1->GetDistToRoot());
 
@@ -68,10 +68,10 @@ void TestRootStackPointers(void)
 
 	ObjectsInit();
 
-	pTest1 = OMalloc(CTestObject);
+	pTest1 = OMalloc<CTestObject>();
 	pTest1->Init(&sKilled1);
 
-	pTest3 = OMalloc(CTestObject);
+	pTest3 = OMalloc<CTestObject>();
 	pTest3->Init(&sKilled3);
 
 	pRoot = ORoot();
@@ -79,7 +79,7 @@ void TestRootStackPointers(void)
 	pRoot->Add(pTest1);
 	pRoot->Add(pTest3);
 
-	pTest2 = OMalloc(CTestObject);
+	pTest2 = OMalloc<CTestObject>();
 	pTest2->Init(&sKilled2);
 	
 	pTest1->mpTest = pTest2;
@@ -172,13 +172,13 @@ void TestRootGraphRemoveSimple(void)
 	ObjectsInit();
 	pRoot = ORoot();
 	
-	pTest2 = OMalloc(CTestObject);
-	pTest3 = OMalloc(CTestObject);
-	pTest4 = OMalloc(CTestObject);
-	pTest5 = OMalloc(CTestObject);
-	pSet = OMalloc(CSetObject);
-	pTop1 = OMalloc(CTestObject);
-	pTop2 = OMalloc(CTestObject);
+	pTest2 = OMalloc<CTestObject>();
+	pTest3 = OMalloc<CTestObject>();
+	pTest4 = OMalloc<CTestObject>();
+	pTest5 = OMalloc<CTestObject>();
+	pSet = OMalloc<CSetObject>();
+	pTop1 = OMalloc<CTestObject>();
+	pTop2 = OMalloc<CTestObject>();
 
 	pTest2->Init(&sKilled2);
 	pTest3->Init(&sKilled3);
@@ -474,13 +474,13 @@ void TestRootGraphRemoveComplex(void)
 	ObjectsInit();
 	pRoot = ORoot();
 	
-	pTest2 = OMalloc(CTestObject);
-	pTest3 = OMalloc(CTestObject);
-	pTest4 = OMalloc(CTestObject);
-	pTest5 = OMalloc(CTestObject);
-	pSet = OMalloc(CSetObject);
-	pTop1 = OMalloc(CTestObject);
-	pTop2 = OMalloc(CTestObject);
+	pTest2 = OMalloc<CTestObject>();
+	pTest3 = OMalloc<CTestObject>();
+	pTest4 = OMalloc<CTestObject>();
+	pTest5 = OMalloc<CTestObject>();
+	pSet = OMalloc<CSetObject>();
+	pTop1 = OMalloc<CTestObject>();
+	pTop2 = OMalloc<CTestObject>();
 
 	pTest2->Init(&sKilled2);
 	pTest3->Init(&sKilled3);
@@ -577,7 +577,7 @@ void TestRootGraphRemoveComplex(void)
 	//      Root(0)
 
 
-	pTest5 = OMalloc(CTestObject);
+	pTest5 = OMalloc<CTestObject>();
 	pTest5->Init(&sKilled5);
 	pTest4->mpTest = pTest5;
 	pTest5->mpTest = pTop1;
@@ -669,14 +669,14 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	ObjectsInit();
 	pRoot = ORoot();
 	
-	pTest1 = OMalloc(CTestObject);
-	pTest2 = OMalloc(CTestObject);
-	pTest3 = OMalloc(CTestObject);
-	pTest4 = OMalloc(CTestObject);
-	pTest5 = OMalloc(CTestObject);
-	pSet = OMalloc(CSetObject);
-	pTop1 = OMalloc(CTestObject);
-	pTop2 = OMalloc(CTestObject);
+	pTest1 = OMalloc<CTestObject>();
+	pTest2 = OMalloc<CTestObject>();
+	pTest3 = OMalloc<CTestObject>();
+	pTest4 = OMalloc<CTestObject>();
+	pTest5 = OMalloc<CTestObject>();
+	pSet = OMalloc<CSetObject>();
+	pTop1 = OMalloc<CTestObject>();
+	pTop2 = OMalloc<CTestObject>();
 
 	pTest1->Init(&sKilled1);
 	pTest2->Init(&sKilled2);
@@ -801,14 +801,14 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 	ObjectsInit();
 	pRoot = ORoot();
 	
-	pTest1 = OMalloc(CTestObject);
-	pTest2 = OMalloc(CTestObject);
-	pTest3 = OMalloc(CTestObject);
-	pTest4 = OMalloc(CTestObject);
-	pTest5 = OMalloc(CTestObject);
-	pSet = OMalloc(CSetObject);
-	pTop1 = OMalloc(CTestObject);
-	pTop2 = OMalloc(CTestObject);
+	pTest1 = OMalloc<CTestObject>();
+	pTest2 = OMalloc<CTestObject>();
+	pTest3 = OMalloc<CTestObject>();
+	pTest4 = OMalloc<CTestObject>();
+	pTest5 = OMalloc<CTestObject>();
+	pSet = OMalloc<CSetObject>();
+	pTop1 = OMalloc<CTestObject>();
+	pTop2 = OMalloc<CTestObject>();
 
 	pTest1->Init(&sKilled1);
 	pTest2->Init(&sKilled2);
@@ -932,15 +932,15 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	ObjectsInit();
 	pRoot = ORoot();
 	
-	pTest1 = OMalloc(CTestObject);
-	pTest2 = OMalloc(CTestObject);
-	pTest3 = OMalloc(CTestObject);
-	pTest4 = OMalloc(CTestObject);
-	pTest5 = OMalloc(CTestObject);
-	pTest6 = OMalloc(CTestObject);
-	pSet = OMalloc(CSetObject);
-	pTop1 = OMalloc(CTestObject);
-	pTop2 = OMalloc(CTestObject);
+	pTest1 = OMalloc<CTestObject>();
+	pTest2 = OMalloc<CTestObject>();
+	pTest3 = OMalloc<CTestObject>();
+	pTest4 = OMalloc<CTestObject>();
+	pTest5 = OMalloc<CTestObject>();
+	pTest6 = OMalloc<CTestObject>();
+	pSet = OMalloc<CSetObject>();
+	pTop1 = OMalloc<CTestObject>();
+	pTop2 = OMalloc<CTestObject>();
 
 	pTest1->Init(&sKilled1);
 	pTest2->Init(&sKilled2);
@@ -1076,16 +1076,16 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 
 	pRoot = ORoot();
 
-	pTest1 = OMalloc(CTestObject);
-	pTest2 = OMalloc(CTestObject);
-	pTest3 = OMalloc(CTestObject);
-	pTest4 = OMalloc(CTestObject);
-	pTest5 = OMalloc(CTestObject);
-	pTest6 = OMalloc(CTestObject);
-	pTest7 = OMalloc(CTestObject);
-	pTest8 = OMalloc(CTestObject);
-	pTest9 = OMalloc(CTestObject);
-	pTest15 = OMalloc(CTestObject);
+	pTest1 = OMalloc<CTestObject>();
+	pTest2 = OMalloc<CTestObject>();
+	pTest3 = OMalloc<CTestObject>();
+	pTest4 = OMalloc<CTestObject>();
+	pTest5 = OMalloc<CTestObject>();
+	pTest6 = OMalloc<CTestObject>();
+	pTest7 = OMalloc<CTestObject>();
+	pTest8 = OMalloc<CTestObject>();
+	pTest9 = OMalloc<CTestObject>();
+	pTest15 = OMalloc<CTestObject>();
 
 	pTest1->Init(&sFreedNotifier1);
 	pTest2->Init(&sFreedNotifier2);
@@ -1234,18 +1234,18 @@ void TestRootGraphRemoveErrorFromObjectConverter(void)
 
 	cRoot = ORoot();
 
-	sz3 = OMalloc(CString)->Init("End");
-	cDiamond = ONMalloc(CTestNamedString, "Diamond End")->Init(sz3, ONull, "1234");
+	sz3 = OMalloc<CString>("End");
+	cDiamond = ONMalloc<CTestNamedString>("Diamond End", sz3, ONull, "1234");
 
-	sz1 = OMalloc(CString)->Init("World");
-	cNS1 = ONMalloc(CTestNamedString, "NamedString 1")->Init(sz1, cDiamond, "Hello");
+	sz1 = OMalloc<CString>("World");
+	cNS1 = ONMalloc<CTestNamedString>("NamedString 1", sz1, cDiamond, "Hello");
 
-	sz2 = OMalloc(CString)->Init("World");
-	cNS2 = ONMalloc(CTestNamedString, "NamedString 2")->Init(sz2, cDiamond, "Hello");
+	sz2 = OMalloc<CString>("World");
+	cNS2 = ONMalloc<CTestNamedString>("NamedString 2", sz2, cDiamond, "Hello");
 
 
-	sz4 = OMalloc(CString)->Init("Start");
-	cDouble = ONMalloc(CTestDoubleNamedString, "Double Start")->Init(sz4, cNS1, ONull);
+	sz4 = OMalloc<CString>("Start");
+	cDouble = ONMalloc<CTestDoubleNamedString>("Double Start", sz4, cNS1, ONull);
 
 	cRoot->Add(cDouble);
 
@@ -1280,9 +1280,9 @@ void TestRootSetRemoveAll(void)
 	CPointerContainer*			pcContainer1;
 	CPointerContainer*			pcContainer2;
 
-	pObject = OMalloc(CTestObject)->Init(&sFreedNotifier1);
-	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
-	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
+	pObject = OMalloc<CTestObject>(&sFreedNotifier1);
+	pContainer2 = OMalloc<CPointerContainer>(pObject);
+	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
 	pRoot = ORoot();
 	pRoot->Add(pContainer1);
 
@@ -1328,9 +1328,9 @@ void TestRootSetRemoveAll(void)
 //	CPointerContainer*			pcContainer2;
 //	Ptr<CPointerContainer>		pTemp;
 //
-//	pObject = OMalloc(CTestObject)->Init(&sFreedNotifier1);
-//	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
-//	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
+//	pObject = OMalloc<CTestObject>(&sFreedNotifier1);
+//	pContainer2 = OMalloc<CPointerContainer>(pObject);
+//	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
 //	pRoot = ORoot();
 //	pRoot->Add(pContainer1);
 //
@@ -1338,7 +1338,7 @@ void TestRootSetRemoveAll(void)
 //	pcContainer1 = &pContainer1;
 //	pcContainer2 = &pContainer2;
 //
-//	pTemp = OMalloc(CPointerContainer)->Init(pContainer1);
+//	pTemp = OMalloc<CPointerContainer>(pContainer1);
 //
 //	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
 //	AssertLongLongInt(6, gcUnknowns.NumElements());
@@ -1374,9 +1374,9 @@ void TestRootKillWithStackPointers(void)
 	Ptr<CRoot>					pRoot;
 	STestObjectFreedNotifier	sFreedNotifier1;
 
-	pObject = OMalloc(CTestObject)->Init(&sFreedNotifier1);
-	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
-	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
+	pObject = OMalloc<CTestObject>(&sFreedNotifier1);
+	pContainer2 = OMalloc<CPointerContainer>(pObject);
+	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
 	pRoot = ORoot();
 	pRoot->Add(pContainer1);
 
@@ -1415,9 +1415,9 @@ void TestRootKill(void)
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(0, gcUnknowns.NumElements());
 
-	pObject = OMalloc(CTestObject)->Init(&sFreedNotifier1);
-	pContainer2 = OMalloc(CPointerContainer)->Init(pObject);
-	pContainer1 = OMalloc(CPointerContainer)->Init(pContainer2);
+	pObject = OMalloc<CTestObject>(&sFreedNotifier1);
+	pContainer2 = OMalloc<CPointerContainer>(pObject);
+	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
 	pRoot = ORoot();
 	pRoot->Add(pContainer1);
 

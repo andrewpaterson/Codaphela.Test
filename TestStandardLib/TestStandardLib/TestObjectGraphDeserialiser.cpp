@@ -50,12 +50,12 @@ void TestObjectGraphDeserialiserBuildGraph1(void)
 	Ptr<CTestInteger>			cIgnored;
 
 	cRoot = ORoot();
-	cStart1 = ONMalloc(CTestSaveableObject2, "Ow/Start 1")->Init("Battery");
-	cStart2 = ONMalloc(CTestSaveableObject2, "Ow/Start 2")->Init("Charger");
-	cShared = ONMalloc(CTestSaveableObject1, "Ow/Shared")->Init();
-	cString1 = OMalloc(CString)->Init("Black");
-	cString2 = OMalloc(CString)->Init("Jack");
-	cIgnored = OMalloc(CTestInteger)->Init(0, 1, 0);
+	cStart1 = ONMalloc<CTestSaveableObject2>("Ow/Start 1", "Battery");
+	cStart2 = ONMalloc<CTestSaveableObject2>("Ow/Start 2", "Charger");
+	cShared = ONMalloc<CTestSaveableObject1>("Ow/Shared");
+	cString1 = OMalloc<CString>("Black");
+	cString2 = OMalloc<CString>("Jack");
+	cIgnored = OMalloc<CTestInteger>(0, 1, 0);
 	
 	cRoot->Add(cStart1);
 	cRoot->Add(cStart2);
@@ -130,7 +130,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 
 	for (i = 0; i < 20; i++)
 	{
-		szOne = OMalloc(CString);
+		szOne = OMalloc<CString>();
 		szOne->Init("Hello World ");
 		szOne->Append(i);
 		cRoot->Add(szOne);
@@ -159,7 +159,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 
 	for (i = 0; i < 20; i++)
 	{
-		szOne = OMalloc(CString);
+		szOne = OMalloc<CString>();
 		szOne->Init("Hello World ");
 		szOne->Append(i + 20);
 		cRoot->Add(szOne);

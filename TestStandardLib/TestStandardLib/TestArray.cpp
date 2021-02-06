@@ -13,8 +13,8 @@ void TestArrayAdd(void)
 {
 	ObjectsInit();
 
-	Ptr<CArray<CTestSaveableObject1>> pacStuff = OMalloc(CArray<CTestSaveableObject1>)->Init();
-	pacStuff->Add(OMalloc(CTestSaveableObject1)->Init());
+	Ptr<CArray<CTestSaveableObject1>> pacStuff = OMalloc<CArray<CTestSaveableObject1>>();
+	pacStuff->Add(OMalloc<CTestSaveableObject1>());
 
 	Ptr<CTestSaveableObject1> pSaveable = pacStuff->Get(0);
 	AssertTrue(pSaveable.IsNotNull());
@@ -32,9 +32,9 @@ void TestArrayGet(void)
 {
 	ObjectsInit();
 
-	Ptr<CArray<CTestSaveableObject1>> pacStuff = OMalloc(CArray<CTestSaveableObject1>)->Init();
-	pacStuff->Add(OMalloc(CTestSaveableObject1)->Init());
-	Ptr<CTestSaveableObject1> pSaveable = OMalloc(CTestSaveableObject1)->Init();
+	Ptr<CArray<CTestSaveableObject1>> pacStuff = OMalloc<CArray<CTestSaveableObject1>>();
+	pacStuff->Add(OMalloc<CTestSaveableObject1>());
+	Ptr<CTestSaveableObject1> pSaveable = OMalloc<CTestSaveableObject1>();
 	pSaveable->miInt = 3;
 	pacStuff->Add(pSaveable);
 
@@ -54,9 +54,9 @@ void TestArrayInsert(void)
 {
 	ObjectsInit();
 
-	Ptr<CArray<CTestSaveableObject1>> pacStuff = OMalloc(CArray<CTestSaveableObject1>)->Init();
-	pacStuff->Add(OMalloc(CTestSaveableObject1)->Init());
-	Ptr<CTestSaveableObject1> pSaveable = OMalloc(CTestSaveableObject1)->Init();
+	Ptr<CArray<CTestSaveableObject1>> pacStuff = OMalloc<CArray<CTestSaveableObject1>>();
+	pacStuff->Add(OMalloc<CTestSaveableObject1>());
+	Ptr<CTestSaveableObject1> pSaveable = OMalloc<CTestSaveableObject1>();
 	pSaveable->miInt = 3;
 	pacStuff->Insert(0, pSaveable);
 
@@ -76,14 +76,14 @@ void TestArrayAddAll(void)
 {
 	ObjectsInit();
 
-	Ptr<CArray<CTestSaveableObject1>> pacStuff = OMalloc(CArray<CTestSaveableObject1>)->Init();
-	pacStuff->Add(OMalloc(CTestSaveableObject1)->Init());
-	Ptr<CTestSaveableObject1> pSaveable = OMalloc(CTestSaveableObject1)->Init();
+	Ptr<CArray<CTestSaveableObject1>> pacStuff = OMalloc<CArray<CTestSaveableObject1>>();
+	pacStuff->Add(OMalloc<CTestSaveableObject1>());
+	Ptr<CTestSaveableObject1> pSaveable = OMalloc<CTestSaveableObject1>();
 	pSaveable->miInt = 3;
 	pacStuff->Insert(0, pSaveable);
 
-	Ptr<CArray<CTestSaveableObject1>> pacMore = OMalloc(CArray<CTestSaveableObject1>)->Init();
-	pSaveable = OMalloc(CTestSaveableObject1)->Init();
+	Ptr<CArray<CTestSaveableObject1>> pacMore = OMalloc<CArray<CTestSaveableObject1>>();
+	pSaveable = OMalloc<CTestSaveableObject1>();
 	pSaveable->miInt = 5;
 
 	AssertInt(0, pSaveable->NumHeapFroms());
@@ -112,14 +112,14 @@ void TestArrayRemove(void)
 
 	Ptr<CRoot> pRoot = ORoot();
 
-	Ptr<CArray<CTestSaveableObject1>> pacStuff = OMalloc(CArray<CTestSaveableObject1>)->Init();
+	Ptr<CArray<CTestSaveableObject1>> pacStuff = OMalloc<CArray<CTestSaveableObject1>>();
 	pRoot->Add(pacStuff);
 
-	pacStuff->Add(OMalloc(CTestSaveableObject1)->Init());
-	Ptr<CTestSaveableObject1> pSaveable = OMalloc(CTestSaveableObject1)->Init();
+	pacStuff->Add(OMalloc<CTestSaveableObject1>());
+	Ptr<CTestSaveableObject1> pSaveable = OMalloc<CTestSaveableObject1>();
 	pSaveable->miInt = 3;
 	pacStuff->Insert(0, pSaveable);
-	pSaveable = OMalloc(CTestSaveableObject1)->Init();
+	pSaveable = OMalloc<CTestSaveableObject1>();
 	pSaveable->miInt = 5;
 	pacStuff->Insert(0, pSaveable);
 

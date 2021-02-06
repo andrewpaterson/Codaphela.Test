@@ -4,15 +4,15 @@
 #include "ObjectWriterChunkedTestClasses.h"
 
 
-Ptr<CTestWithArray> CTestWithArray::Init(char* szString, int x)
+void CTestWithArray::Init(const char* szString, int x)
 {
 	PreInit();
-	mcArray = OMalloc(CArrayObject)->Init();
+	mcArray = OMalloc<CArrayObject>();
 	mszString.Init(szString);
 	mx = x;
 	PostInit();
-	return Ptr<CTestWithArray>(this);
 }
+
 
 void CTestWithArray::Class(void)
 {
@@ -20,15 +20,18 @@ void CTestWithArray::Class(void)
 	Pointer(mcArray.This());
 }
 
+
 void CTestWithArray::Free(void)
 {
 	mszString.Kill();
 }
 
+
 void CTestWithArray::Add(CPointer& pcObject)
 {
 	mcArray->Add(pcObject);
 }
+
 
 BOOL CTestWithArray::Save(CObjectSerialiser* pcFile)
 {
@@ -37,6 +40,7 @@ BOOL CTestWithArray::Save(CObjectSerialiser* pcFile)
 	ReturnOnFalse(pcFile->WriteInt(mx));
 	return TRUE;
 }
+
 
 BOOL CTestWithArray::Load(CObjectDeserialiser* pcFile)
 {
@@ -47,7 +51,7 @@ BOOL CTestWithArray::Load(CObjectDeserialiser* pcFile)
 }
 
 
-Ptr<CTestInteger> CTestInteger::Init(int x, int y, int z)
+void CTestInteger::Init(int x, int y, int z)
 {
 	PreInit();
 	mx = x;
@@ -55,8 +59,8 @@ Ptr<CTestInteger> CTestInteger::Init(int x, int y, int z)
 	mz = z;
 
 	PreInit();
-	return Ptr<CTestInteger>(this);
 }
+
 
 void CTestInteger::Class(void)
 {
@@ -68,6 +72,7 @@ void CTestInteger::Free(void)
 {
 }
 
+
 BOOL CTestInteger::Save(CObjectSerialiser* pcFile)
 {
 	ReturnOnFalse(pcFile->WriteInt(mx));
@@ -75,6 +80,7 @@ BOOL CTestInteger::Save(CObjectSerialiser* pcFile)
 	ReturnOnFalse(pcFile->WriteInt(mz));
 	return TRUE;
 }
+
 
 BOOL CTestInteger::Load(CObjectDeserialiser* pcFile)
 {
@@ -85,28 +91,25 @@ BOOL CTestInteger::Load(CObjectDeserialiser* pcFile)
 }
 
 
-Ptr<CTestNamedString> CTestNamedString::Init(void)
+void CTestNamedString::Init(void)
 {
 	PreInit();
 	mszString = NULL;
 	mpAnother = NULL;
 	mszEmbedded.Zero();
-
 	PostInit();
-	return Ptr<CTestNamedString>(this);
 }
 
 
-Ptr<CTestNamedString> CTestNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, char* szEmbedded)
+void CTestNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, const char* szEmbedded)
 {
 	PreInit();
 	mszString = szString;
 	mpAnother = pAnother;
 	mszEmbedded.Init(szEmbedded);
-
 	PostInit();
-	return Ptr<CTestNamedString>(this);
 }
+
 
 void CTestNamedString::Class(void)
 {
@@ -115,9 +118,11 @@ void CTestNamedString::Class(void)
 	Pointer(mpAnother.This());
 }
 
+
 void CTestNamedString::Free(void)
 {
 }
+
 
 BOOL CTestNamedString::Save(CObjectSerialiser* pcFile)
 {
@@ -126,6 +131,7 @@ BOOL CTestNamedString::Save(CObjectSerialiser* pcFile)
 	ReturnOnFalse(mszEmbedded.WriteString(pcFile));
 	return TRUE;
 }
+
 
 BOOL CTestNamedString::Load(CObjectDeserialiser* pcFile)
 {
@@ -136,27 +142,25 @@ BOOL CTestNamedString::Load(CObjectDeserialiser* pcFile)
 }
 
 
-Ptr<CTestDoubleNamedString> CTestDoubleNamedString::Init(void)
+void CTestDoubleNamedString::Init(void)
 {
 	PreInit();
 	mszString = ONull;
 	mpSplit1 = ONull;
 	mpSplit2 = ONull;
-
 	PostInit();
-	return Ptr<CTestDoubleNamedString>(this);
 }
 
-Ptr<CTestDoubleNamedString> CTestDoubleNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pSplit2, Ptr<CTestNamedString> pSplit1)
+
+void CTestDoubleNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pSplit2, Ptr<CTestNamedString> pSplit1)
 {
 	PreInit();
 	mszString = szString;
 	mpSplit1 = pSplit1;
 	mpSplit2 = pSplit2;
-
 	PostInit();
-	return Ptr<CTestDoubleNamedString>(this);
 }
+
 
 void CTestDoubleNamedString::Class(void)
 {
@@ -166,9 +170,11 @@ void CTestDoubleNamedString::Class(void)
 	Pointer(mpSplit2.This());
 }
 
+
 void CTestDoubleNamedString::Free(void)
 {
 }
+
 
 BOOL CTestDoubleNamedString::Save(CObjectSerialiser* pcFile)
 {
@@ -177,6 +183,7 @@ BOOL CTestDoubleNamedString::Save(CObjectSerialiser* pcFile)
 	ReturnOnFalse(pcFile->WritePointer(mpSplit2));
 	return TRUE;
 }
+
 
 BOOL CTestDoubleNamedString::Load(CObjectDeserialiser* pcFile)
 {
