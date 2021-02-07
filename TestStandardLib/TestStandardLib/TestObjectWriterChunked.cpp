@@ -119,6 +119,7 @@ void TestObjectWriterChunkedSerialised(void)
 	AssertTrue(cChunkFile.ReadClose());
 	cChunkFile.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 	MemoryKill();
 

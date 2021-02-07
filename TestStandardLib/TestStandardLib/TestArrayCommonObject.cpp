@@ -73,6 +73,7 @@ void TestArrayCommonPointerRemapping(void)
 	AssertInt(2, pObject3->NumHeapFroms());
 	AssertInt(0, pObject3->NumPointerTos());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 

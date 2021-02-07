@@ -90,7 +90,7 @@ void TestNamedObjectName(void)
 	pcSet = pRoot->TestGetSet();
 	oiSet = pcSet->GetOI();
 
-	gcObjects.Flush();
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();
@@ -124,6 +124,7 @@ void TestNamedObjectName(void)
 	AssertLongLongInt(oiNamed3, pResult3.GetIndex());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pResult3.GetDistToRoot());
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();
@@ -150,6 +151,7 @@ void TestNamedOjectKill(void)
 	//Trying to test that FreeIdentifiers is called and that mon is freed.
 	pNamedObject->Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 	MemoryKill();
 }

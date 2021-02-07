@@ -17,7 +17,8 @@ CONSTRUCTABLE(CTestObject);
 public:
 	CPointer					mpObject;
 	Ptr<CTestObject>			mpTest;
-	STestObjectFreedNotifier*	mpsKilledNotifier;
+	int							mi;
+	STestObjectFreedNotifier*	mpsFreedNotifier;
 
 	void	Init(void);
 	void	Init(STestObjectFreedNotifier* psKilledNotifier);
@@ -39,7 +40,7 @@ public:
 	CPointer					mpObject1;
 	CPointer					mpObject2;
 	CPointer					mpObject3;
-	STestObjectFreedNotifier*	mpsKilledNotifier;
+	STestObjectFreedNotifier*	mpsFreedNotifier;
 
 	void	Init(void);
 	void	Init(STestObjectFreedNotifier* psKilledNotifier);

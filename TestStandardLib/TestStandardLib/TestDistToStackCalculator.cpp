@@ -63,6 +63,7 @@ void TestDistToStackSimpleOneStep(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -126,6 +127,7 @@ void TestDistToStackSimpleTwoStep(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -205,6 +207,7 @@ void TestDistToStackSimpleHeap(void)
 
 	cParameters.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -274,6 +277,7 @@ void TestDistToStackRootCyclicWithStackPointerA(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -341,6 +345,7 @@ void TestDistToStackRootCyclicWithStackPointerB(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -408,6 +413,7 @@ void TestDistToStackRootCyclicWithStackPointerC(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -493,6 +499,7 @@ void TestDistToStackRootCyclicWithoutStackPointer(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -584,6 +591,7 @@ void TestDistToStackSplitRootAndStack(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -645,6 +653,7 @@ void TestDistToStackSetWithoutStackPointers(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -707,6 +716,7 @@ void TestDistToStackSetWithStackPointers(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -812,6 +822,7 @@ void TestDistToStackSetBroken(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -861,6 +872,7 @@ void TestDistToStackNoStackHeapFromBroken(void)
 	AssertInt(1, pcTest2->NumStackFroms());
 	AssertInt(1, pcTest2->NumPointerTos());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -921,6 +933,7 @@ void TestDistToStackNoHeapA(void)
 	AssertInt(1, pcTest2->NumStackFroms());
 	AssertInt(0, pcTest2->NumPointerTos());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -976,6 +989,7 @@ void TestDistToStackNoHeapB(void)
 	AssertInt(1, pcTest2->NumStackFroms());
 	AssertInt(0, pcTest2->NumPointerTos());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1034,6 +1048,7 @@ void TestDistToStackNoHeapC(void)
 	AssertInt(0, pcTest2->NumStackFroms());
 	AssertInt(0, pcTest2->NumPointerTos());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1193,6 +1208,7 @@ void TestDistToStackCyclicWithScenarioA(void)
 	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
 	cParameters.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1328,6 +1344,7 @@ void TestDistToStackRemoveUnbalancedLargeBroken(void)
 
 	cParameters.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 

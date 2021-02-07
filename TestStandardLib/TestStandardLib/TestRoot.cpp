@@ -42,6 +42,7 @@ void TestRootDistance(void)
 	pcFrom = pcFrom->GetHeapFrom(0);  //Root
 	AssertInt(0, pcFrom->GetDistToRoot());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -144,6 +145,7 @@ void TestRootStackPointers(void)
 	AssertTrue( sKilled3.bFreed);
 	AssertFalse(sKilled2.bFreed);
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -445,6 +447,7 @@ void TestRootGraphRemoveSimple(void)
 	pRoot->RemoveAll();
 	AssertTrue(sKilled2.bFreed);
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -638,6 +641,7 @@ void TestRootGraphRemoveComplex(void)
 	AssertTrue(sKilledTop1.bFreed);
 	AssertTrue(sKilledTop2.bFreed);
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -771,6 +775,7 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	//    ...
 	//   Root(0)
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -899,6 +904,7 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 	//    ...
 	//   Root(0)
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1039,6 +1045,7 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	//   Root(0)
 	//
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1210,6 +1217,7 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1259,6 +1267,7 @@ void TestRootGraphRemoveErrorFromObjectConverter(void)
 	AssertInt(3, cNS2->GetDistToRoot());
 	AssertInt(4, cDiamond->GetDistToRoot());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1306,6 +1315,7 @@ void TestRootSetRemoveAll(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcObject->GetDistToRoot());
 	AssertFalse(pcObject->CanFindRoot());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1356,6 +1366,7 @@ void TestRootSetRemoveAll(void)
 //	AssertInt(UNATTACHED_DIST_TO_ROOT, pcObject->GetDistToRoot());
 //	AssertFalse(pcObject->CanFindRoot());
 //
+//	ObjectsFlush();
 //	ObjectsKill();
 //}
 
@@ -1394,6 +1405,7 @@ void TestRootKillWithStackPointers(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pContainer1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pContainer2->GetDistToRoot());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1442,6 +1454,7 @@ void TestRootKill(void)
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcUnknowns.NumElements());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 

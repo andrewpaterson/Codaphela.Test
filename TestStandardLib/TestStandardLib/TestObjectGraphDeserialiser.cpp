@@ -104,6 +104,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	cBase = gcObjects.Get("Ow/Start 1");
 	AssertTrue(cBase.IsNotNull());
 	AssertLongLongInt(3, cBase->GetOI());
+	AssertString("Ow/Start 1", cBase.GetName());
 	cString1 = gcObjects.Get(6LL);
 	AssertString("Black", cString1->Text());
 	AssertLongLongInt(6LL, cString1->GetOI());
@@ -116,6 +117,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	cGraphSerialiser.Kill();
 	pcWriter->Kill();
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();
@@ -134,7 +136,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 		szOne->Init("Hello World ");
 		szOne->Append(i);
 		cRoot->Add(szOne);
-		AssertLongLongInt(3+i, szOne->GetOI());
+		AssertLongLongInt(1+i, szOne->GetOI());
 	}
 
 	cAllocator.Init(&gcObjects);
@@ -142,17 +144,17 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	cGraphDeserialiser.Init(pcReader, FALSE, &cAllocator, &cDependentReadObjects, gcObjects.GetMemory());
 	cStart1 = cGraphDeserialiser.Read("Ow/Start 1");
 	AssertTrue(cStart1.IsNotNull());
-	AssertLongLongInt(23, cStart1->GetOI());
+	AssertLongLongInt(21, cStart1->GetOI());
 
 	AssertTrue(cStart1->mp1.IsNotNull());
 	AssertString("CTestSaveableObject1", cStart1->mp1->ClassName());
 	cShared = cStart1->mp1;
-	AssertLongLongInt(25, cShared->GetOI());
+	AssertLongLongInt(23, cShared->GetOI());
 
 	AssertTrue(cStart1->mp2.IsNotNull());
 	AssertString("CString", cStart1->mp2->ClassName());
 	cString1 = cStart1->mp2;
-	AssertLongLongInt(24, cString1->GetOI());
+	AssertLongLongInt(22, cString1->GetOI());
 	cGraphDeserialiser.Kill();
 	cDependentReadObjects.Kill();
 	cAllocator.Kill();
@@ -163,11 +165,12 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 		szOne->Init("Hello World ");
 		szOne->Append(i + 20);
 		cRoot->Add(szOne);
-		AssertLongLongInt(26+i, szOne->GetOI());
+		AssertLongLongInt(24+i, szOne->GetOI());
 	}
 
 	pcReader->Kill();
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();
@@ -282,6 +285,7 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	AssertInt(2, cOwStart1->GetDistToRoot());
 	AssertInt(3, cShared->GetDistToRoot());
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();
@@ -357,6 +361,7 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	cObject = gcObjects.Get(cOwStart2->GetOI());
 	AssertPointer(&cOwStart2, &cObject);
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();

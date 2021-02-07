@@ -129,9 +129,9 @@ void TestObjectsObjectSave(void)
 	AssertTrue(pDouble.IsDirty());
 	Pass();
 	
-	bResult = gcObjects.Save(pDouble.BaseObject());
+	bResult = pDouble.BaseObject()->Flush();
 	AssertTrue(bResult);
-	AssertTrue(pDouble.IsDirty());  //This object is *still* dirty after save.  Almost no objects will answer true to IsDirty.
+	AssertTrue(pDouble.IsDirty());
 
 	AssertLongLongInt(1, pcDatabase->NumIndices());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
@@ -142,7 +142,7 @@ void TestObjectsObjectSave(void)
 	AssertLongLongInt(1, pcDatabase->NumDataCached());
 	Pass();
 
-	bResult = gcObjects.Save(pDouble.BaseObject());
+	bResult = pDouble.BaseObject()->Flush();
 	AssertTrue(bResult);
 	AssertLongLongInt(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
@@ -153,7 +153,7 @@ void TestObjectsObjectSave(void)
 	pDouble->mszString = OMalloc<CString>();
 	pDouble->mszString->Init("A String");
 
-	bResult = gcObjects.Save(pDouble.BaseObject());
+	bResult = pDouble.BaseObject()->Flush();
 	AssertTrue(bResult);
 	AssertLongLongInt(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
@@ -166,7 +166,7 @@ void TestObjectsObjectSave(void)
 
 	iSerialisedSize = pDouble->SerialisedSize();
 	AssertInt(118, iSerialisedSize);
-	bResult = gcObjects.Save(pDouble.BaseObject());
+	bResult = pDouble.BaseObject()->Flush();
 	AssertTrue(bResult);
 	AssertLongLongInt(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
@@ -207,7 +207,7 @@ void TestObjectsFlushNoClear(void)
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 	
-	bResult = gcObjects.Flush();
+	bResult = ObjectsFlush();
 	AssertTrue(bResult);
 
 	AssertLongLongInt(9, pcDatabase->NumIndices());
@@ -284,7 +284,7 @@ void TestObjectsFlushDurable(void)
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 
-	bResult = gcObjects.Flush();
+	bResult = ObjectsFlush();
 	AssertTrue(bResult);
 
 	AssertLongLongInt(9, pcDatabase->NumIndices());
@@ -336,7 +336,7 @@ void TestObjectsEvict(void)
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 
-	bResult = gcObjects.Flush();
+	bResult = ObjectsFlush();
 	AssertTrue(bResult);
 
 	AssertLongLongInt(9, pcDatabase->NumIndices());
@@ -356,7 +356,7 @@ void TestObjectsEvict(void)
 	ObjectsInit(pcDatabase);
 	SetupObjectsForDehollowfication();
 
-	bResult = gcObjects.Flush();
+	bResult = ObjectsFlush();
 	AssertTrue(bResult);
 
 	AssertLongLongInt(9, pcDatabase->NumIndicesCached());
@@ -376,7 +376,7 @@ void TestObjectsEvict(void)
 	ObjectsInit(pcDatabase);
 	SetupObjectsForDehollowfication();
 
-	bResult = gcObjects.Flush();
+	bResult = ObjectsFlush();
 	AssertTrue(bResult);
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(6, gcObjects.NumMemoryNames());
@@ -402,8 +402,7 @@ void TestObjectsEvict(void)
 	ObjectsInit(pcDatabase);
 	SetupObjectsForDehollowfication();
 
-	//This flush's clear cache does not work.
-	bResult = gcObjects.Flush();
+	bResult = ObjectsFlush();
 	AssertTrue(bResult);
 	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
@@ -581,7 +580,7 @@ void TestObjectDehollowfication(void)
 	ObjectsInit(pcDatabase);
 	SetupObjectsForDehollowfication();
 	
-	bResult = gcObjects.Flush();
+	bResult = ObjectsFlush();
 	AssertTrue(bResult);
 	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
@@ -662,7 +661,7 @@ void TestObjectsFlushClearGetByOid(void)
 	AssertNotNull(pObject.Object());
 	AssertString("CTestDoubleNamedString", pObject.ClassName());
 
-	bResult = gcObjects.Flush();
+	bResult = ObjectsFlush();
 	AssertTrue(bResult);
 	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
@@ -716,7 +715,7 @@ void TestObjectsFlushClearGetByName(void)
 	AssertNotNull(pObject.Object());
 	AssertString("CTestDoubleNamedString", pObject.ClassName());
 
-	bResult = gcObjects.Flush();
+	bResult = ObjectsFlush();
 	AssertTrue(bResult);
 	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
@@ -757,7 +756,7 @@ void TestObjectsFlushRemovesStackPointers(void)
 
 	pRoot = ORoot();
 
-	bResult = gcObjects.Flush();
+	bResult = ObjectsFlush();
 	AssertTrue(bResult);
 	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);

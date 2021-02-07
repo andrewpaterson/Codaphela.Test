@@ -26,6 +26,7 @@ void TestObjectSize(void)
 	AssertInt(152, sizeof(CSetObject));
 	AssertInt(8, sizeof(CPointer));
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -96,6 +97,7 @@ void TestObjectPointerRemapping(void)
 	AssertNull(&p4);
 	AssertPointer(&pObject3, &p5);
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -168,6 +170,7 @@ void TestObjectPointerRemappingKilling(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -262,6 +265,7 @@ void TestObjectPointerRemappingSimplerComplex(void)
 	//     Root(0)
 
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -512,6 +516,7 @@ void TestObjectPointerRemappingComplex(void)
 	//     Root(0)
 
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -542,9 +547,8 @@ void TestObjectGetObjects(void)
 	AssertFalse(sFreedNotifier1.bFreed);
 	AssertFalse(gcObjects.HasRoot());
 
+	ObjectsFlush();
 	ObjectsKill();
-
-	AssertTrue(sFreedNotifier1.bFreed);
 }
 
 
@@ -571,6 +575,7 @@ void TestObjectStackKill(void)
 	AssertNull(&pObject2);
 	AssertTrue(sFreedNotifier.bFreed);
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -627,6 +632,7 @@ void TestObjectRootUnattachment(void)
 	AssertLongLongInt(2, gcUnknowns.NumElements());
 	AssertTrue(sFreedNotifier.bFreed);
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -670,6 +676,7 @@ void TestObjectKillOnHeap(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcObject->GetDistToRoot());
 	AssertFalse(pcObject->CanFindRoot());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -690,6 +697,7 @@ void TestObjectKillPointerOnStack(void)
 
 	AssertTrue(sFreedNotifier.bFreed);
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -710,6 +718,7 @@ void TestObjectKillObjectOnStack(void)
 
 	AssertTrue(sFreedNotifier.bFreed);
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -759,6 +768,7 @@ void TestObjectSetUnattachment(void)
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcUnknowns.NumElements());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -801,6 +811,7 @@ void TestObjectKillCyclic(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest2->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest3->GetDistToRoot());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 

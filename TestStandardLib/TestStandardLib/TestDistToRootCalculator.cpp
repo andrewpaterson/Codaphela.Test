@@ -175,6 +175,7 @@ void TestClearDistToRootToValidDistComplex(void)
 
 	cDistParameters.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -246,6 +247,7 @@ void TestClearDistToRootToValidDistSimpleLeft(void)
 	
 	cDistParameters.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -315,6 +317,7 @@ void TestClearDistToRootToValidDistSimpleRight(void)
 
 	cDistParameters.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -441,6 +444,7 @@ void TestUpdateAttachedTosDistToRootComplex(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -523,6 +527,7 @@ void TestUpdateAttachedTosDistToRootSimpleLeft(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -608,6 +613,7 @@ void TestUpdateAttachedTosDistToRootSimpleRight(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -692,6 +698,7 @@ void TestUpdateAttachedTosDistToRootSimpleRightBroken(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -870,6 +877,7 @@ void TestUpdateAttachedTosDistToRootChildTriangleKindaBalanced(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -996,6 +1004,7 @@ void TestUpdateAttachedTosDistToRootChildTriangleShortLeft(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1115,6 +1124,7 @@ void TestUpdateEmbeddedObjectTosDetachedSetupDistance(void)
 	AssertInt(6, pRTest7l->GetDistToRoot());
 	AssertInt(7, pRTest8->GetDistToRoot());
 	
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1242,6 +1252,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 
 	cDistParameters.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1379,6 +1390,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioB(void)
 
 	cDistParameters.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1506,6 +1518,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioC(void)
 
 	cDistParameters.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1635,6 +1648,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioD(void)
 
 	cDistParameters.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1733,6 +1747,7 @@ void TestUpdateAttachedTosDistToRootBroken(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1837,6 +1852,7 @@ void TestClearDistToRootToValidDistBroken(void)
 
 	cDistParameters.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1893,6 +1909,7 @@ void TestDistToRootLinear(void)
 
 	cDistParameters.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1954,6 +1971,7 @@ void TestDistToRootCyclic(void)
 
 	cDistParameters.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -1986,6 +2004,7 @@ void TestDistToRootWithStackPointers(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -2074,6 +2093,7 @@ void TestDistToRootLinearToStackScenarioA(void)
 
 	cDistParameters.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -2162,6 +2182,7 @@ void TestDistToRootLinearToStackScenarioB(void)
 
 	cDistParameters.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -2254,6 +2275,7 @@ void TestDistToRootTosNotUpdated(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 };
 
@@ -2531,6 +2553,7 @@ void TestDistToRootComplex(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 

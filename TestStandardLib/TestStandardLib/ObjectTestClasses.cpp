@@ -33,10 +33,11 @@ void CTestObject::Init(CPointer pObject, Ptr<CTestObject> pTest)
 void CTestObject::Init(STestObjectFreedNotifier* psKilledNotifier)
 {
 	PreInit();
-	mpsKilledNotifier = psKilledNotifier;
-	if (mpsKilledNotifier)
+	mpsFreedNotifier = psKilledNotifier;
+	mi = 0x07070707;
+	if (mpsFreedNotifier)
 	{
-		mpsKilledNotifier->bFreed= FALSE;
+		mpsFreedNotifier->bFreed= FALSE;
 	}
 
 	PostInit();
@@ -61,9 +62,9 @@ void CTestObject::Class(void)
 //////////////////////////////////////////////////////////////////////////
 void CTestObject::Free(void)
 {
-	if (mpsKilledNotifier)
+	if (mpsFreedNotifier)
 	{
-		mpsKilledNotifier->bFreed = TRUE;
+		mpsFreedNotifier->bFreed = TRUE;
 	}
 }
 
@@ -74,7 +75,10 @@ void CTestObject::Free(void)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestObject::Save(CObjectSerialiser* pcFile)
 {
-	return FALSE;
+	ReturnOnFalse(pcFile->WritePointer(mpObject));
+	ReturnOnFalse(pcFile->WritePointer(mpTest));
+	ReturnOnFalse(pcFile->WriteInt(mi));
+	return TRUE;
 }
 
 
@@ -84,7 +88,10 @@ BOOL CTestObject::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestObject::Load(CObjectDeserialiser* pcFile)
 {
-	return FALSE;
+	ReturnOnFalse(pcFile->ReadPointer(mpObject.This()));
+	ReturnOnFalse(pcFile->ReadPointer(mpTest.This()));
+	ReturnOnFalse(pcFile->ReadInt(&mi));
+	return TRUE;
 }
 
 
@@ -94,6 +101,7 @@ BOOL CTestObject::Load(CObjectDeserialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 void CTestObject::SomeMethod(void)
 {
+	mi = 0x90909090;
 }
 
 
@@ -114,10 +122,10 @@ void CTestTriPointerObject::Init(void)
 void CTestTriPointerObject::Init(STestObjectFreedNotifier* psKilledNotifier)
 {
 	PreInit();
-	mpsKilledNotifier = psKilledNotifier;
-	if (mpsKilledNotifier)
+	mpsFreedNotifier = psKilledNotifier;
+	if (mpsFreedNotifier)
 	{
-		mpsKilledNotifier->bFreed = FALSE;
+		mpsFreedNotifier->bFreed = FALSE;
 	}
 	PostInit();
 }
@@ -142,9 +150,9 @@ void CTestTriPointerObject::Class(void)
 //////////////////////////////////////////////////////////////////////////
 void CTestTriPointerObject::Free(void)
 {
-	if (mpsKilledNotifier)
+	if (mpsFreedNotifier)
 	{
-		mpsKilledNotifier->bFreed = TRUE;
+		mpsFreedNotifier->bFreed = TRUE;
 	}
 }
 

@@ -144,6 +144,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertLongLongInt(0, pcDatabase->NumIndices());
 	AssertLongLongInt(14, iNumMemoryIndexes);
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();
@@ -252,6 +253,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	cAllocator.Kill();
 	cReader.Kill();
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();

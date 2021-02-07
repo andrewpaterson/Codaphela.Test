@@ -142,7 +142,7 @@ void TestDehollowficationFromDatabase(void)
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase);
 	SetupDehollowficationScene();
-	gcObjects.Flush();
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();
@@ -293,7 +293,7 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase);
 	SetupDehollowficationScene();
-	gcObjects.Flush();
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();

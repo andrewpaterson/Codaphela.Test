@@ -51,6 +51,7 @@ void WriteObjectReaderSimpleFile(void)
 	cGraphSerialiser.Kill();
 	cWriter.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -119,6 +120,7 @@ void TestObjectReaderSimpleDeserialised(void)
 	cAllocator.Kill();
 	cReader.Kill();
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();

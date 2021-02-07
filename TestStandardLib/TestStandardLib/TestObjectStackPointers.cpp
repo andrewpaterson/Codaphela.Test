@@ -24,6 +24,7 @@ void TestObjectStackPointersSingle(void)
 
 	AssertTrue(sNotifier.bFreed);
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -59,6 +60,7 @@ void TestObjectStackPointersSingleWithRoot(void)
 
 	pRoot = NULL;
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
