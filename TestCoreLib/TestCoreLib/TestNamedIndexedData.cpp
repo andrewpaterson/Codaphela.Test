@@ -754,6 +754,8 @@ void TestNamedIndexedDataIterate(EIndexWriteThrough eWriteThrough)
 	CTestNamedIndexedDataObject			cResult;
 	size_t								iDataSize;
 	OIndex								oi;
+	char								szKey[MAX_KEY_SIZE];
+	BOOL								bResult;
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database8");
 
@@ -805,6 +807,50 @@ void TestNamedIndexedDataIterate(EIndexWriteThrough eWriteThrough)
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
 	AssertLongLongInt(INVALID_O_INDEX, oi);
+
+
+	bResult = cDatabase.StartNameIteration(&sIter, szKey, &oi);
+	AssertTrue(bResult);
+	AssertLongLongInt(0x0405LL, oi);
+	AssertString("Albert", szKey);
+
+	bResult = cDatabase.NameIterate(&sIter, szKey, &oi);
+	AssertTrue(bResult);
+	AssertLongLongInt(0x0102LL, oi);
+	AssertString("Ernest", szKey);
+
+	bResult = cDatabase.NameIterate(&sIter, szKey, &oi);
+	AssertTrue(bResult);
+	AssertLongLongInt(0x0506LL, oi);
+	AssertString("Isaac", szKey);
+
+	bResult = cDatabase.NameIterate(&sIter, szKey, &oi);
+	AssertTrue(bResult);
+	AssertLongLongInt(0x0203LL, oi);
+	AssertString("Niels", szKey);
+
+	bResult = cDatabase.NameIterate(&sIter, szKey, &oi);
+	AssertFalse(bResult);
+
+
+	oi = cDatabase.StartIndexIteration(&sIter, &cResult, &iDataSize, 0);
+	AssertLongLongInt(0x0102LL, oi);
+
+	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, 0);
+	AssertLongLongInt(0x0203LL, oi);
+
+	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, 0);
+	AssertLongLongInt(0x0304LL, oi);
+
+	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, 0);
+	AssertLongLongInt(0x0405LL, oi);
+
+	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, 0);
+	AssertLongLongInt(0x0506LL, oi);
+
+	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, 0);
+	AssertLongLongInt(INVALID_O_INDEX, oi);
+
 
 	if (eWriteThrough == IWT_No) cDatabase.Flush();
 	cController.End();
