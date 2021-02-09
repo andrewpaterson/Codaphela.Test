@@ -1,5 +1,6 @@
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/Define.h"
+#include "BaseLib/StdRandom.h"
 #include "BaseLib/Logger.h"
 #include "BaseLib/LifeCycle.h"
 #include "BaseLib/GlobalMemory.h"
@@ -7,8 +8,11 @@
 #include "CoreLib/NamedIndexedData.h"
 #include "CoreLib/ValueIndexedDataConfig.h"
 #include "CoreLib/ValueNamedIndexesConfig.h"
+#include "CoreLib/IndexTreeEvictionCounter.h"
+#include "CoreLib/IndexedDataEvictionCounter.h"
 #include "StandardLib/BaseObject.h"
 #include "TestLib/Assert.h"
+#include "TestLib/Words.h"
 #include "NamedIndexedDataObject.h"
 
 
@@ -730,8 +734,6 @@ void TestNamedIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 }
 
 
-
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -867,6 +869,132 @@ void TestNamedIndexedDataIterate(EIndexWriteThrough eWriteThrough)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThrough)
+{
+	CNamedIndexedData					cDatabase;
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
+	CLifeInit<CNamedIndexesConfig>		cNamedConfig;
+	CDurableFileController				cController;
+	CIndexTreeEvictionStrategyRandom	cIndexEvictionStrategy;
+	CIndexTreeEvictionStrategyRandom	cNamedEvictionStrategy;
+	CFileUtil							cFileUtil;
+	CTestNamedIndexedDataObject			cObject;
+	SIndexTreeFileIterator				sIter;
+	CTestNamedIndexedDataObject			cResult;
+	size_t								iDataSize;
+	OIndex								oi;
+	char								szKey[MAX_KEY_SIZE];
+	BOOL								bResult;
+	CArrayChars							aszWords;
+	CRandom								cRandom;
+	CChars								sz;
+	int									iNumWords;
+	int									iIndex;
+	int									iWord;
+	CArrayChars							aszNames;
+	int									iIter;
+	int									iExpectedOi;
+	CIndexTreeEvictionCounter			cIndexEvictionCounter;
+	CIndexedDataEvictionCounter			cDataEvictionCounter;
+	CIndexTreeEvictionCounter			cNameEvictionCounter;
+
+	aszWords.Init();
+	GetCommonWords(&aszWords);
+	iNumWords = aszWords.NumElements();
+	cRandom.Init(8976);
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database9");
+
+	aszNames.Init();
+	cIndexEvictionCounter.Init();
+	cDataEvictionCounter.Init();
+	cNameEvictionCounter.Init();
+
+	cIndexEvictionStrategy.Init();
+	cNamedEvictionStrategy.Init();
+	cController.Init("Output" _FS_ "Database9" _FS_ "R", "Output" _FS_ "Database9" _FS_ "W");
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy), &cIndexEvictionCounter, &cDataEvictionCounter);
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough, &cNameEvictionCounter);
+	
+	cController.Begin();
+	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
+	for (oi = 1; oi < 1024; oi++)
+	{
+		sz.Init();
+		for (iWord = 0; iWord < 3; iWord++)
+		{
+			if (iWord != 0)
+			{
+				sz.Append(" ");
+			}
+			iIndex = cRandom.Next(0, iNumWords - 1);
+			sz.Append(aszWords.Get(iIndex));
+		}
+		cObject.Init(sz.Text(), oi-1, oi * 7);
+		cDatabase.Add(oi * 7, sz.Text(), &cObject, cObject.Size());
+		aszNames.Add(sz.Text());
+	}
+
+	AssertLongLongInt(1023, cDatabase.NumIndices());
+	AssertLongLongInt(1023, cDatabase.NumNames());
+	AssertLongLongInt(1002, cIndexEvictionCounter.EvictionCount());
+	AssertLongLongInt(1005, cDataEvictionCounter.EvictionCount());
+	AssertLongLongInt(1014, cNameEvictionCounter.EvictionCount());
+
+
+	if (eWriteThrough == IWT_No) cDatabase.Flush();
+	cController.End();
+	cDatabase.Kill();
+	cController.Kill();
+	cNamedEvictionStrategy.Kill();
+	cIndexEvictionStrategy.Kill();
+
+	iIter = 0;
+	oi = cDatabase.StartIndexIteration(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
+	while (oi != INVALID_O_INDEX)
+	{
+		iExpectedOi = (iIter + 1) * 7;
+		AssertLongLongInt(iExpectedOi, oi);
+		AssertInt(sizeof(CTestNamedIndexedDataObject), iDataSize);
+		AssertLongLongInt(iIter, cResult.miNumberX);
+		AssertLongLongInt(iExpectedOi, cResult.miNumberY);
+		AssertString(aszNames.Get(iIter)->Text(), cResult.mszString);
+
+		iIter++;
+		oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
+	}
+	
+	aszNames.QuickSort();
+
+	iIter = 0;
+	bResult = cDatabase.StartNameIteration(&sIter, szKey, &oi);
+	while (bResult)
+	{
+		AssertString(aszNames.Get(iIter)->Text(), szKey);
+
+		iIter++;
+		bResult = cDatabase.NameIterate(&sIter, szKey, &oi);
+	}
+
+	AssertFalse(bResult);
+
+	if (eWriteThrough == IWT_No) cDatabase.Flush();
+	cController.End();
+	cDatabase.Kill();
+	cController.Kill();
+	cNamedEvictionStrategy.Kill();
+	cIndexEvictionStrategy.Kill();
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database8");
+
+	aszWords.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestNamedIndexedData(void)
 {
 	FastFunctionsInit();
@@ -875,30 +1003,32 @@ void TestNamedIndexedData(void)
 	DataMemoryInit();
 	BeginTests();
 
-	TestNamedIndexedDataInit(IWT_Yes);
-	TestNamedIndexedDataInit(IWT_No);
-	TestNamedIndexedDataAddString(IWT_Yes);
-	TestNamedIndexedDataAddString(IWT_No);
-	TestNamedIndexedDataAddChars(IWT_Yes);
-	TestNamedIndexedDataAddChars(IWT_No);
-	TestNamedIndexedDataAddIndex(IWT_Yes);
-	TestNamedIndexedDataAddIndex(IWT_No);
-	TestNamedIndexedDataAddBad(IWT_Yes);
-	TestNamedIndexedDataAddBad(IWT_No);
-	TestNamedIndexedDataGetName(IWT_Yes);
-	TestNamedIndexedDataGetName(IWT_No);
-	TestNamedIndexedDataSetIndex(IWT_Yes);
-	TestNamedIndexedDataSetIndex(IWT_No);
-	TestNamedIndexedDataSet(IWT_Yes);
-	TestNamedIndexedDataSet(IWT_No);
-	TestNamedIndexedDataSetBad(IWT_Yes);
-	TestNamedIndexedDataSetBad(IWT_No);
-	TestNamedIndexedDataPut(IWT_Yes);
-	TestNamedIndexedDataPut(IWT_No);
-	TestNamedIndexedDataRemove(IWT_Yes);
-	TestNamedIndexedDataRemove(IWT_No);
-	TestNamedIndexedDataIterate(IWT_Yes);
-	TestNamedIndexedDataIterate(IWT_No);
+	//TestNamedIndexedDataInit(IWT_Yes);
+	//TestNamedIndexedDataInit(IWT_No);
+	//TestNamedIndexedDataAddString(IWT_Yes);
+	//TestNamedIndexedDataAddString(IWT_No);
+	//TestNamedIndexedDataAddChars(IWT_Yes);
+	//TestNamedIndexedDataAddChars(IWT_No);
+	//TestNamedIndexedDataAddIndex(IWT_Yes);
+	//TestNamedIndexedDataAddIndex(IWT_No);
+	//TestNamedIndexedDataAddBad(IWT_Yes);
+	//TestNamedIndexedDataAddBad(IWT_No);
+	//TestNamedIndexedDataGetName(IWT_Yes);
+	//TestNamedIndexedDataGetName(IWT_No);
+	//TestNamedIndexedDataSetIndex(IWT_Yes);
+	//TestNamedIndexedDataSetIndex(IWT_No);
+	//TestNamedIndexedDataSet(IWT_Yes);
+	//TestNamedIndexedDataSet(IWT_No);
+	//TestNamedIndexedDataSetBad(IWT_Yes);
+	//TestNamedIndexedDataSetBad(IWT_No);
+	//TestNamedIndexedDataPut(IWT_Yes);
+	//TestNamedIndexedDataPut(IWT_No);
+	//TestNamedIndexedDataRemove(IWT_Yes);
+	//TestNamedIndexedDataRemove(IWT_No);
+	//TestNamedIndexedDataIterate(IWT_Yes);
+	//TestNamedIndexedDataIterate(IWT_No);
+	//TestNamedIndexedDataIterateDuringTreeChange(IWT_Yes);
+	TestNamedIndexedDataIterateDuringTreeChange(IWT_No);
 
 	TestStatistics();
 	DataMemoryKill();
