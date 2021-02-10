@@ -119,7 +119,7 @@ void TestIndexTreeFileAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKe
 	BOOL						bResult;
 	CIndexTreeNodeFile* pcNode;
 	CTestIndexTreeObject** ppvTest;
-	SIndexTreeFileIterator		sIter;
+	SIndexTreeFileUnsafeIterator		sIter;
 	BOOL						bContinue;
 	size_t						iSize;
 
@@ -366,7 +366,7 @@ void TestIndexTreeFileNoCacheEviction(void)
 	char					sz[MAX_DATA_SIZE];
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
-	SIndexTreeFileIterator	sIter;
+	SIndexTreeFileUnsafeIterator	sIter;
 	BOOL					bContinue;
 	char*					szData;
 	size_t					iSize;

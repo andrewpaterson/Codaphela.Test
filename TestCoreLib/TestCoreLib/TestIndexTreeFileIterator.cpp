@@ -16,7 +16,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileIteratorUnsafeIterate(void)
 {
-	SIndexTreeFileIterator	sIter;
+	SIndexTreeFileUnsafeIterator	sIter;
 	char*					pvData;
 	char*					pvKey;
 	size_t					iDataSize;

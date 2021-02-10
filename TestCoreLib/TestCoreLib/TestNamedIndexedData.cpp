@@ -752,7 +752,7 @@ void TestNamedIndexedDataIterate(EIndexWriteThrough eWriteThrough)
 	CTestNamedIndexedDataObject			cObject3;
 	CTestNamedIndexedDataObject			cObject4;
 	CTestNamedIndexedDataObject			cObject5;
-	SIndexTreeFileIterator				sIter;
+	SIndexTreeFileIterator		sIter;
 	CTestNamedIndexedDataObject			cResult;
 	size_t								iDataSize;
 	OIndex								oi;
@@ -941,13 +941,6 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 	AssertLongLongInt(1005, cDataEvictionCounter.EvictionCount());
 	AssertLongLongInt(1014, cNameEvictionCounter.EvictionCount());
 
-
-	if (eWriteThrough == IWT_No) cDatabase.Flush();
-	cController.End();
-	cDatabase.Kill();
-	cController.Kill();
-	cNamedEvictionStrategy.Kill();
-	cIndexEvictionStrategy.Kill();
 
 	iIter = 0;
 	oi = cDatabase.StartIndexIteration(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));

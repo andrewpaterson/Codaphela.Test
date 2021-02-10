@@ -76,7 +76,7 @@ void TestIndexTreeDataOrdererAccess(EIndexWriteThrough eWriteThrough)
 	CIndexTreeFileAccess		cAccess;
 	CAccessDataOrderer			cOrderer;
 	char						c;
-	SIndexTreeFileIterator		sIter;
+	SIndexTreeFileUnsafeIterator		sIter;
 	BOOL						bExists;
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
