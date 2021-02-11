@@ -897,6 +897,7 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 	CIndexTreeEvictionCounter			cIndexEvictionCounter;
 	CIndexedDataEvictionCounter			cDataEvictionCounter;
 	CIndexTreeEvictionCounter			cNameEvictionCounter;
+	BOOL								bFailed;
 
 	aszWords.Init();
 	GetCommonWords(&aszWords);
@@ -914,7 +915,7 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 	cNamedEvictionStrategy.Init();
 	cController.Init("Output" _FS_ "Database9" _FS_ "R", "Output" _FS_ "Database9" _FS_ "W");
 	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy), &cIndexEvictionCounter, &cDataEvictionCounter);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough, &cNameEvictionCounter);
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 8 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough, &cNameEvictionCounter);
 	
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
@@ -935,27 +936,46 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 		aszNames.Add(sz.Text());
 	}
 
-	AssertLongLongInt(1023, cDatabase.NumIndices());
-	AssertLongLongInt(1023, cDatabase.NumNames());
+	AssertLongLongInt(21, cDatabase.NumIndicesCached());
+	AssertLongLongInt(18, cDatabase.NumDataCached());
+	AssertLongLongInt(3, cDatabase.NumNamesCached());
 	AssertLongLongInt(1002, cIndexEvictionCounter.EvictionCount());
 	AssertLongLongInt(1005, cDataEvictionCounter.EvictionCount());
-	AssertLongLongInt(1014, cNameEvictionCounter.EvictionCount());
+	AssertLongLongInt(1020, cNameEvictionCounter.EvictionCount());
+	AssertLongLongInt(1023, cDatabase.NumIndices());
+	AssertLongLongInt(1023, cDatabase.NumNames());
+	cIndexEvictionCounter.Reset();
+	cDataEvictionCounter.Reset();
+	cNameEvictionCounter.Reset();
 
-
+	bFailed = FALSE;
 	iIter = 0;
 	oi = cDatabase.StartIndexIteration(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
 	while (oi != INVALID_O_INDEX)
 	{
 		iExpectedOi = (iIter + 1) * 7;
-		AssertLongLongInt(iExpectedOi, oi);
-		AssertInt(sizeof(CTestNamedIndexedDataObject), iDataSize);
-		AssertLongLongInt(iIter, cResult.miNumberX);
-		AssertLongLongInt(iExpectedOi, cResult.miNumberY);
-		AssertString(aszNames.Get(iIter)->Text(), cResult.mszString);
+		if (iExpectedOi != oi) bFailed = TRUE;
+		if (sizeof(CTestNamedIndexedDataObject) != iDataSize) bFailed = TRUE;
+		if (iIter != cResult.miNumberX) bFailed = TRUE;
+		if (iExpectedOi != cResult.miNumberY)  bFailed = TRUE;
+		if (!aszNames.Get(iIter)->Equals(cResult.mszString)) bFailed = TRUE;
+		AssertFalse(bFailed);
 
 		iIter++;
 		oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
 	}
+
+	AssertLongLongInt(1023, cDatabase.NumIndicesCached());
+	AssertLongLongInt(25, cDatabase.NumDataCached());
+	AssertLongLongInt(1023, cDatabase.NumNamesCached());
+	AssertLongLongInt(1022, cIndexEvictionCounter.EvictionCount());
+	AssertLongLongInt(1016, cDataEvictionCounter.EvictionCount());
+	AssertLongLongInt(0, cNameEvictionCounter.EvictionCount());
+	AssertLongLongInt(1023, cDatabase.NumIndices());
+	AssertLongLongInt(1023, cDatabase.NumNames());
+	cIndexEvictionCounter.Reset();
+	cDataEvictionCounter.Reset();
+	cNameEvictionCounter.Reset();
 	
 	aszNames.QuickSort();
 
@@ -969,7 +989,15 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 		bResult = cDatabase.NameIterate(&sIter, szKey, &oi);
 	}
 
-	AssertFalse(bResult);
+	AssertLongLongInt(1023, cDatabase.NumIndicesCached());
+	AssertLongLongInt(25, cDatabase.NumDataCached());
+	AssertLongLongInt(1023, cDatabase.NumNamesCached());
+	AssertLongLongInt(0, cIndexEvictionCounter.EvictionCount());
+	AssertLongLongInt(0, cDataEvictionCounter.EvictionCount());
+	AssertLongLongInt(0, cNameEvictionCounter.EvictionCount());
+	AssertLongLongInt(1023, cDatabase.NumIndices());
+	AssertLongLongInt(1023, cDatabase.NumNames());
+
 
 	if (eWriteThrough == IWT_No) cDatabase.Flush();
 	cController.End();

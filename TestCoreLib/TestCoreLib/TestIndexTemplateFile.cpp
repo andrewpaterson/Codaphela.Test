@@ -42,22 +42,22 @@ void TestIndexTreeTemplateFileStuff(void)
 	AssertTrue(cAccess.PutKeyData(cObject2.GetName(), cObject2.NameLength(), &cObject2, sizeof(CTestIndexTreeObject)));
 	AssertInt(2, cIndexTree.NumElements());
 		
-	AssertTrue(cIndexTree.Get(cObject1.GetName(), cObject1.NameLength(), &cResult, NULL));
+	AssertTrue(cIndexTree.Get(cObject1.GetName(), cObject1.NameLength(), &cResult, NULL, 0));
 	AssertString("Hello", cResult.GetName());
-	AssertTrue(cIndexTree.Get(cObject2.GetName(), cObject2.NameLength(), &cResult, NULL));
+	AssertTrue(cIndexTree.Get(cObject2.GetName(), cObject2.NameLength(), &cResult, NULL, 0));
 	AssertString("Haplo", cResult.GetName());
-	AssertFalse(cIndexTree.Get("Help", 4, &cResult, NULL));
+	AssertFalse(cIndexTree.Get("Help", 4, &cResult, NULL, 0));
 
 	AssertTrue(cIndexTree.Remove(cObject1.GetName(), cObject1.NameLength()));
-	AssertTrue(cIndexTree.Get(cObject2.GetName(), cObject2.NameLength(), &cResult, NULL));
+	AssertTrue(cIndexTree.Get(cObject2.GetName(), cObject2.NameLength(), &cResult, NULL, 0));
 	AssertString("Haplo", cResult.GetName());
-	AssertFalse(cIndexTree.Get(cObject1.GetName(), cObject1.NameLength(), &cResult, NULL));
-	AssertFalse(cIndexTree.Get("Hap", 3, &cResult, NULL));
+	AssertFalse(cIndexTree.Get(cObject1.GetName(), cObject1.NameLength(), &cResult, NULL, 0));
+	AssertFalse(cIndexTree.Get("Hap", 3, &cResult, NULL, 0));
 	AssertInt(1, cIndexTree.NumElements());
 
 	AssertTrue(cIndexTree.Remove(cObject2.GetName(), cObject2.NameLength()));
-	AssertFalse(cIndexTree.Get(cObject2.GetName(), cObject2.NameLength(), &cResult, NULL));
-	AssertFalse(cIndexTree.Get(cObject1.GetName(), cObject1.NameLength(), &cResult, NULL));
+	AssertFalse(cIndexTree.Get(cObject2.GetName(), cObject2.NameLength(), &cResult, NULL, 0));
+	AssertFalse(cIndexTree.Get(cObject1.GetName(), cObject1.NameLength(), &cResult, NULL, 0));
 	AssertInt(0, cIndexTree.NumElements());
 
 	cController.End();

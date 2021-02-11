@@ -17,21 +17,21 @@
 void TestIndexTreeFileIteratorUnsafeIterate(void)
 {
 	SIndexTreeFileUnsafeIterator	sIter;
-	char*					pvData;
-	char*					pvKey;
-	size_t					iDataSize;
-	BOOL					bExists;
-	char					pacKey[9 + 1];
-	int						iKeyLength;
-	CIndexTreeFile			cIndexTree;
-	CMapStringString		cMap;
-	SMapIterator			sMapIter;
-	char*					pacData;
-	int						iResult;
-	int						iMapDataSize;
-	CIndexTreeFileAccess	cAccess;
-	CIndexTreeHelper		cHelper;
-	CDurableFileController	cController;
+	char*							pvData;
+	char*							pvKey;
+	size_t							iDataSize;
+	BOOL							bExists;
+	char							pacKey[9 + 1];
+	int								iKeyLength;
+	CIndexTreeFile					cIndexTree;
+	CMapStringString				cMap;
+	SMapIterator					sMapIter;
+	char*							pacData;
+	int								iResult;
+	int								iMapDataSize;
+	CIndexTreeFileAccess			cAccess;
+	CIndexTreeHelper				cHelper;
+	CDurableFileController			cController;
 
 	cHelper.Init("Output" _FS_ "IndexTreeIterator1", "primary", "backup", TRUE);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
@@ -68,7 +68,7 @@ void TestIndexTreeFileIteratorUnsafeIterate(void)
 
 	AssertInt(12, cIndexTree.NumElements());
 
-	bExists = cIndexTree.StartUnsafeIteration(&sIter, pacKey, &iKeyLength, (void**)&pvData, &iDataSize);
+	bExists = cIndexTree.StartUnsafeIteration(&sIter, pacKey, &iKeyLength, 10, (void**)&pvData, &iDataSize);
 	while (bExists)
 	{
 		pacData = cMap.Get(pacKey);
@@ -78,7 +78,7 @@ void TestIndexTreeFileIteratorUnsafeIterate(void)
 		iResult = memcmp_fast(pacData, pvData, iDataSize);
 		AssertInt(0, iResult);
 
-		bExists = cIndexTree.UnsafeIterate(&sIter, pacKey, &iKeyLength, (void**)&pvData, &iDataSize);
+		bExists = cIndexTree.UnsafeIterate(&sIter, pacKey, &iKeyLength, 10, (void**)&pvData, &iDataSize);
 	}
 
 	cIndexTree.Flush();
