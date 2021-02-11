@@ -4,10 +4,12 @@
 #include "BaseLib/Define.h"
 #include "BaseLib/Logger.h"
 #include "BaseLib/GlobalMemory.h"
+#include "CoreLib/IndexTreeEvictionCounter.h"
 #include "CoreLib/DurableFileController.h"
 #include "CoreLib/NamedIndexes.h"
 #include "CoreLib/ValueNamedIndexesConfig.h"
 #include "StandardLib/BaseObject.h"
+#include "TestLib/Words.h"
 #include "TestLib/Assert.h"
 
 
@@ -433,6 +435,109 @@ void TestNamedIndexesLoad(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestNamedIndexesMoreCacheEviction(void)
+{
+	CNamedIndexes						cNamedIndexes;
+	CDurableFileController				cController;
+	CFileUtil							cFileUtil;
+	char								szDirectory[] = "Output" _FS_ "NamedIndexes" _FS_ "5";
+	char								szRewriteDirectory[] = "Output" _FS_"_NamedIndexes" _FS_ "5";
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	CLifeInit<CNamedIndexesConfig>		cConfig;
+	CIndexTreeEvictionCounter			cEvictionCounter;
+	CArrayChars							aszWords;
+	int									iNumWords;
+	CRandom								cRandom;
+	OIndex								oi;
+	CChars								sz;
+	int									iWord;
+	int									iIndex;
+	CArrayChars							aszNames;
+	size_t								uiCacheSize;
+	CChars*								psz;
+
+	aszWords.Init();
+	GetCommonWords(&aszWords);
+	iNumWords = aszWords.NumElements();
+	cRandom.Init(9824375);
+	aszNames.Init();
+
+	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
+
+	cEvictionStrategy.Init(67);
+	cEvictionCounter.Init();
+
+	cController.Init(szDirectory, szRewriteDirectory);
+	AssertTrue(cController.Begin());
+
+	uiCacheSize = 16 KB;
+	cConfig = CValueNamedIndexesConfig::Create(NULL, uiCacheSize, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), IWT_No, &cEvictionCounter);
+	cNamedIndexes.Init(&cController, cConfig);
+
+	for (oi = 1; oi < 1024; oi++)
+	{
+		sz.Init();
+		for (iWord = 0; iWord < 3; iWord++)
+		{
+			if (iWord != 0)
+			{
+				sz.Append(" ");
+			}
+			iIndex = cRandom.Next(0, iNumWords - 1);
+			sz.Append(aszWords.Get(iIndex));
+		}
+		cNamedIndexes.Add(sz.Text(), oi);
+		aszNames.Add(sz.Text());
+		sz.Kill();
+	}
+
+	AssertLongLongInt(1015, cEvictionCounter.EvictionCount());
+	AssertLongLongInt(15692, cNamedIndexes.GetSystemMemorySize());
+	AssertTrue(cNamedIndexes.GetSystemMemorySize() < uiCacheSize);
+
+	cNamedIndexes.Flush();
+	AssertTrue(cController.End());
+	cNamedIndexes.Kill();
+	cEvictionStrategy.Kill();
+	cController.Kill();
+	Pass();
+
+	cEvictionStrategy.Init(67);
+	cEvictionCounter.Init();
+	cController.Init(szDirectory, szRewriteDirectory);
+	AssertTrue(cController.Begin());
+	cConfig = CValueNamedIndexesConfig::Create(NULL, uiCacheSize, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), IWT_No, &cEvictionCounter);
+	cNamedIndexes.Init(&cController, cConfig);
+	Pass();
+
+	aszNames.Shuffle(cEvictionStrategy.GetRandom());
+	for (iIndex = 0; iIndex < aszNames.NumElements(); iIndex++)
+	{
+		psz = aszNames.Get(iIndex);
+		oi = cNamedIndexes.Get(psz);
+	}
+
+	AssertLongLongInt(1014, cEvictionCounter.EvictionCount());
+	AssertLongLongInt(15564, cNamedIndexes.GetSystemMemorySize());
+	AssertTrue(cNamedIndexes.GetSystemMemorySize() < uiCacheSize);
+
+	cNamedIndexes.Flush();
+	AssertTrue(cController.End());
+	Pass();
+
+	cNamedIndexes.Kill();
+	cEvictionStrategy.Kill();
+	cController.Kill();
+
+	aszWords.Kill();
+	aszNames.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestNamedIndexes(void)
 {
 	CFileUtil	cFileUtil;
@@ -447,6 +552,7 @@ void TestNamedIndexes(void)
 	TestNamedIndexesRemove();
 	TestNamedIndexesCacheEviction();
 	TestNamedIndexesLoad();
+	TestNamedIndexesMoreCacheEviction();
 
 	cFileUtil.RemoveDirs("Output" _FS_ "NamedIndexes", "Output" _FS_ "_NamedIndexes", NULL);
 

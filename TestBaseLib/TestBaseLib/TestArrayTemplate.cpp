@@ -1,3 +1,4 @@
+#include "BaseLib/StdRandom.h"
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/ArrayTemplate.h"
 #include "TestLib/Assert.h"
@@ -278,17 +279,18 @@ void TestArrayTemplateCopy(void)
 	asDestArray.Kill();
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
 void TestArrayTemplateMisc(void)
 {
-	CTestArrayTemplate				cArray;
-	STestArrayTemplateItem	sStack;
-	int						iIndex;
-	STestArrayTemplateItem*	psHeap;
-	STestArrayTemplateItem*	psReturn;
+	CTestArrayTemplate			cArray;
+	STestArrayTemplateItem		sStack;
+	int							iIndex;
+	STestArrayTemplateItem*		psHeap;
+	STestArrayTemplateItem*		psReturn;
 
 	cArray.Init();
 	iIndex = cArray.GetIndex(&sStack);
@@ -455,7 +457,7 @@ void TestArrayTemplateFake(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayTemplateInsertBatch()
+void TestArrayTemplateInsertBatch(void)
 {
 	CTestArrayTemplate			as;
 	int							i;
@@ -643,6 +645,45 @@ void TestArrayTemplateSetChunkSize(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestArrayTemplateShuffle(void)
+{
+	CTestArrayTemplate			cArray;
+	STestArrayTemplateItem		sItem;
+	int							i;
+	CRandom						cRandom;
+
+	cArray.Init();
+	for (i = 0; i < 10; i++)
+	{
+		sItem.i1 = i;
+		sItem.i2 = i;
+		cArray.Add(&sItem);
+	}
+
+	cRandom.Init(67);
+	cArray.Shuffle(&cRandom);
+	cRandom.Kill();
+
+	AssertInt(2, cArray.Get(0)->i1);
+	AssertInt(7, cArray.Get(1)->i1);
+	AssertInt(8, cArray.Get(2)->i1);
+	AssertInt(4, cArray.Get(3)->i1);
+	AssertInt(0, cArray.Get(4)->i1);
+	AssertInt(6, cArray.Get(5)->i1);
+	AssertInt(1, cArray.Get(6)->i1);
+	AssertInt(9, cArray.Get(7)->i1);
+	AssertInt(3, cArray.Get(8)->i1);
+	AssertInt(5, cArray.Get(9)->i1);
+
+	cRandom.Kill();
+	cArray.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestArrayTemplate(void)
 {
 	BeginTests();
@@ -659,6 +700,7 @@ void TestArrayTemplate(void)
 	TestArrayTemplateInsertBatch();
 	TestArrayTemplateRemoveBatch();
 	TestArrayTemplateSetChunkSize();
+	TestArrayTemplateShuffle();
 
 	FastFunctionsKill();
 	MemoryKill();

@@ -1160,7 +1160,7 @@ void TestIndexedDataDescriptorCaching(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	cEvictionStrategy.Init(0);
+	cEvictionStrategy.Init(67);
 	cIndexedDataEvictedList.Init();
 	cIndexTreeEvictedList.Init();
 	cController.Init(szDirectory, NULL);

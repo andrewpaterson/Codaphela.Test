@@ -74,9 +74,9 @@ int main(void)
 	//TestIndexedData();
 	//TestNamedIndexes();
 	TestNamedIndexedData();
-	//TestIndexTreeFileKeyDiagnosticCallback();
-	//TestIndexTreeAccess();
-	//TestCodabase();
+	TestIndexTreeFileKeyDiagnosticCallback();
+	TestIndexTreeAccess();
+	TestCodabase();
 
 	return TestTotalStatistics();
 }

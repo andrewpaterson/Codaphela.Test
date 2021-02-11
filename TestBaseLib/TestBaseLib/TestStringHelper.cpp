@@ -62,7 +62,73 @@ void TestStrIStr(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMemICmp(void)
 {
-    //Ah, fuckit.
+    char    sz1[] = "Andrew";
+    char    sz2[] = "andrew";
+
+    AssertInt(0, MemICmp(sz1, sz2, 6));
+
+    strcpy(sz1, "Bndrew");
+    AssertInt(1, MemICmp(sz1, sz2, 6));
+    Pass();
+
+    AssertInt(-1, MemICmp(sz2, sz1, 6));
+    Pass();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMemSwp(void)
+{
+    char    sz1[] = "Andrew";
+    char    sz2[] = "Claire";
+
+    MemSwp(sz1, sz2, 6);
+    AssertString("Claire", sz1);
+    AssertString("Andrew", sz2);
+    Pass();
+
+    sz1[5] = '\0';
+    sz2[5] = '\0';
+    MemSwp(sz1, sz2, 5);
+    AssertString("Andre", sz1);
+    AssertString("Clair", sz2);
+    Pass();
+
+    sz1[4] = '\0';
+    sz2[4] = '\0';
+    MemSwp(sz1, sz2, 4);
+    AssertString("Clai", sz1);
+    AssertString("Andr", sz2);
+    Pass();
+
+    sz1[3] = '\0';
+    sz2[3] = '\0';
+    MemSwp(sz1, sz2, 3);
+    AssertString("And", sz1);
+    AssertString("Cla", sz2);
+    Pass();
+
+    sz1[2] = '\0';
+    sz2[2] = '\0';
+    MemSwp(sz1, sz2, 2);
+    AssertString("Cl", sz1);
+    AssertString("An", sz2);
+    Pass();
+
+    sz1[1] = '\0';
+    sz2[1] = '\0';
+    MemSwp(sz1, sz2, 1);
+    AssertString("A", sz1);
+    AssertString("C", sz2);
+    Pass();
+
+    MemSwp(sz1, sz2, 0);
+    AssertString("A", sz1);
+    AssertString("C", sz2);
+    Pass();
 }
 
 
@@ -157,6 +223,7 @@ void TestStringHelper(void)
 	TestIToA();
 	TestToLower();
 	TestToUpper();
+    TestMemSwp();
 
 	TestStatistics();
 }

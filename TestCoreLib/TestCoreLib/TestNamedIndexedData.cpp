@@ -915,10 +915,15 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 	cNamedEvictionStrategy.Init();
 	cController.Init("Output" _FS_ "Database9" _FS_ "R", "Output" _FS_ "Database9" _FS_ "W");
 	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy), &cIndexEvictionCounter, &cDataEvictionCounter);
-	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 8 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough, &cNameEvictionCounter);
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough, &cNameEvictionCounter);
 	
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
+
+	AssertLongLongInt(3100, cDatabase.GetIndiciesSystemMemorySize());
+	AssertLongLongInt(0, cDatabase.GetDataSystemMemorySize());
+	AssertLongLongInt(3100, cDatabase.GetNamesSystemMemorySize());
+
 	for (oi = 1; oi < 1024; oi++)
 	{
 		sz.Init();
@@ -934,14 +939,18 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 		cObject.Init(sz.Text(), oi-1, oi * 7);
 		cDatabase.Add(oi * 7, sz.Text(), &cObject, cObject.Size());
 		aszNames.Add(sz.Text());
+		sz.Kill();
 	}
 
+	AssertLongLongInt(8156, cDatabase.GetIndiciesSystemMemorySize());
+	AssertLongLongInt(5756, cDatabase.GetDataSystemMemorySize());
+	AssertLongLongInt(16308, cDatabase.GetNamesSystemMemorySize());
 	AssertLongLongInt(21, cDatabase.NumIndicesCached());
 	AssertLongLongInt(18, cDatabase.NumDataCached());
-	AssertLongLongInt(3, cDatabase.NumNamesCached());
+	AssertLongLongInt(10, cDatabase.NumNamesCached());
 	AssertLongLongInt(1002, cIndexEvictionCounter.EvictionCount());
 	AssertLongLongInt(1005, cDataEvictionCounter.EvictionCount());
-	AssertLongLongInt(1020, cNameEvictionCounter.EvictionCount());
+	AssertLongLongInt(1013, cNameEvictionCounter.EvictionCount());
 	AssertLongLongInt(1023, cDatabase.NumIndices());
 	AssertLongLongInt(1023, cDatabase.NumNames());
 	cIndexEvictionCounter.Reset();
@@ -965,10 +974,13 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 		oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
 	}
 
+	AssertLongLongInt(1111, cDatabase.GetIndiciesSystemMemorySize());
+	AssertLongLongInt(5756, cDatabase.GetDataSystemMemorySize());
+	AssertLongLongInt(16308, cDatabase.GetNamesSystemMemorySize());
 	AssertLongLongInt(1023, cDatabase.NumIndicesCached());
 	AssertLongLongInt(25, cDatabase.NumDataCached());
 	AssertLongLongInt(1023, cDatabase.NumNamesCached());
-	AssertLongLongInt(1022, cIndexEvictionCounter.EvictionCount());
+	AssertLongLongInt(0, cIndexEvictionCounter.EvictionCount());
 	AssertLongLongInt(1016, cDataEvictionCounter.EvictionCount());
 	AssertLongLongInt(0, cNameEvictionCounter.EvictionCount());
 	AssertLongLongInt(1023, cDatabase.NumIndices());
@@ -1016,6 +1028,147 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
+{
+	CNamedIndexedData					cDatabase;
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
+	CLifeInit<CNamedIndexesConfig>		cNamedConfig;
+	CDurableFileController				cController;
+	CIndexTreeEvictionStrategyRandom	cIndexEvictionStrategy;
+	CIndexTreeEvictionStrategyRandom	cNamedEvictionStrategy;
+	CFileUtil							cFileUtil;
+	CTestNamedIndexedDataObject			cObject;
+	CTestNamedIndexedDataObject			cResult;
+	OIndex								oi;
+	BOOL								bResult;
+	CArrayChars							aszWords;
+	CRandom								cRandom;
+	CChars								sz;
+	int									iNumWords;
+	int									iIndex;
+	int									iWord;
+	CArrayChars							aszNames;
+	CIndexTreeEvictionCounter			cIndexEvictionCounter;
+	CIndexedDataEvictionCounter			cDataEvictionCounter;
+	CIndexTreeEvictionCounter			cNameEvictionCounter;
+	//BOOL								bFailed;
+	int									i;
+	unsigned int						uiDataSize;
+
+	aszWords.Init();
+	GetCommonWords(&aszWords);
+	iNumWords = aszWords.NumElements();
+	cRandom.Init(8976);
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database9");
+
+	aszNames.Init();
+	cIndexEvictionCounter.Init();
+	cDataEvictionCounter.Init();
+	cNameEvictionCounter.Init();
+
+	cIndexEvictionStrategy.Init();
+	cNamedEvictionStrategy.Init();
+	cController.Init("Output" _FS_ "Database9" _FS_ "R", "Output" _FS_ "Database9" _FS_ "W");
+	cIndexConfig = CValueIndexedDataConfig::Create("IndexData", 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cIndexEvictionStrategy), &cIndexEvictionCounter, &cDataEvictionCounter);
+	cNamedConfig = CValueNamedIndexesConfig::Create("Names", 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cNamedEvictionStrategy), eWriteThrough, &cNameEvictionCounter);
+
+	cController.Begin();
+	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
+
+	AssertLongLongInt(3100, cDatabase.GetIndiciesSystemMemorySize());
+	AssertLongLongInt(0, cDatabase.GetDataSystemMemorySize());
+	AssertLongLongInt(3100, cDatabase.GetNamesSystemMemorySize());
+
+	for (oi = 1; oi < 1024; oi++)
+	{
+		sz.Init();
+		for (iWord = 0; iWord < 3; iWord++)
+		{
+			if (iWord != 0)
+			{
+				sz.Append(" ");
+			}
+			iIndex = cRandom.Next(0, iNumWords - 1);
+			sz.Append(aszWords.Get(iIndex));
+		}
+		cObject.Init(sz.Text(), oi - 1, oi * 7);
+		cDatabase.Add(oi * 7, sz.Text(), &cObject, cObject.Size());
+		aszNames.Add(sz.Text());
+		sz.Kill();
+	}
+
+	AssertLongLongInt(8156, cDatabase.GetIndiciesSystemMemorySize());
+	AssertLongLongInt(5756, cDatabase.GetDataSystemMemorySize());
+	AssertLongLongInt(16308, cDatabase.GetNamesSystemMemorySize());
+	AssertLongLongInt(21, cDatabase.NumIndicesCached());
+	AssertLongLongInt(18, cDatabase.NumDataCached());
+	AssertLongLongInt(10, cDatabase.NumNamesCached());
+	AssertLongLongInt(1002, cIndexEvictionCounter.EvictionCount());
+	AssertLongLongInt(1005, cDataEvictionCounter.EvictionCount());
+	AssertLongLongInt(1013, cNameEvictionCounter.EvictionCount());
+	AssertLongLongInt(1023, cDatabase.NumIndices());
+	AssertLongLongInt(1023, cDatabase.NumNames());
+	
+	cIndexEvictionCounter.Reset();
+	cDataEvictionCounter.Reset();
+	cNameEvictionCounter.Reset();
+	aszNames.Shuffle(&cRandom);
+	for (i = 0; i < aszNames.NumElements(); i++)
+	{
+		bResult = cDatabase.Get(aszNames.Get(i), &uiDataSize, &cResult, sizeof(CTestNamedIndexedDataObject));
+	}
+
+	AssertLongLongInt(6812, cDatabase.GetIndiciesSystemMemorySize());
+	AssertLongLongInt(317, cDatabase.GetDataSystemMemorySize());
+	AssertLongLongInt(15832, cDatabase.GetNamesSystemMemorySize());
+	AssertLongLongInt(1, cDatabase.NumIndicesCached());
+	AssertLongLongInt(1, cDatabase.NumDataCached());
+	AssertLongLongInt(10, cDatabase.NumNamesCached());
+	AssertLongLongInt(2044, cIndexEvictionCounter.EvictionCount());
+	AssertLongLongInt(1040, cDataEvictionCounter.EvictionCount());
+	AssertLongLongInt(2034, cNameEvictionCounter.EvictionCount());
+	AssertLongLongInt(1023, cDatabase.NumIndices());
+	AssertLongLongInt(1023, cDatabase.NumNames());
+
+	cIndexEvictionCounter.Reset();
+	cDataEvictionCounter.Reset();
+	cNameEvictionCounter.Reset();
+	aszNames.Shuffle(&cRandom);
+	for (i = 0; i < aszNames.NumElements(); i++)
+	{
+		bResult = cDatabase.Get(aszNames.Get(i), &uiDataSize, &cResult, sizeof(CTestNamedIndexedDataObject));
+	}
+
+	AssertLongLongInt(6812, cDatabase.GetIndiciesSystemMemorySize());
+	AssertLongLongInt(322, cDatabase.GetDataSystemMemorySize());
+	AssertLongLongInt(14868, cDatabase.GetNamesSystemMemorySize());
+	AssertLongLongInt(1, cDatabase.NumIndicesCached());
+	AssertLongLongInt(1, cDatabase.NumDataCached());
+	AssertLongLongInt(10, cDatabase.NumNamesCached());
+	AssertLongLongInt(2044, cIndexEvictionCounter.EvictionCount());
+	AssertLongLongInt(1023, cDataEvictionCounter.EvictionCount());
+	AssertLongLongInt(2034, cNameEvictionCounter.EvictionCount());
+	AssertLongLongInt(1023, cDatabase.NumIndices());
+	AssertLongLongInt(1023, cDatabase.NumNames());
+
+	if (eWriteThrough == IWT_No) cDatabase.Flush();
+	cController.End();
+	cDatabase.Kill();
+	cController.Kill();
+	cNamedEvictionStrategy.Kill();
+	cIndexEvictionStrategy.Kill();
+
+	cFileUtil.RemoveDir("Output" _FS_ "Database8");
+
+	aszWords.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestNamedIndexedData(void)
 {
 	FastFunctionsInit();
@@ -1024,31 +1177,33 @@ void TestNamedIndexedData(void)
 	DataMemoryInit();
 	BeginTests();
 
-	//TestNamedIndexedDataInit(IWT_Yes);
-	//TestNamedIndexedDataInit(IWT_No);
-	//TestNamedIndexedDataAddString(IWT_Yes);
-	//TestNamedIndexedDataAddString(IWT_No);
-	//TestNamedIndexedDataAddChars(IWT_Yes);
-	//TestNamedIndexedDataAddChars(IWT_No);
-	//TestNamedIndexedDataAddIndex(IWT_Yes);
-	//TestNamedIndexedDataAddIndex(IWT_No);
-	//TestNamedIndexedDataAddBad(IWT_Yes);
-	//TestNamedIndexedDataAddBad(IWT_No);
-	//TestNamedIndexedDataGetName(IWT_Yes);
-	//TestNamedIndexedDataGetName(IWT_No);
-	//TestNamedIndexedDataSetIndex(IWT_Yes);
-	//TestNamedIndexedDataSetIndex(IWT_No);
-	//TestNamedIndexedDataSet(IWT_Yes);
-	//TestNamedIndexedDataSet(IWT_No);
-	//TestNamedIndexedDataSetBad(IWT_Yes);
-	//TestNamedIndexedDataSetBad(IWT_No);
-	//TestNamedIndexedDataPut(IWT_Yes);
-	//TestNamedIndexedDataPut(IWT_No);
-	//TestNamedIndexedDataRemove(IWT_Yes);
-	//TestNamedIndexedDataRemove(IWT_No);
-	//TestNamedIndexedDataIterate(IWT_Yes);
-	//TestNamedIndexedDataIterate(IWT_No);
-	//TestNamedIndexedDataIterateDuringTreeChange(IWT_Yes);
+	TestNamedIndexedDataInit(IWT_Yes);
+	TestNamedIndexedDataInit(IWT_No);
+	TestNamedIndexedDataAddString(IWT_Yes);
+	TestNamedIndexedDataAddString(IWT_No);
+	TestNamedIndexedDataAddChars(IWT_Yes);
+	TestNamedIndexedDataAddChars(IWT_No);
+	TestNamedIndexedDataAddIndex(IWT_Yes);
+	TestNamedIndexedDataAddIndex(IWT_No);
+	TestNamedIndexedDataAddBad(IWT_Yes);
+	TestNamedIndexedDataAddBad(IWT_No);
+	TestNamedIndexedDataGetName(IWT_Yes);
+	TestNamedIndexedDataGetName(IWT_No);
+	TestNamedIndexedDataSetIndex(IWT_Yes);
+	TestNamedIndexedDataSetIndex(IWT_No);
+	TestNamedIndexedDataSet(IWT_Yes);
+	TestNamedIndexedDataSet(IWT_No);
+	TestNamedIndexedDataSetBad(IWT_Yes);
+	TestNamedIndexedDataSetBad(IWT_No);
+	TestNamedIndexedDataPut(IWT_Yes);
+	TestNamedIndexedDataPut(IWT_No);
+	TestNamedIndexedDataRemove(IWT_Yes);
+	TestNamedIndexedDataRemove(IWT_No);
+	TestNamedIndexedDataIterate(IWT_Yes);
+	TestNamedIndexedDataIterate(IWT_No);
+	TestNamedIndexedDataGetDoesNotExceedCache(IWT_Yes);
+	TestNamedIndexedDataGetDoesNotExceedCache(IWT_No);
+	TestNamedIndexedDataIterateDuringTreeChange(IWT_Yes);
 	TestNamedIndexedDataIterateDuringTreeChange(IWT_No);
 
 	TestStatistics();
