@@ -36,8 +36,8 @@ void TestFileSystemInit(void)
 
 	AssertString("Hello World.", cTextFile.Text());
 
+	szWorkingDirectory.Kill();
 	cTextFile.Kill();
-
 	cSystem.Kill();
 }
 
@@ -69,8 +69,9 @@ void TestFileSystemNearest(void)
 	pcNode = cSystem.GetFileNode("File.txt/Sad/Quan", &szRemaining);
 	AssertNotNull(pcNode);
 	AssertString("Sad/Quan", szRemaining.Text());
-	szRemaining.Kill();
 
+	szRemaining.Kill();
+	szWorkingDirectory.Kill();
 	cSystem.Kill();
 }
 

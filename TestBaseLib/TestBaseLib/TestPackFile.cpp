@@ -41,6 +41,7 @@ void TestPackFileReadWriteSingleFile(void)
 	AssertTrue(bResult);
 
 	cPackFiles.Kill();
+	cBasic.Kill();
 
 	cPackFiles.Init(pcMemoryFile, PFM_Read);
 
@@ -56,6 +57,7 @@ void TestPackFileReadWriteSingleFile(void)
 	AssertTrue(bResult);
 
 	cPackFiles.Kill();
+	cBasic.Kill();
 
 	pcMemoryFile->Kill();
 	free(pcMemoryFile);
@@ -102,6 +104,7 @@ void TestPackFileReadWriteMultipleFiles(void)
 
 	bResult = cBasic.Close();
 	AssertTrue(bResult);
+	cBasic.Kill();
 
 	pcPackFile = cPackFiles.WriteOpen("Directory/Sub/File2.txt");
 	AssertNotNull(pcPackFile);
@@ -118,6 +121,7 @@ void TestPackFileReadWriteMultipleFiles(void)
 
 	bResult = cBasic.Close();
 	AssertTrue(bResult);
+	cBasic.Kill();
 
 	cPackFiles.Kill();
 
@@ -168,7 +172,8 @@ void TestPackFileReadWriteMultipleFiles(void)
 	AssertFalse(bResult);
 
 	cBasic1.Close();
-
+	cBasic1.Kill();
+	cBasic2.Kill();
 	cPackFiles.Kill();
 
 	pcMemoryFile->Kill();

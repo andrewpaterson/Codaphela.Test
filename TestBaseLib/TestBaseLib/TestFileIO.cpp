@@ -196,16 +196,16 @@ void TestFileIOTree(void)
 	CFileBasic					cFile;
 	CTreeTemplate<CFileIOTest>	cTree;
 	CTreeBlock					cBlock;
-	CTreeBlock					cBlockIn;
 	CFileIOTest*				pcRoot;
 	CFileIOTest*				pcChild;
 	CFileIOTest*				pcGrandChild;
 	CTreeTemplate<CFileIOTest>	cTreeIn;
+	CFileIOTest*				pcBlockRoot;
+	CFileIOTest*				pcBlockChild;
+	CTreeBlock					cBlockIn;
 	CFileIOTest*				pcRootIn;
 	CFileIOTest*				pcChildIn;
 	CFileIOTest*				pcGrandChildIn;
-	CFileIOTest*				pcBlockRoot;
-	CFileIOTest*				pcBlockChild;
 
 	TestFileIOBegin(&cMemory, &cFile);
 
@@ -259,6 +259,7 @@ void TestFileIOTree(void)
 	pcGrandChildIn = cTreeIn.GetUp(pcChildIn);
 	AssertNull(pcGrandChildIn);
 	AssertNull(cTreeIn.GetDown(pcRootIn));
+	cTreeIn.Kill();
 
 	AssertTrue(cBlockIn.ReadTreeUnknown(&cFile));
 	AssertInt(2, cBlockIn.NumElements());
@@ -266,9 +267,12 @@ void TestFileIOTree(void)
 	AssertTrue(pcBlockRoot->IsOkay(1337));
 	pcBlockChild = (CFileIOTest*)cBlockIn.GetUp(pcBlockRoot);
 	AssertTrue(pcBlockChild->IsOkay(54321));
+	cBlockIn.Kill();
 
-	cTreeIn.Kill();
 	TestFileIOEnd(&cMemory, &cFile);
+	cFile.Kill();
+	cMemory.Kill();
+
 }
 
 

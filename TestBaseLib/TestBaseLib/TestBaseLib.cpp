@@ -89,6 +89,7 @@ int main(void)
 {
 	int iResult;
 
+	_CrtSetBreakAlloc(0);
 	InitTotalStatistics();
 
 	TestPrimitiveTypes();
@@ -159,7 +160,6 @@ int main(void)
 	TestFileFinder();
 	TestChunkFile();
 	TestChunkFileFile();
-	//_CrtSetBreakAlloc(59695);
 	TestPackFile();
 	TestFileIO();
 	TestFileSystem();
