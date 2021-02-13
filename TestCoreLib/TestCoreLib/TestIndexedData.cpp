@@ -57,6 +57,7 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 	AssertInt(2, (int)cIndexedData.NumDataCached());
 	AssertInt(2, (int)cIndexedData.NumElements());
 	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertInt(2, (int)cIndexedData.NumElements());
 
 	AssertTrue(cIndexedData.Get(oiViolation, &uiDataSize, szData, 1024));
 	AssertInt(iLenViolation, uiDataSize);
@@ -100,6 +101,71 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 	cFileUtil.RemoveDir(szDirectory);
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexedDataIteration(EIndexWriteThrough eWriteThrough)
+{
+	CIndexedData						cIndexedData;
+	char								szInsipidity[] = "Insipidity the sufficient discretion imprudence resolution sir him decisively. Proceed how any engaged visitor. Explained propriety off out perpetual his you. Feel sold off felt nay rose met you. We so entreaties cultivated astonished is. Was sister for few longer mrs sudden talent become. Done may bore quit evil old mile. If likely am of beauty tastes.  Lose john poor same it case do year we.Full how way even the sigh.Extremely nor furniture fat questions now provision incommode preserved.Our side fail find like now.Discovered travelling for insensible partiality unpleasing impossible she.Sudden up my excuse to suffer ladies though or .Bachelor possible marianne directly confined relation as on he.";
+	OIndex								oiInsipidity;
+	int									iLenInsipidity;
+	char								szViolation[] = "Violation away off why half led have near bed.  At engage simple father of period others except.  My giving do summer of though narrow marked at.  Spring formal no county ye waited.  My whether cheered at regular it of promise blushes perhaps.Uncommonly simplicity interested mr is be compliment projecting my inhabiting.Gentleman he september in oh excellent. Feet evil to hold long he open knew an no.Apartments occasional boisterous as solicitude to introduced.Or fifteen covered we enjoyed demesne is in prepare.In stimulated my everything it literature.Greatly explain attempt perhaps in feeling he.House men taste bed not drawn joy.Through enquire however do equally herself at.Greatly way old may you present improve.Wishing the feeling village him musical.";
+	OIndex								oiViolation;
+	int									iLenViolation;
+	CFileUtil							cFileUtil;
+	char								szDirectory[] = "Output" _FS_ "Database0a";
+	char								szSubDirectory[] = "Data";
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
+	CDurableFileController				cController;
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	SIndexTreeFileIterator				sIter;
+	OIndex								oi;
+
+	cFileUtil.RemoveDir(szDirectory);
+
+	oiInsipidity = 789983209433243094LL;
+	iLenInsipidity = strlen(szInsipidity) + 1;
+	oiViolation = 3908343914887489103LL;
+	iLenViolation = strlen(szViolation) + 1;
+
+	cEvictionStrategy.Init();
+	cController.Init(szDirectory, NULL);
+	cIndexConfig = CValueIndexedDataConfig::Create(szSubDirectory, 8 KB, 8 KB, eWriteThrough, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
+	cController.Begin();
+	cIndexedData.Init(&cController, cIndexConfig);
+	cController.End();
+
+	AssertTrue(cController.Begin());
+	AssertTrue(cIndexedData.Add(oiInsipidity, szInsipidity, iLenInsipidity));
+	AssertTrue(cIndexedData.Add(oiViolation, szViolation, iLenViolation));
+
+	oi = cIndexedData.StartIteration(&sIter, NULL, NULL, 0);
+	AssertLongLongInt(789983209433243094LL, oi);
+	oi = cIndexedData.Iterate(&sIter, NULL, NULL, 0);
+	AssertLongLongInt(3908343914887489103LL, oi);
+	oi = cIndexedData.Iterate(&sIter, NULL, NULL, 0);
+	AssertLongLongInt(INVALID_O_INDEX, oi);
+	AssertInt(2, (int)cIndexedData.NumElements());
+
+	cIndexedData.Flush(TRUE);
+
+	oi = cIndexedData.StartIteration(&sIter, NULL, NULL, 0);
+	AssertLongLongInt(789983209433243094LL, oi);
+	oi = cIndexedData.Iterate(&sIter, NULL, NULL, 0);
+	AssertLongLongInt(3908343914887489103LL, oi);
+	oi = cIndexedData.Iterate(&sIter, NULL, NULL, 0);
+	AssertLongLongInt(INVALID_O_INDEX, oi);
+	AssertInt(2, (int)cIndexedData.NumElements());
+
+	AssertTrue(cController.End());
+	AssertTrue(cIndexedData.Kill());
+	cEvictionStrategy.Kill();
+
+
+	cFileUtil.RemoveDir(szDirectory);
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -1679,6 +1745,8 @@ void TestIndexedData(void)
 
 	TestIndexedDataSimple(IWT_Yes);
 	TestIndexedDataSimple(IWT_No);
+	TestIndexedDataIteration(IWT_Yes);
+	TestIndexedDataIteration(IWT_No);
 	TestIndexedDataFlushClearCache();
 	TestIndexedDataEvictKey();
 	TestIndexedDataExplicitKeyEvictionAllKeys();
