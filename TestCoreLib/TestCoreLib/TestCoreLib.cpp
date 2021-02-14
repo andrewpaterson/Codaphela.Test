@@ -48,6 +48,7 @@ int main(void)
 {
 	int iResult;
 
+	//_CrtSetBreakAlloc(0);
 	InitTotalStatistics();
 	TestFloatHelper();
 	TestIntegerHelper();
@@ -55,37 +56,36 @@ int main(void)
 	TestPropertiesFile();
 	TestXMLParser();
 	TestXMLFile();
-	_CrtSetBreakAlloc(0);
 	TestNumber();
 	TestOperators();
-	//TestFunctionCaller();
-	//TestLogFile();
-	//TestDurableSet();
-	//TestDurableFile();
-	//TestDurableFileController();
-	//TestFiles();
-	//TestPackFilesPacker();
-	//TestIndexedFile();
-	//TestIndexedFiles();
-	//TestIndexTreeMemory();
-	//TestIndexTreeNodeFile();
-	//TestIndexTreeFile();
-	//TestIndexTreeDataOrderer();
-	//TestIndexTreeFileCallback();
-	//TestIndexTreeFileIterator();
-	//TestIndexTreeTemplateFile();
-	//TestIndexTreeWriter();
-	//TestIndexTreeEvicting();
-	//TestIndexedFilesEvicting();
-	//TestIndexedData();
-	//TestNamedIndexes();
-	//TestNamedIndexedData();
-	//TestIndexTreeFileKeyDiagnosticCallback();
-	//TestIndexTreeAccess();
-	//TestCodabase();
+	TestFunctionCaller();
+	TestLogFile();  // <-- Memory Leak
+	TestDurableSet();
+	TestDurableFile();
+	TestDurableFileController();
+	TestFiles();
+	TestPackFilesPacker();
+	TestIndexedFile();
+	TestIndexedFiles();
+	TestIndexTreeMemory();
+	TestIndexTreeNodeFile();
+	TestIndexTreeFile();
+	TestIndexTreeDataOrderer();
+	TestIndexTreeFileCallback();
+	TestIndexTreeFileIterator();
+	TestIndexTreeTemplateFile();
+	TestIndexTreeWriter();
+	TestIndexTreeEvicting();
+	TestIndexedFilesEvicting();
+	TestIndexedData();
+	TestNamedIndexes();
+	TestNamedIndexedData();
+	TestIndexTreeFileKeyDiagnosticCallback();
+	TestIndexTreeAccess();
+	TestCodabase();
 
 	iResult = TestTotalStatistics();
-	_CrtDumpMemoryLeaks();
+	//_CrtDumpMemoryLeaks();
 	return iResult;
 }
 
