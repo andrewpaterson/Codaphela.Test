@@ -20,6 +20,7 @@ void TestReadExternalReference(void)
   <ThirdsRoot>\n\
     World\n\
   </ThirdsRoot>\n\
+  <Impact>Genesis Evangelion</Impact>\n\
 </InputDevices>\n";
 	CMarkupTag*	pcTag;
 	CMarkupTag*	pcSecondTag;
@@ -31,7 +32,7 @@ void TestReadExternalReference(void)
 
 	szDoc.Init();
 	iLine = cXMLFile.mcMarkup.mpcDoc->ToString(&szDoc);
-	AssertInt(10, iLine);
+	AssertInt(11, iLine);
 	AssertString(szExpected, szDoc.Text());
 	szDoc.Kill();
 

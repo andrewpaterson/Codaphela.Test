@@ -48,17 +48,16 @@ int main(void)
 {
 	int iResult;
 
-	_CrtSetBreakAlloc(0);
 	InitTotalStatistics();
-
 	TestFloatHelper();
 	TestIntegerHelper();
 	TestFastFunctions();
 	TestPropertiesFile();
 	TestXMLParser();
-	//TestXMLFile();
-	//TestNumber();
-	//TestOperators();
+	TestXMLFile();
+	_CrtSetBreakAlloc(0);
+	TestNumber();
+	TestOperators();
 	//TestFunctionCaller();
 	//TestLogFile();
 	//TestDurableSet();

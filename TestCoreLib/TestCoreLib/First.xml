@@ -3,10 +3,12 @@
   <!ENTITY Second SYSTEM "file:Second.xml">
   <!ENTITY Third SYSTEM "file:Third.xml">
   <!ENTITY Neon "Genesis Evangelion">
+  <!ENTITY Unreference "Unused">
 ]>
 <InputDevices>
   This is text &gt; and doom stuff
   &Second;
   Sweet &lt; other stuff
   &Third;
+  <Impact>&Neon;</Impact>
 </InputDevices>
