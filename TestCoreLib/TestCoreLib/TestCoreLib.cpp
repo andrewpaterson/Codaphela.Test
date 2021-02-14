@@ -1,3 +1,7 @@
+#define _CRTDBG_MAP_ALLOC  
+#include <stdlib.h>  
+#include <crtdbg.h>  
+
 #include "TestLib/Assert.h"
 
 
@@ -42,6 +46,9 @@ void TestCodabase(void);
 //////////////////////////////////////////////////////////////////////////
 int main(void)
 {
+	int iResult;
+
+	_CrtSetBreakAlloc(0);
 	InitTotalStatistics();
 
 	TestFloatHelper();
@@ -49,35 +56,37 @@ int main(void)
 	TestFastFunctions();
 	TestPropertiesFile();
 	TestXMLParser();
-	TestXMLFile();
-	TestNumber();
-	TestOperators();
-	TestFunctionCaller();
-	TestLogFile();
-	TestDurableSet();
-	TestDurableFile();
-	TestDurableFileController();
-	TestFiles();
-	TestPackFilesPacker();
-	TestIndexedFile();
-	TestIndexedFiles();
-	TestIndexTreeMemory();
-	TestIndexTreeNodeFile();
-	TestIndexTreeFile();
-	TestIndexTreeDataOrderer();
-	TestIndexTreeFileCallback();
-	TestIndexTreeFileIterator();
-	TestIndexTreeTemplateFile();
-	TestIndexTreeWriter();
-	TestIndexTreeEvicting();
-	TestIndexedFilesEvicting();
-	TestIndexedData();
-	TestNamedIndexes();
-	TestNamedIndexedData();
-	TestIndexTreeFileKeyDiagnosticCallback();
-	TestIndexTreeAccess();
-	TestCodabase();
+	//TestXMLFile();
+	//TestNumber();
+	//TestOperators();
+	//TestFunctionCaller();
+	//TestLogFile();
+	//TestDurableSet();
+	//TestDurableFile();
+	//TestDurableFileController();
+	//TestFiles();
+	//TestPackFilesPacker();
+	//TestIndexedFile();
+	//TestIndexedFiles();
+	//TestIndexTreeMemory();
+	//TestIndexTreeNodeFile();
+	//TestIndexTreeFile();
+	//TestIndexTreeDataOrderer();
+	//TestIndexTreeFileCallback();
+	//TestIndexTreeFileIterator();
+	//TestIndexTreeTemplateFile();
+	//TestIndexTreeWriter();
+	//TestIndexTreeEvicting();
+	//TestIndexedFilesEvicting();
+	//TestIndexedData();
+	//TestNamedIndexes();
+	//TestNamedIndexedData();
+	//TestIndexTreeFileKeyDiagnosticCallback();
+	//TestIndexTreeAccess();
+	//TestCodabase();
 
-	return TestTotalStatistics();
+	iResult = TestTotalStatistics();
+	_CrtDumpMemoryLeaks();
+	return iResult;
 }
 

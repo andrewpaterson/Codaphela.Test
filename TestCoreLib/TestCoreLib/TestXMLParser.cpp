@@ -228,6 +228,7 @@ void TestNamedReferences(void)
 	szDoc.Init();
 	pcDoc->ToString(&szDoc);
 	AssertString(szExpectedXML, szDoc.Text());
+	szDoc.Kill();
 
 	cXMLParser.Kill();
 	cMarkup.Kill();
