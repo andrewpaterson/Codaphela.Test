@@ -168,6 +168,8 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 		AssertLongLongInt(24+i, szOne->GetOI());
 	}
 
+	pcDatabase->ValidateIdentifiers();
+
 	pcReader->Kill();
 
 	ObjectsFlush();
