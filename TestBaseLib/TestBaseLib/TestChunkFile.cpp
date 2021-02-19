@@ -3,7 +3,9 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/DiskFile.h"
 #include "BaseLib/MemoryFile.h"
+#include "BaseLib/ChunkFileFile.h"
 #include "TestLib/Assert.h"
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -137,6 +139,75 @@ void TestChunkFileNameing(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestChunkFileFileBasic(void)
+{
+	CChunkFile		cChunkFile;
+	CChunkFileFile	cChunkFileFile1;
+	CChunkFileFile	cChunkFileFile2;
+	CFileBasic		cFileBasic1;
+	CFileBasic		cFileBasic2;
+	int				iResult;
+	char			szResult[256];
+
+	cChunkFile.Init(MemoryFile());
+	AssertTrue(cChunkFile.WriteOpen());
+
+	AssertTrue(cChunkFile.WriteChunkBegin());
+	cChunkFileFile1.Init(&cChunkFile);
+	cFileBasic1.Init(&cChunkFileFile1);
+	AssertTrue(cFileBasic1.Open(EFM_Write_Create));
+	AssertTrue(cFileBasic1.WriteInt(12345678));
+	AssertTrue(cFileBasic1.WriteInt(0x7fffffff));
+	AssertTrue(cFileBasic1.Close());
+	AssertTrue(cChunkFile.WriteChunkEnd("2 Ints"));
+	cFileBasic1.Kill();
+
+	AssertTrue(cChunkFile.WriteChunkBegin());
+	cChunkFileFile1.Init(&cChunkFile);
+	cFileBasic2.Init(&cChunkFileFile1);
+	AssertTrue(cFileBasic2.Open(EFM_Write_Create));
+	AssertTrue(cFileBasic2.WriteString("Hello"));
+	AssertTrue(cFileBasic2.WriteString("World"));
+	AssertTrue(cFileBasic2.Close());
+	AssertTrue(cChunkFile.WriteChunkEnd("The Usual"));
+	cFileBasic2.Kill();
+
+	AssertTrue(cChunkFile.WriteClose());
+
+	AssertTrue(cChunkFile.ReadOpen());
+	AssertTrue(cChunkFile.ReadChunkBegin("2 Ints"));
+	cChunkFileFile1.Init(&cChunkFile);
+	cFileBasic1.Init(&cChunkFileFile1);
+	AssertTrue(cFileBasic1.Open(EFM_Read));
+	AssertTrue(cFileBasic1.ReadInt(&iResult));
+	AssertInt(12345678, iResult);
+	AssertTrue(cFileBasic1.ReadInt(&iResult));
+	AssertInt(0x7fffffff, iResult);
+	AssertTrue(cFileBasic1.Close());
+	AssertTrue(cChunkFile.ReadChunkEnd());
+	cFileBasic1.Kill();
+
+	AssertTrue(cChunkFile.ReadChunkBegin("The Usual"));
+	cChunkFileFile1.Init(&cChunkFile);
+	cFileBasic2.Init(&cChunkFileFile1);
+	AssertTrue(cFileBasic2.Open(EFM_Read));
+	AssertTrue(cFileBasic2.ReadString(szResult, 256));
+	AssertString("Hello", szResult);
+	AssertTrue(cFileBasic2.ReadString(szResult, 256));
+	AssertString("World", szResult);
+	AssertTrue(cFileBasic2.Close());
+	AssertTrue(cChunkFile.ReadChunkEnd());
+	cFileBasic2.Kill();
+
+	cChunkFile.ReadClose();
+	cChunkFile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestChunkFile(void)
 {
 	BeginTests();
@@ -146,6 +217,7 @@ void TestChunkFile(void)
 	TestChunkFileSimple();
 	TestChunkFileMD5ing();
 	TestChunkFileNameing();
+	TestChunkFileFileBasic();
 
 	MemoryKill();
 	FastFunctionsKill();
