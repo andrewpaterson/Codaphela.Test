@@ -118,6 +118,8 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	pcWriter->Kill();
 
 	ObjectsFlush();
+
+	pcDatabase->
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	ObjectsKill();

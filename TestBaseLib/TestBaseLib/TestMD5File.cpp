@@ -18,7 +18,6 @@ void TestMD5FileWrite(void)
 	char			szDest[128];
 	int				iFoxLen;
 	filePos			iRead;
-	BOOL			bEndOfFile;
 	char			szLorem[] = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 	unsigned char	ucLoremMD5[] = {0xfa, 0x5c, 0x89, 0xf3, 0xc8, 0x8b, 0x81, 0xbf, 0xd5, 0xe8, 0x21, 0xb0, 0x31, 0x65, 0x69, 0xaf};
 	int				iLoremLen;
@@ -49,18 +48,13 @@ void TestMD5FileWrite(void)
 	iRead = cFile.Read(szDest, 1, iFoxLen+1);
 	AssertLongLongInt(iFoxLen, iRead);
 	AssertMD5(ucFoxMD5, cHashFile.msMD5Context.digest);
-	bEndOfFile = cFile.IsEndOfFile();
-	AssertTrue(bEndOfFile);
 
 	cFile.Seek(0);
-	bEndOfFile = cFile.IsEndOfFile();
-	AssertFalse(bEndOfFile);
 
 	iRead = cFile.Read(szDest, iFoxLen, 1);
 	AssertLongLongInt(1, iRead);
 	AssertMD5(ucFoxMD5, cHashFile.msMD5Context.digest);
-	bEndOfFile = cFile.IsEndOfFile();
-	AssertTrue(bEndOfFile);
+	cFile.Close();
 	cFile.Kill();
 	cHashFile.Kill();
 

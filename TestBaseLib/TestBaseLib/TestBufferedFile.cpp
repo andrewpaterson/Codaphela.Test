@@ -20,34 +20,32 @@ void TestBufferedFileRead(void)
 	int			i;
 	char		szExpected[20];
 
-	cFileUtil.Delete("Test.txt");
+	cFileUtil.TouchDir("Output");
+	AssertTrue(cFileUtil.Delete("Output" _FS_ "Test.txt"));
 
 	cText.Init();
 	cText.mcText.Append("abcdefghijk");
-	cText.Write("Test.txt");
+	cText.Write("Output" _FS_ "Test.txt");
 	cText.Kill();
 
-	cFile.Init(BufferedFile(DiskFile("Test.txt"), 3));
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "Test.txt"), 3));
 
 	cFile.Open(EFM_Read);
 
 	for (c = 'a'; c <= 'k'; c++)
 	{
-		AssertFalse(cFile.IsEndOfFile());
 		memset(sz, 0, 20);
 		iCount = (int)cFile.Read(sz, 1, 1);
 		AssertChar(c, sz[0]);
 		AssertChar(0, sz[1]);
 		AssertInt(1, iCount);
 	}
-	AssertTrue(cFile.IsEndOfFile());
 
 	cFile.Seek(0);
 
 	szExpected[2] = 0;
 	for (i = 0; i < 5; i++)
 	{
-		AssertFalse(cFile.IsEndOfFile());
 		memset(sz, 0, 20);
 		iCount = (int)cFile.Read(sz, 1, 2);
 		szExpected[0] = 'a' + (char)i * 2;
@@ -55,19 +53,16 @@ void TestBufferedFileRead(void)
 		AssertString(szExpected, sz);
 		AssertInt(2, iCount);
 	}
-	AssertFalse(cFile.IsEndOfFile());
 	memset(sz, 0, 20);
 	iCount = (int)cFile.Read(sz, 1, 2);
 	AssertString("k", sz);
 	AssertInt(1, iCount);
-	AssertTrue(cFile.IsEndOfFile());
 
 	cFile.Seek(0);
 
 	szExpected[3] = 0;
 	for (i = 0; i < 3; i++)
 	{
-		AssertFalse(cFile.IsEndOfFile());
 		memset(sz, 0, 20);
 		iCount = (int)cFile.Read(sz, 1, 3);
 		szExpected[0] = 'a' + (char)i * 3;
@@ -76,16 +71,15 @@ void TestBufferedFileRead(void)
 		AssertString(szExpected, sz);
 		AssertInt(3, iCount);
 	}
-	AssertFalse(cFile.IsEndOfFile());
 	memset(sz, 0, 20);
 	iCount = (int)cFile.Read(sz, 1, 3);
 	AssertString("jk", sz);
 	AssertInt(2, iCount);
-	AssertTrue(cFile.IsEndOfFile());
 
+	cFile.Close();
 	cFile.Kill();
 
-	cFileUtil.Delete("Test.txt");
+	AssertTrue(cFileUtil.Delete("Output" _FS_ "Test.txt"));
 }
 
 
@@ -100,73 +94,75 @@ void TestBufferedFileWrite(void)
 	CFileBasic	cFile;
 	CTextFile	cText;
 
-	cFileUtil.Delete("Test.txt");
+	cFileUtil.TouchDir("Output");
+	AssertTrue(cFileUtil.Delete("Output" _FS_ "Test.txt"));
 
-	cFile.Init(BufferedFile(DiskFile("Test.txt"), 3));
-	cFile.Open(EFM_Write_Create);
-	cFile.Write("ab", 1, 2);
-	cFile.Write("cd", 1, 2);
-	cFile.Close();
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "Test.txt"), 3));
+	AssertTrue(cFile.Open(EFM_Write_Create));
+	AssertLongLongInt(2, cFile.Write("ab", 1, 2));
+	AssertLongLongInt(2, cFile.Write("cd", 1, 2));
+	AssertTrue(cFile.Close());
 	cFile.Kill();
 
 	cText.Init();
-	cText.Read("Test.txt");
+	AssertTrue(cText.Read("Output" _FS_ "Test.txt"));
 	AssertString("abcd", cText.mcText.Text());
 	cText.Kill();
 
-	cFile.Init(BufferedFile(DiskFile("Test.txt"), 5));
-	cFile.Open(EFM_Write_Create);
-	cFile.Write("abcdefghi", 1, 9);
-	cFile.Write("jklmn", 1, 5);
-	cFile.Close();
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "Test.txt"), 5));
+	AssertTrue(cFile.Open(EFM_Write_Create));
+	AssertLongLongInt(9, cFile.Write("abcdefghi", 1, 9));
+	AssertLongLongInt(5, cFile.Write("jklmn", 1, 5));
+	AssertTrue(cFile.Close());
 	cFile.Kill();
 
 	cText.Init();
-	cText.Read("Test.txt");
+	AssertTrue(cText.Read("Output" _FS_ "Test.txt"));
 	AssertString("abcdefghijklmn", cText.mcText.Text());
 	cText.Kill();
 
-	cFile.Init(BufferedFile(DiskFile("Test.txt"), 5));
-	cFile.Open(EFM_ReadWrite);
-	cFile.Seek(4);
-	cFile.Write("xyz", 3, 1);
-	cFile.Close();
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "Test.txt"), 5));
+	AssertTrue(cFile.Open(EFM_ReadWrite));
+	AssertTrue(cFile.Seek(4));
+	AssertLongLongInt(1, cFile.Write("xyz", 3, 1));
+	AssertTrue(cFile.Close());
 	cFile.Kill();
 
 	cText.Init();
-	cText.Read("Test.txt");
+	AssertTrue(cText.Read("Output" _FS_ "Test.txt"));
 	AssertString("abcdxyzhijklmn", cText.mcText.Text());
 	cText.Kill();
 
-	cFile.Init(BufferedFile(DiskFile("Test.txt"), 8));
-	cFile.Open(EFM_ReadWrite);
-	cFile.Seek(0, EFSO_END);
-	cFile.Write("opqrst", 6, 1);
-	cFile.Seek(0);
-	cFile.Write("123456", 6, 1);
-	cFile.Write("78", 2, 1);
-	cFile.Close();
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "Test.txt"), 8));
+	AssertTrue(cFile.Open(EFM_ReadWrite));
+	AssertTrue(cFile.Seek(0, EFSO_END));
+	AssertLongLongInt(1, cFile.Write("opqrst", 6, 1));
+	AssertTrue(cFile.Seek(0));
+	AssertLongLongInt(1, cFile.Write("123456", 6, 1));
+	AssertLongLongInt(1, cFile.Write("78", 2, 1));
+	AssertTrue(cFile.Close());
 	cFile.Kill();
 
 	cText.Init();
-	cText.Read("Test.txt");
+	AssertTrue(cText.Read("Output" _FS_ "Test.txt"));
 	AssertString("12345678ijklmnopqrst", cText.mcText.Text());
 	cText.Kill();
 
-	cFile.Init(BufferedFile(DiskFile("Test.txt"), 3));
-	cFile.Open(EFM_Write_Create);
-	cFile.Write("ab", 1, 2);
-	cFile.Write("cdef", 1, 4);
-	cFile.Write("gh", 1, 2);
-	cFile.Close();
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "Test.txt"), 3));
+	AssertTrue(cFile.Open(EFM_Write_Create));
+	AssertLongLongInt(2, cFile.Write("ab", 1, 2));
+	AssertLongLongInt(4, cFile.Write("cdef", 1, 4));
+	AssertLongLongInt(2, cFile.Write("gh", 1, 2));
+	AssertLongLongInt(20, cFile.GetFileLength());
+	AssertTrue(cFile.Close());
 	cFile.Kill();
 
 	cText.Init();
-	cText.Read("Test.txt");
-	AssertString("abcdefgh", cText.mcText.Text());
+	AssertTrue(cText.Read("Output" _FS_ "Test.txt"));
+	AssertString("abcdefghijklmnopqrst", cText.mcText.Text());
 	cText.Kill();
 
-	cFileUtil.Delete("Test.txt");
+	AssertTrue(cFileUtil.Delete("Output" _FS_ "Test.txt"));
 }
 
 
@@ -181,9 +177,10 @@ void TestBufferedFileReadWrite(void)
 	CTextFile	cText;
 	char		sz[20];
 
-	cFileUtil.Delete("Test.txt");
+	cFileUtil.TouchDir("Output");
+	AssertTrue(cFileUtil.Delete("Output" _FS_ "Test.txt"));
 
-	cFile.Init(BufferedFile(DiskFile("Test.txt"), 3));
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "Test.txt"), 3));
 	cFile.Open(EFM_ReadWrite_Create);
 	cFile.Write("abcdefghijklmn", 1, 14);
 	cFile.Write("op", 1, 2);
@@ -207,11 +204,11 @@ void TestBufferedFileReadWrite(void)
 	cFile.Kill();
 
 	cText.Init();
-	cText.Read("Test.txt");
+	cText.Read("Output" _FS_ "Test.txt");
 	AssertString("abXYefg12jk34nop", cText.mcText.Text());
 	cText.Kill();
 
-	cFileUtil.Delete("Test.txt");
+	AssertTrue(cFileUtil.Delete("Output" _FS_ "Test.txt"));
 }
 
 

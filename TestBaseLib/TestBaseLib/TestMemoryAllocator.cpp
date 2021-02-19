@@ -76,6 +76,7 @@ void TestMemoryAllocatorReadWrite(void)
 	AssertTrue(cAllocIn.Read(&cFile));
 
 	cFile.ReadInt(&i);
+	cFile.Close();
 	cFile.Kill();
 	AssertInt(124, i);
 

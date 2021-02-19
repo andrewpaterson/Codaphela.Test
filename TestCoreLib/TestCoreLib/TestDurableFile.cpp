@@ -128,8 +128,8 @@ void TestDurableFileCloseOpen(BOOL bDurable)
 	CDurableFile			cDurableFile;
 	filePos					iResult;
 	CDurableFileController	cController;
-	char					szDirectory[] = "Output" _FS_ "Durable7";
-	char					szRewrite[] = "Output" _FS_ "_Durable7";
+	char					szDirectory[] = "Output" _FS_ "Durable8";
+	char					szRewrite[] = "Output" _FS_ "_Durable8";
 
 	char			szA[] = "AAAA";
 	char			szB[] = "BBBB";
@@ -191,14 +191,14 @@ void TestDurableFileComplex(BOOL bDurable)
 	cDurableFile.Init(&cController, "WrittenFile.txt", "_WrittenFile.txt");
 	cController.Begin();
 
-	iResult = cDurableFile.Write(4, szB, 2, 2);
+	iResult = cDurableFile.Write(4, szB, 2, 2);   // ----BBBB
 	AssertLongLongInt(2, iResult);
 	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
 	AssertLongLongInt(8, cDurableFile.Tell());
 	AssertLongLongInt(8, cDurableFile.Size());
 	AssertInt(1, cDurableFile.GetNumWrites());
 
-	iResult = cDurableFile.Write(10, szC, 2, 2);
+	iResult = cDurableFile.Write(10, szC, 2, 2);  // ----bbbb--CCCC
 	AssertLongLongInt(2, iResult);
 	AssertLongLongInt(14, cDurableFile.Tell());
 	AssertLongLongInt(14, cDurableFile.Size());
@@ -214,7 +214,7 @@ void TestDurableFileComplex(BOOL bDurable)
 	AssertLongLongInt(14, cDurableFile.Size());
 	AssertInt(2, cDurableFile.GetNumWrites());
 	
-	iResult = cDurableFile.Write(12, szE, 1, 4);
+	iResult = cDurableFile.Write(12, szE, 1, 4);  // ----bbbb--ccEEEE
 	AssertLongLongInt(4, iResult);
 	AssertLongLongInt(16, cDurableFile.Tell());
 	AssertLongLongInt(16, cDurableFile.Size());

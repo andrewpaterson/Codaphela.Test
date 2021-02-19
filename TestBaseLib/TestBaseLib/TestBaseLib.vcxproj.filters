@@ -369,6 +369,9 @@
     <ClCompile Include="TestMemoryQueue.cpp">
       <Filter>Source\Memory\Cache</Filter>
     </ClCompile>
+    <ClCompile Include="TestWindowsFiles.cpp">
+      <Filter>Source\File</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

@@ -281,6 +281,7 @@
     <ClCompile Include="TestTextParser.cpp" />
     <ClCompile Include="TestTrackingAllocator.cpp" />
     <ClCompile Include="TestTreeTemplate.cpp" />
+    <ClCompile Include="TestWindowsFiles.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArrayTemplateTestClasses.h" />

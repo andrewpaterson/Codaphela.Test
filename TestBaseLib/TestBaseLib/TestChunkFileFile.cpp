@@ -41,17 +41,13 @@ void TestChunkFileFileRead(void)
 	AssertLongLongInt(1, cChunkFileFile.Read(&cz, 1, 1));
 	AssertChar('Z', cz); cz = 'Q';
 	AssertLongLongInt(1, cChunkFileFile.Tell());
-	AssertFalse(cChunkFileFile.Eof());
 	AssertLongLongInt(0, cChunkFileFile.Read(&cz, 1, 1));
-	AssertTrue(cChunkFileFile.Eof());
 	AssertLongLongInt(1, cChunkFileFile.Tell());
 
 	AssertTrue(cChunkFileFile.Seek(0, EFSO_SET));
-	AssertFalse(cChunkFileFile.Eof());
 	AssertLongLongInt(1, cChunkFileFile.Read(&cz, 1, 2));
 	AssertChar('Z', cz); cz = 'Q';
 	AssertLongLongInt(1, cChunkFileFile.Tell());
-	AssertTrue(cChunkFileFile.Eof());
 
 	AssertTrue(cChunkFileFile.Close());
 

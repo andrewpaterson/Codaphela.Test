@@ -51,6 +51,7 @@ void TestLinkedListBlockAligned(void);
 void TestListVariable(void);
 void TestArrayInt2D(void);
 void TestTreeTemplate(void);
+void TestWindowsFilesTruncate(void);
 void TestMD5File(void);
 void TestDiskFile(void);
 void TestBufferedFile(void);
@@ -131,6 +132,7 @@ int main(void)
 	TestArrayDenseTemplate();
 	TestArraySparseTemplate();
 	TestMemoryFile();
+	TestWindowsFilesTruncate();
 	TestDiskFile();
 	TestBufferedFile();
 	TestMD5File();

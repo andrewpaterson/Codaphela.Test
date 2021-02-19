@@ -48,6 +48,7 @@ void TestFreeListAllocatorReadWrite(void)
 	cAllocIn.GetFreeList()->GetParams(&sParams);
 	AssertInt(4, sParams.iOffset);
 
+	cFile.Close();
 	cFile.Kill();
 
 	MemoryKill();
