@@ -49,7 +49,7 @@ int main(void)
 {
 	int iResult;
 
-	//_CrtSetBreakAlloc(0);
+	_CrtSetBreakAlloc(0);
 	InitTotalStatistics();
 	TestFloatHelper();
 	TestIntegerHelper();
@@ -60,10 +60,10 @@ int main(void)
 	TestNumber();
 	TestOperators();
 	TestFunctionCaller();
-	TestLogFile();  // <-- Memory Leak
+	TestLogFile();  
 	TestDurableSet();
-	TestDurableFile();
-	TestDurableFileController();
+	TestDurableFile();  
+	TestDurableFileController();  // <-- Memory Leak
 	TestFiles();
 	TestPackFilesPacker();
 	TestIndexedFile();

@@ -387,29 +387,39 @@ void TestLogFileFindHoles(void)
 	AssertInt(0, apvOverlapping.NumElements());
 	apvOverlapping.Kill();
 
+	apvOverlapping.Init();
 	cFile.Write(&iInt1, 4, 1);
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, 4);
 	AssertFalse(bResult);
+	apvOverlapping.Kill();
 
+	apvOverlapping.Init();
 	cFile.Write(&iInt2, 4, 1);
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, 8);
 	AssertFalse(bResult);
+	apvOverlapping.Kill();
 
 	for (i = 0; i < 8; i++)
 	{
+		apvOverlapping.Init();
 		bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, i);
 		AssertFalse(bResult);
+		apvOverlapping.Kill();
 	}
 	for (i = 0; i < 8; i++)
 	{
+		apvOverlapping.Init();
 		bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, i, 8 -i);
 		AssertFalse(bResult);
+		apvOverlapping.Kill();
 	}
+	apvOverlapping.Init();
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 7, 2);
 	AssertTrue(bResult);
 	AssertInt(1, apvOverlapping.NumElements());
 	apvOverlapping.Kill();
 
+	apvOverlapping.Init();
 	cFile.Seek(4, EFSO_CURRENT);
 	cFile.Write(&iInt3, 4, 1);
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, 16);
@@ -417,22 +427,29 @@ void TestLogFileFindHoles(void)
 	AssertInt(2, apvOverlapping.NumElements());
 	apvOverlapping.Kill();
 
+	apvOverlapping.Init();
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 12, 4);
 	AssertFalse(bResult);
+	apvOverlapping.Kill();
 
+	apvOverlapping.Init();
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 11, 5);
 	AssertTrue(bResult);
 	AssertInt(1, apvOverlapping.NumElements());
 	apvOverlapping.Kill();
 
+	apvOverlapping.Init();
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, 8);
 	AssertFalse(bResult);
+	apvOverlapping.Kill();
 
+	apvOverlapping.Init();
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, 9);
 	AssertTrue(bResult);
 	AssertInt(1, apvOverlapping.NumElements());
 	apvOverlapping.Kill();
 
+	apvOverlapping.Init();
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 7, 2);
 	AssertTrue(bResult);
 	AssertInt(1, apvOverlapping.NumElements());
@@ -450,17 +467,24 @@ void TestLogFileFindHoles(void)
 	AssertInt(0, apvOverlapping.NumElements());
 	apvOverlapping.Kill();
 
+	apvOverlapping.Init();
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 8, 5);
 	AssertTrue(bResult);
 	AssertInt(1, apvOverlapping.NumElements());
 	apvOverlapping.Kill();
 
+	apvOverlapping.Init();
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, 0);
 	AssertFalse(bResult);
+	apvOverlapping.Kill();
+	apvOverlapping.Init();
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 7, 0);
 	AssertFalse(bResult);
+	apvOverlapping.Kill();
+	apvOverlapping.Init();
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 8, 0);
 	AssertFalse(bResult);
+	apvOverlapping.Kill();
 
 	cFile.Close();
 	cFile.Kill();
@@ -518,7 +542,7 @@ void TestLogFileCommandsSimple(void)
 	AssertInt(sizeof(int), pcMemoryFile->GetBufferSize());
 	AssertInt(iInt, *((int*)pcMemoryFile->GetBufferPointer()));
 
-	pcLogFile->Kill();
+	cFile.Kill();
 }
 
 
@@ -528,16 +552,16 @@ void TestLogFileCommandsSimple(void)
 //////////////////////////////////////////////////////////////////////////
 void TestLogFileCommandsComplex(void)
 {
-	CLogFile*		pcLogFile;
-	CMemoryFile*	pcMemoryFile;
+	CLogFile* pcLogFile;
+	CMemoryFile* pcMemoryFile;
 	CFileBasic		cFile;
 	BOOL			bResult;
 	int				iWritten;
-	char			szABC[] = {"ABCDEFGHIJK"};
-	char			sz123[] = {"123"};
-	char			sz4[] = {"4"};
-	char			szExclamation[] = {"!?"};
-	char			szQWE[] = {"_QWE_"};
+	char			szABC[] = { "ABCDEFGHIJK" };
+	char			sz123[] = { "123" };
+	char			sz4[] = { "4" };
+	char			szExclamation[] = { "!?" };
+	char			szQWE[] = { "_QWE_" };
 	char			szResult[12];
 
 	pcMemoryFile = MemoryFile();
@@ -571,15 +595,16 @@ void TestLogFileCommandsComplex(void)
 	cFile.Read(szResult, 12, 1);
 	AssertString("!?34E_QWE_K", szResult);
 	cFile.Close();
-	
+
 	bResult = pcLogFile->Commit();
 	AssertTrue(bResult);
 	AssertFalse(pcMemoryFile->IsOpen());
 	AssertInt(12, pcMemoryFile->GetBufferSize());
 	AssertString("!?34E_QWE_K", (char*)pcMemoryFile->GetBufferPointer());
 
-	pcLogFile->Kill();
+	cFile.Kill();
 }
+
 
 
 //////////////////////////////////////////////////////////////////////////

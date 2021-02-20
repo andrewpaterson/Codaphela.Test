@@ -159,6 +159,8 @@ void TestDurableFileCloseOpen(BOOL bDurable)
 	AssertLongLongInt(8, cDurableFile.Tell());
 
 	cController.End();
+	cController.Kill();
+	cDurableFile.Kill();
 
 	cFileUtil.RemoveDirs(szDirectory, szRewrite, NULL);
 }
