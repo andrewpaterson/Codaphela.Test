@@ -67,6 +67,9 @@
     <Filter Include="Source\Database">
       <UniqueIdentifier>{e688fdf5-a5e8-4326-9b66-050afb9f34c2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\File\Indexed\Sequence">
+      <UniqueIdentifier>{e11fed26-2343-4c4c-ba2e-1760e53f7ddf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -185,6 +188,9 @@
     </ClCompile>
     <ClCompile Include="TestCodabase.cpp">
       <Filter>Source\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSequence.cpp">
+      <Filter>Source\File\Indexed\Sequence</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

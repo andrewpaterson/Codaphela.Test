@@ -26,6 +26,7 @@ void TestIndexTreeFileIterator(void);
 void TestIndexedFiles(void);
 void TestIndexTreeNodeFile(void);
 void TestIndexedData(void);
+void TestSequence(void);
 void TestOperators(void);
 void TestFunctionCaller(void);
 void TestNumber(void);
@@ -78,6 +79,7 @@ int main(void)
 	TestIndexTreeEvicting();
 	TestIndexedFilesEvicting();
 	TestIndexedData();
+	TestSequence();
 	TestNamedIndexes();
 	TestNamedIndexedData();
 	TestIndexTreeFileKeyDiagnosticCallback();
