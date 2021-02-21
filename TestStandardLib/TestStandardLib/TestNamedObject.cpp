@@ -54,13 +54,14 @@ void TestNamedObjectName(void)
 	OIndex					oiNamed3;
 	CCodabase*				pcDatabase;
 	CSequence*				pcSequence;
+	char					szDirectory[] = "Output" _FS_ "NamedObject";
 
-	cFileUtil.RemoveDir("Output" _FS_ "NamedObject");
-	cFileUtil.TouchDir("Output" _FS_ "NamedObject");
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.TouchDir(szDirectory);
 
-	MemoryInit();
-	pcSequence = CSequenceFactory::Create("Output" _FS_ "NamedObject");
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "NamedObject", IWT_No);
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	TestNamedObjectAddConstructors(); //This is only important if an object is being loaded.
@@ -106,8 +107,8 @@ void TestNamedObjectName(void)
 	AssertNull(pSet.Object());
 
 
-	pcSequence = CSequenceFactory::Create("Output" _FS_ "NamedObject");
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "NamedObject", IWT_Yes);
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	TestNamedObjectAddConstructors();
@@ -135,7 +136,8 @@ void TestNamedObjectName(void)
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
 	ObjectsKill();
-	MemoryKill();
+
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -148,7 +150,6 @@ void TestNamedOjectKill(void)
 	Ptr<CTestNamedObject>	pNamedObject;
 	char*					pszName;
 
-	MemoryInit();
 	ObjectsInit();
 
 	pNamedObject = ONMalloc<CTestNamedObject>("This is my Name", 7);
@@ -160,7 +161,81 @@ void TestNamedOjectKill(void)
 
 	ObjectsFlush();
 	ObjectsKill();
-	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestNamedOjectReuse(EIndexWriteThrough eWriteThrough)
+{
+	CFileUtil				cFileUtil;
+	Ptr<CTestNamedObject>	pNamed1;
+	Ptr<CTestNamedObject>	pNamed2;
+	Ptr<CTestNamedObject>	pNamed3;
+	Ptr<CRoot>				pRoot;
+	CCodabase*				pcDatabase;
+	CSequence*				pcSequence;
+	char					szDirectory[] = "Output" _FS_ "NamedObjectReuse";
+	SLogConfig				sLogConfig;
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.TouchDir(szDirectory);
+
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, eWriteThrough);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+
+	pNamed1 = ONMalloc<CTestNamedObject>("Sister Two", 1);
+
+	pNamed2 = ONMalloc<CTestNamedObject>("Office Block", 2);
+	pNamed2->mpNamedTest1 = pNamed1;
+
+	pRoot = ORoot();
+	pRoot->Add(pNamed1);
+
+	AssertLongLongInt(3, gcObjects.NumMemoryNames());
+	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
+
+	AssertLongLongInt(3LL, pRoot.GetIndex());
+	AssertLongLongInt(1LL, pNamed1.GetIndex());
+	AssertLongLongInt(2LL, pNamed2.GetIndex());
+
+
+	ObjectsFlush();
+	pcDatabase->Close();
+	SafeKill(pcSequence);
+	SafeKill(pcDatabase);
+	ObjectsKill();
+
+	AssertNull(pNamed1.Object());
+	AssertNull(pNamed2.Object());
+	AssertNull(pRoot.Object());
+
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, eWriteThrough);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+
+	pNamed1 = gcObjects.Get("Sister Two");
+
+	gcLogger.GetConfig(&sLogConfig);
+	gcLogger.SetBreakOnError(FALSE);
+	pNamed3 = ONMalloc<CTestNamedObject>("Sister Two", 3);
+	gcLogger.SetConfig(&sLogConfig);
+
+	ObjectsFlush();
+	pcDatabase->Close();
+	SafeKill(pcSequence);
+	SafeKill(pcDatabase);
+	ObjectsKill();
+
+
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -171,11 +246,15 @@ void TestNamedOjectKill(void)
 void TestNamedObject(void)
 {
 	BeginTests();
+	MemoryInit();
 
 	TestNamedObjectSize();
 	TestNamedObjectName();
 	TestNamedOjectKill();
+	TestNamedOjectReuse(IWT_No);
+	TestNamedOjectReuse(IWT_Yes);
 
+	MemoryKill();
 	TestStatistics();
 }
 
