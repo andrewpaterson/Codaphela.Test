@@ -95,11 +95,6 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	CCodabase*					pcDatabase;
 	CSequence*					pcSequence;
 	char						szDirectory[] = "Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping";
-	CFileUtil					cFileUtil;
-
-	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "GraphDeserialiser"));
-	AssertTrue(cFileUtil.TouchDir(szDirectory));
-
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -125,9 +120,9 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	cGraphSerialiser.Kill();
 	pcWriter->Kill();
 
-	ObjectsFlush();
-
 	AssertLongLongInt(9LL, pcSequence->PeekNext());
+
+	gcObjects.Flush();
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
@@ -159,6 +154,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	AssertTrue(cStart1.IsNotNull());
 	AssertLongLongInt(29, cStart1->GetOI());
 
+
 	AssertTrue(cStart1->mp1.IsNotNull());
 	AssertString("CTestSaveableObject1", cStart1->mp1->ClassName());
 	cShared = cStart1->mp1;
@@ -168,6 +164,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	AssertString("CString", cStart1->mp2->ClassName());
 	cString1 = cStart1->mp2;
 	AssertLongLongInt(30, cString1->GetOI());
+
 	cGraphDeserialiser.Kill();
 	cDependentReadObjects.Kill();
 	cAllocator.Kill();
@@ -197,7 +194,101 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestRemappingOfSimpleFilesOIs(void)
+void TestObjectGraphDeserialiserReuseName(void)
+{
+	CObjectWriterSimple			cWriter;
+	CObjectReaderSimpleDisk		cReader;
+	CFileUtil					cFileUtil;
+	Ptr<CTestSaveableObject2>	cBase;
+	Ptr<CTestSaveableObject2>	cStart1;
+	Ptr<CRoot>					cRoot;
+	CObjectGraphSerialiser		cGraphSerialiser;
+	CObjectGraphDeserialiser	cGraphDeserialiser;
+	Ptr<CTestSaveableObject1>	cShared;
+	CObjectAllocator			cAllocator;
+	CDependentReadObjects		cDependentReadObjects;
+	CCodabase*					pcDatabase;
+	CSequence*					pcSequence;
+	char						szDirectory[] = "Output" _FS_ "GraphDeserialiser" _FS_ "Reuse";
+
+	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "GraphDeserialiser"));
+	AssertTrue(cFileUtil.TouchDir("Output" _FS_ "GraphDeserialiser" _FS_ "Reuse"));
+
+	cWriter.Init("Output" _FS_ "GraphDeserialiser" _FS_ "Reuse", "");
+	cReader.Init("Output" _FS_ "GraphDeserialiser" _FS_ "Reuse");
+
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+
+	TestObjectGraphDeserialiserAddConstructors();
+	
+
+	cRoot = ORoot();
+	cStart1 = ONMalloc<CTestSaveableObject2>("Ow/Start 1", "Battery");
+	AssertLongLongInt(3, cStart1->GetOI());
+
+	cRoot->Add(cStart1);
+
+	cBase = gcObjects.Get("Ow/Start 1");
+	AssertTrue(cBase.IsNotNull());
+	AssertLongLongInt(3, cBase->GetOI());
+	AssertString("Ow/Start 1", cBase.GetName());
+
+	cGraphSerialiser.Init(&cWriter);
+	AssertTrue(cGraphSerialiser.Write(&cBase));
+	cGraphSerialiser.Kill();
+	cWriter.Kill();
+
+
+	ObjectsFlush();
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill();
+
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+	TestObjectGraphDeserialiserAddConstructors();
+
+	cAllocator.Init(&gcObjects);
+	cDependentReadObjects.Init();
+	cGraphDeserialiser.Init(&cReader, FALSE, &cAllocator, &cDependentReadObjects, gcObjects.GetMemory());
+	cStart1 = cGraphDeserialiser.Read("Ow/Start 1");
+	AssertTrue(cStart1.IsNotNull());
+	AssertLongLongInt(4, cStart1->GetOI());
+
+	cGraphDeserialiser.Kill();
+	cDependentReadObjects.Kill();
+	cAllocator.Kill();
+
+	pcDatabase->ValidateIdentifiers();
+
+	ObjectsFlush();
+
+	pcDatabase->ValidateIdentifiers();
+
+	cReader.Kill();
+
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill();
+
+	cFileUtil.RemoveDir("Output" _FS_ "GraphDeserialiser");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectGraphDeserialiserRemappingOfSimpleFilesOIs(void)
 {
 	CObjectWriterSimple			cWriter;
 	CObjectReaderSimpleDisk		cReader;
@@ -219,7 +310,7 @@ void TestRemappingOfSimpleFilesOIs(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestRemappingOfChunkedFilesOIs(void)
+void TestObjectGraphDeserialiserRemappingOfChunkedFilesOIs(void)
 {
 	CObjectWriterChunked		cWriter;
 	CObjectReaderChunkFileDisk	cReader;
@@ -241,7 +332,7 @@ void TestRemappingOfChunkedFilesOIs(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestOverwritingOfExistingNamesFromChunkedFiles(void)
+void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 {
 	CObjectWriterChunked			cWriterStart1;
 	CObjectWriterChunked			cWriterStart2;
@@ -401,9 +492,10 @@ void TestObjectGraphDeserialiser(void)
 	BeginTests();
 	MemoryInit();
 
-	TestRemappingOfSimpleFilesOIs();
-	TestRemappingOfChunkedFilesOIs();
-	TestOverwritingOfExistingNamesFromChunkedFiles();
+	TestObjectGraphDeserialiserReuseName();
+	TestObjectGraphDeserialiserRemappingOfSimpleFilesOIs();
+	TestObjectGraphDeserialiserRemappingOfChunkedFilesOIs();
+	TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles();
 
 	MemoryKill();
 	TestStatistics();
