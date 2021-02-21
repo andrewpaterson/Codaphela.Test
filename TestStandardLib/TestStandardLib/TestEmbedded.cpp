@@ -1,6 +1,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
+#include "CoreLib/SequenceFactory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
@@ -270,13 +271,15 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	const char*		szClassName;
 	OIndex			oiComplex;
 	CCodabase*		pcDatabase;
+	CSequence*		pcSequence;
 	char			szDirectory[] = "Output" _FS_ "EmbeddedObject";
 
 	cFileUtil.RemoveDir(szDirectory);
 
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 	SetupEmbeddedObjectConstructors();
 
 	Ptr<CRoot> pRoot = ORoot();
@@ -292,15 +295,17 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 
 	AssertInt(184, sizeof(CEmbeddedTest));
 	AssertInt(568, sizeof(CEmbeddedContainer));
 	AssertInt(1088, sizeof(CEmbeddedComplex));
 
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 	SetupEmbeddedObjectConstructors();
 
 	pRoot = gcObjects.GetRoot();
@@ -335,6 +340,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
 
 	pcDatabase->Close();
+	SafeKill(pcSequence);
 	SafeKill(pcDatabase);
 	ObjectsKill();
 }
@@ -351,13 +357,15 @@ void TestEmbeddedObjectPointTo(void)
 	OIndex		oiComplex;
 	const char*	szClassName;
 	CCodabase*	pcDatabase;
+	CSequence*	pcSequence;
 	char		szDirectory[] = "Output" _FS_ "EmbeddedObject";
 
 	cFileUtil.RemoveDir(szDirectory);
 
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 	SetupEmbeddedObjectConstructors();
 
 	Ptr<CRoot> pRoot = ORoot();
@@ -373,14 +381,17 @@ void TestEmbeddedObjectPointTo(void)
 	AssertTrue(bResult);
 
 	pcDatabase->Close();
+	SafeKill(pcSequence);
 	SafeKill(pcDatabase);
 	ObjectsKill();
 
 	AssertNull(&pContainer);
 
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 	SetupEmbeddedObjectConstructors();
 
 	pRoot = gcObjects.GetRoot();
@@ -398,6 +409,7 @@ void TestEmbeddedObjectPointTo(void)
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 }
 

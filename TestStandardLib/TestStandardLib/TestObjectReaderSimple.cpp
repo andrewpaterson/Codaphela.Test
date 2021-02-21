@@ -2,6 +2,7 @@
 #include "BaseLib/FileUtil.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
+#include "CoreLib/SequenceFactory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectReaderSimpleDisk.h"
 #include "StandardLib/ObjectGraphDeserialiser.h"
@@ -81,10 +82,12 @@ void TestObjectReaderSimpleDeserialised(void)
 	CObjectAllocator			cAllocator;
 	CDependentReadObjects		cDependentReadObjects;
 	CCodabase*					pcDatabase;
+	CSequence*					pcSequence;
 
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 
 	gcObjects.AddConstructor<CTestNamedString>();
 
@@ -123,6 +126,7 @@ void TestObjectReaderSimpleDeserialised(void)
 	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 
 	cFileUtil.RemoveDir(szDirectory);

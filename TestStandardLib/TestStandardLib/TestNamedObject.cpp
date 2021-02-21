@@ -1,6 +1,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
+#include "CoreLib/SequenceFactory.h"
 #include "StandardLib/NamedObject.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/Pointer.h"
@@ -52,14 +53,16 @@ void TestNamedObjectName(void)
 	OIndex					oiSet;
 	OIndex					oiNamed3;
 	CCodabase*				pcDatabase;
+	CSequence*				pcSequence;
 
 	cFileUtil.RemoveDir("Output" _FS_ "NamedObject");
 	cFileUtil.TouchDir("Output" _FS_ "NamedObject");
 
 	MemoryInit();
+	pcSequence = CSequenceFactory::Create("Output" _FS_ "NamedObject");
 	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "NamedObject", IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 	TestNamedObjectAddConstructors(); //This is only important if an object is being loaded.
 
 	pNamed1 = ONMalloc<CTestNamedObject>("Frank", 1);
@@ -92,6 +95,7 @@ void TestNamedObjectName(void)
 
 	ObjectsFlush();
 	pcDatabase->Close();
+	SafeKill(pcSequence);
 	SafeKill(pcDatabase);
 	ObjectsKill();
 
@@ -101,9 +105,11 @@ void TestNamedObjectName(void)
 	AssertNull(pRoot.Object());
 	AssertNull(pSet.Object());
 
+
+	pcSequence = CSequenceFactory::Create("Output" _FS_ "NamedObject");
 	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "NamedObject", IWT_Yes);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 	TestNamedObjectAddConstructors();
 
 	AssertLongLongInt(3, pcDatabase->NumNames());
@@ -127,6 +133,7 @@ void TestNamedObjectName(void)
 	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 	MemoryKill();
 }

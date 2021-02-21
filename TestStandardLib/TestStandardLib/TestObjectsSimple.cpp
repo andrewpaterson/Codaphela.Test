@@ -1,6 +1,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
+#include "CoreLib/SequenceFactory.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
@@ -36,14 +37,16 @@ void TestObjectFreeing(void)
 	STestObjectFreedNotifier	sFreedNotifier1;
 	STestObjectFreedNotifier	sFreedNotifier2;
 	CCodabase*					pcDatabase;
+	CSequence*					pcSequence;
 	char						szDirectory[] = "Output" _FS_ "TestObjectFreeing";
 	CFileUtil					cFileUtil;
 			
 	cFileUtil.RemoveDir(szDirectory);
 
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 
 	pTest1 = OMalloc<CTestObject>();
 	pTest2 = OMalloc<CTestObject>();
@@ -68,6 +71,7 @@ void TestObjectFreeing(void)
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 
 	cFileUtil.RemoveDir(szDirectory);

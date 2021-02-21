@@ -1,6 +1,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
+#include "CoreLib/SequenceFactory.h"
 #include "CoreLib/ValueIndexedDataConfig.h"
 #include "CoreLib/ValueNamedIndexesConfig.h"
 #include "CoreLib/NamedIndexedHeader.h"
@@ -107,19 +108,20 @@ void TestObjectsInMemoryIteration(void)
 void TestObjectsObjectSave(void)
 {
 	Ptr<CTestDoubleNamedString>			pDouble;
-	BOOL								bResult;
 	CFileUtil							cFileUtil;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 	char								szDirectory[] = "Output" _FS_ "ObjectSave";
 	CCodabase*							pcDatabase;
 	int									iSerialisedSize;
+	CSequence*							pcSequence;
 
 	cFileUtil.RemoveDir(szDirectory);
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 
 	pDouble = SetupObjectsForDehollowfication();
 
@@ -129,9 +131,8 @@ void TestObjectsObjectSave(void)
 	AssertTrue(pDouble.IsDirty());
 	Pass();
 	
-	bResult = pDouble.BaseObject()->Flush();
-	AssertTrue(bResult);
-	AssertTrue(pDouble.IsDirty());
+	AssertTrue(pDouble.BaseObject()->Flush());
+	AssertFalse(pDouble.IsDirty());
 
 	AssertLongLongInt(1, pcDatabase->NumIndices());
 	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
@@ -142,8 +143,7 @@ void TestObjectsObjectSave(void)
 	AssertLongLongInt(1, pcDatabase->NumDataCached());
 	Pass();
 
-	bResult = pDouble.BaseObject()->Flush();
-	AssertTrue(bResult);
+	AssertTrue(pDouble.BaseObject()->Flush());
 	AssertLongLongInt(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
 	AssertInt(106, iSerialisedSize);
@@ -151,10 +151,10 @@ void TestObjectsObjectSave(void)
 	AssertLongLongInt(1, pcDatabase->NumDataCached());
 	
 	pDouble->mszString = OMalloc<CString>();
+	AssertTrue(pDouble.IsDirty());
 	pDouble->mszString->Init("A String");
 
-	bResult = pDouble.BaseObject()->Flush();
-	AssertTrue(bResult);
+	AssertTrue(pDouble.BaseObject()->Flush());
 	AssertLongLongInt(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
 	AssertInt(118, iSerialisedSize);
@@ -166,16 +166,17 @@ void TestObjectsObjectSave(void)
 
 	iSerialisedSize = pDouble->SerialisedSize();
 	AssertInt(118, iSerialisedSize);
-	bResult = pDouble.BaseObject()->Flush();
-	AssertTrue(bResult);
+	AssertTrue(pDouble.BaseObject()->Flush());
 	AssertLongLongInt(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
 	AssertInt(118, iSerialisedSize);
 	AssertLongLongInt(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLongLongInt(1, pcDatabase->NumDataCached());
 
+	pcDatabase->Flush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -192,13 +193,15 @@ void TestObjectsFlushNoClear(void)
 	BOOL		bResult;
 	CCodabase*	pcDatabase;
 	char		szDirectory[] = "Output" _FS_ "Flush1";
+	CSequence*	pcSequence;
 
 	cFileUtil.RemoveDir(szDirectory);
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 
 	SetupObjectsForDehollowfication();
 
@@ -217,9 +220,10 @@ void TestObjectsFlushNoClear(void)
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 
-	CArrayChars	aszFileNames;
+	CArrayChars		aszFileNames;
 	int				i;
 	CChars*			psz;
 	CChars			szOutput;
@@ -270,13 +274,15 @@ void TestObjectsFlushDurable(void)
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 	char								szDirectory[] = "Output" _FS_ "Flush2";
 	CCodabase*							pcDatabase;
+	CSequence*							pcSequence;
 
 	cFileUtil.RemoveDir(szDirectory);
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsForDehollowfication();
 
 	AssertLongLongInt(0, pcDatabase->NumIndices());
@@ -294,6 +300,7 @@ void TestObjectsFlushDurable(void)
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 
 
@@ -323,12 +330,15 @@ void TestObjectsEvict(void)
 	BOOL		bResult;
 	CCodabase*	pcDatabase;
 	char		szDirectory[] = "Output" _FS_ "Eviction";
+	CSequence*	pcSequence;
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsForDehollowfication();
 
 	AssertLongLongInt(0, pcDatabase->NumIndices());
@@ -346,14 +356,17 @@ void TestObjectsEvict(void)
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
+
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsForDehollowfication();
 
 	bResult = ObjectsFlush();
@@ -366,14 +379,17 @@ void TestObjectsEvict(void)
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsForDehollowfication();
 
 	bResult = ObjectsFlush();
@@ -392,14 +408,16 @@ void TestObjectsEvict(void)
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsForDehollowfication();
 
 	bResult = ObjectsFlush();
@@ -414,6 +432,7 @@ void TestObjectsEvict(void)
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 }
 
@@ -570,14 +589,17 @@ void TestObjectDehollowfication(void)
 	OIndex							oiOld;
 	OIndex							oiNew;
 	CCodabase*						pcDatabase;
+	CSequence*						pcSequence;
 	char							szDirectory[] = "Output" _FS_ "Dehollowfication";
 	BOOL							bResult;
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsForDehollowfication();
 	
 	bResult = ObjectsFlush();
@@ -588,11 +610,13 @@ void TestObjectDehollowfication(void)
 	AssertLongLongInt(9, pcDatabase->NumIndices());
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsConstructors();
 	AssertLongLongInt(9, pcDatabase->NumIndices());
 
@@ -628,6 +652,7 @@ void TestObjectDehollowfication(void)
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 }
 
@@ -643,14 +668,17 @@ void TestObjectsFlushClearGetByOid(void)
 	Ptr<CTestDoubleNamedString>		pDouble;
 	Ptr<CRoot>						pRoot;
 	CCodabase*						pcDatabase;
+	CSequence*						pcSequence;
 	char							szDirectory[] = "Output" _FS_ "Dehollowfication";
 	BOOL							bResult;
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	pcSequence = CSequenceFactory::Create(szDirectory); 
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsConstructors();
 	
 	pRoot = ORoot();
@@ -681,6 +709,7 @@ void TestObjectsFlushClearGetByOid(void)
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 }
 
@@ -696,14 +725,17 @@ void TestObjectsFlushClearGetByName(void)
 	Ptr<CTestDoubleNamedString>		pDouble;
 	Ptr<CRoot>						pRoot;
 	CCodabase*						pcDatabase;
+	CSequence*						pcSequence;
 	char							szDirectory[] = "Output" _FS_ "Dehollowfication";
 	BOOL							bResult;
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsConstructors();
 
 	pRoot = ORoot();
@@ -728,6 +760,7 @@ void TestObjectsFlushClearGetByName(void)
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 }
 
@@ -742,14 +775,17 @@ void TestObjectsFlushRemovesStackPointers(void)
 	Ptr<CTestDoubleNamedString>		pDouble;
 	Ptr<CRoot>						pRoot;
 	CCodabase*						pcDatabase;
+	CSequence*						pcSequence;
 	char							szDirectory[] = "Output" _FS_ "ClearPointers";
 	BOOL							bResult;
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 
 
 	SetupObjectsConstructors();
@@ -772,6 +808,7 @@ void TestObjectsFlushRemovesStackPointers(void)
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 }
 

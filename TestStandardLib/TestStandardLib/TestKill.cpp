@@ -1,6 +1,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
+#include "CoreLib/SequenceFactory.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "NamedObjectTestClasses.h"
@@ -117,11 +118,13 @@ void TestKillLongCyclicSelfPointer(void)
 //////////////////////////////////////////////////////////////////////////
 void TestKillBestPractice(void)
 {
-	CCodabase* pcDatabase;
+	CCodabase*	pcDatabase;
+	CSequence*	pcSequence;
 
+	pcSequence = CSequenceFactory::Create("Output" _FS_ "TestKillBestPractice");
 	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "TestKillBestPractice", IWT_Yes);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 
 	//Generally an object will be killed if all pointers to it a removed.
 	//Sometimes we'd rather not try and remove all the pointers we just want the object to die.
@@ -271,6 +274,7 @@ void TestKillBestPractice(void)
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 }
 
@@ -281,11 +285,13 @@ void TestKillBestPractice(void)
 //////////////////////////////////////////////////////////////////////////
 void TestKillCanFindRoot(void)
 {
-	CCodabase* pcDatabase;
+	CCodabase*	pcDatabase;
+	CSequence*	pcSequence;
 
+	pcSequence = CSequenceFactory::Create("Output" _FS_ "TestKillCanFindRoot");
 	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "TestKillCanFindRoot", IWT_Yes);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 
 	Ptr<CRoot>			pRoot;
 	Ptr<CGameWorld>		pWorld;
@@ -402,6 +408,7 @@ void TestKillCanFindRoot(void)
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 }
 

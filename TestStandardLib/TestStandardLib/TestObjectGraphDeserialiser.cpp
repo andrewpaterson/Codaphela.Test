@@ -2,6 +2,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
+#include "CoreLib/SequenceFactory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectGraphDeserialiser.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
@@ -92,11 +93,18 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	CObjectAllocator			cAllocator;
 	CDependentReadObjects		cDependentReadObjects;
 	CCodabase*					pcDatabase;
+	CSequence*					pcSequence;
 	char						szDirectory[] = "Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping";
+	CFileUtil					cFileUtil;
 
+	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "GraphDeserialiser"));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 
 	TestObjectGraphDeserialiserAddConstructors();
 	TestObjectGraphDeserialiserBuildGraph1();
@@ -119,15 +127,18 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 
 	ObjectsFlush();
 
-	pcDatabase->
+	AssertLongLongInt(9LL, pcSequence->PeekNext());
+
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 
 
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 	TestObjectGraphDeserialiserAddConstructors();
 
 	cRoot = ORoot();
@@ -138,7 +149,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 		szOne->Init("Hello World ");
 		szOne->Append(i);
 		cRoot->Add(szOne);
-		AssertLongLongInt(1+i, szOne->GetOI());
+		AssertLongLongInt(9LL + i, szOne->GetOI());
 	}
 
 	cAllocator.Init(&gcObjects);
@@ -146,17 +157,17 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	cGraphDeserialiser.Init(pcReader, FALSE, &cAllocator, &cDependentReadObjects, gcObjects.GetMemory());
 	cStart1 = cGraphDeserialiser.Read("Ow/Start 1");
 	AssertTrue(cStart1.IsNotNull());
-	AssertLongLongInt(21, cStart1->GetOI());
+	AssertLongLongInt(29, cStart1->GetOI());
 
 	AssertTrue(cStart1->mp1.IsNotNull());
 	AssertString("CTestSaveableObject1", cStart1->mp1->ClassName());
 	cShared = cStart1->mp1;
-	AssertLongLongInt(23, cShared->GetOI());
+	AssertLongLongInt(31, cShared->GetOI());
 
 	AssertTrue(cStart1->mp2.IsNotNull());
 	AssertString("CString", cStart1->mp2->ClassName());
 	cString1 = cStart1->mp2;
-	AssertLongLongInt(22, cString1->GetOI());
+	AssertLongLongInt(30, cString1->GetOI());
 	cGraphDeserialiser.Kill();
 	cDependentReadObjects.Kill();
 	cAllocator.Kill();
@@ -167,7 +178,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 		szOne->Init("Hello World ");
 		szOne->Append(i + 20);
 		cRoot->Add(szOne);
-		AssertLongLongInt(24+i, szOne->GetOI());
+		AssertLongLongInt(32LL + i, szOne->GetOI());
 	}
 
 	pcDatabase->ValidateIdentifiers();
@@ -177,6 +188,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 }
 
@@ -249,17 +261,20 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	CObjectAllocator				cAllocator;
 	CDependentReadObjects			cDependentReadObjects;
 	CCodabase*						pcDatabase;
+	CSequence*						pcSequence;
 	char							szDirectory[] = "Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping";
 
 	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "GraphDeserialiser"));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
+
 	cWriterStart1.Init(szDirectory, "", "Start1");
 	cWriterStart2.Init(szDirectory, "", "Start2");
 
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 
 	TestObjectGraphDeserialiserAddConstructors();
 	TestObjectGraphDeserialiserBuildGraph1();
@@ -292,12 +307,14 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 
 
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 
 	TestObjectGraphDeserialiserAddConstructors();
 	cRoot = ORoot();
@@ -368,6 +385,7 @@ void TestOverwritingOfExistingNamesFromChunkedFiles(void)
 	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 
 	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "GraphDeserialiser"));

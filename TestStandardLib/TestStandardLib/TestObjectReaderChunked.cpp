@@ -2,6 +2,7 @@
 #include "BaseLib/FileUtil.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
+#include "CoreLib/SequenceFactory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectReaderChunkFileDisk.h"
 #include "StandardLib/ObjectGraphDeserialiser.h"
@@ -128,10 +129,12 @@ void TestObjectReaderChunkedDeserialised(void)
 	OIndex						oiI3;
 	int							iNumMemoryIndexes;
 	CCodabase*					pcDatabase;
+	CSequence*					pcSequence;
 
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 
 	gcObjects.AddConstructor<CTestWithArray>();
 	gcObjects.AddConstructor<CTestInteger>();
@@ -147,11 +150,13 @@ void TestObjectReaderChunkedDeserialised(void)
 	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 
 	gcObjects.AddConstructor<CTestWithArray>();
 	gcObjects.AddConstructor<CTestInteger>();
@@ -256,6 +261,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 
 	cFileUtil.RemoveDir(szDirectory);

@@ -1,6 +1,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
+#include "CoreLib/SequenceFactory.h"
 #include "CoreLib/ValueIndexedDataConfig.h"
 #include "CoreLib/ValueNamedIndexesConfig.h"
 #include "CoreLib/NamedIndexedHeader.h"
@@ -19,6 +20,7 @@ void TestObjectsEvictVsKillUserEvictAfterSave(EIndexWriteThrough eWriteThrough)
 	CFileUtil					cFileUtil;
 	char						szDirectory[] = "Output" _FS_ "ObjectsUserFree";
 	CCodabase*					pcDatabase;
+	CSequence*					pcSequence;
 	Ptr<CTestObject>			pTest1a;
 	Ptr<CTestObject>			pTest1b;
 	STestObjectFreedNotifier	sFreeNotifier1a;
@@ -28,9 +30,10 @@ void TestObjectsEvictVsKillUserEvictAfterSave(EIndexWriteThrough eWriteThrough)
 	cFileUtil.RemoveDir(szDirectory);
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
+	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, eWriteThrough);
 	pcDatabase->Open();
-	ObjectsInit(pcDatabase);
+	ObjectsInit(pcDatabase, pcSequence);
 
 	pTest1a = OMalloc<CTestObject>(&sFreeNotifier1a);
 	pRoot = ORoot();
@@ -51,6 +54,7 @@ void TestObjectsEvictVsKillUserEvictAfterSave(EIndexWriteThrough eWriteThrough)
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
 	ObjectsKill();
 }
 
