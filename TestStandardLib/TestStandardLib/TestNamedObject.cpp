@@ -71,7 +71,7 @@ void TestNamedObjectName(void)
 	pNamed2 = ONMalloc<CTestNamedObject>("Zappa", 2);
 	pNamed2->mpNamedTest1 = pNamed1;
 
-	pNamed3 = ONMalloc<CTestNamedObject>("", 3);
+	pNamed3 = OMalloc<CTestNamedObject>(3);
 	pNamed3->mpNamedTest1 = pNamed1;
 	pNamed3->mpNamedTest2 = pNamed2;
 	oiNamed3 = pNamed3->GetOI();
@@ -227,6 +227,8 @@ void TestNamedOjectReuse(EIndexWriteThrough eWriteThrough)
 	gcLogger.SetBreakOnError(FALSE);
 	pNamed3 = ONMalloc<CTestNamedObject>("Sister Two", 3);
 	gcLogger.SetConfig(&sLogConfig);
+
+	AssertTrue(pNamed3.IsNull());
 
 	ObjectsFlush();
 	pcDatabase->Close();

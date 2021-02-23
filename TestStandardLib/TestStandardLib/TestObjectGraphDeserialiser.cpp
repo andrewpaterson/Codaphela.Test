@@ -256,6 +256,8 @@ void TestObjectGraphDeserialiserReuseName(void)
 	ObjectsInit(pcDatabase, pcSequence);
 	TestObjectGraphDeserialiserAddConstructors();
 
+	cBase = gcObjects.Get("Ow/Start 1");
+
 	cAllocator.Init(&gcObjects);
 	cDependentReadObjects.Init();
 	cGraphDeserialiser.Init(&cReader, FALSE, &cAllocator, &cDependentReadObjects, gcObjects.GetMemory());
@@ -454,9 +456,9 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 	cAllocator.Kill();
 	cReaderStart2.Kill();
 
-	AssertInt(iNumUnknowns+2, gcUnknowns.NumElements());
-	AssertInt(iNumIndexes+2, (int)gcObjects.NumMemoryIndexes());
-	AssertInt(iNumNames+1, (int)gcObjects.NumMemoryNames());
+	AssertInt(iNumUnknowns+1, gcUnknowns.NumElements());
+	AssertInt(iNumIndexes+1, (int)gcObjects.NumMemoryIndexes());
+	AssertInt(iNumNames, (int)gcObjects.NumMemoryNames());
 
 	AssertNotNull(cOwStart2.Object());
 	cRoot->Add(cOwStart2);
