@@ -12,9 +12,10 @@ CONSTRUCTABLE(CTestWithArray);
 public:
 	Ptr<CArrayObject>	mcArray;
 
-	CChars		mszString;
-	int			mx;
+	CChars				mszString;
+	int					mx;
 
+public:
 	void	Init(const char* szString, int x);
 	void	Class(void);
 	void	Free(void);

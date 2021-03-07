@@ -28,6 +28,7 @@ void TestObjectWriterChunkedSerialised(void)
 	int							iLength;
 	char						szTest[4];
 	CFileUtil					cFileUtil;
+	Ptr<CTestInteger>			pcGet;
 
 	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "ObjectWriterChunked"));
 	AssertTrue(cFileUtil.TouchDir("Output" _FS_ "ObjectWriterChunked" _FS_ "Test"));
@@ -44,6 +45,11 @@ void TestObjectWriterChunkedSerialised(void)
 	pcObject1->Add(pcObject4);
 
 	cWriter.Init("Output" _FS_ "ObjectWriterChunked" _FS_ "Test", "Base" _FS_ "Level 1", "ChunkFile");
+
+	AssertInt(3, pcObject1->mcArray->NumElements());
+	AssertLongLongInt(3, pcObject1->mcArray->Get(0).GetIndex());
+	AssertLongLongInt(4, pcObject1->mcArray->Get(1).GetIndex());
+	AssertLongLongInt(5, pcObject1->mcArray->Get(2).GetIndex());
 
 	cGraphSerialiser.Init(&cWriter);
 	AssertTrue(cGraphSerialiser.Write(&pcObject1));
@@ -65,7 +71,21 @@ void TestObjectWriterChunkedSerialised(void)
 	psOutputHeader = (CChunkFileHeader*)cOutputFile.Get();
 	AssertInt(CHUNK_HEADER_MAGIC, psInputHeader->miMagic);
 	AssertInt(CHUNK_HEADER_MAGIC, psOutputHeader->miMagic);
-	//Why does the hash sometimes change?
+	//Why does the hash sometimes change?  Because the file is actually changing.
+	// Failed
+	//  INFO : CTestWithArray : 1 : "Base/Level 1/Warning"
+	//  INFO : CArrayObject : 2
+	//  INFO : CTestInteger : 4
+	//  INFO : CTestInteger : 5
+	//  INFO : CTestInteger : 3 <--
+	//
+	// Passed
+	//  INFO : CTestWithArray : 1 : "Base/Level 1/Warning"
+	//  INFO : CArrayObject : 2
+	//  INFO : CTestInteger : 3 <--
+	//  INFO : CTestInteger : 4
+	//  INFO : CTestInteger : 5
+	//CompareDependentWriteObject compares where the objects are allocated in memory.  This makes adding dependent write objects ordering depend on memory allocations.
 
 	AssertFile("Input" _FS_ "ChunkFile.DRG", "Output" _FS_ "ObjectWriterChunked" _FS_ "Test" _FS_ "Base" _FS_ "Level 1" _FS_ "ChunkFile.DRG");
 	Pass();
