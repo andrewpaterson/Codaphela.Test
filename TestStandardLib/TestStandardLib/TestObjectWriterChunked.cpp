@@ -1,6 +1,8 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/NaiveFile.h"
+#include "BaseLib/ScratchPadAllocator.h"
+#include "CoreLib/TransientSequence.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectWriterChunked.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
@@ -15,7 +17,14 @@
 void TestObjectWriterChunkedSerialised(void)
 {	
 	MemoryInit();
-	ObjectsInit();
+
+	CScratchPadAllocator	cAllocator;
+	CUnknowns				cUnknowns;
+
+	cAllocator.Init();
+	cUnknowns.Init("TestObjectWriterChunkedSerialised", &gcConstructors);
+
+	ObjectsInit(&gcUnknowns, &gcStackPointers, NULL, &gcTransientSequence);
 
 	CObjectWriterChunked		cWriter;
 	CObjectGraphSerialiser		cGraphSerialiser;

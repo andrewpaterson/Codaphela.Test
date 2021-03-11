@@ -12,27 +12,30 @@ void TestUnknownListAddKill(void)
 {
 	MemoryInit();
 
-	CUnknowns		cUnknowns;
-	CTestUnknown*	pcTest;
-	CFreeList*		pcFreeList;
-	CGeneralMemory*	pcMemory;
+	CUnknowns				cUnknowns;
+	CTestUnknown*			pcTest;
+	CFreeList*				pcFreeList;
+	CGeneralMemory*			pcMemory;
+	CLifeInit<CMallocator>	cLifeMalloc = LifeAlloc<CMemoryAllocator, CMallocator>();
+	CMemoryAllocator*		pcMalloc;
 
-	cUnknowns.Init("Test1", &gcConstructors);
-	pcMemory = cUnknowns.GetMemory();
+	pcMalloc = (CMemoryAllocator*)cLifeMalloc.GetLife();
+	cUnknowns.Init(cLifeMalloc, "Test1", &gcConstructors);
+	pcMemory = pcMalloc->GetMemory();
 	AssertNotNull(pcMemory);
 	AssertInt(0, pcMemory->NumElements());
 	AssertTrue(pcMemory->ByteSize() <= 64);
 
 	pcTest = cUnknowns.Add<CTestUnknown>();
 	AssertPointer(&cUnknowns, pcTest->GetUnknownsThisIn());
-	pcFreeList = cUnknowns.GetFreeList(sizeof(CTestUnknown));
+	pcFreeList = pcMemory->GetFreeList(sizeof(CTestUnknown));
 	AssertInt(1, pcFreeList->NumElements());
 	AssertInt(1, pcMemory->NumElements());
 	AssertInt(431, pcMemory->ByteSize());
 
 	pcTest->Init();
 	pcTest->Kill();
-	pcFreeList = cUnknowns.GetFreeList(sizeof(CTestUnknown));
+	pcFreeList = pcMemory->GetFreeList(sizeof(CTestUnknown));
 	AssertNull(pcFreeList);
 	AssertInt(0, pcMemory->NumElements());
 	AssertTrue(pcMemory->ByteSize() <= 64);
