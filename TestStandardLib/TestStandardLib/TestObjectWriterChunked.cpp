@@ -18,13 +18,15 @@ void TestObjectWriterChunkedSerialised(void)
 {	
 	MemoryInit();
 
-	CScratchPadAllocator	cAllocator;
+	CScratchPadAllocator	cScratchPad;
 	CUnknowns				cUnknowns;
+	CLifeInit<CMallocator>	cLifeAlloc;
 
-	cAllocator.Init();
-	cUnknowns.Init("TestObjectWriterChunkedSerialised", &gcConstructors);
+	cScratchPad.Init();
+	cLifeAlloc.Init(&cScratchPad, FALSE, FALSE);
+	cUnknowns.Init(cLifeAlloc, "TestObjectWriterChunkedSerialised", &gcConstructors);
 
-	ObjectsInit(&gcUnknowns, &gcStackPointers, NULL, &gcTransientSequence);
+	ObjectsInit(&cUnknowns, &gcStackPointers, NULL, &gcTransientSequence);
 
 	CObjectWriterChunked		cWriter;
 	CObjectGraphSerialiser		cGraphSerialiser;
@@ -80,21 +82,6 @@ void TestObjectWriterChunkedSerialised(void)
 	psOutputHeader = (CChunkFileHeader*)cOutputFile.Get();
 	AssertInt(CHUNK_HEADER_MAGIC, psInputHeader->miMagic);
 	AssertInt(CHUNK_HEADER_MAGIC, psOutputHeader->miMagic);
-	//Why does the hash sometimes change?  Because the file is actually changing.
-	// Failed
-	//  INFO : CTestWithArray : 1 : "Base/Level 1/Warning"
-	//  INFO : CArrayObject : 2
-	//  INFO : CTestInteger : 4
-	//  INFO : CTestInteger : 5
-	//  INFO : CTestInteger : 3 <--
-	//
-	// Passed
-	//  INFO : CTestWithArray : 1 : "Base/Level 1/Warning"
-	//  INFO : CArrayObject : 2
-	//  INFO : CTestInteger : 3 <--
-	//  INFO : CTestInteger : 4
-	//  INFO : CTestInteger : 5
-	//CompareDependentWriteObject compares where the objects are allocated in memory.  This makes adding dependent write objects ordering depend on memory allocations.
 
 	AssertFile("Input" _FS_ "ChunkFile.DRG", "Output" _FS_ "ObjectWriterChunked" _FS_ "Test" _FS_ "Base" _FS_ "Level 1" _FS_ "ChunkFile.DRG");
 	Pass();
@@ -150,6 +137,9 @@ void TestObjectWriterChunkedSerialised(void)
 
 	ObjectsFlush();
 	ObjectsKill();
+
+	cScratchPad.Kill();
+
 	MemoryKill();
 
 	cFileUtil.RemoveDir("Output" _FS_ "ObjectWriterChunked");
