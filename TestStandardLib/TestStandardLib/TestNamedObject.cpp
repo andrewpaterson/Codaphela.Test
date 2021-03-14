@@ -190,6 +190,7 @@ void TestNamedOjectReuse(EIndexWriteThrough eWriteThrough)
 	ObjectsInit(pcDatabase, pcSequence);
 
 	pNamed1 = ONMalloc<CTestNamedObject>("Sister Two", 1);
+	AssertLongLongInt(1, pNamed1.GetIndex());
 
 	pNamed2 = ONMalloc<CTestNamedObject>("Office Block", 2);
 	pNamed2->mpNamedTest1 = pNamed1;
@@ -222,6 +223,7 @@ void TestNamedOjectReuse(EIndexWriteThrough eWriteThrough)
 	ObjectsInit(pcDatabase, pcSequence);
 
 	pNamed1 = gcObjects.Get("Sister Two");
+	AssertLongLongInt(1, pNamed1.GetIndex());
 
 	gcLogger.GetConfig(&sLogConfig);
 	gcLogger.SetBreakOnError(FALSE);
@@ -229,6 +231,7 @@ void TestNamedOjectReuse(EIndexWriteThrough eWriteThrough)
 	gcLogger.SetConfig(&sLogConfig);
 
 	AssertTrue(pNamed3.IsNull());
+	AssertLongLongInt(1, pNamed1.GetIndex());
 
 	ObjectsFlush();
 	pcDatabase->Close();
