@@ -22,7 +22,6 @@ void TestObjectAllocatorAddConstructors(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectAllocatorSimpleAdd(void)
 {
-	CObjectAllocator			cAllocator;
 	Ptr<CTestNamedObject>	pNamed;
 	Ptr<CTestNamedObject>	pTemp;
 
@@ -30,9 +29,8 @@ void TestObjectAllocatorSimpleAdd(void)
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
-	cAllocator.Init(&gcObjects);
 
-	pNamed = cAllocator.AllocateNew("CTestNamedObject");
+	pNamed = gcObjects.AllocateNew("CTestNamedObject");
 	AssertNotNull(pNamed.Object());
 
 	AssertLongLongInt(1LL, pNamed.GetIndex());
@@ -55,7 +53,6 @@ void TestObjectAllocatorSimpleAdd(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectAllocatorNamedAdd(void)
 {
-	CObjectAllocator		cAllocator;
 	Ptr<CTestNamedObject>	pNamed1;
 	Ptr<CTestNamedObject>	pNamed2;
 	Ptr<CTestNamedObject>	pTemp;
@@ -64,9 +61,8 @@ void TestObjectAllocatorNamedAdd(void)
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
-	cAllocator.Init(&gcObjects);
 
-	pNamed1 = cAllocator.AllocateNewMaybeReplaceExisting("CTestNamedObject", "My Object Name");
+	pNamed1 = gcObjects.AllocateNewMaybeReplaceExisting("CTestNamedObject", "My Object Name");
 	AssertNotNull(pNamed1.Object());
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 	AssertFalse(pNamed1->IsInitialised());
@@ -81,7 +77,7 @@ void TestObjectAllocatorNamedAdd(void)
 	AssertPointer(pNamed1.Object(), pTemp.Object());
 
 	//This should fail or AllocateExisting should be called.
-	pNamed2 = cAllocator.AllocateNewMaybeReplaceExisting("CTestNamedObject", "My Object Name");
+	pNamed2 = gcObjects.AllocateNewMaybeReplaceExisting("CTestNamedObject", "My Object Name");
 	AssertNotNull(pNamed2.Object());
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 	pNamed1->Init(66);
@@ -106,7 +102,6 @@ void TestObjectAllocatorNamedAdd(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectAllocatorNamedOverwrite(void)
 {
-	CObjectAllocator		cAllocator;
 	Ptr<CTestNamedObject>	pNamed1;
 	Ptr<CTestNamedObject>	pNamed2;
 	Ptr<CTestNamedObject>	pTemp;
@@ -115,18 +110,17 @@ void TestObjectAllocatorNamedOverwrite(void)
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
-	cAllocator.Init(&gcObjects);
 
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
-	pNamed1 = cAllocator.AllocateNewMaybeReplaceExisting("CTestNamedObject", "My Object Name");
+	pNamed1 = gcObjects.AllocateNewMaybeReplaceExisting("CTestNamedObject", "My Object Name");
 	AssertLongLongInt(1LL, pNamed1.GetIndex());
 
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
 
 	//This should fail or AllocateExisting should be called.
-	pNamed2 = cAllocator.AllocateNewMaybeReplaceExisting("CTestNamedObject", "My Object Name");
+	pNamed2 = gcObjects.AllocateNewMaybeReplaceExisting("CTestNamedObject", "My Object Name");
 	AssertNotNull(pNamed2.Object());
 	AssertLongLongInt(2LL, pNamed2.GetIndex());
 	AssertString("My Object Name", pNamed2.GetName());
