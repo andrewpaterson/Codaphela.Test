@@ -1,6 +1,5 @@
 #include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
-#include "StandardLib/ObjectAllocator.h"
 #include "TestLib/Assert.h"
 #include "NamedObjectTestClasses.h"
 

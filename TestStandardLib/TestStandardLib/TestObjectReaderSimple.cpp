@@ -5,10 +5,9 @@
 #include "CoreLib/SequenceFactory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectReaderSimpleDisk.h"
-#include "StandardLib/ObjectGraphDeserialiser.h"
+#include "StandardLib/ExternalObjectDeserialiser.h"
 #include "StandardLib/ObjectWriterSimple.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
-#include "StandardLib/ObjectAllocator.h"
 #include "TestLib/Assert.h"
 #include "ObjectWriterChunkedTestClasses.h"
 
@@ -72,7 +71,7 @@ void TestObjectReaderSimpleDeserialised(void)
 	WriteObjectReaderSimpleFile();
 
 	CObjectReaderSimpleDisk		cReader;
-	CObjectGraphDeserialiser	cGraphDeserialiser;
+	CExternalObjectDeserialiser	cGraphDeserialiser;
 	CPointer					cBase;
 
 	Ptr<CTestNamedString>		cNS1;

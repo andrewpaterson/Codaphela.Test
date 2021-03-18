@@ -4,13 +4,12 @@
 #include "CoreLib/CodabaseFactory.h"
 #include "CoreLib/SequenceFactory.h"
 #include "StandardLib/Objects.h"
-#include "StandardLib/ObjectGraphDeserialiser.h"
+#include "StandardLib/ExternalObjectDeserialiser.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "StandardLib/ObjectWriterSimple.h"
 #include "StandardLib/ObjectReaderSimpleDisk.h"
 #include "StandardLib/ObjectWriterChunked.h"
 #include "StandardLib/ObjectReaderChunkFileDisk.h"
-#include "StandardLib/ObjectAllocator.h"
 #include "StandardLib/Root.h"
 #include "TestLib/Assert.h"
 #include "ObjectWriterChunkedTestClasses.h"
@@ -87,7 +86,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	Ptr<CString>				cString1;
 	Ptr<CString>				cString2;
 	CObjectGraphSerialiser		cGraphSerialiser;
-	CObjectGraphDeserialiser	cGraphDeserialiser;
+	CExternalObjectDeserialiser	cGraphDeserialiser;
 	Ptr<CTestSaveableObject1>	cShared;
 	int							i;
 	CDependentReadObjects		cDependentReadObjects;
@@ -200,7 +199,7 @@ void TestObjectGraphDeserialiserReuseName(void)
 	Ptr<CTestSaveableObject2>	cStart1;
 	Ptr<CRoot>					cRoot;
 	CObjectGraphSerialiser		cGraphSerialiser;
-	CObjectGraphDeserialiser	cGraphDeserialiser;
+	CExternalObjectDeserialiser	cGraphDeserialiser;
 	Ptr<CTestSaveableObject1>	cShared;
 	CDependentReadObjects		cDependentReadObjects;
 	CCodabase*					pcDatabase;
@@ -337,7 +336,7 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 	Ptr<CTestSaveableObject2>		cOwStart1;
 	Ptr<CTestSaveableObject2>		cOwStart2;
 	CObjectGraphSerialiser			cGraphSerialiser;
-	CObjectGraphDeserialiser		cGraphDeserialiser;
+	CExternalObjectDeserialiser		cGraphDeserialiser;
 	CObjectReaderChunkFileDisk		cReaderStart1;
 	CObjectReaderChunkFileDisk		cReaderStart2;
 	Ptr<CTestSaveableObject1>		cShared;

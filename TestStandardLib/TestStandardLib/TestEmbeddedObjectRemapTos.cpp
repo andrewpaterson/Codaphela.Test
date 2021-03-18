@@ -1,6 +1,5 @@
 #include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
-#include "StandardLib/ObjectAllocator.h"
 #include "StandardLib/String.h"
 #include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"

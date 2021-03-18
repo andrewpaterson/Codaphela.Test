@@ -94,9 +94,9 @@ Ptr<CTestDoubleNamedString> SetupObjectConverterChunkFile(void)
 //////////////////////////////////////////////////////////////////////////
 void WriteObjectConverterChunkedFile(void)
 {
-	Ptr<CTestDoubleNamedString>	cDouble;
-	CObjectWriterChunked				cWriter;
-	CObjectGraphSerialiser				cGraphSerialiser;
+	Ptr<CTestDoubleNamedString>		cDouble;
+	CObjectWriterChunked			cWriter;
+	CObjectGraphSerialiser			cGraphSerialiser;
 
 	cDouble = SetupObjectConverterChunkFile();
 
@@ -114,20 +114,20 @@ void WriteObjectConverterChunkedFile(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectConverterDragonExistingHollows(void)
 {
-	CObjectConverterNative				cChunkedConverter;
-	CObjectSource*						pcObjectSource;
-	CObjectSourceChunked*				pcObjectMultipleSource;
-	CPointer							pcObject;
-	CDiskFile*							pcDiskFile;
-	Ptr<CTestDoubleNamedString>			pcDoubleNamedString;
-	Ptr<CRoot>							pcRoot;
-	Ptr<CTestNamedString>				pcObject2;
-	CTestNamedString*					pcEnd;
-	Ptr<CTestNamedString>				pcObject3;
-	CTestNamedString*					pcTestNamedString3;
-	CTestNamedString*					pcTestNamedString2;
-	OIndex								oiNew;
-	CFileUtil							cFileUtil;
+	CObjectConverterNative			cChunkedConverter;
+	CObjectSource*					pcObjectSource;
+	CObjectSourceChunked*			pcObjectMultipleSource;
+	CPointer						pcObject;
+	CDiskFile*						pcDiskFile;
+	Ptr<CTestDoubleNamedString>		pcDoubleNamedString;
+	Ptr<CRoot>						pcRoot;
+	Ptr<CTestNamedString>			pcObject2;
+	CTestNamedString*				pcEnd;
+	Ptr<CTestNamedString>			pcObject3;
+	CTestNamedString*				pcTestNamedString3;
+	CTestNamedString*				pcTestNamedString2;
+	OIndex							oiNew;
+	CFileUtil						cFileUtil;
 
 	cFileUtil.RemoveDir("Output" _FS_ "ObjectConverter" _FS_);
 
