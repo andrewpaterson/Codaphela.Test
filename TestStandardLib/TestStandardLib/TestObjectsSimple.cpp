@@ -48,14 +48,12 @@ void TestObjectFreeing(void)
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 
-	pTest1 = OMalloc<CTestObject>();
-	pTest2 = OMalloc<CTestObject>();
+	pTest1 = OMalloc<CTestObject>(&sFreedNotifier1);
+	pTest2 = OMalloc<CTestObject>(&sFreedNotifier2);
 
 	AssertNotNull(&pTest1);
 	AssertNotNull(&pTest2);
 
-	pTest1->Init(&sFreedNotifier1);
-	pTest2->Init(&sFreedNotifier2);
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(0, pcDatabase->NumIndicesCached());
 

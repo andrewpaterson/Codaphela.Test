@@ -55,13 +55,15 @@ void TestObjectAllocatorNamedAdd(void)
 	Ptr<CTestNamedObject>	pNamed1;
 	Ptr<CTestNamedObject>	pNamed2;
 	Ptr<CTestNamedObject>	pTemp;
+	SLogConfig				sLogConfig;
 
 	MemoryInit();
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
+	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
-	pNamed1 = gcObjects.AllocateNewMaybeReplaceExisting("CTestNamedObject", "My Object Name");
+	pNamed1 = gcObjects.AllocateNewNamed("CTestNamedObject", "My Object Name");
 	AssertNotNull(pNamed1.Object());
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 	AssertFalse(pNamed1->IsInitialised());
@@ -75,11 +77,13 @@ void TestObjectAllocatorNamedAdd(void)
 	pTemp = gcObjects.Get("My Object Name");
 	AssertPointer(pNamed1.Object(), pTemp.Object());
 
-	//This should fail or AllocateExisting should be called.
-	pNamed2 = gcObjects.AllocateNewMaybeReplaceExisting("CTestNamedObject", "My Object Name");
-	AssertNotNull(pNamed2.Object());
+	gcLogger.GetConfig(&sLogConfig);
+	gcLogger.SetBreakOnError(FALSE);
+	pNamed2 = gcObjects.AllocateNewNamed("CTestNamedObject", "My Object Name");
+	gcLogger.SetConfig(&sLogConfig);
+
+	AssertNull(pNamed2.Object());
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
-	pNamed1->Init(66);
 
 	AssertLongLongInt(1LL, pNamed2.GetIndex());
 	AssertString("My Object Name", pNamed2.GetName());
@@ -112,14 +116,13 @@ void TestObjectAllocatorNamedOverwrite(void)
 
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
-	pNamed1 = gcObjects.AllocateNewMaybeReplaceExisting("CTestNamedObject", "My Object Name");
+	pNamed1 = gcObjects.AllocateNewNamed("CTestNamedObject", "My Object Name");
 	AssertLongLongInt(1LL, pNamed1.GetIndex());
 
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
 
-	//This should fail or AllocateExisting should be called.
-	pNamed2 = gcObjects.AllocateNewMaybeReplaceExisting("CTestNamedObject", "My Object Name");
+	pNamed2 = gcObjects.AllocateExistingNamed("CTestNamedObject", "My Object Name");
 	AssertNotNull(pNamed2.Object());
 	AssertLongLongInt(2LL, pNamed2.GetIndex());
 	AssertString("My Object Name", pNamed2.GetName());

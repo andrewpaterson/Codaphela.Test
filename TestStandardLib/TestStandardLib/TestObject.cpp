@@ -539,8 +539,7 @@ void TestObjectGetObjects(void)
 
 	cObject.Init();
 
-	pObject1 = OMalloc<CTestObject>();
-	pObject1->Init(&sFreedNotifier1);
+	pObject1 = OMalloc<CTestObject>(&sFreedNotifier1);
 
 	pcObjects = pObject1->GetObjects();
 	AssertPointer(&gcObjects, pcObjects);

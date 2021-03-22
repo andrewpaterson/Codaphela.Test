@@ -19,14 +19,12 @@ void TestPointerNegation(void)
 	CPointer			pcBase;
 
 	pcObject = OMalloc<CTestObject>();
-	pcObject->Init(NULL);
 	AssertFalse(!pcObject);
 
 	pcObject = NULL;
 	AssertTrue(!pcObject);
 
 	pcBase = OMalloc<CTestObject>();
-	((CTestObject*)&pcBase)->Init(NULL);
 	AssertFalse(!pcBase);
 
 	pcBase = NULL;
@@ -171,10 +169,8 @@ void TestPointerAssignmentObjectToObjectPointer()
 {
 	ObjectsInit();
 
-	Ptr<CTestNamedString>	pObject = ONMalloc<CTestNamedString>("Urgle-burgle");
 	Ptr<CTestInteger>		pInteger = OMalloc<CTestInteger>(6, 7, 6);
-
-	pObject->Init(NULL, pInteger, "Embedded");
+	Ptr<CTestNamedString>	pObject = ONMalloc<CTestNamedString>("Urgle-burgle", ONull, pInteger, "Embedded");
 
 	AssertLongLongInt(2, gcObjects.GetStackPointers()->UsedPointers());
 

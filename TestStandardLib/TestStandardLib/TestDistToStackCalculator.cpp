@@ -747,19 +747,15 @@ void TestDistToStackSetBroken(void)
 
 	ObjectsInit();
 
-	pTest1 = OMalloc<CTestObject>();
-	pTest1->Init(&sKilled1);
-
-	pTest3 = OMalloc<CTestObject>();
-	pTest3->Init(&sKilled3);
+	pTest1 = OMalloc<CTestObject>(&sKilled1);
+	pTest3 = OMalloc<CTestObject>(&sKilled3);
 
 	pRoot = ORoot();
 
 	pRoot->Add(pTest1);
 	pRoot->Add(pTest3);
 
-	pTest2 = OMalloc<CTestObject>();
-	pTest2->Init(&sKilled2);
+	pTest2 = OMalloc<CTestObject>(&sKilled2);
 
 	pTest1->mpTest = pTest2;
 	AssertInt(3, pTest2->GetDistToRoot());
@@ -1247,23 +1243,14 @@ void TestDistToStackRemoveUnbalancedLargeBroken(void)
 	ObjectsInit();
 	pRoot = ORoot();
 
-	pTest1 = OMalloc<CTestObject>();
-	pTest2 = OMalloc<CTestObject>();
-	pTest3 = OMalloc<CTestObject>();
-	pTest4 = OMalloc<CTestObject>();
-	pTest5 = OMalloc<CTestObject>();
+	pTest1 = OMalloc<CTestObject>(&sKilled1);
+	pTest2 = OMalloc<CTestObject>(&sKilled2);
+	pTest3 = OMalloc<CTestObject>(&sKilled3);
+	pTest4 = OMalloc<CTestObject>(&sKilled4);
+	pTest5 = OMalloc<CTestObject>(&sKilled5);
 	pSet = OMalloc<CSetObject>();
-	pTop1 = OMalloc<CTestObject>();
-	pTop2 = OMalloc<CTestObject>();
-
-	pTest1->Init(&sKilled1);
-	pTest2->Init(&sKilled2);
-	pTest3->Init(&sKilled3);
-	pTest4->Init(&sKilled4);
-	pTest5->Init(&sKilled5);
-	pSet->Init();
-	pTop1->Init(&sKilledTop1);
-	pTop2->Init(&sKilledTop2);
+	pTop1 = OMalloc<CTestObject>(&sKilledTop1);
+	pTop2 = OMalloc<CTestObject>(&sKilledTop2);
 
 	pRoot->Add(pSet);
 	pSet->Add(pTest2);

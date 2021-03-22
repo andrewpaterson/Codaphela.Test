@@ -468,7 +468,7 @@ void TestUpdateAttachedTosDistToRootSimpleLeft(void)
 	int							iFlags;
 
 	pRoot = ORoot();
-	p1 = ONMalloc<CNamedPointerContainer>("Back")->Init();
+	p1 = ONMalloc<CNamedPointerContainer>("Back");
 	pRoot->Add(p1);
 	pTest1 = OMalloc<CTestObject>();
 	p1->mp = pTest1;
