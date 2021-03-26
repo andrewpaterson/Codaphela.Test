@@ -158,8 +158,9 @@ void TestObjectAllocator(void)
 	TestObjectAllocatorNamedOverwrite();
 
 	xxx;  //Write more tests for Overwrite cases
+	//Test in memory; overwrite from root causes children to be destroyed
+	//Test in memory; overwriten's parent maintains pointer to overwritten
 
 	TestStatistics();
 }
-
 
