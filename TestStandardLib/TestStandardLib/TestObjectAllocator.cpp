@@ -1,4 +1,5 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/MemoryFile.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "NamedObjectTestClasses.h"
@@ -12,6 +13,7 @@ void TestObjectAllocatorAddConstructors(void)
 {
 	gcObjects.AddConstructor<CRoot>();
 	gcObjects.AddConstructor<CTestNamedObject>();
+	gcObjects.AddConstructor<CTestNamedObjectSmall>();
 }
 
 
@@ -149,6 +151,203 @@ void TestObjectAllocatorNamedOverwrite(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed(void)
+{
+	Ptr<CRoot>					pRoot;
+	Ptr<CTestNamedObject>		pNamed1;
+	Ptr<CTestNamedObject>		pNamed2;
+	Ptr<CTestNamedObject>		pNamed3;
+	Ptr<CTestNamedObject>		pNamed4;
+	Ptr<CTestNamedObject>		pNamed5;
+	CPointer					pObject1;
+	CPointer					pObject2;
+	Ptr<CTestNamedObjectSmall>	pNamedSmall;
+
+	MemoryInit();
+	ObjectsInit();
+
+	TestObjectAllocatorAddConstructors();
+
+	pRoot = ORoot();
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(1, gcObjects.NumMemoryNames());
+
+	pNamed1 = ONMalloc<CTestNamedObject>("1", 1);
+	pRoot->Add(pNamed1);
+
+	pNamed2 = ONMalloc<CTestNamedObject>("2", 2);
+	pRoot->Add(pNamed2);
+
+	pNamed3 = ONMalloc<CTestNamedObject>("3", 3);
+	pNamed1->mpNamedTest1 = pNamed3;
+	pNamed2->mpNamedTest1 = pNamed3;
+
+	Pass();
+	pNamed4 = ONMalloc<CTestNamedObject>("4", 4);
+	pNamed1->mpNamedTest2 = pNamed4;
+
+	pNamed5 = ONMalloc<CTestNamedObject>("5", 5);
+	pNamed2->mpNamedTest2 = pNamed5;
+
+	pNamed3 = NULL;
+	pNamed4 = NULL;
+	pNamed5 = NULL;
+
+	AssertLongLongInt(7, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+	
+	AssertString("CTestNamedObject", pNamed1.ClassName());
+	AssertString("CTestNamedObject", pNamed2.ClassName());
+	AssertLongLongInt(3, pNamed1.GetIndex());
+	AssertLongLongInt(4, pNamed2.GetIndex());
+
+	pNamedSmall = gcObjects.AllocateExistingNamed("CTestNamedObjectSmall", "2");
+	pNamedSmall->Init("ABC");
+
+	AssertString("CTestNamedObject", pNamed1.ClassName());
+	AssertString("CTestNamedObjectSmall", pNamed2.ClassName());
+	AssertLongLongInt(3, pNamed1.GetIndex());
+	AssertLongLongInt(4, pNamed2.GetIndex());
+	AssertString("CTestNamedObjectSmall", pNamedSmall.ClassName());
+	AssertLongLongInt(4, pNamedSmall.GetIndex());
+
+	pObject1 = pRoot->Get("1");
+	pObject2 = pRoot->Get("2");
+
+	AssertPointer(pObject1.Dereference(), pNamed1.Dereference());
+	AssertPointer(pObject2.Dereference(), pNamedSmall.Dereference());
+
+	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(5, gcObjects.NumMemoryNames());
+
+	pNamed3 = gcObjects.Get("3");
+	pNamed4 = gcObjects.Get("4");
+	pNamed5 = gcObjects.Get("5");
+
+	AssertNotNull(&pNamed3);
+	AssertNotNull(&pNamed4);
+	AssertNull(&pNamed5);
+
+	ObjectsFlush();
+	ObjectsKill();
+	MemoryKill();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectAllocatorAssignmentToNullObject(void)
+{
+	Ptr<CRoot>				pRoot;
+	Ptr<CTestNamedObject>	pNamed1;
+	Ptr<CTestNamedObject>	pNamed2;
+	CMemoryFile				cMemoryFile;
+	CFileBasic				cFileBasic;
+	char					szLog[4096];
+	char*					szError;
+	
+	char*					sz;
+
+	sz = (char*)4096;
+
+	MemoryInit();
+	ObjectsInit();
+
+	TestObjectAllocatorAddConstructors();
+
+	pRoot = ORoot();
+
+	pNamed1 = ONMalloc<CTestNamedObject>("1", 1);
+	pRoot->Add(pNamed1);
+
+	xxx; //Fix your logging.
+
+	gcLogger.SetEngineOutput()
+	gcLogger.Kill();
+	cMemoryFile.Init();
+	cMemoryFile.Open(EFM_ReadWrite_Create);
+	gcLogger.Init(&cMemoryFile, "TestObjectAllocatorAssignmentToNullObject");
+	gcLogger.SetBreakOnError(FALSE);
+	pNamed2->mpNamedTest1 = pNamed1;
+	cFileBasic.Init(&cMemoryFile);
+	cFileBasic.Seek(0);
+	memset(szLog, 0, 4096);
+	cFileBasic.ReadStringChars(szLog, (int)cFileBasic.GetFileSize());
+	szError = strstr(szLog, "CPointer::DereferenceArrow(void) Attempted to dereference NULL Pointer.");
+	AssertNotNull(szError);
+	gcLogger.Kill();
+	cMemoryFile.Close();
+	cMemoryFile.Kill();
+	cFileBasic.Kill();
+
+	gcLogger.Init();
+
+	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(2, gcObjects.NumMemoryNames());
+
+	ObjectsFlush();
+	ObjectsKill();
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectAllocatorOverwritensParentMaintainsPointerToOverwritten(void)
+{
+	Ptr<CRoot>					pRoot;
+	Ptr<CTestNamedObject>		pNamed1;
+	Ptr<CTestNamedObject>		pNamed2;
+	Ptr<CTestNamedObject>		pNamed3;
+	Ptr<CTestNamedObject>		pNamed4;
+	Ptr<CTestNamedObject>		pNamed5;
+	Ptr<CTestNamedObject>		pNamed6;
+	CPointer					pObject1;
+	CPointer					pObject2;
+	Ptr<CTestNamedObjectSmall>	pNamedSmall;
+
+	MemoryInit();
+	ObjectsInit();
+
+	TestObjectAllocatorAddConstructors();
+
+	pRoot = ORoot();
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(1, gcObjects.NumMemoryNames());
+
+	pNamed1 = ONMalloc<CTestNamedObject>("1", 1);
+	pRoot->Add(pNamed1);
+
+	pNamed2 = ONMalloc<CTestNamedObject>("2", 2);
+	pRoot->Add(pNamed2);
+
+	pNamed3 = ONMalloc<CTestNamedObject>("3", 3);
+	pNamed4 = ONMalloc<CTestNamedObject>("4", 4);
+	pNamed5 = ONMalloc<CTestNamedObject>("5", 5);
+	pNamed6 = ONMalloc<CTestNamedObject>("6", 6);
+
+	pNamed1->mpNamedTest1 = pNamed3;
+	pNamed3->mpNamedTest1 = pNamed5;
+	pNamed3->mpNamedTest2 = pNamed6;
+
+	pNamed2->mpNamedTest1 = pNamed4;
+	pNamed4->mpNamedTest1 = pNamed6;
+	pNamed4->mpNamedTest2 = pNamed5;
+
+
+	ObjectsFlush();
+	ObjectsKill();
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectAllocator(void)
 {
 	BeginTests();
@@ -156,10 +355,10 @@ void TestObjectAllocator(void)
 	TestObjectAllocatorSimpleAdd();
 	TestObjectAllocatorNamedAdd();
 	TestObjectAllocatorNamedOverwrite();
-
-	xxx;  //Write more tests for Overwrite cases
-	//Test in memory; overwrite from root causes children to be destroyed
-	//Test in memory; overwriten's parent maintains pointer to overwritten
+	TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed();
+	TestObjectAllocatorAssignmentToNullObject();
+	TestObjectAllocatorOverwritensParentMaintainsPointerToOverwritten();
+	//Test on disk; pointers to overwritten are preserved when read
 
 	TestStatistics();
 }

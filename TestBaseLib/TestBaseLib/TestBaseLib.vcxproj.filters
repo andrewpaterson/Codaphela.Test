@@ -124,6 +124,9 @@
     <Filter Include="Source\Data\LinkedList">
       <UniqueIdentifier>{84a720a1-3862-4dc3-b246-4fccae290aa8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Error">
+      <UniqueIdentifier>{cde953d0-dca5-4096-a07d-3c1ee2fb9b8f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -371,6 +374,9 @@
     </ClCompile>
     <ClCompile Include="TestWindowsFiles.cpp">
       <Filter>Source\File</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLogger.cpp">
+      <Filter>Source\Error</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

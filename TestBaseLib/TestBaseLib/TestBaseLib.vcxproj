@@ -236,6 +236,7 @@
     <ClCompile Include="TestListCharsMinimal.cpp" />
     <ClCompile Include="TestListTemplate.cpp" />
     <ClCompile Include="TestListVariable.cpp" />
+    <ClCompile Include="TestLogger.cpp" />
     <ClCompile Include="TestMap.cpp" />
     <ClCompile Include="TestMapBlock.cpp" />
     <ClCompile Include="TestMapLong.cpp" />

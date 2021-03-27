@@ -14,6 +14,7 @@ void TestArrayLong(void);
 void TestArrayTemplate(void);
 void TestArrayVoidPtrGet(void);
 void TestArrayMinimalTemplate(void);
+void TestLogger(void);
 void TestMapBlock(void);
 void TestMapInt(void);
 void TestMapLong(void);
@@ -104,6 +105,7 @@ int main(void)
 	TestArrayMinimalTemplate();
 	TestArrayBlockSorted();
 	TestArraySizer();
+	TestLogger();
 	TestMapBlock();
 	TestMapString();
 	TestMapInt();

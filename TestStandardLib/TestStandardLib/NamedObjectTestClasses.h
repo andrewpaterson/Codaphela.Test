@@ -21,5 +21,20 @@ public:
 };
 
 
+class CTestNamedObjectSmall : public CNamedObject
+{
+CONSTRUCTABLE(CTestNamedObjectSmall);
+public:
+	char	mac[4];
+
+	Ptr<CTestNamedObjectSmall> Init(char* sz);
+	void Class(void);
+	void Free(void);
+
+	BOOL Save(CObjectSerialiser* pcFile);
+	BOOL Load(CObjectDeserialiser* pcFile);
+};
+
+
 #endif // __NAMED_OBJECT_TEST_CLASSES_H__
 
