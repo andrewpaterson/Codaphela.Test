@@ -297,7 +297,10 @@ void TestObjectAllocatorOverwritensParentMaintainsPointerToOverwritten(void)
 	Ptr<CTestNamedObject>		pNamed6;
 	CPointer					pObject1;
 	CPointer					pObject2;
-	Ptr<CTestNamedObjectSmall>	pNamedSmall;
+	Ptr<CTestNamedObject>		pNamed3New;
+	Ptr<CTestNamedObject>		pNamed4New;
+	void*						pv3;
+	void*						pv4;
 
 	MemoryInit();
 	ObjectsInit();
@@ -327,6 +330,36 @@ void TestObjectAllocatorOverwritensParentMaintainsPointerToOverwritten(void)
 	pNamed4->mpNamedTest1 = pNamed6;
 	pNamed4->mpNamedTest2 = pNamed5;
 
+	AssertInt(3, pNamed1->mpNamedTest1->miNum);
+	AssertInt(4, pNamed2->mpNamedTest1->miNum);
+
+	AssertLongLongInt(8, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(7, gcObjects.NumMemoryNames());
+
+	AssertInt(3, pNamed3->GetDistToRoot());
+	AssertInt(3, pNamed4->GetDistToRoot());
+
+	pv3 = &pNamed3;
+	pv4 = &pNamed4;
+
+	pNamed3New = gcObjects.AllocateExistingNamed("CTestNamedObject", "3");
+	pNamed3New->Init(33);
+	pNamed4New = gcObjects.AllocateExistingNamed("CTestNamedObject", "4");
+	pNamed4New->Init(44);
+
+	AssertLongLongInt(8, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(7, gcObjects.NumMemoryNames());
+
+	AssertInt(33, pNamed1->mpNamedTest1->miNum);
+	AssertInt(44, pNamed2->mpNamedTest1->miNum);
+
+	AssertTrue(&pNamed3 == &pNamed3New);
+	AssertTrue(&pNamed4 == &pNamed4New);
+	AssertFalse(pv3 == &pNamed3New);
+	AssertFalse(pv4 == &pNamed4New);
+
+	AssertInt(3, pNamed3New->GetDistToRoot());
+	AssertInt(3, pNamed4New->GetDistToRoot());
 
 	ObjectsFlush();
 	ObjectsKill();
