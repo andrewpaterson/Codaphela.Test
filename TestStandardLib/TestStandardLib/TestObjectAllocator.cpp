@@ -371,6 +371,72 @@ void TestObjectAllocatorOverwritensParentMaintainsPointerToOverwritten(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectAllocatorOverwritensParentMaintainsPointerToOverwrittenWithEmbedded(void)
+{
+	Ptr<CRoot>							pRoot;
+	Ptr<CTestNamedObjectWithEmbedded>	pNamed1;
+	Ptr<CTestNamedObjectWithEmbedded>	pNamed2;
+	Ptr<CTestNamedObjectSmall>			pNamed1a;
+	Ptr<CTestNamedObject>				pNamed1b;
+	Ptr<CTestNamedObjectSmall>			pNamed2a;
+	Ptr<CTestNamedObject>				pNamed2b;
+	CPointer							pObject1a;
+	CPointer							pObject1b;
+	CPointer							pObject2a;
+	CPointer							pObject2b;
+
+	MemoryInit();
+	ObjectsInit();
+
+	TestObjectAllocatorAddConstructors();
+
+	pRoot = ORoot();
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(1, gcObjects.NumMemoryNames());
+
+	pNamed1a = ONMalloc<CTestNamedObjectSmall>("TestNamedObjectSmall 1A", (char*)"ABC");
+	pNamed1b = ONMalloc<CTestNamedObject>("TestNamedObject 1B", 4);
+	pNamed2a = ONMalloc<CTestNamedObjectSmall>("TestNamedObjectSmall 2A", (char*)"XYZ");
+	pNamed2b = ONMalloc<CTestNamedObject>("TestNamedObject 2B", 4);
+
+	pNamed1 = ONMalloc<CTestNamedObjectWithEmbedded>("Agrarian", 12, 13, 14, 15, pNamed1b, pNamed1a);
+	pRoot->Add(pNamed1);
+
+	pNamed2 = ONMalloc<CTestNamedObjectWithEmbedded>("Hydroponics", 2012, 2013, 2014, 2015, pNamed2b, pNamed2a);
+	pRoot->Add(pNamed2);
+
+	pNamed1a = NULL;
+	pNamed1b = NULL;
+	pNamed2a = NULL;
+	pNamed2b = NULL;
+	
+	AssertLongLongInt(8, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(7, gcObjects.NumMemoryNames());
+
+	AssertInt(3, pNamed1->mpObject->GetDistToRoot());
+	AssertInt(3, pNamed2->mpObject->GetDistToRoot());
+
+	Write some acutal tests.
+
+	pNamed1 = gcObjects.AllocateExistingNamed("CTestNamedObjectWithEmbedded", "Agrarian");
+	pNamed1->Init(1012, 1013, 1014, 1015, ONull, ONull);
+	pNamed2 = gcObjects.AllocateExistingNamed("CTestNamedObjectWithEmbedded", "Hydroponics");
+	pNamed2->Init(2012, 2013, 2014, 2015, ONull, ONull);
+
+	AssertLongLongInt(8, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(7, gcObjects.NumMemoryNames());
+
+
+	ObjectsFlush();
+	ObjectsKill();
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectAllocator(void)
 {
 	BeginTests();
@@ -381,6 +447,7 @@ void TestObjectAllocator(void)
 	TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed();
 	TestObjectAllocatorAssignmentToNullObject();
 	TestObjectAllocatorOverwritensParentMaintainsPointerToOverwritten();
+	TestObjectAllocatorOverwritensParentMaintainsPointerToOverwrittenWithEmbedded();
 	//Test on disk; pointers to overwritten are preserved when read
 
 	TestStatistics();

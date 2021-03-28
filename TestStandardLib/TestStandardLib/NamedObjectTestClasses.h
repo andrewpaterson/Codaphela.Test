@@ -36,5 +36,27 @@ public:
 };
 
 
+class CTestNamedObjectWithEmbedded : public CNamedObject
+{
+CONSTRUCTABLE(CTestNamedObjectWithEmbedded);
+public:
+	CTestNamedObject				mNamedTest1;
+	CTestNamedObject				mNamedTest2;
+	CPointer						mpObject;
+	Ptr<CTestNamedObjectSmall>		mpSmall;
+	int								miX;
+	int								miY;
+	void*							mpvUnmanaged;
+	int								miUnmagedSize;
+
+	Ptr<CTestNamedObjectWithEmbedded> Init(int iX, int iY, int iName1, int iName2, CPointer pObject, Ptr<CTestNamedObjectSmall> pSmall);
+	void Class(void);
+	void Free(void);
+
+	BOOL Save(CObjectSerialiser* pcFile);
+	BOOL Load(CObjectDeserialiser* pcFile);
+};
+
+
 #endif // __NAMED_OBJECT_TEST_CLASSES_H__
 

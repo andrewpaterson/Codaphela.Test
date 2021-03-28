@@ -120,3 +120,79 @@ BOOL CTestNamedObjectSmall::Load(CObjectDeserialiser* pcFile)
 	return TRUE;
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CTestNamedObjectWithEmbedded> CTestNamedObjectWithEmbedded::Init(int iX, int iY, int iName1, int iName2, CPointer pObject, Ptr<CTestNamedObjectSmall> pSmall)
+{
+	miX = iX;
+	miY = iY;
+	mNamedTest1.Init(iName1);
+	mNamedTest2.Init(iName2);
+	mpObject = pObject;
+	mpSmall = pSmall;
+	mpvUnmanaged = NULL;
+	miUnmagedSize = 0;
+	return this;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestNamedObjectWithEmbedded::Class(void)
+{
+	CObject::Class();
+	Pointer(mpObject.This());
+	Pointer(mpSmall.This());
+	Embedded(&mNamedTest1);
+	Embedded(&mNamedTest2);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestNamedObjectWithEmbedded::Free(void)
+{
+	SafeFree(mpvUnmanaged);
+	miUnmagedSize = 0;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+BOOL CTestNamedObjectWithEmbedded::Save(CObjectSerialiser* pcFile)
+{
+	ReturnOnFalse(pcFile->WritePointer(mpObject));
+	ReturnOnFalse(pcFile->WritePointer(mpSmall));
+	ReturnOnFalse(mNamedTest1.Save(pcFile));
+	ReturnOnFalse(mNamedTest2.Save(pcFile));
+	ReturnOnFalse(pcFile->WriteInt(miX));
+	ReturnOnFalse(pcFile->WriteInt(miY));
+	return TRUE;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+BOOL CTestNamedObjectWithEmbedded::Load(CObjectDeserialiser* pcFile)
+{
+	ReturnOnFalse(pcFile->ReadPointer(mpObject.This()));
+	ReturnOnFalse(pcFile->ReadPointer(mpSmall.This()));
+	ReturnOnFalse(mNamedTest1.Load(pcFile));
+	ReturnOnFalse(mNamedTest2.Load(pcFile));
+	ReturnOnFalse(pcFile->ReadInt(&miX));
+	ReturnOnFalse(pcFile->ReadInt(&miY));
+	return TRUE;
+}
+
+
