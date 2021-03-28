@@ -225,8 +225,7 @@ void TestNamedOjectReuse(EIndexWriteThrough eWriteThrough)
 	pNamed1 = gcObjects.Get("Sister Two");
 	AssertLongLongInt(1, pNamed1.GetIndex());
 
-	gcLogger.GetConfig(&sLogConfig);
-	gcLogger.SetBreakOnError(FALSE);
+	sLogConfig = gcLogger.SetSilent();
 	pNamed3 = ONMalloc<CTestNamedObject>("Sister Two", 3);
 	gcLogger.SetConfig(&sLogConfig);
 

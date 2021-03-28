@@ -1,5 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/MemoryFile.h"
+#include "BaseLib/LogToMemory.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "NamedObjectTestClasses.h"
@@ -79,8 +80,7 @@ void TestObjectAllocatorNamedAdd(void)
 	pTemp = gcObjects.Get("My Object Name");
 	AssertPointer(pNamed1.Object(), pTemp.Object());
 
-	gcLogger.GetConfig(&sLogConfig);
-	gcLogger.SetBreakOnError(FALSE);
+	sLogConfig = gcLogger.SetSilent();
 	pNamed2 = gcObjects.AllocateNewNamed("CTestNamedObject", "My Object Name");
 	gcLogger.SetConfig(&sLogConfig);
 
@@ -246,7 +246,7 @@ void TestObjectAllocatorAssignmentToNullObject(void)
 	CFileBasic				cFileBasic;
 	char					szLog[4096];
 	char*					szError;
-	
+	CLogToMemory			cLogToMemory;
 	char*					sz;
 
 	sz = (char*)4096;
@@ -261,27 +261,17 @@ void TestObjectAllocatorAssignmentToNullObject(void)
 	pNamed1 = ONMalloc<CTestNamedObject>("1", 1);
 	pRoot->Add(pNamed1);
 
-	xxx; //Fix your logging.
+	
+	cLogToMemory.Start(TRUE);
 
-	gcLogger.SetEngineOutput()
-	gcLogger.Kill();
-	cMemoryFile.Init();
-	cMemoryFile.Open(EFM_ReadWrite_Create);
-	gcLogger.Init(&cMemoryFile, "TestObjectAllocatorAssignmentToNullObject");
-	gcLogger.SetBreakOnError(FALSE);
+	//gcLogger.SetBreakOnError(FALSE);
 	pNamed2->mpNamedTest1 = pNamed1;
-	cFileBasic.Init(&cMemoryFile);
-	cFileBasic.Seek(0);
-	memset(szLog, 0, 4096);
-	cFileBasic.ReadStringChars(szLog, (int)cFileBasic.GetFileSize());
+	
+	cLogToMemory.Stop(szLog, 4096);
+
 	szError = strstr(szLog, "CPointer::DereferenceArrow(void) Attempted to dereference NULL Pointer.");
 	AssertNotNull(szError);
-	gcLogger.Kill();
-	cMemoryFile.Close();
-	cMemoryFile.Kill();
-	cFileBasic.Kill();
 
-	gcLogger.Init();
 
 	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(2, gcObjects.NumMemoryNames());
