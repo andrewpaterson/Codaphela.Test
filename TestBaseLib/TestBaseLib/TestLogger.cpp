@@ -32,6 +32,7 @@ void TestLoggerMemoryOutput(void)
 	cBasicMemory.ReadStringChars(sz, (int)cBasicMemory.GetFileSize());
 	cMemory.Close();
 	cMemory.Kill();
+	gcLogger.Kill();
 
 	AssertString("INFO: Hello\n"
 				 "INFO: World\n", sz);

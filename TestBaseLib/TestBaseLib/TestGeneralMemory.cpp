@@ -197,7 +197,7 @@ void TestGeneralMemoryRemoveAllByArray(void)
 
 	AssertInt(9, apv.NumElements());
 
-	cMemory.Remove(&apv);
+	cMemory.RemoveMultiple(&apv);
 	AssertInt(0, cMemory.NumElements());
 
 	apv.Kill();
@@ -234,7 +234,7 @@ void TestGeneralMemoryRemoveHalfByArray(void)
 
 	AssertInt(5, apv.NumElements());
 
-	cMemory.Remove(&apv);
+	cMemory.RemoveMultiple(&apv);
 	AssertInt(4, cMemory.NumElements());
 
 	apv.Kill();
@@ -255,7 +255,7 @@ void TestGeneralMemoryRemoveNoneByArray(void)
 
 	apv.Init();
 	
-	cMemory.Remove(&apv);
+	cMemory.RemoveMultiple(&apv);
 	AssertInt(9, cMemory.NumElements());
 
 	apv.Kill();
