@@ -15,6 +15,7 @@ void TestObjectAllocatorAddConstructors(void)
 	gcObjects.AddConstructor<CRoot>();
 	gcObjects.AddConstructor<CTestNamedObject>();
 	gcObjects.AddConstructor<CTestNamedObjectSmall>();
+	gcObjects.AddConstructor<CTestNamedObjectWithEmbedded>();
 }
 
 
@@ -380,11 +381,7 @@ void TestObjectAllocatorOverwritensParentMaintainsPointerToOverwrittenWithEmbedd
 	Ptr<CTestNamedObject>				pNamed1b;
 	Ptr<CTestNamedObjectSmall>			pNamed2a;
 	Ptr<CTestNamedObject>				pNamed2b;
-	CPointer							pObject1a;
-	CPointer							pObject1b;
-	CPointer							pObject2a;
-	CPointer							pObject2b;
-
+	
 	MemoryInit();
 	ObjectsInit();
 
@@ -405,27 +402,58 @@ void TestObjectAllocatorOverwritensParentMaintainsPointerToOverwrittenWithEmbedd
 	pNamed2 = ONMalloc<CTestNamedObjectWithEmbedded>("Hydroponics", 2012, 2013, 2014, 2015, pNamed2b, pNamed2a);
 	pRoot->Add(pNamed2);
 
-	pNamed1a = NULL;
-	pNamed1b = NULL;
 	pNamed2a = NULL;
 	pNamed2b = NULL;
 	
 	AssertLongLongInt(8, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(7, gcObjects.NumMemoryNames());
 
+	AssertInt(2, pNamed1->GetDistToRoot());
 	AssertInt(3, pNamed1->mpObject->GetDistToRoot());
+	AssertInt(3, pNamed1->mpSmall->GetDistToRoot());
 	AssertInt(3, pNamed2->mpObject->GetDistToRoot());
+	AssertInt(3, pNamed2->mpSmall->GetDistToRoot());
+	AssertInt(2, pNamed1->mNamedTest1.GetDistToRoot());
+	AssertInt(2, pNamed1->mNamedTest2.GetDistToRoot());
+	AssertInt(2, pNamed2->mNamedTest1.GetDistToRoot());
+	AssertInt(2, pNamed2->mNamedTest2.GetDistToRoot());
 
-	Write some acutal tests.
 
 	pNamed1 = gcObjects.AllocateExistingNamed("CTestNamedObjectWithEmbedded", "Agrarian");
 	pNamed1->Init(1012, 1013, 1014, 1015, ONull, ONull);
 	pNamed2 = gcObjects.AllocateExistingNamed("CTestNamedObjectWithEmbedded", "Hydroponics");
 	pNamed2->Init(2012, 2013, 2014, 2015, ONull, ONull);
 
-	AssertLongLongInt(8, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(7, gcObjects.NumMemoryNames());
+	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(5, gcObjects.NumMemoryNames());
 
+	AssertInt(2, pNamed1->GetDistToRoot());
+	AssertNull(&pNamed1->mpObject);
+	AssertNull(&pNamed1->mpSmall);
+	AssertNull(&pNamed2->mpObject);
+	AssertNull(&pNamed2->mpSmall);
+	AssertInt(2, pNamed1->mNamedTest1.GetDistToRoot());
+	AssertInt(2, pNamed1->mNamedTest2.GetDistToRoot());
+	AssertInt(2, pNamed2->mNamedTest1.GetDistToRoot());
+	AssertInt(2, pNamed2->mNamedTest2.GetDistToRoot());
+
+	AssertInt(-1, pNamed1a->GetDistToRoot());
+	AssertInt(-1, pNamed1b->GetDistToRoot());
+
+	pNamed1 = NULL;
+	pNamed2 = NULL;
+	pNamed1a = NULL;
+	pNamed2a = NULL;
+	pNamed1b = NULL;
+	pNamed2b = NULL;
+
+	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(3, gcObjects.NumMemoryNames());
+
+	pNamed1 = gcObjects.Get("Agrarian");
+	pNamed2 = gcObjects.Get("Hydroponics");
+	AssertNotNull(&pNamed1);
+	AssertNotNull(&pNamed2);
 
 	ObjectsFlush();
 	ObjectsKill();

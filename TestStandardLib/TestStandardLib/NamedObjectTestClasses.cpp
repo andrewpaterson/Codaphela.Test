@@ -127,6 +127,8 @@ BOOL CTestNamedObjectSmall::Load(CObjectDeserialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 Ptr<CTestNamedObjectWithEmbedded> CTestNamedObjectWithEmbedded::Init(int iX, int iY, int iName1, int iName2, CPointer pObject, Ptr<CTestNamedObjectSmall> pSmall)
 {
+	PreInit();
+
 	miX = iX;
 	miY = iY;
 	mNamedTest1.Init(iName1);
@@ -135,6 +137,8 @@ Ptr<CTestNamedObjectWithEmbedded> CTestNamedObjectWithEmbedded::Init(int iX, int
 	mpSmall = pSmall;
 	mpvUnmanaged = NULL;
 	miUnmagedSize = 0;
+
+	PostInit();
 	return this;
 }
 
