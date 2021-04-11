@@ -284,7 +284,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 
 	Ptr<CRoot> pRoot = ORoot();
 	Ptr<CEmbeddedComplex> pComplex = OMalloc<CEmbeddedComplex>();
-	oiComplex = pComplex->GetOI();
+	oiComplex = pComplex->GetIndex();
 
 	pRoot->Add(pComplex);
 
@@ -320,20 +320,20 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	AssertInt(1, pComplex->mai[0]);
 	AssertInt(2, pComplex->mai[1]);
 	
-	AssertLongLongInt(INVALID_O_INDEX, pComplex->mcSimple.GetOI());
+	AssertLongLongInt(INVALID_O_INDEX, pComplex->mcSimple.GetIndex());
 	AssertInt(85, pComplex->mcSimple.miAmANumber);
 	AssertFloat(58.0f, pComplex->mcSimple.mfSoAmI, 0);
 
-	AssertLongLongInt(INVALID_O_INDEX, pComplex->mcContainer.GetOI());
+	AssertLongLongInt(INVALID_O_INDEX, pComplex->mcContainer.GetIndex());
 	AssertInt(73, pComplex->mcContainer.mi);
 	AssertFloat(666.0f, pComplex->mcContainer.mf, 0);
 	AssertString("And", pComplex->mcContainer.msz);
 
-	AssertLongLongInt(INVALID_O_INDEX, pComplex->mcContainer.mcOne.GetOI());
+	AssertLongLongInt(INVALID_O_INDEX, pComplex->mcContainer.mcOne.GetIndex());
 	AssertInt(85, pComplex->mcContainer.mcOne.miAmANumber);
 	AssertFloat(58.0f, pComplex->mcContainer.mcOne.mfSoAmI, 0);
 
-	AssertLongLongInt(INVALID_O_INDEX, pComplex->mcContainer.mcTwo.GetOI());
+	AssertLongLongInt(INVALID_O_INDEX, pComplex->mcContainer.mcTwo.GetIndex());
 	AssertInt(85, pComplex->mcContainer.mcTwo.miAmANumber);
 	AssertFloat(58.0f, pComplex->mcContainer.mcTwo.mfSoAmI, 0);
 
@@ -370,7 +370,7 @@ void TestEmbeddedObjectPointTo(void)
 
 	Ptr<CRoot> pRoot = ORoot();
 	Ptr<CEmbeddedComplex> pComplex = OMalloc<CEmbeddedComplex>();
-	oiComplex = pComplex->GetOI();
+	oiComplex = pComplex->GetIndex();
 
 	Ptr<CEmbeddedContainer> pContainer = &pComplex->mcContainer;
 	pRoot->Add(pContainer);

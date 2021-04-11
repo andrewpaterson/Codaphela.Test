@@ -104,14 +104,14 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 
 	cBase = gcObjects.Get("Ow/Start 1");
 	AssertTrue(cBase.IsNotNull());
-	AssertLongLongInt(3, cBase->GetOI());
+	AssertLongLongInt(3, cBase->GetIndex());
 	AssertString("Ow/Start 1", cBase.GetName());
 	cString1 = gcObjects.Get(6LL);
 	AssertString("Black", cString1->Text());
-	AssertLongLongInt(6LL, cString1->GetOI());
+	AssertLongLongInt(6LL, cString1->GetIndex());
 	cString2 = gcObjects.Get(7LL);
 	AssertString("Jack", cString2->Text());
-	AssertLongLongInt(7LL, cString2->GetOI());
+	AssertLongLongInt(7LL, cString2->GetIndex());
 
 	cGraphSerialiser.Init(pcWriter);
 	AssertTrue(cGraphSerialiser.Write(&cBase));
@@ -142,25 +142,25 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 		szOne->Init("Hello World ");
 		szOne->Append(i);
 		cRoot->Add(szOne);
-		AssertLongLongInt(9LL + i, szOne->GetOI());
+		AssertLongLongInt(9LL + i, szOne->GetIndex());
 	}
 	
 	cDependentReadObjects.Init();
 	cGraphDeserialiser.Init(pcReader, FALSE, &gcObjects, &cDependentReadObjects, gcObjects.GetMemory());
 	cStart1 = cGraphDeserialiser.Read("Ow/Start 1");
 	AssertTrue(cStart1.IsNotNull());
-	AssertLongLongInt(29, cStart1->GetOI());
+	AssertLongLongInt(29, cStart1->GetIndex());
 
 
 	AssertTrue(cStart1->mp1.IsNotNull());
 	AssertString("CTestSaveableObject1", cStart1->mp1->ClassName());
 	cShared = cStart1->mp1;
-	AssertLongLongInt(31, cShared->GetOI());
+	AssertLongLongInt(31, cShared->GetIndex());
 
 	AssertTrue(cStart1->mp2.IsNotNull());
 	AssertString("CString", cStart1->mp2->ClassName());
 	cString1 = cStart1->mp2;
-	AssertLongLongInt(30, cString1->GetOI());
+	AssertLongLongInt(30, cString1->GetIndex());
 
 	cGraphDeserialiser.Kill();
 	cDependentReadObjects.Kill();
@@ -171,7 +171,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 		szOne->Init("Hello World ");
 		szOne->Append(i + 20);
 		cRoot->Add(szOne);
-		AssertLongLongInt(32LL + i, szOne->GetOI());
+		AssertLongLongInt(32LL + i, szOne->GetIndex());
 	}
 
 	pcDatabase->ValidateIdentifiers();
@@ -223,13 +223,13 @@ void TestObjectGraphDeserialiserReuseName(void)
 
 	cRoot = ORoot();
 	cStart1 = ONMalloc<CTestSaveableObject2>("Ow/Start 1", "Battery");
-	AssertLongLongInt(3, cStart1->GetOI());
+	AssertLongLongInt(3, cStart1->GetIndex());
 
 	cRoot->Add(cStart1);
 
 	cBase = gcObjects.Get("Ow/Start 1");
 	AssertTrue(cBase.IsNotNull());
-	AssertLongLongInt(3, cBase->GetOI());
+	AssertLongLongInt(3, cBase->GetIndex());
 	AssertString("Ow/Start 1", cBase.GetName());
 
 	cGraphSerialiser.Init(&cWriter);
@@ -258,7 +258,7 @@ void TestObjectGraphDeserialiserReuseName(void)
 	cGraphDeserialiser.Init(&cReader, FALSE, &gcObjects, &cDependentReadObjects, gcObjects.GetMemory());
 	cStart1 = cGraphDeserialiser.Read("Ow/Start 1");
 	AssertTrue(cStart1.IsNotNull());
-	AssertLongLongInt(4, cStart1->GetOI());
+	AssertLongLongInt(4, cStart1->GetIndex());
 
 	cGraphDeserialiser.Kill();
 	cDependentReadObjects.Kill();
@@ -456,14 +456,14 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 
 	AssertNotNull(&cOwStart2);
 	AssertInt(89, cOwStart2->mp1->miInt);
-	AssertLongLongInt(cOwStart1->mp1->GetOI(), cOwStart2->mp1->GetOI());
+	AssertLongLongInt(cOwStart1->mp1->GetIndex(), cOwStart2->mp1->GetIndex());
 	AssertInt(89, cOwStart1->mp1->miInt);
 	AssertPointer(&cOwStart1->mp1, &cOwStart2->mp1);
 
 	cObject = gcObjects.Get("Ow/Start 2");
 	AssertPointer(&cOwStart2, &cObject);
 
-	cObject = gcObjects.Get(cOwStart2->GetOI());
+	cObject = gcObjects.Get(cOwStart2->GetIndex());
 	AssertPointer(&cOwStart2, &cObject);
 
 	ObjectsFlush();

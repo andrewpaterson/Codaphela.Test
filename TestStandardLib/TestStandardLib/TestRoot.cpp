@@ -1389,7 +1389,7 @@ void TestRootKill(void)
 
 	pRoot = ORoot();
 	AssertString(ROOT_NAME, pRoot->GetName());
-	AssertLongLongInt(4LL, pRoot->GetOI());
+	AssertLongLongInt(4LL, pRoot->GetIndex());
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcUnknowns.NumElements());
 

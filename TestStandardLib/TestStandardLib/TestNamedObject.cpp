@@ -74,7 +74,7 @@ void TestNamedObjectName(void)
 	pNamed3 = OMalloc<CTestNamedObject>(3);
 	pNamed3->mpNamedTest1 = pNamed1;
 	pNamed3->mpNamedTest2 = pNamed2;
-	oiNamed3 = pNamed3->GetOI();
+	oiNamed3 = pNamed3->GetIndex();
 	
 	pRoot = ORoot();
 	pRoot->Add(pNamed3);
@@ -92,7 +92,7 @@ void TestNamedObjectName(void)
 	AssertNull(pResult3.Object());
 
 	pcSet = pRoot->TestGetSet();
-	oiSet = pcSet->GetOI();
+	oiSet = pcSet->GetIndex();
 
 	ObjectsFlush();
 	pcDatabase->Close();

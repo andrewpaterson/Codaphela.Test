@@ -577,9 +577,9 @@ void TestUpdateAttachedTosDistToRootSimpleRight(void)
 	//        Root(0)
 	//
 
-	AssertLongLongInt(4, pTest1->GetOI());
-	AssertLongLongInt(5, pTest2->GetOI());
-	AssertLongLongInt(6, pTest3->GetOI());
+	AssertLongLongInt(4, pTest1->GetIndex());
+	AssertLongLongInt(5, pTest2->GetIndex());
+	AssertLongLongInt(6, pTest3->GetIndex());
 
 	pTest2->mpTest.UnsafeClearObject();
 	pTest3->TestRemoveHeapFrom(pTest2.BaseObject());
@@ -662,9 +662,9 @@ void TestUpdateAttachedTosDistToRootSimpleRightBroken(void)
 	//        Root(0)
 	//
 
-	AssertLongLongInt(4, pTest1->GetOI());
-	AssertLongLongInt(5, pTest2->GetOI());
-	AssertLongLongInt(6, pTest3->GetOI());
+	AssertLongLongInt(4, pTest1->GetIndex());
+	AssertLongLongInt(5, pTest2->GetIndex());
+	AssertLongLongInt(6, pTest3->GetIndex());
 
 	pTest1->mpObject.UnsafeClearObject();
 	pTest3->TestRemoveHeapFrom(pTest1.BaseObject());
@@ -1815,13 +1815,13 @@ void TestClearDistToRootToValidDistBroken(void)
 	//              Root(0)
 	//                         
 	
-	AssertLongLongInt(3LL, p6b->GetOI());
-	AssertLongLongInt(4LL, p6c->GetOI());
-	AssertLongLongInt(5LL, pTest1a->GetOI());
-	AssertLongLongInt(6LL, pTest1b->GetOI());
-	AssertLongLongInt(7LL, pTest2a->GetOI());
-	AssertLongLongInt(8LL, pTest2b->GetOI());
-	AssertLongLongInt(9LL, pTest3a->GetOI());
+	AssertLongLongInt(3LL, p6b->GetIndex());
+	AssertLongLongInt(4LL, p6c->GetIndex());
+	AssertLongLongInt(5LL, pTest1a->GetIndex());
+	AssertLongLongInt(6LL, pTest1b->GetIndex());
+	AssertLongLongInt(7LL, pTest2a->GetIndex());
+	AssertLongLongInt(8LL, pTest2b->GetIndex());
+	AssertLongLongInt(9LL, pTest3a->GetIndex());
 
 	AssertInt(2, p6b->GetDistToRoot());
 	AssertInt(2, p6c->GetDistToRoot());
@@ -1839,7 +1839,7 @@ void TestClearDistToRootToValidDistBroken(void)
 
 	AssertInt(1, cDistParameters.NumExpectedDists());
 	psDistToRoot = cDistParameters.GetLowestExpectedDist();
-	AssertLongLongInt(6LL, psDistToRoot->pcObject->GetOI());
+	AssertLongLongInt(6LL, psDistToRoot->pcObject->GetIndex());
 	AssertInt(4, psDistToRoot->iExpectedDist);
 
 	AssertInt(2, p6b->GetDistToRoot());

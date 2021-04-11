@@ -37,11 +37,11 @@ CPointer SetupObjectReaderChunkedChunkFile(void)
 	cNS4 = ONMalloc<CTestNamedString>("NamedString 4");
 
 	cI1 = OMalloc<CTestInteger>(3, 2, 1);
-	AssertLongLongInt(5LL, cI1->GetOI());
+	AssertLongLongInt(5LL, cI1->GetIndex());
 	cI2 = OMalloc<CTestInteger>(543, 3, 4);
-	AssertLongLongInt(6LL, cI2->GetOI());
+	AssertLongLongInt(6LL, cI2->GetIndex());
 	cI3 = OMalloc<CTestInteger>(10, 8192, 7);
-	AssertLongLongInt(7LL, cI3->GetOI());
+	AssertLongLongInt(7LL, cI3->GetIndex());
 
 	cA1 = ONMalloc<CTestWithArray>("Array 1", "Something with One", 1);
 	cA2 = ONMalloc<CTestWithArray>("Array X", "An with 2", 2);

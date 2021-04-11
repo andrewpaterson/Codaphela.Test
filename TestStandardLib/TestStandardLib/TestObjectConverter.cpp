@@ -47,17 +47,17 @@ Ptr<CTestDoubleNamedString> SetupObjectConverterChunkFile(void)
 	cRoot = ORoot();
 
 	cDiamond = ONMalloc<CTestNamedString>("Diamond End");
-	AssertLongLongInt(3LL, cDiamond->GetOI());
+	AssertLongLongInt(3LL, cDiamond->GetIndex());
 
 	cNS1 = ONMalloc<CTestNamedString>("NamedString 1");
-	AssertLongLongInt(4, cNS1->GetOI());
+	AssertLongLongInt(4, cNS1->GetIndex());
 	sz1 = OMalloc<CString>();
 
 	cNS1->Init(sz1, cDiamond, "Hello");
 	sz1->Init("World");
 
 	cNS2 = ONMalloc<CTestNamedString>("NamedString 2");
-	AssertLongLongInt(6LL, cNS2->GetOI());
+	AssertLongLongInt(6LL, cNS2->GetIndex());
 	sz2 = OMalloc<CString>();
 
 	cNS2->Init(sz2, cDiamond, "12345");

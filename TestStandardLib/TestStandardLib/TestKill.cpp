@@ -189,7 +189,7 @@ void TestKillBestPractice(void)
 	AssertInt(2, pRedJetMaverick->NumHeapFroms());
 	AssertInt(3, pHarrier->GetMissiles()->NumElements());
 
-	OIndex oiMissile3 = pMissile3->GetOI();
+	OIndex oiMissile3 = pMissile3->GetIndex();
 	AssertLongLongInt(12LL, oiMissile3);
 
 	pMissile3->Kill();  //<-- This is what is being tested -----------------------------------.

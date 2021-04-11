@@ -339,6 +339,8 @@ void TestObjectAllocatorOverwritensParentMaintainsPointerToOverwritten(void)
 
 	AssertInt(3, pNamed3->GetDistToRoot());
 	AssertInt(3, pNamed4->GetDistToRoot());
+	AssertLongLongInt(5LL, pNamed3->GetIndex());
+	AssertLongLongInt(6LL, pNamed4->GetIndex());
 
 	pv3 = &pNamed3;
 	pv4 = &pNamed4;
@@ -350,6 +352,9 @@ void TestObjectAllocatorOverwritensParentMaintainsPointerToOverwritten(void)
 
 	AssertLongLongInt(8, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(7, gcObjects.NumMemoryNames());
+
+	AssertLongLongInt(5LL, pNamed3New->GetIndex());
+	AssertLongLongInt(6ll, pNamed4New->GetIndex());
 
 	AssertInt(33, pNamed1->mpNamedTest1->miNum);
 	AssertInt(44, pNamed2->mpNamedTest1->miNum);
@@ -476,7 +481,9 @@ void TestObjectAllocator(void)
 	TestObjectAllocatorAssignmentToNullObject();
 	TestObjectAllocatorOverwritensParentMaintainsPointerToOverwritten();
 	TestObjectAllocatorOverwritensParentMaintainsPointerToOverwrittenWithEmbedded();
+
 	//Test on disk; pointers to overwritten are preserved when read
+	//Test dependent named objects overwrite existing named objects.  i.e:  Load "Name 1" -> x -> "Name 2" overwrites "Name 2" that exists in the database.
 
 	TestStatistics();
 }

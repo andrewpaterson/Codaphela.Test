@@ -910,8 +910,8 @@ void TestDistToStackNoHeapA(void)
 	pcTest2 = (CTestObject*)pTest2.Object();
 	pcTest1 = &cTest1;
 
-	AssertLongLongInt(INVALID_O_INDEX, pcTest1->GetOI());
-	AssertLongLongInt(1, pcTest2->GetOI());
+	AssertLongLongInt(INVALID_O_INDEX, pcTest1->GetIndex());
+	AssertLongLongInt(1, pcTest2->GetIndex());
 
 	cTest1.Kill();
 
@@ -969,8 +969,8 @@ void TestDistToStackNoHeapB(void)
 	pcTest2 = (CTestObject*)pTest2.Object();
 	pcTest1 = &cTest1;
 
-	AssertLongLongInt(INVALID_O_INDEX, pcTest1->GetOI());
-	AssertLongLongInt(1, pcTest2->GetOI());
+	AssertLongLongInt(INVALID_O_INDEX, pcTest1->GetIndex());
+	AssertLongLongInt(1, pcTest2->GetIndex());
 
 	cTest1.Kill();
 
@@ -1025,8 +1025,8 @@ void TestDistToStackNoHeapC(void)
 	pcTest2 = (CTestObject*)pTest2.Object();
 	pcTest1 = &cTest1;
 
-	AssertLongLongInt(INVALID_O_INDEX, pcTest1->GetOI());
-	AssertLongLongInt(1, pcTest2->GetOI());
+	AssertLongLongInt(INVALID_O_INDEX, pcTest1->GetIndex());
+	AssertLongLongInt(1, pcTest2->GetIndex());
 
 	pTest2->Kill();
 
