@@ -50,10 +50,10 @@ CPointer SetupObjectReaderChunkedChunkFile(void)
 	sz2 = OMalloc<CString>("Ye!");
 	sz3 = OMalloc<CString>("3");
 
-	cNS1->Init(sz1, cNS2, "In Named 1");
-	cNS2->Init(sz1, cNS3, "Another in 2");
-	cNS3->Init(sz3, cNS1, "Three");
-	cNS4->Init(ONull, ONull, "Nulloid!");
+	cNS1->Set(sz1, cNS2, "In Named 1");
+	cNS2->Set(sz1, cNS3, "Another in 2");
+	cNS3->Set(sz3, cNS1, "Three");
+	cNS4->Set(ONull, ONull, "Nulloid!");
 
 	cA1->Add(sz2);
 	cA1->Add(cNS1);

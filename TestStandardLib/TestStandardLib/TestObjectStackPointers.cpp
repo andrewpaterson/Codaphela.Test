@@ -14,8 +14,7 @@ void TestObjectStackPointersSingle(void)
 
 	STestObjectFreedNotifier	sNotifier;
 
-	Ptr<CTestObject> ptr = OMalloc<CTestObject>();
-	ptr->Init(&sNotifier);
+	Ptr<CTestObject> ptr = OMalloc<CTestObject>(&sNotifier);
 
 	AssertInt(1, ptr->NumStackFroms());
 	AssertFalse(sNotifier.bFreed);
@@ -39,8 +38,7 @@ void TestObjectStackPointersSingleWithRoot(void)
 
 	STestObjectFreedNotifier	sNotifier;
 
-	Ptr<CTestObject> ptr = OMalloc<CTestObject>();
-	ptr->Init(&sNotifier);
+	Ptr<CTestObject> ptr = OMalloc<CTestObject>(&sNotifier);
 
 	AssertInt(1, ptr->NumStackFroms());
 	AssertFalse(sNotifier.bFreed);

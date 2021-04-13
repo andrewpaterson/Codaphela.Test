@@ -104,10 +104,16 @@ void CTestNamedString::Init(void)
 void CTestNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, const char* szEmbedded)
 {
 	PreInit();
+	Set(szString, pAnother, szEmbedded);
+	PostInit();
+}
+
+
+void CTestNamedString::Set(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, const char* szEmbedded)
+{
 	mszString = szString;
 	mpAnother = pAnother;
 	mszEmbedded.Init(szEmbedded);
-	PostInit();
 }
 
 

@@ -163,7 +163,10 @@ void CTestTriPointerObject::Free(void)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestTriPointerObject::Save(CObjectSerialiser* pcFile)
 {
-	return FALSE;
+	ReturnOnFalse(pcFile->WritePointer(mpObject1));
+	ReturnOnFalse(pcFile->WritePointer(mpObject2));
+	ReturnOnFalse(pcFile->WritePointer(mpObject3));
+	return TRUE;
 }
 
 
@@ -173,7 +176,10 @@ BOOL CTestTriPointerObject::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestTriPointerObject::Load(CObjectDeserialiser* pcFile)
 {
-	return FALSE;
+	ReturnOnFalse(pcFile->ReadPointer(mpObject1.This()));
+	ReturnOnFalse(pcFile->ReadPointer(mpObject2.This()));
+	ReturnOnFalse(pcFile->ReadPointer(mpObject3.This()));
+	return TRUE;
 }
 
 

@@ -1,9 +1,12 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/LogToMemory.h"
+#include "CoreLib/CodabaseFactory.h"
+#include "CoreLib/SequenceFactory.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "NamedObjectTestClasses.h"
+#include "ObjectTestClasses.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -287,7 +290,7 @@ void TestObjectAllocatorAssignmentToNullObject(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectAllocatorOverwritensParentMaintainsPointerToOverwritten(void)
+void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwritten(void)
 {
 	Ptr<CRoot>					pRoot;
 	Ptr<CTestNamedObject>		pNamed1;
@@ -377,7 +380,7 @@ void TestObjectAllocatorOverwritensParentMaintainsPointerToOverwritten(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectAllocatorOverwritensParentMaintainsPointerToOverwrittenWithEmbedded(void)
+void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwrittenWithEmbedded(void)
 {
 	Ptr<CRoot>							pRoot;
 	Ptr<CTestNamedObjectWithEmbedded>	pNamed1;
@@ -470,6 +473,106 @@ void TestObjectAllocatorOverwritensParentMaintainsPointerToOverwrittenWithEmbedd
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectAllocatorOverwrittensFlushedObjects(void)
+{
+	Ptr<CRoot>							pRoot;
+	Ptr<CTestTriPointerObject>			pObjet1;
+	Ptr<CTestNamedObject>				pNamed2;
+	Ptr<CTestObject>					pObjet3;
+	Ptr<CTestNamedObjectSmall>			pNamed4;
+	Ptr<CTestNamedObjectWithEmbedded>	pNamed5;
+	Ptr<CTestObject>					pObjet6;
+	Ptr<CTestNamedObject>				pNamed7;
+	CCodabase*							pcDatabase;
+	CSequence*							pcSequence;
+	CFileUtil							cFileUtil;
+	char								szDirectory[] = "Output" _FS_ "ObjectAllocator" _FS_ "Database1";
+
+	cFileUtil.RemoveDir(szDirectory);
+
+	MemoryInit();
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+
+	TestObjectAllocatorAddConstructors();
+
+	pRoot = ORoot();
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(1, gcObjects.NumMemoryNames());
+
+	pObjet1 = OMalloc<CTestTriPointerObject>();
+	pNamed2 = ONMalloc<CTestNamedObject>("Virgil Mallin", 12);
+	pObjet3 = OMalloc<CTestObject>();	pObjet3->mi = 34;
+	pNamed4 = ONMalloc<CTestNamedObjectSmall>("Henry Lindsey", "Sol");
+	pNamed5 = ONMalloc<CTestNamedObjectWithEmbedded>("Wilfrid Stanley", 44, 55, 1, 2, ONull, ONull);
+	pObjet6 = OMalloc<CTestObject>();	pObjet3->mi = 56;
+	pNamed7 = ONMalloc<CTestNamedObject>("Matt Hudson", 78);
+
+	AssertInt(-1, pObjet1.GetDistToRoot());
+	AssertInt(-1, pNamed2.GetDistToRoot());
+	AssertInt(-1, pObjet3.GetDistToRoot());
+	AssertInt(-1, pNamed4.GetDistToRoot());
+	AssertInt(-1, pNamed5.GetDistToRoot());
+	AssertInt(-1, pObjet6.GetDistToRoot());
+
+	pRoot->Add(pObjet1);
+	pObjet1->mpObject1 = pNamed5;
+	pObjet1->mpObject2 = pObjet3;
+	pObjet1->mpObject3 = pNamed4;
+
+	pNamed5->mNamedTest1.mpNamedTest1 = pNamed2;
+	pNamed5->mNamedTest1.mpNamedTest2 = pNamed7;
+	pNamed5->mpObject = pObjet6;
+	
+	pObjet6->mpObject = pNamed4;
+
+//	                                      
+//	                                      pNamed4(3)
+//	                                      /   |     
+//          pNamed2(4)   pNamed7(4)      /    |
+//	           |            |           /     |   
+//	           |            |     pObjet6(4)  |
+//             |            |     /           |
+//	           |            |    /            |       
+//             |            |   /             |        
+//	           |            |  /              |      
+//          mNamedTest1  mNamedTest2          |
+//                    .  .   /               /
+//                   pNamed5(3)  pObjet3(3) /
+// 	                       \       |       /  
+// 	                        \      |      /  
+//                           \     |     /  
+// 	                          \    |    /  
+//                             \   |   /   
+// 	                            \  |  /    
+//                             pObjet1(2)
+//                                 |
+//                                 |
+//                                ...
+//                              Root(0)
+
+	AssertInt(0, pRoot.GetDistToRoot());
+	AssertInt(2, pObjet1.GetDistToRoot());
+	AssertInt(4, pNamed2.GetDistToRoot());
+	AssertInt(3, pObjet3.GetDistToRoot());
+	AssertInt(3, pNamed4.GetDistToRoot());
+	AssertInt(3, pNamed5.GetDistToRoot());
+	AssertInt(4, pObjet6.GetDistToRoot());
+
+	ObjectsFlush();
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill();
+	MemoryKill();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectAllocator(void)
 {
 	BeginTests();
@@ -479,10 +582,10 @@ void TestObjectAllocator(void)
 	TestObjectAllocatorNamedOverwrite();
 	TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed();
 	TestObjectAllocatorAssignmentToNullObject();
-	TestObjectAllocatorOverwritensParentMaintainsPointerToOverwritten();
-	TestObjectAllocatorOverwritensParentMaintainsPointerToOverwrittenWithEmbedded();
+	TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwritten();
+	TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwrittenWithEmbedded();
+	TestObjectAllocatorOverwrittensFlushedObjects();
 
-	//Test on disk; pointers to overwritten are preserved when read
 	//Test dependent named objects overwrite existing named objects.  i.e:  Load "Name 1" -> x -> "Name 2" overwrites "Name 2" that exists in the database.
 
 	TestStatistics();

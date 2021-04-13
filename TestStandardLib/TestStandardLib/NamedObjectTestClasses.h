@@ -28,6 +28,7 @@ public:
 	char	mac[4];
 
 	Ptr<CTestNamedObjectSmall> Init(char* sz);
+	Ptr<CTestNamedObjectSmall> Init(const char* sz);
 	void Class(void);
 	void Free(void);
 

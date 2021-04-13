@@ -133,7 +133,6 @@ void WriteDehollowficationChunkedFile(void)
 void TestDehollowficationFromDatabase(void)
 {
 	CFileUtil							cFileUtil;
-	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 	CCodabase*							pcDatabase;
 	CSequence*							pcSequence;
 	char								szDirectory[] = "Output" _FS_ "Dehollowfication" _FS_ "Database1";

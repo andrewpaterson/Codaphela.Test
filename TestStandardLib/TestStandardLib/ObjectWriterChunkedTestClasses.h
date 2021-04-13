@@ -57,6 +57,8 @@ public:
 	void	Class(void);
 	void	Free(void);
 
+	void	Set(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, const char* szEmbedded);
+
 	BOOL	Save(CObjectSerialiser* pcFile);
 	BOOL	Load(CObjectDeserialiser* pcFile);
 };
