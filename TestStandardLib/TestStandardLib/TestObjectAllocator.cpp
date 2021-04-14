@@ -16,6 +16,7 @@
 void TestObjectAllocatorAddConstructors(void)
 {
 	gcObjects.AddConstructor<CRoot>();
+	gcObjects.AddConstructor<CSetObject>();
 	gcObjects.AddConstructor<CTestNamedObject>();
 	gcObjects.AddConstructor<CTestNamedObjectSmall>();
 	gcObjects.AddConstructor<CTestNamedObjectWithEmbedded>();
@@ -489,8 +490,9 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	char								szDirectory[] = "Output" _FS_ "ObjectAllocator" _FS_ "Database1";
 
 	cFileUtil.RemoveDir(szDirectory);
-
 	MemoryInit();
+
+
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
@@ -561,12 +563,68 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	AssertInt(3, pNamed5.GetDistToRoot());
 	AssertInt(4, pObjet6.GetDistToRoot());
 
+	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(5, gcObjects.NumMemoryNames());
+
 	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
 	ObjectsKill();
+
+	AssertNull(&pRoot);
+	AssertNull(&pObjet1);
+	AssertNull(&pNamed2);
+	AssertNull(&pObjet3);
+	AssertNull(&pNamed4);
+	AssertNull(&pNamed5);
+	AssertNull(&pObjet6);
+
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+
+	TestObjectAllocatorAddConstructors();
+
+	pRoot = ORoot();
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(1, gcObjects.NumMemoryNames());
+	AssertLongLongInt(9, gcObjects.NumDatabaseIndexes());
+	AssertLongLongInt(5, gcObjects.NumDatabaseNames());
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(1, gcObjects.NumMemoryNames());
+
+	ObjectsFlush();  //We need to flush because the objects load in dirty.  They should not.
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill();
+
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+
+	TestObjectAllocatorAddConstructors();
+
+	pRoot = ORoot();
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(1, gcObjects.NumMemoryNames());
+	AssertLongLongInt(2, gcObjects.NumDatabaseIndexes());
+	AssertLongLongInt(1, gcObjects.NumDatabaseNames());
+
+	ObjectsFlush();
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill();
+
+
 	MemoryKill();
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 //////////////////////////////////////////////////////////////////////////
