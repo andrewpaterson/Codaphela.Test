@@ -436,3 +436,87 @@ void CTestObjectWithFields::Update(int8 i8)
 }
 
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestObjectWithFields::Update(char* sz)
+{
+	mpsz = sz;
+	SetDirty(TRUE);
+}
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestEmbeddedObjectWithFields::Init(void)
+{
+	PreInit();
+	PostInit();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestEmbeddedObjectWithFields::Class(void)
+{
+	CObject::Class();
+
+	Primitive(&mbX);
+	Pointer(mpObjectA.This());
+	Embedded(&mcEmbedded1);
+	Pointer(mpObjectB.This());
+	Embedded(&mcEmbedded2);
+	Pointer(mpObjectC.This());
+	Primitive(&mbY);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestEmbeddedObjectWithFields::Free(void)
+{
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+BOOL CTestEmbeddedObjectWithFields::Save(CObjectSerialiser* pcFile)
+{
+	ReturnOnFalse(pcFile->WriteBool(mbX));
+	ReturnOnFalse(pcFile->WritePointer(mpObjectA));
+	ReturnOnFalse(mcEmbedded1.Save(pcFile));
+	ReturnOnFalse(pcFile->WritePointer(mpObjectB));
+	ReturnOnFalse(mcEmbedded2.Save(pcFile));
+	ReturnOnFalse(pcFile->WritePointer(mpObjectC));
+	ReturnOnFalse(pcFile->WriteBool(mbY));
+	return TRUE;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+BOOL CTestEmbeddedObjectWithFields::Load(CObjectDeserialiser* pcFile)
+{
+	ReturnOnFalse(pcFile->ReadBool(mbX.GetPrimitivePointer()));
+	ReturnOnFalse(pcFile->ReadPointer(mpObjectA.This()));
+	ReturnOnFalse(mcEmbedded1.Load(pcFile));
+	ReturnOnFalse(pcFile->ReadPointer(mpObjectB.This()));
+	ReturnOnFalse(mcEmbedded2.Load(pcFile));
+	ReturnOnFalse(pcFile->ReadPointer(mpObjectC.This()));
+	ReturnOnFalse(pcFile->ReadBool(mbY.GetPrimitivePointer()));
+	return TRUE;
+}
+

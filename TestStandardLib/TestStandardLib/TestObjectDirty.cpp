@@ -1,9 +1,10 @@
-#include "BaseLib/GlobalMemory.h"
+﻿#include "BaseLib/GlobalMemory.h"
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/LogToMemory.h"
 #include "CoreLib/CodabaseFactory.h"
 #include "CoreLib/SequenceFactory.h"
 #include "StandardLib/Objects.h"
+#include "StandardLib/String.h"
 #include "TestLib/Assert.h"
 #include "NamedObjectTestClasses.h"
 #include "ObjectTestClasses.h"
@@ -236,6 +237,126 @@ void TestObjectDirtyOnPointerAssignment(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
+{
+	Ptr<CTestEmbeddedObjectWithFields>	pObject;
+	OIndex								oi;
+	CCodabase*							pcDatabase;
+	CSequence*							pcSequence;
+	CFileUtil							cFileUtil;
+	Ptr<CString>						pStringA;
+	Ptr<CString>						pStringB;
+	Ptr<CString>						pStringC;
+
+	char								szDirectory[] = "Output" _FS_ "ObjectDirty" _FS_ "Database4";
+
+	cFileUtil.RemoveDir(szDirectory);
+	MemoryInit();
+
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+	TestObjectDirtyAddConstructors();
+
+
+	pObject = OMalloc<CTestEmbeddedObjectWithFields>();
+	AssertTrue(pObject.IsDirty());
+	AssertTrue(pObject->mcEmbedded1.IsDirty());
+	AssertTrue(pObject->mcEmbedded2.IsDirty());
+
+	pObject->Flush();
+	AssertFalse(pObject.IsDirty());
+	AssertFalse(pObject->mcEmbedded1.IsDirty());
+	AssertFalse(pObject->mcEmbedded2.IsDirty());
+
+	pObject->mcEmbedded1.mi32 = 7;
+	AssertTrue(pObject.IsDirty());
+	AssertTrue(pObject->mcEmbedded1.IsDirty());
+	AssertTrue(pObject->mcEmbedded2.IsDirty());
+
+	ObjectsFlush();
+	AssertFalse(pObject.IsDirty());
+	AssertFalse(pObject->mcEmbedded1.IsDirty());
+	AssertFalse(pObject->mcEmbedded2.IsDirty());
+
+	pObject->mbY = TRUE;
+	AssertTrue(pObject.IsDirty());
+	AssertTrue(pObject->mcEmbedded1.IsDirty());
+	AssertTrue(pObject->mcEmbedded2.IsDirty());
+
+	ObjectsFlush();
+	AssertFalse(pObject.IsDirty());
+	AssertFalse(pObject->mcEmbedded1.IsDirty());
+	AssertFalse(pObject->mcEmbedded2.IsDirty());
+
+	pStringA = (CPointer)OMalloc<CString>();
+	pStringA->Set("Commander X16");
+	pStringB = (CPointer)OMalloc<CString>();
+	pStringB->Set("Fleetwood");
+	pStringC = (CPointer)OMalloc<CString>();
+	pStringC->Set("Master Git");
+
+	pObject->mbX = TRUE;
+	pObject->mbY = FALSE;
+	pObject->mpObjectA = pStringA;
+	pObject->mpObjectB = pStringB;
+	pObject->mpObjectC = pStringC;
+	pObject->mcEmbedded1.mi8 = -8;
+	pObject->mcEmbedded1.mi16 = -16;
+	pObject->mcEmbedded1.mi32 = -32;
+	pObject->mcEmbedded1.mi64 = -64;
+	pObject->mcEmbedded1.mf32 = 32.5f;
+	pObject->mcEmbedded1.mf64 = 64.5;
+	pObject->mcEmbedded1.mb = TRUE;
+	pObject->mcEmbedded1.mui8 = 8;
+	pObject->mcEmbedded1.mui16 = 16;
+	pObject->mcEmbedded1.mui32 = 32;
+	pObject->mcEmbedded1.mui64 = 64;
+	pObject->mcEmbedded1.mc8= 'A';
+	pObject->mcEmbedded1.mc16 = 'B';
+	AssertTrue(pObject.IsDirty());
+	AssertTrue(pObject->mcEmbedded1.IsDirty());
+	AssertTrue(pObject->mcEmbedded2.IsDirty());
+
+	oi = pObject.GetIndex();
+
+	ObjectsFlush();
+	AssertFalse(pObject.IsDirty());
+	AssertFalse(pObject->mcEmbedded1.IsDirty());
+	AssertFalse(pObject->mcEmbedded2.IsDirty());
+
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill();
+	AssertNull(&pObject);
+
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+	TestObjectDirtyAddConstructors();
+
+	pObject = gcObjects.Get(oi);
+
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill();
+	AssertNull(&pObject);
+
+	MemoryKill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectDirty(void)
 {
 	BeginTests();
@@ -243,6 +364,11 @@ void TestObjectDirty(void)
 	TestObjectDirtySimplePrimitiveAssignment();
 	TestObjectDirtyOnPrimitiveAssignment();
 	TestObjectDirtyOnPointerAssignment();
+	TestObjectDirtyOnPrimitiveAssignmentWithEmbedded();
+
+	//String
+	//Hollow pointers
+	//Hollow pointers in embedded 
 
 	TestStatistics();
 }
