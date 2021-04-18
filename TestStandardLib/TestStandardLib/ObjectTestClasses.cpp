@@ -19,9 +19,9 @@ void CTestObject::Init(void)
 //////////////////////////////////////////////////////////////////////////
 void CTestObject::Init(CPointer pObject, Ptr<CTestObject> pTest)
 {
+	Init(NULL);
 	mpObject = pObject;
 	mpTest = pTest;
-	Init(NULL);
 }
 
 
@@ -310,4 +310,129 @@ BOOL CTestSaveableObject2::Load(CObjectDeserialiser* pcFile)
 	mbSaved = FALSE;
 	return TRUE;
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestObjectWithFields::Init(void)
+{
+	PreInit();
+
+	mpsz = NULL;
+
+	PostInit();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestObjectWithFields::Init(CPointer pObject, Ptr<CTestObject> pTest)
+{
+	Init();
+	mpObject = pObject;
+	mpTest = pTest;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestObjectWithFields::Class(void)
+{
+	CObject::Class();
+	Pointer(mpTest.This());
+	Pointer(mpObject.This());
+
+	Primitive(&mi32);
+	Primitive(&mi8);
+	Primitive(&mui8);
+	Primitive(&mui32);
+	Primitive(&mi16);
+	Primitive(&mui16);
+	Primitive(&mc8);
+	Primitive(&mc16);
+	Primitive(&mf32);
+	Primitive(&mf64);
+	Primitive(&mi64);
+	Primitive(&mui64);
+	Primitive(&mb);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestObjectWithFields::Free(void)
+{
+	SafeFree(mpsz);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+BOOL CTestObjectWithFields::Save(CObjectSerialiser* pcFile)
+{
+	ReturnOnFalse(pcFile->WritePointer(mpObject));
+	ReturnOnFalse(pcFile->WritePointer(mpTest));
+
+	ReturnOnFalse(pcFile->WriteInt(mi32));
+	ReturnOnFalse(pcFile->WriteChar(mi8));
+	ReturnOnFalse(pcFile->WriteChar(mui8));
+	ReturnOnFalse(pcFile->WriteInt(mui32));
+	ReturnOnFalse(pcFile->WriteShort(mi16));
+	ReturnOnFalse(pcFile->WriteShort(mui16));
+	ReturnOnFalse(pcFile->WriteChar(mc8));
+	ReturnOnFalse(pcFile->WriteWChar(mc16));
+	ReturnOnFalse(pcFile->WriteFloat(mf32));
+	ReturnOnFalse(pcFile->WriteDouble(mf64));
+	ReturnOnFalse(pcFile->WriteLong(mi64));
+	ReturnOnFalse(pcFile->WriteLong(mui64));
+	ReturnOnFalse(pcFile->WriteBool(mb));
+	return TRUE;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+BOOL CTestObjectWithFields::Load(CObjectDeserialiser* pcFile)
+{
+	ReturnOnFalse(pcFile->ReadPointer(mpObject.This()));
+	ReturnOnFalse(pcFile->ReadPointer(mpTest.This()));
+
+	ReturnOnFalse(pcFile->ReadInt(mi32.GetPrimitivePointer()));
+	ReturnOnFalse(pcFile->ReadChar(mi8.GetPrimitivePointer()));
+	ReturnOnFalse(pcFile->ReadChar(mui8.GetPrimitivePointer()));
+	ReturnOnFalse(pcFile->ReadInt(mui32.GetPrimitivePointer()));
+	ReturnOnFalse(pcFile->ReadShort(mi16.GetPrimitivePointer()));
+	ReturnOnFalse(pcFile->ReadShort(mui16.GetPrimitivePointer()));
+	ReturnOnFalse(pcFile->ReadChar(mc8.GetPrimitivePointer()));
+	ReturnOnFalse(pcFile->ReadWChar(mc16.GetPrimitivePointer()));
+	ReturnOnFalse(pcFile->ReadFloat(mf32.GetPrimitivePointer()));
+	ReturnOnFalse(pcFile->ReadDouble(mf64.GetPrimitivePointer()));
+	ReturnOnFalse(pcFile->ReadLong(mi64.GetPrimitivePointer()));
+	ReturnOnFalse(pcFile->ReadLong(mui64.GetPrimitivePointer()));
+	ReturnOnFalse(pcFile->ReadBool(mb.GetPrimitivePointer()));
+	return TRUE;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestObjectWithFields::Update(int8 i8)
+{
+	mi8 = i8;
+}
+
 

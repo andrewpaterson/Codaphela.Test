@@ -533,6 +533,7 @@ void TestObjectGetObjects(void)
 	CObjects*					pcObjects;
 	Ptr<CTestObject>			pObject1;
 	STestObjectFreedNotifier	sFreedNotifier1;
+	Ptr<CRoot>					pRoot;
 
 	pcObjects = cObject.GetObjects();
 	AssertNull(pcObjects);
@@ -544,7 +545,8 @@ void TestObjectGetObjects(void)
 	pcObjects = pObject1->GetObjects();
 	AssertPointer(&gcObjects, pcObjects);
 	AssertFalse(sFreedNotifier1.bFreed);
-	AssertFalse(gcObjects.HasRoot());
+	pRoot = gcObjects.Get(ROOT_NAME);
+	AssertNull(&pRoot);
 
 	ObjectsFlush();
 	ObjectsKill();

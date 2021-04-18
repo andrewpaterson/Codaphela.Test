@@ -308,7 +308,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupEmbeddedObjectConstructors();
 
-	pRoot = gcObjects.GetRoot();
+	pRoot = gcObjects.Root();
 	AssertTrue(pRoot.IsNotNull());
 	pComplex = pRoot->Get(0);
 	AssertTrue(pComplex.IsHollow());
@@ -394,7 +394,7 @@ void TestEmbeddedObjectPointTo(void)
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupEmbeddedObjectConstructors();
 
-	pRoot = gcObjects.GetRoot();
+	pRoot = gcObjects.Root();
 	AssertTrue(pRoot.IsNotNull());
 	pContainer = pRoot->Get(0);
 	AssertTrue(pContainer.IsHollow());

@@ -118,6 +118,7 @@
     <ClCompile Include="TestNamedObject.cpp" />
     <ClCompile Include="TestObjectAllocator.cpp" />
     <ClCompile Include="TestObjectConverter.cpp" />
+    <ClCompile Include="TestObjectDirty.cpp" />
     <ClCompile Include="TestObjectGraphDeserialiser.cpp" />
     <ClCompile Include="TestObjectReaderChunked.cpp" />
     <ClCompile Include="TestObjectReaderSimple.cpp" />

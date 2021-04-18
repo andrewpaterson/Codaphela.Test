@@ -15,10 +15,10 @@ void TestObjectsCompilation(void)
 {
 	if (FALSE)  //This is intentional.  This code must only be compiled (testing template compilation) not run.
 	{
-		CObjects				cObjects;
+		CObjects			cObjects;
 		Ptr<CTestObject>	cTestPtr;
 
-		cTestPtr = cObjects.Add<CTestObject>();
+		cTestPtr = cObjects.Malloc<CTestObject>();
 		cTestPtr = cObjects.Get<CTestObject>("Invalid Name");
 		cTestPtr = cObjects.Get<CTestObject>(INVALID_O_INDEX);
 	}

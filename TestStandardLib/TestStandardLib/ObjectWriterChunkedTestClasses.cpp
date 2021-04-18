@@ -57,8 +57,7 @@ void CTestInteger::Init(int x, int y, int z)
 	mx = x;
 	my = y;
 	mz = z;
-
-	PreInit();
+	PostInit();
 }
 
 

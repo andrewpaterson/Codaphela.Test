@@ -75,7 +75,8 @@ void TestNamedObjectName(void)
 	pNamed3->mpNamedTest1 = pNamed1;
 	pNamed3->mpNamedTest2 = pNamed2;
 	oiNamed3 = pNamed3->GetIndex();
-	
+	AssertLongLongInt(3, oiNamed3);
+
 	pRoot = ORoot();
 	pRoot->Add(pNamed3);
 	
@@ -84,6 +85,7 @@ void TestNamedObjectName(void)
 
 	pResult1 = gcObjects.Get("Frank");
 	AssertNotNull(pResult1.Object());
+	AssertLongLongInt(1, pResult1.GetIndex());
 
 	pResult2 = gcObjects.Get("Zappa");
 	AssertNotNull(pResult2.Object());
@@ -93,6 +95,9 @@ void TestNamedObjectName(void)
 
 	pcSet = pRoot->TestGetSet();
 	oiSet = pcSet->GetIndex();
+
+	AssertTrue(pRoot.IsDirty());
+	AssertTrue(pcSet->IsDirty());
 
 	ObjectsFlush();
 	pcDatabase->Close();
@@ -123,15 +128,16 @@ void TestNamedObjectName(void)
 	AssertString("CSetObject", pSet.ClassName());
 
 	AssertTrue(pSet.IsNotNull());
+	AssertFalse(pSet.IsHollow());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pSet.GetDistToRoot());
 
 	AssertInt(1, pSet->NumElements());
 	pResult3 = pSet->UnsafeGet(0);
 	AssertTrue(pResult3.IsNotNull());
 	AssertLongLongInt(oiNamed3, pResult3.GetIndex());
+	AssertTrue(pResult3.IsHollow());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pResult3.GetDistToRoot());
 
-	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);

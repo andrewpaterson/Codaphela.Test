@@ -30,6 +30,7 @@ void TestDistToRoot(void);
 void TestDistToStack(void);
 void TestArrayCommonObject(void);
 void TestParameters(void);
+void TestObjectDirty(void);
 void TestObjectAllocator(void);
 void TestObjectWriterChunked(void);
 void TestObjectReaderChunked(void);
@@ -81,6 +82,7 @@ int main(void)
 	TestPointer();
 	TestArrayCommonObject();
 	TestNamedObject();
+	TestObjectDirty();
 	TestObjectAllocator();
 	TestObjectWriterChunked();
 	TestObjectGraphSerialiser();

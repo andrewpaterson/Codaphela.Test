@@ -3,6 +3,9 @@
 #include "StandardLib/Object.h"
 #include "StandardLib/NamedObject.h"
 #include "StandardLib/Pointer.h"
+#include "StandardLib/Integer.h"
+#include "StandardLib/Float.h"
+#include "StandardLib/Character.h"
 
 
 struct STestObjectFreedNotifier
@@ -86,6 +89,42 @@ public:
 	BOOL	Save(CObjectSerialiser* pcFile);
 	BOOL	Load(CObjectDeserialiser* pcFile);
 };
+
+
+
+class CTestObjectWithFields : public CObject
+{
+CONSTRUCTABLE(CTestObject);
+public:
+	CPointer					mpObject;
+	Ptr<CTestObject>			mpTest;
+
+	Int8						mi8;
+	UInt8						mui8;
+	Int32						mi32;
+	UInt32						mui32;
+	Int16						mi16;
+	UInt16						mui16;
+	Char8						mc8;
+	Char16						mc16;
+	Float32						mf32;
+	Float64						mf64;
+	Int64						mi64;
+	UInt64						mui64;
+	Bool						mb;
+
+	char*						mpsz;
+
+	void	Init(void);
+	void	Init(CPointer pObject, Ptr<CTestObject> pTest);
+	void	Class(void);
+	void	Free(void);
+
+	BOOL	Save(CObjectSerialiser* pcFile);
+	BOOL	Load(CObjectDeserialiser* pcFile);
+
+	void	Update(int8 i8);
+}; 
 
 
 #endif // __OBJECT_TEST_CLASSES_H__

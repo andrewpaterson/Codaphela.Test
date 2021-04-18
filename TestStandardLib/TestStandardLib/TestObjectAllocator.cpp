@@ -484,6 +484,7 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	Ptr<CTestNamedObjectWithEmbedded>	pNamed5;
 	Ptr<CTestObject>					pObjet6;
 	Ptr<CTestNamedObject>				pNamed7;
+	Ptr<CTestNamedObject>				pNamed8;
 	CCodabase*							pcDatabase;
 	CSequence*							pcSequence;
 	CFileUtil							cFileUtil;
@@ -511,13 +512,15 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	pNamed5 = ONMalloc<CTestNamedObjectWithEmbedded>("Wilfrid Stanley", 44, 55, 1, 2, ONull, ONull);
 	pObjet6 = OMalloc<CTestObject>();	pObjet3->mi = 56;
 	pNamed7 = ONMalloc<CTestNamedObject>("Matt Hudson", 78);
-
+	pNamed8 = ONMalloc<CTestNamedObject>("Kiva Charity", 90);
+	
 	AssertInt(-1, pObjet1.GetDistToRoot());
 	AssertInt(-1, pNamed2.GetDistToRoot());
 	AssertInt(-1, pObjet3.GetDistToRoot());
 	AssertInt(-1, pNamed4.GetDistToRoot());
 	AssertInt(-1, pNamed5.GetDistToRoot());
 	AssertInt(-1, pObjet6.GetDistToRoot());
+	AssertInt(-1, pNamed7.GetDistToRoot());
 
 	pRoot->Add(pObjet1);
 	pObjet1->mpObject1 = pNamed5;
@@ -553,7 +556,8 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 //                                 |
 //                                 |
 //                                ...
-//                              Root(0)
+//                              Root(0)                   pNamed8(-1)  
+
 
 	AssertInt(0, pRoot.GetDistToRoot());
 	AssertInt(2, pObjet1.GetDistToRoot());
@@ -562,9 +566,11 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	AssertInt(3, pNamed4.GetDistToRoot());
 	AssertInt(3, pNamed5.GetDistToRoot());
 	AssertInt(4, pObjet6.GetDistToRoot());
+	AssertInt(4, pNamed7.GetDistToRoot());
+	AssertInt(-1, pNamed8.GetDistToRoot());
 
-	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(5, gcObjects.NumMemoryNames());
+	AssertLongLongInt(10, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(6, gcObjects.NumMemoryNames());
 
 	ObjectsFlush();
 	pcDatabase->Close();
@@ -579,7 +585,8 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	AssertNull(&pNamed4);
 	AssertNull(&pNamed5);
 	AssertNull(&pObjet6);
-
+	AssertNull(&pNamed7);
+	AssertNull(&pNamed8);
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -591,12 +598,22 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	pRoot = ORoot();
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
-	AssertLongLongInt(9, gcObjects.NumDatabaseIndexes());
-	AssertLongLongInt(5, gcObjects.NumDatabaseNames());
+	AssertLongLongInt(10, gcObjects.NumDatabaseIndexes());
+	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
 
-	ObjectsFlush();  //We need to flush because the objects load in dirty.  They should not.
+	pNamed2 = gcObjects.Get("Virgil Mallin");
+	AssertInt(4, pNamed2.GetDistToRoot());
+	pNamed4 = gcObjects.Get("Henry Lindsey");
+	AssertInt(3, pNamed4.GetDistToRoot());
+	pNamed5 = gcObjects.Get("Wilfrid Stanley");
+	AssertInt(3, pNamed5.GetDistToRoot());
+	pNamed7 = gcObjects.Get("Matt Hudson");
+	AssertInt(4, pNamed7.GetDistToRoot());
+	pNamed8 = gcObjects.Get("Matt Hudson");
+	AssertInt(-1, pNamed8.GetDistToRoot());
+
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
