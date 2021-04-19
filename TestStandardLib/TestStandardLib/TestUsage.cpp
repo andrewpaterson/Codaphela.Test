@@ -13,19 +13,19 @@ void TestUsageNullPointers(void)
 	ObjectsInit();
 
 	Ptr<CGameWorld>			pWorld;
-	CPointer				pNull = ONull;
-	Ptr<CPlayerVehicle>		pVehicle = ONull;
+	CPointer				pNull = Null();
+	Ptr<CPlayerVehicle>		pVehicle = Null();
 	Ptr<CHarrier>			pHarrier;
 
 	pWorld = pNull;
 	pWorld->AddTickable(pNull);
 	pWorld->AddTickable(pVehicle);
-	pWorld->AddTickable(ONull);
+	pWorld->AddTickable(Null());
 
 	pVehicle = pNull;
 	pWorld->AddPlayer(pVehicle);
 	pWorld->AddPlayer(pNull);
-	pWorld->AddPlayer(ONull);
+	pWorld->AddPlayer(Null());
 
 	pVehicle = pHarrier;
 

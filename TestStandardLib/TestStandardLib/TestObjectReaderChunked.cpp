@@ -53,7 +53,7 @@ CPointer SetupObjectReaderChunkedChunkFile(void)
 	cNS1->Set(sz1, cNS2, "In Named 1");
 	cNS2->Set(sz1, cNS3, "Another in 2");
 	cNS3->Set(sz3, cNS1, "Three");
-	cNS4->Set(ONull, ONull, "Nulloid!");
+	cNS4->Set(Null(), Null(), "Nulloid!");
 
 	cA1->Add(sz2);
 	cA1->Add(cNS1);

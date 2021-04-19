@@ -28,6 +28,7 @@ void TestObjectsSimple(void);
 void TestRoot(void);
 void TestDistToRoot(void);
 void TestDistToStack(void);
+void TestObjectGraphWriting(void);
 void TestArrayCommonObject(void);
 void TestParameters(void);
 void TestObjectDirty(void);
@@ -75,6 +76,7 @@ int main(void)
 	TestParameters();
 	TestDistToRoot();
 	TestDistToStack();
+	TestObjectGraphWriting();
 	TestObjectsSimple();
 	TestRoot();
 	TestObject();

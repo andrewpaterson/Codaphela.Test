@@ -144,7 +144,7 @@ void TestPointerAssignmentStackToObjectPointer()
 	ObjectsInit();
 
 	Ptr<CTestInteger>		pInteger = OMalloc<CTestInteger>(6, 7, 6);
-	Ptr<CTestNamedString>	pObject = ONMalloc<CTestNamedString>("Urgle-burgle", ONull, pInteger, "Embedded");
+	Ptr<CTestNamedString>	pObject = ONMalloc<CTestNamedString>("Urgle-burgle", Null(), pInteger, "Embedded");
 
 	AssertLongLongInt(2, gcObjects.GetStackPointers()->UsedPointers());
 
@@ -170,7 +170,7 @@ void TestPointerAssignmentObjectToObjectPointer()
 	ObjectsInit();
 
 	Ptr<CTestInteger>		pInteger = OMalloc<CTestInteger>(6, 7, 6);
-	Ptr<CTestNamedString>	pObject = ONMalloc<CTestNamedString>("Urgle-burgle", ONull, pInteger, "Embedded");
+	Ptr<CTestNamedString>	pObject = ONMalloc<CTestNamedString>("Urgle-burgle", Null(), pInteger, "Embedded");
 
 	AssertLongLongInt(2, gcObjects.GetStackPointers()->UsedPointers());
 

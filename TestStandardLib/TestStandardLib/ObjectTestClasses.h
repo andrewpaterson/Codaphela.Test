@@ -94,7 +94,7 @@ public:
 
 class CTestObjectWithFields : public CObject
 {
-CONSTRUCTABLE(CTestObject);
+CONSTRUCTABLE(CTestObjectWithFields);
 public:
 	CPointer			mpObject;
 	Ptr<CTestObject>	mpTest;
@@ -130,7 +130,7 @@ public:
 
 class CTestEmbeddedObjectWithFields : public CObject
 {
-CONSTRUCTABLE(CTestObject);
+CONSTRUCTABLE(CTestEmbeddedObjectWithFields);
 public:
 	Bool						mbX;
 	CPointer					mpObjectA;

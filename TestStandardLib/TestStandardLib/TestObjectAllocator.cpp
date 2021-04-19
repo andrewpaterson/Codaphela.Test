@@ -429,9 +429,9 @@ void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwrittenWithEmbed
 
 
 	pNamed1 = gcObjects.AllocateExistingNamed("CTestNamedObjectWithEmbedded", "Agrarian");
-	pNamed1->Init(1012, 1013, 1014, 1015, ONull, ONull);
+	pNamed1->Init(1012, 1013, 1014, 1015, Null(), Null());
 	pNamed2 = gcObjects.AllocateExistingNamed("CTestNamedObjectWithEmbedded", "Hydroponics");
-	pNamed2->Init(2012, 2013, 2014, 2015, ONull, ONull);
+	pNamed2->Init(2012, 2013, 2014, 2015, Null(), Null());
 
 	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(5, gcObjects.NumMemoryNames());
@@ -509,7 +509,7 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	pNamed2 = ONMalloc<CTestNamedObject>("Virgil Mallin", 12);
 	pObjet3 = OMalloc<CTestObject>();	pObjet3->mi = 34;
 	pNamed4 = ONMalloc<CTestNamedObjectSmall>("Henry Lindsey", "Sol");
-	pNamed5 = ONMalloc<CTestNamedObjectWithEmbedded>("Wilfrid Stanley", 44, 55, 1, 2, ONull, ONull);
+	pNamed5 = ONMalloc<CTestNamedObjectWithEmbedded>("Wilfrid Stanley", 44, 55, 1, 2, Null(), Null());
 	pObjet6 = OMalloc<CTestObject>();	pObjet3->mi = 56;
 	pNamed7 = ONMalloc<CTestNamedObject>("Matt Hudson", 78);
 	pNamed8 = ONMalloc<CTestNamedObject>("Kiva Charity", 90);
@@ -598,8 +598,8 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	pRoot = ORoot();
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
-	AssertLongLongInt(10, gcObjects.NumDatabaseIndexes());
-	AssertLongLongInt(6, gcObjects.NumDatabaseNames());
+	AssertLongLongInt(9, gcObjects.NumDatabaseIndexes());
+	AssertLongLongInt(5, gcObjects.NumDatabaseNames());
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
 

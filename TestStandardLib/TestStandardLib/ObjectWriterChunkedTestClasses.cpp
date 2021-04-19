@@ -150,9 +150,9 @@ BOOL CTestNamedString::Load(CObjectDeserialiser* pcFile)
 void CTestDoubleNamedString::Init(void)
 {
 	PreInit();
-	mszString = ONull;
-	mpSplit1 = ONull;
-	mpSplit2 = ONull;
+	mszString = Null();
+	mpSplit1 = Null();
+	mpSplit2 = Null();
 	PostInit();
 }
 

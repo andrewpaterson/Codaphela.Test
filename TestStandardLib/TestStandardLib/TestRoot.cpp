@@ -1182,7 +1182,7 @@ void TestRootGraphRemoveErrorFromObjectConverter(void)
 	cRoot = ORoot();
 
 	sz3 = OMalloc<CString>("End");
-	cDiamond = ONMalloc<CTestNamedString>("Diamond End", sz3, ONull, "1234");
+	cDiamond = ONMalloc<CTestNamedString>("Diamond End", sz3, Null(), "1234");
 
 	sz1 = OMalloc<CString>("World");
 	cNS1 = ONMalloc<CTestNamedString>("NamedString 1", sz1, cDiamond, "Hello");
@@ -1192,7 +1192,7 @@ void TestRootGraphRemoveErrorFromObjectConverter(void)
 
 
 	sz4 = OMalloc<CString>("Start");
-	cDouble = ONMalloc<CTestDoubleNamedString>("Double Start", sz4, cNS1, ONull);
+	cDouble = ONMalloc<CTestDoubleNamedString>("Double Start", sz4, cNS1, Null());
 
 	cRoot->Add(cDouble);
 

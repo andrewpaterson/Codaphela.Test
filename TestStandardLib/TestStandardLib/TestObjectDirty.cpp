@@ -26,6 +26,7 @@ void TestObjectDirtyAddConstructors(void)
 	gcObjects.AddConstructor<CTestNamedObjectSmall>();
 	gcObjects.AddConstructor<CTestNamedObjectWithEmbedded>();
 	gcObjects.AddConstructor<CTestObjectWithFields>();
+	gcObjects.AddConstructor<CTestEmbeddedObjectWithFields>();
 }
 
 
@@ -103,6 +104,7 @@ void TestObjectDirtyOnPrimitiveAssignment(void)
 	CCodabase*					pcDatabase;
 	CSequence*					pcSequence;
 	CFileUtil					cFileUtil;
+	Ptr<CRoot>					pRoot;
 	char						szDirectory[] = "Output" _FS_ "ObjectDirty" _FS_ "Database2";
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -115,11 +117,12 @@ void TestObjectDirtyOnPrimitiveAssignment(void)
 	ObjectsInit(pcDatabase, pcSequence);
 	TestObjectDirtyAddConstructors();
 
-
+	pRoot = ORoot();
 	pObject = OMalloc<CTestObjectWithFields>();
 	oi = pObject->GetIndex();
 	AssertTrue(pObject.IsDirty());
 
+	pRoot->Add(pObject);
 	pObject->Flush();
 	AssertFalse(pObject.IsDirty());
 
@@ -166,6 +169,7 @@ void TestObjectDirtyOnPointerAssignment(void)
 	Ptr<CTestNamedObject>		pObject1;
 	Ptr<CTestNamedObject>		pObject2;
 	Ptr<CTestNamedObject>		pObject3;
+	Ptr<CRoot>					pRoot;
 	CCodabase*					pcDatabase;
 	CSequence*					pcSequence;
 	CFileUtil					cFileUtil;
@@ -181,10 +185,11 @@ void TestObjectDirtyOnPointerAssignment(void)
 	ObjectsInit(pcDatabase, pcSequence);
 	TestObjectDirtyAddConstructors();
 
-
+	pRoot = ORoot();
 	pObject1 = ONMalloc<CTestNamedObject>("OBJ1", 1);
 	pObject2 = ONMalloc<CTestNamedObject>("OBJ2", 2);
 	pObject3 = ONMalloc<CTestNamedObject>("OBJ3", 3);
+	pRoot->Add(pObject1, pObject2, pObject3);
 	ObjectsFlush(); 
 
 	AssertFalse(pObject1.IsDirty());
@@ -241,6 +246,7 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 {
 	Ptr<CTestEmbeddedObjectWithFields>	pObject;
 	OIndex								oi;
+	Ptr<CRoot>							pRoot;
 	CCodabase*							pcDatabase;
 	CSequence*							pcSequence;
 	CFileUtil							cFileUtil;
@@ -265,6 +271,9 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	AssertTrue(pObject.IsDirty());
 	AssertTrue(pObject->mcEmbedded1.IsDirty());
 	AssertTrue(pObject->mcEmbedded2.IsDirty());
+
+	pRoot = ORoot();
+	pRoot->Add(pObject);
 
 	pObject->Flush();
 	AssertFalse(pObject.IsDirty());
@@ -321,6 +330,7 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	AssertTrue(pObject->mcEmbedded2.IsDirty());
 
 	oi = pObject.GetIndex();
+	AssertString("CTestEmbeddedObjectWithFields", pObject.ClassName());
 
 	ObjectsFlush();
 	AssertFalse(pObject.IsDirty());
@@ -340,6 +350,7 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	ObjectsInit(pcDatabase, pcSequence);
 	TestObjectDirtyAddConstructors();
 
+	AssertTrue(gcObjects.Contains(oi));
 	pObject = gcObjects.Get(oi);
 
 	pcDatabase->Close();

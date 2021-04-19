@@ -234,6 +234,9 @@
     <ClCompile Include="TestObjectDirty.cpp">
       <Filter>Source\Object\Object</Filter>
     </ClCompile>
+    <ClCompile Include="TestObjectGraphWriting.cpp">
+      <Filter>Source\Object\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectTestClasses.h">

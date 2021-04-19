@@ -548,7 +548,7 @@ void TestEmbeddedOjectIsAllocatedInObjects()
 {
 	ObjectsInit();
 
-	Ptr<CClusterMissile> pClusterMissile = ONMalloc<CClusterMissile>("Gerbil", ONull);
+	Ptr<CClusterMissile> pClusterMissile = ONMalloc<CClusterMissile>("Gerbil", Null());
 	AssertTrue(pClusterMissile->IsAllocatedInObjects());
 	AssertTrue(pClusterMissile->mcMissile1.IsAllocatedInObjects());
 	AssertTrue(pClusterMissile->mcMissile2.IsAllocatedInObjects());
