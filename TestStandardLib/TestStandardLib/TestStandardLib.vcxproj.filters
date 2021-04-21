@@ -76,6 +76,9 @@
     <Filter Include="Source\Object\Object\Distance">
       <UniqueIdentifier>{c71ff53c-ed92-4c82-9370-616a46a484a4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Object\Object\String">
+      <UniqueIdentifier>{4477ee1f-6298-4ce4-8a86-8bfb33057350}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestStandardLib.cpp">
@@ -236,6 +239,9 @@
     </ClCompile>
     <ClCompile Include="TestObjectGraphWriting.cpp">
       <Filter>Source\Object\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="TestString.cpp">
+      <Filter>Source\Object\Object\String</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

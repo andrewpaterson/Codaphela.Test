@@ -33,6 +33,7 @@ void TestArrayCommonObject(void);
 void TestParameters(void);
 void TestObjectDirty(void);
 void TestObjectAllocator(void);
+void TestString(void);
 void TestObjectWriterChunked(void);
 void TestObjectReaderChunked(void);
 void TestObjectGraphDeserialiser(void);
@@ -85,6 +86,7 @@ int main(void)
 	TestArrayCommonObject();
 	TestNamedObject();
 	TestObjectDirty();
+	TestString();
 	TestObjectAllocator();
 	TestObjectWriterChunked();
 	TestObjectGraphSerialiser();

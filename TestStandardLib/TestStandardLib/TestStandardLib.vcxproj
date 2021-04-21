@@ -145,6 +145,7 @@
     <ClCompile Include="TestObject.cpp" />
     <ClCompile Include="TestRoot.cpp" />
     <ClCompile Include="TestObjectGraphSerialiser.cpp" />
+    <ClCompile Include="TestString.cpp" />
     <ClCompile Include="TestUnknowns.cpp" />
     <ClCompile Include="TestUsage.cpp" />
     <ClCompile Include="UnknownKillList.cpp" />

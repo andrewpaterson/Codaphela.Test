@@ -447,8 +447,6 @@ void CTestObjectWithFields::Update(char* sz)
 }
 
 
-
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -456,6 +454,8 @@ void CTestObjectWithFields::Update(char* sz)
 void CTestEmbeddedObjectWithFields::Init(void)
 {
 	PreInit();
+	mcEmbedded1.Init();
+	mcEmbedded2.Init();
 	PostInit();
 }
 
@@ -484,6 +484,8 @@ void CTestEmbeddedObjectWithFields::Class(void)
 //////////////////////////////////////////////////////////////////////////
 void CTestEmbeddedObjectWithFields::Free(void)
 {
+	mcEmbedded1.Free();
+	mcEmbedded2.Free();
 }
 
 
@@ -517,6 +519,74 @@ BOOL CTestEmbeddedObjectWithFields::Load(CObjectDeserialiser* pcFile)
 	ReturnOnFalse(mcEmbedded2.Load(pcFile));
 	ReturnOnFalse(pcFile->ReadPointer(mpObjectC.This()));
 	ReturnOnFalse(pcFile->ReadBool(mbY.GetPrimitivePointer()));
+	return TRUE;
+}
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestEmbeddedStrings::Init(void)
+{
+	PreInit();
+	mString1.Init();
+	mString2.Init();
+	mString3.Init();
+	PostInit();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestEmbeddedStrings::Class(void)
+{
+	CObject::Class();
+
+	Embedded(&mString1);
+	Embedded(&mString2);
+	Embedded(&mString3);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestEmbeddedStrings::Free(void)
+{
+	mString1.Free();
+	mString2.Free();
+	mString3.Free();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+BOOL CTestEmbeddedStrings::Save(CObjectSerialiser* pcFile)
+{
+	ReturnOnFalse(mString1.Save(pcFile));
+	ReturnOnFalse(mString2.Save(pcFile));
+	ReturnOnFalse(mString3.Save(pcFile));
+	return TRUE;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+BOOL CTestEmbeddedStrings::Load(CObjectDeserialiser* pcFile)
+{
+	ReturnOnFalse(mString1.Load(pcFile));
+	ReturnOnFalse(mString2.Load(pcFile));
+	ReturnOnFalse(mString3.Load(pcFile));
 	return TRUE;
 }
 

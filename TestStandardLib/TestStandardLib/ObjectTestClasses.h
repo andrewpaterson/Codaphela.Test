@@ -6,6 +6,7 @@
 #include "StandardLib/Integer.h"
 #include "StandardLib/Float.h"
 #include "StandardLib/Character.h"
+#include "StandardLib/String.h"
 
 
 struct STestObjectFreedNotifier
@@ -147,6 +148,24 @@ public:
 
 	BOOL	Save(CObjectSerialiser* pcFile);
 	BOOL	Load(CObjectDeserialiser* pcFile);
+};
+
+
+class CTestEmbeddedStrings : public CObject
+{
+CONSTRUCTABLE(CTestEmbeddedStrings);
+public:
+	CString		mString1;
+	CString		mString2;
+	CString		mString3;
+
+	void	Init(void);
+	void	Class(void);
+	void	Free(void);
+
+	BOOL	Save(CObjectSerialiser* pcFile);
+	BOOL	Load(CObjectDeserialiser* pcFile);
+
 };
 
 
