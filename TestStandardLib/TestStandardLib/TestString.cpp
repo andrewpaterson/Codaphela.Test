@@ -146,10 +146,15 @@ void TestStringEmbedded(void)
 	ObjectsInit(pcDatabase, pcSequence);
 	TestStringAddConstructors();
 
+	ORoot()->TouchAll();
 	pContainer = gcObjects.Get(oi);
 	pString1 = &pContainer->mString1;
 	pString2 = &pContainer->mString2;
 	pString3 = &pContainer->mString3;
+	AssertInt(2, pString1.GetDistToRoot());
+	AssertInt(2, pString2.GetDistToRoot());
+	AssertInt(2, pString3.GetDistToRoot());
+	AssertInt(2, pContainer.GetDistToRoot());
 
 	AssertString("This is first", pString1->Text());
 	AssertString("Burke is great", pString2->Text());
@@ -174,11 +179,16 @@ void TestStringEmbedded(void)
 	TestStringAddConstructors();
 
 	pContainer = gcObjects.Get(oi);
+	ORoot()->TouchAll();
 	pString1 = &pContainer->mString1;
 	pString2 = &pContainer->mString2;
 	pString3 = &pContainer->mString3;
+	AssertInt(2, pString1.GetDistToRoot());
+	AssertInt(2, pString2.GetDistToRoot());
+	AssertInt(2, pString3.GetDistToRoot());
+	AssertInt(2, pContainer.GetDistToRoot());
 
-	AssertString("This is first", pString1->Text());
+	AssertString("This is", pString1->Text());
 	AssertString("Burke is great", pString2->Text());
 	AssertString("Wooglers", pString3->Text());
 
@@ -194,6 +204,7 @@ void TestStringEmbedded(void)
 
 	pString3->Set("Boogaloo");
 	AssertTrue(pString3.IsDirty());
+	AssertString("Boogaloo", pString3->Text());
 
 	ObjectsFlush();  //Close calls Flush.  Why must flush be called here?
 	pcDatabase->Close();
@@ -215,6 +226,11 @@ void TestStringEmbedded(void)
 	pString1 = &pContainer->mString1;
 	pString2 = &pContainer->mString2;
 	pString3 = &pContainer->mString3;
+	ORoot()->TouchAll();
+	AssertInt(2, pString1.GetDistToRoot());
+	AssertInt(2, pString2.GetDistToRoot());
+	AssertInt(2, pString3.GetDistToRoot());
+	AssertInt(2, pContainer.GetDistToRoot());
 
 	AssertString("This is", pString1->Text());
 	AssertString("Burke is the greatest", pString2->Text());
