@@ -220,6 +220,7 @@
     <ClCompile Include="TestCSVFileEditable.cpp" />
     <ClCompile Include="TestCSVFileImmutable.cpp" />
     <ClCompile Include="TestDataMemory.cpp" />
+    <ClCompile Include="TestDataTypesIO.cpp" />
     <ClCompile Include="TestFileIO.cpp" />
     <ClCompile Include="TestFloat4.cpp" />
     <ClCompile Include="TestFreeListAllocator.cpp" />

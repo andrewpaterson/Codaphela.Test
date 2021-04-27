@@ -127,6 +127,15 @@
     <Filter Include="Source\Error">
       <UniqueIdentifier>{cde953d0-dca5-4096-a07d-3c1ee2fb9b8f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Data\Types">
+      <UniqueIdentifier>{c8015ee2-edcb-4ce2-a25a-ffc666874d1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Types\File">
+      <UniqueIdentifier>{44bc08cf-d197-4d58-b60b-9e6d021ce005}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Primitive">
+      <UniqueIdentifier>{36ac1be1-f14a-4d70-b710-5b688735bdc8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -258,9 +267,6 @@
     <ClCompile Include="TestIndexTreeNodeMemory.cpp">
       <Filter>Source\Data\Index</Filter>
     </ClCompile>
-    <ClCompile Include="TestPrimitiveTypes.cpp">
-      <Filter>Source\Data</Filter>
-    </ClCompile>
     <ClCompile Include="TestChars.cpp">
       <Filter>Source\Data\String</Filter>
     </ClCompile>
@@ -377,6 +383,12 @@
     </ClCompile>
     <ClCompile Include="TestLogger.cpp">
       <Filter>Source\Error</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPrimitiveTypes.cpp">
+      <Filter>Source\Data\Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDataTypesIO.cpp">
+      <Filter>Source\Data\Types\File</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

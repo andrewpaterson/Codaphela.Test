@@ -81,6 +81,7 @@ void TestStackMemoryCompilation(void);
 void TestCSVFileImmutable(void);
 void TestIndexTreeDataOrderer(void);
 void TestIndexTreeMemoryConfig(void);
+void TestDataTypesIO(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -170,6 +171,7 @@ int main(void)
 	TestCSVFileImmutable();
 	TestIndexTreeDataOrderer();
 	TestIndexTreeMemoryConfig();
+	TestDataTypesIO();
 
 	iResult = TestTotalStatistics();
 	_CrtDumpMemoryLeaks();
