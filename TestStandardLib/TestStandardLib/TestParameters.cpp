@@ -1,15 +1,64 @@
 #include "CoreLib/FunctionCaller.h"
-#include "StandardLib/Parameters.h"
 #include "StandardLib/Unknown.h"
 #include "TestLib/Assert.h"
+
+
+struct SParams
+{
+	int		_iParamSize;
+};
+
+
+#define PARAM4(f, t1, a1, t2, a2, t3, a3, t4, a4) \
+struct f : SParams { \
+	t1 a1; t2 a2; t3 a3; t4 a4; \
+	f::f(t1 a1, t2 a2, t3 a3, t4 a4) \
+{ _iParamSize=sizeof(f); this->a1 = a1; this->a2 = a2; this->a3 = a3; this->a4 = a4; } \
+};
+
 
 
 class CTestClassFunctionParams : public CUnknown
 {
 CONSTRUCTABLE(CTestClassFunctionParams);
 public:
-	PARAM4(SFuncParams, int,q, char,c, unsigned long long int,ulli, char,c2);
+
+	struct SFuncParams : SParams
+	{
+		int q;
+		char c;
+		unsigned long long int ulli;
+		char c2;
+
+		SFuncParams::SFuncParams(int q, char c, unsigned long long int ulli, char c2)
+		{
+			_iParamSize = sizeof(SFuncParams);
+			this->q = q;
+			this->c = c;
+			this->ulli = ulli;
+			this->c2 = c2;
+		}
+	};
+
 	void Func(SFuncParams* s);
+};
+
+
+struct SGlobalFuncParams : SParams
+{
+	float x;
+	float y;
+	float z;
+	CChars argz;
+
+	SGlobalFuncParams::SGlobalFuncParams(float x, float y, float z, CChars argz)
+	{
+		_iParamSize = sizeof(SGlobalFuncParams);
+		this->x = x;
+		this->y = y;
+		this->z = z;
+		this->argz = argz;
+	}
 };
 
 
@@ -17,7 +66,6 @@ public:
 //
 //
 //////////////////////////////////////////////////////////////////////////
-PARAM4(SGlobalFuncParams, float,x, float,y, float,z, CChars,argz);
 void TestGlobalFunc(SGlobalFuncParams* arg)
 {
 	float	fTotal;
@@ -31,6 +79,8 @@ void TestGlobalFunc(SGlobalFuncParams* arg)
 	argz2.Init(arg->argz);
 	argz2.Kill();
 }
+
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -64,4 +114,5 @@ void TestParameters(void)
 
 	TestStatistics();
 }
+
 
