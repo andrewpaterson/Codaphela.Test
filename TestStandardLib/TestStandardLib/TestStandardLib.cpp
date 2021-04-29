@@ -34,6 +34,7 @@ void TestParameters(void);
 void TestObjectDirty(void);
 void TestObjectAllocator(void);
 void TestString(void);
+void TestClass(void);
 void TestObjectWriterChunked(void);
 void TestObjectReaderChunked(void);
 void TestObjectGraphDeserialiser(void);
@@ -75,6 +76,7 @@ int main(void)
 	TestSingleChannelAccessor();
 	TestChunkFileNames();
 	TestParameters();
+	TestClass();
 	TestDistToRoot();
 	TestDistToStack();
 	TestObjectGraphWriting();

@@ -79,6 +79,9 @@
     <Filter Include="Source\Object\Object\String">
       <UniqueIdentifier>{4477ee1f-6298-4ce4-8a86-8bfb33057350}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Object\Class">
+      <UniqueIdentifier>{3150f299-3c7e-40a2-a0ad-15df6874b2e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestStandardLib.cpp">
@@ -242,6 +245,9 @@
     </ClCompile>
     <ClCompile Include="TestString.cpp">
       <Filter>Source\Object\Object\String</Filter>
+    </ClCompile>
+    <ClCompile Include="TestClass.cpp">
+      <Filter>Source\Object\Class</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

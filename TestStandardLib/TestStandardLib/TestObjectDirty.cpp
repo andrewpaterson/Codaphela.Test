@@ -268,6 +268,9 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 
 
 	pObject = OMalloc<CTestEmbeddedObjectWithFields>();
+	AssertTrue(pObject->HasClass());
+	AssertTrue(pObject->mcEmbedded1.HasClass());
+	AssertTrue(pObject->mcEmbedded2.HasClass());
 	AssertTrue(pObject.IsDirty());
 	AssertTrue(pObject->mcEmbedded1.IsDirty());
 	AssertTrue(pObject->mcEmbedded2.IsDirty());

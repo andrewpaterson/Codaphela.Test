@@ -108,6 +108,7 @@
     <ClCompile Include="TestArray.cpp" />
     <ClCompile Include="TestArrayCommonObject.cpp" />
     <ClCompile Include="TestChunkFileNames.cpp" />
+    <ClCompile Include="TestClass.cpp" />
     <ClCompile Include="TestDehollowfication.cpp" />
     <ClCompile Include="TestDistToRootCalculator.cpp" />
     <ClCompile Include="TestDistToStackCalculator.cpp" />
