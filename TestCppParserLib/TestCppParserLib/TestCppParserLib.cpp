@@ -1,15 +1,16 @@
-#include "stdafx.h"
 #include "TestLib/Assert.h"
-#include "TestASCIITree.h"
-#include "TestPreprocessor.h"
-#include "TestProject.h"
+
+
+void TestPreprocessor(void);
+void TestASCIITree(void);
+void TestProject(void);
 
 
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-int _tmain(int argc, _TCHAR* argv[])
+int main(void)
 {
 	InitTotalStatistics();
 
@@ -20,4 +21,3 @@ int _tmain(int argc, _TCHAR* argv[])
 	return TestTotalStatistics();
 }
 
-	

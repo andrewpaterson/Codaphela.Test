@@ -31,11 +31,11 @@ void TestSingleChannelAccessor(void)
 	cChannels.BeginChange();
 	cChannels.SetData(cData);
 	cChannels.AddChannel(16, 15, 14, 13, PT_nybble);
-	cChannels.AddChannel(12, 11, PT_uchar);
-	cChannels.AddChannel(10, PT_ushort);
+	cChannels.AddChannel(12, 11, PT_uint8);
+	cChannels.AddChannel(10, PT_uint16);
 	cChannels.AddChannel(9, 8, 7, 6, PT_bit);
 	cChannels.AddChannel(5, 4, PT_crumb);
-	cChannels.AddChannel(3, PT_uchar);
+	cChannels.AddChannel(3, PT_uint8);
 	cChannels.SetSize(1);
 	cChannels.EndChange();
 	cSingle.Init(&cChannels);

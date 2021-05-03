@@ -62,7 +62,7 @@ void TestASCIITreeGetZeroTerminated(void)
 	cTree.PrivateGetZeroTerminated(&pcNode, &pcWord, &iNode, &iWord, "Andrewicus");
 	AssertNotNull(pcNode);
 	AssertInt(5, iNode);
-	AssertBool(TRUE, strlen("Andrewicus") != iNode);  //Did not find.  Letter not equal to string length.
+	AssertBool(TRUE, strlen("Andrewicus") != (size_t)iNode);  //Did not find.  Letter not equal to string length.
 	AssertPointer(pcNode, pcWord);
 	AssertInt(iNode, iWord);
 
@@ -171,7 +171,7 @@ void TestASCIITreeGetLengthTerminated(void)
 	cTree.PrivateGetLengthTerminated(&pcNode, &pcWord, &iNode, &iWord, &szAndrewicus[0], &szAndrewicus[9]);
 	AssertNotNull(pcNode);
 	AssertInt(5, iNode);
-	AssertBool(TRUE, strlen("Andrewicus") != iNode);  //Did not find.  Letter not equal to string length.
+	AssertBool(TRUE, strlen("Andrewicus") != (size_t)iNode);  //Did not find.  Letter not equal to string length.
 	AssertPointer(pcNode, pcWord);
 	AssertInt(iNode, iWord);
 

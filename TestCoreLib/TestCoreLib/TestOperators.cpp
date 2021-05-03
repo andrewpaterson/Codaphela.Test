@@ -20,23 +20,23 @@ void TestOperatorAdd(void)
 
 	ix = 3;
 	iy = 4;
-	gcOperators.mcAdd.Do(PT_int, &iz, PT_int, &ix, PT_int, &iy);
+	gcOperators.mcAdd.Do(PT_int32, &iz, PT_int32, &ix, PT_int32, &iy);
 	AssertInt(7, iz);
 
 	ullix = 0x00ffffffffffffffLL;
 	ulliy = 0x7fedcba987654321LL;
-	gcOperators.mcAdd.Do(PT_long, &ulliz, PT_long, &ullix, PT_long, &ulliy);
+	gcOperators.mcAdd.Do(PT_int64, &ulliz, PT_int64, &ullix, PT_int64, &ulliy);
 	AssertLongLongInt(0x80edcba987654320LL, ulliz);
 
 	cx = 31;
 	cy = 76;
-	gcOperators.mcAdd.Do(PT_char, &cz, PT_char, &cx, PT_char, &cy);
+	gcOperators.mcAdd.Do(PT_char8, &cz, PT_char8, &cx, PT_char8, &cy);
 	AssertChar(0x6b, cz);
 
-	gcOperators.mcAdd.Do(PT_char, &cz, PT_long, &ullix, PT_long, &ulliy);
+	gcOperators.mcAdd.Do(PT_char8, &cz, PT_int64, &ullix, PT_int64, &ulliy);
 	AssertChar(0x20, cz);
 
-	gcOperators.mcAdd.Do(PT_int, &iz, PT_long, &ullix, PT_char, &cy);
+	gcOperators.mcAdd.Do(PT_int32, &iz, PT_int64, &ullix, PT_char8, &cy);
 	AssertInt(0x4b, iz);
 
 	OperatorsKill();

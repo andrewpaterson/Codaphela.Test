@@ -19,9 +19,9 @@ void TestOptimalPadding(void)
 
 	cChannels.Init();
 	cChannels.BeginChange();
-	cChannels.AddChannel(0, PT_char);
-	cChannels.AddChannel(1, PT_int);
-	cChannels.AddChannel(2, PT_long);
+	cChannels.AddChannel(0, PT_char8);
+	cChannels.AddChannel(1, PT_int32);
+	cChannels.AddChannel(2, PT_int64);
 	cChannels.EndChange();
 
 	cPadder.Init(&cChannels);
@@ -39,9 +39,9 @@ void TestOptimalPadding(void)
 
 	cChannels.Init();
 	cChannels.BeginChange();
-	cChannels.AddChannel(0, PT_long);
-	cChannels.AddChannel(1, PT_int);
-	cChannels.AddChannel(2, PT_char);
+	cChannels.AddChannel(0, PT_int64);
+	cChannels.AddChannel(1, PT_int32);
+	cChannels.AddChannel(2, PT_char8);
 	cChannels.EndChange();
 
 	cPadder.Init(&cChannels);
@@ -59,17 +59,17 @@ void TestOptimalPadding(void)
 
 	cChannels.Init();
 	cChannels.BeginChange();
-	cChannels.AddChannel(0, PT_char);
-	cChannels.AddChannel(1, PT_char);
-	cChannels.AddChannel(2, PT_char);
-	cChannels.AddChannel(3, PT_char);
+	cChannels.AddChannel(0, PT_char8);
+	cChannels.AddChannel(1, PT_char8);
+	cChannels.AddChannel(2, PT_char8);
+	cChannels.AddChannel(3, PT_char8);
 								   
-	cChannels.AddChannel(4, PT_char);
-	cChannels.AddChannel(5, PT_char);
-	cChannels.AddChannel(6, PT_char);
-	cChannels.AddChannel(7, PT_char);
+	cChannels.AddChannel(4, PT_char8);
+	cChannels.AddChannel(5, PT_char8);
+	cChannels.AddChannel(6, PT_char8);
+	cChannels.AddChannel(7, PT_char8);
 
-	cChannels.AddChannel(8, PT_long);
+	cChannels.AddChannel(8, PT_int64);
 	cChannels.EndChange();
 
 	cPadder.Init(&cChannels);
@@ -99,10 +99,10 @@ void TestOptimalPadding(void)
 
 	cChannels.Init();
 	cChannels.BeginChange();
-	cChannels.AddChannel(0, PT_char);
-	cChannels.AddChannel(1, PT_long);
-	cChannels.AddChannel(2, PT_char);
-	cChannels.AddChannel(3, PT_long);
+	cChannels.AddChannel(0, PT_char8);
+	cChannels.AddChannel(1, PT_int64);
+	cChannels.AddChannel(2, PT_char8);
+	cChannels.AddChannel(3, PT_int64);
 	cChannels.EndChange();
 
 	cPadder.Init(&cChannels);
@@ -122,15 +122,15 @@ void TestOptimalPadding(void)
 
 	cChannels.Init();
 	cChannels.BeginChange();
-	cChannels.AddChannel(0, PT_char);
-	cChannels.AddChannel(1, PT_short);
-	cChannels.AddChannel(2, PT_char);
-	cChannels.AddChannel(3, PT_short);
-	cChannels.AddChannel(4, PT_long);
-	cChannels.AddChannel(5, PT_short);
-	cChannels.AddChannel(6, PT_char);
-	cChannels.AddChannel(7, PT_int);
-	cChannels.AddChannel(8, PT_long);
+	cChannels.AddChannel(0, PT_char8);
+	cChannels.AddChannel(1, PT_int16);
+	cChannels.AddChannel(2, PT_char8);
+	cChannels.AddChannel(3, PT_int16);
+	cChannels.AddChannel(4, PT_int64);
+	cChannels.AddChannel(5, PT_int16);
+	cChannels.AddChannel(6, PT_char8);
+	cChannels.AddChannel(7, PT_int32);
+	cChannels.AddChannel(8, PT_int64);
 	cChannels.EndChange();
 
 	cPadder.Init(&cChannels);

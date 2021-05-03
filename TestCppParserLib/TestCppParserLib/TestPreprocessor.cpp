@@ -6,7 +6,6 @@
 #include "CoreLib/Operators.h"
 #include "CppParserLib/Preprocessor.h"
 #include "TestLib/Assert.h"
-#include "TestPreprocessor.h"
 
 
 //////////////////////////////////////////////////////////////////////////

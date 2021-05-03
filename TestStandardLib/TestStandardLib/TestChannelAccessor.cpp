@@ -29,7 +29,7 @@ void TestChannelsAccessorContiguous(void)
 	pcChannels->Init();
 	pcChannels->BeginChange();
 	pcChannels->SetSize(2);
-	pcChannels->AddChannel(CHANNEL_NAME_BOB, PT_int);
+	pcChannels->AddChannel(CHANNEL_NAME_BOB, PT_int32);
 	pcChannels->EndChange();
 
 	cCreator.Init(pcChannels);
@@ -45,7 +45,7 @@ void TestChannelsAccessorContiguous(void)
 	pcAccessor->Kill();
 
 	pcChannels->BeginChange();
-	pcChannels->AddChannel(CHANNEL_NAME_ALICE, PT_short);
+	pcChannels->AddChannel(CHANNEL_NAME_ALICE, PT_int16);
 	pcChannels->EndChange();
 
 	cCreator.Init(pcChannels);
@@ -98,9 +98,9 @@ void TestChannelsAccessorByteAligned(void)
 	pcChannels->Init();
 	pcChannels->BeginChange();
 	pcChannels->SetSize(2);
-	pcChannels->AddChannel(CHANNEL_NAME_JACK, PT_short);
-	pcChannels->AddChannel(CHANNEL_NAME_BOB, PT_int);
-	pcChannels->AddChannel(CHANNEL_NAME_ALICE, PT_short);
+	pcChannels->AddChannel(CHANNEL_NAME_JACK, PT_int16);
+	pcChannels->AddChannel(CHANNEL_NAME_BOB, PT_int32);
+	pcChannels->AddChannel(CHANNEL_NAME_ALICE, PT_int16);
 	pcChannels->EndChange();
 
 	cCreator.Init(pcChannels);
@@ -159,15 +159,15 @@ void TestChannelsAccessorTypeConvert(void)
 	pcChannels->Init();
 	pcChannels->BeginChange();
 	pcChannels->SetSize(2);
-	pcChannels->AddChannel(CHANNEL_NAME_JACK, PT_ushort);
-	pcChannels->AddChannel(CHANNEL_NAME_BOB, PT_uint);
-	pcChannels->AddChannel(CHANNEL_NAME_ALICE, PT_ushort);
+	pcChannels->AddChannel(CHANNEL_NAME_JACK, PT_uint16);
+	pcChannels->AddChannel(CHANNEL_NAME_BOB, PT_uint32);
+	pcChannels->AddChannel(CHANNEL_NAME_ALICE, PT_uint16);
 	pcChannels->EndChange();
 	pcChannels->Clear();
 
 	cCreator.Init(pcChannels);
-	cCreator.AddAccess(CHANNEL_NAME_JACK, PT_float);
-	cCreator.AddAccess(CHANNEL_NAME_ALICE, PT_float);
+	cCreator.AddAccess(CHANNEL_NAME_JACK, PT_float32);
+	cCreator.AddAccess(CHANNEL_NAME_ALICE, PT_float32);
 	pcAccessor = cCreator.CreateAndKill();
 	AssertString("CChannelsAccessorTypeConvert", pcAccessor->ClassName());
 	afData[0] = 1.0f;
@@ -181,7 +181,7 @@ void TestChannelsAccessorTypeConvert(void)
 	pcAccessor->Kill();
 
 	cCreator.Init(pcChannels);
-	cCreator.AddAccess(CHANNEL_NAME_BOB, PT_float);
+	cCreator.AddAccess(CHANNEL_NAME_BOB, PT_float32);
 	pcAccessor = cCreator.CreateAndKill();
 	AssertString("CChannelsAccessorTypeConvert", pcAccessor->ClassName());
 	afData[0] = 0.8f;
@@ -190,8 +190,8 @@ void TestChannelsAccessorTypeConvert(void)
 	pcAccessor->Kill();
 
 	cCreator.Init(pcChannels);
-	cCreator.AddAccess(CHANNEL_NAME_ALICE, PT_float);
-	cCreator.AddAccess(CHANNEL_NAME_BOB, PT_float);
+	cCreator.AddAccess(CHANNEL_NAME_ALICE, PT_float32);
+	cCreator.AddAccess(CHANNEL_NAME_BOB, PT_float32);
 	pcAccessor = cCreator.CreateAndKill();
 	AssertString("CChannelsAccessorTypeConvert", pcAccessor->ClassName());
 	pfData = (float*)pcAccessor->Get(1);
@@ -227,9 +227,9 @@ void TestChannelsAccessorChannelBitty(void)
 	AssertInt(1, pcChannels->GetSize());
 
 	cCreator.Init(pcChannels);
-	cCreator.AddAccess(CHANNEL_NAME_JACK, PT_uchar);
-	cCreator.AddAccess(CHANNEL_NAME_BOB, PT_uchar);
-	cCreator.AddAccess(CHANNEL_NAME_ALICE, PT_uchar);
+	cCreator.AddAccess(CHANNEL_NAME_JACK, PT_uint8);
+	cCreator.AddAccess(CHANNEL_NAME_BOB, PT_uint8);
+	cCreator.AddAccess(CHANNEL_NAME_ALICE, PT_uint8);
 	pcAccessor = cCreator.CreateAndKill();
 	AssertString("CChannelsAccessorChannelBitty", pcAccessor->ClassName());
 	aucData[0] = 0xff;
@@ -250,9 +250,9 @@ void TestChannelsAccessorChannelBitty(void)
 	AssertInt(2, pcChannels->GetSize());
 
 	cCreator.Init(pcChannels);
-	cCreator.AddAccess(CHANNEL_NAME_JACK, PT_uchar);
-	cCreator.AddAccess(CHANNEL_NAME_BOB, PT_uchar);
-	cCreator.AddAccess(CHANNEL_NAME_ALICE, PT_uchar);
+	cCreator.AddAccess(CHANNEL_NAME_JACK, PT_uint8);
+	cCreator.AddAccess(CHANNEL_NAME_BOB, PT_uint8);
+	cCreator.AddAccess(CHANNEL_NAME_ALICE, PT_uint8);
 	pcAccessor = cCreator.CreateAndKill();
 	AssertString("CChannelsAccessorChannelBitty", pcAccessor->ClassName());
 	pucData = (unsigned char*)pcAccessor->Get(0);
@@ -272,8 +272,8 @@ void TestChannelsAccessorChannelBitty(void)
 	pcAccessor->Kill();
 
 	cCreator.Init(pcChannels);
-	cCreator.AddAccess(CHANNEL_NAME_ALICE, PT_float);
-	cCreator.AddAccess(CHANNEL_NAME_BOB, PT_float);
+	cCreator.AddAccess(CHANNEL_NAME_ALICE, PT_float32);
+	cCreator.AddAccess(CHANNEL_NAME_BOB, PT_float32);
 	pcAccessor = cCreator.CreateAndKill();
 	AssertString("CChannelsAccessorChannelBitty", pcAccessor->ClassName());
 	pfData = (float*)pcAccessor->Get(0);
@@ -302,9 +302,9 @@ void TestChannelsAccessorAccessBitty(void)
 	pcChannels->Init();
 	pcChannels->BeginChange();
 	pcChannels->SetSize(1);
-	pcChannels->AddChannel(CHANNEL_NAME_JACK, PT_ushort);
-	pcChannels->AddChannel(CHANNEL_NAME_BOB, PT_ushort);
-	pcChannels->AddChannel(CHANNEL_NAME_ALICE, PT_ushort);
+	pcChannels->AddChannel(CHANNEL_NAME_JACK, PT_uint16);
+	pcChannels->AddChannel(CHANNEL_NAME_BOB, PT_uint16);
+	pcChannels->AddChannel(CHANNEL_NAME_ALICE, PT_uint16);
 	pcChannels->EndChange();
 	pcChannels->Clear();
 
@@ -346,8 +346,8 @@ void TestChannelsAccessorWorstCase(void)
 	pcChannels->BeginChange();
 	pcChannels->SetSize(2);
 	pcChannels->AddChannel(CHANNEL_NAME_JACK, PT_bit);
-	pcChannels->AddChannel(CHANNEL_NAME_BOB, PT_uint);
-	pcChannels->AddChannel(CHANNEL_NAME_ALICE, PT_uchar);
+	pcChannels->AddChannel(CHANNEL_NAME_BOB, PT_uint32);
+	pcChannels->AddChannel(CHANNEL_NAME_ALICE, PT_uint8);
 	pcChannels->EndChange();
 	pcChannels->Clear();
 	AssertInt(2, pcChannels->GetSize());
@@ -359,7 +359,7 @@ void TestChannelsAccessorWorstCase(void)
 	memset(aucData, 0, 5);
 
 	cCreator.Init(pcChannels);
-	cCreator.AddAccess(CHANNEL_NAME_JACK, PT_uint);
+	cCreator.AddAccess(CHANNEL_NAME_JACK, PT_uint32);
 	cCreator.AddAccess(CHANNEL_NAME_BOB, PT_bit);
 	cCreator.AddAccess(CHANNEL_NAME_ALICE, PT_nybble);
 	pcAccessor = cCreator.CreateAndKill();

@@ -1,58 +1,49 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
+    <Filter Include="Source">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Source Files\Project Test">
-      <UniqueIdentifier>{17298909-da20-4fd5-ac3b-7266b6802ccb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Preprocessor Test">
+    <Filter Include="Source\Preprocessor">
       <UniqueIdentifier>{d25dff93-745e-44b9-90ae-9c17fc25c8a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Project">
+      <UniqueIdentifier>{17298909-da20-4fd5-ac3b-7266b6802ccb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TestASCIITree.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="TestCppParserLib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestPreprocessor.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="TestProject.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="TestUnit1.cpp">
-      <Filter>Source Files\Project Test</Filter>
+      <Filter>Source\Project</Filter>
     </ClCompile>
     <ClCompile Include="TestUnit2.cpp">
-      <Filter>Source Files\Project Test</Filter>
+      <Filter>Source\Project</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPreprocessor.cpp">
+      <Filter>Source\Preprocessor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestASCIITree.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestPreprocessor.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="TestProject.h">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="TestHeader.h">
-      <Filter>Source Files\Project Test</Filter>
+      <Filter>Source\Project</Filter>
     </ClInclude>
     <ClInclude Include="TestHeader2.h">
-      <Filter>Source Files\Project Test</Filter>
+      <Filter>Source\Project</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

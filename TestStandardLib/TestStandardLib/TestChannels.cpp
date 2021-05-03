@@ -23,11 +23,11 @@ void TestChannelsStuff(void)
 
 	cChannels.BeginChange();
 	cChannels.SetSize(4);
-	cChannels.AddChannel(0, PT_uchar);
+	cChannels.AddChannel(0, PT_uint8);
 	cChannels.EndChange();
 	AssertInt(4*1, cChannels.GetByteSize());
 
-	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 0, PT_uchar);
+	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 0, PT_uint8);
 	pcAccessor->Set(0, &(c = 'A'));
 	pcAccessor->Set(1, &(c = 'a'));
 	pcAccessor->Set(2, &(c = 'A'));
@@ -36,18 +36,18 @@ void TestChannelsStuff(void)
 	pcAccessor->Kill();
 
 	cChannels.BeginChange();
-	cChannels.AddChannel(1, 2, PT_uchar);
+	cChannels.AddChannel(1, 2, PT_uint8);
 	cChannels.EndChange();
 	AssertInt(4*3, cChannels.GetByteSize());
 
-	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 1, PT_uchar);
+	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 1, PT_uint8);
 	pcAccessor->Set(0, &(c = 'B'));
 	pcAccessor->Set(1, &(c = 'b'));
 	pcAccessor->Set(2, &(c = 'B'));
 	pcAccessor->Set(3, &(c = 'X'));
 	pcAccessor->Kill();
 
-	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 2, PT_uchar);
+	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 2, PT_uint8);
 	pcAccessor->Set(0, &(c = 'C'));
 	pcAccessor->Set(1, &(c = 'c'));
 	pcAccessor->Set(2, &(c = 'C'));
@@ -57,16 +57,16 @@ void TestChannelsStuff(void)
 	AssertString("ABCabcABC", (char*)cChannels.GetData());
 
 	cChannels.BeginChange();
-	cChannels.AddChannel(3, PT_uchar);
+	cChannels.AddChannel(3, PT_uint8);
 	cChannels.EndChange();
 	AssertInt(4*4, cChannels.GetByteSize());
 
-	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 0, PT_uchar);
+	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 0, PT_uint8);
 
 	pcAccessor->Set(3, &(c = 'V'));
 	pcAccessor->Kill();
 
-	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 3, PT_uchar);
+	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 3, PT_uint8);
 	pcAccessor->Set(0, &(c = 'D'));
 	pcAccessor->Set(1, &(c = 'd'));
 	pcAccessor->Set(2, &(c = 'D'));
@@ -88,14 +88,14 @@ void TestChannelsStuff(void)
 
 	cChannels.Init();
 	cChannels.BeginChange();
-	cChannels.AddChannel(100, 110, 120, PT_uchar);
+	cChannels.AddChannel(100, 110, 120, PT_uint8);
 	cChannels.SetSize(4);
 	cChannels.SetData(pvUserData);
 	cChannels.EndChange();
 
-	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 110, PT_uchar);
-	pcAccessor2 = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 120, PT_uchar);
-	pcAccessor3 = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 100, PT_uchar);
+	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 110, PT_uint8);
+	pcAccessor2 = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 120, PT_uint8);
+	pcAccessor3 = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 100, PT_uint8);
 	AssertNotNull(pcAccessor);
 	AssertNotNull(pcAccessor2);
 	AssertInt(4, cChannels.GetSize());

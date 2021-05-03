@@ -35,19 +35,19 @@ void TestExternalChannelsSubBytePositions(void)
 
 	cSourceChannels.Init();
 	cSourceChannels.BeginChange();
-	cSourceChannels.AddChannel(0, PT_uchar);
+	cSourceChannels.AddChannel(0, PT_uint8);
 	cSourceChannels.AddChannel(1, PT_bit);
 	cSourceChannels.SetData((char*)uc);
 	cSourceChannels.SetSize(9);
 	cSourceChannels.EndChange();
 
 	cCreator.Init(&cSourceChannels);
-	cCreator.AddAccess(0, PT_uchar);
+	cCreator.AddAccess(0, PT_uint8);
 	pcChannel0 = cCreator.CreateAndKill();
 	AssertString("CChannelsAccessorChannelBitty", pcChannel0->ClassName());
 
 	cCreator.Init(&cSourceChannels);
-	cCreator.AddAccess(1, PT_uchar);
+	cCreator.AddAccess(1, PT_uint8);
 	pcChannel1 = cCreator.CreateAndKill();
 	AssertString("CChannelsAccessorChannelBitty", pcChannel1->ClassName());
 
@@ -143,10 +143,10 @@ void TestContiguousExternalChannels(void)
 
 	cChannels.Init();
 	cChannels.BeginChange();
-	cChannels.AddChannel(3, PT_uchar);
-	cChannels.AddChannel(2, PT_uchar);
-	cChannels.AddChannel(1, PT_uchar);
-	cChannels.AddChannel(0, PT_uchar);
+	cChannels.AddChannel(3, PT_uint8);
+	cChannels.AddChannel(2, PT_uint8);
+	cChannels.AddChannel(1, PT_uint8);
+	cChannels.AddChannel(0, PT_uint8);
 	cChannels.SetSize(4);
 	cChannels.EndChange();
 	AssertInt(4, cChannels.GetSize());
