@@ -846,16 +846,16 @@ void TestIndexTreeMemoryRemoveResize(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryIterate(void)
 {
-	CFileBasic					cFile;
-	CTestIndexTreeMemory		cIndex;
-	CIndexTreeMemoryAccess		cAccess;
-	SIndexTreeMemoryIterator	sIter;
-	char*						szData;
-	size_t						iDataSize;
-	unsigned char				c;
-	char						szKey[1024];
-	size_t						iKeySize;
-	char						szResult[256];
+	CFileBasic						cFile;
+	CTestIndexTreeMemory			cIndex;
+	CIndexTreeMemoryAccess			cAccess;
+	SIndexTreeMemoryUnsafeIterator	sIter;
+	char*							szData;
+	size_t							iDataSize;
+	unsigned char					c;
+	char							szKey[1024];
+	size_t							iKeySize;
+	char							szResult[256];
 
 	cIndex.Init();
 	cAccess.Init(&cIndex);

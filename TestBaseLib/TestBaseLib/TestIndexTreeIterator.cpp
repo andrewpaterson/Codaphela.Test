@@ -15,19 +15,19 @@
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeIteratorUnsafeIterate(void)
 {
-	SIndexTreeMemoryIterator	sIter;
-	char*						pvData;
-	char*						pvKey;
-	size_t						iDataSize;
-	BOOL						bExists;
-	char						pacKey[9+1];
-	int							iKeyLength;
-	CIndexTreeMemory			cIndexTree;
-	CMapStringString			cMap;
-	SMapIterator				sMapIter;
-	char*						pacData;
-	int							iResult;
-	int							iMapDataSize;
+	SIndexTreeMemoryUnsafeIterator	sIter;
+	char*							pvData;
+	char*							pvKey;
+	size_t							iDataSize;
+	BOOL							bExists;
+	char							pacKey[9+1];
+	int								iKeyLength;
+	CIndexTreeMemory				cIndexTree;
+	CMapStringString				cMap;
+	SMapIterator					sMapIter;
+	char*							pacData;
+	int								iResult;
+	int								iMapDataSize;
 
 	cMap.Init(3);
 	cMap.Put("AA", "nutritious");

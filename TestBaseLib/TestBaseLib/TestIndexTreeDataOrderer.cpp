@@ -39,12 +39,12 @@ void AssertIndexTreeDataOrdererString(CIndexTreeDataOrderer* pcOrderer, char* sz
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeDataOrdererAccess(void)
 {
-	CIndexTreeMemory			cIndexTree;
-	CIndexTreeMemoryAccess		cAccess;
-	CAccessDataOrderer			cOrderer;
-	char						c;
-	SIndexTreeMemoryIterator	sIter;
-	BOOL						bExists;
+	CIndexTreeMemory				cIndexTree;
+	CIndexTreeMemoryAccess			cAccess;
+	CAccessDataOrderer				cOrderer;
+	char							c;
+	SIndexTreeMemoryUnsafeIterator	sIter;
+	BOOL							bExists;
 
 	cOrderer.Init();
 	cIndexTree.Init(IKR_No, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
