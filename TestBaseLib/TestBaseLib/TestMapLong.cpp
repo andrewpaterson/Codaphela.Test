@@ -3,6 +3,22 @@
 #include "TestLib/Assert.h"
 
 
+class CTestMapLongLong : public CMapLongLong
+{
+public:
+	void InsertHoldingIntoSorted(void)
+	{
+		return CMapLongLong::InsertHoldingIntoSorted();
+	}
+
+
+	void GetInSorted(int iIndex, void** ppvKey, void** ppvData)
+	{
+		return CMapLongLong::GetInSorted(iIndex, ppvKey, ppvData);
+	}
+};
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -116,10 +132,10 @@ void TestMapLongTemplate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapLongLong(void)
 {
-	CMapLongLong	cMap;
-	int64		iResult;
-	int64*		piKey;
-	int64*		piValue;
+	CTestMapLongLong	cMap;
+	int64				iResult;
+	int64*				piKey;
+	int64*				piValue;
 
 	cMap.Init(TRUE);
 

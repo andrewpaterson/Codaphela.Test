@@ -3,6 +3,22 @@
 #include "TestLib/Assert.h"
 
 
+class CTestMapIntInt : public CMapIntInt
+{
+public:
+	void InsertHoldingIntoSorted(void)
+	{
+		return CMapIntInt::InsertHoldingIntoSorted();
+	}
+
+
+	void GetInSorted(int iIndex, void** ppvKey, void** ppvData)
+	{
+		return CMapIntInt::GetInSorted(iIndex, ppvKey, ppvData);
+	}
+};
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -116,10 +132,10 @@ void TestMapIntTemplate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapIntInt(void)
 {
-	CMapIntInt	cMap;
-	int			iResult;
-	int*		piKey;
-	int*		piValue;
+	CTestMapIntInt	cMap;
+	int				iResult;
+	int*			piKey;
+	int*			piValue;
 
 	cMap.Init(TRUE);
 
