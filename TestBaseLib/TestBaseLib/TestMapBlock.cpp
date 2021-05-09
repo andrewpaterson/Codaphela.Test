@@ -3,7 +3,10 @@
 #include "BaseLib/IntegerHelper.h"
 #include "BaseLib/MapStringString.h"
 #include "BaseLib/MemoryFile.h"
+#include "BaseLib/StdRandom.h"
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/LogString.h"
+#include "TestLib/Words.h"
 #include "TestLib/Assert.h"
 
 
@@ -51,17 +54,17 @@ void TestMapBlockInternals(void)
 	AssertInt(21, *piData);
 
 	iKey = 7; piData = NULL;
-	cMapBlock.Get(&iKey, (void**)&piData, NULL);
+	cMapBlock.Get(&iKey, sizeof(int), (void**)&piData, NULL);
 	AssertNotNull(piData);
 	AssertInt(43, *piData);
 
 	iKey = 9; piData = NULL;
-	cMapBlock.Get(&iKey, (void**)&piData, NULL);
+	cMapBlock.Get(&iKey, sizeof(int), (void**)&piData, NULL);
 	AssertNotNull(piData);
 	AssertInt(21, *piData);
 
 	iKey = 3; piData = NULL;
-	cMapBlock.Get(&iKey, (void**)&piData, NULL);
+	cMapBlock.Get(&iKey, sizeof(int), (void**)&piData, NULL);
 	AssertNull(piData);
 
 	cMapBlock.Kill();
@@ -74,7 +77,23 @@ void TestMapBlockInternals(void)
 //////////////////////////////////////////////////////////////////////////
 BOOL AddToMapBlock(CMapBlock* pcMapBlock, char* szKey, long long int lliData)
 {
-	return pcMapBlock->Put(szKey, strlen(szKey) +1 , &lliData, sizeof(long long int));
+	int				iStrLen;
+
+	iStrLen = strlen(szKey) + 1;
+	return pcMapBlock->Put(szKey, iStrLen, &lliData, sizeof(long long int));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+BOOL GetFromMapBlock(CMapBlock* pcMapBlock, char* szKey, long long int** pplli, int* piSize)
+{
+	int				iStrLen;
+
+	iStrLen = strlen(szKey) + 1;
+	return pcMapBlock->Get(szKey, iStrLen, (void**)pplli, piSize);
 }
 
 
@@ -85,8 +104,10 @@ BOOL AddToMapBlock(CMapBlock* pcMapBlock, char* szKey, long long int lliData)
 void AssertMapBlock(CMapBlock* pcMapBlock, char* szKey, long long int lliData)
 {
 	long long int*	plli;
+	int				iStrLen;
 
-	pcMapBlock->Get(szKey, (void**)&plli, NULL);
+	iStrLen = strlen(szKey) + 1;
+	pcMapBlock->Get(szKey, iStrLen, (void**)&plli, NULL);
 	AssertLongLongInt(lliData, *plli);
 }
 
@@ -117,25 +138,25 @@ void TestMapBlockGet(void)
 	AddToMapBlock(&cMapBlock, "cockerel", llia[2]);
 
 	AssertInt(3, cMapBlock.NumElements());
-	AssertTrue(cMapBlock.Get("cocker", (void**)&plli, &iSize));
+	AssertTrue(GetFromMapBlock(&cMapBlock, "cocker", &plli, &iSize));
 	AssertLongLongInt(llia[0], *plli);
 	AssertInt(sizeof(long long int), iSize);
 
-	AssertTrue(cMapBlock.Get("cock", (void**)&plli, &iSize));
+	AssertTrue(GetFromMapBlock(&cMapBlock, "cock", &plli, &iSize));
 	AssertLongLongInt(llia[1], *plli);
 	AssertInt(sizeof(long long int), iSize);
 
-	AssertTrue(cMapBlock.Get("cockerel", (void**)&plli, &iSize));
+	AssertTrue(GetFromMapBlock(&cMapBlock, "cockerel", &plli, &iSize));
 	AssertLongLongInt(llia[2], *plli);
 
 	AddToMapBlock(&cMapBlock, "vizard", llia[3]);
 	AddToMapBlock(&cMapBlock, "visard", llia[4]);
 	AddToMapBlock(&cMapBlock, "wizard", llia[5]);
-	AssertTrue(cMapBlock.Get("vizard", (void**)&plli, &iSize));
+	AssertTrue(GetFromMapBlock(&cMapBlock, "vizard", &plli, &iSize));
 	AssertLongLongInt(llia[3], *plli);
-	AssertTrue(cMapBlock.Get("visard", (void**)&plli, &iSize));
+	AssertTrue(GetFromMapBlock(&cMapBlock, "visard", &plli, &iSize));
 	AssertLongLongInt(llia[4], *plli);
-	AssertTrue(cMapBlock.Get("wizard", (void**)&plli, &iSize));
+	AssertTrue(GetFromMapBlock(&cMapBlock, "wizard", &plli, &iSize));
 	AssertLongLongInt(llia[5], *plli);
 
 	AddToMapBlock(&cMapBlock, "repletion", llia[6]);
@@ -143,10 +164,10 @@ void TestMapBlockGet(void)
 	AddToMapBlock(&cMapBlock, "quondam", llia[8]);
 	AddToMapBlock(&cMapBlock, "inimical", llia[9]);
 	AddToMapBlock(&cMapBlock, "ignominy", llia[10]);
-	AssertTrue(cMapBlock.Get("inimical", (void**)&plli, &iSize));
+	AssertTrue(GetFromMapBlock(&cMapBlock, "inimical", &plli, &iSize));
 	AssertLongLongInt(llia[9], *plli);
 	AssertInt(sizeof(long long int), iSize);
-	AssertTrue(cMapBlock.Get("cocker", (void**)&plli, &iSize));
+	AssertTrue(GetFromMapBlock(&cMapBlock, "cocker", &plli, &iSize));
 	AssertLongLongInt(llia[0], *plli);
 	AssertInt(sizeof(long long int), iSize);
 
@@ -156,10 +177,10 @@ void TestMapBlockGet(void)
 	AddToMapBlock(&cMapBlock, "sophist", llia[14]);
 	AddToMapBlock(&cMapBlock, "solicitous", llia[15]);
 	AssertInt(16, cMapBlock.NumElements());
-	AssertTrue(cMapBlock.Get("solicitous", (void**)&plli, &iSize));
+	AssertTrue(GetFromMapBlock(&cMapBlock, "solicitous", &plli, &iSize));
 	AssertLongLongInt(llia[15], *plli);
 	AssertInt(sizeof(long long int), iSize);
-	AssertTrue(cMapBlock.Get("cock", (void**)&plli, &iSize));
+	AssertTrue(GetFromMapBlock(&cMapBlock, "cock", &plli, &iSize));
 	AssertLongLongInt(llia[1], *plli);
 	AssertInt(sizeof(long long int), iSize);
 
@@ -208,12 +229,12 @@ void TestMapBlockAddDuplicate(void)
 	bResult = cMapBlock.Put(&ia, sizeof(int), "Hello", iHelloLen + 1);
 	AssertTrue(bResult);
 	AssertInt(1, cMapBlock.NumElements());
-	AssertString("Hello", (char*)cMapBlock.Get(&ia));
+	AssertString("Hello", (char*)cMapBlock.Get(&ia, sizeof(int)));
 
 	bResult = cMapBlock.Put(&ib, sizeof(int), "World", iWorldLen + 1);
 	AssertTrue(bResult);
 	AssertInt(1, cMapBlock.NumElements());
-	AssertString("World", (char*)cMapBlock.Get(&ia));
+	AssertString("World", (char*)cMapBlock.Get(&ia, sizeof(int)));
 
 	cMapBlock.Kill();
 }
@@ -238,34 +259,34 @@ void TestMapBlockRemove(void)
 	bResult = cMapBlock.Put(&ic, sizeof(int), "Rogue", strlen("Rogue") + 1);
 	AssertInt(3, cMapBlock.NumElements());
 
-	cMapBlock.Remove(&ib);
+	cMapBlock.Remove(&ib, sizeof(int));
 	AssertInt(2, cMapBlock.NumElements());
-	bResult = cMapBlock.Get(&ia, (void**)&szData, NULL);
+	bResult = cMapBlock.Get(&ia, sizeof(int), (void**)&szData, NULL);
 	AssertTrue(bResult);
 	AssertString(szData, "Hello");
-	bResult = cMapBlock.Get(&ic, (void**)&szData, NULL);
+	bResult = cMapBlock.Get(&ic, sizeof(int), (void**)&szData, NULL);
 	AssertTrue(bResult);
 	AssertString(szData, "Rogue");
-	bResult = cMapBlock.Get(&ib, (void**)&szData, NULL);
+	bResult = cMapBlock.Get(&ib, sizeof(int), (void**)&szData, NULL);
 	AssertFalse(bResult);
 
-	cMapBlock.Remove(&ia);
+	cMapBlock.Remove(&ia, sizeof(int));
 	AssertInt(1, cMapBlock.NumElements());
-	bResult = cMapBlock.Get(&ia, (void**)&szData, NULL);
+	bResult = cMapBlock.Get(&ia, sizeof(int), (void**)&szData, NULL);
 	AssertFalse(bResult);
-	bResult = cMapBlock.Get(&ic, (void**)&szData, NULL);
+	bResult = cMapBlock.Get(&ic, sizeof(int), (void**)&szData, NULL);
 	AssertTrue(bResult);
 	AssertString(szData, "Rogue");
-	bResult = cMapBlock.Get(&ib, (void**)&szData, NULL);
+	bResult = cMapBlock.Get(&ib, sizeof(int), (void**)&szData, NULL);
 	AssertFalse(bResult);
 
-	cMapBlock.Remove(&ic);
+	cMapBlock.Remove(&ic, sizeof(int));
 	AssertInt(0, cMapBlock.NumElements());
-	bResult = cMapBlock.Get(&ia, (void**)&szData, NULL);
+	bResult = cMapBlock.Get(&ia, sizeof(int), (void**)&szData, NULL);
 	AssertFalse(bResult);
-	bResult = cMapBlock.Get(&ic, (void**)&szData, NULL);
+	bResult = cMapBlock.Get(&ic, sizeof(int), (void**)&szData, NULL);
 	AssertFalse(bResult);
-	bResult = cMapBlock.Get(&ib, (void**)&szData, NULL);
+	bResult = cMapBlock.Get(&ib, sizeof(int), (void**)&szData, NULL);
 	AssertFalse(bResult);
 
 	cMapBlock.Kill();
@@ -282,7 +303,7 @@ void TestMapBlockReadWrite(void)
 	CFileBasic			cFile;
 	CMapStringString	mszszIn;
 
-	mszsz.Init(16);
+	mszsz.Init();
 
 	mszsz.Put("ABC", "XYZ");
 	mszsz.Put("Collision", "Detection");
@@ -319,6 +340,79 @@ void TestMapBlockReadWrite(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMapBlockDataMemoryUnchanged(void)
+{
+	CMapStringString	mszsz;
+	int					i;
+	CRandom				cRandom;
+	CArrayChars			aszWords;
+	CChars				sz;
+	int					iIndex;
+	char*				szWord;
+	char*				szData;
+	char*				aszData[2048];
+	BOOL				bFailed;
+
+	WordsInit();
+
+	mszsz.Init();
+
+	cRandom.Init(2367849);
+	aszWords.Init();
+	GetCommonWords(&aszWords);
+
+	for (i = 0; i < 2048; i++)
+	{
+		iIndex = cRandom.Next(0, aszWords.NumElements() - 1);
+		szWord = aszWords.GetText(iIndex);
+		sz.Init(szWord)->Append(" ");
+		iIndex = cRandom.Next(0, aszWords.NumElements() - 1);
+		szWord = aszWords.GetText(iIndex);
+		sz.Append(szWord);
+
+		mszsz.Put(sz.Text(), IntToString(i));
+		szData = mszsz.Get(sz.Text());
+		aszData[i] = szData;
+
+		sz.Kill();
+	}
+	cRandom.Kill();
+
+	cRandom.Init(2367849);
+
+	bFailed = FALSE;
+	for (i = 0; i < 2048; i++)
+	{
+		iIndex = cRandom.Next(0, aszWords.NumElements() - 1);
+
+		szWord = aszWords.GetText(iIndex);
+		sz.Init(szWord)->Append(" ");
+		iIndex = cRandom.Next(0, aszWords.NumElements() - 1);
+		szWord = aszWords.GetText(iIndex);
+		sz.Append(szWord);
+
+		szData = mszsz.Get(sz.Text());
+		if (aszData[i] != szData)
+		{
+			bFailed = TRUE;
+		}
+		sz.Kill();
+	}
+
+	AssertFalse(bFailed);
+	
+	cRandom.Kill();
+	mszsz.Kill();
+
+	aszWords.Kill();
+	WordsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMapBlock(void)
 {
 	BeginTests();
@@ -330,6 +424,7 @@ void TestMapBlock(void)
 	TestMapBlockAddDuplicate();
 	TestMapBlockRemove();
 	TestMapBlockReadWrite();
+	TestMapBlockDataMemoryUnchanged();
 
 	FastFunctionsKill();
 	MemoryKill();
