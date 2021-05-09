@@ -1,7 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/MapIntInt.h"
 #include "BaseLib/MapPtrPtr.h"
-#include "BaseLib/MapPtrPrimitiveTemplate.h"
 #include "TestLib/Assert.h"
 
 
@@ -72,112 +71,6 @@ void TestMapPtrPtr(void)
 }
 
 
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void TestMapPtrPrimitiveTemplateLong(void)
-{
-	CMapPtrPrimitiveTemplate<long long>		cMapPtrLong;
-	char									c1;
-	char									c2;
-	char									c3;
-	char									c4;
-
-	c1 = c2 = c3 = c4 = ' ';
-
-	cMapPtrLong.Init();
-	cMapPtrLong.Put(&c1, 1LL);
-	cMapPtrLong.Put(&c2, 2LL);
-	cMapPtrLong.Put(&c3, 3LL);
-	cMapPtrLong.Put(&c4, 4LL);
-
-	AssertLongLongInt(1LL, cMapPtrLong.Get(&c1));
-	AssertLongLongInt(2LL, cMapPtrLong.Get(&c2));
-	AssertLongLongInt(3LL, cMapPtrLong.Get(&c3));
-	AssertLongLongInt(4LL, cMapPtrLong.Get(&c4));
-
-	cMapPtrLong.Remove(&c2);
-	AssertInt(3, cMapPtrLong.NumElements());
-
-	*cMapPtrLong.Put(&c3) = 5LL;
-	AssertLongLongInt(5LL, cMapPtrLong.Get(&c3));
-	AssertInt(3, cMapPtrLong.NumElements());
-
-	cMapPtrLong.Kill();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void TestMapPtrPrimitiveTemplateInt(void)
-{
-	CMapPtrPrimitiveTemplate<int>	cMapPtrInt;
-	char							c1;
-	char							c2;
-	char							c3;
-	char							c4;
-
-	c1 = c2 = c3 = c4 = ' ';
-
-	cMapPtrInt.Init();
-	cMapPtrInt.Put(&c1, 1);
-	cMapPtrInt.Put(&c2, 2);
-	cMapPtrInt.Put(&c3, 3);
-	cMapPtrInt.Put(&c4, 4);
-
-	AssertInt(1, cMapPtrInt.Get(&c1));
-	AssertInt(2, cMapPtrInt.Get(&c2));
-	AssertInt(3, cMapPtrInt.Get(&c3));
-	AssertInt(4, cMapPtrInt.Get(&c4));
-
-	cMapPtrInt.Remove(&c2);
-	AssertInt(3, cMapPtrInt.NumElements());
-
-	*cMapPtrInt.Put(&c3) = 5;
-	AssertInt(5, cMapPtrInt.Get(&c3));
-	AssertInt(3, cMapPtrInt.NumElements());
-
-	cMapPtrInt.Kill();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void TestMapPtrPrimitiveTemplateUnsignedChar(void)
-{
-	CMapPtrPrimitiveTemplate<unsigned char>	cMapPtrUnsignedChar;
-	char									c1;
-	char									c2;
-	char									c3;
-	char									c4;
-
-	c1 = c2 = c3 = c4 = ' ';
-
-	cMapPtrUnsignedChar.Init();
-	cMapPtrUnsignedChar.Put(&c1, 1);
-	cMapPtrUnsignedChar.Put(&c2, 2);
-	cMapPtrUnsignedChar.Put(&c3, 3);
-	cMapPtrUnsignedChar.Put(&c4, 4);
-
-	AssertChar(1, cMapPtrUnsignedChar.Get(&c1));
-	AssertChar(2, cMapPtrUnsignedChar.Get(&c2));
-	AssertChar(3, cMapPtrUnsignedChar.Get(&c3));
-	AssertChar(4, cMapPtrUnsignedChar.Get(&c4));
-
-	cMapPtrUnsignedChar.Remove(&c2);
-	AssertInt(3, cMapPtrUnsignedChar.NumElements());
-
-	*cMapPtrUnsignedChar.Put(&c3) = 5;
-	AssertChar(5, cMapPtrUnsignedChar.Get(&c3));
-	AssertInt(3, cMapPtrUnsignedChar.NumElements());
-
-	cMapPtrUnsignedChar.Kill();
-}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -191,9 +84,6 @@ void TestMapPtr(void)
 	FastFunctionsInit();
 
 	TestMapPtrPtr();
-	TestMapPtrPrimitiveTemplateLong();
-	TestMapPtrPrimitiveTemplateInt();
-	TestMapPtrPrimitiveTemplateUnsignedChar();
 
 	FastFunctionsKill();
 	MemoryKill();
