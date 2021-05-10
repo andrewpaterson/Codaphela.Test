@@ -340,6 +340,27 @@ void TestMapBlockReadWrite(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void MakeKey(CRandom* cRandom, CArrayChars* aszWords, CChars* sz)
+{
+	int		iIndex;
+	char*	szWord;
+
+	iIndex = cRandom->Next(0, aszWords->NumElements() - 1);
+	szWord = aszWords->GetText(iIndex);
+	sz->Init(szWord)->Append(" ");
+	iIndex = cRandom->Next(0, aszWords->NumElements() - 1);
+	szWord = aszWords->GetText(iIndex);
+	sz->Append(szWord)->Append(" ");
+	iIndex = cRandom->Next(0, aszWords->NumElements() - 1);
+	szWord = aszWords->GetText(iIndex);
+	sz->Append(szWord);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMapBlockDataMemoryUnchanged(void)
 {
 	CMapStringString	mszsz;
@@ -347,8 +368,6 @@ void TestMapBlockDataMemoryUnchanged(void)
 	CRandom				cRandom;
 	CArrayChars			aszWords;
 	CChars				sz;
-	int					iIndex;
-	char*				szWord;
 	char*				szData;
 	char*				aszData[2048];
 	BOOL				bFailed;
@@ -363,12 +382,7 @@ void TestMapBlockDataMemoryUnchanged(void)
 
 	for (i = 0; i < 2048; i++)
 	{
-		iIndex = cRandom.Next(0, aszWords.NumElements() - 1);
-		szWord = aszWords.GetText(iIndex);
-		sz.Init(szWord)->Append(" ");
-		iIndex = cRandom.Next(0, aszWords.NumElements() - 1);
-		szWord = aszWords.GetText(iIndex);
-		sz.Append(szWord);
+		MakeKey(&cRandom, &aszWords, &sz);
 
 		mszsz.Put(sz.Text(), IntToString(i));
 		szData = mszsz.Get(sz.Text());
@@ -383,13 +397,7 @@ void TestMapBlockDataMemoryUnchanged(void)
 	bFailed = FALSE;
 	for (i = 0; i < 2048; i++)
 	{
-		iIndex = cRandom.Next(0, aszWords.NumElements() - 1);
-
-		szWord = aszWords.GetText(iIndex);
-		sz.Init(szWord)->Append(" ");
-		iIndex = cRandom.Next(0, aszWords.NumElements() - 1);
-		szWord = aszWords.GetText(iIndex);
-		sz.Append(szWord);
+		MakeKey(&cRandom, &aszWords, &sz);
 
 		szData = mszsz.Get(sz.Text());
 		if (aszData[i] != szData)
@@ -413,6 +421,91 @@ void TestMapBlockDataMemoryUnchanged(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMapBlockRemoveHalf(void)
+{
+	CMapStringString	mszsz;
+	int					i;
+	CRandom				cRandom;
+	CArrayChars			aszWords;
+	CChars				sz;
+	char*				szData;
+	char*				aszData[2048];
+	BOOL				bResult;
+	BOOL				bFailed;
+
+	WordsInit();
+
+	mszsz.Init();
+
+	cRandom.Init(2367849);
+	aszWords.Init();
+	GetCommonWords(&aszWords);
+
+	for (i = 0; i < 2048; i++)
+	{
+		MakeKey(&cRandom, &aszWords, &sz);
+
+		mszsz.Put(sz.Text(), IntToString(i));
+		szData = mszsz.Get(sz.Text());
+		aszData[i] = szData;
+
+		sz.Kill();
+	}
+	cRandom.Kill();
+
+	cRandom.Init(2367849);
+	bResult = TRUE;
+	for (i = 0; i < 2048; i++)
+	{
+		MakeKey(&cRandom, &aszWords, &sz);
+		if (i % 2 == 1)
+		{
+			bResult &= mszsz.Remove(sz.Text());
+		}
+		sz.Kill();
+	}
+
+	AssertTrue(bResult);
+	AssertInt(1024, mszsz.NumElements());
+	cRandom.Kill();
+
+	bFailed = FALSE;
+	cRandom.Init(2367849);
+	for (i = 0; i < 2048; i++)
+	{
+		MakeKey(&cRandom, &aszWords, &sz);
+		szData = mszsz.Get(sz.Text());
+		if (i % 2 == 0)
+		{
+			if (aszData[i] != szData)
+			{
+				bFailed = TRUE;
+			}
+		}
+		else
+		{
+			if (szData != NULL)
+			{
+				bFailed = TRUE;
+			}
+		}
+		sz.Kill();
+	}
+	AssertFalse(bFailed);
+	cRandom.Kill();
+
+	mszsz.Kill();
+
+	aszWords.Kill();
+	WordsKill();
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMapBlock(void)
 {
 	BeginTests();
@@ -425,6 +518,7 @@ void TestMapBlock(void)
 	TestMapBlockRemove();
 	TestMapBlockReadWrite();
 	TestMapBlockDataMemoryUnchanged();
+	TestMapBlockRemoveHalf();
 
 	FastFunctionsKill();
 	MemoryKill();
