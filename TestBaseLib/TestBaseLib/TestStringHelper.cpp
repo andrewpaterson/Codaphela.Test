@@ -212,6 +212,34 @@ void TestToUpper(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMemCmp(void)
+{
+    char    szAndrew[] = "Andrew";
+    char    szANdrew[] = "ANdrew";
+    char    szAndre[] = "Andre";
+    int     iResult;
+
+    iResult = MemCmp(szAndrew, 6, szANdrew, 6);
+    AssertInt(1, iResult);
+    iResult = MemCmp(szANdrew, 6, szAndrew, 6);
+    AssertInt(-1, iResult);
+    iResult = MemCmp(szAndrew, 6, szAndrew, 6);
+    AssertInt(0, iResult);
+    iResult = MemCmp(szAndre, 6, szAndrew, 6);
+    AssertInt(-1, iResult);
+    iResult = MemCmp(szAndrew, 6, szAndre, 6);
+    AssertInt(1, iResult);
+    iResult = MemCmp(szAndre, 6, szANdrew, 6);
+    AssertInt(1, iResult);
+    iResult = MemCmp(szANdrew, 6, szAndre, 6);
+    AssertInt(-1, iResult);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestStringHelper(void)
 {
 	BeginTests();
@@ -224,6 +252,7 @@ void TestStringHelper(void)
 	TestToLower();
 	TestToUpper();
     TestMemSwp();
+    TestMemCmp();
 
 	TestStatistics();
 }

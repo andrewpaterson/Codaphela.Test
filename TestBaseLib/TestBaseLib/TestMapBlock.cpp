@@ -1,5 +1,7 @@
 #include "BaseLib/MapBlock.h"
+#include "BaseLib/MapBlockAccess.h"
 #include "BaseLib/SystemAllocator.h"
+#include "BaseLib/CountingAllocator.h"
 #include "BaseLib/IntegerHelper.h"
 #include "BaseLib/MapStringString.h"
 #include "BaseLib/MemoryFile.h"
@@ -8,6 +10,16 @@
 #include "BaseLib/LogString.h"
 #include "TestLib/Words.h"
 #include "TestLib/Assert.h"
+
+
+class CTestMapBlock : public CMapBlock
+{
+public:
+	SMNode* GetNode(void* pvKey, int iKeySize)
+	{
+		return CMapBlock::GetNode(pvKey, iKeySize);
+	}
+};
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -506,6 +518,86 @@ void TestMapBlockRemoveHalf(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMapBlockPutDifferenceSizeDuplicates(void)
+{
+	CTestMapBlock			cIndex;
+	CMapBlockAccess			cAccess;
+	char					szOne[] = "1";
+	char					szTwo[] = "22";
+	char					szOtherTwo[] = "OT";
+	char					szThree[] = "333";
+	char					szKerfuffle[] = "kerfuffle";
+	CCountingAllocator		cAllocator;
+	int						iKeyLength;
+	char					szResult[256];
+	SMNode*					pcNode;
+
+	cAllocator.Init(&gcSystemAllocator);
+	AssertInt(0, cAllocator.AllocatedUserSize());
+
+	cIndex.Init(&cAllocator);
+	cAccess.Init(&cIndex);
+	AssertInt(0, cIndex.NumElements());
+	AssertInt(cAllocator.AllocatedUserSize(), cIndex.ByteSize());
+
+	iKeyLength = strlen("Spoedling");
+	AssertNull(cIndex.GetNode("Spoedling", iKeyLength));
+
+	AssertTrue(cAccess.PutStringData("SpoedlingZ", szKerfuffle, 10));
+	AssertInt(1, cIndex.NumElements());
+
+	//AssertInt(cAllocator.AllocatedUserSize(), cIndex.ByteSize());
+	pcNode = cIndex.GetNode("Spoedling", iKeyLength);
+	AssertNull(pcNode);
+	pcNode = cIndex.GetNode("SpoedlingZ", iKeyLength + 1);
+	AssertNotNull(pcNode);
+
+	AssertTrue(cAccess.PutStringData("Spoedling", szTwo, 3));
+	AssertInt(2, cIndex.NumElements());
+	//AssertInt(cAllocator.AllocatedUserSize(), cIndex.ByteSize());
+	AssertString("kerfuffle", cAccess.GetStringString("SpoedlingZ", szResult));
+	AssertString("22", cAccess.GetStringString("Spoedling", szResult));
+
+	pcNode = cIndex.GetNode("Spoedling", iKeyLength);
+	AssertNotNull(pcNode);
+
+	AssertTrue(cAccess.PutStringData("Spoedling", szOtherTwo, 3));
+	AssertInt(2, cIndex.NumElements());
+	//AssertInt(cAllocator.AllocatedUserSize(), cIndex.ByteSize());
+	AssertString("kerfuffle", cAccess.GetStringString("SpoedlingZ", szResult));
+	AssertString("OT", cAccess.GetStringString("Spoedling", szResult));
+
+	pcNode = cIndex.GetNode("Spoedling", iKeyLength);
+	AssertNotNull(pcNode);
+
+	AssertTrue(cAccess.PutStringData("Spoedling", szThree, 4));
+	AssertInt(2, cIndex.NumElements());
+	//AssertInt(cAllocator.AllocatedUserSize(), cIndex.ByteSize());
+	AssertString("kerfuffle", cAccess.GetStringString("SpoedlingZ", szResult));
+	AssertString("333", cAccess.GetStringString("Spoedling", szResult));
+
+	pcNode = cIndex.GetNode("Spoedling", iKeyLength);
+	AssertNotNull(pcNode);
+
+	AssertTrue(cAccess.PutStringData("Spoedling", szOne, 2));
+	AssertInt(2, cIndex.NumElements());
+	//AssertInt(cAllocator.AllocatedUserSize(), cIndex.ByteSize());
+	AssertString("kerfuffle", cAccess.GetStringString("SpoedlingZ", szResult));
+	AssertString("1", cAccess.GetStringString("Spoedling", szResult));
+
+	pcNode = cIndex.GetNode("Spoedling", iKeyLength);
+	AssertNotNull(pcNode);
+
+	cAccess.Kill();
+	cIndex.Kill();
+	AssertInt(0, cAllocator.AllocatedUserSize());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMapBlock(void)
 {
 	BeginTests();
@@ -519,10 +611,10 @@ void TestMapBlock(void)
 	TestMapBlockReadWrite();
 	TestMapBlockDataMemoryUnchanged();
 	TestMapBlockRemoveHalf();
+	TestMapBlockPutDifferenceSizeDuplicates();
 
 	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }
-
 

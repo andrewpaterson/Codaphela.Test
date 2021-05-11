@@ -75,7 +75,7 @@ void TestMapStringInt(void)
 	AssertTrue(cMap.Put("Dock", 17));
 	AssertInt(2, cMap.NumElements());
 
-	AssertTrue(cMap.StartIteration(&sIter, (void**)&szKey, (void**)&piResult));
+	AssertTrue(cMap.StartIteration(&sIter, (void**)&szKey, NULL, (void**)&piResult, NULL));
 	AssertNotNull(szKey);
 	AssertNotNull(piResult);
 	AssertString("Dock", szKey);

@@ -98,6 +98,7 @@ int main(void)
 	TestPrimitiveTypes();
 	TestIntegerHelper();
 	TestFloat4();
+	TestStringHelper();
 	TestArrayInt();
 	TestArrayLong();
 	TestArrayInt2D();
@@ -124,7 +125,6 @@ int main(void)
 	TestFreeList();
 	TestFreeListAllocator();
 	TestChars();
-	TestStringHelper();
 	TestCharsHelper();
 	TestTextParser();
 	TestDate();

@@ -87,12 +87,12 @@ void TestMapIntInt2(void)
 	x = 5; y = 99;
 	cMapIntInt.Put(&x, &y);
 
-	bResult = cMapIntInt.StartIteration(&sIter, (void**)&px, (void**)&py);
+	bResult = cMapIntInt.StartIteration(&sIter, (void**)&px, NULL, (void**)&py, NULL);
 	while (bResult)
 	{
 		pz = cMapIntInt.Get(px);
 		AssertInt(*py, *pz);
-		bResult = cMapIntInt.Iterate(&sIter, (void**)&px, (void**)&py);
+		bResult = cMapIntInt.Iterate(&sIter, (void**)&px, NULL, (void**)&py, NULL);
 	}
 
 	cMapIntInt.Kill();
