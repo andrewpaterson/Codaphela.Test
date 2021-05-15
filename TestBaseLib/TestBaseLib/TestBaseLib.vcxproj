@@ -240,6 +240,7 @@
     <ClCompile Include="TestLogger.cpp" />
     <ClCompile Include="TestMap.cpp" />
     <ClCompile Include="TestMapBlock.cpp" />
+    <ClCompile Include="TestMapIndexAccess.cpp" />
     <ClCompile Include="TestMapLong.cpp" />
     <ClCompile Include="TestMapString.cpp" />
     <ClCompile Include="TestMemoryAllocator.cpp" />

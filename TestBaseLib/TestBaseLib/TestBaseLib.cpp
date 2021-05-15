@@ -21,6 +21,7 @@ void TestMapLong(void);
 void TestMapPtr(void);
 void TestMapString(void);
 void TestMap(void);
+void TestMapIndexAccess(void);
 void TestListBlock(void);
 void TestListTemplate(void);
 void TestListCharsMinimal(void);
@@ -114,6 +115,7 @@ int main(void)
 	TestMapLong();
 	TestMapPtr();
 	TestMap();
+	TestMapIndexAccess();
 	TestListBlock();
 	TestListTemplate();
 	TestListCharsMinimal();

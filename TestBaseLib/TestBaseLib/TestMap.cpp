@@ -22,7 +22,7 @@ void TestMapStringString2(void)
 	CMapStringString	cMapStringSting;
 	char*				sz1;
 
-	cMapStringSting.Init(11);
+	cMapStringSting.Init();
 
 	cMapStringSting.Put("Hello", "World");
 	cMapStringSting.Put("Michelle", "Bridget");
@@ -45,7 +45,7 @@ void TestMapStringInt2(void)
 	CMapStringInt	cMapStringInt;
 	int*			px;
 
-	cMapStringInt.Init(11);
+	cMapStringInt.Init();
 	cMapStringInt.Put("Hello", 73);
 	cMapStringInt.Put("World", 12);
 	cMapStringInt.Put("Hello", 324);
@@ -103,25 +103,9 @@ void TestMapIntInt2(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMap(void)
-{
-	BeginTests();
-
-	TestMapStringString2();
-	TestMapStringInt2();
-	TestMapIntInt2();
-
-	TestStatistics();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 void DumpTree(CTreeInt* pcTree)
 {
-	int*		pi;
+	int* pi;
 	CChars c;
 
 	pi = pcTree->StartTraversal();
@@ -137,5 +121,21 @@ void DumpTree(CTreeInt* pcTree)
 	c.Append("\n\n");
 	c.Dump();
 	c.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMap(void)
+{
+	BeginTests();
+
+	TestMapStringString2();
+	TestMapStringInt2();
+	TestMapIntInt2();
+
+	TestStatistics();
 }
 

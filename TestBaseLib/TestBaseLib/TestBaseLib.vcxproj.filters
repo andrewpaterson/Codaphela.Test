@@ -115,12 +115,6 @@
     <Filter Include="Source\Data\Array\Embedded">
       <UniqueIdentifier>{54544f2f-36a6-4285-b327-8eb77f822792}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Data\Map\String">
-      <UniqueIdentifier>{41ea07bd-fab8-4567-82da-4369d44d629a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\Data\Map\Primitive">
-      <UniqueIdentifier>{75ee2fe2-6f73-4a20-ad84-62e1b62491d2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Data\LinkedList">
       <UniqueIdentifier>{84a720a1-3862-4dc3-b246-4fccae290aa8}</UniqueIdentifier>
     </Filter>
@@ -135,6 +129,15 @@
     </Filter>
     <Filter Include="Source\Data\Primitive">
       <UniqueIdentifier>{36ac1be1-f14a-4d70-b710-5b688735bdc8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Map\Map">
+      <UniqueIdentifier>{141fe9c8-f9bc-4bc1-adfe-712c7b821a89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Map\Map\Primitive">
+      <UniqueIdentifier>{75ee2fe2-6f73-4a20-ad84-62e1b62491d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Map\Map\String">
+      <UniqueIdentifier>{41ea07bd-fab8-4567-82da-4369d44d629a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -234,9 +237,6 @@
     <ClCompile Include="TestArrayBlockSorted.cpp">
       <Filter>Source\Data\Array\Sorted</Filter>
     </ClCompile>
-    <ClCompile Include="TestMapBlock.cpp">
-      <Filter>Source\Data\Map</Filter>
-    </ClCompile>
     <ClCompile Include="SortedTestObject.cpp">
       <Filter>Source\Data\Array\Sorted</Filter>
     </ClCompile>
@@ -251,9 +251,6 @@
     </ClCompile>
     <ClCompile Include="TestFreeListAllocator.cpp">
       <Filter>Source\Memory\FreeList</Filter>
-    </ClCompile>
-    <ClCompile Include="TestMapPtr.cpp">
-      <Filter>Source\Data\Map</Filter>
     </ClCompile>
     <ClCompile Include="TestTrackingAllocator.cpp">
       <Filter>Source\Memory\Manager</Filter>
@@ -278,9 +275,6 @@
     </ClCompile>
     <ClCompile Include="TestIndexTreeIterator.cpp">
       <Filter>Source\Data\Index</Filter>
-    </ClCompile>
-    <ClCompile Include="TestMap.cpp">
-      <Filter>Source\Data\Map</Filter>
     </ClCompile>
     <ClCompile Include="TestArrayTemplateMinimal.cpp">
       <Filter>Source\Data\Array\Minimal</Filter>
@@ -349,13 +343,13 @@
       <Filter>Source\Memory\Manager</Filter>
     </ClCompile>
     <ClCompile Include="TestMapString.cpp">
-      <Filter>Source\Data\Map\String</Filter>
+      <Filter>Source\Data\Map\Map\String</Filter>
     </ClCompile>
     <ClCompile Include="TestMapInt.cpp">
-      <Filter>Source\Data\Map\Primitive</Filter>
+      <Filter>Source\Data\Map\Map\Primitive</Filter>
     </ClCompile>
     <ClCompile Include="TestMapLong.cpp">
-      <Filter>Source\Data\Map\Primitive</Filter>
+      <Filter>Source\Data\Map\Map\Primitive</Filter>
     </ClCompile>
     <ClCompile Include="TestLinkedList.cpp">
       <Filter>Source\Data\LinkedList</Filter>
@@ -389,6 +383,18 @@
     </ClCompile>
     <ClCompile Include="TestDataTypesIO.cpp">
       <Filter>Source\Data\Types\File</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMap.cpp">
+      <Filter>Source\Data\Map\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMapBlock.cpp">
+      <Filter>Source\Data\Map\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMapPtr.cpp">
+      <Filter>Source\Data\Map\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMapIndexAccess.cpp">
+      <Filter>Source\Data\Map\Map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
