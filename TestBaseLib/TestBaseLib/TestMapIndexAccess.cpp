@@ -40,18 +40,23 @@ struct STestMapIndexAccessKey
 //////////////////////////////////////////////////////////////////////////
 void TestMapIndexAccessPut(void)
 {
-	CMapBlock				cMap;
-	CMapIndexAccess			cAccess;
-	STestMapIndexAccessData	s1;
-	STestMapIndexAccessData	s2;
-	STestMapIndexAccessData	s3;
-	STestMapIndexAccessData	s4;
-	STestMapIndexAccessData	s5;
-	STestMapIndexAccessData	s6;
-	STestMapIndexAccessData	s7;
-	STestMapIndexAccessKey	sk1;
-	STestMapIndexAccessKey	sk2;
-	STestMapIndexAccessKey	sk3;
+	CMapBlock					cMap;
+	CMapIndexAccess				cAccess;
+	STestMapIndexAccessData		s1;
+	STestMapIndexAccessData		s2;
+	STestMapIndexAccessData		s3;
+	STestMapIndexAccessData		s4;
+	STestMapIndexAccessData		s5;
+	STestMapIndexAccessData		s6;
+	STestMapIndexAccessData		s7;
+	STestMapIndexAccessKey		sk1;
+	STestMapIndexAccessKey		sk2;
+	STestMapIndexAccessKey		sk3;
+	STestMapIndexAccessData*	ps;
+	STestMapIndexAccessData		sDest;
+	size_t						uiSize;
+	char						sz[256];
+
 
 	s1.Init(1, 2, 3, 4);
 	s2.Init(5, 6, 7, 8);
@@ -90,7 +95,39 @@ void TestMapIndexAccessPut(void)
 	AssertTrue(cAccess.PutKeyInt(&sk2, sizeof(STestMapIndexAccessKey), 88));
 	AssertTrue(cAccess.PutKeyString(&sk3, sizeof(STestMapIndexAccessKey), "Dangerous"));
 
-
+	ps = (STestMapIndexAccessData*)cAccess.GetLongPtr(0x1000000000000001L);
+	AssertPointer(&s1, ps);
+	AssertInt(102, cAccess.GetLongInt(0x1000000000000004L));
+	AssertLongLongInt(0x1000000000000022L, cAccess.GetLongLong(0x1000000000000006L));
+	AssertChar('c', cAccess.GetLongChar(0x1000000000000003L));
+	AssertString("Whole Hole", cAccess.GetLongString(0x1000000000000002L, sz, 256));
+	AssertTrue(cAccess.GetLongData(0x1000000000000005L, &sDest, &uiSize, sizeof(STestMapIndexAccessData)));
+	AssertSize(sizeof(STestMapIndexAccessData), uiSize);
+	AssertMemory(&s2, &sDest, sizeof(STestMapIndexAccessData));
+	ps = (STestMapIndexAccessData*)cAccess.GetIntPtr(0x10000003);
+	AssertPointer(&s3, ps);
+	AssertInt(101, cAccess.GetIntInt(0x10000001, 101));
+	AssertLongLongInt(0x1000000000000004L, cAccess.GetIntLong(0x10000004));
+	AssertChar('d', cAccess.GetIntChar(0x10000002));
+	AssertString("Spot the Dog", cAccess.GetIntString(0x10000005, sz, 256));
+	AssertTrue(cAccess.GetIntData(0x10000006, &sDest, &uiSize, sizeof(STestMapIndexAccessData)));
+	AssertSize(sizeof(STestMapIndexAccessData), uiSize);
+	AssertMemory(&s4, &sDest, sizeof(STestMapIndexAccessData));
+	ps = (STestMapIndexAccessData*)cAccess.GetStringPtr("01");
+	AssertPointer(&s5, ps);
+	AssertTrue(cAccess.GetStringData("02", &sDest, &uiSize, sizeof(STestMapIndexAccessData)));
+	AssertSize(sizeof(STestMapIndexAccessData), uiSize);
+	AssertMemory(&s6, &sDest, sizeof(STestMapIndexAccessData));
+	AssertChar('e', cAccess.GetStringChar("1"));
+	AssertInt(203, cAccess.GetStringInt("10"));
+	AssertLongLongInt(0x1000000000000001L, cAccess.GetStringLong("11"));
+	AssertString("Jip the Cat", cAccess.GetStringString("12", sz, 256));
+	AssertTrue(cAccess.GetKeyData(&sk1, sizeof(STestMapIndexAccessKey), &sDest, &uiSize, sizeof(STestMapIndexAccessData)));
+	AssertSize(sizeof(STestMapIndexAccessData), uiSize);
+	AssertMemory(&s7, &sDest, sizeof(STestMapIndexAccessData));
+	AssertInt(88, cAccess.GetKeyInt(&sk2, sizeof(STestMapIndexAccessKey)));
+	AssertString("Dangerous", cAccess.GetKeyString(&sk3, sizeof(STestMapIndexAccessKey), sz, 256));
+			
 	cAccess.Kill();
 	cMap.Kill();
 };
