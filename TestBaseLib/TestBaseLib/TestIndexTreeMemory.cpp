@@ -4,6 +4,7 @@
 #include "BaseLib/CountingAllocator.h"
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/MemoryFile.h"
+#include "BaseLib/Logger.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
 #include "TestIndexTreeMemory.h"
@@ -71,6 +72,7 @@ void TestIndexTreeMemoryAdd(EIndexKeyReverse eKeyReverse)
 	CTestIndexTreeObject**	ppvTest;
 	CTestIndexTreeObject***	ppvTestA;
 	CTestIndexTreeObject***	ppvTestAA;
+	SLogConfig				sLogConfig;
 
 	cIndex.Init(eKeyReverse);
 	cAccess.Init(&cIndex);
@@ -110,9 +112,13 @@ void TestIndexTreeMemoryAdd(EIndexKeyReverse eKeyReverse)
 	cIndex.Kill();
 
 	cIndex.Init(eKeyReverse);
+	sLogConfig = gcLogger.SetSilent();
 	bResult = cAccess.PutStringPtr(NULL, &temp);
+	gcLogger.SetConfig(&sLogConfig);
 	AssertFalse(bResult);
+	sLogConfig = gcLogger.SetSilent();
 	bResult = cAccess.PutStringPtr("", &temp);
+	gcLogger.SetConfig(&sLogConfig);
 	AssertFalse(bResult);
 
 	cIndex.Kill();

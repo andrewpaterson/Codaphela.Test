@@ -1,5 +1,5 @@
 #include "BaseLib/MapBlock.h"
-#include "BaseLib/MapBlockAccess.h"
+#include "BaseLib/MapIndexAccess.h"
 #include "BaseLib/SystemAllocator.h"
 #include "BaseLib/CountingAllocator.h"
 #include "BaseLib/IntegerHelper.h"
@@ -521,7 +521,7 @@ void TestMapBlockRemoveHalf(void)
 void TestMapBlockPutDifferenceSizeDuplicates(void)
 {
 	CTestMapBlock			cIndex;
-	CMapBlockAccess			cAccess;
+	CMapIndexAccess			cAccess;
 	char					szOne[] = "1";
 	char					szTwo[] = "22";
 	char					szOtherTwo[] = "OT";
