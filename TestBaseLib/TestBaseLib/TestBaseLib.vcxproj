@@ -224,6 +224,7 @@
     <ClCompile Include="TestFileIO.cpp" />
     <ClCompile Include="TestFloat4.cpp" />
     <ClCompile Include="TestFreeListAllocator.cpp" />
+    <ClCompile Include="TestIndexBlock.cpp" />
     <ClCompile Include="TestIndexTreeConfig.cpp" />
     <ClCompile Include="TestIndexTreeDataOrderer.cpp" />
     <ClCompile Include="TestIndexTreeMemory.cpp" />
@@ -239,8 +240,9 @@
     <ClCompile Include="TestListVariable.cpp" />
     <ClCompile Include="TestLogger.cpp" />
     <ClCompile Include="TestMap.cpp" />
+    <ClCompile Include="TestMapAccess.cpp" />
     <ClCompile Include="TestMapBlock.cpp" />
-    <ClCompile Include="TestMapIndexAccess.cpp" />
+    <ClCompile Include="TestIndexAccess.cpp" />
     <ClCompile Include="TestMapLong.cpp" />
     <ClCompile Include="TestMapString.cpp" />
     <ClCompile Include="TestMemoryAllocator.cpp" />
@@ -294,6 +296,7 @@
     <ClInclude Include="SortedTestObject.h" />
     <ClInclude Include="TestIndexTreeMemory.h" />
     <ClInclude Include="TestIndexTreeObject.h" />
+    <ClInclude Include="TestMap.h" />
     <ClInclude Include="TestPackFile.h" />
   </ItemGroup>
   <ItemGroup>

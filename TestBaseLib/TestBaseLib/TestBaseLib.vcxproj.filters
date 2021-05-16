@@ -139,6 +139,12 @@
     <Filter Include="Source\Data\Map\Map\String">
       <UniqueIdentifier>{41ea07bd-fab8-4567-82da-4369d44d629a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Data\Map\Access">
+      <UniqueIdentifier>{5a1f223d-f91c-4a03-8275-1f0493c5199b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Map\Index">
+      <UniqueIdentifier>{3d7c81da-ed16-4589-82df-dfd04acec8d5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -393,8 +399,14 @@
     <ClCompile Include="TestMapPtr.cpp">
       <Filter>Source\Data\Map\Map</Filter>
     </ClCompile>
-    <ClCompile Include="TestMapIndexAccess.cpp">
-      <Filter>Source\Data\Map\Map</Filter>
+    <ClCompile Include="TestIndexAccess.cpp">
+      <Filter>Source\Data\Map\Access</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMapAccess.cpp">
+      <Filter>Source\Data\Map\Access</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexBlock.cpp">
+      <Filter>Source\Data\Map\Index</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -421,6 +433,9 @@
     </ClInclude>
     <ClInclude Include="TestIndexTreeMemory.h">
       <Filter>Source\Data\Index</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMap.h">
+      <Filter>Source\Data\Map\Map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

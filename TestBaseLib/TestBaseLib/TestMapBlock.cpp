@@ -10,6 +10,7 @@
 #include "BaseLib/LogString.h"
 #include "TestLib/Words.h"
 #include "TestLib/Assert.h"
+#include "TestMap.h"
 
 
 class CTestMapBlock : public CMapBlock
@@ -345,27 +346,6 @@ void TestMapBlockReadWrite(void)
 	mszszIn.Kill();
 	cFile.Close();
 	cFile.Kill();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void MakeKey(CRandom* cRandom, CArrayChars* aszWords, CChars* sz)
-{
-	int		iIndex;
-	char*	szWord;
-
-	iIndex = cRandom->Next(0, aszWords->NumElements() - 1);
-	szWord = aszWords->GetText(iIndex);
-	sz->Init(szWord)->Append(" ");
-	iIndex = cRandom->Next(0, aszWords->NumElements() - 1);
-	szWord = aszWords->GetText(iIndex);
-	sz->Append(szWord)->Append(" ");
-	iIndex = cRandom->Next(0, aszWords->NumElements() - 1);
-	szWord = aszWords->GetText(iIndex);
-	sz->Append(szWord);
 }
 
 
