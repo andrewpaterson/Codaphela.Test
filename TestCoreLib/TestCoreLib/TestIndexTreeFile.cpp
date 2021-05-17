@@ -2098,24 +2098,24 @@ void TestIndexTreeFileComplex(void)
 	cIndexTree.Init(&cController, NULL, IWT_Yes, IKR_No);
 	cAccess.Init(&cIndexTree);
 
-	bHasNext = cMap.StartIteration(&sIter, (void**)&szKey, (void**)&szValue);
+	bHasNext = cMap.StartIteration(&sIter, (void**)&szKey, NULL, (void**)&szValue, NULL);
 	while (bHasNext)
 	{
 		AssertTrue(cAccess.PutStringString(szKey, szValue));
 		cIndexTree.ValidateKey(szKey, strlen(szKey));
-		bHasNext = cMap.Iterate(&sIter, (void**)&szKey, (void**)&szValue);
+		bHasNext = cMap.Iterate(&sIter, (void**)&szKey, NULL, (void**)&szValue, NULL);
 	}
 	AssertInt(cMap.NumElements(), cIndexTree.NumElements());
 	AssertTrue(cIndexTree.ValidateIndexTree());
 
-	bHasNext = cMap.StartIteration(&sIter, (void**)&szKey, (void**)&szValue);
+	bHasNext = cMap.StartIteration(&sIter, (void**)&szKey, NULL, (void**)&szValue, NULL);
 	while (bHasNext)
 	{
 		AssertNotNull(cAccess.GetStringString(szKey, sz));
 		szValue = cMap.Get(szKey);
 		AssertString(szValue, sz);
 
-		bHasNext = cMap.Iterate(&sIter, (void**)&szKey, (void**)&szValue);
+		bHasNext = cMap.Iterate(&sIter, (void**)&szKey, NULL, (void**)&szValue, NULL);
 	}
 
 	cController.End();
@@ -2129,14 +2129,14 @@ void TestIndexTreeFileComplex(void)
 	cIndexTree.Init(&cController, NULL, IWT_Yes, IKR_No);
 	cAccess.Init(&cIndexTree);
 
-	bHasNext = cMap.StartIteration(&sIter, (void**)&szKey, (void**)&szValue);
+	bHasNext = cMap.StartIteration(&sIter, (void**)&szKey, NULL, (void**)&szValue, NULL);
 	while (bHasNext)
 	{
 		AssertNotNull(cAccess.GetStringString(szKey, sz));
 		szValue = cMap.Get(szKey);
 		AssertString(szValue, sz);
 		
-		bHasNext = cMap.Iterate(&sIter, (void**)&szKey, (void**)&szValue);
+		bHasNext = cMap.Iterate(&sIter, (void**)&szKey, NULL, (void**)&szValue, NULL);
 	}
 
 	cController.End();

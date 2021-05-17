@@ -46,14 +46,14 @@ void TestIndexTreeWriterWrite(void)
 	cIndexTree.Init();
 	cAccess.Init(&cIndexTree);
 
-	bExists = cMap.StartIteration(&sMapIter, (void**)&pvKey, (void**)&pvData);
+	bExists = cMap.StartIteration(&sMapIter, (void**)&pvKey, NULL, (void**)&pvData, NULL);
 	while (bExists)
 	{
 		iKeyLength = strlen((char*)pvKey);
 		iDataSize = strlen((char*)pvData);
 		cAccess.PutKeyData(pvKey, iKeyLength, pvData, iDataSize);
 
-		bExists = cMap.Iterate(&sMapIter, (void**)&pvKey, (void**)&pvData);
+		bExists = cMap.Iterate(&sMapIter, (void**)&pvKey, NULL, (void**)&pvData, NULL);
 	}
 
 	AssertInt(12, cIndexTree.NumElements());

@@ -56,14 +56,14 @@ void TestIndexTreeFileIteratorUnsafeIterate(void)
 
 	AssertInt(12, cMap.NumElements());
 
-	bExists = cMap.StartIteration(&sMapIter, (void**)&pvKey, (void**)&pvData);
+	bExists = cMap.StartIteration(&sMapIter, (void**)&pvKey, NULL, (void**)&pvData, NULL);
 	while (bExists)
 	{
 		iKeyLength = strlen((char*)pvKey);
 		iDataSize = strlen((char*)pvData);
 		cIndexTree.Put(pvKey, iKeyLength, pvData, (unsigned char)iDataSize);
 
-		bExists = cMap.Iterate(&sMapIter, (void**)&pvKey, (void**)&pvData);
+		bExists = cMap.Iterate(&sMapIter, (void**)&pvKey, NULL, (void**)&pvData, NULL);
 	}
 
 	AssertInt(12, cIndexTree.NumElements());

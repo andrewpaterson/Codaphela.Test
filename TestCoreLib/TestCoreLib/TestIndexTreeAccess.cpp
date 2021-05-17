@@ -18,7 +18,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void Flush(CIndexTreeAccess* pcAccess, int iFlushFrequency, int* piCurrent)
+void Flush(CIndexAccess* pcAccess, int iFlushFrequency, int* piCurrent)
 {
 	if (iFlushFrequency != -1)
 	{
@@ -37,7 +37,7 @@ void Flush(CIndexTreeAccess* pcAccess, int iFlushFrequency, int* piCurrent)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeAccessString(CIndexTreeAccess* pcAccess, int iFlushFrequency)
+void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 {
 	int64					lliData;
 	int						iData;
