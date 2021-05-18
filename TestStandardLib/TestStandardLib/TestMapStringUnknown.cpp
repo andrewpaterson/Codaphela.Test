@@ -70,6 +70,7 @@ void TestMapStringUnknownGet(void)
 	pcTest = cMap.Put<CTestUnknownJobbie>("Aardvark");
 	pcTest->Init(4, "Restore");
 	AssertInt(3, cMap.NumElements());
+	AssertInt(3, gcUnknowns.NumElements());
 
 	pcTest = (CTestUnknownJobbie*)cMap.Get("World");
 	AssertInt(19, pcTest->miANumber);
@@ -78,13 +79,16 @@ void TestMapStringUnknownGet(void)
 	pcA1 = UMalloc(CTestUnknownJobbie);
 	pcA1->Init(999, "Grand");
 	cMap.Put("Thesaurus", pcA1);
+	AssertInt(4, cMap.NumElements());
+	AssertInt(4, gcUnknowns.NumElements());
 	pcA2 = UMalloc(CTestUnknownJobbie);
 	pcA2->Init(17, "Replaced!");
 	cMap.Put("World", pcA2);
+	AssertInt(4, cMap.NumElements());
+	AssertInt(4, gcUnknowns.NumElements());
 	pcA3 = UMalloc(CTestUnknownJobbie);
 	pcA3->Init(32, "Another");
 	cMap.Put("Jump", pcA3);
-
 	AssertInt(5, cMap.NumElements());
 	AssertInt(5, gcUnknowns.NumElements());
 
