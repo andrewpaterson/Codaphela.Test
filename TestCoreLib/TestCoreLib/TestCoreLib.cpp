@@ -64,30 +64,30 @@ int main(void)
 	TestDurableSet();
 	TestDurableFile();  
 	TestDurableFileController();  // <-- Memory Leak
-	TestFiles();
-	TestPackFilesPacker();
-	TestIndexedFile();
-	TestIndexedFiles();
-	TestIndexTreeMemory();
-	TestIndexTreeNodeFile();
-	TestIndexTreeFile();
-	TestIndexTreeDataOrderer();
-	TestIndexTreeFileCallback();
-	TestIndexTreeFileIterator();
-	TestIndexTreeTemplateFile();
-	TestIndexTreeWriter();
-	TestIndexTreeEvicting();
-	TestIndexedFilesEvicting();
-	TestIndexedData();
-	TestSequence();
-	TestNamedIndexes();
-	TestNamedIndexedData();
-	TestIndexTreeFileKeyDiagnosticCallback();
-	TestIndexTreeAccess();
-	TestCodabase();
+	//TestFiles();
+	//TestPackFilesPacker();
+	//TestIndexedFile();
+	//TestIndexedFiles();
+	//TestIndexTreeMemory();
+	//TestIndexTreeNodeFile();
+	//TestIndexTreeFile();
+	//TestIndexTreeDataOrderer();
+	//TestIndexTreeFileCallback();
+	//TestIndexTreeFileIterator();
+	//TestIndexTreeTemplateFile();
+	//TestIndexTreeWriter();
+	//TestIndexTreeEvicting();
+	//TestIndexedFilesEvicting();
+	//TestIndexedData();
+	//TestSequence();
+	//TestNamedIndexes();
+	//TestNamedIndexedData();
+	//TestIndexTreeFileKeyDiagnosticCallback();
+	//TestIndexTreeAccess();
+	//TestCodabase();
 
 	iResult = TestTotalStatistics();
-	//_CrtDumpMemoryLeaks();
+	_CrtDumpMemoryLeaks();
 	return iResult;
 }
 

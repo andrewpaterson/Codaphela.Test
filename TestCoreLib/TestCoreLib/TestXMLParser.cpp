@@ -245,6 +245,7 @@ void TestXMLParserErrors(void)
 	CMarkup			cMarkup;
 	CLogger			cLogger;
 	CMemoryFile		cMemory;
+	SLogConfig		sLogConfig;
 	char			szZero[1] = { 0 };
 	char			szXML[] = "\
 <Root>\n\
@@ -256,7 +257,7 @@ void TestXMLParserErrors(void)
 
 	cMemory.Init();
 	cLogger.Init(&cMemory, NULL);
-	cLogger.SetSilent();
+	sLogConfig = cLogger.SetSilent();
 	cMarkup.Init();
 	cXMLParser.Init(&cMarkup, &cLogger);
 	tResult = cXMLParser.Parse(szXML, "InMemory");
@@ -264,6 +265,7 @@ void TestXMLParserErrors(void)
 
 	AssertString("ERROR: InMemory [2, 21]: '=' expected after attribute.\n", (char*)cMemory.GetBufferPointer());
 
+	cLogger.SetConfig(&sLogConfig);
 	cXMLParser.Kill();
 	cMarkup.Kill();
 	cLogger.Kill();
