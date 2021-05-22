@@ -2,9 +2,12 @@
 #include "BaseLib/IndexTreeMemoryAccess.h"
 #include "BaseLib/TrackingAllocator.h"
 #include "BaseLib/CountingAllocator.h"
+#include "BaseLib/CreationDataOrderer.h"
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/Logger.h"
+#include "BaseLib/LocalMallocatorConstructors.h"
+#include "BaseLib/DataOrderers.h"
 #include "TestLib/Assert.h"
 #include "TestIndexTreeObject.h"
 #include "TestIndexTreeMemory.h"
@@ -1016,7 +1019,6 @@ void TestIndexTreeMemoryReadWrite(void)
 	cIndex.Kill();
 	cFile.Close();
 
-	cIndexIn.Init();
 	cFile.Open(EFM_Read);
 	bResult = cIndexIn.Read(&cFile);
 	AssertTrue(bResult);
@@ -1326,12 +1328,149 @@ void TestIndexTreeMemoryDataFree(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeMemoryReadWriteDataOrderer(void)
+{
+	CFileBasic							cFile;
+	CTestIndexTreeMemory				cIndex;
+	CIndexTreeMemoryAccess				cAccess;
+	CTestIndexTreeMemory				cIndexIn;
+	CIndexTreeMemoryAccess				cAccessIn;
+	char								szResult[256];
+	BOOL								bResult;
+	CIndexTreeMemoryConfig				cConfig;
+	CLifeInit<CMallocator>				cMallocInit;
+	CMemoryAllocator					cMalloc;
+	CLifeInit<CIndexTreeDataOrderer>	cOrdererInit;
+	CCreationDataOrderer				cOrderer;
+	SDataOrderIterator					sIter;
+	char								szData[128];
+	char								szKey[24];
+	BOOL								bExists;
+	CIndexTreeDataOrderer*				pcOrderer;
+
+	cMalloc.Init();
+	cMallocInit.Init(&cMalloc, FALSE, TRUE);
+	cOrderer.Init();
+	cOrdererInit.Init(&cOrderer, FALSE, TRUE);
+	cConfig.Init(cMallocInit, IKR_No, 128, 24, cOrdererInit);
+
+	cIndex.Init(&cConfig);
+	cAccess.Init(&cIndex);
+	cConfig.Kill();
+
+	cAccess.PutStringData("AAA", "DENISA", 7);
+	cAccess.PutStringData("AAB", "ARIANA", 7);
+	cAccess.PutStringData("C", "VENERA", 7);
+	cAccess.PutStringData("AA", "FATJETA", 8);
+	cAccess.PutStringData("AB", "IRMA", 5);
+	cAccess.PutStringData("DD", "PRIMERA", 8);
+	cAccess.PutStringData("DDDD", "PRANVERA", 9);
+	cAccess.PutStringData("AAC", "GEORGE", 7);
+	cAccess.PutStringData("ABB", "LULE", 5);
+	cAccess.PutStringData("ABA", "JULIANA", 8);
+
+	bExists = cOrderer.StartIteration(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("ABA", szKey); AssertString("JULIANA", szData);
+	bExists = cOrderer.Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("ABB", szKey); AssertString("LULE", szData);
+	bExists = cOrderer.Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("AAC", szKey); AssertString("GEORGE", szData);
+	bExists = cOrderer.Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("DDDD", szKey); AssertString("PRANVERA", szData);
+	bExists = cOrderer.Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("DD", szKey); AssertString("PRIMERA", szData);
+
+	bExists = cOrderer.Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("AB", szKey); AssertString("IRMA", szData);
+	bExists = cOrderer.Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("AA", szKey); AssertString("FATJETA", szData);
+	bExists = cOrderer.Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("C", szKey); AssertString("VENERA", szData);
+	bExists = cOrderer.Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("AAB", szKey); AssertString("ARIANA", szData);
+	bExists = cOrderer.Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("AAA", szKey); AssertString("DENISA", szData);
+
+	bExists = cOrderer.Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertFalse(bExists);
+
+	cFile.Init(MemoryFile());
+	cFile.Open(EFM_Write_Create);
+	AssertTrue(cIndex.Write(&cFile));
+	cAccess.Kill();
+	cIndex.Kill();
+	cFile.Close();
+
+	cFile.Open(EFM_Read);
+	bResult = cIndexIn.Read(&cFile);
+	AssertTrue(bResult);
+	cAccessIn.Init(&cIndexIn);
+	cFile.Close();
+	cFile.Kill();
+
+	pcOrderer = cIndexIn.GetDataOrderer();
+	AssertString("CCreationDataOrderer", pcOrderer->ClassName());
+
+	AssertInt(14, cIndexIn.NumAllocatedNodes());
+	AssertInt(10, cIndexIn.RecurseSize());
+	AssertInt(10, cIndexIn.NumElements());
+	AssertString("DENISA", cAccessIn.GetStringString("AAA", szResult));
+	AssertString("FATJETA", cAccessIn.GetStringString("AA", szResult));
+	AssertString("ARIANA", cAccessIn.GetStringString("AAB", szResult));
+	AssertString("GEORGE", cAccessIn.GetStringString("AAC", szResult));
+	AssertString("IRMA", cAccessIn.GetStringString("AB", szResult));
+	AssertString("JULIANA", cAccessIn.GetStringString("ABA", szResult));
+	AssertString("LULE", cAccessIn.GetStringString("ABB", szResult));
+	AssertString("VENERA", cAccessIn.GetStringString("C", szResult));
+	AssertString("PRANVERA", cAccessIn.GetStringString("DDDD", szResult));
+	AssertString("PRIMERA", cAccessIn.GetStringString("DD", szResult));
+
+	bExists = pcOrderer->StartIteration(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("DDDD", szKey); AssertString("PRANVERA", szData);
+	bExists = pcOrderer->Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("DD", szKey); AssertString("PRIMERA", szData);
+	bExists = pcOrderer->Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("C", szKey); AssertString("VENERA", szData);
+	bExists = pcOrderer->Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("ABB", szKey); AssertString("LULE", szData);
+	bExists = pcOrderer->Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("ABA", szKey); AssertString("JULIANA", szData);
+
+	bExists = pcOrderer->Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("AB", szKey); AssertString("IRMA", szData);
+	bExists = pcOrderer->Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("AAC", szKey); AssertString("GEORGE", szData);
+	bExists = pcOrderer->Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("AAB", szKey); AssertString("ARIANA", szData);
+	bExists = pcOrderer->Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("AAA", szKey); AssertString("DENISA", szData);
+	bExists = pcOrderer->Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("AA", szKey); AssertString("FATJETA", szData);
+
+	bExists = pcOrderer->Iterate(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertFalse(bExists);
+
+	cAccessIn.PutStringData("ZZZ", "EXCELSIOR", 10);
+	bExists = pcOrderer->StartIteration(&sIter, szKey, NULL, 24, szData, NULL, 128);
+	AssertTrue(bExists); AssertString("ZZZ", szKey); AssertString("EXCELSIOR", szData);
+
+	cAccessIn.Kill();
+	cIndexIn.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemory(void)
 {
 
 	BeginTests();
 	FastFunctionsInit();
 	MemoryInit();
+	LocalMallocatorsInit();
+	DataOrderersInit();
 
 	TestIndexTreeMemoryKill();
 	TestIndexTreeMemoryDescribeNode();
@@ -1355,7 +1494,9 @@ void TestIndexTreeMemory(void)
 	TestIndexTreeMemoryDescribeData();
 	TestIndexTreeMemoryPut();
 	TestIndexTreeMemoryDataFree();
+	TestIndexTreeMemoryReadWriteDataOrderer();
 
+	DataOrderersKill();
 	MemoryKill();
 	FastFunctionsKill();
 	TestStatistics();
