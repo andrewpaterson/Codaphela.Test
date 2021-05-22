@@ -21,6 +21,7 @@ void TestMapLong(void);
 void TestMapPtr(void);
 void TestMapString(void);
 void TestMap(void);
+void TestIndexBlock(void);
 void TestIndexAccess(void);
 void TestMapAccess(void);
 void TestListBlock(void);
@@ -151,6 +152,7 @@ int main(void)
 	TestLinkedListTemplate();
 	TestLinkedListBlockAligned();
 	TestIndexTreeMemory();
+	TestIndexBlock();
 	TestCSVFileEditable();
 	TestGeneralMemory();
 	TestDataMemory();

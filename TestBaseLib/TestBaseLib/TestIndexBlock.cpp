@@ -7,6 +7,8 @@
 #include "BaseLib/StdRandom.h"
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/LogString.h"
+#include "BaseLib/LocalMallocatorConstructors.h"
+#include "BaseLib/DataOrderers.h"
 #include "TestLib/Words.h"
 #include "TestLib/Assert.h"
 #include "TestMap.h"
@@ -240,10 +242,10 @@ void TestIndexBlockRemove(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexBlockReadWrite(void)
 {
-	CIndexMapAccess		cAccess;
-	CIndexBlock			cIndex;
-	CFileBasic			cFile;
-	CIndexBlock			cIndexIn;
+	CIndexMapAccess					cAccess;
+	CIndexBlock						cIndex;
+	CFileBasic						cFile;
+	CIndexBlock						cIndexIn;
 
 	cIndex.Init();
 	cAccess.Init(&cIndex);
@@ -261,6 +263,7 @@ void TestIndexBlockReadWrite(void)
 	cFile.Init(MemoryFile());
 	cFile.Open(EFM_Write_Create);
 	AssertTrue(cIndex.Write(&cFile));
+
 	cAccess.Kill();
 	cIndex.Kill();
 
@@ -274,6 +277,104 @@ void TestIndexBlockReadWrite(void)
 	AssertString("Detection", cAccess.GetStringString("Collision"));
 	AssertString("Evolved", cAccess.GetStringString("Retro"));
 	AssertString("Canada", cAccess.GetStringString("Blame"));
+
+	cIndexIn.Kill();
+	cFile.Close();
+	cFile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexBlockIterate(void)
+{
+	CIndexMapAccess					cAccess;
+	CIndexBlock						cIndex;
+	CFileBasic						cFile;
+	CIndexBlock						cIndexIn;
+	SIndexTreeMemoryUnsafeIterator	sIter;
+	char* pvData;
+	size_t							uiDataSize;
+	char							szKey[MAX_KEY_SIZE];
+	size_t							uiKeySize;
+	BOOL							bExists;
+
+	cIndex.Init();
+	cAccess.Init(&cIndex);
+
+	cAccess.PutStringString("ABC", "XYZ");
+	cAccess.PutStringString("Collision", "Detection");
+	cAccess.PutStringString("Retro", "Evolved");
+	cAccess.PutStringString("Blame", "Canada");
+
+	cFile.Init(MemoryFile());
+	cFile.Open(EFM_Write_Create);
+	AssertTrue(cIndex.Write(&cFile));
+
+	bExists = cIndex.StartIteration(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
+	AssertTrue(bExists);
+	AssertString("ABC", szKey);
+	AssertString("XYZ", pvData);
+	AssertInt(3, uiKeySize);
+	AssertInt(4, uiDataSize);
+	bExists = cIndex.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
+	AssertTrue(bExists);
+	AssertString("Blame", szKey);
+	AssertString("Canada", pvData);
+	AssertInt(5, uiKeySize);
+	AssertInt(7, uiDataSize);
+	bExists = cIndex.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
+	AssertTrue(bExists);
+	AssertString("Collision", szKey);
+	AssertString("Detection", pvData);
+	AssertInt(9, uiKeySize);
+	AssertInt(10, uiDataSize);
+	bExists = cIndex.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
+	AssertTrue(bExists);
+	AssertString("Retro", szKey);
+	AssertString("Evolved", pvData);
+	AssertInt(5, uiKeySize);
+	AssertInt(8, uiDataSize);
+	bExists = cIndex.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
+	AssertFalse(bExists);
+
+	cAccess.Kill();
+	cIndex.Kill();
+
+	cFile.Close();
+	cFile.Open(EFM_Read);
+
+	AssertTrue(cIndexIn.Read(&cFile));
+	cAccess.Init(&cIndexIn);
+
+	bExists = cIndex.StartIteration(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
+	AssertTrue(bExists);
+	AssertString("ABC", szKey);
+	AssertString("XYZ", pvData);
+	AssertInt(3, uiKeySize);
+	AssertInt(4, uiDataSize);
+	bExists = cIndex.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
+	AssertTrue(bExists);
+	AssertString("Blame", szKey);
+	AssertString("Canada", pvData);
+	AssertInt(5, uiKeySize);
+	AssertInt(7, uiDataSize);
+	bExists = cIndex.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
+	AssertTrue(bExists);
+	AssertString("Collision", szKey);
+	AssertString("Detection", pvData);
+	AssertInt(9, uiKeySize);
+	AssertInt(10, uiDataSize);
+	bExists = cIndex.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
+	AssertTrue(bExists);
+	AssertString("Retro", szKey);
+	AssertString("Evolved", pvData);
+	AssertInt(5, uiKeySize);
+	AssertInt(8, uiDataSize);
+	bExists = cIndex.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
+	AssertFalse(bExists);
 
 	cIndexIn.Kill();
 	cFile.Close();
@@ -428,6 +529,48 @@ void TestIndexBlockRemoveHalf(void)
 	WordsKill();
 }
 
+char	gszIndexBlockCallbackData[64];
+
+void TestIndexBlockDataFreeCallback(const void* pvData)
+{
+	memset(gszIndexBlockCallbackData, 0, 64);
+	strcpy(gszIndexBlockCallbackData, (char*)pvData);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexBlockDataFree(void)
+{
+	CIndexBlock			cMap;
+	CIndexMapAccess		cAccess;
+
+	cMap.Init();
+	cMap.SetDataFreeCallback(TestIndexBlockDataFreeCallback);
+	cAccess.Init(&cMap);
+
+	TestIndexBlockDataFreeCallback("");
+	cAccess.PutIntString(7, "Jimmy!");
+	AssertString("", gszIndexBlockCallbackData);
+	cAccess.DeleteInt(7);
+	AssertString("Jimmy!", gszIndexBlockCallbackData);
+
+	memset(gszIndexBlockCallbackData, 0, 64);
+	cAccess.PutIntString(7, "Jimmy's not gone.");
+	AssertString("", gszIndexBlockCallbackData);
+	cAccess.PutIntString(7, "Oh, never mind.");
+	AssertString("Jimmy's not gone.", gszIndexBlockCallbackData);
+
+	memset(gszIndexBlockCallbackData, 0, 64);
+	cAccess.PutIntString(7, "Jimmy is Back!!");
+	AssertString("Oh, never mind.", gszIndexBlockCallbackData);
+
+	cAccess.Kill();
+	cMap.Kill();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -436,8 +579,10 @@ void TestIndexBlockRemoveHalf(void)
 void TestIndexBlock(void)
 {
 	BeginTests();
-	MemoryInit();
 	FastFunctionsInit();
+	MemoryInit();
+	LocalMallocatorsInit(&gcConstructors, &gcMallocators);
+	DataOrderersInit(&gcConstructors, &gcDataOrderers);
 
 	TestIndexBlockGet();
 	TestIndexBlockAddDuplicate();
@@ -445,9 +590,11 @@ void TestIndexBlock(void)
 	TestIndexBlockReadWrite();
 	TestIndexBlockDataMemoryUnchanged();
 	TestIndexBlockRemoveHalf();
+	TestIndexBlockDataFree();
+	TestIndexBlockIterate();
 
-	FastFunctionsKill();
 	MemoryKill();
+	FastFunctionsKill();
 	TestStatistics();
 }
 

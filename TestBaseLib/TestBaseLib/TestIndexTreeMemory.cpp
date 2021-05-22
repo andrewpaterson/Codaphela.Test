@@ -1219,6 +1219,7 @@ void TestIndexTreeMemoryDescribeData()
 	cAccess.Kill();
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -1265,6 +1266,62 @@ void TestIndexTreeMemoryPut(void)
 }
 
 
+char	gszIndexTreeMemoryCallbackData[64];
+int		giIndexTreeMemoryCallbackData = 0;
+
+void TestIndexTreeMemoryDataFreeCallback(const void* pvData)
+{
+	memset(gszIndexTreeMemoryCallbackData, 0, 64);
+	strcpy(gszIndexTreeMemoryCallbackData, (char*)pvData);
+	giIndexTreeMemoryCallbackData++;
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeMemoryDataFree(void)
+{
+	CTestIndexTreeMemory	cIndex;
+	CIndexTreeMemoryAccess	cAccess;
+	long long int			lliLarry;
+	long long int			lliThe;
+	long long int			lliLamb;
+
+	cIndex.Init();
+	cIndex.SetDataFreeCallback(TestIndexTreeMemoryDataFreeCallback);
+	cAccess.Init(&cIndex);
+
+	lliLarry = 0x4224f9be509f7b36LL;
+	lliThe = 0x392168ee06b4c0d0;
+	lliLamb = 0xf855181fab7e51e5;
+
+	TestIndexTreeMemoryDataFreeCallback("");
+	AssertTrue(cAccess.PutStringString("Larry", "Paige"));
+	AssertString("", gszIndexTreeMemoryCallbackData);
+	AssertInt(1, giIndexTreeMemoryCallbackData);
+	AssertTrue(cAccess.PutStringString("The", "Live"));
+	AssertTrue(cAccess.PutStringString("Lamb", "Currants"));
+
+	AssertTrue(cAccess.DeleteString("The"));
+	AssertString("Live", gszIndexTreeMemoryCallbackData);
+
+	AssertTrue(cAccess.PutStringString("Larry", "Kinge"));
+	AssertString("Paige", gszIndexTreeMemoryCallbackData);
+
+	AssertTrue(cAccess.PutStringString("Lamb", "Is Delicious"));
+	AssertString("Currants", gszIndexTreeMemoryCallbackData);
+	AssertInt(4, giIndexTreeMemoryCallbackData);
+
+	cAccess.Kill();
+	cIndex.Kill();
+	AssertInt(6, giIndexTreeMemoryCallbackData);
+	AssertString("Kinge", gszIndexTreeMemoryCallbackData);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -1297,6 +1354,7 @@ void TestIndexTreeMemory(void)
 	TestIndexTreeMemoryResizeData();
 	TestIndexTreeMemoryDescribeData();
 	TestIndexTreeMemoryPut();
+	TestIndexTreeMemoryDataFree();
 
 	MemoryKill();
 	FastFunctionsKill();
