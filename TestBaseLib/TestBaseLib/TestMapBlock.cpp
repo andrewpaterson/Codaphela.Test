@@ -594,9 +594,11 @@ void TestMapBlockDataFree(void)
 {
 	CMapBlock			cMap;
 	CMapMapAccess		cAccess;
+	CDataFreeCallBack	cDataFree;
 
 	cMap.Init(&CompareInt, TRUE);
-	cMap.SetDataFreeCallback(TestMapBlockDataFreeCallback);
+	cDataFree.Init(TestMapBlockDataFreeCallback);
+	cMap.SetDataFreeCallback(&cDataFree);
 	cAccess.Init(&cMap);
 
 	TestMapBlockDataFreeCallback("");

@@ -7,8 +7,8 @@
 #include "BaseLib/GlobalMemoryAllocator.h"
 #include "BaseLib/DiskFile.h"
 #include "BaseLib/FileUtil.h"
-#include "BaseLib/IndexTreeDataOrdererConstructors.h"
 #include "BaseLib/LocalMallocatorConstructors.h"
+#include "BaseLib/DataOrderers.h"
 #include "TestLib/Assert.h"
 
 
@@ -65,7 +65,7 @@ void TestIndexTreeMemoryConfigGlobalMallocatorReading(void)
 	cConfigFile.Kill();
 
 	cIndexTree.Init(&cTreeConfig);
-	cAccess.Init(&cIndexTree);
+	cIndexTree.Kill();
 
 	cTreeFile.Init(DiskFile("Output" _FS_ "IndexTreeConfig1" _FS_ "Tree.dat"));
 	cTreeFile.Open(EFM_Read);
@@ -75,7 +75,6 @@ void TestIndexTreeMemoryConfigGlobalMallocatorReading(void)
 	cTreeFile.Kill();
 
 	cIndexTree.Kill();
-	cAccess.Kill();
 
 	cFileUtil.RemoveDir("Output" _FS_ "IndexTreeConfig1");
 }
@@ -118,6 +117,7 @@ void TestIndexTreeMemoryConfigLocalMallocatorReading(void)
 
 	cTreeFile.Init(DiskFile("Output" _FS_ "IndexTreeConfig2" _FS_ "Tree.dat"));
 	cTreeFile.Open(EFM_ReadWrite_Create);
+	//Write writes out the Config into the Tree.dat file.
 	bResult = cIndexTree.Write(&cTreeFile);
 	AssertTrue(bResult);
 	cTreeFile.Close();
@@ -134,17 +134,18 @@ void TestIndexTreeMemoryConfigLocalMallocatorReading(void)
 	cConfigFile.Kill();
 
 	cIndexTree.Init(&cTreeConfig);
-	cAccess.Init(&cIndexTree);
+	cTreeConfig.Kill();
+	cIndexTree.Kill();
 
 	cTreeFile.Init(DiskFile("Output" _FS_ "IndexTreeConfig2" _FS_ "Tree.dat"));
 	cTreeFile.Open(EFM_Read);
+	//Read reads in the config embedded in the Tree.dat file.
 	bResult = cIndexTree.Read(&cTreeFile);
 	AssertTrue(bResult);
 	cTreeFile.Close();
 	cTreeFile.Kill();
 
 	cIndexTree.Kill();
-	cAccess.Kill();
 
 	cFileUtil.RemoveDir("Output" _FS_ "IndexTreeConfig2");
 }
@@ -160,11 +161,12 @@ void TestIndexTreeMemoryConfig(void)
 	FastFunctionsInit();
 	MemoryInit();
 	LocalMallocatorsInit(&gcConstructors, &gcMallocators);
-	IndexTreeDataOrdererInit(&gcConstructors);
+	DataOrderersInit();
 
 	TestIndexTreeMemoryConfigLocalMallocatorReading();
 	TestIndexTreeMemoryConfigGlobalMallocatorReading();
 
+	DataOrderersKill();
 	MemoryKill();
 	FastFunctionsKill();
 	TestStatistics();

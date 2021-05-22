@@ -546,9 +546,11 @@ void TestIndexBlockDataFree(void)
 {
 	CIndexBlock			cMap;
 	CIndexMapAccess		cAccess;
+	CDataFreeCallBack	cDataFree;
 
 	cMap.Init();
-	cMap.SetDataFreeCallback(TestIndexBlockDataFreeCallback);
+	cDataFree.Init(TestIndexBlockDataFreeCallback);
+	cMap.SetDataFreeCallback(&cDataFree);
 	cAccess.Init(&cMap);
 
 	TestIndexBlockDataFreeCallback("");
@@ -593,6 +595,7 @@ void TestIndexBlock(void)
 	TestIndexBlockDataFree();
 	TestIndexBlockIterate();
 
+	DataOrderersKill();
 	MemoryKill();
 	FastFunctionsKill();
 	TestStatistics();

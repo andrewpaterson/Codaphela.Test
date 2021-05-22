@@ -1291,9 +1291,11 @@ void TestIndexTreeMemoryDataFree(void)
 	long long int			lliLarry;
 	long long int			lliThe;
 	long long int			lliLamb;
+	CDataFreeCallBack		cDataFree;
 
 	cIndex.Init();
-	cIndex.SetDataFreeCallback(TestIndexTreeMemoryDataFreeCallback);
+	cDataFree.Init(TestIndexTreeMemoryDataFreeCallback);
+	cIndex.SetDataFreeCallback(&cDataFree);
 	cAccess.Init(&cIndex);
 
 	lliLarry = 0x4224f9be509f7b36LL;
