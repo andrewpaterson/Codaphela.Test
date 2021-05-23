@@ -252,6 +252,8 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	cStrategy.Kill();
 	cController.Kill();
 	cHelper.Kill(TRUE);
+
+	cAllocator.Kill();
 }
 
 
@@ -312,6 +314,9 @@ void TestIndexTreeEvictingEvictWithChildren(void)
 	cIndexTree.Kill();
 	AssertLongLongInt(0, pcMemory->GetTotalAllocatedMemory());
 	cHelper.Kill(TRUE);
+
+	cController.Kill();
+	cAllocator.Kill();
 }
 
 
@@ -628,6 +633,9 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 	cAccess.Kill();
 	AssertLongLongInt(0, pcMemory->GetTotalAllocatedMemory());
 	cHelper.Kill(TRUE);
+
+	cController.Kill();
+	cAllocator.Kill();
 }
 
 
@@ -641,7 +649,6 @@ void TestIndexTreeEvictingEvictLastAccessed(void)
 	CIndexTreeHelper						cHelper;
 	CDurableFileController					cController;
 	CIndexTreeEvictingAccess				cAccess;
-	CMemoryAllocator						cAllocator;
 	CIndexTreeEvictionStrategyDataOrderer	cStrategy;
 	CIndexTreeEvictedList					cIndexTreeEvictedList;
 	CAccessDataOrderer						cOrderer;

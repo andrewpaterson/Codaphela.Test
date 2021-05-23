@@ -354,7 +354,7 @@ void TestIndexedFilesEvictingSetDataNoCacheNoFile(void)
 {
 	CDurableFileController					cController;
 	CIndexTreeHelper						cHelper;
-	CIndexedMap		cDescriptors;
+	CIndexedMap								cDescriptors;
 	char									sz[200];
 	char									sz6[] = "6Six6\0";
 	EIndexWriteThrough						eWriteThrough;
