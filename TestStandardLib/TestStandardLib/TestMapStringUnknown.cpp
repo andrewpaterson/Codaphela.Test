@@ -104,9 +104,7 @@ void TestMapStringUnknownGet(void)
 	AssertPointer(NULL, pcTest);
 
 	pcTest = cMap.Put<CTestUnknownJobbie>("");
-	pcTest->Init(0, "Empty");
-	pcTest = (CTestUnknownJobbie*)cMap.Get("");
-	AssertString("Empty", pcTest->mszText.Text());
+	AssertNull(pcTest);
 
 	cMap.Kill();
 
@@ -128,6 +126,7 @@ void TestMapStringUnknownNoOverwrite(void)
 
 	CMapStringUnknown	cMap;
 	CTestUnknownJobbie*	pcTest;
+	SLogConfig			sLogConfig;
 
 	cMap.Init(TRUE, FALSE);
 
@@ -138,9 +137,11 @@ void TestMapStringUnknownNoOverwrite(void)
 	AssertNotNull(pcTest);
 	AssertInt(1, gcUnknowns.NumElements());
 
+	sLogConfig = gcLogger.SetSilent();
 	pcTest = cMap.Put<CTestUnknownJobbie>("One");
 	AssertNull(pcTest);
 	AssertInt(1, gcUnknowns.NumElements());
+	gcLogger.SetConfig(&sLogConfig);
 
 	cMap.Kill();
 
