@@ -125,6 +125,8 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 		aszKeys.Add(pszKey);
 		bHasData = pcIter->Iterate();
 	}
+	pcIter->Kill();
+	free(pcIter);
 
 	aszIntersection.Init();
 	CCharsHelper::InverseIntersect(&aszIntersection, &aszExpected, &aszKeys);
@@ -135,6 +137,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 	}
 	aszIntersection.Kill();
 	aszKeys.Kill();
+	aszExpected.Kill();
 
 	AssertLongLongInt(500, pcAccess->NumElements());
 	Pass();
