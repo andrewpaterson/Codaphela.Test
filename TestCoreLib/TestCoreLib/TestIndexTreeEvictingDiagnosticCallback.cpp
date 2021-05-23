@@ -96,6 +96,7 @@ void TestIndexTreeFileKeyDiagnosticCallbackStuff(void)
 		"Evict:  G0000007 [1024]\n", 
 		sz.Text());
 
+	sz.Kill();
 	cCallback.Kill();
 	cController.Kill();
 	cEvictionStrategy.Kill();

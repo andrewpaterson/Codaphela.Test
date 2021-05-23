@@ -45,6 +45,7 @@ void TestNamedIndexedDataInit(EIndexWriteThrough eWriteThrough)
 	cController.End();
 	cNamedEvictionStrategy.Kill();
 	cIndexEvictionStrategy.Kill();
+	cController.Kill();
 
 	cDatabase.Kill();
 	cFileUtil.RemoveDir("Output" _FS_ "Database1");
@@ -127,7 +128,8 @@ void TestNamedIndexedDataAddString(EIndexWriteThrough eWriteThrough)
 	cController.End();
 	cNamedEvictionStrategy.Kill();
 	cIndexEvictionStrategy.Kill();
-
+	cController.Kill();
+	cDatabase.Kill();
 
 
 	//Get by Index
@@ -156,6 +158,8 @@ void TestNamedIndexedDataAddString(EIndexWriteThrough eWriteThrough)
 	cController.End();
 	cNamedEvictionStrategy.Kill();
 	cIndexEvictionStrategy.Kill();
+	cController.Kill();
+	cDatabase.Kill();
 
 
 	//Size by Index
@@ -227,6 +231,8 @@ void TestNamedIndexedDataAddChars(EIndexWriteThrough eWriteThrough)
 	cController.End();
 	cIndexEvictionStrategy.Kill();
 	cNamedEvictionStrategy.Kill();
+	cController.Kill();
+	cDatabase.Kill();
 
 
 	//Get by Name
@@ -356,6 +362,8 @@ void TestNamedIndexedDataAddIndex(EIndexWriteThrough eWriteThrough)
 	cController.End();
 	cNamedEvictionStrategy.Kill();
 	cIndexEvictionStrategy.Kill();
+	cController.Kill();
+	cDatabase.Kill();
 
 
 	//Get by Index
@@ -1024,6 +1032,7 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 	cFileUtil.RemoveDir("Output" _FS_ "Database8");
 
 	aszWords.Kill();
+	aszNames.Kill();
 }
 
 
@@ -1164,6 +1173,7 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database8");
 
+	aszNames.Kill();
 	aszWords.Kill();
 }
 
