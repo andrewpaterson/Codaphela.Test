@@ -2975,6 +2975,7 @@ void TestIndexTreeFileRemoveComplex(EIndexWriteThrough eWriteThrough, EIndexKeyR
 	AssertFalse(cAccess.DeleteLong(0x8743));
 
 	cController.End();
+	cController.Kill();
 	cIndexTree.Kill();
 	cAccess.Kill();
 

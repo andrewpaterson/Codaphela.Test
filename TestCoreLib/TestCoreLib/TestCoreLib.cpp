@@ -64,14 +64,14 @@ int main(void)
 	//TestDurableSet();
 	//TestDurableFile();  
 	//TestDurableFileController();
-	TestFiles();  // <-- Memory Leak
-	//TestPackFilesPacker();
+	//TestFiles();
+	//TestPackFilesPacker();  // <-- Memory Leak
 	//TestIndexedFile();
 	//TestIndexedFiles();
 	//TestIndexTreeMemory();
 	//TestIndexTreeNodeFile();
 	//TestIndexTreeFile();
-	//TestIndexTreeDataOrderer();
+	TestIndexTreeDataOrderer();
 	//TestIndexTreeFileCallback();
 	//TestIndexTreeFileIterator();
 	//TestIndexTreeTemplateFile();

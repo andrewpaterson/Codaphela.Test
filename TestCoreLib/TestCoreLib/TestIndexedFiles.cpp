@@ -209,6 +209,7 @@ void TestIndexedFilesWrite(void)
 	AssertIndexedFile(szRewriteDirectorty, "_100_0.DAT", szTemp.Text(), szTemp.Length());
 	cIndexedFiles.Kill();
 	cController.Kill();
+	szTemp.Kill();
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
 	cIndexedFiles.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX");

@@ -29,6 +29,8 @@ void TestIndexTreeMemorySizeOfs(void)
 	AssertInt(1040, tRootNodeSize);
 	AssertInt(16, tNodeSize);
 	AssertInt(4, tNodePointer);
+
+	cIndexTree.Kill();
 }
 
 
