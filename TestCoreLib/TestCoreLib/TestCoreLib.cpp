@@ -51,20 +51,20 @@ int main(void)
 
 	_CrtSetBreakAlloc(0);
 	InitTotalStatistics();
-	TestFloatHelper();
-	TestIntegerHelper();
-	TestFastFunctions();
-	TestPropertiesFile();
-	TestXMLParser();
-	TestXMLFile();
-	TestNumber();
-	TestOperators();
-	TestFunctionCaller();
-	TestLogFile();  
-	TestDurableSet();
-	TestDurableFile();  
-	TestDurableFileController();  // <-- Memory Leak
-	//TestFiles();
+	//TestFloatHelper();
+	//TestIntegerHelper();
+	//TestFastFunctions();
+	//TestPropertiesFile();
+	//TestXMLParser();
+	//TestXMLFile();
+	//TestNumber();
+	//TestOperators();
+	//TestFunctionCaller();
+	//TestLogFile();  
+	//TestDurableSet();
+	//TestDurableFile();  
+	//TestDurableFileController();
+	TestFiles();  // <-- Memory Leak
 	//TestPackFilesPacker();
 	//TestIndexedFile();
 	//TestIndexedFiles();

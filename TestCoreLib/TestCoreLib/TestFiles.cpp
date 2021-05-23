@@ -99,6 +99,7 @@ void TestFileSystemIteration(void)
 		i++;
 		pcSystemFile = cFileSystem.Iterate(&cIter);
 	}
+	cFileSystem.Kill();
 	aszExpected.Kill();
 }
 

@@ -214,6 +214,10 @@ void TestDurableFileControllerRecovery(void)
 	AssertBool(FALSE, cFileUtil.Exists("Output" _FS_ "Durable1" _FS_ "Rewrite"  _FS_ "Mark2.Rewrite"));
 
 	//////////////////////////////////////////////////////////////////////////
+	cDurableFile1.Kill();
+	cDurableFile2.Kill();
+	cDurableFile3.Kill();
+	cDurableFile4.Kill();
 
 	cFileUtil.RemoveDir("Output" _FS_ "Durable1");
 }
@@ -300,6 +304,13 @@ void TestDurableFileControllerTwoInOneDirectory(void)
 
 	AssertTrue(cFileUtil.Exists("Output" _FS_ "Durable3" _FS_ "Write"  _FS_ "3.txt"));
 	AssertTrue(cFileUtil.Exists("Output" _FS_ "Durable3" _FS_ "Write"  _FS_ "4.txt"));
+
+	cDurableFile1.Kill();
+	cDurableFile2.Kill();
+	cDurableFile3.Kill();
+	cDurableFile4.Kill();
+	cController1.Kill();
+	cController2.Kill();
 
 	cFileUtil.RemoveDir("Output" _FS_ "Durable3");
 }
