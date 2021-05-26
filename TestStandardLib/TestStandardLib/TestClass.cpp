@@ -1,5 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "StandardLib/Object.h"
 #include "StandardLib/Pointer.h"
 #include "StandardLib/Array.h"
@@ -80,17 +81,41 @@ public:
 //////////////////////////////////////////////////////////////////////////
 void TestClassDefinition(void)
 {
-	Ptr<CTestClass>	pTestClass;
-	CClass*			pcClass;
+	Ptr<CTestClass>		pTestClass;
+	CClass*				pcTestClassClass;
+	CClass*				pcTinyTestClassClass;
+	CClasses*			pcClasses;
+	CClass*				pcTemp;
 
 	DataIOInit();
 	ObjectsInit();
 
+	pcClasses = gcObjects.GetClasses();
+
 	pTestClass = gcObjects.Malloc<CTestClass>();
 	pTestClass->Init();
 
-	pcClass = pTestClass->GetClass();
+	pcTestClassClass = pTestClass->GetClass();
+	AssertNotNull(pcTestClassClass);
+	AssertString("CTestClass", pcTestClassClass->GetName());
+	AssertInt(CLASS_TYPES, pcTestClassClass->GetType());
+	AssertTrue(pcTestClassClass->IsComplete());
 
+	pcTemp = pcClasses->Get(CLASS_TYPES);
+	AssertPointer(pcTestClassClass, pcTemp);
+	pcTemp = pcClasses->Get("CTestClass");
+	AssertPointer(pcTestClassClass, pcTemp);
+
+	pcTinyTestClassClass = pTestClass->mTiny.GetClass();
+	AssertNotNull(pcTinyTestClassClass);
+	AssertString("CTinyTestClass", pcTinyTestClassClass->GetName());
+	AssertInt(CLASS_TYPES + 1, pcTinyTestClassClass->GetType());
+	AssertTrue(pcTinyTestClassClass->IsComplete());
+
+	pcTemp = pcClasses->Get(CLASS_TYPES + 1);
+	AssertPointer(pcTinyTestClassClass, pcTemp);
+	pcTemp = pcClasses->Get("CTinyTestClass");
+	AssertPointer(pcTinyTestClassClass, pcTemp);
 
 	ObjectsKill();
 	DataIOKill();
@@ -105,9 +130,11 @@ void TestClass(void)
 {
 	BeginTests();
 	MemoryInit();
+	TypesInit();
 
 	TestClassDefinition();
 
+	TypesKill();
 	MemoryKill();
 	TestStatistics();
 }
