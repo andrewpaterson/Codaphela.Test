@@ -76,9 +76,6 @@ public:
 	void	Init(Ptr<CString> szString, Ptr<CTestNamedString> pSplit2, Ptr<CTestNamedString> pSplit1);
 	void	Class(void);
 	void	Free(void);
-
-	BOOL	Save(CObjectSerialiser* pcFile);
-	BOOL	Load(CObjectDeserialiser* pcFile);
 };
 
 

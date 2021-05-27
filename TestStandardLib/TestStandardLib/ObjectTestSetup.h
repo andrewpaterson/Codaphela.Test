@@ -47,9 +47,6 @@ public:
 			void				Class(void);
 			void				Free(void);
 
-			BOOL				Save(CObjectSerialiser* pcFile) { return FALSE; };
-			BOOL				Load(CObjectDeserialiser* pcFile) { return FALSE; };
-
 			void				SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeath);
 
 	virtual void				PlayerInput(void) =0;
@@ -69,9 +66,6 @@ public:
 	void				Class(void);
 	void				Free(void);
 
-	BOOL				Save(CObjectSerialiser* pcFile) { return FALSE; };
-	BOOL				Load(CObjectDeserialiser* pcFile) { return FALSE; };
-
 	void				PlayerInput(void) {};
 	Ptr<CMissile>		FireMissile(CPointer& pTarget);
 	Ptr<CArrayObject>	GetMissiles(void);
@@ -90,9 +84,6 @@ public:
 	Ptr<CJeep>	Init(Ptr<CGameWorld> pWorld);
 	void		Class(void);
 	void		Free(void);
-
-	BOOL		Save(CObjectSerialiser* pcFile) { return FALSE; };
-	BOOL		Load(CObjectDeserialiser* pcFile) { return FALSE; };
 
 	void		PlayerInput(void) {};
 };
@@ -114,9 +105,6 @@ public:
 	void			Class(void);
 	void			Free(void);
 
-	BOOL			Save(CObjectSerialiser* pcFile) { return FALSE; };
-	BOOL			Load(CObjectDeserialiser* pcFile) { return FALSE; };
-
 	void			SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeath);
 };
 
@@ -133,9 +121,6 @@ public:
 	Ptr<CMissile>	Init(Ptr<CGameWorld> pWorld);
 	void			Class(void);
 	void			Free(void);
-
-	BOOL			Save(CObjectSerialiser* pcFile);
-	BOOL			Load(CObjectDeserialiser* pcFile);
 
 	void			SetTarget(CPointer& pTarget);
 	CPointer		GetTarget(void);

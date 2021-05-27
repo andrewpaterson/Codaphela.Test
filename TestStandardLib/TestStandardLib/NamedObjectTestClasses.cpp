@@ -24,8 +24,9 @@ Ptr<CTestNamedObject> CTestNamedObject::Init(int iNum)
 void CTestNamedObject::Class(void)
 {
 	CObject::Class();
-	Pointer(mpNamedTest1.This());
-	Pointer(mpNamedTest2.This());
+	Pointer(mpNamedTest1.This(), "mpNamedTest1");
+	Pointer(mpNamedTest2.This(), "mpNamedTest2");
+	Unmanaged(&miNum, "miNum");
 }
 
 
@@ -160,10 +161,10 @@ Ptr<CTestNamedObjectWithEmbedded> CTestNamedObjectWithEmbedded::Init(int iX, int
 void CTestNamedObjectWithEmbedded::Class(void)
 {
 	CObject::Class();
-	Pointer(mpObject.This());
-	Pointer(mpSmall.This());
-	Embedded(&mNamedTest1);
-	Embedded(&mNamedTest2);
+	Pointer(mpObject.This(), "mpObject");
+	Pointer(mpSmall.This(), "mpSmall");
+	Embedded(&mNamedTest1, "mNamedTest1");
+	Embedded(&mNamedTest2, "mNamedTest2");
 }
 
 

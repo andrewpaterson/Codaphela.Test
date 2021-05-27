@@ -14,8 +14,8 @@ public:
 
 	void Class(void)
 	{
-		Embedded(&mString1);
-		Embedded(&mString2);
+		Embedded(&mString1, "mString1");
+		Embedded(&mString2, "mString2");
 	}
 
 	Ptr<CTestObjectWithTwoEmbedded> Init(void) 
@@ -27,16 +27,6 @@ public:
 
 	void Free(void)
 	{
-	}
-
-	BOOL Save(CObjectSerialiser* pcFile)
-	{
-		return FALSE;
-	}
-
-	BOOL Load(CObjectDeserialiser* pcFile)
-	{
-		return FALSE;
 	}
 };
 

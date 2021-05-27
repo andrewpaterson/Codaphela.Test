@@ -29,7 +29,7 @@ public:
 	void Class(void)
 	{
 		CObject::Class();
-		Primitive(&mc);
+		Primitive(&mc, "mc");
 	}
 
 	void Free(void)
@@ -62,11 +62,12 @@ public:
 	void Class(void)
 	{
 		CObject::Class();
-		Pointer(mpObject.This());
-		Pointer(mpTest.This());
-		Primitive(&mInt);
-		Embedded(&mTiny);
-		Primitive(&mDouble);
+		Pointer(mpObject.This(), "mpObject");
+		Pointer(mpTest.This(), "mpTest");
+		Unmanaged(&miUnmanagedInt, "miUnmanagedInt");
+		Primitive(&mInt, "mInt");
+		Embedded(&mTiny, "mTiny");
+		Primitive(&mDouble, "mDouble");
 	}
 
 	void Free(void)
@@ -116,6 +117,8 @@ void TestClassDefinition(void)
 	AssertPointer(pcTinyTestClassClass, pcTemp);
 	pcTemp = pcClasses->Get("CTinyTestClass");
 	AssertPointer(pcTinyTestClassClass, pcTemp);
+
+	pcTestClassClass->GetField("");
 
 	ObjectsKill();
 	DataIOKill();

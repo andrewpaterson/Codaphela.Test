@@ -117,8 +117,9 @@ Ptr<CHarrier> CHarrier::Init(Ptr<CGameWorld> pWorld)
 void CHarrier::Class(void)
 {
 	CPlayerVehicle::Class();
-	Pointer(mpWorld.This());
-	Pointer(maMissiles.This());
+	Pointer(mpWorld.This(), "mpWorld");
+	Pointer(maMissiles.This(), "maMissiles");
+	Unmanaged(&miSpeed, "miSpeed");
 }
 
 
@@ -183,7 +184,9 @@ Ptr<CJeep> CJeep::Init(Ptr<CGameWorld> pWorld)
 void CJeep::Class(void)
 {
 	CPlayerVehicle::Class();
-	Pointer(mpWorld.This());
+	Pointer(mpWorld.This(), "mpWorld");
+	Unmanaged(&mfFrontWheel, "mfFrontWheel");
+	Unmanaged(&mfBackWheel, "mfBackWheel");
 }
 
 
@@ -223,8 +226,8 @@ Ptr<CMissile> CMissile::Init(Ptr<CGameWorld> pWorld)
 void CMissile::Class(void)
 {
 	CObject::Class();
-	Pointer(mpWorld.This());
-	Pointer(mpTarget.This());
+	Pointer(mpWorld.This(), "mpWorld");
+	Pointer(mpTarget.This(), "mpTarget");
 }
 
 
@@ -258,30 +261,6 @@ CPointer CMissile::GetTarget(void)
 void CMissile::SetTarget(CPointer& pTarget)
 {
 	mpTarget = pTarget;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-BOOL CMissile::Save(CObjectSerialiser* pcFile)
-{ 
-	ReturnOnFalse(pcFile->WritePointer(mpWorld));
-	ReturnOnFalse(pcFile->WritePointer(mpTarget));
-	return TRUE;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-BOOL CMissile::Load(CObjectDeserialiser* pcFile) 
-{ 
-	ReturnOnFalse(pcFile->ReadPointer(mpWorld.This()));
-	ReturnOnFalse(pcFile->ReadPointer(mpTarget.This()));
-	return TRUE; 
 }
 
 
@@ -324,7 +303,8 @@ Ptr<CRedJet> CRedJet::Init(Ptr<CGameWorld> pWorld)
 void CRedJet::Class(void)
 {
 	CObject::Class();
-	Pointer(mpWorld.This());
+	Pointer(mpWorld.This(), "mpWorld");
+	Unmanaged(&mcPicture, sizeof(CGraphicPicture), "mcPicture");
 }
 
 
@@ -386,10 +366,9 @@ Ptr<CClusterMissile> CClusterMissile::Init(Ptr<CGameWorld> pWorld)
 void CClusterMissile::Class(void)
 {
 	CObject::Class();
-	Pointer(mpWorld.This());
-	Embedded(&mcMissile1);
-	Embedded(&mcMissile2);
-
+	Pointer(mpWorld.This(), "mpWorld");
+	Embedded(&mcMissile1, "mcMissile1");
+	Embedded(&mcMissile2, "mcMissile2");
 }
 
 
@@ -413,32 +392,6 @@ void CClusterMissile::Free(void)
 void CClusterMissile::SetKillString(char* szKillString)
 {
 	mszKillState = szKillString;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-BOOL CClusterMissile::Save(CObjectSerialiser* pcFile)
-{ 
-	ReturnOnFalse(mcMissile1.Save(pcFile));
-	ReturnOnFalse(mcMissile2.Save(pcFile));
-	ReturnOnFalse(pcFile->WritePointer(mpWorld));
-	return TRUE;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-BOOL CClusterMissile::Load(CObjectDeserialiser* pcFile) 
-{ 
-	ReturnOnFalse(mcMissile1.Load(pcFile));
-	ReturnOnFalse(mcMissile2.Load(pcFile));
-	ReturnOnFalse(pcFile->ReadPointer(mpWorld.This()));
-	return TRUE; 
 }
 
 
@@ -470,7 +423,7 @@ void CClusterLauncher::Free(void)
 void CClusterLauncher::Class(void)
 {
 	CObject::Class();
-	Pointer(mpMissile.This());
+	Pointer(mpMissile.This(), "mpMissile");
 }
 
 
@@ -503,9 +456,9 @@ void CGameWorld::Free(void)
 void CGameWorld::Class(void)
 {
 	CObject::Class();
-	Pointer(maTickables.This());
-	Pointer(mpPlayer1.This());
-	Pointer(mpPlayer2.This());
+	Pointer(maTickables.This(), "maTickables");
+	Pointer(mpPlayer1.This(), "mpPlayer1");
+	Pointer(mpPlayer2.This(), "mpPlayer2");
 }
 
 

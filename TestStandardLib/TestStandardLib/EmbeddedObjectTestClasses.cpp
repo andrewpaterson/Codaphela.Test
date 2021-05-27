@@ -8,7 +8,9 @@
 void CEmbeddedTest::Class(void)
 {
 	CObject::Class();
-	Pointer(mpTest.This());
+	Unmanaged(&miAmANumber, "miAmANumber");
+	Unmanaged(&mfSoAmI, "mfSoAmI");
+	Pointer(mpTest.This(), "mpTest");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -70,9 +72,16 @@ BOOL CEmbeddedTest::Load(CObjectDeserialiser* pcFile)
 void CEmbeddedContainer::Class(void)
 {
 	CObject::Class();
-	Pointer(mpTest.This());
-	Embedded(&mcOne);
-	Embedded(&mcTwo);
+	char				msz[4];
+	int					mi;
+	float				mf;
+
+	Unmanaged(msz, 4, "msz");
+	Pointer(mpTest.This(), "mpTest");
+	Embedded(&mcOne, "mcOne");
+	Embedded(&mcTwo, "mcTwo");
+	Unmanaged(&mi, "mi");
+	Unmanaged(&mf, "mf");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -110,11 +119,8 @@ void CEmbeddedContainer::Free(void)
 BOOL CEmbeddedContainer::Save(CObjectSerialiser* pcFile)
 {
 	pcFile->WriteData(msz, 4);
-	mcOne.Save(pcFile);
 	pcFile->WriteInt(mi);
-	mcTwo.Save(pcFile);
 	pcFile->WriteFloat(mf);
-	pcFile->WritePointer(mpTest);
 
 	return TRUE;
 }
@@ -126,11 +132,8 @@ BOOL CEmbeddedContainer::Save(CObjectSerialiser* pcFile)
 BOOL CEmbeddedContainer::Load(CObjectDeserialiser* pcFile)
 {
 	pcFile->ReadData(msz, 4);
-	mcOne.Load(pcFile);
 	pcFile->ReadInt(&mi);
-	mcTwo.Load(pcFile);
 	pcFile->ReadFloat(&mf);
-	pcFile->ReadPointer(mpTest.This());
 
 	return TRUE;
 }
@@ -143,10 +146,11 @@ BOOL CEmbeddedContainer::Load(CObjectDeserialiser* pcFile)
 void CEmbeddedComplex::Class(void)
 {
 	CObject::Class();
-	Pointer(mpTest.This());
-	Embedded(&mcSimple);
-	Embedded(&ma);
-	Embedded(&mcContainer);
+	Pointer(mpTest.This(), "mpTest");
+	Unmanaged(mai, 2, "mai");
+	Embedded(&mcSimple, "mcSimple");
+	Embedded(&ma, "ma");
+	Embedded(&mcContainer, "mcContainer");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -183,12 +187,8 @@ void CEmbeddedComplex::Free(void)
 //////////////////////////////////////////////////////////////////////////
 BOOL CEmbeddedComplex::Save(CObjectSerialiser* pcFile)
 {
-	mcSimple.Save(pcFile);
 	pcFile->WriteInt(mai[0]);
 	pcFile->WriteInt(mai[1]);
-	ma.Save(pcFile);
-	mcContainer.Save(pcFile);
-	pcFile->WritePointer(mpTest);
 
 	return TRUE;
 }
@@ -199,12 +199,8 @@ BOOL CEmbeddedComplex::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CEmbeddedComplex::Load(CObjectDeserialiser* pcFile)
 {
-	mcSimple.Load(pcFile);
 	pcFile->ReadInt(&mai[0]);
 	pcFile->ReadInt(&mai[1]);
-	ma.Load(pcFile);
-	mcContainer.Load(pcFile);
-	pcFile->ReadPointer(mpTest.This());
 
 	return TRUE;
 }

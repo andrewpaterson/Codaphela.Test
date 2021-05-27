@@ -50,9 +50,6 @@ public:
 	void	Init(STestObjectFreedNotifier* psKilledNotifier);
 	void	Class(void);
 	void	Free(void);
-
-	BOOL	Save(CObjectSerialiser* pcFile);
-	BOOL	Load(CObjectDeserialiser* pcFile);
 };
 
 
@@ -121,9 +118,6 @@ public:
 	void	Class(void);
 	void	Free(void);
 
-	BOOL	Save(CObjectSerialiser* pcFile);
-	BOOL	Load(CObjectDeserialiser* pcFile);
-
 	void	Update(int8 i8);
 	void	Update(char* sz);
 }; 
@@ -145,9 +139,6 @@ public:
 	void	Init(void);
 	void	Class(void);
 	void	Free(void);
-
-	BOOL	Save(CObjectSerialiser* pcFile);
-	BOOL	Load(CObjectDeserialiser* pcFile);
 };
 
 
@@ -162,10 +153,6 @@ public:
 	void	Init(void);
 	void	Class(void);
 	void	Free(void);
-
-	BOOL	Save(CObjectSerialiser* pcFile);
-	BOOL	Load(CObjectDeserialiser* pcFile);
-
 };
 
 

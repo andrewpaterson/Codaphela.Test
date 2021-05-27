@@ -51,8 +51,9 @@ void CTestObject::Init(STestObjectFreedNotifier* psKilledNotifier)
 void CTestObject::Class(void)
 {
 	CObject::Class();
-	Pointer(mpObject.This());
-	Pointer(mpTest.This());
+	Pointer(mpObject.This(), "mpObject");
+	Pointer(mpTest.This(), "mpTest");
+	Unmanaged(&mi, "mi");
 }
 
 
@@ -75,8 +76,6 @@ void CTestObject::Free(void)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestObject::Save(CObjectSerialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->WritePointer(mpObject));
-	ReturnOnFalse(pcFile->WritePointer(mpTest));
 	ReturnOnFalse(pcFile->WriteInt(mi));
 	return TRUE;
 }
@@ -88,8 +87,6 @@ BOOL CTestObject::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestObject::Load(CObjectDeserialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->ReadPointer(mpObject.This()));
-	ReturnOnFalse(pcFile->ReadPointer(mpTest.This()));
 	ReturnOnFalse(pcFile->ReadInt(&mi));
 	return TRUE;
 }
@@ -138,9 +135,9 @@ void CTestTriPointerObject::Init(STestObjectFreedNotifier* psKilledNotifier)
 void CTestTriPointerObject::Class(void)
 {
 	CObject::Class();
-	Pointer(mpObject1.This());
-	Pointer(mpObject2.This());
-	Pointer(mpObject3.This());
+	Pointer(mpObject1.This(), "mpObject1");
+	Pointer(mpObject2.This(), "mpObject2");
+	Pointer(mpObject3.This(), "mpObject3");
 }
 
 
@@ -154,32 +151,6 @@ void CTestTriPointerObject::Free(void)
 	{
 		mpsFreedNotifier->bFreed = TRUE;
 	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-BOOL CTestTriPointerObject::Save(CObjectSerialiser* pcFile)
-{
-	ReturnOnFalse(pcFile->WritePointer(mpObject1));
-	ReturnOnFalse(pcFile->WritePointer(mpObject2));
-	ReturnOnFalse(pcFile->WritePointer(mpObject3));
-	return TRUE;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-BOOL CTestTriPointerObject::Load(CObjectDeserialiser* pcFile)
-{
-	ReturnOnFalse(pcFile->ReadPointer(mpObject1.This()));
-	ReturnOnFalse(pcFile->ReadPointer(mpObject2.This()));
-	ReturnOnFalse(pcFile->ReadPointer(mpObject3.This()));
-	return TRUE;
 }
 
 
@@ -205,7 +176,9 @@ void CTestSaveableObject1::Init(void)
 void CTestSaveableObject1::Class(void)
 {
 	CObject::Class();
-	Pointer(mpObject.This());
+	Pointer(mpObject.This(), "mpObject");
+	Unmanaged(&miInt, "miInt");
+	Unmanaged(&mszString, "mszString");
 }
 
 
@@ -225,7 +198,6 @@ void CTestSaveableObject1::Free(void)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestSaveableObject1::Save(CObjectSerialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->WritePointer(mpObject));
 	ReturnOnFalse(pcFile->WriteInt(miInt));
 	ReturnOnFalse(mszString.WriteString(pcFile));
 
@@ -240,7 +212,6 @@ BOOL CTestSaveableObject1::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestSaveableObject1::Load(CObjectDeserialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->ReadPointer(mpObject.This()));
 	ReturnOnFalse(pcFile->ReadInt(&miInt));
 	ReturnOnFalse(mszString.ReadString(pcFile));
 
@@ -269,8 +240,9 @@ void CTestSaveableObject2::Init(const char* psz)
 void CTestSaveableObject2::Class(void)
 {
 	CObject::Class();
-	Pointer(mp1.This());
-	Pointer(mp2.This());
+	Pointer(mp1.This(), "mp1");
+	Pointer(mp2.This(), "mp2");
+	Unmanaged(&msz, "msz");
 }
 
 
@@ -290,8 +262,6 @@ void CTestSaveableObject2::Free(void)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestSaveableObject2::Save(CObjectSerialiser* pcFile)
 {
-	pcFile->WritePointer(mp1);
-	pcFile->WritePointer(mp2);
 	msz.WriteString(pcFile);
 	mbSaved = TRUE;
 	return TRUE;
@@ -304,8 +274,6 @@ BOOL CTestSaveableObject2::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestSaveableObject2::Load(CObjectDeserialiser* pcFile)
 {
-	pcFile->ReadPointer(mp1.This());
-	pcFile->ReadPointer(mp2.This());
 	msz.ReadString(pcFile);
 	mbSaved = FALSE;
 	return TRUE;
@@ -345,22 +313,22 @@ void CTestObjectWithFields::Init(CPointer pObject, Ptr<CTestObject> pTest)
 void CTestObjectWithFields::Class(void)
 {
 	CObject::Class();
-	Pointer(mpTest.This());
-	Pointer(mpObject.This());
+	Pointer(mpTest.This(), "mpTest");
+	Pointer(mpObject.This(), "mpObject");
 
-	Primitive(&mi32);
-	Primitive(&mi8);
-	Primitive(&mui8);
-	Primitive(&mui32);
-	Primitive(&mi16);
-	Primitive(&mui16);
-	Primitive(&mc8);
-	Primitive(&mc16);
-	Primitive(&mf32);
-	Primitive(&mf64);
-	Primitive(&mi64);
-	Primitive(&mui64);
-	Primitive(&mb);
+	Primitive(&mi32, "mi32");
+	Primitive(&mi8, "mi8");
+	Primitive(&mui8, "mui8");
+	Primitive(&mui32, "mui32");
+	Primitive(&mi16, "mi16");
+	Primitive(&mui16, "mui16");
+	Primitive(&mc8, "mc8");
+	Primitive(&mc16, "mc16");
+	Primitive(&mf32, "mf32");
+	Primitive(&mf64, "mf64");
+	Primitive(&mi64, "mi64");
+	Primitive(&mui64, "mui64");
+	Primitive(&mb, "mb");
 }
 
 
@@ -371,58 +339,6 @@ void CTestObjectWithFields::Class(void)
 void CTestObjectWithFields::Free(void)
 {
 	SafeFree(mpsz);
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-BOOL CTestObjectWithFields::Save(CObjectSerialiser* pcFile)
-{
-	ReturnOnFalse(pcFile->WritePointer(mpObject));
-	ReturnOnFalse(pcFile->WritePointer(mpTest));
-
-	ReturnOnFalse(pcFile->WriteInt(mi32));
-	ReturnOnFalse(pcFile->WriteChar(mi8));
-	ReturnOnFalse(pcFile->WriteChar(mui8));
-	ReturnOnFalse(pcFile->WriteInt(mui32));
-	ReturnOnFalse(pcFile->WriteShort(mi16));
-	ReturnOnFalse(pcFile->WriteShort(mui16));
-	ReturnOnFalse(pcFile->WriteChar(mc8));
-	ReturnOnFalse(pcFile->WriteWChar(mc16));
-	ReturnOnFalse(pcFile->WriteFloat(mf32));
-	ReturnOnFalse(pcFile->WriteDouble(mf64));
-	ReturnOnFalse(pcFile->WriteLong(mi64));
-	ReturnOnFalse(pcFile->WriteLong(mui64));
-	ReturnOnFalse(pcFile->WriteBool(mb));
-	return TRUE;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-BOOL CTestObjectWithFields::Load(CObjectDeserialiser* pcFile)
-{
-	ReturnOnFalse(pcFile->ReadPointer(mpObject.This()));
-	ReturnOnFalse(pcFile->ReadPointer(mpTest.This()));
-
-	ReturnOnFalse(pcFile->ReadInt(mi32.GetPrimitivePointer()));
-	ReturnOnFalse(pcFile->ReadChar(mi8.GetPrimitivePointer()));
-	ReturnOnFalse(pcFile->ReadChar(mui8.GetPrimitivePointer()));
-	ReturnOnFalse(pcFile->ReadInt(mui32.GetPrimitivePointer()));
-	ReturnOnFalse(pcFile->ReadShort(mi16.GetPrimitivePointer()));
-	ReturnOnFalse(pcFile->ReadShort(mui16.GetPrimitivePointer()));
-	ReturnOnFalse(pcFile->ReadChar(mc8.GetPrimitivePointer()));
-	ReturnOnFalse(pcFile->ReadWChar(mc16.GetPrimitivePointer()));
-	ReturnOnFalse(pcFile->ReadFloat(mf32.GetPrimitivePointer()));
-	ReturnOnFalse(pcFile->ReadDouble(mf64.GetPrimitivePointer()));
-	ReturnOnFalse(pcFile->ReadLong(mi64.GetPrimitivePointer()));
-	ReturnOnFalse(pcFile->ReadLong(mui64.GetPrimitivePointer()));
-	ReturnOnFalse(pcFile->ReadBool(mb.GetPrimitivePointer()));
-	return TRUE;
 }
 
 
@@ -468,13 +384,13 @@ void CTestEmbeddedObjectWithFields::Class(void)
 {
 	CObject::Class();
 
-	Primitive(&mbX);
-	Pointer(mpObjectA.This());
-	Embedded(&mcEmbedded1);
-	Pointer(mpObjectB.This());
-	Embedded(&mcEmbedded2);
-	Pointer(mpObjectC.This());
-	Primitive(&mbY);
+	Primitive(&mbX, "mbX");
+	Pointer(mpObjectA.This(), "mpObjectA");
+	Embedded(&mcEmbedded1, "mcEmbedded1");
+	Pointer(mpObjectB.This(), "mpObjectB");
+	Embedded(&mcEmbedded2, "mcEmbedded2");
+	Pointer(mpObjectC.This(), "mpObjectC");
+	Primitive(&mbY, "mbY");
 }
 
 
@@ -487,42 +403,6 @@ void CTestEmbeddedObjectWithFields::Free(void)
 	mcEmbedded1.Free();
 	mcEmbedded2.Free();
 }
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-BOOL CTestEmbeddedObjectWithFields::Save(CObjectSerialiser* pcFile)
-{
-	ReturnOnFalse(pcFile->WriteBool(mbX));
-	ReturnOnFalse(pcFile->WritePointer(mpObjectA));
-	ReturnOnFalse(mcEmbedded1.Save(pcFile));
-	ReturnOnFalse(pcFile->WritePointer(mpObjectB));
-	ReturnOnFalse(mcEmbedded2.Save(pcFile));
-	ReturnOnFalse(pcFile->WritePointer(mpObjectC));
-	ReturnOnFalse(pcFile->WriteBool(mbY));
-	return TRUE;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-BOOL CTestEmbeddedObjectWithFields::Load(CObjectDeserialiser* pcFile)
-{
-	ReturnOnFalse(pcFile->ReadBool(mbX.GetPrimitivePointer()));
-	ReturnOnFalse(pcFile->ReadPointer(mpObjectA.This()));
-	ReturnOnFalse(mcEmbedded1.Load(pcFile));
-	ReturnOnFalse(pcFile->ReadPointer(mpObjectB.This()));
-	ReturnOnFalse(mcEmbedded2.Load(pcFile));
-	ReturnOnFalse(pcFile->ReadPointer(mpObjectC.This()));
-	ReturnOnFalse(pcFile->ReadBool(mbY.GetPrimitivePointer()));
-	return TRUE;
-}
-
-
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -547,9 +427,9 @@ void CTestEmbeddedStrings::Class(void)
 {
 	CObject::Class();
 
-	Embedded(&mString1);
-	Embedded(&mString2);
-	Embedded(&mString3);
+	Embedded(&mString1, "mString1");
+	Embedded(&mString2, "mString2");
+	Embedded(&mString3, "mString3");
 }
 
 
@@ -562,31 +442,5 @@ void CTestEmbeddedStrings::Free(void)
 	mString1.Free();
 	mString2.Free();
 	mString3.Free();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-BOOL CTestEmbeddedStrings::Save(CObjectSerialiser* pcFile)
-{
-	ReturnOnFalse(mString1.Save(pcFile));
-	ReturnOnFalse(mString2.Save(pcFile));
-	ReturnOnFalse(mString3.Save(pcFile));
-	return TRUE;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-BOOL CTestEmbeddedStrings::Load(CObjectDeserialiser* pcFile)
-{
-	ReturnOnFalse(mString1.Load(pcFile));
-	ReturnOnFalse(mString2.Load(pcFile));
-	ReturnOnFalse(mString3.Load(pcFile));
-	return TRUE;
 }
 

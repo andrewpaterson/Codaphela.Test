@@ -17,7 +17,10 @@ void CTestWithArray::Init(const char* szString, int x)
 void CTestWithArray::Class(void)
 {
 	CObject::Class();
-	Pointer(mcArray.This());
+	Pointer(mcArray.This(), "mcArray");
+	Unmanaged(&mszString, "mszString");
+	Unmanaged(&mx, "mx");;
+
 }
 
 
@@ -35,7 +38,6 @@ void CTestWithArray::Add(CPointer& pcObject)
 
 BOOL CTestWithArray::Save(CObjectSerialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->WritePointer(mcArray));
 	ReturnOnFalse(mszString.WriteString(pcFile));
 	ReturnOnFalse(pcFile->WriteInt(mx));
 	return TRUE;
@@ -44,7 +46,6 @@ BOOL CTestWithArray::Save(CObjectSerialiser* pcFile)
 
 BOOL CTestWithArray::Load(CObjectDeserialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->ReadPointer(mcArray.This()));
 	ReturnOnFalse(mszString.ReadString(pcFile));
 	ReturnOnFalse(pcFile->ReadInt(&mx));
 	return TRUE;
@@ -64,6 +65,9 @@ void CTestInteger::Init(int x, int y, int z)
 void CTestInteger::Class(void)
 {
 	CObject::Class();
+	Unmanaged(&mx, "mx");
+	Unmanaged(&my, "my");
+	Unmanaged(&mz, "mz");
 }
 
 
@@ -119,8 +123,9 @@ void CTestNamedString::Set(Ptr<CString> szString, Ptr<CTestNamedString> pAnother
 void CTestNamedString::Class(void)
 {
 	CObject::Class();
-	Pointer(mszString.This());
-	Pointer(mpAnother.This());
+	Pointer(mszString.This(), "mszString");
+	Pointer(mpAnother.This(), "mpAnother");
+	Unmanaged(&mszEmbedded, "mszEmbedded");
 }
 
 
@@ -170,31 +175,13 @@ void CTestDoubleNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> p
 void CTestDoubleNamedString::Class(void)
 {
 	CObject::Class();
-	Pointer(mszString.This());
-	Pointer(mpSplit1.This());
-	Pointer(mpSplit2.This());
+	Pointer(mszString.This(), "mszString");
+	Pointer(mpSplit1.This(), "mpSplit1");
+	Pointer(mpSplit2.This(), "mpSplit2");
 }
 
 
 void CTestDoubleNamedString::Free(void)
 {
-}
-
-
-BOOL CTestDoubleNamedString::Save(CObjectSerialiser* pcFile)
-{
-	ReturnOnFalse(pcFile->WritePointer(mszString));
-	ReturnOnFalse(pcFile->WritePointer(mpSplit1));
-	ReturnOnFalse(pcFile->WritePointer(mpSplit2));
-	return TRUE;
-}
-
-
-BOOL CTestDoubleNamedString::Load(CObjectDeserialiser* pcFile)
-{
-	ReturnOnFalse(pcFile->ReadPointer(mszString.This()));
-	ReturnOnFalse(pcFile->ReadPointer(mpSplit1.This()));
-	ReturnOnFalse(pcFile->ReadPointer(mpSplit2.This()));
-	return TRUE;
 }
 
