@@ -103,7 +103,7 @@ Ptr<CHarrier> CHarrier::Init(Ptr<CGameWorld> pWorld)
 	mpWorld = pWorld;
 	miSpeed = 7;
 
-	maMissiles = OMalloc<CArrayObject>();
+	maMissiles = OMalloc<CArray<CMissile>>();
 
 	PostInit();
 	return Ptr<CHarrier>(this);
@@ -119,7 +119,7 @@ void CHarrier::Class(void)
 	CPlayerVehicle::Class();
 	Pointer(mpWorld.This(), "mpWorld");
 	Pointer(maMissiles.This(), "maMissiles");
-	Unmanaged(&miSpeed, "miSpeed");
+	UnmanagedInt(&miSpeed, "miSpeed");
 }
 
 
@@ -153,7 +153,7 @@ Ptr<CMissile> CHarrier::FireMissile(CPointer& pTarget)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CArrayObject> CHarrier::GetMissiles(void)
+Ptr<CArray<CMissile>> CHarrier::GetMissiles(void)
 {
 	return maMissiles;
 }
@@ -185,8 +185,8 @@ void CJeep::Class(void)
 {
 	CPlayerVehicle::Class();
 	Pointer(mpWorld.This(), "mpWorld");
-	Unmanaged(&mfFrontWheel, "mfFrontWheel");
-	Unmanaged(&mfBackWheel, "mfBackWheel");
+	UnmanagedFloat(&mfFrontWheel, "mfFrontWheel");
+	UnmanagedFloat(&mfBackWheel, "mfBackWheel");
 }
 
 
@@ -304,7 +304,7 @@ void CRedJet::Class(void)
 {
 	CObject::Class();
 	Pointer(mpWorld.This(), "mpWorld");
-	Unmanaged(&mcPicture, sizeof(CGraphicPicture), "mcPicture");
+	UnmanagedData(&mcPicture, sizeof(CGraphicPicture), "mcPicture");
 }
 
 
@@ -434,7 +434,7 @@ void CClusterLauncher::Class(void)
 Ptr<CGameWorld> CGameWorld::Init(void)
 {
 	PreInit();
-	maTickables = OMalloc<CArrayObject>();
+	maTickables = OMalloc<CArray<>>();
 	PostInit();
 	return Ptr<CGameWorld>(this);
 }
@@ -459,6 +459,15 @@ void CGameWorld::Class(void)
 	Pointer(maTickables.This(), "maTickables");
 	Pointer(mpPlayer1.This(), "mpPlayer1");
 	Pointer(mpPlayer2.This(), "mpPlayer2");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CGameWorld::Tick(void)
+{
 }
 
 
@@ -520,33 +529,7 @@ void CGameWorld::RemoveTickable(CPointer& pTickable)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CGameWorld::Save(CObjectSerialiser* pcFile)
-{
-	ReturnOnFalse(pcFile->WritePointer(maTickables));
-	ReturnOnFalse(pcFile->WritePointer(mpPlayer1));
-	ReturnOnFalse(pcFile->WritePointer(mpPlayer2));
-	return TRUE;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-BOOL CGameWorld::Load(CObjectDeserialiser* pcFile)
-{
-	ReturnOnFalse(pcFile->ReadPointer(maTickables.This()));
-	ReturnOnFalse(pcFile->ReadPointer(mpPlayer1.This()));
-	ReturnOnFalse(pcFile->ReadPointer(mpPlayer2.This()));
-	return TRUE; 
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-Ptr<CArrayObject> CGameWorld::GetTickables(void)
+Ptr<CArray<>> CGameWorld::GetTickables(void)
 {
 	return maTickables;
 }

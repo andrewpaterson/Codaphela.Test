@@ -26,7 +26,7 @@ void CTestNamedObject::Class(void)
 	CObject::Class();
 	Pointer(mpNamedTest1.This(), "mpNamedTest1");
 	Pointer(mpNamedTest2.This(), "mpNamedTest2");
-	Unmanaged(&miNum, "miNum");
+	UnmanagedInt(&miNum, "miNum");
 }
 
 
@@ -45,8 +45,6 @@ void CTestNamedObject::Free(void)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestNamedObject::Save(CObjectSerialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->WritePointer(mpNamedTest1));
-	ReturnOnFalse(pcFile->WritePointer(mpNamedTest2));
 	ReturnOnFalse(pcFile->WriteInt(miNum));
 	return TRUE;
 }
@@ -58,8 +56,6 @@ BOOL CTestNamedObject::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestNamedObject::Load(CObjectDeserialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->ReadPointer(mpNamedTest1.This()));
-	ReturnOnFalse(pcFile->ReadPointer(mpNamedTest2.This()));
 	ReturnOnFalse(pcFile->ReadInt(&miNum));
 	return TRUE;
 }
@@ -165,6 +161,8 @@ void CTestNamedObjectWithEmbedded::Class(void)
 	Pointer(mpSmall.This(), "mpSmall");
 	Embedded(&mNamedTest1, "mNamedTest1");
 	Embedded(&mNamedTest2, "mNamedTest2");
+	UnmanagedInt(&miX, "miX");
+	UnmanagedInt(&miY, "miY");
 }
 
 
@@ -185,10 +183,6 @@ void CTestNamedObjectWithEmbedded::Free(void)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestNamedObjectWithEmbedded::Save(CObjectSerialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->WritePointer(mpObject));
-	ReturnOnFalse(pcFile->WritePointer(mpSmall));
-	ReturnOnFalse(mNamedTest1.Save(pcFile));
-	ReturnOnFalse(mNamedTest2.Save(pcFile));
 	ReturnOnFalse(pcFile->WriteInt(miX));
 	ReturnOnFalse(pcFile->WriteInt(miY));
 	return TRUE;
@@ -201,10 +195,9 @@ BOOL CTestNamedObjectWithEmbedded::Save(CObjectSerialiser* pcFile)
 //////////////////////////////////////////////////////////////////////////
 BOOL CTestNamedObjectWithEmbedded::Load(CObjectDeserialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->ReadPointer(mpObject.This()));
-	ReturnOnFalse(pcFile->ReadPointer(mpSmall.This()));
-	ReturnOnFalse(mNamedTest1.Load(pcFile));
-	ReturnOnFalse(mNamedTest2.Load(pcFile));
+	mpvUnmanaged = NULL;
+	miUnmagedSize = 0;
+
 	ReturnOnFalse(pcFile->ReadInt(&miX));
 	ReturnOnFalse(pcFile->ReadInt(&miY));
 	return TRUE;

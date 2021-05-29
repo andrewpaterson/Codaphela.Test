@@ -1,6 +1,6 @@
 #include "StandardLib/Pointer.h"
 #include "StandardLib/NamedObject.h"
-#include "StandardLib/ArrayObject.h"
+#include "StandardLib/Array.h"
 
 
 class CMissile;
@@ -57,18 +57,18 @@ class CHarrier : public CPlayerVehicle
 {
 CONSTRUCTABLE(CHarrier);
 protected:
-	Ptr<CArrayObject>	maMissiles;
-	Ptr<CGameWorld>		mpWorld;
-	int					miSpeed;
+	Ptr<CArray<CMissile>>	maMissiles;
+	Ptr<CGameWorld>			mpWorld;
+	int						miSpeed;
 
 public:
-	Ptr<CHarrier>		Init(Ptr<CGameWorld> pWorld);
-	void				Class(void);
-	void				Free(void);
+	Ptr<CHarrier>			Init(Ptr<CGameWorld> pWorld);
+	void					Class(void);
+	void					Free(void);
 
-	void				PlayerInput(void) {};
-	Ptr<CMissile>		FireMissile(CPointer& pTarget);
-	Ptr<CArrayObject>	GetMissiles(void);
+	void					PlayerInput(void) {};
+	Ptr<CMissile>			FireMissile(CPointer& pTarget);
+	Ptr<CArray<CMissile>>	GetMissiles(void);
 };
 
 
@@ -145,9 +145,6 @@ public:
 	void					Class(void);
 	void					Free(void);
 
-	BOOL					Save(CObjectSerialiser* pcFile);
-	BOOL					Load(CObjectDeserialiser* pcFile);
-
 	void					SetKillString(char* szKillString);
 };
 
@@ -161,9 +158,6 @@ public:
 	Ptr<CClusterLauncher> 	Init(void);
 	void					Class(void);
 	void					Free(void);
-
-	BOOL					Save(CObjectSerialiser* pcFile) { return FALSE; };
-	BOOL					Load(CObjectDeserialiser* pcFile) { return FALSE; };
 };
 
 
@@ -171,7 +165,7 @@ class CGameWorld : public CObject
 {
 CONSTRUCTABLE(CGameWorld);
 protected:
-	Ptr<CArrayObject>	maTickables;
+	Ptr<CArray<>>		maTickables;
 	Ptr<CPlayerVehicle>	mpPlayer1;
 	Ptr<CPlayerVehicle>	mpPlayer2;
 
@@ -180,13 +174,10 @@ public:
 	void				Class(void);
 	void				Free(void);
 
-	BOOL				Save(CObjectSerialiser* pcFile);
-	BOOL				Load(CObjectDeserialiser* pcFile);
-
 	void				Tick(void);
 	void				AddPlayer(Ptr<CPlayerVehicle> pPlayer);
 	void				AddTickable(CPointer& pTickable);
 	void				RemoveTickable(CPointer& pTickable);
-	Ptr<CArrayObject>	GetTickables(void);
+	Ptr<CArray<>>		GetTickables(void);
 };
 

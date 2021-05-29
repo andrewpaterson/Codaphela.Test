@@ -18,8 +18,8 @@ void CTestWithArray::Class(void)
 {
 	CObject::Class();
 	Pointer(mcArray.This(), "mcArray");
-	Unmanaged(&mszString, "mszString");
-	Unmanaged(&mx, "mx");;
+	UnmanagedString(&mszString, "mszString");
+	UnmanagedInt(&mx, "mx");;
 
 }
 
@@ -65,9 +65,9 @@ void CTestInteger::Init(int x, int y, int z)
 void CTestInteger::Class(void)
 {
 	CObject::Class();
-	Unmanaged(&mx, "mx");
-	Unmanaged(&my, "my");
-	Unmanaged(&mz, "mz");
+	UnmanagedInt(&mx, "mx");
+	UnmanagedInt(&my, "my");
+	UnmanagedInt(&mz, "mz");
 }
 
 
@@ -125,7 +125,7 @@ void CTestNamedString::Class(void)
 	CObject::Class();
 	Pointer(mszString.This(), "mszString");
 	Pointer(mpAnother.This(), "mpAnother");
-	Unmanaged(&mszEmbedded, "mszEmbedded");
+	UnmanagedString(&mszEmbedded, "mszEmbedded");
 }
 
 
@@ -136,8 +136,6 @@ void CTestNamedString::Free(void)
 
 BOOL CTestNamedString::Save(CObjectSerialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->WritePointer(mszString));
-	ReturnOnFalse(pcFile->WritePointer(mpAnother));
 	ReturnOnFalse(mszEmbedded.WriteString(pcFile));
 	return TRUE;
 }
@@ -145,8 +143,6 @@ BOOL CTestNamedString::Save(CObjectSerialiser* pcFile)
 
 BOOL CTestNamedString::Load(CObjectDeserialiser* pcFile)
 {
-	ReturnOnFalse(pcFile->ReadPointer(mszString.This()));
-	ReturnOnFalse(pcFile->ReadPointer(mpAnother.This()));
 	ReturnOnFalse(mszEmbedded.ReadString(pcFile));
 	return TRUE;
 }

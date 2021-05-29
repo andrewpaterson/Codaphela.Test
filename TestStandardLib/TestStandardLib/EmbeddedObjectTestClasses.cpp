@@ -8,8 +8,8 @@
 void CEmbeddedTest::Class(void)
 {
 	CObject::Class();
-	Unmanaged(&miAmANumber, "miAmANumber");
-	Unmanaged(&mfSoAmI, "mfSoAmI");
+	UnmanagedInt(&miAmANumber, "miAmANumber");
+	UnmanagedFloat(&mfSoAmI, "mfSoAmI");
 	Pointer(mpTest.This(), "mpTest");
 }
 
@@ -46,7 +46,6 @@ BOOL CEmbeddedTest::Save(CObjectSerialiser* pcFile)
 {
 	pcFile->WriteInt(miAmANumber);
 	pcFile->WriteFloat(mfSoAmI);
-	pcFile->WritePointer(mpTest);
 
 	return TRUE;
 }
@@ -59,7 +58,6 @@ BOOL CEmbeddedTest::Load(CObjectDeserialiser* pcFile)
 {
 	pcFile->ReadInt(&miAmANumber);
 	pcFile->ReadFloat(&mfSoAmI);
-	pcFile->ReadPointer(mpTest.This());
 	
 	return TRUE;
 }
@@ -76,12 +74,12 @@ void CEmbeddedContainer::Class(void)
 	int					mi;
 	float				mf;
 
-	Unmanaged(msz, 4, "msz");
+	UnmanagedChar(msz, 4, "msz");
 	Pointer(mpTest.This(), "mpTest");
 	Embedded(&mcOne, "mcOne");
 	Embedded(&mcTwo, "mcTwo");
-	Unmanaged(&mi, "mi");
-	Unmanaged(&mf, "mf");
+	UnmanagedInt(&mi, "mi");
+	UnmanagedFloat(&mf, "mf");
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -147,7 +145,7 @@ void CEmbeddedComplex::Class(void)
 {
 	CObject::Class();
 	Pointer(mpTest.This(), "mpTest");
-	Unmanaged(mai, 2, "mai");
+	UnmanagedInt(mai, 2, "mai");
 	Embedded(&mcSimple, "mcSimple");
 	Embedded(&ma, "ma");
 	Embedded(&mcContainer, "mcContainer");

@@ -64,7 +64,7 @@ public:
 		CObject::Class();
 		Pointer(mpObject.This(), "mpObject");
 		Pointer(mpTest.This(), "mpTest");
-		Unmanaged(&miUnmanagedInt, "miUnmanagedInt");
+		UnmanagedInt(&miUnmanagedInt, "miUnmanagedInt");
 		Primitive(&mInt, "mInt");
 		Embedded(&mTiny, "mTiny");
 		Primitive(&mDouble, "mDouble");
@@ -87,6 +87,9 @@ void TestClassDefinition(void)
 	CClass*				pcTinyTestClassClass;
 	CClasses*			pcClasses;
 	CClass*				pcTemp;
+	CField*				pcField;
+	CPointerField*		pcPointerField;
+	EPrimitiveType		eType;
 
 	DataIOInit();
 	ObjectsInit();
@@ -99,10 +102,11 @@ void TestClassDefinition(void)
 	pcTestClassClass = pTestClass->GetClass();
 	AssertNotNull(pcTestClassClass);
 	AssertString("CTestClass", pcTestClassClass->GetName());
-	AssertInt(CLASS_TYPES, pcTestClassClass->GetType());
+	AssertTrue(pcTestClassClass->GetType() > CLASS_TYPES);
 	AssertTrue(pcTestClassClass->IsComplete());
+	eType = pcTestClassClass->GetType();
 
-	pcTemp = pcClasses->Get(CLASS_TYPES);
+	pcTemp = pcClasses->Get(eType);
 	AssertPointer(pcTestClassClass, pcTemp);
 	pcTemp = pcClasses->Get("CTestClass");
 	AssertPointer(pcTestClassClass, pcTemp);
@@ -110,15 +114,43 @@ void TestClassDefinition(void)
 	pcTinyTestClassClass = pTestClass->mTiny.GetClass();
 	AssertNotNull(pcTinyTestClassClass);
 	AssertString("CTinyTestClass", pcTinyTestClassClass->GetName());
-	AssertInt(CLASS_TYPES + 1, pcTinyTestClassClass->GetType());
+	AssertInt(eType + 1, pcTinyTestClassClass->GetType());
 	AssertTrue(pcTinyTestClassClass->IsComplete());
 
-	pcTemp = pcClasses->Get(CLASS_TYPES + 1);
+	pcTemp = pcClasses->Get(eType + 1);
 	AssertPointer(pcTinyTestClassClass, pcTemp);
 	pcTemp = pcClasses->Get("CTinyTestClass");
 	AssertPointer(pcTinyTestClassClass, pcTemp);
 
-	pcTestClassClass->GetField("");
+	pcField = pcTestClassClass->GetField("mpObject");
+	AssertTrue(pcField->IsPointer());
+	AssertString("mpObject", pcField->GetName());
+	AssertInt(168, pcField->GetOffset());
+	pcPointerField = (CPointerField*)pcField;
+
+	pcField = pcTestClassClass->GetField("mpTest");
+	AssertTrue(pcField->IsPointer());
+	AssertInt(176, pcField->GetOffset());
+
+	pcField = pcTestClassClass->GetField("mInt");
+	AssertTrue(pcField->IsPrimitive());
+	AssertString("mInt", pcField->GetName());
+	AssertInt(184, pcField->GetOffset());
+
+	pcField = pcTestClassClass->GetField("miUnmanagedInt");
+	AssertTrue(pcField->IsUnmanaged());
+	AssertFalse(pcField->IsArray());
+	AssertString("miUnmanagedInt", pcField->GetName());
+	AssertInt(192, pcField->GetOffset());
+
+	pcField = pcTestClassClass->GetField("mTiny");
+	AssertTrue(pcField->IsEmbeddedObject());
+	AssertString("mTiny", pcField->GetName());
+	AssertInt(200, pcField->GetOffset());
+
+	pcField = pcTestClassClass->GetField("mDouble");
+	AssertTrue(pcField->IsPrimitive());
+	AssertInt(376, pcField->GetOffset());
 
 	ObjectsKill();
 	DataIOKill();
