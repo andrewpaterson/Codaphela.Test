@@ -1,6 +1,6 @@
 #include "BaseLib/Float3.h"
 #include "BaseLib/Int2.h"
-#include "BaseLib/DataTypesIO.h"
+#include "BaseLib/DatasIO.h"
 #include "BaseLib/MemoryFile.h"
 #include "TestLib/Assert.h"
 
@@ -11,14 +11,14 @@
 //////////////////////////////////////////////////////////////////////////
 void TestDataTypesIOInt2(void)
 {
-	CDataTypesIO			cDataIO;
-	SInt2					si2In;
-	DataTypeIO_FileWriter	fSave;
-	DataTypeIO_FileReader	fLoad;
-	BOOL					bResult;
-	CMemoryFile				cMemoryFile;
-	CFileBasic				cFile;
-	SInt2					si2Out;
+	CDatasIO			cDataIO;
+	SInt2				si2In;
+	DataIO_FileWriter	fSave;
+	DataIO_FileReader	fLoad;
+	BOOL				bResult;
+	CMemoryFile			cMemoryFile;
+	CFileBasic			cFile;
+	SInt2				si2Out;
 
 	cDataIO.Init();
 	cDataIO.Add<SInt2>("SInt2");
@@ -53,18 +53,18 @@ void TestDataTypesIOInt2(void)
 //////////////////////////////////////////////////////////////////////////
 void TestDataTypesIOMultiple(void)
 {
-	CDataTypesIO			cDataIO;
-	SFloat2					sf2In;
-	SFloat3					sf3In;
-	SFloat4					sf4In;
-	DataTypeIO_FileWriter	fSave;
-	DataTypeIO_FileReader	fLoad;
-	BOOL					bResult;
-	CMemoryFile				cMemoryFile;
-	CFileBasic				cFile;
-	SFloat2					sf2Out;
-	SFloat3					sf3Out;
-	SFloat4					sf4Out;
+	CDatasIO			cDataIO;
+	SFloat2				sf2In;
+	SFloat3				sf3In;
+	SFloat4				sf4In;
+	DataIO_FileWriter	fSave;
+	DataIO_FileReader	fLoad;
+	BOOL				bResult;
+	CMemoryFile			cMemoryFile;
+	CFileBasic			cFile;
+	SFloat2				sf2Out;
+	SFloat3				sf3Out;
+	SFloat4				sf4Out;
 
 	cDataIO.Init();
 	cDataIO.Add<SFloat2>();

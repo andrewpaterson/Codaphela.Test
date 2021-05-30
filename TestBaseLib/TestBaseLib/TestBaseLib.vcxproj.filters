@@ -145,6 +145,12 @@
     <Filter Include="Source\Data\Map\Index">
       <UniqueIdentifier>{3d7c81da-ed16-4589-82df-dfd04acec8d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Math\Primitive">
+      <UniqueIdentifier>{3f103a76-5fdd-4795-a27a-075c7ee8321b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Math\Numbers">
+      <UniqueIdentifier>{94aa2c89-b3f9-419c-9ecc-0834cf7a38d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -191,12 +197,6 @@
     </ClCompile>
     <ClCompile Include="TestFileSystem.cpp">
       <Filter>Source\File\System</Filter>
-    </ClCompile>
-    <ClCompile Include="TestIntegerHelper.cpp">
-      <Filter>Source\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="TestNumbers.cpp">
-      <Filter>Source\Math</Filter>
     </ClCompile>
     <ClCompile Include="TestTreeTemplate.cpp">
       <Filter>Source\Data\Tree</Filter>
@@ -408,6 +408,18 @@
     <ClCompile Include="TestIndexBlock.cpp">
       <Filter>Source\Data\Map\Index</Filter>
     </ClCompile>
+    <ClCompile Include="TestGlobalDataTypesIO.cpp">
+      <Filter>Source\Data\Types\File</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIntegerHelper.cpp">
+      <Filter>Source\Math\Primitive</Filter>
+    </ClCompile>
+    <ClCompile Include="TestNumbers.cpp">
+      <Filter>Source\Math\Numbers</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFloatHelper.cpp">
+      <Filter>Source\Math\Primitive</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">
@@ -440,6 +452,5 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
-    <None Include="Test.txt" />
   </ItemGroup>
 </Project>

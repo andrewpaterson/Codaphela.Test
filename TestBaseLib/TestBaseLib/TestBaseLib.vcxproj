@@ -223,7 +223,9 @@
     <ClCompile Include="TestDataTypesIO.cpp" />
     <ClCompile Include="TestFileIO.cpp" />
     <ClCompile Include="TestFloat4.cpp" />
+    <ClCompile Include="TestFloatHelper.cpp" />
     <ClCompile Include="TestFreeListAllocator.cpp" />
+    <ClCompile Include="TestGlobalDataTypesIO.cpp" />
     <ClCompile Include="TestIndexBlock.cpp" />
     <ClCompile Include="TestIndexTreeConfig.cpp" />
     <ClCompile Include="TestIndexTreeDataOrderer.cpp" />
@@ -301,7 +303,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
-    <None Include="Test.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\CommonLibraries\BaseLib\BaseLib.vcxproj">

@@ -7,6 +7,7 @@
 
 void TestPrimitiveTypes(void);
 void TestFloat4(void);
+void TestFloatHelper(void);
 void TestArraySizer(void);
 void TestArrayTemplatePrimitive(void);
 void TestArrayInt(void);
@@ -85,6 +86,7 @@ void TestCSVFileImmutable(void);
 void TestIndexTreeDataOrderer(void);
 void TestIndexTreeMemoryConfig(void);
 void TestDataTypesIO(void);
+void TestGlobalDataTypesIO(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -100,6 +102,7 @@ int main(void)
 
 	TestPrimitiveTypes();
 	TestIntegerHelper();
+	TestFloatHelper();
 	TestFloat4();
 	TestStringHelper();
 	TestArrayInt();
@@ -178,6 +181,7 @@ int main(void)
 	TestIndexTreeDataOrderer();
 	TestIndexTreeMemoryConfig();
 	TestDataTypesIO();
+	TestGlobalDataTypesIO();
 
 	iResult = TestTotalStatistics();
 	_CrtDumpMemoryLeaks();
