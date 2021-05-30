@@ -96,14 +96,14 @@ void WriteObjectConverterChunkedFile(void)
 {
 	Ptr<CTestDoubleNamedString>		cDouble;
 	CObjectWriterChunked			cWriter;
-	CObjectGraphSerialiser			cGraphSerialiser;
+	CObjectGraphSerialiser			cSerialiser;
 
 	cDouble = SetupObjectConverterChunkFile();
 
 	cWriter.Init("Output" _FS_ "ObjectConverter" _FS_, "", "Double");
-	cGraphSerialiser.Init(&cWriter);
-	AssertTrue(cGraphSerialiser.Write(&cDouble));
-	cGraphSerialiser.Kill();
+	cSerialiser.Init(&cWriter);
+	AssertTrue(cSerialiser.Write(&cDouble));
+	cSerialiser.Kill();
 	cWriter.Kill();
 }
 

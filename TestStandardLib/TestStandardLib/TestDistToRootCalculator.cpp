@@ -1,4 +1,5 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
 #include "BaseLib/TypeNames.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/Root.h"
@@ -2568,6 +2569,7 @@ void TestDistToRoot(void)
 	BeginTests();
 	MemoryInit();
 	TypesInit();
+	DataIOInit();
 
 	TestDistToRootTosNotUpdated();
 	TestClearDistToRootToValidDistBroken();
@@ -2593,6 +2595,7 @@ void TestDistToRoot(void)
 	TestDistToRootLinearToStackScenarioB();
 	TestDistToRootComplex();
 
+	DataIOKill();
 	TypesKill();
 	MemoryKill();
 	TestStatistics();

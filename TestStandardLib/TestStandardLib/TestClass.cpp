@@ -9,6 +9,7 @@
 #include "StandardLib/ObjectSerialiser.h"
 #include "StandardLib/ObjectDeserialiser.h"
 #include "StandardLib/Objects.h"
+#include "StandardLib/ObjectWriterChunked.h"
 #include "TestLib/Assert.h"
 
 
@@ -48,6 +49,7 @@ public:
 	int							miUnmanagedInt;
 	CTinyTestClass				mTiny;
 	Float64						mDouble;
+	unsigned char				mauiData[12];
 
 	Ptr<CTestClass> Init(void)
 	{
@@ -55,6 +57,7 @@ public:
 		mInt = 0;
 		miUnmanagedInt = 0;
 		mDouble = 0;
+		memset(mauiData, 0, 12);
 		PostInit();
 		return this;
 	}
@@ -68,6 +71,7 @@ public:
 		Primitive(&mInt, "mInt");
 		Embedded(&mTiny, "mTiny");
 		Primitive(&mDouble, "mDouble");
+		UnmanagedData(mauiData, 12, "mauiData");
 	}
 
 	void Free(void)
@@ -152,6 +156,40 @@ void TestClassDefinition(void)
 	AssertTrue(pcField->IsPrimitive());
 	AssertInt(376, pcField->GetOffset());
 
+	pcField = pcTestClassClass->GetField("mauiData");
+	AssertTrue(pcField->IsUnmanaged());
+	AssertInt(392, pcField->GetOffset());
+
+	ObjectsKill();
+	DataIOKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestClassSave(void)
+{
+	Ptr<CTestClass>				pTestClass;
+	CClasses*					pcClasses;
+	CObjectSingleSerialiser		cSerialiser;
+	CObjectWriterChunked		cWriter;
+
+	DataIOInit();
+	ObjectsInit();
+
+	pcClasses = gcObjects.GetClasses();
+
+	pTestClass = gcObjects.Malloc<CTestClass>();
+	pTestClass->Init();
+	
+	cWriter.Init("Output" _FS_ "Class" _FS_, "", "TestClass");
+	cSerialiser.Init(&cWriter);
+	cSerialiser.Write(&pTestClass);
+	cSerialiser.Kill();
+	cWriter.Kill();
+
 	ObjectsKill();
 	DataIOKill();
 }
@@ -168,6 +206,7 @@ void TestClass(void)
 	TypesInit();
 
 	TestClassDefinition();
+	TestClassSave();
 
 	TypesKill();
 	MemoryKill();

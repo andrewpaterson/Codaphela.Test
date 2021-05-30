@@ -81,7 +81,7 @@ int main(void)
 	TestIndexedData();
 	TestSequence();
 	TestNamedIndexes();
-	TestNamedIndexedData();  // <-- Memory Leak
+	TestNamedIndexedData();
 	TestIndexTreeFileKeyDiagnosticCallback();
 	TestIndexTreeAccess();
 	TestCodabase();
