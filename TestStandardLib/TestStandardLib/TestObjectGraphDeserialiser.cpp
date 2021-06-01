@@ -8,11 +8,11 @@
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "StandardLib/MultiFileObjectWriter.h"
 #include "StandardLib/ObjectReaderSimpleDisk.h"
-#include "StandardLib/ObjectWriterChunked.h"
+#include "StandardLib/ChunkFileObjectWriter.h"
 #include "StandardLib/ObjectReaderChunkFileDisk.h"
 #include "StandardLib/Root.h"
 #include "TestLib/Assert.h"
-#include "ObjectWriterChunkedTestClasses.h"
+#include "ChunkFileObjectWriterTestClasses.h"
 #include "ObjectTestClasses.h"
 
 
@@ -308,7 +308,7 @@ void TestObjectGraphDeserialiserRemappingOfSimpleFilesOIs(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectGraphDeserialiserRemappingOfChunkedFilesOIs(void)
 {
-	CObjectWriterChunked		cWriter;
+	CChunkFileObjectWriter		cWriter;
 	CObjectReaderChunkFileDisk	cReader;
 	CFileUtil					cFileUtil;
 
@@ -330,8 +330,8 @@ void TestObjectGraphDeserialiserRemappingOfChunkedFilesOIs(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 {
-	CObjectWriterChunked			cWriterStart1;
-	CObjectWriterChunked			cWriterStart2;
+	CChunkFileObjectWriter			cWriterStart1;
+	CChunkFileObjectWriter			cWriterStart2;
 	CFileUtil						cFileUtil;
 	Ptr<CTestSaveableObject2>		cOwStart1;
 	Ptr<CTestSaveableObject2>		cOwStart2;

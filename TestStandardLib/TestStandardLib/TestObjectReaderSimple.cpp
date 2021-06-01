@@ -9,7 +9,7 @@
 #include "StandardLib/MultiFileObjectWriter.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "TestLib/Assert.h"
-#include "ObjectWriterChunkedTestClasses.h"
+#include "ChunkFileObjectWriterTestClasses.h"
 
 
 

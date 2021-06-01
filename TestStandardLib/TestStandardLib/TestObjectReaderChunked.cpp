@@ -6,10 +6,10 @@
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectReaderChunkFileDisk.h"
 #include "StandardLib/ExternalObjectDeserialiser.h"
-#include "StandardLib/ObjectWriterChunked.h"
+#include "StandardLib/ChunkFileObjectWriter.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "TestLib/Assert.h"
-#include "ObjectWriterChunkedTestClasses.h"
+#include "ChunkFileObjectWriterTestClasses.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ CPointer SetupObjectReaderChunkedChunkFile(void)
 int WriteObjectReaderChunkedFile(void)
 {
 	CPointer				cBase;
-	CObjectWriterChunked	cWriter;
+	CChunkFileObjectWriter	cWriter;
 	CObjectGraphSerialiser	cGraphSerialiser;
 
 	cBase = SetupObjectReaderChunkedChunkFile();

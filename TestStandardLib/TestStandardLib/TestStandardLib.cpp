@@ -35,7 +35,7 @@ void TestObjectDirty(void);
 void TestObjectAllocator(void);
 void TestString(void);
 void TestClass(void);
-void TestObjectWriterChunked(void);
+void TestChunkFileObjectWriter(void);
 void TestObjectReaderChunked(void);
 void TestObjectGraphDeserialiser(void);
 void TestObjectReaderSimple(void);
@@ -90,7 +90,7 @@ int main(void)
 	TestObjectDirty();
 	TestString();
 	TestObjectAllocator();
-	TestObjectWriterChunked();
+	TestChunkFileObjectWriter();
 	TestObjectGraphSerialiser();
 	TestObjectReaderSimple();
 	TestObjectReaderChunked();

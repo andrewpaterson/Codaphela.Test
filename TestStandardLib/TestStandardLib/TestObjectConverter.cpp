@@ -5,10 +5,10 @@
 #include "StandardLib/ObjectConverterText.h"
 #include "StandardLib/ObjectConverterNative.h"
 #include "StandardLib/String.h"
-#include "StandardLib/ObjectWriterChunked.h"
+#include "StandardLib/ChunkFileObjectWriter.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "TestLib/Assert.h"
-#include "ObjectWriterChunkedTestClasses.h"
+#include "ChunkFileObjectWriterTestClasses.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -95,7 +95,7 @@ Ptr<CTestDoubleNamedString> SetupObjectConverterChunkFile(void)
 void WriteObjectConverterChunkedFile(void)
 {
 	Ptr<CTestDoubleNamedString>		cDouble;
-	CObjectWriterChunked			cWriter;
+	CChunkFileObjectWriter			cWriter;
 	CObjectGraphSerialiser			cSerialiser;
 
 	cDouble = SetupObjectConverterChunkFile();
@@ -337,7 +337,7 @@ Ptr<CTestDoubleNamedString> SetupObjectConverterChunkFile2(void)
 void WriteObjectConverterChunkedFile2(void)
 {
 	Ptr<CTestDoubleNamedString>		cDouble;
-	CObjectWriterChunked			cWriter;
+	CChunkFileObjectWriter			cWriter;
 	CObjectGraphSerialiser			cGraphSerialiser;
 
 	cDouble = SetupObjectConverterChunkFile2();

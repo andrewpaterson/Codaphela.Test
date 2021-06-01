@@ -9,7 +9,7 @@
 #include "StandardLib/ObjectSerialiser.h"
 #include "StandardLib/ObjectDeserialiser.h"
 #include "StandardLib/Objects.h"
-#include "StandardLib/ObjectWriterChunked.h"
+#include "StandardLib/ChunkFileObjectWriter.h"
 #include "TestLib/Assert.h"
 
 
@@ -174,7 +174,7 @@ void TestClassSave(void)
 	Ptr<CTestClass>				pTestClass;
 	CClasses*					pcClasses;
 	CObjectSingleSerialiser		cSerialiser;
-	CObjectWriterChunked		cWriter;
+	CChunkFileObjectWriter		cWriter;
 
 	DataIOInit();
 	ObjectsInit();

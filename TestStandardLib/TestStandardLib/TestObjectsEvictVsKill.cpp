@@ -8,7 +8,7 @@
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
-#include "ObjectWriterChunkedTestClasses.h"
+#include "ChunkFileObjectWriterTestClasses.h"
 
 
 //////////////////////////////////////////////////////////////////////////

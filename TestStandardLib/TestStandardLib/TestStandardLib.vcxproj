@@ -104,7 +104,7 @@
     <ClCompile Include="EmbeddedObjectTestClasses.cpp" />
     <ClCompile Include="NamedObjectTestClasses.cpp" />
     <ClCompile Include="ObjectTestSetup.cpp" />
-    <ClCompile Include="ObjectWriterChunkedTestClasses.cpp" />
+    <ClCompile Include="ChunkFileObjectWriterTestClasses.cpp" />
     <ClCompile Include="TestArray.cpp" />
     <ClCompile Include="TestArrayCommonObject.cpp" />
     <ClCompile Include="TestChunkFileNames.cpp" />
@@ -162,7 +162,7 @@
     <ClInclude Include="NamedObjectTestClasses.h" />
     <ClInclude Include="ObjectTestClasses.h" />
     <ClInclude Include="ObjectTestSetup.h" />
-    <ClInclude Include="ObjectWriterChunkedTestClasses.h" />
+    <ClInclude Include="ChunkFileObjectWriterTestClasses.h" />
     <ClInclude Include="UnknownKillList.h" />
     <ClInclude Include="UnknownTestClasses.h" />
   </ItemGroup>

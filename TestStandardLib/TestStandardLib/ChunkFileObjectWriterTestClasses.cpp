@@ -1,7 +1,7 @@
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectSerialiser.h"
 #include "StandardLib/ObjectDeserialiser.h"
-#include "ObjectWriterChunkedTestClasses.h"
+#include "ChunkFileObjectWriterTestClasses.h"
 
 
 void CTestWithArray::Init(const char* szString, int x)

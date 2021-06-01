@@ -8,10 +8,10 @@
 #include "StandardLib/ObjectConverterText.h"
 #include "StandardLib/ObjectConverterNative.h"
 #include "StandardLib/String.h"
-#include "StandardLib/ObjectWriterChunked.h"
+#include "StandardLib/ChunkFileObjectWriter.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "TestLib/Assert.h"
-#include "ObjectWriterChunkedTestClasses.h"
+#include "ChunkFileObjectWriterTestClasses.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -113,7 +113,7 @@ Ptr<CTestDoubleNamedString> SetupDehollowficationScene(void)
 void WriteDehollowficationChunkedFile(void)
 {
 	Ptr<CTestDoubleNamedString>	cDouble;
-	CObjectWriterChunked		cWriter;
+	CChunkFileObjectWriter		cWriter;
 	CObjectGraphSerialiser		cGraphSerialiser;
 
 	cDouble = SetupDehollowficationScene();

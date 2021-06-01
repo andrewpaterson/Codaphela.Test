@@ -4,17 +4,17 @@
 #include "BaseLib/ScratchPadAllocator.h"
 #include "CoreLib/TransientSequence.h"
 #include "StandardLib/Objects.h"
-#include "StandardLib/ObjectWriterChunked.h"
+#include "StandardLib/ChunkFileObjectWriter.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "TestLib/Assert.h"
-#include "ObjectWriterChunkedTestClasses.h"
+#include "ChunkFileObjectWriterTestClasses.h"
 
 
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectWriterChunkedSerialised(void)
+void TestChunkFileObjectWriterSerialised(void)
 {	
 	MemoryInit();
 
@@ -24,11 +24,11 @@ void TestObjectWriterChunkedSerialised(void)
 
 	cScratchPad.Init();
 	cLifeAlloc.Init(&cScratchPad, FALSE, FALSE);
-	cUnknowns.Init(cLifeAlloc, "TestObjectWriterChunkedSerialised", &gcConstructors);
+	cUnknowns.Init(cLifeAlloc, "TestChunkFileObjectWriterSerialised", &gcConstructors);
 
 	ObjectsInit(&cUnknowns, &gcStackPointers, NULL, &gcTransientSequence);
 
-	CObjectWriterChunked		cWriter;
+	CChunkFileObjectWriter		cWriter;
 	CObjectGraphSerialiser		cGraphSerialiser;
 
 	Ptr<CTestWithArray>			pcObject1;
@@ -41,8 +41,8 @@ void TestObjectWriterChunkedSerialised(void)
 	CFileUtil					cFileUtil;
 	Ptr<CTestInteger>			pcGet;
 
-	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "ObjectWriterChunked"));
-	AssertTrue(cFileUtil.TouchDir("Output" _FS_ "ObjectWriterChunked" _FS_ "Test"));
+	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "ChunkFileObjectWriter"));
+	AssertTrue(cFileUtil.TouchDir("Output" _FS_ "ChunkFileObjectWriter" _FS_ "Test"));
 
 	pcObject1 = ONMalloc<CTestWithArray>("Base/Level 1/Warning", "Talking Clock", 17);
 
@@ -55,7 +55,7 @@ void TestObjectWriterChunkedSerialised(void)
 	pcObject4 = OMalloc<CTestInteger>(0xab, 0xbc, 0xcd);
 	pcObject1->Add(pcObject4);
 
-	cWriter.Init("Output" _FS_ "ObjectWriterChunked" _FS_ "Test", "Base" _FS_ "Level 1", "ChunkFile");
+	cWriter.Init("Output" _FS_ "ChunkFileObjectWriter" _FS_ "Test", "Base" _FS_ "Level 1", "ChunkFile");
 
 	AssertInt(3, pcObject1->mcArray->NumElements());
 	AssertLongLongInt(3, pcObject1->mcArray->Get(0).GetIndex());
@@ -74,7 +74,7 @@ void TestObjectWriterChunkedSerialised(void)
 	CChunkFileHeader*	psOutputHeader;
 
 	AssertTrue(cInputFile.Init()->Read("Input" _FS_ "ChunkFile.DRG"));
-	AssertTrue(cOutputFile.Init()->Read("Output" _FS_ "ObjectWriterChunked" _FS_ "Test" _FS_ "Base" _FS_ "Level 1" _FS_ "ChunkFile.DRG"));
+	AssertTrue(cOutputFile.Init()->Read("Output" _FS_ "ChunkFileObjectWriter" _FS_ "Test" _FS_ "Base" _FS_ "Level 1" _FS_ "ChunkFile.DRG"));
 	
 	AssertLongLongInt(1158LL, cInputFile.Size());
 	AssertLongLongInt(1158LL, cOutputFile.Size());
@@ -83,13 +83,13 @@ void TestObjectWriterChunkedSerialised(void)
 	AssertInt(CHUNK_HEADER_MAGIC, psInputHeader->miMagic);
 	AssertInt(CHUNK_HEADER_MAGIC, psOutputHeader->miMagic);
 
-	AssertFile("Input" _FS_ "ChunkFile.DRG", "Output" _FS_ "ObjectWriterChunked" _FS_ "Test" _FS_ "Base" _FS_ "Level 1" _FS_ "ChunkFile.DRG");
+	AssertFile("Input" _FS_ "ChunkFile.DRG", "Output" _FS_ "ChunkFileObjectWriter" _FS_ "Test" _FS_ "Base" _FS_ "Level 1" _FS_ "ChunkFile.DRG");
 	Pass();
 
 	cOutputFile.Kill();
 	cInputFile.Kill();
 
-	cChunkFile.Init(DiskFile("Output" _FS_ "ObjectWriterChunked" _FS_ "Test" _FS_ "Base" _FS_ "Level 1" _FS_ "ChunkFile.DRG"));
+	cChunkFile.Init(DiskFile("Output" _FS_ "ChunkFileObjectWriter" _FS_ "Test" _FS_ "Base" _FS_ "Level 1" _FS_ "ChunkFile.DRG"));
 	AssertTrue(cChunkFile.ReadOpen());
 
 	//CTestWithArray pcObject1
@@ -142,7 +142,7 @@ void TestObjectWriterChunkedSerialised(void)
 
 	MemoryKill();
 
-	cFileUtil.RemoveDir("Output" _FS_ "ObjectWriterChunked");
+	cFileUtil.RemoveDir("Output" _FS_ "ChunkFileObjectWriter");
 }
 
 
@@ -150,11 +150,11 @@ void TestObjectWriterChunkedSerialised(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectWriterChunked(void)
+void TestChunkFileObjectWriter(void)
 {
 	BeginTests();
 
-	TestObjectWriterChunkedSerialised();
+	TestChunkFileObjectWriterSerialised();
 
 	TestStatistics();
 }
