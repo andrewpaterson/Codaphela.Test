@@ -183,7 +183,7 @@ void TestClassSave(void)
 
 	pTestClass = gcObjects.Malloc<CTestClass>();
 	pTestClass->Init();
-	
+
 	cWriter.Init("Output" _FS_ "Class" _FS_, "", "TestClass");
 	cSerialiser.Init(&cWriter);
 	cSerialiser.Write(&pTestClass);
