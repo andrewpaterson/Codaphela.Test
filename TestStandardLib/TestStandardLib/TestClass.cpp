@@ -176,7 +176,8 @@ void TestClassSave(void)
 	CObjectSingleSerialiser		cSerialiser;
 	CChunkFileObjectWriter		cWriter;
 	CFileUtil					cFileUtil;
-	char						szDirectory[] = "Output" _FS_ "Class" _FS_;
+	BOOL						bResult;
+	char						szDirectory[] = "Output" _FS_ "Class";
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
@@ -191,7 +192,7 @@ void TestClassSave(void)
 
 	cWriter.Init(szDirectory, "", "TestClass");
 	cSerialiser.Init(&cWriter);
-	cSerialiser.Write(&pTestClass);
+	bResult = cSerialiser.Write(&pTestClass);
 	cSerialiser.Kill();
 	cWriter.Kill();
 
@@ -210,12 +211,14 @@ void TestClass(void)
 {
 	BeginTests();
 	MemoryInit();
+	FastFunctionsInit();
 	TypesInit();
 
 	TestClassDefinition();
 	TestClassSave();
 
 	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

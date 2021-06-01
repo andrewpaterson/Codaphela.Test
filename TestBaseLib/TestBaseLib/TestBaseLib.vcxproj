@@ -214,6 +214,7 @@
     <ClCompile Include="TestChars.cpp" />
     <ClCompile Include="TestCharsHelper.cpp" />
     <ClCompile Include="TestChunkFileFile.cpp" />
+    <ClCompile Include="TestChunkFileFileSystem.cpp" />
     <ClCompile Include="TestConstructorCall.cpp" />
     <ClCompile Include="TestConstructors.cpp" />
     <ClCompile Include="TestCountingAllocator.cpp" />

@@ -99,7 +99,7 @@ void CTestNamedString::Init(void)
 	PreInit();
 	mszString = NULL;
 	mpAnother = NULL;
-	mszEmbedded.Zero();
+	mszEmbedded._Init();
 	PostInit();
 }
 

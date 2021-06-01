@@ -16,7 +16,6 @@ void TestExternalChannels(void);
 void TestSingleChannelAccessor(void);
 void TestActionEvent(void);
 void TestEvent(void);
-void TestChunkFileNames(void);
 void TestObjectGraphSerialiser(void);
 void TestPointer(void);
 void TestObjectConverter(void);
@@ -74,7 +73,6 @@ int main(void)
 	TestChannels();
 	TestChannelsAccessor();
 	TestSingleChannelAccessor();
-	TestChunkFileNames();
 	TestParameters();
 	TestClass();
 	TestDistToRoot();

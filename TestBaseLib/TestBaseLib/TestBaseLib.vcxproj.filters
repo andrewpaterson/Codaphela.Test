@@ -420,6 +420,9 @@
     <ClCompile Include="TestFloatHelper.cpp">
       <Filter>Source\Math\Primitive</Filter>
     </ClCompile>
+    <ClCompile Include="TestChunkFileFileSystem.cpp">
+      <Filter>Source\File\Chunk</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

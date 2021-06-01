@@ -63,6 +63,7 @@ void TestBufferedFile(void);
 void TestMemoryFile(void);
 void TestChunkFile(void);
 void TestChunkFileFile(void);
+void TestChunkFileFileSystem(void);
 void TestPackFile(void);
 void TestFileIO(void);
 void TestFileSystem(void);
@@ -177,6 +178,7 @@ int main(void)
 	TestPackFile();
 	TestFileIO();
 	TestFileSystem();
+	TestChunkFileFileSystem();
 	TestCSVFileImmutable();
 	TestIndexTreeDataOrderer();
 	TestIndexTreeMemoryConfig();

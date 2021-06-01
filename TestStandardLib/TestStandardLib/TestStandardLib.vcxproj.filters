@@ -37,14 +37,8 @@
     <Filter Include="Source\Object\Unknown\Collections\Map">
       <UniqueIdentifier>{70a210e2-6ce8-432d-912d-c741299b97ce}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\File">
-      <UniqueIdentifier>{cb579f2f-752d-4b2b-8499-fff8106bb181}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Object\Object\Source">
       <UniqueIdentifier>{281e95c5-5992-4e41-b811-83942989cce3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\File\Chunk">
-      <UniqueIdentifier>{537a4597-a6f5-4f0c-99dc-ed8b564b3169}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Object\Object\Pointer">
       <UniqueIdentifier>{a820a87c-b4fd-4ba6-82b7-6e2aa417382b}</UniqueIdentifier>
@@ -149,9 +143,6 @@
     </ClCompile>
     <ClCompile Include="TestObjectConverter.cpp">
       <Filter>Source\Object\Object\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="TestChunkFileNames.cpp">
-      <Filter>Source\File\Chunk</Filter>
     </ClCompile>
     <ClCompile Include="TestPointer.cpp">
       <Filter>Source\Object\Object\Pointer</Filter>
