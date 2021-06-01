@@ -6,7 +6,7 @@
 #include "StandardLib/Objects.h"
 #include "StandardLib/ExternalObjectDeserialiser.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
-#include "StandardLib/ObjectWriterSimple.h"
+#include "StandardLib/MultiFileObjectWriter.h"
 #include "StandardLib/ObjectReaderSimpleDisk.h"
 #include "StandardLib/ObjectWriterChunked.h"
 #include "StandardLib/ObjectReaderChunkFileDisk.h"
@@ -192,7 +192,7 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectGraphDeserialiserReuseName(void)
 {
-	CObjectWriterSimple			cWriter;
+	CMultiFileObjectWriter		cWriter;
 	CObjectReaderSimpleDisk		cReader;
 	CFileUtil					cFileUtil;
 	Ptr<CTestSaveableObject2>	cBase;
@@ -286,7 +286,7 @@ void TestObjectGraphDeserialiserReuseName(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectGraphDeserialiserRemappingOfSimpleFilesOIs(void)
 {
-	CObjectWriterSimple			cWriter;
+	CMultiFileObjectWriter		cWriter;
 	CObjectReaderSimpleDisk		cReader;
 	CFileUtil					cFileUtil;
 

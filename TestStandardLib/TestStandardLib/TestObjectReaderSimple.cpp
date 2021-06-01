@@ -6,7 +6,7 @@
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectReaderSimpleDisk.h"
 #include "StandardLib/ExternalObjectDeserialiser.h"
-#include "StandardLib/ObjectWriterSimple.h"
+#include "StandardLib/MultiFileObjectWriter.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "TestLib/Assert.h"
 #include "ObjectWriterChunkedTestClasses.h"
@@ -40,7 +40,7 @@ void WriteObjectReaderSimpleFile(void)
 	gcObjects.AddConstructor<CTestNamedString>();
 
 	CPointer				cBase;
-	CObjectWriterSimple		cWriter;
+	CMultiFileObjectWriter		cWriter;
 	CObjectGraphSerialiser	cGraphSerialiser;
 
 	cBase = SetupObjectReaderSimpleFile();

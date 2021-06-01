@@ -2,7 +2,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
-#include "StandardLib/ObjectWriterSimple.h"
+#include "StandardLib/MultiFileObjectWriter.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
 
@@ -20,7 +20,7 @@ void TestObjectGraphSerialiserReachability(void)
 	Ptr<CTestSaveableObject2>	pTest2a;
 	Ptr<CTestSaveableObject2>	pTest2b;
 	CObjectGraphSerialiser		cGraphSerialiser;
-	CObjectWriterSimple			cSimpleWriter;
+	CMultiFileObjectWriter		cSimpleWriter;
 	char						szDirectory[] = "Output" _FS_ "GraphWriter" _FS_ "Data";
 	BOOL						bResult;
 
