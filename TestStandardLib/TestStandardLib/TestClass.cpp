@@ -175,6 +175,11 @@ void TestClassSave(void)
 	CClasses*					pcClasses;
 	CObjectSingleSerialiser		cSerialiser;
 	CChunkFileObjectWriter		cWriter;
+	CFileUtil					cFileUtil;
+	char						szDirectory[] = "Output" _FS_ "Class" _FS_;
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
 	DataIOInit();
 	ObjectsInit();
@@ -184,7 +189,7 @@ void TestClassSave(void)
 	pTestClass = gcObjects.Malloc<CTestClass>();
 	pTestClass->Init();
 
-	cWriter.Init("Output" _FS_ "Class" _FS_, "", "TestClass");
+	cWriter.Init(szDirectory, "", "TestClass");
 	cSerialiser.Init(&cWriter);
 	cSerialiser.Write(&pTestClass);
 	cSerialiser.Kill();
@@ -192,6 +197,8 @@ void TestClassSave(void)
 
 	ObjectsKill();
 	DataIOKill();
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 }
 
 
