@@ -86,9 +86,9 @@ void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
 	Ptr<CString>				cString1;
 	Ptr<CString>				cString2;
 	CObjectGraphSerialiser		cGraphSerialiser;
-	CExternalObjectDeserialiser	cGraphDeserialiser;
 	Ptr<CTestSaveableObject1>	cShared;
 	int							i;
+	CExternalObjectDeserialiser	cGraphDeserialiser;
 	CDependentReadObjects		cDependentReadObjects;
 	CCodabase*					pcDatabase;
 	CSequence*					pcSequence;

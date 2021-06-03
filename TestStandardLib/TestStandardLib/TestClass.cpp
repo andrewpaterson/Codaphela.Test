@@ -7,9 +7,10 @@
 #include "StandardLib/Integer.h"
 #include "StandardLib/Float.h"
 #include "StandardLib/ObjectSerialiser.h"
-#include "StandardLib/ObjectDeserialiser.h"
+#include "StandardLib/ExternalObjectDeserialiser.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ChunkFileObjectWriter.h"
+#include "StandardLib/ObjectReaderSimpleDisk.h"
 #include "TestLib/Assert.h"
 
 
@@ -39,7 +40,7 @@ public:
 };
 
 
-class CTestClass : public CObject
+class CTestClass : public CNamedObject
 {
 CONSTRUCTABLE(CTestClass);
 public:
@@ -129,36 +130,36 @@ void TestClassDefinition(void)
 	pcField = pcTestClassClass->GetField("mpObject");
 	AssertTrue(pcField->IsPointer());
 	AssertString("mpObject", pcField->GetName());
-	AssertInt(168, pcField->GetOffset());
+	AssertInt(192, pcField->GetOffset());
 	pcPointerField = (CPointerField*)pcField;
 
 	pcField = pcTestClassClass->GetField("mpTest");
 	AssertTrue(pcField->IsPointer());
-	AssertInt(176, pcField->GetOffset());
+	AssertInt(200, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mInt");
 	AssertTrue(pcField->IsPrimitive());
 	AssertString("mInt", pcField->GetName());
-	AssertInt(184, pcField->GetOffset());
+	AssertInt(208, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("miUnmanagedInt");
 	AssertTrue(pcField->IsUnmanaged());
 	AssertFalse(pcField->IsArray());
 	AssertString("miUnmanagedInt", pcField->GetName());
-	AssertInt(192, pcField->GetOffset());
+	AssertInt(216, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mTiny");
 	AssertTrue(pcField->IsEmbeddedObject());
 	AssertString("mTiny", pcField->GetName());
-	AssertInt(200, pcField->GetOffset());
+	AssertInt(224, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mDouble");
 	AssertTrue(pcField->IsPrimitive());
-	AssertInt(376, pcField->GetOffset());
+	AssertInt(400, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mauiData");
 	AssertTrue(pcField->IsUnmanaged());
-	AssertInt(392, pcField->GetOffset());
+	AssertInt(416, pcField->GetOffset());
 
 	ObjectsKill();
 	DataIOKill();
@@ -172,23 +173,31 @@ void TestClassDefinition(void)
 void TestClassSave(void)
 {
 	Ptr<CTestClass>				pTestClass;
-	CClasses*					pcClasses;
 	CObjectSingleSerialiser		cSerialiser;
 	CChunkFileObjectWriter		cWriter;
 	CFileUtil					cFileUtil;
 	BOOL						bResult;
 	char						szDirectory[] = "Output" _FS_ "Class";
+	char						szData[] = "0123456789ABC";
+	CExternalObjectDeserialiser	cGraphDeserialiser;
+	CDependentReadObjects		cDependentReadObjects;
+	CObjectReaderSimpleDisk		cReader;
 
+	DataIOInit();
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	DataIOInit();
 	ObjectsInit();
 
-	pcClasses = gcObjects.GetClasses();
-
-	pTestClass = gcObjects.Malloc<CTestClass>();
+	pTestClass = gcObjects.Malloc<CTestClass>("Burke");
 	pTestClass->Init();
+	pTestClass->mpObject = NULL;;
+	pTestClass->mpTest = NULL;
+	memcpy(pTestClass->mauiData, szData, 14);
+	pTestClass->mDouble = 7980345645697083.94783563546;
+	pTestClass->mInt = 2345978634;
+	pTestClass->miUnmanagedInt = 907843256;
+	pTestClass->mTiny.mc = 'c';
 
 	cWriter.Init(szDirectory, "", "TestClass");
 	cSerialiser.Init(&cWriter);
@@ -197,9 +206,19 @@ void TestClassSave(void)
 	cWriter.Kill();
 
 	ObjectsKill();
-	DataIOKill();
+	AssertNull(&pTestClass);
+	ObjectsInit();
+
+	cDependentReadObjects.Init();
+	cReader.Init(szDirectory);
+	cGraphDeserialiser.Init(&cReader, FALSE, &gcObjects, &cDependentReadObjects, gcObjects.GetMemory());
+	pTestClass = cGraphDeserialiser.Read("Burke");
+	AssertNotNull(&pTestClass);
+
+	ObjectsKill();
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	DataIOKill();
 }
 
 
