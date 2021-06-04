@@ -10,7 +10,7 @@
 #include "StandardLib/ExternalObjectDeserialiser.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ChunkFileObjectWriter.h"
-#include "StandardLib/ObjectReaderSimpleDisk.h"
+#include "StandardLib/ObjectReaderChunkFileDisk.h"
 #include "TestLib/Assert.h"
 
 
@@ -79,6 +79,22 @@ public:
 	{
 	}
 };
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestClassAddConstructors(void)
+{
+	gcObjects.AddConstructor<CArrayObject>();
+	gcObjects.AddConstructor<CSetObject>();
+	gcObjects.AddConstructor<CRoot>();
+	gcObjects.AddConstructor<CTestClass>();
+	gcObjects.AddConstructor<CTinyTestClass>();
+}
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -177,17 +193,18 @@ void TestClassSave(void)
 	CChunkFileObjectWriter		cWriter;
 	CFileUtil					cFileUtil;
 	BOOL						bResult;
-	char						szDirectory[] = "Output" _FS_ "Class";
+	char						szDirectory[] = "Output" _FS_ "TestClass";
 	char						szData[] = "0123456789ABC";
 	CExternalObjectDeserialiser	cGraphDeserialiser;
 	CDependentReadObjects		cDependentReadObjects;
-	CObjectReaderSimpleDisk		cReader;
+	CObjectReaderChunkFileDisk 	cReader;
 
 	DataIOInit();
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
 	ObjectsInit();
+	TestClassAddConstructors();
 
 	pTestClass = gcObjects.Malloc<CTestClass>("Burke");
 	pTestClass->Init();
@@ -199,7 +216,7 @@ void TestClassSave(void)
 	pTestClass->miUnmanagedInt = 907843256;
 	pTestClass->mTiny.mc = 'c';
 
-	cWriter.Init(szDirectory, "", "TestClass");
+	cWriter.Init(szDirectory, "", "File");
 	cSerialiser.Init(&cWriter);
 	bResult = cSerialiser.Write(&pTestClass);
 	cSerialiser.Kill();
@@ -210,7 +227,7 @@ void TestClassSave(void)
 	ObjectsInit();
 
 	cDependentReadObjects.Init();
-	cReader.Init(szDirectory);
+	cReader.Init(szDirectory, "File");
 	cGraphDeserialiser.Init(&cReader, FALSE, &gcObjects, &cDependentReadObjects, gcObjects.GetMemory());
 	pTestClass = cGraphDeserialiser.Read("Burke");
 	AssertNotNull(&pTestClass);
