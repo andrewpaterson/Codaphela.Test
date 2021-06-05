@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/Root.h"
 #include "StandardLib/PointerContainer.h"
@@ -1344,6 +1346,8 @@ void TestDistToStack(void)
 {
 	BeginTests();
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 
 	TestDistToStackSimpleTwoStep();
 	TestDistToStackSimpleOneStep();
@@ -1363,6 +1367,8 @@ void TestDistToStack(void)
 	TestDistToStackSetBroken();
 	TestDistToStackRemoveUnbalancedLargeBroken();
 
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 	TestStatistics();
 }

@@ -235,6 +235,8 @@ void TestClassOnStackWrapped(void)
 	pcPointer = pcPointerField->GetPointer(&cTestClass);
 	pcTestClass = (CTestClass*)pcPointer->BaseObject();
 	AssertDouble(45648739045.0, pcTestClass->mDouble, 0);
+
+	Pass();
 }
 //////////////////////////////////////////////////////////////////////////
 //
