@@ -55,6 +55,7 @@ public:
 	Ptr<CTestClass> Init(void)
 	{
 		PreInit();
+		mTiny.Init();
 		mInt = 0;
 		miUnmanagedInt = 0;
 		mDouble = 0;
@@ -186,6 +187,123 @@ void TestClassDefinition(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestClassOnStackWrapped(void)
+{
+	CTestClass			cTestClass;
+	CTestClass			cTestClass2;
+	CClass*				pcTestClassClass;
+	CClass*				pcTinyTestClassClass;
+	CClasses*			pcClasses;
+	CClass*				pcTemp;
+	EPrimitiveType		eType;
+	CField*				pcField;
+	CPointerField*		pcPointerField;
+	CPointer*			pcPointer;
+	CTestClass*			pcTestClass;
+
+	pcClasses = gcObjects.GetClasses();
+
+	cTestClass.Init();
+	pcTestClassClass = cTestClass.GetClass();
+	AssertNotNull(pcTestClassClass);
+	AssertString("CTestClass", pcTestClassClass->GetName());
+	AssertTrue(pcTestClassClass->GetType() > CLASS_TYPES);
+	AssertTrue(pcTestClassClass->IsComplete());
+	eType = pcTestClassClass->GetType();
+
+	pcTemp = pcClasses->Get(eType);
+	AssertPointer(pcTestClassClass, pcTemp);
+	pcTemp = pcClasses->Get("CTestClass");
+	AssertPointer(pcTestClassClass, pcTemp);
+
+	pcTinyTestClassClass = cTestClass.mTiny.GetClass();
+	AssertNotNull(pcTinyTestClassClass);
+	AssertString("CTinyTestClass", pcTinyTestClassClass->GetName());
+	AssertInt(eType + 1, pcTinyTestClassClass->GetType());
+	AssertTrue(pcTinyTestClassClass->IsComplete());
+
+	pcField = pcTestClassClass->GetField("mpObject");
+	AssertTrue(pcField->IsPointer());
+	AssertString("mpObject", pcField->GetName());
+	AssertInt(192, pcField->GetOffset());
+	pcPointerField = (CPointerField*)pcField;
+
+	cTestClass2.Init();
+	cTestClass2.mDouble = 45648739045.0;
+	cTestClass.mpObject = &cTestClass2;
+
+	pcPointer = pcPointerField->GetPointer(&cTestClass);
+	pcTestClass = (CTestClass*)pcPointer->BaseObject();
+	AssertDouble(45648739045.0, pcTestClass->mDouble, 0);
+}
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestClassOnStack(void)
+{
+	DataIOInit();
+	ObjectsInit();
+
+	TestClassOnStackWrapped();
+
+	ObjectsKill();
+	DataIOKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestClassName(void)
+{
+	Ptr<CTestClass>		pTestClass1;
+	CTestClass*			pcTestClass;
+	CNamedObject*		pcNamedObject;
+	CObject*			pcObject;
+	CBaseObject*		pcBaseObject;
+	CEmbeddedObject*	pcEmbeddedObject;
+	CUnknown*			pcUnknown;
+	CConstructable*		pcConstructable;
+
+	DataIOInit();
+	ObjectsInit();
+
+	pTestClass1 = gcObjects.Malloc<CTestClass>();
+	pTestClass1->Init();
+
+	pcTestClass = &pTestClass1;
+	AssertString("CTestClass", pcTestClass->ClassName());
+
+	pcNamedObject = &pTestClass1;
+	AssertString("CTestClass", pcNamedObject->ClassName());
+
+	pcObject = &pTestClass1;
+	AssertString("CTestClass", pcObject->ClassName());
+
+	pcBaseObject = &pTestClass1;
+	AssertString("CTestClass", pcBaseObject->ClassName());
+
+	pcEmbeddedObject = &pTestClass1;
+	AssertString("CTestClass", pcEmbeddedObject->ClassName());
+
+	pcUnknown = &pTestClass1;
+	AssertString("CTestClass", pcUnknown->ClassName());
+
+	pcConstructable = &pTestClass1;
+	AssertString("CTestClass", pcConstructable->ClassName());
+
+	ObjectsKill();
+	DataIOKill();
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestClassSave(void)
 {
 	Ptr<CTestClass>				pTestClass;
@@ -262,7 +380,6 @@ void TestClassHeapObjectEmbeddedPointers(void)
 	DataIOInit();
 	ObjectsInit();
 
-
 	pTestClass1 = gcObjects.Malloc<CTestClass>();
 	AssertTrue(pTestClass1->IsAllocatedInObjects());
 	AssertTrue(pTestClass1->mpObject.IsEmbeddingAllocatedInObjects());
@@ -279,7 +396,6 @@ void TestClassHeapObjectEmbeddedPointers(void)
 	pTestClass2 = NULL;
 
 	ObjectsKill();
-
 	DataIOKill();
 }
 
@@ -296,6 +412,8 @@ void TestClass(void)
 	TypesInit();
 
 	TestClassDefinition();
+	TestClassOnStack();
+	TestClassName();
 	TestClassSave();
 	TestClassHeapObjectEmbeddedPointers();
 
