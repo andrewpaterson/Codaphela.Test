@@ -534,14 +534,14 @@ void TestObjectGetObjects(void)
 	STestObjectFreedNotifier	sFreedNotifier1;
 	Ptr<CRoot>					pRoot;
 
-	pcObjects = cObject.GetObjects();
+	pcObjects = cObject.GetObjectsThisIn();
 	AssertNull(pcObjects);
 
 	cObject.Init();
 
 	pObject1 = OMalloc<CTestObject>(&sFreedNotifier1);
 
-	pcObjects = pObject1->GetObjects();
+	pcObjects = pObject1->GetObjectsThisIn();
 	AssertPointer(&gcObjects, pcObjects);
 	AssertFalse(sFreedNotifier1.bFreed);
 	pRoot = gcObjects.Get(ROOT_NAME);
