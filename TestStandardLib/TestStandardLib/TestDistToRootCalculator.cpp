@@ -2193,7 +2193,7 @@ void TestDistToRootLinearToStackScenarioB(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestDistToRootTosNotUpdated(void)
+void TestDistToRootToUpdated(void)
 {
 	ObjectsInit();
 
@@ -2214,6 +2214,11 @@ void TestDistToRootTosNotUpdated(void)
 	pTest1 = OMalloc<CTestObject>();
 	pTest2 = OMalloc<CTestObject>();
 	pTest3 = OMalloc<CTestObject>();
+
+	AssertTrue(pRoot->IsAllocatedInObjects());
+	AssertTrue(pTest1->IsAllocatedInObjects());
+	AssertTrue(pTest2->IsAllocatedInObjects());
+	AssertTrue(pTest3->IsAllocatedInObjects());
 
 	pTest1->mpTest = pTest2;
 	pTest2->mpTest = pTest3;
@@ -2571,7 +2576,7 @@ void TestDistToRoot(void)
 	TypesInit();
 	DataIOInit();
 
-	TestDistToRootTosNotUpdated();
+	TestDistToRootToUpdated();
 	TestClearDistToRootToValidDistBroken();
 	TestClearDistToRootToValidDistComplex();
 	TestClearDistToRootToValidDistSimpleLeft();

@@ -254,6 +254,40 @@ void TestClassSave(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestClassHeapObjectEmbeddedPointers(void)
+{
+	Ptr<CTestClass>		pTestClass1;
+	Ptr<CTestClass>		pTestClass2;
+
+	DataIOInit();
+	ObjectsInit();
+
+
+	pTestClass1 = gcObjects.Malloc<CTestClass>();
+	AssertTrue(pTestClass1->IsAllocatedInObjects());
+	AssertTrue(pTestClass1->mpObject.IsEmbeddingAllocatedInObjects());
+	AssertTrue(pTestClass1->mTiny.IsEmbedded());
+	pTestClass1->Init();
+
+	pTestClass2 = gcObjects.Malloc<CTestClass>();
+	AssertTrue(pTestClass2->IsAllocatedInObjects());
+	AssertTrue(pTestClass2->mpObject.IsEmbeddingAllocatedInObjects());
+	AssertTrue(pTestClass2->mTiny.IsEmbedded());
+	pTestClass2->Init();
+
+	pTestClass1 = NULL;
+	pTestClass2 = NULL;
+
+	ObjectsKill();
+
+	DataIOKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestClass(void)
 {
 	BeginTests();
@@ -263,6 +297,7 @@ void TestClass(void)
 
 	TestClassDefinition();
 	TestClassSave();
+	TestClassHeapObjectEmbeddedPointers();
 
 	TypesKill();
 	FastFunctionsKill();
