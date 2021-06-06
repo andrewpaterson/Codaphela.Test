@@ -16,7 +16,6 @@ void CTestWithArray::Init(const char* szString, int x)
 
 void CTestWithArray::Class(void)
 {
-	CObject::Class();
 	Pointer(mcArray.This(), "mcArray");
 	UnmanagedString(&mszString, "mszString");
 	UnmanagedInt(&mx, "mx");;
@@ -64,7 +63,6 @@ void CTestInteger::Init(int x, int y, int z)
 
 void CTestInteger::Class(void)
 {
-	CObject::Class();
 	UnmanagedInt(&mx, "mx");
 	UnmanagedInt(&my, "my");
 	UnmanagedInt(&mz, "mz");
@@ -122,7 +120,6 @@ void CTestNamedString::Set(Ptr<CString> szString, Ptr<CTestNamedString> pAnother
 
 void CTestNamedString::Class(void)
 {
-	CObject::Class();
 	Pointer(mszString.This(), "mszString");
 	Pointer(mpAnother.This(), "mpAnother");
 	UnmanagedString(&mszEmbedded, "mszEmbedded");
@@ -170,7 +167,6 @@ void CTestDoubleNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> p
 
 void CTestDoubleNamedString::Class(void)
 {
-	CObject::Class();
 	Pointer(mszString.This(), "mszString");
 	Pointer(mpSplit1.This(), "mpSplit1");
 	Pointer(mpSplit2.This(), "mpSplit2");

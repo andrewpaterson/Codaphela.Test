@@ -263,6 +263,9 @@
     <ClInclude Include="EmbeddedObjectTestClasses.h">
       <Filter>Source\Object</Filter>
     </ClInclude>
+    <ClInclude Include="TestClass.h">
+      <Filter>Source\Object\Class</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

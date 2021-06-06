@@ -50,7 +50,6 @@ void CTestObject::Init(STestObjectFreedNotifier* psKilledNotifier)
 //////////////////////////////////////////////////////////////////////////
 void CTestObject::Class(void)
 {
-	CObject::Class();
 	Pointer(mpObject.This(), "mpObject");
 	Pointer(mpTest.This(), "mpTest");
 	UnmanagedInt(&mi, "mi");
@@ -134,7 +133,6 @@ void CTestTriPointerObject::Init(STestObjectFreedNotifier* psKilledNotifier)
 //////////////////////////////////////////////////////////////////////////
 void CTestTriPointerObject::Class(void)
 {
-	CObject::Class();
 	Pointer(mpObject1.This(), "mpObject1");
 	Pointer(mpObject2.This(), "mpObject2");
 	Pointer(mpObject3.This(), "mpObject3");
@@ -175,7 +173,6 @@ void CTestSaveableObject1::Init(void)
 //////////////////////////////////////////////////////////////////////////
 void CTestSaveableObject1::Class(void)
 {
-	CObject::Class();
 	Pointer(mpObject.This(), "mpObject");
 	UnmanagedInt(&miInt, "miInt");
 	UnmanagedString(&mszString, "mszString");
@@ -239,7 +236,6 @@ void CTestSaveableObject2::Init(const char* psz)
 //////////////////////////////////////////////////////////////////////////
 void CTestSaveableObject2::Class(void)
 {
-	CObject::Class();
 	Pointer(mp1.This(), "mp1");
 	Pointer(mp2.This(), "mp2");
 	UnmanagedString(&msz, "msz");
@@ -312,7 +308,6 @@ void CTestObjectWithFields::Init(CPointer pObject, Ptr<CTestObject> pTest)
 //////////////////////////////////////////////////////////////////////////
 void CTestObjectWithFields::Class(void)
 {
-	CObject::Class();
 	Pointer(mpTest.This(), "mpTest");
 	Pointer(mpObject.This(), "mpObject");
 
@@ -382,8 +377,6 @@ void CTestEmbeddedObjectWithFields::Init(void)
 //////////////////////////////////////////////////////////////////////////
 void CTestEmbeddedObjectWithFields::Class(void)
 {
-	CObject::Class();
-
 	Primitive(&mbX, "mbX");
 	Pointer(mpObjectA.This(), "mpObjectA");
 	Embedded(&mcEmbedded1, "mcEmbedded1");
@@ -425,8 +418,6 @@ void CTestEmbeddedStrings::Init(void)
 //////////////////////////////////////////////////////////////////////////
 void CTestEmbeddedStrings::Class(void)
 {
-	CObject::Class();
-
 	Embedded(&mString1, "mString1");
 	Embedded(&mString2, "mString2");
 	Embedded(&mString3, "mString3");

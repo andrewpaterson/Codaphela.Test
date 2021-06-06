@@ -4,6 +4,7 @@
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
+#include "TestClass.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -30,6 +31,10 @@ void TestObjectStackInit(void)
 	AssertNull(pcClass);
 
 	cObject.Init(&sFreedNotifier);
+
+	pcClass = cObject.GetClass();
+	AssertNotNull(pcClass);
+
 
 	AssertTrue(cObject.GetFlags() & OBJECT_FLAGS_CALLED_INIT);
 
@@ -71,6 +76,37 @@ void TestObjectStackDestructor(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectStackPointedToOutOfFrame(void)
+{
+	Ptr<CTestClass>		pHeapTestClass;
+	CTestClass			cStackTestClass;
+
+
+	cStackTestClass.Init();
+	pHeapTestClass = OMalloc<CTestClass>();
+	pHeapTestClass->mpObject = &cStackTestClass;
+	pHeapTestClass->mDouble = 98457.0;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectStackPointedTo(void)
+{
+	ObjectsInit();
+
+	TestObjectStackPointedToOutOfFrame();
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectStack(void)
 {
 	BeginTests();
@@ -80,6 +116,7 @@ void TestObjectStack(void)
 
 	TestObjectStackInit();
 	TestObjectStackDestructor();
+	TestObjectStackPointedTo();
 
 	DataIOKill();
 	TypesKill();
