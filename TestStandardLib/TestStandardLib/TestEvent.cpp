@@ -38,8 +38,8 @@ public:
 
 class CTestBadListener : public CListener
 {
+CONSTRUCTABLE(CTestBadListener);
 public:
-	CONSTRUCTABLE(CTestBadListener);
 };
 
 
@@ -65,11 +65,10 @@ enum EWhatHappen
 };
 
 
-class CTestObjectIsListenerWithEvent : public CUnknown, public CListenerCall, public CTestListener
+class CTestObjectIsListenerWithEvent : public CListenerCall, public CTestListener
 {
+CONSTRUCTABLE(CTestObjectIsListenerWithEvent);
 public:
-	CONSTRUCTABLE(CTestObjectIsListenerWithEvent);
-
 	EWhatHappen	meWhatHappen;
 	int			miBored;
 
@@ -161,7 +160,7 @@ void CTestObjectIsListenerWithEvent::Style2(CUnknown* pcSource, void* pvContext)
 }
 
 
-class CTestObjectIsListener : public CUnknown, public CTestListener
+class CTestObjectIsListener : public CTestListener
 {
 public:
 	CONSTRUCTABLE(CTestObjectIsListener);

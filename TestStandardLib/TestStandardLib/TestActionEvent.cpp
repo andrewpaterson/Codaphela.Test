@@ -4,9 +4,8 @@
 
 class CTargetForAction : public CListener
 {
+CONSTRUCTABLE(CTargetForAction)
 public:
-	CONSTRUCTABLE(CTargetForAction)
-
 	int		miCorrectCode;
 
 	void Init(void)
