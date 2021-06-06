@@ -10,6 +10,7 @@
 class CTinyTestClass : public CObject
 {
 CONSTRUCTABLE(CTinyTestClass);
+DESTRUCTABLE(CTinyTestClass);
 public:
 	Int8						mc;
 
@@ -35,6 +36,7 @@ public:
 class CTestClass : public CNamedObject
 {
 CONSTRUCTABLE(CTestClass);
+DESTRUCTABLE(CTestClass);
 public:
 	CPointer					mpObject;
 	Ptr<CTestClass>				mpTest;
@@ -54,11 +56,6 @@ public:
 		memset(mauiData, 0, 12);
 		PostInit();
 		return this;
-	}
-
-	CTestClass::~CTestClass(void)
-	{
-		Kill();
 	}
 
 	void Class(void)

@@ -18,6 +18,7 @@ struct STestObjectFreedNotifier
 class CTestObject : public CObject
 {
 CONSTRUCTABLE(CTestObject);
+DESTRUCTABLE(CTestObject);
 public:
 	CPointer					mpObject;
 	Ptr<CTestObject>			mpTest;
@@ -40,6 +41,7 @@ public:
 class CTestTriPointerObject : public CObject
 {
 CONSTRUCTABLE(CTestTriPointerObject);
+DESTRUCTABLE(CTestTriPointerObject);
 public:
 	CPointer					mpObject1;
 	CPointer					mpObject2;
@@ -56,6 +58,7 @@ public:
 class CTestSaveableObject1 : public CNamedObject
 {
 CONSTRUCTABLE(CTestSaveableObject1);
+DESTRUCTABLE(CTestSaveableObject1);
 public:
 	CPointer	mpObject;
 	int			miInt;
@@ -74,6 +77,7 @@ public:
 class CTestSaveableObject2 : public CNamedObject
 {
 CONSTRUCTABLE(CTestSaveableObject2);
+DESTRUCTABLE(CTestSaveableObject2);
 public:
 	CChars						msz;
 	Ptr<CTestSaveableObject1>	mp1;
@@ -93,6 +97,7 @@ public:
 class CTestObjectWithFields : public CObject
 {
 CONSTRUCTABLE(CTestObjectWithFields);
+DESTRUCTABLE(CTestObjectWithFields);
 public:
 	CPointer			mpObject;
 	Ptr<CTestObject>	mpTest;
@@ -126,6 +131,7 @@ public:
 class CTestEmbeddedObjectWithFields : public CObject
 {
 CONSTRUCTABLE(CTestEmbeddedObjectWithFields);
+DESTRUCTABLE(CTestEmbeddedObjectWithFields);
 public:
 	Bool						mbX;
 	CPointer					mpObjectA;
@@ -145,6 +151,7 @@ public:
 class CTestEmbeddedStrings : public CObject
 {
 CONSTRUCTABLE(CTestEmbeddedStrings);
+DESTRUCTABLE(CTestEmbeddedStrings);
 public:
 	CString		mString1;
 	CString		mString2;

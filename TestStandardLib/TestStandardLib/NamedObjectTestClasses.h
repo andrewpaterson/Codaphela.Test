@@ -7,6 +7,7 @@
 class CTestNamedObject : public CNamedObject
 {
 CONSTRUCTABLE(CTestNamedObject);
+DESTRUCTABLE(CTestNamedObject);
 public:
 	Ptr<CTestNamedObject>	mpNamedTest1;
 	Ptr<CTestNamedObject>	mpNamedTest2;
@@ -24,6 +25,7 @@ public:
 class CTestNamedObjectSmall : public CNamedObject
 {
 CONSTRUCTABLE(CTestNamedObjectSmall);
+DESTRUCTABLE(CTestNamedObjectSmall);
 public:
 	char	mac[4];
 
@@ -40,6 +42,7 @@ public:
 class CTestNamedObjectWithEmbedded : public CNamedObject
 {
 CONSTRUCTABLE(CTestNamedObjectWithEmbedded);
+DESTRUCTABLE(CTestNamedObjectWithEmbedded);
 public:
 	CTestNamedObject				mNamedTest1;
 	CTestNamedObject				mNamedTest2;

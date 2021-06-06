@@ -50,6 +50,8 @@ void TestPointerConstructor(void)
 	cCluster.Init();
 	AssertNull(cCluster.mpTest.Object());
 	AssertPointer(&cCluster, cCluster.mpTest.Embedding());
+
+	ObjectsKill();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -66,7 +68,7 @@ void TestPointerDestructorDestruct(STestObjectFreedNotifier* psFreedNotifier)
 	cTestObject.mpTest = OMalloc<CTestObject>(psFreedNotifier);
 
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
-	//cTestObject Destructor called here.  It should cause the allocated object it points to to be destroyed too.
+	//cTestObject Destructor called here.  It causes the allocated object it points to to be destroyed too.
 }
 
 

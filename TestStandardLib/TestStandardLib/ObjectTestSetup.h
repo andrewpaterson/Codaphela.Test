@@ -35,6 +35,7 @@ struct SStateOnKill
 class CPlayerVehicle : public CNamedObject
 {
 CONSTRUCTABLE(CPlayerVehicle);
+DESTRUCTABLE(CPlayerVehicle);
 protected:
 	CGraphicPicture		mcPicture;
 	SPhysicsPoint*		mpsPoint;
@@ -92,6 +93,7 @@ public:
 class CRedJet : public CNamedObject
 {
 CONSTRUCTABLE(CRedJet);
+DESTRUCTABLE(CRedJet);
 protected:
 	CGraphicPicture		mcPicture;
 	Ptr<CGameWorld>		mpWorld;
@@ -112,6 +114,7 @@ public:
 class CMissile : public CObject
 {
 CONSTRUCTABLE(CMissile);
+DESTRUCTABLE(CMissile);
 protected:
 	Ptr<CGameWorld>		mpWorld;
 	CPointer			mpTarget;
@@ -132,6 +135,7 @@ public:
 class CClusterMissile : public CNamedObject
 {
 CONSTRUCTABLE(CClusterMissile);
+DESTRUCTABLE(CClusterMissile);
 public:
 	CMissile			mcMissile1;
 	CMissile			mcMissile2;
@@ -152,6 +156,7 @@ public:
 class CClusterLauncher : public CObject
 {
 CONSTRUCTABLE(CClusterLauncher);
+DESTRUCTABLE(CClusterLauncher);
 public:
 	Ptr<CClusterMissile>	mpMissile;
 
@@ -164,6 +169,7 @@ public:
 class CGameWorld : public CObject
 {
 CONSTRUCTABLE(CGameWorld);
+DESTRUCTABLE(CGameWorld);
 protected:
 	Ptr<CArray<>>		maTickables;
 	Ptr<CPlayerVehicle>	mpPlayer1;

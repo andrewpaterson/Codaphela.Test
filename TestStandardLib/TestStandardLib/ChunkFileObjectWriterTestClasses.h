@@ -9,6 +9,7 @@
 class CTestWithArray : public CNamedObject
 {
 CONSTRUCTABLE(CTestWithArray);
+DESTRUCTABLE(CTestWithArray);
 public:
 	Ptr<CArrayObject>	mcArray;
 
@@ -30,6 +31,7 @@ public:
 class CTestInteger : public CObject
 {
 CONSTRUCTABLE(CTestInteger);
+DESTRUCTABLE(CTestInteger);
 public:
 	int mx;
 	int my; 
@@ -47,6 +49,7 @@ public:
 class CTestNamedString : public CNamedObject
 {
 CONSTRUCTABLE(CTestNamedString);
+DESTRUCTABLE(CTestNamedString);
 public:
 	Ptr<CString>			mszString;
 	Ptr<CTestNamedString>	mpAnother;
@@ -67,6 +70,7 @@ public:
 class CTestDoubleNamedString : public CNamedObject
 {
 CONSTRUCTABLE(CTestDoubleNamedString);
+DESTRUCTABLE(CTestDoubleNamedString);
 public:
 	Ptr<CString>			mszString;
 	Ptr<CTestNamedString>	mpSplit2;

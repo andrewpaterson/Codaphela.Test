@@ -81,7 +81,6 @@ void TestObjectStackPointedToOutOfFrame(void)
 	Ptr<CTestClass>		pHeapTestClass;
 	CTestClass			cStackTestClass;
 
-
 	cStackTestClass.Init();
 	pHeapTestClass = OMalloc<CTestClass>();
 	pHeapTestClass->mpObject = &cStackTestClass;

@@ -10,6 +10,7 @@
 class CEmbeddedTest : public CObject
 {
 CONSTRUCTABLE(CEmbeddedTest);
+DESTRUCTABLE(CEmbeddedTest);
 public:
 	int		miAmANumber;
 	float	mfSoAmI;
@@ -27,6 +28,7 @@ public:
 class CEmbeddedContainer : public CObject
 {
 CONSTRUCTABLE(CEmbeddedContainer);
+DESTRUCTABLE(CEmbeddedContainer);
 public:
 	char				msz[4];
 	CEmbeddedTest		mcOne;
@@ -47,6 +49,7 @@ public:
 class CEmbeddedComplex : public CObject
 {
 CONSTRUCTABLE(CEmbeddedComplex);
+DESTRUCTABLE(CEmbeddedComplex);
 public:
 	CEmbeddedTest		mcSimple;
 	int					mai[2];
