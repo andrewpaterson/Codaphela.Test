@@ -1,4 +1,6 @@
 ﻿#include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/LogToMemory.h"
 #include "CoreLib/CodabaseFactory.h"
@@ -44,6 +46,8 @@ void TestObjectDirtySimplePrimitiveAssignment(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
@@ -88,6 +92,8 @@ void TestObjectDirtySimplePrimitiveAssignment(void)
 	ObjectsKill();
 
 
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 	cFileUtil.RemoveDir(szDirectory);
 }
@@ -109,6 +115,8 @@ void TestObjectDirtyOnPrimitiveAssignment(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
@@ -155,6 +163,8 @@ void TestObjectDirtyOnPrimitiveAssignment(void)
 	ObjectsKill();
 
 
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 	cFileUtil.RemoveDir(szDirectory);
 }
@@ -177,6 +187,8 @@ void TestObjectDirtyOnPointerAssignment(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
@@ -233,6 +245,8 @@ void TestObjectDirtyOnPointerAssignment(void)
 	ObjectsKill();
 
 
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 	cFileUtil.RemoveDir(szDirectory);
 }
@@ -258,6 +272,8 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
@@ -362,6 +378,9 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	ObjectsKill();
 	AssertNull(&pObject);
 
+
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 	cFileUtil.RemoveDir(szDirectory);
 }

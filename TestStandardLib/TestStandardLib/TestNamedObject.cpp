@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
 #include "CoreLib/SequenceFactory.h"
@@ -257,6 +259,8 @@ void TestNamedObject(void)
 {
 	BeginTests();
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 
 	TestNamedObjectSize();
 	TestNamedObjectName();
@@ -264,6 +268,8 @@ void TestNamedObject(void)
 	TestNamedOjectReuse(IWT_No);
 	TestNamedOjectReuse(IWT_Yes);
 
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 	TestStatistics();
 }
