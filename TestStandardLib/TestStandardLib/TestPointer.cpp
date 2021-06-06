@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
@@ -247,6 +249,8 @@ void TestPointer(void)
 {
 	BeginTests();
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 
 	TestPointerConstructor();
 	TestPointerDestructor();
@@ -257,6 +261,8 @@ void TestPointer(void)
 	TestPointerNegation();
 	TestPointerHeapNotInGraphFreeStack();
 
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 	TestStatistics();
 }

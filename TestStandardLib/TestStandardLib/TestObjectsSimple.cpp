@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
 #include "CoreLib/SequenceFactory.h"
@@ -84,10 +86,14 @@ void TestObjectsSimple(void)
 {
 	BeginTests();
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 
 	TestObjectsCompilation();
 	TestObjectFreeing();
 
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 	TestStatistics();
 }

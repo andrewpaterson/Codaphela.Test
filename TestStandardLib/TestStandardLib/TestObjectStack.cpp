@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
@@ -73,10 +75,14 @@ void TestObjectStack(void)
 {
 	BeginTests();
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 
 	TestObjectStackInit();
 	TestObjectStackDestructor();
 
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 	TestStatistics();
 }

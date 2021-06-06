@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/String.h"
 #include "StandardLib/Root.h"
@@ -1406,6 +1408,8 @@ void TestRoot(void)
 {
 	BeginTests();
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 
 	TestRootKill();
 	TestRootKillWithStackPointers();
@@ -1421,6 +1425,8 @@ void TestRoot(void)
 	//TestRootSetKillAll();
 	TestRootSetRemoveAll();
 
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 	TestStatistics();
 }

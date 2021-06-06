@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "StandardLib/ArrayCommonObject.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
@@ -86,9 +88,13 @@ void TestArrayCommonObject(void)
 {
 	BeginTests();
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 
 	TestArrayCommonPointerRemapping();
 
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 	TestStatistics();
 }

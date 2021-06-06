@@ -190,7 +190,6 @@ void TestClassDefinition(void)
 void TestClassOnStackWrapped(void)
 {
 	CTestClass			cTestClass;
-	CTestClass			cTestClass2;
 	CClass*				pcTestClassClass;
 	CClass*				pcTinyTestClassClass;
 	CClasses*			pcClasses;
@@ -200,6 +199,7 @@ void TestClassOnStackWrapped(void)
 	CPointerField*		pcPointerField;
 	CPointer*			pcPointer;
 	CTestClass*			pcTestClass;
+	Ptr<CTestClass>		pTestClass3;
 
 	pcClasses = gcObjects.GetClasses();
 
@@ -228,16 +228,21 @@ void TestClassOnStackWrapped(void)
 	AssertInt(192, pcField->GetOffset());
 	pcPointerField = (CPointerField*)pcField;
 
-	cTestClass2.Init();
-	cTestClass2.mDouble = 45648739045.0;
-	cTestClass.mpObject = &cTestClass2;
+
+	pTestClass3 = OMalloc<CTestClass>();
+	cTestClass.mpObject = pTestClass3;
+	pTestClass3->mDouble = 45648739045.0;
 
 	pcPointer = pcPointerField->GetPointer(&cTestClass);
 	pcTestClass = (CTestClass*)pcPointer->BaseObject();
 	AssertDouble(45648739045.0, pcTestClass->mDouble, 0);
 
+	pTestClass3->Kill();
+
 	Pass();
 }
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -412,11 +417,11 @@ void TestClass(void)
 	FastFunctionsInit();
 	TypesInit();
 
-	TestClassDefinition();
+	//TestClassDefinition();
 	TestClassOnStack();
-	TestClassName();
-	TestClassSave();
-	TestClassHeapObjectEmbeddedPointers();
+	//TestClassName();
+	//TestClassSave();
+	//TestClassHeapObjectEmbeddedPointers();
 
 	TypesKill();
 	FastFunctionsKill();

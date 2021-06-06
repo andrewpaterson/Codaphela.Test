@@ -1,6 +1,8 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/LogToMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "CoreLib/CodabaseFactory.h"
 #include "CoreLib/SequenceFactory.h"
 #include "StandardLib/Objects.h"
@@ -51,7 +53,8 @@ void TestObjectGraphWritingStackIsNotWritten(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 	MemoryInit();
-
+	TypesInit();
+	DataIOInit();
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -116,7 +119,6 @@ void TestObjectGraphWritingStackIsNotWritten(void)
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
-	TestObjectGraphWritingAddConstructors();
 
 	pObj0 = gcObjects.Get(oi0);
 	pObj1 = gcObjects.Get(oi1);
@@ -133,6 +135,8 @@ void TestObjectGraphWritingStackIsNotWritten(void)
 	SafeKill(pcSequence);
 	ObjectsKill();
 
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 	cFileUtil.RemoveDir(szDirectory);
 }

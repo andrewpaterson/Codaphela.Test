@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "CoreLib/FunctionCaller.h"
 #include "StandardLib/Object.h"
 #include "StandardLib/Objects.h"
@@ -824,6 +826,8 @@ void TestObject(void)
 {
 	BeginTests();
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 
 	TestObjectSize();
 	TestObjectGetObjects();
@@ -839,6 +843,8 @@ void TestObject(void)
 	TestObjectRootUnattachment();
 	TestObjectSetUnattachment();
 
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 	TestStatistics();
 }
