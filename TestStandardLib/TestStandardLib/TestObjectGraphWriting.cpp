@@ -18,12 +18,10 @@
 //////////////////////////////////////////////////////////////////////////
 void TestObjectGraphWritingAddConstructors(void)
 {
-	gcObjects.AddConstructor<CRoot>();
 	gcObjects.AddConstructor<CTestObject>();
 	gcObjects.AddConstructor<CTestTriPointerObject>();
 	gcObjects.AddConstructor<CTestSaveableObject1>();
 	gcObjects.AddConstructor<CTestSaveableObject2>();
-	gcObjects.AddConstructor<CSetObject>();
 	gcObjects.AddConstructor<CTestNamedObject>();
 	gcObjects.AddConstructor<CTestNamedObjectSmall>();
 	gcObjects.AddConstructor<CTestNamedObjectWithEmbedded>();

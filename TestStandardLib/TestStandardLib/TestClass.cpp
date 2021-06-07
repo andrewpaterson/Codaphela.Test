@@ -16,9 +16,6 @@
 //////////////////////////////////////////////////////////////////////////
 void TestClassAddConstructors(void)
 {
-	gcObjects.AddConstructor<CArrayObject>();
-	gcObjects.AddConstructor<CSetObject>();
-	gcObjects.AddConstructor<CRoot>();
 	gcObjects.AddConstructor<CTestClass>();
 	gcObjects.AddConstructor<CTinyTestClass>();
 }

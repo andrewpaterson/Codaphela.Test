@@ -18,12 +18,10 @@
 //////////////////////////////////////////////////////////////////////////
 void TestObjectDirtyAddConstructors(void)
 {
-	gcObjects.AddConstructor<CRoot>();
 	gcObjects.AddConstructor<CTestObject>();
 	gcObjects.AddConstructor<CTestTriPointerObject>();
 	gcObjects.AddConstructor<CTestSaveableObject1>();
 	gcObjects.AddConstructor<CTestSaveableObject2>();
-	gcObjects.AddConstructor<CSetObject>();
 	gcObjects.AddConstructor<CTestNamedObject>();
 	gcObjects.AddConstructor<CTestNamedObjectSmall>();
 	gcObjects.AddConstructor<CTestNamedObjectWithEmbedded>();
@@ -151,7 +149,6 @@ void TestObjectDirtyOnPrimitiveAssignment(void)
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
-	TestObjectDirtyAddConstructors();
 
 	pObject = gcObjects.Get(oi);
 	AssertInt(7, pObject->mi32);
@@ -228,7 +225,6 @@ void TestObjectDirtyOnPointerAssignment(void)
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
-	TestObjectDirtyAddConstructors();
 
 	pObject1 = gcObjects.Get("OBJ1");
 	pObject2 = pObject1->mpNamedTest1;
@@ -367,7 +363,6 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
-	TestObjectDirtyAddConstructors();
 
 	AssertTrue(gcObjects.Contains(oi));
 	pObject = gcObjects.Get(oi);

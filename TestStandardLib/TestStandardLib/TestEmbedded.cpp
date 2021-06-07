@@ -15,13 +15,9 @@
 //////////////////////////////////////////////////////////////////////////
 void SetupEmbeddedObjectConstructors(void)
 {
-	gcObjects.AddConstructor<CArrayObject>();
-	gcObjects.AddConstructor<CSetObject>();
-	gcObjects.AddConstructor<CRoot>();
 	gcObjects.AddConstructor<CEmbeddedTest>();
 	gcObjects.AddConstructor<CEmbeddedContainer>();
 	gcObjects.AddConstructor<CEmbeddedComplex>();
-	gcObjects.AddConstructor<CPointerContainer>();
 }
 
 

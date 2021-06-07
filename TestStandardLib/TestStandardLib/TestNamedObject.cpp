@@ -19,9 +19,6 @@
 //////////////////////////////////////////////////////////////////////////
 void TestNamedObjectAddConstructors(void)
 {
-	gcObjects.AddConstructor<CArrayObject>();
-	gcObjects.AddConstructor<CSetObject>();
-	gcObjects.AddConstructor<CRoot>();
 	gcObjects.AddConstructor<CTestNamedObject>();
 }
 
@@ -118,7 +115,6 @@ void TestNamedObjectName(void)
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
-	TestNamedObjectAddConstructors();
 
 	AssertLongLongInt(3, pcDatabase->NumNames());
 	AssertLongLongInt(5, pcDatabase->NumIndices());

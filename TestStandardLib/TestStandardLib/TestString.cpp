@@ -1,6 +1,8 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/LogToMemory.h"
+#include "BaseLib/TypeNames.h"
+#include "BaseLib/GlobalDataTypesIO.h"
 #include "CoreLib/CodabaseFactory.h"
 #include "CoreLib/SequenceFactory.h"
 #include "StandardLib/Objects.h"
@@ -15,9 +17,6 @@
 //////////////////////////////////////////////////////////////////////////
 void TestStringAddConstructors(void)
 {
-	gcObjects.AddConstructor<CRoot>();
-	gcObjects.AddConstructor<CSetObject>();
-	gcObjects.AddConstructor<CString>();
 	gcObjects.AddConstructor<CTestEmbeddedStrings>();
 }
 
@@ -38,6 +37,8 @@ void TestStringDirty(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
@@ -73,7 +74,6 @@ void TestStringDirty(void)
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
-	TestStringAddConstructors();
 
 	pString1 = gcObjects.Get(oi1);
 	pString1->AppendHexHiLo(szDirectory, 7);
@@ -85,7 +85,8 @@ void TestStringDirty(void)
 	SafeKill(pcSequence);
 	ObjectsKill();
 
-
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 	cFileUtil.RemoveDir(szDirectory);
 }
@@ -111,6 +112,8 @@ void TestStringEmbeddedDirty(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
@@ -144,7 +147,6 @@ void TestStringEmbeddedDirty(void)
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
-	TestStringAddConstructors();
 
 	ORoot()->TouchAll();
 	pContainer = gcObjects.Get(oi);
@@ -176,7 +178,6 @@ void TestStringEmbeddedDirty(void)
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
-	TestStringAddConstructors();
 
 	pContainer = gcObjects.Get(oi);
 	ORoot()->TouchAll();
@@ -220,7 +221,6 @@ void TestStringEmbeddedDirty(void)
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
-	TestStringAddConstructors();
 
 	pContainer = gcObjects.Get(oi);
 	pString1 = &pContainer->mString1;
@@ -242,6 +242,8 @@ void TestStringEmbeddedDirty(void)
 	ObjectsKill();
 
 
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 	cFileUtil.RemoveDir(szDirectory);
 }
@@ -261,6 +263,8 @@ void TestStringAlteration(void)
 	Ptr<CRoot>		pRoot;
 
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 	ObjectsInit();
 
 	pString1 = OString("Hello");
@@ -298,6 +302,8 @@ void TestStringAlteration(void)
 	AssertString("BomonoYesomo", pString1->Text());
 
 	ObjectsKill();
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 }
 
@@ -315,6 +321,8 @@ void TestStringTests(void)
 	Ptr<CRoot>		pRoot;
 
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 	ObjectsInit();
 
 	pDest = OString();
@@ -366,9 +374,10 @@ void TestStringTests(void)
 	AssertInt(-1, pString1->FindFromEnd("Nope"));
 
 	ObjectsKill();
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -381,6 +390,8 @@ void TestStringSplit(void)
 	Ptr<CArray<CString>>	paDest;
 
 	MemoryInit();
+	TypesInit();
+	DataIOInit();
 	ObjectsInit();
 
 	pString = OString("And,the,Aardvark,walked,over,the,Hill,and,far,Away");
@@ -419,6 +430,8 @@ void TestStringSplit(void)
 	AssertLongLongInt(1LL, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
+	DataIOKill();
+	TypesKill();
 	MemoryKill();
 }
 

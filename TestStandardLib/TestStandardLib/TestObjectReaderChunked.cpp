@@ -137,8 +137,6 @@ void TestObjectReaderChunkedDeserialised(void)
 	gcObjects.AddConstructor<CTestWithArray>();
 	gcObjects.AddConstructor<CTestInteger>();
 	gcObjects.AddConstructor<CTestNamedString>();
-	gcObjects.AddConstructor<CString>();
-	gcObjects.AddConstructor<CArrayObject>();
 
 	iNumMemoryIndexes = WriteObjectReaderChunkedFile();
 
@@ -159,8 +157,6 @@ void TestObjectReaderChunkedDeserialised(void)
 	gcObjects.AddConstructor<CTestWithArray>();
 	gcObjects.AddConstructor<CTestInteger>();
 	gcObjects.AddConstructor<CTestNamedString>();
-	gcObjects.AddConstructor<CString>();
-	gcObjects.AddConstructor<CArrayObject>();
 
 	AssertLongLongInt(0, pcDatabase->NumIndices());
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
