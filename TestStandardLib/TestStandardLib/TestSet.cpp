@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "StandardLib/Set.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/PointerContainer.h"
@@ -104,6 +106,7 @@ void TestSetRemove(void)
 	AssertInt(7, pacStuff->Get(0)->miInt);
 	AssertInt(3, pacStuff->Get(1)->miInt);
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -145,6 +148,7 @@ void TestSetKillCyclic(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest2->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest3->GetDistToRoot());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -223,6 +227,7 @@ void TestSetRemoveAll(void)
 
 	pSet->Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -235,6 +240,9 @@ void TestSet(void)
 {
 	BeginTests();
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 
 	TestSetAdd();
 	TestSetGet();
@@ -244,6 +252,9 @@ void TestSet(void)
 	//TestSetKillAll();
 	TestSetRemoveAll();
 
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

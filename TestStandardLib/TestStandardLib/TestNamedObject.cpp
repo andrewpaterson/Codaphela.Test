@@ -136,6 +136,7 @@ void TestNamedObjectName(void)
 	AssertTrue(pResult3.IsHollow());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pResult3.GetDistToRoot());
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);

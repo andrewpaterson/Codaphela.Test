@@ -80,6 +80,7 @@ void TestStringDirty(void)
 	AssertTrue(pString1.IsDirty());
 	AssertString("HelloTrue5C74757074754F", pString1->Text());
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -135,7 +136,7 @@ void TestStringEmbeddedDirty(void)
 	pContainer->mString2.Set("Burke is great");
 	pContainer->mString3.Set("Wooglers");
 
-	ObjectsFlush();  //Close calls Flush.  Why must flush be called here?
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -167,7 +168,7 @@ void TestStringEmbeddedDirty(void)
 	AssertTrue(pContainer.IsDirty());
 	AssertString("This is", pString1->Text());
 
-	ObjectsFlush();  //Close calls Flush.  Why must flush be called here?
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -207,7 +208,7 @@ void TestStringEmbeddedDirty(void)
 	AssertTrue(pString3.IsDirty());
 	AssertString("Boogaloo", pString3->Text());
 
-	ObjectsFlush();  //Close calls Flush.  Why must flush be called here?
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -236,6 +237,7 @@ void TestStringEmbeddedDirty(void)
 	AssertString("Burke is the greatest", pString2->Text());
 	AssertString("Boogaloo", pString3->Text());
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);

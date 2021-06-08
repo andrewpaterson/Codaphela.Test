@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/MemoryFile.h"
 #include "CoreLib/Codabase.h"
@@ -46,34 +48,24 @@ Ptr<CTestDoubleNamedString> SetupDehollowficationScene(void)
 
 	cRoot = ORoot();
 
-	cDiamond = ONMalloc<CTestNamedString>("Diamond End");
-	sz1 = OMalloc<CString>();
+	sz3 = OMalloc<CString>("End");
 
-	cNS1 = ONMalloc<CTestNamedString>("NamedString 1");
-	cNS1->Init(sz1, cDiamond, "Hello");
-	sz1->Init("World");
+	cDiamond = ONMalloc<CTestNamedString>("Diamond End", sz3, Null(), "Before Swine");
+	sz1 = OMalloc<CString>("World");
 
-	cNS2 = ONMalloc<CTestNamedString>("NamedString 2");
-	sz2 = OMalloc<CString>();
+	cNS1 = ONMalloc<CTestNamedString>("NamedString 1", sz1, cDiamond, "Hello");
 
-	cNS2->Init(sz2, cDiamond, "12345");
-	sz2->Init("6789");
+	sz2 = OMalloc<CString>("6789");
+	cNS2 = ONMalloc<CTestNamedString>("NamedString 2", sz2, cDiamond, "12345");
 
-	sz3 = OMalloc<CString>();
-	sz3->Init("End");
-	cDiamond->Init(sz3, Null(), "Before Swine");
-
-	sz4 = OMalloc<CString>();
-	sz4->Init("Start");
-	cDouble = ONMalloc<CTestDoubleNamedString>("Double Start");
-	cDouble->Init(sz4, cNS1, Null());
+	sz4 = OMalloc<CString>("Start");
+	cDouble = ONMalloc<CTestDoubleNamedString>("Double Start", sz4, cNS1, Null());
 
 	cRoot->Add(cDouble);
 
 	cDouble->mpSplit1 = cNS2;
 
-	cNS3 = ONMalloc<CTestNamedString>("NamedString 3");
-	cNS3->Init(sz1, Null(), "Random");
+	cNS3 = ONMalloc<CTestNamedString>("NamedString 3", sz1, Null(), "Random");
 
 	cRoot->Add(cNS3);
 
@@ -139,7 +131,9 @@ void TestDehollowficationFromDatabase(void)
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
+	
 	SetupDehollowficationScene();
+	
 	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
@@ -161,6 +155,7 @@ void TestDehollowficationFromDatabase(void)
 	AssertLongLongInt(6, pcDatabase->NumNames());
 	Pass();
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -262,6 +257,7 @@ void TestDehollowficationFromDatabase(void)
 	AssertLongLongInt(11, pcDatabase->NumIndices());
 	Pass();
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -297,7 +293,9 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
+
 	SetupDehollowficationScene();
+
 	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
@@ -340,6 +338,7 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 	AssertFalse(pString2->mpAnother.IsHollow());
 	AssertPointer(pString1->mpAnother.Object(), pString2->mpAnother.Object());
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -366,7 +365,10 @@ void TestDehollowficationFromChunkFileSource(void)
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
+
 	WriteDehollowficationChunkedFile();
+
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -407,6 +409,7 @@ void TestDehollowficationFromChunkFileSource(void)
 	AssertFalse(pStart->mpSplit1.IsHollow());
 	AssertString("CTestNamedString", pStart->mpSplit1.ClassName());
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -422,11 +425,17 @@ void TestDehollowfication(void)
 {
 	BeginTests();
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 
 	TestDehollowficationFromDatabase();
 	TestDehollowficationFromDatabaseOfTwoPointers();
 	TestDehollowficationFromChunkFileSource();
 
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

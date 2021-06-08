@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
@@ -243,6 +245,9 @@ void TestEmbeddedStackPointers(void)
 {
 	BeginTests();
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 
 	TestEmbeddedStackPointersKill();
 	TestEmbeddedStackPointersDestructor();
@@ -250,6 +255,9 @@ void TestEmbeddedStackPointers(void)
 	TestEmbeddedStackPointersEmbeddedDistDirect();
 	TestEmbeddedStackPointersComplex();
 
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

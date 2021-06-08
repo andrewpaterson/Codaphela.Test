@@ -138,6 +138,7 @@ void TestObjectDirtyOnPrimitiveAssignment(void)
 	ObjectsFlush();
 	AssertFalse(pObject.IsDirty());
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -154,6 +155,7 @@ void TestObjectDirtyOnPrimitiveAssignment(void)
 	AssertInt(7, pObject->mi32);
 	AssertFalse(pObject.IsDirty());
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -235,6 +237,7 @@ void TestObjectDirtyOnPointerAssignment(void)
 	AssertFalse(pObject2.IsDirty());
 	AssertNull(&pObject3);
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -352,6 +355,7 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	AssertFalse(pObject->mcEmbedded1.IsDirty());
 	AssertFalse(pObject->mcEmbedded2.IsDirty());
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);

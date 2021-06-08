@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
 #include "CoreLib/SequenceFactory.h"
@@ -289,6 +291,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -335,6 +338,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 
 	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcSequence);
 	SafeKill(pcDatabase);
@@ -376,7 +380,7 @@ void TestEmbeddedObjectPointTo(void)
 	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
 
-	pcDatabase->Close();
+	ObjectsFlush();
 	SafeKill(pcSequence);
 	SafeKill(pcDatabase);
 	ObjectsKill();
@@ -403,6 +407,7 @@ void TestEmbeddedObjectPointTo(void)
 	pComplex = pContainer->GetEmbeddingContainer();
 	//Kinda feels like this test just stopped...
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -568,6 +573,9 @@ void TestEmbedded(void)
 {
 	BeginTests();
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 
 	TestEmbeddedFlags();
 	TestEmbeddedOjectIsAllocatedInObjects();
@@ -580,6 +588,9 @@ void TestEmbedded(void)
 	TestEmbeddedGetEmbeddedObject();
 	TestEmbeddedObjectPointTo();
 
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

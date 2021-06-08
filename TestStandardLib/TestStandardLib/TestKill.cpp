@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
 #include "CoreLib/SequenceFactory.h"
@@ -41,6 +43,7 @@ void TestKillSelfPointer1(void)
 
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -77,6 +80,7 @@ void TestKillSelfPointer2(void)
 	pObject = NULL;
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -108,6 +112,7 @@ void TestKillLongCyclicSelfPointer(void)
 	bResult = pRoot->Remove(pObjectBase);
 	AssertTrue(bResult);
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -137,7 +142,7 @@ void TestKillBestPractice(void)
 
 	pRoot = ORoot();
 
-	AssertLongLongInt(0, pcDatabase->NumNames());
+	AssertLongLongInt(1, pcDatabase->NumNames());
 	pWorld = OMalloc<CGameWorld>();
 
 	pRoot->Add(pWorld);
@@ -190,7 +195,7 @@ void TestKillBestPractice(void)
 	AssertInt(3, pHarrier->GetMissiles()->NumElements());
 
 	OIndex oiMissile3 = pMissile3->GetIndex();
-	AssertLongLongInt(12LL, oiMissile3);
+	AssertLongLongInt(24LL, oiMissile3);
 
 	pMissile3->Kill();  //<-- This is what is being tested -----------------------------------.
 	pMissile3 = gcObjects.TestGetFromMemory(oiMissile3);
@@ -272,6 +277,7 @@ void TestKillBestPractice(void)
 	AssertString("012345678901234", sJeepBefore.cPicture.mszPretenedImAPicture);
 	AssertString("Alas I am Dead!", sJeepAfter.cPicture.mszPretenedImAPicture);
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -406,6 +412,7 @@ void TestKillCanFindRoot(void)
 	AssertString("Alas I am Dead!", sJeepAfter.cPicture.mszPretenedImAPicture);
 
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -421,6 +428,9 @@ void TestKill(void)
 {
 	BeginTests();
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 
 	TestKillSelfPointer1();
 	TestKillSelfPointer2();
@@ -428,6 +438,9 @@ void TestKill(void)
 	TestKillBestPractice();
 	TestKillCanFindRoot();
 
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

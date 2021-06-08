@@ -1,5 +1,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/ScratchPadAllocator.h"
 #include "CoreLib/TransientSequence.h"
@@ -17,6 +19,9 @@
 void TestChunkFileObjectWriterSerialised(void)
 {	
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 
 	CScratchPadAllocator	cScratchPad;
 	CUnknowns				cUnknowns;
@@ -77,8 +82,8 @@ void TestChunkFileObjectWriterSerialised(void)
 	AssertTrue(cInputFile.Init()->Read("Input" _FS_ "ChunkFile.DRG"));
 	AssertTrue(cOutputFile.Init()->Read("Output" _FS_ "ChunkFileObjectWriter" _FS_ "Test" _FS_ "Base" _FS_ "Level 1" _FS_ "ChunkFile.DRG"));
 	
-	AssertLongLongInt(1158LL, cInputFile.Size());
-	AssertLongLongInt(1158LL, cOutputFile.Size());
+	AssertLongLongInt(1198LL, cInputFile.Size());
+	AssertLongLongInt(1198LL, cOutputFile.Size());
 	psInputHeader = (SChunkFileHeader*)cInputFile.Get();
 	psOutputHeader = (SChunkFileHeader*)cOutputFile.Get();
 	AssertInt(CHUNK_HEADER_MAGIC, psInputHeader->miMagic);
@@ -97,7 +102,7 @@ void TestChunkFileObjectWriterSerialised(void)
 	//CTestWithArray pcObject1
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Warning"));
 	AssertTrue(cChunkFileFileSystem.ReadInt(&iLength));
-	AssertInt(127, iLength);
+	AssertInt(131, iLength);
 	AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 	AssertString("NAM", szTest);
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
@@ -113,7 +118,7 @@ void TestChunkFileObjectWriterSerialised(void)
 	//CTestInteger pcObject2
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Unnamed/0000000000000003"));
 	AssertTrue(cChunkFileFileSystem.ReadInt(&iLength));
-	AssertInt(45, iLength);
+	AssertInt(57, iLength);
 	AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 	AssertString("IDX", szTest);
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
@@ -121,7 +126,7 @@ void TestChunkFileObjectWriterSerialised(void)
 	//CTestInteger pcObject3
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Unnamed/0000000000000004"));
 	AssertTrue(cChunkFileFileSystem.ReadInt(&iLength));
-	AssertInt(45, iLength);
+	AssertInt(57, iLength);
 	AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 	AssertString("IDX", szTest);
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
@@ -129,7 +134,7 @@ void TestChunkFileObjectWriterSerialised(void)
 	//CTestInteger pcObject4
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Unnamed/0000000000000005"));
 	AssertTrue(cChunkFileFileSystem.ReadInt(&iLength));
-	AssertInt(45, iLength);
+	AssertInt(57, iLength);
 	AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 	AssertString("IDX", szTest);
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
@@ -143,6 +148,9 @@ void TestChunkFileObjectWriterSerialised(void)
 
 	cScratchPad.Kill();
 
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 
 	cFileUtil.RemoveDir("Output" _FS_ "ChunkFileObjectWriter");

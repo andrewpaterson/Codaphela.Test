@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
 #include "CoreLib/SequenceFactory.h"
@@ -28,7 +30,8 @@ Ptr<CTestDoubleNamedString> SetupObjectsForDehollowfication(void)
 
 	pRoot = ORoot();
 
-	cDiamond = ONMalloc<CTestNamedString>("Diamond");
+	cS2 = OMalloc<CString>("CS2");
+	cDiamond = ONMalloc<CTestNamedString>("Diamond", cS2, Null(), "Diamond");
 
 	cS1 = OMalloc<CString>("CS1");
 	cNS1 = ONMalloc<CTestNamedString>("NS1", cS1, cDiamond, "NS1");
@@ -37,8 +40,6 @@ Ptr<CTestDoubleNamedString> SetupObjectsForDehollowfication(void)
 
 	cNS3 = ONMalloc<CTestNamedString>("NS3", Null(), cNS1, "NS3");
 
-	cS2 = OMalloc<CString>("CS2");
-	cDiamond->Init(cS2, Null(), "Diamond");
 
 	pDouble = ONMalloc<CTestDoubleNamedString>("Double", Null(), cNS2, cNS3);
 
@@ -93,6 +94,7 @@ void TestObjectsInMemoryIteration(void)
 	oi = gcObjects.IterateMemory(&sIter);
 	AssertLongLongInt(INVALID_O_INDEX, oi);
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -146,9 +148,8 @@ void TestObjectsObjectSave(void)
 	AssertLongLongInt(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLongLongInt(1, pcDatabase->NumDataCached());
 	
-	pDouble->mszString = OMalloc<CString>();
+	pDouble->mszString = OMalloc<CString>("A String");
 	AssertTrue(pDouble.IsDirty());
-	pDouble->mszString->Init("A String");
 
 	AssertTrue(pDouble.BaseObject()->Flush());
 	AssertLongLongInt(1, pcDatabase->NumIndices());
@@ -157,8 +158,7 @@ void TestObjectsObjectSave(void)
 	AssertLongLongInt(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLongLongInt(1, pcDatabase->NumDataCached());
 
-	pDouble->mszString = OMalloc<CString>();
-	pDouble->mszString->Init("Different Object");
+	pDouble->mszString = OMalloc<CString>("Different Object");
 
 	iSerialisedSize = pDouble->SerialisedSize();
 	AssertInt(118, iSerialisedSize);
@@ -169,7 +169,7 @@ void TestObjectsObjectSave(void)
 	AssertLongLongInt(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLongLongInt(1, pcDatabase->NumDataCached());
 
-	pcDatabase->Flush();
+	ObjectsFlush(); //ObjectsFlush flushed dirty objects into the databsase.
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -451,8 +451,7 @@ void TestObjectsObjectKillInGraph(void)
 
 	pRoot = ORoot();
 
-	cS1 = OMalloc<CString>();
-	cS1->Init("CS1");
+	cS1 = OMalloc<CString>("CS1");
 	cNS1 = ONMalloc<CTestNamedString>("NS1", cS1, Null(), "NS1");
 
 	cS2 = OMalloc<CString>("CS2");
@@ -476,6 +475,7 @@ void TestObjectsObjectKillInGraph(void)
 	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
 	AssertPointer(pcNS2->mszString.Object(), pcS2);
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -520,6 +520,7 @@ void TestObjectsArrayKillInGraph(void)
 	cA2->Kill();
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -565,7 +566,7 @@ void TestObjectsObjectKillInArrayInGraph(void)
 	AssertInt(0, cA1->NumPointerTos());
 	AssertInt(0, cA2->NumPointerTos());
 
-
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -649,6 +650,7 @@ void TestObjectDehollowfication(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -703,6 +705,7 @@ void TestObjectsFlushClearGetByOid(void)
 	AssertString("CTestDoubleNamedString", pObject.ClassName());
 	AssertString("CRoot", pRoot.ClassName());
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -754,6 +757,7 @@ void TestObjectsFlushClearGetByName(void)
 	AssertNotNull(pObject.Object());
 	AssertString("CTestDoubleNamedString", pObject.ClassName());
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -802,6 +806,7 @@ void TestObjectsFlushRemovesStackPointers(void)
 	pRoot = ORoot();
 	AssertString("CRoot", pRoot.ClassName());
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -817,6 +822,9 @@ void TestObjects(void)
 {
 	BeginTests();
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 
 	TestObjectsObjectKillInGraph();
 	TestObjectsArrayKillInGraph();
@@ -831,6 +839,9 @@ void TestObjects(void)
 	TestObjectsEvict();
 	TestObjectDehollowfication();
 
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestSetup.h"
@@ -10,6 +12,8 @@
 //////////////////////////////////////////////////////////////////////////
 void TestUsageNullPointers(void)
 {
+	SLogConfig	sLogConfig;
+
 	ObjectsInit();
 
 	Ptr<CGameWorld>			pWorld;
@@ -17,14 +21,12 @@ void TestUsageNullPointers(void)
 	Ptr<CPlayerVehicle>		pVehicle = Null();
 	Ptr<CHarrier>			pHarrier;
 
+	sLogConfig = gcLogger.SetSilent();
+
 	pWorld = pNull;
 	pWorld->AddTickable(pNull);
 	pWorld->AddTickable(pVehicle);
 	pWorld->AddTickable(Null());
-
-	pVehicle = pNull;
-	pWorld->AddPlayer(pVehicle);
-	pWorld->AddPlayer(pNull);
 	pWorld->AddPlayer(Null());
 
 	pVehicle = pHarrier;
@@ -32,6 +34,8 @@ void TestUsageNullPointers(void)
 	AssertString("This code must compile", "This code must compile");
 
 	pWorld = pHarrier;  //This probably shouldn't compile but it does because pHarrier (Ptr<CHarrier>) extends CPointer.
+
+	gcLogger.SetConfig(&sLogConfig);
 
 	ObjectsKill();
 }
@@ -60,11 +64,17 @@ void TestUsage(void)
 {
 	BeginTests();
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 
 	TestUsageNullPointers();
 	TestUsageDefaultPointer();
 
-	MemoryKill(); 
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
+	MemoryKill();
 	TestStatistics();
 }
 

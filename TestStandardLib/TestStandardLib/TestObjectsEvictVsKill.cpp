@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
 #include "CoreLib/SequenceFactory.h"
@@ -51,7 +53,6 @@ void TestObjectsEvictVsKillUserEvictAfterSave(EIndexWriteThrough eWriteThrough)
 	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
 
 	ObjectsFlush();
-
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -67,10 +68,16 @@ void TestObjectsEvictVsKill(void)
 {
 	BeginTests();
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 
 	TestObjectsEvictVsKillUserEvictAfterSave(IWT_No);
 	TestObjectsEvictVsKillUserEvictAfterSave(IWT_Yes);
 
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

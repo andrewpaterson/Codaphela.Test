@@ -1,5 +1,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "BaseLib/MemoryFile.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectConverterText.h"
@@ -42,31 +44,21 @@ Ptr<CTestDoubleNamedString> SetupObjectConverterChunkFile(void)
 
 	cRoot = ORoot();
 
-	cDiamond = ONMalloc<CTestNamedString>("Diamond End");
-	AssertLongLongInt(3LL, cDiamond->GetIndex());
+	sz3 = OMalloc<CString>("End");
 
-	cNS1 = ONMalloc<CTestNamedString>("NamedString 1");
-	AssertLongLongInt(4, cNS1->GetIndex());
-	sz1 = OMalloc<CString>();
+	cDiamond = ONMalloc<CTestNamedString>("Diamond End", sz3, Null(), "Before Swine");
+	AssertLongLongInt(4LL, cDiamond->GetIndex());
 
-	cNS1->Init(sz1, cDiamond, "Hello");
-	sz1->Init("World");
+	sz1 = OMalloc<CString>("World");
+	cNS1 = ONMalloc<CTestNamedString>("NamedString 1", sz1, cDiamond, "Hello");
+	AssertLongLongInt(6LL, cNS1->GetIndex());
 
-	cNS2 = ONMalloc<CTestNamedString>("NamedString 2");
-	AssertLongLongInt(6LL, cNS2->GetIndex());
-	sz2 = OMalloc<CString>();
+	sz2 = OMalloc<CString>("6789");
+	cNS2 = ONMalloc<CTestNamedString>("NamedString 2", sz2, cDiamond, "12345");
+	AssertLongLongInt(8LL, cNS2->GetIndex());
 
-	cNS2->Init(sz2, cDiamond, "12345");
-	sz2->Init("6789");
-
-	sz3 = OMalloc<CString>();
-	sz3->Init("End");
-	cDiamond->Init(sz3, Null(), "Before Swine");
-
-	sz4 = OMalloc<CString>();
-	sz4->Init("Start");
-	cDouble = ONMalloc<CTestDoubleNamedString>("Double Start");
-	cDouble->Init(sz4, cNS1, Null());
+	sz4 = OMalloc<CString>("Start");
+	cDouble = ONMalloc<CTestDoubleNamedString>("Double Start", sz4, cNS1, Null());
 
 	cRoot->Add(cDouble);
 
@@ -433,11 +425,17 @@ void TestObjectConverter(void)
 
 	BeginTests();
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 
 	TestObjectConverterText();
 	TestObjectConverterDragonExistingHollows();
 	TestObjectConverterDragonRootDistance();
 
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 

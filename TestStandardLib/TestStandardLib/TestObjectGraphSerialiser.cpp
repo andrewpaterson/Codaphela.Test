@@ -1,5 +1,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectGraphSerialiser.h"
 #include "StandardLib/MultiFileObjectWriter.h"
@@ -81,6 +83,9 @@ void TestObjectGraphSerialiserReachability(void)
 void TestObjectGraphSerialiser(void)
 {
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 	ObjectsInit();
 	BeginTests();
 
@@ -88,6 +93,9 @@ void TestObjectGraphSerialiser(void)
 
 	TestStatistics();
 	ObjectsKill();
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 }
 

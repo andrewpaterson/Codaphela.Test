@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "StandardLib/StackPointers.h"
 #include "StandardLib/Pointer.h"
 #include "StandardLib/Objects.h"
@@ -373,6 +375,9 @@ void TestStackPointers(void)
 {
 	BeginTests();
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 
 	TestStackPointersFindUnused();
 	TestStackPointersAdd();
@@ -380,6 +385,9 @@ void TestStackPointers(void)
 	TestStackPointersHeapKillSingle();
 	TestStackPointersHeapKill();
 
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

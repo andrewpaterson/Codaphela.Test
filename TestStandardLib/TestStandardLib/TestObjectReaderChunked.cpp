@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "BaseLib/FileUtil.h"
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
@@ -268,9 +270,15 @@ void TestObjectReaderChunked(void)
 {
 	BeginTests();
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 
 	TestObjectReaderChunkedDeserialised();
 
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

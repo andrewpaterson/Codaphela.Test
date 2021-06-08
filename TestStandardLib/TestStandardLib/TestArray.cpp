@@ -1,4 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "StandardLib/Array.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
@@ -129,6 +131,7 @@ void TestArrayRemove(void)
 	AssertInt(5, pacStuff->Get(0)->miInt);
 	AssertInt(7, pacStuff->Get(1)->miInt);
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -141,6 +144,9 @@ void TestArray(void)
 {
 	BeginTests();
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 
 	TestArrayAdd();
 	TestArrayGet();
@@ -148,6 +154,9 @@ void TestArray(void)
 	TestArrayAddAll();
 	TestArrayRemove();
 
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

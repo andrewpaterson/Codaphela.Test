@@ -1,6 +1,8 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/LogToMemory.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/TypeNames.h"
 #include "CoreLib/CodabaseFactory.h"
 #include "CoreLib/SequenceFactory.h"
 #include "StandardLib/Objects.h"
@@ -15,8 +17,6 @@
 //////////////////////////////////////////////////////////////////////////
 void TestObjectAllocatorAddConstructors(void)
 {
-	gcObjects.AddConstructor<CRoot>();
-	gcObjects.AddConstructor<CSetObject>();
 	gcObjects.AddConstructor<CTestNamedObject>();
 	gcObjects.AddConstructor<CTestNamedObjectSmall>();
 	gcObjects.AddConstructor<CTestNamedObjectWithEmbedded>();
@@ -33,6 +33,9 @@ void TestObjectAllocatorSimpleAdd(void)
 	Ptr<CTestNamedObject>	pTemp;
 
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
@@ -50,6 +53,9 @@ void TestObjectAllocatorSimpleAdd(void)
 
 	ObjectsFlush();
 	ObjectsKill();
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 }
 
@@ -66,6 +72,9 @@ void TestObjectAllocatorNamedAdd(void)
 	SLogConfig				sLogConfig;
 
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
@@ -98,6 +107,9 @@ void TestObjectAllocatorNamedAdd(void)
 
 	ObjectsFlush();
 	ObjectsKill();
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 }
 
@@ -113,6 +125,9 @@ void TestObjectAllocatorNamedOverwrite(void)
 	Ptr<CTestNamedObject>	pTemp;
 
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
@@ -148,6 +163,9 @@ void TestObjectAllocatorNamedOverwrite(void)
 
 	ObjectsFlush();
 	ObjectsKill();
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 }
 
@@ -169,6 +187,9 @@ void TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed(void)
 	Ptr<CTestNamedObjectSmall>	pNamedSmall;
 
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
@@ -235,6 +256,9 @@ void TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed(void)
 
 	ObjectsFlush();
 	ObjectsKill();
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 }
 
@@ -257,6 +281,9 @@ void TestObjectAllocatorAssignmentToNullObject(void)
 	sz = (char*)4096;
 
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
@@ -283,6 +310,9 @@ void TestObjectAllocatorAssignmentToNullObject(void)
 
 	ObjectsFlush();
 	ObjectsKill();
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 }
 
@@ -308,6 +338,9 @@ void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwritten(void)
 	void*						pv4;
 
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
@@ -373,6 +406,9 @@ void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwritten(void)
 
 	ObjectsFlush();
 	ObjectsKill();
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 }
 
@@ -392,6 +428,9 @@ void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwrittenWithEmbed
 	Ptr<CTestNamedObject>				pNamed2b;
 	
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 	ObjectsInit();
 
 	TestObjectAllocatorAddConstructors();
@@ -466,6 +505,9 @@ void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwrittenWithEmbed
 
 	ObjectsFlush();
 	ObjectsKill();
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 }
 
@@ -492,6 +534,9 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
 
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
@@ -593,8 +638,6 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 
-	TestObjectAllocatorAddConstructors();
-
 	pRoot = ORoot();
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
@@ -614,6 +657,7 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	pNamed8 = gcObjects.Get("Matt Hudson");
 	AssertInt(-1, pNamed8.GetDistToRoot());
 
+	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -624,8 +668,6 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
-
-	TestObjectAllocatorAddConstructors();
 
 	pRoot = ORoot();
 	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
@@ -640,6 +682,9 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	ObjectsKill();
 
 
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
 	MemoryKill();
 	cFileUtil.RemoveDir(szDirectory);
 }
