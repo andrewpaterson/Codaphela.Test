@@ -8,7 +8,7 @@
 #include "StandardLib/ObjectConverterNative.h"
 #include "StandardLib/String.h"
 #include "StandardLib/ChunkFileObjectWriter.h"
-#include "StandardLib/ObjectGraphSerialiser.h"
+#include "StandardLib/ExternalObjectSerialiser.h"
 #include "TestLib/Assert.h"
 #include "ChunkFileObjectWriterTestClasses.h"
 
@@ -84,7 +84,7 @@ void WriteObjectConverterChunkedFile(void)
 {
 	Ptr<CTestDoubleNamedString>		cDouble;
 	CChunkFileObjectWriter			cWriter;
-	CObjectGraphSerialiser			cSerialiser;
+	CExternalObjectSerialiser			cSerialiser;
 
 	cDouble = SetupObjectConverterChunkFile();
 
@@ -121,6 +121,7 @@ void TestObjectConverterDragonExistingHollows(void)
 
 	ObjectsInit();
 	WriteObjectConverterChunkedFile();
+	ObjectsFlush();
 	ObjectsKill();
 
 	ObjectsInit();
@@ -220,6 +221,7 @@ void TestObjectConverterDragonExistingHollows(void)
 	pcObjectSource->Kill();
 	cChunkedConverter.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -261,6 +263,7 @@ void TestObjectConverterText(void)
 	pcObjectSource->Kill();
 	cTextConverter.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -326,7 +329,7 @@ void WriteObjectConverterChunkedFile2(void)
 {
 	Ptr<CTestDoubleNamedString>		cDouble;
 	CChunkFileObjectWriter			cWriter;
-	CObjectGraphSerialiser			cGraphSerialiser;
+	CExternalObjectSerialiser			cGraphSerialiser;
 
 	cDouble = SetupObjectConverterChunkFile2();
 

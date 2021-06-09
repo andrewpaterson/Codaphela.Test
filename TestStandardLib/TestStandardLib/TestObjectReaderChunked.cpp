@@ -9,7 +9,7 @@
 #include "StandardLib/ObjectReaderChunkFileDisk.h"
 #include "StandardLib/ExternalObjectDeserialiser.h"
 #include "StandardLib/ChunkFileObjectWriter.h"
-#include "StandardLib/ObjectGraphSerialiser.h"
+#include "StandardLib/ExternalObjectSerialiser.h"
 #include "TestLib/Assert.h"
 #include "ChunkFileObjectWriterTestClasses.h"
 
@@ -81,7 +81,7 @@ int WriteObjectReaderChunkedFile(void)
 {
 	CPointer				cBase;
 	CChunkFileObjectWriter	cWriter;
-	CObjectGraphSerialiser	cGraphSerialiser;
+	CExternalObjectSerialiser	cGraphSerialiser;
 
 	cBase = SetupObjectReaderChunkedChunkFile();
 
@@ -123,7 +123,6 @@ void TestObjectReaderChunkedDeserialised(void)
 	Ptr<CTestInteger>			cI1;
 	Ptr<CTestInteger>			cI2;
 	Ptr<CTestInteger>			cI3;
-	CDependentReadObjects		cDependentReadObjects;
 	OIndex						oiI1;
 	OIndex						oiI2;
 	OIndex						oiI3;
@@ -163,9 +162,8 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertLongLongInt(0, pcDatabase->NumIndices());
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
-	cDependentReadObjects.Init();
 	cReader.Init("Output" _FS_ "ObjectReaderChunked" _FS_ "Test" _FS_ , "Reader");
-	cGraphDeserialiser.Init(&cReader, FALSE, &gcObjects, &cDependentReadObjects, gcObjects.GetMemory());
+	cGraphDeserialiser.Init(&cReader, FALSE, &gcObjects, gcObjects.GetMemory());
 	cBase = cGraphDeserialiser.Read("Array 1");
 	AssertTrue(cBase.IsNotNull());
 	AssertString("CTestWithArray", cBase.ClassName());
@@ -249,7 +247,6 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertPointer(NULL, &cNS4->mszString);
 
 	cGraphDeserialiser.Kill();
-	cDependentReadObjects.Kill();
 	cReader.Kill();
 
 	ObjectsFlush();

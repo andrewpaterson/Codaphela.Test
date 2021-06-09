@@ -11,7 +11,7 @@
 #include "StandardLib/ObjectConverterNative.h"
 #include "StandardLib/String.h"
 #include "StandardLib/ChunkFileObjectWriter.h"
-#include "StandardLib/ObjectGraphSerialiser.h"
+#include "StandardLib/ExternalObjectSerialiser.h"
 #include "TestLib/Assert.h"
 #include "ChunkFileObjectWriterTestClasses.h"
 
@@ -102,7 +102,7 @@ void WriteDehollowficationChunkedFile(void)
 {
 	Ptr<CTestDoubleNamedString>	cDouble;
 	CChunkFileObjectWriter		cWriter;
-	CObjectGraphSerialiser		cGraphSerialiser;
+	CExternalObjectSerialiser		cGraphSerialiser;
 
 	cDouble = SetupDehollowficationScene();
 

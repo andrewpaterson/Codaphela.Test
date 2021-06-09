@@ -7,7 +7,7 @@
 #include "CoreLib/TransientSequence.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ChunkFileObjectWriter.h"
-#include "StandardLib/ObjectGraphSerialiser.h"
+#include "StandardLib/ExternalObjectSerialiser.h"
 #include "TestLib/Assert.h"
 #include "ChunkFileObjectWriterTestClasses.h"
 
@@ -34,7 +34,7 @@ void TestChunkFileObjectWriterSerialised(void)
 	ObjectsInit(&cUnknowns, &gcStackPointers, NULL, &gcTransientSequence);
 
 	CChunkFileObjectWriter		cWriter;
-	CObjectGraphSerialiser		cGraphSerialiser;
+	CExternalObjectSerialiser		cGraphSerialiser;
 
 	Ptr<CTestWithArray>			pcObject1;
 	Ptr<CTestInteger>			pcObject2;

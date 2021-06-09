@@ -9,7 +9,7 @@
 #include "StandardLib/ObjectReaderSimpleDisk.h"
 #include "StandardLib/ExternalObjectDeserialiser.h"
 #include "StandardLib/MultiFileObjectWriter.h"
-#include "StandardLib/ObjectGraphSerialiser.h"
+#include "StandardLib/ExternalObjectSerialiser.h"
 #include "TestLib/Assert.h"
 #include "ChunkFileObjectWriterTestClasses.h"
 
@@ -43,7 +43,7 @@ void WriteObjectReaderSimpleFile(void)
 
 	CPointer				cBase;
 	CMultiFileObjectWriter		cWriter;
-	CObjectGraphSerialiser	cGraphSerialiser;
+	CExternalObjectSerialiser	cGraphSerialiser;
 
 	cBase = SetupObjectReaderSimpleFile();
 
@@ -80,7 +80,6 @@ void TestObjectReaderSimpleDeserialised(void)
 	Ptr<CTestNamedString>		cNS2;
 	CPointer					cTemp;
 
-	CDependentReadObjects		cDependentReadObjects;
 	CCodabase*					pcDatabase;
 	CSequence*					pcSequence;
 
@@ -94,9 +93,8 @@ void TestObjectReaderSimpleDeserialised(void)
 	AssertLongLongInt(0, pcDatabase->NumIndices());
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
-	cDependentReadObjects.Init();
 	cReader.Init("Output" _FS_ "ObjectReaderSimple" _FS_ "Test" _FS_);
-	cGraphDeserialiser.Init(&cReader, FALSE, &gcObjects, &cDependentReadObjects, gcObjects.GetMemory());
+	cGraphDeserialiser.Init(&cReader, FALSE, &gcObjects, gcObjects.GetMemory());
 	cBase = cGraphDeserialiser.Read("Waggy");
 	AssertTrue(cBase.IsNotNull());
 	AssertString("CTestNamedString", cBase->ClassName());
@@ -120,7 +118,6 @@ void TestObjectReaderSimpleDeserialised(void)
 	AssertPointer(NULL, &cNS2->mpAnother);
 
 	cGraphDeserialiser.Kill();
-	cDependentReadObjects.Kill();
 	cReader.Kill();
 
 	ObjectsFlush();

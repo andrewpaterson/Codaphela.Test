@@ -235,17 +235,16 @@ void TestClassName(void)
 //////////////////////////////////////////////////////////////////////////
 void TestClassSave(void)
 {
-	Ptr<CTestClass>				pTestClass;
-	CObjectSingleSerialiser		cSerialiser;
-	CChunkFileObjectWriter		cWriter;
-	CFileUtil					cFileUtil;
-	BOOL						bResult;
-	char						szDirectory[] = "Output" _FS_ "TestClass";
-	char						szData[] = "0123456789A";
-	CExternalObjectDeserialiser	cGraphDeserialiser;
-	CDependentReadObjects		cDependentReadObjects;
-	CObjectReaderChunkFileDisk 	cReader;
-	OIndex						oi;
+	Ptr<CTestClass>					pTestClass;
+	CInternalObjectSerialiser		cSerialiser;
+	CChunkFileObjectWriter			cWriter;
+	CFileUtil						cFileUtil;
+	BOOL							bResult;
+	char							szDirectory[] = "Output" _FS_ "TestClass";
+	char							szData[] = "0123456789A";
+	CExternalObjectDeserialiser		cGraphDeserialiser;
+	CObjectReaderChunkFileDisk 		cReader;
+	OIndex							oi;
 
 	DataIOInit();
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
@@ -275,9 +274,8 @@ void TestClassSave(void)
 	AssertNull(&pTestClass);
 	ObjectsInit();
 
-	cDependentReadObjects.Init();
 	cReader.Init(szDirectory, "File");
-	cGraphDeserialiser.Init(&cReader, FALSE, &gcObjects, &cDependentReadObjects, gcObjects.GetMemory());
+	cGraphDeserialiser.Init(&cReader, FALSE, &gcObjects, gcObjects.GetMemory());
 	pTestClass = cGraphDeserialiser.Read("Burke");
 	AssertNotNull(&pTestClass);
 

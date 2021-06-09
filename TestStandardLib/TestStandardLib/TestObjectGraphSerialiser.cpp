@@ -3,7 +3,7 @@
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "BaseLib/TypeNames.h"
 #include "StandardLib/Objects.h"
-#include "StandardLib/ObjectGraphSerialiser.h"
+#include "StandardLib/ExternalObjectSerialiser.h"
 #include "StandardLib/MultiFileObjectWriter.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
@@ -15,13 +15,13 @@
 //////////////////////////////////////////////////////////////////////////
 void TestObjectGraphSerialiserReachability(void)
 {
-	CFileUtil						cFileUtil;
+	CFileUtil					cFileUtil;
 	Ptr<CTestSaveableObject1>	pTest1a;
 	Ptr<CTestSaveableObject1>	pTest1b;
 	Ptr<CTestSaveableObject1>	pTest1c;
 	Ptr<CTestSaveableObject2>	pTest2a;
 	Ptr<CTestSaveableObject2>	pTest2b;
-	CObjectGraphSerialiser		cGraphSerialiser;
+	CExternalObjectSerialiser	cGraphSerialiser;
 	CMultiFileObjectWriter		cSimpleWriter;
 	char						szDirectory[] = "Output" _FS_ "GraphWriter" _FS_ "Data";
 	BOOL						bResult;
