@@ -389,6 +389,63 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectDirtyString(void)
+{
+	Ptr<CTestEmbeddedStrings>	pObject;
+	Ptr<CRoot>					pRoot;
+	CCodabase*					pcDatabase;
+	CSequence*					pcSequence;
+	CFileUtil					cFileUtil;
+
+	char						szDirectory[] = "Output" _FS_ "ObjectDirty" _FS_ "Database5";
+
+	cFileUtil.RemoveDir(szDirectory);
+	MemoryInit();
+	TypesInit();
+	DataIOInit();
+
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+	TestObjectDirtyAddConstructors();
+
+
+	pObject = OMalloc<CTestEmbeddedStrings>();
+	pRoot = ORoot();
+	pRoot->Add(pObject);
+
+	pObject->mString1.Set("R");
+	AssertTrue(pObject.IsDirty());
+	AssertTrue(pObject->Flush());
+	AssertFalse(pObject.IsDirty());
+	pObject->mString1.Insert(1, ".00");
+	AssertTrue(pObject.IsDirty());
+	AssertTrue(pObject->Flush());
+	AssertFalse(pObject.IsDirty());
+	pObject->mString1.Insert(1, "25");
+	AssertString("R25.00", pObject->mString1.Text());
+
+	ObjectsFlush();
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill();
+	AssertNull(&pObject);
+
+
+	DataIOKill();
+	TypesKill();
+	MemoryKill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectDirty(void)
 {
 	BeginTests();
@@ -397,10 +454,7 @@ void TestObjectDirty(void)
 	TestObjectDirtyOnPrimitiveAssignment();
 	TestObjectDirtyOnPointerAssignment();
 	TestObjectDirtyOnPrimitiveAssignmentWithEmbedded();
-
-	//String
-	//Hollow pointers
-	//Hollow pointers in embedded 
+	TestObjectDirtyString();
 
 	TestStatistics();
 }
