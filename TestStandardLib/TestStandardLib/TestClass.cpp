@@ -6,6 +6,7 @@
 #include "StandardLib/Objects.h"
 #include "StandardLib/ChunkFileObjectWriter.h"
 #include "StandardLib/ObjectReaderChunkFileDisk.h"
+#include "StandardLib/InternalObjectSerialiser.h"
 #include "TestLib/Assert.h"
 #include "TestClass.h"
 
