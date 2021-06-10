@@ -1,12 +1,11 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "BaseLib/TypeNames.h"
-#include "StandardLib/ObjectSerialiser.h"
 #include "StandardLib/ExternalObjectDeserialiser.h"
+#include "StandardLib/ExternalObjectSerialiser.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ChunkFileObjectWriter.h"
 #include "StandardLib/ObjectReaderChunkFileDisk.h"
-#include "StandardLib/InternalObjectSerialiser.h"
 #include "TestLib/Assert.h"
 #include "TestClass.h"
 
@@ -237,7 +236,7 @@ void TestClassName(void)
 void TestClassSave(void)
 {
 	Ptr<CTestClass>					pTestClass;
-	CInternalObjectSerialiser		cSerialiser;
+	CExternalObjectSerialiser		cSerialiser;
 	CChunkFileObjectWriter			cWriter;
 	CFileUtil						cFileUtil;
 	BOOL							bResult;
