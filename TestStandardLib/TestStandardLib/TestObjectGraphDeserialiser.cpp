@@ -75,7 +75,7 @@ void TestObjectGraphDeserialiserBuildGraph1(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestRemappingOfOIs(CObjectWriter* pcWriter, CObjectReader* pcReader)
+void TestRemappingOfOIs(CExternalObjectWriter* pcWriter, CExternalObjectReader* pcReader)
 {
 	Ptr<CTestSaveableObject2>		cBase;
 	Ptr<CTestSaveableObject2>		cStart1;
