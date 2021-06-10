@@ -3,8 +3,8 @@
 #include "StandardLib/Object.h"
 #include "StandardLib/Pointer.h"
 #include "StandardLib/Array.h"
-#include "StandardLib/ObjectSerialiser.h"
-#include "StandardLib/ObjectDeserialiser.h"
+#include "StandardLib/ObjectWriter.h"
+#include "StandardLib/ObjectReader.h"
 
 
 class CEmbeddedTest : public CObject
@@ -20,8 +20,8 @@ public:
 	Ptr<CEmbeddedTest>	Init(void);
 	void				Free(void);
 
-	BOOL				Save(CObjectSerialiser* pcFile);
-	BOOL				Load(CObjectDeserialiser* pcFile);
+	BOOL				Save(CObjectWriter* pcFile);
+	BOOL				Load(CObjectReader* pcFile);
 };
 
 
@@ -41,8 +41,8 @@ public:
 	Ptr<CEmbeddedContainer>		Init(void);
 	void						Free(void);
 
-	BOOL						Save(CObjectSerialiser* pcFile);
-	BOOL						Load(CObjectDeserialiser* pcFile);
+	BOOL						Save(CObjectWriter* pcFile);
+	BOOL						Load(CObjectReader* pcFile);
 };
 
 
@@ -61,8 +61,8 @@ public:
 	Ptr<CEmbeddedComplex> Init(void);
 	void	Free(void);
 
-	BOOL	Save(CObjectSerialiser* pcFile);
-	BOOL	Load(CObjectDeserialiser* pcFile);
+	BOOL	Save(CObjectWriter* pcFile);
+	BOOL	Load(CObjectReader* pcFile);
 };
 
 

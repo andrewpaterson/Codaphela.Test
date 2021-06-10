@@ -41,7 +41,7 @@ void CEmbeddedTest::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CEmbeddedTest::Save(CObjectSerialiser* pcFile)
+BOOL CEmbeddedTest::Save(CObjectWriter* pcFile)
 {
 	pcFile->WriteInt(miAmANumber);
 	pcFile->WriteFloat(mfSoAmI);
@@ -53,7 +53,7 @@ BOOL CEmbeddedTest::Save(CObjectSerialiser* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CEmbeddedTest::Load(CObjectDeserialiser* pcFile)
+BOOL CEmbeddedTest::Load(CObjectReader* pcFile)
 {
 	pcFile->ReadInt(&miAmANumber);
 	pcFile->ReadFloat(&mfSoAmI);
@@ -112,7 +112,7 @@ void CEmbeddedContainer::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CEmbeddedContainer::Save(CObjectSerialiser* pcFile)
+BOOL CEmbeddedContainer::Save(CObjectWriter* pcFile)
 {
 	pcFile->WriteData(msz, 4);
 	pcFile->WriteInt(mi);
@@ -125,7 +125,7 @@ BOOL CEmbeddedContainer::Save(CObjectSerialiser* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CEmbeddedContainer::Load(CObjectDeserialiser* pcFile)
+BOOL CEmbeddedContainer::Load(CObjectReader* pcFile)
 {
 	pcFile->ReadData(msz, 4);
 	pcFile->ReadInt(&mi);
@@ -180,7 +180,7 @@ void CEmbeddedComplex::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CEmbeddedComplex::Save(CObjectSerialiser* pcFile)
+BOOL CEmbeddedComplex::Save(CObjectWriter* pcFile)
 {
 	pcFile->WriteInt(mai[0]);
 	pcFile->WriteInt(mai[1]);
@@ -192,7 +192,7 @@ BOOL CEmbeddedComplex::Save(CObjectSerialiser* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CEmbeddedComplex::Load(CObjectDeserialiser* pcFile)
+BOOL CEmbeddedComplex::Load(CObjectReader* pcFile)
 {
 	pcFile->ReadInt(&mai[0]);
 	pcFile->ReadInt(&mai[1]);

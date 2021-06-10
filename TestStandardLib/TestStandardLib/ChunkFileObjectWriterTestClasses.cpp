@@ -1,6 +1,6 @@
 #include "StandardLib/Objects.h"
-#include "StandardLib/ObjectSerialiser.h"
-#include "StandardLib/ObjectDeserialiser.h"
+#include "StandardLib/ObjectWriter.h"
+#include "StandardLib/ObjectReader.h"
 #include "ChunkFileObjectWriterTestClasses.h"
 
 
@@ -35,7 +35,7 @@ void CTestWithArray::Add(CPointer& pcObject)
 }
 
 
-BOOL CTestWithArray::Save(CObjectSerialiser* pcFile)
+BOOL CTestWithArray::Save(CObjectWriter* pcFile)
 {
 	ReturnOnFalse(mszString.WriteString(pcFile));
 	ReturnOnFalse(pcFile->WriteInt(mx));
@@ -43,7 +43,7 @@ BOOL CTestWithArray::Save(CObjectSerialiser* pcFile)
 }
 
 
-BOOL CTestWithArray::Load(CObjectDeserialiser* pcFile)
+BOOL CTestWithArray::Load(CObjectReader* pcFile)
 {
 	ReturnOnFalse(mszString.ReadString(pcFile));
 	ReturnOnFalse(pcFile->ReadInt(&mx));
@@ -74,7 +74,7 @@ void CTestInteger::Free(void)
 }
 
 
-BOOL CTestInteger::Save(CObjectSerialiser* pcFile)
+BOOL CTestInteger::Save(CObjectWriter* pcFile)
 {
 	ReturnOnFalse(pcFile->WriteInt(mx));
 	ReturnOnFalse(pcFile->WriteInt(my));
@@ -83,7 +83,7 @@ BOOL CTestInteger::Save(CObjectSerialiser* pcFile)
 }
 
 
-BOOL CTestInteger::Load(CObjectDeserialiser* pcFile)
+BOOL CTestInteger::Load(CObjectReader* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadInt(&mx));
 	ReturnOnFalse(pcFile->ReadInt(&my));
@@ -131,14 +131,14 @@ void CTestNamedString::Free(void)
 }
 
 
-BOOL CTestNamedString::Save(CObjectSerialiser* pcFile)
+BOOL CTestNamedString::Save(CObjectWriter* pcFile)
 {
 	ReturnOnFalse(mszEmbedded.WriteString(pcFile));
 	return TRUE;
 }
 
 
-BOOL CTestNamedString::Load(CObjectDeserialiser* pcFile)
+BOOL CTestNamedString::Load(CObjectReader* pcFile)
 {
 	ReturnOnFalse(mszEmbedded.ReadString(pcFile));
 	return TRUE;

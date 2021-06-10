@@ -1,5 +1,5 @@
-#include "StandardLib/ObjectSerialiser.h"
-#include "StandardLib/ObjectDeserialiser.h"
+#include "StandardLib/ObjectWriter.h"
+#include "StandardLib/ObjectReader.h"
 #include "ObjectTestClasses.h"
 
 
@@ -73,7 +73,7 @@ void CTestObject::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestObject::Save(CObjectSerialiser* pcFile)
+BOOL CTestObject::Save(CObjectWriter* pcFile)
 {
 	ReturnOnFalse(pcFile->WriteInt(mi));
 	return TRUE;
@@ -84,7 +84,7 @@ BOOL CTestObject::Save(CObjectSerialiser* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestObject::Load(CObjectDeserialiser* pcFile)
+BOOL CTestObject::Load(CObjectReader* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadInt(&mi));
 	return TRUE;
@@ -193,7 +193,7 @@ void CTestSaveableObject1::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestSaveableObject1::Save(CObjectSerialiser* pcFile)
+BOOL CTestSaveableObject1::Save(CObjectWriter* pcFile)
 {
 	ReturnOnFalse(pcFile->WriteInt(miInt));
 	ReturnOnFalse(mszString.WriteString(pcFile));
@@ -207,7 +207,7 @@ BOOL CTestSaveableObject1::Save(CObjectSerialiser* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestSaveableObject1::Load(CObjectDeserialiser* pcFile)
+BOOL CTestSaveableObject1::Load(CObjectReader* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadInt(&miInt));
 	ReturnOnFalse(mszString.ReadString(pcFile));
@@ -256,7 +256,7 @@ void CTestSaveableObject2::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestSaveableObject2::Save(CObjectSerialiser* pcFile)
+BOOL CTestSaveableObject2::Save(CObjectWriter* pcFile)
 {
 	msz.WriteString(pcFile);
 	mbSaved = TRUE;
@@ -268,7 +268,7 @@ BOOL CTestSaveableObject2::Save(CObjectSerialiser* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestSaveableObject2::Load(CObjectDeserialiser* pcFile)
+BOOL CTestSaveableObject2::Load(CObjectReader* pcFile)
 {
 	msz.ReadString(pcFile);
 	mbSaved = FALSE;

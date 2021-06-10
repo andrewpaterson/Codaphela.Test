@@ -31,8 +31,8 @@ public:
 	void	Class(void);
 	void	Free(void);
 
-	BOOL	Save(CObjectSerialiser* pcFile);
-	BOOL	Load(CObjectDeserialiser* pcFile);
+	BOOL	Save(CObjectWriter* pcFile);
+	BOOL	Load(CObjectReader* pcFile);
 
 	void	SomeMethod(void);
 };
@@ -69,8 +69,8 @@ public:
 	void		Class(void);
 	void		Free(void);
 
-	BOOL		Save(CObjectSerialiser* pcFile);
-	BOOL		Load(CObjectDeserialiser* pcFile);
+	BOOL		Save(CObjectWriter* pcFile);
+	BOOL		Load(CObjectReader* pcFile);
 };
 
 
@@ -88,8 +88,8 @@ public:
 	void	Class(void);
 	void	Free(void);
 
-	BOOL	Save(CObjectSerialiser* pcFile);
-	BOOL	Load(CObjectDeserialiser* pcFile);
+	BOOL	Save(CObjectWriter* pcFile);
+	BOOL	Load(CObjectReader* pcFile);
 };
 
 

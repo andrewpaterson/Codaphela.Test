@@ -1,5 +1,5 @@
-#include "StandardLib/ObjectSerialiser.h"
-#include "StandardLib/ObjectDeserialiser.h"
+#include "StandardLib/ObjectWriter.h"
+#include "StandardLib/ObjectReader.h"
 #include "NamedObjectTestClasses.h"
 
 
@@ -42,7 +42,7 @@ void CTestNamedObject::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestNamedObject::Save(CObjectSerialiser* pcFile)
+BOOL CTestNamedObject::Save(CObjectWriter* pcFile)
 {
 	ReturnOnFalse(pcFile->WriteInt(miNum));
 	return TRUE;
@@ -53,7 +53,7 @@ BOOL CTestNamedObject::Save(CObjectSerialiser* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestNamedObject::Load(CObjectDeserialiser* pcFile)
+BOOL CTestNamedObject::Load(CObjectReader* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadInt(&miNum));
 	return TRUE;
@@ -108,7 +108,7 @@ void CTestNamedObjectSmall::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestNamedObjectSmall::Save(CObjectSerialiser* pcFile)
+BOOL CTestNamedObjectSmall::Save(CObjectWriter* pcFile)
 {
 	ReturnOnFalse(pcFile->WriteData(mac, 4));
 	return TRUE;
@@ -119,7 +119,7 @@ BOOL CTestNamedObjectSmall::Save(CObjectSerialiser* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestNamedObjectSmall::Load(CObjectDeserialiser* pcFile)
+BOOL CTestNamedObjectSmall::Load(CObjectReader* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadData(mac, 4));
 	return TRUE;
@@ -178,7 +178,7 @@ void CTestNamedObjectWithEmbedded::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestNamedObjectWithEmbedded::Save(CObjectSerialiser* pcFile)
+BOOL CTestNamedObjectWithEmbedded::Save(CObjectWriter* pcFile)
 {
 	ReturnOnFalse(pcFile->WriteInt(miX));
 	ReturnOnFalse(pcFile->WriteInt(miY));
@@ -190,7 +190,7 @@ BOOL CTestNamedObjectWithEmbedded::Save(CObjectSerialiser* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestNamedObjectWithEmbedded::Load(CObjectDeserialiser* pcFile)
+BOOL CTestNamedObjectWithEmbedded::Load(CObjectReader* pcFile)
 {
 	mpvUnmanaged = NULL;
 	miUnmagedSize = 0;
