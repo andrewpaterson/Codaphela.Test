@@ -77,9 +77,10 @@ int main(void)
 	TestClass();
 	TestDistToRoot();
 	TestDistToStack();
-	TestObjectGraphWriting();
 	TestObjectsSimple();
 	TestRoot();
+	TestSet();
+	TestObjectGraphWriting();
 	TestObject();
 	TestObjectStack();
 	TestPointer();
@@ -101,7 +102,6 @@ int main(void)
 	TestObjectsEvictVsKill();
 	TestUsage();
 	TestArray();
-	TestSet();
 	TestKill();
 	TestEmbedded();
 	TestEmbeddedObjectRemapTos();

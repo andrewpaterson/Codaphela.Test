@@ -157,39 +157,39 @@ void TestSetKillCyclic(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-//void TestSetKillAll(void)
-//{
-//	ObjectsInit();
-//
-//	Ptr<CPointerContainer>		pContainer1;
-//	Ptr<CPointerContainer>		pContainer2;
-//	Ptr<CTestObject>			pObject;
-//	Ptr<CRoot>					pRoot;
-//	Ptr<CSetObject>				pSet;
-//
-//	pObject = OMalloc<CTestObject>();
-//	pContainer2 = OMalloc<CPointerContainer>(pObject);
-//	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
-//	pSet = OMalloc<CSetObject>();
-//	pRoot = ORoot();
-//	pRoot->Add(pSet);
-//	pSet->Add(pContainer1);
-//
-//	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
-//	AssertInt(1, pSet->NumElements());
-//
-//	pSet->KillAll();
-//	AssertInt(0, pSet->NumElements());
-//	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
-//	AssertNotNull(&pSet);
-//	AssertNull(&pContainer1);
-//	AssertInt(UNATTACHED_DIST_TO_ROOT, pContainer2->GetDistToRoot());
-//	AssertInt(UNATTACHED_DIST_TO_ROOT, pObject->GetDistToRoot());
-//
-//	pSet->Kill();
-//
-//	ObjectsKill();
-//}
+void TestSetKillAll(void)
+{
+	ObjectsInit();
+
+	Ptr<CPointerContainer>		pContainer1;
+	Ptr<CPointerContainer>		pContainer2;
+	Ptr<CTestObject>			pObject;
+	Ptr<CRoot>					pRoot;
+	Ptr<CSetObject>				pSet;
+
+	pObject = OMalloc<CTestObject>();
+	pContainer2 = OMalloc<CPointerContainer>(pObject);
+	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
+	pSet = OMalloc<CSetObject>();
+	pRoot = ORoot();
+	pRoot->Add(pSet);
+	pSet->Add(pContainer1);
+
+	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	AssertInt(1, pSet->NumElements());
+
+	pSet->Kill();
+	AssertInt(0, pSet->NumElements());
+	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertNotNull(&pSet);
+	AssertNull(&pContainer1);
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pContainer2->GetDistToRoot());
+	AssertInt(UNATTACHED_DIST_TO_ROOT, pObject->GetDistToRoot());
+
+	pSet->Kill();
+
+	ObjectsKill();
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -236,6 +236,16 @@ void TestSetRemoveAll(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestSetSerialisation()
+{
+	int x = 0;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestSet(void)
 {
 	BeginTests();
@@ -247,9 +257,10 @@ void TestSet(void)
 	TestSetAdd();
 	TestSetGet();
 	TestSetAddAll();
+	TestSetSerialisation();
 	TestSetRemove();
 	TestSetKillCyclic();
-	//TestSetKillAll();
+	TestSetKillAll();
 	TestSetRemoveAll();
 
 	DataIOKill();
