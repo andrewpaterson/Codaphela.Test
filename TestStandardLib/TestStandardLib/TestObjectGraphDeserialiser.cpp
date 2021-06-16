@@ -11,7 +11,7 @@
 #include "StandardLib/MultiFileObjectWriter.h"
 #include "StandardLib/ObjectReaderSimpleDisk.h"
 #include "StandardLib/ChunkFileObjectWriter.h"
-#include "StandardLib/ObjectReaderChunkFileDisk.h"
+#include "StandardLib/ChunkFileSystemObjectReader.h"
 #include "StandardLib/Root.h"
 #include "TestLib/Assert.h"
 #include "ChunkFileObjectWriterTestClasses.h"
@@ -300,7 +300,7 @@ void TestObjectGraphDeserialiserRemappingOfSimpleFilesOIs(void)
 void TestObjectGraphDeserialiserRemappingOfChunkedFilesOIs(void)
 {
 	CChunkFileObjectWriter		cWriter;
-	CObjectReaderChunkFileDisk	cReader;
+	CChunkFileSystemObjectReader	cReader;
 	CFileUtil					cFileUtil;
 
 	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "GraphDeserialiser"));
@@ -328,8 +328,8 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 	Ptr<CTestSaveableObject2>		cOwStart2;
 	CExternalObjectSerialiser		cGraphSerialiser;
 	CExternalObjectDeserialiser		cGraphDeserialiser;
-	CObjectReaderChunkFileDisk		cReaderStart1;
-	CObjectReaderChunkFileDisk		cReaderStart2;
+	CChunkFileSystemObjectReader		cReaderStart1;
+	CChunkFileSystemObjectReader		cReaderStart2;
 	Ptr<CTestSaveableObject1>		cShared;
 	Ptr<CRoot>						cRoot;
 	CPointer						cObject;

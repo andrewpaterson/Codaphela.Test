@@ -4,8 +4,24 @@
 #include "StandardLib/Set.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/PointerContainer.h"
+#include "StandardLib/ExternalObjectDeserialiser.h"
+#include "StandardLib/ExternalObjectSerialiser.h"
+#include "StandardLib/ChunkFileObjectWriter.h"
+#include "StandardLib/ChunkFileSystemObjectReader.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSetAddConstructors(void)
+{
+	gcObjects.AddConstructor<CTestSaveableObject1>();
+	gcObjects.AddConstructor<CTestObject>();
+	gcObjects.AddConstructor<CPointerContainer>();
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -178,7 +194,7 @@ void TestSetKillAll(void)
 	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
 	AssertInt(1, pSet->NumElements());
 
-	pSet->Kill();
+	pSet->KillAll();
 	AssertInt(0, pSet->NumElements());
 	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
 	AssertNotNull(&pSet);
@@ -188,6 +204,7 @@ void TestSetKillAll(void)
 
 	pSet->Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -238,7 +255,54 @@ void TestSetRemoveAll(void)
 //////////////////////////////////////////////////////////////////////////
 void TestSetSerialisation()
 {
-	int x = 0;
+	ObjectsInit();
+	TestSetAddConstructors();
+
+	Ptr<CPointerContainer>			pContainer1;
+	Ptr<CPointerContainer>			pContainer2;
+	Ptr<CTestObject>				pObject;
+	Ptr<CSetObject>					pSet;
+	CExternalObjectSerialiser		cSerialiser;
+	CChunkFileObjectWriter			cWriter;
+	CFileUtil						cFileUtil;
+	BOOL							bResult;
+	char							szDirectory[] = "Output" _FS_ "TestSet";
+	CExternalObjectDeserialiser		cGraphDeserialiser;
+	CChunkFileSystemObjectReader 		cReader;
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	pObject = OMalloc<CTestObject>();
+	pContainer2 = OMalloc<CPointerContainer>(pObject);
+	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
+	pSet = OMalloc<CSetObject>();
+	pSet->Add(pContainer1);
+	pSet->Add(pContainer2);
+
+	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
+	AssertInt(2, pSet->NumElements());
+
+	cWriter.Init(szDirectory, "", "File");
+	cSerialiser.Init(&cWriter);
+	bResult = cSerialiser.Write(&pSet);
+	cSerialiser.Kill();
+	cWriter.Kill();
+
+	ObjectsKill();
+	AssertNull(&pSet);
+	ObjectsInit();
+
+	cReader.Init(szDirectory, "File");
+	cGraphDeserialiser.Init(&cReader, FALSE, &gcObjects, gcObjects.GetMemory());
+	pSet = cGraphDeserialiser.Read("Burke");
+	AssertNotNull(&pSet);
+
+	pSet = NULL;
+
+	ObjectsKill();
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 }
 
 

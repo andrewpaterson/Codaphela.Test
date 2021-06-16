@@ -5,7 +5,7 @@
 #include "StandardLib/ExternalObjectSerialiser.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ChunkFileObjectWriter.h"
-#include "StandardLib/ObjectReaderChunkFileDisk.h"
+#include "StandardLib/ChunkFileSystemObjectReader.h"
 #include "TestLib/Assert.h"
 #include "TestClass.h"
 
@@ -233,7 +233,7 @@ void TestClassName(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestClassSave(void)
+void TestClassSerialisation(void)
 {
 	Ptr<CTestClass>					pTestClass;
 	CExternalObjectSerialiser		cSerialiser;
@@ -243,7 +243,7 @@ void TestClassSave(void)
 	char							szDirectory[] = "Output" _FS_ "TestClass";
 	char							szData[] = "0123456789A";
 	CExternalObjectDeserialiser		cGraphDeserialiser;
-	CObjectReaderChunkFileDisk 		cReader;
+	CChunkFileSystemObjectReader 		cReader;
 	OIndex							oi;
 
 	DataIOInit();
@@ -341,7 +341,7 @@ void TestClass(void)
 	TestClassDefinition();
 	TestClassOnStack();
 	TestClassName();
-	TestClassSave();
+	TestClassSerialisation();
 	TestClassHeapObjectEmbeddedPointers();
 
 	TypesKill();

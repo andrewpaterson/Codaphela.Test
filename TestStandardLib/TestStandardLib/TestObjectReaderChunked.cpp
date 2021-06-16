@@ -6,7 +6,7 @@
 #include "CoreLib/CodabaseFactory.h"
 #include "CoreLib/SequenceFactory.h"
 #include "StandardLib/Objects.h"
-#include "StandardLib/ObjectReaderChunkFileDisk.h"
+#include "StandardLib/ChunkFileSystemObjectReader.h"
 #include "StandardLib/ExternalObjectDeserialiser.h"
 #include "StandardLib/ChunkFileObjectWriter.h"
 #include "StandardLib/ExternalObjectSerialiser.h"
@@ -107,7 +107,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	CObjectReaderChunkFileDisk	cReader;
+	CChunkFileSystemObjectReader	cReader;
 	CExternalObjectDeserialiser	cGraphDeserialiser;
 	CPointer					cBase;
 	Ptr<CTestWithArray>			cA1;
