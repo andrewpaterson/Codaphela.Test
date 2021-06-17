@@ -72,6 +72,7 @@ void TestObjectGraphWritingStackIsNotWritten(void)
 	oi3 = pObj3.GetIndex();
 
 	pRoot->Add(pObj1);
+
 	pObj1->mpObject = pObj2;
 	pObj0->mp1 = pObj1;
 	pObj0->mp2 = pObj3;
