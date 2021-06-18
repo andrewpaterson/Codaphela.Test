@@ -114,6 +114,7 @@ int main(void)
 	TestArrayMinimalTemplate();
 	TestArrayBlockSorted();
 	TestArraySizer();
+	TestChars();
 	TestLogger();
 	TestMapBlock();
 	TestMapString();
@@ -133,7 +134,6 @@ int main(void)
 	TestAllocator();
 	TestFreeList();
 	TestFreeListAllocator();
-	TestChars();
 	TestCharsHelper();
 	TestTextParser();
 	TestDate();

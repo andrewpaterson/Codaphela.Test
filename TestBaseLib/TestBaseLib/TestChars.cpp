@@ -12,7 +12,6 @@ void TestCharsSubStringEquals(void)
 	CChars	sz;
 
 	sz.Init("Happy");
-
 	AssertTrue(sz.SubStringEquals(0, "Hap"));
 	AssertTrue(sz.SubStringEquals(0, "Happy"));
 	AssertTrue(sz.SubStringEquals(1, "app"));
@@ -29,7 +28,16 @@ void TestCharsSubStringEquals(void)
 	AssertFalse(sz.SubStringEquals(6, ""));
 	AssertFalse(sz.SubStringEquals(7, ""));
 	AssertFalse(sz.SubStringEquals(5, "y"));
+	sz.Kill();
 
+	sz.Init();
+	AssertFalse(sz.SubStringEquals(0, "Hap"));
+	AssertFalse(sz.SubStringEquals(1, "Hap"));
+	AssertFalse(sz.SubStringEquals(-1, "Hap"));
+
+	AssertTrue(sz.SubStringEquals(0, ""));
+	AssertFalse(sz.SubStringEquals(1, ""));
+	AssertFalse(sz.SubStringEquals(-1, ""));
 	sz.Kill();
 }
 
@@ -271,6 +279,439 @@ void TestCharsMakeCPlusPlus(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestCharsCopyEmptyString(void)
+{
+	CChars sz1;
+	CChars sz2;
+
+	sz1.Init();
+	AssertTrue(sz1.Empty());
+	AssertPointer(gszEmptyString, sz1.Text());
+	
+	sz2.Init();
+	sz1.Append(sz2);
+	AssertPointer(gszEmptyString, sz1.Text());
+	AssertString("", sz1.Text());
+
+	sz1.Append("Hello");
+	AssertString("Hello", sz1.Text());
+	
+	sz2.Append(sz1);
+	AssertString("Hello", sz2.Text());
+
+	sz1.Kill();
+	sz2.Kill();
+
+	sz2.Init();
+	sz1.Init("");
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init(' ', 0);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init(sz2);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init(&sz2);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init((char*)NULL);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init("Star", 4);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init("Star");
+	AssertString("Star", sz1.Text());
+	sz1.Kill();
+
+	sz1.Init("Star", -1, -1);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz2.Kill();
+	sz2.Init("Star");
+
+	sz1.Init(sz2, -1, -1);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init(sz2, 1, 3);
+	AssertString("ta", sz1.Text());
+	sz1.Kill();
+
+	sz1.Init(sz2, 4, 4);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init("Star", 1, 3);
+	AssertString("ta", sz1.Text());
+	sz1.Kill();
+
+	sz1.Init(' ', 2);
+	AssertString("  ", sz1.Text());
+	sz1.Kill();
+
+	sz1.InitList((char*)NULL);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.InitList("Nova", NULL);
+	AssertString("Nova", sz1.Text());
+	sz1.Kill();
+
+	sz1.InitList((CChars*)NULL);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.InitList(&sz2, NULL);
+	AssertString("Star", sz1.Text());
+	sz1.Kill();
+
+	sz1.InitLength(0);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.InitLength(1);
+	sz1.SetChar(0, 'A');
+	AssertString("A", sz1.Text());
+	sz1.Kill();
+
+	sz1.InitData2("X", 0);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.InitData2(NULL, 1);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCharsInsertOutOfBounds(void)
+{
+	CChars sz1;
+	CChars sz2;
+
+	sz1.Init("It's Life");
+	sz1.Insert(4, " My");
+	AssertString("It's My Life", sz1.Text());
+
+	sz1.Insert(12, '.');
+	AssertString("It's My Life.", sz1.Text());
+
+	sz2.Init("!!");
+
+	sz1.Insert(-1, &sz2);
+	AssertString("It's My Life.", sz1.Text());
+
+	sz1.Insert(14, &sz2);
+	AssertString("It's My Life.", sz1.Text());
+
+	sz1.Kill();
+	sz2.Kill();
+
+	sz1.Init();
+	sz1.Insert(1, 'C');
+	AssertPointer(gszEmptyString, sz1.Text());
+
+	sz1.Insert(0, 'C');
+	AssertString("C", sz1.Text());
+
+	sz1.Insert(2, 'a');
+	AssertString("C", sz1.Text());
+
+	sz1.Insert(-1, 'a');
+	AssertString("C", sz1.Text());
+	sz1.Kill();
+
+	sz1.Init();
+	sz1.Insert(-1, 'C');
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCharsLeftAlign(void)
+{
+	CChars sz1;
+
+	sz1.Init();
+	sz1.LeftAlign("ABC", ' ', 6);
+	AssertString("ABC   ", sz1.Text());
+	sz1.Kill();
+
+	sz1.Init();
+	sz1.LeftAlign("ABC", ' ', 2);
+	AssertString("AB", sz1.Text());
+	sz1.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCharsRightAlign(void)
+{
+	CChars sz1;
+
+	sz1.Init();
+	sz1.RightAlign("ABC", ' ', 6);
+	AssertString("   ABC", sz1.Text());
+	sz1.Kill();
+
+	sz1.Init();
+	sz1.RightAlign("ABC", ' ', 2);
+	AssertString("AB", sz1.Text());
+	sz1.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCharsRemoveOutOfBounds(void)
+{
+	CChars sz1;
+
+	sz1.Init();
+	sz1.Remove(1, 2);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init("Mack");
+	sz1.Remove(0, 3);
+	AssertString("k", sz1.Text());
+	sz1.Kill();
+
+	sz1.Init("Mack");
+	sz1.Remove(0, 4);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init("Mack");
+	sz1.Remove(-1, 2);
+	AssertString("ck", sz1.Text());
+	sz1.Kill();
+
+	sz1.Init("Mack");
+	sz1.Remove(2, 5);
+	AssertString("Ma", sz1.Text());
+	sz1.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCharsRemoveEnd(void)
+{
+	CChars sz1;
+
+	sz1.Init();
+	sz1.RemoveFromEnd(2);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init("Mack");
+	sz1.RemoveFromEnd(1);
+	AssertString("Mac", sz1.Text());
+
+	sz1.RemoveFromEnd(3);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init();
+	sz1.RemoveEnd(2);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init("Mack");
+	sz1.RemoveEnd(3);
+	AssertString("Mac", sz1.Text());
+
+	sz1.RemoveEnd(0);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init();
+	sz1.RemoveEnd(-1);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init("Mack");
+	sz1.RemoveEnd(-1);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init("Mack");
+	sz1.RemoveFromEnd(5);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCharsRemoveCharacter(void)
+{
+	CChars sz1;
+
+	sz1.Init();
+	sz1.RemoveCharacter(0);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.RemoveCharacter(1);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.RemoveCharacter(-1);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+
+	sz1.Init("Goblins");
+	sz1.RemoveCharacter(0);
+	AssertString("oblins", sz1.Text());
+	sz1.RemoveCharacter(1);
+	AssertString("olins", sz1.Text());
+	sz1.RemoveCharacter(-1);
+	AssertString("olins", sz1.Text());
+	sz1.RemoveCharacter(5);
+	AssertString("olins", sz1.Text());
+	sz1.RemoveCharacter(4);
+	AssertString("olin", sz1.Text());
+	sz1.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCharsFindOutOfBounds(void)
+{
+	CChars	sz1;
+	int		iPos;
+
+	sz1.Init("ABCDE");
+	iPos = sz1.Find('C');
+	AssertInt(2, iPos);
+
+	iPos = sz1.Find(3, 'C');
+	AssertInt(-1, iPos);
+
+	iPos = sz1.Find(5, 'C');
+	AssertInt(-1, iPos);
+
+	iPos = sz1.Find(6, 'C');
+	AssertInt(-1, iPos);
+
+	iPos = sz1.Find(-1, 'C');
+	AssertInt(2, iPos);
+	sz1.Kill();
+
+	sz1.Init();
+	iPos = sz1.Find('C');
+	AssertInt(-1, iPos);
+	sz1.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCharsFindFromEndOutOfBounds(void)
+{
+	CChars	sz1;
+	int		iPos;
+
+	sz1.Init("ABCDE");
+	iPos = sz1.FindFromEnd('C');
+	AssertInt(2, iPos);
+
+	iPos = sz1.FindFromEnd(1, 'C');
+	AssertInt(-1, iPos);
+
+	iPos = sz1.FindFromEnd(0, 'C');
+	AssertInt(-1, iPos);
+
+	iPos = sz1.FindFromEnd(-1, 'C');
+	AssertInt(-1, iPos);
+
+	iPos = sz1.FindFromEnd(6, 'C');
+	AssertInt(2, iPos);
+	sz1.Kill();
+
+	sz1.Init();
+	iPos = sz1.FindFromEnd('C');
+	AssertInt(-1, iPos);
+	sz1.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCharsSetLength(void)
+{
+	CChars	sz1;
+
+	sz1.Init();
+	sz1.SetLength(0);
+	AssertPointer(gszEmptyString, sz1.Text());
+
+	sz1.SetLength(1);
+	sz1.SetChar(0, 'A');
+	AssertString("A", sz1.Text());
+
+	sz1.SetLength(0);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCharsStripWhiteSpace(void)
+{
+	CChars	sz1;
+
+	sz1.Init();
+	sz1.StripWhiteSpace();
+	AssertPointer(gszEmptyString, sz1.Text());
+
+	sz1.Append("  Bork\t");
+	sz1.StripWhiteSpace();
+	AssertString("Bork", sz1.Text());
+
+	sz1.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestChars(void)
 {
 	BeginTests();
@@ -280,6 +721,17 @@ void TestChars(void)
 	TestCharsInsert();
 	TestCharsSplit();
 	TestCharsMakeCPlusPlus();
+	TestCharsCopyEmptyString();
+	TestCharsInsertOutOfBounds();
+	TestCharsLeftAlign();
+	TestCharsRightAlign();
+	TestCharsRemoveOutOfBounds();
+	TestCharsRemoveEnd();
+	TestCharsRemoveCharacter();
+	TestCharsFindOutOfBounds();
+	TestCharsFindFromEndOutOfBounds();
+	TestCharsSetLength();
+	TestCharsStripWhiteSpace();
 	
 	TestStatistics();
 }
