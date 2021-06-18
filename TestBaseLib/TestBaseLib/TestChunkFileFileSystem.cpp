@@ -234,6 +234,7 @@ void TestChunkFileFileSystemReading(void)
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("No man, Mr. President, thinks more highly than I do of the patriotism", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertFalse(cChunkFileFileSystem.ReadChunkBegin("new/age/Duke"));
 
@@ -241,6 +242,7 @@ void TestChunkFileFileSystemReading(void)
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("The question before the House is one of awful moment to this country.", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertFalse(cChunkFileFileSystem.ReadChunkBegin("new/age/Duke"));
 
@@ -248,46 +250,55 @@ void TestChunkFileFileSystemReading(void)
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("We are apt to shut our eyes against a painful truth", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("new/age/violet/Forensics"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("Shall we try argument?", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Unknown"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("Sir, we have been trying that for the last ten years.", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("last/time/in/Paris"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("There is no longer any room for hope.", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("last/time/in/world/on/See"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("But when shall we be stronger?", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("last/Schism"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("Finally! Something with Doom!", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("last/Tragic"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("If you give me a one word text back, I'm gonna give you the same", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Final"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("Countdown", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("new/really/Final"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("Seriously, how is it not possible to find text on the internet.", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertFalse(cChunkFileFileSystem.ReadChunkBegin(""));
 	AssertFalse(cChunkFileFileSystem.ReadChunkBegin("CCC//XX/xx"));
@@ -298,56 +309,67 @@ void TestChunkFileFileSystemReading(void)
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("The question before the House is one of awful moment to this country.", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("new/age/violet/Tempest"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("No man, Mr. President, thinks more highly than I do of the patriotism", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("new/age/shrinking/daisy/Pusher"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("We are apt to shut our eyes against a painful truth", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("last/Schism"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("Finally! Something with Doom!", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("new/age/violet/Forensics"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("Shall we try argument?", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("last/Tragic"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("If you give me a one word text back, I'm gonna give you the same", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("new/really/Final"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("Seriously, how is it not possible to find text on the internet.", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Final"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("Countdown", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("last/time/in/world/on/See"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("But when shall we be stronger?", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
-	
+	szText.Kill();
+
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("last/time/in/Paris"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("There is no longer any room for hope.", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Unknown"));
 	AssertTrue(szText.ReadChars(&cChunkFileFileSystem));
 	AssertString("Sir, we have been trying that for the last ten years.", szText.Text());
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
+	szText.Kill();
 
 	cChunkFileFileSystem.ReadClose();
 	cChunkFileFileSystem.Kill();

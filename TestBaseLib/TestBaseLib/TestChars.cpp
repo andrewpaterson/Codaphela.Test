@@ -373,6 +373,7 @@ void TestCharsCopyEmptyString(void)
 	sz1.InitList(&sz2, NULL);
 	AssertString("Star", sz1.Text());
 	sz1.Kill();
+	sz2.Kill();
 
 	sz1.InitLength(0);
 	AssertPointer(gszEmptyString, sz1.Text());
