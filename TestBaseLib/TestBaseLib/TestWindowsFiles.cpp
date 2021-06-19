@@ -6,7 +6,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-#ifdef WIN32
+#ifdef _WIN32
 void TestWindowsFilesTruncate(void)
 {
 	CFileUtil		cFileUtil;
@@ -90,9 +90,9 @@ void TestWindowsFiles(void)
 {
 	BeginTests();
 
-#ifdef WIN32
+#ifdef _WIN32
 	TestWindowsFilesTruncate();
-#endif // WIN_32
+#endif // _WIN_32
 
 	TestStatistics();
 }
