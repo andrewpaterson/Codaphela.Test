@@ -44,3 +44,13 @@ TestCoreLib/Release
 /TestBaseLib/TestBaseLib/Output/*
 /TestBaseLib/TestBaseLib/x64/Debug*
 /TestBaseLib/x64/Debug/*
+/TestBaseLib/TestBaseLib/x64/Release/*
+/TestBaseLib/x64/Release/*
+/TestCoreLib/TestCoreLib/x64/Debug/*
+/TestCoreLib/TestCoreLib/x64/Release/*
+/TestCoreLib/x64/Release/*
+/TestCoreLib/x64/Debug/*
+/TestStandardLib/x64/Release/*
+/TestInputLib/TestInputLib/Release/*
+/TestInputLib/Release/*
+/TestInputLib/x64/Release/*

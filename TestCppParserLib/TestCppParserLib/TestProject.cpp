@@ -35,7 +35,7 @@ void TestReinclude(void)
 	pcTU2 = (CTranslationUnit*)pcLibrary->AddFile("TestUnit2.cpp", TRUE, TRUE);
 	pcLibrary->AddFile("TestHeader2.h");
 	pcConfig = pcLibrary->AddConfiguration("Debug");
-	pcConfig->AddDefines("WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE");
+	pcConfig->AddDefines("_WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE");
 
 	cProject.Process("Debug");
 
