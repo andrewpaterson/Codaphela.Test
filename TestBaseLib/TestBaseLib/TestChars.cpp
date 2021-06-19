@@ -1,5 +1,7 @@
 #include "BaseLib/Chars.h"
 #include "BaseLib/ArrayChars.h"
+#include "BaseLib/MemoryFile.h"
+#include "BaseLib/GlobalMemory.h"
 #include "TestLib/Assert.h"
 
 
@@ -713,6 +715,64 @@ void TestCharsStripWhiteSpace(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestCharsReadAndWrite(void)
+{
+	CChars			sz;
+	CMemoryFile*	pcMemoryFile;
+	CFileBasic		cFile;
+	CChars			szInput;
+
+	MemoryInit();
+
+	pcMemoryFile = MemoryFile();
+	cFile.Init(pcMemoryFile);
+	cFile.Open(EFM_ReadWrite_Create);
+
+	sz.Init("Controller");
+	sz.WriteString(&cFile);
+	sz.Kill();
+
+	cFile.Close();
+	
+	cFile.Open(EFM_Read);
+	szInput.ReadString(&cFile);
+	cFile.Close();
+	cFile.Kill();
+
+	AssertString("Controller", szInput.Text());
+
+	szInput.Kill();
+
+
+	pcMemoryFile = MemoryFile();
+	cFile.Init(pcMemoryFile);
+	cFile.Open(EFM_ReadWrite_Create);
+
+	sz.Init();
+	AssertPointer(gszEmptyString, sz.Text());
+	sz.WriteString(&cFile);
+	sz.Kill();
+
+	cFile.Close();
+
+	cFile.Open(EFM_Read);
+	szInput.ReadString(&cFile);
+	cFile.Close();
+	cFile.Kill();
+
+	AssertString("", szInput.Text());
+	AssertPointer(gszEmptyString, sz.Text());
+
+	szInput.Kill();
+
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestChars(void)
 {
 	BeginTests();
@@ -733,6 +793,7 @@ void TestChars(void)
 	TestCharsFindFromEndOutOfBounds();
 	TestCharsSetLength();
 	TestCharsStripWhiteSpace();
+	TestCharsReadAndWrite();
 	
 	TestStatistics();
 }
