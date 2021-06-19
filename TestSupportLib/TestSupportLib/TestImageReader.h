@@ -5,5 +5,5 @@
 void TestImageReader(void);
 
 
-#endif // __TEST_IMAGE_READER_H__
+#endif // !__TEST_IMAGE_READER_H__
 

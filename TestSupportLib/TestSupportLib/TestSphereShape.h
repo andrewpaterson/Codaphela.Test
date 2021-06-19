@@ -5,5 +5,5 @@
 void TestSphereShape(void);
 
 
-#endif // __TEST_SPHERE_SHAPE_H__
+#endif // !__TEST_SPHERE_SHAPE_H__
 

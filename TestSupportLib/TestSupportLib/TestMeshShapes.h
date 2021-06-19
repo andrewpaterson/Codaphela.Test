@@ -5,5 +5,5 @@
 void TestMeshShapes(void);
 
 
-#endif // __TEST_MESH_SHAPES_H__
+#endif // !__TEST_MESH_SHAPES_H__
 

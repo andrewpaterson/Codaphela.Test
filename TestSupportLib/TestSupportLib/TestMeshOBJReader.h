@@ -5,4 +5,4 @@
 void TestMeshOBJReader(void);
 
 
-#endif // __TEST_MESH_OBJ_READER_H__
+#endif // !__TEST_MESH_OBJ_READER_H__

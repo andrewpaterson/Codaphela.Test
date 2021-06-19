@@ -5,5 +5,5 @@
 void TestImageSwizzle(void);
 
 
-#endif // __TEST_IMAGE_SWIZZLE_H__
+#endif // !__TEST_IMAGE_SWIZZLE_H__
 

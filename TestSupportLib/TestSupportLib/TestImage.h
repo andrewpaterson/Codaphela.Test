@@ -5,5 +5,5 @@
 void TestImage(void);
 
 
-#endif // __TEST_IMAGE_H__
+#endif // !__TEST_IMAGE_H__
 

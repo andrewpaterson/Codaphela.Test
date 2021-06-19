@@ -5,4 +5,4 @@
 void TestImageCombiner(void);
 
 
-#endif // __TEST_IMAGE_COMBINER_H__
+#endif // !__TEST_IMAGE_COMBINER_H__

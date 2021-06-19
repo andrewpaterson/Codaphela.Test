@@ -5,4 +5,4 @@
 void TestMeshFaceReturn(void);
 
 
-#endif // __TEST_MESH_FACE_RETURN_H__
+#endif // !__TEST_MESH_FACE_RETURN_H__

@@ -5,5 +5,5 @@
 void TestRectanglePow2Packer(void);
 
 
-#endif // __TEST_RECTANGLE_PACKER_H__
+#endif // !__TEST_RECTANGLE_PACKER_H__
 

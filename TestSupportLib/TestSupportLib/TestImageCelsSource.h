@@ -5,5 +5,5 @@
 void TestImageCelsSource(void);
 
 
-#endif // __TEST_IMAGE_CEL_GROUP_SOURCE_H__
+#endif // !__TEST_IMAGE_CEL_GROUP_SOURCE_H__
 
