@@ -30,5 +30,5 @@ public:
 };
 
 
-#endif // __FILE_IO_TEST_OBJECTS_H__
+#endif // !__FILE_IO_TEST_OBJECTS_H__
 

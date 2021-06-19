@@ -349,6 +349,9 @@ void TestIndexBlockIterate(void)
 	AssertTrue(cIndexIn.Read(&cFile));
 	cAccess.Init(&cIndexIn);
 
+	AssertTrue(cIndexIn.ValidateIndexTree());
+
+	//IndexTreeNode sometimes goes 0xdddddddd starting iteration.  It's got to have something to do with the read but it happens too infrequently.
 	bExists = cIndex.StartIteration(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
 	AssertTrue(bExists);
 	AssertString("ABC", szKey);

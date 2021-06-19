@@ -15,5 +15,5 @@ public:
 int CompareSortedTestObject(const void* arg1, const void* arg2);
 
 
-#endif // __SORTED_TEST_OBJECT_H__
+#endif // !__SORTED_TEST_OBJECT_H__
 
