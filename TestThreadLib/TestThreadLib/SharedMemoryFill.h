@@ -16,6 +16,6 @@ public:
 };
 
 
-#endif // __SHARED_MEMORY_FILL_H__
+#endif // !__SHARED_MEMORY_FILL_H__
 
 

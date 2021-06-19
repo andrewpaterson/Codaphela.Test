@@ -16,5 +16,5 @@ struct SSharedMemoryQueueElement
 };
 
 
-#endif // __SHARED_MEMORY_QUEUE_THREAD_ELEMENT_H__
+#endif // !__SHARED_MEMORY_QUEUE_THREAD_ELEMENT_H__
 

@@ -51,5 +51,5 @@ public:
 };
 
 
-#endif // __POOL_PRODUCER_THREAD_H__
+#endif // !__POOL_PRODUCER_THREAD_H__
 

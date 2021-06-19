@@ -89,5 +89,5 @@ public:
 };
 
 
-#endif // __SHARED_MEMORY_QUEUE_CONSUMER_THREAD_H__
+#endif // !__SHARED_MEMORY_QUEUE_CONSUMER_THREAD_H__
 

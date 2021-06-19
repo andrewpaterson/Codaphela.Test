@@ -20,5 +20,5 @@ struct SThreadedSharedQueueResult
 };
 
 
-#endif // __TEST_SHARED_MEMORY_QUEUE_H__
+#endif // !__TEST_SHARED_MEMORY_QUEUE_H__
 

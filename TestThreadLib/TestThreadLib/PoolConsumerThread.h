@@ -64,5 +64,5 @@ public:
 };
 
 
-#endif // __POOL_CONSUMER_THREAD_H__
+#endif // !__POOL_CONSUMER_THREAD_H__
 
