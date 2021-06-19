@@ -12,5 +12,5 @@ public:
 };
 
 
-#endif // __TEST_HEADER_H__
+#endif // !__TEST_HEADER_H__
 

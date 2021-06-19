@@ -5,5 +5,5 @@
 extern float gfYayForFloat;
 
 
-#endif // __TEST_HEADER_2_H__
+#endif // !__TEST_HEADER_2_H__
 
