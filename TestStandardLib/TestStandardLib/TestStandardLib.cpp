@@ -57,7 +57,6 @@ void TestEmbeddedStackPointers(void);
 int main(void)
 {
 	InitTotalStatistics();
-	InitEmptyString();
 	FastFunctionsInit();
 
 	TestUnknowns();
@@ -108,7 +107,6 @@ int main(void)
 	TestEmbeddedStackPointers();
 
 	FastFunctionsKill();
-	KillEmptyString();
 	return TestTotalStatistics();
 }
 

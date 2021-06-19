@@ -163,5 +163,5 @@ public:
 };
 
 
-#endif // __OBJECT_TEST_CLASSES_H__
+#endif // !__OBJECT_TEST_CLASSES_H__
 

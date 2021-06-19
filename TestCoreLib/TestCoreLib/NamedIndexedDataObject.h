@@ -17,5 +17,5 @@ public:
 };
 
 
-#endif // __TEST_NAMED_INDEXED_DATA_OBJECT_H__
+#endif // !__TEST_NAMED_INDEXED_DATA_OBJECT_H__
 

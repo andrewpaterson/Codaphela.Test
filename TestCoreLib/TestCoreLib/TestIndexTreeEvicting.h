@@ -28,5 +28,5 @@ public:
 };
 
 
-#endif // __TEST_INDEX_TREE_EVICTING_H__
+#endif // !__TEST_INDEX_TREE_EVICTING_H__
 

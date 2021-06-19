@@ -76,5 +76,5 @@ public:
 };
 
 
-#endif // __TEST_CLASS_H__
+#endif // !__TEST_CLASS_H__
 
