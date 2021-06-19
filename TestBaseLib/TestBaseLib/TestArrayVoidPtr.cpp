@@ -17,6 +17,7 @@ void TestArrayVoidPtrGet(void)
 	cArray.Init();
 	cArray.Add(&iValue);
 
+	pi = NULL;
 	cArray.Get(0, (void**)&pi);
 	AssertInt(55, *pi);
 

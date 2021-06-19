@@ -46,9 +46,10 @@ BOOL GetFromIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, long long int** p
 //////////////////////////////////////////////////////////////////////////
 void AssertIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, long long int lliData)
 {
-	long long int* plli;
+	long long int*	plli;
 	int				iStrLen;
 
+	plli = NULL;
 	iStrLen = strlen(szKey) + 1;
 	pcIndexBlock->Get(szKey, iStrLen, (void**)&plli, NULL);
 	AssertLongLongInt(lliData, *plli);

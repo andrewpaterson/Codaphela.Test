@@ -94,7 +94,7 @@ void TestGlobalDataTypesIO(void);
 //
 //
 //////////////////////////////////////////////////////////////////////////
-int main(void)
+int __cdecl main(void)
 {
 	int iResult;
 

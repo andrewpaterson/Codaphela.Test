@@ -49,7 +49,7 @@ void TestArrayIntAddFind(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayIntSorting(void)
+void TestArrayIntSortingUsingQuickSort(void)
 {
 	CArrayInt	cArray;
 
@@ -89,6 +89,50 @@ void TestArrayIntSorting(void)
 	cArray.Kill();
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayIntSortingUsingBubbleSort(void)
+{
+	CArrayInt	cArray;
+
+	cArray.Init();
+	cArray.AddList(-1, 4, 3, 7, 8, 1, 9, 0, 2, 4, 2, -1);
+
+	cArray.BubbleSort();
+
+	AssertInt(10, cArray.NumElements());
+	AssertInt(0, cArray[0]);
+	AssertInt(1, cArray[1]);
+	AssertInt(2, cArray[2]);
+	AssertInt(2, cArray[3]);
+	AssertInt(3, cArray[4]);
+	AssertInt(4, cArray[5]);
+	AssertInt(4, cArray[6]);
+	AssertInt(7, cArray[7]);
+	AssertInt(8, cArray[8]);
+	AssertInt(9, cArray[9]);
+
+	cArray.InsertIntoSorted(7, FALSE);
+	cArray.InsertIntoSorted(1, TRUE);
+
+	AssertInt(11, cArray.NumElements());
+	AssertInt(0, cArray[0]);
+	AssertInt(1, cArray[1]);
+	AssertInt(2, cArray[2]);
+	AssertInt(2, cArray[3]);
+	AssertInt(3, cArray[4]);
+	AssertInt(4, cArray[5]);
+	AssertInt(4, cArray[6]);
+	AssertInt(7, cArray[7]);
+	AssertInt(7, cArray[8]);
+	AssertInt(8, cArray[9]);
+	AssertInt(9, cArray[10]);
+
+	cArray.Kill();
+}
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -329,7 +373,8 @@ void TestArrayInt(void)
 	FastFunctionsInit();
 
 	TestArrayIntAddFind();
-	TestArrayIntSorting();
+	TestArrayIntSortingUsingQuickSort();
+	TestArrayIntSortingUsingBubbleSort();
 	TestArrayIntRemoveDuplicates();
 	TestArrayIntRemoveAt();
 
