@@ -5,5 +5,5 @@
 void TestInputChords(void);
 
 
-#endif // __TEST_INPUT_CHORDS_H__
+#endif // !__TEST_INPUT_CHORDS_H__
 
