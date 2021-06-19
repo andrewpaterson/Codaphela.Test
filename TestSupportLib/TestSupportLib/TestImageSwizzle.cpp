@@ -42,7 +42,7 @@ void TestImageSwizzle(void)
 	pcChannelRename->Init(IMAGE_DIFFUSE_GREY, IMAGE_OPACITY);
 
 	pcChannelAdd = cStack.AddModifier<CImageChannelAdd>();
-	pcChannelAdd->Init(IMAGE_DIFFUSE_RED, PT_uchar);
+	pcChannelAdd->Init(IMAGE_DIFFUSE_RED, PT_uint8);
 	pcChannelAdd->AddChannel(IMAGE_DIFFUSE_GREEN);
 	pcChannelAdd->AddChannel(IMAGE_DIFFUSE_BLUE);
 

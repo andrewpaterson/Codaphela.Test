@@ -20,7 +20,7 @@ void TestImageRGBToGrey(void)
 	CImage				cImage;
 	CImageRGBToGrey		cRGBToGrey;
 
-	cImage.Init(32, 32, PT_uchar, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, IMAGE_DIFFUSE_RED, CHANNEL_ZERO);
+	cImage.Init(32, 32, PT_uint8, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, IMAGE_DIFFUSE_RED, CHANNEL_ZERO);
 	ReadImage(&cImage, "Input\\RGBToGrey.png");
 
 	cRGBToGrey.Init(RGBTGS_OnlyIfChannelsSame);

@@ -25,7 +25,7 @@ void TestImageReaderRAD(void)
 	cImage.Kill();
 
 	//Read raw is a special case.  Because the size and the channels aren't known the image must be initialised before hand.
-	cImage.Init(32, 48, PT_uchar, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	cImage.Init(32, 48, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 	bResult = ReadImage(&cImage, "Input\\readrad.raw");
 	AssertBool(TRUE, bResult);
 	WriteImage(&cImage, "Output\\readraw.raw");

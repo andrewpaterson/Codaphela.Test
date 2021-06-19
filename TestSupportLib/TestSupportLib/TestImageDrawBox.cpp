@@ -26,12 +26,12 @@ void TestImageDrawBox(void)
 
 	cImage.Init();
 	cImage.BeginChange();
-	cImage.AddChannel(IMAGE_NORMAL_X, PT_ushort);
-	cImage.AddChannel(IMAGE_NORMAL_Y, PT_ushort);
-	cImage.AddChannel(IMAGE_NORMAL_Z, PT_ushort);
-	cImage.AddChannel(IMAGE_DIFFUSE_BLUE, PT_uchar);
-	cImage.AddChannel(IMAGE_DIFFUSE_GREEN, PT_uchar);
-	cImage.AddChannel(IMAGE_DIFFUSE_RED, PT_uchar);
+	cImage.AddChannel(IMAGE_NORMAL_X, PT_uint16);
+	cImage.AddChannel(IMAGE_NORMAL_Y, PT_uint16);
+	cImage.AddChannel(IMAGE_NORMAL_Z, PT_uint16);
+	cImage.AddChannel(IMAGE_DIFFUSE_BLUE, PT_uint8);
+	cImage.AddChannel(IMAGE_DIFFUSE_GREEN, PT_uint8);
+	cImage.AddChannel(IMAGE_DIFFUSE_RED, PT_uint8);
 	cImage.SetSize(4, 4);
 	cImage.EndChange();
 	cImage.Clear();

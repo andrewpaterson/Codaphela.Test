@@ -30,7 +30,7 @@ void TestImageColourAccessorBytes(void)
 	cAlpha.Init(0.333f);
 	cColour.Init(&cRGB, &cAlpha);
 
-	cImage.Init(10, 10, PT_uchar,	IMAGE_DIFFUSE_GREEN,	//0x7f
+	cImage.Init(10, 10, PT_uint8,	IMAGE_DIFFUSE_GREEN,	//0x7f
 									IMAGE_NORMAL_Y,		
 									IMAGE_DIFFUSE_BLUE,	//0x3f
 									IMAGE_OPACITY,		//0x54
@@ -39,7 +39,7 @@ void TestImageColourAccessorBytes(void)
 									CHANNEL_ZERO);
 	cImage.Clear();
 
-	pcAccessor = CImageAccessorCreator::Create(&cImage, PT_uchar, IMAGE_OPACITY, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	pcAccessor = CImageAccessorCreator::Create(&cImage, PT_uint8, IMAGE_OPACITY, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 
 	sDest.Full();
 	bResult = pcAccessor->MakeColour(&sDest, &cColour);
@@ -89,19 +89,19 @@ void TestImageColourAccessorFloats(void)
 	cNormal.Init(0.7f, 0.6f, 0.5f);
 	cImage.Init();
 	cImage.BeginChange();
-	cImage.AddChannel(IMAGE_DIFFUSE_GREEN, PT_uchar);
-	cImage.AddChannel(IMAGE_NORMAL_Y, PT_float);
-	cImage.AddChannel(IMAGE_DIFFUSE_BLUE, PT_uchar);
-	cImage.AddChannel(IMAGE_OPACITY, PT_short);
-	cImage.AddChannel(IMAGE_DIFFUSE_RED, PT_uchar);
-	cImage.AddChannel(IMAGE_MASK, PT_int);
-	cImage.AddChannel(IMAGE_NORMAL_Z, PT_float);
-	cImage.AddChannel(IMAGE_NORMAL_X, PT_float);
+	cImage.AddChannel(IMAGE_DIFFUSE_GREEN, PT_uint8);
+	cImage.AddChannel(IMAGE_NORMAL_Y, PT_float32);
+	cImage.AddChannel(IMAGE_DIFFUSE_BLUE, PT_uint8);
+	cImage.AddChannel(IMAGE_OPACITY, PT_int16);
+	cImage.AddChannel(IMAGE_DIFFUSE_RED, PT_uint8);
+	cImage.AddChannel(IMAGE_MASK, PT_int32);
+	cImage.AddChannel(IMAGE_NORMAL_Z, PT_float32);
+	cImage.AddChannel(IMAGE_NORMAL_X, PT_float32);
 	cImage.SetSize(1, 2);
 	cImage.EndChange();
 	cImage.Clear();
 
-	pcAccessor = CImageAccessorCreator::Create(&cImage, PT_float, IMAGE_NORMAL_X, IMAGE_NORMAL_Y, IMAGE_NORMAL_Z, CHANNEL_ZERO);
+	pcAccessor = CImageAccessorCreator::Create(&cImage, PT_float32, IMAGE_NORMAL_X, IMAGE_NORMAL_Y, IMAGE_NORMAL_Z, CHANNEL_ZERO);
 
 	sDest.Full();
 	bResult = pcAccessor->MakeColour(&sDest, &cNormal);
@@ -143,14 +143,14 @@ void TestImageColourMultiAccessor(void)
 
 	cImage.Init();
 	cImage.BeginChange();
-	cImage.AddChannel(IMAGE_DIFFUSE_GREEN, PT_uchar);
-	cImage.AddChannel(IMAGE_NORMAL_Y, PT_float);
-	cImage.AddChannel(IMAGE_DIFFUSE_BLUE, PT_uchar);
-	cImage.AddChannel(IMAGE_OPACITY, PT_ushort);
-	cImage.AddChannel(IMAGE_DIFFUSE_RED, PT_uchar);
-	cImage.AddChannel(IMAGE_MASK, PT_int);
-	cImage.AddChannel(IMAGE_NORMAL_Z, PT_float);
-	cImage.AddChannel(IMAGE_NORMAL_X, PT_float);
+	cImage.AddChannel(IMAGE_DIFFUSE_GREEN, PT_uint8);
+	cImage.AddChannel(IMAGE_NORMAL_Y, PT_float32);
+	cImage.AddChannel(IMAGE_DIFFUSE_BLUE, PT_uint8);
+	cImage.AddChannel(IMAGE_OPACITY, PT_uint16);
+	cImage.AddChannel(IMAGE_DIFFUSE_RED, PT_uint8);
+	cImage.AddChannel(IMAGE_MASK, PT_int32);
+	cImage.AddChannel(IMAGE_NORMAL_Z, PT_float32);
+	cImage.AddChannel(IMAGE_NORMAL_X, PT_float32);
 	cImage.SetSize(1, 2);
 	cImage.EndChange();
 	cImage.Clear();

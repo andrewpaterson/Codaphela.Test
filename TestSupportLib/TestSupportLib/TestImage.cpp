@@ -37,10 +37,10 @@ void TestDrawImage(void)
 	CImageColourRGB			cRGB;
 
 	//Same format, Same types ------------------------------------------
-	cImageDest.Init(3, 2, PT_uchar, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 	cImageDest.Clear();
 
-	cImageSource.Init(3, 2, szSourceRGB, PT_uchar, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 	
 	bResult = cImageSource.IsSameFormat(&cImageDest);
 	AssertBool(TRUE, bResult);
@@ -55,10 +55,10 @@ void TestDrawImage(void)
 	cImageDest.Kill();
 
 	//Different format, Same types ------------------------------------------
-	cImageDest.Init(3, 2, PT_uchar, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 	cImageDest.Clear();
 
-	cImageSource.Init(3, 2, szSourceRGB, PT_uchar, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 
 	bResult = cImageSource.IsSameFormat(&cImageDest);
 	AssertBool(FALSE, bResult);
@@ -71,14 +71,14 @@ void TestDrawImage(void)
 	cImageDest.Kill();
 
 	//Different format, Missing source types ------------------------------------------
-	cImageDest.Init(3, 2, PT_uchar, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 
 	cRGB.Init(0, 0, 0);
 	cBox.Init(NULL, &cRGB);
 	cBox.Modify(&cImageDest);
 	cBox.Kill();
 
-	cImageSource.Init(3, 2, szSourceRB, PT_uchar, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	cImageSource.Init(3, 2, szSourceRB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 
 	bResult = cImageSource.IsSameFormat(&cImageDest);
 	AssertBool(FALSE, bResult);
@@ -91,10 +91,10 @@ void TestDrawImage(void)
 	cImageDest.Kill();
 
 	//Different format, Missing dest types ------------------------------------------
-	cImageDest.Init(3, 2, PT_uchar, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, CHANNEL_ZERO);
+	cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, CHANNEL_ZERO);
 	cImageDest.Clear();
 
-	cImageSource.Init(3, 2, szSourceRGB, PT_uchar, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 
 	bResult = cImageSource.IsSameFormat(&cImageDest);
 	AssertBool(FALSE, bResult);
@@ -107,11 +107,11 @@ void TestDrawImage(void)
 	cImageDest.Kill();
 
 	//Different types ------------------------------------------
-	cImageDest.Init(3, 2, PT_ushort, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	cImageDest.Init(3, 2, PT_uint16, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 	cImageDest.Clear();
 	AssertInt(3*2 * 3*2, cImageDest.GetByteSize());
 
-	cImageSource.Init(3, 2, szSourceRGB, PT_uchar, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 
 	bResult = cImageSource.IsSameFormat(&cImageDest);
 	AssertBool(FALSE, bResult);
@@ -124,11 +124,11 @@ void TestDrawImage(void)
 	cImageDest.Kill();
 
 	//Different types ------------------------------------------
-	cImageDest.Init(3, 2, PT_uchar, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 	cImageDest.Clear();
 	AssertInt(3*2 * 3, cImageDest.GetByteSize());
 
-	cImageSource.Init(3, 2, szSourceR2G2B2, PT_ushort, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	cImageSource.Init(3, 2, szSourceR2G2B2, PT_uint16, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 
 	bResult = cImageSource.IsSameFormat(&cImageDest);
 	AssertBool(FALSE, bResult);
