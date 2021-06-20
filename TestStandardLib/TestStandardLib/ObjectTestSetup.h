@@ -1,5 +1,5 @@
 #include "StandardLib/Pointer.h"
-#include "StandardLib/NamedObject.h"
+#include "StandardLib/Object.h"
 #include "StandardLib/Array.h"
 
 
@@ -32,7 +32,7 @@ struct SStateOnKill
 };
 
 
-class CPlayerVehicle : public CNamedObject
+class CPlayerVehicle : public CObject
 {
 CONSTRUCTABLE(CPlayerVehicle);
 DESTRUCTABLE(CPlayerVehicle);
@@ -90,7 +90,7 @@ public:
 };
 
 
-class CRedJet : public CNamedObject
+class CRedJet : public CObject
 {
 CONSTRUCTABLE(CRedJet);
 DESTRUCTABLE(CRedJet);
@@ -132,7 +132,7 @@ public:
 };
 
 
-class CClusterMissile : public CNamedObject
+class CClusterMissile : public CObject
 {
 CONSTRUCTABLE(CClusterMissile);
 DESTRUCTABLE(CClusterMissile);

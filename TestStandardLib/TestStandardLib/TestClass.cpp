@@ -95,11 +95,11 @@ void TestClassDefinition(void)
 
 	pcField = pcTestClassClass->GetField("mDouble");
 	AssertTrue(pcField->IsPrimitive());
-	AssertInt(400, pcField->GetOffset());
+	AssertInt(424, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mauiData");
 	AssertTrue(pcField->IsUnmanaged());
-	AssertInt(416, pcField->GetOffset());
+	AssertInt(440, pcField->GetOffset());
 
 	ObjectsKill();
 	DataIOKill();
@@ -190,7 +190,7 @@ void TestClassName(void)
 {
 	Ptr<CTestClass>		pTestClass1;
 	CTestClass*			pcTestClass;
-	CNamedObject*		pcNamedObject;
+	CObject*			pcNamedObject;
 	CObject*			pcObject;
 	CBaseObject*		pcBaseObject;
 	CEmbeddedObject*	pcEmbeddedObject;

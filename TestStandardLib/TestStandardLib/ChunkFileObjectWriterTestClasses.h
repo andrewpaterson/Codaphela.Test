@@ -1,12 +1,12 @@
 #ifndef __OBJECT_WRITER_CHUNKED_TEST_CLASSES_H__
 #define __OBJECT_WRITER_CHUNKED_TEST_CLASSES_H__
 #include "StandardLib/Object.h"
-#include "StandardLib/NamedObject.h"
+
 #include "StandardLib/ArrayObject.h"
 #include "StandardLib/String.h"
 
 
-class CTestWithArray : public CNamedObject
+class CTestWithArray : public CObject
 {
 CONSTRUCTABLE(CTestWithArray);
 DESTRUCTABLE(CTestWithArray);
@@ -46,7 +46,7 @@ public:
 };
 
 
-class CTestNamedString : public CNamedObject
+class CTestNamedString : public CObject
 {
 CONSTRUCTABLE(CTestNamedString);
 DESTRUCTABLE(CTestNamedString);
@@ -67,7 +67,7 @@ public:
 };
 
 
-class CTestDoubleNamedString : public CNamedObject
+class CTestDoubleNamedString : public CObject
 {
 CONSTRUCTABLE(CTestDoubleNamedString);
 DESTRUCTABLE(CTestDoubleNamedString);

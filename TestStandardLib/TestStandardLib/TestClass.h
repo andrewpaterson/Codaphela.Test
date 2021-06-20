@@ -33,7 +33,7 @@ public:
 };
 
 
-class CTestClass : public CNamedObject
+class CTestClass : public CObject
 {
 CONSTRUCTABLE(CTestClass);
 DESTRUCTABLE(CTestClass);

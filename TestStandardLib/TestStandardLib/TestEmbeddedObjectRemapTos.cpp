@@ -7,7 +7,7 @@
 #include "TestLib/Assert.h"
 
 
-class CTestObjectWithTwoEmbedded : public CNamedObject
+class CTestObjectWithTwoEmbedded : public CObject
 {
 CONSTRUCTABLE(CTestObjectWithTwoEmbedded);
 DESTRUCTABLE(CTestObjectWithTwoEmbedded);

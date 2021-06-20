@@ -21,11 +21,178 @@ void TestObjectSize(void)
 
 	AssertInt(16, sizeof(CUnknown));
 	AssertInt(60, sizeof(CEmbeddedObject));
-	AssertInt(96, sizeof(CBaseObject));
-	AssertInt(168, sizeof(CObject));
+	AssertInt(120, sizeof(CBaseObject));  //Check your struct alignement.  This is too large.
+	AssertInt(192, sizeof(CObject));
 	AssertInt(208, sizeof(CRoot));
-	AssertInt(152, sizeof(CSetObject));
+	AssertInt(176, sizeof(CSetObject));
 	AssertInt(8, sizeof(CPointer));
+
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectMorphIntoSimple(void)
+{
+	Ptr<CRoot>					pRoot;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
+	Ptr<CTestObject>			pTest10;
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier3;
+	STestObjectFreedNotifier	sFreedNotifier10;
+	int							iNumRemapped;
+	CTestObject*				pcTest1;
+
+	ObjectsInit();
+
+	pRoot = ORoot();
+
+	pTest1 = OMalloc<CTestObject>(&sFreedNotifier1);
+	pTest2 = OMalloc<CTestObject>(&sFreedNotifier2);
+	pTest3 = OMalloc<CTestObject>(&sFreedNotifier3);
+	pTest10 = OMalloc<CTestObject>(&sFreedNotifier10);
+
+	pRoot->Add(pTest1);
+	pTest1->mpObject = pTest2;
+	pTest1->mpTest = pTest3;
+
+	AssertInt(2, pTest1->GetDistToRoot());
+	AssertInt(3, pTest2->GetDistToRoot());
+	AssertInt(3, pTest3->GetDistToRoot());
+
+	AssertLongLongInt(6LL, gcObjects.NumMemoryIndexes());
+
+	//   Test2  Test3
+	//      \   /
+	//      Test1(2)
+	//        |
+	//        |
+	//       ...
+	//     Root(0)
+	//
+	//
+	//      Test10
+	//        |
+	//       ---
+	//        -
+
+	iNumRemapped = pTest3.MorphInto(&pTest10);
+	AssertInt(1, iNumRemapped);
+	AssertPointer(&pTest10, &pTest3);
+
+	AssertPointer(&pTest2, &pTest1->mpObject);
+	AssertPointer(&pTest10, &pTest1->mpTest);
+
+	AssertInt(1, pTest10->NumHeapFroms());
+	AssertPointer(&pTest1, pTest10->GetHeapFrom(0));
+	AssertInt(0, pTest10->NumPointerTos());
+
+	AssertInt(1, pTest2->NumHeapFroms());
+	AssertPointer(&pTest1, pTest2->GetHeapFrom(0));
+	AssertInt(0, pTest2->NumPointerTos());
+
+	AssertTrue(sFreedNotifier3.bFreed);
+
+	AssertFalse(sFreedNotifier1.bFreed);
+	AssertFalse(sFreedNotifier2.bFreed);
+	AssertFalse(sFreedNotifier10.bFreed);
+
+	AssertInt(3, pTest10->GetDistToRoot());
+
+	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+
+	//   Test2    Test10
+	//      \     /
+	//       \   /
+	//       Test1(2) 
+	//        |
+	//        |
+	//       ...
+	//     Root(0)
+
+	pcTest1 = &pTest1;
+	pTest1 = NULL;
+	pTest2 = NULL;
+	pTest10 = NULL;
+	AssertFalse(sFreedNotifier1.bFreed);
+	AssertFalse(sFreedNotifier2.bFreed);
+	AssertFalse(sFreedNotifier10.bFreed);
+
+	pRoot->Remove(pcTest1);
+
+	AssertTrue(sFreedNotifier1.bFreed);
+	AssertTrue(sFreedNotifier2.bFreed);
+	AssertTrue(sFreedNotifier3.bFreed);
+	AssertFalse(sFreedNotifier10.bFreed);
+
+	pTest3 = NULL;
+	AssertTrue(sFreedNotifier10.bFreed);
+
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+
+	//       ---
+	//        -
+	//        |
+	//       ...
+	//     Root(0)
+
+
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectRootRemove(void)
+{
+	Ptr<CRoot>					pRoot;
+	Ptr<CTestObject>			pTest1;
+	Ptr<CTestObject>			pTest2;
+	Ptr<CTestObject>			pTest3;
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier3;
+	CTestObject*				pcTest1;
+
+	ObjectsInit();
+
+	pRoot = ORoot();
+
+	pTest1 = OMalloc<CTestObject>(&sFreedNotifier1);
+	pTest2 = OMalloc<CTestObject>(&sFreedNotifier2);
+	pTest3 = OMalloc<CTestObject>(&sFreedNotifier3);
+
+	pRoot->Add(pTest1);
+	pTest1->mpObject = pTest2;
+	pTest1->mpTest = pTest3;
+
+	AssertInt(2, pTest1->GetDistToRoot());
+	AssertInt(3, pTest2->GetDistToRoot());
+	AssertInt(3, pTest3->GetDistToRoot());
+
+	AssertLongLongInt(5LL, gcObjects.NumMemoryIndexes());
+
+	pcTest1 = &pTest1;
+	pTest1 = NULL;
+	pTest2 = NULL;
+	pTest3 = NULL;
+	pRoot->Remove(pcTest1);
+
+	AssertTrue(sFreedNotifier1.bFreed);
+	AssertTrue(sFreedNotifier2.bFreed);
+	AssertTrue(sFreedNotifier3.bFreed);
+
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -275,7 +442,7 @@ void TestObjectPointerRemappingSimplerComplex(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectPointerRemappingComplex(void)
+void TestObjectMorphIntoComplex(void)
 {
 	Ptr<CRoot>					pRoot;
 	Ptr<CTestObject>			pTest1;
@@ -492,6 +659,8 @@ void TestObjectPointerRemappingComplex(void)
 	pTest13 = NULL;
 	pTest14 = NULL;
 	pTest15 = NULL;
+
+	//gcObjects.ValidateObjectsConsistency();
 
 	pRoot->Remove(pcTest1);
 
@@ -834,14 +1003,16 @@ void TestObject(void)
 	TestObjectStackKill();
 	TestObjectPointerRemapping();
 	TestObjectPointerRemappingKilling();
+	TestObjectRootUnattachment();
+	TestObjectSetUnattachment();
+	TestObjectRootRemove();
+	TestObjectMorphIntoSimple();
 	TestObjectPointerRemappingSimplerComplex();
-	TestObjectPointerRemappingComplex();
+	TestObjectMorphIntoComplex();
 	TestObjectKillOnHeap();
 	TestObjectKillPointerOnStack();
 	TestObjectKillObjectOnStack();
 	TestObjectKillCyclic();
-	TestObjectRootUnattachment();
-	TestObjectSetUnattachment();
 
 	DataIOKill();
 	TypesKill();

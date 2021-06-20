@@ -4,7 +4,6 @@
 #include "CoreLib/Codabase.h"
 #include "CoreLib/CodabaseFactory.h"
 #include "CoreLib/SequenceFactory.h"
-#include "StandardLib/NamedObject.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/Pointer.h"
 #include "StandardLib/Root.h"
@@ -29,7 +28,7 @@ void TestNamedObjectAddConstructors(void)
 //////////////////////////////////////////////////////////////////////////
 void TestNamedObjectSize(void)
 {
-	AssertInt(192, sizeof(CNamedObject));
+	AssertInt(192, sizeof(CObject));
 }
 
 

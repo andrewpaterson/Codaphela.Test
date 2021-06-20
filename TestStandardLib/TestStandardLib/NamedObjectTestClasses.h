@@ -1,10 +1,10 @@
 #ifndef __NAMED_OBJECT_TEST_CLASSES_H__
 #define __NAMED_OBJECT_TEST_CLASSES_H__
-#include "StandardLib/NamedObject.h"
+#include "StandardLib/Object.h"
 #include "StandardLib/Pointer.h"
 
 
-class CTestNamedObject : public CNamedObject
+class CTestNamedObject : public CObject
 {
 CONSTRUCTABLE(CTestNamedObject);
 DESTRUCTABLE(CTestNamedObject);
@@ -22,7 +22,7 @@ public:
 };
 
 
-class CTestNamedObjectSmall : public CNamedObject
+class CTestNamedObjectSmall : public CObject
 {
 CONSTRUCTABLE(CTestNamedObjectSmall);
 DESTRUCTABLE(CTestNamedObjectSmall);
@@ -39,7 +39,7 @@ public:
 };
 
 
-class CTestNamedObjectWithEmbedded : public CNamedObject
+class CTestNamedObjectWithEmbedded : public CObject
 {
 CONSTRUCTABLE(CTestNamedObjectWithEmbedded);
 DESTRUCTABLE(CTestNamedObjectWithEmbedded);

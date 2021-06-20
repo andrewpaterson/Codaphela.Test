@@ -1,7 +1,6 @@
 #ifndef __OBJECT_TEST_CLASSES_H__
 #define __OBJECT_TEST_CLASSES_H__
 #include "StandardLib/Object.h"
-#include "StandardLib/NamedObject.h"
 #include "StandardLib/Pointer.h"
 #include "StandardLib/Integer.h"
 #include "StandardLib/Float.h"
@@ -55,7 +54,7 @@ public:
 };
 
 
-class CTestSaveableObject1 : public CNamedObject
+class CTestSaveableObject1 : public CObject
 {
 CONSTRUCTABLE(CTestSaveableObject1);
 DESTRUCTABLE(CTestSaveableObject1);
@@ -74,7 +73,7 @@ public:
 };
 
 
-class CTestSaveableObject2 : public CNamedObject
+class CTestSaveableObject2 : public CObject
 {
 CONSTRUCTABLE(CTestSaveableObject2);
 DESTRUCTABLE(CTestSaveableObject2);
