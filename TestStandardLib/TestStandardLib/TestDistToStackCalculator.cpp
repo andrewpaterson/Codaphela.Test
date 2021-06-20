@@ -1042,9 +1042,6 @@ void TestDistToStackNoHeapC(void)
 	AssertInt(0, pcTest1->NumHeapFroms());
 	AssertInt(0, pcTest1->NumStackFroms());
 	AssertInt(0, pcTest1->NumPointerTos());
-	AssertInt(0, pcTest2->NumHeapFroms());
-	AssertInt(0, pcTest2->NumStackFroms());
-	AssertInt(0, pcTest2->NumPointerTos());
 
 	ObjectsFlush();
 	ObjectsKill();
