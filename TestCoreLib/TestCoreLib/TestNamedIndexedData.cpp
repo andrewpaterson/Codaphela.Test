@@ -208,6 +208,7 @@ void TestNamedIndexedDataAddChars(EIndexWriteThrough eWriteThrough)
 	CTestNamedIndexedDataObject			cResult;
 	BOOL								bResult;
 	CChars								szName;
+	unsigned int						uiDataSize;
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database2a");
 
@@ -248,8 +249,9 @@ void TestNamedIndexedDataAddChars(EIndexWriteThrough eWriteThrough)
 
 	cController.Begin();
 	szName.Init("Ernest");
-	bResult = cDatabase.Get(&szName, &cResult);
+	bResult = cDatabase.Get(&szName, &uiDataSize, &cResult, cResult.Size());
 	szName.Kill();
+	AssertInt(sizeof(CTestNamedIndexedDataObject), uiDataSize);
 	AssertTrue(bResult);
 	AssertString("Rutherford", cResult.mszString);
 	AssertLongLongInt(1871, cResult.miNumberX);

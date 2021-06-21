@@ -72,11 +72,15 @@ void TestEndianness(void)
 	i64 = 0x0102030405060708LL;
 
 	AssertChar(0x08, ia8[0]);
+#ifdef _DEBUG
 	AssertChar(0x07, ia8[1]);
+#endif // _DEBUG
 	AssertChar(0x06, ia8[2]);
 	AssertChar(0x05, ia8[3]);
 	AssertChar(0x04, ia8[4]);
+#ifdef _DEBUG
 	AssertChar(0x03, ia8[5]);
+#endif // _DEBUG
 	AssertChar(0x02, ia8[6]);
 	AssertChar(0x01, ia8[7]);
 }
