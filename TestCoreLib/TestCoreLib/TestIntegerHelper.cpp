@@ -63,20 +63,22 @@ void TestMisc(void)
 //////////////////////////////////////////////////////////////////////////
 void TestEndianness(void)
 {
-	int64	i64;
-	int8*	pi8;
+	union
+	{
+		int64	i64;
+		int8	ia8[8];
+	};
 
 	i64 = 0x0102030405060708LL;
-	pi8 = (int8*)&i64;
 
-	AssertChar(pi8[0], 0x08);
-	AssertChar(pi8[1], 0x07);
-	AssertChar(pi8[2], 0x06);
-	AssertChar(pi8[3], 0x05);
-	AssertChar(pi8[4], 0x04);
-	AssertChar(pi8[5], 0x03);
-	AssertChar(pi8[6], 0x02);
-	AssertChar(pi8[7], 0x01);
+	AssertChar(0x08, ia8[0]);
+	AssertChar(0x07, ia8[1]);
+	AssertChar(0x06, ia8[2]);
+	AssertChar(0x05, ia8[3]);
+	AssertChar(0x04, ia8[4]);
+	AssertChar(0x03, ia8[5]);
+	AssertChar(0x02, ia8[6]);
+	AssertChar(0x01, ia8[7]);
 }
 
 
