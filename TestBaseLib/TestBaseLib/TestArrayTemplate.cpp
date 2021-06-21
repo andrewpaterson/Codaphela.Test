@@ -190,27 +190,105 @@ int SortTestArrayTemplateItemFunc(const void* pvItemLeft, const void* pvItemRigh
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayTemplateSorting(void)
+void TestArrayTemplateInitialiseArray(CTestArrayTemplate* pasTestArrayTemplate, int iNumElements)
 {
-	CTestArrayTemplate					asTestArrayTemplate;
-	STestArrayTemplateItem*		psItem;
+	int						i;
+	STestArrayTemplateItem* psItem;
 
-	asTestArrayTemplate.Init();
-	psItem = asTestArrayTemplate.Add();
-	psItem->i1 = psItem->i2 = 8;
-	psItem = asTestArrayTemplate.Add();
-	psItem->i1 = psItem->i2 = 5;
-	psItem = asTestArrayTemplate.Add();
-	psItem->i1 = psItem->i2 = 7;
-	psItem = asTestArrayTemplate.Add();
-	psItem->i1 = psItem->i2 = 2;
+	pasTestArrayTemplate->Init();
+	for (i = 0; i < iNumElements; i++)
+	{
+		psItem = pasTestArrayTemplate->Add();
+		psItem->i1 = psItem->i2 = i;
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+BOOL TestArrayTemplateCheckOrder(CTestArrayTemplate* pasTestArrayTemplate, int iNumElements)
+{
+	int						i;
+	STestArrayTemplateItem* psItem;
+
+	for (i = 0; i < iNumElements; i++)
+	{
+		psItem = pasTestArrayTemplate->Get(i);
+		if (!((psItem->i1 == i) && (psItem->i2 == i)))
+		{
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayTemplateBubbleSort(int iSeed, int iArraySize)
+{
+	CTestArrayTemplate	asTestArrayTemplate;
+	CRandom				cRandom;
+
+	TestArrayTemplateInitialiseArray(&asTestArrayTemplate, iArraySize);
+
+	cRandom.Init();
+	asTestArrayTemplate.Shuffle(&cRandom);
+	cRandom.Kill();
+
+	asTestArrayTemplate.BubbleSort(&SortTestArrayTemplateItemFunc);
+
+	AssertTrue(TestArrayTemplateCheckOrder(&asTestArrayTemplate, iArraySize));
+
+	asTestArrayTemplate.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayTemplateQuickSort(int iSeed, int iArraySize)
+{
+	CTestArrayTemplate	asTestArrayTemplate;
+	CRandom				cRandom;
+
+	TestArrayTemplateInitialiseArray(&asTestArrayTemplate, iArraySize);
+
+	cRandom.Init(iSeed);
+	asTestArrayTemplate.Shuffle(&cRandom);
+	cRandom.Kill();
 
 	asTestArrayTemplate.QuickSort(&SortTestArrayTemplateItemFunc);
 
-	AssertInt(2, asTestArrayTemplate[0].i1);
-	AssertInt(5, asTestArrayTemplate[1].i1);
-	AssertInt(7, asTestArrayTemplate[2].i1);
-    AssertInt(8, asTestArrayTemplate[3].i1);
+	AssertTrue(TestArrayTemplateCheckOrder(&asTestArrayTemplate, iArraySize));
+
+	asTestArrayTemplate.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayTemplateTimSort(int iSeed, int iArraySize)
+{
+	CTestArrayTemplate	asTestArrayTemplate;
+	CRandom				cRandom;
+
+	TestArrayTemplateInitialiseArray(&asTestArrayTemplate, iArraySize);
+
+	cRandom.Init(iSeed);
+	asTestArrayTemplate.Shuffle(&cRandom);
+	cRandom.Kill();
+
+	asTestArrayTemplate.TimSort(&SortTestArrayTemplateItemFunc);
+
+	AssertTrue(TestArrayTemplateCheckOrder(&asTestArrayTemplate, iArraySize));
 
 	asTestArrayTemplate.Kill();
 }
@@ -694,7 +772,13 @@ void TestArrayTemplate(void)
 	TestArrayTemplateAllocation();
 	TestArrayTemplateAllocationWithVirtualClass();
 	TestArrayTemplateCopy();
-	TestArrayTemplateSorting();
+	TestArrayTemplateBubbleSort(89037124, 1000);
+	TestArrayTemplateQuickSort(79543983, 1000);
+	TestArrayTemplateQuickSort(87459345, 10000);
+	TestArrayTemplateQuickSort(32884993, 100000);
+	TestArrayTemplateTimSort(23758469, 1000);
+	TestArrayTemplateTimSort(87758402, 10000);
+	TestArrayTemplateTimSort(45987231, 100000);
 	TestArrayTemplateRemove();
 	TestArrayTemplateFake();
 	TestArrayTemplateInsertBatch();
