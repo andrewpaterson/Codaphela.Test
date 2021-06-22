@@ -45,12 +45,13 @@ void TestCodabase(void);
 //
 //
 //////////////////////////////////////////////////////////////////////////
-int main(void)
+int __cdecl main(void)
 {
 	int iResult;
 
 	_CrtSetBreakAlloc(0);
 	InitTotalStatistics();
+
 	TestFloatHelper();
 	TestIntegerHelper();
 	TestFastFunctions();

@@ -660,7 +660,7 @@ void TestObjectMorphIntoComplex(void)
 	pTest14 = NULL;
 	pTest15 = NULL;
 
-	//gcObjects.ValidateObjectsConsistency();
+	gcObjects.ValidateObjectsConsistency();
 
 	pRoot->Remove(pcTest1);
 
