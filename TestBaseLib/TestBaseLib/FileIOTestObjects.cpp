@@ -1,4 +1,5 @@
 #include <string.h>
+#include "BaseLib/StringHelper.h"
 #include "FileIOTestObjects.h"
 
 
@@ -34,7 +35,7 @@ BOOL CFileIOTest::IsOkay(int iNumber)
 	{
 		return FALSE;
 	}
-	return (strcmp(msz, "Game of Thrones ") == 0);
+	return (StringCompare(msz, "Game of Thrones ") == 0);
 }
 
 

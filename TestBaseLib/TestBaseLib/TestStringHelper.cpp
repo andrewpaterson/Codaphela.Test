@@ -6,35 +6,72 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestStrCmp(void)
+{
+    int iResult;
+
+    iResult = StringCompare("Hello", "Hello");
+    AssertInt(0, iResult);
+
+    iResult = StringCompare("", NULL);
+    AssertInt(1, iResult);
+
+    iResult = StringCompare(NULL, "");
+    AssertInt(-1, iResult);
+
+    iResult = StringCompare(NULL, NULL);
+    AssertInt(0, iResult);
+
+    iResult = StringCompare("", "");
+    AssertInt(0, iResult);
+
+    iResult = StringCompare("ABC", "XYZ");
+    AssertInt(-1, iResult);
+
+    iResult = StringCompare("xyz", "abc");
+    AssertInt(1, iResult);
+
+    iResult = StringCompare("abc", "abcd");
+    AssertInt(-1, iResult);
+
+    iResult = StringCompare("abcd", "abc");
+    AssertInt(1, iResult);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestStrICmp(void)
 {
     int iResult;
 
-    iResult = StrICmp("Hello", "hello");
+    iResult = StringInsensitiveCompare("Hello", "hello");
     AssertInt(0, iResult);
 
-    iResult = StrICmp("", NULL);
+    iResult = StringInsensitiveCompare("", NULL);
     AssertInt(1, iResult);
 
-    iResult = StrICmp(NULL, "");
+    iResult = StringInsensitiveCompare(NULL, "");
     AssertInt(-1, iResult);
 
-    iResult = StrICmp(NULL, NULL);
+    iResult = StringInsensitiveCompare(NULL, NULL);
     AssertInt(0, iResult);
 
-    iResult = StrICmp("", "");
+    iResult = StringInsensitiveCompare("", "");
     AssertInt(0, iResult);
 
-    iResult = StrICmp("ABC", "XYZ");
-    AssertInt(-23, iResult);
-
-    iResult = StrICmp("xyz", "abc");
-    AssertInt(23, iResult);
-
-    iResult = StrICmp("abc", "abcd");
+    iResult = StringInsensitiveCompare("ABC", "XYZ");
     AssertInt(-1, iResult);
 
-    iResult = StrICmp("abcd", "abc");
+    iResult = StringInsensitiveCompare("xyz", "abc");
+    AssertInt(1, iResult);
+
+    iResult = StringInsensitiveCompare("abc", "abcd");
+    AssertInt(-1, iResult);
+
+    iResult = StringInsensitiveCompare("abcd", "abc");
     AssertInt(1, iResult);
 }
 
@@ -244,6 +281,7 @@ void TestStringHelper(void)
 {
 	BeginTests();
 
+    TestStrCmp();
 	TestStrICmp();
 	TestStrIStr();
 	TestStrRev();

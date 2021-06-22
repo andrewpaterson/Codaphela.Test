@@ -147,7 +147,7 @@ void TestMapBlockGet(void)
 		lli = ((lli + 0x336b265cfdd8a7a6) / 2) * 3;
 	}
 
-	cMap.Init((DataCompare)&strcmp, TRUE);
+	cMap.Init((DataCompare)&StringCompare, TRUE);
 	AddToMapBlock(&cMap, "cocker", llia[0]);
 	AddToMapBlock(&cMap, "cock", llia[1]);
 	AddToMapBlock(&cMap, "cockerel", llia[2]);
