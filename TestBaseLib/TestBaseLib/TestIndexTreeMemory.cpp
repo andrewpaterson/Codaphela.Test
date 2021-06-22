@@ -1293,6 +1293,8 @@ void TestIndexTreeMemoryDataFree(void)
 	long long int			lliLamb;
 	CDataFreeCallBack		cDataFree;
 
+	giIndexTreeMemoryCallbackData = 0;
+
 	cIndex.Init();
 	cDataFree.Init(TestIndexTreeMemoryDataFreeCallback);
 	cIndex.SetDataFreeCallback(&cDataFree);

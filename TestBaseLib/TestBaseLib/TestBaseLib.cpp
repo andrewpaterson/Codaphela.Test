@@ -184,7 +184,6 @@ int __cdecl main(void)
 	TestIndexTreeMemoryConfig();
 	TestDataTypesIO();
 	TestGlobalDataTypesIO();
-
 	iResult = TestTotalStatistics();
 	_CrtDumpMemoryLeaks();
 	return iResult;

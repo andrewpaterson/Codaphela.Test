@@ -597,6 +597,8 @@ void TestMapBlockDataFree(void)
 	CMapMapAccess		cAccess;
 	CDataFreeCallBack	cDataFree;
 
+	giMapBlockCallbackData = 0;
+
 	cMap.Init(&CompareInt, TRUE);
 	cDataFree.Init(TestMapBlockDataFreeCallback);
 	cMap.SetDataFreeCallback(&cDataFree);

@@ -352,31 +352,31 @@ void TestIndexBlockIterate(void)
 
 	AssertTrue(cIndexIn.ValidateIndexTree());
 
-	bExists = cIndex.StartIteration(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
+	bExists = cIndexIn.StartIteration(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
 	AssertTrue(bExists);
 	AssertString("ABC", szKey);
 	AssertString("XYZ", pvData);
 	AssertInt(3, uiKeySize);
 	AssertInt(4, uiDataSize);
-	bExists = cIndex.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
+	bExists = cIndexIn.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
 	AssertTrue(bExists);
 	AssertString("Blame", szKey);
 	AssertString("Canada", pvData);
 	AssertInt(5, uiKeySize);
 	AssertInt(7, uiDataSize);
-	bExists = cIndex.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
+	bExists = cIndexIn.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
 	AssertTrue(bExists);
 	AssertString("Collision", szKey);
 	AssertString("Detection", pvData);
 	AssertInt(9, uiKeySize);
 	AssertInt(10, uiDataSize);
-	bExists = cIndex.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
+	bExists = cIndexIn.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
 	AssertTrue(bExists);
 	AssertString("Retro", szKey);
 	AssertString("Evolved", pvData);
 	AssertInt(5, uiKeySize);
 	AssertInt(8, uiDataSize);
-	bExists = cIndex.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
+	bExists = cIndexIn.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
 	AssertFalse(bExists);
 
 	cIndexIn.Kill();
