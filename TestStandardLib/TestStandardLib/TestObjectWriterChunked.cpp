@@ -34,16 +34,17 @@ void TestChunkFileObjectWriterSerialised(void)
 	ObjectsInit(&cUnknowns, &gcStackPointers, NULL, &gcTransientSequence);
 
 	CChunkFileObjectWriter		cWriter;
-	CExternalObjectSerialiser		cGraphSerialiser;
+	CExternalObjectSerialiser	cGraphSerialiser;
 
 	Ptr<CTestWithArray>			pcObject1;
 	Ptr<CTestInteger>			pcObject2;
 	Ptr<CTestInteger>			pcObject3;
 	Ptr<CTestInteger>			pcObject4;
 	CChunkFile					cChunkFile;
-	CChunkFileFileSystem				cChunkFileFileSystem;
+	CChunkFileFileSystem		cChunkFileFileSystem;
 	int							iLength;
 	char						szTest[4];
+	int							iTest;
 	CFileUtil					cFileUtil;
 	Ptr<CTestInteger>			pcGet;
 
@@ -82,8 +83,8 @@ void TestChunkFileObjectWriterSerialised(void)
 	AssertTrue(cInputFile.Init()->Read("Input" _FS_ "ChunkFile.DRG"));
 	AssertTrue(cOutputFile.Init()->Read("Output" _FS_ "ChunkFileObjectWriter" _FS_ "Test" _FS_ "Base" _FS_ "Level 1" _FS_ "ChunkFile.DRG"));
 	
-	AssertLongLongInt(1198LL, cInputFile.Size());
-	AssertLongLongInt(1198LL, cOutputFile.Size());
+	AssertLongLongInt(1202LL, cInputFile.Size());
+	AssertLongLongInt(1202LL, cOutputFile.Size());
 	psInputHeader = (SChunkFileHeader*)cInputFile.Get();
 	psOutputHeader = (SChunkFileHeader*)cOutputFile.Get();
 	AssertInt(CHUNK_HEADER_MAGIC, psInputHeader->miMagic);
@@ -102,23 +103,33 @@ void TestChunkFileObjectWriterSerialised(void)
 	//CTestWithArray pcObject1
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Warning"));
 	AssertTrue(cChunkFileFileSystem.ReadInt(&iLength));
-	AssertInt(131, iLength);
+	AssertInt(130, iLength);
+	AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
+	AssertString("DAT", szTest);
 	AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 	AssertString("NAM", szTest);
+	AssertTrue(cChunkFileFileSystem.ReadData(&iTest, 4));
+	AssertInt(-1, iTest);
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
 
 	//CArrayObject
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Unnamed/0000000000000002"));
 	AssertTrue(cChunkFileFileSystem.ReadInt(&iLength));
-	AssertInt(101, iLength);
+	AssertInt(121, iLength);
+	AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
+	AssertString("DAT", szTest);
 	AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 	AssertString("IDX", szTest);
+	AssertTrue(cChunkFileFileSystem.ReadData(&iTest, 4));
+	AssertInt(-1, iTest);
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
 
 	//CTestInteger pcObject2
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Unnamed/0000000000000003"));
 	AssertTrue(cChunkFileFileSystem.ReadInt(&iLength));
-	AssertInt(57, iLength);
+	AssertInt(65, iLength);
+	AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
+	AssertString("DAT", szTest);
 	AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 	AssertString("IDX", szTest);
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
@@ -126,17 +137,25 @@ void TestChunkFileObjectWriterSerialised(void)
 	//CTestInteger pcObject3
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Unnamed/0000000000000004"));
 	AssertTrue(cChunkFileFileSystem.ReadInt(&iLength));
-	AssertInt(57, iLength);
+	AssertInt(65, iLength);
+	AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
+	AssertString("DAT", szTest);
 	AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 	AssertString("IDX", szTest);
+	AssertTrue(cChunkFileFileSystem.ReadData(&iTest, 4));
+	AssertInt(-1, iTest);
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
 
 	//CTestInteger pcObject4
 	AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Unnamed/0000000000000005"));
 	AssertTrue(cChunkFileFileSystem.ReadInt(&iLength));
-	AssertInt(57, iLength);
+	AssertInt(65, iLength);
+	AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
+	AssertString("DAT", szTest);
 	AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 	AssertString("IDX", szTest);
+	AssertTrue(cChunkFileFileSystem.ReadData(&iTest, 4));
+	AssertInt(-1, iTest);
 	AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
 
 	AssertTrue(cChunkFileFileSystem.ReadClose());
