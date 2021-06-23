@@ -276,7 +276,7 @@ void TestSetSerialisation()
 	pObject = OMalloc<CTestObject>();
 	pContainer2 = OMalloc<CPointerContainer>(pObject);
 	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
-	pSet = OMalloc<CSetObject>();
+	pSet = ONMalloc<CSetObject>("Burke");
 	pSet->Add(pContainer1);
 	pSet->Add(pContainer2);
 
@@ -293,11 +293,10 @@ void TestSetSerialisation()
 	AssertNull(&pSet);
 	ObjectsInit();
 
-	//You need to complete this test once NamedObject has been deleted.
-	//cReader.Init(szDirectory, "File");
-	//cGraphDeserialiser.Init(&cReader, FALSE, &gcObjects, gcObjects.GetMemory());
-	//pSet = cGraphDeserialiser.Read("Burke");
-	//AssertNotNull(&pSet);
+	cReader.Init(szDirectory, "File");
+	cGraphDeserialiser.Init(&cReader, FALSE, &gcObjects, gcObjects.GetMemory());
+	pSet = cGraphDeserialiser.Read("Burke");
+	AssertNotNull(&pSet);
 
 	pSet = NULL;
 

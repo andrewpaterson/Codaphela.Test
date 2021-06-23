@@ -54,7 +54,7 @@ void TestEmbeddedStackPointers(void);
 //
 //
 //////////////////////////////////////////////////////////////////////////
-int main(void)
+int __cdecl main(void)
 {
 	InitTotalStatistics();
 	FastFunctionsInit();
