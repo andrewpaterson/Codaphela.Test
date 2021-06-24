@@ -20,7 +20,7 @@ void TestRootDistance(void)
 	Ptr<CRoot>					pRoot;
 	Ptr<CTestObject>			pTest1;
 	int							iDist;
-	CBaseObject*				pcFrom;
+	CEmbeddedObject*			pcFrom;
 
 	ObjectsInit();
 	pRoot = ORoot();
