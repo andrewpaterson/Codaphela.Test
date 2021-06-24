@@ -40,7 +40,7 @@ void TestObjectAllocatorSimpleAdd(void)
 
 	TestObjectAllocatorAddConstructors();
 
-	pNamed = gcObjects.AllocateNew("CTestNamedObject");
+	pNamed = gcObjects.AllocateNewUnitialised("CTestNamedObject");
 	AssertNotNull(pNamed.Object());
 
 	AssertLongLongInt(1LL, pNamed.GetIndex());
@@ -80,7 +80,7 @@ void TestObjectAllocatorNamedAdd(void)
 	TestObjectAllocatorAddConstructors();
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
-	pNamed1 = gcObjects.AllocateNewNamed("CTestNamedObject", "My Object Name");
+	pNamed1 = gcObjects.AllocateNewNamedUnitialised("CTestNamedObject", "My Object Name");
 	AssertNotNull(pNamed1.Object());
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 	AssertFalse(pNamed1->IsInitialised());
@@ -95,7 +95,7 @@ void TestObjectAllocatorNamedAdd(void)
 	AssertPointer(pNamed1.Object(), pTemp.Object());
 
 	sLogConfig = gcLogger.SetSilent();
-	pNamed2 = gcObjects.AllocateNewNamed("CTestNamedObject", "My Object Name");
+	pNamed2 = gcObjects.AllocateNewNamedUnitialised("CTestNamedObject", "My Object Name");
 	gcLogger.SetConfig(&sLogConfig);
 
 	AssertNull(pNamed2.Object());
@@ -134,7 +134,7 @@ void TestObjectAllocatorNamedOverwrite(void)
 
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
-	pNamed1 = gcObjects.AllocateNewNamed("CTestNamedObject", "My Object Name");
+	pNamed1 = gcObjects.AllocateNewNamedUnitialised("CTestNamedObject", "My Object Name");
 	pNamed1->Init(1);
 	AssertLongLongInt(1LL, pNamed1.GetIndex());
 	AssertString("My Object Name", pNamed1.GetName());
@@ -142,7 +142,7 @@ void TestObjectAllocatorNamedOverwrite(void)
 	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(1, gcObjects.NumMemoryNames());
 
-	pNamed2 = gcObjects.AllocateExistingNamed("CTestNamedObject", "My Object Name");
+	pNamed2 = gcObjects.GetNamedObjectInMemoryAndReplaceOrAllocateUnitialised("CTestNamedObject", "My Object Name");
 	pNamed2->Init(2);
 	AssertNotNull(pNamed2.Object());
 	AssertLongLongInt(1LL, pNamed2.GetIndex());
@@ -227,7 +227,7 @@ void TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed(void)
 	AssertLongLongInt(3, pNamed1.GetIndex());
 	AssertLongLongInt(4, pNamed2.GetIndex());
 
-	pNamedSmall = gcObjects.AllocateExistingNamed("CTestNamedObjectSmall", "2");
+	pNamedSmall = gcObjects.GetNamedObjectInMemoryAndReplaceOrAllocateUnitialised("CTestNamedObjectSmall", "2");
 	pNamedSmall->Init("ABC");
 
 	AssertString("CTestNamedObject", pNamed1.ClassName());
@@ -382,9 +382,9 @@ void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwritten(void)
 	pv3 = &pNamed3;
 	pv4 = &pNamed4;
 
-	pNamed3New = gcObjects.AllocateExistingNamed("CTestNamedObject", "3");
+	pNamed3New = gcObjects.GetNamedObjectInMemoryAndReplaceOrAllocateUnitialised("CTestNamedObject", "3");
 	pNamed3New->Init(33);
-	pNamed4New = gcObjects.AllocateExistingNamed("CTestNamedObject", "4");
+	pNamed4New = gcObjects.GetNamedObjectInMemoryAndReplaceOrAllocateUnitialised("CTestNamedObject", "4");
 	pNamed4New->Init(44);
 
 	AssertLongLongInt(8, gcObjects.NumMemoryIndexes());
@@ -467,9 +467,9 @@ void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwrittenWithEmbed
 	AssertInt(2, pNamed2->mNamedTest2.GetDistToRoot());
 
 
-	pNamed1 = gcObjects.AllocateExistingNamed("CTestNamedObjectWithEmbedded", "Agrarian");
+	pNamed1 = gcObjects.GetNamedObjectInMemoryAndReplaceOrAllocateUnitialised("CTestNamedObjectWithEmbedded", "Agrarian");
 	pNamed1->Init(1012, 1013, 1014, 1015, Null(), Null());
-	pNamed2 = gcObjects.AllocateExistingNamed("CTestNamedObjectWithEmbedded", "Hydroponics");
+	pNamed2 = gcObjects.GetNamedObjectInMemoryAndReplaceOrAllocateUnitialised("CTestNamedObjectWithEmbedded", "Hydroponics");
 	pNamed2->Init(2012, 2013, 2014, 2015, Null(), Null());
 
 	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
