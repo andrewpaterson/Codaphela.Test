@@ -76,6 +76,9 @@
     <Filter Include="Source\Object\Class">
       <UniqueIdentifier>{3150f299-3c7e-40a2-a0ad-15df6874b2e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Object\Object\Hollow">
+      <UniqueIdentifier>{ab8aac95-1268-49ee-b080-2627c850d79e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestStandardLib.cpp">
@@ -239,6 +242,9 @@
     </ClCompile>
     <ClCompile Include="TestClass.cpp">
       <Filter>Source\Object\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="TestHollowObject.cpp">
+      <Filter>Source\Object\Object\Hollow</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

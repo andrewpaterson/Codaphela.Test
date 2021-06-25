@@ -121,12 +121,12 @@ void TestNamedObjectName(void)
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
 	pSet = gcObjects.Get(oiSet);
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
 	AssertString("CSetObject", pSet.ClassName());
 
 	AssertTrue(pSet.IsNotNull());
 	AssertFalse(pSet.IsHollow());
-	AssertInt(UNATTACHED_DIST_TO_ROOT, pSet.GetDistToRoot());
+	AssertInt(1, pSet.GetDistToRoot());
 
 	AssertInt(1, pSet->NumElements());
 	pResult3 = pSet->UnsafeGet(0);
