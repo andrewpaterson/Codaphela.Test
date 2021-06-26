@@ -216,6 +216,7 @@
     <ClCompile Include="TestObjectStackPointers.cpp" />
     <ClCompile Include="TestObjectWriterChunked.cpp" />
     <ClCompile Include="TestPointer.cpp" />
+    <ClCompile Include="TestReplaceAndRemap.cpp" />
     <ClCompile Include="TestSet.cpp" />
     <ClCompile Include="TestStackPointers.cpp" />
     <ClCompile Include="TestStandardLib.cpp" />

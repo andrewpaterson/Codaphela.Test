@@ -246,6 +246,9 @@
     <ClCompile Include="TestHollowObject.cpp">
       <Filter>Source\Object\Object\Hollow</Filter>
     </ClCompile>
+    <ClCompile Include="TestReplaceAndRemap.cpp">
+      <Filter>Source\Object\Object\Hollow</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectTestClasses.h">

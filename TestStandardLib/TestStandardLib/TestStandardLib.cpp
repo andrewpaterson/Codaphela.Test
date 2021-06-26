@@ -22,6 +22,7 @@ void TestObjectConverter(void);
 void TestObject(void);
 void TestObjectStack(void);
 void TestObjectStackPointers(void);
+void TestReplaceAndRemap(void);
 void TestHollowObject(void);
 void TestNamedObject(void);
 void TestObjectsSimple(void);
@@ -85,6 +86,7 @@ int __cdecl main(void)
 	TestObjectStack();
 	TestPointer();
 	TestArrayCommonObject();
+	TestReplaceAndRemap();
 	TestHollowObject();
 	TestNamedObject();
 	TestObjectDirty();
