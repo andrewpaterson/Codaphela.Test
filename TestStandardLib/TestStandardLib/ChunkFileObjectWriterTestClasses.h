@@ -23,8 +23,8 @@ public:
 
 	void	Add(CPointer& pcObject);
 
-	BOOL	Save(CObjectWriter* pcFile);
-	BOOL	Load(CObjectReader* pcFile);
+	BOOL	Save(CObjectWriter* pcFile) override;
+	BOOL	Load(CObjectReader* pcFile) override;
 };
 
 
@@ -41,8 +41,8 @@ public:
 	void	Class(void);
 	void	Free(void);
 
-	BOOL	Save(CObjectWriter* pcFile);
-	BOOL	Load(CObjectReader* pcFile);
+	BOOL	Save(CObjectWriter* pcFile) override;
+	BOOL	Load(CObjectReader* pcFile) override;
 };
 
 
@@ -62,8 +62,8 @@ public:
 
 	void	Set(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, const char* szEmbedded);
 
-	BOOL	Save(CObjectWriter* pcFile);
-	BOOL	Load(CObjectReader* pcFile);
+	BOOL	Save(CObjectWriter* pcFile) override;
+	BOOL	Load(CObjectReader* pcFile) override;
 };
 
 

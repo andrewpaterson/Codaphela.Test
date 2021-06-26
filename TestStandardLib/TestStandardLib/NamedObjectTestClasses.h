@@ -17,8 +17,8 @@ public:
 	void Class(void);
 	void Free(void);
 
-	BOOL Save(CObjectWriter* pcFile);
-	BOOL Load(CObjectReader* pcFile);
+	BOOL Save(CObjectWriter* pcFile) override;
+	BOOL Load(CObjectReader* pcFile) override;
 };
 
 
@@ -34,8 +34,8 @@ public:
 	void Class(void);
 	void Free(void);
 
-	BOOL Save(CObjectWriter* pcFile);
-	BOOL Load(CObjectReader* pcFile);
+	BOOL Save(CObjectWriter* pcFile) override;
+	BOOL Load(CObjectReader* pcFile) override;
 };
 
 
@@ -57,8 +57,8 @@ public:
 	void Class(void);
 	void Free(void);
 
-	BOOL Save(CObjectWriter* pcFile);
-	BOOL Load(CObjectReader* pcFile);
+	BOOL Save(CObjectWriter* pcFile) override;
+	BOOL Load(CObjectReader* pcFile) override;
 };
 
 

@@ -20,8 +20,8 @@ public:
 	Ptr<CEmbeddedTest>	Init(void);
 	void				Free(void);
 
-	BOOL				Save(CObjectWriter* pcFile);
-	BOOL				Load(CObjectReader* pcFile);
+	BOOL				Save(CObjectWriter* pcFile) override;
+	BOOL				Load(CObjectReader* pcFile) override;
 };
 
 
@@ -41,8 +41,8 @@ public:
 	Ptr<CEmbeddedContainer>		Init(void);
 	void						Free(void);
 
-	BOOL						Save(CObjectWriter* pcFile);
-	BOOL						Load(CObjectReader* pcFile);
+	BOOL						Save(CObjectWriter* pcFile) override;
+	BOOL						Load(CObjectReader* pcFile) override;
 };
 
 
@@ -61,8 +61,8 @@ public:
 	Ptr<CEmbeddedComplex> Init(void);
 	void	Free(void);
 
-	BOOL	Save(CObjectWriter* pcFile);
-	BOOL	Load(CObjectReader* pcFile);
+	BOOL	Save(CObjectWriter* pcFile) override;
+	BOOL	Load(CObjectReader* pcFile) override;
 };
 
 
