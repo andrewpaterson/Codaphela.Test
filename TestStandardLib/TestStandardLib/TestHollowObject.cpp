@@ -79,7 +79,7 @@ void TestHollowObject1(void)
 	pRoot->TouchAll();
 
 	AssertNull(&pObject1);
-	pObject1 = gcObjects.Get("Paval");
+	pObject1 = gcObjects.Get("Pavel");
 	apcFroms.Init();
 	pObject1->GetHeapFroms(&apcFroms);
 	AssertInt(1, apcFroms.NumElements());
