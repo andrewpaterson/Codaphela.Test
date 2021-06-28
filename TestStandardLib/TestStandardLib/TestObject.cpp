@@ -252,7 +252,7 @@ void TestObjectPointerRemapping(void)
 	AssertTrue(&pObject2 != pcObject2);
 	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
 	AssertLongLongInt(4, gcUnknowns.NumElements());
-	AssertLongLongInt(5LL, pObject3.GetIndex());  //Index of 5 because Pointer.MorphInto does not swap indices.  ObjectAllocator.ReplaceExisting does and we're not testing it.
+	AssertLongLongInt(5LL, pObject3.GetIndex());  //Index of 5 because Pointer.MorphInto does not swap indices.
 
 	AssertInt(1, pObject1->NumPointerTos());
 	AssertPointer(&pObject3, pObject1->TestGetPointerTo(0));

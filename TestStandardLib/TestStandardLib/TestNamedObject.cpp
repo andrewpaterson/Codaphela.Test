@@ -121,7 +121,7 @@ void TestNamedObjectName(void)
 	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
 
 	pSet = gcObjects.Get(oiSet);
-	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
+	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
 	AssertString("CSetObject", pSet.ClassName());
 
 	AssertTrue(pSet.IsNotNull());

@@ -104,7 +104,7 @@ void TestStringEmbeddedDirty(void)
 	Ptr<CString>				pString2;
 	Ptr<CString>				pString3;
 	Ptr<CTestEmbeddedStrings>	pContainer;
-	OIndex						oi;
+	OIndex						oiContainer;
 	CCodabase*					pcDatabase;
 	CSequence*					pcSequence;
 	CFileUtil					cFileUtil;
@@ -125,7 +125,7 @@ void TestStringEmbeddedDirty(void)
 
 	pRoot = ORoot();
 	pContainer = OMalloc<CTestEmbeddedStrings>();
-	oi = pContainer->GetIndex();
+	oiContainer = pContainer->GetIndex();
 	AssertTrue(pContainer.IsDirty());
 
 	pRoot->Add(pContainer);
@@ -135,6 +135,10 @@ void TestStringEmbeddedDirty(void)
 	pContainer->mString1.Set("This is first");
 	pContainer->mString2.Set("Burke is great");
 	pContainer->mString3.Set("Wooglers");
+
+	AssertLongLongInt(INVALID_O_INDEX, pContainer->mString1.GetIndex());
+	AssertLongLongInt(INVALID_O_INDEX, pContainer->mString2.GetIndex());
+	AssertLongLongInt(INVALID_O_INDEX, pContainer->mString3.GetIndex());
 
 	ObjectsFlush();
 	pcDatabase->Close();
@@ -150,7 +154,7 @@ void TestStringEmbeddedDirty(void)
 	ObjectsInit(pcDatabase, pcSequence);
 
 	ORoot()->TouchAll();
-	pContainer = gcObjects.Get(oi);
+	pContainer = gcObjects.Get(oiContainer);
 	pString1 = &pContainer->mString1;
 	pString2 = &pContainer->mString2;
 	pString3 = &pContainer->mString3;
@@ -180,7 +184,7 @@ void TestStringEmbeddedDirty(void)
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 
-	pContainer = gcObjects.Get(oi);
+	pContainer = gcObjects.Get(oiContainer);
 	ORoot()->TouchAll();
 	pString1 = &pContainer->mString1;
 	pString2 = &pContainer->mString2;
@@ -223,7 +227,7 @@ void TestStringEmbeddedDirty(void)
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 
-	pContainer = gcObjects.Get(oi);
+	pContainer = gcObjects.Get(oiContainer);
 	pString1 = &pContainer->mString1;
 	pString2 = &pContainer->mString2;
 	pString3 = &pContainer->mString3;

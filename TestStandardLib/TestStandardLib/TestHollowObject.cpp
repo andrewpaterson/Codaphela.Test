@@ -25,7 +25,7 @@ void TestHollowObjectAddConstructors(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestHollowObject1(void)
+void TestHollowObjectAllocation(void)
 {
 	CFileUtil								cFileUtil;
 	Ptr<CTestObject>						pObject1;
@@ -34,11 +34,8 @@ void TestHollowObject1(void)
 	Ptr<CRoot>								pRoot;
 	CCodabase*								pcDatabase;
 	CSequence*								pcSequence;
-	STestObjectFreedNotifier				sFreeNotifider1;
-	STestObjectFreedNotifier				sFreeNotifider2;
-	STestObjectFreedNotifier				sFreeNotifider3;
 	CArrayTemplateEmbeddedBaseObjectPtr		apcFroms;
-	char									szDirectory[] = "Output" _FS_ "HollowObject";
+	char									szDirectory[] = "Output" _FS_ "HollowObject1";
 
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.TouchDir(szDirectory);
@@ -51,9 +48,9 @@ void TestHollowObject1(void)
 	TestHollowObjectAddConstructors();
 
 	pRoot = ORoot();
-	pObject1 = ONMalloc<CTestObject>("Pavel", &sFreeNotifider1);
-	pObject2 = ONMalloc<CTestObject>("Meninski", &sFreeNotifider2);
-	pObject3 = ONMalloc<CTestObject>("Ned", &sFreeNotifider3);
+	pObject1 = ONMalloc<CTestObject>("Pavel");
+	pObject2 = ONMalloc<CTestObject>("Meninski");
+	pObject3 = ONMalloc<CTestObject>("Ned");
 	pRoot->Add(pObject1);
 	pObject1->mpTest = pObject2;
 	pObject2->mpTest = pObject3;
@@ -71,6 +68,7 @@ void TestHollowObject1(void)
 	SafeKill(pcDatabase);
 	ObjectsKill();
 
+
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
@@ -80,6 +78,7 @@ void TestHollowObject1(void)
 
 	AssertNull(&pObject1);
 	pObject1 = gcObjects.Get("Pavel");
+	AssertNotNull(&pObject1);
 	apcFroms.Init();
 	pObject1->GetHeapFroms(&apcFroms);
 	AssertInt(1, apcFroms.NumElements());
@@ -102,6 +101,90 @@ void TestHollowObject1(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestHollowObjectMemoryIteration(void)
+{
+	CFileUtil								cFileUtil;
+	Ptr<CTestObject>						pObject1;
+	Ptr<CTestObject>						pObject2;
+	Ptr<CTestObject>						pObject3;
+	Ptr<CRoot>								pRoot;
+	CCodabase*								pcDatabase;
+	CSequence*								pcSequence;
+	STestObjectFreedNotifier				sFreeNotifider1;
+	STestObjectFreedNotifier				sFreeNotifider2;
+	STestObjectFreedNotifier				sFreeNotifider3;
+	CArrayTemplateEmbeddedBaseObjectPtr		apcFroms;
+	SIndexesIterator						sIter;
+	OIndex									oi;
+	CPointer								p;
+	OIndex									oiRoot;
+	OIndex									oi1;
+	char									szDirectory[] = "Output" _FS_ "HollowObject2";
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.TouchDir(szDirectory);
+
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+	TestHollowObjectAddConstructors();
+
+	pRoot = ORoot();
+	pObject1 = ONMalloc<CTestObject>("Just", &sFreeNotifider1);
+	pObject2 = ONMalloc<CTestObject>("In", &sFreeNotifider2);
+	pObject3 = ONMalloc<CTestObject>("Time", &sFreeNotifider3);
+	pRoot->Add(pObject1);
+	pObject1->mpTest = pObject2;
+	pObject2->mpTest = pObject3;
+
+	oiRoot = pRoot.GetIndex();
+	oi1 = pObject1.GetIndex();
+
+	ObjectsFlush();
+	pcDatabase->Close();
+	SafeKill(pcSequence);
+	SafeKill(pcDatabase);
+	ObjectsKill();
+
+	AssertTrue(sFreeNotifider1.bFreed);
+	AssertTrue(sFreeNotifider2.bFreed);
+	AssertTrue(sFreeNotifider3.bFreed);
+
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+	pRoot = ORoot();
+	pRoot->TouchAll();
+
+	oi = gcObjects.StartMemoryIteration(&sIter);
+	AssertLongLongInt(oiRoot, oi);
+	oi = gcObjects.IterateMemory(&sIter);
+	AssertLongLongInt(oi1, oi);
+	p = gcObjects.TestGetFromMemory(oi);
+	AssertTrue(p.IsHollow());
+	oi = gcObjects.IterateMemory(&sIter);
+	AssertLongLongInt(INVALID_O_INDEX, oi);
+	AssertString("CTestObject", p->ClassName());
+	AssertFalse(p.IsHollow());
+
+	ObjectsFlush();
+	pcDatabase->Close();
+	SafeKill(pcSequence);
+	SafeKill(pcDatabase);
+	ObjectsKill();
+
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestHollowObject(void)
 {
 	BeginTests();
@@ -109,7 +192,8 @@ void TestHollowObject(void)
 	TypesInit();
 	DataIOInit();
 
-	TestHollowObject1();
+	TestHollowObjectAllocation();
+	TestHollowObjectMemoryIteration();
 
 	DataIOKill();
 	TypesKill();

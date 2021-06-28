@@ -4,6 +4,7 @@
 #include "StandardLib/Objects.h"
 #include "StandardLib/String.h"
 #include "StandardLib/PointerContainer.h"
+#include "StandardLib/HollowObject.h"
 #include "TestLib/Assert.h"
 
 
@@ -45,7 +46,7 @@ void TestEmbeddedObjectRemapTosActual(void)
 
 	Ptr<CRoot>	pRoot = ORoot();
 
-	Ptr<CNamedHollowObject>	pHollow = gcObjects.GetNamedObjectInMemoryOrAllocateHollowForceIndex("Name", gcObjects.GetIndexGenerator()->GetNext(), 3);
+	Ptr<CHollowObject>	pHollow = gcObjects.AllocateHollowWithNameAndIndex("Name", gcObjects.GetIndexGenerator()->GetNext(), 3);
 	AssertInt(3, pHollow.Object()->GetNumEmbedded());
 
 	Ptr<CEmbeddedObject> pHollowEmbedded1 = pHollow.Object()->GetEmbeddedObject(1);
@@ -72,11 +73,11 @@ void TestEmbeddedObjectRemapTosActual(void)
 	Ptr<CTestObjectWithTwoEmbedded> pObject = gcObjects.Malloc<CTestObjectWithTwoEmbedded>("Name2")->Init();
 	AssertInt(3, pObject.Object()->GetNumEmbedded());
 
-	AssertString("CNamedHollowObject", pHollow.ClassName());
+	AssertString("CHollowObject", pHollow.ClassName());
 	AssertString("CHollowEmbeddedObject", pHollowEmbedded1.ClassName());
 	AssertString("CHollowEmbeddedObject", pHollowEmbedded2.ClassName());
 
-	AssertString("CNamedHollowObject", pPointerHollow->mp.ClassName());
+	AssertString("HollowObject", pPointerHollow->mp.ClassName());
 	AssertString("CHollowEmbeddedObject", pPointerHollowEmbedded1->mp.ClassName());
 	AssertString("CHollowEmbeddedObject", pPointerHollowEmbedded2->mp.ClassName());
 

@@ -154,6 +154,7 @@ void TestObjectReplaceWithPointers(void)
 	AssertFalse(sFreeNotifider3.bFreed);
 	AssertFalse(sFreeNotifider4.bFreed);
 
+	gcObjects.DumpMemory();
 	gcObjects.ReplaceBaseObject(&pObject1, &pObject5);
 
 	//         pObject5(2) <--- pObject4(2)  
@@ -211,8 +212,6 @@ void TestReplaceAndRemap(void)
 
 	TestObjectReplaceNoPointers();
 	TestObjectReplaceWithPointers();
-	//TestObjectRemap();
-	//TestObjectRename();
 
 	DataIOKill();
 	TypesKill();
