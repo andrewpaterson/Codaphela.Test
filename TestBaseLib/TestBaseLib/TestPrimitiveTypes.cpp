@@ -65,6 +65,7 @@ void TestPrimitiveTypesPointerArray(void)
 void TestPrimitiveTypesSizes(void)
 {
 	AssertInt(1, sizeof(char));
+	AssertInt(2, sizeof(wchar_t));
 	AssertInt(4, sizeof(int));
 	AssertInt(8, sizeof(long long int));
 	AssertInt(4, sizeof(void*));
