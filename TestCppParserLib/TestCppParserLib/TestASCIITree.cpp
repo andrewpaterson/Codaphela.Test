@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "CPPParserLib/ASCIITree.h"
 #include "TestLib/Assert.h"
 

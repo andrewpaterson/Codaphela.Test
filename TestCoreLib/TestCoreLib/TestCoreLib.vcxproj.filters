@@ -72,9 +72,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="TestCoreLib.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -194,9 +191,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="TestXMLFile.h">
       <Filter>Source\File\XML</Filter>
     </ClInclude>

@@ -224,8 +224,6 @@
     <ClCompile Include="TestUnit2.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="TestProject.h" />
     <ClInclude Include="TestHeader.h" />
     <ClInclude Include="TestHeader2.h" />
   </ItemGroup>

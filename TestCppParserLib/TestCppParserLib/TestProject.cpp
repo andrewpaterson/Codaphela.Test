@@ -5,7 +5,6 @@
 #include "CoreLib/Operators.h"
 #include "CppParserLib/Project.h"
 #include "TestLib/Assert.h"
-#include "TestProject.h"
 
 
 //////////////////////////////////////////////////////////////////////////

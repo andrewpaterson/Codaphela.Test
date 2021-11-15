@@ -11,15 +11,12 @@
     <Filter Include="Source\Project">
       <UniqueIdentifier>{17298909-da20-4fd5-ac3b-7266b6802ccb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Preprocessor\ASCII">
+      <UniqueIdentifier>{7656ec7e-c950-426d-87f7-33f9ae942c0c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TestASCIITree.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="TestCppParserLib.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="TestProject.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="TestUnit1.cpp">
@@ -31,14 +28,14 @@
     <ClCompile Include="TestPreprocessor.cpp">
       <Filter>Source\Preprocessor</Filter>
     </ClCompile>
+    <ClCompile Include="TestProject.cpp">
+      <Filter>Source\Project</Filter>
+    </ClCompile>
+    <ClCompile Include="TestASCIITree.cpp">
+      <Filter>Source\Preprocessor\ASCII</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="TestProject.h">
-      <Filter>Source</Filter>
-    </ClInclude>
     <ClInclude Include="TestHeader.h">
       <Filter>Source\Project</Filter>
     </ClInclude>

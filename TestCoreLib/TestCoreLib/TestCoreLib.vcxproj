@@ -217,7 +217,6 @@
     <ClCompile Include="IndexTreeCallbackTestObject.cpp" />
     <ClCompile Include="IndexTreeFileDataTestCallback.cpp" />
     <ClCompile Include="NamedIndexedDataObject.cpp" />
-    <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="TestCodabase.cpp" />
     <ClCompile Include="TestCoreLib.cpp" />
     <ClCompile Include="TestFiles.cpp" />
@@ -259,7 +258,6 @@
     <ClInclude Include="IndexTreeCallbackTestObject.h" />
     <ClInclude Include="IndexTreeFileDataTestCallback.h" />
     <ClInclude Include="NamedIndexedDataObject.h" />
-    <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestFunctionCaller.h" />
     <ClInclude Include="TestIndexTreeEvicting.h" />
     <ClInclude Include="TestIndexTreeFile.h" />
