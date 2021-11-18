@@ -151,6 +151,9 @@
     <Filter Include="Source\Math\Numbers">
       <UniqueIdentifier>{94aa2c89-b3f9-419c-9ecc-0834cf7a38d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Data\Map\Index\String">
+      <UniqueIdentifier>{9a764bed-4cdf-40f1-ac5b-c40525c594ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -422,6 +425,12 @@
     </ClCompile>
     <ClCompile Include="TestChunkFileFileSystem.cpp">
       <Filter>Source\File\Chunk</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexString.cpp">
+      <Filter>Source\Data\Map\Index\String</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexTemplate.cpp">
+      <Filter>Source\Data\Map\Index</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -29,7 +29,7 @@ void TestIndexTreeIteratorUnsafeIterate(void)
 	int								iResult;
 	int								iMapDataSize;
 
-	cMap.Init(3);
+	cMap.Init();
 	cMap.Put("AA", "nutritious");
 	cMap.Put("AAA", "follow");
 	cMap.Put("AB", "lighten");

@@ -47,6 +47,7 @@ void TestFreeListAllocator(void);
 void TestIndexTreeNodeMemory(void);
 void TestIndexTreeMemory(void);
 void TestIndexTreeMemoryIterator(void);
+void TestIndexString(void);
 void TestGeneralMemory(void);
 void TestDataMemory(void);
 void TestLinkedList(void);
@@ -157,6 +158,7 @@ int __cdecl main(void)
 	TestLinkedListBlockAligned();
 	TestIndexTreeMemory();
 	TestIndexBlock();
+	TestIndexString();
 	TestCSVFileEditable();
 	TestGeneralMemory();
 	TestDataMemory();

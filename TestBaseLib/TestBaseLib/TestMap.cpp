@@ -44,19 +44,19 @@ void TestMapStringString2(void)
 void TestMapStringInt2(void)
 {
 	CMapStringInt	cMapStringInt;
-	int*			px;
+	int				x;
 
 	cMapStringInt.Init();
 	cMapStringInt.Put("Hello", 73);
 	cMapStringInt.Put("World", 12);
 	cMapStringInt.Put("Hello", 324);
 
-	px = cMapStringInt.Get("Hello");
-	AssertInt(324, *px);
-	px = cMapStringInt.Get("World");
-	AssertInt(12, *px);
-	px = cMapStringInt.Get("Miner");
-	AssertNull(px);
+	x = cMapStringInt.Get("Hello");
+	AssertInt(324, x);
+	x = cMapStringInt.Get("World");
+	AssertInt(12, x);
+	x = cMapStringInt.Get("Miner");
+	AssertInt(-1, x);
 
 	cMapStringInt.Kill();
 }

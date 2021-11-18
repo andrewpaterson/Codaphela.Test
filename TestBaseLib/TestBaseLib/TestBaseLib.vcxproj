@@ -232,6 +232,8 @@
     <ClCompile Include="TestFreeListAllocator.cpp" />
     <ClCompile Include="TestGlobalDataTypesIO.cpp" />
     <ClCompile Include="TestIndexBlock.cpp" />
+    <ClCompile Include="TestIndexString.cpp" />
+    <ClCompile Include="TestIndexTemplate.cpp" />
     <ClCompile Include="TestIndexTreeConfig.cpp" />
     <ClCompile Include="TestIndexTreeDataOrderer.cpp" />
     <ClCompile Include="TestIndexTreeMemory.cpp" />

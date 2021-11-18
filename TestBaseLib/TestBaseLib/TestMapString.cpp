@@ -51,7 +51,7 @@ void TestMapStringString(void)
 {
 	CMapStringString	cMap;
 
-	cMap.Init(10, TRUE);
+	cMap.Init();
 	cMap.Kill();
 }
 
@@ -68,7 +68,7 @@ void TestMapStringInt(void)
 	SMapIterator	sIter;
 	char*			szKey;
 
-	cMap.Init(16);
+	cMap.Init();
 
 	AssertTrue(cMap.Put("EZ", 15));
 	AssertInt(1, cMap.NumElements());
@@ -81,7 +81,7 @@ void TestMapStringInt(void)
 	AssertString("Dock", szKey);
 	AssertInt(17, *piResult);
 
-	piResult = cMap.Get("EZ");
+	piResult = cMap.CMapStringTemplate::Get("EZ");
 	AssertNotNull(piResult);
 	iResult = *piResult;
 	AssertInt(15, iResult);
@@ -89,13 +89,13 @@ void TestMapStringInt(void)
 	cMap.Put("KingWin", 13);
 	AssertInt(3, cMap.NumElements());
 
-	iResult = *cMap.Get("EZ");
+	iResult = *cMap.CMapStringTemplate::Get("EZ");
 	AssertInt(15, iResult);
-	iResult = *cMap.Get("KingWin");
+	iResult = *cMap.CMapStringTemplate::Get("KingWin");
 	AssertInt(13, iResult);
-	iResult = *cMap.Get("Dock");
+	iResult = *cMap.CMapStringTemplate::Get("Dock");
 	AssertInt(17, iResult);
-	AssertNull(cMap.Get("KWM"));
+	AssertNull(cMap.CMapStringTemplate::Get("KWM"));
 
 	cMap.Kill();
 }
