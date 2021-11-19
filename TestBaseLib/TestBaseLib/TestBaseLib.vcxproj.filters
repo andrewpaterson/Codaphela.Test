@@ -432,6 +432,9 @@
     <ClCompile Include="TestIndexTemplate.cpp">
       <Filter>Source\Data\Map\Index</Filter>
     </ClCompile>
+    <ClCompile Include="TestLogString.cpp">
+      <Filter>Source\Error</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

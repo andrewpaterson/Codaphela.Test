@@ -248,6 +248,7 @@
     <ClCompile Include="TestListTemplate.cpp" />
     <ClCompile Include="TestListVariable.cpp" />
     <ClCompile Include="TestLogger.cpp" />
+    <ClCompile Include="TestLogString.cpp" />
     <ClCompile Include="TestMap.cpp" />
     <ClCompile Include="TestMapAccess.cpp" />
     <ClCompile Include="TestMapBlock.cpp" />
