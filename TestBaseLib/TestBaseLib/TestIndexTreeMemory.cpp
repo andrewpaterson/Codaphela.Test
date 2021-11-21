@@ -1484,7 +1484,7 @@ void TestIndexTreeMemoryGetLongestPartial(void)
 	AssertTrue(bResult);
 	AssertInt(1, iData);
 
-	bResult = cIndex.GetLongestPartial("Battty", 3, &iData, &puiDataSize, sizeof(int));
+	bResult = cIndex.GetLongestPartial("Battty", 6, &iData, &puiDataSize, sizeof(int));
 	AssertTrue(bResult);
 	AssertInt(1, iData);
 
@@ -1502,7 +1502,7 @@ void TestIndexTreeMemoryGetLongestPartial(void)
 	AssertTrue(bResult);
 	AssertInt(6, iData);
 
-	bResult = cIndex.GetLongestPartial("Batmaoa", 6, &iData, &puiDataSize, sizeof(int));
+	bResult = cIndex.GetLongestPartial("Batmaoa", 7, &iData, &puiDataSize, sizeof(int));
 	AssertTrue(bResult);
 	AssertInt(6, iData);
 
@@ -1510,11 +1510,11 @@ void TestIndexTreeMemoryGetLongestPartial(void)
 	AssertTrue(bResult);
 	AssertInt(4, iData);
 
-	bResult = cIndex.GetLongestPartial("Batmaa", 5, &iData, &puiDataSize, sizeof(int));
+	bResult = cIndex.GetLongestPartial("Batmaa", 6, &iData, &puiDataSize, sizeof(int));
 	AssertTrue(bResult);
 	AssertInt(4, iData);
 
-	bResult = cIndex.GetLongestPartial("Batmap", 5, &iData, &puiDataSize, sizeof(int));
+	bResult = cIndex.GetLongestPartial("Batmap", 6, &iData, &puiDataSize, sizeof(int));
 	AssertTrue(bResult);
 	AssertInt(4, iData);
 
