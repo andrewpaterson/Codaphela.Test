@@ -1467,6 +1467,66 @@ void TestIndexTreeMemoryReadWriteDataOrderer(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexTreeMemoryGetLongestPartial(void)
+{
+	CTestIndexTreeMemory	cIndex;
+	CIndexTreeMemoryAccess	cAccess;
+	int						iData;
+	size_t					puiDataSize;
+	BOOL					bResult;
+
+	cIndex.Init();
+	cAccess.Init(&cIndex);
+
+	cAccess.PutStringInt("Bat", 1);
+
+	bResult = cIndex.GetLongestPartial("Bat", 3, &iData, &puiDataSize, sizeof(int));
+	AssertTrue(bResult);
+	AssertInt(1, iData);
+
+	bResult = cIndex.GetLongestPartial("Battty", 3, &iData, &puiDataSize, sizeof(int));
+	AssertTrue(bResult);
+	AssertInt(1, iData);
+
+	cAccess.PutStringInt("Batman", 2);
+	cAccess.PutStringInt("Batmam", 3);
+	cAccess.PutStringInt("Batma", 4);
+	cAccess.PutStringInt("Batmano", 5);
+	cAccess.PutStringInt("Batmao", 6);
+
+	bResult = cIndex.GetLongestPartial("Bat", 3, &iData, &puiDataSize, sizeof(int));
+	AssertTrue(bResult);
+	AssertInt(1, iData);
+
+	bResult = cIndex.GetLongestPartial("Batmao", 6, &iData, &puiDataSize, sizeof(int));
+	AssertTrue(bResult);
+	AssertInt(6, iData);
+
+	bResult = cIndex.GetLongestPartial("Batmaoa", 6, &iData, &puiDataSize, sizeof(int));
+	AssertTrue(bResult);
+	AssertInt(6, iData);
+
+	bResult = cIndex.GetLongestPartial("Batma", 5, &iData, &puiDataSize, sizeof(int));
+	AssertTrue(bResult);
+	AssertInt(4, iData);
+
+	bResult = cIndex.GetLongestPartial("Batmaa", 5, &iData, &puiDataSize, sizeof(int));
+	AssertTrue(bResult);
+	AssertInt(4, iData);
+
+	bResult = cIndex.GetLongestPartial("Batmap", 5, &iData, &puiDataSize, sizeof(int));
+	AssertTrue(bResult);
+	AssertInt(4, iData);
+
+	cAccess.Kill();
+	cIndex.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemory(void)
 {
 
@@ -1499,6 +1559,7 @@ void TestIndexTreeMemory(void)
 	TestIndexTreeMemoryPut();
 	TestIndexTreeMemoryDataFree();
 	TestIndexTreeMemoryReadWriteDataOrderer();
+	TestIndexTreeMemoryGetLongestPartial();
 
 	DataOrderersKill();
 	MemoryKill();
