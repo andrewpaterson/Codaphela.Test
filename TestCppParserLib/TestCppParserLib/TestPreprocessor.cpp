@@ -458,6 +458,113 @@ Expected\n\
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestPreprocessorSimpleVariadic(void)
+{
+	TypesInit();
+	FastFunctionsInit();
+	TypeConverterInit();
+	OperatorsInit();
+	InitTokenMemory();
+	NumberInit();
+
+	CChars				szDest;
+	CTranslationUnit	cFile;
+	CPreprocessor		cPreprocessor;
+	CListLibraries		cLibraries;
+	CConfig				cConfig;
+	CChars				szName;
+
+	szName.Init("None.cpp");
+
+	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.SetContents("\
+#define _CRT_UNPARENTHESIZE_(...) __VA_ARGS__\n\
+Expected1\n\
+#define _CRT_UNPARENTHESIZE(...)  _CRT_UNPARENTHESIZE_ __VA_ARGS__\n\
+Expected2\n\
+");
+
+	cLibraries.Init();
+	cConfig.Init("");
+	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.PreprocessTranslationUnit(&cFile);
+	szDest.Init();
+	cFile.Append(&szDest);
+
+	AssertString("Expected1\nExpected2\n", szDest.Text());
+
+	szDest.Kill();
+	cLibraries.Kill();
+	cConfig.Kill();
+	cFile.Kill();
+
+	NumberKill();
+	KillTokenMemory();
+	OperatorsKill();
+	TypeConverterKill();
+	FastFunctionsKill();
+	TypesKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorComplexVariadic(void)
+{
+	TypesInit();
+	FastFunctionsInit();
+	TypeConverterInit();
+	OperatorsInit();
+	InitTokenMemory();
+	NumberInit();
+
+	CChars				szDest;
+	CTranslationUnit	cFile;
+	CPreprocessor		cPreprocessor;
+	CListLibraries		cLibraries;
+	CConfig				cConfig;
+	CChars				szName;
+
+	szName.Init("None.cpp");
+
+	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.SetContents("\
+#define CHECK1(x, ...) if (!(x)) { printf(__VA_ARGS__); }\n\
+#define CHECK2(x, ...) if ((x)) { printf(__VA_ARGS__); }\n\
+#define CHECK3(...) { printf(__VA_ARGS__); }\n\
+#define MACRO(s, ...) printf(s, __VA_ARGS__)\n\
+CHECK1(0, \"here % s % s % s\", \"are\", \"some\", \"varargs1(1)\\n\");\n\
+");
+
+	cLibraries.Init();
+	cConfig.Init("");
+	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.PreprocessTranslationUnit(&cFile);
+	szDest.Init();
+	cFile.Append(&szDest);
+
+	AssertString("printf(here are some varargs1(1))", szDest.Text());
+
+	szDest.Kill();
+	cLibraries.Kill();
+	cConfig.Kill();
+	cFile.Kill();
+
+	NumberKill();
+	KillTokenMemory();
+	OperatorsKill();
+	TypeConverterKill();
+	FastFunctionsKill();
+	TypesKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestPreprocessor(void)
 {
 	BeginTests();
@@ -466,7 +573,9 @@ void TestPreprocessor(void)
 	TestPreprocessorConditionals();
 	TestPreprocessorOperatorPrecedence();
 	TestPreprocessorBlockSkipping();
-	TestPreprocessorParentheses();
+	TestPreprocessorSimpleVariadic();
+	TestPreprocessorComplexVariadic();
+
 
 	TestStatistics();
 }
