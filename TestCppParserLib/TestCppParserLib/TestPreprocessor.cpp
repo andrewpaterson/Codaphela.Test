@@ -394,6 +394,70 @@ void TestPreprocessorBlockSkipping(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestPreprocessorParentheses(void)
+{
+	TypesInit();
+	FastFunctionsInit();
+	TypeConverterInit();
+	OperatorsInit();
+	InitTokenMemory();
+	NumberInit();
+
+	CChars				szDest;
+	CTranslationUnit	cFile;
+	CPreprocessor		cPreprocessor;
+	CListLibraries		cLibraries;
+	CConfig				cConfig;
+	CChars				szName;
+
+	szName.Init("None.cpp");
+
+	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.SetContents("\
+#if (defined _M_ARM || defined _M_HYBRID_X86_ARM64) && !defined _M_CEE_PURE\n\
+Unexpected\n\
+#define _VA_ALIGN       4\n\
+#define _SLOTSIZEOF(t)  ((sizeof(t) + _VA_ALIGN - 1) & ~(_VA_ALIGN - 1))\n\
+#define _APALIGN(t,ap)  (((va_list)0 - (ap)) & (__alignof(t) - 1))\n\
+#elif (defined _M_ARM64 || defined _M_ARM64EC) && !defined _M_CEE_PURE\n\
+Unexpected\n\
+#define _VA_ALIGN       8\n\
+#define _SLOTSIZEOF(t)  ((sizeof(t) + _VA_ALIGN - 1) & ~(_VA_ALIGN - 1))\n\
+#define _APALIGN(t,ap)  (((va_list)0 - (ap)) & (__alignof(t) - 1))\n\
+#else\n\
+Expected\n\
+#define _SLOTSIZEOF(t)  (sizeof(t))\n\
+#define _APALIGN(t,ap)  (__alignof(t))\n\
+#endif\n\
+");
+
+	cLibraries.Init();
+	cConfig.Init("");
+	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.PreprocessTranslationUnit(&cFile);
+	szDest.Init();
+	cFile.Append(&szDest);
+
+	AssertString("Expected\n", szDest.Text());
+
+	szDest.Kill();
+	cLibraries.Kill();
+	cConfig.Kill();
+	cFile.Kill();
+
+	NumberKill();
+	KillTokenMemory();
+	OperatorsKill();
+	TypeConverterKill();
+	FastFunctionsKill();
+	TypesKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestPreprocessor(void)
 {
 	BeginTests();
@@ -402,6 +466,7 @@ void TestPreprocessor(void)
 	TestPreprocessorConditionals();
 	TestPreprocessorOperatorPrecedence();
 	TestPreprocessorBlockSkipping();
+	TestPreprocessorParentheses();
 
 	TestStatistics();
 }

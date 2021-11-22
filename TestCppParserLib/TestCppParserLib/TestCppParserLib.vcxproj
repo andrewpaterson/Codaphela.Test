@@ -216,7 +216,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="TestASCIITree.cpp" />
     <ClCompile Include="TestCppParserLib.cpp" />
     <ClCompile Include="TestPreprocessor.cpp" />
     <ClCompile Include="TestProject.cpp" />

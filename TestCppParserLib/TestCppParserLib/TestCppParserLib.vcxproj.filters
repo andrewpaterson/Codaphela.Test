@@ -31,9 +31,6 @@
     <ClCompile Include="TestProject.cpp">
       <Filter>Source\Project</Filter>
     </ClCompile>
-    <ClCompile Include="TestASCIITree.cpp">
-      <Filter>Source\Preprocessor\ASCII</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestHeader.h">
