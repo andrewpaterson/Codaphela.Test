@@ -222,7 +222,7 @@ void TestRectanglePackerHorizontalPowerOf2Sizes(void)
 	AssertInt(8, pcBestAttempt->miHeight);
 
 	szRep.Init();
-	pcBestAttempt->ToString(&szRep);
+	pcBestAttempt->Print(&szRep);
 	AssertString("Lines[1] Size[24, 8]\n[(0, 0) 8:8], [(8, 0) 8:8], [(16, 0) 4:4], [(16, 4) 4:4], [(20, 0) 4:4], [(20, 4) 2:2], [(20, 6) 2:2], [(22, 4) 1:1]\n", szRep.Text());
 	szRep.Kill();
 
@@ -253,7 +253,7 @@ void TestRectanglePackerSquarePowerOf2Sizes(void)
 	AssertInt(12, pcBestAttempt->miHeight);
 
 	szRep.Init();
-	pcBestAttempt->ToString(&szRep);
+	pcBestAttempt->Print(&szRep);
 	AssertString("Lines[2] Size[16, 12]\n[(0, 0) 8:8], [(8, 0) 8:8]\n[(0, 0) 4:4], [(4, 0) 4:4], [(8, 0) 4:4], [(12, 0) 2:2], [(12, 2) 2:2], [(14, 0) 1:1]\n", szRep.Text());
 	szRep.Kill();
 
@@ -283,7 +283,7 @@ void TestRectanglePackerVerticalPowerOf2Sizes(void)
 	AssertInt(24, pcBestAttempt->miHeight);
 
 	szRep.Init();
-	pcBestAttempt->ToString(&szRep);
+	pcBestAttempt->Print(&szRep);
 	AssertString("Lines[4] Size[8, 24]\n[(0, 0) 8:8]\n[(0, 0) 8:8]\n[(0, 0) 4:4], [(4, 0) 4:4]\n[(0, 0) 4:4], [(4, 0) 2:2], [(4, 2) 2:2], [(6, 0) 1:1]\n", szRep.Text());
 	szRep.Kill();
 
@@ -314,7 +314,7 @@ void TestRectanglePackerDefault(void)
 	AssertInt(7, pcBestAttempt->GetWastedArea());
 
 	szRep.Init();
-	pcBestAttempt->ToString(&szRep);
+	pcBestAttempt->Print(&szRep);
 	AssertString("Lines[1] Size[24, 8]\n[(0, 0) 8:8], [(8, 0) 8:8], [(16, 0) 4:4], [(16, 4) 4:4], [(20, 0) 4:4], [(20, 4) 2:2], [(20, 6) 2:2], [(22, 4) 1:1]\n", szRep.Text());
 	szRep.Kill();
 
@@ -325,7 +325,7 @@ void TestRectanglePackerDefault(void)
 	AssertInt(79, pcWorstAttempt->GetWastedArea());
 
 	szRep.Init();
-	pcWorstAttempt->ToString(&szRep);
+	pcWorstAttempt->Print(&szRep);
 	AssertString("Lines[2] Size[22, 12]\n[(0, 0) 8:8], [(8, 0) 8:8], [(16, 0) 4:4], [(16, 4) 4:4], [(20, 0) 2:2], [(20, 2) 2:2], [(20, 4) 1:1]\n[(0, 0) 4:4]\n", szRep.Text());
 	szRep.Kill();
 

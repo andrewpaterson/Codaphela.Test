@@ -40,7 +40,8 @@
 #include "TestNormalGeneration.h"
 #include "TestMeshOBJReader.h"
 
-int main(int argc, _TCHAR* argv[])
+
+ int __cdecl main(int argc, _TCHAR* argv[])
 {
 	CFileUtil		cFileUtil;
 
