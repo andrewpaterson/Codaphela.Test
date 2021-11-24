@@ -579,7 +579,7 @@ void TestPreprocessorHasInclude(void)
 #if defined __has_include\n\
 #  if __has_include (<stdatomic.h>)\n\
 IncludeWasHadded\n\
-#  elif\n\
+#  else\n\
 Nope\n\
 #  endif\n\
 #endif\n\
@@ -592,7 +592,7 @@ Nope\n\
 	szDest.Init();
 	cFile.Append(&szDest);
 
-	AssertString("printf(here are some varargs1(1))", szDest.Text());
+	AssertString("IncludeWasHadded", szDest.Text());
 
 	szDest.Kill();
 	cLibraries.Kill();

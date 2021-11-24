@@ -11,9 +11,6 @@
     <Filter Include="Source\Project">
       <UniqueIdentifier>{17298909-da20-4fd5-ac3b-7266b6802ccb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Preprocessor\ASCII">
-      <UniqueIdentifier>{7656ec7e-c950-426d-87f7-33f9ae942c0c}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestCppParserLib.cpp">
