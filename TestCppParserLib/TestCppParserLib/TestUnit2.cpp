@@ -9,3 +9,4 @@ void TestUnit2(void)
 
 	i = 7;
 };
+
