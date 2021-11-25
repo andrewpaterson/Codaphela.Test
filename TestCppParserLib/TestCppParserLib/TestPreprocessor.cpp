@@ -2,8 +2,10 @@
 #include "BaseLib/PointerRemapper.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
+#include "BaseLib/FileUtil.h"
 #include "CoreLib/Operators.h"
 #include "CppParserLib/Preprocessor.h"
+#include "CppParserLib/HeaderFileMap.h"
 #include "TestLib/Assert.h"
 
 
@@ -374,6 +376,7 @@ void TestPreprocessorBlockSkipping(void)
 
 	AssertString("Start\nPassed\nEnd\nTest\n", szDest.Text());
 
+	cPreprocessor.Kill();
 	szDest.Kill();
 	cLibraries.Kill();
 	cConfig.Kill();
@@ -438,6 +441,7 @@ Expected\n\
 
 	AssertString("Expected\n", szDest.Text());
 
+	cPreprocessor.Kill();
 	szDest.Kill();
 	cConfig.Kill();
 	cFile.Kill();
@@ -488,6 +492,7 @@ Expected2\n\
 
 	AssertString("Expected1\nExpected2\n", szDest.Text());
 
+	cPreprocessor.Kill();
 	szDest.Kill();
 	cConfig.Kill();
 	cFile.Kill();
@@ -539,6 +544,7 @@ CHECK1(0, \"here % s % s % s\", \"are\", \"some\", \"varargs1(1)\\n\");\n\
 
 	AssertString("printf(here are some varargs1(1))", szDest.Text());
 
+	cPreprocessor.Kill();
 	szDest.Kill();
 	cConfig.Kill();
 	cFile.Kill();
@@ -571,13 +577,25 @@ void TestPreprocessorHasInclude(void)
 	CListLibraries		cLibraries;
 	CConfig				cConfig;
 	CChars				szName;
+	CHeaderFileMap		cHeaderFiles;
+	CHeaderNameMap		cHeaderNames;
+	CFileUtil			cFileUtil;
+	CChars				szDirectory;
 
 	szName.Init("None.cpp");
+
+	szDirectory.Init();
+	cFileUtil.CurrentDirectory(&szDirectory);
+	cFileUtil.AppendToPath(&szDirectory, "Input");
+
+
+	cHeaderFiles.Init();
+	cHeaderNames.Init(szDirectory.Text(), &cHeaderFiles, TRUE);
 
 	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
 	cFile.SetContents("\
 #if defined __has_include\n\
-#  if __has_include (<stdatomic.h>)\n\
+#  if __has_include (<Header.h>)\n\
 IncludeWasHadded\n\
 #  else\n\
 Nope\n\
@@ -588,12 +606,18 @@ Nope\n\
 	cLibraries.Init();
 	cConfig.Init("");
 	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.AddIncludeDirectory(&cHeaderNames);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
 	cFile.Append(&szDest);
 
-	AssertString("IncludeWasHadded", szDest.Text());
+	AssertString("IncludeWasHadded\n", szDest.Text());
 
+	cPreprocessor.Kill();
+	cHeaderFiles.Kill();
+	cHeaderNames.Kill();
+
+	szDirectory.Kill();
 	szDest.Kill();
 	cLibraries.Kill();
 	cConfig.Kill();
