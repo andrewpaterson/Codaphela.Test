@@ -15,14 +15,11 @@
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorReplacement(void)
 {
-	TypesInit();
-	FastFunctionsInit();
-	TypeConverterInit();
-	OperatorsInit();
 	InitTokenMemory();
 
 	CChars	szDest;
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #define D3(X) #X\n\
 #define D7(P,Q) D3(P) D3(Q)\n\
@@ -60,20 +57,17 @@ char sz4[] = \"Hello\"  \"World\";\n\
 char sz2[] = \"Hello\"\"World\";\n\
 }\n\
 ", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
-#define floa	int giJoe;\n\
-float	gFriend;\n\
-", &szDest);
-
-	AssertString("float gFriend;\n", szDest.Text());
-
-		CPreprocessor::Preprocess("\
 int x = ++y / z;\n\
 ", &szDest);
 
 	AssertString("int x = ++y / z;\n", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #define SOME_FOO_1(ARG1, ARG2)          0xDE + ARG1 - ARG2 +ARG1 //  \'\'\"\' for US\n\
 #define SOME_FOO_2        0xE2  //  \"<>\" or \"\\|\" on RT 102-key kbd.\n\
@@ -82,7 +76,9 @@ int dufi = SOME_FOO_1(1, 2), dasf = SOME_FOO_2, ewqr = SOME_FOO_3;\n\
 ", &szDest);
 
 	AssertString("int dufi = 0xDE + 1 - 2 +1 , dasf = 0xE2 , ewqr = 0x00000080L ;\n", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 char gsz[] = (\"//@  Don't Collapse me please     ! /*     \");\n\
 char g_Char = \'\\n\';\n\
@@ -93,19 +89,41 @@ char g_Char2 = \'\"\';\n\
 char g_Char = \'\\n\';\n\
 char g_Char2 = \'\"\';\n\
 ", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 # define __nothrow __declspec(nothrow)\n\
 __nothrow;\n\
 ", &szDest);
 
 	AssertString("__declspec(nothrow);\n", szDest.Text());
+	szDest.Kill();
 
 	KillTokenMemory();
-	OperatorsKill();
-	TypeConverterKill();
-	FastFunctionsKill();
-	TypesKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorExactDefine(void)
+{
+	InitTokenMemory();
+
+	CChars	szDest;
+
+	szDest.Init();
+	CPreprocessor::Preprocess("\
+#define floa	int giJoe;\n\
+float	gFriend;\n\
+", &szDest);
+
+	AssertString("float gFriend;\n", szDest.Text());
+	szDest.Kill();
+
+	KillTokenMemory();
 }
 
 
@@ -115,15 +133,11 @@ __nothrow;\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorConditionals(void)
 {
-	TypesInit();
-	FastFunctionsInit();
-	TypeConverterInit();
-	OperatorsInit();
 	InitTokenMemory();
-	NumberInit();
 
 	CChars	szDest;
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #if 1\n\
 Passed\n\
@@ -132,7 +146,9 @@ Failed\n\
 #endif\n\
 ", &szDest);
 	AssertString("Passed\n", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #if 0\n\
 Failed\n\
@@ -141,7 +157,9 @@ Passed\n\
 #endif\n\
 ", &szDest);
 	AssertString("Passed\n", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #if 1\n\
 #define Fred Quintin\n\
@@ -154,13 +172,9 @@ Larry\n\
 Dick\n\
 ", &szDest);
 	AssertString("Quintin\nLarry\nMoby\n", szDest.Text());
+	szDest.Kill();
 
-	NumberKill();
 	KillTokenMemory();
-	OperatorsKill();
-	TypeConverterKill();
-	FastFunctionsKill();
-	TypesKill();
 }
 
 
@@ -170,15 +184,11 @@ Dick\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorOperatorPrecedence(void)
 {
-	TypesInit();
-	FastFunctionsInit();
-	TypeConverterInit();
-	OperatorsInit();
 	InitTokenMemory();
-	NumberInit();
 
 	CChars	szDest;
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #if 1 || 0 && 0\n\
 Passed\n\
@@ -187,7 +197,9 @@ Failed\n\
 #endif\n\
 ", &szDest);
 	AssertString("Passed\n", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #if 0 && 1 || 0\n\
 Failed\n\
@@ -196,7 +208,9 @@ Passed\n\
 #endif\n\
 ", &szDest);
 	AssertString("Passed\n", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #if 0 && 0 | 1\n\
 Failed\n\
@@ -205,7 +219,9 @@ Passed\n\
 #endif\n\
 ", &szDest);
 	AssertString("Passed\n", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #if 1 | 0 ^ 1\n\
 Passed\n\
@@ -214,7 +230,9 @@ Failed\n\
 #endif\n\
 ", &szDest);
 	AssertString("Passed\n", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #if 1 ^ 0 & 0\n\
 Passed\n\
@@ -223,7 +241,9 @@ Failed\n\
 #endif\n\
 ", &szDest);
 	AssertString("Passed\n", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #if 0 & 0 == 0\n\
 Failed\n\
@@ -232,7 +252,9 @@ Passed\n\
 #endif\n\
 ", &szDest);
 	AssertString("Passed\n", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #if 0 == 0 < 0\n\
 Passed\n\
@@ -241,7 +263,9 @@ Failed\n\
 #endif\n\
 ", &szDest);
 	AssertString("Passed\n", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #if 1 < 1 << 1\n\
 Passed\n\
@@ -250,8 +274,9 @@ Failed\n\
 #endif\n\
 ", &szDest);
 	AssertString("Passed\n", szDest.Text());
+	szDest.Kill();
 
-
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #if 0 << 0 + 1\n\
 Failed\n\
@@ -260,7 +285,9 @@ Passed\n\
 #endif\n\
 ", &szDest);
 	AssertString("Passed\n", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #if 1 + 0 * 0\n\
 Passed\n\
@@ -269,7 +296,9 @@ Failed\n\
 #endif\n\
 ", &szDest);
 	AssertString("Passed\n", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #if ~1 * 0\n\
 Failed\n\
@@ -278,7 +307,9 @@ Passed\n\
 #endif\n\
 ", &szDest);
 	AssertString("Passed\n", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #if -(1 - 1)\n\
 Failed\n\
@@ -287,7 +318,9 @@ Passed\n\
 #endif\n\
 ", &szDest);
 	AssertString("Passed\n", szDest.Text());
+	szDest.Kill();
 
+	szDest.Init();
 CPreprocessor::Preprocess("\
 #if +(0 + 0)\n\
 Failed\n\
@@ -296,13 +329,9 @@ Passed\n\
 #endif\n\
 ", &szDest);
 	AssertString("Passed\n", szDest.Text());
+	szDest.Kill();
 
-	NumberKill();
 	KillTokenMemory();
-	OperatorsKill();
-	TypeConverterKill();
-	FastFunctionsKill();
-	TypesKill();
 }
 
 
@@ -312,12 +341,7 @@ Passed\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorBlockSkipping(void)
 {
-	TypesInit();
-	FastFunctionsInit();
-	TypeConverterInit();
-	OperatorsInit();
 	InitTokenMemory();
-	NumberInit();
 
 	CChars				szDest;
 	CTranslationUnit	cFile;
@@ -384,12 +408,7 @@ void TestPreprocessorBlockSkipping(void)
 
 	szName.Kill();
 
-	NumberKill();
 	KillTokenMemory();
-	OperatorsKill();
-	TypeConverterKill();
-	FastFunctionsKill();
-	TypesKill();
 }
 
 
@@ -399,12 +418,7 @@ void TestPreprocessorBlockSkipping(void)
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorParentheses(void)
 {
-	TypesInit();
-	FastFunctionsInit();
-	TypeConverterInit();
-	OperatorsInit();
 	InitTokenMemory();
-	NumberInit();
 
 	CChars				szDest;
 	CTranslationUnit	cFile;
@@ -446,12 +460,7 @@ Expected\n\
 	cConfig.Kill();
 	cFile.Kill();
 
-	NumberKill();
 	KillTokenMemory();
-	OperatorsKill();
-	TypeConverterKill();
-	FastFunctionsKill();
-	TypesKill();
 }
 
 
@@ -461,12 +470,7 @@ Expected\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorSimpleVariadic(void)
 {
-	TypesInit();
-	FastFunctionsInit();
-	TypeConverterInit();
-	OperatorsInit();
 	InitTokenMemory();
-	NumberInit();
 
 	CChars				szDest;
 	CTranslationUnit	cFile;
@@ -495,12 +499,7 @@ Expected\n\
 	cConfig.Kill();
 	cFile.Kill();
 
-	NumberKill();
 	KillTokenMemory();
-	OperatorsKill();
-	TypeConverterKill();
-	FastFunctionsKill();
-	TypesKill();
 }
 
 
@@ -510,12 +509,7 @@ Expected\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorComplexVariadic(void)
 {
-	TypesInit();
-	FastFunctionsInit();
-	TypeConverterInit();
-	OperatorsInit();
 	InitTokenMemory();
-	NumberInit();
 
 	CChars				szDest;
 	CTranslationUnit	cFile;
@@ -544,12 +538,7 @@ CHECK1(0, \"here % s % s % s\", \"are\", \"some\", \"varargs(1)\\n\");\n\
 	cConfig.Kill();
 	cFile.Kill();
 
-	NumberKill();
 	KillTokenMemory();
-	OperatorsKill();
-	TypeConverterKill();
-	FastFunctionsKill();
-	TypesKill();
 }
 
 
@@ -559,12 +548,7 @@ CHECK1(0, \"here % s % s % s\", \"are\", \"some\", \"varargs(1)\\n\");\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorRedefinedVariadic(void)
 {
-	TypesInit();
-	FastFunctionsInit();
-	TypeConverterInit();
-	OperatorsInit();
 	InitTokenMemory();
-	NumberInit();
 
 	CChars				szDest;
 	CTranslationUnit	cFile;
@@ -595,12 +579,7 @@ Expected2\n\
 	cConfig.Kill();
 	cFile.Kill();
 
-	NumberKill();
 	KillTokenMemory();
-	OperatorsKill();
-	TypeConverterKill();
-	FastFunctionsKill();
-	TypesKill();
 }
 
 
@@ -610,17 +589,11 @@ Expected2\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorHasInclude(void)
 {
-	TypesInit();
-	FastFunctionsInit();
-	TypeConverterInit();
-	OperatorsInit();
 	InitTokenMemory();
-	NumberInit();
 
 	CChars				szDest;
 	CTranslationUnit	cFile;
 	CPreprocessor		cPreprocessor;
-	CListLibraries		cLibraries;
 	CConfig				cConfig;
 	CChars				szName;
 	CHeaderFileMap		cHeaderFiles;
@@ -649,7 +622,6 @@ Nope\n\
 #endif\n\
 ");
 
-	cLibraries.Init();
 	cConfig.Init("");
 	cPreprocessor.Init(&cConfig, &cFile.mcStack);
 	cPreprocessor.AddIncludeDirectory(&cHeaderNames);
@@ -665,16 +637,36 @@ Nope\n\
 
 	szDirectory.Kill();
 	szDest.Kill();
-	cLibraries.Kill();
 	cConfig.Kill();
 	cFile.Kill();
 
-	NumberKill();
 	KillTokenMemory();
-	OperatorsKill();
-	TypeConverterKill();
-	FastFunctionsKill();
-	TypesKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorDefineEvaluateToZero(void)
+{
+	InitTokenMemory();
+
+	CChars				szDest;
+
+	szDest.Init();
+	CPreprocessor::Preprocess("\
+#if NOT_DEFINED > 1\n\
+Should not get here\n\
+#else\n\
+Yuppers, here is good\n\
+#endif\n\
+", &szDest);
+
+	AssertString("Yuppers, here is good\n", szDest.Text());
+	szDest.Kill();
+
+	KillTokenMemory();
 }
 
 
@@ -686,15 +678,28 @@ void TestPreprocessor(void)
 {
 	BeginTests();
 
-	//TestPreprocessorReplacement();
-	//TestPreprocessorConditionals();
-	//TestPreprocessorOperatorPrecedence();
-	//TestPreprocessorBlockSkipping();
-	//TestPreprocessorHasInclude();
-	//TestPreprocessorSimpleVariadic();
+	TypesInit();
+	FastFunctionsInit();
+	TypeConverterInit();
+	OperatorsInit();
+	NumberInit();
+
+	TestPreprocessorReplacement();
+	TestPreprocessorExactDefine();
+	TestPreprocessorConditionals();
+	TestPreprocessorOperatorPrecedence();
+	TestPreprocessorBlockSkipping();
+	TestPreprocessorHasInclude();
+	TestPreprocessorSimpleVariadic();
 	TestPreprocessorComplexVariadic();
 	TestPreprocessorRedefinedVariadic();
+	TestPreprocessorDefineEvaluateToZero();
 
+	NumberKill();
+	OperatorsKill();
+	TypeConverterKill();
+	FastFunctionsKill();
+	TypesKill();
 
 	TestStatistics();
 }
