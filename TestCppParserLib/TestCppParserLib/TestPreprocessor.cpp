@@ -478,10 +478,8 @@ void TestPreprocessorSimpleVariadic(void)
 
 	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
 	cFile.SetContents("\
-#define _CRT_UNPARENTHESIZE_(...) __VA_ARGS__\n\
-Expected1\n\
-#define _CRT_UNPARENTHESIZE(...)  _CRT_UNPARENTHESIZE_ __VA_ARGS__\n\
-Expected2\n\
+#define _CRT_UNPARENTHESIZE_(FIRST, ARGS ...) ARGS\n\
+Expected\n\
 ");
 
 	cConfig.Init("");
@@ -490,7 +488,7 @@ Expected2\n\
 	szDest.Init();
 	cFile.Append(&szDest);
 
-	AssertString("Expected1\nExpected2\n", szDest.Text());
+	AssertString("Expected\n", szDest.Text());
 
 	cPreprocessor.Kill();
 	szDest.Kill();
@@ -529,11 +527,8 @@ void TestPreprocessorComplexVariadic(void)
 
 	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
 	cFile.SetContents("\
-#define CHECK1(x, ...) if (!(x)) { printf(__VA_ARGS__); }\n\
-#define CHECK2(x, ...) if ((x)) { printf(__VA_ARGS__); }\n\
-#define CHECK3(...) { printf(__VA_ARGS__); }\n\
-#define MACRO(s, ...) printf(s, __VA_ARGS__)\n\
-CHECK1(0, \"here % s % s % s\", \"are\", \"some\", \"varargs1(1)\\n\");\n\
+#define CHECK1(x, a...) if (!(x)) { printf(a); }\n\
+CHECK1(0, \"here % s % s % s\", \"are\", \"some\", \"varargs(1)\\n\");\n\
 ");
 
 	cConfig.Init("");
@@ -542,7 +537,58 @@ CHECK1(0, \"here % s % s % s\", \"are\", \"some\", \"varargs1(1)\\n\");\n\
 	szDest.Init();
 	cFile.Append(&szDest);
 
-	AssertString("printf(here are some varargs1(1))", szDest.Text());
+	AssertString("if (!(0)) { printf(\"here % s % s % s\", \"are\", \"some\", \"varargs(1)\\n\"); };\n", szDest.Text());
+
+	cPreprocessor.Kill();
+	szDest.Kill();
+	cConfig.Kill();
+	cFile.Kill();
+
+	NumberKill();
+	KillTokenMemory();
+	OperatorsKill();
+	TypeConverterKill();
+	FastFunctionsKill();
+	TypesKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorRedefinedVariadic(void)
+{
+	TypesInit();
+	FastFunctionsInit();
+	TypeConverterInit();
+	OperatorsInit();
+	InitTokenMemory();
+	NumberInit();
+
+	CChars				szDest;
+	CTranslationUnit	cFile;
+	CPreprocessor		cPreprocessor;
+	CConfig				cConfig;
+	CChars				szName;
+
+	szName.Init("None.cpp");
+
+	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.SetContents("\
+#define _CRT_UNPARENTHESIZE_(...) __VA_ARGS__\n\
+Expected1\n\
+#define _CRT_UNPARENTHESIZE(...)  _CRT_UNPARENTHESIZE_ __VA_ARGS__\n\
+Expected2\n\
+");
+
+	cConfig.Init("");
+	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.PreprocessTranslationUnit(&cFile);
+	szDest.Init();
+	cFile.Append(&szDest);
+
+	AssertString("Expected1\nExpected2\n", szDest.Text());
 
 	cPreprocessor.Kill();
 	szDest.Kill();
@@ -644,9 +690,10 @@ void TestPreprocessor(void)
 	//TestPreprocessorConditionals();
 	//TestPreprocessorOperatorPrecedence();
 	//TestPreprocessorBlockSkipping();
-	TestPreprocessorHasInclude();
-	TestPreprocessorSimpleVariadic();
+	//TestPreprocessorHasInclude();
+	//TestPreprocessorSimpleVariadic();
 	TestPreprocessorComplexVariadic();
+	TestPreprocessorRedefinedVariadic();
 
 
 	TestStatistics();
