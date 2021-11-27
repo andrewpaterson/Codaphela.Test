@@ -790,9 +790,15 @@ void TestPreprocessorSimpleEmpty(void)
 	CChars				szDest;
 
 	szDest.Init();
-	CPreprocessor::Preprocess("#if EMPTY(1)", &szDest);
+	CPreprocessor::Preprocess("\
+#if EMPTY(1)\n\
+Nope, not good.\n\
+#else\n\
+Good, good.\n\
+#endif\
+", &szDest);
 
-	AssertString("Yuppers, here is good\n", szDest.Text());
+	AssertString("Good, good.\n", szDest.Text());
 	szDest.Kill();
 
 	KillTokenMemory();
@@ -810,9 +816,15 @@ void TestPreprocessorBrackettedEmpty(void)
 	CChars				szDest;
 
 	szDest.Init();
-	CPreprocessor::Preprocess("#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM)", &szDest);
+	CPreprocessor::Preprocess("\
+#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM)\n\
+Nope, not good.\n\
+#else\n\
+Good, good.\n\
+#endif\
+", &szDest);
 
-	AssertString("Yuppers, here is good\n", szDest.Text());
+	AssertString("Good, good.\n", szDest.Text());
 	szDest.Kill();
 
 	KillTokenMemory();
