@@ -779,6 +779,45 @@ void TestPreprocessorRedefinedEmpty(void)
 	KillTokenMemory();
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorSimpleEmpty(void)
+{
+	InitTokenMemory();
+
+	CChars				szDest;
+
+	szDest.Init();
+	CPreprocessor::Preprocess("#if EMPTY(1)", &szDest);
+
+	AssertString("Yuppers, here is good\n", szDest.Text());
+	szDest.Kill();
+
+	KillTokenMemory();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorBrackettedEmpty(void)
+{
+	InitTokenMemory();
+
+	CChars				szDest;
+
+	szDest.Init();
+	CPreprocessor::Preprocess("#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM)", &szDest);
+
+	AssertString("Yuppers, here is good\n", szDest.Text());
+	szDest.Kill();
+
+	KillTokenMemory();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -794,18 +833,20 @@ void TestPreprocessor(void)
 	OperatorsInit();
 	NumberInit();
 
-	//TestPreprocessorReplacement();
-	//TestPreprocessorExactDefine();
-	//TestPreprocessorConditionals();
-	//TestPreprocessorOperatorPrecedence();
-	//TestPreprocessorBlockSkipping();
-	//TestPreprocessorHasInclude();
-	//TestPreprocessorSimpleVariadic();
-	//TestPreprocessorComplexVariadic();
-	//TestPreprocessorRedefinedVariadic();
-	//TestPreprocessorDefineEvaluateToZero();
-	//TestPreprocessorExistingEmpty();
+	TestPreprocessorReplacement();
+	TestPreprocessorExactDefine();
+	TestPreprocessorConditionals();
+	TestPreprocessorOperatorPrecedence();
+	TestPreprocessorBlockSkipping();
+	TestPreprocessorHasInclude();
+	TestPreprocessorSimpleVariadic();
+	TestPreprocessorComplexVariadic();
+	TestPreprocessorRedefinedVariadic();
+	TestPreprocessorDefineEvaluateToZero();
+	TestPreprocessorSimpleEmpty();
+	TestPreprocessorExistingEmpty();
 	TestPreprocessorRedefinedEmpty();
+	TestPreprocessorBrackettedEmpty();
 
 	NumberKill();
 	OperatorsKill();
@@ -815,3 +856,4 @@ void TestPreprocessor(void)
 
 	TestStatistics();
 }
+
