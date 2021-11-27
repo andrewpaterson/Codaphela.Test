@@ -674,6 +674,116 @@ Yuppers, here is good\n\
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestPreprocessorExistingEmpty(void)
+{
+	InitTokenMemory();
+
+	CChars				szDest;
+	CTranslationUnit	cFile;
+	CPreprocessor		cPreprocessor;
+	CConfig				cConfig;
+	CChars				szName;
+
+	szName.Init("None.cpp");
+
+	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.SetContents("\
+#if EMPTY > 1997L\n\
+Should not get here\n\
+#else\n\
+Evaluate Good!\n\
+#endif\n\
+");
+
+	cConfig.Init("");
+	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.AddDefine("EMPTY");
+	cPreprocessor.PreprocessTranslationUnit(&cFile);
+	szDest.Init();
+	cFile.Append(&szDest);
+
+	AssertString("Evaluate Good!\n", szDest.Text());
+
+	cPreprocessor.Kill();
+	szDest.Kill();
+	cConfig.Kill();
+	cFile.Kill();
+
+	KillTokenMemory();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorRedefinedEmpty(void)
+{
+	InitTokenMemory();
+
+	CChars				szDest;
+	CTranslationUnit	cFile;
+	CPreprocessor		cPreprocessor;
+	CConfig				cConfig;
+	CChars				szName;
+	CDefine*			pcDefine;
+	CPPText*			pcText;
+	CChars				szText;
+
+	szName.Init("None.cpp");
+
+	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.SetContents("\
+#if defined(EMPTY)\n\
+#define REEMPTY EMPTY\n\
+#endif\n\
+#if REEMPTY > 1996\n\
+#define _HAS_X 1\n\
+#define _HAS_Y 1\n\
+#elif REEMPTY > 1\n\
+#define _HAS_X 1\n\
+#define _HAS_Y 0\n\
+#else\n\
+#define _HAS_X 0\n\
+#define _HAS_Y 0\n\
+#endif\n\
+#undef REEMPTY\n\
+");
+
+	cConfig.Init("");
+	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.AddDefine("EMPTY");
+	cPreprocessor.PreprocessTranslationUnit(&cFile);
+	szDest.Init();
+	cFile.Append(&szDest);
+
+	AssertString("", szDest.Text());
+
+	pcDefine = cPreprocessor.GetDefine("_HAS_X", TRUE);
+	pcText = (CPPText*)pcDefine->mcReplacement.Get(0);
+	szText.Init();
+	AssertString("0", pcText->Append(&szText));
+	szText.Kill();
+
+	pcDefine = cPreprocessor.GetDefine("_HAS_Y", TRUE);
+	pcText = (CPPText*)pcDefine->mcReplacement.Get(0);
+	szText.Init();
+	AssertString("0", pcText->Append(&szText));
+	szText.Kill();
+
+	cPreprocessor.Kill();
+	szDest.Kill();
+	cConfig.Kill();
+	cFile.Kill();
+
+	KillTokenMemory();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestPreprocessor(void)
 {
 	BeginTests();
@@ -684,16 +794,18 @@ void TestPreprocessor(void)
 	OperatorsInit();
 	NumberInit();
 
-	TestPreprocessorReplacement();
-	TestPreprocessorExactDefine();
-	TestPreprocessorConditionals();
-	TestPreprocessorOperatorPrecedence();
-	TestPreprocessorBlockSkipping();
-	TestPreprocessorHasInclude();
-	TestPreprocessorSimpleVariadic();
-	TestPreprocessorComplexVariadic();
-	TestPreprocessorRedefinedVariadic();
-	TestPreprocessorDefineEvaluateToZero();
+	//TestPreprocessorReplacement();
+	//TestPreprocessorExactDefine();
+	//TestPreprocessorConditionals();
+	//TestPreprocessorOperatorPrecedence();
+	//TestPreprocessorBlockSkipping();
+	//TestPreprocessorHasInclude();
+	//TestPreprocessorSimpleVariadic();
+	//TestPreprocessorComplexVariadic();
+	//TestPreprocessorRedefinedVariadic();
+	//TestPreprocessorDefineEvaluateToZero();
+	//TestPreprocessorExistingEmpty();
+	TestPreprocessorRedefinedEmpty();
 
 	NumberKill();
 	OperatorsKill();
@@ -703,4 +815,3 @@ void TestPreprocessor(void)
 
 	TestStatistics();
 }
-
