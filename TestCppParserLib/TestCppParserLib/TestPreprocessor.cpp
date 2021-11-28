@@ -879,6 +879,62 @@ char	gszF1[] = D3(F1(H));\
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestPreprocessorHasCPPNameSpaceAttribute()
+{
+	InitTokenMemory();
+
+	CChars				szDest;
+	CTranslationUnit	cFile;
+	CPreprocessor		cPreprocessor;
+	CConfig				cConfig;
+	CChars				szName;
+	CDefine* pcDefine;
+
+	szName.Init("None.cpp");
+
+	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.SetContents("\
+#ifndef __has_cpp_attribute\n\
+#define _KNOWN_SEMANTICS_1\n\
+#elif defined(CUDA)\n\
+#define _KNOWN_SEMANTICS_2\n\
+#elif __has_cpp_attribute(name_space::known_semantics)\n\
+#define _KNOWN_SEMANTICS_3 [[msvc::known_semantics]]\n\
+#else\n\
+#define _KNOWN_SEMANTICS_4\n\
+#endif\n\
+");
+
+	cConfig.Init("");
+	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.PreprocessTranslationUnit(&cFile);
+	szDest.Init();
+	cFile.Append(&szDest);
+
+	AssertString("", szDest.Text());
+
+	pcDefine = cPreprocessor.GetDefine("_KNOWN_SEMANTICS_1", TRUE);
+	AssertNotNull(pcDefine);
+	pcDefine = cPreprocessor.GetDefine("_KNOWN_SEMANTICS_2", TRUE);
+	AssertNull(pcDefine);
+	pcDefine = cPreprocessor.GetDefine("_KNOWN_SEMANTICS_3", TRUE);
+	AssertNull(pcDefine);
+	pcDefine = cPreprocessor.GetDefine("_KNOWN_SEMANTICS_4", TRUE);
+	AssertNull(pcDefine);
+
+	cPreprocessor.Kill();
+	szDest.Kill();
+	cConfig.Kill();
+	cFile.Kill();
+
+	KillTokenMemory();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestPreprocessor(void)
 {
 	BeginTests();
@@ -905,6 +961,7 @@ void TestPreprocessor(void)
 	TestPreprocessorBrackettedEmpty();
 	TestPreprocessorHashedArgumentExpansion();
 	TestPreprocessorDefineBrackettedOmmitted();
+	TestPreprocessorHasCPPNameSpaceAttribute();
 
 	NumberKill();
 	OperatorsKill();
