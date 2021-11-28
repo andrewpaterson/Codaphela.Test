@@ -812,12 +812,11 @@ Good, good.\n\
 void TestPreprocessorBrackettedEmpty(void)
 {
 	InitTokenMemory();
-
 	CChars				szDest;
 
 	szDest.Init();
 	CPreprocessor::Preprocess("\
-#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM)\n\
+#if FUNC(X_TOKE | Y_TOKE)\n\
 Nope, not good.\n\
 #else\n\
 Good, good.\n\
@@ -825,6 +824,51 @@ Good, good.\n\
 ", &szDest);
 
 	AssertString("Good, good.\n", szDest.Text());
+	szDest.Kill();
+
+	KillTokenMemory();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorDefineBrackettedOmmitted(void)
+{
+	InitTokenMemory();
+	CChars				szDest;
+
+	szDest.Init();
+	CPreprocessor::Preprocess("\
+#define F(X) \n\
+F Surfe();\n\
+", &szDest);
+
+	AssertString("Surfe();\n", szDest.Text());
+	szDest.Kill();
+
+	KillTokenMemory();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorHashedArgumentExpansion()
+{
+	InitTokenMemory();
+	CChars				szDest;
+
+	szDest.Init();
+	CPreprocessor::Preprocess("\
+#define D3(X) #X\n\
+#define F1(X) X##__##X\n\
+char	gszF1[] = D3(F1(H));\
+", &szDest);
+
+	AssertString("char gszF1[] = \"H__H\";\n", szDest.Text());
 	szDest.Kill();
 
 	KillTokenMemory();
@@ -859,6 +903,8 @@ void TestPreprocessor(void)
 	TestPreprocessorExistingEmpty();
 	TestPreprocessorRedefinedEmpty();
 	TestPreprocessorBrackettedEmpty();
+	TestPreprocessorHashedArgumentExpansion();
+	TestPreprocessorDefineBrackettedOmmitted();
 
 	NumberKill();
 	OperatorsKill();
