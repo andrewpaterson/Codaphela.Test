@@ -70,6 +70,9 @@
     <Filter Include="Source\File\Indexed\Sequence">
       <UniqueIdentifier>{e11fed26-2343-4c4c-ba2e-1760e53f7ddf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Text\Calculator">
+      <UniqueIdentifier>{2194bd06-1f6e-43f6-baae-085a5a72416f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestCoreLib.cpp">
@@ -188,6 +191,9 @@
     </ClCompile>
     <ClCompile Include="TestSequence.cpp">
       <Filter>Source\File\Indexed\Sequence</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCalculator.cpp">
+      <Filter>Source\Text\Calculator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

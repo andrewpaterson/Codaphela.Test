@@ -217,6 +217,7 @@
     <ClCompile Include="IndexTreeCallbackTestObject.cpp" />
     <ClCompile Include="IndexTreeFileDataTestCallback.cpp" />
     <ClCompile Include="NamedIndexedDataObject.cpp" />
+    <ClCompile Include="TestCalculator.cpp" />
     <ClCompile Include="TestCodabase.cpp" />
     <ClCompile Include="TestCoreLib.cpp" />
     <ClCompile Include="TestFiles.cpp" />

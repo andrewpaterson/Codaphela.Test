@@ -103,12 +103,13 @@ void TestXMLComments(void)
 	AssertBool(TRUE, bContiguous);
 
 	szDoc.Init();
-	cMarkup.mpcDoc->ToString(&szDoc);
+	cMarkup.mpcDoc->Print(&szDoc);
 	AssertString(szExpectedXML, szDoc.Text());
 
 	szDoc.Kill();
 	cMarkup.Kill();
 }
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -157,7 +158,7 @@ GEST Service CreateService error = 1073\n\
 	cXMLParser.Kill();
 
 	szDoc.Init();
-	cMarkup.mpcDoc->ToString(&szDoc);
+	cMarkup.mpcDoc->Print(&szDoc);
 	AssertString(szExpectedXML, szDoc.Text());
 
 	szDoc.Kill();
@@ -226,7 +227,7 @@ void TestNamedReferences(void)
 	AssertString("TagNameRef", pcNamedRef->mszName.Text());
 
 	szDoc.Init();
-	pcDoc->ToString(&szDoc);
+	pcDoc->Print(&szDoc);
 	AssertString(szExpectedXML, szDoc.Text());
 	szDoc.Kill();
 

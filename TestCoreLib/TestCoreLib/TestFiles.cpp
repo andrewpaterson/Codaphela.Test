@@ -252,13 +252,11 @@ void TestGetFileNames(void)
 //////////////////////////////////////////////////////////////////////////
 void AssertFileName(CMapStringInt* pcMap, int iCount, int iRank, char* szFileName)
 {
-	int*			piValue;
+	int			iValue;
 
-	piValue = pcMap->Get(szFileName);
-	AssertNotNull(piValue);
-
-	AssertInt(iCount, *piValue & 0xFFFF);
-	AssertInt(iRank, *piValue >> 16);
+	iValue = pcMap->Get(szFileName);
+	AssertInt(iCount, iValue & 0xFFFF);
+	AssertInt(iRank, iValue >> 16);
 }
 
 
