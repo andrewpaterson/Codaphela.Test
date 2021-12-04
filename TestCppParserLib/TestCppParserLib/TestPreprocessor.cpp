@@ -9,6 +9,31 @@
 #include "TestLib/Assert.h"
 
 
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorSimple(void)
+{
+	InitTokenMemory();
+
+	CChars	szDest;
+
+	szDest.Init();
+	CPreprocessor::Preprocess("\
+#define XACT 3\n\
+int x = XACT + 2;", &szDest);
+
+	//Actually I don't know what this is supposed to look like.  Just make the test pass for now.
+	AssertString("int x = 3 + 2;", szDest.Text());
+	szDest.Kill();
+
+	KillTokenMemory();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -366,10 +391,10 @@ void TestPreprocessorBlockSkipping(void)
 
 	cLibraries.Init();
 	cConfig.Init("DEBUG");
-	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
-	cFile.Append(&szDest);
+	cFile.Print(&szDest);
 
 	AssertString("Start\nPassed\nEnd\n", szDest.Text());
 
@@ -390,13 +415,13 @@ void TestPreprocessorBlockSkipping(void)
 					  End\n\
 					  Test\n\
 					  ");
-
+	
 	cLibraries.Init();
 	cConfig.Init("DEBUG");
-	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
-	cFile.Append(&szDest);
+	cFile.Print(&szDest);
 
 	AssertString("Start\nPassed\nEnd\nTest\n", szDest.Text());
 
@@ -448,10 +473,10 @@ Expected\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
-	cFile.Append(&szDest);
+	cFile.Print(&szDest);
 
 	AssertString("Expected\n", szDest.Text());
 
@@ -487,10 +512,10 @@ Expected\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
-	cFile.Append(&szDest);
+	cFile.Print(&szDest);
 
 	AssertString("Expected\n", szDest.Text());
 
@@ -526,10 +551,10 @@ CHECK1(0, \"here % s % s % s\", \"are\", \"some\", \"varargs(1)\\n\");\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
-	cFile.Append(&szDest);
+	cFile.Print(&szDest);
 
 	AssertString("if (!(0)) { printf(\"here % s % s % s\", \"are\", \"some\", \"varargs(1)\\n\"); };\n", szDest.Text());
 
@@ -567,10 +592,10 @@ Expected2\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
-	cFile.Append(&szDest);
+	cFile.Print(&szDest);
 
 	AssertString("Expected1\nExpected2\n", szDest.Text());
 
@@ -609,7 +634,7 @@ void TestPreprocessorHasInclude(void)
 
 
 	cHeaderFiles.Init();
-	cHeaderNames.Init(szDirectory.Text(), &cHeaderFiles, TRUE);
+	cHeaderNames.Init(szDirectory.Text(), &cHeaderFiles, FALSE, TRUE);
 
 	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
 	cFile.SetContents("\
@@ -623,11 +648,11 @@ Nope\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
 	cPreprocessor.AddIncludeDirectory(&cHeaderNames);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
-	cFile.Append(&szDest);
+	cFile.Print(&szDest);
 
 	AssertString("IncludeWasHadded\n", szDest.Text());
 
@@ -696,11 +721,11 @@ Evaluate Good!\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
 	cPreprocessor.AddDefine("EMPTY");
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
-	cFile.Append(&szDest);
+	cFile.Print(&szDest);
 
 	AssertString("Evaluate Good!\n", szDest.Text());
 
@@ -751,24 +776,24 @@ void TestPreprocessorRedefinedEmpty(void)
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
 	cPreprocessor.AddDefine("EMPTY");
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
-	cFile.Append(&szDest);
+	cFile.Print(&szDest);
 
 	AssertString("", szDest.Text());
 
 	pcDefine = cPreprocessor.GetDefine("_HAS_X", TRUE);
-	pcText = (CPPText*)pcDefine->mcReplacement.Get(0);
+	pcText = (CPPText*)pcDefine->GetReplacement()->Get(0);
 	szText.Init();
-	AssertString("0", pcText->Append(&szText));
+	AssertString("0", pcText->Print(&szText));
 	szText.Kill();
 
 	pcDefine = cPreprocessor.GetDefine("_HAS_Y", TRUE);
-	pcText = (CPPText*)pcDefine->mcReplacement.Get(0);
+	pcText = (CPPText*)pcDefine->GetReplacement()->Get(0);
 	szText.Init();
-	AssertString("0", pcText->Append(&szText));
+	AssertString("0", pcText->Print(&szText));
 	szText.Kill();
 
 	cPreprocessor.Kill();
@@ -778,6 +803,7 @@ void TestPreprocessorRedefinedEmpty(void)
 
 	KillTokenMemory();
 }
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -906,10 +932,10 @@ void TestPreprocessorHasCPPNameSpaceAttribute()
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, &cFile.mcStack);
+	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
-	cFile.Append(&szDest);
+	cFile.Print(&szDest);
 
 	AssertString("", szDest.Text());
 
@@ -970,23 +996,24 @@ void TestPreprocessor(void)
 	OperatorsInit();
 	NumberInit();
 
-	//TestPreprocessorReplacement();
-	//TestPreprocessorExactDefine();
-	//TestPreprocessorConditionals();
-	//TestPreprocessorOperatorPrecedence();
-	//TestPreprocessorBlockSkipping();
-	//TestPreprocessorHasInclude();
-	//TestPreprocessorSimpleVariadic();
-	//TestPreprocessorComplexVariadic();
-	//TestPreprocessorRedefinedVariadic();
-	//TestPreprocessorDefineEvaluateToZero();
-	//TestPreprocessorSimpleEmpty();
-	//TestPreprocessorExistingEmpty();
-	//TestPreprocessorRedefinedEmpty();
-	//TestPreprocessorBrackettedEmpty();
-	//TestPreprocessorHashedArgumentExpansion();
-	//TestPreprocessorDefineBrackettedOmmitted();
-	//TestPreprocessorHasCPPNameSpaceAttribute();
+	TestPreprocessorSimple();
+	TestPreprocessorReplacement();
+	TestPreprocessorExactDefine();
+	TestPreprocessorConditionals();
+	TestPreprocessorOperatorPrecedence();
+	TestPreprocessorBlockSkipping();
+	TestPreprocessorHasInclude();
+	TestPreprocessorSimpleVariadic();
+	TestPreprocessorComplexVariadic();
+	TestPreprocessorRedefinedVariadic();
+	TestPreprocessorDefineEvaluateToZero();
+	TestPreprocessorSimpleEmpty();
+	TestPreprocessorExistingEmpty();
+	TestPreprocessorRedefinedEmpty();
+	TestPreprocessorBrackettedEmpty();
+	TestPreprocessorHashedArgumentExpansion();
+	TestPreprocessorDefineBrackettedOmmitted();
+	TestPreprocessorHasCPPNameSpaceAttribute();
 	TestPreprocessorNegativeExpression();
 
 	NumberKill();

@@ -28,7 +28,7 @@ void TestReinclude(void)
 
 	cProject.Init();
 
-	pcLibrary = cProject.AddLibrary("Test", ".");
+	pcLibrary = cProject.AddLibrary("Test", ".", FALSE);
 	pcLibrary->AddFile("TestHeader.h");
 	pcTU1 = (CTranslationUnit*)pcLibrary->AddFile("TestUnit1.cpp", TRUE, TRUE);
 	pcTU2 = (CTranslationUnit*)pcLibrary->AddFile("TestUnit2.cpp", TRUE, TRUE);
@@ -56,7 +56,7 @@ TestHeader.h          : 2, 0 (14)\n\
 TestHeader.h (Parsing): 3, 0\n\
 TestUnit1.cpp (Parsing): 1, 0 (5)\n\
 TestUnit1.cpp (Parsing): 2, 0\n\
-", pcTU1->mpcLogs->szBlocksLog.Text());
+", pcTU1->GetLogs()->szBlocksLog.Text());
 
 	AssertString("\
      TestUnit1.cpp\n\
@@ -64,7 +64,7 @@ TestUnit1.cpp (Parsing): 2, 0\n\
              TestHeader2.h\n\
          TestHeader.h\n\
          TestHeader.h\n\
-", pcTU1->mpcLogs->szIncludesLog.Text());
+", pcTU1->GetLogs()->szIncludesLog.Text());
 
 		AssertString("\
 TestUnit2.cpp (Parsing): 0, 0 (0)\n\
@@ -84,7 +84,7 @@ TestHeader.h          : 2, 0 (14)\n\
 TestHeader.h (Parsing): 3, 0\n\
 TestUnit2.cpp (Parsing): 1, 0 (5)\n\
 TestUnit2.cpp (Parsing): 2, 0\n\
-", pcTU2->mpcLogs->szBlocksLog.Text());
+", pcTU2->GetLogs()->szBlocksLog.Text());
 
 	AssertString("\
      TestUnit2.cpp\n\
@@ -92,9 +92,9 @@ TestUnit2.cpp (Parsing): 2, 0\n\
              TestHeader2.h\n\
          TestHeader.h\n\
          TestHeader.h\n\
-", pcTU2->mpcLogs->szIncludesLog.Text());
+", pcTU2->GetLogs()->szIncludesLog.Text());
 
-	AssertInt(3, cProject.miBlockReuse);
+	AssertInt(3, cProject.GetBlockReuse());
 
 	cProject.Kill();
 
