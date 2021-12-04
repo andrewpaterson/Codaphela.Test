@@ -27,7 +27,7 @@ void TestPreprocessorSimple(void)
 int x = XACT + 2;", &szDest);
 
 	//Actually I don't know what this is supposed to look like.  Just make the test pass for now.
-	AssertString("int x = 3 + 2;", szDest.Text());
+	AssertString("int x = 3 + 2;\n", szDest.Text());
 	szDest.Kill();
 
 	KillTokenMemory();
@@ -622,7 +622,7 @@ void TestPreprocessorHasInclude(void)
 	CConfig				cConfig;
 	CChars				szName;
 	CHeaderFileMap		cHeaderFiles;
-	CHeaderNameMap		cHeaderNames;
+	CHeaderFiles		cHeaderNames;
 	CFileUtil			cFileUtil;
 	CChars				szDirectory;
 

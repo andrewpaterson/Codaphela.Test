@@ -54,3 +54,4 @@ TestCoreLib/Release
 /TestInputLib/TestInputLib/Release/*
 /TestInputLib/Release/*
 /TestInputLib/x64/Release/*
+/TestCppParserLib/TestCppParserLib/Post/*
