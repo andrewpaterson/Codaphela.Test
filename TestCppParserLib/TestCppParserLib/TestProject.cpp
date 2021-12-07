@@ -25,76 +25,66 @@ void TestReinclude(void)
 	CConfig*			pcConfig;
 	CTranslationUnit*	pcTU1;
 	CTranslationUnit*	pcTU2;
+	CHeaderFile*		pcHF1;
+	CHeaderFile*		pcHF2;
 
-	cProject.Init();
+	cProject.Init(TRUE, TRUE);
 
 	pcLibrary = cProject.AddLibrary("Test", ".", FALSE);
-	pcLibrary->AddFile("TestHeader.h");
-	pcTU1 = (CTranslationUnit*)pcLibrary->AddFile("TestUnit1.cpp", TRUE, TRUE);
-	pcTU2 = (CTranslationUnit*)pcLibrary->AddFile("TestUnit2.cpp", TRUE, TRUE);
-	pcLibrary->AddFile("TestHeader2.h");
+	pcHF1 = pcLibrary->AddHeaderFile("TestHeader.h");
+	pcTU1 = pcLibrary->AddTranslationUnit("TestUnit1.cpp", TRUE, TRUE);
+	pcTU2 = pcLibrary->AddTranslationUnit("TestUnit2.cpp", TRUE, TRUE);
+	pcHF2 = pcLibrary->AddHeaderFile("TestHeader2.h");
 	pcConfig = pcLibrary->AddConfiguration("Debug");
 	pcConfig->AddDefines("_WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE");
 
 	cProject.Process("Debug");
 
-	AssertString("\
-TestUnit1.cpp (Parsing): 0, 0 (0)\n\
-TestHeader.h (Parsing): 0, 0 (0)\n\
-TestHeader2.h (Parsing): 0, 0 (0)\n\
-TestHeader2.h (Parsing): 1, 0 (4)\n\
-TestHeader2.h (Parsing): 2, 0 (7)\n\
-TestHeader2.h (Parsing): 3, 0\n\
-TestHeader.h (Parsing): 1, 0 (5)\n\
-TestHeader.h (Parsing): 2, 0 (14)\n\
-TestHeader.h (Parsing): 3, 0\n\
-TestHeader.h (Parsing): 0, 0 (0)\n\
-TestHeader.h          : 2, 0 (14)\n\
-TestHeader.h (Parsing): 3, 0\n\
-TestHeader.h (Parsing): 0, 0 (0)\n\
-TestHeader.h          : 2, 0 (14)\n\
-TestHeader.h (Parsing): 3, 0\n\
-TestUnit1.cpp (Parsing): 1, 0 (5)\n\
-TestUnit1.cpp (Parsing): 2, 0\n\
-", pcTU1->GetLogs()->szBlocksLog.Text());
 
 	AssertString("\
-     TestUnit1.cpp\n\
-         TestHeader.h\n\
-             TestHeader2.h\n\
-         TestHeader.h\n\
-         TestHeader.h\n\
-", pcTU1->GetLogs()->szIncludesLog.Text());
+     TestUnit1.cpp (Parsing): 0, 0 (1)\n\
+         TestHeader.h (Parsing): 0, 0 (1)\n\
+             TestHeader2.h (Parsing): 0, 0 (1)\n\
+             TestHeader2.h (Parsing): 1, 0 (5)\n\
+             TestHeader2.h (Parsing): 2, 0 (8)\n\
+         TestHeader.h (Parsing): 1, 0 (6)\n\
+         TestHeader.h (Parsing): 2, 0 (15)\n\
+         TestHeader.h (Parsing): 0, 0 (1)\n\
+         TestHeader.h          : 2, 0 (15)\n\
+         TestHeader.h (Parsing): 0, 0 (1)\n\
+         TestHeader.h          : 2, 0 (15)\n\
+     TestUnit1.cpp (Parsing): 1, 0 (6)\n", pcTU1->GetLogs()->szBlocksLog.Text());
+
+	AssertString("\
+     TestUnit1.cpp (Included)\n\
+         TestHeader.h (Included)\n\
+             TestHeader2.h (Included)\n\
+         TestHeader.h (Included)\n\
+         TestHeader.h (Included)\n", pcTU1->GetLogs()->szIncludesLog.Text());
 
 		AssertString("\
-TestUnit2.cpp (Parsing): 0, 0 (0)\n\
-TestHeader.h (Parsing): 0, 0 (0)\n\
-TestHeader2.h (Parsing): 0, 0 (0)\n\
-TestHeader2.h (Parsing): 1, 0 (4)\n\
-TestHeader2.h (Parsing): 2, 0 (7)\n\
-TestHeader2.h (Parsing): 3, 0\n\
-TestHeader.h (Parsing): 1, 0 (5)\n\
-TestHeader.h (Parsing): 2, 0 (14)\n\
-TestHeader.h (Parsing): 3, 0\n\
-TestHeader.h (Parsing): 0, 0 (0)\n\
-TestHeader.h          : 2, 0 (14)\n\
-TestHeader.h (Parsing): 3, 0\n\
-TestHeader.h (Parsing): 0, 0 (0)\n\
-TestHeader.h          : 2, 0 (14)\n\
-TestHeader.h (Parsing): 3, 0\n\
-TestUnit2.cpp (Parsing): 1, 0 (5)\n\
-TestUnit2.cpp (Parsing): 2, 0\n\
-", pcTU2->GetLogs()->szBlocksLog.Text());
+     TestUnit2.cpp (Parsing): 0, 0 (1)\n\
+         TestHeader.h (Parsing): 0, 0 (1)\n\
+             TestHeader2.h (Parsing): 0, 0 (1)\n\
+             TestHeader2.h (Parsing): 1, 0 (5)\n\
+             TestHeader2.h (Parsing): 2, 0 (8)\n\
+         TestHeader.h (Parsing): 1, 0 (6)\n\
+         TestHeader.h (Parsing): 2, 0 (15)\n\
+         TestHeader.h (Parsing): 0, 0 (1)\n\
+         TestHeader.h          : 2, 0 (15)\n\
+         TestHeader.h (Parsing): 0, 0 (1)\n\
+         TestHeader.h          : 2, 0 (15)\n\
+     TestUnit2.cpp (Parsing): 1, 0 (6)\n", pcTU2->GetLogs()->szBlocksLog.Text());
 
 	AssertString("\
-     TestUnit2.cpp\n\
-         TestHeader.h\n\
-             TestHeader2.h\n\
-         TestHeader.h\n\
-         TestHeader.h\n\
+     TestUnit2.cpp (Included)\n\
+         TestHeader.h (Included)\n\
+             TestHeader2.h (Included)\n\
+         TestHeader.h (Included)\n\
+         TestHeader.h (Included)\n\
 ", pcTU2->GetLogs()->szIncludesLog.Text());
 
-	AssertInt(3, cProject.GetBlockReuse());
+	AssertInt(2, cProject.GetBlockReuse());
 
 	cProject.Kill();
 

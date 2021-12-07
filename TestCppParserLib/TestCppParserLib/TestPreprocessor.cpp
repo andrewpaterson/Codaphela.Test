@@ -22,11 +22,16 @@ void TestPreprocessorSimple(void)
 	CChars	szDest;
 
 	szDest.Init();
+	CPreprocessor::Preprocess("char sz;", &szDest);
+
+	AssertString("char sz;\n", szDest.Text());
+	szDest.Kill();
+
+	szDest.Init();
 	CPreprocessor::Preprocess("\
 #define XACT 3\n\
 int x = XACT + 2;", &szDest);
 
-	//Actually I don't know what this is supposed to look like.  Just make the test pass for now.
 	AssertString("int x = 3 + 2;\n", szDest.Text());
 	szDest.Kill();
 
@@ -391,7 +396,7 @@ void TestPreprocessorBlockSkipping(void)
 
 	cLibraries.Init();
 	cConfig.Init("DEBUG");
-	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
+	cPreprocessor.Init(&cConfig, &cFile);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
 	cFile.Print(&szDest);
@@ -418,7 +423,7 @@ void TestPreprocessorBlockSkipping(void)
 	
 	cLibraries.Init();
 	cConfig.Init("DEBUG");
-	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
+	cPreprocessor.Init(&cConfig, &cFile);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
 	cFile.Print(&szDest);
@@ -473,7 +478,7 @@ Expected\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
+	cPreprocessor.Init(&cConfig, &cFile);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
 	cFile.Print(&szDest);
@@ -512,7 +517,7 @@ Expected\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
+	cPreprocessor.Init(&cConfig, &cFile);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
 	cFile.Print(&szDest);
@@ -551,7 +556,7 @@ CHECK1(0, \"here % s % s % s\", \"are\", \"some\", \"varargs(1)\\n\");\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
+	cPreprocessor.Init(&cConfig, &cFile);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
 	cFile.Print(&szDest);
@@ -592,7 +597,7 @@ Expected2\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
+	cPreprocessor.Init(&cConfig, &cFile);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
 	cFile.Print(&szDest);
@@ -648,7 +653,7 @@ Nope\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
+	cPreprocessor.Init(&cConfig, &cFile);
 	cPreprocessor.AddIncludeDirectory(&cHeaderNames);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
@@ -721,7 +726,7 @@ Evaluate Good!\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
+	cPreprocessor.Init(&cConfig, &cFile);
 	cPreprocessor.AddDefine("EMPTY");
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
@@ -776,7 +781,7 @@ void TestPreprocessorRedefinedEmpty(void)
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
+	cPreprocessor.Init(&cConfig, &cFile);
 	cPreprocessor.AddDefine("EMPTY");
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
@@ -932,7 +937,7 @@ void TestPreprocessorHasCPPNameSpaceAttribute()
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, cFile.GetTokenMemory());
+	cPreprocessor.Init(&cConfig, &cFile);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
 	cFile.Print(&szDest);
