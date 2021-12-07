@@ -40,7 +40,6 @@ void TestReinclude(void)
 
 	cProject.Process("Debug");
 
-
 	AssertString("\
      TestUnit1.cpp (Parsing): 0, 0 (1)\n\
          TestHeader.h (Parsing): 0, 0 (1)\n\
