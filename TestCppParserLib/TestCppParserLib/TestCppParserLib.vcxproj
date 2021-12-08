@@ -221,6 +221,7 @@
     <ClCompile Include="TestProject.cpp" />
     <ClCompile Include="TestUnit1.cpp" />
     <ClCompile Include="TestUnit2.cpp" />
+    <ClCompile Include="TestUnit3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestHeader.h" />

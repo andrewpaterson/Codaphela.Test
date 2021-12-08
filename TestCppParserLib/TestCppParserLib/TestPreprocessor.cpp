@@ -403,6 +403,7 @@ void TestPreprocessorBlockSkipping(void)
 
 	AssertString("Start\nPassed\nEnd\n", szDest.Text());
 
+	cPreprocessor.Kill();
 	szDest.Kill();
 	cLibraries.Kill();
 	cConfig.Kill();
@@ -525,6 +526,7 @@ Expected\n\
 	AssertString("Expected\n", szDest.Text());
 
 	cPreprocessor.Kill();
+	szName.Kill();
 	szDest.Kill();
 	cConfig.Kill();
 	cFile.Kill();
@@ -564,6 +566,7 @@ CHECK1(0, \"here % s % s % s\", \"are\", \"some\", \"varargs(1)\\n\");\n\
 	AssertString("if (!(0)) { printf(\"here % s % s % s\", \"are\", \"some\", \"varargs(1)\\n\"); };\n", szDest.Text());
 
 	cPreprocessor.Kill();
+	szName.Kill();
 	szDest.Kill();
 	cConfig.Kill();
 	cFile.Kill();
@@ -605,6 +608,7 @@ Expected2\n\
 	AssertString("Expected1\nExpected2\n", szDest.Text());
 
 	cPreprocessor.Kill();
+	szName.Kill();
 	szDest.Kill();
 	cConfig.Kill();
 	cFile.Kill();
@@ -665,6 +669,7 @@ Nope\n\
 	cHeaderFiles.Kill();
 	cHeaderNames.Kill();
 
+	szName.Kill();
 	szDirectory.Kill();
 	szDest.Kill();
 	cConfig.Kill();
@@ -735,6 +740,7 @@ Evaluate Good!\n\
 	AssertString("Evaluate Good!\n", szDest.Text());
 
 	cPreprocessor.Kill();
+	szName.Kill();
 	szDest.Kill();
 	cConfig.Kill();
 	cFile.Kill();
@@ -802,6 +808,7 @@ void TestPreprocessorRedefinedEmpty(void)
 	szText.Kill();
 
 	cPreprocessor.Kill();
+	szName.Kill();
 	szDest.Kill();
 	cConfig.Kill();
 	cFile.Kill();
@@ -954,6 +961,7 @@ void TestPreprocessorHasCPPNameSpaceAttribute()
 	AssertNull(pcDefine);
 
 	cPreprocessor.Kill();
+	szName.Kill();
 	szDest.Kill();
 	cConfig.Kill();
 	cFile.Kill();

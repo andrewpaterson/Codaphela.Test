@@ -11,6 +11,50 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestNoInclude(void)
+{
+	TypesInit();
+	FastFunctionsInit();
+	TypeConverterInit();
+	OperatorsInit();
+	InitTokenMemory();
+	NumberInit();
+
+	CProject			cProject;
+	CLibrary*			pcLibrary;
+	CConfig*			pcConfig;
+	CTranslationUnit*	pcTU3;
+
+	cProject.Init(TRUE, TRUE);
+
+	pcLibrary = cProject.AddLibrary("Test", ".", FALSE);
+	pcTU3 = pcLibrary->AddTranslationUnit("TestUnit3.cpp", TRUE, TRUE);
+	pcConfig = pcLibrary->AddConfiguration("Debug");
+	pcConfig->AddDefines("_WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE");
+
+	cProject.Process("Debug");
+
+	AssertString("     TestUnit3.cpp (Parsing): 0, 0 (1)\n", pcTU3->GetLogs()->szBlocksLog.Text());
+
+	AssertString("     TestUnit3.cpp (Included)\n", pcTU3->GetLogs()->szIncludesLog.Text());
+
+	AssertInt(0, cProject.GetBlockReuse());
+
+	cProject.Kill();
+
+	NumberKill();
+	KillTokenMemory();
+	OperatorsKill();
+	TypeConverterKill();
+	FastFunctionsKill();
+	TypesKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestReinclude(void)
 {
 	TypesInit();
@@ -104,6 +148,7 @@ void TestProject(void)
 {
 	BeginTests();
 
+	TestNoInclude();
 	TestReinclude();
 
 	TestStatistics();
