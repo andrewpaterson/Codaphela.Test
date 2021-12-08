@@ -31,6 +31,9 @@
     <ClCompile Include="TestUnit3.cpp">
       <Filter>Source\Project</Filter>
     </ClCompile>
+    <ClCompile Include="TestUnit4.cpp">
+      <Filter>Source\Project</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestHeader.h">

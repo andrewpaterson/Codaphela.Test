@@ -222,6 +222,7 @@
     <ClCompile Include="TestUnit1.cpp" />
     <ClCompile Include="TestUnit2.cpp" />
     <ClCompile Include="TestUnit3.cpp" />
+    <ClCompile Include="TestUnit4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestHeader.h" />

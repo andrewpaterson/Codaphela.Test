@@ -55,6 +55,59 @@ void TestNoInclude(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestOneInclude(void)
+{
+	TypesInit();
+	FastFunctionsInit();
+	TypeConverterInit();
+	OperatorsInit();
+	InitTokenMemory();
+	NumberInit();
+
+	CProject			cProject;
+	CLibrary* pcLibrary;
+	CConfig* pcConfig;
+	CTranslationUnit* pcTU1;
+	CHeaderFile* pcHF1;
+
+	cProject.Init(TRUE, TRUE);
+
+	pcLibrary = cProject.AddLibrary("Test", ".", FALSE);
+	pcHF1 = pcLibrary->AddHeaderFile("TestHeader2.h");
+	pcTU1 = pcLibrary->AddTranslationUnit("TestUnit4.cpp", TRUE, TRUE);
+	pcConfig = pcLibrary->AddConfiguration("Debug");
+	pcConfig->AddDefines("_WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE");
+
+	cProject.Process("Debug");
+
+	AssertString("\
+     TestUnit4.cpp (Parsing): 0, 0 (1)\n\
+         TestHeader2.h (Parsing): 0, 0 (1)\n\
+         TestHeader2.h (Parsing): 1, 0 (5)\n\
+         TestHeader2.h (Parsing): 2, 0 (8)\n\
+     TestUnit4.cpp (Parsing): 1, 0 (3)\n", pcTU1->GetLogs()->szBlocksLog.Text());
+
+	AssertString("\
+     TestUnit4.cpp (Included)\n\
+         TestHeader2.h (Included)\n", pcTU1->GetLogs()->szIncludesLog.Text());
+
+	AssertInt(0, cProject.GetBlockReuse());
+
+	cProject.Kill();
+
+	NumberKill();
+	KillTokenMemory();
+	OperatorsKill();
+	TypeConverterKill();
+	FastFunctionsKill();
+	TypesKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestReinclude(void)
 {
 	TypesInit();
@@ -149,6 +202,7 @@ void TestProject(void)
 	BeginTests();
 
 	TestNoInclude();
+	TestOneInclude();
 	TestReinclude();
 
 	TestStatistics();

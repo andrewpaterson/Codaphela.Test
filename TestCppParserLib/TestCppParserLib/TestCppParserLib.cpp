@@ -21,7 +21,7 @@ int __cdecl main(void)
 
 	InitTotalStatistics();
 
-	TestPreprocessor();
+	//TestPreprocessor();
 	TestProject();
 
 	iTotalTestsFailed = TestTotalStatistics();
