@@ -54,10 +54,8 @@ void TestMapBlockInternals(void)
 	psNode2 = (SMNode**)paBlock->GetInSorted(1);
 	AssertInt(sizeof(int), (*psNode1)->iDataSize);
 	AssertInt(sizeof(int), (*psNode1)->iKeySize);
-	AssertPointer(&cMap, (*psNode1)->pcMapBlock);
 	AssertInt(sizeof(int), (*psNode2)->iDataSize);
 	AssertInt(sizeof(int), (*psNode2)->iKeySize);
-	AssertPointer(&cMap, (*psNode2)->pcMapBlock);
 	piKey = (int*)RemapSinglePointer(*psNode1, sizeof(SMNode));
 	AssertInt(7, *piKey);
 	piData = (int*)RemapSinglePointer(piKey, (int)sizeof(int));

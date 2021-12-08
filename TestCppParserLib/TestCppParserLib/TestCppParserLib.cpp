@@ -1,3 +1,7 @@
+#define _CRTDBG_MAP_ALLOC  
+#include <stdlib.h>  
+#include <crtdbg.h>  
+
 #include "TestLib/Assert.h"
 
 
@@ -11,11 +15,18 @@ void TestProject(void);
 //////////////////////////////////////////////////////////////////////////
 int __cdecl main(void)
 {
+	_CrtSetBreakAlloc(602);
+	
+	int	iTotalTestsFailed;
+
 	InitTotalStatistics();
 
 	TestPreprocessor();
 	TestProject();
 
-	return TestTotalStatistics();
+	iTotalTestsFailed = TestTotalStatistics();
+
+	_CrtDumpMemoryLeaks();
+	return iTotalTestsFailed;
 }
 
