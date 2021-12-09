@@ -15,7 +15,7 @@ void TestProject(void);
 //////////////////////////////////////////////////////////////////////////
 int __cdecl main(void)
 {
-	_CrtSetBreakAlloc(0);
+	_CrtSetBreakAlloc(15105);
 	
 	int	iTotalTestsFailed;
 

@@ -396,7 +396,7 @@ void TestPreprocessorBlockSkipping(void)
 
 	cLibraries.Init();
 	cConfig.Init("DEBUG");
-	cPreprocessor.Init(&cConfig, &cFile);
+	cPreprocessor.Init(&cConfig);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
 	cFile.Print(&szDest);
@@ -424,7 +424,7 @@ void TestPreprocessorBlockSkipping(void)
 	
 	cLibraries.Init();
 	cConfig.Init("DEBUG");
-	cPreprocessor.Init(&cConfig, &cFile);
+	cPreprocessor.Init(&cConfig);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
 	cFile.Print(&szDest);
@@ -479,7 +479,7 @@ Expected\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, &cFile);
+	cPreprocessor.Init(&cConfig);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
 	cFile.Print(&szDest);
@@ -518,7 +518,7 @@ Expected\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, &cFile);
+	cPreprocessor.Init(&cConfig);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
 	cFile.Print(&szDest);
@@ -558,7 +558,7 @@ CHECK1(0, \"here % s % s % s\", \"are\", \"some\", \"varargs(1)\\n\");\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, &cFile);
+	cPreprocessor.Init(&cConfig);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
 	cFile.Print(&szDest);
@@ -600,7 +600,7 @@ Expected2\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, &cFile);
+	cPreprocessor.Init(&cConfig);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
 	cFile.Print(&szDest);
@@ -657,7 +657,7 @@ Nope\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, &cFile);
+	cPreprocessor.Init(&cConfig);
 	cPreprocessor.AddIncludeDirectory(&cHeaderNames);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
@@ -731,7 +731,7 @@ Evaluate Good!\n\
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, &cFile);
+	cPreprocessor.Init(&cConfig);
 	cPreprocessor.AddDefine("EMPTY");
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
@@ -787,7 +787,7 @@ void TestPreprocessorRedefinedEmpty(void)
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, &cFile);
+	cPreprocessor.Init(&cConfig);
 	cPreprocessor.AddDefine("EMPTY");
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
@@ -944,7 +944,7 @@ void TestPreprocessorHasCPPNameSpaceAttribute()
 ");
 
 	cConfig.Init("");
-	cPreprocessor.Init(&cConfig, &cFile);
+	cPreprocessor.Init(&cConfig);
 	cPreprocessor.PreprocessTranslationUnit(&cFile);
 	szDest.Init();
 	cFile.Print(&szDest);
