@@ -17,7 +17,6 @@ void TestNoInclude(void)
 	FastFunctionsInit();
 	TypeConverterInit();
 	OperatorsInit();
-	InitTokenMemory();
 	NumberInit();
 
 	CProject			cProject;
@@ -43,7 +42,6 @@ void TestNoInclude(void)
 	cProject.Kill();
 
 	NumberKill();
-	KillTokenMemory();
 	OperatorsKill();
 	TypeConverterKill();
 	FastFunctionsKill();
@@ -61,7 +59,6 @@ void TestOneInclude(void)
 	FastFunctionsInit();
 	TypeConverterInit();
 	OperatorsInit();
-	InitTokenMemory();
 	NumberInit();
 
 	CProject			cProject;
@@ -96,7 +93,6 @@ void TestOneInclude(void)
 	cProject.Kill();
 
 	NumberKill();
-	KillTokenMemory();
 	OperatorsKill();
 	TypeConverterKill();
 	FastFunctionsKill();
@@ -114,7 +110,6 @@ void TestReinclude(void)
 	FastFunctionsInit();
 	TypeConverterInit();
 	OperatorsInit();
-	InitTokenMemory();
 	NumberInit();
 
 	CProject			cProject;
@@ -185,7 +180,6 @@ void TestReinclude(void)
 	cProject.Kill();
 
 	NumberKill();
-	KillTokenMemory();
 	OperatorsKill();
 	TypeConverterKill();
 	FastFunctionsKill();

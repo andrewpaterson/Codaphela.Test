@@ -15,13 +15,13 @@ void TestProject(void);
 //////////////////////////////////////////////////////////////////////////
 int __cdecl main(void)
 {
-	_CrtSetBreakAlloc(15105);
+	_CrtSetBreakAlloc(0);
 	
 	int	iTotalTestsFailed;
 
 	InitTotalStatistics();
 
-	//TestPreprocessor();
+	TestPreprocessor();
 	TestProject();
 
 	iTotalTestsFailed = TestTotalStatistics();

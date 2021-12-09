@@ -9,16 +9,12 @@
 #include "TestLib/Assert.h"
 
 
-
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorSimple(void)
 {
-	InitTokenMemory();
-
 	CChars	szDest;
 
 	szDest.Init();
@@ -34,8 +30,6 @@ int x = XACT + 2;", &szDest);
 
 	AssertString("int x = 3 + 2;\n", szDest.Text());
 	szDest.Kill();
-
-	KillTokenMemory();
 }
 
 
@@ -43,10 +37,26 @@ int x = XACT + 2;", &szDest);
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestPreprocessorSimpleReplacement(void)
+{
+	CChars	szDest;
+
+	szDest.Init();
+	CPreprocessor::Preprocess("\
+#define D5( X ) X \n\
+#define D9(P,Q)  D5(P)  D5(Q) \n\
+D9(Hello, World)", &szDest);
+
+	AssertString("Hello  World  \n", szDest.Text());
+	szDest.Kill();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestPreprocessorReplacement(void)
 {
-	InitTokenMemory();
-
 	CChars	szDest;
 
 	szDest.Init();
@@ -129,8 +139,6 @@ __nothrow;\n\
 
 	AssertString("__declspec(nothrow);\n", szDest.Text());
 	szDest.Kill();
-
-	KillTokenMemory();
 }
 
 
@@ -140,9 +148,7 @@ __nothrow;\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorExactDefine(void)
 {
-	InitTokenMemory();
-
-	CChars	szDest;
+		CChars	szDest;
 
 	szDest.Init();
 	CPreprocessor::Preprocess("\
@@ -152,8 +158,6 @@ float	gFriend;\n\
 
 	AssertString("float gFriend;\n", szDest.Text());
 	szDest.Kill();
-
-	KillTokenMemory();
 }
 
 
@@ -163,8 +167,6 @@ float	gFriend;\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorConditionals(void)
 {
-	InitTokenMemory();
-
 	CChars	szDest;
 
 	szDest.Init();
@@ -203,8 +205,6 @@ Dick\n\
 ", &szDest);
 	AssertString("Quintin\nLarry\nMoby\n", szDest.Text());
 	szDest.Kill();
-
-	KillTokenMemory();
 }
 
 
@@ -214,8 +214,6 @@ Dick\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorOperatorPrecedence(void)
 {
-	InitTokenMemory();
-
 	CChars	szDest;
 
 	szDest.Init();
@@ -360,8 +358,6 @@ Passed\n\
 ", &szDest);
 	AssertString("Passed\n", szDest.Text());
 	szDest.Kill();
-
-	KillTokenMemory();
 }
 
 
@@ -371,8 +367,6 @@ Passed\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorBlockSkipping(void)
 {
-	InitTokenMemory();
-
 	CChars				szDest;
 	CTranslationUnit	cFile;
 	CPreprocessor		cPreprocessor;
@@ -438,8 +432,6 @@ void TestPreprocessorBlockSkipping(void)
 	cFile.Kill();
 
 	szName.Kill();
-
-	KillTokenMemory();
 }
 
 
@@ -449,8 +441,6 @@ void TestPreprocessorBlockSkipping(void)
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorParentheses(void)
 {
-	InitTokenMemory();
-
 	CChars				szDest;
 	CTranslationUnit	cFile;
 	CPreprocessor		cPreprocessor;
@@ -490,8 +480,6 @@ Expected\n\
 	szDest.Kill();
 	cConfig.Kill();
 	cFile.Kill();
-
-	KillTokenMemory();
 }
 
 
@@ -501,8 +489,6 @@ Expected\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorSimpleVariadic(void)
 {
-	InitTokenMemory();
-
 	CChars				szDest;
 	CTranslationUnit	cFile;
 	CPreprocessor		cPreprocessor;
@@ -530,8 +516,6 @@ Expected\n\
 	szDest.Kill();
 	cConfig.Kill();
 	cFile.Kill();
-
-	KillTokenMemory();
 }
 
 
@@ -541,8 +525,6 @@ Expected\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorComplexVariadic(void)
 {
-	InitTokenMemory();
-
 	CChars				szDest;
 	CTranslationUnit	cFile;
 	CPreprocessor		cPreprocessor;
@@ -570,8 +552,6 @@ CHECK1(0, \"here % s % s % s\", \"are\", \"some\", \"varargs(1)\\n\");\n\
 	szDest.Kill();
 	cConfig.Kill();
 	cFile.Kill();
-
-	KillTokenMemory();
 }
 
 
@@ -581,8 +561,6 @@ CHECK1(0, \"here % s % s % s\", \"are\", \"some\", \"varargs(1)\\n\");\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorRedefinedVariadic(void)
 {
-	InitTokenMemory();
-
 	CChars				szDest;
 	CTranslationUnit	cFile;
 	CPreprocessor		cPreprocessor;
@@ -612,8 +590,6 @@ Expected2\n\
 	szDest.Kill();
 	cConfig.Kill();
 	cFile.Kill();
-
-	KillTokenMemory();
 }
 
 
@@ -623,8 +599,6 @@ Expected2\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorHasInclude(void)
 {
-	InitTokenMemory();
-
 	CChars				szDest;
 	CTranslationUnit	cFile;
 	CPreprocessor		cPreprocessor;
@@ -674,8 +648,6 @@ Nope\n\
 	szDest.Kill();
 	cConfig.Kill();
 	cFile.Kill();
-
-	KillTokenMemory();
 }
 
 
@@ -685,8 +657,6 @@ Nope\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorDefineEvaluateToZero(void)
 {
-	InitTokenMemory();
-
 	CChars				szDest;
 
 	szDest.Init();
@@ -700,8 +670,6 @@ Yuppers, here is good\n\
 
 	AssertString("Yuppers, here is good\n", szDest.Text());
 	szDest.Kill();
-
-	KillTokenMemory();
 }
 
 
@@ -711,8 +679,6 @@ Yuppers, here is good\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorExistingEmpty(void)
 {
-	InitTokenMemory();
-
 	CChars				szDest;
 	CTranslationUnit	cFile;
 	CPreprocessor		cPreprocessor;
@@ -744,8 +710,6 @@ Evaluate Good!\n\
 	szDest.Kill();
 	cConfig.Kill();
 	cFile.Kill();
-
-	KillTokenMemory();
 }
 
 
@@ -755,8 +719,6 @@ Evaluate Good!\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorRedefinedEmpty(void)
 {
-	InitTokenMemory();
-
 	CChars				szDest;
 	CTranslationUnit	cFile;
 	CPreprocessor		cPreprocessor;
@@ -813,7 +775,7 @@ void TestPreprocessorRedefinedEmpty(void)
 	cConfig.Kill();
 	cFile.Kill();
 
-	KillTokenMemory();
+
 }
 
 
@@ -823,7 +785,7 @@ void TestPreprocessorRedefinedEmpty(void)
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorSimpleEmpty(void)
 {
-	InitTokenMemory();
+
 
 	CChars				szDest;
 
@@ -839,7 +801,7 @@ Good, good.\n\
 	AssertString("Good, good.\n", szDest.Text());
 	szDest.Kill();
 
-	KillTokenMemory();
+
 }
 
 
@@ -849,7 +811,7 @@ Good, good.\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorBrackettedEmpty(void)
 {
-	InitTokenMemory();
+
 	CChars				szDest;
 
 	szDest.Init();
@@ -864,7 +826,7 @@ Good, good.\n\
 	AssertString("Good, good.\n", szDest.Text());
 	szDest.Kill();
 
-	KillTokenMemory();
+
 }
 
 
@@ -874,7 +836,7 @@ Good, good.\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorDefineBrackettedOmmitted(void)
 {
-	InitTokenMemory();
+
 	CChars				szDest;
 
 	szDest.Init();
@@ -886,7 +848,7 @@ F Surfe();\n\
 	AssertString("Surfe();\n", szDest.Text());
 	szDest.Kill();
 
-	KillTokenMemory();
+
 }
 
 
@@ -896,7 +858,7 @@ F Surfe();\n\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorHashedArgumentExpansion()
 {
-	InitTokenMemory();
+
 	CChars				szDest;
 
 	szDest.Init();
@@ -909,7 +871,7 @@ char	gszF1[] = D3(F1(H));\
 	AssertString("char gszF1[] = \"H__H\";\n", szDest.Text());
 	szDest.Kill();
 
-	KillTokenMemory();
+
 }
 
 
@@ -919,7 +881,7 @@ char	gszF1[] = D3(F1(H));\
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorHasCPPNameSpaceAttribute()
 {
-	InitTokenMemory();
+
 
 	CChars				szDest;
 	CTranslationUnit	cFile;
@@ -965,8 +927,6 @@ void TestPreprocessorHasCPPNameSpaceAttribute()
 	szDest.Kill();
 	cConfig.Kill();
 	cFile.Kill();
-
-	KillTokenMemory();
 }
 
 
@@ -976,7 +936,6 @@ void TestPreprocessorHasCPPNameSpaceAttribute()
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessorNegativeExpression()
 {
-	InitTokenMemory();
 	CChars				szDest;
 
 	szDest.Init();
@@ -991,7 +950,7 @@ Maths is still okay\n\
 	AssertString("Maths is still okay\n", szDest.Text());
 	szDest.Kill();
 
-	KillTokenMemory();
+
 }
 
 
@@ -1010,6 +969,7 @@ void TestPreprocessor(void)
 	NumberInit();
 
 	TestPreprocessorSimple();
+	TestPreprocessorSimpleReplacement();
 	TestPreprocessorReplacement();
 	TestPreprocessorExactDefine();
 	TestPreprocessorConditionals();
