@@ -8,7 +8,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestReadXML(void)
+void TestXMLParderRead(void)
 {
 	TRISTATE		tResult;
 	CMarkup			cMarkup;
@@ -68,7 +68,7 @@ void TestReadXML(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestXMLComments(void)
+void TestXMLParserComments(void)
 {
 	TRISTATE		tResult;
 	CMarkup			cMarkup;
@@ -115,7 +115,7 @@ void TestXMLComments(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestXMLTextToString(void)
+void TestXMLParserTextToString(void)
 {
 	TRISTATE	tResult;
 	CMarkup		cMarkup;
@@ -170,7 +170,7 @@ GEST Service CreateService error = 1073\n\
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestNamedReferences(void)
+void TestXMLParserNamedReferences(void)
 {
 	CMarkupReference*	pcRef;
 	CMarkupNamedRef*	pcNamedRef;
@@ -235,6 +235,7 @@ void TestNamedReferences(void)
 	cMarkup.Kill();
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -264,7 +265,40 @@ void TestXMLParserErrors(void)
 	tResult = cXMLParser.Parse(szXML, "InMemory");
 	cMemory.Write(szZero, 1, 1);
 
-	AssertString("ERROR: InMemory [2, 21]: '=' expected after attribute.\n", (char*)cMemory.GetBufferPointer());
+	AssertStringStartsWith("WARNING: Expected [=].", (char*)cMemory.GetBufferPointer());
+
+	cLogger.SetConfig(&sLogConfig);
+	cXMLParser.Kill();
+	cMarkup.Kill();
+	cLogger.Kill();
+	cMemory.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestXMLParserLogisimFile(void)
+{
+	CXMLParser		cXMLParser;
+	TRISTATE		tResult;
+	CMarkup			cMarkup;
+	CLogger			cLogger;
+	CMemoryFile		cMemory;
+	SLogConfig		sLogConfig;
+	char			szZero[1] = { 0 };
+	char			szXML[] = "<lib desc=\"jar#..\\logi65816\\out\\artifacts\\logi65816.jar#net.logisim.Components\" name=\"12\"/>";
+
+	cMemory.Init();
+	cLogger.Init(&cMemory, NULL);
+	sLogConfig = cLogger.SetSilent();
+	cMarkup.Init();
+	cXMLParser.Init(&cMarkup, &cLogger);
+	tResult = cXMLParser.Parse(szXML, "InMemory");
+	cMemory.Write(szZero, 1, 1);
+
+	AssertTristate(TRITRUE, tResult);
 
 	cLogger.SetConfig(&sLogConfig);
 	cXMLParser.Kill();
@@ -282,11 +316,12 @@ void TestXMLParser(void)
 {
 	BeginTests();
 
-	TestReadXML();
-	TestXMLTextToString();
-	TestXMLComments();
-	TestNamedReferences();
+	TestXMLParderRead();
+	TestXMLParserTextToString();
+	TestXMLParserComments();
+	TestXMLParserNamedReferences();
 	TestXMLParserErrors();
+	TestXMLParserLogisimFile();
 
 	TestStatistics();
 }
