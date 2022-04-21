@@ -55,3 +55,5 @@ TestCoreLib/Release
 /TestInputLib/Release/*
 /TestInputLib/x64/Release/*
 /TestCppParserLib/TestCppParserLib/Post/*
+/TestJavaParserLib/Debug/*
+/TestJavaParserLib/TestJavaParserLib/Debug/*

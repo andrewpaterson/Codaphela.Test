@@ -249,6 +249,12 @@
     <ClCompile Include="TestReplaceAndRemap.cpp">
       <Filter>Source\Object\Object\Hollow</Filter>
     </ClCompile>
+    <ClCompile Include="TestFreeEmbedded.cpp">
+      <Filter>Source\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="TestStringOverride.cpp">
+      <Filter>Source\Object\Object\String</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectTestClasses.h">

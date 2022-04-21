@@ -35,6 +35,7 @@ void TestParameters(void);
 void TestObjectDirty(void);
 void TestObjectAllocator(void);
 void TestString(void);
+void TestStringOverride(void);
 void TestClass(void);
 void TestChunkFileObjectWriter(void);
 void TestObjectReaderChunked(void);
@@ -50,6 +51,7 @@ void TestSet(void);
 void TestEmbedded(void);
 void TestEmbeddedObjectRemapTos(void);
 void TestEmbeddedStackPointers(void);
+void TestFreeEmbedded(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -86,12 +88,14 @@ int __cdecl main(void)
 	TestObjectStack();
 	TestPointer();
 	TestArrayCommonObject();
+	TestFreeEmbedded();
+	TestStringOverride();
 	TestReplaceAndRemap();
 	TestHollowObject();
 	TestNamedObject();
 	TestObjectDirty();
-	TestString();
 	TestObjectAllocator();
+	TestString();
 	TestChunkFileObjectWriter();
 	TestObjectGraphSerialiser();
 	TestObjectReaderSimple();

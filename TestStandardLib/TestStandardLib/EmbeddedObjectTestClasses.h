@@ -61,6 +61,8 @@ public:
 	Ptr<CEmbeddedComplex> Init(void);
 	void	Free(void);
 
+	void	Add(Ptr<> pObject);
+
 	BOOL	Save(CObjectWriter* pcFile) override;
 	BOOL	Load(CObjectReader* pcFile) override;
 };
