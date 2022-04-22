@@ -90,7 +90,6 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <StringPooling>false</StringPooling>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
@@ -99,9 +98,10 @@
       <BrowseInformation>true</BrowseInformation>
       <OpenMPSupport>true</OpenMPSupport>
       <SDLCheck>true</SDLCheck>
-      <CallingConvention>VectorCall</CallingConvention>
       <ExceptionHandling>false</ExceptionHandling>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <DisableSpecificWarnings>26440;26447;26455</DisableSpecificWarnings>
+      <CallingConvention>VectorCall</CallingConvention>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -229,8 +229,10 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\..\..\CommonLibraries\CoreLib\CoreLib.vcxproj">
-      <Project>{52a2d18b-bc88-4eb9-9ef0-ae58c1e9fdd5}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Project>{5918ec20-07c3-485f-80bb-bed4f96ea48f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\CommonLibraries\JavaParserLib\JavaParserLib.vcxproj">
+      <Project>{4d010c1e-4dce-4271-9b1c-87bbf0bc761c}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\..\CommonLibraries\StandardLib\StandardLib.vcxproj">
       <Project>{2cfa23fa-6565-4744-8b75-9790b21cc0e5}</Project>

@@ -4,6 +4,8 @@
 
 #include "TestLib/Assert.h"
 
+void Mine(void);
+
 
 void TestTokenParser(void);
 void TestSkipComments(void);
@@ -18,6 +20,8 @@ int __cdecl main(void)
 	_CrtSetBreakAlloc(0);
 	
 	int	iTotalTestsFailed;
+
+	Mine();
 
 	InitTotalStatistics();
 

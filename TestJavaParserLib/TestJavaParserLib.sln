@@ -12,6 +12,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestLib", "..\..\CommonLibraries\TestLib\TestLib.vcxproj", "{D06D265E-A503-42F8-A93A-A0A1C0B058FF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestJavaParserLib", "TestJavaParserLib\TestJavaParserLib.vcxproj", "{005795B4-42DF-4725-8058-549AF2BBDDAF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5918EC20-07C3-485F-80BB-BED4F96EA48F} = {5918EC20-07C3-485F-80BB-BED4F96EA48F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaParserLib", "..\..\CommonLibraries\JavaParserLib\JavaParserLib.vcxproj", "{4D010C1E-4DCE-4271-9B1C-87BBF0BC761C}"
 EndProject
