@@ -36,6 +36,7 @@ public abstract class TickablePins<\n\
 }\
 ");
 
+	cTokenParser.Parse();
 	cTokenParser.Kill();
 
 	TestStatistics();
