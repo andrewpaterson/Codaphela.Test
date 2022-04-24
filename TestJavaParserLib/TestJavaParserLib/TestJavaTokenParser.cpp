@@ -25,10 +25,35 @@ void TestTokenParserEndOfFile(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestTokenParserComplexGeneric(void)
+void TestTokenParserStartAndEndWithComment(void)
 {
 	CJavaTokenParser	cTokenParser;
 	
+	cTokenParser.Init("\
+  // Tickable Pins Start\n\
+package net.simulation.common;\n\
+\n\
+{\n\
+  protected int x;\n\
+} // Tickable Pins End\
+");
+
+	cTokenParser.Parse();
+
+	cTokenParser.GetFirstToken();
+
+	cTokenParser.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTokenParserComplexGeneric(void)
+{
+	CJavaTokenParser	cTokenParser;
+
 	cTokenParser.Init("\
   // Tickable Pins\n\
 package net.simulation.common;\n\
@@ -52,7 +77,6 @@ public abstract class TickablePins<\n\
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -62,6 +86,7 @@ void TestTokenParser(void)
 	BeginTests();
 
 	TestTokenParserEndOfFile();
+	TestTokenParserStartAndEndWithComment();
 	TestTokenParserComplexGeneric();
 
 	TestStatistics();
