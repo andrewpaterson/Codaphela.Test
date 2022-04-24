@@ -11,12 +11,23 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestTokenParser(void)
+void TestTokenParserEndOfFile(void)
 {
-	BeginTests();
-
 	CJavaTokenParser	cTokenParser;
 
+	cTokenParser.Init("{\n}");
+	cTokenParser.Parse();
+	cTokenParser.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTokenParserComplexGeneric(void)
+{
+	CJavaTokenParser	cTokenParser;
 	
 	cTokenParser.Init("\
   // Tickable Pins\n\
@@ -38,6 +49,20 @@ public abstract class TickablePins<\n\
 
 	cTokenParser.Parse();
 	cTokenParser.Kill();
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTokenParser(void)
+{
+	BeginTests();
+
+	TestTokenParserEndOfFile();
+	TestTokenParserComplexGeneric();
 
 	TestStatistics();
 }
