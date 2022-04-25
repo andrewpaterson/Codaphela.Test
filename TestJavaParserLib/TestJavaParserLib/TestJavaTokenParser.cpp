@@ -39,9 +39,6 @@ package net.simulation.common;\n\
 ");
 
 	cTokenParser.Parse();
-
-	cTokenParser.GetFirstToken();
-
 	cTokenParser.Kill();
 }
 
@@ -81,6 +78,36 @@ public abstract class TickablePins<\n\
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestTokenParserLiterals(void)
+{
+	CJavaTokenParser	cTokenParser;
+
+	cTokenParser.Init("\
+  public String getType()\n\
+  {\n\
+    int x = 100_00;\n\
+    long xl = 1L;\n\
+    float f = 1_000.000f;\n\
+    double fl = 1.3_3e10;\n\
+    char c =  '\u0021'; \n\
+	char c2 = 'A';\n\
+	boolean truey = true;\n\
+	boolean notTrue = !truey;\n\
+    return \"AND Gate\";\n\
+  }\n");
+
+	cTokenParser.Parse();
+
+	cTokenParser.Dump();
+
+	cTokenParser.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestTokenParser(void)
 {
 	BeginTests();
@@ -88,6 +115,7 @@ void TestTokenParser(void)
 	TestTokenParserEndOfFile();
 	TestTokenParserStartAndEndWithComment();
 	TestTokenParserComplexGeneric();
+	TestTokenParserLiterals();
 
 	TestStatistics();
 }
