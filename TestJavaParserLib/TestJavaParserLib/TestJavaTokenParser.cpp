@@ -15,7 +15,7 @@ void TestTokenParserEndOfFile(void)
 {
 	CJavaTokenParser	cTokenParser;
 
-	cTokenParser.Init("{\n}");
+	cTokenParser.Init("Test1.Java", "{\n}");
 	cTokenParser.Parse();
 	cTokenParser.Kill();
 }
@@ -29,7 +29,7 @@ void TestTokenParserStartAndEndWithComment(void)
 {
 	CJavaTokenParser	cTokenParser;
 	
-	cTokenParser.Init("\
+	cTokenParser.Init("Test2.Java", "\
   // Tickable Pins Start\n\
 package net.simulation.common;\n\
 \n\
@@ -51,7 +51,7 @@ void TestTokenParserComplexGeneric(void)
 {
 	CJavaTokenParser	cTokenParser;
 
-	cTokenParser.Init("\
+	cTokenParser.Init("Test3.Java", "\
   // Tickable Pins\n\
 package net.simulation.common;\n\
 \n\
@@ -82,7 +82,7 @@ void TestTokenParserLiterals(void)
 {
 	CJavaTokenParser	cTokenParser;
 
-	cTokenParser.Init("\
+	cTokenParser.Init("Test4.Java", "\
   public String getType()\n\
   {\n\
     int x = 100_00;\n\
@@ -96,7 +96,7 @@ void TestTokenParserLiterals(void)
     return \"AND Gate\";\n\
   }\n");
 
-	cTokenParser.Parse();
+	cTokenParser.Parse(TRUE);
 
 	cTokenParser.Dump();
 

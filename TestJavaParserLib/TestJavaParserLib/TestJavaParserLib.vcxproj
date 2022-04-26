@@ -216,6 +216,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="TestJavaParserGetInteger.cpp" />
     <ClCompile Include="TestJavaParserSkipComments.cpp" />
     <ClCompile Include="TestJavaTokenParser.cpp" />
     <ClCompile Include="TestJavaParserLib.cpp" />

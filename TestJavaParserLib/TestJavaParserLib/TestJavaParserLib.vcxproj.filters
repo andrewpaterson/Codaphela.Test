@@ -19,6 +19,9 @@
     <ClCompile Include="TestJavaParserSkipComments.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="TestJavaParserGetInteger.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
