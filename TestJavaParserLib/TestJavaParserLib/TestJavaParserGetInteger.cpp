@@ -27,7 +27,7 @@ TRISTATE ParseInteger(char* sz, uint64 * pulli, int* piBase, int* piSuffix, int*
 	TRISTATE		tResult;
 
 	cParser.Init(sz);
-	tResult = cParser.GetInteger(pulli, INTEGER_PREFIX_ALL, piBase, INTEGER_SUFFIX_CPP, piSuffix, INTEGER_SEPARATOR_APOSTROPHE, piNumDigits, FALSE);
+	tResult = cParser.GetIntegerLiteral(pulli, INTEGER_PREFIX_ALL, piBase, INTEGER_SUFFIX_CPP, piSuffix, INTEGER_SEPARATOR_APOSTROPHE, piNumDigits, FALSE);
 	cParser.Kill();
 
 	return tResult;

@@ -7,6 +7,7 @@
 void TestTokenParser(void);
 void TestSkipComments(void);
 void TestJavaParserGetInteger(void);
+void TestJavaParserGetCharacter(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -23,6 +24,7 @@ int __cdecl main(void)
 
 	TestSkipComments();
 	TestJavaParserGetInteger();
+	TestJavaParserGetCharacter();
 	TestTokenParser();
 
 	iTotalTestsFailed = TestTotalStatistics();

@@ -8,6 +8,9 @@
     <Filter Include="Source\Java">
       <UniqueIdentifier>{31031b58-800a-4ed0-b959-5c01e46cd45a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\TextParser">
+      <UniqueIdentifier>{d9f53788-e88d-4faf-9a43-392df08406bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestJavaParserLib.cpp">
@@ -17,10 +20,13 @@
       <Filter>Source\Java</Filter>
     </ClCompile>
     <ClCompile Include="TestJavaParserSkipComments.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\TextParser</Filter>
     </ClCompile>
     <ClCompile Include="TestJavaParserGetInteger.cpp">
-      <Filter>Source</Filter>
+      <Filter>Source\TextParser</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJavaParserGetCharacter.cpp">
+      <Filter>Source\TextParser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
