@@ -218,6 +218,7 @@
   <ItemGroup>
     <ClCompile Include="TestJavaParserGetCharacter.cpp" />
     <ClCompile Include="TestJavaParserGetInteger.cpp" />
+    <ClCompile Include="TestJavaParserGetString.cpp" />
     <ClCompile Include="TestJavaParserSkipComments.cpp" />
     <ClCompile Include="TestJavaTokenParser.cpp" />
     <ClCompile Include="TestJavaParserLib.cpp" />

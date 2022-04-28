@@ -28,6 +28,9 @@
     <ClCompile Include="TestJavaParserGetCharacter.cpp">
       <Filter>Source\TextParser</Filter>
     </ClCompile>
+    <ClCompile Include="TestJavaParserGetString.cpp">
+      <Filter>Source\TextParser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

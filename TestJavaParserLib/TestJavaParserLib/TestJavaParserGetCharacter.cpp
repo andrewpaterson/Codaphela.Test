@@ -232,5 +232,5 @@ void TestJavaParserGetCharacter(void)
 	TestJavaParserGetCharacterEscapeUnicode();
 
 	TestStatistics();
-
 }
+
