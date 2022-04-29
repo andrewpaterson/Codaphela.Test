@@ -85,8 +85,8 @@ void TestTokenParserLiterals(void)
 	cTokenParser.Init("Test4.Java", "\
   public String getType()\n\
   {\n\
-    int x = 100_00;\n\
     long xl = 1L;\n\
+    int x = 100_00;\n\
     float f = 1_000.000f;\n\
     double fl = 1.3_3e10;\n\
     char c =  '\u0021'; \n\
@@ -99,6 +99,7 @@ void TestTokenParserLiterals(void)
 	cTokenParser.Parse(TRUE);
 
 	cTokenParser.Dump();
+	cTokenParser.Dump(TRUE);
 
 	cTokenParser.Kill();
 }
@@ -112,9 +113,9 @@ void TestTokenParser(void)
 {
 	BeginTests();
 
-	TestTokenParserEndOfFile();
-	TestTokenParserStartAndEndWithComment();
-	TestTokenParserComplexGeneric();
+	//TestTokenParserEndOfFile();
+	//TestTokenParserStartAndEndWithComment();
+	//TestTokenParserComplexGeneric();
 	TestTokenParserLiterals();
 
 	TestStatistics();

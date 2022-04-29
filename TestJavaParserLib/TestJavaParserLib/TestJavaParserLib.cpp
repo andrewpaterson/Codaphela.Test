@@ -23,10 +23,10 @@ int __cdecl main(void)
 
 	InitTotalStatistics();
 
-	TestSkipComments();
-	TestJavaParserGetInteger();
-	TestJavaParserGetCharacter();
-	TestJavaParserGetString();
+	//TestSkipComments();
+	//TestJavaParserGetInteger();
+	//TestJavaParserGetCharacter();
+	//TestJavaParserGetString();
 	TestTokenParser();
 
 	iTotalTestsFailed = TestTotalStatistics();
