@@ -31,6 +31,9 @@
     <ClCompile Include="TestJavaParserGetString.cpp">
       <Filter>Source\TextParser</Filter>
     </ClCompile>
+    <ClCompile Include="TestJavaParserGetFloat.cpp">
+      <Filter>Source\TextParser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
