@@ -30,6 +30,7 @@ void TestSequence(void);
 void TestOperators(void);
 void TestFunctionCaller(void);
 void TestNumber(void);
+void TestFloatPrinter(void);
 void TestCalculator(void);
 void TestFiles(void);
 void TestPackFilesPacker(void);
@@ -60,6 +61,7 @@ int __cdecl main(void)
 	TestXMLParser();
 	TestXMLFile();
 	TestNumber();
+	TestFloatPrinter();
 	TestCalculator();
 	TestOperators();
 	TestFunctionCaller();

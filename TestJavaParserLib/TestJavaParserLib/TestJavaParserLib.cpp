@@ -10,6 +10,7 @@ void TestJavaParserGetInteger(void);
 void TestJavaParserGetFloat(void);
 void TestJavaParserGetCharacter(void);
 void TestJavaParserGetString(void);
+void TestJavaParserPrintFloat(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -24,6 +25,7 @@ int __cdecl main(void)
 
 	InitTotalStatistics();
 
+	TestJavaParserPrintFloat();
 	//TestSkipComments();
 	//TestJavaParserGetInteger();
 	//TestJavaParserGetCharacter();

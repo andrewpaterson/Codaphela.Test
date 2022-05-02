@@ -195,6 +195,9 @@
     <ClCompile Include="TestCalculator.cpp">
       <Filter>Source\Text\Calculator</Filter>
     </ClCompile>
+    <ClCompile Include="TestFloatPrinter.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestXMLFile.h">

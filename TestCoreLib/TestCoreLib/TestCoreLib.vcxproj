@@ -221,6 +221,7 @@
     <ClCompile Include="TestCodabase.cpp" />
     <ClCompile Include="TestCoreLib.cpp" />
     <ClCompile Include="TestFiles.cpp" />
+    <ClCompile Include="TestFloatPrinter.cpp" />
     <ClCompile Include="TestIndexedFile.cpp" />
     <ClCompile Include="TestIndexedFiles.cpp" />
     <ClCompile Include="TestIndexedFilesCache.cpp" />

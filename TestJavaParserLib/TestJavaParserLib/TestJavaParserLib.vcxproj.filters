@@ -34,6 +34,9 @@
     <ClCompile Include="TestJavaParserGetFloat.cpp">
       <Filter>Source\TextParser</Filter>
     </ClCompile>
+    <ClCompile Include="TestJavaParserPrintFloat.cpp">
+      <Filter>Source\TextParser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

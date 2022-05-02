@@ -507,22 +507,22 @@ void TestNumber(void)
 	TypeConverterInit();
 	NumberInit();
 
-	TestPrivateSubtract();
-	TestInit();
-	TestCopy();
-	TestIntValue();
-	TestGreaterThan();
-	TestGreaterThanOrEquals();
-	TestAdd();
-	TestSubtract();
-	TestMultiply();
-	TestDivide();
-	TestNumbersErrors();
-	TestArithmeticGeometricMean();
-	TestNaturalLogarithm();
-	//TestExponential();
-	TestRoot();
-	TestPower();
+	//TestPrivateSubtract();
+	//TestInit();
+	//TestCopy();
+	//TestIntValue();
+	//TestGreaterThan();
+	//TestGreaterThanOrEquals();
+	//TestAdd();
+	//TestSubtract();
+	//TestMultiply();
+	//TestDivide();
+	//TestNumbersErrors();
+	//TestArithmeticGeometricMean();
+	//TestNaturalLogarithm();
+	////TestExponential();
+	//TestRoot();
+	//TestPower();
 
 	NumberKill();
 	FastFunctionsKill();
