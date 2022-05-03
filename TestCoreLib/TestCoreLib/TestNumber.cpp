@@ -10,6 +10,8 @@
 //////////////////////////////////////////////////////////////////////////
 void TestAdd(void)
 {
+	AssertInt(0, gcNumberControl.NumElements());
+
 	CNumber cNumber1;
 	CNumber cNumber2;
 	CNumber cNumber3;
@@ -29,6 +31,23 @@ void TestAdd(void)
 	AssertNumber("10", cNumber1.Init("30")->Add(cNumber2.Init("-20")));
 	AssertNumber("-10", cNumber1.Init("-30")->Add(cNumber2.Init("20")));
 	AssertNumber("10", cNumber1.Init("-20")->Add(cNumber2.Init("30")));
+
+	CNumber* pcNumber1;
+	CNumber* pcNumber2;
+
+	pcNumber1 = gcNumberControl.Add(2, 6);
+	pcNumber2 = gcNumberControl.Add(2, 0);
+
+	pcNumber1->Init("48", 2, 6);
+	pcNumber2->Init("80", 2, 0);
+
+	pcNumber1->Add(pcNumber2);
+	AssertBool(TRUE, pcNumber1->IsError());
+	AssertBool(TRUE, pcNumber1->IsOverflow());
+
+	gcNumberControl.Remove(2);
+
+	AssertInt(0, gcNumberControl.NumElements());
 }
 
 
@@ -38,6 +57,8 @@ void TestAdd(void)
 //////////////////////////////////////////////////////////////////////////
 void TestSubtract(void)
 {
+	AssertInt(0, gcNumberControl.NumElements());
+
 	CNumber cNumber1;
 	CNumber cNumber2;
 	CNumber cNumber3;
@@ -55,6 +76,8 @@ void TestSubtract(void)
 	AssertNumber("10", cNumber1.Init("30")->Subtract(cNumber2.Init("20")));
 	AssertNumber("-10", cNumber1.Init("-30")->Subtract(cNumber2.Init("-20")));
 	AssertNumber("10", cNumber1.Init("-20")->Subtract(cNumber2.Init("-30")));
+
+	AssertInt(0, gcNumberControl.NumElements());
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -63,6 +86,8 @@ void TestSubtract(void)
 //////////////////////////////////////////////////////////////////////////
 void TestGreaterThan(void)
 {
+	AssertInt(0, gcNumberControl.NumElements());
+
 	CNumber cNumber1;
 	CNumber cNumber2;
 
@@ -78,6 +103,8 @@ void TestGreaterThan(void)
 	AssertBool(TRUE, cNumber1.Init("456")->GreaterThan(cNumber2.Init("-7921")));
 	AssertBool(FALSE, cNumber1.Init("-7921")->GreaterThan(cNumber2.Init("456")));
 	AssertBool(TRUE, cNumber1.Init("-456")->GreaterThan(cNumber2.Init("-456.34")));
+
+	AssertInt(0, gcNumberControl.NumElements());
 }
 
 
@@ -87,6 +114,8 @@ void TestGreaterThan(void)
 //////////////////////////////////////////////////////////////////////////
 void TestGreaterThanOrEquals(void)
 {
+	AssertInt(0, gcNumberControl.NumElements());
+
 	CNumber cNumber1;
 	CNumber cNumber2;
 
@@ -103,6 +132,8 @@ void TestGreaterThanOrEquals(void)
 	AssertBool(FALSE, cNumber1.Init("-7921")->GreaterThanOrEquals(cNumber2.Init("456")));
 	AssertBool(TRUE, cNumber1.Init("-456")->GreaterThanOrEquals(cNumber2.Init("-456.34")));
 	AssertBool(TRUE, cNumber1.Init("-99999.9999")->GreaterThanOrEquals(cNumber2.Init("-99999.9999")));
+
+	AssertInt(0, gcNumberControl.NumElements());
 }
 
 
@@ -112,6 +143,8 @@ void TestGreaterThanOrEquals(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMultiply(void)
 {
+	AssertInt(0, gcNumberControl.NumElements());
+
 	CNumber	cNumber1;
 	CNumber	cNumber2;
 
@@ -136,6 +169,8 @@ void TestMultiply(void)
 	AssertNumber("-49", cNumber1.Init("-7")->Multiply(cNumber2.Init("7")));
 	AssertNumber("49", cNumber1.Init("-7")->Multiply(cNumber2.Init("-7")));
 	AssertNumber("0.0000000000000001", cNumber1.Init("0.00000001")->Multiply(cNumber2.Init("0.00000001")));
+
+	AssertInt(0, gcNumberControl.NumElements());
 }
 
 
@@ -145,6 +180,8 @@ void TestMultiply(void)
 //////////////////////////////////////////////////////////////////////////
 void TestDivide(void)
 {
+	AssertInt(0, gcNumberControl.NumElements());
+
 	CNumber				cNumber1;
 	CNumber				cNumber2;
 	UNumber(26, 21)		uNumber3;
@@ -180,6 +217,8 @@ void TestDivide(void)
 
 	cNumber1.Init("1")->Divide(cNumber2.Init("0"));
 	AssertBool(TRUE, cNumber1.IsDivisionByZero());
+
+	AssertInt(0, gcNumberControl.NumElements());
 }
 
 
@@ -189,14 +228,16 @@ void TestDivide(void)
 //////////////////////////////////////////////////////////////////////////
 void TestInit(void)
 {
+	AssertInt(0, gcNumberControl.NumElements());
+
 	CNumber cNumber;
 
 	cNumber.Init(123);
 	AssertInt(3, cNumber.GetFirstNonZeroDigit());
 	AssertInt(1, cNumber.GetLastNonZeroDigit());
-	AssertChar(1, cNumber.GetDigit(3));
-	AssertChar(2, cNumber.GetDigit(2));
-	AssertChar(3, cNumber.GetDigit(1));
+	AssertChar(1, cNumber.GetDigitUnsafe(3));
+	AssertChar(2, cNumber.GetDigitUnsafe(2));
+	AssertChar(3, cNumber.GetDigitUnsafe(1));
 
 	cNumber.Init(6.5f);
 	AssertNumber("6.5", &cNumber);
@@ -258,6 +299,8 @@ void TestInit(void)
 	AssertBool(TRUE, cNumber.IsNegative());
 	AssertBool(FALSE, cNumber.IsOverflow());
 	AssertBool(FALSE, cNumber.IsUnderflow());
+
+	AssertInt(0, gcNumberControl.NumElements());
 }
 
 
@@ -267,6 +310,8 @@ void TestInit(void)
 //////////////////////////////////////////////////////////////////////////
 void TestNumbersErrors(void)
 {
+	AssertInt(0, gcNumberControl.NumElements());
+
 	CNumber	cNumber1;
 	CNumber	cNumber2;
 
@@ -281,6 +326,81 @@ void TestNumbersErrors(void)
 	AssertBool(TRUE, cNumber1.IsDivisionByZero());
 	AssertBool(TRUE, cNumber2.IsError());
 
+	AssertInt(0, gcNumberControl.NumElements());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIntegerPower(void)
+{
+	CNumber	cNumber1;
+	CNumber	cNumber2;
+
+	AssertInt(0, gcNumberControl.NumElements());
+
+	AssertNumber("  1         ",  cNumber1.Init(2)->Power(cNumber2.Init(0)));
+	AssertNumber("  2         ",  cNumber1.Init(2)->Power(cNumber2.Init(1)));
+	AssertNumber("  4         ",  cNumber1.Init(2)->Power(cNumber2.Init(2)));
+	AssertNumber("  8         ",  cNumber1.Init(2)->Power(cNumber2.Init(3)));
+	AssertNumber(" 16         ",  cNumber1.Init(2)->Power(cNumber2.Init(4)));
+	AssertNumber(" 32         ",  cNumber1.Init(2)->Power(cNumber2.Init(5)));
+	AssertNumber(" 64         ",  cNumber1.Init(2)->Power(cNumber2.Init(6)));
+	AssertNumber("128         ",  cNumber1.Init(2)->Power(cNumber2.Init(7)));
+	AssertNumber("256         ",  cNumber1.Init(2)->Power(cNumber2.Init(8)));
+	AssertNumber("  0.5       ", cNumber1.Init(2)->Power(cNumber2.Init(-1)));
+	AssertNumber("  0.25      ", cNumber1.Init(2)->Power(cNumber2.Init(-2)));
+	AssertNumber("  0.125     ", cNumber1.Init(2)->Power(cNumber2.Init(-3)));
+	AssertNumber("  0.0625    ", cNumber1.Init(2)->Power(cNumber2.Init(-4)));
+	AssertNumber("  0.03125   ", cNumber1.Init(2)->Power(cNumber2.Init(-5)));
+	AssertNumber("  0.015625  ", cNumber1.Init(2)->Power(cNumber2.Init(-6)));
+	AssertNumber("  0.0078125 ", cNumber1.Init(2)->Power(cNumber2.Init(-7)));
+	AssertNumber("  0.00390625", cNumber1.Init(2)->Power(cNumber2.Init(-8)));
+
+	AssertNumber("    1                  ", cNumber1.Init(3)->Power(cNumber2.Init(0)));
+	AssertNumber("    3                  ", cNumber1.Init(3)->Power(cNumber2.Init(1)));
+	AssertNumber("    9                  ", cNumber1.Init(3)->Power(cNumber2.Init(2)));
+	AssertNumber("   27                  ", cNumber1.Init(3)->Power(cNumber2.Init(3)));
+	AssertNumber("   81                  ", cNumber1.Init(3)->Power(cNumber2.Init(4)));
+	AssertNumber("  243                  ", cNumber1.Init(3)->Power(cNumber2.Init(5)));
+	AssertNumber("  729                  ", cNumber1.Init(3)->Power(cNumber2.Init(6)));
+	AssertNumber(" 2187                  ", cNumber1.Init(3)->Power(cNumber2.Init(7)));
+	AssertNumber(" 6561                  ", cNumber1.Init(3)->Power(cNumber2.Init(8)));
+	AssertNumber("    0.3333333333333333 ", cNumber1.Init(3)->Power(cNumber2.Init(-1)));
+	AssertNumber("    0.1111111111111111 ", cNumber1.Init(3)->Power(cNumber2.Init(-2)));
+	AssertNumber("    0.0370370370370370 ", cNumber1.Init(3)->Power(cNumber2.Init(-3)));
+	AssertNumber("    0.0123456790123456 ", cNumber1.Init(3)->Power(cNumber2.Init(-4)));
+	AssertNumber("    0.0041152263374485 ", cNumber1.Init(3)->Power(cNumber2.Init(-5)));
+	AssertNumber("    0.0013717421124828 ", cNumber1.Init(3)->Power(cNumber2.Init(-6)));
+	AssertNumber("    0.0004572473708276 ", cNumber1.Init(3)->Power(cNumber2.Init(-7)));
+	AssertNumber("    0.0001524157902758 ", cNumber1.Init(3)->Power(cNumber2.Init(-8)));
+
+	CNumber*	pcNumber1;
+
+	AssertInt(0, gcNumberControl.NumElements());
+
+	pcNumber1 = gcNumberControl.Add(1, 0);
+	AssertNumber("1", pcNumber1->Init(2, 1, 0)->Power(cNumber2.Init(0)));
+	AssertNumber("2", pcNumber1->Init(2, 1, 0)->Power(cNumber2.Init(1)));
+	AssertNumber("4", pcNumber1->Init(2, 1, 0)->Power(cNumber2.Init(2)));
+	AssertNumber("8", pcNumber1->Init(2, 1, 0)->Power(cNumber2.Init(3)));
+	pcNumber1->Init(2, 1, 0)->Power(cNumber2.Init(4));
+	AssertBool(TRUE, pcNumber1->IsError());
+	AssertBool(TRUE, pcNumber1->IsOverflow());
+	gcNumberControl.Remove();
+
+	pcNumber1 = gcNumberControl.Add(2, 0);
+	AssertNumber("16", pcNumber1->Init(2, 2, 0)->Power(cNumber2.Init(4)));
+	AssertNumber("32", pcNumber1->Init(2, 2, 0)->Power(cNumber2.Init(5)));
+	AssertNumber("64", pcNumber1->Init(2, 2, 0)->Power(cNumber2.Init(6)));
+	pcNumber1->Init(2, 2, 0)->Power(cNumber2.Init(7));
+	AssertBool(TRUE, pcNumber1->IsError());
+	AssertBool(TRUE, pcNumber1->IsOverflow());
+	gcNumberControl.Remove();
+
+	AssertInt(0, gcNumberControl.NumElements());
 }
 
 
@@ -290,6 +410,8 @@ void TestNumbersErrors(void)
 //////////////////////////////////////////////////////////////////////////
 void TestPower(void)
 {
+	AssertInt(0, gcNumberControl.NumElements());
+
 	CNumber	cNumber1;
 	CNumber	cNumber2;
 
@@ -302,6 +424,8 @@ void TestPower(void)
 	AssertNumber("          1995.4606863463604380", cNumber1.Init("23")->Power(cNumber2.Init("2.42342345412")));
 	AssertNumber("          7619.4156630113937693", cNumber1.Init("17.1933")->Power(cNumber2.Init("3.14234235451299")));
 	AssertNumber("             1.1858287765828849", cNumber1.Init("234")->Power(cNumber2.Init("0.03124324234")));
+
+	AssertInt(0, gcNumberControl.NumElements());
 }
 
 
@@ -507,22 +631,23 @@ void TestNumber(void)
 	TypeConverterInit();
 	NumberInit();
 
-	//TestPrivateSubtract();
-	//TestInit();
-	//TestCopy();
-	//TestIntValue();
-	//TestGreaterThan();
-	//TestGreaterThanOrEquals();
-	//TestAdd();
-	//TestSubtract();
-	//TestMultiply();
-	//TestDivide();
-	//TestNumbersErrors();
-	//TestArithmeticGeometricMean();
-	//TestNaturalLogarithm();
-	////TestExponential();
-	//TestRoot();
-	//TestPower();
+	TestPrivateSubtract();
+	TestInit();
+	TestCopy();
+	TestIntValue();
+	TestGreaterThan();
+	TestGreaterThanOrEquals();
+	TestAdd();
+	TestSubtract();
+	TestMultiply();
+	TestDivide();
+	TestNumbersErrors();
+	TestIntegerPower();
+	TestArithmeticGeometricMean();
+	TestNaturalLogarithm();
+	//TestExponential();
+	TestRoot();
+	TestPower();
 
 	NumberKill();
 	FastFunctionsKill();
