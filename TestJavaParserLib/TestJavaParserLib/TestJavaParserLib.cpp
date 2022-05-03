@@ -24,17 +24,21 @@ int __cdecl main(void)
 	int	iTotalTestsFailed;
 
 	InitTotalStatistics();
+	FastFunctionsInit();
+	NumberInit();
 
 	TestJavaParserPrintFloat();
-	//TestSkipComments();
-	//TestJavaParserGetInteger();
-	//TestJavaParserGetCharacter();
-	//TestJavaParserGetString();
+	TestSkipComments();
+	TestJavaParserGetInteger();
+	TestJavaParserGetCharacter();
+	TestJavaParserGetString();
 	TestJavaParserGetFloat();
 	TestTokenParser();
 
 	iTotalTestsFailed = TestTotalStatistics();
 
+	FastFunctionsKill();
+	NumberKill();
 	_CrtDumpMemoryLeaks();
 	return iTotalTestsFailed;
 }

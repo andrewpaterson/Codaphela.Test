@@ -100,6 +100,7 @@ void TestFloatPrinter(void)
 	NumberInit();
 
 	TestFloatPrinterFullRangeNineDigits();
+	TestFloatPrinterRounding();
 
 	NumberKill();
 	TestStatistics();

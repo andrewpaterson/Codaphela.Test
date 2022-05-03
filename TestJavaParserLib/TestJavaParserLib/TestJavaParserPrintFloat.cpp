@@ -28,5 +28,4 @@ void TestJavaParserPrintFloat(void)
 	TestJavaParserPrintFloat32();
 
 	TestStatistics();
-
 }

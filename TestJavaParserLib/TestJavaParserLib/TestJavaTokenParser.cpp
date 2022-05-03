@@ -113,9 +113,9 @@ void TestTokenParser(void)
 {
 	BeginTests();
 
-	//TestTokenParserEndOfFile();
-	//TestTokenParserStartAndEndWithComment();
-	//TestTokenParserComplexGeneric();
+	TestTokenParserEndOfFile();
+	TestTokenParserStartAndEndWithComment();
+	TestTokenParserComplexGeneric();
 	TestTokenParserLiterals();
 
 	TestStatistics();
