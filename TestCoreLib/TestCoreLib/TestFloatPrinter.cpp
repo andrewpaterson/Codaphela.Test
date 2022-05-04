@@ -116,32 +116,100 @@ void TestFloatPrinterRounding(void)
 	FloatToString(sz, 1024, 734.645325f, -1, FALSE);
 	AssertString("734.645325", sz);
 
-	FloatToString(sz, 1024, 3734645376, 0, FALSE);
+	FloatToString(sz, 1024, 3734645376.f, 0, FALSE);
 	AssertString("3.73464525e+9", sz);
 
-	FloatToString(sz, 1024, 3734645376, -1, FALSE);
+	FloatToString(sz, 1024, 3734645376.f, -1, FALSE);
 	AssertString("3.73464525e+9", sz);
 
-	FloatToString(sz, 1024, 3734645376, 1, FALSE);
+	FloatToString(sz, 1024, 3734645376.f, 1, FALSE);
 	AssertString("3.73464525e+9", sz);
 
-	FloatToString(sz, 1024, 0.373464537, 3, FALSE);
+	FloatToString(sz, 1024, 0.373464537f, 3, FALSE);
 	AssertString("0.373", sz);
 
-	FloatToString(sz, 1024, 0.373464537, 1, FALSE);
+	FloatToString(sz, 1024, 0.373464537f, 1, FALSE);
 	AssertString("0.4", sz);
 
-	FloatToString(sz, 1024, 0.373464537, 8, FALSE);
+	FloatToString(sz, 1024, 0.373464537f, 8, FALSE);
 	AssertString("0.37346452", sz);
 
-	FloatToString(sz, 1024, 0.373464537, 9, FALSE);
+	FloatToString(sz, 1024, 0.373464537f, 9, FALSE);
 	AssertString("0.373464525", sz);
 
-	FloatToString(sz, 1024, 0.373464537, 10, FALSE);
+	FloatToString(sz, 1024, 0.373464537f, 10, FALSE);
 	AssertString("0.373464525", sz);
 
-	FloatToString(sz, 1024, 0.373464537, 0, FALSE);
+	FloatToString(sz, 1024, 0.373464537f, 0, FALSE);
 	AssertString("0", sz);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFloatPrinterNegativeRounding(void)
+{
+	char	sz[1024];
+
+	FloatToString(sz, 1024, -734.645348f, 2, FALSE);
+	AssertString("-734.65", sz);
+
+	FloatToString(sz, 1024, -734645376.f, 2, FALSE);
+	AssertString("-734645376.00", sz);
+
+	FloatToString(sz, 1024, -734645376.f, 0, FALSE);
+	AssertString("-734645376", sz);
+
+	FloatToString(sz, 1024, -734645376.f, 1, FALSE);
+	AssertString("-734645376.0", sz);
+
+	FloatToString(sz, 1024, -73464534.8f, 2, FALSE);
+	AssertString("-73464536.00", sz);
+
+	FloatToString(sz, 1024, -734.645325f, -1, FALSE);
+	AssertString("-734.645325", sz);
+
+	FloatToString(sz, 1024, -3734645376.f, 0, FALSE);
+	AssertString("-3.73464525e+9", sz);
+
+	FloatToString(sz, 1024, -3734645376.f, -1, FALSE);
+	AssertString("-3.73464525e+9", sz);
+
+	FloatToString(sz, 1024, -3734645376.f, 1, FALSE);
+	AssertString("-3.73464525e+9", sz);
+
+	FloatToString(sz, 1024, -0.373464537f, 3, FALSE);
+	AssertString("-0.373", sz);
+
+	FloatToString(sz, 1024, -0.373464537f, 1, FALSE);
+	AssertString("-0.4", sz);
+
+	FloatToString(sz, 1024, -0.373464537f, 8, FALSE);
+	AssertString("-0.37346452", sz);
+
+	FloatToString(sz, 1024, -0.373464537f, 9, FALSE);
+	AssertString("-0.373464525", sz);
+
+	FloatToString(sz, 1024, -0.373464537f, 10, FALSE);
+	AssertString("-0.373464525", sz);
+
+	FloatToString(sz, 1024, -0.373464537f, 0, FALSE);
+	AssertString("0", sz);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDoublePrinterFullRangeSixteenDigits(void)
+{
+	char	sz[1024];
+
+	DoubleToString(sz, 1024, 734.6453482389479832432343e303, -1, TRUE);
+	AssertString("7.3464534823894801e+305", sz);
 }
 
 
@@ -156,6 +224,8 @@ void TestFloatPrinter(void)
 
 	TestFloatPrinterFullRangeNineDigits();
 	TestFloatPrinterRounding();
+	TestFloatPrinterNegativeRounding();
+	TestDoublePrinterFullRangeSixteenDigits();
 
 	NumberKill();
 	TestStatistics();
