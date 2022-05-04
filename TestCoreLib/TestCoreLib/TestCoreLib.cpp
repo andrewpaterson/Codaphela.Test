@@ -53,6 +53,8 @@ int __cdecl main(void)
 
 	_CrtSetBreakAlloc(0);
 	InitTotalStatistics();
+	FastFunctionsInit();
+	NumberInit();
 
 	TestFloatHelper();
 	TestIntegerHelper();
@@ -92,6 +94,9 @@ int __cdecl main(void)
 	TestCodabase();
 
 	iResult = TestTotalStatistics();
+
+	NumberKill();
+	FastFunctionsKill();
 	_CrtDumpMemoryLeaks();
 	return iResult;
 }
