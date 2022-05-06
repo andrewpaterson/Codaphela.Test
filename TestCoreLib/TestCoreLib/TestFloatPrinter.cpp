@@ -265,6 +265,64 @@ void TestDoublePrinterFullRangeSixteenDigits(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFloatPrinterSubnormal(void)
+{
+	char	sz[1024];
+
+	FloatToString(sz, 1024, 0x0.000002p-126f, -1, TRUE);
+	AssertString("1.40129846e-45f", sz);
+
+	FloatToString(sz, 1024, 1.40129846e-45f, -1, TRUE);
+	AssertString("1.40129846e-45f", sz);
+
+	FloatToString(sz, 1024, 0x0.000004p-126f, -1, TRUE);
+	AssertString("2.80259693e-45f", sz);
+
+	FloatToString(sz, 1024, 3.33333333e-33f, -1, TRUE);
+	AssertString("3.33333317e-33f", sz);
+
+	FloatToString(sz, 1024, 3.33333333e-34f, -1, TRUE);
+	AssertString("3.33333326e-34f", sz);
+
+	FloatToString(sz, 1024, 3.33333333e-35f, -1, TRUE);
+	AssertString("3.3333332e-35f", sz);
+
+	FloatToString(sz, 1024, 3.33333333e-36f, -1, TRUE);
+	AssertString("3.33333327e-36f", sz);
+
+	FloatToString(sz, 1024, 3.33333333e-37f, -1, TRUE);
+	AssertString("3.33333323e-37f", sz);
+
+	FloatToString(sz, 1024, 3.33333333e-38f, -1, TRUE);
+	AssertString("3.3333334e-38f", sz);
+
+	FloatToString(sz, 1024, 3.33333333e-39f, -1, TRUE);
+	AssertString("3.33333312e-39f", sz);
+
+	FloatToString(sz, 1024, 3.33333333e-40f, -1, TRUE);
+	AssertString("3.33333872e-40f", sz);
+
+	FloatToString(sz, 1024, 3.33333333e-41f, -1, TRUE);
+	AssertString("3.33326866e-41f", sz);
+
+	FloatToString(sz, 1024, 3.33333333e-42f, -1, TRUE);
+	AssertString("3.33368905e-42f", sz);
+
+	FloatToString(sz, 1024, 3.33333333e-43f, -1, TRUE);
+	AssertString("3.33509035e-43f", sz);
+
+	FloatToString(sz, 1024, 3.33333333e-44f, -1, TRUE);
+	AssertString("3.36311631e-44f", sz);
+
+	FloatToString(sz, 1024, 3.33333333e-45f, -1, TRUE);
+	AssertString("2.80259693e-45f", sz);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void AssertNumberString(char* szExpected, CNumber* pcNumber)
 {
 	CChars		sz;
@@ -325,6 +383,7 @@ void TestFloatPrinter(void)
 	TestFloatPrinterRounding();
 	TestFloatPrinterNegativeRounding();
 	TestDoublePrinterFullRangeSixteenDigits();
+	TestFloatPrinterSubnormal();
 
 	NumberKill();
 	TestStatistics();
