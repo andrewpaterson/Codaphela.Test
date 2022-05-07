@@ -37,8 +37,16 @@
     <ClCompile Include="TestJavaParserPrintFloat.cpp">
       <Filter>Source\TextParser</Filter>
     </ClCompile>
+    <ClCompile Include="JavaTokenAssert.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="JavaTokenAssert.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

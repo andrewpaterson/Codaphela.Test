@@ -216,6 +216,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="JavaTokenAssert.cpp" />
     <ClCompile Include="TestJavaParserGetCharacter.cpp" />
     <ClCompile Include="TestJavaParserGetFloat.cpp" />
     <ClCompile Include="TestJavaParserGetInteger.cpp" />
@@ -247,6 +248,9 @@
       <Project>{d06d265e-a503-42f8-a93a-a0a1c0b058ff}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="JavaTokenAssert.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
