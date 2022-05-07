@@ -40,6 +40,7 @@ void TestChars(void);
 void TestStringHelper(void);
 void TestCharsHelper(void);
 void TestTextParser(void);
+void TestEscapeCodes(void);
 void TestFileUtil(void);
 void TestAllocator(void);
 void TestMemoryBlock(void);
@@ -138,6 +139,7 @@ int __cdecl main(void)
 	TestFreeList();
 	TestFreeListAllocator();
 	TestCharsHelper();
+	TestEscapeCodes();
 	TestTextParser();
 	TestDate();
 	TestNumbers();

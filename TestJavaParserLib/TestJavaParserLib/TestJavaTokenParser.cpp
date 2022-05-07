@@ -2,6 +2,8 @@
 #include "BaseLib/PointerRemapper.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
+#include "BaseLib/FileUtil.h"
+#include "BaseLib/TextFile.h"
 #include "CoreLib/Operators.h"
 #include "TestLib/Assert.h"
 #include "JavaParserLib/JavaTokenParser.h"
@@ -105,6 +107,60 @@ void TestTokenParserLiterals(void)
 }
 
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTokenParserStringEscapeChars(void)
+{
+	CJavaTokenParser	cTokenParser;
+
+	cTokenParser.Init("Test5.Java", "return getType() + \" \\\"\" + name + \"\\\"\";");
+
+	cTokenParser.Parse(TRUE);
+
+	cTokenParser.Dump();
+	cTokenParser.Dump(TRUE);
+
+	cTokenParser.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTokenParserFiles(void)
+{
+	CJavaTokenParser	cTokenParser;
+	CFileUtil			cFileUtil;
+	CChars				sz;
+	CTextFile			cFile;
+	BOOL				bResult;
+
+	sz.Init();
+	cFileUtil.CurrentDirectory(&sz);
+	cFileUtil.AppendToPath(&sz, "Input");
+	cFileUtil.AppendToPath(&sz, "TickablePins.java");
+	cFile.Init();
+	bResult = cFile.Read(sz.Text());
+	AssertTrue(bResult);
+	cFile.PassifyNewlines();
+
+	cTokenParser.Init(sz.Text(), cFile.Text());
+
+	cTokenParser.Parse(TRUE);
+	cFile.Kill();
+	sz.Kill();
+
+	cTokenParser.Dump();
+	cTokenParser.Dump(TRUE);
+
+	cTokenParser.Kill();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -113,10 +169,12 @@ void TestTokenParser(void)
 {
 	BeginTests();
 
-	TestTokenParserEndOfFile();
-	TestTokenParserStartAndEndWithComment();
-	TestTokenParserComplexGeneric();
-	TestTokenParserLiterals();
+	//TestTokenParserEndOfFile();
+	//TestTokenParserStartAndEndWithComment();
+	//TestTokenParserComplexGeneric();
+	//TestTokenParserLiterals();
+	TestTokenParserStringEscapeChars();
+	TestTokenParserFiles();
 
 	TestStatistics();
 }

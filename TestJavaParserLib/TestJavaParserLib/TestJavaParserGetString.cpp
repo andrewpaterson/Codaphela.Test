@@ -78,12 +78,34 @@ void TestJavaParserGetStringSimple(void)
 //																		//
 //																		//
 //////////////////////////////////////////////////////////////////////////
+void TestJavaParserGetStringEscaped(void)
+{
+	TRISTATE		tResult;
+	int				iWidth;
+	int				iLength;
+	char			sz[4 KB];
+
+	tResult = ParseString("\"\"", sz, &iLength, &iWidth);
+	AssertZtring(tResult, sz, "", iLength, 0, iWidth, 1);
+
+	tResult = ParseString("\"\\\"\"", sz, &iLength, &iWidth);
+	AssertZtring(tResult, sz, "\"", iLength, 1, iWidth, 1);
+
+	Pass();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//																		//
+//																		//
+//////////////////////////////////////////////////////////////////////////
 void TestJavaParserGetString(void)
 {
 	BeginTests();
 
-	TestJavaParserGetStringSizeofChar16();
-	TestJavaParserGetStringSimple();
+	//TestJavaParserGetStringSizeofChar16();
+	//TestJavaParserGetStringSimple();
+	TestJavaParserGetStringEscaped();
 
 	TestStatistics();
 

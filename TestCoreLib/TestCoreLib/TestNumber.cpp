@@ -552,8 +552,8 @@ void TestCopy(void)
 	AssertNumber("2.7182818284590452", &cNumber3);
 	AssertInt(1, cNumber3.GetFirstNonZeroDigit());
 	AssertInt(-16, cNumber3.GetLastNonZeroDigit());
-	AssertInt(26, cNumber3.mcMaxWholeNumbers);
-	AssertInt(16, cNumber3.mcMaxDecimals);
+	AssertInt(26, cNumber3.GetMaxWholeNumbers());
+	AssertInt(16, cNumber3.GetMaxDecimals());
 
 	uNumber4.c.Copy(&cNumber3, 1, 10);
 	AssertNumber("2.7182818284", &uNumber4.c);

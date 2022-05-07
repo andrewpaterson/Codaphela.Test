@@ -435,6 +435,9 @@
     <ClCompile Include="TestLogString.cpp">
       <Filter>Source\Error</Filter>
     </ClCompile>
+    <ClCompile Include="TestEscapeCodes.cpp">
+      <Filter>Source\Text</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">
