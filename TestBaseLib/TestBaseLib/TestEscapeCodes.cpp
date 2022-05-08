@@ -46,12 +46,12 @@ void TestEscapeCodes(void)
 	AssertString("\\x1f", GetEscapeString((char)31, sz));
 	AssertString(" ",     GetEscapeString((char)32, sz));
 	AssertString("!",     GetEscapeString((char)33, sz));
-	AssertString("\"",    GetEscapeString((char)34, sz));
+	AssertString("\\\"",  GetEscapeString((char)34, sz));
 	AssertString("#",     GetEscapeString((char)35, sz));
 	AssertString("$",     GetEscapeString((char)36, sz));
 	AssertString("%",     GetEscapeString((char)37, sz));
 	AssertString("&",     GetEscapeString((char)38, sz));
-	AssertString("'",     GetEscapeString((char)39, sz));
+	AssertString("\\\'",  GetEscapeString((char)39, sz));
 	AssertString("(",     GetEscapeString((char)40, sz));
 	AssertString(")",     GetEscapeString((char)41, sz));
 	AssertString("*",     GetEscapeString((char)42, sz));
@@ -75,7 +75,7 @@ void TestEscapeCodes(void)
 	AssertString("<",     GetEscapeString((char)60, sz));
 	AssertString("=",     GetEscapeString((char)61, sz));
 	AssertString(">",     GetEscapeString((char)62, sz));
-	AssertString("?",     GetEscapeString((char)63, sz));
+	AssertString("\\\?",  GetEscapeString((char)63, sz));
 	AssertString("@",     GetEscapeString((char)64, sz));
 	AssertString("A",     GetEscapeString((char)65, sz));
 

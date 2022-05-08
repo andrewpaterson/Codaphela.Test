@@ -1,3 +1,5 @@
+#include "BaseLib/LogString.h"
+#include "JavaParserLib/JavaTokenParser.h"
 #include "TestLib/Assert.h"
 #include "JavaTokenAssert.h"
 
@@ -6,9 +8,11 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* AssertKeyword(CJavaToken* pcToken, EJavaKeyword eKeyword)
+CJavaToken* PrivateAssertKeyword(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, EJavaKeyword eKeyword, int iLine, char* szFile)
 {
-	CJavaKeyword* pcKeyword;
+	CJavaKeyword*			pcKeyword;
+	CChars					sz;
+	CJavaKeywordDefinition* pcDefinition;
 
 	AssertNotNull(pcToken);
 	if (pcToken)
@@ -17,7 +21,16 @@ CJavaToken* AssertKeyword(CJavaToken* pcToken, EJavaKeyword eKeyword)
 		if (pcToken->IsKeyword())
 		{
 			pcKeyword = (CJavaKeyword*)pcToken;
-			AssertTrue(pcKeyword->Is(eKeyword));
+			if (!pcKeyword->Is(eKeyword))
+			{
+				sz.Init();
+				pcKeyword->Print(&sz);
+				pcDefinition = pcDefinitions->GetKeyword(eKeyword);
+				Failed((const char*)pcDefinition->GetName(), (const char*)sz.Text(), iLine, szFile);
+				sz.Kill();
+				BREAK();
+			}
+
 		}
 		return pcToken->GetNext();
 	}
@@ -30,9 +43,10 @@ CJavaToken* AssertKeyword(CJavaToken* pcToken, EJavaKeyword eKeyword)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* AssertIdentifier(CJavaToken* pcToken, char* szIdentifier)
+CJavaToken* PrivateAssertIdentifier(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char* szIdentifier, int iLine, char* szFile)
 {
-	CJavaIdentifier* pcIdentifier;
+	CJavaIdentifier*			pcIdentifier;
+	CChars						sz;
 
 	AssertNotNull(pcToken);
 	if (pcToken)
@@ -41,7 +55,14 @@ CJavaToken* AssertIdentifier(CJavaToken* pcToken, char* szIdentifier)
 		if (pcToken->IsIdentifier())
 		{
 			pcIdentifier = (CJavaIdentifier*)pcToken;
-			AssertTrue(pcIdentifier->Is(szIdentifier));
+			if (!pcIdentifier->Is(szIdentifier))
+			{
+				sz.Init();
+				pcIdentifier->Print(&sz);
+				Failed((const char*)szIdentifier, (const char*)sz.Text(), iLine, szFile);
+				sz.Kill();
+				BREAK();
+			}
 		}
 		return pcToken->GetNext();
 	}
@@ -54,9 +75,43 @@ CJavaToken* AssertIdentifier(CJavaToken* pcToken, char* szIdentifier)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* AssertSeparator(CJavaToken* pcToken, EJavaSeparator eSeparator)
+CJavaToken* PrivateAssertComment(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char* szComment, int iLine, char* szFile)
 {
-	CJavaSeparator* pcSeparator;
+	CJavaComment*	pcComment;
+	CChars			sz;
+
+	AssertNotNull(pcToken);
+	if (pcToken)
+	{
+		AssertTrue(pcToken->IsComment());
+		if (pcToken->IsComment())
+		{
+			pcComment = (CJavaComment*)pcToken;
+			if (!pcComment->Is(szComment))
+			{
+				sz.Init();
+				pcComment->GetComment(&sz);
+				Failed((const char*)szComment, (const char*)sz.Text(), iLine, szFile);
+				sz.Kill();
+				BREAK();
+			}
+		}
+		return pcToken->GetNext();
+	}
+
+	return NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+CJavaToken* PrivateAssertSeparator(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, EJavaSeparator eSeparator, int iLine, char* szFile)
+{
+	CJavaSeparator*				pcSeparator;
+	CChars						sz;
+	CJavaSeparatorDefinition*	pcDefinition;
 
 	AssertNotNull(pcToken);
 	if (pcToken)
@@ -65,7 +120,15 @@ CJavaToken* AssertSeparator(CJavaToken* pcToken, EJavaSeparator eSeparator)
 		if (pcToken->IsSeparator())
 		{
 			pcSeparator = (CJavaSeparator*)pcToken;
-			AssertTrue(pcSeparator->Is(eSeparator));
+			if (!pcSeparator->Is(eSeparator))
+			{
+				sz.Init();
+				pcSeparator->Print(&sz);
+				pcDefinition = pcDefinitions->GetSeparator(eSeparator);
+				Failed((const char*)pcDefinition->GetName(), (const char*)sz.Text(), iLine, szFile);
+				sz.Kill();
+				BREAK();
+			}
 		}
 		return pcToken->GetNext();
 	}
@@ -78,18 +141,28 @@ CJavaToken* AssertSeparator(CJavaToken* pcToken, EJavaSeparator eSeparator)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* AssertOperator(CJavaToken* pcToken, EJavaOperator eOperator)
+CJavaToken* PrivateAssertOperator(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, EJavaOperator eOperator, int iLine, char* szFile)
 {
-	CJavaOperator* pcOperator;
+	CJavaOperator*				pcOperator;
+	CChars						sz;
+	CJavaOperatorDefinition*	pcDefinition;
 
 	AssertNotNull(pcToken);
 	if (pcToken)
 	{
+		pcOperator = (CJavaOperator*)pcToken;
 		AssertTrue(pcToken->IsOperator());
 		if (pcToken->IsOperator())
 		{
-			pcOperator = (CJavaOperator*)pcToken;
-			AssertTrue(pcOperator->Is(eOperator));
+			if (!pcOperator->Is(eOperator))
+			{
+				sz.Init();
+				pcOperator->Print(&sz);
+				pcDefinition = pcDefinitions->GetOperator(eOperator);
+				Failed((const char*)pcDefinition->GetName(), (const char*)sz.Text(), iLine, szFile);
+				sz.Kill();
+				BREAK();
+			}
 		}
 		return pcToken->GetNext();
 	}
@@ -102,10 +175,11 @@ CJavaToken* AssertOperator(CJavaToken* pcToken, EJavaOperator eOperator)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* AssertLiteral(CJavaToken* pcToken, char* szString)
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char* szString, int iLine, char* szFile)
 {
-	CJavaString* pcString;
-	CJavaLiteral* pcLiteral;
+	CJavaString*	pcString;
+	CJavaLiteral*	pcLiteral;
+	CChars			sz;
 
 	AssertNotNull(pcToken);
 	if (pcToken)
@@ -118,7 +192,14 @@ CJavaToken* AssertLiteral(CJavaToken* pcToken, char* szString)
 			if (pcLiteral->IsString())
 			{
 				pcString = (CJavaString*)pcToken;
-				AssertTrue(pcString->Is(szString));
+				if (!pcString->Is(szString))
+				{
+					sz.Init();
+					pcString->Print(&sz);
+					Failed((const char*)szString, (const char*)sz.Text(), iLine, szFile);
+					sz.Kill();
+					BREAK();
+				}
 			}
 		}
 		return pcToken->GetNext();
@@ -132,10 +213,11 @@ CJavaToken* AssertLiteral(CJavaToken* pcToken, char* szString)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* AssertLiteral(CJavaToken* pcToken, int64 lli)
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, int64 lli, int iLine, char* szFile)
 {
-	CJavaInteger* pcInteger;
-	CJavaLiteral* pcLiteral;
+	CJavaInteger*	pcInteger;
+	CJavaLiteral*	pcLiteral;
+	CChars			sz;
 
 	AssertNotNull(pcToken);
 	if (pcToken)
@@ -148,7 +230,14 @@ CJavaToken* AssertLiteral(CJavaToken* pcToken, int64 lli)
 			if (pcLiteral->IsInteger())
 			{
 				pcInteger = (CJavaInteger*)pcToken;
-				AssertTrue(pcInteger->Is(lli));
+				if (!pcInteger->Is(lli))
+				{
+					sz.Init();
+					pcInteger->Print(&sz);
+					Failed(LongLongToString(lli), (const char*)sz.Text(), iLine, szFile);
+					sz.Kill();
+					BREAK();
+				}
 			}
 		}
 		return pcToken->GetNext();
@@ -162,10 +251,11 @@ CJavaToken* AssertLiteral(CJavaToken* pcToken, int64 lli)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* AssertLiteral(CJavaToken* pcToken, int32 i)
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, int32 i, int iLine, char* szFile)
 {
-	CJavaInteger* pcInteger;
-	CJavaLiteral* pcLiteral;
+	CJavaInteger*	pcInteger;
+	CJavaLiteral*	pcLiteral;
+	CChars			sz;
 
 	AssertNotNull(pcToken);
 	if (pcToken)
@@ -178,7 +268,14 @@ CJavaToken* AssertLiteral(CJavaToken* pcToken, int32 i)
 			if (pcLiteral->IsInteger())
 			{
 				pcInteger = (CJavaInteger*)pcToken;
-				AssertTrue(pcInteger->Is(i));
+				if (!pcInteger->Is(i))
+				{
+					sz.Init();
+					pcInteger->Print(&sz);
+					Failed(IntToString(i), (const char*)sz.Text(), iLine, szFile);
+					sz.Kill();
+					BREAK();
+				}
 			}
 		}
 		return pcToken->GetNext();
@@ -192,10 +289,11 @@ CJavaToken* AssertLiteral(CJavaToken* pcToken, int32 i)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* AssertLiteral(CJavaToken* pcToken, float64 d)
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, float64 d, int iLine, char* szFile)
 {
 	CJavaFloat*		pcFloat;
-	CJavaLiteral* pcLiteral;
+	CJavaLiteral*	pcLiteral;
+	CChars			sz;
 
 	AssertNotNull(pcToken);
 	if (pcToken)
@@ -208,7 +306,14 @@ CJavaToken* AssertLiteral(CJavaToken* pcToken, float64 d)
 			if (pcLiteral->IsFloat())
 			{
 				pcFloat = (CJavaFloat*)pcToken;
-				AssertTrue(pcFloat->Is(d));
+				if (!pcFloat->Is(d))
+				{
+					sz.Init();
+					pcFloat->Print(&sz);
+					Failed(DoubleToString(d), (const char*)sz.Text(), iLine, szFile);
+					sz.Kill();
+					BREAK();
+				}
 			}
 		}
 		return pcToken->GetNext();
@@ -222,10 +327,11 @@ CJavaToken* AssertLiteral(CJavaToken* pcToken, float64 d)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* AssertLiteral(CJavaToken* pcToken, float32 f)
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, float32 f, int iLine, char* szFile)
 {
-	CJavaFloat* pcFloat;
-	CJavaLiteral* pcLiteral;
+	CJavaFloat*		pcFloat;
+	CJavaLiteral*	pcLiteral;
+	CChars			sz;
 
 	AssertNotNull(pcToken);
 	if (pcToken)
@@ -238,7 +344,14 @@ CJavaToken* AssertLiteral(CJavaToken* pcToken, float32 f)
 			if (pcLiteral->IsFloat())
 			{
 				pcFloat = (CJavaFloat*)pcToken;
-				AssertTrue(pcFloat->Is(f));
+				if (!pcFloat->Is(f))
+				{
+					sz.Init();
+					pcFloat->Print(&sz);
+					Failed(FloatToString(f), (const char*)sz.Text(), iLine, szFile);
+					sz.Kill();
+					BREAK();
+				}
 			}
 		}
 		return pcToken->GetNext();
@@ -252,10 +365,49 @@ CJavaToken* AssertLiteral(CJavaToken* pcToken, float32 f)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* AssertLiteral(CJavaToken* pcToken, char8 c)
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char8 c, int iLine, char* szFile)
+{
+	CJavaCharacter*	pcCharacter;
+	CJavaLiteral*	pcLiteral;
+	CChars			sz;
+
+	AssertNotNull(pcToken);
+	if (pcToken)
+	{
+		AssertTrue(pcToken->IsLiteral());
+		if (pcToken->IsLiteral())
+		{
+			pcLiteral = (CJavaLiteral*)pcToken;
+			AssertTrue(pcLiteral->IsCharacter());
+			if (pcLiteral->IsCharacter())
+			{
+				pcCharacter = (CJavaCharacter*)pcToken;
+				if (!pcCharacter->Is(c))
+				{
+					sz.Init();
+					pcCharacter->Print(&sz);
+					Failed(CharToString(c), (const char*)sz.Text(), iLine, szFile);
+					sz.Kill();
+					BREAK();
+				}
+			}
+		}
+		return pcToken->GetNext();
+	}
+
+	return NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char16 c, int iLine, char* szFile)
 {
 	CJavaCharacter*		pcCharacter;
 	CJavaLiteral*		pcLiteral;
+	CChars				sz;
 
 	AssertNotNull(pcToken);
 	if (pcToken)
@@ -268,7 +420,14 @@ CJavaToken* AssertLiteral(CJavaToken* pcToken, char8 c)
 			if (pcLiteral->IsCharacter())
 			{
 				pcCharacter = (CJavaCharacter*)pcToken;
-				AssertTrue(pcCharacter->Is(c));
+				if (!pcCharacter->Is(c))
+				{
+					sz.Init();
+					pcCharacter->Print(&sz);
+					Failed(CharToString(c), (const char*)sz.Text(), iLine, szFile);
+					sz.Kill();
+					BREAK();
+				}
 			}
 		}
 		return pcToken->GetNext();
@@ -282,40 +441,11 @@ CJavaToken* AssertLiteral(CJavaToken* pcToken, char8 c)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* AssertLiteral(CJavaToken* pcToken, char16 c)
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, bool b, int iLine, char* szFile)
 {
-	CJavaCharacter* pcCharacter;
-	CJavaLiteral* pcLiteral;
-
-	AssertNotNull(pcToken);
-	if (pcToken)
-	{
-		AssertTrue(pcToken->IsLiteral());
-		if (pcToken->IsLiteral())
-		{
-			pcLiteral = (CJavaLiteral*)pcToken;
-			AssertTrue(pcLiteral->IsCharacter());
-			if (pcLiteral->IsCharacter())
-			{
-				pcCharacter = (CJavaCharacter*)pcToken;
-				AssertTrue(pcCharacter->Is(c));
-			}
-		}
-		return pcToken->GetNext();
-	}
-
-	return NULL;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-CJavaToken* AssertLiteral(CJavaToken* pcToken, bool b)
-{
-	CJavaBoolean* pcBoolean;
-	CJavaLiteral* pcLiteral;
+	CJavaBoolean*	pcBoolean;
+	CJavaLiteral*	pcLiteral;
+	CChars			sz;
 
 	AssertNotNull(pcToken);
 	if (pcToken)
@@ -328,7 +458,14 @@ CJavaToken* AssertLiteral(CJavaToken* pcToken, bool b)
 			if (pcLiteral->IsBoolean())
 			{
 				pcBoolean = (CJavaBoolean*)pcToken;
-				AssertTrue(pcBoolean->Is(b));
+				if (!pcBoolean->Is(b))
+				{
+					sz.Init();
+					pcBoolean->Print(&sz);
+					Failed(BoolToString(b), (const char*)sz.Text(), iLine, szFile);
+					sz.Kill();
+					BREAK();
+				}
 			}
 		}
 		return pcToken->GetNext();

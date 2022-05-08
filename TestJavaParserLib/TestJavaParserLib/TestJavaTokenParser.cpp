@@ -16,11 +16,21 @@
 //////////////////////////////////////////////////////////////////////////
 void TestTokenParserEndOfFile(void)
 {
-	CJavaTokenParser	cTokenParser;
+	CJavaTokenParser		cTokenParser;
+	CJavaTokenDefinitions	cTokenDefinitions;
+	CJavaToken*				pcToken;
 
-	cTokenParser.Init("Test1.Java", "{\n}");
+	cTokenDefinitions.Init();
+	cTokenParser.Init(&cTokenDefinitions, "Test1.Java", "{\n}");
 	cTokenParser.Parse();
+
+	pcToken = cTokenParser.GetFirstToken();
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_CurlyBracketLeft);
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_CurlyBracketRight);
+	AssertNull(pcToken);
+
 	cTokenParser.Kill();
+	cTokenDefinitions.Kill();
 }
 
 
@@ -30,9 +40,12 @@ void TestTokenParserEndOfFile(void)
 //////////////////////////////////////////////////////////////////////////
 void TestTokenParserStartAndEndWithComment(void)
 {
-	CJavaTokenParser	cTokenParser;
-	
-	cTokenParser.Init("Test2.Java", "\
+	CJavaTokenParser		cTokenParser;
+	CJavaTokenDefinitions	cTokenDefinitions;
+	CJavaToken*				pcToken;
+
+	cTokenDefinitions.Init();
+	cTokenParser.Init(&cTokenDefinitions, "Test2.Java", "\
   // Tickable Pins Start\n\
 package net.simulation.common;\n\
 \n\
@@ -41,8 +54,30 @@ package net.simulation.common;\n\
 } // Tickable Pins End\
 ");
 
+
 	cTokenParser.Parse();
+
+	pcToken = cTokenParser.GetFirstToken();
+
+	pcToken = AssertComment(&cTokenDefinitions, pcToken, " Tickable Pins Start");
+	pcToken = AssertKeyword(&cTokenDefinitions, pcToken, JK_package);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "net");
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Dot);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "simulation");
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Dot);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "common");
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Semicolon);
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_CurlyBracketLeft);
+	pcToken = AssertKeyword(&cTokenDefinitions, pcToken, JK_protected);
+	pcToken = AssertKeyword(&cTokenDefinitions, pcToken, JK_int);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "x");
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Semicolon);
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_CurlyBracketRight);
+	pcToken = AssertComment(&cTokenDefinitions, pcToken, " Tickable Pins End");
+	AssertNull(pcToken);
+	
 	cTokenParser.Kill();
+	cTokenDefinitions.Kill();
 }
 
 
@@ -52,9 +87,11 @@ package net.simulation.common;\n\
 //////////////////////////////////////////////////////////////////////////
 void TestTokenParserComplexGeneric(void)
 {
-	CJavaTokenParser	cTokenParser;
+	CJavaTokenDefinitions	cTokenDefinitions;
+	CJavaTokenParser		cTokenParser;
 
-	cTokenParser.Init("Test3.Java", "\
+	cTokenDefinitions.Init();
+	cTokenParser.Init(&cTokenDefinitions, "Test3.Java", "\
   // Tickable Pins\n\
 package net.simulation.common;\n\
 \n\
@@ -74,6 +111,7 @@ public abstract class TickablePins<\n\
 
 	cTokenParser.Parse();
 	cTokenParser.Kill();
+	cTokenDefinitions.Kill();
 }
 
 
@@ -83,11 +121,12 @@ public abstract class TickablePins<\n\
 //////////////////////////////////////////////////////////////////////////
 void TestTokenParserLiterals(void)
 {
-	CJavaTokenParser	cTokenParser;
-	CJavaToken*			pcToken;
-	//CChars				szPretty;
+	CJavaTokenDefinitions	cTokenDefinitions;
+	CJavaTokenParser		cTokenParser;
+	CJavaToken*				pcToken;
 
-	cTokenParser.Init("Test4.Java", "\
+	cTokenDefinitions.Init();
+	cTokenParser.Init(&cTokenDefinitions, "Test4.Java", "\
   public String getType()\n\
   {\n\
     long xl = 1L;\n\
@@ -103,69 +142,70 @@ void TestTokenParserLiterals(void)
   }\n");
 
 	cTokenParser.Parse(TRUE);
-	cTokenParser.Dump(TRUE);
 
 	pcToken = cTokenParser.GetFirstToken();
 	
-	pcToken = AssertKeyword(pcToken, JK_public);
-	pcToken = AssertIdentifier(pcToken, "String");
-	pcToken = AssertIdentifier(pcToken, "getType");
-	pcToken = AssertSeparator(pcToken, JS_RoundBracketLeft);
-	pcToken = AssertSeparator(pcToken, JS_RoundBracketRight);
-	pcToken = AssertSeparator(pcToken, JS_CurlyBracketLeft);
-	pcToken = AssertKeyword(pcToken, JK_long);
-	pcToken = AssertIdentifier(pcToken, "xl");
-	pcToken = AssertOperator(pcToken, JO_Assign);
-	pcToken = AssertLiteral(pcToken, 1LL);
-	pcToken = AssertSeparator(pcToken, JS_Semicolon);
-	pcToken = AssertKeyword(pcToken, JK_int);
-	pcToken = AssertIdentifier(pcToken, "x");
-	pcToken = AssertOperator(pcToken, JO_Assign);
-	pcToken = AssertLiteral(pcToken, 10000);
-	pcToken = AssertSeparator(pcToken, JS_Semicolon);
-	pcToken = AssertKeyword(pcToken, JK_float);
-	pcToken = AssertIdentifier(pcToken, "f");
-	pcToken = AssertOperator(pcToken, JO_Assign);
-	pcToken = AssertLiteral(pcToken, 1000.f);
-	pcToken = AssertSeparator(pcToken, JS_Semicolon);
-	pcToken = AssertKeyword(pcToken, JK_double);
-	pcToken = AssertIdentifier(pcToken, "fl");
-	pcToken = AssertOperator(pcToken, JO_Assign);
-	pcToken = AssertLiteral(pcToken, 1.33e+10);
-	pcToken = AssertSeparator(pcToken, JS_Semicolon);
-	pcToken = AssertKeyword(pcToken, JK_char);
-	pcToken = AssertIdentifier(pcToken, "c");
-	pcToken = AssertOperator(pcToken, JO_Assign);
-	pcToken = AssertLiteral(pcToken, '!');
-	pcToken = AssertSeparator(pcToken, JS_Semicolon);
-	pcToken = AssertKeyword(pcToken, JK_char);
-	pcToken = AssertIdentifier(pcToken, "c2");
-	pcToken = AssertOperator(pcToken, JO_Assign);
-	pcToken = AssertLiteral(pcToken, 'A');
-	pcToken = AssertSeparator(pcToken, JS_Semicolon);
-	pcToken = AssertKeyword(pcToken, JK_boolean);
-	pcToken = AssertIdentifier(pcToken, "truey");
-	pcToken = AssertOperator(pcToken, JO_Assign);
-	pcToken = AssertLiteral(pcToken, true);
-	pcToken = AssertSeparator(pcToken, JS_Semicolon);
-	pcToken = AssertKeyword(pcToken, JK_boolean);
-	pcToken = AssertIdentifier(pcToken, "notTrue");
-	pcToken = AssertOperator(pcToken, JO_Assign);
-	pcToken = AssertOperator(pcToken, JO_LogicalNegate);
-	pcToken = AssertIdentifier(pcToken, "truey");
-	pcToken = AssertSeparator(pcToken, JS_Semicolon);
-	pcToken = AssertIdentifier(pcToken, "notTrue");
-	pcToken = AssertOperator(pcToken, JO_Assign);
-	pcToken = AssertLiteral(pcToken, (char16)4129);
-	pcToken = AssertOperator(pcToken, JO_Equal);
-	pcToken = AssertLiteral(pcToken, (char16)4130);
-	pcToken = AssertSeparator(pcToken, JS_Semicolon);
-	pcToken = AssertKeyword(pcToken, JK_return);
-	pcToken = AssertLiteral(pcToken, "AND Gate");
-	pcToken = AssertSeparator(pcToken, JS_Semicolon);
-	pcToken = AssertSeparator(pcToken, JS_CurlyBracketRight);
+	pcToken = AssertKeyword(&cTokenDefinitions, pcToken, JK_public);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "String");
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "getType");
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_RoundBracketLeft);
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_RoundBracketRight);
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_CurlyBracketLeft);
+	pcToken = AssertKeyword(&cTokenDefinitions, pcToken, JK_long);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "xl");
+	pcToken = AssertOperator(&cTokenDefinitions, pcToken, JO_Assign);
+	pcToken = AssertLiteral(&cTokenDefinitions, pcToken, 1LL);
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Semicolon);
+	pcToken = AssertKeyword(&cTokenDefinitions, pcToken, JK_int);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "x");
+	pcToken = AssertOperator(&cTokenDefinitions, pcToken, JO_Assign);
+	pcToken = AssertLiteral(&cTokenDefinitions, pcToken, 10000);
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Semicolon);
+	pcToken = AssertKeyword(&cTokenDefinitions, pcToken, JK_float);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "f");
+	pcToken = AssertOperator(&cTokenDefinitions, pcToken, JO_Assign);
+	pcToken = AssertLiteral(&cTokenDefinitions, pcToken, 1000.f);
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Semicolon);
+	pcToken = AssertKeyword(&cTokenDefinitions, pcToken, JK_double);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "fl");
+	pcToken = AssertOperator(&cTokenDefinitions, pcToken, JO_Assign);
+	pcToken = AssertLiteral(&cTokenDefinitions, pcToken, 1.33e+10);
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Semicolon);
+	pcToken = AssertKeyword(&cTokenDefinitions, pcToken, JK_char);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "c");
+	pcToken = AssertOperator(&cTokenDefinitions, pcToken, JO_Assign);
+	pcToken = AssertLiteral(&cTokenDefinitions, pcToken, '!');
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Semicolon);
+	pcToken = AssertKeyword(&cTokenDefinitions, pcToken, JK_char);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "c2");
+	pcToken = AssertOperator(&cTokenDefinitions, pcToken, JO_Assign);
+	pcToken = AssertLiteral(&cTokenDefinitions, pcToken, 'A');
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Semicolon);
+	pcToken = AssertKeyword(&cTokenDefinitions, pcToken, JK_boolean);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "truey");
+	pcToken = AssertOperator(&cTokenDefinitions, pcToken, JO_Assign);
+	pcToken = AssertLiteral(&cTokenDefinitions, pcToken, true);
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Semicolon);
+	pcToken = AssertKeyword(&cTokenDefinitions, pcToken, JK_boolean);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "notTrue");
+	pcToken = AssertOperator(&cTokenDefinitions, pcToken, JO_Assign);
+	pcToken = AssertOperator(&cTokenDefinitions, pcToken, JO_LogicalNegate);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "truey");
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Semicolon);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "notTrue");
+	pcToken = AssertOperator(&cTokenDefinitions, pcToken, JO_Assign);
+	pcToken = AssertLiteral(&cTokenDefinitions, pcToken, (char16)4129);
+	pcToken = AssertOperator(&cTokenDefinitions, pcToken, JO_Equal);
+	pcToken = AssertLiteral(&cTokenDefinitions, pcToken, (char16)4130);
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Semicolon);
+	pcToken = AssertKeyword(&cTokenDefinitions, pcToken, JK_return);
+	pcToken = AssertLiteral(&cTokenDefinitions, pcToken, "AND Gate");
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Semicolon);
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_CurlyBracketRight);
+	AssertNull(pcToken);
 
 	cTokenParser.Kill();
+	cTokenDefinitions.Kill();
 }
 
 
@@ -175,26 +215,28 @@ void TestTokenParserLiterals(void)
 //////////////////////////////////////////////////////////////////////////
 void TestTokenParserStringEscapeChars(void)
 {
-	CJavaTokenParser	cTokenParser;
-	CJavaToken*			pcToken;
-	CChars				szPretty;
+	CJavaTokenParser		cTokenParser;
+	CJavaTokenDefinitions	cTokenDefinitions;
+	CJavaToken*				pcToken;
+	CChars					szPretty;
 
-	cTokenParser.Init("Test5.Java", "return getType() + \" \\\"\" + name + \"\\\"\";");
+	cTokenDefinitions.Init();
+	cTokenParser.Init(&cTokenDefinitions, "Test5.Java", "return getType() + \" \\\"\" + name + \"\\\"\";");
 
 	cTokenParser.Parse(TRUE);
 
 	pcToken = cTokenParser.GetFirstToken();
-	pcToken = AssertKeyword(pcToken, JK_return);
-	pcToken = AssertIdentifier(pcToken, "getType");
-	pcToken = AssertSeparator(pcToken, JS_RoundBracketLeft);
-	pcToken = AssertSeparator(pcToken, JS_RoundBracketRight);
-	pcToken = AssertOperator(pcToken, JO_Plus);
-	pcToken = AssertLiteral(pcToken, " \"");
-	pcToken = AssertOperator(pcToken, JO_Plus);
-	pcToken = AssertIdentifier(pcToken, "name");
-	pcToken = AssertOperator(pcToken, JO_Plus);
-	pcToken = AssertLiteral(pcToken, "\"");
-	pcToken = AssertSeparator(pcToken, JS_Semicolon);
+	pcToken = AssertKeyword(&cTokenDefinitions, pcToken, JK_return);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "getType");
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_RoundBracketLeft);
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_RoundBracketRight);
+	pcToken = AssertOperator(&cTokenDefinitions, pcToken, JO_Plus);
+	pcToken = AssertLiteral(&cTokenDefinitions, pcToken, " \"");
+	pcToken = AssertOperator(&cTokenDefinitions, pcToken, JO_Plus);
+	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "name");
+	pcToken = AssertOperator(&cTokenDefinitions, pcToken, JO_Plus);
+	pcToken = AssertLiteral(&cTokenDefinitions, pcToken, "\"");
+	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Semicolon);
 	AssertNull(pcToken);
 
 	szPretty.Init();
@@ -203,6 +245,7 @@ void TestTokenParserStringEscapeChars(void)
 	szPretty.Kill();
 
 	cTokenParser.Kill();
+	cTokenDefinitions.Kill();
 }
 
 
@@ -212,11 +255,12 @@ void TestTokenParserStringEscapeChars(void)
 //////////////////////////////////////////////////////////////////////////
 void TestTokenParserFiles(void)
 {
-	CJavaTokenParser	cTokenParser;
-	CFileUtil			cFileUtil;
-	CChars				sz;
-	CTextFile			cFile;
-	BOOL				bResult;
+	CJavaTokenDefinitions	cTokenDefinitions;
+	CJavaTokenParser		cTokenParser;
+	CFileUtil				cFileUtil;
+	CChars					sz;
+	CTextFile				cFile;
+	BOOL					bResult;
 
 	sz.Init();
 	cFileUtil.CurrentDirectory(&sz);
@@ -227,7 +271,8 @@ void TestTokenParserFiles(void)
 	AssertTrue(bResult);
 	cFile.PassifyNewlines();
 
-	cTokenParser.Init(sz.Text(), cFile.Text());
+	cTokenDefinitions.Init();
+	cTokenParser.Init(&cTokenDefinitions, sz.Text(), cFile.Text());
 
 	cTokenParser.Parse(TRUE);
 	cFile.Kill();
@@ -236,6 +281,7 @@ void TestTokenParserFiles(void)
 	cTokenParser.Dump();
 
 	cTokenParser.Kill();
+	cTokenDefinitions.Kill();
 }
 
 

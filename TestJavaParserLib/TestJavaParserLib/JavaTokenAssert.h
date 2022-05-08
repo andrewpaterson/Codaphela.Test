@@ -4,18 +4,30 @@
 #include "JavaParserLib/JavaTokenMemory.h"
 
 
-CJavaToken* AssertKeyword(CJavaToken* pcToken, EJavaKeyword eKeyword);
-CJavaToken* AssertIdentifier(CJavaToken* pcToken, char* szIdentifier);
-CJavaToken* AssertSeparator(CJavaToken* pcToken, EJavaSeparator eSeparator);
-CJavaToken* AssertOperator(CJavaToken* pcToken, EJavaOperator eOperator);
-CJavaToken* AssertLiteral(CJavaToken* pcToken, char* szString);
-CJavaToken* AssertLiteral(CJavaToken* pcToken, int64 lli);
-CJavaToken* AssertLiteral(CJavaToken* pcToken, int32 i);
-CJavaToken* AssertLiteral(CJavaToken* pcToken, float32 f);
-CJavaToken* AssertLiteral(CJavaToken* pcToken, float64 d);
-CJavaToken* AssertLiteral(CJavaToken* pcToken, char8 c);
-CJavaToken* AssertLiteral(CJavaToken* pcToken, char16 c);
-CJavaToken* AssertLiteral(CJavaToken* pcToken, bool b);
+class CJavaTokenDefinitions;
+
+
+CJavaToken* PrivateAssertKeyword(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, EJavaKeyword eKeyword, int iLine, char* szFile);
+CJavaToken* PrivateAssertIdentifier(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char* szIdentifier, int iLine, char* szFile);
+CJavaToken* PrivateAssertSeparator(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, EJavaSeparator eSeparator, int iLine, char* szFile);
+CJavaToken* PrivateAssertOperator(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, EJavaOperator eOperator, int iLine, char* szFile);
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char* szString, int iLine, char* szFile);
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, int64 lli, int iLine, char* szFile);
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, int32 i, int iLine, char* szFile);
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, float32 f, int iLine, char* szFile);
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, float64 d, int iLine, char* szFile);
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char8 c, int iLine, char* szFile);
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char16 c, int iLine, char* szFile);
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, bool b, int iLine, char* szFile);
+CJavaToken* PrivateAssertComment(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char* szComment, int iLine, char* szFile);
+
+
+#define AssertKeyword(p, t, a)		PrivateAssertKeyword(p, t, a, __LINE__, __FILE__)
+#define AssertIdentifier(p, t, a)	PrivateAssertIdentifier(p, t, a, __LINE__, __FILE__)
+#define AssertSeparator(p, t, a)	PrivateAssertSeparator(p, t, a, __LINE__, __FILE__)
+#define AssertOperator(p, t, a)		PrivateAssertOperator(p, t, a, __LINE__, __FILE__)
+#define AssertLiteral(p, t, a)		PrivateAssertLiteral(p, t, a, __LINE__, __FILE__)
+#define AssertComment(p, t, a)		PrivateAssertComment(p, t, a, __LINE__, __FILE__)
 
 
 #endif // !__JAVA_TOKEN_ASSERT_H__
