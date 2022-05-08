@@ -272,6 +272,45 @@ void TestMemCmp(void)
     AssertInt(-1, iResult);
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlagsToString()
+{
+    char    sz[40];
+
+    FlagsToString(sz, 40, (int)0b00110010000000001111111101101010);
+    AssertString("00110010 00000000 11111111 01101010", sz);
+
+    FlagsToString(sz, 40, (int)0b10111011110111101011100101101111);
+    AssertString("10111011 11011110 10111001 01101111", sz);
+
+    FlagsToString(sz, 40, (short int)0b1011101111011110);
+    AssertString("10111011 11011110", sz);
+
+    FlagsToString(sz, 40, (char)0b11011110);
+    AssertString("11011110", sz);
+
+    FlagsToString(sz, 1, (char)0b11011110);
+    AssertString("", sz);
+
+    FlagsToString(sz, 2, (char)0b11011110);
+    AssertString("1", sz);
+
+    FlagsToString(sz, 6, (char)0b11011110);
+    AssertString("11011", sz);
+    
+    FlagsToString(sz, 8, (char)0b11011110);
+    AssertString("1101111", sz);
+
+    FlagsToString(sz, 9, (char)0b11011110);
+    AssertString("11011110", sz);
+
+    FlagsToString(sz, 10, (char)0b11011110);
+    AssertString("11011110", sz);
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -291,6 +330,7 @@ void TestStringHelper(void)
 	TestToUpper();
     TestMemSwp();
     TestMemCmp();
+    TestFlagsToString();
 
 	TestStatistics();
 }
