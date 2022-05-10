@@ -3,7 +3,6 @@
 #include "TestLib/Assert.h"
 
 
-
 //////////////////////////////////////////////////////////////////////////
 //																		//
 //																		//
@@ -103,8 +102,8 @@ void TestJavaParserGetString(void)
 {
 	BeginTests();
 
-	//TestJavaParserGetStringSizeofChar16();
-	//TestJavaParserGetStringSimple();
+	TestJavaParserGetStringSizeofChar16();
+	TestJavaParserGetStringSimple();
 	TestJavaParserGetStringEscaped();
 
 	TestStatistics();

@@ -19,10 +19,13 @@ void TestTokenParserEndOfFile(void)
 	CJavaTokenParser		cTokenParser;
 	CJavaTokenDefinitions	cTokenDefinitions;
 	CJavaToken*				pcToken;
+	BOOL					bResult;
 
 	cTokenDefinitions.Init();
 	cTokenParser.Init(&cTokenDefinitions, "Test1.Java", "{\n}");
-	cTokenParser.Parse();
+
+	bResult = cTokenParser.Parse(TRUE);
+	AssertTrue(bResult);
 
 	pcToken = cTokenParser.GetFirstToken();
 	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_CurlyBracketLeft);
@@ -43,6 +46,7 @@ void TestTokenParserStartAndEndWithComment(void)
 	CJavaTokenParser		cTokenParser;
 	CJavaTokenDefinitions	cTokenDefinitions;
 	CJavaToken*				pcToken;
+	TRISTATE				tResult;
 
 	cTokenDefinitions.Init();
 	cTokenParser.Init(&cTokenDefinitions, "Test2.Java", "\
@@ -54,8 +58,8 @@ package net.simulation.common;\n\
 } // Tickable Pins End\
 ");
 
-
-	cTokenParser.Parse();
+	tResult = cTokenParser.Parse();
+	AssertTristate(TRITRUE, tResult);
 
 	pcToken = cTokenParser.GetFirstToken();
 
@@ -89,6 +93,8 @@ void TestTokenParserComplexGeneric(void)
 {
 	CJavaTokenDefinitions	cTokenDefinitions;
 	CJavaTokenParser		cTokenParser;
+	TRISTATE				tResult;
+	CChars					sz;
 
 	cTokenDefinitions.Init();
 	cTokenParser.Init(&cTokenDefinitions, "Test3.Java", "\
@@ -109,7 +115,28 @@ public abstract class TickablePins<\n\
 }\
 ");
 
-	cTokenParser.Parse();
+	tResult = cTokenParser.Parse();
+	AssertTristate(TRITRUE, tResult);
+
+	sz.Init();
+	cTokenParser.PrettyPrint(&sz);
+
+	AssertStringApproximate("\
+// Tickable Pins\n\
+package net.simulation.common;\n\
+\n\
+import net.common.*; \n\
+import java.util.Set; \n\
+\n\
+public abstract class TickablePins<SNAPSHOT extends Snapshot, PINS extends Pins<SNAPSHOT, PINS, ? extends IntegratedCircuit<SNAPSHOT, PINS>>, INTEGRATED_CIRCUIT extends IntegratedCircuit<SNAPSHOT, PINS>>\n\
+{\n\
+	protected INTEGRATED_CIRCUIT integratedCircuit; \n\
+	protected SNAPSHOT snapshot; \n\
+}\n\
+", sz.Text())
+
+	sz.Kill();
+
 	cTokenParser.Kill();
 	cTokenDefinitions.Kill();
 }
@@ -124,6 +151,7 @@ void TestTokenParserLiterals(void)
 	CJavaTokenDefinitions	cTokenDefinitions;
 	CJavaTokenParser		cTokenParser;
 	CJavaToken*				pcToken;
+	BOOL					bResult;
 
 	cTokenDefinitions.Init();
 	cTokenParser.Init(&cTokenDefinitions, "Test4.Java", "\
@@ -141,7 +169,8 @@ void TestTokenParserLiterals(void)
     return \"AND Gate\";\n\
   }\n");
 
-	cTokenParser.Parse(TRUE);
+	bResult = cTokenParser.Parse(TRUE);
+	AssertTrue(bResult);
 
 	pcToken = cTokenParser.GetFirstToken();
 	
@@ -219,11 +248,13 @@ void TestTokenParserStringEscapeChars(void)
 	CJavaTokenDefinitions	cTokenDefinitions;
 	CJavaToken*				pcToken;
 	CChars					szPretty;
+	BOOL					bResult;;
 
 	cTokenDefinitions.Init();
 	cTokenParser.Init(&cTokenDefinitions, "Test5.Java", "return getType() + \" \\\"\" + name + \"\\\"\";");
 
-	cTokenParser.Parse(TRUE);
+	bResult = cTokenParser.Parse(TRUE);
+	AssertTrue(bResult);
 
 	pcToken = cTokenParser.GetFirstToken();
 	pcToken = AssertKeyword(&cTokenDefinitions, pcToken, JK_return);
@@ -274,7 +305,9 @@ void TestTokenParserFiles(void)
 	cTokenDefinitions.Init();
 	cTokenParser.Init(&cTokenDefinitions, sz.Text(), cFile.Text());
 
-	cTokenParser.Parse(TRUE);
+	bResult = cTokenParser.Parse(TRUE);
+	AssertTrue(bResult);
+
 	cFile.Kill();
 	sz.Kill();
 
