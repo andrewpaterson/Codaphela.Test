@@ -292,6 +292,7 @@ void TestTokenParserFiles(void)
 	CChars					sz;
 	CTextFile				cFile;
 	BOOL					bResult;
+	CChars					szPretty;
 
 	sz.Init();
 	cFileUtil.CurrentDirectory(&sz);
@@ -311,7 +312,11 @@ void TestTokenParserFiles(void)
 	cFile.Kill();
 	sz.Kill();
 
-	cTokenParser.Dump();
+	szPretty.Init();
+	cTokenParser.PrettyPrint(&szPretty);
+
+	szPretty.Dump();
+	szPretty.Kill();
 
 	cTokenParser.Kill();
 	cTokenDefinitions.Kill();
