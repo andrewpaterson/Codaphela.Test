@@ -390,6 +390,43 @@ void TestCharToWideString(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestBoolToString()
+{
+    char    sz[40];
+
+    BoolToString(sz, 40, TRUE);
+    AssertString("true", sz);
+
+    BoolToString(sz, 40, FALSE);
+    AssertString("false", sz);
+
+    BoolToString(sz, 1, FALSE);
+    AssertString("", sz);
+
+    BoolToString(sz, 2, FALSE);
+    AssertString("f", sz);
+
+    BoolToString(sz, 3, FALSE);
+    AssertString("fa", sz);
+
+    BoolToString(sz, 4, FALSE);
+    AssertString("fal", sz);
+
+    BoolToString(sz, 5, FALSE);
+    AssertString("fals", sz);
+
+    BoolToString(sz, 6, FALSE);
+    AssertString("false", sz);
+
+    BoolToString(sz, 7, FALSE);
+    AssertString("false", sz);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestStringHelper(void)
 {
 	BeginTests();
@@ -407,6 +444,7 @@ void TestStringHelper(void)
     TestFlagsToString();
     TestCharToString();
     TestCharToWideString();
+    TestBoolToString();
 
 	TestStatistics();
 }
