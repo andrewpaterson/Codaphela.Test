@@ -316,6 +316,80 @@ void TestFlagsToString()
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestCharToString(void)
+{
+    char    sz[40];
+
+    CharToString(sz, 40, 'A');
+    AssertString("'A'", sz);
+
+    CharToString(sz, 40, '\0');
+    AssertString("'\\0'", sz);
+
+    CharToString(sz, 40, '\n');
+    AssertString("'\\n'", sz);
+
+    CharToString(sz, 40, '\x7f');
+    AssertString("'\\x7f'", sz);
+
+    CharToString(sz, 40, '\x80');
+    AssertString("'€'", sz);
+
+    CharToString(sz, 1, '\x7f');
+    AssertString("", sz);
+
+    CharToString(sz, 2, '\x7f');
+    AssertString("'", sz);
+
+    CharToString(sz, 3, '\x7f');
+    AssertString("'\\", sz);
+
+    CharToString(sz, 4, '\x7f');
+    AssertString("'\\x", sz);
+
+    CharToString(sz, 5, '\x7f');
+    AssertString("'\\x7", sz);
+
+    CharToString(sz, 6, '\x7f');
+    AssertString("'\\x7f", sz);
+
+    CharToString(sz, 7, '\x7f');
+    AssertString("'\\x7f'", sz);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCharToWideString(void)
+{
+    char    sz[40];
+
+    CharToString(sz, 40, (char16)'A');
+    AssertString("'\\u0041'", sz);
+
+    CharToString(sz, 40, (char16)'\0');
+    AssertString("'\\u0000'", sz);
+
+    CharToString(sz, 7, (char16)0x7fff);
+    AssertString("'\\u7ff", sz);
+
+    CharToString(sz, 8, (char16)0x7fff);
+    AssertString("'\\u7fff", sz);
+
+    CharToString(sz, 9, (char16)0x7fff);
+    AssertString("'\\u7fff'", sz);
+
+    CharToString(sz, 10, (char16)0x7fff);
+    AssertString("'\\u7fff'", sz);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestStringHelper(void)
 {
 	BeginTests();
@@ -331,6 +405,8 @@ void TestStringHelper(void)
     TestMemSwp();
     TestMemCmp();
     TestFlagsToString();
+    TestCharToString();
+    TestCharToWideString();
 
 	TestStatistics();
 }
