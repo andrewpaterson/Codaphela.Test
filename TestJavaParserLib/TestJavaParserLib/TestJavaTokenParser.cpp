@@ -315,7 +315,19 @@ void TestTokenParserFiles(void)
 	szPretty.Init();
 	cTokenParser.PrettyPrint(&szPretty);
 
-	szPretty.Dump();
+	sz.Init();
+	cFileUtil.CurrentDirectory(&sz);
+	cFileUtil.AppendToPath(&sz, "Input");
+	cFileUtil.AppendToPath(&sz, "TickablePins.java.expected");
+	cFile.Init();
+	bResult = cFile.Read(sz.Text());
+	AssertTrue(bResult);
+	cFile.PassifyNewlines();
+
+	AssertStringApproximate(cFile.Text(), szPretty.Text());
+
+	cFile.Kill();
+	sz.Kill();
 	szPretty.Kill();
 
 	cTokenParser.Kill();
