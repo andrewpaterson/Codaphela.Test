@@ -35,7 +35,6 @@ public class W65C816Assembler\n\
 }\n\
 ";
 
-
 	cTokenDefinitions.Init();
 	cTokenParser.Init(&cTokenDefinitions, szFileName, szFileContents);
 

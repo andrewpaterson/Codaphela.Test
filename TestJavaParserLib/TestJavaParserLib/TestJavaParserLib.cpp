@@ -36,7 +36,7 @@ int __cdecl main(void)
 	TestJavaParserGetString();
 	TestJavaParserGetFloat();
 	TestJavaTokenParser();
-	TestJavaProjectTokenParser();
+	//TestJavaProjectTokenParser();
 	TestJavaSyntaxParser();
 
 
