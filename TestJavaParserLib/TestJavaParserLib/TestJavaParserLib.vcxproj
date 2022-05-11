@@ -223,6 +223,7 @@
     <ClCompile Include="TestJavaParserGetString.cpp" />
     <ClCompile Include="TestJavaParserPrintFloat.cpp" />
     <ClCompile Include="TestJavaParserSkipComments.cpp" />
+    <ClCompile Include="TestJavaSyntaxParser.cpp" />
     <ClCompile Include="TestJavaTokenParser.cpp" />
     <ClCompile Include="TestJavaParserLib.cpp" />
     <ClCompile Include="TestJavaProjectTokenParser.cpp" />

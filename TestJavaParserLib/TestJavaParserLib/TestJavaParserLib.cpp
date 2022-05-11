@@ -4,14 +4,15 @@
 
 #include "TestLib/Assert.h"
 
-void TestTokenParser(void);
+void TestJavaTokenParser(void);
 void TestSkipComments(void);
 void TestJavaParserGetInteger(void);
 void TestJavaParserGetFloat(void);
 void TestJavaParserGetCharacter(void);
 void TestJavaParserGetString(void);
 void TestJavaParserPrintFloat(void);
-void TestProjectTokenParser(void);
+void TestJavaProjectTokenParser(void);
+void TestJavaSyntaxParser(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -34,8 +35,10 @@ int __cdecl main(void)
 	TestJavaParserGetCharacter();
 	TestJavaParserGetString();
 	TestJavaParserGetFloat();
-	TestTokenParser();
-	TestProjectTokenParser();
+	TestJavaTokenParser();
+	TestJavaProjectTokenParser();
+	TestJavaSyntaxParser();
+
 
 	iTotalTestsFailed = TestTotalStatistics();
 

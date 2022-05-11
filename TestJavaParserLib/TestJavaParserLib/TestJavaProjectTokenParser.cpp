@@ -59,7 +59,7 @@ void PrettyPrintFile(char* szFileName)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestProjectTokenParser(void)
+void TestJavaProjectTokenParser(void)
 {
 	BeginTests();
 

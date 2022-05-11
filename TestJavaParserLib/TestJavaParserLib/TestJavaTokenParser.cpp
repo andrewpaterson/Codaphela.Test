@@ -14,7 +14,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestTokenParserEndOfFile(void)
+void TestJavaTokenParserEndOfFile(void)
 {
 	CJavaTokenParser		cTokenParser;
 	CJavaTokenDefinitions	cTokenDefinitions;
@@ -41,7 +41,7 @@ void TestTokenParserEndOfFile(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestTokenParserStartAndEndWithComment(void)
+void TestJavaTokenParserStartAndEndWithComment(void)
 {
 	CJavaTokenParser		cTokenParser;
 	CJavaTokenDefinitions	cTokenDefinitions;
@@ -89,7 +89,7 @@ package net.simulation.common;\n\
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestTokenParserComplexGeneric(void)
+void TestJavaTokenParserComplexGeneric(void)
 {
 	CJavaTokenDefinitions	cTokenDefinitions;
 	CJavaTokenParser		cTokenParser;
@@ -146,7 +146,7 @@ public abstract class TickablePins<SNAPSHOT extends Snapshot, PINS extends Pins<
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestTokenParserLiterals(void)
+void TestJavaTokenParserLiterals(void)
 {
 	CJavaTokenDefinitions	cTokenDefinitions;
 	CJavaTokenParser		cTokenParser;
@@ -242,7 +242,7 @@ void TestTokenParserLiterals(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestTokenParserStringEscapeChars(void)
+void TestJavaTokenParserStringEscapeChars(void)
 {
 	CJavaTokenParser		cTokenParser;
 	CJavaTokenDefinitions	cTokenDefinitions;
@@ -284,7 +284,7 @@ void TestTokenParserStringEscapeChars(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestTokenParserFiles(void)
+void TestJavaTokenParserFiles(void)
 {
 	CJavaTokenDefinitions	cTokenDefinitions;
 	CJavaTokenParser		cTokenParser;
@@ -339,7 +339,7 @@ void TestTokenParserFiles(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestTokenParserSpecialOperators(void)
+void TestJavaTokenParserSpecialOperators(void)
 {
 	CJavaTokenParser		cTokenParser;
 	CJavaTokenDefinitions	cTokenDefinitions;
@@ -378,17 +378,17 @@ void TestTokenParserSpecialOperators(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestTokenParser(void)
+void TestJavaTokenParser(void)
 {
 	BeginTests();
 
-	TestTokenParserEndOfFile();
-	TestTokenParserStartAndEndWithComment();
-	TestTokenParserComplexGeneric();
-	TestTokenParserLiterals();
-	TestTokenParserStringEscapeChars();
-	TestTokenParserSpecialOperators();
-	TestTokenParserFiles();
+	TestJavaTokenParserEndOfFile();
+	TestJavaTokenParserStartAndEndWithComment();
+	TestJavaTokenParserComplexGeneric();
+	TestJavaTokenParserLiterals();
+	TestJavaTokenParserStringEscapeChars();
+	TestJavaTokenParserSpecialOperators();
+	TestJavaTokenParserFiles();
 
 	TestStatistics();
 }

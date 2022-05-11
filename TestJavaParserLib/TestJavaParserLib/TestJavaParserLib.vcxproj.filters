@@ -11,13 +11,16 @@
     <Filter Include="Source\TextParser">
       <UniqueIdentifier>{d9f53788-e88d-4faf-9a43-392df08406bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Java\Token">
+      <UniqueIdentifier>{1437f301-8d90-4a7a-97cf-cb5b3b553915}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Java\Syntax">
+      <UniqueIdentifier>{212ed298-1dd7-4de0-a777-7e8c4199bbdb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestJavaParserLib.cpp">
       <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="TestJavaTokenParser.cpp">
-      <Filter>Source\Java</Filter>
     </ClCompile>
     <ClCompile Include="TestJavaParserSkipComments.cpp">
       <Filter>Source\TextParser</Filter>
@@ -41,7 +44,13 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="TestJavaProjectTokenParser.cpp">
-      <Filter>Source\Java</Filter>
+      <Filter>Source\Java\Token</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJavaTokenParser.cpp">
+      <Filter>Source\Java\Token</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJavaSyntaxParser.cpp">
+      <Filter>Source\Java\Syntax</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
