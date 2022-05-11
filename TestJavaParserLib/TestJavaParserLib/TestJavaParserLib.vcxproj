@@ -225,6 +225,7 @@
     <ClCompile Include="TestJavaParserSkipComments.cpp" />
     <ClCompile Include="TestJavaTokenParser.cpp" />
     <ClCompile Include="TestJavaParserLib.cpp" />
+    <ClCompile Include="TestJavaProjectTokenParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

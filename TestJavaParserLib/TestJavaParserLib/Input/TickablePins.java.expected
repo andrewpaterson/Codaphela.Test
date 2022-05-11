@@ -13,7 +13,7 @@ public abstract class TickablePins<SNAPSHOT extends Snapshot, PINS extends Pins<
 	protected INTEGRATED_CIRCUIT integratedCircuit;
 	protected SNAPSHOT snapshot;
 	protected Tickables tickables;
-	protected List<Port>ports;
+	protected List<Port> ports;
 	protected long tickCount;
 
 	public TickablePins(Tickables tickables)
@@ -55,9 +55,9 @@ public abstract class TickablePins<SNAPSHOT extends Snapshot, PINS extends Pins<
 		tickCount ++ ;
 	}
 
-	public List<TraceValue>getTraceValues()
+	public List<TraceValue> getTraceValues()
 	{
-		List<TraceValue>traceValues = new ArrayList<>();
+		List<TraceValue> traceValues = new ArrayList<>();
 
 		for (Port port : ports)
 		{
@@ -176,10 +176,10 @@ public abstract class TickablePins<SNAPSHOT extends Snapshot, PINS extends Pins<
 				stringBuilder.append(portTransmissionState).append(":   P").append(portValues).append(" W");
 				stringBuilder.append(connectionValues);
 			}
-			List<Trace>connections = port.getConnections();
-			Set<Port>updatingPorts = get_DEBUG_UpdatingPorts(connections);
+			List<Trace> connections = port.getConnections();
+			Set<Port> updatingPorts = get_DEBUG_UpdatingPorts(connections);
 
-			if (updatingPorts.size()>1)
+			if (updatingPorts.size()> 1)
 			{
 				stringBuilder.append(" (Multiple updaters)");
 			}
@@ -192,9 +192,9 @@ public abstract class TickablePins<SNAPSHOT extends Snapshot, PINS extends Pins<
 		return stringBuilder.toString();
 	}
 
-	private Set<Port>get_DEBUG_UpdatingPorts(List<Trace>connections)
+	private Set<Port> get_DEBUG_UpdatingPorts(List<Trace> connections)
 	{
-		Set<Port>updatingPorts = new LinkedHashSet<>();
+		Set<Port> updatingPorts = new LinkedHashSet<>();
 
 		for (Trace connection : connections)
 		{

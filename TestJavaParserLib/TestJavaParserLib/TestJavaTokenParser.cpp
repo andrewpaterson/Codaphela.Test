@@ -339,6 +339,45 @@ void TestTokenParserFiles(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestTokenParserSpecialOperators(void)
+{
+	CJavaTokenParser		cTokenParser;
+	CJavaTokenDefinitions	cTokenDefinitions;
+	CChars					szPretty;
+	BOOL					bResult;;
+
+	cTokenDefinitions.Init();
+	cTokenParser.Init(&cTokenDefinitions, "Test6.Java", "stream.forEach(System.out::println);");
+
+	bResult = cTokenParser.Parse();
+	AssertTrue(bResult);
+
+	szPretty.Init();
+	cTokenParser.PrettyPrint(&szPretty);
+	AssertString("stream.forEach(System.out::println);\n", szPretty.Text());
+	szPretty.Kill();
+
+	cTokenParser.Kill();
+
+	cTokenParser.Init(&cTokenDefinitions, "Test6.Java", "stream.forEach( s-> System.out.println(s));");
+
+	bResult = cTokenParser.Parse();
+	AssertTrue(bResult);
+
+	szPretty.Init();
+	cTokenParser.PrettyPrint(&szPretty);
+	AssertString("stream.forEach(s -> System.out.println(s));\n", szPretty.Text());
+	szPretty.Kill();
+
+	cTokenParser.Kill();
+	cTokenDefinitions.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestTokenParser(void)
 {
 	BeginTests();
@@ -348,6 +387,7 @@ void TestTokenParser(void)
 	TestTokenParserComplexGeneric();
 	TestTokenParserLiterals();
 	TestTokenParserStringEscapeChars();
+	TestTokenParserSpecialOperators();
 	TestTokenParserFiles();
 
 	TestStatistics();
