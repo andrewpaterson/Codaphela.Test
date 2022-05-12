@@ -20,9 +20,13 @@ void TestJavaSyntaxParserStuff(void)
 	CJavaSyntaxParser		cSyntaxParser;
 	CJavaTokenDefinitions	cTokenDefinitions;
 	BOOL					bResult;
+	CLogger					cLogger;
 	char					szFileName[] = "Test1.Java";
 	char					szFileContents[] = "\
 package net.assembler;\n\
+\n\
+import static net.simulation.common.TraceValue.*;\n\
+import java.util.List;\n\
 \n\
 public class W65C816Assembler\n\
 {\n\
@@ -35,6 +39,7 @@ public class W65C816Assembler\n\
 }\n\
 ";
 
+	cLogger.Init();
 	cTokenDefinitions.Init();
 	cTokenParser.Init(&cTokenDefinitions, szFileName, szFileContents);
 
@@ -43,7 +48,7 @@ public class W65C816Assembler\n\
 
 	cTokenParser.Dump();
 
-	cSyntaxParser.Init(&cTokenDefinitions, szFileName, cTokenParser.GetFirstToken());
+	cSyntaxParser.Init(&cLogger, &cTokenDefinitions, szFileName, cTokenParser.GetFirstToken());
 
 	cSyntaxParser.Parse();
 
@@ -52,6 +57,7 @@ public class W65C816Assembler\n\
 
 	cTokenParser.Kill();
 	cTokenDefinitions.Kill();
+	cLogger.Kill();
 }
 
 
