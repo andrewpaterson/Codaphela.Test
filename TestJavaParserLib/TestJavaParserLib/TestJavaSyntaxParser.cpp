@@ -46,8 +46,6 @@ public class W65C816Assembler\n\
 	bResult = cTokenParser.Parse();
 	AssertTrue(bResult);
 
-	cTokenParser.Dump();
-
 	cSyntaxParser.Init(&cLogger, &cTokenDefinitions, szFileName, cTokenParser.GetFirstToken());
 
 	cSyntaxParser.Parse();
