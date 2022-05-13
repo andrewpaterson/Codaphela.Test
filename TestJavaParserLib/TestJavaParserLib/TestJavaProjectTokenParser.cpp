@@ -20,6 +20,7 @@ void PrettyPrintFile(char* szFileName)
 
 	CJavaTokenDefinitions	cTokenDefinitions;
 	CJavaTokenParser		cTokenParser;
+	CJavaTokenMemory		cTokenMemory;
 	CTextFile				cFile;
 	BOOL					bResult;
 	CChars					szPretty;
@@ -31,7 +32,8 @@ void PrettyPrintFile(char* szFileName)
 	cFile.PassifyNewlines();
 
 	cTokenDefinitions.Init();
-	cTokenParser.Init(&cTokenDefinitions, szFileName, cFile.Text());
+	cTokenMemory.Init();
+	cTokenParser.Init(&cTokenDefinitions, &cTokenMemory, szFileName, cFile.Text());
 
 	bResult = cTokenParser.Parse(TRUE);
 	AssertTrue(bResult);
@@ -49,6 +51,7 @@ void PrettyPrintFile(char* szFileName)
 	szPretty.Kill();
 
 	cTokenParser.Kill();
+	cTokenMemory.Kill();
 	cTokenDefinitions.Kill();
 
 	TestStatistics();

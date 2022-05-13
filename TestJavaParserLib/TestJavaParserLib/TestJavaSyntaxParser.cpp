@@ -18,6 +18,8 @@ void TestJavaSyntaxParserStuff(void)
 {
 	CJavaTokenParser		cTokenParser;
 	CJavaSyntaxParser		cSyntaxParser;
+	CJavaTokenMemory		cTokenMemory;
+	CJavaSyntaxMemory		cSyntaxMemory;
 	CJavaTokenDefinitions	cTokenDefinitions;
 	BOOL					bResult;
 	CLogger					cLogger;
@@ -41,19 +43,21 @@ public class W65C816Assembler\n\
 
 	cLogger.Init();
 	cTokenDefinitions.Init();
-	cTokenParser.Init(&cTokenDefinitions, szFileName, szFileContents);
+	cTokenMemory.Init();
+	cTokenParser.Init(&cTokenDefinitions, &cTokenMemory, szFileName, szFileContents);
 
 	bResult = cTokenParser.Parse();
 	AssertTrue(bResult);
 
-	cSyntaxParser.Init(&cLogger, &cTokenDefinitions, szFileName, cTokenParser.GetFirstToken());
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cLogger, &cSyntaxMemory, &cTokenDefinitions, &cTokenMemory, szFileName, cTokenParser.GetFirstToken());
 
 	cSyntaxParser.Parse();
 
 	cSyntaxParser.Kill();
 	cTokenParser.Kill();
-
-	cTokenParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenMemory.Kill();
 	cTokenDefinitions.Kill();
 	cLogger.Kill();
 }
