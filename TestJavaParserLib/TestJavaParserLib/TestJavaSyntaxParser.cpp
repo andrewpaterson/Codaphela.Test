@@ -48,6 +48,8 @@ public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>>\n\
 }\n\
 ";
 
+xxx//	It breaks on Map because list starts getting a generic but expects an extend not a Map
+
 	cLogger.Init();
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
