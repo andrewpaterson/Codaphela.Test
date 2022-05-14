@@ -27,15 +27,22 @@ void TestJavaSyntaxParserStuff(void)
 	char					szFileContents[] = "\
 package net.assembler;\n\
 \n\
-import static net.simulation.common.TraceValue.*;\n\
-import java.util.List;\n\
+import static net.simulation.common.TraceValue.*; \n\
+import net.simulation.common.TraceValue; \n\
 \n\
-public class W65C816Assembler\n\
+import java.util.ArrayList; \n\
+import java.util.List; \n\
+import java.util.Map; \n\
+\n\
+public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>>\n\
 {\n\
-  private int y;\n\
+  private int y; \n\
+  private X x; \n\
 \n\
   public W65C816Assembler()\n\
   {\n\
+    TraceValue value = NotConnected;\n\
+    List<Map<X, Integer>> map = new ArrayList<>();\n\
     int x = 5;\n\
   }\n\
 }\n\
