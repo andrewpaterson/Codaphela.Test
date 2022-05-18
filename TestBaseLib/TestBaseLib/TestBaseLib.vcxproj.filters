@@ -438,6 +438,9 @@
     <ClCompile Include="TestEscapeCodes.cpp">
       <Filter>Source\Text</Filter>
     </ClCompile>
+    <ClCompile Include="TestTextPosition.cpp">
+      <Filter>Source\Text</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

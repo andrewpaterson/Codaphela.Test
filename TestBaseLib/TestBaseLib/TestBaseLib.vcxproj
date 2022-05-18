@@ -295,6 +295,7 @@
     <ClCompile Include="TestGeneralMemory.cpp" />
     <ClCompile Include="TestTemporaryMemory.cpp" />
     <ClCompile Include="TestTextParser.cpp" />
+    <ClCompile Include="TestTextPosition.cpp" />
     <ClCompile Include="TestTrackingAllocator.cpp" />
     <ClCompile Include="TestTreeTemplate.cpp" />
     <ClCompile Include="TestWindowsFiles.cpp" />

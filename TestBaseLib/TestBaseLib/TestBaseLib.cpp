@@ -39,6 +39,7 @@ void TestArrayBlockSorted(void);
 void TestChars(void);
 void TestStringHelper(void);
 void TestCharsHelper(void);
+void TestTextPosition(void);
 void TestTextParser(void);
 void TestEscapeCodes(void);
 void TestFileUtil(void);
@@ -140,6 +141,7 @@ int __cdecl main(void)
 	TestFreeListAllocator();
 	TestCharsHelper();
 	TestEscapeCodes();
+	TestTextPosition();
 	TestTextParser();
 	TestDate();
 	TestNumbers();
