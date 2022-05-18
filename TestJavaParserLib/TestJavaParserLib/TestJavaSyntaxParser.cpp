@@ -14,7 +14,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestJavaSyntaxParserStuff(void)
+void TestJavaSyntaxParserGenericGeneric(void)
 {
 	CJavaTokenParser		cTokenParser;
 	CJavaSyntaxParser		cSyntaxParser;
@@ -24,6 +24,50 @@ void TestJavaSyntaxParserStuff(void)
 	BOOL					bResult;
 	CLogger					cLogger;
 	char					szFileName[] = "Test1.Java";
+	char					szFileContents[] = "\
+class W65C816Assembler<List<List>>\n\
+{\n\
+}\n\
+";
+
+	//	It breaks on Map because list starts getting a generic but expects an extend not a Map
+
+	cLogger.Init();
+	cTokenDefinitions.Init();
+	cTokenMemory.Init();
+	cTokenParser.Init(&cTokenDefinitions, &cTokenMemory, szFileName, szFileContents);
+
+	bResult = cTokenParser.Parse();
+	AssertTrue(bResult);
+
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cLogger, &cSyntaxMemory, &cTokenDefinitions, &cTokenMemory, szFileName, cTokenParser.GetFirstToken());
+
+	cSyntaxParser.Parse();
+
+	cSyntaxParser.Kill();
+	cTokenParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenMemory.Kill();
+	cTokenDefinitions.Kill();
+	cLogger.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestJavaSyntaxParserStuff(void)
+{
+	CJavaTokenParser		cTokenParser;
+	CJavaSyntaxParser		cSyntaxParser;
+	CJavaTokenMemory		cTokenMemory;
+	CJavaSyntaxMemory		cSyntaxMemory;
+	CJavaTokenDefinitions	cTokenDefinitions;
+	BOOL					bResult;
+	CLogger					cLogger;
+	char					szFileName[] = "Test2.Java";
 	char					szFileContents[] = "\
 package net.assembler;\n\
 \n\
@@ -48,7 +92,7 @@ public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>>\n\
 }\n\
 ";
 
-xxx//	It breaks on Map because list starts getting a generic but expects an extend not a Map
+//	It breaks on Map because list starts getting a generic but expects an extend not a Map
 
 	cLogger.Init();
 	cTokenDefinitions.Init();
@@ -80,6 +124,7 @@ void TestJavaSyntaxParser(void)
 {
 	BeginTests();
 
+	TestJavaSyntaxParserGenericGeneric();
 	TestJavaSyntaxParserStuff();
 
 	TestStatistics();
