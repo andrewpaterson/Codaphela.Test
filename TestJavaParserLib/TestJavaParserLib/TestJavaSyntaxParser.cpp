@@ -23,7 +23,7 @@ void TestJavaSyntaxParserGenericGeneric(void)
 	CJavaTokenDefinitions	cTokenDefinitions;
 	BOOL					bResult;
 	CLogger					cLogger;
-	char					szFileName[] = "Test1.Java";
+	char					szFilename[] = "Test1.Java";
 	char					szFileContents[] = "\
 class W65C816Assembler<List<List>>\n\
 {\n\
@@ -35,13 +35,13 @@ class W65C816Assembler<List<List>>\n\
 	cLogger.Init();
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
-	cTokenParser.Init(&cTokenDefinitions, &cTokenMemory, szFileName, szFileContents);
+	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, szFilename, szFileContents);
 
 	bResult = cTokenParser.Parse();
 	AssertTrue(bResult);
 
 	cSyntaxMemory.Init();
-	cSyntaxParser.Init(&cLogger, &cSyntaxMemory, &cTokenDefinitions, &cTokenMemory, szFileName, cTokenParser.GetFirstToken());
+	cSyntaxParser.Init(&cSyntaxMemory, &cTokenParser);
 
 	cSyntaxParser.Parse();
 
@@ -67,7 +67,7 @@ void TestJavaSyntaxParserStuff(void)
 	CJavaTokenDefinitions	cTokenDefinitions;
 	BOOL					bResult;
 	CLogger					cLogger;
-	char					szFileName[] = "Test2.Java";
+	char					szFilename[] = "Test2.Java";
 	char					szFileContents[] = "\
 package net.assembler;\n\
 \n\
@@ -97,13 +97,13 @@ public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>>\n\
 	cLogger.Init();
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
-	cTokenParser.Init(&cTokenDefinitions, &cTokenMemory, szFileName, szFileContents);
+	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, szFilename, szFileContents);
 
 	bResult = cTokenParser.Parse();
 	AssertTrue(bResult);
 
 	cSyntaxMemory.Init();
-	cSyntaxParser.Init(&cLogger, &cSyntaxMemory, &cTokenDefinitions, &cTokenMemory, szFileName, cTokenParser.GetFirstToken());
+	cSyntaxParser.Init(&cSyntaxMemory, &cTokenParser);
 
 	cSyntaxParser.Parse();
 

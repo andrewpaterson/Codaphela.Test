@@ -14,7 +14,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void PrettyPrintFile(char* szFileName)
+void PrettyPrintFile(char* szFilename)
 {
 	BeginTests();
 
@@ -24,16 +24,17 @@ void PrettyPrintFile(char* szFileName)
 	CTextFile				cFile;
 	BOOL					bResult;
 	CChars					szPretty;
+	CLogger					cLogger;
 
-
+	cLogger.Init();
 	cFile.Init();
-	bResult = cFile.Read(szFileName);
+	bResult = cFile.Read(szFilename);
 	AssertTrue(bResult);
 	cFile.PassifyNewlines();
 
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
-	cTokenParser.Init(&cTokenDefinitions, &cTokenMemory, szFileName, cFile.Text());
+	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, szFilename, cFile.Text());
 
 	bResult = cTokenParser.Parse(TRUE);
 	AssertTrue(bResult);
@@ -41,7 +42,7 @@ void PrettyPrintFile(char* szFileName)
 	cFile.Kill();
 
 	szPretty.Init(" /////////////// ");
-	szPretty.Append(szFileName);
+	szPretty.Append(szFilename);
 	szPretty.Append(" /////////////// ");
 	
 	szPretty.AppendNewLine();
@@ -53,6 +54,7 @@ void PrettyPrintFile(char* szFileName)
 	cTokenParser.Kill();
 	cTokenMemory.Kill();
 	cTokenDefinitions.Kill();
+	cLogger.Kill();
 
 	TestStatistics();
 }
@@ -68,22 +70,22 @@ void TestJavaProjectTokenParser(void)
 
 	CFileUtil				cFileUtil;
 	CChars					sz;
-	CArrayChars				aszJavaFileNames;
+	CArrayChars				aszJavaFilenames;
 	int						i;
-	CChars*					szFileName;
+	CChars*					szFilename;
 
 	sz.Init("D:" _FS_ "Work" _FS_ "658-Computer" _FS_ "logi65816" _FS_ "src");
 
-	aszJavaFileNames.Init();
-	cFileUtil.FindFilesWithExtension(sz.Text(), "java", &aszJavaFileNames, TRUE);
+	aszJavaFilenames.Init();
+	cFileUtil.FindFilesWithExtension(sz.Text(), "java", &aszJavaFilenames, TRUE);
 	sz.Kill();
 
-	for (i = 0; i < aszJavaFileNames.NumElements(); i++)
+	for (i = 0; i < aszJavaFilenames.NumElements(); i++)
 	{
-		szFileName = aszJavaFileNames.Get(i);
-		PrettyPrintFile(szFileName->Text());
+		szFilename = aszJavaFilenames.Get(i);
+		PrettyPrintFile(szFilename->Text());
 	}
-	aszJavaFileNames.Kill();
+	aszJavaFilenames.Kill();
 
 	TestStatistics();
 }

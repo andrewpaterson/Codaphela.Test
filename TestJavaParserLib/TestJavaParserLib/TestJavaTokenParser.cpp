@@ -21,10 +21,12 @@ void TestJavaTokenParserEndOfFile(void)
 	CJavaTokenDefinitions	cTokenDefinitions;
 	CJavaToken*				pcToken;
 	BOOL					bResult;
+	CLogger					cLogger;
 
+	cLogger.Init();
 	cTokenMemory.Init();
 	cTokenDefinitions.Init();
-	cTokenParser.Init(&cTokenDefinitions, &cTokenMemory, "Test1.Java", "{\n}");
+	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test1.Java", "{\n}");
 
 	bResult = cTokenParser.Parse(TRUE);
 	AssertTrue(bResult);
@@ -38,6 +40,7 @@ void TestJavaTokenParserEndOfFile(void)
 	cTokenMemory.Kill();
 	cTokenMemory.Kill();
 	cTokenDefinitions.Kill();
+	cLogger.Kill();
 }
 
 
@@ -52,10 +55,12 @@ void TestJavaTokenParserStartAndEndWithComment(void)
 	CJavaTokenDefinitions	cTokenDefinitions;
 	CJavaToken*				pcToken;
 	TRISTATE				tResult;
+	CLogger					cLogger;
 
+	cLogger.Init();
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
-	cTokenParser.Init(&cTokenDefinitions, &cTokenMemory, "Test2.Java", "\
+	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test2.Java", "\
   // Tickable Pins Start\n\
 package net.simulation.common;\n\
 \n\
@@ -89,6 +94,7 @@ package net.simulation.common;\n\
 	cTokenParser.Kill();	
 	cTokenMemory.Kill();
 	cTokenDefinitions.Kill();
+	cLogger.Kill();
 }
 
 
@@ -103,10 +109,12 @@ void TestJavaTokenParserComplexGeneric(void)
 	CJavaTokenMemory		cTokenMemory;
 	TRISTATE				tResult;
 	CChars					sz;
+	CLogger					cLogger;
 
+	cLogger.Init();
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
-	cTokenParser.Init(&cTokenDefinitions, &cTokenMemory, "Test3.Java", "\
+	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test3.Java", "\
   // Tickable Pins\n\
 package net.simulation.common;\n\
 \n\
@@ -149,6 +157,7 @@ public abstract class TickablePins<SNAPSHOT extends Snapshot, PINS extends Pins<
 	cTokenParser.Kill();	
 	cTokenMemory.Kill();
 	cTokenDefinitions.Kill();
+	cLogger.Kill();
 }
 
 
@@ -163,10 +172,12 @@ void TestJavaTokenParserLiterals(void)
 	CJavaTokenMemory		cTokenMemory;
 	CJavaToken*				pcToken;
 	BOOL					bResult;
+	CLogger					cLogger;
 
+	cLogger.Init();
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
-	cTokenParser.Init(&cTokenDefinitions, &cTokenMemory, "Test4.Java", "\
+	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test4.Java", "\
   public String getType()\n\
   {\n\
     long xl = 1L;\n\
@@ -248,6 +259,7 @@ void TestJavaTokenParserLiterals(void)
 	cTokenParser.Kill();	
 	cTokenMemory.Kill();
 	cTokenDefinitions.Kill();
+	cLogger.Kill();
 }
 
 
@@ -263,10 +275,12 @@ void TestJavaTokenParserStringEscapeChars(void)
 	CJavaToken*				pcToken;
 	CChars					szPretty;
 	BOOL					bResult;;
+	CLogger					cLogger;
 
+	cLogger.Init();
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
-	cTokenParser.Init(&cTokenDefinitions, &cTokenMemory, "Test5.Java", "return getType() + \" \\\"\" + name + \"\\\"\";");
+	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test5.Java", "return getType() + \" \\\"\" + name + \"\\\"\";");
 
 	bResult = cTokenParser.Parse(TRUE);
 	AssertTrue(bResult);
@@ -293,6 +307,7 @@ void TestJavaTokenParserStringEscapeChars(void)
 	cTokenParser.Kill();	
 	cTokenMemory.Kill();
 	cTokenDefinitions.Kill();
+	cLogger.Kill();
 }
 
 
@@ -310,7 +325,9 @@ void TestJavaTokenParserFiles(void)
 	CTextFile				cFile;
 	BOOL					bResult;
 	CChars					szPretty;
+	CLogger					cLogger;
 
+	cLogger.Init();
 	sz.Init();
 	cFileUtil.CurrentDirectory(&sz);
 	cFileUtil.AppendToPath(&sz, "Input");
@@ -322,7 +339,7 @@ void TestJavaTokenParserFiles(void)
 
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
-	cTokenParser.Init(&cTokenDefinitions, &cTokenMemory, sz.Text(), cFile.Text());
+	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, sz.Text(), cFile.Text());
 
 	bResult = cTokenParser.Parse(TRUE);
 	AssertTrue(bResult);
@@ -351,6 +368,7 @@ void TestJavaTokenParserFiles(void)
 	cTokenParser.Kill();	
 	cTokenMemory.Kill();
 	cTokenDefinitions.Kill();
+	cLogger.Kill();
 }
 
 
@@ -365,10 +383,12 @@ void TestJavaTokenParserSpecialOperators(void)
 	CJavaTokenDefinitions	cTokenDefinitions;
 	CChars					szPretty;
 	BOOL					bResult;;
+	CLogger					cLogger;
 
+	cLogger.Init();
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
-	cTokenParser.Init(&cTokenDefinitions, &cTokenMemory, "Test6.Java", "stream.forEach(System.out::println);");
+	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test6.Java", "stream.forEach(System.out::println);");
 
 	bResult = cTokenParser.Parse();
 	AssertTrue(bResult);
@@ -382,7 +402,7 @@ void TestJavaTokenParserSpecialOperators(void)
 	cTokenMemory.Kill();
 
 	cTokenMemory.Init();
-	cTokenParser.Init(&cTokenDefinitions, &cTokenMemory, "Test6.Java", "stream.forEach( s-> System.out.println(s));");
+	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test6.Java", "stream.forEach( s-> System.out.println(s));");
 
 	bResult = cTokenParser.Parse();
 	AssertTrue(bResult);
@@ -395,6 +415,7 @@ void TestJavaTokenParserSpecialOperators(void)
 	cTokenParser.Kill();	
 	cTokenMemory.Kill();
 	cTokenDefinitions.Kill();
+	cLogger.Kill();
 }
 
 
