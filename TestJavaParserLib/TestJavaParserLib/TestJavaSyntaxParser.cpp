@@ -6,8 +6,55 @@
 #include "BaseLib/TextFile.h"
 #include "CoreLib/Operators.h"
 #include "TestLib/Assert.h"
-#include "JavaParserLib/JavaTokenParser.h"
+#include "JavaParserLib/JavaTokenParserEnvironment.h"
 #include "JavaParserLib/JavaSyntaxParser.h"
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestJavaSyntaxParserImport(void)
+{
+	CTokenParserEnvironment		cTokenParser;
+	CJavaSyntaxParser			cSyntaxParser;
+	CJavaSyntaxMemory			cSyntaxMemory;
+	CChars						sz;
+	char						szFilename[] = "Test3.Java";
+	char						szFileContents[] = "\
+package net.assembler;\n\
+\n\
+import static net.simulation.common.TraceValue.*; \n\
+import net.simulation.common.TraceValue; \n\
+\n\
+import java.util.ArrayList; \n\
+import java.util.List; \n\
+import java.util.Map; \n\
+";
+
+	cTokenParser.Init(szFilename, szFileContents);
+	AssertTrue(cTokenParser.Parse());
+
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+
+	cSyntaxParser.Parse();
+	sz.Init();
+	cSyntaxParser.TypePrint(&sz);
+	AssertString("\
+File: Test3.Java\n\
+  Package: net.assembler\n\
+  Import: net.simulation.common.TraceValue\n\
+  Import: net.simulation.common.TraceValue\n\
+  Import: java.util.ArrayList\n\
+  Import: java.util.List\n\
+  Import: java.util.Map\n", sz.Text());
+	sz.Kill();
+
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -16,41 +63,28 @@
 //////////////////////////////////////////////////////////////////////////
 void TestJavaSyntaxParserGenericGeneric(void)
 {
-	CJavaTokenParser		cTokenParser;
-	CJavaSyntaxParser		cSyntaxParser;
-	CJavaTokenMemory		cTokenMemory;
-	CJavaSyntaxMemory		cSyntaxMemory;
-	CJavaTokenDefinitions	cTokenDefinitions;
-	BOOL					bResult;
-	CLogger					cLogger;
-	char					szFilename[] = "Test1.Java";
-	char					szFileContents[] = "\
+	CTokenParserEnvironment		cTokenParser;
+	CJavaSyntaxParser			cSyntaxParser;
+	CJavaSyntaxMemory			cSyntaxMemory;
+	char						szFilename[] = "Test2.Java";
+	char						szFileContents[] = "\
 class W65C816Assembler<List<List>>\n\
 {\n\
 }\n\
 ";
 
-	//	It breaks on Map because list starts getting a generic but expects an extend not a Map
-
-	cLogger.Init();
-	cTokenDefinitions.Init();
-	cTokenMemory.Init();
-	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, szFilename, szFileContents);
-
-	bResult = cTokenParser.Parse();
-	AssertTrue(bResult);
+	cTokenParser.Init(szFilename, szFileContents);
+	AssertTrue(cTokenParser.Parse());
 
 	cSyntaxMemory.Init();
-	cSyntaxParser.Init(&cSyntaxMemory, &cTokenParser);
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
 
 	cSyntaxParser.Parse();
+	cSyntaxParser.Dump(TRUE);
 
 	cSyntaxParser.Kill();
-	cTokenParser.Kill();
 	cSyntaxMemory.Kill();
-	cTokenMemory.Kill();
-	cTokenDefinitions.Kill();
-	cLogger.Kill();
+	cTokenParser.Kill();
 }
 
 
@@ -60,15 +94,11 @@ class W65C816Assembler<List<List>>\n\
 //////////////////////////////////////////////////////////////////////////
 void TestJavaSyntaxParserStuff(void)
 {
-	CJavaTokenParser		cTokenParser;
-	CJavaSyntaxParser		cSyntaxParser;
-	CJavaTokenMemory		cTokenMemory;
-	CJavaSyntaxMemory		cSyntaxMemory;
-	CJavaTokenDefinitions	cTokenDefinitions;
-	BOOL					bResult;
-	CLogger					cLogger;
-	char					szFilename[] = "Test2.Java";
-	char					szFileContents[] = "\
+	CTokenParserEnvironment		cTokenParser;
+	CJavaSyntaxParser			cSyntaxParser;
+	CJavaSyntaxMemory			cSyntaxMemory;
+	char						szFilename[] = "Test3.Java";
+	char						szFileContents[] = "\
 package net.assembler;\n\
 \n\
 import static net.simulation.common.TraceValue.*; \n\
@@ -94,25 +124,17 @@ public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>>\n\
 
 //	It breaks on Map because list starts getting a generic but expects an extend not a Map
 
-	cLogger.Init();
-	cTokenDefinitions.Init();
-	cTokenMemory.Init();
-	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, szFilename, szFileContents);
-
-	bResult = cTokenParser.Parse();
-	AssertTrue(bResult);
+	cTokenParser.Init(szFilename, szFileContents);
+	AssertTrue(cTokenParser.Parse());
 
 	cSyntaxMemory.Init();
-	cSyntaxParser.Init(&cSyntaxMemory, &cTokenParser);
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
 
 	cSyntaxParser.Parse();
 
 	cSyntaxParser.Kill();
-	cTokenParser.Kill();
 	cSyntaxMemory.Kill();
-	cTokenMemory.Kill();
-	cTokenDefinitions.Kill();
-	cLogger.Kill();
+	cTokenParser.Kill();
 }
 
 
@@ -124,6 +146,7 @@ void TestJavaSyntaxParser(void)
 {
 	BeginTests();
 
+	//TestJavaSyntaxParserImport();
 	TestJavaSyntaxParserGenericGeneric();
 	TestJavaSyntaxParserStuff();
 
