@@ -61,23 +61,18 @@ File: Test3.Java\n\
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestJavaSyntaxParserImportError(void)
+void TestJavaSyntaxParserPackageError(void)
 {
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
 	CChars						szOutput;
 	BOOL						bResult;
-	char						szFilename[] = "Test3.Java";
-	char						szFileContents[] = "\
-package;";
 
-	cTokenParser.Init(szFilename, szFileContents, FALSE);
+	cTokenParser.Init(NULL, "package;", FALSE);
 	AssertTrue(cTokenParser.Parse());
-
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
-
 	bResult = cSyntaxParser.Parse();
 	AssertFalse(bResult);
 
@@ -85,7 +80,187 @@ package;";
 package;\n\
        ^", cTokenParser.GetOutput(&szOutput));
 	szOutput.Kill();
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
 
+
+	cTokenParser.Init(NULL, "package net.;", FALSE);
+	AssertTrue(cTokenParser.Parse());
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+	bResult = cSyntaxParser.Parse();
+	AssertFalse(bResult);
+
+	AssertString("ERROR: Identifier expected.\n\
+package net.;\n\
+            ^", cTokenParser.GetOutput(&szOutput));
+	szOutput.Kill();
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+
+
+	cTokenParser.Init(NULL, "package net.;", FALSE);
+	AssertTrue(cTokenParser.Parse());
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+	bResult = cSyntaxParser.Parse();
+	AssertFalse(bResult);
+
+	AssertString("ERROR: Identifier expected.\n\
+package net.;\n\
+            ^", cTokenParser.GetOutput(&szOutput));
+	szOutput.Kill();
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+
+
+	cTokenParser.Init(NULL, "package net.3.parse;", FALSE);
+	AssertTrue(cTokenParser.Parse());
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+	bResult = cSyntaxParser.Parse();
+	AssertFalse(bResult);
+
+	AssertString("ERROR: Identifier expected.\n\
+package net.3.parse;\n\
+            ^", cTokenParser.GetOutput(&szOutput));
+	szOutput.Kill();
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+
+
+	cTokenParser.Init(NULL, "package net", FALSE);
+	AssertTrue(cTokenParser.Parse());
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+	bResult = cSyntaxParser.Parse();
+	AssertFalse(bResult);
+
+	AssertString("ERROR: '.' or ';' expected.\n\
+package net\n\
+           ^", cTokenParser.GetOutput(&szOutput));
+	szOutput.Kill();
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestJavaSyntaxParserImportError(void)
+{
+	CTokenParserEnvironment		cTokenParser;
+	CJavaSyntaxParser			cSyntaxParser;
+	CJavaSyntaxMemory			cSyntaxMemory;
+	CChars						szOutput;
+	BOOL						bResult;
+
+	cTokenParser.Init(NULL, "import static net.simulation.common.TraceValue.*", FALSE);
+	AssertTrue(cTokenParser.Parse());
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+	bResult = cSyntaxParser.Parse();
+	AssertFalse(bResult);
+
+	AssertString("ERROR: ';' expected.\n\
+import static net.simulation.common.TraceValue.*\n\
+                                                ^", 
+		cTokenParser.GetOutput(&szOutput));
+	szOutput.Kill();
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+
+
+	cTokenParser.Init(NULL, "import static.simulation.common.TraceValue.*;", FALSE);
+	AssertTrue(cTokenParser.Parse());
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+	bResult = cSyntaxParser.Parse();
+	AssertFalse(bResult);
+
+	AssertString("ERROR: Identifier expected.\n\
+import static.simulation.common.TraceValue.*;\n\
+             ^",
+		cTokenParser.GetOutput(&szOutput));
+	szOutput.Kill();
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+
+
+	cTokenParser.Init(NULL, "import static ;", FALSE);
+	//cTokenParser.Init(NULL, "import static net.simulation.common.TraceValue.*", FALSE);
+	AssertTrue(cTokenParser.Parse());
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+	bResult = cSyntaxParser.Parse();
+	AssertFalse(bResult);
+
+	AssertString("ERROR: Identifier expected.\n\
+import static ;\n\
+              ^",
+		cTokenParser.GetOutput(&szOutput));
+	szOutput.Kill();
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+
+
+	cTokenParser.Init(NULL, "import static *;", FALSE);
+	//cTokenParser.Init(NULL, "import static net.simulation.common.TraceValue.*", FALSE);
+	AssertTrue(cTokenParser.Parse());
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+	bResult = cSyntaxParser.Parse();
+	AssertFalse(bResult);
+
+	AssertString("ERROR: Identifier expected.\n\
+import static *;\n\
+              ^",
+		cTokenParser.GetOutput(&szOutput));
+	szOutput.Kill();
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+
+
+	cTokenParser.Init(NULL, "import net.simulation.;", FALSE);
+	AssertTrue(cTokenParser.Parse());
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+	bResult = cSyntaxParser.Parse();
+	AssertFalse(bResult);
+
+	AssertString("ERROR: Identifier expected.\n\
+import net.simulation.;\n\
+                      ^",
+		cTokenParser.GetOutput(&szOutput));
+	szOutput.Kill();
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+
+
+	cTokenParser.Init(NULL, "import", FALSE);
+	AssertTrue(cTokenParser.Parse());
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+	bResult = cSyntaxParser.Parse();
+	AssertFalse(bResult);
+
+	AssertString("ERROR: Identifier expected.\n\
+import\n\
+      ^",
+		cTokenParser.GetOutput(&szOutput));
+	szOutput.Kill();
 	cSyntaxParser.Kill();
 	cSyntaxMemory.Kill();
 	cTokenParser.Kill();
@@ -101,6 +276,7 @@ void TestJavaSyntaxParserImports(void)
 	BeginTests();
 
 	TestJavaSyntaxParserImport();
+	TestJavaSyntaxParserPackageError();
 	TestJavaSyntaxParserImportError();
 
 	TestStatistics();
