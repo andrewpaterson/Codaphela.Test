@@ -56,6 +56,42 @@ File: Test3.Java\n\
 	cTokenParser.Kill();
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestJavaSyntaxParserImportError(void)
+{
+	CTokenParserEnvironment		cTokenParser;
+	CJavaSyntaxParser			cSyntaxParser;
+	CJavaSyntaxMemory			cSyntaxMemory;
+	CChars						szOutput;
+	BOOL						bResult;
+	char						szFilename[] = "Test3.Java";
+	char						szFileContents[] = "\
+package;";
+
+	cTokenParser.Init(szFilename, szFileContents, FALSE);
+	AssertTrue(cTokenParser.Parse());
+
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+
+	bResult = cSyntaxParser.Parse();
+	AssertFalse(bResult);
+
+	AssertString("ERROR: Identifier expected.\n\
+package;\n\
+       ^", cTokenParser.GetOutput(&szOutput));
+	szOutput.Kill();
+
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -65,6 +101,7 @@ void TestJavaSyntaxParserImports(void)
 	BeginTests();
 
 	TestJavaSyntaxParserImport();
+	TestJavaSyntaxParserImportError();
 
 	TestStatistics();
 }

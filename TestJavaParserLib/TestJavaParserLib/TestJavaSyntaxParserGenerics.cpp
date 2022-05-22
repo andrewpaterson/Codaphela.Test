@@ -153,7 +153,7 @@ void TestJavaSyntaxParserGenericError(void)
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
 	CChars						szOutput;
-	char* szBuffer;
+	char*						szBuffer;
 	int							iLength;
 	char						szFilename[] = "Test2.Java";
 	char						szFileContents[] = "\

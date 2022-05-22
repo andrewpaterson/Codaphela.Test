@@ -24,7 +24,8 @@ void TestJavaTokenParserEndOfFile(void)
 	CLogger					cLogger;
 	STextPosition*			psPos;
 
-	cLogger.Init();
+	cLogger.Init(NULL);
+	cLogger.SetSilent(TRUE); 
 	cTokenMemory.Init();
 	cTokenDefinitions.Init();
 	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test1.Java", "{\n}");
@@ -66,7 +67,8 @@ void TestJavaTokenParserStartAndEndWithComment(void)
 	TRISTATE				tResult;
 	CLogger					cLogger;
 
-	cLogger.Init();
+	cLogger.Init(NULL);
+	cLogger.SetSilent(TRUE);
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
 	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test2.Java", "\
@@ -120,7 +122,8 @@ void TestJavaTokenParserComplexGeneric(void)
 	CChars					sz;
 	CLogger					cLogger;
 
-	cLogger.Init();
+	cLogger.Init(NULL);
+	cLogger.SetSilent(TRUE);
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
 	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test3.Java", "\
@@ -183,7 +186,8 @@ void TestJavaTokenParserLiterals(void)
 	BOOL					bResult;
 	CLogger					cLogger;
 
-	cLogger.Init();
+	cLogger.Init(NULL);
+	cLogger.SetSilent(TRUE);
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
 	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test4.Java", "\
@@ -286,7 +290,8 @@ void TestJavaTokenParserStringEscapeChars(void)
 	BOOL					bResult;;
 	CLogger					cLogger;
 
-	cLogger.Init();
+	cLogger.Init(NULL);
+	cLogger.SetSilent(TRUE);
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
 	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test5.Java", "return getType() + \" \\\"\" + name + \"\\\"\";");
@@ -336,7 +341,8 @@ void TestJavaTokenParserFiles(void)
 	CChars					szPretty;
 	CLogger					cLogger;
 
-	cLogger.Init();
+	cLogger.Init(NULL);
+	cLogger.SetSilent(TRUE);
 	sz.Init();
 	cFileUtil.CurrentDirectory(&sz);
 	cFileUtil.AppendToPath(&sz, "Input");
@@ -394,7 +400,8 @@ void TestJavaTokenParserSpecialOperators(void)
 	BOOL					bResult;;
 	CLogger					cLogger;
 
-	cLogger.Init();
+	cLogger.Init(NULL);
+	cLogger.SetSilent(TRUE);
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
 	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test6.Java", "stream.forEach(System.out::println);");
