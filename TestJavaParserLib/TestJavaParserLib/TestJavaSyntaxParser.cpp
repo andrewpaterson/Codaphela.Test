@@ -63,12 +63,13 @@ File: Test3.Java\n\
 //////////////////////////////////////////////////////////////////////////
 void TestJavaSyntaxParserGenericGeneric(void)
 {
+	BOOL						bResult;
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
 	char						szFilename[] = "Test2.Java";
 	char						szFileContents[] = "\
-class W65C816Assembler<List<List>>\n\
+public final class W65C816Assembler<List<List>>\n\
 {\n\
 }\n\
 ";
@@ -79,7 +80,109 @@ class W65C816Assembler<List<List>>\n\
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
 
-	cSyntaxParser.Parse();
+	bResult = cSyntaxParser.Parse();
+	AssertTrue(bResult);
+	cSyntaxParser.Dump(TRUE);
+
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestJavaSyntaxParserGenericExtends(void)
+{
+	BOOL						bResult;
+	CTokenParserEnvironment		cTokenParser;
+	CJavaSyntaxParser			cSyntaxParser;
+	CJavaSyntaxMemory			cSyntaxMemory;
+	char						szFilename[] = "Test3.Java";
+	char						szFileContents[] = "\
+public final class W65C816Assembler<X extends Integer>\n\
+{\n\
+}\n\
+";
+
+	cTokenParser.Init(szFilename, szFileContents);
+	AssertTrue(cTokenParser.Parse());
+
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+
+	bResult = cSyntaxParser.Parse();
+	AssertTrue(bResult);
+	cSyntaxParser.Dump(TRUE);
+
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestJavaSyntaxParserGenericWildcard(void)
+{
+	BOOL						bResult;
+	CTokenParserEnvironment		cTokenParser;
+	CJavaSyntaxParser			cSyntaxParser;
+	CJavaSyntaxMemory			cSyntaxMemory;
+	char						szFilename[] = "Test4.Java";
+	char						szFileContents[] = "\
+public final class W65C816Assembler<? extends Map<?, ?>>\n\
+{\n\
+}\n\
+";
+
+	cTokenParser.Init(szFilename, szFileContents);
+	AssertTrue(cTokenParser.Parse());
+
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+
+	bResult = cSyntaxParser.Parse();
+	AssertTrue(bResult);
+	cSyntaxParser.Dump(TRUE);
+
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestJavaSyntaxParserGenericComplex(void)
+{
+	BOOL						bResult;
+	CTokenParserEnvironment		cTokenParser;
+	CJavaSyntaxParser			cSyntaxParser;
+	CJavaSyntaxMemory			cSyntaxMemory;
+	char						szFilename[] = "Test5.Java";
+	char						szFileContents[] = "\
+public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>, ? extends Map<?, ?>>\n\
+{\n\
+}\n\
+";
+
+	//	It breaks on Map because list starts getting a generic but expects an extend not a Map
+
+	cTokenParser.Init(szFilename, szFileContents);
+	AssertTrue(cTokenParser.Parse());
+
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+
+	bResult = cSyntaxParser.Parse();
+	AssertTrue(bResult);
 	cSyntaxParser.Dump(TRUE);
 
 	cSyntaxParser.Kill();
@@ -97,7 +200,7 @@ void TestJavaSyntaxParserStuff(void)
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
-	char						szFilename[] = "Test3.Java";
+	char						szFilename[] = "Test6.Java";
 	char						szFileContents[] = "\
 package net.assembler;\n\
 \n\
@@ -131,6 +234,7 @@ public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>>\n\
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
 
 	cSyntaxParser.Parse();
+	cSyntaxParser.Dump(TRUE);
 
 	cSyntaxParser.Kill();
 	cSyntaxMemory.Kill();
@@ -147,7 +251,10 @@ void TestJavaSyntaxParser(void)
 	BeginTests();
 
 	//TestJavaSyntaxParserImport();
-	TestJavaSyntaxParserGenericGeneric();
+	//TestJavaSyntaxParserGenericGeneric();
+	//TestJavaSyntaxParserGenericExtends();
+	TestJavaSyntaxParserGenericWildcard();
+	TestJavaSyntaxParserGenericComplex();
 	TestJavaSyntaxParserStuff();
 
 	TestStatistics();
