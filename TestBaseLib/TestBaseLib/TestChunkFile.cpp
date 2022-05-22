@@ -85,7 +85,7 @@ void TestChunkFileMD5ing(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestChunkFileNameing(void)
+void TestChunkFilenameing(void)
 {
 	CChunkFile		cChunkFile;
 	int				iChunkNum;
@@ -216,7 +216,7 @@ void TestChunkFile(void)
 	
 	TestChunkFileSimple();
 	TestChunkFileMD5ing();
-	TestChunkFileNameing();
+	TestChunkFilenameing();
 	TestChunkFileFileBasic();
 
 	MemoryKill();

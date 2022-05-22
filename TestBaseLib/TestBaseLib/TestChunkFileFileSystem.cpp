@@ -386,7 +386,7 @@ void TestChunkFileFileSystemNameIteration(void)
 	CChunkFile					cChunkFile;
 	CChunkFileFileSystem		cChunkFileFileSystem;
 	CDiskFile*					pcDiskFile;
-	SChunkFileNameIterator		sIter;
+	SChunkFilenameIterator		sIter;
 	char*						szName;
 
 	pcDiskFile = DiskFile("Input" _FS_ "FrenchToast.DRG");

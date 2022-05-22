@@ -143,16 +143,16 @@ void TestFileUtilFindExtension(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFileUtilRemoveExtension(void)
 {
-	CChars		szFileName;
+	CChars		szFilename;
 	CFileUtil	cFileUtil;
 
-	szFileName.Init("/mnt/world/hello.txt");
-	cFileUtil.RemoveExtension(&szFileName);
-	AssertString("/mnt/world/hello", szFileName.Text());
+	szFilename.Init("/mnt/world/hello.txt");
+	cFileUtil.RemoveExtension(&szFilename);
+	AssertString("/mnt/world/hello", szFilename.Text());
 
-	cFileUtil.RemoveExtension(&szFileName);
-	AssertString("/mnt/world/hello", szFileName.Text());
-	szFileName.Kill();
+	cFileUtil.RemoveExtension(&szFilename);
+	AssertString("/mnt/world/hello", szFilename.Text());
+	szFilename.Kill();
 }
 
 
@@ -165,13 +165,13 @@ void TestFileUtilMakeNameFromDirectory(void)
 	CFileUtil	cFileUtil;
 	CChars		szName;
 	CChars		szDirectory;
-	CChars		szFileName;
+	CChars		szFilename;
 
 	szDirectory.Init("c:" _FS_ "Some" _FS_ "Directory" _FS_ "Or" _FS_ "Other" _FS_);
-	szFileName.Init("c:" _FS_ "Some" _FS_ "Directory" _FS_ "Or" _FS_ "Other" _FS_ "More" _FS_ "Dir" _FS_ "FileName.txt");
-	cFileUtil.MakeNameFromDirectory(&szName, &szFileName, &szDirectory);
+	szFilename.Init("c:" _FS_ "Some" _FS_ "Directory" _FS_ "Or" _FS_ "Other" _FS_ "More" _FS_ "Dir" _FS_ "Filename.txt");
+	cFileUtil.MakeNameFromDirectory(&szName, &szFilename, &szDirectory);
 
-	AssertString("More/Dir/FileName.txt", szName.Text());
+	AssertString("More/Dir/Filename.txt", szName.Text());
 	szName.Kill();
 
 	cFileUtil.MakeNameFromDirectory(&szName, &szDirectory, &szDirectory);
@@ -180,7 +180,7 @@ void TestFileUtilMakeNameFromDirectory(void)
 	szName.Kill();
 
 	szDirectory.Kill();
-	szFileName.Kill();
+	szFilename.Kill();
 }
 
 
@@ -192,7 +192,7 @@ void TestFileUtilMakeDirectory(void)
 {
 	CFileUtil		cFileUtil;
 	CChars			szDirectory;
-	CChars			szFileName;
+	CChars			szFilename;
 	CArrayChars		aszFiles;
 	CChars			szParentDirectory;
 	CChars			szCurrentDirectory;
@@ -204,11 +204,11 @@ void TestFileUtilMakeDirectory(void)
 	szDirectory.Init(szParentDirectory);
 	szDirectory.Append(_FS_);
 	szDirectory.Append("GABBA");
-	szFileName.Init(szDirectory);
-	szFileName.Append(_FS_);
-	szFileName.Append("FileName.txt");
+	szFilename.Init(szDirectory);
+	szFilename.Append(_FS_);
+	szFilename.Append("Filename.txt");
 
-	bResult = cFileUtil.Touch(szFileName.Text());
+	bResult = cFileUtil.Touch(szFilename.Text());
 	AssertFalse(bResult);
 
 	bResult = cFileUtil.TouchDir(szDirectory.Text(), FALSE);
@@ -225,13 +225,13 @@ void TestFileUtilMakeDirectory(void)
 	AssertString(szCurrentDirectory.Text(), aszFiles.GetText(0));
 	aszFiles.Kill();
 
-	bResult = cFileUtil.Touch(szFileName.Text());
+	bResult = cFileUtil.Touch(szFilename.Text());
 	AssertTrue(bResult);
 
 	szCurrentDirectory.Kill();
 	szParentDirectory.Kill();
 	szDirectory.Kill();
-	szFileName.Kill();
+	szFilename.Kill();
 
 	cFileUtil.RemoveDir("file_util");
 }
@@ -244,42 +244,42 @@ void TestFileUtilMakeDirectory(void)
 void TestFileUtilRemoveLastFromPath(void)
 {
 	CFileUtil	cFileUtil;
-	CChars		szFileName;
+	CChars		szFilename;
 
-	szFileName.Init("home\\directory");
-	cFileUtil.RemoveLastFromPath(&szFileName);
-	AssertString("home", szFileName.Text());
-	szFileName.Kill();
+	szFilename.Init("home\\directory");
+	cFileUtil.RemoveLastFromPath(&szFilename);
+	AssertString("home", szFilename.Text());
+	szFilename.Kill();
 
-	szFileName.Init("\\directory");
-	cFileUtil.RemoveLastFromPath(&szFileName);
-	AssertString("\\", szFileName.Text());
-	szFileName.Kill();
+	szFilename.Init("\\directory");
+	cFileUtil.RemoveLastFromPath(&szFilename);
+	AssertString("\\", szFilename.Text());
+	szFilename.Kill();
 
-	szFileName.Init("\\home\\directory");
-	cFileUtil.RemoveLastFromPath(&szFileName);
-	AssertString("\\home", szFileName.Text());
-	szFileName.Kill();
+	szFilename.Init("\\home\\directory");
+	cFileUtil.RemoveLastFromPath(&szFilename);
+	AssertString("\\home", szFilename.Text());
+	szFilename.Kill();
 
-	szFileName.Init("C:\\directory");
-	cFileUtil.RemoveLastFromPath(&szFileName);
-	AssertString("C:\\", szFileName.Text());
-	szFileName.Kill();
+	szFilename.Init("C:\\directory");
+	cFileUtil.RemoveLastFromPath(&szFilename);
+	AssertString("C:\\", szFilename.Text());
+	szFilename.Kill();
 
-	szFileName.Init("C:\\home\\directory");
-	cFileUtil.RemoveLastFromPath(&szFileName);
-	AssertString("C:\\home", szFileName.Text());
-	szFileName.Kill();
+	szFilename.Init("C:\\home\\directory");
+	cFileUtil.RemoveLastFromPath(&szFilename);
+	AssertString("C:\\home", szFilename.Text());
+	szFilename.Kill();
 
-	szFileName.Init("directory");
-	cFileUtil.RemoveLastFromPath(&szFileName);
-	AssertString("", szFileName.Text());
-	szFileName.Kill();
+	szFilename.Init("directory");
+	cFileUtil.RemoveLastFromPath(&szFilename);
+	AssertString("", szFilename.Text());
+	szFilename.Kill();
 
-	szFileName.Init("");
-	cFileUtil.RemoveLastFromPath(&szFileName);
-	AssertString("", szFileName.Text());
-	szFileName.Kill();
+	szFilename.Init("");
+	cFileUtil.RemoveLastFromPath(&szFilename);
+	AssertString("", szFilename.Text());
+	szFilename.Kill();
 }
 
 
@@ -291,19 +291,19 @@ void TestFileUtilTouchDirectory(void)
 {
 	CFileUtil		cFileUtil;
 	CChars			szDirectory;
-	CChars			szFileName;
+	CChars			szFilename;
 
 	cFileUtil.RemoveDir("file_util");
 
 	szDirectory.Init("file_util" _FS_ "directory" _FS_ "make" _FS_ "test");
 	cFileUtil.FullPath(&szDirectory);
-	szFileName.Init(szDirectory);
-	cFileUtil.AppendToPath(&szFileName, "Warthog.PIG");
-	AssertTrue(cFileUtil.TouchDir(szFileName.Text(), TRUE));
-	AssertTrue(cFileUtil.Touch(szFileName.Text()));
+	szFilename.Init(szDirectory);
+	cFileUtil.AppendToPath(&szFilename, "Warthog.PIG");
+	AssertTrue(cFileUtil.TouchDir(szFilename.Text(), TRUE));
+	AssertTrue(cFileUtil.Touch(szFilename.Text()));
 
 	szDirectory.Kill();
-	szFileName.Kill();
+	szFilename.Kill();
 
 	cFileUtil.RemoveDir("file_util");
 
@@ -322,7 +322,7 @@ void TestFileUtilTouchDirectory(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFileUtilTouchDirectoryOnlyFileName(void)
+void TestFileUtilTouchDirectoryOnlyFilename(void)
 {
 	CFileUtil		cFileUtil;
 	CChars			szDirectory;
@@ -420,7 +420,7 @@ void TestFileUtil(void)
 	TestFileUtilMakeDirectory();
 	TestFileUtilRemoveLastFromPath();
 	TestFileUtilTouchDirectory();
-	TestFileUtilTouchDirectoryOnlyFileName();
+	TestFileUtilTouchDirectoryOnlyFilename();
 	TestFileUtilPrependToPath();
 	TestFileUtilRootDirectory();
 

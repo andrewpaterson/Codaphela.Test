@@ -22,7 +22,7 @@ void TestFileSystemInit(void)
 
 	cSystem.Init("Finder");
 
-	szFullName = cSystem.GetFileName("Lord/1.rar");
+	szFullName = cSystem.GetFilename("Lord/1.rar");
 	szTemp.Init(szFullName);
 	szTemp.RemoveFromStart(szWorkingDirectory.Length()+1);
 	szTemp.Replace(FILE_SEPARATOR[0], '/');
@@ -30,7 +30,7 @@ void TestFileSystemInit(void)
 	AssertString("Lord/1.rar", szTemp.Text());
 	szTemp.Kill();
 
-	szFullName = cSystem.GetFileName("File.txt");
+	szFullName = cSystem.GetFilename("File.txt");
 	cTextFile.Init();
 	cTextFile.Read(szFullName);
 

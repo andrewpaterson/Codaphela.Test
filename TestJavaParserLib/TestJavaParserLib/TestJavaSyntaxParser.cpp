@@ -32,7 +32,7 @@ import java.util.List; \n\
 import java.util.Map; \n\
 ";
 
-	cTokenParser.Init(szFilename, szFileContents);
+	cTokenParser.Init(szFilename, szFileContents, TRUE);
 	AssertTrue(cTokenParser.Parse());
 
 	cSyntaxMemory.Init();
@@ -74,7 +74,7 @@ public final class W65C816Assembler<List<List>>\n\
 }\n\
 ";
 
-	cTokenParser.Init(szFilename, szFileContents);
+	cTokenParser.Init(szFilename, szFileContents, TRUE);
 	AssertTrue(cTokenParser.Parse());
 
 	cSyntaxMemory.Init();
@@ -107,7 +107,7 @@ public final class W65C816Assembler<X extends Integer>\n\
 }\n\
 ";
 
-	cTokenParser.Init(szFilename, szFileContents);
+	cTokenParser.Init(szFilename, szFileContents, TRUE);
 	AssertTrue(cTokenParser.Parse());
 
 	cSyntaxMemory.Init();
@@ -140,7 +140,7 @@ public final class W65C816Assembler<? extends Map<?, ?>>\n\
 }\n\
 ";
 
-	cTokenParser.Init(szFilename, szFileContents);
+	cTokenParser.Init(szFilename, szFileContents, TRUE);
 	AssertTrue(cTokenParser.Parse());
 
 	cSyntaxMemory.Init();
@@ -173,9 +173,40 @@ public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>, ? ex
 }\n\
 ";
 
-	//	It breaks on Map because list starts getting a generic but expects an extend not a Map
+	cTokenParser.Init(szFilename, szFileContents, TRUE);
+	AssertTrue(cTokenParser.Parse());
 
-	cTokenParser.Init(szFilename, szFileContents);
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+
+	bResult = cSyntaxParser.Parse();
+	AssertTrue(bResult);
+	cSyntaxParser.Dump(TRUE);
+
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestJavaSyntaxParserGenericError(void)
+{
+	BOOL						bResult;
+	CTokenParserEnvironment		cTokenParser;
+	CJavaSyntaxParser			cSyntaxParser;
+	CJavaSyntaxMemory			cSyntaxMemory;
+	char						szFilename[] = "Test2.Java";
+	char						szFileContents[] = "\
+public final class W65C816Assembler<List \n\
+{\n\
+}\n\
+";
+
+	cTokenParser.Init(szFilename, szFileContents, FALSE);
 	AssertTrue(cTokenParser.Parse());
 
 	cSyntaxMemory.Init();
@@ -200,7 +231,7 @@ void TestJavaSyntaxParserStuff(void)
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
-	char						szFilename[] = "Test6.Java";
+	char						szFilename[] = "TestXX.Java";
 	char						szFileContents[] = "\
 package net.assembler;\n\
 \n\
@@ -225,9 +256,7 @@ public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>>\n\
 }\n\
 ";
 
-//	It breaks on Map because list starts getting a generic but expects an extend not a Map
-
-	cTokenParser.Init(szFilename, szFileContents);
+	cTokenParser.Init(szFilename, szFileContents, TRUE);
 	AssertTrue(cTokenParser.Parse());
 
 	cSyntaxMemory.Init();
@@ -253,8 +282,9 @@ void TestJavaSyntaxParser(void)
 	//TestJavaSyntaxParserImport();
 	//TestJavaSyntaxParserGenericGeneric();
 	//TestJavaSyntaxParserGenericExtends();
-	TestJavaSyntaxParserGenericWildcard();
-	TestJavaSyntaxParserGenericComplex();
+	//TestJavaSyntaxParserGenericWildcard();
+	//TestJavaSyntaxParserGenericComplex();
+	TestJavaSyntaxParserGenericError();
 	TestJavaSyntaxParserStuff();
 
 	TestStatistics();

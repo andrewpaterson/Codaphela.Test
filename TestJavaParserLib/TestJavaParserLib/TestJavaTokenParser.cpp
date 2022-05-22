@@ -22,6 +22,7 @@ void TestJavaTokenParserEndOfFile(void)
 	CJavaToken*				pcToken;
 	BOOL					bResult;
 	CLogger					cLogger;
+	STextPosition*			psPos;
 
 	cLogger.Init();
 	cTokenMemory.Init();
@@ -35,6 +36,14 @@ void TestJavaTokenParserEndOfFile(void)
 	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_CurlyBracketLeft);
 	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_CurlyBracketRight);
 	AssertNull(pcToken);
+
+	pcToken = cTokenParser.GetFirstToken();
+	psPos = pcToken->GetPosition();
+	AssertString("{\n}", psPos->szPos);
+
+	pcToken = pcToken->GetNext();
+	psPos = pcToken->GetPosition();
+	AssertString("}", psPos->szPos);
 
 	cTokenParser.Kill();	
 	cTokenMemory.Kill();

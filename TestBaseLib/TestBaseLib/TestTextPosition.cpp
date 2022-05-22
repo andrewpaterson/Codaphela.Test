@@ -200,12 +200,72 @@ void TestTextPositionMultiLine(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestTextPositionEmptyPosition(void)
+{
+	CTextPositionPrinter	cPrinter;
+	CChars					sz;
+	CExternalString			cText;
+	CChars					szDest;
+	STextPosition			sPos;
+
+	sz.Init("\n{\n");
+	cText.Init(sz.Text(), sz.Length());
+	szDest.Init();
+	sPos.Init(sz.Text(), sz.Length(), &(sz.Text()[0]));
+	cPrinter.Init(&cText, &sPos);
+	cPrinter.PrintPosition(&szDest);
+	cPrinter.Kill();
+	AssertString("[1]:  \n     ^\n", szDest.Text());
+	sz.Kill();
+	szDest.Kill();
+
+	sz.Init("XY\n{\n");
+	cText.Init(sz.Text(), sz.Length());
+	szDest.Init();
+	sPos.Init(sz.Text(), sz.Length(), &(sz.Text()[1]));
+	cPrinter.Init(&cText, &sPos);
+	cPrinter.PrintPosition(&szDest);
+	cPrinter.Kill();
+	AssertString("[1]: XY \n      ^\n", szDest.Text());
+	sz.Kill();
+	szDest.Kill();
+
+	sz.Init("XY\n{\n");
+	cText.Init(sz.Text(), sz.Length());
+	szDest.Init();
+	sPos.Init(sz.Text(), sz.Length(), &(sz.Text()[2]));
+	cPrinter.Init(&cText, &sPos);
+	cPrinter.PrintPosition(&szDest);
+	cPrinter.Kill();
+	AssertString("[1]: XY \n       ^\n", szDest.Text());
+	sz.Kill();
+	szDest.Kill();
+
+
+	sz.Init("XY\n{\n");
+	cText.Init(sz.Text(), sz.Length());
+	szDest.Init();
+	sPos.Init(sz.Text(), sz.Length(), &(sz.Text()[3]));
+	cPrinter.Init(&cText, &sPos);
+	cPrinter.PrintPosition(&szDest);
+	cPrinter.Kill();
+	AssertString("[1]: { \n     ^\n", szDest.Text());
+	sz.Kill();
+	szDest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestTextPosition(void)
 {
 	BeginTests();
 
 	TestTextPositionSingleLine();
 	TestTextPositionMultiLine();
+	TestTextPositionEmptyPosition();
 
 	TestStatistics();
 }

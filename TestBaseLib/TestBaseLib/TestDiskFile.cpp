@@ -77,7 +77,7 @@ void TestDiskFileComplex(void)
 	cFile.Init(&cDiskFile);
 	cFile.Open(EFM_ReadWrite);
 
-	AssertString("Output" _FS_ "Test1.txt", cDiskFile.GetFileName());
+	AssertString("Output" _FS_ "Test1.txt", cDiskFile.GetFilename());
 	AssertLongLongInt(0, cDiskFile.Tell());
 	AssertLongLongInt(16, cDiskFile.Size());
 
