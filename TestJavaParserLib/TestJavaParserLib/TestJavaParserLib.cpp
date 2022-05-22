@@ -12,6 +12,8 @@ void TestJavaParserGetCharacter(void);
 void TestJavaParserGetString(void);
 void TestJavaParserPrintFloat(void);
 void TestJavaProjectTokenParser(void);
+void TestJavaSyntaxParserImports(void);
+void TestJavaSyntaxParserGenerics(void);
 void TestJavaSyntaxParser(void);
 
 
@@ -37,8 +39,9 @@ int __cdecl main(void)
 	TestJavaParserGetFloat();
 	TestJavaTokenParser();
 	//TestJavaProjectTokenParser();
+	TestJavaSyntaxParserImports();
+	TestJavaSyntaxParserGenerics();
 	TestJavaSyntaxParser();
-
 
 	iTotalTestsFailed = TestTotalStatistics();
 

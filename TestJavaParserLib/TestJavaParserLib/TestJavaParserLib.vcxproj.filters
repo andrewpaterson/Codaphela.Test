@@ -52,6 +52,12 @@
     <ClCompile Include="TestJavaSyntaxParser.cpp">
       <Filter>Source\Java\Syntax</Filter>
     </ClCompile>
+    <ClCompile Include="TestJavaSyntaxParserGenerics.cpp">
+      <Filter>Source\Java\Syntax</Filter>
+    </ClCompile>
+    <ClCompile Include="TestJavaSyntaxParserImports.cpp">
+      <Filter>Source\Java\Syntax</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

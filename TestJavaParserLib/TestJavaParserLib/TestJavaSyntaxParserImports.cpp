@@ -14,12 +14,13 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestJavaSyntaxParserStuff(void)
+void TestJavaSyntaxParserImport(void)
 {
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
-	char						szFilename[] = "TestXX.Java";
+	CChars						sz;
+	char						szFilename[] = "Test3.Java";
 	char						szFileContents[] = "\
 package net.assembler;\n\
 \n\
@@ -29,19 +30,6 @@ import net.simulation.common.TraceValue; \n\
 import java.util.ArrayList; \n\
 import java.util.List; \n\
 import java.util.Map; \n\
-\n\
-public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>>\n\
-{\n\
-  private int y; \n\
-  private X x; \n\
-\n\
-  public W65C816Assembler()\n\
-  {\n\
-    TraceValue value = NotConnected;\n\
-    List<Map<X, Integer>> map = new ArrayList<>();\n\
-    int x = 5;\n\
-  }\n\
-}\n\
 ";
 
 	cTokenParser.Init(szFilename, szFileContents, TRUE);
@@ -51,23 +39,32 @@ public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>>\n\
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
 
 	cSyntaxParser.Parse();
-	cSyntaxParser.Dump(TRUE);
+	sz.Init();
+	cSyntaxParser.TypePrint(&sz);
+	AssertString("\
+File: Test3.Java\n\
+  Package: net.assembler\n\
+  Import: net.simulation.common.TraceValue\n\
+  Import: net.simulation.common.TraceValue\n\
+  Import: java.util.ArrayList\n\
+  Import: java.util.List\n\
+  Import: java.util.Map\n", sz.Text());
+	sz.Kill();
 
 	cSyntaxParser.Kill();
 	cSyntaxMemory.Kill();
 	cTokenParser.Kill();
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestJavaSyntaxParser(void)
+void TestJavaSyntaxParserImports(void)
 {
 	BeginTests();
 
-	TestJavaSyntaxParserStuff();
+	TestJavaSyntaxParserImport();
 
 	TestStatistics();
 }

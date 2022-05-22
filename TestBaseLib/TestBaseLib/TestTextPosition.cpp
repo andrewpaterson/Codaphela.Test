@@ -249,7 +249,7 @@ void TestTextPositionEmptyPosition(void)
 	cPrinter.Init(&cText, &sPos);
 	cPrinter.PrintPosition(&szDest);
 	cPrinter.Kill();
-	AssertString("[1]: { \n     ^\n", szDest.Text());
+	AssertString("[2]: { \n     ^\n", szDest.Text());
 	sz.Kill();
 	szDest.Kill();
 }
