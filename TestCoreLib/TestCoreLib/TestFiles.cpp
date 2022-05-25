@@ -115,12 +115,12 @@ void TestFilesIteration(void)
 
 	cFiles.Init("Input" _FS_ "Game2", "PAK");
 	AssertInt(6, cFiles.GetNumPackFiles());
-	AssertFilePath("Input" _FS_ "Game2" _FS_ "Sounds" _FS_ "Cheese.PAK", cFiles.GetPackFiles(0)->GetFileName());
-	AssertFilePath("Input" _FS_ "Game2" _FS_ "Sounds" _FS_ "Santa.PAK", cFiles.GetPackFiles(1)->GetFileName());
-	AssertFilePath("Input" _FS_ "Game2" _FS_ "Textures.PAK", cFiles.GetPackFiles(2)->GetFileName());
-	AssertFilePath("Input" _FS_ "Game2" _FS_ "Models.PAK", cFiles.GetPackFiles(3)->GetFileName());
-	AssertFilePath("Input" _FS_ "Game2" _FS_ "Sounds.PAK", cFiles.GetPackFiles(4)->GetFileName());
-	AssertFilePath("Input" _FS_ "Game2" _FS_ "Videos.PAK", cFiles.GetPackFiles(5)->GetFileName());
+	AssertFilePath("Input" _FS_ "Game2" _FS_ "Sounds" _FS_ "Cheese.PAK", cFiles.GetPackFiles(0)->GetFilename());
+	AssertFilePath("Input" _FS_ "Game2" _FS_ "Sounds" _FS_ "Santa.PAK", cFiles.GetPackFiles(1)->GetFilename());
+	AssertFilePath("Input" _FS_ "Game2" _FS_ "Textures.PAK", cFiles.GetPackFiles(2)->GetFilename());
+	AssertFilePath("Input" _FS_ "Game2" _FS_ "Models.PAK", cFiles.GetPackFiles(3)->GetFilename());
+	AssertFilePath("Input" _FS_ "Game2" _FS_ "Sounds.PAK", cFiles.GetPackFiles(4)->GetFilename());
+	AssertFilePath("Input" _FS_ "Game2" _FS_ "Videos.PAK", cFiles.GetPackFiles(5)->GetFilename());
 
 	AssertStringCase("Sounds/Cheese/Moose.txt", cFiles.StartIteration(&cIter)->GetFullName(), FALSE);
 	AssertInt(1, cIter.GetCurrent()->GetFileRank());
@@ -217,30 +217,30 @@ void TestFilesIteration(void)
 void TestGetFileNames(void)
 {
 	CFiles			cFiles;
-	CMapStringInt	cFileNames;
+	CMapStringInt	cFilenames;
 	int				iNumFiles;
 
 	cFiles.Init("Input" _FS_ "Game2", "PAK");
 
-	cFileNames.Init(2, TRUE);
-	cFiles.GetFileNames(&cFileNames);
+	cFilenames.Init(2, TRUE);
+	cFiles.GetFilenames(&cFilenames);
 
-	iNumFiles = cFileNames.NumElements();
+	iNumFiles = cFilenames.NumElements();
 	AssertInt(11, iNumFiles);
 	
-	AssertFileName(&cFileNames, 2, FILE_SYSTEM_RANK, "Models/Cars.txt");
-	AssertFileName(&cFileNames, 2, FILE_SYSTEM_RANK, "Models/Super/Barbie.txt");
-	AssertFileName(&cFileNames, 2, FILE_SYSTEM_RANK, "Models/Super/Ken.txt");
-	AssertFileName(&cFileNames, 2, FILE_SYSTEM_RANK, "Sounds/Ambient.txt");
-	AssertFileName(&cFileNames, 2, 1,                "Sounds/Cheese/Moose.txt");
-	AssertFileName(&cFileNames, 2, 1,                "Sounds/Cheese/Scream.txt");
-	AssertFileName(&cFileNames, 1, 0,                "Sounds/General.txt");
-	AssertFileName(&cFileNames, 3, FILE_SYSTEM_RANK, "Sounds/Santa/Seattle.txt");
-	AssertFileName(&cFileNames, 1, 1,                "Sounds/Santa/Slay/Spelling.txt");
-	AssertFileName(&cFileNames, 2, FILE_SYSTEM_RANK, "Videos/Intro.txt");
-	AssertFileName(&cFileNames, 1, FILE_SYSTEM_RANK, "Videos/Outro.txt");
+	AssertFileName(&cFilenames, 2, FILE_SYSTEM_RANK, "Models/Cars.txt");
+	AssertFileName(&cFilenames, 2, FILE_SYSTEM_RANK, "Models/Super/Barbie.txt");
+	AssertFileName(&cFilenames, 2, FILE_SYSTEM_RANK, "Models/Super/Ken.txt");
+	AssertFileName(&cFilenames, 2, FILE_SYSTEM_RANK, "Sounds/Ambient.txt");
+	AssertFileName(&cFilenames, 2, 1,                "Sounds/Cheese/Moose.txt");
+	AssertFileName(&cFilenames, 2, 1,                "Sounds/Cheese/Scream.txt");
+	AssertFileName(&cFilenames, 1, 0,                "Sounds/General.txt");
+	AssertFileName(&cFilenames, 3, FILE_SYSTEM_RANK, "Sounds/Santa/Seattle.txt");
+	AssertFileName(&cFilenames, 1, 1,                "Sounds/Santa/Slay/Spelling.txt");
+	AssertFileName(&cFilenames, 2, FILE_SYSTEM_RANK, "Videos/Intro.txt");
+	AssertFileName(&cFilenames, 1, FILE_SYSTEM_RANK, "Videos/Outro.txt");
 
-	cFileNames.Kill();
+	cFilenames.Kill();
 	
 	cFiles.Kill();
 }

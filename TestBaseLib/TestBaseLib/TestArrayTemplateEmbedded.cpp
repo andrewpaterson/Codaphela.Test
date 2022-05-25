@@ -10,8 +10,8 @@
 void TestArrayTemplateEmbeddedAdd(void)
 {
 	CArrayTemplateEmbedded<int, 6>	cArray;
-	int*					pi;
-	int*					piEmbeddedData;
+	int*							pi;
+	int*							piEmbeddedData;
 
 	cArray.Init();
 	AssertInt(0, cArray.NumElements());
@@ -221,7 +221,7 @@ void TestArrayTemplateEmbeddedSizeof(void)
 	AssertInt(36, 3 * sizeof(CTestOverridenArrayTemplateItem));
 	AssertInt(24, sizeof(CArrayTemplate<CTestOverridenArrayTemplateItem>));
 
-	AssertInt(sizeof(SArrayTemplateHeader) + 3 * sizeof(CTestOverridenArrayTemplateItem), sizeof(CTestArrayTemplateEmbedded));
+	AssertInt(sizeof(int) * 2 + 3 * sizeof(CTestOverridenArrayTemplateItem), sizeof(CTestArrayTemplateEmbedded));
 }
 
 
@@ -277,6 +277,55 @@ void TestArrayTemplateEmbeddedAllocationWithVirtualClass(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestArrayTemplateEmbeddedChangeChunkSize(void)
+{
+	CArrayTemplateEmbedded<int, 3>	cArray;
+	int*							pi;
+	int*							piEmbeddedData;
+	int								i;
+
+	cArray.Init();
+	AssertInt(0, cArray.NumElements());
+	piEmbeddedData = cArray.GetData();
+
+	for (i = 0; i < 3; i++)
+	{
+		pi = cArray.Add();
+		*pi = i + 1;
+	}
+	AssertInt(3, cArray.NumElements());
+	AssertPointer(piEmbeddedData, cArray.GetData());
+	AssertTrue(cArray.IsEmbedded());
+	AssertFalse(cArray.IsArray());
+
+	pi = cArray.Add();
+	*pi = i + 1;
+	AssertFalse(cArray.IsEmbedded());
+	AssertTrue(cArray.IsArray());
+
+	cArray.RemoveAt(0);
+	AssertTrue(cArray.IsEmbedded());
+	AssertFalse(cArray.IsArray());
+	AssertInt(3, cArray.NumElements());
+	AssertInt(2, *cArray.Get(0));
+	AssertInt(3, *cArray.Get(1));
+	AssertInt(4, *cArray.Get(2));
+
+	for (i = 5; i < 30; i++)
+	{
+		pi = cArray.Add();
+		*pi = i;
+	}
+
+	AssertTrue(cArray.TestInternalConsistency());
+	cArray.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestArrayTemplateEmbedded(void)
 {
 	BeginTests();
@@ -287,6 +336,7 @@ void TestArrayTemplateEmbedded(void)
 	TestArrayTemplateEmbeddedRemove();
 	TestArrayTemplateEmbeddedSizeof();
 	TestArrayTemplateEmbeddedAllocationWithVirtualClass();
+	TestArrayTemplateEmbeddedChangeChunkSize();
 
 	FastFunctionsKill();
 	TestStatistics();
