@@ -75,6 +75,7 @@ void TestSorting(void);
 void TestIntegerHelper(void);
 void TestFileFinder(void);
 void TestArrayTemplateEmbedded(void);
+void TestArrayTemplateEmbeddedPtr(void);
 void TestArrayBit(void);
 void TestCSVFileEditable(void);
 void TestMemoryAllocator(void);
@@ -158,6 +159,7 @@ int __cdecl main(void)
 	TestSorting();
 	TestArrayBit();
 	TestArrayTemplateEmbedded();
+	TestArrayTemplateEmbeddedPtr();
 	TestLinkedList();
 	TestLinkedListBlock();
 	TestLinkedListTemplate();

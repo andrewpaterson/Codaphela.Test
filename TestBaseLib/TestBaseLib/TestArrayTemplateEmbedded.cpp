@@ -9,7 +9,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestArrayTemplateEmbeddedAdd(void)
 {
-	CArrayTemplateEmbedded<int, 5>	cArray;
+	CArrayTemplateEmbedded<int, 6>	cArray;
 	int*					pi;
 	int*					piEmbeddedData;
 
@@ -25,31 +25,37 @@ void TestArrayTemplateEmbeddedAdd(void)
 	pi = cArray.Get(0);
 	AssertInt(7,* pi);
 
-	cArray.AddNum(3);
-	AssertInt(4, cArray.NumElements());
+	cArray.AddNum(4);
+	AssertInt(5, cArray.NumElements());
 	AssertPointer(piEmbeddedData, cArray.GetData());
 	*cArray.Get(1) = 6;
 	*cArray.Get(2) = 5;
 	*cArray.Get(3) = 4;
+	*cArray.Get(4) = 3;
+	AssertTrue(cArray.IsEmbedded());
+	AssertFalse(cArray.IsArray());
 
 	pi = cArray.Add();
 	*pi = 22;
-	AssertInt(5, cArray.NumElements());
+	AssertInt(6, cArray.NumElements());
 	AssertPointer(piEmbeddedData, cArray.GetData());
 	AssertInt(7, *cArray.Get(0));
-	AssertInt(22, *cArray.Get(4));
+	AssertInt(22, *cArray.Get(5));
+	AssertTrue(cArray.IsEmbedded());
+	AssertFalse(cArray.IsArray());
 
 	pi = cArray.Add();
 	*pi = 20;
-	AssertInt(6, cArray.NumElements());
+	AssertInt(7, cArray.NumElements());
 	AssertFalse(piEmbeddedData == cArray.GetData());
 
 	AssertInt(7, *cArray.Get(0));
 	AssertInt(6, *cArray.Get(1));
 	AssertInt(5, *cArray.Get(2));
 	AssertInt(4, *cArray.Get(3));
-	AssertInt(22, *cArray.Get(4));
-	AssertInt(20, *cArray.Get(5));
+	AssertInt(3, *cArray.Get(4));
+	AssertInt(22, *cArray.Get(5));
+	AssertInt(20, *cArray.Get(6));
 
 	AssertTrue(cArray.TestInternalConsistency());
 	cArray.Kill();
@@ -153,18 +159,18 @@ void TestArrayTemplateEmbeddedRemove(void)
 {
 	CArrayTemplateEmbedded<int*, 2>	cArray;
 
-	int						i1;
-	int						i2;
-	int						i3;
+	int								i1;
+	int								i2;
+	int								i3;
 
-	int*					pi1;
-	int*					pi2;
-	int*					pi3;
+	int*							pi1;
+	int*							pi2;
+	int*							pi3;
 
-	int**					ppi1;
-	int**					ppi2;
+	int**							ppi1;
+	int**							ppi2;
 
-	int						iIndex;
+	int								iIndex;
 
 	i1 = 1;
 	i2 = 2;

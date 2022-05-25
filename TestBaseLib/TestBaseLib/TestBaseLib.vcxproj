@@ -212,6 +212,7 @@
     <ClCompile Include="TestAllocator.cpp" />
     <ClCompile Include="TestArrayBlockSorted.cpp" />
     <ClCompile Include="TestArraySizer.cpp" />
+    <ClCompile Include="TestArrayTemplateEmbeddedPtr.cpp" />
     <ClCompile Include="TestArrayTemplateMinimal.cpp" />
     <ClCompile Include="TestArrayVoidPtr.cpp" />
     <ClCompile Include="TestBaseLib.cpp" />
