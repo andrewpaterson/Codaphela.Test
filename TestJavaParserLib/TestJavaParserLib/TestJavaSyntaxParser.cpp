@@ -67,6 +67,7 @@ void TestJavaSyntaxParser(void)
 {
 	BeginTests();
 
+	AssertInt(28, sizeof(CJavaTokenIdentifierPtrEmbeddedArray));
 	TestJavaSyntaxParserStuff();
 
 	TestStatistics();

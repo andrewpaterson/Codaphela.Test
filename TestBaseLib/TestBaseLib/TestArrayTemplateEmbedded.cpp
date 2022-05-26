@@ -221,7 +221,7 @@ void TestArrayTemplateEmbeddedSizeof(void)
 	AssertInt(36, 3 * sizeof(CTestOverridenArrayTemplateItem));
 	AssertInt(24, sizeof(CArrayTemplate<CTestOverridenArrayTemplateItem>));
 
-	AssertInt(sizeof(int) * 2 + 3 * sizeof(CTestOverridenArrayTemplateItem), sizeof(CTestArrayTemplateEmbedded));
+	AssertInt(sizeof(int) + 3 * sizeof(CTestOverridenArrayTemplateItem), sizeof(CTestArrayTemplateEmbedded));
 }
 
 
@@ -316,6 +316,23 @@ void TestArrayTemplateEmbeddedChangeChunkSize(void)
 		pi = cArray.Add();
 		*pi = i;
 	}
+	AssertInt(28, cArray.NumElements());
+	AssertFalse(cArray.IsEmbedded());
+	AssertTrue(cArray.IsArray());
+
+	for (i = 0; i < 28; i++)
+	{
+		AssertInt(i + 2, *cArray.Get(i)); 
+	}
+
+	for (i = 0; i < 26; i++)
+	{
+		cArray.RemoveAt(1);
+	}
+	AssertTrue(cArray.IsEmbedded());
+	AssertFalse(cArray.IsArray());
+	AssertInt(2, *cArray.Get(0));
+	AssertInt(29, *cArray.Get(1));
 
 	AssertTrue(cArray.TestInternalConsistency());
 	cArray.Kill();
