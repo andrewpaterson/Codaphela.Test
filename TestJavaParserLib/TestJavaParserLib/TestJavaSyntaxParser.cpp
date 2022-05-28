@@ -52,7 +52,6 @@ public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>>\n\
 
 	cSyntaxParser.Parse();
 	cTokenParser.DumpLog();
-	cSyntaxParser.Dump(TRUE);
 
 	cSyntaxParser.Kill();
 	cSyntaxMemory.Kill();

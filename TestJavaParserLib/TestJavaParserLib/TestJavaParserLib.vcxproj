@@ -217,6 +217,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="JavaTokenAssert.cpp" />
+    <ClCompile Include="TestJavaSyntaxParserClassVariables.cpp" />
     <ClCompile Include="TestJavaParserGetCharacter.cpp" />
     <ClCompile Include="TestJavaParserGetFloat.cpp" />
     <ClCompile Include="TestJavaParserGetInteger.cpp" />

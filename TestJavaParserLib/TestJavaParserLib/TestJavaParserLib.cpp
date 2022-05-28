@@ -14,6 +14,7 @@ void TestJavaParserPrintFloat(void);
 void TestJavaProjectTokenParser(void);
 void TestJavaSyntaxParserImports(void);
 void TestJavaSyntaxParserGenerics(void);
+void TestJavaSyntaxParserClassVariables(void);
 void TestJavaSyntaxParser(void);
 
 
@@ -31,17 +32,18 @@ int __cdecl main(void)
 	FastFunctionsInit();
 	NumberInit();
 
-	TestJavaParserPrintFloat();
-	TestSkipComments();
-	TestJavaParserGetInteger();
-	TestJavaParserGetCharacter();
-	TestJavaParserGetString();
-	TestJavaParserGetFloat();
-	TestJavaTokenParser();
+	//TestJavaParserPrintFloat();
+	//TestSkipComments();
+	//TestJavaParserGetInteger();
+	//TestJavaParserGetCharacter();
+	//TestJavaParserGetString();
+	//TestJavaParserGetFloat();
+	//TestJavaTokenParser();
 	//TestJavaProjectTokenParser();
 	//TestJavaSyntaxParserImports();
 	//TestJavaSyntaxParserGenerics();
-	TestJavaSyntaxParser();
+	TestJavaSyntaxParserClassVariables();
+	//TestJavaSyntaxParser();
 
 	iTotalTestsFailed = TestTotalStatistics();
 
