@@ -20,7 +20,7 @@ void TestJavaSyntaxParserImport(void)
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
 	CChars						sz;
-	char						szFilename[] = "Test3.Java";
+	char						szFilename[] = __ENGINE_PRETTY_FUNCTION__".Java";
 	char						szFileContents[] = "\
 package net.assembler;\n\
 \n\

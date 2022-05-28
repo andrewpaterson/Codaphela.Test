@@ -27,25 +27,22 @@ void TestJavaSyntaxParserClassVariablesSimpleDeclaration(void)
 	CJavaSyntaxType*			pcType;
 	CJavaSyntaxClassBlock*		pcBlock;
 	CChars						sz;
-	char						szFilename[] = "TestClassVariablesSimpleDeclaration.Java";
+	CStatementArray*			papcStatements;
+	CJavaSyntaxStatement*		pcStatement;
+	char						szFilename[] = __ENGINE_PRETTY_FUNCTION__".Java";
 	char						szFileContents[] = "\
 class Clazz\n\
 {\n\
-	private int y;\n\
-	private X x;\n\
+	private int y[];\n\
+	public static final X x;\n\
 }\n\
 ";
 
 	cTokenParser.Init(szFilename, szFileContents, FALSE);
 	AssertTrue(cTokenParser.Parse());
-
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
-
-	cSyntaxParser.Parse();
-
-	cSyntaxParser.Dump(TRUE);
-	cTokenParser.DumpLog();
+	AssertTrue(cSyntaxParser.Parse());
 
 	pcFile = cSyntaxParser.GetSyntaxFile();
 	pcPackage = pcFile->GetPackage();
@@ -65,9 +62,104 @@ class Clazz\n\
 
 	pcType = pcClass->GetSyntaxType();
 	sz.Init();
-	AssertString("", pcType->PrettyPrint(&sz));
+	AssertString("Clazz", pcType->PrettyPrint(&sz));
 	sz.Kill();
 	pcBlock = pcClass->GetBlock();
+	AssertNotNull(pcBlock);
+	papcStatements = pcBlock->GetStatements();
+	AssertNotNull(papcStatements);
+	AssertInt(2, papcStatements->NumElements());
+	pcStatement = papcStatements->GetPtr(0);
+	AssertTrue(pcStatement->IsStatement());
+	AssertTrue(pcStatement->IsVariableDeclaration());
+	sz.Init();
+	AssertString("private int y[];", pcStatement->PrettyPrint(&sz));
+	sz.Kill();
+
+	pcStatement = papcStatements->GetPtr(1);
+	AssertTrue(pcStatement->IsStatement());
+	AssertTrue(pcStatement->IsVariableDeclaration());
+	sz.Init();
+	AssertString("public static final X x;", pcStatement->PrettyPrint(&sz));
+	sz.Kill();
+
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestJavaSyntaxParserClassVariablesGenericDeclaration(void)
+{
+	CTokenParserEnvironment		cTokenParser;
+	CJavaSyntaxParser			cSyntaxParser;
+	CJavaSyntaxMemory			cSyntaxMemory;
+	CJavaSyntaxFile* pcFile;
+	CJavaSyntaxPackage* pcPackage;
+	CImportArray* papcImports;
+	CClassCommonArray* papcClasses;
+	CJavaSyntaxClass* pcClass;
+	CJavaSyntaxType* pcType;
+	CJavaSyntaxClassBlock* pcBlock;
+	CChars						sz;
+	CStatementArray* papcStatements;
+	CJavaSyntaxStatement* pcStatement;
+	char						szFilename[] = __ENGINE_PRETTY_FUNCTION__".Java";
+	char						szFileContents[] = "\
+class Clazz\n\
+{\n\
+	public final List<Map<? extends X, ? extends Integer>> map;\n\
+}\n\
+";
+
+	cTokenParser.Init(szFilename, szFileContents, FALSE);
+	AssertTrue(cTokenParser.Parse());
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+	AssertTrue(cSyntaxParser.Parse());
+
+	pcFile = cSyntaxParser.GetSyntaxFile();
+	pcPackage = pcFile->GetPackage();
+	AssertNull(pcPackage);
+
+	papcImports = pcFile->GetImports();
+	AssertNotNull(papcImports);
+	AssertInt(0, papcImports->NumElements());
+
+	papcClasses = pcFile->GetClasses();
+	AssertNotNull(papcClasses);
+	AssertInt(1, papcClasses->NumElements());
+
+	pcClass = (CJavaSyntaxClass*)papcClasses->GetPtr(0);
+	AssertTrue(pcClass->IsClassCommon());
+	AssertTrue(pcClass->IsClass());
+
+	pcType = pcClass->GetSyntaxType();
+	sz.Init();
+	AssertString("Clazz", pcType->PrettyPrint(&sz));
+	sz.Kill();
+	pcBlock = pcClass->GetBlock();
+	AssertNotNull(pcBlock);
+	papcStatements = pcBlock->GetStatements();
+	AssertNotNull(papcStatements);
+	AssertInt(2, papcStatements->NumElements());
+	pcStatement = papcStatements->GetPtr(0);
+	AssertTrue(pcStatement->IsStatement());
+	AssertTrue(pcStatement->IsVariableDeclaration());
+	sz.Init();
+	AssertString("private int y[];", pcStatement->PrettyPrint(&sz));
+	sz.Kill();
+
+	pcStatement = papcStatements->GetPtr(1);
+	AssertTrue(pcStatement->IsStatement());
+	AssertTrue(pcStatement->IsVariableDeclaration());
+	sz.Init();
+	AssertString("public static final X x;", pcStatement->PrettyPrint(&sz));
+	sz.Kill();
 
 	cSyntaxParser.Kill();
 	cSyntaxMemory.Kill();
@@ -84,7 +176,7 @@ void TestJavaSyntaxParserClassVariablesSimpleInitialisation(void)
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
-	char						szFilename[] = "TestClassVariables.Java";
+	char						szFilename[] = __ENGINE_PRETTY_FUNCTION__".Java";
 	char						szFileContents[] = "\
 class Clazz\n\
 {\n\
