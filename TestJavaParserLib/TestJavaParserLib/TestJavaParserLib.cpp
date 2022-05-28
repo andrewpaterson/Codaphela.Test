@@ -14,6 +14,7 @@ void TestJavaParserPrintFloat(void);
 void TestJavaProjectTokenParser(void);
 void TestJavaSyntaxParserImports(void);
 void TestJavaSyntaxParserGenerics(void);
+void TestJavaSyntaxParserClassVariablesSimpleDeclaration(void);
 void TestJavaSyntaxParserClassVariables(void);
 void TestJavaSyntaxParser(void);
 

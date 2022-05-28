@@ -20,6 +20,13 @@ void TestJavaSyntaxParserClassVariablesSimpleDeclaration(void)
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
 	CJavaSyntaxFile*			pcFile;
+	CJavaSyntaxPackage*			pcPackage;
+	CImportArray*				papcImports;
+	CClassCommonArray*			papcClasses;
+	CJavaSyntaxClass*			pcClass;
+	CJavaSyntaxType*			pcType;
+	CJavaSyntaxClassBlock*		pcBlock;
+	CChars						sz;
 	char						szFilename[] = "TestClassVariablesSimpleDeclaration.Java";
 	char						szFileContents[] = "\
 class Clazz\n\
@@ -41,7 +48,26 @@ class Clazz\n\
 	cTokenParser.DumpLog();
 
 	pcFile = cSyntaxParser.GetSyntaxFile();
-	pcFile->GetPackage();
+	pcPackage = pcFile->GetPackage();
+	AssertNull(pcPackage);
+
+	papcImports = pcFile->GetImports();
+	AssertNotNull(papcImports);
+	AssertInt(0, papcImports->NumElements());
+
+	papcClasses = pcFile->GetClasses();
+	AssertNotNull(papcClasses);
+	AssertInt(1, papcClasses->NumElements());
+
+	pcClass = (CJavaSyntaxClass*)papcClasses->GetPtr(0);
+	AssertTrue(pcClass->IsClassCommon());
+	AssertTrue(pcClass->IsClass());
+
+	pcType = pcClass->GetSyntaxType();
+	sz.Init();
+	AssertString("", pcType->PrettyPrint(&sz));
+	sz.Kill();
+	pcBlock = pcClass->GetBlock();
 
 	cSyntaxParser.Kill();
 	cSyntaxMemory.Kill();
