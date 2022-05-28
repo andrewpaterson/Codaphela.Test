@@ -19,6 +19,7 @@ void TestJavaSyntaxParserClassVariablesSimpleDeclaration(void)
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
+	CJavaSyntaxFile*			pcFile;
 	char						szFilename[] = "TestClassVariablesSimpleDeclaration.Java";
 	char						szFileContents[] = "\
 class Clazz\n\
@@ -38,6 +39,9 @@ class Clazz\n\
 
 	cSyntaxParser.Dump(TRUE);
 	cTokenParser.DumpLog();
+
+	pcFile = cSyntaxParser.GetSyntaxFile();
+	pcFile->GetPackage();
 
 	cSyntaxParser.Kill();
 	cSyntaxMemory.Kill();
