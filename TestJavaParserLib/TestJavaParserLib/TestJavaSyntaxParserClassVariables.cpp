@@ -274,14 +274,13 @@ class Clazz\n\
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
 
-	cSyntaxParser.Parse();
+	AssertTrue(cSyntaxParser.Parse());
 	cTokenParser.DumpLog();
 
 	cSyntaxParser.Kill();
 	cSyntaxMemory.Kill();
 	cTokenParser.Kill();
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////
