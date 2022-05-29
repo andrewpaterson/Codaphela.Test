@@ -20,7 +20,7 @@ void TestJavaSyntaxParserGenericGeneric(void)
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
-	char						szFilename[] = __ENGINE_PRETTY_FUNCTION__".Java";
+	char						szFilename[] = __ENGINE_FUNCTION__".Java";
 	char						szFileContents[] = "\
 public final class W65C816Assembler<List<List>>\n\
 {\n\
@@ -53,7 +53,7 @@ void TestJavaSyntaxParserGenericExtends(void)
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
-	char						szFilename[] = __ENGINE_PRETTY_FUNCTION__".Java";
+	char						szFilename[] = __ENGINE_FUNCTION__".Java";
 	char						szFileContents[] = "\
 public final class W65C816Assembler<X extends Integer>\n\
 {\n\
@@ -86,7 +86,7 @@ void TestJavaSyntaxParserGenericWildcard(void)
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
-	char						szFilename[] = __ENGINE_PRETTY_FUNCTION__".Java";
+	char						szFilename[] = __ENGINE_FUNCTION__".Java";
 	char						szFileContents[] = "\
 public final class W65C816Assembler<? extends Map<?, ?>>\n\
 {\n\
@@ -119,7 +119,7 @@ void TestJavaSyntaxParserGenericComplex(void)
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
-	char						szFilename[] = __ENGINE_PRETTY_FUNCTION__".Java";
+	char						szFilename[] = __ENGINE_FUNCTION__".Java";
 	char						szFileContents[] = "\
 public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>, ? extends Map<?, ?>>\n\
 {\n\
@@ -155,7 +155,7 @@ void TestJavaSyntaxParserGenericError(void)
 	CChars						szOutput;
 	char*						szBuffer;
 	int							iLength;
-	char						szFilename[] = __ENGINE_PRETTY_FUNCTION__".Java";
+	char						szFilename[] = __ENGINE_FUNCTION__".Java";
 	char						szFileContents[] = "\
 public final class W65C816Assembler<List \n\
 {\n\
@@ -175,8 +175,8 @@ public final class W65C816Assembler<List \n\
 	szBuffer = cTokenParser.GetOutput(&iLength);
 	szOutput.Init(szBuffer, 0, iLength);
 	AssertString("ERROR: '>' or Type expected.\n\
-[Test2.Java:2]:  { \n\
-                 ^\n\
+[TestJavaSyntaxParserGenericError.Java:2]:  { \n\
+                                            ^\n\
 \n", szOutput.Text());
 	szOutput.Kill();
 

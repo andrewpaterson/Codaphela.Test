@@ -20,7 +20,7 @@ void TestJavaSyntaxParserImport(void)
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
 	CChars						sz;
-	char						szFilename[] = __ENGINE_PRETTY_FUNCTION__".Java";
+	char						szFilename[] = __ENGINE_FUNCTION__".Java";
 	char						szFileContents[] = "\
 package net.assembler;\n\
 \n\
@@ -42,7 +42,7 @@ import java.util.Map; \n\
 	sz.Init();
 	cSyntaxParser.TypePrint(&sz);
 	AssertString("\
-File: Test3.Java\n\
+File: TestJavaSyntaxParserImport.Java\n\
   Package: net.assembler\n\
   Import: net.simulation.common.TraceValue\n\
   Import: net.simulation.common.TraceValue\n\

@@ -29,7 +29,7 @@ void TestJavaSyntaxParserClassVariablesSimpleDeclaration(void)
 	CChars						sz;
 	CStatementArray*			papcStatements;
 	CJavaSyntaxStatement*		pcStatement;
-	char						szFilename[] = __ENGINE_PRETTY_FUNCTION__".Java";
+	char						szFilename[] = __ENGINE_FUNCTION__".Java";
 	char						szFileContents[] = "\
 class Clazz\n\
 {\n\
@@ -128,7 +128,7 @@ void TestJavaSyntaxParserClassVariablesGenericDeclaration(void)
 	CJavaSyntaxGeneric*					pcGeneric;
 	CTypeCommonArray*					apcGenerics;
 	CJavaSyntaxExtent*					pcExtent;
-	char								szFilename[] = __ENGINE_PRETTY_FUNCTION__".Java";
+	char								szFilename[] = __ENGINE_FUNCTION__".Java";
 	char								szFileContents[] = "\
 class Clazz<Y>\n\
 {\n\
@@ -259,7 +259,7 @@ void TestJavaSyntaxParserClassVariablesSimpleInitialisation(void)
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
-	char						szFilename[] = __ENGINE_PRETTY_FUNCTION__".Java";
+	char						szFilename[] = __ENGINE_FUNCTION__".Java";
 	char						szFileContents[] = "\
 class Clazz\n\
 {\n\
