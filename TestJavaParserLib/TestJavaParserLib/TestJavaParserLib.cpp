@@ -33,16 +33,16 @@ int __cdecl main(void)
 	FastFunctionsInit();
 	NumberInit();
 
-	//TestJavaParserPrintFloat();
-	//TestSkipComments();
-	//TestJavaParserGetInteger();
-	//TestJavaParserGetCharacter();
-	//TestJavaParserGetString();
-	//TestJavaParserGetFloat();
-	//TestJavaTokenParser();
+	TestJavaParserPrintFloat();
+	TestSkipComments();
+	TestJavaParserGetInteger();
+	TestJavaParserGetCharacter();
+	TestJavaParserGetString();
+	TestJavaParserGetFloat();
+	TestJavaTokenParser();
 	//TestJavaProjectTokenParser();
-	//TestJavaSyntaxParserImports();
-	//TestJavaSyntaxParserGenerics();
+	TestJavaSyntaxParserImports();
+	TestJavaSyntaxParserGenerics();
 	TestJavaSyntaxParserClassVariables();
 	//TestJavaSyntaxParser();
 

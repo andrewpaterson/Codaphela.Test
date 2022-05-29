@@ -109,24 +109,32 @@ Class Clazz\n\
 //////////////////////////////////////////////////////////////////////////
 void TestJavaSyntaxParserClassVariablesGenericDeclaration(void)
 {
-	CTokenParserEnvironment		cTokenParser;
-	CJavaSyntaxParser			cSyntaxParser;
-	CJavaSyntaxMemory			cSyntaxMemory;
-	CJavaSyntaxFile* pcFile;
-	CJavaSyntaxPackage* pcPackage;
-	CImportArray* papcImports;
-	CClassCommonArray* papcClasses;
-	CJavaSyntaxClass* pcClass;
-	CJavaSyntaxType* pcType;
-	CJavaSyntaxClassBlock* pcBlock;
-	CChars						sz;
-	CStatementArray* papcStatements;
-	CJavaSyntaxStatement* pcStatement;
-	char						szFilename[] = __ENGINE_PRETTY_FUNCTION__".Java";
-	char						szFileContents[] = "\
-class Clazz\n\
+	CTokenParserEnvironment				cTokenParser;
+	CJavaSyntaxParser					cSyntaxParser;
+	CJavaSyntaxMemory					cSyntaxMemory;
+	CJavaSyntaxFile*					pcFile;
+	CJavaSyntaxPackage*					pcPackage;
+	CImportArray*						papcImports;
+	CClassCommonArray*					papcClasses;
+	CJavaSyntaxClass*					pcClass;
+	CJavaSyntaxType*					pcType;
+	CJavaSyntaxClassBlock*				pcBlock;
+	CChars								sz;
+	CStatementArray*					papcStatements;
+	CJavaSyntaxStatement*				pcStatement;
+	CJavaModifiers*						pcModifiers;
+	CJavaSyntaxVariableDeclaration*		pcDeclaration;
+	CIdentifierArray*					pcReferenceType;
+	CJavaSyntaxGeneric*					pcGeneric;
+	CTypeCommonArray*					apcGenerics;
+	CJavaSyntaxExtent*					pcExtent;
+	char								szFilename[] = __ENGINE_PRETTY_FUNCTION__".Java";
+	char								szFileContents[] = "\
+class Clazz<Y>\n\
 {\n\
 	public final List<Map<? extends X, ? extends Integer>> map;\n\
+	List<Pair<?, Y>> list;\n\
+	List<> array3DList[][][];\n\
 }\n\
 ";
 
@@ -155,27 +163,85 @@ class Clazz\n\
 	pcType = pcClass->GetSyntaxType();
 	sz.Init();
 	pcType->PrettyPrint(&sz, 0);
-	AssertString("Clazz", sz.Text());
+	AssertString("Clazz<Y>", sz.Text());
 	sz.Kill();
 	pcBlock = pcClass->GetBlock();
 	AssertNotNull(pcBlock);
 	papcStatements = pcBlock->GetStatements();
 	AssertNotNull(papcStatements);
-	AssertInt(2, papcStatements->NumElements());
+	AssertInt(3, papcStatements->NumElements());
+
 	pcStatement = papcStatements->GetPtr(0);
 	AssertTrue(pcStatement->IsStatement());
 	AssertTrue(pcStatement->IsVariableDeclaration());
 	sz.Init();
 	pcStatement->PrettyPrint(&sz, 0);
-	AssertString("private int y[];", sz.Text());
+	AssertString("public final List<Map<? extends X, ? extends Integer>> map", sz.Text());
 	sz.Kill();
+
+	pcDeclaration = (CJavaSyntaxVariableDeclaration*)pcStatement;
+	pcModifiers = pcDeclaration->GetModifiers();
+	AssertFalse(pcModifiers->IsNone());
+	AssertTrue(pcModifiers->IsPublic());
+	AssertTrue(pcModifiers->IsFinal());
+	AssertFalse(pcModifiers->IsProtected());
+	AssertFalse(pcModifiers->IsPrivate());
+	AssertFalse(pcModifiers->IsPackageModifier());
+	AssertFalse(pcModifiers->IsStatic());
+	AssertFalse(pcModifiers->IsStrictfp());
+	
+	AssertFalse(pcDeclaration->IsPrimitiveType());
+	AssertTrue(pcDeclaration->IsReferenceType());
+	AssertNull(pcDeclaration->GetPrimitiveType());
+	pcReferenceType = pcDeclaration->GetReferenceType();
+	AssertInt(1, pcReferenceType->NumElements());
+	AssertString("List", pcReferenceType->GetPtr(0)->GetIdentifer());
+
+	pcGeneric = pcDeclaration->GetGeneric();
+	apcGenerics = pcGeneric->GetGenerics();
+	AssertInt(1, apcGenerics->NumElements());
+	pcType = (CJavaSyntaxType*)apcGenerics->GetPtr(0);
+	AssertTrue(pcType->IsTypeCommon());
+	AssertTrue(pcType->IsType());
+	AssertFalse(pcType->IsExtent());
+	AssertString("Map", pcType->GetName()->GetIdentifer());
+	pcGeneric = pcType->GetGeneric();
+
+	apcGenerics = pcGeneric->GetGenerics();
+	AssertInt(2, apcGenerics->NumElements());
+	pcExtent = (CJavaSyntaxExtent*)apcGenerics->GetPtr(0);
+	AssertTrue(pcExtent->IsTypeCommon());
+	AssertFalse(pcExtent->IsType());
+	AssertTrue(pcExtent->IsExtent());
+	AssertNull(pcExtent->GetName());
+	AssertTrue(pcExtent->IsWildCard());
 
 	pcStatement = papcStatements->GetPtr(1);
 	AssertTrue(pcStatement->IsStatement());
 	AssertTrue(pcStatement->IsVariableDeclaration());
 	sz.Init();
 	pcStatement->PrettyPrint(&sz, 0);
-	AssertString("public static final X x;", sz.Text());
+	AssertString("List<Pair<?, Y>> list", sz.Text());
+	sz.Kill();
+
+	pcStatement = papcStatements->GetPtr(2);
+	AssertTrue(pcStatement->IsStatement());
+	AssertTrue(pcStatement->IsVariableDeclaration());
+	sz.Init();
+	pcStatement->PrettyPrint(&sz, 0);
+	AssertString("List<> array3DList[][][]", sz.Text());
+	sz.Kill();
+
+	sz.Init();
+	pcFile->PrettyPrint(&sz, 0);
+	AssertString("\
+Class Clazz<Y>\n\
+{\n\
+	public final List<Map<? extends X, ? extends Integer>> map;\n\
+	List<Pair<?, Y>> list;\n\
+	List<> array3DList[][][];\n\
+}\n\
+", sz.Text());
 	sz.Kill();
 
 	cSyntaxParser.Kill();
@@ -227,6 +293,7 @@ void TestJavaSyntaxParserClassVariables(void)
 	BeginTests();
 
 	TestJavaSyntaxParserClassVariablesSimpleDeclaration();
+	TestJavaSyntaxParserClassVariablesGenericDeclaration();
 	TestJavaSyntaxParserClassVariablesSimpleInitialisation();
 
 	TestStatistics();
