@@ -62,7 +62,8 @@ class Clazz\n\
 
 	pcType = pcClass->GetSyntaxType();
 	sz.Init();
-	AssertString("Clazz", pcType->PrettyPrint(&sz));
+	pcType->PrettyPrint(&sz);
+	AssertString("Clazz", sz.Text());
 	sz.Kill();
 	pcBlock = pcClass->GetBlock();
 	AssertNotNull(pcBlock);
@@ -73,14 +74,27 @@ class Clazz\n\
 	AssertTrue(pcStatement->IsStatement());
 	AssertTrue(pcStatement->IsVariableDeclaration());
 	sz.Init();
-	AssertString("private int y[];", pcStatement->PrettyPrint(&sz));
+	pcStatement->PrettyPrint(&sz, 0);
+	AssertString("private int y[]", sz.Text());
 	sz.Kill();
 
 	pcStatement = papcStatements->GetPtr(1);
 	AssertTrue(pcStatement->IsStatement());
 	AssertTrue(pcStatement->IsVariableDeclaration());
 	sz.Init();
-	AssertString("public static final X x;", pcStatement->PrettyPrint(&sz));
+	pcStatement->PrettyPrint(&sz, 0);
+	AssertString("public static final X x", sz.Text());
+	sz.Kill();
+
+	sz.Init();
+	pcFile->PrettyPrint(&sz, 0);
+	AssertString("\
+Class Clazz\n\
+{\n\
+	private int y[];\n\
+	public static final X x;\n\
+}\n\
+", sz.Text());
 	sz.Kill();
 
 	cSyntaxParser.Kill();
@@ -140,7 +154,8 @@ class Clazz\n\
 
 	pcType = pcClass->GetSyntaxType();
 	sz.Init();
-	AssertString("Clazz", pcType->PrettyPrint(&sz));
+	pcType->PrettyPrint(&sz, 0);
+	AssertString("Clazz", sz.Text());
 	sz.Kill();
 	pcBlock = pcClass->GetBlock();
 	AssertNotNull(pcBlock);
@@ -151,14 +166,16 @@ class Clazz\n\
 	AssertTrue(pcStatement->IsStatement());
 	AssertTrue(pcStatement->IsVariableDeclaration());
 	sz.Init();
-	AssertString("private int y[];", pcStatement->PrettyPrint(&sz));
+	pcStatement->PrettyPrint(&sz, 0);
+	AssertString("private int y[];", sz.Text());
 	sz.Kill();
 
 	pcStatement = papcStatements->GetPtr(1);
 	AssertTrue(pcStatement->IsStatement());
 	AssertTrue(pcStatement->IsVariableDeclaration());
 	sz.Init();
-	AssertString("public static final X x;", pcStatement->PrettyPrint(&sz));
+	pcStatement->PrettyPrint(&sz, 0);
+	AssertString("public static final X x;", sz.Text());
 	sz.Kill();
 
 	cSyntaxParser.Kill();
