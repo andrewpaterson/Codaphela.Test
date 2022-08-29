@@ -1,6 +1,5 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FastFunctions.h"
-#include "BaseLib/Log.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "StandardLib/Channels.h"

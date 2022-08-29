@@ -70,36 +70,36 @@ void TestClassDefinition(void)
 	pcField = pcTestClassClass->GetField("mpObject");
 	AssertTrue(pcField->IsPointer());
 	AssertString("mpObject", pcField->GetName());
-	AssertInt(192, pcField->GetOffset());
+	AssertInt(168, pcField->GetOffset());
 	pcPointerField = (CPointerField*)pcField;
 
 	pcField = pcTestClassClass->GetField("mpTest");
 	AssertTrue(pcField->IsPointer());
-	AssertInt(200, pcField->GetOffset());
+	AssertInt(176, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mInt");
 	AssertTrue(pcField->IsPrimitive());
 	AssertString("mInt", pcField->GetName());
-	AssertInt(208, pcField->GetOffset());
+	AssertInt(184, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("miUnmanagedInt");
 	AssertTrue(pcField->IsUnmanaged());
 	AssertFalse(pcField->IsArray());
 	AssertString("miUnmanagedInt", pcField->GetName());
-	AssertInt(216, pcField->GetOffset());
+	AssertInt(192, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mTiny");
 	AssertTrue(pcField->IsEmbeddedObject());
 	AssertString("mTiny", pcField->GetName());
-	AssertInt(224, pcField->GetOffset());
+	AssertInt(200, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mDouble");
 	AssertTrue(pcField->IsPrimitive());
-	AssertInt(424, pcField->GetOffset());
+	AssertInt(376, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mauiData");
 	AssertTrue(pcField->IsUnmanaged());
-	AssertInt(440, pcField->GetOffset());
+	AssertInt(392, pcField->GetOffset());
 
 	ObjectsKill();
 	DataIOKill();
@@ -148,7 +148,7 @@ void TestClassOnStackOutOfFrame(void)
 	pcField = pcTestClassClass->GetField("mpObject");
 	AssertTrue(pcField->IsPointer());
 	AssertString("mpObject", pcField->GetName());
-	AssertInt(192, pcField->GetOffset());
+	AssertInt(168, pcField->GetOffset());
 	pcPointerField = (CPointerField*)pcField;
 
 

@@ -20,11 +20,11 @@ void TestObjectSize(void)
 	ObjectsInit();
 
 	AssertInt(16, sizeof(CUnknown));
-	AssertInt(60, sizeof(CEmbeddedObject));
-	AssertInt(120, sizeof(CBaseObject));  //Check your struct alignement.  This is too large.
-	AssertInt(192, sizeof(CObject));
-	AssertInt(208, sizeof(CRoot));
-	AssertInt(176, sizeof(CSetObject));
+	AssertInt(52, sizeof(CEmbeddedObject));
+	AssertInt(112, sizeof(CBaseObject));  //Check your struct alignement.  This is too large.
+	AssertInt(168, sizeof(CObject));
+	AssertInt(184, sizeof(CRoot));
+	AssertInt(168, sizeof(CSetObject));
 	AssertInt(8, sizeof(CPointer));
 
 	ObjectsFlush();
