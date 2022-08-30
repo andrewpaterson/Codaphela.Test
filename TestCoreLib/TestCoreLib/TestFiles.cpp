@@ -311,10 +311,9 @@ void AssertPakFile(char* szFileName, char* szContents, CFiles* pcFiles)
 //////////////////////////////////////////////////////////////////////////
 void TestFiles(void)
 {
-	BeginTests();
-	
 	TypeConverterInit();
 	MemoryInit();
+	BeginTests();
 
 	TestFilesSimple();
 	TestFileSystemIteration();
@@ -322,9 +321,8 @@ void TestFiles(void)
 	TestGetFileNames();
 	TestFilesWholeDirectory();
 
+	TestStatistics();
 	MemoryKill();
 	TypeConverterKill();
-
-	TestStatistics();
 }
 

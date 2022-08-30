@@ -87,19 +87,17 @@ void TestCalculatorNegativeEquality(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCalculator(void)
 {
-	BeginTests();
-
 	TypeConverterInit();
 	NumberInit();
+	BeginTests();
 
 	TestCalculatorAddition();
 	TestCalculatorSingleNegative();
 	TestCalculatorPositiveEquality();
 	TestCalculatorNegativeEquality();
 
+	TestStatistics();
 	NumberKill();
 	TypeConverterKill();
-
-	TestStatistics();
 }
 

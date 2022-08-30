@@ -79,6 +79,9 @@
     <Filter Include="Source\FileSystem\Fat32">
       <UniqueIdentifier>{e738b858-80d7-442a-9a6b-005797943ad4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\FileSystem\Underlying">
+      <UniqueIdentifier>{17df6ecf-55dc-4893-88a9-80d295d96926}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestCoreLib.cpp">
@@ -206,6 +209,9 @@
     </ClCompile>
     <ClCompile Include="TestFat32.cpp">
       <Filter>Source\FileSystem\Fat32</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMemoryDrive.cpp">
+      <Filter>Source\FileSystem\Underlying</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

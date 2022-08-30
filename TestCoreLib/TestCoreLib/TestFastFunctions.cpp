@@ -92,16 +92,14 @@ void TestMemcmpFast(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFastFunctions(void)
 {
-	BeginTests();
-
 	TypeConverterInit();
+	BeginTests();
 
 	TestMemcpyFast();
 	TestMemcmpFast();
 
-	TypeConverterKill();
-
 	TestStatistics();
+	TypeConverterKill();
 }
 
 
