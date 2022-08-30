@@ -94,13 +94,11 @@ void TestFastFunctions(void)
 {
 	BeginTests();
 
-	FastFunctionsInit();
 	TypeConverterInit();
 
 	TestMemcpyFast();
 	TestMemcmpFast();
 
-	FastFunctionsKill();
 	TypeConverterKill();
 
 	TestStatistics();

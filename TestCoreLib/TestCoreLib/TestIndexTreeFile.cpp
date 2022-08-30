@@ -2990,7 +2990,6 @@ void TestIndexTreeFileRemoveComplex(EIndexWriteThrough eWriteThrough, EIndexKeyR
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFile(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	DataMemoryInit();
@@ -3051,7 +3050,6 @@ void TestIndexTreeFile(void)
 	TestStatistics();
 	DataMemoryKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

@@ -106,12 +106,10 @@ void TestIndexedFileWrite(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexedFile(void)
 {
-	FastFunctionsInit();
 	BeginTests();
 
 	TestIndexedFileWrite();
 
 	TestStatistics();
-	FastFunctionsKill();
 }
 

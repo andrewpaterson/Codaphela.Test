@@ -613,7 +613,6 @@ void TestIndexTreeMemory(void)
 	//Most of the tests for IndexTreeMemory are done in the BaseLib.
 	//This test just exists to remind me of that fact.
 
-	FastFunctionsInit();
 	TypeConverterInit();
 	BeginTests();
 
@@ -626,7 +625,6 @@ void TestIndexTreeMemory(void)
 	TestIndexTreeMemoryPutResize();
 
 	TestStatistics();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

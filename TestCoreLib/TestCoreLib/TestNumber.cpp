@@ -627,7 +627,6 @@ void TestNumber(void)
 {
 	BeginTests();
 
-	FastFunctionsInit();
 	TypeConverterInit();
 	NumberInit();
 
@@ -650,7 +649,6 @@ void TestNumber(void)
 	TestPower();
 
 	NumberKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 
 	TestStatistics();

@@ -313,7 +313,6 @@ void TestFiles(void)
 {
 	BeginTests();
 	
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 
@@ -324,7 +323,6 @@ void TestFiles(void)
 	TestFilesWholeDirectory();
 
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 
 	TestStatistics();

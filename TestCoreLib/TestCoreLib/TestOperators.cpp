@@ -50,13 +50,11 @@ void TestOperatorAdd(void)
 void TestOperators(void)
 {
 	BeginTests();
-	FastFunctionsInit();    
 	TypeConverterInit();
 
 	TestOperatorAdd();
 
 	TypeConverterKill();
-	FastFunctionsKill();    
 	TestStatistics();
 }
 

@@ -57,7 +57,6 @@ void TestSequenceNext(void)
 //////////////////////////////////////////////////////////////////////////
 void TestSequence(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	DataMemoryInit();
@@ -68,7 +67,6 @@ void TestSequence(void)
 	TestStatistics();
 	DataMemoryKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

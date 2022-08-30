@@ -160,7 +160,6 @@ void TestIndexTreeFileIteratorIterate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileIterator(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	WordsInit();
@@ -174,7 +173,6 @@ void TestIndexTreeFileIterator(void)
 	DataMemoryKill();
 	WordsKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

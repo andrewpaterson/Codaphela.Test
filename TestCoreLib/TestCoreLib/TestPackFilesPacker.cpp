@@ -51,13 +51,11 @@ void TestPackFilesPackerSimple(void)
 void TestPackFilesPacker(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 	MemoryInit();
 
 	TestPackFilesPackerSimple();
 
 	MemoryKill();
-	FastFunctionsKill();
 	TestStatistics();
 }
 

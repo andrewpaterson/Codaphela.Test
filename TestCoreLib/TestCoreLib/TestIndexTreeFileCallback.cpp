@@ -104,7 +104,6 @@ void TestIndexTreeFileCallbackWorks(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileCallback(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	DataMemoryInit();
@@ -115,7 +114,6 @@ void TestIndexTreeFileCallback(void)
 	TestStatistics();
 	DataMemoryKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

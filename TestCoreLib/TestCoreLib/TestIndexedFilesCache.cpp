@@ -805,7 +805,6 @@ void TestIndexedFilesEvictingSetDataCacheDiffSizeFile(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexedFilesEvicting(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	DataMemoryInit();
@@ -829,7 +828,6 @@ void TestIndexedFilesEvicting(void)
 	TestStatistics();
 	DataMemoryKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

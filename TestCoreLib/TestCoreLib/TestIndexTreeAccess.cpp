@@ -612,7 +612,6 @@ void TestIndexTreeEvictingAccess(char* szSubirectory, size_t sCacheSize, EIndexW
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeAccess(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	DataMemoryInit();
@@ -659,7 +658,6 @@ void TestIndexTreeAccess(void)
 	WordsKill();
 	DataMemoryKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

@@ -1786,7 +1786,6 @@ void TestIndexedDataRemove2(EIndexWriteThrough eWriteThrough)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexedData(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	DataMemoryInit();
@@ -1817,7 +1816,6 @@ void TestIndexedData(void)
 	TestStatistics();
 	DataMemoryKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

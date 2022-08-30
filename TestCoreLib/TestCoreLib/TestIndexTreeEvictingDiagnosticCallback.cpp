@@ -112,7 +112,6 @@ void TestIndexTreeFileKeyDiagnosticCallbackStuff(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileKeyDiagnosticCallback(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	DataMemoryInit();
@@ -123,7 +122,6 @@ void TestIndexTreeFileKeyDiagnosticCallback(void)
 	TestStatistics();
 	DataMemoryKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

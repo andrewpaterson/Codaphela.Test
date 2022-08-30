@@ -73,6 +73,12 @@
     <Filter Include="Source\Text\Calculator">
       <UniqueIdentifier>{2194bd06-1f6e-43f6-baae-085a5a72416f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\FileSystem">
+      <UniqueIdentifier>{3ad80492-6538-43ad-a489-b23a360a7c5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\FileSystem\Fat32">
+      <UniqueIdentifier>{e738b858-80d7-442a-9a6b-005797943ad4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestCoreLib.cpp">
@@ -197,6 +203,9 @@
     </ClCompile>
     <ClCompile Include="TestFloatPrinter.cpp">
       <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFat32.cpp">
+      <Filter>Source\FileSystem\Fat32</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

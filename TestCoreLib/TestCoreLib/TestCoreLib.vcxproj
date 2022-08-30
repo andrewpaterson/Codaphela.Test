@@ -220,6 +220,7 @@
     <ClCompile Include="TestCalculator.cpp" />
     <ClCompile Include="TestCodabase.cpp" />
     <ClCompile Include="TestCoreLib.cpp" />
+    <ClCompile Include="TestFat32.cpp" />
     <ClCompile Include="TestFiles.cpp" />
     <ClCompile Include="TestFloatPrinter.cpp" />
     <ClCompile Include="TestIndexedFile.cpp" />

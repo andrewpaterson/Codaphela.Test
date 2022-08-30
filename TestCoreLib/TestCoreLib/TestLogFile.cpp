@@ -780,10 +780,8 @@ void TestLogFileMultipleReadsAfterOpens(void)
 //////////////////////////////////////////////////////////////////////////
 void TestLogFile(void)
 {
-	BeginTests();
-
-	FastFunctionsInit();
 	TypeConverterInit();
+	BeginTests();
 
 	TestLogFileOpen();
 	TestLogFileRead();
@@ -796,9 +794,7 @@ void TestLogFile(void)
 	TestLogFileDelete();
 	TestLogFileMultipleReadsAfterOpens();
 
-	FastFunctionsKill();
-	TypeConverterKill();
-
 	TestStatistics();
+	TypeConverterKill();
 }
 

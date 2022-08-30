@@ -407,7 +407,6 @@ void TestIndexTreeDataOrdererEviction(EIndexWriteThrough eWriteThrough)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeDataOrderer(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	DataMemoryInit();
@@ -427,7 +426,6 @@ void TestIndexTreeDataOrderer(void)
 	TestStatistics();
 	DataMemoryKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

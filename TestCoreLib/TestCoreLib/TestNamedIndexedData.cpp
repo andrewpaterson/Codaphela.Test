@@ -1186,7 +1186,6 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 //////////////////////////////////////////////////////////////////////////
 void TestNamedIndexedData(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	DataMemoryInit();
@@ -1224,7 +1223,6 @@ void TestNamedIndexedData(void)
 	TestStatistics();
 	DataMemoryKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

@@ -41,6 +41,7 @@ void TestNamedIndexes(void);
 void TestNamedIndexedData(void);
 void TestIndexTreeFileKeyDiagnosticCallback(void);
 void TestCodabase(void);
+void TestFat32(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -92,6 +93,7 @@ int __cdecl main(void)
 	TestIndexTreeFileKeyDiagnosticCallback();
 	TestIndexTreeAccess();
 	TestCodabase();
+	TestFat32();
 
 	iResult = TestTotalStatistics();
 

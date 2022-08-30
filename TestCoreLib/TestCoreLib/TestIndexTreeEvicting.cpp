@@ -786,7 +786,6 @@ void AssertTree(char* szExpected, CIndexTreeEvicting* pcTree)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeEvicting(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	DataMemoryInit();
@@ -810,7 +809,6 @@ void TestIndexTreeEvicting(void)
 	TestStatistics();
 	DataMemoryKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

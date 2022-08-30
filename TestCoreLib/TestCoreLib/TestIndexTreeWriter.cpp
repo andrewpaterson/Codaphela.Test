@@ -78,7 +78,6 @@ void TestIndexTreeWriterWrite(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeWriter(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	DataMemoryInit();
@@ -89,7 +88,6 @@ void TestIndexTreeWriter(void)
 	TestStatistics();
 	DataMemoryKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

@@ -115,7 +115,6 @@ void TestIndexTreeNodeFileRootMemory(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeNodeFile(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	BeginTests();
 
@@ -124,7 +123,6 @@ void TestIndexTreeNodeFile(void)
 	TestIndexTreeNodeFileRootMemory();
 
 	TestStatistics();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

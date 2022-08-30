@@ -146,7 +146,6 @@ void TestCodabaseOperations(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCodabase(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	DataMemoryInit();
@@ -160,7 +159,6 @@ void TestCodabase(void)
 	WordsKill();
 	DataMemoryKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

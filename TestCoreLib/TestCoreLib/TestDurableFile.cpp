@@ -543,7 +543,6 @@ void TestDurableFileNoController(void)
 //////////////////////////////////////////////////////////////////////////
 void TestDurableFile(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	BeginTests();
 
@@ -564,7 +563,6 @@ void TestDurableFile(void)
 	TestDurableFileNoController();
 
 	TestStatistics();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

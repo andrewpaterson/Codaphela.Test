@@ -542,7 +542,6 @@ void TestNamedIndexes(void)
 {
 	CFileUtil	cFileUtil;
 
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	DataMemoryInit();
@@ -559,7 +558,6 @@ void TestNamedIndexes(void)
 	TestStatistics();
 	DataMemoryKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

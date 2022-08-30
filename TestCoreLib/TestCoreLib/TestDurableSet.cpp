@@ -76,14 +76,12 @@ void TestDurableSetAdd(void)
 //////////////////////////////////////////////////////////////////////////
 void TestDurableSet(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	BeginTests();
 
 	TestDurableSetAdd();
 
 	TestStatistics();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

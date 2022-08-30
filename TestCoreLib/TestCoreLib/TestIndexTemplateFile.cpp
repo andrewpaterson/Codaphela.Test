@@ -76,7 +76,6 @@ void TestIndexTreeTemplateFileStuff(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeTemplateFile(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	DataMemoryInit();
@@ -87,7 +86,6 @@ void TestIndexTreeTemplateFile(void)
 	TestStatistics();
 	DataMemoryKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

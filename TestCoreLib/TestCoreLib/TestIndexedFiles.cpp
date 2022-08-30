@@ -282,7 +282,6 @@ void TestIndexedFilesWrite(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexedFiles(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	BeginTests();
 
@@ -291,7 +290,6 @@ void TestIndexedFiles(void)
 	TestIndexedFilesWrite();
 
 	TestStatistics();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

@@ -322,7 +322,6 @@ void TestDurableFileControllerTwoInOneDirectory(void)
 //////////////////////////////////////////////////////////////////////////
 void TestDurableFileController(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	BeginTests();
 
@@ -331,7 +330,6 @@ void TestDurableFileController(void)
 	TestDurableFileControllerTwoInOneDirectory();
 
 	TestStatistics();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

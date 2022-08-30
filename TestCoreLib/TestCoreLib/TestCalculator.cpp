@@ -89,7 +89,6 @@ void TestCalculator(void)
 {
 	BeginTests();
 
-	FastFunctionsInit();
 	TypeConverterInit();
 	NumberInit();
 
@@ -99,7 +98,6 @@ void TestCalculator(void)
 	TestCalculatorNegativeEquality();
 
 	NumberKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 
 	TestStatistics();
