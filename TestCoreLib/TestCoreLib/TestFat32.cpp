@@ -19,7 +19,16 @@ void TestFat32(void)
 
 	tf_initializeMedia(64);
 	tf_init();
-	pFile = tf_fopen("Hexafile.txt", "wb");
+
+
+	//pFile = tf_fopen("Hexafile.txt", "wb");
+	//AssertNull(pFile);
+
+	tf_create("/");
+
+	pFile = tf_fopen("/Hexafile.txt", "w");
+	AssertNotNull(pFile);
+
 	tf_fwrite((uint8_t*)sz, 5, 1, pFile);
 	tf_fclose(pFile);
 
