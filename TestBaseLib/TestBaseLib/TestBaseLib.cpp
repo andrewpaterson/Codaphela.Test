@@ -37,6 +37,7 @@ void TestArrayDenseTemplate(void);
 void TestArraySparseTemplate(void);
 void TestArrayBlockSorted(void);
 void TestChars(void);
+void TestReditectPrintf(void);
 void TestStringHelper(void);
 void TestCharsHelper(void);
 void TestTextPosition(void);
@@ -120,6 +121,7 @@ int __cdecl main(void)
 	TestArrayBlockSorted();
 	TestArraySizer();
 	TestChars();
+	TestReditectPrintf();
 	TestLogToString();
 	TestLogger();
 	TestMapBlock();

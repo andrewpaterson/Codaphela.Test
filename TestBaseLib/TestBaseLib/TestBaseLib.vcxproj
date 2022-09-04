@@ -263,6 +263,7 @@
     <ClCompile Include="TestMemoryQueue.cpp" />
     <ClCompile Include="TestMemoryStack.cpp" />
     <ClCompile Include="TestPrimitiveTypes.cpp" />
+    <ClCompile Include="TestReditectPrintf.cpp" />
     <ClCompile Include="TestScratchPad.cpp" />
     <ClCompile Include="TestScratchPadAllocator.cpp" />
     <ClCompile Include="TestSorting.cpp" />

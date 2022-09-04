@@ -444,6 +444,9 @@
     <ClCompile Include="TestArrayTemplateEmbeddedPtr.cpp">
       <Filter>Source\Data\Array\Embedded</Filter>
     </ClCompile>
+    <ClCompile Include="TestReditectPrintf.cpp">
+      <Filter>Source\Error</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

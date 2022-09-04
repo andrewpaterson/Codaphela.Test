@@ -1,6 +1,4 @@
-#include "BaseLib/FastFunctions.h"
-#include "BaseLib/TypeConverter.h"
-#include "CoreLib/Fat32.h"
+#include "BaseLib/RedirectPrintf.h"
 #include "TestLib/Assert.h"
 
 
@@ -8,14 +6,12 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFat32(void)
+void TestReditectPrintf(void)
 {
-	TypeConverterInit();
 	BeginTests();
 
-	TestMain("D:\\Temp\\SDCardFat32.img", "-d");
+	eprintf("%s %s\n", "Hello", "World");
 
 	TestStatistics();
-	TypeConverterKill();
 }
 
