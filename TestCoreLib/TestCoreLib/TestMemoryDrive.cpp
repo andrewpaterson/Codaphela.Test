@@ -24,13 +24,13 @@ void TestMemoryDrive(void)
 	}
 	szExpected[i] = '\0';
 
-	cDrive.Init(DRIVE_SECTOR_SIZE * 16);
-	AssertTrue(cDrive.CFileDrive::Write(1, szExpected));
+	cDrive.Init(512 * 16, 512);
+	AssertTrue(cDrive.Write(1, szExpected));
 
-	AssertTrue(cDrive.CFileDrive::Read(0, szActual));
+	AssertTrue(cDrive.Read(0, szActual));
 	AssertString("", szActual)
 
-	AssertTrue(cDrive.CFileDrive::Read(1, szActual));
+	AssertTrue(cDrive.Read(1, szActual));
 	AssertString(szExpected, szActual)
 
 	cDrive.Kill();
