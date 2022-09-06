@@ -22,11 +22,11 @@ void TestFat32(void)
 	filePos					uiLength;
 	void*					pvMemory;
 
-	FAT_DIRECTORY_ENTRY*	psFatDirectory;
-	FAT_VOLUME				sFatVolume;
-	FAT_FILESYSTEM_QUERY	sQuery;
+	SFatDirectoryEntry*	psFatDirectory;
+	SFatVolume				sFatVolume;
+	SFatFileSystemQuery	sQuery;
 	uint16					uiResult;
-	FAT_FILE				sFatFile;
+	SFatFile				sFatFile;
 	BOOL					bResult;
 	uint32					uiBytesRead;
 
@@ -47,7 +47,7 @@ void TestFat32(void)
 	uiResult = fat_mount_volume(&sFatVolume, &cMemoryDrive);
 	AssertInt(STORAGE_SUCCESS, uiResult);
 
-	memset(&sQuery, 0, sizeof(FAT_FILESYSTEM_QUERY));
+	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
 	uiResult = fat_find_first_entry(&sFatVolume, NULL, 0, &psFatDirectory, &sQuery);
 	AssertInt(FAT_SUCCESS, uiResult);
 	AssertString("Document.txt", (char*)psFatDirectory->name);
@@ -73,7 +73,7 @@ void TestFat32(void)
 	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectory, &sQuery);
 	AssertTrue((StrEmpty((char*)psFatDirectory->name)));
 
-	memset(&sQuery, 0, sizeof(FAT_FILESYSTEM_QUERY));
+	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
 	uiResult = fat_find_first_entry(&sFatVolume, "\\Pico", 0, &psFatDirectory, &sQuery);
 	AssertInt(FAT_SUCCESS, uiResult);
 	AssertString(".", (char*)psFatDirectory->name);
