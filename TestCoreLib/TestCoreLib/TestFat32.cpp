@@ -16,19 +16,25 @@ void TestFat32(void)
 	TypeConverterInit();
 	BeginTests();
 
-	CMemoryDrive	cMemoryDrive;
-	uint16			c;
-	CDiskFile		cFile;
-	filePos			uiLength;
-	void*			pvMemory;
+	CMemoryDrive			cMemoryDrive;
+	uint16					c;
+	CDiskFile				cFile;
+	filePos					uiLength;
+	void*					pvMemory;
 
 	FAT_DIRECTORY_ENTRY*	psFatDirectory;
 	FAT_VOLUME				sFatVolume;
 	FAT_FILESYSTEM_QUERY	sQuery;
 	uint16					uiResult;
+	FAT_FILE				sFatFile;
+	BOOL					bResult;
+	uint32					uiBytesRead;
 
-	cFile.Init("D:\\Work\\658-Computer\\SD Card Image\\SDCardFat32.img");
-	cFile.Open(EFM_Read);
+	char					auiFileData[4 KB];
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
 	uiLength = cFile.Size();
 	cMemoryDrive.Init((size_t)uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
@@ -49,10 +55,12 @@ void TestFat32(void)
 
 	memset(&sQuery, 0, sizeof(FAT_FILESYSTEM_QUERY));
 	uiResult = fat_find_first_entry(&sFatVolume, NULL, 0, &psFatDirectory, &sQuery);
+	uiResult = fat_file_open(&sFatVolume, (char*)psFatDirectory->name, 0, &sFatFile);
+	uiResult = fat_file_read(&sFatFile, (uint8*)auiFileData, sFatFile.current_size, &uiBytesRead);
+	uiResult = fat_file_close(&sFatFile);
 
 	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectory, &sQuery);
-	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectory, &sQuery);
-	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectory, &sQuery);
+
 
 	fat_dismount_volume(&sFatVolume);
 
