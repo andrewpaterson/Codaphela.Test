@@ -2,6 +2,7 @@
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/RedirectPrintf.h"
 #include "BaseLib/DiskFile.h"
+#include "BaseLib/StringHelper.h"
 #include "CoreLib/MemoryDrive.h"
 #include "CoreLib/Fat.h"
 #include "TestLib/Assert.h"
@@ -17,7 +18,6 @@ void TestFat32(void)
 	BeginTests();
 
 	CMemoryDrive			cMemoryDrive;
-	uint16					c;
 	CDiskFile				cFile;
 	filePos					uiLength;
 	void*					pvMemory;
@@ -44,28 +44,67 @@ void TestFat32(void)
 
 	fat_init();
 
-	if ((c = fat_mount_volume(&sFatVolume, &cMemoryDrive)) == STORAGE_SUCCESS)
-	{
-		eprintf("Volume '%s' mounted.\n\n", sFatVolume.label);
-	}
-	else
-	{
-		eprintf("Could not mount volume. Error: %x\n\n", c);
-	}
+	uiResult = fat_mount_volume(&sFatVolume, &cMemoryDrive);
+	AssertInt(STORAGE_SUCCESS, uiResult);
 
 	memset(&sQuery, 0, sizeof(FAT_FILESYSTEM_QUERY));
 	uiResult = fat_find_first_entry(&sFatVolume, NULL, 0, &psFatDirectory, &sQuery);
+	AssertInt(FAT_SUCCESS, uiResult);
+	AssertString("Document.txt", (char*)psFatDirectory->name);
+	AssertInt(FAT_ATTR_ARCHIVE, psFatDirectory->attributes);
+
 	uiResult = fat_file_open(&sFatVolume, (char*)psFatDirectory->name, 0, &sFatFile);
+	AssertInt(FAT_SUCCESS, uiResult);
+
 	uiResult = fat_file_read(&sFatFile, (uint8*)auiFileData, sFatFile.current_size, &uiBytesRead);
+	AssertInt(FAT_SUCCESS, uiResult);
+	AssertInt(12, uiBytesRead);
+	auiFileData[12] = '\0';
+	AssertString("Mostly Empty", auiFileData);
+
 	uiResult = fat_file_close(&sFatFile);
+	AssertInt(FAT_SUCCESS, uiResult);
 
 	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectory, &sQuery);
+	AssertInt(FAT_SUCCESS, uiResult);
+	AssertString("Pico", (char*)psFatDirectory->name);
+	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectory->attributes);
 
+	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectory, &sQuery);
+	AssertTrue((StrEmpty((char*)psFatDirectory->name)));
 
-	fat_dismount_volume(&sFatVolume);
+	memset(&sQuery, 0, sizeof(FAT_FILESYSTEM_QUERY));
+	uiResult = fat_find_first_entry(&sFatVolume, "\\Pico", 0, &psFatDirectory, &sQuery);
+	AssertInt(FAT_SUCCESS, uiResult);
+	AssertString(".", (char*)psFatDirectory->name);
+	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectory->attributes);
+
+	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectory, &sQuery);
+	AssertInt(FAT_SUCCESS, uiResult);
+	AssertString("..", (char*)psFatDirectory->name);
+	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectory->attributes);
+
+	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectory, &sQuery);
+	AssertInt(FAT_SUCCESS, uiResult);
+	AssertString(".gitignore", (char*)psFatDirectory->name);
+	AssertInt(FAT_ATTR_ARCHIVE, psFatDirectory->attributes);
+
+	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectory, &sQuery);
+	AssertInt(FAT_SUCCESS, uiResult);
+	AssertString("HowDoesItWork", (char*)psFatDirectory->name);
+	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectory->attributes);
+
+	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectory, &sQuery);
+	AssertInt(FAT_SUCCESS, uiResult);
+	AssertString("LCDBusReader", (char*)psFatDirectory->name);
+	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectory->attributes);
+
+	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectory, &sQuery);
+	AssertTrue((StrEmpty((char*)psFatDirectory->name)));
+
+	fat_unmount_volume(&sFatVolume);
 
 	cMemoryDrive.Kill();
-//	TestMain("D:\\Temp\\SDCardFat32.img", "-d");
 
 	TestStatistics();
 	TypeConverterKill();
