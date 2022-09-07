@@ -298,6 +298,53 @@ void TestFat32ReadDirectoryTree(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFat32Format(void)
+{
+	CMemoryDrive			cMemoryDrive;
+	CDiskFile				cFile;
+	filePos					uiLength;
+	void*					pvMemory;
+	SFatVolume				sFatVolume;
+	uint16					uiResult;
+	BOOL					bResult;
+	SFatDirectoryEntry*		psFatDirectoryEntry;
+	SFatFileSystemQuery		sQuery;
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	fat_init();
+
+	uiResult = fat_format_volume(FAT_FS_TYPE_FAT32, "Fat32", 1, &cMemoryDrive);
+	AssertInt(STORAGE_SUCCESS, uiResult);
+
+	uiResult = fat_mount_volume(&sFatVolume, &cMemoryDrive);
+	AssertInt(STORAGE_SUCCESS, uiResult);
+
+	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
+	uiResult = fat_find_first_entry(&sFatVolume, NULL, 0, &psFatDirectoryEntry, &sQuery);
+	AssertInt(FAT_SUCCESS, uiResult);
+	AssertString("", (char*)psFatDirectoryEntry->name);
+	AssertInt(0, psFatDirectoryEntry->attributes);
+
+	uiResult = fat_unmount_volume(&sFatVolume);
+	AssertInt(STORAGE_SUCCESS, uiResult);
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFat32(void)
 {
 	TypeConverterInit();
@@ -305,6 +352,7 @@ void TestFat32(void)
 
 	TestFat32ReadSpecific();
 	TestFat32ReadDirectoryTree();
+	TestFat32Format();
 
 	TestStatistics();
 	TypeConverterKill();
