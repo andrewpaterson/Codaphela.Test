@@ -22,7 +22,6 @@ void TestFat32ReadSpecific(void)
 	void*					pvMemory;
 	SFatDirectoryEntry*		psFatDirectoryEntry;
 	SFatDirectoryEntry		sFatFileEntry;
-	SFatVolume				sFatVolume;
 	SFatFileSystemQuery		sQuery;
 	uint16					uiResult;
 	SFatFile				sFatFile;
@@ -30,6 +29,7 @@ void TestFat32ReadSpecific(void)
 	uint32					uiBytesRead;
 	char					auiFileData[44 KB];
 	char					auiExpectedData[44 KB];
+	CFatVolume				cVolume;
 
 	cFile.Init("Input\\Fat32\\ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
@@ -43,17 +43,17 @@ void TestFat32ReadSpecific(void)
 
 	fat_init();
 
-	uiResult = fat_mount_volume(&sFatVolume, &cMemoryDrive);
+	uiResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(STORAGE_SUCCESS, uiResult);
 
 	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
-	uiResult = fat_find_first_entry(&sFatVolume, NULL, 0, &psFatDirectoryEntry, &sQuery);
+	uiResult = fat_find_first_entry(cVolume.mpsVolume, NULL, 0, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, uiResult);
 	AssertString("Document.txt", (char*)psFatDirectoryEntry->name);
 	AssertInt(FAT_ATTR_ARCHIVE, psFatDirectoryEntry->attributes);
 
 	memset(&sFatFile, 0, sizeof(SFatFile));
-	uiResult = fat_file_open(&sFatVolume, (char*)psFatDirectoryEntry->name, 0, &sFatFile);
+	uiResult = fat_file_open(cVolume.mpsVolume, (char*)psFatDirectoryEntry->name, 0, &sFatFile);
 	AssertInt(FAT_SUCCESS, uiResult);
 
 	uiResult = fat_file_read(&sFatFile, (uint8*)auiFileData, sFatFile.current_size, &uiBytesRead);
@@ -65,53 +65,53 @@ void TestFat32ReadSpecific(void)
 	uiResult = fat_file_close(&sFatFile);
 	AssertInt(FAT_SUCCESS, uiResult);
 
-	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectoryEntry, &sQuery);
+	uiResult = fat_find_next_entry(cVolume.mpsVolume, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, uiResult);
 	AssertString("Pico", (char*)psFatDirectoryEntry->name);
 	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectoryEntry->attributes);
 
-	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectoryEntry, &sQuery);
+	uiResult = fat_find_next_entry(cVolume.mpsVolume, &psFatDirectoryEntry, &sQuery);
 	AssertTrue((StrEmpty((char*)psFatDirectoryEntry->name)));
 
 
 	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
-	uiResult = fat_find_first_entry(&sFatVolume, "\\Pico", 0, &psFatDirectoryEntry, &sQuery);
+	uiResult = fat_find_first_entry(cVolume.mpsVolume, "\\Pico", 0, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, uiResult);
 	AssertString(".", (char*)psFatDirectoryEntry->name);
 	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectoryEntry->attributes);
 
-	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectoryEntry, &sQuery);
+	uiResult = fat_find_next_entry(cVolume.mpsVolume, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, uiResult);
 	AssertString("..", (char*)psFatDirectoryEntry->name);
 	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectoryEntry->attributes);
 
-	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectoryEntry, &sQuery);
+	uiResult = fat_find_next_entry(cVolume.mpsVolume, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, uiResult);
 	AssertString(".gitignore", (char*)psFatDirectoryEntry->name);
 	AssertInt(FAT_ATTR_ARCHIVE, psFatDirectoryEntry->attributes);
 
-	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectoryEntry, &sQuery);
+	uiResult = fat_find_next_entry(cVolume.mpsVolume, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, uiResult);
 	AssertString("HowDoesItWork", (char*)psFatDirectoryEntry->name);
 	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectoryEntry->attributes);
 
-	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectoryEntry, &sQuery);
+	uiResult = fat_find_next_entry(cVolume.mpsVolume, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, uiResult);
 	AssertString("LCDBusReader", (char*)psFatDirectoryEntry->name);
 	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectoryEntry->attributes);
 
-	uiResult = fat_find_next_entry(&sFatVolume, &psFatDirectoryEntry, &sQuery);
+	uiResult = fat_find_next_entry(cVolume.mpsVolume, &psFatDirectoryEntry, &sQuery);
 	AssertTrue((StrEmpty((char*)psFatDirectoryEntry->name)));
 
 
-	uiResult = fat_get_file_entry(&sFatVolume, "\\Pico\\LCDBusReader\\src\\SDCard.cpp", &sFatFileEntry);
+	uiResult = fat_get_file_entry(cVolume.mpsVolume, "\\Pico\\LCDBusReader\\src\\SDCard.cpp", &sFatFileEntry);
 	AssertInt(FAT_SUCCESS, uiResult);
 	AssertString("SDCARD.CPP", (char*)sFatFileEntry.name);
 	AssertInt(FAT_ATTR_ARCHIVE, sFatFileEntry.attributes);
 
 	memset(&sFatFile, 0, sizeof(SFatFile));
 	sFatFile.buffer = sFatFile.buffer_internal;
-	uiResult = fat_open_file_by_entry(&sFatVolume, &sFatFileEntry, &sFatFile, FAT_FILE_ACCESS_READ);
+	uiResult = fat_open_file_by_entry(cVolume.mpsVolume, &sFatFileEntry, &sFatFile, FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, uiResult);
 
 	uiResult = fat_file_read(&sFatFile, (uint8*)auiFileData, sFatFile.current_size, &uiBytesRead);
@@ -130,7 +130,7 @@ void TestFat32ReadSpecific(void)
 
 	AssertMemory(auiExpectedData, auiFileData, (int)uiLength);
 
-	fat_unmount_volume(&sFatVolume);
+	cVolume.Unmount();
 
 	cMemoryDrive.Kill();
 }
@@ -140,7 +140,7 @@ void TestFat32ReadSpecific(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void RecurseFindFatFilenames(SFatVolume* psFatVolume, char* szPath, CArrayChars* paszFiles)
+void RecurseFindFatFilenames(CFatVolume* pcFatVolume, char* szPath, CArrayChars* paszFiles)
 {
 	SFatFileSystemQuery		sQuery;
 	SFatDirectoryEntry*		psFatDirectoryEntry;
@@ -148,7 +148,7 @@ void RecurseFindFatFilenames(SFatVolume* psFatVolume, char* szPath, CArrayChars*
 	char					szNewPath[FAT_MAX_PATH];
 
 	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
-	uiResult = fat_find_first_entry(psFatVolume, szPath, 0, &psFatDirectoryEntry, &sQuery);
+	uiResult = fat_find_first_entry(pcFatVolume->mpsVolume, szPath, 0, &psFatDirectoryEntry, &sQuery);
 	for (;;)
 	{
 		if ((uiResult != FAT_SUCCESS) || (StrEmpty((char*)psFatDirectoryEntry->name)))
@@ -165,7 +165,7 @@ void RecurseFindFatFilenames(SFatVolume* psFatVolume, char* szPath, CArrayChars*
 		{
 			if (!((strcmp((char*)psFatDirectoryEntry->name, ".") == 0) || (strcmp((char*)psFatDirectoryEntry->name, "..") == 0)))
 			{
-				RecurseFindFatFilenames(psFatVolume, szNewPath, paszFiles);
+				RecurseFindFatFilenames(pcFatVolume, szNewPath, paszFiles);
 			}
 		}
 
@@ -174,7 +174,7 @@ void RecurseFindFatFilenames(SFatVolume* psFatVolume, char* szPath, CArrayChars*
 			paszFiles->Add(szNewPath);
 		}
 
-		uiResult = fat_find_next_entry(psFatVolume, &psFatDirectoryEntry, &sQuery);
+		uiResult = fat_find_next_entry(pcFatVolume->mpsVolume, &psFatDirectoryEntry, &sQuery);
 	}
 }
 
@@ -189,7 +189,6 @@ void TestFat32ReadDirectoryTree(void)
 	CDiskFile				cFile;
 	filePos					uiLength;
 	void*					pvMemory;
-	SFatVolume				sFatVolume;
 	uint16					uiResult;
 	BOOL					bResult;
 	CArrayChars				aszFileNames;
@@ -200,6 +199,7 @@ void TestFat32ReadDirectoryTree(void)
 	char					auiFileData[44 KB];
 	SFatFile				sFatFile;
 	uint32					uiBytesRead;
+	CFatVolume				cVolume;
 
 	cFile.Init("Input\\Fat32\\ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
@@ -213,11 +213,11 @@ void TestFat32ReadDirectoryTree(void)
 
 	fat_init();
 
-	uiResult = fat_mount_volume(&sFatVolume, &cMemoryDrive);
+	uiResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(STORAGE_SUCCESS, uiResult);
 
 	aszFileNames.Init();
-	RecurseFindFatFilenames(&sFatVolume, "", &aszFileNames);
+	RecurseFindFatFilenames(&cVolume, "", &aszFileNames);
 
 	sz.Init();
 	aszFileNames.Print(&sz);
@@ -270,11 +270,11 @@ void TestFat32ReadDirectoryTree(void)
 	for (i = 0; i < aszFileNames.NumElements(); i++)
 	{
 		szFileName = aszFileNames.GetText(i);
-		uiResult = fat_get_file_entry(&sFatVolume, szFileName, &sFatFileEntry);
+		uiResult = fat_get_file_entry(cVolume.mpsVolume, szFileName, &sFatFileEntry);
 		AssertInt(FAT_SUCCESS, uiResult);
 
 		memset(&sFatFile, 0, sizeof(SFatFile));
-		uiResult = fat_file_open(&sFatVolume, szFileName, 0, &sFatFile);
+		uiResult = fat_file_open(cVolume.mpsVolume, szFileName, 0, &sFatFile);
 		AssertInt(FAT_SUCCESS, uiResult);
 
 		uiResult = fat_file_read(&sFatFile, (uint8*)auiFileData, sFatFile.current_size, &uiBytesRead);
@@ -288,7 +288,7 @@ void TestFat32ReadDirectoryTree(void)
 
 	aszFileNames.Kill();
 
-	fat_unmount_volume(&sFatVolume);
+	cVolume.Unmount();
 
 	cMemoryDrive.Kill();
 }
@@ -304,11 +304,11 @@ void TestFat32Format(void)
 	CDiskFile				cFile;
 	filePos					uiLength;
 	void*					pvMemory;
-	SFatVolume				sFatVolume;
 	uint16					uiResult;
 	BOOL					bResult;
 	SFatDirectoryEntry*		psFatDirectoryEntry;
 	SFatFileSystemQuery		sQuery;
+	CFatVolume				cVolume;
 
 	cFile.Init("Input\\Fat32\\ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
@@ -325,16 +325,16 @@ void TestFat32Format(void)
 	uiResult = fat_format_volume(FAT_FS_TYPE_FAT32, "Fat32", 1, &cMemoryDrive);
 	AssertInt(STORAGE_SUCCESS, uiResult);
 
-	uiResult = fat_mount_volume(&sFatVolume, &cMemoryDrive);
+	uiResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(STORAGE_SUCCESS, uiResult);
 
 	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
-	uiResult = fat_find_first_entry(&sFatVolume, NULL, 0, &psFatDirectoryEntry, &sQuery);
+	uiResult = fat_find_first_entry(cVolume.mpsVolume, NULL, 0, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, uiResult);
 	AssertString("", (char*)psFatDirectoryEntry->name);
 	AssertInt(0, psFatDirectoryEntry->attributes);
 
-	uiResult = fat_unmount_volume(&sFatVolume);
+	uiResult = cVolume.Unmount();
 	AssertInt(STORAGE_SUCCESS, uiResult);
 
 	cMemoryDrive.Kill();
