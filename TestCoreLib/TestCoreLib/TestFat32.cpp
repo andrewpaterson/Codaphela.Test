@@ -345,6 +345,93 @@ void TestFat32Format(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFat32Write(void)
+{
+	CMemoryDrive			cMemoryDrive;
+	CDiskFile				cFile;
+	filePos					uiLength;
+	void*					pvMemory;
+	uint16					uiResult;
+	BOOL					bResult;
+	SFatDirectoryEntry*		psFatDirectoryEntry;
+	SFatFileSystemQuery		sQuery;
+	CFatVolume				cVolume;
+	SFatFile				sFatFile;
+	char					auiFileData[4 KB];
+	char					auiFileData2[4 KB];
+	int						i;
+	uint32					uiBytesRead;
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	fat_init();
+
+	uiResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(STORAGE_SUCCESS, uiResult);
+
+	memset(&sFatFile, 0, sizeof(SFatFile));
+	uiResult = fat_file_open(cVolume.mpsVolume, "\\New File.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE, &sFatFile);
+	AssertInt(FAT_SUCCESS, uiResult);
+	AssertInt(0, sFatFile.current_size);
+
+	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
+	uiResult = fat_find_first_entry(cVolume.mpsVolume, NULL, 0, &psFatDirectoryEntry, &sQuery);
+	AssertInt(FAT_SUCCESS, uiResult);
+	AssertString("New File.txt", (char*)psFatDirectoryEntry->name);
+	AssertInt(0, psFatDirectoryEntry->attributes);
+
+	for (i = 0; i < 4 KB; i++)
+	{
+		auiFileData[i] = (char)i;
+	}
+
+	uiResult = fat_file_write(&sFatFile, (uint8*)auiFileData, 4 KB);
+	AssertInt(FAT_SUCCESS, uiResult);
+	AssertInt(4096, sFatFile.current_size);
+
+	uiResult = fat_file_close(&sFatFile);
+	AssertInt(FAT_SUCCESS, uiResult);
+
+	//FIRST_SECTOR_OF_CLUSTER
+	uiResult = cVolume.Unmount();
+	AssertInt(STORAGE_SUCCESS, uiResult);
+
+	fat_init();
+
+	uiResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(STORAGE_SUCCESS, uiResult);
+
+	memset(&sFatFile, 0, sizeof(SFatFile));
+	uiResult = fat_file_open(cVolume.mpsVolume, "\\New File.txt", FAT_FILE_ACCESS_READ, &sFatFile);
+	AssertInt(FAT_SUCCESS, uiResult);
+	AssertInt(4096, sFatFile.current_size);
+
+	uiResult = fat_file_read(&sFatFile, (uint8*)auiFileData2, 4 KB, &uiBytesRead);
+	AssertInt(FAT_SUCCESS, uiResult);
+	AssertInt(0, memcmp(auiFileData, auiFileData2, 4 KB));
+
+	uiResult = fat_file_close(&sFatFile);
+	AssertInt(FAT_SUCCESS, uiResult);
+
+	uiResult = cVolume.Unmount();
+	AssertInt(STORAGE_SUCCESS, uiResult);
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFat32(void)
 {
 	TypeConverterInit();
@@ -353,6 +440,7 @@ void TestFat32(void)
 	TestFat32ReadSpecific();
 	TestFat32ReadDirectoryTree();
 	TestFat32Format();
+	TestFat32Write();
 
 	TestStatistics();
 	TypeConverterKill();
