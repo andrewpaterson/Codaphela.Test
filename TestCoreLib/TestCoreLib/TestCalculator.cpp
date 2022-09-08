@@ -9,7 +9,8 @@
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCalculatorAddition(void)
-{	CCalculator		cCalc;
+{	
+	CCalculator		cCalc;
 	CNumber			cResult;
 
 	cCalc.Init();

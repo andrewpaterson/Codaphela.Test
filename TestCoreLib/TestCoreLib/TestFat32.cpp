@@ -400,7 +400,6 @@ void TestFat32Write(void)
 	uiResult = fat_file_close(&sFatFile);
 	AssertInt(FAT_SUCCESS, uiResult);
 
-	//FIRST_SECTOR_OF_CLUSTER
 	uiResult = cVolume.Unmount();
 	AssertInt(STORAGE_SUCCESS, uiResult);
 
