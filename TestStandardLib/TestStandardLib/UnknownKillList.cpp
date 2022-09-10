@@ -10,7 +10,7 @@ void CKillList::AddKill(CUnknownTestHelper* pcKilled)
 	Add(&pcKilled);
 }
 
-BOOL CKillList::Contains(CUnknownTestHelper* pcKilled)
+bool CKillList::Contains(CUnknownTestHelper* pcKilled)
 {
 	int						i;
 	CUnknownTestHelper*		pcTest;
@@ -20,9 +20,9 @@ BOOL CKillList::Contains(CUnknownTestHelper* pcKilled)
 		pcTest = *Get(i);
 		if (pcTest == pcKilled)
 		{
-			return TRUE;
+			return true;
 		}
 	}
-	return FALSE;
+	return false;
 }
 

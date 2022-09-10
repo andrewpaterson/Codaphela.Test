@@ -64,7 +64,7 @@ void TestEmbeddedStackPointersDestructor(void)
 
 	cTest1.Class();
 	cTest1.Init(&sFreedNotifier1);
-	sFreedNotifier2.bFreed = FALSE;
+	sFreedNotifier2.bFreed = false;
 
 	TestEmbeddedStackPointersDestructor(&sFreedNotifier2, &cTest1);
 

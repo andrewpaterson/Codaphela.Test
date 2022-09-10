@@ -128,7 +128,7 @@ void TestMapStringUnknownNoOverwrite(void)
 	CTestUnknownJobbie*	pcTest;
 	SLogConfig			sLogConfig;
 
-	cMap.Init(TRUE, FALSE);
+	cMap.Init(true, false);
 
 	AssertInt(0, gcUnknowns.NumElements());
 
@@ -165,7 +165,7 @@ void TestMapStringUnknownLoad(void)
 	CTestUnknownJobbie*	pcTest;
 	CChunkFile			cFile;
 	CFileUtil			cFileUtil;
-	BOOL				bResult;
+	bool				bResult;
 
 	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
 	AssertInt(0, gcUnknowns.NumElements());

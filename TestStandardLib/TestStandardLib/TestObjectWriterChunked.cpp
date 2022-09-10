@@ -28,7 +28,7 @@ void TestChunkFileObjectWriterSerialised(void)
 	CLifeInit<CMallocator>	cLifeAlloc;
 
 	cScratchPad.Init();
-	cLifeAlloc.Init(&cScratchPad, FALSE, FALSE);
+	cLifeAlloc.Init(&cScratchPad, false, false);
 	cUnknowns.Init(cLifeAlloc, "TestChunkFileObjectWriterSerialised", &gcConstructors);
 
 	ObjectsInit(&cUnknowns, &gcStackPointers, NULL, &gcTransientSequence);

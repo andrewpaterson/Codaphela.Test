@@ -42,10 +42,10 @@ void CTestNamedObject::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestNamedObject::Save(CObjectWriter* pcFile)
+bool CTestNamedObject::Save(CObjectWriter* pcFile)
 {
 	ReturnOnFalse(pcFile->WriteInt(miNum));
-	return TRUE;
+	return true;
 }
 
 
@@ -53,10 +53,10 @@ BOOL CTestNamedObject::Save(CObjectWriter* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestNamedObject::Load(CObjectReader* pcFile)
+bool CTestNamedObject::Load(CObjectReader* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadInt(&miNum));
-	return TRUE;
+	return true;
 }
 
 
@@ -108,10 +108,10 @@ void CTestNamedObjectSmall::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestNamedObjectSmall::Save(CObjectWriter* pcFile)
+bool CTestNamedObjectSmall::Save(CObjectWriter* pcFile)
 {
 	ReturnOnFalse(pcFile->WriteData(mac, 4));
-	return TRUE;
+	return true;
 }
 
 
@@ -119,10 +119,10 @@ BOOL CTestNamedObjectSmall::Save(CObjectWriter* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestNamedObjectSmall::Load(CObjectReader* pcFile)
+bool CTestNamedObjectSmall::Load(CObjectReader* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadData(mac, 4));
-	return TRUE;
+	return true;
 }
 
 
@@ -178,11 +178,11 @@ void CTestNamedObjectWithEmbedded::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestNamedObjectWithEmbedded::Save(CObjectWriter* pcFile)
+bool CTestNamedObjectWithEmbedded::Save(CObjectWriter* pcFile)
 {
 	ReturnOnFalse(pcFile->WriteInt(miX));
 	ReturnOnFalse(pcFile->WriteInt(miY));
-	return TRUE;
+	return true;
 }
 
 
@@ -190,14 +190,14 @@ BOOL CTestNamedObjectWithEmbedded::Save(CObjectWriter* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestNamedObjectWithEmbedded::Load(CObjectReader* pcFile)
+bool CTestNamedObjectWithEmbedded::Load(CObjectReader* pcFile)
 {
 	mpvUnmanaged = NULL;
 	miUnmagedSize = 0;
 
 	ReturnOnFalse(pcFile->ReadInt(&miX));
 	ReturnOnFalse(pcFile->ReadInt(&miY));
-	return TRUE;
+	return true;
 }
 
 

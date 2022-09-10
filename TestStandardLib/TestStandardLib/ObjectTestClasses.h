@@ -10,7 +10,7 @@
 
 struct STestObjectFreedNotifier
 {
-	BOOL bFreed;
+	bool bFreed;
 };
 
 
@@ -30,8 +30,8 @@ public:
 	void	Class(void);
 	void	Free(void);
 
-	BOOL	Save(CObjectWriter* pcFile) override;
-	BOOL	Load(CObjectReader* pcFile) override;
+	bool	Save(CObjectWriter* pcFile) override;
+	bool	Load(CObjectReader* pcFile) override;
 
 	void	SomeMethod(void);
 };
@@ -62,14 +62,14 @@ public:
 	CPointer	mpObject;
 	int			miInt;
 	CChars		mszString;
-	BOOL		mbSaved;
+	bool		mbSaved;
 
 	void		Init(void);
 	void		Class(void);
 	void		Free(void);
 
-	BOOL		Save(CObjectWriter* pcFile) override;
-	BOOL		Load(CObjectReader* pcFile) override;
+	bool		Save(CObjectWriter* pcFile) override;
+	bool		Load(CObjectReader* pcFile) override;
 };
 
 
@@ -81,14 +81,14 @@ public:
 	CChars						msz;
 	Ptr<CTestSaveableObject1>	mp1;
 	CPointer					mp2;
-	BOOL						mbSaved;
+	bool						mbSaved;
 
 	void	Init(const char* psz);
 	void	Class(void);
 	void	Free(void);
 
-	BOOL	Save(CObjectWriter* pcFile) override;
-	BOOL	Load(CObjectReader* pcFile) override;
+	bool	Save(CObjectWriter* pcFile) override;
+	bool	Load(CObjectReader* pcFile) override;
 };
 
 

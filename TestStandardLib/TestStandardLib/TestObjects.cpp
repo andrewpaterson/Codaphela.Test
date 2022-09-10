@@ -186,7 +186,7 @@ void TestObjectsObjectSave(void)
 void TestObjectsFlushNoClear(void)
 {
 	CFileUtil	cFileUtil;
-	BOOL		bResult;
+	bool		bResult;
 	CCodabase*	pcDatabase;
 	char		szDirectory[] = "Output" _FS_ "Flush1";
 	CSequence*	pcSequence;
@@ -230,7 +230,7 @@ void TestObjectsFlushNoClear(void)
 	szInputDirectory.Init("Input" _FS_ "Dehollowfication");
 
 	aszFileNames.Init();
-	cFileUtil.FindAllFiles(szInputDirectory.Text(), &aszFileNames, TRUE, FALSE);
+	cFileUtil.FindAllFiles(szInputDirectory.Text(), &aszFileNames, true, false);
 
 	AssertTrue(aszFileNames.NumElements() > 0);
 	for (i = 0; i < aszFileNames.NumElements(); i++)
@@ -265,7 +265,7 @@ void TestObjectsFlushNoClear(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectsFlushDurable(void)
 {
-	BOOL								bResult;
+	bool								bResult;
 	CFileUtil							cFileUtil;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 	char								szDirectory[] = "Output" _FS_ "Flush2";
@@ -323,7 +323,7 @@ void TestObjectsFlushDurable(void)
 void TestObjectsEvict(void)
 {
 	CFileUtil	cFileUtil;
-	BOOL		bResult;
+	bool		bResult;
 	CCodabase*	pcDatabase;
 	char		szDirectory[] = "Output" _FS_ "Eviction";
 	CSequence*	pcSequence;
@@ -588,7 +588,7 @@ void TestObjectDehollowfication(void)
 	CCodabase*						pcDatabase;
 	CSequence*						pcSequence;
 	char							szDirectory[] = "Output" _FS_ "Dehollowfication";
-	BOOL							bResult;
+	bool							bResult;
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
@@ -668,7 +668,7 @@ void TestObjectsFlushClearGetByOid(void)
 	CCodabase*						pcDatabase;
 	CSequence*						pcSequence;
 	char							szDirectory[] = "Output" _FS_ "Dehollowfication";
-	BOOL							bResult;
+	bool							bResult;
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
@@ -726,7 +726,7 @@ void TestObjectsFlushClearGetByName(void)
 	CCodabase*						pcDatabase;
 	CSequence*						pcSequence;
 	char							szDirectory[] = "Output" _FS_ "Dehollowfication";
-	BOOL							bResult;
+	bool							bResult;
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
@@ -777,7 +777,7 @@ void TestObjectsFlushRemovesStackPointers(void)
 	CCodabase*						pcDatabase;
 	CSequence*						pcSequence;
 	char							szDirectory[] = "Output" _FS_ "ClearPointers";
-	BOOL							bResult;
+	bool							bResult;
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));

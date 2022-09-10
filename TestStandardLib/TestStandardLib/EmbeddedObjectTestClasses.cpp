@@ -41,24 +41,24 @@ void CEmbeddedTest::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CEmbeddedTest::Save(CObjectWriter* pcFile)
+bool CEmbeddedTest::Save(CObjectWriter* pcFile)
 {
 	pcFile->WriteInt(miAmANumber);
 	pcFile->WriteFloat(mfSoAmI);
 
-	return TRUE;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CEmbeddedTest::Load(CObjectReader* pcFile)
+bool CEmbeddedTest::Load(CObjectReader* pcFile)
 {
 	pcFile->ReadInt(&miAmANumber);
 	pcFile->ReadFloat(&mfSoAmI);
 	
-	return TRUE;
+	return true;
 }
 
 
@@ -112,26 +112,26 @@ void CEmbeddedContainer::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CEmbeddedContainer::Save(CObjectWriter* pcFile)
+bool CEmbeddedContainer::Save(CObjectWriter* pcFile)
 {
 	pcFile->WriteData(msz, 4);
 	pcFile->WriteInt(mi);
 	pcFile->WriteFloat(mf);
 
-	return TRUE;
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CEmbeddedContainer::Load(CObjectReader* pcFile)
+bool CEmbeddedContainer::Load(CObjectReader* pcFile)
 {
 	pcFile->ReadData(msz, 4);
 	pcFile->ReadInt(&mi);
 	pcFile->ReadFloat(&mf);
 
-	return TRUE;
+	return true;
 }
 
 
@@ -182,12 +182,12 @@ void CEmbeddedComplex::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CEmbeddedComplex::Save(CObjectWriter* pcFile)
+bool CEmbeddedComplex::Save(CObjectWriter* pcFile)
 {
 	pcFile->WriteInt(mai[0]);
 	pcFile->WriteInt(mai[1]);
 
-	return TRUE;
+	return true;
 }
 
 
@@ -195,12 +195,12 @@ BOOL CEmbeddedComplex::Save(CObjectWriter* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CEmbeddedComplex::Load(CObjectReader* pcFile)
+bool CEmbeddedComplex::Load(CObjectReader* pcFile)
 {
 	pcFile->ReadInt(&mai[0]);
 	pcFile->ReadInt(&mai[1]);
 
-	return TRUE;
+	return true;
 }
 
 

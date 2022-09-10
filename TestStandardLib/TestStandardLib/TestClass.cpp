@@ -239,7 +239,7 @@ void TestClassSerialisation(void)
 	CExternalObjectSerialiser		cSerialiser;
 	CChunkFileObjectWriter			cWriter;
 	CFileUtil						cFileUtil;
-	BOOL							bResult;
+	bool							bResult;
 	char							szDirectory[] = "Output" _FS_ "TestClass";
 	char							szData[] = "0123456789A";
 	CExternalObjectDeserialiser		cGraphDeserialiser;
@@ -275,7 +275,7 @@ void TestClassSerialisation(void)
 	ObjectsInit();
 
 	cReader.Init(szDirectory, "File");
-	cGraphDeserialiser.Init(&cReader, FALSE, &gcObjects, gcObjects.GetMemory());
+	cGraphDeserialiser.Init(&cReader, false, &gcObjects, gcObjects.GetMemory());
 	pTestClass = cGraphDeserialiser.Read("Burke");
 	AssertNotNull(&pTestClass);
 

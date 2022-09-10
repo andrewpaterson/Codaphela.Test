@@ -56,7 +56,7 @@ void TestStringDirty(void)
 	pString1->Flush();
 	AssertFalse(pString1.IsDirty());
 
-	pString1->AppendBool(TRUE);
+	pString1->AppendBool(true);
 	AssertTrue(pString1.IsDirty());
 	AssertString("HelloTrue", pString1->Text());
 
@@ -282,11 +282,11 @@ void TestStringAlteration(void)
 	pDest->Set(pString1)->Append(' ')->AppendSubString(pString2, 5);
 	AssertString(pDest->Text(), "Hello World");
 
-	pDest->Clear()->AppendBool(TRUE)->Append(pString1, 3)->AppendBool(FALSE, pYes, pNo);
+	pDest->Clear()->AppendBool(true)->Append(pString1, 3)->AppendBool(false, pYes, pNo);
 	AssertString(pDest->Text(), "TrueHelNo");
 
 	pDest->Clear()->AppendFlag(0x03, 0x02, pString1);
-	pDest->AppendFlag(0x03, 0x01, pString2, TRUE);
+	pDest->AppendFlag(0x03, 0x01, pString2, true);
 	AssertString("Hello, World!", pDest->Text());
 
 	pDest->Set("Left:")->LeftAlign(pString1, ' ', 20)->Append(":Right");

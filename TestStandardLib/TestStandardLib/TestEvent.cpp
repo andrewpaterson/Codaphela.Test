@@ -213,7 +213,7 @@ void TestVirtualCall(void)
 	CTestAnotherListener				cAnother1;
 	CTestAnotherListener				cAnother2;
 	CTestAnotherListener				cAnother3;
-	BOOL								bResult;
+	bool								bResult;
 
 	pcTest = UMalloc(CTestObjectIsListenerWithEvent);
 	pcTest->Init();

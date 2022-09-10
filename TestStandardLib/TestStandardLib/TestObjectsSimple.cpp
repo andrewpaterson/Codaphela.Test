@@ -15,7 +15,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestObjectsCompilation(void)
 {
-	if (FALSE)  //This is intentional.  This code must only be compiled (testing template compilation) not run.
+	if (false)  //This is intentional.  This code must only be compiled (testing template compilation) not run.
 	{
 		CObjects			cObjects;
 		Ptr<CTestObject>	cTestPtr;
@@ -24,7 +24,7 @@ void TestObjectsCompilation(void)
 		cTestPtr = cObjects.Get<CTestObject>("Invalid Name");
 		cTestPtr = cObjects.Get<CTestObject>(INVALID_O_INDEX);
 	}
-	AssertTrue(TRUE);
+	AssertTrue(true);
 }
 
 

@@ -111,7 +111,7 @@ void TestSetTypeAddAll(void)
 
 	cDest.Init();
 	cDest.AddAll(&cSet);
-	cSet.KillElements(FALSE);
+	cSet.KillElements(false);
 	cSet.Kill();
 
 	AssertInt(49, cDest.NumElements());

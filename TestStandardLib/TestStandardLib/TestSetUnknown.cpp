@@ -180,7 +180,7 @@ void TestCleanNulls(void)
 	CChars				sz;
 	int					i;
 	SSetIterator		sSetIter;
-	BOOL				bResult;
+	bool				bResult;
 
 	cSet.Init(4);
 

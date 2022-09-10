@@ -294,9 +294,9 @@ void TestObjectAllocatorAssignmentToNullObject(void)
 	pRoot->Add(pNamed1);
 
 	
-	cLogToMemory.Start(TRUE);
+	cLogToMemory.Start(true);
 
-	//gcLogger.SetBreakOnError(FALSE);
+	//gcLogger.SetBreakOnError(false);
 	pNamed2->mpNamedTest1 = pNamed1;
 	
 	cLogToMemory.Stop(szLog, 4096);

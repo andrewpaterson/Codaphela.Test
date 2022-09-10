@@ -265,7 +265,7 @@ void TestSetSerialisation()
 	CExternalObjectSerialiser		cSerialiser;
 	CChunkFileObjectWriter			cWriter;
 	CFileUtil						cFileUtil;
-	BOOL							bResult;
+	bool							bResult;
 	char							szDirectory[] = "Output" _FS_ "TestSet";
 	CExternalObjectDeserialiser		cGraphDeserialiser;
 	CChunkFileSystemObjectReader 	cReader;
@@ -294,7 +294,7 @@ void TestSetSerialisation()
 	ObjectsInit();
 
 	cReader.Init(szDirectory, "File");
-	cGraphDeserialiser.Init(&cReader, FALSE, &gcObjects, gcObjects.GetMemory());
+	cGraphDeserialiser.Init(&cReader, false, &gcObjects, gcObjects.GetMemory());
 	pSet = cGraphDeserialiser.Read("Burke");
 	AssertNotNull(&pSet);
 

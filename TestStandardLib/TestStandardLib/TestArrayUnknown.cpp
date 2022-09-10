@@ -223,7 +223,7 @@ void TestArrayUnknownLoad(void)
 	CFileUtil			cFileUtil;
 	CTestUnknown*		pcTest;
 	CTestUnknownJobbie*	pcTestJobbie;
-	BOOL				bResult;
+	bool				bResult;
 	CUnknown*			pcUnknown;
 
 	AssertInt(0, gcConstructors.NumConstructors());

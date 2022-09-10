@@ -1,27 +1,27 @@
 #include "UnknownTestClasses.h"
 
 
-BOOL CTestUnknown::Save(CFileWriter* pcFile)
+bool CTestUnknown::Save(CFileWriter* pcFile)
 {
 	ReturnOnFalse(pcFile->WriteInt(miCount));
-	return TRUE;
+	return true;
 }
-BOOL CTestUnknown::Load(CFileReader* pcFile)
+bool CTestUnknown::Load(CFileReader* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadInt(&miCount));
-	return TRUE;
+	return true;
 }
 
 
-BOOL CTestUnknownJobbie::Save(CFileWriter* pcFile)
+bool CTestUnknownJobbie::Save(CFileWriter* pcFile)
 {
 	ReturnOnFalse(pcFile->WriteInt(miANumber));
 	ReturnOnFalse(mszText.WriteString(pcFile));
-	return TRUE;
+	return true;
 }
-BOOL CTestUnknownJobbie::Load(CFileReader* pcFile)
+bool CTestUnknownJobbie::Load(CFileReader* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadInt(&miANumber));
 	ReturnOnFalse(mszText.ReadString(pcFile));
-	return TRUE;
+	return true;
 }

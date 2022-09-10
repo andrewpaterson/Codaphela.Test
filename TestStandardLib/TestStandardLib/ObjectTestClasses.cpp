@@ -37,7 +37,7 @@ void CTestObject::Init(STestObjectFreedNotifier* psKilledNotifier)
 	mi = 0x07070707;
 	if (mpsFreedNotifier)
 	{
-		mpsFreedNotifier->bFreed= FALSE;
+		mpsFreedNotifier->bFreed= false;
 	}
 
 	PostInit();
@@ -64,7 +64,7 @@ void CTestObject::Free(void)
 {
 	if (mpsFreedNotifier)
 	{
-		mpsFreedNotifier->bFreed = TRUE;
+		mpsFreedNotifier->bFreed = true;
 	}
 }
 
@@ -73,10 +73,10 @@ void CTestObject::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestObject::Save(CObjectWriter* pcFile)
+bool CTestObject::Save(CObjectWriter* pcFile)
 {
 	ReturnOnFalse(pcFile->WriteInt(mi));
-	return TRUE;
+	return true;
 }
 
 
@@ -84,10 +84,10 @@ BOOL CTestObject::Save(CObjectWriter* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestObject::Load(CObjectReader* pcFile)
+bool CTestObject::Load(CObjectReader* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadInt(&mi));
-	return TRUE;
+	return true;
 }
 
 
@@ -121,7 +121,7 @@ void CTestTriPointerObject::Init(STestObjectFreedNotifier* psKilledNotifier)
 	mpsFreedNotifier = psKilledNotifier;
 	if (mpsFreedNotifier)
 	{
-		mpsFreedNotifier->bFreed = FALSE;
+		mpsFreedNotifier->bFreed = false;
 	}
 	PostInit();
 }
@@ -147,7 +147,7 @@ void CTestTriPointerObject::Free(void)
 {
 	if (mpsFreedNotifier)
 	{
-		mpsFreedNotifier->bFreed = TRUE;
+		mpsFreedNotifier->bFreed = true;
 	}
 }
 
@@ -161,7 +161,7 @@ void CTestSaveableObject1::Init(void)
 	PreInit();
 	miInt = 7;
 	mszString.Init();
-	mbSaved = FALSE;
+	mbSaved = false;
 
 	PostInit();
 }
@@ -193,13 +193,13 @@ void CTestSaveableObject1::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestSaveableObject1::Save(CObjectWriter* pcFile)
+bool CTestSaveableObject1::Save(CObjectWriter* pcFile)
 {
 	ReturnOnFalse(pcFile->WriteInt(miInt));
 	ReturnOnFalse(mszString.WriteString(pcFile));
 
-	mbSaved = TRUE;
-	return TRUE;
+	mbSaved = true;
+	return true;
 }
 
 
@@ -207,13 +207,13 @@ BOOL CTestSaveableObject1::Save(CObjectWriter* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestSaveableObject1::Load(CObjectReader* pcFile)
+bool CTestSaveableObject1::Load(CObjectReader* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadInt(&miInt));
 	ReturnOnFalse(mszString.ReadString(pcFile));
 
-	mbSaved = FALSE;
-	return TRUE;
+	mbSaved = false;
+	return true;
 }
 
 
@@ -225,7 +225,7 @@ void CTestSaveableObject2::Init(const char* psz)
 {
 	PreInit();
 	msz.Init(psz);
-	mbSaved = FALSE;
+	mbSaved = false;
 	PostInit();
 }
 
@@ -256,11 +256,11 @@ void CTestSaveableObject2::Free(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestSaveableObject2::Save(CObjectWriter* pcFile)
+bool CTestSaveableObject2::Save(CObjectWriter* pcFile)
 {
 	msz.WriteString(pcFile);
-	mbSaved = TRUE;
-	return TRUE;
+	mbSaved = true;
+	return true;
 }
 
 
@@ -268,11 +268,11 @@ BOOL CTestSaveableObject2::Save(CObjectWriter* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CTestSaveableObject2::Load(CObjectReader* pcFile)
+bool CTestSaveableObject2::Load(CObjectReader* pcFile)
 {
 	msz.ReadString(pcFile);
-	mbSaved = FALSE;
-	return TRUE;
+	mbSaved = false;
+	return true;
 }
 
 
@@ -354,7 +354,7 @@ void CTestObjectWithFields::Update(int8 i8)
 void CTestObjectWithFields::Update(char* sz)
 {
 	mpsz = sz;
-	SetDirty(TRUE);
+	SetDirty(true);
 }
 
 

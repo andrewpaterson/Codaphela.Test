@@ -24,8 +24,8 @@ public:
 		CUnknown::Kill();
 	}
 
-	BOOL	Save(CFileWriter* pcFile);
-	BOOL	Load(CFileReader* pcFile);
+	bool	Save(CFileWriter* pcFile);
+	bool	Load(CFileReader* pcFile);
 };
 
 
@@ -51,9 +51,9 @@ public:
 		return mszName.Text();
 	}
 
-	BOOL Iterable(void)
+	bool Iterable(void)
 	{
-		return TRUE;
+		return true;
 	}
 };
 
@@ -70,9 +70,9 @@ public:
 		miID = iID;
 	}
 
-	BOOL Iterable(void)
+	bool Iterable(void)
 	{
-		return TRUE;
+		return true;
 	}
 
 	char* GetClassName(void)
@@ -101,7 +101,7 @@ public:
 		CUnknown::Kill();
 	}
 
-	BOOL	Save(CFileWriter* pcFile);
-	BOOL	Load(CFileReader* pcFile);
+	bool	Save(CFileWriter* pcFile);
+	bool	Load(CFileReader* pcFile);
 };
 

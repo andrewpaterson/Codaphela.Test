@@ -8,7 +8,7 @@ class CKillList : public CArrayTemplateMinimal<CUnknownTestHelper*>
 {
 public:
 	void AddKill(CUnknownTestHelper* pcKilled);
-	BOOL Contains(CUnknownTestHelper* pcKilled);
+	bool Contains(CUnknownTestHelper* pcKilled);
 };
 
 

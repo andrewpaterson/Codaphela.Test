@@ -20,7 +20,7 @@ void TestKillSelfPointer1(void)
 
 	Ptr<CRoot>				pRoot;
 	Ptr<CTestNamedObject>	pObject;
-	BOOL					bResult;
+	bool					bResult;
 	CBaseObject*			pvObject;
 
 	pRoot = ORoot();
@@ -58,7 +58,7 @@ void TestKillSelfPointer2(void)
 
 	Ptr<CRoot>				pRoot;
 	Ptr<CTestNamedObject>	pObject;
-	BOOL					bResult;
+	bool					bResult;
 
 	pRoot = ORoot();
 
@@ -97,7 +97,7 @@ void TestKillLongCyclicSelfPointer(void)
 	Ptr<CTestNamedObject>	pObject1;
 	Ptr<CTestNamedObject>	pObject2;
 	Ptr<CTestNamedObject>	pObjectBase;
-	BOOL					bResult;
+	bool					bResult;
 
 	pRoot = ORoot();
 

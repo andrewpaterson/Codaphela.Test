@@ -264,7 +264,7 @@ void TestEmbeddedObjectKill(void)
 //////////////////////////////////////////////////////////////////////////
 void TestEmbeddedObjectContainerDehollowfication(void)
 {
-	BOOL			bResult;
+	bool			bResult;
 	CFileUtil		cFileUtil;
 	const char*		szClassName;
 	OIndex			oiComplex;
@@ -352,7 +352,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 //////////////////////////////////////////////////////////////////////////
 void TestEmbeddedObjectPointTo(void)
 {
-	BOOL		bResult;
+	bool		bResult;
 	CFileUtil	cFileUtil;
 	OIndex		oiComplex;
 	const char*	szClassName;

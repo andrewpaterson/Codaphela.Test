@@ -24,7 +24,7 @@ void TestObjectGraphSerialiserReachability(void)
 	CExternalObjectSerialiser	cGraphSerialiser;
 	CMultiFileObjectWriter		cSimpleWriter;
 	char						szDirectory[] = "Output" _FS_ "GraphWriter" _FS_ "Data";
-	BOOL						bResult;
+	bool						bResult;
 
 	cFileUtil.RemoveDir(szDirectory);
 	AssertTrue(cFileUtil.TouchDir(szDirectory));

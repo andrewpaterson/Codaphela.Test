@@ -83,7 +83,7 @@ void TestArrayTypeLoad(void)
 	CChunkFile					cFile;
 	CFileUtil					cFileUtil;
 	CTestUnknown*				pcTest;
-	BOOL						bResult;
+	bool						bResult;
 
 	AssertInt(0, gcUnknowns.NumElements());
 

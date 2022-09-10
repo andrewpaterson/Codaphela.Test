@@ -78,8 +78,8 @@ void TestObjectDirtySimplePrimitiveAssignment(void)
 	pObject->mi64 = 100;
 	pObject->mui64 = 100;
 
-	pObject->mb = TRUE;
-	pObject->mb = FALSE;
+	pObject->mb = true;
+	pObject->mb = false;
 	pObject->mb = true;
 	pObject->mb = false;
 
@@ -308,7 +308,7 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	AssertFalse(pObject->mcEmbedded1.IsDirty());
 	AssertFalse(pObject->mcEmbedded2.IsDirty());
 
-	pObject->mbY = TRUE;
+	pObject->mbY = true;
 	AssertTrue(pObject.IsDirty());
 	AssertTrue(pObject->mcEmbedded1.IsDirty());
 	AssertTrue(pObject->mcEmbedded2.IsDirty());
@@ -325,8 +325,8 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	pStringC = (CPointer)OMalloc<CString>();
 	pStringC->Set("Master Git");
 
-	pObject->mbX = TRUE;
-	pObject->mbY = FALSE;
+	pObject->mbX = true;
+	pObject->mbY = false;
 	pObject->mpObjectA = pStringA;
 	pObject->mpObjectB = pStringB;
 	pObject->mpObjectC = pStringC;
@@ -336,7 +336,7 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	pObject->mcEmbedded1.mi64 = -64;
 	pObject->mcEmbedded1.mf32 = 32.5f;
 	pObject->mcEmbedded1.mf64 = 64.5;
-	pObject->mcEmbedded1.mb = TRUE;
+	pObject->mcEmbedded1.mb = true;
 	pObject->mcEmbedded1.mui8 = 8;
 	pObject->mcEmbedded1.mui16 = 16;
 	pObject->mcEmbedded1.mui32 = 32;

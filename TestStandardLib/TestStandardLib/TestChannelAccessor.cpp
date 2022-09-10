@@ -354,7 +354,7 @@ void TestChannelsAccessorWorstCase(void)
 	AssertInt(11, pcChannels->GetByteSize());
 	AssertInt(41, pcChannels->GetBitStride());
 	AssertInt(-1, pcChannels->GetByteStride());
-	AssertInt(FALSE, pcChannels->IsOnlyBasicTypes());
+	AssertInt(false, pcChannels->IsOnlyBasicTypes());
 
 	memset(aucData, 0, 5);
 

@@ -26,7 +26,7 @@ void TestArrayCommonPointerRemapping(void)
 	ObjectsInit();
 
 	pRoot = ORoot();
-	pArray = OMalloc<CArrayCommonObject>(FALSE, FALSE, TRUE);
+	pArray = OMalloc<CArrayCommonObject>(false, false, true);
 	pRoot->Add(pArray);
 
 	pObject1 = OMalloc<CTestObject>(&sFreedNotifier);
@@ -43,7 +43,7 @@ void TestArrayCommonPointerRemapping(void)
 	AssertInt(6, pArray->NumElements());
 	AssertInt(5, pArray->NonNullElements());
 
-	sFreedNotifier.bFreed = FALSE;
+	sFreedNotifier.bFreed = false;
 
 	AssertInt(5, pArray->NumPointerTos());
 	AssertInt(1, pArray->NumHeapFroms());
