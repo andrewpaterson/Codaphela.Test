@@ -22,14 +22,14 @@ void TestImageModifierStack(void)
 
 	CImage					cImage;
 	CImageModifierStack		cStack;
-	BOOL					bResult;
+	bool					bResult;
 	CImageRGBToGrey*		pcGrey;
 	CImageHeightToNormals*	pcNormals;
 	CImageResampler*		pcSmall;
 	CImage					cBak;
 
 	bResult = ReadImage(&cBak, "Input/Adelle.png");
-	AssertBool(TRUE, bResult);
+	AssertBool(true, bResult);
 
 	cImage.Copy(&cBak);
 	cStack.Init(&cImage);

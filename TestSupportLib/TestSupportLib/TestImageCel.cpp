@@ -49,7 +49,7 @@ void TestImageCelCropBorders(void)
 	AssertInt(0, cCel.GetSubImage()->GetImageWidth());
 	AssertInt(24, cCel.GetSubImage()->GetFullHeight());
 	AssertInt(0, cCel.GetSubImage()->GetImageHeight());
-	AssertBool(TRUE, cCel.GetSubImage()->IsImageEmpty());
+	AssertBool(true, cCel.GetSubImage()->IsImageEmpty());
 
 	cCel.Kill();
 	cImage.Kill();

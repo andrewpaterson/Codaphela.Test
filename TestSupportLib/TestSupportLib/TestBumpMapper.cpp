@@ -24,7 +24,7 @@ void TestBumpMapper(void)
 
 	cDest.Init();
 
-	ConvertHeightMapTo(TRUE, TRUE, &cDest, &cSource, IMAGE_DIFFUSE_RED);
+	ConvertHeightMapTo(true, true, &cDest, &cSource, IMAGE_DIFFUSE_RED);
 
 	cDest.BeginChange();
 	cDest.RenameChannel(IMAGE_NORMAL_X, IMAGE_DIFFUSE_RED);

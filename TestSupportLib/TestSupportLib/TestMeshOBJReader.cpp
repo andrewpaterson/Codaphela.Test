@@ -13,10 +13,10 @@
 void TestMeshOBJReader(void)
 {
 	CMesh				cMesh;
-	BOOL				bResult;
+	bool				bResult;
 	int					i;
 	CMeshFace*			pcFace;
-	BOOL				bOutOfBounds;
+	bool				bOutOfBounds;
 	int					iNumCorners;
 	int					iNumNormals;
 	SMeshNormalFace*	psNormalFace;
@@ -27,56 +27,56 @@ void TestMeshOBJReader(void)
 	iNumCorners = cMesh.NumCorners();
 	iNumNormals = cMesh.mcNormals.mcNormals.NumElements();
 
-	AssertBool(TRUE, bResult);
+	AssertBool(true, bResult);
 	AssertInt(162, iNumCorners);
 	AssertInt(320, cMesh.NumFaces());
 	AssertInt(320 + 394, iNumNormals);
 
-	bOutOfBounds = FALSE;
+	bOutOfBounds = false;
 	for (i = 0; i < cMesh.NumFaces(); i++)
 	{
 		pcFace = cMesh.GetFace(i);
 		if (pcFace->asCorner[0] >= iNumCorners)
 		{
-			bOutOfBounds = TRUE;
+			bOutOfBounds = true;
 			break;
 		}
 		if (pcFace->asCorner[1] >= iNumCorners)
 		{
-			bOutOfBounds = TRUE;
+			bOutOfBounds = true;
 			break;
 		}
 		if (pcFace->asCorner[2] >= iNumCorners)
 		{
-			bOutOfBounds = TRUE;
+			bOutOfBounds = true;
 			break;
 		}
 	}
-	AssertBool(FALSE, bOutOfBounds);
+	AssertBool(false, bOutOfBounds);
 
-	bOutOfBounds = FALSE;
+	bOutOfBounds = false;
 	for (i = 0; i < cMesh.NumFaces(); i++)
 	{
 		psNormalFace = cMesh.mcNormals.mcFaces.Get(i);
 		if (psNormalFace->aiCornerNormals[0] >= iNumNormals)
 		{
-			bOutOfBounds = TRUE;
+			bOutOfBounds = true;
 			break;
 		}
 		psNormalFace = cMesh.mcNormals.mcFaces.Get(i);
 		if (psNormalFace->aiCornerNormals[1] >= iNumNormals)
 		{
-			bOutOfBounds = TRUE;
+			bOutOfBounds = true;
 			break;
 		}
 		psNormalFace = cMesh.mcNormals.mcFaces.Get(i);
 		if (psNormalFace->aiCornerNormals[2] >= iNumNormals)
 		{
-			bOutOfBounds = TRUE;
+			bOutOfBounds = true;
 			break;
 		}
 	}
-	AssertBool(FALSE, bOutOfBounds);
+	AssertBool(false, bOutOfBounds);
 
 	WriteMesh(&cMesh, "Output/Reader.OBJ");
 

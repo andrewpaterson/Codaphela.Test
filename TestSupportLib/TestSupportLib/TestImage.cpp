@@ -28,7 +28,7 @@ void TestDrawImage(void)
 	char					szSourceRB[12] = "ACDFGIJLMOP";
 	char					szSourceR2G2B2[36] = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqR";
 	char*					pcData;
-	BOOL					bResult;
+	bool					bResult;
 	char					szDestSameType[18] = "BACEDFHGIKJLNMOQP";
 	char					szDestRGBMissingType[18] = "A\0CD\0FG\0IJ\0LM\0OP\0";
 	char					szDestRGMissingType[13] = "ABDEGHJKMNPQ";
@@ -43,7 +43,7 @@ void TestDrawImage(void)
 	cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 	
 	bResult = cImageSource.IsSameFormat(&cImageDest);
-	AssertBool(TRUE, bResult);
+	AssertBool(true, bResult);
 
 
 	CImageCopier::Copy(&cImageSource, &cImageDest, 0, 0, NULL);
@@ -61,7 +61,7 @@ void TestDrawImage(void)
 	cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 
 	bResult = cImageSource.IsSameFormat(&cImageDest);
-	AssertBool(FALSE, bResult);
+	AssertBool(false, bResult);
 
 	CImageCopier::Copy(&cImageSource, &cImageDest, 0, 0, NULL);
 	pcData = (char*)cImageDest.GetData();
@@ -81,7 +81,7 @@ void TestDrawImage(void)
 	cImageSource.Init(3, 2, szSourceRB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 
 	bResult = cImageSource.IsSameFormat(&cImageDest);
-	AssertBool(FALSE, bResult);
+	AssertBool(false, bResult);
 
 	CImageCopier::Copy(&cImageSource, &cImageDest, 0, 0, NULL);
 	pcData = (char*)cImageDest.GetData();
@@ -97,7 +97,7 @@ void TestDrawImage(void)
 	cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 
 	bResult = cImageSource.IsSameFormat(&cImageDest);
-	AssertBool(FALSE, bResult);
+	AssertBool(false, bResult);
 
 	CImageCopier::Copy(&cImageSource, &cImageDest, 0, 0 , NULL);
 	pcData = (char*)cImageDest.GetData();
@@ -114,7 +114,7 @@ void TestDrawImage(void)
 	cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 
 	bResult = cImageSource.IsSameFormat(&cImageDest);
-	AssertBool(FALSE, bResult);
+	AssertBool(false, bResult);
 
 	CImageCopier::Copy(&cImageSource, &cImageDest, 0, 0, NULL);
 	pcData = (char*)cImageDest.GetData();
@@ -131,7 +131,7 @@ void TestDrawImage(void)
 	cImageSource.Init(3, 2, szSourceR2G2B2, PT_uint16, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 
 	bResult = cImageSource.IsSameFormat(&cImageDest);
-	AssertBool(FALSE, bResult);
+	AssertBool(false, bResult);
 
 	CImageCopier::Copy(&cImageSource, &cImageDest, 0, 0, NULL);
 	pcData = (char*)cImageDest.GetData();

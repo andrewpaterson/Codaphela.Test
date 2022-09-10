@@ -125,14 +125,14 @@ void TestImageRADWriter(void)
 	CImage		cImage;
 	CImage		cComp;
 	CArrayInt	aiChannels;
-	BOOL		bResult;
+	bool		bResult;
 
 	//The GDI+ seems to be unable to write most of the types it claims, only 32 bit ARGB seems to work.
 	ReadImage(&cImage, "Input\\basn2c08.png");
 	bResult = WriteImage(&cImage, "Output\\writerad.rad");
-	AssertBool(TRUE, bResult);
+	AssertBool(true, bResult);
 	bResult = ReadImage(&cComp, "Output\\writerad.rad");
-	AssertBool(TRUE, bResult);
+	AssertBool(true, bResult);
 	AssertInt(32, cComp.GetWidth());
 	AssertInt(32, cComp.GetHeight());
 	cComp.GetAllChannels(&aiChannels);

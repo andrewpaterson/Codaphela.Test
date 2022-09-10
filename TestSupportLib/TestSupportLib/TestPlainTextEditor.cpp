@@ -63,8 +63,8 @@ void TestPlainTextEditorInsertionAndTypeOver(void)
 	AssertString("World\nHello\n\tX", cEditor.Text());
 	AssertInt(10, cEditor.miEditPos);
 
-	cEditor.Printable('O', FALSE);
-	cEditor.Printable('!', FALSE);
+	cEditor.Printable('O', false);
+	cEditor.Printable('!', false);
 	AssertString("World\nHellO!\n\tX", cEditor.Text());
 	cEditor.Kill();
 }
@@ -130,22 +130,22 @@ void TestPlainTextEditorSimpleNavigation(void)
 	AssertString("World\nHello\n\tX", cEditor.Text());
 	AssertInt(10, cEditor.miEditPos);
 
-	cEditor.Printable('O', FALSE);
-	cEditor.Printable('!', FALSE);
+	cEditor.Printable('O', false);
+	cEditor.Printable('!', false);
 	AssertString("World\nHellO!\n\tX", cEditor.Text());
 	cEditor.Kill();
 
 	cEditor.Init("\tX");
 	cEditor.Home();
-	cEditor.Printable('a', FALSE);
+	cEditor.Printable('a', false);
 	AssertString("a\tX", cEditor.Text());
-	cEditor.Printable('b', FALSE);
+	cEditor.Printable('b', false);
 	AssertString("ab\tX", cEditor.Text());
-	cEditor.Printable('c', FALSE);
+	cEditor.Printable('c', false);
 	AssertString("abc\tX", cEditor.Text());
-	cEditor.Printable('d', FALSE);
+	cEditor.Printable('d', false);
 	AssertString("abcdX", cEditor.Text());
-	cEditor.Printable('Y', FALSE);
+	cEditor.Printable('Y', false);
 	AssertString("abcdY", cEditor.Text());
 	cEditor.Left();
 	cEditor.Delete();

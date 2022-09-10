@@ -27,7 +27,7 @@ void TestMeshPolygonsAddFace(void)
 
 	AssertInt(0, cMeshEditor.mcPolygons.mcPolygons.NumElements());
 
-	cMeshEditor.AddFace(0, 1, 2,  1,  TRUE, TRUE, FALSE);
+	cMeshEditor.AddFace(0, 1, 2,  1,  true, true, false);
 
 	AssertInt(3, cMeshEditor.mcEdgeVisibility.mcEdges.NumElements());
 	AssertChar(1, cMeshEditor.mcEdgeVisibility.GetEdge(0));
@@ -42,7 +42,7 @@ void TestMeshPolygonsAddFace(void)
 	AssertInt(1, pcPolygon->maiFaces.NumElements());
 	AssertInt(0, pcPolygon->maiFaces.GetValue(0));
 	
-	cMeshEditor.AddFace(0, 2, 3,  1,  FALSE, TRUE, TRUE);
+	cMeshEditor.AddFace(0, 2, 3,  1,  false, true, true);
 
 	AssertInt(5, cMeshEditor.mcEdgeVisibility.mcEdges.NumElements());
 	AssertChar(1, cMeshEditor.mcEdgeVisibility.GetEdge(0));
@@ -71,7 +71,7 @@ void TestMeshPolygonsAddFace(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMeshPolygonsAddDiscontiguousFace(BOOL bOutEdgeValue)
+void TestMeshPolygonsAddDiscontiguousFace(bool bOutEdgeValue)
 {
 	CMesh			cMesh;
 	CMeshEditor		cMeshEditor;
@@ -89,14 +89,14 @@ void TestMeshPolygonsAddDiscontiguousFace(BOOL bOutEdgeValue)
 
 	AssertInt(0, cMeshEditor.mcPolygons.mcPolygons.NumElements());
 
-	cMeshEditor.AddFace(0, 1, 2,  1,  bOutEdgeValue, bOutEdgeValue, FALSE);
-	cMeshEditor.AddFace(0, 3, 4,  1,  FALSE, bOutEdgeValue, bOutEdgeValue);
-	cMeshEditor.AddFace(5, 3, 2,  1,  bOutEdgeValue, FALSE, bOutEdgeValue);
+	cMeshEditor.AddFace(0, 1, 2,  1,  bOutEdgeValue, bOutEdgeValue, false);
+	cMeshEditor.AddFace(0, 3, 4,  1,  false, bOutEdgeValue, bOutEdgeValue);
+	cMeshEditor.AddFace(5, 3, 2,  1,  bOutEdgeValue, false, bOutEdgeValue);
 
 	AssertInt(9, cMeshEditor.mcEdgeVisibility.mcEdges.NumElements());
 	AssertInt(3, cMeshEditor.mcPolygons.mcPolygons.NumElements());
 
-	cMeshEditor.AddFace(0, 2, 3,  1,  FALSE, FALSE, FALSE);
+	cMeshEditor.AddFace(0, 2, 3,  1,  false, false, false);
 
 	AssertInt(9, cMeshEditor.mcEdgeVisibility.mcEdges.NumElements());
 	AssertInt(1, cMeshEditor.mcPolygons.mcPolygons.NumElements());
@@ -116,7 +116,7 @@ void TestMeshPolygonsAddDiscontiguousFace(BOOL bOutEdgeValue)
 	AssertInt(1, pcPolygon->maiFaces.GetValue(2));
 	AssertInt(2, pcPolygon->maiFaces.GetValue(3));
 
-	cMeshEditor.AddFace(5, 4, 3,  2,  TRUE, TRUE, TRUE);
+	cMeshEditor.AddFace(5, 4, 3,  2,  true, true, true);
 
 	AssertInt(10, cMeshEditor.mcEdgeVisibility.mcEdges.NumElements());
 	AssertInt(2, cMeshEditor.mcPolygons.mcPolygons.NumElements());
@@ -179,8 +179,8 @@ void TestMeshPolygons(void)
 	BeginTests();
 
 	TestMeshPolygonsAddFace();
-	TestMeshPolygonsAddDiscontiguousFace(TRUE);
-	TestMeshPolygonsAddDiscontiguousFace(FALSE);
+	TestMeshPolygonsAddDiscontiguousFace(true);
+	TestMeshPolygonsAddDiscontiguousFace(false);
 	TestMeshPolygonAdjacency();
 
 	TestStatistics();

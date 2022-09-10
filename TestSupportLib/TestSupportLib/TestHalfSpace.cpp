@@ -20,7 +20,7 @@ void TestHalfSpace(void)
 	CHalfSpace	cHalfSpace;
 	SFloat3		sTest;
 	SFloat3		sNormal;
-	BOOL		bResult;
+	bool		bResult;
 
 	sPos1.Init(25.00, -12.50, 50.00);
 	sPos2.Init(25.00, -12.50, -50.00);
@@ -32,15 +32,15 @@ void TestHalfSpace(void)
 
 	sTest.Init(0.00, -12.50, 0.00);
 	bResult = cHalfSpace.On(&sTest);
-	AssertBool(TRUE, bResult);
+	AssertBool(true, bResult);
 
 	sTest.Init(0.00, -14.00, 0.00);
 	bResult = cHalfSpace.Contains(&sTest);
-	AssertBool(TRUE, bResult);
+	AssertBool(true, bResult);
 
 	sTest.Init(0.00, 12.50, 0.00);
 	bResult = cHalfSpace.NotContains(&sTest);
-	AssertBool(TRUE, bResult);
+	AssertBool(true, bResult);
 
 
 	sPos1.Init(25.00, -12.50, 50.00);
@@ -53,15 +53,15 @@ void TestHalfSpace(void)
 
 	sTest.Init(0.00, -12.50, 0.00);
 	bResult = cHalfSpace.On(&sTest);
-	AssertBool(TRUE, bResult);
+	AssertBool(true, bResult);
 
 	sTest.Init(0.00, -14.00, 0.00);
 	bResult = cHalfSpace.Contains(&sTest);
-	AssertBool(FALSE, bResult);
+	AssertBool(false, bResult);
 
 	sTest.Init(0.00, 12.50, 0.00);
 	bResult = cHalfSpace.NotContains(&sTest);
-	AssertBool(FALSE, bResult);
+	AssertBool(false, bResult);
 
 	FastFunctionsKill();
 	TestStatistics();

@@ -33,7 +33,7 @@ void TestImageCelsSourceStarControl(void)
 
 	cSingle.Init();
 
-	cSource.Init(TRUE);
+	cSource.Init(true);
 	cSource.AddDiskFileSources("C:\\Work\\Star Control\\Frames\\Androsynth Blazer", "frame", NULL, &cSingle);
 	cSource.AddDiskFileSources("C:\\Work\\Star Control\\Frames\\Androsynth Guardian", "frame", NULL, &cSingle);
 	cSource.AddDiskFileSources("C:\\Work\\Star Control\\Frames\\Arilou Skiff", "frame", NULL, &cSingle);
@@ -126,7 +126,7 @@ void TestImageCelGroupSourceCombine(void)
 	}
 	else
 	{
-		AssertTrue(FALSE);
+		AssertTrue(false);
 	}
 
 	pcImage->Kill();

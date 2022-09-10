@@ -23,7 +23,7 @@ void TestImageColourAccessorBytes(void)
 	CImageAccessor*		pcAccessor;
 	CImage				cImage;
 	SImageColour		sDest;
-	BOOL				bResult;
+	bool				bResult;
 	char*				pvData;
 
 	cRGB.Init(1.0f, 0.5f, 0.25f);
@@ -43,7 +43,7 @@ void TestImageColourAccessorBytes(void)
 
 	sDest.Full();
 	bResult = pcAccessor->MakeColour(&sDest, &cColour);
-	AssertBool(TRUE, bResult);
+	AssertBool(true, bResult);
 
 	//Remember ints have reverse endiannes which is why the test number below looks backwarsd.
 	AssertIntHex(0x3f7fff54, *(int*)((void*)sDest.c));
@@ -84,7 +84,7 @@ void TestImageColourAccessorFloats(void)
 	CImageAccessor*		pcAccessor;
 	CImage				cImage;
 	SImageColour		sDest;
-	BOOL				bResult;
+	bool				bResult;
 
 	cNormal.Init(0.7f, 0.6f, 0.5f);
 	cImage.Init();
@@ -105,7 +105,7 @@ void TestImageColourAccessorFloats(void)
 
 	sDest.Full();
 	bResult = pcAccessor->MakeColour(&sDest, &cNormal);
-	AssertBool(TRUE, bResult);
+	AssertBool(true, bResult);
 
 	AssertFloat(0.7f, *((float*)&((sDest).c)[0x0]), 3);
 	AssertFloat(0.6f, *((float*)&((sDest).c)[0x4]), 3);
@@ -135,7 +135,7 @@ void TestImageColourMultiAccessor(void)
 	CImageAccessor*			pcAccessor;
 	CImage					cImage;
 	SImageColour			sDest;
-	BOOL					bResult;
+	bool					bResult;
 
 	cNormal.Init(0.7f, -0.6f, -0.5f);
 	cAlpha.Init(0.333f);
@@ -159,7 +159,7 @@ void TestImageColourMultiAccessor(void)
 
 	sDest.Full();
 	bResult = pcAccessor->MakeColour(&sDest, &cColour);
-	AssertBool(TRUE, bResult);
+	AssertBool(true, bResult);
 
 	AssertFloat(0.7f, *((float*)&((sDest).c)[0x0]), 3);
 	AssertFloat(-0.6f, *((float*)&((sDest).c)[0x4]), 3);
@@ -189,27 +189,27 @@ void TestImageColourStruct(void)
 	sColour.Full();
 
 	sColour.c[0] = 0;
-	AssertBool(TRUE, sColour.IsZero(1));
+	AssertBool(true, sColour.IsZero(1));
 
 	sColour.c[0] = 3;
-	AssertBool(FALSE, sColour.IsZero(1));
+	AssertBool(false, sColour.IsZero(1));
 
 	sColour.c[0] = 0xff;
 
 	for (i = 0; i < MAX_IMAGE_COLOUR_BYTES; i++)
 	{
 		sColour.c[i] = 0;
-		AssertBool(TRUE, sColour.IsZero(i+1));
+		AssertBool(true, sColour.IsZero(i+1));
 	}
 
 	for (i = MAX_IMAGE_COLOUR_BYTES-1; i >= 0; i--)
 	{
 		sColour.c[i] = 0xff;
-		AssertBool(FALSE, sColour.IsZero(i+1));
+		AssertBool(false, sColour.IsZero(i+1));
 	}
 
 	sColour.Zero();
-	AssertBool(TRUE, sColour.IsZero(8));
+	AssertBool(true, sColour.IsZero(8));
 
 }
 

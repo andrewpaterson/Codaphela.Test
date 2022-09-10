@@ -53,7 +53,7 @@ void TestImageDrawBox(void)
 
 	cRect.Init(1, 1, 4, 4);  //End not inclusive.
 	cRGB.Init(0.5f, 0.6f, 0.7f);
-	cBox.Init(&cRect, &cRGB, FALSE);
+	cBox.Init(&cRect, &cRGB, false);
 	cBox.Modify(&cImage);
 	cBox.Kill();
 

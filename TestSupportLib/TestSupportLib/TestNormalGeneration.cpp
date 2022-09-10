@@ -29,7 +29,7 @@ void TestMeshSmoothGroupsOneAndZero(void)
 	CMeshFace*			pcFace;
 
 	cMesh.Init();
-	cMesh.mcNormals.mbInUse = TRUE;
+	cMesh.mcNormals.mbInUse = true;
 	cMeshEditor.Init(&cMesh);
 
 	sXDirection.Init(1, 0, 0);
@@ -109,7 +109,7 @@ void TestMeshSmoothGroupsNamed(void)
 	CMeshSmoothGroups*	pcSmoothing;
 
 	cMesh.Init();
-	cMesh.mcNormals.mbInUse = TRUE;
+	cMesh.mcNormals.mbInUse = true;
 	cMeshEditor.Init(&cMesh);
 
 	sXDirection.Init(1, 0, 0);
@@ -162,7 +162,7 @@ void TestMeshSmoothFaces(void)
 	CMeshFace*			pcFace;
 
 	cMesh.Init();
-	cMesh.mcNormals.mbInUse = TRUE;
+	cMesh.mcNormals.mbInUse = true;
 	cMeshEditor.Init(&cMesh);
 
 	sXDirection.Init(1, 0, 0);
@@ -221,7 +221,7 @@ void TestMeshFlatFaces(void)
 	SMeshNormalFace*	psFaceNormal;
 
 	cMesh.Init();
-	cMesh.mcNormals.mbInUse = TRUE;
+	cMesh.mcNormals.mbInUse = true;
 	cMeshEditor.Init(&cMesh);
 
 	sXDirection.Init(1, 0, 0);

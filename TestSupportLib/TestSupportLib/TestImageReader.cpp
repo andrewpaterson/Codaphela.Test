@@ -16,10 +16,10 @@
 void TestImageReaderRAD(void)
 {
 	CImage			cImage;
-	BOOL			bResult;
+	bool			bResult;
 
 	bResult = ReadImage(&cImage, "Input\\readrad.rad");
-	AssertBool(TRUE, bResult);
+	AssertBool(true, bResult);
 	WriteImage(&cImage, "Output\\readrad.raw");
 	AssertFileMemory("input\\readrad.raw", cImage.GetData(), cImage.GetByteSize());
 	cImage.Kill();
@@ -27,7 +27,7 @@ void TestImageReaderRAD(void)
 	//Read raw is a special case.  Because the size and the channels aren't known the image must be initialised before hand.
 	cImage.Init(32, 48, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 	bResult = ReadImage(&cImage, "Input\\readrad.raw");
-	AssertBool(TRUE, bResult);
+	AssertBool(true, bResult);
 	WriteImage(&cImage, "Output\\readraw.raw");
 	AssertFileMemory("input\\readraw.raw", cImage.GetData(), cImage.GetByteSize());
 	cImage.Kill();
