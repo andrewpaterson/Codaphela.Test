@@ -6,7 +6,9 @@
 #include "BaseLib/StringHelper.h"
 #include "BaseLib/ArrayChars.h"
 #include "CoreLib/MemoryDrive.h"
-#include "CoreLib/Fat.h"
+#include "CoreLib/FatVolume.h"
+#include "CoreLib/FatFile.h"
+#include "CoreLib/FatFormat.h"
 #include "TestLib/Assert.h"
 
 
