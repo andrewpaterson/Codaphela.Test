@@ -354,7 +354,7 @@ void TestFat32Format(void)
 	cFile.Close();
 	cFile.Kill();
 
-	uiResult = fat_format_volume(FAT_FS_TYPE_FAT32, "Fat32", 1, &cMemoryDrive);
+	uiResult = FatFormat(FAT_FS_TYPE_FAT32, "Fat32", 1, &cMemoryDrive);
 	AssertInt(STORAGE_SUCCESS, uiResult);
 
 	uiResult = cVolume.Mount(&cMemoryDrive);
@@ -461,15 +461,15 @@ void TestFat32Write(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFat32CreateDirectory(void)
 {
-	CMemoryDrive			cMemoryDrive;
-	CDiskFile				cFile;
-	filePos					uiLength;
-	void* pvMemory;
-	uint16					uiResult;
-	BOOL					bResult;
-	CFatVolume				cVolume;
-	CArrayChars				aszDirectories;
-	CChars					sz;
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	filePos			uiLength;
+	void*			pvMemory;
+	uint16			uiResult;
+	BOOL			bResult;
+	CFatVolume		cVolume;
+	CArrayChars		aszDirectories;
+	CChars			sz;
 
 	cFile.Init("Input\\Fat32\\ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
@@ -515,15 +515,15 @@ void TestFat32CreateDirectory(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFat32FormatAndCreateDirectory(void)
 {
-	CMemoryDrive			cMemoryDrive;
-	CDiskFile				cFile;
-	filePos					uiLength;
-	void* pvMemory;
-	uint16					uiResult;
-	BOOL					bResult;
-	CFatVolume				cVolume;
-	CArrayChars				aszDirectories;
-	CChars					sz;
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	filePos			uiLength;
+	void*			pvMemory;
+	uint16			uiResult;
+	BOOL			bResult;
+	CFatVolume		cVolume;
+	CArrayChars		aszDirectories;
+	CChars			sz;
 
 	cFile.Init("Input\\Fat32\\ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
@@ -535,7 +535,7 @@ void TestFat32FormatAndCreateDirectory(void)
 	cFile.Close();
 	cFile.Kill();
 
-	uiResult = fat_format_volume(FAT_FS_TYPE_FAT32, "Fat32", 1, &cMemoryDrive);
+	uiResult = FatFormat(FAT_FS_TYPE_FAT32, "Fat32", 1, &cMemoryDrive);
 	AssertInt(STORAGE_SUCCESS, uiResult);
 
 	uiResult = cVolume.Mount(&cMemoryDrive);
