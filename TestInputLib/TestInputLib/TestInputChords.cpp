@@ -115,7 +115,7 @@ void TestInputChords(void)
 	CPlayer						cPlayer2;
 	CProgramDeviceDetail*		pcDetail;
 	CInputVirtualDevice*		pcPlayer1;
-	BOOL						bResult;
+	bool						bResult;
 	CInputDevice*				pcDevice;
 	CInputVirtualDevice*		pcPlayer2;
 	CInputChord*				pcChord;
@@ -127,12 +127,12 @@ void TestInputChords(void)
 	cInput.AddProgramInput();
 	
 	cPlayer1.Init();
-	pcPlayer1 = cInput.GetDevices()->GetFirstVirtualDeviceInCategoryKeyboard(cInput.GetProgramInput()->GetCategoryName(), FALSE);
+	pcPlayer1 = cInput.GetDevices()->GetFirstVirtualDeviceInCategoryKeyboard(cInput.GetProgramInput()->GetCategoryName(), false);
 	pcDevice = pcPlayer1->GetDefaultDevice();
 
 	pcPlayer1 = cInput.GetDevices()->CreateVirtualDevice("Player 1");
 	bResult = pcPlayer1->AddSources(pcDevice, "W", "A", "S", "D", "Left Control", NULL);
-	AssertBool(TRUE, bResult);
+	AssertBool(true, bResult);
 
 	pcPlayer1->AddOrderedAction(cInput.GetActions()->AddAction("Player 1 Up", &CPlayerListener::Up, (CPlayerListener*)&cPlayer1), "W", "W", NULL);
 	pcPlayer1->AddOrderedAction(cInput.GetActions()->AddAction("Player 1 Down", &CPlayerListener::Down, (CPlayerListener*)&cPlayer1), "S", "W", "W", "W", NULL);
@@ -182,7 +182,7 @@ void TestInputChords(void)
 	cPlayer2.Init();
 	pcPlayer2 = cInput.GetDevices()->CreateVirtualDevice("Player 2");
 	bResult = pcPlayer2->AddSources(pcDevice, "Cursor Up", "Cursor Left", "Cursor Down", "Cursor Right", "Right Control", NULL);
-	AssertBool(TRUE, bResult);
+	AssertBool(true, bResult);
 
 	pcChord = pcPlayer2->AddChordAction(cInput.GetActions()->AddAction("Player 2 Up", &CPlayerListener::Up, (CPlayerListener*)&cPlayer2));
 	pcOrdered = pcChord->AsOrdered();
