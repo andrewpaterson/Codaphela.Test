@@ -13,7 +13,7 @@ TRISTATE ParseString(char* sz, void* szDest, int* piLength, int* piWidth)
 	TRISTATE		tResult;
 
 	cParser.Init(sz);
-	tResult = cParser.GetStringLiteral(szDest, 4 KB, TRUE, piLength, piWidth, FALSE);
+	tResult = cParser.GetStringLiteral(szDest, 4 KB, true, piLength, piWidth, false);
 	cParser.Kill();
 
 	return tResult;

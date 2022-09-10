@@ -32,7 +32,7 @@ import java.util.List; \n\
 import java.util.Map; \n\
 ";
 
-	cTokenParser.Init(szFilename, szFileContents, TRUE);
+	cTokenParser.Init(szFilename, szFileContents, true);
 	AssertTrue(cTokenParser.Parse());
 
 	cSyntaxMemory.Init();
@@ -67,9 +67,9 @@ void TestJavaSyntaxParserPackageError(void)
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
 	CChars						szOutput;
-	BOOL						bResult;
+	bool						bResult;
 
-	cTokenParser.Init(NULL, "package;", FALSE);
+	cTokenParser.Init(NULL, "package;", false);
 	AssertTrue(cTokenParser.Parse());
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
@@ -85,7 +85,7 @@ package;\n\
 	cTokenParser.Kill();
 
 
-	cTokenParser.Init(NULL, "package net.;", FALSE);
+	cTokenParser.Init(NULL, "package net.;", false);
 	AssertTrue(cTokenParser.Parse());
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
@@ -101,7 +101,7 @@ package net.;\n\
 	cTokenParser.Kill();
 
 
-	cTokenParser.Init(NULL, "package net.;", FALSE);
+	cTokenParser.Init(NULL, "package net.;", false);
 	AssertTrue(cTokenParser.Parse());
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
@@ -117,7 +117,7 @@ package net.;\n\
 	cTokenParser.Kill();
 
 
-	cTokenParser.Init(NULL, "package net.3.parse;", FALSE);
+	cTokenParser.Init(NULL, "package net.3.parse;", false);
 	AssertTrue(cTokenParser.Parse());
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
@@ -133,7 +133,7 @@ package net.3.parse;\n\
 	cTokenParser.Kill();
 
 
-	cTokenParser.Init(NULL, "package net", FALSE);
+	cTokenParser.Init(NULL, "package net", false);
 	AssertTrue(cTokenParser.Parse());
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
@@ -160,9 +160,9 @@ void TestJavaSyntaxParserImportError(void)
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
 	CChars						szOutput;
-	BOOL						bResult;
+	bool						bResult;
 
-	cTokenParser.Init(NULL, "import static net.simulation.common.TraceValue.*", FALSE);
+	cTokenParser.Init(NULL, "import static net.simulation.common.TraceValue.*", false);
 	AssertTrue(cTokenParser.Parse());
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
@@ -179,7 +179,7 @@ import static net.simulation.common.TraceValue.*\n\
 	cTokenParser.Kill();
 
 
-	cTokenParser.Init(NULL, "import static.simulation.common.TraceValue.*;", FALSE);
+	cTokenParser.Init(NULL, "import static.simulation.common.TraceValue.*;", false);
 	AssertTrue(cTokenParser.Parse());
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
@@ -196,8 +196,8 @@ import static.simulation.common.TraceValue.*;\n\
 	cTokenParser.Kill();
 
 
-	cTokenParser.Init(NULL, "import static ;", FALSE);
-	//cTokenParser.Init(NULL, "import static net.simulation.common.TraceValue.*", FALSE);
+	cTokenParser.Init(NULL, "import static ;", false);
+	//cTokenParser.Init(NULL, "import static net.simulation.common.TraceValue.*", false);
 	AssertTrue(cTokenParser.Parse());
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
@@ -214,8 +214,8 @@ import static ;\n\
 	cTokenParser.Kill();
 
 
-	cTokenParser.Init(NULL, "import static *;", FALSE);
-	//cTokenParser.Init(NULL, "import static net.simulation.common.TraceValue.*", FALSE);
+	cTokenParser.Init(NULL, "import static *;", false);
+	//cTokenParser.Init(NULL, "import static net.simulation.common.TraceValue.*", false);
 	AssertTrue(cTokenParser.Parse());
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
@@ -232,7 +232,7 @@ import static *;\n\
 	cTokenParser.Kill();
 
 
-	cTokenParser.Init(NULL, "import net.simulation.;", FALSE);
+	cTokenParser.Init(NULL, "import net.simulation.;", false);
 	AssertTrue(cTokenParser.Parse());
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
@@ -249,7 +249,7 @@ import net.simulation.;\n\
 	cTokenParser.Kill();
 
 
-	cTokenParser.Init(NULL, "import", FALSE);
+	cTokenParser.Init(NULL, "import", false);
 	AssertTrue(cTokenParser.Parse());
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());

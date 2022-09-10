@@ -20,17 +20,17 @@ void TestJavaTokenParserEndOfFile(void)
 	CJavaTokenMemory		cTokenMemory;
 	CJavaTokenDefinitions	cTokenDefinitions;
 	CJavaToken*				pcToken;
-	BOOL					bResult;
+	bool					bResult;
 	CLogger					cLogger;
 	STextPosition*			psPos;
 
 	cLogger.Init(NULL);
-	cLogger.SetSilent(TRUE); 
+	cLogger.SetSilent(true); 
 	cTokenMemory.Init();
 	cTokenDefinitions.Init();
 	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test1.Java", "{\n}");
 
-	bResult = cTokenParser.Parse(TRUE);
+	bResult = cTokenParser.Parse(true);
 	AssertTrue(bResult);
 
 	pcToken = cTokenParser.GetFirstToken();
@@ -68,7 +68,7 @@ void TestJavaTokenParserStartAndEndWithComment(void)
 	CLogger					cLogger;
 
 	cLogger.Init(NULL);
-	cLogger.SetSilent(TRUE);
+	cLogger.SetSilent(true);
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
 	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test2.Java", "\
@@ -123,7 +123,7 @@ void TestJavaTokenParserComplexGeneric(void)
 	CLogger					cLogger;
 
 	cLogger.Init(NULL);
-	cLogger.SetSilent(TRUE);
+	cLogger.SetSilent(true);
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
 	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test3.Java", "\
@@ -183,11 +183,11 @@ void TestJavaTokenParserLiterals(void)
 	CJavaTokenParser		cTokenParser;	
 	CJavaTokenMemory		cTokenMemory;
 	CJavaToken*				pcToken;
-	BOOL					bResult;
+	bool					bResult;
 	CLogger					cLogger;
 
 	cLogger.Init(NULL);
-	cLogger.SetSilent(TRUE);
+	cLogger.SetSilent(true);
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
 	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test4.Java", "\
@@ -205,7 +205,7 @@ void TestJavaTokenParserLiterals(void)
     return \"AND Gate\";\n\
   }\n");
 
-	bResult = cTokenParser.Parse(TRUE);
+	bResult = cTokenParser.Parse(true);
 	AssertTrue(bResult);
 
 	pcToken = cTokenParser.GetFirstToken();
@@ -287,16 +287,16 @@ void TestJavaTokenParserStringEscapeChars(void)
 	CJavaTokenDefinitions	cTokenDefinitions;
 	CJavaToken*				pcToken;
 	CChars					szPretty;
-	BOOL					bResult;;
+	bool					bResult;;
 	CLogger					cLogger;
 
 	cLogger.Init(NULL);
-	cLogger.SetSilent(TRUE);
+	cLogger.SetSilent(true);
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
 	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test5.Java", "return getType() + \" \\\"\" + name + \"\\\"\";");
 
-	bResult = cTokenParser.Parse(TRUE);
+	bResult = cTokenParser.Parse(true);
 	AssertTrue(bResult);
 
 	pcToken = cTokenParser.GetFirstToken();
@@ -337,12 +337,12 @@ void TestJavaTokenParserFiles(void)
 	CFileUtil				cFileUtil;
 	CChars					sz;
 	CTextFile				cFile;
-	BOOL					bResult;
+	bool					bResult;
 	CChars					szPretty;
 	CLogger					cLogger;
 
 	cLogger.Init(NULL);
-	cLogger.SetSilent(TRUE);
+	cLogger.SetSilent(true);
 	sz.Init();
 	cFileUtil.CurrentDirectory(&sz);
 	cFileUtil.AppendToPath(&sz, "Input");
@@ -356,7 +356,7 @@ void TestJavaTokenParserFiles(void)
 	cTokenMemory.Init();
 	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, sz.Text(), cFile.Text());
 
-	bResult = cTokenParser.Parse(TRUE);
+	bResult = cTokenParser.Parse(true);
 	AssertTrue(bResult);
 
 	cFile.Kill();
@@ -397,11 +397,11 @@ void TestJavaTokenParserSpecialOperators(void)
 	CJavaTokenMemory		cTokenMemory;
 	CJavaTokenDefinitions	cTokenDefinitions;
 	CChars					szPretty;
-	BOOL					bResult;;
+	bool					bResult;;
 	CLogger					cLogger;
 
 	cLogger.Init(NULL);
-	cLogger.SetSilent(TRUE);
+	cLogger.SetSilent(true);
 	cTokenDefinitions.Init();
 	cTokenMemory.Init();
 	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, "Test6.Java", "stream.forEach(System.out::println);");

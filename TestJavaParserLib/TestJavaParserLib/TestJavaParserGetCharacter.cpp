@@ -14,7 +14,7 @@ TRISTATE ParseCharacter(char* sz, uint16* pc, int* piWidth)
 	TRISTATE		tResult;
 
 	cParser.Init(sz);
-	tResult = cParser.GetCharacterLiteral(pc, TRUE, piWidth, FALSE);
+	tResult = cParser.GetCharacterLiteral(pc, true, piWidth, false);
 	cParser.Kill();
 
 	return tResult;

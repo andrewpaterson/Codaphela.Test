@@ -30,7 +30,7 @@ TRISTATE ParseFloat(char* sz, long double* pldf, int* piBase, int* piExponent, i
 	TRISTATE		tResult;
 
 	cParser.Init(sz);
-	tResult = cParser.GetFloatLiteral(pldf, FLOAT_PREFIX_ALL, piBase, FLOAT_SUFFIX_CPP, piSuffix, FLOAT_EXPONENT_ALL, piExponent, NUMBER_SEPARATOR_APOSTROPHE, piNumWholeDigits, piNumDecimalDigits, piNumExponentDigits, FALSE);
+	tResult = cParser.GetFloatLiteral(pldf, FLOAT_PREFIX_ALL, piBase, FLOAT_SUFFIX_CPP, piSuffix, FLOAT_EXPONENT_ALL, piExponent, NUMBER_SEPARATOR_APOSTROPHE, piNumWholeDigits, piNumDecimalDigits, piNumExponentDigits, false);
 	cParser.Kill();
 
 	return tResult;

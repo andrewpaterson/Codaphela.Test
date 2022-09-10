@@ -16,7 +16,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestJavaSyntaxParserGenericGeneric(void)
 {
-	BOOL						bResult;
+	bool						bResult;
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
@@ -27,7 +27,7 @@ public final class W65C816Assembler<List<List>>\n\
 }\n\
 ";
 
-	cTokenParser.Init(szFilename, szFileContents, TRUE);
+	cTokenParser.Init(szFilename, szFileContents, true);
 	AssertTrue(cTokenParser.Parse());
 
 	cSyntaxMemory.Init();
@@ -35,7 +35,7 @@ public final class W65C816Assembler<List<List>>\n\
 
 	bResult = cSyntaxParser.Parse();
 	AssertTrue(bResult);
-	cSyntaxParser.Dump(TRUE);
+	cSyntaxParser.Dump(true);
 
 	cSyntaxParser.Kill();
 	cSyntaxMemory.Kill();
@@ -49,7 +49,7 @@ public final class W65C816Assembler<List<List>>\n\
 //////////////////////////////////////////////////////////////////////////
 void TestJavaSyntaxParserGenericExtends(void)
 {
-	BOOL						bResult;
+	bool						bResult;
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
@@ -60,7 +60,7 @@ public final class W65C816Assembler<X extends Integer>\n\
 }\n\
 ";
 
-	cTokenParser.Init(szFilename, szFileContents, TRUE);
+	cTokenParser.Init(szFilename, szFileContents, true);
 	AssertTrue(cTokenParser.Parse());
 
 	cSyntaxMemory.Init();
@@ -68,7 +68,7 @@ public final class W65C816Assembler<X extends Integer>\n\
 
 	bResult = cSyntaxParser.Parse();
 	AssertTrue(bResult);
-	cSyntaxParser.Dump(TRUE);
+	cSyntaxParser.Dump(true);
 
 	cSyntaxParser.Kill();
 	cSyntaxMemory.Kill();
@@ -82,7 +82,7 @@ public final class W65C816Assembler<X extends Integer>\n\
 //////////////////////////////////////////////////////////////////////////
 void TestJavaSyntaxParserGenericWildcard(void)
 {
-	BOOL						bResult;
+	bool						bResult;
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
@@ -93,7 +93,7 @@ public final class W65C816Assembler<? extends Map<?, ?>>\n\
 }\n\
 ";
 
-	cTokenParser.Init(szFilename, szFileContents, TRUE);
+	cTokenParser.Init(szFilename, szFileContents, true);
 	AssertTrue(cTokenParser.Parse());
 
 	cSyntaxMemory.Init();
@@ -101,7 +101,7 @@ public final class W65C816Assembler<? extends Map<?, ?>>\n\
 
 	bResult = cSyntaxParser.Parse();
 	AssertTrue(bResult);
-	cSyntaxParser.Dump(TRUE);
+	cSyntaxParser.Dump(true);
 
 	cSyntaxParser.Kill();
 	cSyntaxMemory.Kill();
@@ -115,7 +115,7 @@ public final class W65C816Assembler<? extends Map<?, ?>>\n\
 //////////////////////////////////////////////////////////////////////////
 void TestJavaSyntaxParserGenericComplex(void)
 {
-	BOOL						bResult;
+	bool						bResult;
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
@@ -126,7 +126,7 @@ public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>, ? ex
 }\n\
 ";
 
-	cTokenParser.Init(szFilename, szFileContents, TRUE);
+	cTokenParser.Init(szFilename, szFileContents, true);
 	AssertTrue(cTokenParser.Parse());
 
 	cSyntaxMemory.Init();
@@ -134,7 +134,7 @@ public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>, ? ex
 
 	bResult = cSyntaxParser.Parse();
 	AssertTrue(bResult);
-	cSyntaxParser.Dump(TRUE);
+	cSyntaxParser.Dump(true);
 
 	cSyntaxParser.Kill();
 	cSyntaxMemory.Kill();
@@ -148,7 +148,7 @@ public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>, ? ex
 //////////////////////////////////////////////////////////////////////////
 void TestJavaSyntaxParserGenericError(void)
 {
-	BOOL						bResult;
+	bool						bResult;
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
@@ -162,7 +162,7 @@ public final class W65C816Assembler<List \n\
 }\n\
 ";
 
-	cTokenParser.Init(szFilename, szFileContents, FALSE);
+	cTokenParser.Init(szFilename, szFileContents, false);
 	AssertTrue(cTokenParser.Parse());
 
 	cSyntaxMemory.Init();

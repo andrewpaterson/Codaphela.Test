@@ -44,7 +44,7 @@ public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>>\n\
 }\n\
 ";
 
-	cTokenParser.Init(szFilename, szFileContents, FALSE);
+	cTokenParser.Init(szFilename, szFileContents, false);
 	AssertTrue(cTokenParser.Parse());
 
 	cSyntaxMemory.Init();

@@ -22,7 +22,7 @@ void PrettyPrintFile(char* szFilename)
 	CJavaTokenParser		cTokenParser;
 	CJavaTokenMemory		cTokenMemory;
 	CTextFile				cFile;
-	BOOL					bResult;
+	bool					bResult;
 	CChars					szPretty;
 	CLogger					cLogger;
 
@@ -36,7 +36,7 @@ void PrettyPrintFile(char* szFilename)
 	cTokenMemory.Init();
 	cTokenParser.Init(&cLogger, &cTokenDefinitions, &cTokenMemory, szFilename, cFile.Text());
 
-	bResult = cTokenParser.Parse(TRUE);
+	bResult = cTokenParser.Parse(true);
 	AssertTrue(bResult);
 
 	cFile.Kill();
@@ -77,7 +77,7 @@ void TestJavaProjectTokenParser(void)
 	sz.Init("D:" _FS_ "Work" _FS_ "658-Computer" _FS_ "logi65816" _FS_ "src");
 
 	aszJavaFilenames.Init();
-	cFileUtil.FindFilesWithExtension(sz.Text(), "java", &aszJavaFilenames, TRUE);
+	cFileUtil.FindFilesWithExtension(sz.Text(), "java", &aszJavaFilenames, true);
 	sz.Kill();
 
 	for (i = 0; i < aszJavaFilenames.NumElements(); i++)

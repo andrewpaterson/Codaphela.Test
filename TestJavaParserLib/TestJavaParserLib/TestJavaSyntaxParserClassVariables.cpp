@@ -38,7 +38,7 @@ class Clazz\n\
 }\n\
 ";
 
-	cTokenParser.Init(szFilename, szFileContents, FALSE);
+	cTokenParser.Init(szFilename, szFileContents, false);
 	AssertTrue(cTokenParser.Parse());
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
@@ -138,7 +138,7 @@ class Clazz<Y>\n\
 }\n\
 ";
 
-	cTokenParser.Init(szFilename, szFileContents, FALSE);
+	cTokenParser.Init(szFilename, szFileContents, false);
 	AssertTrue(cTokenParser.Parse());
 	cSyntaxMemory.Init();
 	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
@@ -268,7 +268,7 @@ class Clazz\n\
 }\n\
 ";
 
-	cTokenParser.Init(szFilename, szFileContents, FALSE);
+	cTokenParser.Init(szFilename, szFileContents, false);
 	AssertTrue(cTokenParser.Parse());
 
 	cSyntaxMemory.Init();
