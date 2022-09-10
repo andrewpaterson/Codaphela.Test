@@ -8,7 +8,6 @@
 #include "CoreLib/DurableFileController.h"
 #include "CoreLib/NamedIndexes.h"
 #include "CoreLib/ValueNamedIndexesConfig.h"
-#include "StandardLib/BaseObject.h"
 #include "TestLib/Words.h"
 #include "TestLib/Assert.h"
 
@@ -22,14 +21,14 @@ void TestNamedIndexesAdd(void)
 	CNamedIndexes						cNamedIndexes;
 	CDurableFileController				cController;
 	CFileUtil							cFileUtil;
-	BOOL								bResult;
+	bool								bResult;
 	char								szDirectory[] = "Output" _FS_ "NamedIndexes" _FS_ "1";
 	char								szRewriteDirectory[] = "Output" _FS_ "_NamedIndexes" _FS_ "1";
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 	CLifeInit<CNamedIndexesConfig>		cConfig;
 	SLogConfig							sLogConfig;
 
-	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
+	cFileUtil.MakeDirs(true, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
 	cController.Begin();
@@ -109,13 +108,13 @@ void TestNamedIndexesRemove(void)
 	CNamedIndexes						cNamedIndexes;
 	CDurableFileController				cController;
 	CFileUtil							cFileUtil;
-	BOOL								bResult;
+	bool								bResult;
 	char								szDirectory[] = "Output" _FS_ "NamedIndexes" _FS_ "2";
 	char								szRewriteDirectory[] = "Output" _FS_ "_NamedIndexes" _FS_ "2";
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 	CLifeInit<CNamedIndexesConfig>		cConfig;
 
-	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
+	cFileUtil.MakeDirs(true, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
 	cController.Begin();
@@ -210,14 +209,14 @@ void TestNamedIndexesCacheEviction(void)
 	CNamedIndexes						cNamedIndexes;
 	CDurableFileController				cController;
 	CFileUtil							cFileUtil;
-	BOOL								bResult;
+	bool								bResult;
 	char								szDirectory[] = "Output" _FS_ "NamedIndexes" _FS_ "3";
 	char								szRewriteDirectory[] = "Output" _FS_ "_NamedIndexes" _FS_ "3";
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 	CLifeInit<CNamedIndexesConfig>		cConfig;
 	SLogConfig							sLogConfig;
 
-	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
+	cFileUtil.MakeDirs(true, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
 	cController.Begin();
@@ -311,7 +310,7 @@ void TestNamedIndexesLoad(void)
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 	CLifeInit<CNamedIndexesConfig>		cConfig;
 
-	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
+	cFileUtil.MakeDirs(true, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
 	AssertTrue(cController.Begin());
@@ -462,7 +461,7 @@ void TestNamedIndexesMoreCacheEviction(void)
 	cRandom.Init(9824375);
 	aszNames.Init();
 
-	cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
+	cFileUtil.MakeDirs(true, szDirectory, szRewriteDirectory, NULL);
 
 	cEvictionStrategy.Init(67);
 	cEvictionCounter.Init();

@@ -17,7 +17,7 @@ void TestIndexTreeWriterWrite(void)
 	char*					pvData;
 	char*					pvKey;
 	int						iDataSize;
-	BOOL					bExists;
+	bool					bExists;
 	int						iKeyLength;
 	CIndexTreeMemory		cIndexTree;
 	CIndexTreeMemoryAccess	cAccess;
@@ -27,7 +27,7 @@ void TestIndexTreeWriterWrite(void)
 	CFileUtil				cFileUtil;
 	char					szDirectory[] = "Output" _FS_ "IndexTreeMemoryWriter";
 
-	cMap.Init(3);
+	cMap.Init();
 	cMap.Put("AA", "nutritious");
 	cMap.Put("AAA", "follow");
 	cMap.Put("AB", "lighten");

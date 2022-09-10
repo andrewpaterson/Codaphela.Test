@@ -16,7 +16,7 @@ void TestIndexedFileWrite(void)
 	CFileUtil					cFileUtil;
 	CChars						szWrite;
 	CChars						szRewrite;
-	BOOL						bResult;
+	bool						bResult;
 	char						sz1[] = "12345678";
 	char						sz2[] = "ABCDEFGH";
 	char						sz3[] = "iopfghjk";
@@ -26,7 +26,7 @@ void TestIndexedFileWrite(void)
 	char						szDirectory[] = "Output" _FS_ "IndexedFile";
 	char						szRewriteDirectory[] = "Output" _FS_ "_IndexedFile";
 
-	bResult = cFileUtil.MakeDirs(TRUE, szDirectory, szRewriteDirectory, NULL);
+	bResult = cFileUtil.MakeDirs(true, szDirectory, szRewriteDirectory, NULL);
 	AssertTrue(bResult);
 
 	szWrite.Init("Output" _FS_ "IndexedFile" _FS_ "File.DAT");

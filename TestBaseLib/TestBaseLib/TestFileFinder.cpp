@@ -42,7 +42,7 @@ void TestFileFinder(void)
 	aszFiles.Kill();
 
 	aszFiles.Init();
-	cFileUtil.FindFilesWithExtension("Finder", "rar", &aszFiles, TRUE);
+	cFileUtil.FindFilesWithExtension("Finder", "rar", &aszFiles, true);
 	AssertInt(6, aszFiles.NumElements());
 	AssertFilePath("Finder" _FS_ "Lord" _FS_ "1.rar", aszFiles.Get(0)->Text());
 	AssertFilePath("Finder" _FS_ "Rising" _FS_ "2.rar", aszFiles.Get(1)->Text());
@@ -53,7 +53,7 @@ void TestFileFinder(void)
 	aszFiles.Kill();
 
 	aszFiles.Init();
-	cFileUtil.FindAllFiles("Finder", &aszFiles, TRUE);
+	cFileUtil.FindAllFiles("Finder", &aszFiles, true);
 	AssertInt(12, aszFiles.NumElements());
 	aszFiles.Kill();
 

@@ -55,7 +55,7 @@ void TestLinkedListTemplateWrite(void)
 	CFileUtil					cFileUtil;
 	char						szDirectory[] = "Output" _FS_ "LinkedListTemplate";
 	char						szFile[] = "Output" _FS_ "LinkedListTemplate" _FS_ "Test.DAT";
-	BOOL						b;
+	bool						b;
 	int64*						plli;
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -70,7 +70,7 @@ void TestLinkedListTemplateWrite(void)
 	pcDisk = DiskFile(szFile);
 	AssertTrue(pcDisk->Open(EFM_Write_Create));
 	cFile.Init(pcDisk);
-	AssertTrue(cFile.WriteBool(TRUE));
+	AssertTrue(cFile.WriteBool(true));
 	AssertTrue(cList.Write(&cFile));
 	AssertTrue(pcDisk->Close());
 	cFile.Kill();

@@ -10,7 +10,7 @@
 void TestFileUtilMisc(void)
 {
 	CFileUtil	cFileUtil;
-	BOOL		bResult;
+	bool		bResult;
 	CChars		szPath;
 
 	szPath.Init("TestFileUtil");
@@ -69,7 +69,7 @@ void TestFileUtilNaming(void)
 
 	sz.Init("c:\\Documents and Settings\\Joe\\..\\..\\");
 	cFileUtil.CollapsePath(&sz);
-	AssertStringCase("C:\\", sz.Text(), FALSE);
+	AssertStringCase("C:\\", sz.Text(), false);
 	sz.Kill();
 
 	sz.Init("\\Documents\\and\\Settings\\..\\..\\Joe");
@@ -196,7 +196,7 @@ void TestFileUtilMakeDirectory(void)
 	CArrayChars		aszFiles;
 	CChars			szParentDirectory;
 	CChars			szCurrentDirectory;
-	BOOL			bResult;
+	bool			bResult;
 
 	cFileUtil.RemoveDir("file_util");
 
@@ -211,7 +211,7 @@ void TestFileUtilMakeDirectory(void)
 	bResult = cFileUtil.Touch(szFilename.Text());
 	AssertFalse(bResult);
 
-	bResult = cFileUtil.TouchDir(szDirectory.Text(), FALSE);
+	bResult = cFileUtil.TouchDir(szDirectory.Text(), false);
 	AssertTrue(bResult);
 
 	szCurrentDirectory.Init();
@@ -220,7 +220,7 @@ void TestFileUtilMakeDirectory(void)
 	szCurrentDirectory.Append(szDirectory);
 
 	aszFiles.Init();
-	cFileUtil.FindAllDirectories(szParentDirectory.Text(), &aszFiles, FALSE);
+	cFileUtil.FindAllDirectories(szParentDirectory.Text(), &aszFiles, false);
 	AssertInt(1, aszFiles.NumElements());
 	AssertString(szCurrentDirectory.Text(), aszFiles.GetText(0));
 	aszFiles.Kill();
@@ -299,7 +299,7 @@ void TestFileUtilTouchDirectory(void)
 	cFileUtil.FullPath(&szDirectory);
 	szFilename.Init(szDirectory);
 	cFileUtil.AppendToPath(&szFilename, "Warthog.PIG");
-	AssertTrue(cFileUtil.TouchDir(szFilename.Text(), TRUE));
+	AssertTrue(cFileUtil.TouchDir(szFilename.Text(), true));
 	AssertTrue(cFileUtil.Touch(szFilename.Text()));
 
 	szDirectory.Kill();
@@ -307,13 +307,13 @@ void TestFileUtilTouchDirectory(void)
 
 	cFileUtil.RemoveDir("file_util");
 
-	AssertFalse(cFileUtil.TouchDir("C:\\Warthog.PIG", TRUE));
-	AssertFalse(cFileUtil.TouchDir("\\Warthog.PIG", TRUE));
+	AssertFalse(cFileUtil.TouchDir("C:\\Warthog.PIG", true));
+	AssertFalse(cFileUtil.TouchDir("\\Warthog.PIG", true));
 
 	szDirectory.Init();
 	cFileUtil.CurrentDirectory(&szDirectory);
 	szDirectory.Append("War-pig.hog");
-	AssertFalse(cFileUtil.TouchDir(szDirectory.Text(), TRUE));
+	AssertFalse(cFileUtil.TouchDir(szDirectory.Text(), true));
 	szDirectory.Kill();
 }
 
@@ -328,11 +328,11 @@ void TestFileUtilTouchDirectoryOnlyFilename(void)
 	CChars			szDirectory;
 
 	szDirectory.Init("War-pig.hog");
-	AssertFalse(cFileUtil.TouchDir(szDirectory.Text(), TRUE));
+	AssertFalse(cFileUtil.TouchDir(szDirectory.Text(), true));
 	szDirectory.Kill();
 
 	szDirectory.Init("C:\\War-pig.hog");
-	AssertFalse(cFileUtil.TouchDir(szDirectory.Text(), TRUE));
+	AssertFalse(cFileUtil.TouchDir(szDirectory.Text(), true));
 	szDirectory.Kill();
 }
 

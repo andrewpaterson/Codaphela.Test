@@ -85,7 +85,7 @@ void TestIndexTreeFileInit(void)
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
 
-	cHelper.Init("Output" _FS_"QuakeMinusOne", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"QuakeMinusOne", "primary", "backup", true);
 
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
@@ -97,7 +97,7 @@ void TestIndexTreeFileInit(void)
 	cController.Kill();
 
 	cHelper.RemoveWorkingDirectory();
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -116,14 +116,14 @@ void TestIndexTreeFileAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKe
 	CTestIndexTreeObject		aaa;
 	CTestIndexTreeObject		ab;
 	CTestIndexTreeObject		aab;
-	BOOL						bResult;
+	bool						bResult;
 	CIndexTreeNodeFile* pcNode;
 	CTestIndexTreeObject** ppvTest;
 	SIndexTreeFileUnsafeIterator		sIter;
-	BOOL						bContinue;
+	bool						bContinue;
 	size_t						iSize;
 
-	cHelper.Init("Output" _FS_"IndexTree0", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree0", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -222,7 +222,7 @@ void TestIndexTreeFileAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKe
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -237,12 +237,12 @@ void TestIndexTreeFileGetNodeKey(void)
 	CTestIndexTreeFile			cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	CTestIndexTreeObject		a;
-	BOOL						bResult;
+	bool						bResult;
 	CIndexTreeNodeFile*			pcNode;
 	int							iSize;
 	char						szKey[7];
 
-	cHelper.Init("Output" _FS_"IndexTree0a", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree0a", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -268,7 +268,7 @@ void TestIndexTreeFileGetNodeKey(void)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -285,7 +285,7 @@ void TestIndexTreeFileAddLongKeys(EIndexWriteThrough eWriteThrough, EIndexKeyRev
 	CTestIndexTreeObject		szAmicable;
 	CTestIndexTreeObject		szAmigo;
 
-	cHelper.Init("Output" _FS_"IndexTree0b", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree0b", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -308,7 +308,7 @@ void TestIndexTreeFileAddLongKeys(EIndexWriteThrough eWriteThrough, EIndexKeyRev
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -323,11 +323,11 @@ void TestIndexTreeFileAddSimple(EIndexWriteThrough eWriteThrough, EIndexKeyRever
 	CTestIndexTreeFile			cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	CTestIndexTreeObject		ab;
-	BOOL						bResult;
+	bool						bResult;
 	CIndexTreeNodeFile*			pcNode;
 	CTestIndexTreeObject**		ppvTest;
 
-	cHelper.Init("Output" _FS_"IndexTree0c", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree0c", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -351,7 +351,7 @@ void TestIndexTreeFileAddSimple(EIndexWriteThrough eWriteThrough, EIndexKeyRever
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -367,12 +367,12 @@ void TestIndexTreeFileNoCacheEviction(void)
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
 	SIndexTreeFileUnsafeIterator	sIter;
-	BOOL					bContinue;
+	bool					bContinue;
 	char*					szData;
 	size_t					iSize;
 	SLogConfig				sLogConfig;
 
-	cHelper.Init("Output" _FS_"IndexTree1", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree1", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -517,7 +517,7 @@ void TestIndexTreeFileNoCacheEviction(void)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -543,7 +543,7 @@ void TestIndexTreeFileResizeData(void)
 	CMemoryAllocator		cAllocator;
 	CGeneralMemory*			pcMemory;
 
-	cHelper.Init("Output" _FS_"IndexTree2", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree2", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cAllocator.Init();
@@ -580,15 +580,15 @@ void TestIndexTreeFileResizeData(void)
 	AssertString(szAObject, GetString(&cAccess, "A"));
 
 	pcRoot = cIndexTree.GetRoot();
-	sz.Init(); pcRoot->Print(&sz, FALSE);
+	sz.Init(); pcRoot->Print(&sz, false);
 	AssertString("0:255 .................................................................X..............................................................................................................................................................................................", sz.Text()); sz.Kill();
 	pcNode = pcRoot->Get('A')->u.mpcMemory;
-	sz.Init(); pcNode->Print(&sz, FALSE);
+	sz.Init(); pcNode->Print(&sz, false);
 	AssertString("65:67 (18) X.X", sz.Text()); sz.Kill();
-	sz.Init(); pcNode->Get('A')->u.mpcMemory->Print(&sz, FALSE);
+	sz.Init(); pcNode->Get('A')->u.mpcMemory->Print(&sz, false);
 	AssertString("0:0 (6)", sz.Text()); sz.Kill();
 	AssertFalse(pcNode->Get('B')->IsValid());
-	sz.Init(); pcNode->Get('C')->u.mpcMemory->Print(&sz, FALSE);
+	sz.Init(); pcNode->Get('C')->u.mpcMemory->Print(&sz, false);
 	AssertString("0:0 (8)", sz.Text()); sz.Kill();
 
 	cController.End();
@@ -599,7 +599,7 @@ void TestIndexTreeFileResizeData(void)
 	AssertLongLongInt(0, pcMemory->GetTotalAllocatedMemory());
 	cAllocator.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -616,7 +616,7 @@ void TestIndexTreeFileRemoveNearestFirstFlushed(void)
 	CDurableFileController	cController;
 	CIndexTreeFileAccess	cAccess;
 
-	cHelper.Init("Output" _FS_"IndexTree3", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree3", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -673,7 +673,7 @@ void TestIndexTreeFileRemoveNearestFirstFlushed(void)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -690,7 +690,7 @@ void TestIndexTreeFileRemoveNearestFirst(EIndexWriteThrough eWriteThrough)
 	CDurableFileController	cController;
 	CIndexTreeFileAccess	cAccess;
 
-	cHelper.Init("Output" _FS_"IndexTree3", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree3", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -724,7 +724,7 @@ void TestIndexTreeFileRemoveNearestFirst(EIndexWriteThrough eWriteThrough)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -742,7 +742,7 @@ void TestIndexTreeFileRemoveFurthestFirst(EIndexWriteThrough eWriteThrough)
 	CDurableFileController	cController;
 	CIndexTreeFileAccess	cAccess;
 
-	cHelper.Init("Output" _FS_"IndexTree3a", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree3a", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -786,7 +786,7 @@ void TestIndexTreeFileRemoveFurthestFirst(EIndexWriteThrough eWriteThrough)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -805,7 +805,7 @@ void TestIndexTreeFileRemove(EIndexWriteThrough eWriteThrough)
 	CIndexedFile*			pcFile;
 	CArrayBit				ab;
 
-	cHelper.Init("Output" _FS_"IndexTree3b", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree3b", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -884,7 +884,7 @@ void TestIndexTreeFileRemove(EIndexWriteThrough eWriteThrough)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -894,7 +894,7 @@ void TestIndexTreeFileRemove(EIndexWriteThrough eWriteThrough)
 //////////////////////////////////////////////////////////////////////////
 void InitTestIndexTreeFileFlushDirtyAndDeleted(CIndexTreeHelper* pcHelper, CIndexTreeFileAccess* pcAccess, CTestIndexTreeFile* pcIndexTree, CDurableFileController* pcController)
 {
-	pcHelper->Init("Output" _FS_"IndexTree3c", "primary", "backup", TRUE);
+	pcHelper->Init("Output" _FS_"IndexTree3c", "primary", "backup", true);
 	pcController->Init(pcHelper->GetPrimaryDirectory(), pcHelper->GetBackupDirectory());
 
 	pcController->Begin();
@@ -921,7 +921,7 @@ void KillTestIndexTreeFileFlushDirtyAndDeleted(CIndexTreeHelper* pcHelper, CInde
 	pcController->Kill();
 	pcAccess->Kill();
 
-	pcHelper->Kill(TRUE);
+	pcHelper->Kill(true);
 }
 
 
@@ -1023,7 +1023,7 @@ void TestIndexTreeFileRemoveAndEvict(void)
 	CIndexedFile*			pcFile;
 	CArrayBit				ab;
 
-	cHelper.Init("Output" _FS_"IndexTree3d", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree3d", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -1101,7 +1101,7 @@ void TestIndexTreeFileRemoveAndEvict(void)
 	cController.Kill();
 	cAccess.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -1123,7 +1123,7 @@ void TestIndexTreeFileRemoveAndFlush(void)
 	char						szDest[16];
 
 	cAllocator.Init();
-	cHelper.Init("Output" _FS_"IndexTree3e", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree3e", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -1174,7 +1174,7 @@ void TestIndexTreeFileRemoveAndFlush(void)
 	cController.Kill();
 	cAllocator.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 	cAccess.Kill();
 }
 
@@ -1193,7 +1193,7 @@ void TestIndexTreeFileDeleteInMemory(void)
 	CDurableFileController	cController;
 	CIndexTreeFileAccess	cAccess;
 	
-	cHelper.Init("Output" _FS_"IndexTree4", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree4", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -1242,7 +1242,7 @@ void TestIndexTreeFileDeleteInMemory(void)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -1271,7 +1271,7 @@ void TestIndexTreeFileFindKey(void)
 	CArrayVoidPtr			apvNodes;
 	CListCharsMinimal*		paszKeyNames;
 
-	cHelper.Init("Output" _FS_"IndexTree5", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree5", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -1367,7 +1367,7 @@ void TestIndexTreeFileFindKey(void)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -1385,7 +1385,7 @@ void TestIndexTreeFileDirty(void)
 	CDurableFileController	cController;
 	CIndexTreeFileAccess	cAccess;
 
-	cHelper.Init("Output" _FS_"IndexTree6", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree6", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -1411,7 +1411,7 @@ void TestIndexTreeFileDirty(void)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -1425,12 +1425,12 @@ void TestIndexTreeFileReplaceData(void)
 	CDurableFileController		cController;
 	CIndexTreeFile				cIndexTree;
 	CIndexTreeFileAccess		cAccess;
-	BOOL						bResult;
+	bool						bResult;
 	char						acData[5];
 	char						acResult[5];
 	size_t						iDataSize;
 
-	cHelper.Init("Output" _FS_"IndexTree7", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree7", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -1461,7 +1461,7 @@ void TestIndexTreeFileReplaceData(void)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -1478,9 +1478,9 @@ void TestIndexTreeFileAddUnallocated(void)
 	CTestIndexTreeObject		a;
 	CTestIndexTreeObject		b;
 	CTestIndexTreeObject		c;
-	BOOL						bResult;
+	bool						bResult;
 
-	cHelper.Init("Output" _FS_"IndexTree8", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree8", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -1512,7 +1512,7 @@ void TestIndexTreeFileAddUnallocated(void)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -1532,7 +1532,7 @@ void TestIndexTreeFileRemoveThenDirty(void)
 	char					sz[MAX_DATA_SIZE];
 	CIndexTreeNodeFile*		pcNode;
 
-	cHelper.Init("Output" _FS_"IndexTree9", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree9", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -1586,7 +1586,7 @@ void TestIndexTreeFileRemoveThenDirty(void)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -1604,7 +1604,7 @@ void TestIndexTreeFileAddThenAdd(void)
 	CTestIndexTreeObject		b;
 	char						sz[MAX_DATA_SIZE];
 
-	cHelper.Init("Output" _FS_"IndexTree9a", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree9a", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -1648,7 +1648,7 @@ void TestIndexTreeFileAddThenAdd(void)
 	cAccess.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -1705,7 +1705,7 @@ void TestIndexTreeFileRemoveBeforeFlush(void)
 	CArrayChars				acFiles;
 	CIndexTreeNodeFile*		pcNode;
 
-	cHelper.Init("Output" _FS_"IndexTree9b", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree9b", "primary", "backup", true);
 	szDirectory = cHelper.GetPrimaryDirectory();
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 	cAccess.Init(&cIndexTree);
@@ -1863,7 +1863,7 @@ void TestIndexTreeFileRemoveBeforeFlush(void)
 	AssertIndexFileEmpty("Output/IndexTree9b/primary/23_0.IDAT");
 	AssertIndexFileEmpty("Output/IndexTree9b/primary/21_0.IDAT");
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -1883,7 +1883,7 @@ void TestIndexTreeFileRead(void)
 	int							iNewFile;
 	CIndexedFile*				pcFile;
 
-	cHelper.Init("Output" _FS_"IndexTreeA", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeA", "primary", "backup", true);
 	cHelper.RemoveWorkingDirectory();
 
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
@@ -1974,7 +1974,7 @@ void TestIndexTreeFileRead(void)
 	AssertTrue(cAccess.Kill());
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -1991,7 +1991,7 @@ void TestIndexTreeFileDeleteOnDisk(void)
 	char					sz[MAX_DATA_SIZE];
 	CIndexTreeNodeFile*		pcNode;
 
-	cHelper.Init("Output" _FS_"IndexTreeB", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeB", "primary", "backup", true);
 	cHelper.RemoveWorkingDirectory();
 
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
@@ -2020,7 +2020,7 @@ void TestIndexTreeFileDeleteOnDisk(void)
 
 	cAccess.Kill();
 	cController.Kill();
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -2037,11 +2037,11 @@ void TestIndexTreeFileComplex(void)
 	char						sz[MAX_DATA_SIZE];
 	CMapStringString			cMap;
 	SMapIterator				sIter;
-	BOOL						bHasNext;
+	bool						bHasNext;
 	char*						szKey;
 	char*						szValue;
 
-	cMap.Init(32);
+	cMap.Init();
 
 	cMap.Put("bane", "poison");
 	cMap.Put("baseborn", "of low birth or social standing");
@@ -2089,7 +2089,7 @@ void TestIndexTreeFileComplex(void)
 	cMap.Put("drab", "a slovenly woman");
 	cMap.Put("drought", "thirst");
 
-	cHelper.Init("Output" _FS_"IndexTreeC", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeC", "primary", "backup", true);
 	cHelper.RemoveWorkingDirectory();
 
 	//////////////////////////////////////////////////////////////////////////////////////
@@ -2146,7 +2146,7 @@ void TestIndexTreeFileComplex(void)
 
 	cMap.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -2162,10 +2162,10 @@ void TestIndexTreeFileAddToRoot(void)
 	CIndexTreeFileAccess		cAccess;
 	CTestIndexTreeObject		a;
 	CTestIndexTreeObject		b;
-	BOOL						bResult;
+	bool						bResult;
 
 	//This is supposed to be checking that the nodes indexed in file are in sync with the nodes pointed to in memory.
-	cHelper.Init("Output" _FS_"IndexTreeD", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeD", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -2191,7 +2191,7 @@ void TestIndexTreeFileAddToRoot(void)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -2207,7 +2207,7 @@ void TestIndexTreeFileMemorySize(void)
 	CIndexTreeFileAccess		cAccess;
 	CTestIndexTreeObject		aaa;
 	CTestIndexTreeObject		aab;
-	BOOL						bResult;
+	bool						bResult;
 	size_t						tNodeSize;
 	size_t						tDataNodeSize;
 	size_t						tNodePtrSize;
@@ -2216,7 +2216,7 @@ void TestIndexTreeFileMemorySize(void)
 	size_t						tFiveNodesSize;
 	int							iNumNodes;
 
-	cHelper.Init("Output" _FS_"IndexTreeE", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeE", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -2265,7 +2265,7 @@ void TestIndexTreeFileMemorySize(void)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -2289,7 +2289,7 @@ void TestIndexTreeFileEvictNew(EIndexWriteThrough eWriteThrough)
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
 
-	cHelper.Init("Output" _FS_"IndexTreeF", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeF", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -2352,7 +2352,7 @@ void TestIndexTreeFileEvictNew(EIndexWriteThrough eWriteThrough)
 	cController.Kill();
 	cAllocator.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -2377,7 +2377,7 @@ void TestIndexTreeFileEvictDirty(EIndexWriteThrough eWriteThrough)
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
 
-	cHelper.Init("Output" _FS_"IndexTreeFa", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeFa", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -2390,7 +2390,7 @@ void TestIndexTreeFileEvictDirty(EIndexWriteThrough eWriteThrough)
 	cAccess.PutStringString("AAAB", "Abland");
 	AssertTrue(cAccess.Flush());
 	AssertInt(4, cIndexTree.NumMemoryElements());
-	AssertTrue(cIndexTree.ValidateIndexTree(FALSE));
+	AssertTrue(cIndexTree.ValidateIndexTree(false));
 
 	cAccess.PutStringString("AAA", "South");
 	cAccess.PutStringString("AAAAA", "Dome");
@@ -2404,11 +2404,11 @@ void TestIndexTreeFileEvictDirty(EIndexWriteThrough eWriteThrough)
 	AssertTrue(cAccess.EvictString("AAAB"));
 	AssertInt(2, cIndexTree.NumMemoryElements());
 	AssertTrue(cAccess.EvictString("AAA"));
-	AssertTrue(cIndexTree.ValidateIndexTree(FALSE));
+	AssertTrue(cIndexTree.ValidateIndexTree(false));
 	AssertInt(1, cIndexTree.NumMemoryElements());
 	AssertTrue(cAccess.EvictString("A"));
 	AssertInt(0, cIndexTree.NumMemoryElements());
-	AssertTrue(cIndexTree.ValidateIndexTree(FALSE));
+	AssertTrue(cIndexTree.ValidateIndexTree(false));
 
 	cController.End();
 
@@ -2417,7 +2417,7 @@ void TestIndexTreeFileEvictDirty(EIndexWriteThrough eWriteThrough)
 	cController.Kill();
 	cAllocator.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -2527,7 +2527,7 @@ void TestIndexTreeFileEvictComplexEvictCloseGet(void)
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
 	
-	cHelper.Init("Output" _FS_"IndexTreeG", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeG", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	TestIndexTreeFileEvictComplexSetup(&cController, &cIndexTree, &cAllocator);
@@ -2588,7 +2588,7 @@ void TestIndexTreeFileEvictComplexEvictCloseGet(void)
 
 	cController.Kill();
 	cAllocator.Kill();
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -2615,7 +2615,7 @@ void TestIndexTreeFileEvictComplexEvictGetClose(void)
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
 
-	cHelper.Init("Output" _FS_"IndexTreeG", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeG", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	TestIndexTreeFileEvictComplexSetup(&cController, &cIndexTree, &cAllocator);
@@ -2651,7 +2651,7 @@ void TestIndexTreeFileEvictComplexEvictGetClose(void)
 	cAllocator.Kill();
 	cAccess.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -2678,7 +2678,7 @@ void TestIndexTreeFileEvictComplexEvictOdd(void)
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
 
-	cHelper.Init("Output" _FS_"IndexTreeG", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeG", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	TestIndexTreeFileEvictComplexSetup(&cController, &cIndexTree, &cAllocator);
@@ -2733,7 +2733,7 @@ void TestIndexTreeFileEvictComplexEvictOdd(void)
 	cAllocator.Kill();
 	cAccess.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -2760,7 +2760,7 @@ void TestIndexTreeFileEvictComplexEvictEven(void)
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
 
-	cHelper.Init("Output" _FS_"IndexTreeG", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeG", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	TestIndexTreeFileEvictComplexSetup(&cController, &cIndexTree, &cAllocator);
@@ -2810,7 +2810,7 @@ void TestIndexTreeFileEvictComplexEvictEven(void)
 	cAllocator.Kill();
 	cAccess.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -2837,7 +2837,7 @@ void TestIndexTreeFileFlushNodes(void)
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
 
-	cHelper.Init("Output" _FS_"IndexTreeH", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeH", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	TestIndexTreeFileEvictComplexSetup(&cController, &cIndexTree, &cAllocator);
@@ -2875,7 +2875,7 @@ void TestIndexTreeFileFlushNodes(void)
 	cAllocator.Kill();
 	cAccess.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -2897,7 +2897,7 @@ void TestIndexTreeFileRemoveComplex(EIndexWriteThrough eWriteThrough, EIndexKeyR
 	CIndexTreeFileAccess		cAccess;
 
 
-	cHelper.Init("Output" _FS_"IndexTreeI", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeI", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -2980,7 +2980,7 @@ void TestIndexTreeFileRemoveComplex(EIndexWriteThrough eWriteThrough, EIndexKeyR
 	cAccess.Kill();
 
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 

@@ -10,7 +10,6 @@
 #include "CoreLib/ValueNamedIndexesConfig.h"
 #include "CoreLib/IndexTreeEvictionCounter.h"
 #include "CoreLib/IndexedDataEvictionCounter.h"
-#include "StandardLib/BaseObject.h"
 #include "TestLib/Assert.h"
 #include "TestLib/Words.h"
 #include "NamedIndexedDataObject.h"
@@ -68,7 +67,7 @@ void TestNamedIndexedDataAddString(EIndexWriteThrough eWriteThrough)
 	CTestNamedIndexedDataObject			cObject1;
 	CTestNamedIndexedDataObject			cObject2;
 	CTestNamedIndexedDataObject			cResult;
-	BOOL								bResult;
+	bool								bResult;
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database2");
 
@@ -206,7 +205,7 @@ void TestNamedIndexedDataAddChars(EIndexWriteThrough eWriteThrough)
 	CFileUtil							cFileUtil;
 	CTestNamedIndexedDataObject			cObject1;
 	CTestNamedIndexedDataObject			cResult;
-	BOOL								bResult;
+	bool								bResult;
 	CChars								szName;
 	unsigned int						uiDataSize;
 
@@ -631,7 +630,7 @@ void TestNamedIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 	CTestNamedIndexedDataObject			cObject1;
 	CTestNamedIndexedDataObject			cObject2;
 	CTestNamedIndexedDataObject			cObject3;
-	BOOL								bResult;
+	bool								bResult;
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database7");
 
@@ -767,7 +766,7 @@ void TestNamedIndexedDataIterate(EIndexWriteThrough eWriteThrough)
 	size_t								iDataSize;
 	OIndex								oi;
 	char								szKey[MAX_KEY_SIZE];
-	BOOL								bResult;
+	bool								bResult;
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database8");
 
@@ -894,7 +893,7 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 	size_t								iDataSize;
 	OIndex								oi;
 	char								szKey[MAX_KEY_SIZE];
-	BOOL								bResult;
+	bool								bResult;
 	CArrayChars							aszWords;
 	CRandom								cRandom;
 	CChars								sz;
@@ -907,7 +906,7 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 	CIndexTreeEvictionCounter			cIndexEvictionCounter;
 	CIndexedDataEvictionCounter			cDataEvictionCounter;
 	CIndexTreeEvictionCounter			cNameEvictionCounter;
-	BOOL								bFailed;
+	bool								bFailed;
 
 	aszWords.Init();
 	GetCommonWords(&aszWords);
@@ -968,17 +967,17 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 	cNameEvictionCounter.Reset();
 	Pass();
 
-	bFailed = FALSE;
+	bFailed = false;
 	iIter = 0;
 	oi = cDatabase.StartIndexIteration(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
 	while (oi != INVALID_O_INDEX)
 	{
 		iExpectedOi = (iIter + 1) * 7;
-		if (iExpectedOi != oi) bFailed = TRUE;
-		if (sizeof(CTestNamedIndexedDataObject) != iDataSize) bFailed = TRUE;
-		if (iIter != cResult.miNumberX) bFailed = TRUE;
-		if (iExpectedOi != cResult.miNumberY)  bFailed = TRUE;
-		if (!aszNames.Get(iIter)->Equals(cResult.mszString)) bFailed = TRUE;
+		if (iExpectedOi != oi) bFailed = true;
+		if (sizeof(CTestNamedIndexedDataObject) != iDataSize) bFailed = true;
+		if (iIter != cResult.miNumberX) bFailed = true;
+		if (iExpectedOi != cResult.miNumberY)  bFailed = true;
+		if (!aszNames.Get(iIter)->Equals(cResult.mszString)) bFailed = true;
 		AssertFalse(bFailed);
 
 		iIter++;
@@ -1054,7 +1053,7 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 	CTestNamedIndexedDataObject			cObject;
 	CTestNamedIndexedDataObject			cResult;
 	OIndex								oi;
-	BOOL								bResult;
+	bool								bResult;
 	CArrayChars							aszWords;
 	CRandom								cRandom;
 	CChars								sz;
@@ -1065,7 +1064,7 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 	CIndexTreeEvictionCounter			cIndexEvictionCounter;
 	CIndexedDataEvictionCounter			cDataEvictionCounter;
 	CIndexTreeEvictionCounter			cNameEvictionCounter;
-	//BOOL								bFailed;
+	//bool								bFailed;
 	int									i;
 	unsigned int						uiDataSize;
 

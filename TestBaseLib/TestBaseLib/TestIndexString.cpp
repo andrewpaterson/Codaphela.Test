@@ -14,7 +14,7 @@ void TestIndexStringTemplate(void)
 	double							d;
 	double*							pd;
 	char							szA[] = "A";
-	BOOL							bResult;
+	bool							bResult;
 
 	cIndex.Init();
 	cIndex.Kill();

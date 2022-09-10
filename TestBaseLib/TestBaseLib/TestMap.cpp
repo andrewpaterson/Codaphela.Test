@@ -71,10 +71,10 @@ void TestMapIntInt2(void)
 	CMapIntInt		cMapIntInt;
 	int				*px, *py, *pz;
 	SMapIterator	sIter;
-	BOOL			bResult;
+	bool			bResult;
 	int				x, y;
 
-	cMapIntInt.Init(CompareInt, TRUE);
+	cMapIntInt.Init(CompareInt, true);
 
 	x = 10; y = 73;
 	cMapIntInt.Put(&x, &y);

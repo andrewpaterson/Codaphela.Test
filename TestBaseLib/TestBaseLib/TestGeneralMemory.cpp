@@ -146,7 +146,7 @@ void SetupTestGeneralMemoryRemove(CGeneralMemory* pcMemory)
 {
 	void*	pv;
 
-	pcMemory->Init(4, FALSE);
+	pcMemory->Init(4, false);
 	pcMemory->GetFreeListParams()->AddParamBlock(8, 0, 4);
 	pcMemory->GetFreeListParams()->AddParamBlock(16, 8, 4);
 	pcMemory->GetFreeListParams()->AddParamBlock(24, 16, 4);
@@ -214,14 +214,14 @@ void TestGeneralMemoryRemoveHalfByArray(void)
 	CGeneralMemory		cMemory;
 	CArrayVoidPtr		apv;
 	SMemoryIterator		sIter;
-	BOOL				bAdd;
+	bool				bAdd;
 	SMemory				sMem;
 
 	SetupTestGeneralMemoryRemove(&cMemory);
 
 	apv.Init();
 	sMem = cMemory.StartIteration(&sIter);
-	bAdd = TRUE;
+	bAdd = true;
 	while (sMem.bValid)
 	{
 		if (bAdd)

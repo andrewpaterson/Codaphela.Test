@@ -13,7 +13,7 @@ public:
 	void Init(int iNumber);
 	void Kill(void);
 
-	BOOL IsOkay(int iNumber);
+	bool IsOkay(int iNumber);
 };
 
 class CFileIOAlignedTest
@@ -25,8 +25,8 @@ public:
 	void Init(char bShunt);
 	void Kill(void);
 
-	BOOL IsAligned(int iAlignment);
-	BOOL IsOkay(char bShunt);
+	bool IsAligned(int iAlignment);
+	bool IsOkay(char bShunt);
 };
 
 

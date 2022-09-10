@@ -208,7 +208,7 @@ void TestArrayTemplateInitialiseArray(CTestArrayTemplate* pasTestArrayTemplate, 
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL TestArrayTemplateCheckOrder(CTestArrayTemplate* pasTestArrayTemplate, int iNumElements)
+bool TestArrayTemplateCheckOrder(CTestArrayTemplate* pasTestArrayTemplate, int iNumElements)
 {
 	int						i;
 	STestArrayTemplateItem* psItem;
@@ -218,10 +218,10 @@ BOOL TestArrayTemplateCheckOrder(CTestArrayTemplate* pasTestArrayTemplate, int i
 		psItem = pasTestArrayTemplate->Get(i);
 		if (!((psItem->i1 == i) && (psItem->i2 == i)))
 		{
-			return FALSE;
+			return false;
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 
@@ -392,7 +392,7 @@ void TestArrayTemplateMisc(void)
 	AssertInt(0, psReturn->i1);
 	AssertInt(1, psReturn->i2);
 
-	cArray.RemoveAt(0, TRUE);
+	cArray.RemoveAt(0, true);
 	AssertInt(1, cArray.NumElements());
 
 	psReturn = cArray.Get(0);
@@ -456,7 +456,7 @@ void TestArrayTemplateRemove(void)
 	cArray.Init();
 	psTest1 = cArray.Add();
 	psTest1->i1 = 0; psTest1->i2 = 0;
-	cArray.RemoveAt(0, TRUE);
+	cArray.RemoveAt(0, true);
 	AssertInt(0, cArray.NumElements());
 	cArray.Kill();
 
@@ -465,7 +465,7 @@ void TestArrayTemplateRemove(void)
 	psTest2 = cArray.Add();
 	psTest1->i1 = 0; psTest1->i2 = 0;
 	psTest2->i1 = 1; psTest2->i2 = 1;
-	cArray.RemoveAt(0, TRUE);
+	cArray.RemoveAt(0, true);
 	psTest1 = cArray.Get(0);
 	AssertInt(1, psTest1->i1);
 	AssertInt(1, cArray.NumElements());
@@ -480,7 +480,7 @@ void TestArrayTemplateRemove(void)
 	AssertInt(0, psTest1->i1);
 	psTest2 = cArray.Get(1);
 	AssertInt(1, psTest2->i1);
-	cArray.RemoveAt(1, TRUE);
+	cArray.RemoveAt(1, true);
 	psTest1 = cArray.Get(0);
 	AssertInt(0, psTest1->i1);
 	AssertInt(1, cArray.NumElements());
@@ -491,7 +491,7 @@ void TestArrayTemplateRemove(void)
 	psTest1->i1 = 0; psTest1->i2 = 0;
 	psTest2 = cArray.Add();
 	psTest2->i1 = 1; psTest2->i2 = 1;
-	cArray.RemoveAt(0, FALSE);
+	cArray.RemoveAt(0, false);
 	psTest1 = cArray.Get(0);
 	AssertInt(1, psTest1->i1);
 	AssertInt(1, cArray.NumElements());
@@ -502,7 +502,7 @@ void TestArrayTemplateRemove(void)
 	psTest1->i1 = 0; psTest1->i2 = 0;
 	psTest2 = cArray.Add();
 	psTest2->i1 = 1; psTest2->i2 = 1;
-	cArray.RemoveAt(1, FALSE);
+	cArray.RemoveAt(1, false);
 	psTest1 = cArray.Get(0);
 	AssertInt(0, psTest1->i1);
 	AssertInt(1, cArray.NumElements());

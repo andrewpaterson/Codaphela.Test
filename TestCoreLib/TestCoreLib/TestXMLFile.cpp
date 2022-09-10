@@ -41,7 +41,7 @@ void TestReadExternalReference(void)
 	AssertNotNull(pcSecondTag);
 	szText.Init();
 	pcSecondTag->GetText(&szText);
-	szText.StripWhiteSpace(TRUE);
+	szText.StripWhiteSpace(true);
 	AssertString("Hello", szText.Text());
 	szText.Kill();
 
@@ -50,7 +50,7 @@ void TestReadExternalReference(void)
 	AssertNotNull(pcThirdTag);
 	szText.Init();
 	pcThirdTag->GetText(&szText);
-	szText.StripWhiteSpace(TRUE);
+	szText.StripWhiteSpace(true);
 	AssertString("World", szText.Text());
 	szText.Kill();
 

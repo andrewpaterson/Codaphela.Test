@@ -62,17 +62,17 @@ public:
 		CIndexTreeFile::SetWriteThrough(eWriteThrough);
 	}
 
-	BOOL ValidateIndexTree(BOOL bReadNodes)
+	bool ValidateIndexTree(bool bReadNodes)
 	{
 		return CIndexTreeFile::ValidateIndexTree(bReadNodes);
 	}
 
-	BOOL ValidateIndexTree(void)
+	bool ValidateIndexTree(void)
 	{
 		return CIndexTreeFile::ValidateIndexTree();
 	}
 
-	BOOL ValidateKey(void* pvKey, int iKeySize)
+	bool ValidateKey(void* pvKey, int iKeySize)
 	{
 		return CIndexTreeFile::ValidateKey(pvKey, iKeySize);
 	}

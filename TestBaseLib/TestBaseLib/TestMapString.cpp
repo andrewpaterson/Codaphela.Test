@@ -13,13 +13,13 @@ void TestMapStringTemplate(void)
 	double*						pd;
 	char*						szKey;
 
-	cMap.Init(FALSE);
+	cMap.Init(false);
 	cMap.Kill();
 
-	cMap.Init(TRUE);
+	cMap.Init(true);
 	cMap.Kill();
 
-	cMap.Init(TRUE, TRUE);
+	cMap.Init(true, true);
 	d = 1.0; cMap.Put("A", &d);
 	d = 2.0; cMap.Put("B", &d);
 	d = 3.0; cMap.Put("C", &d);

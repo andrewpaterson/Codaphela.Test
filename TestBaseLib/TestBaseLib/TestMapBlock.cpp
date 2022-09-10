@@ -40,7 +40,7 @@ void TestMapBlockInternals(void)
 	SMNode**			psNode2;
 	int*				piKey;
 
-	cMap.Init(&CompareInt, TRUE);
+	cMap.Init(&CompareInt, true);
 	i = 7; j = 43;
 	cMap.Put(&i, sizeof(int), &j, sizeof(int));
 
@@ -87,7 +87,7 @@ void TestMapBlockInternals(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL AddToMapBlock(CMapBlock* pcMapBlock, char* szKey, long long int lliData)
+bool AddToMapBlock(CMapBlock* pcMapBlock, char* szKey, long long int lliData)
 {
 	int				iStrLen;
 
@@ -100,7 +100,7 @@ BOOL AddToMapBlock(CMapBlock* pcMapBlock, char* szKey, long long int lliData)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL GetFromMapBlock(CMapBlock* pcMapBlock, char* szKey, long long int** pplli, int* piSize)
+bool GetFromMapBlock(CMapBlock* pcMapBlock, char* szKey, long long int** pplli, int* piSize)
 {
 	int				iStrLen;
 
@@ -145,7 +145,7 @@ void TestMapBlockGet(void)
 		lli = ((lli + 0x336b265cfdd8a7a6) / 2) * 3;
 	}
 
-	cMap.Init((DataCompare)&StringCompare, TRUE);
+	cMap.Init((DataCompare)&StringCompare, true);
 	AddToMapBlock(&cMap, "cocker", llia[0]);
 	AddToMapBlock(&cMap, "cock", llia[1]);
 	AddToMapBlock(&cMap, "cockerel", llia[2]);
@@ -231,14 +231,14 @@ void TestMapBlockAddDuplicate(void)
 	CMapBlock	cMap;
 	int			ia = 'a';
 	int			ib = 'a';
-	BOOL		bResult;
+	bool		bResult;
 	int			iWorldLen;
 	int			iHelloLen;
 
 	iWorldLen = strlen("World");
 	iHelloLen = strlen("Hello");
 
-	cMap.Init(&CompareInt, TRUE);
+	cMap.Init(&CompareInt, true);
 	bResult = cMap.Put(&ia, sizeof(int), "Hello", iHelloLen + 1);
 	AssertTrue(bResult);
 	AssertInt(1, cMap.NumElements());
@@ -263,10 +263,10 @@ void TestMapBlockRemove(void)
 	int			ia = 'a';
 	int			ib = 'b';
 	int			ic = 'c';
-	BOOL		bResult;
+	bool		bResult;
 	char*		szData;
 
-	cMap.Init(&CompareInt, TRUE);
+	cMap.Init(&CompareInt, true);
 	bResult = cMap.Put(&ia, sizeof(int), "Hello", strlen("Hello") + 1);
 	bResult = cMap.Put(&ib, sizeof(int), "World", strlen("World") + 1);
 	bResult = cMap.Put(&ic, sizeof(int), "Rogue", strlen("Rogue") + 1);
@@ -362,7 +362,7 @@ void TestMapBlockDataMemoryUnchanged(void)
 	CChars				sz;
 	char*				szData;
 	char*				aszData[2048];
-	BOOL				bFailed;
+	bool				bFailed;
 
 	WordsInit();
 
@@ -386,7 +386,7 @@ void TestMapBlockDataMemoryUnchanged(void)
 
 	cRandom.Init(2367849);
 
-	bFailed = FALSE;
+	bFailed = false;
 	for (i = 0; i < 2048; i++)
 	{
 		MakeKey(&cRandom, &aszWords, &sz);
@@ -394,7 +394,7 @@ void TestMapBlockDataMemoryUnchanged(void)
 		szData = mszsz.Get(sz.Text());
 		if (aszData[i] != szData)
 		{
-			bFailed = TRUE;
+			bFailed = true;
 		}
 		sz.Kill();
 	}
@@ -422,8 +422,8 @@ void TestMapBlockRemoveHalf(void)
 	CChars				sz;
 	char*				szData;
 	char*				aszData[2048];
-	BOOL				bResult;
-	BOOL				bFailed;
+	bool				bResult;
+	bool				bFailed;
 
 	WordsInit();
 
@@ -446,7 +446,7 @@ void TestMapBlockRemoveHalf(void)
 	cRandom.Kill();
 
 	cRandom.Init(2367849);
-	bResult = TRUE;
+	bResult = true;
 	for (i = 0; i < 2048; i++)
 	{
 		MakeKey(&cRandom, &aszWords, &sz);
@@ -461,7 +461,7 @@ void TestMapBlockRemoveHalf(void)
 	AssertInt(1024, mszsz.NumElements());
 	cRandom.Kill();
 
-	bFailed = FALSE;
+	bFailed = false;
 	cRandom.Init(2367849);
 	for (i = 0; i < 2048; i++)
 	{
@@ -471,14 +471,14 @@ void TestMapBlockRemoveHalf(void)
 		{
 			if (aszData[i] != szData)
 			{
-				bFailed = TRUE;
+				bFailed = true;
 			}
 		}
 		else
 		{
 			if (szData != NULL)
 			{
-				bFailed = TRUE;
+				bFailed = true;
 			}
 		}
 		sz.Kill();
@@ -597,7 +597,7 @@ void TestMapBlockDataFree(void)
 
 	giMapBlockCallbackData = 0;
 
-	cMap.Init(&CompareInt, TRUE);
+	cMap.Init(&CompareInt, true);
 	cDataFree.Init(TestMapBlockDataFreeCallback);
 	cMap.SetDataFreeCallback(&cDataFree);
 	cAccess.Init(&cMap);
@@ -654,7 +654,7 @@ void TestMapBlockIterate(void)
 	int					iDataSize;
 	char*				pvKey;
 	int					iKeySize;
-	BOOL				bExists;
+	bool				bExists;
 	char				acKey[MAX_KEY_SIZE];
 
 	cMap.Init();

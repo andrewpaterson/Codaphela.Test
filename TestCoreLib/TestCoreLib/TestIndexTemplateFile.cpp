@@ -28,7 +28,7 @@ void TestIndexTreeTemplateFileStuff(void)
 	CTestIndexTreeObject							cObject2;
 	CTestIndexTreeObject							cResult;
 
-	cHelper.Init("Output" _FS_"IndexTree0", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTree0", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -66,7 +66,7 @@ void TestIndexTreeTemplateFileStuff(void)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 

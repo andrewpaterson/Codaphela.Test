@@ -19,7 +19,7 @@ void TestIndexTreeIteratorUnsafeIterate(void)
 	char*							pvData;
 	char*							pvKey;
 	size_t							iDataSize;
-	BOOL							bExists;
+	bool							bExists;
 	char							pacKey[9+1];
 	int								iKeyLength;
 	CIndexTreeMemory				cIndexTree;
@@ -92,7 +92,7 @@ void TestIndexTreeIteratorIterate(void)
 	CIndexTreeMemory		cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	CIndexTreeIterator*		pcIter;
-	BOOL					bExists;
+	bool					bExists;
 
 	cIndex.Init();
 	cAccess.Init(&cIndex);

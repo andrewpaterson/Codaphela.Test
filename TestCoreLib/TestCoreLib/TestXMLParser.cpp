@@ -31,7 +31,7 @@ void TestXMLParderRead(void)
 	cXMLParser.Kill();
 
 	pcTag = cMarkup.GetRootTag();
-	AssertBool(TRUE, pcTag->Is("painting"));
+	AssertBool(true, pcTag->Is("painting"));
 	pcChildTag = pcTag->GetTag("img");
 	szAttribute = pcChildTag->GetAttribute("alt");
 	AssertString("Foligno Madonna, by Raphael", szAttribute);
@@ -41,7 +41,7 @@ void TestXMLParderRead(void)
 	AssertNull(szAttribute);
 
 	pcTag = pcTag->GetTag("caption");
-	AssertBool(TRUE, pcTag->Is("caption"));
+	AssertBool(true, pcTag->Is("caption"));
 
 	szText.Init();	
 	pcTag->GetText(&szText);
@@ -75,7 +75,7 @@ void TestXMLParserComments(void)
 	CXMLParser		cXMLParser;
 	CChars			szDoc;
 	CChars			szText;
-	BOOL			bContiguous;
+	bool			bContiguous;
 	STagIterator	sIter;
 	char			szXML[] = "\
 						  <!-- Firsts! -->\n\
@@ -100,7 +100,7 @@ void TestXMLParserComments(void)
 	bContiguous = cMarkup.GetRootTag()->GetNextTag(&sIter)->GetText(&szText);
 	AssertString("EvenFun", szText.Text());
 	szText.Kill();
-	AssertBool(TRUE, bContiguous);
+	AssertBool(true, bContiguous);
 
 	szDoc.Init();
 	cMarkup.mpcDoc->Print(&szDoc);
@@ -212,17 +212,17 @@ void TestXMLParserNamedReferences(void)
 	AssertInt(3, pcDoc->macRefs.NumElements());
 
 	pcRef = *pcDoc->macRefs.Get(0);
-	AssertBool(TRUE, pcRef->IsNamedRef());
+	AssertBool(true, pcRef->IsNamedRef());
 	pcNamedRef = (CMarkupNamedRef*)pcRef;
 	AssertString("RootNameRef", pcNamedRef->mszName.Text());
 
 	pcRef = *pcDoc->macRefs.Get(1);
-	AssertBool(TRUE, pcRef->IsNamedRef());
+	AssertBool(true, pcRef->IsNamedRef());
 	pcNamedRef = (CMarkupNamedRef*)pcRef;
 	AssertString("TagNameRef", pcNamedRef->mszName.Text());
 
 	pcRef = *pcDoc->macRefs.Get(2);
-	AssertBool(TRUE, pcRef->IsNamedRef());
+	AssertBool(true, pcRef->IsNamedRef());
 	pcNamedRef = (CMarkupNamedRef*)pcRef;
 	AssertString("TagNameRef", pcNamedRef->mszName.Text());
 

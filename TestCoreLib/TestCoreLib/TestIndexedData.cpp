@@ -56,7 +56,7 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 
 	AssertInt(2, (int)cIndexedData.NumDataCached());
 	AssertInt(2, (int)cIndexedData.NumElements());
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 	AssertInt(2, (int)cIndexedData.NumElements());
 
 	AssertTrue(cIndexedData.Get(oiViolation, &uiDataSize, szData, 1024));
@@ -66,7 +66,7 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 	AssertInt(iLenInsipidity, uiDataSize);
 	AssertString(szInsipidity, szData);
 
-	cIndexedData.Flush(TRUE);
+	cIndexedData.Flush(true);
 	AssertTrue(cController.End());
 
 	AssertTrue(cIndexedData.Kill());
@@ -94,7 +94,7 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 	AssertInt(2, (int)cIndexedData.NumDataCached());
 	AssertInt(2, (int)cIndexedData.NumElements());
 
-	cIndexedData.Flush(TRUE);
+	cIndexedData.Flush(true);
 	AssertTrue(cController.End());
 	AssertTrue(cIndexedData.Kill());
 	cEvictionStrategy.Kill();
@@ -151,7 +151,7 @@ void TestIndexedDataIteration(EIndexWriteThrough eWriteThrough)
 	AssertLongLongInt(INVALID_O_INDEX, oi);
 	AssertInt(2, (int)cIndexedData.NumElements());
 
-	cIndexedData.Flush(TRUE);
+	cIndexedData.Flush(true);
 
 	oi = cIndexedData.StartIteration(&sIter, NULL, NULL, 0);
 	AssertLongLongInt(789983209433243094LL, oi);
@@ -213,7 +213,7 @@ void TestIndexedDataFlushClearCache(void)
 	AssertLongLongInt(3632LL, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(91, cIndexedData.GetDataSystemMemorySize());
 
-	cIndexedData.Flush(FALSE);
+	cIndexedData.Flush(false);
 	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
 	AssertLongLongInt(3632LL, cIndexedData.GetIndiciesSystemMemorySize());
@@ -247,7 +247,7 @@ void TestIndexedDataFlushClearCache(void)
 	AssertLongLongInt(3692LL, cIndexedData.GetIndiciesSystemMemorySize());
 	AssertInt(91, cIndexedData.GetDataSystemMemorySize());
 
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
 	AssertLongLongInt(3692LL, cIndexedData.GetIndiciesSystemMemorySize());
@@ -342,7 +342,7 @@ void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 	AssertTrue(cIndexedData.Add(1LL, szHello, 6));
 	AssertTrue(cIndexedData.Add(2LL, szStream, 7));
 	AssertTrue(cIndexedData.Add(4LL, szWorld, 6));
-	cIndexedData.Flush(FALSE);
+	cIndexedData.Flush(false);
 	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(3, cIndexedData.NumDataCached());
 	AssertLongLongInt(3632LL, cIndexedData.GetIndiciesSystemMemorySize());
@@ -536,7 +536,7 @@ void TestIndexedDataExplicitKeyEvictionDataChanged(void)
 	AssertNotNull(cAccess.GetLongString(oi, szData));
 	AssertString(szShortText1, szData);
 
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 	cController.End();
 	cIndexedData.Kill();
 	cEvictionStrategy.Kill();
@@ -804,7 +804,7 @@ void TestIndexedDataIndexEviction(void)
 
 	cIndexEvictedList.Clear();
 	cKeyDataEvictedList.Clear();
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 	AssertInt(0, cIndexEvictedList.NumElements());
 	AssertLongLongInt(3, cIndexedData.NumIndicesCached());
 	AssertInt(0, cIndexedData.NumDataCached());
@@ -939,7 +939,7 @@ void TestIndexedDataEvictAndFlush(void)
 	ucFlags = cIndexedData.GetRootFlags();
 	AssertChar(INDEX_TREE_NODE_FLAG_DIRTY_PATH, ucFlags);
 
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 
 	AssertTrue(cController.End());
 	cIndexedData.Kill();
@@ -1007,7 +1007,7 @@ void TestIndexedDataFlushAndFlush(void)
 
 	cController.Begin();
 	AssertTrue(cIndexedData.Add(198732178239018792LL, szStream, 7));
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 
 	AssertTrue(cController.End());
 	cIndexedData.Kill();
@@ -1024,7 +1024,7 @@ void TestIndexedDataFlushAndFlush(void)
 
 	cController.Begin();
 	AssertTrue(cIndexedData.Add(573107892314634784LL, szWorld, 6));
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 
 	cController.End();
 	cIndexedData.Kill();
@@ -1120,7 +1120,7 @@ void TestIndexedDataLargeData(void)
 	AssertInt(2, (int)cIndexedData.NumIndicesCached());
 	AssertString(szSmall, szIn);
 
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 	cController.End();
 	cIndexedData.Kill();
 	cEvictionStrategy.Kill();
@@ -1149,7 +1149,7 @@ void TestIndexedDataIndexedAdd(void)
 	char								szEve[] = "Eve";
 	char								szIn[64];
 	CFileUtil							cFileUtil;
-	BOOL								bResult;
+	bool								bResult;
 	char								szDirectory[] = "Output" _FS_ "Database3";
 	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	CDurableFileController				cController;
@@ -1172,7 +1172,7 @@ void TestIndexedDataIndexedAdd(void)
 	AssertTrue(bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
 	AssertInt(0, (int)cIndexedData.NumDatas(4));
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 	AssertInt(1, (int)cIndexedData.NumDatas(4));
 	AssertInt(0, (int)cIndexedData.NumDataCached());
 
@@ -1193,7 +1193,7 @@ void TestIndexedDataIndexedAdd(void)
 	cIndexedData.Get(oIndex1, szIn);
 	AssertString(szFish, szIn);
 
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 	AssertInt(1, (int)cIndexedData.NumDatas(4));
 	AssertInt(1, (int)cIndexedData.NumDatas(5));
 	cIndexedData.Get(oIndex1, szIn);
@@ -1203,7 +1203,7 @@ void TestIndexedDataIndexedAdd(void)
 	AssertInt(1, (int)cIndexedData.NumElements());
 	AssertLongLongInt(1, cIndexedData.NumIndicesCached());
 	AssertTrue(bResult);
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 	AssertInt(2, (int)cIndexedData.NumDatas(4));  //One is ignored but they are both still in the file.
 	AssertInt(1, (int)cIndexedData.NumElements());
 	AssertInt(1, (int)cIndexedData.NumIndicesCached());
@@ -1221,7 +1221,7 @@ void TestIndexedDataIndexedAdd(void)
 	AssertTrue(bResult);
 	AssertInt(1, (int)cIndexedData.NumDataCached());
 	AssertInt(2, (int)cIndexedData.NumIndicesCached());
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 	AssertInt(3, (int)cIndexedData.NumDatas(4));
 	AssertInt(1, (int)cIndexedData.NumDatas(5));
 	AssertInt(2, (int)cIndexedData.NumElements());
@@ -1254,7 +1254,7 @@ void TestIndexedDataDescriptorCaching(void)
 	CDurableFileController				cController;
 	SLogConfig							sLogConfig;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
-	BOOL								bResult;
+	bool								bResult;
 
 	cFileUtil.RemoveDir(szDirectory);
 
@@ -1368,7 +1368,7 @@ void TestIndexedDataDescriptorCaching(void)
 	AssertInt(2, (int)cIndexedData.NumIndicesCached());
 	Pass();
 
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 	cController.End();
 	cIndexedData.Kill();
 	cEvictionStrategy.Kill();
@@ -1518,7 +1518,7 @@ void TestIndexedDataGet(void)
 	
 	AssertLongLongInt(3, cIndexedData.NumElements());
 
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 	cController.End();
 	cIndexedData.Kill();
 	cEvictionStrategy.Kill();
@@ -1639,7 +1639,7 @@ void TestIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 	AssertTrue(cIndexedData.Contains(0x3589));
 	AssertTrue(cIndexedData.Contains(0x8743));
 
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 	cController.End();
 	cIndexedData.Kill();
 	cEvictionStrategy.Kill();
@@ -1679,7 +1679,7 @@ void TestIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 	AssertTrue(cIndexedData.Contains(0x8743));
 	AssertFalse(cIndexedData.Get(0x7634, &uiSize, szData, 256));
 
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 	cController.End();
 	cIndexedData.Kill();
 	cEvictionStrategy.Kill();
@@ -1704,7 +1704,7 @@ void TestIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 	AssertFalse(cIndexedData.Remove(0x3589));
 	AssertFalse(cIndexedData.Remove(0x8743));
 
-	AssertTrue(cIndexedData.Flush(TRUE));
+	AssertTrue(cIndexedData.Flush(true));
 	AssertFalse(cIndexedData.Remove(0x7634));
 	AssertFalse(cIndexedData.Remove(0x3589));
 	AssertFalse(cIndexedData.Remove(0x8743));
@@ -1735,7 +1735,7 @@ void TestIndexedDataRemove2(EIndexWriteThrough eWriteThrough)
 	char								szDirectory[] = "Output" _FS_ "Database8a";
 	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	CDurableFileController				cController;
-	BOOL								bResult;
+	bool								bResult;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 
 	cFileUtil.RemoveDir(szDirectory);

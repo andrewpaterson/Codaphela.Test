@@ -42,8 +42,8 @@ void TestAdd(void)
 	pcNumber2->Init("80", 2, 0);
 
 	pcNumber1->Add(pcNumber2);
-	AssertBool(TRUE, pcNumber1->IsError());
-	AssertBool(TRUE, pcNumber1->IsOverflow());
+	AssertBool(true, pcNumber1->IsError());
+	AssertBool(true, pcNumber1->IsOverflow());
 
 	gcNumberControl.Remove(2);
 
@@ -91,18 +91,18 @@ void TestGreaterThan(void)
 	CNumber cNumber1;
 	CNumber cNumber2;
 
-	AssertBool(TRUE, cNumber1.Init("123")->GreaterThan(cNumber2.Init("122")));
-	AssertBool(FALSE, cNumber1.Init("23")->GreaterThan(cNumber2.Init("122")));
-	AssertBool(TRUE, cNumber1.Init("123")->GreaterThan(cNumber2.Init("22")));
-	AssertBool(TRUE, cNumber1.Init("123.5")->GreaterThan(cNumber2.Init("123")));
-	AssertBool(FALSE, cNumber1.Init("123")->GreaterThan(cNumber2.Init("123.5")));
-	AssertBool(TRUE, cNumber1.Init("1")->GreaterThan(cNumber2.Init("0")));
-	AssertBool(FALSE, cNumber1.Init("0")->GreaterThan(cNumber2.Init("1")));
-	AssertBool(TRUE, cNumber1.Init("1")->GreaterThan(cNumber2.Init("-1")));
-	AssertBool(FALSE, cNumber1.Init("-1")->GreaterThan(cNumber2.Init("1")));
-	AssertBool(TRUE, cNumber1.Init("456")->GreaterThan(cNumber2.Init("-7921")));
-	AssertBool(FALSE, cNumber1.Init("-7921")->GreaterThan(cNumber2.Init("456")));
-	AssertBool(TRUE, cNumber1.Init("-456")->GreaterThan(cNumber2.Init("-456.34")));
+	AssertBool(true, cNumber1.Init("123")->GreaterThan(cNumber2.Init("122")));
+	AssertBool(false, cNumber1.Init("23")->GreaterThan(cNumber2.Init("122")));
+	AssertBool(true, cNumber1.Init("123")->GreaterThan(cNumber2.Init("22")));
+	AssertBool(true, cNumber1.Init("123.5")->GreaterThan(cNumber2.Init("123")));
+	AssertBool(false, cNumber1.Init("123")->GreaterThan(cNumber2.Init("123.5")));
+	AssertBool(true, cNumber1.Init("1")->GreaterThan(cNumber2.Init("0")));
+	AssertBool(false, cNumber1.Init("0")->GreaterThan(cNumber2.Init("1")));
+	AssertBool(true, cNumber1.Init("1")->GreaterThan(cNumber2.Init("-1")));
+	AssertBool(false, cNumber1.Init("-1")->GreaterThan(cNumber2.Init("1")));
+	AssertBool(true, cNumber1.Init("456")->GreaterThan(cNumber2.Init("-7921")));
+	AssertBool(false, cNumber1.Init("-7921")->GreaterThan(cNumber2.Init("456")));
+	AssertBool(true, cNumber1.Init("-456")->GreaterThan(cNumber2.Init("-456.34")));
 
 	AssertInt(0, gcNumberControl.NumElements());
 }
@@ -119,19 +119,19 @@ void TestGreaterThanOrEquals(void)
 	CNumber cNumber1;
 	CNumber cNumber2;
 
-	AssertBool(TRUE, cNumber1.Init("123")->GreaterThanOrEquals(cNumber2.Init("122")));
-	AssertBool(TRUE, cNumber1.Init("123")->GreaterThanOrEquals(cNumber2.Init("123")));
-	AssertBool(FALSE, cNumber1.Init("23")->GreaterThanOrEquals(cNumber2.Init("122")));
-	AssertBool(TRUE, cNumber1.Init("123")->GreaterThanOrEquals(cNumber2.Init("22")));
-	AssertBool(TRUE, cNumber1.Init("123.5")->GreaterThanOrEquals(cNumber2.Init("123")));
-	AssertBool(FALSE, cNumber1.Init("123")->GreaterThanOrEquals(cNumber2.Init("123.5")));
-	AssertBool(TRUE, cNumber1.Init("0")->GreaterThanOrEquals(cNumber2.Init("0")));
-	AssertBool(TRUE, cNumber1.Init("1")->GreaterThanOrEquals(cNumber2.Init("-1")));
-	AssertBool(FALSE, cNumber1.Init("-1")->GreaterThanOrEquals(cNumber2.Init("1")));
-	AssertBool(TRUE, cNumber1.Init("456")->GreaterThanOrEquals(cNumber2.Init("-7921")));
-	AssertBool(FALSE, cNumber1.Init("-7921")->GreaterThanOrEquals(cNumber2.Init("456")));
-	AssertBool(TRUE, cNumber1.Init("-456")->GreaterThanOrEquals(cNumber2.Init("-456.34")));
-	AssertBool(TRUE, cNumber1.Init("-99999.9999")->GreaterThanOrEquals(cNumber2.Init("-99999.9999")));
+	AssertBool(true, cNumber1.Init("123")->GreaterThanOrEquals(cNumber2.Init("122")));
+	AssertBool(true, cNumber1.Init("123")->GreaterThanOrEquals(cNumber2.Init("123")));
+	AssertBool(false, cNumber1.Init("23")->GreaterThanOrEquals(cNumber2.Init("122")));
+	AssertBool(true, cNumber1.Init("123")->GreaterThanOrEquals(cNumber2.Init("22")));
+	AssertBool(true, cNumber1.Init("123.5")->GreaterThanOrEquals(cNumber2.Init("123")));
+	AssertBool(false, cNumber1.Init("123")->GreaterThanOrEquals(cNumber2.Init("123.5")));
+	AssertBool(true, cNumber1.Init("0")->GreaterThanOrEquals(cNumber2.Init("0")));
+	AssertBool(true, cNumber1.Init("1")->GreaterThanOrEquals(cNumber2.Init("-1")));
+	AssertBool(false, cNumber1.Init("-1")->GreaterThanOrEquals(cNumber2.Init("1")));
+	AssertBool(true, cNumber1.Init("456")->GreaterThanOrEquals(cNumber2.Init("-7921")));
+	AssertBool(false, cNumber1.Init("-7921")->GreaterThanOrEquals(cNumber2.Init("456")));
+	AssertBool(true, cNumber1.Init("-456")->GreaterThanOrEquals(cNumber2.Init("-456.34")));
+	AssertBool(true, cNumber1.Init("-99999.9999")->GreaterThanOrEquals(cNumber2.Init("-99999.9999")));
 
 	AssertInt(0, gcNumberControl.NumElements());
 }
@@ -152,7 +152,7 @@ void TestMultiply(void)
 
 	AssertNumber("3", cNumber1.Init("6")->Multiply(cNumber2.Init("0.5")));
 	AssertNumber("0", cNumber1.Init("0.000000001")->Multiply(cNumber2.Init("0.00000001")));
-	AssertBool(TRUE, cNumber1.IsUnderflow());
+	AssertBool(true, cNumber1.IsUnderflow());
 
 	AssertNumber("6", cNumber1.Init("2")->Multiply(cNumber2.Init("3")));
 	AssertNumber("1", cNumber1.Init("1000")->Multiply(cNumber2.Init("0.001")));
@@ -161,8 +161,8 @@ void TestMultiply(void)
 	AssertNumber("99999999999999999999800000.0000000000000001", cNumber1.Init("9999999999999.99999999")->Multiply(cNumber2.Init("9999999999999.99999999")));
 
 	cNumber1.Init("999999999999999.99999999")->Multiply(cNumber2.Init("9999999999999.99999999"));
-	AssertBool(TRUE, cNumber1.IsOverflow());
-	AssertBool(FALSE, cNumber1.IsUnderflow());
+	AssertBool(true, cNumber1.IsOverflow());
+	AssertBool(false, cNumber1.IsUnderflow());
 
 	AssertNumber("49", cNumber1.Init("7")->Multiply(cNumber2.Init("7")));
 	AssertNumber("-49", cNumber1.Init("7")->Multiply(cNumber2.Init("-7")));
@@ -188,7 +188,7 @@ void TestDivide(void)
 	UNumber(26, 21)		uNumber4;
 	UNumber(26, 21)		uResult;
 
-	AssertBool(TRUE, uResult.c.Init("1.471517764685769286382", 26, 21)->Equals(uNumber3.c.Init("4", 26, 21)->Divide(uNumber4.c.Init("2.71828182845904523536", 26, 21))));
+	AssertBool(true, uResult.c.Init("1.471517764685769286382", 26, 21)->Equals(uNumber3.c.Init("4", 26, 21)->Divide(uNumber4.c.Init("2.71828182845904523536", 26, 21))));
 	AssertNumber("1.15672535316593280000", cNumber1.Init("11.5672535316593283")->Divide(cNumber2.Init("10")));
 	AssertNumber("0.9999999999999999", cNumber1.Init("99999999999999999999")->Divide(cNumber2.Init("100000000000000000000")));
 	AssertNumber("3.3333333333333333", cNumber1.Init("0.001")->Divide(cNumber2.Init("0.0003")));
@@ -205,18 +205,18 @@ void TestDivide(void)
 	AssertNumber("25.5555555555555555", cNumber1.Init("230")->Divide(cNumber2.Init("9")));
 
 	AssertNumber("1", cNumber1.Init("99999999999999999999999999.9999999999999999")->Divide(cNumber2.Init("99999999999999999999999999.9999999999999999")));
-	AssertBool(FALSE, cNumber1.IsOverflow());
-	AssertBool(FALSE, cNumber1.IsUnderflow());
+	AssertBool(false, cNumber1.IsOverflow());
+	AssertBool(false, cNumber1.IsUnderflow());
 
 	AssertNumber("3.1428571428571428", cNumber1.Init("22")->Divide(cNumber2.Init("7")));
-	AssertBool(FALSE, cNumber1.IsOverflow());
-	AssertBool(TRUE, cNumber1.IsUnderflow());
+	AssertBool(false, cNumber1.IsOverflow());
+	AssertBool(true, cNumber1.IsUnderflow());
 
 	cNumber1.Init("10000000000000000000")->Divide(cNumber2.Init("0.0000000000000001"));
-	AssertBool(TRUE, cNumber1.IsOverflow());
+	AssertBool(true, cNumber1.IsOverflow());
 
 	cNumber1.Init("1")->Divide(cNumber2.Init("0"));
-	AssertBool(TRUE, cNumber1.IsDivisionByZero());
+	AssertBool(true, cNumber1.IsDivisionByZero());
 
 	AssertInt(0, gcNumberControl.NumElements());
 }
@@ -254,51 +254,51 @@ void TestInit(void)
 	cNumber.Init("99999999999999999999999999.9999999999999999");
 	AssertInt(26, cNumber.GetFirstNonZeroDigit());
 	AssertInt(-16, cNumber.GetLastNonZeroDigit());
-	AssertBool(FALSE, cNumber.IsNegative());
-	AssertBool(FALSE, cNumber.IsOverflow());
-	AssertBool(FALSE, cNumber.IsUnderflow());
+	AssertBool(false, cNumber.IsNegative());
+	AssertBool(false, cNumber.IsOverflow());
+	AssertBool(false, cNumber.IsUnderflow());
 
 	cNumber.Init("-99999999999999999999999999.9999999999999999");
 	AssertInt(26, cNumber.GetFirstNonZeroDigit());
 	AssertInt(-16, cNumber.GetLastNonZeroDigit());
-	AssertBool(TRUE, cNumber.IsNegative());
+	AssertBool(true, cNumber.IsNegative());
 
 	cNumber.Init("199999999999999999999999999.9999999999999999");
 	AssertInt(0, cNumber.GetFirstNonZeroDigit());
 	AssertInt(0, cNumber.GetLastNonZeroDigit());
-	AssertBool(FALSE, cNumber.IsNegative());
-	AssertBool(TRUE, cNumber.IsOverflow());
-	AssertBool(FALSE, cNumber.IsUnderflow());
+	AssertBool(false, cNumber.IsNegative());
+	AssertBool(true, cNumber.IsOverflow());
+	AssertBool(false, cNumber.IsUnderflow());
 
 	cNumber.Init("99999999999999999999999999.99999999999999991");
 	AssertInt(26, cNumber.GetFirstNonZeroDigit());
 	AssertInt(-16, cNumber.GetLastNonZeroDigit());
-	AssertBool(FALSE, cNumber.IsNegative());
-	AssertBool(FALSE, cNumber.IsOverflow());
-	AssertBool(TRUE, cNumber.IsUnderflow());
+	AssertBool(false, cNumber.IsNegative());
+	AssertBool(false, cNumber.IsOverflow());
+	AssertBool(true, cNumber.IsUnderflow());
 
 	cNumber.Init("-001.23", 1, 2);
 	AssertNumber("-1.23", &cNumber);
-	AssertBool(TRUE, cNumber.IsNegative());
-	AssertBool(FALSE, cNumber.IsOverflow());
-	AssertBool(FALSE, cNumber.IsUnderflow());
+	AssertBool(true, cNumber.IsNegative());
+	AssertBool(false, cNumber.IsOverflow());
+	AssertBool(false, cNumber.IsUnderflow());
 
 	cNumber.Init("091.23", 1, 2);
-	AssertBool(FALSE, cNumber.IsNegative());
-	AssertBool(TRUE, cNumber.IsOverflow());
-	AssertBool(FALSE, cNumber.IsUnderflow());
+	AssertBool(false, cNumber.IsNegative());
+	AssertBool(true, cNumber.IsOverflow());
+	AssertBool(false, cNumber.IsUnderflow());
 
 	cNumber.Init("-091.23", 1, 2);
-	AssertBool(TRUE, cNumber.IsNegative());
-	AssertBool(TRUE, cNumber.IsOverflow());
-	AssertBool(FALSE, cNumber.IsUnderflow());
+	AssertBool(true, cNumber.IsNegative());
+	AssertBool(true, cNumber.IsOverflow());
+	AssertBool(false, cNumber.IsUnderflow());
 
 
 	cNumber.Init("-001.2300", 1, 2);
 	AssertNumber("-1.23", &cNumber);
-	AssertBool(TRUE, cNumber.IsNegative());
-	AssertBool(FALSE, cNumber.IsOverflow());
-	AssertBool(FALSE, cNumber.IsUnderflow());
+	AssertBool(true, cNumber.IsNegative());
+	AssertBool(false, cNumber.IsOverflow());
+	AssertBool(false, cNumber.IsUnderflow());
 
 	AssertInt(0, gcNumberControl.NumElements());
 }
@@ -316,15 +316,15 @@ void TestNumbersErrors(void)
 	CNumber	cNumber2;
 
 	cNumber1.Init("1")->Divide(cNumber2.Init("0"));
-	AssertBool(TRUE, cNumber1.IsDivisionByZero());
+	AssertBool(true, cNumber1.IsDivisionByZero());
 
 	cNumber1.Multiply(cNumber2.Init("1"));
-	AssertBool(TRUE, cNumber1.IsDivisionByZero());
-	AssertBool(FALSE, cNumber2.IsError());
+	AssertBool(true, cNumber1.IsDivisionByZero());
+	AssertBool(false, cNumber2.IsError());
 
 	cNumber2.Multiply(&cNumber1);
-	AssertBool(TRUE, cNumber1.IsDivisionByZero());
-	AssertBool(TRUE, cNumber2.IsError());
+	AssertBool(true, cNumber1.IsDivisionByZero());
+	AssertBool(true, cNumber2.IsError());
 
 	AssertInt(0, gcNumberControl.NumElements());
 }
@@ -387,8 +387,8 @@ void TestIntegerPower(void)
 	AssertNumber("4", pcNumber1->Init(2, 1, 0)->Power(cNumber2.Init(2)));
 	AssertNumber("8", pcNumber1->Init(2, 1, 0)->Power(cNumber2.Init(3)));
 	pcNumber1->Init(2, 1, 0)->Power(cNumber2.Init(4));
-	AssertBool(TRUE, pcNumber1->IsError());
-	AssertBool(TRUE, pcNumber1->IsOverflow());
+	AssertBool(true, pcNumber1->IsError());
+	AssertBool(true, pcNumber1->IsOverflow());
 	gcNumberControl.Remove();
 
 	pcNumber1 = gcNumberControl.Add(2, 0);
@@ -396,8 +396,8 @@ void TestIntegerPower(void)
 	AssertNumber("32", pcNumber1->Init(2, 2, 0)->Power(cNumber2.Init(5)));
 	AssertNumber("64", pcNumber1->Init(2, 2, 0)->Power(cNumber2.Init(6)));
 	pcNumber1->Init(2, 2, 0)->Power(cNumber2.Init(7));
-	AssertBool(TRUE, pcNumber1->IsError());
-	AssertBool(TRUE, pcNumber1->IsOverflow());
+	AssertBool(true, pcNumber1->IsError());
+	AssertBool(true, pcNumber1->IsOverflow());
 	gcNumberControl.Remove();
 
 	AssertInt(0, gcNumberControl.NumElements());
@@ -609,13 +609,13 @@ void TestPrivateSubtract(void)
 
 	cNumber3.Init("54.76", 2, 2)->PrivateSubtract(cNumber4.Init("5.448", 1, 3));
 	AssertNumber("49.32", &cNumber3);
-	AssertBool(FALSE, cNumber3.IsOverflow());
-	AssertBool(TRUE, cNumber3.IsUnderflow());
+	AssertBool(false, cNumber3.IsOverflow());
+	AssertBool(true, cNumber3.IsUnderflow());
 
 	cNumber3.Init("540", 3, 0)->PrivateSubtract(cNumber4.Init("0.432", 0, 3));
 	AssertNumber("540", &cNumber3);
-	AssertBool(FALSE, cNumber3.IsOverflow());
-	AssertBool(TRUE, cNumber3.IsUnderflow());
+	AssertBool(false, cNumber3.IsOverflow());
+	AssertBool(true, cNumber3.IsUnderflow());
 }
 
 

@@ -146,7 +146,7 @@ void TestArrayDenseTemplateRemoval(void)
 	CTestDenseArray					cArray;
 	STestArrayDenseTemplateItem*	psItem;
 	int								i;
-	BOOL							bResult;
+	bool							bResult;
 
 	cArray.Init();
 

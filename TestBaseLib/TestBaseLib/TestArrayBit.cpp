@@ -15,20 +15,20 @@ void TestArrayBitAdd(void)
 
 	cArrayBit.Init();
 
-	cArrayBit.Add(TRUE);
-	cArrayBit.Add(FALSE);
+	cArrayBit.Add(true);
+	cArrayBit.Add(false);
 
 	AssertInt(2, cArrayBit.NumElements());
 
 	AssertTrue(cArrayBit.Get(0));
 	AssertFalse(cArrayBit.Get(1));
 
-	cArrayBit.Add(TRUE);
-	cArrayBit.Add(FALSE);
-	cArrayBit.Add(TRUE);
-	cArrayBit.Add(FALSE);
-	cArrayBit.Add(TRUE);
-	cArrayBit.Add(FALSE);
+	cArrayBit.Add(true);
+	cArrayBit.Add(false);
+	cArrayBit.Add(true);
+	cArrayBit.Add(false);
+	cArrayBit.Add(true);
+	cArrayBit.Add(false);
 
 	AssertInt(8, cArrayBit.NumElements());
 
@@ -60,7 +60,7 @@ void TestArrayBitAdd(void)
 	AssertIntHex(0x011861ff, ((int*)cArrayBit.GetData())[1]);
 	AssertIntHex(0x82d97e18, ((int*)cArrayBit.GetData())[2]);
 
-	cArrayBit.Add(TRUE);
+	cArrayBit.Add(true);
 
 	AssertInt(97, cArrayBit.NumElements());
 	AssertTrue(cArrayBit.Get(96));
@@ -69,17 +69,17 @@ void TestArrayBitAdd(void)
 	AssertIntHex(0x011861ff, ((int*)cArrayBit.GetData())[1]);
 	AssertIntHex(0x82d97e18, ((int*)cArrayBit.GetData())[2]);
 
-	cArrayBit.Add(FALSE);
-	cArrayBit.Add(TRUE);
-	cArrayBit.Add(FALSE);
-	cArrayBit.Add(TRUE);
-	cArrayBit.Add(FALSE);
-	cArrayBit.Add(TRUE);
-	cArrayBit.Add(FALSE);
+	cArrayBit.Add(false);
+	cArrayBit.Add(true);
+	cArrayBit.Add(false);
+	cArrayBit.Add(true);
+	cArrayBit.Add(false);
+	cArrayBit.Add(true);
+	cArrayBit.Add(false);
 
 	AssertInt(104, cArrayBit.NumElements());
 
-	cArrayBit.Add(TRUE);
+	cArrayBit.Add(true);
 
 	AssertInt(105, cArrayBit.NumElements());
 	AssertTrue(cArrayBit.Get(104));
@@ -109,8 +109,8 @@ void TestArrayBitReadWrite(void)
 	unsigned int	ui[3];
 	cArrayBit.Init();
 
-	cArrayBit.Add(TRUE);
-	cArrayBit.Add(FALSE);
+	cArrayBit.Add(true);
+	cArrayBit.Add(false);
 
 	cFile.Init(MemoryFile());
 	cFile.Open(EFM_Write_Create);
@@ -127,25 +127,25 @@ void TestArrayBitReadWrite(void)
 	AssertFalse(cArrayBitIn.Get(1));
 	cArrayBitIn.Kill();
 
-	cArrayBit.Add(TRUE);
-	cArrayBit.Add(FALSE);
-	cArrayBit.Add(TRUE);
-	cArrayBit.Add(FALSE);
-	cArrayBit.Add(TRUE);
-	cArrayBit.Add(FALSE);
+	cArrayBit.Add(true);
+	cArrayBit.Add(false);
+	cArrayBit.Add(true);
+	cArrayBit.Add(false);
+	cArrayBit.Add(true);
+	cArrayBit.Add(false);
 	ui[0] = 0xffcbb78e;
 	ui[1] = 0x18011861;
 	ui[2] = 0x0082d97e;
 	cArrayBit.Add(ui, 0, 88);
-	cArrayBit.Add(TRUE);
-	cArrayBit.Add(FALSE);
-	cArrayBit.Add(TRUE);
-	cArrayBit.Add(FALSE);
-	cArrayBit.Add(TRUE);
-	cArrayBit.Add(FALSE);
-	cArrayBit.Add(TRUE);
-	cArrayBit.Add(FALSE);
-	cArrayBit.Add(TRUE);
+	cArrayBit.Add(true);
+	cArrayBit.Add(false);
+	cArrayBit.Add(true);
+	cArrayBit.Add(false);
+	cArrayBit.Add(true);
+	cArrayBit.Add(false);
+	cArrayBit.Add(true);
+	cArrayBit.Add(false);
+	cArrayBit.Add(true);
 	AssertInt(105, cArrayBit.NumElements());
 
 	cFile.Open(EFM_Write_Create);

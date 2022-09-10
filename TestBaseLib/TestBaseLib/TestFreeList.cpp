@@ -165,7 +165,7 @@ void TestFreeListAlignment(void)
 		{
 			pv = pcFreeList->Add();
 			AssertInt(0, ((int)(size_t) pv) % iAlignment);
-			psNode = pcFreeList->FindNode(pv, FALSE);
+			psNode = pcFreeList->FindNode(pv, false);
 			AssertTrue(psNode->iOffset < iAlignment);
 		}
 	}

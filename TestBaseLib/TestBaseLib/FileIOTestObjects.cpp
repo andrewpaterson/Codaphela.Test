@@ -29,11 +29,11 @@ void CFileIOTest::Kill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CFileIOTest::IsOkay(int iNumber)
+bool CFileIOTest::IsOkay(int iNumber)
 {
 	if (iNumber != miNumber)
 	{
-		return FALSE;
+		return false;
 	}
 	return (StringCompare(msz, "Game of Thrones ") == 0);
 }
@@ -67,7 +67,7 @@ void CFileIOAlignedTest::Kill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CFileIOAlignedTest::IsOkay(char bShunt)
+bool CFileIOAlignedTest::IsOkay(char bShunt)
 {
 	int		i;
 
@@ -75,10 +75,10 @@ BOOL CFileIOAlignedTest::IsOkay(char bShunt)
 	{
 		if (b[i] != (char)i + bShunt)
 		{
-			return FALSE;
+			return false;
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 
@@ -86,7 +86,7 @@ BOOL CFileIOAlignedTest::IsOkay(char bShunt)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL CFileIOAlignedTest::IsAligned(int iAlignment)
+bool CFileIOAlignedTest::IsAligned(int iAlignment)
 {
 	size_t	pvLocation;
 	int		iRemainder;
@@ -95,8 +95,8 @@ BOOL CFileIOAlignedTest::IsAligned(int iAlignment)
 	iRemainder = pvLocation % iAlignment;
 	if (iRemainder != 0)
 	{
-		return FALSE;
+		return false;
 	}
-	return TRUE;
+	return true;
 }
 

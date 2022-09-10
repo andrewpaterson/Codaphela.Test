@@ -47,11 +47,11 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 	int						i;
 	CChars*					pszKey2;
 	CChars*					pszData2;
-	BOOL					bPassed;
+	bool					bPassed;
 	int						iArchaicIndex;
 	int						iFlush;
 	CIndexTreeIterator*		pcIter;
-	BOOL					bHasData;
+	bool					bHasData;
 	CArrayChars				aszKeys;
 	CArrayChars				aszExpected;
 	CArrayChars				aszIntersection;
@@ -70,7 +70,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 	AssertTrue(pcAccess->ValidateIndex());
 	Pass();
 
-	bPassed = TRUE;
+	bPassed = true;
 	for (i = 0; i < gaszCommonWords.NumElements(); i++)
 	{
 		pszKey2 = gaszCommonWords.Get(i);
@@ -78,7 +78,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 		iData = pcAccess->GetStringInt(pszKey);
 		if (iData != i)
 		{
-			bPassed = FALSE;
+			bPassed = false;
 			break;
 		}
 		Flush(pcAccess, iFlushFrequency, &iFlush);
@@ -145,7 +145,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 	Pass();
 
 	iArchaicIndex = 0;
-	bPassed = TRUE;
+	bPassed = true;
 	for (i = 0; i < gaszCommonWords.NumElements(); i += 2)
 	{
 		pszKey2 = gaszCommonWords.Get(i);
@@ -165,7 +165,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 
 		if (pszData2->Equals(pszData))
 		{
-			bPassed = FALSE;
+			bPassed = false;
 			break;
 		}
 		Flush(pcAccess, iFlushFrequency, &iFlush);
@@ -188,7 +188,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 	AssertTrue(pcAccess->ValidateIndex());
 	Pass();
 
-	bPassed = TRUE;
+	bPassed = true;
 	for (i = 0; i < gaszCommonWords.NumElements(); i++)
 	{
 		pszKey2 = gaszCommonWords.Get(i);
@@ -196,7 +196,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 		lliData = pcAccess->GetStringLong(pszKey);
 		if (lliData != ((int64)1000 - i) * 86509465456456LL)
 		{
-			bPassed = FALSE;
+			bPassed = false;
 			break;
 		}
 		Flush(pcAccess, iFlushFrequency, &iFlush);
@@ -241,7 +241,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 	AssertTrue(pcAccess->ValidateIndex());
 	Pass();
 
-	bPassed = TRUE;
+	bPassed = true;
 	for (i = 2; i < gaszCommonWords.NumElements(); i += 3)
 	{
 		pszKey2 = gaszCommonWords.Get(i);
@@ -249,7 +249,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 		iData = pcAccess->GetStringInt(pszKey);
 		if (iData != i)
 		{
-			bPassed = FALSE;
+			bPassed = false;
 			break;
 		}
 
@@ -292,11 +292,11 @@ void TestIndexTreeFileAccessFlushEvictBug(void)
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
 	int						iFlushFrequency;
-	BOOL					bResult;
+	bool					bResult;
 
 	iFlushFrequency = -1;
 
-	cHelper.Init("Output" _FS_ "IndexTreeFileAccessFlushEvictBug", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "IndexTreeFileAccessFlushEvictBug", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -332,7 +332,7 @@ void TestIndexTreeFileAccessFlushEvictBug(void)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -350,7 +350,7 @@ void TestIndexTreeFileAccessRemoveEvictBug(void)
 
 	iFlushFrequency = -1;
 
-	cHelper.Init("Output" _FS_ "TestIndexTreeFileAccessRemoveEvictBug", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "TestIndexTreeFileAccessRemoveEvictBug", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -397,7 +397,7 @@ void TestIndexTreeFileAccessRemoveEvictBug(void)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -412,11 +412,11 @@ void TestIndexTreeFileAccessEvictBug()
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
 	int						iFlushFrequency;
-	BOOL					bResult;
+	bool					bResult;
 
 	iFlushFrequency = -1;
 
-	cHelper.Init("Output" _FS_ "IndexTreeFileAccessEvictBug", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "IndexTreeFileAccessEvictBug", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -449,7 +449,7 @@ void TestIndexTreeFileAccessEvictBug()
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -476,7 +476,7 @@ void TestIndexTreeFileAccessFlushBug()
 
 	iFlushFrequency = -1;
 
-	cHelper.Init("Output" _FS_ "IndexTreeFileAccessFlushBug", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "IndexTreeFileAccessFlushBug", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -531,7 +531,7 @@ void TestIndexTreeFileAccessFlushBug()
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -546,7 +546,7 @@ void TestIndexTreeFileAccess(char* szSubirectory, EIndexWriteThrough eWriteThrou
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
 
-	cHelper.Init("Output" _FS_ "IndexTreeFileAccess", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "IndexTreeFileAccess", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -563,7 +563,7 @@ void TestIndexTreeFileAccess(char* szSubirectory, EIndexWriteThrough eWriteThrou
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -580,7 +580,7 @@ void TestIndexTreeEvictingAccess(char* szSubirectory, size_t sCacheSize, EIndexW
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 	CIndexTreeFileKeyDiagnosticCountingCallback			cCallback;
 
-	cHelper.Init("Output" _FS_ "IndexTreeEvictingAccess", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "IndexTreeEvictingAccess", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cEvictionStrategy.Init();
@@ -602,7 +602,7 @@ void TestIndexTreeEvictingAccess(char* szSubirectory, size_t sCacheSize, EIndexW
 	cController.Kill();
 	cEvictionStrategy.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 

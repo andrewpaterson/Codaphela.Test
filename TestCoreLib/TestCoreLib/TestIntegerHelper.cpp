@@ -21,9 +21,9 @@ void TestBitFunctions(void)
 	AssertChar(c[1], 1);
 
 	c[0] = 5;
-	AssertBool(TRUE, GetBit(0, &c));
-	AssertBool(FALSE, GetBit(1, &c));
-	AssertBool(TRUE, GetBit(2, &c));
+	AssertBool(true, GetBit(0, &c));
+	AssertBool(false, GetBit(1, &c));
+	AssertBool(true, GetBit(2, &c));
 
 	AssertInt(1, FindFirstClearBit(c, 8*8));
 	AssertInt(0, FindFirstSetBit(c, 8*8));

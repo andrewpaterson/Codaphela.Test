@@ -33,7 +33,7 @@ void TestIndexTreeFileCallbackWorks(void)
 	CTestIndexTreeMemoryObject							cResult;
 
 
-	cHelper.Init("Output" _FS_"IndexTreeCallback", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeCallback", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -94,7 +94,7 @@ void TestIndexTreeFileCallbackWorks(void)
 
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 

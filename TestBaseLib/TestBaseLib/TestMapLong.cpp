@@ -31,7 +31,7 @@ void TestMapLongTemplate(void)
 	double	e;
 	int64		i;
 
-	cMap.Init(TRUE);
+	cMap.Init(true);
 
 	d = 1.0; cMap.Put((int64)d, &d);
 	d = 2.0; cMap.Put((int64)d, &d);
@@ -137,7 +137,7 @@ void TestMapLongLong(void)
 	int64*				piKey;
 	int64*				piValue;
 
-	cMap.Init(TRUE);
+	cMap.Init(true);
 
 	cMap.Put(5, 15);
 	cMap.Put(7, 17);

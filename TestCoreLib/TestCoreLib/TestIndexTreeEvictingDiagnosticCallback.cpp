@@ -35,7 +35,7 @@ void TestIndexTreeFileKeyDiagnosticCallbackStuff(void)
 	}
 	szData[1023] = '\0';
 
-	cHelper.Init("Output" _FS_ "IndexTreeEvictingDiagnostic", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "IndexTreeEvictingDiagnostic", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cOrderer.Init();
@@ -102,7 +102,7 @@ void TestIndexTreeFileKeyDiagnosticCallbackStuff(void)
 	cEvictionStrategy.Kill();
 	cOrderer.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 

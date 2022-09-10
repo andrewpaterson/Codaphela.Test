@@ -20,7 +20,7 @@ void TestIndexTreeFileIteratorUnsafeIterate(void)
 	char*							pvData;
 	char*							pvKey;
 	size_t							iDataSize;
-	BOOL							bExists;
+	bool							bExists;
 	char							pacKey[9 + 1];
 	int								iKeyLength;
 	CIndexTreeFile					cIndexTree;
@@ -33,14 +33,14 @@ void TestIndexTreeFileIteratorUnsafeIterate(void)
 	CIndexTreeHelper				cHelper;
 	CDurableFileController			cController;
 
-	cHelper.Init("Output" _FS_ "IndexTreeIterator1", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "IndexTreeIterator1", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
 	cIndexTree.Init(&cController, NULL, IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
 
-	cMap.Init(3);
+	cMap.Init();
 	cMap.Put("AA", "nutritious");
 	cMap.Put("AAA", "follow");
 	cMap.Put("AB", "lighten");
@@ -88,7 +88,7 @@ void TestIndexTreeFileIteratorUnsafeIterate(void)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 	cMap.Kill();
 }
 
@@ -106,11 +106,11 @@ void TestIndexTreeFileIteratorIterate(void)
 	CIndexTreeFile			cIndexTree;
 	CIndexTreeFileAccess	cAccess;
 	CIndexTreeIterator*		pcIter;
-	BOOL					bExists;
+	bool					bExists;
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
 
-	cHelper.Init("Output" _FS_ "IndexTreeIterator2", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "IndexTreeIterator2", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -150,7 +150,7 @@ void TestIndexTreeFileIteratorIterate(void)
 	cIndexTree.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 

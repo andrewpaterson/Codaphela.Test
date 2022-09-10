@@ -20,7 +20,7 @@ void PrintOrdererString(CIndexTreeDataOrderer* pcOrderer, CChars* psz)
 	char					szKey[MAX_KEY_SIZE];
 	int						iDataSize;
 	int						iKeySize;
-	BOOL					bExists;
+	bool					bExists;
 
 	bExists = pcOrderer->StartIteration(&sIter, szKey, &iKeySize, MAX_KEY_SIZE, szData, &iDataSize, MAX_DATA_SIZE);
 	while (bExists)
@@ -77,11 +77,11 @@ void TestIndexTreeDataOrdererAccess(EIndexWriteThrough eWriteThrough)
 	CAccessDataOrderer			cOrderer;
 	char						c;
 	SIndexTreeFileUnsafeIterator		sIter;
-	BOOL						bExists;
+	bool						bExists;
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
 
-	cHelper.Init("Output" _FS_"IndexTreeDataOrderer1", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeDataOrderer1", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -149,7 +149,7 @@ void TestIndexTreeDataOrdererAccess(EIndexWriteThrough eWriteThrough)
 	cOrderer.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -166,7 +166,7 @@ void TestIndexTreeDataOrdererRemapListNodes(EIndexWriteThrough eWriteThrough)
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
 
-	cHelper.Init("Output" _FS_"IndexTreeDataOrderer2", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeDataOrderer2", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -216,7 +216,7 @@ void TestIndexTreeDataOrdererRemapListNodes(EIndexWriteThrough eWriteThrough)
 	cOrderer.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -236,7 +236,7 @@ void TestIndexTreeDataOrdererModification(EIndexWriteThrough eWriteThrough)
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
 
-	cHelper.Init("Output" _FS_"IndexTreeDataOrderer3", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeDataOrderer3", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -291,7 +291,7 @@ void TestIndexTreeDataOrdererModification(EIndexWriteThrough eWriteThrough)
 	cOrderer.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -307,7 +307,7 @@ void TestIndexTreeDataOrdererCreation(EIndexWriteThrough eWriteThrough)
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
 
-	cHelper.Init("Output" _FS_"IndexTreeDataOrderer4", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeDataOrderer4", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -336,7 +336,7 @@ void TestIndexTreeDataOrdererCreation(EIndexWriteThrough eWriteThrough)
 	cOrderer.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -354,7 +354,7 @@ void TestIndexTreeDataOrdererEviction(EIndexWriteThrough eWriteThrough)
 	int							i;
 	char						c;
 
-	cHelper.Init("Output" _FS_"IndexTreeDataOrderer4", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeDataOrderer4", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -397,7 +397,7 @@ void TestIndexTreeDataOrdererEviction(EIndexWriteThrough eWriteThrough)
 	cOrderer.Kill();
 	cController.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 

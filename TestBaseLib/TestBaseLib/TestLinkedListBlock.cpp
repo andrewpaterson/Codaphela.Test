@@ -59,7 +59,7 @@ void TestLinkedListBlockWrite(void)
 	CFileUtil			cFileUtil;
 	char				szDirectory[] = "Output" _FS_ "LinkedListBlock";
 	char				szFile[] = "Output" _FS_ "LinkedListBlock" _FS_ "Test.DAT";
-	BOOL				b;
+	bool				b;
 
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.TouchDir(szDirectory);
@@ -76,7 +76,7 @@ void TestLinkedListBlockWrite(void)
 	pcDisk = DiskFile(szFile);
 	AssertTrue(pcDisk->Open(EFM_Write_Create));
 	cFile.Init(pcDisk);
-	AssertTrue(cFile.WriteBool(TRUE));
+	AssertTrue(cFile.WriteBool(true));
 	AssertTrue(cList.Write(&cFile));
 	AssertTrue(pcDisk->Close());
 	cFile.Kill();

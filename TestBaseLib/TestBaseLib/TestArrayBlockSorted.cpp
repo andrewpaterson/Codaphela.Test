@@ -740,7 +740,7 @@ void TestArrayBlockSortedAddDuplicate(void)
 	AssertInt(3, pcObject->miValue);
 	AssertString("Bug", pcObject->mszThreeChars);
 
-	avBlock.SetOverwrite(TRUE);
+	avBlock.SetOverwrite(true);
 	cObject.Init(3, "Tom");
 	avBlock.Add(&cObject);
 

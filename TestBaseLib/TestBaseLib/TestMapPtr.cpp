@@ -21,7 +21,7 @@ void TestMapPtrPtr(void)
 	void*			pvk3;
 	void*			pvv3;
 	SMapIterator	sIter;
-	BOOL			bResult;
+	bool			bResult;
 
 	pvk1 = (void*)0x00324789;
 	pvv1 = (void*)0x00723764;

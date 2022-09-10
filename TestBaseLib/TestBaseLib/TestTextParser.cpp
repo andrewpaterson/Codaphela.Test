@@ -56,7 +56,7 @@ c\n\
 	tResult = cTextParser.GetIdentifier(szTemp);
 	AssertTristate(TRITRUE, tResult);								
 	AssertString("Line", szTemp);
-	AssertBool(TRUE, cTextParser.mbOutsideText);
+	AssertBool(true, cTextParser.mbOutsideText);
 
 	cTextParser.Kill();
 

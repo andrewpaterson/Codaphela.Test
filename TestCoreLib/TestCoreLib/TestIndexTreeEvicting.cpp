@@ -34,7 +34,7 @@ void TestIndexTreeEvictingAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse
 	int							iData;
 	CChars						sz;
 
-	cHelper.Init("Output" _FS_"IndexTreeEvicting0", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeEvicting0", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -44,7 +44,7 @@ void TestIndexTreeEvictingAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse
 	iData = 78;
 	cAccess.PutLongData(1LL, &iData, sizeof(int));
 	sz.Init();
-	cIndexTree.Print(&sz, TRUE, FALSE);
+	cIndexTree.Print(&sz, true, false);
 	if (eWriteThrough == IWT_Yes && eKeyReverse == IKR_Yes)
 	{
 		AssertStringApproximate(
@@ -121,7 +121,7 @@ void TestIndexTreeEvictingAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse
 	cAccess.Kill();
 	cIndexTree.Kill();
 	cController.Kill();
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -141,7 +141,7 @@ void TestIndexTreeEvictingEvictRandom(EIndexWriteThrough eWriteThrough, EIndexKe
 	size_t								sSize;
 	CIndexTreeFileDefaultDataCallback	cWriterCallback;
 
-	cHelper.Init("Output" _FS_"IndexTreeEvicting0a", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeEvicting0a", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 	cIndexTreeEvictedList.Init();
 	cController.Begin();
@@ -181,7 +181,7 @@ void TestIndexTreeEvictingEvictRandom(EIndexWriteThrough eWriteThrough, EIndexKe
 	cIndexTreeEvictedList.Kill();
 	cController.Kill();
 	cStrategy.Kill();
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -204,7 +204,7 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
-	cHelper.Init("Output" _FS_"IndexTreeEvicting1", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeEvicting1", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -251,7 +251,7 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	cEvictedNodes.Kill();
 	cStrategy.Kill();
 	cController.Kill();
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 
 	cAllocator.Kill();
 }
@@ -276,7 +276,7 @@ void TestIndexTreeEvictingEvictWithChildren(void)
 
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
-	cHelper.Init("Output" _FS_"IndexTreeEvicting2", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeEvicting2", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -313,7 +313,7 @@ void TestIndexTreeEvictingEvictWithChildren(void)
 	cController.End();
 	cIndexTree.Kill();
 	AssertLongLongInt(0, pcMemory->GetTotalAllocatedMemory());
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 
 	cController.Kill();
 	cAllocator.Kill();
@@ -342,7 +342,7 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
-	cHelper.Init("Output" _FS_"IndexTreeEvicting3", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeEvicting3", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cController.Begin();
@@ -632,7 +632,7 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 	cIndexTree.Kill();
 	cAccess.Kill();
 	AssertLongLongInt(0, pcMemory->GetTotalAllocatedMemory());
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 
 	cController.Kill();
 	cAllocator.Kill();
@@ -663,7 +663,7 @@ void TestIndexTreeEvictingEvictLastAccessed(void)
 	}
 	szData[1023] = '\0';
 
-	cHelper.Init("Output" _FS_"IndexTreeEvicting4", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_"IndexTreeEvicting4", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 	cIndexTreeEvictedList.Init();
 	cController.Begin();
@@ -724,7 +724,7 @@ void TestIndexTreeEvictingEvictLastAccessed(void)
 	cController.Kill();
 	cStrategy.Kill();
 	cOrderer.Kill();
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -741,7 +741,7 @@ void TestIndexTreeEvictingEmpty(void)
 	CIndexTreeEvictionStrategyDataOrderer	cEvictionStrategy;
 	CAccessDataOrderer						cDataOrderer;
 
-	cHelper.Init("Output" _FS_ "IndexTreeEvicting5", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "IndexTreeEvicting5", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDataOrderer.Init();
@@ -761,7 +761,7 @@ void TestIndexTreeEvictingEmpty(void)
 	cEvictionStrategy.Kill();
 	cDataOrderer.Kill();
 
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -774,7 +774,7 @@ void AssertTree(char* szExpected, CIndexTreeEvicting* pcTree)
 	CChars	sz;
 
 	sz.Init();
-	pcTree->Print(&sz, FALSE, FALSE);
+	pcTree->Print(&sz, false, false);
 	AssertStringApproximate(szExpected, sz.Text());
 	sz.Kill();
 }

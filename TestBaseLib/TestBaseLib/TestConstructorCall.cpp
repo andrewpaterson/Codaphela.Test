@@ -10,7 +10,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestConstructorVirtual(void)
 {
-	BOOL bNoVirtualTable;
+	bool bNoVirtualTable;
 
 	bNoVirtualTable = std::is_trivially_default_constructible<CConstructorCallTest1>();
 	AssertTrue(bNoVirtualTable);

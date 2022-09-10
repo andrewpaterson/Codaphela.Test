@@ -80,9 +80,9 @@ void TestIndexTreeNodeFileRootMemory(void)
 	AssertTrue(pcNode->HasNodes());
 	AssertFalse(pcNode->HasData());
 
-	gcLogger.SetBreakOnError(FALSE);
+	gcLogger.SetBreakOnError(false);
 	AssertFalse(pcNode->ValidateNodesEmpty());
-	gcLogger.SetBreakOnError(TRUE);
+	gcLogger.SetBreakOnError(true);
 
 	AssertInt(33, pcNode->GetFirstIndex());
 	AssertInt(33, pcNode->GetLastIndex());

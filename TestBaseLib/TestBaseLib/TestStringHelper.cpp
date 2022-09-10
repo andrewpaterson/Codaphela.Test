@@ -394,31 +394,31 @@ void TestBoolToString()
 {
     char    sz[40];
 
-    BoolToString(sz, 40, TRUE);
+    BoolToString(sz, 40, true);
     AssertString("true", sz);
 
-    BoolToString(sz, 40, FALSE);
+    BoolToString(sz, 40, false);
     AssertString("false", sz);
 
-    BoolToString(sz, 1, FALSE);
+    BoolToString(sz, 1, false);
     AssertString("", sz);
 
-    BoolToString(sz, 2, FALSE);
+    BoolToString(sz, 2, false);
     AssertString("f", sz);
 
-    BoolToString(sz, 3, FALSE);
+    BoolToString(sz, 3, false);
     AssertString("fa", sz);
 
-    BoolToString(sz, 4, FALSE);
+    BoolToString(sz, 4, false);
     AssertString("fal", sz);
 
-    BoolToString(sz, 5, FALSE);
+    BoolToString(sz, 5, false);
     AssertString("fals", sz);
 
-    BoolToString(sz, 6, FALSE);
+    BoolToString(sz, 6, false);
     AssertString("false", sz);
 
-    BoolToString(sz, 7, FALSE);
+    BoolToString(sz, 7, false);
     AssertString("false", sz);
 }
 

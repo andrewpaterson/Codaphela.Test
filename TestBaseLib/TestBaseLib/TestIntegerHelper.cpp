@@ -27,7 +27,7 @@ void TestFindFirstClearBit(void)
 
 	for (iBit = 71; iBit >= 0; iBit--)
 	{
-		SetBit(iBit, ab, FALSE);
+		SetBit(iBit, ab, false);
 		iIndex = FindFirstClearBit(ab, 72);
 		AssertInt(iBit, iIndex);
 	}
@@ -108,7 +108,7 @@ void TestFindFirstSetBit(void)
 
 	for (iBit = 71; iBit >= 0; iBit--)
 	{
-		SetBit(iBit, ab, TRUE);
+		SetBit(iBit, ab, true);
 		iIndex = FindFirstSetBit(ab, 72);
 		AssertInt(iBit, iIndex);
 	}
@@ -156,7 +156,7 @@ void TestFindLastClearBit(void)
 
 	for (iBit = 0; iBit < 72; iBit++)
 	{
-		SetBit(iBit, ab, FALSE);
+		SetBit(iBit, ab, false);
 		iIndex = FindLastClearBit(ab, 72);
 		AssertInt(iBit, iIndex);
 	}
@@ -240,7 +240,7 @@ void TestFindLastSetBit(void)
 
 	for (iBit = 0; iBit < 72; iBit++)
 	{
-		SetBit(iBit, ab, TRUE);
+		SetBit(iBit, ab, true);
 		iIndex = FindLastSetBit(ab, 72);
 		AssertInt(iBit, iIndex);
 	}

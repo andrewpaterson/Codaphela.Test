@@ -22,13 +22,13 @@ void TestIndexTreeMemoryConfigGlobalMallocatorReading(void)
 	CIndexTreeMemoryAccess				cAccess;
 	CLifeInit<CIndexTreeDataOrderer>	cOrderer;
 	CFileBasic							cConfigFile;
-	BOOL								bResult;
+	bool								bResult;
 	CFileUtil							cFileUtil;
 	CFileBasic							cTreeFile;
 	CIndexTreeMemoryConfig				cTreeConfig;
 	CLifeInit<CMallocator>				cMallocator;
 
-	cMallocator.Init(&gcMemoryAllocator, FALSE, FALSE);
+	cMallocator.Init(&gcMemoryAllocator, false, false);
 	cOrderer = CCreationDataOrderer::Create();
 
 	cIndexTree.Init(cMallocator, IKR_Yes, 512, 8, cOrderer);
@@ -90,7 +90,7 @@ void TestIndexTreeMemoryConfigLocalMallocatorReading(void)
 	CIndexTreeMemoryAccess				cAccess;
 	CLifeInit<CIndexTreeDataOrderer>	cOrderer;
 	CFileBasic							cConfigFile;
-	BOOL								bResult;
+	bool								bResult;
 	CFileUtil							cFileUtil;
 	CFileBasic							cTreeFile;
 	CIndexTreeMemoryConfig				cTreeConfig;

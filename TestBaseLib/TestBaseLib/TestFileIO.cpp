@@ -75,7 +75,7 @@ void TestFileIOHelpers(void)
 	double			d;
 	char			c;
 	unsigned char	uc;
-	BOOL			b;
+	bool			b;
 	int16			s;
 	uint16	us;
 	unsigned char	abi[7];
@@ -89,7 +89,7 @@ void TestFileIOHelpers(void)
 	AssertTrue(cFile.WriteFloat(8.4936205629457392304853));
 	AssertTrue(cFile.WriteChar('g'));
 	AssertTrue(cFile.WriteInt((unsigned char)255));
-	AssertTrue(cFile.WriteBool(TRUE));
+	AssertTrue(cFile.WriteBool(true));
 	AssertTrue(cFile.WriteInt((int16)0x5a0a));
 	AssertTrue(cFile.WriteInt((uint16)0x6be4));
 	AssertTrue(cFile.WriteBits(ab, 7));
@@ -101,7 +101,7 @@ void TestFileIOHelpers(void)
 	AssertTrue(cFile.WriteFloat(2.74944978325209529023823));
 	AssertTrue(cFile.WriteChar('@'));
 	AssertTrue(cFile.WriteInt((unsigned char)1));
-	AssertTrue(cFile.WriteBool(FALSE));
+	AssertTrue(cFile.WriteBool(false));
 	AssertTrue(cFile.WriteInt((int16)0x0001));
 	AssertTrue(cFile.WriteInt((uint16)0xffff));
 
@@ -120,7 +120,7 @@ void TestFileIOHelpers(void)
 	AssertTrue(cFile.ReadInt(&uc));
 	AssertChar((unsigned char)255, uc);
 	AssertTrue(cFile.ReadBool(&b));
-	AssertBool(TRUE, b);
+	AssertBool(true, b);
 	AssertTrue(cFile.ReadInt(&s));
 	AssertShort((int16)0x5a0a, s);
 	AssertTrue(cFile.ReadInt((uint16*)&us));
@@ -143,7 +143,7 @@ void TestFileIOHelpers(void)
 	AssertTrue(cFile.ReadInt(&uc));
 	AssertChar(1, uc);
 	AssertTrue(cFile.ReadBool(&b));
-	AssertBool(FALSE, b);
+	AssertBool(false, b);
 	AssertTrue(cFile.ReadInt(&s));
 	AssertShort((int16)0x0001, s);
 	AssertTrue(cFile.ReadInt((uint16*)&us));
@@ -550,7 +550,7 @@ void TestFileIOMap(void)
 
 	TestFileIOBegin(&cMemory, &cFile);
 	
-	cMap.Init(&CompareInt, TRUE);
+	cMap.Init(&CompareInt, true);
 	i = 9;	ld = 1.4783409838732098273349;
 	cMap.Put(&i, &ld);
 	i = 22;	ld = 1.7983487629380598763752;
@@ -560,7 +560,7 @@ void TestFileIOMap(void)
 	AssertInt(3, cMap.NumElements());
 	AssertTrue(cMap.Write(&cFile));
 
-	mssi.Init(TRUE);
+	mssi.Init(true);
 	mssi.Put("lion", 7);
 	mssi.Put("eat", 1);
 	mssi.Put("zebra", 12);

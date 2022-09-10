@@ -9,7 +9,7 @@
 void TestArrayLongRemoveDuplicates(void)
 {
 	CArrayLong	cArray;
-	BOOL		bRemoved;
+	bool		bRemoved;
 
 	cArray.Init();
 	cArray.AddList(0LL, 1LL, 2LL, 3LL, 4LL, 5LL, 6LL, 0LL);

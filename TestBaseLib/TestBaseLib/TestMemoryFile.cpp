@@ -13,7 +13,7 @@ void TestMemoryFile(void)
 	CMemoryFile	cMemoryFile;
 	char		szHello[] = "Hello";
 	char		szWorld[] = " World";
-	BOOL		bResult;
+	bool		bResult;
 	int			iResult;
 	char		szResult[100];
 

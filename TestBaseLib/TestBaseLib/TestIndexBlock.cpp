@@ -18,7 +18,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL AddToIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, long long int lliData)
+bool AddToIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, long long int lliData)
 {
 	int				iStrLen;
 
@@ -31,7 +31,7 @@ BOOL AddToIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, long long int lliDa
 //
 //
 //////////////////////////////////////////////////////////////////////////
-BOOL GetFromIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, long long int** pplli, int* piSize)
+bool GetFromIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, long long int** pplli, int* piSize)
 {
 	int				iStrLen;
 
@@ -162,7 +162,7 @@ void TestIndexBlockAddDuplicate(void)
 	CIndexBlock	cIndexBlock;
 	int			ia = 'a';
 	int			ib = 'a';
-	BOOL		bResult;
+	bool		bResult;
 	int			iWorldLen;
 	int			iHelloLen;
 
@@ -194,7 +194,7 @@ void TestIndexBlockRemove(void)
 	int			ia = 'a';
 	int			ib = 'b';
 	int			ic = 'c';
-	BOOL		bResult;
+	bool		bResult;
 	char* szData;
 
 	cIndexBlock.Init();
@@ -300,7 +300,7 @@ void TestIndexBlockIterate(void)
 	size_t							uiDataSize;
 	char							szKey[MAX_KEY_SIZE];
 	size_t							uiKeySize;
-	BOOL							bExists;
+	bool							bExists;
 
 	cIndex.Init();
 	cAccess.Init(&cIndex);
@@ -399,7 +399,7 @@ void TestIndexBlockDataMemoryUnchanged(void)
 	CChars				sz;
 	char*				szData;
 	char*				aszData[2048];
-	BOOL				bFailed;
+	bool				bFailed;
 
 	WordsInit();
 
@@ -423,7 +423,7 @@ void TestIndexBlockDataMemoryUnchanged(void)
 
 	cRandom.Init(2367849);
 
-	bFailed = FALSE;
+	bFailed = false;
 	for (i = 0; i < 2048; i++)
 	{
 		MakeKey(&cRandom, &aszWords, &sz);
@@ -431,7 +431,7 @@ void TestIndexBlockDataMemoryUnchanged(void)
 		szData = cAccess.GetStringString(sz.Text());
 		if (aszData[i] != szData)
 		{
-			bFailed = TRUE;
+			bFailed = true;
 		}
 		sz.Kill();
 	}
@@ -461,8 +461,8 @@ void TestIndexBlockRemoveHalf(void)
 	CChars				sz;
 	char*				szData;
 	char*				aszData[2048];
-	BOOL				bResult;
-	BOOL				bFailed;
+	bool				bResult;
+	bool				bFailed;
 
 	WordsInit();
 
@@ -485,7 +485,7 @@ void TestIndexBlockRemoveHalf(void)
 	cRandom.Kill();
 
 	cRandom.Init(2367849);
-	bResult = TRUE;
+	bResult = true;
 	for (i = 0; i < 2048; i++)
 	{
 		MakeKey(&cRandom, &aszWords, &sz);
@@ -500,7 +500,7 @@ void TestIndexBlockRemoveHalf(void)
 	AssertInt(1024, cIndex.NumElements());
 	cRandom.Kill();
 
-	bFailed = FALSE;
+	bFailed = false;
 	cRandom.Init(2367849);
 	for (i = 0; i < 2048; i++)
 	{
@@ -510,14 +510,14 @@ void TestIndexBlockRemoveHalf(void)
 		{
 			if (aszData[i] != szData)
 			{
-				bFailed = TRUE;
+				bFailed = true;
 			}
 		}
 		else
 		{
 			if (szData != NULL)
 			{
-				bFailed = TRUE;
+				bFailed = true;
 			}
 		}
 		sz.Kill();

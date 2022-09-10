@@ -31,7 +31,7 @@ void TestArrayIntAddFind(void)
 	AssertInt(4, cArray[3]);
 	AssertInt(5, cArray[4]);
 
-	cArray.InsertIntoSorted(2, FALSE);
+	cArray.InsertIntoSorted(2, false);
 
 	AssertInt(6, cArray.NumElements());
 	AssertInt(1, cArray[0]);
@@ -70,8 +70,8 @@ void TestArrayIntSortingUsingQuickSort(void)
 	AssertInt(8, cArray[8]);
 	AssertInt(9, cArray[9]);
 
-	cArray.InsertIntoSorted(7, FALSE);
-	cArray.InsertIntoSorted(1, TRUE);
+	cArray.InsertIntoSorted(7, false);
+	cArray.InsertIntoSorted(1, true);
 
 	AssertInt(11, cArray.NumElements());
 	AssertInt(0, cArray[0]);
@@ -115,8 +115,8 @@ void TestArrayIntSortingUsingBubbleSort(void)
 	AssertInt(8, cArray[8]);
 	AssertInt(9, cArray[9]);
 
-	cArray.InsertIntoSorted(7, FALSE);
-	cArray.InsertIntoSorted(1, TRUE);
+	cArray.InsertIntoSorted(7, false);
+	cArray.InsertIntoSorted(1, true);
 
 	AssertInt(11, cArray.NumElements());
 	AssertInt(0, cArray[0]);

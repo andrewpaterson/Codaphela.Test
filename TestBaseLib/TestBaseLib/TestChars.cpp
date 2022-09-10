@@ -193,16 +193,16 @@ the Free Software Foundation, either version 3 of the License, or\n\
 	psz = cStrings.Get(0);
 	AssertPointer(sz2.Text(), psz->Text());
 	AssertInt(73, psz->Length());
-	AssertBool(TRUE, psz->Equals("Turburust CoreLib is free software: you can redistribute it and/or modify", 73));
+	AssertBool(true, psz->Equals("Turburust CoreLib is free software: you can redistribute it and/or modify", 73));
 	psz = cStrings.Get(1);
 	AssertInt(75, psz->Length());
-	AssertBool(TRUE, psz->Equals("it under the terms of the GNU Lesser General Public License as published by", 75));
+	AssertBool(true, psz->Equals("it under the terms of the GNU Lesser General Public License as published by", 75));
 	psz = cStrings.Get(2);
 	AssertInt(65, psz->Length());
-	AssertBool(TRUE, psz->Equals("the Free Software Foundation, either version 3 of the License, or", 65));
+	AssertBool(true, psz->Equals("the Free Software Foundation, either version 3 of the License, or", 65));
 	psz = cStrings.Get(3);
 	AssertInt(35, psz->Length());
-	AssertBool(TRUE, psz->Equals("(at your option) any later version.", 35));
+	AssertBool(true, psz->Equals("(at your option) any later version.", 35));
 
 	sz2.Kill();
 	cStrings.Kill();

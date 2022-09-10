@@ -15,7 +15,7 @@ void TestDataTypesIOInt2(void)
 	SInt2				si2In;
 	DataIO_FileWriter	fSave;
 	DataIO_FileReader	fLoad;
-	BOOL				bResult;
+	bool				bResult;
 	CMemoryFile			cMemoryFile;
 	CFileBasic			cFile;
 	SInt2				si2Out;
@@ -59,7 +59,7 @@ void TestDataTypesIOMultiple(void)
 	SFloat4				sf4In;
 	DataIO_FileWriter	fSave;
 	DataIO_FileReader	fLoad;
-	BOOL				bResult;
+	bool				bResult;
 	CMemoryFile			cMemoryFile;
 	CFileBasic			cFile;
 	SFloat2				sf2Out;

@@ -21,11 +21,11 @@ void TestPackFileReadWriteSingleFile(void)
 	CPackFiles		cPackFiles;
 	CPackFile*		pcPackFile;
 	CFileBasic		cBasic;
-	BOOL			bResult;
+	bool			bResult;
 	char			c;
 
 	pcMemoryFile = MemoryFile();
-	pcMemoryFile->mbBasicFileMustFree = FALSE;
+	pcMemoryFile->mbBasicFileMustFree = false;
 
 	bResult = cPackFiles.Init(pcMemoryFile, PFM_Write);
 	AssertTrue(bResult);
@@ -78,13 +78,13 @@ void TestPackFileReadWriteMultipleFiles(void)
 	CFileBasic		cBasic;
 	CFileBasic		cBasic1;
 	CFileBasic		cBasic2;
-	BOOL			bResult;
+	bool			bResult;
 	int				iLen;
 	char			sz[20];
 	int				iNumber;
 
 	pcMemoryFile = MemoryFile();
-	pcMemoryFile->mbBasicFileMustFree = FALSE;
+	pcMemoryFile->mbBasicFileMustFree = false;
 
 	bResult = cPackFiles.Init(pcMemoryFile, PFM_Write);
 	AssertTrue(bResult);
@@ -190,7 +190,7 @@ void TestPackFileAdd(void)
 	CFileUtil				cFileUtil;
 	CChars					szDir;
 	CDiskFile*				pcDiskFile;
-	BOOL					bResult;
+	bool					bResult;
 	CFileNodePackFileNode*	pcNode;
 	CPackFiles				cPak;
 	CPackFileNode*			pcFile;
@@ -267,9 +267,9 @@ void TestPackFileIterate(void)
 	AssertNotNull(pcDiskFile);
 	cPak.Init(pcDiskFile, PFM_Read);
 
-	sz.Init(); AssertStringCase("Giana/Sisters/Document.txt", cPak.StartIteration(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Giana/Brothers.PAK", cPak.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Giana/Sisters.PAK", cPak.Iterate(&cIter)->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Giana/Sisters/Document.txt", cPak.StartIteration(&cIter)->GetFullName(&sz), false);  sz.Kill();
+	sz.Init(); AssertStringCase("Giana/Brothers.PAK", cPak.Iterate(&cIter)->GetFullName(&sz), false);  sz.Kill();
+	sz.Init(); AssertStringCase("Giana/Sisters.PAK", cPak.Iterate(&cIter)->GetFullName(&sz), false);  sz.Kill();
 	AssertNull(cPak.Iterate(&cIter));
 	cPak.StopIteration(&cIter);
 
@@ -301,9 +301,9 @@ void TestPackFileGetFiles(void)
 
 	AssertInt(3, cArrayFiles.NumElements());
 
-	sz.Init(); AssertStringCase("Giana/Sisters/Document.txt", (*cArrayFiles.Get(0))->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Giana/Brothers.PAK", (*cArrayFiles.Get(1))->GetFullName(&sz), FALSE);  sz.Kill();
-	sz.Init(); AssertStringCase("Giana/Sisters.PAK", (*cArrayFiles.Get(2))->GetFullName(&sz), FALSE);  sz.Kill();
+	sz.Init(); AssertStringCase("Giana/Sisters/Document.txt", (*cArrayFiles.Get(0))->GetFullName(&sz), false);  sz.Kill();
+	sz.Init(); AssertStringCase("Giana/Brothers.PAK", (*cArrayFiles.Get(1))->GetFullName(&sz), false);  sz.Kill();
+	sz.Init(); AssertStringCase("Giana/Sisters.PAK", (*cArrayFiles.Get(2))->GetFullName(&sz), false);  sz.Kill();
 
 	cArrayFiles.Kill();
 	cPak.Kill();

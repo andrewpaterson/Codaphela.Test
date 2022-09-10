@@ -12,7 +12,7 @@ public:
 		//Kill should not be called.
 		CLifeInit<CMallocator> cMalloc;
 
-		cMalloc.Init(&gcSystemAllocator, FALSE, FALSE);
+		cMalloc.Init(&gcSystemAllocator, false, false);
 		CIndexTree::Init(cMalloc, eKeyReverse, sizeof(CIndexTreeNodeMemory), sizeof(CIndexTreeNodeMemory) + sizeof(CIndexTreeDataNode), sizeof(CIndexTreeNodeMemory*), MAX_DATA_SIZE, MAX_KEY_SIZE, LifeNull<CIndexTreeDataOrderer>());
 		mpcRoot = NULL;
 		miSize = 0;
@@ -28,7 +28,7 @@ public:
 		return CIndexTreeMemory::GetNode(pvKey, iKeySize);
 	}
 
-	BOOL ValidateSize(void)
+	bool ValidateSize(void)
 	{
 		return CIndexTreeMemory::ValidateSize();
 	}

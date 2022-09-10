@@ -25,7 +25,7 @@ void TestFat32ReadSpecific(void)
 	SFatFileSystemQuery		sQuery;
 	uint16					uiResult;
 	CFatFile				cFatFile;
-	BOOL					bResult;
+	bool					bResult;
 	uint32					uiBytesRead;
 	char					auiFileData[44 KB];
 	char					auiExpectedData[44 KB];
@@ -226,7 +226,7 @@ void TestFat32ReadDirectoryTree(void)
 	filePos					uiLength;
 	void*					pvMemory;
 	uint16					uiResult;
-	BOOL					bResult;
+	bool					bResult;
 	CArrayChars				aszFileNames;
 	CChars					sz;
 	int						i;
@@ -339,7 +339,7 @@ void TestFat32Format(void)
 	filePos					uiLength;
 	void*					pvMemory;
 	uint16					uiResult;
-	BOOL					bResult;
+	bool					bResult;
 	SFatDirectoryEntry*		psFatDirectoryEntry;
 	SFatFileSystemQuery		sQuery;
 	CFatVolume				cVolume;
@@ -384,7 +384,7 @@ void TestFat32Write(void)
 	filePos					uiLength;
 	void*					pvMemory;
 	uint16					uiResult;
-	BOOL					bResult;
+	bool					bResult;
 	SFatDirectoryEntry*		psFatDirectoryEntry;
 	SFatFileSystemQuery		sQuery;
 	CFatVolume				cVolume;
@@ -466,7 +466,7 @@ void TestFat32CreateDirectory(void)
 	filePos			uiLength;
 	void*			pvMemory;
 	uint16			uiResult;
-	BOOL			bResult;
+	bool			bResult;
 	CFatVolume		cVolume;
 	CArrayChars		aszDirectories;
 	CChars			sz;
@@ -520,7 +520,7 @@ void TestFat32FormatAndCreateDirectory(void)
 	filePos			uiLength;
 	void*			pvMemory;
 	uint16			uiResult;
-	BOOL			bResult;
+	bool			bResult;
 	CFatVolume		cVolume;
 	CArrayChars		aszDirectories;
 	CChars			sz;

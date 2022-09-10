@@ -70,7 +70,7 @@ void TestIndexTreeMemoryAdd(EIndexKeyReverse eKeyReverse)
 	CTestIndexTreeObject	aa;
 	CTestIndexTreeObject	temp;
 	CArrayVoidPtr			avp;
-	BOOL					bResult;
+	bool					bResult;
 	CIndexTreeNodeMemory*	pcNode;
 	CTestIndexTreeObject**	ppvTest;
 	CTestIndexTreeObject***	ppvTestA;
@@ -301,7 +301,7 @@ void TestIndexTreeMemoryPutPtrDuplicate(void)
 	CTestIndexTreeObject	andrewToo;
 	CTestIndexTreeObject*	pcResult;
 	CArrayVoidPtr			avp;
-	BOOL					bResult;
+	bool					bResult;
 
 	cIndex.Init();
 	cAccess.Init(&cIndex);
@@ -993,7 +993,7 @@ void TestIndexTreeMemoryReadWrite(void)
 	CTestIndexTreeMemory	cIndexIn;
 	CIndexTreeMemoryAccess	cAccessIn;
 	char					szResult[256];
-	BOOL					bResult;
+	bool					bResult;
 
 	cIndex.Init();
 	cAccess.Init(&cIndex);
@@ -1168,18 +1168,18 @@ void TestIndexTreeMemoryResizeData(void)
 	AssertString(szAObject, cAccess.GetStringString("A", szResult));
 
 	pcRoot = cIndex.GetRoot();
-	sz.Init(); pcRoot->Print(&sz, FALSE);
+	sz.Init(); pcRoot->Print(&sz, false);
 	AssertString("0:255 .................................................................x..............................................................................................................................................................................................", sz.Text());
 	sz.Kill();
 	pcNode = pcRoot->Get('A');
-	sz.Init(); pcNode->Print(&sz, FALSE);
+	sz.Init(); pcNode->Print(&sz, false);
 	AssertString("65:67 (18) x.x", sz.Text());
 	sz.Kill();
-	sz.Init(); pcNode->Get('A')->Print(&sz, FALSE);
+	sz.Init(); pcNode->Get('A')->Print(&sz, false);
 	AssertString("0:0 (6)", sz.Text());
 	sz.Kill();
 	AssertNull(pcNode->Get('B'));
-	sz.Init(); pcNode->Get('C')->Print(&sz, FALSE);
+	sz.Init(); pcNode->Get('C')->Print(&sz, false);
 	AssertString("0:0 (8)", sz.Text());
 	sz.Kill();
 
@@ -1340,7 +1340,7 @@ void TestIndexTreeMemoryReadWriteDataOrderer(void)
 	CTestIndexTreeMemory				cIndexIn;
 	CIndexTreeMemoryAccess				cAccessIn;
 	char								szResult[256];
-	BOOL								bResult;
+	bool								bResult;
 	CIndexTreeMemoryConfig				cConfig;
 	CLifeInit<CMallocator>				cMallocInit;
 	CMemoryAllocator					cMalloc;
@@ -1349,13 +1349,13 @@ void TestIndexTreeMemoryReadWriteDataOrderer(void)
 	SDataOrderIterator					sIter;
 	char								szData[128];
 	char								szKey[24];
-	BOOL								bExists;
+	bool								bExists;
 	CIndexTreeDataOrderer*				pcOrderer;
 
 	cMalloc.Init();
-	cMallocInit.Init(&cMalloc, FALSE, TRUE);
+	cMallocInit.Init(&cMalloc, false, true);
 	cOrderer.Init();
-	cOrdererInit.Init(&cOrderer, FALSE, TRUE);
+	cOrdererInit.Init(&cOrderer, false, true);
 	cConfig.Init(cMallocInit, IKR_No, 128, 24, cOrdererInit);
 
 	cIndex.Init(&cConfig);
@@ -1473,7 +1473,7 @@ void TestIndexTreeMemoryGetLongestPartial(void)
 	CIndexTreeMemoryAccess	cAccess;
 	int						iData;
 	size_t					puiDataSize;
-	BOOL					bResult;
+	bool					bResult;
 
 	cIndex.Init();
 	cAccess.Init(&cIndex);

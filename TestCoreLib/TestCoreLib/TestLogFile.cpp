@@ -50,7 +50,7 @@ void TestLogFileRead(void)
 	CLogFile*		pcLogFile;
 	CMemoryFile*	pcMemoryFile;
 	CFileBasic		cFile;
-	BOOL			bResult;
+	bool			bResult;
 	int				iLength;
 	char			sz[200];
 	filePos			iRead;
@@ -113,7 +113,7 @@ void TestLogFileWriteMemory(void)
 	CLogFile*		pcLogFile;
 	CMemoryFile*	pcMemoryFile;
 	CFileBasic		cFile;
-	BOOL			bResult;
+	bool			bResult;
 	int				iLength;
 	char			sz[200];
 
@@ -244,7 +244,7 @@ void TestLogFileWriteDiskSingle(void)
 	CLogFile*		pcLogFile;
 	CDiskFile*		pcDiskFile;
 	CFileBasic		cFile;
-	BOOL			bResult;
+	bool			bResult;
 	CFileUtil		cFileUtil;
 	char			szDirectory[] = "Output" _FS_ "LogFile4";
 	char			szFileName[] = "Output" _FS_ "LogFile4" _FS_ "File.txt";
@@ -291,7 +291,7 @@ void TestLogFileWriteDisk(void)
 	CLogFile*		pcLogFile;
 	CDiskFile*		pcDiskFile;
 	CFileBasic		cFile;
-	BOOL			bResult;
+	bool			bResult;
 	int				iLength;
 	char			sz[200];
 	CFileUtil		cFileUtil;
@@ -358,7 +358,7 @@ void TestLogFileFindHoles(void)
 {
 	CLogFile*				pcLogFile;
 	CFileBasic				cFile;
-	BOOL					bResult;
+	bool					bResult;
 	int						iInt1;
 	int						iInt2;
 	int						iInt3;
@@ -500,7 +500,7 @@ void TestLogFileCommandsSimple(void)
 	CLogFile*		pcLogFile;
 	CMemoryFile*	pcMemoryFile;
 	CFileBasic		cFile;
-	BOOL			bResult;
+	bool			bResult;
 	int				iInt;
 	int				iWritten;
 	int				iResult;
@@ -555,7 +555,7 @@ void TestLogFileCommandsComplex(void)
 	CLogFile* pcLogFile;
 	CMemoryFile* pcMemoryFile;
 	CFileBasic		cFile;
-	BOOL			bResult;
+	bool			bResult;
 	int				iWritten;
 	char			szABC[] = { "ABCDEFGHIJK" };
 	char			sz123[] = { "123" };

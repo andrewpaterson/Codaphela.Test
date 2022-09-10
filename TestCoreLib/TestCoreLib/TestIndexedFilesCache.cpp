@@ -12,7 +12,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexedFilesEvictingFlush(EIndexWriteThrough eWriteThrough, BOOL bClearCache)
+void TestIndexedFilesEvictingFlush(EIndexWriteThrough eWriteThrough, bool bClearCache)
 {
 	CDurableFileController					cController;
 	CIndexTreeHelper						cHelper;
@@ -26,7 +26,7 @@ void TestIndexedFilesEvictingFlush(EIndexWriteThrough eWriteThrough, BOOL bClear
 	CIndexedDataDescriptor					cDescriptor;
 	unsigned int							uiSize;
 
-	cHelper.Init("Output" _FS_ "TestEvicting1", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "TestEvicting1", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDescriptors.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX", 1024, eWriteThrough);
@@ -115,7 +115,7 @@ void TestIndexedFilesEvictingFlush(EIndexWriteThrough eWriteThrough, BOOL bClear
 	AssertTrue(cDescriptors.Kill());
 
 	cController.Kill();
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -142,7 +142,7 @@ void TestIndexedFilesEvictingEviction(EIndexWriteThrough eWriteThrough)
 	CIndexedDataDescriptor					cDescriptor;
 	unsigned int							uiSize;
 
-	cHelper.Init("Output" _FS_ "TestEvicting2", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "TestEvicting2", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cKeyDataEvictedList.Init();
@@ -190,7 +190,7 @@ void TestIndexedFilesEvictingEviction(EIndexWriteThrough eWriteThrough)
 	AssertInt(iLenSeparate + sizeof(SIndexedCacheDescriptor), cDescriptors.TestGetCachedObjectSize(oiSeparate));
 	cKeyDataEvictedList.Clear();
 
-	AssertTrue(cDescriptors.Flush(TRUE));
+	AssertTrue(cDescriptors.Flush(true));
 
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
@@ -342,7 +342,7 @@ void TestIndexedFilesEvictingEviction(EIndexWriteThrough eWriteThrough)
 	AssertTrue(cDescriptors.Kill());
 	cKeyDataEvictedList.Kill();
 	cController.Kill();
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -362,7 +362,7 @@ void TestIndexedFilesEvictingSetDataNoCacheNoFile(void)
 
 	AssertInt(32, sizeof(CIndexedDataDescriptor));
 	eWriteThrough = IWT_No;
-	cHelper.Init("Output" _FS_ "TestEvicting3", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "TestEvicting3", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDescriptors.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX", 320, eWriteThrough);
@@ -381,7 +381,7 @@ void TestIndexedFilesEvictingSetDataNoCacheNoFile(void)
 	Pass();
 
 	AssertInt(0, cDescriptors.NumFiles());
-	AssertTrue(cDescriptors.Flush(TRUE));
+	AssertTrue(cDescriptors.Flush(true));
 	AssertTrue(cDescriptors.TestGetDescriptor(1LL, &cResult));
 	AssertInt(0, cResult.GetCacheDataSize());
 	AssertInt(6, cResult.GetFileDataSize());
@@ -407,7 +407,7 @@ void TestIndexedFilesEvictingSetDataNoCacheNoFile(void)
 	Pass();
 
 	cController.Kill();
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -426,7 +426,7 @@ void TestIndexedFilesEvictingSetDataCacheSameSizeNoFile(void)
 	EIndexWriteThrough			eWriteThrough;
 
 	eWriteThrough = IWT_No;
-	cHelper.Init("Output" _FS_ "TestEvicting4", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "TestEvicting4", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDescriptors.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX", 320, eWriteThrough);
@@ -443,7 +443,7 @@ void TestIndexedFilesEvictingSetDataCacheSameSizeNoFile(void)
 	AssertInt(1, cDescriptors.NumDataCached());
 
 	AssertInt(0, cDescriptors.NumFiles());
-	AssertTrue(cDescriptors.Flush(TRUE));
+	AssertTrue(cDescriptors.Flush(true));
 
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
@@ -460,7 +460,7 @@ void TestIndexedFilesEvictingSetDataCacheSameSizeNoFile(void)
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
 	cController.Kill();
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -479,7 +479,7 @@ void TestIndexedFilesEvictingSetDataCacheDiffSizeNoFile(void)
 	EIndexWriteThrough			eWriteThrough;
 
 	eWriteThrough = IWT_No;
-	cHelper.Init("Output" _FS_ "TestEvicting5", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "TestEvicting5", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDescriptors.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX", 320, eWriteThrough);
@@ -496,7 +496,7 @@ void TestIndexedFilesEvictingSetDataCacheDiffSizeNoFile(void)
 	AssertInt(1, cDescriptors.NumDataCached());
 
 	AssertInt(0, cDescriptors.NumFiles());
-	AssertTrue(cDescriptors.Flush(TRUE));
+	AssertTrue(cDescriptors.Flush(true));
 
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
@@ -513,7 +513,7 @@ void TestIndexedFilesEvictingSetDataCacheDiffSizeNoFile(void)
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
 	cController.Kill();
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -532,7 +532,7 @@ void TestIndexedFilesEvictingSetDataNoCacheFileSameSize(void)
 	EIndexWriteThrough			eWriteThrough;
 
 	eWriteThrough = IWT_No;
-	cHelper.Init("Output" _FS_ "TestEvicting6", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "TestEvicting6", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDescriptors.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX", 320, eWriteThrough);
@@ -545,7 +545,7 @@ void TestIndexedFilesEvictingSetDataNoCacheFileSameSize(void)
 	AssertInt(1, cDescriptors.NumDataCached());
 
 	AssertInt(0, cDescriptors.NumFiles());
-	AssertTrue(cDescriptors.Flush(TRUE));
+	AssertTrue(cDescriptors.Flush(true));
 
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
@@ -560,7 +560,7 @@ void TestIndexedFilesEvictingSetDataNoCacheFileSameSize(void)
 	AssertTrue(cDescriptors.TestGetDescriptor(1LL, NULL));
 	AssertInt(1, cDescriptors.NumDataCached());
 
-	AssertTrue(cDescriptors.Flush(TRUE));
+	AssertTrue(cDescriptors.Flush(true));
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
 	cController.Kill();
@@ -576,7 +576,7 @@ void TestIndexedFilesEvictingSetDataNoCacheFileSameSize(void)
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
 	cController.Kill();
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -595,7 +595,7 @@ void TestIndexedFilesEvictingSetDataNoCacheFileDiffSize(void)
 	EIndexWriteThrough			eWriteThrough;
 
 	eWriteThrough = IWT_No;
-	cHelper.Init("Output" _FS_ "TestEvicting7", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "TestEvicting7", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDescriptors.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX", 320, eWriteThrough);
@@ -608,7 +608,7 @@ void TestIndexedFilesEvictingSetDataNoCacheFileDiffSize(void)
 	AssertInt(1, cDescriptors.NumDataCached());
 
 	AssertInt(0, cDescriptors.NumFiles());
-	AssertTrue(cDescriptors.Flush(TRUE));
+	AssertTrue(cDescriptors.Flush(true));
 
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
@@ -623,7 +623,7 @@ void TestIndexedFilesEvictingSetDataNoCacheFileDiffSize(void)
 	AssertTrue(cDescriptors.TestGetDescriptor(1LL, NULL));
 	AssertInt(1, cDescriptors.NumDataCached());
 
-	AssertTrue(cDescriptors.Flush(TRUE));
+	AssertTrue(cDescriptors.Flush(true));
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
 	cController.Kill();
@@ -639,7 +639,7 @@ void TestIndexedFilesEvictingSetDataNoCacheFileDiffSize(void)
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
 	cController.Kill();
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -659,7 +659,7 @@ void TestIndexedFilesEvictingSetDataCacheSameSizeFile(void)
 	EIndexWriteThrough						eWriteThrough;
 
 	eWriteThrough = IWT_No;
-	cHelper.Init("Output" _FS_ "TestEvicting8", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "TestEvicting8", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDescriptors.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX", 320, eWriteThrough);
@@ -672,7 +672,7 @@ void TestIndexedFilesEvictingSetDataCacheSameSizeFile(void)
 	AssertInt(1, cDescriptors.NumDataCached());
 
 	AssertInt(0, cDescriptors.NumFiles());
-	AssertTrue(cDescriptors.Flush(TRUE));
+	AssertTrue(cDescriptors.Flush(true));
 
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
@@ -687,7 +687,7 @@ void TestIndexedFilesEvictingSetDataCacheSameSizeFile(void)
 	AssertTrue(cDescriptors.TestGetDescriptor(1LL, NULL));
 	AssertInt(1, cDescriptors.NumDataCached());
 
-	AssertTrue(cDescriptors.Flush(TRUE));
+	AssertTrue(cDescriptors.Flush(true));
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
 	cController.Kill();
@@ -701,7 +701,7 @@ void TestIndexedFilesEvictingSetDataCacheSameSizeFile(void)
 	AssertTrue(cDescriptors.TestGetDescriptor(1LL, NULL));
 	AssertInt(1, cDescriptors.NumDataCached());
 
-	AssertTrue(cDescriptors.Flush(TRUE));
+	AssertTrue(cDescriptors.Flush(true));
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
 	cController.Kill();
@@ -717,7 +717,7 @@ void TestIndexedFilesEvictingSetDataCacheSameSizeFile(void)
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
 	cController.Kill();
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -737,7 +737,7 @@ void TestIndexedFilesEvictingSetDataCacheDiffSizeFile(void)
 	EIndexWriteThrough   eWriteThrough;
 
 	eWriteThrough = IWT_No;
-	cHelper.Init("Output" _FS_ "TestEvicting8", "primary", "backup", TRUE);
+	cHelper.Init("Output" _FS_ "TestEvicting8", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
 	cDescriptors.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX", 320, eWriteThrough);
@@ -750,7 +750,7 @@ void TestIndexedFilesEvictingSetDataCacheDiffSizeFile(void)
 	AssertInt(1, cDescriptors.NumDataCached());
 
 	AssertInt(0, cDescriptors.NumFiles());
-	AssertTrue(cDescriptors.Flush(TRUE));
+	AssertTrue(cDescriptors.Flush(true));
 
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
@@ -765,7 +765,7 @@ void TestIndexedFilesEvictingSetDataCacheDiffSizeFile(void)
 	AssertTrue(cDescriptors.TestGetDescriptor(1LL, NULL));
 	AssertInt(1, cDescriptors.NumDataCached());
 
-	AssertTrue(cDescriptors.Flush(TRUE));
+	AssertTrue(cDescriptors.Flush(true));
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
 	cController.Kill();
@@ -779,7 +779,7 @@ void TestIndexedFilesEvictingSetDataCacheDiffSizeFile(void)
 	AssertTrue(cDescriptors.TestGetDescriptor(1LL, NULL));
 	AssertInt(1, cDescriptors.NumDataCached());
 
-	AssertTrue(cDescriptors.Flush(TRUE));
+	AssertTrue(cDescriptors.Flush(true));
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
 	cController.Kill();
@@ -795,7 +795,7 @@ void TestIndexedFilesEvictingSetDataCacheDiffSizeFile(void)
 	AssertTrue(cController.End());
 	AssertTrue(cDescriptors.Kill());
 	cController.Kill();
-	cHelper.Kill(TRUE);
+	cHelper.Kill(true);
 }
 
 
@@ -818,10 +818,10 @@ void TestIndexedFilesEvicting(void)
 	TestIndexedFilesEvictingSetDataCacheSameSizeFile();
 	TestIndexedFilesEvictingSetDataCacheDiffSizeFile();
 
-	TestIndexedFilesEvictingFlush(IWT_No, TRUE);
-	TestIndexedFilesEvictingFlush(IWT_Yes, TRUE);
-	TestIndexedFilesEvictingFlush(IWT_No, FALSE);
-	TestIndexedFilesEvictingFlush(IWT_Yes, FALSE);
+	TestIndexedFilesEvictingFlush(IWT_No, true);
+	TestIndexedFilesEvictingFlush(IWT_Yes, true);
+	TestIndexedFilesEvictingFlush(IWT_No, false);
+	TestIndexedFilesEvictingFlush(IWT_Yes, false);
 	TestIndexedFilesEvictingEviction(IWT_No);
 	TestIndexedFilesEvictingEviction(IWT_Yes);
 

@@ -11,7 +11,7 @@ void TestWindowsFilesTruncate(void)
 {
 	CFileUtil		cFileUtil;
 	char			szHello[] = "Hello";
-	BOOL			bResult;
+	bool			bResult;
 	char			szResult[100];
 	HANDLE			hFile;
 	unsigned int	uiResult;

@@ -9,14 +9,14 @@ struct STestTreeTemplateItem
 	int	mi2;
 
 	void Init(int i1, int i2);
-	BOOL IsOkay(int i1, int i2);
+	bool IsOkay(int i1, int i2);
 };
 void STestTreeTemplateItem::Init(int i1, int i2)
 {
 	mi1 = i1;
 	mi2 = i2;
 }
-BOOL STestTreeTemplateItem::IsOkay(int i1, int i2)
+bool STestTreeTemplateItem::IsOkay(int i1, int i2)
 {
 	return (mi1 == i1) && (mi2 == i2);
 }
@@ -93,7 +93,7 @@ void TestTreeTemplateFileHelper(void)
 	STestTreeTemplateItem*	psChild2;
 	CMemoryFile*			pcMemoryFile;
 	CFileBasic				cFileBasic;
-	BOOL					bResult;
+	bool					bResult;
 
 	cTree.Init();
 
@@ -107,7 +107,7 @@ void TestTreeTemplateFileHelper(void)
 	psChild2->mi1 = 3; psChild2->mi2 = 9;
 
 	pcMemoryFile = MemoryFile();
-	pcMemoryFile->mbBasicFileMustFree = FALSE;
+	pcMemoryFile->mbBasicFileMustFree = false;
 
 	cFileBasic.Init(pcMemoryFile);
 	cFileBasic.Open(EFM_Write_Create);

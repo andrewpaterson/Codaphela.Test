@@ -56,7 +56,7 @@ void TestMemoryAllocatorReadWrite(void)
 
 	cFile.WriteInt(789);
 
-	cAlloc.Init(16, FALSE);
+	cAlloc.Init(16, false);
 	cAlloc.GetMemory()->GetFreeListParams()->AddParamBlock(24  , 16  , 32*32);
 	cAlloc.GetMemory()->GetFreeListParams()->AddParamBlock(32  , 24  , 28*32);
 	cAlloc.GetMemory()->GetFreeListParams()->AddParamBlock(40  , 32  , 24*32);

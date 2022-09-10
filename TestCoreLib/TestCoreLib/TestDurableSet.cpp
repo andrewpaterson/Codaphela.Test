@@ -25,7 +25,7 @@ void TestDurableSetAdd(void)
 	char					szRewrite[] = "Output" _FS_ "_Durable2";
 	CDurableFile*			pcDurableFile;
 
-	cFileUtil.MakeDirs(TRUE, szDirectory, szRewrite, NULL);
+	cFileUtil.MakeDirs(true, szDirectory, szRewrite, NULL);
 
 	cController.Init(szDirectory, szRewrite);
 

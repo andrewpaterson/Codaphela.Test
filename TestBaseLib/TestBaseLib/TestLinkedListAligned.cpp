@@ -150,7 +150,7 @@ void TestLinkedListBlockAlignedExhaustive(void)
 	CFileUtil					cFileUtil;
 	char						szDirectory[] = "Output" _FS_ "LinkedListBlockAligned";
 	char						szFile[] = "Output" _FS_ "LinkedListBlockAligned" _FS_ "Test.DAT";
-	BOOL						bResult;
+	bool						bResult;
 	char						sz[256];
 	void*						pvNext;
 	void*						pvPrev;

@@ -133,7 +133,7 @@ void TestDiskFileTruncate(void)
 	CDiskFile	cDiskFile;
 	CFileUtil	cFileUtil;
 	char		szHello[] = "Hello";
-	BOOL		bResult;
+	bool		bResult;
 	filePos		iResult;
 
 	cFileUtil.TouchDir("Output");
