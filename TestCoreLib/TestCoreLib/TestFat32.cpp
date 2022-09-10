@@ -513,6 +513,61 @@ void TestFat32CreateDirectory(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFat32FormatAndCreateDirectory(void)
+{
+	CMemoryDrive			cMemoryDrive;
+	CDiskFile				cFile;
+	filePos					uiLength;
+	void* pvMemory;
+	uint16					uiResult;
+	BOOL					bResult;
+	CFatVolume				cVolume;
+	CArrayChars				aszDirectories;
+	CChars					sz;
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	uiResult = fat_format_volume(FAT_FS_TYPE_FAT32, "Fat32", 1, &cMemoryDrive);
+	AssertInt(STORAGE_SUCCESS, uiResult);
+
+	uiResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(STORAGE_SUCCESS, uiResult);
+
+	uiResult = cVolume.FatCreateDirectory("\\A Directory");
+	AssertInt(FAT_SUCCESS, uiResult);
+	uiResult = cVolume.FatCreateDirectory("\\A Directory\\Another");
+	AssertInt(FAT_SUCCESS, uiResult);
+
+	aszDirectories.Init();
+	RecurseFindFatDirectories(&cVolume, "", &aszDirectories);
+
+	sz.Init();
+	aszDirectories.Print(&sz);
+	aszDirectories.Kill();
+	AssertString("\
+\\A Directory\\Another\n\
+\\A Directory\n", sz.Text());
+	sz.Kill();
+
+	uiResult = cVolume.Unmount();
+	AssertInt(STORAGE_SUCCESS, uiResult);
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFat32(void)
 {
 	TypeConverterInit();
@@ -523,6 +578,7 @@ void TestFat32(void)
 	TestFat32Format();
 	TestFat32Write();
 	TestFat32CreateDirectory();
+	TestFat32FormatAndCreateDirectory();
 
 	TestStatistics();
 	TypeConverterKill();
