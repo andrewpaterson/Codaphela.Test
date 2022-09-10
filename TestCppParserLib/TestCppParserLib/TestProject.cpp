@@ -24,10 +24,10 @@ void TestNoInclude(void)
 	CConfig*			pcConfig;
 	CTranslationUnit*	pcTU3;
 
-	cProject.Init(TRUE, TRUE);
+	cProject.Init(true, true);
 
-	pcLibrary = cProject.AddLibrary("Test", ".", FALSE);
-	pcTU3 = pcLibrary->AddTranslationUnit("TestUnit3.cpp", TRUE, TRUE);
+	pcLibrary = cProject.AddLibrary("Test", ".", false);
+	pcTU3 = pcLibrary->AddTranslationUnit("TestUnit3.cpp", true, true);
 	pcConfig = pcLibrary->AddConfiguration("Debug");
 	pcConfig->AddDefines("_WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE");
 
@@ -67,11 +67,11 @@ void TestOneInclude(void)
 	CTranslationUnit* pcTU1;
 	CHeaderFile* pcHF1;
 
-	cProject.Init(TRUE, TRUE);
+	cProject.Init(true, true);
 
-	pcLibrary = cProject.AddLibrary("Test", ".", FALSE);
+	pcLibrary = cProject.AddLibrary("Test", ".", false);
 	pcHF1 = pcLibrary->AddHeaderFile("TestHeader2.h");
-	pcTU1 = pcLibrary->AddTranslationUnit("TestUnit4.cpp", TRUE, TRUE);
+	pcTU1 = pcLibrary->AddTranslationUnit("TestUnit4.cpp", true, true);
 	pcConfig = pcLibrary->AddConfiguration("Debug");
 	pcConfig->AddDefines("_WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE");
 
@@ -120,12 +120,12 @@ void TestReinclude(void)
 	CHeaderFile*		pcHF1;
 	CHeaderFile*		pcHF2;
 
-	cProject.Init(TRUE, TRUE);
+	cProject.Init(true, true);
 
-	pcLibrary = cProject.AddLibrary("Test", ".", FALSE);
+	pcLibrary = cProject.AddLibrary("Test", ".", false);
 	pcHF1 = pcLibrary->AddHeaderFile("TestHeader.h");
-	pcTU1 = pcLibrary->AddTranslationUnit("TestUnit1.cpp", TRUE, TRUE);
-	pcTU2 = pcLibrary->AddTranslationUnit("TestUnit2.cpp", TRUE, TRUE);
+	pcTU1 = pcLibrary->AddTranslationUnit("TestUnit1.cpp", true, true);
+	pcTU2 = pcLibrary->AddTranslationUnit("TestUnit2.cpp", true, true);
 	pcHF2 = pcLibrary->AddHeaderFile("TestHeader2.h");
 	pcConfig = pcLibrary->AddConfiguration("Debug");
 	pcConfig->AddDefines("_WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE");

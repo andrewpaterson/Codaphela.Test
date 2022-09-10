@@ -376,7 +376,7 @@ void TestPreprocessorBlockSkipping(void)
 
 	szName.Init("None.cpp");
 
-	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.Init(szName.Text(), NULL, false, false);
 	cFile.SetContents("\
 					   Start\n\
 					   #if 1\n\
@@ -403,7 +403,7 @@ void TestPreprocessorBlockSkipping(void)
 	cConfig.Kill();
 	cFile.Kill();
 
-	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.Init(szName.Text(), NULL, false, false);
 	cFile.SetContents("\
 					  Start\n\
 					  #if 0\n\
@@ -449,7 +449,7 @@ void TestPreprocessorParentheses(void)
 
 	szName.Init("None.cpp");
 
-	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.Init(szName.Text(), NULL, false, false);
 	cFile.SetContents("\
 #if (defined _M_ARM || defined _M_HYBRID_X86_ARM64) && !defined _M_CEE_PURE\n\
 Unexpected\n\
@@ -497,7 +497,7 @@ void TestPreprocessorSimpleVariadic(void)
 
 	szName.Init("None.cpp");
 
-	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.Init(szName.Text(), NULL, false, false);
 	cFile.SetContents("\
 #define _CRT_UNPARENTHESIZE_(FIRST, ARGS ...) ARGS\n\
 Expected\n\
@@ -533,7 +533,7 @@ void TestPreprocessorComplexVariadic(void)
 
 	szName.Init("None.cpp");
 
-	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.Init(szName.Text(), NULL, false, false);
 	cFile.SetContents("\
 #define CHECK1(x, a...) if (!(x)) { printf(a); }\n\
 CHECK1(0, \"here % s % s % s\", \"are\", \"some\", \"varargs(1)\\n\");\n\
@@ -569,7 +569,7 @@ void TestPreprocessorRedefinedVariadic(void)
 
 	szName.Init("None.cpp");
 
-	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.Init(szName.Text(), NULL, false, false);
 	cFile.SetContents("\
 #define _CRT_UNPARENTHESIZE_(...) __VA_ARGS__\n\
 Expected1\n\
@@ -617,9 +617,9 @@ void TestPreprocessorHasInclude(void)
 
 
 	cHeaderFiles.Init();
-	cHeaderNames.Init(szDirectory.Text(), &cHeaderFiles, FALSE, TRUE);
+	cHeaderNames.Init(szDirectory.Text(), &cHeaderFiles, false, true);
 
-	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.Init(szName.Text(), NULL, false, false);
 	cFile.SetContents("\
 #if defined __has_include\n\
 #  if __has_include (<Header.h>)\n\
@@ -687,7 +687,7 @@ void TestPreprocessorExistingEmpty(void)
 
 	szName.Init("None.cpp");
 
-	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.Init(szName.Text(), NULL, false, false);
 	cFile.SetContents("\
 #if EMPTY > 1997L\n\
 Should not get here\n\
@@ -730,7 +730,7 @@ void TestPreprocessorRedefinedEmpty(void)
 
 	szName.Init("None.cpp");
 
-	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.Init(szName.Text(), NULL, false, false);
 	cFile.SetContents("\
 #if defined(EMPTY)\n\
 #define REEMPTY EMPTY\n\
@@ -757,13 +757,13 @@ void TestPreprocessorRedefinedEmpty(void)
 
 	AssertString("", szDest.Text());
 
-	pcDefine = cPreprocessor.GetDefine("_HAS_X", TRUE);
+	pcDefine = cPreprocessor.GetDefine("_HAS_X", true);
 	pcText = (CPPText*)pcDefine->GetReplacement()->Get(0);
 	szText.Init();
 	AssertString("0", pcText->Print(&szText));
 	szText.Kill();
 
-	pcDefine = cPreprocessor.GetDefine("_HAS_Y", TRUE);
+	pcDefine = cPreprocessor.GetDefine("_HAS_Y", true);
 	pcText = (CPPText*)pcDefine->GetReplacement()->Get(0);
 	szText.Init();
 	AssertString("0", pcText->Print(&szText));
@@ -892,7 +892,7 @@ void TestPreprocessorHasCPPNameSpaceAttribute()
 
 	szName.Init("None.cpp");
 
-	cFile.Init(szName.Text(), NULL, FALSE, FALSE);
+	cFile.Init(szName.Text(), NULL, false, false);
 	cFile.SetContents("\
 #ifndef __has_cpp_attribute\n\
 #define _KNOWN_SEMANTICS_1\n\
@@ -913,13 +913,13 @@ void TestPreprocessorHasCPPNameSpaceAttribute()
 
 	AssertString("", szDest.Text());
 
-	pcDefine = cPreprocessor.GetDefine("_KNOWN_SEMANTICS_1", TRUE);
+	pcDefine = cPreprocessor.GetDefine("_KNOWN_SEMANTICS_1", true);
 	AssertNotNull(pcDefine);
-	pcDefine = cPreprocessor.GetDefine("_KNOWN_SEMANTICS_2", TRUE);
+	pcDefine = cPreprocessor.GetDefine("_KNOWN_SEMANTICS_2", true);
 	AssertNull(pcDefine);
-	pcDefine = cPreprocessor.GetDefine("_KNOWN_SEMANTICS_3", TRUE);
+	pcDefine = cPreprocessor.GetDefine("_KNOWN_SEMANTICS_3", true);
 	AssertNull(pcDefine);
-	pcDefine = cPreprocessor.GetDefine("_KNOWN_SEMANTICS_4", TRUE);
+	pcDefine = cPreprocessor.GetDefine("_KNOWN_SEMANTICS_4", true);
 	AssertNull(pcDefine);
 
 	cPreprocessor.Kill();
