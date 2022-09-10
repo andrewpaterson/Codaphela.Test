@@ -41,8 +41,6 @@ void TestFat32ReadSpecific(void)
 	cFile.Close();
 	cFile.Kill();
 
-	fat_init();
-
 	uiResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(STORAGE_SUCCESS, uiResult);
 
@@ -182,6 +180,45 @@ void RecurseFindFatFilenames(CFatVolume* pcVolume, char* szPath, CArrayChars* pa
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void RecurseFindFatDirectories(CFatVolume* pcVolume, char* szPath, CArrayChars* paszDirectories)
+{
+	SFatFileSystemQuery		sQuery;
+	SFatDirectoryEntry*		psFatDirectoryEntry;
+	uint16					uiResult;
+	char					szNewPath[FAT_MAX_PATH];
+
+	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
+	uiResult = pcVolume->FatFindFirstEntry(szPath, 0, &psFatDirectoryEntry, &sQuery);
+	for (;;)
+	{
+		if ((uiResult != FAT_SUCCESS) || (StrEmpty((char*)psFatDirectoryEntry->name)))
+		{
+			break;
+		}
+
+		memset(szNewPath, 0, FAT_MAX_PATH);
+		strcpy(szNewPath, szPath);
+		strcat(szNewPath, "\\");
+		strcat(szNewPath, (char*)psFatDirectoryEntry->name);
+
+		if (FixBool(psFatDirectoryEntry->attributes & FAT_ATTR_DIRECTORY))
+		{
+			if (!((strcmp((char*)psFatDirectoryEntry->name, ".") == 0) || (strcmp((char*)psFatDirectoryEntry->name, "..") == 0)))
+			{
+				RecurseFindFatDirectories(pcVolume, szNewPath, paszDirectories);
+				paszDirectories->Add(szNewPath);
+			}
+		}
+
+		uiResult = pcVolume->FatFindNextEntry(&psFatDirectoryEntry, &sQuery);
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFat32ReadDirectoryTree(void)
 {
 	CMemoryDrive			cMemoryDrive;
@@ -209,8 +246,6 @@ void TestFat32ReadDirectoryTree(void)
 	cFile.Read(pvMemory, uiLength, 1);
 	cFile.Close();
 	cFile.Kill();
-
-	fat_init();
 
 	uiResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(STORAGE_SUCCESS, uiResult);
@@ -319,8 +354,6 @@ void TestFat32Format(void)
 	cFile.Close();
 	cFile.Kill();
 
-	fat_init();
-
 	uiResult = fat_format_volume(FAT_FS_TYPE_FAT32, "Fat32", 1, &cMemoryDrive);
 	AssertInt(STORAGE_SUCCESS, uiResult);
 
@@ -371,8 +404,6 @@ void TestFat32Write(void)
 	cFile.Close();
 	cFile.Kill();
 
-	fat_init();
-
 	uiResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(STORAGE_SUCCESS, uiResult);
 
@@ -402,8 +433,6 @@ void TestFat32Write(void)
 	uiResult = cVolume.Unmount();
 	AssertInt(STORAGE_SUCCESS, uiResult);
 
-	fat_init();
-
 	uiResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(STORAGE_SUCCESS, uiResult);
 
@@ -430,6 +459,60 @@ void TestFat32Write(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFat32CreateDirectory(void)
+{
+	CMemoryDrive			cMemoryDrive;
+	CDiskFile				cFile;
+	filePos					uiLength;
+	void* pvMemory;
+	uint16					uiResult;
+	BOOL					bResult;
+	CFatVolume				cVolume;
+	CArrayChars				aszDirectories;
+	CChars					sz;
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	uiResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(STORAGE_SUCCESS, uiResult);
+
+	cVolume.FatCreateDirectory("\\A Directory");
+
+	aszDirectories.Init();
+	RecurseFindFatDirectories(&cVolume, "", &aszDirectories);
+
+	sz.Init();
+	aszDirectories.Print(&sz);
+	aszDirectories.Kill();
+	AssertString("\
+\\A Directory\n\
+\\Pico\\HowDoesItWork\\.vscode\n\
+\\Pico\\HowDoesItWork\n\
+\\Pico\\LCDBusReader\\.vscode\n\
+\\Pico\\LCDBusReader\\src\n\
+\\Pico\\LCDBusReader\n\
+\\Pico\n", sz.Text());
+	sz.Kill();
+	
+	uiResult = cVolume.Unmount();
+	AssertInt(STORAGE_SUCCESS, uiResult);
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFat32(void)
 {
 	TypeConverterInit();
@@ -439,6 +522,7 @@ void TestFat32(void)
 	TestFat32ReadDirectoryTree();
 	TestFat32Format();
 	TestFat32Write();
+	TestFat32CreateDirectory();
 
 	TestStatistics();
 	TypeConverterKill();
