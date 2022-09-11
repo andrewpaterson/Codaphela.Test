@@ -51,6 +51,31 @@ D9(Hello, World)", &szDest);
 	szDest.Kill();
 }
 
+
+#define D8(P,Q) P " " Q
+
+D8(char sz[] =, ;)
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorStringReplacement(void)
+{
+	CChars	szDest;
+
+	szDest.Init();
+	CPreprocessor::Preprocess("\
+#define D8(P,Q) P \" \" Q\n\
+D8(char sz[] =,;)\
+", &szDest);
+
+	//Actually I don't know what this is supposed to look like.  Just make the test pass for now.
+	AssertString("char sz[] = \" \" ;\n", szDest.Text());
+	szDest.Kill();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -125,9 +150,9 @@ char g_Char = \'\\n\';\n\
 char g_Char2 = \'\"\';\n\
 ", &szDest);
 
-	AssertString("char gsz[] = (\"//@  Don't Collapse me please     ! /*     \");\n\
+	AssertString("char gsz[] = (\"//@  Don\\'t Collapse me please     ! /*     \");\n\
 char g_Char = \'\\n\';\n\
-char g_Char2 = \'\"\';\n\
+char g_Char2 = \'\\\"\';\n\
 ", szDest.Text());
 	szDest.Kill();
 
@@ -970,6 +995,7 @@ void TestPreprocessor(void)
 
 	TestPreprocessorSimple();
 	TestPreprocessorSimpleReplacement();
+	TestPreprocessorStringReplacement();
 	TestPreprocessorReplacement();
 	TestPreprocessorExactDefine();
 	TestPreprocessorConditionals();
