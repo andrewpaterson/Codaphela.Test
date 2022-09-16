@@ -760,6 +760,92 @@ void TestFat32GreatWrite(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFat32MultipleSmallReads(void)
+{
+	CMemoryDrive			cMemoryDrive;
+	CDiskFile				cFile;
+	filePos					uiLength;
+	void*					pvMemory;
+	SFatDirectoryEntry		sFatFileEntry;
+	EFatCode				eResult;
+	CFatFile				cFatFile;
+	bool					bResult;
+	uint32					uiBytesRead;
+	char					auiFileData[44 KB];
+	char					auiExpectedData[44 KB];
+	CFatVolume				cVolume;
+	uint32					uiFileSize;
+	uint32					uiBytesToRead;
+	uint8*					puiFileData;
+	int						i;
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	eResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cVolume.FatGetFileEntry("\\Pico\\LCDBusReader\\src\\SDCard.cpp", &sFatFileEntry);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open(&sFatFileEntry, FAT_FILE_ACCESS_READ);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	uiBytesToRead = 1;
+	puiFileData = (uint8*)auiFileData;
+	uiFileSize = cFatFile.GetCurrentSize();
+	for (i = 0;; i++)
+	{
+		eResult = cFatFile.Read(puiFileData, uiBytesToRead, &uiBytesRead);
+		AssertInt(FAT_SUCCESS, eResult);
+		AssertInt(uiBytesToRead, uiBytesRead);
+
+		uiFileSize -= uiBytesToRead;
+		if (uiFileSize == 0)
+		{
+			break;
+		}
+		puiFileData += uiBytesRead;
+
+		uiBytesToRead++;
+		if (uiBytesToRead > uiFileSize)
+		{
+			uiBytesToRead = uiFileSize;
+		}
+	}
+	auiFileData[44000] = '\0';
+
+	cFatFile.Close();
+
+	cFile.Init("Input\\Fat32\\SDCard.cpp");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	AssertInt(44000, (int)uiLength);
+	cFile.Read(auiExpectedData, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	AssertMemory(auiExpectedData, auiFileData, (int)uiLength);
+
+	cVolume.Unmount();
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFat32(void)
 {
 	TypeConverterInit();
@@ -772,6 +858,7 @@ void TestFat32(void)
 	TestFat32CreateDirectory();
 	TestFat32FormatAndCreateDirectory();
 	TestFat32GreatWrite();
+//	TestFat32MultipleSmallReads();
 
 	TestStatistics();
 	TypeConverterKill();

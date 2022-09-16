@@ -213,6 +213,9 @@
     <ClCompile Include="TestMemoryDrive.cpp">
       <Filter>Source\FileSystem\Underlying</Filter>
     </ClCompile>
+    <ClCompile Include="TestFatCache.cpp">
+      <Filter>Source\FileSystem\Fat32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestXMLFile.h">
