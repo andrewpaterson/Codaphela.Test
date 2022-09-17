@@ -54,12 +54,12 @@ char* FatCacheAllocateTestData(int iDataLength)
 //////////////////////////////////////////////////////////////////////////
 void TestFatCacheWrite(void)
 {
-	CMemoryDrive			cMemoryDrive;
-	CDiskFile				cFile;
-	CFatCache				cCache;
-	char*					pvData;
-	int						iDataLength;
-	uint32					uiLength;
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	CFatCache		cCache;
+	char*			pvData;
+	int				iDataLength;
+	uint32			uiLength;
 
 	iDataLength = 65 KB;
 	pvData = FatCacheAllocateTestData(iDataLength);
@@ -138,12 +138,12 @@ void TestFatCacheWrite(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFatCacheDirty(void)
 {
-	CMemoryDrive			cMemoryDrive;
-	CDiskFile				cFile;
-	CFatCache				cCache;
-	char*					pvData;
-	int						iDataLength;
-	uint32					uiLength;
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	CFatCache		cCache;
+	char*			pvData;
+	int				iDataLength;
+	uint32			uiLength;
 
 	iDataLength = 65 KB;
 	pvData = FatCacheAllocateTestData(iDataLength);
@@ -202,39 +202,45 @@ void TestFatCacheDirty(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFatCacheDiscontiguousWrites(void)
 {
-	CMemoryDrive			cMemoryDrive;
-	CDiskFile				cFile;
-	CFatCache				cCache;
-	char*					pvData;
-	int						iDataLength;
-	uint32					uiLength;
-	char*					pcMemory;
-	int						iStart;
-	int						i;
-	int						iZeroIndex;
-	int						iNonZeroIndex;
-	int						aiZeroIndices[16];
-	int						aiNonZeroIndices[16];
-	bool					bIsZero = false;
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	CFatCache		cCache;
+	char*			pvData;
+	int				iDataLength;
+	uint32			uiLength;
+	char*			pcMemory;
+	int				iStart;
+	int				i;
+	int				iZeroIndex;
+	int				iNonZeroIndex;
+	int				aiZeroIndices[16];
+	int				aiNonZeroIndices[16];
+	bool			bIsZero = false;
+	bool			bResult;
 
 	iDataLength = 65 KB;
 	pvData = FatCacheAllocateTestData(iDataLength);
 
 	cMemoryDrive.Init(1 MB, 512);
 	cCache.Init(&cMemoryDrive, 32 KB, 512);
-	cMemoryDrive.Erase(0, cCache.GetSectorsPerCluster() - 1);
+	bResult = cMemoryDrive.Erase(0, cCache.GetSectorsPerCluster() - 1);
+	AssertTrue(bResult);
 
 	uiLength = 512 * 2;
-	cCache.Write((uint8*)pvData, 0, 0, 512, &uiLength, 512);
+	bResult = cCache.Write((uint8*)pvData, 0, 0, 512, &uiLength, 512);
+	AssertTrue(bResult);
 
 	uiLength = 512 * 3;
-	cCache.Write((uint8*)pvData, 0, 0, 512 * 5, &uiLength, 512 * 4);
+	bResult = cCache.Write((uint8*)pvData, 0, 0, 512 * 5, &uiLength, 512 * 4);
+	AssertTrue(bResult);
 
 	uiLength = 512;
-	cCache.Write((uint8*)pvData, 0, 0, 512 * 11, &uiLength, 512 * 10);
+	bResult = cCache.Write((uint8*)pvData, 0, 0, 512 * 11, &uiLength, 512 * 10);
+	AssertTrue(bResult);
 
 	uiLength = 512;
-	cCache.Write((uint8*)pvData, 0, 0, 512 * 13, &uiLength, 512 * 12);
+	bResult = cCache.Write((uint8*)pvData, 0, 0, 512 * 13, &uiLength, 512 * 12);
+	AssertTrue(bResult);
 
 	AssertFalse(cCache.IsSectorDirty(0));
 	AssertTrue(cCache.IsSectorDirty(1));
@@ -309,6 +315,68 @@ void TestFatCacheDiscontiguousWrites(void)
 }
 
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFatCacheRead(void)
+{
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	CFatCache		cCache;
+	char*			pvData;
+	int				iDataLength;
+	char*			pcMemory;
+	int				i;
+	char			c;
+	uint32			uiLength;
+	bool			bResult;
+
+	iDataLength = 32 KB;
+	pvData = FatCacheAllocateTestData(iDataLength);
+
+	cMemoryDrive.Init(1 MB, 512);
+	cCache.Init(&cMemoryDrive, 32 KB, 512);
+	cMemoryDrive.Erase(0, cCache.GetSectorsPerCluster() - 1);
+
+	pcMemory = (char*)cMemoryDrive.GetMemory();
+
+	c = 'A';
+	for (i = 0; i < 256 KB; i++)
+	{
+		pcMemory[i] = c;
+		if (i % 512 == 511)
+		{
+			c++;
+		}
+
+		if (c == '"')
+		{
+			c++;
+		}
+		if (c == '\\')
+		{
+			c++;
+		}
+		if (c == 0)
+		{
+			c = 33;
+		}
+	}
+
+	uiLength = 32 KB;
+	bResult = cCache.Read((uint8*)pvData, 0, 0, 0, &uiLength, 32 KB);
+	AssertTrue(bResult);
+
+	cCache.Kill();
+
+	free(pvData);
+
+	cMemoryDrive.Kill();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -321,6 +389,7 @@ void TestFatCache(void)
 	TestFatCacheWrite();
 	TestFatCacheDirty();
 	TestFatCacheDiscontiguousWrites();
+	TestFatCacheRead();
 
 	TestStatistics();
 	TypeConverterKill();
