@@ -208,6 +208,14 @@ void TestFatCacheDiscontiguousWrites(void)
 	char*					pvData;
 	int						iDataLength;
 	uint32					uiLength;
+	char*					pcMemory;
+	int						iStart;
+	int						i;
+	int						iZeroIndex;
+	int						iNonZeroIndex;
+	int						aiZeroIndices[16];
+	int						aiNonZeroIndices[16];
+	bool					bIsZero = false;
 
 	iDataLength = 65 KB;
 	pvData = FatCacheAllocateTestData(iDataLength);
@@ -245,7 +253,54 @@ void TestFatCacheDiscontiguousWrites(void)
 	AssertFalse(cCache.IsSectorDirty(14));
 	AssertFalse(cCache.IsSectorDirty(15));
 
+	pcMemory = (char*)cMemoryDrive.GetMemory();
+
+	iStart = FindFirstByte(pcMemory, 33, 32 KB);
+	AssertInt(-1, iStart);
+
 	cCache.Flush();
+
+	iZeroIndex = 0;
+	iNonZeroIndex = 0;
+	memset(aiZeroIndices, -1, 16 * sizeof(int));
+	memset(aiNonZeroIndices, -1, 16 * sizeof(int));
+	bIsZero = false;
+	for (i = 0; i < 32 KB; i++)
+	{
+		if (pcMemory[i])
+		{
+			if (bIsZero)
+			{
+				bIsZero = false;
+				aiNonZeroIndices[iNonZeroIndex] = i;
+				iNonZeroIndex++;
+			}
+		}
+		else 
+		{
+			if (!bIsZero)
+			{
+				bIsZero = true;
+				aiZeroIndices[iZeroIndex] = i;
+				iZeroIndex++;
+			}
+		}
+	}
+
+	AssertInt(512 * 0, aiZeroIndices[0]);
+	AssertInt(512 * 1, aiNonZeroIndices[0]);
+
+	AssertInt(512 * 3, aiZeroIndices[1]);
+	AssertInt(512 * 5, aiNonZeroIndices[1]);
+
+	AssertInt(512 * 8, aiZeroIndices[2]);
+	AssertInt(512 * 11, aiNonZeroIndices[2]);
+
+	AssertInt(512 * 12, aiZeroIndices[3]);
+	AssertInt(512 * 13, aiNonZeroIndices[3]);
+
+	AssertInt(512 * 14, aiZeroIndices[4]);
+
 	cCache.Kill();
 
 	free(pvData);
