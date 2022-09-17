@@ -231,15 +231,15 @@ void TestFatCacheDiscontiguousWrites(void)
 	AssertTrue(bResult);
 
 	uiLength = 512 * 3;
-	bResult = cCache.Write((uint8*)pvData, 0, 0, 512 * 5, &uiLength, 512 * 4);
+	bResult = cCache.Write((uint8*)pvData, 0, 0, 512 * 5, &uiLength, 512 * 5);
 	AssertTrue(bResult);
 
 	uiLength = 512;
-	bResult = cCache.Write((uint8*)pvData, 0, 0, 512 * 11, &uiLength, 512 * 10);
+	bResult = cCache.Write((uint8*)pvData, 0, 0, 512 * 11, &uiLength, 512 * 11);
 	AssertTrue(bResult);
 
 	uiLength = 512;
-	bResult = cCache.Write((uint8*)pvData, 0, 0, 512 * 13, &uiLength, 512 * 12);
+	bResult = cCache.Write((uint8*)pvData, 0, 0, 512 * 13, &uiLength, 512 * 13);
 	AssertTrue(bResult);
 
 	AssertFalse(cCache.IsSectorDirty(0));
@@ -315,7 +315,6 @@ void TestFatCacheDiscontiguousWrites(void)
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -368,12 +367,115 @@ void TestFatCacheRead(void)
 	uiLength = 32 KB;
 	bResult = cCache.Read((uint8*)pvData, 0, 0, 0, &uiLength, 32 KB);
 	AssertTrue(bResult);
+	AssertInt(0, uiLength);
+	AssertMemory(pcMemory, pvData, 32 KB);
+	AssertTrue(cCache.IsSectorCached(0));
+	AssertTrue(cCache.IsSectorCached(63));
+
+	cCache.Clear();
+	uiLength = 256;
+	bResult = cCache.Read((uint8*)pvData, 0, 0, 128, &uiLength, 32 KB);
+	AssertTrue(bResult);
+	AssertInt(0, uiLength);
+	AssertMemory(&pcMemory[128], pvData, 256);
+	AssertTrue(cCache.IsSectorCached(0));
+	AssertFalse(cCache.IsSectorCached(1));
+
+	uiLength = 256;
+	bResult = cCache.Read((uint8*)pvData, 0, 0, 384, &uiLength, 32 KB);
+	AssertTrue(bResult);
+	AssertInt(0, uiLength);
+	AssertMemory(&pcMemory[384], pvData, 256);
+	AssertTrue(cCache.IsSectorCached(0));
+	AssertTrue(cCache.IsSectorCached(1));
+	AssertFalse(cCache.IsSectorCached(2));
+
+	uiLength = 256;
+	bResult = cCache.Read((uint8*)pvData, 0, 0, 32384, &uiLength, 32 KB);
+	AssertTrue(bResult);
+	AssertInt(0, uiLength);
+	AssertMemory(&pcMemory[32384], pvData, 256);
+	AssertFalse(cCache.IsSectorCached(62));
+	AssertTrue(cCache.IsSectorCached(63));
+
+	uiLength = 256;
+	bResult = cCache.Read((uint8*)pvData, 0, 0, 16256, &uiLength, 32 KB);
+	AssertTrue(bResult);
+	AssertInt(0, uiLength);
+	AssertMemory(&pcMemory[16256], pvData, 256);
+	AssertFalse(cCache.IsSectorCached(30));
+	AssertTrue(cCache.IsSectorCached(31));
+	AssertTrue(cCache.IsSectorCached(32));
+	AssertFalse(cCache.IsSectorCached(33));
+
+	uiLength = 32 KB;
+	bResult = cCache.Read((uint8*)pvData, 0, 0, 0, &uiLength, 32 KB);
+	AssertTrue(bResult);
+	AssertInt(0, uiLength);
+	AssertMemory(pcMemory, pvData, 32 KB);
+
+	cCache.Clear();
+	uiLength = 256;
+	bResult = cCache.Read((uint8*)pvData, 0, 0, 16256, &uiLength, 32 KB);
+	AssertTrue(bResult);
+	AssertInt(0, uiLength);
+	AssertMemory(&pcMemory[16256], pvData, 256);
+
+	uiLength = 32 KB;
+	bResult = cCache.Read((uint8*)pvData, 0, 0, 0, &uiLength, 32 KB);
+	AssertTrue(bResult);
+	AssertInt(0, uiLength);
+	AssertMemory(pcMemory, pvData, 32 KB);
 
 	cCache.Kill();
 
 	free(pvData);
 
 	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFatCacheLimits(void)
+{
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	CFatCache		cCache;
+	char*			pvData;
+	int				iDataLength;
+	uint32			uiLength;
+	bool			bResult;
+
+	iDataLength = 65 KB;
+	pvData = FatCacheAllocateTestData(iDataLength);
+
+	cMemoryDrive.Init(1 MB, 512);
+	cCache.Init(&cMemoryDrive, 32 KB, 512);
+	bResult = cMemoryDrive.Erase(0, cCache.GetSectorsPerCluster() - 1);
+	AssertTrue(bResult);
+
+	uiLength = 1;
+	bResult = cCache.Write((uint8*)pvData, 0, 0, 1, &uiLength, 0);
+	AssertFalse(bResult);
+	AssertInt(1, uiLength);
+
+	cCache.Kill();
+
+	free(pvData);
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFatCacheComplex(void)
+{
 }
 
 
@@ -390,6 +492,8 @@ void TestFatCache(void)
 	TestFatCacheDirty();
 	TestFatCacheDiscontiguousWrites();
 	TestFatCacheRead();
+	TestFatCacheLimits();
+	TestFatCacheComplex();
 
 	TestStatistics();
 	TypeConverterKill();
