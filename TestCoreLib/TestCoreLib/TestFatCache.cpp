@@ -10,19 +10,15 @@
 #include "TestLib/Assert.h"
 
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFatCacheStuff(void)
+char* FatCacheAllocateTestData(int iDataLength)
 {
-	CMemoryDrive			cMemoryDrive;
-	CDiskFile				cFile;
-	int						i;
-	CFatCache				cCache;
-	char*					pvData;
-	int						iDataLength;
-	uint32					uiLength;
+	int		i;
+	char*	pvData;
 
 	iDataLength = 65 KB;
 	pvData = (char*)malloc(iDataLength);
@@ -40,27 +36,58 @@ void TestFatCacheStuff(void)
 			}
 		}
 	}
+	return pvData;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFatCacheStuff(void)
+{
+	CMemoryDrive			cMemoryDrive;
+	CDiskFile				cFile;
+	CFatCache				cCache;
+	char*					pvData;
+	int						iDataLength;
+	uint32					uiLength;
+
+	iDataLength = 65 KB;
+	pvData = FatCacheAllocateTestData(iDataLength);
+
 	cMemoryDrive.Init(1 MB, 512);
 	cCache.Init(&cMemoryDrive, 32 KB, 512);
-	cCache.Clear();
 
 	uiLength = 3;
 	cCache.Write((uint8*)pvData, 0, 0, 0, &uiLength, 0);
 	uiLength = 3;
 	cCache.Write((uint8*)&pvData[3], 0, 0, 2, &uiLength, 3);
 	AssertString("!!\"\"\"", (char*)cCache.GetCache());
+	AssertTrue(cCache.IsSectorDirty(0));
+	AssertTrue(cCache.IsSectorCached(0));
+	AssertFalse(cCache.IsSectorDirty(1));
+	AssertFalse(cCache.IsSectorCached(1));
 
 	uiLength = 511;
 	cCache.Write((uint8*)pvData, 0, 0, 0, &uiLength, 3);
 	AssertInt(511, strlen((char*)cCache.GetCache()));
 	AssertString("!!!\"\"\"###$$$%%%&&&'''((()))***+++,,,---...///000111222333444555666777888999:::;;;<<<===>>>???@@@AAABBBCCCDDDEEEFFFGGGHHHIIIJJJKKKLLLMMMNNNOOOPPPQQQRRRSSSTTTUUUVVVWWWXXXYYYZZZ[[[\\\\\\]]]^^^___```aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnnooopppqqqrrrssstttuuuvvvwwwxxxyyyzzz{{{|||}}}~~~€€€‚‚‚ƒƒƒ„„„………†††‡‡‡ˆˆˆ‰‰‰ŠŠŠ‹‹‹ŒŒŒ‘‘‘’’’“““”””•••–––———˜˜˜™™™ššš›››œœœŸŸŸ   ¡¡¡¢¢¢£££¤¤¤¥¥¥¦¦¦§§§¨¨¨©©©ªªª«««¬¬¬­­­®®®¯¯¯°°°±±±²²²³³³´´´µµµ¶¶¶···¸¸¸¹¹¹ººº»»»¼¼¼½½½¾¾¾¿¿¿ÀÀÀÁÁÁÂÂÂÃÃÃÄÄÄÅÅÅÆÆÆÇÇÇÈÈÈÉÉÉÊÊÊË", 
 		(char*)cCache.GetCache());
+	AssertTrue(cCache.IsSectorDirty(0));
+	AssertTrue(cCache.IsSectorCached(0));
+	AssertFalse(cCache.IsSectorDirty(1));
+	AssertFalse(cCache.IsSectorCached(1));
 
 	uiLength = 1;
 	cCache.Write((uint8*)pvData, 0, 0, 511, &uiLength, 511);
 	AssertInt(512, strlen((char*)cCache.GetCache()));
 	AssertString("!!!\"\"\"###$$$%%%&&&'''((()))***+++,,,---...///000111222333444555666777888999:::;;;<<<===>>>???@@@AAABBBCCCDDDEEEFFFGGGHHHIIIJJJKKKLLLMMMNNNOOOPPPQQQRRRSSSTTTUUUVVVWWWXXXYYYZZZ[[[\\\\\\]]]^^^___```aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnnooopppqqqrrrssstttuuuvvvwwwxxxyyyzzz{{{|||}}}~~~€€€‚‚‚ƒƒƒ„„„………†††‡‡‡ˆˆˆ‰‰‰ŠŠŠ‹‹‹ŒŒŒ‘‘‘’’’“““”””•••–––———˜˜˜™™™ššš›››œœœŸŸŸ   ¡¡¡¢¢¢£££¤¤¤¥¥¥¦¦¦§§§¨¨¨©©©ªªª«««¬¬¬­­­®®®¯¯¯°°°±±±²²²³³³´´´µµµ¶¶¶···¸¸¸¹¹¹ººº»»»¼¼¼½½½¾¾¾¿¿¿ÀÀÀÁÁÁÂÂÂÃÃÃÄÄÄÅÅÅÆÆÆÇÇÇÈÈÈÉÉÉÊÊÊË!",
 		(char*)cCache.GetCache());
+	AssertTrue(cCache.IsSectorDirty(0));
+	AssertTrue(cCache.IsSectorCached(0));
+	AssertFalse(cCache.IsSectorDirty(1));
+	AssertFalse(cCache.IsSectorCached(1));
 
 	uiLength = 512 + 256;
 	cCache.Write((uint8*)pvData, 0, 0, 1, &uiLength, 512);
@@ -76,6 +103,12 @@ void TestFatCacheStuff(void)
 
 	uiLength = iDataLength;
 	cCache.Write((uint8*)pvData, 0, 0, 0, &uiLength, 16 + 512 + 512 + 1);
+	AssertMemory(pvData, cCache.GetCache(), 32768);
+	AssertTrue(cCache.IsSectorDirty(0));
+	AssertTrue(cCache.IsSectorDirty(63));
+
+	cCache.Clear();
+	cCache.Write((uint8*)pvData, 0, 0, 0, &uiLength, 0);
 	AssertMemory(pvData, cCache.GetCache(), 32768);
 	cCache.Write((uint8*)&pvData[32768], 1, 0, 0, &uiLength, 0);
 	AssertMemory((uint8*)&pvData[32768], cCache.GetCache(), 32768);
@@ -94,12 +127,56 @@ void TestFatCacheStuff(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFatCacheDirty(void)
+{
+	CMemoryDrive			cMemoryDrive;
+	CDiskFile				cFile;
+	CFatCache				cCache;
+	char*					pvData;
+	int						iDataLength;
+	uint32					uiLength;
+
+	iDataLength = 65 KB;
+	pvData = FatCacheAllocateTestData(iDataLength);
+
+	cMemoryDrive.Init(1 MB, 512);
+	cCache.Init(&cMemoryDrive, 32 KB, 512);
+
+	uiLength = 512;
+	cCache.Write((uint8*)pvData, 0, 0, 0, &uiLength, 0);
+	AssertTrue(cCache.IsSectorDirty(0));
+	AssertTrue(cCache.IsSectorCached(0));
+	AssertFalse(cCache.IsSectorDirty(1));
+	AssertFalse(cCache.IsSectorCached(1));
+
+	uiLength = 513;
+	cCache.Write((uint8*)pvData, 0, 0, 0, &uiLength, 0);
+	AssertTrue(cCache.IsSectorDirty(0));
+	AssertTrue(cCache.IsSectorCached(0));
+	AssertTrue(cCache.IsSectorDirty(1));
+	AssertTrue(cCache.IsSectorCached(1));
+	AssertFalse(cCache.IsSectorDirty(2));
+	AssertFalse(cCache.IsSectorCached(2));
+
+	cCache.Kill();
+
+	free(pvData);
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFatCache(void)
 {
 	TypeConverterInit();
 	BeginTests();
 
-	TestFatCacheStuff();
+//	TestFatCacheStuff();
+	TestFatCacheDirty();
 
 	TestStatistics();
 	TypeConverterKill();
