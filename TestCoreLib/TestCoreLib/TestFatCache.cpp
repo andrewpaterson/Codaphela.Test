@@ -77,9 +77,9 @@ void TestFatCacheStuff(void)
 	uiLength = iDataLength;
 	cCache.Write((uint8*)pvData, 0, 0, 0, &uiLength, 16 + 512 + 512 + 1);
 	AssertMemory(pvData, cCache.GetCache(), 32768);
-	cCache.Write((uint8*)&pvData[32768], 0, 0, 0, &uiLength, 0);
+	cCache.Write((uint8*)&pvData[32768], 1, 0, 0, &uiLength, 0);
 	AssertMemory((uint8*)&pvData[32768], cCache.GetCache(), 32768);
-	cCache.Write((uint8*)&pvData[65536], 0, 0, 0, &uiLength, 0);
+	cCache.Write((uint8*)&pvData[65536], 2, 0, 0, &uiLength, 0);
 	AssertMemory((uint8*)&pvData[65536], cCache.GetCache(), 1024);
 
 	cCache.Kill();

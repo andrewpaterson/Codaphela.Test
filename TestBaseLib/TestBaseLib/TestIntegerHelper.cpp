@@ -331,6 +331,109 @@ void TestCountBits(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFindNextSetBit(void)
+{
+	unsigned char	ab[9];
+	int				iBit;
+
+	ab[0] = ab[1] = ab[2] = ab[3] = ab[4] = ab[5] = ab[6] = ab[7] = ab[8] = 0xff;
+	ab[1] = 0b1110'1111;
+
+	iBit = FindFirstClearBit(ab, 64);
+	AssertInt(12, iBit);
+
+	iBit = FindNextSetBit(ab, 64, iBit);
+	AssertInt(13, iBit);
+
+	iBit = FindFirstClearBit(&ab[1], 63);
+	AssertInt(4, iBit);
+
+	iBit = FindNextSetBit(&ab[1], 63, iBit);
+	AssertInt(5, iBit);
+
+	ab[0] = 0b1000'0000;
+	iBit = FindFirstSetBit(ab, 7);
+	AssertInt(-1, iBit);
+
+	iBit = FindNextSetBit(ab, 7, 1);
+	AssertInt(-1, iBit);
+
+	ab[0] = ab[1] = ab[2] = ab[3] = ab[4] = ab[5] = ab[6] = ab[7] = ab[8] = 0;
+	ab[7] = 0b0000'0010;
+	ab[4] = 0b0010'0000;
+	iBit = FindFirstSetBit(&ab[2], 44);
+	AssertInt(21, iBit);
+
+	iBit = FindNextSetBit(&ab[2], 44, 22);
+	AssertInt(41, iBit);
+
+	iBit = FindNextSetBit(&ab[2], 40, 22);
+	AssertInt(-1, iBit);
+
+	iBit = FindNextSetBit(&ab[2], 41, 22);
+	AssertInt(-1, iBit);
+
+	iBit = FindNextSetBit(&ab[2], 42, 22);
+	AssertInt(41, iBit);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFindNextClearBit(void)
+{
+	unsigned char	ab[9];
+	int				iBit;
+
+	ab[0] = ab[1] = ab[2] = ab[3] = ab[4] = ab[5] = ab[6] = ab[7] = ab[8] = 0;
+	ab[1] = 0b0001'0000;
+
+	iBit = FindFirstSetBit(ab, 64);
+	AssertInt(12, iBit);
+
+	iBit = FindNextClearBit(ab, 64, iBit);
+	AssertInt(13, iBit);
+
+	iBit = FindFirstSetBit(&ab[1], 63);
+	AssertInt(4, iBit);
+
+	iBit = FindNextClearBit(&ab[1], 63, iBit);
+	AssertInt(5, iBit);
+
+	ab[0] = 0b0111'1111;
+	iBit = FindFirstClearBit(ab, 7);
+	AssertInt(-1, iBit);
+
+	iBit = FindNextClearBit(ab, 7, 1);
+	AssertInt(-1, iBit);
+
+	ab[0] = ab[1] = ab[2] = ab[3] = ab[4] = ab[5] = ab[6] = ab[7] = ab[8] = 0xff;
+	ab[7] = 0b1111'1101;
+	ab[4] = 0b1101'1111;
+	iBit = FindFirstClearBit(&ab[2], 44);
+	AssertInt(21, iBit);
+
+	iBit = FindNextClearBit(&ab[2], 44, 22);
+	AssertInt(41, iBit);
+
+	iBit = FindNextClearBit(&ab[2], 40, 22);
+	AssertInt(-1, iBit);
+
+	iBit = FindNextClearBit(&ab[2], 41, 22);
+	AssertInt(-1, iBit);
+
+	iBit = FindNextClearBit(&ab[2], 42, 22);
+	AssertInt(41, iBit);
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIntegerHelper(void)
 {
 	TestFindFirstClearBit();
@@ -339,5 +442,7 @@ void TestIntegerHelper(void)
 	TestFindLastSetBit();
 	TestReverseBytes();
 	TestCountBits();
+	TestFindNextSetBit();
+	TestFindNextClearBit();
 }
 
