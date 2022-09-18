@@ -10,7 +10,6 @@
 #include "TestLib/Assert.h"
 
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -45,6 +44,40 @@ char* FatCacheAllocateTestData(int iDataLength)
 		}
 	}
 	return pvData;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void FatCacheFillTestDrive(char* pcMemory, int iDataLength)
+{
+	int		i;
+	char	c;
+
+	c = 'A';
+	for (i = 0; i < iDataLength; i++)
+	{
+		pcMemory[i] = c;
+		if (i % 512 == 511)
+		{
+			c++;
+		}
+
+		if (c == '"')
+		{
+			c++;
+		}
+		if (c == '\\')
+		{
+			c++;
+		}
+		if (c == 0)
+		{
+			c = 33;
+		}
+	}
 }
 
 
@@ -327,8 +360,6 @@ void TestFatCacheRead(void)
 	char*			pvData;
 	int				iDataLength;
 	char*			pcMemory;
-	int				i;
-	char			c;
 	uint32			uiLength;
 	bool			bResult;
 
@@ -340,29 +371,7 @@ void TestFatCacheRead(void)
 	cMemoryDrive.Erase(0, cCache.GetSectorsPerCluster() - 1);
 
 	pcMemory = (char*)cMemoryDrive.GetMemory();
-
-	c = 'A';
-	for (i = 0; i < 256 KB; i++)
-	{
-		pcMemory[i] = c;
-		if (i % 512 == 511)
-		{
-			c++;
-		}
-
-		if (c == '"')
-		{
-			c++;
-		}
-		if (c == '\\')
-		{
-			c++;
-		}
-		if (c == 0)
-		{
-			c = 33;
-		}
-	}
+	FatCacheFillTestDrive(pcMemory, 256 KB);
 
 	uiLength = 32 KB;
 	bResult = cCache.Read((uint8*)pvData, 0, 0, 0, &uiLength, 32 KB);
@@ -439,7 +448,7 @@ void TestFatCacheRead(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFatCacheLimits(void)
+void TestFatCacheWriteLimits(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
@@ -448,6 +457,7 @@ void TestFatCacheLimits(void)
 	int				iDataLength;
 	uint32			uiLength;
 	bool			bResult;
+	char*			pcMemory;
 
 	iDataLength = 65 KB;
 	pvData = FatCacheAllocateTestData(iDataLength);
@@ -462,9 +472,119 @@ void TestFatCacheLimits(void)
 	AssertFalse(bResult);
 	AssertInt(1, uiLength);
 
+	uiLength = 1;
+	bResult = cCache.Write((uint8*)pvData, 0, 0, 0, &uiLength, 0);
+	AssertTrue(bResult);
+	AssertInt(0, uiLength);
+	AssertTrue(cCache.IsSectorCached(0));
+	AssertTrue(cCache.IsSectorDirty(0));
+
+	cCache.Clear();
+	uiLength = 1;
+	bResult = cCache.Write((uint8*)pvData, 0, 0, 511, &uiLength, 510);
+	AssertFalse(bResult);
+	AssertInt(1, uiLength);
+
+	uiLength = 1;
+	bResult = cCache.Write((uint8*)pvData, 0, 0, 511, &uiLength, 511);
+	AssertTrue(bResult);
+	AssertInt(0, uiLength);
+	AssertTrue(cCache.IsSectorCached(0));
+	AssertTrue(cCache.IsSectorDirty(0));
+
+	cCache.Clear();
+	uiLength = 1;
+	bResult = cCache.Write((uint8*)pvData, 0, 0, 512, &uiLength, 511);
+	AssertFalse(bResult);
+	AssertInt(1, uiLength);
+
+	uiLength = 1;
+	bResult = cCache.Write((uint8*)pvData, 0, 0, 512, &uiLength, 512);
+	AssertTrue(bResult);
+	AssertInt(0, uiLength);
+	AssertFalse(cCache.IsSectorCached(0));
+	AssertFalse(cCache.IsSectorDirty(0));
+	AssertTrue(cCache.IsSectorCached(1));
+	AssertTrue(cCache.IsSectorDirty(1));
+
+	pcMemory = (char*)cCache.GetCache();
+	AssertChar('!', pcMemory[512]);
+	AssertChar('\0', pcMemory[511]);
+	AssertChar('\0', pcMemory[513]);
+	cCache.Flush();
+
+	pcMemory = (char*)cMemoryDrive.GetMemory();
+	AssertChar('!', pcMemory[512]);
+	AssertChar('\0', pcMemory[511]);
+	AssertChar('\0', pcMemory[513]);
+
 	cCache.Kill();
 
 	free(pvData);
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFatCacheReadLimits(void)
+{
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	CFatCache		cCache;
+	int				iDataLength;
+	uint32			uiLength;
+	bool			bResult;
+	char*			pcDriveMemory;
+	char			acTestMemory[1 KB];
+
+	iDataLength = 65 KB;
+
+	cMemoryDrive.Init(1 MB, 512);
+	cCache.Init(&cMemoryDrive, 32 KB, 512);
+	bResult = cMemoryDrive.Erase(0, cCache.GetSectorsPerCluster() - 1);
+	AssertTrue(bResult);
+
+	pcDriveMemory = (char*)cMemoryDrive.GetMemory();
+	FatCacheFillTestDrive(pcDriveMemory, 256 KB);
+
+	uiLength = 1;
+	bResult = cCache.Read((uint8*)acTestMemory, 0, 0, 1, &uiLength, 0);
+	AssertFalse(bResult);
+	AssertInt(1, uiLength);
+
+	memset(acTestMemory, 0, 1 KB);
+	uiLength = 2;
+	bResult = cCache.Read((uint8*)acTestMemory, 0, 0, 0, &uiLength, 1);
+	AssertTrue(bResult);
+	AssertInt(1, uiLength);
+	AssertString("A", acTestMemory);
+
+	cCache.Clear();
+	memset(acTestMemory, 0, 1 KB);
+	uiLength = 513;
+	bResult = cCache.Read((uint8*)acTestMemory, 0, 0, 0, &uiLength, 512);
+	AssertTrue(bResult);
+	AssertInt(1, uiLength);
+	AssertString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+		acTestMemory);
+	AssertTrue(cCache.IsSectorCached(0));
+	AssertFalse(cCache.IsSectorCached(1));
+
+	cCache.Clear();
+	memset(acTestMemory, 0, 1 KB);
+	uiLength = 2;
+	bResult = cCache.Read((uint8*)acTestMemory, 0, 0, 32767, &uiLength, 32768);
+	AssertTrue(bResult);
+	AssertInt(1, uiLength);
+	AssertString("", acTestMemory);
+	AssertTrue(cCache.IsSectorCached(0));
+	AssertFalse(cCache.IsSectorCached(1));
+
+	cCache.Kill();
 
 	cMemoryDrive.Kill();
 }
@@ -492,7 +612,8 @@ void TestFatCache(void)
 	TestFatCacheDirty();
 	TestFatCacheDiscontiguousWrites();
 	TestFatCacheRead();
-	TestFatCacheLimits();
+	TestFatCacheWriteLimits();
+	TestFatCacheReadLimits();
 	TestFatCacheComplex();
 
 	TestStatistics();
