@@ -96,8 +96,8 @@ int __cdecl main(void)
 	//TestIndexTreeAccess();
 	//TestCodabase();
 	//TestMemoryDrive();
-	TestFatCache();
-	//TestFat32();
+	//TestFatCache();
+	TestFat32();
 
 	iResult = TestTotalStatistics();
 

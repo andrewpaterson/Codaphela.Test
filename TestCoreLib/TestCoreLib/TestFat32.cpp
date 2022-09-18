@@ -858,7 +858,7 @@ void TestFat32(void)
 	TestFat32CreateDirectory();
 	TestFat32FormatAndCreateDirectory();
 	TestFat32GreatWrite();
-//	TestFat32MultipleSmallReads();
+	TestFat32MultipleSmallReads();
 
 	TestStatistics();
 	TypeConverterKill();
