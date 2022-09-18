@@ -8,9 +8,9 @@
 //////////////////////////////////////////////////////////////////////////
 void TestFindFirstClearBit(void)
 {
-	unsigned char	ab[9];
-	int				iIndex;
-	int				iBit;
+	uint8	ab[9];
+	int		iIndex;
+	int		iBit;
 
 	ab[0] = ab[1] = ab[2] = ab[3] = ab[4] = ab[5] = ab[6] = ab[7] = ab[8] = 0xff;
 	iIndex = FindFirstClearBit(ab, 64);
@@ -56,9 +56,9 @@ void TestFindFirstClearBit(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFindFirstSetBit(void)
 {
-	unsigned char	ab[9];
-	int				iIndex;
-	int				iBit;
+	uint8	ab[9];
+	int		iIndex;
+	int		iBit;
 
 	ab[0] = ab[1] = ab[2] = ab[3] = ab[4] = ab[5] = ab[6] = ab[7] = ab[8] = 0;
 	iIndex = FindFirstSetBit(ab, 64);
@@ -137,9 +137,9 @@ void TestFindFirstSetBit(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFindLastClearBit(void)
 {
-	unsigned char	ab[9];
-	int				iIndex;
-	int				iBit;
+	uint8	ab[9];
+	int		iIndex;
+	int		iBit;
 
 	ab[0] = ab[1] = ab[2] = ab[3] = ab[4] = ab[5] = ab[6] = ab[7] = ab[8] = 0xff;
 	iIndex = FindLastClearBit(ab, 64);
@@ -185,9 +185,9 @@ void TestFindLastClearBit(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFindLastSetBit(void)
 {
-	unsigned char	ab[9];
-	int				iIndex;
-	int				iBit;
+	uint8	ab[9];
+	int		iIndex;
+	int		iBit;
 
 	ab[0] = ab[1] = ab[2] = ab[3] = ab[4] = ab[5] = ab[6] = ab[7] = ab[8] = 0;
 	iIndex = FindLastSetBit(ab, 64);
@@ -274,10 +274,10 @@ void TestReverseBytes(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCountBits(void)
 {
-	unsigned char auc8a[] = { 0x6a, 0x83, 0x5d, 0x16, 0x42, 0x6e, 0x61, 0x80 };
-	unsigned char auc8b[] = { 0x54, 0xdc, 0x72, 0xf5, 0x78, 0xf9, 0x86, 0xa3 };
-	unsigned char auc80[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-	unsigned char auc81[] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+	uint8 auc8a[] = { 0x6a, 0x83, 0x5d, 0x16, 0x42, 0x6e, 0x61, 0x80 };
+	uint8 auc8b[] = { 0x54, 0xdc, 0x72, 0xf5, 0x78, 0xf9, 0x86, 0xa3 };
+	uint8 auc80[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	uint8 auc81[] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
 	AssertInt(26, CountBits(auc8a, 64));
 	AssertInt(26, CountBitsSingly(auc8a, 64));
@@ -333,8 +333,8 @@ void TestCountBits(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFindNextSetBit(void)
 {
-	unsigned char	ab[9];
-	int				iBit;
+	uint8	ab[9];
+	int		iBit;
 
 	ab[0] = ab[1] = ab[2] = ab[3] = ab[4] = ab[5] = ab[6] = ab[7] = ab[8] = 0xff;
 	ab[1] = 0b1110'1111;
@@ -384,8 +384,8 @@ void TestFindNextSetBit(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFindNextClearBit(void)
 {
-	unsigned char	ab[9];
-	int				iBit;
+	uint8	ab[9];
+	int		iBit;
 
 	ab[0] = ab[1] = ab[2] = ab[3] = ab[4] = ab[5] = ab[6] = ab[7] = ab[8] = 0;
 	ab[1] = 0b0001'0000;
@@ -429,6 +429,20 @@ void TestFindNextClearBit(void)
 }
 
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSetBits(void)
+{
+	uint8	ab[9];
+	
+	memset(ab, 0, 9);
+	SetBits(9, ab, true, 3);
+
+	AssertInt(0xe00, *((int*)ab));
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -444,5 +458,6 @@ void TestIntegerHelper(void)
 	TestCountBits();
 	TestFindNextSetBit();
 	TestFindNextClearBit();
+	TestSetBits();
 }
 
