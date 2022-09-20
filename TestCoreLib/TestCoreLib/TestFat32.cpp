@@ -889,11 +889,41 @@ void TestFat32Seek(void)
 
 	cFatFile.Close();
 
-	cFile.Close();
-	cFile.Kill();
-
 	cVolume.Unmount();
 	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+char* AllocateStringBuffer(uint32 uiSize)
+{
+	char*	szSource;
+	char	c;
+	uint32	i;
+
+	szSource = (char*)malloc(uiSize);
+	c = 'A';
+	for (i = 0; i < uiSize; i++)
+	{
+		szSource[i] = c;
+		c++;
+		if (c == 127)
+		{
+			c = 'A';
+		}
+		if ((c == ' ') || (c == '\\') || (c == '"'))
+		{
+			c++;
+		}
+	}
+	i--;
+	szSource[i] = '\0';
+	
+	return szSource;
+
 }
 
 
@@ -914,26 +944,9 @@ void TestFat32WriteAndSeek(void)
 	int				i;
 	char*			szSource;
 	char*			szRead;
-	char			c;
 	uint32			uiBytesRead;
 
-	szSource = (char*)malloc(196 KB);
-	c = 'A';
-	for (i = 0; i < 196 KB; i++)
-	{
-		szSource[i] = c;
-		c++;
-		if (c == 127)
-		{
-			c = 'A';
-		}
-		if ((c == ' ') || (c == '\\') || (c == '"'))
-		{
-			c++;
-		}
-	}
-	i--;
-	szSource[i] = '\0';
+	szSource = AllocateStringBuffer(196 KB);
 
 	cFile.Init("Input\\Fat32\\ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
@@ -987,9 +1000,6 @@ void TestFat32WriteAndSeek(void)
 
 	cFatFile.Close();
 
-	cFile.Close();
-	cFile.Kill();
-
 	free(szRead);
 	free(szSource);
 	cVolume.Unmount();
@@ -1001,7 +1011,140 @@ void TestFat32WriteAndSeek(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFat32SeekWriteAndRead(void)
+void TestFat32SeekWriteAndRead1(void)
+{
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	filePos			uiLength;
+	void*			pvMemory;
+	EFatCode		eResult;
+	CFatFile		cFatFile;
+	bool			bResult;
+	CFatVolume		cVolume;
+	//char			szDest[8 KB];
+	//uint32			uiBytesRead;
+	char*			szSource;
+
+	szSource = AllocateStringBuffer(64 KB);
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	eResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\File.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_OVERWRITE | FAT_FILE_ACCESS_WRITE | FAT_FILE_ACCESS_READ);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cFatFile.Write((uint8*)szSource, 65536);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cFatFile.Seek(65535, FAT_SEEK_START);
+	eResult = cFatFile.Write((uint8*)szSource, 3);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cFatFile.Seek(65536, FAT_SEEK_START);
+	eResult = cFatFile.Write((uint8*)szSource, 3);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cVolume.Unmount();
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFat32SeekWriteAndRead2(void)
+{
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	filePos			uiLength;
+	void*			pvMemory;
+	EFatCode		eResult;
+	CFatFile		cFatFile;
+	bool			bResult;
+	CFatVolume		cVolume;
+	int				i;
+	char			szThree[4];
+	char			c;
+	char			szDest[8 KB];
+	uint32			uiBytesRead;
+	
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	eResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\File.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_OVERWRITE | FAT_FILE_ACCESS_WRITE | FAT_FILE_ACCESS_READ);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	c = 'A';
+	for (i = 0; i < 196 KB; i++)
+	{
+		szThree[0] = szThree[1] = szThree[2] = c;
+		c++;
+		if (c == 127)
+		{
+			c = 'A';
+		}
+		if ((c == ' ') || (c == '\\') || (c == '"'))
+		{
+			c++;
+		}
+
+		eResult = cFatFile.Write((uint8*)szThree, 3);
+		AssertInt(FAT_SUCCESS, eResult);
+		if (i == 65536)
+		{
+			int xxx = 0;
+		}
+		eResult = cFatFile.Seek(i + 1, FAT_SEEK_START);
+		AssertInt(FAT_SUCCESS, eResult);
+	}
+
+	memset(szDest, 0, 8 KB);
+	eResult = cFatFile.Seek(0, FAT_SEEK_START);
+	AssertInt(FAT_SUCCESS, eResult);
+	eResult = cFatFile.Read((uint8*)szDest, 8 KB - 1, &uiBytesRead);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cVolume.Unmount();
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFat32SeekWriteAndRead3(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
@@ -1101,7 +1244,9 @@ void TestFat32(void)
 	TestFat32MultipleSmallReads();
 	TestFat32Seek();
 	TestFat32WriteAndSeek();
-	//TestFat32SeekWriteAndRead();
+	TestFat32SeekWriteAndRead1();
+	TestFat32SeekWriteAndRead2();
+	TestFat32SeekWriteAndRead3();
 
 	TestStatistics();
 	TypeConverterKill();
