@@ -101,6 +101,20 @@ void TestFat32ReadSpecific(void)
 	eResult = cVolume.FatFindNextEntry(&psFatDirectoryEntry, &sQuery);
 	AssertTrue((StrEmpty((char*)psFatDirectoryEntry->name)));
 
+	eResult = cVolume.FatGetFileEntry("\\Pico\\LCDBusReader", &sFatFileEntry);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertString("LCDBUS~1", (char*)sFatFileEntry.name);
+	AssertInt(FAT_ATTR_DIRECTORY, sFatFileEntry.attributes);
+
+	eResult = cVolume.FatGetFileEntry("\\Pico\\LCDBusReader\\src", &sFatFileEntry);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertString("SRC", (char*)sFatFileEntry.name);
+	AssertInt(FAT_ATTR_DIRECTORY, sFatFileEntry.attributes);
+
+	eResult = cVolume.FatGetFileEntry("\\Pico\\HowDoesItWork\\build.sh", &sFatFileEntry);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertString("BUILD.SH", (char*)sFatFileEntry.name);
+	AssertInt(FAT_ATTR_ARCHIVE, sFatFileEntry.attributes);
 
 	eResult = cVolume.FatGetFileEntry("\\Pico\\LCDBusReader\\src\\SDCard.cpp", &sFatFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
@@ -183,10 +197,6 @@ EFatCode RecurseFindFatFilenames(CFatVolume* pcVolume, char* szPath, CArrayChars
 		}
 
 		eResult = pcVolume->FatFindNextEntry(&psFatDirectoryEntry, &sQuery);
-		if (eResult != FAT_SUCCESS)
-		{
-			return eResult;
-		}
 	}
 }
 
@@ -1044,15 +1054,15 @@ void TestFat32SeekWriteAndRead1(void)
 	eResult = cFatFile.Open("\\File.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_OVERWRITE | FAT_FILE_ACCESS_WRITE | FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
 
-	eResult = cFatFile.Write((uint8*)szSource, 65536);
+	eResult = cFatFile.Write((uint8*)szSource, 32768);
 	AssertInt(FAT_SUCCESS, eResult);
 
-	eResult = cFatFile.Seek(65535, FAT_SEEK_START);
-	eResult = cFatFile.Write((uint8*)szSource, 3);
-	AssertInt(FAT_SUCCESS, eResult);
+	//eResult = cFatFile.Seek(65535, FAT_SEEK_START);
+	//eResult = cFatFile.Write((uint8*)szSource, 3);
+	//AssertInt(FAT_SUCCESS, eResult);
 
-	eResult = cFatFile.Seek(65536, FAT_SEEK_START);
-	eResult = cFatFile.Write((uint8*)szSource, 3);
+	//eResult = cFatFile.Seek(65536, FAT_SEEK_START);
+	eResult = cFatFile.Write((uint8*)szSource, 1);
 	AssertInt(FAT_SUCCESS, eResult);
 
 	eResult = cFatFile.Close();
@@ -1061,6 +1071,8 @@ void TestFat32SeekWriteAndRead1(void)
 	cVolume.Unmount();
 
 	cMemoryDrive.Kill();
+
+	free(szSource);
 }
 
 
@@ -1117,10 +1129,7 @@ void TestFat32SeekWriteAndRead2(void)
 
 		eResult = cFatFile.Write((uint8*)szThree, 3);
 		AssertInt(FAT_SUCCESS, eResult);
-		if (i == 65536)
-		{
-			int xxx = 0;
-		}
+
 		eResult = cFatFile.Seek(i + 1, FAT_SEEK_START);
 		AssertInt(FAT_SUCCESS, eResult);
 	}
