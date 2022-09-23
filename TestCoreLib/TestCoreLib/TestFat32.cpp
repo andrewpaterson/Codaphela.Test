@@ -41,6 +41,8 @@ void TestFat32ReadSpecific(void)
 	cFile.Close();
 	cFile.Kill();
 
+	AssertInt(sizeof(uint8), sizeof(char));
+
 	eResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(FAT_SUCCESS, eResult);
 
