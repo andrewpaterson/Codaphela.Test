@@ -216,6 +216,12 @@
     <ClCompile Include="TestFatCache.cpp">
       <Filter>Source\FileSystem\Fat32</Filter>
     </ClCompile>
+    <ClCompile Include="TestFat32ClusterWriteOnly.cpp">
+      <Filter>Source\FileSystem\Fat32</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFat32Common.cpp">
+      <Filter>Source\FileSystem\Fat32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestXMLFile.h">
@@ -241,6 +247,9 @@
     </ClInclude>
     <ClInclude Include="IndexTreeFileDataTestCallback.h">
       <Filter>Source\File\Indexed\Index</Filter>
+    </ClInclude>
+    <ClInclude Include="TestFat32Common.h">
+      <Filter>Source\FileSystem\Fat32</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

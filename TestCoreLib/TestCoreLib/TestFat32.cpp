@@ -8,6 +8,7 @@
 #include "CoreLib/MemoryDrive.h"
 #include "CoreLib/Fat32.h"
 #include "TestLib/Assert.h"
+#include "TestFat32Common.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -910,39 +911,6 @@ void TestFat32Seek(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-char* AllocateStringBuffer(uint32 uiSize)
-{
-	char*	szSource;
-	char	c;
-	uint32	i;
-
-	szSource = (char*)malloc(uiSize);
-	c = 'A';
-	for (i = 0; i < uiSize; i++)
-	{
-		szSource[i] = c;
-		c++;
-		if (c == 127)
-		{
-			c = 'A';
-		}
-		if ((c == ' ') || (c == '\\') || (c == '"'))
-		{
-			c++;
-		}
-	}
-	i--;
-	szSource[i] = '\0';
-	
-	return szSource;
-
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 void TestFat32WriteAndSeek(void)
 {
 	CMemoryDrive	cMemoryDrive;
@@ -1059,11 +1027,11 @@ void TestFat32SeekWriteAndRead1(void)
 	eResult = cFatFile.Write((uint8*)szSource, 32768);
 	AssertInt(FAT_SUCCESS, eResult);
 
-	//eResult = cFatFile.Seek(65535, FAT_SEEK_START);
-	//eResult = cFatFile.Write((uint8*)szSource, 3);
-	//AssertInt(FAT_SUCCESS, eResult);
+	eResult = cFatFile.Seek(65535, FAT_SEEK_START);
+	eResult = cFatFile.Write((uint8*)szSource, 3);
+	AssertInt(FAT_SUCCESS, eResult);
 
-	//eResult = cFatFile.Seek(65536, FAT_SEEK_START);
+	eResult = cFatFile.Seek(65536, FAT_SEEK_START);
 	eResult = cFatFile.Write((uint8*)szSource, 1);
 	AssertInt(FAT_SUCCESS, eResult);
 

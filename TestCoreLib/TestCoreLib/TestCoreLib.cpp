@@ -44,7 +44,7 @@ void TestCodabase(void);
 void TestMemoryDrive(void);
 void TestFatCache(void);
 void TestFat32(void);
-
+void TestFat32WriteLargerThanOneCluster(void);
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -97,7 +97,8 @@ int __cdecl main(void)
 	//TestCodabase();
 	//TestMemoryDrive();
 	//TestFatCache();
-	TestFat32();
+	//TestFat32();
+	TestFat32WriteLargerThanOneCluster();
 
 	iResult = TestTotalStatistics();
 
