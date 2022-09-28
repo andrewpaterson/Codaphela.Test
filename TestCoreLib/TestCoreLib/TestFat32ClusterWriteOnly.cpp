@@ -7,6 +7,7 @@
 #include "BaseLib/ArrayChars.h"
 #include "CoreLib/MemoryDrive.h"
 #include "CoreLib/Fat32.h"
+#include "CoreLib/FatDebug.h"
 #include "TestLib/Assert.h"
 #include "TestFat32Common.h"
 
@@ -31,6 +32,7 @@ void TestFat32WriteLargerThanOneCluster(void)
 	char*			szSource;
 	char*			szRead;
 	uint32			uiBytesRead;
+	uint64			uiMaxSectorSize;
 
 	szSource = AllocateStringBuffer(33 KB);
 
@@ -44,15 +46,37 @@ void TestFat32WriteLargerThanOneCluster(void)
 	cFile.Close();
 	cFile.Kill();
 
+	cMemoryDrive.Erase();
+	uiMaxSectorSize = cMemoryDrive.SetMaxSectorForTesting(((16 MB) / 512) * 1024);
+
+	eResult = FatFormat(FAT_FS_TYPE_FAT32, "Fat32", 64, &cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cMemoryDrive.SetMaxSectorForTesting(uiMaxSectorSize);
+
 	eResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(FAT_SUCCESS, eResult);
+
+	PrintRootDirectory(&cVolume);
+
+	PrintInterestingFATClusters(&cVolume);
 
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\File1.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_OVERWRITE | FAT_FILE_ACCESS_WRITE | FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
 
+	PrintRootDirectory(&cVolume);
+
+	PrintInterestingFATClusters(&cVolume);
+
 	eResult = cFatFile.Write((uint8*)szSource, 32769);
 	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Close();
+
+	PrintRootDirectory(&cVolume);
+
+	PrintInterestingFATClusters(&cVolume);
 
 	szRead = (char*)malloc(32769);
 	cFatFile.Init(&cVolume);
