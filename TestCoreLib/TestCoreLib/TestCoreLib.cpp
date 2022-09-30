@@ -97,7 +97,7 @@ int __cdecl main(void)
 	//TestCodabase();
 	//TestMemoryDrive();
 	//TestFatCache();
-	//TestFat32();
+	TestFat32();
 	TestFat32WriteLargerThanOneCluster();
 
 	iResult = TestTotalStatistics();

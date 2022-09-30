@@ -6,7 +6,7 @@
 #include "BaseLib/StringHelper.h"
 #include "BaseLib/ArrayChars.h"
 #include "CoreLib/MemoryDrive.h"
-#include "CoreLib/FatCache.h"
+#include "CoreLib/FatClusterCache.h"
 #include "TestLib/Assert.h"
 
 
@@ -89,7 +89,7 @@ void TestFatCacheWrite(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	CFatCache		cCache;
+	CFatClusterCache		cCache;
 	char*			pvData;
 	int				iDataLength;
 	uint32			uiLength;
@@ -173,7 +173,7 @@ void TestFatCacheDirty(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	CFatCache		cCache;
+	CFatClusterCache		cCache;
 	char*			pvData;
 	int				iDataLength;
 	uint32			uiLength;
@@ -237,7 +237,7 @@ void TestFatCacheDiscontiguousWrites(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	CFatCache		cCache;
+	CFatClusterCache		cCache;
 	char*			pvData;
 	int				iDataLength;
 	uint32			uiLength;
@@ -356,7 +356,7 @@ void TestFatCacheRead(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	CFatCache		cCache;
+	CFatClusterCache		cCache;
 	char*			pvData;
 	int				iDataLength;
 	char*			pcMemory;
@@ -452,7 +452,7 @@ void TestFatCacheWriteLimits(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	CFatCache		cCache;
+	CFatClusterCache		cCache;
 	char*			pvData;
 	int				iDataLength;
 	uint32			uiLength;
@@ -534,7 +534,7 @@ void TestFatCacheReadLimits(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	CFatCache		cCache;
+	CFatClusterCache		cCache;
 	int				iDataLength;
 	uint32			uiLength;
 	bool			bResult;
@@ -612,7 +612,7 @@ void TestFatCacheComplex(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	CFatCache		cCache;
+	CFatClusterCache		cCache;
 	char*			acData;
 	int				iDataLength;
 	uint32			uiLength;

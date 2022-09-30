@@ -54,31 +54,20 @@ void TestFat32WriteLargerThanOneCluster(void)
 
 	cMemoryDrive.SetMaxSectorForTesting(uiMaxSectorSize);
 
+	szRead = (char*)malloc(32769);
+
 	eResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(FAT_SUCCESS, eResult);
-
-	PrintRootDirectory(&cVolume);
-
-	PrintInterestingFATClusters(&cVolume);
 
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\File1.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_OVERWRITE | FAT_FILE_ACCESS_WRITE | FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
-
-	PrintRootDirectory(&cVolume);
-
-	PrintInterestingFATClusters(&cVolume);
 
 	eResult = cFatFile.Write((uint8*)szSource, 32769);
 	AssertInt(FAT_SUCCESS, eResult);
 
 	cFatFile.Close();
 
-	PrintRootDirectory(&cVolume);
-
-	PrintInterestingFATClusters(&cVolume);
-
-	szRead = (char*)malloc(32769);
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\File1.txt", FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
@@ -94,14 +83,30 @@ void TestFat32WriteLargerThanOneCluster(void)
 	eResult = cFatFile.Open("\\File2.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_OVERWRITE | FAT_FILE_ACCESS_WRITE | FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
 
+	DumpRootDirectory(&cVolume);
+
+	PrintInterestingFATClusters(&cVolume);
+
 	eResult = cFatFile.Write((uint8*)szSource, 32768);
 	AssertInt(FAT_SUCCESS, eResult);
+
+	DumpRootDirectory(&cVolume);
+
+	PrintInterestingFATClusters(&cVolume);
 
 	eResult = cFatFile.Write((uint8*)(&szSource[32768]), 1);
 	AssertInt(FAT_SUCCESS, eResult);
 
+	DumpRootDirectory(&cVolume);
+
+	PrintInterestingFATClusters(&cVolume);
+
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
+
+	DumpRootDirectory(&cVolume);
+
+	PrintInterestingFATClusters(&cVolume);
 
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\File2.txt", FAT_FILE_ACCESS_READ);

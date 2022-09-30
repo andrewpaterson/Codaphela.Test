@@ -7,6 +7,7 @@
 #include "BaseLib/ArrayChars.h"
 #include "CoreLib/MemoryDrive.h"
 #include "CoreLib/Fat32.h"
+#include "CoreLib/FatDebug.h"
 #include "TestLib/Assert.h"
 #include "TestFat32Common.h"
 
@@ -406,6 +407,63 @@ void TestFat32Format(void)
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertString("", (char*)psFatDirectoryEntry->name);
 	AssertInt(0, psFatDirectoryEntry->attributes);
+
+	eResult = cVolume.Unmount();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFat32OpenWriteMode(void)
+{
+	CMemoryDrive	cMemoryDrive;
+	size_t			uiLength;
+	void*			pvMemory;
+	EFatCode		eResult;
+	CFatFile		cFatFile;
+	CFatVolume		cVolume;
+	uint64			uiMaxSectorSize;
+	CChars			sz;
+
+	uiLength = 4 MB;
+	cMemoryDrive.Init(uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	
+	cMemoryDrive.Erase();
+	uiMaxSectorSize = cMemoryDrive.SetMaxSectorForTesting((uiLength / 512) * 1024);
+
+	eResult = FatFormat(FAT_FS_TYPE_FAT32, "Fat32", 64, &cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cMemoryDrive.SetMaxSectorForTesting(uiMaxSectorSize);
+
+	eResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	sz.Init();
+	PrintRootDirectory(&sz, &cVolume, false);
+	sz.DumpKill();
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\File.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0, cFatFile.GetCurrentSize());
+
+	sz.Init();
+	PrintRootDirectory(&sz, &cVolume, false);
+	sz.DumpKill();
+
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	sz.Init();
+	PrintRootDirectory(&sz, &cVolume, false);
+	sz.DumpKill();
 
 	eResult = cVolume.Unmount();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -1001,8 +1059,6 @@ void TestFat32SeekWriteAndRead1(void)
 	CFatFile		cFatFile;
 	bool			bResult;
 	CFatVolume		cVolume;
-	//char			szDest[8 KB];
-	//uint32			uiBytesRead;
 	char*			szSource;
 
 	szSource = AllocateStringBuffer(64 KB);
@@ -1024,7 +1080,7 @@ void TestFat32SeekWriteAndRead1(void)
 	eResult = cFatFile.Open("\\File.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_OVERWRITE | FAT_FILE_ACCESS_WRITE | FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
 
-	eResult = cFatFile.Write((uint8*)szSource, 32768);
+	eResult = cFatFile.Write((uint8*)szSource, 65538);
 	AssertInt(FAT_SUCCESS, eResult);
 
 	eResult = cFatFile.Seek(65535, FAT_SEEK_START);
@@ -1216,6 +1272,7 @@ void TestFat32(void)
 	TestFat32ReadSpecific();
 	TestFat32ReadDirectoryTree();
 	TestFat32Format();
+	TestFat32OpenWriteMode();
 	TestFat32Write();
 	TestFat32CreateDirectory();
 	TestFat32FormatAndCreateDirectory();
