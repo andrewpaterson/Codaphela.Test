@@ -48,6 +48,7 @@ void TestFat32ReadSpecific(void)
 	eResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(FAT_SUCCESS, eResult);
 
+
 	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
 	eResult = cVolume.FindFirstFATEntry(NULL, 0, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, eResult);
@@ -136,6 +137,7 @@ void TestFat32ReadSpecific(void)
 
 	cFatFile.Close();
 
+
 	cFile.Init("Input\\Fat32\\SDCard.cpp");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
@@ -144,13 +146,14 @@ void TestFat32ReadSpecific(void)
 	cFile.Read(auiExpectedData, uiLength, 1);
 	cFile.Close();
 	cFile.Kill();
-
 	AssertMemory(auiExpectedData, auiFileData, (int)uiLength);
+
 
 	eResult = cVolume.GetFileEntry("\\Pico\\LCDBusReader\\src\\LCDBusReader.cpp", &sFatFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertString("LCDBUS~1.CPP", (char*)sFatFileEntry.name);
 	AssertInt(FAT_ATTR_ARCHIVE, sFatFileEntry.attributes);
+
 
 	cVolume.Unmount();
 
