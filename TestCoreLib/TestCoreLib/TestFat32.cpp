@@ -147,6 +147,11 @@ void TestFat32ReadSpecific(void)
 
 	AssertMemory(auiExpectedData, auiFileData, (int)uiLength);
 
+	eResult = cVolume.GetFileEntry("\\Pico\\LCDBusReader\\src\\LCDBusReader.cpp", &sFatFileEntry);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertString("LCDBUS~1.CPP", (char*)sFatFileEntry.name);
+	AssertInt(FAT_ATTR_ARCHIVE, sFatFileEntry.attributes);
+
 	cVolume.Unmount();
 
 	cMemoryDrive.Kill();
