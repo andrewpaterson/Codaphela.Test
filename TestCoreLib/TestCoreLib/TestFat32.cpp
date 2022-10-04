@@ -422,6 +422,51 @@ void TestFat32Format(void)
 	cMemoryDrive.Kill();
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFat32CreateFileEntry(void)
+{
+	CMemoryDrive			cMemoryDrive;
+	CDiskFile				cFile;
+	filePos					uiLength;
+	void*					pvMemory;
+	uint16					eResult;
+	bool					bResult;
+	CFatVolume				cVolume;
+	SFatDirectoryEntry		sRootDirectoryEntry;
+	SFatDirectoryEntry		sFileEntry;
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	eResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cVolume.GetFileEntry("\\", &sRootDirectoryEntry);
+
+	eResult = cVolume.CreateFATEntry(&sRootDirectoryEntry.raw, "Wort Wort Wort.cov", 0, 0, &sFileEntry);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cVolume.Flush();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	DumpRootDirectory(&cVolume);
+
+	eResult = cVolume.Unmount();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cMemoryDrive.Kill();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -462,22 +507,9 @@ void TestFat32OpenWriteMode(void)
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
 
-
-	DumpRootDirectory(&cVolume);
-
 	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
 	eResult = cVolume.FindFirstFATEntry(NULL, 0, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, eResult);
-
-	eResult = cVolume.FindNextFATEntry(&psFatDirectoryEntry, &sQuery);
-	AssertInt(FAT_SUCCESS, eResult);
-
-	eResult = cVolume.FindNextFATEntry(&psFatDirectoryEntry, &sQuery);
-	AssertInt(FAT_SUCCESS, eResult);
-
-	eResult = cVolume.FindNextFATEntry(&psFatDirectoryEntry, &sQuery);
-	AssertInt(FAT_SUCCESS, eResult);
-
 
 	eResult = cVolume.Unmount();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -1278,6 +1310,7 @@ void TestFat32(void)
 	TestFat32ReadSpecific();
 	TestFat32ReadDirectoryTree();
 	TestFat32Format();
+	TestFat32CreateFileEntry();
 	TestFat32OpenWriteMode();
 	TestFat32Write();
 	TestFat32CreateDirectory();
