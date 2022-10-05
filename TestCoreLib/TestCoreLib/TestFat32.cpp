@@ -1,14 +1,16 @@
 #include "BaseLib/FastFunctions.h"
+#include "BaseLib/IntegerHelper.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/RedirectPrintf.h"
+#include "BaseLib/StdRandom.h"
 #include "BaseLib/DiskFile.h"
-#include "BaseLib/IntegerHelper.h"
 #include "BaseLib/StringHelper.h"
 #include "BaseLib/ArrayChars.h"
 #include "CoreLib/MemoryDrive.h"
 #include "CoreLib/Fat32.h"
 #include "CoreLib/FatDebug.h"
 #include "TestLib/Assert.h"
+#include "TestLib/Words.h"
 #include "TestFat32Common.h"
 
 
@@ -165,110 +167,6 @@ void TestFat32ReadSpecific(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-EFatCode RecurseFindFatFilenames(CFatVolume* pcVolume, char* szPath, CArrayChars* paszFiles)
-{
-	SFatFileSystemQuery		sQuery;
-	SFatDirectoryEntry*		psFatDirectoryEntry;
-	EFatCode				eResult;
-	char					szNewPath[FAT_MAX_PATH];
-
-	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
-	eResult = pcVolume->FindFirstFATEntry(szPath, 0, &psFatDirectoryEntry, &sQuery);
-	for (;;)
-	{
-		if (eResult != FAT_SUCCESS)
-		{
-			return eResult;
-		}
-
-		if (StrEmpty((char*)psFatDirectoryEntry->name))
-		{
-			return FAT_SUCCESS;
-		}
-
-		memset(szNewPath, 0, FAT_MAX_PATH);
-		strcpy(szNewPath, szPath);
-		strcat(szNewPath, "\\");
-		strcat(szNewPath, (char*)psFatDirectoryEntry->name);
-
-		if (FixBool(psFatDirectoryEntry->attributes & FAT_ATTR_DIRECTORY))
-		{
-			if (!((strcmp((char*)psFatDirectoryEntry->name, ".") == 0) || (strcmp((char*)psFatDirectoryEntry->name, "..") == 0)))
-			{
-				eResult = RecurseFindFatFilenames(pcVolume, szNewPath, paszFiles);
-				if (eResult != FAT_SUCCESS)
-				{
-					return eResult;
-				}
-			}
-		}
-
-		if (FixBool(psFatDirectoryEntry->attributes & FAT_ATTR_ARCHIVE))
-		{
-			paszFiles->Add(szNewPath);
-		}
-
-		eResult = pcVolume->FindNextFATEntry(&psFatDirectoryEntry, &sQuery);
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-EFatCode RecurseFindFatDirectories(CFatVolume* pcVolume, char* szPath, CArrayChars* paszDirectories)
-{
-	SFatFileSystemQuery		sQuery;
-	SFatDirectoryEntry*		psFatDirectoryEntry;
-	EFatCode				eResult;
-	char					szNewPath[FAT_MAX_PATH];
-
-	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
-	eResult = pcVolume->FindFirstFATEntry(szPath, 0, &psFatDirectoryEntry, &sQuery);
-	for (;;)
-	{
-		if (eResult != FAT_SUCCESS)
-		{
-			return eResult;
-		}
-
-		if (StrEmpty((char*)psFatDirectoryEntry->name))
-		{
-			return FAT_SUCCESS;
-		}
-
-		memset(szNewPath, 0, FAT_MAX_PATH);
-		strcpy(szNewPath, szPath);
-		strcat(szNewPath, "\\");
-		strcat(szNewPath, (char*)psFatDirectoryEntry->name);
-
-		if (FixBool(psFatDirectoryEntry->attributes & FAT_ATTR_DIRECTORY))
-		{
-			if (!((strcmp((char*)psFatDirectoryEntry->name, ".") == 0) || (strcmp((char*)psFatDirectoryEntry->name, "..") == 0)))
-			{
-				eResult = RecurseFindFatDirectories(pcVolume, szNewPath, paszDirectories);
-				if (eResult != FAT_SUCCESS)
-				{
-					return eResult;
-				}
-				paszDirectories->Add(szNewPath);
-			}
-		}
-
-		eResult = pcVolume->FindNextFATEntry(&psFatDirectoryEntry, &sQuery);
-		if (eResult != FAT_SUCCESS)
-		{
-			return eResult;
-		}
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 void TestFat32ReadDirectoryTree(void)
 {
 	CMemoryDrive			cMemoryDrive;
@@ -388,7 +286,7 @@ void TestFat32Format(void)
 	CDiskFile				cFile;
 	filePos					uiLength;
 	void*					pvMemory;
-	uint16					eResult;
+	EFatCode				eResult;
 	bool					bResult;
 	SFatDirectoryEntry*		psFatDirectoryEntry;
 	SFatFileSystemQuery		sQuery;
@@ -426,17 +324,21 @@ void TestFat32Format(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFat32CreateFileEntry(void)
+void TestFat32CreateFileEntries(void)
 {
 	CMemoryDrive			cMemoryDrive;
 	CDiskFile				cFile;
 	filePos					uiLength;
 	void*					pvMemory;
-	uint16					eResult;
+	EFatCode				eResult;
 	bool					bResult;
 	CFatVolume				cVolume;
 	SFatDirectoryEntry		sRootDirectoryEntry;
 	SFatDirectoryEntry		sFileEntry;
+	int						i;
+	CChars					szFileName;
+	CRandom					cRandom;
+	CChars					sz;
 
 	cFile.Init("Input\\Fat32\\ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
@@ -453,13 +355,50 @@ void TestFat32CreateFileEntry(void)
 
 	eResult = cVolume.GetFileEntry("\\", &sRootDirectoryEntry);
 
-	eResult = cVolume.CreateFATEntry(&sRootDirectoryEntry.raw, "Wort Wort Wort.cov", 0, 0, &sFileEntry);
+	eResult = cVolume.CreateFATEntry(&sRootDirectoryEntry.raw, "Wort Wort Wort.cov", FAT_ATTR_ARCHIVE, 0, &sFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
 
 	eResult = cVolume.Flush();
 	AssertInt(FAT_SUCCESS, eResult);
 
-	DumpRootDirectory(&cVolume);
+	sz.Init();
+	PrintRootFatFilenames(&sz, &cVolume);
+	AssertString("\
+\\Wort Wort Wort.cov\n\
+\\Document.txt\n", sz.Text());
+	sz.Kill();
+
+	eResult = cVolume.Unmount();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cRandom.Init(4526);
+	eResult = cVolume.GetFileEntry("\\", &sRootDirectoryEntry);
+	for (i = 0; i < 10; i++)
+	{
+		szFileName.Init();
+		PrintRandomWords(&szFileName, &cRandom, true, 30);
+		szFileName.Append('.');
+		PrintRandomWords(&szFileName, &cRandom, false, 1);
+
+		if (szFileName.Length() > FAT_MAX_FILENAME - 1)
+		{
+			szFileName.SetLength(FAT_MAX_FILENAME - 1);
+		}
+		
+		szFileName.Replace(",", " -");
+		eResult = cVolume.CreateFATEntry(&sRootDirectoryEntry.raw, szFileName.Text(), FAT_ATTR_ARCHIVE, 0, &sFileEntry);
+		AssertInt(FAT_SUCCESS, eResult);
+		szFileName.Kill();
+	}
+	cRandom.Kill();
+
+	eResult = cVolume.Flush();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	DumpRootFatFilenames(&cVolume);
 
 	eResult = cVolume.Unmount();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -528,7 +467,7 @@ void TestFat32Write(void)
 	CDiskFile				cFile;
 	filePos					uiLength;
 	void*					pvMemory;
-	uint16					eResult;
+	EFatCode				eResult;
 	bool					bResult;
 	CFatVolume				cVolume;
 	CFatFile				cFatFile;
@@ -602,7 +541,7 @@ void TestFat32CreateDirectory(void)
 	CDiskFile		cFile;
 	filePos			uiLength;
 	void*			pvMemory;
-	uint16			eResult;
+	EFatCode		eResult;
 	bool			bResult;
 	CFatVolume		cVolume;
 	CArrayChars		aszDirectories;
@@ -656,7 +595,7 @@ void TestFat32FormatAndCreateDirectory(void)
 	CDiskFile		cFile;
 	filePos			uiLength;
 	void*			pvMemory;
-	uint16			eResult;
+	EFatCode		eResult;
 	bool			bResult;
 	CFatVolume		cVolume;
 	CArrayChars		aszDirectories;
@@ -711,7 +650,7 @@ void TestFat32GreatWrite(void)
 	CDiskFile				cFile;
 	filePos					uiLength;
 	void*					pvMemory;
-	uint16					eResult;
+	EFatCode				eResult;
 	bool					bResult;
 	SFatDirectoryEntry*		psFatDirectoryEntry;
 	SFatFileSystemQuery		sQuery;
@@ -1305,12 +1244,13 @@ void TestFat32SeekWriteAndRead3(void)
 void TestFat32(void)
 {
 	TypeConverterInit();
+	WordsInit();
 	BeginTests();
 
 	TestFat32ReadSpecific();
 	TestFat32ReadDirectoryTree();
 	TestFat32Format();
-	TestFat32CreateFileEntry();
+	TestFat32CreateFileEntries();
 	TestFat32OpenWriteMode();
 	TestFat32Write();
 	TestFat32CreateDirectory();
@@ -1324,6 +1264,7 @@ void TestFat32(void)
 	TestFat32SeekWriteAndRead3();
 
 	TestStatistics();
+	WordsKill();
 	TypeConverterKill();
 }
 
