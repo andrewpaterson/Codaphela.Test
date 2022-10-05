@@ -368,6 +368,20 @@ void TestFat32CreateFileEntries(void)
 \\Document.txt\n", sz.Text());
 	sz.Kill();
 
+	eResult = cVolume.CreateFATEntry(&sRootDirectoryEntry.raw, "Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if", FAT_ATTR_ARCHIVE, 0, &sFileEntry);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cVolume.Flush();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	sz.Init();
+	PrintRootFatFilenames(&sz, &cVolume);
+	AssertString("\
+\\Wort Wort Wort.cov\n\
+\\Document.txt\n\
+\\Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if\n", sz.Text());
+	sz.Kill();
+
 	eResult = cVolume.Unmount();
 	AssertInt(FAT_SUCCESS, eResult);
 
@@ -398,7 +412,23 @@ void TestFat32CreateFileEntries(void)
 	eResult = cVolume.Flush();
 	AssertInt(FAT_SUCCESS, eResult);
 
-	DumpRootFatFilenames(&cVolume);
+	sz.Init();
+	PrintRootFatFilenames(&sz, &cVolume);
+	AssertString("\
+\\Wort Wort Wort.cov\n\
+\\Document.txt\n\
+\\Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if\n\
+\\including sea force second appear all on chicane mage doctor example skill with team strumpet popular option small beer drug animal what kickshaw science raise Levant free hit glim meat them.sea\n\
+\\activity bethink oneself of aught spend begin wain land perform opportunity quaggy maid brother mage brimstone sign strumpet very language whence contumely provide hour method happy rack(of a cloud) be driven by the wind base across fruit modern truck.wa\n\
+\\timbrel national process get ceil jakes recognize wide mazed cordwainer produce song lay purpose him study candidate forfend otiose energy dot company worry stand drab day ahead kind wonder space.least\n\
+\\product thither piepowder machine far rest culture here tocsin win tilt with mrs argue aught third blackguard his egad beautiful stay effort plan green live poor already my travel billion equipage.walk\n\
+\\dog cottier similar computer kirtle understand garden experience sex say wrong actually again private thus ween stoup condition beldam horse - coper catch born statement maid fie woman hearken pick leech guy.threat\n\
+\\off avaunt relate magazine billion ball indite child subject billion end another image side embouchure water caducity trouble among wherefore quick - the performance already development meeting watchword turnkey work way vote.pm\n\
+\\list clout buy nigh continue hearken decade bit describe process north caducity rude portion phone back military inside tax free hold write pest outside from carry taiga kine hereunto just.himself\n\
+\\gudgeon host back assume son station spence watchword east whose Lucifer accept nothing behold bruit child owner schoolman service opportunity area put swain rise numbles sore should quickly perchance again.expert\n\
+\\friend degree orts letter book at test believe wain shambles full greenwood plan song agree go - cart host attack gentle fire why meat popinjay degree whole month however nice bethink oneself of movie.low\n\
+\\fervent watch gage rock wide list song cleanse capital few overset trouble better never prove job sex meet environmental industry best animal during quean aught love apple i gaud learn body.shoulder\n", sz.Text());
+	sz.Kill();
 
 	eResult = cVolume.Unmount();
 	AssertInt(FAT_SUCCESS, eResult);
