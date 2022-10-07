@@ -51,7 +51,7 @@ void TestFat32ReadSpecific(void)
 	AssertInt(FAT_SUCCESS, eResult);
 
 
-	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
+	sQuery.Init();
 	eResult = cVolume.FindFirstFATEntry(NULL, 0, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertString("Document.txt", (char*)psFatDirectoryEntry->name);
@@ -77,9 +77,10 @@ void TestFat32ReadSpecific(void)
 
 	eResult = cVolume.FindNextFATEntry(&psFatDirectoryEntry, &sQuery);
 	AssertTrue((StrEmpty((char*)psFatDirectoryEntry->name)));
+	sQuery.Kill(cVolume.GetSectorCache());
 
 
-	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
+	sQuery.Init();
 	eResult = cVolume.FindFirstFATEntry("\\Pico", 0, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertString(".", (char*)psFatDirectoryEntry->name);
@@ -107,6 +108,7 @@ void TestFat32ReadSpecific(void)
 
 	eResult = cVolume.FindNextFATEntry(&psFatDirectoryEntry, &sQuery);
 	AssertTrue((StrEmpty((char*)psFatDirectoryEntry->name)));
+	sQuery.Kill(cVolume.GetSectorCache());
 
 	eResult = cVolume.GetFileEntry("\\Pico\\LCDBusReader", &sFatFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
@@ -308,11 +310,12 @@ void TestFat32Format(void)
 	eResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(FAT_SUCCESS, eResult);
 
-	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
+	sQuery.Init();
 	eResult = cVolume.FindFirstFATEntry(NULL, 0, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertString("", (char*)psFatDirectoryEntry->name);
 	AssertInt(0, psFatDirectoryEntry->attributes);
+	sQuery.Kill(cVolume.GetSectorCache());
 
 	eResult = cVolume.Unmount();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -476,9 +479,10 @@ void TestFat32OpenWriteMode(void)
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
 
-	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
+	sQuery.Init();
 	eResult = cVolume.FindFirstFATEntry(NULL, 0, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, eResult);
+	sQuery.Kill(cVolume.GetSectorCache());
 
 	eResult = cVolume.Unmount();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -590,7 +594,7 @@ void TestFat32CreateDirectory(void)
 	eResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(FAT_SUCCESS, eResult);
 
-	cVolume.FatCreateDirectory("\\A Directory");
+	cVolume.CreateDirectory("\\A Directory");
 
 	aszDirectories.Init();
 	RecurseFindFatDirectories(&cVolume, "", &aszDirectories);
@@ -647,9 +651,9 @@ void TestFat32FormatAndCreateDirectory(void)
 	eResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(FAT_SUCCESS, eResult);
 
-	eResult = cVolume.FatCreateDirectory("\\A Directory");
+	eResult = cVolume.CreateDirectory("\\A Directory");
 	AssertInt(FAT_SUCCESS, eResult);
-	eResult = cVolume.FatCreateDirectory("\\A Directory\\Another");
+	eResult = cVolume.CreateDirectory("\\A Directory\\Another");
 	AssertInt(FAT_SUCCESS, eResult);
 
 	aszDirectories.Init();
@@ -710,11 +714,12 @@ void TestFat32GreatWrite(void)
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertInt(0, cFatFile.GetCurrentSize());
 
-	memset(&sQuery, 0, sizeof(SFatFileSystemQuery));
+	sQuery.Init();
 	eResult = cVolume.FindFirstFATEntry(NULL, 0, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertString("New File.txt", (char*)psFatDirectoryEntry->name);
 	AssertInt(0, psFatDirectoryEntry->attributes);
+	sQuery.Kill(cVolume.GetSectorCache());
 
 	iLength = 196 KB;
 	puiFileData = (char*)malloc(iLength);
@@ -772,9 +777,9 @@ void TestFat32GreatWrite(void)
 	AssertInt(FAT_SUCCESS, eResult);
 
 	iLength = 196 KB;
-	eResult = cVolume.FatCreateDirectory("\\A Directory");
+	eResult = cVolume.CreateDirectory("\\A Directory");
 	AssertInt(FAT_SUCCESS, eResult);
-	eResult = cVolume.FatCreateDirectory("\\A Directory\\Another");
+	eResult = cVolume.CreateDirectory("\\A Directory\\Another");
 	AssertInt(FAT_SUCCESS, eResult);
 
 	cFatFile.Init(&cVolume);
@@ -1215,7 +1220,7 @@ void TestFat32SeekWriteAndRead3(void)
 	eResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(FAT_SUCCESS, eResult);
 
-	cVolume.FatCreateDirectory("\\Directory");
+	cVolume.CreateDirectory("\\Directory");
 
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\Directory\\File.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_OVERWRITE | FAT_FILE_ACCESS_WRITE | FAT_FILE_ACCESS_READ);
