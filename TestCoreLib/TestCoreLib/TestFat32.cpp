@@ -110,6 +110,7 @@ void TestFat32ReadSpecific(void)
 	AssertTrue((StrEmpty((char*)psFatDirectoryEntry->name)));
 	sQuery.Kill(cVolume.GetSectorCache());
 
+
 	eResult = cVolume.GetFileEntry("\\Pico\\LCDBusReader", &sFatFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertString("LCDBUS~1", (char*)sFatFileEntry.name);
