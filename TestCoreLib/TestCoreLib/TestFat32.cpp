@@ -1319,15 +1319,34 @@ void TestFat32WriteAndSeek(void)
 	AssertInt(196 KB, uiBytesRead);
 	AssertString(szSource, szRead);
 
+	bAllSuccess = true;
 	for (i = 1; i < 32769 + 1024; i += 100)
 	{
 		eResult = cFatFile.Seek(i, FAT_SEEK_START);
-		AssertInt(FAT_SUCCESS, eResult);
+		if (eResult != FAT_SUCCESS)
+		{
+			AssertInt(FAT_SUCCESS, eResult);
+			bAllSuccess = false;
+			break;
+		}
 		eResult = cFatFile.Read((uint8*)szRead, 196 KB - i, &uiBytesRead);
-		AssertInt(FAT_SUCCESS, eResult);
-		AssertInt(196 KB - i, uiBytesRead);
+		if (eResult != FAT_SUCCESS)
+		{
+			AssertInt(FAT_SUCCESS, eResult);
+			bAllSuccess = false;
+			break;
+		}
+		
+		if (uiBytesRead != 196 KB - i)
+		{
+			AssertInt(196 KB - i, uiBytesRead);
+			bAllSuccess = false;
+			break;
+		}
+		
 		AssertString(&szSource[i], szRead);
 	}
+	AssertTrue(bAllSuccess);
 
 	cFatFile.Close();
 
@@ -1414,6 +1433,7 @@ void TestFat32SeekWriteAndRead2(void)
 	char			c;
 	char			szDest[8 KB];
 	uint32			uiBytesRead;
+	bool			bAllSuccess;
 	
 	cFile.Init("Input\\Fat32\\ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
@@ -1432,6 +1452,7 @@ void TestFat32SeekWriteAndRead2(void)
 	eResult = cFatFile.Open("\\File.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_OVERWRITE | FAT_FILE_ACCESS_WRITE | FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
 
+	bAllSuccess = true;
 	c = 'A';
 	for (i = 0; i < 196 KB; i++)
 	{
@@ -1447,11 +1468,24 @@ void TestFat32SeekWriteAndRead2(void)
 		}
 
 		eResult = cFatFile.Write((uint8*)szThree, 3);
-		AssertInt(FAT_SUCCESS, eResult);
+		if (eResult != FAT_SUCCESS)
+		{
+			AssertInt(FAT_SUCCESS, eResult);
+			bAllSuccess = false;
+			break;
+		}
+
 
 		eResult = cFatFile.Seek(i + 1, FAT_SEEK_START);
-		AssertInt(FAT_SUCCESS, eResult);
+		if (eResult != FAT_SUCCESS)
+		{
+			AssertInt(FAT_SUCCESS, eResult);
+			bAllSuccess = false;
+			break;
+		}
+
 	}
+	AssertTrue(bAllSuccess);
 
 	memset(szDest, 0, 8 KB);
 	eResult = cFatFile.Seek(0, FAT_SEEK_START);
@@ -1487,6 +1521,7 @@ void TestFat32SeekWriteAndRead3(void)
 	char			c;
 	char			szDest[8 KB];
 	uint32			uiBytesRead;
+	bool			bAllSuccess;
 
 	cFile.Init("Input\\Fat32\\ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
@@ -1514,6 +1549,7 @@ void TestFat32SeekWriteAndRead3(void)
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertInt(cFatFile.GetCurrentSize(), 0);
 
+	bAllSuccess = true;
 	c = 'A';
 	for (i = 0; i < 196 KB; i++)
 	{
@@ -1529,14 +1565,24 @@ void TestFat32SeekWriteAndRead3(void)
 		}
 
 		eResult = cFatFile.Write((uint8*)szThree, 3);
-		AssertInt(FAT_SUCCESS, eResult);
-		if (i == 65536)
+		if (eResult != FAT_SUCCESS)
 		{
-			int xxx = 0;
+			AssertInt(FAT_SUCCESS, eResult);
+			bAllSuccess = false;
+			break;
 		}
+
+
 		eResult = cFatFile.Seek(i + 1, FAT_SEEK_START);
-		AssertInt(FAT_SUCCESS, eResult);
+		if (eResult != FAT_SUCCESS)
+		{
+			AssertInt(FAT_SUCCESS, eResult);
+			bAllSuccess = false;
+			break;
+		}
+
 	}
+	AssertTrue(bAllSuccess);
 
 	memset(szDest, 0, 8 KB);
 	eResult = cFatFile.Seek(0, FAT_SEEK_START);
