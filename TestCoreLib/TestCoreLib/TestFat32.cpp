@@ -689,6 +689,7 @@ void TestFat32CreateFileEntryAndAllocate(void)
 	CFatVolume				cVolume;
 	uint64					uiMaxSectorSize;
 	CFatFile				cFatFile;
+	CChars					sz;
 
 	uiLength = 4 MB;
 	cMemoryDrive.Init(uiLength, 512);
@@ -705,8 +706,6 @@ void TestFat32CreateFileEntryAndAllocate(void)
 	eResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(FAT_SUCCESS, eResult);
 
-	DumpInterestingFATClusters(&cVolume);
-
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\File.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
 	AssertInt(FAT_SUCCESS, eResult);
@@ -715,23 +714,109 @@ void TestFat32CreateFileEntryAndAllocate(void)
 	cVolume.Flush();
 	cFatFile.Flush();
 
-	DumpInterestingFATClusters(&cVolume);
+	sz.Init();
+	PrintFATClusters(&sz, &cVolume, 0, 16);
+	AssertString("\
+-------------------------------------------------------------------- Sector (32) --------------------------------------------------------------------\n\
+    0 -> FFF8,     1 ->  EOC,     2 ->    0,     3 ->  EOC,     4 ->    0,     5 ->    0,     6 ->    0,     7 ->    0,     8 ->    0,     9 ->    0,     a ->    0,     b ->    0,     c ->    0,     d ->    0,     e ->    0,     f ->    0\n", sz.Text());
+	sz.Kill();
 
 	cFatFile.AllocateClusters(64 KB);
 
 	cVolume.Flush();
 	cFatFile.Flush();
 
-	DumpInterestingFATClusters(&cVolume);
+	sz.Init();
+	PrintFATClusters(&sz, &cVolume, 0, 16);
+	AssertString("\
+-------------------------------------------------------------------- Sector (32) --------------------------------------------------------------------\n\
+    0 -> FFF8,     1 ->  EOC,     2 ->    0,     3 ->  EOC,     4 ->    5,     5 ->  EOC,     6 ->    0,     7 ->    0,     8 ->    0,     9 ->    0,     a ->    0,     b ->    0,     c ->    0,     d ->    0,     e ->    0,     f ->    0\n", sz.Text());
+	sz.Kill();
 
 	cFatFile.AllocateClusters(128 KB);
 
 	cVolume.Flush();
 	cFatFile.Flush();
 
-	DumpInterestingFATClusters(&cVolume);
+	sz.Init();
+	PrintFATClusters(&sz, &cVolume, 0, 16);
+	AssertString("\
+-------------------------------------------------------------------- Sector (32) --------------------------------------------------------------------\n\
+    0 -> FFF8,     1 ->  EOC,     2 ->    0,     3 ->  EOC,     4 ->    5,     5 ->    6,     6 ->    7,     7 ->  EOC,     8 ->    0,     9 ->    0,     a ->    0,     b ->    0,     c ->    0,     d ->    0,     e ->    0,     f ->    0\n", sz.Text());
+	sz.Kill();
 
 	cFatFile.Close();
+
+	eResult = cVolume.Unmount();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFat32CreateDirectoryAfterWrite(void)
+{
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	filePos			uiLength;
+	void*			pvMemory;
+	EFatCode		eResult;
+	bool			bResult;
+	CFatVolume		cVolume;
+	char*			puiFileData;
+	int				i;
+	int				iLength;
+	CFatFile		cFatFile;
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	eResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\New File.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0, cFatFile.GetCurrentSize());
+
+	iLength = 4 KB;
+	puiFileData = (char*)malloc(iLength);
+
+	char c = 33;
+	for (i = 0; i < iLength; i++)
+	{
+		puiFileData[i] = c;
+		if (i % 3 == 2)
+		{
+			c++;
+		}
+	}
+
+	eResult = cFatFile.Write((uint8*)puiFileData, iLength);
+
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(4 KB, cFatFile.GetCurrentSize());
+
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	DumpInterestingFATClusters(&cVolume);
+
+	eResult = cVolume.CreateDirectory("\\A Directory");
+	AssertInt(FAT_SUCCESS, eResult);
+
+	DumpInterestingFATClusters(&cVolume);
 
 	eResult = cVolume.Unmount();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -801,11 +886,7 @@ void TestFat32GreatWrite(void)
 		}
 	}
 
-	DumpInterestingFATClusters(&cVolume);
-
 	eResult = cFatFile.Write((uint8*)puiFileData, iLength);
-
-	DumpInterestingFATClusters(&cVolume);
 
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertInt(196 KB, cFatFile.GetCurrentSize());
@@ -823,6 +904,8 @@ void TestFat32GreatWrite(void)
 	eResult = cFatFile.Open("\\New File.txt", FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertInt(196 KB , cFatFile.GetCurrentSize());
+
+	DumpInterestingFATClusters(&cVolume);
 
 	memset(puiFileData2, 0, iLength);
 	eResult = cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
@@ -847,11 +930,15 @@ void TestFat32GreatWrite(void)
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
 
+	DumpInterestingFATClusters(&cVolume);
+
 	iLength = 196 KB;
 	eResult = cVolume.CreateDirectory("\\A Directory");
 	AssertInt(FAT_SUCCESS, eResult);
 	eResult = cVolume.CreateDirectory("\\A Directory\\Another");
 	AssertInt(FAT_SUCCESS, eResult);
+
+	DumpInterestingFATClusters(&cVolume);
 
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\A Directory\\Another\\New File Number Two.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
@@ -862,14 +949,20 @@ void TestFat32GreatWrite(void)
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertInt(196 KB, cFatFile.GetCurrentSize());
 
+	DumpInterestingFATClusters(&cVolume);
+
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
+
+	DumpInterestingFATClusters(&cVolume);
 
 	eResult = cVolume.Unmount();
 	AssertInt(FAT_SUCCESS, eResult);
 
 	eResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(FAT_SUCCESS, eResult);
+
+	DumpInterestingFATClusters(&cVolume);
 
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\New File.txt", FAT_FILE_ACCESS_READ);
@@ -1362,6 +1455,7 @@ void TestFat32(void)
 	TestFat32CreateDirectory();
 	TestFat32FormatAndCreateDirectory();
 	TestFat32CreateFileEntryAndAllocate();
+	TestFat32CreateDirectoryAfterWrite();
 	TestFat32GreatWrite();
 	TestFat32MultipleSmallReads();
 	TestFat32Seek();
