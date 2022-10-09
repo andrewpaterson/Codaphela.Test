@@ -758,19 +758,46 @@ void TestFat32CreateFileEntryAndAllocate(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+char* AllocateAndFillMemory(int iLength)
+{
+	int		i;
+	char*	puiFileData;
+
+	puiFileData = (char*)malloc(iLength);
+
+	char c = 33;
+	for (i = 0; i < iLength; i++)
+	{
+		puiFileData[i] = c;
+		if (i % 3 == 2)
+		{
+			c++;
+		}
+	}
+	return puiFileData;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFat32CreateDirectoryAfterWrite(void)
 {
-	CMemoryDrive	cMemoryDrive;
-	CDiskFile		cFile;
-	filePos			uiLength;
-	void*			pvMemory;
-	EFatCode		eResult;
-	bool			bResult;
-	CFatVolume		cVolume;
-	char*			puiFileData;
-	int				i;
-	int				iLength;
-	CFatFile		cFatFile;
+	CMemoryDrive		cMemoryDrive;
+	CDiskFile			cFile;
+	filePos				uiLength;
+	void*				pvMemory;
+	EFatCode			eResult;
+	bool				bResult;
+	CFatVolume			cVolume;
+	char*				puiFileData;
+	char*				puiFileData2;
+	int					iLength;
+	CFatFile			cFatFile;
+	uint32				uiBytesRead;
+	CChars				sz;
+	SFatDirectoryEntry	sFatFileEntry;
 
 	cFile.Init("Input\\Fat32\\ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
@@ -791,35 +818,133 @@ void TestFat32CreateDirectoryAfterWrite(void)
 	AssertInt(0, cFatFile.GetCurrentSize());
 
 	iLength = 4 KB;
-	puiFileData = (char*)malloc(iLength);
-
-	char c = 33;
-	for (i = 0; i < iLength; i++)
-	{
-		puiFileData[i] = c;
-		if (i % 3 == 2)
-		{
-			c++;
-		}
-	}
+	puiFileData = AllocateAndFillMemory(iLength);
 
 	eResult = cFatFile.Write((uint8*)puiFileData, iLength);
-
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(4 KB, cFatFile.GetCurrentSize());
+	AssertInt(iLength, cFatFile.GetCurrentSize());
 
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
 
-	DumpInterestingFATClusters(&cVolume);
-
 	eResult = cVolume.CreateDirectory("\\A Directory");
 	AssertInt(FAT_SUCCESS, eResult);
 
-	DumpInterestingFATClusters(&cVolume);
+	sz.Init();
+	PrintFATClusters(&sz, &cVolume, 0x240, 0x260);
+	AssertString("\
+-------------------------------------------------------------------- Sector (602) --------------------------------------------------------------------\n\
+  240 ->  EOC,   241 ->  EOC,   242 ->  EOC,   243 ->  EOC,   244 ->  EOC,   245 ->  EOC,   246 ->  EOC,   247 ->  EOC,   248 ->  EOC,   249 ->  24a,   24a ->  EOC,   24b ->  EOC,   24c ->  EOC,   24d ->  EOC,   24e ->  EOC,   24f ->  EOC\n\
+  250 ->  EOC,   251 ->  EOC,   252 ->  EOC,   253 ->  EOC,   254 ->  EOC,   255 ->  EOC,   256 ->  EOC,   257 ->  EOC,   258 ->    0,   259 ->    0,   25a ->    0,   25b ->    0,   25c ->    0,   25d ->    0,   25e ->    0,   25f ->    0\n", sz.Text());
+	sz.Kill();
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\New File.txt", FAT_FILE_ACCESS_READ);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(iLength, cFatFile.GetCurrentSize());
+
+	puiFileData2 = (char*)malloc(iLength);
+	uiBytesRead = 0;
+	cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
+	AssertInt(iLength, uiBytesRead);
+	AssertMemory(puiFileData, puiFileData2, iLength);
+
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cVolume.CreateDirectory("\\A Directory\\We must go deeper");
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cVolume.GetFileEntry("\\A Directory", &sFatFileEntry);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0x257, cVolume.GetEntryCluster(&sFatFileEntry));
+
+	eResult = cVolume.GetFileEntry("\\A Directory\\We must go deeper", &sFatFileEntry);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0x258, cVolume.GetEntryCluster(&sFatFileEntry));
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("A Directory\\Depth Charge.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0, cFatFile.GetCurrentSize());
+
+	eResult = cFatFile.Write((uint8*)puiFileData, iLength);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(iLength, cFatFile.GetCurrentSize());
+
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cVolume.GetFileEntry("\\A Directory\\Depth Charge.txt", &sFatFileEntry);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0x259, cVolume.GetEntryCluster(&sFatFileEntry));
+
+	eResult = cVolume.CreateDirectory("\\A Directory\\Sideways rather is where it is at");
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cVolume.GetFileEntry("\\A Directory\\Sideways rather is where it is at", &sFatFileEntry);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0x25a, cVolume.GetEntryCluster(&sFatFileEntry));
+
+	eResult = cVolume.GetFileEntry("\\A Directory\\We must go deeper", &sFatFileEntry);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0x258, cVolume.GetEntryCluster(&sFatFileEntry));
+
+	eResult = cVolume.GetFileEntry("\\New File.txt", &sFatFileEntry);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0x256, cVolume.GetEntryCluster(&sFatFileEntry));
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\A Directory\\Depth Charge.txt", FAT_FILE_ACCESS_READ);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(iLength, cFatFile.GetCurrentSize());
+
+	uiBytesRead = 0;
+	cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
+	AssertInt(iLength, uiBytesRead);
+	AssertMemory(puiFileData, puiFileData2, iLength);
+
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\New File.txt", FAT_FILE_ACCESS_READ);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(iLength, cFatFile.GetCurrentSize());
+
+	uiBytesRead = 0;
+	cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
+	AssertInt(iLength, uiBytesRead);
+	AssertMemory(puiFileData, puiFileData2, iLength);
+
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	sz.Init();
+	PrintFATClusters(&sz, &cVolume, 0x240, 0x260);
+	AssertString("\
+-------------------------------------------------------------------- Sector (602) --------------------------------------------------------------------\n\
+  240 ->  EOC,   241 ->  EOC,   242 ->  EOC,   243 ->  EOC,   244 ->  EOC,   245 ->  EOC,   246 ->  EOC,   247 ->  EOC,   248 ->  EOC,   249 ->  24a,   24a ->  EOC,   24b ->  EOC,   24c ->  EOC,   24d ->  EOC,   24e ->  EOC,   24f ->  EOC\n\
+  250 ->  EOC,   251 ->  EOC,   252 ->  EOC,   253 ->  EOC,   254 ->  EOC,   255 ->  EOC,   256 ->  EOC,   257 ->  EOC,   258 ->  EOC,   259 ->  EOC,   25a ->  EOC,   25b ->    0,   25c ->    0,   25d ->    0,   25e ->    0,   25f ->    0\n", sz.Text());
+	sz.Kill();
+
+	sz.Init();
+	PrintFatFilenames(&sz, "\\A Directory", &cVolume);
+	AssertString("\\A Directory\\Depth Charge.txt\n", sz.Text())
+	sz.Kill();
+
+	sz.Init();
+	PrintFatDirectories(&sz, "\\A Directory", &cVolume);
+	AssertString("\
+\\A Directory\\We must go deeper\n\
+\\A Directory\\Sideways rather is where it is at\n", sz.Text());
+	sz.Kill();
 
 	eResult = cVolume.Unmount();
 	AssertInt(FAT_SUCCESS, eResult);
+
+	free(puiFileData);
+	free(puiFileData2);
 
 	cMemoryDrive.Kill();
 }
@@ -843,9 +968,9 @@ void TestFat32GreatWrite(void)
 	CFatFile				cFatFile;
 	char*					puiFileData;
 	char*					puiFileData2;
-	int						i;
 	uint32					uiBytesRead;
 	int						iLength;
+	CChars					sz;
 
 	cFile.Init("Input\\Fat32\\ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
@@ -873,18 +998,8 @@ void TestFat32GreatWrite(void)
 	sQuery.Kill(cVolume.GetSectorCache());
 
 	iLength = 196 KB;
-	puiFileData = (char*)malloc(iLength);
 	puiFileData2 = (char*)malloc(iLength);
-
-	char c = 33;
-	for (i = 0; i < iLength; i++)
-	{
-		puiFileData[i] = c;
-		if (i % 3 == 2)
-		{
-			c++;
-		}
-	}
+	puiFileData = AllocateAndFillMemory(iLength);
 
 	eResult = cFatFile.Write((uint8*)puiFileData, iLength);
 
@@ -904,8 +1019,6 @@ void TestFat32GreatWrite(void)
 	eResult = cFatFile.Open("\\New File.txt", FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertInt(196 KB , cFatFile.GetCurrentSize());
-
-	DumpInterestingFATClusters(&cVolume);
 
 	memset(puiFileData2, 0, iLength);
 	eResult = cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
@@ -930,15 +1043,11 @@ void TestFat32GreatWrite(void)
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
 
-	DumpInterestingFATClusters(&cVolume);
-
 	iLength = 196 KB;
 	eResult = cVolume.CreateDirectory("\\A Directory");
 	AssertInt(FAT_SUCCESS, eResult);
 	eResult = cVolume.CreateDirectory("\\A Directory\\Another");
 	AssertInt(FAT_SUCCESS, eResult);
-
-	DumpInterestingFATClusters(&cVolume);
 
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\A Directory\\Another\\New File Number Two.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
@@ -949,12 +1058,8 @@ void TestFat32GreatWrite(void)
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertInt(196 KB, cFatFile.GetCurrentSize());
 
-	DumpInterestingFATClusters(&cVolume);
-
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
-
-	DumpInterestingFATClusters(&cVolume);
 
 	eResult = cVolume.Unmount();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -962,7 +1067,19 @@ void TestFat32GreatWrite(void)
 	eResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(FAT_SUCCESS, eResult);
 
-	DumpInterestingFATClusters(&cVolume);
+	sz.Init();
+	PrintInterestingFATClusters(&sz, &cVolume);
+	AssertString("\
+-------------------------------------------------------------------- Sector (602) --------------------------------------------------------------------\n\
+  200 ->  EOC,   201 ->  EOC,   202 ->  EOC,   203 ->  EOC,   204 ->  EOC,   205 ->  EOC,   206 ->  EOC,   207 ->  EOC,   208 ->  EOC,   209 ->  EOC,   20a ->  EOC,   20b ->  EOC,   20c ->  EOC,   20d ->  EOC,   20e ->  EOC,   20f ->  EOC\n\
+  210 ->  EOC,   211 ->  EOC,   212 ->  EOC,   213 ->  EOC,   214 ->  EOC,   215 ->  EOC,   216 ->  EOC,   217 ->  EOC,   218 ->  EOC,   219 ->  EOC,   21a ->  EOC,   21b ->  EOC,   21c ->  EOC,   21d ->  EOC,   21e ->  EOC,   21f ->  EOC\n\
+  220 ->  EOC,   221 ->  EOC,   222 ->  EOC,   223 ->  EOC,   224 ->  EOC,   225 ->  EOC,   226 ->  EOC,   227 ->  EOC,   228 ->  EOC,   229 ->  EOC,   22a ->  EOC,   22b ->  EOC,   22c ->  EOC,   22d ->  EOC,   22e ->  EOC,   22f ->  EOC\n\
+  230 ->  EOC,   231 ->  EOC,   232 ->  EOC,   233 ->  EOC,   234 ->  EOC,   235 ->  EOC,   236 ->  EOC,   237 ->  EOC,   238 ->  EOC,   239 ->  EOC,   23a ->  EOC,   23b ->  EOC,   23c ->  EOC,   23d ->  EOC,   23e ->  EOC,   23f ->  EOC\n\
+  240 ->  EOC,   241 ->  EOC,   242 ->  EOC,   243 ->  EOC,   244 ->  EOC,   245 ->  EOC,   246 ->  EOC,   247 ->  EOC,   248 ->  EOC,   249 ->  24a,   24a ->  EOC,   24b ->  EOC,   24c ->  EOC,   24d ->  EOC,   24e ->  EOC,   24f ->  EOC\n\
+  250 ->  EOC,   251 ->  EOC,   252 ->  EOC,   253 ->  EOC,   254 ->  EOC,   255 ->  EOC,   256 ->  257,   257 ->  258,   258 ->  259,   259 ->  25a,   25a ->  25b,   25b ->  25c,   25c ->  EOC,   25d ->  EOC,   25e ->  EOC,   25f ->  260\n\
+  260 ->  261,   261 ->  262,   262 ->  263,   263 ->  264,   264 ->  265,   265 ->  EOC,   266 ->    0,   267 ->    0,   268 ->    0,   269 ->    0,   26a ->    0,   26b ->    0,   26c ->    0,   26d ->    0,   26e ->    0,   26f ->    0\n\
+  270 ->    0,   271 ->    0,   272 ->    0,   273 ->    0,   274 ->    0,   275 ->    0,   276 ->    0,   277 ->    0,   278 ->    0,   279 ->    0,   27a ->    0,   27b ->    0,   27c ->    0,   27d ->    0,   27e ->    0,   27f ->    0\n", sz.Text());
+	sz.Kill();
 
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\New File.txt", FAT_FILE_ACCESS_READ);

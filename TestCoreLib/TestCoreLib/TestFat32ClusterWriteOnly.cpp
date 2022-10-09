@@ -83,16 +83,8 @@ void TestFat32WriteLargerThanOneCluster(void)
 	eResult = cFatFile.Open("\\File2.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_OVERWRITE | FAT_FILE_ACCESS_WRITE | FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
 
-	DumpRootDirectoryEntries(&cVolume);
-
-	DumpInterestingFATClusters(&cVolume);
-
 	eResult = cFatFile.Write((uint8*)szSource, 32768);
 	AssertInt(FAT_SUCCESS, eResult);
-
-	DumpRootDirectoryEntries(&cVolume);
-
-	DumpInterestingFATClusters(&cVolume);
 
 	eResult = cFatFile.Write((uint8*)(&szSource[32768]), 1);
 	AssertInt(FAT_SUCCESS, eResult);
