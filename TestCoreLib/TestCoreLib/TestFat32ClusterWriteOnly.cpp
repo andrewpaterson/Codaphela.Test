@@ -33,6 +33,7 @@ void TestFat32WriteLargerThanOneCluster(void)
 	char*			szRead;
 	uint32			uiBytesRead;
 	uint64			uiMaxSectorSize;
+	CChars			sz;
 
 	szSource = AllocateStringBuffer(33 KB);
 
@@ -88,17 +89,95 @@ void TestFat32WriteLargerThanOneCluster(void)
 
 	eResult = cFatFile.Write((uint8*)(&szSource[32768]), 1);
 	AssertInt(FAT_SUCCESS, eResult);
+	
+	sz.Init();
+	PrintRootDirectoryEntries(&sz, &cVolume, false);
+	AssertStringApproximate("\
+---------------------------------------\n\
+Short name: Fat32\n\
+Cluster:    0\n\
+Size:       0\n\
+Attributes: VOLUME_ID\n\
+---------------------------------------\n\
+Sequence:     65\n\
+Long name[1]: File1\n\
+Long name[2]: .txt\n\
+Long name[3]: ÿÿ\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     225\n\
+---------------------------------------\n\
+Short name: FILE1~0.TXT\n\
+Cluster:    4\n\
+Size:       32769\n\
+Attributes: ARCHIVE\n\
+---------------------------------------\n\
+Sequence:     65\n\
+Long name[1]: File2\n\
+Long name[2]: .txt\n\
+Long name[3]: ÿÿ\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     221\n\
+---------------------------------------\n\
+Short name: FILE2~0.TXT\n\
+Cluster:    6\n\
+Size:       0\n\
+Attributes: ARCHIVE\n", sz.Text());
+	sz.Kill();
 
-	DumpRootDirectoryEntries(&cVolume);
-
-	DumpInterestingFATClusters(&cVolume);
+	sz.Init();
+	PrintFATClusters(&sz, &cVolume, 0, 0x10);
+	AssertString("\
+-------------------------------------------------------------------- Sector (32) --------------------------------------------------------------------\n\
+    0 -> FFF8,     1 ->  EOC,     2 ->    0,     3 ->  EOC,     4 ->    5,     5 ->  EOC,     6 ->    7,     7 ->  EOC,     8 ->    0,     9 ->    0,     a ->    0,     b ->    0,     c ->    0,     d ->    0,     e ->    0,     f ->    0\n", sz.Text());
+	sz.Kill();
 
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
 
-	DumpRootDirectoryEntries(&cVolume);
+	sz.Init();
+	PrintRootDirectoryEntries(&sz, &cVolume, false);
+	AssertStringApproximate("\
+---------------------------------------\n\
+Short name: Fat32\n\
+Cluster:    0\n\
+Size:       0\n\
+Attributes: VOLUME_ID\n\
+--------------------------------------- \n\
+Sequence:     65\n\
+Long name[1]: File1\n\
+Long name[2]: .txt\n\
+Long name[3]: ÿÿ\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     225\n\
+--------------------------------------- \n\
+Short name: FILE1~0.TXT\n\
+Cluster:    4\n\
+Size:       32769\n\
+Attributes: ARCHIVE\n\
+--------------------------------------- \n\
+Sequence:     65\n\
+Long name[1]: File2\n\
+Long name[2]: .txt\n\
+Long name[3]: ÿÿ\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     221\n\
+---------------------------------------\n\
+Short name: FILE2~0.TXT\n\
+Cluster:    6\n\
+Size:       32769\n\
+Attributes: ARCHIVE\n", sz.Text());
+	sz.Kill();
 
-	DumpInterestingFATClusters(&cVolume);
+	sz.Init();
+	PrintFATClusters(&sz, &cVolume, 0, 0x10);
+	AssertString("\
+-------------------------------------------------------------------- Sector (32) --------------------------------------------------------------------\n\
+    0 -> FFF8,     1 ->  EOC,     2 ->    0,     3 ->  EOC,     4 ->    5,     5 ->  EOC,     6 ->    7,     7 ->  EOC,     8 ->    0,     9 ->    0,     a ->    0,     b ->    0,     c ->    0,     d ->    0,     e ->    0,     f ->    0\n", sz.Text());
+	sz.Kill();
 
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\File2.txt", FAT_FILE_ACCESS_READ);
