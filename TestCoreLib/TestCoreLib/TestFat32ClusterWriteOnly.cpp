@@ -16,11 +16,8 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFat32WriteLargerThanOneCluster(void)
+void TestFat32WriteLargerThanOneClusterAppend(void)
 {
-	TypeConverterInit();
-	BeginTests();
-
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
 	filePos			uiLength;
@@ -195,8 +192,188 @@ Attributes: ARCHIVE\n", sz.Text());
 
 	free(szRead);
 	free(szSource);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFat32WriteLargerThanOneClusterOverwrite(void)
+{
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	filePos			uiLength;
+	void*			pvMemory;
+	EFatCode		eResult;
+	CFatFile		cFatFile;
+	bool			bResult;
+	CFatVolume		cVolume;
+	char*			szSource;
+	char*			szRead;
+	uint32			uiBytesRead;
+	uint64			uiMaxSectorSize;
+	int				i;
+	bool			bAllSuccessful;
+
+	szSource = AllocateStringBuffer(33 KB);
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	cMemoryDrive.Erase();
+	uiMaxSectorSize = cMemoryDrive.SetMaxSectorForTesting(((16 MB) / 512) * 1024);
+
+	eResult = FatFormat(FAT_FS_TYPE_FAT32, "Fat32", 64, &cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cMemoryDrive.SetMaxSectorForTesting(uiMaxSectorSize);
+
+	szRead = (char*)malloc(32769);
+
+	eResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\File1.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_OVERWRITE | FAT_FILE_ACCESS_WRITE | FAT_FILE_ACCESS_READ);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cFatFile.Write((uint8*)szSource, 32768);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(32768, cFatFile.GetCurrentSize());
+
+	eResult = cFatFile.Seek(32767, FAT_SEEK_START);
+	AssertInt(FAT_SUCCESS, eResult);
+	eResult = cFatFile.Write((uint8*)&szSource[32767], 2);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(32769, cFatFile.GetCurrentSize());
+
+	cFatFile.Seek(0, FAT_SEEK_START);
+	eResult = cFatFile.Read((uint8*)szRead, 32769, &uiBytesRead);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(32769, uiBytesRead);
+	AssertMemory(szSource, szRead, uiBytesRead);
+
+	eResult = cFatFile.Write((uint8*)szSource, 32768 + 64);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(65601, cFatFile.GetCurrentSize());
+
+	bAllSuccessful = true;
+	for (i = 32768; i >= 0; i--)
+	{
+		eResult = cFatFile.Seek(i, FAT_SEEK_START);
+		if (eResult != FAT_SUCCESS)
+		{
+			AssertInt(FAT_SUCCESS, eResult);
+			bAllSuccessful = false;
+			break;
+		}
+
+		eResult = cFatFile.Read((uint8*)szRead, 1, &uiBytesRead);
+		if (eResult != FAT_SUCCESS)
+		{
+			AssertInt(FAT_SUCCESS, eResult);
+			bAllSuccessful = false;
+			break;
+		}
+
+		if (uiBytesRead != 1)
+		{
+			AssertInt(1, uiBytesRead);
+			bAllSuccessful = false;
+			break;
+
+		}
+
+		if (szRead[0] != szSource[i])
+		{
+			AssertChar(szSource[i], szRead[i]);
+			bAllSuccessful = false;
+			break;
+		}
+	}
+
+	AssertTrue(bAllSuccessful);
+
+	bAllSuccessful = true;
+	for (i = 65600; i > 32768; i--)
+	{
+		eResult = cFatFile.Seek(i, FAT_SEEK_START);
+		if (eResult != FAT_SUCCESS)
+		{
+			AssertInt(FAT_SUCCESS, eResult);
+			bAllSuccessful = false;
+			break;
+		}
+
+		eResult = cFatFile.Read((uint8*)szRead, 1, &uiBytesRead);
+		if (eResult != FAT_SUCCESS)
+		{
+			AssertInt(FAT_SUCCESS, eResult);
+			bAllSuccessful = false;
+			break;
+		}
+
+		if (uiBytesRead != 1)
+		{
+			AssertInt(1, uiBytesRead);
+			bAllSuccessful = false;
+			break;
+
+		}
+
+		if (szRead[0] != szSource[i - 32769])
+		{
+			AssertChar(szSource[i], szRead[i]);
+			bAllSuccessful = false;
+			break;
+		}
+	}
+
+	AssertTrue(bAllSuccessful);
+
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\File1.txt", FAT_FILE_ACCESS_READ);
+	AssertInt(FAT_SUCCESS, eResult);
+	memset(szRead, 0xcc, 32769);
+	eResult = cFatFile.Read((uint8*)szRead, 32769, &uiBytesRead);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(32769, uiBytesRead);
+	AssertMemory(szSource, szRead, 32768);
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cVolume.Unmount();
+
+	cMemoryDrive.Kill();
+
+	free(szRead);
+	free(szSource);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFat32WriteLargerThanOneCluster(void)
+{
+	TypeConverterInit();
+	BeginTests();
+
+	TestFat32WriteLargerThanOneClusterAppend();
+	TestFat32WriteLargerThanOneClusterOverwrite();
 
 	TestStatistics();
 	TypeConverterKill();
 }
-
