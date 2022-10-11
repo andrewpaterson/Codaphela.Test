@@ -54,11 +54,11 @@ void TestFat32ReadSpecific(void)
 	sQuery.Init();
 	eResult = cVolume.FindFirstFATEntry(NULL, 0, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertString("Document.txt", (char*)psFatDirectoryEntry->name);
-	AssertInt(FAT_ATTR_ARCHIVE, psFatDirectoryEntry->attributes);
+	AssertString("Document.txt", (char*)psFatDirectoryEntry->szName);
+	AssertInt(FAT_ATTR_ARCHIVE, psFatDirectoryEntry->uiAttributes);
 
 	cFatFile.Init(&cVolume);
-	eResult = cFatFile.Open((char*)psFatDirectoryEntry->name, 0);
+	eResult = cFatFile.Open((char*)psFatDirectoryEntry->szName, 0);
 	AssertInt(FAT_SUCCESS, eResult);
 
 	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.GetCurrentSize(), &uiBytesRead);
@@ -72,64 +72,64 @@ void TestFat32ReadSpecific(void)
 
 	eResult = cVolume.FindNextFATEntry(&psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertString("Pico", (char*)psFatDirectoryEntry->name);
-	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectoryEntry->attributes);
+	AssertString("Pico", (char*)psFatDirectoryEntry->szName);
+	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectoryEntry->uiAttributes);
 
 	eResult = cVolume.FindNextFATEntry(&psFatDirectoryEntry, &sQuery);
-	AssertTrue((StrEmpty((char*)psFatDirectoryEntry->name)));
+	AssertTrue((StrEmpty((char*)psFatDirectoryEntry->szName)));
 	sQuery.Kill(cVolume.GetSectorCache());
 
 
 	sQuery.Init();
 	eResult = cVolume.FindFirstFATEntry("\\Pico", 0, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertString(".", (char*)psFatDirectoryEntry->name);
-	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectoryEntry->attributes);
+	AssertString(".", (char*)psFatDirectoryEntry->szName);
+	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectoryEntry->uiAttributes);
 
 	eResult = cVolume.FindNextFATEntry(&psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertString("..", (char*)psFatDirectoryEntry->name);
-	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectoryEntry->attributes);
+	AssertString("..", (char*)psFatDirectoryEntry->szName);
+	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectoryEntry->uiAttributes);
 
 	eResult = cVolume.FindNextFATEntry(&psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertString(".gitignore", (char*)psFatDirectoryEntry->name);
-	AssertInt(FAT_ATTR_ARCHIVE, psFatDirectoryEntry->attributes);
+	AssertString(".gitignore", (char*)psFatDirectoryEntry->szName);
+	AssertInt(FAT_ATTR_ARCHIVE, psFatDirectoryEntry->uiAttributes);
 
 	eResult = cVolume.FindNextFATEntry(&psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertString("HowDoesItWork", (char*)psFatDirectoryEntry->name);
-	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectoryEntry->attributes);
+	AssertString("HowDoesItWork", (char*)psFatDirectoryEntry->szName);
+	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectoryEntry->uiAttributes);
 
 	eResult = cVolume.FindNextFATEntry(&psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertString("LCDBusReader", (char*)psFatDirectoryEntry->name);
-	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectoryEntry->attributes);
+	AssertString("LCDBusReader", (char*)psFatDirectoryEntry->szName);
+	AssertInt(FAT_ATTR_DIRECTORY, psFatDirectoryEntry->uiAttributes);
 
 	eResult = cVolume.FindNextFATEntry(&psFatDirectoryEntry, &sQuery);
-	AssertTrue((StrEmpty((char*)psFatDirectoryEntry->name)));
+	AssertTrue((StrEmpty((char*)psFatDirectoryEntry->szName)));
 	sQuery.Kill(cVolume.GetSectorCache());
 
 
 	eResult = cVolume.GetFileEntry("\\Pico\\LCDBusReader", &sFatFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertString("LCDBUS~1", (char*)sFatFileEntry.name);
-	AssertInt(FAT_ATTR_DIRECTORY, sFatFileEntry.attributes);
+	AssertString("LCDBUS~1", (char*)sFatFileEntry.szName);
+	AssertInt(FAT_ATTR_DIRECTORY, sFatFileEntry.uiAttributes);
 
 	eResult = cVolume.GetFileEntry("\\Pico\\LCDBusReader\\src", &sFatFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertString("SRC", (char*)sFatFileEntry.name);
-	AssertInt(FAT_ATTR_DIRECTORY, sFatFileEntry.attributes);
+	AssertString("SRC", (char*)sFatFileEntry.szName);
+	AssertInt(FAT_ATTR_DIRECTORY, sFatFileEntry.uiAttributes);
 
 	eResult = cVolume.GetFileEntry("\\Pico\\HowDoesItWork\\build.sh", &sFatFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertString("BUILD.SH", (char*)sFatFileEntry.name);
-	AssertInt(FAT_ATTR_ARCHIVE, sFatFileEntry.attributes);
+	AssertString("BUILD.SH", (char*)sFatFileEntry.szName);
+	AssertInt(FAT_ATTR_ARCHIVE, sFatFileEntry.uiAttributes);
 
 	eResult = cVolume.GetFileEntry("\\Pico\\LCDBusReader\\src\\SDCard.cpp", &sFatFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertString("SDCARD.CPP", (char*)sFatFileEntry.name);
-	AssertInt(FAT_ATTR_ARCHIVE, sFatFileEntry.attributes);
+	AssertString("SDCARD.CPP", (char*)sFatFileEntry.szName);
+	AssertInt(FAT_ATTR_ARCHIVE, sFatFileEntry.uiAttributes);
 
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open(&sFatFileEntry, FAT_FILE_ACCESS_READ);
@@ -156,8 +156,8 @@ void TestFat32ReadSpecific(void)
 
 	eResult = cVolume.GetFileEntry("\\Pico\\LCDBusReader\\src\\LCDBusReader.cpp", &sFatFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertString("LCDBUS~1.CPP", (char*)sFatFileEntry.name);
-	AssertInt(FAT_ATTR_ARCHIVE, sFatFileEntry.attributes);
+	AssertString("LCDBUS~1.CPP", (char*)sFatFileEntry.szName);
+	AssertInt(FAT_ATTR_ARCHIVE, sFatFileEntry.uiAttributes);
 
 
 	cVolume.Unmount();
@@ -265,7 +265,7 @@ void TestFat32ReadDirectoryTree(void)
 		eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.GetCurrentSize(), &uiBytesRead);
 		AssertInt(FAT_SUCCESS, eResult);
 		AssertInt(cFatFile.GetCurrentSize(), uiBytesRead);
-		AssertInt(sFatFileEntry.size, uiBytesRead);
+		AssertInt(sFatFileEntry.uiSize, uiBytesRead);
 
 		eResult = cFatFile.Close();
 		AssertInt(FAT_SUCCESS, eResult);
@@ -314,8 +314,8 @@ void TestFat32Format(void)
 	sQuery.Init();
 	eResult = cVolume.FindFirstFATEntry(NULL, 0, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertString("", (char*)psFatDirectoryEntry->name);
-	AssertInt(0, psFatDirectoryEntry->attributes);
+	AssertString("", (char*)psFatDirectoryEntry->szName);
+	AssertInt(0, psFatDirectoryEntry->uiAttributes);
 	sQuery.Kill(cVolume.GetSectorCache());
 
 	eResult = cVolume.Unmount();
@@ -359,7 +359,7 @@ void TestFat32CreateFileEntries(void)
 
 	eResult = cVolume.GetFileEntry("\\", &sRootDirectoryEntry);
 
-	eResult = cVolume.CreateFATEntry(&sRootDirectoryEntry.raw, "Wort Wort Wort.cov", FAT_ATTR_ARCHIVE, 0, &sFileEntry);
+	eResult = cVolume.CreateFATEntry(&sRootDirectoryEntry.sRaw, "Wort Wort Wort.cov", FAT_ATTR_ARCHIVE, 0, &sFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
 
 	eResult = cVolume.Flush();
@@ -372,7 +372,7 @@ void TestFat32CreateFileEntries(void)
 \\Document.txt\n", sz.Text());
 	sz.Kill();
 
-	eResult = cVolume.CreateFATEntry(&sRootDirectoryEntry.raw, "Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if", FAT_ATTR_ARCHIVE, 0, &sFileEntry);
+	eResult = cVolume.CreateFATEntry(&sRootDirectoryEntry.sRaw, "Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if", FAT_ATTR_ARCHIVE, 0, &sFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
 
 	eResult = cVolume.Flush();
@@ -407,7 +407,7 @@ void TestFat32CreateFileEntries(void)
 		}
 		
 		szFileName.Replace(",", " -");
-		eResult = cVolume.CreateFATEntry(&sRootDirectoryEntry.raw, szFileName.Text(), FAT_ATTR_ARCHIVE, 0, &sFileEntry);
+		eResult = cVolume.CreateFATEntry(&sRootDirectoryEntry.sRaw, szFileName.Text(), FAT_ATTR_ARCHIVE, 0, &sFileEntry);
 		AssertInt(FAT_SUCCESS, eResult);
 		szFileName.Kill();
 	}
@@ -993,8 +993,8 @@ void TestFat32GreatWrite(void)
 	sQuery.Init();
 	eResult = cVolume.FindFirstFATEntry(NULL, 0, &psFatDirectoryEntry, &sQuery);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertString("New File.txt", (char*)psFatDirectoryEntry->name);
-	AssertInt(FAT_ATTR_ARCHIVE, psFatDirectoryEntry->attributes);
+	AssertString("New File.txt", (char*)psFatDirectoryEntry->szName);
+	AssertInt(FAT_ATTR_ARCHIVE, psFatDirectoryEntry->uiAttributes);
 	sQuery.Kill(cVolume.GetSectorCache());
 
 	iLength = 196 KB;
