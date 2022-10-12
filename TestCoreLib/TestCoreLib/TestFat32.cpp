@@ -343,6 +343,8 @@ void TestFat32CreateFileEntries(void)
 	CChars					szFileName;
 	CRandom					cRandom;
 	CChars					sz;
+	CFatFile				cFatFile;
+
 
 	cFile.Init("Input\\Fat32\\ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
@@ -372,10 +374,19 @@ void TestFat32CreateFileEntries(void)
 \\Document.txt\n", sz.Text());
 	sz.Kill();
 
-	eResult = cVolume.CreateFATEntry(&sRootDirectoryEntry.sRaw, "Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if", FAT_ATTR_ARCHIVE, 0, &sFileEntry);
+	XXX //Create fat entry seems to not update the sector cache correctly in release.
+	eResult = cVolume.CreateFATEntry(&sRootDirectoryEntry.sRaw, "Dashwood contempt on mr unlocked resolved provided of of - Stanhil" /*l wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if */, FAT_ATTR_ARCHIVE, 0, &sFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
 
 	eResult = cVolume.Flush();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	DumpRootDirectoryEntries(&cVolume);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("Dashwood contempt on mr unlocked resolved provided of of - Stanhil", FAT_ATTR_READ_ONLY);
+	AssertInt(FAT_SUCCESS, eResult);
+	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
 
 	sz.Init();
