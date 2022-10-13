@@ -247,13 +247,13 @@ void TestFat32WriteLargerThanOneClusterOverwrite(void)
 
 	eResult = cFatFile.Write((uint8*)szSource, 32768);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(32768, cFatFile.GetCurrentSize());
+	AssertInt(32768, cFatFile.Size());
 
 	eResult = cFatFile.Seek(32767, FAT_SEEK_START);
 	AssertInt(FAT_SUCCESS, eResult);
 	eResult = cFatFile.Write((uint8*)&szSource[32767], 2);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(32769, cFatFile.GetCurrentSize());
+	AssertInt(32769, cFatFile.Size());
 
 	cFatFile.Seek(0, FAT_SEEK_START);
 	eResult = cFatFile.Read((uint8*)szRead, 32769, &uiBytesRead);
@@ -263,7 +263,7 @@ void TestFat32WriteLargerThanOneClusterOverwrite(void)
 
 	eResult = cFatFile.Write((uint8*)szSource, 32768 + 64);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(65601, cFatFile.GetCurrentSize());
+	AssertInt(65601, cFatFile.Size());
 
 	bAllSuccessful = true;
 	for (i = 32768; i >= 0; i--)

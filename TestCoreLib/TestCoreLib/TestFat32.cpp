@@ -61,7 +61,7 @@ void TestFat32ReadSpecific(void)
 	eResult = cFatFile.Open((char*)psFatDirectoryEntry->szName, 0);
 	AssertInt(FAT_SUCCESS, eResult);
 
-	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.GetCurrentSize(), &uiBytesRead);
+	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertInt(12, uiBytesRead);
 	auiFileData[12] = '\0';
@@ -135,7 +135,7 @@ void TestFat32ReadSpecific(void)
 	eResult = cFatFile.Open(&sFatFileEntry, FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
 
-	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.GetCurrentSize(), &uiBytesRead);
+	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertInt(44000, uiBytesRead);
 	auiFileData[44000] = '\0';
@@ -262,9 +262,9 @@ void TestFat32ReadDirectoryTree(void)
 		eResult = cFatFile.Open(szFileName, 0);
 		AssertInt(FAT_SUCCESS, eResult);
 
-		eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.GetCurrentSize(), &uiBytesRead);
+		eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
 		AssertInt(FAT_SUCCESS, eResult);
-		AssertInt(cFatFile.GetCurrentSize(), uiBytesRead);
+		AssertInt(cFatFile.Size(), uiBytesRead);
 		AssertInt(sFatFileEntry.uiSize, uiBytesRead);
 
 		eResult = cFatFile.Close();
@@ -482,7 +482,7 @@ void TestFat32OpenWriteMode(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\File.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0, cFatFile.GetCurrentSize());
+	AssertInt(0, cFatFile.Size());
 
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -534,7 +534,7 @@ void TestFat32Write(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\New File.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0, cFatFile.GetCurrentSize());
+	AssertInt(0, cFatFile.Size());
 
 	for (i = 0; i < 4 KB; i++)
 	{
@@ -543,7 +543,7 @@ void TestFat32Write(void)
 
 	eResult = cFatFile.Write((uint8*)auiFileData, 4 KB);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(4096, cFatFile.GetCurrentSize());
+	AssertInt(4096, cFatFile.Size());
 
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -557,7 +557,7 @@ void TestFat32Write(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\New File.txt", FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(4096, cFatFile.GetCurrentSize());
+	AssertInt(4096, cFatFile.Size());
 
 	eResult = cFatFile.Read((uint8*)auiFileData2, 4 KB, &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
@@ -716,7 +716,7 @@ void TestFat32CreateFileEntryAndAllocate(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\File.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0, cFatFile.GetCurrentSize());
+	AssertInt(0, cFatFile.Size());
 
 	cVolume.Flush();
 	cFatFile.Flush();
@@ -822,14 +822,14 @@ void TestFat32CreateDirectoryAfterWrite(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\New File.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0, cFatFile.GetCurrentSize());
+	AssertInt(0, cFatFile.Size());
 
 	iLength = 4 KB;
 	puiFileData = AllocateAndFillMemory(iLength);
 
 	eResult = cFatFile.Write((uint8*)puiFileData, iLength);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(iLength, cFatFile.GetCurrentSize());
+	AssertInt(iLength, cFatFile.Size());
 
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -848,7 +848,7 @@ void TestFat32CreateDirectoryAfterWrite(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\New File.txt", FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(iLength, cFatFile.GetCurrentSize());
+	AssertInt(iLength, cFatFile.Size());
 
 	puiFileData2 = (char*)malloc(iLength);
 	uiBytesRead = 0;
@@ -873,11 +873,11 @@ void TestFat32CreateDirectoryAfterWrite(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("A Directory\\Depth Charge.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0, cFatFile.GetCurrentSize());
+	AssertInt(0, cFatFile.Size());
 
 	eResult = cFatFile.Write((uint8*)puiFileData, iLength);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(iLength, cFatFile.GetCurrentSize());
+	AssertInt(iLength, cFatFile.Size());
 
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -904,7 +904,7 @@ void TestFat32CreateDirectoryAfterWrite(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\A Directory\\Depth Charge.txt", FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(iLength, cFatFile.GetCurrentSize());
+	AssertInt(iLength, cFatFile.Size());
 
 	uiBytesRead = 0;
 	cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
@@ -917,7 +917,7 @@ void TestFat32CreateDirectoryAfterWrite(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\New File.txt", FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(iLength, cFatFile.GetCurrentSize());
+	AssertInt(iLength, cFatFile.Size());
 
 	uiBytesRead = 0;
 	cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
@@ -995,7 +995,7 @@ void TestFat32GreatWrite(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\New File.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0, cFatFile.GetCurrentSize());
+	AssertInt(0, cFatFile.Size());
 
 	sQuery.Init();
 	eResult = cVolume.FindFirstFATEntry(NULL, 0, &psFatDirectoryEntry, &sQuery);
@@ -1011,7 +1011,7 @@ void TestFat32GreatWrite(void)
 	eResult = cFatFile.Write((uint8*)puiFileData, iLength);
 
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(196 KB, cFatFile.GetCurrentSize());
+	AssertInt(196 KB, cFatFile.Size());
 
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -1025,7 +1025,7 @@ void TestFat32GreatWrite(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\New File.txt", FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(196 KB , cFatFile.GetCurrentSize());
+	AssertInt(196 KB , cFatFile.Size());
 
 	memset(puiFileData2, 0, iLength);
 	eResult = cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
@@ -1059,11 +1059,11 @@ void TestFat32GreatWrite(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\A Directory\\Another\\New File Number Two.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0, cFatFile.GetCurrentSize());
+	AssertInt(0, cFatFile.Size());
 
 	eResult = cFatFile.Write((uint8*)puiFileData, iLength);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(196 KB, cFatFile.GetCurrentSize());
+	AssertInt(196 KB, cFatFile.Size());
 
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -1091,7 +1091,7 @@ void TestFat32GreatWrite(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\New File.txt", FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(196 KB, cFatFile.GetCurrentSize());
+	AssertInt(196 KB, cFatFile.Size());
 
 	memset(puiFileData2, 0, iLength);
 	eResult = cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
@@ -1106,7 +1106,7 @@ void TestFat32GreatWrite(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\A Directory\\Another\\New File Number Two.txt", FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(196 KB, cFatFile.GetCurrentSize());
+	AssertInt(196 KB, cFatFile.Size());
 
 	memset(puiFileData2, 0, iLength);
 	eResult = cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
@@ -1172,7 +1172,7 @@ void TestFat32MultipleSmallReads(void)
 
 	uiBytesToRead = 1;
 	puiFileData = (uint8*)auiFileData;
-	uiFileSize = cFatFile.GetCurrentSize();
+	uiFileSize = cFatFile.Size();
 	for (i = 0;; i++)
 	{
 		eResult = cFatFile.Read(puiFileData, uiBytesToRead, &uiBytesRead);
@@ -1247,7 +1247,7 @@ void TestFat32Seek(void)
 	AssertInt(FAT_SUCCESS, eResult);
 
 	bool bAllSuccess = true;
-	for (i = 0; i < (int)cFatFile.GetCurrentSize(); i++)
+	for (i = 0; i < (int)cFatFile.Size(); i++)
 	{
 		eResult = cFatFile.Seek(i, FAT_SEEK_START);
 		if (eResult != FAT_SUCCESS)
@@ -1307,7 +1307,7 @@ void TestFat32WriteAndSeek(void)
 	AssertInt(FAT_SUCCESS, eResult);
 
 	bool bAllSuccess = true;
-	for (i = 0; i < (int)cFatFile.GetCurrentSize(); i++)
+	for (i = 0; i < (int)cFatFile.Size(); i++)
 	{
 		eResult = cFatFile.Seek(i, FAT_SEEK_START);
 		if (eResult != FAT_SUCCESS)
@@ -1554,7 +1554,7 @@ void TestFat32SeekWriteAndRead3(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\Directory\\File.txt", FAT_FILE_ACCESS_WRITE | FAT_FILE_ACCESS_READ);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(cFatFile.GetCurrentSize(), 0);
+	AssertInt(cFatFile.Size(), 0);
 
 	bAllSuccess = true;
 	c = 'A';
@@ -1642,8 +1642,8 @@ void TestFat32RenameSameLength(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\Manequin.txt", FAT_ATTR_READ_ONLY);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(12, cFatFile.GetCurrentSize());
-	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.GetCurrentSize(), &uiBytesRead);
+	AssertInt(12, cFatFile.Size());
+	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertInt(12, uiBytesRead);
 	auiFileData[12] = '\0';
@@ -1699,8 +1699,8 @@ void TestFat32RenameShortToLong(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if", FAT_ATTR_READ_ONLY);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(12, cFatFile.GetCurrentSize());
-	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.GetCurrentSize(), &uiBytesRead);
+	AssertInt(12, cFatFile.Size());
+	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertInt(12, uiBytesRead);
 	auiFileData[12] = '\0';
@@ -1748,7 +1748,7 @@ void TestFat32CreateFileRenameFileCreateFile(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\File1.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0, cFatFile.GetCurrentSize());
+	AssertInt(0, cFatFile.Size());
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
 
@@ -1764,8 +1764,8 @@ void TestFat32CreateFileRenameFileCreateFile(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if", FAT_ATTR_READ_ONLY);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(12, cFatFile.GetCurrentSize());
-	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.GetCurrentSize(), &uiBytesRead);
+	AssertInt(12, cFatFile.Size());
+	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertInt(12, uiBytesRead);
 	auiFileData[12] = '\0';
@@ -1776,7 +1776,7 @@ void TestFat32CreateFileRenameFileCreateFile(void)
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\File2.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0, cFatFile.GetCurrentSize());
+	AssertInt(0, cFatFile.Size());
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
 
@@ -2029,15 +2029,17 @@ Attributes: ARCHIVE\n", sz.Text());
 //////////////////////////////////////////////////////////////////////////
 void TestFat32Delete(void)
 {
-	CMemoryDrive	cMemoryDrive;
-	CDiskFile		cFile;
-	filePos			uiLength;
-	void*			pvMemory;
-	EFatCode		eResult;
-	CFatFile		cFatFile;
-	bool			bResult;
-	CFatVolume		cVolume;
-	CChars			sz;
+	CMemoryDrive		cMemoryDrive;
+	CDiskFile			cFile;
+	filePos				uiLength;
+	void*				pvMemory;
+	EFatCode			eResult;
+	CFatFile			cFatFile;
+	bool				bResult;
+	CFatVolume			cVolume;
+	CChars				sz;
+	SFatDirectoryEntry	sEntry;
+	uint32				uiCluster;
 
 	cFile.Init("Input\\Fat32\\ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
@@ -2052,6 +2054,19 @@ void TestFat32Delete(void)
 	eResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(FAT_SUCCESS, eResult);
 
+	sz.Init();
+	eResult = PrintFATClusters(&sz, &cVolume, 0x250, 0x260);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertString("\
+-------------------------------------------------------------------- Sector (602) --------------------------------------------------------------------\n\
+  250 ->  EOC,   251 ->  EOC,   252 ->  EOC,   253 ->  EOC,   254 ->  EOC,   255 ->  EOC,   256 ->    0,   257 ->    0,   258 ->    0,   259 ->    0,   25a ->    0,   25b ->    0,   25c ->    0,   25d ->    0,   25e ->    0,   25f ->    0\n", sz.Text());
+	sz.Kill();
+
+	eResult = cVolume.GetFileEntry("\\Document.txt", &sEntry);
+	AssertInt(FAT_SUCCESS, eResult);
+	uiCluster = cVolume.GetEntryCluster(&sEntry);
+	AssertInt(0x255, uiCluster);
+
 	eResult = cVolume.Delete("\\Document.txt");
 	AssertInt(FAT_SUCCESS, eResult);
 
@@ -2060,6 +2075,14 @@ void TestFat32Delete(void)
 	AssertInt(FAT_FILE_NOT_FOUND, eResult);
 	eResult = cFatFile.Close();
 	AssertInt(FAT_INVALID_HANDLE, eResult);
+
+	sz.Init();
+	eResult = PrintFATClusters(&sz, &cVolume, 0x250, 0x260);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertString("\
+-------------------------------------------------------------------- Sector (602) --------------------------------------------------------------------\n\
+  250 ->  EOC,   251 ->  EOC,   252 ->  EOC,   253 ->  EOC,   254 ->  EOC,   255 ->    0,   256 ->    0,   257 ->    0,   258 ->    0,   259 ->    0,   25a ->    0,   25b ->    0,   25c ->    0,   25d ->    0,   25e ->    0,   25f ->    0\n", sz.Text());
+	sz.Kill();
 
 	sz.Init();
 	PrintRootFatFilenames(&sz, &cVolume);
