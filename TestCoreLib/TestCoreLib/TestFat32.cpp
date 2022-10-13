@@ -1610,7 +1610,7 @@ void TestFat32SeekWriteAndRead3(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestRenameSameLength(void)
+void TestFat32RenameSameLength(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
@@ -1636,7 +1636,7 @@ void TestRenameSameLength(void)
 	eResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(FAT_SUCCESS, eResult);
 
-	eResult = cVolume.RenameFile("\\Document.txt", "\\Manequin.txt");
+	eResult = cVolume.Rename("\\Document.txt", "\\Manequin.txt");
 	AssertInt(FAT_SUCCESS, eResult);
 
 	cFatFile.Init(&cVolume);
@@ -1661,7 +1661,7 @@ void TestRenameSameLength(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestRenameShortToLong(void)
+void TestFat32RenameShortToLong(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
@@ -1693,7 +1693,7 @@ void TestRenameShortToLong(void)
 	sz.Dump();
 	sz.Kill();
 
-	eResult = cVolume.RenameFile("\\Document.txt", "\\Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if");
+	eResult = cVolume.Rename("\\Document.txt", "\\Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if");
 	AssertInt(FAT_SUCCESS, eResult);
 
 	cFatFile.Init(&cVolume);
@@ -1718,7 +1718,7 @@ void TestRenameShortToLong(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestCreateFileRenameFileCreateFile(void)
+void TestFat32CreateFileRenameFileCreateFile(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
@@ -1758,7 +1758,7 @@ void TestCreateFileRenameFileCreateFile(void)
 \\Document.txt\n", sz.Text());
 	sz.Kill();
 
-	eResult = cVolume.RenameFile("\\Document.txt", "\\Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if");
+	eResult = cVolume.Rename("\\Document.txt", "\\Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if");
 	AssertInt(FAT_SUCCESS, eResult);
 
 	cFatFile.Init(&cVolume);
@@ -2027,6 +2027,94 @@ Attributes: ARCHIVE\n", sz.Text());
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFat32Delete(void)
+{
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	filePos			uiLength;
+	void*			pvMemory;
+	EFatCode		eResult;
+	CFatFile		cFatFile;
+	bool			bResult;
+	CFatVolume		cVolume;
+	CChars			sz;
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	eResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cVolume.Delete("\\Document.txt");
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\Document.txt", FAT_ATTR_READ_ONLY);
+	AssertInt(FAT_FILE_NOT_FOUND, eResult);
+	eResult = cFatFile.Close();
+	AssertInt(FAT_INVALID_HANDLE, eResult);
+
+	sz.Init();
+	PrintRootFatFilenames(&sz, &cVolume);
+	AssertString("", sz.Text());
+	sz.Kill();
+
+	sz.Init();
+	PrintRootDirectoryEntries(&sz, &cVolume, false);
+	AssertString("\
+---------------------------------------\n\
+Sequence:     66\n\
+Long name[1]:  Info\n\
+Long name[2]: rmatio\n\
+Long name[3]: n\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     114\n\
+---------------------------------------\n\
+Sequence:     1\n\
+Long name[1]: Syste\n\
+Long name[2]: m Volu\n\
+Long name[3]: me\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     114\n\
+---------------------------------------\n\
+Short name: SYSTEM~1\n\
+Cluster:    3\n\
+Size:       0\n\
+Attributes: HIDDEN, SYSTEM, DIRECTORY\n\
+---------------------------------------\n\
+Sequence:     65\n\
+Long name[1]: Pico\n\
+Long name[2]: ÿÿÿÿÿÿ\n\
+Long name[3]: ÿÿ\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     56\n\
+---------------------------------------\n\
+Short name: PICO\n\
+Cluster:    6\n\
+Size:       0\n\
+Attributes: DIRECTORY\n", sz.Text());
+	sz.Kill();
+
+	cVolume.Unmount();
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFat32(void)
 {
 	TypeConverterInit();
@@ -2050,9 +2138,10 @@ void TestFat32(void)
 	TestFat32SeekWriteAndRead1();
 	TestFat32SeekWriteAndRead2();
 	TestFat32SeekWriteAndRead3();
-	TestRenameSameLength();
-	TestRenameShortToLong();
-	TestCreateFileRenameFileCreateFile();
+	TestFat32RenameSameLength();
+	TestFat32RenameShortToLong();
+	TestFat32CreateFileRenameFileCreateFile();
+	TestFat32Delete();
 
 	TestStatistics();
 	WordsKill();
