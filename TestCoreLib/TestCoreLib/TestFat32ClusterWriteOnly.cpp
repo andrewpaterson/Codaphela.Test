@@ -377,3 +377,4 @@ void TestFat32WriteLargerThanOneCluster(void)
 	TestStatistics();
 	TypeConverterKill();
 }
+

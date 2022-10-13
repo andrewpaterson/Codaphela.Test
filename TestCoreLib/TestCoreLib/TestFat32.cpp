@@ -1723,7 +1723,7 @@ void TestFat32CreateFileRenameFileCreateFile(void)
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
 	filePos			uiLength;
-	void* pvMemory;
+	void*			pvMemory;
 	EFatCode		eResult;
 	CFatFile		cFatFile;
 	bool			bResult;
