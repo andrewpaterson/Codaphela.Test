@@ -379,8 +379,6 @@ void TestFat32CreateFileEntries(void)
 	eResult = cVolume.Flush();
 	AssertInt(FAT_SUCCESS, eResult);
 
-	DumpRootDirectoryEntries(&cVolume);
-
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if", FAT_ATTR_READ_ONLY);
 	AssertInt(FAT_SUCCESS, eResult);
@@ -1612,6 +1610,423 @@ void TestFat32SeekWriteAndRead3(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestRenameSameLength(void)
+{
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	filePos			uiLength;
+	void* pvMemory;
+	EFatCode		eResult;
+	CFatFile		cFatFile;
+	bool			bResult;
+	CFatVolume		cVolume;
+	uint32			uiBytesRead;
+	char			auiFileData[13];
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	eResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	eResult = cVolume.RenameFile("\\Document.txt", "\\Manequin.txt");
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\Manequin.txt", FAT_ATTR_READ_ONLY);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(12, cFatFile.GetCurrentSize());
+	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.GetCurrentSize(), &uiBytesRead);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(12, uiBytesRead);
+	auiFileData[12] = '\0';
+	AssertString("Mostly Empty", auiFileData);
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cVolume.Unmount();
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestRenameShortToLong(void)
+{
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	filePos			uiLength;
+	void*			pvMemory;
+	EFatCode		eResult;
+	CFatFile		cFatFile;
+	bool			bResult;
+	CFatVolume		cVolume;
+	uint32			uiBytesRead;
+	char			auiFileData[13];
+	CChars			sz;
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	eResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	sz.Init();
+	PrintRootFatFilenames(&sz, &cVolume);
+	sz.Dump();
+	sz.Kill();
+
+	eResult = cVolume.RenameFile("\\Document.txt", "\\Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if");
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if", FAT_ATTR_READ_ONLY);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(12, cFatFile.GetCurrentSize());
+	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.GetCurrentSize(), &uiBytesRead);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(12, uiBytesRead);
+	auiFileData[12] = '\0';
+	AssertString("Mostly Empty", auiFileData);
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cVolume.Unmount();
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCreateFileRenameFileCreateFile(void)
+{
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	filePos			uiLength;
+	void* pvMemory;
+	EFatCode		eResult;
+	CFatFile		cFatFile;
+	bool			bResult;
+	CFatVolume		cVolume;
+	uint32			uiBytesRead;
+	char			auiFileData[13];
+	CChars			sz;
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	eResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\File1.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0, cFatFile.GetCurrentSize());
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	sz.Init();
+	PrintRootFatFilenames(&sz, &cVolume);
+	AssertString("\\File1.txt\n\
+\\Document.txt\n", sz.Text());
+	sz.Kill();
+
+	eResult = cVolume.RenameFile("\\Document.txt", "\\Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if");
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if", FAT_ATTR_READ_ONLY);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(12, cFatFile.GetCurrentSize());
+	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.GetCurrentSize(), &uiBytesRead);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(12, uiBytesRead);
+	auiFileData[12] = '\0';
+	AssertString("Mostly Empty", auiFileData);
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\File2.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0, cFatFile.GetCurrentSize());
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	sz.Init();
+	PrintRootFatFilenames(&sz, &cVolume);
+	AssertString("\\File1.txt\n\
+\\File2.txt\n\
+\\Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if\n", sz.Text());
+	sz.Kill();
+
+	sz.Init();
+	PrintRootDirectoryEntries(&sz, &cVolume, false);
+	AssertStringApproximate("\
+---------------------------------------\n\
+Sequence:     66\n\
+Long name[1]:  Info\n\
+Long name[2]: rmatio\n\
+Long name[3]: n\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     114\n\
+---------------------------------------\n\
+Sequence:     1\n\
+Long name[1]: Syste\n\
+Long name[2]: m Volu\n\
+Long name[3]: me\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     114\n\
+---------------------------------------\n\
+Short name: SYSTEM~1\n\
+Cluster:    3\n\
+Size:       0\n\
+Attributes: HIDDEN, SYSTEM, DIRECTORY\n\
+---------------------------------------\n\
+Sequence:     65\n\
+Long name[1]: File1\n\
+Long name[2]: .txt\n\
+Long name[3]: ÿÿ\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     225\n\
+---------------------------------------\n\
+Short name: FILE1~0.TXT\n\
+Cluster:    0\n\
+Size:       0\n\
+Attributes: ARCHIVE\n\
+---------------------------------------\n\
+Sequence:     65\n\
+Long name[1]: File2\n\
+Long name[2]: .txt\n\
+Long name[3]: ÿÿ\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     221\n\
+---------------------------------------\n\
+Short name: FILE2~0.TXT\n\
+Cluster:    0\n\
+Size:       0\n\
+Attributes: ARCHIVE\n\
+---------------------------------------\n\
+Sequence:     65\n\
+Long name[1]: Pico\n\
+Long name[2]: ÿÿÿÿÿÿ\n\
+Long name[3]: ÿÿ\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     56\n\
+---------------------------------------\n\
+Short name: PICO\n\
+Cluster:    6\n\
+Size:       0\n\
+Attributes: DIRECTORY\n\
+---------------------------------------\n\
+Sequence:     84\n\
+Long name[1]: h as.\n\
+Long name[2]: if\n\
+Long name[3]: ÿÿ\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     19\n\
+Long name[1]: in to\n\
+Long name[2]:  altho\n\
+Long name[3]: ug\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     18\n\
+Long name[1]: e - P\n\
+Long name[2]: leasan\n\
+Long name[3]: t \n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     17\n\
+Long name[1]: g con\n\
+Long name[2]: vinced\n\
+Long name[3]:  y\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     16\n\
+Long name[1]: hing \n\
+Long name[2]: admitt\n\
+Long name[3]: in\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     15\n\
+Long name[1]: oprie\n\
+Long name[2]: ty som\n\
+Long name[3]: et\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     14\n\
+Long name[1]: mity \n\
+Long name[2]: he he \n\
+Long name[3]: pr\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     13\n\
+Long name[1]: rnest\n\
+Long name[2]: ly ext\n\
+Long name[3]: re\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     12\n\
+Long name[1]: fence\n\
+Long name[2]:  - If \n\
+Long name[3]: ea\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     11\n\
+Long name[1]: ling \n\
+Long name[2]: at an \n\
+Long name[3]: of\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     10\n\
+Long name[1]: e how\n\
+Long name[2]: ever s\n\
+Long name[3]: mi\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     9\n\
+Long name[1]:  no p\n\
+Long name[2]: rudent\n\
+Long name[3]:  h\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     8\n\
+Long name[1]:  oh -\n\
+Long name[2]:  Hundr\n\
+Long name[3]: ed\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     7\n\
+Long name[1]: t it \n\
+Long name[2]: welcom\n\
+Long name[3]: ed\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     6\n\
+Long name[1]: ll wo\n\
+Long name[2]: ndered\n\
+Long name[3]:  i\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     5\n\
+Long name[1]: f of \n\
+Long name[2]: - Stan\n\
+Long name[3]: hi\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     4\n\
+Long name[1]: ed pr\n\
+Long name[2]: ovided\n\
+Long name[3]:  o\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     3\n\
+Long name[1]: locke\n\
+Long name[2]: d reso\n\
+Long name[3]: lv\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     2\n\
+Long name[1]: empt \n\
+Long name[2]: on mr \n\
+Long name[3]: un\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Sequence:     1\n\
+Long name[1]: Dashw\n\
+Long name[2]: ood co\n\
+Long name[3]: nt\n\
+Cluster:      0\n\
+Attributes:   LONG_NAME\n\
+Checksum:     223\n\
+---------------------------------------\n\
+Short name: DASHWO~0.IF\n\
+Cluster:    597\n\
+Size:       12\n\
+Attributes: ARCHIVE\n", sz.Text());
+	sz.Kill();
+
+	cVolume.Unmount();
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFat32(void)
 {
 	TypeConverterInit();
@@ -1635,6 +2050,9 @@ void TestFat32(void)
 	TestFat32SeekWriteAndRead1();
 	TestFat32SeekWriteAndRead2();
 	TestFat32SeekWriteAndRead3();
+	TestRenameSameLength();
+	TestRenameShortToLong();
+	TestCreateFileRenameFileCreateFile();
 
 	TestStatistics();
 	WordsKill();
