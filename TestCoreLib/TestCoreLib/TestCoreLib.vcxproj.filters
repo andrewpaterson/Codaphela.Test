@@ -216,9 +216,6 @@
     <ClCompile Include="TestFatCache.cpp">
       <Filter>Source\FileSystem\Fat32</Filter>
     </ClCompile>
-    <ClCompile Include="TestFat32ClusterWriteOnly.cpp">
-      <Filter>Source\FileSystem\Fat32</Filter>
-    </ClCompile>
     <ClCompile Include="TestFat32Common.cpp">
       <Filter>Source\FileSystem\Fat32</Filter>
     </ClCompile>

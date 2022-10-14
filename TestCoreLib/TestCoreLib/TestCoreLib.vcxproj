@@ -221,7 +221,6 @@
     <ClCompile Include="TestCodabase.cpp" />
     <ClCompile Include="TestCoreLib.cpp" />
     <ClCompile Include="TestFat32.cpp" />
-    <ClCompile Include="TestFat32ClusterWriteOnly.cpp" />
     <ClCompile Include="TestFat32Common.cpp" />
     <ClCompile Include="TestFatCache.cpp" />
     <ClCompile Include="TestFiles.cpp" />
