@@ -483,6 +483,7 @@ void TestFat32OpenWriteMode(void)
 	eResult = cFatFile.Open("\\File.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
 	AssertInt(FAT_SUCCESS, eResult);
 	AssertInt(0, cFatFile.Size());
+	AssertInt(0, cFatFile.CalculateFirstCluster())
 
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -1690,7 +1691,7 @@ void TestFat32RenameShortToLong(void)
 
 	sz.Init();
 	PrintRootFatFilenames(&sz, &cVolume);
-	sz.Dump();
+	AssertString("\\Document.txt\n", sz.Text());
 	sz.Kill();
 
 	eResult = cVolume.Rename("\\Document.txt", "\\Dashwood contempt on mr unlocked resolved provided of of - Stanhill wondered it it welcomed oh - Hundred no prudent he however smiling at an offence - If earnestly extremity he he propriety something admitting convinced ye - Pleasant in to although as.if");
@@ -2326,13 +2327,13 @@ void TestFat32WriteLargerThanOneClusterOverwrite(void)
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
 	filePos			uiLength;
-	void* pvMemory;
+	void*			pvMemory;
 	EFatCode		eResult;
 	CFatFile		cFatFile;
 	bool			bResult;
 	CFatVolume		cVolume;
-	char* szSource;
-	char* szRead;
+	char*			szSource;
+	char*			szRead;
 	uint32			uiBytesRead;
 	uint64			uiMaxSectorSize;
 	int				i;
@@ -2490,13 +2491,13 @@ void TestFat32WriteLargerThanOneClusterOverwrite(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFat32PartionsMount(void)
 {
-	CMemoryDrive		cMemoryDrive;
-	CDiskFile			cFile;
-	filePos				uiLength;
-	void*				pvMemory;
-	EFatCode			eResult;
-	bool				bResult;
-	CFatVolume			cVolume;
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	filePos			uiLength;
+	void*			pvMemory;
+	EFatCode		eResult;
+	bool			bResult;
+	CFatVolume		cVolume;
 
 	cFile.Init("Input\\Fat32\\SDCard4PartitionMBR.img");
 	bResult = cFile.Open(EFM_Read);
@@ -2513,6 +2514,332 @@ void TestFat32PartionsMount(void)
 
 	eResult = cVolume.Unmount();
 	AssertInt(FAT_SUCCESS, eResult);
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFat32Close(void)
+{
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	filePos			uiLength;
+	void*			pvMemory;
+	EFatCode		eResult;
+	CFatFile		cFatFile;
+	bool			bResult;
+	CFatVolume		cVolume;
+	char			auiFileData[44 KB];
+	char			auiExpectedData[44 KB];
+	uint32			uiBytesRead;
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	cFile.Init("Input\\Fat32\\SDCard.cpp");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	AssertInt(44000, (int)uiLength);
+	cFile.Read(auiExpectedData, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	eResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\Pico\\LCDBusReader\\src\\SDCard.cpp", FAT_FILE_ACCESS_READ | FAT_FILE_ACCESS_WRITE);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(44000, cFatFile.Size());
+	AssertInt(0, cFatFile.Tell());
+	eResult = cFatFile.Seek(0, FAT_SEEK_START);
+	AssertInt(FAT_SUCCESS, eResult);
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\Pico\\LCDBusReader\\src\\SDCard.cpp", FAT_FILE_ACCESS_READ | FAT_FILE_ACCESS_WRITE);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(44000, cFatFile.Size());
+	AssertInt(0, cFatFile.Tell());
+
+	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(44000, uiBytesRead);
+	AssertMemory(auiExpectedData, auiFileData, (int)uiLength);
+
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cVolume.Unmount();
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFat32TruncateToSmall(void)
+{
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	filePos			uiLength;
+	void* pvMemory;
+	EFatCode		eResult;
+	CFatFile		cFatFile;
+	bool			bResult;
+	CFatVolume		cVolume;
+	char			auiFileData[44 KB];
+	char			auiExpectedData[44 KB];
+	uint32			uiBytesRead;
+	CChars			sz;
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	cFile.Init("Input\\Fat32\\SDCard.cpp");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	AssertInt(44000, (int)uiLength);
+	cFile.Read(auiExpectedData, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	eResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\Pico\\LCDBusReader\\src\\SDCard.cpp", FAT_FILE_ACCESS_READ | FAT_FILE_ACCESS_WRITE);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(44000, cFatFile.Size());
+	AssertInt(0, cFatFile.Tell());
+	eResult = cFatFile.Seek(1, FAT_SEEK_START);
+	AssertInt(FAT_SUCCESS, eResult);
+	
+	sz.Init();
+	PrintFATClusters(&sz, &cVolume, 0x240, 0x250);
+	AssertString("\
+-------------------------------------------------------------------- Sector (602) --------------------------------------------------------------------\n\
+  240 ->  EOC,   241 ->  EOC,   242 ->  EOC,   243 ->  EOC,   244 ->  EOC,   245 ->  EOC,   246 ->  EOC,   247 ->  EOC,   248 ->  EOC,   249 ->  24a,   24a ->  EOC,   24b ->  EOC,   24c ->  EOC,   24d ->  EOC,   24e ->  EOC,   24f ->  EOC\n", sz.Text());
+	sz.Kill();
+	eResult = cFatFile.Truncate();
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(1, cFatFile.Size());
+	sz.Init();
+	PrintFATClusters(&sz, &cVolume, 0x240, 0x250);
+	AssertString("\
+-------------------------------------------------------------------- Sector (602) --------------------------------------------------------------------\n\
+  240 ->  EOC,   241 ->  EOC,   242 ->  EOC,   243 ->  EOC,   244 ->  EOC,   245 ->  EOC,   246 ->  EOC,   247 ->  EOC,   248 ->  EOC,   249 ->  EOC,   24a ->    0,   24b ->  EOC,   24c ->  EOC,   24d ->  EOC,   24e ->  EOC,   24f ->  EOC\n", sz.Text());
+	sz.Kill();
+
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\Pico\\LCDBusReader\\src\\SDCard.cpp", FAT_FILE_ACCESS_READ | FAT_FILE_ACCESS_WRITE);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(1, cFatFile.Size());
+
+	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(1, uiBytesRead);
+	AssertMemory(auiExpectedData, auiFileData, (int)uiBytesRead);
+
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cVolume.Unmount();
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFat32OpenOverwrite(void)
+{
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	filePos			uiLength;
+	void*			pvMemory;
+	EFatCode		eResult;
+	CFatFile		cFatFile;
+	bool			bResult;
+	CFatVolume		cVolume;
+	char			auiFileData[44 KB];
+	char			auiExpectedData[44 KB];
+	uint32			uiBytesRead;
+	CChars			sz;
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	cFile.Init("Input\\Fat32\\SDCard.cpp");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	AssertInt(44000, (int)uiLength);
+	cFile.Read(auiExpectedData, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	eResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\Pico\\LCDBusReader\\src\\SDCard.cpp", FAT_FILE_ACCESS_READ);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(44000, cFatFile.Size());
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0x249, cFatFile.CalculateFirstCluster());
+	cFatFile.Close();
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\Pico\\LCDBusReader\\src\\SDCard.cpp", FAT_FILE_ACCESS_READ | FAT_FILE_ACCESS_WRITE | FAT_FILE_ACCESS_OVERWRITE);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0, cFatFile.Size());
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0, cFatFile.CalculateFirstCluster());
+
+	sz.Init();
+	PrintFATClusters(&sz, &cVolume, 0x240, 0x250);
+	AssertString("\
+-------------------------------------------------------------------- Sector (602) --------------------------------------------------------------------\n\
+  240 ->  EOC,   241 ->  EOC,   242 ->  EOC,   243 ->  EOC,   244 ->  EOC,   245 ->  EOC,   246 ->  EOC,   247 ->  EOC,   248 ->  EOC,   249 ->    0,   24a ->    0,   24b ->  EOC,   24c ->  EOC,   24d ->  EOC,   24e ->  EOC,   24f ->  EOC\n", sz.Text());
+	sz.Kill();
+
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\Pico\\LCDBusReader\\src\\SDCard.cpp", FAT_FILE_ACCESS_READ | FAT_FILE_ACCESS_WRITE);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0, cFatFile.Size());
+
+	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0, uiBytesRead);
+
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cVolume.Unmount();
+
+	cMemoryDrive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFat32TruncateToZero(void)
+{
+	CMemoryDrive	cMemoryDrive;
+	CDiskFile		cFile;
+	filePos			uiLength;
+	void*			pvMemory;
+	EFatCode		eResult;
+	CFatFile		cFatFile;
+	bool			bResult;
+	CFatVolume		cVolume;
+	char			auiFileData[44 KB];
+	char			auiExpectedData[44 KB];
+	uint32			uiBytesRead;
+	CChars			sz;
+
+	cFile.Init("Input\\Fat32\\ComplexDisk.img");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	cMemoryDrive.Init((size_t)uiLength, 512);
+	pvMemory = cMemoryDrive.GetMemory();
+	cFile.Read(pvMemory, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	cFile.Init("Input\\Fat32\\SDCard.cpp");
+	bResult = cFile.Open(EFM_Read);
+	AssertTrue(bResult);
+	uiLength = cFile.Size();
+	AssertInt(44000, (int)uiLength);
+	cFile.Read(auiExpectedData, uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+
+	eResult = cVolume.Mount(&cMemoryDrive);
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\Pico\\LCDBusReader\\src\\SDCard.cpp", FAT_FILE_ACCESS_READ | FAT_FILE_ACCESS_WRITE);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(44000, cFatFile.Size());
+	AssertInt(0, cFatFile.Tell());
+	AssertInt(FAT_SUCCESS, eResult);
+
+	sz.Init();
+	PrintFATClusters(&sz, &cVolume, 0x240, 0x250);
+	AssertString("\
+-------------------------------------------------------------------- Sector (602) --------------------------------------------------------------------\n\
+  240 ->  EOC,   241 ->  EOC,   242 ->  EOC,   243 ->  EOC,   244 ->  EOC,   245 ->  EOC,   246 ->  EOC,   247 ->  EOC,   248 ->  EOC,   249 ->  24a,   24a ->  EOC,   24b ->  EOC,   24c ->  EOC,   24d ->  EOC,   24e ->  EOC,   24f ->  EOC\n", sz.Text());
+	sz.Kill();
+	eResult = cFatFile.Truncate();
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0, cFatFile.Size());
+	sz.Init();
+	PrintFATClusters(&sz, &cVolume, 0x240, 0x250);
+	AssertString("\
+-------------------------------------------------------------------- Sector (602) --------------------------------------------------------------------\n\
+  240 ->  EOC,   241 ->  EOC,   242 ->  EOC,   243 ->  EOC,   244 ->  EOC,   245 ->  EOC,   246 ->  EOC,   247 ->  EOC,   248 ->  EOC,   249 ->    0,   24a ->    0,   24b ->  EOC,   24c ->  EOC,   24d ->  EOC,   24e ->  EOC,   24f ->  EOC\n", sz.Text());
+	sz.Kill();
+
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cFatFile.Init(&cVolume);
+	eResult = cFatFile.Open("\\Pico\\LCDBusReader\\src\\SDCard.cpp", FAT_FILE_ACCESS_READ | FAT_FILE_ACCESS_WRITE);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0, cFatFile.Size());
+
+	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
+	AssertInt(FAT_SUCCESS, eResult);
+	AssertInt(0, uiBytesRead);
+
+	eResult = cFatFile.Close();
+	AssertInt(FAT_SUCCESS, eResult);
+
+	cVolume.Unmount();
 
 	cMemoryDrive.Kill();
 }
@@ -2551,6 +2878,10 @@ void TestFat32(void)
 	TestFat32Delete();
 	TestFat32WriteLargerThanOneClusterAppend();
 	TestFat32WriteLargerThanOneClusterOverwrite();
+	TestFat32Close();
+	TestFat32OpenOverwrite();
+	TestFat32TruncateToSmall();
+	TestFat32TruncateToZero();
 	TestFat32PartionsMount();
 
 	TestStatistics();
