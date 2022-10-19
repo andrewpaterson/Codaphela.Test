@@ -865,11 +865,11 @@ void TestFat32CreateDirectoryAfterWrite(void)
 
 	eResult = cVolume.GetFileEntry("\\A Directory", &sFatFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0x257, cVolume.GetEntryCluster(&sFatFileEntry));
+	AssertInt(0x257, cVolume.GetEntryCluster(&sFatFileEntry.sRaw));
 
 	eResult = cVolume.GetFileEntry("\\A Directory\\We must go deeper", &sFatFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0x258, cVolume.GetEntryCluster(&sFatFileEntry));
+	AssertInt(0x258, cVolume.GetEntryCluster(&sFatFileEntry.sRaw));
 
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("A Directory\\Depth Charge.txt", FAT_FILE_ACCESS_CREATE | FAT_FILE_ACCESS_WRITE);
@@ -885,22 +885,22 @@ void TestFat32CreateDirectoryAfterWrite(void)
 
 	eResult = cVolume.GetFileEntry("\\A Directory\\Depth Charge.txt", &sFatFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0x259, cVolume.GetEntryCluster(&sFatFileEntry));
+	AssertInt(0x259, cVolume.GetEntryCluster(&sFatFileEntry.sRaw));
 
 	eResult = cVolume.CreateDirectory("\\A Directory\\Sideways rather is where it is at");
 	AssertInt(FAT_SUCCESS, eResult);
 
 	eResult = cVolume.GetFileEntry("\\A Directory\\Sideways rather is where it is at", &sFatFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0x25a, cVolume.GetEntryCluster(&sFatFileEntry));
+	AssertInt(0x25a, cVolume.GetEntryCluster(&sFatFileEntry.sRaw));
 
 	eResult = cVolume.GetFileEntry("\\A Directory\\We must go deeper", &sFatFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0x258, cVolume.GetEntryCluster(&sFatFileEntry));
+	AssertInt(0x258, cVolume.GetEntryCluster(&sFatFileEntry.sRaw));
 
 	eResult = cVolume.GetFileEntry("\\New File.txt", &sFatFileEntry);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0x256, cVolume.GetEntryCluster(&sFatFileEntry));
+	AssertInt(0x256, cVolume.GetEntryCluster(&sFatFileEntry.sRaw));
 
 	cFatFile.Init(&cVolume);
 	eResult = cFatFile.Open("\\A Directory\\Depth Charge.txt", FAT_FILE_ACCESS_READ);
@@ -2065,7 +2065,7 @@ void TestFat32Delete(void)
 
 	eResult = cVolume.GetFileEntry("\\Document.txt", &sEntry);
 	AssertInt(FAT_SUCCESS, eResult);
-	uiCluster = cVolume.GetEntryCluster(&sEntry);
+	uiCluster = cVolume.GetEntryCluster(&sEntry.sRaw);
 	AssertInt(0x255, uiCluster);
 
 	eResult = cVolume.Delete("\\Document.txt");
