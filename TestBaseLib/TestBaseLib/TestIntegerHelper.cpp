@@ -6,7 +6,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFindFirstClearBit(void)
+void TestIntegerHelperFindFirstClearBit(void)
 {
 	uint8	ab[9];
 	int		iIndex;
@@ -54,7 +54,7 @@ void TestFindFirstClearBit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFindFirstSetBit(void)
+void TestIntegerHelperFindFirstSetBit(void)
 {
 	uint8	ab[9];
 	int		iIndex;
@@ -135,7 +135,7 @@ void TestFindFirstSetBit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFindLastClearBit(void)
+void TestIntegerHelperFindLastClearBit(void)
 {
 	uint8	ab[9];
 	int		iIndex;
@@ -183,7 +183,7 @@ void TestFindLastClearBit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFindLastSetBit(void)
+void TestIntegerHelperFindLastSetBit(void)
 {
 	uint8	ab[9];
 	int		iIndex;
@@ -251,7 +251,7 @@ void TestFindLastSetBit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestReverseBytes(void)
+void TestIntegerHelperReverseBytes(void)
 {
 	char szAuto[9] = "Autobody";
 	char szAutoDash[10] = "Auto-Body";
@@ -272,7 +272,7 @@ void TestReverseBytes(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestCountBits(void)
+void TestIntegerHelperCountBits(void)
 {
 	uint8 auc8a[] = { 0x6a, 0x83, 0x5d, 0x16, 0x42, 0x6e, 0x61, 0x80 };
 	uint8 auc8b[] = { 0x54, 0xdc, 0x72, 0xf5, 0x78, 0xf9, 0x86, 0xa3 };
@@ -331,7 +331,7 @@ void TestCountBits(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFindNextSetBit(void)
+void TestIntegerHelperFindNextSetBit(void)
 {
 	uint8	ab[9];
 	int		iBit;
@@ -382,7 +382,7 @@ void TestFindNextSetBit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFindNextClearBit(void)
+void TestIntegerHelperFindNextClearBit(void)
 {
 	uint8	ab[9];
 	int		iBit;
@@ -433,7 +433,7 @@ void TestFindNextClearBit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSetBits(void)
+void TestIntegerHelperSetBits(void)
 {
 	uint8	ab[9];
 	
@@ -448,16 +448,102 @@ void TestSetBits(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIntegerHelperBitFunctions(void)
+{
+	char	c[8];
+
+	memset(c, 0, 8);
+
+	SetBit(1, c, 1);
+	AssertChar(c[0], 2);
+	SetBit(7, c, 1);
+	AssertChar(c[0], -126);
+	SetBit(8, c, 1);
+	AssertChar(c[1], 1);
+
+	c[0] = 5;
+	AssertBool(true, GetBit(0, &c));
+	AssertBool(false, GetBit(1, &c));
+	AssertBool(true, GetBit(2, &c));
+
+	AssertInt(1, FindFirstClearBit(c, 8 * 8));
+	AssertInt(0, FindFirstSetBit(c, 8 * 8));
+	c[0] = 4;
+	AssertInt(0, FindFirstClearBit(c, 8 * 8));
+	AssertInt(2, FindFirstSetBit(c, 8 * 8));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIntegerHelperMisc(void)
+{
+	AssertInt(4, GetLogBase2(16));
+	AssertInt(4, GetLogBase2(31));
+	AssertInt(5, GetLogBase2(32));
+	AssertInt(5, GetLogBase2(63));
+
+	AssertInt(1024, TruncateLowBits(1024));
+	AssertInt(1024, TruncateLowBits(1025));
+	AssertInt(1024, TruncateLowBits(2047));
+	AssertInt(1, TruncateLowBits(1));
+	AssertInt(0, TruncateLowBits(0));
+
+	AssertInt(1024, GetBestHighBit(1023));
+	AssertInt(1024, GetBestHighBit(1024));
+	AssertInt(2048, GetBestHighBit(1025));
+	AssertInt(2048, GetBestHighBit(2047));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIntegerHelperEndianness(void)
+{
+	union
+	{
+		int64	i64;
+		int8	ia8[8];
+	};
+
+	i64 = 0x0102030405060708LL;
+
+	AssertChar(0x08, ia8[0]);
+#ifdef _DEBUG
+	AssertChar(0x07, ia8[1]);
+#endif // _DEBUG
+	AssertChar(0x06, ia8[2]);
+	AssertChar(0x05, ia8[3]);
+	AssertChar(0x04, ia8[4]);
+#ifdef _DEBUG
+	AssertChar(0x03, ia8[5]);
+#endif // _DEBUG
+	AssertChar(0x02, ia8[6]);
+	AssertChar(0x01, ia8[7]);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIntegerHelper(void)
 {
-	TestFindFirstClearBit();
-	TestFindFirstSetBit();
-	TestFindLastClearBit();
-	TestFindLastSetBit();
-	TestReverseBytes();
-	TestCountBits();
-	TestFindNextSetBit();
-	TestFindNextClearBit();
-	TestSetBits();
+	TestIntegerHelperFindFirstClearBit();
+	TestIntegerHelperFindFirstSetBit();
+	TestIntegerHelperFindLastClearBit();
+	TestIntegerHelperFindLastSetBit();
+	TestIntegerHelperReverseBytes();
+	TestIntegerHelperCountBits();
+	TestIntegerHelperFindNextSetBit();
+	TestIntegerHelperFindNextClearBit();
+	TestIntegerHelperSetBits();
+	TestIntegerHelperBitFunctions();
+	TestIntegerHelperMisc();
+	TestIntegerHelperEndianness();
 }
 

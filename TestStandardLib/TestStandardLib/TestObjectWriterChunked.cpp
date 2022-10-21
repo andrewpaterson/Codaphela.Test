@@ -4,7 +4,7 @@
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/ScratchPadAllocator.h"
-#include "CoreLib/TransientSequence.h"
+#include "BaseLib/TransientSequence.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ChunkFileObjectWriter.h"
 #include "StandardLib/ExternalObjectSerialiser.h"
