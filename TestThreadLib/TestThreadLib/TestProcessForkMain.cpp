@@ -15,7 +15,7 @@ int TestClientProcessMain(int argc, char* argv[])
 	CTextFile	cTextFile;
 	CFileUtil	cFileUtil;
 	CChars		sz;
-	BOOL		bResult;
+	bool		bResult;
 	
 	if (argc == 1)
 	{

@@ -2,7 +2,7 @@
 #include "BaseLib/PointerRemapper.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
-#include "CoreLib/Operators.h"
+#include "BaseLib/Operators.h"
 #include "CppParserLib/Project.h"
 #include "TestLib/Assert.h"
 

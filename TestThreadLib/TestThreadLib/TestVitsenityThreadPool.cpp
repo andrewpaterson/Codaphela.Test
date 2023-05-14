@@ -16,7 +16,7 @@ private:
 	int					mix;
 	int					miThreadId;
 	CSafeArrayBlock*	mpcArray;
-	BOOL				mbRunning;
+	bool				mbRunning;
 
 public:
 	void Init(int x, CSafeArrayBlock* pcArray)
@@ -24,7 +24,7 @@ public:
 		mix = x;
 		mpcArray = pcArray;
 		miThreadId = -1;
-		mbRunning = TRUE;
+		mbRunning = true;
 	}
 
 	void Start(int iThreadId)
@@ -40,10 +40,10 @@ public:
 		{
 			mpcArray->Add(&mix);
 		}
-		mbRunning = FALSE;
+		mbRunning = false;
 	}
 
-	BOOL IsDone(void)
+	bool IsDone(void)
 	{
 		return !mbRunning;
 	}
@@ -126,7 +126,7 @@ void TestVitsenityThreadPoolConcurrency(void)
 
 	aiArray.Kill();
 	acPushers.Kill();
-	cPool.Stop(TRUE);
+	cPool.Stop(true);
 	cPool.Kill();
 }
 

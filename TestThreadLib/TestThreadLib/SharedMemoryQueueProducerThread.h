@@ -53,9 +53,9 @@ public:
 		SSharedMemoryQueueElement		sProducerData;
 		int								iSize;
 		char							c;
-		BOOL							bDone;
+		bool							bDone;
 		CSharedMemoryQueue				cQueue;
-		BOOL							bResult;
+		bool							bResult;
 
 		bResult = cQueue.Init(mszName.Text());
 		if (!bResult)
@@ -63,7 +63,7 @@ public:
 			return;
 		}
 
-		bDone = FALSE;
+		bDone = false;
 		iSize = 100;
 		c = 33;
 		for (iProduce = 0; iProduce < THREADED_SHARED_QUEUE_PRODUCE_SIZE; iProduce++)
@@ -86,7 +86,7 @@ public:
 				c = 33;
 			}
 		}
-		bDone = TRUE;
+		bDone = true;
 
 		cQueue.Kill();
 	}

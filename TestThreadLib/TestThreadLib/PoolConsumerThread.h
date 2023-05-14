@@ -40,7 +40,7 @@ public:
 	virtual void Run(void)
 	{
 		int		iResult;
-		BOOL	bResult;
+		bool	bResult;
 
 		while (IsRunning() || mpcQueue->IsNotEmpty())
 		{

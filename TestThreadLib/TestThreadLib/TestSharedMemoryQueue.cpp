@@ -22,7 +22,7 @@
 void TestSharedMemoryQueueBasic(void)
 {
 	CSharedMemoryQueue	cQueue;
-	BOOL				bResult;
+	bool				bResult;
 	CChars				sz;
 	char				szData[4 KB];
 	size_t				uiDataSize;
@@ -136,7 +136,7 @@ void TestSharedMemoryQueueOne(void)
 	int					iSize;
 	char				c;
 	size_t				uiSize;
-	BOOL				bResult;
+	bool				bResult;
 	int					iProduce;
 	int					iTaken;
 	CChars				szExpected;
@@ -339,7 +339,7 @@ void TestSharedMemoryQueueMultiThreadThisProducer(void)
 	int									iProcess;
 	int									iSize;
 	char								c;
-	BOOL								bDone;
+	bool								bDone;
 	int									iProduce;
 	SSharedMemoryQueueElement			sProducerData;
 	char								szQueueName[] = "TestMultiThreadThisProducer";
@@ -357,7 +357,7 @@ void TestSharedMemoryQueueMultiThreadThisProducer(void)
 
 	iProcess = 0;
 
-	bDone = FALSE;
+	bDone = false;
 	iSize = 100;
 	c = 33;
 	for (iProduce = 0; iProduce < THREADED_SHARED_QUEUE_PRODUCE_SIZE; iProduce++)
@@ -388,7 +388,7 @@ void TestSharedMemoryQueueMultiThreadThisProducer(void)
 			iProcess++;
 		}
 	}
-	bDone = TRUE;
+	bDone = true;
 	cProducersDone.miThreadsStopped++;
 
 	while (cConsumersDone.miThreadsStopped < 4)
@@ -431,7 +431,7 @@ void TestSharedMemoryQueueMultiProcessForkDuring(void)
 	SSharedMemoryQueueElement		sProducerData;
 	int								iSize;
 	char							c;
-	BOOL							bDone;
+	bool							bDone;
 	CSharedMemory					cResult;
 	SProcessSharedQueueResult*		psResult;
 	CInterProcessDone				cProcessesDone;
@@ -454,7 +454,7 @@ void TestSharedMemoryQueueMultiProcessForkDuring(void)
 
 	iSize = 100;
 	c = 33;
-	bDone = FALSE;
+	bDone = false;
 	for (iProduce = 0; iProduce < PROCESS_SHARED_QUEUE_PRODUCE_SIZE; iProduce++)
 	{
 		memset(sProducerData.sz, c, iSize);
@@ -477,11 +477,11 @@ void TestSharedMemoryQueueMultiProcessForkDuring(void)
 
 		if ((iProduce % 1000 == 999) && (iProcess < 4))
 		{
-			ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, IToA(iProcess, szProcess), FALSE);
+			ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, IntToString(szProcess, 16, iProcess), false);
 			iProcess++;
 		}
 	}
-	bDone = TRUE;
+	bDone = true;
 
 	cProcessesDone.Stop();
 	cProcessesDone.Wait(5);
@@ -523,7 +523,7 @@ void TestSharedMemoryQueueMultiProcessForkEarly(void)
 	SSharedMemoryQueueElement		sProducerData;
 	int								iSize;
 	char							c;
-	BOOL							bDone;
+	bool							bDone;
 	CSharedMemory					cResult;
 	SProcessSharedQueueResult* psResult;
 	CInterProcessDone				cProcessesDone;
@@ -540,14 +540,14 @@ void TestSharedMemoryQueueMultiProcessForkEarly(void)
 	cProcessesDone.Start();
 
 	cQueue.Init(szQueueName, 0);
-	ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, "0", FALSE);
-	ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, "1", FALSE);
-	ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, "2", FALSE);
-	ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, "3", FALSE);
+	ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, "0", false);
+	ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, "1", false);
+	ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, "2", false);
+	ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, "3", false);
 
 	iSize = 100;
 	c = 33;
-	bDone = FALSE;
+	bDone = false;
 	for (iProduce = 0; iProduce < PROCESS_SHARED_QUEUE_PRODUCE_SIZE; iProduce++)
 	{
 		memset(sProducerData.sz, c, iSize);
@@ -568,7 +568,7 @@ void TestSharedMemoryQueueMultiProcessForkEarly(void)
 			c = 33;
 		}
 	}
-	bDone = TRUE;
+	bDone = true;
 
 	cProcessesDone.Stop();
 	cProcessesDone.Wait(5);

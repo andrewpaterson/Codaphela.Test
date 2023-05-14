@@ -47,10 +47,10 @@ int TestThreadLib(int argc, char* argv[])
 //
 //
 //////////////////////////////////////////////////////////////////////////
-int main(int argc, char* argv[])
+int __cdecl main(int argc, char* argv[])
 {
 	CMainProcessDirector	cDirector;
-	BOOL					bMainRan;
+	bool					bMainRan;
 
 	cDirector.Init();
 	cDirector.AddRedirect("test", TestThreadLib);

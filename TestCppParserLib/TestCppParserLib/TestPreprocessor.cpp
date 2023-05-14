@@ -3,7 +3,7 @@
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/FileUtil.h"
-#include "CoreLib/Operators.h"
+#include "BaseLib/Operators.h"
 #include "CppParserLib/Preprocessor.h"
 #include "CppParserLib/HeaderFileMap.h"
 #include "TestLib/Assert.h"

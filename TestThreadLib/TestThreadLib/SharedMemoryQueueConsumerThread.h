@@ -56,7 +56,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	void Run(void)
 	{
-		BOOL						bResult;
+		bool						bResult;
 		SSharedMemoryQueueElement	sConsumerData;
 		size_t						uiSize;
 		int							iTaken;

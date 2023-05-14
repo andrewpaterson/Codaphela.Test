@@ -239,9 +239,6 @@
       <Project>{e25d2dac-0e80-42b2-8fa7-99b837cf7588}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\CommonLibraries\CoreLib\CoreLib.vcxproj">
-      <Project>{5918ec20-07c3-485f-80bb-bed4f96ea48f}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\CommonLibraries\JavaParserLib\JavaParserLib.vcxproj">
       <Project>{4d010c1e-4dce-4271-9b1c-87bbf0bc761c}</Project>
     </ProjectReference>

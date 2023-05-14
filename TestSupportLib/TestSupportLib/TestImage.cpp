@@ -2,7 +2,7 @@
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/PointerRemapper.h"
 #include "BaseLib/FastFunctions.h"
-#include "CoreLib/Operators.h"
+#include "BaseLib/Operators.h"
 #include "BaseLib/TypeConverter.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/Objects.h"

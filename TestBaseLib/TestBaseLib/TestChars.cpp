@@ -169,7 +169,7 @@ void TestCharsSplit(void)
 	cStrings.Kill();
 	
 	sz.Init("\
-Turburust CoreLib is free software: you can redistribute it and/or modify\n\
+Turburust BaseLib is free software: you can redistribute it and/or modify\n\
 it under the terms of the GNU Lesser General Public License as published by\n\
 the Free Software Foundation, either version 3 of the License, or\n\
 (at your option) any later version.");
@@ -180,7 +180,7 @@ the Free Software Foundation, either version 3 of the License, or\n\
 	sz.Kill();
 
 	AssertInt(4, cStrings.NumElements());
-	AssertString("Turburust CoreLib is free software: you can redistribute it and/or modify", cStrings.Get(0)->Text());
+	AssertString("Turburust BaseLib is free software: you can redistribute it and/or modify", cStrings.Get(0)->Text());
 	AssertString("it under the terms of the GNU Lesser General Public License as published by", cStrings.Get(1)->Text());
 	AssertString("the Free Software Foundation, either version 3 of the License, or", cStrings.Get(2)->Text());
 	AssertString("(at your option) any later version.", cStrings.Get(3)->Text());
@@ -193,7 +193,7 @@ the Free Software Foundation, either version 3 of the License, or\n\
 	psz = cStrings.Get(0);
 	AssertPointer(sz2.Text(), psz->Text());
 	AssertInt(73, psz->Length());
-	AssertBool(true, psz->Equals("Turburust CoreLib is free software: you can redistribute it and/or modify", 73));
+	AssertBool(true, psz->Equals("Turburust BaseLib is free software: you can redistribute it and/or modify", 73));
 	psz = cStrings.Get(1);
 	AssertInt(75, psz->Length());
 	AssertBool(true, psz->Equals("it under the terms of the GNU Lesser General Public License as published by", 75));

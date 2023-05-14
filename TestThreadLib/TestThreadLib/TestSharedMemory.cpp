@@ -23,7 +23,7 @@ void AssertMappedFile(char* szName, int iExpectedMappedCount)
 
 	hMapFile = OpenFileMapping(
 		FILE_MAP_ALL_ACCESS,
-		FALSE,
+		false,
 		szName);
 
 	if (iExpectedMappedCount > 0)
@@ -64,7 +64,7 @@ void TestSharedMemoryOneProcess(void)
 {
 	CResizableSharedMemory	cSharedOwner;
 	CResizableSharedMemory	cSharedClient;
-	BOOL			bResult;
+	bool			bResult;
 	char*			pcOwner;
 	char*			pcClient;
 	int				i;
@@ -113,7 +113,7 @@ void TestSharedMemoryResizeOneProcess(void)
 	CResizableSharedMemory	cSharedOwner;
 	CResizableSharedMemory	cSharedClient;
 	CResizableSharedMemory	cSharedNewOwner;
-	BOOL			bResult;
+	bool			bResult;
 	char*			pcOwner;
 	char*			pcClient;
 	int				i;
@@ -144,9 +144,9 @@ void TestSharedMemoryResizeOneProcess(void)
 	cSharedOwner.Close();
 
 	cSharedNewOwner.Init("Local\\TestSharedMemoryResizeOneProcess");
-	gcLogger.SetBreakOnError(FALSE);
+	gcLogger.SetBreakOnError(false);
 	bResult = cSharedNewOwner.Create(3940 + 16);
-	gcLogger.SetBreakOnError(TRUE);
+	gcLogger.SetBreakOnError(true);
 	AssertFalse(bResult);
 	cSharedNewOwner.Kill();
 
@@ -187,11 +187,11 @@ void TestSharedMemoryResizeOneProcess(void)
 void TestSharedMemoryTwoProcesses(void)
 {
 	CResizableSharedMemory	cSharedOwner;
-	BOOL			bResult;
+	bool			bResult;
 	unsigned char*	pcOwner;
 	int				i, j;
 	char			szSharedMemoryName[] = {"Local\\TestSharedMemoryTwoProcesses"};
-	BOOL			bAllMatch;
+	bool			bAllMatch;
 
 	cSharedOwner.Init(szSharedMemoryName);
 	bResult = cSharedOwner.Create(256);
@@ -205,16 +205,16 @@ void TestSharedMemoryTwoProcesses(void)
 		pcOwner[i] = (char)i;
 	}
 
-	ForkProcess("--test-shared-memory", szSharedMemoryName, "256", FALSE);
+	ForkProcess("--test-shared-memory", szSharedMemoryName, "256", false);
 
 	for (j = 0; j < 50; j++)
 	{
-		bAllMatch = TRUE;
+		bAllMatch = true;
 		for (i = 0; i < 256; i++)
 		{
 			if (255 - (unsigned char)i != pcOwner[i])
 			{
-				bAllMatch = FALSE;
+				bAllMatch = false;
 				break;
 			}
 		}
@@ -248,13 +248,13 @@ void AssertFilledMemory(char* pcMemory, int iChunkSize)
 	int		iB;
 	int		iC;
 	int		iD;
-	BOOL	bOneEqualsChunkSize;
-	BOOL	bSumEqualsChunkSize;
+	bool	bOneEqualsChunkSize;
+	bool	bSumEqualsChunkSize;
 	int		i;
 	CChars	sz;
 
-	bOneEqualsChunkSize = TRUE;
-	bSumEqualsChunkSize = TRUE;
+	bOneEqualsChunkSize = true;
+	bSumEqualsChunkSize = true;
 
 	for (i = 0; i < 16000 / iChunkSize; i++)
 	{
@@ -294,7 +294,7 @@ void TestSharedMemoryResizeOneProcessFill(void)
 	CResizableSharedMemory	cSharedOwner;
 	CResizableSharedMemory	cSharedClient[4];
 	CResizableSharedMemory*	pcSharedClient;
-	BOOL					bResult;
+	bool					bResult;
 	char*					pcMemory;
 	int						i;
 	int						iChunkSize;
@@ -337,7 +337,7 @@ void TestSharedMemoryResizeOneProcessFill(void)
 		{
 			pcSharedClient->Close();
 			pcSharedClient->Kill();
-			AssertTrue(FALSE);
+			AssertTrue(false);
 			break;
 		}
 
@@ -379,7 +379,7 @@ void TestSharedMemoryResizeOneProcessResizeAndRelease(void)
 {
 	CResizableSharedMemory	cSharedOwner;
 	CResizableSharedMemory	cSharedClient[4];
-	BOOL					bResult;
+	bool					bResult;
 	int						i;
 	char					szMemoryName[] = { "Local\\TestSharedMemoryResizeOneProcessResizeAndRelease" };
 	CRandom					cRandom;
@@ -425,7 +425,7 @@ void TestSharedMemoryResizeMultiThread(void)
 {
 	CResizableSharedMemory	cSharedOwner;
 	CInterProcessMutex		cMutex;
-	BOOL					bResult;
+	bool					bResult;
 	char					szSharedMemoryName[] = { "Local\\TestSharedMemoryResizeMultiThread" };
 	char					szMutexName[] = { "Local\\TestMutexResizeMultiThread" };
 	unsigned int*			puiPosition;
@@ -532,7 +532,7 @@ void TestSharedMemoryResizeMultiProcess(void)
 {
 	CResizableSharedMemory		cSharedOwner;
 	CInterProcessMutex			cMutex;
-	BOOL						bResult;
+	bool						bResult;
 	char						szSharedMemoryName[] = { "Local\\TestSharedMemoryResizeMultiProcess" };
 	char						szMutexName[] = { "Local\\TestMutexResizeMultiProcess" };
 	unsigned int*				puiPosition;
@@ -547,7 +547,7 @@ void TestSharedMemoryResizeMultiProcess(void)
 	bResult = cMutex.Create();
 	AssertTrue(bResult);
 	iChunkSize = 16;
-	IToA(iChunkSize, szChunkSize);
+	IntToString(szChunkSize, 16, iChunkSize);
 
 	cSharedOwner.Init(szSharedMemoryName, "Owner");
 	bResult = cSharedOwner.Create(sizeof(int) + iChunkSize);
@@ -565,10 +565,10 @@ void TestSharedMemoryResizeMultiProcess(void)
 	cDone.Init(szSharedMemoryName, ":D");
 	cDone.Start();
 
-	ForkProcess("--test-shared-memory", szSharedMemoryName, szMutexName, "A", szChunkSize, FALSE);
-	ForkProcess("--test-shared-memory", szSharedMemoryName, szMutexName, "B", szChunkSize, FALSE);
-	ForkProcess("--test-shared-memory", szSharedMemoryName, szMutexName, "C", szChunkSize, FALSE);
-	ForkProcess("--test-shared-memory", szSharedMemoryName, szMutexName, "D", szChunkSize, FALSE);
+	ForkProcess("--test-shared-memory", szSharedMemoryName, szMutexName, "A", szChunkSize, false);
+	ForkProcess("--test-shared-memory", szSharedMemoryName, szMutexName, "B", szChunkSize, false);
+	ForkProcess("--test-shared-memory", szSharedMemoryName, szMutexName, "C", szChunkSize, false);
+	ForkProcess("--test-shared-memory", szSharedMemoryName, szMutexName, "D", szChunkSize, false);
 	
 	for (;;)
 	{

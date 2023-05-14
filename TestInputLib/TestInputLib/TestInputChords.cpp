@@ -1,7 +1,7 @@
 #include "BaseLib/Logger.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
-#include "CoreLib/Operators.h"
+#include "BaseLib/Operators.h"
 #include "InputLib/Input.h"
 #include "TestLib/Assert.h"
 #include "Player.h"

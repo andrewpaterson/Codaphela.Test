@@ -16,7 +16,7 @@ void TestProcessFork(void)
 
 	CFileUtil		cFileUtil;
 	int				i;
-	BOOL			bFileExists;
+	bool			bFileExists;
 	char			szFileName[] = {"Output" _FS_ "test-client-process.txt"};
 	CTextFile		cTextFile;
 
@@ -24,9 +24,9 @@ void TestProcessFork(void)
 	cFileUtil.Delete(szFileName);
 	AssertFalse(cFileUtil.Exists(szFileName));
 
-	ForkProcess("--test-client-process", szFileName, FALSE);
+	ForkProcess("--test-client-process", szFileName, false);
 
-	bFileExists = FALSE;
+	bFileExists = false;
 	for (i = 0; i < 50; i++)
 	{
 		std::this_thread::sleep_for(std::chrono::milliseconds(16));

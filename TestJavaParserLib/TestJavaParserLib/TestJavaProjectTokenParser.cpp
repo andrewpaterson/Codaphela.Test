@@ -4,7 +4,7 @@
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TextFile.h"
-#include "CoreLib/Operators.h"
+#include "BaseLib/Operators.h"
 #include "TestLib/Assert.h"
 #include "JavaParserLib/JavaTokenParser.h"
 #include "JavaTokenAssert.h"

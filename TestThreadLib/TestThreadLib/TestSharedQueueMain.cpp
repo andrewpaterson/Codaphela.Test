@@ -16,7 +16,7 @@ int TestSharedMemoryQueue(char* szSharedQueueName, char* szSharedResultName, cha
 {
 	CSharedMemory				cResult;
 	SProcessSharedQueueResult*	psResult;
-	BOOL						bResult;
+	bool						bResult;
 	SSharedMemoryQueueElement	sConsumerData;
 	size_t						uiSize;
 	CSharedMemoryQueue			cQueue;

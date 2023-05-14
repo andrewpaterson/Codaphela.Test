@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CoreLib/PlainTextEditor.h"
+#include "BaseLib/PlainTextEditor.h"
 #include "TestLib/Assert.h"
 
 
