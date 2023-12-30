@@ -70,7 +70,7 @@ void TestFileIOHelpers(void)
 	unsigned char	ab[7] = {0x5e, 0xe1, 0x9e, 0x03, 0x32, 0x1f, 0x93};
 	int				ai[3] = {0x7deb74f3, 0x41b0f58c, 0x5cbf05d8};
 	int				i;
-	long long int	l;
+	int64_t	l;
 	float			f;
 	double			d;
 	char			c;
@@ -541,10 +541,10 @@ void TestFileIOMap(void)
 {
 	CMemoryFile						cMemory;
 	CFileBasic						cFile;
-	CMapTemplate<int, long double>	cMap;
+	CMapTemplate<int, float96>	cMap;
 	int								i;
-	long double						ld;
-	CMapTemplate<int, long double>	cMapIn;
+	float96						ld;
+	CMapTemplate<int, float96>	cMapIn;
 	CMapStringInt					mssi;
 	CMapStringInt					mssii;
 

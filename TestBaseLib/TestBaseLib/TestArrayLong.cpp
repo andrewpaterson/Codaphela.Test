@@ -17,7 +17,7 @@ void TestArrayLongRemoveDuplicates(void)
 	AssertInt(6, cArray.NumElements());
 	AssertInt(8, cArray.AllocatedElements());
 	AssertInt(4, cArray.ChunkSize());
-	AssertInt(sizeof(long long int), cArray.ElementSize());
+	AssertInt(sizeof(int64_t), cArray.ElementSize());
 	AssertFalse(bRemoved);
 	cArray.Kill();
 

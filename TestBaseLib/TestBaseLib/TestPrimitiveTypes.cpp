@@ -4,8 +4,8 @@
 struct TestPrimitiveLongStruct
 {
 public:
-	long long int lli1;
-	long long int lli2;
+	int64_t lli1;
+	int64_t lli2;
 };
 
 
@@ -67,7 +67,7 @@ void TestPrimitiveTypesSizes(void)
 	AssertInt(1, sizeof(char));
 	AssertInt(2, sizeof(wchar_t));
 	AssertInt(4, sizeof(int));
-	AssertInt(8, sizeof(long long int));
+	AssertInt(8, sizeof(int64_t));
 	AssertInt(4, sizeof(void*));
 }
 

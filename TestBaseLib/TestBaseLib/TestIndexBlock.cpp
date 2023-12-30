@@ -18,12 +18,12 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-bool AddToIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, long long int lliData)
+bool AddToIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, int64_t lliData)
 {
 	int				iStrLen;
 
 	iStrLen = strlen(szKey) + 1;
-	return pcIndexBlock->Put(szKey, iStrLen, &lliData, sizeof(long long int));
+	return pcIndexBlock->Put(szKey, iStrLen, &lliData, sizeof(int64_t));
 }
 
 
@@ -31,7 +31,7 @@ bool AddToIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, long long int lliDa
 //
 //
 //////////////////////////////////////////////////////////////////////////
-bool GetFromIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, long long int** pplli, int* piSize)
+bool GetFromIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, int64_t** pplli, int* piSize)
 {
 	int				iStrLen;
 
@@ -44,9 +44,9 @@ bool GetFromIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, long long int** p
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, long long int lliData)
+void AssertIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, int64_t lliData)
 {
-	long long int*	plli;
+	int64_t*	plli;
 	int				iStrLen;
 
 	plli = NULL;
@@ -63,10 +63,10 @@ void AssertIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, long long int lliD
 void TestIndexBlockGet(void)
 {
 	CIndexBlock		cIndexBlock;
-	long long int	llia[64];
+	int64_t	llia[64];
 	int				i;
-	long long int	lli;
-	long long int* plli;
+	int64_t	lli;
+	int64_t* plli;
 	int				iSize;
 
 	lli = 0x886c857864030e05;
@@ -84,11 +84,11 @@ void TestIndexBlockGet(void)
 	AssertInt(3, cIndexBlock.NumElements());
 	AssertTrue(GetFromIndexBlock(&cIndexBlock, "cocker", &plli, &iSize));
 	AssertLongLongInt(llia[0], *plli);
-	AssertInt(sizeof(long long int), iSize);
+	AssertInt(sizeof(int64_t), iSize);
 
 	AssertTrue(GetFromIndexBlock(&cIndexBlock, "cock", &plli, &iSize));
 	AssertLongLongInt(llia[1], *plli);
-	AssertInt(sizeof(long long int), iSize);
+	AssertInt(sizeof(int64_t), iSize);
 
 	AssertTrue(GetFromIndexBlock(&cIndexBlock, "cockerel", &plli, &iSize));
 	AssertLongLongInt(llia[2], *plli);
@@ -110,10 +110,10 @@ void TestIndexBlockGet(void)
 	AddToIndexBlock(&cIndexBlock, "ignominy", llia[10]);
 	AssertTrue(GetFromIndexBlock(&cIndexBlock, "inimical", &plli, &iSize));
 	AssertLongLongInt(llia[9], *plli);
-	AssertInt(sizeof(long long int), iSize);
+	AssertInt(sizeof(int64_t), iSize);
 	AssertTrue(GetFromIndexBlock(&cIndexBlock, "cocker", &plli, &iSize));
 	AssertLongLongInt(llia[0], *plli);
-	AssertInt(sizeof(long long int), iSize);
+	AssertInt(sizeof(int64_t), iSize);
 
 	AddToIndexBlock(&cIndexBlock, "voluble", llia[11]);
 	AddToIndexBlock(&cIndexBlock, "intransigent", llia[12]);
@@ -123,10 +123,10 @@ void TestIndexBlockGet(void)
 	AssertInt(16, cIndexBlock.NumElements());
 	AssertTrue(GetFromIndexBlock(&cIndexBlock, "solicitous", &plli, &iSize));
 	AssertLongLongInt(llia[15], *plli);
-	AssertInt(sizeof(long long int), iSize);
+	AssertInt(sizeof(int64_t), iSize);
 	AssertTrue(GetFromIndexBlock(&cIndexBlock, "cock", &plli, &iSize));
 	AssertLongLongInt(llia[1], *plli);
-	AssertInt(sizeof(long long int), iSize);
+	AssertInt(sizeof(int64_t), iSize);
 
 	AddToIndexBlock(&cIndexBlock, "resplendent", llia[16]);
 	AssertInt(17, cIndexBlock.NumElements());

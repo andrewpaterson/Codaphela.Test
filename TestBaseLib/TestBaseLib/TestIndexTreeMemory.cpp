@@ -1231,10 +1231,10 @@ void TestIndexTreeMemoryPut(void)
 {
 	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
-	long long int			lliLarry;
-	long long int			lliThe;
-	long long int			lliLamb;
-	long long int			lliResult;
+	int64_t			lliLarry;
+	int64_t			lliThe;
+	int64_t			lliLamb;
+	int64_t			lliResult;
 
 	cIndex.Init();
 	cAccess.Init(&cIndex);
@@ -1289,9 +1289,9 @@ void TestIndexTreeMemoryDataFree(void)
 {
 	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
-	long long int			lliLarry;
-	long long int			lliThe;
-	long long int			lliLamb;
+	int64_t			lliLarry;
+	int64_t			lliThe;
+	int64_t			lliLamb;
 	CDataFreeCallBack		cDataFree;
 
 	giIndexTreeMemoryCallbackData = 0;

@@ -15,7 +15,7 @@ void TestOperatorAdd(void)
 	OperatorsInit();
 
 	int	ix, iy, iz;
-	unsigned long long int ullix, ulliy, ulliz;
+	uint64_t ullix, ulliy, ulliz;
 	char cx, cy, cz;
 
 	ix = 3;

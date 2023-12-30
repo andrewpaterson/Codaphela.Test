@@ -87,12 +87,12 @@ void TestMapBlockInternals(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-bool AddToMapBlock(CMapBlock* pcMapBlock, char* szKey, long long int lliData)
+bool AddToMapBlock(CMapBlock* pcMapBlock, char* szKey, int64_t lliData)
 {
 	int				iStrLen;
 
 	iStrLen = strlen(szKey) + 1;
-	return pcMapBlock->Put(szKey, iStrLen, &lliData, sizeof(long long int));
+	return pcMapBlock->Put(szKey, iStrLen, &lliData, sizeof(int64_t));
 }
 
 
@@ -100,7 +100,7 @@ bool AddToMapBlock(CMapBlock* pcMapBlock, char* szKey, long long int lliData)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-bool GetFromMapBlock(CMapBlock* pcMapBlock, char* szKey, long long int** pplli, int* piSize)
+bool GetFromMapBlock(CMapBlock* pcMapBlock, char* szKey, int64_t** pplli, int* piSize)
 {
 	int				iStrLen;
 
@@ -113,9 +113,9 @@ bool GetFromMapBlock(CMapBlock* pcMapBlock, char* szKey, long long int** pplli, 
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertMapBlock(CMapBlock* pcMapBlock, char* szKey, long long int lliData)
+void AssertMapBlock(CMapBlock* pcMapBlock, char* szKey, int64_t lliData)
 {
-	long long int*	plli;
+	int64_t*	plli;
 	int				iStrLen;
 
 	plli = NULL;
@@ -132,10 +132,10 @@ void AssertMapBlock(CMapBlock* pcMapBlock, char* szKey, long long int lliData)
 void TestMapBlockGet(void)
 {
 	CMapBlock		cMap;
-	long long int	llia[64];
+	int64_t	llia[64];
 	int				i;
-	long long int	lli;
-	long long int*	plli;
+	int64_t	lli;
+	int64_t*	plli;
 	int				iSize;
 
 	lli = 0x886c857864030e05;
@@ -153,11 +153,11 @@ void TestMapBlockGet(void)
 	AssertInt(3, cMap.NumElements());
 	AssertTrue(GetFromMapBlock(&cMap, "cocker", &plli, &iSize));
 	AssertLongLongInt(llia[0], *plli);
-	AssertInt(sizeof(long long int), iSize);
+	AssertInt(sizeof(int64_t), iSize);
 
 	AssertTrue(GetFromMapBlock(&cMap, "cock", &plli, &iSize));
 	AssertLongLongInt(llia[1], *plli);
-	AssertInt(sizeof(long long int), iSize);
+	AssertInt(sizeof(int64_t), iSize);
 
 	AssertTrue(GetFromMapBlock(&cMap, "cockerel", &plli, &iSize));
 	AssertLongLongInt(llia[2], *plli);
@@ -179,10 +179,10 @@ void TestMapBlockGet(void)
 	AddToMapBlock(&cMap, "ignominy", llia[10]);
 	AssertTrue(GetFromMapBlock(&cMap, "inimical", &plli, &iSize));
 	AssertLongLongInt(llia[9], *plli);
-	AssertInt(sizeof(long long int), iSize);
+	AssertInt(sizeof(int64_t), iSize);
 	AssertTrue(GetFromMapBlock(&cMap, "cocker", &plli, &iSize));
 	AssertLongLongInt(llia[0], *plli);
-	AssertInt(sizeof(long long int), iSize);
+	AssertInt(sizeof(int64_t), iSize);
 
 	AddToMapBlock(&cMap, "voluble", llia[11]);
 	AddToMapBlock(&cMap, "intransigent", llia[12]);
@@ -192,10 +192,10 @@ void TestMapBlockGet(void)
 	AssertInt(16, cMap.NumElements());
 	AssertTrue(GetFromMapBlock(&cMap, "solicitous", &plli, &iSize));
 	AssertLongLongInt(llia[15], *plli);
-	AssertInt(sizeof(long long int), iSize);
+	AssertInt(sizeof(int64_t), iSize);
 	AssertTrue(GetFromMapBlock(&cMap, "cock", &plli, &iSize));
 	AssertLongLongInt(llia[1], *plli);
-	AssertInt(sizeof(long long int), iSize);
+	AssertInt(sizeof(int64_t), iSize);
 
 	AddToMapBlock(&cMap, "resplendent", llia[16]);
 	AssertInt(17, cMap.NumElements());

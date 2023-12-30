@@ -13,7 +13,7 @@ void TestIndexTreeNodeMemoryInit(void)
 {
 	CIndexTreeNodeMemory*	pcNode;
 	CIndexTreeNodeMemory	pcChildNode;
-	long long int			uiObject;
+	int64_t			uiObject;
 	CIndexTreeNodeMemory*	pcResult;
 	CTestIndexTreeMemory	cTree;
 	SLogConfig				sLogConfig;
