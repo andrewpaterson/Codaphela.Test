@@ -264,10 +264,6 @@
       <Project>{e25d2dac-0e80-42b2-8fa7-99b837cf7588}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\CommonLibraries\CoreLib\CoreLib.vcxproj">
-      <Project>{52a2d18b-bc88-4eb9-9ef0-ae58c1e9fdd5}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\CommonLibraries\StandardLib\StandardLib.vcxproj">
       <Project>{2cfa23fa-6565-4744-8b75-9790b21cc0e5}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

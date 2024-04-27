@@ -52,7 +52,7 @@ void TestIndexTreeIteratorUnsafeIterate(void)
 	{
 		iKeyLength = strlen((char*)pvKey);
 		iDataSize = strlen((char*)pvData);
-		cIndexTree.Put(pvKey, iKeyLength, pvData, (unsigned char)iDataSize);
+		cIndexTree.Put(pvKey, iKeyLength, pvData, (uint8)iDataSize);
 
 		bExists = cMap.Iterate(&sMapIter, (void**)&pvKey, NULL, (void**)&pvData, NULL);
 	}

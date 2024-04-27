@@ -62,5 +62,5 @@ public:
 };
 
 
-#endif // !__NAMED_OBJECT_TEST_CLASSES_H__
+#endif // __NAMED_OBJECT_TEST_CLASSES_H__
 

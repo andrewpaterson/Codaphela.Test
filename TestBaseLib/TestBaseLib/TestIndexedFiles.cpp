@@ -113,7 +113,7 @@ void TestIndexedFilesWrite(void)
 	CFileDataIndex			cDataIndex2;
 	CFileDataIndex			cDataIndex3;
 	CFileDataIndex			cDataIndex4;
-	unsigned int			uiDataSize;
+	uint32			uiDataSize;
 	char					szData[1024];
 	SLogConfig				sLogConfig;
 

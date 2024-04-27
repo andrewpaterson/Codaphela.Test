@@ -286,7 +286,7 @@ void TestFlagsToString()
     FlagsToString(sz, 40, (int)0b10111011110111101011100101101111);
     AssertString("10111011 11011110 10111001 01101111", sz);
 
-    FlagsToString(sz, 40, (short int)0b1011101111011110);
+    FlagsToString(sz, 40, (int16)0b1011101111011110);
     AssertString("10111011 11011110", sz);
 
     FlagsToString(sz, 40, (char)0b11011110);

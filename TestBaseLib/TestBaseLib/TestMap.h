@@ -7,7 +7,7 @@
 void MakeKey(CRandom* cRandom, CArrayChars* aszWords, CChars* sz);
 
 
-#endif // !__TEST_MAP_H__
+#endif // __TEST_MAP_H__
 
 
 

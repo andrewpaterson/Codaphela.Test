@@ -35,5 +35,5 @@ public:
 };
 
 
-#endif // !__CONSTRUCTORS_TEST_CLASSES_H__
+#endif // __CONSTRUCTORS_TEST_CLASSES_H__
 

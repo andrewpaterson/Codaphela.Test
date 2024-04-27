@@ -92,18 +92,18 @@ void TestEscapeCodes(void)
 	AssertString("~",     GetEscapeString((char)126, sz));
 	AssertString("\\x7f", GetEscapeString((char)127, sz));
 
-	AssertString("€",     GetEscapeString((unsigned char)128, sz));
-	AssertString("\\x81", GetEscapeString((unsigned char)129, sz));
-	AssertString("‚",     GetEscapeString((unsigned char)130, sz));
-	AssertString("ƒ",     GetEscapeString((unsigned char)131, sz));
-	AssertString("„",     GetEscapeString((unsigned char)132, sz));
+	AssertString("€",     GetEscapeString((uint8)128, sz));
+	AssertString("\\x81", GetEscapeString((uint8)129, sz));
+	AssertString("‚",     GetEscapeString((uint8)130, sz));
+	AssertString("ƒ",     GetEscapeString((uint8)131, sz));
+	AssertString("„",     GetEscapeString((uint8)132, sz));
 
-	AssertString("ú",     GetEscapeString((unsigned char)250, sz));
-	AssertString("û",     GetEscapeString((unsigned char)251, sz));
-	AssertString("ü",     GetEscapeString((unsigned char)252, sz));
-	AssertString("ý",     GetEscapeString((unsigned char)253, sz));
-	AssertString("þ",     GetEscapeString((unsigned char)254, sz));
-	AssertString("\\xff", GetEscapeString((unsigned char)255, sz));
+	AssertString("ú",     GetEscapeString((uint8)250, sz));
+	AssertString("û",     GetEscapeString((uint8)251, sz));
+	AssertString("ü",     GetEscapeString((uint8)252, sz));
+	AssertString("ý",     GetEscapeString((uint8)253, sz));
+	AssertString("þ",     GetEscapeString((uint8)254, sz));
+	AssertString("\\xff", GetEscapeString((uint8)255, sz));
 
 	TestStatistics();
 }

@@ -45,5 +45,5 @@ class CConstructorCaller4 : public CPostMalloc<CConstructorTestClass>
 };
 
 
-#endif // !__CONSTRUCTOR_CALL_TEST_CLASSES_H__
+#endif // __CONSTRUCTOR_CALL_TEST_CLASSES_H__
 

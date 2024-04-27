@@ -12,5 +12,5 @@ public:
 };
 
 
-#endif // !__DEATH_TRACKER_H__
+#endif // __DEATH_TRACKER_H__
 

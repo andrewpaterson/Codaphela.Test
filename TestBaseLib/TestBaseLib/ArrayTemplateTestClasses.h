@@ -25,6 +25,6 @@ public:
 };
 
 
-#endif // !__ARRAY_TEMPLATE_TEST_CLASSES__
+#endif // __ARRAY_TEMPLATE_TEST_CLASSES__
 
 

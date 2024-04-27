@@ -14,7 +14,7 @@ void TestWindowsFilesTruncate(void)
 	bool			bResult;
 	char			szResult[100];
 	HANDLE			hFile;
-	unsigned int	uiResult;
+	uint32	uiResult;
 
 	cFileUtil.TouchDir("Output");
 

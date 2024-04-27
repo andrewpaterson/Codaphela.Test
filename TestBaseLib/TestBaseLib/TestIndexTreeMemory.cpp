@@ -735,8 +735,8 @@ void TestIndexTreeMemoryAddLongLong(void)
 {
 	CIndexTreeMemory		cIndex;
 	CIndexTreeMemoryAccess	cAccess;
-	long long				li;
-	long long				li2;
+	int64				li;
+	int64				li2;
 
 	cIndex.Init();
 	cAccess.Init(&cIndex);
@@ -759,7 +759,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 {
 	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
-	long long				li;
+	int64				li;
 	CMemoryAllocator		cMemoryAlloc;
 	CCountingAllocator		cTrackingAlloc;
 	int						iExpectedRootSize;
@@ -781,7 +781,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 	li = 0x77LL; cAccess.PutStringLong("M", li);
 	AssertInt(2, cIndex.NumAllocatedNodes());
 	AssertInt(1, cIndex.RecurseSize());
-	AssertInt(1064, iExpectedRootSize + sizeof(CIndexTreeNodeMemory) + sizeof(long long));
+	AssertInt(1064, iExpectedRootSize + sizeof(CIndexTreeNodeMemory) + sizeof(int64));
 	AssertInt(1076, cTrackingAlloc.AllocatedUserSize());
 
 	li = 0x88LL; cAccess.PutStringLong("MA", li);
@@ -862,7 +862,7 @@ void TestIndexTreeMemoryIterate(void)
 	SIndexTreeMemoryUnsafeIterator	sIter;
 	char*							szData;
 	size_t							iDataSize;
-	unsigned char					c;
+	uint8					c;
 	char							szKey[1024];
 	size_t							iKeySize;
 	char							szResult[256];
@@ -1055,7 +1055,7 @@ void TestIndexTreeMemoryRemoveOnRoot(void)
 	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	int						i;
-	unsigned char			cKey;
+	uint8			cKey;
 	int						iData;
 	CIndexTreeNodeMemory*	pcRoot;
 	CIndexTreeNodeMemory*	pcOldRoot;
@@ -1076,7 +1076,7 @@ void TestIndexTreeMemoryRemoveOnRoot(void)
 
 	for (i = 0; i <= UCHAR_MAX; i++)
 	{
-		cKey = (unsigned char)i;
+		cKey = (uint8)i;
 		memset(&iData, cKey, sizeof(int));
 		cIndex.Put(&cKey, 1, &iData, sizeof(int));
 
@@ -1094,7 +1094,7 @@ void TestIndexTreeMemoryRemoveOnRoot(void)
 
 	for (i = 0; i <= UCHAR_MAX; i++)
 	{
-		cKey = (unsigned char)(i / 2);
+		cKey = (uint8)(i / 2);
 		if (i % 2 == 1)
 		{
 			cKey = 255 - cKey;
@@ -1154,7 +1154,7 @@ void TestIndexTreeMemoryResizeData(void)
 	iNodeMemoryOffset1 = (size_t)pcNode->GetNodesMemory() - (size_t)pcNode;
 	AssertInt(cIndex.SizeofNode(), iNodeMemoryOffset1);
 
-	AssertTrue(cAccess.PutStringData("A", szAObject, (unsigned char)strlen(szAObject) + 1));
+	AssertTrue(cAccess.PutStringData("A", szAObject, (uint8)strlen(szAObject) + 1));
 
 	pcNode = cIndex.GetNode("A", 1);
 	AssertInt(3, pcNode->NumIndexes());

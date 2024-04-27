@@ -28,7 +28,7 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 	OIndex								oiViolation;
 	int									iLenViolation;
 	CFileUtil							cFileUtil;
-	unsigned int						uiDataSize;
+	uint32						uiDataSize;
 	char								szData[1024];
 	char								szDirectory[] = "Output" _FS_ "Database0";
 	char								szSubDirectory[] = "Data";
@@ -183,7 +183,7 @@ void TestIndexedDataFlushClearCache(void)
 	char								szStream[] = "Stream";
 	char								szDirectory[] = "Output" _FS_ "Database1a";
 	CFileUtil							cFileUtil;
-	unsigned int						uiDataSize;
+	uint32						uiDataSize;
 	char								szData[7];
 	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	SLogConfig							sLogConfig;
@@ -317,7 +317,7 @@ void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 	char						szStream[] = "Stream";
 	char						szDirectory[] = "Output" _FS_ "Database1b";
 	CFileUtil					cFileUtil;
-	unsigned int				uiDataSize;
+	uint32				uiDataSize;
 	char						szData[7];
 	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	CDurableFileController		cController;
@@ -612,9 +612,9 @@ void TestIndexedDataEvictKey(void)
 	char								szStream[] = "Stream";
 	char								szDirectory[] = "Output" _FS_ "Database1d";
 	CFileUtil							cFileUtil;
-	unsigned int						uiDataSize;
+	uint32						uiDataSize;
 	char								szData[1024];
-	unsigned int						uiSize;
+	uint32						uiSize;
 	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	CDurableFileController				cController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
@@ -751,7 +751,7 @@ void TestIndexedDataIndexEviction(void)
 	char								szStream[] = "Stream";
 	char								szDirectory[] = "Output" _FS_ "Database1e";
 	char								szIn[7];
-	unsigned int						uiSize;
+	uint32						uiSize;
 	filePos								iFileSize;
 	CFileUtil							cFileUtil;
 	CLifeInit<CIndexedDataConfig>		cIndexConfig;
@@ -914,9 +914,9 @@ void TestIndexedDataEvictAndFlush(void)
 	char								szStream[] = "Stream";
 	char								szDirectory[] = "Output" _FS_ "Database1f";
 	char								szIn[8];
-	unsigned int						uiSize;
+	uint32						uiSize;
 	CFileUtil							cFileUtil;
-	unsigned char						ucFlags;
+	uint8						ucFlags;
 	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	CDurableFileController				cController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
@@ -989,7 +989,7 @@ void TestIndexedDataFlushAndFlush(void)
 	char								szStream[] = "Stream";
 	char								szDirectory[] = "Output" _FS_ "Database1f";
 	char								szIn[8];
-	unsigned int						uiSize;
+	uint32						uiSize;
 	CFileUtil							cFileUtil;
 	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	CDurableFileController				cController;
@@ -1491,7 +1491,7 @@ void TestIndexedDataGet(void)
 	CIndexedData						cIndexedData;
 	CFileUtil							cFileUtil;
 	char								szData[256];
-	unsigned int						uiSize;
+	uint32						uiSize;
 	char								szSmellsLikeTeenSpirit[] = {"Smells Like Teen Spirit"};
 	char								szSeizedPotPlants[] = {"Seized pot plants turn out to be daisies"};
 	char								szCallingFromWindows[] = {"I am calling you from Windows"};
@@ -1611,7 +1611,7 @@ void TestIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 	CIndexedData						cIndexedData;
 	CFileUtil							cFileUtil;
 	char								szData[256];
-	unsigned int						uiSize;
+	uint32						uiSize;
 	char								szSmellsLikeTeenSpirit[] = { "Smells Like Teen Spirit" };
 	char								szSeizedPotPlants[] = { "Seized pot plants turn out to be daisies" };
 	char								szCallingFromWindows[] = { "I am calling you from Windows" };

@@ -207,7 +207,7 @@ void TestNamedIndexedDataAddChars(EIndexWriteThrough eWriteThrough)
 	CTestNamedIndexedDataObject			cResult;
 	bool								bResult;
 	CChars								szName;
-	unsigned int						uiDataSize;
+	uint32						uiDataSize;
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database2a");
 
@@ -1066,7 +1066,7 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 	CIndexTreeEvictionCounter			cNameEvictionCounter;
 	//bool								bFailed;
 	int									i;
-	unsigned int						uiDataSize;
+	uint32						uiDataSize;
 
 	aszWords.Init();
 	GetCommonWords(&aszWords);

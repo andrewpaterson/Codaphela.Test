@@ -44,7 +44,7 @@ public:
 	int							miUnmanagedInt;
 	CTinyTestClass				mTiny;
 	Float64						mDouble;
-	unsigned char				mauiData[12];
+	uint8				mauiData[12];
 
 	Ptr<CTestClass> Init(void)
 	{
@@ -76,5 +76,5 @@ public:
 };
 
 
-#endif // !__TEST_CLASS_H__
+#endif // __TEST_CLASS_H__
 

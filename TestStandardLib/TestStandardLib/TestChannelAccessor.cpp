@@ -210,8 +210,8 @@ void TestChannelsAccessorChannelBitty(void)
 	CChannels*					pcChannels;
 	CChannelsAccessor*			pcAccessor;
 	CChannelsAccessorCreator	cCreator;
-	unsigned char*				pucData;
-	unsigned char				aucData[3];
+	uint8*				pucData;
+	uint8				aucData[3];
 	float*						pfData;
 
 	pcChannels = UMalloc(CChannels);
@@ -237,7 +237,7 @@ void TestChannelsAccessorChannelBitty(void)
 	aucData[2] = 0xff;
 	pcAccessor->Set(0, aucData);
 	AssertChar(0xb, *pcChannels->GetData());  //Or maybe 0xd.  I'm not sure of the ordering
-	pucData = (unsigned char*)pcAccessor->Get(0);
+	pucData = (uint8*)pcAccessor->Get(0);
 	AssertChar((char)0xff, pucData[0]);
 	AssertChar((char)0x55, pucData[1]);
 	AssertChar((char)0xff, pucData[2]);
@@ -255,7 +255,7 @@ void TestChannelsAccessorChannelBitty(void)
 	cCreator.AddAccess(CHANNEL_NAME_ALICE, PT_uint8);
 	pcAccessor = cCreator.CreateAndKill();
 	AssertString("CChannelsAccessorChannelBitty", pcAccessor->ClassName());
-	pucData = (unsigned char*)pcAccessor->Get(0);
+	pucData = (uint8*)pcAccessor->Get(0);
 	AssertChar((char)0xff, pucData[0]);
 	AssertChar((char)0x55, pucData[1]);
 	AssertChar((char)0xff, pucData[2]);
@@ -264,8 +264,8 @@ void TestChannelsAccessorChannelBitty(void)
 	aucData[1] = 0xaa;
 	aucData[2] = 0xff;
 	pcAccessor->Set(1, aucData);
-	AssertChar(0xc, ((unsigned char)*pcChannels->GetData()) >> 4);  //Or maybe 0xd.  I'm not sure of the ordering
-	pucData = (unsigned char*)pcAccessor->Get(1);
+	AssertChar(0xc, ((uint8)*pcChannels->GetData()) >> 4);  //Or maybe 0xd.  I'm not sure of the ordering
+	pucData = (uint8*)pcAccessor->Get(1);
 	AssertChar((char)0x00, pucData[0]);
 	AssertChar((char)0xaa, pucData[1]);
 	AssertChar((char)0xff, pucData[2]);
@@ -295,8 +295,8 @@ void TestChannelsAccessorAccessBitty(void)
 	CChannels*					pcChannels;
 	CChannelsAccessor*			pcAccessor;
 	CChannelsAccessorCreator	cCreator;
-	unsigned char*				pucData;
-	unsigned char				aucData[2];
+	uint8*				pucData;
+	uint8				aucData[2];
 
 	pcChannels = UMalloc(CChannels);
 	pcChannels->Init();
@@ -322,7 +322,7 @@ void TestChannelsAccessorAccessBitty(void)
 	AssertShortHex((uint16)0x8e38, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 0 + 0));
 	AssertShortHex((uint16)0xcb2b, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 0 + 2));
 	AssertShortHex((uint16)0x2222, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 0 + 4));
-	pucData = (unsigned char*)pcAccessor->Get(0);
+	pucData = (uint8*)pcAccessor->Get(0);
 	AssertShortHex((uint16)0x2ca3, *(uint16*)pucData);
 	pcAccessor->Kill();
 }
@@ -337,8 +337,8 @@ void TestChannelsAccessorWorstCase(void)
 	CChannels*					pcChannels;
 	CChannelsAccessor*			pcAccessor;
 	CChannelsAccessorCreator	cCreator;
-	unsigned char*				pucData;
-	unsigned char				aucData[5];
+	uint8*				pucData;
+	uint8				aucData[5];
 
 
 	pcChannels = UMalloc(CChannels);
@@ -373,18 +373,18 @@ void TestChannelsAccessorWorstCase(void)
 	aucData[3] = 0xff;
 	aucData[4] = 0xff;
 	pcAccessor->Set(0, aucData);
-	AssertChar((unsigned char)0xff, pcChannels->GetData()[0]);
-	AssertChar((unsigned char)0xff, pcChannels->GetData()[1]);
-	AssertChar((unsigned char)0xff, pcChannels->GetData()[2]);
-	AssertChar((unsigned char)0xff, pcChannels->GetData()[3]);
-	AssertChar((unsigned char)0xff, pcChannels->GetData()[4]);
-	AssertChar((unsigned char)0x01, pcChannels->GetData()[5]);  //01 because the next 'pixel' is all zeros.  The 1 is the high bit of the char in ALICE.
-	pucData = (unsigned char*)pcAccessor->Get(0);
-	AssertChar((unsigned char)0xff, pucData[0]);
-	AssertChar((unsigned char)0xff, pucData[1]);
-	AssertChar((unsigned char)0xff, pucData[2]);
-	AssertChar((unsigned char)0xff, pucData[3]);
-	AssertChar((unsigned char)0x1f, pucData[4]);
+	AssertChar((uint8)0xff, pcChannels->GetData()[0]);
+	AssertChar((uint8)0xff, pcChannels->GetData()[1]);
+	AssertChar((uint8)0xff, pcChannels->GetData()[2]);
+	AssertChar((uint8)0xff, pcChannels->GetData()[3]);
+	AssertChar((uint8)0xff, pcChannels->GetData()[4]);
+	AssertChar((uint8)0x01, pcChannels->GetData()[5]);  //01 because the next 'pixel' is all zeros.  The 1 is the high bit of the char in ALICE.
+	pucData = (uint8*)pcAccessor->Get(0);
+	AssertChar((uint8)0xff, pucData[0]);
+	AssertChar((uint8)0xff, pucData[1]);
+	AssertChar((uint8)0xff, pucData[2]);
+	AssertChar((uint8)0xff, pucData[3]);
+	AssertChar((uint8)0x1f, pucData[4]);
 
 	aucData[0] = 0xff;
 	aucData[1] = 0xff;
@@ -392,18 +392,18 @@ void TestChannelsAccessorWorstCase(void)
 	aucData[3] = 0xff;
 	aucData[4] = 0xfe;
 	pcAccessor->Set(1, aucData);
-	AssertChar((unsigned char)0x03, pcChannels->GetData()[5]); //01 from 'pixel' 0 and 02 from the bit in JACK in 'pixel' 1.
-	AssertChar((unsigned char)0x00, pcChannels->GetData()[6]);
-	AssertChar((unsigned char)0x00, pcChannels->GetData()[7]);
-	AssertChar((unsigned char)0x00, pcChannels->GetData()[8]);
-	AssertChar((unsigned char)0xfc, pcChannels->GetData()[9]);  //fc it the six low bits of the char
-	AssertChar((unsigned char)0x03, pcChannels->GetData()[10] & 0x03);  //03 is the two high bits.
-	pucData = (unsigned char*)pcAccessor->Get(1);
-	AssertChar((unsigned char)0xff, pucData[0]);
-	AssertChar((unsigned char)0xff, pucData[1]);
-	AssertChar((unsigned char)0xff, pucData[2]);
-	AssertChar((unsigned char)0xff, pucData[3]);
-	AssertChar((unsigned char)0x1e, pucData[4]);
+	AssertChar((uint8)0x03, pcChannels->GetData()[5]); //01 from 'pixel' 0 and 02 from the bit in JACK in 'pixel' 1.
+	AssertChar((uint8)0x00, pcChannels->GetData()[6]);
+	AssertChar((uint8)0x00, pcChannels->GetData()[7]);
+	AssertChar((uint8)0x00, pcChannels->GetData()[8]);
+	AssertChar((uint8)0xfc, pcChannels->GetData()[9]);  //fc it the six low bits of the char
+	AssertChar((uint8)0x03, pcChannels->GetData()[10] & 0x03);  //03 is the two high bits.
+	pucData = (uint8*)pcAccessor->Get(1);
+	AssertChar((uint8)0xff, pucData[0]);
+	AssertChar((uint8)0xff, pucData[1]);
+	AssertChar((uint8)0xff, pucData[2]);
+	AssertChar((uint8)0xff, pucData[3]);
+	AssertChar((uint8)0x1e, pucData[4]);
 }
 
 

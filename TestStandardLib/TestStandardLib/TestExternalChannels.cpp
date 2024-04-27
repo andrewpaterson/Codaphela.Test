@@ -19,8 +19,8 @@ void TestExternalChannelsSubBytePositions(void)
 	CChannelsAccessor*			pcChannel1;
 	CChannelsAccessorCreator	cCreator;
 	CChannels					cSourceChannels;
-	unsigned char				uc[11] = {0x29, 0x33, 0xBE, 0x84, 0xE1, 0x6C, 0xD6, 0xAE, 0x52, 0xE8, 0x01};
-	unsigned char*				pucData;
+	uint8				uc[11] = {0x29, 0x33, 0xBE, 0x84, 0xE1, 0x6C, 0xD6, 0xAE, 0x52, 0xE8, 0x01};
+	uint8*				pucData;
 //   MSb                                                                                           LSb
 // X 1 11101000 0 10100101 0 10111011 0 10110011 0 11001110 0 00110000 1 00101111 1 00011001 1 00101001
 // ^         ^          ^          ^          ^          ^          ^          ^          ^          ^
@@ -50,52 +50,52 @@ void TestExternalChannelsSubBytePositions(void)
 	pcChannel1 = cCreator.CreateAndKill();
 	AssertString("CChannelsAccessorChannelBitty", pcChannel1->ClassName());
 
-	pucData = (unsigned char*)pcChannel0->Get(0);
+	pucData = (uint8*)pcChannel0->Get(0);
 	AssertInt(0x29, *pucData);
 
 	
-	pucData = (unsigned char*)pcChannel1->Get(0);
+	pucData = (uint8*)pcChannel1->Get(0);
 	AssertInt(0xFF, *pucData);  //LSb of the right hand 3 in 0x33 scaled up to a byte from a bit.
 
-	pucData = (unsigned char*)pcChannel0->Get(1);
+	pucData = (uint8*)pcChannel0->Get(1);
 	AssertInt(0x19, *pucData);
-	pucData = (unsigned char*)pcChannel1->Get(1);
+	pucData = (uint8*)pcChannel1->Get(1);
 	AssertInt(0xFF, *pucData);
 
-	pucData = (unsigned char*)pcChannel0->Get(2);
+	pucData = (uint8*)pcChannel0->Get(2);
 	AssertInt(0x2F, *pucData);
-	pucData = (unsigned char*)pcChannel1->Get(2);
+	pucData = (uint8*)pcChannel1->Get(2);
 	AssertInt(0xFF, *pucData);
 
-	pucData = (unsigned char*)pcChannel0->Get(3);
+	pucData = (uint8*)pcChannel0->Get(3);
 	AssertInt(0x30, *pucData);
 	
-	pucData = (unsigned char*)pcChannel1->Get(3);
+	pucData = (uint8*)pcChannel1->Get(3);
 	AssertInt(0x00, *pucData);
 
-	pucData = (unsigned char*)pcChannel0->Get(4);
+	pucData = (uint8*)pcChannel0->Get(4);
 	AssertInt(0xCE, *pucData);
-	pucData = (unsigned char*)pcChannel1->Get(4);
+	pucData = (uint8*)pcChannel1->Get(4);
 	AssertInt(0x00, *pucData);
 
-	pucData = (unsigned char*)pcChannel0->Get(5);
+	pucData = (uint8*)pcChannel0->Get(5);
 	AssertInt(0xB3, *pucData);
-	pucData = (unsigned char*)pcChannel1->Get(5);
+	pucData = (uint8*)pcChannel1->Get(5);
 	AssertInt(0x00, *pucData);
 
-	pucData = (unsigned char*)pcChannel0->Get(6);
+	pucData = (uint8*)pcChannel0->Get(6);
 	AssertInt(0xBB, *pucData);
-	pucData = (unsigned char*)pcChannel1->Get(6);
+	pucData = (uint8*)pcChannel1->Get(6);
 	AssertInt(0x00, *pucData);
 
-	pucData = (unsigned char*)pcChannel0->Get(7);
+	pucData = (uint8*)pcChannel0->Get(7);
 	AssertInt(0xA5, *pucData);
-	pucData = (unsigned char*)pcChannel1->Get(7);
+	pucData = (uint8*)pcChannel1->Get(7);
 	AssertInt(0x00, *pucData);
 
-	pucData = (unsigned char*)pcChannel0->Get(8);
+	pucData = (uint8*)pcChannel0->Get(8);
 	AssertInt(0xE8, *pucData);
-	pucData = (unsigned char*)pcChannel1->Get(8);
+	pucData = (uint8*)pcChannel1->Get(8);
 	AssertInt(0xFF, *pucData);
 
 	cSourceChannels.Kill();

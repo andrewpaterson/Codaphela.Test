@@ -73,18 +73,18 @@
 	TestImageRecolour();
 	TestImageSwizzle();
 	TestImageCombiner();
-	//TestWinText();
-	//TestImageCelsSource();
-	//TestHalfSpace();
-	//TestPolygon();
-	//TestSphereShape();
-	//TestTriangleShape();
-	//TestMeshFaceReturn();
-	//TestMeshPolygons();
-	//TestMeshShapes();
-	//TestMeshConnectivity();
-	//TestNormalGeneration();
-	//TestMeshOBJReader();
+	TestWinText();
+	TestImageCelsSource();
+	TestHalfSpace();
+	TestPolygon();
+	TestSphereShape();
+	TestTriangleShape();
+	TestMeshFaceReturn();
+	TestMeshPolygons();
+	TestMeshShapes();
+	TestMeshConnectivity();
+	TestNormalGeneration();
+	TestMeshOBJReader();
 
 	cFileUtil.RemoveDir("Output");
 

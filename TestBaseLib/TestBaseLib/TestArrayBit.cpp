@@ -11,7 +11,7 @@
 void TestArrayBitAdd(void)
 {
 	CArrayBit		cArrayBit;
-	unsigned int	ui[3];
+	uint32	ui[3];
 
 	cArrayBit.Init();
 
@@ -106,7 +106,7 @@ void TestArrayBitReadWrite(void)
 	CFileBasic		cFile;
 	CArrayBit		cArrayBit;
 	CArrayBit		cArrayBitIn;
-	unsigned int	ui[3];
+	uint32	ui[3];
 	cArrayBit.Init();
 
 	cArrayBit.Add(true);

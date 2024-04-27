@@ -52,10 +52,10 @@ void TestChunkFileSimple(void)
 void TestChunkFileMD5ing(void)
 {
 	char			szFox[] = "The quick brown fox jumps over the lazy dog";
-	unsigned char	ucFoxMD5[] = {0x9e, 0x10, 0x7d, 0x9d, 0x37, 0x2b, 0xb6, 0x82, 0x6b, 0xd8, 0x1d, 0x35, 0x42, 0xa4, 0x19, 0xd6};
+	uint8	ucFoxMD5[] = {0x9e, 0x10, 0x7d, 0x9d, 0x37, 0x2b, 0xb6, 0x82, 0x6b, 0xd8, 0x1d, 0x35, 0x42, 0xa4, 0x19, 0xd6};
 	int				iFoxLen;
 	char			szLorem[] = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-	unsigned char	ucLoremMD5[] = {0xfa, 0x5c, 0x89, 0xf3, 0xc8, 0x8b, 0x81, 0xbf, 0xd5, 0xe8, 0x21, 0xb0, 0x31, 0x65, 0x69, 0xaf};
+	uint8	ucLoremMD5[] = {0xfa, 0x5c, 0x89, 0xf3, 0xc8, 0x8b, 0x81, 0xbf, 0xd5, 0xe8, 0x21, 0xb0, 0x31, 0x65, 0x69, 0xaf};
 	int				iLoremLen;
 	CChunkFile		cChunkFile;
 
@@ -71,9 +71,9 @@ void TestChunkFileMD5ing(void)
 	AssertTrue(cChunkFile.WriteClose());
 
 	AssertTrue(cChunkFile.ReadOpen());
-	AssertMD5(ucLoremMD5, (unsigned char *)cChunkFile.GetMD5Hash());
+	AssertMD5(ucLoremMD5, (uint8 *)cChunkFile.GetMD5Hash());
 	AssertTrue(cChunkFile.ReadChunkBegin(0));
-	AssertMD5(ucFoxMD5, (unsigned char *)cChunkFile.GetMD5Hash());
+	AssertMD5(ucFoxMD5, (uint8 *)cChunkFile.GetMD5Hash());
 	AssertTrue(cChunkFile.ReadChunkEnd());
 	AssertTrue(cChunkFile.ReadClose());
 

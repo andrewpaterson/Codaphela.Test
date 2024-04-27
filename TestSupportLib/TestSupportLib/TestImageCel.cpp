@@ -103,7 +103,7 @@ void TestImageCelTransparentColourCropBorders(void)
 {
 	CImageCelTransparent	cCel;
 	CImage					cImage;
-	unsigned int			cBlack;
+	uint32			cBlack;
 
 	cBlack = 0x5a000000;  //the 5a represents garbage.  Only the first three bytes are used.
 	ReadImage(&cImage, "Input\\cel5.png");

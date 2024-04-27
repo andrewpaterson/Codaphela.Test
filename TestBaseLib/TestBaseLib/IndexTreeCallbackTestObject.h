@@ -23,5 +23,5 @@ struct STestIndexTreeFileObject
 };
 
 
-#endif // !__INDEX_TREE_CALLBACK_TEST_OBJECT_H__
+#endif // __INDEX_TREE_CALLBACK_TEST_OBJECT_H__
 

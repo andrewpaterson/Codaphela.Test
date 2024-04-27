@@ -136,9 +136,9 @@ void TestLinkedListBlockAlignedGrow(void)
 void TestLinkedListBlockAlignedExhaustive(void)
 {
 	CLinkedListBlockAligned		cList;
-	unsigned char				pv[1 KB];
+	uint8				pv[1 KB];
 	int							iAlignment;
-	unsigned int				uiDataSize;
+	uint32				uiDataSize;
 	void*						pvNew;
 	void*						pvData;
 	int							i;
@@ -158,7 +158,7 @@ void TestLinkedListBlockAlignedExhaustive(void)
 	memset_fast(pv, 0, 1 KB);
 	for (i = 0; i < 256; i++)
 	{
-		pv[i] = (unsigned char)i;
+		pv[i] = (uint8)i;
 	}
 
 	cList.Init();

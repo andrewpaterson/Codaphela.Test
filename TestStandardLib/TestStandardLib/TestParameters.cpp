@@ -27,10 +27,10 @@ public:
 	{
 		int q;
 		char c;
-		unsigned long long int ulli;
+		uint64 ulli;
 		char c2;
 
-		SFuncParams::SFuncParams(int q, char c, unsigned long long int ulli, char c2)
+		SFuncParams::SFuncParams(int q, char c, uint64 ulli, char c2)
 		{
 			_iParamSize = sizeof(SFuncParams);
 			this->q = q;

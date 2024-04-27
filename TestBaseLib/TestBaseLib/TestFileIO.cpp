@@ -67,18 +67,18 @@ void TestFileIOHelpers(void)
 {
 	CMemoryFile		cMemory;
 	CFileBasic		cFile;
-	unsigned char	ab[7] = {0x5e, 0xe1, 0x9e, 0x03, 0x32, 0x1f, 0x93};
+	uint8	ab[7] = {0x5e, 0xe1, 0x9e, 0x03, 0x32, 0x1f, 0x93};
 	int				ai[3] = {0x7deb74f3, 0x41b0f58c, 0x5cbf05d8};
 	int				i;
 	int64_t	l;
 	float			f;
 	double			d;
 	char			c;
-	unsigned char	uc;
+	uint8	uc;
 	bool			b;
 	int16			s;
 	uint16	us;
-	unsigned char	abi[7];
+	uint8	abi[7];
 	int				aii[3];
 
 	TestFileIOBegin(&cMemory, &cFile);
@@ -88,7 +88,7 @@ void TestFileIOHelpers(void)
 	AssertTrue(cFile.WriteFloat(3.34759834536f));
 	AssertTrue(cFile.WriteFloat(8.4936205629457392304853));
 	AssertTrue(cFile.WriteChar('g'));
-	AssertTrue(cFile.WriteInt((unsigned char)255));
+	AssertTrue(cFile.WriteInt((uint8)255));
 	AssertTrue(cFile.WriteBool(true));
 	AssertTrue(cFile.WriteInt((int16)0x5a0a));
 	AssertTrue(cFile.WriteInt((uint16)0x6be4));
@@ -100,7 +100,7 @@ void TestFileIOHelpers(void)
 	AssertTrue(cFile.WriteFloat(6.478389585938f));
 	AssertTrue(cFile.WriteFloat(2.74944978325209529023823));
 	AssertTrue(cFile.WriteChar('@'));
-	AssertTrue(cFile.WriteInt((unsigned char)1));
+	AssertTrue(cFile.WriteInt((uint8)1));
 	AssertTrue(cFile.WriteBool(false));
 	AssertTrue(cFile.WriteInt((int16)0x0001));
 	AssertTrue(cFile.WriteInt((uint16)0xffff));
@@ -118,7 +118,7 @@ void TestFileIOHelpers(void)
 	AssertTrue(cFile.ReadChar(&c));
 	AssertChar('g', c);
 	AssertTrue(cFile.ReadInt(&uc));
-	AssertChar((unsigned char)255, uc);
+	AssertChar((uint8)255, uc);
 	AssertTrue(cFile.ReadBool(&b));
 	AssertBool(true, b);
 	AssertTrue(cFile.ReadInt(&s));

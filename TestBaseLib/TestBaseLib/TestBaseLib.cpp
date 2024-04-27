@@ -59,6 +59,7 @@ void TestLinkedListBlock(void);
 void TestLinkedListTemplate(void);
 void TestLinkedListBlockAligned(void);
 void TestListVariable(void);
+void TestMemoryManager(void);
 void TestArrayInt2D(void);
 void TestTreeTemplate(void);
 void TestWindowsFilesTruncate(void);
@@ -205,6 +206,7 @@ int __cdecl main(void)
 	TestLinkedListBlock();
 	TestLinkedListTemplate();
 	TestLinkedListBlockAligned();
+	TestMemoryManager();
 	TestIndexTreeMemory();
 	TestIndexBlock();
 	TestIndexString();

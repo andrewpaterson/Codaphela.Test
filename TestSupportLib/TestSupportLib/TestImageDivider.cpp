@@ -221,7 +221,7 @@ void TestImageDividerGenerateFromNumbersWithTransparent(void)
 	CImageDivider			cImageDivider;
 	CImage					cImage;
 	CImageCel*				pcImageCel;
-	unsigned int			uiTransparent;
+	uint32			uiTransparent;
 	CImageDividerNumbers	cNumbers;
 
 	ReadImage(&cImage, "Input\\grid.png");
@@ -259,7 +259,7 @@ void TestImageDividerGenerateFromBorderWithTransparent(void)
 	CImageDivider	cImageDivider;
 	CImage			cImage;
 	CImageCelMask*	pcRectangle;
-	unsigned int	uiTransparent;
+	uint32	uiTransparent;
 	CImage			cMask;
 
 	ReadImage(&cImage, "Input\\cel6.png");

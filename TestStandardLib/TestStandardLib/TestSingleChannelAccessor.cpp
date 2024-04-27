@@ -22,10 +22,10 @@ void TestSingleChannelAccessor(void)
 
 	
 	CChannels					cChannels;
-	unsigned char				cData[9] = "ti@YA,\n#";
+	uint8				cData[9] = "ti@YA,\n#";
 	CSingleChannelAccessor		cSingle;
 	char						c;
-	unsigned					s;
+	uint32					s;
 
 	cChannels.Init();
 	cChannels.BeginChange();

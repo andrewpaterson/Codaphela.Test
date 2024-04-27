@@ -58,8 +58,8 @@ void TestObjectDirtySimplePrimitiveAssignment(void)
 	pObject = OMalloc<CTestObjectWithFields>();
 	
 	pObject->mi32 = 7;
-	pObject->mui32 = (unsigned int)99;
-	pObject->mi32 = (unsigned char)8;
+	pObject->mui32 = (uint32)99;
+	pObject->mi32 = (uint8)8;
 	pObject->mf32 = 1.0f;
 	pObject->mf64 = 1.0;
 	pObject->mf64 = 2.0f;

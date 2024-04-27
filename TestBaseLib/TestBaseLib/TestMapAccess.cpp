@@ -27,9 +27,9 @@ struct STestMapAccessData
 struct STestMapAccessKey
 {
 	int		ma;
-	short	mb;
+	int16	mb;
 
-	void Init(int a, short b)
+	void Init(int a, int16 b)
 	{
 		ma = a;
 		mb = b;

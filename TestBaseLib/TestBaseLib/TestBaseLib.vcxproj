@@ -260,6 +260,7 @@
     <ClCompile Include="TestMemoryAllocator.cpp" />
     <ClCompile Include="TestMemoryBlock.cpp" />
     <ClCompile Include="TestMemoryCache.cpp" />
+    <ClCompile Include="TestMemoryManager.cpp" />
     <ClCompile Include="TestMemoryQueue.cpp" />
     <ClCompile Include="TestMemoryStack.cpp" />
     <ClCompile Include="TestPrimitiveTypes.cpp" />

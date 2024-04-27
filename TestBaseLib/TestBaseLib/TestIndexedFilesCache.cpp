@@ -24,7 +24,7 @@ void TestIndexedFilesEvictingFlush(EIndexWriteThrough eWriteThrough, bool bClear
 	int										iLenMoreover;
 	OIndex									oi;
 	CIndexedDataDescriptor					cDescriptor;
-	unsigned int							uiSize;
+	uint32							uiSize;
 
 	cHelper.Init("Output" _FS_ "TestEvicting1", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
@@ -140,7 +140,7 @@ void TestIndexedFilesEvictingEviction(EIndexWriteThrough eWriteThrough)
 	OIndex									oiIndulged;
 	OIndex									oiSeparate;
 	CIndexedDataDescriptor					cDescriptor;
-	unsigned int							uiSize;
+	uint32							uiSize;
 
 	cHelper.Init("Output" _FS_ "TestEvicting2", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
