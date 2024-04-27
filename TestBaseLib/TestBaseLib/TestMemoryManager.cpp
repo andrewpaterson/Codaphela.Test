@@ -376,6 +376,97 @@ void TestMemoryManagerDeallocateAllocate2(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMemoryManagerDeallocateAllocate3(void)
+{
+	CMemoryManager	cMemory;
+	void*			pvStartMemory;
+	void*			pvEndMemory;
+	void*			pvMem1;
+	void*			pvMem2;
+	void*			pvMem3;
+	void*			pvMem4;
+	uint32			uiMemorySize;
+	SMMNode*		psNode;
+
+	uiMemorySize = 88;
+	pvStartMemory = malloc(uiMemorySize);
+	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
+	cMemory.Init(pvStartMemory, pvEndMemory);
+
+	pvMem1 = cMemory.Allocate(12);
+	pvMem2 = cMemory.Allocate(8);
+	pvMem3 = cMemory.Allocate(12);
+	pvMem4 = cMemory.Allocate(8);
+
+	AssertNotNull(pvMem1);
+	AssertNotNull(pvMem2);
+	AssertNotNull(pvMem3);
+	AssertNotNull(pvMem4);
+
+	cMemory.Deallocate(pvMem1);
+	psNode = cMemory.StartIteration();
+	psNode = AssertNode(psNode, 12, false);
+	psNode = AssertNode(psNode, 8, true);
+	psNode = AssertNode(psNode, 12, true);
+	psNode = AssertNode(psNode, 8, true);
+	AssertNull(psNode);
+
+	cMemory.Deallocate(pvMem2);
+	psNode = cMemory.StartIteration();
+	psNode = AssertNode(psNode, 32, false);
+	psNode = AssertNode(psNode, 12, 12, true);
+	psNode = AssertNode(psNode, 8, true);
+	AssertNull(psNode);
+
+	pvMem1 = cMemory.Allocate(16);
+	psNode = cMemory.StartIteration();
+	psNode = AssertNode(psNode, 16, 32, true);
+	psNode = AssertNode(psNode, 12, 12, true);
+	psNode = AssertNode(psNode, 8, true);
+	AssertNull(psNode);
+
+	cMemory.Deallocate(pvMem1);
+	psNode = cMemory.StartIteration();
+	psNode = AssertNode(psNode, 32, false);
+	psNode = AssertNode(psNode, 12, 12, true);
+	psNode = AssertNode(psNode, 8, true);
+	AssertNull(psNode);
+
+	pvMem1 = cMemory.Allocate(15);
+	psNode = cMemory.StartIteration();
+	psNode = AssertNode(psNode, 15, 15, true);
+	psNode = AssertNode(psNode, 5, false);
+	psNode = AssertNode(psNode, 12, 12, true);
+	psNode = AssertNode(psNode, 8, true);
+	AssertNull(psNode);
+
+	cMemory.Deallocate(pvMem3);
+	psNode = cMemory.StartIteration();
+	psNode = AssertNode(psNode, 15, 15, true);
+	psNode = AssertNode(psNode, 29, false);
+	psNode = AssertNode(psNode, 8, true);
+	AssertNull(psNode);
+
+	cMemory.Deallocate(pvMem1);
+	psNode = cMemory.StartIteration();
+	psNode = AssertNode(psNode, 56, false);
+	psNode = AssertNode(psNode, 8, true);
+	AssertNull(psNode);
+
+	cMemory.Deallocate(pvMem4);
+	psNode = cMemory.StartIteration();
+	AssertNull(psNode);
+
+	cMemory.Kill();
+
+	free(pvStartMemory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMemoryManager(void)
 {
 	BeginTests();
@@ -386,6 +477,7 @@ void TestMemoryManager(void)
 	TestMemoryManagerDeallocate2();
 	TestMemoryManagerDeallocateAllocate1();
 	TestMemoryManagerDeallocateAllocate2();
+	TestMemoryManagerDeallocateAllocate3();
 
 	FastFunctionsKill();
 	TestStatistics();
