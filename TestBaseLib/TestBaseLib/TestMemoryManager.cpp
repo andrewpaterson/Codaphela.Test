@@ -1,5 +1,7 @@
 #include "BaseLib/MemoryManager.h"
 #include "BaseLib/IntegerHelper.h"
+#include "BaseLib/ArrayVoidPtr.h"
+#include "BaseLib/StdRandom.h"
 #include "TestLib/Assert.h"
 
 
@@ -487,11 +489,21 @@ void TestMemoryManagerEmptyCache(void)
 	uint32			uiUsedSize;
 	uint32			uiUnusedSize;
 	uint32			uiTotalSize;
+	int32			i;
+	int32			iIndex;
+	int32			iToRemove;
+	int32			j;
+	CArrayVoidPtr	apvAllocations;
+	CRandom			cRandom;
+	void**			ppv;
+	uint32			uiRemovals;
 
 	uiMemorySize = 64 KB;
 	pvStartMemory = malloc(uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
+
+	apvAllocations.Init();
 
 	uiCount = 100;
 	uiValue = 0;
@@ -502,6 +514,8 @@ void TestMemoryManagerEmptyCache(void)
 		{
 			break;
 		}
+
+		apvAllocations.Add(pv);
 
 		memset(pv, uiValue, uiCount);
 		uiValue++;
@@ -516,6 +530,7 @@ void TestMemoryManagerEmptyCache(void)
 	AssertInt(64 KB, uiTotalSize);
 	uiAllocations = cMemory.GetNumAllocations(false);
 	AssertInt(582, uiAllocations);
+	AssertInt(582, apvAllocations.NumElements());
 	uiRemainingSize = cMemory.GetRemaingTailSize();
 	AssertInt(52, uiRemainingSize);
 	uiUsedSize = cMemory.GetUsedAllocationSize();
@@ -524,6 +539,39 @@ void TestMemoryManagerEmptyCache(void)
 	AssertInt(0, uiUnusedSize);
 	AssertInt(64 KB, uiRemainingSize + uiUsedSize + uiUnusedSize);
 
+	uiRemovals = 0;
+	cRandom.Init(3456897);
+	for (i = 0; i < 100; i++)
+	{
+		iIndex = cRandom.Next(0, apvAllocations.NumElements() - 1);
+		iToRemove = cRandom.Next(0, 2);
+		for (j = iToRemove; j >= 0; j--)
+		{
+			ppv = apvAllocations.Get(iIndex + j);
+			pv = *ppv;
+			cMemory.Deallocate(pv);
+			apvAllocations.RemoveAt(iIndex + j, true);
+			uiRemovals++;
+		}
+		uiAllocations = cMemory.GetNumAllocations(false);
+		AssertInt(582, uiAllocations + uiRemovals);
+	}
+	
+	uiTotalSize = cMemory.GetTotalSize();
+	AssertInt(64 KB, uiTotalSize);
+	uiAllocations = cMemory.GetNumAllocations(false);
+	AssertInt(382, uiAllocations);
+	uiRemainingSize = cMemory.GetRemaingTailSize();
+	AssertInt(52, uiRemainingSize);
+	uiUsedSize = cMemory.GetUsedAllocationSize();
+	AssertInt(42753, uiUsedSize);
+	uiUnusedSize = cMemory.GetUnusedAllocationSize();
+	AssertInt(22731, uiUnusedSize);
+	AssertInt(64 KB, uiRemainingSize + uiUsedSize + uiUnusedSize);
+
+	apvAllocations.Kill();
+
+	cRandom.Kill();
 	cMemory.Kill();
 	free(pvStartMemory);
 }
