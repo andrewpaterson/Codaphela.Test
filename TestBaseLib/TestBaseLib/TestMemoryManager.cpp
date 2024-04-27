@@ -22,6 +22,7 @@ void TestMemoryManagerContiguousAllocations(void)
 	pvStartMemory = malloc(uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
+	cMemory.DisableEmptyCache();
 
 	pvMem1 = cMemory.Allocate(10);
 	pvMem2 = cMemory.Allocate(20);
@@ -93,6 +94,7 @@ void TestMemoryManagerDeallocate1(void)
 	pvStartMemory = malloc(uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
+	cMemory.DisableEmptyCache();
 
 	pvMem1 = cMemory.Allocate(10);
 	pvMem2 = cMemory.Allocate(10);
@@ -156,6 +158,7 @@ void TestMemoryManagerDeallocate2(void)
 	pvStartMemory = malloc(uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
+	cMemory.DisableEmptyCache();
 
 	pvMem1 = cMemory.Allocate(8);
 	pvMem2 = cMemory.Allocate(8);
@@ -230,6 +233,7 @@ void TestMemoryManagerDeallocateAllocate1(void)
 	pvStartMemory = malloc(uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
+	cMemory.DisableEmptyCache();
 
 	pvMem1 = cMemory.Allocate(8);
 	pvMem2 = cMemory.Allocate(8);
@@ -320,6 +324,7 @@ void TestMemoryManagerDeallocateAllocate2(void)
 	pvStartMemory = malloc(uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
+	cMemory.DisableEmptyCache();
 
 	pvMem1 = cMemory.Allocate(8);
 	pvMem2 = cMemory.Allocate(8);
@@ -392,6 +397,7 @@ void TestMemoryManagerDeallocateAllocate3(void)
 	pvStartMemory = malloc(uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
+	cMemory.DisableEmptyCache();
 
 	pvMem1 = cMemory.Allocate(12);
 	pvMem2 = cMemory.Allocate(8);
@@ -467,6 +473,66 @@ void TestMemoryManagerDeallocateAllocate3(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMemoryManagerEmptyCache(void)
+{
+	CMemoryManager	cMemory;
+	void*			pvStartMemory;
+	void*			pvEndMemory;
+	void*			pv;
+	uint32			uiMemorySize;
+	uint32			uiCount;
+	uint8			uiValue;
+	uint32			uiAllocations;
+	uint32			uiRemainingSize;
+	uint32			uiUsedSize;
+	uint32			uiUnusedSize;
+	uint32			uiTotalSize;
+
+	uiMemorySize = 64 KB;
+	pvStartMemory = malloc(uiMemorySize);
+	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
+	cMemory.Init(pvStartMemory, pvEndMemory);
+
+	uiCount = 100;
+	uiValue = 0;
+	for (;;)
+	{
+		pv = cMemory.Allocate(uiCount);
+		if (pv == NULL)
+		{
+			break;
+		}
+
+		memset(pv, uiValue, uiCount);
+		uiValue++;
+		uiCount++;
+		if (uiCount > 150)
+		{
+			uiCount = 50;
+		}
+	}
+
+	uiTotalSize = cMemory.GetTotalSize();
+	AssertInt(64 KB, uiTotalSize);
+	uiAllocations = cMemory.GetNumAllocations(false);
+	AssertInt(582, uiAllocations);
+	uiRemainingSize = cMemory.GetRemaingTailSize();
+	AssertInt(52, uiRemainingSize);
+	uiUsedSize = cMemory.GetUsedAllocationSize();
+	AssertInt(65484, uiUsedSize);
+	uiUnusedSize = cMemory.GetUnusedAllocationSize();
+	AssertInt(0, uiUnusedSize);
+	AssertInt(64 KB, uiRemainingSize + uiUsedSize + uiUnusedSize);
+
+	cMemory.Kill();
+	free(pvStartMemory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMemoryManager(void)
 {
 	BeginTests();
@@ -478,6 +544,7 @@ void TestMemoryManager(void)
 	TestMemoryManagerDeallocateAllocate1();
 	TestMemoryManagerDeallocateAllocate2();
 	TestMemoryManagerDeallocateAllocate3();
+	TestMemoryManagerEmptyCache();
 
 	FastFunctionsKill();
 	TestStatistics();
