@@ -58,7 +58,7 @@ void TestIndexStringInt(void)
 	CIndexStringInt					cIndex;
 	int								iResult;
 	SIndexTreeMemoryUnsafeIterator	sIter;
-	size_t							uiKeySize;
+	size							uiKeySize;
 	char							szDestKey[32];
 
 	cIndex.Init();
@@ -102,14 +102,14 @@ void TestIndexStringPrimitive(void)
 	SIndexTreeMemoryUnsafeIterator	sIter;
 	int64							lli;
 	char							szKey[32];
-	size_t							iKeySize;
+	size							iKeySize;
 	char							szGrip[] = "Grip";
 
 	cIndex.Init();
 	AssertTrue(cIndex.Put(szBall, 0x298CC45731D2LL, &szBall[3]));
 
 	AssertTrue(cIndex.StartIteration(&sIter, &lli, szKey, &iKeySize, 32));
-	AssertLongLongInt(0x298CC45731D2LL, lli);
+	AssertLong(0x298CC45731D2LL, lli);
 	AssertString("Ball", szKey);
 
 	AssertFalse(cIndex.Iterate(&sIter, &lli, szKey, &iKeySize, 32));
@@ -117,21 +117,21 @@ void TestIndexStringPrimitive(void)
 	AssertTrue(cIndex.Put(szGrip, 0xC7689F79B2498LL));
 
 	AssertTrue(cIndex.StartIteration(&sIter, &lli, szKey, &iKeySize, 32));
-	AssertLongLongInt(0x298CC45731D2LL, lli);
+	AssertLong(0x298CC45731D2LL, lli);
 	AssertString("Ball", szKey);
 
 	AssertTrue(cIndex.Iterate(&sIter, &lli, szKey, &iKeySize, 32));
-	AssertLongLongInt(0xC7689F79B2498LL, lli);
+	AssertLong(0xC7689F79B2498LL, lli);
 	AssertString("Grip", szKey);
 
 	AssertFalse(cIndex.Iterate(&sIter, &lli, szKey, &iKeySize, 32));
 
 	lli = cIndex.Get(&szGrip[0], -1, &szGrip[2]);
-	AssertLongLongInt(-1, lli);
+	AssertLong(-1, lli);
 	lli = cIndex.Get(&szGrip[0], -1, &szGrip[3]);
-	AssertLongLongInt(0xC7689F79B2498LL, lli);
+	AssertLong(0xC7689F79B2498LL, lli);
 	lli = cIndex.Get(&szGrip[0], -1);
-	AssertLongLongInt(0xC7689F79B2498LL, lli);
+	AssertLong(0xC7689F79B2498LL, lli);
 
 	cIndex.Kill();
 }

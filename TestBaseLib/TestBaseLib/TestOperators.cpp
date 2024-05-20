@@ -26,7 +26,7 @@ void TestOperatorAdd(void)
 	ullix = 0x00ffffffffffffffLL;
 	ulliy = 0x7fedcba987654321LL;
 	gcOperators.mcAdd.Do(PT_int64, &ulliz, PT_int64, &ullix, PT_int64, &ulliy);
-	AssertLongLongInt(0x80edcba987654320LL, ulliz);
+	AssertLong(0x80edcba987654320LL, ulliz);
 
 	cx = 31;
 	cy = 76;

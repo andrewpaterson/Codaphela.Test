@@ -88,10 +88,10 @@ bool CFileIOAlignedTest::IsOkay(char bShunt)
 //////////////////////////////////////////////////////////////////////////
 bool CFileIOAlignedTest::IsAligned(int iAlignment)
 {
-	size_t	pvLocation;
+	size	pvLocation;
 	int		iRemainder;
 
-	pvLocation = (size_t)this;
+	pvLocation = (size)this;
 	iRemainder = pvLocation % iAlignment;
 	if (iRemainder != 0)
 	{

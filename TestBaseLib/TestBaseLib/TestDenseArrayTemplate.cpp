@@ -4,7 +4,7 @@
 
 struct STestArrayDenseTemplateItem
 {
-	int	i1;
+	int32	i1;
 };
 
 
@@ -23,8 +23,8 @@ void TestArrayDenseTemplateInsertion(void)
 	STestArrayDenseTemplateItem*	psItem2;
 	STestArrayDenseTemplateItem*	psItem3;
 	STestArrayDenseTemplateItem*	psItem;
-	int								i;
-	int								iEnd;
+	size							i;
+	size							iEnd;
 
 	cArray.Init();
 
@@ -51,7 +51,7 @@ void TestArrayDenseTemplateInsertion(void)
 		AssertInt(i, psItem->i1);
 	}
 
-	iEnd = cArray.NumUsedElements()+100;
+	iEnd = cArray.NumUsedElements() + 100;
 	for (i = cArray.NumUsedElements(); i < iEnd; i++)
 	{
 		psItem = cArray.Add();
@@ -80,7 +80,7 @@ void TestArrayDenseTemplateInsertion(void)
 	for (i = cArray.NumUsedElements(); i < iEnd; i++)
 	{
 		psItem = cArray.InsertAt(0);
-		psItem->i1 = -i;
+		psItem->i1 = -((int32)i);
 	}
 	for (i = 0; i < cArray.NumUsedElements(); i++)
 	{
@@ -145,7 +145,7 @@ void TestArrayDenseTemplateRemoval(void)
 {
 	CTestDenseArray					cArray;
 	STestArrayDenseTemplateItem*	psItem;
-	int								i;
+	size							i;
 	bool							bResult;
 
 	cArray.Init();

@@ -18,7 +18,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void Flush(CIndexAccess* pcAccess, int iFlushFrequency, int* piCurrent)
+void Flush(CIndexAccess* pcAccess, int32 iFlushFrequency, int32* piCurrent)
 {
 	if (iFlushFrequency != -1)
 	{
@@ -37,19 +37,19 @@ void Flush(CIndexAccess* pcAccess, int iFlushFrequency, int* piCurrent)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
+void TestIndexTreeAccessString(CIndexAccess* pcAccess, int32 iFlushFrequency)
 {
 	int64					lliData;
-	int						iData;
+	int32					iData;
 	char*					pszData;
 	char					szData[256];
 	char*					pszKey;
-	int						i;
+	size					i;
 	CChars*					pszKey2;
 	CChars*					pszData2;
 	bool					bPassed;
-	int						iArchaicIndex;
-	int						iFlush;
+	size					iArchaicIndex;
+	int32					iFlush;
 	CIndexTreeIterator*		pcIter;
 	bool					bHasData;
 	CArrayChars				aszKeys;
@@ -65,7 +65,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 		pcAccess->PutStringInt(pszKey, iData);
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
-	AssertLongLongInt(1000, pcAccess->NumElements());
+	AssertLong(1000, pcAccess->NumElements());
 	Pass();
 	AssertTrue(pcAccess->ValidateIndex());
 	Pass();
@@ -139,7 +139,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 	aszKeys.Kill();
 	aszExpected.Kill();
 
-	AssertLongLongInt(500, pcAccess->NumElements());
+	AssertLong(500, pcAccess->NumElements());
 	Pass();
 	AssertTrue(pcAccess->ValidateIndex());
 	Pass();
@@ -175,15 +175,19 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 	AssertTrue(pcAccess->ValidateIndex());
 	Pass();
 
-	for (i = gaszCommonWords.NumElements() - 1; i >= 0; i--)
+	i = gaszCommonWords.NumElements();
+	do
 	{
+		i--;
 		pszKey2 = gaszCommonWords.Get(i);
 		pszKey = pszKey2->Text();
 		lliData = ((int64)1000 - i) * 86509465456456LL;
 		pcAccess->PutStringLong(pszKey, lliData);
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
-	AssertLongLongInt(1000, pcAccess->NumElements());
+	while (i != 0);
+
+	AssertLong(1000, pcAccess->NumElements());
 	Pass();
 	AssertTrue(pcAccess->ValidateIndex());
 	Pass();
@@ -213,7 +217,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 		pcAccess->DeleteString(pszKey);
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
-	AssertLongLongInt(666, pcAccess->NumElements());
+	AssertLong(666, pcAccess->NumElements());
 	Pass();
 	AssertTrue(pcAccess->ValidateIndex());
 	Pass();
@@ -225,7 +229,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int iFlushFrequency)
 		pcAccess->DeleteString(pszKey);
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
-	AssertLongLongInt(333, pcAccess->NumElements());
+	AssertLong(333, pcAccess->NumElements());
 	Pass();
 	AssertTrue(pcAccess->ValidateIndex());
 	Pass();
@@ -291,7 +295,7 @@ void TestIndexTreeFileAccessFlushEvictBug(void)
 	CTestIndexTreeFile		cIndexTree;
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
-	int						iFlushFrequency;
+	int32					iFlushFrequency;
 	bool					bResult;
 
 	iFlushFrequency = -1;
@@ -346,7 +350,7 @@ void TestIndexTreeFileAccessRemoveEvictBug(void)
 	CTestIndexTreeFile		cIndexTree;
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
-	int						iFlushFrequency;
+	int32					iFlushFrequency;
 
 	iFlushFrequency = -1;
 
@@ -361,7 +365,7 @@ void TestIndexTreeFileAccessRemoveEvictBug(void)
 	AssertTrue(cAccess.PutStringInt("anyone", 0x04));
 	AssertTrue(cAccess.PutStringInt("anything", 0x05));
 
-	AssertLongLongInt(3, cAccess.NumElements());
+	AssertLong(3, cAccess.NumElements());
 	Pass();
 	AssertTrue(cAccess.ValidateIndex());
 	Pass();
@@ -386,7 +390,7 @@ void TestIndexTreeFileAccessRemoveEvictBug(void)
 	AssertFalse(cAccess.HasString("any"));
 	Pass();
 
-	AssertLongLongInt(1, cAccess.NumElements());
+	AssertLong(1, cAccess.NumElements());
 	Pass();
 	AssertTrue(cAccess.ValidateIndex());
 	Pass();
@@ -411,7 +415,7 @@ void TestIndexTreeFileAccessEvictBug()
 	CIndexTreeFile			cIndexTree;
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
-	int						iFlushFrequency;
+	int32					iFlushFrequency;
 	bool					bResult;
 
 	iFlushFrequency = -1;
@@ -463,16 +467,16 @@ void TestIndexTreeFileAccessFlushBug()
 	CIndexTreeFile			cIndexTree;
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
-	int						iData;
+	size					iData;
 	char*					pszData;
 	char*					pszKey;
-	int						i;
+	size					i;
 	CChars*					pszKey2;
 	CChars*					pszData2;
-	int						iArchaicIndex;
-	int						iFlush;
-	int						iFlushFrequency;
-	int						iCount;
+	size					iArchaicIndex;
+	int32					iFlush;
+	int32					iFlushFrequency;
+	size					iCount;
 
 	iFlushFrequency = -1;
 
@@ -493,7 +497,7 @@ void TestIndexTreeFileAccessFlushBug()
 		cAccess.PutStringInt(pszKey, iData);
 		Flush(&cAccess, iFlushFrequency, &iFlush);
 	}
-	AssertLongLongInt(iCount, cAccess.NumElements());
+	AssertLong(iCount, cAccess.NumElements());
 
 	iArchaicIndex = 0;
 	for (i = 0; i < iCount; i++)
@@ -520,7 +524,7 @@ void TestIndexTreeFileAccessFlushBug()
 		}
 		Flush(&cAccess, iFlushFrequency, &iFlush);
 	}
-	AssertLongLongInt(iCount / 2, cAccess.NumElements());
+	AssertLong(iCount / 2, cAccess.NumElements());
 	Pass();
 
 	cAccess.Flush();
@@ -539,7 +543,7 @@ void TestIndexTreeFileAccessFlushBug()
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeFileAccess(char* szSubirectory, EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse, int iFlushFrequency)
+void TestIndexTreeFileAccess(char* szSubirectory, EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse, int32 iFlushFrequency)
 {
 	CIndexTreeFileAccess	cAccess;
 	CIndexTreeFile			cIndexTree;
@@ -571,14 +575,14 @@ void TestIndexTreeFileAccess(char* szSubirectory, EIndexWriteThrough eWriteThrou
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeEvictingAccess(char* szSubirectory, size_t sCacheSize, EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse, int iFlushFrequency)
+void TestIndexTreeEvictingAccess(char* szSubirectory, size sCacheSize, EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse, int32 iFlushFrequency)
 {
-	CIndexTreeEvictingAccess 			cAccess;
-	CIndexTreeEvicting					cIndexTree;
-	CIndexTreeHelper					cHelper;
-	CDurableFileController				cController;
-	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
-	CIndexTreeFileKeyDiagnosticCountingCallback			cCallback;
+	CIndexTreeEvictingAccess 						cAccess;
+	CIndexTreeEvicting								cIndexTree;
+	CIndexTreeHelper								cHelper;
+	CDurableFileController							cController;
+	CIndexTreeEvictionStrategyRandom				cEvictionStrategy;
+	CIndexTreeFileKeyDiagnosticCountingCallback		cCallback;
 
 	cHelper.Init("Output" _FS_ "IndexTreeEvictingAccess", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());

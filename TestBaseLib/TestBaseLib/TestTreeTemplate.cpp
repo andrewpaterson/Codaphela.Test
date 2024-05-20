@@ -11,11 +11,15 @@ struct STestTreeTemplateItem
 	void Init(int i1, int i2);
 	bool IsOkay(int i1, int i2);
 };
+
+
 void STestTreeTemplateItem::Init(int i1, int i2)
 {
 	mi1 = i1;
 	mi2 = i2;
 }
+
+
 bool STestTreeTemplateItem::IsOkay(int i1, int i2)
 {
 	return (mi1 == i1) && (mi2 == i2);
@@ -76,6 +80,94 @@ void TestTreeTemplateInsert(void)
 	AssertPointer(pcNode0, cTree.GetDown(pcNode00));
 	AssertPointer(pcNode0, cTree.GetDown(pcNode01));
 	AssertPointer(pcNode0, cTree.GetDown(pcNode02));
+
+	cTree.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void ClearPath(size* paiPath, size uiSize)
+{
+	size	i;
+
+	for (i = 0; i < uiSize; i++)
+	{
+		paiPath[i] = ARRAY_ELEMENT_NOT_FOUND;
+	}
+}
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTreeTemplateGetPathTo(void)
+{
+	CTestTree				cTree;
+	STestTreeTemplateItem*	pcNode0;
+	STestTreeTemplateItem*	pcNode00;
+	STestTreeTemplateItem*	pcNode01;
+	STestTreeTemplateItem*	pcNode02;
+	STestTreeTemplateItem*	pcNode000;
+	STestTreeTemplateItem*	pcNode010;
+	size					uiNumElements;
+	size					uiNumElementsByCount;
+	size					aiPath[10];
+
+	cTree.Init();
+	pcNode0 = cTree.InsertRoot();
+	pcNode0->Init(672, 7645);
+
+	pcNode00 = cTree.InsertOnRightOfChildren(pcNode0);
+	pcNode00->Init(720, 6);
+
+	pcNode000 = cTree.InsertOnRightOfChildren(pcNode00);
+	pcNode000->Init(325, 28274);
+
+	pcNode01 = cTree.InsertOnRightOfChildren(pcNode0);
+	pcNode01->Init(8, 12);
+
+	pcNode010 = cTree.InsertOnRightOfChildren(pcNode01);
+	pcNode010->Init(64, 12753);
+
+	pcNode02 = cTree.InsertOnRightOfChildren(pcNode0);
+	pcNode02->Init(99, 7);
+
+	uiNumElements = cTree.NumElements();
+	uiNumElementsByCount = cTree.CountElements();
+	AssertSize(uiNumElements, uiNumElementsByCount);
+
+	ClearPath(aiPath, 10);
+	cTree.GetPathTo(aiPath, pcNode0);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, aiPath[0]);
+
+	ClearPath(aiPath, 10);
+	cTree.GetPathTo(aiPath, pcNode01);
+	AssertSize(1, aiPath[0]);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, aiPath[1]);
+
+	ClearPath(aiPath, 10);
+	cTree.GetPathTo(aiPath, pcNode010);
+	AssertSize(1, aiPath[0]);
+	AssertSize(0, aiPath[1]);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, aiPath[2]);
+
+	ClearPath(aiPath, 10);
+	cTree.GetPathTo(aiPath, pcNode00);
+	AssertSize(0, aiPath[0]);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, aiPath[1]);
+
+	ClearPath(aiPath, 10);
+	cTree.GetPathTo(aiPath, pcNode000);
+	AssertSize(0, aiPath[0]);
+	AssertSize(0, aiPath[1]);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, aiPath[2]);
+
+	ClearPath(aiPath, 10);
+	cTree.GetPathTo(aiPath, pcNode02);
+	AssertSize(2, aiPath[0]);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, aiPath[1]);
 
 	cTree.Kill();
 }
@@ -153,6 +245,7 @@ void TestTreeTemplate(void)
 	BeginTests();
 
 	TestTreeTemplateInsert();
+	TestTreeTemplateGetPathTo();
 	TestTreeTemplateFileHelper();
 
 	TestStatistics();

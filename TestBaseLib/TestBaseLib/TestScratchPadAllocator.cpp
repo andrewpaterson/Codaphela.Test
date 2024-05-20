@@ -54,7 +54,7 @@ void TestScratchPadAllocatorReadWrite(void)
 	CScratchPadAllocator	cAlloc;
 	CFileBasic				cFile;
 	CScratchPadAllocator	cAllocIn;
-	int						i;
+	int32						i;
 	SScratchPadParams		sParams;
 
 	cFile.Init(MemoryFile());

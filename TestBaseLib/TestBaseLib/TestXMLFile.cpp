@@ -10,7 +10,7 @@ void TestReadExternalReference(void)
 {
 	CXMLFile	cXMLFile;
 	CChars		szDoc;
-	int			iLine;
+	size		iLine;
 	char		szExpected[] = "<InputDevices>\n\
   This is text &lt; and doom stuff\n\
   <RootInSecond>\n\
@@ -66,7 +66,7 @@ void TestRepeatedExternalTags(void)
 {
 	CXMLFile		cXMLFile;
 	CChars			szDoc;
-	int				iLine;
+	size			iLine;
 	char			szExpected[] = "<Root>\n\
   <ExtTag>\n\
     <SubTag>Look at me!  I&apos;m going to be an elite pilot.</SubTag>\n\
@@ -86,7 +86,7 @@ void TestRepeatedExternalTags(void)
   </ExtTag>\n\
 </Root>\n";
 	CMarkupTag*		pcRoot;
-	int				iCount;
+	size			iCount;
 	CMarkupTag*		pcExtTag;
 	CMarkupTag*		pcSubTag1;
 	CMarkupTag*		pcSubTag2;
@@ -117,7 +117,7 @@ void TestRepeatedExternalTags(void)
 			break;
 		}
 
-		pcSubTag1 = pcExtTag->GetTag("SubTag", 0);
+		pcSubTag1 = pcExtTag->GetTag("SubTag", (size)0);
 		pcSubTag2 = pcExtTag->GetTag("SubTag", 1);
 		pcSubTag3 = pcExtTag->GetTag("SubTag", 2);
 

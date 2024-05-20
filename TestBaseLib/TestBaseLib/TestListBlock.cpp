@@ -9,10 +9,10 @@
 
 struct STestListBlockItem
 {
-	int	mi1;
-	int	mi2;
+	int32	mi1;
+	int32	mi2;
 
-	void Init(int i1, int i2)
+	void Init(int32 i1, int32 i2)
 	{
 		this->mi1 = i1;
 		this->mi2 = i2;

@@ -11,7 +11,7 @@ public:
 		return CIndexTreeEvicting::GetRoot();
 	}
 
-	size_t GetSystemMemorySize(void)
+	size GetSystemMemorySize(void)
 	{
 		return CIndexTreeEvicting::GetSystemMemorySize();
 	}

@@ -17,7 +17,7 @@ void TestCountingAllocatorSizeSystemAllocator(void)
 	void*				pv2;
 	void*				pv3;
 	void*				pv4;
-	size_t				iHeaderSize;
+	size				iHeaderSize;
 
 	cCounting.Init(&gcSystemAllocator);
 	iHeaderSize = sizeof(SCountingMemoryAllocation);
@@ -70,7 +70,7 @@ void TestCountingAllocatorSizeMemoryAllocator(void)
 	void*				pv2;
 	void*				pv3;
 	void*				pv4;
-	size_t				iHeaderSize;
+	size				iHeaderSize;
 
 	cMemory.Init();
 	cCounting.Init(&cMemory);

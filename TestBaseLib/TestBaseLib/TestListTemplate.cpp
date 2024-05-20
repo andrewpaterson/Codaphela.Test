@@ -9,10 +9,10 @@
 
 struct STestListTemplateItem
 {
-	int	mi1;
-	int	mi2;
+	size	mi1;
+	size	mi2;
 
-	void Init(int i1, int i2)
+	void Init(size i1, size i2)
 	{
 		this->mi1 = i1;
 		this->mi2 = i2;
@@ -34,7 +34,7 @@ void TestListTemplateMethods(void)
 	STestListTemplateItem*					psItem4;
 	STestListTemplateItem*					psItem5;
 	STestListTemplateItem					sItem6;
-	int										iIndex;
+	size									iIndex;
 	STestListTemplateItem					sItem;
 
 	cList.Init(16);

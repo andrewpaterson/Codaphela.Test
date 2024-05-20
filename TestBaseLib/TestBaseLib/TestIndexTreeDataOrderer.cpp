@@ -15,7 +15,7 @@
 void AssertIndexTreeDataOrdererString(CIndexTreeDataOrderer* pcOrderer, char* szExpected)
 {
 	SDataOrderIterator	sIter;
-	int					iSize;
+	size				iSize;
 	bool				bExists;
 	CChars				sz;
 	char				pc[256];
@@ -114,10 +114,10 @@ void TestIndexTreeDataOrdererAccess(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeDataOrdererRemapListNodes(void)
 {
-	CIndexTreeMemory			cIndexTree;
-	CIndexTreeMemoryAccess		cAccess;
-	CAccessDataOrderer			cOrderer;
-	int							i;
+	CIndexTreeMemory		cIndexTree;
+	CIndexTreeMemoryAccess	cAccess;
+	CAccessDataOrderer		cOrderer;
+	size					i;
 
 	cOrderer.Init();
 	cIndexTree.Init(IKR_Yes, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
@@ -125,14 +125,22 @@ void TestIndexTreeDataOrdererRemapListNodes(void)
 
 	AssertIndexTreeDataOrdererString(&cOrderer, "");
 
-	for (i = 60; i >= 0; i--)
+	i = 61;
+	do 
 	{
+		i--;
 		cAccess.PutIntLong(i << 8, i);
 	}
-	for (i = 60; i >= 0; i--)
+	while (i != 0);
+
+	i = 61;
+	do
 	{
+		i--;
 		cAccess.PutIntChar(i << 8, 'A' + (char)i);
 	}
+	while (i != 0);
+
 	AssertIndexTreeDataOrdererString(&cOrderer, "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}");
 
 	for (i = 0; i <= 60; i+=2)
@@ -151,10 +159,14 @@ void TestIndexTreeDataOrdererRemapListNodes(void)
 	}
 	AssertIndexTreeDataOrdererString(&cOrderer, "}|{zyxwvutsrqponmlkjihgfedcba`_^]\\[ZYXWVUTSRQPONMLKJIHGFEDCBA");
 
-	for (i = 60; i >= 0; i-=2)
+	i = 62;
+	do
 	{
+		i -= 2;
 		AssertTrue(cAccess.HasInt(i << 8));
 	}
+	while (i != 0);
+
 	AssertIndexTreeDataOrdererString(&cOrderer, "ACEGIKMOQSUWY[]_acegikmoqsuwy{}|zxvtrpnljhfdb`^\\ZXVTRPNLJHFDB");
 
 	cIndexTree.Kill();
@@ -173,8 +185,8 @@ void TestIndexTreeDataOrdererModification(void)
 	CIndexTreeMemory			cIndexTree;
 	CIndexTreeMemoryAccess		cAccess;
 	CModificationDataOrderer	cOrderer;
-	int							i;
-	int							iKey;
+	size						i;
+	size						iKey;
 	char						c;
 
 	cOrderer.Init();
@@ -183,11 +195,15 @@ void TestIndexTreeDataOrdererModification(void)
 
 	AssertIndexTreeDataOrdererString(&cOrderer, "");
 
-	for (i = 25; i >= 0; i--)
+	i = 26;
+	do
 	{
+		i--;
 		iKey = i * 0b1010101010101010101010101010;
 		cAccess.PutIntChar(iKey, 'A' + (char)i);
 	}
+	while (i != 0);
+
 	AssertIndexTreeDataOrdererString(&cOrderer, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
 	for (i = 0; i <= 25; i++)
@@ -231,9 +247,9 @@ void TestIndexTreeDataOrdererModification(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeDataOrdererCreation(void)
 {
-	CIndexTreeMemory			cIndexTree;
-	CIndexTreeMemoryAccess		cAccess;
-	CCreationDataOrderer		cOrderer;
+	CIndexTreeMemory		cIndexTree;
+	CIndexTreeMemoryAccess	cAccess;
+	CCreationDataOrderer	cOrderer;
 
 	cOrderer.Init();
 	cIndexTree.Init(IKR_Yes, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));

@@ -25,7 +25,6 @@ void TestCharsSubStringEquals(void)
 	AssertTrue(sz.SubStringEquals(0, ""));
 
 	AssertFalse(sz.SubStringEquals(1, "Hap"));
-	AssertFalse(sz.SubStringEquals(-1, "Happy"));
 	AssertFalse(sz.SubStringEquals(0, "app"));
 	AssertFalse(sz.SubStringEquals(6, ""));
 	AssertFalse(sz.SubStringEquals(7, ""));
@@ -35,11 +34,9 @@ void TestCharsSubStringEquals(void)
 	sz.Init();
 	AssertFalse(sz.SubStringEquals(0, "Hap"));
 	AssertFalse(sz.SubStringEquals(1, "Hap"));
-	AssertFalse(sz.SubStringEquals(-1, "Hap"));
 
 	AssertTrue(sz.SubStringEquals(0, ""));
 	AssertFalse(sz.SubStringEquals(1, ""));
-	AssertFalse(sz.SubStringEquals(-1, ""));
 	sz.Kill();
 }
 
@@ -333,16 +330,8 @@ void TestCharsCopyEmptyString(void)
 	AssertString("Star", sz1.Text());
 	sz1.Kill();
 
-	sz1.Init("Star", -1, -1);
-	AssertPointer(gszEmptyString, sz1.Text());
-	sz1.Kill();
-
 	sz2.Kill();
 	sz2.Init("Star");
-
-	sz1.Init(sz2, -1, -1);
-	AssertPointer(gszEmptyString, sz1.Text());
-	sz1.Kill();
 
 	sz1.Init(sz2, 1, 3);
 	AssertString("ta", sz1.Text());
@@ -414,9 +403,6 @@ void TestCharsInsertOutOfBounds(void)
 
 	sz2.Init("!!");
 
-	sz1.Insert(-1, &sz2);
-	AssertString("It's My Life.", sz1.Text());
-
 	sz1.Insert(14, &sz2);
 	AssertString("It's My Life.", sz1.Text());
 
@@ -433,13 +419,6 @@ void TestCharsInsertOutOfBounds(void)
 	sz1.Insert(2, 'a');
 	AssertString("C", sz1.Text());
 
-	sz1.Insert(-1, 'a');
-	AssertString("C", sz1.Text());
-	sz1.Kill();
-
-	sz1.Init();
-	sz1.Insert(-1, 'C');
-	AssertPointer(gszEmptyString, sz1.Text());
 	sz1.Kill();
 }
 
@@ -461,6 +440,16 @@ void TestCharsLeftAlign(void)
 	sz1.LeftAlign("ABC", ' ', 2);
 	AssertString("AB", sz1.Text());
 	sz1.Kill();
+
+	sz1.Init();
+	sz1.LeftAlign("ABC", ' ', 0);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init();
+	sz1.LeftAlign("", ' ', 0);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
 }
 
 
@@ -480,6 +469,16 @@ void TestCharsRightAlign(void)
 	sz1.Init();
 	sz1.RightAlign("ABC", ' ', 2);
 	AssertString("AB", sz1.Text());
+	sz1.Kill();
+
+	sz1.Init();
+	sz1.RightAlign("ABC", ' ', 0);
+	AssertPointer(gszEmptyString, sz1.Text());
+	sz1.Kill();
+
+	sz1.Init();
+	sz1.RightAlign("", ' ', 0);
+	AssertPointer(gszEmptyString, sz1.Text());
 	sz1.Kill();
 }
 
@@ -508,7 +507,7 @@ void TestCharsRemoveOutOfBounds(void)
 	sz1.Kill();
 
 	sz1.Init("Mack");
-	sz1.Remove(-1, 2);
+	sz1.Remove(0, 2);
 	AssertString("ck", sz1.Text());
 	sz1.Kill();
 
@@ -553,13 +552,8 @@ void TestCharsRemoveEnd(void)
 	AssertPointer(gszEmptyString, sz1.Text());
 	sz1.Kill();
 
-	sz1.Init();
-	sz1.RemoveEnd(-1);
-	AssertPointer(gszEmptyString, sz1.Text());
-	sz1.Kill();
-
 	sz1.Init("Mack");
-	sz1.RemoveEnd(-1);
+	sz1.RemoveEnd(0);
 	AssertPointer(gszEmptyString, sz1.Text());
 	sz1.Kill();
 
@@ -583,8 +577,6 @@ void TestCharsRemoveCharacter(void)
 	AssertPointer(gszEmptyString, sz1.Text());
 	sz1.RemoveCharacter(1);
 	AssertPointer(gszEmptyString, sz1.Text());
-	sz1.RemoveCharacter(-1);
-	AssertPointer(gszEmptyString, sz1.Text());
 	sz1.Kill();
 
 
@@ -592,8 +584,6 @@ void TestCharsRemoveCharacter(void)
 	sz1.RemoveCharacter(0);
 	AssertString("oblins", sz1.Text());
 	sz1.RemoveCharacter(1);
-	AssertString("olins", sz1.Text());
-	sz1.RemoveCharacter(-1);
 	AssertString("olins", sz1.Text());
 	sz1.RemoveCharacter(5);
 	AssertString("olins", sz1.Text());
@@ -617,21 +607,18 @@ void TestCharsFindOutOfBounds(void)
 	AssertInt(2, iPos);
 
 	iPos = sz1.Find(3, 'C');
-	AssertInt(-1, iPos);
+	AssertInt(ARRAY_ELEMENT_NOT_FOUND, iPos);
 
 	iPos = sz1.Find(5, 'C');
-	AssertInt(-1, iPos);
+	AssertInt(ARRAY_ELEMENT_NOT_FOUND, iPos);
 
 	iPos = sz1.Find(6, 'C');
-	AssertInt(-1, iPos);
-
-	iPos = sz1.Find(-1, 'C');
-	AssertInt(2, iPos);
+	AssertInt(ARRAY_ELEMENT_NOT_FOUND, iPos);
 	sz1.Kill();
 
 	sz1.Init();
 	iPos = sz1.Find('C');
-	AssertInt(-1, iPos);
+	AssertInt(ARRAY_ELEMENT_NOT_FOUND, iPos);
 	sz1.Kill();
 }
 
@@ -650,13 +637,10 @@ void TestCharsFindFromEndOutOfBounds(void)
 	AssertInt(2, iPos);
 
 	iPos = sz1.FindFromEnd(1, 'C');
-	AssertInt(-1, iPos);
+	AssertInt(ARRAY_ELEMENT_NOT_FOUND, iPos);
 
 	iPos = sz1.FindFromEnd(0, 'C');
-	AssertInt(-1, iPos);
-
-	iPos = sz1.FindFromEnd(-1, 'C');
-	AssertInt(-1, iPos);
+	AssertInt(ARRAY_ELEMENT_NOT_FOUND, iPos);
 
 	iPos = sz1.FindFromEnd(6, 'C');
 	AssertInt(2, iPos);
@@ -664,7 +648,7 @@ void TestCharsFindFromEndOutOfBounds(void)
 
 	sz1.Init();
 	iPos = sz1.FindFromEnd('C');
-	AssertInt(-1, iPos);
+	AssertInt(ARRAY_ELEMENT_NOT_FOUND, iPos);
 	sz1.Kill();
 }
 

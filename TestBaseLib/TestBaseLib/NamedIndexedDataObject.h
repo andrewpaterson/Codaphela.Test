@@ -13,7 +13,7 @@ public:
 	void	Init(void);
 	void	Init(char* szString, int64 iNumberX, int64 iNumberY);
 
-	size_t	Size(void);
+	size	Size(void);
 };
 
 

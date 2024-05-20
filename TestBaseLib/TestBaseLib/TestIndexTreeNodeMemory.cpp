@@ -13,7 +13,7 @@ void TestIndexTreeNodeMemoryInit(void)
 {
 	CIndexTreeNodeMemory*	pcNode;
 	CIndexTreeNodeMemory	pcChildNode;
-	int64_t			uiObject;
+	int64					uiObject;
 	CIndexTreeNodeMemory*	pcResult;
 	CTestIndexTreeMemory	cTree;
 	SLogConfig				sLogConfig;
@@ -65,10 +65,10 @@ void TestIndexTreeNodeMemoryInit(void)
 //////////////////////////////////////////////////////////////////////////
 CIndexTreeNodeMemory* TestIndexTreeNodeMemoryMalloc(void)
 {
-	int						iSize;
+	size					iSize;
 	CIndexTreeNodeMemory*	pcNode;
 
-	iSize = sizeof(CIndexTreeNodeMemory) + (MAX_UCHAR-1) * sizeof(CIndexTreeNodeMemory*);
+	iSize = sizeof(CIndexTreeNodeMemory) + (MAX_UCHAR - 1) * sizeof(CIndexTreeNodeMemory*);
 	pcNode = (CIndexTreeNodeMemory*)malloc(iSize);
 	memset(pcNode, 0xfffefdfc, iSize);
 	return pcNode;

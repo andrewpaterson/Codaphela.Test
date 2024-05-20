@@ -18,16 +18,16 @@ void TestIndexTreeIteratorUnsafeIterate(void)
 	SIndexTreeMemoryUnsafeIterator	sIter;
 	char*							pvData;
 	char*							pvKey;
-	size_t							iDataSize;
+	size							iDataSize;
 	bool							bExists;
-	char							pacKey[9+1];
-	int								iKeyLength;
+	uint8							pacKey[9+1];
+	size							iKeyLength;
 	CIndexTreeMemory				cIndexTree;
 	CMapStringString				cMap;
 	SMapIterator					sMapIter;
 	char*							pacData;
-	int								iResult;
-	int								iMapDataSize;
+	size							iResult;
+	size							iMapDataSize;
 
 	cMap.Init();
 	cMap.Put("AA", "nutritious");
@@ -52,7 +52,7 @@ void TestIndexTreeIteratorUnsafeIterate(void)
 	{
 		iKeyLength = strlen((char*)pvKey);
 		iDataSize = strlen((char*)pvData);
-		cIndexTree.Put(pvKey, iKeyLength, pvData, (uint8)iDataSize);
+		cIndexTree.Put(pvKey, iKeyLength, pvData, iDataSize);
 
 		bExists = cMap.Iterate(&sMapIter, (void**)&pvKey, NULL, (void**)&pvData, NULL);
 	}
@@ -64,7 +64,7 @@ void TestIndexTreeIteratorUnsafeIterate(void)
 	{
 		iKeyLength = cIndexTree.GetKey(pvData, pacKey, 9+1);
 
-		pacData = cMap.Get(pacKey);
+		pacData = cMap.Get((char*)pacKey);
 		iMapDataSize = strlen(pacData);
 		AssertInt(iMapDataSize, iDataSize);
 
@@ -85,9 +85,9 @@ void TestIndexTreeIteratorUnsafeIterate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeIteratorIterate(void)
 {
-	int						iData;
+	size					iData;
 	char*					pszKey;
-	int						i;
+	size					i;
 	CChars*					pszKey2;
 	CIndexTreeMemory		cIndex;
 	CIndexTreeMemoryAccess	cAccess;
@@ -106,7 +106,7 @@ void TestIndexTreeIteratorIterate(void)
 		cAccess.PutStringInt(pszKey, iData);
 	}
 
-	AssertLongLongInt(1000, cAccess.NumElements());
+	AssertLong(1000, cAccess.NumElements());
 
 	pcIter = cAccess.CreateIterator();
 
@@ -150,5 +150,4 @@ void TestIndexTreeMemoryIterator(void)
 	FastFunctionsKill();
 	TypeConverterKill();
 }
-
 

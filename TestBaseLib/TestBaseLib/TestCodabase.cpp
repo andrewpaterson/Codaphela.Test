@@ -73,10 +73,10 @@ void TestCodabaseOperations(void)
 	AssertTrue(pcDatabase->Add(oiKey1, szData1, strlen(szData1) + 1));
 	AssertTrue(pcDatabase->Add(oiKey2, szData2, strlen(szData2) + 1));
 
-	AssertLongLongInt(2, pcDatabase->NumIndicesCached());
-	AssertLongLongInt(0, pcDatabase->NumNamesCached());
-	AssertLongLongInt(2, pcDatabase->NumIndices());
-	AssertLongLongInt(0, pcDatabase->NumNames());
+	AssertLong(2, pcDatabase->NumIndicesCached());
+	AssertLong(0, pcDatabase->NumNamesCached());
+	AssertLong(2, pcDatabase->NumIndices());
+	AssertLong(0, pcDatabase->NumNames());
 	Pass();
 
 	pcDatabase->Close();
@@ -109,10 +109,10 @@ void TestCodabaseOperations(void)
 	AssertTrue(pcDatabase->Get(oiKey4, szResult));
 	AssertString(szData4, szResult);
 
-	AssertLongLongInt(4, pcDatabase->NumIndicesCached());
-	AssertLongLongInt(2, pcDatabase->NumNamesCached());
-	AssertLongLongInt(4, pcDatabase->NumIndices());
-	AssertLongLongInt(2, pcDatabase->NumNames());
+	AssertLong(4, pcDatabase->NumIndicesCached());
+	AssertLong(2, pcDatabase->NumNamesCached());
+	AssertLong(4, pcDatabase->NumIndices());
+	AssertLong(2, pcDatabase->NumNames());
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
@@ -124,12 +124,12 @@ void TestCodabaseOperations(void)
 	Pass();
 	pcDatabase->Open();
 
-	AssertLongLongInt(0, pcDatabase->NumIndicesCached());
-	AssertLongLongInt(0, pcDatabase->NumNamesCached());
-	AssertLongLongInt(4, pcDatabase->NumIndices());
-	AssertLongLongInt(2, pcDatabase->NumNames());
-	AssertLongLongInt(4, pcDatabase->NumIndicesCached());
-	AssertLongLongInt(2, pcDatabase->NumNamesCached());
+	AssertLong(0, pcDatabase->NumIndicesCached());
+	AssertLong(0, pcDatabase->NumNamesCached());
+	AssertLong(4, pcDatabase->NumIndices());
+	AssertLong(2, pcDatabase->NumNames());
+	AssertLong(4, pcDatabase->NumIndicesCached());
+	AssertLong(2, pcDatabase->NumNamesCached());
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);

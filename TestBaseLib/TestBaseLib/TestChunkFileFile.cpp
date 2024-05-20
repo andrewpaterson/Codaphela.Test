@@ -20,7 +20,7 @@ void TestChunkFileFileRead(void)
 	cChunkFile.Init(MemoryFile());
 	AssertTrue(cChunkFile.WriteOpen());
 	AssertTrue(cChunkFile.WriteChunkBegin());
-	AssertLongLongInt(1, cChunkFile.Write(szZ, 1, 1));
+	AssertLong(1, cChunkFile.Write(szZ, 1, 1));
 	AssertTrue(cChunkFile.WriteChunkEnd("Zynaps"));
 	AssertTrue(cChunkFile.WriteClose());
 
@@ -31,23 +31,23 @@ void TestChunkFileFileRead(void)
 
 	cChunkFileFile.Init(&cChunkFile);
 	AssertTrue(cChunkFileFile.Open(EFM_Read));
-	AssertLongLongInt(1, cChunkFileFile.Size());
-	AssertLongLongInt(0, cChunkFileFile.Tell());
-	AssertLongLongInt(1, cChunkFileFile.Read(&cz, 1, 1));
+	AssertLong(1, cChunkFileFile.Size());
+	AssertLong(0, cChunkFileFile.Tell());
+	AssertLong(1, cChunkFileFile.Read(&cz, 1, 1));
 	AssertChar('Z', cz); cz = 'Q';
 
 	AssertTrue(cChunkFileFile.Seek(0, EFSO_SET));
-	AssertLongLongInt(0, cChunkFileFile.Tell());
-	AssertLongLongInt(1, cChunkFileFile.Read(&cz, 1, 1));
+	AssertLong(0, cChunkFileFile.Tell());
+	AssertLong(1, cChunkFileFile.Read(&cz, 1, 1));
 	AssertChar('Z', cz); cz = 'Q';
-	AssertLongLongInt(1, cChunkFileFile.Tell());
-	AssertLongLongInt(0, cChunkFileFile.Read(&cz, 1, 1));
-	AssertLongLongInt(1, cChunkFileFile.Tell());
+	AssertLong(1, cChunkFileFile.Tell());
+	AssertLong(0, cChunkFileFile.Read(&cz, 1, 1));
+	AssertLong(1, cChunkFileFile.Tell());
 
 	AssertTrue(cChunkFileFile.Seek(0, EFSO_SET));
-	AssertLongLongInt(1, cChunkFileFile.Read(&cz, 1, 2));
+	AssertLong(1, cChunkFileFile.Read(&cz, 1, 2));
 	AssertChar('Z', cz); cz = 'Q';
-	AssertLongLongInt(1, cChunkFileFile.Tell());
+	AssertLong(1, cChunkFileFile.Tell());
 
 	AssertTrue(cChunkFileFile.Close());
 

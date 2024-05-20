@@ -23,16 +23,16 @@ void TestSequenceNext(void)
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.TouchDir(szDirectory);
 
-	AssertLongLongInt(1LL, FIRST_O_INDEX);
+	AssertLong(1LL, FIRST_O_INDEX);
 
 	cConfig = CValueSequenceConfig::Create(szDirectory);
 	cSequence.Init(cConfig);
 
 	oi = cSequence.GetNext();
-	AssertLongLongInt(1LL, oi);
+	AssertLong(1LL, oi);
 
 	oi = cSequence.GetNext();
-	AssertLongLongInt(2LL, oi);
+	AssertLong(2LL, oi);
 
 	cSequence.Kill();
 
@@ -40,10 +40,10 @@ void TestSequenceNext(void)
 	cSequence.Init(cConfig);
 
 	oi = cSequence.GetNext();
-	AssertLongLongInt(3LL, oi);
+	AssertLong(3LL, oi);
 
 	oi = cSequence.GetNext();
-	AssertLongLongInt(4LL, oi);
+	AssertLong(4LL, oi);
 
 	cSequence.Kill();
 

@@ -15,8 +15,8 @@ void TestFreeListAllocatorReadWrite(void)
 	CFreeListAllocator		cAlloc;
 	CFileBasic				cFile;
 	CFreeListAllocator		cAllocIn;
-	int						i;
-	SFreeListParams		sParams;
+	int32					i;
+	SFreeListParams			sParams;
 
 	cFile.Init(MemoryFile());
 	cFile.Open(EFM_ReadWrite_Create);

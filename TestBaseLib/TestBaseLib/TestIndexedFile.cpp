@@ -38,16 +38,16 @@ void TestIndexedFileWrite(void)
 	cIndexedFile.Init(&cController, 0, "File.DAT", "_File.DAT", 9, 0);
 
 	iFileIndex = cIndexedFile.Write(sz3);
-	AssertLongLongInt(0, iFileIndex);
-	AssertLongLongInt(9, cIndexedFile.GetFileSize());
+	AssertLong(0, iFileIndex);
+	AssertLong(9, cIndexedFile.GetFileSize());
 
 	iFileIndex = cIndexedFile.Write(sz2);
-	AssertLongLongInt(1, iFileIndex);
-	AssertLongLongInt(18, cIndexedFile.GetFileSize());
+	AssertLong(1, iFileIndex);
+	AssertLong(18, cIndexedFile.GetFileSize());
 
 	bResult = cIndexedFile.Write(0, sz1);
 	AssertTrue(bResult);
-	AssertLongLongInt(18, cIndexedFile.GetFileSize());
+	AssertLong(18, cIndexedFile.GetFileSize());
 
 	bResult = cController.End();
 	AssertTrue(bResult);

@@ -17,7 +17,7 @@
 class CTestMapBlock : public CMapBlock
 {
 public:
-	SMNode* GetNode(void* pvKey, int iKeySize)
+	SMNode* GetNode(void* pvKey, size iKeySize)
 	{
 		return CMapBlock::GetNode(pvKey, iKeySize);
 	}
@@ -31,52 +31,52 @@ public:
 void TestMapBlockInternals(void)
 {
 	CMapBlock			cMap;
-	int					i;
-	int					j;
-	int					iKey;
-	int*				piData;
+	size				i;
+	size				j;
+	size				iKey;
+	size*				piData;
 	CArrayBlockSorted*	paBlock;
 	SMNode**			psNode1;
 	SMNode**			psNode2;
-	int*				piKey;
+	size*				piKey;
 
 	cMap.Init(&CompareInt, true);
 	i = 7; j = 43;
-	cMap.Put(&i, sizeof(int), &j, sizeof(int));
+	cMap.Put(&i, sizeof(size), &j, sizeof(size));
 
 	i = 9; j = 21;
-	cMap.Put(&i, sizeof(int), &j, sizeof(int));
+	cMap.Put(&i, sizeof(size), &j, sizeof(size));
 	AssertInt(2, cMap.NumElements());
 
 	paBlock = cMap.GetArray();
 	paBlock->InsertHoldingIntoSorted();
 	psNode1 = (SMNode**)paBlock->GetInSorted(0);
 	psNode2 = (SMNode**)paBlock->GetInSorted(1);
-	AssertInt(sizeof(int), (*psNode1)->iDataSize);
-	AssertInt(sizeof(int), (*psNode1)->iKeySize);
-	AssertInt(sizeof(int), (*psNode2)->iDataSize);
-	AssertInt(sizeof(int), (*psNode2)->iKeySize);
-	piKey = (int*)RemapSinglePointer(*psNode1, sizeof(SMNode));
+	AssertInt(sizeof(size), (*psNode1)->iDataSize);
+	AssertInt(sizeof(size), (*psNode1)->iKeySize);
+	AssertInt(sizeof(size), (*psNode2)->iDataSize);
+	AssertInt(sizeof(size), (*psNode2)->iKeySize);
+	piKey = (size*)RemapSinglePointer(*psNode1, sizeof(SMNode));
 	AssertInt(7, *piKey);
-	piData = (int*)RemapSinglePointer(piKey, (int)sizeof(int));
+	piData = (size*)RemapSinglePointer(piKey, (size)sizeof(size));
 	AssertInt(43, *piData);
-	piKey = (int*)RemapSinglePointer(*psNode2, sizeof(SMNode));
+	piKey = (size*)RemapSinglePointer(*psNode2, sizeof(SMNode));
 	AssertInt(9, *piKey);
-	piData = (int*)RemapSinglePointer(piKey, (int)sizeof(int));
+	piData = (size*)RemapSinglePointer(piKey, (size)sizeof(size));
 	AssertInt(21, *piData);
 
 	iKey = 7; piData = NULL;
-	cMap.Get(&iKey, sizeof(int), (void**)&piData, NULL);
+	cMap.Get(&iKey, sizeof(size), (void**)&piData, NULL);
 	AssertNotNull(piData);
 	AssertInt(43, *piData);
 
 	iKey = 9; piData = NULL;
-	cMap.Get(&iKey, sizeof(int), (void**)&piData, NULL);
+	cMap.Get(&iKey, sizeof(size), (void**)&piData, NULL);
 	AssertNotNull(piData);
 	AssertInt(21, *piData);
 
 	iKey = 3; piData = NULL;
-	cMap.Get(&iKey, sizeof(int), (void**)&piData, NULL);
+	cMap.Get(&iKey, sizeof(size), (void**)&piData, NULL);
 	AssertNull(piData);
 
 	cMap.Kill();
@@ -87,12 +87,12 @@ void TestMapBlockInternals(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-bool AddToMapBlock(CMapBlock* pcMapBlock, char* szKey, int64_t lliData)
+bool AddToMapBlock(CMapBlock* pcMapBlock, char* szKey, int64 lliData)
 {
-	int				iStrLen;
+	size				iStrLen;
 
 	iStrLen = strlen(szKey) + 1;
-	return pcMapBlock->Put(szKey, iStrLen, &lliData, sizeof(int64_t));
+	return pcMapBlock->Put(szKey, iStrLen, &lliData, sizeof(int64));
 }
 
 
@@ -100,9 +100,9 @@ bool AddToMapBlock(CMapBlock* pcMapBlock, char* szKey, int64_t lliData)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-bool GetFromMapBlock(CMapBlock* pcMapBlock, char* szKey, int64_t** pplli, int* piSize)
+bool GetFromMapBlock(CMapBlock* pcMapBlock, char* szKey, int64** pplli, size* piSize)
 {
-	int				iStrLen;
+	size				iStrLen;
 
 	iStrLen = strlen(szKey) + 1;
 	return pcMapBlock->Get(szKey, iStrLen, (void**)pplli, piSize);
@@ -113,15 +113,15 @@ bool GetFromMapBlock(CMapBlock* pcMapBlock, char* szKey, int64_t** pplli, int* p
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertMapBlock(CMapBlock* pcMapBlock, char* szKey, int64_t lliData)
+void AssertMapBlock(CMapBlock* pcMapBlock, char* szKey, int64 lliData)
 {
-	int64_t*	plli;
-	int				iStrLen;
+	int64*	plli;
+	size				iStrLen;
 
 	plli = NULL;
 	iStrLen = strlen(szKey) + 1;
 	pcMapBlock->Get(szKey, iStrLen, (void**)&plli, NULL);
-	AssertLongLongInt(lliData, *plli);
+	AssertLong(lliData, *plli);
 }
 
 
@@ -131,12 +131,12 @@ void AssertMapBlock(CMapBlock* pcMapBlock, char* szKey, int64_t lliData)
 //////////////////////////////////////////////////////////////////////////
 void TestMapBlockGet(void)
 {
-	CMapBlock		cMap;
-	int64_t	llia[64];
-	int				i;
-	int64_t	lli;
-	int64_t*	plli;
-	int				iSize;
+	CMapBlock	cMap;
+	int64		llia[64];
+	size		i;
+	int64		lli;
+	int64*		plli;
+	size		iSize;
 
 	lli = 0x886c857864030e05;
 	for (i = 0; i < 64; i++)
@@ -152,25 +152,25 @@ void TestMapBlockGet(void)
 
 	AssertInt(3, cMap.NumElements());
 	AssertTrue(GetFromMapBlock(&cMap, "cocker", &plli, &iSize));
-	AssertLongLongInt(llia[0], *plli);
-	AssertInt(sizeof(int64_t), iSize);
+	AssertLong(llia[0], *plli);
+	AssertInt(sizeof(int64), iSize);
 
 	AssertTrue(GetFromMapBlock(&cMap, "cock", &plli, &iSize));
-	AssertLongLongInt(llia[1], *plli);
-	AssertInt(sizeof(int64_t), iSize);
+	AssertLong(llia[1], *plli);
+	AssertInt(sizeof(int64), iSize);
 
 	AssertTrue(GetFromMapBlock(&cMap, "cockerel", &plli, &iSize));
-	AssertLongLongInt(llia[2], *plli);
+	AssertLong(llia[2], *plli);
 
 	AddToMapBlock(&cMap, "vizard", llia[3]);
 	AddToMapBlock(&cMap, "visard", llia[4]);
 	AddToMapBlock(&cMap, "wizard", llia[5]);
 	AssertTrue(GetFromMapBlock(&cMap, "vizard", &plli, &iSize));
-	AssertLongLongInt(llia[3], *plli);
+	AssertLong(llia[3], *plli);
 	AssertTrue(GetFromMapBlock(&cMap, "visard", &plli, &iSize));
-	AssertLongLongInt(llia[4], *plli);
+	AssertLong(llia[4], *plli);
 	AssertTrue(GetFromMapBlock(&cMap, "wizard", &plli, &iSize));
-	AssertLongLongInt(llia[5], *plli);
+	AssertLong(llia[5], *plli);
 
 	AddToMapBlock(&cMap, "repletion", llia[6]);
 	AddToMapBlock(&cMap, "ponderous", llia[7]);
@@ -178,11 +178,11 @@ void TestMapBlockGet(void)
 	AddToMapBlock(&cMap, "inimical", llia[9]);
 	AddToMapBlock(&cMap, "ignominy", llia[10]);
 	AssertTrue(GetFromMapBlock(&cMap, "inimical", &plli, &iSize));
-	AssertLongLongInt(llia[9], *plli);
-	AssertInt(sizeof(int64_t), iSize);
+	AssertLong(llia[9], *plli);
+	AssertInt(sizeof(int64), iSize);
 	AssertTrue(GetFromMapBlock(&cMap, "cocker", &plli, &iSize));
-	AssertLongLongInt(llia[0], *plli);
-	AssertInt(sizeof(int64_t), iSize);
+	AssertLong(llia[0], *plli);
+	AssertInt(sizeof(int64), iSize);
 
 	AddToMapBlock(&cMap, "voluble", llia[11]);
 	AddToMapBlock(&cMap, "intransigent", llia[12]);
@@ -191,11 +191,11 @@ void TestMapBlockGet(void)
 	AddToMapBlock(&cMap, "solicitous", llia[15]);
 	AssertInt(16, cMap.NumElements());
 	AssertTrue(GetFromMapBlock(&cMap, "solicitous", &plli, &iSize));
-	AssertLongLongInt(llia[15], *plli);
-	AssertInt(sizeof(int64_t), iSize);
+	AssertLong(llia[15], *plli);
+	AssertInt(sizeof(int64), iSize);
 	AssertTrue(GetFromMapBlock(&cMap, "cock", &plli, &iSize));
-	AssertLongLongInt(llia[1], *plli);
-	AssertInt(sizeof(int64_t), iSize);
+	AssertLong(llia[1], *plli);
+	AssertInt(sizeof(int64), iSize);
 
 	AddToMapBlock(&cMap, "resplendent", llia[16]);
 	AssertInt(17, cMap.NumElements());
@@ -229,25 +229,25 @@ void TestMapBlockGet(void)
 void TestMapBlockAddDuplicate(void)
 {
 	CMapBlock	cMap;
-	int			ia = 'a';
-	int			ib = 'a';
+	size		ia = 'a';
+	size		ib = 'a';
 	bool		bResult;
-	int			iWorldLen;
-	int			iHelloLen;
+	size		iWorldLen;
+	size		iHelloLen;
 
 	iWorldLen = strlen("World");
 	iHelloLen = strlen("Hello");
 
 	cMap.Init(&CompareInt, true);
-	bResult = cMap.Put(&ia, sizeof(int), "Hello", iHelloLen + 1);
+	bResult = cMap.Put(&ia, sizeof(size), "Hello", iHelloLen + 1);
 	AssertTrue(bResult);
 	AssertInt(1, cMap.NumElements());
-	AssertString("Hello", (char*)cMap.Get(&ia, sizeof(int)));
+	AssertString("Hello", (char*)cMap.Get(&ia, sizeof(size)));
 
-	bResult = cMap.Put(&ib, sizeof(int), "World", iWorldLen + 1);
+	bResult = cMap.Put(&ib, sizeof(size), "World", iWorldLen + 1);
 	AssertTrue(bResult);
 	AssertInt(1, cMap.NumElements());
-	AssertString("World", (char*)cMap.Get(&ia, sizeof(int)));
+	AssertString("World", (char*)cMap.Get(&ia, sizeof(size)));
 
 	cMap.Kill();
 }
@@ -260,46 +260,46 @@ void TestMapBlockAddDuplicate(void)
 void TestMapBlockRemove(void)
 {
 	CMapBlock	cMap;
-	int			ia = 'a';
-	int			ib = 'b';
-	int			ic = 'c';
+	size		ia = 'a';
+	size		ib = 'b';
+	size		ic = 'c';
 	bool		bResult;
 	char*		szData;
 
 	cMap.Init(&CompareInt, true);
-	bResult = cMap.Put(&ia, sizeof(int), "Hello", strlen("Hello") + 1);
-	bResult = cMap.Put(&ib, sizeof(int), "World", strlen("World") + 1);
-	bResult = cMap.Put(&ic, sizeof(int), "Rogue", strlen("Rogue") + 1);
+	bResult = cMap.Put(&ia, sizeof(size), "Hello", strlen("Hello") + 1);
+	bResult = cMap.Put(&ib, sizeof(size), "World", strlen("World") + 1);
+	bResult = cMap.Put(&ic, sizeof(size), "Rogue", strlen("Rogue") + 1);
 	AssertInt(3, cMap.NumElements());
 
-	cMap.Remove(&ib, sizeof(int));
+	cMap.Remove(&ib, sizeof(size));
 	AssertInt(2, cMap.NumElements());
-	bResult = cMap.Get(&ia, sizeof(int), (void**)&szData, NULL);
+	bResult = cMap.Get(&ia, sizeof(size), (void**)&szData, NULL);
 	AssertTrue(bResult);
 	AssertString(szData, "Hello");
-	bResult = cMap.Get(&ic, sizeof(int), (void**)&szData, NULL);
+	bResult = cMap.Get(&ic, sizeof(size), (void**)&szData, NULL);
 	AssertTrue(bResult);
 	AssertString(szData, "Rogue");
-	bResult = cMap.Get(&ib, sizeof(int), (void**)&szData, NULL);
+	bResult = cMap.Get(&ib, sizeof(size), (void**)&szData, NULL);
 	AssertFalse(bResult);
 
-	cMap.Remove(&ia, sizeof(int));
+	cMap.Remove(&ia, sizeof(size));
 	AssertInt(1, cMap.NumElements());
-	bResult = cMap.Get(&ia, sizeof(int), (void**)&szData, NULL);
+	bResult = cMap.Get(&ia, sizeof(size), (void**)&szData, NULL);
 	AssertFalse(bResult);
-	bResult = cMap.Get(&ic, sizeof(int), (void**)&szData, NULL);
+	bResult = cMap.Get(&ic, sizeof(size), (void**)&szData, NULL);
 	AssertTrue(bResult);
 	AssertString(szData, "Rogue");
-	bResult = cMap.Get(&ib, sizeof(int), (void**)&szData, NULL);
+	bResult = cMap.Get(&ib, sizeof(size), (void**)&szData, NULL);
 	AssertFalse(bResult);
 
-	cMap.Remove(&ic, sizeof(int));
+	cMap.Remove(&ic, sizeof(size));
 	AssertInt(0, cMap.NumElements());
-	bResult = cMap.Get(&ia, sizeof(int), (void**)&szData, NULL);
+	bResult = cMap.Get(&ia, sizeof(size), (void**)&szData, NULL);
 	AssertFalse(bResult);
-	bResult = cMap.Get(&ic, sizeof(int), (void**)&szData, NULL);
+	bResult = cMap.Get(&ic, sizeof(size), (void**)&szData, NULL);
 	AssertFalse(bResult);
-	bResult = cMap.Get(&ib, sizeof(int), (void**)&szData, NULL);
+	bResult = cMap.Get(&ib, sizeof(size), (void**)&szData, NULL);
 	AssertFalse(bResult);
 
 	cMap.Kill();
@@ -356,7 +356,7 @@ void TestMapBlockReadWrite(void)
 void TestMapBlockDataMemoryUnchanged(void)
 {
 	CMapStringString	mszsz;
-	int					i;
+	size				i;
 	CRandom				cRandom;
 	CArrayChars			aszWords;
 	CChars				sz;
@@ -416,7 +416,7 @@ void TestMapBlockDataMemoryUnchanged(void)
 void TestMapBlockRemoveHalf(void)
 {
 	CMapStringString	mszsz;
-	int					i;
+	size				i;
 	CRandom				cRandom;
 	CArrayChars			aszWords;
 	CChars				sz;
@@ -500,17 +500,17 @@ void TestMapBlockRemoveHalf(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapBlockPutDifferenceSizeDuplicates(void)
 {
-	CTestMapBlock			cIndex;
-	CMapIndexAccess			cAccess;
-	char					szOne[] = "1";
-	char					szTwo[] = "22";
-	char					szOtherTwo[] = "OT";
-	char					szThree[] = "333";
-	char					szKerfuffle[] = "kerfuffle";
-	CCountingAllocator		cAllocator;
-	int						iKeyLength;
-	char					szResult[256];
-	SMNode*					pcNode;
+	CTestMapBlock		cIndex;
+	CMapIndexAccess		cAccess;
+	char				szOne[] = "1";
+	char				szTwo[] = "22";
+	char				szOtherTwo[] = "OT";
+	char				szThree[] = "333";
+	char				szKerfuffle[] = "kerfuffle";
+	CCountingAllocator	cAllocator;
+	size				iKeyLength;
+	char				szResult[256];
+	SMNode*				pcNode;
 
 	cAllocator.Init(&gcSystemAllocator);
 	AssertInt(0, cAllocator.AllocatedUserSize());
@@ -575,7 +575,7 @@ void TestMapBlockPutDifferenceSizeDuplicates(void)
 
 
 char	gszMapBlockCallbackData[64];
-int		giMapBlockCallbackData = 0;
+size		giMapBlockCallbackData = 0;
 
 void TestMapBlockDataFreeCallback(const void* pvData)
 {
@@ -631,7 +631,11 @@ void TestMapBlockDataFree(void)
 }
 
 
-char* TestMapCopyKey(char* szDest, char* pvKey, int iKeySize)
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+char* TestMapCopyKey(char* szDest, char* pvKey, size iKeySize)
 {
 	memcpy(szDest, pvKey, iKeySize);
 	szDest[iKeySize] = '\0';
@@ -651,9 +655,9 @@ void TestMapBlockIterate(void)
 	CMapBlock			cMapIn;
 	SMapIterator		sIter;
 	char*				pvData;
-	int					iDataSize;
+	size				iDataSize;
 	char*				pvKey;
-	int					iKeySize;
+	size				iKeySize;
 	bool				bExists;
 	char				acKey[MAX_KEY_SIZE];
 

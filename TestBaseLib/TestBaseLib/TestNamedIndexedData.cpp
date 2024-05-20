@@ -116,14 +116,14 @@ void TestNamedIndexedDataAddString(EIndexWriteThrough eWriteThrough)
 	bResult = cDatabase.Get("Ernest", &cResult);
 	AssertTrue(bResult);
 	AssertString("Rutherford", cResult.mszString);
-	AssertLongLongInt(1871, cResult.miNumberX);
-	AssertLongLongInt(1937, cResult.miNumberY);
+	AssertLong(1871, cResult.miNumberX);
+	AssertLong(1937, cResult.miNumberY);
 
 	bResult = cDatabase.Get("Niels", &cResult);
 	AssertTrue(bResult);
 	AssertString("Bohr", cResult.mszString);
-	AssertLongLongInt(1885, cResult.miNumberX);
-	AssertLongLongInt(1962, cResult.miNumberY);
+	AssertLong(1885, cResult.miNumberX);
+	AssertLong(1962, cResult.miNumberY);
 	cController.End();
 	cNamedEvictionStrategy.Kill();
 	cIndexEvictionStrategy.Kill();
@@ -146,14 +146,14 @@ void TestNamedIndexedDataAddString(EIndexWriteThrough eWriteThrough)
 	bResult = cDatabase.Get(0x0203LL, &cResult);
 	AssertTrue(bResult);
 	AssertString("Bohr", cResult.mszString);
-	AssertLongLongInt(1885, cResult.miNumberX);
-	AssertLongLongInt(1962, cResult.miNumberY);
+	AssertLong(1885, cResult.miNumberX);
+	AssertLong(1962, cResult.miNumberY);
 
 	bResult = cDatabase.Get(0x0102, &cResult);
 	AssertTrue(bResult);
 	AssertString("Rutherford", cResult.mszString);
-	AssertLongLongInt(1871, cResult.miNumberX);
-	AssertLongLongInt(1937, cResult.miNumberY);
+	AssertLong(1871, cResult.miNumberX);
+	AssertLong(1937, cResult.miNumberY);
 	cController.End();
 	cNamedEvictionStrategy.Kill();
 	cIndexEvictionStrategy.Kill();
@@ -175,8 +175,8 @@ void TestNamedIndexedDataAddString(EIndexWriteThrough eWriteThrough)
 	cController.Begin();
 	AssertInt(sizeof(CTestNamedIndexedDataObject), cDatabase.Size(0x0203));
 	AssertInt(sizeof(CTestNamedIndexedDataObject), cDatabase.Size(0x0102));
-	AssertLongLongInt(2, cDatabase.NumIndices());
-	AssertLongLongInt(2, cDatabase.NumNames());
+	AssertLong(2, cDatabase.NumIndices());
+	AssertLong(2, cDatabase.NumNames());
 	cController.End();
 
 
@@ -207,7 +207,7 @@ void TestNamedIndexedDataAddChars(EIndexWriteThrough eWriteThrough)
 	CTestNamedIndexedDataObject			cResult;
 	bool								bResult;
 	CChars								szName;
-	uint32						uiDataSize;
+	size								uiDataSize;
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database2a");
 
@@ -253,10 +253,10 @@ void TestNamedIndexedDataAddChars(EIndexWriteThrough eWriteThrough)
 	AssertInt(sizeof(CTestNamedIndexedDataObject), uiDataSize);
 	AssertTrue(bResult);
 	AssertString("Rutherford", cResult.mszString);
-	AssertLongLongInt(1871, cResult.miNumberX);
-	AssertLongLongInt(1937, cResult.miNumberY);
-	AssertLongLongInt(1, cDatabase.NumIndices());
-	AssertLongLongInt(1, cDatabase.NumNames());
+	AssertLong(1871, cResult.miNumberX);
+	AssertLong(1937, cResult.miNumberY);
+	AssertLong(1, cDatabase.NumIndices());
+	AssertLong(1, cDatabase.NumNames());
 	cController.End();
 
 
@@ -313,8 +313,8 @@ void TestNamedIndexedDataAddBad(EIndexWriteThrough eWriteThrough)
 	AssertFalse(cDatabase.Add(1LL, NULL, 0));
 	gcLogger.SetConfig(&sLogConfig);
 	szName.Kill();
-	AssertLongLongInt(0, cDatabase.NumIndices());
-	AssertLongLongInt(0, cDatabase.NumNames());
+	AssertLong(0, cDatabase.NumIndices());
+	AssertLong(0, cDatabase.NumNames());
 	cController.End();
 
 
@@ -382,10 +382,10 @@ void TestNamedIndexedDataAddIndex(EIndexWriteThrough eWriteThrough)
 	AssertFalse(cDatabase.Get("Ernest", &cResult));
 	AssertTrue(cDatabase.Get(0x56788435450563LL, &cResult));
 	AssertString("Rutherford", cResult.mszString);
-	AssertLongLongInt(1871, cResult.miNumberX);
-	AssertLongLongInt(1937, cResult.miNumberY);
-	AssertLongLongInt(1, cDatabase.NumIndices());
-	AssertLongLongInt(0, cDatabase.NumNames());
+	AssertLong(1871, cResult.miNumberX);
+	AssertLong(1937, cResult.miNumberY);
+	AssertLong(1, cDatabase.NumIndices());
+	AssertLong(0, cDatabase.NumNames());
 	cController.End();
 
 
@@ -411,7 +411,7 @@ void TestNamedIndexedDataGetName(EIndexWriteThrough eWriteThrough)
 	CIndexTreeEvictionStrategyRandom	cIndexEvictionStrategy;
 	CIndexTreeEvictionStrategyRandom	cNamedEvictionStrategy;
 	CFileUtil							cFileUtil;
-	int									pai[512];
+	size									pai[512];
 	CChars								szName;
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database3");
@@ -492,12 +492,12 @@ void TestNamedIndexedDataSetIndex(EIndexWriteThrough eWriteThrough)
 	cController.Begin();
 	AssertTrue(cDatabase.Get("Depend warmth fat but her but played", &cResult));
 	AssertString("Those an equal point no years do.", cResult.mszString);
-	AssertLongLongInt(456754674567, cResult.miNumberX);
-	AssertLongLongInt(192345324532, cResult.miNumberY);
+	AssertLong(456754674567, cResult.miNumberX);
+	AssertLong(192345324532, cResult.miNumberY);
 	AssertTrue(cDatabase.Get(0xf97f3227894f783eLL, &cResult));
 	AssertString("Those an equal point no years do.", cResult.mszString);
-	AssertLongLongInt(456754674567, cResult.miNumberX);
-	AssertLongLongInt(192345324532, cResult.miNumberY);
+	AssertLong(456754674567, cResult.miNumberX);
+	AssertLong(192345324532, cResult.miNumberY);
 	cController.End();
 
 	cDatabase.Kill();
@@ -558,8 +558,8 @@ void TestNamedIndexedDataSet(EIndexWriteThrough eWriteThrough)
 	AssertFalse(cDatabase.Get(0xe678f6989c68234aLL, &cResult));
 	AssertFalse(cDatabase.Get(0xf9786d996987bcd1LL, &cResult));
 	AssertString("Terminated uncommonly at at estimating.", cResult.mszString);
-	AssertLongLongInt(87632234423, cResult.miNumberX);
-	AssertLongLongInt(3948765293847, cResult.miNumberY);
+	AssertLong(87632234423, cResult.miNumberX);
+	AssertLong(3948765293847, cResult.miNumberY);
 
 	cObject1.Init("Certainty listening no no behaviour.", 192345324532, 456754674567);
 	AssertTrue(cDatabase.Set("Ten behaviour met moonlight extremity acuteness direction", &cObject1));
@@ -574,16 +574,16 @@ void TestNamedIndexedDataSet(EIndexWriteThrough eWriteThrough)
 	cController.Begin();
 	AssertTrue(cDatabase.Get(0xf97f3227894f783eLL, &cResult));
 	AssertString("Answer living law things either sir bed length.", cResult.mszString);
-	AssertLongLongInt(4657587587534, cResult.miNumberX);
-	AssertLongLongInt(327649823, cResult.miNumberY);
+	AssertLong(4657587587534, cResult.miNumberX);
+	AssertLong(327649823, cResult.miNumberY);
 	AssertTrue(cDatabase.Get(&sz, &cResult));
 	AssertString("Because add why not esteems amiable him.", cResult.mszString);
-	AssertLongLongInt(867575634, cResult.miNumberX);
-	AssertLongLongInt(75684567698873423, cResult.miNumberY);
+	AssertLong(867575634, cResult.miNumberX);
+	AssertLong(75684567698873423, cResult.miNumberY);
 	AssertTrue(cDatabase.Get("Prudent cordial comfort do no on colonel as assured chicken", &cResult));
 	AssertString("Because add why not esteems amiable him.", cResult.mszString);
-	AssertLongLongInt(867575634, cResult.miNumberX);
-	AssertLongLongInt(75684567698873423, cResult.miNumberY);
+	AssertLong(867575634, cResult.miNumberX);
+	AssertLong(75684567698873423, cResult.miNumberY);
 	sz.Kill();
 	cController.End();
 
@@ -648,8 +648,8 @@ void TestNamedIndexedDataRemove(EIndexWriteThrough eWriteThrough)
 	cDatabase.Add(0x0203LL, "Niels", &cObject2, cObject2.Size());
 	cObject3.Init("Planck", 1858, 1947);
 	cDatabase.Add(0x0304LL, &cObject3, cObject3.Size());
-	AssertLongLongInt(3, cDatabase.NumIndices());
-	AssertLongLongInt(2, cDatabase.NumNames());
+	AssertLong(3, cDatabase.NumIndices());
+	AssertLong(2, cDatabase.NumNames());
 	AssertTrue(cDatabase.Contains(0x0102LL));
 	AssertTrue(cDatabase.Contains("Ernest"));
 	AssertTrue(cDatabase.Contains(0x0203LL));
@@ -763,7 +763,7 @@ void TestNamedIndexedDataIterate(EIndexWriteThrough eWriteThrough)
 	CTestNamedIndexedDataObject			cObject5;
 	SIndexTreeFileIterator		sIter;
 	CTestNamedIndexedDataObject			cResult;
-	size_t								iDataSize;
+	size								iDataSize;
 	OIndex								oi;
 	char								szKey[MAX_KEY_SIZE];
 	bool								bResult;
@@ -788,56 +788,56 @@ void TestNamedIndexedDataIterate(EIndexWriteThrough eWriteThrough)
 	cDatabase.Add(0x405LL, "Albert", &cObject4, cObject4.Size());
 	cObject5.Init("Newton", 1643, 1727);
 	cDatabase.Add(0x506LL, "Isaac", &cObject5, cObject5.Size());
-	AssertLongLongInt(5, cDatabase.NumIndices());
-	AssertLongLongInt(4, cDatabase.NumNames());
+	AssertLong(5, cDatabase.NumIndices());
+	AssertLong(4, cDatabase.NumNames());
 
 	oi = cDatabase.StartIndexIteration(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
-	AssertLongLongInt(0x0102LL, oi);
+	AssertLong(0x0102LL, oi);
 	AssertInt(sizeof(CTestNamedIndexedDataObject), iDataSize);
 	AssertMemory(&cObject1, &cResult, iDataSize);
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
-	AssertLongLongInt(0x0203LL, oi);
+	AssertLong(0x0203LL, oi);
 	AssertInt(sizeof(CTestNamedIndexedDataObject), iDataSize);
 	AssertMemory(&cObject2, &cResult, iDataSize);
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
-	AssertLongLongInt(0x0304LL, oi);
+	AssertLong(0x0304LL, oi);
 	AssertInt(sizeof(CTestNamedIndexedDataObject), iDataSize);
 	AssertMemory(&cObject3, &cResult, iDataSize);
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
-	AssertLongLongInt(0x0405LL, oi);
+	AssertLong(0x0405LL, oi);
 	AssertInt(sizeof(CTestNamedIndexedDataObject), iDataSize);
 	AssertMemory(&cObject4, &cResult, iDataSize);
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
-	AssertLongLongInt(0x0506LL, oi);
+	AssertLong(0x0506LL, oi);
 	AssertInt(sizeof(CTestNamedIndexedDataObject), iDataSize);
 	AssertMemory(&cObject5, &cResult, iDataSize);
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
-	AssertLongLongInt(INVALID_O_INDEX, oi);
+	AssertLong(INVALID_O_INDEX, oi);
 
 
 	bResult = cDatabase.StartNameIteration(&sIter, szKey, &oi);
 	AssertTrue(bResult);
-	AssertLongLongInt(0x0405LL, oi);
+	AssertLong(0x0405LL, oi);
 	AssertString("Albert", szKey);
 
 	bResult = cDatabase.NameIterate(&sIter, szKey, &oi);
 	AssertTrue(bResult);
-	AssertLongLongInt(0x0102LL, oi);
+	AssertLong(0x0102LL, oi);
 	AssertString("Ernest", szKey);
 
 	bResult = cDatabase.NameIterate(&sIter, szKey, &oi);
 	AssertTrue(bResult);
-	AssertLongLongInt(0x0506LL, oi);
+	AssertLong(0x0506LL, oi);
 	AssertString("Isaac", szKey);
 
 	bResult = cDatabase.NameIterate(&sIter, szKey, &oi);
 	AssertTrue(bResult);
-	AssertLongLongInt(0x0203LL, oi);
+	AssertLong(0x0203LL, oi);
 	AssertString("Niels", szKey);
 
 	bResult = cDatabase.NameIterate(&sIter, szKey, &oi);
@@ -845,22 +845,22 @@ void TestNamedIndexedDataIterate(EIndexWriteThrough eWriteThrough)
 
 
 	oi = cDatabase.StartIndexIteration(&sIter, &cResult, &iDataSize, 0);
-	AssertLongLongInt(0x0102LL, oi);
+	AssertLong(0x0102LL, oi);
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, 0);
-	AssertLongLongInt(0x0203LL, oi);
+	AssertLong(0x0203LL, oi);
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, 0);
-	AssertLongLongInt(0x0304LL, oi);
+	AssertLong(0x0304LL, oi);
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, 0);
-	AssertLongLongInt(0x0405LL, oi);
+	AssertLong(0x0405LL, oi);
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, 0);
-	AssertLongLongInt(0x0506LL, oi);
+	AssertLong(0x0506LL, oi);
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, 0);
-	AssertLongLongInt(INVALID_O_INDEX, oi);
+	AssertLong(INVALID_O_INDEX, oi);
 
 
 	if (eWriteThrough == IWT_No) cDatabase.Flush();
@@ -890,19 +890,19 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 	CTestNamedIndexedDataObject			cObject;
 	SIndexTreeFileIterator				sIter;
 	CTestNamedIndexedDataObject			cResult;
-	size_t								iDataSize;
+	size								iDataSize;
 	OIndex								oi;
 	char								szKey[MAX_KEY_SIZE];
 	bool								bResult;
 	CArrayChars							aszWords;
 	CRandom								cRandom;
 	CChars								sz;
-	int									iNumWords;
-	int									iIndex;
-	int									iWord;
+	size									iNumWords;
+	size									iIndex;
+	size									iWord;
 	CArrayChars							aszNames;
-	int									iIter;
-	int									iExpectedOi;
+	size									iIter;
+	size									iExpectedOi;
 	CIndexTreeEvictionCounter			cIndexEvictionCounter;
 	CIndexedDataEvictionCounter			cDataEvictionCounter;
 	CIndexTreeEvictionCounter			cNameEvictionCounter;
@@ -929,9 +929,9 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
 
-	AssertLongLongInt(3100, cDatabase.GetIndiciesSystemMemorySize());
-	AssertLongLongInt(0, cDatabase.GetDataSystemMemorySize());
-	AssertLongLongInt(3100, cDatabase.GetNamesSystemMemorySize());
+	AssertLong(3100, cDatabase.GetIndiciesSystemMemorySize());
+	AssertLong(0, cDatabase.GetDataSystemMemorySize());
+	AssertLong(3100, cDatabase.GetNamesSystemMemorySize());
 
 	for (oi = 1; oi < 1024; oi++)
 	{
@@ -951,17 +951,17 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 		sz.Kill();
 	}
 
-	AssertLongLongInt(8156, cDatabase.GetIndiciesSystemMemorySize());
-	AssertLongLongInt(5756, cDatabase.GetDataSystemMemorySize());
-	AssertLongLongInt(16308, cDatabase.GetNamesSystemMemorySize());
-	AssertLongLongInt(21, cDatabase.NumIndicesCached());
-	AssertLongLongInt(18, cDatabase.NumDataCached());
-	AssertLongLongInt(10, cDatabase.NumNamesCached());
-	AssertLongLongInt(1002, cIndexEvictionCounter.EvictionCount());
-	AssertLongLongInt(1005, cDataEvictionCounter.EvictionCount());
-	AssertLongLongInt(1013, cNameEvictionCounter.EvictionCount());
-	AssertLongLongInt(1023, cDatabase.NumIndices());
-	AssertLongLongInt(1023, cDatabase.NumNames());
+	AssertLong(8156, cDatabase.GetIndiciesSystemMemorySize());
+	AssertLong(5756, cDatabase.GetDataSystemMemorySize());
+	AssertLong(16308, cDatabase.GetNamesSystemMemorySize());
+	AssertLong(21, cDatabase.NumIndicesCached());
+	AssertLong(18, cDatabase.NumDataCached());
+	AssertLong(10, cDatabase.NumNamesCached());
+	AssertLong(1002, cIndexEvictionCounter.EvictionCount());
+	AssertLong(1005, cDataEvictionCounter.EvictionCount());
+	AssertLong(1013, cNameEvictionCounter.EvictionCount());
+	AssertLong(1023, cDatabase.NumIndices());
+	AssertLong(1023, cDatabase.NumNames());
 	cIndexEvictionCounter.Reset();
 	cDataEvictionCounter.Reset();
 	cNameEvictionCounter.Reset();
@@ -985,18 +985,18 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 	}
 	Pass();
 
-	AssertLongLongInt(8156, cDatabase.GetIndiciesSystemMemorySize());
-	AssertLongLongInt(4478, cDatabase.GetDataSystemMemorySize());
-	AssertLongLongInt(15668, cDatabase.GetNamesSystemMemorySize());
-	AssertLongLongInt(18, cDatabase.NumIndicesCached());
-	AssertLongLongInt(14, cDatabase.NumDataCached());
-	AssertLongLongInt(15, cDatabase.NumNamesCached());
-	AssertLongLongInt(1023, cIndexEvictionCounter.EvictionCount());
-	AssertLongLongInt(1009, cDataEvictionCounter.EvictionCount());
-	AssertLongLongInt(0, cNameEvictionCounter.EvictionCount());
-	AssertLongLongInt(1023, cDatabase.NumIndices());
-	AssertLongLongInt(1023, cDatabase.NumNames());
-	AssertLongLongInt(0, cDatabase.NumDataCached()); 
+	AssertLong(8156, cDatabase.GetIndiciesSystemMemorySize());
+	AssertLong(4478, cDatabase.GetDataSystemMemorySize());
+	AssertLong(15668, cDatabase.GetNamesSystemMemorySize());
+	AssertLong(18, cDatabase.NumIndicesCached());
+	AssertLong(14, cDatabase.NumDataCached());
+	AssertLong(15, cDatabase.NumNamesCached());
+	AssertLong(1023, cIndexEvictionCounter.EvictionCount());
+	AssertLong(1009, cDataEvictionCounter.EvictionCount());
+	AssertLong(0, cNameEvictionCounter.EvictionCount());
+	AssertLong(1023, cDatabase.NumIndices());
+	AssertLong(1023, cDatabase.NumNames());
+	AssertLong(0, cDatabase.NumDataCached()); 
 	cIndexEvictionCounter.Reset();
 	cDataEvictionCounter.Reset();
 	cNameEvictionCounter.Reset();
@@ -1013,14 +1013,14 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 		bResult = cDatabase.NameIterate(&sIter, szKey, &oi);
 	}
 
-	AssertLongLongInt(18, cDatabase.NumIndicesCached());
-	AssertLongLongInt(0, cDatabase.NumDataCached());
-	AssertLongLongInt(16, cDatabase.NumNamesCached());
-	AssertLongLongInt(0, cIndexEvictionCounter.EvictionCount());
-	AssertLongLongInt(0, cDataEvictionCounter.EvictionCount());
-	AssertLongLongInt(1022, cNameEvictionCounter.EvictionCount());
-	AssertLongLongInt(1023, cDatabase.NumIndices());
-	AssertLongLongInt(1023, cDatabase.NumNames());
+	AssertLong(18, cDatabase.NumIndicesCached());
+	AssertLong(0, cDatabase.NumDataCached());
+	AssertLong(16, cDatabase.NumNamesCached());
+	AssertLong(0, cIndexEvictionCounter.EvictionCount());
+	AssertLong(0, cDataEvictionCounter.EvictionCount());
+	AssertLong(1022, cNameEvictionCounter.EvictionCount());
+	AssertLong(1023, cDatabase.NumIndices());
+	AssertLong(1023, cDatabase.NumNames());
 
 
 	if (eWriteThrough == IWT_No) cDatabase.Flush();
@@ -1057,16 +1057,16 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 	CArrayChars							aszWords;
 	CRandom								cRandom;
 	CChars								sz;
-	int									iNumWords;
-	int									iIndex;
-	int									iWord;
+	size									iNumWords;
+	size									iIndex;
+	size									iWord;
 	CArrayChars							aszNames;
 	CIndexTreeEvictionCounter			cIndexEvictionCounter;
 	CIndexedDataEvictionCounter			cDataEvictionCounter;
 	CIndexTreeEvictionCounter			cNameEvictionCounter;
 	//bool								bFailed;
-	int									i;
-	uint32						uiDataSize;
+	size									i;
+	size								uiDataSize;
 
 	aszWords.Init();
 	GetCommonWords(&aszWords);
@@ -1089,9 +1089,9 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 	cController.Begin();
 	cDatabase.Init(&cController, cIndexConfig, cNamedConfig);
 
-	AssertLongLongInt(3100, cDatabase.GetIndiciesSystemMemorySize());
-	AssertLongLongInt(0, cDatabase.GetDataSystemMemorySize());
-	AssertLongLongInt(3100, cDatabase.GetNamesSystemMemorySize());
+	AssertLong(3100, cDatabase.GetIndiciesSystemMemorySize());
+	AssertLong(0, cDatabase.GetDataSystemMemorySize());
+	AssertLong(3100, cDatabase.GetNamesSystemMemorySize());
 
 	for (oi = 1; oi < 1024; oi++)
 	{
@@ -1111,17 +1111,17 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 		sz.Kill();
 	}
 
-	AssertLongLongInt(8156, cDatabase.GetIndiciesSystemMemorySize());
-	AssertLongLongInt(5756, cDatabase.GetDataSystemMemorySize());
-	AssertLongLongInt(16308, cDatabase.GetNamesSystemMemorySize());
-	AssertLongLongInt(21, cDatabase.NumIndicesCached());
-	AssertLongLongInt(18, cDatabase.NumDataCached());
-	AssertLongLongInt(10, cDatabase.NumNamesCached());
-	AssertLongLongInt(1002, cIndexEvictionCounter.EvictionCount());
-	AssertLongLongInt(1005, cDataEvictionCounter.EvictionCount());
-	AssertLongLongInt(1013, cNameEvictionCounter.EvictionCount());
-	AssertLongLongInt(1023, cDatabase.NumIndices());
-	AssertLongLongInt(1023, cDatabase.NumNames());
+	AssertLong(8156, cDatabase.GetIndiciesSystemMemorySize());
+	AssertLong(5756, cDatabase.GetDataSystemMemorySize());
+	AssertLong(16308, cDatabase.GetNamesSystemMemorySize());
+	AssertLong(21, cDatabase.NumIndicesCached());
+	AssertLong(18, cDatabase.NumDataCached());
+	AssertLong(10, cDatabase.NumNamesCached());
+	AssertLong(1002, cIndexEvictionCounter.EvictionCount());
+	AssertLong(1005, cDataEvictionCounter.EvictionCount());
+	AssertLong(1013, cNameEvictionCounter.EvictionCount());
+	AssertLong(1023, cDatabase.NumIndices());
+	AssertLong(1023, cDatabase.NumNames());
 	
 	cIndexEvictionCounter.Reset();
 	cDataEvictionCounter.Reset();
@@ -1132,17 +1132,17 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 		bResult = cDatabase.Get(aszNames.Get(i), &uiDataSize, &cResult, sizeof(CTestNamedIndexedDataObject));
 	}
 
-	AssertLongLongInt(6812, cDatabase.GetIndiciesSystemMemorySize());
-	AssertLongLongInt(317, cDatabase.GetDataSystemMemorySize());
-	AssertLongLongInt(16128, cDatabase.GetNamesSystemMemorySize());
-	AssertLongLongInt(1, cDatabase.NumIndicesCached());
-	AssertLongLongInt(1, cDatabase.NumDataCached());
-	AssertLongLongInt(8, cDatabase.NumNamesCached());
-	AssertLongLongInt(1040, cIndexEvictionCounter.EvictionCount());
-	AssertLongLongInt(1022, cDataEvictionCounter.EvictionCount());
-	AssertLongLongInt(1030, cNameEvictionCounter.EvictionCount());
-	AssertLongLongInt(1023, cDatabase.NumIndices());
-	AssertLongLongInt(1023, cDatabase.NumNames());
+	AssertLong(6812, cDatabase.GetIndiciesSystemMemorySize());
+	AssertLong(317, cDatabase.GetDataSystemMemorySize());
+	AssertLong(16128, cDatabase.GetNamesSystemMemorySize());
+	AssertLong(1, cDatabase.NumIndicesCached());
+	AssertLong(1, cDatabase.NumDataCached());
+	AssertLong(8, cDatabase.NumNamesCached());
+	AssertLong(1040, cIndexEvictionCounter.EvictionCount());
+	AssertLong(1022, cDataEvictionCounter.EvictionCount());
+	AssertLong(1030, cNameEvictionCounter.EvictionCount());
+	AssertLong(1023, cDatabase.NumIndices());
+	AssertLong(1023, cDatabase.NumNames());
 
 	cIndexEvictionCounter.Reset();
 	cDataEvictionCounter.Reset();
@@ -1153,17 +1153,17 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 		bResult = cDatabase.Get(aszNames.Get(i), &uiDataSize, &cResult, sizeof(CTestNamedIndexedDataObject));
 	}
 
-	AssertLongLongInt(6812, cDatabase.GetIndiciesSystemMemorySize());
-	AssertLongLongInt(322, cDatabase.GetDataSystemMemorySize());
-	AssertLongLongInt(15988, cDatabase.GetNamesSystemMemorySize());
-	AssertLongLongInt(1, cDatabase.NumIndicesCached());
-	AssertLongLongInt(1, cDatabase.NumDataCached());
-	AssertLongLongInt(11, cDatabase.NumNamesCached());
-	AssertLongLongInt(1040, cIndexEvictionCounter.EvictionCount());
-	AssertLongLongInt(1022, cDataEvictionCounter.EvictionCount());
-	AssertLongLongInt(1028, cNameEvictionCounter.EvictionCount());
-	AssertLongLongInt(1023, cDatabase.NumIndices());
-	AssertLongLongInt(1023, cDatabase.NumNames());
+	AssertLong(6812, cDatabase.GetIndiciesSystemMemorySize());
+	AssertLong(322, cDatabase.GetDataSystemMemorySize());
+	AssertLong(15988, cDatabase.GetNamesSystemMemorySize());
+	AssertLong(1, cDatabase.NumIndicesCached());
+	AssertLong(1, cDatabase.NumDataCached());
+	AssertLong(11, cDatabase.NumNamesCached());
+	AssertLong(1040, cIndexEvictionCounter.EvictionCount());
+	AssertLong(1022, cDataEvictionCounter.EvictionCount());
+	AssertLong(1028, cNameEvictionCounter.EvictionCount());
+	AssertLong(1023, cDatabase.NumIndices());
+	AssertLong(1023, cDatabase.NumNames());
 
 	if (eWriteThrough == IWT_No) cDatabase.Flush();
 	cController.End();

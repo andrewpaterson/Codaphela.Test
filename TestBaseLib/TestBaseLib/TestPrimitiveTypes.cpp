@@ -4,8 +4,8 @@
 struct TestPrimitiveLongStruct
 {
 public:
-	int64_t lli1;
-	int64_t lli2;
+	int64 lli1;
+	int64 lli2;
 };
 
 
@@ -51,10 +51,10 @@ void TestPrimitiveTypesPointerArray(void)
 
 	AssertPointer(&sLongs1, p1);
 	AssertPointer(&sLongs2, p2);
-	AssertLongLongInt(1LL, p1->lli1);
-	AssertLongLongInt(2LL, p2->lli1);
-	AssertLongLongInt(3LL, sPointers.aps[0]->lli2);
-	AssertLongLongInt(4LL, sPointers.aps[1]->lli2);
+	AssertLong(1LL, p1->lli1);
+	AssertLong(2LL, p2->lli1);
+	AssertLong(3LL, sPointers.aps[0]->lli2);
+	AssertLong(4LL, sPointers.aps[1]->lli2);
 }
 
 
@@ -67,7 +67,7 @@ void TestPrimitiveTypesSizes(void)
 	AssertInt(1, sizeof(char));
 	AssertInt(2, sizeof(wchar_t));
 	AssertInt(4, sizeof(int));
-	AssertInt(8, sizeof(int64_t));
+	AssertInt(8, sizeof(int64));
 	AssertInt(4, sizeof(void*));
 }
 

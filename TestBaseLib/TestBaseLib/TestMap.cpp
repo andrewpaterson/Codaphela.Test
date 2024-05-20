@@ -106,8 +106,8 @@ void TestMapIntInt2(void)
 //////////////////////////////////////////////////////////////////////////
 void DumpTree(CTreeInt* pcTree)
 {
-	int* pi;
-	CChars c;
+	int*	pi;
+	CChars	c;
 
 	pi = pcTree->StartTraversal();
 	c.Init("-----------------\n");

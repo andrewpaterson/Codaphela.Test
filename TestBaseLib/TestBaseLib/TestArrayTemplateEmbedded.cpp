@@ -69,9 +69,9 @@ void TestArrayTemplateEmbeddedAdd(void)
 void TestArrayTemplateEmbeddedRemoveAt(void)
 {
 	CArrayTemplateEmbedded<int, 5>	cArray;
-	int*					piEmbeddedData;
-	int*					pi;
-	int						i;
+	int*							piEmbeddedData;
+	int*							pi;
+	int								i;
 
 	cArray.Init();
 	piEmbeddedData = cArray.GetData();
@@ -170,7 +170,7 @@ void TestArrayTemplateEmbeddedRemove(void)
 	int**							ppi1;
 	int**							ppi2;
 
-	int								iIndex;
+	size							iIndex;
 
 	i1 = 1;
 	i2 = 2;
@@ -185,11 +185,11 @@ void TestArrayTemplateEmbeddedRemove(void)
 	ppi2 = cArray.Add(&pi2);
 
 	iIndex = cArray.GetIndex(&pi1);
-	AssertInt(-1, iIndex);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, iIndex);
 	iIndex = cArray.GetIndex(ppi1);
 	AssertInt(0, iIndex);
 	iIndex = cArray.GetIndex(&pi2);
-	AssertInt(-1, iIndex);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, iIndex);
 	iIndex = cArray.GetIndex(ppi2);
 	AssertInt(1, iIndex);
 
@@ -204,7 +204,7 @@ void TestArrayTemplateEmbeddedRemove(void)
 
 	cArray.Remove(&pi1);
 	iIndex = cArray.Find(&pi1);
-	AssertInt(-1, iIndex);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, iIndex);
 	AssertPointer(pi2, *cArray.Get(0));
 }
 
@@ -282,7 +282,7 @@ void TestArrayTemplateEmbeddedChangeChunkSize(void)
 	CArrayTemplateEmbedded<int, 3>	cArray;
 	int*							pi;
 	int*							piEmbeddedData;
-	int								i;
+	size							i;
 
 	cArray.Init();
 	AssertInt(0, cArray.NumElements());

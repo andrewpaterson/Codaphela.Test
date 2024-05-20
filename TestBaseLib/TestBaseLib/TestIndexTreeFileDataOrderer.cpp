@@ -17,9 +17,9 @@ void PrintOrdererString(CIndexTreeDataOrderer* pcOrderer, CChars* psz)
 {
 	SDataOrderIterator		sIter;
 	char					szData[MAX_DATA_SIZE];
-	char					szKey[MAX_KEY_SIZE];
-	int						iDataSize;
-	int						iKeySize;
+	uint8					szKey[MAX_KEY_SIZE];
+	size					iDataSize;
+	size					iKeySize;
 	bool					bExists;
 
 	bExists = pcOrderer->StartIteration(&sIter, szKey, &iKeySize, MAX_KEY_SIZE, szData, &iDataSize, MAX_DATA_SIZE);
@@ -72,14 +72,14 @@ void AssertIndexTreeFileDataOrdererString(CIndexTreeDataOrderer* pcOrderer, char
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileDataOrdererAccess(EIndexWriteThrough eWriteThrough)
 {
-	CIndexTreeFile				cIndexTree;
-	CIndexTreeFileAccess		cAccess;
-	CAccessDataOrderer			cOrderer;
-	char						c;
-	SIndexTreeFileUnsafeIterator		sIter;
-	bool						bExists;
-	CIndexTreeHelper			cHelper;
-	CDurableFileController		cController;
+	CIndexTreeFile					cIndexTree;
+	CIndexTreeFileAccess			cAccess;
+	CAccessDataOrderer				cOrderer;
+	char							c;
+	SIndexTreeFileUnsafeIterator	sIter;
+	bool							bExists;
+	CIndexTreeHelper				cHelper;
+	CDurableFileController			cController;
 
 	cHelper.Init("Output" _FS_"IndexTreeDataOrderer1", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
@@ -162,7 +162,7 @@ void TestIndexTreeFileDataOrdererRemapListNodes(EIndexWriteThrough eWriteThrough
 	CIndexTreeFile				cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	CAccessDataOrderer			cOrderer;
-	int							i;
+	size						i;
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
 
@@ -176,14 +176,21 @@ void TestIndexTreeFileDataOrdererRemapListNodes(EIndexWriteThrough eWriteThrough
 
 	AssertIndexTreeFileDataOrdererString(&cOrderer, "");
 
-	for (i = 60; i >= 0; i--)
+	i = 61;
+	do
 	{
+		i--;
 		cAccess.PutIntLong(i << 8, i);
 	}
-	for (i = 60; i >= 0; i--)
+	while (i != 0);
+	i = 61;
+	do
 	{
+		i--;
 		cAccess.PutIntChar(i << 8, 'A' + (char)i);
 	}
+	while (i != 0);
+
 	AssertIndexTreeFileDataOrdererString(&cOrderer, "ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}");
 
 	for (i = 0; i <= 60; i += 2)
@@ -202,10 +209,13 @@ void TestIndexTreeFileDataOrdererRemapListNodes(EIndexWriteThrough eWriteThrough
 	}
 	AssertIndexTreeFileDataOrdererString(&cOrderer, "}|{zyxwvutsrqponmlkjihgfedcba`_^]\\[ZYXWVUTSRQPONMLKJIHGFEDCBA");
 
-	for (i = 60; i >= 0; i -= 2)
+	i = 62;
+	do
 	{
+		i -= 2;
 		AssertTrue(cAccess.HasInt(i << 8));
 	}
+	while (i != 0);
 	AssertIndexTreeFileDataOrdererString(&cOrderer, "ACEGIKMOQSUWY[]_acegikmoqsuwy{}|zxvtrpnljhfdb`^\\ZXVTRPNLJHFDB");
 
 	cAccess.Flush();
@@ -230,8 +240,8 @@ void TestIndexTreeFileDataOrdererModification(EIndexWriteThrough eWriteThrough)
 	CIndexTreeFile				cIndexTree;
 	CIndexTreeFileAccess		cAccess;
 	CModificationDataOrderer	cOrderer;
-	int							i;
-	int							iKey;
+	size						i;
+	int32						iKey;
 	char						c;
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
@@ -247,11 +257,15 @@ void TestIndexTreeFileDataOrdererModification(EIndexWriteThrough eWriteThrough)
 
 	AssertIndexTreeFileDataOrdererString(&cOrderer, "");
 
-	for (i = 25; i >= 0; i--)
+	i = 26;
+	do
 	{
+		i--;
 		iKey = i * 0b1010101010101010101010101010;
 		cAccess.PutIntChar(iKey, 'A' + (char)i);
 	}
+	while (i != 0);
+
 	AssertIndexTreeFileDataOrdererString(&cOrderer, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 
 	for (i = 0; i <= 25; i++)
@@ -351,7 +365,7 @@ void TestIndexTreeFileDataOrdererEviction(EIndexWriteThrough eWriteThrough)
 	CAccessDataOrderer			cOrderer;
 	CIndexTreeHelper			cHelper;
 	CDurableFileController		cController;
-	int							i;
+	size						i;
 	char						c;
 
 	cHelper.Init("Output" _FS_"IndexTreeDataOrderer4", "primary", "backup", true);
@@ -365,10 +379,14 @@ void TestIndexTreeFileDataOrdererEviction(EIndexWriteThrough eWriteThrough)
 
 	AssertIndexTreeFileDataOrdererString(&cOrderer, "");
 
-	for (i = 25; i >= 0; i--)
+	i = 26;
+	do
 	{
+		i--;
 		cAccess.PutIntChar(i, 'a' + (char)i);
 	}
+	while (i != 0);
+
 	AssertIndexTreeFileDataOrdererString(&cOrderer, "abcdefghijklmnopqrstuvwxyz");
 
 	cAccess.EvictInt(12);

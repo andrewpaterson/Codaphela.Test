@@ -28,49 +28,49 @@ void TestChunkFileFileSystemWriting(void)
 
 	AssertTrue(cChunkFileFileSystem.WriteOpen());
 
-	cChunkFileFileSystem.WriteChunkBegin("new/age/violet/Tempest");
-	cChunkFileFileSystem.WriteString("No man, Mr. President, thinks more highly than I do of the patriotism");
-	cChunkFileFileSystem.WriteChunkEnd();
+	AssertTrue(cChunkFileFileSystem.WriteChunkBegin("new/age/violet/Tempest"));
+	AssertTrue(cChunkFileFileSystem.WriteString("No man, Mr. President, thinks more highly than I do of the patriotism"));
+	AssertTrue(cChunkFileFileSystem.WriteChunkEnd());
 
-	cChunkFileFileSystem.WriteChunkBegin("new/age/shrinking/daisy/Sunlight");
-	cChunkFileFileSystem.WriteString("The question before the House is one of awful moment to this country.");
-	cChunkFileFileSystem.WriteChunkEnd();
+	AssertTrue(cChunkFileFileSystem.WriteChunkBegin("new/age/shrinking/daisy/Sunlight"));
+	AssertTrue(cChunkFileFileSystem.WriteString("The question before the House is one of awful moment to this country."));
+	AssertTrue(cChunkFileFileSystem.WriteChunkEnd());
 
-	cChunkFileFileSystem.WriteChunkBegin("new/age/shrinking/daisy/Pusher");
-	cChunkFileFileSystem.WriteString("We are apt to shut our eyes against a painful truth");
-	cChunkFileFileSystem.WriteChunkEnd();
+	AssertTrue(cChunkFileFileSystem.WriteChunkBegin("new/age/shrinking/daisy/Pusher"));
+	AssertTrue(cChunkFileFileSystem.WriteString("We are apt to shut our eyes against a painful truth"));
+	AssertTrue(cChunkFileFileSystem.WriteChunkEnd());
 
-	cChunkFileFileSystem.WriteChunkBegin("new/age/violet/Forensics");
-	cChunkFileFileSystem.WriteString("Shall we try argument?");
-	cChunkFileFileSystem.WriteChunkEnd();
+	AssertTrue(cChunkFileFileSystem.WriteChunkBegin("new/age/violet/Forensics"));
+	AssertTrue(cChunkFileFileSystem.WriteString("Shall we try argument?"));
+	AssertTrue(cChunkFileFileSystem.WriteChunkEnd());
 
-	cChunkFileFileSystem.WriteChunkBegin("Unknown");
-	cChunkFileFileSystem.WriteString("Sir, we have been trying that for the last ten years.");
-	cChunkFileFileSystem.WriteChunkEnd();
+	AssertTrue(cChunkFileFileSystem.WriteChunkBegin("Unknown"));
+	AssertTrue(cChunkFileFileSystem.WriteString("Sir, we have been trying that for the last ten years."));
+	AssertTrue(cChunkFileFileSystem.WriteChunkEnd());
 
-	cChunkFileFileSystem.WriteChunkBegin("last/time/in/Paris");
-	cChunkFileFileSystem.WriteString("There is no longer any room for hope.");
-	cChunkFileFileSystem.WriteChunkEnd();
+	AssertTrue(cChunkFileFileSystem.WriteChunkBegin("last/time/in/Paris"));
+	AssertTrue(cChunkFileFileSystem.WriteString("There is no longer any room for hope."));
+	AssertTrue(cChunkFileFileSystem.WriteChunkEnd());
 
-	cChunkFileFileSystem.WriteChunkBegin("last/time/in/world/on/See");
-	cChunkFileFileSystem.WriteString("But when shall we be stronger?");
-	cChunkFileFileSystem.WriteChunkEnd();
+	AssertTrue(cChunkFileFileSystem.WriteChunkBegin("last/time/in/world/on/See"));
+	AssertTrue(cChunkFileFileSystem.WriteString("But when shall we be stronger?"));
+	AssertTrue(cChunkFileFileSystem.WriteChunkEnd());
 
-	cChunkFileFileSystem.WriteChunkBegin("last/Schism");
-	cChunkFileFileSystem.WriteString("Finally! Something with Doom!");
-	cChunkFileFileSystem.WriteChunkEnd();
+	AssertTrue(cChunkFileFileSystem.WriteChunkBegin("last/Schism"));
+	AssertTrue(cChunkFileFileSystem.WriteString("Finally! Something with Doom!"));
+	AssertTrue(cChunkFileFileSystem.WriteChunkEnd());
 
-	cChunkFileFileSystem.WriteChunkBegin("last/Tragic");
-	cChunkFileFileSystem.WriteString("If you give me a one word text back, I'm gonna give you the same");
-	cChunkFileFileSystem.WriteChunkEnd();
+	AssertTrue(cChunkFileFileSystem.WriteChunkBegin("last/Tragic"));
+	AssertTrue(cChunkFileFileSystem.WriteString("If you give me a one word text back, I'm gonna give you the same"));
+	AssertTrue(cChunkFileFileSystem.WriteChunkEnd());
 
-	cChunkFileFileSystem.WriteChunkBegin("Final");
-	cChunkFileFileSystem.WriteString("Countdown");
-	cChunkFileFileSystem.WriteChunkEnd();
+	AssertTrue(cChunkFileFileSystem.WriteChunkBegin("Final"));
+	AssertTrue(cChunkFileFileSystem.WriteString("Countdown"));
+	AssertTrue(cChunkFileFileSystem.WriteChunkEnd());
 
-	cChunkFileFileSystem.WriteChunkBegin("new/really/Final");
-	cChunkFileFileSystem.WriteString("Seriously, how is it not possible to find text on the internet.");
-	cChunkFileFileSystem.WriteChunkEnd();
+	AssertTrue(cChunkFileFileSystem.WriteChunkBegin("new/really/Final"));
+	AssertTrue(cChunkFileFileSystem.WriteString("Seriously, how is it not possible to find text on the internet."));
+	AssertTrue(cChunkFileFileSystem.WriteChunkEnd());
 
 	AssertTrue(cChunkFileFileSystem.WriteClose());
 	cChunkFileFileSystem.Kill();

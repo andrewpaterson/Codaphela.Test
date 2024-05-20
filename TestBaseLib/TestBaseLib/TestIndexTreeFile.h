@@ -13,16 +13,16 @@ public:
 		mpcDurableFileControl = NULL;
 	}
 
-	size_t ByteSize(void)
+	size ByteSize(void)
 	{
 		return CIndexTreeFile::ByteSize();
 	}
 
-	size_t GetUserMemorySize(void)
+	size GetUserMemorySize(void)
 	{
 		return CIndexTreeFile::ByteSize();
 	}
-	size_t GetSystemMemorySize(void)
+	size GetSystemMemorySize(void)
 	{
 		return CIndexTreeFile::GetSystemMemorySize();
 	}
@@ -87,7 +87,7 @@ public:
 		return CIndexTreeFile::GetNodeKeySize(pcNode);
 	}
 
-	int GetNodeKey(CIndexTreeNodeFile* pcNode, char* pvDestKey, int iDestKeySize)
+	int GetNodeKey(CIndexTreeNodeFile* pcNode, uint8* pvDestKey, int iDestKeySize)
 	{
 		return CIndexTreeFile::GetNodeKey(pcNode, pvDestKey, iDestKeySize);
 	}

@@ -88,11 +88,11 @@ void TestLinkedListTemplateWrite(void)
 	cFile.Kill();
 
 	plli = cList.GetHead();
-	AssertLongLongInt(3498489579023845LL, *plli);
+	AssertLong(3498489579023845LL, *plli);
 	plli = cList.GetNext(plli);
-	AssertLongLongInt(9837459843598451LL, *plli);
+	AssertLong(9837459843598451LL, *plli);
 	plli = cList.GetNext(plli);
-	AssertLongLongInt(6409377732684332LL, *plli);
+	AssertLong(6409377732684332LL, *plli);
 	plli = cList.GetNext(plli);
 	AssertNull(plli);
 	cList.Kill();

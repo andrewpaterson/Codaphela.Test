@@ -68,7 +68,7 @@ void TestArrayMinimalTemplateInt(void)
 void TestArrayMinimalTemplateInsertBatch()
 {
 	CTestArray					as;
-	int							i;
+	size							i;
 	STestArrayTemplateItem*		ps;
 
 
@@ -138,7 +138,7 @@ void TestArrayMinimalTemplateInsertBatch()
 void TestArrayMinimalTemplateRemoveBatch()
 {
 	CTestArray					as;
-	int							i;
+	size						i;
 	STestArrayTemplateItem*		ps;
 
 
@@ -208,9 +208,9 @@ void TestArrayMinimalTemplateWithVirtualClass(void)
 	CTestOverriddenArray				ac;
 	CTestOverridenArrayTemplateItem*	pc;
 	CTestOverridenArrayTemplateItem		c;
-	int									iIndex;
+	size									iIndex;
 	CTestOverridenArrayTemplateItem		av[5];
-	int									i;
+	size									i;
 
 	ac.Init();
 

@@ -6,7 +6,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void FillQueueElement(void* pvData, size_t uiSize, char c)
+void FillQueueElement(void* pvData, size uiSize, char c)
 {
 	if (pvData && uiSize > 1)
 	{
@@ -20,7 +20,7 @@ void FillQueueElement(void* pvData, size_t uiSize, char c)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertQueueElement(CMemoryQueue* pcQueue, void* pvData, size_t iDataSize, char cExpected)
+void AssertQueueElement(CMemoryQueue* pcQueue, void* pvData, size iDataSize, char cExpected)
 {
 	char*						szData;
 	CChars						szExpected;
@@ -40,7 +40,7 @@ void AssertQueueElement(CMemoryQueue* pcQueue, void* pvData, size_t iDataSize, c
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void* PushElement(CMemoryQueue* pcQueue, size_t uiSize, char c)
+void* PushElement(CMemoryQueue* pcQueue, size uiSize, char c)
 {
 	void*	pv;
 
@@ -65,7 +65,7 @@ void TestMemoryQueuePush(void)
 	void*			pvD;
 	void*			pvE;
 	void*			pvF;
-	size_t			uiDataSize;
+	size			uiDataSize;
 	void*			pv;
 	char			c;
 
@@ -167,7 +167,7 @@ void TestMemoryQueuePeek(void)
 	char			c;
 	void*			pvNext;
 	void*			pv;
-	size_t			uiDataSize;
+	size			uiDataSize;
 
 	pvQueue = malloc(128 + sizeof(SCircularMemoryList));
 	cQueue.Init(pvQueue, 128 + sizeof(SCircularMemoryList));
@@ -205,10 +205,10 @@ void TestMemoryQueueRemap(void)
 	void*			pvQueue;
 	void*			pvA;
 	char			c;
-	size_t			uiQueueSize;
+	size			uiQueueSize;
 	void*			pv;
 	int				iExpectedCount;
-	size_t			uiExpectedAllocatedSize;
+	size			uiExpectedAllocatedSize;
 	int				i;
 
 	pvQueue = malloc(8 KB);

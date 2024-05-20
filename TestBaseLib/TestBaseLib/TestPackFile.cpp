@@ -79,9 +79,9 @@ void TestPackFileReadWriteMultipleFiles(void)
 	CFileBasic		cBasic1;
 	CFileBasic		cBasic2;
 	bool			bResult;
-	int				iLen;
+	size			iLen;
 	char			sz[20];
-	int				iNumber;
+	int32			iNumber;
 
 	pcMemoryFile = MemoryFile();
 	pcMemoryFile->mbBasicFileMustFree = false;
@@ -211,14 +211,14 @@ void TestPackFileAdd(void)
 	pcNode = cPak.GetNode("Ants.rar");
 	AssertTrue(pcNode->IsFile());
 	pcFile = pcNode->File();
-	AssertLongLongInt(72, pcFile->Size());
-	AssertLongLongInt(1009, pcFile->FilePos());
+	AssertLong(72, pcFile->Size());
+	AssertLong(1009, pcFile->FilePos());
 
 	pcNode = cPak.GetNode("Ants.txt");
 	AssertTrue(pcNode->IsFile());
 	pcFile = pcNode->File();
-	AssertLongLongInt(0, pcFile->Size());
-	AssertLongLongInt(0, pcFile->FilePos());
+	AssertLong(0, pcFile->Size());
+	AssertLong(0, pcFile->FilePos());
 
 	cPak.Kill();
 

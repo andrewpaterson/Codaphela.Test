@@ -3,7 +3,7 @@
 #include "BaseLib/PrimitiveTypes.h"
 
 
-char* AllocateStringBuffer(uint32 uiSize);
+char* AllocateStringBuffer(size uiSize);
 
 
 #endif // __TEST_FAT_32_COMMON_H__

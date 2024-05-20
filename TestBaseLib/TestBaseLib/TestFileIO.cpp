@@ -67,86 +67,86 @@ void TestFileIOHelpers(void)
 {
 	CMemoryFile		cMemory;
 	CFileBasic		cFile;
-	uint8	ab[7] = {0x5e, 0xe1, 0x9e, 0x03, 0x32, 0x1f, 0x93};
-	int				ai[3] = {0x7deb74f3, 0x41b0f58c, 0x5cbf05d8};
-	int				i;
-	int64_t	l;
+	uint8			ab[7] = {0x5e, 0xe1, 0x9e, 0x03, 0x32, 0x1f, 0x93};
+	int32			ai[3] = {0x7deb74f3, 0x41b0f58c, 0x5cbf05d8};
+	int32			i;
+	int64			l;
 	float			f;
 	double			d;
 	char			c;
-	uint8	uc;
+	uint8			uc;
 	bool			b;
 	int16			s;
-	uint16	us;
-	uint8	abi[7];
-	int				aii[3];
+	uint16			us;
+	uint8			abi[7];
+	int32			aii[3];
 
 	TestFileIOBegin(&cMemory, &cFile);
 
 	AssertTrue(cFile.WriteInt(0xf48e33a9));
-	AssertTrue(cFile.WriteInt(0xcbb671c1babc0022LL));
+	AssertTrue(cFile.WriteLong(0xcbb671c1babc0022LL));
 	AssertTrue(cFile.WriteFloat(3.34759834536f));
 	AssertTrue(cFile.WriteFloat(8.4936205629457392304853));
 	AssertTrue(cFile.WriteChar('g'));
-	AssertTrue(cFile.WriteInt((uint8)255));
+	AssertTrue(cFile.WriteByte((uint8)255));
 	AssertTrue(cFile.WriteBool(true));
-	AssertTrue(cFile.WriteInt((int16)0x5a0a));
-	AssertTrue(cFile.WriteInt((uint16)0x6be4));
+	AssertTrue(cFile.WriteShort((int16)0x5a0a));
+	AssertTrue(cFile.WriteShort((uint16)0x6be4));
 	AssertTrue(cFile.WriteBits(ab, 7));
 	AssertTrue(cFile.WriteIntArray(ai, 3));
 
 	AssertTrue(cFile.WriteInt(0x091bfe25));
-	AssertTrue(cFile.WriteInt(0xe98ebf36c079e63aLL));
+	AssertTrue(cFile.WriteLong(0xe98ebf36c079e63aLL));
 	AssertTrue(cFile.WriteFloat(6.478389585938f));
 	AssertTrue(cFile.WriteFloat(2.74944978325209529023823));
 	AssertTrue(cFile.WriteChar('@'));
-	AssertTrue(cFile.WriteInt((uint8)1));
+	AssertTrue(cFile.WriteByte((uint8)1));
 	AssertTrue(cFile.WriteBool(false));
-	AssertTrue(cFile.WriteInt((int16)0x0001));
-	AssertTrue(cFile.WriteInt((uint16)0xffff));
+	AssertTrue(cFile.WriteShort((int16)0x0001));
+	AssertTrue(cFile.WriteShort((uint16)0xffff));
 
 	TestFileIOMiddle(&cFile);
 	
 	AssertTrue(cFile.ReadInt(&i));
 	AssertInt(0xf48e33a9, i);
-	AssertTrue(cFile.ReadInt(&l));
-	AssertLongLongInt(0xcbb671c1babc0022LL, l);
+	AssertTrue(cFile.ReadLong(&l));
+	AssertLong(0xcbb671c1babc0022LL, l);
 	AssertTrue(cFile.ReadFloat(&f));
 	AssertFloat(3.34759834536f, f, 13);
 	AssertTrue(cFile.ReadFloat(&d));
 	AssertDouble(8.4936205629457392304853, d, 19);
 	AssertTrue(cFile.ReadChar(&c));
 	AssertChar('g', c);
-	AssertTrue(cFile.ReadInt(&uc));
+	AssertTrue(cFile.ReadByte(&uc));
 	AssertChar((uint8)255, uc);
 	AssertTrue(cFile.ReadBool(&b));
 	AssertBool(true, b);
-	AssertTrue(cFile.ReadInt(&s));
+	AssertTrue(cFile.ReadShort(&s));
 	AssertShort((int16)0x5a0a, s);
-	AssertTrue(cFile.ReadInt((uint16*)&us));
+	AssertTrue(cFile.ReadShort((uint16*)&us));
 	AssertShort((uint16)0x6be4, us);
 	AssertTrue(cFile.ReadBits(abi, 7));
 	AssertMemory(ab, abi, 7);
 	AssertTrue(cFile.ReadIntArray(aii, 3));
-	AssertMemory(ai, aii, 3 * sizeof(int));
+	AssertMemory(ai, aii, 3 * sizeof(size));
 
 	AssertTrue(cFile.ReadInt(&i));
 	AssertInt(0x091bfe25, i);
-	AssertTrue(cFile.ReadInt(&l));
-	AssertLongLongInt(0xe98ebf36c079e63aLL, l);
+	AssertTrue(cFile.ReadLong(&l));
+	AssertLong(0xe98ebf36c079e63aLL, l);
 	AssertTrue(cFile.ReadFloat(&f));
 	AssertFloat(6.478389585938f, f, 13);
 	AssertTrue(cFile.ReadFloat(&d));
 	AssertDouble(2.74944978325209529023823, d, 19);
 	AssertTrue(cFile.ReadChar(&c));
 	AssertChar('@', c);
-	AssertTrue(cFile.ReadInt(&uc));
+	AssertTrue(cFile.ReadByte(&uc));
 	AssertChar(1, uc);
 	AssertTrue(cFile.ReadBool(&b));
 	AssertBool(false, b);
-	AssertTrue(cFile.ReadInt(&s));
+	AssertTrue(cFile.ReadShort(&s));
 	AssertShort((int16)0x0001, s);
-	AssertTrue(cFile.ReadInt((uint16*)&us));
+	AssertTrue(cFile.ReadShort((uint16*)&us));
 	AssertShort((uint16)0xffff, us);
 
 	TestFileIOEnd(&cMemory, &cFile);
@@ -405,12 +405,12 @@ void TestFileIOArray(void)
 	CMemoryFile							cMemory;
 	CFileBasic							cFile;
 	CArrayTemplate<CFileIOTest>			acTest;
-	int									i;
+	size									i;
 	CFileIOTest*						pcTest;
 	CArrayTemplate<CFileIOTest>			acTestIn;
 	CArrayInt							ai;
 	CArrayInt							aii;
-	int									ii;
+	size									ii;
 	CArrayBlock							av;
 	CArrayBlock							avi;
 	CArrayTemplateMinimal<CFileIOTest>	asTest;
@@ -506,7 +506,7 @@ void TestFileIOString(void)
 	CChars			szi;
 	CChars			szi2;
 	char			szc[4];
-	int				i;
+	size			i;
 
 	TestFileIOBegin(&cMemory, &cFile);
 
@@ -541,10 +541,10 @@ void TestFileIOMap(void)
 {
 	CMemoryFile						cMemory;
 	CFileBasic						cFile;
-	CMapTemplate<int, float96>	cMap;
-	int								i;
-	float96						ld;
-	CMapTemplate<int, float96>	cMapIn;
+	CMapTemplate<size, float96>		cMap;
+	size							i;
+	float96							ld;
+	CMapTemplate<size, float96>		cMapIn;
 	CMapStringInt					mssi;
 	CMapStringInt					mssii;
 

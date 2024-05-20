@@ -30,7 +30,7 @@ void CTestNamedIndexedDataObject::Init(char* szString, int64 iNumberX, int64 iNu
 //
 //
 //////////////////////////////////////////////////////////////////////////
-size_t CTestNamedIndexedDataObject::Size(void)
+size CTestNamedIndexedDataObject::Size(void)
 {
 	return sizeof(CTestNamedIndexedDataObject);
 }

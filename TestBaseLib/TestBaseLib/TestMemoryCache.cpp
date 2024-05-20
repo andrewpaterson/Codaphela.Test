@@ -18,7 +18,7 @@ void FillCachedElement(void* pvData, int iSize, char c)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertElement(void* pvData, size_t uiDataSize, char cExpected)
+void AssertElement(void* pvData, size uiDataSize, char cExpected)
 {
 	char* szData;
 	CChars	szExpected;
@@ -35,7 +35,7 @@ void AssertElement(void* pvData, size_t uiDataSize, char cExpected)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertCacheElement(CMemoryCache* pcCache, void* pvData, size_t uiDataSize, char cExpected)
+void AssertCacheElement(CMemoryCache* pcCache, void* pvData, size uiDataSize, char cExpected)
 {
 	AssertInt(uiDataSize, pcCache->GetSize(pvData));
 
@@ -71,14 +71,17 @@ void AssertLinkOrder(CMemoryCache* pcCache)
 	}
 
 	psCacheDesc = pcCache->GetLast();
-	for (i = cPointers.NumElements() - 1; i >= 0; i--)
+	i = cPointers.NumElements();
+	do
 	{
+		i--;
 		psCacheDescReverse = (SMemoryCacheDescriptor*)cPointers.GetPtr(i);
 		
 		AssertPointer(psCacheDesc, psCacheDescReverse);
 
 		psCacheDesc = pcCache->GetPrev(psCacheDesc);
 	}
+	while (i != 0);
 
 	cPointers.Kill();
 }

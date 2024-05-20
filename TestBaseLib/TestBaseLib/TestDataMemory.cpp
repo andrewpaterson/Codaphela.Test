@@ -21,10 +21,10 @@ void TestDataMemorySizeof(void)
 void TestDataMemoryAdd(void)
 {
 	CDataMemory		cMemory;
-	int				i;
+	size				i;
 	CChars*			psz;
 	void*			pv;
-	int				iAllocated;
+	size				iAllocated;
 	CArrayVoidPtr	apv;
 
 	cMemory.Init(&gcDataMemoryFreeListParams);
@@ -47,7 +47,7 @@ void TestDataMemoryAdd(void)
 
 	AssertInt(433, gaszArchaicDefinitions.NumElements());
 	AssertInt(gaszArchaicDefinitions.NumElements(), cMemory.NumElements());
-	AssertInt(29813, cMemory.ByteSize());
+	AssertInt(29937, cMemory.ByteSize());
 	AssertInt(8, cMemory.NumFreeLists());
 	AssertInt(13665, iAllocated);
 
@@ -58,7 +58,7 @@ void TestDataMemoryAdd(void)
 	}
 
 	AssertInt(216, cMemory.NumElements());
-	AssertInt(29813, cMemory.ByteSize());
+	AssertInt(29937, cMemory.ByteSize());
 	AssertInt(8, cMemory.NumFreeLists());
 
 	for (i = 1; i < apv.NumElements(); i += 2)

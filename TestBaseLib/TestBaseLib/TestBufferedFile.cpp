@@ -99,8 +99,8 @@ void TestBufferedFileWrite(void)
 
 	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "Test.txt"), 3));
 	AssertTrue(cFile.Open(EFM_Write_Create));
-	AssertLongLongInt(2, cFile.Write("ab", 1, 2));
-	AssertLongLongInt(2, cFile.Write("cd", 1, 2));
+	AssertLong(2, cFile.Write("ab", 1, 2));
+	AssertLong(2, cFile.Write("cd", 1, 2));
 	AssertTrue(cFile.Close());
 	cFile.Kill();
 
@@ -111,8 +111,8 @@ void TestBufferedFileWrite(void)
 
 	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "Test.txt"), 5));
 	AssertTrue(cFile.Open(EFM_Write_Create));
-	AssertLongLongInt(9, cFile.Write("abcdefghi", 1, 9));
-	AssertLongLongInt(5, cFile.Write("jklmn", 1, 5));
+	AssertLong(9, cFile.Write("abcdefghi", 1, 9));
+	AssertLong(5, cFile.Write("jklmn", 1, 5));
 	AssertTrue(cFile.Close());
 	cFile.Kill();
 
@@ -124,7 +124,7 @@ void TestBufferedFileWrite(void)
 	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "Test.txt"), 5));
 	AssertTrue(cFile.Open(EFM_ReadWrite));
 	AssertTrue(cFile.Seek(4));
-	AssertLongLongInt(1, cFile.Write("xyz", 3, 1));
+	AssertLong(1, cFile.Write("xyz", 3, 1));
 	AssertTrue(cFile.Close());
 	cFile.Kill();
 
@@ -136,10 +136,10 @@ void TestBufferedFileWrite(void)
 	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "Test.txt"), 8));
 	AssertTrue(cFile.Open(EFM_ReadWrite));
 	AssertTrue(cFile.Seek(0, EFSO_END));
-	AssertLongLongInt(1, cFile.Write("opqrst", 6, 1));
+	AssertLong(1, cFile.Write("opqrst", 6, 1));
 	AssertTrue(cFile.Seek(0));
-	AssertLongLongInt(1, cFile.Write("123456", 6, 1));
-	AssertLongLongInt(1, cFile.Write("78", 2, 1));
+	AssertLong(1, cFile.Write("123456", 6, 1));
+	AssertLong(1, cFile.Write("78", 2, 1));
 	AssertTrue(cFile.Close());
 	cFile.Kill();
 
@@ -150,10 +150,10 @@ void TestBufferedFileWrite(void)
 
 	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "Test.txt"), 3));
 	AssertTrue(cFile.Open(EFM_Write_Create));
-	AssertLongLongInt(2, cFile.Write("ab", 1, 2));
-	AssertLongLongInt(4, cFile.Write("cdef", 1, 4));
-	AssertLongLongInt(2, cFile.Write("gh", 1, 2));
-	AssertLongLongInt(20, cFile.GetFileLength());
+	AssertLong(2, cFile.Write("ab", 1, 2));
+	AssertLong(4, cFile.Write("cdef", 1, 4));
+	AssertLong(2, cFile.Write("gh", 1, 2));
+	AssertLong(20, cFile.GetFileLength());
 	AssertTrue(cFile.Close());
 	cFile.Kill();
 

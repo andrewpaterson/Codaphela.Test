@@ -72,15 +72,15 @@ void TestTextParserGetIntegerLiteral(void)
 	TRISTATE	tResult;
 	CTextParser cTextParser;
 	uint64		ulliValue;
-	int			iBase;
-	int			iSuffix;
-	int			iNumDigits;
+	uint16		iBase;
+	uint16		iSuffix;
+	uint16		iNumDigits;
 
 	cTextParser.Init("100\n");
 	tResult = cTextParser.GetIntegerLiteral(&ulliValue, INTEGER_PREFIX_ALL, &iBase, INTEGER_SUFFIX_CPP, &iSuffix, NUMBER_SEPARATOR_APOSTROPHE, &iNumDigits, true);
 	cTextParser.Kill();
 	AssertTritrue(tResult);
-	AssertLongLongInt(100LL, ulliValue);
+	AssertLong(100LL, ulliValue);
 	AssertInt(10, iBase);
 	AssertInt(INTEGER_SUFFIX_NONE, iSuffix);
 	AssertInt(3, iNumDigits);
@@ -89,7 +89,7 @@ void TestTextParserGetIntegerLiteral(void)
 	tResult = cTextParser.GetIntegerLiteral(&ulliValue, INTEGER_PREFIX_ALL, &iBase, INTEGER_SUFFIX_CPP, &iSuffix, NUMBER_SEPARATOR_APOSTROPHE, &iNumDigits, true);
 	cTextParser.Kill();
 	AssertTritrue(tResult);
-	AssertLongLongInt(100LL, ulliValue);
+	AssertLong(100LL, ulliValue);
 	AssertInt(10, iBase);
 	AssertInt(INTEGER_SUFFIX_NONE, iSuffix);
 	AssertInt(3, iNumDigits);
@@ -98,7 +98,7 @@ void TestTextParserGetIntegerLiteral(void)
 	tResult = cTextParser.GetIntegerLiteral(&ulliValue, INTEGER_PREFIX_ALL, &iBase, INTEGER_SUFFIX_CPP, &iSuffix, NUMBER_SEPARATOR_APOSTROPHE, &iNumDigits, true);
 	cTextParser.Kill();
 	AssertTritrue(tResult);
-	AssertLongLongInt(100LL, ulliValue);
+	AssertLong(100LL, ulliValue);
 	AssertInt(10, iBase);
 	AssertInt(INTEGER_SUFFIX_ULL, iSuffix);
 	AssertInt(3, iNumDigits);
@@ -107,7 +107,7 @@ void TestTextParserGetIntegerLiteral(void)
 	tResult = cTextParser.GetIntegerLiteral(&ulliValue, INTEGER_PREFIX_ALL, &iBase, INTEGER_SUFFIX_CPP, &iSuffix, NUMBER_SEPARATOR_APOSTROPHE, &iNumDigits, true);
 	cTextParser.Kill();
 	AssertTritrue(tResult);
-	AssertLongLongInt(256LL, ulliValue);
+	AssertLong(256LL, ulliValue);
 	AssertInt(16, iBase);
 	AssertInt(INTEGER_SUFFIX_ULL, iSuffix);
 	AssertInt(3, iNumDigits);
@@ -116,7 +116,7 @@ void TestTextParserGetIntegerLiteral(void)
 	tResult = cTextParser.GetIntegerLiteral(&ulliValue, INTEGER_PREFIX_ALL, &iBase, INTEGER_SUFFIX_CPP, &iSuffix, NUMBER_SEPARATOR_APOSTROPHE, &iNumDigits, true);
 	cTextParser.Kill();
 	AssertTritrue(tResult);
-	AssertLongLongInt(256LL, ulliValue);
+	AssertLong(256LL, ulliValue);
 	AssertInt(16, iBase);
 	AssertInt(INTEGER_SUFFIX_LL, iSuffix);
 	AssertInt(3, iNumDigits);
@@ -125,7 +125,7 @@ void TestTextParserGetIntegerLiteral(void)
 	tResult = cTextParser.GetIntegerLiteral(&ulliValue, INTEGER_PREFIX_ALL, &iBase, INTEGER_SUFFIX_CPP, &iSuffix, NUMBER_SEPARATOR_APOSTROPHE, &iNumDigits, true);
 	cTextParser.Kill();
 	AssertTritrue(tResult);
-	AssertLongLongInt(100L, ulliValue);
+	AssertLong(100L, ulliValue);
 	AssertInt(10, iBase);
 	AssertInt(INTEGER_SUFFIX_L, iSuffix);
 	AssertInt(3, iNumDigits);
@@ -134,7 +134,7 @@ void TestTextParserGetIntegerLiteral(void)
 	tResult = cTextParser.GetIntegerLiteral(&ulliValue, INTEGER_PREFIX_ALL, &iBase, INTEGER_SUFFIX_CPP, &iSuffix, NUMBER_SEPARATOR_APOSTROPHE, &iNumDigits, true);
 	cTextParser.Kill();
 	AssertTritrue(tResult);
-	AssertLongLongInt(64L, ulliValue);
+	AssertLong(64L, ulliValue);
 	AssertInt(8, iBase);
 	AssertInt(INTEGER_SUFFIX_NONE, iSuffix);
 	AssertInt(3, iNumDigits);
@@ -143,7 +143,7 @@ void TestTextParserGetIntegerLiteral(void)
 	tResult = cTextParser.GetIntegerLiteral(&ulliValue, INTEGER_PREFIX_ALL, &iBase, INTEGER_SUFFIX_CPP, &iSuffix, NUMBER_SEPARATOR_APOSTROPHE, &iNumDigits, true);
 	cTextParser.Kill();
 	AssertTritrue(tResult);
-	AssertLongLongInt(64L, ulliValue);
+	AssertLong(64L, ulliValue);
 	AssertInt(8, iBase);
 	AssertInt(INTEGER_SUFFIX_UL, iSuffix);
 	AssertInt(3, iNumDigits);
@@ -152,7 +152,7 @@ void TestTextParserGetIntegerLiteral(void)
 	tResult = cTextParser.GetIntegerLiteral(&ulliValue, INTEGER_PREFIX_ALL, &iBase, INTEGER_SUFFIX_CPP, &iSuffix, NUMBER_SEPARATOR_APOSTROPHE, &iNumDigits, true);
 	cTextParser.Kill();
 	AssertTritrue(tResult);
-	AssertLongLongInt(4LL, ulliValue);
+	AssertLong(4LL, ulliValue);
 	AssertInt(2, iBase);
 	AssertInt(INTEGER_SUFFIX_NONE, iSuffix);
 	AssertInt(3, iNumDigits);
@@ -161,7 +161,7 @@ void TestTextParserGetIntegerLiteral(void)
 	tResult = cTextParser.GetIntegerLiteral(&ulliValue, INTEGER_PREFIX_ALL, &iBase, INTEGER_SUFFIX_CPP, &iSuffix, NUMBER_SEPARATOR_APOSTROPHE, &iNumDigits, true);
 	cTextParser.Kill();
 	AssertTritrue(tResult);
-	AssertLongLongInt(4LL, ulliValue);
+	AssertLong(4LL, ulliValue);
 	AssertInt(2, iBase);
 	AssertInt(INTEGER_SUFFIX_L, iSuffix);
 	AssertInt(3, iNumDigits);
@@ -198,7 +198,7 @@ void TestTextParserGetIntegerLiteral(void)
 	tResult = cTextParser.GetIntegerLiteral(&ulliValue, INTEGER_PREFIX_ALL, &iBase, INTEGER_SUFFIX_CPP, &iSuffix, NUMBER_SEPARATOR_APOSTROPHE, &iNumDigits, true);
 	cTextParser.Kill();
 	AssertTritrue(tResult);
-	AssertLongLongInt(0XFFFF'FFFF'ffff'ffffUll, ulliValue);
+	AssertLong(0XFFFF'FFFF'ffff'ffffUll, ulliValue);
 	AssertInt(16, iBase);
 	AssertInt(INTEGER_SUFFIX_ULL, iSuffix);
 	AssertInt(16, iNumDigits);
@@ -217,7 +217,7 @@ void TestTextParserGetIntegerLiteral(void)
 	tResult = cTextParser.GetIntegerLiteral(&ulliValue, INTEGER_PREFIX_ALL, &iBase, INTEGER_SUFFIX_CPP, &iSuffix, NUMBER_SEPARATOR_APOSTROPHE, &iNumDigits, true);
 	cTextParser.Kill();
 	AssertTritrue(tResult);
-	AssertLongLongInt(10, ulliValue);
+	AssertLong(10, ulliValue);
 	AssertInt(16, iBase);
 	AssertInt(INTEGER_SUFFIX_NONE, iSuffix);
 	AssertInt(1, iNumDigits);
@@ -226,7 +226,7 @@ void TestTextParserGetIntegerLiteral(void)
 	tResult = cTextParser.GetIntegerLiteral(&ulliValue, INTEGER_PREFIX_ALL, NULL, INTEGER_SUFFIX_CPP, NULL, NUMBER_SEPARATOR_APOSTROPHE, NULL, true);
 	cTextParser.Kill();
 	AssertTritrue(tResult);
-	AssertLongLongInt(10, ulliValue);
+	AssertLong(10, ulliValue);
 }
 
 
@@ -239,12 +239,12 @@ void TestTextParserGetFloatLiteral(void)
 	TRISTATE	tResult;
 	CTextParser cTextParser;
 	float96		ldValue;
-	int			iBase;
-	int			iSuffix;
-	int			iNumWholeDigits;
-	int			iNumDecimalDigits;
-	int			iNumExponentDigits;
-	int			iExponent;
+	uint16		iBase;
+	uint16		iSuffix;
+	uint16		iNumWholeDigits;
+	uint16		iNumDecimalDigits;
+	uint16		iNumExponentDigits;
+	uint16		iExponent;
 
 	cTextParser.Init("100.\n");
 	tResult = cTextParser.GetFloatLiteral(&ldValue, FLOAT_PREFIX_ALL, &iBase, FLOAT_SUFFIX_CPP, &iSuffix, FLOAT_EXPONENT_ALL, &iExponent, NUMBER_SEPARATOR_UNDERSCORE, &iNumWholeDigits , &iNumDecimalDigits, &iNumExponentDigits, true);

@@ -7,11 +7,11 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-char* AllocateStringBuffer(uint32 uiSize)
+char* AllocateStringBuffer(size uiSize)
 {
-	char* szSource;
+	char*	 szSource;
 	char	c;
-	uint32	i;
+	size	i;
 
 	szSource = (char*)malloc(uiSize);
 	c = 'A';
@@ -32,6 +32,5 @@ char* AllocateStringBuffer(uint32 uiSize)
 	szSource[i] = '\0';
 
 	return szSource;
-
 }
 

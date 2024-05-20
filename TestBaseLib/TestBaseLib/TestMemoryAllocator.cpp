@@ -48,7 +48,7 @@ void TestMemoryAllocatorReadWrite(void)
 	CMemoryAllocator		cAlloc;
 	CFileBasic				cFile;
 	CMemoryAllocator		cAllocIn;
-	int						i;
+	int32					i;
 	SMemoryFreeListParams*	psBlockParams;
 
 	cFile.Init(MemoryFile());

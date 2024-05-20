@@ -17,7 +17,7 @@ void TestArrayTemplateAllocation(void)
 {
 	CTestArrayTemplate			asTestArrayTemplate;
 	STestArrayTemplateItem*		psItem;
-	int				i;
+	size						i;
 
 	asTestArrayTemplate.Init();
 	AssertInt(sizeof(STestArrayTemplateItem), asTestArrayTemplate.ElementSize());
@@ -59,7 +59,7 @@ void TestArrayTemplateAllocationWithVirtualClass(void)
 	CTestOverriddenArray				ac;
 	CTestOverridenArrayTemplateItem*	pc;
 	CTestOverridenArrayTemplateItem		c;
-	int									iIndex;
+	size								iIndex;
 	CTestOverridenArrayTemplateItem		av[5];
 
 	ac.Init();
@@ -190,10 +190,10 @@ int SortTestArrayTemplateItemFunc(const void* pvItemLeft, const void* pvItemRigh
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayTemplateInitialiseArray(CTestArrayTemplate* pasTestArrayTemplate, int iNumElements)
+void TestArrayTemplateInitialiseArray(CTestArrayTemplate* pasTestArrayTemplate, size iNumElements)
 {
-	int						i;
-	STestArrayTemplateItem* psItem;
+	size						i;
+	STestArrayTemplateItem*		psItem;
 
 	pasTestArrayTemplate->Init();
 	for (i = 0; i < iNumElements; i++)
@@ -208,10 +208,10 @@ void TestArrayTemplateInitialiseArray(CTestArrayTemplate* pasTestArrayTemplate, 
 //
 //
 //////////////////////////////////////////////////////////////////////////
-bool TestArrayTemplateCheckOrder(CTestArrayTemplate* pasTestArrayTemplate, int iNumElements)
+bool TestArrayTemplateCheckOrder(CTestArrayTemplate* pasTestArrayTemplate, size iNumElements)
 {
-	int						i;
-	STestArrayTemplateItem* psItem;
+	size						i;
+	STestArrayTemplateItem*		psItem;
 
 	for (i = 0; i < iNumElements; i++)
 	{
@@ -229,14 +229,14 @@ bool TestArrayTemplateCheckOrder(CTestArrayTemplate* pasTestArrayTemplate, int i
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayTemplateBubbleSort(int iSeed, int iArraySize)
+void TestArrayTemplateBubbleSort(int iSeed, size iArraySize)
 {
 	CTestArrayTemplate	asTestArrayTemplate;
 	CRandom				cRandom;
 
 	TestArrayTemplateInitialiseArray(&asTestArrayTemplate, iArraySize);
 
-	cRandom.Init();
+	cRandom.Init(iSeed);
 	asTestArrayTemplate.Shuffle(&cRandom);
 	cRandom.Kill();
 
@@ -252,7 +252,7 @@ void TestArrayTemplateBubbleSort(int iSeed, int iArraySize)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayTemplateQuickSort(int iSeed, int iArraySize)
+void TestArrayTemplateQuickSort(int iSeed, size iArraySize)
 {
 	CTestArrayTemplate	asTestArrayTemplate;
 	CRandom				cRandom;
@@ -275,7 +275,7 @@ void TestArrayTemplateQuickSort(int iSeed, int iArraySize)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayTemplateTimSort(int iSeed, int iArraySize)
+void TestArrayTemplateTimSort(int iSeed, size iArraySize)
 {
 	CTestArrayTemplate	asTestArrayTemplate;
 	CRandom				cRandom;
@@ -366,7 +366,7 @@ void TestArrayTemplateMisc(void)
 {
 	CTestArrayTemplate			cArray;
 	STestArrayTemplateItem		sStack;
-	int							iIndex;
+	size						iIndex;
 	STestArrayTemplateItem*		psHeap;
 	STestArrayTemplateItem*		psReturn;
 
@@ -538,7 +538,7 @@ void TestArrayTemplateFake(void)
 void TestArrayTemplateInsertBatch(void)
 {
 	CTestArrayTemplate			as;
-	int							i;
+	size						i;
 	STestArrayTemplateItem*		ps;
 
 
@@ -608,7 +608,7 @@ void TestArrayTemplateInsertBatch(void)
 void TestArrayTemplateRemoveBatch(void)
 {
 	CTestArrayTemplate			as;
-	int							i;
+	size						i;
 	STestArrayTemplateItem*		ps;
 
 
@@ -676,7 +676,7 @@ void TestArrayTemplateRemoveBatch(void)
 void TestArrayTemplateSetChunkSize(void)
 {
 	CTestArrayTemplate			as;
-	int							i;
+	size						i;
 	STestArrayTemplateItem*		ps;
 	SArrayTemplateHeader		sHeader;
 
@@ -727,7 +727,7 @@ void TestArrayTemplateShuffle(void)
 {
 	CTestArrayTemplate			cArray;
 	STestArrayTemplateItem		sItem;
-	int							i;
+	size						i;
 	CRandom						cRandom;
 
 	cArray.Init();

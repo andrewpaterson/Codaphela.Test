@@ -18,17 +18,17 @@ void TestIndexTreeFileIteratorUnsafeIterate(void)
 {
 	SIndexTreeFileUnsafeIterator	sIter;
 	char*							pvData;
-	char*							pvKey;
-	size_t							iDataSize;
+	uint8*							pvKey;
+	size							iDataSize;
 	bool							bExists;
-	char							pacKey[9 + 1];
-	int								iKeyLength;
+	uint8							pacKey[9 + 1];
+	size							iKeyLength;
 	CIndexTreeFile					cIndexTree;
 	CMapStringString				cMap;
 	SMapIterator					sMapIter;
 	char*							pacData;
 	int								iResult;
-	int								iMapDataSize;
+	size							iMapDataSize;
 	CIndexTreeFileAccess			cAccess;
 	CIndexTreeHelper				cHelper;
 	CDurableFileController			cController;
@@ -99,9 +99,9 @@ void TestIndexTreeFileIteratorUnsafeIterate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileIteratorIterate(void)
 {
-	size_t					iData;
-	char*					pszKey;
-	int						i;
+	size					iData;
+	uint8*					pszKey;
+	size					i;
 	CChars*					pszKey2;
 	CIndexTreeFile			cIndexTree;
 	CIndexTreeFileAccess	cAccess;
@@ -120,23 +120,23 @@ void TestIndexTreeFileIteratorIterate(void)
 	for (i = 0; i < gaszCommonWords.NumElements(); i++)
 	{
 		pszKey2 = gaszCommonWords.Get(i);
-		pszKey = pszKey2->Text();
+		pszKey = (uint8*)pszKey2->Text();
 		iData = i;
 
-		cAccess.PutStringInt(pszKey, iData);
+		cAccess.PutStringInt((char*)pszKey, iData);
 	}
 
-	AssertLongLongInt(1000, cAccess.NumElements());
+	AssertLong(1000, cAccess.NumElements());
 
 	pcIter = cAccess.CreateIterator();
 
 	for (i = 0; i < gaszCommonWords.NumElements(); i++)
 	{
 		pszKey2 = gaszCommonWords.Get(i);
-		pszKey = pszKey2->Text();
+		pszKey = (uint8*)pszKey2->Text();
 
 		bExists = pcIter->Iterate();
-		AssertString(pszKey, pcIter->GetKey());
+		AssertString((char*)pszKey, pcIter->GetKey());
 	}
 	bExists = pcIter->Iterate();
 	AssertFalse(bExists);
