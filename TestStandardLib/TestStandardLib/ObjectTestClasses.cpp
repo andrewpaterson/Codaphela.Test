@@ -75,7 +75,7 @@ void CTestObject::Free(void)
 //////////////////////////////////////////////////////////////////////////
 bool CTestObject::Save(CObjectWriter* pcFile)
 {
-	ReturnOnFalse(pcFile->WriteInt(mi));
+	ReturnOnFalse(pcFile->WriteInt32(mi));
 	return true;
 }
 
@@ -86,7 +86,7 @@ bool CTestObject::Save(CObjectWriter* pcFile)
 //////////////////////////////////////////////////////////////////////////
 bool CTestObject::Load(CObjectReader* pcFile)
 {
-	ReturnOnFalse(pcFile->ReadInt(&mi));
+	ReturnOnFalse(pcFile->ReadInt32(&mi));
 	return true;
 }
 
@@ -195,7 +195,7 @@ void CTestSaveableObject1::Free(void)
 //////////////////////////////////////////////////////////////////////////
 bool CTestSaveableObject1::Save(CObjectWriter* pcFile)
 {
-	ReturnOnFalse(pcFile->WriteInt(miInt));
+	ReturnOnFalse(pcFile->WriteInt32(miInt));
 	ReturnOnFalse(mszString.WriteString(pcFile));
 
 	mbSaved = true;
@@ -209,7 +209,7 @@ bool CTestSaveableObject1::Save(CObjectWriter* pcFile)
 //////////////////////////////////////////////////////////////////////////
 bool CTestSaveableObject1::Load(CObjectReader* pcFile)
 {
-	ReturnOnFalse(pcFile->ReadInt(&miInt));
+	ReturnOnFalse(pcFile->ReadInt32(&miInt));
 	ReturnOnFalse(mszString.ReadString(pcFile));
 
 	mbSaved = false;

@@ -284,7 +284,7 @@ void TestClassSerialisation(void)
 	AssertDouble(7980345645697084.0, pTestClass->mDouble, 0);
 	AssertInt(907843256, pTestClass->miUnmanagedInt);
 	AssertChar('c', pTestClass->mTiny.mc);
-	AssertLongLongInt(oi, pTestClass->GetIndex());
+	AssertLong(oi, pTestClass->GetIndex());
 
 	pTestClass = NULL;
 

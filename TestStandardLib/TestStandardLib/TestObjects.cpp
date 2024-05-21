@@ -74,25 +74,25 @@ void TestObjectsInMemoryIteration(void)
 	SetupObjectsForDehollowfication();
 
 	oi = gcObjects.StartMemoryIteration(&sIter);
-	AssertLongLongInt(1LL, oi);
+	AssertLong(1LL, oi);
 	oi = gcObjects.IterateMemory(&sIter);
-	AssertLongLongInt(2LL, oi);
+	AssertLong(2LL, oi);
 	oi = gcObjects.IterateMemory(&sIter);
-	AssertLongLongInt(3LL, oi);
+	AssertLong(3LL, oi);
 	oi = gcObjects.IterateMemory(&sIter);
-	AssertLongLongInt(4LL, oi);
+	AssertLong(4LL, oi);
 	oi = gcObjects.IterateMemory(&sIter);
-	AssertLongLongInt(5LL, oi);
+	AssertLong(5LL, oi);
 	oi = gcObjects.IterateMemory(&sIter);
-	AssertLongLongInt(6LL, oi);
+	AssertLong(6LL, oi);
 	oi = gcObjects.IterateMemory(&sIter);
-	AssertLongLongInt(7LL, oi);
+	AssertLong(7LL, oi);
 	oi = gcObjects.IterateMemory(&sIter);
-	AssertLongLongInt(8LL, oi);
+	AssertLong(8LL, oi);
 	oi = gcObjects.IterateMemory(&sIter);
-	AssertLongLongInt(9LL, oi);
+	AssertLong(9LL, oi);
 	oi = gcObjects.IterateMemory(&sIter);
-	AssertLongLongInt(INVALID_O_INDEX, oi);
+	AssertLong(INVALID_O_INDEX, oi);
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -123,51 +123,51 @@ void TestObjectsObjectSave(void)
 
 	pDouble = SetupObjectsForDehollowfication();
 
-	AssertLongLongInt(0, pcDatabase->NumIndices());
-	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+	AssertLong(0, pcDatabase->NumIndices());
+	AssertLong(9, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryNames());
 	AssertTrue(pDouble.IsDirty());
 	Pass();
 	
 	AssertTrue(pDouble.BaseObject()->Flush());
 	AssertFalse(pDouble.IsDirty());
 
-	AssertLongLongInt(1, pcDatabase->NumIndices());
-	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+	AssertLong(1, pcDatabase->NumIndices());
+	AssertLong(9, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryNames());
 	iSerialisedSize = pDouble->SerialisedSize();
-	AssertInt(106, pDouble->SerialisedSize());
-	AssertLongLongInt(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
-	AssertLongLongInt(1, pcDatabase->NumDataCached());
+	AssertInt(126, pDouble->SerialisedSize());
+	AssertLong(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
+	AssertLong(1, pcDatabase->NumDataCached());
 	Pass();
 
 	AssertTrue(pDouble.BaseObject()->Flush());
-	AssertLongLongInt(1, pcDatabase->NumIndices());
+	AssertLong(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
 	AssertInt(106, iSerialisedSize);
-	AssertLongLongInt(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
-	AssertLongLongInt(1, pcDatabase->NumDataCached());
+	AssertLong(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
+	AssertLong(1, pcDatabase->NumDataCached());
 	
 	pDouble->mszString = OMalloc<CString>("A String");
 	AssertTrue(pDouble.IsDirty());
 
 	AssertTrue(pDouble.BaseObject()->Flush());
-	AssertLongLongInt(1, pcDatabase->NumIndices());
+	AssertLong(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
 	AssertInt(118, iSerialisedSize);
-	AssertLongLongInt(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
-	AssertLongLongInt(1, pcDatabase->NumDataCached());
+	AssertLong(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
+	AssertLong(1, pcDatabase->NumDataCached());
 
 	pDouble->mszString = OMalloc<CString>("Different Object");
 
 	iSerialisedSize = pDouble->SerialisedSize();
 	AssertInt(118, iSerialisedSize);
 	AssertTrue(pDouble.BaseObject()->Flush());
-	AssertLongLongInt(1, pcDatabase->NumIndices());
+	AssertLong(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
 	AssertInt(118, iSerialisedSize);
-	AssertLongLongInt(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
-	AssertLongLongInt(1, pcDatabase->NumDataCached());
+	AssertLong(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
+	AssertLong(1, pcDatabase->NumDataCached());
 
 	ObjectsFlush(); //ObjectsFlush flushed dirty objects into the databsase.
 	pcDatabase->Close();
@@ -201,18 +201,18 @@ void TestObjectsFlushNoClear(void)
 
 	SetupObjectsForDehollowfication();
 
-	AssertLongLongInt(0, pcDatabase->NumIndices());
-	AssertLongLongInt(0, pcDatabase->NumNames());
-	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+	AssertLong(0, pcDatabase->NumIndices());
+	AssertLong(0, pcDatabase->NumNames());
+	AssertLong(9, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryNames());
 	
 	bResult = ObjectsFlush();
 	AssertTrue(bResult);
 
-	AssertLongLongInt(9, pcDatabase->NumIndices());
-	AssertLongLongInt(6, pcDatabase->NumNames());
-	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+	AssertLong(9, pcDatabase->NumIndices());
+	AssertLong(6, pcDatabase->NumNames());
+	AssertLong(9, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryNames());
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
@@ -220,7 +220,7 @@ void TestObjectsFlushNoClear(void)
 	ObjectsKill();
 
 	CArrayChars		aszFileNames;
-	int				i;
+	size			i;
 	CChars*			psz;
 	CChars			szOutput;
 	CChars			szFileName;
@@ -281,18 +281,18 @@ void TestObjectsFlushDurable(void)
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsForDehollowfication();
 
-	AssertLongLongInt(0, pcDatabase->NumIndices());
-	AssertLongLongInt(0, pcDatabase->NumNames());
-	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+	AssertLong(0, pcDatabase->NumIndices());
+	AssertLong(0, pcDatabase->NumNames());
+	AssertLong(9, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryNames());
 
 	bResult = ObjectsFlush();
 	AssertTrue(bResult);
 
-	AssertLongLongInt(9, pcDatabase->NumIndices());
-	AssertLongLongInt(6, pcDatabase->NumNames());
-	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+	AssertLong(9, pcDatabase->NumIndices());
+	AssertLong(6, pcDatabase->NumNames());
+	AssertLong(9, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryNames());
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
@@ -337,18 +337,18 @@ void TestObjectsEvict(void)
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsForDehollowfication();
 
-	AssertLongLongInt(0, pcDatabase->NumIndices());
-	AssertLongLongInt(0, pcDatabase->NumIndicesCached());
-	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+	AssertLong(0, pcDatabase->NumIndices());
+	AssertLong(0, pcDatabase->NumIndicesCached());
+	AssertLong(9, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryNames());
 
 	bResult = ObjectsFlush();
 	AssertTrue(bResult);
 
-	AssertLongLongInt(9, pcDatabase->NumIndices());
-	AssertLongLongInt(9, pcDatabase->NumIndicesCached());
-	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+	AssertLong(9, pcDatabase->NumIndices());
+	AssertLong(9, pcDatabase->NumIndicesCached());
+	AssertLong(9, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryNames());
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
@@ -368,10 +368,10 @@ void TestObjectsEvict(void)
 	bResult = ObjectsFlush();
 	AssertTrue(bResult);
 
-	AssertLongLongInt(9, pcDatabase->NumIndicesCached());
-	AssertLongLongInt(9, pcDatabase->NumIndices());
-	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(6, gcObjects.NumMemoryNames());
+	AssertLong(9, pcDatabase->NumIndicesCached());
+	AssertLong(9, pcDatabase->NumIndices());
+	AssertLong(9, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryNames());
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
@@ -390,16 +390,16 @@ void TestObjectsEvict(void)
 
 	bResult = ObjectsFlush();
 	AssertTrue(bResult);
-	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(6, gcObjects.NumMemoryNames());
-	AssertLongLongInt(9, pcDatabase->NumIndices());
-	AssertLongLongInt(6, pcDatabase->NumNames());
-	AssertLongLongInt(9, pcDatabase->NumIndicesCached());
+	AssertLong(9, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryNames());
+	AssertLong(9, pcDatabase->NumIndices());
+	AssertLong(6, pcDatabase->NumNames());
+	AssertLong(9, pcDatabase->NumIndicesCached());
 
 	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(0, gcObjects.NumMemoryNames());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
+	AssertLong(0, gcObjects.NumMemoryNames());
 
 
 	pcDatabase->Close();
@@ -421,10 +421,10 @@ void TestObjectsEvict(void)
 	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
 
-	//AssertLongLongInt(0, pcDatabase->NumIndicesCached());
-	AssertLongLongInt(9, pcDatabase->NumIndices());
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(0, gcObjects.NumMemoryNames());
+	//AssertLong(0, pcDatabase->NumIndicesCached());
+	AssertLong(9, pcDatabase->NumIndices());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
+	AssertLong(0, gcObjects.NumMemoryNames());
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
@@ -460,19 +460,19 @@ void TestObjectsObjectKillInGraph(void)
 	pRoot->Add(cNS2);
 	
 	AssertPointer(cNS2->mpAnother.Object(), cNS1.Object());
-	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryIndexes());
 	pcNS2 = &cNS2;
 	cNS2 = NULL;
 	pRoot = NULL;
 	cS1 = NULL;
 	pcS2 = &cS2;
 	cS2 = NULL;
-	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryIndexes());
 
 	cNS1->Kill();
 
 	AssertNull(pcNS2->mpAnother.Object());
-	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
+	AssertLong(4, gcObjects.NumMemoryIndexes());
 	AssertPointer(pcNS2->mszString.Object(), pcS2);
 
 	ObjectsFlush();
@@ -508,17 +508,17 @@ void TestObjectsArrayKillInGraph(void)
 	pRoot->Add(cA1);
 	pRoot->Add(cA2);
 
-	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryIndexes());
 
 	cNS1 = NULL;
 	pRoot = NULL;
 	cS1 = NULL;
 
 	cA1->Kill();
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
 
 	cA2->Kill();
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLong(2, gcObjects.NumMemoryIndexes());
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -555,13 +555,13 @@ void TestObjectsObjectKillInArrayInGraph(void)
 
 	AssertInt(1, cA1->NumPointerTos());
 	AssertInt(1, cA2->NumPointerTos());
-	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryIndexes());
 	pRoot = NULL;
 	cS1 = NULL;
-	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryIndexes());
 
 	cNS1->Kill();
-	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
+	AssertLong(4, gcObjects.NumMemoryIndexes());
 
 	AssertInt(0, cA1->NumPointerTos());
 	AssertInt(0, cA2->NumPointerTos());
@@ -604,7 +604,7 @@ void TestObjectDehollowfication(void)
 	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
 
-	AssertLongLongInt(9, pcDatabase->NumIndices());
+	AssertLong(9, pcDatabase->NumIndices());
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -615,7 +615,7 @@ void TestObjectDehollowfication(void)
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsConstructors();
-	AssertLongLongInt(9, pcDatabase->NumIndices());
+	AssertLong(9, pcDatabase->NumIndices());
 
 	AssertTrue(gcObjects.Contains("Double"));
 
@@ -641,7 +641,7 @@ void TestObjectDehollowfication(void)
 	AssertInt(sizeof(CTestNamedString), iClassSize);
 	AssertString("CTestNamedString", pcInternal->mpSplit1.ClassName());
 	oiNew = pDouble->mpSplit1.GetIndex();
-	AssertLongLongInt(oiOld, oiNew);
+	AssertLong(oiOld, oiNew);
 
 	pSingle = pDouble->mpSplit2;
 	AssertTrue(pcInternal->mpSplit2.IsNotNull());
@@ -682,7 +682,7 @@ void TestObjectsFlushClearGetByOid(void)
 	pRoot = ORoot();
 	pDouble = ONMalloc<CTestDoubleNamedString>("Double");
 	pRoot->Add(pDouble);
-	AssertLongLongInt(0, pcDatabase->NumIndices());
+	AssertLong(0, pcDatabase->NumIndices());
 	pObject = gcObjects.Get(3);
 	AssertNotNull(pObject.Object());
 	AssertString("CTestDoubleNamedString", pObject.ClassName());
@@ -691,7 +691,7 @@ void TestObjectsFlushClearGetByOid(void)
 	AssertTrue(bResult);
 	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
-	AssertLongLongInt(3, pcDatabase->NumIndices());
+	AssertLong(3, pcDatabase->NumIndices());
 
 	pObject = gcObjects.Get(3);
 	AssertNotNull(pObject.Object());
@@ -740,8 +740,8 @@ void TestObjectsFlushClearGetByName(void)
 	pRoot = ORoot();
 	pDouble = ONMalloc<CTestDoubleNamedString>("Double");
 	pRoot->Add(pDouble);
-	AssertLongLongInt(0, pcDatabase->NumIndices());
-	AssertLongLongInt(0, pcDatabase->NumNames());
+	AssertLong(0, pcDatabase->NumIndices());
+	AssertLong(0, pcDatabase->NumNames());
 	pObject = gcObjects.Get(3);
 	AssertNotNull(pObject.Object());
 	AssertString("CTestDoubleNamedString", pObject.ClassName());
@@ -750,8 +750,8 @@ void TestObjectsFlushClearGetByName(void)
 	AssertTrue(bResult);
 	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
-	AssertLongLongInt(3, pcDatabase->NumIndices());
-	AssertLongLongInt(2, pcDatabase->NumNames());
+	AssertLong(3, pcDatabase->NumIndices());
+	AssertLong(2, pcDatabase->NumNames());
 
 	pObject = gcObjects.Get("Double");
 	AssertNotNull(pObject.Object());
@@ -796,7 +796,7 @@ void TestObjectsFlushRemovesStackPointers(void)
 	AssertTrue(bResult);
 	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
-	AssertLongLongInt(2, pcDatabase->NumIndices());
+	AssertLong(2, pcDatabase->NumIndices());
 
 	AssertNull(&pRoot);
 

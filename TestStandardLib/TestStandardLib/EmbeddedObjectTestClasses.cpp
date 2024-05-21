@@ -43,7 +43,7 @@ void CEmbeddedTest::Free(void)
 //////////////////////////////////////////////////////////////////////////
 bool CEmbeddedTest::Save(CObjectWriter* pcFile)
 {
-	pcFile->WriteInt(miAmANumber);
+	pcFile->WriteInt32(miAmANumber);
 	pcFile->WriteFloat(mfSoAmI);
 
 	return true;
@@ -55,7 +55,7 @@ bool CEmbeddedTest::Save(CObjectWriter* pcFile)
 //////////////////////////////////////////////////////////////////////////
 bool CEmbeddedTest::Load(CObjectReader* pcFile)
 {
-	pcFile->ReadInt(&miAmANumber);
+	pcFile->ReadInt32(&miAmANumber);
 	pcFile->ReadFloat(&mfSoAmI);
 	
 	return true;
@@ -115,7 +115,7 @@ void CEmbeddedContainer::Free(void)
 bool CEmbeddedContainer::Save(CObjectWriter* pcFile)
 {
 	pcFile->WriteData(msz, 4);
-	pcFile->WriteInt(mi);
+	pcFile->WriteInt32(mi);
 	pcFile->WriteFloat(mf);
 
 	return true;
@@ -128,7 +128,7 @@ bool CEmbeddedContainer::Save(CObjectWriter* pcFile)
 bool CEmbeddedContainer::Load(CObjectReader* pcFile)
 {
 	pcFile->ReadData(msz, 4);
-	pcFile->ReadInt(&mi);
+	pcFile->ReadInt32(&mi);
 	pcFile->ReadFloat(&mf);
 
 	return true;
@@ -184,8 +184,8 @@ void CEmbeddedComplex::Free(void)
 //////////////////////////////////////////////////////////////////////////
 bool CEmbeddedComplex::Save(CObjectWriter* pcFile)
 {
-	pcFile->WriteInt(mai[0]);
-	pcFile->WriteInt(mai[1]);
+	pcFile->WriteInt32(mai[0]);
+	pcFile->WriteInt32(mai[1]);
 
 	return true;
 }
@@ -197,8 +197,8 @@ bool CEmbeddedComplex::Save(CObjectWriter* pcFile)
 //////////////////////////////////////////////////////////////////////////
 bool CEmbeddedComplex::Load(CObjectReader* pcFile)
 {
-	pcFile->ReadInt(&mai[0]);
-	pcFile->ReadInt(&mai[1]);
+	pcFile->ReadInt32(&mai[0]);
+	pcFile->ReadInt32(&mai[1]);
 
 	return true;
 }

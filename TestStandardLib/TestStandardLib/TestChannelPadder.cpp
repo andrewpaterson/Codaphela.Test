@@ -27,12 +27,12 @@ void TestOptimalPadding(void)
 	cPadder.OptimalPadding();
 
 	cChannel = cChannels.GetChannelAtIndex(0);
-	AssertInt(0, cChannel->miByteOffset);
+	AssertSize(0, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(1);
-	AssertInt(4, cChannel->miByteOffset);
+	AssertSize(4, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(2);
-	AssertInt(8, cChannel->miByteOffset);
-	AssertInt(16, cChannels.GetByteStride());
+	AssertSize(8, cChannel->miByteOffset);
+	AssertSize(16, cChannels.GetByteStride());
 
 	cChannels.Kill();
 
@@ -47,12 +47,12 @@ void TestOptimalPadding(void)
 	cPadder.OptimalPadding();
 
 	cChannel = cChannels.GetChannelAtIndex(0);
-	AssertInt(0, cChannel->miByteOffset);
+	AssertSize(0, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(1);
-	AssertInt(8, cChannel->miByteOffset);
+	AssertSize(8, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(2);
-	AssertInt(12, cChannel->miByteOffset);
-	AssertInt(16, cChannels.GetByteStride());
+	AssertSize(12, cChannel->miByteOffset);
+	AssertSize(16, cChannels.GetByteStride());
 
 	cChannels.Kill();
 
@@ -75,24 +75,24 @@ void TestOptimalPadding(void)
 	cPadder.OptimalPadding();
 
 	cChannel = cChannels.GetChannelAtIndex(0);
-	AssertInt(0, cChannel->miByteOffset);
+	AssertSize(0, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(1);
-	AssertInt(1, cChannel->miByteOffset);
+	AssertSize(1, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(2);
-	AssertInt(2, cChannel->miByteOffset);
+	AssertSize(2, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(3);
-	AssertInt(3, cChannel->miByteOffset);
+	AssertSize(3, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(4);
-	AssertInt(4, cChannel->miByteOffset);
+	AssertSize(4, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(5);
-	AssertInt(5, cChannel->miByteOffset);
+	AssertSize(5, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(6);
-	AssertInt(6, cChannel->miByteOffset);
+	AssertSize(6, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(7);
-	AssertInt(7, cChannel->miByteOffset);
+	AssertSize(7, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(8);
-	AssertInt(8, cChannel->miByteOffset);
-	AssertInt(16, cChannels.GetByteStride());
+	AssertSize(8, cChannel->miByteOffset);
+	AssertSize(16, cChannels.GetByteStride());
 
 	cChannels.Kill();
 
@@ -108,14 +108,14 @@ void TestOptimalPadding(void)
 	cPadder.OptimalPadding();
 
 	cChannel = cChannels.GetChannelAtIndex(0);
-	AssertInt(0, cChannel->miByteOffset);
+	AssertSize(0, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(1);
-	AssertInt(8, cChannel->miByteOffset);
+	AssertSize(8, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(2);
-	AssertInt(16, cChannel->miByteOffset);
+	AssertSize(16, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(3);
-	AssertInt(24, cChannel->miByteOffset);
-	AssertInt(32, cChannels.GetByteStride());
+	AssertSize(24, cChannel->miByteOffset);
+	AssertSize(32, cChannels.GetByteStride());
 
 	cChannels.Kill();
 
@@ -136,24 +136,24 @@ void TestOptimalPadding(void)
 	cPadder.OptimalPadding();
 
 	cChannel = cChannels.GetChannelAtIndex(0);
-	AssertInt(0, cChannel->miByteOffset);
+	AssertSize(0, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(1);
-	AssertInt(2, cChannel->miByteOffset);
+	AssertSize(2, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(2);
-	AssertInt(4, cChannel->miByteOffset);
+	AssertSize(4, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(3);
-	AssertInt(6, cChannel->miByteOffset);
+	AssertSize(6, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(4);
-	AssertInt(8, cChannel->miByteOffset);
+	AssertSize(8, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(5);
-	AssertInt(16, cChannel->miByteOffset);
+	AssertSize(16, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(6);
-	AssertInt(18, cChannel->miByteOffset);
+	AssertSize(18, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(7);
-	AssertInt(20, cChannel->miByteOffset);
+	AssertSize(20, cChannel->miByteOffset);
 	cChannel = cChannels.GetChannelAtIndex(8);
-	AssertInt(24, cChannel->miByteOffset);
-	AssertInt(32, cChannels.GetByteStride());
+	AssertSize(24, cChannel->miByteOffset);
+	AssertSize(32, cChannels.GetByteStride());
 
 	cChannels.Kill();
 

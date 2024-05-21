@@ -31,7 +31,7 @@ void TestKillSelfPointer1(void)
 	pRoot->Add(pObject);
 	AssertInt(1, pRoot->NumObjects());
 
-	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
+	AssertLong(3, gcObjects.NumMemoryIndexes());
 
 	pvObject = pObject.BaseObject();
 	pObject = NULL;
@@ -41,7 +41,7 @@ void TestKillSelfPointer1(void)
 	AssertTrue(bResult);
 	AssertInt(0, pRoot->NumObjects());
 
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLong(2, gcObjects.NumMemoryIndexes());
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -68,17 +68,17 @@ void TestKillSelfPointer2(void)
 	pRoot->Add(pObject);
 	AssertInt(1, pRoot->NumObjects());
 
-	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
+	AssertLong(3, gcObjects.NumMemoryIndexes());
 
 	//pObject should not be destroyed here and not cause a stack overflow.
 	bResult = pRoot->Remove(pObject);
 	AssertTrue(bResult);
 	AssertInt(0, pRoot->NumObjects());
-	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
+	AssertLong(3, gcObjects.NumMemoryIndexes());
 
 	//If there were cyclic pointers then the object cannot tell it should be freed when a stack pointer is removed.
 	pObject = NULL;
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLong(2, gcObjects.NumMemoryIndexes());
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -142,7 +142,7 @@ void TestKillBestPractice(void)
 
 	pRoot = ORoot();
 
-	AssertLongLongInt(1, pcDatabase->NumNames());
+	AssertLong(1, pcDatabase->NumNames());
 	pWorld = OMalloc<CGameWorld>();
 
 	pRoot->Add(pWorld);
@@ -179,10 +179,10 @@ void TestKillBestPractice(void)
 
 	AssertString("Kill not called", sMaverickBefore.cPicture.mszPretenedImAPicture);
 	AssertString("Kill not called", sMaverickAfter.cPicture.mszPretenedImAPicture);
-	AssertLongLongInt(12, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(5, gcObjects.NumMemoryNames());
-	AssertLongLongInt(0, pcDatabase->NumIndices());
-	AssertLongLongInt(0, pcDatabase->NumNames());
+	AssertLong(12, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryNames());
+	AssertLong(0, pcDatabase->NumIndices());
+	AssertLong(0, pcDatabase->NumNames());
 	AssertInt(2, pWorld.GetDistToRoot());
 	AssertInt(3, pHarrier.GetDistToRoot());
 	AssertInt(3, pJeep.GetDistToRoot());
@@ -195,7 +195,7 @@ void TestKillBestPractice(void)
 	AssertInt(3, pHarrier->GetMissiles()->NumElements());
 
 	OIndex oiMissile3 = pMissile3->GetIndex();
-	AssertLongLongInt(24LL, oiMissile3);
+	AssertLong(24LL, oiMissile3);
 
 	pMissile3->Kill();  //<-- This is what is being tested -----------------------------------.
 	pMissile3 = gcObjects.TestGetFromMemory(oiMissile3);
@@ -203,10 +203,10 @@ void TestKillBestPractice(void)
 
 	AssertString("Kill not called", sMaverickBefore.cPicture.mszPretenedImAPicture);
 	AssertString("Kill not called", sMaverickAfter.cPicture.mszPretenedImAPicture);
-	AssertLongLongInt(11, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(5, gcObjects.NumMemoryNames());
-	AssertLongLongInt(0, pcDatabase->NumIndices());
-	AssertLongLongInt(0, pcDatabase->NumNames());
+	AssertLong(11, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryNames());
+	AssertLong(0, pcDatabase->NumIndices());
+	AssertLong(0, pcDatabase->NumNames());
 	AssertInt(2, pWorld.GetDistToRoot());
 	AssertInt(3, pHarrier.GetDistToRoot());
 	AssertInt(3, pJeep.GetDistToRoot());
@@ -229,10 +229,10 @@ void TestKillBestPractice(void)
 	AssertInt(1, pMissile2->NumPointerTos());
 	CPointer pTarget2 = pMissile2->GetTarget();
 	AssertTrue(pTarget2.IsNull());
-	AssertLongLongInt(10, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(4, gcObjects.NumMemoryNames());
-	AssertLongLongInt(0, pcDatabase->NumIndices());
-	AssertLongLongInt(0, pcDatabase->NumNames());
+	AssertLong(10, gcObjects.NumMemoryIndexes());
+	AssertLong(4, gcObjects.NumMemoryNames());
+	AssertLong(0, pcDatabase->NumIndices());
+	AssertLong(0, pcDatabase->NumNames());
 	AssertInt(2, pWorld.GetDistToRoot());
 	AssertInt(3, pHarrier.GetDistToRoot());
 	AssertInt(3, pJeep.GetDistToRoot());
@@ -261,13 +261,13 @@ void TestKillBestPractice(void)
 	pRoot->Remove(pWorld);
 	//ERROR: (baseobject.cpp:1159) void __thiscall CBaseObject::ValidateCanFindRoot(void) Object {02596128 [ 4]:CArrayObject(128) 6} has a positive dist to root and should be able to find the Root object.
 
-	AssertLongLongInt(8, gcObjects.NumMemoryIndexes());
+	AssertLong(8, gcObjects.NumMemoryIndexes());
 	pWorld = NULL;
 
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(1, gcObjects.NumMemoryNames());
-	AssertLongLongInt(0, pcDatabase->NumIndices());
-	AssertLongLongInt(0, pcDatabase->NumNames());
+	AssertLong(2, gcObjects.NumMemoryIndexes());
+	AssertLong(1, gcObjects.NumMemoryNames());
+	AssertLong(0, pcDatabase->NumIndices());
+	AssertLong(0, pcDatabase->NumNames());
 
 	AssertInt('X', sHarrierBefore.sPoint.x);
 	AssertInt('Y', sHarrierBefore.sPoint.y);
@@ -344,7 +344,7 @@ void TestKillCanFindRoot(void)
 	AssertTrue(pWorld->GetTickables()->CanFindRoot());
 	AssertTrue(pRoot->CanFindRoot());
 	AssertTrue(pRoot->TestGetSet()->CanFindRoot());
-	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
+	AssertLong(9, gcObjects.NumMemoryIndexes());
 
 	//     
 	// 4        ArrayObject[6](4)
@@ -388,10 +388,10 @@ void TestKillCanFindRoot(void)
 	AssertInt(-1, pRedJetGoose->GetDistToRoot());
 	AssertInt(-1, pWorld->GetDistToRoot());
 	AssertInt(-1, pWorld->GetTickables()->GetDistToRoot());
-	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(5, gcObjects.NumMemoryNames());
-	AssertLongLongInt(0, pcDatabase->NumIndices());
-	AssertLongLongInt(0, pcDatabase->NumNames());
+	AssertLong(9, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryNames());
+	AssertLong(0, pcDatabase->NumIndices());
+	AssertLong(0, pcDatabase->NumNames());
 
 	pJeep = NULL;
 	pRedJetMaverick = NULL;
@@ -400,8 +400,8 @@ void TestKillCanFindRoot(void)
 	pcWorld = &pWorld;
 	pWorld = NULL;
 
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(1, gcObjects.NumMemoryNames());
+	AssertLong(2, gcObjects.NumMemoryIndexes());
+	AssertLong(1, gcObjects.NumMemoryNames());
 
 	AssertInt('X', sHarrierBefore.sPoint.x);
 	AssertInt('Y', sHarrierBefore.sPoint.y);

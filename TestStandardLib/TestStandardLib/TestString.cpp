@@ -78,7 +78,7 @@ void TestStringDirty(void)
 	pString1 = gcObjects.Get(oi1);
 	pString1->AppendHexHiLo(szDirectory, 7);
 	AssertTrue(pString1.IsDirty());
-	AssertString("HelloTrue5C74757074754F", pString1->Text());
+	AssertString("HelloTrue5c74757074754f", pString1->Text());
 
 	ObjectsFlush();
 	pcDatabase->Close();
@@ -136,9 +136,9 @@ void TestStringEmbeddedDirty(void)
 	pContainer->mString2.Set("Burke is great");
 	pContainer->mString3.Set("Wooglers");
 
-	AssertLongLongInt(INVALID_O_INDEX, pContainer->mString1.GetIndex());
-	AssertLongLongInt(INVALID_O_INDEX, pContainer->mString2.GetIndex());
-	AssertLongLongInt(INVALID_O_INDEX, pContainer->mString3.GetIndex());
+	AssertLong(INVALID_O_INDEX, pContainer->mString1.GetIndex());
+	AssertLong(INVALID_O_INDEX, pContainer->mString2.GetIndex());
+	AssertLong(INVALID_O_INDEX, pContainer->mString3.GetIndex());
 
 	ObjectsFlush();
 	pcDatabase->Close();
@@ -401,11 +401,11 @@ void TestStringSplit(void)
 	ObjectsInit();
 
 	pString = OString("And,the,Aardvark,walked,over,the,Hill,and,far,Away");
-	AssertLongLongInt(1LL, gcObjects.NumMemoryIndexes());
+	AssertLong(1LL, gcObjects.NumMemoryIndexes());
 
 	paDest = pString->Split(',');
 	AssertInt(10, paDest->Length());
-	AssertLongLongInt(12LL, gcObjects.NumMemoryIndexes());
+	AssertLong(12LL, gcObjects.NumMemoryIndexes());
 
 	AssertString("And", paDest->Get(0)->Text());
 	AssertString("the", paDest->Get(1)->Text());
@@ -419,21 +419,21 @@ void TestStringSplit(void)
 	AssertString("Away", paDest->Get(9)->Text());
 
 	pString = NULL;
-	AssertLongLongInt(11LL, gcObjects.NumMemoryIndexes());
+	AssertLong(11LL, gcObjects.NumMemoryIndexes());
 	paDest->Clear();
-	AssertLongLongInt(1LL, gcObjects.NumMemoryIndexes());
+	AssertLong(1LL, gcObjects.NumMemoryIndexes());
 	paDest = NULL;
-	AssertLongLongInt(0LL, gcObjects.NumMemoryIndexes());
+	AssertLong(0LL, gcObjects.NumMemoryIndexes());
 
 	pString = OString("And,the,Aardvark,walked,over,the,Hill,and,far,Away");
-	AssertLongLongInt(1LL, gcObjects.NumMemoryIndexes());
+	AssertLong(1LL, gcObjects.NumMemoryIndexes());
 
 	paDest = pString->Split(',');
 	AssertInt(10, paDest->Length());
-	AssertLongLongInt(12LL, gcObjects.NumMemoryIndexes());
+	AssertLong(12LL, gcObjects.NumMemoryIndexes());
 
 	paDest = NULL;
-	AssertLongLongInt(1LL, gcObjects.NumMemoryIndexes());
+	AssertLong(1LL, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
 	DataIOKill();

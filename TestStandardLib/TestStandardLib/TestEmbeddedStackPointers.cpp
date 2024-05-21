@@ -27,12 +27,12 @@ void TestEmbeddedStackPointersKill(void)
 	cComplex.mpTest = OMalloc<CTestObject>(&sFreedNotifier);
 	AssertInt(0, cComplex.NumStackFroms());
 	AssertInt(1, cComplex.mpTest->NumStackFroms());
-	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
+	AssertLong(1, gcObjects.NumMemoryIndexes());
 
 	cComplex.Kill();
 
 	AssertTrue(sFreedNotifier.bFreed);
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
 }
 
 
@@ -117,13 +117,13 @@ void TestEmbeddedStackPointersEmbeddedDistPassThruPointer(void)
 
 	pTest = NULL;
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest->GetDistToStack());
-	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
+	AssertLong(1, gcObjects.NumMemoryIndexes());
 	AssertInt(1, pComplex->mpTest->NumStackFroms());
 	AssertInt(1, cComplex.NumStackFroms());
 
 	cComplex.Kill();
 
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
 }
@@ -162,11 +162,11 @@ void TestEmbeddedStackPointersEmbeddedDistDirect(void)
 
 	pcTest = (CEmbeddedTest*)cComplex.mpTest.Object();
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest->GetDistToStack());
-	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
+	AssertLong(1, gcObjects.NumMemoryIndexes());
 
 	cComplex.Kill();
 
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
 }

@@ -200,8 +200,8 @@ void TestEmbeddedObjectKill(void)
 
 	//The number of allocated object shouldn't change until all the froms are removed
 	//both from the embedded object and the 'normal' object.
-	AssertLongLongInt(7, gcObjects.GetMemory()->NumIndexed());
-	AssertLongLongInt(7, gcUnknowns.NumElements());
+	AssertLong(7, gcObjects.GetMemory()->NumIndexed());
+	AssertLong(7, gcUnknowns.NumElements());
 
 	pClusterMissile->SetKillString(szClusterMissileState);
 	pClusterMissile->mcMissile1.SetKillString(szMissile1State);
@@ -237,22 +237,22 @@ void TestEmbeddedObjectKill(void)
 	pClusterMissile = NULL;
 
 	//Make sure nothing has been de-allocated.
-	AssertLongLongInt(7, gcObjects.GetMemory()->NumIndexed());
-	AssertLongLongInt(7, gcUnknowns.NumElements());
+	AssertLong(7, gcObjects.GetMemory()->NumIndexed());
+	AssertLong(7, gcUnknowns.NumElements());
 
 	pPointerPointer->Clear();
 
 	AssertString("Killed", szClusterMissileState);
 	AssertString("Killed", szMissile1State);
 
-	AssertLongLongInt(6, gcObjects.GetMemory()->NumIndexed());
-	AssertLongLongInt(6, gcUnknowns.NumElements());
+	AssertLong(6, gcObjects.GetMemory()->NumIndexed());
+	AssertLong(6, gcUnknowns.NumElements());
 
 	ObjectsFlush();
 	gcObjects.EvictInMemory();
 
-	AssertLongLongInt(0, gcObjects.GetMemory()->NumIndexed());
-	AssertLongLongInt(0, gcUnknowns.NumElements());
+	AssertLong(0, gcObjects.GetMemory()->NumIndexed());
+	AssertLong(0, gcUnknowns.NumElements());
 
 	ObjectsKill();
 }
@@ -314,29 +314,29 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	
 	szClassName = pComplex->ClassName();
 	AssertString("CEmbeddedComplex", szClassName);
-	AssertLongLongInt(oiComplex, pComplex.GetIndex());
+	AssertLong(oiComplex, pComplex.GetIndex());
 
 	AssertInt(1, pComplex->mai[0]);
 	AssertInt(2, pComplex->mai[1]);
 	
-	AssertLongLongInt(INVALID_O_INDEX, pComplex->mcSimple.GetIndex());
+	AssertLong(INVALID_O_INDEX, pComplex->mcSimple.GetIndex());
 	AssertInt(85, pComplex->mcSimple.miAmANumber);
 	AssertFloat(58.0f, pComplex->mcSimple.mfSoAmI, 0);
 
-	AssertLongLongInt(INVALID_O_INDEX, pComplex->mcContainer.GetIndex());
+	AssertLong(INVALID_O_INDEX, pComplex->mcContainer.GetIndex());
 	AssertInt(73, pComplex->mcContainer.mi);
 	AssertFloat(666.0f, pComplex->mcContainer.mf, 0);
 	AssertString("And", pComplex->mcContainer.msz);
 
-	AssertLongLongInt(INVALID_O_INDEX, pComplex->mcContainer.mcOne.GetIndex());
+	AssertLong(INVALID_O_INDEX, pComplex->mcContainer.mcOne.GetIndex());
 	AssertInt(85, pComplex->mcContainer.mcOne.miAmANumber);
 	AssertFloat(58.0f, pComplex->mcContainer.mcOne.mfSoAmI, 0);
 
-	AssertLongLongInt(INVALID_O_INDEX, pComplex->mcContainer.mcTwo.GetIndex());
+	AssertLong(INVALID_O_INDEX, pComplex->mcContainer.mcTwo.GetIndex());
 	AssertInt(85, pComplex->mcContainer.mcTwo.miAmANumber);
 	AssertFloat(58.0f, pComplex->mcContainer.mcTwo.mfSoAmI, 0);
 
-	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
+	AssertLong(3, gcObjects.NumMemoryIndexes());
 
 	ObjectsFlush();
 	pcDatabase->Close();
@@ -398,8 +398,8 @@ void TestEmbeddedObjectPointTo(void)
 	AssertTrue(pRoot.IsNotNull());
 	pContainer = pRoot->Get(0);
 	AssertTrue(pContainer.IsHollow());
-	AssertInt(0, pContainer.Object()->GetNumEmbedded());
-	AssertLongLongInt(-1, pContainer.GetIndex());
+	AssertSize(0, pContainer.Object()->GetNumEmbedded());
+	AssertLong(-1, pContainer.GetIndex());
 
 	szClassName = pContainer->ClassName();
 	AssertString("CEmbeddedContainer", szClassName);
@@ -428,14 +428,14 @@ void TestEmbeddedGetEmbeddedIndex(void)
 	cComplex.Init();
 
 	AssertInt(0, cComplex.TestGetNumEmbeddedFromFlags());
-	AssertInt(6, cComplex.GetNumEmbedded());
+	AssertSize(6, cComplex.GetNumEmbedded());
 	AssertInt(6, cComplex.TestGetNumEmbeddedFromFlags());
 
-	AssertInt(1, cComplex.mcSimple.GetNumEmbedded());
-	AssertInt(1, cComplex.ma.GetNumEmbedded());
-	AssertInt(3, cComplex.mcContainer.GetNumEmbedded());
-	AssertInt(1, cComplex.mcContainer.mcOne.GetNumEmbedded());
-	AssertInt(1, cComplex.mcContainer.mcOne.GetNumEmbedded());
+	AssertSize(1, cComplex.mcSimple.GetNumEmbedded());
+	AssertSize(1, cComplex.ma.GetNumEmbedded());
+	AssertSize(3, cComplex.mcContainer.GetNumEmbedded());
+	AssertSize(1, cComplex.mcContainer.mcOne.GetNumEmbedded());
+	AssertSize(1, cComplex.mcContainer.mcOne.GetNumEmbedded());
 
 	AssertInt(0, cComplex.GetEmbeddedIndex(&cComplex));
 	AssertInt(1, cComplex.GetEmbeddedIndex(&cComplex.mcSimple));
@@ -509,12 +509,12 @@ void TestEmbeddedObjectClass(void)
 
 	//Class not yet called.  Always call Class.
 	AssertInt(0, cComplex.GetNumFieldPointerTos());
-	AssertInt(1, cComplex.GetNumEmbedded());
+	AssertSize(1, cComplex.GetNumEmbedded());
 
 	cComplex.ClearFlagNumEmbedded();
 	cComplex.Init();
 	AssertInt(5, cComplex.GetNumFieldPointerTos());
-	AssertInt(6, cComplex.GetNumEmbedded());
+	AssertSize(6, cComplex.GetNumEmbedded());
 
 	pcPtr0 = cComplex.GetFieldPointerTo(0);
 	pcPtr1 = cComplex.GetFieldPointerTo(1);

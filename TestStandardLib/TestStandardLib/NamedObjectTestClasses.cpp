@@ -44,7 +44,7 @@ void CTestNamedObject::Free(void)
 //////////////////////////////////////////////////////////////////////////
 bool CTestNamedObject::Save(CObjectWriter* pcFile)
 {
-	ReturnOnFalse(pcFile->WriteInt(miNum));
+	ReturnOnFalse(pcFile->WriteInt32(miNum));
 	return true;
 }
 
@@ -55,7 +55,7 @@ bool CTestNamedObject::Save(CObjectWriter* pcFile)
 //////////////////////////////////////////////////////////////////////////
 bool CTestNamedObject::Load(CObjectReader* pcFile)
 {
-	ReturnOnFalse(pcFile->ReadInt(&miNum));
+	ReturnOnFalse(pcFile->ReadInt32(&miNum));
 	return true;
 }
 
@@ -180,8 +180,8 @@ void CTestNamedObjectWithEmbedded::Free(void)
 //////////////////////////////////////////////////////////////////////////
 bool CTestNamedObjectWithEmbedded::Save(CObjectWriter* pcFile)
 {
-	ReturnOnFalse(pcFile->WriteInt(miX));
-	ReturnOnFalse(pcFile->WriteInt(miY));
+	ReturnOnFalse(pcFile->WriteInt32(miX));
+	ReturnOnFalse(pcFile->WriteInt32(miY));
 	return true;
 }
 
@@ -195,8 +195,8 @@ bool CTestNamedObjectWithEmbedded::Load(CObjectReader* pcFile)
 	mpvUnmanaged = NULL;
 	miUnmagedSize = 0;
 
-	ReturnOnFalse(pcFile->ReadInt(&miX));
-	ReturnOnFalse(pcFile->ReadInt(&miY));
+	ReturnOnFalse(pcFile->ReadInt32(&miX));
+	ReturnOnFalse(pcFile->ReadInt32(&miY));
 	return true;
 }
 

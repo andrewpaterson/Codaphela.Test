@@ -65,7 +65,7 @@ void TestChannelsAccessorContiguous(void)
 	sData = 602;
 	pcAccessor->Set(1, &sData);
 	pvData = pcAccessor->Get(1);
-	AssertShort(602, *(uint16*)pvData);
+	AssertShort((uint16)602, *(uint16*)pvData);
 	pcAccessor->Kill();
 
 	cCreator.Init(pcChannels);
@@ -111,11 +111,11 @@ void TestChannelsAccessorByteAligned(void)
 	sData[0] = 784;
 	sData[1] = 602;
 	pcAccessor->Set(1, &sData);
-	AssertShort(784, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 8 + 0));
-	AssertShort(602, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 8 + 6));
+	AssertShort((uint16)784, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 8 + 0));
+	AssertShort((uint16)602, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 8 + 6));
 	psData = (uint16*)pcAccessor->Get(1);
-	AssertShort(784, psData[0]);
-	AssertShort(602, psData[1]);
+	AssertShort((uint16)784, psData[0]);
+	AssertShort((uint16)602, psData[1]);
 	pcAccessor->Kill();
 
 	cCreator.Init(pcChannels);
@@ -131,14 +131,14 @@ void TestChannelsAccessorByteAligned(void)
 	pcAccessor = cCreator.CreateAndKill();
 	AssertString("CChannelsAccessorByteAligned", pcAccessor->ClassName());
 	psData = (uint16*)pcAccessor->Get(1);
-	AssertShort(602, psData[0]);
+	AssertShort((uint16)602, psData[0]);
 	AssertInt(999999, *(int*)&psData[1]);
 	sData[0] = 22172;
 	sData[1] = 18432;
 	sData[2] = 30812;
 	pcAccessor->Set(0, sData);
 	AssertInt(2019313664, *(int*)RemapSinglePointer(pcChannels->GetData(), 2));
-	AssertShort(22172, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 6));
+	AssertShort((uint16)22172, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 6));
 	pcAccessor->Kill();
 }
 
@@ -337,9 +337,8 @@ void TestChannelsAccessorWorstCase(void)
 	CChannels*					pcChannels;
 	CChannelsAccessor*			pcAccessor;
 	CChannelsAccessorCreator	cCreator;
-	uint8*				pucData;
-	uint8				aucData[5];
-
+	uint8*						pucData;
+	uint8						aucData[5];
 
 	pcChannels = UMalloc(CChannels);
 	pcChannels->Init();
@@ -350,11 +349,11 @@ void TestChannelsAccessorWorstCase(void)
 	pcChannels->AddChannel(CHANNEL_NAME_ALICE, PT_uint8);
 	pcChannels->EndChange();
 	pcChannels->Clear();
-	AssertInt(2, pcChannels->GetSize());
-	AssertInt(11, pcChannels->GetByteSize());
-	AssertInt(41, pcChannels->GetBitStride());
-	AssertInt(-1, pcChannels->GetByteStride());
-	AssertInt(false, pcChannels->IsOnlyBasicTypes());
+	AssertSize(2, pcChannels->GetSize());
+	AssertSize(11, pcChannels->GetByteSize());
+	AssertSize(41, pcChannels->GetBitStride());
+	AssertSize(CHANNEL_NON_ALIGNED_BYTES, pcChannels->GetByteStride());
+	AssertBool(false, pcChannels->IsOnlyBasicTypes());
 
 	memset(aucData, 0, 5);
 
@@ -364,9 +363,9 @@ void TestChannelsAccessorWorstCase(void)
 	cCreator.AddAccess(CHANNEL_NAME_ALICE, PT_nybble);
 	pcAccessor = cCreator.CreateAndKill();
 	AssertString("CChannelsAccessorWorstCase", pcAccessor->ClassName());
-	AssertInt(-1, pcAccessor->GetByteSize());
-	AssertInt(37, pcAccessor->GetBitSize());
-	AssertInt(5, pcAccessor->GetBufferSize());
+	AssertSize(-1, pcAccessor->GetByteSize());
+	AssertSize(37, pcAccessor->GetBitSize());
+	AssertSize(5, pcAccessor->GetBufferSize());
 	aucData[0] = 0xff;
 	aucData[1] = 0xff;
 	aucData[2] = 0xff;

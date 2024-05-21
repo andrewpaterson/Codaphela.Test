@@ -90,8 +90,8 @@ void TestObjectReaderSimpleDeserialised(void)
 
 	gcObjects.AddConstructor<CTestNamedString>();
 
-	AssertLongLongInt(0, pcDatabase->NumIndices());
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLong(0, pcDatabase->NumIndices());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
 
 	cReader.Init("Output" _FS_ "ObjectReaderSimple" _FS_ "Test" _FS_);
 	cGraphDeserialiser.Init(&cReader, false, &gcObjects, gcObjects.GetMemory());
@@ -101,8 +101,8 @@ void TestObjectReaderSimpleDeserialised(void)
 	AssertString("Waggy", cBase.GetName());
 	AssertString("NS1",  ((CTestNamedString*)&cBase)->mszEmbedded.Text());
 
-	AssertLongLongInt(0, pcDatabase->NumIndices());
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLong(0, pcDatabase->NumIndices());
+	AssertLong(2, gcObjects.NumMemoryIndexes());
 
 	cNS1 = gcObjects.Get("Waggy");
 	AssertTrue(cNS1.IsNotNull());

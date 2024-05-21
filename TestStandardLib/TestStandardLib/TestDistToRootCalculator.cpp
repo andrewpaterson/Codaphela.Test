@@ -579,9 +579,9 @@ void TestUpdateAttachedTosDistToRootSimpleRight(void)
 	//        Root(0)
 	//
 
-	AssertLongLongInt(4, pTest1->GetIndex());
-	AssertLongLongInt(5, pTest2->GetIndex());
-	AssertLongLongInt(6, pTest3->GetIndex());
+	AssertLong(4, pTest1->GetIndex());
+	AssertLong(5, pTest2->GetIndex());
+	AssertLong(6, pTest3->GetIndex());
 
 	pTest2->mpTest.UnsafeClearObject();
 	pTest3->TestRemoveHeapFrom(pTest2.BaseObject());
@@ -664,9 +664,9 @@ void TestUpdateAttachedTosDistToRootSimpleRightBroken(void)
 	//        Root(0)
 	//
 
-	AssertLongLongInt(4, pTest1->GetIndex());
-	AssertLongLongInt(5, pTest2->GetIndex());
-	AssertLongLongInt(6, pTest3->GetIndex());
+	AssertLong(4, pTest1->GetIndex());
+	AssertLong(5, pTest2->GetIndex());
+	AssertLong(6, pTest3->GetIndex());
 
 	pTest1->mpObject.UnsafeClearObject();
 	pTest3->TestRemoveHeapFrom(pTest1.BaseObject());
@@ -1817,13 +1817,13 @@ void TestClearDistToRootToValidDistBroken(void)
 	//              Root(0)
 	//                         
 	
-	AssertLongLongInt(3LL, p6b->GetIndex());
-	AssertLongLongInt(4LL, p6c->GetIndex());
-	AssertLongLongInt(5LL, pTest1a->GetIndex());
-	AssertLongLongInt(6LL, pTest1b->GetIndex());
-	AssertLongLongInt(7LL, pTest2a->GetIndex());
-	AssertLongLongInt(8LL, pTest2b->GetIndex());
-	AssertLongLongInt(9LL, pTest3a->GetIndex());
+	AssertLong(3LL, p6b->GetIndex());
+	AssertLong(4LL, p6c->GetIndex());
+	AssertLong(5LL, pTest1a->GetIndex());
+	AssertLong(6LL, pTest1b->GetIndex());
+	AssertLong(7LL, pTest2a->GetIndex());
+	AssertLong(8LL, pTest2b->GetIndex());
+	AssertLong(9LL, pTest3a->GetIndex());
 
 	AssertInt(2, p6b->GetDistToRoot());
 	AssertInt(2, p6c->GetDistToRoot());
@@ -1841,7 +1841,7 @@ void TestClearDistToRootToValidDistBroken(void)
 
 	AssertInt(1, cDistParameters.NumExpectedDists());
 	psDistToRoot = cDistParameters.GetLowestExpectedDist();
-	AssertLongLongInt(6LL, psDistToRoot->pcObject->GetIndex());
+	AssertLong(6LL, psDistToRoot->pcObject->GetIndex());
 	AssertInt(4, psDistToRoot->iExpectedDist);
 
 	AssertInt(2, p6b->GetDistToRoot());
@@ -1998,11 +1998,11 @@ void TestDistToRootWithStackPointers(void)
 	cNS2 = OMalloc<CTestObject>(sz2, cNS3);
 	sz2 = OMalloc<CString>("Down");
 
-	AssertLongLongInt(1, cNS3.GetIndex());
-	AssertLongLongInt(2, cNS1.GetIndex());
-	AssertLongLongInt(3, sz1.GetIndex());
-	AssertLongLongInt(4, cNS2.GetIndex());
-	AssertLongLongInt(5, sz2.GetIndex());
+	AssertLong(1, cNS3.GetIndex());
+	AssertLong(2, cNS1.GetIndex());
+	AssertLong(3, sz1.GetIndex());
+	AssertLong(4, cNS2.GetIndex());
+	AssertLong(5, sz2.GetIndex());
 
 	gcObjects.ValidateObjectsConsistency();
 
@@ -2409,7 +2409,7 @@ void TestDistToRootComplex(void)
 	pTest23 = NULL;
 	pTest24 = NULL;
 
-	AssertLongLongInt(24, gcObjects.NumMemoryIndexes());
+	AssertLong(24, gcObjects.NumMemoryIndexes());
 	AssertInt( 2,  pcTest3->GetDistToRoot());
 	AssertInt( 2,  pcTest4->GetDistToRoot());
 	AssertInt( 3,  pcTest5->GetDistToRoot());
@@ -2531,7 +2531,7 @@ void TestDistToRootComplex(void)
 	//                              pRoot(0)
 	//                    
 
-	AssertLongLongInt(24, gcObjects.NumMemoryIndexes());
+	AssertLong(24, gcObjects.NumMemoryIndexes());
 	AssertInt( 2,  pcTest3->GetDistToRoot());
 	AssertInt( 2,  pcTest4->GetDistToRoot());
 	AssertInt( 3,  pcTest5->GetDistToRoot());

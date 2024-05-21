@@ -161,13 +161,13 @@ void TestHollowObjectMemoryIteration(void)
 	pRoot->TouchAll();
 
 	oi = gcObjects.StartMemoryIteration(&sIter);
-	AssertLongLongInt(oiRoot, oi);
+	AssertLong(oiRoot, oi);
 	oi = gcObjects.IterateMemory(&sIter);
-	AssertLongLongInt(oi1, oi);
+	AssertLong(oi1, oi);
 	p = gcObjects.TestGetFromMemory(oi);
 	AssertTrue(p.IsHollow());
 	oi = gcObjects.IterateMemory(&sIter);
-	AssertLongLongInt(INVALID_O_INDEX, oi);
+	AssertLong(INVALID_O_INDEX, oi);
 	AssertString("CTestObject", p->ClassName());
 	AssertFalse(p.IsHollow());
 

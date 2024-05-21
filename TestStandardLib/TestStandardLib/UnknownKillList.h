@@ -1,5 +1,5 @@
-#ifndef __DEATH_TRACKER_H__
-#define __DEATH_TRACKER_H__
+#ifndef __UNKNOWN_KILL_LIST_H__
+#define __UNKNOWN_KILL_LIST_H__
 #include "BaseLib/ArrayTemplateMinimal.h"
 
 
@@ -12,5 +12,5 @@ public:
 };
 
 
-#endif // __DEATH_TRACKER_H__
+#endif // __UNKNOWN_KILL_LIST_H__
 

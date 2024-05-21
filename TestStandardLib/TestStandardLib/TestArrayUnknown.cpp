@@ -104,8 +104,11 @@ void TestRemoval(void)
 
 	cArray.StartIteration(&sSetIter);
 	cArray.RemoveDuringIteration(&sSetIter);
+	cArray.Iterate(&sSetIter);
 	cArray.RemoveDuringIteration(&sSetIter);
+	cArray.Iterate(&sSetIter);
 	cArray.RemoveDuringIteration(&sSetIter);
+	cArray.Iterate(&sSetIter);
 
 	iNum = cArray.NumElements();
 	AssertInt(0, iNum);
@@ -148,6 +151,7 @@ void TestRemoval(void)
 	cArray.RemoveDuringIteration(&sSetIter);
 	iNum = cArray.NumElements();
 	AssertInt(0, iNum);
+	cArray.Iterate(&sSetIter);
 
 	cArray.RemoveDuringIteration(&sSetIter);
 	cArray.Kill();

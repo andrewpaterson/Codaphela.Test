@@ -41,7 +41,7 @@ void TestExternalChannelsSubBytePositions(void)
 	cSourceChannels.EndChange();
 
 	cCreator.Init(&cSourceChannels);
-	cCreator.AddAccess(0, PT_uint8);
+	cCreator.AddAccess((size)0, PT_uint8);
 	pcChannel0 = cCreator.CreateAndKill();
 	AssertString("CChannelsAccessorChannelBitty", pcChannel0->ClassName());
 
@@ -160,10 +160,10 @@ void TestContiguousExternalChannels(void)
 	iExpected1 = 0xaaff00aa;
 	iExpected2 = 0x00000000;
 	iExpected3 = 0xFFffffff;
-	AssertPointer((void*)(size_t)iExpected0, (void*)(size_t)((int*)cChannels.GetData())[0]);
-	AssertPointer((void*)(size_t)iExpected1, (void*)(size_t)((int*)cChannels.GetData())[1]);
-	AssertPointer((void*)(size_t)iExpected2, (void*)(size_t)((int*)cChannels.GetData())[2]);
-	AssertPointer((void*)(size_t)iExpected3, (void*)(size_t)((int*)cChannels.GetData())[3]);
+	AssertPointer((void*)(size)iExpected0, (void*)(size)((int*)cChannels.GetData())[0]);
+	AssertPointer((void*)(size)iExpected1, (void*)(size)((int*)cChannels.GetData())[1]);
+	AssertPointer((void*)(size)iExpected2, (void*)(size)((int*)cChannels.GetData())[2]);
+	AssertPointer((void*)(size)iExpected3, (void*)(size)((int*)cChannels.GetData())[3]);
 
 	cCopy.Kill();
 	cChannels.Kill();

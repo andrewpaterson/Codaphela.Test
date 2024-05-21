@@ -124,7 +124,7 @@ void TestRootStackPointers(void)
 
 	iFroms = pTest3->NumHeapFroms();
 	AssertInt(1, iFroms);
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
 
 	//Stop the stack from pointing.
 	pTest1 = NULL;
@@ -134,7 +134,7 @@ void TestRootStackPointers(void)
 	AssertFalse(sKilled1.bFreed);
 	AssertFalse(sKilled3.bFreed);
 	AssertFalse(sKilled2.bFreed);
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
 
 	pRoot->Remove(pcTest3);
 
@@ -1070,7 +1070,7 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 	AssertInt(6, pTest8->GetDistToRoot());
 	AssertInt(6, pTest9->GetDistToRoot());
 
-	AssertLongLongInt(12, gcObjects.NumMemoryIndexes());
+	AssertLong(12, gcObjects.NumMemoryIndexes());
 
 	//
 	// Test8[10](6) Test9[11](6)
@@ -1156,7 +1156,7 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 	//        ...
 	//      Root(0)
 
-	AssertLongLongInt(9, gcObjects.NumMemoryIndexes());
+	AssertLong(9, gcObjects.NumMemoryIndexes());
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -1240,14 +1240,14 @@ void TestRootSetRemoveAll(void)
 	pcContainer1 = &pContainer1;
 	pcContainer2 = &pContainer2;
 
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(5, gcUnknowns.NumElements());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcUnknowns.NumElements());
 
 	//This removes all the immediately held objects (but does not kill them if they are pointed to by something else).
 	pRoot->RemoveAll();
 
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(5, gcUnknowns.NumElements());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcUnknowns.NumElements());
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer1->GetDistToRoot());
 	AssertFalse(pcContainer1->CanFindRoot());
@@ -1291,15 +1291,15 @@ void TestRootSetKillAll(void)
 
 	pTemp = OMalloc<CPointerContainer>(pContainer1);
 
-	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(6, gcUnknowns.NumElements());
+	AssertLong(6, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcUnknowns.NumElements());
 
 	//This kills all the immediately held objects (setting pointers to null as applicable).
 	//Objects further down the tree pointed to by stack pointers will not be killed.
 	pRoot->KillAll();
 
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(5, gcUnknowns.NumElements());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcUnknowns.NumElements());
 	AssertNull(&pTemp->mp);
 	AssertNull(&pContainer1);
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer2->GetDistToRoot());
@@ -1332,15 +1332,15 @@ void TestRootKillWithStackPointers(void)
 	pRoot = ORoot();
 	pRoot->Add(pContainer1);
 
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(5, gcUnknowns.NumElements());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcUnknowns.NumElements());
 
 	pRoot->Kill();
 
 	//Shouldn't these be 3?  Why doesn't killing the root remove the root object?
 	AssertNull(&pRoot);
-	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(4, gcUnknowns.NumElements());
+	AssertLong(4, gcObjects.NumMemoryIndexes());
+	AssertLong(4, gcUnknowns.NumElements());
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pObject->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pContainer1->GetDistToRoot());
@@ -1365,8 +1365,8 @@ void TestRootKill(void)
 	Ptr<CRoot>					pRoot;
 	STestObjectFreedNotifier	sFreedNotifier1;
 
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(0, gcUnknowns.NumElements());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
+	AssertLong(0, gcUnknowns.NumElements());
 
 	pObject = OMalloc<CTestObject>(&sFreedNotifier1);
 	pContainer2 = OMalloc<CPointerContainer>(pObject);
@@ -1378,22 +1378,22 @@ void TestRootKill(void)
 	pContainer1 = NULL;
 	pContainer2 = NULL;
 
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(5, gcUnknowns.NumElements());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcUnknowns.NumElements());
 	Pass();
 
 	pRoot->Kill();
 
 	//Shouldn't these be 0?  Why doesn't killing the root remove the root object?
-	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(1, gcUnknowns.NumElements());
+	AssertLong(1, gcObjects.NumMemoryIndexes());
+	AssertLong(1, gcUnknowns.NumElements());
 	Pass();
 
 	pRoot = ORoot();
 	AssertString(ROOT_NAME, pRoot->GetName());
-	AssertLongLongInt(4LL, pRoot->GetIndex());
-	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(1, gcUnknowns.NumElements());
+	AssertLong(4LL, pRoot->GetIndex());
+	AssertLong(1, gcObjects.NumMemoryIndexes());
+	AssertLong(1, gcUnknowns.NumElements());
 
 	ObjectsFlush();
 	ObjectsKill();

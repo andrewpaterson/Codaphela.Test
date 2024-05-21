@@ -73,17 +73,17 @@ void TestNamedObjectName(void)
 	pNamed3->mpNamedTest1 = pNamed1;
 	pNamed3->mpNamedTest2 = pNamed2;
 	oiNamed3 = pNamed3->GetIndex();
-	AssertLongLongInt(3, oiNamed3);
+	AssertLong(3, oiNamed3);
 
 	pRoot = ORoot();
 	pRoot->Add(pNamed3);
 	
-	AssertLongLongInt(3, gcObjects.NumMemoryNames());
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLong(3, gcObjects.NumMemoryNames());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
 
 	pResult1 = gcObjects.Get("Frank");
 	AssertNotNull(pResult1.Object());
-	AssertLongLongInt(1, pResult1.GetIndex());
+	AssertLong(1, pResult1.GetIndex());
 
 	pResult2 = gcObjects.Get("Zappa");
 	AssertNotNull(pResult2.Object());
@@ -115,13 +115,13 @@ void TestNamedObjectName(void)
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 
-	AssertLongLongInt(3, pcDatabase->NumNames());
-	AssertLongLongInt(5, pcDatabase->NumIndices());
-	AssertLongLongInt(0, gcObjects.NumMemoryNames());
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLong(3, pcDatabase->NumNames());
+	AssertLong(5, pcDatabase->NumIndices());
+	AssertLong(0, gcObjects.NumMemoryNames());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
 
 	pSet = gcObjects.Get(oiSet);
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLong(2, gcObjects.NumMemoryIndexes());
 	AssertString("CSetObject", pSet.ClassName());
 
 	AssertTrue(pSet.IsNotNull());
@@ -131,7 +131,7 @@ void TestNamedObjectName(void)
 	AssertInt(1, pSet->NumElements());
 	pResult3 = pSet->UnsafeGet(0);
 	AssertTrue(pResult3.IsNotNull());
-	AssertLongLongInt(oiNamed3, pResult3.GetIndex());
+	AssertLong(oiNamed3, pResult3.GetIndex());
 	AssertTrue(pResult3.IsHollow());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pResult3.GetDistToRoot());
 
@@ -194,7 +194,7 @@ void TestNamedOjectReuse(EIndexWriteThrough eWriteThrough)
 	ObjectsInit(pcDatabase, pcSequence);
 
 	pNamed1 = ONMalloc<CTestNamedObject>("Sister Two", 1);
-	AssertLongLongInt(1, pNamed1.GetIndex());
+	AssertLong(1, pNamed1.GetIndex());
 
 	pNamed2 = ONMalloc<CTestNamedObject>("Office Block", 2);
 	pNamed2->mpNamedTest1 = pNamed1;
@@ -202,12 +202,12 @@ void TestNamedOjectReuse(EIndexWriteThrough eWriteThrough)
 	pRoot = ORoot();
 	pRoot->Add(pNamed1);
 
-	AssertLongLongInt(3, gcObjects.NumMemoryNames());
-	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
+	AssertLong(3, gcObjects.NumMemoryNames());
+	AssertLong(4, gcObjects.NumMemoryIndexes());
 
-	AssertLongLongInt(3LL, pRoot.GetIndex());
-	AssertLongLongInt(1LL, pNamed1.GetIndex());
-	AssertLongLongInt(2LL, pNamed2.GetIndex());
+	AssertLong(3LL, pRoot.GetIndex());
+	AssertLong(1LL, pNamed1.GetIndex());
+	AssertLong(2LL, pNamed2.GetIndex());
 
 
 	ObjectsFlush();
@@ -227,14 +227,14 @@ void TestNamedOjectReuse(EIndexWriteThrough eWriteThrough)
 	ObjectsInit(pcDatabase, pcSequence);
 
 	pNamed1 = gcObjects.Get("Sister Two");
-	AssertLongLongInt(1, pNamed1.GetIndex());
+	AssertLong(1, pNamed1.GetIndex());
 
 	sLogConfig = gcLogger.SetSilent();
 	pNamed3 = ONMalloc<CTestNamedObject>("Sister Two", 3);
 	gcLogger.SetConfig(&sLogConfig);
 
 	AssertTrue(pNamed3.IsNull());
-	AssertLongLongInt(1, pNamed1.GetIndex());
+	AssertLong(1, pNamed1.GetIndex());
 
 	ObjectsFlush();
 	pcDatabase->Close();

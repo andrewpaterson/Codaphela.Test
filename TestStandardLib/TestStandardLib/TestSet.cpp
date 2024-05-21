@@ -152,13 +152,13 @@ void TestSetKillCyclic(void)
 	pRoot->Add(pSet);
 	pSet->Add(pTest3);
 
-	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryIndexes());
 	AssertInt(5, pTest1->GetDistToRoot());
 	AssertInt(4, pTest2->GetDistToRoot());
 	AssertInt(3, pTest3->GetDistToRoot());
 
 	pSet->Kill();
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
 	AssertNull(&pSet);
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest2->GetDistToRoot());
@@ -191,12 +191,12 @@ void TestSetKillAll(void)
 	pRoot->Add(pSet);
 	pSet->Add(pContainer1);
 
-	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryIndexes());
 	AssertInt(1, pSet->NumElements());
 
 	pSet->KillAll();
 	AssertInt(0, pSet->NumElements());
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
 	AssertNotNull(&pSet);
 	AssertNull(&pContainer1);
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pContainer2->GetDistToRoot());
@@ -231,12 +231,12 @@ void TestSetRemoveAll(void)
 	pRoot->Add(pSet);
 	pSet->Add(pContainer1);
 
-	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryIndexes());
 	AssertInt(1, pSet->NumElements());
 
 	pSet->RemoveAll();
 	AssertInt(0, pSet->NumElements());
-	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryIndexes());
 	AssertNotNull(&pSet);
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pContainer1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pContainer2->GetDistToRoot());
@@ -280,7 +280,7 @@ void TestSetSerialisation()
 	pSet->Add(pContainer1);
 	pSet->Add(pContainer2);
 
-	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
+	AssertLong(4, gcObjects.NumMemoryIndexes());
 	AssertInt(2, pSet->NumElements());
 
 	cWriter.Init(szDirectory, "", "File");

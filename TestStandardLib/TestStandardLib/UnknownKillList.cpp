@@ -12,7 +12,7 @@ void CKillList::AddKill(CUnknownTestHelper* pcKilled)
 
 bool CKillList::Contains(CUnknownTestHelper* pcKilled)
 {
-	int						i;
+	size					i;
 	CUnknownTestHelper*		pcTest;
 
 	for (i = 0; i < miUsedElements; i++)

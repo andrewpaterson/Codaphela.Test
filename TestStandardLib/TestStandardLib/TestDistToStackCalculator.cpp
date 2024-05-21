@@ -647,9 +647,9 @@ void TestDistToStackSetWithoutStackPointers(void)
 	AssertPointer(pcSet, cDistParameters.GetCompletelyDetached(0));
 	AssertPointer(pcTest, cDistParameters.GetCompletelyDetached(1));
 
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
 	gcObjects.Remove(cDistParameters.GetCompletelyDetachedArray());
-	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
+	AssertLong(3, gcObjects.NumMemoryIndexes());
 
 	cDistParameters.Kill();
 
@@ -710,9 +710,9 @@ void TestDistToStackSetWithStackPointers(void)
 
 
 
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
 	gcObjects.Remove(cDistParameters.GetCompletelyDetachedArray());
-	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
+	AssertLong(4, gcObjects.NumMemoryIndexes());
 
 	cDistParameters.Kill();
 
@@ -787,7 +787,7 @@ void TestDistToStackSetBroken(void)
 	pTest2 = NULL;
 	pTest3 = NULL;
 
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
 	AssertInt(3, pcTest2->GetDistToRoot());
 	AssertInt(2, pcTest2->NumHeapFroms());
 	
@@ -808,9 +808,9 @@ void TestDistToStackSetBroken(void)
 	AssertInt(1, cDistParameters.NumCompletelyDetached());
 	AssertPointer(pcTest3, cDistParameters.GetCompletelyDetached(0));
 
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
 	gcObjects.Remove(cDistParameters.GetCompletelyDetachedArray());
-	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
+	AssertLong(4, gcObjects.NumMemoryIndexes());
 
 	cDistParameters.Kill();
 
@@ -912,8 +912,8 @@ void TestDistToStackNoHeapA(void)
 	pcTest2 = (CTestObject*)pTest2.Object();
 	pcTest1 = &cTest1;
 
-	AssertLongLongInt(INVALID_O_INDEX, pcTest1->GetIndex());
-	AssertLongLongInt(1, pcTest2->GetIndex());
+	AssertLong(INVALID_O_INDEX, pcTest1->GetIndex());
+	AssertLong(1, pcTest2->GetIndex());
 
 	cTest1.Kill();
 
@@ -971,8 +971,8 @@ void TestDistToStackNoHeapB(void)
 	pcTest2 = (CTestObject*)pTest2.Object();
 	pcTest1 = &cTest1;
 
-	AssertLongLongInt(INVALID_O_INDEX, pcTest1->GetIndex());
-	AssertLongLongInt(1, pcTest2->GetIndex());
+	AssertLong(INVALID_O_INDEX, pcTest1->GetIndex());
+	AssertLong(1, pcTest2->GetIndex());
 
 	cTest1.Kill();
 
@@ -1027,8 +1027,8 @@ void TestDistToStackNoHeapC(void)
 	pcTest2 = (CTestObject*)pTest2.Object();
 	pcTest1 = &cTest1;
 
-	AssertLongLongInt(INVALID_O_INDEX, pcTest1->GetIndex());
-	AssertLongLongInt(1, pcTest2->GetIndex());
+	AssertLong(INVALID_O_INDEX, pcTest1->GetIndex());
+	AssertLong(1, pcTest2->GetIndex());
 
 	pTest2->Kill();
 

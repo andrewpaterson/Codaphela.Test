@@ -51,6 +51,7 @@ void TestSetStuffs(void)
 	pcTest = (CTestNamedUnknown*)cSet.StartIteration(&sSetIter);
 	AssertString("The One", pcTest->GetName());
 	pcTest = (CTestNamedUnknown*)cSet.Iterate(&sSetIter);
+	AssertNotNull(pcTest);
 	AssertString("There can be only three", pcTest->GetName());
 
 	pcTest = gcUnknowns.StartIteration(&sIter);
@@ -60,6 +61,7 @@ void TestSetStuffs(void)
 
 	cSet.StartIteration(&sSetIter);
 	cSet.RemoveDuringIteration(&sSetIter);
+	cSet.Iterate(&sSetIter);
 	cSet.RemoveDuringIteration(&sSetIter);
 
 	iNum = cSet.NumElements();
@@ -113,11 +115,14 @@ void TestSetRemoval(void)
 
 	cSet.StartIteration(&sSetIter);
 	cSet.RemoveDuringIteration(&sSetIter);
+	cSet.Iterate(&sSetIter);
 	cSet.RemoveDuringIteration(&sSetIter);
+	cSet.Iterate(&sSetIter);
 	cSet.RemoveDuringIteration(&sSetIter);
 
 	iNum = cSet.NumElements();
 	AssertInt(0, iNum);
+	cSet.Iterate(&sSetIter);
 
 	cSet.RemoveDuringIteration(&sSetIter);
 
@@ -152,11 +157,13 @@ void TestSetRemoval(void)
 	iNum = cSet.NumElements();
 	AssertInt(1, iNum);
 	pcTest = (CTestNamedUnknown*)cSet.Iterate(&sSetIter);
+	AssertNotNull(pcTest);
 	AssertString("There can be only three", pcTest->GetName());
 
 	cSet.RemoveDuringIteration(&sSetIter);
 	iNum = cSet.NumElements();
 	AssertInt(0, iNum);
+	cSet.Iterate(&sSetIter);
 
 	cSet.RemoveDuringIteration(&sSetIter);
 	cSet.Kill();
@@ -278,6 +285,7 @@ void TestCleanNulls(void)
 	for (i = 0; i < 19; i++)
 	{
 		cSet.RemoveDuringIteration(&sSetIter);
+		cSet.Iterate(&sSetIter);
 	}
 
 	AssertInt(1, cSet.NumElements());

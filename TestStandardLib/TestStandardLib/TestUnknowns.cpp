@@ -31,7 +31,7 @@ void TestUnknownListAddKill(void)
 	pcFreeList = pcMemory->GetFreeList(sizeof(CTestUnknown));
 	AssertInt(1, pcFreeList->NumElements());
 	AssertInt(1, pcMemory->NumElements());
-	AssertInt(431, pcMemory->ByteSize());
+	AssertInt(435, pcMemory->ByteSize());
 
 	pcTest->Init();
 	pcTest->Kill();
@@ -159,13 +159,20 @@ void TestUnknownListRemoveDuringIteration(void)
 	pcTest = cUnknowns.Iterate(&sIter);
 	AssertInt(5, pcTest->miID);
 	cUnknowns.RemoveDuringIteration(&sIter);
+
+	pcTest = cUnknowns.Iterate(&sIter);
+	AssertInt(3, pcTest->miID);
 	cUnknowns.RemoveDuringIteration(&sIter);
+	AssertInt(2, cUnknowns.GetIterableListsHeadNumElements());
+	AssertInt(2, cUnknowns.NumElements());
 
 	pcTest = cUnknowns.Iterate(&sIter);
 	AssertInt(4, pcTest->miID);
 	cUnknowns.RemoveDuringIteration(&sIter);
-	cUnknowns.RemoveDuringIteration(&sIter);
-	AssertInt(0, cUnknowns.GetIterableListsHeadNumElements());
+	AssertInt(1, cUnknowns.GetIterableListsHeadNumElements());
+	AssertInt(1, cUnknowns.NumElements());
+
+	pcTest = cUnknowns.Iterate(&sIter);
 	cUnknowns.RemoveDuringIteration(&sIter);
 	AssertInt(0, cUnknowns.GetIterableListsHeadNumElements());
 
@@ -175,8 +182,6 @@ void TestUnknownListRemoveDuringIteration(void)
 }
 
 
-//
-//
 //////////////////////////////////////////////////////////////////////////
 //
 //

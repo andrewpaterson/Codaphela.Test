@@ -67,7 +67,7 @@ void TestObjectMorphIntoSimple(void)
 	AssertInt(3, pTest2->GetDistToRoot());
 	AssertInt(3, pTest3->GetDistToRoot());
 
-	AssertLongLongInt(6LL, gcObjects.NumMemoryIndexes());
+	AssertLong(6LL, gcObjects.NumMemoryIndexes());
 
 	//   Test2  Test3
 	//      \   /
@@ -106,7 +106,7 @@ void TestObjectMorphIntoSimple(void)
 
 	AssertInt(3, pTest10->GetDistToRoot());
 
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
 
 	//   Test2    Test10
 	//      \     /
@@ -135,7 +135,7 @@ void TestObjectMorphIntoSimple(void)
 	pTest3 = NULL;
 	AssertTrue(sFreedNotifier10.bFreed);
 
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLong(2, gcObjects.NumMemoryIndexes());
 
 	//       ---
 	//        -
@@ -180,7 +180,7 @@ void TestObjectRootRemove(void)
 	AssertInt(3, pTest2->GetDistToRoot());
 	AssertInt(3, pTest3->GetDistToRoot());
 
-	AssertLongLongInt(5LL, gcObjects.NumMemoryIndexes());
+	AssertLong(5LL, gcObjects.NumMemoryIndexes());
 
 	pcTest1 = &pTest1;
 	pTest1 = NULL;
@@ -192,7 +192,7 @@ void TestObjectRootRemove(void)
 	AssertTrue(sFreedNotifier2.bFreed);
 	AssertTrue(sFreedNotifier3.bFreed);
 
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLong(2, gcObjects.NumMemoryIndexes());
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -234,12 +234,12 @@ void TestObjectPointerRemapping(void)
 	AssertInt(1, pObject2->NumHeapFroms());
 	AssertInt(0, pObject3->NumPointerTos());
 	AssertInt(0, pObject3->NumHeapFroms());
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(5, gcUnknowns.NumElements());
-	AssertLongLongInt(4LL, pObject2.GetIndex());
-	AssertLongLongInt(5LL, pObject3.GetIndex());
-	AssertInt(1, pObject2->GetNumEmbedded());
-	AssertInt(1, pObject3->GetNumEmbedded());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcUnknowns.NumElements());
+	AssertLong(4LL, pObject2.GetIndex());
+	AssertLong(5LL, pObject3.GetIndex());
+	AssertSize(1, pObject2->GetNumEmbedded());
+	AssertSize(1, pObject3->GetNumEmbedded());
 
 	pcObject2 = (CTestObject*)pObject2.Object();
 	iNumRemapped = pObject2.MorphInto(&pObject3);
@@ -250,9 +250,9 @@ void TestObjectPointerRemapping(void)
 	AssertPointer(&pObject3, &pObject1->mpObject);
 	AssertPointer(&pObject3, &pObject2);
 	AssertTrue(&pObject2 != pcObject2);
-	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(4, gcUnknowns.NumElements());
-	AssertLongLongInt(5LL, pObject3.GetIndex());  //Index of 5 because Pointer.MorphInto does not swap indices.
+	AssertLong(4, gcObjects.NumMemoryIndexes());
+	AssertLong(4, gcUnknowns.NumElements());
+	AssertLong(5LL, pObject3.GetIndex());  //Index of 5 because Pointer.MorphInto does not swap indices.
 
 	AssertInt(1, pObject1->NumPointerTos());
 	AssertPointer(&pObject3, pObject1->TestGetPointerTo(0));
@@ -387,7 +387,7 @@ void TestObjectPointerRemappingSimplerComplex(void)
 	AssertInt(3, pTest12->GetDistToRoot());
 	AssertInt(2, pTest10->GetDistToRoot());
 
-	AssertLongLongInt(7, gcObjects.NumMemoryIndexes());
+	AssertLong(7, gcObjects.NumMemoryIndexes());
 
 
 	//   Test13  Test14
@@ -424,7 +424,7 @@ void TestObjectPointerRemappingSimplerComplex(void)
 	AssertTrue(sFreedNotifier13.bFreed);
 	AssertTrue(sFreedNotifier14.bFreed);
 
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLong(2, gcObjects.NumMemoryIndexes());
 
 	//       ---
 	//        -
@@ -523,7 +523,7 @@ void TestObjectMorphIntoComplex(void)
 	AssertInt(6, pTest8->GetDistToRoot());
 	AssertInt(6, pTest9->GetDistToRoot());
 
-	AssertLongLongInt(17, gcObjects.NumMemoryIndexes());
+	AssertLong(17, gcObjects.NumMemoryIndexes());
 
 	//   Test8  Test9
 	//	   |    / |
@@ -563,7 +563,7 @@ void TestObjectMorphIntoComplex(void)
 	pTest5 = NULL;
 	pTest7 = NULL;
 
-	AssertLongLongInt(17, gcObjects.NumMemoryIndexes());
+	AssertLong(17, gcObjects.NumMemoryIndexes());
 
 	pcTest3 = (CTestObject*)pTest3.Object();
 	iNumRemapped = pTest3.MorphInto(&pTest10);
@@ -617,7 +617,7 @@ void TestObjectMorphIntoComplex(void)
 	AssertInt(5, pTest13->GetDistToRoot());
 	AssertInt(5, pTest14->GetDistToRoot());
 
-	AssertLongLongInt(14, gcObjects.NumMemoryIndexes());
+	AssertLong(14, gcObjects.NumMemoryIndexes());
 
 	//   Test8   Test9
 	//     |    /
@@ -677,7 +677,7 @@ void TestObjectMorphIntoComplex(void)
 	AssertTrue(sFreedNotifier14.bFreed);
 	AssertTrue(sFreedNotifier15.bFreed);
 
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLong(2, gcObjects.NumMemoryIndexes());
 
 	//       ---
 	//        -
@@ -782,13 +782,13 @@ void TestObjectRootUnattachment(void)
 
 	pContainer2 = NULL;
 	pObject = NULL;
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(5, gcUnknowns.NumElements());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcUnknowns.NumElements());
 	AssertFalse(sFreedNotifier.bFreed);
 
 	pRoot->Remove(pContainer1);
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(5, gcUnknowns.NumElements());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcUnknowns.NumElements());
 
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer1->GetDistToRoot());
 	AssertFalse(pcContainer1->CanFindRoot());
@@ -799,8 +799,8 @@ void TestObjectRootUnattachment(void)
 	AssertFalse(sFreedNotifier.bFreed);
 
 	pContainer1 = NULL;
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(2, gcUnknowns.NumElements());
+	AssertLong(2, gcObjects.NumMemoryIndexes());
+	AssertLong(2, gcUnknowns.NumElements());
 	AssertTrue(sFreedNotifier.bFreed);
 
 	ObjectsFlush();
@@ -837,7 +837,7 @@ void TestObjectKillOnHeap(void)
 
 	pContainer2 = NULL;
 	pObject = NULL;
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
 
 	pRoot->TestGetSet()->Kill();
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer1->GetDistToRoot());
@@ -923,11 +923,11 @@ void TestObjectSetUnattachment(void)
 
 	pContainer2 = NULL;
 	pObject = NULL;
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
 
 	pRoot->NullifySet();
-	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(4, gcUnknowns.NumElements());
+	AssertLong(4, gcObjects.NumMemoryIndexes());
+	AssertLong(4, gcUnknowns.NumElements());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer1->GetDistToRoot());
 	AssertFalse(pcContainer1->CanFindRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcContainer2->GetDistToRoot());
@@ -936,8 +936,8 @@ void TestObjectSetUnattachment(void)
 	AssertFalse(pcObject->CanFindRoot());
 
 	pContainer1 = NULL;
-	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(1, gcUnknowns.NumElements());
+	AssertLong(1, gcObjects.NumMemoryIndexes());
+	AssertLong(1, gcUnknowns.NumElements());
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -969,14 +969,14 @@ void TestObjectKillCyclic(void)
 	pRoot = ORoot();
 	pRoot->Add(pTest4);
 
-	AssertLongLongInt(6, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryIndexes());
 	AssertInt(5, pTest1->GetDistToRoot());
 	AssertInt(4, pTest2->GetDistToRoot());
 	AssertInt(3, pTest3->GetDistToRoot());
 	AssertInt(2, pTest4->GetDistToRoot());
 
 	pTest4->Kill();
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
 	AssertNull(&pTest4);
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest1->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest2->GetDistToRoot());

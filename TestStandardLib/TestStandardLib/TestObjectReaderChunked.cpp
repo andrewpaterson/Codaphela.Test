@@ -39,11 +39,11 @@ CPointer SetupObjectReaderChunkedChunkFile(void)
 	cNS4 = ONMalloc<CTestNamedString>("NamedString 4");
 
 	cI1 = OMalloc<CTestInteger>(3, 2, 1);
-	AssertLongLongInt(5LL, cI1->GetIndex());
+	AssertLong(5LL, cI1->GetIndex());
 	cI2 = OMalloc<CTestInteger>(543, 3, 4);
-	AssertLongLongInt(6LL, cI2->GetIndex());
+	AssertLong(6LL, cI2->GetIndex());
 	cI3 = OMalloc<CTestInteger>(10, 8192, 7);
-	AssertLongLongInt(7LL, cI3->GetIndex());
+	AssertLong(7LL, cI3->GetIndex());
 
 	cA1 = ONMalloc<CTestWithArray>("Array 1", "Something with One", 1);
 	cA2 = ONMalloc<CTestWithArray>("Array X", "An with 2", 2);
@@ -141,8 +141,8 @@ void TestObjectReaderChunkedDeserialised(void)
 
 	iNumMemoryIndexes = WriteObjectReaderChunkedFile();
 
-	AssertLongLongInt(0, pcDatabase->NumIndices());
-	AssertLongLongInt(14, iNumMemoryIndexes);
+	AssertLong(0, pcDatabase->NumIndices());
+	AssertLong(14, iNumMemoryIndexes);
 
 	ObjectsFlush();
 	pcDatabase->Close();
@@ -159,8 +159,8 @@ void TestObjectReaderChunkedDeserialised(void)
 	gcObjects.AddConstructor<CTestInteger>();
 	gcObjects.AddConstructor<CTestNamedString>();
 
-	AssertLongLongInt(0, pcDatabase->NumIndices());
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLong(0, pcDatabase->NumIndices());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
 
 	cReader.Init("Output" _FS_ "ObjectReaderChunked" _FS_ "Test" _FS_ , "Reader");
 	cGraphDeserialiser.Init(&cReader, false, &gcObjects, gcObjects.GetMemory());
@@ -168,8 +168,8 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertTrue(cBase.IsNotNull());
 	AssertString("CTestWithArray", cBase.ClassName());
 
-	AssertLongLongInt(0, pcDatabase->NumIndices());
-	AssertLongLongInt(14, gcObjects.NumMemoryIndexes());
+	AssertLong(0, pcDatabase->NumIndices());
+	AssertLong(14, gcObjects.NumMemoryIndexes());
 
 	cA1 = gcObjects.Get("Array 1");
 	AssertTrue(cA1.IsNotNull());

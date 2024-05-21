@@ -18,10 +18,10 @@ void TestStringOverrideCharPointerPlusDeconstructor(void)
 {
 	Ptr<CString>	pString1 = OMalloc<CString>("Hello ");
 	Ptr<CString>	pString3 = NULL;
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLong(2, gcObjects.NumMemoryIndexes());
 
 	pString3 = pString1 + " World";
-	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
+	AssertLong(3, gcObjects.NumMemoryIndexes());
 
 	AssertString("Hello  World", pString3->Text());
 }
@@ -38,9 +38,9 @@ void TestStringOverrideCharPointerPlus(void)
 	DataIOInit();
 	ObjectsInit();
 
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
 	TestStringOverrideCharPointerPlusDeconstructor();
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
 	DataIOKill();
@@ -58,10 +58,10 @@ void TestStringOverrideStringPlusDeconstructor(void)
 	Ptr<CString>	pString1 = OMalloc<CString>("Hello ");
 	Ptr<CString>	pString2 = OMalloc<CString>(" World");
 	Ptr<CString>	pString3 = NULL;
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLong(2, gcObjects.NumMemoryIndexes());
 
 	pString3 = pString1 + pString2;
-	AssertLongLongInt(3, gcObjects.NumMemoryIndexes());
+	AssertLong(3, gcObjects.NumMemoryIndexes());
 
 	AssertString("Hello  World", pString3->Text());
 }
@@ -78,9 +78,9 @@ void TestStringOverrideStringPlus(void)
 	DataIOInit();
 	ObjectsInit();
 
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
 	TestStringOverrideStringPlusDeconstructor();
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
 	DataIOKill();

@@ -23,16 +23,16 @@ void TestFreeEmbeddedFlags(void)
 	
 	Ptr<CEmbeddedComplex>	pComplex;
 
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
 
 	pComplex = OMalloc<CEmbeddedComplex>();
-	AssertLongLongInt(1, gcObjects.NumMemoryIndexes());
+	AssertLong(1, gcObjects.NumMemoryIndexes());
 
 	pComplex->Add(OMalloc<CEmbeddedTest>());
-	AssertLongLongInt(2, gcObjects.NumMemoryIndexes());
+	AssertLong(2, gcObjects.NumMemoryIndexes());
 
 	pComplex = NULL;
-	AssertLongLongInt(0, gcObjects.NumMemoryIndexes());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
 
 	ObjectsKill();
 }

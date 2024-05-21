@@ -50,15 +50,15 @@ void TestObjectReplaceNoPointers(void)
 	pRoot->Add(pObject2);
 	oi1 = pObject1->GetIndex();
 	oi3 = pObject3->GetIndex();
-	AssertLongLongInt(5, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(4, gcObjects.NumMemoryNames());
+	AssertLong(5, gcObjects.NumMemoryIndexes());
+	AssertLong(4, gcObjects.NumMemoryNames());
 	AssertFalse(oi1 == oi3);
 	AssertString("GraphRoot", pRoot->GetName());
 	AssertInt(5, gcUnknowns.NumElements());
 
 	gcObjects.ReplaceBaseObject(&pObject1, &pObject3);
-	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(3, gcObjects.NumMemoryNames());
+	AssertLong(4, gcObjects.NumMemoryIndexes());
+	AssertLong(3, gcObjects.NumMemoryNames());
 	AssertTrue(sFreeNotifider1.bFreed);
 	AssertPointer(&pObject3, &pObject1);
 	AssertFalse(sFreeNotifider2.bFreed);
@@ -144,8 +144,8 @@ void TestObjectReplaceWithHeapPointers(void)
 	pObject2 = NULL;
 	pObject3 = NULL;
 	pRoot = NULL;
-	AssertLongLongInt(7, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(5, gcObjects.NumMemoryNames());
+	AssertLong(7, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryNames());
 	AssertInt(7, gcUnknowns.NumElements());
 	AssertFalse(oi1 == oi2);
 	AssertFalse(oi1 == oi3);
@@ -167,8 +167,8 @@ void TestObjectReplaceWithHeapPointers(void)
 	//                    ...
 	//                   Root(0)
 
-	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(2, gcObjects.NumMemoryNames());
+	AssertLong(4, gcObjects.NumMemoryIndexes());
+	AssertLong(2, gcObjects.NumMemoryNames());
 	AssertInt(4, gcUnknowns.NumElements());
 	AssertTrue(sFreeNotifider3.bFreed);
 	AssertFalse(sFreeNotifider4.bFreed);
@@ -262,8 +262,8 @@ void TestObjectReplaceWithStackPointers(void)
 	pObject2 = NULL;
 	pObject3 = NULL;
 	pRoot = NULL;
-	AssertLongLongInt(7, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(5, gcObjects.NumMemoryNames());
+	AssertLong(7, gcObjects.NumMemoryIndexes());
+	AssertLong(5, gcObjects.NumMemoryNames());
 	AssertInt(7, gcUnknowns.NumElements());
 	AssertFalse(oi1 == oi2);
 	AssertFalse(oi1 == oi3);
@@ -285,8 +285,8 @@ void TestObjectReplaceWithStackPointers(void)
 	//                    ...
 	//                   Root(0)
 
-	AssertLongLongInt(4, gcObjects.NumMemoryIndexes());
-	AssertLongLongInt(2, gcObjects.NumMemoryNames());
+	AssertLong(4, gcObjects.NumMemoryIndexes());
+	AssertLong(2, gcObjects.NumMemoryNames());
 	AssertInt(4, gcUnknowns.NumElements());
 	AssertTrue(sFreeNotifider3.bFreed);
 	AssertFalse(sFreeNotifider4.bFreed);
