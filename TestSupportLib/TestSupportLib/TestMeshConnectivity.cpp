@@ -7,10 +7,10 @@
 #include "TestMeshConnectivity.h"
 
 
-void AssertCornerFaces(CMeshCorner* pcCorner, int iNumFaces, ...);
-void AssertCornerEdges(CMeshCorner* pcCorner, int iNumEdges, ...);
-void AssertEdgeFaces(CMeshEdge* pcEdge, int iFace1, int iFace2);
-void AssertEdgeCorners(CMeshEdge* pcEdge, int iCorner1, int iCorner2);
+void AssertCornerFaces(CMeshCorner* pcCorner, size iNumFaces, ...);
+void AssertCornerEdges(CMeshCorner* pcCorner, size iNumEdges, ...);
+void AssertEdgeFaces(CMeshEdge* pcEdge, size iFace1, size iFace2);
+void AssertEdgeCorners(CMeshEdge* pcEdge, size iCorner1, size iCorner2);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ void TestMeshEdgeConnectivity(void)
 	CMeshPlaneEditor*	pcPlaneEditor;
 	CMeshEditor			cMeshEditor;
 	CMeshConnectivity*	pcConn;
-	int					i;
+	size				i;
 	CCornerEdgesMap*	pcCornerEdgesMap;
 
 	cMesh.Init();
@@ -98,11 +98,11 @@ void TestMeshEdgeConnectivity(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertCornerFaces(CMeshCorner* pcCorner, int iNumFaces, ...)
+void AssertCornerFaces(CMeshCorner* pcCorner, size iNumFaces, ...)
 {
 	va_list		vaMarker;
-	int			i;
-	int			iFaceNum;
+	size			i;
+	size			iFaceNum;
 
 	AssertInt(iNumFaces, pcCorner->aiFace.NumElements());
 	if (iNumFaces != pcCorner->aiFace.NumElements())
@@ -113,7 +113,7 @@ void AssertCornerFaces(CMeshCorner* pcCorner, int iNumFaces, ...)
 	va_start(vaMarker, iNumFaces);
 	for (i = 0; i < iNumFaces; i++)
 	{
-		iFaceNum = va_arg(vaMarker, int);
+		iFaceNum = va_arg(vaMarker, size);
 		AssertInt(iFaceNum, pcCorner->aiFace.GetValue(i));
 	}
 	va_end(vaMarker);
@@ -125,11 +125,11 @@ void AssertCornerFaces(CMeshCorner* pcCorner, int iNumFaces, ...)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertCornerEdges(CMeshCorner* pcCorner, int iNumEdges, ...)
+void AssertCornerEdges(CMeshCorner* pcCorner, size iNumEdges, ...)
 {
 	va_list		vaMarker;
-	int			i;
-	int			iEdgeNum;
+	size			i;
+	size			iEdgeNum;
 
 	AssertInt(iNumEdges, pcCorner->aiEdge.NumElements());
 	if (iNumEdges != pcCorner->aiEdge.NumElements())
@@ -140,7 +140,7 @@ void AssertCornerEdges(CMeshCorner* pcCorner, int iNumEdges, ...)
 	va_start(vaMarker, iNumEdges);
 	for (i = 0; i < iNumEdges; i++)
 	{
-		iEdgeNum = va_arg(vaMarker, int);
+		iEdgeNum = va_arg(vaMarker, size);
 		AssertInt(iEdgeNum, pcCorner->aiEdge.GetValue(i));
 	}
 	va_end(vaMarker);
@@ -151,7 +151,7 @@ void AssertCornerEdges(CMeshCorner* pcCorner, int iNumEdges, ...)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertEdgeFaces(CMeshEdge* pcEdge, int iFace1, int iFace2)
+void AssertEdgeFaces(CMeshEdge* pcEdge, size iFace1, size iFace2)
 {
 	AssertInt(iFace1, pcEdge->aiFace[0]);
 	AssertInt(iFace2, pcEdge->aiFace[1]);
@@ -162,7 +162,7 @@ void AssertEdgeFaces(CMeshEdge* pcEdge, int iFace1, int iFace2)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertEdgeCorners(CMeshEdge* pcEdge, int iCorner1, int iCorner2)
+void AssertEdgeCorners(CMeshEdge* pcEdge, size iCorner1, size iCorner2)
 {
 	AssertInt(iCorner1, pcEdge->aiCorner[0]);
 	AssertInt(iCorner2, pcEdge->aiCorner[1]);
