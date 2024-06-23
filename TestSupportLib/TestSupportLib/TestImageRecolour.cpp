@@ -3,7 +3,8 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/TypeConverter.h"
-#include "StandardLib/Unknowns.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "StandardLib/Objects.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/ImageRecolour.h"
@@ -15,10 +16,8 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestImageRecolour(void)
+void TestImageRecolour1(void)
 {
-	BeginTests();
-
 	CImage				cImage;
 	CImageRecolour		cRecolour;
 	CRectangle			cRect;
@@ -31,8 +30,8 @@ void TestImageRecolour(void)
 	o3.Init(1.0f, 1.0f, 1.0f); n3.Init(0.0f, 0.0f, 0.0f);
 
 	cRecolour.Init(&o1, &n1, &cRect);
-	cRecolour.AddRecolour( &o2, &n2);
-	cRecolour.AddRecolour( &o3, &n3);
+	cRecolour.AddRecolour(&o2, &n2);
+	cRecolour.AddRecolour(&o3, &n3);
 	cRecolour.Modify(&cImage);
 	cRecolour.Kill();
 
@@ -40,9 +39,26 @@ void TestImageRecolour(void)
 	AssertFileMemory("input\\recolour.raw", cImage.GetData(), cImage.GetByteSize());
 
 	cImage.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageRecolour(void)
+{
+	BeginTests();
+
+	DataIOInit();
+	ObjectsInit();
+
+	TestImageRecolour1();
+
+	ObjectsKill();
+	DataIOKill();
 
 	TestStatistics();
 }
-
 
 

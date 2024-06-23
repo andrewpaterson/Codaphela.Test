@@ -3,6 +3,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/TypeConverter.h"
+#include "BaseLib/GlobalDataTypesIO.h"
 #include "StandardLib/Objects.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
@@ -21,14 +22,11 @@
 //////////////////////////////////////////////////////////////////////////
 void TestImageCombinerMask(void)
 {
-
 	CImageCelSourceBorders	cBorder;
 	CImageCombiner			cCombiner;
 	Ptr<CImage>				pcImage;
 	CImageCelsSource		cSource;
 	SImageColour			sColour;
-
-	ObjectsInit();
 
 	sColour.c[0] = 0;
 	sColour.c[1] = 0;
@@ -54,8 +52,6 @@ void TestImageCombinerMask(void)
 	pcImage->Kill();
 	cCombiner.Kill();
 	cSource.Kill();
-
-	ObjectsKill();
 }
 
 
@@ -67,8 +63,14 @@ void TestImageCombiner(void)
 {
 	BeginTests();
 
+	DataIOInit();
+	ObjectsInit();
+
 	TestImageCombinerMask();
 
+	ObjectsKill();
+	DataIOKill();
+	
 	TestStatistics();
 }
 

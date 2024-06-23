@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/TypeConverter.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "StandardLib/Objects.h"
 #include "SupportLib/ImageModifierStack.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
@@ -11,14 +13,12 @@
 #include "TestImageModifierStack.h"
 
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestImageModifierStack(void)
+void TestImageModifierStack1(void)
 {
-	BeginTests();
 
 	CImage					cImage;
 	CImageModifierStack		cStack;
@@ -31,6 +31,7 @@ void TestImageModifierStack(void)
 	bResult = ReadImage(&cBak, "Input/Adelle.png");
 	AssertBool(true, bResult);
 
+	cImage.Init();
 	cImage.Copy(&cBak);
 	cStack.Init(&cImage);
 
@@ -44,6 +45,7 @@ void TestImageModifierStack(void)
 
 	pcNormals = cStack.AddModifier<CImageHeightToNormals>();
 	pcNormals->Init(IMAGE_DIFFUSE_GREY);
+	cImage.Init();
 	cImage.Copy(&cBak);
 	cStack.ApplyAll();
 
@@ -53,6 +55,7 @@ void TestImageModifierStack(void)
 
 	pcSmall = cStack.AddModifier<CImageResampler>();
 	pcSmall->Init(IR_NearestNeighbour, 21, 16);
+	cImage.Init();
 	cImage.Copy(&cBak);
 	cStack.ApplyAll();
 
@@ -64,6 +67,24 @@ void TestImageModifierStack(void)
 	cImage.Kill();
 
 	cBak.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageModifierStack(void)
+{
+	BeginTests();
+
+	DataIOInit();
+	ObjectsInit();
+
+	TestImageModifierStack1();
+
+	ObjectsKill();
+	DataIOKill();
 
 	TestStatistics();
 }

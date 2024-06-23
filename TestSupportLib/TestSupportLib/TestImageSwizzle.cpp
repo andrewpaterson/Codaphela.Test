@@ -3,7 +3,8 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/TypeConverter.h"
-#include "StandardLib/Unknowns.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "StandardLib/Objects.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/ImageRGBToGrey.h"
@@ -19,10 +20,8 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestImageSwizzle(void)
+void TestImageSwizzle1(void)
 {
-	BeginTests();
-
 	CImage					cImage;
 	CImageModifierStack		cStack;
 	CImageRGBToGrey*		pcRGBToGrey;
@@ -58,6 +57,24 @@ void TestImageSwizzle(void)
 	AssertFileMemory("input\\swizzle.raw", cImage.GetData(), cImage.GetByteSize());
 
 	cImage.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageSwizzle(void)
+{
+	BeginTests();
+
+	DataIOInit();
+	ObjectsInit();
+
+	TestImageSwizzle1();
+
+	ObjectsKill();
+	DataIOKill();
 
 	TestStatistics();
 }
