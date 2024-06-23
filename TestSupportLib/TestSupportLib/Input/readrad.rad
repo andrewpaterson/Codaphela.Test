@@ -4,9 +4,9 @@ RawImage
 	Height	48;
 	Channels
 	{
-		UChar Red;
-		UChar Green;
-		UChar Blue;
+		UByte Red;
+		UByte Green;
+		UByte Blue;
 	}
 	FileName	"readrad.raw";
 }

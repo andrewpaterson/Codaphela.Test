@@ -184,6 +184,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AssertImage.cpp" />
     <ClCompile Include="TestSupportLib.cpp" />
     <ClCompile Include="TestBumpMapper.cpp" />
     <ClCompile Include="TestImage.cpp" />
@@ -221,6 +222,7 @@
     <ClCompile Include="TestTriangleShape.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AssertImage.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestBumpMapper.h" />
     <ClInclude Include="TestImage.h" />

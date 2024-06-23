@@ -210,6 +210,7 @@
     <ClCompile Include="FileIOTestObjects.cpp" />
     <ClCompile Include="SortedTestObject.cpp" />
     <ClCompile Include="TestAllocator.cpp" />
+    <ClCompile Include="TestArrayBlock.cpp" />
     <ClCompile Include="TestArrayBlockSorted.cpp" />
     <ClCompile Include="TestArraySizer.cpp" />
     <ClCompile Include="TestArrayTemplateEmbeddedPtr.cpp" />

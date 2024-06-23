@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "BaseLib/NaiveFile.h"
-#include "StandardLib/Unknowns.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "StandardLib/Objects.h"
 #include "SupportLib/Image.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
@@ -9,13 +10,14 @@
 #include "TestImageGreyToRGB.h"
 
 
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestImageGreyToRGB(void)
+void TestImageGreyToRGB1(void)
 {
-	BeginTests();
 
 	CImage				cImage;
 	CImageGreyToRGB		cGreyToRGB;
@@ -31,6 +33,24 @@ void TestImageGreyToRGB(void)
 
 	cGreyToRGB.Kill();
 	cImage.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageGreyToRGB(void)
+{
+	BeginTests();
+
+	DataIOInit();
+	ObjectsInit();
+
+	TestImageGreyToRGB1();
+
+	ObjectsKill();
+	DataIOKill();
 
 	TestStatistics();
 }

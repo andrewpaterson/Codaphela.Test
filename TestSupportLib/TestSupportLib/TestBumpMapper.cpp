@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/FastFunctions.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "StandardLib/Objects.h"
 #include "SupportLib/Image.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
@@ -13,12 +15,10 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestBumpMapper(void)
+void TestBumpMapper1(void)
 {
-	BeginTests();
-
-	CImage			cSource;
-	CImage			cDest;
+	CImage	cSource;
+	CImage	cDest;
 
 	ReadImage(&cSource, "Input\\HeightMap.png");
 
@@ -42,11 +42,31 @@ void TestBumpMapper(void)
 	cDest.RenameChannel(IMAGE_BUMP_V, IMAGE_DIFFUSE_GREEN);
 	cDest.EndChange();
 
-	WriteImage(&cDest, "Output\\Bump.png", IT_PNG);
+	WriteImage(&cDest, "Output\\BumpMap.png", IT_PNG);
 
 	AssertFile("Input\\NormalMap.png", "Output\\NormalMap.png");
+	AssertFile("Input\\BumpMap.png", "Output\\BumpMap.png");
 
+	cDest.Kill();
 	cSource.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestBumpMapper(void)
+{
+	BeginTests();
+
+	DataIOInit();
+	ObjectsInit();
+
+	TestBumpMapper1();
+
+	ObjectsKill();
+	DataIOKill();
 
 	TestStatistics();
 }

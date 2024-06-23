@@ -2,6 +2,8 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/NaiveFile.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "StandardLib/Objects.h"
 #include "SupportLib/ImageDivider.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
@@ -297,10 +299,16 @@ void TestImageDivider(void)
 {
 	BeginTests();
 
+	DataIOInit();
+	ObjectsInit();
+
 	TestImageDividerGenerateFromBorder();
 	TestImageDividerGenerateFromNumbers();
 	TestImageDividerGenerateFromNumbersWithTransparent();
 	TestImageDividerGenerateFromBorderWithTransparent();
+
+	ObjectsKill();
+	DataIOKill();
 
 	TestStatistics();
 }

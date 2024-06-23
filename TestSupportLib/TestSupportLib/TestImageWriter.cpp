@@ -2,6 +2,8 @@
 #include "SupportLib/Image.h"
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeConverter.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "StandardLib/Objects.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
 #include "TestLib/Assert.h"
@@ -155,9 +157,16 @@ void TestImageWriter(void)
 {
 	BeginTests();
 
+	DataIOInit();
+	ObjectsInit();
+
 	TestImagePNGWriter();
 	TestImageTGAWriter();
 	TestImageRADWriter();
 
+	ObjectsKill();
+	DataIOKill();
+
 	TestStatistics();
 }
+

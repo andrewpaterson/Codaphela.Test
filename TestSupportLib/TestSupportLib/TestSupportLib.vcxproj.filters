@@ -127,6 +127,9 @@
     <ClCompile Include="TestTriangleShape.cpp">
       <Filter>Source Files\Shape</Filter>
     </ClCompile>
+    <ClCompile Include="AssertImage.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -230,6 +233,9 @@
     </ClInclude>
     <ClInclude Include="TestTriangleShape.h">
       <Filter>Source Files\Shape</Filter>
+    </ClInclude>
+    <ClInclude Include="AssertImage.h">
+      <Filter>Source Files\Image</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

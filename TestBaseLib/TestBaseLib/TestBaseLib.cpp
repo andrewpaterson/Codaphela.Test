@@ -8,6 +8,7 @@
 void TestPrimitiveTypes(void);
 void TestFloat4(void);
 void TestFloatHelper(void);
+void TestArrayBlock(void);
 void TestArraySizer(void);
 void TestArrayTemplatePrimitive(void);
 void TestArrayInt(void);
@@ -152,6 +153,7 @@ int __cdecl main(void)
 	TestFloatHelper();
 	TestFloat4();
 	TestStringHelper();
+	TestArrayBlock();
 	TestArrayInt();
 	TestArrayLong();
 	TestArrayInt2D();

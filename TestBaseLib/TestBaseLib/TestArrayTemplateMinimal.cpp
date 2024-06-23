@@ -141,7 +141,6 @@ void TestArrayMinimalTemplateRemoveBatch()
 	size						i;
 	STestArrayTemplateItem*		ps;
 
-
 	as.Init();
 	for (i = 0; i < 10; i++)
 	{
