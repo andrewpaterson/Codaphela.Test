@@ -3,7 +3,8 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/TypeConverter.h"
-#include "StandardLib/Unknowns.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "StandardLib/Objects.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/ImageDrawBox.h"
@@ -15,9 +16,8 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestImageDrawBox(void)
+void TestImageDrawBox1(void)
 {
-	BeginTests();
 
 	CImage				cImage;
 	CImageDrawBox		cBox;
@@ -61,6 +61,24 @@ void TestImageDrawBox(void)
 	AssertFileMemory("input\\BoxBorder.raw", cImage.GetData(), cImage.GetByteSize());
 
 	cImage.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawBox(void)
+{
+	BeginTests();
+
+	DataIOInit();
+	ObjectsInit();
+
+	TestImageDrawBox1();
+
+	ObjectsKill();
+	DataIOKill();
 
 	TestStatistics();
 }

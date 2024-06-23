@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "BaseLib/FastFunctions.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "StandardLib/Objects.h"
 #include "SupportLib/ImageCel.h"
 #include "SupportLib/ImageCelMask.h"
 #include "SupportLib/ImageCelTransparent.h"
@@ -40,6 +42,9 @@ void TestImageCelCropBorders(void)
 	AssertInt(18, cCel.GetSubImage()->GetImageHeight());
 	AssertInt(1, cCel.GetSubImage()->mcImageRect.miLeft);
 	AssertInt(3, cCel.GetSubImage()->mcImageRect.miTop);
+
+	cCel.Kill();
+	cImage.Kill();
 
 	ReadImage(&cImage, "Input\\cel3.png");
 	cCel.Init(&cImage);
@@ -130,9 +135,15 @@ void TestImageCel(void)
 {
 	BeginTests();
 
+	DataIOInit();
+	ObjectsInit();
+
 	TestImageCelCropBorders();
 	TestImageCelMaskCropBorders();
 	TestImageCelTransparentColourCropBorders();
+
+	ObjectsKill();
+	DataIOKill();
 
 	TestStatistics();
 }

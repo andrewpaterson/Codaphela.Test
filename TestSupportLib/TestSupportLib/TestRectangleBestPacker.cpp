@@ -10,7 +10,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestRectanglePackerHorizontalAllSameSize(void)
 {
-	CRectangleBestPacker		cPacker;
+	CRectangleBestPacker	cPacker;
 	CPackAttempt*			pcBestAttempt;
 	CPackedLine*			pcLine;
 	CPackRectangleAttempt*	pcRect;
@@ -57,17 +57,17 @@ void TestRectanglePackerHorizontalAllSameSize(void)
 
 	pcRect = pcLine->Get(sz1);
 	AssertNotNull(pcRect);
-	AssertInt(0, pcRect->mix);
+	AssertInt(50, pcRect->mix);
 	AssertInt(0, pcRect->miy);
 
 	pcRect = pcLine->Get(sz2);
 	AssertNotNull(pcRect);
-	AssertInt(50, pcRect->mix);
+	AssertInt(10, pcRect->mix);
 	AssertInt(0, pcRect->miy);
 
 	pcRect = pcLine->Get(sz3);
 	AssertNotNull(pcRect);
-	AssertInt(40, pcRect->mix);
+	AssertInt(20, pcRect->mix);
 	AssertInt(0, pcRect->miy);
 
 	pcRect = pcLine->Get(sz4);
@@ -77,12 +77,12 @@ void TestRectanglePackerHorizontalAllSameSize(void)
 
 	pcRect = pcLine->Get(sz5);
 	AssertNotNull(pcRect);
-	AssertInt(20, pcRect->mix);
+	AssertInt(40, pcRect->mix);
 	AssertInt(0, pcRect->miy);
 
 	pcRect = pcLine->Get(sz6);
 	AssertNotNull(pcRect);
-	AssertInt(10, pcRect->mix);
+	AssertInt(0, pcRect->mix);
 	AssertInt(0, pcRect->miy);
 
 	cPacker.Kill();
@@ -339,7 +339,7 @@ void TestRectanglePackerDefault(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRectanglePackerGetPackedRectangles(void)
 {
-	CRectangleBestPacker		cPacker;
+	CRectangleBestPacker	cPacker;
 	CPackAttempt*			pcBestAttempt;
 	CRectangle				cRect1;
 	CRectangle				cRect2;
@@ -370,19 +370,22 @@ void TestRectanglePackerGetPackedRectangles(void)
 	AssertInt(3, macRects.NumElements());
 
 	pcPackedRect = macRects.Get(0);
+	AssertString(sz1, (char*)pcPackedRect->GetUserData());
 	AssertInt(0, pcPackedRect->miLeft);
-	AssertInt(0, pcPackedRect->miTop);
-	AssertInt(4, pcPackedRect->miRight);
-	AssertInt(5, pcPackedRect->miBottom);
-
-	pcPackedRect = macRects.Get(1);
-	AssertInt(4, pcPackedRect->miLeft);
 	AssertInt(0, pcPackedRect->miTop);
 	AssertInt(7, pcPackedRect->miRight);
 	AssertInt(5, pcPackedRect->miBottom);
 
-	pcPackedRect = macRects.Get(2);
+	pcPackedRect = macRects.Get(1);
+	AssertString(sz3, (char*)pcPackedRect->GetUserData());
 	AssertInt(0, pcPackedRect->miLeft);
+	AssertInt(5, pcPackedRect->miTop);
+	AssertInt(4, pcPackedRect->miRight);
+	AssertInt(10, pcPackedRect->miBottom);
+
+	pcPackedRect = macRects.Get(2);
+	AssertString(sz2, (char*)pcPackedRect->GetUserData());
+	AssertInt(4, pcPackedRect->miLeft);
 	AssertInt(5, pcPackedRect->miTop);
 	AssertInt(7, pcPackedRect->miRight);
 	AssertInt(10, pcPackedRect->miBottom);
