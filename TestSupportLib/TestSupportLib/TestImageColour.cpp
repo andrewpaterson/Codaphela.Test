@@ -2,6 +2,9 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/GeometricTypes.h"
 #include "BaseLib/TypeConverter.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "StandardLib/Unknowns.h"
+#include "StandardLib/Objects.h"
 #include "SupportLib/ImageColour.h"
 #include "SupportLib/ImageAccessor.h"
 #include "SupportLib/ImageAccessorCreator.h"
@@ -16,15 +19,15 @@
 //////////////////////////////////////////////////////////////////////////
 void TestImageColourAccessorBytes(void)
 {
-	CImageColourRGB		cRGB; 
-	CImageColourOpacity	cAlpha;
-	CImageColourCombo2	cColour;
-	CChannels*			pcChannels;
-	CImageAccessor*		pcAccessor;
-	CImage				cImage;
-	SImageColour		sDest;
-	bool				bResult;
-	char*				pvData;
+	CImageColourRGB			cRGB; 
+	CImageColourOpacity		cAlpha;
+	CImageColourCombo2		cColour;
+	CChannels*				pcChannels;
+	CImageAccessor*			pcAccessor;
+	CImage					cImage;
+	SImageColour			sDest;
+	bool					bResult;
+	char*					pvData;
 
 	cRGB.Init(1.0f, 0.5f, 0.25f);
 	cAlpha.Init(0.333f);
@@ -70,6 +73,8 @@ void TestImageColourAccessorBytes(void)
 	AssertChar(0x54, pvData[0x9]);
 	AssertChar((char)0xff, pvData[0xa]);
 	AssertChar(0x00, pvData[0xb]);
+
+	cImage.Kill();
 }
 
 
@@ -119,6 +124,8 @@ void TestImageColourAccessorFloats(void)
 	AssertFloat(0.6f, *(float*)&(pcChannels->GetData()[22]), 3);
 	AssertFloat(0.7f, *(float*)&(pcChannels->GetData()[38]), 3);
 	AssertFloat(0.5f, *(float*)&(pcChannels->GetData()[34]), 3);
+
+	cImage.Kill();
 }
 
 
@@ -174,6 +181,8 @@ void TestImageColourMultiAccessor(void)
 	AssertFloat( 0.7f, *(float*)&(pcChannels->GetData()[38]), 3);
 	AssertFloat(-0.5f, *(float*)&(pcChannels->GetData()[34]), 3);
 	AssertShortHex(0x553f, *(unsigned short*)&(pcChannels->GetData()[27]));
+
+	cImage.Kill();
 }
 
 
@@ -222,10 +231,16 @@ void TestImageColour(void)
 {
 	BeginTests();
 
+	DataIOInit();
+	ObjectsInit();
+
 	TestImageColourStruct();
 	TestImageColourAccessorBytes();
 	TestImageColourAccessorFloats();
 	TestImageColourMultiAccessor();
+
+	ObjectsKill();
+	DataIOKill();
 
 	TestStatistics();
 }

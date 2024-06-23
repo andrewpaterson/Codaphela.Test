@@ -12,7 +12,7 @@ class CTinyTestClass : public CObject
 CONSTRUCTABLE(CTinyTestClass);
 DESTRUCTABLE(CTinyTestClass);
 public:
-	Int8						mc;
+	Int8	mc;
 
 	Ptr<CTinyTestClass> Init(void)
 	{
@@ -38,12 +38,12 @@ class CTestClass : public CObject
 CONSTRUCTABLE(CTestClass);
 DESTRUCTABLE(CTestClass);
 public:
-	CPointer					mpObject;
-	Ptr<CTestClass>				mpTest;
-	Int32						mInt;
-	int							miUnmanagedInt;
-	CTinyTestClass				mTiny;
-	Float64						mDouble;
+	CPointer			mpObject;
+	Ptr<CTestClass>		mpTest;
+	Int32				mInt;
+	int					miUnmanagedInt;
+	CTinyTestClass		mTiny;
+	Float64				mDouble;
 	uint8				mauiData[12];
 
 	Ptr<CTestClass> Init(void)

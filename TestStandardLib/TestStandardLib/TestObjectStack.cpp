@@ -101,6 +101,69 @@ void TestObjectStackPointedTo(void)
 	ObjectsKill();
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectStackObjectReuseOutOfFrame(CTestClass** pcTestClass)
+{
+	CTestClass		cStackTestClass;
+	CChars			sz;
+
+	(*pcTestClass) = &cStackTestClass;
+
+	sz.Init(); 
+	cStackTestClass.PrintFlags(&sz);
+	AssertString("CALLED_CONSTRUCTOR", sz.Text());
+	sz.Kill();
+
+	cStackTestClass.Init();
+	sz.Init();
+	cStackTestClass.PrintFlags(&sz);
+	AssertString("CALLED_CONSTRUCTOR, DIRTY, CALLED_INIT, CALLED_CLASS", sz.Text());
+	sz.Kill();
+
+	cStackTestClass.Kill();
+	sz.Init();
+	cStackTestClass.PrintFlags(&sz);
+	AssertString("CALLED_CONSTRUCTOR, DIRTY, CALLED_KILL, CALLED_CLASS", sz.Text());
+	sz.Kill();
+
+
+	cStackTestClass.Init();
+	sz.Init();
+	cStackTestClass.PrintFlags(&sz);
+	AssertString("CALLED_CONSTRUCTOR, DIRTY, CALLED_INIT, CALLED_CLASS", sz.Text());
+	sz.Kill();
+
+	cStackTestClass.Kill();
+	sz.Init();
+	cStackTestClass.PrintFlags(&sz);
+	AssertString("CALLED_CONSTRUCTOR, DIRTY, CALLED_KILL, CALLED_CLASS", sz.Text());
+	sz.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectStackObjectReuse(void)
+{
+	CTestClass*		pcTestClass;
+	CChars			sz;
+
+	ObjectsInit();
+
+	TestObjectStackObjectReuseOutOfFrame(&pcTestClass);
+	sz.Init();
+	pcTestClass->PrintFlags(&sz);
+	AssertString("", sz.Text());
+	sz.Kill();
+
+	ObjectsKill();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -116,6 +179,7 @@ void TestObjectStack(void)
 	TestObjectStackInit();
 	TestObjectStackDestructor();
 	TestObjectStackPointedTo();
+	TestObjectStackObjectReuse();
 
 	DataIOKill();
 	TypesKill();

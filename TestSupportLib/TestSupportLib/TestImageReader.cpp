@@ -2,6 +2,9 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/FileUtil.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "StandardLib/Unknowns.h"
+#include "StandardLib/Objects.h"
 #include "SupportLib/Image.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
@@ -109,18 +112,61 @@ void TestImageReaderPNG(void)
 void TestImageReaderTGA(void)
 {
 	CImage			cImage;
+	CArrayChannel	pcChannels;	
+	SChannel*		psChannel;
 
 	ReadImage(&cImage, "Input\\tar32un.tga");
+	cImage.GetAllChannels(&pcChannels);
+	AssertInt(4, pcChannels.NumElements());
+	psChannel = pcChannels.Get(0);
+	AssertIntHex(CHANNEL(IP_Opacity, CT_Intensity), psChannel->iChannel);
+	AssertInt(PT_uint8, psChannel->eType);
+	psChannel = pcChannels.Get(1);
+	AssertIntHex(CHANNEL(IP_Diffuse, CT_Red), psChannel->iChannel);
+	AssertInt(PT_uint8, psChannel->eType);
+	psChannel = pcChannels.Get(2);
+	AssertIntHex(CHANNEL(IP_Diffuse, CT_Green), psChannel->iChannel);
+	AssertInt(PT_uint8, psChannel->eType);
+	psChannel = pcChannels.Get(3);
+	AssertIntHex(CHANNEL(IP_Diffuse, CT_Blue), psChannel->iChannel);
+	AssertInt(PT_uint8, psChannel->eType);
+
 	WriteImage(&cImage, "Output\\tar32un.raw");
 	AssertFileMemory("input\\tar32un.raw", cImage.GetData(), cImage.GetByteSize());
 	cImage.Kill();
 
+
 	ReadImage(&cImage, "Input\\tar24un.tga");
+	cImage.GetAllChannels(&pcChannels);
+	AssertInt(3, pcChannels.NumElements());
+	psChannel = pcChannels.Get(0);
+	AssertIntHex(CHANNEL(IP_Diffuse, CT_Red), psChannel->iChannel);
+	AssertInt(PT_uint8, psChannel->eType);
+	psChannel = pcChannels.Get(1);
+	AssertIntHex(CHANNEL(IP_Diffuse, CT_Green), psChannel->iChannel);
+	AssertInt(PT_uint8, psChannel->eType);
+	psChannel = pcChannels.Get(2);
+	AssertIntHex(CHANNEL(IP_Diffuse, CT_Blue), psChannel->iChannel);
+	AssertInt(PT_uint8, psChannel->eType);
+
 	WriteImage(&cImage, "Output\\tar24un.raw");
 	AssertFileMemory("input\\tar24un.raw", cImage.GetData(), cImage.GetByteSize());
 	cImage.Kill();
 
+
 	ReadImage(&cImage, "Input\\tar16un.tga");
+	cImage.GetAllChannels(&pcChannels);
+	AssertInt(3, pcChannels.NumElements());
+	psChannel = pcChannels.Get(0);
+	AssertIntHex(CHANNEL(IP_Diffuse, CT_Red), psChannel->iChannel);
+	AssertInt(PT_uint8, psChannel->eType);
+	psChannel = pcChannels.Get(1);
+	AssertIntHex(CHANNEL(IP_Diffuse, CT_Green), psChannel->iChannel);
+	AssertInt(PT_uint8, psChannel->eType);
+	psChannel = pcChannels.Get(2);
+	AssertIntHex(CHANNEL(IP_Diffuse, CT_Blue), psChannel->iChannel);
+	AssertInt(PT_uint8, psChannel->eType);
+
 	WriteImage(&cImage, "Output\\tar16un.raw");
 	AssertFileMemory("input\\tar16un.raw", cImage.GetData(), cImage.GetByteSize());
 	cImage.Kill();
@@ -135,9 +181,15 @@ void TestImageReader(void)
 {
 	BeginTests();
 
+	DataIOInit();
+	ObjectsInit();
+
 	TestImageReaderRAD();
 	TestImageReaderPNG();
 	TestImageReaderTGA();
+
+	ObjectsKill();
+	DataIOKill();
 
 	TestStatistics();
 }
