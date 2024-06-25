@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/NaiveFile.h"

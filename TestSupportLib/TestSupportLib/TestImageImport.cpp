@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "TestImageImport.h"
 #include "SupportLib/Image.h"
 #include "BaseLib/FastFunctions.h"

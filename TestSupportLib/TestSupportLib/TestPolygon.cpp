@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "TestPolygon.h"
 #include "TestLib/Assert.h"
 #include "BaseLib/FastFunctions.h"

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "TestLib/Assert.h"
 #include "TestTriangleShape.h"
 #include "BaseLib/FastFunctions.h"

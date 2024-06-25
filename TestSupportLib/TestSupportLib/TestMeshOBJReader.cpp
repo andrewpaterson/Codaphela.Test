@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "SupportLib/Mesh.h"
 #include "SupportLib/MeshReader.h"
 #include "SupportLib/MeshWriter.h"

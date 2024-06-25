@@ -1,7 +1,6 @@
 // TestSupportLib.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TypeNames.h"
@@ -41,7 +40,7 @@
 #include "TestMeshOBJReader.h"
 
 
- int __cdecl main(int argc, _TCHAR* argv[])
+int __cdecl main(void)
 {
 	CFileUtil		cFileUtil;
 

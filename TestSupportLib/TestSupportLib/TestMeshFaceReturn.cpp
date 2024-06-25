@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "SupportLib/MeshFaceReturn.h"
 #include "TestLib/Assert.h"
 #include "TestMeshFaceReturn.h"

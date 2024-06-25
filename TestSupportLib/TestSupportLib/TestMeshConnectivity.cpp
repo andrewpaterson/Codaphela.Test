@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "TestMeshConnectivity.h"
 #include "SupportLib/Mesh.h"
 #include "SupportLib/MeshEditor.h"

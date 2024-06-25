@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "BaseLib/GlobalDataTypesIO.h"
 #include "StandardLib/Objects.h"
 #include "SupportLib/WinText.h"
 #include "SupportLib/ImageReader.h"
@@ -12,16 +12,12 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestWinText(void)
+void TestWinText1(void)
 {
-	BeginTests();
-
-	ObjectsInit();
-
 	CWinText			cWinText;
-	SWinFontInstance*	psWinFont;
+	SWinFontInstance* psWinFont;
 	Ptr<CFont>			pcFont;
-	CGlyph*				pcCel;
+	CGlyph* pcCel;
 	CImage				cDestImage;
 
 	cWinText.Init(NULL);
@@ -32,7 +28,7 @@ void TestWinText(void)
 	AssertFile("Input/Fixedsys.bmp", "Output/Fixedsys.bmp");
 
 	pcCel = pcFont->GetGlyph('H');
-	pcCel->GetSubImage()->SetAlignment(SUB_IMAGE_ALIGNMENT_LEFT|SUB_IMAGE_ALIGNMENT_TOP);
+	pcCel->GetSubImage()->SetAlignment(SUB_IMAGE_ALIGNMENT_LEFT | SUB_IMAGE_ALIGNMENT_TOP);
 	cDestImage.Init(pcCel->GetFullWidth(), pcCel->GetFullHeight(), pcCel->GetSourceImage());
 	cDestImage.Clear();
 	CImageCopier::Copy(pcCel->GetCel(), &cDestImage, 0, 0);
@@ -42,8 +38,24 @@ void TestWinText(void)
 
 	pcFont->Kill();
 	cWinText.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestWinText(void)
+{
+	BeginTests();
+
+	DataIOInit();
+	ObjectsInit();
+
+	TestWinText1();
 
 	ObjectsKill();
+	DataIOKill();
 
 	TestStatistics();
 }

@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "SupportLib/RectanglePow2Packer.h"
 #include "TestLib/Assert.h"
 #include "TestRectanglePow2Packer.h"

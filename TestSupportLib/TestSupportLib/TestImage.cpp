@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/PointerRemapper.h"
 #include "BaseLib/FastFunctions.h"

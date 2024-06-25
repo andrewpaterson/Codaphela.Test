@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "SupportLib/RectangleBestPacker.h"
 #include "TestLib/Assert.h"
 #include "TestRectangleBestPacker.h"
