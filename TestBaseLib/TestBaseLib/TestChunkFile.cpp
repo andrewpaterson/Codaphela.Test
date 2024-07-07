@@ -156,8 +156,8 @@ void TestChunkFileFileBasic(void)
 	cChunkFileFile1.Init(&cChunkFile);
 	cFileBasic1.Init(&cChunkFileFile1);
 	AssertTrue(cFileBasic1.Open(EFM_Write_Create));
-	AssertTrue(cFileBasic1.WriteInt(12345678));
-	AssertTrue(cFileBasic1.WriteInt(0x7fffffff));
+	AssertTrue(cFileBasic1.WriteInt32(12345678));
+	AssertTrue(cFileBasic1.WriteInt32(0x7fffffff));
 	AssertTrue(cFileBasic1.Close());
 	AssertTrue(cChunkFile.WriteChunkEnd("2 Ints"));
 	cFileBasic1.Kill();
@@ -179,9 +179,9 @@ void TestChunkFileFileBasic(void)
 	cChunkFileFile1.Init(&cChunkFile);
 	cFileBasic1.Init(&cChunkFileFile1);
 	AssertTrue(cFileBasic1.Open(EFM_Read));
-	AssertTrue(cFileBasic1.ReadInt(&iResult));
+	AssertTrue(cFileBasic1.ReadInt32(&iResult));
 	AssertInt(12345678, iResult);
-	AssertTrue(cFileBasic1.ReadInt(&iResult));
+	AssertTrue(cFileBasic1.ReadInt32(&iResult));
 	AssertInt(0x7fffffff, iResult);
 	AssertTrue(cFileBasic1.Close());
 	AssertTrue(cChunkFile.ReadChunkEnd());

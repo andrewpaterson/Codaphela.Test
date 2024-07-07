@@ -1,5 +1,6 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeNames.h"
+#include "BaseLib/GlobalDataTypesIO.h"
 #include "StandardLib/ChannelPadder.h"
 #include "TestLib/Assert.h"
 
@@ -13,8 +14,6 @@ void TestOptimalPadding(void)
 	CChannels		cChannels;
 	CChannelPadder	cPadder;
 	CChannel*		cChannel;
-
-	TypesInit();
 
 	cChannels.Init();
 	cChannels.BeginChange();
@@ -156,8 +155,6 @@ void TestOptimalPadding(void)
 	AssertSize(32, cChannels.GetByteStride());
 
 	cChannels.Kill();
-
-	TypesKill();
 }
 
 
@@ -169,7 +166,17 @@ void TestExternalChannelPadder(void)
 {
 	BeginTests();
 
+	MemoryInit();
+	TypesInit();
+	DataIOInit();
+	ObjectsInit();
+
 	TestOptimalPadding();
+
+	ObjectsKill();
+	DataIOKill();
+	TypesKill();
+	MemoryKill();
 
 	TestStatistics();
 }

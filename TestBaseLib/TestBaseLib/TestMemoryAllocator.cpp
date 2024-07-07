@@ -54,7 +54,7 @@ void TestMemoryAllocatorReadWrite(void)
 	cFile.Init(MemoryFile());
 	cFile.Open(EFM_ReadWrite_Create);
 
-	cFile.WriteInt(789);
+	cFile.WriteInt32(789);
 
 	cAlloc.Init(16, false);
 	cAlloc.GetMemory()->GetFreeListParams()->AddParamBlock(24  , 16  , 32*32);
@@ -63,19 +63,19 @@ void TestMemoryAllocatorReadWrite(void)
 
 	AssertTrue(cAlloc.Write(&cFile));
 
-	cFile.WriteInt(124);
+	cFile.WriteInt32(124);
 
 	cFile.Close();
 	cAlloc.Kill();
 
 	cFile.Open(EFM_Read);
 
-	cFile.ReadInt(&i);
+	cFile.ReadInt32(&i);
 	AssertInt(789, i);
 
 	AssertTrue(cAllocIn.Read(&cFile));
 
-	cFile.ReadInt(&i);
+	cFile.ReadInt32(&i);
 	cFile.Close();
 	cFile.Kill();
 	AssertInt(124, i);

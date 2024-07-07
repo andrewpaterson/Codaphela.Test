@@ -52,7 +52,7 @@ CONSTRUCTABLE(CEmbeddedComplex);
 DESTRUCTABLE(CEmbeddedComplex);
 public:
 	CEmbeddedTest		mcSimple;
-	int					mai[2];
+	int32				mai[2];
 	CArray<>			ma;
 	CEmbeddedContainer	mcContainer;
 	Ptr<>				mpTest;

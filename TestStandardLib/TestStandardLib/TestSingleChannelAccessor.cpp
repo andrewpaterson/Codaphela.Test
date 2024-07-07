@@ -1,6 +1,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
+#include "BaseLib/GlobalDataTypesIO.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/Channels.h"
 #include "StandardLib/SingleChannelAccessor.h"
@@ -18,9 +19,9 @@ void TestSingleChannelAccessor(void)
 	MemoryInit();
 	TypesInit();
 	TypeConverterInit();
-	UnknownsInit();
+	DataIOInit();
+	ObjectsInit();
 
-	
 	CChannels					cChannels;
 	uint8				cData[9] = "ti@YA,\n#";
 	CSingleChannelAccessor		cSingle;
@@ -66,7 +67,8 @@ void TestSingleChannelAccessor(void)
 	cChannels.Kill();
 
 
-	UnknownsKill();
+	ObjectsKill();
+	DataIOKill();
 	TypeConverterKill();
 	TypesKill();
 	MemoryKill();

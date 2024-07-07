@@ -52,7 +52,7 @@ void CTestObject::Class(void)
 {
 	Pointer(mpObject.This(), "mpObject");
 	Pointer(mpTest.This(), "mpTest");
-	UnmanagedInt(&mi, "mi");
+	UnmanagedSInt(&mi, "mi");
 }
 
 
@@ -174,7 +174,7 @@ void CTestSaveableObject1::Init(void)
 void CTestSaveableObject1::Class(void)
 {
 	Pointer(mpObject.This(), "mpObject");
-	UnmanagedInt(&miInt, "miInt");
+	UnmanagedInt32(&miInt, "miInt");
 	UnmanagedString(&mszString, "mszString");
 }
 

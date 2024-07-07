@@ -11,7 +11,7 @@ DESTRUCTABLE(CTestNamedObject);
 public:
 	Ptr<CTestNamedObject>	mpNamedTest1;
 	Ptr<CTestNamedObject>	mpNamedTest2;
-	int						miNum;
+	int32					miNum;
 
 	Ptr<CTestNamedObject> Init(int iNum);
 	void Class(void);
@@ -48,10 +48,10 @@ public:
 	CTestNamedObject				mNamedTest2;
 	CPointer						mpObject;
 	Ptr<CTestNamedObjectSmall>		mpSmall;
-	int								miX;
-	int								miY;
+	int32							miX;
+	int32							miY;
 	void*							mpvUnmanaged;
-	int								miUnmagedSize;
+	uint16							miUnmagedSize;
 
 	Ptr<CTestNamedObjectWithEmbedded> Init(int iX, int iY, int iName1, int iName2, CPointer pObject, Ptr<CTestNamedObjectSmall> pSmall);
 	void Class(void);

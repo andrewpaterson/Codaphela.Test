@@ -7,7 +7,7 @@
 //////////////////////////////////////////////////////////////////////////
 void CEmbeddedTest::Class(void)
 {
-	UnmanagedInt(&miAmANumber, "miAmANumber");
+	UnmanagedSInt(&miAmANumber, "miAmANumber");
 	UnmanagedFloat(&mfSoAmI, "mfSoAmI");
 	Pointer(mpTest.This(), "mpTest");
 }
@@ -69,16 +69,17 @@ bool CEmbeddedTest::Load(CObjectReader* pcFile)
 void CEmbeddedContainer::Class(void)
 {
 	char	msz[4];
-	int		mi;
+	uint8	mi;
 	float	mf;
 
 	UnmanagedChar(msz, 4, "msz");
 	Pointer(mpTest.This(), "mpTest");
 	Embedded(&mcOne, "mcOne");
 	Embedded(&mcTwo, "mcTwo");
-	UnmanagedInt(&mi, "mi");
+	UnmanagedUInt8(&mi, "mi");
 	UnmanagedFloat(&mf, "mf");
 }
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -142,7 +143,7 @@ bool CEmbeddedContainer::Load(CObjectReader* pcFile)
 void CEmbeddedComplex::Class(void)
 {
 	Pointer(mpTest.This(), "mpTest");
-	UnmanagedInt(mai, 2, "mai");
+	UnmanagedInt32(mai, 2, "mai");
 	Embedded(&mcSimple, "mcSimple");
 	Embedded(&ma, "ma");
 	Embedded(&mcContainer, "mcContainer");

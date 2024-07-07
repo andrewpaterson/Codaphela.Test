@@ -62,7 +62,7 @@ public:
 	{
 		Pointer(mpObject.This(), "mpObject");
 		Pointer(mpTest.This(), "mpTest");
-		UnmanagedInt(&miUnmanagedInt, "miUnmanagedInt");
+		UnmanagedSInt(&miUnmanagedInt, "miUnmanagedInt");
 		Primitive(&mInt, "mInt");
 		Embedded(&mTiny, "mTiny");
 		Primitive(&mDouble, "mDouble");

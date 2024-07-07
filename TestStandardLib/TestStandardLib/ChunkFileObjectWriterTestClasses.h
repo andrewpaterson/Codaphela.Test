@@ -33,11 +33,11 @@ class CTestInteger : public CObject
 CONSTRUCTABLE(CTestInteger);
 DESTRUCTABLE(CTestInteger);
 public:
-	int mx;
-	int my; 
-	int mz;
+	int32	mx;
+	int16	my; 
+	int8	mz;
 
-	void	Init(int x, int y, int z);
+	void	Init(int32 x, int16 y, int8 z);
 	void	Class(void);
 	void	Free(void);
 

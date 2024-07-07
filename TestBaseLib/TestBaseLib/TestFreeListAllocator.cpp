@@ -21,24 +21,24 @@ void TestFreeListAllocatorReadWrite(void)
 	cFile.Init(MemoryFile());
 	cFile.Open(EFM_ReadWrite_Create);
 
-	cFile.WriteInt(789);
+	cFile.WriteInt32(789);
 
 	cAlloc.Init(48, 16, 4);
 	AssertTrue(cAlloc.Write(&cFile));
 
-	cFile.WriteInt(124);
+	cFile.WriteInt32(124);
 
 	cFile.Close();
 	cAlloc.Kill();
 
 	cFile.Open(EFM_Read);
 
-	cFile.ReadInt(&i);
+	cFile.ReadInt32(&i);
 	AssertInt(789, i);
 
 	AssertTrue(cAllocIn.Read(&cFile));
 
-	cFile.ReadInt(&i);
+	cFile.ReadInt32(&i);
 	AssertInt(124, i);
 
 	AssertInt(16, cAllocIn.GetFreeList()->GetAlignment());

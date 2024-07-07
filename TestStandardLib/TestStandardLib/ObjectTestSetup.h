@@ -60,7 +60,7 @@ CONSTRUCTABLE(CHarrier);
 protected:
 	Ptr<CArray<CMissile>>	maMissiles;
 	Ptr<CGameWorld>			mpWorld;
-	int						miSpeed;
+	int32					miSpeed;
 
 public:
 	Ptr<CHarrier>			Init(Ptr<CGameWorld> pWorld);

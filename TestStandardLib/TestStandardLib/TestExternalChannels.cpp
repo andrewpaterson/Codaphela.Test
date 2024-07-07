@@ -2,6 +2,8 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "StandardLib/Objects.h"
 #include "StandardLib/Channels.h"
 #include "StandardLib/ChannelsAccessorCreator.h"
 #include "StandardLib/Unknowns.h"
@@ -26,11 +28,6 @@ void TestExternalChannelsSubBytePositions(void)
 // ^         ^          ^          ^          ^          ^          ^          ^          ^          ^
 // 8 8 77777777 7 76666666 6 66555555 5 55544444 4 44443333 3 33333222 2 22222211 1 11111110 0 00000000
 // 1 0 98765432 1 09876543 2 10987654 3 21098765 4 32109876 5 43210987 6 54321098 7 65432109 8 76543210
-
-	MemoryInit();
-	TypesInit();
-	TypeConverterInit();
-	UnknownsInit();
 
 	cSourceChannels.Init();
 	cSourceChannels.BeginChange();
@@ -99,11 +96,6 @@ void TestExternalChannelsSubBytePositions(void)
 	AssertInt(0xFF, *pucData);
 
 	cSourceChannels.Kill();
-
-	UnknownsKill();
-	TypesKill();
-	TypeConverterKill();
-	MemoryKill();
 }
 
 
@@ -120,11 +112,6 @@ void TestContiguousExternalChannels(void)
 	int					iExpected1;
 	int					iExpected2;
 	int					iExpected3;
-
-	MemoryInit();
-	TypeConverterInit();
-	TypesInit();
-	UnknownsInit();
 
 	//Rows      3 2 1 0
 	vSourse = 0xFF00aa55;
@@ -168,11 +155,6 @@ void TestContiguousExternalChannels(void)
 	cCopy.Kill();
 	cChannels.Kill();
 	cExternalChannel.Kill();
-
-	UnknownsKill();
-	TypesKill();
-	TypeConverterKill();
-	MemoryKill();
 }
 
 
@@ -184,8 +166,20 @@ void TestExternalChannels(void)
 {
 	BeginTests();
 
+	MemoryInit();
+	TypesInit();
+	TypeConverterInit();
+	DataIOInit();
+	ObjectsInit();
+
 	TestExternalChannelsSubBytePositions();
 	TestContiguousExternalChannels();
+
+	ObjectsKill();
+	DataIOKill();
+	TypesKill();
+	TypeConverterKill();
+	MemoryKill();
 
 	TestStatistics();
 }

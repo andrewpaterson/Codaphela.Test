@@ -83,33 +83,33 @@ void TestFileIOHelpers(void)
 
 	TestFileIOBegin(&cMemory, &cFile);
 
-	AssertTrue(cFile.WriteInt(0xf48e33a9));
-	AssertTrue(cFile.WriteLong(0xcbb671c1babc0022LL));
+	AssertTrue(cFile.WriteInt32(0xf48e33a9));
+	AssertTrue(cFile.WriteInt64(0xcbb671c1babc0022LL));
 	AssertTrue(cFile.WriteFloat(3.34759834536f));
 	AssertTrue(cFile.WriteFloat(8.4936205629457392304853));
 	AssertTrue(cFile.WriteChar('g'));
-	AssertTrue(cFile.WriteByte((uint8)255));
+	AssertTrue(cFile.WriteInt8((uint8)255));
 	AssertTrue(cFile.WriteBool(true));
-	AssertTrue(cFile.WriteShort((int16)0x5a0a));
-	AssertTrue(cFile.WriteShort((uint16)0x6be4));
+	AssertTrue(cFile.WriteInt16((int16)0x5a0a));
+	AssertTrue(cFile.WriteInt16((uint16)0x6be4));
 	AssertTrue(cFile.WriteBits(ab, 7));
 	AssertTrue(cFile.WriteIntArray(ai, 3));
 
-	AssertTrue(cFile.WriteInt(0x091bfe25));
-	AssertTrue(cFile.WriteLong(0xe98ebf36c079e63aLL));
+	AssertTrue(cFile.WriteInt32(0x091bfe25));
+	AssertTrue(cFile.WriteInt64(0xe98ebf36c079e63aLL));
 	AssertTrue(cFile.WriteFloat(6.478389585938f));
 	AssertTrue(cFile.WriteFloat(2.74944978325209529023823));
 	AssertTrue(cFile.WriteChar('@'));
-	AssertTrue(cFile.WriteByte((uint8)1));
+	AssertTrue(cFile.WriteInt8((uint8)1));
 	AssertTrue(cFile.WriteBool(false));
-	AssertTrue(cFile.WriteShort((int16)0x0001));
-	AssertTrue(cFile.WriteShort((uint16)0xffff));
+	AssertTrue(cFile.WriteInt16((int16)0x0001));
+	AssertTrue(cFile.WriteInt16((uint16)0xffff));
 
 	TestFileIOMiddle(&cFile);
 	
-	AssertTrue(cFile.ReadInt(&i));
+	AssertTrue(cFile.ReadInt32(&i));
 	AssertInt(0xf48e33a9, i);
-	AssertTrue(cFile.ReadLong(&l));
+	AssertTrue(cFile.ReadInt64(&l));
 	AssertLong(0xcbb671c1babc0022LL, l);
 	AssertTrue(cFile.ReadFloat(&f));
 	AssertFloat(3.34759834536f, f, 13);
@@ -117,22 +117,22 @@ void TestFileIOHelpers(void)
 	AssertDouble(8.4936205629457392304853, d, 19);
 	AssertTrue(cFile.ReadChar(&c));
 	AssertChar('g', c);
-	AssertTrue(cFile.ReadByte(&uc));
+	AssertTrue(cFile.ReadInt8(&uc));
 	AssertChar((uint8)255, uc);
 	AssertTrue(cFile.ReadBool(&b));
 	AssertBool(true, b);
-	AssertTrue(cFile.ReadShort(&s));
+	AssertTrue(cFile.ReadInt16(&s));
 	AssertShort((int16)0x5a0a, s);
-	AssertTrue(cFile.ReadShort((uint16*)&us));
+	AssertTrue(cFile.ReadInt16((uint16*)&us));
 	AssertShort((uint16)0x6be4, us);
 	AssertTrue(cFile.ReadBits(abi, 7));
 	AssertMemory(ab, abi, 7);
 	AssertTrue(cFile.ReadIntArray(aii, 3));
 	AssertMemory(ai, aii, 3 * sizeof(size));
 
-	AssertTrue(cFile.ReadInt(&i));
+	AssertTrue(cFile.ReadInt32(&i));
 	AssertInt(0x091bfe25, i);
-	AssertTrue(cFile.ReadLong(&l));
+	AssertTrue(cFile.ReadInt64(&l));
 	AssertLong(0xe98ebf36c079e63aLL, l);
 	AssertTrue(cFile.ReadFloat(&f));
 	AssertFloat(6.478389585938f, f, 13);
@@ -140,13 +140,13 @@ void TestFileIOHelpers(void)
 	AssertDouble(2.74944978325209529023823, d, 19);
 	AssertTrue(cFile.ReadChar(&c));
 	AssertChar('@', c);
-	AssertTrue(cFile.ReadByte(&uc));
+	AssertTrue(cFile.ReadInt8(&uc));
 	AssertChar(1, uc);
 	AssertTrue(cFile.ReadBool(&b));
 	AssertBool(false, b);
-	AssertTrue(cFile.ReadShort(&s));
+	AssertTrue(cFile.ReadInt16(&s));
 	AssertShort((int16)0x0001, s);
-	AssertTrue(cFile.ReadShort((uint16*)&us));
+	AssertTrue(cFile.ReadInt16((uint16*)&us));
 	AssertShort((uint16)0xffff, us);
 
 	TestFileIOEnd(&cMemory, &cFile);

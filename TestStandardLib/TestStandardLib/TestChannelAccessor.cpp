@@ -1,6 +1,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
+#include "BaseLib/GlobalDataTypesIO.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/Channels.h"
 #include "StandardLib/ChannelsAccessor.h"
@@ -416,7 +417,8 @@ void TestChannelsAccessor(void)
 	MemoryInit();
 	TypesInit();
 	TypeConverterInit();
-	UnknownsInit();
+	DataIOInit();
+	ObjectsInit();
 
 	TestChannelsAccessorContiguous();
 	TestChannelsAccessorByteAligned();
@@ -425,7 +427,8 @@ void TestChannelsAccessor(void)
 	TestChannelsAccessorAccessBitty();
 	TestChannelsAccessorWorstCase();
 
-	UnknownsKill();
+	ObjectsKill();
+	DataIOKill();
 	TypeConverterKill();
 	TypesKill();
 	MemoryKill();

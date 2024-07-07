@@ -60,7 +60,7 @@ CONSTRUCTABLE(CTestSaveableObject1);
 DESTRUCTABLE(CTestSaveableObject1);
 public:
 	CPointer	mpObject;
-	int			miInt;
+	int32		miInt;
 	CChars		mszString;
 	bool		mbSaved;
 

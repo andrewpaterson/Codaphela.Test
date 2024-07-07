@@ -25,7 +25,7 @@ void CTestNamedObject::Class(void)
 {
 	Pointer(mpNamedTest1.This(), "mpNamedTest1");
 	Pointer(mpNamedTest2.This(), "mpNamedTest2");
-	UnmanagedInt(&miNum, "miNum");
+	UnmanagedInt32(&miNum, "miNum");
 }
 
 
@@ -158,8 +158,8 @@ void CTestNamedObjectWithEmbedded::Class(void)
 	Pointer(mpSmall.This(), "mpSmall");
 	Embedded(&mNamedTest1, "mNamedTest1");
 	Embedded(&mNamedTest2, "mNamedTest2");
-	UnmanagedInt(&miX, "miX");
-	UnmanagedInt(&miY, "miY");
+	UnmanagedInt32(&miX, "miX");
+	UnmanagedInt32(&miY, "miY");
 }
 
 
@@ -199,5 +199,4 @@ bool CTestNamedObjectWithEmbedded::Load(CObjectReader* pcFile)
 	ReturnOnFalse(pcFile->ReadInt32(&miY));
 	return true;
 }
-
 

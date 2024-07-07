@@ -96,10 +96,10 @@ void TestPackFileReadWriteMultipleFiles(void)
 	bResult = cBasic.WriteString("Yeeeaahh!");
 	AssertTrue(bResult);
 
-	bResult = cBasic.WriteInt(1032);
+	bResult = cBasic.WriteInt32(1032);
 	AssertTrue(bResult);
 
-	bResult = cBasic.WriteInt(-8);
+	bResult = cBasic.WriteInt32(-8);
 	AssertTrue(bResult);
 
 	bResult = cBasic.Close();
@@ -113,10 +113,10 @@ void TestPackFileReadWriteMultipleFiles(void)
 	bResult = cBasic.WriteString("Aaaahh");
 	AssertTrue(bResult);
 
-	bResult = cBasic.WriteInt(743);
+	bResult = cBasic.WriteInt32(743);
 	AssertTrue(bResult);
 
-	bResult = cBasic.WriteInt(380);
+	bResult = cBasic.WriteInt32(380);
 	AssertTrue(bResult);
 
 	bResult = cBasic.Close();
@@ -154,21 +154,21 @@ void TestPackFileReadWriteMultipleFiles(void)
 	AssertTrue(bResult);
 	AssertString("Aaaahh", sz);
 
-	bResult = cBasic1.ReadInt(&iNumber);
+	bResult = cBasic1.ReadInt32(&iNumber);
 	AssertTrue(bResult);
 	AssertInt(1032, iNumber);
 
-	bResult = cBasic2.ReadInt(&iNumber);
+	bResult = cBasic2.ReadInt32(&iNumber);
 	AssertTrue(bResult);
 	AssertInt(743, iNumber);
 
 	cBasic2.Close();
 
-	bResult = cBasic1.ReadInt(&iNumber);
+	bResult = cBasic1.ReadInt32(&iNumber);
 	AssertTrue(bResult);
 	AssertInt(-8, iNumber);
 
-	bResult = cBasic2.ReadInt(&iNumber);
+	bResult = cBasic2.ReadInt32(&iNumber);
 	AssertFalse(bResult);
 
 	cBasic1.Close();

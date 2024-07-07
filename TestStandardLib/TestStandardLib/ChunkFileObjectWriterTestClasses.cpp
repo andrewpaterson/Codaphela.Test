@@ -18,7 +18,7 @@ void CTestWithArray::Class(void)
 {
 	Pointer(mcArray.This(), "mcArray");
 	UnmanagedString(&mszString, "mszString");
-	UnmanagedInt(&mx, "mx");;
+	UnmanagedSInt(&mx, "mx");;
 
 }
 
@@ -51,7 +51,7 @@ bool CTestWithArray::Load(CObjectReader* pcFile)
 }
 
 
-void CTestInteger::Init(int x, int y, int z)
+void CTestInteger::Init(int32 x, int16 y, int8 z)
 {
 	PreInit();
 	mx = x;
@@ -63,9 +63,9 @@ void CTestInteger::Init(int x, int y, int z)
 
 void CTestInteger::Class(void)
 {
-	UnmanagedInt(&mx, "mx");
-	UnmanagedInt(&my, "my");
-	UnmanagedInt(&mz, "mz");
+	UnmanagedInt32(&mx, "mx");
+	UnmanagedInt16(&my, "my");
+	UnmanagedInt8(&mz, "mz");
 }
 
 
@@ -77,8 +77,8 @@ void CTestInteger::Free(void)
 bool CTestInteger::Save(CObjectWriter* pcFile)
 {
 	ReturnOnFalse(pcFile->WriteInt32(mx));
-	ReturnOnFalse(pcFile->WriteInt32(my));
-	ReturnOnFalse(pcFile->WriteInt32(mz));
+	ReturnOnFalse(pcFile->WriteInt16(my));
+	ReturnOnFalse(pcFile->WriteInt8(mz));
 	return true;
 }
 
@@ -86,8 +86,8 @@ bool CTestInteger::Save(CObjectWriter* pcFile)
 bool CTestInteger::Load(CObjectReader* pcFile)
 {
 	ReturnOnFalse(pcFile->ReadInt32(&mx));
-	ReturnOnFalse(pcFile->ReadInt32(&my));
-	ReturnOnFalse(pcFile->ReadInt32(&mz));
+	ReturnOnFalse(pcFile->ReadInt16(&my));
+	ReturnOnFalse(pcFile->ReadInt8(&mz));
 	return true;
 }
 

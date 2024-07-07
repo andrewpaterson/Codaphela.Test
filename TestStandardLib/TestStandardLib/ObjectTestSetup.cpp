@@ -118,7 +118,7 @@ void CHarrier::Class(void)
 	CPlayerVehicle::Class();
 	Pointer(mpWorld.This(), "mpWorld");
 	Pointer(maMissiles.This(), "maMissiles");
-	UnmanagedInt(&miSpeed, "miSpeed");
+	UnmanagedInt32(&miSpeed, "miSpeed");
 }
 
 
