@@ -5,6 +5,10 @@
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/Channels.h"
 #include "StandardLib/ChannelsAccessorCreator.h"
+#include "StandardLib/ExternalObjectSerialiser.h"
+#include "StandardLib/MultiFileObjectWriter.h"
+#include "StandardLib/ExternalObjectDeserialiser.h"
+#include "StandardLib/FileObjectReader.h"
 #include "TestLib/Assert.h"
 
 
@@ -14,6 +18,8 @@
 //////////////////////////////////////////////////////////////////////////
 void TestChannelsStuff(void)
 {
+	ObjectsInit();
+
 	CChannels					cChannels;
 	CChannelsAccessor*			pcAccessor;
 	CChannelsAccessor*			pcAccessor2;
@@ -114,6 +120,120 @@ void TestChannelsStuff(void)
 
 	cChannels.Kill();
 	free(pvUserData);
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestChannelsLoad(void)
+{
+	ObjectsInit();
+
+	Ptr<CChannels>				pcChannels;
+	CChannelsAccessor*			pcAccessorR;
+	CChannelsAccessor*			pcAccessorG;
+	CChannelsAccessor*			pcAccessorB;
+	int							r;
+	int							g;
+	int							b;
+	int							iCount;
+	int							x;
+	int							y;
+	CExternalObjectSerialiser	cSerialiser;
+	CMultiFileObjectWriter		cWriter;
+	CFileUtil					cFileUtil;
+	CChannels*					pcOld;
+	CChannels*					pcNew;
+
+	pcChannels = ONMalloc<CChannels>("File");
+	pcChannels.GetIndex();
+
+	pcOld = (CChannels*)pcChannels.Object();
+
+	pcChannels->BeginChange();
+	pcChannels->SetSize(8 * 32);
+	pcChannels->AddChannel(0, PT_uint8);
+	pcChannels->AddChannel(1, PT_uint8);
+	pcChannels->AddChannel(2, PT_uint8);
+	pcChannels->EndChange();
+	AssertInt(8 * 32 * 3, pcChannels->GetByteSize());
+
+	pcAccessorR = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 0);
+	pcAccessorG = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 1);
+	pcAccessorB = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 2);
+
+	x = 0;
+	y = 0;
+	iCount = 0;
+	for (r = 0; r < 8; r++)
+	{
+		for (g = 0; g < 8; g++)
+		{
+			for (b = 0; b < 4; b++)
+			{
+				pcAccessorR->Set(x + y * 8, &r);
+				pcAccessorG->Set(x + y * 8, &g);
+				pcAccessorB->Set(x + y * 8, &b);
+
+				x++;
+				if (x >= 8)
+				{
+					x = 0;
+					y++;
+				}
+
+				iCount++;
+			}
+		}
+	}
+
+	AssertInt(256, iCount);
+
+	pcAccessorR->Kill();
+	pcAccessorG->Kill();
+	pcAccessorB->Kill();
+
+	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "Channels"));
+	AssertTrue(cFileUtil.TouchDir("Output" _FS_ "Channels"));
+
+	cWriter.Init("Output" _FS_ "Channels" _FS_, "");
+	cSerialiser.Init(&cWriter);
+	AssertTrue(cSerialiser.Write(&pcChannels));
+	cSerialiser.Kill();
+	cWriter.Kill();
+
+	ObjectsFlush();
+	ObjectsKill();
+
+	ObjectsInit();
+
+	gcObjects.AddConstructor<CChannels>();
+
+	CFileObjectReader				cReader;
+	CExternalObjectDeserialiser		cDeserialiser;
+	CFileBasic						cFileBasic;
+	CDiskFile*						pcDiskFile;
+
+	pcDiskFile = DiskFile("Output" _FS_ "Channels" _FS_ "File.DRG");
+	cFileBasic.Init(pcDiskFile);
+
+	cReader.Init(&cFileBasic);
+	cDeserialiser.Init(&cReader, false, &gcObjects, gcObjects.GetMemory());
+	pcChannels = cDeserialiser.Read("File");
+	cDeserialiser.Kill();
+	cReader.Kill();
+
+	pcNew = (CChannels*)pcChannels.Object();
+	AssertFalse(pcOld == pcNew); 
+
+	pcChannels = NULL;
+
+	ObjectsFlush();
+	ObjectsKill();
 }
 
 
@@ -128,11 +248,10 @@ void TestChannels(void)
 	TypesInit();
 	TypeConverterInit();
 	DataIOInit();
-	ObjectsInit();
 
 	TestChannelsStuff();
+	TestChannelsLoad();
 
-	ObjectsKill();
 	DataIOKill();
 	TypeConverterKill();
 	TypesKill();

@@ -243,7 +243,7 @@ void TestClassSerialisation(void)
 	char							szDirectory[] = "Output" _FS_ "TestClass";
 	char							szData[] = "0123456789A";
 	CExternalObjectDeserialiser		cGraphDeserialiser;
-	CChunkFileSystemObjectReader 		cReader;
+	CChunkFileSystemObjectReader 	cReader;
 	OIndex							oi;
 
 	DataIOInit();

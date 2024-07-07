@@ -38,7 +38,7 @@ Ptr<CTestDoubleNamedString> SetupDehollowficationScene(void)
 	Ptr<CTestNamedString>			cNS1;
 	Ptr<CTestNamedString>			cNS2;
 	Ptr<CTestNamedString>			cDiamond;
-	Ptr<CTestDoubleNamedString>	cDouble;
+	Ptr<CTestDoubleNamedString>		cDouble;
 	Ptr<CString>					sz1;
 	Ptr<CString>					sz3;
 	Ptr<CString>					sz2;

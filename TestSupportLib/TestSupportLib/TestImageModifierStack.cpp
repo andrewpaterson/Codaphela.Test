@@ -18,7 +18,6 @@
 //////////////////////////////////////////////////////////////////////////
 void TestImageModifierStack1(void)
 {
-
 	CImage					cImage;
 	CImageModifierStack		cStack;
 	bool					bResult;

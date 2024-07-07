@@ -271,8 +271,6 @@ void TestObjectAllocatorAssignmentToNullObject(void)
 	Ptr<CRoot>				pRoot;
 	Ptr<CTestNamedObject>	pNamed1;
 	Ptr<CTestNamedObject>	pNamed2;
-	CMemoryFile				cMemoryFile;
-	CFileBasic				cFileBasic;
 	char					szLog[4096];
 	char*					szError;
 	CLogToMemory			cLogToMemory;

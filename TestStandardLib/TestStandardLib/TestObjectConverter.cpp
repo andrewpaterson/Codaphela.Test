@@ -84,7 +84,7 @@ void WriteObjectConverterChunkedFile(void)
 {
 	Ptr<CTestDoubleNamedString>		cDouble;
 	CChunkFileObjectWriter			cWriter;
-	CExternalObjectSerialiser			cSerialiser;
+	CExternalObjectSerialiser		cSerialiser;
 
 	cDouble = SetupObjectConverterChunkFile();
 
