@@ -148,6 +148,7 @@ void TestChannelsLoad(void)
 	CFileUtil					cFileUtil;
 	CChannels*					pcOld;
 	CChannels*					pcNew;
+	CChannel*					pcChannel;
 
 	pcChannels = ONMalloc<CChannels>("File");
 	pcChannels.GetIndex();
@@ -217,6 +218,9 @@ void TestChannelsLoad(void)
 	CExternalObjectDeserialiser		cDeserialiser;
 	CFileBasic						cFileBasic;
 	CDiskFile*						pcDiskFile;
+	uint8							ar;
+	uint8							ag;
+	uint8							ab;
 
 	pcDiskFile = DiskFile("Output" _FS_ "Channels" _FS_ "File.DRG");
 	cFileBasic.Init(pcDiskFile);
@@ -228,7 +232,86 @@ void TestChannelsLoad(void)
 	cReader.Kill();
 
 	pcNew = (CChannels*)pcChannels.Object();
-	AssertFalse(pcOld == pcNew); 
+	AssertFalse(pcOld == pcNew);
+	
+	AssertSize(8 * 32 * 3, pcChannels->GetByteSize());
+	AssertSize(3, pcChannels->GetByteStride());
+	AssertSize(3 * 8, pcChannels->GetBitStride());
+	AssertSize(3, pcChannels->GetNumChannels());
+
+	pcChannel = pcChannels->GetChannel(0);
+	AssertSize(1, pcChannel->miByteSize);
+	AssertSize(0, pcChannel->miByteOffset);
+	AssertSize(8, pcChannel->miBitSize);
+	AssertSize(0, pcChannel->miBitOffset);
+	AssertSize(PT_uint8, pcChannel->eType);
+	AssertSize(0, pcChannel->iChannel);
+	AssertBool(false, pcChannel->bReverse);
+
+	pcChannel = pcChannels->GetChannel(1);
+	AssertSize(1, pcChannel->miByteSize);
+	AssertSize(1, pcChannel->miByteOffset);
+	AssertSize(8, pcChannel->miBitSize);
+	AssertSize(8, pcChannel->miBitOffset);
+	AssertSize(PT_uint8, pcChannel->eType);
+	AssertSize(1, pcChannel->iChannel);
+	AssertBool(false, pcChannel->bReverse);
+
+	pcChannel = pcChannels->GetChannel(2);
+	AssertSize(1, pcChannel->miByteSize);
+	AssertSize(2, pcChannel->miByteOffset);
+	AssertSize(8, pcChannel->miBitSize);
+	AssertSize(16, pcChannel->miBitOffset);
+	AssertSize(PT_uint8, pcChannel->eType);
+	AssertSize(2, pcChannel->iChannel);
+	AssertBool(false, pcChannel->bReverse);
+
+	AssertBool(true, pcChannels->IsOnlyBasicTypes());
+
+	pcAccessorR = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 0);
+	pcAccessorG = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 1);
+	pcAccessorB = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 2);
+
+	iCount = 0;
+
+	x = 0;
+	y = 0;
+	iCount = 0;
+	for (r = 0; r < 8; r++)
+	{
+		for (g = 0; g < 8; g++)
+		{
+			for (b = 0; b < 4; b++)
+			{
+				ar = *((uint8*)pcAccessorR->Get(x + y * 8));
+				ag = *((uint8*)pcAccessorG->Get(x + y * 8));
+				ab = *((uint8*)pcAccessorB->Get(x + y * 8));
+
+				if ((ar != (uint8)r) ||
+					(ag != (uint8)g) ||
+					(ab != (uint8)b))
+				{
+					AssertChar(r, (uint8)ar);
+					AssertChar(g, (uint8)ag);
+					AssertChar(b, (uint8)ab);
+				}
+
+				x++;
+				if (x >= 8)
+				{
+					x = 0;
+					y++;
+				}
+
+				iCount++;
+			}
+		}
+	}
+	AssertInt(256, iCount);
+
+	pcAccessorR->Kill();
+	pcAccessorG->Kill();
+	pcAccessorB->Kill();
 
 	pcChannels = NULL;
 
