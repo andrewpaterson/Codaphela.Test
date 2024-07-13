@@ -5,5 +5,5 @@
 void TestNormalGeneration(void);
 
 
-#endif // !__TEST_NORMAL_GENERATION_H__
+#endif // __TEST_NORMAL_GENERATION_H__
 

@@ -5,5 +5,5 @@
 void TestMeshPolygons(void);
 
 
-#endif // !__TEST_MESH_POLYGONS_H__
+#endif // __TEST_MESH_POLYGONS_H__
 

@@ -5,5 +5,5 @@
 void TestMeshConnectivity(void);
 
 
-#endif // !__TEST_MESH_CONNECTIVITY_H__
+#endif // __TEST_MESH_CONNECTIVITY_H__
 

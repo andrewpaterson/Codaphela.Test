@@ -6,5 +6,5 @@
 void TestPlainTextEditor(void);
 
 
-#endif // !__TEST_PLAIN_TEXT_EDITOR_H__
+#endif // __TEST_PLAIN_TEXT_EDITOR_H__
 

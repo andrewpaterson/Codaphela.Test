@@ -1,5 +1,6 @@
 #include "StandardLib/ObjectWriter.h"
 #include "StandardLib/ObjectReader.h"
+#include "StandardLib/ClassDefines.h"
 #include "ObjectTestClasses.h"
 
 
@@ -50,9 +51,11 @@ void CTestObject::Init(STestObjectFreedNotifier* psKilledNotifier)
 //////////////////////////////////////////////////////////////////////////
 void CTestObject::Class(void)
 {
-	Pointer(mpObject.This(), "mpObject");
-	Pointer(mpTest.This(), "mpTest");
-	UnmanagedSInt(&mi, "mi");
+	M_Pointer(mpObject);
+	M_Pointer(mpTest);
+	U_SInt(mi);
+	//For some reason uncommenting this breaks the TestObjectDirtyOnPrimitiveAssignmentWithEmbedded test.
+	//U_Pointer(mpsFreedNotifier);
 }
 
 
@@ -118,11 +121,13 @@ void CTestTriPointerObject::Init(void)
 void CTestTriPointerObject::Init(STestObjectFreedNotifier* psKilledNotifier)
 {
 	PreInit();
+
 	mpsFreedNotifier = psKilledNotifier;
 	if (mpsFreedNotifier)
 	{
 		mpsFreedNotifier->bFreed = false;
 	}
+
 	PostInit();
 }
 
@@ -133,9 +138,9 @@ void CTestTriPointerObject::Init(STestObjectFreedNotifier* psKilledNotifier)
 //////////////////////////////////////////////////////////////////////////
 void CTestTriPointerObject::Class(void)
 {
-	Pointer(mpObject1.This(), "mpObject1");
-	Pointer(mpObject2.This(), "mpObject2");
-	Pointer(mpObject3.This(), "mpObject3");
+	M_Pointer(mpObject1);
+	M_Pointer(mpObject2);
+	M_Pointer(mpObject3);
 }
 
 
@@ -159,6 +164,7 @@ void CTestTriPointerObject::Free(void)
 void CTestSaveableObject1::Init(void)
 {
 	PreInit();
+
 	miInt = 7;
 	mszString.Init();
 	mbSaved = false;
@@ -173,9 +179,9 @@ void CTestSaveableObject1::Init(void)
 //////////////////////////////////////////////////////////////////////////
 void CTestSaveableObject1::Class(void)
 {
-	Pointer(mpObject.This(), "mpObject");
-	UnmanagedInt32(&miInt, "miInt");
-	UnmanagedString(&mszString, "mszString");
+	M_Pointer(mpObject);
+	U_Int32(miInt);
+	U_String(mszString);
 }
 
 
@@ -224,8 +230,10 @@ bool CTestSaveableObject1::Load(CObjectReader* pcFile)
 void CTestSaveableObject2::Init(const char* psz)
 {
 	PreInit();
+
 	msz.Init(psz);
 	mbSaved = false;
+
 	PostInit();
 }
 
@@ -236,9 +244,9 @@ void CTestSaveableObject2::Init(const char* psz)
 //////////////////////////////////////////////////////////////////////////
 void CTestSaveableObject2::Class(void)
 {
-	Pointer(mp1.This(), "mp1");
-	Pointer(mp2.This(), "mp2");
-	UnmanagedString(&msz, "msz");
+	M_Pointer(mp1);
+	M_Pointer(mp2);
+	U_String(msz);
 }
 
 
@@ -308,22 +316,24 @@ void CTestObjectWithFields::Init(CPointer pObject, Ptr<CTestObject> pTest)
 //////////////////////////////////////////////////////////////////////////
 void CTestObjectWithFields::Class(void)
 {
-	Pointer(mpTest.This(), "mpTest");
-	Pointer(mpObject.This(), "mpObject");
+	M_Pointer(mpTest);
+	M_Pointer(mpObject);
 
-	Primitive(&mi32, "mi32");
-	Primitive(&mi8, "mi8");
-	Primitive(&mui8, "mui8");
-	Primitive(&mui32, "mui32");
-	Primitive(&mi16, "mi16");
-	Primitive(&mui16, "mui16");
-	Primitive(&mc8, "mc8");
-	Primitive(&mc16, "mc16");
-	Primitive(&mf32, "mf32");
-	Primitive(&mf64, "mf64");
-	Primitive(&mi64, "mi64");
-	Primitive(&mui64, "mui64");
-	Primitive(&mb, "mb");
+	M_Int8(mi8);
+	M_UInt8(mui8);
+	M_Int32(mi32);
+	M_UInt32(mui32);
+	M_Int16(mi16);
+	M_UInt16(mui16);
+	M_Char8(mc8);
+	M_Char16(mc16);
+	M_Float32(mf32);
+	M_Float64(mf64);
+	M_Int64(mi64);
+	M_UInt64(mui64);
+	M_Bool(mb);
+
+	U_Pointer(mpsz);
 }
 
 
@@ -365,8 +375,10 @@ void CTestObjectWithFields::Update(char* sz)
 void CTestEmbeddedObjectWithFields::Init(void)
 {
 	PreInit();
+
 	mcEmbedded1.Init();
 	mcEmbedded2.Init();
+
 	PostInit();
 }
 
@@ -377,13 +389,13 @@ void CTestEmbeddedObjectWithFields::Init(void)
 //////////////////////////////////////////////////////////////////////////
 void CTestEmbeddedObjectWithFields::Class(void)
 {
-	Primitive(&mbX, "mbX");
-	Pointer(mpObjectA.This(), "mpObjectA");
-	Embedded(&mcEmbedded1, "mcEmbedded1");
-	Pointer(mpObjectB.This(), "mpObjectB");
-	Embedded(&mcEmbedded2, "mcEmbedded2");
-	Pointer(mpObjectC.This(), "mpObjectC");
-	Primitive(&mbY, "mbY");
+	M_Bool(mbX);
+	M_Pointer(mpObjectA);
+	M_Embedded(mcEmbedded1);
+	M_Pointer(mpObjectB);
+	M_Embedded(mcEmbedded2);
+	M_Pointer(mpObjectC);
+	M_Bool(mbY);
 }
 
 
@@ -418,9 +430,9 @@ void CTestEmbeddedStrings::Init(void)
 //////////////////////////////////////////////////////////////////////////
 void CTestEmbeddedStrings::Class(void)
 {
-	Embedded(&mString1, "mString1");
-	Embedded(&mString2, "mString2");
-	Embedded(&mString3, "mString3");
+	M_Embedded(mString1);
+	M_Embedded(mString2);
+	M_Embedded(mString3);
 }
 
 

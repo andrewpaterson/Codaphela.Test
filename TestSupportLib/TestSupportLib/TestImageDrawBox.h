@@ -5,5 +5,5 @@
 void TestImageDrawBox(void);
 
 
-#endif // !__TEST_IMAGE_DRAW_BOX_H__
+#endif // __TEST_IMAGE_DRAW_BOX_H__
 

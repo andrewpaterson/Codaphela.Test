@@ -5,5 +5,5 @@
 void TestTriangleShape(void);
 
 
-#endif // !__TEST_TRIANGLE_SHAPE_H__
+#endif // __TEST_TRIANGLE_SHAPE_H__
 

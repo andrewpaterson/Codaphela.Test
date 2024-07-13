@@ -1,6 +1,7 @@
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectWriter.h"
 #include "StandardLib/ObjectReader.h"
+#include "StandardLib/ClassDefines.h"
 #include "ObjectTestSetup.h"
 
 
@@ -52,6 +53,10 @@ Ptr<CPlayerVehicle> CPlayerVehicle::Init(void)
 //////////////////////////////////////////////////////////////////////////
 void CPlayerVehicle::Class(void)
 {
+	U_Data(CGraphicPicture, mcPicture);
+	U_Data(SPhysicsPoint, mpsPoint);
+	U_Pointer(mpsBeforeDeath);
+	U_Pointer(mpsAfterDeath);
 }
 
 
@@ -116,9 +121,10 @@ Ptr<CHarrier> CHarrier::Init(Ptr<CGameWorld> pWorld)
 void CHarrier::Class(void)
 {
 	CPlayerVehicle::Class();
-	Pointer(mpWorld.This(), "mpWorld");
-	Pointer(maMissiles.This(), "maMissiles");
-	UnmanagedInt32(&miSpeed, "miSpeed");
+
+	M_Pointer(mpWorld);
+	M_Pointer(maMissiles);
+	U_Int32(miSpeed);
 }
 
 
@@ -183,9 +189,10 @@ Ptr<CJeep> CJeep::Init(Ptr<CGameWorld> pWorld)
 void CJeep::Class(void)
 {
 	CPlayerVehicle::Class();
-	Pointer(mpWorld.This(), "mpWorld");
-	UnmanagedFloat(&mfFrontWheel, "mfFrontWheel");
-	UnmanagedFloat(&mfBackWheel, "mfBackWheel");
+
+	M_Pointer(mpWorld);
+	U_Float32(mfFrontWheel);
+	U_Float32(mfBackWheel);
 }
 
 
@@ -224,8 +231,9 @@ Ptr<CMissile> CMissile::Init(Ptr<CGameWorld> pWorld)
 //////////////////////////////////////////////////////////////////////////
 void CMissile::Class(void)
 {
-	Pointer(mpWorld.This(), "mpWorld");
-	Pointer(mpTarget.This(), "mpTarget");
+	M_Pointer(mpWorld);
+	M_Pointer(mpTarget);
+	U_Pointer(mszKillState);
 }
 
 
@@ -300,8 +308,11 @@ Ptr<CRedJet> CRedJet::Init(Ptr<CGameWorld> pWorld)
 //////////////////////////////////////////////////////////////////////////
 void CRedJet::Class(void)
 {
-	Pointer(mpWorld.This(), "mpWorld");
-	UnmanagedData(&mcPicture, sizeof(CGraphicPicture), "mcPicture");
+	U_Data(CGraphicPicture, mcPicture);
+	M_Pointer(mpWorld);
+	U_Data(SPhysicsPoint, mpsPoint);
+	U_Pointer(mpsBeforeDeath);
+	U_Pointer(mpsAfterDeath);
 }
 
 
@@ -362,9 +373,10 @@ Ptr<CClusterMissile> CClusterMissile::Init(Ptr<CGameWorld> pWorld)
 //////////////////////////////////////////////////////////////////////////
 void CClusterMissile::Class(void)
 {
-	Pointer(mpWorld.This(), "mpWorld");
-	Embedded(&mcMissile1, "mcMissile1");
-	Embedded(&mcMissile2, "mcMissile2");
+	M_Pointer(mpWorld);
+	M_Embedded(mcMissile1);
+	M_Embedded(mcMissile2);
+	U_Pointer(mszKillState);
 }
 
 
@@ -418,7 +430,7 @@ void CClusterLauncher::Free(void)
 //////////////////////////////////////////////////////////////////////////
 void CClusterLauncher::Class(void)
 {
-	Pointer(mpMissile.This(), "mpMissile");
+	M_Pointer(mpMissile);
 }
 
 
@@ -450,9 +462,9 @@ void CGameWorld::Free(void)
 //////////////////////////////////////////////////////////////////////////
 void CGameWorld::Class(void)
 {
-	Pointer(maTickables.This(), "maTickables");
-	Pointer(mpPlayer1.This(), "mpPlayer1");
-	Pointer(mpPlayer2.This(), "mpPlayer2");
+	M_Pointer(maTickables);
+	M_Pointer(mpPlayer1);
+	M_Pointer(mpPlayer2);
 }
 
 

@@ -5,4 +5,4 @@
 void TestPolygon(void);
 
 
-#endif // !__TEST_POLYGON_H__
+#endif // __TEST_POLYGON_H__

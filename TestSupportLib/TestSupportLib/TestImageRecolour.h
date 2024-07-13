@@ -5,4 +5,4 @@
 void TestImageRecolour(void);
 
 
-#endif // !__TEST_IMAGE_RECOLOUR_H__
+#endif // __TEST_IMAGE_RECOLOUR_H__

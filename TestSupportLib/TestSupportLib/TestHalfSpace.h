@@ -5,5 +5,5 @@
 void TestHalfSpace(void);
 
 
-#endif // !__TEST_HALF_SPACE_H__
+#endif // __TEST_HALF_SPACE_H__
 

@@ -1,5 +1,6 @@
 #include "StandardLib/ObjectWriter.h"
 #include "StandardLib/ObjectReader.h"
+#include "StandardLib/ClassDefines.h"
 #include "NamedObjectTestClasses.h"
 
 
@@ -23,9 +24,9 @@ Ptr<CTestNamedObject> CTestNamedObject::Init(int iNum)
 //////////////////////////////////////////////////////////////////////////
 void CTestNamedObject::Class(void)
 {
-	Pointer(mpNamedTest1.This(), "mpNamedTest1");
-	Pointer(mpNamedTest2.This(), "mpNamedTest2");
-	UnmanagedInt32(&miNum, "miNum");
+	M_Pointer(mpNamedTest1);
+	M_Pointer(mpNamedTest2);
+	U_Int32(miNum);
 }
 
 
@@ -92,6 +93,7 @@ Ptr<CTestNamedObjectSmall> CTestNamedObjectSmall::Init(const char* sz)
 //////////////////////////////////////////////////////////////////////////
 void CTestNamedObjectSmall::Class(void)
 {
+	U_CharArray(mac, 4);
 }
 
 
@@ -154,12 +156,14 @@ Ptr<CTestNamedObjectWithEmbedded> CTestNamedObjectWithEmbedded::Init(int iX, int
 //////////////////////////////////////////////////////////////////////////
 void CTestNamedObjectWithEmbedded::Class(void)
 {
-	Pointer(mpObject.This(), "mpObject");
-	Pointer(mpSmall.This(), "mpSmall");
-	Embedded(&mNamedTest1, "mNamedTest1");
-	Embedded(&mNamedTest2, "mNamedTest2");
-	UnmanagedInt32(&miX, "miX");
-	UnmanagedInt32(&miY, "miY");
+	M_Pointer(mpObject);
+	M_Pointer(mpSmall);
+	M_Embedded(mNamedTest1);
+	M_Embedded(mNamedTest2);
+	U_Int32(miX);
+	U_Int32(miY);
+	U_UInt16(miUnmagedSize);
+	U_Pointer(mpvUnmanaged);
 }
 
 

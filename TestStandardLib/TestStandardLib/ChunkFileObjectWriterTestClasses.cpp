@@ -1,3 +1,4 @@
+#include "StandardLib/ClassDefines.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ObjectWriter.h"
 #include "StandardLib/ObjectReader.h"
@@ -7,19 +8,20 @@
 void CTestWithArray::Init(const char* szString, int x)
 {
 	PreInit();
+
 	mcArray = OMalloc<CArrayObject>();
 	mszString.Init(szString);
 	mx = x;
+
 	PostInit();
 }
 
 
 void CTestWithArray::Class(void)
 {
-	Pointer(mcArray.This(), "mcArray");
-	UnmanagedString(&mszString, "mszString");
-	UnmanagedSInt(&mx, "mx");;
-
+	M_Pointer(mcArray);
+	U_String(mszString);
+	U_SInt(mx);
 }
 
 
@@ -54,18 +56,20 @@ bool CTestWithArray::Load(CObjectReader* pcFile)
 void CTestInteger::Init(int32 x, int16 y, int8 z)
 {
 	PreInit();
+
 	mx = x;
 	my = y;
 	mz = z;
+
 	PostInit();
 }
 
 
 void CTestInteger::Class(void)
 {
-	UnmanagedInt32(&mx, "mx");
-	UnmanagedInt16(&my, "my");
-	UnmanagedInt8(&mz, "mz");
+	U_Int32(mx);
+	U_Int16(my);
+	U_Int8(mz);
 }
 
 
@@ -95,9 +99,11 @@ bool CTestInteger::Load(CObjectReader* pcFile)
 void CTestNamedString::Init(void)
 {
 	PreInit();
+
 	mszString = NULL;
 	mpAnother = NULL;
 	mszEmbedded._Init();
+
 	PostInit();
 }
 
@@ -105,7 +111,9 @@ void CTestNamedString::Init(void)
 void CTestNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, const char* szEmbedded)
 {
 	PreInit();
+
 	Set(szString, pAnother, szEmbedded);
+
 	PostInit();
 }
 
@@ -120,9 +128,9 @@ void CTestNamedString::Set(Ptr<CString> szString, Ptr<CTestNamedString> pAnother
 
 void CTestNamedString::Class(void)
 {
-	Pointer(mszString.This(), "mszString");
-	Pointer(mpAnother.This(), "mpAnother");
-	UnmanagedString(&mszEmbedded, "mszEmbedded");
+	M_Pointer(mszString);
+	M_Pointer(mpAnother);
+	U_String(mszEmbedded);
 }
 
 
@@ -148,9 +156,11 @@ bool CTestNamedString::Load(CObjectReader* pcFile)
 void CTestDoubleNamedString::Init(void)
 {
 	PreInit();
+
 	mszString = Null();
 	mpSplit1 = Null();
 	mpSplit2 = Null();
+
 	PostInit();
 }
 
@@ -158,18 +168,20 @@ void CTestDoubleNamedString::Init(void)
 void CTestDoubleNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pSplit2, Ptr<CTestNamedString> pSplit1)
 {
 	PreInit();
+
 	mszString = szString;
 	mpSplit1 = pSplit1;
 	mpSplit2 = pSplit2;
+
 	PostInit();
 }
 
 
 void CTestDoubleNamedString::Class(void)
 {
-	Pointer(mszString.This(), "mszString");
-	Pointer(mpSplit1.This(), "mpSplit1");
-	Pointer(mpSplit2.This(), "mpSplit2");
+	M_Pointer(mszString);
+	M_Pointer(mpSplit1);
+	M_Pointer(mpSplit2);
 }
 
 

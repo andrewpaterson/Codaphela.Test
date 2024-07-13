@@ -5,5 +5,5 @@
 void TestImageColour(void);
 
 
-#endif // !__TEST_IMAGE_COLOUR_H__
+#endif // __TEST_IMAGE_COLOUR_H__
 

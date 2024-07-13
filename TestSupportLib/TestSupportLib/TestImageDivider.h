@@ -5,5 +5,5 @@
 void TestImageDivider(void);
 
 
-#endif // !__TEST_SUBIMAGE_HELPER_H__
+#endif // __TEST_SUBIMAGE_HELPER_H__
 

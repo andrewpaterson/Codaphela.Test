@@ -5,5 +5,5 @@
 void TestImageRGBToGrey(void);
 
 
-#endif // !__TEST_IMAGE_RGB_TO_GREY_H__
+#endif // __TEST_IMAGE_RGB_TO_GREY_H__
 

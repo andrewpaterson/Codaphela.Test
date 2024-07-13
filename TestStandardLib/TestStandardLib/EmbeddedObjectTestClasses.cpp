@@ -1,3 +1,4 @@
+#include "StandardLib/ClassDefines.h"
 #include "EmbeddedObjectTestClasses.h"
 
 
@@ -7,10 +8,11 @@
 //////////////////////////////////////////////////////////////////////////
 void CEmbeddedTest::Class(void)
 {
-	UnmanagedSInt(&miAmANumber, "miAmANumber");
-	UnmanagedFloat(&mfSoAmI, "mfSoAmI");
-	Pointer(mpTest.This(), "mpTest");
+	U_SInt(miAmANumber);
+	U_Float32(mfSoAmI);
+	M_Pointer(mpTest);
 }
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -68,16 +70,12 @@ bool CEmbeddedTest::Load(CObjectReader* pcFile)
 //////////////////////////////////////////////////////////////////////////
 void CEmbeddedContainer::Class(void)
 {
-	char	msz[4];
-	uint8	mi;
-	float	mf;
-
-	UnmanagedChar(msz, 4, "msz");
-	Pointer(mpTest.This(), "mpTest");
-	Embedded(&mcOne, "mcOne");
-	Embedded(&mcTwo, "mcTwo");
-	UnmanagedUInt8(&mi, "mi");
-	UnmanagedFloat(&mf, "mf");
+	U_CharArray(msz, 4);
+	M_Pointer(mpTest);
+	M_Embedded(mcOne);
+	M_Embedded(mcTwo);
+	U_SInt(mi);
+	U_Float32(mf);
 }
 
 
@@ -142,11 +140,11 @@ bool CEmbeddedContainer::Load(CObjectReader* pcFile)
 //////////////////////////////////////////////////////////////////////////
 void CEmbeddedComplex::Class(void)
 {
-	Pointer(mpTest.This(), "mpTest");
-	UnmanagedInt32(mai, 2, "mai");
-	Embedded(&mcSimple, "mcSimple");
-	Embedded(&ma, "ma");
-	Embedded(&mcContainer, "mcContainer");
+	M_Pointer(mpTest);
+	U_Int32Array(mai, 2);
+	M_Embedded(mcSimple);
+	M_Embedded(ma);
+	M_Embedded(mcContainer);
 }
 
 

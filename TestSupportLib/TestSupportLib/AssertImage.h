@@ -8,5 +8,5 @@
 bool PrivateAssertChannel(EImagePurpose ePurpose, EChannelType eType, EPrimitiveType ePrimitive, SChannel* psChannel, size iLine, char* szFile);
 
 
-#endif // !__ASSERT_IMAGE_H__
+#endif // __ASSERT_IMAGE_H__
 

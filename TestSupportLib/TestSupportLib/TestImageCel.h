@@ -5,5 +5,5 @@
 void TestImageCel(void);
 
 
-#endif // !__TEST_IMAGE_CEL_H__
+#endif // __TEST_IMAGE_CEL_H__
 
