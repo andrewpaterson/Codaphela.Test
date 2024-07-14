@@ -8,25 +8,8 @@
 #include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Unknowns.h"
 #include "TestLib/Assert.h"
-#include "TestImage.h"
-#include "TestImageImport.h"
 #include "TestImageWriter.h"
-#include "TestImageReader.h"
-#include "TestImageDivider.h"
-#include "TestBumpMapper.h"
 #include "TestPlainTextEditor.h"
-#include "TestImageColour.h"
-#include "TestImageCel.h"
-#include "TestRectangleBestPacker.h"
-#include "TestRectanglePow2Packer.h"
-#include "TestImageGreyToRGB.h"
-#include "TestImageRGBToGrey.h"
-#include "TestImageModifierStack.h"
-#include "TestImageDrawBox.h"
-#include "TestImageRecolour.h"
-#include "TestImageSwizzle.h"
-#include "TestImageCombiner.h"
-#include "TestImageCelsSource.h"
 #include "TestWinText.h"
 #include "TestHalfSpace.h"
 #include "TestPolygon.h"
@@ -38,6 +21,27 @@
 #include "TestMeshConnectivity.h"
 #include "TestNormalGeneration.h"
 #include "TestMeshOBJReader.h"
+
+
+void TestBumpMapper(void);
+void TestImage(void);
+void TestImageCel(void);
+void TestImageCelsSource(void);
+void TestImageColour(void);
+void TestImageCombiner(void);
+void TestImageDivider(void);
+void TestImageDrawBox(void);
+void TestImageGreyToRGB(void);
+void TestImageImport(void);
+void TestImageModifierStack(void);
+void TestImageMultiAccessor(void);
+void TestImageReader(void);
+void TestImageRecolour(void);
+void TestImageRGBToGrey(void);
+void TestImageSwizzle(void);
+void TestRectangleBestPacker(void);
+void TestRectanglePow2Packer(void);
+void TestImageToR3G3B2A1(void);
 
 
 int __cdecl main(void)
@@ -72,6 +76,7 @@ int __cdecl main(void)
 	TestImageRecolour();
 	TestImageSwizzle();
 	TestImageCombiner();
+	TestImageToR3G3B2A1();
 	TestWinText();
 	TestImageCelsSource();
 	TestHalfSpace();

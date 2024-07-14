@@ -130,64 +130,13 @@
     <ClCompile Include="AssertImage.cpp">
       <Filter>Source Files\Image</Filter>
     </ClCompile>
+    <ClCompile Include="TestImageRGBAToR3G3B2A1.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestBumpMapper.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestImage.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestImageCel.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestImageCelsSource.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestImageColour.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestImageCombiner.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestImageDivider.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestImageDrawBox.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestImageGreyToRGB.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestImageImport.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestImageModifierStack.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestImageMultiAccessor.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestImageReader.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestImageRecolour.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestImageRGBToGrey.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestImageSwizzle.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestRectangleBestPacker.h">
-      <Filter>Source Files\Image</Filter>
-    </ClInclude>
-    <ClInclude Include="TestRectanglePow2Packer.h">
-      <Filter>Source Files\Image</Filter>
     </ClInclude>
     <ClInclude Include="TestWinText.h">
       <Filter>Source Files\Image\Font</Filter>

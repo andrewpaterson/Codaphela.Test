@@ -7,7 +7,6 @@
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageDivider.h"
 #include "TestLib/Assert.h"
-#include "TestImageCel.h"
 
 
 //////////////////////////////////////////////////////////////////////////

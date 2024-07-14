@@ -10,7 +10,6 @@
 #include "SupportLib/ImageCelTransparent.h"
 #include "SupportLib/ImageCelMaskTransparent.h"
 #include "TestLib/Assert.h"
-#include "TestImageDivider.h"
 
 
 //////////////////////////////////////////////////////////////////////////

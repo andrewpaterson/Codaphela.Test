@@ -9,7 +9,6 @@
 #include "SupportLib/ImageAccessorCreator.h"
 #include "SupportLib/Image.h"
 #include "TestLib/Assert.h"
-#include "TestImageColour.h"
 
 
 //////////////////////////////////////////////////////////////////////////

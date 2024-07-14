@@ -6,7 +6,6 @@
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
 #include "TestLib/Assert.h"
-#include "TestImage.h"
 
 
 //////////////////////////////////////////////////////////////////////////

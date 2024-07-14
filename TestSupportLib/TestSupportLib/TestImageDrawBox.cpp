@@ -8,7 +8,6 @@
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/ImageDrawBox.h"
 #include "TestLib/Assert.h"
-#include "TestImageDrawBox.h"
 
 
 //////////////////////////////////////////////////////////////////////////

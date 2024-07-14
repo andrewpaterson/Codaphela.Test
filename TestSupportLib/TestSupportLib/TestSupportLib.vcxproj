@@ -185,6 +185,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AssertImage.cpp" />
+    <ClCompile Include="TestImageRGBAToR3G3B2A1.cpp" />
     <ClCompile Include="TestSupportLib.cpp" />
     <ClCompile Include="TestBumpMapper.cpp" />
     <ClCompile Include="TestImage.cpp" />
@@ -224,24 +225,6 @@
   <ItemGroup>
     <ClInclude Include="AssertImage.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="TestBumpMapper.h" />
-    <ClInclude Include="TestImage.h" />
-    <ClInclude Include="TestImageCel.h" />
-    <ClInclude Include="TestImageCelsSource.h" />
-    <ClInclude Include="TestImageColour.h" />
-    <ClInclude Include="TestImageCombiner.h" />
-    <ClInclude Include="TestImageDivider.h" />
-    <ClInclude Include="TestImageDrawBox.h" />
-    <ClInclude Include="TestImageGreyToRGB.h" />
-    <ClInclude Include="TestImageImport.h" />
-    <ClInclude Include="TestImageModifierStack.h" />
-    <ClInclude Include="TestImageMultiAccessor.h" />
-    <ClInclude Include="TestImageReader.h" />
-    <ClInclude Include="TestImageRecolour.h" />
-    <ClInclude Include="TestImageRGBToGrey.h" />
-    <ClInclude Include="TestImageSwizzle.h" />
-    <ClInclude Include="TestRectangleBestPacker.h" />
-    <ClInclude Include="TestRectanglePow2Packer.h" />
     <ClInclude Include="TestWinText.h" />
     <ClInclude Include="TestMeshColour.h" />
     <ClInclude Include="TestMeshConnectivity.h" />

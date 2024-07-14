@@ -1,6 +1,5 @@
-#include "TestImageImport.h"
-#include "SupportLib/Image.h"
 #include "BaseLib/FastFunctions.h"
+#include "SupportLib/Image.h"
 #include "TestLib/Assert.h"
 
 

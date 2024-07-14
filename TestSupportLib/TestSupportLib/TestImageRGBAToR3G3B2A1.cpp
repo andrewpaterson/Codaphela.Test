@@ -13,23 +13,14 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestImageRGBToGrey1(void)
+void TestImageToR3G3B2A1Convert(void)
 {
 	CImage				cImage;
 	CImageRGBToGrey		cRGBToGrey;
 	CArrayChannel		pcChannels;
 	bool				bResult;
 
-	ReadImage(&cImage, "Input\\RGBToGrey.png");
-	
-	cImage.GetAllChannels(&pcChannels);
-	AssertInt(3, pcChannels.NumElements());
-	AssertChannel(IP_Diffuse, CT_Red, PT_uint8, pcChannels.Get(0));
-	AssertChannel(IP_Diffuse, CT_Green, PT_uint8, pcChannels.Get(1));
-	AssertChannel(IP_Diffuse, CT_Blue, PT_uint8, pcChannels.Get(2));
-	AssertInt(32, cImage.GetWidth());
-	AssertInt(32, cImage.GetHeight());
-	AssertInt(3072, cImage.GetByteSize());
+	ReadImage(&cImage, "Input\\cel1.png");
 
 	cRGBToGrey.Init(RGBTGS_OnlyIfChannelsSame);
 	bResult = cRGBToGrey.Modify(&cImage);
@@ -55,14 +46,14 @@ void TestImageRGBToGrey1(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestImageRGBToGrey(void)
+void TestImageToR3G3B2A1(void)
 {
 	BeginTests();
 
 	DataIOInit();
 	ObjectsInit();
 
-	TestImageRGBToGrey1();
+	TestImageToR3G3B2A1Convert();
 
 	ObjectsKill();
 	DataIOKill();

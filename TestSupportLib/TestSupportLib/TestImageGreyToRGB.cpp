@@ -6,9 +6,6 @@
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/ImageGreyToRGB.h"
 #include "TestLib/Assert.h"
-#include "TestImageGreyToRGB.h"
-
-
 
 
 //////////////////////////////////////////////////////////////////////////
