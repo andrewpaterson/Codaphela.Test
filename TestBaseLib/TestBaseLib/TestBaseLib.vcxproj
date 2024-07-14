@@ -302,6 +302,7 @@
     <ClCompile Include="TestTextPosition.cpp" />
     <ClCompile Include="TestTrackingAllocator.cpp" />
     <ClCompile Include="TestTreeTemplate.cpp" />
+    <ClCompile Include="TestTypeConverter.cpp" />
     <ClCompile Include="TestWindowsFiles.cpp" />
     <ClCompile Include="IndexTreeCallbackTestObject.cpp" />
     <ClCompile Include="IndexTreeFileDataTestCallback.cpp" />

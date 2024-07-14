@@ -232,6 +232,9 @@
     <Filter Include="Source\FileSystem\Underlying">
       <UniqueIdentifier>{17df6ecf-55dc-4893-88a9-80d295d96926}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Data\Types\Converter">
+      <UniqueIdentifier>{7c5556dd-2cc1-4bfc-a786-efc5910249da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -650,6 +653,9 @@
     </ClCompile>
     <ClCompile Include="TestArrayBlock.cpp">
       <Filter>Source\Data\Array\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTypeConverter.cpp">
+      <Filter>Source\Data\Types\Converter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
