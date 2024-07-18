@@ -41,7 +41,7 @@ void TestImageRGBToGrey(void);
 void TestImageSwizzle(void);
 void TestRectangleBestPacker(void);
 void TestRectanglePow2Packer(void);
-void TestImageToR3G3B2A1(void);
+void TestImageToR3G3B2A(void);
 
 
 int __cdecl main(void)
@@ -76,7 +76,7 @@ int __cdecl main(void)
 	TestImageRecolour();
 	TestImageSwizzle();
 	TestImageCombiner();
-	TestImageToR3G3B2A1();
+	TestImageToR3G3B2A();
 	TestWinText();
 	TestImageCelsSource();
 	TestHalfSpace();

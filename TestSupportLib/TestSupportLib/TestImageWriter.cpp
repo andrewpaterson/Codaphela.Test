@@ -34,7 +34,7 @@ void TestImagePNGWriter(void)
 	cImage.Kill();
 	cComp.Kill();
 
-	//Not testing this unitil I start using PNGLib to write images rather than the GDI+.
+	//Not testing this unitl I start using PNGLib to write images rather than the GDI+.
 	ReadImage(&cImage, "Input\\basn0g01.png");
 	WriteImage(&cImage, "Output\\basn0g01.png");
 	cImage.Kill();
@@ -151,6 +151,20 @@ void TestImageRADWriter(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestImageSFTWriter(void)
+{
+	CImage		cImage;
+	CImage		cComp;
+	bool		bResult;
+
+	bResult = ReadImage(&cImage, "Input\\basn2c08.png");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestImageWriter(void)
 {
 	BeginTests();
@@ -161,6 +175,7 @@ void TestImageWriter(void)
 	TestImagePNGWriter();
 	TestImageTGAWriter();
 	TestImageRADWriter();
+	TestImageSFTWriter();
 
 	ObjectsKill();
 	DataIOKill();

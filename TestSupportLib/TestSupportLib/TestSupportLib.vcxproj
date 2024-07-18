@@ -185,7 +185,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AssertImage.cpp" />
-    <ClCompile Include="TestImageRGBAToR3G3B2A1.cpp" />
+    <ClCompile Include="TestImageRGBAToR3G3B2A.cpp" />
     <ClCompile Include="TestSupportLib.cpp" />
     <ClCompile Include="TestBumpMapper.cpp" />
     <ClCompile Include="TestImage.cpp" />

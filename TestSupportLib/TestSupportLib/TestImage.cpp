@@ -33,7 +33,7 @@ void TestDrawImage(void)
 	char				szDestRGBMissingType[18] = "A\0CD\0FG\0IJ\0LM\0OP\0";
 	char				szDestRGMissingType[13] = "ABDEGHJKMNPQ";
 	char				szDestRGBDifferentType[36] = "AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQ";
-	char				szDestRGBDifferentType2[18] = "`abcdefghijklmnop";
+	char				szDestRGBDifferentType2[18] = "abcdefghijklmnopq";
 	CImageColourRGB		cRGB;
 
 	//Same format, Same types ------------------------------------------
@@ -136,7 +136,6 @@ void TestDrawImage(void)
 	CImageCopier::Copy(&cImageSource, &cImageDest, 0, 0, NULL);
 	pcData = (char*)cImageDest.GetData();
 
-	//The string "`abcdefghijklmnop" is correct.  Remember the conversion is: "s / (0xffff/0xff)"
 	AssertString(szDestRGBDifferentType2, pcData);
 
 	cImageSource.Kill();
