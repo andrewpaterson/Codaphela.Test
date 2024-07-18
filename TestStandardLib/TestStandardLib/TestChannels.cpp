@@ -4,6 +4,7 @@
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/Channels.h"
+#include "StandardLib/ChannelsCopier.h"
 #include "StandardLib/ChannelsAccessorCreator.h"
 #include "StandardLib/ExternalObjectSerialiser.h"
 #include "StandardLib/MultiFileObjectWriter.h"
@@ -324,6 +325,147 @@ void TestChannelsLoad(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestChannelsCopier16bitTo8bit(void)
+{
+	ObjectsInit();
+
+	Ptr<CChannels>		pcSource;
+	CChannelsAccessor*	pcAccessor;
+	uint16				ui16;
+	uint16*				pui16;
+	Ptr<CChannels>		pcDest;
+	uint8*				pui8;
+
+	pcSource = ONMalloc<CChannels>("Source");
+
+	pcSource->BeginChange();
+	pcSource->SetSize(4);
+	pcSource->AddChannel(0, PT_uint16);
+	pcSource->EndChange();
+	AssertInt(4 * 2, pcSource->GetByteSize());
+
+	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcSource, 0);
+	ui16 = 0xfeff; pcAccessor->Set(0, &ui16);
+	ui16 = 0xcab3; pcAccessor->Set(1, &ui16);
+	ui16 = 0x0000; pcAccessor->Set(2, &ui16);
+	ui16 = 0x2100; pcAccessor->Set(3, &ui16);
+	pcAccessor->Kill();
+
+	pui16 = (uint16*)pcSource->GetData();
+	AssertShortHex((int16)0xfeff, pui16[0]);
+	AssertShortHex((int16)0xcab3, pui16[1]);
+	AssertShortHex(0x0000, pui16[2]);
+	AssertShortHex(0x2100, pui16[3]);
+
+	pcDest = ONMalloc<CChannels>("Dest");
+
+	pcDest->BeginChange();
+	pcDest->SetSize(4);
+	pcDest->AddChannel(0, PT_uint8);
+	pcDest->EndChange();
+	AssertInt(4 * 1, pcDest->GetByteSize());
+
+	CChannelsCopier	cCopier;
+
+	cCopier.Init(&pcSource, &pcDest);
+	cCopier.Copy(0, 0, 4);
+	cCopier.Kill();
+
+	pui8 = (uint8*)pcDest->GetData();
+	AssertChar((int8)0xfe, pui8[0]);
+	AssertChar((int8)0xca, pui8[1]);
+	AssertChar(0x00, pui8[2]);
+	AssertChar(0x21, pui8[3]);
+
+	pcSource = NULL;
+	pcDest = NULL;
+
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestChannelsCopier24bitTo8bit(void)
+{
+	ObjectsInit();
+
+	Ptr<CChannels>		pcSource;
+	CChannelsAccessor*	pcAccessor0;
+	CChannelsAccessor*	pcAccessor1;
+	CChannelsAccessor*	pcAccessor2;
+	uint8				ui8;
+	uint8*				pui8;
+	Ptr<CChannels>		pcDest;
+
+	pcSource = ONMalloc<CChannels>("Source");
+
+	pcSource->BeginChange();
+	pcSource->SetSize(4);
+	pcSource->AddChannel(0, PT_uint8);
+	pcSource->AddChannel(1, PT_uint8);
+	pcSource->AddChannel(2, PT_uint8);
+	pcSource->EndChange();
+	AssertInt(4 * 3, pcSource->GetByteSize());
+
+	pcAccessor0 = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcSource, 0);
+	ui8 = 0xfe; pcAccessor0->Set(0, &ui8);
+	ui8 = 0xca; pcAccessor0->Set(1, &ui8);
+	ui8 = 0x00; pcAccessor0->Set(2, &ui8);
+	ui8 = 0x21; pcAccessor0->Set(3, &ui8);
+	pcAccessor0->Kill();
+
+	pcAccessor1 = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcSource, 1);
+	ui8 = 0xff; pcAccessor1->Set(0, &ui8);
+	ui8 = 0x80; pcAccessor1->Set(1, &ui8);
+	ui8 = 0x7f; pcAccessor1->Set(2, &ui8);
+	ui8 = 0x40; pcAccessor1->Set(3, &ui8);
+	pcAccessor1->Kill();
+
+	pcAccessor2 = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcSource, 2);
+	ui8 = 0x03; pcAccessor2->Set(0, &ui8);
+	ui8 = 0x02; pcAccessor2->Set(1, &ui8);
+	ui8 = 0x01; pcAccessor2->Set(2, &ui8);
+	ui8 = 0x20; pcAccessor2->Set(3, &ui8);
+	pcAccessor2->Kill();
+
+	pcDest = ONMalloc<CChannels>("Dest");
+
+	pcDest->BeginChange();
+	pcDest->SetSize(4);
+	pcDest->AddChannel(2, PT_crumb);
+	pcDest->AddChannel(1, PT_tribble);
+	pcDest->AddChannel(0, PT_tribble);
+	pcDest->EndChange();
+	AssertInt(4 * 1, pcDest->GetByteSize());
+
+	CChannelsCopier	cCopier;
+
+	cCopier.Init(&pcSource, &pcDest);
+	cCopier.Copy(0, 0, 4);
+	cCopier.Kill();
+
+	pui8 = (uint8*)pcDest->GetData();
+	AssertChar((int8)0xfc, pui8[0]);
+	AssertChar((int8)0xac, pui8[1]);
+	AssertChar(0x0c, pui8[2]);
+	AssertChar(0x04, pui8[3]);
+
+	pcSource = NULL;
+	pcDest = NULL;
+
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestChannels(void)
 {
 	BeginTests();
@@ -334,6 +476,8 @@ void TestChannels(void)
 
 	TestChannelsStuff();
 	TestChannelsLoad();
+	TestChannelsCopier16bitTo8bit();
+	TestChannelsCopier24bitTo8bit();
 
 	DataIOKill();
 	TypeConverterKill();

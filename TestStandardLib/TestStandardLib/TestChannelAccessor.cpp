@@ -321,7 +321,7 @@ void TestChannelsAccessorAccessBitty(void)
 	aucData[1] = 0x2c;
 	pcAccessor->Set(0, aucData);
 	AssertShortHex((uint16)0x8e38, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 0 + 0));
-	AssertShortHex((uint16)0xcb2b, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 0 + 2));
+	AssertShortHex((uint16)0xcb2c, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 0 + 2));
 	AssertShortHex((uint16)0x2222, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 0 + 4));
 	pucData = (uint8*)pcAccessor->Get(0);
 	AssertShortHex((uint16)0x2ca3, *(uint16*)pucData);
