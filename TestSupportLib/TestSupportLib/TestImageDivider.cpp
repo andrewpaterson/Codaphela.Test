@@ -18,16 +18,14 @@
 //////////////////////////////////////////////////////////////////////////
 void TestImageDividerGenerateFromBorder(void)
 {
-
 	CImageDivider	cImageDivider;
-	CImage			cImage;
-	CImage			cMask;
 	CImageCelMask*	pcRectangle;
 
-	ReadImage(&cImage, "Input\\splitter.png");
+	Ptr<CImage> pcImage = ReadImage("Input\\splitter.png");
+	Ptr<CImage> pcMask = OMalloc<CImage>();
 
-	cImageDivider.Init(&cImage);
-	cImageDivider.GenerateFromBorder(&cMask);
+	cImageDivider.Init(&pcImage);
+	cImageDivider.GenerateFromBorder(pcMask);
 	AssertInt(20, cImageDivider.GetDestImageCels()->NumElements());
 	pcRectangle = (CImageCelMask*)cImageDivider.GetDestImageCels()->Get(0);
 	AssertInt(1, pcRectangle->GetSubImage()->mcImageRect.miLeft);
@@ -47,12 +45,12 @@ void TestImageDividerGenerateFromBorder(void)
 	AssertInt(3, pcRectangle->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(3, pcRectangle->GetSubImage()->mcImageRect.GetHeight());
 
-	WriteImage(&cMask, "Output\\splitter.raw");
-	AssertFileMemory("input\\splitter.raw", cMask.mcChannels.GetData(), cMask.GetByteSize());
+	WriteImage(pcMask, "Output\\splitter.raw");
+	AssertFileMemory("input\\splitter.raw", pcMask->mcChannels.GetData(), pcMask->GetByteSize());
 
 	cImageDivider.Kill();
-	cMask.Kill();
-	cImage.Kill();
+	pcMask = NULL;
+	pcImage = NULL;
 }
 
 
@@ -63,17 +61,16 @@ void TestImageDividerGenerateFromBorder(void)
 void TestImageDividerGenerateFromNumbers(void)
 {
 	CImageDivider			cImageDivider;
-	CImage					cImage;
 	CImageCel*				pcImageCel;
 	CImageDividerNumbers	cNumbers;
 
-	ReadImage(&cImage, "Input\\grid.png");
+	Ptr<CImage> pcImage = ReadImage("Input\\grid.png");
 
 
 	//int iCelWidth, int iCelHeight, int iColumnCount, int iRowCount, int iLeftOffset, int iTopOffset, int iWidthSpacing, int iHeightSpacing
 
 	cNumbers.InitGeneral(-1, -1, 4, 3, 0, 0, 0, 0);
-	cImageDivider.Init(&cImage, NULL);
+	cImageDivider.Init(&pcImage, NULL);
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(12, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = (CImageCel*)cImageDivider.GetDestImageCels()->Get(0);
@@ -90,7 +87,7 @@ void TestImageDividerGenerateFromNumbers(void)
 	cImageDivider.Kill();
 
 	cNumbers.InitGeneral(16, 16, -1, -1, 0, 0, 0, 0);
-	cImageDivider.Init(&cImage, NULL);
+	cImageDivider.Init(&pcImage, NULL);
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(12, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = (CImageCel*)cImageDivider.GetDestImageCels()->Get(0);
@@ -107,7 +104,7 @@ void TestImageDividerGenerateFromNumbers(void)
 	cImageDivider.Kill();
 
 	cNumbers.InitGeneral(16, 16, -1, -1, 0, 0, 16, 0);
-	cImageDivider.Init(&cImage, NULL);
+	cImageDivider.Init(&pcImage, NULL);
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(6, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = (CImageCel*)cImageDivider.GetDestImageCels()->Get(0);
@@ -124,7 +121,7 @@ void TestImageDividerGenerateFromNumbers(void)
 	cImageDivider.Kill();
 
 	cNumbers.InitGeneral(16, 16, -1, -1, 0, 0, 0, 16);
-	cImageDivider.Init(&cImage, NULL);
+	cImageDivider.Init(&pcImage, NULL);
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(8, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = (CImageCel*)cImageDivider.GetDestImageCels()->Get(0);
@@ -141,7 +138,7 @@ void TestImageDividerGenerateFromNumbers(void)
 	cImageDivider.Kill();
 
 	cNumbers.InitGeneral(16, 16, -1, -1, 16, 0, 0, 0);
-	cImageDivider.Init(&cImage, NULL);
+	cImageDivider.Init(&pcImage, NULL);
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(9, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = (CImageCel*)cImageDivider.GetDestImageCels()->Get(0);
@@ -158,7 +155,7 @@ void TestImageDividerGenerateFromNumbers(void)
 	cImageDivider.Kill();
 
 	cNumbers.InitGeneral(16, 16, -1, -1, 16, 0, 16, 0);
-	cImageDivider.Init(&cImage, NULL);
+	cImageDivider.Init(&pcImage, NULL);
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(6, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = (CImageCel*)cImageDivider.GetDestImageCels()->Get(0);
@@ -175,7 +172,7 @@ void TestImageDividerGenerateFromNumbers(void)
 	cImageDivider.Kill();
 
 	cNumbers.InitGeneral(-1, -1, 3, 3, 16, 0, 0, 0);
-	cImageDivider.Init(&cImage, NULL);
+	cImageDivider.Init(&pcImage, NULL);
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(9, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = (CImageCel*)cImageDivider.GetDestImageCels()->Get(0);
@@ -192,7 +189,7 @@ void TestImageDividerGenerateFromNumbers(void)
 	cImageDivider.Kill();
 
 	cNumbers.InitGeneral(-1, -1, 2, 3, 16, 0, 16, 0);
-	cImageDivider.Init(&cImage, NULL);
+	cImageDivider.Init(&pcImage, NULL);
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(6, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = (CImageCel*)cImageDivider.GetDestImageCels()->Get(0);
@@ -208,7 +205,7 @@ void TestImageDividerGenerateFromNumbers(void)
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 	cImageDivider.Kill();
 
-	cImage.Kill();
+	pcImage = NULL;;
 }
 
 
@@ -219,15 +216,14 @@ void TestImageDividerGenerateFromNumbers(void)
 void TestImageDividerGenerateFromNumbersWithTransparent(void)
 {
 	CImageDivider			cImageDivider;
-	CImage					cImage;
 	CImageCel*				pcImageCel;
-	uint32			uiTransparent;
+	uint32					uiTransparent;
 	CImageDividerNumbers	cNumbers;
 
-	ReadImage(&cImage, "Input\\grid.png");
+	Ptr<CImage> pcImage = ReadImage("Input\\grid.png");
 
 	uiTransparent = 0x212121ff;
-	cImageDivider.Init(&cImage, (SImageColour*)&uiTransparent);
+	cImageDivider.Init(&pcImage, (SImageColour*)&uiTransparent);
 
 	cNumbers.InitGeneral(-1, -1, 4, 3, 0, 0, 0, 0);
 	cImageDivider.GenerateFromNumbers(&cNumbers);
@@ -245,7 +241,7 @@ void TestImageDividerGenerateFromNumbersWithTransparent(void)
 	AssertInt(15, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 	cImageDivider.Kill();
 
-	cImage.Kill();
+	pcImage = NULL;
 }
 
 
@@ -257,16 +253,15 @@ void TestImageDividerGenerateFromBorderWithTransparent(void)
 {
 
 	CImageDivider	cImageDivider;
-	CImage			cImage;
 	CImageCelMask*	pcRectangle;
-	uint32	uiTransparent;
-	CImage			cMask;
+	uint32			uiTransparent;
 
-	ReadImage(&cImage, "Input\\cel6.png");
+	Ptr<CImage> pcImage = ReadImage("Input\\cel6.png");
+	Ptr<CImage> pcMask = OMalloc<CImage>();
 
 	uiTransparent = 0x000000;
-	cImageDivider.Init(&cImage, (SImageColour*)&uiTransparent);
-	cImageDivider.GenerateFromBorder(&cMask);
+	cImageDivider.Init(&pcImage, (SImageColour*)&uiTransparent);
+	cImageDivider.GenerateFromBorder(&pcMask);
 	AssertInt(2, cImageDivider.GetDestImageCels()->NumElements());
 	pcRectangle = (CImageCelMask*)cImageDivider.GetDestImageCels()->Get(0);
 	AssertInt(4, pcRectangle->GetSubImage()->mcImageRect.miLeft);
@@ -280,12 +275,12 @@ void TestImageDividerGenerateFromBorderWithTransparent(void)
 	AssertInt(11, pcRectangle->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(25, pcRectangle->GetSubImage()->mcImageRect.GetHeight());
 
-	WriteImage(&cMask, "Output\\cel6.raw");
-	AssertFileMemory("input\\cel6.raw", cMask.mcChannels.GetData(), cMask.GetByteSize());
+	WriteImage(&pcMask, "Output\\cel6.raw");
+	AssertFileMemory("input\\cel6.raw", pcMask->mcChannels.GetData(), pcMask->GetByteSize());
 
 	cImageDivider.Kill();
-	cMask.Kill();
-	cImage.Kill();
+	pcMask = NULL;
+	pcImage = NULL;
 }
 
 

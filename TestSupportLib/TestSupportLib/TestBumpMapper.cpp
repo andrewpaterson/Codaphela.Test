@@ -15,38 +15,35 @@
 //////////////////////////////////////////////////////////////////////////
 void TestBumpMapper1(void)
 {
-	CImage	cSource;
-	CImage	cDest;
+	Ptr<CImage> pcSource = ReadImage("Input\\HeightMap.png");
+	Ptr<CImage>	pcDest = OMalloc<CImage>();
 
-	ReadImage(&cSource, "Input\\HeightMap.png");
+	pcDest = ConvertHeightMapTo(true, true, pcSource, IMAGE_DIFFUSE_RED);
 
-	cDest.Init();
+	pcDest->BeginChange();
+	pcDest->RenameChannel(IMAGE_NORMAL_X, IMAGE_DIFFUSE_RED);
+	pcDest->RenameChannel(IMAGE_NORMAL_Y, IMAGE_DIFFUSE_GREEN);
+	pcDest->RenameChannel(IMAGE_NORMAL_Z, IMAGE_DIFFUSE_BLUE);
+	pcDest->EndChange();
 
-	ConvertHeightMapTo(true, true, &cDest, &cSource, IMAGE_DIFFUSE_RED);
+	WriteImage(pcDest, "Output\\NormalMap.png", IT_PNG);
 
-	cDest.BeginChange();
-	cDest.RenameChannel(IMAGE_NORMAL_X, IMAGE_DIFFUSE_RED);
-	cDest.RenameChannel(IMAGE_NORMAL_Y, IMAGE_DIFFUSE_GREEN);
-	cDest.RenameChannel(IMAGE_NORMAL_Z, IMAGE_DIFFUSE_BLUE);
-	cDest.EndChange();
+	pcDest->BeginChange();
+	pcDest->RenameChannel(IMAGE_DIFFUSE_RED, IMAGE_NORMAL_X);
+	pcDest->RenameChannel(IMAGE_DIFFUSE_GREEN, IMAGE_NORMAL_Y);
 
-	WriteImage(&cDest, "Output\\NormalMap.png", IT_PNG);
+	pcDest->RenameChannel(IMAGE_BUMP_U, IMAGE_DIFFUSE_RED);
+	pcDest->RenameChannel(IMAGE_BUMP_V, IMAGE_DIFFUSE_GREEN);
+	pcDest->EndChange();
 
-	cDest.BeginChange();
-	cDest.RenameChannel(IMAGE_DIFFUSE_RED, IMAGE_NORMAL_X);
-	cDest.RenameChannel(IMAGE_DIFFUSE_GREEN, IMAGE_NORMAL_Y);
-
-	cDest.RenameChannel(IMAGE_BUMP_U, IMAGE_DIFFUSE_RED);
-	cDest.RenameChannel(IMAGE_BUMP_V, IMAGE_DIFFUSE_GREEN);
-	cDest.EndChange();
-
-	WriteImage(&cDest, "Output\\BumpMap.png", IT_PNG);
+	WriteImage(pcDest, "Output\\BumpMap.png", IT_PNG);
 
 	AssertFile("Input\\NormalMap.png", "Output\\NormalMap.png");
 	AssertFile("Input\\BumpMap.png", "Output\\BumpMap.png");
 
-	cDest.Kill();
-	cSource.Kill();
+	//These are probably unnecessay.
+	pcDest->Kill();
+	pcSource->Kill();
 }
 
 

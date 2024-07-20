@@ -31,15 +31,15 @@ void TestHalfSpace(void)
 
 	sTest.Init(0.00, -12.50, 0.00);
 	bResult = cHalfSpace.On(&sTest);
-	AssertBool(true, bResult);
+	AssertTrue(bResult);
 
 	sTest.Init(0.00, -14.00, 0.00);
 	bResult = cHalfSpace.Contains(&sTest);
-	AssertBool(true, bResult);
+	AssertTrue(bResult);
 
 	sTest.Init(0.00, 12.50, 0.00);
 	bResult = cHalfSpace.NotContains(&sTest);
-	AssertBool(true, bResult);
+	AssertTrue(bResult);
 
 
 	sPos1.Init(25.00, -12.50, 50.00);
@@ -52,7 +52,7 @@ void TestHalfSpace(void)
 
 	sTest.Init(0.00, -12.50, 0.00);
 	bResult = cHalfSpace.On(&sTest);
-	AssertBool(true, bResult);
+	AssertTrue(bResult);
 
 	sTest.Init(0.00, -14.00, 0.00);
 	bResult = cHalfSpace.Contains(&sTest);

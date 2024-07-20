@@ -20,7 +20,6 @@
 //////////////////////////////////////////////////////////////////////////
 void TestImageSwizzle1(void)
 {
-	CImage					cImage;
 	CImageModifierStack		cStack;
 	CImageRGBToGrey*		pcRGBToGrey;
 	CImageChannelRename*	pcChannelRename;
@@ -28,9 +27,9 @@ void TestImageSwizzle1(void)
 	CImageDrawBox*			pcDrawBox;
 	CImageColourRGB			cRGB;
 
-	ReadImage(&cImage, "Input\\swizzel.png");
+	Ptr<CImage> pcImage = ReadImage("Input\\swizzel.png");
 
-	cStack.Init(&cImage);
+	cStack.Init(pcImage);
 	
 	pcRGBToGrey = cStack.AddModifier<CImageRGBToGrey>();
 	pcRGBToGrey->Init(RGBTGS_OnlyIfChannelsSame);
@@ -51,10 +50,10 @@ void TestImageSwizzle1(void)
 	cStack.ApplyAll();
 	cStack.Kill();
 
-	WriteImage(&cImage, "Output\\swizzle.raw");
-	AssertFileMemory("input\\swizzle.raw", cImage.GetData(), cImage.GetByteSize());
+	WriteImage(pcImage, "Output\\swizzle.raw");
+	AssertFileMemory("input\\swizzle.raw", pcImage->GetData(), pcImage->GetByteSize());
 
-	cImage.Kill();
+	pcImage->Kill();
 }
 
 

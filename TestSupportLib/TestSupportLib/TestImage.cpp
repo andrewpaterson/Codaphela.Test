@@ -43,7 +43,7 @@ void TestDrawImage(void)
 	cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 	
 	bResult = cImageSource.IsSameFormat(&cImageDest);
-	AssertBool(true, bResult);
+	AssertTrue(bResult);
 
 
 	CImageCopier::Copy(&cImageSource, &cImageDest, 0, 0, NULL);

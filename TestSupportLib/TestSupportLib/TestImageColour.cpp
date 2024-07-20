@@ -44,7 +44,7 @@ void TestImageColourAccessorBytes(void)
 
 	sDest.Full();
 	bResult = pcAccessor->MakeColour(&sDest, &cColour);
-	AssertBool(true, bResult);
+	AssertTrue(bResult);
 
 	//Remember ints have reverse endiannes which is why the test number below looks backwarsd.
 	AssertIntHex(0x3f7fff54, *(int*)((void*)sDest.c));
@@ -108,7 +108,7 @@ void TestImageColourAccessorFloats(void)
 
 	sDest.Full();
 	bResult = pcAccessor->MakeColour(&sDest, &cNormal);
-	AssertBool(true, bResult);
+	AssertTrue(bResult);
 
 	AssertFloat(0.7f, *((float*)&((sDest).c)[0x0]), 3);
 	AssertFloat(0.6f, *((float*)&((sDest).c)[0x4]), 3);
@@ -164,7 +164,7 @@ void TestImageColourMultiAccessor(void)
 
 	sDest.Full();
 	bResult = pcAccessor->MakeColour(&sDest, &cColour);
-	AssertBool(true, bResult);
+	AssertTrue(bResult);
 
 	AssertFloat(0.7f, *((float*)&((sDest).c)[0x0]), 3);
 	AssertFloat(-0.6f, *((float*)&((sDest).c)[0x4]), 3);

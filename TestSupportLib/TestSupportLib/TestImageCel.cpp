@@ -16,10 +16,9 @@
 void TestImageCelCropBorders(void)
 {
 	CImageCel	cCel;
-	CImage		cImage;
 
-	ReadImage(&cImage, "Input\\cel1.png");
-	cCel.Init(&cImage);
+	Ptr<CImage> pcImage = ReadImage("Input\\cel1.png");
+	cCel.Init(&pcImage);
 	cCel.CropTransparentBorders();
 
 	AssertInt(24, cCel.GetSubImage()->GetFullWidth());
@@ -28,10 +27,10 @@ void TestImageCelCropBorders(void)
 	AssertInt(24, cCel.GetSubImage()->GetImageHeight());
 
 	cCel.Kill();
-	cImage.Kill();
+	pcImage->Kill();
 
-	ReadImage(&cImage, "Input\\cel2.png");
-	cCel.Init(&cImage);
+	pcImage = ReadImage("Input\\cel2.png");
+	cCel.Init(&pcImage);
 	cCel.CropTransparentBorders();
 
 	AssertInt(24, cCel.GetSubImage()->GetFullWidth());
@@ -42,10 +41,10 @@ void TestImageCelCropBorders(void)
 	AssertInt(3, cCel.GetSubImage()->mcImageRect.miTop);
 
 	cCel.Kill();
-	cImage.Kill();
+	pcImage->Kill();
 
-	ReadImage(&cImage, "Input\\cel3.png");
-	cCel.Init(&cImage);
+	pcImage = ReadImage("Input\\cel3.png");
+	cCel.Init(&pcImage);
 	cCel.CropTransparentBorders();
 
 	AssertInt(24, cCel.GetSubImage()->GetFullWidth());
@@ -55,7 +54,7 @@ void TestImageCelCropBorders(void)
 	AssertBool(true, cCel.GetSubImage()->IsImageEmpty());
 
 	cCel.Kill();
-	cImage.Kill();
+	pcImage->Kill();
 }
 
 
@@ -65,16 +64,15 @@ void TestImageCelCropBorders(void)
 //////////////////////////////////////////////////////////////////////////
 void TestImageCelMaskCropBorders(void)
 {
-	CImage			cImage;
 	CImageDivider	cDivider;
 	CImageCelMask*	pcRect1;
 	CImageCelMask*	pcRect2;
-	CImage			cMask;
 
-	ReadImage(&cImage, "Input\\cel4.png");
+	Ptr<CImage> pcImage = ReadImage("Input\\cel4.png");
+	Ptr<CImage> pcMask = OMalloc<CImage>();
 
-	cDivider.Init(&cImage);
-	cDivider.GenerateFromBorder(&cMask);
+	cDivider.Init(&pcImage);
+	cDivider.GenerateFromBorder(pcMask);
 	
 	AssertInt(2, cDivider.GetDestImageCels()->NumElements());
 	pcRect1 = (CImageCelMask*)cDivider.GetDestImageCels()->UnsafeGet(0);
@@ -92,9 +90,9 @@ void TestImageCelMaskCropBorders(void)
 	AssertInt(22, pcRect2->GetSubImage()->GetFullHeight());
 	AssertInt(11, pcRect2->GetSubImage()->GetImageHeight());
 
-	cMask.Kill();
-	cImage.Kill();
 	cDivider.Kill();
+	pcImage = NULL;
+	pcMask = NULL;
 }
 
 
@@ -105,12 +103,11 @@ void TestImageCelMaskCropBorders(void)
 void TestImageCelTransparentColourCropBorders(void)
 {
 	CImageCelTransparent	cCel;
-	CImage					cImage;
-	uint32			cBlack;
+	uint32					cBlack;
 
 	cBlack = 0x5a000000;  //the 5a represents garbage.  Only the first three bytes are used.
-	ReadImage(&cImage, "Input\\cel5.png");
-	cCel.Init(&cImage, (SImageColour*)&cBlack);
+	Ptr<CImage> pcImage = ReadImage("Input\\cel5.png");
+	cCel.Init(&pcImage, (SImageColour*)&cBlack);
 	cCel.CropTransparentBorders();
 
 	AssertInt(24, cCel.GetSubImage()->GetFullWidth());
@@ -121,7 +118,7 @@ void TestImageCelTransparentColourCropBorders(void)
 	AssertInt(2, cCel.GetSubImage()->mcImageRect.miTop);
 
 	cCel.Kill();
-	cImage.Kill();
+	pcImage->Kill();
 }
 
 

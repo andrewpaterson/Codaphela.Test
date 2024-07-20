@@ -17,53 +17,52 @@
 //////////////////////////////////////////////////////////////////////////
 void TestImageModifierStack1(void)
 {
-	CImage					cImage;
 	CImageModifierStack		cStack;
-	bool					bResult;
 	CImageRGBToGrey*		pcGrey;
 	CImageHeightToNormals*	pcNormals;
 	CImageResampler*		pcSmall;
-	CImage					cBak;
+	
+	Ptr<CImage> pcBak = ReadImage("Input/Adelle.png", IT_Unknown, true);
+	AssertTrue(pcBak.IsNotNull());
 
-	bResult = ReadImage(&cBak, "Input/Adelle.png");
-	AssertBool(true, bResult);
-
-	cImage.Init();
-	cImage.Copy(&cBak);
-	cStack.Init(&cImage);
+	Ptr<CImage> pcImage = OMallocNoI<CImage>();
+	pcImage->Copy(pcBak);
+	cStack.Init(pcImage);
 
 	pcGrey = cStack.AddModifier<CImageRGBToGrey>();
 	pcGrey->Init(RGBTGS_UseRed);
 	cStack.ApplyAll();
 
-	WriteImage(&cImage, "Output/AdelleGrey.raw");
-	AssertFileMemory("Input/AdelleGrey.raw", cImage.GetData(), cImage.GetByteSize());
-	cImage.Kill();
+	WriteImage(pcImage, "Output/AdelleGrey.raw");
+	AssertFileMemory("Input/AdelleGrey.raw", pcImage->GetData(), pcImage->GetByteSize());
+	pcImage = NULL;
 
+	pcImage = OMallocNoI<CImage>();
 	pcNormals = cStack.AddModifier<CImageHeightToNormals>();
 	pcNormals->Init(IMAGE_DIFFUSE_GREY);
-	cImage.Init();
-	cImage.Copy(&cBak);
+	pcImage->Copy(pcBak);
+	cStack.SetImage(pcImage);
 	cStack.ApplyAll();
 
-	WriteImage(&cImage, "Output/AdelleNormal.raw");
-	AssertFileMemory("Input/AdelleNormal.raw", cImage.GetData(), cImage.GetByteSize());
-	cImage.Kill();
+	WriteImage(pcImage, "Output/AdelleNormal.raw");
+	AssertFileMemory("Input/AdelleNormal.raw", pcImage->GetData(), pcImage->GetByteSize());
+	pcImage = NULL;
 
+	pcImage = OMallocNoI<CImage>();
 	pcSmall = cStack.AddModifier<CImageResampler>();
 	pcSmall->Init(IR_NearestNeighbour, 21, 16);
-	cImage.Init();
-	cImage.Copy(&cBak);
+	pcImage->Copy(pcBak);
+	cStack.SetImage(pcImage);
 	cStack.ApplyAll();
 
-	WriteImage(&cImage, "Output/AdelleSmall.raw");
-	AssertFileMemory("Input/AdelleSmall.raw", cImage.GetData(), cImage.GetByteSize());
+	WriteImage(pcImage, "Output/AdelleSmall.raw");
+	AssertFileMemory("Input/AdelleSmall.raw", pcImage->GetData(), pcImage->GetByteSize());
 	AssertInt(3, cStack.NumModifiers());
 
 	cStack.Kill();
-	cImage.Kill();
+	pcImage = NULL;
 
-	cBak.Kill();
+	pcBak = NULL;
 }
 
 
@@ -77,9 +76,11 @@ void TestImageModifierStack(void)
 
 	DataIOInit();
 	ObjectsInit();
+	ImageChannelDescriptorInit();
 
 	TestImageModifierStack1();
 
+	ImageChannelDescriptorKill();
 	ObjectsKill();
 	DataIOKill();
 

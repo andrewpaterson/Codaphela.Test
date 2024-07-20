@@ -15,20 +15,19 @@
 void TestImageGreyToRGB1(void)
 {
 
-	CImage				cImage;
 	CImageGreyToRGB		cGreyToRGB;
 
-	ReadImage(&cImage, "Input/basn0g08.png");
+	Ptr<CImage> pcImage = ReadImage("Input/basn0g08.png");
 
 	cGreyToRGB.Init();
-	cGreyToRGB.Modify(&cImage);
+	cGreyToRGB.Modify(pcImage);
 	cGreyToRGB.Kill();
 
-	WriteImage(&cImage, "Output/GreyToRGB.raw");
-	AssertFileMemory("input/GreyToRGB.raw", cImage.GetData(), cImage.GetByteSize());
+	WriteImage(pcImage, "Output/GreyToRGB.raw");
+	AssertFileMemory("input/GreyToRGB.raw", pcImage->GetData(), pcImage->GetByteSize());
 
 	cGreyToRGB.Kill();
-	cImage.Kill();
+	pcImage->Kill();
 }
 
 

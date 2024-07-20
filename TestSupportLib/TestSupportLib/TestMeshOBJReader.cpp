@@ -26,7 +26,7 @@ void TestMeshOBJReader(void)
 	iNumCorners = cMesh.NumCorners();
 	iNumNormals = cMesh.mcNormals.mcNormals.NumElements();
 
-	AssertBool(true, bResult);
+	AssertTrue(bResult);
 	AssertInt(162, iNumCorners);
 	AssertInt(320, cMesh.NumFaces());
 	AssertInt(320 + 394, iNumNormals);
