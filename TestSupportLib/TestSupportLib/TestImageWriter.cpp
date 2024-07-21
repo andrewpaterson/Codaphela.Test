@@ -147,39 +147,17 @@ void TestImageRADWriter(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestImageSFTWriter(void)
-{
-	bool bResult;
-
-	Ptr<CImage> pcImage = ReadImage("Input\\MakiWalk.png", IT_Unknown, true);
-	AssertTrue(pcImage.IsNotNull());
-
-	bResult = WriteImage(pcImage, "Output\\MakiWalk.sft");
-	AssertTrue(bResult);
-
-	pcImage->Kill();
-
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 void TestImageWriter(void)
 {
 	BeginTests();
 
 	DataIOInit();
 	ObjectsInit();
-	ImageChannelDescriptorInit();
 
 	TestImagePNGWriter();
 	TestImageTGAWriter();
 	TestImageRADWriter();
-	TestImageSFTWriter();
 
-	ImageChannelDescriptorKill();
 	ObjectsKill();
 	DataIOKill();
 

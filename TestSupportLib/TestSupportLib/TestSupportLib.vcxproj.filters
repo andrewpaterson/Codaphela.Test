@@ -133,6 +133,9 @@
     <ClCompile Include="TestImageRGBAToR3G3B2A.cpp">
       <Filter>Source Files\Image</Filter>
     </ClCompile>
+    <ClCompile Include="TestImageSFTWriter.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
