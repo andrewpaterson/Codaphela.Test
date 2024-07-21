@@ -22,7 +22,6 @@ void TestImageSFTWriter1(void)
 	AssertTrue(bResult);
 
 	pcImage->Kill();
-
 }
 
 
