@@ -8,6 +8,8 @@
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/SFTReader.h"
 #include "SupportLib/SFTWriter.h"
+#include "SupportLib/ImageDivider.h"
+#include "SupportLib/ImageCel.h"
 #include "TestLib/Assert.h"
 
 
@@ -23,7 +25,7 @@ void TestImageSFTWriter1(void)
 	Ptr<CImage> pcImage = ReadImage("Input\\Tiny.png", IT_Unknown, true);
 	AssertTrue(pcImage.IsNotNull());
 
-	bResult = SaveSFTTransparentCel(pcImage, "Output\\Tiny.sft", 0, 0, pcImage->GetWidth(), pcImage->GetHeight());
+	bResult = SaveSFTTransparent(pcImage, "Output\\Tiny.sft");
 	AssertTrue(bResult);
 
 	pcImage = NULL;
@@ -100,6 +102,50 @@ void TestImageSFTWriter3(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestImageSFTWriter4(void)
+{
+	bool					bResult;
+	CImageDivider			cImageDivider;
+	CImageDividerNumbers	cNumbers;
+	CArrayUnknown*			pacImageCels;
+	CImageCel*				pcImageCel;
+
+	Ptr<CImage> pcImage = ReadImage("Input\\MakiWalk.png", IT_Unknown, true);
+	AssertTrue(pcImage.IsNotNull());
+
+	cNumbers.InitGeneral(-1, -1, 6, 1, 0, 0, 0, 0);
+	cImageDivider.Init(&pcImage, NULL);
+	cImageDivider.GenerateFromNumbers(&cNumbers);
+	pacImageCels = cImageDivider.GetDestImageCels();
+
+	AssertSize(6, pacImageCels->NumElements());
+	pcImageCel = (CImageCel*)pacImageCels->Get(0);
+
+	AssertSize(42, pcImageCel->GetSubImage()->GetFullWidth());
+	AssertSize(32, pcImageCel->GetSubImage()->GetImageWidth());
+	AssertSize(91, pcImageCel->GetSubImage()->GetFullHeight());
+	AssertSize(90, pcImageCel->GetSubImage()->GetImageHeight());
+
+	bResult = SaveSFT(pacImageCels, "Output\\MakiStand.sft");
+	AssertTrue(bResult);
+
+	AssertFile("Input\\MakiStand-expected.sft", "Output\\MakiStand.sft")
+
+	pcImage = NULL;
+
+	pcImage = LoadSFT("Output\\MakiStand.sft");
+	WriteImage(pcImage, "Output\\MakiStand.png", IT_PNG);
+
+	pcImage = NULL;
+
+	AssertFile("Input\\MakiStand-expected.png", "Output\\MakiStand.png")
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestImageSFTWriter(void)
 {
 	BeginTests();
@@ -111,6 +157,7 @@ void TestImageSFTWriter(void)
 	TestImageSFTWriter1();
 	TestImageSFTWriter2();
 	TestImageSFTWriter3();
+	TestImageSFTWriter4();
 
 	ImageChannelDescriptorKill();
 	ObjectsKill();
