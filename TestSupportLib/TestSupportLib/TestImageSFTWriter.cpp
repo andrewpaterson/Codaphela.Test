@@ -87,7 +87,7 @@ void TestImageSFTWriterOpaque(void)
 
 	AssertFile("Input\\Fighting320-expected.sft", "Output\\Fighting320.sft")
 
-		pcImage = NULL;
+	pcImage = NULL;
 
 	pcImage = LoadSFT("Output\\Fighting320.sft");
 	WriteImage(pcImage, "Output\\Fighting320.png", IT_PNG);

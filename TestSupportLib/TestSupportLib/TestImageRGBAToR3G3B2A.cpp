@@ -28,9 +28,9 @@ void TestImageToR3G3B2AConvert(void)
 
 	pcImage->GetAllChannels(&pcChannels);
 	AssertInt(3, pcChannels.NumElements());
-	AssertChannel(IP_Diffuse, CT_Blue, PT_crumb, pcChannels.Get(0));
+	AssertChannel(IP_Diffuse, CT_Blue, PT_crumb, pcChannels.Get(2));
 	AssertChannel(IP_Diffuse, CT_Green, PT_tribble, pcChannels.Get(1));
-	AssertChannel(IP_Diffuse, CT_Red, PT_tribble, pcChannels.Get(2));
+	AssertChannel(IP_Diffuse, CT_Red, PT_tribble, pcChannels.Get(0));
 	AssertInt(24, pcImage->GetWidth());
 	AssertInt(24, pcImage->GetHeight());
 	AssertInt(576, pcImage->GetChannels()->GetSize());
