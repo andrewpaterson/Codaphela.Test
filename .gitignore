@@ -58,3 +58,5 @@ TestCoreLib/Release
 /TestJavaParserLib/Debug/*
 /TestJavaParserLib/TestJavaParserLib/Debug/*
 /TestJavaParserLib/TestJavaParserLib/Log.txt
+/TestElectronicsLib/Debug/*
+/TestElectronicsLib/TestElectronicsLib/Debug/*
