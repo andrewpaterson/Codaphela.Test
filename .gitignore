@@ -62,3 +62,6 @@ TestCoreLib/Release
 /TestElectronicsLib/TestElectronicsLib/Debug/*
 /TestCppParserLib/Release/*
 /TestCppParserLib/TestCppParserLib/Release/*
+/TestGerberLib/Debug/*
+/TestGerberLib/TestGerberLib/Debug/*
+/TestGerberLib/TestGerberLib/Log.txt
