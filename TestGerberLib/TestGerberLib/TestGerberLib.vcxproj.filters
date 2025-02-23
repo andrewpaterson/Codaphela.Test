@@ -8,10 +8,16 @@
     <Filter Include="Source">
       <UniqueIdentifier>{d5c00f06-eaad-4b95-aeb3-14fd10974709}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Parser">
+      <UniqueIdentifier>{38a2e7b5-9768-443f-be2d-bff95c8881ee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestGerberLib.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGerberParser.cpp">
+      <Filter>Source\Parser</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -9,10 +9,12 @@
 #include "StandardLib/Unknowns.h"
 #include "TestLib/Assert.h"
 
+
+void TestGerberParser(void);
+
+
 int __cdecl main(void)
 {
-	CFileUtil		cFileUtil;
-
 	InitTotalStatistics();
 
 	FastFunctionsInit();
@@ -21,7 +23,7 @@ int __cdecl main(void)
 	MemoryInit();
 	UnknownsInit();
 
-	
+	TestGerberParser();
 
 	UnknownsKill();
 	MemoryKill();

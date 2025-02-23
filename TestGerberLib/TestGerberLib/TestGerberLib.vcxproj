@@ -185,6 +185,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="TestGerberLib.cpp" />
+    <ClCompile Include="TestGerberParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
@@ -194,6 +195,9 @@
     <ProjectReference Include="..\..\..\CommonLibraries\BaseLib\BaseLib.vcxproj">
       <Project>{e25d2dac-0e80-42b2-8fa7-99b837cf7588}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\CommonLibraries\GerberLib\GerberLib.vcxproj">
+      <Project>{27c44a6d-223d-4cb9-a7a3-fcab828f85c7}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\..\CommonLibraries\ImageLib\ImageLib.vcxproj">
       <Project>{1f518043-b152-4b9c-9d61-ddd6400420ed}</Project>
@@ -207,7 +211,7 @@
       <Project>{221022f1-b103-456a-8f55-721f33f2e26d}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-	<ProjectReference Include="..\..\..\CommonLibraries\TestLib\TestLib.vcxproj">
+    <ProjectReference Include="..\..\..\CommonLibraries\TestLib\TestLib.vcxproj">
       <Project>{d06d265e-a503-42f8-a93a-a0a1c0b058ff}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
