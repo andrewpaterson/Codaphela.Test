@@ -9,7 +9,6 @@
 //////////////////////////////////////////////////////////////////////////
 void TestTextParserGetIdentifier(void)
 {
-
 	char		c;
 	TRISTATE	tResult;
 	char		szTemp[1024];
@@ -290,10 +289,57 @@ void TestTextParserGetFloatLiteral(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestTextParserGetIdentifierWithWhitespace()
+{
+	TRISTATE	tResult;
+	char		szTemp[1024];
+	CTextParser cTextParser;
+	char		szText[] = "Hello/* Not * */ World // bleugh\n  Another/*//*/";
+
+	cTextParser.Init(szText);
+	tResult = cTextParser.GetIdentifier(szTemp);
+	AssertTristate(TRITRUE, tResult);
+	AssertString("Hello", szTemp);
+
+	tResult = cTextParser.GetIdentifier(szTemp);
+	AssertTristate(TRITRUE, tResult);
+	AssertString("World", szTemp);
+
+	tResult = cTextParser.GetIdentifier(szTemp);
+	AssertTristate(TRITRUE, tResult);
+	AssertString("Another", szTemp);
+
+	cTextParser.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestTextParserGetString()
 {
-//xxx
+	TRISTATE	tResult;
+	char		szTemp[1024];
+	CTextParser cTextParser;
+	char		szText[] = "\"Hello /* Hey */\"/* */\"Wor\nld\"\n\"Hi\"";
+
+	cTextParser.Init(szText);
+	tResult = cTextParser.GetString(szTemp);
+	AssertTristate(TRITRUE, tResult);
+	AssertString("Hello /* Hey */", szTemp);
+
+	tResult = cTextParser.GetString(szTemp);
+	AssertTristate(TRITRUE, tResult);
+	AssertString("Wor\nld", szTemp);
+
+	tResult = cTextParser.GetString(szTemp);
+	AssertTristate(TRITRUE, tResult);
+	AssertString("Hi", szTemp);
+
+	cTextParser.Kill();
 }
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -307,6 +353,7 @@ void TestTextParser(void)
 	TestTextParserGetIdentifier();
 	TestTextParserGetIntegerLiteral();
 	TestTextParserGetFloatLiteral();
+	TestTextParserGetIdentifierWithWhitespace();
 	TestTextParserGetString();
 
 	TestStatistics();
