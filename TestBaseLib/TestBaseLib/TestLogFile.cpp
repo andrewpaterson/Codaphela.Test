@@ -638,7 +638,7 @@ void TestLogFileDelete(void)
 	pcLogFile->Begin();
 
 	AssertTrue(cFile.Open(EFM_Read));
-	AssertLong(iSourcelen + 1, cFile.GetFileSize());
+	AssertLong(iSourcelen + 1, cFile.Size());
 	cFile.ReadData(szResult, iSourcelen + 1);
 	AssertString(szSource, szResult);
 	cFile.Close();
@@ -646,20 +646,20 @@ void TestLogFileDelete(void)
 	cFile.Open(EFM_ReadWrite_Create);
 	iWriteLen = strlen(szWrite);
 	cFile.WriteData(szWrite, iWriteLen);
-	AssertLong(iSourcelen + 1, cFile.GetFileSize());
+	AssertLong(iSourcelen + 1, cFile.Size());
 	
 	pcLogFile->Close();
 	AssertSize(5, pcLogFile->GetNumCommands());
-	AssertLong(25, cFile.GetFileSize());
+	AssertLong(25, cFile.Size());
 
 	cFile.Delete();
 	AssertTrue(cFileUtil.Exists(szFileName));
 	AssertSize(1, pcLogFile->GetNumCommands());
-	AssertLong(0, cFile.GetFileSize());
+	AssertLong(0, cFile.Size());
 
 	cFile.Open(EFM_ReadWrite_Create);
 	cFile.Write(szA, 2, 1);
-	AssertLong(2, cFile.GetFileSize());
+	AssertLong(2, cFile.Size());
 	cFile.Close();
 
 	pcLogFile->Commit();
@@ -720,7 +720,7 @@ void TestLogFileMultipleReadsAfterOpens(void)
 	pcLogFile->Begin();
 
 	AssertTrue(cFile.Open(EFM_Read));
-	AssertLong(iSourcelen + 1, cFile.GetFileSize());
+	AssertLong(iSourcelen + 1, cFile.Size());
 	cFile.ReadData(szResult, iSourcelen + 1);
 	AssertString(szSource, szResult);
 	cFile.Close();
@@ -728,16 +728,16 @@ void TestLogFileMultipleReadsAfterOpens(void)
 	cFile.Open(EFM_ReadWrite_Create);
 	iWriteLen = strlen(szWrite);
 	cFile.WriteData(szWrite, iWriteLen);
-	AssertLong(iSourcelen + 1, cFile.GetFileSize());
+	AssertLong(iSourcelen + 1, cFile.Size());
 	pcLogFile->Close();
 
 	cFile.Delete();
 	AssertTrue(cFileUtil.Exists(szFileName));
-	AssertLong(0, cFile.GetFileSize());
+	AssertLong(0, cFile.Size());
 
 	cFile.Open(EFM_ReadWrite_Create);
 	cFile.Write(szA, 2, 1);
-	AssertLong(2, cFile.GetFileSize());
+	AssertLong(2, cFile.Size());
 
 	cFile.Close();
 

@@ -29,7 +29,7 @@ void TestLoggerMemoryOutput(void)
 	cMemory.Open(EFM_Read);
 	cBasicMemory.Init(&cMemory);
 	memset(sz, 0, 1024);
-	cBasicMemory.ReadStringChars(sz, (int)cBasicMemory.GetFileSize());
+	cBasicMemory.ReadStringChars(sz, (int)cBasicMemory.Size());
 	cMemory.Close();
 	cMemory.Kill();
 	gcLogger.Kill();

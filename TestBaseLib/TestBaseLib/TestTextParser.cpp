@@ -290,6 +290,16 @@ void TestTextParserGetFloatLiteral(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestTextParserGetString()
+{
+//xxx
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestTextParser(void)
 {
 	BeginTests();
@@ -297,6 +307,7 @@ void TestTextParser(void)
 	TestTextParserGetIdentifier();
 	TestTextParserGetIntegerLiteral();
 	TestTextParserGetFloatLiteral();
+	TestTextParserGetString();
 
 	TestStatistics();
 }
