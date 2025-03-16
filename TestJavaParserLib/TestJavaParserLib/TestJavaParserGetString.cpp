@@ -7,7 +7,7 @@
 //																		//
 //																		//
 //////////////////////////////////////////////////////////////////////////
-TRISTATE ParseString(char* sz, void* szDest, int* piLength, int* piWidth)
+TRISTATE ParseString(char* sz, void* szDest, size* piLength, uint16* piWidth)
 {
 	CTextParser		cParser;
 	TRISTATE		tResult;
@@ -49,8 +49,8 @@ void TestJavaParserGetStringSizeofChar16(void)
 void TestJavaParserGetStringSimple(void)
 {
 	TRISTATE		tResult;
-	int				iWidth;
-	int				iLength;
+	uint16			iWidth;
+	size			iLength;
 	char			sz[4 KB];
 
 	tResult = ParseString("\"H\"", sz, &iLength, &iWidth);
@@ -79,10 +79,10 @@ void TestJavaParserGetStringSimple(void)
 //////////////////////////////////////////////////////////////////////////
 void TestJavaParserGetStringEscaped(void)
 {
-	TRISTATE		tResult;
-	int				iWidth;
-	int				iLength;
-	char			sz[4 KB];
+	TRISTATE	tResult;
+	uint16		iWidth;
+	size		iLength;
+	char		sz[4 KB];
 
 	tResult = ParseString("\"\"", sz, &iLength, &iWidth);
 	AssertZtring(tResult, sz, "", iLength, 0, iWidth, 1);

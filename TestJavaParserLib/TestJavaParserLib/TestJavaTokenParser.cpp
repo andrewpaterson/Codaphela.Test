@@ -85,7 +85,6 @@ package net.simulation.common;\n\
 
 	pcToken = cTokenParser.GetFirstToken();
 
-	pcToken = AssertComment(&cTokenDefinitions, pcToken, " Tickable Pins Start");
 	pcToken = AssertKeyword(&cTokenDefinitions, pcToken, JK_package);
 	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "net");
 	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Dot);
@@ -99,7 +98,6 @@ package net.simulation.common;\n\
 	pcToken = AssertIdentifier(&cTokenDefinitions, pcToken, "x");
 	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_Semicolon);
 	pcToken = AssertSeparator(&cTokenDefinitions, pcToken, JS_CurlyBracketRight);
-	pcToken = AssertComment(&cTokenDefinitions, pcToken, " Tickable Pins End");
 	AssertNull(pcToken);
 	
 	cTokenParser.Kill();	
@@ -151,7 +149,6 @@ public abstract class TickablePins<\n\
 	cTokenParser.PrettyPrint(&sz);
 
 	AssertStringApproximate("\
-// Tickable Pins\n\
 package net.simulation.common;\n\
 \n\
 import net.common.*; \n\

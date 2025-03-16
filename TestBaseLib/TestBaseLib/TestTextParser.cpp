@@ -42,7 +42,7 @@ c\n\
 	AssertString("2", szTemp);
 	AssertTristate(TRITRUE, tResult);
 
-	cTextParser.SkipWhiteSpace();
+	cTextParser.SkipWhitespace();
 	tResult = cTextParser.GetCharacter(&c);
 	AssertChar('c', c);
 	AssertTristate(TRITRUE, tResult);

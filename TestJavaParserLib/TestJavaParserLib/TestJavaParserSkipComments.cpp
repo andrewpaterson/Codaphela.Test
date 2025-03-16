@@ -7,15 +7,15 @@
 //																		//
 //																		//
 //////////////////////////////////////////////////////////////////////////
-void TestSkipWhiteSpaceWithCStyleComments(void)
+void TestSkipWhitespaceWithCStyleComments(void)
 {
 	CTextParser		cParser;
 	char			szIdentifier[1 KB];
-	int				iLength;
+	size			iLength;
 	TRISTATE		/* / * Hello */ tResult;
 
 	cParser.Init("  /* /* Hello */  X");
-	cParser.SkipWhiteSpace();
+	cParser.SkipWhitespace();
 	tResult = cParser.GetIdentifier(szIdentifier, &iLength, false, false);
 	AssertTristate(TRITRUE, tResult);
 	AssertString("X", szIdentifier);
@@ -27,59 +27,18 @@ void TestSkipWhiteSpaceWithCStyleComments(void)
 //																		//
 //																		//
 //////////////////////////////////////////////////////////////////////////
-void TestSkipWhiteSpaceWithCppStyleComments(void)
+void TestSkipWhitespaceWithCppStyleComments(void)
 {
 	CTextParser		cParser;
 	char			szIdentifier[1 KB];
-	int				iLength;
+	size			iLength;
 	TRISTATE		tResult;  //
 
 	cParser.Init("  //\n  //\n  X");
-	cParser.SkipWhiteSpace();
+	cParser.SkipWhitespace();
 	tResult = cParser.GetIdentifier(szIdentifier, &iLength, false, false);
 	AssertTristate(TRITRUE, tResult);
 	AssertString("X", szIdentifier);
-	cParser.Kill();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//																		//
-//																		//
-//////////////////////////////////////////////////////////////////////////
-void TestSkipCStyleComment(void)
-{
-	CTextParser		cParser;
-	char			szComment[1 KB];
-	int				iLength;
-	TRISTATE		tResult;
-
-	cParser.Init("  /*Hello*/  X");
-	tResult = cParser.GetComment(szComment, &iLength, true);
-	AssertTristate(TRITRUE, tResult);
-	AssertString("Hello", szComment);
-	cParser.Kill();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//																		//
-//																		//
-//////////////////////////////////////////////////////////////////////////
-void TestSkipCppStyleComment(void)
-{
-	CTextParser		cParser;
-	char			szComment[1 KB];
-	int				iLength;
-	TRISTATE		tResult;
-
-	cParser.Init("  //Hello\n  //World");
-	tResult = cParser.GetComment(szComment, &iLength, true);
-	AssertTristate(TRITRUE, tResult);
-	AssertString("Hello", szComment);
-	tResult = cParser.GetComment(szComment, &iLength, true);
-	AssertTristate(TRITRUE, tResult);
-	AssertString("World", szComment);
 	cParser.Kill();
 }
 
@@ -93,10 +52,8 @@ void TestSkipComments(void)
 {
 	BeginTests();
 
-	TestSkipWhiteSpaceWithCppStyleComments();
-	TestSkipWhiteSpaceWithCStyleComments();
-	TestSkipCppStyleComment();
-	TestSkipCStyleComment();
+	TestSkipWhitespaceWithCppStyleComments();
+	TestSkipWhitespaceWithCStyleComments();
 
 	TestStatistics();
 }

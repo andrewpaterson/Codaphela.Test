@@ -679,16 +679,16 @@ void TestCharsSetLength(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestCharsStripWhiteSpace(void)
+void TestCharsStripWhitespace(void)
 {
 	CChars	sz1;
 
 	sz1.Init();
-	sz1.StripWhiteSpace();
+	sz1.StripWhitespace();
 	AssertPointer(gszEmptyString, sz1.Text());
 
 	sz1.Append("  Bork\t");
-	sz1.StripWhiteSpace();
+	sz1.StripWhitespace();
 	AssertString("Bork", sz1.Text());
 
 	sz1.Kill();
@@ -776,7 +776,7 @@ void TestChars(void)
 	TestCharsFindOutOfBounds();
 	TestCharsFindFromEndOutOfBounds();
 	TestCharsSetLength();
-	TestCharsStripWhiteSpace();
+	TestCharsStripWhitespace();
 	TestCharsReadAndWrite();
 	
 	TestStatistics();

@@ -26,11 +26,11 @@ void AssertEvents(CInput* pcInput, CProgramDeviceDetail* pcDetail, CPlayer* pcPl
 {
 	va_list						vaMarker;
 	char*						pc;
-	int							iCount;
+	size						iCount;
 	CArrayTestEventValue		cArray;
-	int							iLen;
+	size						iLen;
 	float						fValue;
-	int							i;
+	size						i;
 	STestEventValue*			pcEvent;
 
 	cArray.Init();

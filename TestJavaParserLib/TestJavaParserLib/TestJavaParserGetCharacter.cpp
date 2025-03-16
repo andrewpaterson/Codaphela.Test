@@ -8,7 +8,7 @@
 //																		//
 //																		//
 //////////////////////////////////////////////////////////////////////////
-TRISTATE ParseCharacter(char* sz, uint16* pc, int* piWidth)
+TRISTATE ParseCharacter(char* sz, uint16* pc, uint16* piWidth)
 {
 	CTextParser		cParser;
 	TRISTATE		tResult;
@@ -25,7 +25,7 @@ TRISTATE ParseCharacter(char* sz, uint16* pc, int* piWidth)
 //																		//
 //																		//
 //////////////////////////////////////////////////////////////////////////
-void AssertCharacter(TRISTATE tResult, uint16 cActual, uint16 cExpected, int iWidthActual, int iWidthExpected)
+void AssertCharacter(TRISTATE tResult, uint16 cActual, uint16 cExpected, uint16 iWidthActual, uint16 iWidthExpected)
 {
 	AssertTristate(TRITRUE, tResult);
 	AssertShort(cExpected, cActual);
@@ -39,9 +39,9 @@ void AssertCharacter(TRISTATE tResult, uint16 cActual, uint16 cExpected, int iWi
 //////////////////////////////////////////////////////////////////////////
 void TestJavaParserGetCharacterSimple(void)
 {
-	TRISTATE		tResult;
-	uint16			c;
-	int				iWidth;
+	TRISTATE	tResult;
+	uint16		c;
+	uint16		iWidth;
 
 	tResult = ParseCharacter("'A'", &c, &iWidth);
 	AssertCharacter(tResult, c, 'A', iWidth, 1);
@@ -68,9 +68,9 @@ void TestJavaParserGetCharacterSimple(void)
 //////////////////////////////////////////////////////////////////////////
 void TestJavaParserGetCharacterEscapeCode(void)
 {
-	TRISTATE		tResult;
-	uint16			c;
-	int				iWidth;
+	TRISTATE	tResult;
+	uint16		c;
+	uint16		iWidth;
 
 	tResult = ParseCharacter("'\\a'", &c, &iWidth);
 	AssertCharacter(tResult, c, '\a', iWidth, 1);
@@ -118,9 +118,9 @@ void TestJavaParserGetCharacterEscapeCode(void)
 //////////////////////////////////////////////////////////////////////////
 void TestJavaParserGetCharacterEscapeOctal(void)
 {
-	TRISTATE		tResult;
-	uint16			c;
-	int				iWidth;
+	TRISTATE	tResult;
+	uint16		c;
+	uint16		iWidth;
 
 	tResult = ParseCharacter("'\\00'", &c, &iWidth);
 	AssertCharacter(tResult, c, 0, iWidth, 1);
@@ -156,9 +156,9 @@ void TestJavaParserGetCharacterEscapeOctal(void)
 //////////////////////////////////////////////////////////////////////////
 void TestJavaParserGetCharacterEscapeHexadecimal(void)
 {
-	TRISTATE		tResult;
-	uint16			c;
-	int				iWidth;
+	TRISTATE	tResult;
+	uint16		c;
+	uint16		iWidth;
 
 	tResult = ParseCharacter("'\\x0'", &c, &iWidth);
 	AssertCharacter(tResult, c, 0, iWidth, 1);
@@ -200,9 +200,9 @@ void TestJavaParserGetCharacterEscapeHexadecimal(void)
 //////////////////////////////////////////////////////////////////////////
 void TestJavaParserGetCharacterEscapeUnicode(void)
 {
-	TRISTATE		tResult;
-	uint16			c;
-	int				iWidth;
+	TRISTATE	tResult;
+	uint16		c;
+	uint16		iWidth;
 
 	tResult = ParseCharacter("'\\u0000'", &c, &iWidth);
 	AssertCharacter(tResult, c, 0, iWidth, 2);

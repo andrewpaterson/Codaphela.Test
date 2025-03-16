@@ -24,7 +24,7 @@ void AssertFloating(TRISTATE tResult, long double ldfActualValue, long double ld
 //																		//
 //																		//
 //////////////////////////////////////////////////////////////////////////
-TRISTATE ParseFloat(char* sz, long double* pldf, int* piBase, int* piExponent, int* piSuffix, int* piNumWholeDigits, int* piNumDecimalDigits, int* piNumExponentDigits)
+TRISTATE ParseFloat(char* sz, long double* pldf, uint16* piBase, uint16* piExponent, uint16* piSuffix, uint16* piNumWholeDigits, uint16* piNumDecimalDigits, uint16* piNumExponentDigits)
 {
 	CTextParser		cParser;
 	TRISTATE		tResult;
@@ -45,12 +45,12 @@ void TestJavaParserGetFloatSuffixes(void)
 {
 	TRISTATE		tResult;
 	long double		ldf;
-	int				iBase;
-	int				iNumWholeDigits;
-	int				iNumDecimalDigits;
-	int				iNumExponentDigits;
-	int				iSuffix;
-	int				iExponent;
+	uint16			iBase;
+	uint16			iNumWholeDigits;
+	uint16			iNumDecimalDigits;
+	uint16			iNumExponentDigits;
+	uint16			iSuffix;
+	uint16			iExponent;
 
 	tResult = ParseFloat("0.f", &ldf, &iBase, &iExponent, &iSuffix, &iNumWholeDigits, &iNumDecimalDigits, &iNumExponentDigits);
 	AssertFloating(tResult, ldf, 0.l, iBase, 10, iExponent, FLOAT_EXPONENT_DEFAULT, iSuffix, FLOAT_SUFFIX_F, iNumWholeDigits, 1, iNumDecimalDigits, 0, iNumExponentDigits, 0);

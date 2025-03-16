@@ -8,7 +8,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* PrivateAssertKeyword(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, EJavaTokenKeyword eKeyword, int iLine, char* szFile)
+CJavaToken* PrivateAssertKeyword(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, EJavaTokenKeyword eKeyword, size iLine, char* szFile)
 {
 	CJavaTokenKeyword*			pcKeyword;
 	CChars					sz;
@@ -43,7 +43,7 @@ CJavaToken* PrivateAssertKeyword(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* PrivateAssertIdentifier(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char* szIdentifier, int iLine, char* szFile)
+CJavaToken* PrivateAssertIdentifier(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char* szIdentifier, size iLine, char* szFile)
 {
 	CJavaTokenIdentifier*			pcIdentifier;
 	CChars						sz;
@@ -75,39 +75,7 @@ CJavaToken* PrivateAssertIdentifier(CJavaTokenDefinitions* pcDefinitions, CJavaT
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* PrivateAssertComment(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char* szComment, int iLine, char* szFile)
-{
-	CJavaTokenComment*	pcComment;
-	CChars			sz;
-
-	AssertNotNull(pcToken);
-	if (pcToken)
-	{
-		AssertTrue(pcToken->IsComment());
-		if (pcToken->IsComment())
-		{
-			pcComment = (CJavaTokenComment*)pcToken;
-			if (!pcComment->Is(szComment))
-			{
-				sz.Init();
-				pcComment->GetComment(&sz);
-				Failed((const char*)szComment, (const char*)sz.Text(), iLine, szFile, false);
-				sz.Kill();
-				BREAK();
-			}
-		}
-		return pcToken->GetNext();
-	}
-
-	return NULL;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-CJavaToken* PrivateAssertSeparator(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, EJavaTokenSeparator eSeparator, int iLine, char* szFile)
+CJavaToken* PrivateAssertSeparator(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, EJavaTokenSeparator eSeparator, size iLine, char* szFile)
 {
 	CJavaTokenSeparator*				pcSeparator;
 	CChars						sz;
@@ -141,7 +109,7 @@ CJavaToken* PrivateAssertSeparator(CJavaTokenDefinitions* pcDefinitions, CJavaTo
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* PrivateAssertOperator(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, EJavaTokenOperator eOperator, int iLine, char* szFile)
+CJavaToken* PrivateAssertOperator(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, EJavaTokenOperator eOperator, size iLine, char* szFile)
 {
 	CJavaTokenOperator*				pcOperator;
 	CChars						sz;
@@ -175,11 +143,11 @@ CJavaToken* PrivateAssertOperator(CJavaTokenDefinitions* pcDefinitions, CJavaTok
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char* szString, int iLine, char* szFile)
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char* szString, size iLine, char* szFile)
 {
 	CJavaTokenString*	pcString;
 	CJavaTokenLiteral*	pcLiteral;
-	CChars			sz;
+	CChars				sz;
 
 	AssertNotNull(pcToken);
 	if (pcToken)
@@ -213,7 +181,7 @@ CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, int64 lli, int iLine, char* szFile)
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, int64 lli, size iLine, char* szFile)
 {
 	CJavaTokenInteger*	pcInteger;
 	CJavaTokenLiteral*	pcLiteral;
@@ -234,7 +202,7 @@ CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 				{
 					sz.Init();
 					pcInteger->Print(&sz);
-					Failed(LongLongToString(lli), (const char*)sz.Text(), iLine, szFile, false);
+					Failed(LongToString(lli), (const char*)sz.Text(), iLine, szFile, false);
 					sz.Kill();
 					BREAK();
 				}
@@ -251,7 +219,7 @@ CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, int32 i, int iLine, char* szFile)
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, int32 i, size iLine, char* szFile)
 {
 	CJavaTokenInteger*	pcInteger;
 	CJavaTokenLiteral*	pcLiteral;
@@ -289,7 +257,7 @@ CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, float64 d, int iLine, char* szFile)
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, float64 d, size iLine, char* szFile)
 {
 	CJavaTokenFloat*		pcFloat;
 	CJavaTokenLiteral*	pcLiteral;
@@ -327,7 +295,7 @@ CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, float32 f, int iLine, char* szFile)
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, float32 f, size iLine, char* szFile)
 {
 	CJavaTokenFloat*		pcFloat;
 	CJavaTokenLiteral*	pcLiteral;
@@ -365,7 +333,7 @@ CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char8 c, int iLine, char* szFile)
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char8 c, size iLine, char* szFile)
 {
 	CJavaTokenCharacter*	pcCharacter;
 	CJavaTokenLiteral*	pcLiteral;
@@ -403,7 +371,7 @@ CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char16 c, int iLine, char* szFile)
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, char16 c, size iLine, char* szFile)
 {
 	CJavaTokenCharacter*		pcCharacter;
 	CJavaTokenLiteral*		pcLiteral;
@@ -441,7 +409,7 @@ CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 //
 //
 //////////////////////////////////////////////////////////////////////////
-CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, bool b, int iLine, char* szFile)
+CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToken* pcToken, bool b, size iLine, char* szFile)
 {
 	CJavaTokenBoolean*	pcBoolean;
 	CJavaTokenLiteral*	pcLiteral;

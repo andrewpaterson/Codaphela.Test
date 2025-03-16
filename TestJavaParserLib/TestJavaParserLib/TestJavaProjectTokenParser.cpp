@@ -71,7 +71,7 @@ void TestJavaProjectTokenParser(void)
 	CFileUtil				cFileUtil;
 	CChars					sz;
 	CArrayChars				aszJavaFilenames;
-	int						i;
+	size					i;
 	CChars*					szFilename;
 
 	sz.Init("D:" _FS_ "Work" _FS_ "658-Computer" _FS_ "logi65816" _FS_ "src");

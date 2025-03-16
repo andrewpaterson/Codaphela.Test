@@ -4,6 +4,7 @@
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "BaseLib/NaiveFile.h"
 #include "GerberLib/GerberParser.h"
+#include "GerberLib/GerberCommands.h"
 #include "TestLib/Assert.h"
 
 
@@ -13,10 +14,12 @@
 //////////////////////////////////////////////////////////////////////////
 void TestGerberParserBasic(void)
 {
-	CChars			szGerberFile;
-	CGerberParser	cParser;
+	CChars				szGerberFile;
+	CGerberParser		cParser;
+	CGerberCommands		cCommands;
 
 	szGerberFile.Init(
+		"G04 Gerber Test File*\n"
 		"%TF.GenerationSoftware,KiCad,Pcbnew,8.0.7*%\n"
 		"%TF.CreationDate,2025-02-09T12:46:03+02:00*%\n"
 		"%TF.ProjectId,EPM570 Programmer,45504d35-3730-4205-9072-6f6772616d6d,V0*%\n"
@@ -58,9 +61,12 @@ void TestGerberParserBasic(void)
 		"%ADD12RoundRect,0.250000X-0.475000X0.250000X-0.475000X-0.250000X0.475000X-0.250000X0.475000X0.250000X0*%\n"
 		"%TD*%\n");
 
-	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt");
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
 	cParser.Parse();
 	cParser.Kill();
+
+	cCommands.Kill();
 }
 
 

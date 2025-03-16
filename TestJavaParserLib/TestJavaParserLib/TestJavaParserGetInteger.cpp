@@ -13,7 +13,7 @@ void AssertInteger(TRISTATE tResult, uint64 ulliActualValue, uint64 ulliExpected
 	AssertInt(iExpectedBase, iActualBase);
 	AssertInt(bExpectediSuffix, iActualSuffix);
 	AssertInt(iExpectedNumDigits, iActualNumDigits);
-	AssertLongLongInt(ulliExpectedValue, ulliActualValue);
+	AssertLong(ulliExpectedValue, ulliActualValue);
 }
 
 
@@ -21,7 +21,7 @@ void AssertInteger(TRISTATE tResult, uint64 ulliActualValue, uint64 ulliExpected
 //																		//
 //																		//
 //////////////////////////////////////////////////////////////////////////
-TRISTATE ParseInteger(char* sz, uint64 * pulli, int* piBase, int* piSuffix, int* piNumDigits)
+TRISTATE ParseInteger(char* sz, uint64 * pulli, uint16* piBase, uint16* piSuffix, uint16* piNumDigits)
 {
 	CTextParser		cParser;
 	TRISTATE		tResult;
@@ -40,11 +40,11 @@ TRISTATE ParseInteger(char* sz, uint64 * pulli, int* piBase, int* piSuffix, int*
 //////////////////////////////////////////////////////////////////////////
 void TestJavaParserGetIntegerSuffixes(void)
 {
-	TRISTATE		tResult;
-	uint64			ulliValue;
-	int				iBase;
-	int				iNumDigits;
-	int				iSuffix;
+	TRISTATE	tResult;
+	uint64		ulliValue;
+	uint16		iBase;
+	uint16		iNumDigits;
+	uint16		iSuffix;
 
 	tResult = ParseInteger("0", &ulliValue, &iBase, &iSuffix, &iNumDigits);
 	AssertInteger(tResult, ulliValue, 0, iBase, 10, iSuffix, INTEGER_SUFFIX_NONE, iNumDigits, 1);
@@ -176,11 +176,11 @@ void TestJavaParserGetIntegerSuffixes(void)
 //////////////////////////////////////////////////////////////////////////
 void TestJavaParserGetIntegerHexadecimalPrefixes(void)
 {
-	TRISTATE		tResult;
-	uint64			ulliValue;
-	int				iBase;
-	int				iNumDigits;
-	int				iSuffix;
+	TRISTATE	tResult;
+	uint64		ulliValue;
+	uint16		iBase;
+	uint16		iNumDigits;
+	uint16		iSuffix;
 
 	tResult = ParseInteger("0x0", &ulliValue, &iBase, &iSuffix, &iNumDigits);
 	AssertInteger(tResult, ulliValue, 0, iBase, 16, iSuffix, INTEGER_SUFFIX_NONE, iNumDigits, 1);
@@ -252,11 +252,11 @@ void TestJavaParserGetIntegerHexadecimalPrefixes(void)
 //////////////////////////////////////////////////////////////////////////
 void TestJavaParserGetIntegerBinaryPrefixes(void)
 {
-	TRISTATE		tResult;
-	uint64			ulliValue;
-	int				iBase;
-	int				iNumDigits;
-	int				iSuffix;
+	TRISTATE	tResult;
+	uint64		ulliValue;
+	uint16		iBase;
+	uint16		iNumDigits;
+	uint16		iSuffix;
 
 	tResult = ParseInteger("0b0", &ulliValue, &iBase, &iSuffix, &iNumDigits);
 	AssertInteger(tResult, ulliValue, 0, iBase, 2, iSuffix, INTEGER_SUFFIX_NONE, iNumDigits, 1);
@@ -304,11 +304,11 @@ void TestJavaParserGetIntegerBinaryPrefixes(void)
 //////////////////////////////////////////////////////////////////////////
 void TestJavaParserGetIntegerOctallPrefixes(void)
 {
-	TRISTATE		tResult;
-	uint64			ulliValue;
-	int				iBase;
-	int				iNumDigits;
-	int				iSuffix;
+	TRISTATE	tResult;
+	uint64		ulliValue;
+	uint16		iBase;
+	uint16		iNumDigits;
+	uint16		iSuffix;
 
 	tResult = ParseInteger("00", &ulliValue, &iBase, &iSuffix, &iNumDigits);
 	AssertInteger(tResult, ulliValue, 0, iBase, 8, iSuffix, INTEGER_SUFFIX_NONE, iNumDigits, 1);
@@ -380,11 +380,11 @@ void TestJavaParserGetIntegerOctallPrefixes(void)
 //////////////////////////////////////////////////////////////////////////
 void TestJavaParserGetIntegerSeparators(void)
 {
-	TRISTATE		tResult;
-	uint64			ulliValue;
-	int				iBase;
-	int				iNumDigits;
-	int				iSuffix;
+	TRISTATE	tResult;
+	uint64		ulliValue;
+	uint16		iBase;
+	uint16		iNumDigits;
+	uint16		iSuffix;
 
 	tResult = ParseInteger("1'000", &ulliValue, &iBase, &iSuffix, &iNumDigits);
 	AssertInteger(tResult, ulliValue, 1000, iBase, 10, iSuffix, INTEGER_SUFFIX_NONE, iNumDigits, 4);
