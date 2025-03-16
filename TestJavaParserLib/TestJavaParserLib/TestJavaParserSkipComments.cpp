@@ -16,7 +16,7 @@ void TestSkipWhitespaceWithCStyleComments(void)
 
 	cParser.Init("  /* /* Hello */  X");
 	cParser.SkipWhitespace();
-	tResult = cParser.GetIdentifier(szIdentifier, &iLength, false, false);
+	tResult = cParser.GetIdentifier(szIdentifier, &iLength, false);
 	AssertTristate(TRITRUE, tResult);
 	AssertString("X", szIdentifier);
 	cParser.Kill();
@@ -36,7 +36,7 @@ void TestSkipWhitespaceWithCppStyleComments(void)
 
 	cParser.Init("  //\n  //\n  X");
 	cParser.SkipWhitespace();
-	tResult = cParser.GetIdentifier(szIdentifier, &iLength, false, false);
+	tResult = cParser.GetIdentifier(szIdentifier, &iLength, false);
 	AssertTristate(TRITRUE, tResult);
 	AssertString("X", szIdentifier);
 	cParser.Kill();
