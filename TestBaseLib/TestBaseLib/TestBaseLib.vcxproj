@@ -208,6 +208,7 @@
     <ClCompile Include="ConstructorCallTestClasses.cpp" />
     <ClCompile Include="ConstructorsTestClasses.cpp" />
     <ClCompile Include="FileIOTestObjects.cpp" />
+    <ClCompile Include="ParserCustomIdentifier.cpp" />
     <ClCompile Include="SortedTestObject.cpp" />
     <ClCompile Include="TestAllocator.cpp" />
     <ClCompile Include="TestArrayBlock.cpp" />
@@ -350,6 +351,7 @@
     <ClInclude Include="ConstructorCallTestClasses.h" />
     <ClInclude Include="ConstructorsTestClasses.h" />
     <ClInclude Include="FileIOTestObjects.h" />
+    <ClInclude Include="ParserCustomIdentifier.h" />
     <ClInclude Include="SortedTestObject.h" />
     <ClInclude Include="TestIndexTreeMemory.h" />
     <ClInclude Include="TestMap.h" />
