@@ -5,10 +5,7 @@
 
 
 TRISTATE ParseCustomExactIdentifier(CTextParser* pcTextParser, char* szIdentifier);
-TRISTATE ParseCustomExactIdentifierUnset(CTextParser* pcTextParser, char* szIdentifier);
-
 TRISTATE ParseCustomIdentifier(CTextParser* pcTextParser, char* szIdentifier, size* piLength);
-TRISTATE ParseCustomdentifierUnset(CTextParser* pcTextParser, char* szIdentifier, size* piLength);
 
 
 #endif // __PARSER_CUSTOM_IDENTIFIER_H__

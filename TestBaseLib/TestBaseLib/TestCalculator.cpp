@@ -18,7 +18,7 @@ void TestCalculatorBinaryOperator(void)
 	CCalcExpression*	pcExpression;
 	CChars				sz;
 
-	cCalculator.Init();
+	cCalculator.Init(true);
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("7.5 / 2.3");
 	cParser.Kill();
@@ -260,7 +260,7 @@ void TestCalculatorVariableEvaluation(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestCalculatorUnaryOperator1(void)
+void TestCalculatorUnaryOperator(void)
 {
 	CCalculator			cCalculator;
 	CCalculatorParser	cParser;
@@ -269,6 +269,7 @@ void TestCalculatorUnaryOperator1(void)
 	CChars				sz;
 
 	cCalculator.Init();
+
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("-7.5 * 2.3");
 	cParser.Kill();
@@ -282,23 +283,7 @@ void TestCalculatorUnaryOperator1(void)
 	cResult = cCalculator.Eval(pcExpression);
 	AssertNumber("-17.25", &cResult);
 	SafeKill(pcExpression);
-	cCalculator.Kill();
-}
 
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void TestCalculatorUnaryOperator2(void)
-{
-	CCalculator			cCalculator;
-	CCalculatorParser	cParser;
-	CNumber				cResult;
-	CCalcExpression*	pcExpression;
-	CChars				sz;
-
-	cCalculator.Init();
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("2 * -3");
 	cParser.Kill();
@@ -312,6 +297,7 @@ void TestCalculatorUnaryOperator2(void)
 	cResult = cCalculator.Eval(pcExpression);
 	AssertNumber("-6", &cResult);
 	SafeKill(pcExpression);
+
 	cCalculator.Kill();
 }
 
@@ -397,11 +383,11 @@ void TestCalculatorMinimalParser()
 
 	cCalculator.Init(true, false, false);
 	pcSymbols = cCalculator.GetSymbols();
-	pcSymbols->SetOperator("+", CO_Add, 3);
-	pcSymbols->SetOperator("-", CO_Subtract, 3);
-	pcSymbols->SetOperator("x", CO_Multiply, 2);
+	pcSymbols->SetOperator("+", CO_Add, 4);
+	pcSymbols->SetOperator("-", CO_Subtract, 4);
+	pcSymbols->SetOperator("x", CO_Multiply, 3);
 	pcSymbols->SetOperator("/", CO_Divide, 2);
-	pcSymbols->SetAssignment("=", 12);
+	pcSymbols->SetOperator("=", CO_Assignment, 5);
 
 	cTextParser.Init("$1=$2+4*$2=6/5*$1x$2*");
 	cTextParser.SetIdentifierParser(ParseCustomIdentifier);
@@ -456,6 +442,369 @@ $2=(6/5)\n\
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestCalculatorComparision()
+{
+	CCalculator			cCalculator;
+	CCalculatorParser	cParser;
+	CNumber				cResult;
+	CCalcExpression*	pcExpression;
+
+	cCalculator.Init(true);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("2 > 3");
+	cParser.Kill();
+
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("0", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("2 > 2");
+	cParser.Kill();
+
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("0", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("3 > 2");
+	cParser.Kill();
+
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("1", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("2 < 3");
+	cParser.Kill();
+
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("1", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("2 < 2");
+	cParser.Kill();
+
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("0", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("3 < 2");
+	cParser.Kill();
+
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("0", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("2 >= 3");
+	cParser.Kill();
+
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("0", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("2 >= 2");
+	cParser.Kill();
+
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("1", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("3 >= 2");
+	cParser.Kill();
+
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("1", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("2 <= 3");
+	cParser.Kill();
+
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("1", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("2 <= 2");
+	cParser.Kill();
+
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("1", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("3 <= 2");
+	cParser.Kill();
+
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("0", &cResult);
+	SafeKill(pcExpression);
+
+	cCalculator.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCalculatorCrement(void)
+{
+	CCalculator			cCalculator;
+	CCalculatorParser	cParser;
+	CNumber				cResult;
+	CCalcExpression* pcExpression;
+
+	cCalculator.Init();
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("++2");
+	cParser.Kill();
+
+	AssertFalse(cCalculator.HasError());
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("3", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("++(++2)");
+	cParser.Kill();
+
+	AssertFalse(cCalculator.HasError());
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("4", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("--0");
+	cParser.Kill();
+
+	AssertFalse(cCalculator.HasError());
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("-1", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("--0.78");
+	cParser.Kill();
+
+	AssertFalse(cCalculator.HasError());
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("-0.22", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("-- -2");
+	cParser.Kill();
+
+	AssertFalse(cCalculator.HasError());
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("-3", &cResult);
+	SafeKill(pcExpression);
+
+	cCalculator.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCalculatorPrecedence(void)
+{
+	CCalculator			cCalculator;
+	CCalculatorParser	cParser;
+	CNumber				cResult;
+	CCalcExpression* pcExpression;
+	CChars				sz;
+
+	cCalculator.Init();
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("12*8/5");
+	cParser.Kill();
+
+	sz.Init();
+	pcExpression->Print(&sz);
+	AssertString("(12 * (8 / 5))", sz.Text());
+	sz.Kill();
+
+	AssertFalse(cCalculator.HasError());
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("19.2", &cResult);
+	SafeKill(pcExpression);
+
+	cCalculator.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCalculatorCleanExpression(void)
+{
+	CCalculator			cCalculator;
+	CCalculatorParser	cParser;
+	CNumber				cResult;
+	CCalcExpression*	pcExpression;
+	CChars				sz;
+
+	cCalculator.Init();
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("((-(((((3))+(((4))))))))");
+	cParser.Kill();
+
+	sz.Init();
+	pcExpression->Print(&sz);
+	AssertString("(-(3 + 4))", sz.Text());
+	sz.Kill();
+
+	AssertFalse(cCalculator.HasError());
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("-7", &cResult);
+	SafeKill(pcExpression);
+
+	cCalculator.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCalculatorComplex(void)
+{
+	CCalculator			cCalculator;
+	CCalculatorParser	cParser;
+	CNumber				cResult;
+	CCalcExpression*	pcExpression;
+	CChars				sz;
+
+	cCalculator.Init();
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("5*(3+4)/3");
+	cParser.Kill();
+
+	sz.Init();
+	pcExpression->Print(&sz);
+	AssertString("(5 * ((3 + 4) / 3))", sz.Text());
+	sz.Kill();
+
+	AssertFalse(cCalculator.HasError());
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("11.6666666666666665", &cResult);
+	SafeKill(pcExpression);
+
+	cCalculator.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCalculatorLogicalNot(void)
+{
+	CCalculator			cCalculator;
+	CCalculatorParser	cParser;
+	CNumber				cResult;
+	CCalcExpression* pcExpression;
+	CChars				sz;
+
+	cCalculator.Init();
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("!(5==5)");
+	cParser.Kill();
+
+	sz.Init();
+	pcExpression->Print(&sz);
+	AssertString("(!(5 == 5))", sz.Text());
+	sz.Kill();
+
+	AssertFalse(cCalculator.HasError());
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("0", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("!(5!=5)");
+	cParser.Kill();
+
+	sz.Init();
+	pcExpression->Print(&sz);
+	AssertString("(!(5 != 5))", sz.Text());
+	sz.Kill();
+
+	AssertFalse(cCalculator.HasError());
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("1", &cResult);
+	SafeKill(pcExpression);
+
+	cCalculator.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCalculatorShift(void)
+{
+	CCalculator			cCalculator;
+	CCalculatorParser	cParser;
+	CNumber				cResult;
+	CCalcExpression* pcExpression;
+	CChars				sz;
+
+	cCalculator.Init();
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("2 << 3");
+	cParser.Kill();
+
+	sz.Init();
+	pcExpression->Print(&sz);
+	AssertString("(2 << 3)", sz.Text());
+	sz.Kill();
+
+	AssertFalse(cCalculator.HasError());
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("16", &cResult);
+	SafeKill(pcExpression);
+
+	cParser.Init(&cCalculator);
+	pcExpression = (CCalcExpression*)cParser.Parse("6.5 >> 2");
+	cParser.Kill();
+
+	sz.Init();
+	pcExpression->Print(&sz);
+	AssertString("(6.5 >> 2)", sz.Text());
+	sz.Kill();
+
+	AssertFalse(cCalculator.HasError());
+	cResult = cCalculator.Eval(pcExpression);
+	AssertNumber("1", &cResult);
+	SafeKill(pcExpression);
+
+	cCalculator.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestCalculator(void)
 {
 	TypeConverterInit();
@@ -472,9 +821,13 @@ void TestCalculator(void)
 	TestCalculatorVariableEvaluation();
 	TestCalculatorExternalParser();
 	TestCalculatorMinimalParser();
-	TestCalculatorUnaryOperator1();
-	TestCalculatorUnaryOperator2();
-	//You should test things like ++ and <=
+	TestCalculatorComparision();
+	TestCalculatorCrement();
+	TestCalculatorUnaryOperator();
+	TestCalculatorPrecedence();
+	TestCalculatorCleanExpression();
+	TestCalculatorComplex();
+	TestCalculatorShift();
 
 	TestStatistics();
 	NumberKill();

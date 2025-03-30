@@ -165,28 +165,6 @@ TRISTATE ParseCustomIdentifier(CTextParser* pcTextParser, char* szIdentifier, si
 //
 //
 //////////////////////////////////////////////////////////////////////////
-TRISTATE ParseCustomExactIdentifierUnset(CTextParser* pcTextParser, char* szIdentifier)
-{
-	gcLogger.Error2(__METHOD__, " Custom Identifier Parser not set.", NULL);
-	return TRIERROR;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-TRISTATE ParseCustomdentifierUnset(CTextParser* pcTextParser, char* szIdentifier, size* piLength)
-{
-	gcLogger.Error2(__METHOD__, " Custom Identifier Parser not set.", NULL);
-	return TRIERROR;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 TRISTATE GetCustomIdentifierCharacter(CTextParser* pcTextParser, char* pc, bool bFirst)
 {
 	char	cCurrent;
