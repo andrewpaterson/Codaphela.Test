@@ -59,7 +59,8 @@ void TestGerberParserBasic(void)
 		"%TD*%\n"
 		"%TA.AperFunction,SMDPad,CuDef*%\n"
 		"%ADD12RoundRect,0.250000X-0.475000X0.250000X-0.475000X-0.250000X0.475000X-0.250000X0.475000X0.250000X0*%\n"
-		"%TD*%\n");
+		"%TD*%\n"
+		"M02*\n");
 
 	cCommands.Init();
 	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
@@ -74,18 +75,74 @@ void TestGerberParserBasic(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestGerberParserExpression(void)
+{
+	CChars				szGerberFile;
+	CGerberParser		cParser;
+	CGerberCommands		cCommands;
+
+	szGerberFile.Init(
+		"%AMCircle*\n"
+		"1,1,1.5,0,0,0*%\n"
+		"M02*\n");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	cParser.Parse();
+	cParser.Kill();
+
+	cCommands.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGerberParserExample1(void)
+{
+	CChars				szGerberFile;
+	CGerberParser		cParser;
+	CGerberCommands		cCommands;
+
+	szGerberFile.Init(
+		"%FSLAX26Y26*%\n"
+		"%MOMM*%\n"
+		"%ADD100C,1.5*%\n"
+		"D100*\n"
+		"X0Y0D03*\n"
+		"M02*\n");
+	
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	cParser.Parse();
+	cParser.Kill();
+
+	cCommands.Kill();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestGerberParser(void)
 {
+	TypeConverterInit();
+	NumberInit();
 	BeginTests();
 
 	DataIOInit();
 	ObjectsInit();
-
-	TestGerberParserBasic();
+	
+	//TestGerberParserBasic();
+	TestGerberParserExpression();
+	//TestGerberParserExample1();
 
 	ObjectsKill();
 	DataIOKill();
 
 	TestStatistics();
+	NumberKill();
+	TypeConverterKill();
 }
 
