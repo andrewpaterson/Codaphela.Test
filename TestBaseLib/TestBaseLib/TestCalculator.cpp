@@ -17,8 +17,10 @@ void TestCalculatorBinaryOperator(void)
 	CNumber				cResult;
 	CCalcExpression*	pcExpression;
 	CChars				sz;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init(true);
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols, true);
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("7.5 / 2.3");
 	cParser.Kill();
@@ -33,6 +35,7 @@ void TestCalculatorBinaryOperator(void)
 	AssertNumber("3.2608695652173913", &cResult);
 	SafeKill(pcExpression);
 	cCalculator.Kill();
+	cSymbols.Kill();
 }
 
 
@@ -46,8 +49,10 @@ void TestCalculatorAddition(void)
 	CCalculatorParser	cParser;
 	CNumber				cResult;
 	CCalcExpression*	pcExpression;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init();
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols);
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("-1 - 44 + 45");
 	cParser.Kill();
@@ -57,6 +62,7 @@ void TestCalculatorAddition(void)
 	AssertNumber("0", &cResult);
 	SafeKill(pcExpression);
 	cCalculator.Kill();
+	cSymbols.Kill();
 }
 
 
@@ -70,8 +76,10 @@ void TestCalculatorSingleNegative(void)
 	CCalculatorParser	cParser;
 	CNumber				cResult;
 	CCalcExpression*	pcExpression;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init();
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols);
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("-1");
 	cParser.Kill();
@@ -81,6 +89,7 @@ void TestCalculatorSingleNegative(void)
 	AssertNumber("-1", &cResult);
 	cCalculator.Kill();
 	SafeKill(pcExpression);
+	cSymbols.Kill();
 }
 
 
@@ -94,8 +103,10 @@ void TestCalculatorPositiveEquality(void)
 	CCalculatorParser	cParser;
 	CNumber				cResult;
 	CCalcExpression*	pcExpression;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init();
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols);
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("(3 == 3)");
 	cParser.Kill();
@@ -106,7 +117,7 @@ void TestCalculatorPositiveEquality(void)
 	cCalculator.Kill();
 	SafeKill(pcExpression);
 
-	cCalculator.Init();
+	cCalculator.Init(&cSymbols);
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("(2 == 3)");
 	cParser.Kill();
@@ -116,6 +127,8 @@ void TestCalculatorPositiveEquality(void)
 	AssertNumber("0", &cResult);
 	cCalculator.Kill();
 	SafeKill(pcExpression);
+	
+	cSymbols.Kill();
 }
 
 
@@ -129,8 +142,10 @@ void TestCalculatorNegativeEquality(void)
 	CCalculatorParser	cParser;
 	CNumber				cResult;
 	CCalcExpression*	pcExpression;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init();
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols);
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("1 == -1");
 	cParser.Kill();
@@ -141,7 +156,7 @@ void TestCalculatorNegativeEquality(void)
 	cCalculator.Kill();
 	SafeKill(pcExpression);
 
-	cCalculator.Init();
+	cCalculator.Init(&cSymbols);
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("(1 == -1)");
 	cParser.Kill();
@@ -153,7 +168,7 @@ void TestCalculatorNegativeEquality(void)
 	SafeKill(pcExpression);
 
 
-	cCalculator.Init();
+	cCalculator.Init(&cSymbols);
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("43 == -1 - 44 + 45 + 43");
 	cParser.Kill();
@@ -163,6 +178,8 @@ void TestCalculatorNegativeEquality(void)
 	AssertNumber("1", &cResult);
 	cCalculator.Kill();
 	SafeKill(pcExpression);
+
+	cSymbols.Kill();
 }
 
 
@@ -177,8 +194,10 @@ void TestCalculatorIdentifiers(void)
 	CNumber				cResult;
 	CCalcExpression*	pcExpression;
 	CChars				sz;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init(false);
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols, false);
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("2.57 * x");
 	cParser.Kill();
@@ -194,6 +213,8 @@ void TestCalculatorIdentifiers(void)
 	AssertString("Variable [x] is not assigned.", cCalculator.GetError());
 	SafeKill(pcExpression);
 	cCalculator.Kill();
+
+	cSymbols.Kill();
 }
 
 
@@ -208,8 +229,10 @@ void TestCalculatorAssignment(void)
 	CNumber						cResult;
 	CCalcVariableDefinition*	pcVariableDefinition;
 	CChars						sz;
+	CCalculatorSymbols			cSymbols;
 
-	cCalculator.Init();
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols);
 	cParser.Init(&cCalculator);
 	pcVariableDefinition = (CCalcVariableDefinition*)cParser.Parse("x = 3 * 2");
 	cCalculator.Add(pcVariableDefinition);
@@ -225,6 +248,8 @@ void TestCalculatorAssignment(void)
 	AssertFalse(cCalculator.HasError());
 	AssertNumber("6", &cResult);
 	cCalculator.Kill();
+
+	cSymbols.Kill();
 }
 
 
@@ -239,8 +264,10 @@ void TestCalculatorVariableEvaluation(void)
 	CNumber						cResult;
 	CCalcVariableDefinition*	pcVariableDefinition;
 	CCalcExpression*			pcExpression;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init();
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols);
 	cParser.Init(&cCalculator);
 	pcVariableDefinition = (CCalcVariableDefinition*)cParser.Parse("x = 3 * 2");
 	cCalculator.Add(pcVariableDefinition);
@@ -253,6 +280,8 @@ void TestCalculatorVariableEvaluation(void)
 	AssertFalse(cCalculator.HasError());
 	AssertNumber("10", &cResult);
 	cCalculator.Kill();
+
+	cSymbols.Kill();
 }
 
 
@@ -267,8 +296,10 @@ void TestCalculatorUnaryOperator(void)
 	CNumber				cResult;
 	CCalcExpression*	pcExpression;
 	CChars				sz;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init();
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols);
 
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("-7.5 * 2.3");
@@ -299,6 +330,8 @@ void TestCalculatorUnaryOperator(void)
 	SafeKill(pcExpression);
 
 	cCalculator.Kill();
+
+	cSymbols.Kill();
 }
 
 
@@ -315,8 +348,10 @@ void TestCalculatorExternalParser(void)
 	CChars				sz;
 	CTextParser			cTextParser;
 	TRISTATE			tResult;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init(false);
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols, false);
 
 	cTextParser.Init("x = y + 4;\ny = 6 / 5;\n x * y;");
 	cParser.Init(&cCalculator);
@@ -363,6 +398,7 @@ y = (6 / 5)\n\
 	AssertNumber("6.24", &cResult);
 
 	cCalculator.Kill();
+	cSymbols.Kill();
 }
 
 
@@ -380,8 +416,11 @@ void TestCalculatorMinimalParser()
 	CTextParser			cTextParser;
 	TRISTATE			tResult;
 	CCalculatorSymbols* pcSymbols;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init(true, false, false);
+	cSymbols.Init(true);
+	cCalculator.Init(&cSymbols, false, true);
+
 	pcSymbols = cCalculator.GetSymbols();
 	pcSymbols->SetOperator("+", CO_Add, 4);
 	pcSymbols->SetOperator("-", CO_Subtract, 4);
@@ -435,6 +474,7 @@ $2=(6/5)\n\
 	AssertNumber("6.24", &cResult);
 
 	cCalculator.Kill();
+	cSymbols.Kill();
 }
 
 
@@ -448,8 +488,10 @@ void TestCalculatorComparision()
 	CCalculatorParser	cParser;
 	CNumber				cResult;
 	CCalcExpression*	pcExpression;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init(true);
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols);
 
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("2 > 3");
@@ -548,6 +590,7 @@ void TestCalculatorComparision()
 	SafeKill(pcExpression);
 
 	cCalculator.Kill();
+	cSymbols.Kill(); 
 }
 
 
@@ -560,9 +603,11 @@ void TestCalculatorCrement(void)
 	CCalculator			cCalculator;
 	CCalculatorParser	cParser;
 	CNumber				cResult;
-	CCalcExpression* pcExpression;
+	CCalcExpression*	pcExpression;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init();
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols);
 
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("++2");
@@ -610,6 +655,7 @@ void TestCalculatorCrement(void)
 	SafeKill(pcExpression);
 
 	cCalculator.Kill();
+	cSymbols.Kill();
 }
 
 
@@ -622,10 +668,12 @@ void TestCalculatorPrecedence(void)
 	CCalculator			cCalculator;
 	CCalculatorParser	cParser;
 	CNumber				cResult;
-	CCalcExpression* pcExpression;
+	CCalcExpression*	pcExpression;
 	CChars				sz;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init();
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols);
 
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("12*8/5");
@@ -642,6 +690,7 @@ void TestCalculatorPrecedence(void)
 	SafeKill(pcExpression);
 
 	cCalculator.Kill();
+	cSymbols.Kill();
 }
 
 
@@ -656,8 +705,10 @@ void TestCalculatorCleanExpression(void)
 	CNumber				cResult;
 	CCalcExpression*	pcExpression;
 	CChars				sz;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init();
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols);
 
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("((-(((((3))+(((4))))))))");
@@ -674,6 +725,7 @@ void TestCalculatorCleanExpression(void)
 	SafeKill(pcExpression);
 
 	cCalculator.Kill();
+	cSymbols.Kill();
 }
 
 
@@ -688,8 +740,10 @@ void TestCalculatorComplex(void)
 	CNumber				cResult;
 	CCalcExpression*	pcExpression;
 	CChars				sz;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init();
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols);
 
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("5*(3+4)/3");
@@ -706,6 +760,7 @@ void TestCalculatorComplex(void)
 	SafeKill(pcExpression);
 
 	cCalculator.Kill();
+	cSymbols.Kill();
 }
 
 
@@ -718,10 +773,12 @@ void TestCalculatorLogicalNot(void)
 	CCalculator			cCalculator;
 	CCalculatorParser	cParser;
 	CNumber				cResult;
-	CCalcExpression* pcExpression;
+	CCalcExpression*	pcExpression;
 	CChars				sz;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init();
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols);
 
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("!(5==5)");
@@ -752,6 +809,7 @@ void TestCalculatorLogicalNot(void)
 	SafeKill(pcExpression);
 
 	cCalculator.Kill();
+	cSymbols.Kill();
 }
 
 
@@ -764,10 +822,12 @@ void TestCalculatorShift(void)
 	CCalculator			cCalculator;
 	CCalculatorParser	cParser;
 	CNumber				cResult;
-	CCalcExpression* pcExpression;
+	CCalcExpression*	pcExpression;
 	CChars				sz;
+	CCalculatorSymbols	cSymbols;
 
-	cCalculator.Init();
+	cSymbols.Init(false);
+	cCalculator.Init(&cSymbols);
 
 	cParser.Init(&cCalculator);
 	pcExpression = (CCalcExpression*)cParser.Parse("2 << 3");
@@ -798,6 +858,7 @@ void TestCalculatorShift(void)
 	SafeKill(pcExpression);
 
 	cCalculator.Kill();
+	cSymbols.Kill();
 }
 
 
