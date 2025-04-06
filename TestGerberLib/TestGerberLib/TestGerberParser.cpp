@@ -77,9 +77,16 @@ void TestGerberParserBasic(void)
 //////////////////////////////////////////////////////////////////////////
 void TestGerberParserExpression(void)
 {
-	CChars				szGerberFile;
-	CGerberParser		cParser;
-	CGerberCommands		cCommands;
+	CChars							szGerberFile;
+	CGerberParser					cParser;
+	CGerberCommands					cCommands;
+	TRISTATE						tResult;
+	size							uiNumCommands;
+	CGerberCommand*					pcCommand;
+	CGerberCommandApertureMacro*	pcApetureMacro;
+	size							uiNumPrimitives;
+	CGerberApertureMacro*			pcPrimitive;
+	CGerberApertureMacroCircle*		pcCircle;
 
 	szGerberFile.Init(
 		"%AMCircle*\n"
@@ -88,8 +95,24 @@ void TestGerberParserExpression(void)
 
 	cCommands.Init();
 	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
-	cParser.Parse();
+	tResult = cParser.Parse();
 	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(2, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsApertureMacro());
+
+	pcApetureMacro = (CGerberCommandApertureMacro*)pcCommand;
+	uiNumPrimitives = pcApetureMacro->NumPrimitives();
+	AssertInt(1, uiNumPrimitives);
+
+	pcPrimitive = pcApetureMacro->GetPrimitive(0);
+	AssertTrue(pcPrimitive->IsCircle());
+
+	pcCircle = (CGerberApertureMacroCircle*)pcPrimitive;
 
 	cCommands.Kill();
 }
