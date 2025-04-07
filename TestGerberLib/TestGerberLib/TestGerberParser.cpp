@@ -87,10 +87,11 @@ void TestGerberParserExpression(void)
 	size							uiNumPrimitives;
 	CGerberApertureMacro*			pcPrimitive;
 	CGerberApertureMacroCircle*		pcCircle;
+	CNumber*						pcNumber;
 
 	szGerberFile.Init(
 		"%AMCircle*\n"
-		"1,1,1.5,0,0,0*%\n"
+		"1,1,1.5,4.36,2,90.8234795*%\n"
 		"M02*\n");
 
 	cCommands.Init();
@@ -113,6 +114,21 @@ void TestGerberParserExpression(void)
 	AssertTrue(pcPrimitive->IsCircle());
 
 	pcCircle = (CGerberApertureMacroCircle*)pcPrimitive;
+	pcNumber = pcCircle->GetCenterX()->GetConstNumber();
+	AssertNotNull(pcNumber);
+	AssertFloat(4.36f, pcNumber->FloatValue(), 2);
+
+	pcNumber = pcCircle->GetCenterY()->GetConstNumber();
+	AssertNotNull(pcNumber);
+	AssertFloat(2.0f, pcNumber->FloatValue(), 2);
+
+	pcNumber = pcCircle->GetDiameter()->GetConstNumber();
+	AssertNotNull(pcNumber);
+	AssertFloat(1.5f, pcNumber->FloatValue(), 2);
+
+	pcNumber = pcCircle->GetRotation()->GetConstNumber();
+	AssertNotNull(pcNumber);
+	AssertFloat(90.82348f, pcNumber->FloatValue(), 5);
 
 	cCommands.Kill();
 }
