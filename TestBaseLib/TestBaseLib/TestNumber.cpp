@@ -308,6 +308,135 @@ void TestInit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestConstants(void)
+{
+	AssertInt(0, gcNumberControl.NumElements());
+
+	CNumber		cTest;
+	CNumber		cTwo;
+	CNumber		cHalf;
+	CNumber		cMinusTwo;
+	CNumber		cMinusHalf;
+	CNumber		cPi;
+	CNumber		cE;
+	CNumber		cMinusPi;
+	CNumber		cMinusE;
+	CNumber		cZero;
+
+	cTwo.Two();
+	AssertInt(1, cTwo.GetFirstNonZeroDigit());
+	AssertInt(1, cTwo.GetLastNonZeroDigit());
+	AssertChar(2, cTwo.GetDigitUnsafe(1));
+	AssertChar(0, cTwo.GetDigitUnsafe(2));
+	AssertChar(0, cTwo.GetDigitUnsafe(-1));
+	AssertTrue(cTwo.IsPositive());
+
+	cTest.Init("2");
+	cTest.Equals(&cTwo);
+
+	cHalf.Half();
+	AssertInt(-1, cHalf.GetFirstNonZeroDigit());
+	AssertInt(-1, cHalf.GetLastNonZeroDigit());
+	AssertChar(5, cHalf.GetDigitUnsafe(-1));
+	AssertChar(0, cHalf.GetDigitUnsafe(1));
+	AssertChar(0, cHalf.GetDigitUnsafe(-2));
+	AssertTrue(cHalf.IsPositive());
+
+	cTest.Init("0.5");
+	cTest.Equals(&cHalf);
+
+	cMinusTwo.Two(false);
+	AssertInt(1, cMinusTwo.GetFirstNonZeroDigit());
+	AssertInt(1, cMinusTwo.GetLastNonZeroDigit());
+	AssertChar(2, cMinusTwo.GetDigitUnsafe(1));
+	AssertChar(0, cMinusTwo.GetDigitUnsafe(2));
+	AssertChar(0, cMinusTwo.GetDigitUnsafe(-1));
+	AssertTrue(cMinusTwo.IsNegative());
+
+	cTest.Init("-2");
+	cTest.Equals(&cMinusTwo);
+
+	cMinusHalf.Half(false);
+	AssertInt(-1, cMinusHalf.GetFirstNonZeroDigit());
+	AssertInt(-1, cMinusHalf.GetLastNonZeroDigit());
+	AssertChar(5, cMinusHalf.GetDigitUnsafe(-1));
+	AssertChar(0, cMinusHalf.GetDigitUnsafe(1));
+	AssertChar(0, cMinusHalf.GetDigitUnsafe(-2));
+	AssertTrue(cMinusHalf.IsNegative());
+
+	cTest.Init("-0.5");
+	cTest.Equals(&cMinusHalf);
+
+	cPi.Pi();
+	AssertInt(1, cPi.GetFirstNonZeroDigit());
+	AssertInt(-16, cPi.GetLastNonZeroDigit());
+	AssertChar(0, cPi.GetDigitUnsafe(2));
+	AssertChar(3, cPi.GetDigitUnsafe(1));
+	AssertChar(1, cPi.GetDigitUnsafe(-1));
+	AssertChar(4, cPi.GetDigitUnsafe(-2));
+	AssertTrue(cPi.IsPositive());
+
+	cTest.Init("3.1415926535897932");
+	cTest.Equals(&cPi);
+
+	cMinusPi.Pi(false);
+	AssertInt(1, cMinusPi.GetFirstNonZeroDigit());
+	AssertInt(-16, cMinusPi.GetLastNonZeroDigit());
+	AssertChar(0, cMinusPi.GetDigitUnsafe(2));
+	AssertChar(3, cMinusPi.GetDigitUnsafe(1));
+	AssertChar(1, cMinusPi.GetDigitUnsafe(-1));
+	AssertChar(4, cMinusPi.GetDigitUnsafe(-2));
+	AssertTrue(cMinusPi.IsNegative());
+
+	cTest.Init("-3.1415926535897932");
+	cTest.Equals(&cMinusPi);
+	
+	cE.E();
+	AssertInt(1, cE.GetFirstNonZeroDigit());
+	AssertInt(-16, cE.GetLastNonZeroDigit());
+	AssertChar(0, cE.GetDigitUnsafe(2));
+	AssertChar(2, cE.GetDigitUnsafe(1));
+	AssertChar(7, cE.GetDigitUnsafe(-1));
+	AssertChar(1, cE.GetDigitUnsafe(-2));
+	AssertTrue(cE.IsPositive());
+
+	cTest.Init("2.7182818284590452");
+	cTest.Equals(&cE);
+
+	cMinusE.E(false);
+	AssertInt(1, cMinusE.GetFirstNonZeroDigit());
+	AssertInt(-16, cMinusE.GetLastNonZeroDigit());
+	AssertChar(0, cMinusE.GetDigitUnsafe(2));
+	AssertChar(2, cMinusE.GetDigitUnsafe(1));
+	AssertChar(7, cMinusE.GetDigitUnsafe(-1));
+	AssertChar(1, cMinusE.GetDigitUnsafe(-2));
+	AssertTrue(cMinusE.IsNegative());
+
+	cTest.Init("-2.7182818284590452");
+	cTest.Equals(&cMinusE);
+
+	cZero.Zero();
+	AssertInt(1, cZero.GetFirstNonZeroDigit());
+	AssertInt(1, cZero.GetLastNonZeroDigit());
+	AssertChar(0, cZero.GetDigitUnsafe(2));
+	AssertChar(0, cZero.GetDigitUnsafe(1));
+	AssertChar(0, cZero.GetDigitUnsafe(-1));
+	AssertTrue(cZero.IsPositiveOrZero());
+	AssertFalse(cZero.IsPositive());
+	AssertTrue(cZero.IsZero());
+	AssertFalse(cZero.IsNegative());
+
+	cTest.Init("0");
+	cTest.Equals(&cZero);
+
+	AssertInt(0, gcNumberControl.NumElements());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestNumbersErrors(void)
 {
 	AssertInt(0, gcNumberControl.NumElements());
@@ -632,6 +761,7 @@ void TestNumber(void)
 
 	TestPrivateSubtract();
 	TestInit();
+	TestConstants();
 	TestCopy();
 	TestIntValue();
 	TestGreaterThan();
