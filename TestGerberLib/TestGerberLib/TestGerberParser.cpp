@@ -270,6 +270,107 @@ void TestGerberParserCenterLineMacro(void)
 	cCommands.Kill();
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGerberParserOutlineMacro(void)
+{
+	CChars								szGerberFile;
+	CGerberParser						cParser;
+	CGerberCommands						cCommands;
+	TRISTATE							tResult;
+	size								uiNumCommands;
+	CGerberCommand*						pcCommand;
+	CGerberCommandApertureMacro*		pcApetureMacro;
+	size								uiNumPrimitives;
+	CGerberApertureMacro*				pcPrimitive;
+	CGerberApertureMacroOutline*		pcShape;
+	Float64								pcValue;
+	size								uiNumPositions;
+	CGerberExpressionPosition*			pcPosition;
+
+	szGerberFile.Init(
+		"%AMLine*\n"
+		"4, 1, 7, 0,1, 2,3, 4,5, 6,7, 8,9, 10,11, 12,13, 45.235456*%\n"
+		"M02*\n");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(2, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsApertureMacro());
+
+	pcApetureMacro = (CGerberCommandApertureMacro*)pcCommand;
+	uiNumPrimitives = pcApetureMacro->NumPrimitives();
+	AssertInt(1, uiNumPrimitives);
+
+	pcPrimitive = pcApetureMacro->GetPrimitive(0);
+	AssertTrue(pcPrimitive->IsOutline());
+	pcShape = (CGerberApertureMacroOutline*)pcPrimitive;
+
+	pcValue = pcShape->GetExposure()->DoubleValue();
+	AssertDouble(1.0, pcValue, 2);
+
+	uiNumPositions = pcShape->NumPositions();
+	AssertSize(7, uiNumPositions);
+
+	pcPosition = pcShape->GetPosition(0);
+	pcValue = pcPosition->GetX()->DoubleValue();
+	AssertDouble(0.0, pcValue, 2);
+	pcValue = pcPosition->GetY()->DoubleValue();
+	AssertDouble(1.0, pcValue, 2);
+
+	pcPosition = pcShape->GetPosition(1);
+	pcValue = pcPosition->GetX()->DoubleValue();
+	AssertDouble(2.0, pcValue, 2);
+	pcValue = pcPosition->GetY()->DoubleValue();
+	AssertDouble(3.0, pcValue, 2);
+
+	pcPosition = pcShape->GetPosition(2);
+	pcValue = pcPosition->GetX()->DoubleValue();
+	AssertDouble(4.0, pcValue, 2);
+	pcValue = pcPosition->GetY()->DoubleValue();
+	AssertDouble(5.0, pcValue, 2);
+
+	pcPosition = pcShape->GetPosition(3);
+	pcValue = pcPosition->GetX()->DoubleValue();
+	AssertDouble(6.0, pcValue, 2);
+	pcValue = pcPosition->GetY()->DoubleValue();
+	AssertDouble(7.0, pcValue, 2);
+
+	pcPosition = pcShape->GetPosition(4);
+	pcValue = pcPosition->GetX()->DoubleValue();
+	AssertDouble(8.0, pcValue, 2);
+	pcValue = pcPosition->GetY()->DoubleValue();
+	AssertDouble(9.0, pcValue, 2);
+
+	pcPosition = pcShape->GetPosition(5);
+	pcValue = pcPosition->GetX()->DoubleValue();
+	AssertDouble(10.0, pcValue, 2);
+	pcValue = pcPosition->GetY()->DoubleValue();
+	AssertDouble(11.0, pcValue, 2);
+
+	pcPosition = pcShape->GetPosition(6);
+	pcValue = pcPosition->GetX()->DoubleValue();
+	AssertDouble(12.0, pcValue, 2);
+	pcValue = pcPosition->GetY()->DoubleValue();
+	AssertDouble(13.0, pcValue, 2);
+
+	pcValue = pcShape->GetRotation()->DoubleValue();
+	AssertDouble(45.235456, pcValue, 6);
+
+	cCommands.Kill();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -313,6 +414,7 @@ void TestGerberParser(void)
 	TestGerberParserCircleMacro();
 	TestGerberParserVectorLineMacro();
 	TestGerberParserCenterLineMacro();
+	TestGerberParserOutlineMacro();
 	//TestGerberParserExample1();
 
 	ObjectsKill();
