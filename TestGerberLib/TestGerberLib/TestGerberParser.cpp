@@ -210,6 +210,70 @@ void TestGerberParserVectorLineMacro(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestGerberParserCenterLineMacro(void)
+{
+	CChars								szGerberFile;
+	CGerberParser						cParser;
+	CGerberCommands						cCommands;
+	TRISTATE							tResult;
+	size								uiNumCommands;
+	CGerberCommand*						pcCommand;
+	CGerberCommandApertureMacro*		pcApetureMacro;
+	size								uiNumPrimitives;
+	CGerberApertureMacro*				pcPrimitive;
+	CGerberApertureMacroCenterLine*		pcLine;
+	Float64								pcValue;
+
+	szGerberFile.Init(
+		"%AMLine*\n"
+		"21, 1, 2.3, 3.5, 3, 4, 87*%\n"
+		"M02*\n");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(2, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsApertureMacro());
+
+	pcApetureMacro = (CGerberCommandApertureMacro*)pcCommand;
+	uiNumPrimitives = pcApetureMacro->NumPrimitives();
+	AssertInt(1, uiNumPrimitives);
+
+	pcPrimitive = pcApetureMacro->GetPrimitive(0);
+	AssertTrue(pcPrimitive->IsCenterLine());
+	pcLine = (CGerberApertureMacroCenterLine*)pcPrimitive;
+
+	pcValue = pcLine->GetExposure()->DoubleValue();
+	AssertDouble(1.0, pcValue, 2);
+
+	pcValue = pcLine->GetWidth()->DoubleValue();
+	AssertDouble(2.3, pcValue, 2);
+
+	pcValue = pcLine->GetHeight()->DoubleValue();
+	AssertDouble(3.5, pcValue, 2);
+
+	pcValue = pcLine->GetCenterX()->DoubleValue();
+	AssertDouble(3.0, pcValue, 2);
+
+	pcValue = pcLine->GetCenterY()->DoubleValue();
+	AssertDouble(4.0, pcValue, 2);
+
+	pcValue = pcLine->GetRotation()->DoubleValue();
+	AssertDouble(87.0, pcValue, 2);
+
+	cCommands.Kill();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestGerberParserExample1(void)
 {
 	CChars				szGerberFile;
@@ -248,6 +312,7 @@ void TestGerberParser(void)
 	//TestGerberParserBasic();
 	TestGerberParserCircleMacro();
 	TestGerberParserVectorLineMacro();
+	TestGerberParserCenterLineMacro();
 	//TestGerberParserExample1();
 
 	ObjectsKill();
