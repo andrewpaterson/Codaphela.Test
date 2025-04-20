@@ -12,11 +12,12 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestGerberParserBasic(void)
+void TestGerberParserPartialReal(void)
 {
 	CChars				szGerberFile;
 	CGerberParser		cParser;
 	CGerberCommands		cCommands;
+	TRISTATE			tResult;
 
 	szGerberFile.Init(
 		"G04 Gerber Test File*\n"
@@ -64,7 +65,9 @@ void TestGerberParserBasic(void)
 
 	cCommands.Init();
 	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
-	cParser.Parse();
+	tResult = cParser.Parse();
+	AssertTritrue(tResult);
+	
 	cParser.Kill();
 
 	cCommands.Kill();
@@ -375,6 +378,87 @@ void TestGerberParserOutlineMacro(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestGerberParserCommentMacro(void)
+{
+	CChars								szGerberFile;
+	CGerberParser						cParser;
+	CGerberCommands						cCommands;
+	TRISTATE							tResult;
+	size								uiNumCommands;
+	CGerberCommand*						pcCommand;
+	CGerberCommandApertureMacro*		pcApetureMacro;
+	size								uiNumPrimitives;
+	CGerberApertureMacro*				pcPrimitive;
+	CGerberApertureMacroComment*		pcComment;
+	Float64								pcValue;
+
+	szGerberFile.Init(
+		"%AMComment*\n"
+		"0 Rectangle with rounded corners, with rotation*\n"
+		"0 The origin of the aperture is its center*\n"
+		"0 $1 X-size*\n"
+		"0 $2 Y-size*\n"
+		"0 $3 Rounding radius*\n"
+		"0 $4 Rotation angle, in degrees counterclockwise*%\n"
+		"M02*\n");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(2, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsApertureMacro());
+
+	pcApetureMacro = (CGerberCommandApertureMacro*)pcCommand;
+	uiNumPrimitives = pcApetureMacro->NumPrimitives();
+	AssertInt(6, uiNumPrimitives);
+
+	pcPrimitive = pcApetureMacro->GetPrimitive(0);
+	AssertTrue(pcPrimitive->IsComment());
+	pcComment = (CGerberApertureMacroComment*)pcPrimitive;
+	AssertString("Rectangle with rounded corners, with rotation", pcComment->Text());
+
+	pcPrimitive = pcApetureMacro->GetPrimitive(1);
+	AssertTrue(pcPrimitive->IsComment());
+	pcComment = (CGerberApertureMacroComment*)pcPrimitive;
+	AssertString("The origin of the aperture is its center", pcComment->Text());
+
+	pcPrimitive = pcApetureMacro->GetPrimitive(2);
+	AssertTrue(pcPrimitive->IsComment());
+	pcComment = (CGerberApertureMacroComment*)pcPrimitive;
+	AssertString("$1 X-size", pcComment->Text());
+
+	pcPrimitive = pcApetureMacro->GetPrimitive(3);
+	AssertTrue(pcPrimitive->IsComment());
+	pcComment = (CGerberApertureMacroComment*)pcPrimitive;
+	AssertString("$2 Y-size", pcComment->Text());
+
+	pcPrimitive = pcApetureMacro->GetPrimitive(4);
+	AssertTrue(pcPrimitive->IsComment());
+	pcComment = (CGerberApertureMacroComment*)pcPrimitive;
+	AssertString("$3 Rounding radius", pcComment->Text());
+
+	pcPrimitive = pcApetureMacro->GetPrimitive(5);
+	AssertTrue(pcPrimitive->IsComment());
+	pcComment = (CGerberApertureMacroComment*)pcPrimitive;
+	AssertString("$4 Rotation angle, in degrees counterclockwise", pcComment->Text());
+
+	pcCommand = cCommands.GetCommand(1);
+	AssertTrue(pcCommand->IsEndOfFile());
+
+	cCommands.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestGerberParserExample1(void)
 {
 	CChars				szGerberFile;
@@ -410,12 +494,15 @@ void TestGerberParser(void)
 	DataIOInit();
 	ObjectsInit();
 	
-	//TestGerberParserBasic();
-	TestGerberParserCircleMacro();
-	TestGerberParserVectorLineMacro();
-	TestGerberParserCenterLineMacro();
-	TestGerberParserOutlineMacro();
+	//TestGerberParserCircleMacro();
+	//TestGerberParserVectorLineMacro();
+	//TestGerberParserCenterLineMacro();
+	//TestGerberParserOutlineMacro();
+	TestGerberParserCommentMacro();
+	//TestGerberParserPolygonMacro();
+	//TestGerberParserThermalMacro();
 	//TestGerberParserExample1();
+	//TestGerberParserPartialReal();
 
 	ObjectsKill();
 	DataIOKill();
