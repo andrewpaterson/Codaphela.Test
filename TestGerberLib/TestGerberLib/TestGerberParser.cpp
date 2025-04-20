@@ -12,15 +12,15 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestGerberParserCommentCommand(void)
+void TestGerberParserCommandComment(void)
 {
-	CChars								szGerberFile;
-	CGerberParser						cParser;
-	CGerberCommands						cCommands;
-	TRISTATE							tResult;
-	size								uiNumCommands;
-	CGerberCommand*						pcCommand;
-	CGerberCommandComment*				pcComment;
+	CChars					szGerberFile;
+	CGerberParser			cParser;
+	CGerberCommands			cCommands;
+	TRISTATE				tResult;
+	size					uiNumCommands;
+	CGerberCommand*			pcCommand;
+	CGerberCommandComment*	pcComment;
 
 	szGerberFile.Init(
 		"G04 Ucamco ex. 1: Twon\n"
@@ -60,16 +60,16 @@ void TestGerberParserCommentCommand(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestGerberParserCommentFormatSpecifier(void)
+void TestGerberParserCommandFormatSpecifier(void)
 {
-	CChars								szGerberFile;
-	CGerberParser						cParser;
-	CGerberCommands						cCommands;
-	TRISTATE							tResult;
-	size								uiNumCommands;
-	CGerberCommand*						pcCommand;
-	CGerberCommandFormatSpecifier*		pcFormatSpecifier;
-	uint16								ui;
+	CChars							szGerberFile;
+	CGerberParser					cParser;
+	CGerberCommands					cCommands;
+	TRISTATE						tResult;
+	size							uiNumCommands;
+	CGerberCommand*					pcCommand;
+	CGerberCommandFormatSpecifier*	pcFormatSpecifier;
+	uint16							ui;
 
 	szGerberFile.Init(
 		"%FSLAX26Y35*%\n");
@@ -99,6 +99,43 @@ void TestGerberParserCommentFormatSpecifier(void)
 
 	ui = pcFormatSpecifier->GetYDecimals();
 	AssertShort((uint16)5, ui);
+
+	cCommands.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGerberParserCommandMeasurementMode(void)
+{
+	CChars							szGerberFile;
+	CGerberParser					cParser;
+	CGerberCommands					cCommands;
+	TRISTATE						tResult;
+	size							uiNumCommands;
+	CGerberCommand*					pcCommand;
+	CGerberCommandMeasurementMode*	pcMeasurementMode;
+
+	szGerberFile.Init("%MOMM*%");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(1, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsMeasurementMode());
+
+	pcMeasurementMode = (CGerberCommandMeasurementMode*)pcCommand;
+
+	AssertTrue(pcMeasurementMode->IsMillimeters());
+	AssertFalse(pcMeasurementMode->IsInches());
 
 	cCommands.Kill();
 }
@@ -731,17 +768,18 @@ void TestGerberParser(void)
 	DataIOInit();
 	ObjectsInit();
 	
-	//TestGerberParserCommentCommand();
-	TestGerberParserCommentFormatSpecifier();
-	//TestGerberParserCircleMacro();
-	//TestGerberParserVectorLineMacro();
-	//TestGerberParserCenterLineMacro();
-	//TestGerberParserOutlineMacro();
-	//TestGerberParserCommentMacro();
-	//TestGerberParserPolygonMacro();
-	//TestGerberParserThermalMacro();
-	//TestGerberParserExample1();
-	//TestGerberParserPartialReal();
+	TestGerberParserCommandComment();
+	TestGerberParserCommandFormatSpecifier();
+	TestGerberParserCommandMeasurementMode();
+	TestGerberParserCircleMacro();
+	TestGerberParserVectorLineMacro();
+	TestGerberParserCenterLineMacro();
+	TestGerberParserOutlineMacro();
+	TestGerberParserCommentMacro();
+	TestGerberParserPolygonMacro();
+	TestGerberParserThermalMacro();
+	TestGerberParserExample1();
+	TestGerberParserPartialReal();
 
 	ObjectsKill();
 	DataIOKill();
