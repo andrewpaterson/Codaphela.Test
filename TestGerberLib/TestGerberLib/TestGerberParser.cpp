@@ -577,6 +577,77 @@ void TestGerberParserPolygonMacro(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestGerberParserThermalMacro(void)
+{
+	CChars							szGerberFile;
+	CGerberParser					cParser;
+	CGerberCommands					cCommands;
+	TRISTATE						tResult;
+	size							uiNumCommands;
+	CGerberCommand*					pcCommand;
+	CGerberCommandApertureMacro*	pcApetureMacro;
+	size							uiNumPrimitives;
+	CGerberApertureMacro*			pcPrimitive;
+	CGerberApertureMacroThermal*	pcThermal;
+	CNumber*						pcNumber;
+
+	szGerberFile.Init(
+		"%AM Thermal*\n"
+		"7,1,2,0.95,0.75,0.175,3.0*%\n"
+		"M02*\n");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(2, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsApertureMacro());
+
+	pcApetureMacro = (CGerberCommandApertureMacro*)pcCommand;
+	uiNumPrimitives = pcApetureMacro->NumPrimitives();
+	AssertInt(1, uiNumPrimitives);
+
+	pcPrimitive = pcApetureMacro->GetPrimitive(0);
+	AssertTrue(pcPrimitive->IsThermal());
+
+	pcThermal = (CGerberApertureMacroThermal*)pcPrimitive;
+	pcNumber = pcThermal->GetCenterX()->GetConstNumber();
+	AssertNotNull(pcNumber);
+	AssertFloat(1.f, pcNumber->FloatValue(), 2);
+
+	pcNumber = pcThermal->GetCenterY()->GetConstNumber();
+	AssertNotNull(pcNumber);
+	AssertFloat(2.f, pcNumber->FloatValue(), 2);
+
+	pcNumber = pcThermal->GetInnerDiameter()->GetConstNumber();
+	AssertNotNull(pcNumber);
+	AssertFloat(0.75f, pcNumber->FloatValue(), 2);
+
+	pcNumber = pcThermal->GetOuterDiameter()->GetConstNumber();
+	AssertNotNull(pcNumber);
+	AssertFloat(0.95f, pcNumber->FloatValue(), 2);
+
+	pcNumber = pcThermal->GetRotation()->GetConstNumber();
+	AssertNotNull(pcNumber);
+	AssertFloat(3.f, pcNumber->FloatValue(), 5);
+
+	pcNumber = pcThermal->GetGapThickness()->GetConstNumber();
+	AssertNotNull(pcNumber);
+	AssertFloat(0.175f, pcNumber->FloatValue(), 5);
+
+	cCommands.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestGerberParserExample1(void)
 {
 	CChars				szGerberFile;
@@ -618,8 +689,8 @@ void TestGerberParser(void)
 	//TestGerberParserCenterLineMacro();
 	//TestGerberParserOutlineMacro();
 	//TestGerberParserCommentMacro();
-	TestGerberParserPolygonMacro();
-	//TestGerberParserThermalMacro();
+	//TestGerberParserPolygonMacro();
+	TestGerberParserThermalMacro();
 	//TestGerberParserExample1();
 	//TestGerberParserPartialReal();
 
