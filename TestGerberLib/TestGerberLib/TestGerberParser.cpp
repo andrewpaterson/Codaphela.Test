@@ -60,6 +60,54 @@ void TestGerberParserCommentCommand(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestGerberParserCommentFormatSpecifier(void)
+{
+	CChars								szGerberFile;
+	CGerberParser						cParser;
+	CGerberCommands						cCommands;
+	TRISTATE							tResult;
+	size								uiNumCommands;
+	CGerberCommand*						pcCommand;
+	CGerberCommandFormatSpecifier*		pcFormatSpecifier;
+	uint16								ui;
+
+	szGerberFile.Init(
+		"%FSLAX26Y35*%\n");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(1, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsFormatSpecifier());
+
+	pcFormatSpecifier = (CGerberCommandFormatSpecifier*)pcCommand;
+
+	ui = pcFormatSpecifier->GetXWholeNumbers();
+	AssertShort((uint16)2, ui);
+
+	ui = pcFormatSpecifier->GetXDecimals();
+	AssertShort((uint16)5, ui);
+
+	ui = pcFormatSpecifier->GetYWholeNumbers();
+	AssertShort((uint16)3, ui);
+
+	ui = pcFormatSpecifier->GetYDecimals();
+	AssertShort((uint16)5, ui);
+
+	cCommands.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestGerberParserPartialReal(void)
 {
 	CChars				szGerberFile;
@@ -684,13 +732,14 @@ void TestGerberParser(void)
 	ObjectsInit();
 	
 	//TestGerberParserCommentCommand();
+	TestGerberParserCommentFormatSpecifier();
 	//TestGerberParserCircleMacro();
 	//TestGerberParserVectorLineMacro();
 	//TestGerberParserCenterLineMacro();
 	//TestGerberParserOutlineMacro();
 	//TestGerberParserCommentMacro();
 	//TestGerberParserPolygonMacro();
-	TestGerberParserThermalMacro();
+	//TestGerberParserThermalMacro();
 	//TestGerberParserExample1();
 	//TestGerberParserPartialReal();
 
