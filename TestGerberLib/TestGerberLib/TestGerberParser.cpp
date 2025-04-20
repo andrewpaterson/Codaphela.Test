@@ -506,6 +506,77 @@ void TestGerberParserCommentMacro(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestGerberParserPolygonMacro(void)
+{
+	CChars							szGerberFile;
+	CGerberParser					cParser;
+	CGerberCommands					cCommands;
+	TRISTATE						tResult;
+	size							uiNumCommands;
+	CGerberCommand*					pcCommand;
+	CGerberCommandApertureMacro*	pcApetureMacro;
+	size							uiNumPrimitives;
+	CGerberApertureMacro*			pcPrimitive;
+	CGerberApertureMacroPolygon*	pcPolygon;
+	CNumber*						pcNumber;
+
+	szGerberFile.Init(
+		"%AM Polygon*\n"
+		"5,1,8,0,0,7,0*%\n"
+		"M02*\n");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(2, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsApertureMacro());
+
+	pcApetureMacro = (CGerberCommandApertureMacro*)pcCommand;
+	uiNumPrimitives = pcApetureMacro->NumPrimitives();
+	AssertInt(1, uiNumPrimitives);
+
+	pcPrimitive = pcApetureMacro->GetPrimitive(0);
+	AssertTrue(pcPrimitive->IsPolygon());
+
+	pcPolygon = (CGerberApertureMacroPolygon*)pcPrimitive;
+	pcNumber = pcPolygon->GetCenterX()->GetConstNumber();
+	AssertNotNull(pcNumber);
+	AssertFloat(0.f, pcNumber->FloatValue(), 2);
+
+	pcNumber = pcPolygon->GetCenterY()->GetConstNumber();
+	AssertNotNull(pcNumber);
+	AssertFloat(0.f, pcNumber->FloatValue(), 2);
+
+	pcNumber = pcPolygon->GetDiameter()->GetConstNumber();
+	AssertNotNull(pcNumber);
+	AssertFloat(7.f, pcNumber->FloatValue(), 2);
+
+	pcNumber = pcPolygon->GetNumberOfVertices()->GetConstNumber();
+	AssertNotNull(pcNumber);
+	AssertInt(8, pcNumber->IntValue());
+
+	pcNumber = pcPolygon->GetRotation()->GetConstNumber();
+	AssertNotNull(pcNumber);
+	AssertFloat(0.f, pcNumber->FloatValue(), 5);
+
+	pcNumber = pcPolygon->GetExposure()->GetConstNumber();
+	AssertNotNull(pcNumber);
+	AssertFloat(1.f, pcNumber->FloatValue(), 5);
+
+	cCommands.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestGerberParserExample1(void)
 {
 	CChars				szGerberFile;
@@ -541,13 +612,13 @@ void TestGerberParser(void)
 	DataIOInit();
 	ObjectsInit();
 	
-	TestGerberParserCommentCommand();
+	//TestGerberParserCommentCommand();
 	//TestGerberParserCircleMacro();
 	//TestGerberParserVectorLineMacro();
 	//TestGerberParserCenterLineMacro();
 	//TestGerberParserOutlineMacro();
 	//TestGerberParserCommentMacro();
-	//TestGerberParserPolygonMacro();
+	TestGerberParserPolygonMacro();
 	//TestGerberParserThermalMacro();
 	//TestGerberParserExample1();
 	//TestGerberParserPartialReal();
