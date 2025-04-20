@@ -12,6 +12,54 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestGerberParserCommentCommand(void)
+{
+	CChars								szGerberFile;
+	CGerberParser						cParser;
+	CGerberCommands						cCommands;
+	TRISTATE							tResult;
+	size								uiNumCommands;
+	CGerberCommand*						pcCommand;
+	CGerberCommandComment*				pcComment;
+
+	szGerberFile.Init(
+		"G04 Ucamco ex. 1: Twon\n"
+		"square boxes *\n"
+		"G04 Ucamco ex. 2: Shapes*\n"
+		"M02*\n");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(3, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsComment());
+
+	pcComment = (CGerberCommandComment*)pcCommand;
+	AssertString("Ucamco ex. 1: Twon\nsquare boxes ", pcComment->Text());
+
+	pcCommand = cCommands.GetCommand(1);
+	AssertTrue(pcCommand->IsComment());
+
+	pcComment = (CGerberCommandComment*)pcCommand;
+	AssertString("Ucamco ex. 2: Shapes", pcComment->Text());
+
+	pcCommand = cCommands.GetCommand(2);
+	AssertTrue(pcCommand->IsEndOfFile());
+
+	cCommands.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestGerberParserPartialReal(void)
 {
 	CChars				szGerberFile;
@@ -390,7 +438,6 @@ void TestGerberParserCommentMacro(void)
 	size								uiNumPrimitives;
 	CGerberApertureMacro*				pcPrimitive;
 	CGerberApertureMacroComment*		pcComment;
-	Float64								pcValue;
 
 	szGerberFile.Init(
 		"%AMComment*\n"
@@ -494,11 +541,12 @@ void TestGerberParser(void)
 	DataIOInit();
 	ObjectsInit();
 	
+	TestGerberParserCommentCommand();
 	//TestGerberParserCircleMacro();
 	//TestGerberParserVectorLineMacro();
 	//TestGerberParserCenterLineMacro();
 	//TestGerberParserOutlineMacro();
-	TestGerberParserCommentMacro();
+	//TestGerberParserCommentMacro();
 	//TestGerberParserPolygonMacro();
 	//TestGerberParserThermalMacro();
 	//TestGerberParserExample1();
