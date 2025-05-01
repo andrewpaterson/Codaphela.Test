@@ -275,7 +275,40 @@ void TestGerberParserCommandPlotMode(void)
 //////////////////////////////////////////////////////////////////////////
 void TestGerberParserCommandLoadPolarity(void)
 {
+	CChars							szGerberFile;
+	CGerberParser					cParser;
+	CGerberCommands					cCommands;
+	TRISTATE						tResult;
+	size							uiNumCommands;
+	CGerberCommand*					pcCommand;
+	CGerberCommandLoadPolarity*		pcPolarity;
 
+	szGerberFile.Init(
+		"%LPC*%\n"
+		"%LPD*%\n");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(2, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsLoadPolarity());
+	pcPolarity = (CGerberCommandLoadPolarity*)pcCommand;
+	AssertTrue(pcPolarity->IsClear());
+	AssertFalse(pcPolarity->IsDark());
+
+	pcCommand = cCommands.GetCommand(1);
+	AssertTrue(pcCommand->IsLoadPolarity());
+	pcPolarity = (CGerberCommandLoadPolarity*)pcCommand;
+	AssertTrue(pcPolarity->IsDark());
+	AssertFalse(pcPolarity->IsClear());
+
+	cCommands.Kill();
 }
 
 
@@ -285,7 +318,50 @@ void TestGerberParserCommandLoadPolarity(void)
 //////////////////////////////////////////////////////////////////////////
 void TestGerberParserCommandLoadMirroring(void)
 {
+	CChars							szGerberFile;
+	CGerberParser					cParser;
+	CGerberCommands					cCommands;
+	TRISTATE						tResult;
+	size							uiNumCommands;
+	CGerberCommand*					pcCommand;
+	CGerberCommandLoadMirroring*	pcMirroring;
 
+	szGerberFile.Init(
+		"%LMN*%\n"
+		"%LMX*%\n"
+		"%LMY*%\n"
+		"%LMXY*%\n");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(4, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsLoadMirroring());
+	pcMirroring = (CGerberCommandLoadMirroring*)pcCommand;
+	AssertTrue(pcMirroring->IsNone());
+
+	pcCommand = cCommands.GetCommand(1);
+	AssertTrue(pcCommand->IsLoadMirroring());
+	pcMirroring = (CGerberCommandLoadMirroring*)pcCommand;
+	AssertTrue(pcMirroring->IsX());
+
+	pcCommand = cCommands.GetCommand(2);
+	AssertTrue(pcCommand->IsLoadMirroring());
+	pcMirroring = (CGerberCommandLoadMirroring*)pcCommand;
+	AssertTrue(pcMirroring->IsY());
+
+	pcCommand = cCommands.GetCommand(3);
+	AssertTrue(pcCommand->IsLoadMirroring());
+	pcMirroring = (CGerberCommandLoadMirroring*)pcCommand;
+	AssertTrue(pcMirroring->IsXY());
+
+	cCommands.Kill();
 }
 
 
@@ -947,16 +1023,16 @@ void TestGerberParser(void)
 	DataIOInit();
 	ObjectsInit();
 	
-	TestGerberParserCommandEndOfFile();					//M02
-	TestGerberParserCommandComment();					//G04
-	TestGerberParserCommandFormatSpecifier();			//FS
-	TestGerberParserCommandMeasurementMode();			//MO
-	TestGerberParserCommandPlotMode();					//G01, G02, G03
-	TestGerberParserCommandLoadPolarity();				//LP
-	TestGerberParserCommandLoadMirroring();				//LM
-	TestGerberParserCommandLoadRotation();				//LR
-	TestGerberParserCommandLoadScaling();				//LS
-	TestGerberParserCommandFileAttribute();				//TG
+	TestGerberParserCommandEndOfFile();			//M02
+	TestGerberParserCommandComment();			//G04
+	TestGerberParserCommandFormatSpecifier();	//FS
+	TestGerberParserCommandMeasurementMode();	//MO
+	TestGerberParserCommandPlotMode();			//G01, G02, G03
+	TestGerberParserCommandLoadPolarity();		//LP
+	TestGerberParserCommandLoadMirroring();		//LM
+	TestGerberParserCommandLoadRotation();		//LR
+	TestGerberParserCommandLoadScaling();		//LS
+	TestGerberParserCommandFileAttribute();		//TG
 	TestGerberParserCircleMacro();
 	TestGerberParserVectorLineMacro();
 	TestGerberParserCenterLineMacro();
