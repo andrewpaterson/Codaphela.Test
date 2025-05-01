@@ -3,6 +3,7 @@
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "BaseLib/NaiveFile.h"
+#include "BaseLib/LogToMemory.h"
 #include "GerberLib/GerberParser.h"
 #include "GerberLib/GerberCommands.h"
 #include "TestLib/Assert.h"
@@ -117,6 +118,9 @@ void TestGerberParserCommandMeasurementMode(void)
 	size							uiNumCommands;
 	CGerberCommand*					pcCommand;
 	CGerberCommandMeasurementMode*	pcMeasurementMode;
+	CLogToMemory					cMemoryLog;
+	char							szLogText[200];
+	char*							szSyntaxError;
 
 	szGerberFile.Init("%MOMM*%");
 
@@ -136,6 +140,48 @@ void TestGerberParserCommandMeasurementMode(void)
 
 	AssertTrue(pcMeasurementMode->IsMillimeters());
 	AssertFalse(pcMeasurementMode->IsInches());
+
+	cCommands.Kill();
+
+
+	szGerberFile.Init("%MOIN*%");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(1, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsMeasurementMode());
+
+	pcMeasurementMode = (CGerberCommandMeasurementMode*)pcCommand;
+
+	AssertTrue(pcMeasurementMode->IsInches());
+	AssertFalse(pcMeasurementMode->IsMillimeters());
+
+	cCommands.Kill();
+
+
+	cMemoryLog.Start(true);
+	szGerberFile.Init("%MOPT*%");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTrierror(tResult);
+	
+	cMemoryLog.Stop(szLogText, 200);
+	szSyntaxError = strstr(szLogText, "Syntax Error");
+	AssertString(
+"Syntax Error, could not parse Command:\n"
+"%MOPT*\n"
+"   ^\n", szSyntaxError);
 
 	cCommands.Kill();
 }
