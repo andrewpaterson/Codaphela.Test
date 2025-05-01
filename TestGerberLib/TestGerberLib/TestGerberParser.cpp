@@ -13,6 +13,37 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestGerberParserCommandEndOfFile(void)
+{
+	CChars					szGerberFile;
+	CGerberParser			cParser;
+	CGerberCommands			cCommands;
+	TRISTATE				tResult;
+	size					uiNumCommands;
+	CGerberCommand*			pcCommand;
+
+	szGerberFile.Init("M02*\n");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(1, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsEndOfFile());
+
+	cCommands.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestGerberParserCommandComment(void)
 {
 	CChars					szGerberFile;
@@ -191,7 +222,109 @@ void TestGerberParserCommandMeasurementMode(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestGerberParserPartialReal(void)
+void TestGerberParserCommandPlotMode(void)
+{
+	CChars							szGerberFile;
+	CGerberParser					cParser;
+	CGerberCommands					cCommands;
+	TRISTATE						tResult;
+	size							uiNumCommands;
+	CGerberCommand*					pcCommand;
+	CGerberCommandPlotMode*			pcPlotMode;
+
+	szGerberFile.Init("G01*G02*G03*");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(3, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsPlotMode());
+	pcPlotMode = (CGerberCommandPlotMode*)pcCommand;
+	AssertTrue(pcPlotMode->IsLinear());
+	AssertFalse(pcPlotMode->IsCircular());
+
+	pcCommand = cCommands.GetCommand(1);
+	AssertTrue(pcCommand->IsPlotMode());
+	pcPlotMode = (CGerberCommandPlotMode*)pcCommand;
+	AssertTrue(pcPlotMode->IsCircular());
+	AssertFalse(pcPlotMode->IsLinear());
+	AssertTrue(pcPlotMode->IsClockwise());
+	AssertFalse(pcPlotMode->IsAnticlockwise());
+
+	pcCommand = cCommands.GetCommand(2);
+	AssertTrue(pcCommand->IsPlotMode());
+	pcPlotMode = (CGerberCommandPlotMode*)pcCommand;
+	AssertTrue(pcPlotMode->IsCircular());
+	AssertFalse(pcPlotMode->IsLinear());
+	AssertFalse(pcPlotMode->IsClockwise());
+	AssertTrue(pcPlotMode->IsAnticlockwise());
+
+	cCommands.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGerberParserCommandLoadPolarity(void)
+{
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGerberParserCommandLoadMirroring(void)
+{
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGerberParserCommandLoadRotation(void)
+{
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGerberParserCommandLoadScaling(void)
+{
+
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGerberParserCommandFileAttribute(void)
+{
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGerberParserPartialKiCadReal(void)
 {
 	CChars				szGerberFile;
 	CGerberParser		cParser;
@@ -814,9 +947,16 @@ void TestGerberParser(void)
 	DataIOInit();
 	ObjectsInit();
 	
-	TestGerberParserCommandComment();
-	TestGerberParserCommandFormatSpecifier();
-	TestGerberParserCommandMeasurementMode();
+	TestGerberParserCommandEndOfFile();					//M02
+	TestGerberParserCommandComment();					//G04
+	TestGerberParserCommandFormatSpecifier();			//FS
+	TestGerberParserCommandMeasurementMode();			//MO
+	TestGerberParserCommandPlotMode();					//G01, G02, G03
+	TestGerberParserCommandLoadPolarity();				//LP
+	TestGerberParserCommandLoadMirroring();				//LM
+	TestGerberParserCommandLoadRotation();				//LR
+	TestGerberParserCommandLoadScaling();				//LS
+	TestGerberParserCommandFileAttribute();				//TG
 	TestGerberParserCircleMacro();
 	TestGerberParserVectorLineMacro();
 	TestGerberParserCenterLineMacro();
@@ -825,7 +965,7 @@ void TestGerberParser(void)
 	TestGerberParserPolygonMacro();
 	TestGerberParserThermalMacro();
 	TestGerberParserExample1();
-	TestGerberParserPartialReal();
+	//TestGerberParserPartialKiCadReal();
 
 	ObjectsKill();
 	DataIOKill();
