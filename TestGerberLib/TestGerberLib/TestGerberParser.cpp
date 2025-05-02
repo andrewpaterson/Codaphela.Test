@@ -71,6 +71,7 @@ void TestGerberParserCommandComment(void)
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsComment());
+	AssertTrue(pcCommand->IsType(GC_G04));
 
 	pcComment = (CGerberCommandComment*)pcCommand;
 	AssertString("Ucamco ex. 1: Twon\nsquare boxes ", pcComment->Text());
@@ -117,6 +118,7 @@ void TestGerberParserCommandFormatSpecifier(void)
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsFormatSpecifier());
+	AssertTrue(pcCommand->IsType(GC_FS));
 
 	pcFormatSpecifier = (CGerberCommandFormatSpecifier*)pcCommand;
 
@@ -166,6 +168,7 @@ void TestGerberParserCommandMeasurementMode(void)
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsMeasurementMode());
+	AssertTrue(pcCommand->IsType(GC_MO));
 
 	pcMeasurementMode = (CGerberCommandMeasurementMode*)pcCommand;
 
@@ -245,12 +248,14 @@ void TestGerberParserCommandPlotMode(void)
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsPlotMode());
+	AssertTrue(pcCommand->IsType(GC_G01));
 	pcPlotMode = (CGerberCommandPlotMode*)pcCommand;
 	AssertTrue(pcPlotMode->IsLinear());
 	AssertFalse(pcPlotMode->IsCircular());
 
 	pcCommand = cCommands.GetCommand(1);
 	AssertTrue(pcCommand->IsPlotMode());
+	AssertTrue(pcCommand->IsType(GC_G02));
 	pcPlotMode = (CGerberCommandPlotMode*)pcCommand;
 	AssertTrue(pcPlotMode->IsCircular());
 	AssertFalse(pcPlotMode->IsLinear());
@@ -259,6 +264,7 @@ void TestGerberParserCommandPlotMode(void)
 
 	pcCommand = cCommands.GetCommand(2);
 	AssertTrue(pcCommand->IsPlotMode());
+	AssertTrue(pcCommand->IsType(GC_G03));
 	pcPlotMode = (CGerberCommandPlotMode*)pcCommand;
 	AssertTrue(pcPlotMode->IsCircular());
 	AssertFalse(pcPlotMode->IsLinear());
@@ -298,6 +304,7 @@ void TestGerberParserCommandLoadPolarity(void)
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsLoadPolarity());
+	AssertTrue(pcCommand->IsType(GC_LP));
 	pcPolarity = (CGerberCommandLoadPolarity*)pcCommand;
 	AssertTrue(pcPolarity->IsClear());
 	AssertFalse(pcPolarity->IsDark());
@@ -343,6 +350,7 @@ void TestGerberParserCommandLoadMirroring(void)
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsLoadMirroring());
+	AssertTrue(pcCommand->IsType(GC_LM));
 	pcMirroring = (CGerberCommandLoadMirroring*)pcCommand;
 	AssertTrue(pcMirroring->IsNone());
 
@@ -371,7 +379,39 @@ void TestGerberParserCommandLoadMirroring(void)
 //////////////////////////////////////////////////////////////////////////
 void TestGerberParserCommandLoadRotation(void)
 {
+	CChars							szGerberFile;
+	CGerberParser					cParser;
+	CGerberCommands					cCommands;
+	TRISTATE						tResult;
+	size							uiNumCommands;
+	CGerberCommand*					pcCommand;
+	CGerberCommandLoadRotation*		pcRotation;
 
+	szGerberFile.Init(
+		"%LR90*%\n"
+		"%LR0.008192*%\n");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(2, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsLoadRotation());
+	AssertTrue(pcCommand->IsType(GC_LR));
+	pcRotation = (CGerberCommandLoadRotation*)pcCommand;
+	AssertNumber("90", pcRotation->GetRotation());
+
+	pcCommand = cCommands.GetCommand(1);
+	AssertTrue(pcCommand->IsLoadRotation());
+	pcRotation = (CGerberCommandLoadRotation*)pcCommand;
+	AssertNumber("0.008192", pcRotation->GetRotation());
+
+	cCommands.Kill();
 }
 
 
@@ -381,7 +421,39 @@ void TestGerberParserCommandLoadRotation(void)
 //////////////////////////////////////////////////////////////////////////
 void TestGerberParserCommandLoadScaling(void)
 {
+	CChars							szGerberFile;
+	CGerberParser					cParser;
+	CGerberCommands					cCommands;
+	TRISTATE						tResult;
+	size							uiNumCommands;
+	CGerberCommand*					pcCommand;
+	CGerberCommandLoadScaling*		pcScaling;
 
+	szGerberFile.Init(
+		"%LS90*%\n"
+		"%LS0.008192*%\n");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(2, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsLoadScaling());
+	AssertTrue(pcCommand->IsType(GC_LS));
+	pcScaling = (CGerberCommandLoadScaling*)pcCommand;
+	AssertNumber("90", pcScaling->GetScaling());
+
+	pcCommand = cCommands.GetCommand(1);
+	AssertTrue(pcCommand->IsLoadScaling());
+	pcScaling = (CGerberCommandLoadScaling*)pcCommand;
+	AssertNumber("0.008192", pcScaling->GetScaling());
+
+	cCommands.Kill();
 }
 
 
@@ -393,72 +465,6 @@ void TestGerberParserCommandLoadScaling(void)
 void TestGerberParserCommandFileAttribute(void)
 {
 
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void TestGerberParserPartialKiCadReal(void)
-{
-	CChars				szGerberFile;
-	CGerberParser		cParser;
-	CGerberCommands		cCommands;
-	TRISTATE			tResult;
-
-	szGerberFile.Init(
-		"G04 Gerber Test File*\n"
-		"%TF.GenerationSoftware,KiCad,Pcbnew,8.0.7*%\n"
-		"%TF.CreationDate,2025-02-09T12:46:03+02:00*%\n"
-		"%TF.ProjectId,EPM570 Programmer,45504d35-3730-4205-9072-6f6772616d6d,V0*%\n"
-		"%TF.SameCoordinates,Original*%\n"
-		"%TF.FileFunction,Copper,L1,Top*%\n"
-		"%TF.FilePolarity,Positive*%\n"
-		"%FSLAX46Y46*%\n"
-		"G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*\n"
-		"G04 Created by KiCad (PCBNEW 8.0.7) date 2025-02-09 12:46:03*\n"
-		"%MOMM*%\n"
-		"%LPD*%\n"
-		"G01*\n"
-		"G04 APERTURE LIST*\n"
-		"G04 Aperture macros list*\n"
-		"%AMRoundRect*\n"
-		"0 Rectangle with rounded corners*\n"
-		"0 $1 Rounding radius*\n"
-		"0 $2 $3 $4 $5 $6 $7 $8 $9 X,Y pos of 4 corners*\n"
-		"0 Add a 4 corners polygon primitive as box body*\n"
-		"4,1,4,$2,$3,$4,$5,$6,$7,$8,$9,$2,$3,0*\n"
-		"0 Add four circle primitives for the rounded corners*\n"
-		"1,1,$1+$1,$2,$3*\n"
-		"1,1,$1+$1,$4,$5*\n"
-		"1,1,$1+$1,$6,$7*\n"
-		"1,1,$1+$1,$8,$9*\n"
-		"0 Add four rect primitives between the rounded corners*\n"
-		"20,1,$1+$1,$2,$3,$4,$5,0*\n"
-		"20,1,$1+$1,$4,$5,$6,$7,0*\n"
-		"20,1,$1+$1,$6,$7,$8,$9,0*\n"
-		"20,1,$1+$1,$8,$9,$2,$3,0*%\n"
-		"G04 Aperture macros list end*\n"
-		"%TA.AperFunction,EtchedComponent*%\n"
-		"%ADD10C,0.000000*%\n"
-		"%TD*%\n"
-		"%TA.AperFunction,SMDPad,CuDef*%\n"
-		"%ADD11R,1.150000X0.600000*%\n"
-		"%TD*%\n"
-		"%TA.AperFunction,SMDPad,CuDef*%\n"
-		"%ADD12RoundRect,0.250000X-0.475000X0.250000X-0.475000X-0.250000X0.475000X-0.250000X0.475000X0.250000X0*%\n"
-		"%TD*%\n"
-		"M02*\n");
-
-	cCommands.Init();
-	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
-	tResult = cParser.Parse();
-	AssertTritrue(tResult);
-	
-	cParser.Kill();
-
-	cCommands.Kill();
 }
 
 
@@ -631,6 +637,7 @@ void TestGerberParserCenterLineMacro(void)
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsApertureMacro());
+	AssertTrue(pcCommand->IsType(GC_AM));
 
 	pcApetureMacro = (CGerberCommandApertureMacro*)pcCommand;
 	uiNumPrimitives = pcApetureMacro->NumPrimitives();
@@ -1010,6 +1017,73 @@ void TestGerberParserExample1(void)
 	cCommands.Kill();
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGerberParserPartialKiCadReal(void)
+{
+	CChars				szGerberFile;
+	CGerberParser		cParser;
+	CGerberCommands		cCommands;
+	TRISTATE			tResult;
+
+	szGerberFile.Init(
+		"G04 Gerber Test File*\n"
+		"%TF.GenerationSoftware,KiCad,Pcbnew,8.0.7*%\n"
+		"%TF.CreationDate,2025-02-09T12:46:03+02:00*%\n"
+		"%TF.ProjectId,EPM570 Programmer,45504d35-3730-4205-9072-6f6772616d6d,V0*%\n"
+		"%TF.SameCoordinates,Original*%\n"
+		"%TF.FileFunction,Copper,L1,Top*%\n"
+		"%TF.FilePolarity,Positive*%\n"
+		"%FSLAX46Y46*%\n"
+		"G04 Gerber Fmt 4.6, Leading zero omitted, Abs format (unit mm)*\n"
+		"G04 Created by KiCad (PCBNEW 8.0.7) date 2025-02-09 12:46:03*\n"
+		"%MOMM*%\n"
+		"%LPD*%\n"
+		"G01*\n"
+		"G04 APERTURE LIST*\n"
+		"G04 Aperture macros list*\n"
+		"%AMRoundRect*\n"
+		"0 Rectangle with rounded corners*\n"
+		"0 $1 Rounding radius*\n"
+		"0 $2 $3 $4 $5 $6 $7 $8 $9 X,Y pos of 4 corners*\n"
+		"0 Add a 4 corners polygon primitive as box body*\n"
+		"4,1,4,$2,$3,$4,$5,$6,$7,$8,$9,$2,$3,0*\n"
+		"0 Add four circle primitives for the rounded corners*\n"
+		"1,1,$1+$1,$2,$3*\n"
+		"1,1,$1+$1,$4,$5*\n"
+		"1,1,$1+$1,$6,$7*\n"
+		"1,1,$1+$1,$8,$9*\n"
+		"0 Add four rect primitives between the rounded corners*\n"
+		"20,1,$1+$1,$2,$3,$4,$5,0*\n"
+		"20,1,$1+$1,$4,$5,$6,$7,0*\n"
+		"20,1,$1+$1,$6,$7,$8,$9,0*\n"
+		"20,1,$1+$1,$8,$9,$2,$3,0*%\n"
+		"G04 Aperture macros list end*\n"
+		"%TA.AperFunction,EtchedComponent*%\n"
+		"%ADD10C,0.000000*%\n"
+		"%TD*%\n"
+		"%TA.AperFunction,SMDPad,CuDef*%\n"
+		"%ADD11R,1.150000X0.600000*%\n"
+		"%TD*%\n"
+		"%TA.AperFunction,SMDPad,CuDef*%\n"
+		"%ADD12RoundRect,0.250000X-0.475000X0.250000X-0.475000X-0.250000X0.475000X-0.250000X0.475000X0.250000X0*%\n"
+		"%TD*%\n"
+		"M02*\n");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	AssertTritrue(tResult);
+
+	cParser.Kill();
+
+	cCommands.Kill();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -1032,7 +1106,7 @@ void TestGerberParser(void)
 	TestGerberParserCommandLoadMirroring();		//LM
 	TestGerberParserCommandLoadRotation();		//LR
 	TestGerberParserCommandLoadScaling();		//LS
-	TestGerberParserCommandFileAttribute();		//TG
+	TestGerberParserCommandFileAttribute();		//TF
 	TestGerberParserCircleMacro();
 	TestGerberParserVectorLineMacro();
 	TestGerberParserCenterLineMacro();
