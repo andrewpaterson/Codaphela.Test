@@ -457,14 +457,166 @@ void TestGerberParserCommandLoadScaling(void)
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
 void TestGerberParserCommandFileAttribute(void)
 {
+	CChars							szGerberFile;
+	CGerberParser					cParser;
+	CGerberCommands					cCommands;
+	TRISTATE						tResult;
+	size							uiNumCommands;
+	CGerberCommand*					pcCommand;
+	CGerberCommandFileAttribute*	pcAttribute;
+	char*							szAttribute;
+	char*							szValue;
+	size							uiNumValues;
 
+	szGerberFile.Init(
+		"%TF.CreationDate,2016-04-25T00:00;00+01:00*%\n"
+		"%TF.FileFunction,Soldermask,Top*%\n"
+		"%TF.FileFunction,Copper,L1,Top*%");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(3, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsFileAttribute());
+	AssertTrue(pcCommand->IsType(GC_TF));
+	pcAttribute = (CGerberCommandFileAttribute*)pcCommand;
+
+	szAttribute = pcAttribute->NameText();
+	AssertString(".CreationDate", szAttribute);
+	uiNumValues = pcAttribute->NumValues();
+	AssertSize(1, uiNumValues);
+	szValue = pcAttribute->ValueText(0);
+	AssertString("2016-04-25T00:00;00+01:00", szValue);
+
+	pcCommand = cCommands.GetCommand(1);
+	AssertTrue(pcCommand->IsFileAttribute());
+	pcAttribute = (CGerberCommandFileAttribute*)pcCommand;
+
+	szAttribute = pcAttribute->NameText();
+	AssertString(".FileFunction", szAttribute);
+	uiNumValues = pcAttribute->NumValues();
+	AssertSize(2, uiNumValues);
+	szValue = pcAttribute->ValueText(0);
+	AssertString("Soldermask", szValue);
+	szValue = pcAttribute->ValueText(1);
+	AssertString("Top", szValue);
+
+	pcCommand = cCommands.GetCommand(2);
+	AssertTrue(pcCommand->IsFileAttribute());
+	pcAttribute = (CGerberCommandFileAttribute*)pcCommand;
+
+	szAttribute = pcAttribute->NameText();
+	AssertString(".FileFunction", szAttribute);
+	uiNumValues = pcAttribute->NumValues();
+	AssertSize(3, uiNumValues);
+	szValue = pcAttribute->ValueText(0);
+	AssertString("Copper", szValue);
+	szValue = pcAttribute->ValueText(1);
+	AssertString("L1", szValue);
+	szValue = pcAttribute->ValueText(2);
+	AssertString("Top", szValue);
+
+	cCommands.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGerberParserCommandApertureAttribute(void)
+{
+	CChars								szGerberFile;
+	CGerberParser						cParser;
+	CGerberCommands						cCommands;
+	TRISTATE							tResult;
+	size								uiNumCommands;
+	CGerberCommand*						pcCommand;
+	CGerberCommandApertureAttribute*	pcAttribute;
+	char*								szAttribute;
+	char*								szValue;
+	size								uiNumValues;
+
+	szGerberFile.Init("%TA.AperFunction,Conductor*%");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(1, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsApertureAttribute());
+	AssertTrue(pcCommand->IsType(GC_TA));
+	pcAttribute = (CGerberCommandApertureAttribute*)pcCommand;
+
+	szAttribute = pcAttribute->NameText();
+	AssertString(".AperFunction", szAttribute);
+	uiNumValues = pcAttribute->NumValues();
+	AssertSize(1, uiNumValues);
+	szValue = pcAttribute->ValueText(0);
+	AssertString("Conductor", szValue);
+
+	cCommands.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGerberParserCommandObjectAttribute(void)
+{
+	CChars								szGerberFile;
+	CGerberParser						cParser;
+	CGerberCommands						cCommands;
+	TRISTATE							tResult;
+	size								uiNumCommands;
+	CGerberCommand*						pcCommand;
+	CGerberCommandObjectAttribute*		pcAttribute;
+	char*								szAttribute;
+	char*								szValue;
+	size								uiNumValues;
+
+	szGerberFile.Init("%TO.C,R6*%");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(1, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsObjectAttribute());
+	AssertTrue(pcCommand->IsType(GC_TO));
+	pcAttribute = (CGerberCommandObjectAttribute*)pcCommand;
+
+	szAttribute = pcAttribute->NameText();
+	AssertString(".C", szAttribute);
+	uiNumValues = pcAttribute->NumValues();
+	AssertSize(1, uiNumValues);
+	szValue = pcAttribute->ValueText(0);
+	AssertString("R6", szValue);
+
+	cCommands.Kill();
 }
 
 
@@ -1107,6 +1259,8 @@ void TestGerberParser(void)
 	TestGerberParserCommandLoadRotation();		//LR
 	TestGerberParserCommandLoadScaling();		//LS
 	TestGerberParserCommandFileAttribute();		//TF
+	TestGerberParserCommandApertureAttribute(); //TA
+	TestGerberParserCommandObjectAttribute();	//TO
 	TestGerberParserCircleMacro();
 	TestGerberParserVectorLineMacro();
 	TestGerberParserCenterLineMacro();
