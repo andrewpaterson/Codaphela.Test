@@ -624,6 +624,50 @@ void TestGerberParserCommandObjectAttribute(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestGerberParserCommandDeleteAttribute(void)
+{
+	CChars								szGerberFile;
+	CGerberParser						cParser;
+	CGerberCommands						cCommands;
+	TRISTATE							tResult;
+	size								uiNumCommands;
+	CGerberCommand*						pcCommand;
+	CGerberCommandObjectAttribute*		pcAttribute;
+	char*								szAttribute;
+	char*								szValue;
+	size								uiNumValues;
+
+	szGerberFile.Init("%TO.C,R6*%");
+
+	cCommands.Init();
+	cParser.Init(szGerberFile.Text(), szGerberFile.Length(), "none.txt", &cCommands);
+	tResult = cParser.Parse();
+	cParser.Kill();
+
+	AssertTritrue(tResult);
+	uiNumCommands = cCommands.NumCommands();
+	AssertInt(1, uiNumCommands);
+
+	pcCommand = cCommands.GetCommand(0);
+	AssertTrue(pcCommand->IsObjectAttribute());
+	AssertTrue(pcCommand->IsType(GC_TO));
+	pcAttribute = (CGerberCommandObjectAttribute*)pcCommand;
+
+	szAttribute = pcAttribute->NameText();
+	AssertString(".C", szAttribute);
+	uiNumValues = pcAttribute->NumValues();
+	AssertSize(1, uiNumValues);
+	szValue = pcAttribute->ValueText(0);
+	AssertString("R6", szValue);
+
+	cCommands.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestGerberParserCircleMacro(void)
 {
 	CChars							szGerberFile;
@@ -1261,6 +1305,7 @@ void TestGerberParser(void)
 	TestGerberParserCommandFileAttribute();		//TF
 	TestGerberParserCommandApertureAttribute(); //TA
 	TestGerberParserCommandObjectAttribute();	//TO
+	TestGerberParserCommandDeleteAttribute();	//TD
 	TestGerberParserCircleMacro();
 	TestGerberParserVectorLineMacro();
 	TestGerberParserCenterLineMacro();

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="Log.txt" />
+    <None Include="Todo.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source">
+      <UniqueIdentifier>{d5c00f06-eaad-4b95-aeb3-14fd10974709}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\wdc">
+      <UniqueIdentifier>{5abe8ae0-e04c-429b-8e84-9335e6bd6462}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\wdc\W65C816">
+      <UniqueIdentifier>{a311156c-7650-4e00-b585-41ced89298f5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="TestMicroprocessorLib.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="TestW65C816.cpp">
+      <Filter>Source\wdc\W65C816</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

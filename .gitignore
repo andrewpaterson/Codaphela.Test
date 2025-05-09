@@ -63,5 +63,11 @@ TestCoreLib/Release
 /TestCppParserLib/Release/*
 /TestCppParserLib/TestCppParserLib/Release/*
 /TestGerberLib/Debug/*
+/TestGerberLib/Releaase/*
 /TestGerberLib/TestGerberLib/Debug/*
+/TestGerberLib/TestGerberLib/Release/*
 /TestGerberLib/TestGerberLib/Log.txt
+/TestMicroprocessorLib/Debug/*
+/TestMicroprocessorLib/Release/*
+/TestMicroprocessorLib/TestMicroprocessorLib/Debug/*
+/TestMicroprocessorLib/TestMicroprocessorLib/Release/*
