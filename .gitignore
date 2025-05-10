@@ -71,3 +71,4 @@ TestCoreLib/Release
 /TestMicroprocessorLib/Release/*
 /TestMicroprocessorLib/TestMicroprocessorLib/Debug/*
 /TestMicroprocessorLib/TestMicroprocessorLib/Release/*
+/TestMicroprocessorLib/TestMicroprocessorLib/Log.txt

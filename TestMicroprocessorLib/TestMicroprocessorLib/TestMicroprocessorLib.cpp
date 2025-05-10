@@ -15,6 +15,9 @@ void TestW65C816(void);
 
 int __cdecl main(void)
 {
+	int iResult;
+
+	_CrtSetBreakAlloc(0);
 	InitTotalStatistics();
 
 	FastFunctionsInit();
@@ -30,6 +33,9 @@ int __cdecl main(void)
 	TypeConverterKill();
 	TypesKill();
 	FastFunctionsKill();
-	return TestTotalStatistics();
+
+	iResult = TestTotalStatistics();
+	_CrtDumpMemoryLeaks();
+	return iResult;
 }
 
