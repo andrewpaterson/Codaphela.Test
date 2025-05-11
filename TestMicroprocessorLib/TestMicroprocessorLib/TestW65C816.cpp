@@ -14,10 +14,12 @@
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816OnlyInitAndKill(void)
 {
-	CW65C816	cW65C816;
+	CW65C816		cW65C816;
+	CW65C816Pins	cPins;
 
 	CInstructionFactory::GetInstance()->Init();
-	cW65C816.Init();
+	cPins.Init();
+	cW65C816.Init(&cPins);
 	cW65C816.Kill();
 	CInstructionFactory::GetInstance()->Kill();
 }
