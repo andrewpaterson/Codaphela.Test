@@ -34,7 +34,6 @@ void TestW65C816(void)
 	BeginTests();
 
 	DataIOInit();
-	
 
 	TestW65C816OnlyInitAndKill();
 
