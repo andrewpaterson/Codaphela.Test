@@ -88,10 +88,10 @@ void AssertSignals(CW65C816Pins* pcW65C816, bool bVPA, bool bVDA, bool bVPB, boo
 	bool bPinsVPB;
 	bool bPinsRWB;
 
-	bPinsVPA = pcW65C816->GetVPA();
-	bPinsVDA = pcW65C816->GetVDA();
-	bPinsVPB = pcW65C816->GetVPB();
-	bPinsRWB = pcW65C816->GetRWB();
+	bPinsVPA = pcW65C816->GetVPA().IsHigh();
+	bPinsVDA = pcW65C816->GetVDA().IsHigh();
+	bPinsVPB = pcW65C816->GetVPB().IsHigh();
+	bPinsRWB = pcW65C816->GetRWB().IsHigh();
 
 	AssertBool(bVPA, bPinsVPA);
 	AssertBool(bVDA, bPinsVDA);
@@ -106,7 +106,7 @@ void AssertSignals(CW65C816Pins* pcW65C816, bool bVPA, bool bVDA, bool bVPB, boo
 //////////////////////////////////////////////////////////////////////////
 void AssertPhi2Low(CW65C816Pins* pcW65C816)
 {
-	AssertFalse(pcW65C816->GetPHI2());
+	AssertTrue(pcW65C816->GetPHI2().IsLow());
 }
 
 
@@ -116,7 +116,7 @@ void AssertPhi2Low(CW65C816Pins* pcW65C816)
 //////////////////////////////////////////////////////////////////////////
 void AssertPhi2High(CW65C816Pins* pcW65C816)
 {
-	AssertTrue(pcW65C816->GetPHI2());
+	AssertTrue(pcW65C816->GetPHI2().IsHigh());
 }
 
 
@@ -130,13 +130,25 @@ void TestW65C816OnlyInitAndKill(void)
 	CW65C816Pins	cPins;
 	CMetaBus8		cData;
 	CMetaBus16		cAddress;
+	CMetaTrace		cPhi2;
+	CMetaTrace		cResB;
+	CMetaTrace		cRWB;
 
 	CInstructionFactory::GetInstance()->Init();
+
 	cData.Init();
 	cAddress.Init();
-	cPins.Init(&cAddress, &cData);
+	cPhi2.Init(false);
+	cResB.Init(false);
+	cRWB.Init();
+
+	cPins.Init(&cAddress, &cData, &cPhi2, &cResB, &cRWB);
 	cW65C816.Init(&cPins);
 	cW65C816.Kill();
+
+	cPhi2.Kill();
+	cResB.Kill();
+	cRWB.Kill();
 	cAddress.Kill();
 	cData.Kill();
 	CInstructionFactory::GetInstance()->Kill();
@@ -153,14 +165,27 @@ void TestW65C816ResetReleaseBeforePhi2Falling(void)
 	CW65C816Pins	cPins;
 	CMetaBus8		cData;
 	CMetaBus16		cAddress;
+	CMetaTrace		cPhi2;
+	CMetaTrace		cResB;
+	CMetaTrace		cRWB;
+	CMetaTrace		cVPA;
+	CMetaTrace		cVDA;
+	CMetaTrace		cVPB;
 
 	CInstructionFactory::GetInstance()->Init();
 
 	cData.Init();
 	cAddress.Init();
-	cPins.Init(&cAddress, &cData);
+	cPhi2.Init(false);
+	cResB.Init(false);
+	cRWB.Init();
+	cVPA.Init();
+	cVDA.Init();
+	cVPB.Init();
+
+	cPins.Init(&cAddress, &cData, &cPhi2, &cResB, &cRWB);
+	cPins.SetImportantTraces(&cVPA, &cVDA, &cVPB);
 	cW65C816.Init(&cPins);
-	cPins.Reset();
 	AssertOpcodeName(&cW65C816, "---");
 	AssertCycleName(&cW65C816, "---");
 
@@ -199,6 +224,13 @@ void TestW65C816ResetReleaseBeforePhi2Falling(void)
 
 	cW65C816.Kill();
 	cPins.Kill();
+
+	cVPA.Kill();
+	cVDA.Kill();
+	cVPB.Kill();
+	cPhi2.Kill();
+	cResB.Kill();
+	cRWB.Kill();
 	cAddress.Kill();
 	cData.Kill();
 	CInstructionFactory::GetInstance()->Kill();
@@ -215,14 +247,27 @@ void TestW65C816ResetReleaseBeforePhi2Rising(void)
 	CW65C816Pins	cPins;
 	CMetaBus8		cData;
 	CMetaBus16		cAddress;
+	CMetaTrace		cPhi2;
+	CMetaTrace		cResB;
+	CMetaTrace		cRWB;
+	CMetaTrace		cVPA;
+	CMetaTrace		cVDA;
+	CMetaTrace		cVPB;
 
 	CInstructionFactory::GetInstance()->Init();
 
 	cData.Init();
 	cAddress.Init();
-	cPins.Init(&cAddress, &cData);
+	cPhi2.Init(false);
+	cResB.Init(false);
+	cRWB.Init();
+	cVPA.Init();
+	cVDA.Init();
+	cVPB.Init();
+
+	cPins.Init(&cAddress, &cData, &cPhi2, &cResB, &cRWB);
+	cPins.SetImportantTraces(&cVPA, &cVDA, &cVPB);
 	cW65C816.Init(&cPins);
-	cPins.Reset();
 	AssertOpcodeName(&cW65C816, "---");
 	AssertCycleName(&cW65C816, "---");
 
@@ -270,6 +315,13 @@ void TestW65C816ResetReleaseBeforePhi2Rising(void)
 
 	cW65C816.Kill();
 	cPins.Kill();
+
+	cVPA.Kill();
+	cVDA.Kill();
+	cVPB.Kill();
+	cPhi2.Kill();
+	cResB.Kill();
+	cRWB.Kill();
 	cAddress.Kill();
 	cData.Kill();
 	CInstructionFactory::GetInstance()->Kill();

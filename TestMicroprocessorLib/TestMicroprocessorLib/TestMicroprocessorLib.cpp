@@ -7,6 +7,7 @@
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Unknowns.h"
+#include "MicroprocessorLib/MetaTrace.h"
 #include "TestLib/Assert.h"
 
 
@@ -26,6 +27,7 @@ int __cdecl main(void)
 	TypeConverterInit();
 	MemoryInit();
 	UnknownsInit();
+	gcMetaTraceUndriven.Init();
 
 	TestW65C816Reset();
 	TestW65C816Add();
