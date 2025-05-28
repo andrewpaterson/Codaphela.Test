@@ -19,7 +19,10 @@
     <ClCompile Include="TestMicroprocessorLib.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="TestW65C816.cpp">
+    <ClCompile Include="TestW65C816Reset.cpp">
+      <Filter>Source\wdc\W65C816</Filter>
+    </ClCompile>
+    <ClCompile Include="TestW65C816Add.cpp">
       <Filter>Source\wdc\W65C816</Filter>
     </ClCompile>
   </ItemGroup>

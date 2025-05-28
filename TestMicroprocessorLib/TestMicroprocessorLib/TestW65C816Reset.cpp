@@ -10,6 +10,7 @@
 
 void TestW65C816Reset(CW65C816* pcW65C816);
 
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -340,7 +341,17 @@ void TestW65C816Reset(CW65C816* pcW65C816)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C816(void)
+void TestW65C816ResetVector(void)
+{
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestW65C816Reset(void)
 {
 	TypeConverterInit();
 	NumberInit();
@@ -351,6 +362,7 @@ void TestW65C816(void)
 	TestW65C816OnlyInitAndKill();
 	TestW65C816ResetReleaseBeforePhi2Falling();
 	TestW65C816ResetReleaseBeforePhi2Rising();
+	TestW65C816ResetVector();
 
 	DataIOKill();
 

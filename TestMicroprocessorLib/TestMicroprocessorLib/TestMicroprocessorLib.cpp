@@ -10,7 +10,8 @@
 #include "TestLib/Assert.h"
 
 
-void TestW65C816(void);
+void TestW65C816Reset(void);
+void TestW65C816Add(void);
 
 
 int __cdecl main(void)
@@ -26,7 +27,8 @@ int __cdecl main(void)
 	MemoryInit();
 	UnknownsInit();
 
-	TestW65C816();
+	TestW65C816Reset();
+	TestW65C816Add();
 
 	UnknownsKill();
 	MemoryKill();

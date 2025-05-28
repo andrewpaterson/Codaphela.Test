@@ -184,7 +184,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="TestMicroprocessorLib.cpp" />
-    <ClCompile Include="TestW65C816.cpp" />
+    <ClCompile Include="TestW65C816Add.cpp" />
+    <ClCompile Include="TestW65C816Reset.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
