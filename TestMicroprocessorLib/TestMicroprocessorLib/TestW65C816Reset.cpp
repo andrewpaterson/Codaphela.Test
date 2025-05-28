@@ -55,11 +55,11 @@ void AssertCycle(CW65C816* pcW65C816, int16 iExpected)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertAddress(CW65C816Pins* pcW65C816, uint16 uiAddress)
+void AssertAddress(CW65C816Pins* pcW65C816, CTimeline* pcTimeline, uint16 uiAddress)
 {
 	uint16	uiPinsAddress;
 
-	uiPinsAddress = pcW65C816->GetAddress();
+	uiPinsAddress = pcW65C816->ReadAddress(pcTimeline);
 	AssertShortHex(uiAddress, uiPinsAddress);
 }
 
@@ -68,11 +68,11 @@ void AssertAddress(CW65C816Pins* pcW65C816, uint16 uiAddress)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertData(CW65C816Pins* pcW65C816, uint8 uiData)
+void AssertData(CW65C816Pins* pcW65C816, CTimeline* pcTimeline, uint8 uiData)
 {
 	uint8	uiPinsData;
 
-	uiPinsData = pcW65C816->GetData();
+	uiPinsData = pcW65C816->ReadData(pcTimeline);
 	AssertByteHex(uiData, uiPinsData);
 }
 
@@ -128,11 +128,17 @@ void TestW65C816OnlyInitAndKill(void)
 {
 	CW65C816		cW65C816;
 	CW65C816Pins	cPins;
+	CMetaBus8		cData;
+	CMetaBus16		cAddress;
 
 	CInstructionFactory::GetInstance()->Init();
-	cPins.Init();
+	cData.Init();
+	cAddress.Init();
+	cPins.Init(&cAddress, &cData);
 	cW65C816.Init(&cPins);
 	cW65C816.Kill();
+	cAddress.Kill();
+	cData.Kill();
 	CInstructionFactory::GetInstance()->Kill();
 }
 
@@ -145,10 +151,14 @@ void TestW65C816ResetReleaseBeforePhi2Falling(void)
 {
 	CW65C816		cW65C816;
 	CW65C816Pins	cPins;
+	CMetaBus8		cData;
+	CMetaBus16		cAddress;
 
 	CInstructionFactory::GetInstance()->Init();
 
-	cPins.Init();
+	cData.Init();
+	cAddress.Init();
+	cPins.Init(&cAddress, &cData);
 	cW65C816.Init(&cPins);
 	cPins.Reset();
 	AssertOpcodeName(&cW65C816, "---");
@@ -188,6 +198,9 @@ void TestW65C816ResetReleaseBeforePhi2Falling(void)
 	TestW65C816Reset(&cW65C816);
 
 	cW65C816.Kill();
+	cPins.Kill();
+	cAddress.Kill();
+	cData.Kill();
 	CInstructionFactory::GetInstance()->Kill();
 }
 
@@ -200,10 +213,14 @@ void TestW65C816ResetReleaseBeforePhi2Rising(void)
 {
 	CW65C816		cW65C816;
 	CW65C816Pins	cPins;
+	CMetaBus8		cData;
+	CMetaBus16		cAddress;
 
 	CInstructionFactory::GetInstance()->Init();
 
-	cPins.Init();
+	cData.Init();
+	cAddress.Init();
+	cPins.Init(&cAddress, &cData);
 	cW65C816.Init(&cPins);
 	cPins.Reset();
 	AssertOpcodeName(&cW65C816, "---");
@@ -252,6 +269,9 @@ void TestW65C816ResetReleaseBeforePhi2Rising(void)
 	TestW65C816Reset(&cW65C816);
 
 	cW65C816.Kill();
+	cPins.Kill();
+	cAddress.Kill();
+	cData.Kill();
 	CInstructionFactory::GetInstance()->Kill();
 }
 
@@ -284,56 +304,56 @@ void TestW65C816Reset(CW65C816* pcW65C816)
 	AssertOpcodeName(pcW65C816, "RES");
 	AssertCycle(pcW65C816, 3);
 	AssertCycleName(pcW65C816, "IO");
-	AssertAddress(pcPins, 0x1ff);
+	AssertAddress(pcPins, NULL, 0x1ff);
 	pcPins->HalfCycle();
 	pcW65C816->InputTransition(NULL);  // <---------  __/¯¯
 	AssertCycle(pcW65C816, 3);
-	AssertAddress(pcPins, 0x1ff);
+	AssertAddress(pcPins, NULL, 0x1ff);
 
 	pcPins->HalfCycle();
 	pcW65C816->InputTransition(NULL);  // <---------  ¯¯\__
 	AssertCycle(pcW65C816, 4);
-	AssertAddress(pcPins, 0x1fe);
+	AssertAddress(pcPins, NULL, 0x1fe);
 	pcPins->HalfCycle();
 	pcW65C816->InputTransition(NULL);  // <---------  __/¯¯
 	AssertCycle(pcW65C816, 4);
-	AssertAddress(pcPins, 0x1fe);
+	AssertAddress(pcPins, NULL, 0x1fe);
 
 	pcPins->HalfCycle();
 	pcW65C816->InputTransition(NULL);  // <---------  ¯¯\__
 	AssertCycle(pcW65C816, 5);
-	AssertAddress(pcPins, 0x1fd);
+	AssertAddress(pcPins, NULL, 0x1fd);
 	pcPins->HalfCycle();
 	pcW65C816->InputTransition(NULL);  // <---------  __/¯¯
 	AssertCycle(pcW65C816, 5);
-	AssertAddress(pcPins, 0x1fd);
+	AssertAddress(pcPins, NULL, 0x1fd);
 
 	pcPins->HalfCycle();
 	pcW65C816->InputTransition(NULL);  // <---------  ¯¯\__
 	AssertCycle(pcW65C816, 6);
-	AssertAddress(pcPins, 0xfffc);
+	AssertAddress(pcPins, NULL, 0xfffc);
 	pcPins->HalfCycle();
 	pcW65C816->InputTransition(NULL);  // <---------  __/¯¯
 	AssertCycle(pcW65C816, 6);
-	AssertAddress(pcPins, 0xfffc);
+	AssertAddress(pcPins, NULL, 0xfffc);
 
-	pcPins->SetData(0x34);
+	pcPins->WriteData(NULL, 0x34);
 
 	pcPins->HalfCycle();
 	pcW65C816->InputTransition(NULL);  // <---------  ¯¯\__
 	AssertCycle(pcW65C816, 7);
-	AssertAddress(pcPins, 0xfffd);
+	AssertAddress(pcPins, NULL, 0xfffd);
 	pcPins->HalfCycle();
 	pcW65C816->InputTransition(NULL);  // <---------  __/¯¯
 	AssertCycle(pcW65C816, 7);
-	AssertAddress(pcPins, 0xfffd);
+	AssertAddress(pcPins, NULL, 0xfffd);
 
-	pcPins->SetData(0x12);
+	pcPins->WriteData(NULL, 0x12);
 
 	pcPins->HalfCycle();
 	pcW65C816->InputTransition(NULL);  // <---------  ¯¯\__
 	AssertCycle(pcW65C816, 1);
-	AssertAddress(pcPins, 0x1234);
+	AssertAddress(pcPins, NULL, 0x1234);
 }
 
 
