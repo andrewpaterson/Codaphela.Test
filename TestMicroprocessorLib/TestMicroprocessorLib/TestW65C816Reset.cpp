@@ -5,6 +5,7 @@
 #include "BaseLib/LogToMemory.h"
 #include "MicroprocessorLib/W65C816.h"
 #include "MicroprocessorLib/InstructionFactory.h"
+#include "MicroprocessorLib/MetaW65C816.h"
 #include "TestLib/Assert.h"
 
 
@@ -88,10 +89,10 @@ void AssertSignals(bool bVPA, bool bVDA, bool bVPB, bool bRWB, CMetaTrace* pcVPA
 	bool bPinsVPB;
 	bool bPinsRWB;
 
-	bPinsVPA = pcVPA->Get().IsHigh();
-	bPinsVDA = pcVDA->Get().IsHigh();
-	bPinsVPB = pcVPB->Get().IsHigh();
-	bPinsRWB = pcRWB->Get().IsHigh();
+	bPinsVPA = pcVPA->IsHigh();
+	bPinsVDA = pcVDA->IsHigh();
+	bPinsVPB = pcVPB->IsHigh();
+	bPinsRWB = pcRWB->IsHigh();
 
 	AssertBool(bVPA, bPinsVPA);
 	AssertBool(bVDA, bPinsVDA);
@@ -106,7 +107,7 @@ void AssertSignals(bool bVPA, bool bVDA, bool bVPB, bool bRWB, CMetaTrace* pcVPA
 //////////////////////////////////////////////////////////////////////////
 void AssertPhi2Low(CMetaTrace* pcPhi2)
 {
-	AssertTrue(pcPhi2->Get().IsLow());
+	AssertTrue(pcPhi2->IsLow());
 }
 
 
@@ -116,7 +117,7 @@ void AssertPhi2Low(CMetaTrace* pcPhi2)
 //////////////////////////////////////////////////////////////////////////
 void AssertPhi2High(CMetaTrace* pcPhi2)
 {
-	AssertTrue(pcPhi2->Get().IsHigh());
+	AssertTrue(pcPhi2->IsHigh());
 }
 
 
@@ -423,7 +424,18 @@ void TestW65C816Reset(CW65C816* pcW65C816, CMetaTrace* pcPhi2, CMetaTrace* pcVPA
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816ResetVector(void)
 {
+	CMetaW65C816	cMPU;
 
+	CInstructionFactory::GetInstance()->Init();
+
+	cMPU.Init();
+
+	cMPU.TickInstruction();
+	cMPU.TickInstruction();
+
+	cMPU.Kill();
+	
+	CInstructionFactory::GetInstance()->Kill();
 }
 
 
