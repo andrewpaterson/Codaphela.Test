@@ -418,6 +418,57 @@ void TestW65C816Reset(CW65C816* pcW65C816, CMetaTrace* pcPhi2, CMetaTrace* pcVPA
 }
 
 
+uint8	guiBank;
+uint8	gauiMemory[65536];
+CChars	gszResetSequence;
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestW65C816ResetVectorTickLow(CMetaW65C816* pcMPU)
+{
+	guiBank = pcMPU->GetData()->Get();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestW65C816ResetVectorTickHigh(CMetaW65C816* pcMPU)
+{
+	uint32	uiAddress;
+	bool	bRead;
+	bool	bWrite;
+	bool	bValidAddress;
+	uint8	uiData;
+
+	pcMPU->Print(&gszResetSequence, true, true, true, true, true, false, false, false, false);
+	gszResetSequence.AppendNewLine();
+
+	uiAddress = pcMPU->GetAddress()->Get();
+	uiAddress |= guiBank << 16;
+
+	bWrite = pcMPU->GetRWB()->IsLow();
+	bRead = pcMPU->GetRWB()->IsHigh();
+
+	bValidAddress = pcMPU->GetVDA()->IsHigh() || pcMPU->GetVPA()->IsHigh();
+
+	if (bValidAddress)
+	{
+		if (bRead)
+		{
+			if (guiBank == 0)
+			{
+				uiData = gauiMemory[uiAddress];
+				pcMPU->GetData()->Set(uiData);
+			}
+		}
+	}
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -425,16 +476,56 @@ void TestW65C816Reset(CW65C816* pcW65C816, CMetaTrace* pcPhi2, CMetaTrace* pcVPA
 void TestW65C816ResetVector(void)
 {
 	CMetaW65C816	cMPU;
+	size			i;
+	bool			bRunning;
 
 	CInstructionFactory::GetInstance()->Init();
 
-	cMPU.Init();
+	memset(gauiMemory, 0xea, 65536);
+	gauiMemory[0xfffc] = 00;
+	gauiMemory[0xfffd] = 02;
+	gauiMemory[0x0200] = INX_Implied;
+	gauiMemory[0x0201] = INY_Implied;
+	gauiMemory[0x0202] = INC_Accumulator;
+	gauiMemory[0x0203] = STP_Implied;
 
-	cMPU.TickInstruction();
-	cMPU.TickInstruction();
+	gszResetSequence.Init();
+
+	cMPU.Init(TestW65C816ResetVectorTickHigh, TestW65C816ResetVectorTickLow);
+
+	for (i = 0;; i++)
+	{
+		bRunning = cMPU.TickInstruction();
+		if (!bRunning)
+		{
+			break;
+		}
+	}
 
 	cMPU.Kill();
+
+	AssertSize(4, i);
+
+	gszResetSequence.Dump();
+	AssertString(""\
+		"RES: (1) IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
+		"RES: (2) IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
+		"RES: (3) IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
+		"RES: (4) IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01fe\n"\
+		"RES: (5) IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01fd\n"\
+		"RES: (6) Read(AAL)       A.0000  X.0000  Y.0000  PC.00:0000  S.01fc\n"\
+		"RES: (7) Read(AAH)       A.0000  X.0000  Y.0000  PC.00:0000  S.01fc\n"\
+		"OPC: (1) Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0200  S.01fc\n"\
+		"INX: (2) IO              A.0000  X.0001  Y.0001  PC.00:0201  S.01fc\n"\
+		"OPC: (1) Read(Opcode)    A.0000  X.0001  Y.0001  PC.00:0201  S.01fc\n"\
+		"INY: (2) IO              A.0000  X.0001  Y.0001  PC.00:0202  S.01fc\n"\
+		"OPC: (1) Read(Opcode)    A.0000  X.0001  Y.0001  PC.00:0202  S.01fc\n"\
+		"INC: (2) IO              A.0001  X.0001  Y.0001  PC.00:0203  S.01fc\n"\
+		"OPC: (1) Read(Opcode)    A.0001  X.0001  Y.0001  PC.00:0203  S.01fc\n"\
+		"STP: (2) IO              A.0001  X.0001  Y.0001  PC.00:0204  S.01fc\n", gszResetSequence.Text());
 	
+	gszResetSequence.Kill();
+
 	CInstructionFactory::GetInstance()->Kill();
 }
 
