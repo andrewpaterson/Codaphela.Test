@@ -8,7 +8,7 @@
 #include "TestLib/Assert.h"
 
 
-void TestW65C816Reset(CW65C816* pcW65C816);
+void TestW65C816Reset(CW65C816* pcW65C816, CMetaTrace* pcPhi2);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -81,17 +81,17 @@ void AssertData(CW65C816Pins* pcW65C816, CTimeline* pcTimeline, uint8 uiData)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertSignals(CW65C816Pins* pcW65C816, bool bVPA, bool bVDA, bool bVPB, bool bRWB)
+void AssertSignals(bool bVPA, bool bVDA, bool bVPB, bool bRWB, CMetaTrace* pcVPA, CMetaTrace* pcVDA, CMetaTrace* pcVPB ,CMetaTrace* pcRWB)
 {
 	bool bPinsVPA;
 	bool bPinsVDA;
 	bool bPinsVPB;
 	bool bPinsRWB;
 
-	bPinsVPA = pcW65C816->GetVPA().IsHigh();
-	bPinsVDA = pcW65C816->GetVDA().IsHigh();
-	bPinsVPB = pcW65C816->GetVPB().IsHigh();
-	bPinsRWB = pcW65C816->GetRWB().IsHigh();
+	bPinsVPA = pcVPA->Get().IsHigh();
+	bPinsVDA = pcVDA->Get().IsHigh();
+	bPinsVPB = pcVPB->Get().IsHigh();
+	bPinsRWB = pcRWB->Get().IsHigh();
 
 	AssertBool(bVPA, bPinsVPA);
 	AssertBool(bVDA, bPinsVDA);
@@ -104,9 +104,9 @@ void AssertSignals(CW65C816Pins* pcW65C816, bool bVPA, bool bVDA, bool bVPB, boo
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertPhi2Low(CW65C816Pins* pcW65C816)
+void AssertPhi2Low(CMetaTrace* pcPhi2)
 {
-	AssertTrue(pcW65C816->GetPHI2().IsLow());
+	AssertTrue(pcPhi2->Get().IsLow());
 }
 
 
@@ -114,9 +114,9 @@ void AssertPhi2Low(CW65C816Pins* pcW65C816)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertPhi2High(CW65C816Pins* pcW65C816)
+void AssertPhi2High(CMetaTrace* pcPhi2)
 {
-	AssertTrue(pcW65C816->GetPHI2().IsHigh());
+	AssertTrue(pcPhi2->Get().IsHigh());
 }
 
 
@@ -193,34 +193,34 @@ void TestW65C816ResetReleaseBeforePhi2Falling(void)
 	AssertOpcodeName(&cW65C816, "RES");
 	AssertCycle(&cW65C816, 1);
 	AssertCycleName(&cW65C816, "IO");
-	cPins.HalfCycle();
+	cPhi2.Invert();
 	cW65C816.InputTransition(NULL);
 
-	cPins.HalfCycle();
+	cPhi2.Invert();
 	cW65C816.InputTransition(NULL);
-	cPins.HalfCycle();
+	cPhi2.Invert();
 	cW65C816.InputTransition(NULL);
 	AssertCycle(&cW65C816, 1);
 
 	//Disable reset interrupt.
 	//Falling edge, start of new cycle.
-	cPins.SetRESB(true);
-	cPins.HalfCycle();
+	cResB.Set(true);
+	cPhi2.Invert();
 	cW65C816.InputTransition(NULL);  // <---------  ¯¯\__
 	AssertOpcodeName(&cW65C816, "RES");
-	AssertSignals(&cPins, true, true, true, true);
-	AssertPhi2Low(&cPins);
+	AssertSignals(true, true, true, true, &cVPA, &cVDA, &cVPB, &cRWB);
+	AssertPhi2Low(&cPhi2);
 	AssertCycle(&cW65C816, 1);
 	AssertCycleName(&cW65C816, "IO");
-	cPins.HalfCycle();
+	cPhi2.Invert();
 	cW65C816.InputTransition(NULL);  // <---------  __/¯¯
-	AssertSignals(&cPins, true, true, true, true);
+	AssertSignals(true, true, true, true, &cVPA, &cVDA, &cVPB, &cRWB);
 	AssertOpcodeName(&cW65C816, "RES");
 	AssertCycle(&cW65C816, 1);
 	AssertCycleName(&cW65C816, "IO");
-	AssertPhi2High(&cPins);
+	AssertPhi2High(&cPhi2);
 
-	TestW65C816Reset(&cW65C816);
+	TestW65C816Reset(&cW65C816, &cPhi2);
 
 	cW65C816.Kill();
 	cPins.Kill();
@@ -275,43 +275,44 @@ void TestW65C816ResetReleaseBeforePhi2Rising(void)
 	AssertOpcodeName(&cW65C816, "RES");
 	AssertCycle(&cW65C816, 1);
 	AssertCycleName(&cW65C816, "IO");
-	cPins.HalfCycle();
+	cPhi2.Invert();
 	cW65C816.InputTransition(NULL);
 
-	cPins.HalfCycle();
+	cPhi2.Invert();
 	cW65C816.InputTransition(NULL);
-	cPins.HalfCycle();
+	cPhi2.Invert();
 	cW65C816.InputTransition(NULL);
-	cPins.HalfCycle();
+	cPhi2.Invert();
 	cW65C816.InputTransition(NULL);
 	AssertCycle(&cW65C816, 1);
 
 	//Disable reset interrupt.
 	//Rising edge
-	cPins.SetRESB(true);
-	cPins.HalfCycle();
+	cResB.Set(true);
+	cPhi2.Invert();
 	cW65C816.InputTransition(NULL);  // <---------  __/¯¯
 	AssertOpcodeName(&cW65C816, "RES");
-	AssertPhi2High(&cPins);
+	AssertPhi2High(&cPhi2);
 	AssertCycle(&cW65C816, 1);
 	AssertCycleName(&cW65C816, "IO");
 
 	//Start of new cycle.
-	cPins.HalfCycle();
+	cPhi2.Invert();
 	cW65C816.InputTransition(NULL);  // <---------  ¯¯\__
-	AssertSignals(&cPins, true, true, true, true);
+	AssertSignals(true, true, true, true, &cVPA, &cVDA, &cVPB, &cRWB);
 	AssertOpcodeName(&cW65C816, "RES");
 	AssertCycle(&cW65C816, 1);
 	AssertCycleName(&cW65C816, "IO");
-	AssertPhi2Low(&cPins);
-	cPins.HalfCycle();
+	AssertPhi2Low(&cPhi2);
+	cPhi2.Invert();
 	cW65C816.InputTransition(NULL);  // <---------  __/¯¯
-	AssertSignals(&cPins, true, true, true, true);
+	AssertSignals(true, true, true, true, &cVPA, &cVDA, &cVPB, &cRWB);
 	AssertOpcodeName(&cW65C816, "RES");
 	AssertCycle(&cW65C816, 1);
 	AssertCycleName(&cW65C816, "IO");
-	AssertPhi2High(&cPins);
-	TestW65C816Reset(&cW65C816);
+	AssertPhi2High(&cPhi2);
+
+	TestW65C816Reset(&cW65C816, &cPhi2);
 
 	cW65C816.Kill();
 	cPins.Kill();
@@ -332,77 +333,77 @@ void TestW65C816ResetReleaseBeforePhi2Rising(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C816Reset(CW65C816* pcW65C816)
+void TestW65C816Reset(CW65C816* pcW65C816, CMetaTrace* pcPhi2)
 {
 	CW65C816Pins*	pcPins;
 	
 	pcPins = pcW65C816->GetPins();
 
-	pcPins->HalfCycle();
-	AssertPhi2Low(pcPins);
+	pcPhi2->Invert();
+	AssertPhi2Low(pcPhi2);
 	pcW65C816->InputTransition(NULL);  // <---------  ¯¯\__
 	AssertOpcodeName(pcW65C816, "RES");
 	AssertCycle(pcW65C816, 2);
 	AssertCycleName(pcW65C816, "IO");
-	pcPins->HalfCycle();
-	AssertPhi2High(pcPins);
+	pcPhi2->Invert();
+	AssertPhi2High(pcPhi2);
 	pcW65C816->InputTransition(NULL);  // <---------  __/¯¯
 	AssertCycle(pcW65C816, 2);
 	AssertOpcodeName(pcW65C816, "RES");
 	AssertCycleName(pcW65C816, "IO");
 
-	pcPins->HalfCycle();
+	pcPhi2->Invert();
 	pcW65C816->InputTransition(NULL);  // <---------  ¯¯\__
 	AssertOpcodeName(pcW65C816, "RES");
 	AssertCycle(pcW65C816, 3);
 	AssertCycleName(pcW65C816, "IO");
 	AssertAddress(pcPins, NULL, 0x1ff);
-	pcPins->HalfCycle();
+	pcPhi2->Invert();
 	pcW65C816->InputTransition(NULL);  // <---------  __/¯¯
 	AssertCycle(pcW65C816, 3);
 	AssertAddress(pcPins, NULL, 0x1ff);
 
-	pcPins->HalfCycle();
+	pcPhi2->Invert();
 	pcW65C816->InputTransition(NULL);  // <---------  ¯¯\__
 	AssertCycle(pcW65C816, 4);
 	AssertAddress(pcPins, NULL, 0x1fe);
-	pcPins->HalfCycle();
+	pcPhi2->Invert();
 	pcW65C816->InputTransition(NULL);  // <---------  __/¯¯
 	AssertCycle(pcW65C816, 4);
 	AssertAddress(pcPins, NULL, 0x1fe);
 
-	pcPins->HalfCycle();
+	pcPhi2->Invert();
 	pcW65C816->InputTransition(NULL);  // <---------  ¯¯\__
 	AssertCycle(pcW65C816, 5);
 	AssertAddress(pcPins, NULL, 0x1fd);
-	pcPins->HalfCycle();
+	pcPhi2->Invert();
 	pcW65C816->InputTransition(NULL);  // <---------  __/¯¯
 	AssertCycle(pcW65C816, 5);
 	AssertAddress(pcPins, NULL, 0x1fd);
 
-	pcPins->HalfCycle();
+	pcPhi2->Invert();
 	pcW65C816->InputTransition(NULL);  // <---------  ¯¯\__
 	AssertCycle(pcW65C816, 6);
 	AssertAddress(pcPins, NULL, 0xfffc);
-	pcPins->HalfCycle();
+	pcPhi2->Invert();
 	pcW65C816->InputTransition(NULL);  // <---------  __/¯¯
 	AssertCycle(pcW65C816, 6);
 	AssertAddress(pcPins, NULL, 0xfffc);
 
 	pcPins->WriteData(NULL, 0x34);
 
-	pcPins->HalfCycle();
+	pcPhi2->Invert();
 	pcW65C816->InputTransition(NULL);  // <---------  ¯¯\__
 	AssertCycle(pcW65C816, 7);
 	AssertAddress(pcPins, NULL, 0xfffd);
-	pcPins->HalfCycle();
+	pcPhi2->Invert();
 	pcW65C816->InputTransition(NULL);  // <---------  __/¯¯
 	AssertCycle(pcW65C816, 7);
 	AssertAddress(pcPins, NULL, 0xfffd);
 
 	pcPins->WriteData(NULL, 0x12);
 
-	pcPins->HalfCycle();
+	pcPhi2->Invert();
 	pcW65C816->InputTransition(NULL);  // <---------  ¯¯\__
 	AssertCycle(pcW65C816, 1);
 	AssertAddress(pcPins, NULL, 0x1234);
