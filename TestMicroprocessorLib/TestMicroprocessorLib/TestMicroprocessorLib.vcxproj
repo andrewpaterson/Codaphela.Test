@@ -185,6 +185,7 @@
   <ItemGroup>
     <ClCompile Include="TestMicroprocessorLib.cpp" />
     <ClCompile Include="TestW65C816Add.cpp" />
+    <ClCompile Include="TestW65C816Context.cpp" />
     <ClCompile Include="TestW65C816Reset.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -206,6 +207,9 @@
       <Project>{d06d265e-a503-42f8-a93a-a0a1c0b058ff}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TestW65C816Context.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

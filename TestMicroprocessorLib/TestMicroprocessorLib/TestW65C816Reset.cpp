@@ -7,6 +7,7 @@
 #include "MicroprocessorLib/InstructionFactory.h"
 #include "MicroprocessorLib/MetaW65C816.h"
 #include "TestLib/Assert.h"
+#include "TestW65C816Context.h"
 
 
 void TestW65C816Reset(CW65C816* pcW65C816, CMetaTrace* pcPhi2, CMetaTrace* pcVPA, CMetaTrace* pcVDA, CMetaTrace* pcVPB, CMetaTrace* pcRWB);
@@ -418,17 +419,16 @@ void TestW65C816Reset(CW65C816* pcW65C816, CMetaTrace* pcPhi2, CMetaTrace* pcVPA
 }
 
 
-uint8	guiBank;
-uint8	gauiMemory[65536];
-CChars	gszResetSequence;
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C816ResetVectorTickLow(CMetaW65C816* pcMPU)
+void TestW65C816ResetVectorTickLow(CMetaW65C816* pcMPU, void* pvContext)
 {
-	guiBank = pcMPU->GetData()->Get();
+	CTestW65C816Context*	pcContext;
+
+	pcContext = (CTestW65C816Context*)pvContext;
+	pcContext->SetBank(pcMPU->GetData()->Get());
 }
 
 
@@ -436,19 +436,22 @@ void TestW65C816ResetVectorTickLow(CMetaW65C816* pcMPU)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C816ResetVectorTickHigh(CMetaW65C816* pcMPU)
+void TestW65C816ResetVectorTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 {
-	uint32	uiAddress;
-	bool	bRead;
-	bool	bWrite;
-	bool	bValidAddress;
-	uint8	uiData;
+	uint32					uiAddress;
+	bool					bRead;
+	bool					bWrite;
+	bool					bValidAddress;
+	uint8					uiData;
+	CTestW65C816Context*	pcContext;
 
-	pcMPU->Print(&gszResetSequence, true, true, true, true, true, false, false, false, false);
-	gszResetSequence.AppendNewLine();
+	pcContext = (CTestW65C816Context*)pvContext;
+
+	pcMPU->Print(pcContext->GetSequence(), true, true, true, true, true, false, false, false, false);
+	pcContext->GetSequence()->AppendNewLine();
 
 	uiAddress = pcMPU->GetAddress()->Get();
-	uiAddress |= guiBank << 16;
+	uiAddress |= pcContext->GetBank() << 16;
 
 	bWrite = pcMPU->GetRWB()->IsLow();
 	bRead = pcMPU->GetRWB()->IsHigh();
@@ -459,9 +462,9 @@ void TestW65C816ResetVectorTickHigh(CMetaW65C816* pcMPU)
 	{
 		if (bRead)
 		{
-			if (guiBank == 0)
+			if (pcContext->GetBank() == 0)
 			{
-				uiData = gauiMemory[uiAddress];
+				uiData = pcContext->GetMemory(uiAddress);
 				pcMPU->GetData()->Set(uiData);
 			}
 		}
@@ -475,23 +478,22 @@ void TestW65C816ResetVectorTickHigh(CMetaW65C816* pcMPU)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816ResetVector(void)
 {
-	CMetaW65C816	cMPU;
-	size			i;
-	bool			bRunning;
+	CMetaW65C816			cMPU;
+	size					i;
+	bool					bRunning;
+	CTestW65C816Context		cTestContext;
 
 	CInstructionFactory::GetInstance()->Init();
 
-	memset(gauiMemory, 0xea, 65536);
-	gauiMemory[0xfffc] = 00;
-	gauiMemory[0xfffd] = 02;
-	gauiMemory[0x0200] = INX_Implied;
-	gauiMemory[0x0201] = INY_Implied;
-	gauiMemory[0x0202] = INC_Accumulator;
-	gauiMemory[0x0203] = STP_Implied;
+	cTestContext.Init(0x10000, 0xea);
+	cTestContext.SetMemory(0xfffc, 0x00);
+	cTestContext.SetMemory(0xfffd, 0x02);
+	cTestContext.SetMemory(0x0200, INX_Implied);
+	cTestContext.SetMemory(0x0201, INY_Implied);
+	cTestContext.SetMemory(0x0202, INC_Accumulator);
+	cTestContext.SetMemory(0x0203, STP_Implied);
 
-	gszResetSequence.Init();
-
-	cMPU.Init(TestW65C816ResetVectorTickHigh, TestW65C816ResetVectorTickLow);
+	cMPU.Init(TestW65C816ResetVectorTickHigh, TestW65C816ResetVectorTickLow, &cTestContext);
 
 	for (i = 0;; i++)
 	{
@@ -506,7 +508,6 @@ void TestW65C816ResetVector(void)
 
 	AssertSize(4, i);
 
-	gszResetSequence.Dump();
 	AssertString(""\
 		"RES: (1) IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
 		"RES: (2) IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
@@ -522,9 +523,9 @@ void TestW65C816ResetVector(void)
 		"OPC: (1) Read(Opcode)    A.0000  X.0001  Y.0001  PC.00:0202  S.01fc\n"\
 		"INC: (2) IO              A.0001  X.0001  Y.0001  PC.00:0203  S.01fc\n"\
 		"OPC: (1) Read(Opcode)    A.0001  X.0001  Y.0001  PC.00:0203  S.01fc\n"\
-		"STP: (2) IO              A.0001  X.0001  Y.0001  PC.00:0204  S.01fc\n", gszResetSequence.Text());
+		"STP: (2) IO              A.0001  X.0001  Y.0001  PC.00:0204  S.01fc\n", cTestContext.SequenceText());
 	
-	gszResetSequence.Kill();
+	cTestContext.Kill();
 
 	CInstructionFactory::GetInstance()->Kill();
 }
