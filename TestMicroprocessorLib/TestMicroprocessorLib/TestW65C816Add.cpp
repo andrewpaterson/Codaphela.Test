@@ -88,14 +88,11 @@ void TestW65C816AddADCImmediateSimpleLog(void)
 
 	cTestContext.SetMemory(0xfffc, 0x00);
 	cTestContext.SetMemory(0xfffd, 0x02);
-	cTestContext.SetMemory(0x0200, INC_Absolute);
-	cTestContext.SetMemory(0x0201, 0x04);
-	cTestContext.SetMemory(0x0202, 0x02);
-	cTestContext.SetMemory(0x0203, LDA_Immediate);
-	cTestContext.SetMemory(0x0204, 0x01);
-	cTestContext.SetMemory(0x0205, ADC_Immediate);
-	cTestContext.SetMemory(0x0206, 0x02);
-	cTestContext.SetMemory(0x0207, STP_Implied);
+	cTestContext.SetMemory(0x0200, LDA_Immediate);
+	cTestContext.SetMemory(0x0201, 0x01);
+	cTestContext.SetMemory(0x0202, ADC_Immediate);
+	cTestContext.SetMemory(0x0203, 0x05);
+	cTestContext.SetMemory(0x0204, STP_Implied);
 
 	cMPU.Init(TestW65C81ContextTickHigh, TestW65C81ContextTickLow, &cTestContext);
 
@@ -112,8 +109,9 @@ void TestW65C816AddADCImmediateSimpleLog(void)
 
 	AssertSize(3, i);
 
-	AssertString("LDA: A.0001  X.0000  Y.0000  PC.00:0202\n"\
-				 "ADC: A.0003  X.0000  Y.0000  PC.00:0204\n" , cTestContext.SequenceText());
+	AssertString("RES: A.0000  X.0000  Y.0000  PC.00:0200\n"\
+				 "LDA: A.0001  X.0000  Y.0000  PC.00:0202\n"\
+				 "ADC: A.0006  X.0000  Y.0000  PC.00:0204\n" , cTestContext.SequenceText());
 
 	cTestContext.GetSequence()->Dump();
 
@@ -136,7 +134,7 @@ void TestW65C816Add(void)
 
 	DataIOInit();
 
-	//TestW65C816AddADCImmediateFullLog();
+	TestW65C816AddADCImmediateFullLog();
 	TestW65C816AddADCImmediateSimpleLog();
 
 	DataIOKill();
