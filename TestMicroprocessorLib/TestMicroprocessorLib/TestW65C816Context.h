@@ -13,8 +13,15 @@ protected:
 	CChars	mszSequence;
 	uint32	muiMemorySize;
 	uint8	muiFill;
+	size	muiStartOfPreviousLine;
+	size	muiStartOfPrevPrevLine;
 
 public:
+	bool	mbPrintReset;
+	bool	mbPrintStop;
+	bool	mbPrintMnemonic;
+	bool	mbPrintCycle;
+	bool	mbPrintOperation;
 	bool	mbPrintA;
 	bool	mbPrintX;
 	bool	mbPrintY;
@@ -23,10 +30,11 @@ public:
 	bool	mbPrintDP; 
 	bool	mbPrintDB;
 	bool	mbPrintP;
+	bool	mbPrintMergedCycles;
 
 public:
 	void		Init(uint32 uiMemorySize, uint8 uiFill);
-	void		SetPrint(bool bA, bool bX, bool bY, bool bPC, bool bS, bool bDP, bool bDB, bool bP);
+	void		SetPrint(bool bReset, bool bStop, bool bMnemonic, bool bCycle, bool bOperation, bool bA, bool bX, bool bY, bool bPC, bool bS, bool bDP, bool bDB, bool bP, bool mbMerged);
 	void		Kill(void);
 
 	uint8		GetBank(void);
@@ -36,6 +44,8 @@ public:
 	void		SetMemory(uint32 uiAddress, uint8 uiValue);
 	CChars*		GetSequence(void);
 	char*		SequenceText(void);
+	void		SetStartOfPreviousLine(size uiStartOfPreviousLine);
+	size		GetStartOfPrevPrevLine(void);
 };
 
 

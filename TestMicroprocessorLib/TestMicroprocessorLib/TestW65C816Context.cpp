@@ -14,6 +14,10 @@ void CTestW65C816Context::Init(uint32 uiMemorySize, uint8 uiFill)
 	muiFill = uiFill;
 	memset(mauiMemory, uiFill, uiMemorySize);
 
+	mbPrintReset = false;
+	mbPrintMnemonic = false;
+	mbPrintCycle = false;
+	mbPrintOperation = false;
 	mbPrintA = false;
 	mbPrintX = false;
 	mbPrintY = false;
@@ -22,6 +26,8 @@ void CTestW65C816Context::Init(uint32 uiMemorySize, uint8 uiFill)
 	mbPrintDP = false;
 	mbPrintDB = false;
 	mbPrintP = false;
+	muiStartOfPreviousLine = 0;
+	muiStartOfPrevPrevLine = 0;
 }
 
 
@@ -41,8 +47,13 @@ void CTestW65C816Context::Kill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestW65C816Context::SetPrint(bool bA, bool bX, bool bY, bool bPC, bool bS, bool bDP, bool bDB, bool bP)
+void CTestW65C816Context::SetPrint(bool bReset, bool bStop, bool bMnemonic, bool bCycle, bool bOperation, bool bA, bool bX, bool bY, bool bPC, bool bS, bool bDP, bool bDB, bool bP, bool mbMerged)
 {
+	mbPrintReset = bReset;
+	mbPrintStop = bStop;
+	mbPrintMnemonic = bMnemonic;
+	mbPrintCycle = bCycle;
+	mbPrintOperation = bOperation;
 	mbPrintA = bA;
 	mbPrintX = bX;
 	mbPrintY = bY;
@@ -51,6 +62,7 @@ void CTestW65C816Context::SetPrint(bool bA, bool bX, bool bY, bool bPC, bool bS,
 	mbPrintDP = bDP;
 	mbPrintDB = bDB;
 	mbPrintP = bP;
+	mbPrintMergedCycles = mbMerged;
 }
 
 
@@ -138,6 +150,26 @@ char* CTestW65C816Context::SequenceText(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+size CTestW65C816Context::GetStartOfPrevPrevLine(void)
+{
+	return muiStartOfPrevPrevLine;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestW65C816Context::SetStartOfPreviousLine(size uiStartOfPreviousLine)
+{
+	muiStartOfPrevPrevLine = muiStartOfPreviousLine;
+	muiStartOfPreviousLine = uiStartOfPreviousLine;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestW65C81ContextTickLow(CMetaW65C816* pcMPU, void* pvContext)
 {
 	CTestW65C816Context* pcContext;
@@ -159,11 +191,61 @@ void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 	bool					bValidAddress;
 	uint8					uiData;
 	CTestW65C816Context*	pcContext;
+	bool					bReset;
+	bool					bStop;
+	bool					bFetchOpcode;
+	CChars*					psz;
+	size					uiPos1;
+	size					uiPos2;
+	size					uiPreviousStart;
 
 	pcContext = (CTestW65C816Context*)pvContext;
 
-	pcMPU->Print(pcContext->GetSequence(), pcContext->mbPrintA, pcContext->mbPrintX, pcContext->mbPrintY, pcContext->mbPrintPC, pcContext->mbPrintS, pcContext->mbPrintDP, pcContext->mbPrintDB, pcContext->mbPrintP);
-	pcContext->GetSequence()->AppendNewLine();
+	bFetchOpcode = pcMPU->IsFetchOpcodeCycle();
+	bReset = pcMPU->IsResetInstruction();
+	bStop = pcMPU->IsStopInstruction();
+
+	if ((bReset && pcContext->mbPrintReset) ||
+		(bStop && pcContext->mbPrintStop) || 
+		!bReset && !bStop)
+	{
+		psz = pcContext->GetSequence();
+		uiPreviousStart = psz->Length();
+		if (pcContext->mbPrintMergedCycles && bFetchOpcode)
+		{
+			pcContext->SetStartOfPreviousLine(uiPreviousStart);
+		}
+
+		pcMPU->Print(pcContext->GetSequence(),
+					 pcContext->mbPrintMnemonic,
+					 pcContext->mbPrintCycle,
+					 pcContext->mbPrintOperation,
+					 pcContext->mbPrintA,
+					 pcContext->mbPrintX,
+					 pcContext->mbPrintY,
+					 pcContext->mbPrintPC,
+					 pcContext->mbPrintS,
+					 pcContext->mbPrintDP,
+					 pcContext->mbPrintDB,
+					 pcContext->mbPrintP);
+		psz->AppendNewLine();
+
+		if (pcContext->mbPrintMergedCycles && bFetchOpcode)
+		{
+			uiPos1 = psz->Find(pcContext->GetStartOfPrevPrevLine(), ':');
+			uiPos2 = psz->Find(uiPreviousStart, ':');
+			if (uiPos1 != uiPos2)
+			{
+				psz->Remove(uiPos1, uiPos2);
+			}
+			else
+			{
+				psz->Clear();
+			}
+			uiPreviousStart = psz->Length();
+			pcContext->SetStartOfPreviousLine(uiPreviousStart);
+		}
+	}
 
 	uiAddress = pcMPU->GetAddress()->Get();
 	uiAddress |= pcContext->GetBank() << 16;

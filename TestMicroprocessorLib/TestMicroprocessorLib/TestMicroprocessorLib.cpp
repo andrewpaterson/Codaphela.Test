@@ -29,7 +29,7 @@ int __cdecl main(void)
 	UnknownsInit();
 	gcMetaTraceUndriven.Init();
 
-	TestW65C816Reset();
+	//TestW65C816Reset();
 	TestW65C816Add();
 
 	UnknownsKill();

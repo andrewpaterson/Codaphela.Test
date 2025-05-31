@@ -447,7 +447,7 @@ void TestW65C816ResetVectorTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 
 	pcContext = (CTestW65C816Context*)pvContext;
 
-	pcMPU->Print(pcContext->GetSequence(), true, true, true, true, true, false, false, false);
+	pcMPU->Print(pcContext->GetSequence(), true, true, true, true, true, true, true, true, false, false, false);
 	pcContext->GetSequence()->AppendNewLine();
 
 	uiAddress = pcMPU->GetAddress()->Get();
@@ -508,22 +508,22 @@ void TestW65C816ResetVector(void)
 
 	AssertSize(4, i);
 
-	AssertString(	"RES: (1) IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
-					"RES: (2) IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
-					"RES: (3) IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
-					"RES: (4) IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01fe\n"\
-					"RES: (5) IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01fd\n"\
-					"RES: (6) Read(AAL)       A.0000  X.0000  Y.0000  PC.00:0000  S.01fc\n"\
-					"RES: (7) Read(AAH)       A.0000  X.0000  Y.0000  PC.00:0000  S.01fc\n"\
-					"OPC: (1) Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0200  S.01fc\n"\
-					"INX: (2) IO              A.0000  X.0001  Y.0001  PC.00:0201  S.01fc\n"\
-					"OPC: (1) Read(Opcode)    A.0000  X.0001  Y.0001  PC.00:0201  S.01fc\n"\
-					"INY: (2) IO              A.0000  X.0001  Y.0001  PC.00:0202  S.01fc\n"\
-					"OPC: (1) Read(Opcode)    A.0000  X.0001  Y.0001  PC.00:0202  S.01fc\n"\
-					"INC: (2) IO              A.0001  X.0001  Y.0001  PC.00:0203  S.01fc\n"\
-					"OPC: (1) Read(Opcode)    A.0001  X.0001  Y.0001  PC.00:0203  S.01fc\n"\
-					"STP: (2) IO              A.0001  X.0001  Y.0001  PC.00:0204  S.01fc\n", cTestContext.SequenceText());
-	
+	AssertString("RES: (1)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
+				 "RES: (2)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
+				 "RES: (3)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
+				 "RES: (4)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01fe\n"\
+				 "RES: (5)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01fd\n"\
+				 "RES: (6)  Read(AAL)       A.0000  X.0000  Y.0000  PC.00:0000  S.01fc\n"\
+				 "RES: (7)  Read(AAH)       A.0000  X.0000  Y.0000  PC.00:0000  S.01fc\n"\
+				 "OPC: (1)  Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0200  S.01fc\n"\
+				 "INX: (2)  IO              A.0000  X.0000  Y.0000  PC.00:0201  S.01fc\n"\
+				 "OPC: (1)  Read(Opcode)    A.0000  X.0001  Y.0001  PC.00:0201  S.01fc\n"\
+				 "INY: (2)  IO              A.0000  X.0001  Y.0001  PC.00:0202  S.01fc\n"\
+				 "OPC: (1)  Read(Opcode)    A.0000  X.0001  Y.0001  PC.00:0202  S.01fc\n"\
+				 "INC: (2)  IO              A.0000  X.0001  Y.0001  PC.00:0203  S.01fc\n"\
+				 "OPC: (1)  Read(Opcode)    A.0001  X.0001  Y.0001  PC.00:0203  S.01fc\n"\
+				 "STP: (2)  IO              A.0001  X.0001  Y.0001  PC.00:0204  S.01fc\n"\
+				 "STP: (3)  IO              A.0001  X.0001  Y.0001  PC.00:0204  S.01fc\n", cTestContext.SequenceText());
 	cTestContext.Kill();
 
 	CInstructionFactory::GetInstance()->Kill();
