@@ -14,6 +14,9 @@
     <Filter Include="Source\wdc\W65C816">
       <UniqueIdentifier>{a311156c-7650-4e00-b585-41ced89298f5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\wdc\W65C816\Context">
+      <UniqueIdentifier>{fe3d0591-37c3-4e1f-b036-f6bcee5a6aed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestMicroprocessorLib.cpp">
@@ -26,12 +29,12 @@
       <Filter>Source\wdc\W65C816</Filter>
     </ClCompile>
     <ClCompile Include="TestW65C816Context.cpp">
-      <Filter>Source\wdc\W65C816</Filter>
+      <Filter>Source\wdc\W65C816\Context</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestW65C816Context.h">
-      <Filter>Source\wdc\W65C816</Filter>
+      <Filter>Source\wdc\W65C816\Context</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

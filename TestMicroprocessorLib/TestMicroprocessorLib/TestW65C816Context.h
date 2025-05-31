@@ -37,6 +37,8 @@ public:
 	void		SetPrint(bool bReset, bool bStop, bool bMnemonic, bool bCycle, bool bOperation, bool bA, bool bX, bool bY, bool bPC, bool bS, bool bDP, bool bDB, bool bP, bool mbMerged);
 	void		Kill(void);
 
+	size		Run(CMetaW65C816* pcMPU);
+
 	uint8		GetBank(void);
 	void		SetBank(uint8 uiBank);
 	uint8*		GetMemory(void);

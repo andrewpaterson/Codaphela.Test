@@ -166,6 +166,64 @@ void CTestW65C816Context::SetStartOfPreviousLine(size uiStartOfPreviousLine)
 	muiStartOfPreviousLine = uiStartOfPreviousLine;
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void MergeEndCycleString(CTestW65C816Context* pcContext, bool bFetchOpcode, size uiPreviousStart, CChars* psz)
+{
+	size	uiPos1;
+	size	uiPos2;
+
+	if (pcContext->mbPrintMergedCycles && bFetchOpcode)
+	{
+		uiPos1 = psz->Find(pcContext->GetStartOfPrevPrevLine(), ':');
+		uiPos2 = psz->Find(uiPreviousStart, ':');
+		if (uiPos1 != uiPos2)
+		{
+			psz->Remove(uiPos1, uiPos2);
+		}
+		else
+		{
+			psz->Clear();
+		}
+		uiPreviousStart = psz->Length();
+		pcContext->SetStartOfPreviousLine(uiPreviousStart);
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+size CTestW65C816Context::Run(CMetaW65C816* pcMPU)
+{
+	size		i;
+	bool		bRunning;
+	size		uiEnd;
+	size		uiLength;
+
+	for (i = 0;; i++)
+	{
+		bRunning = pcMPU->TickInstruction();
+		if (!bRunning)
+		{
+			if (mbPrintMergedCycles && mbPrintStop)
+			{
+				uiLength = mszSequence.Length();
+				uiEnd = mszSequence.FindFromEnd(uiLength-2, '\n');
+				mszSequence.Remove(uiEnd, uiLength);
+				mszSequence.AppendNewLine();
+			}
+			break;
+		}
+	}
+	return i;
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -195,8 +253,6 @@ void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 	bool					bStop;
 	bool					bFetchOpcode;
 	CChars*					psz;
-	size					uiPos1;
-	size					uiPos2;
 	size					uiPreviousStart;
 
 	pcContext = (CTestW65C816Context*)pvContext;
@@ -230,21 +286,7 @@ void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 					 pcContext->mbPrintP);
 		psz->AppendNewLine();
 
-		if (pcContext->mbPrintMergedCycles && bFetchOpcode)
-		{
-			uiPos1 = psz->Find(pcContext->GetStartOfPrevPrevLine(), ':');
-			uiPos2 = psz->Find(uiPreviousStart, ':');
-			if (uiPos1 != uiPos2)
-			{
-				psz->Remove(uiPos1, uiPos2);
-			}
-			else
-			{
-				psz->Clear();
-			}
-			uiPreviousStart = psz->Length();
-			pcContext->SetStartOfPreviousLine(uiPreviousStart);
-		}
+		MergeEndCycleString(pcContext, bFetchOpcode, uiPreviousStart, psz);
 	}
 
 	uiAddress = pcMPU->GetAddress()->Get();

@@ -17,8 +17,7 @@
 void TestW65C816AddADCImmediateFullLog(void)
 {
 	CMetaW65C816			cMPU;
-	size					i;
-	bool					bRunning;
+	size					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
 	CInstructionFactory::GetInstance()->Init();
@@ -36,18 +35,11 @@ void TestW65C816AddADCImmediateFullLog(void)
 
 	cMPU.Init(TestW65C81ContextTickHigh, TestW65C81ContextTickLow, &cTestContext);
 
-	for (i = 0;; i++)
-	{
-		bRunning = cMPU.TickInstruction();
-		if (!bRunning)
-		{
-			break;
-		}
-	}
+	uiInstructions = cTestContext.Run(&cMPU);
 
 	cMPU.Kill();
 
-	AssertSize(3, i);
+	AssertSize(3, uiInstructions);
 
 	AssertString("RES: (1)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
 				 "RES: (2)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
@@ -77,14 +69,13 @@ void TestW65C816AddADCImmediateFullLog(void)
 void TestW65C816AddADCImmediateSimpleLog(void)
 {
 	CMetaW65C816			cMPU;
-	size					i;
-	bool					bRunning;
+	size					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
 	CInstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x10000, 0xea);
-	cTestContext.SetPrint(true, false, true, false, false, true, true, true, true, false, false, false, false, true);
+	cTestContext.SetPrint(true, true, true, false, false, true, true, true, true, false, false, false, false, true);
 
 	cTestContext.SetMemory(0xfffc, 0x00);
 	cTestContext.SetMemory(0xfffd, 0x02);
@@ -96,22 +87,16 @@ void TestW65C816AddADCImmediateSimpleLog(void)
 
 	cMPU.Init(TestW65C81ContextTickHigh, TestW65C81ContextTickLow, &cTestContext);
 
-	for (i = 0;; i++)
-	{
-		bRunning = cMPU.TickInstruction();
-		if (!bRunning)
-		{
-			break;
-		}
-	}
+	uiInstructions = cTestContext.Run(&cMPU);
 
 	cMPU.Kill();
 
-	AssertSize(3, i);
+	AssertSize(3, uiInstructions);
 
 	AssertString("RES: A.0000  X.0000  Y.0000  PC.00:0200\n"\
 				 "LDA: A.0001  X.0000  Y.0000  PC.00:0202\n"\
-				 "ADC: A.0006  X.0000  Y.0000  PC.00:0204\n" , cTestContext.SequenceText());
+				 "ADC: A.0006  X.0000  Y.0000  PC.00:0204\n"\
+				 "STP: A.0006  X.0000  Y.0000  PC.00:0205\n" , cTestContext.SequenceText());
 
 	cTestContext.Kill();
 
