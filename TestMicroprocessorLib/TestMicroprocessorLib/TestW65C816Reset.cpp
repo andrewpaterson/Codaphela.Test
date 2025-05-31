@@ -49,7 +49,7 @@ void AssertCycleName(CW65C816* pcW65C816, char* szExpected)
 //////////////////////////////////////////////////////////////////////////
 void AssertCycle(CW65C816* pcW65C816, int16 iExpected)
 {
-	AssertShort(iExpected, pcW65C816->GetCycle());
+	AssertShort(iExpected, pcW65C816->GetCyclePlusOne());
 }
 
 

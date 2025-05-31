@@ -113,9 +113,6 @@ void TestW65C816AddADCImmediateSimpleLog(void)
 				 "LDA: A.0001  X.0000  Y.0000  PC.00:0202\n"\
 				 "ADC: A.0006  X.0000  Y.0000  PC.00:0204\n" , cTestContext.SequenceText());
 
-	cTestContext.GetSequence()->Dump();
-
-
 	cTestContext.Kill();
 
 	CInstructionFactory::GetInstance()->Kill();
