@@ -40,6 +40,20 @@ void CTestW65C816Context::Init(uint32 uiMemorySize, uint8 uiFill)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void CTestW65C816Context::Init(uint32 uiMemorySize, uint8 uiFill, uint16 uiResetAddress)
+{
+	Init(uiMemorySize, uiFill);
+
+
+	SetByte(0xfffc, GetLowByte(uiResetAddress));
+	SetByte(0xfffd, GetHighByte(uiResetAddress));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void CTestW65C816Context::Kill(void)
 {
 	muiLastAddress = 0;
@@ -356,7 +370,6 @@ void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 		}
 	}
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////

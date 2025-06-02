@@ -39,6 +39,7 @@ public:
 
 public:
 	void		Init(uint32 uiMemorySize, uint8 uiFill);
+	void		Init(uint32 uiMemorySize, uint8 uiFill, uint16 uiResettAddress);
 	void		SetPrint(bool bReset, bool bStop, bool bMnemonic, bool bCycle, bool bOperation, bool bA, bool bX, bool bY, bool bPC, bool bS, bool bDP, bool bDB, bool bP, bool mbMerged);
 	void		Kill(void);
 
