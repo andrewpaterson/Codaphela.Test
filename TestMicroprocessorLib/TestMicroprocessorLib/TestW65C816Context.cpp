@@ -1,3 +1,5 @@
+#include "BaseLib/FileUtil.h"
+#include "BaseLib/DiskFile.h"
 #include "MicroprocessorLib/InstructionFactory.h"
 #include "TestLib/Assert.h"
 #include "TestW65C816Context.h"
@@ -33,6 +35,8 @@ void CTestW65C816Context::Init(uint32 uiMemorySize, uint8 uiFill)
 	muiLastAddress = 0;
 	muiInstructions = 0;
 	mbPrintSet = false;
+	mbEnablePrint = true;
+	mbDebugSpew = false;
 }
 
 
@@ -44,9 +48,49 @@ void CTestW65C816Context::Init(uint32 uiMemorySize, uint8 uiFill, uint16 uiReset
 {
 	Init(uiMemorySize, uiFill);
 
-
 	SetByte(0xfffc, GetLowByte(uiResetAddress));
 	SetByte(0xfffd, GetHighByte(uiResetAddress));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestW65C816Context::Init(char* szMemoryFileame)
+{
+	CChars		sz;
+	CFileUtil	cFileUtil;
+	CFileBasic	cFile;
+	CDiskFile	cDisk;
+	uint32		uiSize;
+	bool		bResult;
+
+	sz.Init();
+
+	cFileUtil.CurrentDirectory(&sz);
+	cFileUtil.AppendToPath(&sz, "Input");
+	cFileUtil.AppendToPath(&sz, szMemoryFileame);
+
+	cDisk.Init(sz);
+	sz.Kill();
+	cFile.Init(&cDisk);
+	bResult = cFile.Open(EFM_Read);
+	if (!bResult)
+	{
+		cDisk.Kill();
+		cFile.Kill();
+		return;
+	}
+
+	uiSize = (uint32)cDisk.Size();
+	
+	Init(uiSize, 0xff);
+
+	uiSize = cFile.Read(mauiMemory, uiSize, 1);
+	cFile.Close();
+	cDisk.Kill();
+	cFile.Kill();
 }
 
 
@@ -257,9 +301,9 @@ void MergeEndCycleString(CTestW65C816Context* pcContext, bool bFetchOpcode, size
 //
 //
 //////////////////////////////////////////////////////////////////////////
-size CTestW65C816Context::Run(CMetaW65C816* pcMPU)
+uint64 CTestW65C816Context::Run(CMetaW65C816* pcMPU)
 {
-	size		i;
+	uint64		i;
 	bool		bRunning;
 	size		uiEnd;
 	size		uiLength;
@@ -269,12 +313,15 @@ size CTestW65C816Context::Run(CMetaW65C816* pcMPU)
 		bRunning = pcMPU->TickInstruction();
 		if (!bRunning)
 		{
-			if (mbPrintMergedCycles && mbPrintStop)
+			if (mbEnablePrint)
 			{
-				uiLength = mszSequence.Length();
-				uiEnd = mszSequence.FindFromEnd(uiLength-2, '\n');
-				mszSequence.Remove(uiEnd, uiLength);
-				mszSequence.AppendNewLine();
+				if (mbPrintMergedCycles && mbPrintStop)
+				{
+					uiLength = mszSequence.Length();
+					uiEnd = mszSequence.FindFromEnd(uiLength - 2, '\n');
+					mszSequence.Remove(uiEnd, uiLength);
+					mszSequence.AppendNewLine();
+				}
 			}
 			break;
 		}
@@ -313,6 +360,7 @@ void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 	bool					bFetchOpcode;
 	CChars*					psz;
 	size					uiPreviousStart;
+	CChars					szTemp;
 
 	pcContext = (CTestW65C816Context*)pvContext;
 
@@ -320,18 +368,10 @@ void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 	bReset = pcMPU->IsResetInstruction();
 	bStop = pcMPU->IsStopInstruction();
 
-	if ((bReset && pcContext->mbPrintReset) ||
-		(bStop && pcContext->mbPrintStop) || 
-		!bReset && !bStop)
+	if (pcContext->mbDebugSpew)
 	{
-		psz = pcContext->GetSequence();
-		uiPreviousStart = psz->Length();
-		if (pcContext->mbPrintMergedCycles && bFetchOpcode)
-		{
-			pcContext->SetStartOfPreviousLine(uiPreviousStart);
-		}
-
-		pcMPU->Print(pcContext->GetSequence(),
+		szTemp.Init();
+		pcMPU->Print(&szTemp,
 					 pcContext->mbPrintMnemonic,
 					 pcContext->mbPrintCycle,
 					 pcContext->mbPrintOperation,
@@ -343,9 +383,39 @@ void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 					 pcContext->mbPrintDP,
 					 pcContext->mbPrintDB,
 					 pcContext->mbPrintP);
-		psz->AppendNewLine();
+		szTemp.AppendNewLine();
+		szTemp.DumpKill();
+	}
 
-		MergeEndCycleString(pcContext, bFetchOpcode, uiPreviousStart, psz);
+	if (pcContext->mbEnablePrint)
+	{
+		if ((bReset && pcContext->mbPrintReset) ||
+			(bStop && pcContext->mbPrintStop) ||
+			!bReset && !bStop)
+		{
+			psz = pcContext->GetSequence();
+			uiPreviousStart = psz->Length();
+			if (pcContext->mbPrintMergedCycles && bFetchOpcode)
+			{
+				pcContext->SetStartOfPreviousLine(uiPreviousStart);
+			}
+
+			pcMPU->Print(pcContext->GetSequence(),
+						 pcContext->mbPrintMnemonic,
+						 pcContext->mbPrintCycle,
+						 pcContext->mbPrintOperation,
+						 pcContext->mbPrintA,
+						 pcContext->mbPrintX,
+						 pcContext->mbPrintY,
+						 pcContext->mbPrintPC,
+						 pcContext->mbPrintS,
+						 pcContext->mbPrintDP,
+						 pcContext->mbPrintDB,
+						 pcContext->mbPrintP);
+			psz->AppendNewLine();
+
+			MergeEndCycleString(pcContext, bFetchOpcode, uiPreviousStart, psz);
+		}
 	}
 
 	uiAddress = pcMPU->GetAddress()->Get();
@@ -378,8 +448,8 @@ void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816InContext(CTestW65C816Context* pcContext, char* szExpected)
 {
-	CMetaW65C816			cMPU;
-	size					uiInstructions;
+	CMetaW65C816	cMPU;
+	uint64			uiInstructions;
 
 	CInstructionFactory::GetInstance()->Init();
 
@@ -391,7 +461,7 @@ void TestW65C816InContext(CTestW65C816Context* pcContext, char* szExpected)
 
 	cMPU.Kill();
 
-	AssertSize(pcContext->muiInstructions, uiInstructions);
+	AssertLong(pcContext->muiInstructions, uiInstructions);
 
 	AssertString(szExpected, pcContext->SequenceText());
 

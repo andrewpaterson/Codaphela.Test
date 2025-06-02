@@ -33,17 +33,20 @@ public:
 	bool	mbPrintDB;
 	bool	mbPrintP;
 	bool	mbPrintMergedCycles;
+	bool	mbEnablePrint;
+	bool	mbDebugSpew;
 
 	uint32	muiLastAddress;
 	size	muiInstructions;
 
 public:
 	void		Init(uint32 uiMemorySize, uint8 uiFill);
-	void		Init(uint32 uiMemorySize, uint8 uiFill, uint16 uiResettAddress);
+	void		Init(uint32 uiMemorySize, uint8 uiFill, uint16 uiResetAddress);
+	void		Init(char* szMemoryFileame);
 	void		SetPrint(bool bReset, bool bStop, bool bMnemonic, bool bCycle, bool bOperation, bool bA, bool bX, bool bY, bool bPC, bool bS, bool bDP, bool bDB, bool bP, bool mbMerged);
 	void		Kill(void);
 
-	size		Run(CMetaW65C816* pcMPU);
+	uint64		Run(CMetaW65C816* pcMPU);
 
 	uint8		GetBank(void);
 	void		SetBank(uint8 uiBank);

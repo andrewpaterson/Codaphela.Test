@@ -17,7 +17,7 @@
 void TestW65C816AddADCImmediateFullLog(void)
 {
 	CMetaW65C816			cMPU;
-	size					uiInstructions;
+	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
 	CInstructionFactory::GetInstance()->Init();
@@ -39,7 +39,7 @@ void TestW65C816AddADCImmediateFullLog(void)
 
 	cMPU.Kill();
 
-	AssertSize(3, uiInstructions);
+	AssertLong(3, uiInstructions);
 
 	AssertString(""\
 		"RES: (1)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\

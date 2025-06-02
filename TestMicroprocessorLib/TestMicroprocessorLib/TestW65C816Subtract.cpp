@@ -17,7 +17,7 @@
 void TestW65C816SubtractSBCImmediateFullLog(void)
 {
 	CMetaW65C816			cMPU;
-	size					uiInstructions;
+	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
 	CInstructionFactory::GetInstance()->Init();
@@ -40,7 +40,7 @@ void TestW65C816SubtractSBCImmediateFullLog(void)
 
 	cMPU.Kill();
 
-	AssertSize(4, uiInstructions);
+	AssertLong(4, uiInstructions);
 
 	AssertString(""\
 		"RES: (1)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff    P(Z0 N0 D0 I0 M8  X8  C0 E1 V0 B0)\n"\
