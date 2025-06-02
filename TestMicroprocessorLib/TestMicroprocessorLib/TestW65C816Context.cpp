@@ -187,6 +187,23 @@ uint8 CTestW65C816Context::GetByte(uint32 uiAddress)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+uint16 CTestW65C816Context::GetShort(uint32 uiAddress)
+{
+	if (uiAddress < muiMemorySize)
+	{
+		return *((uint16*)&mauiMemory[uiAddress]);
+	}
+	else
+	{
+		return muiFill;
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void CTestW65C816Context::SetByte(uint32 uiAddress, uint8 uiValue)
 {
 	if (uiAddress < muiMemorySize)
@@ -204,6 +221,30 @@ void CTestW65C816Context::SetByte(uint32 uiAddress, uint8 uiValue)
 void CTestW65C816Context::SetByte(uint8 uiValue)
 {
 	SetByte(muiLastAddress + 1, uiValue);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestW65C816Context::SetShort(uint32 uiAddress, uint16 uiValue)
+{
+	if (uiAddress < muiMemorySize)
+	{
+		*((uint16*)&mauiMemory[uiAddress]) = uiValue;
+	}
+	muiLastAddress = uiAddress + 1;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestW65C816Context::SetShort(uint16 uiValue)
+{
+	SetShort(muiLastAddress + 1, uiValue);
 }
 
 
@@ -267,6 +308,20 @@ void CTestW65C816Context::SetStartOfPreviousLine(size uiStartOfPreviousLine)
 {
 	muiStartOfPrevPrevLine = muiStartOfPreviousLine;
 	muiStartOfPreviousLine = uiStartOfPreviousLine;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestW65C816Context::StripToInstruction(char* szInstruction)
+{
+	size	uiIndex;
+
+	uiIndex = mszSequence.Find(szInstruction);
+	uiIndex = mszSequence.FindFromEnd(uiIndex, "OPC");
+	mszSequence.RemoveFromStart(uiIndex);
 }
 
 
@@ -469,4 +524,5 @@ void TestW65C816InContext(CTestW65C816Context* pcContext, char* szExpected)
 
 	CInstructionFactory::GetInstance()->Kill();
 }
+
 

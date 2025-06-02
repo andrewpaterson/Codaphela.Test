@@ -47,9 +47,11 @@ public:
 	void		Kill(void);
 
 	uint64		Run(CMetaW65C816* pcMPU);
+	void		StripToInstruction(char* szInstruction);
 
 	uint8		GetBank(void);
 	void		SetBank(uint8 uiBank);
+
 	uint8*		GetMemory(void);
 	uint8		GetByte(uint32 uiAddress);
 	void		SetByte(uint32 uiAddress, uint8 uiValue);
@@ -60,6 +62,9 @@ public:
 	char*		SequenceText(void);
 	void		SetStartOfPreviousLine(size uiStartOfPreviousLine);
 	size		GetStartOfPrevPrevLine(void);
+	uint16		GetShort(uint32 uiAddress);
+	void		SetShort(uint32 uiAddress, uint16 uiValue);
+	void		SetShort(uint16 uiValue);
 };
 
 
