@@ -185,6 +185,7 @@
     <ClCompile Include="TestMicroprocessorLib.cpp" />
     <ClCompile Include="TestW65C816Add.cpp" />
     <ClCompile Include="TestW65C816Context.cpp" />
+    <ClCompile Include="TestW65C816Load.cpp" />
     <ClCompile Include="TestW65C816Reset.cpp" />
     <ClCompile Include="TestW65C816Subtract.cpp" />
   </ItemGroup>

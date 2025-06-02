@@ -83,10 +83,10 @@ void TestW65C816AddADCImmediate(void)
 	cTestContext.SetOpcd(STP_Implied);
 
 	TestW65C816InContext(&cTestContext, ""\
-		"RES: A.0000  X.0000  Y.0000  PC.00:0200    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"LDA: A.0001  X.0000  Y.0000  PC.00:0202    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"ADC: A.0006  X.0000  Y.0000  PC.00:0204    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"STP: A.0006  X.0000  Y.0000  PC.00:0205    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n");
+		"RES: A.0000  X.0000  Y.0000  PC.00:0200    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"LDA: A.0001  X.0000  Y.0000  PC.00:0202    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"ADC: A.0006  X.0000  Y.0000  PC.00:0204    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"STP: A.0006  X.0000  Y.0000  PC.00:0205    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n");
 }
 
 
@@ -110,10 +110,10 @@ void TestW65C816AddADCImmediateOverflow(void)
 	cTestContext.SetOpcd(0x0204, STP_Implied);
 
 	TestW65C816InContext(&cTestContext, ""\
-		"RES: A.0000  X.0000  Y.0000  PC.00:0200    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"LDA: A.0080  X.0000  Y.0000  PC.00:0202    P(Z0 N1 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"ADC: A.0000  X.0000  Y.0000  PC.00:0204    P(Z1 N0 D0 I1 M8  X8  C1 E1 V1 B0)\n"\
-		"STP: A.0000  X.0000  Y.0000  PC.00:0205    P(Z1 N0 D0 I1 M8  X8  C1 E1 V1 B0)\n");
+		"RES: A.0000  X.0000  Y.0000  PC.00:0200    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"LDA: A.0080  X.0000  Y.0000  PC.00:0202    P(Z0 N1 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"ADC: A.0000  X.0000  Y.0000  PC.00:0204    P(Z1 N0 D0 I1 M.8 X.8 C1 E1 V1 B0)\n"\
+		"STP: A.0000  X.0000  Y.0000  PC.00:0205    P(Z1 N0 D0 I1 M.8 X.8 C1 E1 V1 B0)\n");
 }
 
 
@@ -142,11 +142,11 @@ void TestW65C816AddADCAbsoluteLongWithCarryPositive(void)
 	cTestContext.SetByte(0x3005, 0x02);
 
 	TestW65C816InContext(&cTestContext, ""\
-		"RES: A.0000  X.0000  Y.0000  PC.00:0200    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"LDA: A.007c  X.0000  Y.0000  PC.00:0202    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"SEC: A.007c  X.0000  Y.0000  PC.00:0203    P(Z0 N0 D0 I1 M8  X8  C1 E1 V0 B0)\n"\
-		"ADC: A.007f  X.0000  Y.0000  PC.00:0207    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"STP: A.007f  X.0000  Y.0000  PC.00:0208    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n");
+		"RES: A.0000  X.0000  Y.0000  PC.00:0200    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"LDA: A.007c  X.0000  Y.0000  PC.00:0202    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"SEC: A.007c  X.0000  Y.0000  PC.00:0203    P(Z0 N0 D0 I1 M.8 X.8 C1 E1 V0 B0)\n"\
+		"ADC: A.007f  X.0000  Y.0000  PC.00:0207    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"STP: A.007f  X.0000  Y.0000  PC.00:0208    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n");
 }
 
 
@@ -178,12 +178,12 @@ void TestW65C816AddADCIndexedIndirectWithXWithCarryPositive(void)
 	cTestContext.SetByte(0x3005, 0x03);
 
 	TestW65C816InContext(&cTestContext, ""\
-		"RES: A.0000  X.0000  Y.0000  PC.00:0200    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"LDA: A.00fe  X.0000  Y.0000  PC.00:0202    P(Z0 N1 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"SEC: A.00fe  X.0000  Y.0000  PC.00:0203    P(Z0 N1 D0 I1 M8  X8  C1 E1 V0 B0)\n"\
-		"LDX: A.00fe  X.0010  Y.0000  PC.00:0205    P(Z0 N0 D0 I1 M8  X8  C1 E1 V0 B0)\n"\
-		"ADC: A.0002  X.0010  Y.0000  PC.00:0207    P(Z0 N0 D0 I1 M8  X8  C1 E1 V0 B0)\n"\
-		"STP: A.0002  X.0010  Y.0000  PC.00:0208    P(Z0 N0 D0 I1 M8  X8  C1 E1 V0 B0)\n");
+		"RES: A.0000  X.0000  Y.0000  PC.00:0200    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"LDA: A.00fe  X.0000  Y.0000  PC.00:0202    P(Z0 N1 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"SEC: A.00fe  X.0000  Y.0000  PC.00:0203    P(Z0 N1 D0 I1 M.8 X.8 C1 E1 V0 B0)\n"\
+		"LDX: A.00fe  X.0010  Y.0000  PC.00:0205    P(Z0 N0 D0 I1 M.8 X.8 C1 E1 V0 B0)\n"\
+		"ADC: A.0002  X.0010  Y.0000  PC.00:0207    P(Z0 N0 D0 I1 M.8 X.8 C1 E1 V0 B0)\n"\
+		"STP: A.0002  X.0010  Y.0000  PC.00:0208    P(Z0 N0 D0 I1 M.8 X.8 C1 E1 V0 B0)\n");
 }
 
 
@@ -212,11 +212,11 @@ void TestW65C816AddADCAbsoluteLongWithCarryNegative(void)
 	cTestContext.SetByte(0x3005, 0x02);
 
 	TestW65C816InContext(&cTestContext, ""\
-		"RES: A.0000  X.0000  Y.0000  PC.00:0200    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"LDA: A.007d  X.0000  Y.0000  PC.00:0202    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"SEC: A.007d  X.0000  Y.0000  PC.00:0203    P(Z0 N0 D0 I1 M8  X8  C1 E1 V0 B0)\n"\
-		"ADC: A.0080  X.0000  Y.0000  PC.00:0207    P(Z0 N1 D0 I1 M8  X8  C0 E1 V1 B0)\n"\
-		"STP: A.0080  X.0000  Y.0000  PC.00:0208    P(Z0 N1 D0 I1 M8  X8  C0 E1 V1 B0)\n");
+		"RES: A.0000  X.0000  Y.0000  PC.00:0200    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"LDA: A.007d  X.0000  Y.0000  PC.00:0202    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"SEC: A.007d  X.0000  Y.0000  PC.00:0203    P(Z0 N0 D0 I1 M.8 X.8 C1 E1 V0 B0)\n"\
+		"ADC: A.0080  X.0000  Y.0000  PC.00:0207    P(Z0 N1 D0 I1 M.8 X.8 C0 E1 V1 B0)\n"\
+		"STP: A.0080  X.0000  Y.0000  PC.00:0208    P(Z0 N1 D0 I1 M.8 X.8 C0 E1 V1 B0)\n");
 }
 
 
@@ -269,9 +269,9 @@ void TestW65C816AddBruceClark01(void)
 	TestW65C816AddImmediateInit(&cTestContext, 1, 1, false);
 
 	TestW65C816AddInContext(&cTestContext, ""\
-		"CLC: A.0000    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"LDA: A.0001    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"ADC: A.0002    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n");
+		"CLC: A.0000    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"LDA: A.0001    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"ADC: A.0002    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n");
 }
 
 
@@ -288,9 +288,9 @@ void TestW65C816AddBruceClark02(void)
 	TestW65C816AddImmediateInit(&cTestContext, 1, 0xff, false);
 
 	TestW65C816AddInContext(&cTestContext, ""\
-		"CLC: A.0000    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"LDA: A.0001    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"ADC: A.0000    P(Z1 N0 D0 I1 M8  X8  C1 E1 V0 B0)\n");
+		"CLC: A.0000    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"LDA: A.0001    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"ADC: A.0000    P(Z1 N0 D0 I1 M.8 X.8 C1 E1 V0 B0)\n");
 }
 
 
@@ -307,9 +307,9 @@ void TestW65C816AddBruceClark03(void)
 	TestW65C816AddImmediateInit(&cTestContext, 0x7f, 1, false);
 
 	TestW65C816AddInContext(&cTestContext, ""\
-		"CLC: A.0000    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"LDA: A.007f    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"ADC: A.0080    P(Z0 N1 D0 I1 M8  X8  C0 E1 V1 B0)\n");
+		"CLC: A.0000    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"LDA: A.007f    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"ADC: A.0080    P(Z0 N1 D0 I1 M.8 X.8 C0 E1 V1 B0)\n");
 }
 
 
@@ -326,9 +326,9 @@ void TestW65C816AddBruceClark04(void)
 	TestW65C816AddImmediateInit(&cTestContext, 0x80, 0xff, false);
 
 	TestW65C816AddInContext(&cTestContext, ""\
-		"CLC: A.0000    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"LDA: A.0080    P(Z0 N1 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
-		"ADC: A.007f    P(Z0 N0 D0 I1 M8  X8  C1 E1 V1 B0)\n");
+		"CLC: A.0000    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"LDA: A.0080    P(Z0 N1 D0 I1 M.8 X.8 C0 E1 V0 B0)\n"\
+		"ADC: A.007f    P(Z0 N0 D0 I1 M.8 X.8 C1 E1 V1 B0)\n");
 }
 
 
@@ -345,9 +345,9 @@ void TestW65C816AddBruceClark05(void)
 	TestW65C816AddImmediateInit(&cTestContext, 0x3f, 0x40, true);
 
 	TestW65C816AddInContext(&cTestContext, ""\
-		"SEC: A.0000    P(Z0 N0 D0 I1 M8  X8  C1 E1 V0 B0)\n"\
-		"LDA: A.003f    P(Z0 N0 D0 I1 M8  X8  C1 E1 V0 B0)\n"\
-		"ADC: A.0080    P(Z0 N1 D0 I1 M8  X8  C0 E1 V1 B0)\n");
+		"SEC: A.0000    P(Z0 N0 D0 I1 M.8 X.8 C1 E1 V0 B0)\n"\
+		"LDA: A.003f    P(Z0 N0 D0 I1 M.8 X.8 C1 E1 V0 B0)\n"\
+		"ADC: A.0080    P(Z0 N1 D0 I1 M.8 X.8 C0 E1 V1 B0)\n");
 }
 
 

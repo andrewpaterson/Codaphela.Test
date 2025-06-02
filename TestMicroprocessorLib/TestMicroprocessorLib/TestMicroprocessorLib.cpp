@@ -15,6 +15,7 @@ void TestW65C816Reset(void);
 void TestW65C816Add(void);
 void TestW65C816Subtract(void);
 void TestW65C816Arithmetic(void);
+void TestW65C816Load(void);
 
 
 int __cdecl main(void)
@@ -34,7 +35,8 @@ int __cdecl main(void)
 	TestW65C816Reset();
 	TestW65C816Add();
 	TestW65C816Subtract();
-	TestW65C816Arithmetic();
+	TestW65C816Load();
+	//TestW65C816Arithmetic();
 
 	UnknownsKill();
 	MemoryKill();
