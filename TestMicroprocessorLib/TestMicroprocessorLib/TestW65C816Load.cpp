@@ -136,6 +136,65 @@ void TestW65C816LoadLDAAbsolute(void)
 	CInstructionFactory::GetInstance()->Kill();
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestW65C816LoadLDAAbsoluteLong(void)
+{
+	CMetaW65C816			cMPU;
+	uint64					uiInstructions;
+	CTestW65C816Context		cTestContext;
+
+	CInstructionFactory::GetInstance()->Init();
+
+	cTestContext.Init(0x20000, 0xea, 0x0200);
+	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, false, false, false, false, false);
+
+	cTestContext.SetShort(0x013003, 0xcdef);
+
+	cTestContext.SetOpcd(0x0200, CLC_Implied);
+	cTestContext.SetOpcd(XCE_Implied);
+	cTestContext.SetOpcd(REP_Immediate);
+	cTestContext.SetByte(0x30);
+	cTestContext.SetOpcd(LDA_AbsoluteLong);
+	cTestContext.SetByte(0x03);
+	cTestContext.SetByte(0x30);
+	cTestContext.SetByte(0x01);
+	cTestContext.SetOpcd(STA_Absolute);
+	cTestContext.SetByte(0x00);
+	cTestContext.SetByte(0x01);
+	cTestContext.SetOpcd(STP_Implied);
+
+	cMPU.Init(TestW65C81ContextTickHigh, TestW65C81ContextTickLow, &cTestContext);
+
+	uiInstructions = cTestContext.Run(&cMPU);
+
+	cMPU.Kill();
+
+	AssertLong(6, uiInstructions);
+	AssertShortHex((uint16)0xcdef, cTestContext.GetShort(0x0100));
+
+	cTestContext.StripToInstruction("LDA");
+	AssertString(""\
+		"OPC: (1)  Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0204\n"\
+		"LDA: (2)  Read(AAL)       A.0000  X.0000  Y.0000  PC.00:0205\n"\
+		"LDA: (3)  Read(AAH)       A.0000  X.0000  Y.0000  PC.00:0206\n"\
+		"LDA: (4)  Read(AAB)       A.0000  X.0000  Y.0000  PC.00:0207\n"\
+		"LDA: (5)  Read(DL)        A.0000  X.0000  Y.0000  PC.00:0208\n"\
+		"LDA: (6)  Read(DH)        A.0000  X.0000  Y.0000  PC.00:0208\n"\
+		"OPC: (1)  Read(Opcode)    A.cdef  X.0000  Y.0000  PC.00:0208\n"\
+		"STA: (2)  Read(AAL)       A.cdef  X.0000  Y.0000  PC.00:0209\n"\
+		"STA: (3)  Read(AAH)       A.cdef  X.0000  Y.0000  PC.00:020a\n"\
+		"STA: (4)  Write(DL)       A.cdef  X.0000  Y.0000  PC.00:020b\n"\
+		"STA: (5)  Write(DH)       A.cdef  X.0000  Y.0000  PC.00:020b\n"\
+		"OPC: (1)  Read(Opcode)    A.cdef  X.0000  Y.0000  PC.00:020b\n", cTestContext.SequenceText());
+
+	cTestContext.Kill();
+
+	CInstructionFactory::GetInstance()->Kill();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -315,6 +374,154 @@ void TestW65C816LoadLDAStackRelativeIndirectIndexedWithY(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestW65C816LoadLDADirectPage(void)
+{
+	CMetaW65C816			cMPU;
+	uint64					uiInstructions;
+	CTestW65C816Context		cTestContext;
+
+	CInstructionFactory::GetInstance()->Init();
+
+	cTestContext.Init(0x10000, 0xea, 0x0200);
+	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, false, true, false, false, false);
+
+	cTestContext.SetShort(0x7146, 0xcdef);
+
+	cTestContext.SetOpcd(0x0200, CLC_Implied);
+	cTestContext.SetOpcd(XCE_Implied);
+	cTestContext.SetOpcd(REP_Immediate);
+	cTestContext.SetByte(0x30);
+	cTestContext.SetOpcd(LDX_Immediate);
+	cTestContext.SetShort(0x7123);
+	cTestContext.SetOpcd(PHX_StackImplied);
+	cTestContext.SetOpcd(PLD_StackImplied);
+	cTestContext.SetOpcd(LDA_DirectPage);
+	cTestContext.SetByte(0x23);
+	cTestContext.SetOpcd(STA_Absolute);
+	cTestContext.SetShort(0x0100);
+	cTestContext.SetOpcd(STP_Implied);
+
+	cMPU.Init(TestW65C81ContextTickHigh, TestW65C81ContextTickLow, &cTestContext);
+
+	uiInstructions = cTestContext.Run(&cMPU);
+
+	cMPU.Kill();
+
+	AssertLong(9, uiInstructions);
+	AssertShortHex((uint16)0xcdef, cTestContext.GetShort(0x0100));
+
+	cTestContext.StripToInstruction("LDX");
+	AssertString(""\
+		"OPC: (1)  Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0204  DP.0000\n"\
+		"LDX: (2)  Read(DL)        A.0000  X.0000  Y.0000  PC.00:0205  DP.0000\n"\
+		"LDX: (3)  Read(DH)        A.0000  X.0000  Y.0000  PC.00:0206  DP.0000\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.7123  Y.0000  PC.00:0207  DP.0000\n"\
+		"PHX: (2)  IO              A.0000  X.7123  Y.0000  PC.00:0208  DP.0000\n"\
+		"PHX: (3)  Write(DH)       A.0000  X.7123  Y.0000  PC.00:0208  DP.0000\n"\
+		"PHX: (4)  Write(DL)       A.0000  X.7123  Y.0000  PC.00:0208  DP.0000\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.7123  Y.0000  PC.00:0208  DP.0000\n"\
+		"PLD: (2)  IO              A.0000  X.7123  Y.0000  PC.00:0209  DP.0000\n"\
+		"PLD: (3)  IO              A.0000  X.7123  Y.0000  PC.00:0209  DP.0000\n"\
+		"PLD: (4)  Read(DL)        A.0000  X.7123  Y.0000  PC.00:0209  DP.0000\n"\
+		"PLD: (5)  Read(DH)        A.0000  X.7123  Y.0000  PC.00:0209  DP.0000\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.7123  Y.0000  PC.00:0209  DP.7123\n"\
+		"LDA: (2)  Read(D0)        A.0000  X.7123  Y.0000  PC.00:020a  DP.7123\n"\
+		"LDA: (4)  Read(DL)        A.0000  X.7123  Y.0000  PC.00:020b  DP.7123\n"\
+		"LDA: (5)  Read(DH)        A.0000  X.7123  Y.0000  PC.00:020b  DP.7123\n"\
+		"OPC: (1)  Read(Opcode)    A.cdef  X.7123  Y.0000  PC.00:020b  DP.7123\n"\
+		"STA: (2)  Read(AAL)       A.cdef  X.7123  Y.0000  PC.00:020c  DP.7123\n"\
+		"STA: (3)  Read(AAH)       A.cdef  X.7123  Y.0000  PC.00:020d  DP.7123\n"\
+		"STA: (4)  Write(DL)       A.cdef  X.7123  Y.0000  PC.00:020e  DP.7123\n"\
+		"STA: (5)  Write(DH)       A.cdef  X.7123  Y.0000  PC.00:020e  DP.7123\n"\
+		"OPC: (1)  Read(Opcode)    A.cdef  X.7123  Y.0000  PC.00:020e  DP.7123\n", cTestContext.SequenceText());
+
+	cTestContext.Kill();
+
+	CInstructionFactory::GetInstance()->Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestW65C816LoadLDADirectPageIndirectLong(void)
+{
+	CMetaW65C816			cMPU;
+	uint64					uiInstructions;
+	CTestW65C816Context		cTestContext;
+
+	CInstructionFactory::GetInstance()->Init();
+
+	cTestContext.Init(0x20000, 0xea, 0x0200);
+	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, false, true, false, false, false);
+
+	cTestContext.SetShort(0x7124, 0x3003);
+	cTestContext.SetByte(0x01);
+
+	cTestContext.SetShort(0x013003, 0xcdef);
+
+	cTestContext.SetOpcd(0x0200, CLC_Implied);
+	cTestContext.SetOpcd(XCE_Implied);
+	cTestContext.SetOpcd(REP_Immediate);
+	cTestContext.SetByte(0x30);
+	cTestContext.SetOpcd(LDX_Immediate);
+	cTestContext.SetShort(0x7123);
+	cTestContext.SetOpcd(PHX_StackImplied);
+	cTestContext.SetOpcd(PLD_StackImplied);
+	cTestContext.SetOpcd(LDA_DirectPageIndirectLong);
+	cTestContext.SetByte(0x01);
+	cTestContext.SetOpcd(STA_Absolute);
+	cTestContext.SetShort(0x0100);
+	cTestContext.SetOpcd(STP_Implied);
+
+	cMPU.Init(TestW65C81ContextTickHigh, TestW65C81ContextTickLow, &cTestContext);
+
+	uiInstructions = cTestContext.Run(&cMPU);
+
+	cMPU.Kill();
+
+	AssertLong(9, uiInstructions);
+	AssertShortHex((uint16)0xcdef, cTestContext.GetShort(0x0100));
+
+	cTestContext.StripToInstruction("LDX");
+	AssertString(""\
+		"OPC: (1)  Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0204  DP.0000\n"\
+		"LDX: (2)  Read(DL)        A.0000  X.0000  Y.0000  PC.00:0205  DP.0000\n"\
+		"LDX: (3)  Read(DH)        A.0000  X.0000  Y.0000  PC.00:0206  DP.0000\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.7123  Y.0000  PC.00:0207  DP.0000\n"\
+		"PHX: (2)  IO              A.0000  X.7123  Y.0000  PC.00:0208  DP.0000\n"\
+		"PHX: (3)  Write(DH)       A.0000  X.7123  Y.0000  PC.00:0208  DP.0000\n"\
+		"PHX: (4)  Write(DL)       A.0000  X.7123  Y.0000  PC.00:0208  DP.0000\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.7123  Y.0000  PC.00:0208  DP.0000\n"\
+		"PLD: (2)  IO              A.0000  X.7123  Y.0000  PC.00:0209  DP.0000\n"\
+		"PLD: (3)  IO              A.0000  X.7123  Y.0000  PC.00:0209  DP.0000\n"\
+		"PLD: (4)  Read(DL)        A.0000  X.7123  Y.0000  PC.00:0209  DP.0000\n"\
+		"PLD: (5)  Read(DH)        A.0000  X.7123  Y.0000  PC.00:0209  DP.0000\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.7123  Y.0000  PC.00:0209  DP.7123\n"\
+		"LDA: (2)  Read(D0)        A.0000  X.7123  Y.0000  PC.00:020a  DP.7123\n"\
+		"LDA: (4)  Read(AAL)       A.0000  X.7123  Y.0000  PC.00:020b  DP.7123\n"\
+		"LDA: (5)  Read(AAH)       A.0000  X.7123  Y.0000  PC.00:020b  DP.7123\n"\
+		"LDA: (6)  Read(AAB)       A.0000  X.7123  Y.0000  PC.00:020b  DP.7123\n"\
+		"LDA: (7)  Read(DL)        A.0000  X.7123  Y.0000  PC.00:020b  DP.7123\n"\
+		"LDA: (8)  Read(DH)        A.0000  X.7123  Y.0000  PC.00:020b  DP.7123\n"\
+		"OPC: (1)  Read(Opcode)    A.cdef  X.7123  Y.0000  PC.00:020b  DP.7123\n"\
+		"STA: (2)  Read(AAL)       A.cdef  X.7123  Y.0000  PC.00:020c  DP.7123\n"\
+		"STA: (3)  Read(AAH)       A.cdef  X.7123  Y.0000  PC.00:020d  DP.7123\n"\
+		"STA: (4)  Write(DL)       A.cdef  X.7123  Y.0000  PC.00:020e  DP.7123\n"\
+		"STA: (5)  Write(DH)       A.cdef  X.7123  Y.0000  PC.00:020e  DP.7123\n"\
+		"OPC: (1)  Read(Opcode)    A.cdef  X.7123  Y.0000  PC.00:020e  DP.7123\n", cTestContext.SequenceText());
+
+	cTestContext.Kill();
+
+	CInstructionFactory::GetInstance()->Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDADirectPageIndexedIndirectWithX(void)
 {
 	CMetaW65C816			cMPU;
@@ -324,7 +531,7 @@ void TestW65C816LoadLDADirectPageIndexedIndirectWithX(void)
 	CInstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x10000, 0xea, 0x0200);
-	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, true, true, true, false, false);
+	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, false, true, false, false, false);
 
 	cTestContext.SetShort(0x0007, 0x3003);
 	cTestContext.SetShort(0x3003, 0xcdef);
@@ -350,22 +557,25 @@ void TestW65C816LoadLDADirectPageIndexedIndirectWithX(void)
 	AssertLong(7, uiInstructions);
 	AssertShortHex((uint16)0xcdef, cTestContext.GetShort(0x0100));
 
-	cTestContext.StripToInstruction("LDA");
+	cTestContext.StripToInstruction("LDX");
 	AssertString(""\
-		"OPC: (1)  Read(Opcode)    A.0000  X.0004  Y.0000  PC.00:0207  S.01fc  DP.0000  DB.00\n"\
-		"LDA: (2)  Read(D0)        A.0000  X.0004  Y.0000  PC.00:0208  S.01fc  DP.0000  DB.00\n"\
-		"LDA: (3)  IO              A.0000  X.0004  Y.0000  PC.00:0209  S.01fc  DP.0000  DB.00\n"\
-		"LDA: (4)  IO              A.0000  X.0004  Y.0000  PC.00:0209  S.01fc  DP.0000  DB.00\n"\
-		"LDA: (5)  Read(AAL)       A.0000  X.0004  Y.0000  PC.00:0209  S.01fc  DP.0000  DB.00\n"\
-		"LDA: (6)  Read(AAH)       A.0000  X.0004  Y.0000  PC.00:0209  S.01fc  DP.0000  DB.00\n"\
-		"LDA: (7)  Read(DL)        A.0000  X.0004  Y.0000  PC.00:0209  S.01fc  DP.0000  DB.00\n"\
-		"LDA: (8)  Read(DH)        A.0000  X.0004  Y.0000  PC.00:0209  S.01fc  DP.0000  DB.00\n"\
-		"OPC: (1)  Read(Opcode)    A.cdef  X.0004  Y.0000  PC.00:0209  S.01fc  DP.0000  DB.00\n"\
-		"STA: (2)  Read(AAL)       A.cdef  X.0004  Y.0000  PC.00:020a  S.01fc  DP.0000  DB.00\n"\
-		"STA: (3)  Read(AAH)       A.cdef  X.0004  Y.0000  PC.00:020b  S.01fc  DP.0000  DB.00\n"\
-		"STA: (4)  Write(DL)       A.cdef  X.0004  Y.0000  PC.00:020c  S.01fc  DP.0000  DB.00\n"\
-		"STA: (5)  Write(DH)       A.cdef  X.0004  Y.0000  PC.00:020c  S.01fc  DP.0000  DB.00\n"\
-		"OPC: (1)  Read(Opcode)    A.cdef  X.0004  Y.0000  PC.00:020c  S.01fc  DP.0000  DB.00\n", cTestContext.SequenceText());
+		"OPC: (1)  Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0204  DP.0000\n"\
+		"LDX: (2)  Read(DL)        A.0000  X.0000  Y.0000  PC.00:0205  DP.0000\n"\
+		"LDX: (3)  Read(DH)        A.0000  X.0000  Y.0000  PC.00:0206  DP.0000\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.0004  Y.0000  PC.00:0207  DP.0000\n"\
+		"LDA: (2)  Read(D0)        A.0000  X.0004  Y.0000  PC.00:0208  DP.0000\n"\
+		"LDA: (3)  IO              A.0000  X.0004  Y.0000  PC.00:0209  DP.0000\n"\
+		"LDA: (4)  IO              A.0000  X.0004  Y.0000  PC.00:0209  DP.0000\n"\
+		"LDA: (5)  Read(AAL)       A.0000  X.0004  Y.0000  PC.00:0209  DP.0000\n"\
+		"LDA: (6)  Read(AAH)       A.0000  X.0004  Y.0000  PC.00:0209  DP.0000\n"\
+		"LDA: (7)  Read(DL)        A.0000  X.0004  Y.0000  PC.00:0209  DP.0000\n"\
+		"LDA: (8)  Read(DH)        A.0000  X.0004  Y.0000  PC.00:0209  DP.0000\n"\
+		"OPC: (1)  Read(Opcode)    A.cdef  X.0004  Y.0000  PC.00:0209  DP.0000\n"\
+		"STA: (2)  Read(AAL)       A.cdef  X.0004  Y.0000  PC.00:020a  DP.0000\n"\
+		"STA: (3)  Read(AAH)       A.cdef  X.0004  Y.0000  PC.00:020b  DP.0000\n"\
+		"STA: (4)  Write(DL)       A.cdef  X.0004  Y.0000  PC.00:020c  DP.0000\n"\
+		"STA: (5)  Write(DH)       A.cdef  X.0004  Y.0000  PC.00:020c  DP.0000\n"\
+		"OPC: (1)  Read(Opcode)    A.cdef  X.0004  Y.0000  PC.00:020c  DP.0000\n", cTestContext.SequenceText());
 
 	cTestContext.Kill();
 
@@ -387,8 +597,11 @@ void TestW65C816Load(void)
 
 	TestW65C816LoadLDAImmediate();
 	TestW65C816LoadLDAAbsolute();
+	TestW65C816LoadLDAAbsoluteLong();
 	TestW65C816LoadLDAStackRelative();
 	TestW65C816LoadLDAStackRelativeIndirectIndexedWithY();
+	TestW65C816LoadLDADirectPage();
+	TestW65C816LoadLDADirectPageIndirectLong();
 	TestW65C816LoadLDADirectPageIndexedIndirectWithX();
 
 	DataIOKill();
@@ -397,4 +610,23 @@ void TestW65C816Load(void)
 	NumberKill();
 	TypeConverterKill();
 }
+
+
+/*
+	* LDA_DirectPageIndexedIndirectWithX = 0xA1,
+	* LDA_StackRelative = 0xA3,
+	* LDA_DirectPage = 0xA5,
+	* LDA_DirectPageIndirectLong = 0xA7,
+	* LDA_Immediate = 0xA9,
+	* LDA_Absolute = 0xAD,
+	* LDA_AbsoluteLong = 0xAF,
+	  LDA_DirectPageIndirectIndexedWithY = 0xB1,
+	  LDA_DirectPageIndirect = 0xB2,
+	* LDA_StackRelativeIndirectIndexedWithY = 0xB3,
+	  LDA_DirectPageIndexedWithX = 0xB5,
+	  LDA_DirectPageIndirectLongIndexedWithY = 0xB7,
+	  LDA_AbsoluteIndexedWithY = 0xB9,
+	  LDA_AbsoluteIndexedWithX = 0xBD,
+	  LDA_AbsoluteLongIndexedWithX = 0xBF,
+*/
 
