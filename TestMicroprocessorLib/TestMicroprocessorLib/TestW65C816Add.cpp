@@ -41,20 +41,21 @@ void TestW65C816AddADCImmediateFullLog(void)
 
 	AssertSize(3, uiInstructions);
 
-	AssertString("RES: (1)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
-				 "RES: (2)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
-				 "RES: (3)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
-				 "RES: (4)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01fe\n"\
-				 "RES: (5)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01fd\n"\
-				 "RES: (6)  Read(AAL)       A.0000  X.0000  Y.0000  PC.00:0000  S.01fc\n"\
-				 "RES: (7)  Read(AAH)       A.0000  X.0000  Y.0000  PC.00:0000  S.01fc\n"\
-				 "OPC: (1)  Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0200  S.01fc\n"\
-				 "LDA: (2)  Read(DL)        A.0000  X.0000  Y.0000  PC.00:0201  S.01fc\n"\
-				 "OPC: (1)  Read(Opcode)    A.0001  X.0000  Y.0000  PC.00:0202  S.01fc\n"\
-				 "ADC: (2)  Read(DL)        A.0001  X.0000  Y.0000  PC.00:0203  S.01fc\n"\
-				 "OPC: (1)  Read(Opcode)    A.0003  X.0000  Y.0000  PC.00:0204  S.01fc\n"\
-				 "STP: (2)  IO              A.0003  X.0000  Y.0000  PC.00:0205  S.01fc\n"\
-				 "STP: (3)  IO              A.0003  X.0000  Y.0000  PC.00:0205  S.01fc\n" , cTestContext.SequenceText());
+	AssertString(""\
+		"RES: (1)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
+		"RES: (2)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
+		"RES: (3)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff\n"\
+		"RES: (4)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01fe\n"\
+		"RES: (5)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01fd\n"\
+		"RES: (6)  Read(AAL)       A.0000  X.0000  Y.0000  PC.00:0000  S.01fc\n"\
+		"RES: (7)  Read(AAH)       A.0000  X.0000  Y.0000  PC.00:0000  S.01fc\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0200  S.01fc\n"\
+		"LDA: (2)  Read(DL)        A.0000  X.0000  Y.0000  PC.00:0201  S.01fc\n"\
+		"OPC: (1)  Read(Opcode)    A.0001  X.0000  Y.0000  PC.00:0202  S.01fc\n"\
+		"ADC: (2)  Read(DL)        A.0001  X.0000  Y.0000  PC.00:0203  S.01fc\n"\
+		"OPC: (1)  Read(Opcode)    A.0003  X.0000  Y.0000  PC.00:0204  S.01fc\n"\
+		"STP: (2)  IO              A.0003  X.0000  Y.0000  PC.00:0205  S.01fc\n"\
+		"STP: (3)  IO              A.0003  X.0000  Y.0000  PC.00:0205  S.01fc\n" , cTestContext.SequenceText());
 
 	cTestContext.Kill();
 
@@ -79,7 +80,7 @@ void TestW65C816AddADCImmediate(void)
 	cTestContext.SetByte(0x01);
 	cTestContext.SetOpcd(ADC_Immediate);
 	cTestContext.SetByte(0x05);
-	cTestContext.SetOpcd(0x0204, STP_Implied);
+	cTestContext.SetOpcd(STP_Implied);
 
 	TestW65C816InContext(&cTestContext, ""\
 		"RES: A.0000  X.0000  Y.0000  PC.00:0200    P(Z0 N0 D0 I1 M8  X8  C0 E1 V0 B0)\n"\
