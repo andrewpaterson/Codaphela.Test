@@ -17,6 +17,8 @@ protected:
 	size	muiStartOfPrevPrevLine;
 
 public:
+	bool	mbPrintSet;
+
 	bool	mbPrintReset;
 	bool	mbPrintStop;
 	bool	mbPrintMnemonic;
@@ -32,6 +34,9 @@ public:
 	bool	mbPrintP;
 	bool	mbPrintMergedCycles;
 
+	uint32	muiLastAddress;
+	size	muiInstructions;
+
 public:
 	void		Init(uint32 uiMemorySize, uint8 uiFill);
 	void		SetPrint(bool bReset, bool bStop, bool bMnemonic, bool bCycle, bool bOperation, bool bA, bool bX, bool bY, bool bPC, bool bS, bool bDP, bool bDB, bool bP, bool mbMerged);
@@ -42,8 +47,11 @@ public:
 	uint8		GetBank(void);
 	void		SetBank(uint8 uiBank);
 	uint8*		GetMemory(void);
-	uint8		GetMemory(uint32 uiAddress);
-	void		SetMemory(uint32 uiAddress, uint8 uiValue);
+	uint8		GetByte(uint32 uiAddress);
+	void		SetByte(uint32 uiAddress, uint8 uiValue);
+	void		SetByte(uint8 uiValue);
+	void		SetOpcd(uint32 uiAddress, uint8 uiOpcode);
+	void		SetOpcd(uint8 uiOpcode);
 	CChars*		GetSequence(void);
 	char*		SequenceText(void);
 	void		SetStartOfPreviousLine(size uiStartOfPreviousLine);
@@ -53,6 +61,9 @@ public:
 
 void TestW65C81ContextTickLow(CMetaW65C816* pcMPU, void* pvContext);
 void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext);
+
+
+void TestW65C816InContext(CTestW65C816Context* pcContext, char* szExpected);
 
 
 #endif // __TEST_W65C816_CONTEXT_H__

@@ -464,7 +464,7 @@ void TestW65C816ResetVectorTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 		{
 			if (pcContext->GetBank() == 0)
 			{
-				uiData = pcContext->GetMemory(uiAddress);
+				uiData = pcContext->GetByte(uiAddress);
 				pcMPU->GetData()->Set(uiData);
 			}
 		}
@@ -486,12 +486,12 @@ void TestW65C816ResetVector(void)
 	CInstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x10000, 0xea);
-	cTestContext.SetMemory(0xfffc, 0x00);
-	cTestContext.SetMemory(0xfffd, 0x02);
-	cTestContext.SetMemory(0x0200, INX_Implied);
-	cTestContext.SetMemory(0x0201, INY_Implied);
-	cTestContext.SetMemory(0x0202, INC_Accumulator);
-	cTestContext.SetMemory(0x0203, STP_Implied);
+	cTestContext.SetByte(0xfffc, 0x00);
+	cTestContext.SetByte(0x02);
+	cTestContext.SetOpcd(0x0200, INX_Implied);
+	cTestContext.SetOpcd(INY_Implied);
+	cTestContext.SetOpcd(INC_Accumulator);
+	cTestContext.SetOpcd(STP_Implied);
 
 	cMPU.Init(TestW65C816ResetVectorTickHigh, TestW65C816ResetVectorTickLow, &cTestContext);
 
@@ -517,8 +517,8 @@ void TestW65C816ResetVector(void)
 				 "RES: (7)  Read(AAH)       A.0000  X.0000  Y.0000  PC.00:0000  S.01fc\n"\
 				 "OPC: (1)  Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0200  S.01fc\n"\
 				 "INX: (2)  IO              A.0000  X.0000  Y.0000  PC.00:0201  S.01fc\n"\
-				 "OPC: (1)  Read(Opcode)    A.0000  X.0001  Y.0001  PC.00:0201  S.01fc\n"\
-				 "INY: (2)  IO              A.0000  X.0001  Y.0001  PC.00:0202  S.01fc\n"\
+				 "OPC: (1)  Read(Opcode)    A.0000  X.0001  Y.0000  PC.00:0201  S.01fc\n"\
+				 "INY: (2)  IO              A.0000  X.0001  Y.0000  PC.00:0202  S.01fc\n"\
 				 "OPC: (1)  Read(Opcode)    A.0000  X.0001  Y.0001  PC.00:0202  S.01fc\n"\
 				 "INC: (2)  IO              A.0000  X.0001  Y.0001  PC.00:0203  S.01fc\n"\
 				 "OPC: (1)  Read(Opcode)    A.0001  X.0001  Y.0001  PC.00:0203  S.01fc\n"\

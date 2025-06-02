@@ -1,3 +1,5 @@
+#include "MicroprocessorLib/InstructionFactory.h"
+#include "TestLib/Assert.h"
 #include "TestW65C816Context.h"
 
 
@@ -28,6 +30,9 @@ void CTestW65C816Context::Init(uint32 uiMemorySize, uint8 uiFill)
 	mbPrintP = false;
 	muiStartOfPreviousLine = 0;
 	muiStartOfPrevPrevLine = 0;
+	muiLastAddress = 0;
+	muiInstructions = 0;
+	mbPrintSet = false;
 }
 
 
@@ -37,9 +42,11 @@ void CTestW65C816Context::Init(uint32 uiMemorySize, uint8 uiFill)
 //////////////////////////////////////////////////////////////////////////
 void CTestW65C816Context::Kill(void)
 {
+	muiLastAddress = 0;
 	mszSequence.Kill();
 	free(mauiMemory);
 	mauiMemory = NULL;
+	mbPrintSet = false;
 }
 
 
@@ -49,20 +56,25 @@ void CTestW65C816Context::Kill(void)
 //////////////////////////////////////////////////////////////////////////
 void CTestW65C816Context::SetPrint(bool bReset, bool bStop, bool bMnemonic, bool bCycle, bool bOperation, bool bA, bool bX, bool bY, bool bPC, bool bS, bool bDP, bool bDB, bool bP, bool mbMerged)
 {
-	mbPrintReset = bReset;
-	mbPrintStop = bStop;
-	mbPrintMnemonic = bMnemonic;
-	mbPrintCycle = bCycle;
-	mbPrintOperation = bOperation;
-	mbPrintA = bA;
-	mbPrintX = bX;
-	mbPrintY = bY;
-	mbPrintPC = bPC;
-	mbPrintS = bS;
-	mbPrintDP = bDP;
-	mbPrintDB = bDB;
-	mbPrintP = bP;
-	mbPrintMergedCycles = mbMerged;
+	if (!mbPrintSet)
+	{
+		mbPrintReset = bReset;
+		mbPrintStop = bStop;
+		mbPrintMnemonic = bMnemonic;
+		mbPrintCycle = bCycle;
+		mbPrintOperation = bOperation;
+		mbPrintA = bA;
+		mbPrintX = bX;
+		mbPrintY = bY;
+		mbPrintPC = bPC;
+		mbPrintS = bS;
+		mbPrintDP = bDP;
+		mbPrintDB = bDB;
+		mbPrintP = bP;
+		mbPrintMergedCycles = mbMerged;
+
+		mbPrintSet = true;
+	}
 }
 
 
@@ -100,7 +112,7 @@ uint8* CTestW65C816Context::GetMemory(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-uint8 CTestW65C816Context::GetMemory(uint32 uiAddress)
+uint8 CTestW65C816Context::GetByte(uint32 uiAddress)
 {
 	if (uiAddress < muiMemorySize)
 	{
@@ -117,12 +129,45 @@ uint8 CTestW65C816Context::GetMemory(uint32 uiAddress)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestW65C816Context::SetMemory(uint32 uiAddress, uint8 uiValue)
+void CTestW65C816Context::SetByte(uint32 uiAddress, uint8 uiValue)
 {
 	if (uiAddress < muiMemorySize)
 	{
 		mauiMemory[uiAddress] = uiValue;
 	}
+	muiLastAddress = uiAddress;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestW65C816Context::SetByte(uint8 uiValue)
+{
+	SetByte(muiLastAddress + 1, uiValue);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestW65C816Context::SetOpcd(uint32 uiAddress, uint8 uiOpcode)
+{
+	muiInstructions++;
+	SetByte(uiAddress, uiOpcode);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestW65C816Context::SetOpcd(uint8 uiOpcode)
+{
+	muiInstructions++;
+	SetByte(uiOpcode);
 }
 
 
@@ -301,14 +346,44 @@ void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 	{
 		if (bRead)
 		{
-			uiData = pcContext->GetMemory(uiAddress);
+			uiData = pcContext->GetByte(uiAddress);
 			pcMPU->GetData()->Set(uiData);
 		}
 		if (bWrite)
 		{
 			uiData = pcMPU->GetData()->Get();
-			pcContext->SetMemory(uiAddress, uiData);
+			pcContext->SetByte(uiAddress, uiData);
 		}
 	}
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestW65C816InContext(CTestW65C816Context* pcContext, char* szExpected)
+{
+	CMetaW65C816			cMPU;
+	size					uiInstructions;
+
+	CInstructionFactory::GetInstance()->Init();
+
+	pcContext->SetPrint(true, true, true, false, false, true, true, true, true, false, false, false, true, true);
+
+	cMPU.Init(TestW65C81ContextTickHigh, TestW65C81ContextTickLow, pcContext);
+
+	uiInstructions = pcContext->Run(&cMPU);
+
+	cMPU.Kill();
+
+	AssertSize(pcContext->muiInstructions, uiInstructions);
+
+	AssertString(szExpected, pcContext->SequenceText());
+
+	pcContext->Kill();
+
+	CInstructionFactory::GetInstance()->Kill();
 }
 
