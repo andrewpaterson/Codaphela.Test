@@ -308,17 +308,20 @@ void TestW65C816LoadLDAAbsoluteLongIndexedWithX(void)
 		"OPC: (1)  Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0204  S.01fc    Addr.00:0204  Data.a2\n"\
 		"LDX: (2)  Read(DL)        A.0000  X.0000  Y.0000  PC.00:0205  S.01fc    Addr.00:0205  Data.ff\n"\
 		"LDX: (3)  Read(DH)        A.0000  X.0000  Y.0000  PC.00:0206  S.01fc    Addr.00:0206  Data.ff\n"\
+
 		"OPC: (1)  Read(Opcode)    A.0000  X.ffff  Y.0000  PC.00:0207  S.01fc    Addr.00:0207  Data.bf\n"\
 		"LDA: (2)  Read(AAL)       A.0000  X.ffff  Y.0000  PC.00:0208  S.01fc    Addr.00:0208  Data.ff\n"\
 		"LDA: (3)  Read(AAH)       A.0000  X.ffff  Y.0000  PC.00:0209  S.01fc    Addr.00:0209  Data.ff\n"\
 		"LDA: (4)  Read(AAB)       A.0000  X.ffff  Y.0000  PC.00:020a  S.01fc    Addr.00:020a  Data.01\n"\
 		"LDA: (5)  Read(DL)        A.0000  X.ffff  Y.0000  PC.00:020b  S.01fc    Addr.02:fffe  Data.ef\n"\
 		"LDA: (6)  Read(DH)        A.0000  X.ffff  Y.0000  PC.00:020b  S.01fc    Addr.02:ffff  Data.cd\n"\
+
 		"OPC: (1)  Read(Opcode)    A.cdef  X.ffff  Y.0000  PC.00:020b  S.01fc    Addr.00:020b  Data.8d\n"\
 		"STA: (2)  Read(AAL)       A.cdef  X.ffff  Y.0000  PC.00:020c  S.01fc    Addr.00:020c  Data.00\n"\
 		"STA: (3)  Read(AAH)       A.cdef  X.ffff  Y.0000  PC.00:020d  S.01fc    Addr.00:020d  Data.01\n"\
 		"STA: (4)  Write(DL)       A.cdef  X.ffff  Y.0000  PC.00:020e  S.01fc    Addr.00:0100  Data.ef\n"\
 		"STA: (5)  Write(DH)       A.cdef  X.ffff  Y.0000  PC.00:020e  S.01fc    Addr.00:0101  Data.cd\n"\
+
 		"OPC: (1)  Read(Opcode)    A.cdef  X.ffff  Y.0000  PC.00:020e  S.01fc    Addr.00:020e  Data.db\n", cTestContext.SequenceText());
 
 	cTestContext.Kill();
