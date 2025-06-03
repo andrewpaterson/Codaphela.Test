@@ -32,11 +32,11 @@ int __cdecl main(void)
 	UnknownsInit();
 	gcMetaTraceUndriven.Init();
 
-	//TestW65C816Reset();
-	//TestW65C816Add();
-	//TestW65C816Subtract();
+	TestW65C816Reset();
+	TestW65C816Add();
+	TestW65C816Subtract();
 	TestW65C816Load();
-	//TestW65C816Arithmetic();
+	TestW65C816Arithmetic();
 
 	UnknownsKill();
 	MemoryKill();

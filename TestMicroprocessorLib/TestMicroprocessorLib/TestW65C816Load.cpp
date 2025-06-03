@@ -532,7 +532,6 @@ void TestW65C816LoadLDADirectPageIndirectIndexedWithY(void)
 
 	cTestContext.Init(0x30000, 0xea, 0x0200);
 	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, false, true, true, false, false);
-	cTestContext.mbDebugSpew = true;
 
 	cTestContext.SetShort(0x4554, 0xeeff);
 	cTestContext.SetShort(0x2cdef, 0xcdef);
@@ -693,15 +692,15 @@ void TestW65C816Load(void)
 
 	DataIOInit();
 
-	//TestW65C816LoadLDAImmediate();
-	//TestW65C816LoadLDAAbsolute();
-	//TestW65C816LoadLDAAbsoluteLong();
-	//TestW65C816LoadLDAStackRelative();
-	//TestW65C816LoadLDAStackRelativeIndirectIndexedWithY();
-	//TestW65C816LoadLDADirectPage();
-	//TestW65C816LoadLDADirectPageIndirectLong();
+	TestW65C816LoadLDAImmediate();
+	TestW65C816LoadLDAAbsolute();
+	TestW65C816LoadLDAAbsoluteLong();
+	TestW65C816LoadLDAStackRelative();
+	TestW65C816LoadLDAStackRelativeIndirectIndexedWithY();
+	TestW65C816LoadLDADirectPage();
+	TestW65C816LoadLDADirectPageIndirectLong();
 	TestW65C816LoadLDADirectPageIndirectIndexedWithY();
-	//TestW65C816LoadLDADirectPageIndexedIndirectWithX();
+	TestW65C816LoadLDADirectPageIndexedIndirectWithX();
 
 	DataIOKill();
 
