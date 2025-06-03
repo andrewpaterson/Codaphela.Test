@@ -8,49 +8,67 @@
 class CTestW65C816Context
 {
 protected:
-	uint8	muiBank;
-	uint8*	mauiMemory;
-	CChars	mszSequence;
-	uint32	muiMemorySize;
-	uint8	muiFill;
-	size	muiStartOfPreviousLine;
-	size	muiStartOfPrevPrevLine;
+	uint8*			mauiMemory;
+	CChars			mszSequence;
+	uint32			muiMemorySize;
+	uint8			muiFill;
+	size			muiStartOfPreviousLine;
+	size			muiStartOfPrevPrevLine;
 
 public:
-	bool	mbPrintSet;
+	bool			mbPrintSet;
 
-	bool	mbPrintReset;
-	bool	mbPrintStop;
-	bool	mbPrintMnemonic;
-	bool	mbPrintCycle;
-	bool	mbPrintOperation;
-	bool	mbPrintA;
-	bool	mbPrintX;
-	bool	mbPrintY;
-	bool	mbPrintPC;
-	bool	mbPrintS;
-	bool	mbPrintDP; 
-	bool	mbPrintDB;
-	bool	mbPrintP;
-	bool	mbPrintMergedCycles;
-	bool	mbEnablePrint;
-	bool	mbDebugSpew;
+	bool			mbPrintReset;
+	bool			mbPrintStop;
+	bool			mbPrintMnemonic;
+	bool			mbPrintCycle;
+	bool			mbPrintOperation;
+	bool			mbPrintA;
+	bool			mbPrintX;
+	bool			mbPrintY;
+	bool			mbPrintPC;
+	bool			mbPrintS;
+	bool			mbPrintDP; 
+	bool			mbPrintDB;
+	bool			mbPrintP;
+	bool			mbPrintMergedCycles;
 
-	uint32	muiLastAddress;
-	size	muiInstructions;
+	bool			mbPrintAddressBus;
+	bool			mbPrintDataBus;
+	bool			mbPrintBank;
+	bool			mbPrintVPB;
+	bool			mbPrintRDY;
+	bool			mbPrintMLB;
+	bool			mbPrintVPA;
+	bool			mbPrintVDA;
+	bool			mbPrintWM;
+	bool			mbPrintWX;
+	bool			mbPrintE;
+	bool			mbPrintRWB;
+
+	bool			mbAddressOperation;
+	bool			mbDataOperation;
+	bool			mbDescription;
+
+	bool			mbEnablePrint;
+	bool			mbDebugSpew;
+
+	uint32			muiLastAddress;
+	size			muiInstructions;
+	CMetaW65C816*	mpcMPU;
 
 public:
 	void		Init(uint32 uiMemorySize, uint8 uiFill);
 	void		Init(uint32 uiMemorySize, uint8 uiFill, uint16 uiResetAddress);
 	void		Init(char* szMemoryFileame);
 	void		SetPrint(bool bReset, bool bStop, bool bMnemonic, bool bCycle, bool bOperation, bool bA, bool bX, bool bY, bool bPC, bool bS, bool bDP, bool bDB, bool bP, bool mbMerged);
+	void		SetSignalPrint(bool bAddressBus, bool bDataBus, bool bBank, bool bVPB, bool bRDY, bool bMLB, bool bVPA, bool bVDA, bool bWM, bool bWX, bool bE, bool bRWB);
+	void		SetOperationPrint(bool bAddressOperation, bool bDataOperation, bool bDescription);
+	void		DebugSpew(void);
 	void		Kill(void);
 
 	uint64		Run(CMetaW65C816* pcMPU);
 	void		StripToInstruction(char* szInstruction);
-
-	uint8		GetBank(void);
-	void		SetBank(uint8 uiBank);
 
 	uint8*		GetMemory(void);
 	uint8		GetByte(uint32 uiAddress);

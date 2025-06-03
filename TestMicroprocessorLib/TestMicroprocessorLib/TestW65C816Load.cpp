@@ -785,6 +785,107 @@ void TestW65C816LoadLDADirectPageIndirectIndexedWithY(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestW65C816LoadLDADirectPageIndirectLongIndexedWithY(void)
+{
+	CMetaW65C816			cMPU;
+	uint64					uiInstructions;
+	CTestW65C816Context		cTestContext;
+
+	CInstructionFactory::GetInstance()->Init();
+
+	cTestContext.Init(0x30000, 0xea, 0x0200);
+	cTestContext.SetPrint(true, true, true, true, true, true, true, true, true, true, true, true, true, false);
+	cTestContext.SetSignalPrint(true, true, true, true, true, true, true, true, true, true, true, true);
+	cTestContext.SetOperationPrint(true, true, true);
+
+	cTestContext.SetShort(0x4554, 0xeeff);
+	cTestContext.SetByte(0x01);
+
+	cTestContext.SetShort(0x2cdef, 0xcdef);
+
+	cTestContext.SetOpcd(0x0200, CLC_Implied);
+	cTestContext.SetOpcd(XCE_Implied);
+	cTestContext.SetOpcd(REP_Immediate);
+	cTestContext.SetByte(0x30);
+	cTestContext.SetOpcd(LDX_Immediate);
+	cTestContext.SetShort(0x4455);
+	cTestContext.SetOpcd(PHX_StackImplied);
+	cTestContext.SetOpcd(PLD_StackImplied);
+	cTestContext.SetOpcd(LDY_Immediate);
+	cTestContext.SetShort(0xdef0);
+	cTestContext.SetOpcd(LDA_DirectPageIndirectLongIndexedWithY);
+	cTestContext.SetByte(0xff);
+	cTestContext.SetOpcd(STA_AbsoluteLong);
+	cTestContext.SetShort(0x0100);
+	cTestContext.SetByte(0x00);
+	cTestContext.SetOpcd(STP_Implied);
+
+	cMPU.Init(TestW65C81ContextTickHigh, TestW65C81ContextTickLow, &cTestContext);
+
+	uiInstructions = cTestContext.Run(&cMPU);
+
+	cMPU.Kill();
+
+	AssertLong(10, uiInstructions);
+	AssertShortHex((uint16)0xcdef, cTestContext.GetShort(0x0100));
+
+	AssertString(""\
+		"RES: (1)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff  DP.0000  DB.00    P(Z0 N0 D0 I0 M.8 X.8 C0 E1 V0 B0)    Addr.0000  Data.ea  Bank.00  RWB1 VPA1 VDA1 VPB1 E1 RDY1 MLB1 M1 X1    PBR,PC        IO                                                             Reset the CPU.\n"\
+		"RES: (2)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff  DP.0000  DB.00    P(Z0 N0 D0 I0 M.8 X.8 C0 E1 V0 B0)    Addr.0000  Data.00  Bank.00  RWB1 VPA0 VDA0 VPB1 E1 RDY1 MLB1 M1 X1    PBR,PC        IO                                                             Reset the CPU.\n"\
+		"RES: (3)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01ff  DP.0000  DB.00    P(Z0 N0 D0 I0 M.8 X.8 C0 E1 V0 B0)    Addr.01ff  Data.00  Bank.00  RWB1 VPA0 VDA0 VPB1 E1 RDY1 MLB1 M1 X1    S             IO SP--                                                        Reset the CPU.\n"\
+		"RES: (4)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01fe  DP.0000  DB.00    P(Z0 N0 D0 I0 M.8 X.8 C0 E1 V0 B0)    Addr.01fe  Data.00  Bank.00  RWB1 VPA0 VDA0 VPB1 E1 RDY1 MLB1 M1 X1    S             IO SP--                                                        Reset the CPU.\n"\
+		"RES: (5)  IO              A.0000  X.0000  Y.0000  PC.00:0000  S.01fd  DP.0000  DB.00    P(Z0 N0 D0 I0 M.8 X.8 C0 E1 V0 B0)    Addr.01fd  Data.00  Bank.00  RWB1 VPA0 VDA0 VPB1 E1 RDY1 MLB1 M1 X1    S             IO SP-- Execute(HELP!)                                         Reset the CPU.\n"\
+		"RES: (6)  Read(AAL)       A.0000  X.0000  Y.0000  PC.00:0000  S.01fc  DP.0000  DB.00    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)    Addr.fffc  Data.00  Bank.00  RWB1 VPA0 VDA1 VPB0 E1 RDY1 MLB1 M1 X1    VA            Read(AAL)                                                      Reset the CPU.\n"\
+		"RES: (7)  Read(AAH)       A.0000  X.0000  Y.0000  PC.00:0000  S.01fc  DP.0000  DB.00    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)    Addr.fffd  Data.02  Bank.00  RWB1 VPA0 VDA1 VPB0 E1 RDY1 MLB1 M1 X1    VA+1          Read(AAH) Set(PC) DONE                                         Reset the CPU.\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0200  S.01fc  DP.0000  DB.00    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)    Addr.0200  Data.18  Bank.00  RWB1 VPA1 VDA1 VPB1 E1 RDY1 MLB1 M1 X1    PBR,PC        Read(Opcode) PC++                                              Fetch Opcode from address in program counter.\n"\
+		"CLC: (2)  IO              A.0000  X.0000  Y.0000  PC.00:0201  S.01fc  DP.0000  DB.00    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)    Addr.0201  Data.00  Bank.00  RWB1 VPA0 VDA0 VPB1 E1 RDY1 MLB1 M1 X1    PBR,PC        IO Execute(HELP!) DONE                                         Clear Carry Flag.\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0201  S.01fc  DP.0000  DB.00    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)    Addr.0201  Data.fb  Bank.00  RWB1 VPA1 VDA1 VPB1 E1 RDY1 MLB1 M1 X1    PBR,PC        Read(Opcode) PC++                                              Fetch Opcode from address in program counter.\n"\
+		"XCE: (2)  IO              A.0000  X.0000  Y.0000  PC.00:0202  S.01fc  DP.0000  DB.00    P(Z0 N0 D0 I1 M.8 X.8 C0 E1 V0 B0)    Addr.0202  Data.00  Bank.00  RWB1 VPA0 VDA0 VPB1 E1 RDY1 MLB1 M1 X1    PBR,PC        IO Execute(HELP!) DONE                                         Exchange Carry and Emulation Bits.\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0202  S.01fc  DP.0000  DB.00    P(Z0 N0 D0 I1 M.8 X.8 C1 E0 V0 ..)    Addr.0202  Data.c2  Bank.00  RWB1 VPA1 VDA1 VPB1 E0 RDY1 MLB1 M1 X1    PBR,PC        Read(Opcode) PC++                                              Fetch Opcode from address in program counter.\n"\
+		"REP: (2)  Read(DL)        A.0000  X.0000  Y.0000  PC.00:0203  S.01fc  DP.0000  DB.00    P(Z0 N0 D0 I1 M.8 X.8 C1 E0 V0 ..)    Addr.0203  Data.30  Bank.00  RWB1 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M1 X1    PBR,PC        PC++ Read(DL)                                                  Reset Status Bits.\n"\
+		"REP: (3)  Read(DH)        A.0000  X.0000  Y.0000  PC.00:0204  S.01fc  DP.0000  DB.00    P(Z0 N0 D0 I1 M.8 X.8 C1 E0 V0 ..)    Addr.0204  Data.a2  Bank.00  RWB1 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M1 X1    PBR,PC        Read(DH) Execute(HELP!) DONE                                   Reset Status Bits.\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0204  S.01fc  DP.0000  DB.00    P(Z0 N0 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.0204  Data.a2  Bank.00  RWB1 VPA1 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        Read(Opcode) PC++                                              Fetch Opcode from address in program counter.\n"\
+		"LDX: (2)  Read(DL)        A.0000  X.0000  Y.0000  PC.00:0205  S.01fc  DP.0000  DB.00    P(Z0 N0 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.0205  Data.55  Bank.00  RWB1 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        PC++ Read(DL) Execute_If_8Bit_XY(HELP!) DONE_If_8Bit_XY        Load Index X with Memory.\n"\
+		"LDX: (3)  Read(DH)        A.0000  X.0000  Y.0000  PC.00:0206  S.01fc  DP.0000  DB.00    P(Z0 N0 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.0206  Data.44  Bank.00  RWB1 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        PC++ Read(DH) Execute_If_16Bit_XY(HELP!) DONE_If_16Bit_XY      Load Index X with Memory.\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.4455  Y.0000  PC.00:0207  S.01fc  DP.0000  DB.00    P(Z0 N0 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.0207  Data.da  Bank.00  RWB1 VPA1 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        Read(Opcode) PC++                                              Fetch Opcode from address in program counter.\n"\
+		"PHX: (2)  IO              A.0000  X.4455  Y.0000  PC.00:0208  S.01fc  DP.0000  DB.00    P(Z0 N0 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.0208  Data.00  Bank.00  RWB1 VPA0 VDA0 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        IO Execute(HELP!)                                              Push Index X on Stack.\n"\
+		"PHX: (3)  Write(DH)       A.0000  X.4455  Y.0000  PC.00:0208  S.01fc  DP.0000  DB.00    P(Z0 N0 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.01fc  Data.44  Bank.00  RWB0 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    S             Write(DH) SP-- Note(1)                                         Push Index X on Stack.\n"\
+		"PHX: (4)  Write(DL)       A.0000  X.4455  Y.0000  PC.00:0208  S.01fb  DP.0000  DB.00    P(Z0 N0 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.01fb  Data.55  Bank.00  RWB0 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    S             Write(DL) SP-- DONE                                            Push Index X on Stack.\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.4455  Y.0000  PC.00:0208  S.01fa  DP.0000  DB.00    P(Z0 N0 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.0208  Data.2b  Bank.00  RWB1 VPA1 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        Read(Opcode) PC++                                              Fetch Opcode from address in program counter.\n"\
+		"PLD: (2)  IO              A.0000  X.4455  Y.0000  PC.00:0209  S.01fa  DP.0000  DB.00    P(Z0 N0 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.0209  Data.00  Bank.00  RWB1 VPA0 VDA0 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        IO                                                             Pull Direct Register from Stack.\n"\
+		"PLD: (3)  IO              A.0000  X.4455  Y.0000  PC.00:0209  S.01fa  DP.0000  DB.00    P(Z0 N0 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.0209  Data.00  Bank.00  RWB1 VPA0 VDA0 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        IO                                                             Pull Direct Register from Stack.\n"\
+		"PLD: (4)  Read(DL)        A.0000  X.4455  Y.0000  PC.00:0209  S.01fa  DP.0000  DB.00    P(Z0 N0 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.01fb  Data.55  Bank.00  RWB1 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    S+1           Read(DL) SP++                                                  Pull Direct Register from Stack.\n"\
+		"PLD: (5)  Read(DH)        A.0000  X.4455  Y.0000  PC.00:0209  S.01fb  DP.0000  DB.00    P(Z0 N0 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.01fc  Data.44  Bank.00  RWB1 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    S+1           Read(DH) SP++ Execute(HELP!) DONE                              Pull Direct Register from Stack.\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.4455  Y.0000  PC.00:0209  S.01fc  DP.4455  DB.00    P(Z0 N0 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.0209  Data.a0  Bank.00  RWB1 VPA1 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        Read(Opcode) PC++                                              Fetch Opcode from address in program counter.\n"\
+		"LDY: (2)  Read(DL)        A.0000  X.4455  Y.0000  PC.00:020a  S.01fc  DP.4455  DB.00    P(Z0 N0 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.020a  Data.f0  Bank.00  RWB1 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        PC++ Read(DL) Execute_If_8Bit_XY(HELP!) DONE_If_8Bit_XY        Load Index Y with Memory.\n"\
+		"LDY: (3)  Read(DH)        A.0000  X.4455  Y.0000  PC.00:020b  S.01fc  DP.4455  DB.00    P(Z0 N0 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.020b  Data.de  Bank.00  RWB1 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        PC++ Read(DH) Execute_If_16Bit_XY(HELP!) DONE_If_16Bit_XY      Load Index Y with Memory.\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.4455  Y.def0  PC.00:020c  S.01fc  DP.4455  DB.00    P(Z0 N1 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.020c  Data.b7  Bank.00  RWB1 VPA1 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        Read(Opcode) PC++                                              Fetch Opcode from address in program counter.\n"\
+		"LDA: (2)  Read(D0)        A.0000  X.4455  Y.def0  PC.00:020d  S.01fc  DP.4455  DB.00    P(Z0 N1 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.020d  Data.ff  Bank.00  RWB1 VPA1 VDA0 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        Read(D0) PC++                                                  Load Accumulator with Memory.\n"\
+		"LDA: (4)  Read(AAL)       A.0000  X.4455  Y.def0  PC.00:020e  S.01fc  DP.4455  DB.00    P(Z0 N1 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.4554  Data.ff  Bank.00  RWB1 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    D+D0          Read(AAL)                                                      Load Accumulator with Memory.\n"\
+		"LDA: (5)  Read(AAH)       A.0000  X.4455  Y.def0  PC.00:020e  S.01fc  DP.4455  DB.00    P(Z0 N1 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.4555  Data.ee  Bank.00  RWB1 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    D+D0+1        Read(AAH)                                                      Load Accumulator with Memory.\n"\
+		"LDA: (6)  Read(AAB)       A.0000  X.4455  Y.def0  PC.00:020e  S.01fc  DP.4455  DB.00    P(Z0 N1 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.4556  Data.01  Bank.00  RWB1 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    D+D0+2        Read(AAB)                                                      Load Accumulator with Memory.\n"\
+		"LDA: (7)  Read(DL)        A.0000  X.4455  Y.def0  PC.00:020e  S.01fc  DP.4455  DB.00    P(Z0 N1 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.cdef  Data.ef  Bank.02  RWB1 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    AAB,AA+Y      Read(DL) Execute_If_8Bit_M(HELP!) DONE_If_8Bit_M               Load Accumulator with Memory.\n"\
+		"LDA: (8)  Read(DH)        A.0000  X.4455  Y.def0  PC.00:020e  S.01fc  DP.4455  DB.00    P(Z0 N1 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.cdf0  Data.cd  Bank.02  RWB1 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    AAB,AA+Y+1    Read(DH) Execute_If_16Bit_M(HELP!) DONE_If_16Bit_M             Load Accumulator with Memory.\n"\
+		"OPC: (1)  Read(Opcode)    A.cdef  X.4455  Y.def0  PC.00:020e  S.01fc  DP.4455  DB.00    P(Z0 N1 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.020e  Data.8f  Bank.00  RWB1 VPA1 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        Read(Opcode) PC++                                              Fetch Opcode from address in program counter.\n"\
+		"STA: (2)  Read(AAL)       A.cdef  X.4455  Y.def0  PC.00:020f  S.01fc  DP.4455  DB.00    P(Z0 N1 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.020f  Data.00  Bank.00  RWB1 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        Read(AAL) PC++                                                 Store Accumulator in Memory.\n"\
+		"STA: (3)  Read(AAH)       A.cdef  X.4455  Y.def0  PC.00:0210  S.01fc  DP.4455  DB.00    P(Z0 N1 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.0210  Data.01  Bank.00  RWB1 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        Read(AAH) PC++                                                 Store Accumulator in Memory.\n"\
+		"STA: (4)  Read(AAB)       A.cdef  X.4455  Y.def0  PC.00:0211  S.01fc  DP.4455  DB.00    P(Z0 N1 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.0211  Data.00  Bank.00  RWB1 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        Read(AAB) PC++                                                 Store Accumulator in Memory.\n"\
+		"STA: (5)  Write(DL)       A.cdef  X.4455  Y.def0  PC.00:0212  S.01fc  DP.4455  DB.00    P(Z0 N1 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.0100  Data.ef  Bank.00  RWB0 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    AAB,AA        Execute(HELP!) Write(DL) DONE_If_8Bit_M                        Store Accumulator in Memory.\n"\
+		"STA: (6)  Write(DH)       A.cdef  X.4455  Y.def0  PC.00:0212  S.01fc  DP.4455  DB.00    P(Z0 N1 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.0101  Data.cd  Bank.00  RWB0 VPA0 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    AAB,AA+1      Write(DH) DONE_If_16Bit_M                                      Store Accumulator in Memory.\n"\
+		"OPC: (1)  Read(Opcode)    A.cdef  X.4455  Y.def0  PC.00:0212  S.01fc  DP.4455  DB.00    P(Z0 N1 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.0212  Data.db  Bank.00  RWB1 VPA1 VDA1 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        Read(Opcode) PC++                                              Fetch Opcode from address in program counter.\n"\
+		"STP: (2)  IO              A.cdef  X.4455  Y.def0  PC.00:0213  S.01fc  DP.4455  DB.00    P(Z0 N1 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.0213  Data.00  Bank.00  RWB1 VPA0 VDA0 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        IO                                                             Stop the Clock.\n"\
+		"STP: (3)  IO              A.cdef  X.4455  Y.def0  PC.00:0213  S.01fc  DP.4455  DB.00    P(Z0 N1 D0 I1 M16 X16 C1 E0 V0 ..)    Addr.0213  Data.00  Bank.00  RWB1 VPA0 VDA0 VPB1 E0 RDY1 MLB1 M0 X0    PBR,PC        IO Execute(HELP!) DONE                                         Stop the Clock.\n", cTestContext.SequenceText());
+
+	cTestContext.Kill();
+
+	CInstructionFactory::GetInstance()->Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDADirectPageIndexedIndirectWithX(void)
 {
 	CMetaW65C816			cMPU;
@@ -858,17 +959,18 @@ void TestW65C816Load(void)
 
 	DataIOInit();
 
-	//TestW65C816LoadLDAImmediate();
-	//TestW65C816LoadLDAAbsolute();
-	//TestW65C816LoadLDAAbsoluteLong();
-	//TestW65C816LoadLDAStackRelative();
-	//TestW65C816LoadLDAStackRelativeIndirectIndexedWithY();
-	//TestW65C816LoadLDADirectPage();
-	//TestW65C816LoadLDADirectPageIndirect();
+	TestW65C816LoadLDAImmediate();
+	TestW65C816LoadLDAAbsolute();
+	TestW65C816LoadLDAAbsoluteLong();
+	TestW65C816LoadLDAStackRelative();
+	TestW65C816LoadLDAStackRelativeIndirectIndexedWithY();
+	TestW65C816LoadLDADirectPage();
+	TestW65C816LoadLDADirectPageIndirect();
 	TestW65C816LoadLDADirectPageIndexedWithX();
-	//TestW65C816LoadLDADirectPageIndirectLong();
-	//TestW65C816LoadLDADirectPageIndirectIndexedWithY();
-	//TestW65C816LoadLDADirectPageIndexedIndirectWithX();
+	TestW65C816LoadLDADirectPageIndirectLong();
+	TestW65C816LoadLDADirectPageIndirectIndexedWithY();
+	TestW65C816LoadLDADirectPageIndirectLongIndexedWithY();
+	TestW65C816LoadLDADirectPageIndexedIndirectWithX();
 
 	DataIOKill();
 

@@ -11,7 +11,6 @@
 //////////////////////////////////////////////////////////////////////////
 void CTestW65C816Context::Init(uint32 uiMemorySize, uint8 uiFill)
 {
-	muiBank = 0;
 	mauiMemory = (uint8*)malloc(uiMemorySize);
 	mszSequence.Init();
 	muiMemorySize = uiMemorySize;
@@ -34,6 +33,24 @@ void CTestW65C816Context::Init(uint32 uiMemorySize, uint8 uiFill)
 	muiStartOfPrevPrevLine = 0;
 	muiLastAddress = 0;
 	muiInstructions = 0;
+
+	mbPrintAddressBus = false;
+	mbPrintDataBus = false;
+	mbPrintBank = false;
+	mbPrintVPB = false;
+	mbPrintRDY = false;
+	mbPrintMLB = false;
+	mbPrintVPA = false;
+	mbPrintVDA = false;
+	mbPrintWM = false;
+	mbPrintWX = false;
+	mbPrintE = false;
+	mbPrintRWB = false;
+
+	mbAddressOperation = false;
+	mbDataOperation = false;
+	mbDescription = false;
+
 	mbPrintSet = false;
 	mbEnablePrint = true;
 	mbDebugSpew = false;
@@ -140,9 +157,20 @@ void CTestW65C816Context::SetPrint(bool bReset, bool bStop, bool bMnemonic, bool
 //
 //
 //////////////////////////////////////////////////////////////////////////
-uint8 CTestW65C816Context::GetBank(void)
+void CTestW65C816Context::SetSignalPrint(bool bAddressBus, bool bDataBus, bool bBank, bool bVPB, bool bRDY, bool bMLB, bool bVPA, bool bVDA, bool bWM, bool bWX, bool bE, bool bRWB)
 {
-	return muiBank;
+	mbPrintAddressBus = bAddressBus;
+	mbPrintDataBus = bDataBus;
+	mbPrintBank = bBank;
+	mbPrintVPB = bVPB;
+	mbPrintRDY = bRDY;
+	mbPrintMLB = bMLB;
+	mbPrintVPA = bVPA;
+	mbPrintVDA = bVDA;
+	mbPrintWM = bWM;
+	mbPrintWX = bWX;
+	mbPrintE = bE;
+	mbPrintRWB = bRWB;
 }
 
 
@@ -150,9 +178,21 @@ uint8 CTestW65C816Context::GetBank(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestW65C816Context::SetBank(uint8 uiBank)
+void CTestW65C816Context::SetOperationPrint(bool bAddressOperation, bool bDataOperation, bool bDescription)
 {
-	muiBank = uiBank;
+	mbAddressOperation = bAddressOperation;
+	mbDataOperation = bDataOperation;
+	mbDescription = bDescription;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestW65C816Context::DebugSpew(void)
+{
+	mbDebugSpew = true;
 }
 
 
@@ -363,6 +403,7 @@ uint64 CTestW65C816Context::Run(CMetaW65C816* pcMPU)
 	size		uiEnd;
 	size		uiLength;
 
+	mpcMPU = pcMPU;
 	for (i = 0;; i++)
 	{
 		bRunning = pcMPU->TickInstruction();
@@ -389,12 +430,43 @@ uint64 CTestW65C816Context::Run(CMetaW65C816* pcMPU)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C81ContextTickLow(CMetaW65C816* pcMPU, void* pvContext)
+void TestW65C81ContextDebugSpew(CMetaW65C816* pcMPU, CTestW65C816Context* pcContext)
 {
-	CTestW65C816Context* pcContext;
+	CChars					szTemp;
 
-	pcContext = (CTestW65C816Context*)pvContext;
-	pcContext->SetBank(pcMPU->GetData()->Get());
+	if (pcContext->mbDebugSpew)
+	{
+		szTemp.Init();
+		pcMPU->Print(&szTemp,
+			pcContext->mbPrintMnemonic,
+			pcContext->mbPrintCycle,
+			pcContext->mbPrintOperation,
+			pcContext->mbPrintA,
+			pcContext->mbPrintX,
+			pcContext->mbPrintY,
+			pcContext->mbPrintPC,
+			pcContext->mbPrintS,
+			pcContext->mbPrintDP,
+			pcContext->mbPrintDB,
+			pcContext->mbPrintP,
+			pcContext->mbPrintAddressBus,
+			pcContext->mbPrintDataBus,
+			pcContext->mbPrintBank,
+			pcContext->mbPrintVPB,
+			pcContext->mbPrintRDY,
+			pcContext->mbPrintMLB,
+			pcContext->mbPrintVPA,
+			pcContext->mbPrintVDA,
+			pcContext->mbPrintWM,
+			pcContext->mbPrintWX,
+			pcContext->mbPrintE,
+			pcContext->mbPrintRWB,
+			pcContext->mbAddressOperation,
+			pcContext->mbDataOperation,
+			pcContext->mbDescription);
+		szTemp.AppendNewLine();
+		szTemp.DumpKill();
+	}
 }
 
 
@@ -402,45 +474,17 @@ void TestW65C81ContextTickLow(CMetaW65C816* pcMPU, void* pvContext)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext)
+void TestW65C81ContextPrint(CMetaW65C816* pcMPU, CTestW65C816Context* pcContext)
 {
-	uint32					uiAddress;
-	bool					bRead;
-	bool					bWrite;
-	bool					bValidAddress;
-	uint8					uiData;
-	CTestW65C816Context*	pcContext;
 	bool					bReset;
 	bool					bStop;
 	bool					bFetchOpcode;
 	CChars*					psz;
 	size					uiPreviousStart;
-	CChars					szTemp;
-
-	pcContext = (CTestW65C816Context*)pvContext;
 
 	bFetchOpcode = pcMPU->IsFetchOpcodeCycle();
 	bReset = pcMPU->IsResetInstruction();
 	bStop = pcMPU->IsStopInstruction();
-
-	if (pcContext->mbDebugSpew)
-	{
-		szTemp.Init();
-		pcMPU->Print(&szTemp,
-					 pcContext->mbPrintMnemonic,
-					 pcContext->mbPrintCycle,
-					 pcContext->mbPrintOperation,
-					 pcContext->mbPrintA,
-					 pcContext->mbPrintX,
-					 pcContext->mbPrintY,
-					 pcContext->mbPrintPC,
-					 pcContext->mbPrintS,
-					 pcContext->mbPrintDP,
-					 pcContext->mbPrintDB,
-					 pcContext->mbPrintP);
-		szTemp.AppendNewLine();
-		szTemp.DumpKill();
-	}
 
 	if (pcContext->mbEnablePrint)
 	{
@@ -456,25 +500,65 @@ void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 			}
 
 			pcMPU->Print(pcContext->GetSequence(),
-						 pcContext->mbPrintMnemonic,
-						 pcContext->mbPrintCycle,
-						 pcContext->mbPrintOperation,
-						 pcContext->mbPrintA,
-						 pcContext->mbPrintX,
-						 pcContext->mbPrintY,
-						 pcContext->mbPrintPC,
-						 pcContext->mbPrintS,
-						 pcContext->mbPrintDP,
-						 pcContext->mbPrintDB,
-						 pcContext->mbPrintP);
+				pcContext->mbPrintMnemonic,
+				pcContext->mbPrintCycle,
+				pcContext->mbPrintOperation,
+				pcContext->mbPrintA,
+				pcContext->mbPrintX,
+				pcContext->mbPrintY,
+				pcContext->mbPrintPC,
+				pcContext->mbPrintS,
+				pcContext->mbPrintDP,
+				pcContext->mbPrintDB,
+				pcContext->mbPrintP,
+				pcContext->mbPrintAddressBus,
+				pcContext->mbPrintDataBus,
+				pcContext->mbPrintBank,
+				pcContext->mbPrintVPB,
+				pcContext->mbPrintRDY,
+				pcContext->mbPrintMLB,
+				pcContext->mbPrintVPA,
+				pcContext->mbPrintVDA,
+				pcContext->mbPrintWM,
+				pcContext->mbPrintWX,
+				pcContext->mbPrintE,
+				pcContext->mbPrintRWB,
+				pcContext->mbAddressOperation,
+				pcContext->mbDataOperation,
+				pcContext->mbDescription);
 			psz->AppendNewLine();
 
 			MergeEndCycleString(pcContext, bFetchOpcode, uiPreviousStart, psz);
 		}
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestW65C81ContextTickLow(CMetaW65C816* pcMPU, void* pvContext)
+{
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext)
+{
+	uint32					uiAddress;
+	bool					bRead;
+	bool					bWrite;
+	bool					bValidAddress;
+	uint8					uiData;
+	CTestW65C816Context*	pcContext;
+
+	pcContext = (CTestW65C816Context*)pvContext;
 
 	uiAddress = pcMPU->GetAddress()->Get();
-	uiAddress |= pcContext->GetBank() << 16;
+	uiAddress |= pcMPU->GetBank() << 16;
 
 	bWrite = pcMPU->GetRWB()->IsLow();
 	bRead = pcMPU->GetRWB()->IsHigh();
@@ -494,6 +578,9 @@ void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 			pcContext->SetByte(uiAddress, uiData);
 		}
 	}
+
+	TestW65C81ContextDebugSpew(pcMPU, pcContext);
+	TestW65C81ContextPrint(pcMPU, pcContext);
 }
 
 

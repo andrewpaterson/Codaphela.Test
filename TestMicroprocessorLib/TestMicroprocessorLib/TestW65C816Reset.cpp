@@ -425,10 +425,6 @@ void TestW65C816Reset(CW65C816* pcW65C816, CMetaTrace* pcPhi2, CMetaTrace* pcVPA
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816ResetVectorTickLow(CMetaW65C816* pcMPU, void* pvContext)
 {
-	CTestW65C816Context*	pcContext;
-
-	pcContext = (CTestW65C816Context*)pvContext;
-	pcContext->SetBank(pcMPU->GetData()->Get());
 }
 
 
@@ -447,11 +443,11 @@ void TestW65C816ResetVectorTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 
 	pcContext = (CTestW65C816Context*)pvContext;
 
-	pcMPU->Print(pcContext->GetSequence(), true, true, true, true, true, true, true, true, false, false, false);
+	pcMPU->Print(pcContext->GetSequence(), true, true, true, true, true, true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false);
 	pcContext->GetSequence()->AppendNewLine();
 
 	uiAddress = pcMPU->GetAddress()->Get();
-	uiAddress |= pcContext->GetBank() << 16;
+	uiAddress |= pcMPU->GetBank() << 16;
 
 	bWrite = pcMPU->GetRWB()->IsLow();
 	bRead = pcMPU->GetRWB()->IsHigh();
@@ -462,7 +458,7 @@ void TestW65C816ResetVectorTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 	{
 		if (bRead)
 		{
-			if (pcContext->GetBank() == 0)
+			if (pcMPU->GetBank() == 0)
 			{
 				uiData = pcContext->GetByte(uiAddress);
 				pcMPU->GetData()->Set(uiData);
