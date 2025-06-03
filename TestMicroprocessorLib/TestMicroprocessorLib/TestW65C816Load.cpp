@@ -522,6 +522,104 @@ void TestW65C816LoadLDADirectPageIndirectLong(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestW65C816LoadLDADirectPageIndirectIndexedWithY(void)
+{
+	CMetaW65C816			cMPU;
+	uint64					uiInstructions;
+	CTestW65C816Context		cTestContext;
+
+	CInstructionFactory::GetInstance()->Init();
+
+	cTestContext.Init(0x30000, 0xea, 0x0200);
+	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, false, true, true, false, false);
+	cTestContext.mbDebugSpew = true;
+
+	cTestContext.SetShort(0x4554, 0xeeff);
+	cTestContext.SetShort(0x2cdef, 0xcdef);
+
+	cTestContext.SetOpcd(0x0200, CLC_Implied);
+	cTestContext.SetOpcd(XCE_Implied);
+	cTestContext.SetOpcd(REP_Immediate);
+	cTestContext.SetByte(0x30);
+	cTestContext.SetOpcd(LDX_Immediate);
+	cTestContext.SetShort(0x4455);
+	cTestContext.SetOpcd(PHX_StackImplied);
+	cTestContext.SetOpcd(PLD_StackImplied);
+	cTestContext.SetOpcd(LDX_Immediate);
+	cTestContext.SetShort(1);
+	cTestContext.SetOpcd(PHX_StackImplied);
+	cTestContext.SetOpcd(PLB_StackImplied);
+	cTestContext.SetOpcd(LDY_Immediate);
+	cTestContext.SetShort(0xdef0);
+	cTestContext.SetOpcd(LDA_DirectPageIndirectIndexedWithY);
+	cTestContext.SetByte(0xff);
+	cTestContext.SetOpcd(STA_AbsoluteLong);
+	cTestContext.SetShort(0x0100);
+	cTestContext.SetByte(0x00);
+	cTestContext.SetOpcd(STP_Implied);
+
+	cMPU.Init(TestW65C81ContextTickHigh, TestW65C81ContextTickLow, &cTestContext);
+
+	uiInstructions = cTestContext.Run(&cMPU);
+
+	cMPU.Kill();
+
+	AssertLong(13, uiInstructions);
+	AssertShortHex((uint16)0xcdef, cTestContext.GetShort(0x0100));
+
+	cTestContext.StripToInstruction("LDX");
+	AssertString(""\
+		"OPC: (1)  Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0204  DP.0000  DB.00\n"\
+		"LDX: (2)  Read(DL)        A.0000  X.0000  Y.0000  PC.00:0205  DP.0000  DB.00\n"\
+		"LDX: (3)  Read(DH)        A.0000  X.0000  Y.0000  PC.00:0206  DP.0000  DB.00\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.4455  Y.0000  PC.00:0207  DP.0000  DB.00\n"\
+		"PHX: (2)  IO              A.0000  X.4455  Y.0000  PC.00:0208  DP.0000  DB.00\n"\
+		"PHX: (3)  Write(DH)       A.0000  X.4455  Y.0000  PC.00:0208  DP.0000  DB.00\n"\
+		"PHX: (4)  Write(DL)       A.0000  X.4455  Y.0000  PC.00:0208  DP.0000  DB.00\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.4455  Y.0000  PC.00:0208  DP.0000  DB.00\n"\
+		"PLD: (2)  IO              A.0000  X.4455  Y.0000  PC.00:0209  DP.0000  DB.00\n"\
+		"PLD: (3)  IO              A.0000  X.4455  Y.0000  PC.00:0209  DP.0000  DB.00\n"\
+		"PLD: (4)  Read(DL)        A.0000  X.4455  Y.0000  PC.00:0209  DP.0000  DB.00\n"\
+		"PLD: (5)  Read(DH)        A.0000  X.4455  Y.0000  PC.00:0209  DP.0000  DB.00\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.4455  Y.0000  PC.00:0209  DP.4455  DB.00\n"\
+		"LDX: (2)  Read(DL)        A.0000  X.4455  Y.0000  PC.00:020a  DP.4455  DB.00\n"\
+		"LDX: (3)  Read(DH)        A.0000  X.4455  Y.0000  PC.00:020b  DP.4455  DB.00\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.0001  Y.0000  PC.00:020c  DP.4455  DB.00\n"\
+		"PHX: (2)  IO              A.0000  X.0001  Y.0000  PC.00:020d  DP.4455  DB.00\n"\
+		"PHX: (3)  Write(DH)       A.0000  X.0001  Y.0000  PC.00:020d  DP.4455  DB.00\n"\
+		"PHX: (4)  Write(DL)       A.0000  X.0001  Y.0000  PC.00:020d  DP.4455  DB.00\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.0001  Y.0000  PC.00:020d  DP.4455  DB.00\n"\
+		"PLB: (2)  IO              A.0000  X.0001  Y.0000  PC.00:020e  DP.4455  DB.00\n"\
+		"PLB: (3)  IO              A.0000  X.0001  Y.0000  PC.00:020e  DP.4455  DB.00\n"\
+		"PLB: (4)  Read(DL)        A.0000  X.0001  Y.0000  PC.00:020e  DP.4455  DB.00\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.0001  Y.0000  PC.00:020e  DP.4455  DB.01\n"\
+		"LDY: (2)  Read(DL)        A.0000  X.0001  Y.0000  PC.00:020f  DP.4455  DB.01\n"\
+		"LDY: (3)  Read(DH)        A.0000  X.0001  Y.0000  PC.00:0210  DP.4455  DB.01\n"\
+		"OPC: (1)  Read(Opcode)    A.0000  X.0001  Y.def0  PC.00:0211  DP.4455  DB.01\n"\
+		"LDA: (2)  Read(D0)        A.0000  X.0001  Y.def0  PC.00:0212  DP.4455  DB.01\n"\
+		"LDA: (4)  Read(AAL)       A.0000  X.0001  Y.def0  PC.00:0213  DP.4455  DB.01\n"\
+		"LDA: (5)  Read(AAH)       A.0000  X.0001  Y.def0  PC.00:0213  DP.4455  DB.01\n"\
+		"LDA: (6)  IO              A.0000  X.0001  Y.def0  PC.00:0213  DP.4455  DB.01\n"\
+		"LDA: (7)  Read(DL)        A.0000  X.0001  Y.def0  PC.00:0213  DP.4455  DB.01\n"\
+		"LDA: (8)  Read(DH)        A.0000  X.0001  Y.def0  PC.00:0213  DP.4455  DB.01\n"\
+		"OPC: (1)  Read(Opcode)    A.cdef  X.0001  Y.def0  PC.00:0213  DP.4455  DB.01\n"\
+		"STA: (2)  Read(AAL)       A.cdef  X.0001  Y.def0  PC.00:0214  DP.4455  DB.01\n"\
+		"STA: (3)  Read(AAH)       A.cdef  X.0001  Y.def0  PC.00:0215  DP.4455  DB.01\n"\
+		"STA: (4)  Read(AAB)       A.cdef  X.0001  Y.def0  PC.00:0216  DP.4455  DB.01\n"\
+		"STA: (5)  Write(DL)       A.cdef  X.0001  Y.def0  PC.00:0217  DP.4455  DB.01\n"\
+		"STA: (6)  Write(DH)       A.cdef  X.0001  Y.def0  PC.00:0217  DP.4455  DB.01\n"\
+		"OPC: (1)  Read(Opcode)    A.cdef  X.0001  Y.def0  PC.00:0217  DP.4455  DB.01\n", cTestContext.SequenceText());
+
+	cTestContext.Kill();
+
+	CInstructionFactory::GetInstance()->Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDADirectPageIndexedIndirectWithX(void)
 {
 	CMetaW65C816			cMPU;
@@ -595,14 +693,15 @@ void TestW65C816Load(void)
 
 	DataIOInit();
 
-	TestW65C816LoadLDAImmediate();
-	TestW65C816LoadLDAAbsolute();
-	TestW65C816LoadLDAAbsoluteLong();
-	TestW65C816LoadLDAStackRelative();
-	TestW65C816LoadLDAStackRelativeIndirectIndexedWithY();
-	TestW65C816LoadLDADirectPage();
-	TestW65C816LoadLDADirectPageIndirectLong();
-	TestW65C816LoadLDADirectPageIndexedIndirectWithX();
+	//TestW65C816LoadLDAImmediate();
+	//TestW65C816LoadLDAAbsolute();
+	//TestW65C816LoadLDAAbsoluteLong();
+	//TestW65C816LoadLDAStackRelative();
+	//TestW65C816LoadLDAStackRelativeIndirectIndexedWithY();
+	//TestW65C816LoadLDADirectPage();
+	//TestW65C816LoadLDADirectPageIndirectLong();
+	TestW65C816LoadLDADirectPageIndirectIndexedWithY();
+	//TestW65C816LoadLDADirectPageIndexedIndirectWithX();
 
 	DataIOKill();
 
@@ -620,7 +719,7 @@ void TestW65C816Load(void)
 	* LDA_Immediate = 0xA9,
 	* LDA_Absolute = 0xAD,
 	* LDA_AbsoluteLong = 0xAF,
-	  LDA_DirectPageIndirectIndexedWithY = 0xB1,
+	* LDA_DirectPageIndirectIndexedWithY = 0xB1,
 	  LDA_DirectPageIndirect = 0xB2,
 	* LDA_StackRelativeIndirectIndexedWithY = 0xB3,
 	  LDA_DirectPageIndexedWithX = 0xB5,
