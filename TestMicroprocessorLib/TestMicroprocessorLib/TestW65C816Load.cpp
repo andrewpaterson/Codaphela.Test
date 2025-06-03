@@ -531,7 +531,7 @@ void TestW65C816LoadLDADirectPageIndirectIndexedWithY(void)
 	CInstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x30000, 0xea, 0x0200);
-	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, false, true, true, false, false);
+	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, true, true, true, false, false);
 
 	cTestContext.SetShort(0x4554, 0xeeff);
 	cTestContext.SetShort(0x2cdef, 0xcdef);
@@ -540,6 +540,9 @@ void TestW65C816LoadLDADirectPageIndirectIndexedWithY(void)
 	cTestContext.SetOpcd(XCE_Implied);
 	cTestContext.SetOpcd(REP_Immediate);
 	cTestContext.SetByte(0x30);
+	cTestContext.SetOpcd(LDA_Immediate);
+	cTestContext.SetShort(0x1ff);
+	cTestContext.SetOpcd(TCS_Implied);
 	cTestContext.SetOpcd(LDX_Immediate);
 	cTestContext.SetShort(0x4455);
 	cTestContext.SetOpcd(PHX_StackImplied);
@@ -563,51 +566,56 @@ void TestW65C816LoadLDADirectPageIndirectIndexedWithY(void)
 
 	cMPU.Kill();
 
-	AssertLong(13, uiInstructions);
+	AssertLong(15, uiInstructions);
 	AssertShortHex((uint16)0xcdef, cTestContext.GetShort(0x0100));
 
-	cTestContext.StripToInstruction("LDX");
+	cTestContext.StripToInstruction("LDA");
 	AssertString(""\
-		"OPC: (1)  Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0204  DP.0000  DB.00\n"\
-		"LDX: (2)  Read(DL)        A.0000  X.0000  Y.0000  PC.00:0205  DP.0000  DB.00\n"\
-		"LDX: (3)  Read(DH)        A.0000  X.0000  Y.0000  PC.00:0206  DP.0000  DB.00\n"\
-		"OPC: (1)  Read(Opcode)    A.0000  X.4455  Y.0000  PC.00:0207  DP.0000  DB.00\n"\
-		"PHX: (2)  IO              A.0000  X.4455  Y.0000  PC.00:0208  DP.0000  DB.00\n"\
-		"PHX: (3)  Write(DH)       A.0000  X.4455  Y.0000  PC.00:0208  DP.0000  DB.00\n"\
-		"PHX: (4)  Write(DL)       A.0000  X.4455  Y.0000  PC.00:0208  DP.0000  DB.00\n"\
-		"OPC: (1)  Read(Opcode)    A.0000  X.4455  Y.0000  PC.00:0208  DP.0000  DB.00\n"\
-		"PLD: (2)  IO              A.0000  X.4455  Y.0000  PC.00:0209  DP.0000  DB.00\n"\
-		"PLD: (3)  IO              A.0000  X.4455  Y.0000  PC.00:0209  DP.0000  DB.00\n"\
-		"PLD: (4)  Read(DL)        A.0000  X.4455  Y.0000  PC.00:0209  DP.0000  DB.00\n"\
-		"PLD: (5)  Read(DH)        A.0000  X.4455  Y.0000  PC.00:0209  DP.0000  DB.00\n"\
-		"OPC: (1)  Read(Opcode)    A.0000  X.4455  Y.0000  PC.00:0209  DP.4455  DB.00\n"\
-		"LDX: (2)  Read(DL)        A.0000  X.4455  Y.0000  PC.00:020a  DP.4455  DB.00\n"\
-		"LDX: (3)  Read(DH)        A.0000  X.4455  Y.0000  PC.00:020b  DP.4455  DB.00\n"\
-		"OPC: (1)  Read(Opcode)    A.0000  X.0001  Y.0000  PC.00:020c  DP.4455  DB.00\n"\
-		"PHX: (2)  IO              A.0000  X.0001  Y.0000  PC.00:020d  DP.4455  DB.00\n"\
-		"PHX: (3)  Write(DH)       A.0000  X.0001  Y.0000  PC.00:020d  DP.4455  DB.00\n"\
-		"PHX: (4)  Write(DL)       A.0000  X.0001  Y.0000  PC.00:020d  DP.4455  DB.00\n"\
-		"OPC: (1)  Read(Opcode)    A.0000  X.0001  Y.0000  PC.00:020d  DP.4455  DB.00\n"\
-		"PLB: (2)  IO              A.0000  X.0001  Y.0000  PC.00:020e  DP.4455  DB.00\n"\
-		"PLB: (3)  IO              A.0000  X.0001  Y.0000  PC.00:020e  DP.4455  DB.00\n"\
-		"PLB: (4)  Read(DL)        A.0000  X.0001  Y.0000  PC.00:020e  DP.4455  DB.00\n"\
-		"OPC: (1)  Read(Opcode)    A.0000  X.0001  Y.0000  PC.00:020e  DP.4455  DB.01\n"\
-		"LDY: (2)  Read(DL)        A.0000  X.0001  Y.0000  PC.00:020f  DP.4455  DB.01\n"\
-		"LDY: (3)  Read(DH)        A.0000  X.0001  Y.0000  PC.00:0210  DP.4455  DB.01\n"\
-		"OPC: (1)  Read(Opcode)    A.0000  X.0001  Y.def0  PC.00:0211  DP.4455  DB.01\n"\
-		"LDA: (2)  Read(D0)        A.0000  X.0001  Y.def0  PC.00:0212  DP.4455  DB.01\n"\
-		"LDA: (4)  Read(AAL)       A.0000  X.0001  Y.def0  PC.00:0213  DP.4455  DB.01\n"\
-		"LDA: (5)  Read(AAH)       A.0000  X.0001  Y.def0  PC.00:0213  DP.4455  DB.01\n"\
-		"LDA: (6)  IO              A.0000  X.0001  Y.def0  PC.00:0213  DP.4455  DB.01\n"\
-		"LDA: (7)  Read(DL)        A.0000  X.0001  Y.def0  PC.00:0213  DP.4455  DB.01\n"\
-		"LDA: (8)  Read(DH)        A.0000  X.0001  Y.def0  PC.00:0213  DP.4455  DB.01\n"\
-		"OPC: (1)  Read(Opcode)    A.cdef  X.0001  Y.def0  PC.00:0213  DP.4455  DB.01\n"\
-		"STA: (2)  Read(AAL)       A.cdef  X.0001  Y.def0  PC.00:0214  DP.4455  DB.01\n"\
-		"STA: (3)  Read(AAH)       A.cdef  X.0001  Y.def0  PC.00:0215  DP.4455  DB.01\n"\
-		"STA: (4)  Read(AAB)       A.cdef  X.0001  Y.def0  PC.00:0216  DP.4455  DB.01\n"\
-		"STA: (5)  Write(DL)       A.cdef  X.0001  Y.def0  PC.00:0217  DP.4455  DB.01\n"\
-		"STA: (6)  Write(DH)       A.cdef  X.0001  Y.def0  PC.00:0217  DP.4455  DB.01\n"\
-		"OPC: (1)  Read(Opcode)    A.cdef  X.0001  Y.def0  PC.00:0217  DP.4455  DB.01\n", cTestContext.SequenceText());
+		"OPC: (1)  Read(Opcode)    A.0000  X.0000  Y.0000  PC.00:0204  S.01fc  DP.0000  DB.00\n"\
+		"LDA: (2)  Read(DL)        A.0000  X.0000  Y.0000  PC.00:0205  S.01fc  DP.0000  DB.00\n"\
+		"LDA: (3)  Read(DH)        A.0000  X.0000  Y.0000  PC.00:0206  S.01fc  DP.0000  DB.00\n"\
+		"OPC: (1)  Read(Opcode)    A.01ff  X.0000  Y.0000  PC.00:0207  S.01fc  DP.0000  DB.00\n"\
+		"TCS: (2)  IO              A.01ff  X.0000  Y.0000  PC.00:0208  S.01fc  DP.0000  DB.00\n"\
+		"OPC: (1)  Read(Opcode)    A.01ff  X.0000  Y.0000  PC.00:0208  S.01ff  DP.0000  DB.00\n"\
+		"LDX: (2)  Read(DL)        A.01ff  X.0000  Y.0000  PC.00:0209  S.01ff  DP.0000  DB.00\n"\
+		"LDX: (3)  Read(DH)        A.01ff  X.0000  Y.0000  PC.00:020a  S.01ff  DP.0000  DB.00\n"\
+		"OPC: (1)  Read(Opcode)    A.01ff  X.4455  Y.0000  PC.00:020b  S.01ff  DP.0000  DB.00\n"\
+		"PHX: (2)  IO              A.01ff  X.4455  Y.0000  PC.00:020c  S.01ff  DP.0000  DB.00\n"\
+		"PHX: (3)  Write(DH)       A.01ff  X.4455  Y.0000  PC.00:020c  S.01ff  DP.0000  DB.00\n"\
+		"PHX: (4)  Write(DL)       A.01ff  X.4455  Y.0000  PC.00:020c  S.01fe  DP.0000  DB.00\n"\
+		"OPC: (1)  Read(Opcode)    A.01ff  X.4455  Y.0000  PC.00:020c  S.01fd  DP.0000  DB.00\n"\
+		"PLD: (2)  IO              A.01ff  X.4455  Y.0000  PC.00:020d  S.01fd  DP.0000  DB.00\n"\
+		"PLD: (3)  IO              A.01ff  X.4455  Y.0000  PC.00:020d  S.01fd  DP.0000  DB.00\n"\
+		"PLD: (4)  Read(DL)        A.01ff  X.4455  Y.0000  PC.00:020d  S.01fd  DP.0000  DB.00\n"\
+		"PLD: (5)  Read(DH)        A.01ff  X.4455  Y.0000  PC.00:020d  S.01fe  DP.0000  DB.00\n"\
+		"OPC: (1)  Read(Opcode)    A.01ff  X.4455  Y.0000  PC.00:020d  S.01ff  DP.4455  DB.00\n"\
+		"LDX: (2)  Read(DL)        A.01ff  X.4455  Y.0000  PC.00:020e  S.01ff  DP.4455  DB.00\n"\
+		"LDX: (3)  Read(DH)        A.01ff  X.4455  Y.0000  PC.00:020f  S.01ff  DP.4455  DB.00\n"\
+		"OPC: (1)  Read(Opcode)    A.01ff  X.0001  Y.0000  PC.00:0210  S.01ff  DP.4455  DB.00\n"\
+		"PHX: (2)  IO              A.01ff  X.0001  Y.0000  PC.00:0211  S.01ff  DP.4455  DB.00\n"\
+		"PHX: (3)  Write(DH)       A.01ff  X.0001  Y.0000  PC.00:0211  S.01ff  DP.4455  DB.00\n"\
+		"PHX: (4)  Write(DL)       A.01ff  X.0001  Y.0000  PC.00:0211  S.01fe  DP.4455  DB.00\n"\
+		"OPC: (1)  Read(Opcode)    A.01ff  X.0001  Y.0000  PC.00:0211  S.01fd  DP.4455  DB.00\n"\
+		"PLB: (2)  IO              A.01ff  X.0001  Y.0000  PC.00:0212  S.01fd  DP.4455  DB.00\n"\
+		"PLB: (3)  IO              A.01ff  X.0001  Y.0000  PC.00:0212  S.01fd  DP.4455  DB.00\n"\
+		"PLB: (4)  Read(DL)        A.01ff  X.0001  Y.0000  PC.00:0212  S.01fd  DP.4455  DB.00\n"\
+		"OPC: (1)  Read(Opcode)    A.01ff  X.0001  Y.0000  PC.00:0212  S.01fe  DP.4455  DB.01\n"\
+		"LDY: (2)  Read(DL)        A.01ff  X.0001  Y.0000  PC.00:0213  S.01fe  DP.4455  DB.01\n"\
+		"LDY: (3)  Read(DH)        A.01ff  X.0001  Y.0000  PC.00:0214  S.01fe  DP.4455  DB.01\n"\
+		"OPC: (1)  Read(Opcode)    A.01ff  X.0001  Y.def0  PC.00:0215  S.01fe  DP.4455  DB.01\n"\
+		"LDA: (2)  Read(D0)        A.01ff  X.0001  Y.def0  PC.00:0216  S.01fe  DP.4455  DB.01\n"\
+		"LDA: (4)  Read(AAL)       A.01ff  X.0001  Y.def0  PC.00:0217  S.01fe  DP.4455  DB.01\n"\
+		"LDA: (5)  Read(AAH)       A.01ff  X.0001  Y.def0  PC.00:0217  S.01fe  DP.4455  DB.01\n"\
+		"LDA: (6)  IO              A.01ff  X.0001  Y.def0  PC.00:0217  S.01fe  DP.4455  DB.01\n"\
+		"LDA: (7)  Read(DL)        A.01ff  X.0001  Y.def0  PC.00:0217  S.01fe  DP.4455  DB.01\n"\
+		"LDA: (8)  Read(DH)        A.01ff  X.0001  Y.def0  PC.00:0217  S.01fe  DP.4455  DB.01\n"\
+		"OPC: (1)  Read(Opcode)    A.cdef  X.0001  Y.def0  PC.00:0217  S.01fe  DP.4455  DB.01\n"\
+		"STA: (2)  Read(AAL)       A.cdef  X.0001  Y.def0  PC.00:0218  S.01fe  DP.4455  DB.01\n"\
+		"STA: (3)  Read(AAH)       A.cdef  X.0001  Y.def0  PC.00:0219  S.01fe  DP.4455  DB.01\n"\
+		"STA: (4)  Read(AAB)       A.cdef  X.0001  Y.def0  PC.00:021a  S.01fe  DP.4455  DB.01\n"\
+		"STA: (5)  Write(DL)       A.cdef  X.0001  Y.def0  PC.00:021b  S.01fe  DP.4455  DB.01\n"\
+		"STA: (6)  Write(DH)       A.cdef  X.0001  Y.def0  PC.00:021b  S.01fe  DP.4455  DB.01\n"\
+		"OPC: (1)  Read(Opcode)    A.cdef  X.0001  Y.def0  PC.00:021b  S.01fe  DP.4455  DB.01\n", cTestContext.SequenceText());
 
 	cTestContext.Kill();
 
