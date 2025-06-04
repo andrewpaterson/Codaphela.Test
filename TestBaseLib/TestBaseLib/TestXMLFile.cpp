@@ -6,7 +6,63 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestReadExternalReference(void)
+void TestXMLFileRead(void)
+{
+	CXMLFile	cXMLFile;
+	CChars		szDoc;
+	size		iLine;
+	char		szExpected[] = "<InputDevices>\n\
+  This is text &gt; and doom stuff\n\
+  <RootInSecond>\n\
+    Hello\n\
+  </RootInSecond>\n\
+  Sweet &lt; other stuff\n\
+  <ThirdsRoot>\n\
+    World\n\
+  </ThirdsRoot>\n\
+  <Impact>Genesis Evangelion</Impact>\n\
+</InputDevices>\n";
+	CMarkupTag* pcTag;
+	CMarkupTag* pcSecondTag;
+	CMarkupTag* pcThirdTag;
+	CChars		szText;
+
+	cXMLFile.Init();
+	cXMLFile.Read("FirstExpected.xml", ".");
+
+	szDoc.Init();
+	iLine = cXMLFile.mcMarkup.mpcDoc->Print(&szDoc);
+	AssertInt(11, iLine);
+	AssertString(szExpected, szDoc.Text());
+	szDoc.Kill();
+
+	pcTag = cXMLFile.mcMarkup.mpcDoc->GetRootTag();
+	pcSecondTag = pcTag->GetTag("RootInSecond");
+	AssertNotNull(pcSecondTag);
+	szText.Init();
+	pcSecondTag->GetText(&szText);
+	szText.StripWhitespace(true);
+	AssertString("Hello", szText.Text());
+	szText.Kill();
+
+	pcTag = cXMLFile.mcMarkup.mpcDoc->GetRootTag();
+	pcThirdTag = pcTag->GetTag("ThirdsRoot");
+	AssertNotNull(pcThirdTag);
+	szText.Init();
+	pcThirdTag->GetText(&szText);
+	szText.StripWhitespace(true);
+	AssertString("World", szText.Text());
+	szText.Kill();
+
+	cXMLFile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestXMLFileReadExternalReference(void)
 {
 	CXMLFile	cXMLFile;
 	CChars		szDoc;
@@ -62,7 +118,7 @@ void TestReadExternalReference(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestRepeatedExternalTags(void)
+void TestXMLFileRepeatedExternalTags(void)
 {
 	CXMLFile		cXMLFile;
 	CChars			szDoc;
@@ -149,8 +205,9 @@ void TestXMLFile(void)
 {
 	BeginTests();
 
-	TestReadExternalReference();
-	TestRepeatedExternalTags();
+	TestXMLFileRead();
+	TestXMLFileReadExternalReference();
+	TestXMLFileRepeatedExternalTags();
 
 	TestStatistics();
 }

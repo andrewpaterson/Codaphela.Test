@@ -8,7 +8,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestXMLParderRead(void)
+void TestXMLParserRead(void)
 {
 	TRISTATE		tResult;
 	CMarkup			cMarkup;
@@ -316,7 +316,7 @@ void TestXMLParser(void)
 {
 	BeginTests();
 
-	TestXMLParderRead();
+	TestXMLParserRead();
 	TestXMLParserTextToString();
 	TestXMLParserComments();
 	TestXMLParserNamedReferences();
