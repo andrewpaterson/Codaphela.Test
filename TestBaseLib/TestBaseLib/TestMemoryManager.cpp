@@ -527,7 +527,7 @@ void TestMemoryManagerEmptyCache(void)
 	}
 
 	uiTotalSize = cMemory.GetTotalSize();
-	AssertInt(64 KB, uiTotalSize);
+	AssertInt((uint32)(64 KB), uiTotalSize);
 	uiAllocations = cMemory.GetNumAllocations(false);
 	AssertInt(582, uiAllocations);
 	AssertInt(582, apvAllocations.NumElements());
@@ -537,7 +537,7 @@ void TestMemoryManagerEmptyCache(void)
 	AssertInt(65484, uiUsedSize);
 	uiUnusedSize = cMemory.GetUnusedAllocationSize();
 	AssertInt(0, uiUnusedSize);
-	AssertInt(64 KB, uiRemainingSize + uiUsedSize + uiUnusedSize);
+	AssertInt((uint32)(64 KB), uiRemainingSize + uiUsedSize + uiUnusedSize);
 
 	uiRemovals = 0;
 	cRandom.Init(3456897);
@@ -558,7 +558,7 @@ void TestMemoryManagerEmptyCache(void)
 	}
 	
 	uiTotalSize = cMemory.GetTotalSize();
-	AssertInt(64 KB, uiTotalSize);
+	AssertInt((uint32)(64 KB), uiTotalSize);
 	uiAllocations = cMemory.GetNumAllocations(false);
 	AssertInt(382, uiAllocations);
 	uiRemainingSize = cMemory.GetRemaingTailSize();
@@ -567,7 +567,7 @@ void TestMemoryManagerEmptyCache(void)
 	AssertInt(42753, uiUsedSize);
 	uiUnusedSize = cMemory.GetUnusedAllocationSize();
 	AssertInt(22731, uiUnusedSize);
-	AssertInt(64 KB, uiRemainingSize + uiUsedSize + uiUnusedSize);
+	AssertInt((uint32)(64 KB), uiRemainingSize + uiUsedSize + uiUnusedSize);
 
 	apvAllocations.Kill();
 

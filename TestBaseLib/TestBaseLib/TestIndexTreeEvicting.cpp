@@ -163,16 +163,16 @@ void TestIndexTreeEvictingEvictRandom(EIndexWriteThrough eWriteThrough, EIndexKe
 
 	cAccess.Flush();
 	sSize = cIndexTree.GetRoot()->CalculateNodeSize();
-	AssertInt(2062LL, sSize);
+	AssertSize(2062LL, sSize);
 	sSize = cIndexTree.GetSystemMemorySize();
-	AssertInt(3424LL, sSize);
+	AssertSize(3424LL, sSize);
 
 	cAccess.DeleteLong(1LL);
 	cAccess.Flush();
 	sSize = cIndexTree.GetRoot()->CalculateNodeSize();
-	AssertInt(2062LL, sSize);
+	AssertSize(2062LL, sSize);
 	sSize = cIndexTree.GetSystemMemorySize();
-	AssertInt(3100LL, sSize);
+	AssertSize(3100LL, sSize);
 
 
 	cController.End();

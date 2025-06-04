@@ -600,25 +600,25 @@ void TestCharsRemoveCharacter(void)
 void TestCharsFindOutOfBounds(void)
 {
 	CChars	sz1;
-	int		iPos;
+	size	iPos;
 
 	sz1.Init("ABCDE");
 	iPos = sz1.Find('C');
-	AssertInt(2, iPos);
+	AssertSize(2, iPos);
 
 	iPos = sz1.Find(3, 'C');
-	AssertInt(ARRAY_ELEMENT_NOT_FOUND, iPos);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, iPos);
 
 	iPos = sz1.Find(5, 'C');
-	AssertInt(ARRAY_ELEMENT_NOT_FOUND, iPos);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, iPos);
 
 	iPos = sz1.Find(6, 'C');
-	AssertInt(ARRAY_ELEMENT_NOT_FOUND, iPos);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, iPos);
 	sz1.Kill();
 
 	sz1.Init();
 	iPos = sz1.Find('C');
-	AssertInt(ARRAY_ELEMENT_NOT_FOUND, iPos);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, iPos);
 	sz1.Kill();
 }
 
@@ -630,25 +630,25 @@ void TestCharsFindOutOfBounds(void)
 void TestCharsFindFromEndOutOfBounds(void)
 {
 	CChars	sz1;
-	int		iPos;
+	size	iPos;
 
 	sz1.Init("ABCDE");
 	iPos = sz1.FindFromEnd('C');
-	AssertInt(2, iPos);
+	AssertSize(2, iPos);
 
 	iPos = sz1.FindFromEnd(1, 'C');
-	AssertInt(ARRAY_ELEMENT_NOT_FOUND, iPos);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, iPos);
 
 	iPos = sz1.FindFromEnd(0, 'C');
-	AssertInt(ARRAY_ELEMENT_NOT_FOUND, iPos);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, iPos);
 
 	iPos = sz1.FindFromEnd(6, 'C');
-	AssertInt(2, iPos);
+	AssertSize(2, iPos);
 	sz1.Kill();
 
 	sz1.Init();
 	iPos = sz1.FindFromEnd('C');
-	AssertInt(ARRAY_ELEMENT_NOT_FOUND, iPos);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, iPos);
 	sz1.Kill();
 }
 

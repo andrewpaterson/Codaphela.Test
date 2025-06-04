@@ -40,8 +40,8 @@ void TestDataTypesIOInt2(void)
 	cFile.Kill();
 	cMemoryFile.Kill();
 
-	AssertInt(0x10203040, si2Out.x);
-	AssertInt(0x80a0b0c0, si2Out.y);
+	AssertInt((int)0x10203040, si2Out.x);
+	AssertInt((int)0x80a0b0c0, si2Out.y);
 
 	cDataIO.Kill();
 }

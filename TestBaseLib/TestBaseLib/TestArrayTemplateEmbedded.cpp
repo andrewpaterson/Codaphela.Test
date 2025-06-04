@@ -322,7 +322,7 @@ void TestArrayTemplateEmbeddedChangeChunkSize(void)
 
 	for (i = 0; i < 28; i++)
 	{
-		AssertInt(i + 2, *cArray.Get(i)); 
+		AssertInt((int)i + 2, *cArray.Get(i)); 
 	}
 
 	for (i = 0; i < 26; i++)

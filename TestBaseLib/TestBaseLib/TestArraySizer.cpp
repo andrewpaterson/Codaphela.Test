@@ -16,11 +16,11 @@ void TestArraySizer(void)
 	BeginTests();
 
 	CMapIntInt	miiExpected;
-	int			iElements;
-	int			iChunkSize;
-	int*		piExpectedChunkSize;
-	int			iCount;
-	int			iOldChunkSize;
+	size		iElements;
+	size		iChunkSize;
+	size*		piExpectedChunkSize;
+	size		iCount;
+	size		iOldChunkSize;
 
 	miiExpected.Init(true);
 	miiExpected.Put(0, 1);
@@ -82,7 +82,7 @@ void TestArraySizer(void)
 			iChunkSize = CalculateChunkSize(iElements);
 			AssertInt(0, iElements % iChunkSize);
 
-			piExpectedChunkSize = miiExpected.Get(iElements);
+			piExpectedChunkSize = (size*)miiExpected.Get(iElements);
 			if (piExpectedChunkSize)
 			{
 				AssertInt(*piExpectedChunkSize, iChunkSize);
@@ -91,7 +91,7 @@ void TestArraySizer(void)
 			iOldChunkSize = iChunkSize;
 		}
 	}
-	AssertInt(miiExpected.NumElements(), iCount);
+	AssertSize(miiExpected.NumElements(), iCount);
 	miiExpected.Kill();
 
 	TestStatistics();

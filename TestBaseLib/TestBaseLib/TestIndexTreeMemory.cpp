@@ -1083,12 +1083,12 @@ void TestIndexTreeMemoryRemoveOnRoot(void)
 		pcRoot = cIndex.GetRoot();
 		AssertPointer(pcOldRoot, pcRoot);
 
-		AssertInt(0, pcRoot->GetFirstIndex());
-		AssertInt(255, pcRoot->GetLastIndex());
-		AssertInt(256, pcRoot->NumIndexes());
-		AssertInt(i + 1, pcRoot->NumValidIndexes());
-		AssertInt(i + 1, cIndex.NumElements());
-		AssertInt(i + 2, cIndex.NumAllocatedNodes());
+		AssertSize(0, pcRoot->GetFirstIndex());
+		AssertSize(255, pcRoot->GetLastIndex());
+		AssertSize(256, pcRoot->NumIndexes());
+		AssertSize(i + 1, pcRoot->NumValidIndexes());
+		AssertSize(i + 1, cIndex.NumElements());
+		AssertSize(i + 2, cIndex.NumAllocatedNodes());
 	}
 	AssertInt(256, cIndex.NumElements());
 
@@ -1104,12 +1104,12 @@ void TestIndexTreeMemoryRemoveOnRoot(void)
 		pcRoot = cIndex.GetRoot();
 		AssertPointer(pcOldRoot, pcRoot);
 
-		AssertInt(0, pcRoot->GetFirstIndex());
-		AssertInt(255, pcRoot->GetLastIndex());
-		AssertInt(256, pcRoot->NumIndexes());
-		AssertInt(255 - i, pcRoot->NumValidIndexes());
-		AssertInt(255 - i, cIndex.NumElements());
-		AssertInt(256 - i, cIndex.NumAllocatedNodes());
+		AssertSize(0, pcRoot->GetFirstIndex());
+		AssertSize(255, pcRoot->GetLastIndex());
+		AssertSize(256, pcRoot->NumIndexes());
+		AssertSize(255 - i, pcRoot->NumValidIndexes());
+		AssertSize(255 - i, cIndex.NumElements());
+		AssertSize(256 - i, cIndex.NumAllocatedNodes());
 
 		avp.Init();
 		cIndex.FindAll(&avp);

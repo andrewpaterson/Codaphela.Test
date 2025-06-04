@@ -23,8 +23,8 @@ void TestArrayDenseTemplateInsertion(void)
 	STestArrayDenseTemplateItem*	psItem2;
 	STestArrayDenseTemplateItem*	psItem3;
 	STestArrayDenseTemplateItem*	psItem;
-	size							i;
-	size							iEnd;
+	int32							i;
+	int32							iEnd;
 
 	cArray.Init();
 
@@ -45,19 +45,19 @@ void TestArrayDenseTemplateInsertion(void)
 	AssertInt(4, cArray.NumUsedElements());
 	AssertInt(3, cArray.NumUsedNodes());
 
-	for (i = 0; i < cArray.NumUsedElements(); i++)
+	for (i = 0; i < (int32)cArray.NumUsedElements(); i++)
 	{
 		psItem = cArray.Get(i);
 		AssertInt(i, psItem->i1);
 	}
 
 	iEnd = cArray.NumUsedElements() + 100;
-	for (i = cArray.NumUsedElements(); i < iEnd; i++)
+	for (i = (int32)cArray.NumUsedElements(); i < iEnd; i++)
 	{
 		psItem = cArray.Add();
 		psItem->i1 = i;
 	}
-	for (i = 0; i < cArray.NumUsedElements(); i++)
+	for (i = 0; i < (int32)cArray.NumUsedElements(); i++)
 	{
 		psItem = cArray.Get(i);
 		AssertInt(i, psItem->i1);
@@ -77,15 +77,15 @@ void TestArrayDenseTemplateInsertion(void)
 	AssertInt(0, psItem->i1);
 
 	iEnd = cArray.NumUsedElements()+100;
-	for (i = cArray.NumUsedElements(); i < iEnd; i++)
+	for (i = (int32)cArray.NumUsedElements(); i < iEnd; i++)
 	{
 		psItem = cArray.InsertAt(0);
 		psItem->i1 = -((int32)i);
 	}
-	for (i = 0; i < cArray.NumUsedElements(); i++)
+	for (i = 0; i < (int32)cArray.NumUsedElements(); i++)
 	{
 		psItem = cArray.Get(i);
-		AssertInt(i-(cArray.NumUsedElements()-1), psItem->i1);
+		AssertInt(i-((int)cArray.NumUsedElements()-1), psItem->i1);
 	}
 
 	cArray.Kill();

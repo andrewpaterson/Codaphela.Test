@@ -56,18 +56,18 @@ void TestArrayBitAdd(void)
 	AssertFalse(cArrayBit.Get(14));
 	AssertTrue(cArrayBit.Get(15));
 
-	AssertIntHex(0xcbb78e55, ((int*)cArrayBit.GetData())[0]);
-	AssertIntHex(0x011861ff, ((int*)cArrayBit.GetData())[1]);
-	AssertIntHex(0x82d97e18, ((int*)cArrayBit.GetData())[2]);
+	AssertIntHex((uint32)0xcbb78e55, ((uint32*)cArrayBit.GetData())[0]);
+	AssertIntHex((uint32)0x011861ff, ((uint32*)cArrayBit.GetData())[1]);
+	AssertIntHex((uint32)0x82d97e18, ((uint32*)cArrayBit.GetData())[2]);
 
 	cArrayBit.Add(true);
 
 	AssertInt(97, cArrayBit.NumElements());
 	AssertTrue(cArrayBit.Get(96));
 
-	AssertIntHex(0xcbb78e55, ((int*)cArrayBit.GetData())[0]);
-	AssertIntHex(0x011861ff, ((int*)cArrayBit.GetData())[1]);
-	AssertIntHex(0x82d97e18, ((int*)cArrayBit.GetData())[2]);
+	AssertIntHex((uint32)0xcbb78e55, ((uint32*)cArrayBit.GetData())[0]);
+	AssertIntHex((uint32)0x011861ff, ((uint32*)cArrayBit.GetData())[1]);
+	AssertIntHex((uint32)0x82d97e18, ((uint32*)cArrayBit.GetData())[2]);
 
 	cArrayBit.Add(false);
 	cArrayBit.Add(true);
@@ -160,9 +160,9 @@ void TestArrayBitReadWrite(void)
 	AssertInt(105, cArrayBitIn.NumElements());
 	AssertTrue(cArrayBitIn.Get(0));
 	AssertFalse(cArrayBitIn.Get(1));
-	AssertIntHex(0xcbb78e55, ((int*)cArrayBitIn.GetData())[0]);
-	AssertIntHex(0x011861ff, ((int*)cArrayBitIn.GetData())[1]);
-	AssertIntHex(0x82d97e18, ((int*)cArrayBitIn.GetData())[2]);
+	AssertIntHex((uint32)0xcbb78e55, ((uint32*)cArrayBitIn.GetData())[0]);
+	AssertIntHex((uint32)0x011861ff, ((uint32*)cArrayBitIn.GetData())[1]);
+	AssertIntHex((uint32)0x82d97e18, ((uint32*)cArrayBitIn.GetData())[2]);
 	AssertTrue(cArrayBitIn.Get(96));
 	AssertFalse(cArrayBitIn.Get(97));
 	AssertTrue(cArrayBitIn.Get(98));

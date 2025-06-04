@@ -48,21 +48,21 @@ void TestArrayInt2DRemoval(void)
 		cArray.RemoveColumn(1);
 	}
 
-	AssertInt(cArray.mcArray.GetValue(0), 1);
-	AssertInt(cArray.mcArray.GetValue(1), 11);
-	AssertInt(cArray.mcArray.GetValue(2), 21);
-	AssertInt(cArray.mcArray.GetValue(3), 31);
-	AssertInt(cArray.mcArray.GetValue(4), 41);
-	AssertInt(cArray.mcArray.GetValue(5), 51);
-	AssertInt(cArray.mcArray.GetValue(6), 61);
-	AssertInt(cArray.mcArray.GetValue(7), 71);
-	AssertInt(cArray.mcArray.GetValue(8), 81);
-	AssertInt(cArray.mcArray.GetValue(9), 91);
+	AssertInt(cArray.mcArray.GetValue(0), (uint)1);
+	AssertInt(cArray.mcArray.GetValue(1), (uint)11);
+	AssertInt(cArray.mcArray.GetValue(2), (uint)21);
+	AssertInt(cArray.mcArray.GetValue(3), (uint)31);
+	AssertInt(cArray.mcArray.GetValue(4), (uint)41);
+	AssertInt(cArray.mcArray.GetValue(5), (uint)51);
+	AssertInt(cArray.mcArray.GetValue(6), (uint)61);
+	AssertInt(cArray.mcArray.GetValue(7), (uint)71);
+	AssertInt(cArray.mcArray.GetValue(8), (uint)81);
+	AssertInt(cArray.mcArray.GetValue(9), (uint)91);
 
 	cArray.RemoveColumn(0);
-	AssertInt(cArray.mcArray.NumElements(), 0);
-	AssertInt(cArray.miWidth, 0);
-	AssertInt(cArray.miHeight, 10);
+	AssertSize(cArray.mcArray.NumElements(), 0);
+	AssertSize(cArray.miWidth, 0);
+	AssertSize(cArray.miHeight, 10);
 
 	cArray.Kill();
 }

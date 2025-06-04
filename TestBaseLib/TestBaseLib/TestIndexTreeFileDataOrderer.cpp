@@ -272,7 +272,7 @@ void TestIndexTreeFileDataOrdererModification(EIndexWriteThrough eWriteThrough)
 	{
 		iKey = i * 0b1010101010101010101010101010;
 		c = cAccess.GetIntChar(iKey);
-		AssertInt('A' + i, c)
+		AssertSize('A' + i, c)
 	}
 	AssertIndexTreeFileDataOrdererString(&cOrderer, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 

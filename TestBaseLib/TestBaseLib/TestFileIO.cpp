@@ -108,7 +108,7 @@ void TestFileIOHelpers(void)
 	TestFileIOMiddle(&cFile);
 	
 	AssertTrue(cFile.ReadInt32(&i));
-	AssertInt(0xf48e33a9, i);
+	AssertInt((int32)0xf48e33a9, i);
 	AssertTrue(cFile.ReadInt64(&l));
 	AssertLong(0xcbb671c1babc0022LL, l);
 	AssertTrue(cFile.ReadFloat(&f));
@@ -301,7 +301,7 @@ void TestFileIOLinkList(void)
 	pcTest1->Init(3);
 	pcTest2 = cLinkList.Add();
 	pcTest2->Init(887);
-	AssertInt(cLinkList.NumElements(), 2);
+	AssertSize(cLinkList.NumElements(), 2);
 	AssertTrue(cLinkList.Write(&cFile));
 
 	cBlock.Init();
@@ -314,7 +314,7 @@ void TestFileIOLinkList(void)
 	strcpy(sz, "Wheeling Willow");
 	pv = cBlock.InsertAfterTail(strlen(sz)+1);
 	strcpy((char*)pv, sz);
-	AssertInt(cBlock.NumElements(), 3);
+	AssertSize(cBlock.NumElements(), 3);
 	AssertTrue(cBlock.Write(&cFile));
 
 	cBlock.Kill();
@@ -322,7 +322,7 @@ void TestFileIOLinkList(void)
 	TestFileIOMiddle(&cFile);
 
 	AssertTrue(cLinkListIn.Read(&cFile));
-	AssertInt(cLinkListIn.NumElements(), 2);
+	AssertSize(cLinkListIn.NumElements(), 2);
 	pcTestIn = cLinkListIn.GetHead();
 	AssertNotNull(pcTestIn);
 	AssertTrue(pcTestIn->IsOkay(3));
@@ -332,7 +332,7 @@ void TestFileIOLinkList(void)
 	AssertNull(pcTestIn);
 
 	AssertTrue(cBlockIn.Read(&cFile));
-	AssertInt(cBlockIn.NumElements(), 3);
+	AssertSize(cBlockIn.NumElements(), 3);
 	pv = cBlockIn.GetHead();
 	AssertString("Lurching Larch", (char*)pv);
 	pv = cBlockIn.GetNext(pv);
@@ -371,14 +371,14 @@ void TestFileIOLinkedListBlockAligned(void)
 	pcAli2 = (CFileIOAlignedTest*)cAligned.Add(sizeof(CFileIOAlignedTest), 17);
 	AssertTrue(pcAli2->IsAligned(17));
 	pcAli2->Init(-7);
-	AssertInt(cAligned.NumElements(), 2);
+	AssertSize(cAligned.NumElements(), 2);
 	AssertTrue(cAligned.Write(&cFile));
 
 	cAligned.Kill();
 	TestFileIOMiddle(&cFile);
 
 	AssertTrue(cAlignedIn.Read(&cFile));
-	AssertInt(cAlignedIn.NumElements(), 2);
+	AssertSize(cAlignedIn.NumElements(), 2);
 	pcAliIn = (CFileIOAlignedTest*)cAlignedIn.GetHead();
 	AssertNotNull(pcAliIn);
 	AssertTrue(pcAliIn->IsAligned(13));
