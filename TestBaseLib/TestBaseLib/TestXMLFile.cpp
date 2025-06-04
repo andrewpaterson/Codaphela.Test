@@ -12,11 +12,11 @@ void TestXMLFileRead(void)
 	CChars		szDoc;
 	size		iLine;
 	char		szExpected[] = "<InputDevices>\n\
-  This is text &gt; and doom stuff\n\
+  This is text &lt; and doom stuff\n\
   <RootInSecond>\n\
     Hello\n\
   </RootInSecond>\n\
-  Sweet &lt; other stuff\n\
+  Sweet &gt; other stuff\n\
   <ThirdsRoot>\n\
     World\n\
   </ThirdsRoot>\n\
@@ -68,11 +68,11 @@ void TestXMLFileReadExternalReference(void)
 	CChars		szDoc;
 	size		iLine;
 	char		szExpected[] = "<InputDevices>\n\
-  This is text &lt; and doom stuff\n\
+  This is text &gt; and doom stuff\n\
   <RootInSecond>\n\
     Hello\n\
   </RootInSecond>\n\
-  Sweet &gt; other stuff\n\
+  Sweet &lt; other stuff\n\
   <ThirdsRoot>\n\
     World\n\
   </ThirdsRoot>\n\
