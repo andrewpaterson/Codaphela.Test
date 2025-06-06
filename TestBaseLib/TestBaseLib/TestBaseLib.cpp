@@ -101,6 +101,7 @@ void TestFloatHelper(void);
 void TestIntegerHelper(void);
 void TestFastFunctions(void);
 void TestPropertiesFile(void);
+void TestJSONParser(void);
 void TestXMLParser(void);
 void TestXMLFile(void);
 void TestLogFile(void);
@@ -249,6 +250,7 @@ int __cdecl main(void)
 	TestIntegerHelper();
 	TestFastFunctions();
 	TestPropertiesFile();
+	//TestJSONParser();
 	TestXMLParser();
 	TestXMLFile();
 	TestNumber();
