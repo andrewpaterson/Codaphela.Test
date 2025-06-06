@@ -23,10 +23,10 @@ void TestSingleChannelAccessor(void)
 	ObjectsInit();
 
 	CChannels					cChannels;
-	uint8				cData[9] = "ti@YA,\n#";
+	uint8						cData[9] = "ti@YA,\n#";
 	CSingleChannelAccessor		cSingle;
 	char						c;
-	uint32					s;
+	uint16						s;
 
 	cChannels.Init();
 	cChannels.BeginChange();
@@ -54,7 +54,7 @@ void TestSingleChannelAccessor(void)
 	cSingle.GetNative(12, &c); AssertChar('@', c);
 	cSingle.GetNative(11, &c); AssertChar('Y', c);
 
-	cSingle.GetNative(10, &s); AssertShortHex(0x2c41, s);
+	cSingle.GetNative(10, &s); AssertShortHex((uint16)0x2c41, s);
 
 	AssertFloat(0.0f, cSingle.GetConvertToFloat(9), 1);
 	AssertFloat(1.0f, cSingle.GetConvertToFloat(8), 1);

@@ -152,8 +152,8 @@ void AssertCornerEdges(CMeshCorner* pcCorner, size iNumEdges, ...)
 //////////////////////////////////////////////////////////////////////////
 void AssertEdgeFaces(CMeshEdge* pcEdge, size iFace1, size iFace2)
 {
-	AssertInt(iFace1, pcEdge->aiFace[0]);
-	AssertInt(iFace2, pcEdge->aiFace[1]);
+	AssertSize(iFace1, pcEdge->aiFace[0]);
+	AssertSize(iFace2, pcEdge->aiFace[1]);
 }
 
 
@@ -163,8 +163,8 @@ void AssertEdgeFaces(CMeshEdge* pcEdge, size iFace1, size iFace2)
 //////////////////////////////////////////////////////////////////////////
 void AssertEdgeCorners(CMeshEdge* pcEdge, size iCorner1, size iCorner2)
 {
-	AssertInt(iCorner1, pcEdge->aiCorner[0]);
-	AssertInt(iCorner2, pcEdge->aiCorner[1]);
+	AssertSize(iCorner1, pcEdge->aiCorner[0]);
+	AssertSize(iCorner2, pcEdge->aiCorner[1]);
 }
 
 

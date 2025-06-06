@@ -169,7 +169,7 @@ void TestImageColourMultiAccessor(void)
 	AssertFloat(0.7f, *((float*)&((sDest).c)[0x0]), 3);
 	AssertFloat(-0.6f, *((float*)&((sDest).c)[0x4]), 3);
 	AssertFloat(-0.5f, *((float*)&((sDest).c)[0x8]), 3);
-	AssertShortHex(0x553f, *((unsigned short*)&((sDest).c)[0xc]));
+	AssertShortHex((uint16)0x553f, *((uint16*)&((sDest).c)[0xc]));
 
 	pcAccessor->Set(0, 1, &sDest);
 	pcAccessor->Kill();
@@ -178,7 +178,7 @@ void TestImageColourMultiAccessor(void)
 	AssertFloat(-0.6f, *(float*)&(pcChannels->GetData()[22]), 3);
 	AssertFloat( 0.7f, *(float*)&(pcChannels->GetData()[38]), 3);
 	AssertFloat(-0.5f, *(float*)&(pcChannels->GetData()[34]), 3);
-	AssertShortHex(0x553f, *(unsigned short*)&(pcChannels->GetData()[27]));
+	AssertShortHex((uint16)0x553f, *(uint16*)&(pcChannels->GetData()[27]));
 
 	cImage.Kill();
 }

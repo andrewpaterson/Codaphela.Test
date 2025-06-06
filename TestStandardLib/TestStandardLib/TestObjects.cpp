@@ -582,7 +582,7 @@ void TestObjectDehollowfication(void)
 	CTestDoubleNamedString*			pcInternal;
 	Ptr<CTestDoubleNamedString>		pDouble;
 	Ptr<CTestNamedString>			pSingle;
-	int								iClassSize;
+	size							iClassSize;
 	OIndex							oiOld;
 	OIndex							oiNew;
 	CCodabase*						pcDatabase;
@@ -638,7 +638,7 @@ void TestObjectDehollowfication(void)
 	iClassSize = pDouble->mpSplit1->ClassSize();  //The method call - ClassSize() - is irrelevant as long as the -> operator on mpSplit1 is invoked.
 	AssertTrue(pcInternal->mpSplit1.IsNotNull());
 	AssertFalse(pcInternal->mpSplit1.IsHollow());
-	AssertInt(sizeof(CTestNamedString), iClassSize);
+	AssertSize(sizeof(CTestNamedString), iClassSize);
 	AssertString("CTestNamedString", pcInternal->mpSplit1.ClassName());
 	oiNew = pDouble->mpSplit1.GetIndex();
 	AssertLong(oiOld, oiNew);

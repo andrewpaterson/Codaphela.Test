@@ -19,8 +19,8 @@ void TestObjectSize(void)
 {
 	ObjectsInit();
 
-	AssertInt(16, sizeof(CUnknown));
-	AssertInt(52, sizeof(CEmbeddedObject));
+	AssertInt(20, sizeof(CUnknown));
+	AssertInt(56, sizeof(CEmbeddedObject));
 	AssertInt(112, sizeof(CBaseObject));  //Check your struct alignement.  This is too large.
 	AssertInt(168, sizeof(CObject));
 	AssertInt(184, sizeof(CRoot));

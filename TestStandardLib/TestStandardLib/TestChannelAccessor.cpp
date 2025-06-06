@@ -175,7 +175,7 @@ void TestChannelsAccessorTypeConvert(void)
 	afData[1] = 0.34f;
 	pcAccessor->Set(1, afData);
 	AssertShortHex((uint16)0xffff, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 8 + 0));
-	AssertShortHex(0x5709, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 8 + 6));
+	AssertShortHex((uint16)0x5709, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 8 + 6));
 	pfData = (float*)pcAccessor->Get(1);
 	AssertFloat(1.0f, pfData[0], 2);
 	AssertFloat(0.34f, pfData[1], 2);
@@ -187,7 +187,7 @@ void TestChannelsAccessorTypeConvert(void)
 	AssertString("CChannelsAccessorTypeConvert", pcAccessor->ClassName());
 	afData[0] = 0.8f;
 	pcAccessor->Set(1, afData);
-	AssertIntHex(0xcccccd00, *(int*)RemapSinglePointer(pcChannels->GetData(), 8 + 2));
+	AssertIntHex((uint32)0xcccccd00, *(uint32*)RemapSinglePointer(pcChannels->GetData(), 8 + 2));
 	pcAccessor->Kill();
 
 	cCreator.Init(pcChannels);

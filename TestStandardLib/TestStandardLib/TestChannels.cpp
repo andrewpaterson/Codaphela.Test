@@ -354,8 +354,8 @@ void TestChannelsCopier16bitTo8bit(void)
 	pui16 = (uint16*)pcSource->GetData();
 	AssertShortHex((int16)0xfeff, pui16[0]);
 	AssertShortHex((int16)0xcab3, pui16[1]);
-	AssertShortHex(0x0000, pui16[2]);
-	AssertShortHex(0x2100, pui16[3]);
+	AssertShortHex((uint16)0x0000, pui16[2]);
+	AssertShortHex((uint16)0x2100, pui16[3]);
 
 	pcDest = ONMalloc<CChannels>("Dest");
 
