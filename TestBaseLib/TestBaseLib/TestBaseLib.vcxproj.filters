@@ -660,6 +660,9 @@
     <ClCompile Include="ParserCustomIdentifier.cpp">
       <Filter>Source\Calculator</Filter>
     </ClCompile>
+    <ClCompile Include="TestJSONParser.cpp">
+      <Filter>Source\Text</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

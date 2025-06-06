@@ -26,9 +26,11 @@ void TestXMLParserRead(void)
 	STagIterator	sIter;
 
 	cMarkup.Init();
-	cXMLParser.Init(&cMarkup, NULL);
-	tResult = cXMLParser.Parse(szXML, "");
+	cXMLParser.Init(szXML, "", &cMarkup, NULL);
+	tResult = cXMLParser.Parse();
 	cXMLParser.Kill();
+
+	AssertTritrue(tResult);
 
 	pcTag = cMarkup.GetRootTag();
 	AssertBool(true, pcTag->Is("painting"));
@@ -91,8 +93,8 @@ void TestXMLParserComments(void)
 </Channel>\n";
 
 	cMarkup.Init();
-	cXMLParser.Init(&cMarkup, NULL);
-	tResult = cXMLParser.Parse(szXML, "");
+	cXMLParser.Init(szXML, "", &cMarkup, NULL);
+	tResult = cXMLParser.Parse();
 	cXMLParser.Kill();
 
 	szText.Init();
@@ -153,8 +155,8 @@ GEST Service CreateService error = 1073\n\
 	//I doubt it will ever be a problem.
 
 	cMarkup.Init();
-	cXMLParser.Init(&cMarkup, NULL);
-	tResult = cXMLParser.Parse(szXML, "");
+	cXMLParser.Init(szXML, "", &cMarkup, NULL);
+	tResult = cXMLParser.Parse();
 	cXMLParser.Kill();
 
 	szDoc.Init();
@@ -205,8 +207,8 @@ void TestXMLParserNamedReferences(void)
 </Root>\n";
 
 	cMarkup.Init();
-	cXMLParser.Init(&cMarkup, NULL);
-	tResult = cXMLParser.Parse(szXML, "");
+	cXMLParser.Init(szXML, "", &cMarkup, NULL);
+	tResult = cXMLParser.Parse();
 
 	pcDoc = cXMLParser.mpcDoc;
 	AssertInt(3, pcDoc->macRefs.NumElements());
@@ -261,8 +263,8 @@ void TestXMLParserErrors(void)
 	cLogger.Init(&cMemory, NULL);
 	sLogConfig = cLogger.SetSilent();
 	cMarkup.Init();
-	cXMLParser.Init(&cMarkup, &cLogger);
-	tResult = cXMLParser.Parse(szXML, "InMemory");
+	cXMLParser.Init(szXML, "InMemory", &cMarkup, &cLogger);
+	tResult = cXMLParser.Parse();
 	cMemory.Write(szZero, 1, 1);
 
 	AssertStringStartsWith("WARNING: Expected [=].", (char*)cMemory.GetBufferPointer());
@@ -294,8 +296,8 @@ void TestXMLParserLogisimFile(void)
 	cLogger.Init(&cMemory, NULL);
 	sLogConfig = cLogger.SetSilent();
 	cMarkup.Init();
-	cXMLParser.Init(&cMarkup, &cLogger);
-	tResult = cXMLParser.Parse(szXML, "InMemory");
+	cXMLParser.Init(szXML, "InMemory", &cMarkup, &cLogger);
+	tResult = cXMLParser.Parse();
 	cMemory.Write(szZero, 1, 1);
 
 	AssertTristate(TRITRUE, tResult);

@@ -244,6 +244,7 @@
     <ClCompile Include="TestIndexTreeIterator.cpp" />
     <ClCompile Include="TestIndexTreeNodeMemory.cpp" />
     <ClCompile Include="TestIndexTreeObject.cpp" />
+    <ClCompile Include="TestJSONParser.cpp" />
     <ClCompile Include="TestLinkedList.cpp" />
     <ClCompile Include="TestLinkedListBlock.cpp" />
     <ClCompile Include="TestLinkedListTemplate.cpp" />
