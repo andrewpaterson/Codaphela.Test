@@ -24,6 +24,7 @@ void TestMapInt(void);
 void TestMapLong(void);
 void TestMapPtr(void);
 void TestMapString(void);
+void TestMapStringIntAndPrimitive(void);
 void TestMap(void);
 void TestIndexBlock(void);
 void TestIndexAccess(void);
@@ -171,6 +172,7 @@ int __cdecl main(void)
 	TestLogger();
 	TestMapBlock();
 	TestMapString();
+	TestMapStringIntAndPrimitive();
 	TestMapInt();
 	TestMapLong();
 	TestMapPtr();

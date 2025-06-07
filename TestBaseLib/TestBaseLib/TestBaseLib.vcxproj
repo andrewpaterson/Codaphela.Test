@@ -260,6 +260,7 @@
     <ClCompile Include="TestIndexAccess.cpp" />
     <ClCompile Include="TestMapLong.cpp" />
     <ClCompile Include="TestMapString.cpp" />
+    <ClCompile Include="TestMapStringIntAndPrimitive.cpp" />
     <ClCompile Include="TestMemoryAllocator.cpp" />
     <ClCompile Include="TestMemoryBlock.cpp" />
     <ClCompile Include="TestMemoryCache.cpp" />
