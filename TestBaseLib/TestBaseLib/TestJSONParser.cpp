@@ -137,10 +137,12 @@ void TestJSONParserRead2(void)
 void TestJSONParser(void)
 {
 	BeginTests();
+	DataMemoryInit();
 
 	TestJSONParserRead1();
 	TestJSONParserRead2();
 
+	DataMemoryKill();
 	TestStatistics();
 }
 

@@ -204,11 +204,13 @@ void TestXMLFileRepeatedExternalTags(void)
 void TestXMLFile(void)
 {
 	BeginTests();
+	DataMemoryInit();
 
 	TestXMLFileRead();
 	TestXMLFileReadExternalReference();
 	TestXMLFileRepeatedExternalTags();
 
+	DataMemoryKill();
 	TestStatistics();
 }
 

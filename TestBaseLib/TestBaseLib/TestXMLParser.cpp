@@ -317,6 +317,7 @@ void TestXMLParserLogisimFile(void)
 void TestXMLParser(void)
 {
 	BeginTests();
+	DataMemoryInit();
 
 	TestXMLParserRead();
 	TestXMLParserTextToString();
@@ -325,6 +326,7 @@ void TestXMLParser(void)
 	TestXMLParserErrors();
 	TestXMLParserLogisimFile();
 
+	DataMemoryKill();
 	TestStatistics();
 }
 
