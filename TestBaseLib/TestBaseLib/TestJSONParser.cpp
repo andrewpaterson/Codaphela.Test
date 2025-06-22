@@ -17,6 +17,7 @@ void TestJSONParserRead1(void)
 	CMarkupTag*		pcChildTag;
 	char*			szAttribute;
 	CChars			szText;
+	STagIterator	sIter;
 	uint			uiType;
 	char			szJSON[] = "\
 {\n\
@@ -41,12 +42,13 @@ void TestJSONParserRead1(void)
   ]\n\
 }\n";
 
-	STagIterator	sIter;
 
 	cMarkup.Init();
 	cJSONParser.Init(szJSON, "", &cMarkup, &gcLogger);
 	tResult = cJSONParser.Parse();
 	cJSONParser.Kill();
+
+	cMarkup.Dump();
 
 	AssertTritrue(tResult);
 
@@ -112,7 +114,7 @@ void TestJSONParserRead2(void)
 					\"Abbrev\" : \"ISO 8879:1986\",\n\
 					\"GlossDef\" : {\n\
 						\"para\": \"A meta-markup language, used to create markup languages such as DocBook.\",\n\
-						\"GlossSeeAlso\" : [\"GML\", \"XML\"]\n\
+						\"GlossSeeAlso\": [\"GML\", \"XML\"]\n\
 					},\n\
 				\"GlossSee\" : \"markup\"\n\
 				}\n\
@@ -120,6 +122,58 @@ void TestJSONParserRead2(void)
 		}\n\
 	}\n\
 }\n";
+
+	cMarkup.Init();
+	cJSONParser.Init(szJSON, "", &cMarkup, &gcLogger);
+	tResult = cJSONParser.Parse();
+	cJSONParser.Kill();
+
+	cMarkup.Dump();
+
+	AssertTritrue(tResult);
+
+	pcTag = cMarkup.GetRootTag();
+
+	cMarkup.Kill();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestJSONParserReadAttributes(void)
+{
+	TRISTATE		tResult;
+	CMarkup			cMarkup;
+	CJSONParser		cJSONParser;
+	CMarkupTag*		pcTag;
+	char			szJSON[] = "\
+{\"widget\": {\n\
+    \"debug\": \"on\",\n\
+    \"window\": {\n\
+        \"title\": \"Sample Konfabulator Widget\",\n\
+        \"name\": \"main_window\",\n\
+        \"width\": 500,\n\
+        \"height\": 500\n\
+    },\n\
+    \"image\": { \n\
+        \"src\": \"Images/Sun.png\",\n\
+        \"name\": \"sun1\",\n\
+        \"hOffset\": 250,\n\
+        \"vOffset\": 250,\n\
+        \"alignment\": \"center\"\n\
+    },\n\
+    \"text\": {\n\
+        \"data\": \"Click Here\",\n\
+        \"size\": 36,\n\
+        \"style\": \"bold\",\n\
+        \"name\": \"text1\",\n\
+        \"hOffset\": 250,\n\
+        \"vOffset\": 100,\n\
+        \"alignment\": \"center\",\n\
+        \"onMouseUp\": \"sun1.opacity = (sun1.opacity / 100) * 90;\"\n\
+    }\n\
+}}\n";
 
 	cMarkup.Init();
 	cJSONParser.Init(szJSON, "", &cMarkup, &gcLogger);
@@ -145,6 +199,7 @@ void TestJSONParser(void)
 
 	TestJSONParserRead1();
 	TestJSONParserRead2();
+	TestJSONParserReadAttributes();
 
 	DataMemoryKill();
 	TestStatistics();
