@@ -8,10 +8,49 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestXMLParserReadSingleTag(void)
+{
+	CChars			sz;
+	TRISTATE		tResult;
+	CMarkup			cMarkup;
+	uint			uiType;
+	CXMLParser		cXMLParser;
+	CMarkupTag*		pcTag;
+	char*			szAttribute;
+	char			szXML[] = "<?xml version=\"1.0\" encoding='UTF-8'?><Imagine src=\"Sourcey\"/>";
+
+	cMarkup.Init();
+	cXMLParser.Init(szXML, "", &cMarkup, NULL);
+	tResult = cXMLParser.Parse();
+	cXMLParser.Kill();
+
+	AssertTritrue(tResult);
+
+	pcTag = cMarkup.GetRootTag();
+	AssertBool(true, pcTag->Is("Imagine"));
+	szAttribute = (char*)pcTag->GetAttribute("src", &uiType);
+	AssertInt(PT_char8Pointer, uiType);
+	AssertString("Sourcey", szAttribute);
+
+	sz.Init();
+	pcTag->Print(&sz);
+	AssertString("<Imagine src=\"Sourcey\"/>\n", sz.Text());
+	sz.Kill();
+
+
+	cMarkup.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestXMLParserRead(void)
 {
 	TRISTATE		tResult;
 	CMarkup			cMarkup;
+	uint			uiType;
 	CXMLParser		cXMLParser;
 	CMarkupTag*		pcTag;
 	CMarkupTag*		pcChildTag;
@@ -35,11 +74,14 @@ void TestXMLParserRead(void)
 	pcTag = cMarkup.GetRootTag();
 	AssertBool(true, pcTag->Is("painting"));
 	pcChildTag = pcTag->GetTag("img");
-	szAttribute = pcChildTag->GetAttribute("alt");
+	szAttribute = (char*)pcChildTag->GetAttribute("alt", &uiType);
+	AssertInt(PT_char8Pointer, uiType);
 	AssertString("Foligno Madonna, by Raphael", szAttribute);
-	szAttribute = pcChildTag->GetAttribute("src");
+	szAttribute = (char*)pcChildTag->GetAttribute("src", &uiType);
+	AssertInt(PT_char8Pointer, uiType);
 	AssertString("madonna.jpg", szAttribute);
-	szAttribute = pcChildTag->GetAttribute("foo");
+	szAttribute = (char*)pcChildTag->GetAttribute("foo", &uiType);
+	AssertInt(PT_Undefined, uiType);
 	AssertNull(szAttribute);
 
 	pcTag = pcTag->GetTag("caption");
@@ -319,6 +361,7 @@ void TestXMLParser(void)
 	BeginTests();
 	DataMemoryInit();
 
+	TestXMLParserReadSingleTag();
 	TestXMLParserRead();
 	TestXMLParserTextToString();
 	TestXMLParserComments();

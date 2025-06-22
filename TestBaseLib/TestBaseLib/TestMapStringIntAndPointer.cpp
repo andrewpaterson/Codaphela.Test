@@ -9,7 +9,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMapStringIntAndPrimitivePut(void)
+void TestMapStringIntAndPointerPut(void)
 {
 	CMapStringIntAndPointer		cMap;
 	bool						bBool;
@@ -85,7 +85,7 @@ bool TestNumberMatchesIndex(CMapStringIntAndPointer* pcMap, CArrayInt* paiKeys)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMapStringIntAndPrimitiveRemove(void)
+void TestMapStringIntAndPointerRemove(void)
 {
 	CMapStringIntAndPointer		cMap;
 	size						uiSize;
@@ -164,13 +164,93 @@ void TestMapStringIntAndPrimitiveRemove(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMapStringIntAndPrimitive(void)
+void TestMapStringIntAndPointerIterate(void)
+{
+	CMapStringIntAndPointer		cMap;
+	size						uiSize;
+	size						ui;
+	char						szKey[5];
+	CArrayInt					aiKeys;
+	CRandom						cRandom;
+	uint						uiKey;
+	uint						uiType;
+	CFreeList					cFreeNumbers;
+	CNumber*					pcNumber;
+	size						uiNumberSize;
+	bool						bPass;
+	SMapIterator				sIter;
+	char*						szIterKey;
+	bool						bValid;
+	CChars						szNumber;
+
+	aiKeys.Init();
+	for (ui = 0; ui < 32; ui++)
+	{
+		aiKeys.Add(ui);
+	}
+
+	cRandom.Init(89743636);
+	aiKeys.Shuffle(&cRandom);
+
+	cMap.Init(true, true);
+
+	uiNumberSize = NUMBER_SIZE(DEFAULT_WHOLE_NUMBERS, DEFAULT_DECIMALS);
+	cFreeNumbers.Init(uiNumberSize);
+	for (ui = 0; ui < 32; ui++)
+	{
+		uiKey = aiKeys.GetValue(ui);
+		IntToString(szKey, 5, uiKey, 10);
+		pcNumber = (CNumber*)cFreeNumbers.Add();
+		pcNumber->Init((int)uiKey);
+		cMap.Put(szKey, PT_Number, pcNumber);
+	}
+
+	uiSize = cMap.NumElements();
+	AssertSize(32, uiSize);
+
+	aiKeys.Shuffle(&cRandom);
+
+	bPass = TestNumberMatchesIndex(&cMap, &aiKeys);
+	AssertTrue(bPass);
+
+	bValid = cMap.StartIteration(&sIter, (void**)&szIterKey, NULL, (void**)&pcNumber, &uiType);
+	while (bValid)
+	{
+		AssertInt(PT_Number, uiType);
+
+		szNumber.Init();
+		pcNumber->Print(&szNumber);
+		AssertString(szIterKey, szNumber.Text());
+		szNumber.Kill();
+
+		bValid = cMap.Iterate(&sIter, (void**)&szIterKey, NULL, (void**)&pcNumber, &uiType);
+	}
+
+	aiKeys.Kill();
+	cRandom.Kill();
+
+	cMap.Kill();
+
+	cFreeNumbers.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMapStringIntAndPointer(void)
 {
 	BeginTests();
+	FastFunctionsInit();
+	NumberInit();
 
-	TestMapStringIntAndPrimitivePut();
-	TestMapStringIntAndPrimitiveRemove();
+	TestMapStringIntAndPointerPut();
+	TestMapStringIntAndPointerRemove();
+	TestMapStringIntAndPointerIterate();
 
+	NumberKill();
+	FastFunctionsKill();
 	TestStatistics();
 }
 

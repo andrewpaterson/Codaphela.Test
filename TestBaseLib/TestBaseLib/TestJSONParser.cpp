@@ -13,10 +13,11 @@ void TestJSONParserRead1(void)
 	TRISTATE		tResult;
 	CMarkup			cMarkup;
 	CJSONParser		cJSONParser;
-	CMarkupTag* pcTag;
-	CMarkupTag* pcChildTag;
-	char* szAttribute;
+	CMarkupTag*		pcTag;
+	CMarkupTag*		pcChildTag;
+	char*			szAttribute;
 	CChars			szText;
+	uint			uiType;
 	char			szJSON[] = "\
 {\n\
   \"painting\": [\n\
@@ -52,11 +53,14 @@ void TestJSONParserRead1(void)
 	pcTag = cMarkup.GetRootTag();
 	AssertBool(true, pcTag->Is("painting"));
 	pcChildTag = pcTag->GetTag("img");
-	szAttribute = pcChildTag->GetAttribute("alt");
+	szAttribute = (char*)pcChildTag->GetAttribute("alt", &uiType);
+	AssertInt(PT_char8Pointer, uiType);
 	AssertString("Foligno Madonna, by Raphael", szAttribute);
-	szAttribute = pcChildTag->GetAttribute("src");
+	szAttribute = (char*)pcChildTag->GetAttribute("src", &uiType);
+	AssertInt(PT_char8Pointer, uiType);
 	AssertString("madonna.jpg", szAttribute);
-	szAttribute = pcChildTag->GetAttribute("foo");
+	szAttribute = (char*)pcChildTag->GetAttribute("foo", &uiType);
+	AssertInt(PT_char8Pointer, uiType);
 	AssertNull(szAttribute);
 
 	pcTag = pcTag->GetTag("caption");

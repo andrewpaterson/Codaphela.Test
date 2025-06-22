@@ -663,7 +663,7 @@
     <ClCompile Include="TestJSONParser.cpp">
       <Filter>Source\Text</Filter>
     </ClCompile>
-    <ClCompile Include="TestMapStringIntAndPrimitive.cpp">
+    <ClCompile Include="TestMapStringIntAndPointer.cpp">
       <Filter>Source\Data\Map\Map\String</Filter>
     </ClCompile>
   </ItemGroup>
@@ -694,9 +694,6 @@
     </ClInclude>
     <ClInclude Include="TestMap.h">
       <Filter>Source\Data\Map\Map</Filter>
-    </ClInclude>
-    <ClInclude Include="TestXMLFile.h">
-      <Filter>Source\File\XML</Filter>
     </ClInclude>
     <ClInclude Include="TestFunctionCaller.h">
       <Filter>Source\Function</Filter>
