@@ -868,6 +868,7 @@ void TestCalculatorShift(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCalculator(void)
 {
+	FastFunctionsInit();
 	TypeConverterInit();
 	NumberInit();
 	BeginTests();
@@ -893,5 +894,6 @@ void TestCalculator(void)
 	TestStatistics();
 	NumberKill();
 	TypeConverterKill();
+	FastFunctionsKill();
 }
 

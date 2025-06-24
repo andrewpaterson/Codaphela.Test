@@ -375,7 +375,6 @@ void TestFloatPrinterScratchPad(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFloatPrinter(void)
 {
-	NumberInit();
 	BeginTests();
 
 	TestFloatPrinterScratchPad();
@@ -386,6 +385,5 @@ void TestFloatPrinter(void)
 	TestFloatPrinterSubnormal();
 
 	TestStatistics();
-	NumberKill();
 }
 
