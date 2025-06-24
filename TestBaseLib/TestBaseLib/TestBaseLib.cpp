@@ -148,7 +148,7 @@ int __cdecl main(void)
 {
 	int iResult;
 
-	_CrtSetBreakAlloc(0);
+	_CrtSetBreakAlloc(284245);
 	InitTotalStatistics();
 
 	TestPrimitiveTypes();
@@ -252,7 +252,7 @@ int __cdecl main(void)
 	TestIntegerHelper();
 	TestFastFunctions();
 	TestPropertiesFile();
-	//TestJSONParser();
+	TestJSONParser();
 	TestXMLParser();
 	TestXMLFile();
 	TestNumber();

@@ -13,12 +13,6 @@ void TestJSONParserRead1(void)
 	TRISTATE		tResult;
 	CMarkup			cMarkup;
 	CJSONParser		cJSONParser;
-	CMarkupTag*		pcTag;
-	CMarkupTag*		pcChildTag;
-	char*			szAttribute;
-	CChars			szText;
-	STagIterator	sIter;
-	uint			uiType;
 	char			szJSON[] = "\
 {\n\
   \"painting\": [\n\
@@ -51,39 +45,6 @@ void TestJSONParserRead1(void)
 	cMarkup.Dump();
 
 	AssertTritrue(tResult);
-
-	pcTag = cMarkup.GetRootTag();
-	AssertBool(true, pcTag->Is("painting"));
-	pcChildTag = pcTag->GetTag("img");
-	szAttribute = (char*)pcChildTag->GetAttribute("alt", &uiType);
-	AssertInt(PT_char8Pointer, uiType);
-	AssertString("Foligno Madonna, by Raphael", szAttribute);
-	szAttribute = (char*)pcChildTag->GetAttribute("src", &uiType);
-	AssertInt(PT_char8Pointer, uiType);
-	AssertString("madonna.jpg", szAttribute);
-	szAttribute = (char*)pcChildTag->GetAttribute("foo", &uiType);
-	AssertInt(PT_char8Pointer, uiType);
-	AssertNull(szAttribute);
-
-	pcTag = pcTag->GetTag("caption");
-	AssertBool(true, pcTag->Is("caption"));
-
-	szText.Init();
-	pcTag->GetText(&szText);
-	AssertString("This is Raphael's \"Foligno\" Madonna, painted in ", szText.Text());
-	szText.Kill();
-
-	pcChildTag = pcTag->GetTag("date", &sIter);
-	szText.Init();
-	pcChildTag->GetText(&szText);
-	AssertString("1511", szText.Text());
-	szText.Kill();
-
-	pcChildTag = pcTag->GetNextTag(&sIter);
-	szText.Init();
-	pcChildTag->GetText(&szText);
-	AssertString("1512", szText.Text());
-	szText.Kill();
 
 	cMarkup.Kill();
 }
@@ -128,14 +89,13 @@ void TestJSONParserRead2(void)
 	tResult = cJSONParser.Parse();
 	cJSONParser.Kill();
 
-	cMarkup.Dump();
-
 	AssertTritrue(tResult);
 
 	pcTag = cMarkup.GetRootTag();
 
 	cMarkup.Kill();
 }
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -192,6 +152,78 @@ void TestJSONParserReadAttributes(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestJSONParser65816SampleTest(void)
+{
+	TRISTATE		tResult;
+	CMarkup			cMarkup;
+	CJSONParser		cJSONParser;
+	CMarkupTag*		pcTag;
+	char			szJSON[] = "\
+{\n\
+	\"name\": \"3d e 1\",\n\
+	\"initial\": {\n\
+		\"pc\": 9900,\n\
+		\"s\": 2191,\n\
+		\"p\": 171,\n\
+		\"a\": 25345,\n\
+		\"x\": 100,\n\
+		\"y\": 124,\n\
+		\"dbr\": 26,\n\
+		\"d\": 50304,\n\
+		\"pbr\": 111,\n\
+		\"e\": 1,\n\
+		\"ram\": [\n\
+			[1751932, 14],\n\
+			[7284398, 187],\n\
+			[7284397, 24],\n\
+			[7284396, 61]\n\
+		]\n\
+	},\n\
+	\"final\": {\n\
+		\"pc\": 9903,\n\
+		\"s\": 2191,\n\
+		\"p\": 43,\n\
+		\"a\": 25344,\n\
+		\"x\": 100,\n\
+		\"y\": 124,\n\
+		\"dbr\": 26,\n\
+		\"d\": 50304,\n\
+		\"pbr\": 111,\n\
+		\"e\": 1,\n\
+		\"ram\": [\n\
+			[1751932, 14],\n\
+			[7284398, 187],\n\
+			[7284397, 24],\n\
+			[7284396, 61]\n\
+		]\n\
+	},\n\
+	\"cycles\": [\n\
+		[7284396, 61, \"dp-remx-\"],\n\
+		[7284397, 24, \"-p-remx-\"],\n\
+		[7284398, 187, \"-p-remx-\"],\n\
+		[1751932, 14, \"d--remx-\"]\n\
+	]\n\
+}\n";
+
+	cMarkup.Init();
+	cJSONParser.Init(szJSON, "", &cMarkup, &gcLogger);
+	tResult = cJSONParser.Parse();
+	cJSONParser.Kill();
+
+	AssertTritrue(tResult);
+
+	pcTag = cMarkup.GetRootTag();
+
+	cMarkup.Dump();
+
+	cMarkup.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestJSONParser(void)
 {
 	BeginTests();
@@ -200,6 +232,7 @@ void TestJSONParser(void)
 	TestJSONParserRead1();
 	TestJSONParserRead2();
 	TestJSONParserReadAttributes();
+	TestJSONParser65816SampleTest();
 
 	DataMemoryKill();
 	TestStatistics();

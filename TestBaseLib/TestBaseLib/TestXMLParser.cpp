@@ -28,7 +28,7 @@ void TestXMLParserReadSingleTag(void)
 
 	pcTag = cMarkup.GetRootTag();
 	AssertBool(true, pcTag->Is("Imagine"));
-	szAttribute = (char*)pcTag->GetAttribute("src", &uiType);
+	szAttribute = (char*)pcTag->GetNamedAttribute("src", &uiType);
 	AssertInt(PT_char8Pointer, uiType);
 	AssertString("Sourcey", szAttribute);
 
@@ -74,13 +74,13 @@ void TestXMLParserRead(void)
 	pcTag = cMarkup.GetRootTag();
 	AssertBool(true, pcTag->Is("painting"));
 	pcChildTag = pcTag->GetTag("img");
-	szAttribute = (char*)pcChildTag->GetAttribute("alt", &uiType);
+	szAttribute = (char*)pcChildTag->GetNamedAttribute("alt", &uiType);
 	AssertInt(PT_char8Pointer, uiType);
 	AssertString("Foligno Madonna, by Raphael", szAttribute);
-	szAttribute = (char*)pcChildTag->GetAttribute("src", &uiType);
+	szAttribute = (char*)pcChildTag->GetNamedAttribute("src", &uiType);
 	AssertInt(PT_char8Pointer, uiType);
 	AssertString("madonna.jpg", szAttribute);
-	szAttribute = (char*)pcChildTag->GetAttribute("foo", &uiType);
+	szAttribute = (char*)pcChildTag->GetNamedAttribute("foo", &uiType);
 	AssertInt(PT_Undefined, uiType);
 	AssertNull(szAttribute);
 
