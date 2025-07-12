@@ -14,9 +14,14 @@ void TestXMLParserReadSingleTag(void)
 	TRISTATE		tResult;
 	CMarkup			cMarkup;
 	uint			uiType;
+	char*			szName;
 	CXMLParser		cXMLParser;
 	CMarkupTag*		pcTag;
+	CMarkupTag*		pcChildTag;
 	char*			szAttribute;
+	bool			bExists;
+	size			uiNumAttributes;
+	STagIterator	sIter;
 	char			szXML[] = "<?xml version=\"1.0\" encoding='UTF-8'?><Imagine src=\"Sourcey\"/>";
 
 	cMarkup.Init();
@@ -27,8 +32,18 @@ void TestXMLParserReadSingleTag(void)
 	AssertTritrue(tResult);
 
 	pcTag = cMarkup.GetRootTag();
+	pcChildTag = pcTag->GetTag(&sIter);
+	AssertNull(pcChildTag);
+
 	AssertBool(true, pcTag->Is("Imagine"));
-	szAttribute = (char*)pcTag->GetNamedAttribute("src", &uiType);
+	uiNumAttributes = pcTag->GetNumAttributes();
+	AssertInt(1, uiNumAttributes);
+	szAttribute = (char*)pcTag->GetAttribute(0, &uiType, &szName);
+	AssertInt(PT_char8Pointer, uiType);
+	AssertString("Sourcey", szAttribute);
+
+	bExists = pcTag->GetAttribute("src", (void**)&szAttribute, &uiType);
+	AssertTrue(bExists);
 	AssertInt(PT_char8Pointer, uiType);
 	AssertString("Sourcey", szAttribute);
 
@@ -36,7 +51,6 @@ void TestXMLParserReadSingleTag(void)
 	pcTag->Print(&sz);
 	AssertString("<Imagine src=\"Sourcey\"/>\n", sz.Text());
 	sz.Kill();
-
 
 	cMarkup.Kill();
 }
@@ -54,6 +68,7 @@ void TestXMLParserRead(void)
 	CXMLParser		cXMLParser;
 	CMarkupTag*		pcTag;
 	CMarkupTag*		pcChildTag;
+	bool			bExists;
 	char*			szAttribute;
 	CChars			szText;
 	char			szXML[] = "\
@@ -74,15 +89,16 @@ void TestXMLParserRead(void)
 	pcTag = cMarkup.GetRootTag();
 	AssertBool(true, pcTag->Is("painting"));
 	pcChildTag = pcTag->GetTag("img");
-	szAttribute = (char*)pcChildTag->GetNamedAttribute("alt", &uiType);
+	bExists = pcChildTag->GetAttribute("alt", (void**)&szAttribute, &uiType);
+	AssertTrue(bExists);
 	AssertInt(PT_char8Pointer, uiType);
 	AssertString("Foligno Madonna, by Raphael", szAttribute);
-	szAttribute = (char*)pcChildTag->GetNamedAttribute("src", &uiType);
+	bExists = pcChildTag->GetAttribute("src", (void**)&szAttribute, &uiType);
+	AssertTrue(bExists);
 	AssertInt(PT_char8Pointer, uiType);
 	AssertString("madonna.jpg", szAttribute);
-	szAttribute = (char*)pcChildTag->GetNamedAttribute("foo", &uiType);
-	AssertInt(PT_Undefined, uiType);
-	AssertNull(szAttribute);
+	bExists = pcChildTag->GetAttribute("foo", (void**)&szAttribute, &uiType);
+	AssertFalse(bExists);
 
 	pcTag = pcTag->GetTag("caption");
 	AssertBool(true, pcTag->Is("caption"));
