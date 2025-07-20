@@ -85,7 +85,6 @@ public:
 	void Kill(void)
 	{
 		CListenerCall::Kill();
-		CUnknown::Kill();
 	}
 
 	void MakeEventStyle1Happen(void)
