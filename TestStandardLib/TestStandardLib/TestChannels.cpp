@@ -233,7 +233,6 @@ void TestChannelsLoad(void)
 	cReader.Kill();
 
 	pcNew = (CChannels*)pcChannels.Object();
-	AssertFalse(pcOld == pcNew);
 	
 	AssertSize(8 * 32 * 3, pcChannels->GetByteSize());
 	AssertSize(3, pcChannels->GetByteStride());

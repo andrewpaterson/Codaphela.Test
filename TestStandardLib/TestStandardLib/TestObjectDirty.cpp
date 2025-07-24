@@ -266,6 +266,12 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	Ptr<CString>						pStringA;
 	Ptr<CString>						pStringB;
 	Ptr<CString>						pStringC;
+	CClass*								pcClass;
+	CArrayVoidPtr*						pacPointers;
+	CPointerField*						pcField;
+	CPointer*							pcpPtr;
+	CTestEmbeddedObjectWithFields*		pcObject;
+	Ptr<CString>						pString;
 
 	char								szDirectory[] = "Output" _FS_ "ObjectDirty" _FS_ "Database4";
 
@@ -348,7 +354,28 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	AssertTrue(pObject->mcEmbedded2.IsDirty());
 
 	oi = pObject.GetIndex();
+	AssertTrue(oi > 0);
 	AssertString("CTestEmbeddedObjectWithFields", pObject.ClassName());
+	pcClass = pObject.GetClass();
+	AssertString("CTestEmbeddedObjectWithFields", pcClass->GetName());
+	pacPointers = pcClass->GetPointerFields();
+
+	AssertSize(3, pacPointers->NumElements());
+	pcField = (CPointerField*)pacPointers->GetPtr(0);
+	AssertString("mpObjectA", pcField->GetName());
+	AssertInt(176, pcField->GetOffset());
+	pcField = (CPointerField*)pacPointers->GetPtr(1);
+	AssertString("mpObjectB", pcField->GetName());
+	AssertInt(496, pcField->GetOffset());
+	pcField = (CPointerField*)pacPointers->GetPtr(2);
+	AssertString("mpObjectC", pcField->GetName());
+	AssertInt(816, pcField->GetOffset());
+
+	pcObject = (CTestEmbeddedObjectWithFields*)pObject.Object();
+	pcpPtr = (CPointer*)RemapSinglePointer(pcObject, pcField->GetOffset());
+	AssertString("CString", (*pcpPtr).ClassName());
+	pString = *pcpPtr;
+	AssertString("Master Git", pString->Text());
 
 	ObjectsFlush();
 	AssertFalse(pObject.IsDirty());

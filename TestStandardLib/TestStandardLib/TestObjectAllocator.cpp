@@ -170,6 +170,19 @@ void TestObjectAllocatorNamedOverwrite(void)
 }
 
 
+size guiDestroyed;
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectAllocatorCountDestructions(CBaseObject* pvObject)
+{
+	guiDestroyed++;
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -185,6 +198,7 @@ void TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed(void)
 	CPointer					pObject1;
 	CPointer					pObject2;
 	Ptr<CTestNamedObjectSmall>	pNamedSmall;
+	CChars						sz;
 
 	MemoryInit();
 	FastFunctionsInit();
@@ -192,7 +206,26 @@ void TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed(void)
 	DataIOInit();
 	ObjectsInit();
 
+	guiDestroyed = 0;
+	gcObjects.SetDestructionCallback(&TestObjectAllocatorCountDestructions);
+
 	TestObjectAllocatorAddConstructors();
+
+
+	//          "4"(6)  "3"(5)  "5"(7)
+	//            |     /   \     |
+	//            |    /     \    |
+	//            |   /       \   |
+	//            |  /         \  |
+	//            | /           \ |
+	//           "1"(3)       "2"(4)
+	//              \           /
+	//               \         /
+	//                \       /
+	//                 \     /
+	//                  \   /
+	//                   ...
+	//                  Root(0)
 
 	pRoot = ORoot();
 	AssertLong(2, gcObjects.NumMemoryIndexes());
@@ -215,6 +248,13 @@ void TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed(void)
 	pNamed5 = ONMalloc<CTestNamedObject>("5", 5);
 	pNamed2->mpNamedTest2 = pNamed5;
 
+	AssertLong(1, pRoot.GetIndex());
+	AssertLong(3, pNamed1.GetIndex());
+	AssertLong(4, pNamed2.GetIndex());
+	AssertLong(5, pNamed3.GetIndex());
+	AssertLong(6, pNamed4.GetIndex());
+	AssertLong(7, pNamed5.GetIndex());
+
 	pNamed3 = NULL;
 	pNamed4 = NULL;
 	pNamed5 = NULL;
@@ -227,7 +267,38 @@ void TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed(void)
 	AssertLong(3, pNamed1.GetIndex());
 	AssertLong(4, pNamed2.GetIndex());
 
+	sz.Init();
+	gcObjects.PrintMemoryNames(&sz);
+	AssertString(""\
+		"1\n"\
+		"2\n"\
+		"3\n"\
+		"4\n"\
+		"5\n"\
+		"GraphRoot\n", sz.Text());
+	sz.Kill();
+
+	AssertSize(0, guiDestroyed);
+
+	//          "4"(6)  "3"(5)  "5"(7)
+	//            |     / 
+	//            |    /  
+	//            |   /   
+	//            |  /    
+	//            | /     
+	//           "1"(3)       "2"(4)
+	//              \           /
+	//               \         /
+	//                \       /
+	//                 \     /
+	//                  \   /
+	//                   ...
+	//                  Root(0)
+
+	guiDestroyed = 0;
+
 	pNamedSmall = gcObjects.GetNamedObjectInMemoryAndReplaceOrAllocateUnitialised("CTestNamedObjectSmall", "2");
+	AssertSize(2, guiDestroyed);
 	pNamedSmall->Init("ABC");
 
 	AssertString("CTestNamedObject", pNamed1.ClassName());
@@ -246,6 +317,16 @@ void TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed(void)
 	AssertLong(6, gcObjects.NumMemoryIndexes());
 	AssertLong(5, gcObjects.NumMemoryNames());
 
+	sz.Init();
+	gcObjects.PrintMemoryNames(&sz);
+	AssertString(""\
+"1\n"\
+"2\n"\
+"3\n"\
+"4\n"\
+"GraphRoot\n", sz.Text());
+	sz.Kill();
+
 	pNamed3 = gcObjects.Get("3");
 	pNamed4 = gcObjects.Get("4");
 	pNamed5 = gcObjects.Get("5");
@@ -254,6 +335,8 @@ void TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed(void)
 	AssertNotNull(&pNamed4);
 	AssertNull(&pNamed5);
 
+	guiDestroyed = 0;
+
 	ObjectsFlush();
 	ObjectsKill();
 	DataIOKill();
@@ -261,6 +344,164 @@ void TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed(void)
 	FastFunctionsKill();
 	MemoryKill();
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectAllocatorNullCausesChildrenToBeDestroyed(void)
+{
+	Ptr<CRoot>					pRoot;
+	Ptr<CTestNamedObject>		pNamed1;
+	Ptr<CTestNamedObject>		pNamed2;
+	Ptr<CTestNamedObject>		pNamed3;
+	Ptr<CTestNamedObject>		pNamed4;
+	Ptr<CTestNamedObject>		pNamed5;
+	CPointer					pObject1;
+	CPointer					pObject2;
+	CChars						sz;
+
+	MemoryInit();
+	FastFunctionsInit();
+	TypesInit();
+	DataIOInit();
+	ObjectsInit();
+	
+	guiDestroyed = 0;
+	gcObjects.SetDestructionCallback(&TestObjectAllocatorCountDestructions);
+
+	TestObjectAllocatorAddConstructors();
+
+
+	//          "4"(6)  "3"(5)  "5"(7)
+	//            |     /   \     |
+	//            |    /     \    |
+	//            |   /       \   |
+	//            |  /         \  |
+	//            | /           \ |
+	//           "1"(3)       "2"(4)
+	//              \           /
+	//               \         /
+	//                \       /
+	//                 \     /
+	//                  \   /
+	//                   ...
+	//                  Root(0)
+
+	pRoot = ORoot();
+	AssertLong(2, gcObjects.NumMemoryIndexes());
+	AssertLong(1, gcObjects.NumMemoryNames());
+
+	pNamed1 = ONMalloc<CTestNamedObject>("1", 1);
+	pRoot->Add(pNamed1);
+
+	pNamed2 = ONMalloc<CTestNamedObject>("2", 2);
+	pRoot->Add(pNamed2);
+
+	pNamed3 = ONMalloc<CTestNamedObject>("3", 3);
+	pNamed1->mpNamedTest1 = pNamed3;
+	pNamed2->mpNamedTest1 = pNamed3;
+
+	Pass();
+	pNamed4 = ONMalloc<CTestNamedObject>("4", 4);
+	pNamed1->mpNamedTest2 = pNamed4;
+
+	pNamed5 = ONMalloc<CTestNamedObject>("5", 5);
+	pNamed2->mpNamedTest2 = pNamed5;
+
+	AssertLong(1, pRoot.GetIndex());
+	AssertLong(3, pNamed1.GetIndex());
+	AssertLong(4, pNamed2.GetIndex());
+	AssertLong(5, pNamed3.GetIndex());
+	AssertLong(6, pNamed4.GetIndex());
+	AssertLong(7, pNamed5.GetIndex());
+
+	pNamed3 = NULL;
+	pNamed4 = NULL;
+	pNamed5 = NULL;
+
+	AssertLong(7, gcObjects.NumMemoryIndexes());
+	AssertLong(6, gcObjects.NumMemoryNames());
+
+	AssertString("CTestNamedObject", pNamed1.ClassName());
+	AssertString("CTestNamedObject", pNamed2.ClassName());
+	AssertLong(3, pNamed1.GetIndex());
+	AssertLong(4, pNamed2.GetIndex());
+
+	sz.Init();
+	gcObjects.PrintMemoryNames(&sz);
+	AssertString(""\
+		"1\n"\
+		"2\n"\
+		"3\n"\
+		"4\n"\
+		"5\n"\
+		"GraphRoot\n", sz.Text());
+	sz.Kill();
+
+	AssertSize(0, guiDestroyed);
+
+	//          "4"(6)  "3"(5)  "5"(7)
+	//            |     / 
+	//            |    /  
+	//            |   /   
+	//            |  /    
+	//            | /     
+	//           "1"(3)       "2"(4)
+	//              \
+	//               \
+	//                \
+	//                 \
+	//                  \
+	//                   ...
+	//                  Root(0)
+
+	guiDestroyed = 0;
+
+	pRoot->Remove(pNamed2);
+	pNamed2 = NULL;
+	AssertSize(2, guiDestroyed);
+
+	AssertLong(3, pNamed1.GetIndex());
+	AssertLong(NULL_O_INDEX, pNamed2.GetIndex());
+
+	pObject1 = pRoot->Get("1");
+	pObject2 = pRoot->Get("2");
+
+	AssertPointer(pObject1.Dereference(), pNamed1.Dereference());
+	AssertNull(pObject2.Dereference());
+
+	AssertLong(5, gcObjects.NumMemoryIndexes());
+	AssertLong(4, gcObjects.NumMemoryNames());
+
+	sz.Init();
+	gcObjects.PrintMemoryNames(&sz);
+	AssertString(""\
+		"1\n"\
+		"3\n"\
+		"4\n"\
+		"GraphRoot\n", sz.Text());
+	sz.Kill();
+
+	pNamed3 = gcObjects.Get("3");
+	pNamed4 = gcObjects.Get("4");
+	pNamed5 = gcObjects.Get("5");
+
+	AssertNotNull(&pNamed3);
+	AssertNotNull(&pNamed4);
+	AssertNull(&pNamed5);
+
+	guiDestroyed = 0;
+
+	ObjectsFlush();
+	ObjectsKill();
+	DataIOKill();
+	TypesKill();
+	FastFunctionsKill();
+	MemoryKill();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -698,6 +939,7 @@ void TestObjectAllocator(void)
 	TestObjectAllocatorSimpleAdd();
 	TestObjectAllocatorNamedAdd();
 	TestObjectAllocatorNamedOverwrite();
+	TestObjectAllocatorNullCausesChildrenToBeDestroyed();
 	TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed();
 	TestObjectAllocatorAssignmentToNullObject();
 	TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwritten();

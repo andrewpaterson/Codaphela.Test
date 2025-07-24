@@ -94,8 +94,8 @@ int __cdecl main(void)
 	TestHollowObject();
 	TestNamedObject();
 	TestObjectDirty();
-	//TestObjectAllocator();
-	//TestString();
+	TestObjectAllocator();
+	TestString();
 	TestChunkFileObjectWriter();
 	TestObjectGraphSerialiser();
 	TestObjectReaderSimple();

@@ -18,7 +18,7 @@ public:
 		miCorrectCode = 0;
 	}
 
-	void Dingo(CUnknown* pcUnknown, void* pvContext)
+	void Dingo(CListener* pcUnknown, void* pvContext)
 	{
 		char* szCode;
 
@@ -34,12 +34,12 @@ public:
 		}
 	};
 
-	void Coyote(CUnknown* pcUnknown, void* pvContext)
+	void Coyote(CListener* pcUnknown, void* pvContext)
 	{
 		miCorrectCode = 1;
 	};
 
-	void Sydney(CUnknown* pcUnknown, void* pvContext)
+	void Sydney(CListener* pcUnknown, void* pvContext)
 	{
 		float fValue;
 
@@ -54,7 +54,7 @@ public:
 		}
 	};
 
-	void Nabia(CUnknown* pcUnknown, void* pvContext)
+	void Nabia(CListener* pcUnknown, void* pvContext)
 	{
 		if (pvContext == NULL)
 		{
