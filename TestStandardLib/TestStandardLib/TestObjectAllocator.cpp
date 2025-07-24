@@ -893,7 +893,7 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	AssertInt(3, pNamed5.GetDistToRoot());
 	pNamed7 = gcObjects.Get("Matt Hudson");
 	AssertInt(4, pNamed7.GetDistToRoot());
-	pNamed8 = gcObjects.Get("Matt Hudson");
+	pNamed8 = gcObjects.Get("Kiva Charity");
 	AssertInt(-1, pNamed8.GetDistToRoot());
 
 	ObjectsFlush();
@@ -911,8 +911,8 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	pRoot = ORoot();
 	AssertLong(2, gcObjects.NumMemoryIndexes());
 	AssertLong(1, gcObjects.NumMemoryNames());
-	AssertLong(2, gcObjects.NumDatabaseIndexes());
-	AssertLong(1, gcObjects.NumDatabaseNames());
+	AssertLong(9, gcObjects.NumDatabaseIndexes());
+	AssertLong(5, gcObjects.NumDatabaseNames());
 
 	ObjectsFlush();
 	pcDatabase->Close();
