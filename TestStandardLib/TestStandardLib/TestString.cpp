@@ -93,6 +93,72 @@ void TestStringDirty(void)
 }
 
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestStringMemoryIterate(void)
+{
+	Ptr<CTestEmbeddedStrings>	pContainer;
+	OIndex						oiContainer;
+	CCodabase*					pcDatabase;
+	CSequence*					pcSequence;
+	CFileUtil					cFileUtil;
+	SIndexesIterator			sIter;
+	Ptr<CRoot>					pRoot;
+	OIndex						oi;
+	CPointer					pcBaseObject;
+	uint64						uiExpected;
+	char						szDirectory[] = "Output" _FS_ "String" _FS_ "Database2";
+
+	cFileUtil.RemoveDir(szDirectory);
+	MemoryInit();
+	TypesInit();
+	DataIOInit();
+
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+	TestStringAddConstructors();
+
+	pRoot = ORoot();
+	pContainer = OMalloc<CTestEmbeddedStrings>();
+	oiContainer = pContainer->GetIndex();
+	AssertTrue(pContainer.IsDirty());
+
+	pRoot->Add(pContainer);
+
+	gcObjects.DumpMemoryUseRecursion();
+
+	uiExpected = 1LL;
+	oi = gcObjects.StartMemoryIteration(&sIter);
+	while (oi != INVALID_O_INDEX)
+	{
+		AssertLong(uiExpected, oi);
+
+		pcBaseObject = &gcObjects.Get(oi);
+		AssertTrue(pcBaseObject.IsNotNull());
+
+		oi = gcObjects.IterateMemory(&sIter);
+		uiExpected++;
+	}
+
+
+	ObjectsFlush();
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill();
+
+
+	DataIOKill();
+	TypesKill();
+	MemoryKill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -109,7 +175,7 @@ void TestStringEmbeddedDirty(void)
 	CSequence*					pcSequence;
 	CFileUtil					cFileUtil;
 	Ptr<CRoot>					pRoot;
-	char						szDirectory[] = "Output" _FS_ "String" _FS_ "Database2";
+	char						szDirectory[] = "Output" _FS_ "String" _FS_ "Database3";
 
 	cFileUtil.RemoveDir(szDirectory);
 	MemoryInit();
@@ -451,6 +517,7 @@ void TestString(void)
 	BeginTests();
 
 	TestStringDirty();
+	TestStringMemoryIterate();
 	TestStringEmbeddedDirty();
 	TestStringAlteration();
 	TestStringTests();

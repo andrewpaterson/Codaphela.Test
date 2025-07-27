@@ -52,6 +52,7 @@ void TestEmbedded(void);
 void TestEmbeddedObjectRemapTos(void);
 void TestEmbeddedStackPointers(void);
 void TestFreeEmbedded(void);
+void TestIndexTreeMemory(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -63,6 +64,7 @@ int __cdecl main(void)
 	InitTotalStatistics();
 	FastFunctionsInit();
 
+	TestIndexTreeMemory();
 	TestUnknowns();
 	TestArrayUnknown();
 	TestSetUnknown();

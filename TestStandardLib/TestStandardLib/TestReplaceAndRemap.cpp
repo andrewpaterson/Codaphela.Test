@@ -154,7 +154,8 @@ void TestObjectReplaceWithHeapPointers(void)
 	AssertFalse(sFreeNotifider3.bFreed);
 	AssertFalse(sFreeNotifider4.bFreed);
 
-	gcObjects.DumpMemory();
+	//Uh?  Why is this here?
+	gcObjects.DumpMemoryUseIteration();
 	gcObjects.ReplaceBaseObject(&pObject1, &pObject5);
 
 	//         pObject5(2) <--- pObject4(2)  
@@ -272,7 +273,8 @@ void TestObjectReplaceWithStackPointers(void)
 	AssertFalse(sFreeNotifider3.bFreed);
 	AssertFalse(sFreeNotifider4.bFreed);
 
-	gcObjects.DumpMemory();
+	//Uh?  Why is this here?
+	gcObjects.DumpMemoryUseIteration();
 	gcObjects.ReplaceBaseObject(&pObject1, &pObject5);
 
 	//         pObject5(2) <--- pObject4(2)  

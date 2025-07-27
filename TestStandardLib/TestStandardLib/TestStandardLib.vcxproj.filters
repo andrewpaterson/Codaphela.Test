@@ -79,6 +79,9 @@
     <Filter Include="Source\Object\Object\Hollow">
       <UniqueIdentifier>{ab8aac95-1268-49ee-b080-2627c850d79e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\IndexTreeMemory">
+      <UniqueIdentifier>{b7c20375-d6f0-4e1c-9c32-cbe95226899a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestStandardLib.cpp">
@@ -254,6 +257,9 @@
     </ClCompile>
     <ClCompile Include="TestStringOverride.cpp">
       <Filter>Source\Object\Object\String</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexTreeMemory.cpp">
+      <Filter>Source\IndexTreeMemory</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
