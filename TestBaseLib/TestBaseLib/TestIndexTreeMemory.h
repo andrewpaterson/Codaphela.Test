@@ -23,7 +23,7 @@ public:
 		return CIndexTreeMemory::GetRoot();
 	}
 
-	CIndexTreeNodeMemory* GetNode(void* pvKey, int iKeySize)
+	CIndexTreeNodeMemory* GetNode(uint8* pvKey, int iKeySize)
 	{
 		return CIndexTreeMemory::GetNode(pvKey, iKeySize);
 	}

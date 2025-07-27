@@ -30,16 +30,16 @@ void TestIndexTreeMemory(void)
 	ui3 = 3;
 
 	cIndexTree.Init();
-	cIndexTree.Put(&ui1, sizeof(uint64), &ui1, sizeof(uint64));
-	cIndexTree.Put(&ui2, sizeof(uint64), &ui2, sizeof(uint64));
-	cIndexTree.Put(&ui3, sizeof(uint64), &ui3, sizeof(uint64));
+	cIndexTree.Put((uint8*)&ui1, sizeof(uint64), &ui1, sizeof(uint64));
+	cIndexTree.Put((uint8*)&ui2, sizeof(uint64), &ui2, sizeof(uint64));
+	cIndexTree.Put((uint8*)&ui3, sizeof(uint64), &ui3, sizeof(uint64));
 
 	uiExpected = 1;
-	bResult = cIndexTree.StartIteration(&sIter, &uiKey, &iKeyLength, sizeof(uint64), NULL, NULL, 0);
+	bResult = cIndexTree.StartIteration(&sIter, (uint8*)&uiKey, &iKeyLength, sizeof(uint64), NULL, NULL, 0);
 	while (bResult)
 	{
 		AssertLong(uiExpected, uiKey);
-		bResult = cIndexTree.Iterate(&sIter, &uiKey, &iKeyLength, sizeof(uint64), NULL, NULL, 0);
+		bResult = cIndexTree.Iterate(&sIter, (uint8*)&uiKey, &iKeyLength, sizeof(uint64), NULL, NULL, 0);
 		uiExpected++;
 	}
 

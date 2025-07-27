@@ -23,7 +23,7 @@ bool AddToIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, int64 lliData)
 	size				iStrLen;
 
 	iStrLen = strlen(szKey) + 1;
-	return pcIndexBlock->Put(szKey, iStrLen, &lliData, sizeof(int64));
+	return pcIndexBlock->Put((uint8*)szKey, iStrLen, &lliData, sizeof(int64));
 }
 
 
@@ -36,7 +36,7 @@ bool GetFromIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, int64** pplli, si
 	size				iStrLen;
 
 	iStrLen = strlen(szKey) + 1;
-	return pcIndexBlock->Get(szKey, iStrLen, (void**)pplli, piSize);
+	return pcIndexBlock->Get((uint8*)szKey, iStrLen, (void**)pplli, piSize);
 }
 
 
@@ -51,7 +51,7 @@ void AssertIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, int64 lliData)
 
 	plli = NULL;
 	iStrLen = strlen(szKey) + 1;
-	pcIndexBlock->Get(szKey, iStrLen, (void**)&plli, NULL);
+	pcIndexBlock->Get((uint8*)szKey, iStrLen, (void**)&plli, NULL);
 	AssertLong(lliData, *plli);
 }
 
@@ -170,15 +170,15 @@ void TestIndexBlockAddDuplicate(void)
 	iHelloLen = strlen("Hello");
 
 	cIndexBlock.Init();
-	bResult = cIndexBlock.Put(&ia, sizeof(size), "Hello", iHelloLen + 1);
+	bResult = cIndexBlock.Put((uint8*)&ia, sizeof(size), "Hello", iHelloLen + 1);
 	AssertTrue(bResult);
 	AssertInt(1, cIndexBlock.NumElements());
-	AssertString("Hello", (char*)cIndexBlock.Get(&ia, sizeof(size)));
+	AssertString("Hello", (char*)cIndexBlock.Get((uint8*)&ia, sizeof(size)));
 
-	bResult = cIndexBlock.Put(&ib, sizeof(size), "World", iWorldLen + 1);
+	bResult = cIndexBlock.Put((uint8*)&ib, sizeof(size), "World", iWorldLen + 1);
 	AssertTrue(bResult);
 	AssertInt(1, cIndexBlock.NumElements());
-	AssertString("World", (char*)cIndexBlock.Get(&ia, sizeof(size)));
+	AssertString("World", (char*)cIndexBlock.Get((uint8*)&ia, sizeof(size)));
 
 	cIndexBlock.Kill();
 }
@@ -198,39 +198,39 @@ void TestIndexBlockRemove(void)
 	char*			szData;
 
 	cIndexBlock.Init();
-	bResult = cIndexBlock.Put(&ia, sizeof(size), "Hello", strlen("Hello") + 1);
-	bResult = cIndexBlock.Put(&ib, sizeof(size), "World", strlen("World") + 1);
-	bResult = cIndexBlock.Put(&ic, sizeof(size), "Rogue", strlen("Rogue") + 1);
+	bResult = cIndexBlock.Put((uint8*)&ia, sizeof(size), "Hello", strlen("Hello") + 1);
+	bResult = cIndexBlock.Put((uint8*)&ib, sizeof(size), "World", strlen("World") + 1);
+	bResult = cIndexBlock.Put((uint8*)&ic, sizeof(size), "Rogue", strlen("Rogue") + 1);
 	AssertInt(3, cIndexBlock.NumElements());
 
-	cIndexBlock.Remove(&ib, sizeof(size));
+	cIndexBlock.Remove((uint8*)&ib, sizeof(size));
 	AssertInt(2, cIndexBlock.NumElements());
-	bResult = cIndexBlock.Get(&ia, sizeof(size), (void**)&szData, NULL);
+	bResult = cIndexBlock.Get((uint8*)&ia, sizeof(size), (void**)&szData, NULL);
 	AssertTrue(bResult);
 	AssertString(szData, "Hello");
-	bResult = cIndexBlock.Get(&ic, sizeof(size), (void**)&szData, NULL);
+	bResult = cIndexBlock.Get((uint8*)&ic, sizeof(size), (void**)&szData, NULL);
 	AssertTrue(bResult);
 	AssertString(szData, "Rogue");
-	bResult = cIndexBlock.Get(&ib, sizeof(size), (void**)&szData, NULL);
+	bResult = cIndexBlock.Get((uint8*)&ib, sizeof(size), (void**)&szData, NULL);
 	AssertFalse(bResult);
 
-	cIndexBlock.Remove(&ia, sizeof(size));
+	cIndexBlock.Remove((uint8*)&ia, sizeof(size));
 	AssertInt(1, cIndexBlock.NumElements());
-	bResult = cIndexBlock.Get(&ia, sizeof(size), (void**)&szData, NULL);
+	bResult = cIndexBlock.Get((uint8*)&ia, sizeof(size), (void**)&szData, NULL);
 	AssertFalse(bResult);
-	bResult = cIndexBlock.Get(&ic, sizeof(size), (void**)&szData, NULL);
+	bResult = cIndexBlock.Get((uint8*)&ic, sizeof(size), (void**)&szData, NULL);
 	AssertTrue(bResult);
 	AssertString(szData, "Rogue");
-	bResult = cIndexBlock.Get(&ib, sizeof(size), (void**)&szData, NULL);
+	bResult = cIndexBlock.Get((uint8*)&ib, sizeof(size), (void**)&szData, NULL);
 	AssertFalse(bResult);
 
-	cIndexBlock.Remove(&ic, sizeof(size));
+	cIndexBlock.Remove((uint8*)&ic, sizeof(size));
 	AssertInt(0, cIndexBlock.NumElements());
-	bResult = cIndexBlock.Get(&ia, sizeof(size), (void**)&szData, NULL);
+	bResult = cIndexBlock.Get((uint8*)&ia, sizeof(size), (void**)&szData, NULL);
 	AssertFalse(bResult);
-	bResult = cIndexBlock.Get(&ic, sizeof(size), (void**)&szData, NULL);
+	bResult = cIndexBlock.Get((uint8*)&ic, sizeof(size), (void**)&szData, NULL);
 	AssertFalse(bResult);
-	bResult = cIndexBlock.Get(&ib, sizeof(size), (void**)&szData, NULL);
+	bResult = cIndexBlock.Get((uint8*)&ib, sizeof(size), (void**)&szData, NULL);
 	AssertFalse(bResult);
 
 	cIndexBlock.Kill();

@@ -17,7 +17,7 @@ void TestIndexTreeIteratorUnsafeIterate(void)
 {
 	SIndexTreeMemoryUnsafeIterator	sIter;
 	char*							pvData;
-	char*							pvKey;
+	uint8*							pvKey;
 	size							iDataSize;
 	bool							bExists;
 	uint8							pacKey[9+1];

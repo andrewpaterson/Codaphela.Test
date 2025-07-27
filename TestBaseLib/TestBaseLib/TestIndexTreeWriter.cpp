@@ -51,7 +51,7 @@ void TestIndexTreeWriterWrite(void)
 	{
 		iKeyLength = strlen((char*)pvKey);
 		iDataSize = strlen((char*)pvData);
-		cAccess.PutKeyData(pvKey, iKeyLength, pvData, iDataSize);
+		cAccess.PutKeyData((uint8*)pvKey, iKeyLength, pvData, iDataSize);
 
 		bExists = cMap.Iterate(&sMapIter, (void**)&pvKey, NULL, (void**)&pvData, NULL);
 	}

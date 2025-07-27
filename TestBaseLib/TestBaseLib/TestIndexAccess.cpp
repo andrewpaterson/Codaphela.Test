@@ -92,9 +92,9 @@ void TestIndexAccessMapBlock(void)
 	AssertTrue(cAccess.PutStringInt("10", 203));
 	AssertTrue(cAccess.PutStringLong("11", 0x1000000000000001L));
 	AssertTrue(cAccess.PutStringString("12", "Jip the Cat"));
-	AssertTrue(cAccess.PutKeyData(&sk1, sizeof(STestIndexAccessKey), &s7, sizeof(STestIndexAccessData)));
-	AssertTrue(cAccess.PutKeyInt(&sk2, sizeof(STestIndexAccessKey), 88));
-	AssertTrue(cAccess.PutKeyString(&sk3, sizeof(STestIndexAccessKey), "Dangerous"));
+	AssertTrue(cAccess.PutKeyData((uint8*)&sk1, sizeof(STestIndexAccessKey), &s7, sizeof(STestIndexAccessData)));
+	AssertTrue(cAccess.PutKeyInt((uint8*)&sk2, sizeof(STestIndexAccessKey), 88));
+	AssertTrue(cAccess.PutKeyString((uint8*)&sk3, sizeof(STestIndexAccessKey), "Dangerous"));
 
 	ps = (STestIndexAccessData*)cAccess.GetLongPtr(0x1000000000000001L);
 	AssertPointer(&s1, ps);
@@ -123,11 +123,11 @@ void TestIndexAccessMapBlock(void)
 	AssertInt(203, cAccess.GetStringInt("10"));
 	AssertLong(0x1000000000000001L, cAccess.GetStringLong("11"));
 	AssertString("Jip the Cat", cAccess.GetStringString("12", sz, 256));
-	AssertTrue(cAccess.GetKeyData(&sk1, sizeof(STestIndexAccessKey), &sDest, &uiSize, sizeof(STestIndexAccessData)));
+	AssertTrue(cAccess.GetKeyData((uint8*)&sk1, sizeof(STestIndexAccessKey), &sDest, &uiSize, sizeof(STestIndexAccessData)));
 	AssertSize(sizeof(STestIndexAccessData), uiSize);
 	AssertMemory(&s7, &sDest, sizeof(STestIndexAccessData));
-	AssertInt(88, cAccess.GetKeyInt(&sk2, sizeof(STestIndexAccessKey)));
-	AssertString("Dangerous", cAccess.GetKeyString(&sk3, sizeof(STestIndexAccessKey), sz, 256));
+	AssertInt(88, cAccess.GetKeyInt((uint8*)&sk2, sizeof(STestIndexAccessKey)));
+	AssertString("Dangerous", cAccess.GetKeyString((uint8*)&sk3, sizeof(STestIndexAccessKey), sz, 256));
 			
 	cAccess.Kill();
 	cMap.Kill();
@@ -190,9 +190,9 @@ void TestIndexAccessIndexTreeMemory(void)
 	AssertTrue(cAccess.PutStringInt("10", 203));
 	AssertTrue(cAccess.PutStringLong("11", 0x1000000000000001L));
 	AssertTrue(cAccess.PutStringString("12", "Jip the Cat"));
-	AssertTrue(cAccess.PutKeyData(&sk1, sizeof(STestIndexAccessKey), &s7, sizeof(STestIndexAccessData)));
-	AssertTrue(cAccess.PutKeyInt(&sk2, sizeof(STestIndexAccessKey), 88));
-	AssertTrue(cAccess.PutKeyString(&sk3, sizeof(STestIndexAccessKey), "Dangerous"));
+	AssertTrue(cAccess.PutKeyData((uint8*)&sk1, sizeof(STestIndexAccessKey), &s7, sizeof(STestIndexAccessData)));
+	AssertTrue(cAccess.PutKeyInt((uint8*)&sk2, sizeof(STestIndexAccessKey), 88));
+	AssertTrue(cAccess.PutKeyString((uint8*)&sk3, sizeof(STestIndexAccessKey), "Dangerous"));
 
 	ps = (STestIndexAccessData*)cAccess.GetLongPtr(0x1000000000000001L);
 	AssertPointer(&s1, ps);
@@ -221,11 +221,11 @@ void TestIndexAccessIndexTreeMemory(void)
 	AssertInt(203, cAccess.GetStringInt("10"));
 	AssertLong(0x1000000000000001L, cAccess.GetStringLong("11"));
 	AssertString("Jip the Cat", cAccess.GetStringString("12", sz, 256));
-	AssertTrue(cAccess.GetKeyData(&sk1, sizeof(STestIndexAccessKey), &sDest, &uiSize, sizeof(STestIndexAccessData)));
+	AssertTrue(cAccess.GetKeyData((uint8*)&sk1, sizeof(STestIndexAccessKey), &sDest, &uiSize, sizeof(STestIndexAccessData)));
 	AssertSize(sizeof(STestIndexAccessData), uiSize);
 	AssertMemory(&s7, &sDest, sizeof(STestIndexAccessData));
-	AssertInt(88, cAccess.GetKeyInt(&sk2, sizeof(STestIndexAccessKey)));
-	AssertString("Dangerous", cAccess.GetKeyString(&sk3, sizeof(STestIndexAccessKey), sz, 256));
+	AssertInt(88, cAccess.GetKeyInt((uint8*)&sk2, sizeof(STestIndexAccessKey)));
+	AssertString("Dangerous", cAccess.GetKeyString((uint8*)&sk3, sizeof(STestIndexAccessKey), sz, 256));
 
 	cAccess.Kill();
 	cMap.Kill();

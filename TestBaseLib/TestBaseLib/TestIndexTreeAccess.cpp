@@ -121,7 +121,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int32 iFlushFrequency)
 	bHasData = pcIter->Iterate();
 	while (bHasData)
 	{
-		pszKey = pcIter->GetKey();
+		pszKey = (char*)pcIter->GetKey();
 		aszKeys.Add(pszKey);
 		bHasData = pcIter->Iterate();
 	}

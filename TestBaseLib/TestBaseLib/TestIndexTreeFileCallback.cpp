@@ -50,7 +50,7 @@ void TestIndexTreeFileCallbackWorks(void)
 	cIndexTree.Init(&cController, NULL, &cDataCallback, IWT_Yes, IKR_No);
 
 	memset(&cResult, 0, sizeof(CTestIndexTreeMemoryObject));
-	AssertTrue(cIndexTree.Get(szKey1, 2, &cResult, NULL, 0));
+	AssertTrue(cIndexTree.Get((uint8*)szKey1, 2, &cResult, NULL, 0));
 	AssertInt(17, cResult.mi1);
 	AssertInt(2, cResult.mi2);
 	AssertInt(56, cResult.mi3);
@@ -75,14 +75,14 @@ void TestIndexTreeFileCallbackWorks(void)
 	cIndexTree.Init(&cController, NULL, &cDataCallback, IWT_No, IKR_No);
 
 	memset(&cResult, 0, sizeof(CTestIndexTreeMemoryObject));
-	AssertTrue(cIndexTree.Get(szKey1, 2, &cResult, NULL, 0));
+	AssertTrue(cIndexTree.Get((uint8*)szKey1, 2, &cResult, NULL, 0));
 	AssertInt(17, cResult.mi1);
 	AssertInt(6, cResult.mi2);
 	AssertInt(56, cResult.mi3);
 	AssertInt(8, cResult.mi4);
 
 	memset(&cResult, 0, sizeof(CTestIndexTreeMemoryObject));
-	AssertTrue(cIndexTree.Get(szKey2, 2, &cResult, NULL, 0));
+	AssertTrue(cIndexTree.Get((uint8*)szKey2, 2, &cResult, NULL, 0));
 	AssertInt(17, cResult.mi1);
 	AssertInt(10, cResult.mi2);
 	AssertInt(56, cResult.mi3);

@@ -43,7 +43,7 @@ void TestIndexTreeMemoryDescribeNode(void)
 
 	cAccess.PutStringString("zx", "Jackrabbit");
 
-	pcNode = cIndex.GetNode("zx", 2);
+	pcNode = cIndex.GetNode((uint8*)"zx", 2);
 	AssertNotNull(pcNode);
 	AssertFalse(pcNode->HasNodes());
 	AssertTrue(pcNode->HasData());
@@ -84,7 +84,7 @@ void TestIndexTreeMemoryAdd(EIndexKeyReverse eKeyReverse)
 	bResult = cAccess.PutStringPtr(a.GetName(), &a);
 	AssertTrue(bResult);
 
-	pcNode = cIndex.GetNode("A", 1);
+	pcNode = cIndex.GetNode((uint8*)"A", 1);
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetDataPtr();
 	AssertPointer(&a, *ppvTest);
 
@@ -92,11 +92,11 @@ void TestIndexTreeMemoryAdd(EIndexKeyReverse eKeyReverse)
 	bResult = cAccess.PutStringPtr(aa.GetName(), &aa);
 	AssertTrue(bResult);
 
-	pcNode = cIndex.GetNode("A", 1);
+	pcNode = cIndex.GetNode((uint8*)"A", 1);
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetDataPtr();
 	AssertPointer(&a, *ppvTest);
 
-	pcNode = cIndex.GetNode("AB", 2);
+	pcNode = cIndex.GetNode((uint8*)"AB", 2);
 	ppvTest = (CTestIndexTreeObject**)pcNode->GetDataPtr();
 	AssertPointer(&aa, *ppvTest);
 
@@ -148,7 +148,7 @@ void TestIndexTreeMemoryAddDataOnExistingKey(void)
 	cAccess.PutStringString("z", "Dukeling");
 	AssertString("Jackrabbit", cAccess.GetStringString("zx", sz));
 	AssertString("Dukeling", cAccess.GetStringString("z", sz));
-	pcNode = cIndex.GetNode("z", 1);
+	pcNode = cIndex.GetNode((uint8*)"z", 1);
 	AssertTrue(pcNode->HasData());
 	AssertTrue(pcNode->HasNodes());
 	Pass();
@@ -156,7 +156,7 @@ void TestIndexTreeMemoryAddDataOnExistingKey(void)
 	cAccess.PutStringString("z", "Big Dukeling of Doom");
 	AssertString("Jackrabbit", cAccess.GetStringString("zx", sz));
 	AssertString("Big Dukeling of Doom", cAccess.GetStringString("z", sz));
-	pcNode = cIndex.GetNode("z", 1);
+	pcNode = cIndex.GetNode((uint8*)"z", 1);
 	AssertTrue(pcNode->HasData());
 	AssertTrue(pcNode->HasNodes());
 	Pass();
@@ -164,7 +164,7 @@ void TestIndexTreeMemoryAddDataOnExistingKey(void)
 	cAccess.PutStringString("z", "o");
 	AssertString("Jackrabbit", cAccess.GetStringString("zx", sz));
 	AssertString("o", cAccess.GetStringString("z", sz));
-	pcNode = cIndex.GetNode("z", 1);
+	pcNode = cIndex.GetNode((uint8*)"z", 1);
 	AssertTrue(pcNode->HasData());
 	AssertTrue(pcNode->HasNodes());
 	Pass();
@@ -172,7 +172,7 @@ void TestIndexTreeMemoryAddDataOnExistingKey(void)
 	cAccess.DeleteString("z");
 	AssertString("Jackrabbit", cAccess.GetStringString("zx", sz));
 	AssertNull(cAccess.GetStringString("z", sz));
-	pcNode = cIndex.GetNode("z", 1);
+	pcNode = cIndex.GetNode((uint8*)"z", 1);
 	AssertFalse(pcNode->HasData());
 	AssertTrue(pcNode->HasNodes());
 	Pass();
@@ -180,7 +180,7 @@ void TestIndexTreeMemoryAddDataOnExistingKey(void)
 	cAccess.PutStringString("z", "Dukeling");
 	AssertString("Jackrabbit", cAccess.GetStringString("zx", sz));
 	AssertString("Dukeling", cAccess.GetStringString("z", sz));
-	pcNode = cIndex.GetNode("z", 1);
+	pcNode = cIndex.GetNode((uint8*)"z", 1);
 	AssertTrue(pcNode->HasData());
 	AssertTrue(pcNode->HasNodes());
 	Pass();
@@ -188,7 +188,7 @@ void TestIndexTreeMemoryAddDataOnExistingKey(void)
 	cAccess.DeleteString("z");
 	cAccess.DeleteString("zx");
 	AssertNull(cAccess.GetStringString("zx", sz));
-	pcNode = cIndex.GetNode("z", 1);
+	pcNode = cIndex.GetNode((uint8*)"z", 1);
 	AssertNull(pcNode);
 	AssertInt(0, cIndex.NumElements());
 	Pass();
@@ -232,18 +232,18 @@ void TestIndexTreeMemoryGet(void)
 	AssertInt(1, avp.NumElements());
 	avp.Kill();
 
-	pcNodeAndrew = cIndex.GetNode("Andrew", 6);
+	pcNodeAndrew = cIndex.GetNode((uint8*)"Andrew", 6);
 	pcNodes = (CIndexTreeNodeMemory**)pcNodeAndrew->GetNodesMemory();
 	AssertNull(pcNodes);
 
-	pcNodeAndre = cIndex.GetNode("Andre", 5);
+	pcNodeAndre = cIndex.GetNode((uint8*)"Andre", 5);
 	pcNodes = (CIndexTreeNodeMemory**)pcNodeAndre->GetNodesMemory();
 	pcNode = pcNodes[0];
 	AssertPointer(pcNodeAndrew, pcNode);
 
 	batman.Init("Batman");
 	cAccess.PutStringPtr(batman.GetName(), &batman);
-	pcNodeBatman = cIndex.GetNode("Batman", 6);
+	pcNodeBatman = cIndex.GetNode((uint8*)"Batman", 6);
 	AssertInt(0, pcNodeBatman->NumIndexes());
 	pcResult = (CTestIndexTreeObject*)cAccess.GetStringPtr("Batman");
 	AssertPointer(&batman, pcResult);
@@ -255,8 +255,8 @@ void TestIndexTreeMemoryGet(void)
 	szBatmam = "Batmam";
 	batmam.Init(szBatmam);
 	cAccess.PutStringPtr(szBatmam, &batmam);
-	pcNodeBatman = cIndex.GetNode("Batman", 6);
-	pcNodeBatmam = cIndex.GetNode(szBatmam, 6);
+	pcNodeBatman = cIndex.GetNode((uint8*)"Batman", 6);
+	pcNodeBatmam = cIndex.GetNode((uint8*)szBatmam, 6);
 	pcResult = (CTestIndexTreeObject*)cAccess.GetStringPtr(szBatmam);
 	AssertPointer(&batmam, pcResult);
 	avp.Init();
@@ -264,7 +264,7 @@ void TestIndexTreeMemoryGet(void)
 	AssertInt(3, avp.NumElements());
 	avp.Kill();
 
-	pcNodeAndre = cIndex.GetNode("Andre", 5);
+	pcNodeAndre = cIndex.GetNode((uint8*)"Andre", 5);
 	AssertTrue(pcNodeAndre->HasNodes());
 	AssertFalse(pcNodeAndre->HasData());
 	pcNodes = (CIndexTreeNodeMemory**)pcNodeAndre->GetNodesMemory();
@@ -360,13 +360,13 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 	AssertInt(cIndex.ByteSize(), cAllocator.AllocatedUserSize());
 
 	iKeyLength = strlen("Spoedling");
-	AssertNull(cIndex.GetNode("Spoedling", iKeyLength));
+	AssertNull(cIndex.GetNode((uint8*)"Spoedling", iKeyLength));
 
 	AssertTrue(cAccess.PutStringData("SpoedlingZ", szKerfuffle, 10));
 	AssertInt(1, cIndex.NumElements());
 
 	AssertInt(cIndex.ByteSize(), cAllocator.AllocatedUserSize());
-	pcNode = cIndex.GetNode("Spoedling", iKeyLength);
+	pcNode = cIndex.GetNode((uint8*)"Spoedling", iKeyLength);
 	AssertNotNull(pcNode);
 	pcChildNode = pcNode->Get('Z');
 	AssertNotNull(pcChildNode);
@@ -378,7 +378,7 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 	AssertString("kerfuffle", cAccess.GetStringString("SpoedlingZ", szResult));
 	AssertString("22", cAccess.GetStringString("Spoedling", szResult));
 
-	pcNode = cIndex.GetNode("Spoedling", iKeyLength);
+	pcNode = cIndex.GetNode((uint8*)"Spoedling", iKeyLength);
 	AssertNotNull(pcNode);
 	pcChildNode = pcNode->Get('Z');
 	AssertNotNull(pcChildNode);
@@ -390,7 +390,7 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 	AssertString("kerfuffle", cAccess.GetStringString("SpoedlingZ", szResult));
 	AssertString("OT", cAccess.GetStringString("Spoedling", szResult));
 
-	pcNode = cIndex.GetNode("Spoedling", iKeyLength);
+	pcNode = cIndex.GetNode((uint8*)"Spoedling", iKeyLength);
 	AssertNotNull(pcNode);
 	pcChildNode = pcNode->Get('Z');
 	AssertNotNull(pcChildNode);
@@ -402,7 +402,7 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 	AssertString("kerfuffle", cAccess.GetStringString("SpoedlingZ", szResult));
 	AssertString("333", cAccess.GetStringString("Spoedling", szResult));
 
-	pcNode = cIndex.GetNode("Spoedling", iKeyLength);
+	pcNode = cIndex.GetNode((uint8*)"Spoedling", iKeyLength);
 	AssertNotNull(pcNode);
 	pcChildNode = pcNode->Get('Z');
 	AssertNotNull(pcChildNode);
@@ -414,7 +414,7 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 	AssertString("kerfuffle", cAccess.GetStringString("SpoedlingZ", szResult));
 	AssertString("1", cAccess.GetStringString("Spoedling", szResult));
 
-	pcNode = cIndex.GetNode("Spoedling", iKeyLength);
+	pcNode = cIndex.GetNode((uint8*)"Spoedling", iKeyLength);
 	AssertNotNull(pcNode);
 	pcChildNode = pcNode->Get('Z');
 	AssertNotNull(pcChildNode);
@@ -1146,7 +1146,7 @@ void TestIndexTreeMemoryResizeData(void)
 	AssertTrue(cAccess.PutStringString("AA", szAAObject));
 	AssertTrue(cAccess.PutStringString("AC", szACObject));
 
-	pcNode = cIndex.GetNode("A", 1);
+	pcNode = cIndex.GetNode((uint8*)"A", 1);
 	pcOldNode = pcNode;
 	AssertInt(3, pcNode->NumIndexes());
 	AssertInt(2, pcNode->NumValidIndexes());
@@ -1156,7 +1156,7 @@ void TestIndexTreeMemoryResizeData(void)
 
 	AssertTrue(cAccess.PutStringData("A", szAObject, strlen(szAObject) + 1));
 
-	pcNode = cIndex.GetNode("A", 1);
+	pcNode = cIndex.GetNode((uint8*)"A", 1);
 	AssertInt(3, pcNode->NumIndexes());
 	AssertInt(2, pcNode->NumValidIndexes());
 	AssertInt(18, pcNode->GetDataSize());
@@ -1210,7 +1210,7 @@ void TestIndexTreeMemoryDescribeData()
 	cAccess.PutLongString(iKey2, szObject2);
 	AssertInt(2, cIndex.NumElements());
 
-	pcNode = cIndex.GetNode(&iKey1, sizeof(int64));
+	pcNode = cIndex.GetNode((uint8*)&iKey1, sizeof(int64));
 	AssertNotNull(pcNode);
 	AssertTrue(pcNode->HasData());
 
@@ -1481,11 +1481,11 @@ void TestIndexTreeMemoryGetLongestPartial(void)
 
 	cAccess.PutStringInt("Bat", 1);
 
-	bResult = cIndex.GetLongestPartial("Bat", 3, &iData, &puiDataSize, sizeof(size));
+	bResult = cIndex.GetLongestPartial((uint8*)"Bat", 3, &iData, &puiDataSize, sizeof(size));
 	AssertTrue(bResult);
 	AssertInt(1, iData);
 
-	bResult = cIndex.GetLongestPartial("Battty", 6, &iData, &puiDataSize, sizeof(size));
+	bResult = cIndex.GetLongestPartial((uint8*)"Battty", 6, &iData, &puiDataSize, sizeof(size));
 	AssertTrue(bResult);
 	AssertInt(1, iData);
 
@@ -1495,27 +1495,27 @@ void TestIndexTreeMemoryGetLongestPartial(void)
 	cAccess.PutStringInt("Batmano", 5);
 	cAccess.PutStringInt("Batmao", 6);
 
-	bResult = cIndex.GetLongestPartial("Bat", 3, &iData, &puiDataSize, sizeof(size));
+	bResult = cIndex.GetLongestPartial((uint8*)"Bat", 3, &iData, &puiDataSize, sizeof(size));
 	AssertTrue(bResult);
 	AssertInt(1, iData);
 
-	bResult = cIndex.GetLongestPartial("Batmao", 6, &iData, &puiDataSize, sizeof(size));
+	bResult = cIndex.GetLongestPartial((uint8*)"Batmao", 6, &iData, &puiDataSize, sizeof(size));
 	AssertTrue(bResult);
 	AssertInt(6, iData);
 
-	bResult = cIndex.GetLongestPartial("Batmaoa", 7, &iData, &puiDataSize, sizeof(size));
+	bResult = cIndex.GetLongestPartial((uint8*)"Batmaoa", 7, &iData, &puiDataSize, sizeof(size));
 	AssertTrue(bResult);
 	AssertInt(6, iData);
 
-	bResult = cIndex.GetLongestPartial("Batma", 5, &iData, &puiDataSize, sizeof(size));
+	bResult = cIndex.GetLongestPartial((uint8*)"Batma", 5, &iData, &puiDataSize, sizeof(size));
 	AssertTrue(bResult);
 	AssertInt(4, iData);
 
-	bResult = cIndex.GetLongestPartial("Batmaa", 6, &iData, &puiDataSize, sizeof(size));
+	bResult = cIndex.GetLongestPartial((uint8*)"Batmaa", 6, &iData, &puiDataSize, sizeof(size));
 	AssertTrue(bResult);
 	AssertInt(4, iData);
 
-	bResult = cIndex.GetLongestPartial("Batmap", 6, &iData, &puiDataSize, sizeof(size));
+	bResult = cIndex.GetLongestPartial((uint8*)"Batmap", 6, &iData, &puiDataSize, sizeof(size));
 	AssertTrue(bResult);
 	AssertInt(4, iData);
 
@@ -1602,7 +1602,7 @@ void TestIndexTreeMemoryAllocation(void)
 	AssertLong(tRootNodeSize, pcMemory->GetTotalAllocatedMemory());
 
 	lliKey1 = 1;
-	pvData1 = (char*)cIndexTree.Put(&lliKey1, sizeof(int64), NULL, 103);
+	pvData1 = (char*)cIndexTree.Put((uint8*)&lliKey1, sizeof(int64), NULL, 103);
 	AssertLong(1 /* root node (256 children) */ + 7 /* empty nodes with child */ + 1 /* node with no children but with data */, pcMemory->GetTotalAllocations());
 	Pass();
 	AssertLong(tRootNodeSize + (tNodeSize + tNoDataSize) * 7 + (tDataNodeSize + 103), pcMemory->GetTotalAllocatedMemory());

@@ -74,12 +74,12 @@ public:
 
 	bool ValidateKey(void* pvKey, int iKeySize)
 	{
-		return CIndexTreeFile::ValidateKey(pvKey, iKeySize);
+		return CIndexTreeFile::ValidateKey((uint8*)pvKey, iKeySize);
 	}
 
 	CIndexTreeNodeFile* GetNode(void* pvKey, int iKeySize)
 	{
-		return CIndexTreeFile::GetNode(pvKey, iKeySize);
+		return CIndexTreeFile::GetNode((uint8*)pvKey, iKeySize);
 	}
 
 	int GetNodeKeySize(CIndexTreeNodeFile* pcNode)
