@@ -42,7 +42,6 @@ void TestIndexTreeMemory(void)
 		bResult = cIndexTree.Iterate(&sIter, (uint8*)&uiKey, &iKeyLength, sizeof(uint64), NULL, NULL, 0);
 		uiExpected++;
 	}
-
 	AssertLong(4LL, uiExpected);
 
 	cIndexTree.Kill();
