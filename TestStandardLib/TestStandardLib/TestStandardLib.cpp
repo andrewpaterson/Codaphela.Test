@@ -106,7 +106,7 @@ int __cdecl main(void)
 	//TestObjectConverter();
 	//TestObjects();
 	TestStackPointers();
-	//TestDehollowfication();
+	TestDehollowfication();
 	//TestString();
 	TestObjectsEvictVsKill();
 	TestUsage();

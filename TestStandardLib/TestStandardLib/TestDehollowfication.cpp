@@ -288,6 +288,7 @@ void TestDehollowficationFromDatabaseComplex(void)
 
 	AssertFalse(pDiamond.IsHollow());
 	AssertFalse(pDouble->mpSplit1->mpAnother.IsHollow());
+	AssertLong(4LL, pDouble->mpSplit1->mpAnother.GetIndex());
 	Pass();
 
 	AssertLong(10, gcUnknowns.NumElements());
@@ -299,6 +300,7 @@ void TestDehollowficationFromDatabaseComplex(void)
 	AssertTrue(pDouble->mpSplit2.IsHollow());
 	pDouble->mpSplit2->ClassSize(); //This will cause mpSplit2 to be de-hollowed
 	AssertFalse(pDouble->mpSplit2.IsHollow());
+	AssertLong(4LL, pDouble->mpSplit2->mpAnother.GetIndex());
 	AssertFalse(pDouble->mpSplit2->mpAnother.IsHollow());
 	AssertPointer(pDiamond.Object(), pDouble->mpSplit2->mpAnother.Object());
 	Pass();
