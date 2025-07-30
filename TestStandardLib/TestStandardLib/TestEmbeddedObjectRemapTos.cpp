@@ -70,7 +70,7 @@ void TestEmbeddedObjectRemapTosActual(void)
 
 	pRoot->Add(pHollow);
 
-	Ptr<CTestObjectWithTwoEmbedded> pObject = gcObjects.Malloc<CTestObjectWithTwoEmbedded>("Name2")->Init();
+	Ptr<CTestObjectWithTwoEmbedded> pObject = gcObjects.Malloc<CTestObjectWithTwoEmbedded>("Name2");
 	AssertSize(3, pObject.Object()->GetNumEmbedded());
 
 	AssertString("CHollowObject", pHollow.ClassName());
@@ -109,6 +109,7 @@ void TestEmbeddedObjectRemapTosActual(void)
 	AssertInt(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumStackFroms());
 	AssertInt(1, pHollowEmbedded2.Object()->CEmbeddedObject::NumStackFroms());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 

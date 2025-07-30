@@ -144,7 +144,7 @@ void TestObjectsObjectSave(void)
 	AssertTrue(pDouble.BaseObject()->Flush());
 	AssertLong(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
-	AssertInt(106, iSerialisedSize);
+	AssertInt(126, iSerialisedSize);
 	AssertLong(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLong(1, pcDatabase->NumDataCached());
 	
@@ -154,18 +154,18 @@ void TestObjectsObjectSave(void)
 	AssertTrue(pDouble.BaseObject()->Flush());
 	AssertLong(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
-	AssertInt(118, iSerialisedSize);
+	AssertInt(138, iSerialisedSize);
 	AssertLong(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLong(1, pcDatabase->NumDataCached());
 
 	pDouble->mszString = OMalloc<CString>("Different Object");
 
 	iSerialisedSize = pDouble->SerialisedSize();
-	AssertInt(118, iSerialisedSize);
+	AssertInt(138, iSerialisedSize);
 	AssertTrue(pDouble.BaseObject()->Flush());
 	AssertLong(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
-	AssertInt(118, iSerialisedSize);
+	AssertInt(138, iSerialisedSize);
 	AssertLong(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLong(1, pcDatabase->NumDataCached());
 

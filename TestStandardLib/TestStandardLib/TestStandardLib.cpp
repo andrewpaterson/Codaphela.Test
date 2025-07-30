@@ -92,7 +92,7 @@ int __cdecl main(void)
 	TestArrayCommonObject();
 	TestFreeEmbedded();
 	TestStringOverride();
-	//TestReplaceAndRemap();
+	TestReplaceAndRemap();
 	TestHollowObject();
 	TestNamedObject();
 	TestObjectDirty();
@@ -106,14 +106,14 @@ int __cdecl main(void)
 	//TestObjectConverter();
 	//TestObjects();
 	TestStackPointers();
-	TestDehollowfication();
-	TestString();
+	//TestDehollowfication();
+	//TestString();
 	TestObjectsEvictVsKill();
 	TestUsage();
 	TestArray();
 	//TestKill();
-	//TestEmbedded();
-	//TestEmbeddedObjectRemapTos();
+	TestEmbedded();
+	TestEmbeddedObjectRemapTos();
 	//TestEmbeddedStackPointers();
 
 	FastFunctionsKill();

@@ -33,6 +33,8 @@ void TestEmbeddedStackPointersKill(void)
 
 	AssertTrue(sFreedNotifier.bFreed);
 	AssertLong(0, gcObjects.NumMemoryIndexes());
+
+	ObjectsKill();
 }
 
 
@@ -62,7 +64,6 @@ void TestEmbeddedStackPointersDestructor(void)
 	STestObjectFreedNotifier	sFreedNotifier1;
 	STestObjectFreedNotifier	sFreedNotifier2;
 
-	cTest1.Class();
 	cTest1.Init(&sFreedNotifier1);
 	sFreedNotifier2.bFreed = false;
 
@@ -108,7 +109,6 @@ void TestEmbeddedStackPointersEmbeddedDistPassThruPointer(void)
 	pTest = OMalloc<CEmbeddedTest>();
 	pcTest = (CEmbeddedTest*)pTest.Object();
 
-	pTest->Init();
 	cComplex.mpTest = pTest;
 
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest->GetDistToStack());
@@ -200,10 +200,8 @@ void TestEmbeddedStackPointersComplex(void)
 	cComplexOnStack1.Init();
 	cComplexOnStack2.Init();
 
-	pTestObject1 = OMalloc<CTestObject>();
-	pTestObject1->Init(&sFreedNotifier1);
-	pTestObject2 = OMalloc<CTestObject>();
-	pTestObject2->Init(&sFreedNotifier2);
+	pTestObject1 = OMalloc<CTestObject>(&sFreedNotifier1);
+	pTestObject2 = OMalloc<CTestObject>(&sFreedNotifier2);
 
 	AssertInt(0, cComplexOnStack1.GetDistToStack());
 	AssertInt(0, cComplexOnStack1.NumStackFroms());

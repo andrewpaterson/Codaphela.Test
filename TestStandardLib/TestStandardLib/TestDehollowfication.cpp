@@ -51,17 +51,17 @@ Ptr<CTestDoubleNamedString> SetupDehollowficationScene(void)
 
 	sz3 = OMalloc<CString>("End");
 
-	cDiamond = ONMalloc<CTestNamedString>("Diamond End", sz3, Null(), "Before Swine");
+	cDiamond = ONMalloc<CTestNamedString>("Diamond End", sz3, Null(), "Before Swine");  //cDiamond->mpAnother = sz3
 	sz1 = OMalloc<CString>("World");
 
-	cNS1 = ONMalloc<CTestNamedString>("NamedString 1", sz1, cDiamond, "Hello");
+	cNS1 = ONMalloc<CTestNamedString>("NamedString 1", sz1, cDiamond, "Hello");		//cNS1->mpAnother = cDiamond
 
 	sz2 = OMalloc<CString>("6789");
-	cNS2 = ONMalloc<CTestNamedString>("NamedString 2", sz2, cDiamond, "12345");
+	cNS2 = ONMalloc<CTestNamedString>("NamedString 2", sz2, cDiamond, "12345");		//cNS2->mpAnother = cDiamond
 
 	sz4 = OMalloc<CString>("Start");
-	cDouble = ONMalloc<CTestDoubleNamedString>("Double Start", sz4, cNS1, Null());
-
+	cDouble = ONMalloc<CTestDoubleNamedString>("Double Start", sz4, cNS1, Null());  //cDouble->szString = sz4
+																					//cDouble->mpSplit2 = cNS1
 	cRoot->Add(cDouble);
 
 	cDouble->mpSplit1 = cNS2;
@@ -249,45 +249,45 @@ void TestDehollowficationFromDatabaseComplex(void)
 	AssertInt(1, gcObjects.GetStackPointers()->UsedPointers());
 	Pass();
 
-	Ptr<CTestDoubleNamedString> pTest = pRoot->Get<CTestDoubleNamedString>("Double Start");  //This will cause pRoot.Set to be dehollowed.
+	Ptr<CTestDoubleNamedString> pDouble = pRoot->Get<CTestDoubleNamedString>("Double Start");  //This will cause pRoot.Set to be dehollowed.
 	AssertInt(2, gcObjects.GetStackPointers()->UsedPointers());
 	AssertFalse(pRoot->IsSetHollow());
-	AssertTrue(pTest.IsNotNull());
-	AssertTrue(pTest.IsHollow());
-	AssertLong(10, pTest.GetIndex());
+	AssertTrue(pDouble.IsNotNull());
+	AssertTrue(pDouble.IsHollow());
+	AssertLong(10, pDouble.GetIndex());
 	AssertLong(4, gcUnknowns.NumElements());
 	AssertLong(3, gcObjects.NumMemoryIndexes());
 	Pass();
 
-	AssertString("12345", pTest->mpSplit1->mszEmbedded.Text()); //This will cause pTest and pTest.Split1 to be dehollowed.
+	AssertString("12345", pDouble->mpSplit1->mszEmbedded.Text()); //This will cause pDouble and pDouble.Split1 to be dehollowed.
 	AssertLong(9, gcUnknowns.NumElements());
 	AssertLong(6, gcObjects.NumMemoryIndexes());
-	AssertFalse(pTest.IsHollow());
-	AssertLong(10, pTest.GetIndex());
+	AssertFalse(pDouble.IsHollow());
+	AssertLong(10, pDouble.GetIndex());
 	AssertInt(2, gcObjects.GetStackPointers()->UsedPointers());
-	AssertTrue(pTest->mpSplit1->mpAnother.IsHollow());
-	AssertTrue(pTest->mpSplit2.IsHollow());
-	AssertTrue(pTest->mpSplit1->mszString.IsHollow());
-	AssertString("Diamond End", pTest->mpSplit1->mpAnother.GetName());
-	AssertString("6789", pTest->mpSplit1->mszString->Text());
-	AssertFalse(pTest->mpSplit1->mszString.IsHollow());
+	AssertTrue(pDouble->mpSplit1->mpAnother.IsHollow());
+	AssertTrue(pDouble->mpSplit2.IsHollow());
+	AssertTrue(pDouble->mpSplit1->mszString.IsHollow());
+	AssertString("Diamond End", pDouble->mpSplit1->mpAnother.GetName());
+	AssertString("6789", pDouble->mpSplit1->mszString->Text());
+	AssertFalse(pDouble->mpSplit1->mszString.IsHollow());
 	Pass();
 
 	AssertInt(2, gcObjects.GetStackPointers()->UsedPointers());
 	Pass();
 
-	Ptr<CTestNamedString> pDiamond = pTest->mpSplit1->mpAnother;
+	Ptr<CTestNamedString> pDiamond = pDouble->mpSplit1->mpAnother;
 	AssertLong(9, gcUnknowns.NumElements());
 	AssertLong(5, gcObjects.NumMemoryIndexes());
 	AssertInt(3, gcObjects.GetStackPointers()->UsedPointers());
-	AssertTrue(pTest->mpSplit1->mpAnother.IsHollow());
+	AssertTrue(pDouble->mpSplit1->mpAnother.IsHollow());
 	AssertTrue(pDiamond.IsHollow());
 	Pass();
 
 	pDiamond->ClassName(); //This will cause pDiamond to be de-hollowed
 
 	AssertFalse(pDiamond.IsHollow());
-	AssertFalse(pTest->mpSplit1->mpAnother.IsHollow());
+	AssertFalse(pDouble->mpSplit1->mpAnother.IsHollow());
 	Pass();
 
 	AssertLong(10, gcUnknowns.NumElements());
@@ -296,11 +296,11 @@ void TestDehollowficationFromDatabaseComplex(void)
 	AssertLong(6, pcDatabase->NumNames());
 	Pass();
 
-	AssertTrue(pTest->mpSplit2.IsHollow());
-	pTest->mpSplit2->ClassSize();
-	AssertFalse(pTest->mpSplit2.IsHollow());
-	AssertFalse(pTest->mpSplit2->mpAnother.IsHollow());
-	AssertPointer(pDiamond.Object(), pTest->mpSplit2->mpAnother.Object());
+	AssertTrue(pDouble->mpSplit2.IsHollow());
+	pDouble->mpSplit2->ClassSize(); //This will cause mpSplit2 to be de-hollowed
+	AssertFalse(pDouble->mpSplit2.IsHollow());
+	AssertFalse(pDouble->mpSplit2->mpAnother.IsHollow());
+	AssertPointer(pDiamond.Object(), pDouble->mpSplit2->mpAnother.Object());
 	Pass();
 
 	AssertLong(11, gcObjects.NumMemoryIndexes());
@@ -315,13 +315,13 @@ void TestDehollowficationFromDatabaseComplex(void)
 
 	AssertTrue(pRandom->mszString.IsHollow());
 	AssertFalse(pRandom.IsHollow());
-	AssertTrue(pTest->mpSplit2->mszString.IsHollow());
+	AssertTrue(pDouble->mpSplit2->mszString.IsHollow());
 	Pass();
 
 	AssertString("World", pRandom->mszString->Text());
 	AssertFalse(pRandom->mszString.IsHollow());
-	AssertFalse(pTest->mpSplit2->mszString.IsHollow());
-	AssertPointer(pRandom->mszString.Object(), pTest->mpSplit2->mszString.Object());
+	AssertFalse(pDouble->mpSplit2->mszString.IsHollow());
+	AssertPointer(pRandom->mszString.Object(), pDouble->mpSplit2->mszString.Object());
 	Pass();
 
 	AssertLong(11, pcDatabase->NumIndices());
@@ -334,7 +334,7 @@ void TestDehollowficationFromDatabaseComplex(void)
 	ObjectsKill();
 
 	AssertTrue(pRoot.IsNull());
-	AssertTrue(pTest.IsNull());
+	AssertTrue(pDouble.IsNull());
 	AssertTrue(pDiamond.IsNull());
 	AssertTrue(pRandom.IsNull());
 	Pass();
@@ -465,19 +465,19 @@ void TestDehollowficationFromChunkFileSource(void)
 	AssertString("NamedString 1", pcObjectSourceChunked->GetName(2));
 	AssertString("NamedString 2", pcObjectSourceChunked->GetName(3));
 
-	Ptr<CTestDoubleNamedString> pStart;
+	Ptr<CTestDoubleNamedString> pDouble;
 
-	pStart = gcObjects.Get("Double Start");
-	AssertTrue(pStart.IsNotNull());
-	AssertString("CTestDoubleNamedString", pStart.ClassName());
+	pDouble = gcObjects.Get("Double Start");
+	AssertTrue(pDouble.IsNotNull());
+	AssertString("CTestDoubleNamedString", pDouble.ClassName());
 
-	AssertTrue(pStart->mpSplit1.IsHollow());
-	AssertTrue(pStart->mpSplit2.IsHollow());
-	AssertFalse(pStart->mszString.IsHollow());
+	AssertTrue(pDouble->mpSplit1.IsHollow());
+	AssertTrue(pDouble->mpSplit2.IsHollow());
+	AssertFalse(pDouble->mszString.IsHollow());
 
-	pStart->mpSplit1->ClassName();
-	AssertFalse(pStart->mpSplit1.IsHollow());
-	AssertString("CTestNamedString", pStart->mpSplit1.ClassName());
+	pDouble->mpSplit1->ClassName();
+	AssertFalse(pDouble->mpSplit1.IsHollow());
+	AssertString("CTestNamedString", pDouble->mpSplit1.ClassName());
 
 	ObjectsFlush();
 	pcDatabase->Close();

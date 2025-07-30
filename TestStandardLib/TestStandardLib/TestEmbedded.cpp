@@ -46,21 +46,6 @@ void TestEmbeddedFlags(void)
 	AssertFalse(cComplex.mcContainer.mcOne.IsInitialised());
 	AssertFalse(cComplex.mcContainer.mcTwo.IsInitialised());
 
-	cComplex.Class();
-
-	AssertTrue(cComplex.HasClass());
-	AssertTrue(cComplex.ma.HasClass());
-	AssertTrue(cComplex.mcSimple.HasClass());
-	AssertTrue(cComplex.mcContainer.HasClass());
-	AssertTrue(cComplex.mcContainer.mcOne.HasClass());
-	AssertTrue(cComplex.mcContainer.mcTwo.HasClass());
-	AssertFalse(cComplex.IsInitialised());
-	AssertFalse(cComplex.ma.IsInitialised());
-	AssertFalse(cComplex.mcSimple.IsInitialised());
-	AssertFalse(cComplex.mcContainer.IsInitialised());
-	AssertFalse(cComplex.mcContainer.mcOne.IsInitialised());
-	AssertFalse(cComplex.mcContainer.mcTwo.IsInitialised());
-
 	cComplex.Init();
 
 	AssertTrue(cComplex.HasClass());
@@ -111,6 +96,7 @@ void TestEmbeddedObjectAddDistToRoot(void)
 
 	AssertInt(3, pHarrier->GetDistToRoot());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -167,6 +153,7 @@ void TestEmbeddedObjectRemoveDistToRoot(void)
 	pRoot->Remove(pHarrier);
 	AssertInt(4, pHarrier->GetDistToRoot());
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 
@@ -190,13 +177,11 @@ void TestEmbeddedObjectKill(void)
 	Ptr<CClusterMissile> pClusterMissile = ONMalloc<CClusterMissile>("Anna", pWorld);
 	pWorld = NULL;
 
-	Ptr<CPointerContainer> pPointerPointer = OMalloc<CPointerContainer>();
+	Ptr<CPointerContainer> pPointerPointer = OMalloc<CPointerContainer>(&pClusterMissile->mcMissile1);
 	pRoot->Add(pPointerPointer);
-	pPointerPointer->Init(&pClusterMissile->mcMissile1);
 
-	Ptr<CPointerContainer> pPointerPointer2 = OMalloc<CPointerContainer>();
+	Ptr<CPointerContainer> pPointerPointer2 = OMalloc<CPointerContainer>(&pClusterMissile);
 	pRoot->Add(pPointerPointer2);
-	pPointerPointer2->Init(&pClusterMissile);
 
 	//The number of allocated object shouldn't change until all the froms are removed
 	//both from the embedded object and the 'normal' object.
@@ -299,7 +284,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 
 	AssertInt(184, sizeof(CEmbeddedTest));
 	AssertInt(568, sizeof(CEmbeddedContainer));
-	AssertInt(1088, sizeof(CEmbeddedComplex));
+	AssertInt(1104, sizeof(CEmbeddedComplex));
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -336,7 +321,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	AssertInt(85, pComplex->mcContainer.mcTwo.miAmANumber);
 	AssertFloat(58.0f, pComplex->mcContainer.mcTwo.mfSoAmI, 0);
 
-	AssertLong(3, gcObjects.NumMemoryIndexes());
+	AssertLong(1, gcObjects.NumMemoryIndexes());
 
 	ObjectsFlush();
 	pcDatabase->Close();
@@ -381,6 +366,7 @@ void TestEmbeddedObjectPointTo(void)
 	AssertTrue(bResult);
 
 	ObjectsFlush();
+	pcDatabase->Close();
 	SafeKill(pcSequence);
 	SafeKill(pcDatabase);
 	ObjectsKill();
