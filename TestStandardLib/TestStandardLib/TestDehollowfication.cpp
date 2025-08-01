@@ -190,10 +190,13 @@ void TestDehollowficationFromDatabaseSimple(void)
 //////////////////////////////////////////////////////////////////////////
 void TestDehollowficationFromDatabaseComplex(void)
 {
-	CFileUtil							cFileUtil;
-	CCodabase*							pcDatabase;
-	CSequence*							pcSequence;
-	char								szDirectory[] = "Output" _FS_ "Dehollowfication" _FS_ "Database1";
+	CFileUtil		cFileUtil;
+	CCodabase*		pcDatabase;
+	CSequence*		pcSequence;
+	size			uiSize;
+	bool			bResult;
+	CBaseObject*	pcObject;
+	char			szDirectory[] = "Output" _FS_ "Dehollowfication" _FS_ "Database1";
 
 	cFileUtil.RemoveDir(szDirectory);
 
@@ -255,16 +258,23 @@ void TestDehollowficationFromDatabaseComplex(void)
 	AssertTrue(pDouble.IsNotNull());
 	AssertTrue(pDouble.IsHollow());
 	AssertLong(10, pDouble.GetIndex());
-	AssertLong(4, gcUnknowns.NumElements());
-	AssertLong(3, gcObjects.NumMemoryIndexes());
+	AssertLong(4LL, gcUnknowns.NumElements());
+	AssertLong(4LL, gcObjects.NumMemoryIndexes());
 	Pass();
 
-	AssertString("12345", pDouble->mpSplit1->mszEmbedded.Text()); //This will cause pDouble and pDouble.Split1 to be dehollowed.
-	AssertLong(9, gcUnknowns.NumElements());
-	AssertLong(6, gcObjects.NumMemoryIndexes());
+	AssertString("12345", pDouble->mpSplit1->mszEmbedded.Text()); //This will cause pDouble and pDouble.mpSplit1 to be dehollowed.
+	AssertLong(9LL, gcUnknowns.NumElements());
+	AssertLong(9LL, gcObjects.NumMemoryIndexes());
 	AssertFalse(pDouble.IsHollow());
 	AssertLong(10, pDouble.GetIndex());
 	AssertInt(2, gcObjects.GetStackPointers()->UsedPointers());
+	AssertFalse(pDouble->mpSplit1.IsHollow());
+	AssertLong(8LL, pDouble->mpSplit1.GetIndex());
+	AssertString("NamedString 2", pDouble->mpSplit1.GetName());
+	pcObject = gcObjects.GetMemory()->GetObjects()->Get(pDouble->mpSplit1.GetIndex());  //Why Is 8LL not in the index?
+	bResult = gcObjects.GetMemory()->GetNames()->Get((uint8*)pDouble->mpSplit1.GetName(), 13, NULL, &uiSize, 0);  //Why Is "NamedString 2" not in the index?
+	AssertNotNull(pcObject);
+	AssertTrue(bResult);
 	AssertTrue(pDouble->mpSplit1->mpAnother.IsHollow());
 	AssertTrue(pDouble->mpSplit2.IsHollow());
 	AssertTrue(pDouble->mpSplit1->mszString.IsHollow());
@@ -278,7 +288,7 @@ void TestDehollowficationFromDatabaseComplex(void)
 
 	Ptr<CTestNamedString> pDiamond = pDouble->mpSplit1->mpAnother;
 	AssertLong(9, gcUnknowns.NumElements());
-	AssertLong(5, gcObjects.NumMemoryIndexes());
+	AssertLong(9, gcObjects.NumMemoryIndexes());
 	AssertInt(3, gcObjects.GetStackPointers()->UsedPointers());
 	AssertTrue(pDouble->mpSplit1->mpAnother.IsHollow());
 	AssertTrue(pDiamond.IsHollow());
@@ -289,18 +299,21 @@ void TestDehollowficationFromDatabaseComplex(void)
 	AssertFalse(pDiamond.IsHollow());
 	AssertFalse(pDouble->mpSplit1->mpAnother.IsHollow());
 	AssertLong(4LL, pDouble->mpSplit1->mpAnother.GetIndex());
+	AssertString("Diamond End", pDouble->mpSplit1->mpAnother.GetName());
 	Pass();
 
-	AssertLong(10, gcUnknowns.NumElements());
-	AssertLong(5, gcObjects.NumMemoryIndexes());
-	AssertLong(3, gcObjects.NumMemoryNames());
-	AssertLong(6, pcDatabase->NumNames());
+	AssertLong(10LL, gcUnknowns.NumElements());
+	AssertLong(10LL, gcObjects.NumMemoryIndexes());
+	AssertLong(6LL, gcObjects.NumMemoryNames());
+	AssertLong(6LL, pcDatabase->NumNames());
 	Pass();
 
 	AssertTrue(pDouble->mpSplit2.IsHollow());
 	pDouble->mpSplit2->ClassSize(); //This will cause mpSplit2 to be de-hollowed
 	AssertFalse(pDouble->mpSplit2.IsHollow());
+	AssertNotNull(&pDouble->mpSplit2->mpAnother);
 	AssertLong(4LL, pDouble->mpSplit2->mpAnother.GetIndex());
+	AssertString("Diamond End", pDouble->mpSplit2->mpAnother.GetName());
 	AssertFalse(pDouble->mpSplit2->mpAnother.IsHollow());
 	AssertPointer(pDiamond.Object(), pDouble->mpSplit2->mpAnother.Object());
 	Pass();

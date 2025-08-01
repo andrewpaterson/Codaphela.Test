@@ -118,7 +118,10 @@ void TestHollowObjectMemoryIteration(void)
 	OIndex									oi;
 	CPointer								p;
 	OIndex									oiRoot;
+	OIndex									oiSet;
 	OIndex									oi1;
+	OIndex									oi2;
+	OIndex									oi3;
 	char									szDirectory[] = "Output" _FS_ "HollowObject2";
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -140,7 +143,10 @@ void TestHollowObjectMemoryIteration(void)
 	pObject2->mpTest = pObject3;
 
 	oiRoot = pRoot.GetIndex();
+	oiSet = pRoot->TestGetSet()->GetIndex();
 	oi1 = pObject1.GetIndex();
+	oi2 = pObject2.GetIndex();
+	oi3 = pObject3.GetIndex();
 
 	ObjectsFlush();
 	pcDatabase->Close();
@@ -162,6 +168,8 @@ void TestHollowObjectMemoryIteration(void)
 
 	oi = gcObjects.StartMemoryIteration(&sIter);
 	AssertLong(oiRoot, oi);
+	oi = gcObjects.IterateMemory(&sIter);
+	AssertLong(oiSet, oi);
 	oi = gcObjects.IterateMemory(&sIter);
 	AssertLong(oi1, oi);
 	p = gcObjects.TestGetFromMemory(oi);

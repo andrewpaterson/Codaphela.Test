@@ -56,6 +56,7 @@ void TestObjectReplaceNoPointers(void)
 	AssertString("GraphRoot", pRoot->GetName());
 	AssertInt(5, gcUnknowns.NumElements());
 
+	gcObjects.RemoveMemoryIdentifiers(&pObject3);
 	gcObjects.ReplaceBaseObject(&pObject1, &pObject3);
 	AssertLong(4, gcObjects.NumMemoryIndexes());
 	AssertLong(3, gcObjects.NumMemoryNames());
@@ -154,8 +155,7 @@ void TestObjectReplaceWithHeapPointers(void)
 	AssertFalse(sFreeNotifider3.bFreed);
 	AssertFalse(sFreeNotifider4.bFreed);
 
-	//Uh?  Why is this here?
-	gcObjects.DumpMemoryUseIteration();
+	gcObjects.RemoveMemoryIdentifiers(&pObject5);
 	gcObjects.ReplaceBaseObject(&pObject1, &pObject5);
 
 	//         pObject5(2) <--- pObject4(2)  
@@ -273,8 +273,7 @@ void TestObjectReplaceWithStackPointers(void)
 	AssertFalse(sFreeNotifider3.bFreed);
 	AssertFalse(sFreeNotifider4.bFreed);
 
-	//Uh?  Why is this here?
-	gcObjects.DumpMemoryUseIteration();
+	gcObjects.RemoveMemoryIdentifiers(&pObject5);
 	gcObjects.ReplaceBaseObject(&pObject1, &pObject5);
 
 	//         pObject5(2) <--- pObject4(2)  
