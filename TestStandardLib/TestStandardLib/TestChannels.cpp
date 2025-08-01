@@ -227,7 +227,7 @@ void TestChannelsLoad(void)
 	cFileBasic.Init(pcDiskFile);
 
 	cReader.Init(&cFileBasic);
-	cDeserialiser.Init(&cReader, false, &gcObjects, gcObjects.GetMemory());
+	cDeserialiser.Init(&cReader, false, &gcObjects);
 	pcChannels = cDeserialiser.Read("File");
 	cDeserialiser.Kill();
 	cReader.Kill();

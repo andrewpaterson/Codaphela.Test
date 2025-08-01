@@ -141,7 +141,7 @@ void TestRemappingOfOIs(CExternalObjectWriter* pcWriter, CExternalObjectReader* 
 		AssertLong(9LL + i, szOne->GetIndex());
 	}
 	
-	cGraphDeserialiser.Init(pcReader, false, &gcObjects, gcObjects.GetMemory());
+	cGraphDeserialiser.Init(pcReader, false, &gcObjects);
 	cStart1 = cGraphDeserialiser.Read("Ow/Start 1");
 	AssertTrue(cStart1.IsNotNull());
 	AssertLong(29, cStart1->GetIndex());
@@ -247,7 +247,7 @@ void TestObjectGraphDeserialiserReuseName(void)
 	cBase = gcObjects.Get("Ow/Start 1");
 
 	
-	cGraphDeserialiser.Init(&cReader, false, &gcObjects, gcObjects.GetMemory());
+	cGraphDeserialiser.Init(&cReader, false, &gcObjects);
 	cStart1 = cGraphDeserialiser.Read("Ow/Start 1");
 	AssertTrue(cStart1.IsNotNull());
 	AssertLong(3, cStart1->GetIndex());  //Should this be 4?  I don't know.
@@ -397,7 +397,7 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 
 	
 	cReaderStart1.Init("Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping", "Start1");
-	cGraphDeserialiser.Init(&cReaderStart1, false, &gcObjects, gcObjects.GetMemory());
+	cGraphDeserialiser.Init(&cReaderStart1, false, &gcObjects);
 	cOwStart1 = cGraphDeserialiser.Read("Ow/Start 1");
 	cGraphDeserialiser.Kill();
 	cReaderStart1.Kill();
@@ -428,7 +428,7 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 
 	
 	cReaderStart2.Init("Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping", "Start2");
-	cGraphDeserialiser.Init(&cReaderStart2, false, &gcObjects, gcObjects.GetMemory());
+	cGraphDeserialiser.Init(&cReaderStart2, false, &gcObjects);
 	cOwStart2 = cGraphDeserialiser.Read("Ow/Start 2");
 	cGraphDeserialiser.Kill();
 	cReaderStart2.Kill();

@@ -294,7 +294,7 @@ void TestSetSerialisation()
 	ObjectsInit();
 
 	cReader.Init(szDirectory, "File");
-	cGraphDeserialiser.Init(&cReader, false, &gcObjects, gcObjects.GetMemory());
+	cGraphDeserialiser.Init(&cReader, false, &gcObjects);
 	pSet = cGraphDeserialiser.Read("Burke");
 	AssertNotNull(&pSet);
 
