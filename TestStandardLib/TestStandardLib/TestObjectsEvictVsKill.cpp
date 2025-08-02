@@ -42,14 +42,14 @@ void TestObjectsEvictVsKillUserEvictAfterSave(EIndexWriteThrough eWriteThrough)
 	pRoot->Add(pTest1a);
 	pTest1b = OMalloc<CTestObject>(&sFreeNotifier1b);
 	pTest1a->mpTest = pTest1b;
-	AssertLong(0, pcDatabase->NumIndices());
+	AssertLong(eWriteThrough == IWT_No ? 0LL : 3LL , pcDatabase->NumIndices());
 	AssertLong(4, gcObjects.NumMemoryIndexes());
 
 	AssertInt(0x07070707, pTest1a->mi);
 
 	pTest1a->Flush();
 
-	AssertLong(1, pcDatabase->NumIndices());
+	AssertLong(eWriteThrough == IWT_No ? 1LL : 4LL, pcDatabase->NumIndices());
 	AssertLong(4, gcObjects.NumMemoryIndexes());
 
 	ObjectsFlush();

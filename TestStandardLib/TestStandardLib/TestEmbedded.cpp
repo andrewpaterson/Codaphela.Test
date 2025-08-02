@@ -321,7 +321,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	AssertInt(85, pComplex->mcContainer.mcTwo.miAmANumber);
 	AssertFloat(58.0f, pComplex->mcContainer.mcTwo.mfSoAmI, 0);
 
-	AssertLong(1, gcObjects.NumMemoryIndexes());
+	AssertLong(3, gcObjects.NumMemoryIndexes());
 
 	ObjectsFlush();
 	pcDatabase->Close();

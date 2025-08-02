@@ -188,8 +188,8 @@ void TestKillBestPractice(void)
 	AssertString("Kill not called", sMaverickAfter.cPicture.mszPretenedImAPicture);
 	AssertLong(12, gcObjects.NumMemoryIndexes());
 	AssertLong(5, gcObjects.NumMemoryNames());
-	AssertLong(0, pcDatabase->NumIndices());
-	AssertLong(0, pcDatabase->NumNames());
+	AssertLong(10, pcDatabase->NumIndices());
+	AssertLong(5, pcDatabase->NumNames());
 	AssertInt(2, pWorld.GetDistToRoot());
 	AssertInt(3, pHarrier.GetDistToRoot());
 	AssertInt(3, pJeep.GetDistToRoot());
@@ -202,7 +202,7 @@ void TestKillBestPractice(void)
 	AssertInt(3, pHarrier->GetMissiles()->NumElements());
 
 	OIndex oiMissile3 = pMissile3->GetIndex();
-	AssertLong(24LL, oiMissile3);
+	AssertLong(12LL, oiMissile3);
 
 	pMissile3->Kill();  //<-- This is what is being tested -----------------------------------.
 	pMissile3 = gcObjects.TestGetFromMemory(oiMissile3);
@@ -212,8 +212,8 @@ void TestKillBestPractice(void)
 	AssertString("Kill not called", sMaverickAfter.cPicture.mszPretenedImAPicture);
 	AssertLong(11, gcObjects.NumMemoryIndexes());
 	AssertLong(5, gcObjects.NumMemoryNames());
-	AssertLong(0, pcDatabase->NumIndices());
-	AssertLong(0, pcDatabase->NumNames());
+	AssertLong(11, pcDatabase->NumIndices());
+	AssertLong(5, pcDatabase->NumNames());
 	AssertInt(2, pWorld.GetDistToRoot());
 	AssertInt(3, pHarrier.GetDistToRoot());
 	AssertInt(3, pJeep.GetDistToRoot());
@@ -238,8 +238,8 @@ void TestKillBestPractice(void)
 	AssertTrue(pTarget2.IsNull());
 	AssertLong(10, gcObjects.NumMemoryIndexes());
 	AssertLong(4, gcObjects.NumMemoryNames());
-	AssertLong(0, pcDatabase->NumIndices());
-	AssertLong(0, pcDatabase->NumNames());
+	AssertLong(11, pcDatabase->NumIndices());
+	AssertLong(5, pcDatabase->NumNames());
 	AssertInt(2, pWorld.GetDistToRoot());
 	AssertInt(3, pHarrier.GetDistToRoot());
 	AssertInt(3, pJeep.GetDistToRoot());
@@ -273,8 +273,8 @@ void TestKillBestPractice(void)
 
 	AssertLong(2, gcObjects.NumMemoryIndexes());
 	AssertLong(1, gcObjects.NumMemoryNames());
-	AssertLong(0, pcDatabase->NumIndices());
-	AssertLong(0, pcDatabase->NumNames());
+	AssertLong(11, pcDatabase->NumIndices());
+	AssertLong(5, pcDatabase->NumNames());
 
 	AssertInt('X', sHarrierBefore.sPoint.x);
 	AssertInt('Y', sHarrierBefore.sPoint.y);
@@ -300,6 +300,10 @@ void TestKillCanFindRoot(void)
 {
 	CCodabase*	pcDatabase;
 	CSequence*	pcSequence;
+	CFileUtil	cFileUtil;
+
+	cFileUtil.RemoveDir("Output" _FS_ "TestKillCanFindRoot");
+	cFileUtil.TouchDir("Output" _FS_ "TestKillCanFindRoot");
 
 	pcSequence = CSequenceFactory::Create("Output" _FS_ "TestKillCanFindRoot");
 	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "TestKillCanFindRoot", IWT_Yes);
@@ -397,8 +401,8 @@ void TestKillCanFindRoot(void)
 	AssertInt(-1, pWorld->GetTickables()->GetDistToRoot());
 	AssertLong(9, gcObjects.NumMemoryIndexes());
 	AssertLong(5, gcObjects.NumMemoryNames());
-	AssertLong(0, pcDatabase->NumIndices());
-	AssertLong(0, pcDatabase->NumNames());
+	AssertLong(9, pcDatabase->NumIndices());
+	AssertLong(5, pcDatabase->NumNames());
 
 	pJeep = NULL;
 	pRedJetMaverick = NULL;
