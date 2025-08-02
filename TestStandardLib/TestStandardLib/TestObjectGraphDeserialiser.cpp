@@ -250,7 +250,7 @@ void TestObjectGraphDeserialiserReuseName(void)
 	cGraphDeserialiser.Init(&cReader, false, &gcObjects);
 	cStart1 = cGraphDeserialiser.Read("Ow/Start 1");
 	AssertTrue(cStart1.IsNotNull());
-	AssertLong(3, cStart1->GetIndex());  //Should this be 4?  I don't know.
+	AssertLong(4LL, cStart1->GetIndex());
 
 	cGraphDeserialiser.Kill();
 

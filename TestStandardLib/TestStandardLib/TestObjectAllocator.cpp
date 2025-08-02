@@ -145,11 +145,11 @@ void TestObjectAllocatorNamedOverwrite(void)
 	pNamed2 = gcObjects.GetNamedObjectInMemoryAndReplaceOrAllocateUninitialisedWithSameName("CTestNamedObject", "My Object Name");
 	pNamed2->Init(2);
 	AssertNotNull(pNamed2.Object());
-	AssertLong(1LL, pNamed2.GetIndex());
+	AssertLong(2LL, pNamed2.GetIndex());
 	AssertString("My Object Name", pNamed2.GetName());
 	AssertLong(1, gcObjects.NumMemoryIndexes());
 
-	pNamed1 = gcObjects.Get(1LL);
+	pNamed1 = gcObjects.Get(2LL);
 	AssertNotNull(pNamed1.Object());
 	AssertInt(2, pNamed1->miNum);
 	AssertInt(2, pNamed2->miNum);
@@ -303,10 +303,10 @@ void TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed(void)
 
 	AssertString("CTestNamedObject", pNamed1.ClassName());
 	AssertString("CTestNamedObjectSmall", pNamed2.ClassName());
-	AssertLong(3, pNamed1.GetIndex());
-	AssertLong(4, pNamed2.GetIndex());
+	AssertLong(3LL, pNamed1.GetIndex());
+	AssertLong(8LL, pNamed2.GetIndex());
 	AssertString("CTestNamedObjectSmall", pNamedSmall.ClassName());
-	AssertLong(4, pNamedSmall.GetIndex());
+	AssertLong(8LL, pNamedSmall.GetIndex());
 
 	pObject1 = pRoot->Get("1");
 	pObject2 = pRoot->Get("2");
@@ -629,8 +629,8 @@ void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwritten(void)
 	AssertLong(8, gcObjects.NumMemoryIndexes());
 	AssertLong(7, gcObjects.NumMemoryNames());
 
-	AssertLong(5LL, pNamed3New->GetIndex());
-	AssertLong(6ll, pNamed4New->GetIndex());
+	AssertLong(9LL, pNamed3New->GetIndex());
+	AssertLong(10ll, pNamed4New->GetIndex());
 
 	AssertInt(33, pNamed1->mpNamedTest1->miNum);
 	AssertInt(44, pNamed2->mpNamedTest1->miNum);
