@@ -117,7 +117,7 @@ void TestRemappingOfOIs(CExternalObjectWriter* pcWriter, CExternalObjectReader* 
 
 	AssertLong(9LL, pcSequence->PeekNext());
 
-	gcObjects.Flush();
+	ObjectsFlush();
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
@@ -140,9 +140,9 @@ void TestRemappingOfOIs(CExternalObjectWriter* pcWriter, CExternalObjectReader* 
 		cRoot->Add(szOne);
 		AssertLong(9LL + i, szOne->GetIndex());
 	}
-	
+
 	cGraphDeserialiser.Init(pcReader, false, &gcObjects);
-	cStart1 = cGraphDeserialiser.Read("Ow/Start 1");
+ 	cStart1 = cGraphDeserialiser.Read("Ow/Start 1");
 	AssertTrue(cStart1.IsNotNull());
 	AssertLong(29, cStart1->GetIndex());
 

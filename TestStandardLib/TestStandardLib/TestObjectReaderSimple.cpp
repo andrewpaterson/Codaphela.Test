@@ -97,8 +97,6 @@ void TestObjectReaderSimpleDeserialised(void)
 	cGraphDeserialiser.Init(&cReader, false, &gcObjects);
 	cBase = cGraphDeserialiser.Read("Waggy");
 
-	gcObjects.DumpMemoryUseIteration();
-
 	AssertTrue(cBase.IsNotNull());
 	AssertString("CTestNamedString", cBase->ClassName());
 	AssertString("Waggy", cBase.GetName());

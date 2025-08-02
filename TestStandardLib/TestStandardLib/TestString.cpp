@@ -220,11 +220,7 @@ void TestStringEmbeddedDirty(void)
 	ORoot()->TouchAll();
 	pContainer = gcObjects.Get(oiContainer);
 
-	gcObjects.DumpMemoryUseIteration();
-
 	pString1 = &pContainer->mString1;
-
-	gcObjects.DumpMemoryUseIteration();
 
 	pString2 = &pContainer->mString2;
 	pString3 = &pContainer->mString3;
@@ -241,8 +237,6 @@ void TestStringEmbeddedDirty(void)
 	AssertTrue(pString1.IsDirty());
 	AssertTrue(pContainer.IsDirty());
 	AssertString("This is", pString1->Text());
-
-	gcObjects.DumpMemoryUseIteration();
 
 	ObjectsFlush();
 	pcDatabase->Close();
