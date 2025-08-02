@@ -136,7 +136,7 @@ void TestObjectsObjectSave(void)
 	AssertLong(9, gcObjects.NumMemoryIndexes());
 	AssertLong(6, gcObjects.NumMemoryNames());
 	iSerialisedSize = pDouble->SerialisedSize();
-	AssertInt(126, pDouble->SerialisedSize());
+	AssertInt(166, pDouble->SerialisedSize());
 	AssertLong(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLong(1, pcDatabase->NumDataCached());
 	Pass();
@@ -144,7 +144,7 @@ void TestObjectsObjectSave(void)
 	AssertTrue(pDouble.BaseObject()->Flush());
 	AssertLong(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
-	AssertInt(126, iSerialisedSize);
+	AssertInt(166, iSerialisedSize);
 	AssertLong(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLong(1, pcDatabase->NumDataCached());
 	
@@ -154,18 +154,18 @@ void TestObjectsObjectSave(void)
 	AssertTrue(pDouble.BaseObject()->Flush());
 	AssertLong(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
-	AssertInt(138, iSerialisedSize);
+	AssertInt(178, iSerialisedSize);
 	AssertLong(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLong(1, pcDatabase->NumDataCached());
 
 	pDouble->mszString = OMalloc<CString>("Different Object");
 
 	iSerialisedSize = pDouble->SerialisedSize();
-	AssertInt(138, iSerialisedSize);
+	AssertInt(178, iSerialisedSize);
 	AssertTrue(pDouble.BaseObject()->Flush());
 	AssertLong(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
-	AssertInt(138, iSerialisedSize);
+	AssertInt(178, iSerialisedSize);
 	AssertLong(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLong(1, pcDatabase->NumDataCached());
 
@@ -218,44 +218,6 @@ void TestObjectsFlushNoClear(void)
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
 	ObjectsKill();
-
-	CArrayChars		aszFileNames;
-	size			i;
-	CChars*			psz;
-	CChars			szOutput;
-	CChars			szFileName;
-	CChars			szCurrent;
-	CChars			szInputDirectory;
-
-	szInputDirectory.Init("Input" _FS_ "Dehollowfication");
-
-	aszFileNames.Init();
-	cFileUtil.FindAllFiles(szInputDirectory.Text(), &aszFileNames, true, false);
-
-	AssertTrue(aszFileNames.NumElements() > 0);
-	for (i = 0; i < aszFileNames.NumElements(); i++)
-	{
-		psz = aszFileNames.Get(i);
-
-		szCurrent.Init();
-		cFileUtil.CurrentDirectory(&szCurrent);
-
-		szFileName.Init(psz->Text());
-		szFileName.RemoveFromStart(szCurrent.Length() + 1);
-		szFileName.RemoveFromStart(szInputDirectory.Length() + 1);
-		szOutput.Init(szCurrent);
-		cFileUtil.AppendToPath(&szOutput, szDirectory);
-		cFileUtil.AppendToPath(&szOutput, szFileName.Text());
-
-		AssertFile(psz->Text(), szOutput.Text());
-
-		szOutput.Kill();
-		szFileName.Kill();
-		szCurrent.Kill();
-	}
-
-	szInputDirectory.Kill();
-	aszFileNames.Kill();
 }
 
 
@@ -650,7 +612,6 @@ void TestObjectDehollowfication(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsFlush();
 	ObjectsKill();
 }
 

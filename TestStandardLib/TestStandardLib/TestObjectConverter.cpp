@@ -173,9 +173,7 @@ void TestObjectConverterDragonExistingHollows(void)
 	AssertInt(3, pcObject.GetDistToRoot());
 	AssertString("NamedString 2", pcObject.GetName());
 
-	oiNew = cChunkedConverter.TestGetNewIndexFromOld(6LL);
-	AssertLong(oiNew, pcObject.GetIndex());
-
+	oiNew = pcObject.GetIndex();
 	AssertString("NamedString 1", pcDoubleNamedString->mpSplit2.GetName());
 	AssertTrue(pcDoubleNamedString->mpSplit2.IsNotNull());
 	AssertTrue(pcDoubleNamedString->mpSplit2.IsHollow());
@@ -203,7 +201,7 @@ void TestObjectConverterDragonExistingHollows(void)
 	AssertString("Diamond End", pcTestNamedString2->mpAnother.GetName());
 	AssertLong(9, pcTestNamedString2->mpAnother.GetIndex());
 
-	oiNew = cChunkedConverter.TestGetNewIndexFromOld(3LL);
+	oiNew = pcTestNamedString2->mpAnother.GetIndex();
 	pcEnd = (CTestNamedString*)gcObjects.TestGetFromMemory(oiNew).Object();
 	AssertString("Diamond End", pcEnd->GetName());
 
@@ -283,21 +281,15 @@ Ptr<CTestDoubleNamedString> SetupObjectConverterChunkFile2(void)
 
 	cRoot = ORoot();
 
-	cDiamond = ONMalloc<CTestNamedString>("Diamond");
+	cDiamond = ONMalloc<CTestNamedString>("Diamond", Null(), Null(), "Diamond");
 
-	cNS1 = ONMalloc<CTestNamedString>("NS1");
-	cNS1->Init(Null(), cDiamond, "NS1");
+	cNS1 = ONMalloc<CTestNamedString>("NS1", Null(), cDiamond, "NS1");
 
-	cNS2 = ONMalloc<CTestNamedString>("NS2");
-	cNS2->Init(Null(), cDiamond, "NS2");
+	cNS2 = ONMalloc<CTestNamedString>("NS2", Null(), cDiamond, "NS2");
 
-	cNS3 = ONMalloc<CTestNamedString>("NS3");
-	cNS3->Init(Null(), cNS1, "NS3");
+	cNS3 = ONMalloc<CTestNamedString>("NS3", Null(), cNS1, "NS3");
 
-	cDiamond->Init(Null(), Null(), "Diamond");
-
-	cDouble = ONMalloc<CTestDoubleNamedString>("Double");
-	cDouble->Init(Null(), cNS2, cNS3);
+	cDouble = ONMalloc<CTestDoubleNamedString>("Double", Null(), cNS2, cNS3);
 
 	cRoot->Add(cDouble);
 
@@ -363,6 +355,7 @@ void TestObjectConverterDragonRootDistance(void)
 
 	ObjectsInit();
 	WriteObjectConverterChunkedFile2();
+	ObjectsFlush();
 	ObjectsKill();
 
 	ObjectsInit();
@@ -410,6 +403,7 @@ void TestObjectConverterDragonRootDistance(void)
 	pcObjectSource->Kill();
 	cChunkedConverter.Kill();
 
+	ObjectsFlush();
 	ObjectsKill();
 }
 

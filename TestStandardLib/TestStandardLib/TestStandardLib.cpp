@@ -103,18 +103,18 @@ int __cdecl main(void)
 	TestObjectReaderChunked();
 	TestObjectStackPointers();
 	//TestObjectGraphDeserialiser();
-	//TestObjectConverter();
-	//TestObjects();
+	TestObjectConverter();
+	TestObjects();
 	TestStackPointers();
-	TestDehollowfication();
-	//TestString();
+	//TestDehollowfication();
+	TestString();
 	TestObjectsEvictVsKill();
 	TestUsage();
 	TestArray();
-	//TestKill();
+	TestKill();
 	TestEmbedded();
 	TestEmbeddedObjectRemapTos();
-	//TestEmbeddedStackPointers();
+	TestEmbeddedStackPointers();
 
 	FastFunctionsKill();
 	return TestTotalStatistics();

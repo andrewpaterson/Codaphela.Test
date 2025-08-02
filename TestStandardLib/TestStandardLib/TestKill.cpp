@@ -1,5 +1,6 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/FileUtil.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/Codabase.h"
 #include "BaseLib/CodabaseFactory.h"
@@ -125,6 +126,10 @@ void TestKillBestPractice(void)
 {
 	CCodabase*	pcDatabase;
 	CSequence*	pcSequence;
+	CFileUtil	cFileUtil;
+
+	cFileUtil.RemoveDir("Output" _FS_ "TestKillBestPractice");
+	cFileUtil.TouchDir("Output" _FS_ "TestKillBestPractice");
 
 	pcSequence = CSequenceFactory::Create("Output" _FS_ "TestKillBestPractice");
 	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "TestKillBestPractice", IWT_Yes);
@@ -144,8 +149,10 @@ void TestKillBestPractice(void)
 
 	AssertLong(1, pcDatabase->NumNames());
 	pWorld = OMalloc<CGameWorld>();
+	gcObjects.ValidateObjectsConsistency();
 
 	pRoot->Add(pWorld);
+	gcObjects.ValidateObjectsConsistency();
 
 	Ptr<CHarrier> pHarrier = ONMalloc<CHarrier>("Harrier", pWorld);
 
