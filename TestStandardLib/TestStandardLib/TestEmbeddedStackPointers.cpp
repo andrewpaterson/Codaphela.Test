@@ -190,46 +190,49 @@ void TestEmbeddedStackPointersComplex(void)
 {
 	ObjectsInit();
 
-	CEmbeddedComplex			cComplexOnStack1;
-	CEmbeddedComplex			cComplexOnStack2;
-	Ptr<CTestObject>			pTestObject1;
-	STestObjectFreedNotifier	sFreedNotifier1;
-	Ptr<CTestObject>			pTestObject2;
-	STestObjectFreedNotifier	sFreedNotifier2;
+	//CEmbeddedComplex destructor must be called before ObjectsKill.
+	{
+		CEmbeddedComplex			cComplexOnStack1;
+		CEmbeddedComplex			cComplexOnStack2;
+		Ptr<CTestObject>			pTestObject1;
+		STestObjectFreedNotifier	sFreedNotifier1;
+		Ptr<CTestObject>			pTestObject2;
+		STestObjectFreedNotifier	sFreedNotifier2;
 
-	cComplexOnStack1.Init();
-	cComplexOnStack2.Init();
+		cComplexOnStack1.Init();
+		cComplexOnStack2.Init();
 
-	pTestObject1 = OMalloc<CTestObject>(&sFreedNotifier1);
-	pTestObject2 = OMalloc<CTestObject>(&sFreedNotifier2);
+		pTestObject1 = OMalloc<CTestObject>(&sFreedNotifier1);
+		pTestObject2 = OMalloc<CTestObject>(&sFreedNotifier2);
 
-	AssertInt(0, cComplexOnStack1.GetDistToStack());
-	AssertInt(0, cComplexOnStack1.NumStackFroms());
-	AssertInt(0, cComplexOnStack2.GetDistToStack());
-	AssertInt(0, cComplexOnStack2.NumStackFroms());
+		AssertInt(0, cComplexOnStack1.GetDistToStack());
+		AssertInt(0, cComplexOnStack1.NumStackFroms());
+		AssertInt(0, cComplexOnStack2.GetDistToStack());
+		AssertInt(0, cComplexOnStack2.NumStackFroms());
 
-	cComplexOnStack1.mpTest = &cComplexOnStack2;
-	cComplexOnStack1.mcSimple.mpTest = &cComplexOnStack2;
-	cComplexOnStack1.mcContainer.mcOne.mpTest = pTestObject1;
-	cComplexOnStack2.mcContainer.mcOne.mpTest = pTestObject1;
+		cComplexOnStack1.mpTest = &cComplexOnStack2;
+		cComplexOnStack1.mcSimple.mpTest = &cComplexOnStack2;
+		cComplexOnStack1.mcContainer.mcOne.mpTest = pTestObject1;
+		cComplexOnStack2.mcContainer.mcOne.mpTest = pTestObject1;
 
-	AssertInt(0, cComplexOnStack1.GetDistToStack());
-	AssertInt(0, cComplexOnStack1.NumStackFroms());
-	AssertInt(3, cComplexOnStack1.NumPointerTos());
-	AssertInt(0, cComplexOnStack2.GetDistToStack());
-	AssertInt(2, cComplexOnStack2.NumStackFroms());
-	AssertInt(1, cComplexOnStack2.NumPointerTos());
+		AssertInt(0, cComplexOnStack1.GetDistToStack());
+		AssertInt(0, cComplexOnStack1.NumStackFroms());
+		AssertInt(3, cComplexOnStack1.NumPointerTos());
+		AssertInt(0, cComplexOnStack2.GetDistToStack());
+		AssertInt(2, cComplexOnStack2.NumStackFroms());
+		AssertInt(1, cComplexOnStack2.NumPointerTos());
 
-	AssertFalse(sFreedNotifier1.bFreed);
-	AssertFalse(sFreedNotifier2.bFreed);
-	TestEmbeddedStackPointersComplex(&cComplexOnStack1, &cComplexOnStack2);
-	AssertFalse(sFreedNotifier1.bFreed);
-	AssertFalse(sFreedNotifier2.bFreed);
+		AssertFalse(sFreedNotifier1.bFreed);
+		AssertFalse(sFreedNotifier2.bFreed);
+		TestEmbeddedStackPointersComplex(&cComplexOnStack1, &cComplexOnStack2);
+		AssertFalse(sFreedNotifier1.bFreed);
+		AssertFalse(sFreedNotifier2.bFreed);
 
-	AssertInt(0, cComplexOnStack1.GetDistToStack());
-	AssertInt(0, cComplexOnStack1.NumStackFroms());
-	AssertInt(0, cComplexOnStack2.GetDistToStack());
-	AssertInt(2, cComplexOnStack2.NumStackFroms());
+		AssertInt(0, cComplexOnStack1.GetDistToStack());
+		AssertInt(0, cComplexOnStack1.NumStackFroms());
+		AssertInt(0, cComplexOnStack2.GetDistToStack());
+		AssertInt(2, cComplexOnStack2.NumStackFroms());
+	}
 
 	ObjectsKill();
 }
