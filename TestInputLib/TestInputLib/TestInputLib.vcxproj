@@ -188,7 +188,6 @@
   <ItemGroup>
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerListener.h" />
-    <ClInclude Include="TestInputChords.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
@@ -209,6 +208,9 @@
     <ProjectReference Include="..\..\..\CommonLibraries\TestLib\TestLib.vcxproj">
       <Project>{d06d265e-a503-42f8-a93a-a0a1c0b058ff}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\CommonLibraries\WinInputLib\WinInputLib.vcxproj">
+      <Project>{efe4d8a4-d7f4-4ba2-9f43-0e3bc02268c2}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

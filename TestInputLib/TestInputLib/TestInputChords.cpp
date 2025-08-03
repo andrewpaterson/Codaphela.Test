@@ -2,10 +2,11 @@
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/Operators.h"
+#include "BaseLib/GlobalDataTypesIO.h"
 #include "InputLib/Input.h"
+//#include "WinInputLib/WinInput.h"
 #include "TestLib/Assert.h"
 #include "Player.h"
-#include "TestInputChords.h"
 
 
 struct STestEventValue
@@ -105,8 +106,11 @@ void TestInputChords(void)
 	FastFunctionsInit();
 	TypesInit();
 	TypeConverterInit();
-	gcOperators.Init();
+	OperatorsInit();
+	MemoryInit();
+	DataIOInit();
 	UnknownsInit();
+	ObjectsInit();
 
 	BeginTests();
 
@@ -122,7 +126,7 @@ void TestInputChords(void)
 	COrderedInputChordCriteria*	pcOrdered;
 	CGroupInputChordCriteria*	pcGroup;
 
-	cInput.Init();
+	cInput.Init(NULL);
 	pcDetail = AddProgrammaticDevice(cInput.GetProgramInput());
 	cInput.AddProgramInput();
 	
@@ -134,10 +138,10 @@ void TestInputChords(void)
 	bResult = pcPlayer1->AddSources(pcDevice, "W", "A", "S", "D", "Left Control", NULL);
 	AssertBool(true, bResult);
 
-	pcPlayer1->AddOrderedAction(cInput.GetActions()->AddAction("Player 1 Up", &CPlayerListener::Up, (CPlayerListener*)&cPlayer1), "W", "W", NULL);
-	pcPlayer1->AddOrderedAction(cInput.GetActions()->AddAction("Player 1 Down", &CPlayerListener::Down, (CPlayerListener*)&cPlayer1), "S", "W", "W", "W", NULL);
-	pcPlayer1->AddOrderedAction(cInput.GetActions()->AddAction("Player 1 Left", &CPlayerListener::Left, (CPlayerListener*)&cPlayer1), "A", "D", "A", "A", NULL);
-	pcPlayer1->AddOrderedAction(cInput.GetActions()->AddAction("Player 1 Right", &CPlayerListener::Right, (CPlayerListener*)&cPlayer1), "A", "D", "A", "D", NULL);
+	pcPlayer1->AddOrderedAction(cInput.GetActions()->AddActionWithListener("Player 1 Up", &CPlayerListener::Up, (CPlayerListener*)&cPlayer1), "W", "W", NULL);
+	pcPlayer1->AddOrderedAction(cInput.GetActions()->AddActionWithListener("Player 1 Down", &CPlayerListener::Down, (CPlayerListener*)&cPlayer1), "S", "W", "W", "W", NULL);
+	pcPlayer1->AddOrderedAction(cInput.GetActions()->AddActionWithListener("Player 1 Left", &CPlayerListener::Left, (CPlayerListener*)&cPlayer1), "A", "D", "A", "A", NULL);
+	pcPlayer1->AddOrderedAction(cInput.GetActions()->AddActionWithListener("Player 1 Right", &CPlayerListener::Right, (CPlayerListener*)&cPlayer1), "A", "D", "A", "D", NULL);
 
 	pcPlayer1->Enable();
 
@@ -184,7 +188,7 @@ void TestInputChords(void)
 	bResult = pcPlayer2->AddSources(pcDevice, "Cursor Up", "Cursor Left", "Cursor Down", "Cursor Right", "Right Control", NULL);
 	AssertBool(true, bResult);
 
-	pcChord = pcPlayer2->AddChordAction(cInput.GetActions()->AddAction("Player 2 Up", &CPlayerListener::Up, (CPlayerListener*)&cPlayer2));
+	pcChord = pcPlayer2->AddChordAction(cInput.GetActions()->AddActionWithListener("Player 2 Up", &CPlayerListener::Up, (CPlayerListener*)&cPlayer2));
 	pcOrdered = pcChord->AsOrdered();
 	pcGroup = pcOrdered->AddGroupAction();
 	pcGroup->AddActiveAction(pcChord->AddEvaluatorSpecificSource(pcDevice, pcDevice->GetSource("Cursor Left"), ICT_Toggle));
@@ -195,7 +199,7 @@ void TestInputChords(void)
 	pcOrdered->AddActiveAction(pcChord->AddEvaluatorSpecificSource(pcDevice, pcDevice->GetSource("Cursor Up"), ICT_Toggle));
 	pcOrdered->AddInactiveAction(pcChord->AddEvaluatorSpecificSource(pcDevice, pcDevice->GetSource("Cursor Up"), ICT_Toggle));
 	pcChord->Done();
-	pcChord = pcPlayer2->AddChordAction(cInput.GetActions()->AddAction("Player 2 Down", &CPlayerListener::Down, (CPlayerListener*)&cPlayer2));
+	pcChord = pcPlayer2->AddChordAction(cInput.GetActions()->AddActionWithListener("Player 2 Down", &CPlayerListener::Down, (CPlayerListener*)&cPlayer2));
 	pcOrdered = pcChord->AsOrdered();
 	pcGroup = pcOrdered->AddGroupAction();
 	pcGroup->AddActiveAction(pcChord->AddEvaluatorSpecificSource(pcDevice, pcDevice->GetSource("Cursor Left"), ICT_Toggle));
@@ -243,8 +247,11 @@ void TestInputChords(void)
 
 	TestStatistics();
 
+	ObjectsKill();
 	UnknownsKill();
-	gcOperators.Kill();
+	DataIOKill();
+	MemoryKill();
+	OperatorsKill();
 	TypeConverterKill();
 	TypesKill();
 	FastFunctionsKill();

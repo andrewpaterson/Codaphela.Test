@@ -24,9 +24,6 @@
     <ClInclude Include="PlayerListener.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="TestInputChords.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

@@ -1,5 +1,7 @@
 #include "TestLib/Assert.h"
-#include "TestInputChords.h"
+
+
+void TestInputChords(void);
 
 
 //////////////////////////////////////////////////////////////////////////

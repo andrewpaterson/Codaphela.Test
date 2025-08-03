@@ -24,5 +24,5 @@ public:
 };
 
 
-#endif // !__TEST_PLAYER_H__
+#endif // __TEST_PLAYER_H__
 

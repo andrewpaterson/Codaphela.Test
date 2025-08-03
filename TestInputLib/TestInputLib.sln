@@ -12,6 +12,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestLib", "..\..\CommonLibraries\TestLib\TestLib.vcxproj", "{D06D265E-A503-42F8-A93A-A0A1C0B058FF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestInputLib", "TestInputLib\TestInputLib.vcxproj", "{7A15BB84-0E63-47E1-93EB-369602C32112}"
+	ProjectSection(ProjectDependencies) = postProject
+		{EFE4D8A4-D7F4-4BA2-9F43-0E3BC02268C2} = {EFE4D8A4-D7F4-4BA2-9F43-0E3BC02268C2}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WinInputLib", "..\..\CommonLibraries\WinInputLib\WinInputLib.vcxproj", "{EFE4D8A4-D7F4-4BA2-9F43-0E3BC02268C2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +64,14 @@ Global
 		{7A15BB84-0E63-47E1-93EB-369602C32112}.Release|Win32.ActiveCfg = Release|Win32
 		{7A15BB84-0E63-47E1-93EB-369602C32112}.Release|Win32.Build.0 = Release|Win32
 		{7A15BB84-0E63-47E1-93EB-369602C32112}.Release|x64.ActiveCfg = Release|Win32
+		{EFE4D8A4-D7F4-4BA2-9F43-0E3BC02268C2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EFE4D8A4-D7F4-4BA2-9F43-0E3BC02268C2}.Debug|Win32.Build.0 = Debug|Win32
+		{EFE4D8A4-D7F4-4BA2-9F43-0E3BC02268C2}.Debug|x64.ActiveCfg = Debug|x64
+		{EFE4D8A4-D7F4-4BA2-9F43-0E3BC02268C2}.Debug|x64.Build.0 = Debug|x64
+		{EFE4D8A4-D7F4-4BA2-9F43-0E3BC02268C2}.Release|Win32.ActiveCfg = Release|Win32
+		{EFE4D8A4-D7F4-4BA2-9F43-0E3BC02268C2}.Release|Win32.Build.0 = Release|Win32
+		{EFE4D8A4-D7F4-4BA2-9F43-0E3BC02268C2}.Release|x64.ActiveCfg = Release|x64
+		{EFE4D8A4-D7F4-4BA2-9F43-0E3BC02268C2}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
