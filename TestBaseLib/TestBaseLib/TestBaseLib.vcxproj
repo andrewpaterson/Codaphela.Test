@@ -91,6 +91,7 @@
       <OpenMPSupport>true</OpenMPSupport>
       <SDLCheck>true</SDLCheck>
       <CallingConvention>VectorCall</CallingConvention>
+      <ExceptionHandling>false</ExceptionHandling>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
