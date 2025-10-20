@@ -13,8 +13,8 @@ class CTestListener : public CListener
 {
 CONSTRUCTABLE(CTestListener);
 public:
-	virtual void Style1(CListener* pcSource, void* pvContext) {};
-	virtual void Style2(CListener* pcSource, void* pvContext) {};
+	virtual void Style1(CUnknown* pcSource, void* pvContext) {};
+	virtual void Style2(CUnknown* pcSource, void* pvContext) {};
 };
 
 
@@ -29,7 +29,7 @@ public:
 		iThisIsNotTheRightWayToUseListeners = 0;
 	}
 
-	virtual void Another(CListener* pcSource, void* pvContext)
+	virtual void Another(CUnknown* pcSource, void* pvContext)
 	{ 
 		iThisIsNotTheRightWayToUseListeners = 1;
 	};
@@ -104,8 +104,8 @@ public:
 		CallListeners(&CTestListener::Style2, this, &sContext);
 	}
 
-	void Style1(CListener* pcSource, void* pvContext) override;
-	void Style2(CListener* pcSource, void* pvContext) override;
+	void Style1(CUnknown* pcSource, void* pvContext) override;
+	void Style2(CUnknown* pcSource, void* pvContext) override;
 };
 
 
@@ -113,7 +113,7 @@ public:
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestObjectIsListenerWithEvent::Style1(CListener* pcSource, void* pvContext)
+void CTestObjectIsListenerWithEvent::Style1(CUnknown* pcSource, void* pvContext)
 {
 	CTestObjectIsListenerWithEvent*	pvthis;
 	STestEventContext1*				psContext;
@@ -139,7 +139,7 @@ void CTestObjectIsListenerWithEvent::Style1(CListener* pcSource, void* pvContext
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestObjectIsListenerWithEvent::Style2(CListener* pcSource, void* pvContext)
+void CTestObjectIsListenerWithEvent::Style2(CUnknown* pcSource, void* pvContext)
 {
 	CTestObjectIsListenerWithEvent*	_this;
 	STestEventContext2*				psContext;
@@ -174,8 +174,8 @@ public:
 	{
 	}
 
-	void Style1(CListener* pcSource, void* pvContext) override;
-	void Style2(CListener* pcSource, void* pvContext) override;
+	void Style1(CUnknown* pcSource, void* pvContext) override;
+	void Style2(CUnknown* pcSource, void* pvContext) override;
 };
 
 
@@ -184,7 +184,7 @@ public:
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestObjectIsListener::Style1(CListener* pcSource, void* pvContext)
+void CTestObjectIsListener::Style1(CUnknown* pcSource, void* pvContext)
 {
 	mszAlsoBored.Set("Sup my homies");
 }
@@ -194,7 +194,7 @@ void CTestObjectIsListener::Style1(CListener* pcSource, void* pvContext)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestObjectIsListener::Style2(CListener* pcSource, void* pvContext)
+void CTestObjectIsListener::Style2(CUnknown* pcSource, void* pvContext)
 {
 	mszAlsoBored.Set("Wikky wikky free styling");
 }
