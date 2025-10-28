@@ -72,3 +72,7 @@ TestCoreLib/Release
 /TestMicroprocessorLib/TestMicroprocessorLib/Debug/*
 /TestMicroprocessorLib/TestMicroprocessorLib/Release/*
 /TestMicroprocessorLib/TestMicroprocessorLib/Log.txt
+/TestWindowLib/Debug/*
+/TestWindowLib/Release/*
+/TestWindowLib/TestWindowLib/Debug/*
+/TestWindowLib/TestWindowLib/Release/*
