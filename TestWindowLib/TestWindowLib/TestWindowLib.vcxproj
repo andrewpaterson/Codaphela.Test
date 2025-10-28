@@ -184,6 +184,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ReferenceTestWindow.cpp" />
     <ClCompile Include="TestRefWindow.cpp" />
     <ClCompile Include="TestWindowLib.cpp" />
   </ItemGroup>
@@ -211,9 +212,15 @@
       <Project>{d06d265e-a503-42f8-a93a-a0a1c0b058ff}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\CommonLibraries\WindowLib\WindowLib.vcxproj">
+      <Project>{b5d4c7aa-49ef-45d2-b970-0ab1f1184ae6}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\CommonLibraries\WinRefLib\WinRefLib.vcxproj">
       <Project>{5f0b57a7-0f29-4845-9320-14b4b27491f7}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ReferenceTestWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
