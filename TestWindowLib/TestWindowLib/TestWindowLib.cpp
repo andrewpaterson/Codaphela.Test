@@ -7,6 +7,7 @@
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/GlobalDataTypesIO.h"
+#include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
 
 
@@ -28,6 +29,7 @@ int __cdecl main(void)
 	TypeConverterInit();
 	MemoryInit();
 	DataIOInit();
+	ObjectsInit();
 
 	cFileUtil.MakeDir("Output");
 	
@@ -37,6 +39,7 @@ int __cdecl main(void)
 
 	cFileUtil.RemoveDir("Output");
 
+	ObjectsKill();
 	DataIOKill();
 	MemoryKill();
 	TypeConverterKill();

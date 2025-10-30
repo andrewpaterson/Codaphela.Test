@@ -76,3 +76,4 @@ TestCoreLib/Release
 /TestWindowLib/Release/*
 /TestWindowLib/TestWindowLib/Debug/*
 /TestWindowLib/TestWindowLib/Release/*
+/TestWindowLib/TestWindowLib/Log.txt

@@ -11,14 +11,14 @@
 void TestRefWindowCreation(void)
 {
 	CWinRefWindowFactory	cNativeFactory;
-	CReferenceTestWindow	cTesterWindow;
+	CReferenceTestWindow	cTestWindow;
 
-	cNativeFactory.Init(&gcMemoryAllocator);
-	cTesterWindow.Init("HCP65 Board Tester", &cNativeFactory);
+	cNativeFactory.Init(&gcMemoryAllocator, 96, 64);
+	cTestWindow.Init("Reference Test Window", &cNativeFactory);
 
-	cTesterWindow.Show();
+	cTestWindow.Show();
 
-	cTesterWindow.Kill();
+	cTestWindow.Kill();
 }
 
 

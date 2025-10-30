@@ -5,7 +5,7 @@
 
 class CReferenceTestWindow : public CWindow
 {
-    CONSTRUCTABLE(CReferenceTestWindow)
+CONSTRUCTABLE(CReferenceTestWindow)
 protected:
     int64	miTime;
     int32	miX;
