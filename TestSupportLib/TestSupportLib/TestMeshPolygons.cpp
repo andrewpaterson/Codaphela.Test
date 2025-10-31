@@ -1,8 +1,9 @@
-#include "TestMeshConnectivity.h"
+#include "BaseLib/GlobalDataTypesIO.h"
 #include "SupportLib/Mesh.h"
 #include "SupportLib/MeshEditor.h"
 #include "SupportLib/MeshPlaneEditor.h"
 #include "TestLib/Assert.h"
+#include "TestMeshConnectivity.h"
 #include "TestMeshPolygons.h"
 
 
@@ -12,6 +13,9 @@
 //////////////////////////////////////////////////////////////////////////
 void TestMeshPolygonsAddFace(void)
 {
+	DataIOInit();
+	ObjectsInit();
+
 	CMesh			cMesh;
 	CMeshEditor		cMeshEditor;
 	CMeshPolygon*	pcPolygon;
@@ -63,6 +67,9 @@ void TestMeshPolygonsAddFace(void)
 
 	cMesh.Kill();
 	cMeshEditor.Kill();
+
+	ObjectsKill();
+	DataIOKill();
 }
 
 
@@ -72,6 +79,9 @@ void TestMeshPolygonsAddFace(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMeshPolygonsAddDiscontiguousFace(bool bOutEdgeValue)
 {
+	DataIOInit();
+	ObjectsInit();
+
 	CMesh			cMesh;
 	CMeshEditor		cMeshEditor;
 	CMeshPolygon*	pcPolygon;
@@ -122,6 +132,9 @@ void TestMeshPolygonsAddDiscontiguousFace(bool bOutEdgeValue)
 
 	cMesh.Kill();
 	cMeshEditor.Kill();
+
+	ObjectsKill();
+	DataIOKill();
 }
 
 
@@ -131,6 +144,9 @@ void TestMeshPolygonsAddDiscontiguousFace(bool bOutEdgeValue)
 //////////////////////////////////////////////////////////////////////////
 void TestMeshPolygonAdjacency(void)
 {
+	DataIOInit();
+	ObjectsInit();
+
 	CMeshEditor			cMeshEditor;
 	CMesh				cMesh;
 	CMeshPlaneEditor*	pcPlane;
@@ -166,6 +182,9 @@ void TestMeshPolygonAdjacency(void)
 
 	cMeshEditor.Kill();
 	cMesh.Kill();
+
+	ObjectsKill();
+	DataIOKill();
 }
 
 

@@ -7,7 +7,7 @@
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/ImageRGBToGrey.h"
-#include "SupportLib/ImageDrawBox.h"
+#include "SupportLib/ImageModifierDrawBox.h"
 #include "SupportLib/ImageModifierStack.h"
 #include "SupportLib/ImageChannelRename.h"
 #include "SupportLib/ImageChannelAdd.h"
@@ -24,10 +24,12 @@ void TestImageSwizzle1(void)
 	CImageRGBToGrey*		pcRGBToGrey;
 	CImageChannelRename*	pcChannelRename;
 	CImageChannelAdd*		pcChannelAdd;
-	CImageDrawBox*			pcDrawBox;
+	CImageModifierDrawBox*	pcDrawBox;
 	CImageColourRGB			cRGB;
 
 	Ptr<CImage> pcImage = ReadImage("Input\\swizzel.png");
+	AssertInt(25, pcImage->GetWidth());
+	AssertInt(25, pcImage->GetHeight());
 
 	cStack.Init(pcImage);
 	
@@ -42,10 +44,10 @@ void TestImageSwizzle1(void)
 	pcChannelAdd->AddChannel(IMAGE_DIFFUSE_GREEN);
 	pcChannelAdd->AddChannel(IMAGE_DIFFUSE_BLUE);
 
-	pcDrawBox = cStack.AddModifier<CImageDrawBox>();
+	pcDrawBox = cStack.AddModifier<CImageModifierDrawBox>();
 	
 	cRGB.Init(1.0f, 1.0f, 1.0f);
-	pcDrawBox->Init(NULL, &cRGB);
+	pcDrawBox->Init(NULL, &cRGB, true);
 
 	cStack.ApplyAll();
 	cStack.Kill();

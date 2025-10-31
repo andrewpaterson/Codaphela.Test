@@ -46,7 +46,7 @@
     <ClCompile Include="TestImageDivider.cpp">
       <Filter>Source Files\Image</Filter>
     </ClCompile>
-    <ClCompile Include="TestImageDrawBox.cpp">
+    <ClCompile Include="TestImageModifierDrawBox.cpp">
       <Filter>Source Files\Image</Filter>
     </ClCompile>
     <ClCompile Include="TestImageGreyToRGB.cpp">

@@ -33,9 +33,9 @@ void TestImageColourAccessorBytes(void)
 
 	cImage.Init(10, 10, PT_uint8,	IMAGE_DIFFUSE_GREEN,	//0x7f
 									IMAGE_NORMAL_Y,		
-									IMAGE_DIFFUSE_BLUE,	//0x3f
-									IMAGE_OPACITY,		//0x54
-									IMAGE_DIFFUSE_RED,	//0xff
+									IMAGE_DIFFUSE_BLUE,		//0x3f
+									IMAGE_OPACITY,			//0x54
+									IMAGE_DIFFUSE_RED,		//0xff
 									IMAGE_MASK, 
 									CHANNEL_ZERO);
 	cImage.Clear();

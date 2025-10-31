@@ -9,7 +9,7 @@
 #include "SupportLib/Image.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageAccessorCreator.h"
-#include "SupportLib/ImageDrawBox.h"
+#include "SupportLib/ImageModifierDrawBox.h"
 #include "SupportLib/ImageCopier.h"
 #include "TestLib/Assert.h"
 #include "TestImageWriter.h"
@@ -22,7 +22,7 @@
 void TestDrawImage(void)
 {
 	CImage				cImageDest;
-	CImageDrawBox		cBox;
+	CImageModifierDrawBox		cBox;
 	CImage				cImageSource;
 	char				szSourceRGB[18] = "ABCDEFGHIJKLMNOPQ";
 	char				szSourceRB[12] = "ACDFGIJLMOP";

@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalDataTypesIO.h"
 #include "SupportLib/Mesh.h"
 #include "SupportLib/MeshEditor.h"
 #include "SupportLib/MeshPlaneEditor.h"
@@ -499,12 +500,18 @@ void TestMeshShapes(void)
 {
 	BeginTests();
 
+	DataIOInit();
+	ObjectsInit();
+
 	TestPlane();
 	TestBox();
 	TestDisc();
 	TestRing();
 	TestCone();
 	TestCylinder();
+
+	ObjectsKill();
+	DataIOKill();
 
 	TestStatistics();
 }

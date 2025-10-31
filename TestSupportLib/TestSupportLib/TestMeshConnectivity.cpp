@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalDataTypesIO.h"
 #include "TestMeshConnectivity.h"
 #include "SupportLib/Mesh.h"
 #include "SupportLib/MeshEditor.h"
@@ -176,7 +177,13 @@ void TestMeshConnectivity(void)
 {
 	BeginTests();
 
+	DataIOInit();
+	ObjectsInit();
+
 	TestMeshEdgeConnectivity();
+
+	ObjectsKill();
+	DataIOKill();
 
 	TestStatistics();
 }

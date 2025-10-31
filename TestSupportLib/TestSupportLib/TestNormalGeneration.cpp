@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalDataTypesIO.h"
 #include "SupportLib/Mesh.h"
 #include "SupportLib/MeshEditor.h"
 #include "SupportLib/MeshBoxEditor.h"
@@ -15,6 +16,9 @@
 //////////////////////////////////////////////////////////////////////////
 void TestMeshSmoothGroupsOneAndZero(void)
 {
+	DataIOInit();
+	ObjectsInit();
+
 	CMesh				cMesh;
 	SFloat3				sXDirection;
 	SFloat3				sYDirection;
@@ -89,6 +93,9 @@ void TestMeshSmoothGroupsOneAndZero(void)
 
 	cMesh.Kill();
 	cMeshEditor.Kill();
+
+	ObjectsKill();
+	DataIOKill();
 }
 
 
@@ -98,6 +105,9 @@ void TestMeshSmoothGroupsOneAndZero(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMeshSmoothGroupsNamed(void)
 {
+	DataIOInit();
+	ObjectsInit();
+
 	CMesh				cMesh;
 	SFloat3				sXDirection;
 	SFloat3				sYDirection;
@@ -139,6 +149,9 @@ void TestMeshSmoothGroupsNamed(void)
 
 	cMesh.Kill();
 	cMeshEditor.Kill();
+
+	ObjectsKill();
+	DataIOKill();
 }
 
 
@@ -148,6 +161,9 @@ void TestMeshSmoothGroupsNamed(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMeshSmoothFaces(void)
 {
+	DataIOInit();
+	ObjectsInit();
+
 	CMesh				cMesh;
 	SFloat3				sXDirection;
 	SFloat3				sYDirection;
@@ -199,6 +215,9 @@ void TestMeshSmoothFaces(void)
 
 	cMesh.Kill();
 	cMeshEditor.Kill();
+
+	ObjectsKill();
+	DataIOKill();
 }
 
 
@@ -208,6 +227,9 @@ void TestMeshSmoothFaces(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMeshFlatFaces(void)
 {
+	DataIOInit();
+	ObjectsInit();
+
 	CMesh				cMesh;
 	SFloat3				sXDirection;
 	SFloat3				sYDirection;
@@ -257,6 +279,9 @@ void TestMeshFlatFaces(void)
 
 	cMesh.Kill();
 	cMeshEditor.Kill();
+
+	ObjectsKill();
+	DataIOKill();
 }
 
 

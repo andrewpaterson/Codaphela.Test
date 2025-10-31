@@ -2,6 +2,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/TypeConverter.h"
+#include "BaseLib/GlobalDataTypesIO.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/Objects.h"
 #include "SupportLib/ImageReader.h"
@@ -21,6 +22,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestImageCelsSourceStarControl(void)
 {
+	DataIOInit();
 	ObjectsInit();
 
 	CImageCelSourceSingle	cSingle;
@@ -83,6 +85,7 @@ void TestImageCelsSourceStarControl(void)
 	cSource.Kill();
 
 	ObjectsKill();
+	DataIOKill();
 }
 
 
@@ -92,6 +95,7 @@ void TestImageCelsSourceStarControl(void)
 //////////////////////////////////////////////////////////////////////////
 void TestImageCelGroupSourceCombine(void)
 {
+	DataIOInit();
 	ObjectsInit();
 
 	CImageCelSourceSingle	cSingle;
@@ -119,6 +123,8 @@ void TestImageCelGroupSourceCombine(void)
 
 	if (pcImage.IsNotNull())
 	{
+		AssertInt(630, pcImage->GetWidth());
+		AssertInt(109, pcImage->GetHeight());
 		WriteImage(&pcImage, "Output\\StarControl.raw");
 		AssertFileMemory("input\\StarControl.raw", pcImage->mcChannels.GetData(), pcImage->GetByteSize());
 	}
@@ -132,6 +138,7 @@ void TestImageCelGroupSourceCombine(void)
 	cSource.Kill();
 
 	ObjectsKill();
+	DataIOKill();
 }
 
 

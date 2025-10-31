@@ -30,7 +30,7 @@ void TestImageCelsSource(void);
 void TestImageColour(void);
 void TestImageCombiner(void);
 void TestImageDivider(void);
-void TestImageDrawBox(void);
+void TestImageModifierDrawBox(void);
 void TestImageGreyToRGB(void);
 void TestImageImport(void);
 void TestImageModifierStack(void);
@@ -47,7 +47,10 @@ void TestImageSFTWriter(void);
 
 int __cdecl main(void)
 {
-	CFileUtil		cFileUtil;
+	CFileUtil	cFileUtil;
+	int			iResult;
+
+	_CrtSetBreakAlloc(0);
 
 	InitTotalStatistics();
 
@@ -57,40 +60,41 @@ int __cdecl main(void)
 	MemoryInit();
 	UnknownsInit();
 
+	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output");
 	
-	TestImage();
-	TestImageColour();
-	TestImageImport();
-	TestImageReader();
-	TestImageWriter();
-	TestImageGreyToRGB();
-	TestImageRGBToGrey();
-	TestImageDivider();
-	TestBumpMapper();
-	TestPlainTextEditor();
-	TestImageCel();
-	TestRectangleBestPacker();
-	TestRectanglePow2Packer();
-	TestImageModifierStack();
-	TestImageDrawBox();
-	TestImageRecolour();
-	TestImageSwizzle();
-	TestImageCombiner();
-	TestImageToR3G3B2A();
-	TestImageSFTWriter();
-	TestWinText();
-	TestImageCelsSource();
-	TestHalfSpace();
-	TestPolygon();
-	TestSphereShape();
-	TestTriangleShape();
-	TestMeshFaceReturn();
-	TestMeshPolygons();
-	TestMeshShapes();
-	TestMeshConnectivity();
-	TestNormalGeneration();
-	TestMeshOBJReader();
+	//TestImage();
+	//TestImageColour();
+	//TestImageImport();
+	//TestImageReader();
+	//TestImageWriter();
+	//TestImageGreyToRGB();
+	//TestImageRGBToGrey();
+	//TestImageDivider();
+	//TestBumpMapper();
+	//TestPlainTextEditor();
+	//TestImageCel();
+	//TestRectangleBestPacker();
+	//TestRectanglePow2Packer();
+	//TestImageModifierStack();
+	TestImageModifierDrawBox();
+	//TestImageRecolour();
+	//TestImageSwizzle();
+	//TestImageCombiner();
+	//TestImageToR3G3B2A();
+	//TestImageSFTWriter();
+	//TestWinText();
+	//TestImageCelsSource();
+	//TestHalfSpace();
+	//TestPolygon();
+	//TestSphereShape();
+	//TestTriangleShape();
+	//TestMeshFaceReturn();
+	//TestMeshPolygons();
+	//TestMeshShapes();
+	//TestMeshConnectivity();
+	//TestNormalGeneration();
+	//TestMeshOBJReader();
 
 	cFileUtil.RemoveDir("Output");
 
@@ -99,6 +103,10 @@ int __cdecl main(void)
 	TypeConverterKill();
 	TypesKill();
 	FastFunctionsKill();
-	return TestTotalStatistics();
+
+	iResult = TestTotalStatistics();
+	_CrtDumpMemoryLeaks();
+	return iResult;
+
 }
 
