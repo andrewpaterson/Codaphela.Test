@@ -30,6 +30,7 @@ void TestImageCelsSource(void);
 void TestImageColour(void);
 void TestImageCombiner(void);
 void TestImageDivider(void);
+void TestImageDraw(void);
 void TestImageModifierDrawBox(void);
 void TestImageGreyToRGB(void);
 void TestImageImport(void);
@@ -63,23 +64,24 @@ int __cdecl main(void)
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output");
 	
-	//TestImage();
-	//TestImageColour();
-	//TestImageImport();
-	//TestImageReader();
-	//TestImageWriter();
-	//TestImageGreyToRGB();
-	//TestImageRGBToGrey();
-	//TestImageDivider();
-	//TestBumpMapper();
-	//TestPlainTextEditor();
-	//TestImageCel();
-	//TestRectangleBestPacker();
-	//TestRectanglePow2Packer();
-	//TestImageModifierStack();
+	TestImage();
+	TestImageColour();
+	TestImageImport();
+	TestImageReader();
+	TestImageWriter();
+	TestImageGreyToRGB();
+	TestImageRGBToGrey();
+	TestImageDivider();
+	TestBumpMapper();
+	TestPlainTextEditor();
+	TestImageCel();
+	TestRectangleBestPacker();
+	TestRectanglePow2Packer();
+	TestImageModifierStack();
 	TestImageModifierDrawBox();
-	//TestImageRecolour();
-	//TestImageSwizzle();
+	TestImageDraw();
+	TestImageRecolour();
+	TestImageSwizzle();
 	//TestImageCombiner();
 	//TestImageToR3G3B2A();
 	//TestImageSFTWriter();
@@ -105,7 +107,7 @@ int __cdecl main(void)
 	FastFunctionsKill();
 
 	iResult = TestTotalStatistics();
-	_CrtDumpMemoryLeaks();
+	//_CrtDumpMemoryLeaks();
 	return iResult;
 
 }

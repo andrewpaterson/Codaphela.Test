@@ -20,6 +20,24 @@
     <Filter Include="Source Files\Shape">
       <UniqueIdentifier>{47a626e0-7e47-47b3-aa1b-ebefdc76f4d3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Image\Draw">
+      <UniqueIdentifier>{6fcdae2d-418a-4cd3-aa1e-fdde63040822}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Image\Cel">
+      <UniqueIdentifier>{4a25fa40-f94e-4fb9-a2ae-5eb9e566d918}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Image\Cel\Divider">
+      <UniqueIdentifier>{31e9e937-63df-4f85-b747-3bdaef932df4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Image\Cel\Source">
+      <UniqueIdentifier>{d85f8030-37be-4b5b-bde4-2de8e7a2b953}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Image\Cel\Combiner">
+      <UniqueIdentifier>{a8d4497b-2590-4533-a2fe-4e863c2e5302}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Image\Modifiers">
+      <UniqueIdentifier>{004b17ec-d906-4de3-829c-9d6c45ae3be0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestSupportLib.cpp">
@@ -31,31 +49,13 @@
     <ClCompile Include="TestImage.cpp">
       <Filter>Source Files\Image</Filter>
     </ClCompile>
-    <ClCompile Include="TestImageCel.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestImageCelsSource.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
     <ClCompile Include="TestImageColour.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestImageCombiner.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestImageDivider.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestImageModifierDrawBox.cpp">
       <Filter>Source Files\Image</Filter>
     </ClCompile>
     <ClCompile Include="TestImageGreyToRGB.cpp">
       <Filter>Source Files\Image</Filter>
     </ClCompile>
     <ClCompile Include="TestImageImport.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestImageModifierStack.cpp">
       <Filter>Source Files\Image</Filter>
     </ClCompile>
     <ClCompile Include="TestImageMultiAccessor.cpp">
@@ -135,6 +135,27 @@
     </ClCompile>
     <ClCompile Include="TestImageSFTWriter.cpp">
       <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageCel.cpp">
+      <Filter>Source Files\Image\Cel</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageDivider.cpp">
+      <Filter>Source Files\Image\Cel\Divider</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageCelsSource.cpp">
+      <Filter>Source Files\Image\Cel\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageCombiner.cpp">
+      <Filter>Source Files\Image\Cel\Combiner</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageModifierDrawBox.cpp">
+      <Filter>Source Files\Image\Modifiers</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageModifierStack.cpp">
+      <Filter>Source Files\Image\Modifiers</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageDraw.cpp">
+      <Filter>Source Files\Image\Draw</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

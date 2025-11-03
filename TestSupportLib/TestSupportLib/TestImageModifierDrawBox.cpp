@@ -41,6 +41,7 @@ void TestImageModifierDrawBox1(void)
 	cBox.Modify(&cImage);
 
 	WriteImage(&cImage, "Output\\Box1.png");
+	WriteImage(&cImage, "Output\\Box1.raw");
 	AssertFileMemory("input\\Box1.raw", cImage.GetData(), cImage.GetByteSize());
 
 	cImage.BeginChange();
@@ -57,6 +58,7 @@ void TestImageModifierDrawBox1(void)
 	cBox.Kill();
 
 	WriteImage(&cImage, "Output\\BoxBorder.png");
+	WriteImage(&cImage, "Output\\BoxBorder.raw");
 	AssertFileMemory("input\\BoxBorder.raw", cImage.GetData(), cImage.GetByteSize());
 
 	cImage.Kill();
@@ -81,13 +83,7 @@ void TestImageModifierDrawBox2(void)
 	CImageModifierStack		cStack;
 	Ptr<CImage>				pImage;
 
-	pImage = ONMalloc<CImage>("Picture");
-	pImage->BeginChange();
-	pImage->AddChannel(IMAGE_DIFFUSE_BLUE, PT_uint8);
-	pImage->AddChannel(IMAGE_DIFFUSE_GREEN, PT_uint8);
-	pImage->AddChannel(IMAGE_DIFFUSE_RED, PT_uint8);
-	pImage->SetSize(32, 32);
-	pImage->EndChange();
+	pImage = ONMalloc<CImage>("Picture", 32, 32);
 	pImage->Clear();
 
 	cStack.Init(pImage);
@@ -115,9 +111,16 @@ void TestImageModifierDrawBox2(void)
 	cStack.Kill();
 
 	WriteImage(pImage, "Output\\Box2.png");
+	WriteImage(pImage, "Output\\Box2.raw");
 	AssertFileMemory("input\\Box2.raw", pImage->GetData(), pImage->GetByteSize());
 
 	pImage->Kill();
+
+	cRect.Kill();
+	cRed.Kill();
+	cGreen.Kill();
+	cBlue.Kill();
+	cGrey.Kill();
 }
 
 
