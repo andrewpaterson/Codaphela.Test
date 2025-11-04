@@ -35,7 +35,7 @@ void TestImageModifierDrawBox1(void)
 	cImage.EndChange();
 	cImage.Clear();
 
-	cRect.Init(1, 1, 3, 3);  //End not inclusive.
+	cRect.Init(1, 1, 2, 2);  //End inclusive.
 	cRGB.Init(0.9f, 0.2f, 0.25f);
 	cBox.Init(&cRect, &cRGB);
 	cBox.Modify(&cImage);
@@ -51,7 +51,7 @@ void TestImageModifierDrawBox1(void)
 	cBox.Modify(&cImage);
 	cBox.Kill();
 
-	cRect.Init(1, 1, 4, 4);  //End not inclusive.
+	cRect.Init(1, 1, 3, 3);  //End inclusive.
 	cRGB.Init(0.5f, 0.6f, 0.7f);
 	cBox.Init(&cRect, &cRGB, false);
 	cBox.Modify(&cImage);
@@ -93,17 +93,17 @@ void TestImageModifierDrawBox2(void)
 	pcBackground->Init(NULL, &cGrey);
 
 	pcBox1 = cStack.AddModifier<CImageModifierDrawBox>();
-	cRect.Init(12, 0, 31, 22);
+	cRect.Init(12, 0, 30, 21);
 	cRed.Init(1.0f, 0.2f, 0.2f);
 	pcBox1->Init(&cRect, &cRed);
 
 	pcBox2 = cStack.AddModifier<CImageModifierDrawBox>();
-	cRect.Init(3, 15, 19, 28);
+	cRect.Init(3, 15, 18, 27);
 	cGreen.Init(0.2f, 1.0f, 0.2f);
 	pcBox2->Init(&cRect, &cGreen);
 
 	pcBox3 = cStack.AddModifier<CImageModifierDrawBox>();
-	cRect.Init(6, 6, 25, 12);
+	cRect.Init(6, 6, 24, 11);
 	cBlue.Init(0.2f, 0.2f, 1.0f);
 	pcBox3->Init(&cRect, &cBlue);
 

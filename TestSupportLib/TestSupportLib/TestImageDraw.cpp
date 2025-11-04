@@ -26,7 +26,7 @@ void TestImageDrawBox(void)
 	{
 		cColour.Init(1.0f, 0.7f + (i/20.0f)* 1.05263162f, 0.4f + (i/10.0f)* 1.11111116f);
 		cDraw.SetColour(&cColour);
-		cDraw.DrawBox(8+i, 10+i, 24-i, 22-i, false);
+		cDraw.DrawBox(8+i, 10+i, 23-i, 21-i, false);
 		cColour.Kill();
 	}
 	
@@ -36,7 +36,6 @@ void TestImageDrawBox(void)
 
 	pImage = NULL;
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -55,11 +54,11 @@ void TestImageDrawLine(void)
 	cColour.Init(1.0f, 1, 1);
 	cDraw.SetColour(&cColour);
 
-	cDraw.DrawLine(0, 0, 64, 32);
-	cDraw.DrawLine(0, 0, 64, 16);
-	cDraw.DrawLine(0, 0, 32, 32);
-	cDraw.DrawLine(0, 0, 64, 0);
-	cDraw.DrawLine(0, 0, 0, 32);
+	cDraw.DrawLine(0, 0, 63, 31);
+	cDraw.DrawLine(0, 0, 63, 16);
+	cDraw.DrawLine(0, 0, 31, 31);
+	cDraw.DrawLine(0, 0, 63, 0);
+	cDraw.DrawLine(0, 0, 0, 31);
 
 	WriteImage(pImage, "Output\\DrawLine1.raw");
 	WriteImage(pImage, "Output\\DrawLine1.png");
@@ -70,11 +69,11 @@ void TestImageDrawLine(void)
 	cColour.Init(0.4f, 0.9f, 0.4f);
 	cDraw.SetColour(&cColour);
 
-	cDraw.DrawLine(64, 32, 0, 0);
-	cDraw.DrawLine(64, 16, 0, 0);
-	cDraw.DrawLine(32, 32, 0, 0);
-	cDraw.DrawLine(64, 0 , 0, 0);
-	cDraw.DrawLine(0, 32 , 0, 0);
+	cDraw.DrawLine(63, 31, 0, 0);
+	cDraw.DrawLine(63, 16, 0, 0);
+	cDraw.DrawLine(31, 31, 0, 0);
+	cDraw.DrawLine(63, 0 , 0, 0);
+	cDraw.DrawLine(0, 31 , 0, 0);
 
 	WriteImage(pImage, "Output\\DrawLine2.raw");
 	WriteImage(pImage, "Output\\DrawLine2.png");
@@ -85,16 +84,70 @@ void TestImageDrawLine(void)
 	cColour.Init(0.4f, 0.4f, 0.99f);
 	cDraw.SetColour(&cColour);
 
-	cDraw.DrawLine(64, 0, 0, 32);
-	cDraw.DrawLine(64, 0, 0, 16);
-	cDraw.DrawLine(32, 0, 0, 32);
-	cDraw.DrawLine(64, 0, 0, 0);
-	cDraw.DrawLine(0, 0, 0, 32);
+	cDraw.DrawLine(63, 0, 0, 31);
+	cDraw.DrawLine(63, 0, 0, 16);
+	cDraw.DrawLine(31, 0, 0, 31);
+	cDraw.DrawLine(63, 0, 0, 0);
+	cDraw.DrawLine(0, 0, 0, 31);
 
 	WriteImage(pImage, "Output\\DrawLine3.raw");
 	WriteImage(pImage, "Output\\DrawLine3.png");
 	AssertFileMemory("input\\DrawLine3.raw", pImage->GetData(), pImage->GetByteSize());
 
+	cDraw.Kill();
+	cColour.Kill();
+	pImage = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawLineExtents(void)
+{
+	CImageDraw			cDraw;
+	Ptr<CImage>			pImage = OMalloc<CImage>(16, 16);
+	CImageColourRGB		cColour1;
+	CImageColourRGB		cColour2;
+	int32				x;
+	int32				y;
+
+	pImage->Clear();
+
+	cDraw.Init(pImage);
+	cColour1.Init(1.0f, 0.1f, 0.1f);
+	cColour2.Init(0.1f, 0.1f, 1.0f);
+
+	for (x = 0; x < 16; x += 2)
+	{
+		cDraw.SetColour(&cColour1);
+		cDraw.DrawLine(x, 0, x, 1);
+		cDraw.SetColour(&cColour2);
+		cDraw.DrawVerticalLine(x+1, 0, 1);
+	}
+
+	WriteImage(pImage, "Output\\DrawLine4.raw");
+	WriteImage(pImage, "Output\\DrawLine4.png");
+	AssertFileMemory("input\\DrawLine4.raw", pImage->GetData(), pImage->GetByteSize());
+
+	pImage->Clear();
+
+	for (y = 0; y < 16; y += 2)
+	{
+		cDraw.SetColour(&cColour1);
+		cDraw.DrawLine(15, y, 16, y);
+		cDraw.SetColour(&cColour2);
+		cDraw.DrawHorizontalLine(15, 16, y + 1);
+	}
+
+	WriteImage(pImage, "Output\\DrawLine5.raw");
+	WriteImage(pImage, "Output\\DrawLine5.png");
+	AssertFileMemory("input\\DrawLine5.raw", pImage->GetData(), pImage->GetByteSize());
+
+	cDraw.Kill();
+	cColour1.Kill();
+	cColour2.Kill();
 	pImage = NULL;
 }
 
@@ -112,6 +165,7 @@ void TestImageDraw(void)
 
 	TestImageDrawBox();
 	TestImageDrawLine();
+	TestImageDrawLineExtents();
 
 	ObjectsKill();
 	DataIOKill();
