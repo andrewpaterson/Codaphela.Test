@@ -17,7 +17,7 @@ void TestWinText1(void)
 	CWinText			cWinText;
 	SWinFontInstance*	psWinFont;
 	Ptr<CFont>			pcFont;
-	CGlyph*				 pcCel;
+	CGlyph*				pcCel;
 	CImage				cDestImage;
 
 	cWinText.Init(NULL);

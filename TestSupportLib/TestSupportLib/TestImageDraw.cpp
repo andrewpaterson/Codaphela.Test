@@ -65,6 +65,36 @@ void TestImageDrawLine(void)
 	WriteImage(pImage, "Output\\DrawLine1.png");
 	AssertFileMemory("input\\DrawLine1.raw", pImage->GetData(), pImage->GetByteSize());
 
+	pImage->Clear();
+
+	cColour.Init(0.4f, 0.9f, 0.4f);
+	cDraw.SetColour(&cColour);
+
+	cDraw.DrawLine(64, 32, 0, 0);
+	cDraw.DrawLine(64, 16, 0, 0);
+	cDraw.DrawLine(32, 32, 0, 0);
+	cDraw.DrawLine(64, 0 , 0, 0);
+	cDraw.DrawLine(0, 32 , 0, 0);
+
+	WriteImage(pImage, "Output\\DrawLine2.raw");
+	WriteImage(pImage, "Output\\DrawLine2.png");
+	AssertFileMemory("input\\DrawLine2.raw", pImage->GetData(), pImage->GetByteSize());
+
+	pImage->Clear();
+
+	cColour.Init(0.4f, 0.4f, 0.99f);
+	cDraw.SetColour(&cColour);
+
+	cDraw.DrawLine(64, 0, 0, 32);
+	cDraw.DrawLine(64, 0, 0, 16);
+	cDraw.DrawLine(32, 0, 0, 32);
+	cDraw.DrawLine(64, 0, 0, 0);
+	cDraw.DrawLine(0, 0, 0, 32);
+
+	WriteImage(pImage, "Output\\DrawLine3.raw");
+	WriteImage(pImage, "Output\\DrawLine3.png");
+	AssertFileMemory("input\\DrawLine3.raw", pImage->GetData(), pImage->GetByteSize());
+
 	pImage = NULL;
 }
 
