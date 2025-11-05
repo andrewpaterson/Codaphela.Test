@@ -666,6 +666,9 @@
     <ClCompile Include="TestMapStringIntAndPointer.cpp">
       <Filter>Source\Data\Map\Map\String</Filter>
     </ClCompile>
+    <ClCompile Include="TestCharsImmutable.cpp">
+      <Filter>Source\Data\String</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">
