@@ -38,48 +38,21 @@
     <Filter Include="Source Files\Image\Modifiers">
       <UniqueIdentifier>{004b17ec-d906-4de3-829c-9d6c45ae3be0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Image\Colour">
+      <UniqueIdentifier>{46a84e3f-0036-4397-b939-b18ca5590243}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Image\IO">
+      <UniqueIdentifier>{22f2a94a-cb59-45ed-977c-b9d8f6afad44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Image\Area">
+      <UniqueIdentifier>{5e02e4e4-74b3-4d00-827a-3b28afe3ed60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestSupportLib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestBumpMapper.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
     <ClCompile Include="TestImage.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestImageColour.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestImageGreyToRGB.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestImageImport.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestImageMultiAccessor.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestImageReader.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestImageRecolour.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestImageRGBToGrey.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestImageSwizzle.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestImageWriter.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestRectangleBestPacker.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestRectanglePow2Packer.cpp">
       <Filter>Source Files\Image</Filter>
     </ClCompile>
     <ClCompile Include="TestWinText.cpp">
@@ -130,12 +103,6 @@
     <ClCompile Include="AssertImage.cpp">
       <Filter>Source Files\Image</Filter>
     </ClCompile>
-    <ClCompile Include="TestImageRGBAToR3G3B2A.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="TestImageSFTWriter.cpp">
-      <Filter>Source Files\Image</Filter>
-    </ClCompile>
     <ClCompile Include="TestImageCel.cpp">
       <Filter>Source Files\Image\Cel</Filter>
     </ClCompile>
@@ -156,6 +123,42 @@
     </ClCompile>
     <ClCompile Include="TestImageDraw.cpp">
       <Filter>Source Files\Image\Draw</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageRecolour.cpp">
+      <Filter>Source Files\Image\Modifiers</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageRGBAToR3G3B2A.cpp">
+      <Filter>Source Files\Image\Modifiers</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageRGBToGrey.cpp">
+      <Filter>Source Files\Image\Modifiers</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageGreyToRGB.cpp">
+      <Filter>Source Files\Image\Modifiers</Filter>
+    </ClCompile>
+    <ClCompile Include="TestBumpMapper.cpp">
+      <Filter>Source Files\Image\Modifiers</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageColour.cpp">
+      <Filter>Source Files\Image\Colour</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageSwizzle.cpp">
+      <Filter>Source Files\Image\Modifiers</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageWriter.cpp">
+      <Filter>Source Files\Image\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageSFTWriter.cpp">
+      <Filter>Source Files\Image\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageReader.cpp">
+      <Filter>Source Files\Image\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="TestRectangleBestPacker.cpp">
+      <Filter>Source Files\Image\Area</Filter>
+    </ClCompile>
+    <ClCompile Include="TestRectanglePow2Packer.cpp">
+      <Filter>Source Files\Image\Area</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

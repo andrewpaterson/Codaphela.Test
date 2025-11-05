@@ -198,9 +198,7 @@
     <ClCompile Include="TestImageDivider.cpp" />
     <ClCompile Include="TestImageModifierDrawBox.cpp" />
     <ClCompile Include="TestImageGreyToRGB.cpp" />
-    <ClCompile Include="TestImageImport.cpp" />
     <ClCompile Include="TestImageModifierStack.cpp" />
-    <ClCompile Include="TestImageMultiAccessor.cpp" />
     <ClCompile Include="TestImageReader.cpp" />
     <ClCompile Include="TestImageRecolour.cpp" />
     <ClCompile Include="TestImageRGBToGrey.cpp" />

@@ -33,9 +33,7 @@ void TestImageDivider(void);
 void TestImageDraw(void);
 void TestImageModifierDrawBox(void);
 void TestImageGreyToRGB(void);
-void TestImageImport(void);
 void TestImageModifierStack(void);
-void TestImageMultiAccessor(void);
 void TestImageReader(void);
 void TestImageRecolour(void);
 void TestImageRGBToGrey(void);
@@ -66,7 +64,6 @@ int __cdecl main(void)
 	
 	TestImage();
 	TestImageColour();
-	TestImageImport();
 	TestImageReader();
 	TestImageWriter();
 	TestImageGreyToRGB();
@@ -82,21 +79,21 @@ int __cdecl main(void)
 	TestImageDraw();
 	TestImageRecolour();
 	TestImageSwizzle();
-	//TestImageCombiner();
-	//TestImageToR3G3B2A();
-	//TestImageSFTWriter();
-	//TestWinText();
-	//TestImageCelsSource();
-	//TestHalfSpace();
-	//TestPolygon();
-	//TestSphereShape();
-	//TestTriangleShape();
-	//TestMeshFaceReturn();
-	//TestMeshPolygons();
-	//TestMeshShapes();
-	//TestMeshConnectivity();
-	//TestNormalGeneration();
-	//TestMeshOBJReader();
+	TestImageCombiner();
+	TestImageToR3G3B2A();
+	TestImageSFTWriter();
+	TestWinText();
+	TestImageCelsSource();
+	TestHalfSpace();
+	TestPolygon();
+	TestSphereShape();
+	TestTriangleShape();
+	TestMeshFaceReturn();
+	TestMeshPolygons();
+	TestMeshShapes();
+	TestMeshConnectivity();
+	TestNormalGeneration();
+	TestMeshOBJReader();
 
 	cFileUtil.RemoveDir("Output");
 
@@ -107,7 +104,7 @@ int __cdecl main(void)
 	FastFunctionsKill();
 
 	iResult = TestTotalStatistics();
-	//_CrtDumpMemoryLeaks();
+	_CrtDumpMemoryLeaks();
 	return iResult;
 
 }
