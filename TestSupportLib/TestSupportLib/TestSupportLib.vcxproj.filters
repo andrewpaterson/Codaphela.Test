@@ -47,6 +47,9 @@
     <Filter Include="Source Files\Image\Area">
       <UniqueIdentifier>{5e02e4e4-74b3-4d00-827a-3b28afe3ed60}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Tile">
+      <UniqueIdentifier>{1665df54-a7e8-4ce6-a0d3-8c9776ca2286}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestSupportLib.cpp">
