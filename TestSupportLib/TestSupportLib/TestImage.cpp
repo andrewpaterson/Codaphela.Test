@@ -12,7 +12,6 @@
 #include "SupportLib/ImageModifierDrawBox.h"
 #include "SupportLib/ImageCopier.h"
 #include "TestLib/Assert.h"
-#include "TestImageWriter.h"
 
 
 //////////////////////////////////////////////////////////////////////////

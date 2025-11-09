@@ -400,6 +400,7 @@ void TestPlainTextEditorCopyPaste(void)
 {
 	CPlainTextEditor	cEditor;
 	CChars				szSelection;
+	CChars				szline;
 
 	cEditor.Init("ABCDE\nFGHIJ\nKLMNO\nPQRST\nUVWXY");
 	cEditor.SetPosition(8);
@@ -409,19 +410,36 @@ void TestPlainTextEditorCopyPaste(void)
 	szSelection.Kill();
 	AssertInt(8, cEditor.miEditPos);
 	AssertInt(2, cEditor.GetCharCountAlongLine(cEditor.miEditPos));
+	szline.Init();
+	AssertString("MNO", cEditor.Line(&szline));
+	szline.Kill();
 
 	cEditor.Down();
+	szline.Init();
+	AssertString("RST", cEditor.Line(&szline));
+	szline.Kill();
+
 	cEditor.Down();
+	szline.Init();
+	AssertString("WXY", cEditor.Line(&szline));
+	szline.Kill();
 
 	szSelection.Init();
 	cEditor.CutLine(&szSelection);
 	AssertString("UVWXY", szSelection.Text());
 	szSelection.Kill();
-	AssertInt(20, cEditor.miEditPos);
-	AssertInt(2, cEditor.GetCharCountAlongLine(cEditor.miEditPos));
+	AssertInt(18, cEditor.miEditPos);
+	AssertInt(0, cEditor.GetCharCountAlongLine(cEditor.miEditPos));
+	szline.Init();
+	AssertString("", cEditor.Line(&szline));
+	szline.Kill();
 
 	cEditor.DocumentHome();
 	cEditor.Right();
+
+	szline.Init();
+	AssertString("BCDE", cEditor.Line(&szline));
+	szline.Kill();
 
 	szSelection.Init();
 	cEditor.CutLine(&szSelection);

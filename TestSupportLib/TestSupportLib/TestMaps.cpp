@@ -1,4 +1,4 @@
-#include "SupportLib/MeshUVCoords.h"
+#include "SupportLib/Maps.h"
 #include "TestLib/Assert.h"
 
 
@@ -6,10 +6,24 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMeshUVCoords(void)
+void TestMapsInit(void)
+{
+	CMaps	cMaps;
+
+	cMaps.Init();
+	cMaps.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMaps(void)
 {
 	BeginTests();
 
+	TestMapsInit();
 
 	TestStatistics();
 }
