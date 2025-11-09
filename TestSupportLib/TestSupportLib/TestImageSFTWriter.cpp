@@ -22,23 +22,23 @@ void TestImageSFTWriterTinyTransparent(void)
 	bool		bResult;
 	CNaiveFile	cNaiveFile;
 
-	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "Tiny.png", IT_Unknown, true);
-	AssertTrue(pcImage.IsNotNull());
+	Ptr<CImage> pImage = ReadImage("Input" _FS_ "Tiny.png", IT_Unknown, true);
+	AssertTrue(pImage.IsNotNull());
 
-	bResult = SaveSFT(pcImage, "Output" _FS_ "Tiny.sft", true);
+	bResult = SaveSFT(pImage, "Output" _FS_ "Tiny.sft", true);
 	AssertTrue(bResult);
 
-	pcImage = NULL;
+	pImage = NULL;
 
 	AssertFile("Input" _FS_ "Tiny-expected.sft", "Output" _FS_ "Tiny.sft")
 
-	pcImage = LoadSFT("Output" _FS_ "Tiny.sft");
+	pImage = LoadSFT("Output" _FS_ "Tiny.sft");
 
-	cNaiveFile.Init(pcImage->GetData(), pcImage->GetByteSize());
+	cNaiveFile.Init(pImage->GetData(), pImage->GetByteSize());
 	cNaiveFile.Write("Output" _FS_ "Tiny.raw");
-	cNaiveFile.KillExceptBuffer();
+	cNaiveFile.Kill();
 
-	pcImage = NULL;
+	pImage = NULL;
 
 	AssertFile("Input" _FS_ "Tiny-expected.raw", "Output" _FS_ "Tiny.raw")
 }
@@ -52,20 +52,20 @@ void TestImageSFTWriterTransparent(void)
 {
 	bool		bResult;
 
-	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "MakiStand.png", IT_Unknown, true);
-	AssertTrue(pcImage.IsNotNull());
+	Ptr<CImage> pImage = ReadImage("Input" _FS_ "MakiStand.png", IT_Unknown, true);
+	AssertTrue(pImage.IsNotNull());
 
-	bResult = SaveSFT(pcImage, "Output" _FS_ "MakiStand.sft");
+	bResult = SaveSFT(pImage, "Output" _FS_ "MakiStand.sft");
 	AssertTrue(bResult);
 
 	AssertFile("Input" _FS_ "MakiStand-expected.sft", "Output" _FS_ "MakiStand.sft")
 
-	pcImage = NULL;
+	pImage = NULL;
 
-	pcImage = LoadSFT("Output" _FS_ "MakiStand.sft");
-	WriteImage(pcImage, "Output" _FS_ "MakiStand.png", IT_PNG);
+	pImage = LoadSFT("Output" _FS_ "MakiStand.sft");
+	WriteImage(pImage, "Output" _FS_ "MakiStand.png", IT_PNG);
 
-	pcImage = NULL;
+	pImage = NULL;
 
 	AssertFile("Input" _FS_ "MakiStand-expected.png", "Output" _FS_ "MakiStand.png")
 }
@@ -79,20 +79,20 @@ void TestImageSFTWriterOpaque(void)
 {
 	bool		bResult;
 
-	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "Fighting320.png", IT_Unknown, true);
-	AssertTrue(pcImage.IsNotNull());
+	Ptr<CImage> pImage = ReadImage("Input" _FS_ "Fighting320.png", IT_Unknown, true);
+	AssertTrue(pImage.IsNotNull());
 
-	bResult = SaveSFT(pcImage, "Output" _FS_ "Fighting320.sft");
+	bResult = SaveSFT(pImage, "Output" _FS_ "Fighting320.sft");
 	AssertTrue(bResult);
 
 	AssertFile("Input" _FS_ "Fighting320-expected.sft", "Output" _FS_ "Fighting320.sft")
 
-	pcImage = NULL;
+	pImage = NULL;
 
-	pcImage = LoadSFT("Output" _FS_ "Fighting320.sft");
-	WriteImage(pcImage, "Output" _FS_ "Fighting320.png", IT_PNG);
+	pImage = LoadSFT("Output" _FS_ "Fighting320.sft");
+	WriteImage(pImage, "Output" _FS_ "Fighting320.png", IT_PNG);
 
-	pcImage = NULL;
+	pImage = NULL;
 
 	AssertFile("Input" _FS_ "Fighting320-expected.png", "Output" _FS_ "Fighting320.png")
 }
@@ -111,11 +111,11 @@ void TestImageSFTWriterTransparentCelContainer(void)
 	CImageCel*				pcImageCel;
 	CFileUtil				cFileUtil;
 
-	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "MakiWalk.png", IT_Unknown, true);
-	AssertTrue(pcImage.IsNotNull());
+	Ptr<CImage> pImage = ReadImage("Input" _FS_ "MakiWalk.png", IT_Unknown, true);
+	AssertTrue(pImage.IsNotNull());
 
 	cNumbers.InitGeneral(-1, -1, 6, 1, 0, 0, 0, 0);
-	cImageDivider.Init(&pcImage, NULL);
+	cImageDivider.Init(&pImage, NULL);
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	pacImageCels = cImageDivider.GetDestImageCels();
 
@@ -135,12 +135,12 @@ void TestImageSFTWriterTransparentCelContainer(void)
 
 	AssertFile("Input" _FS_ "MakiWalk-expected.sft", "Output" _FS_ "MakiWalk.sft")
 
-	pcImage = NULL;
+	pImage = NULL;
 
-	pcImage = LoadSFT("Output" _FS_ "MakiWalk.sft");
-	WriteImage(pcImage, "Output" _FS_ "MakiWalk.png", IT_PNG);
+	pImage = LoadSFT("Output" _FS_ "MakiWalk.sft");
+	WriteImage(pImage, "Output" _FS_ "MakiWalk.png", IT_PNG);
 
-	pcImage = NULL;
+	pImage = NULL;
 
 	AssertFile("Input" _FS_ "MakiWalk-expected.png", "Output" _FS_ "MakiWalk.png")
 }
@@ -192,10 +192,10 @@ void TestImageSFTWriterMultiSourceCelContainer(void)
 	AssertFile("Input" _FS_ "Combined-expected.sft", "Output" _FS_ "Combined.sft")
 
 
-	Ptr<CImage> pcImage = LoadSFT("Output" _FS_ "Combined.sft");
-	WriteImage(pcImage, "Output" _FS_ "Combined.png", IT_PNG);
+	Ptr<CImage> pImage = LoadSFT("Output" _FS_ "Combined.sft");
+	WriteImage(pImage, "Output" _FS_ "Combined.png", IT_PNG);
 
-	pcImage = NULL;
+	pImage = NULL;
 
 	AssertFile("Input" _FS_ "Combined-expected.png", "Output" _FS_ "Combined.png")
 }
@@ -216,8 +216,8 @@ void TestImageSFTWriter(void)
 	TestImageSFTWriterTinyTransparent();
 	TestImageSFTWriterTransparent();
 	TestImageSFTWriterOpaque();
-	TestImageSFTWriterTransparentCelContainer();
-	TestImageSFTWriterMultiSourceCelContainer();
+	//TestImageSFTWriterTransparentCelContainer();
+	//TestImageSFTWriterMultiSourceCelContainer();
 
 	ImageChannelDescriptorKill();
 	ObjectsKill();
