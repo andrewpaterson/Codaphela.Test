@@ -17,7 +17,7 @@ void TestImageCelCropBorders(void)
 {
 	CImageCel	cCel;
 
-	Ptr<CImage> pcImage = ReadImage("Input\\cel1.png");
+	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "cel1.png");
 	cCel.Init(&pcImage);
 	cCel.CropTransparentBorders();
 
@@ -29,7 +29,7 @@ void TestImageCelCropBorders(void)
 	cCel.Kill();
 	pcImage->Kill();
 
-	pcImage = ReadImage("Input\\cel2.png");
+	pcImage = ReadImage("Input" _FS_ "cel2.png");
 	cCel.Init(&pcImage);
 	cCel.CropTransparentBorders();
 
@@ -43,7 +43,7 @@ void TestImageCelCropBorders(void)
 	cCel.Kill();
 	pcImage->Kill();
 
-	pcImage = ReadImage("Input\\cel3.png");
+	pcImage = ReadImage("Input" _FS_ "cel3.png");
 	cCel.Init(&pcImage);
 	cCel.CropTransparentBorders();
 
@@ -68,7 +68,7 @@ void TestImageCelMaskCropBorders(void)
 	CImageCelMask*	pcRect1;
 	CImageCelMask*	pcRect2;
 
-	Ptr<CImage> pcImage = ReadImage("Input\\cel4.png");
+	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "cel4.png");
 	Ptr<CImage> pcMask = OMalloc<CImage>();
 
 	cDivider.Init(&pcImage);
@@ -106,7 +106,7 @@ void TestImageCelTransparentColourCropBorders(void)
 	uint32					cBlack;
 
 	cBlack = 0x5a000000;  //the 5a represents garbage.  Only the first three bytes are used.
-	Ptr<CImage> pcImage = ReadImage("Input\\cel5.png");
+	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "cel5.png");
 	cCel.Init(&pcImage, (SImageColour*)&cBlack);
 	cCel.CropTransparentBorders();
 

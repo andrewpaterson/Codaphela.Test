@@ -34,8 +34,8 @@ void TestImageCombinerMask(void)
 	cBorder.Init(&sColour);
 
 	cSource.Init();
-	cSource.AddDiskFileSource("Input\\cel4.png", "Cel 4", &cBorder);
-	cSource.AddDiskFileSource("Input\\cel6.png", "Cel 6", &cBorder);
+	cSource.AddDiskFileSource("Input" _FS_ "cel4.png", "Cel 4", &cBorder);
+	cSource.AddDiskFileSource("Input" _FS_ "cel6.png", "Cel 6", &cBorder);
 
 	cSource.Load();
 
@@ -43,9 +43,9 @@ void TestImageCombinerMask(void)
 	cCombiner.AddCels(cSource.GetCels());
 	pcImage = cCombiner.Combine();
 
-	WriteImage(&pcImage, "Output\\CombineMask.png");
-	WriteImage(&pcImage, "Output\\CombineMask.raw");
-	AssertFileMemory("input\\CombineMask.raw", pcImage->mcChannels.GetData(), pcImage->GetByteSize());
+	WriteImage(&pcImage, "Output" _FS_ "CombineMask.png");
+	WriteImage(&pcImage, "Output" _FS_ "CombineMask.raw");
+	AssertFileMemory("input" _FS_ "CombineMask.raw", pcImage->mcChannels.GetData(), pcImage->GetByteSize());
 
 	pcImage->Kill();
 	cCombiner.Kill();

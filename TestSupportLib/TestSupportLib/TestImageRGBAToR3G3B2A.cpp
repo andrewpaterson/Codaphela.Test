@@ -19,7 +19,7 @@ void TestImageToR3G3B2AConvert(void)
 	CArrayChannel	pcChannels;
 	bool			bResult;
 
-	Ptr<CImage> pcImage = ReadImage("Input\\cel1.png");
+	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "cel1.png");
 
 	cRGBTo8bit.Init();
 	pcImage = cRGBTo8bit.Modify(pcImage);
@@ -36,9 +36,9 @@ void TestImageToR3G3B2AConvert(void)
 	AssertInt(576, pcImage->GetChannels()->GetSize());
 	AssertInt(576, pcImage->GetByteSize());
 
-	bResult =  WriteImage(pcImage, "Output\\RGBTo8bit.raw");
+	bResult =  WriteImage(pcImage, "Output" _FS_ "RGBTo8bit.raw");
 	AssertTrue(bResult);
-	AssertFileMemory("input\\RGBTo8bit.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("input" _FS_ "RGBTo8bit.raw", pcImage->GetData(), pcImage->GetByteSize());
 
 	//This is probably unnecessay.
 	pcImage->Kill();

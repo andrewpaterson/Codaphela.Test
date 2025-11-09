@@ -20,7 +20,7 @@ void TestImageRecolour1(void)
 	CRectangle			cRect;
 	CImageColourRGB		o1, o2, o3, n1, n2, n3;
 
-	Ptr<CImage> pcImage = ReadImage("Input\\recolour.png");
+	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "recolour.png");
 	cRect.Init(0, 4, 8, 8);
 	o1.Init(1.0f, 0.0f, 0.0f); n1.Init(0.2f, 1.0f, 0.3f);
 	o2.Init(0.0f, 0.0f, 0.0f); n2.Init(0.9f, 0.0f, 0.8f);
@@ -32,8 +32,8 @@ void TestImageRecolour1(void)
 	cRecolour.Modify(pcImage);
 	cRecolour.Kill();
 
-	WriteImage(pcImage, "Output\\recolour.raw");
-	AssertFileMemory("input\\recolour.raw", pcImage->GetData(), pcImage->GetByteSize());
+	WriteImage(pcImage, "Output" _FS_ "recolour.raw");
+	AssertFileMemory("input" _FS_ "recolour.raw", pcImage->GetData(), pcImage->GetByteSize());
 
 	pcImage = NULL;
 }

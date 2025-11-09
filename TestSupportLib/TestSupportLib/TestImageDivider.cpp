@@ -21,7 +21,7 @@ void TestImageDividerGenerateFromBorder(void)
 	CImageDivider	cImageDivider;
 	CImageCelMask*	pcRectangle;
 
-	Ptr<CImage> pcImage = ReadImage("Input\\splitter.png");
+	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "splitter.png");
 	Ptr<CImage> pcMask = OMalloc<CImage>();
 
 	cImageDivider.Init(&pcImage);
@@ -45,8 +45,8 @@ void TestImageDividerGenerateFromBorder(void)
 	AssertInt(3, pcRectangle->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(3, pcRectangle->GetSubImage()->mcImageRect.GetHeight());
 
-	WriteImage(pcMask, "Output\\splitter.raw");
-	AssertFileMemory("input\\splitter.raw", pcMask->mcChannels.GetData(), pcMask->GetByteSize());
+	WriteImage(pcMask, "Output" _FS_ "splitter.raw");
+	AssertFileMemory("input" _FS_ "splitter.raw", pcMask->mcChannels.GetData(), pcMask->GetByteSize());
 
 	cImageDivider.Kill();
 	pcMask = NULL;
@@ -64,7 +64,7 @@ void TestImageDividerGenerateFromNumbers(void)
 	CImageCel*				pcImageCel;
 	CImageDividerNumbers	cNumbers;
 
-	Ptr<CImage> pcImage = ReadImage("Input\\grid.png");
+	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "grid.png");
 
 
 	//int iCelWidth, int iCelHeight, int iColumnCount, int iRowCount, int iLeftOffset, int iTopOffset, int iWidthSpacing, int iHeightSpacing
@@ -220,7 +220,7 @@ void TestImageDividerGenerateFromNumbersWithTransparent(void)
 	uint32					uiTransparent;
 	CImageDividerNumbers	cNumbers;
 
-	Ptr<CImage> pcImage = ReadImage("Input\\grid.png");
+	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "grid.png");
 
 	uiTransparent = 0x212121ff;
 	cImageDivider.Init(&pcImage, (SImageColour*)&uiTransparent);
@@ -256,7 +256,7 @@ void TestImageDividerGenerateFromBorderWithTransparent(void)
 	CImageCelMask*	pcRectangle;
 	uint32			uiTransparent;
 
-	Ptr<CImage> pcImage = ReadImage("Input\\cel6.png");
+	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "cel6.png");
 	Ptr<CImage> pcMask = OMalloc<CImage>();
 
 	uiTransparent = 0x000000;
@@ -275,8 +275,8 @@ void TestImageDividerGenerateFromBorderWithTransparent(void)
 	AssertInt(11, pcRectangle->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(25, pcRectangle->GetSubImage()->mcImageRect.GetHeight());
 
-	WriteImage(&pcMask, "Output\\cel6.raw");
-	AssertFileMemory("input\\cel6.raw", pcMask->mcChannels.GetData(), pcMask->GetByteSize());
+	WriteImage(&pcMask, "Output" _FS_ "cel6.raw");
+	AssertFileMemory("input" _FS_ "cel6.raw", pcMask->mcChannels.GetData(), pcMask->GetByteSize());
 
 	cImageDivider.Kill();
 	pcMask = NULL;

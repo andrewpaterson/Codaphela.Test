@@ -15,7 +15,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestBumpMapper1(void)
 {
-	Ptr<CImage> pcSource = ReadImage("Input\\HeightMap.png");
+	Ptr<CImage> pcSource = ReadImage("Input" _FS_ "HeightMap.png");
 	Ptr<CImage>	pcDest = OMalloc<CImage>();
 
 	pcDest = ConvertHeightMapTo(true, true, pcSource, IMAGE_DIFFUSE_RED);
@@ -26,7 +26,7 @@ void TestBumpMapper1(void)
 	pcDest->RenameChannel(IMAGE_NORMAL_Z, IMAGE_DIFFUSE_BLUE);
 	pcDest->EndChange();
 
-	WriteImage(pcDest, "Output\\NormalMap.png", IT_PNG);
+	WriteImage(pcDest, "Output" _FS_ "NormalMap.png", IT_PNG);
 
 	pcDest->BeginChange();
 	pcDest->RenameChannel(IMAGE_DIFFUSE_RED, IMAGE_NORMAL_X);
@@ -36,10 +36,10 @@ void TestBumpMapper1(void)
 	pcDest->RenameChannel(IMAGE_BUMP_V, IMAGE_DIFFUSE_GREEN);
 	pcDest->EndChange();
 
-	WriteImage(pcDest, "Output\\BumpMap.png", IT_PNG);
+	WriteImage(pcDest, "Output" _FS_ "BumpMap.png", IT_PNG);
 
-	AssertFile("Input\\NormalMap.png", "Output\\NormalMap.png");
-	AssertFile("Input\\BumpMap.png", "Output\\BumpMap.png");
+	AssertFile("Input" _FS_ "NormalMap.png", "Output" _FS_ "NormalMap.png");
+	AssertFile("Input" _FS_ "BumpMap.png", "Output" _FS_ "BumpMap.png");
 
 	//These are probably unnecessay.
 	pcDest->Kill();

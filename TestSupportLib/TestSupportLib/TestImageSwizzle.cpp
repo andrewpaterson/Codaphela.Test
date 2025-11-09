@@ -27,7 +27,7 @@ void TestImageSwizzle1(void)
 	CImageModifierDrawBox*	pcDrawBox;
 	CImageColourRGB			cRGB;
 
-	Ptr<CImage> pcImage = ReadImage("Input\\swizzel.png");
+	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "swizzel.png");
 	AssertInt(25, pcImage->GetWidth());
 	AssertInt(25, pcImage->GetHeight());
 
@@ -52,8 +52,8 @@ void TestImageSwizzle1(void)
 	cStack.ApplyAll();
 	cStack.Kill();
 
-	WriteImage(pcImage, "Output\\swizzle.raw");
-	AssertFileMemory("input\\swizzle.raw", pcImage->GetData(), pcImage->GetByteSize());
+	WriteImage(pcImage, "Output" _FS_ "swizzle.raw");
+	AssertFileMemory("input" _FS_ "swizzle.raw", pcImage->GetData(), pcImage->GetByteSize());
 
 	pcImage->Kill();
 }

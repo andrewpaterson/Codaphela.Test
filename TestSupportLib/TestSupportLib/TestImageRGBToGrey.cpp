@@ -18,7 +18,7 @@ void TestImageRGBToGrey1(void)
 	CImageRGBToGrey		cRGBToGrey;
 	CArrayChannel		pcChannels;
 
-	Ptr<CImage> pcImage = ReadImage("Input\\RGBToGrey.png");
+	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "RGBToGrey.png");
 	
 	pcImage->GetAllChannels(&pcChannels);
 	AssertInt(3, pcChannels.NumElements());
@@ -42,8 +42,8 @@ void TestImageRGBToGrey1(void)
 	AssertInt(1024, pcImage->GetChannels()->GetSize());
 	AssertInt(1024, pcImage->GetByteSize());
 
-	WriteImage(pcImage, "Output\\RGBToGrey.raw");
-	AssertFileMemory("input\\RGBToGrey.raw", pcImage->GetData(), pcImage->GetByteSize());
+	WriteImage(pcImage, "Output" _FS_ "RGBToGrey.raw");
+	AssertFileMemory("input" _FS_ "RGBToGrey.raw", pcImage->GetData(), pcImage->GetByteSize());
 
 	//This is probably unnecessay.
 	pcImage->Kill();
