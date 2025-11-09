@@ -20,24 +20,29 @@
 //////////////////////////////////////////////////////////////////////////
 void TestDrawImage(void)
 {
-	CImage				cImageDest;
+	CImage						cImageDest;
 	CImageModifierDrawBox		cBox;
-	CImage				cImageSource;
-	char				szSourceRGB[18] = "ABCDEFGHIJKLMNOPQ";
-	char				szSourceRB[12] = "ACDFGIJLMOP";
-	char				szSourceR2G2B2[36] = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqR";
-	char*				pcData;
-	bool				bResult;
-	char				szDestSameType[18] = "BACEDFHGIKJLNMOQP";
-	char				szDestRGBMissingType[18] = "A\0CD\0FG\0IJ\0LM\0OP\0";
-	char				szDestRGMissingType[13] = "ABDEGHJKMNPQ";
-	char				szDestRGBDifferentType[36] = "AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQ";
-	char				szDestRGBDifferentType2[18] = "abcdefghijklmnopq";
-	CImageColourRGB		cRGB;
+	CImage						cImageSource;
+	char						szSourceRGB[18] = "ABCDEFGHIJKLMNOPQ";
+	char						szSourceRB[12] = "ACDFGIJLMOP";
+	char						szSourceR2G2B2[36] = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqR";
+	char*						pcData;
+	bool						bResult;
+	char						szDestSameType[18] = "BACEDFHGIKJLNMOQP";
+	char						szDestRGBMissingType[18] = "A\0CD\0FG\0IJ\0LM\0OP\0";
+	char						szDestRGMissingType[13] = "ABDEGHJKMNPQ";
+	char						szDestRGBDifferentType[36] = "AABBCCDDEEFFGGHHIIJJKKLLMMNNOOPPQQ";
+	char						szDestRGBDifferentType2[18] = "abcdefghijklmnopq";
+	CImageColourRGB				cRGB;
+	CChannels*					pcChannelsSource;
+	CChannels*					pcChannelsDest;
 
 	//Same format, Same types ------------------------------------------
 	cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 	cImageDest.Clear();
+
+	pcChannelsSource = &cImageDest.mcChannels;
+	pcChannelsDest = &cImageDest.mcChannels;
 
 	cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
 	
@@ -66,7 +71,10 @@ void TestDrawImage(void)
 	pcData = (char*)cImageDest.GetData();
 	AssertString(szDestSameType, pcData);
 
+	AssertSize(1, cImageSource.NumEmbedded());
 	cImageSource.Kill();
+	xxx;  // Assert pcChannelsSource is killed by the above kill.
+	AssertSize(1, cImageDest.NumEmbedded());
 	cImageDest.Kill();
 
 	//Different format, Missing source types ------------------------------------------

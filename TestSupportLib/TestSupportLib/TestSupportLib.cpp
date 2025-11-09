@@ -53,7 +53,7 @@ int __cdecl main(void)
 	CFileUtil	cFileUtil;
 	int			iResult;
 
-	_CrtSetBreakAlloc(426);
+	_CrtSetBreakAlloc(939);
 
 	InitTotalStatistics();
 
@@ -65,7 +65,7 @@ int __cdecl main(void)
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output");
 	
-	//TestImage();
+	TestImage();
 	//TestImageColour();
 	//TestImageReader();
 	//TestImageWriter();
@@ -85,7 +85,7 @@ int __cdecl main(void)
 	//TestImageCombiner();
 	//TestImageToR3G3B2A();
 	//TestImageSFTWriter();
-	TestMaps();
+	//TestMaps();
 	//TestWinText();
 	//TestImageCelsSource();
 	//TestHalfSpace();

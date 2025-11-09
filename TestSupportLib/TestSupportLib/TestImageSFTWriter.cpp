@@ -216,8 +216,8 @@ void TestImageSFTWriter(void)
 	TestImageSFTWriterTinyTransparent();
 	TestImageSFTWriterTransparent();
 	TestImageSFTWriterOpaque();
-	//TestImageSFTWriterTransparentCelContainer();
-	//TestImageSFTWriterMultiSourceCelContainer();
+	TestImageSFTWriterTransparentCelContainer();
+	TestImageSFTWriterMultiSourceCelContainer();
 
 	ImageChannelDescriptorKill();
 	ObjectsKill();
