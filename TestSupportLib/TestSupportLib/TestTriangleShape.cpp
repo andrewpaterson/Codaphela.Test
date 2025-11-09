@@ -11,9 +11,7 @@
 void TestTriangleShape(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 
-	FastFunctionsKill();
 	TestStatistics();
 }

@@ -109,12 +109,10 @@ void TestPolygonFindIndiciesFacing(void)
 void TestPolygon(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	TestPolygonFindIndiciesFacing();
 	TestPolygonAddTriangle();
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 

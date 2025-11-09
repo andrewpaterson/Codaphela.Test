@@ -86,12 +86,10 @@ void TestSphereFromPoints(void)
 void TestSphereShape(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	TestSphereFromPoints();
 	TestShereIntersectionVolume();
 	
-	FastFunctionsKill();
 	TestStatistics();
 }
 

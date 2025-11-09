@@ -10,7 +10,6 @@
 void TestHalfSpace(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	SFloat3		sPos1;
 	SFloat3		sPos2;
@@ -61,7 +60,6 @@ void TestHalfSpace(void)
 	bResult = cHalfSpace.NotContains(&sTest);
 	AssertBool(false, bResult);
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 
