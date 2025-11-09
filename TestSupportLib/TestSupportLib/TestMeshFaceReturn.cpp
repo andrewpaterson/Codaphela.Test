@@ -1,6 +1,5 @@
 #include "SupportLib/MeshFaceReturn.h"
 #include "TestLib/Assert.h"
-#include "TestMeshFaceReturn.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -75,3 +74,4 @@ void TestMeshFaceReturn(void)
 	AssertInt(17, r1.miFirstFace);
 	AssertInt(7, r1.NewEdges());
 }
+

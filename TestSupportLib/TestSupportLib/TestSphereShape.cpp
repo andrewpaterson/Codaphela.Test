@@ -1,7 +1,6 @@
-#include "TestLib/Assert.h"
-#include "TestSphereShape.h"
 #include "BaseLib/FastFunctions.h"
 #include "SupportLib/Sphere.h"
+#include "TestLib/Assert.h"
 
 
 //////////////////////////////////////////////////////////////////////////

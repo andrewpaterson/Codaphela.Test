@@ -1,10 +1,8 @@
 #include "BaseLib/GlobalDataTypesIO.h"
-#include "TestMeshConnectivity.h"
 #include "SupportLib/Mesh.h"
 #include "SupportLib/MeshEditor.h"
 #include "SupportLib/MeshPlaneEditor.h"
 #include "TestLib/Assert.h"
-#include "TestMeshConnectivity.h"
 
 
 void AssertCornerFaces(CMeshCorner* pcCorner, size iNumFaces, ...);

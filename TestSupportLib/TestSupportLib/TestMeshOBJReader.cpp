@@ -2,7 +2,6 @@
 #include "SupportLib/MeshReader.h"
 #include "SupportLib/MeshWriter.h"
 #include "TestLib/Assert.h"
-#include "TestMeshOBJReader.h"
 
 
 //////////////////////////////////////////////////////////////////////////

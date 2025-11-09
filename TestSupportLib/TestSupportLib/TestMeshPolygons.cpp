@@ -3,8 +3,6 @@
 #include "SupportLib/MeshEditor.h"
 #include "SupportLib/MeshPlaneEditor.h"
 #include "TestLib/Assert.h"
-#include "TestMeshConnectivity.h"
-#include "TestMeshPolygons.h"
 
 
 //////////////////////////////////////////////////////////////////////////

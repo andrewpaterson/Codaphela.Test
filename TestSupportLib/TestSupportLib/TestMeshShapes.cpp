@@ -9,7 +9,6 @@
 #include "SupportLib/MeshCylinderEditor.h"
 #include "SupportLib/MeshWriter.h"
 #include "TestLib/Assert.h"
-#include "TestMeshShapes.h"
 
 
 void AssertFace(CMeshFace* pcMeshFace, int iCorner1, int iCorner2, int iCorner3);

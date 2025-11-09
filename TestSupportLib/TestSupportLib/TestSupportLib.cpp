@@ -8,25 +8,14 @@
 #include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Unknowns.h"
 #include "TestLib/Assert.h"
-#include "TestImageWriter.h"
-#include "TestPlainTextEditor.h"
-#include "TestWinText.h"
-#include "TestHalfSpace.h"
-#include "TestPolygon.h"
-#include "TestSphereShape.h"
-#include "TestTriangleShape.h"
-#include "TestMeshFaceReturn.h"
-#include "TestMeshPolygons.h"
-#include "TestMeshShapes.h"
-#include "TestMeshConnectivity.h"
-#include "TestNormalGeneration.h"
-#include "TestMeshOBJReader.h"
 
 
+void TestPlainTextEditor(void);
 void TestBumpMapper(void);
 void TestImage(void);
 void TestImageCel(void);
 void TestImageCelsSource(void);
+void TestImageWriter(void);
 void TestImageColour(void);
 void TestImageCombiner(void);
 void TestImageDivider(void);
@@ -42,6 +31,20 @@ void TestRectangleBestPacker(void);
 void TestRectanglePow2Packer(void);
 void TestImageToR3G3B2A(void);
 void TestImageSFTWriter(void);
+void TestWinText(void);
+void TestHalfSpace(void);
+void TestMeshColours(void);
+void TestMeshUVCoords(void);
+void TestMeshMaterials(void);
+void TestPolygon(void);
+void TestSphereShape(void);
+void TestTriangleShape(void);
+void TestMeshFaceReturn(void);
+void TestMeshPolygons(void);
+void TestMeshShapes(void);
+void TestMeshConnectivity(void);
+void TestNormalGeneration(void);
+void TestMeshOBJReader(void);
 
 
 int __cdecl main(void)
@@ -86,6 +89,9 @@ int __cdecl main(void)
 	TestImageCelsSource();
 	TestHalfSpace();
 	TestPolygon();
+	TestMeshColours();
+	TestMeshUVCoords();
+	TestMeshMaterials();
 	TestSphereShape();
 	TestTriangleShape();
 	TestMeshFaceReturn();

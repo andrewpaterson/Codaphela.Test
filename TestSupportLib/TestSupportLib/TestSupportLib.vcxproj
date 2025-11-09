@@ -188,6 +188,7 @@
     <ClCompile Include="TestImageDraw.cpp" />
     <ClCompile Include="TestImageRGBAToR3G3B2A.cpp" />
     <ClCompile Include="TestImageSFTWriter.cpp" />
+    <ClCompile Include="TestMaps.cpp" />
     <ClCompile Include="TestSupportLib.cpp" />
     <ClCompile Include="TestBumpMapper.cpp" />
     <ClCompile Include="TestImage.cpp" />
@@ -225,21 +226,6 @@
   <ItemGroup>
     <ClInclude Include="AssertImage.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="TestWinText.h" />
-    <ClInclude Include="TestMeshColour.h" />
-    <ClInclude Include="TestMeshConnectivity.h" />
-    <ClInclude Include="TestMeshFaceReturn.h" />
-    <ClInclude Include="TestMeshMaterial.h" />
-    <ClInclude Include="TestMeshOBJReader.h" />
-    <ClInclude Include="TestMeshPolygons.h" />
-    <ClInclude Include="TestMeshShapes.h" />
-    <ClInclude Include="TestMeshUVCoords.h" />
-    <ClInclude Include="TestNormalGeneration.h" />
-    <ClInclude Include="TestPlainTextEditor.h" />
-    <ClInclude Include="TestHalfSpace.h" />
-    <ClInclude Include="TestPolygon.h" />
-    <ClInclude Include="TestSphereShape.h" />
-    <ClInclude Include="TestTriangleShape.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

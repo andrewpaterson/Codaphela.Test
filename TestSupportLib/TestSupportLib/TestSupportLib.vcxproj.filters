@@ -47,7 +47,7 @@
     <Filter Include="Source Files\Image\Area">
       <UniqueIdentifier>{5e02e4e4-74b3-4d00-827a-3b28afe3ed60}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Tile">
+    <Filter Include="Source Files\Map">
       <UniqueIdentifier>{1665df54-a7e8-4ce6-a0d3-8c9776ca2286}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -163,55 +163,13 @@
     <ClCompile Include="TestRectanglePow2Packer.cpp">
       <Filter>Source Files\Image\Area</Filter>
     </ClCompile>
+    <ClCompile Include="TestMaps.cpp">
+      <Filter>Source Files\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestWinText.h">
-      <Filter>Source Files\Image\Font</Filter>
-    </ClInclude>
-    <ClInclude Include="TestMeshColour.h">
-      <Filter>Source Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="TestMeshConnectivity.h">
-      <Filter>Source Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="TestMeshFaceReturn.h">
-      <Filter>Source Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="TestMeshMaterial.h">
-      <Filter>Source Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="TestMeshOBJReader.h">
-      <Filter>Source Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="TestMeshPolygons.h">
-      <Filter>Source Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="TestMeshShapes.h">
-      <Filter>Source Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="TestMeshUVCoords.h">
-      <Filter>Source Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="TestNormalGeneration.h">
-      <Filter>Source Files\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="TestPlainTextEditor.h">
-      <Filter>Source Files\TextEditor</Filter>
-    </ClInclude>
-    <ClInclude Include="TestHalfSpace.h">
-      <Filter>Source Files\Shape</Filter>
-    </ClInclude>
-    <ClInclude Include="TestPolygon.h">
-      <Filter>Source Files\Shape</Filter>
-    </ClInclude>
-    <ClInclude Include="TestSphereShape.h">
-      <Filter>Source Files\Shape</Filter>
-    </ClInclude>
-    <ClInclude Include="TestTriangleShape.h">
-      <Filter>Source Files\Shape</Filter>
     </ClInclude>
     <ClInclude Include="AssertImage.h">
       <Filter>Source Files\Image</Filter>

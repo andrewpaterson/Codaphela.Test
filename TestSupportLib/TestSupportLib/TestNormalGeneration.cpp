@@ -7,7 +7,6 @@
 #include "SupportLib/MeshFlatFaces.h"
 #include "SupportLib/MeshWriter.h"
 #include "TestLib/Assert.h"
-#include "TestNormalGeneration.h"
 
 
 //////////////////////////////////////////////////////////////////////////

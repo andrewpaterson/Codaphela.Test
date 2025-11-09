@@ -627,14 +627,14 @@ void TestPlainTextEditor(void)
 {
 	BeginTests();
 
-	//TestPlainTextEditorInsertionAndTypeOver();
-	//TestPlainTextEditorSimpleNavigation();
-	//TestPlainTextEditorUpDownNavigation();
-	//TestPlainTextEditorWordNavigation();
-	//TestPlainTextEditorSelection();
-	//TestPlainTextEditorCopyPaste();
-	//TestPlainTextEditorSelectionOverwrite();
-	//TestPlainTextEditorDeleteLine();
+	TestPlainTextEditorInsertionAndTypeOver();
+	TestPlainTextEditorSimpleNavigation();
+	TestPlainTextEditorUpDownNavigation();
+	TestPlainTextEditorWordNavigation();
+	TestPlainTextEditorSelection();
+	TestPlainTextEditorCopyPaste();
+	TestPlainTextEditorSelectionOverwrite();
+	TestPlainTextEditorDeleteLine();
 	TestPlainTextEditorLeftRightDelete();
 
 	TestStatistics();
