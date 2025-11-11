@@ -18,7 +18,42 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestDrawImage(void)
+void TestImageKillChannels(void)
+{
+	CChannels*	pcChannelsSource;
+	CChannels*	pcChannelsDest;
+
+	AssertSize(0, gcObjects.NumMemoryIndexes());
+
+	Ptr<CImage> pImageSource = OMalloc<CImage>(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	pImageSource->Clear();
+	Ptr<CImage> pImageDest = OMalloc<CImage>(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	pImageDest->Clear();
+
+	AssertSize(2, gcObjects.NumMemoryIndexes());
+
+	pcChannelsSource = &pImageSource->mcChannels;
+	pcChannelsDest = &pImageDest->mcChannels;
+
+	AssertSize(6, pcChannelsSource->GetSize());
+	AssertSize(2, pImageSource.NumEmbedded());  //Two because the Image is considered to be embedded in itself along with the Channels.
+	pImageSource = NULL;
+	AssertSize(0, pImageSource.NumEmbedded());
+	
+	AssertSize(6, pcChannelsDest->GetSize());
+	AssertSize(2, pImageDest.NumEmbedded());
+	pImageDest = NULL;
+	AssertSize(0, pImageDest.NumEmbedded());
+
+	AssertSize(0, gcObjects.NumMemoryIndexes());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageCopier(void)
 {
 	CImage						cImageDest;
 	CImageModifierDrawBox		cBox;
@@ -39,30 +74,38 @@ void TestDrawImage(void)
 
 	//Same format, Same types ------------------------------------------
 	cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	pcChannelsDest = &cImageDest.mcChannels;
 	cImageDest.Clear();
 
-	pcChannelsSource = &cImageDest.mcChannels;
-	pcChannelsDest = &cImageDest.mcChannels;
-
 	cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
-	
+	pcChannelsSource = &cImageSource.mcChannels;
+
 	bResult = cImageSource.IsSameFormat(&cImageDest);
 	AssertTrue(bResult);
 
-
 	CImageCopier::Copy(&cImageSource, &cImageDest, 0, 0, NULL);
-	
 	pcData = (char*)cImageDest.GetData();
 	AssertString(szSourceRGB, pcData);
 
+	AssertSize(0, gcObjects.NumMemoryIndexes());
+
+	AssertSize(6, pcChannelsSource->GetSize());
+	AssertSize(2, cImageSource.NumEmbedded());
 	cImageSource.Kill();
+	AssertSize(0, pcChannelsSource->GetSize());
+	AssertSize(6, pcChannelsDest->GetSize());
+	AssertSize(2, cImageDest.NumEmbedded());
 	cImageDest.Kill();
+	AssertSize(0, pcChannelsDest->GetSize());
+	AssertSize(0, gcObjects.NumMemoryIndexes());
 
 	//Different format, Same types ------------------------------------------
 	cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	pcChannelsDest = &cImageDest.mcChannels;
 	cImageDest.Clear();
 
 	cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	pcChannelsSource = &cImageSource.mcChannels;
 
 	bResult = cImageSource.IsSameFormat(&cImageDest);
 	AssertBool(false, bResult);
@@ -71,14 +114,18 @@ void TestDrawImage(void)
 	pcData = (char*)cImageDest.GetData();
 	AssertString(szDestSameType, pcData);
 
-	AssertSize(1, cImageSource.NumEmbedded());
+	AssertSize(6, pcChannelsSource->GetSize());
+	AssertSize(2, cImageSource.NumEmbedded());
 	cImageSource.Kill();
-	xxx;  // Assert pcChannelsSource is killed by the above kill.
-	AssertSize(1, cImageDest.NumEmbedded());
+	AssertSize(0, pcChannelsSource->GetSize());
+	AssertSize(6, pcChannelsDest->GetSize());
+	AssertSize(2, cImageDest.NumEmbedded());
 	cImageDest.Kill();
+	AssertSize(0, pcChannelsDest->GetSize());
 
 	//Different format, Missing source types ------------------------------------------
 	cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	pcChannelsDest = &cImageDest.mcChannels;
 
 	cRGB.Init(0, 0, 0);
 	cBox.Init(NULL, &cRGB);
@@ -86,6 +133,7 @@ void TestDrawImage(void)
 	cBox.Kill();
 
 	cImageSource.Init(3, 2, szSourceRB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	pcChannelsSource = &cImageSource.mcChannels;
 
 	bResult = cImageSource.IsSameFormat(&cImageDest);
 	AssertBool(false, bResult);
@@ -99,9 +147,11 @@ void TestDrawImage(void)
 
 	//Different format, Missing dest types ------------------------------------------
 	cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, CHANNEL_ZERO);
+	pcChannelsDest = &cImageDest.mcChannels;
 	cImageDest.Clear();
 
 	cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	pcChannelsSource = &cImageSource.mcChannels;
 
 	bResult = cImageSource.IsSameFormat(&cImageDest);
 	AssertBool(false, bResult);
@@ -115,10 +165,12 @@ void TestDrawImage(void)
 
 	//Different types ------------------------------------------
 	cImageDest.Init(3, 2, PT_uint16, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	pcChannelsDest = &cImageDest.mcChannels;
 	cImageDest.Clear();
 	AssertInt(3*2 * 3*2, cImageDest.GetByteSize());
 
 	cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	pcChannelsSource = &cImageSource.mcChannels;
 
 	bResult = cImageSource.IsSameFormat(&cImageDest);
 	AssertBool(false, bResult);
@@ -132,10 +184,12 @@ void TestDrawImage(void)
 
 	//Different types ------------------------------------------
 	cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	pcChannelsDest = &cImageDest.mcChannels;
 	cImageDest.Clear();
 	AssertInt(3*2 * 3, cImageDest.GetByteSize());
 
 	cImageSource.Init(3, 2, szSourceR2G2B2, PT_uint16, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	pcChannelsSource = &cImageSource.mcChannels;
 
 	bResult = cImageSource.IsSameFormat(&cImageDest);
 	AssertBool(false, bResult);
@@ -161,7 +215,8 @@ void TestImage(void)
 	DataIOInit();
 	ObjectsInit();
 
-	TestDrawImage();
+	TestImageKillChannels();
+	TestImageCopier();
 
 	ObjectsKill();
 	DataIOKill();

@@ -53,7 +53,7 @@ int __cdecl main(void)
 	CFileUtil	cFileUtil;
 	int			iResult;
 
-	_CrtSetBreakAlloc(939);
+	_CrtSetBreakAlloc(0);
 
 	InitTotalStatistics();
 
@@ -66,41 +66,41 @@ int __cdecl main(void)
 	cFileUtil.MakeDir("Output");
 	
 	TestImage();
-	//TestImageColour();
-	//TestImageReader();
-	//TestImageWriter();
-	//TestImageGreyToRGB();
-	//TestImageRGBToGrey();
-	//TestImageDivider();
-	//TestBumpMapper();
-	//TestPlainTextEditor();
-	//TestImageCel();
-	//TestRectangleBestPacker();
-	//TestRectanglePow2Packer();
-	//TestImageModifierStack();
-	//TestImageModifierDrawBox();
-	//TestImageDraw();
-	//TestImageRecolour();
-	//TestImageSwizzle();
-	//TestImageCombiner();
-	//TestImageToR3G3B2A();
-	//TestImageSFTWriter();
-	//TestMaps();
-	//TestWinText();
-	//TestImageCelsSource();
-	//TestHalfSpace();
-	//TestPolygon();
-	//TestMeshColours();
-	//TestMeshUVCoords();
-	//TestMeshMaterials();
-	//TestSphereShape();
-	//TestTriangleShape();
-	//TestMeshFaceReturn();
-	//TestMeshPolygons();
-	//TestMeshShapes();
-	//TestMeshConnectivity();
-	//TestNormalGeneration();
-	//TestMeshOBJReader();
+	TestImageColour();
+	TestImageReader();
+	TestImageWriter();
+	TestImageGreyToRGB();
+	TestImageRGBToGrey();
+	TestImageDivider();
+	TestBumpMapper();
+	TestPlainTextEditor();
+	TestImageCel();
+	TestRectangleBestPacker();
+	TestRectanglePow2Packer();
+	TestImageModifierStack();
+	TestImageModifierDrawBox();
+	TestImageDraw();
+	TestImageRecolour();
+	TestImageSwizzle();
+	TestImageCombiner();
+	TestImageToR3G3B2A();
+	TestImageSFTWriter();
+	TestMaps();
+	TestWinText();
+	TestImageCelsSource();
+	TestHalfSpace();
+	TestPolygon();
+	TestMeshColours();
+	TestMeshUVCoords();
+	TestMeshMaterials();
+	TestSphereShape();
+	TestTriangleShape();
+	TestMeshFaceReturn();
+	TestMeshPolygons();
+	TestMeshShapes();
+	TestMeshConnectivity();
+	TestNormalGeneration();
+	TestMeshOBJReader();
 
 	cFileUtil.RemoveDir("Output");
 

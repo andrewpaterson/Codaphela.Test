@@ -384,7 +384,7 @@ void TestEmbeddedObjectPointTo(void)
 	AssertTrue(pRoot.IsNotNull());
 	pContainer = pRoot->Get(0);
 	AssertTrue(pContainer.IsHollow());
-	AssertSize(0, pContainer.Object()->GetNumEmbedded());
+	AssertSize(0, pContainer.Object()->NumEmbedded());
 	AssertLong(-1, pContainer.GetIndex());
 
 	szClassName = pContainer->ClassName();
@@ -414,14 +414,14 @@ void TestEmbeddedGetEmbeddedIndex(void)
 	cComplex.Init();
 
 	AssertInt(0, cComplex.TestGetNumEmbeddedFromFlags());
-	AssertSize(6, cComplex.GetNumEmbedded());
+	AssertSize(6, cComplex.NumEmbedded());
 	AssertInt(6, cComplex.TestGetNumEmbeddedFromFlags());
 
-	AssertSize(1, cComplex.mcSimple.GetNumEmbedded());
-	AssertSize(1, cComplex.ma.GetNumEmbedded());
-	AssertSize(3, cComplex.mcContainer.GetNumEmbedded());
-	AssertSize(1, cComplex.mcContainer.mcOne.GetNumEmbedded());
-	AssertSize(1, cComplex.mcContainer.mcOne.GetNumEmbedded());
+	AssertSize(1, cComplex.mcSimple.NumEmbedded());
+	AssertSize(1, cComplex.ma.NumEmbedded());
+	AssertSize(3, cComplex.mcContainer.NumEmbedded());
+	AssertSize(1, cComplex.mcContainer.mcOne.NumEmbedded());
+	AssertSize(1, cComplex.mcContainer.mcOne.NumEmbedded());
 
 	AssertInt(0, cComplex.GetEmbeddedIndex(&cComplex));
 	AssertInt(1, cComplex.GetEmbeddedIndex(&cComplex.mcSimple));
@@ -495,12 +495,12 @@ void TestEmbeddedObjectClass(void)
 
 	//Class not yet called.  Always call Class.
 	AssertInt(0, cComplex.GetNumFieldPointerTos());
-	AssertSize(1, cComplex.GetNumEmbedded());
+	AssertSize(1, cComplex.NumEmbedded());
 
 	cComplex.ClearFlagNumEmbedded();
 	cComplex.Init();
 	AssertInt(5, cComplex.GetNumFieldPointerTos());
-	AssertSize(6, cComplex.GetNumEmbedded());
+	AssertSize(6, cComplex.NumEmbedded());
 
 	pcPtr0 = cComplex.GetFieldPointerTo(0);
 	pcPtr1 = cComplex.GetFieldPointerTo(1);

@@ -238,8 +238,8 @@ void TestObjectPointerRemapping(void)
 	AssertLong(5, gcUnknowns.NumElements());
 	AssertLong(4LL, pObject2.GetIndex());
 	AssertLong(5LL, pObject3.GetIndex());
-	AssertSize(1, pObject2->GetNumEmbedded());
-	AssertSize(1, pObject3->GetNumEmbedded());
+	AssertSize(1, pObject2->NumEmbedded());
+	AssertSize(1, pObject3->NumEmbedded());
 
 	pcObject2 = (CTestObject*)pObject2.Object();
 	iNumRemapped = pObject2.MorphInto(&pObject3);

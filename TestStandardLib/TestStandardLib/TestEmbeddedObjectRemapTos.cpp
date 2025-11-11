@@ -47,12 +47,12 @@ void TestEmbeddedObjectRemapTosActual(void)
 	Ptr<CRoot>	pRoot = ORoot();
 
 	Ptr<CHollowObject>	pHollow = gcObjects.AllocateHollowWithNameAndIndex("Name", gcObjects.GetIndexGenerator()->GetNext(), 3);
-	AssertSize(3, pHollow.Object()->GetNumEmbedded());
+	AssertSize(3, pHollow.Object()->NumEmbedded());
 
 	Ptr<CEmbeddedObject> pHollowEmbedded1 = pHollow.Object()->GetEmbeddedObject(1);
 	Ptr<CEmbeddedObject> pHollowEmbedded2 = pHollow.Object()->GetEmbeddedObject(2);
 	AssertPointer(pHollow.Object(), pHollow.Object()->GetEmbeddedObject(0));
-	AssertSize(3, pHollow.Object()->GetNumEmbedded());
+	AssertSize(3, pHollow.Object()->NumEmbedded());
 
 	Ptr<CPointerContainer>	pPointerHollow = gcObjects.Malloc<CPointerContainer>()->Init(pHollow);
 	Ptr<CPointerContainer>	pPointerHollowEmbedded1 = gcObjects.Malloc<CPointerContainer>()->Init(pHollowEmbedded1);
@@ -71,7 +71,7 @@ void TestEmbeddedObjectRemapTosActual(void)
 	pRoot->Add(pHollow);
 
 	Ptr<CTestObjectWithTwoEmbedded> pObject = gcObjects.Malloc<CTestObjectWithTwoEmbedded>("Name2");
-	AssertSize(3, pObject.Object()->GetNumEmbedded());
+	AssertSize(3, pObject.Object()->NumEmbedded());
 
 	AssertString("CHollowObject", pHollow.ClassName());
 	AssertString("CHollowEmbeddedObject", pHollowEmbedded1.ClassName());

@@ -53,6 +53,7 @@ void TestEmbeddedObjectRemapTos(void);
 void TestEmbeddedStackPointers(void);
 void TestFreeEmbedded(void);
 void TestIndexTreeMemory(void);
+void TestEmbeddedReInit(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -118,6 +119,7 @@ int __cdecl main(void)
 	TestEmbedded();
 	TestEmbeddedObjectRemapTos();
 	TestEmbeddedStackPointers();
+	TestEmbeddedReInit();
 
 	FastFunctionsKill();
 
