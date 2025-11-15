@@ -53,7 +53,7 @@ void CTestObject::Class(void)
 {
 	M_Pointer(mpObject);
 	M_Pointer(mpTest);
-	U_SInt(mi);
+	U_Int32(mi);
 	//For some reason uncommenting this breaks the TestObjectDirtyOnPrimitiveAssignmentWithEmbedded test.
 	//U_Pointer(mpsFreedNotifier);
 }
@@ -446,4 +446,48 @@ void CTestEmbeddedStrings::Free(void)
 	mString2.Free();
 	mString3.Free();
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestSimpleObject::Init(STestObjectFreedNotifier* psKilledNotifier, int32 i)
+{
+	PreInit();
+
+	mi = i;
+	mpsFreedNotifier = psKilledNotifier;
+	if (mpsFreedNotifier)
+	{
+		mpsFreedNotifier->bFreed = false;
+	}
+
+	PostInit();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestSimpleObject::Class(void)
+{
+	U_Int32(mi);
+	U_Pointer(mpsFreedNotifier);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestSimpleObject::Free(void)
+{
+	if (mpsFreedNotifier)
+	{
+		mpsFreedNotifier->bFreed = true;
+	}
+}
+
 

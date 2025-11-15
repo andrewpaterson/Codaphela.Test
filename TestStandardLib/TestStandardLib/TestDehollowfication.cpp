@@ -219,7 +219,7 @@ void TestDehollowficationFromDatabaseComplex(void)
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupDehollowficationConstructors();
 	AssertLong(0, gcUnknowns.NumElements());
-	AssertInt(0, gcObjects.GetStackPointers()->UsedPointers());
+	AssertInt(0, gcObjects.GetStackPointers()->NumElements());
 
 	AssertLong(0, gcObjects.NumMemoryIndexes());
 	AssertLong(0, gcObjects.NumMemoryNames());
@@ -249,11 +249,11 @@ void TestDehollowficationFromDatabaseComplex(void)
 	AssertLong(1, gcObjects.NumMemoryNames());
 	AssertLong(1, pcDatabase->NumIndicesCached());
 	AssertLong(6, pcDatabase->NumNames());
-	AssertInt(1, gcObjects.GetStackPointers()->UsedPointers());
+	AssertInt(1, gcObjects.GetStackPointers()->NumElements());
 	Pass();
 
 	Ptr<CTestDoubleNamedString> pDouble = pRoot->Get<CTestDoubleNamedString>("Double Start");  //This will cause pRoot.Set to be dehollowed.
-	AssertInt(2, gcObjects.GetStackPointers()->UsedPointers());
+	AssertInt(2, gcObjects.GetStackPointers()->NumElements());
 	AssertFalse(pRoot->IsSetHollow());
 	AssertTrue(pDouble.IsNotNull());
 	AssertTrue(pDouble.IsHollow());
@@ -267,7 +267,7 @@ void TestDehollowficationFromDatabaseComplex(void)
 	AssertLong(9LL, gcObjects.NumMemoryIndexes());
 	AssertFalse(pDouble.IsHollow());
 	AssertLong(10, pDouble.GetIndex());
-	AssertInt(2, gcObjects.GetStackPointers()->UsedPointers());
+	AssertInt(2, gcObjects.GetStackPointers()->NumElements());
 	AssertFalse(pDouble->mpSplit1.IsHollow());
 	AssertLong(8LL, pDouble->mpSplit1.GetIndex());
 	AssertString("NamedString 2", pDouble->mpSplit1.GetName());
@@ -283,13 +283,13 @@ void TestDehollowficationFromDatabaseComplex(void)
 	AssertFalse(pDouble->mpSplit1->mszString.IsHollow());
 	Pass();
 
-	AssertInt(2, gcObjects.GetStackPointers()->UsedPointers());
+	AssertInt(2, gcObjects.GetStackPointers()->NumElements());
 	Pass();
 
 	Ptr<CTestNamedString> pDiamond = pDouble->mpSplit1->mpAnother;
 	AssertLong(9, gcUnknowns.NumElements());
 	AssertLong(9, gcObjects.NumMemoryIndexes());
-	AssertInt(3, gcObjects.GetStackPointers()->UsedPointers());
+	AssertInt(3, gcObjects.GetStackPointers()->NumElements());
 	AssertTrue(pDouble->mpSplit1->mpAnother.IsHollow());
 	AssertTrue(pDiamond.IsHollow());
 	Pass();

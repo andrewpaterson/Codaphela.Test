@@ -21,7 +21,7 @@ DESTRUCTABLE(CTestObject);
 public:
 	CPointer					mpObject;
 	Ptr<CTestObject>			mpTest;
-	int							mi;
+	int32						mi;
 	STestObjectFreedNotifier*	mpsFreedNotifier;
 
 	void	Init(void);
@@ -92,7 +92,6 @@ public:
 };
 
 
-
 class CTestObjectWithFields : public CObject
 {
 CONSTRUCTABLE(CTestObjectWithFields);
@@ -157,6 +156,20 @@ public:
 	CString		mString3;
 
 	void	Init(void);
+	void	Class(void);
+	void	Free(void);
+};
+
+
+class CTestSimpleObject : public CObject
+{
+CONSTRUCTABLE(CTestSimpleObject);
+DESTRUCTABLE(CTestSimpleObject);
+public:
+	int32						mi;
+	STestObjectFreedNotifier*	mpsFreedNotifier;
+
+	void	Init(STestObjectFreedNotifier* psKilledNotifier, int32 i);
 	void	Class(void);
 	void	Free(void);
 };

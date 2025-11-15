@@ -45,7 +45,7 @@ void TestStackPointersAdd(void)
 
 	AssertInt(2, pcStackPointer21->NumPointers());
 
-	AssertInt(4, cStackPointes.UsedPointers());
+	AssertInt(4, cStackPointes.NumElements());
 
 	pcStackPointer13 = cStackPointes.Add(cPointer1.This(), pcStackPointer11);
 	AssertNotNull(pcStackPointer13);
@@ -63,19 +63,19 @@ void TestStackPointersAdd(void)
 
 	AssertInt(3, pcStackPointer21->NumPointers());
 
-	AssertInt(6, cStackPointes.UsedPointers());
+	AssertInt(6, cStackPointes.NumElements());
 
 	pcStackPointerNull = cStackPointes.Add(cPointer1.This(), pcStackPointer11);
 	AssertNull(pcStackPointerNull);
 	AssertInt(3, pcStackPointer11->NumPointers());
 
-	AssertInt(6, cStackPointes.UsedPointers());
+	AssertInt(6, cStackPointes.NumElements());
 
 	cStackPointes.RemoveAll(pcStackPointer21);
 
-	AssertInt(3, cStackPointes.UsedPointers());
+	AssertInt(3, cStackPointes.NumElements());
 
-	AssertFalse(pcStackPointer21->mbUsed);
+	AssertFalse(pcStackPointer21->IsUsed());
 
 	pcStackPointer21 = cStackPointes.Add(cPointer1.This());
 	AssertNotNull(pcStackPointer21);
@@ -94,13 +94,13 @@ void TestStackPointersAdd(void)
 
 	AssertInt(3, pcStackPointer21->NumPointers());
 
-	AssertInt(6, cStackPointes.UsedPointers());
+	AssertInt(6, cStackPointes.NumElements());
 
 	pcStackPointerNull = cStackPointes.Add(cPointer1.This(), pcStackPointer21);
 	AssertNull(pcStackPointerNull);
 	AssertInt(3, pcStackPointer11->NumPointers());
 
-	AssertInt(6, cStackPointes.UsedPointers());
+	AssertInt(6, cStackPointes.NumElements());
 
 	cStackPointes.Kill();
 }

@@ -140,6 +140,80 @@ void TestArrayRemove(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestArraySneakyOnStack(void)
+{
+	ObjectsInit();
+
+	CTestObject					aArray;
+	STestObjectFreedNotifier	sFreed;
+	SStackPointer*				psPointer;
+	CBaseObject*				pcObject;
+
+	AssertSize(0, gcStackPointers.NumElements());
+
+	Ptr<CTestSimpleObject> pTestObject = OMalloc<CTestSimpleObject>(&sFreed, 23);
+	AssertSize(1, gcStackPointers.NumElements());
+	psPointer = gcStackPointers.Get(0);
+	AssertTrue(psPointer->meType == SPT_Pointer);
+	pcObject = psPointer->u.pcPointer->BaseObject();
+	//The pointer 'pTestObject' is on the stack and pointes to a CTestSimpleObject.
+	AssertPointer(pTestObject.BaseObject(), pcObject);
+
+	AssertSize(1, gcStackPointers.NumElements());
+	aArray.Init(pTestObject, NULL);
+	AssertSize(1, gcStackPointers.NumElements());
+
+	//aArray should not be marked for killing when pTestObject is killed.
+	pTestObject = NULL;
+	AssertSize(0, gcStackPointers.NumElements());
+
+	aArray.Kill();
+
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayOnStack(void)
+{
+	ObjectsInit();
+
+	CArray<CTestSimpleObject>	aArray;
+	STestObjectFreedNotifier	sFreed;
+	SStackPointer*				psPointer;
+	CBaseObject*				pcObject;
+
+	AssertSize(0, gcStackPointers.NumElements());
+
+	Ptr<CTestSimpleObject> pTestObject = OMalloc<CTestSimpleObject>(&sFreed, 23);
+	AssertSize(1, gcStackPointers.NumElements());
+	psPointer = gcStackPointers.Get(0);
+	AssertTrue(psPointer->meType == SPT_Pointer);
+	pcObject = psPointer->u.pcPointer->BaseObject();
+	//The pointer 'pTestObject' is on the stack and pointes to a CTestSimpleObject.
+	AssertPointer(pTestObject.BaseObject(), pcObject);
+
+	aArray.Init();
+	aArray.Add(pTestObject);
+
+	//aArray should not be marked for killing when pTestObject is killed.
+	pTestObject = NULL;
+
+	aArray.Kill();
+
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestArray(void)
 {
 	BeginTests();
@@ -153,6 +227,8 @@ void TestArray(void)
 	TestArrayInsert();
 	TestArrayAddAll();
 	TestArrayRemove();
+	//TestArraySneakyOnStack();
+	//TestArrayOnStack();
 
 	DataIOKill();
 	TypesKill();
