@@ -172,6 +172,7 @@ public:
 
 	void Kill(void)
 	{
+		mszAlsoBored.Kill();
 	}
 
 	void Style1(CUnknown* pcSource, void* pvContext) override;

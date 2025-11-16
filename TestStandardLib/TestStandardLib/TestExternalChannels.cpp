@@ -21,8 +21,8 @@ void TestExternalChannelsSubBytePositions(void)
 	CChannelsAccessor*			pcChannel1;
 	CChannelsAccessorCreator	cCreator;
 	CChannels					cSourceChannels;
-	uint8				uc[11] = {0x29, 0x33, 0xBE, 0x84, 0xE1, 0x6C, 0xD6, 0xAE, 0x52, 0xE8, 0x01};
-	uint8*				pucData;
+	uint8						uc[11] = {0x29, 0x33, 0xBE, 0x84, 0xE1, 0x6C, 0xD6, 0xAE, 0x52, 0xE8, 0x01};
+	uint8*						pucData;
 //   MSb                                                                                           LSb
 // X 1 11101000 0 10100101 0 10111011 0 10110011 0 11001110 0 00110000 1 00101111 1 00011001 1 00101001
 // ^         ^          ^          ^          ^          ^          ^          ^          ^          ^
@@ -96,6 +96,8 @@ void TestExternalChannelsSubBytePositions(void)
 	AssertInt(0xFF, *pucData);
 
 	cSourceChannels.Kill();
+	pcChannel0->Kill();
+	pcChannel1->Kill();
 }
 
 
