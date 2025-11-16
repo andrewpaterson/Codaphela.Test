@@ -134,186 +134,206 @@ void TestChannelsLoad(void)
 {
 	ObjectsInit();
 
-	Ptr<CChannels>				pcChannels;
-	CChannelsAccessor*			pcAccessorR;
-	CChannelsAccessor*			pcAccessorG;
-	CChannelsAccessor*			pcAccessorB;
-	int							r;
-	int							g;
-	int							b;
-	int							iCount;
-	int							x;
-	int							y;
-	CExternalObjectSerialiser	cSerialiser;
-	CMultiFileObjectWriter		cWriter;
-	CFileUtil					cFileUtil;
-	CChannels*					pcOld;
-	CChannels*					pcNew;
-	CChannel*					pcChannel;
-
-	pcChannels = ONMalloc<CChannels>("File");
-	pcChannels.GetIndex();
-
-	pcOld = (CChannels*)pcChannels.Object();
-
-	pcChannels->BeginChange();
-	pcChannels->SetSize(8 * 32);
-	pcChannels->AddChannel(0, PT_uint8);
-	pcChannels->AddChannel(1, PT_uint8);
-	pcChannels->AddChannel(2, PT_uint8);
-	pcChannels->EndChange();
-	AssertInt(8 * 32 * 3, pcChannels->GetByteSize());
-
-	pcAccessorR = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 0);
-	pcAccessorG = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 1);
-	pcAccessorB = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 2);
-
-	x = 0;
-	y = 0;
-	iCount = 0;
-	for (r = 0; r < 8; r++)
 	{
-		for (g = 0; g < 8; g++)
+		Ptr<CChannels>				pcChannels;
+		CChannelsAccessor*			pcAccessorR;
+		CChannelsAccessor*			pcAccessorG;
+		CChannelsAccessor*			pcAccessorB;
+		int							r;
+		int							g;
+		int							b;
+		int							iCount;
+		int							x;
+		int							y;
+		CExternalObjectSerialiser	cSerialiser;
+		CMultiFileObjectWriter		cWriter;
+		CFileUtil					cFileUtil;
+		CChannels*					pcOld;
+
+		pcChannels = ONMalloc<CChannels>("File");
+		pcChannels.GetIndex();
+
+		pcOld = (CChannels*)pcChannels.Object();
+
+		pcChannels->BeginChange();
+		pcChannels->SetSize(8 * 32);
+		pcChannels->AddChannel(0, PT_uint8);
+		pcChannels->AddChannel(1, PT_uint8);
+		pcChannels->AddChannel(2, PT_uint8);
+		pcChannels->EndChange();
+		AssertInt(8 * 32 * 3, pcChannels->GetByteSize());
+
+		pcAccessorR = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 0);
+		pcAccessorG = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 1);
+		pcAccessorB = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 2);
+
+		x = 0;
+		y = 0;
+		iCount = 0;
+		for (r = 0; r < 8; r++)
 		{
-			for (b = 0; b < 4; b++)
+			for (g = 0; g < 8; g++)
 			{
-				pcAccessorR->Set(x + y * 8, &r);
-				pcAccessorG->Set(x + y * 8, &g);
-				pcAccessorB->Set(x + y * 8, &b);
-
-				x++;
-				if (x >= 8)
+				for (b = 0; b < 4; b++)
 				{
-					x = 0;
-					y++;
-				}
+					pcAccessorR->Set(x + y * 8, &r);
+					pcAccessorG->Set(x + y * 8, &g);
+					pcAccessorB->Set(x + y * 8, &b);
 
-				iCount++;
+					x++;
+					if (x >= 8)
+					{
+						x = 0;
+						y++;
+					}
+
+					iCount++;
+				}
 			}
 		}
+
+		AssertInt(256, iCount);
+
+		pcAccessorR->Kill();
+		pcAccessorG->Kill();
+		pcAccessorB->Kill();
+
+		AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "Channels"));
+		AssertTrue(cFileUtil.TouchDir("Output" _FS_ "Channels"));
+
+		cWriter.Init("Output" _FS_ "Channels" _FS_, "");
+		cSerialiser.Init(&cWriter);
+		AssertTrue(cSerialiser.Write(&pcChannels));
+		cSerialiser.Kill();
+		cWriter.Kill();
+
+		pcChannels = NULL;
 	}
-
-	AssertInt(256, iCount);
-
-	pcAccessorR->Kill();
-	pcAccessorG->Kill();
-	pcAccessorB->Kill();
-
-	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "Channels"));
-	AssertTrue(cFileUtil.TouchDir("Output" _FS_ "Channels"));
-
-	cWriter.Init("Output" _FS_ "Channels" _FS_, "");
-	cSerialiser.Init(&cWriter);
-	AssertTrue(cSerialiser.Write(&pcChannels));
-	cSerialiser.Kill();
-	cWriter.Kill();
 
 	ObjectsFlush();
 	ObjectsKill();
 
 	ObjectsInit();
 
-	gcObjects.AddConstructor<CChannels>();
-
-	CFileObjectReader				cReader;
-	CExternalObjectDeserialiser		cDeserialiser;
-	CFileBasic						cFileBasic;
-	CDiskFile*						pcDiskFile;
-	uint8							ar;
-	uint8							ag;
-	uint8							ab;
-
-	pcDiskFile = DiskFile("Output" _FS_ "Channels" _FS_ "File.DRG");
-	cFileBasic.Init(pcDiskFile);
-
-	cReader.Init(&cFileBasic);
-	cDeserialiser.Init(&cReader, false, &gcObjects);
-	pcChannels = cDeserialiser.Read("File");
-	cDeserialiser.Kill();
-	cReader.Kill();
-
-	pcNew = (CChannels*)pcChannels.Object();
-	
-	AssertSize(8 * 32 * 3, pcChannels->GetByteSize());
-	AssertSize(3, pcChannels->GetByteStride());
-	AssertSize(3 * 8, pcChannels->GetBitStride());
-	AssertSize(3, pcChannels->GetNumChannels());
-
-	pcChannel = pcChannels->GetChannel(0);
-	AssertSize(1, pcChannel->miByteSize);
-	AssertSize(0, pcChannel->miByteOffset);
-	AssertSize(8, pcChannel->miBitSize);
-	AssertSize(0, pcChannel->miBitOffset);
-	AssertSize(PT_uint8, pcChannel->eType);
-	AssertSize(0, pcChannel->iChannel);
-	AssertBool(false, pcChannel->bReverse);
-
-	pcChannel = pcChannels->GetChannel(1);
-	AssertSize(1, pcChannel->miByteSize);
-	AssertSize(1, pcChannel->miByteOffset);
-	AssertSize(8, pcChannel->miBitSize);
-	AssertSize(8, pcChannel->miBitOffset);
-	AssertSize(PT_uint8, pcChannel->eType);
-	AssertSize(1, pcChannel->iChannel);
-	AssertBool(false, pcChannel->bReverse);
-
-	pcChannel = pcChannels->GetChannel(2);
-	AssertSize(1, pcChannel->miByteSize);
-	AssertSize(2, pcChannel->miByteOffset);
-	AssertSize(8, pcChannel->miBitSize);
-	AssertSize(16, pcChannel->miBitOffset);
-	AssertSize(PT_uint8, pcChannel->eType);
-	AssertSize(2, pcChannel->iChannel);
-	AssertBool(false, pcChannel->bReverse);
-
-	AssertBool(true, pcChannels->IsOnlyBasicTypes());
-
-	pcAccessorR = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 0);
-	pcAccessorG = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 1);
-	pcAccessorB = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 2);
-
-	iCount = 0;
-
-	x = 0;
-	y = 0;
-	iCount = 0;
-	for (r = 0; r < 8; r++)
 	{
-		for (g = 0; g < 8; g++)
+		Ptr<CChannels>				pcChannels;
+		CChannelsAccessor*			pcAccessorR;
+		CChannelsAccessor*			pcAccessorG;
+		CChannelsAccessor*			pcAccessorB;
+		int							r;
+		int							g;
+		int							b;
+		int							iCount;
+		int							x;
+		int							y;
+		CMultiFileObjectWriter		cWriter;
+		CChannels*					pcNew;
+		CChannel*					pcChannel;
+
+		gcObjects.AddConstructor<CChannels>();
+
+		CFileObjectReader				cReader;
+		CExternalObjectDeserialiser		cDeserialiser;
+		CFileBasic						cFileBasic;
+		CDiskFile*						pcDiskFile;
+		uint8							ar;
+		uint8							ag;
+		uint8							ab;
+
+		pcDiskFile = DiskFile("Output" _FS_ "Channels" _FS_ "File.DRG");
+		cFileBasic.Init(pcDiskFile);
+
+		cReader.Init(&cFileBasic);
+		cDeserialiser.Init(&cReader, false, &gcObjects);
+		pcChannels = cDeserialiser.Read("File");
+		cDeserialiser.Kill();
+		cReader.Kill();
+
+		cFileBasic.Kill();
+
+		pcNew = (CChannels*)pcChannels.Object();
+
+		AssertSize(8 * 32 * 3, pcChannels->GetByteSize());
+		AssertSize(3, pcChannels->GetByteStride());
+		AssertSize(3 * 8, pcChannels->GetBitStride());
+		AssertSize(3, pcChannels->GetNumChannels());
+
+		pcChannel = pcChannels->GetChannel(0);
+		AssertSize(1, pcChannel->miByteSize);
+		AssertSize(0, pcChannel->miByteOffset);
+		AssertSize(8, pcChannel->miBitSize);
+		AssertSize(0, pcChannel->miBitOffset);
+		AssertSize(PT_uint8, pcChannel->eType);
+		AssertSize(0, pcChannel->iChannel);
+		AssertBool(false, pcChannel->bReverse);
+
+		pcChannel = pcChannels->GetChannel(1);
+		AssertSize(1, pcChannel->miByteSize);
+		AssertSize(1, pcChannel->miByteOffset);
+		AssertSize(8, pcChannel->miBitSize);
+		AssertSize(8, pcChannel->miBitOffset);
+		AssertSize(PT_uint8, pcChannel->eType);
+		AssertSize(1, pcChannel->iChannel);
+		AssertBool(false, pcChannel->bReverse);
+
+		pcChannel = pcChannels->GetChannel(2);
+		AssertSize(1, pcChannel->miByteSize);
+		AssertSize(2, pcChannel->miByteOffset);
+		AssertSize(8, pcChannel->miBitSize);
+		AssertSize(16, pcChannel->miBitOffset);
+		AssertSize(PT_uint8, pcChannel->eType);
+		AssertSize(2, pcChannel->iChannel);
+		AssertBool(false, pcChannel->bReverse);
+
+		AssertBool(true, pcChannels->IsOnlyBasicTypes());
+
+		pcAccessorR = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 0);
+		pcAccessorG = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 1);
+		pcAccessorB = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 2);
+
+		iCount = 0;
+
+		x = 0;
+		y = 0;
+		iCount = 0;
+		for (r = 0; r < 8; r++)
 		{
-			for (b = 0; b < 4; b++)
+			for (g = 0; g < 8; g++)
 			{
-				ar = *((uint8*)pcAccessorR->Get(x + y * 8));
-				ag = *((uint8*)pcAccessorG->Get(x + y * 8));
-				ab = *((uint8*)pcAccessorB->Get(x + y * 8));
-
-				if ((ar != (uint8)r) ||
-					(ag != (uint8)g) ||
-					(ab != (uint8)b))
+				for (b = 0; b < 4; b++)
 				{
-					AssertChar(r, (uint8)ar);
-					AssertChar(g, (uint8)ag);
-					AssertChar(b, (uint8)ab);
-				}
+					ar = *((uint8*)pcAccessorR->Get(x + y * 8));
+					ag = *((uint8*)pcAccessorG->Get(x + y * 8));
+					ab = *((uint8*)pcAccessorB->Get(x + y * 8));
 
-				x++;
-				if (x >= 8)
-				{
-					x = 0;
-					y++;
-				}
+					if ((ar != (uint8)r) ||
+						(ag != (uint8)g) ||
+						(ab != (uint8)b))
+					{
+						AssertChar(r, (uint8)ar);
+						AssertChar(g, (uint8)ag);
+						AssertChar(b, (uint8)ab);
+					}
 
-				iCount++;
+					x++;
+					if (x >= 8)
+					{
+						x = 0;
+						y++;
+					}
+
+					iCount++;
+				}
 			}
 		}
+		AssertInt(256, iCount);
+
+		pcAccessorR->Kill();
+		pcAccessorG->Kill();
+		pcAccessorB->Kill();
+
+		pcChannels = NULL;
 	}
-	AssertInt(256, iCount);
-
-	pcAccessorR->Kill();
-	pcAccessorG->Kill();
-	pcAccessorB->Kill();
-
-	pcChannels = NULL;
 
 	ObjectsFlush();
 	ObjectsKill();

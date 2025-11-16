@@ -79,6 +79,8 @@ void TestChannelsAccessorContiguous(void)
 	pvData = RemapSinglePointer(pvData, 4);
 	AssertInt(602, *(uint16*)pvData);
 	pcAccessor->Kill();
+
+	pcChannels->Kill();
 }
 
 
@@ -141,6 +143,8 @@ void TestChannelsAccessorByteAligned(void)
 	AssertInt(2019313664, *(int*)RemapSinglePointer(pcChannels->GetData(), 2));
 	AssertShort((uint16)22172, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 6));
 	pcAccessor->Kill();
+
+	pcChannels->Kill();
 }
 
 
@@ -199,6 +203,8 @@ void TestChannelsAccessorTypeConvert(void)
 	AssertFloat(0.34f, pfData[0], 2);
 	AssertFloat(0.80f, pfData[1], 2);
 	pcAccessor->Kill();
+
+	pcChannels->Kill();
 }
 
 
@@ -284,6 +290,8 @@ void TestChannelsAccessorChannelBitty(void)
 	AssertFloat(1.0f, pfData[0], 2);
 	AssertFloat(0.67f, pfData[1], 2);
 	pcAccessor->Kill();
+
+	pcChannels->Kill();
 }
 
 
@@ -326,6 +334,8 @@ void TestChannelsAccessorAccessBitty(void)
 	pucData = (uint8*)pcAccessor->Get(0);
 	AssertShortHex((uint16)0x2ca3, *(uint16*)pucData);
 	pcAccessor->Kill();
+
+	pcChannels->Kill();
 }
 
 
@@ -404,6 +414,10 @@ void TestChannelsAccessorWorstCase(void)
 	AssertChar((uint8)0xff, pucData[2]);
 	AssertChar((uint8)0xff, pucData[3]);
 	AssertChar((uint8)0x1e, pucData[4]);
+	
+	pcAccessor->Kill();
+
+	pcChannels->Kill();
 }
 
 
