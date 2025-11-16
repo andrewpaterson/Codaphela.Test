@@ -161,13 +161,16 @@ void TestArraySneakyOnStack(void)
 
 	AssertSize(1, gcStackPointers.NumElements());
 	aArray.Init(pTestObject, NULL);
+	AssertSize(2, gcStackPointers.NumElements());
+
+	AssertFalse(sFreed.bFreed);
+	pTestObject = NULL;
+	AssertFalse(sFreed.bFreed);
 	AssertSize(1, gcStackPointers.NumElements());
 
-	//aArray should not be marked for killing when pTestObject is killed.
-	pTestObject = NULL;
-	AssertSize(0, gcStackPointers.NumElements());
-
 	aArray.Kill();
+	AssertSize(0, gcStackPointers.NumElements());
+	AssertTrue(sFreed.bFreed);
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -178,7 +181,7 @@ void TestArraySneakyOnStack(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayOnStack(void)
+void TestArrayOnStackKill(void)
 {
 	ObjectsInit();
 
@@ -197,13 +200,71 @@ void TestArrayOnStack(void)
 	//The pointer 'pTestObject' is on the stack and pointes to a CTestSimpleObject.
 	AssertPointer(pTestObject.BaseObject(), pcObject);
 
+	AssertSize(1, gcStackPointers.NumElements());
 	aArray.Init();
 	aArray.Add(pTestObject);
+	AssertSize(2, gcStackPointers.NumElements());
 
-	//aArray should not be marked for killing when pTestObject is killed.
+	AssertFalse(sFreed.bFreed);
 	pTestObject = NULL;
+	AssertFalse(sFreed.bFreed);
+	AssertSize(1, gcStackPointers.NumElements());
 
 	aArray.Kill();
+	AssertSize(0, gcStackPointers.NumElements());
+	AssertTrue(sFreed.bFreed);
+
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayOnStackRemoveObject(void)
+{
+	ObjectsInit();
+
+	CArray<CTestSimpleObject>	aArray;
+	STestObjectFreedNotifier	sFreed;
+	SStackPointer*				psPointer;
+	CBaseObject*				pcObject;
+
+	AssertSize(0, gcStackPointers.NumElements());
+	AssertSize(0, gcObjects.NumMemoryIndexes());
+
+	Ptr<CTestSimpleObject> pTestObject = OMalloc<CTestSimpleObject>(&sFreed, 23);
+	AssertSize(1, gcStackPointers.NumElements());
+	AssertSize(1, gcObjects.NumMemoryIndexes());
+	psPointer = gcStackPointers.Get(0);
+	AssertTrue(psPointer->meType == SPT_Pointer);
+	pcObject = psPointer->u.pcPointer->BaseObject();
+	//The pointer 'pTestObject' is on the stack and pointes to a CTestSimpleObject.
+	AssertPointer(pTestObject.BaseObject(), pcObject);
+
+	AssertSize(1, gcStackPointers.NumElements());
+	aArray.Init();
+	AssertSize(1, gcStackPointers.NumElements());
+	aArray.Add(pTestObject);
+	AssertSize(2, gcStackPointers.NumElements());
+	AssertSize(1, aArray.NumElements());
+	AssertSize(1, gcObjects.NumMemoryIndexes());
+
+	aArray.Remove(pTestObject);
+	AssertSize(1, gcStackPointers.NumElements());
+	AssertSize(0, aArray.NumElements());
+	AssertSize(1, gcObjects.NumMemoryIndexes());
+	AssertFalse(sFreed.bFreed);
+
+	pTestObject = NULL;
+	AssertTrue(sFreed.bFreed);
+	AssertSize(0, gcStackPointers.NumElements());
+	AssertSize(0, gcObjects.NumMemoryIndexes());
+
+	aArray.Kill();
+	AssertSize(0, gcStackPointers.NumElements());
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -227,8 +288,9 @@ void TestArray(void)
 	TestArrayInsert();
 	TestArrayAddAll();
 	TestArrayRemove();
-	//TestArraySneakyOnStack();
-	//TestArrayOnStack();
+	TestArraySneakyOnStack();
+	TestArrayOnStackKill();
+	TestArrayOnStackRemoveObject();
 
 	DataIOKill();
 	TypesKill();
