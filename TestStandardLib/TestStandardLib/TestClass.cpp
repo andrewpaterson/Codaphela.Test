@@ -235,58 +235,77 @@ void TestClassName(void)
 //////////////////////////////////////////////////////////////////////////
 void TestClassSerialisation(void)
 {
-	Ptr<CTestClass>					pTestClass;
-	CExternalObjectSerialiser		cSerialiser;
-	CChunkFileObjectWriter			cWriter;
-	CFileUtil						cFileUtil;
-	bool							bResult;
-	char							szDirectory[] = "Output" _FS_ "TestClass";
-	char							szData[] = "0123456789A";
-	CExternalObjectDeserialiser		cGraphDeserialiser;
-	CChunkFileSystemObjectReader 	cReader;
-	OIndex							oi;
+	char		szDirectory[] = "Output" _FS_ "TestClass";
+	CFileUtil	cFileUtil;
 
 	DataIOInit();
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
 	ObjectsInit();
-	TestClassAddConstructors();
 
-	pTestClass = gcObjects.Malloc<CTestClass>("Burke");
-	pTestClass->Init();
-	oi = pTestClass->GetIndex();
-	pTestClass->mpObject = NULL;;
-	pTestClass->mpTest = NULL;
-	memcpy(pTestClass->mauiData, szData, 12);
-	pTestClass->mDouble = 7980345645697084.0;
-	pTestClass->mInt = 45978634;
-	pTestClass->miUnmanagedInt = 907843256;
-	pTestClass->mTiny.mc = 'c';
+	{
+		Ptr<CTestClass>					pTestClass;
+		CExternalObjectSerialiser		cSerialiser;
+		CChunkFileObjectWriter			cWriter;
+		bool							bResult;
+		char							szData[] = "0123456789A";
+		CExternalObjectDeserialiser		cGraphDeserialiser;
+		CChunkFileSystemObjectReader 	cReader;
+		OIndex							oi;
 
-	cWriter.Init(szDirectory, "", "File");
-	cSerialiser.Init(&cWriter);
-	bResult = cSerialiser.Write(&pTestClass);
-	cSerialiser.Kill();
-	cWriter.Kill();
+		TestClassAddConstructors();
+
+		pTestClass = gcObjects.Malloc<CTestClass>("Burke");
+		pTestClass->Init();
+		oi = pTestClass->GetIndex();
+		pTestClass->mpObject = NULL;;
+		pTestClass->mpTest = NULL;
+		memcpy(pTestClass->mauiData, szData, 12);
+		pTestClass->mDouble = 7980345645697084.0;
+		pTestClass->mInt = 45978634;
+		pTestClass->miUnmanagedInt = 907843256;
+		pTestClass->mTiny.mc = 'c';
+
+		cWriter.Init(szDirectory, "", "File");
+		cSerialiser.Init(&cWriter);
+		bResult = cSerialiser.Write(&pTestClass);
+		cSerialiser.Kill();
+		cWriter.Kill();
+
+		pTestClass = NULL;
+	}
 
 	ObjectsKill();
-	AssertNull(&pTestClass);
+
 	ObjectsInit();
 
-	cReader.Init(szDirectory, "File");
-	cGraphDeserialiser.Init(&cReader, false, &gcObjects);
-	pTestClass = cGraphDeserialiser.Read("Burke");
-	AssertNotNull(&pTestClass);
+	{
+		Ptr<CTestClass>					pTestClass;
+		CChunkFileObjectWriter			cWriter;
+		char							szData[] = "0123456789A";
+		CExternalObjectDeserialiser		cGraphDeserialiser;
+		CChunkFileSystemObjectReader 	cReader;
+		OIndex							oi;
 
-	AssertMemory(szData, pTestClass->mauiData, 12);
-	AssertInt(45978634, pTestClass->mInt);
-	AssertDouble(7980345645697084.0, pTestClass->mDouble, 0);
-	AssertInt(907843256, pTestClass->miUnmanagedInt);
-	AssertChar('c', pTestClass->mTiny.mc);
-	AssertLong(oi, pTestClass->GetIndex());
+		cReader.Init(szDirectory, "File");
+		cGraphDeserialiser.Init(&cReader, false, &gcObjects);
+		pTestClass = cGraphDeserialiser.Read("Burke");
+		AssertNotNull(&pTestClass);
 
-	pTestClass = NULL;
+		cGraphDeserialiser.Kill();
+		cReader.Kill();
+		
+		oi = pTestClass->GetIndex();
+		AssertMemory(szData, pTestClass->mauiData, 12);
+		AssertInt(45978634, pTestClass->mInt);
+		AssertDouble(7980345645697084.0, pTestClass->mDouble, 0);
+		AssertInt(907843256, pTestClass->miUnmanagedInt);
+		AssertChar('c', pTestClass->mTiny.mc);
+		AssertLong(oi, pTestClass->GetIndex());
+
+		pTestClass = NULL;
+	}
 
 	ObjectsKill();
 
