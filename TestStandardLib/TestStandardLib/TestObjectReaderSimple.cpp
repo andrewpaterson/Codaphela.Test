@@ -73,7 +73,7 @@ void TestObjectReaderSimpleDeserialised(void)
 	WriteObjectReaderSimpleFile();
 
 	CObjectReaderSimpleDisk		cReader;
-	CExternalObjectDeserialiser	cGraphDeserialiser;
+	CExternalObjectDeserialiser	cDeserialiser;
 	CPointer					cBase;
 
 	Ptr<CTestNamedString>		cNS1;
@@ -94,8 +94,8 @@ void TestObjectReaderSimpleDeserialised(void)
 	AssertLong(0, gcObjects.NumMemoryIndexes());
 
 	cReader.Init("Output" _FS_ "ObjectReaderSimple" _FS_ "Test" _FS_);
-	cGraphDeserialiser.Init(&cReader, false, &gcObjects);
-	cBase = cGraphDeserialiser.Read("Waggy");
+	cDeserialiser.Init(&cReader, false, &gcObjects);
+	cBase = cDeserialiser.Read("Waggy");
 
 	AssertTrue(cBase.IsNotNull());
 	AssertString("CTestNamedString", cBase->ClassName());
@@ -118,7 +118,7 @@ void TestObjectReaderSimpleDeserialised(void)
 	AssertPointer(&cNS2, &cNS1->mpAnother);
 	AssertPointer(NULL, &cNS2->mpAnother);
 
-	cGraphDeserialiser.Kill();
+	cDeserialiser.Kill();
 	cReader.Kill();
 
 	ObjectsFlush();

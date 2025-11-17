@@ -267,7 +267,7 @@ void TestSetSerialisation()
 	CFileUtil						cFileUtil;
 	bool							bResult;
 	char							szDirectory[] = "Output" _FS_ "TestSet";
-	CExternalObjectDeserialiser		cGraphDeserialiser;
+	CExternalObjectDeserialiser		cDeserialiser;
 	CChunkFileSystemObjectReader 	cReader;
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
@@ -294,9 +294,11 @@ void TestSetSerialisation()
 	ObjectsInit();
 
 	cReader.Init(szDirectory, "File");
-	cGraphDeserialiser.Init(&cReader, false, &gcObjects);
-	pSet = cGraphDeserialiser.Read("Burke");
+	cDeserialiser.Init(&cReader, false, &gcObjects);
+	pSet = cDeserialiser.Read("Burke");
 	AssertNotNull(&pSet);
+	cDeserialiser.Kill();
+	cReader.Kill();
 
 	pSet = NULL;
 

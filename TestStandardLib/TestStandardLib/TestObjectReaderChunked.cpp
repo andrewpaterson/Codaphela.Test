@@ -108,27 +108,27 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
 	CChunkFileSystemObjectReader	cReader;
-	CExternalObjectDeserialiser	cGraphDeserialiser;
-	CPointer					cBase;
-	Ptr<CTestWithArray>			cA1;
-	Ptr<CTestWithArray>			cA2;
-	Ptr<CTestNamedString>		cNS1;
-	Ptr<CTestNamedString>		cNS2;
-	Ptr<CTestNamedString>		cNS3;
-	Ptr<CTestNamedString>		cNS4;
-	Ptr<CString>				sz1;
-	Ptr<CString>				sz2;
-	Ptr<CString>				sz3;
-	CPointer					cTemp;
-	Ptr<CTestInteger>			cI1;
-	Ptr<CTestInteger>			cI2;
-	Ptr<CTestInteger>			cI3;
-	OIndex						oiI1;
-	OIndex						oiI2;
-	OIndex						oiI3;
-	int							iNumMemoryIndexes;
-	CCodabase*					pcDatabase;
-	CSequence*					pcSequence;
+	CExternalObjectDeserialiser		cDeserialiser;
+	CPointer						cBase;
+	Ptr<CTestWithArray>				cA1;
+	Ptr<CTestWithArray>				cA2;
+	Ptr<CTestNamedString>			cNS1;
+	Ptr<CTestNamedString>			cNS2;
+	Ptr<CTestNamedString>			cNS3;
+	Ptr<CTestNamedString>			cNS4;
+	Ptr<CString>					sz1;
+	Ptr<CString>					sz2;
+	Ptr<CString>					sz3;
+	CPointer						cTemp;
+	Ptr<CTestInteger>				cI1;
+	Ptr<CTestInteger>				cI2;
+	Ptr<CTestInteger>				cI3;
+	OIndex							oiI1;
+	OIndex							oiI2;
+	OIndex							oiI3;
+	int								iNumMemoryIndexes;
+	CCodabase*						pcDatabase;
+	CSequence*						pcSequence;
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -163,8 +163,8 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertLong(0, gcObjects.NumMemoryIndexes());
 
 	cReader.Init("Output" _FS_ "ObjectReaderChunked" _FS_ "Test" _FS_ , "Reader");
-	cGraphDeserialiser.Init(&cReader, false, &gcObjects);
-	cBase = cGraphDeserialiser.Read("Array 1");
+	cDeserialiser.Init(&cReader, false, &gcObjects);
+	cBase = cDeserialiser.Read("Array 1");
 	AssertTrue(cBase.IsNotNull());
 	AssertString("CTestWithArray", cBase.ClassName());
 
@@ -214,9 +214,9 @@ void TestObjectReaderChunkedDeserialised(void)
 	cTemp = cA1->mcArray->Get(1);
 	AssertPointer(&cNS1, &cTemp);
 
-	oiI1 = cGraphDeserialiser.GetNewIndexFromOld(5LL);
-	oiI2 = cGraphDeserialiser.GetNewIndexFromOld(6LL);
-	oiI3 = cGraphDeserialiser.GetNewIndexFromOld(7LL);
+	oiI1 = cDeserialiser.GetNewIndexFromOld(5LL);
+	oiI2 = cDeserialiser.GetNewIndexFromOld(6LL);
+	oiI3 = cDeserialiser.GetNewIndexFromOld(7LL);
 
 	cI1 = gcObjects.Get(oiI1);
 	AssertString("CTestInteger", cI1->ClassName());
@@ -246,7 +246,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertPointer(NULL, &cNS4->mpAnother);
 	AssertPointer(NULL, &cNS4->mszString);
 
-	cGraphDeserialiser.Kill();
+	cDeserialiser.Kill();
 	cReader.Kill();
 
 	ObjectsFlush();
