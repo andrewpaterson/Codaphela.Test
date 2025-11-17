@@ -9,6 +9,7 @@
 #include "StandardLib/String.h"
 #include "TestLib/Assert.h"
 #include "NamedObjectTestClasses.h"
+#include "TestBaseObject.h"
 #include "ObjectTestClasses.h"
 
 
@@ -272,6 +273,8 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	CPointer*							pcpPtr;
 	CTestEmbeddedObjectWithFields*		pcObject;
 	Ptr<CString>						pString;
+	size								uiTestObjectSize;
+	size								uiBoolSize;
 
 	char								szDirectory[] = "Output" _FS_ "ObjectDirty" _FS_ "Database4";
 
@@ -280,6 +283,12 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	TypesInit();
 	DataIOInit();
 
+	uiTestObjectSize = sizeof(CTestObjectWithFields);
+	AssertSize(OBJECT_SIZE + POINTER_SIZE + POINTER_SIZE + 128, uiTestObjectSize);
+	
+	uiBoolSize = sizeof(Bool);  // 	uint16(muiClassType) + uint16(muiNegativeEmbeddingOffset) + uint8(mVal:bool) + uint8(padding)
+	AssertSize(6, uiBoolSize);
+	uiBoolSize += 2;  // + uint16(padding)
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -363,13 +372,13 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	AssertSize(3, pacPointers->NumElements());
 	pcField = (CPointerField*)pacPointers->GetPtr(0);
 	AssertString("mpObjectA", pcField->GetName());
-	AssertInt(176, pcField->GetOffset());
+	AssertInt(OBJECT_SIZE + uiBoolSize, pcField->GetOffset());
 	pcField = (CPointerField*)pacPointers->GetPtr(1);
 	AssertString("mpObjectB", pcField->GetName());
-	AssertInt(496, pcField->GetOffset());
+	AssertInt(OBJECT_SIZE + uiBoolSize + POINTER_SIZE + uiTestObjectSize, pcField->GetOffset());
 	pcField = (CPointerField*)pacPointers->GetPtr(2);
 	AssertString("mpObjectC", pcField->GetName());
-	AssertInt(816, pcField->GetOffset());
+	AssertInt(OBJECT_SIZE + uiBoolSize + POINTER_SIZE + uiTestObjectSize + POINTER_SIZE + uiTestObjectSize, pcField->GetOffset());
 
 	pcObject = (CTestEmbeddedObjectWithFields*)pObject.Object();
 	pcpPtr = (CPointer*)RemapSinglePointer(pcObject, pcField->GetOffset());

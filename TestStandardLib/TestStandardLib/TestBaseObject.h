@@ -1,0 +1,12 @@
+#ifndef __TEST_BASE_OBJECT_H__
+#define __TEST_BASE_OBJECT_H__
+
+
+#define EMBEDDED_OBJECT_SIZE	52
+#define BASE_OBJECT_SIZE		(EMBEDDED_OBJECT_SIZE + 52)
+#define OBJECT_SIZE				(BASE_OBJECT_SIZE + 56)
+#define POINTER_SIZE			8
+
+
+#endif // __TEST_BASE_OBJECT_H__
+

@@ -290,6 +290,9 @@
     <ClInclude Include="TestClass.h">
       <Filter>Source\Object\Class</Filter>
     </ClInclude>
+    <ClInclude Include="TestBaseObject.h">
+      <Filter>Source\Object\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

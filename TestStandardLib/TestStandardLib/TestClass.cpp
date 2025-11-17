@@ -7,6 +7,7 @@
 #include "StandardLib/ChunkFileObjectWriter.h"
 #include "StandardLib/ChunkFileSystemObjectReader.h"
 #include "TestLib/Assert.h"
+#include "TestBaseObject.h"
 #include "TestClass.h"
 
 
@@ -70,36 +71,36 @@ void TestClassDefinition(void)
 	pcField = pcTestClassClass->GetField("mpObject");
 	AssertTrue(pcField->IsPointer());
 	AssertString("mpObject", pcField->GetName());
-	AssertInt(168, pcField->GetOffset());
+	AssertInt(OBJECT_SIZE, pcField->GetOffset());
 	pcPointerField = (CPointerField*)pcField;
 
 	pcField = pcTestClassClass->GetField("mpTest");
 	AssertTrue(pcField->IsPointer());
-	AssertInt(176, pcField->GetOffset());
+	AssertInt(OBJECT_SIZE + 8, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mInt");
 	AssertTrue(pcField->IsPrimitive());
 	AssertString("mInt", pcField->GetName());
-	AssertInt(184, pcField->GetOffset());
+	AssertInt(OBJECT_SIZE + 16, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("miUnmanagedInt");
 	AssertTrue(pcField->IsUnmanaged());
 	AssertFalse(pcField->IsArray());
 	AssertString("miUnmanagedInt", pcField->GetName());
-	AssertInt(192, pcField->GetOffset());
+	AssertInt(OBJECT_SIZE + 24, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mTiny");
 	AssertTrue(pcField->IsEmbeddedObject());
 	AssertString("mTiny", pcField->GetName());
-	AssertInt(200, pcField->GetOffset());
+	AssertInt(OBJECT_SIZE + 32, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mDouble");
 	AssertTrue(pcField->IsPrimitive());
-	AssertInt(376, pcField->GetOffset());
+	AssertInt(OBJECT_SIZE + 200, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mauiData");
 	AssertTrue(pcField->IsUnmanaged());
-	AssertInt(392, pcField->GetOffset());
+	AssertInt(OBJECT_SIZE + 216, pcField->GetOffset());
 
 	ObjectsKill();
 	DataIOKill();
@@ -148,7 +149,7 @@ void TestClassOnStackOutOfFrame(void)
 	pcField = pcTestClassClass->GetField("mpObject");
 	AssertTrue(pcField->IsPointer());
 	AssertString("mpObject", pcField->GetName());
-	AssertInt(168, pcField->GetOffset());
+	AssertInt(OBJECT_SIZE, pcField->GetOffset());
 	pcPointerField = (CPointerField*)pcField;
 
 

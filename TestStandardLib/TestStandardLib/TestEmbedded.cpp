@@ -7,6 +7,7 @@
 #include "StandardLib/Objects.h"
 #include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
+#include "TestBaseObject.h"
 #include "ObjectTestSetup.h"
 #include "EmbeddedObjectTestClasses.h"
 
@@ -255,6 +256,8 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	OIndex			oiComplex;
 	CCodabase*		pcDatabase;
 	CSequence*		pcSequence;
+	size			uiEmbeddedTestSize;
+	size			uiEmbeddedContainerSize;
 	char			szDirectory[] = "Output" _FS_ "EmbeddedObject";
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -282,9 +285,11 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	SafeKill(pcSequence);
 	ObjectsKill();
 
-	AssertInt(184, sizeof(CEmbeddedTest));
-	AssertInt(568, sizeof(CEmbeddedContainer));
-	AssertInt(1104, sizeof(CEmbeddedComplex));
+	uiEmbeddedTestSize = OBJECT_SIZE + sizeof(int) + sizeof(float) + POINTER_SIZE;
+	AssertSize(sizeof(CEmbeddedTest), uiEmbeddedTestSize);
+	uiEmbeddedContainerSize = OBJECT_SIZE + 4 + uiEmbeddedTestSize + sizeof(int) + uiEmbeddedTestSize + sizeof(float) + POINTER_SIZE + 12  /* random padding I assume */;
+	AssertSize(sizeof(CEmbeddedContainer), uiEmbeddedContainerSize);
+	AssertSize(sizeof(CEmbeddedComplex), OBJECT_SIZE + uiEmbeddedTestSize + sizeof(int32) * 2 + sizeof(CArray<>) + uiEmbeddedContainerSize + POINTER_SIZE);
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);

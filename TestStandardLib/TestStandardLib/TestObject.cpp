@@ -8,6 +8,7 @@
 #include "StandardLib/Root.h"
 #include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
+#include "TestBaseObject.h"
 #include "ObjectTestClasses.h"
 
 
@@ -20,12 +21,12 @@ void TestObjectSize(void)
 	ObjectsInit();
 
 	AssertInt(16, sizeof(CUnknown));
-	AssertInt(52, sizeof(CEmbeddedObject));
-	AssertInt(112, sizeof(CBaseObject));  //Check your struct alignement.  This is too large.
-	AssertInt(168, sizeof(CObject));
-	AssertInt(184, sizeof(CRoot));
-	AssertInt(168, sizeof(CSetObject));
-	AssertInt(8, sizeof(CPointer));
+	AssertInt(EMBEDDED_OBJECT_SIZE, sizeof(CEmbeddedObject));
+	AssertInt(BASE_OBJECT_SIZE, sizeof(CBaseObject));  //Check your struct alignement.  This is too large.
+	AssertInt(OBJECT_SIZE, sizeof(CObject));
+	AssertInt(OBJECT_SIZE + 16, sizeof(CRoot));
+	AssertInt(OBJECT_SIZE, sizeof(CSetObject));
+	AssertInt(POINTER_SIZE, sizeof(CPointer));
 
 	ObjectsFlush();
 	ObjectsKill();
