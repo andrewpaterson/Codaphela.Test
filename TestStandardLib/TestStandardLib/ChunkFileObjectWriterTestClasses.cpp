@@ -136,6 +136,7 @@ void CTestNamedString::Class(void)
 
 void CTestNamedString::Free(void)
 {
+	mszEmbedded.Kill();
 }
 
 

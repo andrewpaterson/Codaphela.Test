@@ -1335,9 +1335,10 @@ void TestRootKillWithStackPointers(void)
 	AssertLong(5, gcObjects.NumMemoryIndexes());
 	AssertLong(5, gcUnknowns.NumElements());
 
+	//This is not implemented yet.
 	pRoot->Kill();
 
-	//Shouldn't these be 3?  Why doesn't killing the root remove the root object?
+	//These should be 3.
 	AssertNull(&pRoot);
 	AssertLong(4, gcObjects.NumMemoryIndexes());
 	AssertLong(4, gcUnknowns.NumElements());
@@ -1382,9 +1383,10 @@ void TestRootKill(void)
 	AssertLong(5, gcUnknowns.NumElements());
 	Pass();
 
+	//This is not implemented yet.  Killing the root should cause every object to have it's dist to root set to invalid (including the root).
 	pRoot->Kill();
 
-	//Shouldn't these be 0?  Why doesn't killing the root remove the root object?
+	//These should be zero.
 	AssertLong(1, gcObjects.NumMemoryIndexes());
 	AssertLong(1, gcUnknowns.NumElements());
 	Pass();

@@ -2197,90 +2197,181 @@ void TestDistToRootToUpdated(void)
 {
 	ObjectsInit();
 
-	CDistToRootCalculator		cDistToRootCalculator;
-	CDistCalculatorParameters	cDistParameters;
+	{
+		CDistToRootCalculator		cDistToRootCalculator;
+		CDistCalculatorParameters	cDistParameters;
 
-	CTestObject*		pcTest1;
-	CTestObject*		pcTest2;
-	CTestObject*		pcTest3;
-	CSetObject*			pcSet;
+		CTestObject*		pcTest1;
+		CTestObject*		pcTest2;
+		CTestObject*		pcTest3;
+		CSetObject*			pcSet;
 
-	Ptr<CTestObject>	pTest1;
-	Ptr<CTestObject>	pTest2;
-	Ptr<CTestObject>	pTest3;
-	Ptr<CRoot>			pRoot;
+		Ptr<CTestObject>	pTest1;
+		Ptr<CTestObject>	pTest2;
+		Ptr<CTestObject>	pTest3;
+		Ptr<CRoot>			pRoot;
 
-	pRoot = ORoot();
-	pTest1 = OMalloc<CTestObject>();
-	pTest2 = OMalloc<CTestObject>();
-	pTest3 = OMalloc<CTestObject>();
+		pRoot = ORoot();
+		pTest1 = OMalloc<CTestObject>();
+		pTest2 = OMalloc<CTestObject>();
+		pTest3 = OMalloc<CTestObject>();
 
-	AssertTrue(pRoot->IsAllocatedInObjects());
-	AssertTrue(pTest1->IsAllocatedInObjects());
-	AssertTrue(pTest2->IsAllocatedInObjects());
-	AssertTrue(pTest3->IsAllocatedInObjects());
+		AssertTrue(pRoot->IsAllocatedInObjects());
+		AssertTrue(pTest1->IsAllocatedInObjects());
+		AssertTrue(pTest2->IsAllocatedInObjects());
+		AssertTrue(pTest3->IsAllocatedInObjects());
 
-	pTest1->mpTest = pTest2;
-	pTest2->mpTest = pTest3;
-	pTest2->mpObject = pTest1;
+		pTest1->mpTest = pTest2;
+		pTest2->mpTest = pTest3;
+		pTest2->mpObject = pTest1;
 
-	pRoot->Add(pTest1);
+		pRoot->Add(pTest1);
 	
-	AssertInt(2, pTest1->GetDistToRoot());
-	AssertInt(3, pTest2->GetDistToRoot());
-	AssertInt(4, pTest3->GetDistToRoot());
+		AssertInt(2, pTest1->GetDistToRoot());
+		AssertInt(3, pTest2->GetDistToRoot());
+		AssertInt(4, pTest3->GetDistToRoot());
 
-	pcTest1 = &pTest1;
-	pcTest2	= &pTest2;
-	pcTest3	= &pTest3;
+		pcTest1 = &pTest1;
+		pcTest2	= &pTest2;
+		pcTest3	= &pTest3;
 
-	AssertTrue(pTest3->CanFindRootThroughValidPath());
+		AssertTrue(pTest3->CanFindRootThroughValidPath());
 
-	pTest2 = NULL;
-	pTest3 = NULL;
+		pTest2 = NULL;
+		pTest3 = NULL;
 
-	//
-	//   pTest3[4](4)
-	//       ^
-	//       |      
-	//       |      
-	//   pTest2[3](3)
-	//      |^
-	//      ||
-	//      v|
-	//   pTest1[2](2)
-	//   ^   ^
-	//  .    |
-	// .     |
-	//   SetObject[1](1)
-	//       ^
-	//       |
-	//       |
-	//    pRoot[1,GraphRoot](0)
-	//  
+		//
+		//   pTest3[4](4)
+		//       ^
+		//       |      
+		//       |      
+		//   pTest2[3](3)
+		//      |^
+		//      ||
+		//      v|
+		//   pTest1[2](2)
+		//   ^   ^
+		//  .    |
+		// .     |
+		//   SetObject[1](1)
+		//       ^
+		//       |
+		//       |
+		//    pRoot[1,GraphRoot](0)
+		//  
 
-	pcSet = pRoot->TestGetSet();
-	pcSet->UnsafeRemove(pcTest1);
-	pcTest1->TestRemoveHeapFrom(pcSet);
+		pcSet = pRoot->TestGetSet();
+		pcSet->UnsafeRemove(pcTest1);
+		pcTest1->TestRemoveHeapFrom(pcSet);
 
-	AssertInt(0, pcSet->NumElements());
-	AssertInt(1, pcTest1->NumHeapFroms()); //pointed to from pTest2
-	AssertInt(1, pcTest1->NumStackFroms());
+		AssertInt(0, pcSet->NumElements());
+		AssertInt(1, pcTest1->NumHeapFroms()); //pointed to from pTest2
+		AssertInt(1, pcTest1->NumStackFroms());
 
-	cDistParameters.Init();
+		cDistParameters.Init();
 
 
-	cDistToRootCalculator.Calculate(pcTest1, &cDistParameters);
-	cDistParameters.ClearTouchedFlags();
+		cDistToRootCalculator.Calculate(pcTest1, &cDistParameters);
+		cDistParameters.ClearTouchedFlags();
 	
-	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest1->GetDistToRoot());
-	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest2->GetDistToRoot());
-	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest3->GetDistToRoot());
+		AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest1->GetDistToRoot());
+		AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest2->GetDistToRoot());
+		AssertInt(UNATTACHED_DIST_TO_ROOT, pcTest3->GetDistToRoot());
 
 
-	cDistParameters.Kill();
+		cDistParameters.Kill();
 
-	gcObjects.ValidateObjectsConsistency();
+		gcObjects.ValidateObjectsConsistency();
+	}
+
+	ObjectsFlush();
+	ObjectsKill();
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToRootSimpleDeallocation(void)
+{
+	ObjectsInit();
+
+	{
+		Ptr<CRoot>	pRoot;
+
+		AssertSize(0, gcObjects.GetMemory()->NumIndexed());
+		AssertSize(0, gcObjects.GetMemory()->NumNames());
+
+		pRoot = ORoot();
+
+		gcObjects.ValidateObjectsConsistency();
+	}
+
+	AssertSize(2, gcObjects.GetMemory()->NumIndexed());
+	AssertSize(1, gcObjects.GetMemory()->NumNames());
+
+	ObjectsFlush();
+	ObjectsKill();
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToRootComplexDeallocation(void)
+{
+	ObjectsInit();
+
+	{
+		Ptr<CTestObject>	pTest1;
+		Ptr<CTestObject>	pTest2;
+		Ptr<CTestObject>	pTest3;
+		Ptr<CRoot>			pRoot;
+
+		AssertSize(0, gcObjects.GetMemory()->NumIndexed());
+		AssertSize(0, gcObjects.GetMemory()->NumNames());
+
+		pRoot = ORoot();
+		pTest1 = OMalloc<CTestObject>();
+		pTest2 = OMalloc<CTestObject>();
+		pTest3 = OMalloc<CTestObject>();
+		AssertSize(5, gcObjects.GetMemory()->NumIndexed());
+		AssertSize(1, gcObjects.GetMemory()->NumNames());
+
+		AssertTrue(pRoot->IsAllocatedInObjects());
+		AssertTrue(pTest1->IsAllocatedInObjects());
+		AssertTrue(pTest2->IsAllocatedInObjects());
+		AssertTrue(pTest3->IsAllocatedInObjects());
+
+		pTest1->mpTest = pTest2;
+		pTest2->mpTest = pTest3;
+		pTest2->mpObject = pTest1;
+
+		AssertSize(0, pRoot->NumObjects());
+		pRoot->Add(pTest1);
+		AssertSize(1, pRoot->NumObjects());
+
+		AssertInt(2, pTest1->GetDistToRoot());
+		AssertInt(3, pTest2->GetDistToRoot());
+		AssertInt(4, pTest3->GetDistToRoot());
+
+		gcObjects.ValidateObjectsConsistency();
+		AssertSize(5, gcObjects.GetMemory()->NumIndexed());
+		AssertSize(1, gcObjects.GetMemory()->NumNames());
+
+		pRoot->Remove(pTest1);
+		AssertSize(0, pRoot->NumObjects());
+		AssertSize(5, gcObjects.GetMemory()->NumIndexed());
+		AssertSize(1, gcObjects.GetMemory()->NumNames());
+
+		pTest1 = NULL;
+		pTest2 = NULL;
+		pTest3 = NULL;
+		AssertSize(2, gcObjects.GetMemory()->NumIndexed());
+		AssertSize(1, gcObjects.GetMemory()->NumNames());
+	}
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -2576,6 +2667,8 @@ void TestDistToRoot(void)
 	TypesInit();
 	DataIOInit();
 
+	TestDistToRootSimpleDeallocation();
+	TestDistToRootComplexDeallocation();
 	TestDistToRootToUpdated();
 	TestClearDistToRootToValidDistBroken();
 	TestClearDistToRootToValidDistComplex();
