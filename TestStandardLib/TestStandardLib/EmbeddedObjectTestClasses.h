@@ -5,6 +5,7 @@
 #include "StandardLib/Array.h"
 #include "StandardLib/ObjectWriter.h"
 #include "StandardLib/ObjectReader.h"
+#include "ObjectTestClasses.h"
 
 
 class CEmbeddedTest : public CObject
@@ -43,6 +44,8 @@ public:
 
 	bool						Save(CObjectWriter* pcFile) override;
 	bool						Load(CObjectReader* pcFile) override;
+	Ptr<CEmbeddedTest>			GetOne(void);
+	Ptr<CEmbeddedTest>			GetTwo(void);
 };
 
 
@@ -65,6 +68,46 @@ public:
 
 	bool	Save(CObjectWriter* pcFile) override;
 	bool	Load(CObjectReader* pcFile) override;
+};
+
+
+class CEmbeddedTestWithNotifier : public CObject
+{
+CONSTRUCTABLE(CEmbeddedTestWithNotifier);
+DESTRUCTABLE(CEmbeddedTestWithNotifier);
+public:
+	STestObjectFreedNotifier*	mpsFreedNotifier;
+	Ptr<>						mpTest;
+
+	void							Class(void);
+	Ptr<CEmbeddedTestWithNotifier>	Init(STestObjectFreedNotifier* psFreedNotifier, Ptr<> pTest);
+	void							Free(void);
+
+	bool							Save(CObjectWriter* pcFile) override;
+	bool							Load(CObjectReader* pcFile) override;
+};
+
+
+class CEmbeddedContainerWithNotifier : public CObject
+{
+CONSTRUCTABLE(CEmbeddedContainerWithNotifier);
+DESTRUCTABLE(CEmbeddedContainerWithNotifier);
+public:
+	CEmbeddedTestWithNotifier	mcOne;
+	CEmbeddedTestWithNotifier	mcTwo;
+	CEmbeddedTestWithNotifier	mcThree;
+	STestObjectFreedNotifier*	mpsFreedNotifier;
+	Ptr<>						mpTest;
+
+	void									Class(void);
+	Ptr<CEmbeddedContainerWithNotifier>		Init(STestObjectFreedNotifier* psFreedNotifier, Ptr<> pTest, Ptr<> pOne, Ptr<> pTwo, Ptr<> pThree, STestObjectFreedNotifier* psFreedOne, STestObjectFreedNotifier* psFreedTwo, STestObjectFreedNotifier* psFreedThree);
+	void									Free(void);
+
+	bool									Save(CObjectWriter* pcFile) override;
+	bool									Load(CObjectReader* pcFile) override;
+	Ptr<CEmbeddedTestWithNotifier>			GetOne(void);
+	Ptr<CEmbeddedTestWithNotifier>			GetTwo(void);
+	Ptr<CEmbeddedTestWithNotifier>			GetThree(void);
 };
 
 

@@ -13,7 +13,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestEmbeddedReInitOnStack(void)
+void TestStackEmbeddedReInitOnStack(void)
 {
 	ObjectsInit();
 
@@ -63,7 +63,7 @@ void TestEmbeddedReInitOnStack(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestEmbeddedReInitOnStackPointedTo(void)
+void TestStackEmbeddedReInitOnStackPointedTo(void)
 {
 	ObjectsInit();
 
@@ -129,7 +129,7 @@ void TestEmbeddedReInitOnStackPointedTo(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestEmbeddedReInitOnHeap(void)
+void TestStackEmbeddedReInitOnHeap(void)
 {
 	ObjectsInit();
 
@@ -175,7 +175,7 @@ void TestEmbeddedReInitOnHeap(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestEmbeddedReInitOnHeapPointedTo(void)
+void TestStackEmbeddedReInitOnHeapPointedTo(void)
 {
 	ObjectsInit();
 
@@ -237,7 +237,7 @@ void TestEmbeddedReInitOnHeapPointedTo(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestEmbeddedReInit(void)
+void TestStackEmbeddedReInit(void)
 {
 	BeginTests();
 	MemoryInit();
@@ -245,10 +245,13 @@ void TestEmbeddedReInit(void)
 	TypesInit();
 	DataIOInit();
 
-	TestEmbeddedReInitOnStack();
-	TestEmbeddedReInitOnStackPointedTo();
-	TestEmbeddedReInitOnHeap();
-	TestEmbeddedReInitOnHeapPointedTo();
+	//These Embeddeds are refering to objects declared on the Stack.
+	//I wish I would name things properly.  They're not refering to
+	//re-initialisation of objects embedded in other objects.
+	TestStackEmbeddedReInitOnStack();
+	TestStackEmbeddedReInitOnStackPointedTo();
+	TestStackEmbeddedReInitOnHeap();
+	TestStackEmbeddedReInitOnHeapPointedTo();
 
 	DataIOKill();
 	TypesKill();

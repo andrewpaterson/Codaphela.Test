@@ -224,7 +224,7 @@
     <ClCompile Include="TestDistToStackCalculator.cpp" />
     <ClCompile Include="TestEmbedded.cpp" />
     <ClCompile Include="TestEmbeddedObjectRemapTos.cpp" />
-    <ClCompile Include="TestEmbeddedReInit.cpp" />
+    <ClCompile Include="TestStackEmbeddedReInit.cpp" />
     <ClCompile Include="TestEmbeddedStackPointers.cpp" />
     <ClCompile Include="TestFreeEmbedded.cpp" />
     <ClCompile Include="TestHollowObject.cpp" />

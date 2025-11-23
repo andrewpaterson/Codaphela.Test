@@ -560,6 +560,124 @@ void TestEmbeddedOjectIsAllocatedInObjects()
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestEmbeddedObjectKillSanity(void)
+{
+	ObjectsInit();
+
+	{
+		Ptr<CEmbeddedContainer>		pContainer;
+		Ptr<CEmbeddedTest>			pFieldOne;
+		Ptr<CEmbeddedTest>			pFieldTwo;
+
+		pContainer = OMalloc<CEmbeddedContainer>();
+
+		pFieldOne = pContainer->GetOne();
+		pFieldTwo = pContainer->GetTwo();
+
+		AssertPointer(&pContainer->mcOne, &pFieldOne);
+		AssertPointer(&pContainer->mcTwo, &pFieldTwo);
+
+		pContainer->Kill();
+
+		AssertNull(&pFieldOne);
+		AssertNull(&pFieldTwo);
+	}
+	AssertSize(0, gcObjects.NumMemoryIndexes());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestEmbeddedObjectKillFreesEmbedded(void)
+{
+	ObjectsInit();
+
+	{
+		CEmbeddedContainerWithNotifier		cContainer;
+		Ptr<CEmbeddedTestWithNotifier>		pFieldOne;
+		Ptr<CEmbeddedTestWithNotifier>		pFieldTwo;
+		Ptr<CEmbeddedTestWithNotifier>		pFieldThree;
+
+		Ptr<CTestObject>					pTestA;
+		Ptr<CTestObject>					pTestB;
+		Ptr<CTestObject>					pTestC;
+
+		STestObjectFreedNotifier			sNotifierContainer;
+		STestObjectFreedNotifier			sNotifierOne;
+		STestObjectFreedNotifier			sNotifierTwo;
+		STestObjectFreedNotifier			sNotifierThree;
+		STestObjectFreedNotifier			sNotifierA;
+		STestObjectFreedNotifier			sNotifierB;
+		STestObjectFreedNotifier			sNotifierC;
+
+		CTestObject							cTestD;
+		CTestObject							cTestE;
+		CTestObject							cTestF;
+
+		pTestA = ONMalloc<CTestObject>("Aye", &sNotifierA);
+		pTestB = ONMalloc<CTestObject>("Bee", &sNotifierB);
+		pTestC = ONMalloc<CTestObject>("Sea", &sNotifierC);
+
+		cContainer.Init(&sNotifierContainer,
+			NULL,
+			pTestA,
+			pTestB,
+			pTestC,
+			&sNotifierOne,
+			&sNotifierTwo,
+			&sNotifierThree);
+
+		pFieldOne = cContainer.GetOne();
+		pFieldTwo = cContainer.GetTwo();
+		pFieldThree = cContainer.GetThree();
+
+		cTestD.Init(pFieldOne, NULL);
+		cTestE.Init(pFieldTwo, NULL);
+		cTestF.Init(pFieldThree, NULL);
+
+		AssertPointer(&cContainer.mcOne, &pFieldOne);
+		AssertPointer(&cContainer.mcTwo, &pFieldTwo);
+		AssertPointer(&cContainer.mcThree, &pFieldThree);
+
+		AssertFalse(sNotifierContainer.bFreed);
+		AssertFalse(sNotifierOne.bFreed);
+		AssertFalse(sNotifierTwo.bFreed);
+		AssertFalse(sNotifierThree.bFreed);
+		AssertFalse(sNotifierA.bFreed);
+		AssertFalse(sNotifierB.bFreed);
+		AssertFalse(sNotifierC.bFreed);
+
+		cContainer.Kill();
+
+		AssertTrue(sNotifierContainer.bFreed);
+		AssertTrue(sNotifierOne.bFreed);
+		AssertTrue(sNotifierTwo.bFreed);
+		AssertTrue(sNotifierThree.bFreed);
+		AssertFalse(sNotifierA.bFreed);
+		AssertFalse(sNotifierB.bFreed);
+		AssertFalse(sNotifierC.bFreed);
+
+		AssertNull(&pFieldOne);
+		AssertNull(&pFieldTwo);
+		AssertNull(&pFieldThree);
+		AssertNull(&cTestD.mpObject);
+		AssertNull(&cTestE.mpObject);
+		AssertNull(&cTestF.mpObject);
+	}
+	AssertSize(0, gcObjects.NumMemoryIndexes());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestEmbedded(void)
 {
 	BeginTests();
@@ -578,6 +696,8 @@ void TestEmbedded(void)
 	TestEmbeddedObjectClass();
 	TestEmbeddedGetEmbeddedObject();
 	TestEmbeddedObjectPointTo();
+	TestEmbeddedObjectKillSanity();
+	TestEmbeddedObjectKillFreesEmbedded();
 
 	DataIOKill();
 	TypesKill();
