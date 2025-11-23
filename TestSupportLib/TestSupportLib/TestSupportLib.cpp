@@ -100,7 +100,7 @@ int __cdecl main(void)
 	TestMeshShapes();
 	TestMeshConnectivity();
 	TestNormalGeneration();
-	TestMeshOBJReader();
+	//TestMeshOBJReader();
 
 	cFileUtil.RemoveDir("Output");
 
@@ -112,6 +112,5 @@ int __cdecl main(void)
 	iResult = TestTotalStatistics();
 	_CrtDumpMemoryLeaks();
 	return iResult;
-
 }
 

@@ -1,3 +1,4 @@
+#include "BaseLib/GlobalDataTypesIO.h"
 #include "SupportLib/Mesh.h"
 #include "SupportLib/MeshReader.h"
 #include "SupportLib/MeshWriter.h"
@@ -10,6 +11,11 @@
 //////////////////////////////////////////////////////////////////////////
 void TestMeshOBJReader(void)
 {
+	//This test can't be run because I lost the Smoothing.OBJ file.
+	NumberInit();
+	DataIOInit();
+	ObjectsInit();
+
 	CMesh				cMesh;
 	bool				bResult;
 	int					i;
@@ -18,9 +24,13 @@ void TestMeshOBJReader(void)
 	int					iNumCorners;
 	int					iNumNormals;
 	SMeshNormalFace*	psNormalFace;
+	CFileUtil			cFileUtil;
+
+	cFileUtil.RemoveDir("Output/Shape");
+	cFileUtil.MakeDir("Output/Shape");
 
 	cMesh.Init();
-	bResult = ReadMesh(&cMesh, "Input/Smoothing.OBJ");
+	bResult = ReadMesh(&cMesh, "Input/Shape/Smoothing.OBJ");
 
 	iNumCorners = cMesh.NumCorners();
 	iNumNormals = cMesh.mcNormals.mcNormals.NumElements();
@@ -76,8 +86,14 @@ void TestMeshOBJReader(void)
 	}
 	AssertBool(false, bOutOfBounds);
 
-	WriteMesh(&cMesh, "Output/Reader.OBJ");
+	WriteMesh(&cMesh, "Output/Shape/Reader.OBJ");
 
 	cMesh.Kill();
+
+	cFileUtil.RemoveDir("Output/Shape");
+
+	ObjectsKill();
+	DataIOKill();
+	NumberKill();
 }
 

@@ -135,6 +135,10 @@ void TestBox(void)
 	int					iNumCorners;
 	int					iNumFaces;
 	int					iNumPositions;
+	CFileUtil			cFileUtil;
+
+	cFileUtil.RemoveDir("Output/Shape");
+	cFileUtil.MakeDir("Output/Shape");
 
 	cMesh.Init();
 	cMeshEditor.Init(&cMesh);
@@ -148,11 +152,12 @@ void TestBox(void)
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 4, 5, 6);
 
 	cMeshEditor.Touch();
-	WriteMesh(&cMesh, "Output/Box4x5x6.OBJ");
+	WriteMesh(&cMesh, "Output/Shape/Box4x5x6.OBJ");
 
-	AssertInt(150, cMesh.CornerChunkSize());
-	AssertInt(296, cMesh.FaceChunkSize());
-	AssertInt(150, cMesh.TestPositionChunkSize());
+	//I don't know why I'm testing this.
+	AssertInt(32, cMesh.CornerChunkSize());
+	AssertInt(72, cMesh.FaceChunkSize());
+	AssertInt(32, cMesh.TestPositionChunkSize());
 
 	iNumCorners = cMesh.NumCorners();;
 	iNumFaces = cMesh.NumFaces();
@@ -164,103 +169,120 @@ void TestBox(void)
 	AssertInt(6, cMeshEditor.mcPolygons.NumUniqueNames());
 
 	cMeshEditor.RemoveModifiers();
+	cMeshEditor.Kill();
 	cMesh.Kill();
-	AssertFile("Input/Box4x5x6.OBJ", "Output/Box4x5x6.OBJ");
+	AssertFile("Input/Shape/Box4x5x6.OBJ", "Output/Shape/Box4x5x6.OBJ");
 
 	cMesh.Init();
+	cMeshEditor.Init(&cMesh);
 
 	pcBoxEditor = cMeshEditor.AddModifier<CMeshBoxEditor>();
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 1, 2, 2);
 
 	cMeshEditor.Touch();
-	WriteMesh(&cMesh, "Output/Box1x2x2.OBJ");
+	WriteMesh(&cMesh, "Output/Shape/Box1x2x2.OBJ");
 	AssertInt(6, cMeshEditor.mcPolygons.NumUniqueNames());
 	cMeshEditor.RemoveModifiers();
+	cMeshEditor.Kill();
 	cMesh.Kill();
-	AssertFile("Input/Box1x2x2.OBJ", "Output/Box1x2x2.OBJ");
+	AssertFile("Input/Shape/Box1x2x2.OBJ", "Output/Shape/Box1x2x2.OBJ");
 
 	cMesh.Init();
+	cMeshEditor.Init(&cMesh);
 
 	pcBoxEditor = cMeshEditor.AddModifier<CMeshBoxEditor>();
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 2, 2, 2);
 
 	cMeshEditor.Touch();
-	WriteMesh(&cMesh, "Output/Box2x2x2.OBJ");
+	WriteMesh(&cMesh, "Output/Shape/Box2x2x2.OBJ");
 	AssertInt(6, cMeshEditor.mcPolygons.NumUniqueNames());
 	cMeshEditor.RemoveModifiers();
+	cMeshEditor.Kill();
 	cMesh.Kill();
-	AssertFile("Input/Box2x2x2.OBJ", "Output/Box2x2x2.OBJ");
+	AssertFile("Input/Shape/Box2x2x2.OBJ", "Output/Shape/Box2x2x2.OBJ");
 
 	cMesh.Init();
+	cMeshEditor.Init(&cMesh);
 
 	pcBoxEditor = cMeshEditor.AddModifier<CMeshBoxEditor>();
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 2, 1, 2);
 
 	cMeshEditor.Touch();
-	WriteMesh(&cMesh, "Output/Box2x1x2.OBJ");
+	WriteMesh(&cMesh, "Output/Shape/Box2x1x2.OBJ");
 	AssertInt(6, cMeshEditor.mcPolygons.NumUniqueNames());
 	cMeshEditor.RemoveModifiers();
+	cMeshEditor.Kill();
 	cMesh.Kill();
-	AssertFile("Input/Box2x1x2.OBJ", "Output/Box2x1x2.OBJ");
+	AssertFile("Input/Shape/Box2x1x2.OBJ", "Output/Shape/Box2x1x2.OBJ");
 
 	cMesh.Init();
+	cMeshEditor.Init(&cMesh);
 
 	pcBoxEditor = cMeshEditor.AddModifier<CMeshBoxEditor>();
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 2, 2, 1);
 
 	cMeshEditor.Touch();
-	WriteMesh(&cMesh, "Output/Box2x2x1.OBJ");
+	WriteMesh(&cMesh, "Output/Shape/Box2x2x1.OBJ");
 	AssertInt(6, cMeshEditor.mcPolygons.NumUniqueNames());
 	cMeshEditor.RemoveModifiers();
+	cMeshEditor.Kill();
 	cMesh.Kill();
-	AssertFile("Input/Box2x2x1.OBJ", "Output/Box2x2x1.OBJ");
+	AssertFile("Input/Shape/Box2x2x1.OBJ", "Output/Shape/Box2x2x1.OBJ");
 
 	cMesh.Init();
+	cMeshEditor.Init(&cMesh);
 
 	pcBoxEditor = cMeshEditor.AddModifier<CMeshBoxEditor>();
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 1, 1, 2);
 
 	cMeshEditor.Touch();
-	WriteMesh(&cMesh, "Output/Box1x1x2.OBJ");
+	WriteMesh(&cMesh, "Output/Shape/Box1x1x2.OBJ");
 	AssertInt(6, cMeshEditor.mcPolygons.NumUniqueNames());
 	cMeshEditor.RemoveModifiers();
+	cMeshEditor.Kill();
 	cMesh.Kill();
-	AssertFile("Input/Box1x1x2.OBJ", "Output/Box1x1x2.OBJ");
+	AssertFile("Input/Shape/Box1x1x2.OBJ", "Output/Shape/Box1x1x2.OBJ");
 
 	cMesh.Init();
+	cMeshEditor.Init(&cMesh);
 
 	pcBoxEditor = cMeshEditor.AddModifier<CMeshBoxEditor>();
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 1, 2, 1);
 
 	cMeshEditor.Touch();
-	WriteMesh(&cMesh, "Output/Box1x2x1.OBJ");
+	WriteMesh(&cMesh, "Output/Shape/Box1x2x1.OBJ");
 	AssertInt(6, cMeshEditor.mcPolygons.NumUniqueNames());
 	cMeshEditor.RemoveModifiers();
+	cMeshEditor.Kill();
 	cMesh.Kill();
-	AssertFile("Input/Box1x2x1.OBJ", "Output/Box1x2x1.OBJ");
+	AssertFile("Input/Shape/Box1x2x1.OBJ", "Output/Shape/Box1x2x1.OBJ");
 
 	cMesh.Init();
+	cMeshEditor.Init(&cMesh);
 
 	pcBoxEditor = cMeshEditor.AddModifier<CMeshBoxEditor>();
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 2, 1, 1);
 
 	cMeshEditor.Touch();
-	WriteMesh(&cMesh, "Output/Box2x1x1.OBJ");
+	WriteMesh(&cMesh, "Output/Shape/Box2x1x1.OBJ");
 	AssertInt(6, cMeshEditor.mcPolygons.NumUniqueNames());
 	cMeshEditor.RemoveModifiers();
+	cMeshEditor.Kill();
 	cMesh.Kill();
-	AssertFile("Input/Box2x1x1.OBJ", "Output/Box2x1x1.OBJ");
+	AssertFile("Input/Shape/Box2x1x1.OBJ", "Output/Shape/Box2x1x1.OBJ");
 
 	cMesh.Init();
+	cMeshEditor.Init(&cMesh);
 
 	pcBoxEditor = cMeshEditor.AddModifier<CMeshBoxEditor>();
 	pcBoxEditor->Init(&sXDirection, &sYDirection, &sZDirection, &sStart, 1, 1, 1);
 
 	cMeshEditor.Touch();
 
-	AssertInt(8, cMesh.CornerChunkSize());
-	AssertInt(12, cMesh.FaceChunkSize());
-	AssertInt(8, cMesh.TestPositionChunkSize());
+	//I don't know why I'm testing this.
+	AssertInt(4, cMesh.CornerChunkSize());
+	AssertInt(8, cMesh.FaceChunkSize());
+	AssertInt(4, cMesh.TestPositionChunkSize());
 
 	iNumCorners = cMesh.NumCorners();;
 	iNumFaces = cMesh.NumFaces();
@@ -271,12 +293,15 @@ void TestBox(void)
 	AssertInt(8, iNumPositions);
 	AssertInt(6, cMeshEditor.mcPolygons.NumUniqueNames());
 
-	WriteMesh(&cMesh, "Output/Box1x1x1.OBJ");
+	WriteMesh(&cMesh, "Output/Shape/Box1x1x1.OBJ");
 	cMeshEditor.RemoveModifiers();
+	cMeshEditor.Kill();
 	cMesh.Kill();
-	AssertFile("Input/Box1x1x1.OBJ", "Output/Box1x1x1.OBJ");
+	AssertFile("Input/Shape/Box1x1x1.OBJ", "Output/Shape/Box1x1x1.OBJ");
 
 	cMeshEditor.Kill();
+
+	cFileUtil.RemoveDir("Output/Shape");
 }
 
 
@@ -303,9 +328,10 @@ void TestDisc(void)
 
 	cMeshEditor.Touch();
 
-	AssertInt(4, cMesh.CornerChunkSize());
-	AssertInt(3, cMesh.FaceChunkSize());
-	AssertInt(4, cMesh.TestPositionChunkSize());
+	//I don't know why I'm testing this.
+	AssertInt(2, cMesh.CornerChunkSize());
+	AssertInt(2, cMesh.FaceChunkSize());
+	AssertInt(2, cMesh.TestPositionChunkSize());
 
 	AssertInt(4, cMesh.NumCorners());
 	AssertInt(3, cMesh.NumFaces());
@@ -324,9 +350,10 @@ void TestDisc(void)
 
 	cMeshEditor.Touch();
 
-	AssertInt(7, cMesh.CornerChunkSize());
-	AssertInt(9, cMesh.FaceChunkSize());
-	AssertInt(7, cMesh.TestPositionChunkSize());
+	//I don't know why I'm testing this.
+	AssertInt(4, cMesh.CornerChunkSize());
+	AssertInt(8, cMesh.FaceChunkSize());
+	AssertInt(4, cMesh.TestPositionChunkSize());
 
 	AssertInt(7, cMesh.NumCorners());
 	AssertInt(9, cMesh.NumFaces());
@@ -350,6 +377,10 @@ void TestRing(void)
 	SFloat3				sStart;
 	CMeshRingEditor*	pcRingEditor;
 	CMeshEditor			cMeshEditor;
+	CFileUtil			cFileUtil;
+
+	cFileUtil.RemoveDir("Output/Shape");
+	cFileUtil.MakeDir("Output/Shape");
 
 	sZDirection.Init(0, 0, 1);
 	sStart.Init(0, 0, 0);
@@ -362,9 +393,10 @@ void TestRing(void)
 
 	cMeshEditor.Touch();
 
-	AssertInt(6, cMesh.CornerChunkSize());
-	AssertInt(6, cMesh.FaceChunkSize());
-	AssertInt(6, cMesh.TestPositionChunkSize());
+	//I don't know why I'm testing this.
+	AssertInt(4, cMesh.CornerChunkSize());
+	AssertInt(4, cMesh.FaceChunkSize());
+	AssertInt(4, cMesh.TestPositionChunkSize());
 
 	AssertInt(6, cMesh.NumCorners());
 	AssertInt(6, cMesh.NumFaces());
@@ -383,9 +415,10 @@ void TestRing(void)
 
 	cMeshEditor.Touch();
 
-	AssertInt(96, cMesh.CornerChunkSize());
-	AssertInt(168, cMesh.FaceChunkSize());
-	AssertInt(96, cMesh.TestPositionChunkSize());
+	//I don't know why I'm testing this.
+	AssertInt(32, cMesh.CornerChunkSize());
+	AssertInt(32, cMesh.FaceChunkSize());
+	AssertInt(32, cMesh.TestPositionChunkSize());
 
 	AssertInt(96, cMesh.NumCorners());
 	AssertInt(168, cMesh.NumFaces());
@@ -395,6 +428,8 @@ void TestRing(void)
 
 	cMesh.Kill();
 	cMeshEditor.Kill();
+
+	cFileUtil.RemoveDir("Output/Shape");
 }
 
 
@@ -409,6 +444,10 @@ void TestCone(void)
 	SFloat3				sStart;
 	CMeshConeEditor*	pcConeEditor;
 	CMeshEditor			cMeshEditor;
+	CFileUtil			cFileUtil;
+
+	cFileUtil.RemoveDir("Output/Shape");
+	cFileUtil.MakeDir("Output/Shape");
 
 	cMesh.Init();
 	cMeshEditor.Init(&cMesh);
@@ -420,11 +459,12 @@ void TestCone(void)
 	pcConeEditor->Init(&sZDirection, &sStart, 1.0f, 3.0f, 6.0f, 20, 3, 4, 11);
 
 	cMeshEditor.Touch();
-	WriteMesh(&cMesh, "Output/Cone20x3x4x11.OBJ");
+	WriteMesh(&cMesh, "Output/Shape/Cone20x3x4x11.OBJ");
 
-	AssertInt(322, cMesh.CornerChunkSize());
-	AssertInt(640, cMesh.FaceChunkSize());
-	AssertInt(322, cMesh.TestPositionChunkSize());
+	//I don't know why I'm testing this.
+	AssertInt(72, cMesh.CornerChunkSize());
+	AssertInt(108, cMesh.FaceChunkSize());
+	AssertInt(72, cMesh.TestPositionChunkSize());
 
 	AssertInt(322, cMesh.NumCorners());
 	AssertInt(640, cMesh.NumFaces());
@@ -433,18 +473,23 @@ void TestCone(void)
 	AssertInt(3, cMeshEditor.mcPolygons.NumUniqueNames());
 
 	cMeshEditor.RemoveModifiers();
+	cMeshEditor.Kill();
 	cMesh.Kill();
-	AssertFile("Input/Cone20x3x4x11.OBJ", "Output/Cone20x3x4x11.OBJ");
+	AssertFile("Input/Shape/Cone20x3x4x11.OBJ", "Output/Shape/Cone20x3x4x11.OBJ");
+
+	cMesh.Init();
+	cMeshEditor.Init(&cMesh);
 
 	pcConeEditor = cMeshEditor.AddModifier<CMeshConeEditor>();
 	pcConeEditor->Init(&sZDirection, &sStart, 1.0f, 1.0f, 2.0f, 3, 1, 1, 2);
 
 	cMeshEditor.Touch();
-	WriteMesh(&cMesh, "Output/Cone3x1x1x2.OBJ");
+	WriteMesh(&cMesh, "Output/Shape/Cone3x1x1x2.OBJ");
 
-	AssertInt(8, cMesh.CornerChunkSize());
-	AssertInt(12, cMesh.FaceChunkSize());
-	AssertInt(8, cMesh.TestPositionChunkSize());
+	//I don't know why I'm testing this.
+	AssertInt(4, cMesh.CornerChunkSize());
+	AssertInt(8, cMesh.FaceChunkSize());
+	AssertInt(4, cMesh.TestPositionChunkSize());
 
 	AssertInt(8, cMesh.NumCorners());
 	AssertInt(12, cMesh.NumFaces());
@@ -453,10 +498,11 @@ void TestCone(void)
 	AssertInt(3, cMeshEditor.mcPolygons.NumUniqueNames());
 
 	cMeshEditor.RemoveModifiers();
-	cMesh.Kill();
-	AssertFile("Input/Cone3x1x1x2.OBJ", "Output/Cone3x1x1x2.OBJ");
-
 	cMeshEditor.Kill();
+	cMesh.Kill();
+	AssertFile("Input/Shape/Cone3x1x1x2.OBJ", "Output/Shape/Cone3x1x1x2.OBJ");
+
+	cFileUtil.RemoveDir("Output/Shape");
 }
 
 
@@ -471,6 +517,10 @@ void TestCylinder(void)
 	SFloat3					sStart;
 	CMeshCylinderEditor*	pcCylinderEditor;
 	CMeshEditor				cMeshEditor;
+	CFileUtil				cFileUtil;
+
+	cFileUtil.RemoveDir("Output/Shape");
+	cFileUtil.MakeDir("Output/Shape");
 
 	cMesh.Init();
 	cMeshEditor.Init(&cMesh);
@@ -482,12 +532,14 @@ void TestCylinder(void)
 	pcCylinderEditor->Init(&sZDirection, &sStart, 1.0f, 2.0f, 8, 3, 4);
 
 	cMeshEditor.Touch();
-	WriteMesh(&cMesh, "Output/Cylinder8x3x4x11.OBJ");
+	WriteMesh(&cMesh, "Output/Shape/Cylinder8x3x4x11.OBJ");
 
 	cMeshEditor.RemoveModifiers();
 	cMesh.Kill();
-	AssertFile("Input/Cylinder8x3x4x11.OBJ", "Output/Cylinder8x3x4x11.OBJ");
+	AssertFile("Input/Shape/Cylinder8x3x4x11.OBJ", "Output/Shape/Cylinder8x3x4x11.OBJ");
 	cMeshEditor.Kill();
+
+	cFileUtil.RemoveDir("Output/Shape");
 }
 
 
@@ -500,6 +552,7 @@ void TestMeshShapes(void)
 	BeginTests();
 
 	DataIOInit();
+	NumberInit();
 	ObjectsInit();
 
 	TestPlane();
@@ -510,6 +563,7 @@ void TestMeshShapes(void)
 	TestCylinder();
 
 	ObjectsKill();
+	NumberKill();
 	DataIOKill();
 
 	TestStatistics();

@@ -15,7 +15,6 @@
 //////////////////////////////////////////////////////////////////////////
 void TestMeshSmoothGroupsOneAndZero(void)
 {
-	DataIOInit();
 	ObjectsInit();
 
 	CMesh				cMesh;
@@ -94,7 +93,6 @@ void TestMeshSmoothGroupsOneAndZero(void)
 	cMeshEditor.Kill();
 
 	ObjectsKill();
-	DataIOKill();
 }
 
 
@@ -104,7 +102,6 @@ void TestMeshSmoothGroupsOneAndZero(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMeshSmoothGroupsNamed(void)
 {
-	DataIOInit();
 	ObjectsInit();
 
 	CMesh				cMesh;
@@ -150,7 +147,6 @@ void TestMeshSmoothGroupsNamed(void)
 	cMeshEditor.Kill();
 
 	ObjectsKill();
-	DataIOKill();
 }
 
 
@@ -160,7 +156,6 @@ void TestMeshSmoothGroupsNamed(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMeshSmoothFaces(void)
 {
-	DataIOInit();
 	ObjectsInit();
 
 	CMesh				cMesh;
@@ -216,7 +211,6 @@ void TestMeshSmoothFaces(void)
 	cMeshEditor.Kill();
 
 	ObjectsKill();
-	DataIOKill();
 }
 
 
@@ -226,7 +220,6 @@ void TestMeshSmoothFaces(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMeshFlatFaces(void)
 {
-	DataIOInit();
 	ObjectsInit();
 
 	CMesh				cMesh;
@@ -280,7 +273,6 @@ void TestMeshFlatFaces(void)
 	cMeshEditor.Kill();
 
 	ObjectsKill();
-	DataIOKill();
 }
 
 
@@ -291,12 +283,16 @@ void TestMeshFlatFaces(void)
 void TestNormalGeneration(void)
 {
 	BeginTests();
+	NumberInit();
+	DataIOInit();
 
 	TestMeshSmoothGroupsOneAndZero();
 	TestMeshSmoothGroupsNamed();
 	TestMeshSmoothFaces();
 	TestMeshFlatFaces();
 
+	DataIOKill();
+	NumberKill();
 	TestStatistics();
 }
 
