@@ -12,7 +12,11 @@ protected:
 
 public:
     void	Init(char* szWindowTitle, CNativeWindowFactory* pcWindowFactory);
-    void	Kill(void);
+    void	Class(void);
+    void 	Free(void);
+
+    bool	Save(CObjectWriter* pcFile) override;
+    bool	Load(CObjectReader* pcFile) override;
 
     void	Tick(int64 iUpdateTimeInMillieconds, int64 iTotalTimeInMillieconds);
     void	CanvasChanged(CCanvas* pcNewCanvas);

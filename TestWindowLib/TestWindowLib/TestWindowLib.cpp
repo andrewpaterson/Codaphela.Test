@@ -20,7 +20,10 @@ void TestRefWindow(void);
 //////////////////////////////////////////////////////////////////////////
 int __cdecl main(void)
 {
-	CFileUtil		cFileUtil;
+	CFileUtil	cFileUtil;
+	int			iResult;
+
+	_CrtSetBreakAlloc(0);
 
 	InitTotalStatistics();
 
@@ -31,11 +34,10 @@ int __cdecl main(void)
 	DataIOInit();
 	ObjectsInit();
 
+	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output");
-	
 
 	TestRefWindow();
-
 
 	cFileUtil.RemoveDir("Output");
 
@@ -45,6 +47,9 @@ int __cdecl main(void)
 	TypeConverterKill();
 	TypesKill();
 	FastFunctionsKill();
-	return TestTotalStatistics();
+
+	iResult = TestTotalStatistics();
+	_CrtDumpMemoryLeaks();
+	return iResult;
 }
 

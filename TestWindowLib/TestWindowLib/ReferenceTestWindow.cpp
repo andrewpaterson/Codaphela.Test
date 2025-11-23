@@ -1,4 +1,5 @@
 #include "BaseLib/Chars.h"
+#include "StandardLib/ClassDefines.h"
 #include "SupportLib/ColourARGB32.h"
 #include "ReferenceTestWindow.h"
 
@@ -19,9 +20,42 @@ void CReferenceTestWindow::Init(char* szWindowTitle, CNativeWindowFactory* pcWin
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CReferenceTestWindow::Kill(void)
+void CReferenceTestWindow::Free(void)
 {
-    CWindow::Kill();
+    CWindow::Free();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CReferenceTestWindow::Class(void)
+{
+    CWindow::Class();
+
+    U_Int64(miTime);
+    U_Int32(miX);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+bool CReferenceTestWindow::Save(CObjectWriter* pcFile)
+{
+    return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+bool CReferenceTestWindow::Load(CObjectReader* pcFile)
+{
+    return false;
 }
 
 
@@ -31,6 +65,11 @@ void CReferenceTestWindow::Kill(void)
 //////////////////////////////////////////////////////////////////////////
 void CReferenceTestWindow::Tick(int64 iUpdateTimeInMillieconds, int64 iTotalTimeInMillieconds)
 {
+    miX++;
+    if (miX == 10)
+    {
+        mpcNativeWindow->Stop();
+    }
 }
 
 
