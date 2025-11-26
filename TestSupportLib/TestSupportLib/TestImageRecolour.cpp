@@ -58,4 +58,3 @@ void TestImageRecolour(void)
 	TestStatistics();
 }
 
-

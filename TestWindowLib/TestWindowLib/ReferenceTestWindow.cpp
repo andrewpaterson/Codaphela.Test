@@ -65,6 +65,7 @@ bool CReferenceTestWindow::Load(CObjectReader* pcFile)
 //////////////////////////////////////////////////////////////////////////
 void CReferenceTestWindow::Tick(int64 iUpdateTimeInMillieconds, int64 iTotalTimeInMillieconds)
 {
+    Paint();
     miX++;
     if (miX == 10)
     {
@@ -77,7 +78,7 @@ void CReferenceTestWindow::Tick(int64 iUpdateTimeInMillieconds, int64 iTotalTime
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CReferenceTestWindow::CanvasChanged(CCanvas* pcNewCanvas)
+void CReferenceTestWindow::CanvasChanged(Ptr<CCanvas> pcNewCanvas)
 {
 }
 

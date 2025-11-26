@@ -111,7 +111,7 @@ void TestMaps(void)
 {
 	BeginTests();
 
-	//TestMapsInit();
+	TestMapsInit();
 	TestMapsRender();
 
 	TestStatistics();

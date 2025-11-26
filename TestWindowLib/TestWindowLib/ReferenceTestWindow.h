@@ -19,7 +19,7 @@ public:
     bool	Load(CObjectReader* pcFile) override;
 
     void	Tick(int64 iUpdateTimeInMillieconds, int64 iTotalTimeInMillieconds);
-    void	CanvasChanged(CCanvas* pcNewCanvas);
+    void	CanvasChanged(Ptr<CCanvas> pcNewCanvas);
 };
 
 
