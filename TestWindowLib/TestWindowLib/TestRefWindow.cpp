@@ -15,6 +15,10 @@ void TestRefWindowCreation(void)
 	CReferenceTestWindow	cTestWindow;
 	CFileUtil				cFileUtil;
 	char					szDirectory[] = "Output" _FS_ "Creation";
+	CArrayChars				aszFiles;
+	size					i;
+	CChars*					pszFilename;
+	CChars					szExpectedFilename;
 
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.MakeDir(szDirectory);
@@ -25,6 +29,24 @@ void TestRefWindowCreation(void)
 	cTestWindow.Show();
 
 	cTestWindow.Kill();
+	cNativeFactory.Kill();
+
+	aszFiles.Init();
+	cFileUtil.FindAllFiles(szDirectory, &aszFiles, false, false);
+	AssertSize(11, aszFiles.NumElements());
+
+	for (i = 1; i < aszFiles.NumElements(); i++)
+	{
+		pszFilename = aszFiles.Get(i);
+		szExpectedFilename.Init(pszFilename);
+		szExpectedFilename.Replace("Output", "Input");
+
+		AssertFile(szExpectedFilename.Text(), pszFilename->Text());
+
+		szExpectedFilename.Kill();
+	}
+
+	aszFiles.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
 }
