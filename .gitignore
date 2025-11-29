@@ -77,3 +77,13 @@ TestCoreLib/Release
 /TestWindowLib/TestWindowLib/Debug/*
 /TestWindowLib/TestWindowLib/Release/*
 /TestWindowLib/TestWindowLib/Log.txt
+/TestWindowLib/TestWindowLib/Output/*
+/TestWindowLib/TestWindowLib/Output/Creation/Frame1.png
+/TestWindowLib/TestWindowLib/Output/Creation/Frame2.png
+/TestWindowLib/TestWindowLib/Output/Creation/Frame3.png
+/TestWindowLib/TestWindowLib/Output/Creation/Frame4.png
+/TestWindowLib/TestWindowLib/Output/Creation/Frame5.png
+/TestWindowLib/TestWindowLib/Output/Creation/Frame6.png
+/TestWindowLib/TestWindowLib/Output/Creation/Frame7.png
+/TestWindowLib/TestWindowLib/Output/Creation/Frame8.png
+/TestWindowLib/TestWindowLib/Output/Creation/Frame9.png

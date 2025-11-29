@@ -678,6 +678,45 @@ void TestEmbeddedObjectKillFreesEmbedded(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestEmbeddedObjectPointedToNoRemove(void)
+{
+	ObjectsInit();
+
+	STestObjectFreedNotifier	sNotifierA;
+	STestObjectFreedNotifier	sNotifierD;
+	{
+		Ptr<CTestObject>			pTestA;
+		CTestObject					cTestD;
+
+		pTestA = ONMalloc<CTestObject>("Aye", &sNotifierA);
+		pTestA->mi = 0xA;
+
+		cTestD.Init(&sNotifierD);
+		cTestD.mi = 0xD;
+		pTestA->mpObject = &cTestD;
+
+		AssertSize(1, gcObjects.NumMemoryIndexes());
+		AssertPointer(&cTestD, pTestA->mpObject.Object());
+		AssertFalse(sNotifierA.bFreed);
+		AssertFalse(sNotifierD.bFreed);
+
+		pTestA = NULL;
+
+		AssertSize(0, gcObjects.NumMemoryIndexes());
+		AssertTrue(sNotifierA.bFreed);
+		AssertFalse(sNotifierD.bFreed);
+	}
+	AssertTrue(sNotifierA.bFreed);
+	AssertTrue(sNotifierD.bFreed);
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestEmbedded(void)
 {
 	BeginTests();
@@ -698,6 +737,7 @@ void TestEmbedded(void)
 	TestEmbeddedObjectPointTo();
 	TestEmbeddedObjectKillSanity();
 	TestEmbeddedObjectKillFreesEmbedded();
+	TestEmbeddedObjectPointedToNoRemove();
 
 	DataIOKill();
 	TypesKill();
