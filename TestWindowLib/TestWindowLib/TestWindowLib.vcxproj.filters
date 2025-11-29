@@ -1,9 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
+    <Filter Include="Source">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source\Component">
+      <UniqueIdentifier>{f56382f2-5dbf-4e64-ac69-179be08b5f9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Component\Window">
+      <UniqueIdentifier>{7daf3352-2eae-4ed3-9ad3-0c8c28acdc78}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -11,18 +17,27 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestWindowLib.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawTestRefWindow.cpp">
+      <Filter>Source\Component\Window</Filter>
     </ClCompile>
     <ClCompile Include="TestRefWindow.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source\Component\Window</Filter>
     </ClCompile>
-    <ClCompile Include="ReferenceTestWindow.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="TickTestRefWindow.cpp">
+      <Filter>Source\Component\Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ReferenceTestWindow.h">
-      <Filter>Source Files</Filter>
+    <ClInclude Include="DrawTestRefWindow.h">
+      <Filter>Source\Component\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="TickTestRefWindow.h">
+      <Filter>Source\Component\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTestRefWindow.h">
+      <Filter>Source\Component\Window</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -184,9 +184,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ReferenceTestWindow.cpp" />
+    <ClCompile Include="DrawTestRefWindow.cpp" />
     <ClCompile Include="TestRefWindow.cpp" />
     <ClCompile Include="TestWindowLib.cpp" />
+    <ClCompile Include="TickTestRefWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Todo.txt" />
@@ -220,7 +221,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ReferenceTestWindow.h" />
+    <ClInclude Include="DataTestRefWindow.h" />
+    <ClInclude Include="DrawTestRefWindow.h" />
+    <ClInclude Include="TickTestRefWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

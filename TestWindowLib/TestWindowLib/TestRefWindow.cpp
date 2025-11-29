@@ -1,8 +1,11 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "WinRefLib/WinRefWindowFactory.h"
+#include "WindowLib/Window.h"
 #include "TestLib/Assert.h"
-#include "ReferenceTestWindow.h"
+#include "DrawTestRefWindow.h"
+#include "TickTestRefWindow.h"
+#include "DataTestRefWindow.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -12,43 +15,53 @@
 void TestRefWindowCreation(void)
 {
 	CWinRefWindowFactory	cNativeFactory;
-	CReferenceTestWindow	cTestWindow;
-	CFileUtil				cFileUtil;
-	char					szDirectory[] = "Output" _FS_ "Creation";
-	CArrayChars				aszFiles;
-	size					i;
-	CChars*					pszFilename;
-	CChars					szExpectedFilename;
 
-	cFileUtil.RemoveDir(szDirectory);
-	cFileUtil.MakeDir(szDirectory);
-
-	cNativeFactory.Init(&gcMemoryAllocator, 96, 64, szDirectory);
-	cTestWindow.Init("Reference Test Window", &cNativeFactory);
-
-	cTestWindow.Show();
-
-	cTestWindow.Kill();
-	cNativeFactory.Kill();
-
-	aszFiles.Init();
-	cFileUtil.FindAllFiles(szDirectory, &aszFiles, false, false);
-	AssertSize(11, aszFiles.NumElements());
-
-	for (i = 1; i < aszFiles.NumElements(); i++)
 	{
-		pszFilename = aszFiles.Get(i);
-		szExpectedFilename.Init(pszFilename);
-		szExpectedFilename.Replace("Output", "Input");
+		CWindow					cTestWindow;
+		CFileUtil				cFileUtil;
+		char					szDirectory[] = "Output" _FS_ "Creation";
+		CArrayChars				aszFiles;
+		size					i;
+		CChars* pszFilename;
+		CChars					szExpectedFilename;
+		CDrawTestRefWindow		cDraw;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
 
-		AssertFile(szExpectedFilename.Text(), pszFilename->Text());
+		cFileUtil.RemoveDir(szDirectory);
+		cFileUtil.MakeDir(szDirectory);
 
-		szExpectedFilename.Kill();
+		cNativeFactory.Init(&gcMemoryAllocator, 96, 64, szDirectory);
+
+		cTick.Init(&cData);
+		cDraw.Init(&cData);
+		cTestWindow.Init("Reference Test Window", &cNativeFactory, &cTick, &cDraw);
+
+		cTestWindow.Show();
+
+		cTestWindow.Kill();
+
+		aszFiles.Init();
+		cFileUtil.FindAllFiles(szDirectory, &aszFiles, false, false);
+		AssertSize(11, aszFiles.NumElements());
+
+		for (i = 1; i < aszFiles.NumElements(); i++)
+		{
+			pszFilename = aszFiles.Get(i);
+			szExpectedFilename.Init(pszFilename);
+			szExpectedFilename.Replace("Output", "Input");
+
+			AssertFile(szExpectedFilename.Text(), pszFilename->Text());
+
+			szExpectedFilename.Kill();
+		}
+
+		aszFiles.Kill();
+
+		cFileUtil.RemoveDir(szDirectory);
 	}
 
-	aszFiles.Kill();
-
-	cFileUtil.RemoveDir(szDirectory);
+	cNativeFactory.Kill();
 }
 
 
