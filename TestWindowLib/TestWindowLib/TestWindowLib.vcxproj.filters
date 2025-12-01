@@ -11,6 +11,9 @@
     <Filter Include="Source\Component\Window">
       <UniqueIdentifier>{7daf3352-2eae-4ed3-9ad3-0c8c28acdc78}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Event">
+      <UniqueIdentifier>{1b97a888-2b1b-40d2-a1d0-dde7030f6d42}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Todo.txt" />
