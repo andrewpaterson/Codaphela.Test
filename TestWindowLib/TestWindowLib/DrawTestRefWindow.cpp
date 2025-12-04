@@ -29,13 +29,12 @@ bool CDrawTestRefWindow::Draw(Ptr<CCanvas> pCanvas)
     ARGB32          sGrey;
     ARGB32          sGreen;
     ARGB32          sBlue;
+    SInt2           sSize;
 
     if (pCanvas->IsValid())
     {
-        cRect.miLeft = 0;
-        cRect.miRight = pCanvas->GetWidth();
-        cRect.miTop = 0;
-        cRect.miBottom = pCanvas->GetHeight();
+        sSize = pCanvas->GetActualSize();
+        cRect.Init(sSize);
 
         sGrey = Set32BitColour((uint8)64, 64, 64);
         pCanvas->DrawBox(&cRect, true, sGrey);
@@ -48,11 +47,11 @@ bool CDrawTestRefWindow::Draw(Ptr<CCanvas> pCanvas)
             {
                 if ((x == 0) || (y == 5))
                 {
-                    pCanvas->DrawPixel(x + mpcData->iX, y, sGreen);
+                    pCanvas->DrawPixel(x + mpcData->iTick, y, sGreen);
                 }
                 else
                 {
-                    pCanvas->DrawPixel(x + mpcData->iX, y, sBlue);
+                    pCanvas->DrawPixel(x + mpcData->iTick, y, sBlue);
                 }
             }
         }

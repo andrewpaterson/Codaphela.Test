@@ -11,7 +11,40 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestImageDrawBox(void)
+void TestImageDrawBox1(void)
+{
+	CImageDraw			cDraw;
+	Ptr<CImage>			pImage = OMalloc<CImage>(32, 32);
+	CImageColourRGB		cColour;
+
+	pImage->Clear();
+
+	cDraw.Init(&pImage);
+
+	cColour.Init(0, 0, 0);
+	cDraw.SetColour(&cColour);
+	cColour.Kill();
+	cDraw.DrawBox(0, 0, 31, 31, true);
+
+	cColour.Init(1, 1, 1);
+	cDraw.SetColour(&cColour);
+	cColour.Kill();
+	cDraw.DrawBox(0, 0, 31, 31, false);
+
+	cDraw.Kill();
+	WriteImage(pImage, "Output" _FS_ "DrawBox1.raw");
+	WriteImage(pImage, "Output" _FS_ "DrawBox1.png");
+	AssertFileMemory("input" _FS_ "DrawBox1.raw", pImage->GetData(), pImage->GetByteSize());
+
+	pImage = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawBox2(void)
 {
 	CImageDraw			cDraw;
 	Ptr<CImage>			pImage = OMalloc<CImage>(32, 32);
@@ -20,19 +53,20 @@ void TestImageDrawBox(void)
 
 	pImage->Clear();
 
-	cDraw.Init(pImage);
+	cDraw.Init(&pImage);
 
 	for (i = 0; i < 6; i++)
 	{
-		cColour.Init(1.0f, 0.7f + (i/20.0f)* 1.05263162f, 0.4f + (i/10.0f)* 1.11111116f);
+		cColour.Init(1.0f, 0.7f + (i / 20.0f) * 1.05263162f, 0.4f + (i / 10.0f) * 1.11111116f);
 		cDraw.SetColour(&cColour);
-		cDraw.DrawBox(8+i, 10+i, 23-i, 21-i, false);
+		cDraw.DrawBox(8 + i, 10 + i, 23 - i, 21 - i, false);
 		cColour.Kill();
 	}
-	
-	WriteImage(pImage, "Output" _FS_ "DrawBox1.raw");
-	WriteImage(pImage, "Output" _FS_ "DrawBox1.png");
-	AssertFileMemory("input" _FS_ "DrawBox1.raw", pImage->GetData(), pImage->GetByteSize());
+
+	cDraw.Kill();
+	WriteImage(pImage, "Output" _FS_ "DrawBox2.raw");
+	WriteImage(pImage, "Output" _FS_ "DrawBox2.png");
+	AssertFileMemory("input" _FS_ "DrawBox2.raw", pImage->GetData(), pImage->GetByteSize());
 
 	pImage = NULL;
 }
@@ -50,7 +84,7 @@ void TestImageDrawLine(void)
 
 	pImage->Clear();
 
-	cDraw.Init(pImage);
+	cDraw.Init(&pImage);
 	cColour.Init(1.0f, 1, 1);
 	cDraw.SetColour(&cColour);
 
@@ -115,7 +149,7 @@ void TestImageDrawLineExtents(void)
 
 	pImage->Clear();
 
-	cDraw.Init(pImage);
+	cDraw.Init(&pImage);
 	cColour1.Init(1.0f, 0.1f, 0.1f);
 	cColour2.Init(0.1f, 0.1f, 1.0f);
 
@@ -163,7 +197,8 @@ void TestImageDraw(void)
 	DataIOInit();
 	ObjectsInit();
 
-	TestImageDrawBox();
+	TestImageDrawBox1();
+	TestImageDrawBox2();
 	TestImageDrawLine();
 	TestImageDrawLineExtents();
 

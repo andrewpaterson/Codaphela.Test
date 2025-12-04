@@ -5,7 +5,8 @@
 
 struct SDataTestRefWindow
 {
-	int32	iX;
+	int32	iTick;
+	int32	iStop;
 };
 
 

@@ -8,13 +8,14 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTickTestRefWindow::Init(SDataTestRefWindow* pcData)
+void CTickTestRefWindow::Init(SDataTestRefWindow* pcData, int32 iStop)
 {
     PreInit();
 
     CWindowTick::Init();
     mpcData = pcData;
-    mpcData->iX = 0;
+    mpcData->iTick = 0;
+    mpcData->iStop = iStop;
 
     PostInit();
 }
@@ -28,8 +29,8 @@ void CTickTestRefWindow::Tick(Ptr<CWindow> pWindow, int64 iUpdateTimeInMilliecon
 {
     pWindow->Paint();
 
-    mpcData->iX++;
-    if (mpcData->iX == 11)
+    mpcData->iTick++;
+    if (mpcData->iTick == mpcData->iStop)
     {
         pWindow->Stop();
     }
