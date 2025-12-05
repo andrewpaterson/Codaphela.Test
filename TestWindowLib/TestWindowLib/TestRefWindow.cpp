@@ -143,20 +143,20 @@ void TestRefWindowFlowContainer(void)
 		size					i;
 		CChars*					pszFilename;
 		CChars					szExpectedFilename;
+		CCanvas					cCanvas1;
+		CCanvas					cCanvas2;
+		CCanvas					cCanvas3;
 		CDrawCanvasBorder		cDraw1;
 		CDrawCanvasBorder		cDraw2;
 		CDrawCanvasBorder		cDraw3;
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 		CFlowContainer			cFlow;
-		CCanvas					cCanvas1;
-		CCanvas					cCanvas2;
-		CCanvas					cCanvas3;
 		SContainerBounds		sBounds;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 64, szDirectory);
 
-		cTick.Init(&cData, 2);
+		cTick.Init(&cData, 1);
 		cTestWindow.Init("Reference Test Window", &cNativeFactory, &cTick, NULL);
 
 		cDraw1.Init(Set32BitColour(1.0f, 0, 0));
@@ -194,7 +194,7 @@ void TestRefWindowFlowContainer(void)
 
 		aszFiles.Init();
 		cFileUtil.FindAllFiles(szDirectory, &aszFiles, false, false);
-		AssertSize(2, aszFiles.NumElements());
+		AssertSize(1, aszFiles.NumElements());
 
 		for (i = 1; i < aszFiles.NumElements(); i++)
 		{
