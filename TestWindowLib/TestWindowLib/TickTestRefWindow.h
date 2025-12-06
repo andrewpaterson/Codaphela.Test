@@ -13,7 +13,7 @@ protected:
 
 public:
 	void	Init(SDataTestRefWindow* pcData, int32 iStop);
-	void	Tick(Ptr<CWindow> pWindow, int64 iUpdateTimeInMillieconds, int64 iTotalTimeInMillieconds);
+	void	Tick(Ptr<CWindow> pWindow, int64 iUpdateTimeInMillieconds, int64 iTotalTimeInMillieconds) override;
 };
 
 

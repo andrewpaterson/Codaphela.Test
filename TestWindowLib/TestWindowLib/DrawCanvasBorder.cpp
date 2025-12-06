@@ -46,7 +46,6 @@ bool CDrawCanvasBorder::Draw(Ptr<CCanvas> pCanvas)
         {
             pCanvas->DrawBox(&cRect, false, sGrey);
         }
-
     }
 
     return true;
