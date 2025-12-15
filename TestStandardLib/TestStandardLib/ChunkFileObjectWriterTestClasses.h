@@ -18,8 +18,8 @@ public:
 
 public:
 	void	Init(const char* szString, int x);
-	void	Class(void);
-	void	Free(void);
+	void	Class(void) override;
+	void	Free(void) override;
 
 	void	Add(CPointer& pcObject);
 
@@ -38,8 +38,8 @@ public:
 	int8	mz;
 
 	void	Init(int32 x, int16 y, int8 z);
-	void	Class(void);
-	void	Free(void);
+	void	Class(void) override;
+	void	Free(void) override;
 
 	bool	Save(CObjectWriter* pcFile) override;
 	bool	Load(CObjectReader* pcFile) override;
@@ -57,8 +57,8 @@ public:
 
 	void	Init(void);
 	void	Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, const char* szEmbedded);
-	void	Class(void);
-	void	Free(void);
+	void	Class(void) override;
+	void	Free(void) override;
 
 	void	Set(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, const char* szEmbedded);
 
@@ -78,8 +78,8 @@ public:
 
 	void	Init(void);
 	void	Init(Ptr<CString> szString, Ptr<CTestNamedString> pSplit2, Ptr<CTestNamedString> pSplit1);
-	void	Class(void);
-	void	Free(void);
+	void	Class(void) override;
+	void	Free(void) override;
 };
 
 

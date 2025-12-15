@@ -45,8 +45,8 @@ protected:
 
 public:
 			Ptr<CPlayerVehicle>	Init(void);
-			void				Class(void);
-			void				Free(void);
+			void				Class(void) override;
+			void				Free(void) override;
 
 			void				SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeath);
 
@@ -64,8 +64,8 @@ protected:
 
 public:
 	Ptr<CHarrier>			Init(Ptr<CGameWorld> pWorld);
-	void					Class(void);
-	void					Free(void);
+	void					Class(void) override;
+	void					Free(void) override;
 
 	void					PlayerInput(void) {};
 	Ptr<CMissile>			FireMissile(CPointer& pTarget);
@@ -83,8 +83,8 @@ protected:
 
 public:
 	Ptr<CJeep>	Init(Ptr<CGameWorld> pWorld);
-	void		Class(void);
-	void		Free(void);
+	void		Class(void) override;
+	void		Free(void) override;
 
 	void		PlayerInput(void) {};
 };
@@ -104,8 +104,8 @@ protected:
 
 public:
 	Ptr<CRedJet>	Init(Ptr<CGameWorld> pWorld);
-	void			Class(void);
-	void			Free(void);
+	void			Class(void) override;
+	void			Free(void) override;
 
 	void			SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeath);
 };
@@ -122,8 +122,8 @@ protected:
 
 public:
 	Ptr<CMissile>	Init(Ptr<CGameWorld> pWorld);
-	void			Class(void);
-	void			Free(void);
+	void			Class(void) override;
+	void			Free(void) override;
 
 	void			SetTarget(CPointer& pTarget);
 	CPointer		GetTarget(void);
@@ -146,8 +146,8 @@ protected:
 
 public:
 	Ptr<CClusterMissile> 	Init(Ptr<CGameWorld> pWorld);
-	void					Class(void);
-	void					Free(void);
+	void					Class(void) override;
+	void					Free(void) override;
 
 	void					SetKillString(char* szKillString);
 };
@@ -161,8 +161,8 @@ public:
 	Ptr<CClusterMissile>	mpMissile;
 
 	Ptr<CClusterLauncher> 	Init(void);
-	void					Class(void);
-	void					Free(void);
+	void					Class(void) override;
+	void					Free(void) override;
 };
 
 
@@ -177,8 +177,8 @@ protected:
 
 public:
 	Ptr<CGameWorld>		Init(void);
-	void				Class(void);
-	void				Free(void);
+	void				Class(void) override;
+	void				Free(void) override;
 
 	void				Tick(void);
 	void				AddPlayer(Ptr<CPlayerVehicle> pPlayer);

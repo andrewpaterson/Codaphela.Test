@@ -17,9 +17,9 @@ public:
 	float	mfSoAmI;
 	Ptr<>	mpTest;
 
-	void				Class(void);
+	void				Class(void) override;
 	Ptr<CEmbeddedTest>	Init(void);
-	void				Free(void);
+	void				Free(void) override;
 
 	bool				Save(CObjectWriter* pcFile) override;
 	bool				Load(CObjectReader* pcFile) override;
@@ -38,9 +38,9 @@ public:
 	float				mf;
 	Ptr<>				mpTest;
 
-	void						Class(void);
+	void						Class(void) override;
 	Ptr<CEmbeddedContainer>		Init(void);
-	void						Free(void);
+	void						Free(void) override;
 
 	bool						Save(CObjectWriter* pcFile) override;
 	bool						Load(CObjectReader* pcFile) override;
@@ -60,9 +60,9 @@ public:
 	CEmbeddedContainer	mcContainer;
 	Ptr<>				mpTest;
 
-	void	Class(void);
+	void	Class(void) override;
 	Ptr<CEmbeddedComplex> Init(void);
-	void	Free(void);
+	void	Free(void) override;
 
 	void	Add(Ptr<> pObject);
 
@@ -79,9 +79,9 @@ public:
 	STestObjectFreedNotifier*	mpsFreedNotifier;
 	Ptr<>						mpTest;
 
-	void							Class(void);
+	void							Class(void) override;
 	Ptr<CEmbeddedTestWithNotifier>	Init(STestObjectFreedNotifier* psFreedNotifier, Ptr<> pTest);
-	void							Free(void);
+	void							Free(void) override;
 
 	bool							Save(CObjectWriter* pcFile) override;
 	bool							Load(CObjectReader* pcFile) override;
@@ -99,9 +99,9 @@ public:
 	STestObjectFreedNotifier*	mpsFreedNotifier;
 	Ptr<>						mpTest;
 
-	void									Class(void);
+	void									Class(void) override;
 	Ptr<CEmbeddedContainerWithNotifier>		Init(STestObjectFreedNotifier* psFreedNotifier, Ptr<> pTest, Ptr<> pOne, Ptr<> pTwo, Ptr<> pThree, STestObjectFreedNotifier* psFreedOne, STestObjectFreedNotifier* psFreedTwo, STestObjectFreedNotifier* psFreedThree);
-	void									Free(void);
+	void									Free(void) override;
 
 	bool									Save(CObjectWriter* pcFile) override;
 	bool									Load(CObjectReader* pcFile) override;

@@ -27,13 +27,14 @@ public:
 	void	Init(void);
 	void	Init(STestObjectFreedNotifier* psKilledNotifier);
 	void	Init(CPointer pObject, Ptr<CTestObject> pTest);
-	void	Class(void);
-	void	Free(void);
+	void	Class(void) override;
+	void	Free(void) override;
 
 	bool	Save(CObjectWriter* pcFile) override;
 	bool	Load(CObjectReader* pcFile) override;
 
 	void	SomeMethod(void);
+	void	AllocateTest(void);
 };
 
 
@@ -49,8 +50,8 @@ public:
 
 	void	Init(void);
 	void	Init(STestObjectFreedNotifier* psKilledNotifier);
-	void	Class(void);
-	void	Free(void);
+	void	Class(void) override;
+	void	Free(void) override;
 };
 
 
@@ -65,8 +66,8 @@ public:
 	bool		mbSaved;
 
 	void		Init(void);
-	void		Class(void);
-	void		Free(void);
+	void		Class(void) override;
+	void		Free(void) override;
 
 	bool		Save(CObjectWriter* pcFile) override;
 	bool		Load(CObjectReader* pcFile) override;
@@ -84,8 +85,8 @@ public:
 	bool						mbSaved;
 
 	void	Init(const char* psz);
-	void	Class(void);
-	void	Free(void);
+	void	Class(void) override;
+	void	Free(void) override;
 
 	bool	Save(CObjectWriter* pcFile) override;
 	bool	Load(CObjectReader* pcFile) override;
@@ -118,8 +119,8 @@ public:
 
 	void	Init(void);
 	void	Init(CPointer pObject, Ptr<CTestObject> pTest);
-	void	Class(void);
-	void	Free(void);
+	void	Class(void) override;
+	void	Free(void) override;
 
 	void	Update(int8 i8);
 	void	Update(char* sz);
@@ -141,8 +142,8 @@ public:
 
 
 	void	Init(void);
-	void	Class(void);
-	void	Free(void);
+	void	Class(void) override;
+	void	Free(void) override;
 };
 
 
@@ -156,8 +157,8 @@ public:
 	CString		mString3;
 
 	void	Init(void);
-	void	Class(void);
-	void	Free(void);
+	void	Class(void) override;
+	void	Free(void) override;
 };
 
 
@@ -170,8 +171,8 @@ public:
 	STestObjectFreedNotifier*	mpsFreedNotifier;
 
 	void	Init(STestObjectFreedNotifier* psKilledNotifier, int32 i);
-	void	Class(void);
-	void	Free(void);
+	void	Class(void) override;
+	void	Free(void) override;
 };
 
 

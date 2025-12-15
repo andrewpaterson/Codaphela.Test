@@ -14,8 +14,8 @@ public:
 	int32					miNum;
 
 	Ptr<CTestNamedObject> Init(int iNum);
-	void Class(void);
-	void Free(void);
+	void Class(void) override;
+	void Free(void) override;
 
 	bool Save(CObjectWriter* pcFile) override;
 	bool Load(CObjectReader* pcFile) override;
@@ -31,8 +31,8 @@ public:
 
 	Ptr<CTestNamedObjectSmall> Init(char* sz);
 	Ptr<CTestNamedObjectSmall> Init(const char* sz);
-	void Class(void);
-	void Free(void);
+	void Class(void) override;
+	void Free(void) override;
 
 	bool Save(CObjectWriter* pcFile) override;
 	bool Load(CObjectReader* pcFile) override;
@@ -54,8 +54,8 @@ public:
 	uint16							miUnmagedSize;
 
 	Ptr<CTestNamedObjectWithEmbedded> Init(int iX, int iY, int iName1, int iName2, CPointer pObject, Ptr<CTestNamedObjectSmall> pSmall);
-	void Class(void);
-	void Free(void);
+	void Class(void) override;
+	void Free(void) override;
 
 	bool Save(CObjectWriter* pcFile) override;
 	bool Load(CObjectReader* pcFile) override;

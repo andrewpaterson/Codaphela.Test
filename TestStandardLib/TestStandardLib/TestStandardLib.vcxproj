@@ -212,6 +212,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CollectionObjectTestClasses.cpp" />
     <ClCompile Include="EmbeddedObjectTestClasses.cpp" />
     <ClCompile Include="NamedObjectTestClasses.cpp" />
     <ClCompile Include="ObjectTestSetup.cpp" />
@@ -224,6 +225,7 @@
     <ClCompile Include="TestDistToStackCalculator.cpp" />
     <ClCompile Include="TestEmbedded.cpp" />
     <ClCompile Include="TestEmbeddedObjectRemapTos.cpp" />
+    <ClCompile Include="TestObjectFree.cpp" />
     <ClCompile Include="TestStackEmbeddedReInit.cpp" />
     <ClCompile Include="TestEmbeddedStackPointers.cpp" />
     <ClCompile Include="TestFreeEmbedded.cpp" />
@@ -274,6 +276,7 @@
     <ClCompile Include="TestMapStringUnknown.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CollectionObjectTestClasses.h" />
     <ClInclude Include="EmbeddedObjectTestClasses.h" />
     <ClInclude Include="NamedObjectTestClasses.h" />
     <ClInclude Include="ObjectTestClasses.h" />
