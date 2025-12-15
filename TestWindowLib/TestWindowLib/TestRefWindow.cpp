@@ -244,22 +244,40 @@ void TestRefWindowFlowContainerRightCenteredContinue(void)
 		ARGB32									sColour;
 		CRandom									cRandom;
 		CPointer								pNull;
-		CArrayTemplateEmbeddedBaseObjectPtr		apcFroms;
+		CArrayTemplateEmbeddedBaseObjectPtr		apcHeapFroms;
+		CArrayStackPointer						apcStackFroms;
 		size									uiNumHeaps;
+		CBaseObject*							pcWindowObject;
+		CBaseObject*							pcCanvasObject1a;
+		CBaseObject*							pcCanvasObject1b;
+		CBaseObject*							pcFocusObject;
 		CBaseObject*							pcObject;
+		CPointer*								pcWindowPointer;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 24, szDirectory);
 
 		cTick.Init(&cData, 1);
 		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull);
 		AssertSize(4, pTestWindow.NumHeapFroms());
-		apcFroms.Init();
-		pTestWindow->GetHeapFroms(&apcFroms);
-		pcObject = *apcFroms.Get(0);
-		pcObject = *apcFroms.Get(1);
-		pcObject = *apcFroms.Get(2);
-		pcObject = *apcFroms.Get(3);
-		apcFroms.Kill();
+		apcHeapFroms.Init();
+		pTestWindow->GetHeapFroms(&apcHeapFroms);
+		pcWindowObject = *apcHeapFroms.Get(0);
+		pcCanvasObject1a = *apcHeapFroms.Get(1);
+		pcCanvasObject1b = *apcHeapFroms.Get(2);
+		pcFocusObject = *apcHeapFroms.Get(3);
+		apcHeapFroms.Kill();
+
+		AssertPointer(&pTestWindow, pcWindowObject);
+		AssertPointer(&pTestWindow->GetCanvas(), pcCanvasObject1a);
+		AssertPointer(&pTestWindow->GetCanvas(), pcCanvasObject1b);
+		AssertPointer(&pTestWindow->GetFocus(), pcFocusObject);
+
+		AssertSize(1, pTestWindow.NumStackFroms());
+		apcStackFroms.Init();
+		pTestWindow->GetStackFroms(&apcStackFroms);
+		pcWindowPointer = apcStackFroms.Get(0)->u.pcPointer;
+		apcStackFroms.Kill();
+		AssertPointer(pTestWindow.This(), pcWindowPointer);
 
 		pFlow = OMalloc<CFlowContainer>(pTestWindow);
 		pFlow->SetFlowStyle(CSD_Right, CSW_Continue, CSV_Center);
@@ -287,7 +305,21 @@ void TestRefWindowFlowContainerRightCenteredContinue(void)
 			pDraw = NULL;
 
 			AssertSize(3 + (i + 1) * 2, gcObjects.NumMemoryIndexes());
-			AssertSize(15, pTestWindow.NumHeapFroms());
+			AssertSize(6 + i, pTestWindow.NumHeapFroms());
+			AssertSize(1, pTestWindow.NumStackFroms());
+
+			apcHeapFroms.Init();
+			pTestWindow->GetHeapFroms(&apcHeapFroms);
+			pcWindowObject = *apcHeapFroms.Get(0);
+			pcCanvasObject1a = *apcHeapFroms.Get(1);
+			pcCanvasObject1b = *apcHeapFroms.Get(2);
+			pcFocusObject = *apcHeapFroms.Get(3);
+			apcHeapFroms.Kill();
+
+			AssertPointer(&pTestWindow, pcWindowObject);
+			AssertPointer(&pTestWindow->GetCanvas(), pcCanvasObject1a);
+			AssertPointer(&pTestWindow->GetCanvas(), pcCanvasObject1b);
+			AssertPointer(&pTestWindow->GetFocus(), pcFocusObject);
 		}
 
 		AssertSize(10, pFlow->NumComponents());
@@ -296,16 +328,22 @@ void TestRefWindowFlowContainerRightCenteredContinue(void)
 		pTestWindow->Show();
 		AssertSize(34, gcObjects.NumMemoryIndexes());
 
+		AssertSize(1, pTestWindow.NumStackFroms());
+		apcStackFroms.Init();
+		pTestWindow->GetStackFroms(&apcStackFroms);
+		pcWindowPointer = apcStackFroms.Get(0)->u.pcPointer;
+		apcStackFroms.Kill();
+		AssertPointer(pTestWindow.This(), pcWindowPointer);
+
 		AssertSize(15, pTestWindow.NumHeapFroms());
-		apcFroms.Init();
-		pTestWindow->GetHeapFroms(&apcFroms);
-		uiNumHeaps = apcFroms.NumElements();
+		apcHeapFroms.Init();
+		pTestWindow->GetHeapFroms(&apcHeapFroms);
+		uiNumHeaps = apcHeapFroms.NumElements();
 		for (i = 0; i < uiNumHeaps; i++)
 		{
-			pcObject = *apcFroms.Get(i);
+			pcObject = *apcHeapFroms.Get(i);
 		}
-		apcFroms.Kill();
-		AssertSize(1, pTestWindow->NumStackFroms());
+		apcHeapFroms.Kill();
 
 		pTestWindow = NULL;
 		AssertSize(0, gcObjects.NumMemoryIndexes());
