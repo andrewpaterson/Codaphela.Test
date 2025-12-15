@@ -253,6 +253,7 @@ void TestRefWindowFlowContainerRightCenteredContinue(void)
 		CBaseObject*							pcFocusObject;
 		CBaseObject*							pcObject;
 		CPointer*								pcWindowPointer;
+		CPointer*								pcPointer1;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 24, szDirectory);
 
@@ -280,6 +281,7 @@ void TestRefWindowFlowContainerRightCenteredContinue(void)
 		AssertPointer(pTestWindow.This(), pcWindowPointer);
 
 		pFlow = OMalloc<CFlowContainer>(pTestWindow);
+
 		pFlow->SetFlowStyle(CSD_Right, CSW_Continue, CSV_Center);
 		pTestWindow->SetContainer(pFlow);
 		AssertSize(3, gcObjects.NumMemoryIndexes());
@@ -323,6 +325,11 @@ void TestRefWindowFlowContainerRightCenteredContinue(void)
 		}
 
 		AssertSize(10, pFlow->NumComponents());
+		AssertSize(1, pFlow.NumStackFroms());
+		apcStackFroms.Init();
+		pFlow->GetStackFroms(&apcStackFroms);
+		pcPointer1 = apcStackFroms.Get(0)->u.pcPointer;
+		apcStackFroms.Kill();
 		pFlow = NULL;
 
 		pTestWindow->Show();
