@@ -186,6 +186,7 @@
   <ItemGroup>
     <ClCompile Include="DrawCanvasBorder.cpp" />
     <ClCompile Include="DrawTestRefWindow.cpp" />
+    <ClCompile Include="TestFlowContainer.cpp" />
     <ClCompile Include="TestRefWindow.cpp" />
     <ClCompile Include="TestWindowLib.cpp" />
     <ClCompile Include="TickTestRefWindow.cpp" />

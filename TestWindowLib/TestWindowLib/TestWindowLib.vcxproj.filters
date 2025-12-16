@@ -14,6 +14,12 @@
     <Filter Include="Source\Event">
       <UniqueIdentifier>{1b97a888-2b1b-40d2-a1d0-dde7030f6d42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Component\Container">
+      <UniqueIdentifier>{37b33757-0df9-4ff5-81cd-c02b27757f43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\TestCommon">
+      <UniqueIdentifier>{477c47f5-af94-4ef5-bc50-5766f29aceae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Todo.txt" />
@@ -22,31 +28,34 @@
     <ClCompile Include="TestWindowLib.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="DrawTestRefWindow.cpp">
-      <Filter>Source\Component\Window</Filter>
-    </ClCompile>
     <ClCompile Include="TestRefWindow.cpp">
       <Filter>Source\Component\Window</Filter>
     </ClCompile>
-    <ClCompile Include="TickTestRefWindow.cpp">
-      <Filter>Source\Component\Window</Filter>
+    <ClCompile Include="TestFlowContainer.cpp">
+      <Filter>Source\Component\Container</Filter>
     </ClCompile>
     <ClCompile Include="DrawCanvasBorder.cpp">
-      <Filter>Source\Component\Window</Filter>
+      <Filter>Source\TestCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawTestRefWindow.cpp">
+      <Filter>Source\TestCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="TickTestRefWindow.cpp">
+      <Filter>Source\TestCommon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DrawTestRefWindow.h">
-      <Filter>Source\Component\Window</Filter>
-    </ClInclude>
-    <ClInclude Include="TickTestRefWindow.h">
-      <Filter>Source\Component\Window</Filter>
-    </ClInclude>
     <ClInclude Include="DataTestRefWindow.h">
-      <Filter>Source\Component\Window</Filter>
+      <Filter>Source\TestCommon</Filter>
     </ClInclude>
     <ClInclude Include="DrawCanvasBorder.h">
-      <Filter>Source\Component\Window</Filter>
+      <Filter>Source\TestCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawTestRefWindow.h">
+      <Filter>Source\TestCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="TickTestRefWindow.h">
+      <Filter>Source\TestCommon</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
