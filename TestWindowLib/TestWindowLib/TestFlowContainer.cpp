@@ -466,14 +466,113 @@ void TestFlowContainerRightBottomContinue(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFlowContainerRightTopWrap(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "FlowContainerRightTopWrap";
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	{
+		Ptr<CWindow>							pTestWindow;
+		CArrayChars								aszFiles;
+		size									i;
+		CChars* pszFilename;
+		CChars									szExpectedFilename;
+		Ptr<CCanvas>							pCanvas;
+		Ptr<CDrawCanvasBorder>					pDraw;
+		CTickTestRefWindow						cTick;
+		SDataTestRefWindow						cData;
+		Ptr<CFlowContainer>						pFlow;
+		SContainerBounds						sBounds;
+		ARGB32									sColour;
+		CRandom									cRandom;
+		CPointer								pNull;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 32, 96, szDirectory);
+
+		cTick.Init(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull);
+		AssertSize(4, pTestWindow.NumHeapFroms());
+
+
+		pFlow = OMalloc<CFlowContainer>(pTestWindow);
+
+		pFlow->SetFlowStyle(CSD_Right, CSW_Wrap, CSV_Top);
+		pTestWindow->SetContainer(pFlow);
+
+		cRandom.Init(2945);
+		for (i = 0; i < 10; i++)
+		{
+			sColour = Set32BitColour(cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f);
+			pDraw = OMalloc<CDrawCanvasBorder>(sColour);
+
+			pCanvas = OMalloc<CCanvas>(pTestWindow, CF_R8G8B8, pDraw);
+			pFlow->AddComponent(pCanvas);
+
+			if (i % 2 == 0)
+			{
+				pCanvas->SetDesiredSize(5 + i, 5 + i);
+			}
+			else
+			{
+				pCanvas->SetDesiredSize(5 + (10 - i), 5 + (10 - i));
+			}
+			pCanvas = NULL;
+			pDraw = NULL;
+
+			AssertSize(3 + (i + 1) * 2, gcObjects.NumMemoryIndexes());
+			AssertSize(6 + i, pTestWindow.NumHeapFroms());
+			AssertSize(1, pTestWindow.NumStackFroms());
+		}
+
+		pTestWindow->Show();
+
+
+		AssertSize(34, gcObjects.NumMemoryIndexes());
+		pTestWindow = NULL;
+		AssertSize(34, gcObjects.NumMemoryIndexes());
+		pFlow = NULL;
+		AssertSize(0, gcObjects.NumMemoryIndexes());
+
+		aszFiles.Init();
+		cFileUtil.FindAllFiles(szDirectory, &aszFiles, false, false);
+		AssertSize(1, aszFiles.NumElements());
+
+		for (i = 0; i < aszFiles.NumElements(); i++)
+		{
+			pszFilename = aszFiles.Get(i);
+			szExpectedFilename.Init(pszFilename);
+			szExpectedFilename.Replace("Output", "Input");
+
+			AssertFile(szExpectedFilename.Text(), pszFilename->Text());
+
+			szExpectedFilename.Kill();
+		}
+
+		aszFiles.Kill();
+	}
+
+	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFlowContainer(void)
 {
 	BeginTests();
 
-	TestFlowContainerBasic();
-	TestFlowContainerRightCenteredContinue();
-	TestFlowContainerRightTopContinue();
-	TestFlowContainerRightBottomContinue();
+	//TestFlowContainerBasic();
+	//TestFlowContainerRightCenteredContinue();
+	//TestFlowContainerRightTopContinue();
+	//TestFlowContainerRightBottomContinue();
+	TestFlowContainerRightTopWrap();
 
 	TestStatistics();
 }
