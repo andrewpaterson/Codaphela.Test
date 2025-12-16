@@ -476,20 +476,20 @@ void TestFlowContainerRightTopWrap(void)
 	cFileUtil.MakeDir(szDirectory);
 
 	{
-		Ptr<CWindow>							pTestWindow;
-		CArrayChars								aszFiles;
-		size									i;
-		CChars* pszFilename;
-		CChars									szExpectedFilename;
-		Ptr<CCanvas>							pCanvas;
-		Ptr<CDrawCanvasBorder>					pDraw;
-		CTickTestRefWindow						cTick;
-		SDataTestRefWindow						cData;
-		Ptr<CFlowContainer>						pFlow;
-		SContainerBounds						sBounds;
-		ARGB32									sColour;
-		CRandom									cRandom;
-		CPointer								pNull;
+		Ptr<CWindow>			pTestWindow;
+		CArrayChars				aszFiles;
+		size					i;
+		CChars*					pszFilename;
+		CChars					szExpectedFilename;
+		Ptr<CCanvas>			pCanvas;
+		Ptr<CDrawCanvasBorder>	pDraw;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		Ptr<CFlowContainer>		pFlow;
+		SContainerBounds		sBounds;
+		ARGB32					sColour;
+		CRandom					cRandom;
+		CPointer				pNull;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 32, 96, szDirectory);
 
@@ -564,15 +564,137 @@ void TestFlowContainerRightTopWrap(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRandomSeed, EContainerStyleDirection eD, EContainerStyleWrap eW, EContainerStyleVertical eA)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		CArrayChars				aszFiles;
+		size					i;
+		CChars*					pszFilename;
+		CChars					szExpectedFilename;
+		Ptr<CCanvas>			pCanvas;
+		Ptr<CDrawCanvasBorder>	pDraw;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		Ptr<CFlowContainer>		pFlow;
+		SContainerBounds		sBounds;
+		ARGB32					sColour;
+		CRandom					cRandom;
+		CPointer				pNull;
+
+		cNativeFactory.Init(&gcMemoryAllocator, iWidth, iHeight, szDirectory);
+
+		cTick.Init(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull);
+
+		pFlow = OMalloc<CFlowContainer>(pTestWindow);
+
+		pFlow->SetFlowStyle(eD, eW, eA);
+		pTestWindow->SetContainer(pFlow);
+
+		cRandom.Init(iRandomSeed);
+		for (i = 0; i < 10; i++)
+		{
+			sColour = Set32BitColour(cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f);
+			pDraw = OMalloc<CDrawCanvasBorder>(sColour);
+
+			pCanvas = OMalloc<CCanvas>(pTestWindow, CF_R8G8B8, pDraw);
+			pFlow->AddComponent(pCanvas);
+
+			if (i % 2 == 0)
+			{
+				pCanvas->SetDesiredSize(5 + i, 5 + i);
+			}
+			else
+			{
+				pCanvas->SetDesiredSize(5 + (10 - i), 5 + (10 - i));
+			}
+			pCanvas = NULL;
+			pDraw = NULL;
+		}
+
+		pTestWindow->Show();
+
+
+		pTestWindow = NULL;
+		pFlow = NULL;
+		AssertSize(0, gcObjects.NumMemoryIndexes());
+
+		aszFiles.Init();
+		cFileUtil.FindAllFiles(szDirectory, &aszFiles, false, false);
+		AssertSize(1, aszFiles.NumElements());
+
+		for (i = 0; i < aszFiles.NumElements(); i++)
+		{
+			pszFilename = aszFiles.Get(i);
+			szExpectedFilename.Init(pszFilename);
+			szExpectedFilename.Replace("Output", "Input");
+
+			AssertFile(szExpectedFilename.Text(), pszFilename->Text());
+
+			szExpectedFilename.Kill();
+		}
+
+		aszFiles.Kill();
+	}
+
+	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainerRightCenterWrap(void)
+{
+	TestFlowContainer("Output" _FS_ "FlowContainerRightCenterWrap", 32, 96, 2945, CSD_Right, CSW_Wrap, CSV_Center);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainerRightBottomWrap(void)
+{
+	TestFlowContainer("Output" _FS_ "FlowContainerRightBottomWrap", 32, 96, 2945, CSD_Right, CSW_Wrap, CSV_Bottom);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowLongContainerRightBottomWrap(void)
+{
+	TestFlowContainer("Output" _FS_ "FlowLongContainerRightBottomWrap", 96, 14, 6356, CSD_Right, CSW_Wrap, CSV_Bottom);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFlowContainer(void)
 {
 	BeginTests();
 
-	//TestFlowContainerBasic();
-	//TestFlowContainerRightCenteredContinue();
-	//TestFlowContainerRightTopContinue();
-	//TestFlowContainerRightBottomContinue();
+	TestFlowContainerBasic();
+	TestFlowContainerRightCenteredContinue();
+	TestFlowContainerRightTopContinue();
+	TestFlowContainerRightBottomContinue();
 	TestFlowContainerRightTopWrap();
+	TestFlowContainerRightCenterWrap();
+	TestFlowContainerRightBottomWrap();
+	TestFlowLongContainerRightBottomWrap();
 
 	TestStatistics();
 }
