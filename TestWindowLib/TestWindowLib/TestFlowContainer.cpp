@@ -564,7 +564,7 @@ void TestFlowContainerRightTopWrap(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRandomSeed, EContainerStyleDirection eD, EContainerStyleWrap eW, EContainerStyleVertical eA)
+void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRandomSeed, EContainerStyleDirection eD, EContainerStyleWrap eW, EContainerStyleVertical eV, EContainerStyleHorizontal eH)
 {
 	CWinRefWindowFactory	cNativeFactory;
 	CFileUtil				cFileUtil;
@@ -594,8 +594,14 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRand
 		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull);
 
 		pFlow = OMalloc<CFlowContainer>(pTestWindow);
-
-		pFlow->SetFlowStyle(eD, eW, eA);
+		if ((eV != CSV_Unknown) && (eH == CSH_Unknown))
+		{
+			pFlow->SetFlowStyle(eD, eW, eV);
+		}
+		if ((eV == CSV_Unknown) && (eH != CSH_Unknown))
+		{
+			pFlow->SetFlowStyle(eD, eW, eH);
+		}
 		pTestWindow->SetContainer(pFlow);
 
 		cRandom.Init(iRandomSeed);
@@ -653,6 +659,26 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRand
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRandomSeed, EContainerStyleDirection eD, EContainerStyleWrap eW, EContainerStyleVertical eA)
+{
+	TestFlowContainer(szDirectory, iWidth, iHeight, iRandomSeed, eD, eW, eA, CSH_Unknown);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRandomSeed, EContainerStyleDirection eD, EContainerStyleWrap eW, EContainerStyleHorizontal eA)
+{
+	TestFlowContainer(szDirectory, iWidth, iHeight, iRandomSeed, eD, eW, CSV_Unknown, eA);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFlowContainerRightCenterWrap(void)
 {
 	TestFlowContainer("Output" _FS_ "FlowContainerRightCenterWrap", 32, 96, 2945, CSD_Right, CSW_Wrap, CSV_Center);
@@ -683,6 +709,76 @@ void TestFlowLongContainerRightBottomWrap(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFlowContainerDownCenterContinue(void)
+{
+	TestFlowContainer("Output" _FS_ "FlowContainerDownCenterContinue", 32, 96, 7548, CSD_Down, CSW_Continue, CSH_Center);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainerDownLeftContinue(void)
+{
+	TestFlowContainer("Output" _FS_ "FlowContainerDownLeftContinue", 32, 96, 7548, CSD_Down, CSW_Continue, CSH_Left);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainerDownRightContinue(void)
+{
+	TestFlowContainer("Output" _FS_ "FlowContainerDownRightContinue", 32, 96, 7548, CSD_Down, CSW_Continue, CSH_Right);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainerDownCenterWrap(void)
+{
+	TestFlowContainer("Output" _FS_ "FlowContainerDownCenterWrap", 96, 32, 8129, CSD_Down, CSW_Wrap, CSH_Center);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainerDownLeftWrap(void)
+{
+	TestFlowContainer("Output" _FS_ "FlowContainerDownLeftWrap", 96, 32, 8129, CSD_Down, CSW_Wrap, CSH_Left);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainerDownRightWrap(void)
+{
+	TestFlowContainer("Output" _FS_ "FlowContainerDownRightWrap", 96, 32, 8129, CSD_Down, CSW_Wrap, CSH_Right);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowLongContainerDownRightWrap(void)
+{
+	TestFlowContainer("Output" _FS_ "FlowLongContainerDownRightWrap", 14, 96, 2941, CSD_Down, CSW_Wrap, CSH_Right);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFlowContainer(void)
 {
 	BeginTests();
@@ -695,6 +791,13 @@ void TestFlowContainer(void)
 	TestFlowContainerRightCenterWrap();
 	TestFlowContainerRightBottomWrap();
 	TestFlowLongContainerRightBottomWrap();
+	TestFlowContainerDownCenterContinue();
+	TestFlowContainerDownLeftContinue();
+	TestFlowContainerDownRightContinue();
+	TestFlowContainerDownCenterWrap();
+	TestFlowContainerDownLeftWrap();
+	TestFlowContainerDownRightWrap();
+	TestFlowLongContainerDownRightWrap();
 
 	TestStatistics();
 }

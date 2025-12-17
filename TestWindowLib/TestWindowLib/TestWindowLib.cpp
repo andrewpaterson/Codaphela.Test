@@ -38,7 +38,7 @@ int __cdecl main(void)
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output");
 
-	TestRefWindow();
+	//TestRefWindow();
 	TestFlowContainer();
 
 	cFileUtil.RemoveDir("Output");
