@@ -29,7 +29,7 @@ void TestRefWindowCreation(void)
 		CWindow					cTestWindow;
 		CArrayChars				aszFiles;
 		size					i;
-		CChars* pszFilename;
+		CChars*					pszFilename;
 		CChars					szExpectedFilename;
 		CDrawTestRefWindow		cDraw;
 		CTickTestRefWindow		cTick;
