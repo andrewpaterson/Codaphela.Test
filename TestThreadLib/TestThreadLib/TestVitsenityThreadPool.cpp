@@ -65,13 +65,13 @@ void TestVitsenityThreadPoolConcurrency(void)
 {
 	CSafeArrayBlock				aiArray;
 	CArrayTemplate<CPusher>		acPushers;
-	int							i;
+	size						i;
 	CPusher*					pcPusher;
-	int							iNumHardwareTheads;
-	int							iDoneCount;
+	size						iNumHardwareTheads;
+	size						iDoneCount;
 	int							iPrevX;
 	int							iX;
-	int							iGreatherThanCount;
+	size						iGreatherThanCount;
 	CVitsenityThreadPool					cPool;
 
 	iNumHardwareTheads = std::thread::hardware_concurrency();

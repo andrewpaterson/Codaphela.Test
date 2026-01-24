@@ -26,7 +26,7 @@ CJavaToken* PrivateAssertKeyword(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 				sz.Init();
 				pcKeyword->Print(&sz);
 				pcDefinition = pcDefinitions->GetKeyword(eKeyword);
-				Failed((const char*)pcDefinition->GetName(), (const char*)sz.Text(), iLine, szFile, false);
+				Failed((const char*)pcDefinition->GetName(), (const char*)sz.Text(), "", iLine, szFile, false);
 				sz.Kill();
 				BREAK();
 			}
@@ -59,7 +59,7 @@ CJavaToken* PrivateAssertIdentifier(CJavaTokenDefinitions* pcDefinitions, CJavaT
 			{
 				sz.Init();
 				pcIdentifier->Print(&sz);
-				Failed((const char*)szIdentifier, (const char*)sz.Text(), iLine, szFile, false);
+				Failed((const char*)szIdentifier, (const char*)sz.Text(), "", iLine, szFile, false);
 				sz.Kill();
 				BREAK();
 			}
@@ -93,7 +93,7 @@ CJavaToken* PrivateAssertSeparator(CJavaTokenDefinitions* pcDefinitions, CJavaTo
 				sz.Init();
 				pcSeparator->Print(&sz);
 				pcDefinition = pcDefinitions->GetSeparator(eSeparator);
-				Failed((const char*)pcDefinition->GetName(), (const char*)sz.Text(), iLine, szFile, false);
+				Failed((const char*)pcDefinition->GetName(), (const char*)sz.Text(), "", iLine, szFile, false);
 				sz.Kill();
 				BREAK();
 			}
@@ -127,7 +127,7 @@ CJavaToken* PrivateAssertOperator(CJavaTokenDefinitions* pcDefinitions, CJavaTok
 				sz.Init();
 				pcOperator->Print(&sz);
 				pcDefinition = pcDefinitions->GetOperator(eOperator);
-				Failed((const char*)pcDefinition->GetName(), (const char*)sz.Text(), iLine, szFile, false);
+				Failed((const char*)pcDefinition->GetName(), (const char*)sz.Text(), "", iLine, szFile, false);
 				sz.Kill();
 				BREAK();
 			}
@@ -164,7 +164,7 @@ CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 				{
 					sz.Init();
 					pcString->Print(&sz);
-					Failed((const char*)szString, (const char*)sz.Text(), iLine, szFile, false);
+					Failed((const char*)szString, (const char*)sz.Text(), "", iLine, szFile, false);
 					sz.Kill();
 					BREAK();
 				}
@@ -202,7 +202,7 @@ CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 				{
 					sz.Init();
 					pcInteger->Print(&sz);
-					Failed(LongToString(lli), (const char*)sz.Text(), iLine, szFile, false);
+					Failed(LongToString(lli), (const char*)sz.Text(), "", iLine, szFile, false);
 					sz.Kill();
 					BREAK();
 				}
@@ -240,7 +240,7 @@ CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 				{
 					sz.Init();
 					pcInteger->Print(&sz);
-					Failed(IntToString(i), (const char*)sz.Text(), iLine, szFile, false);
+					Failed(IntToString(i), (const char*)sz.Text(), "", iLine, szFile, false);
 					sz.Kill();
 					BREAK();
 				}
@@ -278,7 +278,7 @@ CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 				{
 					sz.Init();
 					pcFloat->Print(&sz);
-					Failed(DoubleToString(d), (const char*)sz.Text(), iLine, szFile, false);
+					Failed(DoubleToString(d), (const char*)sz.Text(), "", iLine, szFile, false);
 					sz.Kill();
 					BREAK();
 				}
@@ -316,7 +316,7 @@ CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 				{
 					sz.Init();
 					pcFloat->Print(&sz);
-					Failed(FloatToString(f), (const char*)sz.Text(), iLine, szFile, false);
+					Failed(FloatToString(f), (const char*)sz.Text(), "", iLine, szFile, false);
 					sz.Kill();
 					BREAK();
 				}
@@ -354,7 +354,7 @@ CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 				{
 					sz.Init();
 					pcCharacter->Print(&sz);
-					Failed(CharToString(c), (const char*)sz.Text(), iLine, szFile, false);
+					Failed(CharToString(c), (const char*)sz.Text(), "", iLine, szFile, false);
 					sz.Kill();
 					BREAK();
 				}
@@ -392,7 +392,7 @@ CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 				{
 					sz.Init();
 					pcCharacter->Print(&sz);
-					Failed(CharToString(c), (const char*)sz.Text(), iLine, szFile, false);
+					Failed(CharToString(c), (const char*)sz.Text(), "", iLine, szFile, false);
 					sz.Kill();
 					BREAK();
 				}
@@ -430,7 +430,7 @@ CJavaToken* PrivateAssertLiteral(CJavaTokenDefinitions* pcDefinitions, CJavaToke
 				{
 					sz.Init();
 					pcBoolean->Print(&sz);
-					Failed(BoolToString(b), (const char*)sz.Text(), iLine, szFile, false);
+					Failed(BoolToString(b), (const char*)sz.Text(), "", iLine, szFile, false);
 					sz.Kill();
 					BREAK();
 				}

@@ -25,11 +25,9 @@ int __cdecl main(void)
 	TypesInit();
 	TypeConverterInit();
 	MemoryInit();
-	UnknownsInit();
 
 	TestGerberParser();
 
-	UnknownsKill();
 	MemoryKill();
 	TypeConverterKill();
 	TypesKill();

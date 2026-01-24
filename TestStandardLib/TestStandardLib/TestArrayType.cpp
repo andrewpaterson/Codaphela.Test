@@ -3,7 +3,7 @@
 #include "BaseLib/DiskFile.h"
 #include "TestLib/Assert.h"
 #include "StandardLib/Unknowns.h"
-#include "StandardLib/ArrayType.h"
+#include "StandardLib/ArrayUnknownTemplate.h"
 #include "UnknownTestClasses.h"
 
 
@@ -16,14 +16,14 @@ void TestArrayTypeInstantiation(void)
 	MemoryInit();
 	UnknownsInit();
 	
-	CArrayType<CTestUnknown>	cArray;
-	CTestUnknown*				pcTest1;
-	CTestUnknown*				pcTest2;
-	CTestUnknown*				pcTest3;
-	CTestUnknown*				pcTest4;
-	CTestUnknown*				pcTest;
-	int							iSize;
-	const char*					szName;
+	CArrayUnknownTemplate<CTestUnknown>		cArray;
+	CTestUnknown*							pcTest1;
+	CTestUnknown*							pcTest2;
+	CTestUnknown*							pcTest3;
+	CTestUnknown*							pcTest4;
+	CTestUnknown*							pcTest;
+	int										iSize;
+	const char*								szName;
 	
 	cArray.Init();
 
@@ -61,7 +61,7 @@ void TestArrayTypeInstantiation(void)
 	AssertInt(48, iSize);
 
 	szName = cArray.ClassName();
-	AssertString("CArrayType", szName);
+	AssertString("CArrayUnknownTemplate", szName);
 
 	cArray.Kill();
 
@@ -79,7 +79,7 @@ void TestArrayTypeLoad(void)
 	MemoryInit();
 	UnknownsInit();
 
-	CArrayType<CTestUnknown>	cArray;
+	CArrayUnknownTemplate<CTestUnknown>	cArray;
 	CChunkFile					cFile;
 	CFileUtil					cFileUtil;
 	CTestUnknown*				pcTest;

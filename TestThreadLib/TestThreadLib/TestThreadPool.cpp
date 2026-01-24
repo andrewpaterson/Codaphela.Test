@@ -39,15 +39,15 @@ public:
 //////////////////////////////////////////////////////////////////////////
 void TestThreadPoolThreadDestroyed(void)
 {
-	CThreadPool			cPool;
-	CPoolProducerThread*			pcProducer;
-	CPoolConsumerThread*			pcConsumer;
-	CSafeArrayBlock		cQueue;
-	int					i;
-	CArrayVoidPtr		apcConsumers;
-	CThreadsDone		cProducersDone;
-	CThreadsDone		cConsumersDone;
-	CConsumerTotal		cTotal;
+	CThreadPool				cPool;
+	CPoolProducerThread*	pcProducer;
+	CPoolConsumerThread*	pcConsumer;
+	CSafeArrayBlock			cQueue;
+	size					i;
+	CArrayVoidPtr			apcConsumers;
+	CThreadsDone			cProducersDone;
+	CThreadsDone			cConsumersDone;
+	CConsumerTotal			cTotal;
 
 	cQueue.Init(sizeof(int));
 	cPool.Init();

@@ -109,7 +109,6 @@ void TestInputChords(void)
 	OperatorsInit();
 	MemoryInit();
 	DataIOInit();
-	UnknownsInit();
 	ObjectsInit();
 
 	BeginTests();
@@ -248,7 +247,6 @@ void TestInputChords(void)
 	TestStatistics();
 
 	ObjectsKill();
-	UnknownsKill();
 	DataIOKill();
 	MemoryKill();
 	OperatorsKill();
