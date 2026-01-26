@@ -188,6 +188,7 @@
     <ClCompile Include="DrawTestRefWindow.cpp" />
     <ClCompile Include="TestFlowContainer.cpp" />
     <ClCompile Include="TestRefWindow.cpp" />
+    <ClCompile Include="TestText.cpp" />
     <ClCompile Include="TestWindowLib.cpp" />
     <ClCompile Include="TickTestRefWindow.cpp" />
   </ItemGroup>

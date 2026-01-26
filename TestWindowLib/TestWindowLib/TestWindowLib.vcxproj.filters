@@ -20,6 +20,12 @@
     <Filter Include="Source\TestCommon">
       <UniqueIdentifier>{477c47f5-af94-4ef5-bc50-5766f29aceae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Component\Drawing">
+      <UniqueIdentifier>{6732870f-ae3b-4640-97b9-25d5a7c76686}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Component\Drawing\Text">
+      <UniqueIdentifier>{fb715c60-deb5-45aa-bfa7-7ddc81aa4ad2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Todo.txt" />
@@ -42,6 +48,9 @@
     </ClCompile>
     <ClCompile Include="TickTestRefWindow.cpp">
       <Filter>Source\TestCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="TestText.cpp">
+      <Filter>Source\Component\Drawing\Text</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
