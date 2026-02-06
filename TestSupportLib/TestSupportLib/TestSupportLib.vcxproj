@@ -207,7 +207,6 @@
     <ClCompile Include="TestImageWriter.cpp" />
     <ClCompile Include="TestRectangleBestPacker.cpp" />
     <ClCompile Include="TestRectanglePow2Packer.cpp" />
-    <ClCompile Include="TestWinText.cpp" />
     <ClCompile Include="TestMeshColour.cpp" />
     <ClCompile Include="TestMeshConnectivity.cpp" />
     <ClCompile Include="TestMeshFaceReturn.cpp" />

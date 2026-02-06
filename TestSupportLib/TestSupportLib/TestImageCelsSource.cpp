@@ -69,7 +69,7 @@ void TestImageCelsSourceStarControl(void)
 	cSource.Load();
 
 	cCombiner.Init(ICL_Best, ICS_Arbitrary, ICC_FromCels);
-	cCombiner.AddCels(cSource.GetCels());
+	cCombiner.AddCels(cSource.GetImageCels());
 	pcImage = cCombiner.Combine();
 
 	if (pcImage.IsNotNull())
@@ -118,7 +118,7 @@ void TestImageCelGroupSourceCombine(void)
 	cSource.Load();
 
 	cCombiner.Init(ICL_Best, ICS_Arbitrary, ICC_FromCels);
-	cCombiner.AddCels(cSource.GetCels());
+	cCombiner.AddCels(cSource.GetImageCels());
 	pcImage = cCombiner.Combine();
 
 	if (pcImage.IsNotNull())

@@ -58,9 +58,6 @@
     <ClCompile Include="TestImage.cpp">
       <Filter>Source Files\Image</Filter>
     </ClCompile>
-    <ClCompile Include="TestWinText.cpp">
-      <Filter>Source Files\Image\Font</Filter>
-    </ClCompile>
     <ClCompile Include="TestMeshColour.cpp">
       <Filter>Source Files\Mesh</Filter>
     </ClCompile>

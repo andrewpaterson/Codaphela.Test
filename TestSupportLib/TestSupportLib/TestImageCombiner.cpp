@@ -40,12 +40,12 @@ void TestImageCombinerMask(void)
 	cSource.Load();
 
 	cCombiner.Init(ICL_Best, ICS_Arbitrary, ICC_FromCels);
-	cCombiner.AddCels(cSource.GetCels());
+	cCombiner.AddCels(cSource.GetImageCels());
 	pcImage = cCombiner.Combine();
 
 	WriteImage(&pcImage, "Output" _FS_ "CombineMask.png");
 	WriteImage(&pcImage, "Output" _FS_ "CombineMask.raw");
-	AssertFileMemory("input" _FS_ "CombineMask.raw", pcImage->mcChannels.GetData(), pcImage->GetByteSize());
+	AssertFileMemory("input" _FS_ "CombineMask.raw", pcImage->GetChannels()->GetData(), pcImage->GetByteSize());
 
 	pcImage->Kill();
 	cCombiner.Kill();

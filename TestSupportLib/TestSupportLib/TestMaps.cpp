@@ -14,39 +14,41 @@ void TestMapsRender(void)
 {
 	DataIOInit();
 	ObjectsInit();
-	ImageChannelDescriptorInit();
+	{
+		CMaps					cMaps;
+		CMapsContext			cContext;
+		CImageDivider			cImageDivider;
+		CImageDividerNumbers	cNumbers;
+		Ptr<CArrayImageCel>		pacBackgroundCels;
+		CFileUtil				cFileUtil;
+		CChars					szFilename;
 
-	CMaps					cMaps;
-	CMapsContext			cContext;
-	CImageDivider			cImageDivider;
-	CImageDividerNumbers	cNumbers;
-	CArrayUnknown*			pacBackgroundCels;
-	CFileUtil				cFileUtil;
-	CChars					szFilename;
+		ImageChannelDescriptorInit();
 
-	szFilename.Init();
-	cFileUtil.CurrentDirectory(&szFilename);
-	cFileUtil.AppendToPath(&szFilename, "Input");
-	cFileUtil.AppendToPath(&szFilename, "SpaceCrusade");
-	cFileUtil.AppendToPath(&szFilename, "Tiles.png");
-	AssertTrue(cFileUtil.Exists(szFilename.Text()));
-	
-	Ptr<CImage> pBackground = ReadImage("Input" _FS_ "SpaceCrusade" _FS_ "Tiles.png", IT_Unknown, true);
-	AssertTrue(pBackground.IsNotNull());
+		szFilename.Init();
+		cFileUtil.CurrentDirectory(&szFilename);
+		cFileUtil.AppendToPath(&szFilename, "Input");
+		cFileUtil.AppendToPath(&szFilename, "SpaceCrusade");
+		cFileUtil.AppendToPath(&szFilename, "Tiles.png");
+		AssertTrue(cFileUtil.Exists(szFilename.Text()));
 
-	cNumbers.InitGeneral(-1, -1, 10, 3, 0, 0, 0, 0);
-	cImageDivider.Init(&pBackground, NULL);
-	cImageDivider.GenerateFromNumbers(&cNumbers);
-	pacBackgroundCels = cImageDivider.GetDestImageCels();
-	AssertSize(30, pacBackgroundCels->NumElements());
+		Ptr<CImage> pBackground = ReadImage("Input" _FS_ "SpaceCrusade" _FS_ "Tiles.png", IT_Unknown, true);
+		AssertTrue(pBackground.IsNotNull());
 
-	cContext.Init();
-	cMaps.Init(&cContext);
+		cNumbers.InitGeneral(-1, -1, 10, 3, 0, 0, 0, 0);
+		cImageDivider.Init(&pBackground, NULL);
+		cImageDivider.GenerateFromNumbers(&cNumbers);
+		pacBackgroundCels = cImageDivider.GetDestImageCels();
+		AssertSize(30, pacBackgroundCels->NumElements());
 
-	cMaps.Kill();
-	cContext.Kill();
+		cContext.Init();
+		cMaps.Init(&cContext);
 
-	ImageChannelDescriptorKill();
+		cMaps.Kill();
+		cContext.Kill();
+
+		ImageChannelDescriptorKill();
+	}
 	ObjectsKill();
 	DataIOKill();
 }

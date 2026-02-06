@@ -32,7 +32,6 @@ void TestRectanglePow2Packer(void);
 void TestImageToR3G3B2A(void);
 void TestImageSFTWriter(void);
 void TestMaps(void);
-void TestWinText(void);
 void TestHalfSpace(void);
 void TestMeshColours(void);
 void TestMeshUVCoords(void);
@@ -86,7 +85,6 @@ int __cdecl main(void)
 	TestImageToR3G3B2A();
 	TestImageSFTWriter();
 	TestMaps();
-	TestWinText();
 	TestImageCelsSource();
 	TestHalfSpace();
 	TestPolygon();

@@ -107,8 +107,8 @@ void TestImageSFTWriterTransparentCelContainer(void)
 	bool					bResult;
 	CImageDivider			cImageDivider;
 	CImageDividerNumbers	cNumbers;
-	CArrayUnknown*			pacImageCels;
-	CImageCel*				pcImageCel;
+	Ptr<CArrayImageCel>		pacImageCels;
+	Ptr<CImageCel>			pImageCel;
 	CFileUtil				cFileUtil;
 
 	Ptr<CImage> pImage = ReadImage("Input" _FS_ "MakiWalk.png", IT_Unknown, true);
@@ -120,17 +120,17 @@ void TestImageSFTWriterTransparentCelContainer(void)
 	pacImageCels = cImageDivider.GetDestImageCels();
 
 	AssertSize(6, pacImageCels->NumElements());
-	pcImageCel = (CImageCel*)pacImageCels->Get(0);
+	pImageCel = pacImageCels->Get(0);
 
-	AssertSize(42, pcImageCel->GetSubImage()->GetFullWidth());
-	AssertSize(32, pcImageCel->GetSubImage()->GetImageWidth());
-	AssertSize(91, pcImageCel->GetSubImage()->GetFullHeight());
-	AssertSize(90, pcImageCel->GetSubImage()->GetImageHeight());
+	AssertSize(42, pImageCel->GetSubImage()->GetFullWidth());
+	AssertSize(32, pImageCel->GetSubImage()->GetImageWidth());
+	AssertSize(91, pImageCel->GetSubImage()->GetFullHeight());
+	AssertSize(90, pImageCel->GetSubImage()->GetImageHeight());
 
 	cFileUtil.Delete("Output" _FS_ "MakiWalk.sft");
 	cFileUtil.Delete("Output" _FS_ "MakiWalk.png");
 
-	bResult = SaveSFT(pacImageCels, "Output" _FS_ "MakiWalk.sft");
+	bResult = SaveSFTCelArray(pacImageCels, "Output" _FS_ "MakiWalk.sft");
 	AssertTrue(bResult);
 
 	AssertFile("Input" _FS_ "MakiWalk-expected.sft", "Output" _FS_ "MakiWalk.sft")
@@ -141,6 +141,7 @@ void TestImageSFTWriterTransparentCelContainer(void)
 	WriteImage(pImage, "Output" _FS_ "MakiWalk.png", IT_PNG);
 
 	pImage = NULL;
+	pacImageCels = NULL;
 
 	AssertFile("Input" _FS_ "MakiWalk-expected.png", "Output" _FS_ "MakiWalk.png")
 }
@@ -155,10 +156,10 @@ void TestImageSFTWriterMultiSourceCelContainer(void)
 	bool					bResult;
 	CImageDivider			cImageDivider;
 	CImageDividerNumbers	cNumbers;
-	CArrayUnknown*			pacMakiWalkCels;
-	CImageCel*				pcImageCel;
+	Ptr<CArrayImageCel>		pacMakiWalkCels;
+	Ptr<CImageCel>			pImageCel;
 	CFileUtil				cFileUtil;
-	CArrayUnknown			acImageCels;
+	CArrayImageCel			acImageCels;
 
 	Ptr<CImage> pcBackground = ReadImage("Input" _FS_ "Fighting320.png", IT_Unknown, true);
 	AssertTrue(pcBackground.IsNotNull());
@@ -175,18 +176,19 @@ void TestImageSFTWriterMultiSourceCelContainer(void)
 	pacMakiWalkCels = cImageDivider.GetDestImageCels();
 
 	acImageCels.Init();
-	pcImageCel = acImageCels.Add<CImageCel>();
-	pcImageCel->Init(pcBackground);
+	pImageCel = OMalloc<CImageCel>(pcBackground);
+	acImageCels.Add(pImageCel);
 
-	pcImageCel = acImageCels.Add<CImageCel>();
-	pcImageCel->Init(pcMakiStand);
+	pImageCel = OMalloc<CImageCel>(pcMakiStand);
+	acImageCels.Add(pImageCel);
+	
 
 	acImageCels.AddAll(pacMakiWalkCels);
 
 	cFileUtil.Delete("Output" _FS_ "Combined.sft");
 	cFileUtil.Delete("Output" _FS_ "Combined.png");
 
-	bResult = SaveSFT(&acImageCels, "Output" _FS_ "Combined.sft");
+	bResult = SaveSFTCelArray(&acImageCels, "Output" _FS_ "Combined.sft");
 	AssertTrue(bResult);
 
 	AssertFile("Input" _FS_ "Combined-expected.sft", "Output" _FS_ "Combined.sft")
