@@ -16,7 +16,7 @@
 void TestImageToR3G3B2AConvert(void)
 {
 	CImageR3G3B2A	cRGBTo8bit;
-	CArrayChannel	pcChannels;
+	CArrayChannel	acChannels;
 	bool			bResult;
 
 	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "cel1.png");
@@ -26,11 +26,13 @@ void TestImageToR3G3B2AConvert(void)
 	cRGBTo8bit.Kill();
 	AssertTrue(pcImage.IsNotNull());
 
-	pcImage->GetAllChannels(&pcChannels);
-	AssertInt(3, pcChannels.NumElements());
-	AssertChannel(IP_Diffuse, CT_Blue, PT_crumb, pcChannels.Get(2));
-	AssertChannel(IP_Diffuse, CT_Green, PT_tribble, pcChannels.Get(1));
-	AssertChannel(IP_Diffuse, CT_Red, PT_tribble, pcChannels.Get(0));
+	acChannels.Init();
+	pcImage->GetAllChannels(&acChannels);
+	AssertInt(3, acChannels.NumElements());
+	AssertChannel(IP_Diffuse, CT_Blue, PT_crumb, acChannels.Get(2));
+	AssertChannel(IP_Diffuse, CT_Green, PT_tribble, acChannels.Get(1));
+	AssertChannel(IP_Diffuse, CT_Red, PT_tribble, acChannels.Get(0));
+	acChannels.Kill();
 	AssertInt(24, pcImage->GetWidth());
 	AssertInt(24, pcImage->GetHeight());
 	AssertInt(576, pcImage->GetChannels()->GetSize());

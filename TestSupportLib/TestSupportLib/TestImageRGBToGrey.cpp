@@ -16,15 +16,17 @@
 void TestImageRGBToGrey1(void)
 {
 	CImageRGBToGrey		cRGBToGrey;
-	CArrayChannel		pcChannels;
+	CArrayChannel		acChannels;
 
 	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "RGBToGrey.png");
 	
-	pcImage->GetAllChannels(&pcChannels);
-	AssertInt(3, pcChannels.NumElements());
-	AssertChannel(IP_Diffuse, CT_Red, PT_uint8, pcChannels.Get(0));
-	AssertChannel(IP_Diffuse, CT_Green, PT_uint8, pcChannels.Get(1));
-	AssertChannel(IP_Diffuse, CT_Blue, PT_uint8, pcChannels.Get(2));
+	acChannels.Init();
+	pcImage->GetAllChannels(&acChannels);
+	AssertInt(3, acChannels.NumElements());
+	AssertChannel(IP_Diffuse, CT_Red, PT_uint8, acChannels.Get(0));
+	AssertChannel(IP_Diffuse, CT_Green, PT_uint8, acChannels.Get(1));
+	AssertChannel(IP_Diffuse, CT_Blue, PT_uint8, acChannels.Get(2));
+	acChannels.Kill();
 	AssertInt(32, pcImage->GetWidth());
 	AssertInt(32, pcImage->GetHeight());
 	AssertInt(3072, pcImage->GetByteSize());
@@ -34,9 +36,11 @@ void TestImageRGBToGrey1(void)
 	cRGBToGrey.Kill();
 	AssertTrue(pcImage.IsNotNull());
 
-	pcImage->GetAllChannels(&pcChannels);
-	AssertInt(1, pcChannels.NumElements());
-	AssertChannel(IP_Diffuse, CT_Intensity, PT_uint8, pcChannels.Get(0));
+	acChannels.Init();
+	pcImage->GetAllChannels(&acChannels);
+	AssertInt(1, acChannels.NumElements());
+	AssertChannel(IP_Diffuse, CT_Intensity, PT_uint8, acChannels.Get(0));
+	acChannels.Kill();
 	AssertInt(32, pcImage->GetWidth());
 	AssertInt(32, pcImage->GetHeight());
 	AssertInt(1024, pcImage->GetChannels()->GetSize());

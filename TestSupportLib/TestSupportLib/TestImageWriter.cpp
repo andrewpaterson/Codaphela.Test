@@ -22,6 +22,7 @@ void TestImagePNGWriter(void)
 	Ptr<CImage> pcComp = ReadImage("Output" _FS_ "basn2c08.png");
 	AssertInt(32, pcComp->GetWidth());
 	AssertInt(32, pcComp->GetHeight());
+	aiChannels.Init();
 	pcComp->GetAllChannels(&aiChannels);
 	AssertInt(3, aiChannels.NumElements());
 	AssertInt(IMAGE_DIFFUSE_RED, aiChannels.GetValue(0));
@@ -102,11 +103,13 @@ void TestImageTGAWriter(void)
 	//Ptr<CImage> pcComp = ReadImage("Output" _FS_ "tar24un.tga");
 	//AssertInt(32, pcComp->GetWidth());
 	//AssertInt(32, pcComp->GetHeight());
+	//acChannels.Init();
 	//pcComp->GetAllChannels(&aiChannels);
 	//AssertInt(3, aiChannels.NumElements());
 	//AssertInt(IMAGE_DIFFUSE_RED, aiChannels.GetValue(0));
 	//AssertInt(IMAGE_DIFFUSE_GREEN, aiChannels.GetValue(1));
 	//AssertInt(IMAGE_DIFFUSE_BLUE, aiChannels.GetValue(2));
+	//acChannels.Kill();
 	//AssertMemory(pcImage->mcChannels.GetData(), pcComp->mcChannels.GetData(), pcImage->GetByteSize());
 	//aiChannels.Kill();
 	//pcImage->Kill();
@@ -131,6 +134,7 @@ void TestImageRADWriter(void)
 	AssertTrue(bResult);
 	AssertInt(32, pcComp->GetWidth());
 	AssertInt(32, pcComp->GetHeight());
+	aiChannels.Init();
 	pcComp->GetAllChannels(&aiChannels);
 	AssertInt(3, aiChannels.NumElements());
 	AssertInt(IMAGE_DIFFUSE_RED, aiChannels.GetValue(0));
