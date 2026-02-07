@@ -179,6 +179,8 @@ void TestPlainTextEditorSimpleNavigation(void)
 	AssertInt(6, cEditor.miEditPos);
 	cEditor.Down();
 	AssertInt(9, cEditor.miEditPos);
+
+	cEditor.Kill();
 }
 
 
@@ -595,6 +597,8 @@ void TestPlainTextEditorDeleteLine(void)
 	cEditor.DeleteLine();
 	AssertString("", cEditor.Text());
 	AssertInt(0, cEditor.miEditPos);
+
+	cEditor.Kill();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -634,6 +638,8 @@ void TestPlainTextEditorLeftRightDelete(void)
 	cEditor.Delete();
 	AssertInt(1, cEditor.miEditPos);
 	AssertString("H", cEditor.Text());
+
+	cEditor.Kill();
 }
 
 

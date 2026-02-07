@@ -98,7 +98,7 @@ int __cdecl main(void)
 	TestMeshShapes();
 	TestMeshConnectivity();
 	TestNormalGeneration();
-	//TestMeshOBJReader();
+	TestMeshOBJReader();
 
 	cFileUtil.RemoveDir("Output");
 
