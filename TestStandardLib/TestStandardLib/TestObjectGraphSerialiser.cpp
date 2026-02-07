@@ -59,6 +59,7 @@ void TestObjectGraphSerialiserReachability(void)
 	bResult = cGraphSerialiser.Write(&pTest2a);
 	AssertTrue(bResult);
 	cGraphSerialiser.Kill();
+	cSimpleWriter.Kill();
 
 	AssertTrue(pTest1a->mbSaved);
 	AssertTrue(pTest1b->mbSaved);

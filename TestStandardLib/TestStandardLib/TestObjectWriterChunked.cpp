@@ -164,6 +164,7 @@ void TestChunkFileObjectWriterSerialised(void)
 
 	ObjectsFlush();
 	ObjectsKill();
+	cUnknowns.Kill();
 
 	cScratchPad.Kill();
 
