@@ -47,9 +47,7 @@ void TestImageCombinerMask(void)
 	WriteImage(&pcImage, "Output" _FS_ "CombineMask.raw");
 	AssertFileMemory("input" _FS_ "CombineMask.raw", pcImage->GetChannels()->GetData(), pcImage->GetByteSize());
 
-	pcImage->Kill();
-	cCombiner.Kill();
-	cSource.Kill();
+	pcImage = NULL;
 }
 
 

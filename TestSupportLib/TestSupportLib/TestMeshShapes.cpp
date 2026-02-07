@@ -113,9 +113,6 @@ void TestPlane(void)
 	AssertInt(2, pcPolygon->maiFaces.NumElements());
 	AssertInt(6, pcPolygon->maiFaces.GetValue(0));
 	AssertInt(7, pcPolygon->maiFaces.GetValue(1));
-
-	cMeshEditor.Kill();
-	cMesh.Kill();
 }
 
 
@@ -298,8 +295,6 @@ void TestBox(void)
 	cMeshEditor.Kill();
 	cMesh.Kill();
 	AssertFile("Input/Shape/Box1x1x1.OBJ", "Output/Shape/Box1x1x1.OBJ");
-
-	cMeshEditor.Kill();
 
 	cFileUtil.RemoveDir("Output/Shape");
 }

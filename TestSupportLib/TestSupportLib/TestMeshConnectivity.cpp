@@ -86,9 +86,6 @@ void TestMeshEdgeConnectivity(void)
 	AssertEdgeFaces(pcConn->mcEdges.Get(6), 2, -1);
 	AssertEdgeFaces(pcConn->mcEdges.Get(7), 3, -1);
 	AssertEdgeFaces(pcConn->mcEdges.Get(8), 3, -1);
-
-	cMesh.Kill();
-	cMeshEditor.Kill();
 }
 
 

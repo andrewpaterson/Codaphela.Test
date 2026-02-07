@@ -31,6 +31,7 @@ void TestMapsRender(void)
 		cFileUtil.AppendToPath(&szFilename, "SpaceCrusade");
 		cFileUtil.AppendToPath(&szFilename, "Tiles.png");
 		AssertTrue(cFileUtil.Exists(szFilename.Text()));
+		szFilename.Kill();
 
 		Ptr<CImage> pBackground = ReadImage("Input" _FS_ "SpaceCrusade" _FS_ "Tiles.png", IT_Unknown, true);
 		AssertTrue(pBackground.IsNotNull());
