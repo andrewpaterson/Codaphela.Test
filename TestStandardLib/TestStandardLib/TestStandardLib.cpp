@@ -107,11 +107,11 @@ int __cdecl main(void)
 	TestObjectReaderSimple();
 	TestObjectReaderChunked();
 	TestObjectStackPointers();
-	//TestObjectGraphDeserialiser();
+	//TestObjectGraphDeserialiser();  This is commented out until you fix the garbage embedded from pointer.
 	TestObjectConverter();
 	TestObjects();
 	TestStackPointers();
-	//TestDehollowfication();
+	//TestDehollowfication();  This commented out until you fix diamond pointer dehollofication.
 	TestString();
 	TestObjectsEvictVsKill();
 	TestUsage();
