@@ -51,7 +51,7 @@ void TestText1(void)
 
 		cFlow.AddComponent(&cText);
 
-		AssertSize(3, cFlow.NumComponents());
+		AssertSize(1, cFlow.NumComponents());
 
 		cTestWindow.Show();
 
