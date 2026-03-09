@@ -163,6 +163,9 @@
     <ClCompile Include="TestMaps.cpp">
       <Filter>Source Files\Map</Filter>
     </ClCompile>
+    <ClCompile Include="TestFont.cpp">
+      <Filter>Source Files\Image\Font</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">

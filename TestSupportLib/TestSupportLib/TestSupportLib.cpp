@@ -31,6 +31,7 @@ void TestRectangleBestPacker(void);
 void TestRectanglePow2Packer(void);
 void TestImageToR3G3B2A(void);
 void TestImageSFTWriter(void);
+void TestFont(void);
 void TestMaps(void);
 void TestHalfSpace(void);
 void TestMeshColours(void);
@@ -84,6 +85,7 @@ int __cdecl main(void)
 	TestImageCombiner();
 	TestImageToR3G3B2A();
 	TestImageSFTWriter();
+	TestFont();
 	TestMaps();
 	TestImageCelsSource();
 	TestHalfSpace();

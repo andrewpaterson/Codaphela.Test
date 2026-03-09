@@ -669,6 +669,9 @@
     <ClCompile Include="TestCharsImmutable.cpp">
       <Filter>Source\Data\String</Filter>
     </ClCompile>
+    <ClCompile Include="TestUTF-8.cpp">
+      <Filter>Source\Text</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">
