@@ -16,7 +16,7 @@ void TestPrintFunction(const char* szString)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestReditectPrintf(void)
+void TestRedirectPrintf(void)
 {
 	BeginTests();
 

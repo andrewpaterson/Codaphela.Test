@@ -41,7 +41,7 @@ void TestArraySparseTemplate(void);
 void TestArrayBlockSorted(void);
 void TestChars(void);
 void TestCharsImmutable(void);
-void TestReditectPrintf(void);
+void TestRedirectPrintf(void);
 void TestStringHelper(void);
 void TestCharsHelper(void);
 void TestUTF8(void);
@@ -170,7 +170,7 @@ int __cdecl main(void)
 	TestArraySizer();
 	TestChars();
 	TestCharsImmutable();
-	TestReditectPrintf();
+	TestRedirectPrintf();
 	TestLogToString();
 	TestLogger();
 	TestMapBlock();
