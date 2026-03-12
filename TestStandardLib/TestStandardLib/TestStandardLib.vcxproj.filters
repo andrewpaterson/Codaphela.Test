@@ -82,6 +82,9 @@
     <Filter Include="Source\IndexTreeMemory">
       <UniqueIdentifier>{b7c20375-d6f0-4e1c-9c32-cbe95226899a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Object\Object\Collection\Map">
+      <UniqueIdentifier>{30ea6e21-91ac-417e-b8ce-45c15583f4ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestStandardLib.cpp">
@@ -269,6 +272,9 @@
     </ClCompile>
     <ClCompile Include="CollectionObjectTestClasses.cpp">
       <Filter>Source\Object\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMapUnknownUnknown.cpp">
+      <Filter>Source\Object\Unknown\Collections\Map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

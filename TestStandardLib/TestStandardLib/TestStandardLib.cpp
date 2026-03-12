@@ -7,6 +7,7 @@ void TestArrayType(void);
 void TestArrayUnknown(void);
 void TestUnknowns(void);
 void TestMapStringUnknown(void);
+void TestMapUnknownUnknown(void);
 void TestSetType(void);
 void TestSetUnknown(void);
 void TestChannelsAccessor(void);
@@ -76,6 +77,7 @@ int __cdecl main(void)
 	TestArrayType();
 	TestSetType();
 	TestMapStringUnknown();
+	TestMapUnknownUnknown();
 	TestEvent();
 	TestActionEvent();
 	TestExternalChannels();

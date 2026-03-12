@@ -119,6 +119,58 @@ void TestMapStringUnknownGet(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMapStringUnknownIterate(void)
+{
+	MemoryInit();
+	UnknownsInit();
+
+	CMapStringUnknown		cMap;
+	CTestUnknownJobbie*		pcTest1;
+	CTestUnknownJobbie*		pcTest2;
+	CTestUnknownJobbie*		pcTest3;
+	SMapIterator			sIter;
+	char*					pszKey;
+	CUnknown*				pcValue;
+	bool					bResult;
+
+	cMap.Init();
+
+	AssertInt(0, cMap.NumElements());
+
+	pcTest1 = cMap.Put<CTestUnknownJobbie>("World");
+	pcTest1->Init(19, "A pony");
+	pcTest2 = cMap.Put<CTestUnknownJobbie>("Hello");
+	pcTest2->Init(7, "1st");
+	pcTest3 = cMap.Put<CTestUnknownJobbie>("Aardvark");
+	pcTest3->Init(4, "Restore");
+	AssertInt(3, cMap.NumElements());
+
+	bResult = cMap.StartIteration(&sIter, &pszKey, &pcValue);
+	AssertTrue(bResult);
+	AssertString("Aardvark", pszKey);
+	AssertPointer(pcTest3, pcValue);
+	bResult = cMap.Iterate(&sIter, &pszKey, &pcValue);
+	AssertTrue(bResult);
+	AssertString("Hello", pszKey);
+	AssertPointer(pcTest2, pcValue);
+	bResult = cMap.Iterate(&sIter, &pszKey, &pcValue);
+	AssertTrue(bResult);
+	AssertString("World", pszKey);
+	AssertPointer(pcTest1, pcValue);
+	bResult = cMap.Iterate(&sIter, &pszKey, &pcValue);
+	AssertFalse(bResult);
+
+	cMap.Kill();
+
+	UnknownsKill();
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMapStringUnknownNoOverwrite(void)
 {
 	MemoryInit();
@@ -251,6 +303,7 @@ void TestMapStringUnknown(void)
 
 	TestMapStringUnknownPut();
 	TestMapStringUnknownGet();
+	TestMapStringUnknownIterate();
 	TestMapStringUnknownNoOverwrite();
 	TestMapStringUnknownLoad();
 

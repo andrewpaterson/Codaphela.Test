@@ -8,22 +8,9 @@ public:
 
 	int	miCount;
 
-	void Init(void)
-	{
-		miCount = 1;
-	}
-
-	void Init(int iCount)
-	{
-		miCount = iCount;
-	}
-
-	void Kill(void)
-	{
-		miCount --;
-		CUnknown::Kill();
-	}
-
+	void	Init(void);
+	void	Init(int iCount);
+	void	Kill(void);
 	bool	Save(CFileWriter* pcFile);
 	bool	Load(CFileReader* pcFile);
 };
@@ -35,26 +22,10 @@ CONSTRUCTABLE(CTestNamedUnknown)
 public:
 	CChars	mszName;
 
-	void Init(char* szName)
-	{
-		mszName.Init(szName);
-	}
-
-	void Kill(void)
-	{
-		mszName.Kill();
-		CUnknown::Kill();
-	}
-
-	char* GetName(void)
-	{
-		return mszName.Text();
-	}
-
-	bool Iterable(void)
-	{
-		return true;
-	}
+	void	Init(char* szName);
+	void	Kill(void);
+	char*	GetName(void);
+	bool	Iterable(void);
 };
 
 
@@ -64,43 +35,21 @@ CONSTRUCTABLE(CTestIterableUnknown)
 public:
 	int	miID;
 
-	void Init(int iID)
-	{
-		CTestUnknown::Init();
-		miID = iID;
-	}
-
-	bool Iterable(void)
-	{
-		return true;
-	}
-
-	char* GetClassName(void)
-	{
-		return "TestIterableUnknown";
-	}
+	void	Init(int iID);
+	bool	Iterable(void);
+	char*	GetClassName(void);
 };
 
 
 class CTestUnknownJobbie : public CUnknown
 {
-CONSTRUCTABLE(CTestUnknownJobbie);
+CONSTRUCTABLE(CTestUnknownJobbie)
 public:
 	int		miANumber;
 	CChars	mszText;
 
-	void 	Init(int iNumber, char* pszText) 
-	{ 
-		miANumber = iNumber; 
-		mszText.Init(pszText); 
-	}
-
-	void 	Kill(void) 
-	{ 
-		mszText.Kill();
-		CUnknown::Kill();
-	}
-
+	void 	Init(int iNumber, char* pszText);
+	void 	Kill(void);
 	bool	Save(CFileWriter* pcFile);
 	bool	Load(CFileReader* pcFile);
 };
