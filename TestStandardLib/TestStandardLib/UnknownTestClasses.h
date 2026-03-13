@@ -26,6 +26,8 @@ public:
 	void	Kill(void);
 	char*	GetName(void);
 	bool	Iterable(void);
+	bool	Save(CFileWriter* pcFile);
+	bool	Load(CFileReader* pcFile);
 };
 
 

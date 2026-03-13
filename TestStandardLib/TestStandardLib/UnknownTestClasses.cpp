@@ -46,6 +46,28 @@ bool CTestNamedUnknown::Iterable(void)
 //                                                                      //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
+bool CTestNamedUnknown::Save(CFileWriter* pcFile)
+{
+	ReturnOnFalse(mszName.WriteString(pcFile));
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
+bool CTestNamedUnknown::Load(CFileReader* pcFile)
+{
+	ReturnOnFalse(mszName.ReadString(pcFile));
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
 void CTestIterableUnknown::Init(int iID)
 {
 	CTestUnknown::Init();

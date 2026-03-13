@@ -213,11 +213,11 @@ void TestMapStringUnknownLoad(void)
 	MemoryInit();
 	UnknownsInit();
 
-	CMapStringUnknown	cMap;
-	CTestUnknownJobbie*	pcTest;
-	CChunkFile			cFile;
-	CFileUtil			cFileUtil;
-	bool				bResult;
+	CMapStringUnknown		cMap;
+	CTestUnknownJobbie*		pcTest;
+	CChunkFile				cFile;
+	CFileUtil				cFileUtil;
+	bool					bResult;
 
 	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
 	AssertInt(0, gcUnknowns.NumElements());
