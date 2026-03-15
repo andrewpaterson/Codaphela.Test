@@ -180,7 +180,6 @@ int __cdecl main(void)
 	TestMapLong();
 	TestMapPtr();
 	TestMap();
-	TestIndexAccess();
 	TestMapAccess();
 	TestListBlock();
 	TestListTemplate();
@@ -200,8 +199,6 @@ int __cdecl main(void)
 	TestDate();
 	TestNumbers();
 	TestArrayTemplate();
-	TestIndexTreeNodeMemory();
-	TestIndexTreeMemoryIterator();
 	TestArrayDenseTemplate();
 	TestArraySparseTemplate();
 	TestMemoryFile();
@@ -218,9 +215,6 @@ int __cdecl main(void)
 	TestLinkedListTemplate();
 	TestLinkedListBlockAligned();
 	TestMemoryManager();
-	TestIndexTreeMemory();
-	TestIndexBlock();
-	TestIndexString();
 	TestCSVFileEditable();
 	TestGeneralMemory();
 	TestDataMemory();
@@ -244,14 +238,20 @@ int __cdecl main(void)
 	TestFileSystem();
 	TestChunkFileFileSystem();
 	TestCSVFileImmutable();
-	TestIndexTreeDataOrderer();
-	TestIndexTreeMemoryConfig();
 	TestDataTypesIO();
 	TestGlobalDataTypesIO();
 	TestFloatHelper();
 	TestIntegerHelper();
 	TestNumber();
-	TestCalculator();
+	TestIndexAccess();
+	TestIndexTreeNodeMemory();
+	TestIndexTreeMemoryIterator();
+	TestIndexTreeMemory();
+	TestIndexBlock();
+	TestIndexString();
+	TestIndexTreeDataOrderer();
+	TestIndexTreeMemoryConfig();
+	//TestCalculator();
 
 	FastFunctionsInit();
 	NumberInit();

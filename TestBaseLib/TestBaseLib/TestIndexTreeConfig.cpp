@@ -64,7 +64,7 @@ void TestIndexTreeMemoryConfigGlobalMallocatorReading(void)
 	cConfigFile.Close();
 	cConfigFile.Kill();
 
-	cIndexTree.Init(&cTreeConfig);
+	cIndexTree.Init(&cTreeConfig, &cIndexTree, &cIndexTree);
 	cIndexTree.Kill();
 
 	cTreeFile.Init(DiskFile("Output" _FS_ "IndexTreeConfig1" _FS_ "Tree.dat"));
@@ -133,7 +133,7 @@ void TestIndexTreeMemoryConfigLocalMallocatorReading(void)
 	cConfigFile.Close();
 	cConfigFile.Kill();
 
-	cIndexTree.Init(&cTreeConfig);
+	cIndexTree.Init(&cTreeConfig, &cIndexTree, &cIndexTree);
 	cTreeConfig.Kill();
 	cIndexTree.Kill();
 

@@ -52,9 +52,9 @@ void TestMapBlockInternals(void)
 	paBlock->InsertHoldingIntoSorted();
 	psNode1 = (SMNode**)paBlock->GetInSorted(0);
 	psNode2 = (SMNode**)paBlock->GetInSorted(1);
-	AssertInt(sizeof(size), (*psNode1)->iDataSize);
+	AssertInt(sizeof(size), (*psNode1)->iValueSize);
 	AssertInt(sizeof(size), (*psNode1)->iKeySize);
-	AssertInt(sizeof(size), (*psNode2)->iDataSize);
+	AssertInt(sizeof(size), (*psNode2)->iValueSize);
 	AssertInt(sizeof(size), (*psNode2)->iKeySize);
 	piKey = (size*)RemapSinglePointer(*psNode1, sizeof(SMNode));
 	AssertInt(7, *piKey);
@@ -575,12 +575,23 @@ void TestMapBlockPutDifferenceSizeDuplicates(void)
 
 
 char	gszMapBlockCallbackData[64];
-size		giMapBlockCallbackData = 0;
+size	giMapBlockCallbackData = 0;
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMapBlockDataFreeCallback(const void* pvData)
 {
+	SMNode*		psNode;
+	void*		pvValue;
+	void*		pvKey;
+	
+	psNode = (SMNode*)pvData;
+	CMapBlock::RemapKeyAndData(psNode, &pvKey, &pvValue);
 	memset(gszMapBlockCallbackData, 0, 64);
-	strcpy(gszMapBlockCallbackData, (char*)pvData);
+	strcpy(gszMapBlockCallbackData, (char*)pvValue);
 	giMapBlockCallbackData++;
 }
 
@@ -602,31 +613,31 @@ void TestMapBlockDataFree(void)
 	cMap.SetDataFreeCallback(&cDataFree);
 	cAccess.Init(&cMap);
 
-	TestMapBlockDataFreeCallback("");
-	AssertInt(1, giMapBlockCallbackData);
+	memset(gszMapBlockCallbackData, 0, 64);
+	AssertInt(0, giMapBlockCallbackData);
 	cAccess.PutIntString(7, "Jimmy!");
 	AssertString("", gszMapBlockCallbackData);
-	AssertInt(1, giMapBlockCallbackData);
+	AssertInt(0, giMapBlockCallbackData);
 	cAccess.DeleteInt(7);
 	AssertString("Jimmy!", gszMapBlockCallbackData);
-	AssertInt(2, giMapBlockCallbackData);
+	AssertInt(1, giMapBlockCallbackData);
 
 	memset(gszMapBlockCallbackData, 0, 64);
 	cAccess.PutIntString(7, "Jimmy's not gone.");
 	AssertString("", gszMapBlockCallbackData);
 	cAccess.PutIntString(7, "Oh, never mind.");
 	AssertString("Jimmy's not gone.", gszMapBlockCallbackData);
-	AssertInt(3, giMapBlockCallbackData);
+	AssertInt(2, giMapBlockCallbackData);
 
 	memset(gszMapBlockCallbackData, 0, 64);
 	cAccess.PutIntString(7, "Jimmy is Back!!");
 	AssertString("Oh, never mind.", gszMapBlockCallbackData);     
-	AssertInt(4, giMapBlockCallbackData);
+	AssertInt(3, giMapBlockCallbackData);
 
 	cAccess.Kill();
 	cMap.Kill();
 
-	AssertInt(5, giMapBlockCallbackData);
+	AssertInt(4, giMapBlockCallbackData);
 	AssertString("Jimmy is Back!!", gszMapBlockCallbackData);
 }
 

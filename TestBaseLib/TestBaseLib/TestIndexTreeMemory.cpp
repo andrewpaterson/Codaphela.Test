@@ -1015,7 +1015,8 @@ void TestIndexTreeMemoryReadWrite(void)
 
 	cFile.Init(MemoryFile());
 	cFile.Open(EFM_Write_Create);
-	AssertTrue(cIndex.Write(&cFile));
+	bResult = cIndex.Write(&cFile);
+	AssertTrue(bResult);
 	cAccess.Kill();
 	cIndex.Kill();
 	cFile.Close();
@@ -1270,7 +1271,8 @@ void TestIndexTreeMemoryPut(void)
 
 
 char	gszIndexTreeMemoryCallbackData[64];
-size		giIndexTreeMemoryCallbackData = 0;
+size	giIndexTreeMemoryCallbackData = 0;
+
 
 void TestIndexTreeMemoryDataFreeCallback(const void* pvData)
 {
@@ -1289,9 +1291,9 @@ void TestIndexTreeMemoryDataFree(void)
 {
 	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
-	int64			lliLarry;
-	int64			lliThe;
-	int64			lliLamb;
+	int64					lliLarry;
+	int64					lliThe;
+	int64					lliLamb;
 	CDataFreeCallBack		cDataFree;
 
 	giIndexTreeMemoryCallbackData = 0;
@@ -1359,7 +1361,7 @@ void TestIndexTreeMemoryReadWriteDataOrderer(void)
 	cOrdererInit.Init(&cOrderer, false, true);
 	cConfig.Init(cMallocInit, IKR_No, 128, 24, cOrdererInit);
 
-	cIndex.Init(&cConfig);
+	cIndex.Init(&cConfig, &cIndex, &cIndex);
 	cAccess.Init(&cIndex);
 	cConfig.Kill();
 

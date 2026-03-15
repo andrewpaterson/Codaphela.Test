@@ -22,7 +22,6 @@ void TestIndexTemplateStuff(void)
 	CIndexTemplate<SIndexTemplateKey, int64>	cIndex;
 
 	cIndex.Init();
-
 	cIndex.Kill();
 }
 

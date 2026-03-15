@@ -243,10 +243,11 @@ void TestIndexBlockRemove(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexBlockReadWrite(void)
 {
-	CIndexMapAccess					cAccess;
-	CIndexBlock						cIndex;
-	CFileBasic						cFile;
-	CIndexBlock						cIndexIn;
+	CIndexMapAccess		cAccess;
+	CIndexBlock			cIndex;
+	CFileBasic			cFile;
+	CIndexBlock			cIndexIn;
+	bool				bResult;
 
 	cIndex.Init();
 	cAccess.Init(&cIndex);
@@ -263,7 +264,8 @@ void TestIndexBlockReadWrite(void)
 
 	cFile.Init(MemoryFile());
 	cFile.Open(EFM_Write_Create);
-	AssertTrue(cIndex.Write(&cFile));
+	bResult = cIndex.Write(&cFile);
+	AssertTrue(bResult);
 
 	cAccess.Kill();
 	cIndex.Kill();
@@ -271,7 +273,8 @@ void TestIndexBlockReadWrite(void)
 	cFile.Close();
 	cFile.Open(EFM_Read);
 
-	AssertTrue(cIndexIn.Read(&cFile));
+	bResult = cIndexIn.Read(&cFile);
+	AssertTrue(bResult);
 	cAccess.Init(&cIndexIn);
 
 	AssertString("XYZ", cAccess.GetStringString("ABC"));
@@ -536,8 +539,11 @@ char	gszIndexBlockCallbackData[64];
 
 void TestIndexBlockDataFreeCallback(const void* pvData)
 {
+	SIndexBlockNode* psValue;
+
+	psValue = (SIndexBlockNode*)pvData;
 	memset(gszIndexBlockCallbackData, 0, 64);
-	strcpy(gszIndexBlockCallbackData, (char*)pvData);
+	strcpy(gszIndexBlockCallbackData, (char*)psValue->pvData);
 }
 
 
@@ -547,16 +553,16 @@ void TestIndexBlockDataFreeCallback(const void* pvData)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexBlockDataFree(void)
 {
-	CIndexBlock			cMap;
+	CIndexBlock			cIndex;
 	CIndexMapAccess		cAccess;
 	CDataFreeCallBack	cDataFree;
 
-	cMap.Init();
+	cIndex.Init();
 	cDataFree.Init(TestIndexBlockDataFreeCallback);
-	cMap.SetDataFreeCallback(&cDataFree);
-	cAccess.Init(&cMap);
+	cIndex.SetDataFreeCallback(&cDataFree);
+	cAccess.Init(&cIndex);
 
-	TestIndexBlockDataFreeCallback("");
+	memset(gszIndexBlockCallbackData, 0, 64);
 	cAccess.PutIntString(7, "Jimmy!");
 	AssertString("", gszIndexBlockCallbackData);
 	cAccess.DeleteInt(7);
@@ -573,7 +579,7 @@ void TestIndexBlockDataFree(void)
 	AssertString("Oh, never mind.", gszIndexBlockCallbackData);
 
 	cAccess.Kill();
-	cMap.Kill();
+	cIndex.Kill();
 }
 
 
