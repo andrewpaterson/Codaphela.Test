@@ -480,7 +480,7 @@
     <ClCompile Include="TestMapBlock.cpp">
       <Filter>Source\Data\Map\Map</Filter>
     </ClCompile>
-    <ClCompile Include="TestMapPtr.cpp">
+    <ClCompile Include="TestMapPtrPtr.cpp">
       <Filter>Source\Data\Map\Map</Filter>
     </ClCompile>
     <ClCompile Include="TestIndexAccess.cpp">
@@ -671,6 +671,9 @@
     </ClCompile>
     <ClCompile Include="TestUTF-8.cpp">
       <Filter>Source\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexPtr.cpp">
+      <Filter>Source\Data\Map\Index</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

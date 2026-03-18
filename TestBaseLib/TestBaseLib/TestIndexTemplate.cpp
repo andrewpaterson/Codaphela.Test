@@ -2,7 +2,7 @@
 #include "BaseLib/LogString.h"
 #include "BaseLib/LocalMallocatorConstructors.h"
 #include "BaseLib/DataOrderers.h"
-#include "BaseLib/IndexTemplate.h"
+#include "BaseLib/IndexTemplateTemplate.h"
 #include "TestLib/Assert.h"
 
 
@@ -17,9 +17,9 @@ struct SIndexTemplateKey
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTemplateStuff(void)
+void TestIndexTemplateTemplateStuff(void)
 {
-	CIndexTemplate<SIndexTemplateKey, int64>	cIndex;
+	CIndexTemplateTemplate<SIndexTemplateKey, int64>	cIndex;
 
 	cIndex.Init();
 	cIndex.Kill();
@@ -30,7 +30,7 @@ void TestIndexTemplateStuff(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTemplate(void)
+void TestIndexTemplateTemplate(void)
 {
 	BeginTests();
 	FastFunctionsInit();
@@ -38,7 +38,7 @@ void TestIndexTemplate(void)
 	LocalMallocatorsInit(&gcConstructors, &gcMallocators);
 	DataOrderersInit(&gcConstructors, &gcDataOrderers);
 
-	TestIndexTemplateStuff();
+	TestIndexTemplateTemplateStuff();
 
 	DataOrderersKill();
 	MemoryKill();

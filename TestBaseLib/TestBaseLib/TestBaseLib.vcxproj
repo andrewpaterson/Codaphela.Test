@@ -239,6 +239,7 @@
     <ClCompile Include="TestFreeListAllocator.cpp" />
     <ClCompile Include="TestGlobalDataTypesIO.cpp" />
     <ClCompile Include="TestIndexBlock.cpp" />
+    <ClCompile Include="TestIndexPtr.cpp" />
     <ClCompile Include="TestIndexString.cpp" />
     <ClCompile Include="TestIndexTemplate.cpp" />
     <ClCompile Include="TestIndexTreeConfig.cpp" />
@@ -288,7 +289,7 @@
     <ClCompile Include="TestStringHelper.cpp" />
     <ClCompile Include="TestDate.cpp" />
     <ClCompile Include="TestMapInt.cpp" />
-    <ClCompile Include="TestMapPtr.cpp" />
+    <ClCompile Include="TestMapPtrPtr.cpp" />
     <ClCompile Include="TestBufferedFile.cpp" />
     <ClCompile Include="TestDiskFile.cpp" />
     <ClCompile Include="TestFileFinder.cpp" />

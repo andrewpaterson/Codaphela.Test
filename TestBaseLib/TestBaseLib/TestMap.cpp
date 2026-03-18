@@ -1,7 +1,7 @@
 #include "BaseLib/IntegerHelper.h"
 #include "BaseLib/Numbers.h"
 #include "BaseLib/Chars.h"
-#include "BaseLib/MapTemplate.h"
+#include "BaseLib/MapTemplateTemplate.h"
 #include "BaseLib/MapStringTemplate.h"
 #include "BaseLib/MapStringString.h"
 #include "BaseLib/MapStringInt.h"
@@ -10,7 +10,7 @@
 #include "TestMap.h"
 
 
-typedef CMapTemplate<int, int> CMapIntInt;
+typedef CMapTemplateTemplate<int, int> CMapIntInt;
 typedef CTreeTemplate<int> CTreeInt;
 
 

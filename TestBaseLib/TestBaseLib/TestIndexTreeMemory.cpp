@@ -883,7 +883,7 @@ void TestIndexTreeMemoryIterate(void)
 	AssertInt(10, cIndex.RecurseSize());
 	AssertInt(10, cIndex.NumElements());
 
-	AssertTrue(cIndex.StartUnsafeIteration(&sIter, (void**)&szData, &iDataSize));
+	AssertTrue(cIndex.StartIteration(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(8, iDataSize);
 	AssertString("FATJETA", szData);
 	Pass();
@@ -892,61 +892,61 @@ void TestIndexTreeMemoryIterate(void)
 	AssertInt(2, iKeySize);
 	AssertString("AA", szKey);
 
-	AssertTrue(cIndex.UnsafeIterate(&sIter, (void**)&szData, &iDataSize));
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(7, iDataSize);
 	AssertString("DENISA", szData);
 	AssertInt(3, cIndex.GetKey(szData, szKey, 1024));
 	AssertString("AAA", szKey);
 
-	AssertTrue(cIndex.UnsafeIterate(&sIter, (void**)&szData, &iDataSize));
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(7, iDataSize);
 	AssertString("ARIANA", szData);
 	AssertInt(3, cIndex.GetKey(szData, szKey, 1024));
 	AssertString("AAB", szKey);
 
-	AssertTrue(cIndex.UnsafeIterate(&sIter, (void**)&szData, &iDataSize));
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(7, iDataSize);
 	AssertString("GEORGE", szData);
 	AssertInt(3, cIndex.GetKey(szData, szKey, 1024));
 	AssertString("AAC", szKey);
 
-	AssertTrue(cIndex.UnsafeIterate(&sIter, (void**)&szData, &iDataSize));
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(5, iDataSize);
 	AssertString("IRMA", szData);
 	AssertInt(2, cIndex.GetKey(szData, szKey, 1024));
 	AssertString("AB", szKey);
 
-	AssertTrue(cIndex.UnsafeIterate(&sIter, (void**)&szData, &iDataSize));
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(8, iDataSize);
 	AssertString("JULIANA", szData);
 	AssertInt(3, cIndex.GetKey(szData, szKey, 1024));
 	AssertString("ABA", szKey);
 
-	AssertTrue(cIndex.UnsafeIterate(&sIter, (void**)&szData, &iDataSize));
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(5, iDataSize);
 	AssertString("LULE", szData);
 	AssertInt(3, cIndex.GetKey(szData, szKey, 1024));
 	AssertString("ABB", szKey);
 
-	AssertTrue(cIndex.UnsafeIterate(&sIter, (void**)&szData, &iDataSize));
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(7, iDataSize);
 	AssertString("VENERA", szData);
 	AssertInt(1, cIndex.GetKey(szData, szKey, 1024));
 	AssertString("C", szKey);
 
-	AssertTrue(cIndex.UnsafeIterate(&sIter, (void**)&szData, &iDataSize));
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(8, iDataSize);
 	AssertString("PRIMERA", szData);
 	AssertInt(2, cIndex.GetKey(szData, szKey, 1024));
 	AssertString("DD", szKey);
 
-	AssertTrue(cIndex.UnsafeIterate(&sIter, (void**)&szData, &iDataSize));
+	AssertTrue(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(9, iDataSize);
 	AssertString("PRANVERA", szData);
 	AssertInt(4, cIndex.GetKey(szData, szKey, 1024));
 	AssertString("DDDD", szKey);
 
-	AssertFalse(cIndex.UnsafeIterate(&sIter, (void**)&szData, &iDataSize));
+	AssertFalse(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	cIndex.Kill();
 
 	cIndex.Init();
@@ -954,29 +954,29 @@ void TestIndexTreeMemoryIterate(void)
 	AssertInt(0, cIndex.RecurseSize());
 	AssertInt(0, cIndex.NumElements());
 
-	AssertFalse(cIndex.StartUnsafeIteration(&sIter, (void**)&szData, &iDataSize));
+	AssertFalse(cIndex.StartIteration(&sIter, (void**)&szData, &iDataSize));
 	cIndex.Kill();
 
 	cIndex.Init();
 	c = 255;
 	cAccess.PutKeyString(&c, 1, "Banks");
 	AssertString("Banks", cAccess.GetKeyString(&c, 1, szResult));
-	AssertTrue(cIndex.StartUnsafeIteration(&sIter, (void**)&szData, &iDataSize));
+	AssertTrue(cIndex.StartIteration(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(6, iDataSize);
 	AssertString("Banks", szData);
 
-	AssertFalse(cIndex.UnsafeIterate(&sIter, (void**)&szData, &iDataSize));
+	AssertFalse(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	cIndex.Kill();
 
 	cIndex.Init();
 	c = 0;
 	cAccess.PutKeyString(&c, 1, "Planks");
 	AssertString("Planks", cAccess.GetKeyString(&c, 1, szResult));
-	AssertTrue(cIndex.StartUnsafeIteration(&sIter, (void**)&szData, &iDataSize));
+	AssertTrue(cIndex.StartIteration(&sIter, (void**)&szData, &iDataSize));
 	AssertInt(7, iDataSize);
 	AssertString("Planks", szData);
 
-	AssertFalse(cIndex.UnsafeIterate(&sIter, (void**)&szData, &iDataSize));
+	AssertFalse(cIndex.Iterate(&sIter, (void**)&szData, &iDataSize));
 	cIndex.Kill();
 	cAccess.Kill();
 }

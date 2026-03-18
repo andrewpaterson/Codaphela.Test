@@ -8,7 +8,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMapPtrPtr(void)
+void TestMapPtrPtrIterate(void)
 {
 	CMapPtrPtr		cMap;
 	void*			pvValue;
@@ -75,13 +75,13 @@ void TestMapPtrPtr(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMapPtr(void)
+void TestMapPtrPtr(void)
 {
 	BeginTests();
 	MemoryInit();
 	FastFunctionsInit();
 
-	TestMapPtrPtr();
+	TestMapPtrPtrIterate();
 
 	FastFunctionsKill();
 	MemoryKill();

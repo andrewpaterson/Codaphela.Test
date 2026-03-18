@@ -22,12 +22,14 @@ void TestLogger(void);
 void TestMapBlock(void);
 void TestMapInt(void);
 void TestMapLong(void);
-void TestMapPtr(void);
+void TestMapPtrPtr(void);
 void TestMapString(void);
 void TestMapStringIntAndPointer(void);
 void TestMap(void);
 void TestIndexBlock(void);
 void TestIndexAccess(void);
+void TestIndexPtr(void);
+void TestIndexTemplateTemplate(void);
 void TestMapAccess(void);
 void TestListBlock(void);
 void TestListTemplate(void);
@@ -178,7 +180,7 @@ int __cdecl main(void)
 	TestMapStringIntAndPointer();
 	TestMapInt();
 	TestMapLong();
-	TestMapPtr();
+	TestMapPtrPtr();
 	TestMap();
 	TestMapAccess();
 	TestListBlock();
@@ -251,6 +253,8 @@ int __cdecl main(void)
 	TestIndexString();
 	TestIndexTreeDataOrderer();
 	TestIndexTreeMemoryConfig();
+	TestIndexPtr();
+	TestIndexTemplateTemplate();
 	//TestCalculator();
 
 	FastFunctionsInit();

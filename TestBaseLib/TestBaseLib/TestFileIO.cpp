@@ -5,7 +5,7 @@
 #include "BaseLib/LinkedListBlockAligned.h"
 #include "BaseLib/LinkedListBlock.h"
 #include "BaseLib/TreeTemplate.h"
-#include "BaseLib/MapTemplate.h"
+#include "BaseLib/MapTemplateTemplate.h"
 #include "BaseLib/TreeBlock.h"
 #include "BaseLib/SystemAllocator.h"
 #include "BaseLib/GlobalMemory.h"
@@ -541,10 +541,10 @@ void TestFileIOMap(void)
 {
 	CMemoryFile						cMemory;
 	CFileBasic						cFile;
-	CMapTemplate<size, float96>		cMap;
+	CMapTemplateTemplate<size, float96>		cMap;
 	size							i;
 	float96							ld;
-	CMapTemplate<size, float96>		cMapIn;
+	CMapTemplateTemplate<size, float96>		cMapIn;
 	CMapStringInt					mssi;
 	CMapStringInt					mssii;
 
@@ -574,7 +574,7 @@ void TestFileIOMap(void)
 
 	AssertTrue(cMapIn.Read(&cFile, &CompareInt));
 	AssertInt(3, cMapIn.NumElements());
-	//CMapTemplate doesn't actually have full read and write methods.
+	//CMapTemplateTemplate doesn't actually have full read and write methods.
 
 	AssertTrue(mssii.Read(&cFile));
 	AssertInt(4, mssii.NumElements());
