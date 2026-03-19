@@ -245,10 +245,10 @@ void TestMapStringUnknownLoad(void)
 
 	bResult = cFile.WriteClose();
 	AssertTrue(bResult);
+	AssertInt(4, gcUnknowns.NumElements());
 
 	cFile.Kill();
 	cMap.Kill();
-
 	AssertInt(0, gcUnknowns.NumElements());
 
 	cFile.Init(DiskFile("Output" _FS_ "MapStringUnknown" _FS_ "Map.dat"));
@@ -262,7 +262,6 @@ void TestMapStringUnknownLoad(void)
 	AssertTrue(bResult);
 
 	cFile.Kill();
-
 	AssertInt(4, cMap.NumElements());
 	AssertInt(4, gcUnknowns.NumElements());
 
@@ -281,9 +280,9 @@ void TestMapStringUnknownLoad(void)
 	pcTest = (CTestUnknownJobbie*)cMap.Get("Yurk");
 	AssertInt(8, pcTest->miANumber);
 	AssertString("Yurk", pcTest->mszText.Text());
+	AssertInt(4, gcUnknowns.NumElements());
 
 	cMap.Kill();
-
 	AssertInt(0, gcUnknowns.NumElements());
 
 	cFileUtil.RemoveDir("Output" _FS_ "MapStringUnknown");

@@ -13,6 +13,7 @@ public:
 	void	Kill(void);
 	bool	Save(CFileWriter* pcFile);
 	bool	Load(CFileReader* pcFile);
+	void	Print(CChars* psz);
 };
 
 
@@ -28,6 +29,7 @@ public:
 	bool	Iterable(void);
 	bool	Save(CFileWriter* pcFile);
 	bool	Load(CFileReader* pcFile);
+	void	Print(CChars* psz);
 };
 
 
@@ -40,6 +42,7 @@ public:
 	void	Init(int iID);
 	bool	Iterable(void);
 	char*	GetClassName(void);
+	void	Print(CChars* psz);
 };
 
 
@@ -54,5 +57,6 @@ public:
 	void 	Kill(void);
 	bool	Save(CFileWriter* pcFile);
 	bool	Load(CFileReader* pcFile);
+	void	Print(CChars* psz);
 };
 

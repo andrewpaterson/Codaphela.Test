@@ -305,6 +305,8 @@ void TestMapUnknownUnknownLoad(void)
 	bResult = cFile.WriteClose();
 	AssertTrue(bResult);
 
+	cMap.Sort();
+
 	cFile.Kill();
 	cMap.Kill();
 	AssertInt(0, gcUnknowns.NumElements());

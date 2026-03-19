@@ -68,6 +68,18 @@ bool CTestNamedUnknown::Load(CFileReader* pcFile)
 //                                                                      //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
+void CTestNamedUnknown::Print(CChars* psz)
+{
+	psz->Append('"');
+	psz->Append(mszName.Text());
+	psz->Append('"');
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
 void CTestIterableUnknown::Init(int iID)
 {
 	CTestUnknown::Init();
@@ -92,6 +104,18 @@ bool CTestIterableUnknown::Iterable(void)
 char* CTestIterableUnknown::GetClassName(void)
 {
 	return "TestIterableUnknown";
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
+void CTestIterableUnknown::Print(CChars* psz)
+{
+	CTestUnknown::Print(psz);
+	psz->Append(", ");
+	psz->Append(miID);
 }
 
 
@@ -152,6 +176,16 @@ bool CTestUnknown::Load(CFileReader* pcFile)
 //                                                                      //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
+void CTestUnknown::Print(CChars* psz)
+{
+	psz->Append(miCount);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
 void CTestUnknownJobbie::Init(int iNumber, char* pszText)
 {
 	miANumber = iNumber;
@@ -191,5 +225,18 @@ bool CTestUnknownJobbie::Load(CFileReader* pcFile)
 	ReturnOnFalse(pcFile->ReadInt32(&miANumber));
 	ReturnOnFalse(mszText.ReadString(pcFile));
 	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
+void CTestUnknownJobbie::Print(CChars* psz)
+{
+	psz->Append(miANumber);
+	psz->Append(", \"");
+	psz->Append(mszText.Text());
+	psz->Append('"');
 }
 
