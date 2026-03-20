@@ -193,6 +193,7 @@ void TestIndexUnknownLoad(void)
 	DataOrderersInit();
 
 	CIndexUnknown				cIndex;
+	CIndexUnknown				cIndexIn;
 	CFileUtil					cFileUtil;
 	CTestUnknownJobbie*			pcValue1;
 	CUnknown*					pcValue;
@@ -245,18 +246,18 @@ void TestIndexUnknownLoad(void)
 	bResult = cFile.ReadOpen();
 	AssertTrue(bResult);
 
-	bResult = cIndex.Load(&cFile);
+	bResult = cIndexIn.Load(&cFile);
 	AssertTrue(bResult);
 
 	bResult = cFile.ReadClose();
 	AssertTrue(bResult);
 	cFile.Kill();
-	AssertInt(12000, cIndex.NumElements());
+	AssertInt(12000, cIndexIn.NumElements());
 	AssertInt(12000, gcUnknowns.NumElements());
 
 	ui = 0;
 	bValid = false;
-	bExists = cIndex.StartIteration(&sIter, (uint8*)szKey, &uiKeyLength, 20, &pcValue);
+	bExists = cIndexIn.StartIteration(&sIter, (uint8*)szKey, &uiKeyLength, 20, &pcValue);
 	while (bExists)
 	{
 		bValid = StringCompare("CTestUnknownJobbie", pcValue->ClassName()) == 0;
@@ -266,13 +267,13 @@ void TestIndexUnknownLoad(void)
 			break;
 		}
 
-		bExists = cIndex.Iterate(&sIter, (uint8*)szKey, &uiKeyLength, 20, &pcValue);
+		bExists = cIndexIn.Iterate(&sIter, (uint8*)szKey, &uiKeyLength, 20, &pcValue);
 		ui++;
 	}
 	AssertTrue(bValid);
 	AssertSize(12000, ui);
 
-	cIndex.Kill();
+	cIndexIn.Kill();
 
 	DataOrderersKill();
 	UnknownsKill();

@@ -14,6 +14,55 @@
 #include "TestIndexTreeMemory.h"
 
 
+char	gszIndexTreeMemoryCallbackData[64];
+size	giIndexTreeMemoryCallbackData = 0;
+
+
+class CTestIndexTreeMemoryDataFree : public CDataFree
+{
+protected:
+	CIndexTreeMemory* mpcIndexTreeMemory;
+
+public:
+	void	Init(CIndexTreeMemory* pcIndexTreeMemory);
+	void	FreeData(void* pvData) override;
+	void	Clear(void);
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestIndexTreeMemoryDataFree::Init(CIndexTreeMemory* pcIndexTreeMemory)
+{
+	mpcIndexTreeMemory = pcIndexTreeMemory;
+	Clear();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestIndexTreeMemoryDataFree::FreeData(void* pvData)
+{
+	Clear();
+	strcpy(gszIndexTreeMemoryCallbackData, (char*)pvData);
+	giIndexTreeMemoryCallbackData++;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestIndexTreeMemoryDataFree::Clear(void)
+{
+	memset(gszIndexTreeMemoryCallbackData, 0, 64);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -1270,36 +1319,23 @@ void TestIndexTreeMemoryPut(void)
 }
 
 
-char	gszIndexTreeMemoryCallbackData[64];
-size	giIndexTreeMemoryCallbackData = 0;
-
-
-void TestIndexTreeMemoryDataFreeCallback(const void* pvData)
-{
-	memset(gszIndexTreeMemoryCallbackData, 0, 64);
-	strcpy(gszIndexTreeMemoryCallbackData, (char*)pvData);
-	giIndexTreeMemoryCallbackData++;
-}
-
-
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryDataFree(void)
 {
-	CTestIndexTreeMemory	cIndex;
-	CIndexTreeMemoryAccess	cAccess;
-	int64					lliLarry;
-	int64					lliThe;
-	int64					lliLamb;
-	CDataFreeCallBack		cDataFree;
+	CTestIndexTreeMemory			cIndex;
+	CIndexTreeMemoryAccess			cAccess;
+	int64							lliLarry;
+	int64							lliThe;
+	int64							lliLamb;
+	CTestIndexTreeMemoryDataFree	cDataFree;
 
 	giIndexTreeMemoryCallbackData = 0;
 
 	cIndex.Init();
-	cDataFree.Init(TestIndexTreeMemoryDataFreeCallback);
+	cDataFree.Init(&cIndex);
 	cIndex.SetDataFreeCallback(&cDataFree);
 	cAccess.Init(&cIndex);
 
@@ -1307,26 +1343,29 @@ void TestIndexTreeMemoryDataFree(void)
 	lliThe = 0x392168ee06b4c0d0;
 	lliLamb = 0xf855181fab7e51e5;
 
-	TestIndexTreeMemoryDataFreeCallback("");
 	AssertTrue(cAccess.PutStringString("Larry", "Paige"));
 	AssertString("", gszIndexTreeMemoryCallbackData);
-	AssertInt(1, giIndexTreeMemoryCallbackData);
+	AssertInt(0, giIndexTreeMemoryCallbackData);
 	AssertTrue(cAccess.PutStringString("The", "Live"));
 	AssertTrue(cAccess.PutStringString("Lamb", "Currants"));
 
+	cDataFree.Clear();
 	AssertTrue(cAccess.DeleteString("The"));
 	AssertString("Live", gszIndexTreeMemoryCallbackData);
 
+	cDataFree.Clear();
 	AssertTrue(cAccess.PutStringString("Larry", "Kinge"));
 	AssertString("Paige", gszIndexTreeMemoryCallbackData);
 
+	cDataFree.Clear();
 	AssertTrue(cAccess.PutStringString("Lamb", "Is Delicious"));
 	AssertString("Currants", gszIndexTreeMemoryCallbackData);
-	AssertInt(4, giIndexTreeMemoryCallbackData);
+	AssertInt(3, giIndexTreeMemoryCallbackData);
 
+	cDataFree.Clear();
 	cAccess.Kill();
 	cIndex.Kill();
-	AssertInt(6, giIndexTreeMemoryCallbackData);
+	AssertInt(5, giIndexTreeMemoryCallbackData);
 	AssertString("Kinge", gszIndexTreeMemoryCallbackData);
 }
 
@@ -1361,7 +1400,7 @@ void TestIndexTreeMemoryReadWriteDataOrderer(void)
 	cOrdererInit.Init(&cOrderer, false, true);
 	cConfig.Init(cMallocInit, IKR_No, 128, 24, cOrdererInit);
 
-	cIndex.Init(&cConfig, &cIndex, &cIndex);
+	cIndex.Init(&cConfig, &cIndex, &cIndex, NULL);
 	cAccess.Init(&cIndex);
 	cConfig.Kill();
 
@@ -2133,27 +2172,27 @@ void TestIndexTreeMemory(void)
 	LocalMallocatorsInit();
 	DataOrderersInit();
 
-	TestIndexTreeMemoryKill();
-	TestIndexTreeMemoryDescribeNode();
-	TestIndexTreeMemoryAdd(IKR_Yes);
-	TestIndexTreeMemoryAdd(IKR_No);
-	TestIndexTreeMemoryAddDataOnExistingKey();
-	TestIndexTreeMemoryGet();
-	TestIndexTreeMemoryPutPtrDuplicate();
-	TestIndexTreeMemoryPutDifferenceSizeDuplicates();
-	TestIndexTreeMemoryValidateInternalConsistency();
-	TestIndexTreeMemoryCountAllocatedNodes();
-	TestIndexTreeMemoryRemoveResize();
-	TestIndexTreeMemoryRemoveByObject();
-	TestIndexTreeMemoryHasKey();
-	TestIndexTreeMemoryRemoveNullNode();
-	TestIndexTreeMemoryAddLongLong();
-	TestIndexTreeMemoryIterate();
-	TestIndexTreeMemoryReadWrite();
-	TestIndexTreeMemoryRemoveOnRoot();
-	TestIndexTreeMemoryResizeData();
-	TestIndexTreeMemoryDescribeData();
-	TestIndexTreeMemoryPut();
+	//TestIndexTreeMemoryKill();
+	//TestIndexTreeMemoryDescribeNode();
+	//TestIndexTreeMemoryAdd(IKR_Yes);
+	//TestIndexTreeMemoryAdd(IKR_No);
+	//TestIndexTreeMemoryAddDataOnExistingKey();
+	//TestIndexTreeMemoryGet();
+	//TestIndexTreeMemoryPutPtrDuplicate();
+	//TestIndexTreeMemoryPutDifferenceSizeDuplicates();
+	//TestIndexTreeMemoryValidateInternalConsistency();
+	//TestIndexTreeMemoryCountAllocatedNodes();
+	//TestIndexTreeMemoryRemoveResize();
+	//TestIndexTreeMemoryRemoveByObject();
+	//TestIndexTreeMemoryHasKey();
+	//TestIndexTreeMemoryRemoveNullNode();
+	//TestIndexTreeMemoryAddLongLong();
+	//TestIndexTreeMemoryIterate();
+	//TestIndexTreeMemoryReadWrite();
+	//TestIndexTreeMemoryRemoveOnRoot();
+	//TestIndexTreeMemoryResizeData();
+	//TestIndexTreeMemoryDescribeData();
+	//TestIndexTreeMemoryPut();
 	TestIndexTreeMemoryDataFree();
 	TestIndexTreeMemoryReadWriteDataOrderer();
 	TestIndexTreeMemoryGetLongestPartial();

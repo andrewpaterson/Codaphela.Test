@@ -24,6 +24,61 @@ public:
 };
 
 
+char	gszMapBlockCallbackData[64];
+size	giMapBlockCallbackData = 0;
+
+
+class CTestMapDataFree : public CDataFree
+{
+protected:
+	CMapBlock*	mpcMapBlock;
+
+public:
+	void	Init(CMapBlock* pcIndexBlock);
+	void	FreeData(void* pvData) override;
+	void	Clear(void);
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestMapDataFree::Init(CMapBlock* pcMapBlock)
+{
+	mpcMapBlock = pcMapBlock;
+	Clear();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestMapDataFree::FreeData(void* pvData)
+{
+	SMNode*		psNode;
+	void*		pvValue;
+	void*		pvKey;
+	
+	psNode = (SMNode*)pvData;
+	CMapBlock::RemapKeyAndData(psNode, &pvKey, &pvValue);
+	Clear();
+	strcpy(gszMapBlockCallbackData, (char*)pvValue);
+	giMapBlockCallbackData++;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestMapDataFree::Clear(void)
+{
+	memset(gszMapBlockCallbackData, 0, 64);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -574,28 +629,6 @@ void TestMapBlockPutDifferenceSizeDuplicates(void)
 }
 
 
-char	gszMapBlockCallbackData[64];
-size	giMapBlockCallbackData = 0;
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void TestMapBlockDataFreeCallback(const void* pvData)
-{
-	SMNode*		psNode;
-	void*		pvValue;
-	void*		pvKey;
-	
-	psNode = (SMNode*)pvData;
-	CMapBlock::RemapKeyAndData(psNode, &pvKey, &pvValue);
-	memset(gszMapBlockCallbackData, 0, 64);
-	strcpy(gszMapBlockCallbackData, (char*)pvValue);
-	giMapBlockCallbackData++;
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -604,16 +637,15 @@ void TestMapBlockDataFree(void)
 {
 	CMapBlock			cMap;
 	CMapMapAccess		cAccess;
-	CDataFreeCallBack	cDataFree;
+	CTestMapDataFree	cDataFree;
 
 	giMapBlockCallbackData = 0;
 
 	cMap.Init(&CompareInt, true);
-	cDataFree.Init(TestMapBlockDataFreeCallback);
+	cDataFree.Init(&cMap);
 	cMap.SetDataFreeCallback(&cDataFree);
 	cAccess.Init(&cMap);
 
-	memset(gszMapBlockCallbackData, 0, 64);
 	AssertInt(0, giMapBlockCallbackData);
 	cAccess.PutIntString(7, "Jimmy!");
 	AssertString("", gszMapBlockCallbackData);
@@ -622,18 +654,19 @@ void TestMapBlockDataFree(void)
 	AssertString("Jimmy!", gszMapBlockCallbackData);
 	AssertInt(1, giMapBlockCallbackData);
 
-	memset(gszMapBlockCallbackData, 0, 64);
+	cDataFree.Clear();
 	cAccess.PutIntString(7, "Jimmy's not gone.");
 	AssertString("", gszMapBlockCallbackData);
 	cAccess.PutIntString(7, "Oh, never mind.");
 	AssertString("Jimmy's not gone.", gszMapBlockCallbackData);
 	AssertInt(2, giMapBlockCallbackData);
 
-	memset(gszMapBlockCallbackData, 0, 64);
+	cDataFree.Clear();
 	cAccess.PutIntString(7, "Jimmy is Back!!");
 	AssertString("Oh, never mind.", gszMapBlockCallbackData);     
 	AssertInt(3, giMapBlockCallbackData);
 
+	cDataFree.Clear();
 	cAccess.Kill();
 	cMap.Kill();
 

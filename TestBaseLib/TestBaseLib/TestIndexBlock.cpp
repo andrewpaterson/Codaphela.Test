@@ -14,6 +14,58 @@
 #include "TestMap.h"
 
 
+char	gszIndexBlockCallbackData[64];
+
+
+class CTestIndexBlockDataFree : public CDataFree
+{
+protected:
+	CIndexBlock*	mpcIndexBlock;
+
+public:
+	void	Init(CIndexBlock* pcIndexBlock);
+	void	FreeData(void* pvData) override;
+	void	Clear(void);
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestIndexBlockDataFree::Init(CIndexBlock* pcIndexBlock)
+{
+	mpcIndexBlock = pcIndexBlock;
+	Clear();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestIndexBlockDataFree::FreeData(void* pvData)
+{
+	SIndexBlockNode* psValue;
+
+	psValue = (SIndexBlockNode*)pvData;
+	Clear();
+	strcpy(gszIndexBlockCallbackData, (char*)psValue->pvData);
+
+	mpcIndexBlock->FreeData(pvData);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestIndexBlockDataFree::Clear(void)
+{
+	memset(gszIndexBlockCallbackData, 0, 64);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -535,17 +587,6 @@ void TestIndexBlockRemoveHalf(void)
 	WordsKill();
 }
 
-char	gszIndexBlockCallbackData[64];
-
-void TestIndexBlockDataFreeCallback(const void* pvData)
-{
-	SIndexBlockNode* psValue;
-
-	psValue = (SIndexBlockNode*)pvData;
-	memset(gszIndexBlockCallbackData, 0, 64);
-	strcpy(gszIndexBlockCallbackData, (char*)psValue->pvData);
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -553,28 +594,27 @@ void TestIndexBlockDataFreeCallback(const void* pvData)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexBlockDataFree(void)
 {
-	CIndexBlock			cIndex;
-	CIndexMapAccess		cAccess;
-	CDataFreeCallBack	cDataFree;
+	CIndexBlock					cIndex;
+	CIndexMapAccess				cAccess;
+	CTestIndexBlockDataFree		cDataFree;
 
 	cIndex.Init();
-	cDataFree.Init(TestIndexBlockDataFreeCallback);
+	cDataFree.Init(&cIndex);
 	cIndex.SetDataFreeCallback(&cDataFree);
 	cAccess.Init(&cIndex);
 
-	memset(gszIndexBlockCallbackData, 0, 64);
 	cAccess.PutIntString(7, "Jimmy!");
 	AssertString("", gszIndexBlockCallbackData);
 	cAccess.DeleteInt(7);
 	AssertString("Jimmy!", gszIndexBlockCallbackData);
 
-	memset(gszIndexBlockCallbackData, 0, 64);
+	cDataFree.Clear();
 	cAccess.PutIntString(7, "Jimmy's not gone.");
 	AssertString("", gszIndexBlockCallbackData);
 	cAccess.PutIntString(7, "Oh, never mind.");
 	AssertString("Jimmy's not gone.", gszIndexBlockCallbackData);
 
-	memset(gszIndexBlockCallbackData, 0, 64);
+	cDataFree.Clear();
 	cAccess.PutIntString(7, "Jimmy is Back!!");
 	AssertString("Oh, never mind.", gszIndexBlockCallbackData);
 
