@@ -10,8 +10,8 @@
 
 class CTestObjectWithTwoEmbedded : public CObject
 {
-CONSTRUCTABLE(CTestObjectWithTwoEmbedded);
-DESTRUCTABLE(CTestObjectWithTwoEmbedded);
+CONSTRUCTABLE(CTestObjectWithTwoEmbedded)
+DESTRUCTABLE(CTestObjectWithTwoEmbedded)
 public:
 	CString		mString1;
 	CString		mString2;

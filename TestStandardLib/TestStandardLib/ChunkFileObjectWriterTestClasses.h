@@ -8,8 +8,8 @@
 
 class CTestWithArray : public CObject
 {
-CONSTRUCTABLE(CTestWithArray);
-DESTRUCTABLE(CTestWithArray);
+CONSTRUCTABLE(CTestWithArray)
+DESTRUCTABLE(CTestWithArray)
 public:
 	Ptr<CArrayObject>	mcArray;
 
@@ -30,8 +30,8 @@ public:
 
 class CTestInteger : public CObject
 {
-CONSTRUCTABLE(CTestInteger);
-DESTRUCTABLE(CTestInteger);
+CONSTRUCTABLE(CTestInteger)
+DESTRUCTABLE(CTestInteger)
 public:
 	int32	mx;
 	int16	my; 
@@ -48,8 +48,8 @@ public:
 
 class CTestNamedString : public CObject
 {
-CONSTRUCTABLE(CTestNamedString);
-DESTRUCTABLE(CTestNamedString);
+CONSTRUCTABLE(CTestNamedString)
+DESTRUCTABLE(CTestNamedString)
 public:
 	Ptr<CString>			mszString;
 	Ptr<CTestNamedString>	mpAnother;
@@ -69,8 +69,8 @@ public:
 
 class CTestDoubleNamedString : public CObject
 {
-CONSTRUCTABLE(CTestDoubleNamedString);
-DESTRUCTABLE(CTestDoubleNamedString);
+CONSTRUCTABLE(CTestDoubleNamedString)
+DESTRUCTABLE(CTestDoubleNamedString)
 public:
 	Ptr<CString>			mszString;
 	Ptr<CTestNamedString>	mpSplit2;

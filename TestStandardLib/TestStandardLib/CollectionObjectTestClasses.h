@@ -8,8 +8,8 @@
 
 class CTestArrayObject : public CObject
 {
-CONSTRUCTABLE(CTestArrayObject);
-DESTRUCTABLE(CTestArrayObject);
+CONSTRUCTABLE(CTestArrayObject)
+DESTRUCTABLE(CTestArrayObject)
 public:
 	CArray<CTestObject>		maChildren;
 	int32					mi;

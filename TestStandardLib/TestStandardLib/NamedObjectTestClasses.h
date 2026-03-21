@@ -6,8 +6,8 @@
 
 class CTestNamedObject : public CObject
 {
-CONSTRUCTABLE(CTestNamedObject);
-DESTRUCTABLE(CTestNamedObject);
+CONSTRUCTABLE(CTestNamedObject)
+DESTRUCTABLE(CTestNamedObject)
 public:
 	Ptr<CTestNamedObject>	mpNamedTest1;
 	Ptr<CTestNamedObject>	mpNamedTest2;
@@ -24,8 +24,8 @@ public:
 
 class CTestNamedObjectSmall : public CObject
 {
-CONSTRUCTABLE(CTestNamedObjectSmall);
-DESTRUCTABLE(CTestNamedObjectSmall);
+CONSTRUCTABLE(CTestNamedObjectSmall)
+DESTRUCTABLE(CTestNamedObjectSmall)
 public:
 	char	mac[4];
 
@@ -41,8 +41,8 @@ public:
 
 class CTestNamedObjectWithEmbedded : public CObject
 {
-CONSTRUCTABLE(CTestNamedObjectWithEmbedded);
-DESTRUCTABLE(CTestNamedObjectWithEmbedded);
+CONSTRUCTABLE(CTestNamedObjectWithEmbedded)
+DESTRUCTABLE(CTestNamedObjectWithEmbedded)
 public:
 	CTestNamedObject				mNamedTest1;
 	CTestNamedObject				mNamedTest2;

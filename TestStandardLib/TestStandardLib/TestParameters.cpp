@@ -20,7 +20,7 @@ struct f : SParams { \
 
 class CTestClassFunctionParams : public CUnknown
 {
-CONSTRUCTABLE(CTestClassFunctionParams);
+CONSTRUCTABLE(CTestClassFunctionParams)
 public:
 
 	struct SFuncParams : SParams

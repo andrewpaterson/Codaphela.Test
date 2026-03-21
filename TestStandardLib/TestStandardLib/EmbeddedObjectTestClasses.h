@@ -10,8 +10,8 @@
 
 class CEmbeddedTest : public CObject
 {
-CONSTRUCTABLE(CEmbeddedTest);
-DESTRUCTABLE(CEmbeddedTest);
+CONSTRUCTABLE(CEmbeddedTest)
+DESTRUCTABLE(CEmbeddedTest)
 public:
 	int		miAmANumber;
 	float	mfSoAmI;
@@ -28,8 +28,8 @@ public:
 
 class CEmbeddedContainer : public CObject
 {
-CONSTRUCTABLE(CEmbeddedContainer);
-DESTRUCTABLE(CEmbeddedContainer);
+CONSTRUCTABLE(CEmbeddedContainer)
+DESTRUCTABLE(CEmbeddedContainer)
 public:
 	char				msz[4];
 	CEmbeddedTest		mcOne;
@@ -51,8 +51,8 @@ public:
 
 class CEmbeddedComplex : public CObject
 {
-CONSTRUCTABLE(CEmbeddedComplex);
-DESTRUCTABLE(CEmbeddedComplex);
+CONSTRUCTABLE(CEmbeddedComplex)
+DESTRUCTABLE(CEmbeddedComplex)
 public:
 	CEmbeddedTest		mcSimple;
 	int32				mai[2];
@@ -73,8 +73,8 @@ public:
 
 class CEmbeddedTestWithNotifier : public CObject
 {
-CONSTRUCTABLE(CEmbeddedTestWithNotifier);
-DESTRUCTABLE(CEmbeddedTestWithNotifier);
+CONSTRUCTABLE(CEmbeddedTestWithNotifier)
+DESTRUCTABLE(CEmbeddedTestWithNotifier)
 public:
 	STestObjectFreedNotifier*	mpsFreedNotifier;
 	Ptr<>						mpTest;
@@ -90,8 +90,8 @@ public:
 
 class CEmbeddedContainerWithNotifier : public CObject
 {
-CONSTRUCTABLE(CEmbeddedContainerWithNotifier);
-DESTRUCTABLE(CEmbeddedContainerWithNotifier);
+CONSTRUCTABLE(CEmbeddedContainerWithNotifier)
+DESTRUCTABLE(CEmbeddedContainerWithNotifier)
 public:
 	CEmbeddedTestWithNotifier	mcOne;
 	CEmbeddedTestWithNotifier	mcTwo;

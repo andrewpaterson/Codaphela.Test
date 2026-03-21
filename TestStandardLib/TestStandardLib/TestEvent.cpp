@@ -11,7 +11,7 @@ struct STestEventContext1;
 struct STestEventContext2;
 class CTestListener : public CListener
 {
-CONSTRUCTABLE(CTestListener);
+CONSTRUCTABLE(CTestListener)
 public:
 	virtual void Style1(CUnknown* pcSource, void* pvContext) {};
 	virtual void Style2(CUnknown* pcSource, void* pvContext) {};
@@ -20,7 +20,7 @@ public:
 
 class CTestAnotherListener : public CListener
 {
-CONSTRUCTABLE(CTestAnotherListener);
+CONSTRUCTABLE(CTestAnotherListener)
 public:
 	int	iThisIsNotTheRightWayToUseListeners;
 
@@ -38,7 +38,7 @@ public:
 
 class CTestBadListener : public CListener
 {
-CONSTRUCTABLE(CTestBadListener);
+CONSTRUCTABLE(CTestBadListener)
 public:
 };
 
@@ -67,7 +67,7 @@ enum EWhatHappen
 
 class CTestObjectIsListenerWithEvent : public CUnknown, public CListenerCall, public CTestListener
 {
-CONSTRUCTABLE(CTestObjectIsListenerWithEvent);
+CONSTRUCTABLE(CTestObjectIsListenerWithEvent)
 public:
 	EWhatHappen	meWhatHappen;
 	int			miBored;
@@ -161,7 +161,7 @@ void CTestObjectIsListenerWithEvent::Style2(CUnknown* pcSource, void* pvContext)
 
 class CTestObjectIsListener : public CUnknown, public CTestListener
 {
-CONSTRUCTABLE(CTestObjectIsListener);
+CONSTRUCTABLE(CTestObjectIsListener)
 public:
 	CChars	mszAlsoBored;
 

@@ -34,8 +34,8 @@ struct SStateOnKill
 
 class CPlayerVehicle : public CObject
 {
-CONSTRUCTABLE(CPlayerVehicle);
-DESTRUCTABLE(CPlayerVehicle);
+CONSTRUCTABLE(CPlayerVehicle)
+DESTRUCTABLE(CPlayerVehicle)
 protected:
 	CGraphicPicture		mcPicture;
 	SPhysicsPoint*		mpsPoint;
@@ -56,7 +56,8 @@ public:
 
 class CHarrier : public CPlayerVehicle
 {
-CONSTRUCTABLE(CHarrier);
+CONSTRUCTABLE(CHarrier)
+DESTRUCTABLE(CHarrier)
 protected:
 	Ptr<CArray<CMissile>>	maMissiles;
 	Ptr<CGameWorld>			mpWorld;
@@ -75,7 +76,8 @@ public:
 
 class CJeep : public CPlayerVehicle
 {
-CONSTRUCTABLE(CJeep);
+CONSTRUCTABLE(CJeep)
+DESTRUCTABLE(CJeep)
 protected:
 	Ptr<CGameWorld>		mpWorld;
 	float				mfFrontWheel;
@@ -92,8 +94,8 @@ public:
 
 class CRedJet : public CObject
 {
-CONSTRUCTABLE(CRedJet);
-DESTRUCTABLE(CRedJet);
+CONSTRUCTABLE(CRedJet)
+DESTRUCTABLE(CRedJet)
 protected:
 	CGraphicPicture		mcPicture;
 	Ptr<CGameWorld>		mpWorld;
@@ -113,8 +115,8 @@ public:
 
 class CMissile : public CObject
 {
-CONSTRUCTABLE(CMissile);
-DESTRUCTABLE(CMissile);
+CONSTRUCTABLE(CMissile)
+DESTRUCTABLE(CMissile)
 protected:
 	Ptr<CGameWorld>		mpWorld;
 	CPointer			mpTarget;
@@ -134,8 +136,8 @@ public:
 
 class CClusterMissile : public CObject
 {
-CONSTRUCTABLE(CClusterMissile);
-DESTRUCTABLE(CClusterMissile);
+CONSTRUCTABLE(CClusterMissile)
+DESTRUCTABLE(CClusterMissile)
 public:
 	CMissile			mcMissile1;
 	CMissile			mcMissile2;
@@ -155,8 +157,8 @@ public:
 
 class CClusterLauncher : public CObject
 {
-CONSTRUCTABLE(CClusterLauncher);
-DESTRUCTABLE(CClusterLauncher);
+CONSTRUCTABLE(CClusterLauncher)
+DESTRUCTABLE(CClusterLauncher)
 public:
 	Ptr<CClusterMissile>	mpMissile;
 
@@ -168,8 +170,8 @@ public:
 
 class CGameWorld : public CObject
 {
-CONSTRUCTABLE(CGameWorld);
-DESTRUCTABLE(CGameWorld);
+CONSTRUCTABLE(CGameWorld)
+DESTRUCTABLE(CGameWorld)
 protected:
 	Ptr<CArray<>>		maTickables;
 	Ptr<CPlayerVehicle>	mpPlayer1;

@@ -9,8 +9,8 @@
 
 class CTinyTestClass : public CObject
 {
-CONSTRUCTABLE(CTinyTestClass);
-DESTRUCTABLE(CTinyTestClass);
+CONSTRUCTABLE(CTinyTestClass)
+DESTRUCTABLE(CTinyTestClass)
 public:
 	Int8	mc;
 
@@ -35,8 +35,8 @@ public:
 
 class CTestClass : public CObject
 {
-CONSTRUCTABLE(CTestClass);
-DESTRUCTABLE(CTestClass);
+CONSTRUCTABLE(CTestClass)
+DESTRUCTABLE(CTestClass)
 public:
 	CPointer			mpObject;
 	Ptr<CTestClass>		mpTest;

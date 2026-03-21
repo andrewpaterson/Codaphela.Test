@@ -16,8 +16,8 @@ struct STestObjectFreedNotifier
 
 class CTestObject : public CObject
 {
-CONSTRUCTABLE(CTestObject);
-DESTRUCTABLE(CTestObject);
+CONSTRUCTABLE(CTestObject)
+DESTRUCTABLE(CTestObject)
 public:
 	CPointer					mpObject;
 	Ptr<CTestObject>			mpTest;
@@ -40,8 +40,8 @@ public:
 
 class CTestTriPointerObject : public CObject
 {
-CONSTRUCTABLE(CTestTriPointerObject);
-DESTRUCTABLE(CTestTriPointerObject);
+CONSTRUCTABLE(CTestTriPointerObject)
+DESTRUCTABLE(CTestTriPointerObject)
 public:
 	CPointer					mpObject1;
 	CPointer					mpObject2;
@@ -57,8 +57,8 @@ public:
 
 class CTestSaveableObject1 : public CObject
 {
-CONSTRUCTABLE(CTestSaveableObject1);
-DESTRUCTABLE(CTestSaveableObject1);
+CONSTRUCTABLE(CTestSaveableObject1)
+DESTRUCTABLE(CTestSaveableObject1)
 public:
 	CPointer	mpObject;
 	int32		miInt;
@@ -76,8 +76,8 @@ public:
 
 class CTestSaveableObject2 : public CObject
 {
-CONSTRUCTABLE(CTestSaveableObject2);
-DESTRUCTABLE(CTestSaveableObject2);
+CONSTRUCTABLE(CTestSaveableObject2)
+DESTRUCTABLE(CTestSaveableObject2)
 public:
 	CChars						msz;
 	Ptr<CTestSaveableObject1>	mp1;
@@ -95,8 +95,8 @@ public:
 
 class CTestObjectWithFields : public CObject
 {
-CONSTRUCTABLE(CTestObjectWithFields);
-DESTRUCTABLE(CTestObjectWithFields);
+CONSTRUCTABLE(CTestObjectWithFields)
+DESTRUCTABLE(CTestObjectWithFields)
 public:
 	CPointer			mpObject;
 	Ptr<CTestObject>	mpTest;
@@ -129,8 +129,8 @@ public:
 
 class CTestEmbeddedObjectWithFields : public CObject
 {
-CONSTRUCTABLE(CTestEmbeddedObjectWithFields);
-DESTRUCTABLE(CTestEmbeddedObjectWithFields);
+CONSTRUCTABLE(CTestEmbeddedObjectWithFields)
+DESTRUCTABLE(CTestEmbeddedObjectWithFields)
 public:
 	Bool						mbX;
 	CPointer					mpObjectA;
@@ -149,8 +149,8 @@ public:
 
 class CTestEmbeddedStrings : public CObject
 {
-CONSTRUCTABLE(CTestEmbeddedStrings);
-DESTRUCTABLE(CTestEmbeddedStrings);
+CONSTRUCTABLE(CTestEmbeddedStrings)
+DESTRUCTABLE(CTestEmbeddedStrings)
 public:
 	CString		mString1;
 	CString		mString2;
@@ -164,8 +164,8 @@ public:
 
 class CTestSimpleObject : public CObject
 {
-CONSTRUCTABLE(CTestSimpleObject);
-DESTRUCTABLE(CTestSimpleObject);
+CONSTRUCTABLE(CTestSimpleObject)
+DESTRUCTABLE(CTestSimpleObject)
 public:
 	int32						mi;
 	STestObjectFreedNotifier*	mpsFreedNotifier;
