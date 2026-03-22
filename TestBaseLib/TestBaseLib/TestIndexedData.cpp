@@ -69,7 +69,8 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 	cIndexedData.Flush(true);
 	AssertTrue(cController.End());
 
-	AssertTrue(cIndexedData.Kill());
+	AssertTrue(cIndexedData.CanKill());    
+cIndexedData.Kill();
 	cEvictionStrategy.Kill();
 	cController.Kill();
 
@@ -96,7 +97,8 @@ void TestIndexedDataSimple(EIndexWriteThrough eWriteThrough)
 
 	cIndexedData.Flush(true);
 	AssertTrue(cController.End());
-	AssertTrue(cIndexedData.Kill());
+	AssertTrue(cIndexedData.CanKill());    
+	cIndexedData.Kill();
 	cEvictionStrategy.Kill();
 	cController.Kill();
 
@@ -162,7 +164,8 @@ void TestIndexedDataIteration(EIndexWriteThrough eWriteThrough)
 	AssertInt(2, (int)cIndexedData.NumElements());
 
 	AssertTrue(cController.End());
-	AssertTrue(cIndexedData.Kill());
+	AssertTrue(cIndexedData.CanKill());    
+	cIndexedData.Kill();
 	cEvictionStrategy.Kill();
 	cController.Kill();
 
