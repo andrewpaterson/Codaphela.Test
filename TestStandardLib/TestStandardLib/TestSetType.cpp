@@ -22,6 +22,7 @@ void TestSetTypeInstantiation(void)
 	const char*				szName;
 	SSetIterator			sIter;
 	int						iCount;
+	bool					bExists;
 
 	cSet.Init();
 
@@ -32,11 +33,11 @@ void TestSetTypeInstantiation(void)
 	cSet.Add(pcTest2);
 
 	iCount = 0;
-	pcTest = cSet.StartIteration(&sIter);
-	while (pcTest)
+	bExists = cSet.StartIteration(&sIter, &pcTest);
+	while (bExists)
 	{
 		iCount++;
-		pcTest = cSet.Iterate(&sIter);
+		bExists = cSet.Iterate(&sIter, &pcTest);
 	}
 	AssertInt(2, iCount);
 	AssertInt(2, cSet.NumElements());
@@ -46,15 +47,18 @@ void TestSetTypeInstantiation(void)
 	AssertTrue(cSet.Contains(pcTest1));
 	AssertTrue(cSet.Contains(pcTest2));
 
-	pcTest = cSet.StartIteration(&sIter);
+	bExists = cSet.StartIteration(&sIter, &pcTest);
 	AssertPointer(pcTest1, pcTest);
-	pcTest = cSet.Iterate(&sIter);
+	bExists = cSet.Iterate(&sIter, &pcTest);
 	AssertPointer(pcTest2, pcTest);
 
-	pcTest = cSet.StartIteration(&sIter);
+	bExists = cSet.StartIteration(&sIter, &pcTest);
 	cSet.RemoveDuringIteration(&sIter);
-	pcTest = cSet.Iterate(&sIter);
+	bExists = cSet.Iterate(&sIter, &pcTest);
 	AssertPointer(pcTest2, pcTest);
+
+	bExists = cSet.Iterate(&sIter, &pcTest);
+	AssertFalse(bExists);
 
 	AssertInt(1, cSet.NumElements());
 

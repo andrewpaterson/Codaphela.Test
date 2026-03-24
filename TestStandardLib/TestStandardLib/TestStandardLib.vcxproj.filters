@@ -88,6 +88,9 @@
     <Filter Include="Source\Object\Unknown\Index">
       <UniqueIdentifier>{bd62e0d1-ae99-44e4-b1d6-e4836e337936}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Object\Object\Collection\Index">
+      <UniqueIdentifier>{304365b7-7172-461f-9491-5fa435788dd6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestStandardLib.cpp">
@@ -281,6 +284,12 @@
     </ClCompile>
     <ClCompile Include="TestIndexUnknown.cpp">
       <Filter>Source\Object\Unknown\Index</Filter>
+    </ClCompile>
+    <ClCompile Include="TestMapObject.cpp">
+      <Filter>Source\Object\Object\Collection\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIndexObject.cpp">
+      <Filter>Source\Object\Object\Collection\Index</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

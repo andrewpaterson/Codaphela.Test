@@ -22,6 +22,7 @@ void TestSetStuffs(void)
 	CTestNamedUnknown*						pcTest;
 	SIteratorTemplate<CTestNamedUnknown>	sIter;
 	SSetIterator							sSetIter;
+	bool									bExists;
 
 	cSet.Init();
 
@@ -37,20 +38,20 @@ void TestSetStuffs(void)
 
 	iNum = cSet.NumElements();
 	AssertInt(3, iNum);
-	pcTest = (CTestNamedUnknown*)cSet.StartIteration(&sSetIter);
+	bExists = (CTestNamedUnknown*)cSet.StartIteration(&sSetIter, (CUnknown**)&pcTest);
 	AssertString("The One", pcTest->GetName());
-	pcTest = (CTestNamedUnknown*)cSet.Iterate(&sSetIter);
+	bExists = (CTestNamedUnknown*)cSet.Iterate(&sSetIter, (CUnknown**)&pcTest);
 	AssertString("Two", pcTest->GetName());
-	pcTest = (CTestNamedUnknown*)cSet.Iterate(&sSetIter);
+	bExists = (CTestNamedUnknown*)cSet.Iterate(&sSetIter, (CUnknown**)&pcTest);
 	AssertString("There can be only three", pcTest->GetName());
 
 	cSet.Remove(pcTest2);
 
 	iNum = cSet.NumElements();
 	AssertInt(2, iNum);
-	pcTest = (CTestNamedUnknown*)cSet.StartIteration(&sSetIter);
+	bExists = (CTestNamedUnknown*)cSet.StartIteration(&sSetIter, (CUnknown**)&pcTest);
 	AssertString("The One", pcTest->GetName());
-	pcTest = (CTestNamedUnknown*)cSet.Iterate(&sSetIter);
+	bExists = (CTestNamedUnknown*)cSet.Iterate(&sSetIter, (CUnknown**)&pcTest);
 	AssertNotNull(pcTest);
 	AssertString("There can be only three", pcTest->GetName());
 
@@ -59,9 +60,9 @@ void TestSetStuffs(void)
 	pcTest = gcUnknowns.Iterate(&sIter);
 	AssertString("There can be only three", pcTest->GetName());
 
-	cSet.StartIteration(&sSetIter);
+	cSet.StartIteration(&sSetIter, (CUnknown**)&pcTest);
 	cSet.RemoveDuringIteration(&sSetIter);
-	cSet.Iterate(&sSetIter);
+	cSet.Iterate(&sSetIter, (CUnknown**)&pcTest);
 	cSet.RemoveDuringIteration(&sSetIter);
 
 	iNum = cSet.NumElements();
@@ -97,6 +98,7 @@ void TestSetRemoval(void)
 	CTestNamedUnknown*						pcTest;
 	SIteratorTemplate<CTestNamedUnknown>	sIter;
 	SSetIterator							sSetIter;
+	bool									bExists;
 
 	cSet.Init();
 
@@ -113,16 +115,16 @@ void TestSetRemoval(void)
 	iNum = cSet.NumElements();
 	AssertInt(3, iNum);
 
-	cSet.StartIteration(&sSetIter);
+	cSet.StartIteration(&sSetIter, NULL);
 	cSet.RemoveDuringIteration(&sSetIter);
-	cSet.Iterate(&sSetIter);
+	cSet.Iterate(&sSetIter, NULL);
 	cSet.RemoveDuringIteration(&sSetIter);
-	cSet.Iterate(&sSetIter);
+	cSet.Iterate(&sSetIter, NULL);
 	cSet.RemoveDuringIteration(&sSetIter);
 
 	iNum = cSet.NumElements();
 	AssertInt(0, iNum);
-	cSet.Iterate(&sSetIter);
+	cSet.Iterate(&sSetIter, NULL);
 
 	cSet.RemoveDuringIteration(&sSetIter);
 
@@ -146,24 +148,25 @@ void TestSetRemoval(void)
 	iNum = cSet.NumElements();
 	AssertInt(3, iNum);
 
-	pcTest = (CTestNamedUnknown*)cSet.StartIteration(&sSetIter);
+	bExists = cSet.StartIteration(&sSetIter, (CUnknown**)&pcTest);
 	AssertString("The One", pcTest->GetName());
 
 	cSet.RemoveDuringIteration(&sSetIter);
-	pcTest = (CTestNamedUnknown*)cSet.Iterate(&sSetIter);
+	bExists = cSet.Iterate(&sSetIter, (CUnknown**)&pcTest);
 	AssertString("Two", pcTest->GetName());
 
 	cSet.RemoveDuringIteration(&sSetIter);
 	iNum = cSet.NumElements();
 	AssertInt(1, iNum);
-	pcTest = (CTestNamedUnknown*)cSet.Iterate(&sSetIter);
+	bExists = cSet.Iterate(&sSetIter, (CUnknown**)&pcTest);
 	AssertNotNull(pcTest);
 	AssertString("There can be only three", pcTest->GetName());
 
 	cSet.RemoveDuringIteration(&sSetIter);
 	iNum = cSet.NumElements();
 	AssertInt(0, iNum);
-	cSet.Iterate(&sSetIter);
+	bExists = cSet.Iterate(&sSetIter, (CUnknown**)&pcTest);
+	AssertFalse(bExists);
 
 	cSet.RemoveDuringIteration(&sSetIter);
 	cSet.Kill();
@@ -281,11 +284,11 @@ void TestCleanNulls(void)
 	AssertPointer(apUnknowns[30], cSet.UnsafeGet(18));
 	AssertPointer(apUnknowns[31], cSet.UnsafeGet(19));
 
-	cSet.StartIteration(&sSetIter);
+	cSet.StartIteration(&sSetIter, NULL);
 	for (i = 0; i < 19; i++)
 	{
 		cSet.RemoveDuringIteration(&sSetIter);
-		cSet.Iterate(&sSetIter);
+		cSet.Iterate(&sSetIter, NULL);
 	}
 
 	AssertInt(1, cSet.NumElements());
@@ -316,3 +319,4 @@ void TestSetUnknown(void)
 
 	TestStatistics();
 }
+

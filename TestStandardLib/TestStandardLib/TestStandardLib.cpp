@@ -33,6 +33,8 @@ void TestDistToRoot(void);
 void TestDistToStack(void);
 void TestObjectGraphWriting(void);
 void TestArrayCommonObject(void);
+void TestIndexObject(void);
+void TestMapObject(void);
 void TestParameters(void);
 void TestObjectDirty(void);
 void TestObjectAllocator(void);
@@ -99,6 +101,8 @@ int __cdecl main(void)
 	TestObjectStack();
 	TestPointer();
 	TestArrayCommonObject();
+	TestIndexObject();
+	TestMapObject();
 	TestFreeEmbedded();
 	TestStringOverride();
 	TestReplaceAndRemap();

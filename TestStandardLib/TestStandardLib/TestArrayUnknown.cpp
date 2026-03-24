@@ -86,6 +86,7 @@ void TestRemoval(void)
 	CTestNamedUnknown*						pcTest;
 	SIteratorTemplate<CTestNamedUnknown>	sIter;
 	SSetIterator							sSetIter;
+	bool									bExists;
 
 	cArray.Init();
 
@@ -102,13 +103,13 @@ void TestRemoval(void)
 	iNum = cArray.NumElements();
 	AssertInt(3, iNum);
 
-	cArray.StartIteration(&sSetIter);
+	cArray.StartIteration(&sSetIter, NULL);
 	cArray.RemoveDuringIteration(&sSetIter);
-	cArray.Iterate(&sSetIter);
+	cArray.Iterate(&sSetIter, NULL);
 	cArray.RemoveDuringIteration(&sSetIter);
-	cArray.Iterate(&sSetIter);
+	cArray.Iterate(&sSetIter, NULL);
 	cArray.RemoveDuringIteration(&sSetIter);
-	cArray.Iterate(&sSetIter);
+	cArray.Iterate(&sSetIter, NULL);
 
 	iNum = cArray.NumElements();
 	AssertInt(0, iNum);
@@ -135,23 +136,27 @@ void TestRemoval(void)
 	iNum = cArray.NumElements();
 	AssertInt(3, iNum);
 
-	pcTest = (CTestNamedUnknown*)cArray.StartIteration(&sSetIter);
+	bExists = cArray.StartIteration(&sSetIter, (CUnknown**)&pcTest);
+	AssertTrue(bExists);
 	AssertString("The One", pcTest->GetName());
 
 	cArray.RemoveDuringIteration(&sSetIter);
-	pcTest = (CTestNamedUnknown*)cArray.Iterate(&sSetIter);
+	bExists = cArray.Iterate(&sSetIter, (CUnknown**)&pcTest);
+	AssertTrue(bExists);
 	AssertString("Two", pcTest->GetName());
 
 	cArray.RemoveDuringIteration(&sSetIter);
 	iNum = cArray.NumElements();
 	AssertInt(1, iNum);
-	pcTest = (CTestNamedUnknown*)cArray.Iterate(&sSetIter);
+	bExists = cArray.Iterate(&sSetIter, (CUnknown**)&pcTest);
+	AssertTrue(bExists);
 	AssertString("There can be only three", pcTest->GetName());
 
 	cArray.RemoveDuringIteration(&sSetIter);
 	iNum = cArray.NumElements();
 	AssertInt(0, iNum);
-	cArray.Iterate(&sSetIter);
+	bExists = cArray.Iterate(&sSetIter, NULL);
+	AssertFalse(bExists);
 
 	cArray.RemoveDuringIteration(&sSetIter);
 	cArray.Kill();
@@ -173,6 +178,7 @@ void TestIteration(void)
 	CArrayUnknown			cArray;
 	CTestNamedUnknown*		pcTest;
 	SSetIterator			sSetIter;
+	bool					bExists;
 
 	cArray.Init();
 
@@ -185,22 +191,28 @@ void TestIteration(void)
 	pcTest = cArray.Add<CTestNamedUnknown>();
 	pcTest->Init("D");
 
-	pcTest = (CTestNamedUnknown*)cArray.StartIteration(&sSetIter);
+	bExists = cArray.StartIteration(&sSetIter, (CUnknown**)&pcTest);
+	AssertTrue(bExists);
 	AssertString("A", pcTest->GetName());
 	AssertInt(0, sSetIter.iIndex);
-	pcTest = (CTestNamedUnknown*)cArray.Iterate(&sSetIter);
+	bExists = cArray.Iterate(&sSetIter, (CUnknown**)&pcTest);
+	AssertTrue(bExists);
 	AssertString("B", pcTest->GetName());
 	AssertInt(1, sSetIter.iIndex);
-	pcTest = (CTestNamedUnknown*)cArray.Iterate(&sSetIter);
+	bExists = cArray.Iterate(&sSetIter, (CUnknown**)&pcTest);
+	AssertTrue(bExists);
 	AssertString("C", pcTest->GetName());
 	AssertInt(2, sSetIter.iIndex);
-	pcTest = (CTestNamedUnknown*)cArray.Iterate(&sSetIter);
+	bExists = cArray.Iterate(&sSetIter, (CUnknown**)&pcTest);
+	AssertTrue(bExists);
 	AssertString("D", pcTest->GetName());
 	AssertInt(3, sSetIter.iIndex);
-	pcTest = (CTestNamedUnknown*)cArray.Iterate(&sSetIter);
+	bExists = cArray.Iterate(&sSetIter, (CUnknown**)&pcTest);
+	AssertFalse(bExists);
 	AssertNull(pcTest);
 	AssertInt(4, sSetIter.iIndex);
-	pcTest = (CTestNamedUnknown*)cArray.Iterate(&sSetIter);
+	bExists = cArray.Iterate(&sSetIter, (CUnknown**)&pcTest);
+	AssertFalse(bExists);
 	AssertNull(pcTest);
 	AssertInt(4, sSetIter.iIndex);
 
