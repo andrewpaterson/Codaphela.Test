@@ -57,16 +57,13 @@ void TestIndexObjectPut(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexObjectDetach(void)
+void TestIndexObjectDetachInHeap(void)
 {
 	ObjectsInit();
 
 	{
 		Ptr<CRoot>					pRoot;
 		Ptr<CIndexObject>			pIndex;
-		Ptr<CTestObject>			pTest1;
-		Ptr<CTestObject>			pTest2;
-		Ptr<CTestObject>			pTest3;
 		STestObjectFreedNotifier	sNotifier1;
 		STestObjectFreedNotifier	sNotifier2;
 		STestObjectFreedNotifier	sNotifier3;
@@ -103,7 +100,7 @@ void TestIndexObjectDetach(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexObjectIterateNull(void)
+void TestIndexObjectIterateSafeNull(void)
 {
 	ObjectsInit();
 
@@ -183,6 +180,219 @@ void TestIndexObjectIterateNull(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexObjectIterateUnsafeNull(void)
+{
+	ObjectsInit();
+
+	{
+		Ptr<CRoot>						pRoot;
+		Ptr<CIndexObject>				pIndex;
+		Ptr<CTestObject>				pTest1;
+		Ptr<CTestObject>				pTest2;
+		Ptr<CTestObject>				pTest3;
+		STestObjectFreedNotifier		sNotifier1;
+		STestObjectFreedNotifier		sNotifier2;
+		STestObjectFreedNotifier		sNotifier3;
+		SIndexTreeMemoryUnsafeIterator	sIter;
+		bool							bExists;
+		CObject*						pcObject;
+
+		pRoot = ORoot();
+		pIndex = OMalloc<CIndexObject>();
+		pRoot->Add(pIndex);
+
+		pTest3 = OMalloc<CTestObject>(&sNotifier1);
+		pTest2 = OMalloc<CTestObject>(&sNotifier2);
+		pTest1 = OMalloc<CTestObject>(&sNotifier3);
+		pIndex->Put("shnork", pTest3);
+		pIndex->Put("shniqu", Null<CObject>());
+		pIndex->Put("shnerp", pTest2);
+		pIndex->Put("booger", pTest1);
+		pIndex->Put("bozzul", Null<CObject>());
+
+		AssertSize(5, pIndex->NumElements());
+		AssertSize(6, gcObjects.NumMemoryIndexes());
+
+		bExists = pIndex->GetIndexForTesting()->StartIteration(&sIter, (CUnknown**)&pcObject);
+		AssertTrue(bExists);
+		AssertPointer(&pTest1, pcObject);
+
+		bExists = pIndex->GetIndexForTesting()->Iterate(&sIter, (CUnknown**)&pcObject);
+		AssertTrue(bExists);
+		AssertNull(pcObject);
+
+		bExists = pIndex->GetIndexForTesting()->Iterate(&sIter, (CUnknown**)&pcObject);
+		AssertTrue(bExists);
+		AssertPointer(&pTest2, pcObject);
+
+		bExists = pIndex->GetIndexForTesting()->Iterate(&sIter, (CUnknown**)&pcObject);
+		AssertTrue(bExists);
+		AssertNull(pcObject);
+
+		bExists = pIndex->GetIndexForTesting()->Iterate(&sIter, (CUnknown**)&pcObject);
+		AssertTrue(bExists);
+		AssertPointer(&pTest3, pcObject);
+
+		bExists = pIndex->GetIndexForTesting()->Iterate(&sIter, (CUnknown**)&pcObject);
+		AssertFalse(bExists);
+		AssertNull(pcObject);
+	}
+
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexObjectRemove(void)
+{
+	ObjectsInit();
+
+	{
+		Ptr<CRoot>					pRoot;
+		Ptr<CIndexObject>			pIndex;
+		Ptr<CTestObject>			pTest1;
+		Ptr<CTestObject>			pTest2;
+		Ptr<CTestObject>			pTest3;
+		STestObjectFreedNotifier	sNotifier1;
+		STestObjectFreedNotifier	sNotifier2;
+		STestObjectFreedNotifier	sNotifier3;
+
+		pRoot = ORoot();
+		pIndex = OMalloc<CIndexObject>();
+		pRoot->Add(pIndex);
+
+		pIndex->Put("shnork", OMalloc<CTestObject>(&sNotifier3));
+		pIndex->Put("shnerp", OMalloc<CTestObject>(&sNotifier2));
+		pIndex->Put("booger", OMalloc<CTestObject>(&sNotifier1));
+		AssertSize(3, pIndex->NumElements());
+		AssertSize(6, gcObjects.NumMemoryIndexes());
+
+		pIndex->Remove("shnerp");
+		AssertSize(2, pIndex->NumElements());
+		AssertSize(5, gcObjects.NumMemoryIndexes());
+		AssertFalse(sNotifier1.bFreed);
+		AssertTrue(sNotifier2.bFreed);
+		AssertFalse(sNotifier3.bFreed);
+
+		pTest1 = pIndex->Get("booger");
+		pIndex->Remove("booger");
+		AssertSize(1, pIndex->NumElements());
+		AssertSize(5, gcObjects.NumMemoryIndexes());
+		AssertFalse(sNotifier1.bFreed);
+		AssertTrue(sNotifier2.bFreed);
+		AssertFalse(sNotifier3.bFreed);
+	}
+
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexObjectDetachOnStack(void)
+{
+	ObjectsInit();
+
+	{
+		STestObjectFreedNotifier		sNotifier1;
+		STestObjectFreedNotifier		sNotifier2;
+		STestObjectFreedNotifier		sNotifier3;
+		bool							bExists;
+		SIndexTreeMemoryUnsafeIterator	sIter;
+		CTestObject*					pcObject;
+
+		{
+			CIndexObject			cIndex;
+
+			cIndex.Init();
+			cIndex.Put("shnork", OMalloc<CTestObject>(&sNotifier1));
+			cIndex.Put("shnerp", OMalloc<CTestObject>(&sNotifier2));
+			cIndex.Put("booger", OMalloc<CTestObject>(&sNotifier3));
+			AssertFalse(sNotifier1.bFreed);
+			AssertFalse(sNotifier2.bFreed);
+			AssertFalse(sNotifier3.bFreed);
+			AssertSize(3, cIndex.NumElements());
+			AssertSize(3, gcObjects.NumMemoryIndexes());
+
+			bExists = cIndex.GetIndexForTesting()->StartIteration(&sIter, (CUnknown**)&pcObject);
+			while (bExists)
+			{
+				AssertIntHex(0x7070707, pcObject->mi);
+				bExists = cIndex.GetIndexForTesting()->Iterate(&sIter, (CUnknown**)&pcObject);
+			}
+		}
+
+		AssertSize(0, gcObjects.NumMemoryIndexes());
+		AssertTrue(sNotifier1.bFreed);
+		AssertTrue(sNotifier2.bFreed);
+		AssertTrue(sNotifier3.bFreed);
+	}
+
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexObjectGetPointerTos(void)
+{
+	ObjectsInit();
+
+	{
+		Ptr<CRoot>							pRoot;
+		Ptr<CIndexObject>					pIndex;
+		Ptr<CTestObject>					pTest1;
+		Ptr<CTestObject>					pTest2;
+		Ptr<CTestObject>					pTest3;
+		STestObjectFreedNotifier			sNotifier1;
+		STestObjectFreedNotifier			sNotifier2;
+		STestObjectFreedNotifier			sNotifier3;
+		CArrayTemplateEmbeddedObjectPtr		apcTos;
+
+		pRoot = ORoot();
+		pIndex = OMalloc<CIndexObject>();
+		pRoot->Add(pIndex);
+
+		pTest3 = OMalloc<CTestObject>(&sNotifier1);
+		pTest2 = OMalloc<CTestObject>(&sNotifier2);
+		pTest1 = OMalloc<CTestObject>(&sNotifier3);
+		pIndex->Put("shnork", pTest3);
+		pIndex->Put("shniqu", Null<CObject>());
+		pIndex->Put("shnerp", pTest2);
+		pIndex->Put("booger", pTest1);
+		pIndex->Put("bozzul", Null<CObject>());
+
+		AssertSize(5, pIndex->NumElements());
+		AssertSize(6, gcObjects.NumMemoryIndexes());
+
+		apcTos.Init();
+		pIndex->GetPointerTos(&apcTos);
+		AssertSize(3, apcTos.NumElements());
+		AssertTrue(apcTos.ContainsVoidPtr(&pTest1));
+		AssertTrue(apcTos.ContainsVoidPtr(&pTest2));
+		AssertTrue(apcTos.ContainsVoidPtr(&pTest3));
+		apcTos.Kill();
+	}
+
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexObject(void)
 {
 	BeginTests();
@@ -190,9 +400,13 @@ void TestIndexObject(void)
 	TypesInit();
 	DataIOInit();
 
-	//TestIndexObjectPut();
-	//TestIndexObjectDetach();
-	TestIndexObjectIterateNull();
+	TestIndexObjectPut();
+	TestIndexObjectDetachInHeap();
+	TestIndexObjectIterateSafeNull();
+	TestIndexObjectIterateUnsafeNull();
+	TestIndexObjectRemove();
+	TestIndexObjectDetachOnStack();
+	TestIndexObjectGetPointerTos();
 
 	DataIOKill();
 	TypesKill();
