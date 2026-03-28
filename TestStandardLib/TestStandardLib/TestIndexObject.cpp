@@ -468,6 +468,124 @@ void TestIndexObjectPointerFromsHeap(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexObjectPointerFromsStack(void)
+{
+	ObjectsInit();
+
+	{
+		CIndexObject						cIndex;
+		Ptr<CTestObject>					pTest1;
+		Ptr<CTestObject>					pTest2;
+		Ptr<CTestObject>					pTest3;
+		STestObjectFreedNotifier			sNotifier1;
+		STestObjectFreedNotifier			sNotifier2;
+		STestObjectFreedNotifier			sNotifier3;
+
+		gcObjects.ValidateObjectsConsistency();
+
+		cIndex.Init();
+		pTest3 = OMalloc<CTestObject>(&sNotifier1);
+		pTest2 = OMalloc<CTestObject>(&sNotifier2);
+		pTest1 = OMalloc<CTestObject>(&sNotifier3);
+		cIndex.Put("booger", pTest1);
+		cIndex.Put("shnerp", pTest2);
+		cIndex.Put("shnork", pTest3);
+		AssertSize(2, pTest1->NumStackFroms());
+		AssertSize(2, pTest2->NumStackFroms());
+		AssertSize(2, pTest3->NumStackFroms());
+		AssertSize(3, cIndex.NumElements());
+
+		cIndex.Remove("booger");
+		AssertSize(1, pTest1->NumStackFroms());
+		AssertSize(2, pTest2->NumStackFroms());
+		AssertSize(2, pTest3->NumStackFroms());
+		AssertSize(2, cIndex.NumElements());
+
+		cIndex.RemoveAll();
+		AssertSize(1, pTest1->NumStackFroms());
+		AssertSize(1, pTest2->NumStackFroms());
+		AssertSize(1, pTest3->NumStackFroms());
+		AssertSize(0, cIndex.NumElements());
+
+		cIndex.Put("abcde", pTest1);
+		AssertSize(2, pTest1->NumStackFroms());
+		AssertSize(1, pTest2->NumStackFroms());
+		AssertSize(1, pTest3->NumStackFroms());
+		AssertSize(1, cIndex.NumElements());
+
+		cIndex.Put("abcdf", pTest1);
+		AssertSize(3, pTest1->NumStackFroms());
+		AssertSize(1, pTest2->NumStackFroms());
+		AssertSize(1, pTest3->NumStackFroms());
+		AssertSize(2, cIndex.NumElements());
+
+		cIndex.Remove("abcde");
+		AssertSize(2, pTest1->NumStackFroms());
+		AssertSize(1, pTest2->NumStackFroms());
+		AssertSize(1, pTest3->NumStackFroms());
+		AssertSize(1, cIndex.NumElements());
+
+		cIndex.Remove("abcdf");
+		AssertSize(1, pTest1->NumStackFroms());
+		AssertSize(1, pTest2->NumStackFroms());
+		AssertSize(1, pTest3->NumStackFroms());
+		AssertSize(0, cIndex.NumElements());
+
+		pTest1 = NULL;
+		pTest2 = NULL;
+		pTest3 = NULL;
+	}
+
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexObjectPutOverwrite(void)
+{
+	ObjectsInit();
+
+	{
+		Ptr<CRoot>							pRoot;
+		Ptr<CIndexObject>					pIndex;
+		Ptr<CTestObject>					pTest1;
+		Ptr<CTestObject>					pTest2;
+		STestObjectFreedNotifier			sNotifier1;
+		STestObjectFreedNotifier			sNotifier2;
+		bool								bResult;
+
+		pRoot = ORoot();
+		pIndex = OMalloc<CIndexObject>();
+		pRoot->Add(pIndex);
+
+		pTest2 = OMalloc<CTestObject>(&sNotifier2);
+		pTest1 = OMalloc<CTestObject>(&sNotifier1);
+		bResult = pIndex->Put("1", pTest2);
+		gcObjects.ValidateObjectsConsistency();
+		AssertTrue(bResult);
+		AssertSize(1, pIndex->NumElements());
+		AssertSize(5, gcObjects.NumMemoryIndexes());
+
+		bResult = pIndex->Put("1", pTest1);
+		gcObjects.ValidateObjectsConsistency();
+		AssertTrue(bResult);
+		AssertSize(1, pIndex->NumElements());
+		AssertSize(5, gcObjects.NumMemoryIndexes());
+	}
+
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexObject(void)
 {
 	BeginTests();
@@ -475,14 +593,16 @@ void TestIndexObject(void)
 	TypesInit();
 	DataIOInit();
 
-	//TestIndexObjectPut();
-	//TestIndexObjectDetachInHeap();
-	//TestIndexObjectIterateSafeNull();
-	//TestIndexObjectIterateUnsafeNull();
-	//TestIndexObjectRemove();
-	//TestIndexObjectDetachOnStack();
-	//TestIndexObjectGetPointerTos();
+	TestIndexObjectPut();
+	TestIndexObjectDetachInHeap();
+	TestIndexObjectIterateSafeNull();
+	TestIndexObjectIterateUnsafeNull();
+	TestIndexObjectRemove();
+	TestIndexObjectDetachOnStack();
+	TestIndexObjectGetPointerTos();
 	TestIndexObjectPointerFromsHeap();
+	TestIndexObjectPointerFromsStack();
+	TestIndexObjectPutOverwrite();
 
 	DataIOKill();
 	TypesKill();
