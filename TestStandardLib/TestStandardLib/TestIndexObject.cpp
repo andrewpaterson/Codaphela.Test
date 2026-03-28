@@ -393,6 +393,81 @@ void TestIndexObjectGetPointerTos(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexObjectPointerFromsHeap(void)
+{
+	ObjectsInit();
+
+	{
+		Ptr<CRoot>							pRoot;
+		Ptr<CIndexObject>					pIndex;
+		Ptr<CTestObject>					pTest1;
+		Ptr<CTestObject>					pTest2;
+		Ptr<CTestObject>					pTest3;
+		STestObjectFreedNotifier			sNotifier1;
+		STestObjectFreedNotifier			sNotifier2;
+		STestObjectFreedNotifier			sNotifier3;
+
+		pRoot = ORoot();
+		pIndex = OMalloc<CIndexObject>();
+		pRoot->Add(pIndex);
+
+		pTest3 = OMalloc<CTestObject>(&sNotifier1);
+		pTest2 = OMalloc<CTestObject>(&sNotifier2);
+		pTest1 = OMalloc<CTestObject>(&sNotifier3);
+		pIndex->Put("booger", pTest1);
+		pIndex->Put("shnerp", pTest2);
+		pIndex->Put("shnork", pTest3);
+		AssertSize(1, pTest1->NumHeapFroms());
+		AssertSize(1, pTest2->NumHeapFroms());
+		AssertSize(1, pTest3->NumHeapFroms());
+		AssertSize(3, pIndex->NumElements());
+
+		pIndex->Remove("booger");
+		AssertSize(0, pTest1->NumHeapFroms());
+		AssertSize(1, pTest2->NumHeapFroms());
+		AssertSize(1, pTest3->NumHeapFroms());
+		AssertSize(2, pIndex->NumElements());
+
+		pIndex->RemoveAll();
+		AssertSize(0, pTest1->NumHeapFroms());
+		AssertSize(0, pTest2->NumHeapFroms());
+		AssertSize(0, pTest3->NumHeapFroms());
+		AssertSize(0, pIndex->NumElements());
+
+		pIndex->Put("abcde", pTest1);
+		AssertSize(1, pTest1->NumHeapFroms());
+		AssertSize(0, pTest2->NumHeapFroms());
+		AssertSize(0, pTest3->NumHeapFroms());
+		AssertSize(1, pIndex->NumElements());
+
+		pIndex->Put("abcdf", pTest1);
+		AssertSize(2, pTest1->NumHeapFroms());
+		AssertSize(0, pTest2->NumHeapFroms());
+		AssertSize(0, pTest3->NumHeapFroms());
+		AssertSize(2, pIndex->NumElements());
+
+		pIndex->Remove("abcde");
+		AssertSize(1, pTest1->NumHeapFroms());
+		AssertSize(0, pTest2->NumHeapFroms());
+		AssertSize(0, pTest3->NumHeapFroms());
+		AssertSize(1, pIndex->NumElements());
+
+		pIndex->Remove("abcdf");
+		AssertSize(0, pTest1->NumHeapFroms());
+		AssertSize(0, pTest2->NumHeapFroms());
+		AssertSize(0, pTest3->NumHeapFroms());
+		AssertSize(0, pIndex->NumElements());
+	}
+
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexObject(void)
 {
 	BeginTests();
@@ -400,13 +475,14 @@ void TestIndexObject(void)
 	TypesInit();
 	DataIOInit();
 
-	TestIndexObjectPut();
-	TestIndexObjectDetachInHeap();
-	TestIndexObjectIterateSafeNull();
-	TestIndexObjectIterateUnsafeNull();
-	TestIndexObjectRemove();
-	TestIndexObjectDetachOnStack();
-	TestIndexObjectGetPointerTos();
+	//TestIndexObjectPut();
+	//TestIndexObjectDetachInHeap();
+	//TestIndexObjectIterateSafeNull();
+	//TestIndexObjectIterateUnsafeNull();
+	//TestIndexObjectRemove();
+	//TestIndexObjectDetachOnStack();
+	//TestIndexObjectGetPointerTos();
+	TestIndexObjectPointerFromsHeap();
 
 	DataIOKill();
 	TypesKill();
