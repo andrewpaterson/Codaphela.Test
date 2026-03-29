@@ -568,12 +568,15 @@ void TestIndexObjectPutOverwrite(void)
 		AssertTrue(bResult);
 		AssertSize(1, pIndex->NumElements());
 		AssertSize(5, gcObjects.NumMemoryIndexes());
+		pTest2 = NULL;
+		AssertFalse(sNotifier2.bFreed);
 
 		bResult = pIndex->Put("1", pTest1);
 		gcObjects.ValidateObjectsConsistency();
 		AssertTrue(bResult);
 		AssertSize(1, pIndex->NumElements());
-		AssertSize(5, gcObjects.NumMemoryIndexes());
+		AssertSize(4, gcObjects.NumMemoryIndexes());
+		AssertTrue(sNotifier2.bFreed);
 	}
 	ObjectsFlush();
 	ObjectsKill();

@@ -261,7 +261,9 @@ void TestObjectPointerRemapping(void)
 	AssertPointer(pRoot->TestGetSet(), pObject1->GetHeapFrom(0));
 
 	p4 = gcObjects.Get(4LL);
+	gcObjects.ValidateObjectsConsistency();
 	p5 = gcObjects.Get(5LL);
+	gcObjects.ValidateObjectsConsistency();
 
 	AssertNull(&p4);
 	AssertPointer(&pObject3, &p5);
