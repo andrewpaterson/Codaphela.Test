@@ -11,7 +11,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayCommonPointerRemapping(void)
+void TestArrayCommonObjectPointerRemapping(void)
 {
 	Ptr<CArrayCommonObject>		pArray;
 	Ptr<CRoot>					pRoot;
@@ -91,7 +91,7 @@ void TestArrayCommonObject(void)
 	TypesInit();
 	DataIOInit();
 
-	TestArrayCommonPointerRemapping();
+	TestArrayCommonObjectPointerRemapping();
 
 	DataIOKill();
 	TypesKill();

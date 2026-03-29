@@ -253,7 +253,7 @@ void TestSetRemoveAll(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSetSerialisation()
+void TestSetSerialisation(void)
 {
 	ObjectsInit();
 	TestSetAddConstructors();

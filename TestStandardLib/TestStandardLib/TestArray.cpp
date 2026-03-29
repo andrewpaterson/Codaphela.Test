@@ -1,10 +1,27 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "BaseLib/TypeNames.h"
-#include "StandardLib/Array.h"
+#include "StandardLib/ArrayObject.h"
 #include "StandardLib/Objects.h"
+#include "StandardLib/ExternalObjectDeserialiser.h"
+#include "StandardLib/ExternalObjectSerialiser.h"
+#include "StandardLib/ChunkFileObjectWriter.h"
+#include "StandardLib/ChunkFileSystemObjectReader.h"
+#include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayAddConstructors(void)
+{
+	gcObjects.AddConstructor<CTestSaveableObject1>();
+	gcObjects.AddConstructor<CTestObject>();
+	gcObjects.AddConstructor<CPointerContainer>();
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -275,6 +292,144 @@ void TestArrayOnStackRemoveObject(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestArrayConstructorExists(void)
+{
+	CConstructors*	pcConstructors;
+	CArrayObject*	pcArray;
+
+	ObjectsInit();
+
+	pcConstructors = gcObjects.GetConstructors();
+	pcArray = pcConstructors->Get<CArrayObject>();
+	AssertNotNull(pcArray);
+	AssertString("CArrayObject", pcArray->ClassName());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayClassExists(void)
+{
+	CClasses*		pcClasses;
+	CClass*			pcClass;
+
+	ObjectsInit();
+
+	CArrayObject	cArray;
+
+	pcClasses = gcObjects.GetClasses();
+	pcClass = pcClasses->Get(cArray.ClassName());
+	AssertNotNull(pcClass);
+	AssertString("CArrayObject", pcClass->GetName());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArraySerialisation(void)
+{
+	CFileUtil	cFileUtil;
+	bool		bResult;
+	char		szDirectory[] = "Output" _FS_ "TestArray";
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	ObjectsInit();
+	TestArrayAddConstructors();
+	{
+		Ptr<CPointerContainer>			pContainer1;
+		Ptr<CPointerContainer>			pContainer2;
+		Ptr<CPointerContainer>			pContainer3;
+		Ptr<CTestObject>				pObject;
+		Ptr<CArrayObject>				pArray;
+		CExternalObjectSerialiser		cSerialiser;
+		CChunkFileObjectWriter			cWriter;
+		CExternalObjectDeserialiser		cDeserialiser;
+		CChunkFileSystemObjectReader 	cReader;
+
+		pObject = OMalloc<CTestObject>();
+		pContainer2 = OMalloc<CPointerContainer>(pObject);
+		pContainer1 = OMalloc<CPointerContainer>(pContainer2);
+		pContainer3 = OMalloc<CPointerContainer>(Null());
+		pArray = ONMalloc<CArrayObject>("Orbis");
+		pArray->Add(pContainer1);
+		pArray->Add(pContainer2);
+		pArray->Add(pContainer3);
+
+		AssertLong(5, gcObjects.NumMemoryIndexes());
+		AssertInt(3, pArray->NumElements());
+
+		cWriter.Init(szDirectory, "", "File");
+		cSerialiser.Init(&cWriter);
+		bResult = cSerialiser.Write(&pArray);
+		cSerialiser.Kill();
+		cWriter.Kill();
+	}
+	ObjectsKill();
+	ObjectsInit();
+	{
+		CPointer						pPointer1;
+		CPointer						pPointer2;
+		CPointer						pPointer3;
+		CPointer						pPointer4;
+		Ptr<CArrayObject>				pArray;
+		CChunkFileObjectWriter			cWriter;
+		CExternalObjectDeserialiser		cDeserialiser;
+		CChunkFileSystemObjectReader 	cReader;
+
+		cReader.Init(szDirectory, "File");
+		cDeserialiser.Init(&cReader, false, &gcObjects);
+		pArray = cDeserialiser.Read("Orbis");
+		AssertNotNull(&pArray);
+		pPointer1 = pArray->Get(0);
+		pPointer2 = pArray->Get(1);
+		pPointer3 = pArray->Get(2);
+		AssertTrue(pPointer1.IsNotNull());
+		AssertTrue(pPointer2.IsNotNull());
+		AssertTrue(pPointer3.IsNotNull());
+		AssertString("CPointerContainer", pPointer1->ClassName());
+		AssertString("CPointerContainer", pPointer2->ClassName());
+		AssertString("CPointerContainer", pPointer3->ClassName());
+
+		Ptr<CPointerContainer>			pContainer1;
+		Ptr<CPointerContainer>			pContainer2;
+		Ptr<CPointerContainer>			pContainer3;
+		Ptr<CTestObject>				pObject;
+		pContainer1 = pPointer1;
+		pContainer2 = pPointer2;
+		pContainer3 = pPointer3;
+		AssertTrue(pContainer1->mp.IsNotNull());
+		AssertTrue(pContainer2->mp.IsNotNull());
+		AssertTrue(pContainer3->mp.IsNull());
+		AssertString("CPointerContainer", pContainer1->mp->ClassName());
+		AssertString("CTestObject", pContainer2->mp->ClassName());
+		AssertPointer(&pContainer1->mp, &pContainer2);
+		
+		cDeserialiser.Kill();
+		cReader.Kill();
+
+		pArray = NULL;
+	}
+	ObjectsFlush();
+	ObjectsKill();
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestArray(void)
 {
 	BeginTests();
@@ -291,6 +446,9 @@ void TestArray(void)
 	TestArraySneakyOnStack();
 	TestArrayOnStackKill();
 	TestArrayOnStackRemoveObject();
+	TestArrayConstructorExists();
+	TestArrayClassExists();
+	TestArraySerialisation();
 
 	DataIOKill();
 	TypesKill();

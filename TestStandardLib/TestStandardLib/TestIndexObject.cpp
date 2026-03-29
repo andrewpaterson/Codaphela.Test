@@ -1,10 +1,28 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "BaseLib/TypeNames.h"
+#include "BaseLib/DataOrderers.h"
 #include "StandardLib/IndexObject.h"
 #include "StandardLib/Objects.h"
+#include "StandardLib/ExternalObjectDeserialiser.h"
+#include "StandardLib/ExternalObjectSerialiser.h"
+#include "StandardLib/ChunkFileObjectWriter.h"
+#include "StandardLib/ChunkFileSystemObjectReader.h"
+#include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexObjectAddConstructors(void)
+{
+	gcObjects.AddConstructor<CTestSaveableObject1>();
+	gcObjects.AddConstructor<CTestObject>();
+	gcObjects.AddConstructor<CPointerContainer>();
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -586,6 +604,145 @@ void TestIndexObjectPutOverwrite(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexObjectSerialisation()
+{
+	CFileUtil	cFileUtil;
+	bool		bResult;
+	char		szDirectory[] = "Output" _FS_ "TestIndexObject";
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	DataOrderersInit();
+	ObjectsInit();
+	TestIndexObjectAddConstructors();
+	{
+		Ptr<CPointerContainer>			pContainer1;
+		Ptr<CPointerContainer>			pContainer2;
+		Ptr<CPointerContainer>			pContainer3;
+		Ptr<CTestObject>				pObject;
+		Ptr<CIndexObject>				pIndexObject;
+		CExternalObjectSerialiser		cSerialiser;
+		CChunkFileObjectWriter			cWriter;
+		CExternalObjectDeserialiser		cDeserialiser;
+		CChunkFileSystemObjectReader 	cReader;
+
+		pObject = OMalloc<CTestObject>();
+		pContainer2 = OMalloc<CPointerContainer>(pObject);
+		pContainer1 = OMalloc<CPointerContainer>(pContainer2);
+		pContainer3 = OMalloc<CPointerContainer>(Null());
+		pIndexObject = ONMalloc<CIndexObject>("Orbis");
+		pIndexObject->Put("Hun", pContainer1);
+		pIndexObject->Put("Koya", pContainer2);
+		pIndexObject->Put("Tokka", pContainer3);
+
+		AssertLong(5, gcObjects.NumMemoryIndexes());
+		AssertInt(3, pIndexObject->NumElements());
+
+		cWriter.Init(szDirectory, "", "File");
+		cSerialiser.Init(&cWriter);
+		bResult = cSerialiser.Write(&pIndexObject);
+		cSerialiser.Kill();
+		cWriter.Kill();
+	}
+	ObjectsKill();
+	ObjectsInit();
+	{
+		CPointer						pPointer1;
+		CPointer						pPointer2;
+		CPointer						pPointer3;
+		CPointer						pPointer4;
+		Ptr<CIndexObject>				pIndexObject;
+		CChunkFileObjectWriter			cWriter;
+		CExternalObjectDeserialiser		cDeserialiser;
+		CChunkFileSystemObjectReader 	cReader;
+
+		cReader.Init(szDirectory, "File");
+		cDeserialiser.Init(&cReader, false, &gcObjects);
+		pIndexObject = cDeserialiser.Read("Orbis");
+		AssertNotNull(&pIndexObject);
+		pPointer1 = pIndexObject->Get("Hun");
+		pPointer2 = pIndexObject->Get("Koya");
+		pPointer3 = pIndexObject->Get("Tokka");
+		AssertTrue(pPointer1.IsNotNull());
+		AssertTrue(pPointer2.IsNotNull());
+		AssertTrue(pPointer3.IsNotNull());
+		AssertString("CPointerContainer", pPointer1->ClassName());
+		AssertString("CPointerContainer", pPointer2->ClassName());
+		AssertString("CPointerContainer", pPointer3->ClassName());
+
+		Ptr<CPointerContainer>			pContainer1;
+		Ptr<CPointerContainer>			pContainer2;
+		Ptr<CPointerContainer>			pContainer3;
+		Ptr<CTestObject>				pObject;
+		pContainer1 = pPointer1;
+		pContainer2 = pPointer2;
+		pContainer3 = pPointer3;
+		AssertTrue(pContainer1->mp.IsNotNull());
+		AssertTrue(pContainer2->mp.IsNotNull());
+		AssertTrue(pContainer3->mp.IsNull());
+		AssertString("CPointerContainer", pContainer1->mp->ClassName());
+		AssertString("CTestObject", pContainer2->mp->ClassName());
+		AssertPointer(&pContainer1->mp, &pContainer2);
+
+		cDeserialiser.Kill();
+		cReader.Kill();
+
+		pIndexObject = NULL;
+	}
+	ObjectsFlush();
+	ObjectsKill();
+	DataOrderersKill();
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexObjectConstructorExists(void)
+{
+	CConstructors*	pcConstructors;
+	CIndexObject*	pcIndexObject;
+
+	ObjectsInit();
+
+	pcConstructors = gcObjects.GetConstructors();
+	pcIndexObject = pcConstructors->Get<CIndexObject>();
+	AssertNotNull(pcIndexObject);
+	AssertString("CIndexObject", pcIndexObject->ClassName());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexObjectClassExists(void)
+{
+	CClasses*		pcClasses;
+	CClass*			pcClass;
+
+	ObjectsInit();
+
+	CIndexObject	cIndexObject;
+
+	pcClasses = gcObjects.GetClasses();
+	pcClass = pcClasses->Get(cIndexObject.ClassName());
+	AssertNotNull(pcClass);
+	AssertString("CIndexObject", pcClass->GetName());
+
+	ObjectsKill();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexObject(void)
 {
 	BeginTests();
@@ -593,6 +750,8 @@ void TestIndexObject(void)
 	TypesInit();
 	DataIOInit();
 
+	TestIndexObjectConstructorExists();
+	TestIndexObjectClassExists();
 	TestIndexObjectPut();
 	TestIndexObjectDetachInHeap();
 	TestIndexObjectIterateSafeNull();
@@ -603,6 +762,8 @@ void TestIndexObject(void)
 	TestIndexObjectPointerFromsHeap();
 	TestIndexObjectPointerFromsStack();
 	TestIndexObjectPutOverwrite();
+	TestIndexObjectSerialisation();
+	//TestIndexObjectMorphInto1();
 
 	DataIOKill();
 	TypesKill();
