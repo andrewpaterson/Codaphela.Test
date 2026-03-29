@@ -17,9 +17,9 @@ void TestDistToStackSimpleOneStep(void)
 {
 	ObjectsInit();
 
-	Ptr<CNamedPointerContainer>	p1 = ONMalloc<CNamedPointerContainer>("Pointer A");
-	Ptr<CNamedPointerContainer>	p2 = ONMalloc<CNamedPointerContainer>("Pointer B");
-	Ptr<CNamedPointerContainer> p3 = ONMalloc<CNamedPointerContainer>("Pointer C");
+	Ptr<CPointerContainer>	p1 = ONMalloc<CPointerContainer>("Pointer A");
+	Ptr<CPointerContainer>	p2 = ONMalloc<CPointerContainer>("Pointer B");
+	Ptr<CPointerContainer> p3 = ONMalloc<CPointerContainer>("Pointer C");
 	AssertInt(0, p2->NumHeapFroms());
 	AssertInt(0, p1->NumHeapFroms());
 	AssertInt(0, p3->NumHeapFroms());
@@ -78,9 +78,9 @@ void TestDistToStackSimpleTwoStep(void)
 {
 	ObjectsInit();
 
-	Ptr<CNamedPointerContainer>	p1 = ONMalloc<CNamedPointerContainer>("Pointer A");
-	Ptr<CNamedPointerContainer>	p2 = ONMalloc<CNamedPointerContainer>("Pointer B");
-	Ptr<CNamedPointerContainer> p3 = ONMalloc<CNamedPointerContainer>("Pointer C");
+	Ptr<CPointerContainer>	p1 = ONMalloc<CPointerContainer>("Pointer A");
+	Ptr<CPointerContainer>	p2 = ONMalloc<CPointerContainer>("Pointer B");
+	Ptr<CPointerContainer> p3 = ONMalloc<CPointerContainer>("Pointer C");
 	AssertInt(3, (int)gcObjects.NumMemoryIndexes());
 	AssertInt(0, p2->NumHeapFroms());
 
@@ -142,15 +142,15 @@ void TestDistToStackSimpleHeap(void)
 {
 	ObjectsInit();
 
-	CNamedPointerContainer*		pc2;
-	CNamedPointerContainer*		pc3;
+	CPointerContainer*		pc2;
+	CPointerContainer*		pc3;
 
 	CDistCalculatorParameters	cParameters;
 	CDistToStackCalculator		cDistToStackCalculator;
 
-	Ptr<CNamedPointerContainer>	p1 = ONMalloc<CNamedPointerContainer>("Pointer A");
-	Ptr<CNamedPointerContainer>	p2 = ONMalloc<CNamedPointerContainer>("Pointer B");
-	Ptr<CNamedPointerContainer> p3 = ONMalloc<CNamedPointerContainer>("Pointer C");
+	Ptr<CPointerContainer>	p1 = ONMalloc<CPointerContainer>("Pointer A");
+	Ptr<CPointerContainer>	p2 = ONMalloc<CPointerContainer>("Pointer B");
+	Ptr<CPointerContainer> p3 = ONMalloc<CPointerContainer>("Pointer C");
 
 	AssertInt(3, (int)gcObjects.NumMemoryIndexes());
 	AssertInt(0, p2->NumHeapFroms());
@@ -225,19 +225,19 @@ void TestDistToStackRootCyclicWithStackPointerA(void)
 	CDistToRootCalculator		cDistToRootCalculator;
 	CDistToStackCalculator		cDistToStackCalculator;
 	CDistCalculatorParameters	cDistParameters;
-	CNamedPointerContainer*		pc1;
-	CNamedPointerContainer*		pc2;
-	CNamedPointerContainer*		pc3;
+	CPointerContainer*		pc1;
+	CPointerContainer*		pc2;
+	CPointerContainer*		pc3;
 
-	Ptr<CNamedPointerContainer>	p1 = ONMalloc<CNamedPointerContainer>("Pointer A");
-	Ptr<CNamedPointerContainer>	p2 = ONMalloc<CNamedPointerContainer>("Pointer B");
-	Ptr<CNamedPointerContainer>	p3 = ONMalloc<CNamedPointerContainer>("Pointer C");
+	Ptr<CPointerContainer>	p1 = ONMalloc<CPointerContainer>("Pointer A");
+	Ptr<CPointerContainer>	p2 = ONMalloc<CPointerContainer>("Pointer B");
+	Ptr<CPointerContainer>	p3 = ONMalloc<CPointerContainer>("Pointer C");
 	p1->mp = p2;
 	p2->mp = p3;
 	p3->mp = p1;
 
 	Ptr<CRoot> pRoot = ORoot();
-	Ptr<CNamedPointerContainer>	p0 = ONMalloc<CNamedPointerContainer>("Test Helper", p1);
+	Ptr<CPointerContainer>	p0 = ONMalloc<CPointerContainer>("Test Helper", p1);
 	pRoot->Add(p0);
 
 	Ptr<CPointerContainer> pStack = OMalloc<CPointerContainer>(p2);
@@ -295,19 +295,19 @@ void TestDistToStackRootCyclicWithStackPointerB(void)
 	CDistToRootCalculator		cDistToRootCalculator;
 	CDistToStackCalculator		cDistToStackCalculator;
 	CDistCalculatorParameters	cDistParameters;
-	CNamedPointerContainer*		pc1;
-	CNamedPointerContainer*		pc2;
-	CNamedPointerContainer*		pc3;
+	CPointerContainer*		pc1;
+	CPointerContainer*		pc2;
+	CPointerContainer*		pc3;
 
-	Ptr<CNamedPointerContainer>	p1 = ONMalloc<CNamedPointerContainer>("Pointer A");
-	Ptr<CNamedPointerContainer>	p2 = ONMalloc<CNamedPointerContainer>("Pointer B");
-	Ptr<CNamedPointerContainer>	p3 = ONMalloc<CNamedPointerContainer>("Pointer C");
+	Ptr<CPointerContainer>	p1 = ONMalloc<CPointerContainer>("Pointer A");
+	Ptr<CPointerContainer>	p2 = ONMalloc<CPointerContainer>("Pointer B");
+	Ptr<CPointerContainer>	p3 = ONMalloc<CPointerContainer>("Pointer C");
 	p1->mp = p2;
 	p2->mp = p3;
 	p3->mp = p1;
 
 	Ptr<CRoot> pRoot = ORoot();
-	Ptr<CNamedPointerContainer>	p0 = ONMalloc<CNamedPointerContainer>("Test Helper", p1);
+	Ptr<CPointerContainer>	p0 = ONMalloc<CPointerContainer>("Test Helper", p1);
 	pRoot->Add(p0);
 
 	Ptr<CPointerContainer> pStack = OMalloc<CPointerContainer>(p1);
@@ -363,19 +363,19 @@ void TestDistToStackRootCyclicWithStackPointerC(void)
 	CDistToRootCalculator		cDistToRootCalculator;
 	CDistToStackCalculator		cDistToStackCalculator;
 	CDistCalculatorParameters	cDistParameters;
-	CNamedPointerContainer*		pc1;
-	CNamedPointerContainer*		pc2;
-	CNamedPointerContainer*		pc3;
+	CPointerContainer*		pc1;
+	CPointerContainer*		pc2;
+	CPointerContainer*		pc3;
 
-	Ptr<CNamedPointerContainer>	p1 = ONMalloc<CNamedPointerContainer>("Pointer A");
-	Ptr<CNamedPointerContainer>	p2 = ONMalloc<CNamedPointerContainer>("Pointer B");
-	Ptr<CNamedPointerContainer>	p3 = ONMalloc<CNamedPointerContainer>("Pointer C");
+	Ptr<CPointerContainer>	p1 = ONMalloc<CPointerContainer>("Pointer A");
+	Ptr<CPointerContainer>	p2 = ONMalloc<CPointerContainer>("Pointer B");
+	Ptr<CPointerContainer>	p3 = ONMalloc<CPointerContainer>("Pointer C");
 	p1->mp = p2;
 	p2->mp = p3;
 	p3->mp = p1;
 
 	Ptr<CRoot> pRoot = ORoot();
-	Ptr<CNamedPointerContainer>	p0 = ONMalloc<CNamedPointerContainer>("Test Helper", p1);
+	Ptr<CPointerContainer>	p0 = ONMalloc<CPointerContainer>("Test Helper", p1);
 	pRoot->Add(p0);
 
 	Ptr<CPointerContainer> pStack = OMalloc<CPointerContainer>(p3);
@@ -431,19 +431,19 @@ void TestDistToStackRootCyclicWithoutStackPointer(void)
 	CDistToRootCalculator		cDistToRootCalculator;
 	CDistToStackCalculator		cDistToStackCalculator;
 	CDistCalculatorParameters	cDistParameters;
-	CNamedPointerContainer*		pc1;
-	CNamedPointerContainer*		pc2;
-	CNamedPointerContainer*		pc3;
+	CPointerContainer*		pc1;
+	CPointerContainer*		pc2;
+	CPointerContainer*		pc3;
 
-	Ptr<CNamedPointerContainer>	p1 = ONMalloc<CNamedPointerContainer>("Pointer A");
-	Ptr<CNamedPointerContainer>	p2 = ONMalloc<CNamedPointerContainer>("Pointer B");
-	Ptr<CNamedPointerContainer>	p3 = ONMalloc<CNamedPointerContainer>("Pointer C");
+	Ptr<CPointerContainer>	p1 = ONMalloc<CPointerContainer>("Pointer A");
+	Ptr<CPointerContainer>	p2 = ONMalloc<CPointerContainer>("Pointer B");
+	Ptr<CPointerContainer>	p3 = ONMalloc<CPointerContainer>("Pointer C");
 	p1->mp = p2;
 	p2->mp = p3;
 	p3->mp = p1;
 
 	Ptr<CRoot> pRoot = ORoot();
-	Ptr<CNamedPointerContainer>	p0 = ONMalloc<CNamedPointerContainer>("Test Helper", p1);
+	Ptr<CPointerContainer>	p0 = ONMalloc<CPointerContainer>("Test Helper", p1);
 	pRoot->Add(p0);
 
 	//
@@ -522,8 +522,8 @@ void TestDistToStackSplitRootAndStack(void)
 	CTestObject*				pcTestL2;
 	CTestObject*				pcTestR1;
 	CTestObject*				pcTestR2;
-	CNamedPointerContainer*		pcC;
-	CNamedPointerContainer*		pcL1;
+	CPointerContainer*		pcC;
+	CPointerContainer*		pcL1;
 
 	Ptr<CTestObject>	pTestC = OMalloc<CTestObject>();
 	Ptr<CTestObject>	pTestL1 = OMalloc<CTestObject>();
@@ -537,8 +537,8 @@ void TestDistToStackSplitRootAndStack(void)
 	pTestC->mpObject = pTestR1;
 
 	Ptr<CRoot> pRoot = ORoot();
-	Ptr<CNamedPointerContainer>	pC = ONMalloc<CNamedPointerContainer>("Test Helper Center", pTestC);
-	Ptr<CNamedPointerContainer>	pL1 = ONMalloc<CNamedPointerContainer>("Test Helper Left", pTestL1);
+	Ptr<CPointerContainer>	pC = ONMalloc<CPointerContainer>("Test Helper Center", pTestC);
+	Ptr<CPointerContainer>	pL1 = ONMalloc<CPointerContainer>("Test Helper Left", pTestL1);
 	pRoot->Add(pC);
 	pRoot->Add(pL1);
 
