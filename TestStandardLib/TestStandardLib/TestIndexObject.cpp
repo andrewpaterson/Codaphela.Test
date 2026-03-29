@@ -724,7 +724,7 @@ void TestIndexObjectClassExists(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexObjectMorphInto1(void)
+void TestIndexObjectMorphInto(void)
 {
 	ObjectsInit();
 	{
@@ -824,7 +824,7 @@ void TestIndexObject(void)
 	TestIndexObjectPointerFromsStack();
 	TestIndexObjectPutOverwrite();
 	TestIndexObjectSerialisation();
-	TestIndexObjectMorphInto1();
+	TestIndexObjectMorphInto();
 
 	DataIOKill();
 	TypesKill();
