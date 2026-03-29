@@ -85,7 +85,7 @@ void TestObjectMorphIntoSimple(void)
 	//        -
 
 	iNumRemapped = pTest3.MorphInto(&pTest10);
-	AssertInt(1, iNumRemapped);
+	AssertInt(2, iNumRemapped);  //This includes stack pointers and heap pointers.
 	AssertPointer(&pTest10, &pTest3);
 
 	AssertPointer(&pTest2, &pTest1->mpObject);
@@ -244,7 +244,7 @@ void TestObjectPointerRemapping(void)
 
 	pcObject2 = (CTestObject*)pObject2.Object();
 	iNumRemapped = pObject2.MorphInto(&pObject3);
-	AssertInt(1, iNumRemapped);
+	AssertInt(2, iNumRemapped);
 	AssertTrue(sFreedNotifier2.bFreed);
 	AssertFalse(sFreedNotifier3.bFreed);
 
@@ -324,7 +324,7 @@ void TestObjectPointerRemappingKilling(void)
 	AssertInt(1, pObject4->NumPointerTos());
 
 	iNumRemapped = pObject2.MorphInto(&pObject4);
-	AssertInt(1, iNumRemapped);
+	AssertInt(2, iNumRemapped);
 
 	AssertPointer(pcObject4, &pObject4);
 	AssertPointer(&pObject4, &pObject2);
@@ -568,7 +568,7 @@ void TestObjectMorphIntoComplex(void)
 
 	pcTest3 = (CTestObject*)pTest3.Object();
 	iNumRemapped = pTest3.MorphInto(&pTest10);
-	AssertInt(1, iNumRemapped);
+	AssertInt(2, iNumRemapped);
 
 	AssertPointer(&pTest2, &pTest1->mpObject);
 	AssertPointer(&pTest10, &pTest1->mpTest);

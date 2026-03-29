@@ -32,7 +32,6 @@ void TestIndexObjectAddConstructors(void)
 void TestIndexObjectPut(void)
 {
 	ObjectsInit();
-
 	{
 		Ptr<CRoot>					pRoot;
 		Ptr<CIndexObject>			pIndex;
@@ -65,7 +64,6 @@ void TestIndexObjectPut(void)
 		pTest3 = pIndex->Get("shnork");
 		AssertPointer(&sNotifier1, pTest3->mpsFreedNotifier);
 	}
-
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -78,7 +76,6 @@ void TestIndexObjectPut(void)
 void TestIndexObjectDetachInHeap(void)
 {
 	ObjectsInit();
-
 	{
 		Ptr<CRoot>					pRoot;
 		Ptr<CIndexObject>			pIndex;
@@ -108,7 +105,6 @@ void TestIndexObjectDetachInHeap(void)
 		AssertTrue(sNotifier2.bFreed);
 		AssertTrue(sNotifier3.bFreed);
 	}
-
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -121,7 +117,6 @@ void TestIndexObjectDetachInHeap(void)
 void TestIndexObjectIterateSafeNull(void)
 {
 	ObjectsInit();
-
 	{
 		Ptr<CRoot>					pRoot;
 		Ptr<CIndexObject>			pIndex;
@@ -188,7 +183,6 @@ void TestIndexObjectIterateSafeNull(void)
 		AssertFalse(bExists);
 		AssertNull(&pPtr);
 	}
-
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -201,7 +195,6 @@ void TestIndexObjectIterateSafeNull(void)
 void TestIndexObjectIterateUnsafeNull(void)
 {
 	ObjectsInit();
-
 	{
 		Ptr<CRoot>						pRoot;
 		Ptr<CIndexObject>				pIndex;
@@ -255,7 +248,6 @@ void TestIndexObjectIterateUnsafeNull(void)
 		AssertFalse(bExists);
 		AssertNull(pcObject);
 	}
-
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -268,7 +260,6 @@ void TestIndexObjectIterateUnsafeNull(void)
 void TestIndexObjectRemove(void)
 {
 	ObjectsInit();
-
 	{
 		Ptr<CRoot>					pRoot;
 		Ptr<CIndexObject>			pIndex;
@@ -304,7 +295,6 @@ void TestIndexObjectRemove(void)
 		AssertTrue(sNotifier2.bFreed);
 		AssertFalse(sNotifier3.bFreed);
 	}
-
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -317,7 +307,6 @@ void TestIndexObjectRemove(void)
 void TestIndexObjectDetachOnStack(void)
 {
 	ObjectsInit();
-
 	{
 		STestObjectFreedNotifier		sNotifier1;
 		STestObjectFreedNotifier		sNotifier2;
@@ -352,7 +341,6 @@ void TestIndexObjectDetachOnStack(void)
 		AssertTrue(sNotifier2.bFreed);
 		AssertTrue(sNotifier3.bFreed);
 	}
-
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -365,7 +353,6 @@ void TestIndexObjectDetachOnStack(void)
 void TestIndexObjectGetPointerTos(void)
 {
 	ObjectsInit();
-
 	{
 		Ptr<CRoot>							pRoot;
 		Ptr<CIndexObject>					pIndex;
@@ -401,7 +388,6 @@ void TestIndexObjectGetPointerTos(void)
 		AssertTrue(apcTos.ContainsVoidPtr(&pTest3));
 		apcTos.Kill();
 	}
-
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -414,7 +400,6 @@ void TestIndexObjectGetPointerTos(void)
 void TestIndexObjectPointerFromsHeap(void)
 {
 	ObjectsInit();
-
 	{
 		Ptr<CRoot>							pRoot;
 		Ptr<CIndexObject>					pIndex;
@@ -476,7 +461,6 @@ void TestIndexObjectPointerFromsHeap(void)
 		AssertSize(0, pTest3->NumHeapFroms());
 		AssertSize(0, pIndex->NumElements());
 	}
-
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -489,7 +473,6 @@ void TestIndexObjectPointerFromsHeap(void)
 void TestIndexObjectPointerFromsStack(void)
 {
 	ObjectsInit();
-
 	{
 		CIndexObject						cIndex;
 		Ptr<CTestObject>					pTest1;
@@ -553,7 +536,6 @@ void TestIndexObjectPointerFromsStack(void)
 		pTest2 = NULL;
 		pTest3 = NULL;
 	}
-
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -566,7 +548,6 @@ void TestIndexObjectPointerFromsStack(void)
 void TestIndexObjectPutOverwrite(void)
 {
 	ObjectsInit();
-
 	{
 		Ptr<CRoot>							pRoot;
 		Ptr<CIndexObject>					pIndex;
@@ -594,7 +575,6 @@ void TestIndexObjectPutOverwrite(void)
 		AssertSize(1, pIndex->NumElements());
 		AssertSize(5, gcObjects.NumMemoryIndexes());
 	}
-
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -739,6 +719,87 @@ void TestIndexObjectClassExists(void)
 	ObjectsKill();
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexObjectMorphInto1(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CRoot>							pRoot;
+		Ptr<CIndexObject>					pIndex1;
+		Ptr<CTestObject>					pTest1;
+		Ptr<CTestTriPointerObject>			pTest2;
+		Ptr<CTestObject>					pTest3;
+		Ptr<CTestTriPointerObject>			pTest4;
+		STestObjectFreedNotifier			sNotifier1;
+		STestObjectFreedNotifier			sNotifier2;
+		STestObjectFreedNotifier			sNotifier3;
+		STestObjectFreedNotifier			sNotifier4;
+		bool								bResult;
+		int64								oid;
+		size								uiRemapped;
+
+		pRoot = ORoot();
+		pIndex1 = OMalloc<CIndexObject>(IKR_Yes);
+		pRoot->Add(pIndex1);
+
+		pTest1 = OMalloc<CTestObject>(&sNotifier1);
+		pTest2 = OMalloc<CTestTriPointerObject>(&sNotifier2);
+		pTest3 = OMalloc<CTestObject>(&sNotifier3);
+		pTest4 = OMalloc<CTestTriPointerObject>(&sNotifier4);
+		oid = 1;
+		bResult = pIndex1->Put((uint8*)&oid, sizeof(int64), pTest1);
+		AssertTrue(bResult);
+		oid = 2;
+		bResult = pIndex1->Put((uint8*)&oid, sizeof(int64), pTest2);
+		
+		CIndexObject		cIndex2;
+
+		cIndex2.Init(IKR_Yes);
+		cIndex2.Put("3", pTest2);
+		cIndex2.Put("4", pTest3);
+		cIndex2.Put("5", pTest2);
+
+		pTest4->mpObject1 = pTest2;
+		pTest4->mpObject2 = pTest2;
+
+		pTest2->mpObject1 = pTest1;
+
+		Ptr<CTestObjectWithFields>	pTest5;
+		CPointer					pPtr;
+
+		pTest5 = OMalloc<CTestObjectWithFields>();
+
+		AssertFalse(sNotifier2.bFreed);
+		uiRemapped = pTest2.MorphInto(&pTest5);
+		//2 (cIndex2) +
+		//1 (pIndex1) +
+		//1 (pTest2)  +
+		//2 (pTest4->mpObject1, pTest4->mpObject2) =
+		//6
+		AssertSize(6, uiRemapped);
+		AssertPointer(&pTest5, &pTest2);
+		AssertString("CTestObjectWithFields", pTest5->ClassName());
+		AssertTrue(sNotifier2.bFreed);
+		AssertPointer(&pTest5, &pTest4->mpObject1);
+		AssertPointer(&pTest5, &pTest4->mpObject2);
+		pPtr = pIndex1->Get((uint8*)&oid, sizeof(int64));
+		AssertPointer(&pTest5, &pPtr);
+		pPtr = cIndex2.Get("3");
+		AssertPointer(&pTest5, &pPtr);
+		pPtr = cIndex2.Get("4");
+		AssertPointer(&pTest3, &pPtr);
+		pPtr = cIndex2.Get("5");
+		AssertPointer(&pTest5, &pPtr);
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -763,7 +824,7 @@ void TestIndexObject(void)
 	TestIndexObjectPointerFromsStack();
 	TestIndexObjectPutOverwrite();
 	TestIndexObjectSerialisation();
-	//TestIndexObjectMorphInto1();
+	TestIndexObjectMorphInto1();
 
 	DataIOKill();
 	TypesKill();

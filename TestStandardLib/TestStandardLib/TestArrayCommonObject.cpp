@@ -56,7 +56,7 @@ void TestArrayCommonObjectPointerRemapping(void)
 
 	pcObject1 = (CTestObject*)pObject1.Object();
 	iNumRemapped = pObject1.MorphInto(&pObject3);
-	AssertInt(2, iNumRemapped);
+	AssertInt(3, iNumRemapped);
 
 	AssertInt(6, pArray->NumElements());
 	AssertInt(5, pArray->NonNullElements());
