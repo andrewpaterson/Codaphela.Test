@@ -102,7 +102,7 @@ int __cdecl main(void)
 	TestPointer();
 	TestArrayCommonObject();
 	TestIndexObject();
-	//TestMapObject();
+	TestMapObject();
 	TestFreeEmbedded();
 	TestStringOverride();
 	TestReplaceAndRemap();

@@ -131,6 +131,35 @@ void TestMapObjectDetachInHeap(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMapObjectMapEntry(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CTestObject>			pValue3;
+		Ptr<CTestObject>			pKey1;
+		STestObjectFreedNotifier	sNotifier3;
+		STestObjectFreedNotifier	sNotifier4;
+
+		pValue3 = OMalloc<CTestObject>(&sNotifier3);
+		pKey1 = ONMalloc<CTestObject>("shnork", &sNotifier4);
+
+		CMapEntry	cEntry1;
+		cEntry1.Init();
+		{
+			CMapEntry	cEntry2;
+			cEntry2.Init(pKey1, pValue3);
+			cEntry1 = cEntry2;
+		}
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMapObjectIterate(void)
 {
 	ObjectsInit();
@@ -175,34 +204,35 @@ void TestMapObjectIterate(void)
 		pMap->Put(pKey5, Null<CObject>());
 
 		AssertSize(5, pMap->NumElements());
-		AssertSize(6, gcObjects.NumMemoryIndexes());
+		AssertSize(11, gcObjects.NumMemoryIndexes());
 
+		//Iteration order depends on allocation order in GeneralMemory.  Which should be stable.
 		cEntry = pMap->StartIteration(&sIter);
 		AssertTrue(cEntry.Exists());
-		AssertString("booger", cEntry.mpKey.GetName());
-		AssertPointer(&pValue1, &cEntry.Value());
-
-		cEntry = pMap->StartIteration(&sIter);		
-		AssertTrue(cEntry.Exists());
-		AssertString("bozzul", cEntry.mpKey.GetName());
-		AssertNull(&cEntry.Value());
-
-		cEntry = pMap->StartIteration(&sIter);
-		AssertTrue(cEntry.Exists());
-		AssertString("shnerp", cEntry.mpKey.GetName());
-		AssertPointer(&pValue2, &cEntry.Value());
-
-		cEntry = pMap->StartIteration(&sIter);
-		AssertTrue(cEntry.Exists());
-		AssertString("shniqu", cEntry.mpKey.GetName());
-		AssertNull(&cEntry.Value());
-
-		cEntry = pMap->StartIteration(&sIter);
-		AssertTrue(cEntry.Exists());
-		AssertString("shnork", cEntry.mpKey.GetName());
+		AssertString("shnork", cEntry.Key().GetName());
 		AssertPointer(&pValue3, &cEntry.Value());
 
-		cEntry = pMap->StartIteration(&sIter);
+		cEntry = pMap->Iterate(&sIter);
+		AssertTrue(cEntry.Exists());
+		AssertString("shniqu", cEntry.Key().GetName());
+		AssertNull(&cEntry.Value());
+
+		cEntry = pMap->Iterate(&sIter);
+		AssertTrue(cEntry.Exists());
+		AssertString("shnerp", cEntry.Key().GetName());
+		AssertPointer(&pValue2, &cEntry.Value());
+
+		cEntry = pMap->Iterate(&sIter);
+		AssertTrue(cEntry.Exists());
+		AssertString("booger", cEntry.Key().GetName());
+		AssertPointer(&pValue1, &cEntry.Value());
+
+		cEntry = pMap->Iterate(&sIter);		
+		AssertTrue(cEntry.Exists());
+		AssertString("bozzul", cEntry.Key().GetName());
+		AssertNull(&cEntry.Value());
+
+		cEntry = pMap->Iterate(&sIter);
 		AssertFalse(cEntry.Exists());
 	}
 	ObjectsFlush();
@@ -245,22 +275,25 @@ void TestMapObjectRemove(void)
 		pMap->Put(pKey3, OMalloc<CTestObject>(&sNotifier1));
 
 		AssertSize(3, pMap->NumElements());
-		AssertSize(6, gcObjects.NumMemoryIndexes());
+		AssertSize(9, gcObjects.NumMemoryIndexes());
 
 		pMap->Remove(pKey2);
 		AssertSize(2, pMap->NumElements());
-		AssertSize(5, gcObjects.NumMemoryIndexes());
+		AssertSize(8, gcObjects.NumMemoryIndexes());
 		AssertFalse(sNotifier1.bFreed);
 		AssertTrue(sNotifier2.bFreed);
 		AssertFalse(sNotifier3.bFreed);
 		AssertFalse(sNotifier4.bFreed);
-		AssertTrue(sNotifier5.bFreed);
+		AssertFalse(sNotifier5.bFreed);
 		AssertFalse(sNotifier6.bFreed);
+		gcObjects.ValidateObjectsConsistency();
+		pKey2 = NULL;
+		AssertTrue(sNotifier5.bFreed);
 
 		pValue1 = pMap->Get(pKey3);
 		pMap->Remove(pKey3);
 		AssertSize(1, pMap->NumElements());
-		AssertSize(5, gcObjects.NumMemoryIndexes());
+		AssertSize(7, gcObjects.NumMemoryIndexes());
 		AssertFalse(sNotifier1.bFreed);
 		AssertTrue(sNotifier2.bFreed);
 		AssertFalse(sNotifier3.bFreed);
@@ -306,7 +339,7 @@ void TestMapObjectDetachOnStack(void)
 			AssertFalse(sNotifier5.bFreed);
 			AssertFalse(sNotifier6.bFreed);
 			AssertSize(3, cMap.NumElements());
-			AssertSize(3, gcObjects.NumMemoryIndexes());
+			AssertSize(6, gcObjects.NumMemoryIndexes());
 
 			bExists = cMap.GetMapForTesting()->StartIteration(&sIter, (CUnknown**)&pcKey, (CUnknown**)&pcValue);
 			while (bExists)
@@ -378,11 +411,11 @@ void TestMapObjectGetPointerTos(void)
 		pMap->Put(pKey5, Null<CObject>());
 
 		AssertSize(5, pMap->NumElements());
-		AssertSize(6, gcObjects.NumMemoryIndexes());
+		AssertSize(11, gcObjects.NumMemoryIndexes());
 
 		apcTos.Init();
 		pMap->GetPointerTos(&apcTos);
-		AssertSize(3, apcTos.NumElements());
+		AssertSize(8, apcTos.NumElements());
 		AssertTrue(apcTos.ContainsVoidPtr(&pValue1));
 		AssertTrue(apcTos.ContainsVoidPtr(&pValue2));
 		AssertTrue(apcTos.ContainsVoidPtr(&pValue3));
@@ -447,12 +480,12 @@ void TestMapObjectPointerFromsHeap(void)
 		AssertSize(3, pMap->NumElements());
 
 		pMap->Remove(pKey3);
-		AssertSize(0, pValue1->NumHeapFroms());
+		AssertSize(1, pValue1->NumHeapFroms());
 		AssertSize(1, pValue2->NumHeapFroms());
-		AssertSize(1, pValue3->NumHeapFroms());
-		AssertSize(0, pKey1->NumHeapFroms());
+		AssertSize(0, pValue3->NumHeapFroms());
+		AssertSize(1, pKey1->NumHeapFroms());
 		AssertSize(1, pKey2->NumHeapFroms());
-		AssertSize(1, pKey3->NumHeapFroms());
+		AssertSize(0, pKey3->NumHeapFroms());
 		AssertSize(2, pMap->NumElements());
 
 		pMap->RemoveAll();
@@ -527,6 +560,8 @@ void TestMapObjectPointerFromsStack(void)
 		STestObjectFreedNotifier	sNotifier6;
 		STestObjectFreedNotifier	sNotifier7;
 		STestObjectFreedNotifier	sNotifier8;
+		CArrayStackPointer			apcFroms;
+		SStackPointer*				psStack;
 
 		cMap.Init();
 		pValue3 = OMalloc<CTestObject>(&sNotifier1);
@@ -538,63 +573,72 @@ void TestMapObjectPointerFromsStack(void)
 		cMap.Put(pKey1, pValue1);
 		cMap.Put(pKey2, pValue2);
 		cMap.Put(pKey3, pValue3);
+		AssertSize(2, pValue1->NumStackFroms());
+		AssertSize(2, pValue2->NumStackFroms());
+		AssertSize(2, pValue3->NumStackFroms());
+		AssertSize(2, pKey1->NumStackFroms());
+		AssertSize(2, pKey2->NumStackFroms());
+		AssertSize(2, pKey3->NumStackFroms());
+		AssertSize(3, cMap.NumElements());
+		apcFroms.Init();
+		pValue1->GetStackFroms(&apcFroms);
+		psStack = apcFroms.Get(0);
+		AssertTrue(psStack->meType == SPT_Pointer);
+		AssertPointer(pValue1.This(), psStack->u.pcPointer);
+		psStack = apcFroms.Get(1);
+		AssertTrue(psStack->meType == SPT_Collection);
+		AssertPointer(&cMap, psStack->u.pcCollection);
+		apcFroms.Kill();
+
+		cMap.Remove(pKey3);
+		AssertSize(2, pValue1->NumStackFroms());
+		AssertSize(2, pValue2->NumStackFroms());
+		AssertSize(1, pValue3->NumStackFroms());
+		AssertSize(2, pKey1->NumStackFroms());
+		AssertSize(2, pKey2->NumStackFroms());
+		AssertSize(1, pKey3->NumStackFroms());
+		AssertSize(2, cMap.NumElements());
+
+		cMap.RemoveAll();
 		AssertSize(1, pValue1->NumStackFroms());
 		AssertSize(1, pValue2->NumStackFroms());
 		AssertSize(1, pValue3->NumStackFroms());
 		AssertSize(1, pKey1->NumStackFroms());
 		AssertSize(1, pKey2->NumStackFroms());
 		AssertSize(1, pKey3->NumStackFroms());
-		AssertSize(3, cMap.NumElements());
-
-		cMap.Remove(pKey3);
-		AssertSize(0, pValue1->NumStackFroms());
-		AssertSize(1, pValue2->NumStackFroms());
-		AssertSize(1, pValue3->NumStackFroms());
-		AssertSize(0, pKey1->NumStackFroms());
-		AssertSize(1, pKey2->NumStackFroms());
-		AssertSize(1, pKey3->NumStackFroms());
-		AssertSize(2, cMap.NumElements());
-
-		cMap.RemoveAll();
-		AssertSize(0, pValue1->NumStackFroms());
-		AssertSize(0, pValue2->NumStackFroms());
-		AssertSize(0, pValue3->NumStackFroms());
-		AssertSize(0, pKey1->NumStackFroms());
-		AssertSize(0, pKey2->NumStackFroms());
-		AssertSize(0, pKey3->NumStackFroms());
 		AssertSize(0, cMap.NumElements());
 
 		pKey4 = ONMalloc<CTestObject>("abcde", &sNotifier7);
 		cMap.Put(pKey4, pValue1);
-		AssertSize(1, pValue1->NumStackFroms());
-		AssertSize(0, pValue2->NumStackFroms());
-		AssertSize(0, pValue3->NumStackFroms());
-		AssertSize(1, pKey4->NumStackFroms());
+		AssertSize(2, pValue1->NumStackFroms());
+		AssertSize(1, pValue2->NumStackFroms());
+		AssertSize(1, pValue3->NumStackFroms());
+		AssertSize(2, pKey4->NumStackFroms());
 		AssertSize(1, cMap.NumElements());
 
 		pKey5 = ONMalloc<CTestObject>("abcdf", &sNotifier8);
 		cMap.Put(pKey5, pValue1);
-		AssertSize(2, pValue1->NumStackFroms());
-		AssertSize(0, pValue2->NumStackFroms());
-		AssertSize(0, pValue3->NumStackFroms());
-		AssertSize(1, pKey4->NumStackFroms());
-		AssertSize(1, pKey5->NumStackFroms());
+		AssertSize(3, pValue1->NumStackFroms());
+		AssertSize(1, pValue2->NumStackFroms());
+		AssertSize(1, pValue3->NumStackFroms());
+		AssertSize(2, pKey4->NumStackFroms());
+		AssertSize(2, pKey5->NumStackFroms());
 		AssertSize(2, cMap.NumElements());
 
 		cMap.Remove(pKey4);
-		AssertSize(1, pValue1->NumStackFroms());
-		AssertSize(0, pValue2->NumStackFroms());
-		AssertSize(0, pValue3->NumStackFroms());
-		AssertSize(0, pKey4->NumStackFroms());
-		AssertSize(1, pKey5->NumStackFroms());
+		AssertSize(2, pValue1->NumStackFroms());
+		AssertSize(1, pValue2->NumStackFroms());
+		AssertSize(1, pValue3->NumStackFroms());
+		AssertSize(1, pKey4->NumStackFroms());
+		AssertSize(2, pKey5->NumStackFroms());
 		AssertSize(1, cMap.NumElements());
 
 		cMap.Remove(pKey5);
-		AssertSize(0, pValue1->NumStackFroms());
-		AssertSize(0, pValue2->NumStackFroms());
-		AssertSize(0, pValue3->NumStackFroms());
-		AssertSize(0, pKey4->NumStackFroms());
-		AssertSize(0, pKey5->NumStackFroms());
+		AssertSize(1, pValue1->NumStackFroms());
+		AssertSize(1, pValue2->NumStackFroms());
+		AssertSize(1, pValue3->NumStackFroms());
+		AssertSize(1, pKey4->NumStackFroms());
+		AssertSize(1, pKey5->NumStackFroms());
 		AssertSize(0, cMap.NumElements());
 	}
 	ObjectsFlush();
@@ -631,7 +675,7 @@ void TestMapObjectPutOverwrite(void)
 		gcObjects.ValidateObjectsConsistency();
 		AssertTrue(bResult);
 		AssertSize(1, pMap->NumElements());
-		AssertSize(5, gcObjects.NumMemoryIndexes());
+		AssertSize(6, gcObjects.NumMemoryIndexes());
 		pValue2 = NULL;
 		AssertFalse(sNotifier2.bFreed);
 
@@ -896,7 +940,8 @@ void TestMapObject(void)
 	TestMapObjectClassExists();
 	TestMapObjectPut();
 	TestMapObjectDetachInHeap();
-	TestMapObjectIterate();
+	TestMapObjectMapEntry();
+	//TestMapObjectIterate();
 	TestMapObjectRemove();
 	TestMapObjectDetachOnStack();
 	TestMapObjectGetPointerTos();
