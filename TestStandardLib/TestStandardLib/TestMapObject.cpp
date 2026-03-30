@@ -131,26 +131,83 @@ void TestMapObjectDetachInHeap(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMapObjectMapEntry(void)
+void TestMapObjectKillOnStack(void)
 {
 	ObjectsInit();
 	{
-		Ptr<CTestObject>			pValue3;
-		Ptr<CTestObject>			pKey1;
+		CMapObject					cMap;
+		STestObjectFreedNotifier	sNotifier1;
+		STestObjectFreedNotifier	sNotifier2;
 		STestObjectFreedNotifier	sNotifier3;
 		STestObjectFreedNotifier	sNotifier4;
+		STestObjectFreedNotifier	sNotifier5;
+		STestObjectFreedNotifier	sNotifier6;
 
-		pValue3 = OMalloc<CTestObject>(&sNotifier3);
-		pKey1 = ONMalloc<CTestObject>("shnork", &sNotifier4);
+		cMap.Init();
+		cMap.Put(ONMalloc<CTestObject>("shnork", &sNotifier4), OMalloc<CTestObject>(&sNotifier1));
+		cMap.Put(ONMalloc<CTestObject>("shnerp", &sNotifier5), OMalloc<CTestObject>(&sNotifier2));
+		cMap.Put(ONMalloc<CTestObject>("booger", &sNotifier6), OMalloc<CTestObject>(&sNotifier3));
+		AssertFalse(sNotifier1.bFreed);
+		AssertFalse(sNotifier2.bFreed);
+		AssertFalse(sNotifier3.bFreed);
+		AssertFalse(sNotifier4.bFreed);
+		AssertFalse(sNotifier5.bFreed);
+		AssertFalse(sNotifier6.bFreed);
 
-		CMapEntry	cEntry1;
-		cEntry1.Init();
-		{
-			CMapEntry	cEntry2;
-			cEntry2.Init(pKey1, pValue3);
-			cEntry1 = cEntry2;
-		}
+		AssertSize(3, cMap.NumElements());
+		AssertSize(6, gcObjects.NumMemoryIndexes());
+
+		cMap.Kill();
+
+		AssertSize(0, gcObjects.NumMemoryIndexes());
+		AssertTrue(sNotifier1.bFreed);
+		AssertTrue(sNotifier2.bFreed);
+		AssertTrue(sNotifier3.bFreed);
+		AssertTrue(sNotifier4.bFreed);
+		AssertTrue(sNotifier5.bFreed);
+		AssertTrue(sNotifier6.bFreed);
 	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+CMapEntry TestMapObjectReturnMapEntry(STestObjectFreedNotifier* psNotifier3, STestObjectFreedNotifier* psNotifier4)
+{
+	CMapEntry			cEntry2;
+	Ptr<CTestObject>	pValue3;
+	Ptr<CTestObject>	pKey1;
+
+	pValue3 = OMalloc<CTestObject>(psNotifier3);
+	pKey1 = ONMalloc<CTestObject>("shnork", psNotifier4);
+
+	cEntry2.Init(pKey1, pValue3);
+	AssertTrue(cEntry2.ValidatePointersEmbedded());
+	return cEntry2;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMapObjectMapEntry(void)
+{
+	STestObjectFreedNotifier	sNotifier3;
+	STestObjectFreedNotifier	sNotifier4;
+
+	ObjectsInit();
+	{
+		CMapEntry					cEntry1;
+
+		cEntry1 = TestMapObjectReturnMapEntry(&sNotifier3, &sNotifier4);
+		AssertTrue(cEntry1.ValidatePointersEmbedded());
+		AssertFalse(sNotifier3.bFreed);
+		AssertFalse(sNotifier4.bFreed);
+	}
+	AssertTrue(sNotifier3.bFreed);
+	AssertTrue(sNotifier4.bFreed);
+
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -207,6 +264,7 @@ void TestMapObjectIterate(void)
 		AssertSize(11, gcObjects.NumMemoryIndexes());
 
 		//Iteration order depends on allocation order in GeneralMemory.  Which should be stable.
+		cEntry.Init();
 		cEntry = pMap->StartIteration(&sIter);
 		AssertTrue(cEntry.Exists());
 		AssertString("shnork", cEntry.Key().GetName());
@@ -820,14 +878,17 @@ void TestMapObjectClassExists(void)
 	CClass*		pcClass;
 
 	ObjectsInit();
+	{
+		CMapObject		cMapObject;
+		CMapPtrPtr*		pcMapPtrPtr;
 
-	CMapObject	cMapObject;
-
-	pcClasses = gcObjects.GetClasses();
-	pcClass = pcClasses->Get(cMapObject.ClassName());
-	AssertNotNull(pcClass);
-	AssertString("CMapObject", pcClass->GetName());
-
+		pcClasses = gcObjects.GetClasses();
+		pcClass = pcClasses->Get(cMapObject.ClassName());
+		AssertNotNull(pcClass);
+		AssertString("CMapObject", pcClass->GetName());
+		pcMapPtrPtr = cMapObject.GetMapForTesting()->GetMapForTesting();
+		AssertFalse(pcMapPtrPtr->IsMallocInitialised());  //Init was never so the Mallocator was never setup.
+	}
 	ObjectsKill();
 }
 
@@ -940,8 +1001,9 @@ void TestMapObject(void)
 	TestMapObjectClassExists();
 	TestMapObjectPut();
 	TestMapObjectDetachInHeap();
+	TestMapObjectKillOnStack();
 	TestMapObjectMapEntry();
-	//TestMapObjectIterate();
+	TestMapObjectIterate();
 	TestMapObjectRemove();
 	TestMapObjectDetachOnStack();
 	TestMapObjectGetPointerTos();

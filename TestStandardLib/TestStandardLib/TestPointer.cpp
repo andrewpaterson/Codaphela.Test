@@ -247,6 +247,29 @@ void TestPointerHeapNotInGraphFreeStack(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestPointerCopy(void)
+{
+	ObjectsInit();
+	{
+		CTestObject	cTestObject1;
+		cTestObject1.Init();
+		CTestObject	cTestObject2;
+		cTestObject2.Init();
+		AssertPointer(&cTestObject1, cTestObject1.mpObject.Embedding());
+		cTestObject1.mpObject = &cTestObject2;
+		AssertPointer(&cTestObject1, cTestObject1.mpObject.Embedding());
+		Ptr<CTestObject> pTest1 = cTestObject1.mpObject;
+		AssertNull(pTest1.Embedding());
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestPointer(void)
 {
 	BeginTests();
@@ -262,6 +285,7 @@ void TestPointer(void)
 	TestPointerAssignmentObjectToObjectPointer();
 	TestPointerNegation();
 	TestPointerHeapNotInGraphFreeStack();
+	TestPointerCopy();
 
 	DataIOKill();
 	TypesKill();

@@ -32,11 +32,13 @@ void TestStackEmbeddedReInitOnStack(void)
 		AssertInt(85, pcTwo->miAmANumber);
 		AssertSize(73, cContainer.mi);
 		AssertSize(3, cContainer.NumEmbedded());
+		AssertSize(3, cContainer.CountNumEmbedded());
 		cContainer.Kill();
 		AssertSize(0, pcOne->miAmANumber);
 		AssertSize(0, pcTwo->miAmANumber);
 		AssertSize(0, cContainer.mi);
 		AssertSize(3, cContainer.NumEmbedded());
+		AssertSize(3, cContainer.CountNumEmbedded());
 		AssertSize(0, gcObjects.NumMemoryIndexes());
 
 		cContainer.Init();
@@ -46,11 +48,13 @@ void TestStackEmbeddedReInitOnStack(void)
 		AssertInt(85, pcTwo->miAmANumber);
 		AssertSize(73, cContainer.mi);
 		AssertSize(3, cContainer.NumEmbedded());
+		AssertSize(3, cContainer.CountNumEmbedded());
 		cContainer.Kill();
 		AssertSize(0, pcOne->miAmANumber);
 		AssertSize(0, pcTwo->miAmANumber);
 		AssertSize(0, cContainer.mi);
 		AssertSize(3, cContainer.NumEmbedded());
+		AssertSize(3, cContainer.CountNumEmbedded());
 		AssertSize(0, gcObjects.NumMemoryIndexes());
 	}
 	AssertSize(0, gcObjects.NumMemoryIndexes());

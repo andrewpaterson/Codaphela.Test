@@ -758,6 +758,23 @@ void TestObjectStackKill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectStackDetach(void)
+{
+	ObjectsInit();
+	{
+		CTestObject cObject;
+		cObject.Init();
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectRootUnattachment(void)
 {
 	ObjectsInit();
@@ -1004,6 +1021,7 @@ void TestObject(void)
 	TestObjectSize();
 	TestObjectGetObjects();
 	TestObjectStackKill();
+	TestObjectStackDetach();
 	TestObjectPointerRemapping();
 	TestObjectPointerRemappingKilling();
 	TestObjectRootUnattachment();
