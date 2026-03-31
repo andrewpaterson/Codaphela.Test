@@ -634,7 +634,6 @@ void TestIndexObjectSerialisation()
 		CPointer						pPointer1;
 		CPointer						pPointer2;
 		CPointer						pPointer3;
-		CPointer						pPointer4;
 		Ptr<CIndexObject>				pIndexObject;
 		CChunkFileObjectWriter			cWriter;
 		CExternalObjectDeserialiser		cDeserialiser;

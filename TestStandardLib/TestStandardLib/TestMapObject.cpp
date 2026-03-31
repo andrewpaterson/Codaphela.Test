@@ -399,12 +399,12 @@ void TestMapObjectDetachOnStack(void)
 			AssertSize(3, cMap.NumElements());
 			AssertSize(6, gcObjects.NumMemoryIndexes());
 
-			bExists = cMap.GetMapForTesting()->StartIteration(&sIter, (CUnknown**)&pcKey, (CUnknown**)&pcValue);
+			bExists = cMap.GetMap()->StartIteration(&sIter, (CUnknown**)&pcKey, (CUnknown**)&pcValue);
 			while (bExists)
 			{
 				AssertIntHex(0x7070707, pcKey->mi);
 				AssertIntHex(0x7070707, pcValue->mi);
-				bExists = cMap.GetMapForTesting()->Iterate(&sIter, (CUnknown**)&pcKey, (CUnknown**)&pcValue);
+				bExists = cMap.GetMap()->Iterate(&sIter, (CUnknown**)&pcKey, (CUnknown**)&pcValue);
 			}
 		}
 
@@ -756,7 +756,7 @@ void TestMapObjectPutOverwrite(void)
 void TestMapObjectSerialisation()
 {
 	CFileUtil	cFileUtil;
-//	bool		bResult;
+	bool		bResult;
 	char		szDirectory[] = "Output" _FS_ "TestMapObject";
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
@@ -764,82 +764,105 @@ void TestMapObjectSerialisation()
 
 	DataOrderersInit();
 	ObjectsInit();
-	//TestMapObjectAddConstructors();
-	//{
-	//	Ptr<CPointerContainer>			pContainer1;
-	//	Ptr<CPointerContainer>			pContainer2;
-	//	Ptr<CPointerContainer>			pContainer3;
-	//	Ptr<CTestObject>				pObject;
-	//	Ptr<CMapObject>					pMapObject;
-	//	CExternalObjectSerialiser		cSerialiser;
-	//	CChunkFileObjectWriter			cWriter;
-	//	CExternalObjectDeserialiser		cDeserialiser;
-	//	CChunkFileSystemObjectReader 	cReader;
+	TestMapObjectAddConstructors();
+	{
+		Ptr<CPointerContainer>			pContainer1;
+		Ptr<CPointerContainer>			pContainer2;
+		Ptr<CPointerContainer>			pContainer3;
+		Ptr<CTestObject>				pObject;
+		Ptr<CMapObject>					pMapObject;
+		CExternalObjectSerialiser		cSerialiser;
+		CChunkFileObjectWriter			cWriter;
+		CExternalObjectDeserialiser		cDeserialiser;
+		CChunkFileSystemObjectReader 	cReader;
 
-	//	pObject = OMalloc<CTestObject>();
-	//	pContainer2 = OMalloc<CPointerContainer>(pObject);
-	//	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
-	//	pContainer3 = OMalloc<CPointerContainer>(Null());
-	//	pMapObject = ONMalloc<CMapObject>("Orbis");
-	//	pMapObject->Put("Hun", pContainer1);
-	//	pMapObject->Put("Koya", pContainer2);
-	//	pMapObject->Put("Tokka", pContainer3);
+		pObject = OMalloc<CTestObject>();
+		pContainer2 = OMalloc<CPointerContainer>(pObject);
+		pContainer1 = OMalloc<CPointerContainer>(pContainer2);
+		pContainer3 = OMalloc<CPointerContainer>(Null());
+		pMapObject = ONMalloc<CMapObject>("Orbis");
+		pMapObject->Put(OMalloc<CString>("Hun"), pContainer1);
+		pMapObject->Put(OMalloc<CString>("Koya"), pContainer2);
+		pMapObject->Put(OMalloc<CString>("Tokka"), pContainer3);
 
-	//	AssertLong(5, gcObjects.NumMemoryIndexes());
-	//	AssertInt(3, pMapObject->NumElements());
+		AssertLong(8, gcObjects.NumMemoryIndexes());
+		AssertInt(3, pMapObject->NumElements());
 
-	//	cWriter.Init(szDirectory, "", "File");
-	//	cSerialiser.Init(&cWriter);
-	//	bResult = cSerialiser.Write(&pMapObject);
-	//	cSerialiser.Kill();
-	//	cWriter.Kill();
-	//}
-	//ObjectsKill();
-	//ObjectsInit();
-	//{
-	//	CPointer						pPointer1;
-	//	CPointer						pPointer2;
-	//	CPointer						pPointer3;
-	//	CPointer						pPointer4;
-	//	Ptr<CMapObject>					pMapObject;
-	//	CChunkFileObjectWriter			cWriter;
-	//	CExternalObjectDeserialiser		cDeserialiser;
-	//	CChunkFileSystemObjectReader 	cReader;
+		cWriter.Init(szDirectory, "", "File");
+		cSerialiser.Init(&cWriter);
+		bResult = cSerialiser.Write(&pMapObject);
+		cSerialiser.Kill();
+		cWriter.Kill();
+	}
+	ObjectsKill();
+	ObjectsInit();
+	{
+		Ptr<CString>					pKey1;
+		Ptr<CString>					pKey2;
+		Ptr<CString>					pKey3;
+		Ptr<CPointerContainer>			pValue1;
+		Ptr<CPointerContainer>			pValue2;
+		Ptr<CPointerContainer>			pValue3;
+		Ptr<CMapObject>					pMapObject;
+		CChunkFileObjectWriter			cWriter;
+		CExternalObjectDeserialiser		cDeserialiser;
+		CChunkFileSystemObjectReader 	cReader;
+		SMapIterator					sIter;
+		CMapEntry						cEntry;
 
-	//	cReader.Init(szDirectory, "File");
-	//	cDeserialiser.Init(&cReader, false, &gcObjects);
-	//	pMapObject = cDeserialiser.Read("Orbis");
-	//	AssertNotNull(&pMapObject);
-	//	pPointer1 = pMapObject->Get("Hun");
-	//	pPointer2 = pMapObject->Get("Koya");
-	//	pPointer3 = pMapObject->Get("Tokka");
-	//	AssertTrue(pPointer1.IsNotNull());
-	//	AssertTrue(pPointer2.IsNotNull());
-	//	AssertTrue(pPointer3.IsNotNull());
-	//	AssertString("CPointerContainer", pPointer1->ClassName());
-	//	AssertString("CPointerContainer", pPointer2->ClassName());
-	//	AssertString("CPointerContainer", pPointer3->ClassName());
+		cReader.Init(szDirectory, "File");
+		cDeserialiser.Init(&cReader, false, &gcObjects);
+		pMapObject = cDeserialiser.Read("Orbis");
+		AssertNotNull(&pMapObject);
+		AssertLong(8, gcObjects.NumMemoryIndexes());
+		AssertInt(3, pMapObject->NumElements());
+		cDeserialiser.Kill();
+		cReader.Kill();
 
-	//	Ptr<CPointerContainer>	pContainer1;
-	//	Ptr<CPointerContainer>	pContainer2;
-	//	Ptr<CPointerContainer>	pContainer3;
-	//	Ptr<CTestObject>		pObject;
+		pMapObject->Sort();
 
-	//	pContainer1 = pPointer1;
-	//	pContainer2 = pPointer2;
-	//	pContainer3 = pPointer3;
-	//	AssertTrue(pContainer1->mp.IsNotNull());
-	//	AssertTrue(pContainer2->mp.IsNotNull());
-	//	AssertTrue(pContainer3->mp.IsNull());
-	//	AssertString("CPointerContainer", pContainer1->mp->ClassName());
-	//	AssertString("CTestObject", pContainer2->mp->ClassName());
-	//	AssertPointer(&pContainer1->mp, &pContainer2);
+		cEntry = pMapObject->StartIteration(&sIter);
+		pKey1 = cEntry.Key();
+		AssertTrue(pKey1.IsNotNull());
+		AssertString("Hun", pKey1->Text());
+		cEntry = pMapObject->Iterate(&sIter);
+		pKey2 = cEntry.Key();
+		AssertTrue(pKey2.IsNotNull());
+		AssertString("CString", pKey1->ClassName());
+		AssertString("Koya", pKey2->Text());
+		cEntry = pMapObject->Iterate(&sIter);
+		pKey3 = cEntry.Key();
+		AssertTrue(pKey3.IsNotNull());
+		AssertString("CString", pKey2->ClassName());
+		AssertString("CString", pKey3->ClassName());
+		AssertString("Tokka", pKey3->Text());
+		pValue1 = pMapObject->Get(pKey1);
+		pValue2 = pMapObject->Get(pKey2);
+		pValue3 = pMapObject->Get(pKey3);
+		AssertTrue(pValue1.IsNotNull());
+		AssertTrue(pValue2.IsNotNull());
+		AssertTrue(pValue3.IsNotNull());
+		AssertString("CPointerContainer", pValue1->ClassName());
+		AssertString("CPointerContainer", pValue2->ClassName());
+		AssertString("CPointerContainer", pValue3->ClassName());
 
-	//	cDeserialiser.Kill();
-	//	cReader.Kill();
+		Ptr<CPointerContainer>	pContainer1;
+		Ptr<CPointerContainer>	pContainer2;
+		Ptr<CPointerContainer>	pContainer3;
+		Ptr<CTestObject>		pObject;
 
-	//	pMapObject = NULL;
-	//}
+		pContainer1 = pValue1;
+		pContainer2 = pValue2;
+		pContainer3 = pValue3;
+		AssertTrue(pContainer1->mp.IsNotNull());
+		AssertTrue(pContainer2->mp.IsNotNull());
+		AssertTrue(pContainer3->mp.IsNull());
+		AssertString("CPointerContainer", pContainer1->mp->ClassName());
+		AssertString("CTestObject", pContainer2->mp->ClassName());
+		AssertPointer(&pContainer1->mp, &pContainer2);
+
+		pMapObject = NULL;
+	}
 	ObjectsFlush();
 	ObjectsKill();
 	DataOrderersKill();
@@ -886,7 +909,7 @@ void TestMapObjectClassExists(void)
 		pcClass = pcClasses->Get(cMapObject.ClassName());
 		AssertNotNull(pcClass);
 		AssertString("CMapObject", pcClass->GetName());
-		pcMapPtrPtr = cMapObject.GetMapForTesting()->GetMapForTesting();
+		pcMapPtrPtr = cMapObject.GetMap()->GetMap();
 		AssertFalse(pcMapPtrPtr->IsMallocInitialised());  //Init was never so the Mallocator was never setup.
 	}
 	ObjectsKill();
