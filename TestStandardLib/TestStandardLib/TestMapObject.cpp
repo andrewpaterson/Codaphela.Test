@@ -2,6 +2,9 @@
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/DataOrderers.h"
+#include "BaseLib/Codabase.h"
+#include "BaseLib/CodabaseFactory.h"
+#include "BaseLib/SequenceFactory.h"
 #include "StandardLib/MapObject.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ExternalObjectDeserialiser.h"
@@ -399,12 +402,12 @@ void TestMapObjectDetachOnStack(void)
 			AssertSize(3, cMap.NumElements());
 			AssertSize(6, gcObjects.NumMemoryIndexes());
 
-			bExists = cMap.GetMap()->StartIteration(&sIter, (CUnknown**)&pcKey, (CUnknown**)&pcValue);
+			bExists = cMap.GetUnknownMap()->StartIteration(&sIter, (CUnknown**)&pcKey, (CUnknown**)&pcValue);
 			while (bExists)
 			{
 				AssertIntHex(0x7070707, pcKey->mi);
 				AssertIntHex(0x7070707, pcValue->mi);
-				bExists = cMap.GetMap()->Iterate(&sIter, (CUnknown**)&pcKey, (CUnknown**)&pcValue);
+				bExists = cMap.GetUnknownMap()->Iterate(&sIter, (CUnknown**)&pcKey, (CUnknown**)&pcValue);
 			}
 		}
 
@@ -753,11 +756,11 @@ void TestMapObjectPutOverwrite(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMapObjectSerialisation()
+void TestMapObjectExternalSerialisation()
 {
 	CFileUtil	cFileUtil;
 	bool		bResult;
-	char		szDirectory[] = "Output" _FS_ "TestMapObject";
+	char		szDirectory[] = "Output" _FS_ "MapObjectExternalSerialisation";
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
@@ -818,8 +821,6 @@ void TestMapObjectSerialisation()
 		AssertInt(3, pMapObject->NumElements());
 		cDeserialiser.Kill();
 		cReader.Kill();
-
-		pMapObject->Sort();
 
 		cEntry = pMapObject->StartIteration(&sIter);
 		pKey1 = cEntry.Key();
@@ -909,7 +910,7 @@ void TestMapObjectClassExists(void)
 		pcClass = pcClasses->Get(cMapObject.ClassName());
 		AssertNotNull(pcClass);
 		AssertString("CMapObject", pcClass->GetName());
-		pcMapPtrPtr = cMapObject.GetMap()->GetMap();
+		pcMapPtrPtr = cMapObject.GetUnknownMap()->GetPointerMap();
 		AssertFalse(pcMapPtrPtr->IsMallocInitialised());  //Init was never so the Mallocator was never setup.
 	}
 	ObjectsKill();
@@ -1013,6 +1014,148 @@ void TestMapObjectMorphInto(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMapObjectInternalSerialisation(void)
+{
+	CFileUtil						cFileUtil;
+	CCodabase* pcDatabase;
+	CSequence* pcSequence;
+	char							szDirectory[] = "Output" _FS_ "MapObjectInternalSerialisation";
+	bool							bResult;
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+	{
+		Ptr<CRoot>					pRoot;
+		Ptr<CMapObject>				pMap;
+		Ptr<CTestObject>			pKey;
+		Ptr<CTestObject>			pValue1;
+		Ptr<CTestObject>			pValue2;
+		Ptr<CTestObject>			pValue3;
+		Ptr<CTestTriPointerObject>	pValue5;
+		bool						bResult;
+		size						ui;
+
+		pRoot = ORoot();
+		pMap = ONMalloc<CMapObject>("Map");
+		pRoot->Add(pMap);
+
+		gcObjects.DisableValidation();
+
+		bResult = true;
+		for (ui = 0; ui < 10000; ui++)
+		{
+			if (ui % 2 == 0)
+			{
+				pValue3 = pValue2;
+				pValue2 = pValue1;
+				pValue1 = OMalloc<CTestObject>();
+			}
+			else
+			{
+				pValue5 = OMalloc<CTestTriPointerObject>();
+				pValue5->mpObject1 = pValue1;
+				pValue5->mpObject2 = pValue2;
+				pValue5->mpObject2 = pValue3;
+
+			}
+			pKey = ONMalloc<CTestObject>(SizeToString(ui));
+			bResult = pMap->Put(pKey, pValue1);
+			if (!bResult)
+			{
+				AssertTrue(bResult);
+				break;
+			}
+		}
+		AssertTrue(bResult);
+	}
+
+	gcObjects.EnableValidation();
+	gcObjects.ValidateObjectsConsistency();
+
+	bResult = ObjectsFlush();
+	AssertTrue(bResult);
+	bResult = gcObjects.EvictInMemory();
+	AssertTrue(bResult);
+
+	AssertLong(15003LL, pcDatabase->NumIndices());
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill();
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+	{
+		CArrayInt	aiKeyNames;
+		CRandom		cRandom;
+		uint		uiCount;
+		size		ui;
+		bool		bResult;
+
+		cRandom.Init(89073456);
+		aiKeyNames.Init();
+		for (uiCount = 0; uiCount < 10000; uiCount++)
+		{
+			aiKeyNames.Add(uiCount);
+		}
+		aiKeyNames.Shuffle(&cRandom);
+		cRandom.Kill();
+		AssertSize(10000, aiKeyNames.NumElements());
+		
+		TestMapObjectAddConstructors();
+		AssertLong(15003LL, pcDatabase->NumIndices());
+
+		AssertTrue(gcObjects.Contains("Map"));
+
+		Ptr<CMapObject>		pMap;
+		Ptr<CTestObject>	pKey;
+		CPointer			pValue;
+		uint				uiName;
+
+		pMap = gcObjects.Get("Map");
+		AssertTrue(pMap.IsNotNull());
+		AssertSize(10000, pMap->NumElements());
+		AssertFalse(pMap->IsSorted());
+
+		bResult = true;
+		for (ui = 0; ui < 10000; ui++)
+		{
+			uiName = aiKeyNames.GetValue(ui);
+			pKey = gcObjects.Get(SizeToString(uiName));
+			bResult = pKey.IsNotNull();
+			if (!bResult)
+			{
+				AssertTrue(bResult);
+				break;
+			}
+			pValue = pMap->Get(pKey);
+			bResult = pValue.IsNotNull();
+			if (!bResult)
+			{
+				AssertTrue(bResult);
+				break;
+			}
+		}
+		AssertTrue(bResult);
+	}
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMapObject(void)
 {
 	BeginTests();
@@ -1033,8 +1176,9 @@ void TestMapObject(void)
 	TestMapObjectPointerFromsHeap();
 	TestMapObjectPointerFromsStack();
 	TestMapObjectPutOverwrite();
-	TestMapObjectSerialisation();
+	TestMapObjectExternalSerialisation();
 	TestMapObjectMorphInto();
+	TestMapObjectInternalSerialisation();
 
 	DataIOKill();
 	TypesKill();
