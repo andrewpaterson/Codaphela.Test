@@ -25,7 +25,8 @@ void TestObjectSize(void)
 	AssertInt(BASE_OBJECT_SIZE, sizeof(CBaseObject));  //Check your struct alignement.  This is too large.
 	AssertInt(OBJECT_SIZE, sizeof(CObject));
 	AssertInt(OBJECT_SIZE + 16, sizeof(CRoot));
-	AssertInt(OBJECT_SIZE, sizeof(CSetObject));
+	AssertInt(OBJECT_SIZE + 8, sizeof(CSetObject));
+	AssertInt(OBJECT_SIZE + 8, sizeof(CArrayObject));
 	AssertInt(POINTER_SIZE, sizeof(CPointer));
 
 	ObjectsFlush();

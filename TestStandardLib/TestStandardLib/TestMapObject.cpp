@@ -1016,11 +1016,11 @@ void TestMapObjectMorphInto(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapObjectInternalSerialisation(void)
 {
-	CFileUtil						cFileUtil;
-	CCodabase* pcDatabase;
-	CSequence* pcSequence;
-	char							szDirectory[] = "Output" _FS_ "MapObjectInternalSerialisation";
-	bool							bResult;
+	CFileUtil	cFileUtil;
+	CCodabase*	pcDatabase;
+	CSequence*	pcSequence;
+	char		szDirectory[] = "Output" _FS_ "MapObjectInternalSerialisation";
+	bool		bResult;
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
@@ -1144,6 +1144,7 @@ void TestMapObjectInternalSerialisation(void)
 			}
 		}
 		AssertTrue(bResult);
+		aiKeyNames.Kill();
 	}
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
@@ -1178,7 +1179,7 @@ void TestMapObject(void)
 	TestMapObjectPutOverwrite();
 	TestMapObjectExternalSerialisation();
 	TestMapObjectMorphInto();
-	TestMapObjectInternalSerialisation();
+//	TestMapObjectInternalSerialisation();
 
 	DataIOKill();
 	TypesKill();

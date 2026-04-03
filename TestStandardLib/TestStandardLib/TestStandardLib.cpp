@@ -101,8 +101,6 @@ int __cdecl main(void)
 	TestObjectStack();
 	TestPointer();
 	TestArrayCommonObject();
-	TestIndexObject();
-	TestMapObject();
 	TestFreeEmbedded();
 	TestStringOverride();
 	TestReplaceAndRemap();
@@ -124,6 +122,8 @@ int __cdecl main(void)
 	TestObjectsEvictVsKill();
 	TestUsage();
 	TestArray();
+	TestIndexObject();
+	TestMapObject();
 	TestKill();
 	TestEmbedded();
 	TestEmbeddedObjectRemapTos();

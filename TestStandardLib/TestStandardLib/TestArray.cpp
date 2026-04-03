@@ -1,6 +1,9 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "BaseLib/TypeNames.h"
+#include "BaseLib/Codabase.h"
+#include "BaseLib/CodabaseFactory.h"
+#include "BaseLib/SequenceFactory.h"
 #include "StandardLib/ArrayObject.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ExternalObjectDeserialiser.h"
@@ -21,6 +24,7 @@ void TestArrayAddConstructors(void)
 	gcObjects.AddConstructor<CTestSaveableObject1>();
 	gcObjects.AddConstructor<CTestObject>();
 	gcObjects.AddConstructor<CPointerContainer>();
+	gcObjects.AddConstructor<CTestTriPointerObject>();
 }
 
 
@@ -334,7 +338,7 @@ void TestArrayClassExists(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArraySerialisation(void)
+void TestArrayExternalSerialisation(void)
 {
 	CFileUtil	cFileUtil;
 	bool		bResult;
@@ -426,6 +430,287 @@ void TestArraySerialisation(void)
 }
 
 
+struct STriOi
+{
+	OIndex	oi1;
+	OIndex	oi2;
+	OIndex	oi3;
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayInternalSerialisation(void)
+{
+	CFileUtil			cFileUtil;
+	CCodabase*			pcDatabase;
+	CSequence*			pcSequence;
+	char				szDirectory[] = "Output" _FS_ "ArrayObjectInternalSerialisation";
+	bool				bResult;
+	CIndexTreeMemory	cMemory;
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	uint		uiIndex;
+	CArrayInt	aiKeyNames;
+	CRandom		cRandom;
+	uint		uiCount;
+	size		ui;
+
+	cMemory.Init(IKR_Yes);
+
+	cRandom.Init(32280975);
+	aiKeyNames.Init();
+	for (uiCount = 0; uiCount < 10000; uiCount++)
+	{
+		aiKeyNames.Add(uiCount);
+	}
+	aiKeyNames.Shuffle(&cRandom);
+	cRandom.Kill();
+	AssertSize(10000, aiKeyNames.NumElements());
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+	{
+		Ptr<CRoot>					pRoot;
+		Ptr<CArrayObject>			pArray;
+		Ptr<CTestObject>			pKey;
+		Ptr<CTestObject>			pValue1;
+		Ptr<CTestObject>			pValue2;
+		Ptr<CTestObject>			pValue3;
+		Ptr<CTestTriPointerObject>	pValue5;
+		bool						bResult;
+		size						ui;
+		OIndex						oi;
+		STriOi*						psTriOi;
+		STriOi						sTriOi;
+
+		pRoot = ORoot();
+		pArray = ONMalloc<CArrayObject>("Array");
+		pRoot->Add(pArray);
+
+		gcObjects.DisableValidation();
+
+		pValue1 = NULL;
+		pValue2 = NULL;
+		pValue3 = NULL;
+
+		bResult = true;
+		for (ui = 0; ui < 10000; ui++)
+		{
+			if (ui % 2 == 0)
+			{
+				pValue3 = pValue2;
+				pValue2 = pValue1;
+				pValue1 = OMalloc<CTestObject>();
+				bResult = pArray->Add(pValue1);
+			}
+			else
+			{
+				pValue5 = OMalloc<CTestTriPointerObject>();
+				pValue5->mpObject1 = pValue1;
+				pValue5->mpObject2 = pValue2;
+				pValue5->mpObject3 = pValue3;
+				bResult = pArray->Add(pValue5);
+
+				oi = pValue5->GetIndex();
+				psTriOi = (STriOi*)cMemory.Put((uint8*)&oi, sizeof(OIndex), NULL, sizeof(STriOi));
+				psTriOi->oi1 = pValue1.GetIndex();
+				psTriOi->oi2 = pValue2.GetIndex();
+				psTriOi->oi3 = pValue3.GetIndex();
+			}
+			if (!bResult)
+			{
+				AssertTrue(bResult);
+				break;
+			}
+		}
+		AssertTrue(bResult);
+
+		pValue1 = NULL;
+		pValue2 = NULL;
+		pValue3 = NULL;
+
+		bResult = true;
+		for (ui = 0; ui < 10000; ui++)
+		{
+			uiIndex = aiKeyNames.GetValue(ui);
+			if (uiIndex % 2 == 0)
+			{
+				pValue1 = pArray->Get((size)uiIndex);
+				bResult = pValue1.IsNotNull();
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+				bResult = StringCompare("CTestObject", pValue1->ClassName()) == 0;
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+			}
+			else
+			{
+				pValue5 = pArray->Get((size)uiIndex);
+				bResult = pValue5.IsNotNull();
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+				bResult = StringCompare("CTestTriPointerObject", pValue5->ClassName()) == 0;
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+
+				oi = pValue5->GetIndex();
+				bResult = cMemory.Get((uint8*)&oi, sizeof(OIndex), &sTriOi, NULL, sizeof(STriOi));
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+
+				pValue1 = gcObjects.Get(sTriOi.oi1);
+				pValue2 = gcObjects.Get(sTriOi.oi2);
+				pValue3 = gcObjects.Get(sTriOi.oi3);
+
+				bResult  = &pValue5->mpObject1 == &pValue1;
+				bResult &= &pValue5->mpObject2 == &pValue2;
+				bResult &= &pValue5->mpObject3 == &pValue3;
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+			}
+		}
+		AssertTrue(bResult);
+	}
+
+	gcObjects.EnableValidation();
+	gcObjects.ValidateObjectsConsistency();
+
+	bResult = ObjectsFlush();
+	AssertTrue(bResult);
+	bResult = gcObjects.EvictInMemory();
+	AssertTrue(bResult);
+
+	AssertLong(10003LL, pcDatabase->NumIndices());
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill();
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+	{
+		TestArrayAddConstructors();
+		AssertLong(10003LL, pcDatabase->NumIndices());
+
+		AssertTrue(gcObjects.Contains("Array"));
+
+		Ptr<CArrayObject>			pArray;
+		Ptr<CTestObject>			pValue1;
+		Ptr<CTestObject>			pValue2;
+		Ptr<CTestObject>			pValue3;
+		Ptr<CTestTriPointerObject>	pValue5;
+		bool						bResult;
+		OIndex						oi;
+		STriOi						sTriOi;
+
+		pArray = gcObjects.Get("Array");
+		AssertTrue(pArray.IsNotNull());
+		AssertSize(10000, pArray->NumElements());
+
+		pValue1 = NULL;
+		pValue2 = NULL;
+		pValue3 = NULL;
+
+		bResult = true;
+		for (ui = 0; ui < 10000; ui++)
+		{
+			uiIndex = aiKeyNames.GetValue(ui);
+			if (uiIndex % 2 == 0)
+			{
+				pValue3 = pValue2;
+				pValue2 = pValue1;
+				pValue1 = pArray->Get((size)uiIndex);
+				bResult = pValue1.IsNotNull();
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+				bResult = StringCompare("CTestObject", pValue1->ClassName()) == 0;
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+			}
+			else
+			{
+				pValue5 = pArray->Get((size)uiIndex);
+				bResult = pValue5.IsNotNull();
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+				bResult = StringCompare("CTestTriPointerObject", pValue5->ClassName()) == 0;
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+
+				oi = pValue5->GetIndex();
+				bResult = cMemory.Get((uint8*)&oi, sizeof(OIndex), &sTriOi, NULL, sizeof(STriOi));
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+
+				pValue1 = gcObjects.Get(sTriOi.oi1);
+				pValue2 = gcObjects.Get(sTriOi.oi2);
+				pValue3 = gcObjects.Get(sTriOi.oi3);
+
+				bResult = &pValue5->mpObject1 == &pValue1;
+				bResult &= &pValue5->mpObject2 == &pValue2;
+				bResult &= &pValue5->mpObject3 == &pValue3;
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+			}
+		}
+		AssertTrue(bResult);
+
+		aiKeyNames.Kill();
+	}
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill();
+
+	cMemory.Kill();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -448,7 +733,8 @@ void TestArray(void)
 	TestArrayOnStackRemoveObject();
 	TestArrayConstructorExists();
 	TestArrayClassExists();
-	TestArraySerialisation();
+	TestArrayExternalSerialisation();
+	TestArrayInternalSerialisation();
 
 	DataIOKill();
 	TypesKill();
