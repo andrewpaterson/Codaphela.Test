@@ -408,8 +408,8 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 	AssertTrue(pDiamond2.IsHollow());
 	AssertPointer(pDiamond1.Object(), pDiamond2.Object());
 	AssertPointer(pString1->mpAnother.Object(), pString2->mpAnother.Object());
-	AssertLong(3LL, pDiamond1.GetIndex());
-	AssertLong(3LL, pDiamond2.GetIndex());
+	AssertLong(4LL, pDiamond1.GetIndex());
+	AssertLong(4LL, pDiamond2.GetIndex());
 
 	//Dehollofication of pDiamond1 happens here. pString1->mpAnother and pString2->mpAnother are remapped to the dehollowed diamond object.
 	pDiamond1->ClassName();
@@ -417,7 +417,7 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 	AssertFalse(pDiamond1.IsHollow());
 	AssertFalse(pDiamond2.IsHollow());  //This should be false but it's not until I remap local pointers.
 	AssertPointer(pDiamond1.Object(), pDiamond2.Object());  //These should be the same but they're not until I remap local pointers.
-	AssertLong(3LL, pDiamond1.GetIndex());
+	AssertLong(4LL, pDiamond1.GetIndex());
 
 	AssertFalse(pString1->mpAnother.IsHollow());
 	AssertFalse(pString2->mpAnother.IsHollow());

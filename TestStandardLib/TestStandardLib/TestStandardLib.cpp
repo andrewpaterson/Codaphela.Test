@@ -117,7 +117,7 @@ int __cdecl main(void)
 	TestObjectConverter();
 	TestObjects();
 	TestStackPointers();
-	//TestDehollowfication();  This commented out until you fix diamond pointer dehollofication.
+	TestDehollowfication();
 	TestString();
 	TestObjectsEvictVsKill();
 	TestUsage();
