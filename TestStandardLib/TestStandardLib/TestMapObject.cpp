@@ -1014,7 +1014,7 @@ void TestMapObjectMorphInto(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMapObjectInternalSerialisation(void)
+void TestMapObjectInternalSerialisation(size uiNumMapItems)
 {
 	CFileUtil	cFileUtil;
 	CCodabase*	pcDatabase;
@@ -1047,7 +1047,7 @@ void TestMapObjectInternalSerialisation(void)
 		gcObjects.DisableValidation();
 
 		bResult = true;
-		for (ui = 0; ui < 10000; ui++)
+		for (ui = 0; ui < uiNumMapItems; ui++)
 		{
 			if (ui % 2 == 0)
 			{
@@ -1082,7 +1082,7 @@ void TestMapObjectInternalSerialisation(void)
 	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
 
-	AssertLong(15003LL, pcDatabase->NumIndices());
+	AssertLong(uiNumMapItems + uiNumMapItems / 2 + 3, pcDatabase->NumIndices());
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -1101,16 +1101,16 @@ void TestMapObjectInternalSerialisation(void)
 
 		cRandom.Init(89073456);
 		aiKeyNames.Init();
-		for (uiCount = 0; uiCount < 10000; uiCount++)
+		for (uiCount = 0; uiCount < uiNumMapItems; uiCount++)
 		{
 			aiKeyNames.Add(uiCount);
 		}
 		aiKeyNames.Shuffle(&cRandom);
 		cRandom.Kill();
-		AssertSize(10000, aiKeyNames.NumElements());
+		AssertSize(uiNumMapItems, aiKeyNames.NumElements());
 		
 		TestMapObjectAddConstructors();
-		AssertLong(15003LL, pcDatabase->NumIndices());
+		AssertLong(uiNumMapItems + uiNumMapItems / 2 + 3, pcDatabase->NumIndices());
 
 		AssertTrue(gcObjects.Contains("Map"));
 
@@ -1121,11 +1121,11 @@ void TestMapObjectInternalSerialisation(void)
 
 		pMap = gcObjects.Get("Map");
 		AssertTrue(pMap.IsNotNull());
-		AssertSize(10000, pMap->NumElements());
+		AssertSize(uiNumMapItems, pMap->NumElements());
 		AssertFalse(pMap->IsSorted());
 
 		bResult = true;
-		for (ui = 0; ui < 10000; ui++)
+		for (ui = 0; ui < uiNumMapItems; ui++)
 		{
 			uiName = aiKeyNames.GetValue(ui);
 			pKey = gcObjects.Get(SizeToString(uiName));
@@ -1179,7 +1179,8 @@ void TestMapObject(void)
 	TestMapObjectPutOverwrite();
 	TestMapObjectExternalSerialisation();
 	TestMapObjectMorphInto();
-//	TestMapObjectInternalSerialisation();
+	//TestMapObjectInternalSerialisation(4);
+	//TestMapObjectInternalSerialisation(10000);
 
 	DataIOKill();
 	TypesKill();

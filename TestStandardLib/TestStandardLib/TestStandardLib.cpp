@@ -113,7 +113,7 @@ int __cdecl main(void)
 	TestObjectReaderSimple();
 	TestObjectReaderChunked();
 	TestObjectStackPointers();
-	//TestObjectGraphDeserialiser();  This is commented out until you fix the garbage embedded from pointer.
+	//TestObjectGraphDeserialiser();
 	TestObjectConverter();
 	TestObjects();
 	TestStackPointers();
