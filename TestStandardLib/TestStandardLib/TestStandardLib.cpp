@@ -95,7 +95,6 @@ int __cdecl main(void)
 	TestDistToStack();
 	TestObjectsSimple();
 	TestRoot();
-	TestSet();
 	TestObjectGraphWriting();
 	TestObject();
 	TestObjectStack();
@@ -122,6 +121,7 @@ int __cdecl main(void)
 	TestObjectsEvictVsKill();
 	TestUsage();
 	TestArray();
+	TestSet();
 	TestIndexObject();
 	TestMapObject();
 	TestKill();

@@ -175,7 +175,7 @@ void TestRootGraphRemoveSimple(void)
 	pTest3 = OMalloc<CTestObject>(&sKilled3);
 	pTest4 = OMalloc<CTestObject>(&sKilled4);
 	pTest5 = OMalloc<CTestObject>(&sKilled5);
-	pSet = OMalloc<CSetObject>();
+	pSet = OMalloc<CSetObject>(false);
 	pTop1 = OMalloc<CTestObject>(&sKilledTop1);
 	pTop2 = OMalloc<CTestObject>(&sKilledTop2);
 
@@ -470,7 +470,7 @@ void TestRootGraphRemoveComplex(void)
 	pTest3 = OMalloc<CTestObject>(&sKilled3);
 	pTest4 = OMalloc<CTestObject>(&sKilled4);
 	pTest5 = OMalloc<CTestObject>(&sKilled5);
-	pSet = OMalloc<CSetObject>();
+	pSet = OMalloc<CSetObject>(false);
 	pTop1 = OMalloc<CTestObject>(&sKilledTop1);
 	pTop2 = OMalloc<CTestObject>(&sKilledTop2);
 
@@ -658,7 +658,7 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 	pTest3 = OMalloc<CTestObject>(&sKilled3);
 	pTest4 = OMalloc<CTestObject>(&sKilled4);
 	pTest5 = OMalloc<CTestObject>(&sKilled5);
-	pSet = OMalloc<CSetObject>();
+	pSet = OMalloc<CSetObject>(false);
 	pTop1 = OMalloc<CTestObject>(&sKilledTop1);
 	pTop2 = OMalloc<CTestObject>(&sKilledTop2);
 
@@ -782,7 +782,7 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 	pTest3 = OMalloc<CTestObject>(&sKilled3);
 	pTest4 = OMalloc<CTestObject>(&sKilled4);
 	pTest5 = OMalloc<CTestObject>(&sKilled5);
-	pSet = OMalloc<CSetObject>();
+	pSet = OMalloc<CSetObject>(false);
 	pTop1 = OMalloc<CTestObject>(&sKilledTop1);
 	pTop2 = OMalloc<CTestObject>(&sKilledTop2);
 
@@ -906,7 +906,7 @@ void TestRootGraphRemoveMostlyBalanced(void)
 	pTest4 = OMalloc<CTestObject>(&sKilled4);
 	pTest5 = OMalloc<CTestObject>(&sKilled5);
 	pTest6 = OMalloc<CTestObject>(&sKilled6);
-	pSet = OMalloc<CSetObject>();
+	pSet = OMalloc<CSetObject>(false);
 	pTop1 = OMalloc<CTestObject>(&sKilledTop1);
 	pTop2 = OMalloc<CTestObject>(&sKilledTop2);
 

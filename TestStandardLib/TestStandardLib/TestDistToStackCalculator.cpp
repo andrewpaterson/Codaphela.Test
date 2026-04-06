@@ -619,7 +619,7 @@ void TestDistToStackSetWithoutStackPointers(void)
 	CTestObject*				pcTest;
 
 	pTest = OMalloc<CTestObject>(&sFreedNotifier);
-	pSet = OMalloc<CSet<CTestObject>>();
+	pSet = OMalloc<CSet<CTestObject>>(false);
 	pSet->Add(pTest);
 
 	pContainer = OMalloc<CPointerContainer>();
@@ -681,7 +681,7 @@ void TestDistToStackSetWithStackPointers(void)
 	CTestObject*				pcTest;
 
 	pTest = OMalloc<CTestObject>(&sFreedNotifier);
-	pSet = OMalloc<CSet<CTestObject>>();
+	pSet = OMalloc<CSet<CTestObject>>(false);
 	pSet->Add(pTest);
 
 	pContainer = OMalloc<CPointerContainer>();
@@ -1247,7 +1247,7 @@ void TestDistToStackRemoveUnbalancedLargeBroken(void)
 	pTest3 = OMalloc<CTestObject>(&sKilled3);
 	pTest4 = OMalloc<CTestObject>(&sKilled4);
 	pTest5 = OMalloc<CTestObject>(&sKilled5);
-	pSet = OMalloc<CSetObject>();
+	pSet = OMalloc<CSetObject>(false);
 	pTop1 = OMalloc<CTestObject>(&sKilledTop1);
 	pTop2 = OMalloc<CTestObject>(&sKilledTop2);
 

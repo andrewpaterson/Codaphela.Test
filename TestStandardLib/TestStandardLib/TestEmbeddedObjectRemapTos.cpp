@@ -5,6 +5,7 @@
 #include "StandardLib/String.h"
 #include "StandardLib/PointerContainer.h"
 #include "StandardLib/HollowObject.h"
+#include "StandardLib/ObjectHeader.h"
 #include "TestLib/Assert.h"
 
 
@@ -46,7 +47,7 @@ void TestEmbeddedObjectRemapTosActual(void)
 
 	Ptr<CRoot>	pRoot = ORoot();
 
-	Ptr<CHollowObject>	pHollow = gcObjects.AllocateHollowWithNameAndIndex("Name", gcObjects.GetIndexGenerator()->GetNext(), 3);
+	Ptr<CHollowObject>	pHollow = gcObjects.AllocateInternalHollowWithNameAndIndex("Name", gcObjects.GetIndexGenerator()->GetNext(), 3, OBJECT_IDENTIFIER_SIZE_NOT_SET);
 	AssertSize(3, pHollow.Object()->NumEmbedded());
 
 	Ptr<CEmbeddedObject> pHollowEmbedded1 = pHollow.Object()->GetEmbeddedObject(1);

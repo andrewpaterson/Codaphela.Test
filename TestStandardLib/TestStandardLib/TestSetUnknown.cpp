@@ -24,7 +24,7 @@ void TestSetStuffs(void)
 	SSetIterator							sSetIter;
 	bool									bExists;
 
-	cSet.Init();
+	cSet.Init(false);
 
 	pcTest1 = cSet.Add<CTestNamedUnknown>();
 	pcTest1->Init("The One");
@@ -100,7 +100,7 @@ void TestSetRemoval(void)
 	SSetIterator							sSetIter;
 	bool									bExists;
 
-	cSet.Init();
+	cSet.Init(false);
 
 	pcTest1 = cSet.Add<CTestNamedUnknown>();
 	pcTest1->Init("The One");
@@ -133,7 +133,7 @@ void TestSetRemoval(void)
 
 	cSet.Kill();
 
-	cSet.Init();
+	cSet.Init(false);
 
 	pcTest1 = cSet.Add<CTestNamedUnknown>();
 	pcTest1->Init("The One");
@@ -192,7 +192,7 @@ void TestCleanNulls(void)
 	SSetIterator		sSetIter;
 	bool				bResult;
 
-	cSet.Init(4);
+	cSet.Init(4, false);
 
 	for (int i = 0; i < 32; i++)
 	{

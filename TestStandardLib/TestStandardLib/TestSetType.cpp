@@ -24,7 +24,7 @@ void TestSetTypeInstantiation(void)
 	int						iCount;
 	bool					bExists;
 
-	cSet.Init();
+	cSet.Init(false);
 
 	pcTest1 = cSet.Add();
 	pcTest1->Init();
@@ -66,7 +66,7 @@ void TestSetTypeInstantiation(void)
 	AssertInt(0, cSet.NumElements());
 
 	iSize = cSet.ClassSize();
-	AssertInt(48, iSize);
+	AssertInt(52, iSize);
 
 	szName = cSet.ClassName();
 	AssertString("CSetType", szName);
@@ -94,7 +94,7 @@ void TestSetTypeAddAll(void)
 	CChars						sz;
 	CTestNamedUnknown*			pcTest25;
 
-	cSet.Init();
+	cSet.Init(false);
 	pcTest25 = NULL;
 	for (i = 0; i < 50; i++)
 	{
@@ -113,7 +113,7 @@ void TestSetTypeAddAll(void)
 
 	cSet.Remove(pcTest25);
 
-	cDest.Init();
+	cDest.Init(false);
 	cDest.AddAll(&cSet);
 	cSet.KillElements(false);
 	cSet.Kill();

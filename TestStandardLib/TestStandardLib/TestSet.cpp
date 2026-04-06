@@ -1,6 +1,9 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "BaseLib/TypeNames.h"
+#include "BaseLib/Codabase.h"
+#include "BaseLib/CodabaseFactory.h"
+#include "BaseLib/SequenceFactory.h"
 #include "StandardLib/Set.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/PointerContainer.h"
@@ -32,7 +35,7 @@ void TestSetAdd(void)
 {
 	ObjectsInit();
 
-	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc<CSet<CTestSaveableObject1>>();
+	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc<CSet<CTestSaveableObject1>>(false);
 	pacStuff->Add(OMalloc<CTestSaveableObject1>());
 
 	Ptr<CTestSaveableObject1> pSaveable = pacStuff->Get(0);
@@ -51,7 +54,7 @@ void TestSetGet(void)
 {
 	ObjectsInit();
 
-	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc<CSet<CTestSaveableObject1>>();
+	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc<CSet<CTestSaveableObject1>>(false);
 	pacStuff->Add(OMalloc<CTestSaveableObject1>());
 	Ptr<CTestSaveableObject1> pSaveable = OMalloc<CTestSaveableObject1>();
 	pSaveable->miInt = 3;
@@ -73,13 +76,13 @@ void TestSetAddAll(void)
 {
 	ObjectsInit();
 
-	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc<CSet<CTestSaveableObject1>>();
+	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc<CSet<CTestSaveableObject1>>(false);
 	pacStuff->Add(OMalloc<CTestSaveableObject1>());
 	Ptr<CTestSaveableObject1> pSaveable = OMalloc<CTestSaveableObject1>();
 	pSaveable->miInt = 3;
 	pacStuff->Add(pSaveable);
 
-	Ptr<CSet<CTestSaveableObject1>> pacMore = OMalloc<CSet<CTestSaveableObject1>>();
+	Ptr<CSet<CTestSaveableObject1>> pacMore = OMalloc<CSet<CTestSaveableObject1>>(false);
 	pSaveable = OMalloc<CTestSaveableObject1>();
 	pSaveable->miInt = 5;
 	pacStuff->Add(pSaveable);
@@ -105,7 +108,7 @@ void TestSetRemove(void)
 
 	Ptr<CRoot> pRoot = ORoot();
 
-	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc<CSet<CTestSaveableObject1>>();
+	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc<CSet<CTestSaveableObject1>>(false);
 	pRoot->Add(pacStuff);
 
 	pacStuff->Add(OMalloc<CTestSaveableObject1>());
@@ -147,7 +150,7 @@ void TestSetKillCyclic(void)
 	pTest2->mpTest = pTest1;
 	pTest3 = OMalloc<CTestObject>();
 	pTest3->mpTest = pTest2;
-	pSet = OMalloc<CSetObject>();
+	pSet = OMalloc<CSetObject>(false);
 	pRoot = ORoot();
 	pRoot->Add(pSet);
 	pSet->Add(pTest3);
@@ -186,7 +189,7 @@ void TestSetKillAll(void)
 	pObject = OMalloc<CTestObject>();
 	pContainer2 = OMalloc<CPointerContainer>(pObject);
 	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
-	pSet = OMalloc<CSetObject>();
+	pSet = OMalloc<CSetObject>(false);
 	pRoot = ORoot();
 	pRoot->Add(pSet);
 	pSet->Add(pContainer1);
@@ -226,7 +229,7 @@ void TestSetRemoveAll(void)
 	pObject = OMalloc<CTestObject>();
 	pContainer2 = OMalloc<CPointerContainer>(pObject);
 	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
-	pSet = OMalloc<CSetObject>();
+	pSet = OMalloc<CSetObject>(false);
 	pRoot = ORoot();
 	pRoot->Add(pSet);
 	pSet->Add(pContainer1);
@@ -276,7 +279,7 @@ void TestSetSerialisation(void)
 	pObject = OMalloc<CTestObject>();
 	pContainer2 = OMalloc<CPointerContainer>(pObject);
 	pContainer1 = OMalloc<CPointerContainer>(pContainer2);
-	pSet = ONMalloc<CSetObject>("Burke");
+	pSet = ONMalloc<CSetObject>("Burke", false);
 	pSet->Add(pContainer1);
 	pSet->Add(pContainer2);
 
@@ -312,6 +315,138 @@ void TestSetSerialisation(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestSetObjectInternalSerialisation(size uiNumSetItems)
+{
+	CFileUtil	cFileUtil;
+	CCodabase*	pcDatabase;
+	CSequence*	pcSequence;
+	char		szDirectory[] = "Output" _FS_ "SetObjectInternalSerialisation";
+	bool		bResult;
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+	{
+		Ptr<CRoot>					pRoot;
+		Ptr<CSetObject>				pSet;
+		Ptr<CTestObject>			pValue1;
+		Ptr<CTestObject>			pValue2;
+		Ptr<CTestObject>			pValue3;
+		Ptr<CTestTriPointerObject>	pValue5;
+		bool						bResult;
+		size						ui;
+
+		pRoot = ORoot();
+		pSet = ONMalloc<CSetObject>("Set", false);
+		pRoot->Add(pSet);
+
+		gcObjects.DisableValidation();
+
+		bResult = true;
+		for (ui = 0; ui < uiNumSetItems; ui++)
+		{
+			if (ui % 2 == 0)
+			{
+				pValue3 = pValue2;
+				pValue2 = pValue1;
+				pValue1 = OMalloc<CTestObject>();
+			}
+			else
+			{
+				pValue5 = OMalloc<CTestTriPointerObject>();
+				pValue5->mpObject1 = pValue1;
+				pValue5->mpObject2 = pValue2;
+				pValue5->mpObject2 = pValue3;
+
+			}
+			bResult = pSet->Add(pValue1);
+			if (!bResult)
+			{
+				AssertTrue(bResult);
+				break;
+			}
+		}
+		AssertTrue(bResult);
+	}
+
+	gcObjects.EnableValidation();
+	gcObjects.ValidateObjectsConsistency();
+
+	bResult = ObjectsFlush();
+	AssertTrue(bResult);
+	bResult = gcObjects.EvictInMemory();
+	AssertTrue(bResult);
+
+	AssertLong(uiNumSetItems + 1, pcDatabase->NumIndices());
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill();
+
+	pcSequence = CSequenceFactory::Create(szDirectory);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+	{
+		CArrayInt	aiKeyNames;
+		CRandom		cRandom;
+		uint		uiCount;
+		size		ui;
+		bool		bResult;
+
+		cRandom.Init(679843263);
+		aiKeyNames.Init();
+		for (uiCount = 0; uiCount < uiNumSetItems; uiCount++)
+		{
+			aiKeyNames.Add(uiCount);
+		}
+		aiKeyNames.Shuffle(&cRandom);
+		cRandom.Kill();
+		AssertSize(uiNumSetItems, aiKeyNames.NumElements());
+		
+		TestSetAddConstructors();
+		AssertLong(uiNumSetItems + 1, pcDatabase->NumIndices());
+
+		AssertTrue(gcObjects.Contains("Set"));
+
+		Ptr<CSetObject>		pSet;
+		CPointer			pValue;
+		uint				uiName;
+
+		pSet = gcObjects.Get("Set");
+		AssertTrue(pSet.IsNotNull());
+		AssertSize(uiNumSetItems, pSet->NumElements());
+		AssertFalse(pSet->IsSorted());
+
+		bResult = true;
+		for (ui = 0; ui < uiNumSetItems; ui++)
+		{
+			uiName = aiKeyNames.GetValue(ui);
+			pValue = pSet->Get(uiName);
+			bResult = pValue.IsNotNull();
+			if (!bResult)
+			{
+				AssertTrue(bResult);
+				break;
+			}
+		}
+		AssertTrue(bResult);
+		aiKeyNames.Kill();
+	}
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestSet(void)
 {
 	BeginTests();
@@ -328,6 +463,8 @@ void TestSet(void)
 	TestSetKillCyclic();
 	TestSetKillAll();
 	TestSetRemoveAll();
+	//TestSetObjectInternalSerialisation(4);
+	//TestSetObjectInternalSerialisation(10000);
 
 	DataIOKill();
 	TypesKill();

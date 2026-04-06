@@ -58,7 +58,7 @@ void TestArrayTypeInstantiation(void)
 	AssertPointer(pcTest1, pcTest);
 
 	iSize = cArray.ClassSize();
-	AssertInt(48, iSize);
+	AssertInt(52, iSize);
 
 	szName = cArray.ClassName();
 	AssertString("CArrayUnknownTemplate", szName);
