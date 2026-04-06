@@ -9,7 +9,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSetStuffs(void)
+void TestSetUnknownRemoveDuringIteration1(void)
 {
 	MemoryInit();
 	UnknownsInit();
@@ -80,12 +80,11 @@ void TestSetStuffs(void)
 }
 
 
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSetRemoval(void)
+void TestSetUnknownRemoveDuringIteration2(void)
 {
 	MemoryInit();
 	UnknownsInit();
@@ -180,7 +179,7 @@ void TestSetRemoval(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestCleanNulls(void)
+void TestSetUnknownCleanNulls(void)
 {
 	MemoryInit();
 	UnknownsInit();
@@ -304,6 +303,87 @@ void TestCleanNulls(void)
 	MemoryKill();
 }
 
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSetUnknownSorted(size uiNumElements)
+{
+	MemoryInit();
+	UnknownsInit();
+
+	CSetUnknown								cSet;
+	size									iNum;
+	CTestNamedUnknown*						pcTest;
+	bool									bExists;
+	CArrayUnknownPtr						apTests;
+
+	cSet.Init(true, true, false, true, 1, true);  //You need some way of disallowing null.
+	apTests.Init();
+
+	for (iNum = 0; iNum < uiNumElements; iNum++)
+	{
+		pcTest = cSet.Add<CTestNamedUnknown>();
+		pcTest->Init(SizeToString(iNum));
+		apTests.Add((CUnknown**)&pcTest);
+	}
+
+	iNum = cSet.NumElements();
+	AssertInt(uiNumElements, iNum);
+
+	AssertTrue(cSet.IsSorted());
+	AssertTrue(cSet.CalculateIsSorted());
+
+	bExists = true;
+	for (iNum = 0; iNum < uiNumElements; iNum++)
+	{
+		pcTest = *((CTestNamedUnknown**)apTests.Get(iNum));
+		bExists = cSet.Contains(pcTest);
+		if (!bExists)
+		{
+			AssertTrue(bExists);
+		}
+	}
+	AssertTrue(bExists);
+
+	for (iNum = 0; iNum < uiNumElements; iNum++)
+	{
+		if (iNum % 2 == 1)
+		{
+			pcTest = *((CTestNamedUnknown**)apTests.Get(iNum));
+			cSet.Remove(pcTest);
+		}
+	}
+
+	iNum = cSet.NumElements();
+	AssertInt(uiNumElements / 2, iNum);
+
+	AssertTrue(cSet.IsSorted());
+	AssertTrue(cSet.CalculateIsSorted());
+
+	bExists = true;
+	for (iNum = 0; iNum < uiNumElements; iNum++)
+	{
+		if (iNum % 2 == 0)
+		{
+			pcTest = *((CTestNamedUnknown**)apTests.Get(iNum));
+			bExists = cSet.Contains(pcTest);
+			if (!bExists)
+			{
+				AssertTrue(bExists);
+			}
+		}
+	}
+	AssertTrue(bExists);
+
+	apTests.Kill();
+
+	cSet.Kill();
+
+	UnknownsKill();
+	MemoryKill();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -313,9 +393,11 @@ void TestSetUnknown(void)
 {
 	BeginTests();
 
-	TestSetStuffs();
-	TestSetRemoval();
-	TestCleanNulls();
+	TestSetUnknownRemoveDuringIteration1();
+	TestSetUnknownRemoveDuringIteration2();
+	TestSetUnknownCleanNulls();
+	TestSetUnknownSorted(4);
+	TestSetUnknownSorted(10000);
 
 	TestStatistics();
 }
