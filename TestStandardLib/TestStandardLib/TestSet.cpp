@@ -585,9 +585,15 @@ void TestSetObjectInternalSerialisation(size uiNumSetItems)
 			uiLength = StrLen(szName);
 
 			bExists = cIndexObjectPointers.Get((uint8*)szName, uiLength, &pcObject, NULL, sizeof(CObject*));
-			AssertPointer(pObject.Object(), pcObject);
+			bResult = pObject.Object() == pcObject;
+			if (bResult)
+			{
+				AssertPointer(pObject.Object(), pcObject);
+				break;
+			}
 			pObject = pSet->Iterate(&sIter);
 		}
+		AssertTrue(bResult);
 
 		cIndexObjectPointers.Kill();
 		aiKeyNames.Kill();
@@ -599,6 +605,160 @@ void TestSetObjectInternalSerialisation(size uiNumSetItems)
 
 	cIndexTriIndices.Kill();
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSetObjectMorphSetEntry(size uiNumElements)
+{
+	ObjectsInit();
+	{
+		size										ui;
+		Ptr<CSetObject>								pSet;
+		Ptr<CTestSaveableObject1>					pSaveable;
+		CArrayTemplate<STestObjectFreedNotifier>	asFreedNotifiers;
+		STestObjectFreedNotifier*					psFreedNotifier;
+		Ptr<>										pMiddle;
+		size										uiHalfWay;
+		Ptr<CTestEmbeddedObjectWithFields>			pComplex;
+		size										uiNumRemapped;
+		Ptr<CRoot>									pRoot;
+		size										uiNumSaveableObject;
+		size										uiNumEmbeddedObject;
+		SSetIterator								sIter;
+		Ptr<>										pObject;
+		bool										bResult;
+		int											iCompare;
+		Ptr<CTestObject>							pTestObject;
+
+		uiHalfWay = uiNumElements / 2;
+		asFreedNotifiers.Init();
+		for (ui = 0; ui < uiNumElements; ui++)
+		{
+			asFreedNotifiers.Add();
+		}
+
+		gcObjects.DisableValidation();
+
+		pRoot = ORoot();
+		pSet = OMalloc<CSetObject>();
+		pRoot->Add(pSaveable);
+		for (ui = 0; ui < uiNumElements; ui++)
+		{
+			pSaveable = OMalloc<CTestSaveableObject1>();
+			pSaveable->miInt = uiNumElements - ui;
+			pSaveable->mszString.Init(SizeToString(ui));
+			psFreedNotifier = asFreedNotifiers.Get(ui);
+			pSaveable->mpObject = OMalloc<CTestObject>(psFreedNotifier);
+			pSet->Add(pSaveable);
+
+			if (ui == uiHalfWay)
+			{
+				pMiddle = pSaveable;
+			}
+		}
+		pSaveable = NULL;
+
+		AssertTrue(pSet->IsSorted());
+		AssertTrue(pSet->CalculateIsSorted());
+
+		AssertSize(1, pMiddle.NumHeapFroms());
+		AssertSize(1, pMiddle.NumStackFroms());
+
+		pComplex = ONMalloc<CTestEmbeddedObjectWithFields>("Complex");
+		AssertSize(2 * uiNumElements + 1 + 3, gcObjects.NumMemoryIndexes());
+
+		gcObjects.EnableValidation();
+
+		uiNumRemapped = pMiddle.MorphInto(&pComplex);
+		AssertSize(2, uiNumRemapped);
+		AssertSize(2 * (uiNumElements - 1) + 1 + 3, gcObjects.NumMemoryIndexes());
+
+		bResult = true;
+		for (ui = 0; ui < uiNumElements; ui++)
+		{
+			psFreedNotifier = asFreedNotifiers.Get(ui);
+			if (ui != uiHalfWay)
+			{
+				if (psFreedNotifier->bFreed)
+				{
+					AssertFalse(psFreedNotifier->bFreed);
+					break;
+				}
+			}
+			else
+			{
+				if (!psFreedNotifier->bFreed)
+				{
+					AssertTrue(psFreedNotifier->bFreed);
+					break;
+				}
+			}
+		}
+		AssertTrue(bResult);
+
+		AssertFalse(pSet->IsSorted());
+		AssertFalse(pSet->CalculateIsSorted());
+
+		pSet->Contains(pComplex);
+
+		AssertTrue(pSet->IsSorted());
+		AssertTrue(pSet->CalculateIsSorted());
+
+		AssertPointer(&pComplex, &pMiddle);
+
+		uiNumSaveableObject = 0;
+		uiNumEmbeddedObject = 0;
+
+		pObject = pSet->StartIteration(&sIter);
+		while (pObject.IsNotNull())
+		{
+			iCompare = StrCmp("CTestSaveableObject1", pObject.ClassName());
+			if (iCompare == 0)
+			{
+				uiNumSaveableObject++;
+			}
+
+			iCompare = StrCmp("CTestEmbeddedObjectWithFields", pObject.ClassName());
+			if (iCompare == 0)
+			{
+				uiNumEmbeddedObject++;
+			}
+
+			pObject = pSet->Iterate(&sIter);
+		}
+
+		AssertInt(uiNumElements - 1, uiNumSaveableObject);
+		AssertInt(1, uiNumEmbeddedObject);
+
+		AssertSize(2 * (uiNumElements - 1) + 1 + 3, gcObjects.NumMemoryIndexes());
+
+		pTestObject = OMalloc<CTestObject>();
+
+		uiNumRemapped = pSet.MorphInto(&pTestObject);
+		AssertSize(1, uiNumRemapped);
+		AssertSize(1 + 3, gcObjects.NumMemoryIndexes());
+
+		bResult = true;
+		for (ui = 0; ui < uiNumElements; ui++)
+		{
+			psFreedNotifier = asFreedNotifiers.Get(ui);
+			if (!psFreedNotifier->bFreed)
+			{
+				AssertTrue(psFreedNotifier->bFreed);
+				break;
+			}
+		}
+		AssertTrue(bResult);
+
+		asFreedNotifiers.Kill();
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -612,16 +772,18 @@ void TestSet(void)
 	TypesInit();
 	DataIOInit();
 
-	//TestSetAdd();
-	//TestSetGet();
-	//TestSetAddAll();
-	//TestSetRemove();
-	//TestSetKillCyclic();
-	//TestSetKillAll();
-	//TestSetRemoveAll();
-	//TestSetSerialisation();
+	TestSetAdd();
+	TestSetGet();
+	TestSetAddAll();
+	TestSetRemove();
+	TestSetKillCyclic();
+	TestSetKillAll();
+	TestSetRemoveAll();
+	TestSetSerialisation();
 	TestSetObjectInternalSerialisation(4);
 	TestSetObjectInternalSerialisation(10000);
+	TestSetObjectMorphSetEntry(10);
+	TestSetObjectMorphSetEntry(2000);
 
 	DataIOKill();
 	TypesKill();

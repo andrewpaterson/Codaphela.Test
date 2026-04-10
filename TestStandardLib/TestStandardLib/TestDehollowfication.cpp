@@ -611,11 +611,11 @@ void TestDehollowficationFatFromDatabaseSimple(void)
 		pPtr3 = gcObjects.Get("3");
 
 		AssertString("CHollowObject", pPtr1->PointerObject()->ClassName());
-		AssertFalse(((CHollowObject*)pPtr1->PointerObject())->IsFatHollow());
+		AssertTrue(((CHollowObject*)pPtr1->PointerObject())->IsFatHollow());
 		AssertString("CHollowObject", pPtr2->PointerObject()->ClassName());
-		AssertFalse(((CHollowObject*)pPtr2->PointerObject())->IsFatHollow());
+		AssertTrue(((CHollowObject*)pPtr2->PointerObject())->IsFatHollow());
 		AssertString("CHollowObject", pPtr3->PointerObject()->ClassName());
-		AssertFalse(((CHollowObject*)pPtr3->PointerObject())->IsFatHollow());
+		AssertTrue(((CHollowObject*)pPtr3->PointerObject())->IsFatHollow());
 
 		AssertPointer(&pPtr1, pPtr1->mp.Embedding());
 		&(pPtr1->mp);

@@ -20,7 +20,7 @@ void TestArrayCommonObjectPointerRemapping(void)
 	Ptr<CTestSaveableObject1>	pObject3;
 	STestObjectFreedNotifier	sFreedNotifier;
 	CPointer					pNull;
-	int							iNumRemapped;
+	size						uiNumRemapped;
 	CTestObject*				pcObject1;
 	
 	ObjectsInit();
@@ -55,8 +55,8 @@ void TestArrayCommonObjectPointerRemapping(void)
 	AssertInt(0, pObject3->NumPointerTos());
 
 	pcObject1 = (CTestObject*)pObject1.Object();
-	iNumRemapped = pObject1.MorphInto(&pObject3);
-	AssertInt(3, iNumRemapped);
+	uiNumRemapped = pObject1.MorphInto(&pObject3);
+	AssertInt(3, uiNumRemapped);
 
 	AssertInt(6, pArray->NumElements());
 	AssertInt(5, pArray->NonNullElements());
