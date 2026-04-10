@@ -299,7 +299,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 
 	pRoot = gcObjects.Root();
 	AssertTrue(pRoot.IsNotNull());
-	pComplex = pRoot->Get(0);
+	pComplex = pRoot->GetFirst<CEmbeddedComplex>();
 	AssertTrue(pComplex.IsHollow());
 	
 	szClassName = pComplex->ClassName();
@@ -387,7 +387,7 @@ void TestEmbeddedObjectPointTo(void)
 
 	pRoot = gcObjects.Root();
 	AssertTrue(pRoot.IsNotNull());
-	pContainer = pRoot->Get(0);
+	pContainer = pRoot->GetFirst<CEmbeddedContainer>();
 	AssertTrue(pContainer.IsHollow());
 	AssertSize(0, pContainer.Object()->NumEmbedded());
 	AssertLong(-1, pContainer.GetIndex());

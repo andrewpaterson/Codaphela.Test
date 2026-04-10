@@ -4,6 +4,7 @@
 #include "BaseLib/Codabase.h"
 #include "BaseLib/CodabaseFactory.h"
 #include "BaseLib/SequenceFactory.h"
+#include "BaseLib/DebugOutput.h"
 #include "StandardLib/Set.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/PointerContainer.h"
@@ -11,6 +12,7 @@
 #include "StandardLib/ExternalObjectSerialiser.h"
 #include "StandardLib/ChunkFileObjectWriter.h"
 #include "StandardLib/ChunkFileSystemObjectReader.h"
+#include "StandardLib/HollowObject.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
 
@@ -24,6 +26,7 @@ void TestSetAddConstructors(void)
 	gcObjects.AddConstructor<CTestSaveableObject1>();
 	gcObjects.AddConstructor<CTestObject>();
 	gcObjects.AddConstructor<CPointerContainer>();
+	gcObjects.AddConstructor<CTestTriPointerObject>();
 }
 
 
@@ -38,7 +41,7 @@ void TestSetAdd(void)
 	Ptr<CSet<CTestSaveableObject1>> pacStuff = OMalloc<CSet<CTestSaveableObject1>>(false);
 	pacStuff->Add(OMalloc<CTestSaveableObject1>());
 
-	Ptr<CTestSaveableObject1> pSaveable = pacStuff->Get(0);
+	Ptr<CTestSaveableObject1> pSaveable = pacStuff->UnsafeGet(0);
 	AssertTrue(pSaveable.IsNotNull());
 	AssertInt(7, pSaveable->miInt);
 
@@ -61,8 +64,8 @@ void TestSetGet(void)
 	pacStuff->Add(pSaveable);
 
 	AssertInt(2, pacStuff->NumElements());
-	AssertInt(7, pacStuff->Get(0)->miInt);
-	AssertInt(3, pacStuff->Get(1)->miInt);
+	AssertInt(7, pacStuff->UnsafeGet(0)->miInt);
+	AssertInt(3, pacStuff->UnsafeGet(1)->miInt);
 
 	ObjectsKill();
 }
@@ -90,9 +93,9 @@ void TestSetAddAll(void)
 	pacMore->AddAll(pacStuff);
 
 	AssertInt(3, pacMore->NumElements());
-	AssertInt(7, pacMore->Get(0)->miInt);
-	AssertInt(3, pacMore->Get(1)->miInt);
-	AssertInt(5, pacMore->Get(2)->miInt);
+	AssertInt(7, pacMore->UnsafeGet(0)->miInt);
+	AssertInt(3, pacMore->UnsafeGet(1)->miInt);
+	AssertInt(5, pacMore->UnsafeGet(2)->miInt);
 
 	ObjectsKill();
 }
@@ -122,8 +125,8 @@ void TestSetRemove(void)
 	pacStuff->Remove(pSaveable);
 
 	AssertInt(2, pacStuff->NumElements());
-	AssertInt(7, pacStuff->Get(0)->miInt);
-	AssertInt(3, pacStuff->Get(1)->miInt);
+	AssertInt(7, pacStuff->UnsafeGet(0)->miInt);
+	AssertInt(3, pacStuff->UnsafeGet(1)->miInt);
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -311,20 +314,45 @@ void TestSetSerialisation(void)
 }
 
 
+struct STriOi
+{
+	OIndex	oi1;
+	OIndex	oi2;
+	OIndex	oi3;
+};
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
 void TestSetObjectInternalSerialisation(size uiNumSetItems)
 {
-	CFileUtil	cFileUtil;
-	CCodabase*	pcDatabase;
-	CSequence*	pcSequence;
-	char		szDirectory[] = "Output" _FS_ "SetObjectInternalSerialisation";
-	bool		bResult;
+	CFileUtil			cFileUtil;
+	CCodabase*			pcDatabase;
+	CSequence*			pcSequence;
+	char				szDirectory[] = "Output" _FS_ "SetObjectInternalSerialisation";
+	bool				bResult;
+	CIndexTreeMemory	cIndexTriIndices;
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	CArrayInt	aiKeyNames;
+	CRandom		cRandom;
+	uint		uiCount;
+
+	cIndexTriIndices.Init(IKR_Yes);
+
+	cRandom.Init(32280975);
+	aiKeyNames.Init();
+	for (uiCount = 0; uiCount < uiNumSetItems; uiCount++)
+	{
+		aiKeyNames.Add(uiCount);
+	}
+	aiKeyNames.Shuffle(&cRandom);
+	cRandom.Kill();
+	AssertSize(uiNumSetItems, aiKeyNames.NumElements());
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -333,18 +361,31 @@ void TestSetObjectInternalSerialisation(size uiNumSetItems)
 	{
 		Ptr<CRoot>					pRoot;
 		Ptr<CSetObject>				pSet;
+		Ptr<CTestObject>			pKey;
 		Ptr<CTestObject>			pValue1;
 		Ptr<CTestObject>			pValue2;
 		Ptr<CTestObject>			pValue3;
 		Ptr<CTestTriPointerObject>	pValue5;
+		CPointer					pObject;
 		bool						bResult;
 		size						ui;
+		OIndex						oi;
+		STriOi*						psTriOi;
+		STriOi						sTriOi;
+		SSetIterator				sIter;
+		bool						bExists;
 
 		pRoot = ORoot();
-		pSet = ONMalloc<CSetObject>("Set", false);
+		pSet = ONMalloc<CSetObject>("Set");
 		pRoot->Add(pSet);
 
 		gcObjects.DisableValidation();
+
+		pValue1 = NULL;
+		pValue2 = NULL;
+		pValue3 = NULL;
+
+		AssertTrue(pSet->IsMustSort());
 
 		bResult = true;
 		for (ui = 0; ui < uiNumSetItems; ui++)
@@ -353,22 +394,74 @@ void TestSetObjectInternalSerialisation(size uiNumSetItems)
 			{
 				pValue3 = pValue2;
 				pValue2 = pValue1;
-				pValue1 = OMalloc<CTestObject>();
+				pValue1 = ONMalloc<CTestObject>(SizeToString(ui));
+				bResult = pSet->Add(pValue1);
 			}
 			else
 			{
-				pValue5 = OMalloc<CTestTriPointerObject>();
+				pValue5 = ONMalloc<CTestTriPointerObject>(SizeToString(ui));
 				pValue5->mpObject1 = pValue1;
 				pValue5->mpObject2 = pValue2;
-				pValue5->mpObject2 = pValue3;
+				pValue5->mpObject3 = pValue3;
+				bResult = pSet->Add(pValue5);
 
+				oi = pValue5->GetIndex();
+				psTriOi = (STriOi*)cIndexTriIndices.Put((uint8*)&oi, sizeof(OIndex), NULL, sizeof(STriOi));
+				psTriOi->oi1 = pValue1.GetIndex();
+				psTriOi->oi2 = pValue2.GetIndex();
+				psTriOi->oi3 = pValue3.GetIndex();
 			}
-			bResult = pSet->Add(pValue1);
 			if (!bResult)
 			{
 				AssertTrue(bResult);
 				break;
 			}
+		}
+		AssertTrue(bResult);
+
+		pValue1 = NULL;
+		pValue2 = NULL;
+		pValue3 = NULL;
+
+		bResult = true;
+		pObject = pSet->StartIteration(&sIter);
+		while (pObject.IsNotNull())
+		{
+			oi = pObject->GetIndex();
+			bExists = cIndexTriIndices.Get((uint8*)&oi, sizeof(OIndex), &sTriOi, NULL, sizeof(STriOi));
+			if (!bExists)
+			{
+				bResult = StringCompare("CTestObject", pObject->ClassName()) == 0;
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+			}
+			else
+			{
+				bResult = StringCompare("CTestTriPointerObject", pObject->ClassName()) == 0;
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+
+				pValue1 = gcObjects.Get(sTriOi.oi1);
+				pValue2 = gcObjects.Get(sTriOi.oi2);
+				pValue3 = gcObjects.Get(sTriOi.oi3);
+
+				pValue5 = pObject;
+				bResult  = &pValue5->mpObject1 == &pValue1;
+				bResult &= &pValue5->mpObject2 == &pValue2;
+				bResult &= &pValue5->mpObject3 == &pValue3;
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+			}
+			pObject = pSet->Iterate(&sIter);
 		}
 		AssertTrue(bResult);
 	}
@@ -381,7 +474,7 @@ void TestSetObjectInternalSerialisation(size uiNumSetItems)
 	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
 
-	AssertLong(uiNumSetItems + 1, pcDatabase->NumIndices());
+	AssertLong(uiNumSetItems + 3LL, pcDatabase->NumIndices());
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -392,55 +485,119 @@ void TestSetObjectInternalSerialisation(size uiNumSetItems)
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	{
-		CArrayInt	aiKeyNames;
-		CRandom		cRandom;
-		uint		uiCount;
-		size		ui;
-		bool		bResult;
-
-		cRandom.Init(679843263);
-		aiKeyNames.Init();
-		for (uiCount = 0; uiCount < uiNumSetItems; uiCount++)
-		{
-			aiKeyNames.Add(uiCount);
-		}
-		aiKeyNames.Shuffle(&cRandom);
-		cRandom.Kill();
-		AssertSize(uiNumSetItems, aiKeyNames.NumElements());
-		
 		TestSetAddConstructors();
-		AssertLong(uiNumSetItems + 1, pcDatabase->NumIndices());
+		AssertLong(uiNumSetItems + 3LL, pcDatabase->NumIndices());
 
 		AssertTrue(gcObjects.Contains("Set"));
 
-		Ptr<CSetObject>		pSet;
-		CPointer			pValue;
-		uint				uiName;
+		Ptr<CSetObject>				pSet;
+		Ptr<CHollowObject>			pHollow;
+		bool						bResult;
+		OIndex						oi;
+		STriOi						sTriOi;
+		SSetIterator				sIter;
+		CPointer					pObject;
+		bool						bExists;
+		CIndexTreeMemory			cIndexObjectPointers;
+		char*						szName;
+		size						uiLength;
+		CHollowObject*				pcHollow;
+		CObject*					pcObject;
 
 		pSet = gcObjects.Get("Set");
 		AssertTrue(pSet.IsNotNull());
 		AssertSize(uiNumSetItems, pSet->NumElements());
+
+		cIndexObjectPointers.Init();
+
+		AssertTrue(pSet->IsMustSort());
 		AssertFalse(pSet->IsSorted());
 
 		bResult = true;
-		for (ui = 0; ui < uiNumSetItems; ui++)
+		pObject = pSet->StartIteration(&sIter);
+		AssertTrue(pSet->IsSorted());
+		AssertTrue(pSet->CalculateIsSorted());
+		while (pObject.IsNotNull())
 		{
-			uiName = aiKeyNames.GetValue(ui);
-			pValue = pSet->Get(uiName);
-			bResult = pValue.IsNotNull();
+			bResult = pObject.IsHollow();
 			if (!bResult)
 			{
 				AssertTrue(bResult);
 				break;
 			}
+			pHollow = pObject;
+			pcHollow = ((CHollowObject*)pHollow.Object());
+			bResult = pcHollow->IsFatHollow();
+			if (!bResult)
+			{
+				AssertTrue(bResult);
+				break;
+			}
+			szName = pHollow.GetName();
+			uiLength = StrLen(szName);
+			
+			cIndexObjectPointers.Put((uint8*)szName, uiLength, &pcHollow, sizeof(CHollowObject*));
+
+			oi = pObject->GetIndex();
+			bResult = pObject.IsHollow();
+			if (bResult)
+			{
+				AssertFalse(bResult);
+				break;
+			}
+
+			bExists = cIndexTriIndices.Get((uint8*)&oi, sizeof(OIndex), &sTriOi, NULL, sizeof(STriOi));
+			if (!bExists)
+			{
+				bResult = StringCompare("CTestObject", pObject->ClassName()) == 0;
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+			}
+			else
+			{
+				bResult = StringCompare("CTestTriPointerObject", pObject->ClassName()) == 0;
+				if (!bResult)
+				{
+					AssertTrue(bResult);
+					break;
+				}
+			}
+			pObject = pSet->Iterate(&sIter);
 		}
 		AssertTrue(bResult);
+		AssertTrue(pSet->IsSorted());
+		AssertTrue(pSet->CalculateIsSorted());
+
+		bResult = true;
+		pObject = pSet->StartIteration(&sIter);
+		while (pObject.IsNotNull())
+		{
+			bResult = pObject.IsHollow();
+			if (bResult)
+			{
+				AssertFalse(bResult);
+				break;
+			}
+			szName = pObject.GetName();
+			uiLength = StrLen(szName);
+
+			bExists = cIndexObjectPointers.Get((uint8*)szName, uiLength, &pcObject, NULL, sizeof(CObject*));
+			AssertPointer(pObject.Object(), pcObject);
+			pObject = pSet->Iterate(&sIter);
+		}
+
+		cIndexObjectPointers.Kill();
 		aiKeyNames.Kill();
 	}
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
 	ObjectsKill();
+
+	cIndexTriIndices.Kill();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -455,16 +612,16 @@ void TestSet(void)
 	TypesInit();
 	DataIOInit();
 
-	TestSetAdd();
-	TestSetGet();
-	TestSetAddAll();
-	TestSetSerialisation();
-	TestSetRemove();
-	TestSetKillCyclic();
-	TestSetKillAll();
-	TestSetRemoveAll();
-	//TestSetObjectInternalSerialisation(4);
-	//TestSetObjectInternalSerialisation(10000);
+	//TestSetAdd();
+	//TestSetGet();
+	//TestSetAddAll();
+	//TestSetRemove();
+	//TestSetKillCyclic();
+	//TestSetKillAll();
+	//TestSetRemoveAll();
+	//TestSetSerialisation();
+	TestSetObjectInternalSerialisation(4);
+	TestSetObjectInternalSerialisation(10000);
 
 	DataIOKill();
 	TypesKill();

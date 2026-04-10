@@ -64,7 +64,7 @@ void TestObjectReplaceNoPointers(void)
 	AssertPointer(&pObject3, &pObject1);
 	AssertFalse(sFreeNotifider2.bFreed);
 	AssertFalse(sFreeNotifider3.bFreed);
-	pObject4 = pRoot->Get(0);
+	pObject4 = pRoot->GetFirst<CTestObject>();
 	AssertPointer(&pObject3, &pObject4);
 	AssertInt(4, gcUnknowns.NumElements());
 

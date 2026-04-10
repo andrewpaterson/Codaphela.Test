@@ -442,7 +442,7 @@ struct STriOi
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayInternalSerialisation(void)
+void TestArrayInternalSerialisation(size uiNumArrayItems)
 {
 	CFileUtil			cFileUtil;
 	CCodabase*			pcDatabase;
@@ -464,13 +464,13 @@ void TestArrayInternalSerialisation(void)
 
 	cRandom.Init(32280975);
 	aiKeyNames.Init();
-	for (uiCount = 0; uiCount < 10000; uiCount++)
+	for (uiCount = 0; uiCount < uiNumArrayItems; uiCount++)
 	{
 		aiKeyNames.Add(uiCount);
 	}
 	aiKeyNames.Shuffle(&cRandom);
 	cRandom.Kill();
-	AssertSize(10000, aiKeyNames.NumElements());
+	AssertSize(uiNumArrayItems, aiKeyNames.NumElements());
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -501,7 +501,7 @@ void TestArrayInternalSerialisation(void)
 		pValue3 = NULL;
 
 		bResult = true;
-		for (ui = 0; ui < 10000; ui++)
+		for (ui = 0; ui < uiNumArrayItems; ui++)
 		{
 			if (ui % 2 == 0)
 			{
@@ -537,7 +537,7 @@ void TestArrayInternalSerialisation(void)
 		pValue3 = NULL;
 
 		bResult = true;
-		for (ui = 0; ui < 10000; ui++)
+		for (ui = 0; ui < uiNumArrayItems; ui++)
 		{
 			uiIndex = aiKeyNames.GetValue(ui);
 			if (uiIndex % 2 == 0)
@@ -605,7 +605,7 @@ void TestArrayInternalSerialisation(void)
 	bResult = gcObjects.EvictInMemory();
 	AssertTrue(bResult);
 
-	AssertLong(10003LL, pcDatabase->NumIndices());
+	AssertLong(uiNumArrayItems + 3LL, pcDatabase->NumIndices());
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -617,7 +617,7 @@ void TestArrayInternalSerialisation(void)
 	ObjectsInit(pcDatabase, pcSequence);
 	{
 		TestArrayAddConstructors();
-		AssertLong(10003LL, pcDatabase->NumIndices());
+		AssertLong(uiNumArrayItems + 3LL, pcDatabase->NumIndices());
 
 		AssertTrue(gcObjects.Contains("Array"));
 
@@ -632,14 +632,14 @@ void TestArrayInternalSerialisation(void)
 
 		pArray = gcObjects.Get("Array");
 		AssertTrue(pArray.IsNotNull());
-		AssertSize(10000, pArray->NumElements());
+		AssertSize(uiNumArrayItems, pArray->NumElements());
 
 		pValue1 = NULL;
 		pValue2 = NULL;
 		pValue3 = NULL;
 
 		bResult = true;
-		for (ui = 0; ui < 10000; ui++)
+		for (ui = 0; ui < uiNumArrayItems; ui++)
 		{
 			uiIndex = aiKeyNames.GetValue(ui);
 			if (uiIndex % 2 == 0)
@@ -734,7 +734,8 @@ void TestArray(void)
 	TestArrayConstructorExists();
 	TestArrayClassExists();
 	TestArrayExternalSerialisation();
-	TestArrayInternalSerialisation();
+	TestArrayInternalSerialisation(4);
+	TestArrayInternalSerialisation(10000);
 
 	DataIOKill();
 	TypesKill();

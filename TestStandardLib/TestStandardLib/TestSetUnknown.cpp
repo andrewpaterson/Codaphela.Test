@@ -364,17 +364,23 @@ void TestSetUnknownSorted(size uiNumElements)
 	bExists = true;
 	for (iNum = 0; iNum < uiNumElements; iNum++)
 	{
+		pcTest = *((CTestNamedUnknown**)apTests.Get(iNum));
+		bExists = cSet.Contains(pcTest);
 		if (iNum % 2 == 0)
 		{
-			pcTest = *((CTestNamedUnknown**)apTests.Get(iNum));
-			bExists = cSet.Contains(pcTest);
 			if (!bExists)
 			{
 				AssertTrue(bExists);
 			}
 		}
+		else
+		{
+			if (bExists)
+			{
+				AssertFalse(bExists);
+			}
+		}
 	}
-	AssertTrue(bExists);
 
 	apTests.Kill();
 

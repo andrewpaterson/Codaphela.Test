@@ -665,7 +665,7 @@ void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwrittenWithEmbed
 	Ptr<CTestNamedObject>				pNamed1b;
 	Ptr<CTestNamedObjectSmall>			pNamed2a;
 	Ptr<CTestNamedObject>				pNamed2b;
-	
+
 	MemoryInit();
 	FastFunctionsInit();
 	TypesInit();
@@ -758,12 +758,12 @@ void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwrittenWithEmbed
 void TestObjectAllocatorOverwrittensFlushedObjects(void)
 {
 	Ptr<CRoot>							pRoot;
-	Ptr<CTestTriPointerObject>			pObjet1;
+	Ptr<CTestTriPointerObject>			pObject1;
 	Ptr<CTestNamedObject>				pNamed2;
-	Ptr<CTestObject>					pObjet3;
+	Ptr<CTestObject>					pObject3;
 	Ptr<CTestNamedObjectSmall>			pNamed4;
 	Ptr<CTestNamedObjectWithEmbedded>	pNamed5;
-	Ptr<CTestObject>					pObjet6;
+	Ptr<CTestObject>					pObject6;
 	Ptr<CTestNamedObject>				pNamed7;
 	Ptr<CTestNamedObject>				pNamed8;
 	CCodabase*							pcDatabase;
@@ -777,7 +777,6 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	TypesInit();
 	DataIOInit();
 
-
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
@@ -789,54 +788,54 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	AssertLong(2, gcObjects.NumMemoryIndexes());
 	AssertLong(1, gcObjects.NumMemoryNames());
 
-	pObjet1 = OMalloc<CTestTriPointerObject>();
+	pObject1 = OMalloc<CTestTriPointerObject>();
 	pNamed2 = ONMalloc<CTestNamedObject>("Virgil Mallin", 12);
-	pObjet3 = OMalloc<CTestObject>();	pObjet3->mi = 34;
+	pObject3 = OMalloc<CTestObject>();	pObject3->mi = 34;
 	pNamed4 = ONMalloc<CTestNamedObjectSmall>("Henry Lindsey", "Sol");
 	pNamed5 = ONMalloc<CTestNamedObjectWithEmbedded>("Wilfrid Stanley", 44, 55, 1, 2, Null(), Null());
-	pObjet6 = OMalloc<CTestObject>();	pObjet3->mi = 56;
+	pObject6 = OMalloc<CTestObject>();	pObject3->mi = 56;
 	pNamed7 = ONMalloc<CTestNamedObject>("Matt Hudson", 78);
 	pNamed8 = ONMalloc<CTestNamedObject>("Kiva Charity", 90);
 	
-	AssertInt(-1, pObjet1.GetDistToRoot());
+	AssertInt(-1, pObject1.GetDistToRoot());
 	AssertInt(-1, pNamed2.GetDistToRoot());
-	AssertInt(-1, pObjet3.GetDistToRoot());
+	AssertInt(-1, pObject3.GetDistToRoot());
 	AssertInt(-1, pNamed4.GetDistToRoot());
 	AssertInt(-1, pNamed5.GetDistToRoot());
-	AssertInt(-1, pObjet6.GetDistToRoot());
+	AssertInt(-1, pObject6.GetDistToRoot());
 	AssertInt(-1, pNamed7.GetDistToRoot());
 
-	pRoot->Add(pObjet1);
-	pObjet1->mpObject1 = pNamed5;
-	pObjet1->mpObject2 = pObjet3;
-	pObjet1->mpObject3 = pNamed4;
+	pRoot->Add(pObject1);
+	pObject1->mpObject1 = pNamed5;
+	pObject1->mpObject2 = pObject3;
+	pObject1->mpObject3 = pNamed4;
 
 	pNamed5->mNamedTest1.mpNamedTest1 = pNamed2;
 	pNamed5->mNamedTest1.mpNamedTest2 = pNamed7;
-	pNamed5->mpObject = pObjet6;
+	pNamed5->mpObject = pObject6;
 	
-	pObjet6->mpObject = pNamed4;
+	pObject6->mpObject = pNamed4;
 
 //	                                      
-//	                                      pNamed4(3)
+//	                                     pNamed4(3)
 //	                                      /   |     
 //          pNamed2(4)   pNamed7(4)      /    |
 //	           |            |           /     |   
-//	           |            |     pObjet6(4)  |
+//	           |            |   pObject6(4)   |
 //             |            |     /           |
 //	           |            |    /            |       
 //             |            |   /             |        
 //	           |            |  /              |      
 //          mNamedTest1  mNamedTest2          |
 //                    .  .   /               /
-//                   pNamed5(3)  pObjet3(3) /
+//                  pNamed5(3)  pObject3(3) /
 // 	                       \       |       /  
 // 	                        \      |      /  
 //                           \     |     /  
 // 	                          \    |    /  
 //                             \   |   /   
 // 	                            \  |  /    
-//                             pObjet1(2)
+//                             pObject1(2)
 //                                 |
 //                                 |
 //                                ...
@@ -844,12 +843,12 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 
 
 	AssertInt(0, pRoot.GetDistToRoot());
-	AssertInt(2, pObjet1.GetDistToRoot());
+	AssertInt(2, pObject1.GetDistToRoot());
 	AssertInt(4, pNamed2.GetDistToRoot());
-	AssertInt(3, pObjet3.GetDistToRoot());
+	AssertInt(3, pObject3.GetDistToRoot());
 	AssertInt(3, pNamed4.GetDistToRoot());
 	AssertInt(3, pNamed5.GetDistToRoot());
-	AssertInt(4, pObjet6.GetDistToRoot());
+	AssertInt(4, pObject6.GetDistToRoot());
 	AssertInt(4, pNamed7.GetDistToRoot());
 	AssertInt(-1, pNamed8.GetDistToRoot());
 
@@ -863,12 +862,12 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	ObjectsKill();
 
 	AssertNull(&pRoot);
-	AssertNull(&pObjet1);
+	AssertNull(&pObject1);
 	AssertNull(&pNamed2);
-	AssertNull(&pObjet3);
+	AssertNull(&pObject3);
 	AssertNull(&pNamed4);
 	AssertNull(&pNamed5);
-	AssertNull(&pObjet6);
+	AssertNull(&pObject6);
 	AssertNull(&pNamed7);
 	AssertNull(&pNamed8);
 
@@ -886,14 +885,19 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 	AssertLong(1, gcObjects.NumMemoryNames());
 
 	pNamed2 = gcObjects.Get("Virgil Mallin");
-	AssertInt(4, pNamed2.GetDistToRoot());
+	AssertSize(0, pNamed2.NumHeapFroms());
+	AssertInt( 4, pNamed2.GetDistToRoot());
 	pNamed4 = gcObjects.Get("Henry Lindsey");
-	AssertInt(3, pNamed4.GetDistToRoot());
+	AssertSize(0, pNamed4.NumHeapFroms());
+	AssertInt( 3, pNamed4.GetDistToRoot());
 	pNamed5 = gcObjects.Get("Wilfrid Stanley");
-	AssertInt(3, pNamed5.GetDistToRoot());
+	AssertSize(0, pNamed5.NumHeapFroms());
+	AssertInt( 3, pNamed5.GetDistToRoot());
 	pNamed7 = gcObjects.Get("Matt Hudson");
-	AssertInt(4, pNamed7.GetDistToRoot());
+	AssertSize(1, pNamed7.NumHeapFroms());
+	AssertInt( 4, pNamed7.GetDistToRoot());
 	pNamed8 = gcObjects.Get("Kiva Charity");
+	AssertSize(0, pNamed8.NumHeapFroms());
 	AssertInt(-1, pNamed8.GetDistToRoot());
 
 	ObjectsFlush();
