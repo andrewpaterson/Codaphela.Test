@@ -21,7 +21,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSetAddConstructors(void)
+void TestSetObjectAddConstructors(void)
 {
 	gcObjects.AddConstructor<CTestSaveableObject1>();
 	gcObjects.AddConstructor<CTestObject>();
@@ -34,7 +34,7 @@ void TestSetAddConstructors(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSetAdd(void)
+void TestSetObjectAdd(void)
 {
 	ObjectsInit();
 
@@ -53,7 +53,7 @@ void TestSetAdd(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSetGet(void)
+void TestSetObjectGet(void)
 {
 	ObjectsInit();
 
@@ -75,7 +75,7 @@ void TestSetGet(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSetAddAll(void)
+void TestSetObjectAddAll(void)
 {
 	ObjectsInit();
 
@@ -105,7 +105,7 @@ void TestSetAddAll(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSetRemove(void)
+void TestSetObjectRemove(void)
 {
 	ObjectsInit();
 
@@ -137,7 +137,7 @@ void TestSetRemove(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSetKillCyclic(void)
+void TestSetObjectKillCyclic(void)
 {
 	ObjectsInit();
 
@@ -179,7 +179,7 @@ void TestSetKillCyclic(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSetKillAll(void)
+void TestSetObjectKillAll(void)
 {
 	ObjectsInit();
 
@@ -219,7 +219,7 @@ void TestSetKillAll(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSetRemoveAll(void)
+void TestSetObjectRemoveAll(void)
 {
 	ObjectsInit();
 
@@ -259,10 +259,10 @@ void TestSetRemoveAll(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSetSerialisation(void)
+void TestSetObjectSerialisation(void)
 {
 	ObjectsInit();
-	TestSetAddConstructors();
+	TestSetObjectAddConstructors();
 
 	Ptr<CPointerContainer>			pContainer1;
 	Ptr<CPointerContainer>			pContainer2;
@@ -272,7 +272,7 @@ void TestSetSerialisation(void)
 	CChunkFileObjectWriter			cWriter;
 	CFileUtil						cFileUtil;
 	bool							bResult;
-	char							szDirectory[] = "Output" _FS_ "TestSet";
+	char							szDirectory[] = "Output" _FS_ "TestSetObject";
 	CExternalObjectDeserialiser		cDeserialiser;
 	CChunkFileSystemObjectReader 	cReader;
 
@@ -326,7 +326,7 @@ struct STriOi
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSetObjectInternalSerialisation(size uiNumSetItems)
+void TestSetObjectObjectInternalSerialisation(size uiNumSetItems)
 {
 	CFileUtil			cFileUtil;
 	CCodabase*			pcDatabase;
@@ -485,7 +485,7 @@ void TestSetObjectInternalSerialisation(size uiNumSetItems)
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	{
-		TestSetAddConstructors();
+		TestSetObjectAddConstructors();
 		AssertLong(uiNumSetItems + 3LL, pcDatabase->NumIndices());
 
 		AssertTrue(gcObjects.Contains("Set"));
@@ -611,7 +611,7 @@ void TestSetObjectInternalSerialisation(size uiNumSetItems)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSetObjectMorphSetEntry(size uiNumElements)
+void TestSetObjectObjectMorphSetEntry(size uiNumElements)
 {
 	ObjectsInit();
 	{
@@ -764,7 +764,7 @@ void TestSetObjectMorphSetEntry(size uiNumElements)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSet(void)
+void TestSetObject(void)
 {
 	BeginTests();
 	MemoryInit();
@@ -772,18 +772,18 @@ void TestSet(void)
 	TypesInit();
 	DataIOInit();
 
-	TestSetAdd();
-	TestSetGet();
-	TestSetAddAll();
-	TestSetRemove();
-	TestSetKillCyclic();
-	TestSetKillAll();
-	TestSetRemoveAll();
-	TestSetSerialisation();
-	TestSetObjectInternalSerialisation(4);
-	TestSetObjectInternalSerialisation(10000);
-	TestSetObjectMorphSetEntry(10);
-	TestSetObjectMorphSetEntry(2000);
+	TestSetObjectAdd();
+	TestSetObjectGet();
+	TestSetObjectAddAll();
+	TestSetObjectRemove();
+	TestSetObjectKillCyclic();
+	TestSetObjectKillAll();
+	TestSetObjectRemoveAll();
+	TestSetObjectSerialisation();
+	TestSetObjectObjectInternalSerialisation(4);
+	TestSetObjectObjectInternalSerialisation(10000);
+	TestSetObjectObjectMorphSetEntry(10);
+	TestSetObjectObjectMorphSetEntry(2000);
 
 	DataIOKill();
 	TypesKill();

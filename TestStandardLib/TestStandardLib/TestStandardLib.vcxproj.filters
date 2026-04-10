@@ -207,10 +207,10 @@
     <ClCompile Include="TestUsage.cpp">
       <Filter>Source\Object</Filter>
     </ClCompile>
-    <ClCompile Include="TestArray.cpp">
+    <ClCompile Include="TestArrayObject.cpp">
       <Filter>Source\Object\Object\Collection\Array</Filter>
     </ClCompile>
-    <ClCompile Include="TestSet.cpp">
+    <ClCompile Include="TestSetObject.cpp">
       <Filter>Source\Object\Object\Collection\Set</Filter>
     </ClCompile>
     <ClCompile Include="TestEmbedded.cpp">

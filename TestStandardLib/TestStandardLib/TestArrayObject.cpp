@@ -19,7 +19,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayAddConstructors(void)
+void TestArrayObjectAddConstructors(void)
 {
 	gcObjects.AddConstructor<CTestSaveableObject1>();
 	gcObjects.AddConstructor<CTestObject>();
@@ -32,7 +32,7 @@ void TestArrayAddConstructors(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayAdd(void)
+void TestArrayObjectAdd(void)
 {
 	ObjectsInit();
 
@@ -51,7 +51,7 @@ void TestArrayAdd(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayGet(void)
+void TestArrayObjectGet(void)
 {
 	ObjectsInit();
 
@@ -73,7 +73,7 @@ void TestArrayGet(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayInsert(void)
+void TestArrayObjectInsert(void)
 {
 	ObjectsInit();
 
@@ -95,7 +95,7 @@ void TestArrayInsert(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayAddAll(void)
+void TestArrayObjectAddAll(void)
 {
 	ObjectsInit();
 
@@ -129,7 +129,7 @@ void TestArrayAddAll(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayRemove(void)
+void TestArrayObjectRemove(void)
 {
 	ObjectsInit();
 
@@ -161,7 +161,7 @@ void TestArrayRemove(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArraySneakyOnStack(void)
+void TestArrayObjectSneakyOnStack(void)
 {
 	ObjectsInit();
 
@@ -202,7 +202,7 @@ void TestArraySneakyOnStack(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayOnStackKill(void)
+void TestArrayObjectOnStackKill(void)
 {
 	ObjectsInit();
 
@@ -244,7 +244,7 @@ void TestArrayOnStackKill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayOnStackRemoveObject(void)
+void TestArrayObjectOnStackRemoveObject(void)
 {
 	ObjectsInit();
 
@@ -296,7 +296,7 @@ void TestArrayOnStackRemoveObject(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayConstructorExists(void)
+void TestArrayObjectConstructorExists(void)
 {
 	CConstructors*	pcConstructors;
 	CArrayObject*	pcArray;
@@ -316,7 +316,7 @@ void TestArrayConstructorExists(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayClassExists(void)
+void TestArrayObjectClassExists(void)
 {
 	CClasses*		pcClasses;
 	CClass*			pcClass;
@@ -338,17 +338,17 @@ void TestArrayClassExists(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayExternalSerialisation(void)
+void TestArrayObjectExternalSerialisation(void)
 {
 	CFileUtil	cFileUtil;
 	bool		bResult;
-	char		szDirectory[] = "Output" _FS_ "TestArray";
+	char		szDirectory[] = "Output" _FS_ "TestArrayObject";
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
 	ObjectsInit();
-	TestArrayAddConstructors();
+	TestArrayObjectAddConstructors();
 	{
 		Ptr<CPointerContainer>			pContainer1;
 		Ptr<CPointerContainer>			pContainer2;
@@ -442,7 +442,7 @@ struct STriOi
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArrayInternalSerialisation(size uiNumArrayItems)
+void TestArrayObjectInternalSerialisation(size uiNumArrayItems)
 {
 	CFileUtil			cFileUtil;
 	CCodabase*			pcDatabase;
@@ -616,7 +616,7 @@ void TestArrayInternalSerialisation(size uiNumArrayItems)
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	{
-		TestArrayAddConstructors();
+		TestArrayObjectAddConstructors();
 		AssertLong(uiNumArrayItems + 3LL, pcDatabase->NumIndices());
 
 		AssertTrue(gcObjects.Contains("Array"));
@@ -715,7 +715,7 @@ void TestArrayInternalSerialisation(size uiNumArrayItems)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestArray(void)
+void TestArrayObject(void)
 {
 	BeginTests();
 	MemoryInit();
@@ -723,19 +723,19 @@ void TestArray(void)
 	TypesInit();
 	DataIOInit();
 
-	TestArrayAdd();
-	TestArrayGet();
-	TestArrayInsert();
-	TestArrayAddAll();
-	TestArrayRemove();
-	TestArraySneakyOnStack();
-	TestArrayOnStackKill();
-	TestArrayOnStackRemoveObject();
-	TestArrayConstructorExists();
-	TestArrayClassExists();
-	TestArrayExternalSerialisation();
-	TestArrayInternalSerialisation(4);
-	TestArrayInternalSerialisation(10000);
+	TestArrayObjectAdd();
+	TestArrayObjectGet();
+	TestArrayObjectInsert();
+	TestArrayObjectAddAll();
+	TestArrayObjectRemove();
+	TestArrayObjectSneakyOnStack();
+	TestArrayObjectOnStackKill();
+	TestArrayObjectOnStackRemoveObject();
+	TestArrayObjectConstructorExists();
+	TestArrayObjectClassExists();
+	TestArrayObjectExternalSerialisation();
+	TestArrayObjectInternalSerialisation(4);
+	TestArrayObjectInternalSerialisation(10000);
 
 	DataIOKill();
 	TypesKill();
