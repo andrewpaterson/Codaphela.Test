@@ -1038,7 +1038,10 @@ void TestMapObjectInternalSerialisation(size uiNumMapItems)
 		Ptr<CTestObject>			pValue3;
 		Ptr<CTestTriPointerObject>	pValue5;
 		bool						bResult;
+		uint						uiCount;
 		size						ui;
+		SMapIterator				sIter;
+		CMapEntry					cEntry;
 
 		pRoot = ORoot();
 		pMap = ONMalloc<CMapObject>("Map");
@@ -1072,6 +1075,17 @@ void TestMapObjectInternalSerialisation(size uiNumMapItems)
 			}
 		}
 		AssertTrue(bResult);
+
+		uiCount = 0;
+		cEntry.Init();
+		cEntry = pMap->StartIteration(&sIter);
+		while (cEntry.Exists())
+		{
+			uiCount++;
+			cEntry = pMap->Iterate(&sIter);
+		}
+
+		AssertSize(uiNumMapItems, uiCount);
 	}
 
 	gcObjects.EnableValidation();
@@ -1118,6 +1132,8 @@ void TestMapObjectInternalSerialisation(size uiNumMapItems)
 		Ptr<CTestObject>	pKey;
 		CPointer			pValue;
 		uint				uiName;
+		SMapIterator		sIter;
+		CMapEntry			cEntry;
 
 		pMap = gcObjects.Get("Map");
 		AssertTrue(pMap.IsNotNull());
@@ -1145,6 +1161,17 @@ void TestMapObjectInternalSerialisation(size uiNumMapItems)
 		}
 		AssertTrue(bResult);
 		aiKeyNames.Kill();
+
+		uiCount = 0;
+		cEntry.Init();
+		cEntry = pMap->StartIteration(&sIter);
+		while (cEntry.Exists())
+		{
+			uiCount++;
+			cEntry = pMap->Iterate(&sIter);
+		}
+
+		AssertSize(uiNumMapItems, uiCount);
 	}
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
@@ -1179,8 +1206,8 @@ void TestMapObject(void)
 	TestMapObjectPutOverwrite();
 	TestMapObjectExternalSerialisation();
 	TestMapObjectMorphInto();
-	//TestMapObjectInternalSerialisation(4);
-	//TestMapObjectInternalSerialisation(10000);
+	TestMapObjectInternalSerialisation(4);
+	TestMapObjectInternalSerialisation(3000);
 
 	DataIOKill();
 	TypesKill();

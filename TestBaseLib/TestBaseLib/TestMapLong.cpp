@@ -12,7 +12,7 @@ public:
 	}
 
 
-	void GetInSorted(int iIndex, void** ppvKey, void** ppvData)
+	bool GetInSorted(int iIndex, void** ppvKey, void** ppvData)
 	{
 		return CMapLongLong::GetInSorted(iIndex, ppvKey, ppvData);
 	}
