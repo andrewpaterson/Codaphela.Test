@@ -5,15 +5,8 @@
 #include "BaseLib/Codabase.h"
 #include "BaseLib/CodabaseFactory.h"
 #include "BaseLib/SequenceFactory.h"
-#include "StandardLib/MapObject.h"
-#include "StandardLib/Objects.h"
-#include "StandardLib/ExternalObjectDeserialiser.h"
-#include "StandardLib/ExternalObjectSerialiser.h"
-#include "StandardLib/ChunkFileObjectWriter.h"
-#include "StandardLib/ChunkFileSystemObjectReader.h"
-#include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
-#include "ObjectTestClasses.h"
+#include "TestMapObject.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -1184,6 +1177,144 @@ void TestMapObjectInternalSerialisation(size uiNumMapItems)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMapObjectEmbeddedOnHeapKill(void)
+{
+	ObjectsInit();
+	{
+		STestObjectFreedNotifier	sFreedNotifier1;
+		STestObjectFreedNotifier	sFreedNotifier2;
+		STestObjectFreedNotifier	sFreedNotifier3;
+		STestObjectFreedNotifier	sFreedNotifier4;
+		Ptr<CTestEmbeddedMap>		pEmbedded;
+		Ptr<CTestObject>			pTest;
+		CTestObject*				pcTest;
+		Ptr<CTestObject>			pKey1;
+		Ptr<CTestObject>			pKey2;
+
+		pEmbedded = OMalloc<CTestEmbeddedMap>(&sFreedNotifier1);
+		pTest = OMalloc<CTestObject>(&sFreedNotifier2);
+		pKey1 = OMalloc<CTestObject>(&sFreedNotifier3);
+		pKey2 = OMalloc<CTestObject>(&sFreedNotifier4);
+		pEmbedded->mcMap.Put(pKey1, pTest);
+		pEmbedded->mcMap.Put(pKey2, pTest);
+
+		AssertSize(2, pTest.NumHeapFroms());
+		AssertSize(1, pTest.NumStackFroms());
+
+		pcTest = &pTest;
+		pTest = NULL;
+		AssertFalse(sFreedNotifier1.bFreed);
+		AssertFalse(sFreedNotifier2.bFreed);
+		AssertSize(2, pcTest->NumHeapFroms());
+		AssertSize(0, pcTest->NumStackFroms());
+
+		pEmbedded = NULL;
+
+		AssertTrue(sFreedNotifier1.bFreed);
+		AssertTrue(sFreedNotifier2.bFreed);
+	}
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMapObjectEmbeddedOnStackKill(void)
+{
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier3;
+	STestObjectFreedNotifier	sFreedNotifier4;
+
+	ObjectsInit();
+	{
+		CTestEmbeddedMap		cEmbedded;
+		Ptr<CTestObject>		pTest;
+		CTestObject*			pcTest;
+		Ptr<CTestObject>		pKey1;
+		Ptr<CTestObject>		pKey2;
+
+		cEmbedded.Init(&sFreedNotifier1);
+		pTest = OMalloc<CTestObject>(&sFreedNotifier2);
+		pKey1 = OMalloc<CTestObject>(&sFreedNotifier3);
+		pKey2 = OMalloc<CTestObject>(&sFreedNotifier4);
+		cEmbedded.mcMap.Put(pKey1, pTest);
+		cEmbedded.mcMap.Put(pKey2, pTest);
+
+		AssertSize(3, pTest.NumStackFroms());
+		AssertSize(0, pTest.NumHeapFroms());
+		pcTest = &pTest;
+
+		pTest = NULL;
+		AssertSize(0, pTest.NumStackFroms());
+		AssertSize(0, pcTest->NumHeapFroms());
+		AssertSize(2, pcTest->NumStackFroms());
+
+		AssertFalse(sFreedNotifier1.bFreed);
+		AssertFalse(sFreedNotifier2.bFreed);
+	}
+	AssertTrue(sFreedNotifier1.bFreed);
+	AssertTrue(sFreedNotifier2.bFreed);
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMapObjectEmbeddedInObjectsKill(void)
+{
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier3;
+	STestObjectFreedNotifier	sFreedNotifier4;
+
+	ObjectsInit();
+
+	Ptr<CTestEmbeddedMap>		pEmbedded;
+	Ptr<CTestObject>			pTest;
+	CTestObject*				pcTest;
+	Ptr<CTestObject>			pKey1;
+	Ptr<CTestObject>			pKey2;
+	Ptr<CRoot>					pRoot;
+
+	pRoot = ORoot();
+	pEmbedded = OMalloc<CTestEmbeddedMap>(&sFreedNotifier1);
+	pRoot->Add(pEmbedded);
+	pTest = OMalloc<CTestObject>(&sFreedNotifier2);
+	pKey1 = OMalloc<CTestObject>(&sFreedNotifier3);
+	pKey2 = OMalloc<CTestObject>(&sFreedNotifier4);
+	pEmbedded->mcMap.Put(pKey1, pTest);
+	pEmbedded->mcMap.Put(pKey2, pTest);
+
+	AssertSize(2, pTest.NumHeapFroms());
+	AssertSize(1, pTest.NumStackFroms());
+	pcTest = &pTest;
+
+	pTest = NULL;
+	pEmbedded = NULL;
+	AssertSize(2, pcTest->NumHeapFroms());
+	AssertSize(0, pcTest->NumStackFroms());
+
+	AssertFalse(sFreedNotifier1.bFreed);
+	AssertFalse(sFreedNotifier2.bFreed);
+
+	ObjectsFlush();
+	ObjectsKill();
+
+	AssertTrue(sFreedNotifier1.bFreed);
+	AssertTrue(sFreedNotifier2.bFreed);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMapObject(void)
 {
 	BeginTests();
@@ -1208,6 +1339,9 @@ void TestMapObject(void)
 	TestMapObjectMorphInto();
 	TestMapObjectInternalSerialisation(4);
 	TestMapObjectInternalSerialisation(3000);
+	TestMapObjectEmbeddedOnHeapKill();
+	TestMapObjectEmbeddedOnStackKill();
+	TestMapObjectEmbeddedInObjectsKill();
 
 	DataIOKill();
 	TypesKill();

@@ -5,16 +5,10 @@
 #include "BaseLib/CodabaseFactory.h"
 #include "BaseLib/SequenceFactory.h"
 #include "BaseLib/DebugOutput.h"
-#include "StandardLib/Set.h"
-#include "StandardLib/Objects.h"
-#include "StandardLib/PointerContainer.h"
-#include "StandardLib/ExternalObjectDeserialiser.h"
-#include "StandardLib/ExternalObjectSerialiser.h"
-#include "StandardLib/ChunkFileObjectWriter.h"
-#include "StandardLib/ChunkFileSystemObjectReader.h"
 #include "StandardLib/HollowObject.h"
+#include "StandardLib/Set.h"
 #include "TestLib/Assert.h"
-#include "ObjectTestClasses.h"
+#include "TestSetObject.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -764,6 +758,126 @@ void TestSetObjectObjectMorphSetEntry(size uiNumElements)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestSetObjectEmbeddedOnHeapKill(void)
+{
+	ObjectsInit();
+	{
+		STestObjectFreedNotifier	sFreedNotifier1;
+		STestObjectFreedNotifier	sFreedNotifier2;
+		Ptr<CTestEmbeddedSet>		pEmbedded;
+		Ptr<CTestObject>			pTest;
+		CTestObject*				pcTest;
+
+		pEmbedded = OMalloc<CTestEmbeddedSet>(&sFreedNotifier1);
+		pTest = OMalloc<CTestObject>(&sFreedNotifier2);
+		pEmbedded->mcSet.Add(pTest);
+		pEmbedded->mcSet.Add(pTest);
+
+		AssertSize(2, pTest.NumHeapFroms());
+		AssertSize(1, pTest.NumStackFroms());
+
+		pcTest = &pTest;
+		pTest = NULL;
+		AssertFalse(sFreedNotifier1.bFreed);
+		AssertFalse(sFreedNotifier2.bFreed);
+		AssertSize(2, pcTest->NumHeapFroms());
+		AssertSize(0, pcTest->NumStackFroms());
+
+		pEmbedded = NULL;
+
+		AssertTrue(sFreedNotifier1.bFreed);
+		AssertTrue(sFreedNotifier2.bFreed);
+	}
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSetObjectEmbeddedOnStackKill(void)
+{
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+
+	ObjectsInit();
+	{
+		CTestEmbeddedSet		cEmbedded;
+		Ptr<CTestObject>		pTest;
+		CTestObject*			pcTest;
+
+		cEmbedded.Init(&sFreedNotifier1);
+		pTest = OMalloc<CTestObject>(&sFreedNotifier2);
+		cEmbedded.mcSet.Add(pTest);
+		cEmbedded.mcSet.Add(pTest);
+
+		AssertSize(3, pTest.NumStackFroms());
+		AssertSize(0, pTest.NumHeapFroms());
+		pcTest = &pTest;
+
+		pTest = NULL;
+		AssertSize(0, pTest.NumStackFroms());
+		AssertSize(0, pcTest->NumHeapFroms());
+		AssertSize(2, pcTest->NumStackFroms());
+
+		AssertFalse(sFreedNotifier1.bFreed);
+		AssertFalse(sFreedNotifier2.bFreed);
+	}
+	AssertTrue(sFreedNotifier1.bFreed);
+	AssertTrue(sFreedNotifier2.bFreed);
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSetObjectEmbeddedInObjectsKill(void)
+{
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+
+	ObjectsInit();
+
+	Ptr<CTestEmbeddedSet>		pEmbedded;
+	Ptr<CTestObject>			pTest;
+	CTestObject*				pcTest;
+	Ptr<CRoot>					pRoot;
+
+	pRoot = ORoot();
+	pEmbedded = OMalloc<CTestEmbeddedSet>(&sFreedNotifier1);
+	pRoot->Add(pEmbedded);
+	pTest = OMalloc<CTestObject>(&sFreedNotifier2);
+	pEmbedded->mcSet.Add(pTest);
+	pEmbedded->mcSet.Add(pTest);
+
+	AssertSize(2, pTest.NumHeapFroms());
+	AssertSize(1, pTest.NumStackFroms());
+	pcTest = &pTest;
+
+	pTest = NULL;
+	pEmbedded = NULL;
+	AssertSize(2, pcTest->NumHeapFroms());
+	AssertSize(0, pcTest->NumStackFroms());
+
+	AssertFalse(sFreedNotifier1.bFreed);
+	AssertFalse(sFreedNotifier2.bFreed);
+
+	ObjectsFlush();
+	ObjectsKill();
+
+	AssertTrue(sFreedNotifier1.bFreed);
+	AssertTrue(sFreedNotifier2.bFreed);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestSetObject(void)
 {
 	BeginTests();
@@ -784,6 +898,9 @@ void TestSetObject(void)
 	TestSetObjectObjectInternalSerialisation(10000);
 	TestSetObjectObjectMorphSetEntry(10);
 	TestSetObjectObjectMorphSetEntry(2000);
+	TestSetObjectEmbeddedOnHeapKill();
+	TestSetObjectEmbeddedOnStackKill();
+	TestSetObjectEmbeddedInObjectsKill();
 
 	DataIOKill();
 	TypesKill();

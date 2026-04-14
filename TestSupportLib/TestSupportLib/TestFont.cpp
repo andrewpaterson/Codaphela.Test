@@ -33,6 +33,7 @@ void TestFontCreateFont(void)
 	pFont = cFactory.Generate(&cParams);
 	AssertTrue(pFont.IsNotNull());
 	cFactory.Kill();
+	cParams.Kill();
 
 	szCharacterFile.Kill();
 	szImageFile.Kill();

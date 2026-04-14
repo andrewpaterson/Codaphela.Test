@@ -286,8 +286,12 @@
     <ClInclude Include="ObjectTestClasses.h" />
     <ClInclude Include="ObjectTestSetup.h" />
     <ClInclude Include="ChunkFileObjectWriterTestClasses.h" />
+    <ClInclude Include="TestArrayObject.h" />
     <ClInclude Include="TestBaseObject.h" />
     <ClInclude Include="TestClass.h" />
+    <ClInclude Include="TestIndexObject.h" />
+    <ClInclude Include="TestMapObject.h" />
+    <ClInclude Include="TestSetObject.h" />
     <ClInclude Include="UnknownKillList.h" />
     <ClInclude Include="UnknownTestClasses.h" />
   </ItemGroup>

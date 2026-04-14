@@ -4,15 +4,8 @@
 #include "BaseLib/Codabase.h"
 #include "BaseLib/CodabaseFactory.h"
 #include "BaseLib/SequenceFactory.h"
-#include "StandardLib/ArrayObject.h"
-#include "StandardLib/Objects.h"
-#include "StandardLib/ExternalObjectDeserialiser.h"
-#include "StandardLib/ExternalObjectSerialiser.h"
-#include "StandardLib/ChunkFileObjectWriter.h"
-#include "StandardLib/ChunkFileSystemObjectReader.h"
-#include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
-#include "ObjectTestClasses.h"
+#include "TestArrayObject.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -715,6 +708,119 @@ void TestArrayObjectInternalSerialisation(size uiNumArrayItems)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestArrayObjectEmbeddedOnHeapKill(void)
+{
+	ObjectsInit();
+	{
+		STestObjectFreedNotifier	sFreedNotifier1;
+		STestObjectFreedNotifier	sFreedNotifier2;
+		Ptr<CTestEmbeddedArray>		pEmbedded;
+		Ptr<CTestObject>			pTest;
+		CTestObject*				pcTest;
+
+		pEmbedded = OMalloc<CTestEmbeddedArray>(&sFreedNotifier1);
+		pTest = OMalloc<CTestObject>(&sFreedNotifier2);
+		pEmbedded->mcArray.Add(pTest);
+		pEmbedded->mcArray.Add(pTest);
+
+		AssertSize(2, pTest.NumHeapFroms());
+		AssertSize(1, pTest.NumStackFroms());
+
+		pcTest = &pTest;
+		pTest = NULL;
+		AssertFalse(sFreedNotifier1.bFreed);
+		AssertFalse(sFreedNotifier2.bFreed);
+		AssertSize(2, pcTest->NumHeapFroms());
+		AssertSize(0, pcTest->NumStackFroms());
+
+		pEmbedded = NULL;
+		AssertTrue(sFreedNotifier1.bFreed);
+		AssertTrue(sFreedNotifier2.bFreed);
+	}
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayObjectEmbeddedOnStackKill(void)
+{
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+
+	ObjectsInit();
+	{
+		CTestEmbeddedArray			cEmbedded;
+		Ptr<CTestObject>			pTest;
+		CTestObject*				pcTest;
+
+		cEmbedded.Init(&sFreedNotifier1);
+		pTest = OMalloc<CTestObject>(&sFreedNotifier2);
+		cEmbedded.mcArray.Add(pTest);
+		cEmbedded.mcArray.Add(pTest);
+
+		AssertSize(3, pTest.NumStackFroms());
+		AssertSize(0, pTest.NumHeapFroms());
+		pcTest = &pTest;
+
+		pTest = NULL;
+		AssertSize(0, pTest.NumStackFroms());
+		AssertSize(0, pcTest->NumHeapFroms());
+		AssertSize(2, pcTest->NumStackFroms());
+	}
+	AssertTrue(sFreedNotifier1.bFreed);
+	AssertTrue(sFreedNotifier2.bFreed);
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayObjectEmbeddedInObjectsKill(void)
+{
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+
+	ObjectsInit();
+
+	Ptr<CTestEmbeddedArray>		pEmbedded;
+	Ptr<CTestObject>			pTest;
+	CTestObject*				pcTest;
+	Ptr<CRoot>					pRoot;
+
+	pRoot = ORoot();
+	pEmbedded = OMalloc<CTestEmbeddedArray>(&sFreedNotifier1);
+	pRoot->Add(pEmbedded);
+	pTest = OMalloc<CTestObject>(&sFreedNotifier2);
+	pEmbedded->mcArray.Add(pTest);
+	pEmbedded->mcArray.Add(pTest);
+
+	AssertSize(2, pTest.NumHeapFroms());
+	AssertSize(1, pTest.NumStackFroms());
+	pcTest = &pTest;
+
+	pTest = NULL;
+	pEmbedded = NULL;
+	AssertSize(2, pcTest->NumHeapFroms());
+	AssertSize(0, pcTest->NumStackFroms());
+
+	ObjectsFlush();
+	ObjectsKill();
+
+	AssertTrue(sFreedNotifier1.bFreed);
+	AssertTrue(sFreedNotifier2.bFreed);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestArrayObject(void)
 {
 	BeginTests();
@@ -736,6 +842,9 @@ void TestArrayObject(void)
 	TestArrayObjectExternalSerialisation();
 	TestArrayObjectInternalSerialisation(4);
 	TestArrayObjectInternalSerialisation(10000);
+	TestArrayObjectEmbeddedOnHeapKill();
+	TestArrayObjectEmbeddedOnStackKill();
+	TestArrayObjectEmbeddedInObjectsKill();
 
 	DataIOKill();
 	TypesKill();

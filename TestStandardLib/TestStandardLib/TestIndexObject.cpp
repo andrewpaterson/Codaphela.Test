@@ -2,15 +2,8 @@
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/DataOrderers.h"
-#include "StandardLib/IndexObject.h"
-#include "StandardLib/Objects.h"
-#include "StandardLib/ExternalObjectDeserialiser.h"
-#include "StandardLib/ExternalObjectSerialiser.h"
-#include "StandardLib/ChunkFileObjectWriter.h"
-#include "StandardLib/ChunkFileSystemObjectReader.h"
-#include "StandardLib/PointerContainer.h"
 #include "TestLib/Assert.h"
-#include "ObjectTestClasses.h"
+#include "TestIndexObject.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -806,6 +799,125 @@ void TestIndexObjectMorphInto(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexObjectEmbeddedOnHeapKill(void)
+{
+	ObjectsInit();
+	{
+		STestObjectFreedNotifier	sFreedNotifier1;
+		STestObjectFreedNotifier	sFreedNotifier2;
+		Ptr<CTestEmbeddedIndex>		pEmbedded;
+		Ptr<CTestObject>			pTest;
+		CTestObject*				pcTest;
+
+		pEmbedded = OMalloc<CTestEmbeddedIndex>(&sFreedNotifier1);
+		pTest = OMalloc<CTestObject>(&sFreedNotifier2);
+		pEmbedded->mcIndex.Put("1", pTest);
+		pEmbedded->mcIndex.Put("2", pTest);
+
+		AssertSize(2, pTest.NumHeapFroms());
+		AssertSize(1, pTest.NumStackFroms());
+
+		pcTest = &pTest;
+		pTest = NULL;
+		AssertFalse(sFreedNotifier1.bFreed);
+		AssertFalse(sFreedNotifier2.bFreed);
+		AssertSize(2, pcTest->NumHeapFroms());
+		AssertSize(0, pcTest->NumStackFroms());
+
+		pEmbedded = NULL;
+		AssertTrue(sFreedNotifier1.bFreed);
+		AssertTrue(sFreedNotifier2.bFreed);
+	}
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexObjectEmbeddedOnStackKill(void)
+{
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+
+	ObjectsInit();
+	{
+		CTestEmbeddedIndex			cEmbedded;
+		Ptr<CTestObject>			pTest;
+		CTestObject*				pcTest;
+
+		cEmbedded.Init(&sFreedNotifier1);
+		pTest = OMalloc<CTestObject>(&sFreedNotifier2);
+		cEmbedded.mcIndex.Put("1", pTest);
+		cEmbedded.mcIndex.Put("2", pTest);
+
+		AssertSize(3, pTest.NumStackFroms());
+		AssertSize(0, pTest.NumHeapFroms());
+		pcTest = &pTest;
+
+		pTest = NULL;
+		AssertSize(0, pTest.NumStackFroms());
+		AssertSize(0, pcTest->NumHeapFroms());
+		AssertSize(2, pcTest->NumStackFroms());
+
+		AssertFalse(sFreedNotifier1.bFreed);
+		AssertFalse(sFreedNotifier2.bFreed);
+	}
+	AssertTrue(sFreedNotifier1.bFreed);
+	AssertTrue(sFreedNotifier2.bFreed);
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexObjectEmbeddedInObjectsKill(void)
+{
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+
+	ObjectsInit();
+
+	Ptr<CTestEmbeddedIndex>		pEmbedded;
+	Ptr<CTestObject>			pTest;
+	CTestObject*				pcTest;
+	Ptr<CRoot>					pRoot;
+
+	pRoot = ORoot();
+	pEmbedded = OMalloc<CTestEmbeddedIndex>(&sFreedNotifier1);
+	pRoot->Add(pEmbedded);
+	pTest = OMalloc<CTestObject>(&sFreedNotifier2);
+	pEmbedded->mcIndex.Put("1", pTest);
+	pEmbedded->mcIndex.Put("2", pTest);
+
+	AssertSize(2, pTest.NumHeapFroms());
+	AssertSize(1, pTest.NumStackFroms());
+	pcTest = &pTest;
+
+	pTest = NULL;
+	pEmbedded = NULL;
+	AssertSize(2, pcTest->NumHeapFroms());
+	AssertSize(0, pcTest->NumStackFroms());
+
+	AssertFalse(sFreedNotifier1.bFreed);
+	AssertFalse(sFreedNotifier2.bFreed);
+
+	ObjectsFlush();
+	ObjectsKill();
+
+	AssertTrue(sFreedNotifier1.bFreed);
+	AssertTrue(sFreedNotifier2.bFreed);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexObject(void)
 {
 	BeginTests();
@@ -827,6 +939,9 @@ void TestIndexObject(void)
 	TestIndexObjectPutOverwrite();
 	TestIndexObjectSerialisation();
 	TestIndexObjectMorphInto();
+	TestIndexObjectEmbeddedOnHeapKill();
+	TestIndexObjectEmbeddedOnStackKill();
+	TestIndexObjectEmbeddedInObjectsKill();
 
 	DataIOKill();
 	TypesKill();

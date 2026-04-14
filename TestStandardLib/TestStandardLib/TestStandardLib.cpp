@@ -84,11 +84,6 @@ int __cdecl main(void)
 	TestIndexUnknown();
 	TestEvent();
 	TestActionEvent();
-	TestExternalChannels();
-	TestExternalChannelPadder();
-	TestChannels();
-	TestChannelsAccessor();
-	TestSingleChannelAccessor();
 	TestParameters();
 	TestClass();
 	TestDistToRoot();
@@ -130,6 +125,11 @@ int __cdecl main(void)
 	TestEmbeddedStackPointers();
 	TestStackEmbeddedReInit();
 	TestObjectFree();
+	TestExternalChannels();
+	TestExternalChannelPadder();
+	TestChannels();
+	TestChannelsAccessor();
+	TestSingleChannelAccessor();
 
 	FastFunctionsKill();
 

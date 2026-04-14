@@ -323,6 +323,18 @@
     <ClInclude Include="CollectionObjectTestClasses.h">
       <Filter>Source\Object\Object</Filter>
     </ClInclude>
+    <ClInclude Include="TestArrayObject.h">
+      <Filter>Source\Object\Object\Collection\Array</Filter>
+    </ClInclude>
+    <ClInclude Include="TestIndexObject.h">
+      <Filter>Source\Object\Object\Collection\Index</Filter>
+    </ClInclude>
+    <ClInclude Include="TestMapObject.h">
+      <Filter>Source\Object\Object\Collection\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="TestSetObject.h">
+      <Filter>Source\Object\Object\Collection\Set</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
