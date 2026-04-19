@@ -124,9 +124,11 @@ void TestUTF8Example3(void)
 	CTextFile	cTextFile;
 	CChars		sz;
 	uint32		c32;
-	size		uiLength;
+	size		uiUTF8ElementLength;
+	size		uiCodePointLength;
 	size		uiPos;
 	uint8		auiBuffer[0x13];
+	uint8*		psz;
 
 	cTextFile.Init();
 	cTextFile.Read("Input" _FS_ "UTF8" _FS_ "Example3.txt");
@@ -136,35 +138,42 @@ void TestUTF8Example3(void)
 	cUTF8.Init(&sz);
 	c32 = cUTF8.GetUint32();
 	AssertIntHex((uint32)0x0041, c32);
+	AssertSize(1, GetUnicodeCodePointLength(c32));
 	c32 = cUTF8.GetUint32();
 	AssertIntHex((uint32)0x1F469, c32);
+	AssertSize(3, GetUnicodeCodePointLength(c32));
 	c32 = cUTF8.GetUint32();
 	AssertIntHex((uint32)0x200D, c32);
+	AssertSize(2, GetUnicodeCodePointLength(c32));
 	c32 = cUTF8.GetUint32();
 	AssertIntHex((uint32)0x1F3FB, c32);
+	AssertSize(3, GetUnicodeCodePointLength(c32));
 	c32 = cUTF8.GetUint32();
 	AssertIntHex((uint32)0x200D, c32);
+	AssertSize(2, GetUnicodeCodePointLength(c32));
 	c32 = cUTF8.GetUint32();
 	AssertIntHex((uint32)0x1F9B0, c32);
+	AssertSize(3, GetUnicodeCodePointLength(c32));
 	c32 = cUTF8.GetUint32();
 	AssertIntHex((uint32)0, c32);
 	cUTF8.Kill();
 
 	cUTF8.Init(&sz);
 	uiPos = cUTF8.GetPosition();
-	uiLength = cUTF8.GetLength();
+	uiUTF8ElementLength = cUTF8.Step();
 	AssertSize(0, uiPos);
-	AssertSize(1, uiLength);
+	AssertSize(1, uiUTF8ElementLength);
 	uiPos = cUTF8.GetPosition();
 	AssertSize(0, uiPos);
 
 	c32 = cUTF8.GetUint32();
 	AssertIntHex((uint32)0x0041, c32);
+	AssertSize(1, GetUnicodeCodePointLength(c32));
 
 	uiPos = cUTF8.GetPosition();
-	uiLength = cUTF8.GetLength();
+	uiUTF8ElementLength = cUTF8.Step();
 	AssertSize(1, uiPos);
-	AssertSize(0x12, uiLength);
+	AssertSize(18, uiUTF8ElementLength);
 	c32 = cUTF8.GetUint32();
 	c32 = cUTF8.GetUint32();
 	c32 = cUTF8.GetUint32();
@@ -173,9 +182,9 @@ void TestUTF8Example3(void)
 	AssertIntHex((uint32)0x1F9B0, c32);
 
 	uiPos = cUTF8.GetPosition();
-	uiLength = cUTF8.GetLength();
-	AssertSize(0x13, uiPos);
-	AssertSize(0, uiLength);
+	uiUTF8ElementLength = cUTF8.Step();
+	AssertSize(19, uiPos);
+	AssertSize(0, uiUTF8ElementLength);
 
 	c32 = cUTF8.GetUint32();
 	AssertIntHex((uint32)0, c32);
@@ -183,30 +192,35 @@ void TestUTF8Example3(void)
 
 	cUTF8.Init(&sz);
 	uiPos = cUTF8.GetPosition();
-	uiLength = cUTF8.GetLength();
+	uiUTF8ElementLength = cUTF8.Step();
 	AssertSize(0, uiPos);
-	AssertSize(1, uiLength);
+	AssertSize(1, uiUTF8ElementLength);
 	memset(auiBuffer, 0, 0x13);
-	uiLength = cUTF8.GetMulti(auiBuffer, 0x12);
-	AssertSize(1, uiLength);
+	uiCodePointLength = cUTF8.GetMulti(auiBuffer, 0x12);
+	AssertSize(1, uiCodePointLength);
 	AssertString("A", (char*)auiBuffer);
 
 	uiPos = cUTF8.GetPosition();
-	uiLength = cUTF8.GetLength();
+	uiUTF8ElementLength = cUTF8.Step();
 	AssertSize(1, uiPos);
-	AssertSize(0x12, uiLength);
+	AssertSize(18, uiUTF8ElementLength);
 	memset(auiBuffer, 0, 0x13);
-	uiLength = cUTF8.GetMulti(auiBuffer, 0x12);
-	AssertSize(0x12, uiLength);
-	AssertString("üë©‚Äçüèª‚Äçü¶∞", (char*)auiBuffer);
+	uiCodePointLength = cUTF8.GetMulti(auiBuffer, 0x12);
+	AssertSize(11, uiCodePointLength);
+	psz = auiBuffer;
+	AssertString("iÙ", (char*)psz);
+	psz = (uint8*)NextString((char*)psz);
+	AssertString("˚Û", (char*)psz);
+	psz = (uint8*)NextString((char*)psz);
+	AssertString("∞˘", (char*)psz);
 
 	uiPos = cUTF8.GetPosition();
-	uiLength = cUTF8.GetLength();
+	uiUTF8ElementLength = cUTF8.Step();
 	AssertSize(0x13, uiPos);
-	AssertSize(0, uiLength);
+	AssertSize(0, uiUTF8ElementLength);
 	memset(auiBuffer, 0, 0x13);
-	uiLength = cUTF8.GetMulti(auiBuffer, 0x12);
-	AssertSize(0, uiLength);
+	uiCodePointLength = cUTF8.GetMulti(auiBuffer, 0x12);
+	AssertSize(0, uiCodePointLength);
 	AssertString("", (char*)auiBuffer);
 	cUTF8.Kill();
 
@@ -223,9 +237,11 @@ void TestUTF8Example4(void)
 	CUTF8		cUTF8;
 	CTextFile	cTextFile;
 	CChars		sz;
-	size		uiLength;
+	size		uiUTF8ElementLength;
+	size		uiCodePointLength;
 	size		uiPos;
 	uint8		auiBuffer[0x13];
+	uint8*		psz;
 
 	cTextFile.Init();
 	cTextFile.Read("Input" _FS_ "UTF8" _FS_ "Example4.txt");
@@ -234,39 +250,44 @@ void TestUTF8Example4(void)
 
 	cUTF8.Init(&sz);
 	uiPos = cUTF8.GetPosition();
-	uiLength = cUTF8.GetLength();
+	uiUTF8ElementLength = cUTF8.Step();
 	AssertSize(0, uiPos);
-	AssertSize(2, uiLength);
+	AssertSize(2, uiUTF8ElementLength);
 	memset(auiBuffer, 0, 0x13);
-	uiLength = cUTF8.GetMulti(auiBuffer, 0x12);
-	AssertSize(2, uiLength);
-	AssertString("≈Ç", (char*)auiBuffer);
+	uiCodePointLength = cUTF8.GetMulti(auiBuffer, 0x12);
+	AssertSize(2, uiCodePointLength);
+	AssertShort((uint16)322, *((uint16*)auiBuffer));
 
 	uiPos = cUTF8.GetPosition();
-	uiLength = cUTF8.GetLength();
+	uiUTF8ElementLength = cUTF8.Step();
 	AssertSize(2, uiPos);
-	AssertSize(0x12, uiLength);
+	AssertSize(0x12, uiUTF8ElementLength);
 	memset(auiBuffer, 0, 0x13);
-	uiLength = cUTF8.GetMulti(auiBuffer, 0x12);
-	AssertSize(0x12, uiLength);
-	AssertString("üë©‚Äçüèª‚Äçü¶∞", (char*)auiBuffer);
+	uiCodePointLength = cUTF8.GetMulti(auiBuffer, 0x12);
+	AssertSize(11, uiCodePointLength);
+	psz = auiBuffer;
+	AssertString("iÙ", (char*)psz);
+	psz = (uint8*)NextString((char*)psz);
+	AssertString("˚Û", (char*)psz);
+	psz = (uint8*)NextString((char*)psz);
+	AssertString("∞˘", (char*)psz);
 
 	uiPos = cUTF8.GetPosition();
-	uiLength = cUTF8.GetLength();
+	uiUTF8ElementLength = cUTF8.Step();
 	AssertSize(0x14, uiPos);
-	AssertSize(2, uiLength);
+	AssertSize(2, uiUTF8ElementLength);
 	memset(auiBuffer, 0, 0x13);
-	uiLength = cUTF8.GetMulti(auiBuffer, 0x12);
-	AssertSize(2, uiLength);
-	AssertString("≈Ç", (char*)auiBuffer);
+	uiCodePointLength = cUTF8.GetMulti(auiBuffer, 0x12);
+	AssertSize(2, uiCodePointLength);
+	AssertShort((uint16)322, *((uint16*)auiBuffer));
 
 	uiPos = cUTF8.GetPosition();
-	uiLength = cUTF8.GetLength();
+	uiUTF8ElementLength = cUTF8.Step();
 	AssertSize(0x16, uiPos);
-	AssertSize(0, uiLength);
+	AssertSize(0, uiUTF8ElementLength);
 	memset(auiBuffer, 0, 0x13);
-	uiLength = cUTF8.GetMulti(auiBuffer, 0x12);
-	AssertSize(0, uiLength);
+	uiCodePointLength = cUTF8.GetMulti(auiBuffer, 0x12);
+	AssertSize(0, uiCodePointLength);
 	AssertString((char*)auiBuffer, "");
 	cUTF8.Kill();
 
