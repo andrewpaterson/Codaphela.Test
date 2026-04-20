@@ -100,7 +100,7 @@ int __cdecl main(void)
 	//TestMeshShapes();  Write is not consistent.
 	TestMeshConnectivity();
 	TestNormalGeneration();
-	//TestMeshOBJReader();
+	//TestMeshOBJReader();  Source OBJ file is missing
 
 	cFileUtil.RemoveDir("Output");
 

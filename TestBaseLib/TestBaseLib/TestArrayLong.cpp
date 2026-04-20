@@ -1,4 +1,4 @@
-#include "BaseLib/ArrayLong.h"
+#include "BaseLib/ArrayInt64.h"
 #include "TestLib/Assert.h"
 
 
@@ -8,7 +8,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestArrayLongRemoveDuplicates(void)
 {
-	CArrayLong	cArray;
+	CArrayInt64	cArray;
 	bool		bRemoved;
 
 	cArray.Init();

@@ -47,6 +47,7 @@ void TestRedirectPrintf(void);
 void TestStringHelper(void);
 void TestCharsHelper(void);
 void TestUTF8(void);
+void TestUTF16(void);
 void TestTextPosition(void);
 void TestTextParser(void);
 void TestEscapeCodes(void);
@@ -195,6 +196,7 @@ int __cdecl main(void)
 	TestFreeListAllocator();
 	TestCharsHelper();
 	TestUTF8();
+	TestUTF16();
 	TestEscapeCodes();
 	TestTextPosition();
 	TestTextParser();
