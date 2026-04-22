@@ -48,6 +48,7 @@ void TestStringHelper(void);
 void TestCharsHelper(void);
 void TestUTF8(void);
 void TestUTF16(void);
+void TestUnicode(void);
 void TestTextPosition(void);
 void TestTextParser(void);
 void TestEscapeCodes(void);
@@ -197,6 +198,7 @@ int __cdecl main(void)
 	TestCharsHelper();
 	TestUTF8();
 	TestUTF16();
+	TestUnicode();
 	TestEscapeCodes();
 	TestTextPosition();
 	TestTextParser();

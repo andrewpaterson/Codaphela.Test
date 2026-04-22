@@ -678,6 +678,9 @@
     <ClCompile Include="TestUTF-16.cpp">
       <Filter>Source\Text</Filter>
     </ClCompile>
+    <ClCompile Include="TestUnicode.cpp">
+      <Filter>Source\Text</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">
