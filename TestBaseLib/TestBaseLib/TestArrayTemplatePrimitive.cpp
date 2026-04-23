@@ -1,5 +1,5 @@
-#include "BaseLib/ArrayFloat.h"
-#include "BaseLib/ArrayDouble.h"
+#include "BaseLib/ArrayFloat32.h"
+#include "BaseLib/ArrayFloat64.h"
 #include "BaseLib/ArrayChar.h"
 #include "BaseLib/ArrayInt64.h"
 #include "TestLib/Assert.h"
@@ -13,7 +13,7 @@ void TestArrayTemplatePrimitive(void)
 {
 	CArrayChar		aChars;
 	CArrayFloat		aFloats;
-	CArrayDouble	aDoubles;
+	CArrayFloat64	aDoubles;
 	CArrayInt64		aLongs;
 	int				iIndex;
 

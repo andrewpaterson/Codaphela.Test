@@ -1,6 +1,7 @@
-#include "BaseLib/UTF-16.h"
 #include "BaseLib/TextFile.h"
+#include "BaseLib/IntegerHelper.h"
 #include "BaseLib/ArrayUint16.h"
+#include "BaseLib/UTF-16.h"
 #include "TestLib/Assert.h"
 
 
@@ -367,6 +368,65 @@ void TestUTF16Example5(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+uint32 ReverseUTF16Endianness(uint32 s)
+{
+	SwapUint16((uint16*)&s, ((uint16*)&s) + 1);
+	return s;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestUTF16Example6(void)
+{
+	CUTF16		cUTF16;
+	CTextFile	cTextFile;
+	uint32		c32;
+	bool		bRead;
+	CArrayUint16	aui;
+
+	cTextFile.Init();
+	bRead = cTextFile.Read("Input" _FS_ "UTF16LE" _FS_ "Example6.txt");
+	AssertTrue(bRead);
+	aui.Init(&gcSystemAllocator, (uint16*)cTextFile.Text(), cTextFile.Length() / sizeof(uint16));
+	cTextFile.Kill();
+
+	cUTF16.Init(aui.GetData(), aui.NumElements());
+
+	AssertTrue(cUTF16.GetByteOrderMark());
+
+	c32 = cUTF16.GetCodePointUint32();
+	AssertIntHex(0x1F469, c32);
+	c32 = cUTF16.GetCodePointUint32();
+	AssertIntHex(0x1F3FB, c32);
+	c32 = cUTF16.GetCodePointUint32();
+	AssertIntHex(0x1F9B0, c32);
+	c32 = cUTF16.GetCodePointUint32();
+	AssertIntHex(0, c32);
+
+	c32 = cUTF16.GetUTF16ElementUint32(0x1F469);
+	c32 = ReverseUTF16Endianness(c32);
+	AssertIntHex(0xD83DDC69, c32);
+	c32 = cUTF16.GetUTF16ElementUint32(0x1F3FB);
+	c32 = ReverseUTF16Endianness(c32);
+	AssertIntHex(0xD83CDFFB, c32);
+	c32 = cUTF16.GetUTF16ElementUint32(0x1F9B0);
+	c32 = ReverseUTF16Endianness(c32);
+	AssertIntHex(0xD83EDDB0, c32);
+	c32 = cUTF16.GetUTF16ElementUint32(0);
+
+	cUTF16.Kill();
+	aui.Kill();
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestUTF16(void)
 {
 	BeginTests();
@@ -376,6 +436,7 @@ void TestUTF16(void)
 	TestUTF16Example3();
 	TestUTF16Example4();
 	TestUTF16Example5();
+	TestUTF16Example6();
 
 	TestStatistics();
 }

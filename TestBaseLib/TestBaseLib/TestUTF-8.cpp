@@ -1,5 +1,6 @@
-#include "BaseLib/UTF-8.h"
 #include "BaseLib/TextFile.h"
+#include "BaseLib/IntegerHelper.h"
+#include "BaseLib/UTF-8.h"
 #include "TestLib/Assert.h"
 
 
@@ -353,6 +354,51 @@ void TestUTF8Example5(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestUTF8Example6(void)
+{
+	CUTF8		cUTF8;
+	CTextFile	cTextFile;
+	CChars		sz;
+	uint32		c32;
+	bool		bRead;
+
+	cTextFile.Init();
+	bRead = cTextFile.Read("Input" _FS_ "UTF8" _FS_ "Example6.txt");
+	AssertTrue(bRead);
+	sz.Init(cTextFile.Text());
+	cTextFile.Kill();
+
+	cUTF8.Init(&sz);
+
+	c32 = cUTF8.GetCodePointUint32();
+	AssertIntHex(0x1F469, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertIntHex(0x1F3FB, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertIntHex(0x1F9B0, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertIntHex(0, c32);
+
+	c32 = cUTF8.GetUTF8ElementUint32(0x1F469);
+	c32 = ReverseIntEndianness(c32);
+	AssertIntHex(0xF09F91A9, c32);
+	c32 = cUTF8.GetUTF8ElementUint32(0x1F3FB);
+	c32 = ReverseIntEndianness(c32);
+	AssertIntHex(0xF09F8FBB, c32);
+	c32 = cUTF8.GetUTF8ElementUint32(0x1F9B0);
+	c32 = ReverseIntEndianness(c32);
+	AssertIntHex(0xF09FA6B0, c32);
+	c32 = cUTF8.GetUTF8ElementUint32(0);
+
+	cUTF8.Kill();
+	sz.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestUTF8(void)
 {
 	BeginTests();
@@ -362,6 +408,7 @@ void TestUTF8(void)
 	TestUTF8Example3();
 	TestUTF8Example4();
 	TestUTF8Example5();
+	TestUTF8Example6();
 
 	TestStatistics();
 }

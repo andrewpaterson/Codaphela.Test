@@ -1,4 +1,5 @@
 #include "BaseLib/ArrayInt.h"
+#include "BaseLib/ArrayUint.h"
 #include "TestLib/Assert.h"
 
 
@@ -8,7 +9,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestArrayIntAddFind(void)
 {
-	CArrayInt	cArray;
+	CArrayUint	cArray;
 
 	cArray.Init();
 	cArray.AddList(-1, 1, 2, 3, 4, -1);
@@ -51,7 +52,7 @@ void TestArrayIntAddFind(void)
 //////////////////////////////////////////////////////////////////////////
 void TestArrayIntSortingUsingQuickSort(void)
 {
-	CArrayInt	cArray;
+	CArrayUint	cArray;
 
 	cArray.Init();
 	cArray.AddList(-1, 4, 3, 7, 8, 1, 9, 0, 2, 4, 2, -1);
@@ -107,7 +108,7 @@ void TestArrayIntSortingUsingQuickSort(void)
 //////////////////////////////////////////////////////////////////////////
 void TestArrayIntSortingUsingBubbleSort(void)
 {
-	CArrayInt	cArray;
+	CArrayUint	cArray;
 
 	cArray.Init();
 	cArray.AddList(-1, 4, 3, 7, 8, 1, 9, 0, 2, 4, 2, -1);
@@ -151,7 +152,7 @@ void TestArrayIntSortingUsingBubbleSort(void)
 //////////////////////////////////////////////////////////////////////////
 void TestArrayIntRemoveDuplicates(void)
 {
-	CArrayInt	cArray;
+	CArrayUint	cArray;
 
 	cArray.Init();
 	cArray.AddList(-1, 1, 1, 2, 3, 3, 3, 4, 5, 5, -1);
@@ -173,8 +174,8 @@ void TestArrayIntRemoveDuplicates(void)
 //////////////////////////////////////////////////////////////////////////
 void TestArrayIntRemoveAt(void)
 {
-	CArrayInt	cArray;
-	CArrayInt	cKiller;
+	CArrayUint	cArray;
+	CArrayUint	cKiller;
 
 	////////////////////////////////////////////////
 	cArray.Init();
