@@ -395,6 +395,83 @@ void TestUTF8Example6(void)
 }
 
 
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestUTF8BOMExample1(void)
+{
+	CUTF8		cUTF8;
+	CTextFile	cTextFile;
+	CChars		sz;
+	uint16		c16;
+	uint32		c32;
+	bool		bRead;
+
+	cTextFile.Init();
+	bRead = cTextFile.Read("Input" _FS_ "UTF8BOM" _FS_ "Example1.txt");
+	AssertTrue(bRead);
+	sz.Init(cTextFile.Text());
+	cTextFile.Kill();
+
+	cUTF8.Init(&sz);
+
+	AssertTrue(cUTF8.GetByteOrderMark());
+
+	c16 = cUTF8.GetCodePointUint16();
+	AssertChar('H', (char)c16);
+	c16 = cUTF8.GetCodePointUint16();
+	AssertChar('e', (char)c16);
+	c16 = cUTF8.GetCodePointUint16();
+	AssertChar('l', (char)c16);
+	c16 = cUTF8.GetCodePointUint16();
+	AssertChar('l', (char)c16);
+	c16 = cUTF8.GetCodePointUint16();
+	AssertChar('o', (char)c16);
+	c16 = cUTF8.GetCodePointUint16();
+	AssertChar(' ', (char)c16);
+
+	c16 = cUTF8.GetCodePointUint16();
+	AssertShort((uint16)0xFFFD, c16);
+
+	c32 = cUTF8.GetCodePointUint32();
+	AssertInt((uint32)0x4E16, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertInt((uint32)0x754C, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertInt((uint32)0x0020, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertInt((uint32)0x1F43C, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertInt((uint32)0x0020, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertInt((uint32)0x002D, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertInt((uint32)0x0020, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertInt((uint32)0x20AC, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertInt((uint32)0x0020, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertInt((uint32)0x00A9, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertInt((uint32)0x0020, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertInt((uint32)0x1D7D9, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertInt((uint32)0x1D7DA, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertInt((uint32)0x1D7DB, c32);
+	c32 = cUTF8.GetCodePointUint32();
+	AssertInt((uint32)0, c32);
+
+	cUTF8.Kill();
+	sz.Kill();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -409,6 +486,8 @@ void TestUTF8(void)
 	TestUTF8Example4();
 	TestUTF8Example5();
 	TestUTF8Example6();
+
+	TestUTF8BOMExample1();
 
 	TestStatistics();
 }
