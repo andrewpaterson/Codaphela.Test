@@ -259,7 +259,7 @@ int __cdecl main(void)
 	TestIndexTreeMemoryConfig();
 	TestIndexPtr();
 	TestIndexTemplateTemplate();
-	//TestCalculator();
+	TestCalculator();
 
 	FastFunctionsInit();
 	NumberInit();
