@@ -13,6 +13,8 @@ void TestJSONParserRead1(void)
 	TRISTATE		tResult;
 	CMarkup			cMarkup;
 	CJSONParser		cJSONParser;
+	CChars			sz;
+	CMarkupTag*		pcTag;
 	char			szJSON[] = "\
 {\n\
   \"painting\": [\n\
@@ -42,7 +44,23 @@ void TestJSONParserRead1(void)
 	tResult = cJSONParser.Parse();
 	cJSONParser.Kill();
 
-	cMarkup.Dump();
+	pcTag = cMarkup.GetRootTag();
+
+	sz.Init();
+	cMarkup.Print(&sz);
+	AssertString(
+		"<>\n"
+		"  <painting>\n"
+		"    [img@src=\"madonna.jpg\", img@alt=\"Foligno Madonna, by Raphael\"]\n"
+		"    <>\n"
+		"      <caption \"This is Raphael's \"Foligno\" Madonna, painted in\", \"-\", \".\">\n"
+		"        [date=\"1511\"]\n"
+		"        [date=\"1512\"]\n"
+		"      </caption>\n"
+		"    </>\n"
+		"  </painting>\n"
+		"</>\n", sz.Text());
+	sz.Kill();
 
 	AssertTritrue(tResult);
 
@@ -60,6 +78,7 @@ void TestJSONParserRead2(void)
 	CMarkup			cMarkup;
 	CJSONParser		cJSONParser;
 	CMarkupTag*		pcTag;
+	CChars			sz;
 	char			szJSON[] = "\
 {\n\
 \"glossary\": {\n\
@@ -93,6 +112,24 @@ void TestJSONParserRead2(void)
 
 	pcTag = cMarkup.GetRootTag();
 
+	sz.Init();
+	cMarkup.Print(&sz);
+	AssertString(
+		"<>\n"
+		"  <glossary title=\"example glossary\">\n"
+		"    <GlossDiv title=\"S\">\n"
+		"      <GlossList>\n"
+		"        <GlossEntry ID=\"SGML\", SortAs=\"SGML\", GlossTerm=\"Standard Generalized Markup Language\", Acronym=\"SGML\", Abbrev=\"ISO 8879:1986\", GlossSee=\"markup\">\n"
+		"          <GlossDef para=\"A meta-markup language, used to create markup languages such as DocBook.\">\n"
+		"            <GlossSeeAlso \"GML\", \"XML\"/>\n"
+		"          </GlossDef>\n"
+		"        </GlossEntry>\n"
+		"      </GlossList>\n"
+		"    </GlossDiv>\n"
+		"  </glossary>\n"
+		"</>\n", sz.Text());
+	sz.Kill();
+
 	cMarkup.Kill();
 }
 
@@ -107,6 +144,7 @@ void TestJSONParserReadAttributes(void)
 	CMarkup			cMarkup;
 	CJSONParser		cJSONParser;
 	CMarkupTag*		pcTag;
+	CChars			sz;
 	char			szJSON[] = "\
 {\"widget\": {\n\
     \"debug\": \"on\",\n\
@@ -144,6 +182,20 @@ void TestJSONParserReadAttributes(void)
 
 	pcTag = cMarkup.GetRootTag();
 
+	pcTag = cMarkup.GetRootTag();
+
+	sz.Init();
+	cMarkup.Print(&sz);
+	AssertString(
+		"<>\n"
+		"  <widget debug=\"on\">\n"
+		"    <window title=\"Sample Konfabulator Widget\", name=\"main_window\", width=500, height=500/>\n"
+		"    <image src=\"Images/Sun.png\", name=\"sun1\", hOffset=250, vOffset=250, alignment=\"center\"/>\n"
+		"    <text data=\"Click Here\", size=36, style=\"bold\", name=\"text1\", hOffset=250, vOffset=100, alignment=\"center\", onMouseUp=\"sun1.opacity = (sun1.opacity / 100) * 90;\"/>\n"
+		"  </widget>\n"
+ 		"</>\n", sz.Text());
+	sz.Kill();
+
 	cMarkup.Kill();
 }
 
@@ -158,6 +210,7 @@ void TestJSONParser65816SampleTest(void)
 	CMarkup			cMarkup;
 	CJSONParser		cJSONParser;
 	CMarkupTag*		pcTag;
+	CChars			sz;
 	char			szJSON[] = "\
 {\n\
 	\"name\": \"3d e 1\",\n\
@@ -214,7 +267,34 @@ void TestJSONParser65816SampleTest(void)
 
 	pcTag = cMarkup.GetRootTag();
 
-	cMarkup.Dump();
+	sz.Init();
+	cMarkup.Print(&sz);
+	AssertString(
+		"<name=\"3d e 1\">\n"
+		"  <initial pc=9900, s=2191, p=171, a=25345, x=100, y=124, dbr=26, d=50304, pbr=111, e=1>\n"
+		"    <ram>\n"
+		"      [1751932, 14]\n"
+		"      [7284398, 187]\n"
+		"      [7284397, 24]\n"
+		"      [7284396, 61]\n"
+		"    </ram>\n"
+		"  </initial>\n"
+		"  <final pc=9903, s=2191, p=43, a=25344, x=100, y=124, dbr=26, d=50304, pbr=111, e=1>\n"
+		"    <ram>\n"
+		"      [1751932, 14]\n"
+		"      [7284398, 187]\n"
+		"      [7284397, 24]\n"
+		"      [7284396, 61]\n"
+		"    </ram>\n"
+		"  </final>\n"
+		"  <cycles>\n"
+		"    [7284396, 61, \"dp-remx-\"]\n"
+		"    [7284397, 24, \"-p-remx-\"]\n"
+		"    [7284398, 187, \"-p-remx-\"]\n"
+		"    [1751932, 14, \"d--remx-\"]\n"
+		"  </cycles>\n"
+		"</>\n", sz.Text());
+	sz.Kill();
 
 	cMarkup.Kill();
 }
