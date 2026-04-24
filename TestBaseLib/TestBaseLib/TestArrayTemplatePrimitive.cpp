@@ -12,7 +12,7 @@
 void TestArrayTemplatePrimitive(void)
 {
 	CArrayChar		aChars;
-	CArrayFloat		aFloats;
+	CArrayFloat32	aFloats;
 	CArrayFloat64	aDoubles;
 	CArrayInt64		aLongs;
 	int				iIndex;
