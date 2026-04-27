@@ -1,6 +1,6 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/GlobalDataTypesIO.h"
-#include "BaseLib/UTF-8.h"
+#include "BaseLib/UTF8.h"
 #include "BaseLib/TextFile.h"
 #include "StandardLib/Objects.h"
 #include "SupportLib/Font.h"
