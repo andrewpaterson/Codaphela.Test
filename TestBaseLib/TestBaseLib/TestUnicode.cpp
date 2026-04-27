@@ -56,7 +56,7 @@ void TestUnicodeConvertUTF16ToUTF8(void)
 	eEncoding = cUTF16.GetEncoding(auiUTF16Souce.GetData());
 	AssertTrue(UE_UTF16LE == eEncoding);
 	AssertTrue(cUTF16.GetByteOrderMark());
-	uiUTF16Length = cUTF16.Peek();
+	uiUTF16Length = cUTF16.PeekUTFBytes();
 	while (uiUTF16Length != 0)
 	{
 		if (uiUTF16Length == 1)
@@ -176,7 +176,7 @@ void TestUnicodeConvertUTF16ToUTF8(void)
 			}
 		}
 
-		uiUTF16Length = cUTF16.Peek();
+		uiUTF16Length = cUTF16.PeekUTFBytes();
 	}
 	AssertTrue(bSucceeded);
 
@@ -245,7 +245,7 @@ void TestUnicodeConvertUTF8ToUTF16(void)
 
 	auiUTF16Dest.InsertBlockAfterEnd((uint16*)cUTF8.GetBOMBytes(UE_UTF16LE), cUTF8.GetBOMLength(UE_UTF16LE) / sizeof(uint16));
 	
-	uiUTF8Length = cUTF8.Peek();
+	uiUTF8Length = cUTF8.PeekUTFBytes();
 	while (uiUTF8Length != 0)
 	{
 		if (uiUTF8Length == 1)
@@ -365,7 +365,7 @@ void TestUnicodeConvertUTF8ToUTF16(void)
 			}
 		}
 
-		uiUTF8Length = cUTF8.Peek();
+		uiUTF8Length = cUTF8.PeekUTFBytes();
 	}
 	AssertTrue(bSucceeded);
 

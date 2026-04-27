@@ -681,6 +681,9 @@
     <ClCompile Include="TestUnicode.cpp">
       <Filter>Source\Text</Filter>
     </ClCompile>
+    <ClCompile Include="TestUnicodeWriter.cpp">
+      <Filter>Source\Text</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

@@ -131,7 +131,7 @@ void TestUTF16Example3(void)
 	CTextFile		cTextFile;
 	CArrayUint16	aui;
 	uint32			c32;
-	size			uiUTF16ElementLength;
+	size			uiUTF16ByteLength;
 	size			uiCodePointLength;
 	size			uiPos;
 	uint8			auiBuffer[0x13];
@@ -176,8 +176,8 @@ void TestUTF16Example3(void)
 
 	uiPos = cUTF16.GetPosition();
 	AssertSize(1, uiPos);
-	uiUTF16ElementLength = cUTF16.Peek();
-	AssertSize(1, uiUTF16ElementLength);
+	uiUTF16ByteLength = cUTF16.PeekUTFBytes();
+	AssertSize(2, uiUTF16ByteLength);
 	uiPos = cUTF16.GetPosition();
 	AssertSize(1, uiPos);
 
@@ -185,8 +185,8 @@ void TestUTF16Example3(void)
 	AssertIntHex((uint32)0x0041, c32);
 	AssertSize(1, cUTF16.GetUnicodeCodePointLength(c32));
 
-	uiUTF16ElementLength = cUTF16.Peek();
-	AssertSize(8, uiUTF16ElementLength);
+	uiUTF16ByteLength = cUTF16.PeekUTFBytes();
+	AssertSize(16, uiUTF16ByteLength);
 	c32 = cUTF16.GetCodePointUint32();
 	AssertIntHex((uint32)0x1F469, c32);
 	c32 = cUTF16.GetCodePointUint32();
@@ -200,8 +200,8 @@ void TestUTF16Example3(void)
 
 	uiPos = cUTF16.GetPosition();
 	AssertSize(10, uiPos);
-	uiUTF16ElementLength = cUTF16.Peek();
-	AssertSize(0, uiUTF16ElementLength);
+	uiUTF16ByteLength = cUTF16.PeekUTFBytes();
+	AssertSize(0, uiUTF16ByteLength);
 
 	c32 = cUTF16.GetCodePointUint32();
 	AssertIntHex((uint32)0, c32);
@@ -213,8 +213,8 @@ void TestUTF16Example3(void)
 
 	uiPos = cUTF16.GetPosition();
 	AssertSize(1, uiPos);
-	uiUTF16ElementLength = cUTF16.Peek();
-	AssertSize(1, uiUTF16ElementLength);
+	uiUTF16ByteLength = cUTF16.PeekUTFBytes();
+	AssertSize(2, uiUTF16ByteLength);
 	memset(auiBuffer, 0, 0x13);
 	uiCodePointLength = cUTF16.GetCodePointMulti(auiBuffer, 0x12);
 	AssertSize(1, uiCodePointLength);
@@ -222,8 +222,8 @@ void TestUTF16Example3(void)
 
 	uiPos = cUTF16.GetPosition();
 	AssertSize(2, uiPos);
-	uiUTF16ElementLength = cUTF16.Peek();
-	AssertSize(8, uiUTF16ElementLength);
+	uiUTF16ByteLength = cUTF16.PeekUTFBytes();
+	AssertSize(16, uiUTF16ByteLength);
 	memset(auiBuffer, 0, 0x13);
 	uiCodePointLength = cUTF16.GetCodePointMulti(auiBuffer, 0x12);
 	AssertSize(11, uiCodePointLength);
@@ -235,9 +235,9 @@ void TestUTF16Example3(void)
 	AssertString("°ù", (char*)psz);
 
 	uiPos = cUTF16.GetPosition();
-	uiUTF16ElementLength = cUTF16.Peek();
+	uiUTF16ByteLength = cUTF16.PeekUTFBytes();
 	AssertSize(10, uiPos);
-	AssertSize(0, uiUTF16ElementLength);
+	AssertSize(0, uiUTF16ByteLength);
 	memset(auiBuffer, 0, 0x13);
 	uiCodePointLength = cUTF16.GetCodePointMulti(auiBuffer, 0x12);
 	AssertSize(0, uiCodePointLength);
@@ -257,7 +257,7 @@ void TestUTF16Example4(void)
 	CUTF16			cUTF16;
 	CTextFile		cTextFile;
 	CArrayUint16	aui;
-	size			uiUTF16ElementLength;
+	size			uiUTF16ByteLength;
 	size			uiCodePointLength;
 	size			uiPos;
 	uint8			auiBuffer[0x13];
@@ -276,17 +276,17 @@ void TestUTF16Example4(void)
 
 	uiPos = cUTF16.GetPosition();
 	AssertSize(1, uiPos);
-	uiUTF16ElementLength = cUTF16.Peek();
-	AssertSize(1, uiUTF16ElementLength);
+	uiUTF16ByteLength = cUTF16.PeekUTFBytes();
+	AssertSize(2, uiUTF16ByteLength);
 	memset(auiBuffer, 0, 0x13);
 	uiCodePointLength = cUTF16.GetCodePointMulti(auiBuffer, 0x12);
 	AssertSize(2, uiCodePointLength);
 	AssertShort((uint16)322, *((uint16*)auiBuffer));
 
 	uiPos = cUTF16.GetPosition();
-	uiUTF16ElementLength = cUTF16.Peek();
+	uiUTF16ByteLength = cUTF16.PeekUTFBytes();
 	AssertSize(2, uiPos);
-	AssertSize(8, uiUTF16ElementLength);
+	AssertSize(16, uiUTF16ByteLength);
 	memset(auiBuffer, 0, 0x13);
 	uiCodePointLength = cUTF16.GetCodePointMulti(auiBuffer, 0x12);
 	AssertSize(11, uiCodePointLength);
@@ -298,18 +298,18 @@ void TestUTF16Example4(void)
 	AssertString("°ù", (char*)psz);
 
 	uiPos = cUTF16.GetPosition();
-	uiUTF16ElementLength = cUTF16.Peek();
+	uiUTF16ByteLength = cUTF16.PeekUTFBytes();
 	AssertSize(10, uiPos);
-	AssertSize(1, uiUTF16ElementLength);
+	AssertSize(2, uiUTF16ByteLength);
 	memset(auiBuffer, 0, 0x13);
 	uiCodePointLength = cUTF16.GetCodePointMulti(auiBuffer, 0x12);
 	AssertSize(2, uiCodePointLength);
 	AssertShort((uint16)322, *((uint16*)auiBuffer));
 
 	uiPos = cUTF16.GetPosition();
-	uiUTF16ElementLength = cUTF16.Peek();
+	uiUTF16ByteLength = cUTF16.PeekUTFBytes();
 	AssertSize(11, uiPos);
-	AssertSize(0, uiUTF16ElementLength);
+	AssertSize(0, uiUTF16ByteLength);
 	memset(auiBuffer, 0, 0x13);
 	uiCodePointLength = cUTF16.GetCodePointMulti(auiBuffer, 0x12);
 	AssertSize(0, uiCodePointLength);
@@ -331,7 +331,7 @@ void TestUTF16Example5(void)
 	uint16			c16;
 	uint32			c32;
 	bool			bRead;
-	size			uiUTF16ElementLength;
+	size			uiUTF16ByteLength;
 	CArrayUint16	aui;
 
 	cTextFile.Init();
@@ -344,20 +344,20 @@ void TestUTF16Example5(void)
 
 	AssertTrue(cUTF16.GetByteOrderMark());
 
-	uiUTF16ElementLength = cUTF16.Peek();
-	AssertSize(1, uiUTF16ElementLength);
+	uiUTF16ByteLength = cUTF16.PeekUTFBytes();
+	AssertSize(2, uiUTF16ByteLength);
 	c16 = cUTF16.GetCodePointUint16();
 	AssertShortHex((uint16)0x2665, c16);
-	uiUTF16ElementLength = cUTF16.Peek();
-	AssertSize(2, uiUTF16ElementLength);
+	uiUTF16ByteLength = cUTF16.PeekUTFBytes();
+	AssertSize(4, uiUTF16ByteLength);
 	c32 = cUTF16.GetCodePointUint32();
 	AssertIntHex(0x12219, c32);
-	uiUTF16ElementLength = cUTF16.Peek();
-	AssertSize(1, uiUTF16ElementLength);
+	uiUTF16ByteLength = cUTF16.PeekUTFBytes();
+	AssertSize(2, uiUTF16ByteLength);
 	c16 = cUTF16.GetCodePointUint16();
 	AssertShortHex((uint16)0x0040, c16);
-	uiUTF16ElementLength = cUTF16.Peek();
-	AssertSize(0, uiUTF16ElementLength);
+	uiUTF16ByteLength = cUTF16.PeekUTFBytes();
+	AssertSize(0, uiUTF16ByteLength);
 
 	cUTF16.Kill();
 	aui.Kill();

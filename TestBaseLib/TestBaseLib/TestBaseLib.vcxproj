@@ -311,6 +311,7 @@
     <ClCompile Include="TestTreeTemplate.cpp" />
     <ClCompile Include="TestTypeConverter.cpp" />
     <ClCompile Include="TestUnicode.cpp" />
+    <ClCompile Include="TestUnicodeWriter.cpp" />
     <ClCompile Include="TestUTF-16.cpp" />
     <ClCompile Include="TestUTF-8.cpp" />
     <ClCompile Include="TestWindowsFiles.cpp" />
