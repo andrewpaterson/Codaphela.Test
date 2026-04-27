@@ -1,6 +1,6 @@
 #include "BaseLib/TextFile.h"
 #include "BaseLib/IntegerHelper.h"
-#include "BaseLib/UTF-8.h"
+#include "BaseLib/UTF8.h"
 #include "TestLib/Assert.h"
 
 

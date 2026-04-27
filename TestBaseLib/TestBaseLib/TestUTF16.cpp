@@ -1,7 +1,7 @@
 #include "BaseLib/TextFile.h"
 #include "BaseLib/IntegerHelper.h"
 #include "BaseLib/ArrayUint16.h"
-#include "BaseLib/UTF-16.h"
+#include "BaseLib/UTF16.h"
 #include "TestLib/Assert.h"
 
 
@@ -381,10 +381,10 @@ uint32 ReverseUTF16Endianness(uint32 s)
 //////////////////////////////////////////////////////////////////////////
 void TestUTF16Example6(void)
 {
-	CUTF16		cUTF16;
-	CTextFile	cTextFile;
-	uint32		c32;
-	bool		bRead;
+	CUTF16			cUTF16;
+	CTextFile		cTextFile;
+	uint32			c32;
+	bool			bRead;
 	CArrayUint16	aui;
 
 	cTextFile.Init();
@@ -419,7 +419,6 @@ void TestUTF16Example6(void)
 
 	cUTF16.Kill();
 	aui.Kill();
-
 }
 
 

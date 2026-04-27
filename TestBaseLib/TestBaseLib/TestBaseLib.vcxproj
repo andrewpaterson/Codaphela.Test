@@ -312,8 +312,8 @@
     <ClCompile Include="TestTypeConverter.cpp" />
     <ClCompile Include="TestUnicode.cpp" />
     <ClCompile Include="TestUnicodeWriter.cpp" />
-    <ClCompile Include="TestUTF-16.cpp" />
-    <ClCompile Include="TestUTF-8.cpp" />
+    <ClCompile Include="TestUTF16.cpp" />
+    <ClCompile Include="TestUTF8.cpp" />
     <ClCompile Include="TestWindowsFiles.cpp" />
     <ClCompile Include="IndexTreeCallbackTestObject.cpp" />
     <ClCompile Include="IndexTreeFileDataTestCallback.cpp" />

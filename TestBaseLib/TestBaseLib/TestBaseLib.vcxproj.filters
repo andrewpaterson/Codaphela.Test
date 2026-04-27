@@ -669,13 +669,13 @@
     <ClCompile Include="TestCharsImmutable.cpp">
       <Filter>Source\Data\String</Filter>
     </ClCompile>
-    <ClCompile Include="TestUTF-8.cpp">
+    <ClCompile Include="TestUTF8.cpp">
       <Filter>Source\Text</Filter>
     </ClCompile>
     <ClCompile Include="TestIndexPtr.cpp">
       <Filter>Source\Data\Map\Index</Filter>
     </ClCompile>
-    <ClCompile Include="TestUTF-16.cpp">
+    <ClCompile Include="TestUTF16.cpp">
       <Filter>Source\Text</Filter>
     </ClCompile>
     <ClCompile Include="TestUnicode.cpp">

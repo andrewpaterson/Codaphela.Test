@@ -1,5 +1,5 @@
-#include "BaseLib/UTF-8.h"
-#include "BaseLib/UTF-16.h"
+#include "BaseLib/UTF8.h"
+#include "BaseLib/UTF16.h"
 #include "BaseLib/ArrayUint16.h"
 #include "BaseLib/ArrayUint8.h"
 #include "BaseLib/TextFile.h"
