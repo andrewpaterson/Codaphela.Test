@@ -53,7 +53,7 @@ void TestUnicodeConvertUTF16ToUTF8(void)
 	auiUTF8Dest.Init();
 
 	bSucceeded = true;
-	eEncoding = cUTF16.GetEncoding(auiUTF16Souce.GetData());
+	eEncoding = GetUnicodeEncoding(auiUTF16Souce.GetData(), auiUTF16Souce.ByteSize());
 	AssertTrue(UE_UTF16LE == eEncoding);
 	AssertTrue(cUTF16.GetByteOrderMark());
 	uiUTF16Length = cUTF16.PeekUTFBytes();
@@ -240,7 +240,7 @@ void TestUnicodeConvertUTF8ToUTF16(void)
 	auiUTF16Dest.Init();
 
 	bSucceeded = true;
-	eEncoding = cUTF8.GetEncoding(sz.Text());
+	eEncoding = GetUnicodeEncoding(sz.Text(), sz.Length());
 	AssertTrue(UE_UTF8 == eEncoding);
 
 	auiUTF16Dest.InsertBlockAfterEnd((uint16*)cUTF8.GetBOMBytes(UE_UTF16LE), cUTF8.GetBOMLength(UE_UTF16LE) / sizeof(uint16));
