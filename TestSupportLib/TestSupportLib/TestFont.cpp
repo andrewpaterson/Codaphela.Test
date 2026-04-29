@@ -141,7 +141,7 @@ void TestFontLookupText(void)
 	uiNumElements = pcRun->NumElements();
 	AssertSize(2, uiNumElements);
 	pcElement = pcRun->GetElement(0);
-	AssertString("CTextUTF16Long", pcElement->ClassName());
+	AssertString("CTextUTF16Short", pcElement->ClassName());
 	pcElement = pcRun->GetElement(1);
 	AssertString("CTextNewLine", pcElement->ClassName());
 
@@ -149,7 +149,7 @@ void TestFontLookupText(void)
 	uiNumElements = pcRun->NumElements();
 	AssertSize(2, uiNumElements);
 	pcElement = pcRun->GetElement(0);
-	AssertString("CTextUTF16Long", pcElement->ClassName());
+	AssertString("CTextUTF16Short", pcElement->ClassName());
 	pcElement = pcRun->GetElement(1);
 	AssertString("CTextNewLine", pcElement->ClassName());
 
@@ -157,14 +157,13 @@ void TestFontLookupText(void)
 	uiNumElements = pcRun->NumElements();
 	AssertSize(2, uiNumElements);
 	pcElement = pcRun->GetElement(0);
-	AssertString("CTextUTF16Long", pcElement->ClassName());
+	AssertString("CTextUTF16Short", pcElement->ClassName());
 	pcElement = pcRun->GetElement(1);
 	AssertString("CTextNewLine", pcElement->ClassName());
 
 
 	pText->Kill();
 	pFont = NULL;
-
 }
 
 
