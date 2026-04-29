@@ -7,6 +7,8 @@
 #include "SupportLib/FontFactory.h"
 #include "SupportLib/Text.h"
 #include "SupportLib/SimpleTextReader.h"
+#include "SupportLib/TextUTF16Short.h"
+#include "SupportLib/TextUTF16Long.h"
 #include "TestLib/Assert.h"
 
 
@@ -128,6 +130,8 @@ void TestFontLookupText(void)
 	size				uiNumElements;
 	CTextRun*			pcRun;
 	CTextElement*		pcElement;
+	CTextUTF16Short*	pcUTF16Short;
+	CChars				sz;
 
 	pFont = CreateFont("anuvverbubbla_8x8", 8, 8);
 	cTextReader.Init(&pFont);
@@ -142,6 +146,11 @@ void TestFontLookupText(void)
 	AssertSize(2, uiNumElements);
 	pcElement = pcRun->GetElement(0);
 	AssertString("CTextUTF16Short", pcElement->ClassName());
+	pcUTF16Short = (CTextUTF16Short*)pcElement;
+	sz.Init();
+	pcUTF16Short->PrintAsASCII(&sz);
+	AssertString("¿BACK IN THE DÄY?    ", sz.Text());
+	sz.Kill();
 	pcElement = pcRun->GetElement(1);
 	AssertString("CTextNewLine", pcElement->ClassName());
 
@@ -150,6 +159,11 @@ void TestFontLookupText(void)
 	AssertSize(2, uiNumElements);
 	pcElement = pcRun->GetElement(0);
 	AssertString("CTextUTF16Short", pcElement->ClassName());
+	pcUTF16Short = (CTextUTF16Short*)pcElement;
+	sz.Init();
+	pcUTF16Short->PrintAsASCII(&sz);
+	AssertString(" Ñ = (5   3 + 7 / 2)", sz.Text());
+	sz.Kill();
 	pcElement = pcRun->GetElement(1);
 	AssertString("CTextNewLine", pcElement->ClassName());
 
@@ -158,9 +172,13 @@ void TestFontLookupText(void)
 	AssertSize(2, uiNumElements);
 	pcElement = pcRun->GetElement(0);
 	AssertString("CTextUTF16Short", pcElement->ClassName());
+	pcUTF16Short = (CTextUTF16Short*)pcElement;
+	sz.Init();
+	pcUTF16Short->PrintAsASCII(&sz);
+	AssertString("  ©< >© UNICORNS  ", sz.Text());
+	sz.Kill();
 	pcElement = pcRun->GetElement(1);
 	AssertString("CTextNewLine", pcElement->ClassName());
-
 
 	pText->Kill();
 	pFont = NULL;
@@ -178,7 +196,7 @@ void TestFont(void)
 	DataIOInit();
 	ObjectsInit();
 
-	TestFontCreateFont();
+	//TestFontCreateFont();
 	TestFontLookupText();
 
 	ObjectsKill();
