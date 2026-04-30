@@ -196,7 +196,7 @@ void TestFont(void)
 	DataIOInit();
 	ObjectsInit();
 
-	//TestFontCreateFont();
+	TestFontCreateFont();
 	TestFontLookupText();
 
 	ObjectsKill();
