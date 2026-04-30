@@ -60,14 +60,14 @@ void TestMapsInit(void)
 	pcType0 = pacBlockTypes->Get(0);
 	pcType1 = pacBlockTypes->Get(1);
 
-	AssertString("Image", pcType0->GetName());
+	AssertString("MovableBlockType.Image", pcType0->GetName());
 	AssertSize(1, pcType0->NumBlocks());
 	pcBlock0 = pcType0->GetBlock(0);
 	AssertString("CMovableBlockImageCel", pcBlock0->ClassName());
 	pcNullBlock0 = pcType0->GetNullBlock();
 	AssertOPointer(pcBlock0, pcNullBlock0);
 
-	AssertString("Boolean", pcType1->GetName());
+	AssertString("MovableBlockType.Boolean", pcType1->GetName());
 	AssertSize(1, pcType1->NumBlocks());
 	pcBlock1 = pcType1->GetBlock(0);
 	AssertString("CMovableBlockBoolean", pcBlock1->ClassName());
