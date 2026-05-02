@@ -7,6 +7,7 @@
 
 void TestPrimitiveTypes(void);
 void TestFloat4(void);
+void TestFloat2(void);
 void TestFloatHelper(void);
 void TestTypeConverter(void);
 void TestArrayBlock(void);
@@ -251,6 +252,7 @@ int __cdecl main(void)
 	TestFloatHelper();
 	TestIntegerHelper();
 	TestNumber();
+	TestFloat2();
 	TestIndexAccess();
 	TestIndexTreeNodeMemory();
 	TestIndexTreeMemoryIterator();

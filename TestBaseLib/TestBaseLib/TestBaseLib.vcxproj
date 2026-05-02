@@ -234,6 +234,7 @@
     <ClCompile Include="TestDataTypesIO.cpp" />
     <ClCompile Include="TestEscapeCodes.cpp" />
     <ClCompile Include="TestFileIO.cpp" />
+    <ClCompile Include="TestFloat2.cpp" />
     <ClCompile Include="TestFloat4.cpp" />
     <ClCompile Include="TestFloatHelper.cpp" />
     <ClCompile Include="TestFreeListAllocator.cpp" />
