@@ -684,7 +684,10 @@
     <ClCompile Include="TestUnicodeWriter.cpp">
       <Filter>Source\Text</Filter>
     </ClCompile>
-    <ClCompile Include="TestFloat2.cpp">
+    <ClCompile Include="TestFloat32Vec2.cpp">
+      <Filter>Source\Data\Geometric</Filter>
+    </ClCompile>
+    <ClCompile Include="TestInt32Vec2.cpp">
       <Filter>Source\Data\Geometric</Filter>
     </ClCompile>
   </ItemGroup>

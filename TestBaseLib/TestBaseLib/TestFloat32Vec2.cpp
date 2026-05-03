@@ -6,17 +6,18 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFloat2Add(void)
+void TestFloat32Vec2Add(void)
 {
-	SFloat32Vec2 sf4a;
-	SFloat32Vec2 sf4b;
+	SFloat32Vec2 sfa;
+	SFloat32Vec2 sfb;
 
-	sf4a.Init(1, 2);
-	sf4b.Init(4, 3);
+	sfa.Init(1, 2);
+	sfb.Init(4, 3);
 
-	sf4a += sf4b;
+	sfa += sfb;
 
-	AssertFloat(5, sf4a.x, 13);
+	AssertFloat(5, sfa.x, 13);
+	AssertFloat(5, sfa.y, 13);
 }
 
 
@@ -24,10 +25,10 @@ void TestFloat2Add(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFloat2Print(void)
+void TestFloat32Vec2Print(void)
 {
-	SFloat32Vec2		sf;
-	CChars		sz;
+	SFloat32Vec2	sf;
+	CChars			sz;
 
 	sf.Init(345.342359f, 0.0002345f);
 	sz.Init();
@@ -41,13 +42,27 @@ void TestFloat2Print(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFloat2(void)
+void TestFloat32Vec2Magnitude(void)
+{
+	SFloat32Vec2	sf;
+
+	sf.Init(345.0f, 432.0f);
+	AssertFloat(552.8552856445312f, sf.Magnitude(), 13);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFloat32Vec2(void)
 {
 	BeginTests();
 	NumberInit();
 
-	TestFloat2Add();
-	TestFloat2Print();
+	TestFloat32Vec2Add();
+	TestFloat32Vec2Print();
+	TestFloat32Vec2Magnitude();
 
 	NumberKill();
 	TestStatistics();

@@ -7,7 +7,6 @@
 
 void TestPrimitiveTypes(void);
 void TestFloat4(void);
-void TestFloat2(void);
 void TestFloatHelper(void);
 void TestTypeConverter(void);
 void TestArrayBlock(void);
@@ -47,6 +46,8 @@ void TestCharsImmutable(void);
 void TestRedirectPrintf(void);
 void TestStringHelper(void);
 void TestCharsHelper(void);
+void TestInt32Vec2(void);
+void TestFloat32Vec2(void);
 void TestUTF8(void);
 void TestUTF16(void);
 void TestUnicode(void);
@@ -179,6 +180,11 @@ int __cdecl main(void)
 	TestRedirectPrintf();
 	TestLogToString();
 	TestLogger();
+	TestIntegerHelper();
+	TestNumber();
+	TestFloatHelper();
+	TestInt32Vec2();
+	TestFloat32Vec2();
 	TestMapBlock();
 	TestMapString();
 	TestMapStringIntAndPointer();
@@ -249,10 +255,6 @@ int __cdecl main(void)
 	TestCSVFileImmutable();
 	TestDataTypesIO();
 	TestGlobalDataTypesIO();
-	TestFloatHelper();
-	TestIntegerHelper();
-	TestNumber();
-	TestFloat2();
 	TestIndexAccess();
 	TestIndexTreeNodeMemory();
 	TestIndexTreeMemoryIterator();
