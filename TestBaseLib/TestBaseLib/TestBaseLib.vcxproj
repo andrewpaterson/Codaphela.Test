@@ -236,6 +236,7 @@
     <ClCompile Include="TestFileIO.cpp" />
     <ClCompile Include="TestFloat32Vec2.cpp" />
     <ClCompile Include="TestFloat4.cpp" />
+    <ClCompile Include="TestFloat64Vec2.cpp" />
     <ClCompile Include="TestFloatHelper.cpp" />
     <ClCompile Include="TestFreeListAllocator.cpp" />
     <ClCompile Include="TestGlobalDataTypesIO.cpp" />
@@ -249,7 +250,9 @@
     <ClCompile Include="TestIndexTreeIterator.cpp" />
     <ClCompile Include="TestIndexTreeNodeMemory.cpp" />
     <ClCompile Include="TestIndexTreeObject.cpp" />
+    <ClCompile Include="TestInt16Vec2.cpp" />
     <ClCompile Include="TestInt32Vec2.cpp" />
+    <ClCompile Include="TestInt64Vec2.cpp" />
     <ClCompile Include="TestJSONParser.cpp" />
     <ClCompile Include="TestLinkedList.cpp" />
     <ClCompile Include="TestLinkedListBlock.cpp" />

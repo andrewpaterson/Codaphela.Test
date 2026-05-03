@@ -1,4 +1,4 @@
-#include "BaseLib/Int32Vec2.h"
+#include "BaseLib/Int16Vec2.h"
 #include "TestLib/Assert.h"
 
 
@@ -6,10 +6,10 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestInt32Vec2Add(void)
+void TestInt16Vec2Add(void)
 {
-	SInt32Vec2 sia;
-	SInt32Vec2 sib;
+	SInt16Vec2 sia;
+	SInt16Vec2 sib;
 
 	sia.Init(1, 2);
 	sib.Init(4, 3);
@@ -25,9 +25,9 @@ void TestInt32Vec2Add(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestInt32Vec2Print(void)
+void TestInt16Vec2Print(void)
 {
-	SInt32Vec2	si;
+	SInt16Vec2	si;
 	CChars		sz;
 
 	si.Init(345, 1);
@@ -42,12 +42,12 @@ void TestInt32Vec2Print(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestInt32Vec2Magnitude(void)
+void TestInt16Vec2Magnitude(void)
 {
-	SInt32Vec2	si;
+	SInt16Vec2	si;
 
-	si.Init(20123405, 13459784);
-	AssertInt(24209857, si.Magnitude());
+	si.Init(325, 453);
+	AssertInt(557, si.Magnitude());
 }
 
 
@@ -55,14 +55,14 @@ void TestInt32Vec2Magnitude(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestInt32Vec2(void)
+void TestInt16Vec2(void)
 {
 	BeginTests();
 	NumberInit();
 
-	TestInt32Vec2Add();
-	TestInt32Vec2Print();
-	TestInt32Vec2Magnitude();
+	TestInt16Vec2Add();
+	TestInt16Vec2Print();
+	TestInt16Vec2Magnitude();
 
 	NumberKill();
 	TestStatistics();

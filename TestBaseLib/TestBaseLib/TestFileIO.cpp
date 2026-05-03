@@ -541,10 +541,10 @@ void TestFileIOMap(void)
 {
 	CMemoryFile						cMemory;
 	CFileBasic						cFile;
-	CMapTemplateTemplate<size, float96>		cMap;
+	CMapTemplateTemplate<size, float128>		cMap;
 	size							i;
-	float96							ld;
-	CMapTemplateTemplate<size, float96>		cMapIn;
+	float128							ld;
+	CMapTemplateTemplate<size, float128>		cMapIn;
 	CMapStringInt					mssi;
 	CMapStringInt					mssii;
 

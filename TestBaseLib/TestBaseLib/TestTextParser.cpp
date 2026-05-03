@@ -237,7 +237,7 @@ void TestTextParserGetFloatLiteral(void)
 {
 	TRISTATE	tResult;
 	CTextParser cTextParser;
-	float96		ldValue;
+	float128		ldValue;
 	uint16		iBase;
 	uint16		iSuffix;
 	uint16		iNumWholeDigits;

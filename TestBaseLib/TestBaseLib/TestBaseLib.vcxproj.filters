@@ -690,6 +690,15 @@
     <ClCompile Include="TestInt32Vec2.cpp">
       <Filter>Source\Data\Geometric</Filter>
     </ClCompile>
+    <ClCompile Include="TestInt16Vec2.cpp">
+      <Filter>Source\Data\Geometric</Filter>
+    </ClCompile>
+    <ClCompile Include="TestInt64Vec2.cpp">
+      <Filter>Source\Data\Geometric</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFloat64Vec2.cpp">
+      <Filter>Source\Data\Geometric</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">
