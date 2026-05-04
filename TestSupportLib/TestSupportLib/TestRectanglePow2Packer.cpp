@@ -17,7 +17,7 @@ void TestRectanglePow2PackerStuff(void)
 	char					sz3[] = "3";
 	CArrayPackedRectangle	macRects;
 	CPackedRectangle*		pcPackedRect;
-	SInt2					sImageSize;
+	SInt32Vec2					sImageSize;
 
 	cRect1.Init(0, 0, 7, 5);
 	cRect2.Init(0, 0, 3, 5);

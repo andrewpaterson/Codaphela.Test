@@ -1,5 +1,5 @@
 #include "BaseLib/Float3.h"
-#include "BaseLib/Int2.h"
+#include "BaseLib/IntVec2.h"
 #include "BaseLib/DatasIO.h"
 #include "BaseLib/MemoryFile.h"
 #include "TestLib/Assert.h"
@@ -12,18 +12,18 @@
 void TestDataTypesIOInt2(void)
 {
 	CDatasIO			cDataIO;
-	SInt2				si2In;
+	SIntVec2				si2In;
 	DataIO_FileWriter	fSave;
 	DataIO_FileReader	fLoad;
 	bool				bResult;
 	CMemoryFile			cMemoryFile;
 	CFileBasic			cFile;
-	SInt2				si2Out;
+	SIntVec2				si2Out;
 
 	cDataIO.Init();
-	cDataIO.Add<SInt2>("SInt2");
-	fSave = cDataIO.GetFileWriter("SInt2");
-	fLoad = cDataIO.GetFileReader("SInt2");
+	cDataIO.Add<SIntVec2>("SIntVec2");
+	fSave = cDataIO.GetFileWriter("SIntVec2");
+	fLoad = cDataIO.GetFileReader("SIntVec2");
 
 	cMemoryFile.Init();
 	cFile.Init(&cMemoryFile);
@@ -70,8 +70,8 @@ void TestDataTypesIOMultiple(void)
 	cDataIO.Add<SFloat32Vec2>();
 	cDataIO.Add<SFloat3>();
 	cDataIO.Add<SFloat4>();
-	fSave = cDataIO.GetFileWriter("SInt2");
-	fLoad = cDataIO.GetFileReader("SInt2");
+	fSave = cDataIO.GetFileWriter("SIntVec2");
+	fLoad = cDataIO.GetFileReader("SIntVec2");
 
 	sf2In.Init(0.1f, 2.3f);
 	sf3In.Init(4.5f, 6.7f, 8.9f);
