@@ -21,10 +21,10 @@ void TestMeshPolygonsAddFace(void)
 		cMesh.Init();
 		cMeshEditor.Init(&cMesh);
 
-		cMesh.AddCorner(&SFloat3(0, 0, 0));
-		cMesh.AddCorner(&SFloat3(1, 0, 0));
-		cMesh.AddCorner(&SFloat3(1, 1, 0));
-		cMesh.AddCorner(&SFloat3(0, 1, 0));
+		cMesh.AddCorner(&SFloat32Vec3(0, 0, 0));
+		cMesh.AddCorner(&SFloat32Vec3(1, 0, 0));
+		cMesh.AddCorner(&SFloat32Vec3(1, 1, 0));
+		cMesh.AddCorner(&SFloat32Vec3(0, 1, 0));
 
 		AssertInt(0, cMeshEditor.mcPolygons.mcPolygons.NumElements());
 
@@ -84,12 +84,12 @@ void TestMeshPolygonsAddDiscontiguousFace(bool bOutEdgeValue)
 		cMesh.Init();
 		cMeshEditor.Init(&cMesh);
 
-		cMesh.AddCorner(&SFloat3(0, 0, 0));
-		cMesh.AddCorner(&SFloat3(1, 0, 0));
-		cMesh.AddCorner(&SFloat3(1, 1, 0));
-		cMesh.AddCorner(&SFloat3(0, 1, 0));
-		cMesh.AddCorner(&SFloat3(-0.5f, 0.5f, 0));
-		cMesh.AddCorner(&SFloat3(0.5f, 1.5f, 0));
+		cMesh.AddCorner(&SFloat32Vec3(0, 0, 0));
+		cMesh.AddCorner(&SFloat32Vec3(1, 0, 0));
+		cMesh.AddCorner(&SFloat32Vec3(1, 1, 0));
+		cMesh.AddCorner(&SFloat32Vec3(0, 1, 0));
+		cMesh.AddCorner(&SFloat32Vec3(-0.5f, 0.5f, 0));
+		cMesh.AddCorner(&SFloat32Vec3(0.5f, 1.5f, 0));
 
 		AssertInt(0, cMeshEditor.mcPolygons.mcPolygons.NumElements());
 
@@ -148,7 +148,7 @@ void TestMeshPolygonAdjacency(void)
 		cMeshEditor.Init(&cMesh);
 
 		pcPlane = cMeshEditor.AddModifier<CMeshPlaneEditor>();
-		pcPlane->Init(&SFloat3(3, 0, 0), &SFloat3(0, 3, 0), &SFloat3(0, 0, 0), 3, 3);
+		pcPlane->Init(&SFloat32Vec3(3, 0, 0), &SFloat32Vec3(0, 3, 0), &SFloat32Vec3(0, 0, 0), 3, 3);
 
 		cMeshEditor.Collapse();
 

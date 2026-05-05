@@ -18,10 +18,10 @@ void TestMeshSmoothGroupsOneAndZero(void)
 	ObjectsInit();
 
 	CMesh				cMesh;
-	SFloat3				sXDirection;
-	SFloat3				sYDirection;
-	SFloat3				sZDirection;
-	SFloat3				sStart;
+	SFloat32Vec3				sXDirection;
+	SFloat32Vec3				sYDirection;
+	SFloat32Vec3				sZDirection;
+	SFloat32Vec3				sStart;
 	CMeshBoxEditor*		pcBoxEditor;
 	CMeshEditor			cMeshEditor;
 	CMeshSmoothGroups*	pcSmoothing;
@@ -105,10 +105,10 @@ void TestMeshSmoothGroupsNamed(void)
 	ObjectsInit();
 
 	CMesh				cMesh;
-	SFloat3				sXDirection;
-	SFloat3				sYDirection;
-	SFloat3				sZDirection;
-	SFloat3				sStart;
+	SFloat32Vec3				sXDirection;
+	SFloat32Vec3				sYDirection;
+	SFloat32Vec3				sZDirection;
+	SFloat32Vec3				sStart;
 	CMeshBoxEditor*		pcBoxEditor;
 	CMeshEditor			cMeshEditor;
 	CMeshSmoothGroups*	pcSmoothing;
@@ -159,10 +159,10 @@ void TestMeshSmoothFaces(void)
 	ObjectsInit();
 
 	CMesh				cMesh;
-	SFloat3				sXDirection;
-	SFloat3				sYDirection;
-	SFloat3				sZDirection;
-	SFloat3				sStart;
+	SFloat32Vec3				sXDirection;
+	SFloat32Vec3				sYDirection;
+	SFloat32Vec3				sZDirection;
+	SFloat32Vec3				sStart;
 	CMeshBoxEditor*		pcBoxEditor;
 	CMeshEditor			cMeshEditor;
 	CMeshSmoothFaces*	pcSmoothing;
@@ -223,10 +223,10 @@ void TestMeshFlatFaces(void)
 	ObjectsInit();
 
 	CMesh				cMesh;
-	SFloat3				sXDirection;
-	SFloat3				sYDirection;
-	SFloat3				sZDirection;
-	SFloat3				sStart;
+	SFloat32Vec3				sXDirection;
+	SFloat32Vec3				sYDirection;
+	SFloat32Vec3				sZDirection;
+	SFloat32Vec3				sStart;
 	CMeshBoxEditor*		pcBoxEditor;
 	CMeshEditor			cMeshEditor;
 	CMeshFlatFaces*		pcSmoothing;

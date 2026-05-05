@@ -14,9 +14,9 @@ void TestNumbers(void)
 
 	fTiny = SMALL_NUMBER/2.0f;
 
-	AssertTrue(FloatEqual(10, 10));
-	AssertFalse(FloatEqual(10, 11));
-	AssertFalse(FloatEqual(11, 10));
+	AssertTrue(FloatEqual(10.f, 10.f));
+	AssertFalse(FloatEqual(10.f, 11.f));
+	AssertFalse(FloatEqual(11.f, 10.f));
 
 	AssertTrue(FloatEqual(10, 10-fTiny));
 	AssertTrue(FloatEqual(10, 10+fTiny));

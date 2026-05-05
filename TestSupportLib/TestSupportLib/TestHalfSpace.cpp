@@ -11,12 +11,12 @@ void TestHalfSpace(void)
 {
 	BeginTests();
 
-	SFloat3		sPos1;
-	SFloat3		sPos2;
-	SFloat3		sPos3;
+	SFloat32Vec3		sPos1;
+	SFloat32Vec3		sPos2;
+	SFloat32Vec3		sPos3;
 	CHalfSpace	cHalfSpace;
-	SFloat3		sTest;
-	SFloat3		sNormal;
+	SFloat32Vec3		sTest;
+	SFloat32Vec3		sNormal;
 	bool		bResult;
 
 	sPos1.Init(25.00, -12.50, 50.00);

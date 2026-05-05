@@ -91,38 +91,38 @@ void TestFloatHelperRoundFloat(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFloatHelperTruncateDouble(void)
 {
-	AssertDouble(0.1234130859375, TruncateDouble(0.12345, -13), 13);
-	AssertDouble(0.1232910156250, TruncateDouble(0.12345, -12), 13);
-	AssertDouble(0.1230468750000, TruncateDouble(0.12345, -11), 13);
-	AssertDouble(0.1230468750000, TruncateDouble(0.12345, -10), 13);
-	AssertDouble(0.1230468750000, TruncateDouble(0.12345, -9), 13);
-	AssertDouble(0.1210937500000, TruncateDouble(0.12345, -8), 13);
-	AssertDouble(0.1171875000000, TruncateDouble(0.12345, -7), 13);
-	AssertDouble(0.1093750000000, TruncateDouble(0.12345, -6), 13);
-	AssertDouble(0.0937500000000, TruncateDouble(0.12345, -5), 13);
-	AssertDouble(0.0625000000000, TruncateDouble(0.12345, -4), 13);
-	AssertDouble(0.0000000000000, TruncateDouble(0.12345, -3), 13);
-	AssertDouble(0.0000000000000, TruncateDouble(0.12345, -2), 13);
-	AssertDouble(0.0000000000000, TruncateDouble(0.12345, -1), 13);
+	AssertDouble(0.1234130859375, TruncateFloat(0.12345, -13LL), 13);
+	AssertDouble(0.1232910156250, TruncateFloat(0.12345, -12LL), 13);
+	AssertDouble(0.1230468750000, TruncateFloat(0.12345, -11LL), 13);
+	AssertDouble(0.1230468750000, TruncateFloat(0.12345, -10LL), 13);
+	AssertDouble(0.1230468750000, TruncateFloat(0.12345, -9LL), 13);
+	AssertDouble(0.1210937500000, TruncateFloat(0.12345, -8LL), 13);
+	AssertDouble(0.1171875000000, TruncateFloat(0.12345, -7LL), 13);
+	AssertDouble(0.1093750000000, TruncateFloat(0.12345, -6LL), 13);
+	AssertDouble(0.0937500000000, TruncateFloat(0.12345, -5LL), 13);
+	AssertDouble(0.0625000000000, TruncateFloat(0.12345, -4LL), 13);
+	AssertDouble(0.0000000000000, TruncateFloat(0.12345, -3LL), 13);
+	AssertDouble(0.0000000000000, TruncateFloat(0.12345, -2LL), 13);
+	AssertDouble(0.0000000000000, TruncateFloat(0.12345, -1LL), 13);
 
-	AssertDouble(3274.4062500000, TruncateDouble(3274.437, -5), 13);
-	AssertDouble(3274.3750000000, TruncateDouble(3274.437, -4), 13);
-	AssertDouble(3274.3750000000, TruncateDouble(3274.437, -3), 13);
-	AssertDouble(3274.2500000000, TruncateDouble(3274.437, -2), 13);
-	AssertDouble(3274.0000000000, TruncateDouble(3274.437, -1), 13);
-	AssertDouble(3274.0000000000, TruncateDouble(3274.437, 0), 13);
-	AssertDouble(3274.0000000000, TruncateDouble(3274.437, 1), 13);
-	AssertDouble(3272.0000000000, TruncateDouble(3274.437, 2), 13);
-	AssertDouble(3272.0000000000, TruncateDouble(3274.437, 3), 13);
-	AssertDouble(3264.0000000000, TruncateDouble(3274.437, 4), 13);
-	AssertDouble(3264.0000000000, TruncateDouble(3274.437, 5), 13);
-	AssertDouble(3264.0000000000, TruncateDouble(3274.437, 6), 13);
-	AssertDouble(3200.0000000000, TruncateDouble(3274.437, 7), 13);
-	AssertDouble(3072.0000000000, TruncateDouble(3274.437, 8), 13);
-	AssertDouble(3072.0000000000, TruncateDouble(3274.437, 9), 13);
-	AssertDouble(3072.0000000000, TruncateDouble(3274.437, 10), 13);
-	AssertDouble(2048.0000000000, TruncateDouble(3274.437, 11), 13);
-	AssertDouble(0000.0000000000, TruncateDouble(3274.437, 12), 13);
+	AssertDouble(3274.4062500000, TruncateFloat(3274.437, -5LL), 13);
+	AssertDouble(3274.3750000000, TruncateFloat(3274.437, -4LL), 13);
+	AssertDouble(3274.3750000000, TruncateFloat(3274.437, -3LL), 13);
+	AssertDouble(3274.2500000000, TruncateFloat(3274.437, -2LL), 13);
+	AssertDouble(3274.0000000000, TruncateFloat(3274.437, -1LL), 13);
+	AssertDouble(3274.0000000000, TruncateFloat(3274.437, 0LL), 13);
+	AssertDouble(3274.0000000000, TruncateFloat(3274.437, 1LL), 13);
+	AssertDouble(3272.0000000000, TruncateFloat(3274.437, 2LL), 13);
+	AssertDouble(3272.0000000000, TruncateFloat(3274.437, 3LL), 13);
+	AssertDouble(3264.0000000000, TruncateFloat(3274.437, 4LL), 13);
+	AssertDouble(3264.0000000000, TruncateFloat(3274.437, 5LL), 13);
+	AssertDouble(3264.0000000000, TruncateFloat(3274.437, 6LL), 13);
+	AssertDouble(3200.0000000000, TruncateFloat(3274.437, 7LL), 13);
+	AssertDouble(3072.0000000000, TruncateFloat(3274.437, 8LL), 13);
+	AssertDouble(3072.0000000000, TruncateFloat(3274.437, 9LL), 13);
+	AssertDouble(3072.0000000000, TruncateFloat(3274.437, 10LL), 13);
+	AssertDouble(2048.0000000000, TruncateFloat(3274.437, 11LL), 13);
+	AssertDouble(0000.0000000000, TruncateFloat(3274.437, 12LL), 13);
 }
 
 
@@ -132,39 +132,39 @@ void TestFloatHelperTruncateDouble(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFloatHelperRoundDouble(void)
 {
-	AssertDouble(0.1234130859375, RoundDouble(0.12345, -13), 13);
-	AssertDouble(0.1235351562500, RoundDouble(0.12345, -12), 13);
-	AssertDouble(0.1235351562500, RoundDouble(0.12345, -11), 13);
-	AssertDouble(0.1230468750000, RoundDouble(0.12345, -10), 13);
-	AssertDouble(0.1230468750000, RoundDouble(0.12345, -9), 13);
-	AssertDouble(0.1250000000000, RoundDouble(0.12345, -8), 13);
-	AssertDouble(0.1250000000000, RoundDouble(0.12345, -7), 13);
-	AssertDouble(0.1250000000000, RoundDouble(0.12345, -6), 13);
-	AssertDouble(0.1250000000000, RoundDouble(0.12345, -5), 13);
-	AssertDouble(0.1250000000000, RoundDouble(0.12345, -4), 13);
-	AssertDouble(0.1250000000000, RoundDouble(0.12345, -3), 13);
-	AssertDouble(0.0000000000000, RoundDouble(0.12345, -2), 13);
-	AssertDouble(0.0000000000000, RoundDouble(0.12345, -1), 13);
+	AssertDouble(0.1234130859375, RoundFloat(0.12345, -13LL), 13);
+	AssertDouble(0.1235351562500, RoundFloat(0.12345, -12LL), 13);
+	AssertDouble(0.1235351562500, RoundFloat(0.12345, -11LL), 13);
+	AssertDouble(0.1230468750000, RoundFloat(0.12345, -10LL), 13);
+	AssertDouble(0.1230468750000, RoundFloat(0.12345, -9LL), 13);
+	AssertDouble(0.1250000000000, RoundFloat(0.12345, -8LL), 13);
+	AssertDouble(0.1250000000000, RoundFloat(0.12345, -7LL), 13);
+	AssertDouble(0.1250000000000, RoundFloat(0.12345, -6LL), 13);
+	AssertDouble(0.1250000000000, RoundFloat(0.12345, -5LL), 13);
+	AssertDouble(0.1250000000000, RoundFloat(0.12345, -4LL), 13);
+	AssertDouble(0.1250000000000, RoundFloat(0.12345, -3LL), 13);
+	AssertDouble(0.0000000000000, RoundFloat(0.12345, -2LL), 13);
+	AssertDouble(0.0000000000000, RoundFloat(0.12345, -1LL), 13);
 
-	AssertDouble(3274.4375000000, RoundDouble(3274.437, -5), 13);
-	AssertDouble(3274.4375000000, RoundDouble(3274.437, -4), 13);
-	AssertDouble(3274.3750000000, RoundDouble(3274.437, -3), 13);
-	AssertDouble(3274.5000000000, RoundDouble(3274.437, -2), 13);
-	AssertDouble(3274.5000000000, RoundDouble(3274.437, -1), 13);
-	AssertDouble(3274.0000000000, RoundDouble(3274.437, 0), 13);
-	AssertDouble(3274.0000000000, RoundDouble(3274.437, 1), 13);
-	AssertDouble(3276.0000000000, RoundDouble(3274.437, 2), 13);
-	AssertDouble(3272.0000000000, RoundDouble(3274.437, 3), 13);
-	AssertDouble(3280.0000000000, RoundDouble(3274.437, 4), 13);
-	AssertDouble(3264.0000000000, RoundDouble(3274.437, 5), 13);
-	AssertDouble(3264.0000000000, RoundDouble(3274.437, 6), 13);
-	AssertDouble(3328.0000000000, RoundDouble(3274.437, 7), 13);
-	AssertDouble(3328.0000000000, RoundDouble(3274.437, 8), 13);
-	AssertDouble(3072.0000000000, RoundDouble(3274.437, 9), 13);
-	AssertDouble(3072.0000000000, RoundDouble(3274.437, 10), 13);
-	AssertDouble(4096.0000000000, RoundDouble(3274.437, 11), 13);
-	AssertDouble(4096.0000000000, RoundDouble(3274.437, 12), 13);
-	AssertDouble(0000.0000000000, RoundDouble(3274.437, 13), 13);
+	AssertDouble(3274.4375000000, RoundFloat(3274.437, -5LL), 13);
+	AssertDouble(3274.4375000000, RoundFloat(3274.437, -4LL), 13);
+	AssertDouble(3274.3750000000, RoundFloat(3274.437, -3LL), 13);
+	AssertDouble(3274.5000000000, RoundFloat(3274.437, -2LL), 13);
+	AssertDouble(3274.5000000000, RoundFloat(3274.437, -1LL), 13);
+	AssertDouble(3274.0000000000, RoundFloat(3274.437, 0LL), 13);
+	AssertDouble(3274.0000000000, RoundFloat(3274.437, 1LL), 13);
+	AssertDouble(3276.0000000000, RoundFloat(3274.437, 2LL), 13);
+	AssertDouble(3272.0000000000, RoundFloat(3274.437, 3LL), 13);
+	AssertDouble(3280.0000000000, RoundFloat(3274.437, 4LL), 13);
+	AssertDouble(3264.0000000000, RoundFloat(3274.437, 5LL), 13);
+	AssertDouble(3264.0000000000, RoundFloat(3274.437, 6LL), 13);
+	AssertDouble(3328.0000000000, RoundFloat(3274.437, 7LL), 13);
+	AssertDouble(3328.0000000000, RoundFloat(3274.437, 8LL), 13);
+	AssertDouble(3072.0000000000, RoundFloat(3274.437, 9LL), 13);
+	AssertDouble(3072.0000000000, RoundFloat(3274.437, 10LL), 13);
+	AssertDouble(4096.0000000000, RoundFloat(3274.437, 11LL), 13);
+	AssertDouble(4096.0000000000, RoundFloat(3274.437, 12LL), 13);
+	AssertDouble(0000.0000000000, RoundFloat(3274.437, 13LL), 13);
 }
 
 
@@ -188,7 +188,7 @@ void TestTruncateFloat(void)
 	AssertFloat(0.8125f, TruncateFloat(0.817f, -5), 7);
 	AssertFloat(280.39874f, TruncateFloat(280.39874f, -16), 7);
 	AssertFloat(80.39874f, TruncateFloat(80.39874f, -16), 7);
-	AssertFloat(1000000.0f, TruncateFloat(1000000.0, -16), 7);
+	AssertFloat(1000000.0f, TruncateFloat(1000000.0f, -16), 7);
 }
 
 

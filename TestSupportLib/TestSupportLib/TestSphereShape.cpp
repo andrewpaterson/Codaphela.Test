@@ -11,8 +11,8 @@ void TestShereIntersectionVolume(void)
 {
 	CSphere		cSphere1;
 	CSphere		cSphere2;
-	SFloat3	sPos1;
-	SFloat3	sPos2;
+	SFloat32Vec3	sPos1;
+	SFloat32Vec3	sPos2;
 
 	cSphere1.Init(&sPos1);
 	cSphere1.Set(0,0,0, 1.0f);
@@ -40,8 +40,8 @@ void TestShereIntersectionVolume(void)
 //////////////////////////////////////////////////////////////////////////
 void TestSphereFromPoints(void)
 {
-	SFloat3	asPosition[3];
-	SFloat3	sCenter;
+	SFloat32Vec3	asPosition[3];
+	SFloat32Vec3	sCenter;
 	CSphere		cSphere;
 
 	asPosition[0].Init(0,0,0);
@@ -49,13 +49,13 @@ void TestSphereFromPoints(void)
 	asPosition[2].Init(-1,0,0);
 
 	cSphere.Init(&sCenter);
-	cSphere.SetFromPointsUsingAveragePosition(asPosition, sizeof(SFloat3), 3);
+	cSphere.SetFromPointsUsingAveragePosition(asPosition, sizeof(SFloat32Vec3), 3);
 	AssertFloat(0.0f, cSphere.mpsPosition->x, 3);
 	AssertFloat(0.0f, cSphere.mpsPosition->y, 3);
 	AssertFloat(0.0f, cSphere.mpsPosition->z, 3);
 	AssertFloat(1.0f, cSphere.mfRadius, 3);
 
-	cSphere.SetFromPointsUsingBestFit(asPosition, sizeof(SFloat3), 3);
+	cSphere.SetFromPointsUsingBestFit(asPosition, sizeof(SFloat32Vec3), 3);
 	AssertFloat(0.0f, cSphere.mpsPosition->x, 3);
 	AssertFloat(0.0f, cSphere.mpsPosition->y, 3);
 	AssertFloat(0.0f, cSphere.mpsPosition->z, 3);
@@ -65,13 +65,13 @@ void TestSphereFromPoints(void)
 	asPosition[1].Init(1,0,0);
 	asPosition[2].Init(-1,0,0);
 
-	cSphere.SetFromPointsUsingAveragePosition(asPosition, sizeof(SFloat3), 3);
+	cSphere.SetFromPointsUsingAveragePosition(asPosition, sizeof(SFloat32Vec3), 3);
 	AssertFloat(0.333f, cSphere.mpsPosition->x, 3);
 	AssertFloat(0.0f, cSphere.mpsPosition->y, 3);
 	AssertFloat(0.0f, cSphere.mpsPosition->z, 3);
 	AssertFloat(1.333f, cSphere.mfRadius, 3);
 
-	cSphere.SetFromPointsUsingBestFit(asPosition, sizeof(SFloat3), 3);
+	cSphere.SetFromPointsUsingBestFit(asPosition, sizeof(SFloat32Vec3), 3);
 	AssertFloat(0.0f, cSphere.mpsPosition->x, 3);
 	AssertFloat(0.0f, cSphere.mpsPosition->y, 3);
 	AssertFloat(0.0f, cSphere.mpsPosition->z, 3);

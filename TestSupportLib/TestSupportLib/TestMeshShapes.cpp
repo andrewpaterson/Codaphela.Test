@@ -22,9 +22,9 @@ void AssertCornerCount(CMeshCorner* pcMeshCorner, int iEdgeCount, int iFaceCount
 void TestPlane(void)
 {
 	CMesh				cMesh;
-	SFloat3				sXDirection;
-	SFloat3				sYDirection;
-	SFloat3				sStart;
+	SFloat32Vec3				sXDirection;
+	SFloat32Vec3				sYDirection;
+	SFloat32Vec3				sStart;
 	CMeshPlaneEditor*	pcPlaneEditor;
 	CMeshEditor			cMeshEditor;
 	int					iNumCorners;
@@ -55,17 +55,17 @@ void TestPlane(void)
 	AssertInt(16, cMeshEditor.NumEdges());
 	AssertInt(12, cMeshEditor.NumVisibleEdges(1));
 
-	AssertFloat3(SFloat3(0.0f ,0, 0), cMesh.GetPosition(0), 3);
-	AssertFloat3(SFloat3(0.5f ,0, 0), cMesh.GetPosition(1), 3);
-	AssertFloat3(SFloat3(1.0f ,0, 0), cMesh.GetPosition(2), 3);
+	AssertFloat3(SFloat32Vec3(0.0f, 0, 0), cMesh.GetPosition(0), 3);
+	AssertFloat3(SFloat32Vec3(0.5f, 0, 0), cMesh.GetPosition(1), 3);
+	AssertFloat3(SFloat32Vec3(1.0f, 0, 0), cMesh.GetPosition(2), 3);
 
-	AssertFloat3(SFloat3(0.0f ,0.5f, 0), cMesh.GetPosition(3), 3);
-	AssertFloat3(SFloat3(0.5f ,0.5f, 0), cMesh.GetPosition(4), 3);
-	AssertFloat3(SFloat3(1.0f ,0.5f, 0), cMesh.GetPosition(5), 3);
+	AssertFloat3(SFloat32Vec3(0.0f, 0.5f, 0), cMesh.GetPosition(3), 3);
+	AssertFloat3(SFloat32Vec3(0.5f, 0.5f, 0), cMesh.GetPosition(4), 3);
+	AssertFloat3(SFloat32Vec3(1.0f, 0.5f, 0), cMesh.GetPosition(5), 3);
 
-	AssertFloat3(SFloat3(0.0f ,1, 0), cMesh.GetPosition(6), 3);
-	AssertFloat3(SFloat3(0.5f ,1, 0), cMesh.GetPosition(7), 3);
-	AssertFloat3(SFloat3(1.0f ,1, 0), cMesh.GetPosition(8), 3);
+	AssertFloat3(SFloat32Vec3(0.0f, 1, 0), cMesh.GetPosition(6), 3);
+	AssertFloat3(SFloat32Vec3(0.5f, 1, 0), cMesh.GetPosition(7), 3);
+	AssertFloat3(SFloat32Vec3(1.0f, 1, 0), cMesh.GetPosition(8), 3);
 
 	AssertInt(9, cMesh.NumCorners());
 	AssertInt(8, cMesh.NumFaces());
@@ -123,10 +123,10 @@ void TestPlane(void)
 void TestBox(void)
 {
 	CMesh				cMesh;
-	SFloat3				sXDirection;
-	SFloat3				sYDirection;
-	SFloat3				sZDirection;
-	SFloat3				sStart;
+	SFloat32Vec3				sXDirection;
+	SFloat32Vec3				sYDirection;
+	SFloat32Vec3				sZDirection;
+	SFloat32Vec3				sStart;
 	CMeshBoxEditor*		pcBoxEditor;
 	CMeshEditor			cMeshEditor;
 	int					iNumCorners;
@@ -307,8 +307,8 @@ void TestBox(void)
 void TestDisc(void)
 {
 	CMesh				cMesh;
-	SFloat3				sZDirection;
-	SFloat3				sStart;
+	SFloat32Vec3				sZDirection;
+	SFloat32Vec3				sStart;
 	CMeshDiscEditor*	pcDiscEditor;
 	CMeshEditor			cMeshEditor;
 
@@ -368,8 +368,8 @@ void TestDisc(void)
 void TestRing(void)
 {
 	CMesh				cMesh;
-	SFloat3				sZDirection;
-	SFloat3				sStart;
+	SFloat32Vec3				sZDirection;
+	SFloat32Vec3				sStart;
 	CMeshRingEditor*	pcRingEditor;
 	CMeshEditor			cMeshEditor;
 	CFileUtil			cFileUtil;
@@ -435,8 +435,8 @@ void TestRing(void)
 void TestCone(void)
 {
 	CMesh				cMesh;
-	SFloat3				sZDirection;
-	SFloat3				sStart;
+	SFloat32Vec3				sZDirection;
+	SFloat32Vec3				sStart;
 	CMeshConeEditor*	pcConeEditor;
 	CMeshEditor			cMeshEditor;
 	CFileUtil			cFileUtil;
@@ -508,8 +508,8 @@ void TestCone(void)
 void TestCylinder(void)
 {
 	CMesh					cMesh;
-	SFloat3					sZDirection;
-	SFloat3					sStart;
+	SFloat32Vec3					sZDirection;
+	SFloat32Vec3					sStart;
 	CMeshCylinderEditor*	pcCylinderEditor;
 	CMeshEditor				cMeshEditor;
 	CFileUtil				cFileUtil;

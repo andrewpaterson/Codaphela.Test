@@ -13,11 +13,11 @@ void TestPolygonAddTriangle(void)
 	CPolygon	cPolygon;
 	CTriangle	cTriangle1;
 	CTriangle	cTriangle2;
-	SFloat3		sPos1;
-	SFloat3		sPos2;
-	SFloat3		sPos3;
-	SFloat3		sPos4;
-	SFloat3		sNormal;
+	SFloat32Vec3		sPos1;
+	SFloat32Vec3		sPos2;
+	SFloat32Vec3		sPos3;
+	SFloat32Vec3		sPos4;
+	SFloat32Vec3		sNormal;
 
 	sNormal.Init(0.0f, 1.0f, 0.0f);
 	sPos1.Init(25.00, -12.50, 50.00);
@@ -36,10 +36,10 @@ void TestPolygonAddTriangle(void)
 	cPolygon.AddTriangle(&cTriangle2);
 
 	AssertInt(4, cPolygon.mapsPositions.NumElements());
-	AssertPointer(&sPos1, *((SFloat3**)cPolygon.mapsPositions.Get(0)));
-	AssertPointer(&sPos2, *((SFloat3**)cPolygon.mapsPositions.Get(1)));
-	AssertPointer(&sPos4, *((SFloat3**)cPolygon.mapsPositions.Get(2)));
-	AssertPointer(&sPos3, *((SFloat3**)cPolygon.mapsPositions.Get(3)));
+	AssertPointer(&sPos1, *((SFloat32Vec3**)cPolygon.mapsPositions.Get(0)));
+	AssertPointer(&sPos2, *((SFloat32Vec3**)cPolygon.mapsPositions.Get(1)));
+	AssertPointer(&sPos4, *((SFloat32Vec3**)cPolygon.mapsPositions.Get(2)));
+	AssertPointer(&sPos3, *((SFloat32Vec3**)cPolygon.mapsPositions.Get(3)));
 
 	cPolygon.Kill();
 }
@@ -52,9 +52,9 @@ void TestPolygonAddTriangle(void)
 void TestPolygonFindIndiciesFacing(void)
 {
 	CPolygon	cPolygon;
-	SFloat3	sPos[6];
-	SFloat3		sNormal;
-	SFloat3	sTest;
+	SFloat32Vec3	sPos[6];
+	SFloat32Vec3		sNormal;
+	SFloat32Vec3	sTest;
 	float		fDeg;
 	float		fLen;
 	CArrayInt	cIndicies;

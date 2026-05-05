@@ -1,4 +1,4 @@
-#include "BaseLib/Float64Vec2.h"
+#include "BaseLib/Float64Vec3.h"
 #include "TestLib/Assert.h"
 
 
@@ -6,18 +6,19 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFloat64Vec2Add(void)
+void TestFloat64Vec3Add(void)
 {
-	SFloat64Vec2 sfa;
-	SFloat64Vec2 sfb;
+	SFloat64Vec3 sfa;
+	SFloat64Vec3 sfb;
 
-	sfa.Init(1, 2);
-	sfb.Init(4, 3);
+	sfa.Init(1, 2, 3);
+	sfb.Init(4, 3, 2);
 
 	sfa += sfb;
 
 	AssertDouble(5, sfa.x, 13);
 	AssertDouble(5, sfa.y, 13);
+	AssertDouble(5, sfa.z, 13);
 }
 
 
@@ -25,15 +26,15 @@ void TestFloat64Vec2Add(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFloat64Vec2Print(void)
+void TestFloat64Vec3Print(void)
 {
-	SFloat64Vec2	sf;
+	SFloat64Vec3	sf;
 	CChars			sz;
 
-	sf.Init(345.342359, 0.0002345);
+	sf.Init(345.342359, 0.0002345, 7483.09841);
 	sz.Init();
 	sf.Print(&sz);
-	AssertString("[ 345.34,   0.00]", sz.Text());
+	AssertString("[  345.34,    0.00, 7483.10]", sz.Text());
 	sz.Kill();
 }
 
@@ -42,12 +43,12 @@ void TestFloat64Vec2Print(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFloat64Vec2Magnitude(void)
+void TestFloat64Vec3Magnitude(void)
 {
-	SFloat64Vec2	sf;
+	SFloat64Vec3	sf;
 
-	sf.Init(345.0, 464.0);
-	AssertDouble(578.2049809539866, sf.Magnitude(), 13);
+	sf.Init(345.0, 464.0, 903.9);
+	AssertDouble(1073.0126793286274, sf.Magnitude(), 13);
 }
 
 
@@ -55,14 +56,14 @@ void TestFloat64Vec2Magnitude(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFloat64Vec2(void)
+void TestFloat64Vec3(void)
 {
 	BeginTests();
 	NumberInit();
 
-	TestFloat64Vec2Add();
-	TestFloat64Vec2Print();
-	TestFloat64Vec2Magnitude();
+	TestFloat64Vec3Add();
+	TestFloat64Vec3Print();
+	TestFloat64Vec3Magnitude();
 
 	NumberKill();
 	TestStatistics();

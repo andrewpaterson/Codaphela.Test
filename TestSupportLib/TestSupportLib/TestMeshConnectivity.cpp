@@ -18,10 +18,10 @@ void AssertEdgeCorners(CMeshEdge* pcEdge, size iCorner1, size iCorner2);
 void TestMeshEdgeConnectivity(void)
 {
 	CMesh				cMesh;
-	SFloat3				sXDirection;
-	SFloat3				sYDirection;
-	SFloat3				sZDirection;
-	SFloat3				sStart;
+	SFloat32Vec3				sXDirection;
+	SFloat32Vec3				sYDirection;
+	SFloat32Vec3				sZDirection;
+	SFloat32Vec3				sStart;
 	CMeshPlaneEditor*	pcPlaneEditor;
 	CMeshEditor			cMeshEditor;
 	CMeshConnectivity*	pcConn;
