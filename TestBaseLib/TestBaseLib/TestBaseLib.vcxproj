@@ -253,8 +253,13 @@
     <ClCompile Include="TestIndexTreeNodeMemory.cpp" />
     <ClCompile Include="TestIndexTreeObject.cpp" />
     <ClCompile Include="TestInt16Vec2.cpp" />
+    <ClCompile Include="TestInt16Vec3.cpp" />
     <ClCompile Include="TestInt32Vec2.cpp" />
+    <ClCompile Include="TestInt32Vec3.cpp" />
     <ClCompile Include="TestInt64Vec2.cpp" />
+    <ClCompile Include="TestInt64Vec3.cpp" />
+    <ClCompile Include="TestIntVec2.cpp" />
+    <ClCompile Include="TestIntVec3.cpp" />
     <ClCompile Include="TestJSONParser.cpp" />
     <ClCompile Include="TestLinkedList.cpp" />
     <ClCompile Include="TestLinkedListBlock.cpp" />

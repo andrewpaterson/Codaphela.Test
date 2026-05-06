@@ -705,6 +705,21 @@
     <ClCompile Include="TestFloat64Vec3.cpp">
       <Filter>Source\Data\Geometric</Filter>
     </ClCompile>
+    <ClCompile Include="TestInt32Vec3.cpp">
+      <Filter>Source\Data\Geometric</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIntVec3.cpp">
+      <Filter>Source\Data\Geometric</Filter>
+    </ClCompile>
+    <ClCompile Include="TestInt64Vec3.cpp">
+      <Filter>Source\Data\Geometric</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIntVec2.cpp">
+      <Filter>Source\Data\Geometric</Filter>
+    </ClCompile>
+    <ClCompile Include="TestInt16Vec3.cpp">
+      <Filter>Source\Data\Geometric</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">
