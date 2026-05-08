@@ -12,13 +12,13 @@
 void TestDataTypesIOInt2(void)
 {
 	CDatasIO			cDataIO;
-	SIntVec2				si2In;
+	SIntVec2			si2In;
 	DataIO_FileWriter	fSave;
 	DataIO_FileReader	fLoad;
 	bool				bResult;
 	CMemoryFile			cMemoryFile;
 	CFileBasic			cFile;
-	SIntVec2				si2Out;
+	SIntVec2			si2Out;
 
 	cDataIO.Init();
 	cDataIO.Add<SIntVec2>("SIntVec2");
@@ -56,7 +56,7 @@ void TestDataTypesIOMultiple(void)
 	CDatasIO			cDataIO;
 	SFloat32Vec2				sf2In;
 	SFloat32Vec3				sf3In;
-	SFloat4				sf4In;
+	SFloat32Vec4				sf4In;
 	DataIO_FileWriter	fSave;
 	DataIO_FileReader	fLoad;
 	bool				bResult;
@@ -64,12 +64,12 @@ void TestDataTypesIOMultiple(void)
 	CFileBasic			cFile;
 	SFloat32Vec2				sf2Out;
 	SFloat32Vec3				sf3Out;
-	SFloat4				sf4Out;
+	SFloat32Vec4				sf4Out;
 
 	cDataIO.Init();
 	cDataIO.Add<SFloat32Vec2>();
 	cDataIO.Add<SFloat32Vec3>();
-	cDataIO.Add<SFloat4>();
+	cDataIO.Add<SFloat32Vec4>();
 	fSave = cDataIO.GetFileWriter("SIntVec2");
 	fLoad = cDataIO.GetFileReader("SIntVec2");
 
@@ -84,7 +84,7 @@ void TestDataTypesIOMultiple(void)
 	AssertTrue(bResult);
 	bResult = (((SDataTypeIO*)&sf3In)->*(cDataIO.GetFileWriter<SFloat32Vec3>()))(&cFile);
 	AssertTrue(bResult);
-	bResult = (((SDataTypeIO*)&sf4In)->*(cDataIO.GetFileWriter<SFloat4>()))(&cFile);
+	bResult = (((SDataTypeIO*)&sf4In)->*(cDataIO.GetFileWriter<SFloat32Vec4>()))(&cFile);
 	AssertTrue(bResult);
 	cFile.Close();
 
@@ -93,7 +93,7 @@ void TestDataTypesIOMultiple(void)
 	AssertTrue(bResult);
 	bResult = (((SDataTypeIO*)&sf3Out)->*(cDataIO.GetFileReader<SFloat32Vec3>()))(&cFile);
 	AssertTrue(bResult);
-	bResult = (((SDataTypeIO*)&sf4Out)->*(cDataIO.GetFileReader<SFloat4>()))(&cFile);
+	bResult = (((SDataTypeIO*)&sf4Out)->*(cDataIO.GetFileReader<SFloat32Vec4>()))(&cFile);
 	AssertTrue(bResult);
 	cFile.Close();
 	cFile.Kill();

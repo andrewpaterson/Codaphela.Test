@@ -57,6 +57,9 @@ void TestInt64Vec3(void);
 void TestIntVec3(void);
 void TestFloat32Vec3(void);
 void TestFloat64Vec3(void);
+void TestInt32Vec4(void);
+void TestFloat32Vec4(void);
+void TestFloat32Vec4(void);
 void TestUTF8(void);
 void TestUTF16(void);
 void TestUnicode(void);
@@ -203,6 +206,8 @@ int __cdecl main(void)
 	TestIntVec3();
 	TestFloat32Vec3();
 	TestFloat64Vec3();
+	//TestInt32Vec4();
+	TestFloat32Vec4();
 	TestMapBlock();
 	TestMapString();
 	TestMapStringIntAndPointer();

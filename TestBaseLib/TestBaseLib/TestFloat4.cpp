@@ -1,4 +1,4 @@
-#include "BaseLib/Float4.h"
+#include "BaseLib/Float32Vec4.h"
 #include "TestLib/Assert.h"
 
 
@@ -8,8 +8,8 @@
 //////////////////////////////////////////////////////////////////////////
 void TestFloat4Add(void)
 {
-	SFloat4 sf4a;
-	SFloat4 sf4b;
+	SFloat32Vec4 sf4a;
+	SFloat32Vec4 sf4b;
 
 	sf4a.Init(1,2,3,4);
 	sf4b.Init(4,3,2,1);
