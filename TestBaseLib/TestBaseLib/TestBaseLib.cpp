@@ -206,7 +206,7 @@ int __cdecl main(void)
 	TestIntVec3();
 	TestFloat32Vec3();
 	TestFloat64Vec3();
-	//TestInt32Vec4();
+	TestInt32Vec4();
 	TestFloat32Vec4();
 	TestMapBlock();
 	TestMapString();
