@@ -1,4 +1,5 @@
 #include "BaseLib/Logger.h"
+#include "BaseLib/DataTypes.h"
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/XMLParser.h"
 #include "TestLib/Assert.h"
