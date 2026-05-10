@@ -237,7 +237,7 @@
     <ClCompile Include="TestFloat32Vec2.cpp" />
     <ClCompile Include="TestFloat32Vec3.cpp" />
     <ClCompile Include="TestFloat32Vec4.cpp" />
-    <ClCompile Include="TestFloat4.cpp" />
+    <ClCompile Include="TestFloat64Vec4.cpp" />
     <ClCompile Include="TestFloat64Vec2.cpp" />
     <ClCompile Include="TestFloat64Vec3.cpp" />
     <ClCompile Include="TestFloatHelper.cpp" />
@@ -255,13 +255,16 @@
     <ClCompile Include="TestIndexTreeObject.cpp" />
     <ClCompile Include="TestInt16Vec2.cpp" />
     <ClCompile Include="TestInt16Vec3.cpp" />
+    <ClCompile Include="TestInt16Vec4.cpp" />
     <ClCompile Include="TestInt32Vec2.cpp" />
     <ClCompile Include="TestInt32Vec3.cpp" />
     <ClCompile Include="TestInt32Vec4.cpp" />
     <ClCompile Include="TestInt64Vec2.cpp" />
     <ClCompile Include="TestInt64Vec3.cpp" />
+    <ClCompile Include="TestInt64Vec4.cpp" />
     <ClCompile Include="TestIntVec2.cpp" />
     <ClCompile Include="TestIntVec3.cpp" />
+    <ClCompile Include="TestIntVec4.cpp" />
     <ClCompile Include="TestJSONParser.cpp" />
     <ClCompile Include="TestLinkedList.cpp" />
     <ClCompile Include="TestLinkedListBlock.cpp" />

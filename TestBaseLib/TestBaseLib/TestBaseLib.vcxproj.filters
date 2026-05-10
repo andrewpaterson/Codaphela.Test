@@ -235,6 +235,15 @@
     <Filter Include="Source\Calculator">
       <UniqueIdentifier>{2194bd06-1f6e-43f6-baae-085a5a72416f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Data\Geometric\Vec2">
+      <UniqueIdentifier>{badb46ba-cf50-418e-ad6f-352b6f2f343c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Geometric\Vec3">
+      <UniqueIdentifier>{181516b8-a5c2-4558-8194-6a5ed2847d66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Geometric\Vec4">
+      <UniqueIdentifier>{3aa55e09-bfec-4d7c-940f-a02fdae8ec57}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -344,9 +353,6 @@
     </ClCompile>
     <ClCompile Include="TestTrackingAllocator.cpp">
       <Filter>Source\Memory\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="TestFloat4.cpp">
-      <Filter>Source\Data\Geometric</Filter>
     </ClCompile>
     <ClCompile Include="TestTemporaryMemory.cpp">
       <Filter>Source\Memory\Temporary</Filter>
@@ -685,46 +691,58 @@
       <Filter>Source\Text</Filter>
     </ClCompile>
     <ClCompile Include="TestFloat32Vec2.cpp">
-      <Filter>Source\Data\Geometric</Filter>
-    </ClCompile>
-    <ClCompile Include="TestInt32Vec2.cpp">
-      <Filter>Source\Data\Geometric</Filter>
-    </ClCompile>
-    <ClCompile Include="TestInt16Vec2.cpp">
-      <Filter>Source\Data\Geometric</Filter>
-    </ClCompile>
-    <ClCompile Include="TestInt64Vec2.cpp">
-      <Filter>Source\Data\Geometric</Filter>
+      <Filter>Source\Data\Geometric\Vec2</Filter>
     </ClCompile>
     <ClCompile Include="TestFloat64Vec2.cpp">
-      <Filter>Source\Data\Geometric</Filter>
+      <Filter>Source\Data\Geometric\Vec2</Filter>
     </ClCompile>
-    <ClCompile Include="TestFloat32Vec3.cpp">
-      <Filter>Source\Data\Geometric</Filter>
+    <ClCompile Include="TestInt16Vec2.cpp">
+      <Filter>Source\Data\Geometric\Vec2</Filter>
     </ClCompile>
-    <ClCompile Include="TestFloat64Vec3.cpp">
-      <Filter>Source\Data\Geometric</Filter>
+    <ClCompile Include="TestInt32Vec2.cpp">
+      <Filter>Source\Data\Geometric\Vec2</Filter>
     </ClCompile>
-    <ClCompile Include="TestInt32Vec3.cpp">
-      <Filter>Source\Data\Geometric</Filter>
-    </ClCompile>
-    <ClCompile Include="TestIntVec3.cpp">
-      <Filter>Source\Data\Geometric</Filter>
-    </ClCompile>
-    <ClCompile Include="TestInt64Vec3.cpp">
-      <Filter>Source\Data\Geometric</Filter>
+    <ClCompile Include="TestInt64Vec2.cpp">
+      <Filter>Source\Data\Geometric\Vec2</Filter>
     </ClCompile>
     <ClCompile Include="TestIntVec2.cpp">
-      <Filter>Source\Data\Geometric</Filter>
+      <Filter>Source\Data\Geometric\Vec2</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFloat32Vec3.cpp">
+      <Filter>Source\Data\Geometric\Vec3</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFloat64Vec3.cpp">
+      <Filter>Source\Data\Geometric\Vec3</Filter>
     </ClCompile>
     <ClCompile Include="TestInt16Vec3.cpp">
-      <Filter>Source\Data\Geometric</Filter>
+      <Filter>Source\Data\Geometric\Vec3</Filter>
+    </ClCompile>
+    <ClCompile Include="TestInt32Vec3.cpp">
+      <Filter>Source\Data\Geometric\Vec3</Filter>
+    </ClCompile>
+    <ClCompile Include="TestInt64Vec3.cpp">
+      <Filter>Source\Data\Geometric\Vec3</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIntVec3.cpp">
+      <Filter>Source\Data\Geometric\Vec3</Filter>
     </ClCompile>
     <ClCompile Include="TestInt32Vec4.cpp">
-      <Filter>Source\Data\Geometric</Filter>
+      <Filter>Source\Data\Geometric\Vec4</Filter>
     </ClCompile>
     <ClCompile Include="TestFloat32Vec4.cpp">
-      <Filter>Source\Data\Geometric</Filter>
+      <Filter>Source\Data\Geometric\Vec4</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFloat64Vec4.cpp">
+      <Filter>Source\Data\Geometric\Vec4</Filter>
+    </ClCompile>
+    <ClCompile Include="TestInt16Vec4.cpp">
+      <Filter>Source\Data\Geometric\Vec4</Filter>
+    </ClCompile>
+    <ClCompile Include="TestInt64Vec4.cpp">
+      <Filter>Source\Data\Geometric\Vec4</Filter>
+    </ClCompile>
+    <ClCompile Include="TestIntVec4.cpp">
+      <Filter>Source\Data\Geometric\Vec4</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
