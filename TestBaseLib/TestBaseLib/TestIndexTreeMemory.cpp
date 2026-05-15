@@ -1665,7 +1665,7 @@ void TestIndexTreeMemoryComplexGlobalAllocator(void)
 {
 	CIndexTreeMemory		cIndexTree;
 	CIndexTreeMemoryAccess	cAccess;
-	char					sz[MAX_UCHAR];
+	char					sz[MAX_UINT8];
 	CArrayVoidPtr			avp;
 	SLogConfig				sLogConfig;
 
@@ -1794,7 +1794,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorBigEndian(void)
 	CIndexTreeMemory		cIndexTree;
 	CIndexTreeMemoryAccess	cAccess;
 	CGeneralMemory* pcMemory;
-	char					sz[MAX_UCHAR];
+	char					sz[MAX_UINT8];
 	CArrayVoidPtr			avp;
 	SLogConfig				sLogConfig;
 
@@ -1930,7 +1930,7 @@ void TestIndexTreeMemoryComplexMemoryAllocatorLittleEndian(void)
 	CIndexTreeMemory		cIndexTree;
 	CIndexTreeMemoryAccess	cAccess;
 	CGeneralMemory* pcMemory;
-	char					sz[MAX_UCHAR];
+	char					sz[MAX_UINT8];
 	CArrayVoidPtr			avp;
 	SLogConfig				sLogConfig;
 

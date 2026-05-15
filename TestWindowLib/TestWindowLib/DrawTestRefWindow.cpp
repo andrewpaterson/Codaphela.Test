@@ -29,7 +29,7 @@ bool CDrawTestRefWindow::Draw(Ptr<CCanvas> pCanvas)
     ARGB32          sGrey;
     ARGB32          sGreen;
     ARGB32          sBlue;
-    SInt2           sSize;
+    SInt32Vec2           sSize;
 
     if (pCanvas->IsValid())
     {

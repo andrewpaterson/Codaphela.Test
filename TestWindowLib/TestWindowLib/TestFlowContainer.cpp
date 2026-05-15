@@ -66,16 +66,16 @@ void TestFlowContainerBasic(void)
 		cCanvas3.SetDesiredSize(5, 16);
 
 		AssertSize(3, cFlow.NumComponents());
-		AssertInt2(0, 0, &cCanvas1.GetActualSize());
+		AssertInt32Vec2(0, 0, &cCanvas1.GetActualSize());
 
 		cTestWindow.Show();
 
-		AssertInt2(10, 10, &cCanvas1.GetActualSize());
-		AssertInt2(20, 20, &cCanvas2.GetActualSize());
-		AssertInt2(5, 16, &cCanvas3.GetActualSize());
-		AssertInt2(0, 0, &cCanvas1.GetPosition());
-		AssertInt2(10, 0, &cCanvas2.GetPosition());
-		AssertInt2(30, 0, &cCanvas3.GetPosition());
+		AssertInt32Vec2(10, 10, &cCanvas1.GetActualSize());
+		AssertInt32Vec2(20, 20, &cCanvas2.GetActualSize());
+		AssertInt32Vec2(5, 16, &cCanvas3.GetActualSize());
+		AssertInt32Vec2(0, 0, &cCanvas1.GetPosition());
+		AssertInt32Vec2(10, 0, &cCanvas2.GetPosition());
+		AssertInt32Vec2(30, 0, &cCanvas3.GetPosition());
 
 		cCanvas1.GetContainerBounds(&sBounds);
 
