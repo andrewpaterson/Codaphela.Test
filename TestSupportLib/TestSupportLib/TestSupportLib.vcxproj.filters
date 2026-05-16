@@ -50,6 +50,9 @@
     <Filter Include="Source Files\Map">
       <UniqueIdentifier>{1665df54-a7e8-4ce6-a0d3-8c9776ca2286}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Test">
+      <UniqueIdentifier>{4ab42786-e413-48cc-9643-6ad65e7c3e75}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestSupportLib.cpp">
@@ -166,13 +169,19 @@
     <ClCompile Include="TestFont.cpp">
       <Filter>Source Files\Image\Font</Filter>
     </ClCompile>
+    <ClCompile Include="TestMapViewport.cpp">
+      <Filter>Source Files\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="SupportAssert.cpp">
+      <Filter>Source Files\Test</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stdafx.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="AssertImage.h">
       <Filter>Source Files\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="SupportAssert.h">
+      <Filter>Source Files\Test</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

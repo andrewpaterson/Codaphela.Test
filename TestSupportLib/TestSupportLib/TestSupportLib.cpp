@@ -33,6 +33,7 @@ void TestImageToR3G3B2A(void);
 void TestImageSFTWriter(void);
 void TestFont(void);
 void TestMaps(void);
+void TestMapViewport(void);
 void TestHalfSpace(void);
 void TestMeshColours(void);
 void TestMeshUVCoords(void);
@@ -87,6 +88,7 @@ int __cdecl main(void)
 	TestImageSFTWriter();
 	TestFont();
 	TestMaps();
+	TestMapViewport();
 	TestImageCelsSource();
 	TestHalfSpace();
 	TestPolygon();
