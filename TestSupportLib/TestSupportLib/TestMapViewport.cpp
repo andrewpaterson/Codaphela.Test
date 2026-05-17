@@ -19,7 +19,6 @@ void TestMapViewportRender(void)
 	ObjectsInit();
 	{
 		Ptr<CMaps>				pMaps;
-		Ptr<CMapsContext>		pContext;
 		Ptr<CMapViewport>		pViewport;
 		CImageDivider			cImageDivider;
 		CImageDividerNumbers	cNumbers;
@@ -52,8 +51,7 @@ void TestMapViewportRender(void)
 		pCel = paSuckerCels->Get(0);
 		pSprite1 = OMalloc<CSprite>(pCel, 0, 0);
 
-		pContext = OMalloc<CMapsContext>();
-		pMaps = OMalloc<CMaps>(pContext);
+		pMaps = OMalloc<CMaps>();
 		pViewport = OMalloc<CMapViewport>(pMaps);
 
 

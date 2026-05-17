@@ -12,64 +12,12 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestMapsInit(void)
-{
-	DataIOInit();
-	ObjectsInit();
-	ImageChannelDescriptorInit();
-
-	CMaps							cMaps;
-	CMapsContext					cContext;
-	Ptr<CArrayMovableBlockType>		pacBlockTypes;
-	Ptr<CMovableBlockType>			pcType0;
-	Ptr<CMovableBlockType>			pcType1;
-	Ptr<CMovableBlock>				pcBlock0;
-	Ptr<CMovableBlock>				pcBlock1;
-	Ptr<CMovableBlock>				pcNullBlock0;
-	Ptr<CMovableBlock>				pcNullBlock1;
-
-	cContext.Init();
-	cMaps.Init(&cContext);
-
-	pacBlockTypes = cContext.GetBlockTypes();
-	AssertSize(2, pacBlockTypes->NumElements());
-	pcType0 = pacBlockTypes->Get(0);
-	pcType1 = pacBlockTypes->Get(1);
-
-	AssertString("MovableBlockType.Image", pcType0->GetName());
-	AssertSize(1, pcType0->NumBlocks());
-	pcBlock0 = pcType0->GetBlock(0);
-	AssertString("CMovableBlockImageCel", pcBlock0->ClassName());
-	pcNullBlock0 = pcType0->GetNullBlock();
-	AssertOPointer(pcBlock0, pcNullBlock0);
-
-	AssertString("MovableBlockType.Boolean", pcType1->GetName());
-	AssertSize(1, pcType1->NumBlocks());
-	pcBlock1 = pcType1->GetBlock(0);
-	AssertString("CMovableBlockBoolean", pcBlock1->ClassName());
-	pcNullBlock1 = pcType1->GetNullBlock();
-	AssertOPointer(pcBlock1, pcNullBlock1);
-
-	cMaps.Kill();
-	cContext.Kill();
-
-	ImageChannelDescriptorKill();
-	ObjectsKill();
-	DataIOKill();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 void TestMapsGenerate(void)
 {
 	DataIOInit();
 	ObjectsInit();
 	{
 		CMaps					cMaps;
-		CMapsContext			cContext;
 		CImageDivider			cImageDivider;
 		CImageDividerNumbers	cNumbers;
 		Ptr<CArrayImageCel>		pacBackgroundCels;
@@ -95,11 +43,9 @@ void TestMapsGenerate(void)
 		pacBackgroundCels = cImageDivider.GetDestImageCels();
 		AssertSize(30, pacBackgroundCels->NumElements());
 
-		cContext.Init();
-		cMaps.Init(&cContext);
-
+		cMaps.Init();
+		//Do something here.
 		cMaps.Kill();
-		cContext.Kill();
 
 		ImageChannelDescriptorKill();
 	}
@@ -116,7 +62,6 @@ void TestMaps(void)
 {
 	BeginTests();
 
-	TestMapsInit();
 	TestMapsGenerate();
 
 	TestStatistics();
