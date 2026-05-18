@@ -98,6 +98,14 @@ void TestMapsGenerate(void)
 		cMaps.Kill();
 
 		ImageChannelDescriptorKill();
+
+		szInputFilename.Init(szOutputFilename);
+		szInputFilename.Replace("Output", "Input");
+
+		AssertFile(szInputFilename, szOutputFilename);
+
+		szOutputFilename.Kill();
+		szInputFilename.Kill();
 	}
 	ObjectsKill();
 	DataIOKill();
