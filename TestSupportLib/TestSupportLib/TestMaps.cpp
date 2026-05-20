@@ -14,7 +14,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CImage> ReadSpaceCrusadeImage(char* szFilename)
+Ptr<CImage> TestMapsReadSpaceCrusadeImage(char* szFilename)
 {
 	CFileUtil			cFileUtil;
 	CChars				szInputFilename;
@@ -39,14 +39,14 @@ Ptr<CImage> ReadSpaceCrusadeImage(char* szFilename)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CArrayImageCel> ReadSpaceCrusadeCels(char* szFilename, int iColumnCount, int iRowCount)
+Ptr<CArrayImageCel> TestMapsReadSpaceCrusadeCels(char* szFilename, int iColumnCount, int iRowCount)
 {
 	Ptr<CImage>				pImage;
 	CImageDivider			cImageDivider;
 	CImageDividerNumbers	cNumbers;
 	Ptr<CArrayImageCel>		pCels;
 
-	pImage = ReadSpaceCrusadeImage(szFilename);
+	pImage = TestMapsReadSpaceCrusadeImage(szFilename);
 
 	cNumbers.InitGeneral(-1, -1, iColumnCount, iRowCount, 0, 0, 0, 0);
 	cImageDivider.Init(pImage, NULL);
@@ -105,9 +105,9 @@ void TestMapsSpriteMap(void)
 
 		ImageChannelDescriptorInit();
 
-		pSoulSuckerCels = ReadSpaceCrusadeCels("SoulSucker.png", 8, 1);
-		pBloodAngelsCels = ReadSpaceCrusadeCels("BloodAngels.png", 8, 1);
-		pGretchinCels = ReadSpaceCrusadeCels("Gretchin.png", 8, 1);
+		pSoulSuckerCels = TestMapsReadSpaceCrusadeCels("SoulSucker.png", 8, 1);
+		pBloodAngelsCels = TestMapsReadSpaceCrusadeCels("BloodAngels.png", 8, 1);
+		pGretchinCels = TestMapsReadSpaceCrusadeCels("Gretchin.png", 8, 1);
 
 		for (uiSprite = 0; uiSprite < 8; uiSprite++)
 		{
@@ -249,16 +249,7 @@ void TestMapsTileMap(void)
 
 		ImageChannelDescriptorInit();
 
-		szInputFilename.Init();
-		cFileUtil.CurrentDirectory(&szInputFilename);
-		cFileUtil.AppendToPath(&szInputFilename, "Input");
-		cFileUtil.AppendToPath(&szInputFilename, "SpaceCrusade");
-		cFileUtil.AppendToPath(&szInputFilename, "Tiles.png");
-		AssertTrue(cFileUtil.Exists(szInputFilename.Text()));
-
-		pBackground = ReadImage(szInputFilename.Text(), IT_Unknown, true);
-		AssertTrue(pBackground.IsNotNull());
-		szInputFilename.Kill();
+		pBackground = TestMapsReadSpaceCrusadeImage("Tiles.png");
 
 		cNumbers.InitGeneral(-1, -1, 10, 3, 0, 0, 0, 0);
 		cImageDivider.Init(&pBackground, NULL);
