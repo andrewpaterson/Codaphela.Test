@@ -174,7 +174,7 @@ void TestChannelsAccessorTypeConvert(void)
 	cCreator.AddAccess(CHANNEL_NAME_JACK, PT_float32);
 	cCreator.AddAccess(CHANNEL_NAME_ALICE, PT_float32);
 	pcAccessor = cCreator.CreateAndKill();
-	AssertString("CChannelsAccessorTypeConvert", pcAccessor->ClassName());
+	AssertString("CChannelsAccessorTypeConverter", pcAccessor->ClassName());
 	afData[0] = 1.0f;
 	afData[1] = 0.34f;
 	pcAccessor->Set(1, afData);
@@ -188,7 +188,7 @@ void TestChannelsAccessorTypeConvert(void)
 	cCreator.Init(pcChannels);
 	cCreator.AddAccess(CHANNEL_NAME_BOB, PT_float32);
 	pcAccessor = cCreator.CreateAndKill();
-	AssertString("CChannelsAccessorTypeConvert", pcAccessor->ClassName());
+	AssertString("CChannelsAccessorTypeConverter", pcAccessor->ClassName());
 	afData[0] = 0.8f;
 	pcAccessor->Set(1, afData);
 	AssertIntHex((uint32)0xcccccd00, *(uint32*)RemapSinglePointer(pcChannels->GetData(), 8 + 2));
@@ -198,7 +198,7 @@ void TestChannelsAccessorTypeConvert(void)
 	cCreator.AddAccess(CHANNEL_NAME_ALICE, PT_float32);
 	cCreator.AddAccess(CHANNEL_NAME_BOB, PT_float32);
 	pcAccessor = cCreator.CreateAndKill();
-	AssertString("CChannelsAccessorTypeConvert", pcAccessor->ClassName());
+	AssertString("CChannelsAccessorTypeConverter", pcAccessor->ClassName());
 	pfData = (float*)pcAccessor->Get(1);
 	AssertFloat(0.34f, pfData[0], 2);
 	AssertFloat(0.80f, pfData[1], 2);

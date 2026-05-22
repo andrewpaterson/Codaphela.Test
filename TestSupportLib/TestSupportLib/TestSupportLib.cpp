@@ -13,6 +13,7 @@
 void TestPlainTextEditor(void);
 void TestBumpMapper(void);
 void TestImage(void);
+void TestImageOpacity(void);
 void TestImageCel(void);
 void TestImageCelsSource(void);
 void TestImageWriter(void);
@@ -67,6 +68,7 @@ int __cdecl main(void)
 	cFileUtil.MakeDir("Output");
 	
 	TestImage();
+	TestImageOpacity();
 	TestImageColour();
 	TestImageReader();
 	TestImageWriter();

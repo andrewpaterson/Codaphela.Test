@@ -12,8 +12,7 @@ void TestMapPtrPtrIterate(void)
 {
 	CMapPtrPtr		cMap;
 	void*			pvValue;
-	void**			ppvKey;
-	void**			ppvValue;
+	void*			pvKey;
 	void*			pvk1;
 	void*			pvv1;
 	void*			pvk2;
@@ -49,22 +48,22 @@ void TestMapPtrPtrIterate(void)
 	pvValue = cMap.Get(pvk2);
 	AssertPointer(pvv2, pvValue);
 
-	bResult = cMap.StartIteration(&sIter, (void**)&ppvKey, NULL, (void**)&ppvValue, NULL);
+	bResult = cMap.StartIteration(&sIter, (void**)&pvKey, (void**)&pvValue);
 	AssertTrue(bResult);
-	AssertPointer(pvk1, *ppvKey);
-	AssertPointer(pvv1, *ppvValue);
+	AssertPointer(pvk1, pvKey);
+	AssertPointer(pvv1, pvValue);
 
-	bResult = cMap.Iterate(&sIter, (void**)&ppvKey, NULL, (void**)&ppvValue, NULL);
+	bResult = cMap.Iterate(&sIter, (void**)&pvKey, (void**)&pvValue);
 	AssertTrue(bResult);
-	AssertPointer(pvk2, *ppvKey);
-	AssertPointer(pvv2, *ppvValue);
+	AssertPointer(pvk2, pvKey);
+	AssertPointer(pvv2, pvValue);
 
-	bResult = cMap.Iterate(&sIter, (void**)&ppvKey, NULL, (void**)&ppvValue, NULL);
+	bResult = cMap.Iterate(&sIter, (void**)&pvKey, (void**)&pvValue);
 	AssertTrue(bResult);
-	AssertPointer(pvk3, *ppvKey);
-	AssertPointer(pvv3, *ppvValue);
+	AssertPointer(pvk3, pvKey);
+	AssertPointer(pvv3, pvValue);
 
-	bResult = cMap.Iterate(&sIter, (void**)&ppvKey, NULL, (void**)&ppvValue, NULL);
+	bResult = cMap.Iterate(&sIter, (void**)&pvKey, (void**)&pvValue);
 	AssertFalse(bResult);
 
 	cMap.Kill();

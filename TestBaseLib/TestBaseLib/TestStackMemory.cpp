@@ -11,12 +11,12 @@ void TestStackMemoryCompilation(void)
 	CStackMemory<>	cTemp;
 	void*			pv;
 
-	pv = cTemp.Init(3 KB);
+	pv = cTemp.Init(8);
 	AssertPointer(&cTemp, pv);
 	cTemp.Kill();
 
 	pv = cTemp.Init(12 KB);
-	AssertFalse(&cTemp == pv);
+	AssertNotPointer(&cTemp, pv);
 	cTemp.Kill();
 }
 

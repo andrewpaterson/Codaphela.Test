@@ -175,6 +175,9 @@
     <ClCompile Include="SupportAssert.cpp">
       <Filter>Source Files\Test</Filter>
     </ClCompile>
+    <ClCompile Include="TestImageOpacity.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssertImage.h">
