@@ -37,10 +37,10 @@ void TestImageColourAccessorBytes(void)
 									IMAGE_OPACITY,			//0x54
 									IMAGE_DIFFUSE_RED,		//0xff
 									IMAGE_MASK, 
-									CHANNEL_ZERO);
+									CHANNEL_STOP);
 	cImage.Clear();
 
-	pcAccessor = CImageAccessorCreator::Create(&cImage, PT_uint8, IMAGE_OPACITY, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	pcAccessor = CImageAccessorCreator::Create(&cImage, PT_uint8, IMAGE_OPACITY, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 
 	sDest.Full();
 	bResult = pcAccessor->MakeColour(&sDest, &cColour);
@@ -104,7 +104,7 @@ void TestImageColourAccessorFloats(void)
 	cImage.EndChange();
 	cImage.Clear();
 
-	pcAccessor = CImageAccessorCreator::Create(&cImage, PT_float32, IMAGE_NORMAL_X, IMAGE_NORMAL_Y, IMAGE_NORMAL_Z, CHANNEL_ZERO);
+	pcAccessor = CImageAccessorCreator::Create(&cImage, PT_float32, IMAGE_NORMAL_X, IMAGE_NORMAL_Y, IMAGE_NORMAL_Z, CHANNEL_STOP);
 
 	sDest.Full();
 	bResult = pcAccessor->MakeColour(&sDest, &cNormal);
@@ -160,7 +160,7 @@ void TestImageColourMultiAccessor(void)
 	cImage.EndChange();
 	cImage.Clear();
 
-	pcAccessor = CImageAccessorCreator::Create(&cImage, IMAGE_NORMAL_X, IMAGE_NORMAL_Y, IMAGE_NORMAL_Z, IMAGE_OPACITY, CHANNEL_ZERO);
+	pcAccessor = CImageAccessorCreator::Create(&cImage, IMAGE_NORMAL_X, IMAGE_NORMAL_Y, IMAGE_NORMAL_Z, IMAGE_OPACITY, CHANNEL_STOP);
 
 	sDest.Full();
 	bResult = pcAccessor->MakeColour(&sDest, &cColour);

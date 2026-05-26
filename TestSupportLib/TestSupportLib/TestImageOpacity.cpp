@@ -6,11 +6,14 @@
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/Objects.h"
+#include "StandardLib/ChannelsAccessorContiguous.h"
+#include "StandardLib/ChannelsAccessorCreatorParams.h"
 #include "SupportLib/Image.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageAccessorCreator.h"
 #include "SupportLib/ImageModifierDrawBox.h"
 #include "SupportLib/ImageCopier.h"
+#include "SupportLib/ImageBlitter.h"
 #include "SupportLib/ImageWriter.h"
 #include "TestLib/Assert.h"
 
@@ -54,23 +57,25 @@ void TestImageOpacityCopier(void)
 
 	ObjectsInit();
 	{
-		Ptr<CImage>		pBackground;
-		Ptr<CImage>		pMaki;
+		Ptr<CImage>		pBackgroundImage;
+		Ptr<CImage>		pMakiImage;
+		Ptr<CImageCel>	pBackgroundCel;
+		Ptr<CImageCel>	pMakiCel;
 		CArrayChannel	asChannels;
 		SChannel*		psChannel;
 		Ptr<CImage>		pDestImage;
 		size			uiWidth;
 		size			uiHeight;
-		CImageCopier	cCopier;
+		CImageBlitter	cBlitter;
 		CChars			szOutputFilename;
 		CChars			szInputFilename;
 		bool			bWritten;
 
-		pBackground = TestImageOpacityReadImage("Fighting320.png");
-		pMaki = TestImageOpacityReadImage("MakiStand.png");
+		pBackgroundImage = TestImageOpacityReadImage("Fighting320.png");
+		pMakiImage = TestImageOpacityReadImage("MakiStand.png");
 
 		asChannels.Init();
-		pBackground->GetAllChannels(&asChannels);
+		pBackgroundImage->GetAllChannels(&asChannels);
 		AssertSize(3, asChannels.NumElements());
 		psChannel = asChannels.Get(0);
 		AssertSize(IMAGE_DIFFUSE_RED, psChannel->iChannel);
@@ -79,7 +84,7 @@ void TestImageOpacityCopier(void)
 		asChannels.Kill();
 
 		asChannels.Init();
-		pMaki->GetAllChannels(&asChannels);
+		pMakiImage->GetAllChannels(&asChannels);
 		AssertSize(4, asChannels.NumElements());
 		psChannel = asChannels.Get(0);
 		AssertSize(IMAGE_OPACITY, psChannel->iChannel);
@@ -87,20 +92,23 @@ void TestImageOpacityCopier(void)
 		AssertFalse(psChannel->bReverse);
 		asChannels.Kill();
 
-		uiWidth = pBackground->GetWidth();
-		uiHeight = pBackground->GetHeight();
-		pDestImage = OMalloc<CImage>(uiWidth, uiHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+		uiWidth = pBackgroundImage->GetWidth();
+		uiHeight = pBackgroundImage->GetHeight();
+		pDestImage = OMalloc<CImage>(uiWidth, uiHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pDestImage->Clear();
 
-		cCopier.Init(pBackground, pDestImage);
-		cCopier.Copy(0, 0);
-		cCopier.Kill();
+		pBackgroundCel = OMalloc<CImageCel>(pBackgroundImage);
+		pMakiCel = OMalloc<CImageCel>(pMakiImage);
 
-		// Add a transforming destination CChannelsAccessor that understand the channel types and can multiply them by the channel opacity.  See CChannelsAccessorTypeConverter.
+		cBlitter.Init(pBackgroundCel, pDestImage, NULL);
+		cBlitter.Copy(0, 0);
+		cBlitter.Kill();
 
-		cCopier.Init(pMaki, pDestImage);
-		cCopier.Copy(100, 87);
-		cCopier.Kill();
+		// Aaaagh
+
+		cBlitter.Init(pMakiCel, pDestImage, NULL);
+		cBlitter.Copy(100, 87);
+		cBlitter.Kill();
 
 		szOutputFilename.Init(szDirectory);
 		cFileUtil.AppendToPath(&szOutputFilename, "Fighting.png");

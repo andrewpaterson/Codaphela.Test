@@ -28,9 +28,9 @@ void TestImageKillChannels(void)
 
 		AssertSize(0, gcObjects.NumMemoryIndexes());
 
-		Ptr<CImage> pImageSource = OMalloc<CImage>(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+		Ptr<CImage> pImageSource = OMalloc<CImage>(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pImageSource->Clear();
-		Ptr<CImage> pImageDest = OMalloc<CImage>(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+		Ptr<CImage> pImageDest = OMalloc<CImage>(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pImageDest->Clear();
 
 		AssertSize(2, gcObjects.NumMemoryIndexes());
@@ -80,11 +80,11 @@ void TestImageCopier(void)
 		CChannels*					pcChannelsDest;
 
 		//Same format, Same types ------------------------------------------
-		cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+		cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pcChannelsDest = &cImageDest.mcChannels;
 		cImageDest.Clear();
 
-		cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+		cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pcChannelsSource = &cImageSource.mcChannels;
 
 		bResult = cImageSource.IsSameFormat(&cImageDest);
@@ -107,11 +107,11 @@ void TestImageCopier(void)
 		AssertSize(0, gcObjects.NumMemoryIndexes());
 
 		//Different format, Same types ------------------------------------------
-		cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+		cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pcChannelsDest = &cImageDest.mcChannels;
 		cImageDest.Clear();
 
-		cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+		cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pcChannelsSource = &cImageSource.mcChannels;
 
 		bResult = cImageSource.IsSameFormat(&cImageDest);
@@ -131,7 +131,7 @@ void TestImageCopier(void)
 		AssertSize(0, pcChannelsDest->GetSize());
 
 		//Different format, Missing source types ------------------------------------------
-		cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+		cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pcChannelsDest = &cImageDest.mcChannels;
 
 		cRGB.Init(0, 0, 0);
@@ -139,7 +139,7 @@ void TestImageCopier(void)
 		cBox.Modify(&cImageDest);
 		cBox.Kill();
 
-		cImageSource.Init(3, 2, szSourceRB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+		cImageSource.Init(3, 2, szSourceRB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pcChannelsSource = &cImageSource.mcChannels;
 
 		bResult = cImageSource.IsSameFormat(&cImageDest);
@@ -153,11 +153,11 @@ void TestImageCopier(void)
 		cImageDest.Kill();
 
 		//Different format, Missing dest types ------------------------------------------
-		cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, CHANNEL_ZERO);
+		cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, CHANNEL_STOP);
 		pcChannelsDest = &cImageDest.mcChannels;
 		cImageDest.Clear();
 
-		cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+		cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pcChannelsSource = &cImageSource.mcChannels;
 
 		bResult = cImageSource.IsSameFormat(&cImageDest);
@@ -171,12 +171,12 @@ void TestImageCopier(void)
 		cImageDest.Kill();
 
 		//Different types ------------------------------------------
-		cImageDest.Init(3, 2, PT_uint16, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+		cImageDest.Init(3, 2, PT_uint16, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pcChannelsDest = &cImageDest.mcChannels;
 		cImageDest.Clear();
 		AssertInt(3*2 * 3*2, cImageDest.GetByteSize());
 
-		cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+		cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pcChannelsSource = &cImageSource.mcChannels;
 
 		bResult = cImageSource.IsSameFormat(&cImageDest);
@@ -190,12 +190,12 @@ void TestImageCopier(void)
 		cImageDest.Kill();
 
 		//Different types ------------------------------------------
-		cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+		cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pcChannelsDest = &cImageDest.mcChannels;
 		cImageDest.Clear();
 		AssertInt(3*2 * 3, cImageDest.GetByteSize());
 
-		cImageSource.Init(3, 2, szSourceR2G2B2, PT_uint16, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+		cImageSource.Init(3, 2, szSourceR2G2B2, PT_uint16, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pcChannelsSource = &cImageSource.mcChannels;
 
 		bResult = cImageSource.IsSameFormat(&cImageDest);
@@ -291,7 +291,7 @@ void TestImageCopierRealPNG(void)
 
 		uiWidth = pImage->GetWidth() / 2;
 		uiHeight = pImage->GetHeight();
-		pDestImage = OMalloc<CImage>(uiWidth, uiHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+		pDestImage = OMalloc<CImage>(uiWidth, uiHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		AssertFalse(pDestImage.IsNull());
 
 		pDestImage->Clear();

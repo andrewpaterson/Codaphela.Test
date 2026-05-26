@@ -35,7 +35,7 @@ void TestImageReaderRAD(void)
 
 
 	//Read raw is a special case.  Because the size and the channels aren't known the image must be initialised before hand.
-	pcImage = OMalloc<CImage>(32, 48, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_ZERO);
+	pcImage = OMalloc<CImage>(32, 48, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 	ReadRawImage(pcImage, "Input" _FS_ "readrad.raw");
 	AssertTrue(pcImage.IsNotNull());
 	acChannels.Init();

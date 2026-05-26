@@ -14,7 +14,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestImagePNGWriter(void)
 {
-	CArrayInt	aiChannels;
+	CArraySize	aiChannels;
 
 	//The GDI+ seems to be unable to write most of the types it claims, only 32 bit ARGB seems to work.
 	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "basn2c08.png");
@@ -24,10 +24,10 @@ void TestImagePNGWriter(void)
 	AssertInt(32, pcComp->GetHeight());
 	aiChannels.Init();
 	pcComp->GetAllChannels(&aiChannels);
-	AssertInt(3, aiChannels.NumElements());
-	AssertInt(IMAGE_DIFFUSE_RED, aiChannels.GetValue(0));
-	AssertInt(IMAGE_DIFFUSE_GREEN, aiChannels.GetValue(1));
-	AssertInt(IMAGE_DIFFUSE_BLUE, aiChannels.GetValue(2));
+	AssertSize(3, aiChannels.NumElements());
+	AssertSize(IMAGE_DIFFUSE_RED, aiChannels.GetValue(0));
+	AssertSize(IMAGE_DIFFUSE_GREEN, aiChannels.GetValue(1));
+	AssertSize(IMAGE_DIFFUSE_BLUE, aiChannels.GetValue(2));
 	AssertMemory(pcImage->mcChannels.GetData(), pcComp->mcChannels.GetData(), pcImage->GetByteSize());
 	aiChannels.Kill();
 	pcImage->Kill();
@@ -123,7 +123,7 @@ void TestImageTGAWriter(void)
 //////////////////////////////////////////////////////////////////////////
 void TestImageRADWriter(void)
 {
-	CArrayInt		aiChannels;
+	CArraySize		aiChannels;
 	bool			bResult;
 
 	//The GDI+ seems to be unable to write most of the types it claims, only 32 bit ARGB seems to work.
@@ -136,10 +136,10 @@ void TestImageRADWriter(void)
 	AssertInt(32, pcComp->GetHeight());
 	aiChannels.Init();
 	pcComp->GetAllChannels(&aiChannels);
-	AssertInt(3, aiChannels.NumElements());
-	AssertInt(IMAGE_DIFFUSE_RED, aiChannels.GetValue(0));
-	AssertInt(IMAGE_DIFFUSE_GREEN, aiChannels.GetValue(1));
-	AssertInt(IMAGE_DIFFUSE_BLUE, aiChannels.GetValue(2));
+	AssertSize(3, aiChannels.NumElements());
+	AssertSize(IMAGE_DIFFUSE_RED, aiChannels.GetValue(0));
+	AssertSize(IMAGE_DIFFUSE_GREEN, aiChannels.GetValue(1));
+	AssertSize(IMAGE_DIFFUSE_BLUE, aiChannels.GetValue(2));
 	AssertMemory(pcImage->mcChannels.GetData(), pcComp->mcChannels.GetData(), pcImage->GetByteSize());
 	aiChannels.Kill();
 	pcImage->Kill();
