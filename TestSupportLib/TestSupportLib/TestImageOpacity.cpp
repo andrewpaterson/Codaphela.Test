@@ -15,6 +15,7 @@
 #include "SupportLib/ImageCopier.h"
 #include "SupportLib/ImageBlitter.h"
 #include "SupportLib/ImageWriter.h"
+#include "SupportLib/ImageRowBlitterCache.h"
 #include "TestLib/Assert.h"
 
 
@@ -57,19 +58,20 @@ void TestImageOpacityCopier(void)
 
 	ObjectsInit();
 	{
-		Ptr<CImage>		pBackgroundImage;
-		Ptr<CImage>		pMakiImage;
-		Ptr<CImageCel>	pBackgroundCel;
-		Ptr<CImageCel>	pMakiCel;
-		CArrayChannel	asChannels;
-		SChannel*		psChannel;
-		Ptr<CImage>		pDestImage;
-		size			uiWidth;
-		size			uiHeight;
-		CImageBlitter	cBlitter;
-		CChars			szOutputFilename;
-		CChars			szInputFilename;
-		bool			bWritten;
+		Ptr<CImage>					pBackgroundImage;
+		Ptr<CImage>					pMakiImage;
+		Ptr<CImageCel>				pBackgroundCel;
+		Ptr<CImageCel>				pMakiCel;
+		Ptr<CImageRowBlitterCache>	pCache;
+		CArrayChannel				asChannels;
+		SChannel*					psChannel;
+		Ptr<CImage>					pDestImage;
+		size						uiWidth;
+		size						uiHeight;
+		CImageBlitter				cBlitter;
+		CChars						szOutputFilename;
+		CChars						szInputFilename;
+		bool						bWritten;
 
 		pBackgroundImage = TestImageOpacityReadImage("Fighting320.png");
 		pMakiImage = TestImageOpacityReadImage("MakiStand.png");
@@ -92,6 +94,8 @@ void TestImageOpacityCopier(void)
 		AssertFalse(psChannel->bReverse);
 		asChannels.Kill();
 
+		pCache = OMalloc<CImageRowBlitterCache>();
+
 		uiWidth = pBackgroundImage->GetWidth();
 		uiHeight = pBackgroundImage->GetHeight();
 		pDestImage = OMalloc<CImage>(uiWidth, uiHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
@@ -100,13 +104,13 @@ void TestImageOpacityCopier(void)
 		pBackgroundCel = OMalloc<CImageCel>(pBackgroundImage);
 		pMakiCel = OMalloc<CImageCel>(pMakiImage);
 
-		cBlitter.Init(pBackgroundCel, pDestImage, NULL);
+		cBlitter.Init(pBackgroundCel, pDestImage, pCache);
 		cBlitter.Copy(0, 0);
 		cBlitter.Kill();
 
 		// Aaaagh
 
-		cBlitter.Init(pMakiCel, pDestImage, NULL);
+		cBlitter.Init(pMakiCel, pDestImage, pCache);
 		cBlitter.Copy(100, 87);
 		cBlitter.Kill();
 
@@ -124,6 +128,8 @@ void TestImageOpacityCopier(void)
 
 		szOutputFilename.Kill();
 		szInputFilename.Kill();
+
+		pCache = NULL;
 	}
 	ObjectsKill();
 }
@@ -145,5 +151,4 @@ void TestImageOpacity(void)
 
 	TestStatistics();
 }
-
 
