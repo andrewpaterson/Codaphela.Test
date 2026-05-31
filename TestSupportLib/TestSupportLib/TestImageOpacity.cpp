@@ -47,9 +47,8 @@ Ptr<CImage> TestImageOpacityReadImage(char* szFilename)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestImageOpacityCopier(void)
+void TestImageOpacityCopier(char* szDirectory, char* szInputPathName, char* szTestFilename)
 {
-	char				szDirectory[] = "Output" _FS_ "ImageOpacityCopier";
 	CIndexTreeMemory	cMemory;
 	CFileUtil			cFileUtil;
 
@@ -74,7 +73,7 @@ void TestImageOpacityCopier(void)
 		bool						bWritten;
 
 		pBackgroundImage = TestImageOpacityReadImage("Fighting320.png");
-		pMakiImage = TestImageOpacityReadImage("MakiStand.png");
+		pMakiImage = TestImageOpacityReadImage(szInputPathName);
 
 		asChannels.Init();
 		pBackgroundImage->GetAllChannels(&asChannels);
@@ -102,7 +101,7 @@ void TestImageOpacityCopier(void)
 		pDestImage->Clear();
 
 		pBackgroundCel = OMalloc<CImageCel>(pBackgroundImage);
-		pMakiCel = OMalloc<CImageCel>(pMakiImage);
+		pMakiCel = OMalloc<CImageCel>(pMakiImage, true);
 
 		cBlitter.Init(pBackgroundCel, pDestImage, pCache);
 		cBlitter.Copy(0, 0);
@@ -115,7 +114,7 @@ void TestImageOpacityCopier(void)
 		cBlitter.Kill();
 
 		szOutputFilename.Init(szDirectory);
-		cFileUtil.AppendToPath(&szOutputFilename, "Fighting.png");
+		cFileUtil.AppendToPath(&szOutputFilename, szTestFilename);
 
 		bWritten = WriteImage(pDestImage, szOutputFilename.Text(), IT_PNG);
 		AssertTrue(bWritten);
@@ -139,13 +138,34 @@ void TestImageOpacityCopier(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestImageOpacityOpaqueBlitter(void)
+{
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "MakiStand.png", "Fighting.png");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageOpacityTranslucentBlitter(void)
+{
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "ImageOpacityCopier" _FS_ "MakiStandFeathered.png", "FightingFeathered.png");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestImageOpacity(void)
 {
 	BeginTests();
 
 	DataIOInit();
-
-	TestImageOpacityCopier();
+	
+	TestImageOpacityOpaqueBlitter();
+	TestImageOpacityTranslucentBlitter();
 
 	DataIOKill();
 
