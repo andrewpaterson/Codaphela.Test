@@ -61,7 +61,7 @@ void TestImageOpacityCopier(char* szDirectory, char* szInputPathName, char* szTe
 		Ptr<CImage>					pMakiImage;
 		Ptr<CImageCel>				pBackgroundCel;
 		Ptr<CImageCel>				pMakiCel;
-		Ptr<CImageRowBlitterCache>	pCache;
+		CImageRowBlitterCache		cCache;
 		CArrayChannel				asChannels;
 		SChannel*					psChannel;
 		Ptr<CImage>					pDestImage;
@@ -71,6 +71,8 @@ void TestImageOpacityCopier(char* szDirectory, char* szInputPathName, char* szTe
 		CChars						szOutputFilename;
 		CChars						szInputFilename;
 		bool						bWritten;
+		CImageBlitterContext		cBackground;
+		CImageBlitterContext		cForeground;
 
 		pBackgroundImage = TestImageOpacityReadImage("Fighting320.png");
 		pMakiImage = TestImageOpacityReadImage(szInputPathName);
@@ -93,7 +95,7 @@ void TestImageOpacityCopier(char* szDirectory, char* szInputPathName, char* szTe
 		AssertFalse(psChannel->bReverse);
 		asChannels.Kill();
 
-		pCache = OMalloc<CImageRowBlitterCache>();
+		cCache.Init();
 
 		uiWidth = pBackgroundImage->GetWidth();
 		uiHeight = pBackgroundImage->GetHeight();
@@ -103,14 +105,14 @@ void TestImageOpacityCopier(char* szDirectory, char* szInputPathName, char* szTe
 		pBackgroundCel = OMalloc<CImageCel>(pBackgroundImage);
 		pMakiCel = OMalloc<CImageCel>(pMakiImage, true);
 
-		cBlitter.Init(pBackgroundCel, pDestImage, pCache);
-		cBlitter.Copy(0, 0);
+		cBlitter.Init(pBackgroundCel, pDestImage, &cCache);
+		cBlitter.UpdateContext(&cBackground);
+		cBlitter.Copy(&cBackground, 0, 0);
 		cBlitter.Kill();
 
-		// Aaaagh
-
-		cBlitter.Init(pMakiCel, pDestImage, pCache);
-		cBlitter.Copy(100, 87);
+		cBlitter.Init(pMakiCel, pDestImage, &cCache);
+		cBlitter.UpdateContext(&cForeground);
+		cBlitter.Copy(&cForeground, 100, 87);
 		cBlitter.Kill();
 
 		szOutputFilename.Init(szDirectory);
@@ -128,7 +130,7 @@ void TestImageOpacityCopier(char* szDirectory, char* szInputPathName, char* szTe
 		szOutputFilename.Kill();
 		szInputFilename.Kill();
 
-		pCache = NULL;
+		cCache.Kill();
 	}
 	ObjectsKill();
 }

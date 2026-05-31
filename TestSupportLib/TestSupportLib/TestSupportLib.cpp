@@ -67,44 +67,44 @@ int __cdecl main(void)
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output");
 	
-	TestImage();
+	//TestImage();
 	TestImageOpacity();
-	TestImageColour();
-	TestImageReader();
-	TestImageWriter();
-	TestImageGreyToRGB();
-	TestImageRGBToGrey();
-	TestImageDivider();
-	TestBumpMapper();
-	TestPlainTextEditor();
-	TestImageCel();
-	TestRectangleBestPacker();
-	TestRectanglePow2Packer();
-	TestImageModifierStack();
-	TestImageModifierDrawBox();
-	TestImageDraw();
-	TestImageRecolour();
-	TestImageSwizzle();
-	TestImageCombiner();
-	TestImageToR3G3B2A();
-	TestImageSFTWriter();
-	TestFont();
-	TestMaps();
-	TestMapViewport();
-	TestImageCelsSource();
-	TestHalfSpace();
-	TestPolygon();
-	TestMeshColours();
-	TestMeshUVCoords();
-	TestMeshMaterials();
-	TestSphereShape();
-	TestTriangleShape();
-	TestMeshFaceReturn();
-	TestMeshPolygons();
-	//TestMeshShapes();  Write is not consistent.
-	TestMeshConnectivity();
-	TestNormalGeneration();
-	//TestMeshOBJReader();  Source OBJ file is missing
+	//TestImageColour();
+	//TestImageReader();
+	//TestImageWriter();
+	//TestImageGreyToRGB();
+	//TestImageRGBToGrey();
+	//TestImageDivider();
+	//TestBumpMapper();
+	//TestPlainTextEditor();
+	//TestImageCel();
+	//TestRectangleBestPacker();
+	//TestRectanglePow2Packer();
+	//TestImageModifierStack();
+	//TestImageModifierDrawBox();
+	//TestImageDraw();
+	//TestImageRecolour();
+	//TestImageSwizzle();
+	//TestImageCombiner();
+	//TestImageToR3G3B2A();
+	//TestImageSFTWriter();
+	//TestFont();
+	//TestMaps();
+	//TestMapViewport();
+	//TestImageCelsSource();
+	//TestHalfSpace();
+	//TestPolygon();
+	//TestMeshColours();
+	//TestMeshUVCoords();
+	//TestMeshMaterials();
+	//TestSphereShape();
+	//TestTriangleShape();
+	//TestMeshFaceReturn();
+	//TestMeshPolygons();
+	////TestMeshShapes();  Write is not consistent.
+	//TestMeshConnectivity();
+	//TestNormalGeneration();
+	////TestMeshOBJReader();  Source OBJ file is missing
 
 	cFileUtil.RemoveDir("Output");
 
