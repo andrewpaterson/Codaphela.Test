@@ -47,7 +47,7 @@ Ptr<CImage> TestImageOpacityReadImage(char* szFilename)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestImageOpacityCopier(char* szDirectory, char* szInputPathName, char* szTestFilename)
+void TestImageOpacityCopier(char* szDirectory, char* szInputPathName, char* szTestFilename, int32 x, int32 y)
 {
 	CIndexTreeMemory	cMemory;
 	CFileUtil			cFileUtil;
@@ -112,7 +112,7 @@ void TestImageOpacityCopier(char* szDirectory, char* szInputPathName, char* szTe
 
 		cBlitter.Init(pMakiCel, pDestImage, &cCache);
 		cBlitter.UpdateContext(&cForeground);
-		cBlitter.Copy(&cForeground, 100, 87);
+		cBlitter.Copy(&cForeground, x, y);
 		cBlitter.Kill();
 
 		szOutputFilename.Init(szDirectory);
@@ -142,7 +142,13 @@ void TestImageOpacityCopier(char* szDirectory, char* szInputPathName, char* szTe
 //////////////////////////////////////////////////////////////////////////
 void TestImageOpacityOpaqueBlitter(void)
 {
-	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "MakiStand.png", "Fighting.png");
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "MakiStand.png", "Fighting.png", 100, 87);
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "MakiStand.png", "FightingZero.png", 0, 0);
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "MakiStand.png", "FightingMinus10Y.png", 120, -10);
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "MakiStand.png", "FightingPlus210Y.png", 77, 120);
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "MakiStand.png", "FightingMinus18X.png", -18, 60);
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "MakiStand.png", "FightingPlus295X.png", 295, 68);
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "ImageOpacityCopier" _FS_ "MakiWalkWide.png", "FightingPlusWide.png", -170, -3);
 }
 
 
@@ -152,7 +158,14 @@ void TestImageOpacityOpaqueBlitter(void)
 //////////////////////////////////////////////////////////////////////////
 void TestImageOpacityTranslucentBlitter(void)
 {
-	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "ImageOpacityCopier" _FS_ "MakiStandFeathered.png", "FightingFeathered.png");
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "ImageOpacityCopier" _FS_ "MakiStandFeathered.png", "FightingFeathered.png", 100, 87);
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "ImageOpacityCopier" _FS_ "MakiStandFeathered.png", "FightingFeathered.png", 100, 87);
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "ImageOpacityCopier" _FS_ "MakiStandFeathered.png", "FightingZeroFeathered.png", 0, 0);
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "ImageOpacityCopier" _FS_ "MakiStandFeathered.png", "FightingMinus10YFeathered.png", 120, -10);
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "ImageOpacityCopier" _FS_ "MakiStandFeathered.png", "FightingPlus210YFeathered.png", 77, 120);
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "ImageOpacityCopier" _FS_ "MakiStandFeathered.png", "FightingMinus18XFeathered.png", -18, 60);
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "ImageOpacityCopier" _FS_ "MakiStandFeathered.png", "FightingPlus295XFeathered.png", 295, 68);
+	TestImageOpacityCopier("Output" _FS_ "ImageOpacityCopier", "ImageOpacityCopier" _FS_ "MakiWalkWideTranslucent.png", "FightingPlusWideTranslucent.png", -170, -3);
 }
 
 
