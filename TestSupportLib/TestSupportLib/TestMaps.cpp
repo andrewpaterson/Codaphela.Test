@@ -14,7 +14,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CImage> TestMapsReadSpaceCrusadeImage(char* szFilename)
+Ptr<CImage> TestMapsReadImage(char* szDirectory, char* szFilename)
 {
 	CFileUtil			cFileUtil;
 	CChars				szInputFilename;
@@ -23,7 +23,7 @@ Ptr<CImage> TestMapsReadSpaceCrusadeImage(char* szFilename)
 	szInputFilename.Init();
 	cFileUtil.CurrentDirectory(&szInputFilename);
 	cFileUtil.AppendToPath(&szInputFilename, "Input");
-	cFileUtil.AppendToPath(&szInputFilename, "SpaceCrusade");
+	cFileUtil.AppendToPath(&szInputFilename, szDirectory);
 	cFileUtil.AppendToPath(&szInputFilename, szFilename);
 	AssertTrue(cFileUtil.Exists(szInputFilename.Text()));
 
@@ -39,14 +39,14 @@ Ptr<CImage> TestMapsReadSpaceCrusadeImage(char* szFilename)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CArrayImageCel> TestMapsReadSpaceCrusadeCels(char* szFilename, int iColumnCount, int iRowCount)
+Ptr<CArrayImageCel> TestMapsReadCels(char* szDirectory, char* szFilename, int iColumnCount, int iRowCount)
 {
 	Ptr<CImage>				pImage;
 	CImageDivider			cImageDivider;
 	CImageDividerNumbers	cNumbers;
 	Ptr<CArrayImageCel>		pCels;
 
-	pImage = TestMapsReadSpaceCrusadeImage(szFilename);
+	pImage = TestMapsReadImage(szDirectory, szFilename);
 
 	cNumbers.InitGeneral(-1, -1, iColumnCount, iRowCount, 0, 0, 0, 0);
 	cImageDivider.Init(pImage, NULL);
@@ -65,6 +65,106 @@ Ptr<CArrayImageCel> TestMapsReadSpaceCrusadeCels(char* szFilename, int iColumnCo
 	AssertSize(0, pCels.NumHeapFroms());
 
 	return pCels;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CArrayImageCel> TestMapsReadSpaceCrusadeCels(char* szFilename, int iColumnCount, int iRowCount)
+{
+	return TestMapsReadCels("SpaceCrusade", szFilename, iColumnCount, iRowCount);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMapsTinySpriteMap(void)
+{
+	char				szDirectory[] = "Output" _FS_ "MapsSpriteMap";
+	CIndexTreeMemory	cMemory;
+	CFileUtil			cFileUtil;
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	DataIOInit();
+	ObjectsInit();
+	{
+		CMaps						cMaps;
+		CImageDivider				cImageDivider;
+		CChars						szInputFilename;
+		CChars						szOutputFilename;
+		Ptr<CArrayImageCel>			pCels;
+		Ptr<CSpriteMap>				pSpriteMap;
+		Ptr<CImageCel>				pCel1;
+		Ptr<CImageCel>				pCel2;
+		Ptr<CImageCel>				pCel3;
+		Ptr<CImageCel>				pCel4;
+		CSubImage* pcSubImage;
+		Ptr<CImage>					pWholeMap;
+		bool						bWritten;
+		size						uiSprite;
+
+		ImageChannelDescriptorInit();
+
+		pCels = TestMapsReadCels("MapsSpriteMap", "TinySprites.png", 2, 2);
+
+		AssertSize(4, pCels->Size());
+		for (uiSprite = 0; uiSprite < 4; uiSprite++)
+		{
+			pCel1 = pCels->Get(uiSprite);
+			AssertTrue(pCel1.IsNotNull());
+
+			pcSubImage = pCel1->GetSubImage();
+			AssertSize(4, pcSubImage->GetFullWidth());
+			AssertSize(4, pcSubImage->GetFullHeight());
+			AssertSize(2, pcSubImage->GetImageWidth());
+			AssertSize(2, pcSubImage->GetImageHeight());
+		}
+
+		pCel1 = pCels->Get(0);
+		pCel2 = pCels->Get(1);
+		pCel3 = pCels->Get(2);
+		pCel4 = pCels->Get(3);
+
+		cMaps.Init();
+
+		pSpriteMap = OMalloc<CSpriteMap>();
+		cMaps.AddMap(pSpriteMap);
+
+		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel1, 0, 0));
+		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel2, 4, 0));
+		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel3, 0, 4));
+		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel4, 4, 4));
+
+		AssertSize(4, pSpriteMap->NumSprites());
+
+		pWholeMap = pSpriteMap->WriteToImage();
+		AssertTrue(pWholeMap.IsNotNull());
+
+		szOutputFilename.Init(szDirectory);
+		cFileUtil.AppendToPath(&szOutputFilename, "TestTinyMap.png");
+		bWritten = WriteImage(pWholeMap, szOutputFilename.Text());
+		AssertTrue(bWritten);
+
+		cMaps.Kill();
+
+		ImageChannelDescriptorKill();
+
+		szInputFilename.Init(szOutputFilename);
+		szInputFilename.Replace("Output", "Input");
+
+		AssertFile(szInputFilename, szOutputFilename);
+
+		szOutputFilename.Kill();
+		szInputFilename.Kill();
+	}
+	ObjectsKill();
+	DataIOKill();
 }
 
 
@@ -102,7 +202,7 @@ void TestMapsTileMap(void)
 
 		ImageChannelDescriptorInit();
 
-		pBackground = TestMapsReadSpaceCrusadeImage("Tiles.png");
+		pBackground = TestMapsReadImage("SpaceCrusade", "Tiles.png");
 
 		cNumbers.InitGeneral(-1, -1, 10, 3, 0, 0, 0, 0);
 		cImageDivider.Init(&pBackground, NULL);
@@ -177,24 +277,24 @@ void TestMapsSpriteMap(void)
 	DataIOInit();
 	ObjectsInit();
 	{
-		CMaps					cMaps;
-		CImageDivider			cImageDivider;
-		CChars					szInputFilename;
-		CChars					szOutputFilename;
-		Ptr<CArrayImageCel>		pSoulSuckerCels;
-		Ptr<CArrayImageCel>		pBloodAngelsCels;
-		Ptr<CArrayImageCel>		pGretchinCels;
-		Ptr<CSpriteMap>			pSpriteMap;
-		Ptr<CImageCel>			pCel1;
-		Ptr<CImageCel>			pCel2;
-		Ptr<CImageCel>			pCel3;
-		Ptr<CImageCel>			pCel4;
-		Ptr<CImageCel>			pCel5;
-		Ptr<CImageCel>			pCel6;
-		CSubImage* pcSubImage;
-		Ptr<CImage>				pWholeMap;
-		bool					bWritten;
-		size					uiSprite;
+		CMaps						cMaps;
+		CImageDivider				cImageDivider;
+		CChars						szInputFilename;
+		CChars						szOutputFilename;
+		Ptr<CArrayImageCel>			pSoulSuckerCels;
+		Ptr<CArrayImageCel>			pBloodAngelsCels;
+		Ptr<CArrayImageCel>			pGretchinCels;
+		Ptr<CSpriteMap>				pSpriteMap;
+		Ptr<CImageCel>				pCel1;
+		Ptr<CImageCel>				pCel2;
+		Ptr<CImageCel>				pCel3;
+		Ptr<CImageCel>				pCel4;
+		Ptr<CImageCel>				pCel5;
+		Ptr<CImageCel>				pCel6;
+		CSubImage*					pcSubImage;
+		Ptr<CImage>					pWholeMap;
+		bool						bWritten;
+		size						uiSprite;
 
 		ImageChannelDescriptorInit();
 
@@ -315,6 +415,7 @@ void TestMaps(void)
 {
 	BeginTests();
 
+	TestMapsTinySpriteMap();
 	TestMapsTileMap();
 	TestMapsSpriteMap();
 

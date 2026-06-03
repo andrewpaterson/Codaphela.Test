@@ -104,11 +104,11 @@ void TestImageOpacityCopier(char* szDirectory, char* szInputPathName, char* szTe
 		pMakiCel = OMalloc<CImageCel>(pMakiImage, true);
 
 		cBlitter.Init(pBackgroundCel, pDestImage, &cCache);
-		cBlitter.Copy(0, 0);
+		cBlitter.Blit(0, 0);
 		cBlitter.Kill();
 
 		cBlitter.Init(pMakiCel, pDestImage, &cCache);
-		cBlitter.Copy(x, y);
+		cBlitter.Blit(x, y);
 		cBlitter.Kill();
 
 		szOutputFilename.Init(szDirectory);
