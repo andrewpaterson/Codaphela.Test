@@ -88,8 +88,8 @@ int __cdecl main(void)
 	TestImageCombiner();
 	TestImageToR3G3B2A();
 	TestImageSFTWriter();
-	TestFont();
 	TestMaps();
+	TestFont();
 	TestMapViewport();
 	TestImageCelsSource();
 	TestHalfSpace();
