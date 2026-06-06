@@ -104,7 +104,7 @@ void TestMapsTinySpriteMap(void)
 		Ptr<CImageCel>				pCel2;
 		Ptr<CImageCel>				pCel3;
 		Ptr<CImageCel>				pCel4;
-		CSubImage* pcSubImage;
+		CSubImage*					pcSubImage;
 		Ptr<CImage>					pWholeMap;
 		bool						bWritten;
 		size						uiSprite;
