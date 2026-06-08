@@ -39,7 +39,8 @@ void TestFontCreateFont(void)
 	ObjectsInit();
 	{
 		CFontFactory				cFactory;
-		CFontImportParams			cParams;
+		CFontImportParameters		cImportParams;
+		CFontCreationParameters		cCreateParams;
 		CChars						szCharacterFile;
 		CChars						szImageFile;
 		Ptr<CFont>					pFont;
@@ -49,15 +50,17 @@ void TestFontCreateFont(void)
 		char						szCharacter[5];
 		size						uiLength;
 
+		cCreateParams.Init(8, 8);
+
 		szCharacterFile.Init(szDirectory);
 		szCharacterFile.Append("anuvverbubbla_8x8.txt");
 		szImageFile.Init(szDirectory);
 		szImageFile.Append("anuvverbubbla_8x8.png");
 
-		bExists = cParams.Init(szImageFile.Text(), szCharacterFile.Text(), 8, 8);
+		bExists = cImportParams.Init(szImageFile.Text(), szCharacterFile.Text(), 8, 8);
 		AssertTrue(bExists);
 		cFactory.Init();
-		pFont = cFactory.Generate(&cParams);
+		pFont = cFactory.Generate(&cImportParams, &cCreateParams);
 		AssertTrue(pFont.IsNotNull());
 
 		AssertSize(73, pFont->NumGlyphs());
@@ -75,7 +78,7 @@ void TestFontCreateFont(void)
 		bExists = pFont->Iterate(&sIter, (uint8*)szCharacter, &uiLength, 4);
 
 		cFactory.Kill();
-		cParams.Kill();
+		cImportParams.Kill();
 
 		szCharacterFile.Kill();
 		szImageFile.Kill();
@@ -91,12 +94,15 @@ void TestFontCreateFont(void)
 Ptr<CFont> CreateFont(char* szFontName, int iCharWidth, int iCharHeight)
 {
 	CFontFactory				cFactory;
-	CFontImportParams			cParams;
+	CFontImportParameters		cImportParams;
+	CFontCreationParameters		cCreateParams;
 	CChars						szCharacterFile;
 	CChars						szImageFile;
 	Ptr<CFont>					pFont;
 	char						szDirectory[] = { "Input" _FS_ "Font Pack" _FS_ };
 	bool						bExists;
+
+	cCreateParams.Init(8, 8);
 
 	szCharacterFile.Init(szDirectory);
 	szCharacterFile.Append(szFontName);
@@ -105,21 +111,21 @@ Ptr<CFont> CreateFont(char* szFontName, int iCharWidth, int iCharHeight)
 	szImageFile.Append(szFontName);
 	szImageFile.Append(".png");
 
-	bExists = cParams.Init(szImageFile.Text(), szCharacterFile.Text(), iCharWidth, iCharHeight);
+	bExists = cImportParams.Init(szImageFile.Text(), szCharacterFile.Text(), iCharWidth, iCharHeight);
 	if (!bExists)
 	{
 		szCharacterFile.Kill();
 		szImageFile.Kill();
-		cParams.Kill();
+		cImportParams.Kill();
 		return NULL;
 	}
 	
 	cFactory.Init();
-	pFont = cFactory.Generate(&cParams);
+	pFont = cFactory.Generate(&cImportParams, &cCreateParams);
 	szCharacterFile.Kill();
 	szImageFile.Kill();
 	cFactory.Kill();
-	cParams.Kill();
+	cImportParams.Kill();
 
 	return pFont;
 }
@@ -138,9 +144,9 @@ void TestFontLookupText(void)
 		CSimpleTextReader	cTextReader;
 		size				uiNumRuns;
 		size				uiNumElements;
-		CTextRun* pcRun;
-		CTextElement* pcElement;
-		CTextUTF16Short* pcUTF16Short;
+		CTextRun*			pcRun;
+		CTextElement*		pcElement;
+		CTextUTF16Short*	pcUTF16Short;
 		CChars				sz;
 
 		pFont = CreateFont("anuvverbubbla_8x8", 8, 8);
@@ -326,7 +332,7 @@ void TestFontGetGlyphsFromText(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFontMapFontDraw(void)
+void TestFontMapFontWriteToImage(void)
 {
 	char		szDirectory[] = "Output" _FS_ "MapFontDraw";
 	CFileUtil	cFileUtil;
@@ -381,7 +387,68 @@ void TestFontMapFontDraw(void)
 		szInputFilename.Kill();
 	}
 	ObjectsKill();
+}
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFontMapFontViewportLayout(void)
+{
+	char		szDirectory[] = "Output" _FS_ "MapFontDraw";
+	CFileUtil	cFileUtil;
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	ObjectsInit();
+	{
+		Ptr<CFont>			pFont;
+		Ptr<CText>			pText;
+		CSimpleTextReader	cTextReader;
+		CTextLayout			cLayout;
+		Ptr<CMapFontDraw>	pFontDraw;
+		Ptr<CSpriteMap>		pSpriteMap;
+		Ptr<CImage>			pImage;
+		CChars				szOutputFilename;
+		CChars				szInputFilename;
+		bool				bWritten;
+
+		pFont = CreateFont("anuvverbubbla_8x8", 8, 8);
+		cTextReader.Init(&pFont);
+		pText = cTextReader.Read("Input" _FS_ "Text" _FS_ "Test1 anuvverbubbla.txt");
+		cTextReader.Kill();
+
+		pSpriteMap = OMalloc<CSpriteMap>();
+		pFontDraw = OMalloc<CMapFontDraw>(pSpriteMap);
+
+		pSpriteMap->BeginChange();
+		cLayout.Init();
+		cLayout.Layout(pFontDraw, pText);
+		cLayout.Kill();
+		pSpriteMap->EndChange();
+
+		pImage = pSpriteMap->WriteToImage();
+
+		szOutputFilename.Init(szDirectory);
+		cFileUtil.AppendToPath(&szOutputFilename, "anuvverbubbla.txt.png");
+		bWritten = WriteImage(pImage, szOutputFilename.Text());
+		AssertTrue(bWritten);
+
+		pFontDraw->Kill();
+		pText->Kill();
+		pFont = NULL;
+
+		szInputFilename.Init(szOutputFilename);
+		szInputFilename.Replace("Output", "Input");
+
+		AssertFile(szInputFilename, szOutputFilename);
+
+		szOutputFilename.Kill();
+		szInputFilename.Kill();
+	}
+	ObjectsKill();
 }
 
 
@@ -398,7 +465,8 @@ void TestFont(void)
 	TestFontCreateFont();
 	TestFontLookupText();
 	TestFontGetGlyphsFromText();
-	TestFontMapFontDraw();
+	TestFontMapFontWriteToImage();
+	TestFontMapFontViewportLayout();
 
 	DataIOKill();
 
