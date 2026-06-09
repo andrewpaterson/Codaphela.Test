@@ -91,7 +91,6 @@ void TestMapsTinySpriteMap(void)
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	DataIOInit();
 	ObjectsInit();
 	{
 		CMaps						cMaps;
@@ -131,7 +130,7 @@ void TestMapsTinySpriteMap(void)
 		pCel3 = pCels->Get(2);
 		pCel4 = pCels->Get(3);
 
-		cMaps.Init();
+		cMaps.Init(NULL, NULL);
 
 		pSpriteMap = OMalloc<CSpriteMap>();
 		cMaps.AddMap(pSpriteMap);
@@ -164,7 +163,6 @@ void TestMapsTinySpriteMap(void)
 		szInputFilename.Kill();
 	}
 	ObjectsKill();
-	DataIOKill();
 }
 
 
@@ -181,7 +179,6 @@ void TestMapsTileMap(void)
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	DataIOInit();
 	ObjectsInit();
 	{
 		CMaps					cMaps;
@@ -221,7 +218,7 @@ void TestMapsTileMap(void)
 			AssertTrue(pCel.IsNotNull());
 		}
 
-		cMaps.Init();
+		cMaps.Init(NULL, NULL);
 		
 		pTileMap = OMalloc<CTileMap>();
 		cMaps.AddMap(pTileMap);
@@ -257,7 +254,7 @@ void TestMapsTileMap(void)
 		szInputFilename.Kill();
 	}
 	ObjectsKill();
-	DataIOKill();
+
 }
 
 
@@ -274,7 +271,6 @@ void TestMapsSpriteMap(void)
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	DataIOInit();
 	ObjectsInit();
 	{
 		CMaps						cMaps;
@@ -368,7 +364,7 @@ void TestMapsSpriteMap(void)
 		AssertNotPointer(&pCel3->GetSourceImage(), &pCel5->GetSourceImage());
 		AssertNotPointer(&pCel5->GetSourceImage(), &pCel1->GetSourceImage());
 
-		cMaps.Init();
+		cMaps.Init(NULL, NULL);
 
 		pSpriteMap = OMalloc<CSpriteMap>();
 		cMaps.AddMap(pSpriteMap);
@@ -381,7 +377,7 @@ void TestMapsSpriteMap(void)
 		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel6, 25, 19));
 
 		AssertSize(6, pSpriteMap->NumSprites());
-
+		
 		pWholeMap = pSpriteMap->WriteToImage();
 		AssertTrue(pWholeMap.IsNotNull());
 
@@ -403,7 +399,6 @@ void TestMapsSpriteMap(void)
 		szInputFilename.Kill();
 	}
 	ObjectsKill();
-	DataIOKill();
 }
 
 
@@ -415,9 +410,13 @@ void TestMaps(void)
 {
 	BeginTests();
 
+	DataIOInit();
+
 	TestMapsTinySpriteMap();
 	TestMapsTileMap();
 	TestMapsSpriteMap();
+
+	DataIOKill();
 
 	TestStatistics();
 }
