@@ -101,6 +101,7 @@ void TestMapViewportBlit(void)
 		Ptr<CArrayImageCel>			pSoulSuckerCels;
 		Ptr<CArrayImageCel>			pBloodAngelsCels;
 		Ptr<CArrayImageCel>			pGretchinCels;
+		bool						bResult;
 
 		ImageChannelDescriptorInit();
 
@@ -117,18 +118,27 @@ void TestMapViewportBlit(void)
 
 		pDestImage = OMalloc<CImage>(32, 32, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pBlitterCache = OMalloc<CImageCelBlitterCache>(pDestImage);
-		cMaps.Init(pBlitterCache, pBlitterCache);
+		cMaps.Init(pBlitterCache, pDestImage);
 
 		pTileMap = OMalloc<CTileMap>();
-		cMaps.AddMap(pTileMap);
 		pCelLayer = OMalloc<CTileLayerCel>(pTileMap, "Cel", SInt32Vec2(4, 4), SInt32Vec2(16, 16), SInt32Vec2(0, 0));
 		pCelLayer->SetTiles(0, 0, pacBackgroundCels, 7, 5, 5, 6);
 		pCelLayer->SetTiles(0, 1, pacBackgroundCels, 19, 2, 2, 4);
 		pCelLayer->SetTiles(0, 2, pacBackgroundCels, 18, 2, 3, 4);
 		pCelLayer->SetTiles(0, 3, pacBackgroundCels, 9, 5, 5, 8);
+		pTileMap->AddLayer(pCelLayer);
 
-		cMaps.Blit();
+		cMaps.AddMap(pTileMap);
 
+		bResult = cMaps.CreateCelBlitters();
+		AssertTrue(bResult);
+
+		cMaps.SetViewportPosition(8, 8);
+		bResult = cMaps.Blit();
+		AssertTrue(bResult);
+
+		szOutputFilename.Init(szDirectory);
+		cFileUtil.AppendToPath(&szOutputFilename, "TestViewportBlit.png");
 		bWritten = WriteImage(pDestImage, szOutputFilename.Text(), IT_PNG);
 		AssertTrue(bWritten);
 
