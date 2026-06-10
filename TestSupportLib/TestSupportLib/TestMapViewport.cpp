@@ -102,6 +102,14 @@ void TestMapViewportBlit(void)
 		Ptr<CArrayImageCel>			pBloodAngelsCels;
 		Ptr<CArrayImageCel>			pGretchinCels;
 		bool						bResult;
+		Ptr<CSpriteMap>				pSpriteMap;
+		Ptr<CImageCel>				pCel1;
+		Ptr<CImageCel>				pCel2;
+		Ptr<CImageCel>				pCel3;
+		Ptr<CImageCel>				pCel4;
+		Ptr<CImageCel>				pCel5;
+		Ptr<CImageCel>				pCel6;
+		int32						x, y;
 
 		ImageChannelDescriptorInit();
 
@@ -109,6 +117,12 @@ void TestMapViewportBlit(void)
 		pSoulSuckerCels = TestMapViewportReadCels("SoulSucker.png", 8, 1);
 		pBloodAngelsCels = TestMapViewportReadCels("BloodAngels.png", 8, 1);
 		pGretchinCels = TestMapViewportReadCels("Gretchin.png", 8, 1);
+		pCel1 = pSoulSuckerCels->Get(7);
+		pCel2 = pSoulSuckerCels->Get(2);
+		pCel3 = pBloodAngelsCels->Get(3);
+		pCel4 = pBloodAngelsCels->Get(0);
+		pCel5 = pGretchinCels->Get(6);
+		pCel6 = pGretchinCels->Get(4);
 
 		cNumbers.InitGeneral(-1, -1, 10, 3, 0, 0, 0, 0);
 		cImageDivider.Init(&pBackground, NULL);
@@ -130,29 +144,46 @@ void TestMapViewportBlit(void)
 
 		cMaps.AddMap(pTileMap);
 
+		pSpriteMap = OMalloc<CSpriteMap>();
+		cMaps.AddMap(pSpriteMap);
+
+		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel1, 0, 0));
+		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel2, 16, 16));
+		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel3, 0, 32));
+		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel4, 32, 0));
+		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel5, 32, 32));
+		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel6, 48, 16));
+
 		bResult = cMaps.CreateCelBlitters();
 		AssertTrue(bResult);
 
-		cMaps.SetViewportPosition(8, 8);
-		bResult = cMaps.Blit();
-		AssertTrue(bResult);
+		for (x = 8; x < 24; x++)
+		{
+			y = x;
+			cMaps.SetViewportPosition(x, y);
+			bResult = cMaps.Blit();
+			AssertTrue(bResult);
 
-		szOutputFilename.Init(szDirectory);
-		cFileUtil.AppendToPath(&szOutputFilename, "TestViewportBlit.png");
-		bWritten = WriteImage(pDestImage, szOutputFilename.Text(), IT_PNG);
-		AssertTrue(bWritten);
+			szOutputFilename.Init(szDirectory);
+			cFileUtil.AppendToPath(&szOutputFilename, "TestViewportBlit");
+			szOutputFilename.Append(x - 8);
+			szOutputFilename.Append(".png");
+			bWritten = WriteImage(pDestImage, szOutputFilename.Text(), IT_PNG);
+			AssertTrue(bWritten);
+
+			szInputFilename.Init(szOutputFilename);
+			szInputFilename.Replace("Output", "Input");
+
+			AssertFile(szInputFilename, szOutputFilename);
+
+			szOutputFilename.Kill();
+			szInputFilename.Kill();
+		}
 
 		cMaps.Kill();
 
 		ImageChannelDescriptorKill();
 
-		szInputFilename.Init(szOutputFilename);
-		szInputFilename.Replace("Output", "Input");
-
-		AssertFile(szInputFilename, szOutputFilename);
-
-		szOutputFilename.Kill();
-		szInputFilename.Kill();
 
 	}
 	ObjectsKill();
