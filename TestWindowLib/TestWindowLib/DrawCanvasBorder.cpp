@@ -27,7 +27,7 @@ bool CDrawCanvasBorder::Draw(Ptr<CCanvas> pCanvas)
     CRectangle      cRect;
     ARGB32	        sBlack;
     ARGB32	        sGrey;
-    SInt32Vec2           sSize;
+    SInt32Vec2      sSize;
 
     if (pCanvas->IsValid())
     {

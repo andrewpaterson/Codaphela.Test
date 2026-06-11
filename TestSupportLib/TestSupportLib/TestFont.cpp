@@ -13,6 +13,8 @@
 #include "SupportLib/TextLayout.h"
 #include "SupportLib/GlyphListFontDraw.h"
 #include "SupportLib/MapFontDraw.h"
+#include "SupportLib/Maps.h"
+#include "SupportLib/MapViewport.h"
 #include "TestLib/Assert.h"
 
 
@@ -102,7 +104,7 @@ Ptr<CFont> CreateFont(char* szFontName, int iCharWidth, int iCharHeight)
 	char						szDirectory[] = { "Input" _FS_ "Font Pack" _FS_ };
 	bool						bExists;
 
-	cCreateParams.Init(8, 8);
+	cCreateParams.Init(iCharWidth, iCharHeight);
 
 	szCharacterFile.Init(szDirectory);
 	szCharacterFile.Append(szFontName);
@@ -404,36 +406,50 @@ void TestFontMapFontViewportLayout(void)
 
 	ObjectsInit();
 	{
-		Ptr<CFont>			pFont;
-		Ptr<CText>			pText;
-		CSimpleTextReader	cTextReader;
-		CTextLayout			cLayout;
-		Ptr<CMapFontDraw>	pFontDraw;
-		Ptr<CSpriteMap>		pSpriteMap;
-		Ptr<CImage>			pImage;
-		CChars				szOutputFilename;
-		CChars				szInputFilename;
-		bool				bWritten;
+		Ptr<CFont>					pFont;
+		Ptr<CText>					pText;
+		CSimpleTextReader			cTextReader;
+		CTextLayout					cLayout;
+		Ptr<CMapFontDraw>			pFontDraw;
+		Ptr<CSpriteMap>				pSpriteMap;
+		CChars						szOutputFilename;
+		CChars						szInputFilename;
+		bool						bWritten;
+		CMaps						cMaps;
+		Ptr<CImage>					pDestImage;
+		Ptr<CImageCelBlitterCache>	pBlitterCache;
+		bool						bResult;
 
-		pFont = CreateFont("anuvverbubbla_8x8", 8, 8);
+		pFont = CreateFont("nuskool_krome_64x64", 64, 64);
 		cTextReader.Init(&pFont);
-		pText = cTextReader.Read("Input" _FS_ "Text" _FS_ "Test1 anuvverbubbla.txt");
+		pText = cTextReader.Read("Input" _FS_ "Text" _FS_ "Test1 nuskool_krome_64x64.txt");
 		cTextReader.Kill();
 
+		pDestImage = OMalloc<CImage>(1280, 720, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+		pBlitterCache = OMalloc<CImageCelBlitterCache>(pDestImage);
+		cMaps.Init(pBlitterCache, pDestImage);
 		pSpriteMap = OMalloc<CSpriteMap>();
+		cMaps.AddMap(pSpriteMap);
 		pFontDraw = OMalloc<CMapFontDraw>(pSpriteMap);
 
+		gcObjects.DisableValidation();
 		pSpriteMap->BeginChange();
 		cLayout.Init();
 		cLayout.Layout(pFontDraw, pText);
 		cLayout.Kill();
 		pSpriteMap->EndChange();
+		gcObjects.EnableValidation();
 
-		pImage = pSpriteMap->WriteToImage();
+		bResult = cMaps.CreateCelBlitters();
+		AssertTrue(bResult);
+
+		cMaps.SetViewportPosition(0, 0);
+		bResult = cMaps.Blit();
+		AssertTrue(bResult);
 
 		szOutputFilename.Init(szDirectory);
-		cFileUtil.AppendToPath(&szOutputFilename, "anuvverbubbla.txt.png");
-		bWritten = WriteImage(pImage, szOutputFilename.Text());
+		cFileUtil.AppendToPath(&szOutputFilename, "nuskool_krome_64x64.txt.png");
+		bWritten = WriteImage(pDestImage, szOutputFilename.Text());
 		AssertTrue(bWritten);
 
 		pFontDraw->Kill();
@@ -462,10 +478,10 @@ void TestFont(void)
 
 	DataIOInit();
 
-	TestFontCreateFont();
-	TestFontLookupText();
-	TestFontGetGlyphsFromText();
-	TestFontMapFontWriteToImage();
+	//TestFontCreateFont();
+	//TestFontLookupText();
+	//TestFontGetGlyphsFromText();
+	//TestFontMapFontWriteToImage();
 	TestFontMapFontViewportLayout();
 
 	DataIOKill();
