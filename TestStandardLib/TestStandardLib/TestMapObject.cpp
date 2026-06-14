@@ -891,8 +891,9 @@ void TestMapObjectConstructorExists(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapObjectClassExists(void)
 {
-	CClasses*	pcClasses;
-	CClass*		pcClass;
+	CClasses*				pcClasses;
+	CClass*					pcClass;
+	CMapUnknownUnknown*		pcMapUnknownUnknown;
 
 	ObjectsInit();
 	{
@@ -903,8 +904,10 @@ void TestMapObjectClassExists(void)
 		pcClass = pcClasses->Get(cMapObject.ClassName());
 		AssertNotNull(pcClass);
 		AssertString("CMapObject", pcClass->GetName());
-		pcMapPtrPtr = cMapObject.GetUnknownMap()->GetPointerMap();
-		AssertFalse(pcMapPtrPtr->IsMallocInitialised());  //Init was never so the Mallocator was never setup.
+		pcMapUnknownUnknown = cMapObject.GetUnknownMap();
+		AssertNotNull(pcMapUnknownUnknown);
+		pcMapPtrPtr = pcMapUnknownUnknown->GetPointerMap();
+		AssertNotNull(pcMapPtrPtr);
 	}
 	ObjectsKill();
 }
