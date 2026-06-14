@@ -426,6 +426,8 @@ void TestFontMapFontViewportLayout(void)
 		cTextReader.Kill();
 
 		pDestImage = OMalloc<CImage>(1280, 720, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+		pDestImage->Clear();
+
 		pBlitterCache = OMalloc<CImageCelBlitterCache>(pDestImage);
 		cMaps.Init(pBlitterCache, pDestImage);
 		pSpriteMap = OMalloc<CSpriteMap>();
@@ -478,11 +480,11 @@ void TestFont(void)
 
 	DataIOInit();
 
-	//TestFontCreateFont();
-	//TestFontLookupText();
-	//TestFontGetGlyphsFromText();
-	//TestFontMapFontWriteToImage();
-	TestFontMapFontViewportLayout();
+	TestFontCreateFont();
+	TestFontLookupText();
+	TestFontGetGlyphsFromText();
+	TestFontMapFontWriteToImage();
+//	TestFontMapFontViewportLayout();
 
 	DataIOKill();
 

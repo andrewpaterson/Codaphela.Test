@@ -78,9 +78,9 @@ void TestImageCelsSourceStarControl(void)
 		pcImage->RemoveChannel(IMAGE_OPACITY);
 		pcImage->EndChange();
 		WriteImage(&pcImage, "C:" _FS_ "Work" _FS_ "Star Control" _FS_ "Frames" _FS_ "StarControl All.rad");
+		pcImage->Kill();
 	}
 
-	pcImage->Kill();
 	cCombiner.Kill();
 	cSource.Kill();
 
@@ -151,7 +151,7 @@ void TestImageCelsSource(void)
 	BeginTests();
 
 	TestImageCelGroupSourceCombine();
-	//TestImageCelGroupSourceStarControl();
+	TestImageCelsSourceStarControl();
 
 	TestStatistics();
 }

@@ -87,3 +87,5 @@ TestCoreLib/Release
 /TestWindowLib/TestWindowLib/Output/Creation/Frame7.png
 /TestWindowLib/TestWindowLib/Output/Creation/Frame8.png
 /TestWindowLib/TestWindowLib/Output/Creation/Frame9.png
+/TestSupportLib/Release/*
+/TestSupportLib/TestSupportLib/Release/*

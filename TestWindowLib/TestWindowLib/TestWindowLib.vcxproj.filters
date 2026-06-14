@@ -46,6 +46,9 @@
     <ClCompile Include="TickTestRefWindow.cpp">
       <Filter>Source\TestCommon</Filter>
     </ClCompile>
+    <ClCompile Include="TestCanvas.cpp">
+      <Filter>Source\Component\Drawing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataTestRefWindow.h">
