@@ -156,6 +156,195 @@ void TestObjectFreeLoopCollectionCyclicPointer(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectFreeStackWithCyclicHeapPointer(void)
+{
+	ObjectsInit();
+	{
+		STestObjectFreedNotifier	sFreed1;
+		STestObjectFreedNotifier	sFreed2;
+		Ptr<CTestObject>			pObject1;
+		Ptr<CTestObject>			pObject2;
+		CArrayStackPointer			apcStackFroms;
+		CChars						sz;
+
+		AssertSize(0, gcObjects.NumMemoryIndexes());
+
+		pObject1 = OMalloc<CTestObject>(&sFreed1);
+		pObject2 = OMalloc<CTestObject>(&sFreed2);
+
+		pObject1->mpTest = pObject2;
+		pObject2->mpTest = pObject1;
+		
+		AssertFalse(sFreed1.bFreed);
+		AssertFalse(sFreed2.bFreed);
+		AssertSize(1, pObject1.NumStackFroms());
+		AssertSize(1, pObject2.NumStackFroms());
+		AssertSize(2, gcObjects.NumMemoryIndexes());
+
+		sz.Init();
+		gcObjects.PrintStackPointers(&sz);
+		AssertString("\
+0: Pointer [CTestObject:1 Rx (CC, D, CA, CI, CC)]\n\
+1: Pointer [CTestObject:2 Rx (CC, D, CA, CI, CC)]\n", sz.Text());
+		sz.Kill();
+
+		pObject1 = NULL;
+
+		AssertFalse(sFreed1.bFreed);
+		AssertFalse(sFreed2.bFreed);
+		AssertSize(0, pObject1.NumStackFroms());
+		AssertSize(1, pObject2.NumStackFroms());
+		AssertSize(2, gcObjects.NumMemoryIndexes());
+
+		sz.Init();
+		gcObjects.PrintStackPointers(&sz);
+		AssertString("\
+0: Pointer [CTestObject:2 Rx (CC, D, CA, CI, CC)]\n", sz.Text());
+		sz.Kill();
+
+		pObject2 = NULL;
+
+		AssertTrue(sFreed1.bFreed);
+		AssertTrue(sFreed2.bFreed);
+		AssertSize(0, pObject1.NumStackFroms());
+		AssertSize(0, pObject2.NumStackFroms());
+		AssertSize(0, gcObjects.NumMemoryIndexes());
+
+		sz.Init();
+		gcObjects.PrintStackPointers(&sz);
+		AssertString("", sz.Text());
+		sz.Kill();
+	}
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectFreeStackWithCyclicHeapPointerHeapFrom(void)
+{
+	ObjectsInit();
+	{
+		STestObjectFreedNotifier	sFreed1;
+		STestObjectFreedNotifier	sFreed2;
+		STestObjectFreedNotifier	sFreedBase;
+		Ptr<CTestObject>			pObject1;
+		Ptr<CTestObject>			pObject2;
+		Ptr<CTestObject>			pObjectBase;
+		CArrayStackPointer			apcStackFroms;
+		CChars						sz;
+
+		AssertSize(0, gcObjects.NumMemoryIndexes());
+
+		pObject1 = OMalloc<CTestObject>(&sFreed1);
+		pObject2 = OMalloc<CTestObject>(&sFreed2);
+		pObjectBase = OMalloc<CTestObject>(&sFreedBase);
+
+		pObject1->mpTest = pObject2;
+		pObject2->mpTest = pObject1;
+		pObjectBase->mpTest = pObject1;
+
+		sz.Init();
+		gcObjects.PrintStackPointers(&sz);
+		AssertString("\
+0: Pointer [CTestObject:1 Rx (CC, D, CA, CI, CC)]\n\
+1: Pointer [CTestObject:2 Rx (CC, D, CA, CI, CC)]\n\
+2: Pointer [CTestObject:3 Rx (CC, D, CA, CI, CC)]\n", sz.Text());
+		sz.Kill();
+
+		pObject1 = NULL;
+		pObject2 = NULL;
+
+		AssertFalse(sFreed1.bFreed);
+		AssertFalse(sFreed2.bFreed);
+		AssertFalse(sFreedBase.bFreed);
+		AssertSize(0, pObject1.NumStackFroms());
+		AssertSize(0, pObject2.NumStackFroms());
+		AssertSize(1, pObjectBase.NumStackFroms());
+		AssertSize(3, gcObjects.NumMemoryIndexes());
+
+		sz.Init();
+		gcObjects.PrintStackPointers(&sz);
+		AssertString("\
+0: Pointer [CTestObject:3 Rx (CC, D, CA, CI, CC)]\n", sz.Text());
+		sz.Kill();
+
+	}
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectFreeStackWithCyclicHeapPointerRootFrom(void)
+{
+	ObjectsInit();
+	{
+		STestObjectFreedNotifier	sFreed1;
+		STestObjectFreedNotifier	sFreed2;
+		Ptr<CTestObject>			pObject1;
+		Ptr<CTestObject>			pObject2;
+		Ptr<CRoot>					pRoot;
+		CArrayStackPointer			apcStackFroms;
+		CChars						sz;
+
+		AssertSize(0, gcObjects.NumMemoryIndexes());
+
+		pObject1 = OMalloc<CTestObject>(&sFreed1);
+		pObject2 = OMalloc<CTestObject>(&sFreed2);
+		
+		pRoot = ORoot();
+
+		pObject1->mpTest = pObject2;
+		pObject2->mpTest = pObject1;
+		pRoot->Add(pObject1);
+
+		sz.Init();
+		gcObjects.PrintStackPointers(&sz);
+		AssertString("\
+0: Pointer [CTestObject:1 R2 (CC, D, CA, CI, CC)]\n\
+1: Pointer [CTestObject:2 R3 (CC, D, CA, CI, CC)]\n\
+2: Pointer [CRoot:3:\"GraphRoot\" R0 (CC, D, CA, CI, CC)]\n", sz.Text());
+		sz.Kill();
+
+		pObject1 = NULL;
+		pObject2 = NULL;
+
+		AssertFalse(sFreed1.bFreed);
+		AssertFalse(sFreed2.bFreed);
+		AssertSize(0, pObject1.NumStackFroms());
+		AssertSize(0, pObject2.NumStackFroms());
+		AssertSize(4, gcObjects.NumMemoryIndexes());
+
+		sz.Init();
+		gcObjects.PrintStackPointers(&sz);
+		AssertString("\
+0: Pointer [CRoot:3:\"GraphRoot\" R0 (CC, D, CA, CI, CC)]\n", sz.Text());
+		sz.Kill();
+
+		pRoot = NULL;
+
+		AssertFalse(sFreed1.bFreed);
+		AssertFalse(sFreed2.bFreed);
+		AssertSize(4, gcObjects.NumMemoryIndexes());
+
+		sz.Init();
+		gcObjects.PrintStackPointers(&sz);
+		AssertString("", sz.Text());
+		sz.Kill();
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectFree(void)
 {
 	BeginTests();
@@ -167,6 +356,9 @@ void TestObjectFree(void)
 	TestObjectFreeSelfCyclicPointer();
 	TestObjectFreeLoopCyclicPointer();
 	TestObjectFreeLoopCollectionCyclicPointer();
+	TestObjectFreeStackWithCyclicHeapPointer();
+	TestObjectFreeStackWithCyclicHeapPointerHeapFrom();
+	TestObjectFreeStackWithCyclicHeapPointerRootFrom();
 
 	DataIOKill();
 	TypesKill();

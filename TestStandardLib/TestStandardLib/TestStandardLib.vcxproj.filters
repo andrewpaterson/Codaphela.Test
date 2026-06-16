@@ -91,6 +91,9 @@
     <Filter Include="Source\Object\Object\Collection\Index">
       <UniqueIdentifier>{304365b7-7172-461f-9491-5fa435788dd6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Object\Object\Embedded">
+      <UniqueIdentifier>{070a75fe-d198-418b-a7bd-fb9aa60b36fd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestStandardLib.cpp">
@@ -213,9 +216,6 @@
     <ClCompile Include="TestSetObject.cpp">
       <Filter>Source\Object\Object\Collection\Set</Filter>
     </ClCompile>
-    <ClCompile Include="TestEmbedded.cpp">
-      <Filter>Source\Object</Filter>
-    </ClCompile>
     <ClCompile Include="EmbeddedObjectTestClasses.cpp">
       <Filter>Source\Object</Filter>
     </ClCompile>
@@ -261,9 +261,6 @@
     <ClCompile Include="TestReplaceAndRemap.cpp">
       <Filter>Source\Object\Object\Hollow</Filter>
     </ClCompile>
-    <ClCompile Include="TestFreeEmbedded.cpp">
-      <Filter>Source\Object</Filter>
-    </ClCompile>
     <ClCompile Include="TestStringOverride.cpp">
       <Filter>Source\Object\Object\String</Filter>
     </ClCompile>
@@ -290,6 +287,12 @@
     </ClCompile>
     <ClCompile Include="TestIndexObject.cpp">
       <Filter>Source\Object\Object\Collection\Index</Filter>
+    </ClCompile>
+    <ClCompile Include="TestEmbedded.cpp">
+      <Filter>Source\Object\Object\Embedded</Filter>
+    </ClCompile>
+    <ClCompile Include="TestFreeEmbedded.cpp">
+      <Filter>Source\Object\Object\Embedded</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
