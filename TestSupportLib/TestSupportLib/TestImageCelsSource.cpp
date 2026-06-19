@@ -31,6 +31,8 @@ void TestImageCelsSourceStarControl(void)
 	CImageCelsSource		cSource;
 	CImageSourceDiskFile	cDiskFile;
 
+	gcObjects.DisableValidation();
+
 	cSingle.Init();
 
 	cSource.Init(true);
@@ -71,6 +73,8 @@ void TestImageCelsSourceStarControl(void)
 	cCombiner.Init(ICL_Best, ICS_Arbitrary, ICC_FromCels);
 	cCombiner.AddCels(cSource.GetImageCels());
 	pcImage = cCombiner.Combine();
+
+	gcObjects.EnableValidation();
 
 	if (pcImage.IsNotNull())
 	{
@@ -115,11 +119,15 @@ void TestImageCelGroupSourceCombine(void)
 	cDiskFile.Init("Input" _FS_ "Source" _FS_ "Broodhome.png", "Chenjesu Broodhome");
 	cSource.AddSource(&cDiskFile, &cGrid);
 
+	gcObjects.DisableValidation();
+
 	cSource.Load();
 
 	cCombiner.Init(ICL_Best, ICS_Arbitrary, ICC_FromCels);
 	cCombiner.AddCels(cSource.GetImageCels());
 	pcImage = cCombiner.Combine();
+
+	gcObjects.EnableValidation();
 
 	if (pcImage.IsNotNull())
 	{

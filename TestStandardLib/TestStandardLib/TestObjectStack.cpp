@@ -46,7 +46,7 @@ void TestObjectStackInit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectStackDestructorOutOfFrame(STestObjectFreedNotifier* psFreeNotifier)
+void DestructorOutOfFrame(STestObjectFreedNotifier* psFreeNotifier)
 {
 	CTestObject					cObject;
 
@@ -65,7 +65,7 @@ void TestObjectStackDestructor(void)
 
 	ObjectsInit();
 
-	TestObjectStackDestructorOutOfFrame(&sFreedNotifier);
+	DestructorOutOfFrame(&sFreedNotifier);
 	AssertTrue(sFreedNotifier.bFreed);
 
 	ObjectsKill();
@@ -76,7 +76,7 @@ void TestObjectStackDestructor(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectStackPointedToOutOfFrame(void)
+void PointedToOutOfFrame(void)
 {
 	Ptr<CTestClass>		pHeapTestClass;
 	CTestClass			cStackTestClass;
@@ -96,7 +96,7 @@ void TestObjectStackPointedTo(void)
 {
 	ObjectsInit();
 
-	TestObjectStackPointedToOutOfFrame();
+	PointedToOutOfFrame();
 
 	ObjectsKill();
 }
@@ -105,7 +105,7 @@ void TestObjectStackPointedTo(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectStackObjectReuseOutOfFrame(CTestClass** pcTestClass)
+void ObjectReuseOutOfFrame(CTestClass** pcTestClass)
 {
 	CTestClass		cStackTestClass;
 	CChars			sz;
@@ -155,12 +155,97 @@ void TestObjectStackObjectReuse(void)
 
 	ObjectsInit();
 
-	TestObjectStackObjectReuseOutOfFrame(&pcTestClass);
+	ObjectReuseOutOfFrame(&pcTestClass);
 	sz.Init();
 	pcTestClass->PrintFlags(&sz);
 	AssertString("", sz.Text());
 	sz.Kill();
 
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CTestObject> CreateTestObject(void)
+{
+	Ptr<CTestObject>	pTestObject;
+
+	pTestObject = OMalloc<CTestObject>();
+	return pTestObject;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CTestObject> CreateAndReturnTestObject(void)
+{
+	return CreateTestObject();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectStackAssignmentOperator(void)
+{
+	ObjectsInit();
+	{
+		CChars				sz;
+		Ptr<CTestObject>	pTest;
+
+		pTest = CreateTestObject();
+
+		sz.Init();
+		gcObjects.PrintStackPointers(&sz);
+		AssertString(
+"0: Pointer [CTestObject:1 Rx (CC, D, CA, CI, CC)]\n", 
+			sz.Text());
+		sz.Kill();
+
+		pTest = NULL;
+
+		sz.Init();
+		gcObjects.PrintStackPointers(&sz);
+		AssertString("", sz.Text());
+		sz.Kill();
+	}
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectStackAssignmentOperator2(void)
+{
+	ObjectsInit();
+	{
+		CChars				sz;
+		Ptr<CTestObject>	pTest;
+
+		pTest = CreateAndReturnTestObject();
+
+		sz.Init();
+		gcObjects.PrintStackPointers(&sz);
+		AssertString(
+"0: Pointer [CTestObject:1 Rx (CC, D, CA, CI, CC)]\n", 
+			sz.Text());
+		sz.Kill();
+
+		pTest->Kill();
+
+		sz.Init();
+		gcObjects.PrintStackPointers(&sz);
+		AssertString("", sz.Text());
+		sz.Kill();
+	}
 	ObjectsKill();
 }
 
@@ -176,6 +261,8 @@ void TestObjectStack(void)
 	TypesInit();
 	DataIOInit();
 
+	TestObjectStackAssignmentOperator();
+	TestObjectStackAssignmentOperator2();
 	TestObjectStackInit();
 	TestObjectStackDestructor();
 	TestObjectStackPointedTo();

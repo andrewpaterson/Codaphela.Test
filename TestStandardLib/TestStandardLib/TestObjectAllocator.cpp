@@ -950,7 +950,7 @@ void TestObjectAllocator(void)
 	TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwrittenWithEmbedded();
 	TestObjectAllocatorOverwrittensFlushedObjects();
 
-	//Test dependent named objects overwrite existing named objects.  i.e:  Load "Name 1" -> x -> "Name 2" overwrites "Name 2" that exists in the database.
+	// Test dependent named objects overwrite existing named objects.  i.e:  Load "Name 1" -> x -> "Name 2" overwrites "Name 2" that exists in the database.
 
 	TestStatistics();
 }

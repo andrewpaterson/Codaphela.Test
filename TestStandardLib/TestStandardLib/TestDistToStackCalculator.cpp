@@ -1108,7 +1108,7 @@ void TestDistToStackCyclicWithScenarioA(void)
 	//         . 
 	//
 
-	//Test from pTest1
+	// Test from pTest1
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest1->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
@@ -1127,7 +1127,7 @@ void TestDistToStackCyclicWithScenarioA(void)
 	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
 	cParameters.Kill();
 
-	//Test from pTest2
+	// Test from pTest2
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest1->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
@@ -1146,7 +1146,7 @@ void TestDistToStackCyclicWithScenarioA(void)
 	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
 	cParameters.Kill();
 
-	//Test from pTest3
+	// Test from pTest3
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest1->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
@@ -1165,7 +1165,7 @@ void TestDistToStackCyclicWithScenarioA(void)
 	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
 	cParameters.Kill();
 
-	//Test from pTest4
+	// Test from pTest4
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest1->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
@@ -1184,7 +1184,7 @@ void TestDistToStackCyclicWithScenarioA(void)
 	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
 	cParameters.Kill();
 
-	//Test from pTest5
+	// Test from pTest5
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest1->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
