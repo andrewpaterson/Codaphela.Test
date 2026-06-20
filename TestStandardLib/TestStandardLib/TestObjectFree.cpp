@@ -182,7 +182,7 @@ void TestObjectFreeStackWithCyclicHeapPointer(void)
 		AssertSize(2, gcObjects.NumMemoryIndexes());
 
 		sz.Init();
-		gcObjects.PrintStackPointers(&sz);
+		gcObjects.PrintStackPointers(&sz, false);
 		AssertString("\
 0: Pointer [CTestObject:1 Rx (CC, D, CA, CI, CC)]\n\
 1: Pointer [CTestObject:2 Rx (CC, D, CA, CI, CC)]\n", sz.Text());
@@ -197,7 +197,7 @@ void TestObjectFreeStackWithCyclicHeapPointer(void)
 		AssertSize(2, gcObjects.NumMemoryIndexes());
 
 		sz.Init();
-		gcObjects.PrintStackPointers(&sz);
+		gcObjects.PrintStackPointers(&sz, false);
 		AssertString("\
 0: Pointer [CTestObject:2 Rx (CC, D, CA, CI, CC)]\n", sz.Text());
 		sz.Kill();
@@ -211,7 +211,7 @@ void TestObjectFreeStackWithCyclicHeapPointer(void)
 		AssertSize(0, gcObjects.NumMemoryIndexes());
 
 		sz.Init();
-		gcObjects.PrintStackPointers(&sz);
+		gcObjects.PrintStackPointers(&sz, false);
 		AssertString("", sz.Text());
 		sz.Kill();
 	}
@@ -247,7 +247,7 @@ void TestObjectFreeStackWithCyclicHeapPointerHeapFrom(void)
 		pObjectBase->mpTest = pObject1;
 
 		sz.Init();
-		gcObjects.PrintStackPointers(&sz);
+		gcObjects.PrintStackPointers(&sz, false);
 		AssertString("\
 0: Pointer [CTestObject:1 Rx (CC, D, CA, CI, CC)]\n\
 1: Pointer [CTestObject:2 Rx (CC, D, CA, CI, CC)]\n\
@@ -266,7 +266,7 @@ void TestObjectFreeStackWithCyclicHeapPointerHeapFrom(void)
 		AssertSize(3, gcObjects.NumMemoryIndexes());
 
 		sz.Init();
-		gcObjects.PrintStackPointers(&sz);
+		gcObjects.PrintStackPointers(&sz, false);
 		AssertString("\
 0: Pointer [CTestObject:3 Rx (CC, D, CA, CI, CC)]\n", sz.Text());
 		sz.Kill();
@@ -304,7 +304,7 @@ void TestObjectFreeStackWithCyclicHeapPointerRootFrom(void)
 		pRoot->Add(pObject1);
 
 		sz.Init();
-		gcObjects.PrintStackPointers(&sz);
+		gcObjects.PrintStackPointers(&sz, false);
 		AssertString("\
 0: Pointer [CTestObject:1 R2 (CC, D, CA, CI, CC)]\n\
 1: Pointer [CTestObject:2 R3 (CC, D, CA, CI, CC)]\n\
@@ -321,7 +321,7 @@ void TestObjectFreeStackWithCyclicHeapPointerRootFrom(void)
 		AssertSize(4, gcObjects.NumMemoryIndexes());
 
 		sz.Init();
-		gcObjects.PrintStackPointers(&sz);
+		gcObjects.PrintStackPointers(&sz, false);
 		AssertString("\
 0: Pointer [CRoot:3:\"GraphRoot\" R0 (CC, D, CA, CI, CC)]\n", sz.Text());
 		sz.Kill();
@@ -333,7 +333,7 @@ void TestObjectFreeStackWithCyclicHeapPointerRootFrom(void)
 		AssertSize(4, gcObjects.NumMemoryIndexes());
 
 		sz.Init();
-		gcObjects.PrintStackPointers(&sz);
+		gcObjects.PrintStackPointers(&sz, false);
 		AssertString("", sz.Text());
 		sz.Kill();
 	}
