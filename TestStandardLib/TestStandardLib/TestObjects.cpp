@@ -95,7 +95,7 @@ void TestObjectsInMemoryIteration(void)
 	AssertLong(INVALID_O_INDEX, oi);
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -173,7 +173,7 @@ void TestObjectsObjectSave(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	cFileUtil.RemoveDir(szDirectory);
 }
@@ -217,7 +217,7 @@ void TestObjectsFlushNoClear(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -259,7 +259,7 @@ void TestObjectsFlushDurable(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 
 	AssertFile("Input" _FS_ "Dehollowfication" _FS_ "48_0.DAT",     "Output" _FS_ "Flush2" _FS_ "48_0.DAT");
@@ -315,7 +315,7 @@ void TestObjectsEvict(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
@@ -338,7 +338,7 @@ void TestObjectsEvict(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
@@ -367,7 +367,7 @@ void TestObjectsEvict(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
@@ -391,7 +391,7 @@ void TestObjectsEvict(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -438,7 +438,7 @@ void TestObjectsObjectKillInGraph(void)
 	AssertPointer(pcNS2->mszString.Object(), pcS2);
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -483,7 +483,7 @@ void TestObjectsArrayKillInGraph(void)
 	AssertLong(2, gcObjects.NumMemoryIndexes());
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -493,14 +493,14 @@ void TestObjectsArrayKillInGraph(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectsObjectKillInArrayInGraph(void)
 {
+	ObjectsInit();
+	
 	Ptr<CTestNamedString>	cNS1;
 	Ptr<CArrayObject>		cA1;
 	Ptr<CArrayObject>		cA2;
 	Ptr<CRoot>				pRoot;
 	Ptr<CString>			cS1;
-
-	ObjectsInit();
-
+		
 	pRoot = ORoot();
 
 	cS1 = OMalloc<CString>("CS1");
@@ -528,8 +528,11 @@ void TestObjectsObjectKillInArrayInGraph(void)
 	AssertInt(0, cA1->NumPointerTos());
 	AssertInt(0, cA2->NumPointerTos());
 
+	cA1 = NULL;
+	cA2 = NULL;
+
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -570,7 +573,7 @@ void TestObjectDehollowfication(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -612,7 +615,7 @@ void TestObjectDehollowfication(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -670,7 +673,7 @@ void TestObjectsFlushClearGetByOid(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -722,7 +725,7 @@ void TestObjectsFlushClearGetByName(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -771,7 +774,7 @@ void TestObjectsFlushRemovesStackPointers(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 

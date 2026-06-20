@@ -39,7 +39,7 @@ void TestSetObjectAdd(void)
 	AssertTrue(pSaveable.IsNotNull());
 	AssertInt(7, pSaveable->miInt);
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -61,7 +61,7 @@ void TestSetObjectGet(void)
 	AssertInt(7, pacStuff->UnsafeGet(0)->miInt);
 	AssertInt(3, pacStuff->UnsafeGet(1)->miInt);
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -91,7 +91,7 @@ void TestSetObjectAddAll(void)
 	AssertInt(3, pacMore->UnsafeGet(1)->miInt);
 	AssertInt(5, pacMore->UnsafeGet(2)->miInt);
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -123,7 +123,7 @@ void TestSetObjectRemove(void)
 	AssertInt(3, pacStuff->UnsafeGet(1)->miInt);
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -165,7 +165,7 @@ void TestSetObjectKillCyclic(void)
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pTest3->GetDistToRoot());
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -205,7 +205,7 @@ void TestSetObjectKillAll(void)
 	pSet->Kill();
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -245,7 +245,7 @@ void TestSetObjectRemoveAll(void)
 	pSet->Kill();
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -289,7 +289,7 @@ void TestSetObjectSerialisation(void)
 	cSerialiser.Kill();
 	cWriter.Kill();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	AssertNull(&pSet);
 	ObjectsInit();
 
@@ -302,7 +302,7 @@ void TestSetObjectSerialisation(void)
 
 	pSet = NULL;
 
-	ObjectsKill();
+	ObjectsKill(false);
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 }
@@ -472,7 +472,7 @@ void TestSetObjectObjectInternalSerialisation(size uiNumSetItems)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -595,7 +595,7 @@ void TestSetObjectObjectInternalSerialisation(size uiNumSetItems)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	cIndexTriIndices.Kill();
 }
@@ -750,7 +750,7 @@ void TestSetObjectObjectMorphSetEntry(size uiNumElements)
 		asFreedNotifiers.Kill();
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -788,7 +788,7 @@ void TestSetObjectEmbeddedOnHeapKill(void)
 		AssertTrue(sFreedNotifier1.bFreed);
 		AssertTrue(sFreedNotifier2.bFreed);
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -827,7 +827,7 @@ void TestSetObjectEmbeddedOnStackKill(void)
 	AssertTrue(sFreedNotifier1.bFreed);
 	AssertTrue(sFreedNotifier2.bFreed);
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -867,7 +867,7 @@ void TestSetObjectEmbeddedInObjectsKill(void)
 	AssertFalse(sFreedNotifier2.bFreed);
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 
 	AssertTrue(sFreedNotifier1.bFreed);
 	AssertTrue(sFreedNotifier2.bFreed);

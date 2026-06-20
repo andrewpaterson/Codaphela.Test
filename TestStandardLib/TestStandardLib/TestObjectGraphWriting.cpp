@@ -106,6 +106,12 @@ void TestObjectGraphWritingStackIsNotWritten(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
+	pObj0.Kill();
+	pObj1.Kill();
+	pObj2.Kill();
+	pObj3.Kill();
+	pRoot = NULL;
+
 	ObjectsKill();
 
 	AssertNull(&pObj0);
@@ -113,12 +119,12 @@ void TestObjectGraphWritingStackIsNotWritten(void)
 	AssertNull(&pObj2);
 	AssertNull(&pObj3);
 
-
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 
+	pRoot = ORoot();
 	pObj0 = gcObjects.Get(oi0);
 	pObj1 = gcObjects.Get(oi1);
 	pObj2 = gcObjects.Get(oi2);
@@ -132,6 +138,12 @@ void TestObjectGraphWritingStackIsNotWritten(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
+	pObj0 = NULL;
+	pObj1 = NULL;
+	pObj2 = NULL;
+	pObj3 = NULL;
+	pRoot = NULL;
+	
 	ObjectsKill();
 
 	DataIOKill();

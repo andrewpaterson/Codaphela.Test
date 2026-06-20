@@ -101,7 +101,7 @@ void TestNamedObjectName(void)
 	pcDatabase->Close();
 	SafeKill(pcSequence);
 	SafeKill(pcDatabase);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	AssertNull(pNamed1.Object());
 	AssertNull(pNamed2.Object());
@@ -139,7 +139,7 @@ void TestNamedObjectName(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	cFileUtil.RemoveDir(szDirectory);
 }
@@ -214,7 +214,7 @@ void TestNamedOjectReuse(EIndexWriteThrough eWriteThrough)
 	pcDatabase->Close();
 	SafeKill(pcSequence);
 	SafeKill(pcDatabase);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	AssertNull(pNamed1.Object());
 	AssertNull(pNamed2.Object());
@@ -240,7 +240,7 @@ void TestNamedOjectReuse(EIndexWriteThrough eWriteThrough)
 	pcDatabase->Close();
 	SafeKill(pcSequence);
 	SafeKill(pcDatabase);
-	ObjectsKill();
+	ObjectsKill(false);
 
 
 	cFileUtil.RemoveDir(szDirectory);

@@ -134,6 +134,11 @@ void TestPointerAssignmentSimple()
 	AssertNotNull(&pcObject1);
 	AssertLong(2, gcObjects.NumMemoryIndexes());
 
+	pcObject1 = NULL;
+
+	AssertNull(&pcObject1);
+	AssertLong(0, gcObjects.NumMemoryIndexes());
+
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -157,7 +162,7 @@ void TestPointerAssignmentStackToObjectPointer()
 	AssertLong(3, gcObjects.GetStackPointers()->NumElements());
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 
 	AssertTrue(pObject.IsNull());
 	AssertTrue(pInteger.IsNull());
@@ -183,7 +188,7 @@ void TestPointerAssignmentObjectToObjectPointer()
 	AssertLong(3, gcObjects.GetStackPointers()->NumElements());
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 
 	AssertTrue(pObject.IsNull());
 	AssertTrue(pInteger.IsNull());
@@ -237,6 +242,8 @@ void TestPointerHeapNotInGraphFreeStack(void)
 	AssertInt(0, pcTest2->NumHeapFroms());
 	AssertInt(1, pcTest2->NumStackFroms());
 	AssertInt(1, pcTest2->NumPointerTos());
+
+	pTest2 = NULL;
 
 	ObjectsFlush();
 	ObjectsKill();

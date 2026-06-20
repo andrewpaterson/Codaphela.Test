@@ -102,6 +102,8 @@ void TestClassDefinition(void)
 	AssertTrue(pcField->IsUnmanaged());
 	AssertInt(OBJECT_SIZE + 216, pcField->GetOffset());
 
+	pTestClass = NULL;
+
 	ObjectsKill();
 	DataIOKill();
 }
@@ -224,6 +226,8 @@ void TestClassName(void)
 
 	pcConstructable = &pTestClass1;
 	AssertString("CTestClass", pcConstructable->ClassName());
+
+	pTestClass1 = NULL;
 
 	ObjectsKill();
 	DataIOKill();

@@ -56,7 +56,7 @@ void TestObjectsEvictVsKillUserEvictAfterSave(EIndexWriteThrough eWriteThrough)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 

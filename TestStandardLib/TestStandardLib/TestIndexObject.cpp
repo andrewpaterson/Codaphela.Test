@@ -58,7 +58,7 @@ void TestIndexObjectPut(void)
 		AssertPointer(&sNotifier1, pTest3->mpsFreedNotifier);
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -99,7 +99,7 @@ void TestIndexObjectDetachInHeap(void)
 		AssertTrue(sNotifier3.bFreed);
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -177,7 +177,7 @@ void TestIndexObjectIterateSafeNull(void)
 		AssertNull(&pPtr);
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -242,7 +242,7 @@ void TestIndexObjectIterateUnsafeNull(void)
 		AssertNull(pcObject);
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -289,7 +289,7 @@ void TestIndexObjectRemove(void)
 		AssertFalse(sNotifier3.bFreed);
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -335,7 +335,7 @@ void TestIndexObjectDetachOnStack(void)
 		AssertTrue(sNotifier3.bFreed);
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -382,7 +382,7 @@ void TestIndexObjectGetPointerTos(void)
 		apcTos.Kill();
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -455,7 +455,7 @@ void TestIndexObjectPointerFromsHeap(void)
 		AssertSize(0, pIndex->NumElements());
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -530,7 +530,7 @@ void TestIndexObjectPointerFromsStack(void)
 		pTest3 = NULL;
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -572,7 +572,7 @@ void TestIndexObjectPutOverwrite(void)
 		AssertTrue(sNotifier2.bFreed);
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -621,7 +621,7 @@ void TestIndexObjectSerialisation()
 		cSerialiser.Kill();
 		cWriter.Kill();
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 	ObjectsInit();
 	{
 		CPointer						pPointer1;
@@ -666,7 +666,7 @@ void TestIndexObjectSerialisation()
 		pIndexObject = NULL;
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 	DataOrderersKill();
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
@@ -689,7 +689,7 @@ void TestIndexObjectConstructorExists(void)
 	AssertNotNull(pcIndexObject);
 	AssertString("CIndexObject", pcIndexObject->ClassName());
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -711,7 +711,7 @@ void TestIndexObjectClassExists(void)
 	AssertNotNull(pcClass);
 	AssertString("CIndexObject", pcClass->GetName());
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -791,7 +791,7 @@ void TestIndexObjectMorphInto(void)
 		AssertPointer(&pTest5, &pPtr);
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -828,7 +828,7 @@ void TestIndexObjectEmbeddedOnHeapKill(void)
 		AssertTrue(sFreedNotifier1.bFreed);
 		AssertTrue(sFreedNotifier2.bFreed);
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -867,7 +867,7 @@ void TestIndexObjectEmbeddedOnStackKill(void)
 	AssertTrue(sFreedNotifier1.bFreed);
 	AssertTrue(sFreedNotifier2.bFreed);
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -907,7 +907,7 @@ void TestIndexObjectEmbeddedInObjectsKill(void)
 	AssertFalse(sFreedNotifier2.bFreed);
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 
 	AssertTrue(sFreedNotifier1.bFreed);
 	AssertTrue(sFreedNotifier2.bFreed);

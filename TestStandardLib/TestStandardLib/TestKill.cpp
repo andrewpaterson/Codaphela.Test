@@ -44,6 +44,8 @@ void TestKillSelfPointer1(void)
 
 	AssertLong(2, gcObjects.NumMemoryIndexes());
 
+	pRoot = NULL;
+
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -81,6 +83,9 @@ void TestKillSelfPointer2(void)
 	pObject = NULL;
 	AssertLong(2, gcObjects.NumMemoryIndexes());
 
+	pRoot = NULL;
+	AssertLong(2, gcObjects.NumMemoryIndexes());
+
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -112,6 +117,11 @@ void TestKillLongCyclicSelfPointer(void)
 	//pObject should be destroyed here and not cause a stack overflow.
 	bResult = pRoot->Remove(pObjectBase);
 	AssertTrue(bResult);
+
+	pRoot = NULL;
+	pObject1 = NULL;
+	pObjectBase = NULL;
+	AssertLong(2, gcObjects.NumMemoryIndexes());
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -284,11 +294,13 @@ void TestKillBestPractice(void)
 	AssertString("012345678901234", sJeepBefore.cPicture.mszPretenedImAPicture);
 	AssertString("Alas I am Dead!", sJeepAfter.cPicture.mszPretenedImAPicture);
 
+	pRoot = NULL;
+
 	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -427,7 +439,7 @@ void TestKillCanFindRoot(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 

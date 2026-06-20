@@ -70,7 +70,7 @@ void TestStringDirty(void)
 		SafeKill(pcDatabase);
 		SafeKill(pcSequence);
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 	AssertNull(&pString1);
 
 
@@ -89,6 +89,7 @@ void TestStringDirty(void)
 		SafeKill(pcDatabase);
 		SafeKill(pcSequence);
 	}
+	pString1 = NULL;
 	ObjectsKill();
 
 	DataIOKill();
@@ -104,15 +105,10 @@ void TestStringDirty(void)
 //////////////////////////////////////////////////////////////////////////
 void TestStringMemoryIterate(void)
 {
-	OIndex						oiContainer;
+	CFileUtil					cFileUtil;
+	char						szDirectory[] = "Output" _FS_ "String" _FS_ "Database2";
 	CCodabase*					pcDatabase;
 	CSequence*					pcSequence;
-	CFileUtil					cFileUtil;
-	SIndexesIterator			sIter;
-	OIndex						oi;
-	CPointer					pcBaseObject;
-	uint64						uiExpected;
-	char						szDirectory[] = "Output" _FS_ "String" _FS_ "Database2";
 
 	cFileUtil.RemoveDir(szDirectory);
 	MemoryInit();
@@ -127,6 +123,11 @@ void TestStringMemoryIterate(void)
 	{
 		Ptr<CTestEmbeddedStrings>	pContainer;
 		Ptr<CRoot>					pRoot;
+		OIndex						oiContainer;
+		SIndexesIterator			sIter;
+		OIndex						oi;
+		CPointer					pcBaseObject;
+		uint64						uiExpected;
 
 		TestStringAddConstructors();
 
@@ -258,6 +259,7 @@ void TestStringEmbeddedDirty(void)
 		SafeKill(pcDatabase);
 		SafeKill(pcSequence);
 	}
+	pString1 = NULL;
 	ObjectsKill();
 
 
@@ -303,7 +305,7 @@ void TestStringEmbeddedDirty(void)
 		SafeKill(pcDatabase);
 		SafeKill(pcSequence);
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 	AssertNull(&pString1);
 	AssertNull(&pString2);
 	AssertNull(&pString3);

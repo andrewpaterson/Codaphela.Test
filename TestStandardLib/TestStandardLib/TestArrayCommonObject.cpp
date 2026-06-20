@@ -76,7 +76,7 @@ void TestArrayCommonObjectPointerRemapping(void)
 	AssertInt(0, pObject3->NumPointerTos());
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -155,7 +155,7 @@ void TestArrayCommonObjectMorphInto(void)
 		AssertPointer(&pTest5, &pPtr);
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 //////////////////////////////////////////////////////////////////////////

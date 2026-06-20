@@ -66,7 +66,7 @@ void TestHollowObjectAllocation(void)
 	pcDatabase->Close();
 	SafeKill(pcSequence);
 	SafeKill(pcDatabase);
-	ObjectsKill();
+	ObjectsKill(false);
 
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
@@ -91,7 +91,7 @@ void TestHollowObjectAllocation(void)
 	pcDatabase->Close();
 	SafeKill(pcSequence);
 	SafeKill(pcDatabase);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	cFileUtil.RemoveDir(szDirectory);
 }
@@ -152,7 +152,7 @@ void TestHollowObjectMemoryIteration(void)
 	pcDatabase->Close();
 	SafeKill(pcSequence);
 	SafeKill(pcDatabase);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	AssertTrue(sFreeNotifider1.bFreed);
 	AssertTrue(sFreeNotifider2.bFreed);
@@ -183,7 +183,7 @@ void TestHollowObjectMemoryIteration(void)
 	pcDatabase->Close();
 	SafeKill(pcSequence);
 	SafeKill(pcDatabase);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	cFileUtil.RemoveDir(szDirectory);
 }

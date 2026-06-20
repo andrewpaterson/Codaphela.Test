@@ -88,6 +88,8 @@ void TestObjectDirtySimplePrimitiveAssignment(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
+
+	pObject = NULL;
 	ObjectsKill();
 
 
@@ -143,7 +145,7 @@ void TestObjectDirtyOnPrimitiveAssignment(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 	AssertNull(&pObject);
 
 
@@ -160,7 +162,7 @@ void TestObjectDirtyOnPrimitiveAssignment(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 
 	DataIOKill();
@@ -217,7 +219,7 @@ void TestObjectDirtyOnPointerAssignment(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	AssertNull(&pObject1);
 	AssertNull(&pObject2);
@@ -242,7 +244,7 @@ void TestObjectDirtyOnPointerAssignment(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 
 	DataIOKill();
@@ -395,7 +397,7 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 	AssertNull(&pObject);
 
 
@@ -410,7 +412,7 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 	AssertNull(&pObject);
 
 
@@ -462,6 +464,9 @@ void TestObjectDirtyString(void)
 	AssertFalse(pObject.IsDirty());
 	pObject->mString1.Insert(1, "25");
 	AssertString("R25.00", pObject->mString1.Text());
+
+	pObject = NULL;
+	pRoot = NULL;
 
 	ObjectsFlush();
 	pcDatabase->Close();

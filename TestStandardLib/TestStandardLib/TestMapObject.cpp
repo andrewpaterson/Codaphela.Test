@@ -70,7 +70,7 @@ void TestMapObjectPut(void)
 		AssertPointer(&sNotifier1, pValue3->mpsFreedNotifier);
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -119,7 +119,7 @@ void TestMapObjectDetachInHeap(void)
 		AssertTrue(sNotifier6.bFreed);
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -164,7 +164,7 @@ void TestMapObjectKillOnStack(void)
 		AssertTrue(sNotifier6.bFreed);
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -205,7 +205,7 @@ void TestMapObjectMapEntry(void)
 	AssertTrue(sNotifier4.bFreed);
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -290,7 +290,7 @@ void TestMapObjectIterate(void)
 		AssertFalse(cEntry.Exists());
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -356,7 +356,7 @@ void TestMapObjectRemove(void)
 		AssertFalse(sNotifier6.bFreed);
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -413,7 +413,7 @@ void TestMapObjectDetachOnStack(void)
 		AssertTrue(sNotifier6.bFreed);
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -481,7 +481,7 @@ void TestMapObjectGetPointerTos(void)
 		apcTos.Kill();
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -585,7 +585,7 @@ void TestMapObjectPointerFromsHeap(void)
 		AssertSize(0, pMap->NumElements());
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -696,7 +696,7 @@ void TestMapObjectPointerFromsStack(void)
 		AssertSize(0, cMap.NumElements());
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -741,7 +741,7 @@ void TestMapObjectPutOverwrite(void)
 		AssertTrue(sNotifier2.bFreed);
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -790,7 +790,7 @@ void TestMapObjectExternalSerialisation()
 		cSerialiser.Kill();
 		cWriter.Kill();
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 	ObjectsInit();
 	{
 		Ptr<CString>					pKey1;
@@ -858,7 +858,7 @@ void TestMapObjectExternalSerialisation()
 		pMapObject = NULL;
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 	DataOrderersKill();
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
@@ -881,7 +881,7 @@ void TestMapObjectConstructorExists(void)
 	AssertNotNull(pcMapObject);
 	AssertString("CMapObject", pcMapObject->ClassName());
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -909,7 +909,7 @@ void TestMapObjectClassExists(void)
 		pcMapPtrPtr = pcMapUnknownUnknown->GetPointerMap();
 		AssertNotNull(pcMapPtrPtr);
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -1002,7 +1002,7 @@ void TestMapObjectMorphInto(void)
 		AssertPointer(&pValue5, &pPtr);
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -1096,7 +1096,7 @@ void TestMapObjectInternalSerialisation(size uiNumMapItems)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -1172,7 +1172,7 @@ void TestMapObjectInternalSerialisation(size uiNumMapItems)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -1216,7 +1216,7 @@ void TestMapObjectEmbeddedOnHeapKill(void)
 		AssertTrue(sFreedNotifier1.bFreed);
 		AssertTrue(sFreedNotifier2.bFreed);
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -1261,7 +1261,7 @@ void TestMapObjectEmbeddedOnStackKill(void)
 	AssertTrue(sFreedNotifier1.bFreed);
 	AssertTrue(sFreedNotifier2.bFreed);
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -1307,7 +1307,7 @@ void TestMapObjectEmbeddedInObjectsKill(void)
 	AssertFalse(sFreedNotifier2.bFreed);
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 
 	AssertTrue(sFreedNotifier1.bFreed);
 	AssertTrue(sFreedNotifier2.bFreed);

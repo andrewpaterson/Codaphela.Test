@@ -157,7 +157,7 @@ void TestDehollowficationFromDatabaseSimple(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -179,7 +179,7 @@ void TestDehollowficationFromDatabaseSimple(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -213,7 +213,7 @@ void TestDehollowficationFromDatabaseComplex(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -234,7 +234,7 @@ void TestDehollowficationFromDatabaseComplex(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -348,7 +348,7 @@ void TestDehollowficationFromDatabaseComplex(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	AssertTrue(pRoot.IsNull());
 	AssertTrue(pDouble.IsNull());
@@ -387,7 +387,7 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -429,7 +429,7 @@ void TestDehollowficationFromDatabaseOfTwoPointers(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	cFileUtil.RemoveDir(szDirectory);
 }
@@ -459,7 +459,7 @@ void TestDehollowficationFromChunkFileSource(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 	cFileUtil.RemoveDir(szDirectory);
 
 	CObjectSourceChunked* pcObjectSourceChunked;
@@ -500,7 +500,7 @@ void TestDehollowficationFromChunkFileSource(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -587,7 +587,7 @@ void TestDehollowficationFatFromDatabaseSimple(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -653,7 +653,7 @@ void TestDehollowficationFatFromDatabaseSimple(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 
 	cFileUtil.RemoveDir(szDirectory);

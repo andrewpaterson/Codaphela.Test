@@ -19,7 +19,8 @@ void TestDistToStackSimpleOneStep(void)
 
 	Ptr<CPointerContainer>	p1 = ONMalloc<CPointerContainer>("Pointer A");
 	Ptr<CPointerContainer>	p2 = ONMalloc<CPointerContainer>("Pointer B");
-	Ptr<CPointerContainer> p3 = ONMalloc<CPointerContainer>("Pointer C");
+	Ptr<CPointerContainer>	p3 = ONMalloc<CPointerContainer>("Pointer C");
+
 	AssertInt(0, p2->NumHeapFroms());
 	AssertInt(0, p1->NumHeapFroms());
 	AssertInt(0, p3->NumHeapFroms());
@@ -65,6 +66,9 @@ void TestDistToStackSimpleOneStep(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	p1 = NULL;
+	p2 = NULL;
+
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -80,7 +84,7 @@ void TestDistToStackSimpleTwoStep(void)
 
 	Ptr<CPointerContainer>	p1 = ONMalloc<CPointerContainer>("Pointer A");
 	Ptr<CPointerContainer>	p2 = ONMalloc<CPointerContainer>("Pointer B");
-	Ptr<CPointerContainer> p3 = ONMalloc<CPointerContainer>("Pointer C");
+	Ptr<CPointerContainer>	p3 = ONMalloc<CPointerContainer>("Pointer C");
 	AssertInt(3, (int)gcObjects.NumMemoryIndexes());
 	AssertInt(0, p2->NumHeapFroms());
 
@@ -129,6 +133,9 @@ void TestDistToStackSimpleTwoStep(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	p1 = NULL;
+	p2 = NULL;
+
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -142,15 +149,15 @@ void TestDistToStackSimpleHeap(void)
 {
 	ObjectsInit();
 
-	CPointerContainer*		pc2;
-	CPointerContainer*		pc3;
+	CPointerContainer*			pc2;
+	CPointerContainer*			pc3;
 
 	CDistCalculatorParameters	cParameters;
 	CDistToStackCalculator		cDistToStackCalculator;
 
 	Ptr<CPointerContainer>	p1 = ONMalloc<CPointerContainer>("Pointer A");
 	Ptr<CPointerContainer>	p2 = ONMalloc<CPointerContainer>("Pointer B");
-	Ptr<CPointerContainer> p3 = ONMalloc<CPointerContainer>("Pointer C");
+	Ptr<CPointerContainer>	p3 = ONMalloc<CPointerContainer>("Pointer C");
 
 	AssertInt(3, (int)gcObjects.NumMemoryIndexes());
 	AssertInt(0, p2->NumHeapFroms());
@@ -209,6 +216,10 @@ void TestDistToStackSimpleHeap(void)
 
 	cParameters.Kill();
 
+	p1 = NULL;
+	p2 = NULL;
+	p3 = NULL;
+
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -225,9 +236,9 @@ void TestDistToStackRootCyclicWithStackPointerA(void)
 	CDistToRootCalculator		cDistToRootCalculator;
 	CDistToStackCalculator		cDistToStackCalculator;
 	CDistCalculatorParameters	cDistParameters;
-	CPointerContainer*		pc1;
-	CPointerContainer*		pc2;
-	CPointerContainer*		pc3;
+	CPointerContainer*			pc1;
+	CPointerContainer*			pc2;
+	CPointerContainer*			pc3;
 
 	Ptr<CPointerContainer>	p1 = ONMalloc<CPointerContainer>("Pointer A");
 	Ptr<CPointerContainer>	p2 = ONMalloc<CPointerContainer>("Pointer B");
@@ -279,6 +290,10 @@ void TestDistToStackRootCyclicWithStackPointerA(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	p0 = NULL;
+	pRoot = NULL;
+	pStack = NULL;
+
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -295,9 +310,9 @@ void TestDistToStackRootCyclicWithStackPointerB(void)
 	CDistToRootCalculator		cDistToRootCalculator;
 	CDistToStackCalculator		cDistToStackCalculator;
 	CDistCalculatorParameters	cDistParameters;
-	CPointerContainer*		pc1;
-	CPointerContainer*		pc2;
-	CPointerContainer*		pc3;
+	CPointerContainer*			pc1;
+	CPointerContainer*			pc2;
+	CPointerContainer*			pc3;
 
 	Ptr<CPointerContainer>	p1 = ONMalloc<CPointerContainer>("Pointer A");
 	Ptr<CPointerContainer>	p2 = ONMalloc<CPointerContainer>("Pointer B");
@@ -306,7 +321,7 @@ void TestDistToStackRootCyclicWithStackPointerB(void)
 	p2->mp = p3;
 	p3->mp = p1;
 
-	Ptr<CRoot> pRoot = ORoot();
+	Ptr<CRoot>				pRoot = ORoot();
 	Ptr<CPointerContainer>	p0 = ONMalloc<CPointerContainer>("Test Helper", p1);
 	pRoot->Add(p0);
 
@@ -347,6 +362,10 @@ void TestDistToStackRootCyclicWithStackPointerB(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	p0 = NULL;
+	pRoot = NULL;
+	pStack = NULL;
+
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -363,9 +382,9 @@ void TestDistToStackRootCyclicWithStackPointerC(void)
 	CDistToRootCalculator		cDistToRootCalculator;
 	CDistToStackCalculator		cDistToStackCalculator;
 	CDistCalculatorParameters	cDistParameters;
-	CPointerContainer*		pc1;
-	CPointerContainer*		pc2;
-	CPointerContainer*		pc3;
+	CPointerContainer*			pc1;
+	CPointerContainer*			pc2;
+	CPointerContainer*			pc3;
 
 	Ptr<CPointerContainer>	p1 = ONMalloc<CPointerContainer>("Pointer A");
 	Ptr<CPointerContainer>	p2 = ONMalloc<CPointerContainer>("Pointer B");
@@ -374,7 +393,7 @@ void TestDistToStackRootCyclicWithStackPointerC(void)
 	p2->mp = p3;
 	p3->mp = p1;
 
-	Ptr<CRoot> pRoot = ORoot();
+	Ptr<CRoot>				pRoot = ORoot();
 	Ptr<CPointerContainer>	p0 = ONMalloc<CPointerContainer>("Test Helper", p1);
 	pRoot->Add(p0);
 
@@ -415,6 +434,10 @@ void TestDistToStackRootCyclicWithStackPointerC(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	p0 = NULL;
+	pRoot = NULL;
+	pStack = NULL;
+
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -431,9 +454,9 @@ void TestDistToStackRootCyclicWithoutStackPointer(void)
 	CDistToRootCalculator		cDistToRootCalculator;
 	CDistToStackCalculator		cDistToStackCalculator;
 	CDistCalculatorParameters	cDistParameters;
-	CPointerContainer*		pc1;
-	CPointerContainer*		pc2;
-	CPointerContainer*		pc3;
+	CPointerContainer*			pc1;
+	CPointerContainer*			pc2;
+	CPointerContainer*			pc3;
 
 	Ptr<CPointerContainer>	p1 = ONMalloc<CPointerContainer>("Pointer A");
 	Ptr<CPointerContainer>	p2 = ONMalloc<CPointerContainer>("Pointer B");
@@ -442,7 +465,7 @@ void TestDistToStackRootCyclicWithoutStackPointer(void)
 	p2->mp = p3;
 	p3->mp = p1;
 
-	Ptr<CRoot> pRoot = ORoot();
+	Ptr<CRoot>				pRoot = ORoot();
 	Ptr<CPointerContainer>	p0 = ONMalloc<CPointerContainer>("Test Helper", p1);
 	pRoot->Add(p0);
 
@@ -501,6 +524,9 @@ void TestDistToStackRootCyclicWithoutStackPointer(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	p0 = NULL;
+	pRoot = NULL;
+
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -522,8 +548,8 @@ void TestDistToStackSplitRootAndStack(void)
 	CTestObject*				pcTestL2;
 	CTestObject*				pcTestR1;
 	CTestObject*				pcTestR2;
-	CPointerContainer*		pcC;
-	CPointerContainer*		pcL1;
+	CPointerContainer*			pcC;
+	CPointerContainer*			pcL1;
 
 	Ptr<CTestObject>	pTestC = OMalloc<CTestObject>();
 	Ptr<CTestObject>	pTestL1 = OMalloc<CTestObject>();
@@ -593,6 +619,9 @@ void TestDistToStackSplitRootAndStack(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	pRoot = NULL;
+	pStack = NULL;
+
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -655,6 +684,8 @@ void TestDistToStackSetWithoutStackPointers(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	pRoot = NULL;
+
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -708,8 +739,6 @@ void TestDistToStackSetWithStackPointers(void)
 	AssertInt(1, cDistParameters.NumCompletelyDetached());
 	AssertPointer(pcSet, cDistParameters.GetCompletelyDetached(0));
 
-
-
 	AssertLong(5, gcObjects.NumMemoryIndexes());
 	gcObjects.Remove(cDistParameters.GetCompletelyDetachedArray());
 	AssertLong(4, gcObjects.NumMemoryIndexes());
@@ -717,6 +746,9 @@ void TestDistToStackSetWithStackPointers(void)
 	cDistParameters.Kill();
 
 	gcObjects.ValidateObjectsConsistency();
+
+	pTest = NULL;
+	pRoot = NULL;
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -820,6 +852,8 @@ void TestDistToStackSetBroken(void)
 
 	gcObjects.ValidateObjectsConsistency();
 
+	pRoot = NULL;
+
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -869,6 +903,8 @@ void TestDistToStackNoStackHeapFromBroken(void)
 	AssertInt(0, pcTest2->NumHeapFroms());
 	AssertInt(1, pcTest2->NumStackFroms());
 	AssertInt(1, pcTest2->NumPointerTos());
+
+	pTest2 = NULL;
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -931,6 +967,8 @@ void TestDistToStackNoHeapA(void)
 	AssertInt(1, pcTest2->NumStackFroms());
 	AssertInt(0, pcTest2->NumPointerTos());
 
+	pTest2 = NULL;
+
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -986,6 +1024,8 @@ void TestDistToStackNoHeapB(void)
 	AssertInt(0, pcTest2->NumHeapFroms());
 	AssertInt(1, pcTest2->NumStackFroms());
 	AssertInt(0, pcTest2->NumPointerTos());
+
+	pTest2 = NULL;
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -1065,11 +1105,11 @@ void TestDistToStackCyclicWithScenarioA(void)
 	CDistCalculatorParameters	cParameters;
 	CDistToStackCalculator		cDistToStackCalculator;
 
-	Ptr<CTestObject> pTest1 = OMalloc<CTestObject>();
-	Ptr<CTestTriPointerObject> pTest2 = OMalloc<CTestTriPointerObject>();
-	Ptr<CTestTriPointerObject> pTest3 = OMalloc<CTestTriPointerObject>();
-	Ptr<CTestObject> pTest4 = OMalloc<CTestObject>();
-	Ptr<CTestObject> pTest5 = OMalloc<CTestObject>();
+	Ptr<CTestObject>			pTest1 = OMalloc<CTestObject>();
+	Ptr<CTestTriPointerObject>	pTest2 = OMalloc<CTestTriPointerObject>();
+	Ptr<CTestTriPointerObject>	pTest3 = OMalloc<CTestTriPointerObject>();
+	Ptr<CTestObject>			pTest4 = OMalloc<CTestObject>();
+	Ptr<CTestObject>			pTest5 = OMalloc<CTestObject>();
 
 	pcTest1 = &pTest1;
 	pcTest2 = &pTest2;
@@ -1203,6 +1243,12 @@ void TestDistToStackCyclicWithScenarioA(void)
 	cDistToStackCalculator.ResetObjectsToUnknownDistToStack(&cParameters);
 	cParameters.Kill();
 
+	pTest1 = NULL;
+	pTest2 = NULL;
+	pTest3 = NULL;
+	pTest4 = NULL;
+	pTest5 = NULL;
+
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -1214,122 +1260,123 @@ void TestDistToStackCyclicWithScenarioA(void)
 //////////////////////////////////////////////////////////////////////////
 void TestDistToStackRemoveUnbalancedLargeBroken(void)
 {
-	CDistCalculatorParameters	cParameters;
-	CDistToStackCalculator		cDistToStackCalculator;
-
-	Ptr<CRoot>					pRoot;
-	STestObjectFreedNotifier	sKilled1;
-	STestObjectFreedNotifier	sKilled2;
-	STestObjectFreedNotifier	sKilled3;
-	STestObjectFreedNotifier	sKilled4;
-	STestObjectFreedNotifier	sKilled5;
-	STestObjectFreedNotifier	sKilledTop1;
-	STestObjectFreedNotifier	sKilledTop2;
-	Ptr<CTestObject>			pTest1;
-	Ptr<CTestObject>			pTest2;
-	Ptr<CTestObject>			pTest3;
-	Ptr<CTestObject>			pTest4;
-	Ptr<CTestObject>			pTest5;
-	Ptr<CSetObject>				pSet;
-	Ptr<CTestObject>			pTop1;
-	Ptr<CTestObject>			pTop2;
-	CTestObject*				pcTest2;
-	CTestObject*				pcTest3;
-	CTestObject*				pcTest4;
-	CTestObject*				pcTest5;
-	CArrayBlockObjectPtr*		papcKilled;
-
 	ObjectsInit();
-	pRoot = ORoot();
+	{
+		CDistCalculatorParameters	cParameters;
+		CDistToStackCalculator		cDistToStackCalculator;
 
-	pTest1 = OMalloc<CTestObject>(&sKilled1);
-	pTest2 = OMalloc<CTestObject>(&sKilled2);
-	pTest3 = OMalloc<CTestObject>(&sKilled3);
-	pTest4 = OMalloc<CTestObject>(&sKilled4);
-	pTest5 = OMalloc<CTestObject>(&sKilled5);
-	pSet = OMalloc<CSetObject>(false);
-	pTop1 = OMalloc<CTestObject>(&sKilledTop1);
-	pTop2 = OMalloc<CTestObject>(&sKilledTop2);
+		Ptr<CRoot>					pRoot;
+		STestObjectFreedNotifier	sKilled1;
+		STestObjectFreedNotifier	sKilled2;
+		STestObjectFreedNotifier	sKilled3;
+		STestObjectFreedNotifier	sKilled4;
+		STestObjectFreedNotifier	sKilled5;
+		STestObjectFreedNotifier	sKilledTop1;
+		STestObjectFreedNotifier	sKilledTop2;
+		Ptr<CTestObject>			pTest1;
+		Ptr<CTestObject>			pTest2;
+		Ptr<CTestObject>			pTest3;
+		Ptr<CTestObject>			pTest4;
+		Ptr<CTestObject>			pTest5;
+		Ptr<CSetObject>				pSet;
+		Ptr<CTestObject>			pTop1;
+		Ptr<CTestObject>			pTop2;
+		CTestObject* pcTest2;
+		CTestObject* pcTest3;
+		CTestObject* pcTest4;
+		CTestObject* pcTest5;
+		CArrayBlockObjectPtr* papcKilled;
 
-	pRoot->Add(pSet);
-	pSet->Add(pTest2);
-	pSet->Add(pTop2);
+		pRoot = ORoot();
 
-	pTest2->mpTest = pTest3;
-	pTest5->mpTest = pTop1;
-	pTest4->mpTest = pTest5;
-	pTest3->mpTest = pTest4;
-	pTop1->mpTest = pTest1;
-	pTop2->mpTest = pTest1;
-	pTest1->mpTest = pTop1;
-	pTest1->mpObject = pTop2;
+		pTest1 = OMalloc<CTestObject>(&sKilled1);
+		pTest2 = OMalloc<CTestObject>(&sKilled2);
+		pTest3 = OMalloc<CTestObject>(&sKilled3);
+		pTest4 = OMalloc<CTestObject>(&sKilled4);
+		pTest5 = OMalloc<CTestObject>(&sKilled5);
+		pSet = OMalloc<CSetObject>(false);
+		pTop1 = OMalloc<CTestObject>(&sKilledTop1);
+		pTop2 = OMalloc<CTestObject>(&sKilledTop2);
 
-	AssertInt(2, pSet->GetDistToRoot());
-	AssertInt(3, pTest2->GetDistToRoot());
-	AssertInt(4, pTest3->GetDistToRoot());
-	AssertInt(5, pTest4->GetDistToRoot());
-	AssertInt(6, pTest5->GetDistToRoot());
-	AssertInt(4, pTest1->GetDistToRoot());
-	AssertInt(5, pTop1->GetDistToRoot());
-	AssertInt(3, pTop2->GetDistToRoot());
-	AssertInt(2, pSet->NumElements());
-	AssertInt(2, pSet->NumPointerTos());
+		pRoot->Add(pSet);
+		pSet->Add(pTest2);
+		pSet->Add(pTop2);
 
-	pcTest2 = &pTest2;
-	pcTest3 = &pTest3;
-	pcTest4 = &pTest4;
-	pcTest5 = &pTest5;
+		pTest2->mpTest = pTest3;
+		pTest5->mpTest = pTop1;
+		pTest4->mpTest = pTest5;
+		pTest3->mpTest = pTest4;
+		pTop1->mpTest = pTest1;
+		pTop2->mpTest = pTest1;
+		pTest1->mpTest = pTop1;
+		pTest1->mpObject = pTop2;
 
-	pTest3 = NULL;
-	pTest4 = NULL;
-	pTest5 = NULL;
+		AssertInt(2, pSet->GetDistToRoot());
+		AssertInt(3, pTest2->GetDistToRoot());
+		AssertInt(4, pTest3->GetDistToRoot());
+		AssertInt(5, pTest4->GetDistToRoot());
+		AssertInt(6, pTest5->GetDistToRoot());
+		AssertInt(4, pTest1->GetDistToRoot());
+		AssertInt(5, pTop1->GetDistToRoot());
+		AssertInt(3, pTop2->GetDistToRoot());
+		AssertInt(2, pSet->NumElements());
+		AssertInt(2, pSet->NumPointerTos());
 
-	//
-	//     Test1[3](4)  
-	//       // \\      
-	//      //   \\       
-	//   Top1(5) Top2(3)
-	//     |       |
-	//   Test5(6)  |
-	//     |       |
-	//   Test4(5)  |
-	//     |       |
-	//   Test3(4)  |
-	//     |	   |
-	// Test2[4](3) |
-	//      \     /
-	//       \   /
-	//       Set(2)
-	//        |
-	//       ...
-	//      Root(0)
-	//
+		pcTest2 = &pTest2;
+		pcTest3 = &pTest3;
+		pcTest4 = &pTest4;
+		pcTest5 = &pTest5;
 
-	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
-	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
-	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest4->GetDistToStack());
-	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest5->GetDistToStack());
+		pTest3 = NULL;
+		pTest4 = NULL;
+		pTest5 = NULL;
 
-	pSet->Remove(pcTest2);
+		//
+		//     Test1[3](4)  
+		//       // \\      
+		//      //   \\       
+		//   Top1(5) Top2(3)
+		//     |       |
+		//   Test5(6)  |
+		//     |       |
+		//   Test4(5)  |
+		//     |       |
+		//   Test3(4)  |
+		//     |	   |
+		// Test2[4](3) |
+		//      \     /
+		//       \   /
+		//       Set(2)
+		//        |
+		//       ...
+		//      Root(0)
+		//
 
-	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
-	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
-	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest4->GetDistToStack());
-	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest5->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest4->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest5->GetDistToStack());
 
-	gcObjects.ValidateObjectsConsistency();
+		pSet->Remove(pcTest2);
 
-	pcTest2->TestRemoveStackFrom(pTest2.This());
-	pTest2.UnsafeClearObject();
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest4->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest5->GetDistToStack());
 
-	cParameters.Init();
-	cDistToStackCalculator.Calculate(pcTest2, &cParameters);
+		gcObjects.ValidateObjectsConsistency();
 
-	papcKilled = cParameters.GetCompletelyDetachedArray();
-	AssertInt(4, papcKilled->NumElements());
+		pcTest2->TestRemoveStackFrom(pTest2.This());
+		pTest2.UnsafeClearObject();
 
-	cParameters.Kill();
+		cParameters.Init();
+		cDistToStackCalculator.Calculate(pcTest2, &cParameters);
 
+		papcKilled = cParameters.GetCompletelyDetachedArray();
+		AssertInt(4, papcKilled->NumElements());
+
+		cParameters.Kill();
+	}
 	ObjectsFlush();
 	ObjectsKill();
 }

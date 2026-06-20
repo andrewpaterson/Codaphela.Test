@@ -36,7 +36,7 @@ void TestArrayObjectAdd(void)
 	AssertTrue(pSaveable.IsNotNull());
 	AssertInt(7, pSaveable->miInt);
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -58,7 +58,7 @@ void TestArrayObjectGet(void)
 	AssertInt(7, pacStuff->Get(0)->miInt);
 	AssertInt(3, pacStuff->Get(1)->miInt);
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -80,7 +80,7 @@ void TestArrayObjectInsert(void)
 	AssertInt(3, pacStuff->Get(0)->miInt);
 	AssertInt(7, pacStuff->Get(1)->miInt);
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -114,7 +114,7 @@ void TestArrayObjectAddAll(void)
 	AssertInt(3, pacMore->Get(1)->miInt);
 	AssertInt(7, pacMore->Get(2)->miInt);
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -146,7 +146,7 @@ void TestArrayObjectRemove(void)
 	AssertInt(7, pacStuff->Get(1)->miInt);
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -187,7 +187,7 @@ void TestArrayObjectSneakyOnStack(void)
 	AssertTrue(sFreed.bFreed);
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -229,7 +229,7 @@ void TestArrayObjectOnStackKill(void)
 	AssertTrue(sFreed.bFreed);
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -281,7 +281,7 @@ void TestArrayObjectOnStackRemoveObject(void)
 	AssertSize(0, gcStackPointers.NumElements());
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -301,7 +301,7 @@ void TestArrayObjectConstructorExists(void)
 	AssertNotNull(pcArray);
 	AssertString("CArrayObject", pcArray->ClassName());
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -323,7 +323,7 @@ void TestArrayObjectClassExists(void)
 	AssertNotNull(pcClass);
 	AssertString("CArrayObject", pcClass->GetName());
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -371,7 +371,7 @@ void TestArrayObjectExternalSerialisation(void)
 		cSerialiser.Kill();
 		cWriter.Kill();
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 	ObjectsInit();
 	{
 		CPointer						pPointer1;
@@ -417,7 +417,7 @@ void TestArrayObjectExternalSerialisation(void)
 		pArray = NULL;
 	}
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 }
@@ -602,7 +602,7 @@ void TestArrayObjectInternalSerialisation(size uiNumArrayItems)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
@@ -698,7 +698,7 @@ void TestArrayObjectInternalSerialisation(size uiNumArrayItems)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	cMemory.Kill();
 }
@@ -737,7 +737,7 @@ void TestArrayObjectEmbeddedOnHeapKill(void)
 		AssertTrue(sFreedNotifier1.bFreed);
 		AssertTrue(sFreedNotifier2.bFreed);
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -773,7 +773,7 @@ void TestArrayObjectEmbeddedOnStackKill(void)
 	AssertTrue(sFreedNotifier1.bFreed);
 	AssertTrue(sFreedNotifier2.bFreed);
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -810,7 +810,7 @@ void TestArrayObjectEmbeddedInObjectsKill(void)
 	AssertSize(0, pcTest->NumStackFroms());
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 
 	AssertTrue(sFreedNotifier1.bFreed);
 	AssertTrue(sFreedNotifier2.bFreed);

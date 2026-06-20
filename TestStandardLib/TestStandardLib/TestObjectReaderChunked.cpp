@@ -253,7 +253,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	cFileUtil.RemoveDir(szDirectory);
 }

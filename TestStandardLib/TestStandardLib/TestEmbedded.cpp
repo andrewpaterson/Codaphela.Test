@@ -64,7 +64,7 @@ void TestEmbeddedFlags(void)
 
 	cComplex.Kill();
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -98,7 +98,7 @@ void TestEmbeddedObjectAddDistToRoot(void)
 	AssertInt(3, pHarrier->GetDistToRoot());
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -155,7 +155,7 @@ void TestEmbeddedObjectRemoveDistToRoot(void)
 	AssertInt(4, pHarrier->GetDistToRoot());
 
 	ObjectsFlush();
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -240,7 +240,7 @@ void TestEmbeddedObjectKill(void)
 	AssertLong(0, gcObjects.GetMemory()->NumIndexed());
 	AssertLong(0, gcUnknowns.NumElements());
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -283,7 +283,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	uiEmbeddedTestSize = OBJECT_SIZE + sizeof(int) + sizeof(float) + POINTER_SIZE;
 	AssertSize(sizeof(CEmbeddedTest), uiEmbeddedTestSize);
@@ -332,7 +332,7 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	pcDatabase->Close();
 	SafeKill(pcSequence);
 	SafeKill(pcDatabase);
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -374,7 +374,7 @@ void TestEmbeddedObjectPointTo(void)
 	pcDatabase->Close();
 	SafeKill(pcSequence);
 	SafeKill(pcDatabase);
-	ObjectsKill();
+	ObjectsKill(false);
 
 	AssertNull(&pContainer);
 
@@ -402,7 +402,7 @@ void TestEmbeddedObjectPointTo(void)
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -436,7 +436,7 @@ void TestEmbeddedGetEmbeddedIndex(void)
 	AssertInt(5, cComplex.GetEmbeddedIndex(&cComplex.mcContainer.mcTwo));
 	AssertInt(-1, cComplex.GetEmbeddedIndex(NULL));
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -478,7 +478,7 @@ void TestEmbeddedGetEmbeddedObject(void)
 	pcEmbedded = cComplex.ma.GetEmbeddedObject(1);
 	AssertNull(pcEmbedded);
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -528,7 +528,7 @@ void TestEmbeddedObjectClass(void)
 	AssertInt(4, cComplex.GetFieldPointerToIndex(pcPtr4));
 	AssertInt(-1, cComplex.GetFieldPointerToIndex(NULL));
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -552,7 +552,7 @@ void TestEmbeddedOjectIsAllocatedInObjects()
 	AssertFalse(cClusterMissile.mcMissile1.IsAllocatedInObjects());
 	AssertFalse(cClusterMissile.mcMissile2.IsAllocatedInObjects());
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -584,7 +584,7 @@ void TestEmbeddedObjectKillSanity(void)
 	}
 	AssertSize(0, gcObjects.NumMemoryIndexes());
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -670,7 +670,7 @@ void TestEmbeddedObjectKillFreesEmbedded(void)
 	}
 	AssertSize(0, gcObjects.NumMemoryIndexes());
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -709,7 +709,7 @@ void TestEmbeddedObjectPointedToNoRemove(void)
 	AssertTrue(sNotifierA.bFreed);
 	AssertTrue(sNotifierD.bFreed);
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 

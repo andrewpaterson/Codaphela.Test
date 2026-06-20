@@ -39,20 +39,21 @@ CPointer SetupObjectReaderSimpleFile(void)
 void WriteObjectReaderSimpleFile(void)
 {
 	ObjectsInit();
-	gcObjects.AddConstructor<CTestNamedString>();
+	{
+		gcObjects.AddConstructor<CTestNamedString>();
 
-	CPointer				cBase;
-	CMultiFileObjectWriter		cWriter;
-	CExternalObjectSerialiser	cGraphSerialiser;
+		CPointer				cBase;
+		CMultiFileObjectWriter		cWriter;
+		CExternalObjectSerialiser	cGraphSerialiser;
 
-	cBase = SetupObjectReaderSimpleFile();
+		cBase = SetupObjectReaderSimpleFile();
 
-	cWriter.Init("Output" _FS_ "ObjectReaderSimple" _FS_ "Test" _FS_, "");
-	cGraphSerialiser.Init(&cWriter);
-	AssertTrue(cGraphSerialiser.Write(cBase.BaseObject()));
-	cGraphSerialiser.Kill();
-	cWriter.Kill();
-
+		cWriter.Init("Output" _FS_ "ObjectReaderSimple" _FS_ "Test" _FS_, "");
+		cGraphSerialiser.Init(&cWriter);
+		AssertTrue(cGraphSerialiser.Write(cBase.BaseObject()));
+		cGraphSerialiser.Kill();
+		cWriter.Kill();
+	}
 	ObjectsFlush();
 	ObjectsKill();
 }
@@ -72,59 +73,60 @@ void TestObjectReaderSimpleDeserialised(void)
 
 	WriteObjectReaderSimpleFile();
 
-	CObjectReaderSimpleDisk		cReader;
-	CExternalObjectDeserialiser	cDeserialiser;
-	CPointer					cBase;
-
-	Ptr<CTestNamedString>		cNS1;
-	Ptr<CTestNamedString>		cNS2;
-	CPointer					cTemp;
-
-	CCodabase*					pcDatabase;
-	CSequence*					pcSequence;
+	CCodabase*						pcDatabase;
+	CSequence*						pcSequence;
 
 	pcSequence = CSequenceFactory::Create(szDirectory);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
+	{
+		CObjectReaderSimpleDisk			cReader;
+		CExternalObjectDeserialiser		cDeserialiser;
+		CPointer						cBase;
 
-	gcObjects.AddConstructor<CTestNamedString>();
+		Ptr<CTestNamedString>			cNS1;
+		Ptr<CTestNamedString>			cNS2;
+		CPointer						cTemp;
 
-	AssertLong(0, pcDatabase->NumIndices());
-	AssertLong(0, gcObjects.NumMemoryIndexes());
+		gcObjects.AddConstructor<CTestNamedString>();
 
-	cReader.Init("Output" _FS_ "ObjectReaderSimple" _FS_ "Test" _FS_);
-	cDeserialiser.Init(&cReader, false, &gcObjects);
-	cBase = cDeserialiser.Read("Waggy");
+		AssertLong(0, pcDatabase->NumIndices());
+		AssertLong(0, gcObjects.NumMemoryIndexes());
 
-	AssertTrue(cBase.IsNotNull());
-	AssertString("CTestNamedString", cBase->ClassName());
-	AssertString("Waggy", cBase.GetName());
-	AssertString("NS1",  ((CTestNamedString*)&cBase)->mszEmbedded.Text());
+		cReader.Init("Output" _FS_ "ObjectReaderSimple" _FS_ "Test" _FS_);
+		cDeserialiser.Init(&cReader, false, &gcObjects);
+		cBase = cDeserialiser.Read("Waggy");
 
-	AssertLong(0LL, pcDatabase->NumIndices());
-	AssertLong(2LL, gcObjects.NumMemoryIndexes());
+		AssertTrue(cBase.IsNotNull());
+		AssertString("CTestNamedString", cBase->ClassName());
+		AssertString("Waggy", cBase.GetName());
+		AssertString("NS1", ((CTestNamedString*)&cBase)->mszEmbedded.Text());
 
-	cNS1 = gcObjects.Get("Waggy");
-	AssertTrue(cNS1.IsNotNull());
-	AssertString("NS1", cNS1->mszEmbedded.Text());
+		AssertLong(0LL, pcDatabase->NumIndices());
+		AssertLong(2LL, gcObjects.NumMemoryIndexes());
 
-	cNS2 = gcObjects.Get("Dog");
-	AssertTrue(cNS2.IsNotNull());
-	AssertString("NS2", cNS2->mszEmbedded.Text());
+		cNS1 = gcObjects.Get("Waggy");
+		AssertTrue(cNS1.IsNotNull());
+		AssertString("NS1", cNS1->mszEmbedded.Text());
 
-	AssertPointer(&cNS1, &cBase);
+		cNS2 = gcObjects.Get("Dog");
+		AssertTrue(cNS2.IsNotNull());
+		AssertString("NS2", cNS2->mszEmbedded.Text());
 
-	AssertPointer(&cNS2, &cNS1->mpAnother);
-	AssertPointer(NULL, &cNS2->mpAnother);
+		AssertPointer(&cNS1, &cBase);
 
-	cDeserialiser.Kill();
-	cReader.Kill();
+		AssertPointer(&cNS2, &cNS1->mpAnother);
+		AssertPointer(NULL, &cNS2->mpAnother);
 
-	ObjectsFlush();
-	pcDatabase->Close();
-	SafeKill(pcDatabase);
-	SafeKill(pcSequence);
+		cDeserialiser.Kill();
+		cReader.Kill();
+
+		ObjectsFlush();
+		pcDatabase->Close();
+		SafeKill(pcDatabase);
+		SafeKill(pcSequence);
+	}
 	ObjectsKill();
 
 	cFileUtil.RemoveDir(szDirectory);
