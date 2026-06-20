@@ -292,6 +292,8 @@
     <ClCompile Include="TestReditectPrintf.cpp" />
     <ClCompile Include="TestScratchPad.cpp" />
     <ClCompile Include="TestScratchPadAllocator.cpp" />
+    <ClCompile Include="TestSet.cpp" />
+    <ClCompile Include="TestSetBlock.cpp" />
     <ClCompile Include="TestSorting.cpp" />
     <ClCompile Include="TestArrayBit.cpp" />
     <ClCompile Include="TestArrayTemplateEmbedded.cpp" />
@@ -372,6 +374,7 @@
     <ClCompile Include="TestFastFunctions.cpp" />
     <ClCompile Include="TestOperators.cpp" />
     <ClCompile Include="TestXMLParser.cpp" />
+    <ClCompile Include="WordKey.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArrayTemplateTestClasses.h" />
@@ -381,7 +384,6 @@
     <ClInclude Include="ParserCustomIdentifier.h" />
     <ClInclude Include="SortedTestObject.h" />
     <ClInclude Include="TestIndexTreeMemory.h" />
-    <ClInclude Include="TestMap.h" />
     <ClInclude Include="TestPackFile.h" />
     <ClInclude Include="IndexTreeCallbackTestObject.h" />
     <ClInclude Include="IndexTreeFileDataTestCallback.h" />
@@ -391,6 +393,7 @@
     <ClInclude Include="TestIndexTreeEvicting.h" />
     <ClInclude Include="TestIndexTreeFile.h" />
     <ClInclude Include="TestIndexTreeObject.h" />
+    <ClInclude Include="WordKey.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="External.xml" />

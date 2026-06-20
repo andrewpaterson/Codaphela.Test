@@ -25,6 +25,8 @@ void TestMapPtrPtr(void);
 void TestMapString(void);
 void TestMapStringIntAndPointer(void);
 void TestMap(void);
+void TestSetBlock(void);
+void TestSet(void);
 void TestIndexBlock(void);
 void TestIndexAccess(void);
 void TestIndexPtr(void);
@@ -222,6 +224,8 @@ int __cdecl main(void)
 	TestMapLong();
 	TestMapPtrPtr();
 	TestMap();
+	TestSetBlock();
+	TestSet();
 	TestMapAccess();
 	TestListBlock();
 	TestListTemplate();

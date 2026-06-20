@@ -11,7 +11,7 @@
 #include "BaseLib/DataOrderers.h"
 #include "TestLib/Words.h"
 #include "TestLib/Assert.h"
-#include "TestMap.h"
+#include "WordKey.h"
 
 
 char	gszIndexBlockCallbackData[64];

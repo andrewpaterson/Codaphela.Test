@@ -244,6 +244,12 @@
     <Filter Include="Source\Data\Geometric\Vec4">
       <UniqueIdentifier>{3aa55e09-bfec-4d7c-940f-a02fdae8ec57}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Data\Set">
+      <UniqueIdentifier>{447c2301-83a6-408d-a2c3-0eaa38d797f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Data\Common">
+      <UniqueIdentifier>{b7cac390-cea3-439d-a3c4-b86c776e2e9e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestBaseLib.cpp">
@@ -744,6 +750,15 @@
     <ClCompile Include="TestIntVec4.cpp">
       <Filter>Source\Data\Geometric\Vec4</Filter>
     </ClCompile>
+    <ClCompile Include="TestSetBlock.cpp">
+      <Filter>Source\Data\Set</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSet.cpp">
+      <Filter>Source\Data\Set</Filter>
+    </ClCompile>
+    <ClCompile Include="WordKey.cpp">
+      <Filter>Source\Data\Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">
@@ -770,9 +785,6 @@
     <ClInclude Include="TestIndexTreeMemory.h">
       <Filter>Source\Data\Index</Filter>
     </ClInclude>
-    <ClInclude Include="TestMap.h">
-      <Filter>Source\Data\Map\Map</Filter>
-    </ClInclude>
     <ClInclude Include="TestFunctionCaller.h">
       <Filter>Source\Function</Filter>
     </ClInclude>
@@ -796,6 +808,9 @@
     </ClInclude>
     <ClInclude Include="ParserCustomIdentifier.h">
       <Filter>Source\Calculator</Filter>
+    </ClInclude>
+    <ClInclude Include="WordKey.h">
+      <Filter>Source\Data\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

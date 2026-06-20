@@ -1,5 +1,5 @@
-#ifndef __TEST_MAP_H__
-#define __TEST_MAP_H__
+#ifndef __WORD_KEY_H__
+#define __WORD_KEY_H__
 #include "BaseLib/StdRandom.h"
 #include "BaseLib/ArrayChars.h"
 
@@ -7,7 +7,5 @@
 void MakeKey(CRandom* cRandom, CArrayChars* aszWords, CChars* sz);
 
 
-#endif // __TEST_MAP_H__
-
-
+#endif // __WORD_KEY_H__
 
