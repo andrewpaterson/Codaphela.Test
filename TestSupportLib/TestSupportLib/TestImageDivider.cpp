@@ -300,7 +300,7 @@ void TestImageDivider(void)
 	TestImageDividerGenerateFromNumbersWithTransparent();
 	TestImageDividerGenerateFromBorderWithTransparent();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 
 	TestStatistics();

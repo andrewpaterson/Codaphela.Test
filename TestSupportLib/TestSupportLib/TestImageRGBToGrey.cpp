@@ -67,7 +67,7 @@ void TestImageRGBToGrey(void)
 
 	TestImageRGBToGrey1();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 
 	TestStatistics();

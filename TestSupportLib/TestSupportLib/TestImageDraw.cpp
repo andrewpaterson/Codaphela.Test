@@ -202,7 +202,7 @@ void TestImageDraw(void)
 	TestImageDrawLine();
 	TestImageDrawLineExtents();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 
 	TestStatistics();

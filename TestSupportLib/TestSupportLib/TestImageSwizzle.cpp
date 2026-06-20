@@ -72,7 +72,7 @@ void TestImageSwizzle(void)
 
 	TestImageSwizzle1();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 
 	TestStatistics();

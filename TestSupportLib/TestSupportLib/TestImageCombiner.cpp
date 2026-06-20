@@ -64,7 +64,7 @@ void TestImageCombiner(void)
 
 	TestImageCombinerMask();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 	
 	TestStatistics();

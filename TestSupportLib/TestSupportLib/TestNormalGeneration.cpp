@@ -92,7 +92,7 @@ void TestMeshSmoothGroupsOneAndZero(void)
 	cMesh.Kill();
 	cMeshEditor.Kill();
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -146,7 +146,7 @@ void TestMeshSmoothGroupsNamed(void)
 	cMesh.Kill();
 	cMeshEditor.Kill();
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -210,7 +210,7 @@ void TestMeshSmoothFaces(void)
 	cMesh.Kill();
 	cMeshEditor.Kill();
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -272,7 +272,7 @@ void TestMeshFlatFaces(void)
 	cMesh.Kill();
 	cMeshEditor.Kill();
 
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 

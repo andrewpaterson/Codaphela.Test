@@ -44,7 +44,7 @@ void TestImageGreyToRGB(void)
 
 	TestImageGreyToRGB1();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 
 	TestStatistics();

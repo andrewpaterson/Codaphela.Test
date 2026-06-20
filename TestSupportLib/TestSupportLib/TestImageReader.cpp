@@ -276,7 +276,7 @@ void TestImageReader(void)
 	TestImageReaderPNG();
 	TestImageReaderTGA();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 
 	TestStatistics();

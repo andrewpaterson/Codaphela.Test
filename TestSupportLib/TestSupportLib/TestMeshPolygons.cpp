@@ -63,7 +63,7 @@ void TestMeshPolygonsAddFace(void)
 		AssertInt(0, pcPolygon->maiFaces.GetValue(0));
 		AssertInt(1, pcPolygon->maiFaces.GetValue(1));
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 }
 
@@ -125,7 +125,7 @@ void TestMeshPolygonsAddDiscontiguousFace(bool bOutEdgeValue)
 		AssertInt(10, cMeshEditor.mcEdgeVisibility.mcEdges.NumElements());
 		AssertInt(2, cMeshEditor.mcPolygons.mcPolygons.NumElements());
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 }
 
@@ -172,7 +172,7 @@ void TestMeshPolygonAdjacency(void)
 
 		aiAdjacent.Kill();
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 }
 

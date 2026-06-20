@@ -138,7 +138,7 @@ void TestImageModifierDrawBox(void)
 	TestImageModifierDrawBox1();
 	TestImageModifierDrawBox2();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 
 	TestStatistics();

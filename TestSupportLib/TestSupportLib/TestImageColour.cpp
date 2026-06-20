@@ -237,7 +237,7 @@ void TestImageColour(void)
 	TestImageColourAccessorFloats();
 	TestImageColourMultiAccessor();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 
 	TestStatistics();

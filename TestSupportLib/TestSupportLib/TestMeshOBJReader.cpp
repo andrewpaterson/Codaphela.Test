@@ -90,7 +90,7 @@ void TestMeshOBJReader(void)
 
 		cFileUtil.RemoveDir("Output/Shape");
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 	NumberKill();
 }

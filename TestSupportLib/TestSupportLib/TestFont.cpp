@@ -85,7 +85,7 @@ void TestFontCreateFont(void)
 		szCharacterFile.Kill();
 		szImageFile.Kill();
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -201,7 +201,7 @@ void TestFontLookupText(void)
 		pText->Kill();
 		pFont = NULL;
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -326,7 +326,7 @@ void TestFontGetGlyphsFromText(void)
 		pText->Kill();
 		pFont = NULL;
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -388,7 +388,7 @@ void TestFontMapFontWriteToImage(void)
 		szOutputFilename.Kill();
 		szInputFilename.Kill();
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -435,12 +435,12 @@ void TestFontMapFontViewportLayout(void)
 		pFontDraw = OMalloc<CMapFontDraw>(pSpriteMap);
 
 		gcObjects.DisableValidation();
+
 		pSpriteMap->BeginChange();
 		cLayout.Init();
 		cLayout.Layout(pFontDraw, pText);
 		cLayout.Kill();
 		pSpriteMap->EndChange();
-		gcObjects.EnableValidation();
 
 		bResult = cMaps.CreateCelBlitters();
 		AssertTrue(bResult);
@@ -448,6 +448,8 @@ void TestFontMapFontViewportLayout(void)
 		cMaps.SetViewportPosition(0, 0);
 		bResult = cMaps.Blit();
 		AssertTrue(bResult);
+
+		gcObjects.EnableValidation();
 
 		szOutputFilename.Init(szDirectory);
 		cFileUtil.AppendToPath(&szOutputFilename, "nuskool_krome_64x64.txt.png");
@@ -466,7 +468,7 @@ void TestFontMapFontViewportLayout(void)
 		szOutputFilename.Kill();
 		szInputFilename.Kill();
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -484,7 +486,7 @@ void TestFont(void)
 	TestFontLookupText();
 	TestFontGetGlyphsFromText();
 	TestFontMapFontWriteToImage();
-//	TestFontMapFontViewportLayout();
+	TestFontMapFontViewportLayout();
 
 	DataIOKill();
 

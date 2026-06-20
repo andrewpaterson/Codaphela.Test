@@ -88,7 +88,7 @@ void TestImageCelsSourceStarControl(void)
 	cCombiner.Kill();
 	cSource.Kill();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 }
 
@@ -145,7 +145,7 @@ void TestImageCelGroupSourceCombine(void)
 	cCombiner.Kill();
 	cSource.Kill();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 }
 

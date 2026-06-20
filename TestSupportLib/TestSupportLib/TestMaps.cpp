@@ -162,7 +162,7 @@ void TestMapsTinySpriteMap(void)
 		szOutputFilename.Kill();
 		szInputFilename.Kill();
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -253,7 +253,7 @@ void TestMapsTileMap(void)
 		szOutputFilename.Kill();
 		szInputFilename.Kill();
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 
 }
 
@@ -398,7 +398,7 @@ void TestMapsSpriteMap(void)
 		szOutputFilename.Kill();
 		szInputFilename.Kill();
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 

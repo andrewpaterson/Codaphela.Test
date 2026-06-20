@@ -50,7 +50,7 @@ void TestImageKillChannels(void)
 
 		AssertSize(0, gcObjects.NumMemoryIndexes());
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -209,7 +209,7 @@ void TestImageCopier(void)
 		cImageSource.Kill();
 		cImageDest.Kill();
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 
@@ -314,7 +314,7 @@ void TestImageCopierRealPNG(void)
 		szOutputFilename.Kill();
 		szInputFilename.Kill();
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 

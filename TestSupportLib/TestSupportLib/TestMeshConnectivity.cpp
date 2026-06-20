@@ -177,7 +177,7 @@ void TestMeshConnectivity(void)
 
 	TestMeshEdgeConnectivity();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 
 	TestStatistics();

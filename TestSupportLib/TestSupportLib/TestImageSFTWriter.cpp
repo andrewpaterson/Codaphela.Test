@@ -222,7 +222,7 @@ void TestImageSFTWriter(void)
 	TestImageSFTWriterMultiSourceCelContainer();
 
 	ImageChannelDescriptorKill();
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 
 	TestStatistics();

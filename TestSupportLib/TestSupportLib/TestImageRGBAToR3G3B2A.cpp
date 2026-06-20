@@ -60,7 +60,7 @@ void TestImageToR3G3B2A(void)
 
 	TestImageToR3G3B2AConvert();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 
 	TestStatistics();

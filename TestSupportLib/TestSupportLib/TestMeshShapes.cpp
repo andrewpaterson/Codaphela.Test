@@ -557,7 +557,7 @@ void TestMeshShapes(void)
 	TestCone();
 	TestCylinder();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	NumberKill();
 	DataIOKill();
 

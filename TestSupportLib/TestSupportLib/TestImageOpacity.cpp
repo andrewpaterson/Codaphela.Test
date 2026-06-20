@@ -128,7 +128,7 @@ void TestImageOpacityCopier(char* szDirectory, char* szInputPathName, char* szTe
 
 		cCache.Kill();
 	}
-	ObjectsKill();
+	ObjectsKill(false);
 }
 
 

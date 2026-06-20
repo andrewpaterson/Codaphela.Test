@@ -137,7 +137,7 @@ void TestImageCel(void)
 	TestImageCelMaskCropBorders();
 	TestImageCelTransparentColourCropBorders();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 
 	TestStatistics();

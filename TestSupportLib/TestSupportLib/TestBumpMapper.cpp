@@ -60,7 +60,7 @@ void TestBumpMapper(void)
 
 	TestBumpMapper1();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 
 	TestStatistics();

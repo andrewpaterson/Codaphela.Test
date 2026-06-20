@@ -52,7 +52,7 @@ void TestImageRecolour(void)
 
 	TestImageRecolour1();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 
 	TestStatistics();

@@ -162,7 +162,7 @@ void TestImageWriter(void)
 	TestImageTGAWriter();
 	TestImageRADWriter();
 
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 
 	TestStatistics();

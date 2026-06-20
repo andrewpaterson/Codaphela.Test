@@ -81,7 +81,7 @@ void TestImageModifierStack(void)
 	TestImageModifierStack1();
 
 	ImageChannelDescriptorKill();
-	ObjectsKill();
+	ObjectsKill(false);
 	DataIOKill();
 
 	TestStatistics();
