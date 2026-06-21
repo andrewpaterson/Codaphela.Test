@@ -1,4 +1,5 @@
 #include "BaseLib/SetBlock.h"
+#include "BaseLib/SetString.h"
 #include "BaseLib/SystemAllocator.h"
 #include "BaseLib/CountingAllocator.h"
 #include "BaseLib/IntegerHelper.h"
@@ -307,40 +308,45 @@ void TestSetBlockRemove(void)
 //////////////////////////////////////////////////////////////////////////
 void TestSetBlockReadWrite(void)
 {
-	//CSetString	mszsz;
-	//CFileBasic	cFile;
-	//CSetString	mszszIn;
+	CSetString	mszsz;
+	CFileBasic	cFile;
+	CSetString	mszszIn;
+	char*		szResult;
 
-	//mszsz.Init();
+	mszsz.Init();
 
-	//mszsz.Put("ABC", "XYZ");
-	//mszsz.Put("Collision", "Detection");
-	//mszsz.Put("Retro", "Evolved");
-	//mszsz.Put("Blame", "Canada");
+	szResult = mszsz.Put("ABC");
+	AssertString(szResult, "ABC");
+	szResult = mszsz.Put("Collision");
+	AssertString(szResult, "Collision");
+	szResult = mszsz.Put("Retro");
+	AssertString(szResult, "Retro");
+	szResult = mszsz.Put("Blame");
+	AssertString(szResult, "Blame");
 
-	//AssertString("XYZ", mszsz.Get("ABC"));
-	//AssertString("Detection", mszsz.Get("Collision"));
-	//AssertString("Evolved", mszsz.Get("Retro"));
-	//AssertString("Canada", mszsz.Get("Blame"));
+	AssertString("ABC", mszsz.Get("ABC"));
+	AssertString("Collision", mszsz.Get("Collision"));
+	AssertString("Retro", mszsz.Get("Retro"));
+	AssertString("Blame", mszsz.Get("Blame"));
 
-	//cFile.Init(MemoryFile());
-	//cFile.Open(EFM_Write_Create);
-	//AssertTrue(mszsz.Write(&cFile));
-	//mszsz.Kill();
+	cFile.Init(MemoryFile());
+	cFile.Open(EFM_Write_Create);
+	AssertTrue(mszsz.Write(&cFile));
+	mszsz.Kill();
 
-	//cFile.Close();
-	//cFile.Open(EFM_Read);
+	cFile.Close();
+	cFile.Open(EFM_Read);
 
-	//AssertTrue(mszszIn.Read(&cFile));
+	AssertTrue(mszszIn.Read(&cFile));
 
-	//AssertString("XYZ", mszszIn.Get("ABC"));
-	//AssertString("Detection", mszszIn.Get("Collision"));
-	//AssertString("Evolved", mszszIn.Get("Retro"));
-	//AssertString("Canada", mszszIn.Get("Blame"));
+	AssertString("ABC", mszszIn.Get("ABC"));
+	AssertString("Collision", mszszIn.Get("Collision"));
+	AssertString("Retro", mszszIn.Get("Retro"));
+	AssertString("Blame", mszszIn.Get("Blame"));
 
-	//mszszIn.Kill();
-	//cFile.Close();
-	//cFile.Kill();
+	mszszIn.Kill();
+	cFile.Close();
+	cFile.Kill();
 }
 
 
@@ -350,57 +356,53 @@ void TestSetBlockReadWrite(void)
 //////////////////////////////////////////////////////////////////////////
 void TestSetBlockDataMemoryUnchanged(void)
 {
-	//CSetString		mszsz;
-	//size			i;
-	//CRandom			cRandom;
-	//CArrayChars		aszWords;
-	//CChars			sz;
-	//char*			szData;
-	//char*			aszData[2048];
-	//bool			bFailed;
+	CSetString		mszsz;
+	size			i;
+	CRandom			cRandom;
+	CArrayChars		aszWords;
+	CChars			sz;
+	bool			bFailed;
+	bool			bHas;
 
-	//WordsInit();
+	WordsInit();
 
-	//mszsz.Init();
+	mszsz.Init();
 
-	//cRandom.Init(2367849);
-	//aszWords.Init();
-	//GetCommonWords(&aszWords);
+	cRandom.Init(2367849);
+	aszWords.Init();
+	GetCommonWords(&aszWords);
 
-	//for (i = 0; i < 2048; i++)
-	//{
-	//	MakeKey(&cRandom, &aszWords, &sz);
+	for (i = 0; i < 2048; i++)
+	{
+		MakeKey(&cRandom, &aszWords, &sz);
+		mszsz.Put(sz.Text());
+		sz.Kill();
+	}
+	cRandom.Kill();
 
-	//	mszsz.Put(sz.Text(), IntToString(i));
-	//	szData = mszsz.Get(sz.Text());
-	//	aszData[i] = szData;
+	cRandom.Init(2367849);
 
-	//	sz.Kill();
-	//}
-	//cRandom.Kill();
+	bFailed = false;
+	for (i = 0; i < 2048; i++)
+	{
+		MakeKey(&cRandom, &aszWords, &sz);
 
-	//cRandom.Init(2367849);
+		bHas = mszsz.Has(sz.Text());
+		if (!bHas)
+		{
+			bFailed = true;
+			break;
+		}
+		sz.Kill();
+	}
 
-	//bFailed = false;
-	//for (i = 0; i < 2048; i++)
-	//{
-	//	MakeKey(&cRandom, &aszWords, &sz);
+	AssertFalse(bFailed);
+	
+	cRandom.Kill();
+	mszsz.Kill();
 
-	//	szData = mszsz.Get(sz.Text());
-	//	if (aszData[i] != szData)
-	//	{
-	//		bFailed = true;
-	//	}
-	//	sz.Kill();
-	//}
-
-	//AssertFalse(bFailed);
-	//
-	//cRandom.Kill();
-	//mszsz.Kill();
-
-	//aszWords.Kill();
-	//WordsKill();
+	aszWords.Kill();
+	WordsKill();
 }
 
 
@@ -410,83 +412,77 @@ void TestSetBlockDataMemoryUnchanged(void)
 //////////////////////////////////////////////////////////////////////////
 void TestSetBlockRemoveHalf(void)
 {
-	//CSetStringString	mszsz;
-	//size				i;
-	//CRandom				cRandom;
-	//CArrayChars			aszWords;
-	//CChars				sz;
-	//char*				szData;
-	//char*				aszData[2048];
-	//bool				bResult;
-	//bool				bFailed;
+	CSetString		mszsz;
+	size			i;
+	CRandom			cRandom;
+	CArrayChars		aszWords;
+	CChars			sz;
+	bool			bResult;
+	bool			bFailed;
+	char*			szResult;
 
-	//WordsInit();
+	WordsInit();
 
-	//mszsz.Init();
+	mszsz.Init();
 
-	//cRandom.Init(2367849);
-	//aszWords.Init();
-	//GetCommonWords(&aszWords);
+	cRandom.Init(2367849);
+	aszWords.Init();
+	GetCommonWords(&aszWords);
 
-	//for (i = 0; i < 2048; i++)
-	//{
-	//	MakeKey(&cRandom, &aszWords, &sz);
+	for (i = 0; i < 2048; i++)
+	{
+		MakeKey(&cRandom, &aszWords, &sz);
+		mszsz.Put(sz.Text());
+		sz.Kill();
+	}
+	cRandom.Kill();
 
-	//	mszsz.Put(sz.Text(), IntToString(i));
-	//	szData = mszsz.Get(sz.Text());
-	//	aszData[i] = szData;
+	cRandom.Init(2367849);
+	bResult = true;
+	for (i = 0; i < 2048; i++)
+	{
+		MakeKey(&cRandom, &aszWords, &sz);
+		if (i % 2 == 1)
+		{
+			bResult &= mszsz.Remove(sz.Text());
+		}
+		sz.Kill();
+	}
 
-	//	sz.Kill();
-	//}
-	//cRandom.Kill();
+	AssertTrue(bResult);
+	AssertInt(1024, mszsz.NumElements());
+	cRandom.Kill();
 
-	//cRandom.Init(2367849);
-	//bResult = true;
-	//for (i = 0; i < 2048; i++)
-	//{
-	//	MakeKey(&cRandom, &aszWords, &sz);
-	//	if (i % 2 == 1)
-	//	{
-	//		bResult &= mszsz.Remove(sz.Text());
-	//	}
-	//	sz.Kill();
-	//}
+	bFailed = false;
+	cRandom.Init(2367849);
+	for (i = 0; i < 2048; i++)
+	{
+		MakeKey(&cRandom, &aszWords, &sz);
+		szResult = mszsz.Get(sz.Text());
+		if (i % 2 == 0)
+		{
+			if (!sz.Equals(szResult))
+			{
+				bFailed = true;
+			}
+		}
+		else
+		{
+			if (szResult != NULL)
+			{
+				bFailed = true;
+			}
+		}
+		sz.Kill();
+	}
+	AssertFalse(bFailed);
+	cRandom.Kill();
 
-	//AssertTrue(bResult);
-	//AssertInt(1024, mszsz.NumElements());
-	//cRandom.Kill();
+	mszsz.Kill();
 
-	//bFailed = false;
-	//cRandom.Init(2367849);
-	//for (i = 0; i < 2048; i++)
-	//{
-	//	MakeKey(&cRandom, &aszWords, &sz);
-	//	szData = mszsz.Get(sz.Text());
-	//	if (i % 2 == 0)
-	//	{
-	//		if (aszData[i] != szData)
-	//		{
-	//			bFailed = true;
-	//		}
-	//	}
-	//	else
-	//	{
-	//		if (szData != NULL)
-	//		{
-	//			bFailed = true;
-	//		}
-	//	}
-	//	sz.Kill();
-	//}
-	//AssertFalse(bFailed);
-	//cRandom.Kill();
-
-	//mszsz.Kill();
-
-	//aszWords.Kill();
-	//WordsKill();
+	aszWords.Kill();
+	WordsKill();
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////
