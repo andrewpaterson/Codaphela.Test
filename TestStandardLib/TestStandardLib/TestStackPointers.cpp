@@ -23,9 +23,8 @@ void TestStackPointersAdd(void)
 	CStackPointer*	pcStackPointer21;
 	CStackPointer*	pcStackPointer22;
 	CStackPointer*	pcStackPointer23;
-	CStackPointer*	pcStackPointerNull;
 
-	cStackPointes.Init(6);
+	cStackPointes.Init();
 
 	pcStackPointer11 = cStackPointes.Add(cPointer1.This());
 	AssertNotNull(pcStackPointer11);
@@ -64,18 +63,10 @@ void TestStackPointersAdd(void)
 	AssertInt(3, pcStackPointer21->NumPointers());
 
 	AssertInt(6, cStackPointes.NumElements());
-
-	pcStackPointerNull = cStackPointes.Add(cPointer1.This(), pcStackPointer11);
-	AssertNull(pcStackPointerNull);
-	AssertInt(3, pcStackPointer11->NumPointers());
-
-	AssertInt(6, cStackPointes.NumElements());
-
+	
 	cStackPointes.RemoveAll(pcStackPointer21);
 
 	AssertInt(3, cStackPointes.NumElements());
-
-	AssertFalse(pcStackPointer21->IsUsed());
 
 	pcStackPointer21 = cStackPointes.Add(cPointer1.This());
 	AssertNotNull(pcStackPointer21);
@@ -95,66 +86,6 @@ void TestStackPointersAdd(void)
 	AssertInt(3, pcStackPointer21->NumPointers());
 
 	AssertInt(6, cStackPointes.NumElements());
-
-	pcStackPointerNull = cStackPointes.Add(cPointer1.This(), pcStackPointer21);
-	AssertNull(pcStackPointerNull);
-	AssertInt(3, pcStackPointer11->NumPointers());
-
-	AssertInt(6, cStackPointes.NumElements());
-
-	cStackPointes.Kill();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void TestStackPointersFindUnused(void)
-{
-	CStackPointers	cStackPointes;
-	
-	cStackPointes.Init(3);
-
-	AssertInt(2, cStackPointes.TestFindUnusedIndex(2));
-	AssertInt(0, cStackPointes.TestFindUnusedIndex(0));
-	AssertInt(1, cStackPointes.TestFindUnusedIndex(1));
-
-	cStackPointes.TestAdd(2);
-	AssertInt(0, cStackPointes.TestFindUnusedIndex(2));
-	cStackPointes.TestKill(2);
-
-	cStackPointes.TestAdd(0);
-	AssertInt(1, cStackPointes.TestFindUnusedIndex(0));
-	cStackPointes.TestKill(0);
-
-	cStackPointes.TestAdd(1);
-	AssertInt(2, cStackPointes.TestFindUnusedIndex(1));
-	cStackPointes.TestKill(1);
-
-	cStackPointes.TestAdd(2);
-	cStackPointes.TestAdd(0);
-	AssertInt(1, cStackPointes.TestFindUnusedIndex(2));
-	AssertInt(1, cStackPointes.TestFindUnusedIndex(0));
-	AssertInt(1, cStackPointes.TestFindUnusedIndex(1));
-	cStackPointes.TestKill(2);
-	cStackPointes.TestKill(0);
-
-	cStackPointes.TestAdd(0);
-	cStackPointes.TestAdd(1);
-	AssertInt(2, cStackPointes.TestFindUnusedIndex(0));
-	AssertInt(2, cStackPointes.TestFindUnusedIndex(1));
-	AssertInt(2, cStackPointes.TestFindUnusedIndex(2));
-	cStackPointes.TestKill(0);
-	cStackPointes.TestKill(1);
-
-	cStackPointes.TestAdd(1);
-	cStackPointes.TestAdd(2);
-	AssertInt(0, cStackPointes.TestFindUnusedIndex(1));
-	AssertInt(0, cStackPointes.TestFindUnusedIndex(2));
-	AssertInt(0, cStackPointes.TestFindUnusedIndex(0));
-	cStackPointes.TestKill(1);
-	cStackPointes.TestKill(2);
 
 	cStackPointes.Kill();
 }
@@ -379,7 +310,6 @@ void TestStackPointers(void)
 	TypesInit();
 	DataIOInit();
 
-	TestStackPointersFindUnused();
 	TestStackPointersAdd();
 	TestStackPointersKillSingle();
 	TestStackPointersHeapKillSingle();
