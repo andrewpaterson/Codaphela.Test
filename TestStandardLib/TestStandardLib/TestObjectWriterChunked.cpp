@@ -32,7 +32,7 @@ void TestChunkFileObjectWriterSerialised(void)
 	cLifeAlloc.Init(&cScratchPad, false, false);
 	cUnknowns.Init(cLifeAlloc, "TestChunkFileObjectWriterSerialised", &gcConstructors);
 
-	ObjectsInit(&cUnknowns, &gcStackPointers, NULL, &gcTransientSequence);
+	ObjectsInit(&cUnknowns, NULL, &gcTransientSequence);
 	{
 		CChunkFileObjectWriter		cWriter;
 		CExternalObjectSerialiser	cGraphSerialiser;
