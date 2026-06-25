@@ -323,7 +323,7 @@ void TestObjectPointerRemappingKilling(void)
 		pObject2->mpObject = pObject3;
 
 		pObject3 = NULL;
-		AssertFalse(pcObject3->HasStackPointers());
+		AssertFalse(pcObject3->HasStackFroms());
 		AssertTrue(pcObject3->HasHeapFroms());
 
 		AssertInt(0, pObject4->NumPointerTos());

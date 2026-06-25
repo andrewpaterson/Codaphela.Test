@@ -302,6 +302,81 @@ void TestStackPointersKillSingle(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestStackPointersSorting1(void)
+{
+	//Stack distance rework: You have no idea what causes the stack distance to be set.
+
+	ObjectsInit();
+	{
+		Ptr<CTestEmbeddedObjectWithFields>	pTest1;
+		Ptr<CTestEmbeddedObjectWithFields>	pTest2;
+		Ptr<CTestEmbeddedObjectWithFields>	pTest3;
+		Ptr<CTestEmbeddedObjectWithFields>	pTest4;
+		Ptr<CTestEmbeddedObjectWithFields>	pTest5;
+		Ptr<CTestEmbeddedObjectWithFields>	pTest6;
+		CTestEmbeddedObjectWithFields*		pcTest1;
+		CTestEmbeddedObjectWithFields*		pcTest2;
+		CTestEmbeddedObjectWithFields*		pcTest3;
+		CTestEmbeddedObjectWithFields*		pcTest4;
+		CTestEmbeddedObjectWithFields*		pcTest5;
+		CTestEmbeddedObjectWithFields*		pcTest6;
+
+		pTest1 = OMalloc<CTestEmbeddedObjectWithFields>();
+		pTest2 = OMalloc<CTestEmbeddedObjectWithFields>();
+		pTest3 = OMalloc<CTestEmbeddedObjectWithFields>();
+		pTest4 = OMalloc<CTestEmbeddedObjectWithFields>();
+		pTest5 = OMalloc<CTestEmbeddedObjectWithFields>();
+		pTest6 = OMalloc<CTestEmbeddedObjectWithFields>();
+		pcTest1 = &pTest1;
+		pcTest2 = &pTest2;
+		pcTest3 = &pTest3;
+		pcTest4 = &pTest4;
+		pcTest5 = &pTest5;
+		pcTest6 = &pTest6;
+
+		AssertInt(UNKNOWN_DIST_TO_STACK, pTest1->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pTest2->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pTest3->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pTest4->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pTest5->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pTest6->GetDistToStack());
+
+		pTest1->mpObjectA = pTest2;
+		pTest2->mpObjectA = pTest3;
+		pTest3->mpObjectA = pTest4;
+		pTest3->mpObjectB = pTest4;
+		pTest4->mpObjectA = pTest5;
+		pTest5->mpObjectA = pTest6;
+		pTest2 = NULL;
+		pTest3 = NULL;
+		pTest4 = NULL;
+		pTest5 = NULL;
+		pTest6 = NULL;
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest1->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest4->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest5->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest6->GetDistToStack());
+		AssertSize(6, gcObjects.NumMemoryIndexes());
+
+		pcTest5->mpObjectA = NULL;
+		AssertSize(5, gcObjects.NumMemoryIndexes());
+
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest1->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest2->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest3->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest4->GetDistToStack());
+		AssertInt(UNKNOWN_DIST_TO_STACK, pcTest5->GetDistToStack());
+	}
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestStackPointers(void)
 {
 	BeginTests();
@@ -314,6 +389,7 @@ void TestStackPointers(void)
 	TestStackPointersKillSingle();
 	TestStackPointersHeapKillSingle();
 	TestStackPointersHeapKill();
+	TestStackPointersSorting1();
 
 	DataIOKill();
 	TypesKill();

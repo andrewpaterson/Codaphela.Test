@@ -204,7 +204,7 @@ void TestObjectStackAssignmentOperator(void)
 		sz.Init();
 		gcObjects.PrintStackPointers(&sz, false);
 		AssertString(
-"0: Pointer [CTestObject:1 Rx (CC, D, CA, CI, CC)]\n", 
+"0: Pointer [CTestObject:1 Ru Su (CC, D, CA, CI, CC)]\n", 
 			sz.Text());
 		sz.Kill();
 
@@ -235,7 +235,7 @@ void TestObjectStackAssignmentOperator2(void)
 		sz.Init();
 		gcObjects.PrintStackPointers(&sz, false);
 		AssertString(
-"0: Pointer [CTestObject:1 Rx (CC, D, CA, CI, CC)]\n", 
+"0: Pointer [CTestObject:1 Ru Su (CC, D, CA, CI, CC)]\n", 
 			sz.Text());
 		sz.Kill();
 
