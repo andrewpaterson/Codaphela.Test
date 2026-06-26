@@ -2,6 +2,7 @@
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "BaseLib/UTF8.h"
 #include "BaseLib/TextFile.h"
+#include "BaseLib/Timer.h"
 #include "StandardLib/Objects.h"
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/Font.h"
@@ -345,9 +346,10 @@ void TestFontMapFontWriteToImage(void)
 	ObjectsInit();
 	{
 		Ptr<CFont>			pFont;
+		Ptr<CRoot>			pRoot;
 		Ptr<CText>			pText;
 		CSimpleTextReader	cTextReader;
-		CTextLayout			cLayout;
+		Ptr<CTextLayout>	pLayout;
 		Ptr<CMapFontDraw>	pFontDraw;
 		Ptr<CSpriteMap>		pSpriteMap;
 		Ptr<CImage>			pImage;
@@ -355,18 +357,23 @@ void TestFontMapFontWriteToImage(void)
 		CChars				szInputFilename;
 		bool				bWritten;
 
+		pRoot = ORoot();
 		pFont = CreateFont("anuvverbubbla_8x8", 8, 8);
+		pRoot->Add(pFont);
 		cTextReader.Init(&pFont);
 		pText = cTextReader.Read("Input" _FS_ "Text" _FS_ "Test1 anuvverbubbla.txt");
+		pRoot->Add(pText);
 		cTextReader.Kill();
 
 		pSpriteMap = OMalloc<CSpriteMap>();
 		pFontDraw = OMalloc<CMapFontDraw>(pSpriteMap);
+		pRoot->Add(pSpriteMap);
+		pRoot->Add(pFontDraw);
 
 		pSpriteMap->BeginChange();
-		cLayout.Init();
-		cLayout.Layout(pFontDraw, pText);
-		cLayout.Kill();
+		pLayout = OMalloc<CTextLayout>();
+		pLayout->Layout(pFontDraw, pText);
+		pLayout = NULL;
 		pSpriteMap->EndChange();
 
 		pImage = pSpriteMap->WriteToImage();
@@ -388,6 +395,7 @@ void TestFontMapFontWriteToImage(void)
 		szOutputFilename.Kill();
 		szInputFilename.Kill();
 	}
+	ObjectsFlush();
 	ObjectsKill(false);
 }
 
@@ -406,21 +414,26 @@ void TestFontMapFontViewportLayout(void)
 
 	ObjectsInit();
 	{
+		Ptr<CRoot>					pRoot;
 		Ptr<CFont>					pFont;
 		Ptr<CText>					pText;
 		CSimpleTextReader			cTextReader;
-		CTextLayout					cLayout;
+		Ptr<CTextLayout>			pLayout;
 		Ptr<CMapFontDraw>			pFontDraw;
 		Ptr<CSpriteMap>				pSpriteMap;
 		CChars						szOutputFilename;
 		CChars						szInputFilename;
 		bool						bWritten;
-		CMaps						cMaps;
+		Ptr<CMaps>					pMaps;
 		Ptr<CImage>					pDestImage;
 		Ptr<CImageCelBlitterCache>	pBlitterCache;
 		bool						bResult;
+		CTimer						cTimer;
+		int64						iMilliseconds;
 
+		pRoot = ORoot();
 		pFont = CreateFont("nuskool_krome_64x64", 64, 64);
+		pRoot->Add(pFont);
 		cTextReader.Init(&pFont);
 		pText = cTextReader.Read("Input" _FS_ "Text" _FS_ "Test1 nuskool_krome_64x64.txt");
 		cTextReader.Kill();
@@ -429,25 +442,35 @@ void TestFontMapFontViewportLayout(void)
 		pDestImage->Clear();
 
 		pBlitterCache = OMalloc<CImageCelBlitterCache>(pDestImage);
-		cMaps.Init(pBlitterCache, pDestImage);
+		pRoot->Add(pBlitterCache);
+
+		pMaps = ONMalloc<CMaps>("Maps", pBlitterCache, pDestImage);
+		pRoot->Add(pMaps);
+
 		pSpriteMap = OMalloc<CSpriteMap>();
-		cMaps.AddMap(pSpriteMap);
 		pFontDraw = OMalloc<CMapFontDraw>(pSpriteMap);
+		pRoot->Add(pFontDraw);
 
 		gcObjects.DisableValidation();
 
 		pSpriteMap->BeginChange();
-		cLayout.Init();
-		cLayout.Layout(pFontDraw, pText);
-		cLayout.Kill();
+		pLayout = OMalloc<CTextLayout>();
+		pRoot->Add(pLayout);
+		pLayout->Layout(pFontDraw, pText);
 		pSpriteMap->EndChange();
+		pMaps->AddMap(pSpriteMap);
+		pLayout = NULL;
 
-		bResult = cMaps.CreateCelBlitters();
+		bResult = pMaps->CreateCelBlitters();
 		AssertTrue(bResult);
 
-		cMaps.SetViewportPosition(0, 0);
-		bResult = cMaps.Blit();
+		cTimer.Init();
+		pMaps->SetViewportPosition(0, 0);
+		bResult = pMaps->Blit();
 		AssertTrue(bResult);
+		cTimer.Update();
+		iMilliseconds = cTimer.GetTotalTimeInMillieconds();
+		AssertTrue(iMilliseconds < 10);
 
 		gcObjects.EnableValidation();
 
@@ -457,8 +480,9 @@ void TestFontMapFontViewportLayout(void)
 		AssertTrue(bWritten);
 
 		pFontDraw->Kill();
-		pText->Kill();
+		pText = NULL;
 		pFont = NULL;
+		pMaps = NULL;
 
 		szInputFilename.Init(szOutputFilename);
 		szInputFilename.Replace("Output", "Input");
@@ -468,6 +492,7 @@ void TestFontMapFontViewportLayout(void)
 		szOutputFilename.Kill();
 		szInputFilename.Kill();
 	}
+	ObjectsFlush();
 	ObjectsKill(false);
 }
 
