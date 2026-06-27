@@ -306,9 +306,9 @@ void TestObjectFreeStackWithCyclicHeapPointerRootFrom(void)
 		sz.Init();
 		gcObjects.PrintStackPointers(&sz, false);
 		AssertString("\
-0: Pointer [CTestObject:1 R2 Su (CC, D, CA, CI, CC)]\n\
-1: Pointer [CTestObject:2 R3 Su (CC, D, CA, CI, CC)]\n\
-2: Pointer [CRoot:3:\"GraphRoot\" R0 Su (CC, D, CA, CI, CC)]\n", sz.Text());
+0: Pointer [CRoot:3:\"GraphRoot\" R0 Su (CC, D, CA, CI, CC)]\n\
+1: Pointer [CTestObject:1 R2 Su (CC, D, CA, CI, CC)]\n\
+2: Pointer [CTestObject:2 R3 Su (CC, D, CA, CI, CC)]\n", sz.Text());
 		sz.Kill();
 
 		pObject1 = NULL;

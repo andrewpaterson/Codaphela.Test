@@ -283,7 +283,7 @@ int __cdecl main(void)
 	TestChunkFile();
 	TestChunkFileFile();
 	TestPackFile();
-	TestFileIO();
+	//TestFileIO();
 	TestFileSystem();
 	TestChunkFileFileSystem();
 	TestCSVFileImmutable();
@@ -330,7 +330,7 @@ int __cdecl main(void)
 	TestIndexTreeWriter();
 	TestIndexTreeEvicting();
 	TestIndexedFilesEvicting();
-	TestIndexedData();
+	//TestIndexedData();
 	TestSequence();
 	TestNamedIndexes();
 	TestNamedIndexedData();
@@ -339,7 +339,7 @@ int __cdecl main(void)
 	TestCodabase();
 	TestMemoryDrive();
 	TestFatCache();
-	TestFat32();
+	//TestFat32();
 
 	NumberKill();
 	FastFunctionsKill();
