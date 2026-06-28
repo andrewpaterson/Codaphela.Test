@@ -33,7 +33,7 @@ void TestFileIOBegin(CMemoryFile* pcMemory, CFileBasic* pcFile)
 //////////////////////////////////////////////////////////////////////////
 void TestFileIOMiddle(CFileBasic* pcFile)
 {
-	char			szMagic[14];
+	char	szMagic[14];
 
 	AssertTrue(pcFile->WriteData("HappyEnding\0", 13));
 	AssertTrue(pcFile->Close());
@@ -49,7 +49,7 @@ void TestFileIOMiddle(CFileBasic* pcFile)
 //////////////////////////////////////////////////////////////////////////
 void TestFileIOEnd(CMemoryFile* pcMemory, CFileBasic* pcFile)
 {
-	char			szHappy[13];
+	char	szHappy[13];
 
 	AssertTrue(pcFile->ReadData(szHappy, 13));
 	AssertString("HappyEnding", szHappy);
@@ -354,13 +354,13 @@ void TestFileIOLinkList(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFileIOLinkedListBlockAligned(void)
 {
-	CMemoryFile						cMemory;
-	CFileBasic						cFile;
-	CLinkedListBlockAligned			cAligned;
-	CLinkedListBlockAligned			cAlignedIn;
-	CFileIOAlignedTest*				pcAli1;
-	CFileIOAlignedTest*				pcAli2;
-	CFileIOAlignedTest*				pcAliIn;
+	CMemoryFile					cMemory;
+	CFileBasic					cFile;
+	CLinkedListBlockAligned		cAligned;
+	CLinkedListBlockAligned		cAlignedIn;
+	CFileIOAlignedTest*			pcAli1;
+	CFileIOAlignedTest*			pcAli2;
+	CFileIOAlignedTest*			pcAliIn;
 
 	TestFileIOBegin(&cMemory, &cFile);
 

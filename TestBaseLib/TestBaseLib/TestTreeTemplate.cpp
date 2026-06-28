@@ -244,9 +244,13 @@ void TestTreeTemplate(void)
 {
 	BeginTests();
 
+	MemoryInit();
+
 	TestTreeTemplateInsert();
 	TestTreeTemplateGetPathTo();
 	TestTreeTemplateFileHelper();
+
+	MemoryKill();
 
 	TestStatistics();
 }

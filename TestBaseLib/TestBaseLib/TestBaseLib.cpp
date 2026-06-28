@@ -176,6 +176,7 @@ int __cdecl main(void)
 
 	_CrtSetBreakAlloc(0);
 	InitTotalStatistics();
+	InitAllocatorDebug();
 
 	TestPrimitiveTypes();
 	TestIntegerHelper();
@@ -283,7 +284,7 @@ int __cdecl main(void)
 	TestChunkFile();
 	TestChunkFileFile();
 	TestPackFile();
-	//TestFileIO();
+	TestFileIO();
 	TestFileSystem();
 	TestChunkFileFileSystem();
 	TestCSVFileImmutable();
