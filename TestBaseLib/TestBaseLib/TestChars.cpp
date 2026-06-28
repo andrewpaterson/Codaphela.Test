@@ -134,6 +134,72 @@ void TestCharsReplace(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestCharsReplaceIntensive(void)
+{
+	CChars	sz;
+	CChars	szExpected;
+
+	CChars	szOriginal;
+	CChars	szReplacement;
+	size	uiCount;
+	size	uiCountCount;
+	size	uiLength;
+	
+	szOriginal.Init();
+	szOriginal.Append('B', 35);
+
+	for (uiLength = 0; uiLength < 7; uiLength++)
+	{
+		for (uiCountCount = 0; uiCountCount < 20; uiCountCount++)
+		{
+			szExpected.Init();
+			sz.Init();
+
+			szReplacement.Init();
+			szReplacement.Append('A', uiLength * 5);
+
+			if (uiCountCount % 2 == 0)
+			{
+				for (uiCount = 0; uiCount < uiCountCount / 2; uiCount++)
+				{
+					szExpected.Append(szReplacement);
+					szExpected.Append("xx");
+					sz.Append(szOriginal);
+					sz.Append("xx");
+				}
+				if (szExpected.Length() > 2)
+				{
+					szExpected.RemoveFromEnd(2);
+					sz.RemoveFromEnd(2);
+				}
+			}
+			else
+			{
+				for (uiCount = 0; uiCount < uiCountCount / 2; uiCount++)
+				{
+					szExpected.Append(szReplacement);
+					szExpected.Append("xx");
+					sz.Append(szOriginal);
+					sz.Append("xx");
+				}
+			}
+
+			sz.Replace(szOriginal.Text(), szReplacement.Text());
+			szReplacement.Kill();
+
+			AssertString(szExpected.Text(), sz.Text());
+			sz.Kill();
+			szExpected.Kill();
+		}
+	}
+	szOriginal.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestCharsInsert(void)
 {
 	CChars sz;
@@ -778,6 +844,7 @@ void TestChars(void)
 	TestCharsSetLength();
 	TestCharsStripWhitespace();
 	TestCharsReadAndWrite();
+	TestCharsReplaceIntensive();
 	
 	TestStatistics();
 }
