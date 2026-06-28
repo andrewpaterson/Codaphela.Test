@@ -1381,7 +1381,7 @@ void TestFat32SeekWriteAndRead1(void)
 	CFatVolume		cVolume;
 	char*			szSource;
 
-	szSource = AllocateStringBuffer(64 KB);
+	szSource = AllocateStringBuffer(64 KB + 2);
 
 	cFile.Init("Input\\Fat32\\ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);

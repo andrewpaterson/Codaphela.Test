@@ -312,18 +312,81 @@ void TestIndexedDataFlushClearCache(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexedDataExplicitKeyEvictionOneKey(void)
+{
+	CIndexedData						cIndexedData;
+	char								szHello[] = "Hello";
+	char								szDirectory[] = "Output" _FS_ "Database1g";
+	CFileUtil							cFileUtil;
+	CLifeInit<CIndexedDataConfig>		cIndexConfig;
+	CDurableFileController				cController;
+	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
+	CIndexedDataDescriptor				cDescriptor;
+
+	cFileUtil.RemoveDir(szDirectory);
+
+	AssertInt(32, sizeof(CIndexedDataDescriptor));
+
+	cEvictionStrategy.Init();
+	cController.Init(szDirectory, NULL);
+	cIndexConfig = CValueIndexedDataConfig::Create(NULL, 8 KB, 8 KB, IWT_No, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy));
+	cController.Begin();
+	cIndexedData.Init(&cController, cIndexConfig);
+	cController.End();
+
+	cController.Begin();
+	AssertLong(0, cIndexedData.NumIndicesCached());
+	AssertSize(0, cIndexedData.NumDataCached());
+	AssertSize(3100, cIndexedData.GetIndiciesSystemMemorySize());
+
+	AssertTrue(cIndexedData.Add(1LL, szHello, 6));
+	cDescriptor.Init(0, (void*)NULL);
+	cIndexedData.TestGetDescriptor(1LL, &cDescriptor);
+	AssertSize(6, cDescriptor.GetDataSize());
+	AssertNotNull(cDescriptor.GetCache());
+
+	cIndexedData.Flush(false);
+
+	AssertLong(1, cIndexedData.NumIndicesCached());
+	AssertSize(1, cIndexedData.NumDataCached());
+	AssertLong(3452LL, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertSize(30, cIndexedData.GetDataSystemMemorySize());
+	Pass();
+
+	AssertTrue(cIndexedData.EvictKey(1LL));
+	AssertLong(0, cIndexedData.NumIndicesCached());
+	AssertSize(0, cIndexedData.NumDataCached());
+	AssertLong(3100LL, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertSize(0, cIndexedData.GetDataSystemMemorySize());
+	Pass();
+
+	cIndexedData.Flush();
+	cController.End();
+	cIndexedData.Kill();
+	cEvictionStrategy.Kill();
+	cController.Kill();
+
+
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 {
-	CIndexedData				cIndexedData;
-	char						szHello[] = "Hello";
-	char						szWorld[] = "World";
-	char						szStream[] = "Stream";
-	char						szDirectory[] = "Output" _FS_ "Database1b";
-	CFileUtil					cFileUtil;
-	uint32				uiDataSize;
-	char						szData[7];
+	CIndexedData						cIndexedData;
+	char								szHello[] = "Hello";
+	char								szWorld[] = "World";
+	char								szStream[] = "Stream";
+	char								szDirectory[] = "Output" _FS_ "Database1b";
+	CFileUtil							cFileUtil;
+	uint32								uiDataSize;
+	char								szData[7];
 	CLifeInit<CIndexedDataConfig>		cIndexConfig;
-	CDurableFileController		cController;
+	CDurableFileController				cController;
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -339,38 +402,42 @@ void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 
 	cController.Begin();
 	AssertLong(0, cIndexedData.NumIndicesCached());
-	AssertInt(0, cIndexedData.NumDataCached());
-	AssertInt(3100, cIndexedData.GetIndiciesSystemMemorySize());
+	AssertSize(0, cIndexedData.NumDataCached());
+	AssertSize(3100, cIndexedData.GetIndiciesSystemMemorySize());
 
 	AssertTrue(cIndexedData.Add(1LL, szHello, 6));
 	AssertTrue(cIndexedData.Add(2LL, szStream, 7));
 	AssertTrue(cIndexedData.Add(4LL, szWorld, 6));
-	cIndexedData.Flush(false);
 	AssertLong(3, cIndexedData.NumIndicesCached());
-	AssertInt(3, cIndexedData.NumDataCached());
+	AssertSize(3, cIndexedData.NumDataCached());
+
+	cIndexedData.Flush(false);
+
+	AssertLong(3, cIndexedData.NumIndicesCached());
+	AssertSize(3, cIndexedData.NumDataCached());
 	AssertLong(3632LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(91, cIndexedData.GetDataSystemMemorySize());
+	AssertSize(91, cIndexedData.GetDataSystemMemorySize());
 	Pass();
 
 	AssertTrue(cIndexedData.EvictKey(1LL));
 	AssertLong(2, cIndexedData.NumIndicesCached());
-	AssertInt(2, cIndexedData.NumDataCached());
+	AssertSize(2, cIndexedData.NumDataCached());
 	AssertLong(3560LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(61, cIndexedData.GetDataSystemMemorySize());
+	AssertSize(61, cIndexedData.GetDataSystemMemorySize());
 	Pass();
 
 	AssertTrue(cIndexedData.EvictKey(2LL));
 	AssertLong(1, cIndexedData.NumIndicesCached());
-	AssertInt(1, cIndexedData.NumDataCached());
+	AssertSize(1, cIndexedData.NumDataCached());
 	AssertLong(3488LL, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(30, cIndexedData.GetDataSystemMemorySize());
+	AssertSize(30, cIndexedData.GetDataSystemMemorySize());
 	Pass();
 
 	AssertTrue(cIndexedData.EvictKey(4LL));
 	AssertLong(0, cIndexedData.NumIndicesCached());
-	AssertInt(0, cIndexedData.NumDataCached());
+	AssertSize(0, cIndexedData.NumDataCached());
 	AssertLong(3100, cIndexedData.GetIndiciesSystemMemorySize());
-	AssertInt(0, cIndexedData.GetDataSystemMemorySize());
+	AssertSize(0, cIndexedData.GetDataSystemMemorySize());
 	Pass();
 
 	AssertTrue(cIndexedData.Get(1LL, &uiDataSize, szData, 7));
@@ -380,8 +447,8 @@ void TestIndexedDataExplicitKeyEvictionAllKeys(void)
 	AssertTrue(cIndexedData.Get(4LL, &uiDataSize, szData, 7));
 	AssertString(szWorld, szData);
 	AssertLong(3, cIndexedData.NumIndicesCached());
-	AssertInt(3, cIndexedData.NumDataCached());
-	AssertInt(91, cIndexedData.GetDataSystemMemorySize());
+	AssertSize(3, cIndexedData.NumDataCached());
+	AssertSize(91, cIndexedData.GetDataSystemMemorySize());
 	Pass();
 
 	cIndexedData.Flush();
@@ -1799,6 +1866,7 @@ void TestIndexedData(void)
 	TestIndexedDataIteration(IWT_Yes);
 	TestIndexedDataIteration(IWT_No);
 	TestIndexedDataFlushClearCache();
+	TestIndexedDataExplicitKeyEvictionOneKey();
 	TestIndexedDataEvictKey();
 	TestIndexedDataExplicitKeyEvictionAllKeys();
 	TestIndexedDataExplicitKeyEvictionDataChanged();
