@@ -12,6 +12,28 @@
 #include "DataTestRefWindow.h"
 
 
+bool gbAssertFile = false;
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertImageFile(CChars* pszExpected, CChars* pszActual)
+{
+	CFileUtil	cFileUtil;
+
+	if (gbAssertFile)
+	{
+		AssertFile(pszExpected->Text(), pszActual->Text());
+	}
+	else
+	{
+		cFileUtil.Copy(pszActual->Text(), pszExpected->Text());
+	}
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -29,7 +51,7 @@ void TestFlowContainerBasic(void)
 		CWindow					cTestWindow;
 		CArrayChars				aszFiles;
 		size					i;
-		CChars* pszFilename;
+		CChars*					pszFilename;
 		CChars					szExpectedFilename;
 		CCanvas					cCanvas1;
 		CCanvas					cCanvas2;
@@ -91,7 +113,7 @@ void TestFlowContainerBasic(void)
 			szExpectedFilename.Init(pszFilename);
 			szExpectedFilename.Replace("Output", "Input");
 
-			AssertFile(szExpectedFilename.Text(), pszFilename->Text());
+			AssertImageFile(&szExpectedFilename, pszFilename);
 
 			szExpectedFilename.Kill();
 		}
@@ -121,7 +143,7 @@ void TestFlowContainerRightCenteredContinue(void)
 		Ptr<CWindow>							pTestWindow;
 		CArrayChars								aszFiles;
 		size									i;
-		CChars* pszFilename;
+		CChars*									pszFilename;
 		CChars									szExpectedFilename;
 		Ptr<CCanvas>							pCanvas;
 		Ptr<CDrawCanvasBorder>					pDraw;
@@ -135,13 +157,14 @@ void TestFlowContainerRightCenteredContinue(void)
 		CArrayTemplateEmbeddedBaseObjectPtr		apcHeapFroms;
 		CArrayStackPointer						apcStackFroms;
 		size									uiNumHeaps;
-		CBaseObject* pcWindowObject;
-		CBaseObject* pcCanvasObject1a;
-		CBaseObject* pcCanvasObject1b;
-		CBaseObject* pcFocusObject;
-		CBaseObject* pcObject;
-		CPointer* pcWindowPointer;
-		CPointer* pcPointer1;
+		CBaseObject*							pcWindowObject;
+		CBaseObject*							pcCanvasObject1a;
+		CBaseObject*							pcCanvasObject1b;
+		CBaseObject*							pcFocusObject;
+		CBaseObject*							pcObject;
+		CPointer*								pcWindowPointer;
+		CPointer*								pcPointer1;
+		SStackPointer*							psStackPointer;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 24, szDirectory);
 
@@ -164,7 +187,8 @@ void TestFlowContainerRightCenteredContinue(void)
 		AssertSize(1, pTestWindow.NumStackFroms());
 		apcStackFroms.Init();
 		pTestWindow->GetStackFroms(&apcStackFroms);
-		pcWindowPointer = apcStackFroms.Get(0)->u.pcPointer;
+		psStackPointer = apcStackFroms.Get(0);
+		pcWindowPointer = psStackPointer->u.pcPointer;
 		apcStackFroms.Kill();
 		AssertPointer(pTestWindow.This(), pcWindowPointer);
 
@@ -253,7 +277,7 @@ void TestFlowContainerRightCenteredContinue(void)
 			szExpectedFilename.Init(pszFilename);
 			szExpectedFilename.Replace("Output", "Input");
 
-			AssertFile(szExpectedFilename.Text(), pszFilename->Text());
+			AssertImageFile(&szExpectedFilename, pszFilename);
 
 			szExpectedFilename.Kill();
 		}
@@ -351,7 +375,7 @@ void TestFlowContainerRightTopContinue(void)
 			szExpectedFilename.Init(pszFilename);
 			szExpectedFilename.Replace("Output", "Input");
 
-			AssertFile(szExpectedFilename.Text(), pszFilename->Text());
+			AssertImageFile(&szExpectedFilename, pszFilename);
 
 			szExpectedFilename.Kill();
 		}
@@ -449,7 +473,7 @@ void TestFlowContainerRightBottomContinue(void)
 			szExpectedFilename.Init(pszFilename);
 			szExpectedFilename.Replace("Output", "Input");
 
-			AssertFile(szExpectedFilename.Text(), pszFilename->Text());
+			AssertImageFile(&szExpectedFilename, pszFilename);
 
 			szExpectedFilename.Kill();
 		}
@@ -547,7 +571,7 @@ void TestFlowContainerRightTopWrap(void)
 			szExpectedFilename.Init(pszFilename);
 			szExpectedFilename.Replace("Output", "Input");
 
-			AssertFile(szExpectedFilename.Text(), pszFilename->Text());
+			AssertImageFile(&szExpectedFilename, pszFilename);
 
 			szExpectedFilename.Kill();
 		}
@@ -642,7 +666,7 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRand
 			szExpectedFilename.Init(pszFilename);
 			szExpectedFilename.Replace("Output", "Input");
 
-			AssertFile(szExpectedFilename.Text(), pszFilename->Text());
+			AssertImageFile(&szExpectedFilename, pszFilename);
 
 			szExpectedFilename.Kill();
 		}
