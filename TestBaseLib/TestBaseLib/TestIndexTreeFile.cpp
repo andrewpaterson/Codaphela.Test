@@ -2535,7 +2535,8 @@ void TestIndexTreeFileEvictComplexEvictCloseGet(void)
 	AssertLong(3873LL, pcMemory->GetTotalAllocatedMemory());
 	Pass();
 
-	//TestIndexTreeFileEvictComplexSetup does the following
+	//Note: TestIndexTreeFileEvictComplexSetup does the following
+	// 
 	//PutStringString(szAAAAA, "Update 1")
 	//PutStringString(szAAABB, "Update 2")
 	//PutStringString(szAABAA, "Update 3")

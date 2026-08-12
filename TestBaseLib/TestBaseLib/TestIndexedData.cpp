@@ -186,7 +186,7 @@ void TestIndexedDataFlushClearCache(void)
 	char								szStream[] = "Stream";
 	char								szDirectory[] = "Output" _FS_ "Database1a";
 	CFileUtil							cFileUtil;
-	uint32						uiDataSize;
+	uint32								uiDataSize;
 	char								szData[7];
 	CLifeInit<CIndexedDataConfig>		cIndexConfig;
 	SLogConfig							sLogConfig;

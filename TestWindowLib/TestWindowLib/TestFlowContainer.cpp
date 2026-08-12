@@ -12,7 +12,7 @@
 #include "DataTestRefWindow.h"
 
 
-bool gbAssertFile = false;
+bool gbAssertFile = true;
 
 
 //////////////////////////////////////////////////////////////////////////

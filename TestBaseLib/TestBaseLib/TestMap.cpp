@@ -20,20 +20,20 @@ typedef CTreeTemplate<int> CTreeInt;
 //////////////////////////////////////////////////////////////////////////
 void TestMapStringString2(void)
 {
-	CMapStringString	cMapStringSting;
+	CMapStringString	cMapStringString;
 	char*				sz1;
 
-	cMapStringSting.Init();
+	cMapStringString.Init();
 
-	cMapStringSting.Put("Hello", "World");
-	cMapStringSting.Put("Michelle", "Bridget");
-	cMapStringSting.Put("Number", "String");
-	cMapStringSting.Put("Michelle", "Megan");
+	cMapStringString.Put("Hello", "World");
+	cMapStringString.Put("Michelle", "Bridget");
+	cMapStringString.Put("Number", "String");
+	cMapStringString.Put("Michelle", "Megan");
 
-	sz1 = cMapStringSting.Get("Michelle");
+	sz1 = cMapStringString.Get("Michelle");
 	AssertString("Megan", sz1);
 
-	cMapStringSting.Kill();
+	cMapStringString.Kill();
 };
 
 

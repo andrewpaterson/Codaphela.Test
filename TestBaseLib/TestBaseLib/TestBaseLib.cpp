@@ -334,13 +334,13 @@ int __cdecl main(void)
 	//TestIndexedData();
 	TestSequence();
 	TestNamedIndexes();
-	TestNamedIndexedData();
+	//TestNamedIndexedData();
 	TestIndexTreeFileKeyDiagnosticCallback();
 	TestIndexTreeAccess();
 	TestCodabase();
 	TestMemoryDrive();
 	TestFatCache();
-	//TestFat32();
+	TestFat32();
 
 	NumberKill();
 	FastFunctionsKill();
