@@ -759,6 +759,9 @@
     <ClCompile Include="WordKey.cpp">
       <Filter>Source\Data\Common</Filter>
     </ClCompile>
+    <ClCompile Include="TestCircularMemoryList.cpp">
+      <Filter>Source\Memory\Cache</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestIndexTreeObject.h">

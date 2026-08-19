@@ -214,6 +214,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ArrayTemplateTestClasses.cpp" />
+    <ClCompile Include="TestCircularMemoryList.cpp" />
     <ClCompile Include="ConstructorCallTestClasses.cpp" />
     <ClCompile Include="ConstructorsTestClasses.cpp" />
     <ClCompile Include="FileIOTestObjects.cpp" />

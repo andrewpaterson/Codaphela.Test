@@ -112,6 +112,7 @@ void TestCSVFileEditable(void);
 void TestMemoryAllocator(void);
 void TestTrackingAllocator(void);
 void TestCountingAllocator(void);
+void TestCircularMemoryList(void);
 void TestMemoryStack(void);
 void TestMemoryCache(void);
 void TestMemoryQueue(void);
@@ -273,6 +274,7 @@ int __cdecl main(void)
 	TestTrackingAllocator();
 	TestScratchPad();
 	TestScratchPadAllocator();
+	TestCircularMemoryList();
 	TestMemoryStack();
 	TestMemoryCache();
 	TestMemoryQueue();
@@ -331,10 +333,10 @@ int __cdecl main(void)
 	TestIndexTreeWriter();
 	TestIndexTreeEvicting();
 	TestIndexedFilesEvicting();
-	//TestIndexedData();
+	TestIndexedData();
 	TestSequence();
 	TestNamedIndexes();
-	//TestNamedIndexedData();
+	TestNamedIndexedData();
 	TestIndexTreeFileKeyDiagnosticCallback();
 	TestIndexTreeAccess();
 	TestCodabase();
