@@ -951,17 +951,39 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 		sz.Kill();
 	}
 
-	AssertLong(8156, cDatabase.GetIndiciesSystemMemorySize());
-	AssertLong(5756, cDatabase.GetDataSystemMemorySize());
-	AssertLong(16308, cDatabase.GetNamesSystemMemorySize());
-	AssertLong(21, cDatabase.NumIndicesCached());
-	AssertLong(18, cDatabase.NumDataCached());
-	AssertLong(10, cDatabase.NumNamesCached());
-	AssertLong(1002, cIndexEvictionCounter.EvictionCount());
-	AssertLong(1005, cDataEvictionCounter.EvictionCount());
-	AssertLong(1013, cNameEvictionCounter.EvictionCount());
-	AssertLong(1023, cDatabase.NumIndices());
-	AssertLong(1023, cDatabase.NumNames());
+	if (eWriteThrough == IWT_Yes)
+	{
+		AssertLong(8156, cDatabase.GetIndiciesSystemMemorySize());
+		AssertLong(5756, cDatabase.GetDataSystemMemorySize());
+		AssertLong(16308, cDatabase.GetNamesSystemMemorySize());
+		AssertLong(21, cDatabase.NumIndicesCached());
+		AssertLong(18, cDatabase.NumDataCached());
+		AssertLong(10, cDatabase.NumNamesCached());
+		AssertLong(1002, cIndexEvictionCounter.EvictionCount());
+		AssertLong(1005, cDataEvictionCounter.EvictionCount());
+		AssertLong(1013, cNameEvictionCounter.EvictionCount());
+		AssertLong(1023, cDatabase.NumIndices());  //This causes evictions.
+		AssertLong(1023, cDatabase.NumNames());
+	}
+	else if (eWriteThrough = IWT_No)
+	{
+		AssertLong(6716, cDatabase.GetIndiciesSystemMemorySize());
+		AssertLong(322, cDatabase.GetDataSystemMemorySize());
+		AssertLong(16308, cDatabase.GetNamesSystemMemorySize());
+		AssertLong(1, cDatabase.NumIndicesCached());
+		AssertLong(1, cDatabase.NumDataCached());
+		AssertLong(10, cDatabase.NumNamesCached());
+		AssertLong(17013, cIndexEvictionCounter.EvictionCount());
+		AssertLong(1022, cDataEvictionCounter.EvictionCount());
+		AssertLong(1013, cNameEvictionCounter.EvictionCount());
+		AssertLong(1023, cDatabase.NumIndices());  //This causes evictions.
+		AssertLong(1023, cDatabase.NumNames());
+	}
+	else
+	{
+		Fail();
+	}
+
 	cIndexEvictionCounter.Reset();
 	cDataEvictionCounter.Reset();
 	cNameEvictionCounter.Reset();
@@ -985,18 +1007,40 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 	}
 	Pass();
 
-	AssertLong(8156, cDatabase.GetIndiciesSystemMemorySize());
-	AssertLong(4478, cDatabase.GetDataSystemMemorySize());
-	AssertLong(15668, cDatabase.GetNamesSystemMemorySize());
-	AssertLong(18, cDatabase.NumIndicesCached());
-	AssertLong(14, cDatabase.NumDataCached());
-	AssertLong(15, cDatabase.NumNamesCached());
-	AssertLong(1023, cIndexEvictionCounter.EvictionCount());
-	AssertLong(1009, cDataEvictionCounter.EvictionCount());
-	AssertLong(0, cNameEvictionCounter.EvictionCount());
-	AssertLong(1023, cDatabase.NumIndices());
-	AssertLong(1023, cDatabase.NumNames());
-	AssertLong(0, cDatabase.NumDataCached()); 
+	if (eWriteThrough == IWT_Yes)
+	{
+		AssertLong(8156, cDatabase.GetIndiciesSystemMemorySize());
+		AssertLong(4478, cDatabase.GetDataSystemMemorySize());
+		AssertLong(15668, cDatabase.GetNamesSystemMemorySize());
+		AssertLong(18, cDatabase.NumIndicesCached());
+		AssertLong(14, cDatabase.NumDataCached());
+		AssertLong(15, cDatabase.NumNamesCached());
+		AssertLong(1023, cIndexEvictionCounter.EvictionCount());
+		AssertLong(1009, cDataEvictionCounter.EvictionCount());
+		AssertLong(0, cNameEvictionCounter.EvictionCount());
+		AssertLong(1023, cDatabase.NumIndices());	//This causes evictions.
+		AssertLong(1023, cDatabase.NumNames());
+		AssertLong(0, cDatabase.NumDataCached()); 
+	}
+	else if (eWriteThrough = IWT_No)
+	{
+		AssertLong(8156, cDatabase.GetIndiciesSystemMemorySize());
+		AssertLong(4479, cDatabase.GetDataSystemMemorySize());
+		AssertLong(15668, cDatabase.GetNamesSystemMemorySize());
+		AssertLong(18, cDatabase.NumIndicesCached());
+		AssertLong(14, cDatabase.NumDataCached());
+		AssertLong(15, cDatabase.NumNamesCached());
+		AssertLong(1023, cIndexEvictionCounter.EvictionCount());
+		AssertLong(1009, cDataEvictionCounter.EvictionCount());
+		AssertLong(0, cNameEvictionCounter.EvictionCount());
+		AssertLong(1023, cDatabase.NumIndices());	//This causes evictions.
+		AssertLong(1023, cDatabase.NumNames());
+		AssertLong(0, cDatabase.NumDataCached());
+	}
+	else
+	{
+		Fail();
+	}
 	cIndexEvictionCounter.Reset();
 	cDataEvictionCounter.Reset();
 	cNameEvictionCounter.Reset();
@@ -1066,6 +1110,7 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 	CIndexTreeEvictionCounter			cNameEvictionCounter;
 	size								i;
 	size								uiDataSize;
+	char*								szName;
 
 	aszWords.Init();
 	GetCommonWords(&aszWords);
@@ -1105,26 +1150,49 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 			sz.Append(aszWords.Get(iIndex));
 		}
 
-		cObject.Init(sz.Text(), oi - 1, oi * 7);
-		cDatabase.Add(oi * 7, sz.Text(), &cObject, cObject.Size());
-		aszNames.Add(sz.Text());
+		szName = sz.Text();
+		uiDataSize = cObject.Size();
+		cObject.Init(szName, oi - 1, oi * 7);
+		cDatabase.Add(oi * 7, szName, &cObject, uiDataSize);
+		aszNames.Add(szName);
 		sz.Kill();
 
 		cDatabase.ValidateCache();
 	}
 
-	AssertLong(8156, cDatabase.GetIndiciesSystemMemorySize());
-	AssertLong(5756, cDatabase.GetDataSystemMemorySize());
-	AssertLong(16308, cDatabase.GetNamesSystemMemorySize());
-	AssertLong(21, cDatabase.NumIndicesCached());
-	AssertLong(18, cDatabase.NumDataCached());
-	AssertLong(10, cDatabase.NumNamesCached());
-	AssertLong(1002, cIndexEvictionCounter.EvictionCount());
-	AssertLong(1005, cDataEvictionCounter.EvictionCount());
-	AssertLong(1013, cNameEvictionCounter.EvictionCount());
-	AssertLong(1023, cDatabase.NumIndices());
-	AssertLong(1023, cDatabase.NumNames());
-	
+	if (eWriteThrough == IWT_Yes)
+	{
+		AssertLong(8156, cDatabase.GetIndiciesSystemMemorySize());
+		AssertLong(5756, cDatabase.GetDataSystemMemorySize());
+		AssertLong(16308, cDatabase.GetNamesSystemMemorySize());
+		AssertLong(21, cDatabase.NumIndicesCached());
+		AssertLong(18, cDatabase.NumDataCached());
+		AssertLong(10, cDatabase.NumNamesCached());
+		AssertLong(1002, cIndexEvictionCounter.EvictionCount());
+		AssertLong(1005, cDataEvictionCounter.EvictionCount());
+		AssertLong(1013, cNameEvictionCounter.EvictionCount());
+		AssertLong(1023, cDatabase.NumIndices());  //This causes evictions.
+		AssertLong(1023, cDatabase.NumNames());
+	}
+	else if (eWriteThrough = IWT_No)
+	{
+		AssertLong(6716, cDatabase.GetIndiciesSystemMemorySize());
+		AssertLong(322, cDatabase.GetDataSystemMemorySize());
+		AssertLong(16308, cDatabase.GetNamesSystemMemorySize());
+		AssertLong(1, cDatabase.NumIndicesCached());
+		AssertLong(1, cDatabase.NumDataCached());
+		AssertLong(10, cDatabase.NumNamesCached());
+		AssertLong(17013, cIndexEvictionCounter.EvictionCount());
+		AssertLong(1022, cDataEvictionCounter.EvictionCount());
+		AssertLong(1013, cNameEvictionCounter.EvictionCount());
+		AssertLong(1023, cDatabase.NumIndices());  //This causes evictions.
+		AssertLong(1023, cDatabase.NumNames());
+	}
+	else
+	{
+		Fail();
+	}
+
 	cIndexEvictionCounter.Reset();
 	cDataEvictionCounter.Reset();
 	cNameEvictionCounter.Reset();
