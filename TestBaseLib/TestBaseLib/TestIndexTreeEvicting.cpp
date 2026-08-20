@@ -145,7 +145,7 @@ void TestIndexTreeEvictingEvictRandom(EIndexWriteThrough eWriteThrough, EIndexKe
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 	cIndexTreeEvictedList.Init();
 	cController.Begin();
-	cStrategy.Init();
+	cStrategy.Init(15);
 	cIndexTree.Init(&cController, "Sub", 8 KB, &cIndexTreeEvictedList, LifeLocal<CIndexTreeEvictionStrategy>(&cStrategy), &cWriterCallback, eWriteThrough, eKeyReverse);
 	cAccess.Init(&cIndexTree);
 
@@ -209,7 +209,7 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 
 	cController.Begin();
 	cEvictedNodes.Init();
-	cStrategy.Init();
+	cStrategy.Init(15);
 	cIndexTree.Init(&cController, "Here", 3656, &cEvictedNodes, LifeLocal<CIndexTreeEvictionStrategy>(&cStrategy), NULL, LifeLocal<CMallocator>(&cAllocator), eWriteThrough, IKR_No);
 	cAccess.Init(&cIndexTree);
 

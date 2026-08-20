@@ -587,7 +587,7 @@ void TestIndexTreeEvictingAccess(char* szSubirectory, size sCacheSize, EIndexWri
 	cHelper.Init("Output" _FS_ "IndexTreeEvictingAccess", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
 
-	cEvictionStrategy.Init();
+	cEvictionStrategy.Init(15);
 	cController.Begin();
 	cCallback.Init("any");
 	cIndexTree.Init(&cController, szSubirectory, sCacheSize, NULL, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), NULL,  eWriteThrough, eKeyReverse);
