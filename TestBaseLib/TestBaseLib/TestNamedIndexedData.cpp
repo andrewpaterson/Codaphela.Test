@@ -411,7 +411,7 @@ void TestNamedIndexedDataGetName(EIndexWriteThrough eWriteThrough)
 	CIndexTreeEvictionStrategyRandom	cIndexEvictionStrategy;
 	CIndexTreeEvictionStrategyRandom	cNamedEvictionStrategy;
 	CFileUtil							cFileUtil;
-	size									pai[512];
+	size								pai[512];
 	CChars								szName;
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database3");
@@ -761,7 +761,7 @@ void TestNamedIndexedDataIterate(EIndexWriteThrough eWriteThrough)
 	CTestNamedIndexedDataObject			cObject3;
 	CTestNamedIndexedDataObject			cObject4;
 	CTestNamedIndexedDataObject			cObject5;
-	SIndexTreeFileIterator		sIter;
+	SIndexTreeFileIterator				sIter;
 	CTestNamedIndexedDataObject			cResult;
 	size								iDataSize;
 	OIndex								oi;
@@ -897,12 +897,12 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 	CArrayChars							aszWords;
 	CRandom								cRandom;
 	CChars								sz;
-	size									iNumWords;
-	size									iIndex;
-	size									iWord;
+	size								iNumWords;
+	size								iIndex;
+	size								iWord;
 	CArrayChars							aszNames;
-	size									iIter;
-	size									iExpectedOi;
+	size								iIter;
+	size								iExpectedOi;
 	CIndexTreeEvictionCounter			cIndexEvictionCounter;
 	CIndexedDataEvictionCounter			cDataEvictionCounter;
 	CIndexTreeEvictionCounter			cNameEvictionCounter;
@@ -1057,15 +1057,14 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 	CArrayChars							aszWords;
 	CRandom								cRandom;
 	CChars								sz;
-	size									iNumWords;
-	size									iIndex;
-	size									iWord;
+	size								iNumWords;
+	size								iIndex;
+	size								iWord;
 	CArrayChars							aszNames;
 	CIndexTreeEvictionCounter			cIndexEvictionCounter;
 	CIndexedDataEvictionCounter			cDataEvictionCounter;
 	CIndexTreeEvictionCounter			cNameEvictionCounter;
-	//bool								bFailed;
-	size									i;
+	size								i;
 	size								uiDataSize;
 
 	aszWords.Init();
@@ -1105,10 +1104,13 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 			iIndex = cRandom.Next(0, iNumWords - 1);
 			sz.Append(aszWords.Get(iIndex));
 		}
+
 		cObject.Init(sz.Text(), oi - 1, oi * 7);
 		cDatabase.Add(oi * 7, sz.Text(), &cObject, cObject.Size());
 		aszNames.Add(sz.Text());
 		sz.Kill();
+
+		cDatabase.ValidateCache();
 	}
 
 	AssertLong(8156, cDatabase.GetIndiciesSystemMemorySize());
@@ -1206,9 +1208,9 @@ void TestNamedIndexedData(void)
 	TestNamedIndexedDataSetIndex(IWT_No);
 	TestNamedIndexedDataSet(IWT_Yes);
 	TestNamedIndexedDataSet(IWT_No);
-	TestNamedIndexedDataSetBad(IWT_Yes);
+	TestNamedIndexedDataSetBad(IWT_Yes);	//Why isn't this implemented?
 	TestNamedIndexedDataSetBad(IWT_No);
-	TestNamedIndexedDataPut(IWT_Yes);
+	TestNamedIndexedDataPut(IWT_Yes);		//Why isn't this implemented?
 	TestNamedIndexedDataPut(IWT_No);
 	TestNamedIndexedDataRemove(IWT_Yes);
 	TestNamedIndexedDataRemove(IWT_No);
