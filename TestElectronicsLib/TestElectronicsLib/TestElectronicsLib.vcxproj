@@ -27,6 +27,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
     <PlatformToolset>v142</PlatformToolset>
+    <EnableASAN>true</EnableASAN>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -207,7 +208,7 @@
       <Project>{221022f1-b103-456a-8f55-721f33f2e26d}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-	<ProjectReference Include="..\..\..\CommonLibraries\TestLib\TestLib.vcxproj">
+    <ProjectReference Include="..\..\..\CommonLibraries\TestLib\TestLib.vcxproj">
       <Project>{d06d265e-a503-42f8-a93a-a0a1c0b058ff}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>

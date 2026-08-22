@@ -34,7 +34,6 @@ int __cdecl main(void)
 	TypeConverterInit();
 	MemoryInit();
 	DataIOInit();
-	ObjectsInit();
 
 	cFileUtil.RemoveDir("Output");
 	cFileUtil.MakeDir("Output");
@@ -45,7 +44,6 @@ int __cdecl main(void)
 
 	cFileUtil.RemoveDir("Output");
 
-	ObjectsKill();
 	DataIOKill();
 	MemoryKill();
 	TypeConverterKill();

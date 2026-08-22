@@ -132,10 +132,12 @@ void TestRefWindowCanvasBorder(void)
 void TestRefWindow(void)
 {
 	BeginTests();
+	ObjectsInit();
 
 	TestRefWindowCreation();
 	TestRefWindowCanvasBorder();
 
+	ObjectsKill();
 	TestStatistics();
 }
 

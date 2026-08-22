@@ -22,6 +22,7 @@ bool gbAssertFile = true;
 void AssertImageFile(CChars* pszExpected, CChars* pszActual)
 {
 	CFileUtil	cFileUtil;
+	bool		bSuccess;
 
 	if (gbAssertFile)
 	{
@@ -29,7 +30,10 @@ void AssertImageFile(CChars* pszExpected, CChars* pszActual)
 	}
 	else
 	{
-		cFileUtil.Copy(pszActual->Text(), pszExpected->Text());
+		bSuccess = cFileUtil.Delete(pszExpected->Text());
+		AssertTrue(bSuccess);
+		bSuccess = cFileUtil.Copy(pszActual->Text(), pszExpected->Text());
+		AssertTrue(bSuccess);
 	}
 }
 
@@ -806,6 +810,7 @@ void TestFlowLongContainerDownRightWrap(void)
 void TestFlowContainer(void)
 {
 	BeginTests();
+	ObjectsInit();
 
 	TestFlowContainerBasic();
 	TestFlowContainerRightCenteredContinue();
@@ -823,6 +828,7 @@ void TestFlowContainer(void)
 	TestFlowContainerDownRightWrap();
 	TestFlowLongContainerDownRightWrap();
 
+	ObjectsKill();
 	TestStatistics();
 }
 

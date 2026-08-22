@@ -20,20 +20,18 @@ void TestCanvasWriteImage(void)
 {
 	CWinRefWindowFactory	cNativeFactory;
 	CFileUtil				cFileUtil;
-	char					szDirectory[] = "Output" _FS_ "FlowContainerRightCenteredContinue";
+	char					szDirectory[] = "Output" _FS_ "CanvasWriteImage";
 
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.MakeDir(szDirectory);
 
 	{
 		Ptr<CWindow>							pTestWindow;
-		Ptr<CCanvas>							pCanvas;
-		Ptr<CDrawCanvasBorder>					pDraw;
+		//Ptr<CCanvas>							pCanvas;
+		//Ptr<CDrawCanvasBorder>					pDraw;
 		CTickTestRefWindow						cTick;
 		SDataTestRefWindow						cData;
 		Ptr<CFillContainer>						pFill;
-		SContainerBounds						sBounds;
-		CRandom									cRandom;
 		CPointer								pNull;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 24, szDirectory);
@@ -43,7 +41,11 @@ void TestCanvasWriteImage(void)
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
+
 	}
+
+	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -54,9 +56,11 @@ void TestCanvasWriteImage(void)
 void TestCanvas(void)
 {
 	BeginTests();
+	ObjectsInit();
 
 	TestCanvasWriteImage();
 
+	ObjectsKill();
 	TestStatistics();
 }
 
