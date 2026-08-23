@@ -28,7 +28,7 @@ void TestCanvasWriteImage(void)
 	{
 		Ptr<CWindow>							pTestWindow;
 		//Ptr<CCanvas>							pCanvas;
-		//Ptr<CDrawCanvasBorder>					pDraw;
+		//Ptr<CDrawCanvasBorder>				pDraw;
 		CTickTestRefWindow						cTick;
 		SDataTestRefWindow						cData;
 		Ptr<CFillContainer>						pFill;
@@ -42,7 +42,11 @@ void TestCanvasWriteImage(void)
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
 
+		int xxx = 0;
+		//pTestWindow = NULL;
+		//pFill = NULL;
 	}
+	AssertSize(0, gcObjects.NumMemoryIndexes());
 
 	cNativeFactory.Kill();
 	cFileUtil.RemoveDir(szDirectory);
