@@ -44,13 +44,13 @@ protected:
 	SStateOnKill*		mpsAfterDeath;
 
 public:
-			Ptr<CPlayerVehicle>	Init(void);
-			void				Class(void) override;
-			void				Free(void) override;
+			void	Init(void);
+			void	Class(void) override;
+			void	Free(void) override;
 
-			void				SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeath);
+			void	SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeath);
 
-	virtual void				PlayerInput(void) =0;
+	virtual void	PlayerInput(void) =0;
 };
 
 
@@ -64,7 +64,7 @@ protected:
 	int32					miSpeed;
 
 public:
-	Ptr<CHarrier>			Init(Ptr<CGameWorld> pWorld);
+	void					Init(Ptr<CGameWorld> pWorld);
 	void					Class(void) override;
 	void					Free(void) override;
 
@@ -84,11 +84,11 @@ protected:
 	float				mfBackWheel;
 
 public:
-	Ptr<CJeep>	Init(Ptr<CGameWorld> pWorld);
-	void		Class(void) override;
-	void		Free(void) override;
+	void	Init(Ptr<CGameWorld> pWorld);
+	void	Class(void) override;
+	void	Free(void) override;
 
-	void		PlayerInput(void) {};
+	void	PlayerInput(void) {};
 };
 
 
@@ -105,11 +105,11 @@ protected:
 	SStateOnKill*		mpsAfterDeath;
 
 public:
-	Ptr<CRedJet>	Init(Ptr<CGameWorld> pWorld);
-	void			Class(void) override;
-	void			Free(void) override;
+	void	Init(Ptr<CGameWorld> pWorld);
+	void	Class(void) override;
+	void	Free(void) override;
 
-	void			SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeath);
+	void	SetKillHook(SStateOnKill* psBeforeDeath, SStateOnKill* psAfterDeath);
 };
 
 
@@ -123,14 +123,14 @@ protected:
 	char*				mszKillState;
 
 public:
-	Ptr<CMissile>	Init(Ptr<CGameWorld> pWorld);
-	void			Class(void) override;
-	void			Free(void) override;
+	void		Init(Ptr<CGameWorld> pWorld);
+	void		Class(void) override;
+	void		Free(void) override;
 
-	void			SetTarget(CPointer& pTarget);
-	CPointer		GetTarget(void);
+	void		SetTarget(CPointer& pTarget);
+	CPointer	GetTarget(void);
 
-	void			SetKillString(char* szKillString);
+	void		SetKillString(char* szKillString);
 };
 
 
@@ -147,11 +147,11 @@ protected:
 	char*				mszKillState;
 
 public:
-	Ptr<CClusterMissile> 	Init(Ptr<CGameWorld> pWorld);
-	void					Class(void) override;
-	void					Free(void) override;
+	void	Init(Ptr<CGameWorld> pWorld);
+	void	Class(void) override;
+	void	Free(void) override;
 
-	void					SetKillString(char* szKillString);
+	void	SetKillString(char* szKillString);
 };
 
 
@@ -162,9 +162,9 @@ DESTRUCTABLE(CClusterLauncher)
 public:
 	Ptr<CClusterMissile>	mpMissile;
 
-	Ptr<CClusterLauncher> 	Init(void);
-	void					Class(void) override;
-	void					Free(void) override;
+	void 	Init(void);
+	void	Class(void) override;
+	void	Free(void) override;
 };
 
 
@@ -178,14 +178,14 @@ protected:
 	Ptr<CPlayerVehicle>	mpPlayer2;
 
 public:
-	Ptr<CGameWorld>		Init(void);
-	void				Class(void) override;
-	void				Free(void) override;
+	void			Init(void);
+	void			Class(void) override;
+	void			Free(void) override;
 
-	void				Tick(void);
-	void				AddPlayer(Ptr<CPlayerVehicle> pPlayer);
-	void				AddTickable(CPointer& pTickable);
-	void				RemoveTickable(CPointer& pTickable);
-	Ptr<CArray<>>		GetTickables(void);
+	void			Tick(void);
+	void			AddPlayer(Ptr<CPlayerVehicle> pPlayer);
+	void			AddTickable(CPointer& pTickable);
+	void			RemoveTickable(CPointer& pTickable);
+	Ptr<CArray<>>	GetTickables(void);
 };
 

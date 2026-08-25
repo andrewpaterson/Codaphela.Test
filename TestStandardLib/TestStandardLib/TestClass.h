@@ -14,12 +14,11 @@ DESTRUCTABLE(CTinyTestClass)
 public:
 	Int8	mc;
 
-	Ptr<CTinyTestClass> Init(void)
+	void Init(void)
 	{
 		PreInit();
 		mc = 127;
 		PostInit();
-		return this;
 	}
 
 	void Class(void)
@@ -46,7 +45,7 @@ public:
 	Float64				mDouble;
 	uint8				mauiData[12];
 
-	Ptr<CTestClass> Init(void)
+	void Init(void)
 	{
 		PreInit();
 		mTiny.Init();
@@ -55,7 +54,6 @@ public:
 		mDouble = 0;
 		memset(mauiData, 0, 12);
 		PostInit();
-		return this;
 	}
 
 	void Class(void)

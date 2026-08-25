@@ -8,11 +8,9 @@
 void CTestWithArray::Init(const char* szString, int x)
 {
 	PreInit();
-
 	mcArray = OMalloc<CArrayObject>();
 	mszString.Init(szString);
 	mx = x;
-
 	PostInit();
 }
 
@@ -56,11 +54,9 @@ bool CTestWithArray::Load(CObjectReader* pcFile)
 void CTestInteger::Init(int32 x, int16 y, int8 z)
 {
 	PreInit();
-
 	mx = x;
 	my = y;
 	mz = z;
-
 	PostInit();
 }
 
@@ -99,11 +95,9 @@ bool CTestInteger::Load(CObjectReader* pcFile)
 void CTestNamedString::Init(void)
 {
 	PreInit();
-
 	mszString = NULL;
 	mpAnother = NULL;
 	mszEmbedded._Init();
-
 	PostInit();
 }
 
@@ -111,9 +105,7 @@ void CTestNamedString::Init(void)
 void CTestNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pAnother, const char* szEmbedded)
 {
 	PreInit();
-
 	Set(szString, pAnother, szEmbedded);
-
 	PostInit();
 }
 
@@ -157,11 +149,9 @@ bool CTestNamedString::Load(CObjectReader* pcFile)
 void CTestDoubleNamedString::Init(void)
 {
 	PreInit();
-
 	mszString = Null();
 	mpSplit1 = Null();
 	mpSplit2 = Null();
-
 	PostInit();
 }
 
@@ -169,11 +159,9 @@ void CTestDoubleNamedString::Init(void)
 void CTestDoubleNamedString::Init(Ptr<CString> szString, Ptr<CTestNamedString> pSplit2, Ptr<CTestNamedString> pSplit1)
 {
 	PreInit();
-
 	mszString = szString;
 	mpSplit1 = pSplit1;
 	mpSplit2 = pSplit2;
-
 	PostInit();
 }
 

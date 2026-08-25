@@ -13,7 +13,7 @@ public:
 	Ptr<CTestNamedObject>	mpNamedTest2;
 	int32					miNum;
 
-	Ptr<CTestNamedObject> Init(int iNum);
+	void Init(int iNum);
 	void Class(void) override;
 	void Free(void) override;
 
@@ -29,8 +29,8 @@ DESTRUCTABLE(CTestNamedObjectSmall)
 public:
 	char	mac[4];
 
-	Ptr<CTestNamedObjectSmall> Init(char* sz);
-	Ptr<CTestNamedObjectSmall> Init(const char* sz);
+	void Init(char* sz);
+	void Init(const char* sz);
 	void Class(void) override;
 	void Free(void) override;
 
@@ -53,7 +53,7 @@ public:
 	void*							mpvUnmanaged;
 	uint16							miUnmagedSize;
 
-	Ptr<CTestNamedObjectWithEmbedded> Init(int iX, int iY, int iName1, int iName2, CPointer pObject, Ptr<CTestNamedObjectSmall> pSmall);
+	void Init(int iX, int iY, int iName1, int iName2, CPointer pObject, Ptr<CTestNamedObjectSmall> pSmall);
 	void Class(void) override;
 	void Free(void) override;
 

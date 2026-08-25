@@ -8,13 +8,11 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CTestNamedObject> CTestNamedObject::Init(int iNum)
+void CTestNamedObject::Init(int iNum)
 {
 	PreInit();
 	miNum = iNum;
-
 	PostInit();
-	return this;
 }
 
 
@@ -65,9 +63,9 @@ bool CTestNamedObject::Load(CObjectReader* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CTestNamedObjectSmall> CTestNamedObjectSmall::Init(char* sz)
+void CTestNamedObjectSmall::Init(char* sz)
 {
-	return Init((const char*)sz);
+	Init((const char*)sz);
 }
 
 
@@ -75,15 +73,12 @@ Ptr<CTestNamedObjectSmall> CTestNamedObjectSmall::Init(char* sz)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CTestNamedObjectSmall> CTestNamedObjectSmall::Init(const char* sz)
+void CTestNamedObjectSmall::Init(const char* sz)
 {
 	PreInit();
-
 	memset(mac, 0, 4);
 	StrCpySafe(mac, sz, 4);
-
 	PostInit();
-	return this;
 }
 
 
@@ -132,10 +127,9 @@ bool CTestNamedObjectSmall::Load(CObjectReader* pcFile)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CTestNamedObjectWithEmbedded> CTestNamedObjectWithEmbedded::Init(int iX, int iY, int iName1, int iName2, CPointer pObject, Ptr<CTestNamedObjectSmall> pSmall)
+void CTestNamedObjectWithEmbedded::Init(int iX, int iY, int iName1, int iName2, CPointer pObject, Ptr<CTestNamedObjectSmall> pSmall)
 {
 	PreInit();
-
 	miX = iX;
 	miY = iY;
 	mNamedTest1.Init(iName1);
@@ -144,9 +138,7 @@ Ptr<CTestNamedObjectWithEmbedded> CTestNamedObjectWithEmbedded::Init(int iX, int
 	mpSmall = pSmall;
 	mpvUnmanaged = NULL;
 	miUnmagedSize = 0;
-
 	PostInit();
-	return this;
 }
 
 

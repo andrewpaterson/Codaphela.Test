@@ -93,7 +93,7 @@
       <SDLCheck>true</SDLCheck>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <CallingConvention>VectorCall</CallingConvention>
-      <DisableSpecificWarnings>26440;26447;26455</DisableSpecificWarnings>
+      <DisableSpecificWarnings>26440;26447;26455;26476</DisableSpecificWarnings>
       <ExceptionHandling>false</ExceptionHandling>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <FloatingPointExceptions>false</FloatingPointExceptions>
@@ -151,8 +151,8 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
-      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -165,8 +165,9 @@
       <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <CallingConvention>VectorCall</CallingConvention>
-      <DisableSpecificWarnings>26440;26447;26455</DisableSpecificWarnings>
+      <DisableSpecificWarnings>26440;26447;26455;26476</DisableSpecificWarnings>
       <ExceptionHandling>false</ExceptionHandling>
+      <FloatingPointExceptions>false</FloatingPointExceptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

@@ -18,14 +18,13 @@ void CEmbeddedTest::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CEmbeddedTest> CEmbeddedTest::Init(void)
+void CEmbeddedTest::Init(void)
 {
 	PreInit();
 	miAmANumber = 85;
 	mfSoAmI = 58.0f;
-
+	mpTest = NULL;
 	PostInit();
-	return Ptr<CEmbeddedTest>(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -83,17 +82,17 @@ void CEmbeddedContainer::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CEmbeddedContainer> CEmbeddedContainer::Init(void)
+void CEmbeddedContainer::Init(void)
 {
 	PreInit();
 	strcpy(msz, "And");
+	mpTest = NULL;
 	mcOne.Init();
 	mi = 73;
 	mcTwo.Init();
 	mf = 666.0f;
 
 	PostInit();
-	return Ptr<CEmbeddedContainer>(this);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -152,17 +151,17 @@ void CEmbeddedComplex::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CEmbeddedComplex> CEmbeddedComplex::Init(void)
+void CEmbeddedComplex::Init(void)
 {
 	PreInit();
 	mcSimple.Init();
+	mcContainer.Init();
+	ma.Init();
+
+	mpTest = NULL;
 	mai[0] = 1;
 	mai[1] = 2;
-	ma.Init();
-	mcContainer.Init();
-
 	PostInit();
-	return Ptr<CEmbeddedComplex>(this);
 }
 
 
@@ -248,19 +247,16 @@ void CEmbeddedTestWithNotifier::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CEmbeddedTestWithNotifier> CEmbeddedTestWithNotifier::Init(STestObjectFreedNotifier* psFreedNotifier, Ptr<> pTest)
+void CEmbeddedTestWithNotifier::Init(STestObjectFreedNotifier* psFreedNotifier, Ptr<> pTest)
 {
 	PreInit();
-	
 	mpTest = pTest;
 	mpsFreedNotifier = psFreedNotifier;
 	if (mpsFreedNotifier)
 	{
 		mpsFreedNotifier->bFreed = false;
 	}
-
 	PostInit();
-	return Ptr<>(this);
 }
 
 
@@ -314,7 +310,7 @@ void CEmbeddedContainerWithNotifier::Class(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CEmbeddedContainerWithNotifier> CEmbeddedContainerWithNotifier::Init(STestObjectFreedNotifier* psFreedNotifier, 
+void CEmbeddedContainerWithNotifier::Init(STestObjectFreedNotifier* psFreedNotifier, 
 																		 Ptr<> pTest, 
 																		 Ptr<> pOne, 
 																		 Ptr<> pTwo, 
@@ -324,7 +320,6 @@ Ptr<CEmbeddedContainerWithNotifier> CEmbeddedContainerWithNotifier::Init(STestOb
 																		 STestObjectFreedNotifier* psFreedThree)
 {
 	PreInit();
-
 	mcOne.Init(psFreedOne, pOne);
 	mcTwo.Init(psFreedTwo, pTwo);
 	mcThree.Init(psFreedThree, pThree);
@@ -334,9 +329,7 @@ Ptr<CEmbeddedContainerWithNotifier> CEmbeddedContainerWithNotifier::Init(STestOb
 	{
 		mpsFreedNotifier->bFreed = false;
 	}
-
 	PostInit();
-	return Ptr<>(this);
 }
 
 //////////////////////////////////////////////////////////////////////////

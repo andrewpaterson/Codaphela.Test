@@ -131,13 +131,11 @@ void CTestTriPointerObject::Init(void)
 void CTestTriPointerObject::Init(STestObjectFreedNotifier* psKilledNotifier)
 {
 	PreInit();
-
 	mpsFreedNotifier = psKilledNotifier;
 	if (mpsFreedNotifier)
 	{
 		mpsFreedNotifier->bFreed = false;
 	}
-
 	PostInit();
 }
 
@@ -194,11 +192,9 @@ bool CTestTriPointerObject::Load(CObjectReader* pcFile)
 void CTestSaveableObject1::Init(void)
 {
 	PreInit();
-
 	miInt = 7;
 	mszString.Init();
 	mbSaved = false;
-
 	PostInit();
 }
 
@@ -260,10 +256,8 @@ bool CTestSaveableObject1::Load(CObjectReader* pcFile)
 void CTestSaveableObject2::Init(const char* psz)
 {
 	PreInit();
-
 	msz.Init(psz);
 	mbSaved = false;
-
 	PostInit();
 }
 
@@ -321,9 +315,7 @@ bool CTestSaveableObject2::Load(CObjectReader* pcFile)
 void CTestObjectWithFields::Init(void)
 {
 	PreInit();
-
 	mpsz = NULL;
-
 	PostInit();
 }
 
@@ -405,10 +397,8 @@ void CTestObjectWithFields::Update(char* sz)
 void CTestEmbeddedObjectWithFields::Init(void)
 {
 	PreInit();
-
 	mcEmbedded1.Init();
 	mcEmbedded2.Init();
-
 	PostInit();
 }
 
@@ -485,14 +475,12 @@ void CTestEmbeddedStrings::Free(void)
 void CTestSimpleObject::Init(STestObjectFreedNotifier* psKilledNotifier, int32 i)
 {
 	PreInit();
-
 	mi = i;
 	mpsFreedNotifier = psKilledNotifier;
 	if (mpsFreedNotifier)
 	{
 		mpsFreedNotifier->bFreed = false;
 	}
-
 	PostInit();
 }
 
