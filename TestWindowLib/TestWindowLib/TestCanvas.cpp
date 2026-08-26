@@ -26,13 +26,13 @@ void TestCanvasWriteImage(void)
 	cFileUtil.MakeDir(szDirectory);
 
 	{
-		Ptr<CWindow>							pTestWindow;
-		//Ptr<CCanvas>							pCanvas;
-		//Ptr<CDrawCanvasBorder>				pDraw;
-		CTickTestRefWindow						cTick;
-		SDataTestRefWindow						cData;
-		Ptr<CFillContainer>						pFill;
-		CPointer								pNull;
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CCanvas>			pCanvas;
+		Ptr<CDrawCanvasBorder>	pDraw;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		Ptr<CFillContainer>		pFill;
+		CPointer				pNull;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 24, szDirectory);
 
@@ -41,10 +41,6 @@ void TestCanvasWriteImage(void)
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
-
-		int xxx = 0;
-		//pTestWindow = NULL;
-		//pFill = NULL;
 	}
 	AssertSize(0, gcObjects.NumMemoryIndexes());
 

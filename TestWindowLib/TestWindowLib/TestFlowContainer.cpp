@@ -52,21 +52,21 @@ void TestFlowContainerBasic(void)
 	cFileUtil.MakeDir(szDirectory);
 
 	{
-		CWindow					cTestWindow;
-		CArrayChars				aszFiles;
-		size					i;
-		CChars*					pszFilename;
-		CChars					szExpectedFilename;
-		CCanvas					cCanvas1;
-		CCanvas					cCanvas2;
-		CCanvas					cCanvas3;
-		CDrawCanvasBorder		cDraw1;
-		CDrawCanvasBorder		cDraw2;
-		CDrawCanvasBorder		cDraw3;
-		CTickTestRefWindow		cTick;
-		SDataTestRefWindow		cData;
-		CFlowContainer			cFlow;
-		SContainerBounds		sBounds;
+		CWindow				cTestWindow;
+		CArrayChars			aszFiles;
+		size				i;
+		CChars*				pszFilename;
+		CChars				szExpectedFilename;
+		CCanvas				cCanvas1;
+		CCanvas				cCanvas2;
+		CCanvas				cCanvas3;
+		CDrawCanvasBorder	cDraw1;
+		CDrawCanvasBorder	cDraw2;
+		CDrawCanvasBorder	cDraw3;
+		CTickTestRefWindow	cTick;
+		SDataTestRefWindow	cData;
+		CFlowContainer		cFlow;
+		SContainerBounds	sBounds;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 30, szDirectory);
 
@@ -308,20 +308,20 @@ void TestFlowContainerRightTopContinue(void)
 	cFileUtil.MakeDir(szDirectory);
 
 	{
-		Ptr<CWindow>							pTestWindow;
-		CArrayChars								aszFiles;
-		size									i;
-		CChars* pszFilename;
-		CChars									szExpectedFilename;
-		Ptr<CCanvas>							pCanvas;
-		Ptr<CDrawCanvasBorder>					pDraw;
-		CTickTestRefWindow						cTick;
-		SDataTestRefWindow						cData;
-		Ptr<CFlowContainer>						pFlow;
-		SContainerBounds						sBounds;
-		ARGB32									sColour;
-		CRandom									cRandom;
-		CPointer								pNull;
+		Ptr<CWindow>			pTestWindow;
+		CArrayChars				aszFiles;
+		size					i;
+		CChars*					pszFilename;
+		CChars					szExpectedFilename;
+		Ptr<CCanvas>			pCanvas;
+		Ptr<CDrawCanvasBorder>	pDraw;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		Ptr<CFlowContainer>		pFlow;
+		SContainerBounds		sBounds;
+		ARGB32					sColour;
+		CRandom					cRandom;
+		CPointer				pNull;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 24, szDirectory);
 
@@ -406,20 +406,20 @@ void TestFlowContainerRightBottomContinue(void)
 	cFileUtil.MakeDir(szDirectory);
 
 	{
-		Ptr<CWindow>							pTestWindow;
-		CArrayChars								aszFiles;
-		size									i;
-		CChars* pszFilename;
-		CChars									szExpectedFilename;
-		Ptr<CCanvas>							pCanvas;
-		Ptr<CDrawCanvasBorder>					pDraw;
-		CTickTestRefWindow						cTick;
-		SDataTestRefWindow						cData;
-		Ptr<CFlowContainer>						pFlow;
-		SContainerBounds						sBounds;
-		ARGB32									sColour;
-		CRandom									cRandom;
-		CPointer								pNull;
+		Ptr<CWindow>			pTestWindow;
+		CArrayChars				aszFiles;
+		size					i;
+		CChars*					pszFilename;
+		CChars					szExpectedFilename;
+		Ptr<CCanvas>			pCanvas;
+		Ptr<CDrawCanvasBorder>	pDraw;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		Ptr<CFlowContainer>		pFlow;
+		SContainerBounds		sBounds;
+		ARGB32					sColour;
+		CRandom					cRandom;
+		CPointer				pNull;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 24, szDirectory);
 
