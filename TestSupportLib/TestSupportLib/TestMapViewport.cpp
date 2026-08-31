@@ -161,7 +161,7 @@ void TestMapViewportBlit(void)
 		{
 			y = x;
 			cMaps.SetViewportPosition(x, y);
-			bResult = cMaps.Blit();
+			bResult = cMaps.Blit(false);
 			AssertTrue(bResult);
 
 			szOutputFilename.Init(szDirectory);
@@ -183,8 +183,6 @@ void TestMapViewportBlit(void)
 		cMaps.Kill();
 
 		ImageChannelDescriptorKill();
-
-
 	}
 	ObjectsKill(false);
 }

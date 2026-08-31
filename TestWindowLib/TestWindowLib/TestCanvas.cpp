@@ -4,10 +4,11 @@
 #include "StandardLib/Objects.h"
 #include "WindowLib/Window.h"
 #include "WindowLib/FillContainer.h"
+#include "WindowLib/MapsCanvasDraw.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/AssertGeometric.h"
-#include "DrawTestRefWindow.h"
-#include "DrawCanvasBorder.h"
+#include "TestRefWindowCanvasDraw.h"
+#include "BorderCanvasDraw.h"
 #include "TickTestRefWindow.h"
 #include "DataTestRefWindow.h"
 
@@ -28,11 +29,11 @@ void TestCanvasWriteImage(void)
 	{
 		Ptr<CWindow>			pTestWindow;
 		Ptr<CCanvas>			pCanvas;
-		Ptr<CDrawCanvasBorder>	pDraw;
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFillContainer>		pFill;
 		CPointer				pNull;
+		Ptr<CMapsCanvasDraw>	pDraw;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 24, szDirectory);
 
@@ -41,6 +42,11 @@ void TestCanvasWriteImage(void)
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
+
+		pDraw = OMalloc<CMapsCanvasDraw>();
+
+		pCanvas = OMalloc<CCanvas>(pTestWindow, CF_R8G8B8, pDraw);
+		pFill->AddComponent(pCanvas);
 	}
 	AssertSize(0, gcObjects.NumMemoryIndexes());
 

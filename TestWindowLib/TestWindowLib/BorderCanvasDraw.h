@@ -1,14 +1,14 @@
-#ifndef __DRAW_CANVAS_BORDER_H__
-#define __DRAW_CANVAS_BORDER_H__
+#ifndef __BORDER_CANVAS_DRAW_H__
+#define __BORDER_CANVAS_DRAW_H__
 #include "SupportLib/ColourARGB32.h"
 #include "WindowLib/CanvasDraw.h"
 #include "DataTestRefWindow.h"
 
 
-class CDrawCanvasBorder: public CCanvasDraw
+class CBorderCanvasDraw : public CCanvasDraw
 {
-CONSTRUCTABLE(CDrawCanvasBorder);
-DESTRUCTABLE(CDrawCanvasBorder);
+CONSTRUCTABLE(CBorderCanvasDraw);
+DESTRUCTABLE(CBorderCanvasDraw);
 protected:
 	ARGB32	msColour;
 
@@ -18,5 +18,5 @@ public:
 };
 
 
-#endif // __DRAW_CANVAS_BORDER_H__
+#endif // __BORDER_CANVAS_DRAW_H__
 

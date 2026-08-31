@@ -6,8 +6,8 @@
 #include "SupportLib/ColourARGB32.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/AssertGeometric.h"
-#include "DrawTestRefWindow.h"
-#include "DrawCanvasBorder.h"
+#include "TestRefWindowCanvasDraw.h"
+#include "BorderCanvasDraw.h"
 #include "TickTestRefWindow.h"
 #include "DataTestRefWindow.h"
 
@@ -31,7 +31,7 @@ void TestRefWindowCreation(void)
 		size					i;
 		CChars*					pszFilename;
 		CChars					szExpectedFilename;
-		CDrawTestRefWindow		cDraw;
+		CTestRefWindowCanvasDraw		cDraw;
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 
@@ -88,7 +88,7 @@ void TestRefWindowCanvasBorder(void)
 		size					i;
 		CChars*					pszFilename;
 		CChars					szExpectedFilename;
-		CDrawCanvasBorder		cDraw;
+		CBorderCanvasDraw		cDraw;
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 

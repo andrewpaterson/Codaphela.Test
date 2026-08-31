@@ -1,19 +1,17 @@
 #include "StandardLib/ClassDefines.h"
 #include "WindowLib/Canvas.h"
-#include "DrawCanvasBorder.h"
+#include "BorderCanvasDraw.h"
 
 
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CDrawCanvasBorder::Init(ARGB32 sColour)
+void CBorderCanvasDraw::Init(ARGB32 sColour)
 {
     PreInit();
-
     CCanvasDraw::Init();
     msColour = sColour;
-
     PostInit();
 }
 
@@ -22,7 +20,7 @@ void CDrawCanvasBorder::Init(ARGB32 sColour)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-bool CDrawCanvasBorder::Draw(Ptr<CCanvas> pCanvas)
+bool CBorderCanvasDraw::Draw(Ptr<CCanvas> pCanvas)
 {
     CRectangle      cRect;
     ARGB32	        sBlack;

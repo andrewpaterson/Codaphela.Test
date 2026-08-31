@@ -1,14 +1,14 @@
 #include "StandardLib/ClassDefines.h"
 #include "SupportLib/ColourARGB32.h"
 #include "WindowLib/Canvas.h"
-#include "DrawTestRefWindow.h"
+#include "TestRefWindowCanvasDraw.h"
 
 
 //////////////////////////////////////////////////////////////////////////
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CDrawTestRefWindow::Init(SDataTestRefWindow* pcData)
+void CTestRefWindowCanvasDraw::Init(SDataTestRefWindow* pcData)
 {
     PreInit();
     
@@ -23,7 +23,7 @@ void CDrawTestRefWindow::Init(SDataTestRefWindow* pcData)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-bool CDrawTestRefWindow::Draw(Ptr<CCanvas> pCanvas)
+bool CTestRefWindowCanvasDraw::Draw(Ptr<CCanvas> pCanvas)
 {
     CRectangle      cRect;
     ARGB32          sGrey;

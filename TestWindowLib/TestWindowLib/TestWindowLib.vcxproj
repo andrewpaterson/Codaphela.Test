@@ -187,8 +187,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DrawCanvasBorder.cpp" />
-    <ClCompile Include="DrawTestRefWindow.cpp" />
+    <ClCompile Include="BorderCanvasDraw.cpp" />
+    <ClCompile Include="TestRefWindowCanvasDraw.cpp" />
     <ClCompile Include="TestCanvas.cpp" />
     <ClCompile Include="TestFlowContainer.cpp" />
     <ClCompile Include="TestRefWindow.cpp" />
@@ -228,8 +228,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataTestRefWindow.h" />
-    <ClInclude Include="DrawCanvasBorder.h" />
-    <ClInclude Include="DrawTestRefWindow.h" />
+    <ClInclude Include="BorderCanvasDraw.h" />
+    <ClInclude Include="TestRefWindowCanvasDraw.h" />
     <ClInclude Include="TickTestRefWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

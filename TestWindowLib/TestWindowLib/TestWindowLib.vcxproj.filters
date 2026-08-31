@@ -37,10 +37,10 @@
     <ClCompile Include="TestFlowContainer.cpp">
       <Filter>Source\Component\Container</Filter>
     </ClCompile>
-    <ClCompile Include="DrawCanvasBorder.cpp">
+    <ClCompile Include="BorderCanvasDraw.cpp">
       <Filter>Source\TestCommon</Filter>
     </ClCompile>
-    <ClCompile Include="DrawTestRefWindow.cpp">
+    <ClCompile Include="TestRefWindowCanvasDraw.cpp">
       <Filter>Source\TestCommon</Filter>
     </ClCompile>
     <ClCompile Include="TickTestRefWindow.cpp">
@@ -54,10 +54,10 @@
     <ClInclude Include="DataTestRefWindow.h">
       <Filter>Source\TestCommon</Filter>
     </ClInclude>
-    <ClInclude Include="DrawCanvasBorder.h">
+    <ClInclude Include="BorderCanvasDraw.h">
       <Filter>Source\TestCommon</Filter>
     </ClInclude>
-    <ClInclude Include="DrawTestRefWindow.h">
+    <ClInclude Include="TestRefWindowCanvasDraw.h">
       <Filter>Source\TestCommon</Filter>
     </ClInclude>
     <ClInclude Include="TickTestRefWindow.h">

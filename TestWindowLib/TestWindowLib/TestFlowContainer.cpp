@@ -6,8 +6,8 @@
 #include "WindowLib/FlowContainer.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/AssertGeometric.h"
-#include "DrawTestRefWindow.h"
-#include "DrawCanvasBorder.h"
+#include "TestRefWindowCanvasDraw.h"
+#include "BorderCanvasDraw.h"
 #include "TickTestRefWindow.h"
 #include "DataTestRefWindow.h"
 
@@ -60,9 +60,9 @@ void TestFlowContainerBasic(void)
 		CCanvas				cCanvas1;
 		CCanvas				cCanvas2;
 		CCanvas				cCanvas3;
-		CDrawCanvasBorder	cDraw1;
-		CDrawCanvasBorder	cDraw2;
-		CDrawCanvasBorder	cDraw3;
+		CBorderCanvasDraw	cDraw1;
+		CBorderCanvasDraw	cDraw2;
+		CBorderCanvasDraw	cDraw3;
 		CTickTestRefWindow	cTick;
 		SDataTestRefWindow	cData;
 		CFlowContainer		cFlow;
@@ -150,7 +150,7 @@ void TestFlowContainerRightCenteredContinue(void)
 		CChars*									pszFilename;
 		CChars									szExpectedFilename;
 		Ptr<CCanvas>							pCanvas;
-		Ptr<CDrawCanvasBorder>					pDraw;
+		Ptr<CBorderCanvasDraw>					pDraw;
 		CTickTestRefWindow						cTick;
 		SDataTestRefWindow						cData;
 		Ptr<CFlowContainer>						pFlow;
@@ -206,7 +206,7 @@ void TestFlowContainerRightCenteredContinue(void)
 		for (i = 0; i < 10; i++)
 		{
 			sColour = Set32BitColour(cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f);
-			pDraw = OMalloc<CDrawCanvasBorder>(sColour);
+			pDraw = OMalloc<CBorderCanvasDraw>(sColour);
 
 			pCanvas = OMalloc<CCanvas>(pTestWindow, CF_R8G8B8, pDraw);
 			pFlow->AddComponent(pCanvas);
@@ -314,7 +314,7 @@ void TestFlowContainerRightTopContinue(void)
 		CChars*					pszFilename;
 		CChars					szExpectedFilename;
 		Ptr<CCanvas>			pCanvas;
-		Ptr<CDrawCanvasBorder>	pDraw;
+		Ptr<CBorderCanvasDraw>	pDraw;
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
@@ -339,7 +339,7 @@ void TestFlowContainerRightTopContinue(void)
 		for (i = 0; i < 10; i++)
 		{
 			sColour = Set32BitColour(cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f);
-			pDraw = OMalloc<CDrawCanvasBorder>(sColour);
+			pDraw = OMalloc<CBorderCanvasDraw>(sColour);
 
 			pCanvas = OMalloc<CCanvas>(pTestWindow, CF_R8G8B8, pDraw);
 			pFlow->AddComponent(pCanvas);
@@ -412,7 +412,7 @@ void TestFlowContainerRightBottomContinue(void)
 		CChars*					pszFilename;
 		CChars					szExpectedFilename;
 		Ptr<CCanvas>			pCanvas;
-		Ptr<CDrawCanvasBorder>	pDraw;
+		Ptr<CBorderCanvasDraw>	pDraw;
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
@@ -437,7 +437,7 @@ void TestFlowContainerRightBottomContinue(void)
 		for (i = 0; i < 10; i++)
 		{
 			sColour = Set32BitColour(cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f);
-			pDraw = OMalloc<CDrawCanvasBorder>(sColour);
+			pDraw = OMalloc<CBorderCanvasDraw>(sColour);
 
 			pCanvas = OMalloc<CCanvas>(pTestWindow, CF_R8G8B8, pDraw);
 			pFlow->AddComponent(pCanvas);
@@ -510,7 +510,7 @@ void TestFlowContainerRightTopWrap(void)
 		CChars*					pszFilename;
 		CChars					szExpectedFilename;
 		Ptr<CCanvas>			pCanvas;
-		Ptr<CDrawCanvasBorder>	pDraw;
+		Ptr<CBorderCanvasDraw>	pDraw;
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
@@ -535,7 +535,7 @@ void TestFlowContainerRightTopWrap(void)
 		for (i = 0; i < 10; i++)
 		{
 			sColour = Set32BitColour(cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f);
-			pDraw = OMalloc<CDrawCanvasBorder>(sColour);
+			pDraw = OMalloc<CBorderCanvasDraw>(sColour);
 
 			pCanvas = OMalloc<CCanvas>(pTestWindow, CF_R8G8B8, pDraw);
 			pFlow->AddComponent(pCanvas);
@@ -607,7 +607,7 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRand
 		CChars*					pszFilename;
 		CChars					szExpectedFilename;
 		Ptr<CCanvas>			pCanvas;
-		Ptr<CDrawCanvasBorder>	pDraw;
+		Ptr<CBorderCanvasDraw>	pDraw;
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
@@ -636,7 +636,7 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRand
 		for (i = 0; i < 10; i++)
 		{
 			sColour = Set32BitColour(cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f);
-			pDraw = OMalloc<CDrawCanvasBorder>(sColour);
+			pDraw = OMalloc<CBorderCanvasDraw>(sColour);
 
 			pCanvas = OMalloc<CCanvas>(pTestWindow, CF_R8G8B8, pDraw);
 			pFlow->AddComponent(pCanvas);

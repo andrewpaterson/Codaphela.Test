@@ -466,7 +466,7 @@ void TestFontMapFontViewportLayout(void)
 
 		cTimer.Init();
 		pMaps->SetViewportPosition(0, 0);
-		bResult = pMaps->Blit();
+		bResult = pMaps->Blit(false);
 		AssertTrue(bResult);
 		cTimer.Update();
 		iMilliseconds = cTimer.GetTotalTimeInMillieconds();
