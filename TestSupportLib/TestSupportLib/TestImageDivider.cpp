@@ -10,6 +10,7 @@
 #include "SupportLib/ImageCelTransparent.h"
 #include "SupportLib/ImageCelMaskTransparent.h"
 #include "TestLib/Assert.h"
+#include "TestReadImage.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -21,7 +22,7 @@ void TestImageDividerGenerateFromBorder(void)
 	CImageDivider		cImageDivider;
 	Ptr<CImageCelMask>	pcRectangle;
 
-	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "splitter.png");
+	Ptr<CImage> pcImage = TestReadImage(NULL, "splitter.png");
 	Ptr<CImage> pcMask = OMalloc<CImage>();
 
 	cImageDivider.Init(&pcImage);
@@ -64,7 +65,7 @@ void TestImageDividerGenerateFromNumbers(void)
 	Ptr<CImageCel>			pcImageCel;
 	CImageDividerNumbers	cNumbers;
 
-	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "grid.png");
+	Ptr<CImage> pcImage = TestReadImage(NULL, "grid.png");
 
 
 	//int iCelWidth, int iCelHeight, int iColumnCount, int iRowCount, int iLeftOffset, int iTopOffset, int iWidthSpacing, int iHeightSpacing
@@ -220,7 +221,7 @@ void TestImageDividerGenerateFromNumbersWithTransparent(void)
 	uint32					uiTransparent;
 	CImageDividerNumbers	cNumbers;
 
-	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "grid.png");
+	Ptr<CImage> pcImage = TestReadImage(NULL, "grid.png");
 
 	uiTransparent = 0x212121ff;
 	cImageDivider.Init(&pcImage, (SImageColour*)&uiTransparent);

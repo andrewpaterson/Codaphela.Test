@@ -11,7 +11,7 @@
 #include "SupportLib/ImageDivider.h"
 #include "SupportLib/ImageCel.h"
 #include "TestLib/Assert.h"
-
+#include "TestReadImage.h"
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -22,7 +22,7 @@ void TestImageSFTWriterTinyTransparent(void)
 	bool		bResult;
 	CNaiveFile	cNaiveFile;
 
-	Ptr<CImage> pImage = ReadImage("Input" _FS_ "Tiny.png", IT_Unknown, true);
+	Ptr<CImage> pImage = TestReadImage(NULL, "Tiny.png");
 	AssertTrue(pImage.IsNotNull());
 
 	bResult = SaveSFT(pImage, "Output" _FS_ "Tiny.sft", true);
@@ -52,7 +52,7 @@ void TestImageSFTWriterTransparent(void)
 {
 	bool		bResult;
 
-	Ptr<CImage> pImage = ReadImage("Input" _FS_ "MakiStand.png", IT_Unknown, true);
+	Ptr<CImage> pImage = TestReadImage(NULL, "MakiStand.png");
 	AssertTrue(pImage.IsNotNull());
 
 	bResult = SaveSFT(pImage, "Output" _FS_ "MakiStand.sft");
@@ -79,7 +79,7 @@ void TestImageSFTWriterOpaque(void)
 {
 	bool		bResult;
 
-	Ptr<CImage> pImage = ReadImage("Input" _FS_ "Fighting320.png", IT_Unknown, true);
+	Ptr<CImage> pImage = TestReadImage(NULL, "Fighting320.png");
 	AssertTrue(pImage.IsNotNull());
 
 	bResult = SaveSFT(pImage, "Output" _FS_ "Fighting320.sft");
@@ -111,7 +111,7 @@ void TestImageSFTWriterTransparentCelContainer(void)
 	Ptr<CImageCel>			pImageCel;
 	CFileUtil				cFileUtil;
 
-	Ptr<CImage> pImage = ReadImage("Input" _FS_ "MakiWalk.png", IT_Unknown, true);
+	Ptr<CImage> pImage = TestReadImage(NULL, "MakiWalk.png");
 	AssertTrue(pImage.IsNotNull());
 
 	cNumbers.InitGeneral(-1, -1, 6, 1, 0, 0, 0, 0);
@@ -161,13 +161,13 @@ void TestImageSFTWriterMultiSourceCelContainer(void)
 	CFileUtil				cFileUtil;
 	CArrayImageCel			acImageCels;
 
-	Ptr<CImage> pcBackground = ReadImage("Input" _FS_ "Fighting320.png", IT_Unknown, true);
+	Ptr<CImage> pcBackground = TestReadImage(NULL, "Fighting320.png");
 	AssertTrue(pcBackground.IsNotNull());
 
-	Ptr<CImage> pcMakiStand = ReadImage("Input" _FS_ "MakiStand.png", IT_Unknown, true);
+	Ptr<CImage> pcMakiStand = TestReadImage(NULL, "MakiStand.png");
 	AssertTrue(pcMakiStand.IsNotNull());
 
-	Ptr<CImage> pcMakiWalk = ReadImage("Input" _FS_ "MakiWalk.png", IT_Unknown, true);
+	Ptr<CImage> pcMakiWalk = TestReadImage(NULL, "MakiWalk.png");
 	AssertTrue(pcMakiWalk.IsNotNull());
 
 	cNumbers.InitGeneral(-1, -1, 6, 1, 0, 0, 0, 0);

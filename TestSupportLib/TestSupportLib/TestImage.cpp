@@ -13,6 +13,7 @@
 #include "SupportLib/ImageCopier.h"
 #include "SupportLib/ImageWriter.h"
 #include "TestLib/Assert.h"
+#include "TestReadImage.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -217,31 +218,6 @@ void TestImageCopier(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CImage> TestImageReadSpaceCrusadeImage(char* szFilename)
-{
-	CFileUtil			cFileUtil;
-	CChars				szInputFilename;
-	Ptr<CImage>			pImage;
-
-	szInputFilename.Init();
-	cFileUtil.CurrentDirectory(&szInputFilename);
-	cFileUtil.AppendToPath(&szInputFilename, "Input");
-	cFileUtil.AppendToPath(&szInputFilename, "SpaceCrusade");
-	cFileUtil.AppendToPath(&szInputFilename, szFilename);
-	AssertTrue(cFileUtil.Exists(szInputFilename.Text()));
-
-	pImage = ReadImage(szInputFilename.Text(), IT_Unknown, true);
-	AssertTrue(pImage.IsNotNull());
-	szInputFilename.Kill();
-
-	return pImage;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 void TestImageCopierRealPNG(void)
 {
 	char				szDirectory[] = "Output" _FS_ "CopierRealPNG";
@@ -264,7 +240,7 @@ void TestImageCopierRealPNG(void)
 		CChars			szInputFilename;
 		bool			bWritten;
 
-		pImage = TestImageReadSpaceCrusadeImage("SoulSucker.png");
+		pImage = TestReadImage("SpaceCrusade", "SoulSucker.png");
 
 		asChannels.Init();
 		pImage->GetAllChannels(&asChannels);

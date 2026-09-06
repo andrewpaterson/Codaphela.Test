@@ -1,71 +1,11 @@
 #include "BaseLib/GlobalDataTypesIO.h"
-#include "StandardLib/Pointer.h"
-#include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
-#include "SupportLib/ImageDivider.h"
 #include "SupportLib/Maps.h"
 #include "SupportLib/TileLayerCel.h"
 #include "SupportLib/ImageWriter.h"
 #include "TestLib/Assert.h"
+#include "TestReadImage.h"
 #include "SupportAssert.h"
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-Ptr<CImage> TestMapsReadImage(char* szDirectory, char* szFilename)
-{
-	CFileUtil			cFileUtil;
-	CChars				szInputFilename;
-	Ptr<CImage>			pImage;
-
-	szInputFilename.Init();
-	cFileUtil.CurrentDirectory(&szInputFilename);
-	cFileUtil.AppendToPath(&szInputFilename, "Input");
-	cFileUtil.AppendToPath(&szInputFilename, szDirectory);
-	cFileUtil.AppendToPath(&szInputFilename, szFilename);
-	AssertTrue(cFileUtil.Exists(szInputFilename.Text()));
-
-	pImage = ReadImage(szInputFilename.Text(), IT_Unknown, true);
-	AssertTrue(pImage.IsNotNull());
-	szInputFilename.Kill();
-
-	return pImage;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-Ptr<CArrayImageCel> TestMapsReadCels(char* szDirectory, char* szFilename, int iColumnCount, int iRowCount)
-{
-	Ptr<CImage>				pImage;
-	CImageDivider			cImageDivider;
-	CImageDividerNumbers	cNumbers;
-	Ptr<CArrayImageCel>		pCels;
-
-	pImage = TestMapsReadImage(szDirectory, szFilename);
-
-	cNumbers.InitGeneral(-1, -1, iColumnCount, iRowCount, 0, 0, 0, 0);
-	cImageDivider.Init(pImage, NULL);
-	cImageDivider.GenerateFromNumbers(&cNumbers);
-	pCels = cImageDivider.GetDestImageCels();
-
-	AssertTrue(pCels.IsNotNull());
-	AssertInt(iColumnCount * iRowCount, pCels->NumElements());
-
-	AssertSize(2, pCels.NumStackFroms());
-	AssertSize(0, pCels.NumHeapFroms());
-
-	cImageDivider.Kill();
-
-	AssertSize(1, pCels.NumStackFroms());
-	AssertSize(0, pCels.NumHeapFroms());
-
-	return pCels;
-}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -74,7 +14,7 @@ Ptr<CArrayImageCel> TestMapsReadCels(char* szDirectory, char* szFilename, int iC
 //////////////////////////////////////////////////////////////////////////
 Ptr<CArrayImageCel> TestMapsReadSpaceCrusadeCels(char* szFilename, int iColumnCount, int iRowCount)
 {
-	return TestMapsReadCels("SpaceCrusade", szFilename, iColumnCount, iRowCount);
+	return TestReadCels("SpaceCrusade", szFilename, iColumnCount, iRowCount);
 }
 
 
@@ -110,7 +50,7 @@ void TestMapsTinySpriteMap(void)
 
 		ImageChannelDescriptorInit();
 
-		pCels = TestMapsReadCels("MapsSpriteMap", "TinySprites.png", 2, 2);
+		pCels = TestReadCels("MapsSpriteMap", "TinySprites.png", 2, 2);
 
 		AssertSize(4, pCels->Size());
 		for (uiSprite = 0; uiSprite < 4; uiSprite++)
@@ -199,7 +139,7 @@ void TestMapsTileMap(void)
 
 		ImageChannelDescriptorInit();
 
-		pBackground = TestMapsReadImage("SpaceCrusade", "Tiles.png");
+		pBackground = TestReadImage("SpaceCrusade", "Tiles.png");
 
 		cNumbers.InitGeneral(-1, -1, 10, 3, 0, 0, 0, 0);
 		cImageDivider.Init(&pBackground, NULL);
@@ -274,7 +214,6 @@ void TestMapsSpriteMap(void)
 	ObjectsInit();
 	{
 		CMaps						cMaps;
-		CImageDivider				cImageDivider;
 		CChars						szInputFilename;
 		CChars						szOutputFilename;
 		Ptr<CArrayImageCel>			pSoulSuckerCels;

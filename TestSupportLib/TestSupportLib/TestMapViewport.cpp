@@ -7,67 +7,9 @@
 #include "SupportLib/MapViewport.h"
 #include "SupportLib/TileLayerCel.h"
 #include "TestLib/Assert.h"
+#include "TestReadImage.h"
 #include "SupportAssert.h"
 
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-Ptr<CImage> TestMapViewportReadImage(char* szDirectory, char* szFilename)
-{
-	CFileUtil	cFileUtil;
-	CChars		szInputFilename;
-	Ptr<CImage>	pImage;
-
-	szInputFilename.Init();
-	cFileUtil.CurrentDirectory(&szInputFilename);
-	cFileUtil.AppendToPath(&szInputFilename, "Input");
-	cFileUtil.AppendToPath(&szInputFilename, szDirectory);
-	cFileUtil.AppendToPath(&szInputFilename, szFilename);
-	AssertTrue(cFileUtil.Exists(szInputFilename.Text()));
-
-	pImage = ReadImage(szInputFilename.Text(), IT_Unknown, true);
-	AssertTrue(pImage.IsNotNull());
-	szInputFilename.Kill();
-
-	return pImage;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-Ptr<CArrayImageCel> TestMapViewportReadCels(char* szDirectory, char* szFilename, int iColumnCount, int iRowCount)
-{
-	Ptr<CImage>				pImage;
-	CImageDivider			cImageDivider;
-	CImageDividerNumbers	cNumbers;
-	Ptr<CArrayImageCel>		pCels;
-
-	pImage = TestMapViewportReadImage(szDirectory, szFilename);
-
-	cNumbers.InitGeneral(-1, -1, iColumnCount, iRowCount, 0, 0, 0, 0);
-	cImageDivider.Init(pImage, NULL);
-	cImageDivider.GenerateFromNumbers(&cNumbers);
-	pCels = cImageDivider.GetDestImageCels();
-
-	cImageDivider.Kill();
-
-	return pCels;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-Ptr<CArrayImageCel> TestMapViewportReadCels(char* szFilename, int iColumnCount, int iRowCount)
-{
-	return TestMapViewportReadCels("SpaceCrusade", szFilename, iColumnCount, iRowCount);
-}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -86,8 +28,6 @@ void TestMapViewportBlit(void)
 	ObjectsInit();
 	{
 		CMaps						cMaps;
-		CImageDivider				cImageDivider;
-		CImageDividerNumbers		cNumbers;
 		Ptr<CArrayImageCel>			pacBackgroundCels;
 		CChars						szInputFilename;
 		CChars						szOutputFilename;
@@ -113,10 +53,10 @@ void TestMapViewportBlit(void)
 
 		ImageChannelDescriptorInit();
 
-		pBackground = TestMapViewportReadImage("SpaceCrusade", "Tiles.png");
-		pSoulSuckerCels = TestMapViewportReadCels("SoulSucker.png", 8, 1);
-		pBloodAngelsCels = TestMapViewportReadCels("BloodAngels.png", 8, 1);
-		pGretchinCels = TestMapViewportReadCels("Gretchin.png", 8, 1);
+		pacBackgroundCels = TestReadCels("SpaceCrusade", "Tiles.png", 10, 3);
+		pSoulSuckerCels = TestReadCels("SpaceCrusade", "SoulSucker.png", 8, 1);
+		pBloodAngelsCels = TestReadCels("SpaceCrusade", "BloodAngels.png", 8, 1);
+		pGretchinCels = TestReadCels("SpaceCrusade", "Gretchin.png", 8, 1);
 		pCel1 = pSoulSuckerCels->Get(7);
 		pCel2 = pSoulSuckerCels->Get(2);
 		pCel3 = pBloodAngelsCels->Get(3);
@@ -124,10 +64,6 @@ void TestMapViewportBlit(void)
 		pCel5 = pGretchinCels->Get(6);
 		pCel6 = pGretchinCels->Get(4);
 
-		cNumbers.InitGeneral(-1, -1, 10, 3, 0, 0, 0, 0);
-		cImageDivider.Init(&pBackground, NULL);
-		cImageDivider.GenerateFromNumbers(&cNumbers);
-		pacBackgroundCels = cImageDivider.GetDestImageCels();
 		AssertSize(30, pacBackgroundCels->NumElements());
 
 		pDestImage = OMalloc<CImage>(32, 32, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);

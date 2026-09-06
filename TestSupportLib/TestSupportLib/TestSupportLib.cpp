@@ -35,6 +35,7 @@ void TestImageSFTWriter(void);
 void TestFont(void);
 void TestMaps(void);
 void TestMapViewport(void);
+void TestTileMapGenerator(void);
 void TestHalfSpace(void);
 void TestMeshColours(void);
 void TestMeshUVCoords(void);
@@ -90,6 +91,7 @@ int __cdecl main(void)
 	TestImageSFTWriter();
 	TestMaps();
 	TestMapViewport();
+	TestTileMapGenerator();
 	TestFont();
 	TestImageCelsSource();
 	TestHalfSpace();
