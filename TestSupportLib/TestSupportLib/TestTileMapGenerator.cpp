@@ -43,23 +43,30 @@ void TestTileMapGeneratorGenerate(void)
 
 	ObjectsInit();
 	{
-		CMaps					cMaps;
-		CImageDivider			cImageDivider;
-		//CChars				szInputFilename;
-		//CChars				szOutputFilename;
-		CTileMapGenerator		cTileMapGenerator;
-		Ptr<CArrayImageCel>		pacBackgroundCels;
-		CTileColourSource*		pcWallColour;
-		CTileColourSource*		pcFloorColour;
-		CTileColourSource*		pcSpaceColour;
-		CTileColourSource*		pcDoorColour;
-		Ptr<CImage>				pFloorPlan;
+		CMaps						cMaps;
+		CImageDivider				cImageDivider;
+		CChars						szInputFilename;
+		CChars						szOutputFilename;
+		CTileMapGenerator			cTileMapGenerator;
+		Ptr<CArrayImageCel>			pacBackgroundCels;
+		CTileColourSource*			pcWallColour;
+		CTileColourSource*			pcFloorColour;
+		CTileColourSource*			pcSpaceColour;
+		CTileColourSource*			pcDoorColour;
+		Ptr<CImage>					pFloorPlanImage;
+		Ptr<CTileMap>				pTileMap;
+		Ptr<CImage>					pDestImage;
+		Ptr<CImageCelBlitterCache>	pBlitterCache;
+		SSizeVec2					sMapSize;
+		SSizeVec2					sCelSize;
+		bool						bResult;
+		bool						bWritten;
 
-		pFloorPlan = TestReadImage("SpaceCrusade", "FloorPlan.png");
+		pFloorPlanImage = TestReadImage("SpaceCrusade", "FloorPlan.png");
 
 		cTileMapGenerator.Init();
 
-		cTileMapGenerator.AddTileGridSource("FloorPlan", pFloorPlan);
+		cTileMapGenerator.AddTileGridSource("FloorPlan", pFloorPlanImage);
 
 		pcWallColour = cTileMapGenerator.AddColourSource(138, 138, 138);
 		pcFloorColour = cTileMapGenerator.AddColourSource(107, 73, 14);
@@ -78,6 +85,10 @@ void TestTileMapGeneratorGenerate(void)
 
 		cTileMapGenerator.AddCelType(		 'W', SCCT_Wall);
 		cTileMapGenerator.AddNegativeCelType('w', SCCT_Wall);
+
+		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Space, "Single",		" . . . \n"
+																			" . B . \n"
+																			" . . . \n");
 
 		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Floor, "Single",		" . . . \n"
 																			" . B . \n"
@@ -200,11 +211,37 @@ void TestTileMapGeneratorGenerate(void)
 		cTileMapGenerator.AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Floor,  pcFloorColour);
 		cTileMapGenerator.AddTileGenerator("FloorPlan", SCML_Shadow, SCCT_Shadow, pcFloorColour);
 
-		cTileMapGenerator.Generate();
+		sMapSize = cTileMapGenerator.GetMapSize();
+		sCelSize = cTileMapGenerator.GetCelSize();
 
-		CTileMap
-		//szOutputFilename.Kill();
-		//szInputFilename.Kill();
+		pTileMap = cTileMapGenerator.Generate();
+
+		pDestImage = OMalloc<CImage>(sMapSize.x * sCelSize.x, sMapSize.y * sCelSize.y, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+		pBlitterCache = OMalloc<CImageCelBlitterCache>(pDestImage);
+		cMaps.Init(pBlitterCache, pDestImage);
+		cMaps.AddMap(pTileMap);
+
+		cMaps.SetViewportPosition(0, 0);
+
+		bResult = cMaps.CreateCelBlitters();
+		AssertTrue(bResult);
+
+		bResult = cMaps.Blit(false);
+		AssertTrue(bResult);
+		
+		szOutputFilename.Init(szDirectory);
+		cFileUtil.AppendToPath(&szOutputFilename, "TestTileMapGeneratorGenerate");
+		szOutputFilename.Append(".png");
+		bWritten = WriteImage(pDestImage, szOutputFilename.Text(), IT_PNG);
+		AssertTrue(bWritten);
+
+		szInputFilename.Init(szOutputFilename);
+		szInputFilename.Replace("Output", "Input");
+
+		AssertFile(szInputFilename, szOutputFilename);
+
+		szOutputFilename.Kill();
+		szInputFilename.Kill();
 	}
 	ObjectsKill(false);
 }
