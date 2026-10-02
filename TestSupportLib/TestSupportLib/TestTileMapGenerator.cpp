@@ -85,6 +85,8 @@ void TestTileMapGeneratorGenerate(void)
 
 		cTileMapGenerator.AddCelType(		 'W', SCCT_Wall);
 		cTileMapGenerator.AddNegativeCelType('w', SCCT_Wall);
+		cTileMapGenerator.AddCelType(		 'C', SCCT_Wall, SCCT_Door);
+		cTileMapGenerator.AddNegativeCelType('c', SCCT_Wall, SCCT_Door);
 
 		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Space, "Single",		" . . . \n"
 																			" . B . \n"
@@ -94,49 +96,49 @@ void TestTileMapGeneratorGenerate(void)
 																			" . B . \n"
 																			" . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "Single",		" . ! . \n"
-																			" ! B ! \n"
-																			" . ! . \n");
+		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "Single",		" . c . \n"
+																			" c B c \n"
+																			" . c . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpDown",		" . P . \n"
-																			" ! B ! \n"
-																			" . P . \n");
+		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpDown",		" . C . \n"
+																			" c B c \n"
+																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "LeftRight",	" . ! . \n"
-																			" P B P \n"
-																			" . ! . \n");
+		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "LeftRight",	" . c . \n"
+																			" C B C \n"
+																			" . c . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpRight",		" . P . \n"
-																			" ! B P \n"
-																			" . ! . \n");
+		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpRight",		" . C . \n"
+																			" c B C \n"
+																			" . c . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "DownRight",	" . ! . \n"
-																			" ! B P \n"
-																			" . P . \n");
+		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "DownRight",	" . c . \n"
+																			" c B C \n"
+																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "DownLeft",	" . ! . \n"
-																			" P B ! \n"
-																			" . P . \n");
+		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "DownLeft",	" . c . \n"
+																			" C B c \n"
+																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpLeft",		" . P . \n"
-																			" P B ! \n"
-																			" . ! . \n");
+		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpLeft",		" . C . \n"
+																			" C B c \n"
+																			" . c . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "LeftRightDown"," . ! . \n"
-																			" P B P \n"
-																			" . P . \n");
+		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "LeftRightDown"," . c . \n"
+																			" C B C \n"
+																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpDownLeft",	" . P . \n"
-																			" P B ! \n"
-																			" . P . \n");
+		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpDownLeft",	" . C . \n"
+																			" C B c \n"
+																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpDownRight",	" . P . \n"
-																			" ! B P \n"
-																			" . P . \n");
+		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpDownRight",	" . C . \n"
+																			" c B C \n"
+																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "LeftRightUp",	" . P . \n"
-																			" P B P \n"
-																			" . ! . \n");
+		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "LeftRightUp",	" . C . \n"
+																			" C B C \n"
+																			" . c . \n");
 
 		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Door, "DoorDown",	" . W . \n"
 																			" . B . \n"
