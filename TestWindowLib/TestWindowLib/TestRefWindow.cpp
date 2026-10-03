@@ -25,25 +25,34 @@ void TestRefWindowCreation(void)
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.MakeDir(szDirectory);
 
+	ObjectsInit();
 	{
-		CWindow					cTestWindow;
-		CArrayChars				aszFiles;
-		size					i;
-		CChars*					pszFilename;
-		CChars					szExpectedFilename;
-		CTestRefWindowCanvasDraw		cDraw;
-		CTickTestRefWindow		cTick;
-		SDataTestRefWindow		cData;
+		Ptr<CWindow>					pTestWindow;
+		Ptr<CTestRefWindowCanvasDraw>	pDraw;
+		Ptr<CTickTestRefWindow>			pTick;
+		SDataTestRefWindow				cData;
+		Ptr<CRoot>						pRoot;
+		CArrayChars						aszFiles;
+		size							i;
+		CChars*							pszFilename;
+		CChars							szExpectedFilename;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 64, szDirectory);
 
-		cTick.Init(&cData, 10);
-		cDraw.Init(&cData);
-		cTestWindow.Init("Reference Test Window", &cNativeFactory, &cTick, &cDraw);
+		pRoot = ORoot();
 
-		cTestWindow.Show();
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 10);
+		pDraw = OMalloc<CTestRefWindowCanvasDraw>(&cData);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pDraw);
 
-		cTestWindow.Kill();
+		pRoot->Add(pTestWindow);
+
+		pTestWindow->Show();
+
+		pRoot->RemoveAll();
+		pTestWindow = NULL;
+		pDraw = NULL;
+		pTick = NULL;
 
 		aszFiles.Init();
 		cFileUtil.FindAllFiles(szDirectory, &aszFiles, false, false);
@@ -62,9 +71,11 @@ void TestRefWindowCreation(void)
 
 		aszFiles.Kill();
 
+		cNativeFactory.Kill();
 	}
+	ObjectsFlush();
+	ObjectsKill();
 
-	cNativeFactory.Kill();
 	cFileUtil.RemoveDir(szDirectory);
 }
 
@@ -82,25 +93,29 @@ void TestRefWindowCanvasBorder(void)
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.MakeDir(szDirectory);
 
+	ObjectsInit();
 	{
-		CWindow					cTestWindow;
-		CArrayChars				aszFiles;
-		size					i;
-		CChars*					pszFilename;
-		CChars					szExpectedFilename;
-		CBorderCanvasDraw		cDraw;
-		CTickTestRefWindow		cTick;
-		SDataTestRefWindow		cData;
+		Ptr<CWindow>					pTestWindow;
+		CArrayChars						aszFiles;
+		size							i;
+		CChars*							pszFilename;
+		CChars							szExpectedFilename;
+		Ptr<CBorderCanvasDraw>			pDraw;
+		Ptr<CTickTestRefWindow>			pTick;
+		SDataTestRefWindow				cData;
+		Ptr<CRoot>						pRoot;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 64, szDirectory);
 
-		cTick.Init(&cData, 1);
-		cDraw.Init(Set32BitColour(1.0f, 0, 0));
-		cTestWindow.Init("Reference Test Window", &cNativeFactory, &cTick, &cDraw);
+		pRoot = ORoot();
 
-		cTestWindow.Show();
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pDraw = OMalloc<CBorderCanvasDraw>(Set32BitColour(1.0f, 0, 0));
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pDraw);
 
-		cTestWindow.Kill();
+		pTestWindow->Show();
+
+		pTestWindow->Kill();
 
 		aszFiles.Init();
 		cFileUtil.FindAllFiles(szDirectory, &aszFiles, false, false);
@@ -118,9 +133,11 @@ void TestRefWindowCanvasBorder(void)
 		}
 
 		aszFiles.Kill();
+		cNativeFactory.Kill();
 	}
+	ObjectsFlush();
+	ObjectsKill();
 
-	cNativeFactory.Kill();
 	cFileUtil.RemoveDir(szDirectory);
 }
 
@@ -132,12 +149,10 @@ void TestRefWindowCanvasBorder(void)
 void TestRefWindow(void)
 {
 	BeginTests();
-	ObjectsInit();
 
 	TestRefWindowCreation();
 	TestRefWindowCanvasBorder();
 
-	ObjectsKill();
 	TestStatistics();
 }
 

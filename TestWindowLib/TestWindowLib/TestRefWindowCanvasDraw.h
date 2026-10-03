@@ -9,7 +9,7 @@ class CTestRefWindowCanvasDraw : public CCanvasDraw
 CONSTRUCTABLE(CTestRefWindowCanvasDraw);
 DESTRUCTABLE(CTestRefWindowCanvasDraw);
 protected:
-	SDataTestRefWindow* mpcData;
+	SDataTestRefWindow*		mpcData;
 
 public:
 	void	Init(SDataTestRefWindow* pcData);

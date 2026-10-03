@@ -2,6 +2,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/StdRandom.h"
 #include "StandardLib/Objects.h"
+#include "SupportLib/ImageCelBlitterCache.h"
 #include "WindowLib/Window.h"
 #include "WindowLib/FillContainer.h"
 #include "WindowLib/MapsCanvasDraw.h"
@@ -26,31 +27,58 @@ void TestCanvasWriteImage(void)
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.MakeDir(szDirectory);
 
+	ObjectsInit();
 	{
-		Ptr<CWindow>			pTestWindow;
-		Ptr<CCanvas>			pCanvas;
-		CTickTestRefWindow		cTick;
-		SDataTestRefWindow		cData;
-		Ptr<CFillContainer>		pFill;
-		CPointer				pNull;
-		Ptr<CMapsCanvasDraw>	pDraw;
+		Ptr<CWindow>				pTestWindow;
+		Ptr<CCanvas>				pCanvas;
+		Ptr<CTickTestRefWindow>		pTick;
+		SDataTestRefWindow			cData;
+		CPointer					pNull;
+		Ptr<CFillContainer>			pFill;
+		Ptr<CMapsCanvasDraw>		pDraw;
+		Ptr<CMaps>					pMaps;
+		Ptr<CImageCelBlitterCache>	pCache;
+		Ptr<CImageCelBlitterCache>	pDestImage;
+		Ptr<CRoot>					pRoot;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 24, szDirectory);
 
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull);
+		pRoot = ORoot();
+
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pNull);
+		gcObjects.ValidateObjectsConsistency();
+
+		pRoot->Add(pTestWindow);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
 
-		pDraw = OMalloc<CMapsCanvasDraw>();
+		pDestImage = OMalloc<CImage>(320, 200, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+		pCache = OMalloc<CImageCelBlitterCache>(pDestImage);
+		pMaps = OMalloc<CMaps>(pCache, pDestImage);
+		pDraw = OMalloc<CMapsCanvasDraw>(pMaps);
 
 		pCanvas = OMalloc<CCanvas>(pTestWindow, CF_R8G8B8, pDraw);
 		pFill->AddComponent(pCanvas);
-	}
-	AssertSize(0, gcObjects.NumMemoryIndexes());
 
-	cNativeFactory.Kill();
+		pRoot->RemoveAll();
+
+		pTestWindow = NULL;
+		pCanvas = NULL;
+		pTick = NULL;
+		pFill = NULL;
+		pDraw = NULL;
+		pMaps = NULL;
+		pCache = NULL;
+		pDestImage = NULL;
+
+		cNativeFactory.Kill();
+	}
+	AssertSize(2, gcObjects.NumMemoryIndexes());  //Root and root-set.
+	ObjectsFlush();
+	ObjectsKill();
+
 	cFileUtil.RemoveDir(szDirectory);
 }
 
@@ -62,11 +90,9 @@ void TestCanvasWriteImage(void)
 void TestCanvas(void)
 {
 	BeginTests();
-	ObjectsInit();
 
 	TestCanvasWriteImage();
 
-	ObjectsKill();
 	TestStatistics();
 }
 
