@@ -43,11 +43,12 @@ void TestTileMapGenerator2x2Generate(void)
 
 	ObjectsInit();
 	{
-		CMaps						cMaps;
+		Ptr<CMaps>					pMaps;
 		CImageDivider				cImageDivider;
 		CChars						szInputFilename;
 		CChars						szOutputFilename;
-		CTileMapGenerator			cTileMapGenerator;
+		Ptr<CRoot>					pRoot;
+		Ptr<CTileMapGenerator>		pTileMapGenerator;
 		Ptr<CArrayImageCel>			pacBackgroundCels;
 		CTileColourSource*			pcWallColour;
 		CTileColourSource*			pcFloorColour;
@@ -64,160 +65,169 @@ void TestTileMapGenerator2x2Generate(void)
 
 		pFloorPlanImage = TestReadImage("SpaceCrusade", "SmallPlan.png");
 
-		cTileMapGenerator.Init();
+		pRoot = ORoot();
+		pTileMapGenerator = OMalloc<CTileMapGenerator>();
+		pRoot->Add(pTileMapGenerator);
 
-		cTileMapGenerator.AddTileGridSource("FloorPlan", pFloorPlanImage);
+		pTileMapGenerator->AddTileGridSource("FloorPlan", pFloorPlanImage);
 
-		pcWallColour = cTileMapGenerator.AddColourSource(138, 138, 138);
-		pcFloorColour = cTileMapGenerator.AddColourSource(107, 73, 14);
-		pcSpaceColour = cTileMapGenerator.AddColourSource(0, 0, 0);
-		pcDoorColour = cTileMapGenerator.AddColourSource(71, 71, 71);
+		pcWallColour = pTileMapGenerator->AddColourSource(138, 138, 138);
+		pcFloorColour = pTileMapGenerator->AddColourSource(107, 73, 14);
+		pcSpaceColour = pTileMapGenerator->AddColourSource(0, 0, 0);
+		pcDoorColour = pTileMapGenerator->AddColourSource(71, 71, 71);
 
-		cTileMapGenerator.AddCelType(		 'W', SCCT_Wall);
-		cTileMapGenerator.AddNegativeCelType('w', SCCT_Wall);
-		cTileMapGenerator.AddCelType(		 'C', SCCT_Wall, SCCT_Door);
-		cTileMapGenerator.AddNegativeCelType('c', SCCT_Wall, SCCT_Door);
+		pTileMapGenerator->AddCelType(		 'W', SCCT_Wall);
+		pTileMapGenerator->AddNegativeCelType('w', SCCT_Wall);
+		pTileMapGenerator->AddCelType(		 'C', SCCT_Wall, SCCT_Door);
+		pTileMapGenerator->AddNegativeCelType('c', SCCT_Wall, SCCT_Door);
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Space, "Single",		" . . . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Space, "Single",		" . . . \n"
 																			" . B . \n"
 																			" . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Floor, "Single",		" . . . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Floor, "Single",		" . . . \n"
 																			" . B . \n"
 																			" . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "Single",		" . c . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "Single",		" . c . \n"
 																			" c B c \n"
 																			" . c . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpDown",		" . C . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "UpDown",		" . C . \n"
 																			" c B c \n"
 																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "LeftRight",	" . c . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "LeftRight",	" . c . \n"
 																			" C B C \n"
 																			" . c . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpRight",		" . C . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "UpRight",		" . C . \n"
 																			" c B C \n"
 																			" . c . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "DownRight",	" . c . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "DownRight",	" . c . \n"
 																			" c B C \n"
 																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "DownLeft",	" . c . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "DownLeft",	" . c . \n"
 																			" C B c \n"
 																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpLeft",		" . C . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "UpLeft",		" . C . \n"
 																			" C B c \n"
 																			" . c . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "LeftRightDown"," . c . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "LeftRightDown"," . c . \n"
 																			" C B C \n"
 																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpDownLeft",	" . C . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "UpDownLeft",	" . C . \n"
 																			" C B c \n"
 																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpDownRight",	" . C . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "UpDownRight",	" . C . \n"
 																			" c B C \n"
 																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "LeftRightUp",	" . C . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "LeftRightUp",	" . C . \n"
 																			" C B C \n"
 																			" . c . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Door, "DoorDown",	" . W . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Door, "DoorDown",	" . W . \n"
 																			" . B . \n"
 																			" . P . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Door, "DoorUp",		" . P . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Door, "DoorUp",		" . P . \n"
 																			" . B . \n"
 																			" . W . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Door, "DoorLeft",	" . . . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Door, "DoorLeft",	" . . . \n"
 																			" W B P \n"
 																			" . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Door, "DoorRight",	" . . . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Door, "DoorRight",	" . . . \n"
 																			" P B W \n"
 																			" . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Shadow, "ShadowLeft"," W w . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow, "ShadowLeft"," W w . \n"
 																			" W B . \n"
 																			" . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Shadow,"ShadowSingle"," W w . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow,"ShadowSingle"," W w . \n"
 																			" w B . \n"
 																			" . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Shadow,"ShadowUpLeft"," W W . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow,"ShadowUpLeft"," W W . \n"
 																			" W B . \n"
 																			" . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Shadow,"ShadowUp",	" W W . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow,"ShadowUp",	" W W . \n"
 																			" w B . \n"
 																			" . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Shadow,"ShadowDown",	" w w . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow,"ShadowDown",	" w w . \n"
 																			" W B . \n"
 																			" . . . \n");
 
 		pacBackgroundCels = TestReadCels("SpaceCrusade", "Tiles.png", 10, 3);
 
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 26, SCCT_Space,  "Single");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  0, SCCT_Wall,   "Single");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  4, SCCT_Wall,   "UpDown");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  5, SCCT_Wall,   "LeftRight");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  6, SCCT_Wall,   "DownLeft");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  7, SCCT_Wall,   "DownRight");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  8, SCCT_Wall,   "UpLeft");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  9, SCCT_Wall,   "UpRight");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 10, SCCT_Wall,   "LeftRightDown");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 11, SCCT_Wall,   "UpDownLeft");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 12, SCCT_Wall,   "UpDownRight");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 13, SCCT_Wall,   "LeftRightUp");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  1, SCCT_Floor,  "Single");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 14, SCCT_Door,   "DoorUp");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 15, SCCT_Door,   "DoorDown");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 16, SCCT_Door,   "DoorLeft");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 17, SCCT_Door,   "DoorRight");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 18, SCCT_Door,   "DoorUp");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 19, SCCT_Door,   "DoorDown");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 20, SCCT_Door,   "DoorLeft");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 21, SCCT_Door,   "DoorRight");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 22, SCCT_Shadow, "ShadowLeft");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 23, SCCT_Shadow, "ShadowSingle");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 24, SCCT_Shadow, "ShadowUpLeft");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 25, SCCT_Shadow, "ShadowUp");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 27, SCCT_Shadow, "ShadowDown");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 26, SCCT_Space,  "Single");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  0, SCCT_Wall,   "Single");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  4, SCCT_Wall,   "UpDown");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  5, SCCT_Wall,   "LeftRight");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  6, SCCT_Wall,   "DownLeft");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  7, SCCT_Wall,   "DownRight");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  8, SCCT_Wall,   "UpLeft");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  9, SCCT_Wall,   "UpRight");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 10, SCCT_Wall,   "LeftRightDown");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 11, SCCT_Wall,   "UpDownLeft");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 12, SCCT_Wall,   "UpDownRight");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 13, SCCT_Wall,   "LeftRightUp");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  1, SCCT_Floor,  "Single");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 14, SCCT_Door,   "DoorUp");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 15, SCCT_Door,   "DoorDown");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 16, SCCT_Door,   "DoorLeft");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 17, SCCT_Door,   "DoorRight");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 18, SCCT_Door,   "DoorUp");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 19, SCCT_Door,   "DoorDown");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 20, SCCT_Door,   "DoorLeft");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 21, SCCT_Door,   "DoorRight");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 22, SCCT_Shadow, "ShadowLeft");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 23, SCCT_Shadow, "ShadowSingle");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 24, SCCT_Shadow, "ShadowUpLeft");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 25, SCCT_Shadow, "ShadowUp");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 27, SCCT_Shadow, "ShadowDown");
 
-		cTileMapGenerator.AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Space,  pcSpaceColour);
-		cTileMapGenerator.AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Wall,	 pcWallColour);
-		cTileMapGenerator.AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Door,	 pcDoorColour);
-		cTileMapGenerator.AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Floor,  pcFloorColour);
-		cTileMapGenerator.AddTileGenerator("FloorPlan", SCML_Shadow, SCCT_Shadow, pcFloorColour);
+		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Space,  pcSpaceColour);
+		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Wall,	 pcWallColour);
+		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Door,	 pcDoorColour);
+		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Floor,  pcFloorColour);
+		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Shadow, SCCT_Shadow, pcFloorColour);
 
-		sMapSize = cTileMapGenerator.GetMapSize();
-		sCelSize = cTileMapGenerator.GetCelSize();
+		sMapSize = pTileMapGenerator->GetMapSize();
+		sCelSize = pTileMapGenerator->GetCelSize();
 
-		pTileMap = cTileMapGenerator.Generate();
+		pTileMap = pTileMapGenerator->Generate();
 
 		pDestImage = OMalloc<CImage>(sMapSize.x * sCelSize.x, sMapSize.y * sCelSize.y, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pBlitterCache = OMalloc<CImageCelBlitterCache>(pDestImage);
-		cMaps.Init(pBlitterCache, pDestImage);
-		cMaps.AddMap(pTileMap);
 
-		cMaps.SetViewportPosition(0, 0);
+		pMaps = OMalloc<CMaps>(pBlitterCache, pDestImage);;
+		pRoot->Add(pMaps);
+		pMaps->AddMap(pTileMap);
 
-		bResult = cMaps.CreateCelBlitters();
+		pMaps->SetViewportPosition(0, 0);
+
+		bResult = pMaps->CreateCelBlitters();
 		AssertTrue(bResult);
 
-		bResult = cMaps.Blit(false);
+		bResult = pMaps->Blit(false);
 		AssertTrue(bResult);
+
+		pRoot->Remove(pMaps);
+		pRoot->Remove(pTileMapGenerator);
+		pMaps = NULL;
+		pTileMapGenerator = NULL;
 
 		szOutputFilename.Init(szDirectory);
 		cFileUtil.AppendToPath(&szOutputFilename, "TileMapGenerator2x2Generate");
@@ -233,6 +243,7 @@ void TestTileMapGenerator2x2Generate(void)
 		szOutputFilename.Kill();
 		szInputFilename.Kill();
 	}
+	ObjectsFlush();
 	ObjectsKill(false);
 }
 
@@ -252,11 +263,12 @@ void TestTileMapGenerator40x40Generate(void)
 
 	ObjectsInit();
 	{
-		CMaps						cMaps;
+		Ptr<CMaps>					pMaps;
 		CImageDivider				cImageDivider;
 		CChars						szInputFilename;
 		CChars						szOutputFilename;
-		CTileMapGenerator			cTileMapGenerator;
+		Ptr<CRoot>					pRoot;
+		Ptr<CTileMapGenerator>		pTileMapGenerator;
 		Ptr<CArrayImageCel>			pacBackgroundCels;
 		CTileColourSource*			pcWallColour;
 		CTileColourSource*			pcFloorColour;
@@ -270,17 +282,22 @@ void TestTileMapGenerator40x40Generate(void)
 		SSizeVec2					sCelSize;
 		bool						bResult;
 		bool						bWritten;
+		CRandom						cRandom;
 
 		pFloorPlanImage = TestReadImage("SpaceCrusade", "FloorPlan.png");
 
-		cTileMapGenerator.Init();
+		cRandom.Init(2345);
 
-		cTileMapGenerator.AddTileGridSource("FloorPlan", pFloorPlanImage);
+		pRoot = ORoot();
+		pTileMapGenerator = OMalloc<CTileMapGenerator>(&cRandom);
+		pRoot->Add(pTileMapGenerator);
 
-		pcWallColour = cTileMapGenerator.AddColourSource(138, 138, 138);
-		pcFloorColour = cTileMapGenerator.AddColourSource(107, 73, 14);
-		pcSpaceColour = cTileMapGenerator.AddColourSource(0, 0, 0);
-		pcDoorColour = cTileMapGenerator.AddColourSource(71, 71, 71);
+		pTileMapGenerator->AddTileGridSource("FloorPlan", pFloorPlanImage);
+
+		pcWallColour = pTileMapGenerator->AddColourSource(138, 138, 138);
+		pcFloorColour = pTileMapGenerator->AddColourSource(107, 73, 14);
+		pcSpaceColour = pTileMapGenerator->AddColourSource(0, 0, 0);
+		pcDoorColour = pTileMapGenerator->AddColourSource(71, 71, 71);
 
 		//Blocks must be rectangular with each row ending with a newline.  Spaces are removed before processing.
 
@@ -292,154 +309,161 @@ void TestTileMapGenerator40x40Generate(void)
 		//  e.g. W ->  SCCT_Wall
 		//  e.g. w -> !SCCT_Wall
 
-		cTileMapGenerator.AddCelType(		 'W', SCCT_Wall);
-		cTileMapGenerator.AddNegativeCelType('w', SCCT_Wall);
-		cTileMapGenerator.AddCelType(		 'C', SCCT_Wall, SCCT_Door);
-		cTileMapGenerator.AddNegativeCelType('c', SCCT_Wall, SCCT_Door);
+		pTileMapGenerator->AddCelType(		 'W', SCCT_Wall);
+		pTileMapGenerator->AddNegativeCelType('w', SCCT_Wall);
+		pTileMapGenerator->AddCelType(		 'C', SCCT_Wall, SCCT_Door);
+		pTileMapGenerator->AddNegativeCelType('c', SCCT_Wall, SCCT_Door);
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Space, "Single",		" . . . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Space, "Single",		" . . . \n"
 																			" . B . \n"
 																			" . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Floor, "Single",		" . . . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Floor, "Single",		" . . . \n"
 																			" . B . \n"
 																			" . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "Single",		" . c . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "Single",		" . c . \n"
 																			" c B c \n"
 																			" . c . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpDown",		" . C . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "UpDown",		" . C . \n"
 																			" c B c \n"
 																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "LeftRight",	" . c . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "LeftRight",	" . c . \n"
 																			" C B C \n"
 																			" . c . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpRight",		" . C . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "UpRight",		" . C . \n"
 																			" c B C \n"
 																			" . c . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "DownRight",	" . c . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "DownRight",	" . c . \n"
 																			" c B C \n"
 																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "DownLeft",	" . c . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "DownLeft",	" . c . \n"
 																			" C B c \n"
 																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpLeft",		" . C . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "UpLeft",		" . C . \n"
 																			" C B c \n"
 																			" . c . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "LeftRightDown"," . c . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "LeftRightDown"," . c . \n"
 																			" C B C \n"
 																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpDownLeft",	" . C . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "UpDownLeft",	" . C . \n"
 																			" C B c \n"
 																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "UpDownRight",	" . C . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "UpDownRight",	" . C . \n"
 																			" c B C \n"
 																			" . C . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Wall, "LeftRightUp",	" . C . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "LeftRightUp",	" . C . \n"
 																			" C B C \n"
 																			" . c . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Door, "DoorDown",	" . W . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Door, "DoorDown",	" . W . \n"
 																			" . B . \n"
 																			" . P . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Door, "DoorUp",		" . P . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Door, "DoorUp",		" . P . \n"
 																			" . B . \n"
 																			" . W . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Door, "DoorLeft",	" . . . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Door, "DoorLeft",	" . . . \n"
 																			" W B P \n"
 																			" . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Door, "DoorRight",	" . . . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Door, "DoorRight",	" . . . \n"
 																			" P B W \n"
 																			" . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Shadow, "ShadowLeft"," W w . \n"
-																			" W B . \n"
-																			" . . . \n");
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow, "ShadowLeft", " W w . \n"
+																			 " W B . \n"
+																			 " . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Shadow,"ShadowSingle"," W w . \n"
-																			" w B . \n"
-																			" . . . \n");
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow,"ShadowSingle"," W w . \n"
+																			 " w B . \n"
+																			 " . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Shadow,"ShadowUpLeft"," W W . \n"
-																			" W B . \n"
-																			" . . . \n");
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow,"ShadowUpLeft"," W W . \n"
+																			 " W B . \n"
+																			 " . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Shadow,"ShadowUp",	" W W . \n"
-																			" w B . \n"
-																			" . . . \n");
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow,"ShadowUp",	 " W W . \n"
+																			 " w B . \n"
+																			 " . . . \n");
 
-		cTileMapGenerator.AddPattern("FloorPlan", SCCT_Shadow,"ShadowDown",	" w w . \n"
-																			" W B . \n"
-																			" . . . \n");
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow,"ShadowDown",	 " w w . \n"
+																			 " W B . \n"
+																			 " . . . \n");
 
 		pacBackgroundCels = TestReadCels("SpaceCrusade", "Tiles.png", 10, 3);
 
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 26, SCCT_Space,  "Single");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  0, SCCT_Wall,   "Single");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  4, SCCT_Wall,   "UpDown");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  5, SCCT_Wall,   "LeftRight");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  6, SCCT_Wall,   "DownLeft");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  7, SCCT_Wall,   "DownRight");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  8, SCCT_Wall,   "UpLeft");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  9, SCCT_Wall,   "UpRight");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 10, SCCT_Wall,   "LeftRightDown");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 11, SCCT_Wall,   "UpDownLeft");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 12, SCCT_Wall,   "UpDownRight");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 13, SCCT_Wall,   "LeftRightUp");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  1, SCCT_Floor,  "Single");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  2, SCCT_Floor,  "Single");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels,  3, SCCT_Floor,  "Single");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 14, SCCT_Door,   "DoorUp");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 15, SCCT_Door,   "DoorDown");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 16, SCCT_Door,   "DoorLeft");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 17, SCCT_Door,   "DoorRight");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 18, SCCT_Door,   "DoorUp");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 19, SCCT_Door,   "DoorDown");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 20, SCCT_Door,   "DoorLeft");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 21, SCCT_Door,   "DoorRight");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 22, SCCT_Shadow, "ShadowLeft");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 23, SCCT_Shadow, "ShadowSingle");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 24, SCCT_Shadow, "ShadowUpLeft");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 25, SCCT_Shadow, "ShadowUp");
-		cTileMapGenerator.AddTileBrush(pacBackgroundCels, 27, SCCT_Shadow, "ShadowDown");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 26, SCCT_Space,  "Single");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  0, SCCT_Wall,   "Single");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  4, SCCT_Wall,   "UpDown");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  5, SCCT_Wall,   "LeftRight");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  6, SCCT_Wall,   "DownLeft");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  7, SCCT_Wall,   "DownRight");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  8, SCCT_Wall,   "UpLeft");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  9, SCCT_Wall,   "UpRight");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 10, SCCT_Wall,   "LeftRightDown");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 11, SCCT_Wall,   "UpDownLeft");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 12, SCCT_Wall,   "UpDownRight");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 13, SCCT_Wall,   "LeftRightUp");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  1, SCCT_Floor,  "Single", 2);
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  2, SCCT_Floor,  "Single", 200);
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels,  3, SCCT_Floor,  "Single", 1);
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 14, SCCT_Door,   "DoorUp");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 15, SCCT_Door,   "DoorDown");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 16, SCCT_Door,   "DoorLeft");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 17, SCCT_Door,   "DoorRight");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 18, SCCT_Door,   "DoorUp");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 19, SCCT_Door,   "DoorDown");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 20, SCCT_Door,   "DoorLeft");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 21, SCCT_Door,   "DoorRight");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 22, SCCT_Shadow, "ShadowLeft");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 23, SCCT_Shadow, "ShadowSingle");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 24, SCCT_Shadow, "ShadowUpLeft");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 25, SCCT_Shadow, "ShadowUp");
+		pTileMapGenerator->AddTileBrush(pacBackgroundCels, 27, SCCT_Shadow, "ShadowDown");
 
-		cTileMapGenerator.AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Space,  pcSpaceColour);
-		cTileMapGenerator.AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Wall,	 pcWallColour);
-		cTileMapGenerator.AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Door,	 pcDoorColour);
-		cTileMapGenerator.AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Floor,  pcFloorColour);
-		cTileMapGenerator.AddTileGenerator("FloorPlan", SCML_Shadow, SCCT_Shadow, pcFloorColour);
+		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Space,  pcSpaceColour);
+		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Wall,	 pcWallColour);
+		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Door,	 pcDoorColour);
+		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor,	 SCCT_Floor,  pcFloorColour);
+		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Shadow, SCCT_Shadow, pcFloorColour);
 
-		sMapSize = cTileMapGenerator.GetMapSize();
-		sCelSize = cTileMapGenerator.GetCelSize();
+		sMapSize = pTileMapGenerator->GetMapSize();
+		sCelSize = pTileMapGenerator->GetCelSize();
 
-		pTileMap = cTileMapGenerator.Generate();
+		pTileMap = pTileMapGenerator->Generate();
 
 		pDestImage = OMalloc<CImage>(sMapSize.x * sCelSize.x, sMapSize.y * sCelSize.y, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pBlitterCache = OMalloc<CImageCelBlitterCache>(pDestImage);
-		cMaps.Init(pBlitterCache, pDestImage);
-		cMaps.AddMap(pTileMap);
-
-		cMaps.SetViewportPosition(0, 0);
-
-		bResult = cMaps.CreateCelBlitters();
-		AssertTrue(bResult);
-
-		bResult = cMaps.Blit(false);
-		AssertTrue(bResult);
 		
+		pMaps = OMalloc<CMaps>(pBlitterCache, pDestImage);;
+		pRoot->Add(pMaps);
+		pMaps->AddMap(pTileMap);
+
+		pMaps->SetViewportPosition(0, 0);
+
+		bResult = pMaps->CreateCelBlitters();
+		AssertTrue(bResult);
+
+		bResult = pMaps->Blit(false);
+		AssertTrue(bResult);
+
+		pRoot->Remove(pMaps);
+		pRoot->Remove(pTileMapGenerator);
+		pMaps = NULL;
+		pTileMapGenerator = NULL;
+
 		szOutputFilename.Init(szDirectory);
 		cFileUtil.AppendToPath(&szOutputFilename, "TileMapGenerator40x40Generate");
 		szOutputFilename.Append(".png");
@@ -454,6 +478,7 @@ void TestTileMapGenerator40x40Generate(void)
 		szOutputFilename.Kill();
 		szInputFilename.Kill();
 	}
+	ObjectsFlush();
 	ObjectsKill(false);
 }
 
