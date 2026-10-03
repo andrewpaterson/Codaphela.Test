@@ -314,11 +314,11 @@ void TestTileMapGenerator40x40Generate(void)
 		pTileMapGenerator->AddCelType(		 'C', SCCT_Wall, SCCT_Door);
 		pTileMapGenerator->AddNegativeCelType('c', SCCT_Wall, SCCT_Door);
 
-		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Space, "Single",		" . . . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Space, "Single",	" . . . \n"
 																			" . B . \n"
 																			" . . . \n");
 
-		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Floor, "Single",		" . . . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Floor, "Single",	" . . . \n"
 																			" . B . \n"
 																			" . . . \n");
 
@@ -334,7 +334,7 @@ void TestTileMapGenerator40x40Generate(void)
 																			" C B C \n"
 																			" . c . \n");
 
-		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "UpRight",		" . C . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "UpRight",	" . C . \n"
 																			" c B C \n"
 																			" . c . \n");
 
@@ -358,11 +358,11 @@ void TestTileMapGenerator40x40Generate(void)
 																			" C B c \n"
 																			" . C . \n");
 
-		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "UpDownRight",	" . C . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "UpDownRight"," . C . \n"
 																			" c B C \n"
 																			" . C . \n");
 
-		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "LeftRightUp",	" . C . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "LeftRightUp"," . C . \n"
 																			" C B C \n"
 																			" . c . \n");
 
@@ -382,23 +382,23 @@ void TestTileMapGenerator40x40Generate(void)
 																			" P B W \n"
 																			" . . . \n");
 
-		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow, "ShadowLeft", " W w . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow, "ShadowLeft"," W w . \n"
 																			 " W B . \n"
 																			 " . . . \n");
 
 		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow,"ShadowSingle"," W w . \n"
-																			 " w B . \n"
-																			 " . . . \n");
+																			  " w B . \n"
+																			  " . . . \n");
 
 		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow,"ShadowUpLeft"," W W . \n"
-																			 " W B . \n"
-																			 " . . . \n");
+																			  " W B . \n"
+																			  " . . . \n");
 
 		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow,"ShadowUp",	 " W W . \n"
 																			 " w B . \n"
 																			 " . . . \n");
 
-		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow,"ShadowDown",	 " w w . \n"
+		pTileMapGenerator->AddPattern("FloorPlan", SCCT_Shadow,"ShadowDown", " w w . \n"
 																			 " W B . \n"
 																			 " . . . \n");
 
