@@ -188,6 +188,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BorderCanvasDraw.cpp" />
+    <ClCompile Include="SpaceCrusade.cpp" />
     <ClCompile Include="TestRefWindowCanvasDraw.cpp" />
     <ClCompile Include="TestCanvas.cpp" />
     <ClCompile Include="TestFlowContainer.cpp" />
@@ -229,6 +230,7 @@
   <ItemGroup>
     <ClInclude Include="DataTestRefWindow.h" />
     <ClInclude Include="BorderCanvasDraw.h" />
+    <ClInclude Include="SpaceCrusade.h" />
     <ClInclude Include="TestRefWindowCanvasDraw.h" />
     <ClInclude Include="TickTestRefWindow.h" />
   </ItemGroup>

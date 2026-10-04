@@ -12,6 +12,7 @@
 #include "BorderCanvasDraw.h"
 #include "TickTestRefWindow.h"
 #include "DataTestRefWindow.h"
+#include "SpaceCrusade.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -40,13 +41,23 @@ void TestCanvasWriteImage(void)
 		Ptr<CImageCelBlitterCache>	pCache;
 		Ptr<CImageCelBlitterCache>	pDestImage;
 		Ptr<CRoot>					pRoot;
+		bool						bResult;
+		CRandom						cRandom;
+		Ptr<CImage>					pFloorPlanImage;
+		Ptr<CTileMap>				pTileMap;
+		Ptr<CTileMapGenerator>		pTileMapGenerator;
+		Ptr<CArrayImageCel>			paBackgroundCels;
 
-		cNativeFactory.Init(&gcMemoryAllocator, 96, 24, szDirectory);
+		pFloorPlanImage = ReadSpaceImage("SpaceCrusade", "FloorPlan.png");
+
+		cRandom.Init(2345);
+
+		cNativeFactory.Init(&gcMemoryAllocator, 320, 200, szDirectory);
 
 		pRoot = ORoot();
 
 		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pNull);
+		pTestWindow = OMalloc<CWindow>("Space Crusade", &cNativeFactory, pTick, pNull);
 		gcObjects.ValidateObjectsConsistency();
 
 		pRoot->Add(pTestWindow);
@@ -54,13 +65,33 @@ void TestCanvasWriteImage(void)
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
 
-		pDestImage = OMalloc<CImage>(320, 200, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+		pTileMapGenerator = OMalloc<CTileMapGenerator>(&cRandom);
+		pRoot->Add(pTileMapGenerator);
+
+		pTileMapGenerator->AddTileGridSource("FloorPlan", pFloorPlanImage);
+
+		paBackgroundCels = ReadSpaceCels("SpaceCrusade", "Tiles.png", 10, 3);
+
+		AddSpacePatterns(pTileMapGenerator, paBackgroundCels);
+		AddSpaceSources(pTileMapGenerator);
+
+
+		pDestImage = OMalloc<CImage>(cNativeFactory.GetWidth(), cNativeFactory.GetHeight(), PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pCache = OMalloc<CImageCelBlitterCache>(pDestImage);
 		pMaps = OMalloc<CMaps>(pCache, pDestImage);
-		pDraw = OMalloc<CMapsCanvasDraw>(pMaps);
+		pRoot->Add(pMaps);
 
-		pCanvas = OMalloc<CCanvas>(pTestWindow, CF_R8G8B8, pDraw);
+		pMaps->SetViewportPosition(0, 0);
+
+		bResult = pMaps->CreateCelBlitters();
+		AssertTrue(bResult);
+
+
+		pDraw = OMalloc<CMapsCanvasDraw>(pMaps);
+		pCanvas = OMalloc<CCanvas>(pTestWindow, CFT_RGB, pDraw);
 		pFill->AddComponent(pCanvas);
+
+
 
 		pTestWindow = NULL;
 		pCanvas = NULL;

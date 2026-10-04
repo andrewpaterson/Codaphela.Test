@@ -3,9 +3,7 @@
 #include "StandardLib/Pointer.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageCel.h"
-#include "SupportLib/ImageCel.h"
 #include "SupportLib/ImageDivider.h"
-#include "TestLib/Assert.h"
 
 
 Ptr<CImage>			TestReadImage(char* szDirectory, char* szFilename);

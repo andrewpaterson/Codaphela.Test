@@ -49,6 +49,9 @@
     <ClCompile Include="TestCanvas.cpp">
       <Filter>Source\Component\Drawing</Filter>
     </ClCompile>
+    <ClCompile Include="SpaceCrusade.cpp">
+      <Filter>Source\TestCommon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataTestRefWindow.h">
@@ -61,6 +64,9 @@
       <Filter>Source\TestCommon</Filter>
     </ClInclude>
     <ClInclude Include="TickTestRefWindow.h">
+      <Filter>Source\TestCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="SpaceCrusade.h">
       <Filter>Source\TestCommon</Filter>
     </ClInclude>
   </ItemGroup>

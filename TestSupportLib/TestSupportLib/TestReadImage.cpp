@@ -1,3 +1,4 @@
+#include "TestLib/Assert.h"
 #include "TestReadImage.h"
 
 
