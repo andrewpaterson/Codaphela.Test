@@ -74,11 +74,11 @@ void TestFlowContainerBasic(void)
 		cTestWindow.Init("Reference Test Window", &cNativeFactory, &cTick, NULL);
 
 		cDraw1.Init(Set32BitColour(1.0f, 0, 0));
-		cCanvas1.Init(&cTestWindow, CF_R8G8B8, &cDraw1);
+		cCanvas1.Init(&cTestWindow, CFT_RGB, &cDraw1);
 		cDraw2.Init(Set32BitColour(0, 1.0f, 0));
-		cCanvas2.Init(&cTestWindow, CF_R8G8B8, &cDraw2);
+		cCanvas2.Init(&cTestWindow, CFT_RGB, &cDraw2);
 		cDraw3.Init(Set32BitColour(0, 0, 1.0f));
-		cCanvas3.Init(&cTestWindow, CF_R8G8B8, &cDraw3);
+		cCanvas3.Init(&cTestWindow, CFT_RGB, &cDraw3);
 
 		cFlow.Init(&cTestWindow);
 		cFlow.SetFlowStyle(CSD_Right, CSW_Continue, CSV_Top);
@@ -208,7 +208,7 @@ void TestFlowContainerRightCenteredContinue(void)
 			sColour = Set32BitColour(cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f);
 			pDraw = OMalloc<CBorderCanvasDraw>(sColour);
 
-			pCanvas = OMalloc<CCanvas>(pTestWindow, CF_R8G8B8, pDraw);
+			pCanvas = OMalloc<CCanvas>(pTestWindow, CFT_RGB, pDraw);
 			pFlow->AddComponent(pCanvas);
 
 			if (i % 2 == 0)
@@ -341,7 +341,7 @@ void TestFlowContainerRightTopContinue(void)
 			sColour = Set32BitColour(cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f);
 			pDraw = OMalloc<CBorderCanvasDraw>(sColour);
 
-			pCanvas = OMalloc<CCanvas>(pTestWindow, CF_R8G8B8, pDraw);
+			pCanvas = OMalloc<CCanvas>(pTestWindow, CFT_RGB, pDraw);
 			pFlow->AddComponent(pCanvas);
 
 			if (i % 2 == 0)
@@ -439,7 +439,7 @@ void TestFlowContainerRightBottomContinue(void)
 			sColour = Set32BitColour(cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f);
 			pDraw = OMalloc<CBorderCanvasDraw>(sColour);
 
-			pCanvas = OMalloc<CCanvas>(pTestWindow, CF_R8G8B8, pDraw);
+			pCanvas = OMalloc<CCanvas>(pTestWindow, CFT_RGB, pDraw);
 			pFlow->AddComponent(pCanvas);
 
 			if (i % 2 == 0)
@@ -537,7 +537,7 @@ void TestFlowContainerRightTopWrap(void)
 			sColour = Set32BitColour(cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f);
 			pDraw = OMalloc<CBorderCanvasDraw>(sColour);
 
-			pCanvas = OMalloc<CCanvas>(pTestWindow, CF_R8G8B8, pDraw);
+			pCanvas = OMalloc<CCanvas>(pTestWindow, CFT_RGB, pDraw);
 			pFlow->AddComponent(pCanvas);
 
 			if (i % 2 == 0)
@@ -638,7 +638,7 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRand
 			sColour = Set32BitColour(cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f);
 			pDraw = OMalloc<CBorderCanvasDraw>(sColour);
 
-			pCanvas = OMalloc<CCanvas>(pTestWindow, CF_R8G8B8, pDraw);
+			pCanvas = OMalloc<CCanvas>(pTestWindow, CFT_RGB, pDraw);
 			pFlow->AddComponent(pCanvas);
 
 			if (i % 2 == 0)
