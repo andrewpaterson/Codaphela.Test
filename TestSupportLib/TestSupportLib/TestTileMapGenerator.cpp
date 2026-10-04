@@ -58,6 +58,10 @@ void TestTileMapGeneratorAddPatterns(Ptr<CTileMapGenerator> pTileMapGenerator, P
 																			" c F c \n"
 																			" . c . \n");
 
+	pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "Star",			" . C . \n"
+																			" C W C \n"
+																			" . C . \n");
+
 	pTileMapGenerator->AddPattern("FloorPlan", SCCT_Wall, "UpDown",			" . C . \n"
 																			" c W c \n"
 																			" . C . \n");
@@ -140,26 +144,27 @@ void TestTileMapGeneratorAddPatterns(Ptr<CTileMapGenerator> pTileMapGenerator, P
 																				" . . . \n");
 	}
 
-	pTileMapGenerator->AddTileBrush(paBackgroundCels, 26, SCCT_Space,  "Single");
-	pTileMapGenerator->AddTileBrush(paBackgroundCels,  0, SCCT_Wall,   "Single");
-	pTileMapGenerator->AddTileBrush(paBackgroundCels,  4, SCCT_Wall,   "UpDown");
-	pTileMapGenerator->AddTileBrush(paBackgroundCels,  5, SCCT_Wall,   "LeftRight");
-	pTileMapGenerator->AddTileBrush(paBackgroundCels,  6, SCCT_Wall,   "DownLeft");
-	pTileMapGenerator->AddTileBrush(paBackgroundCels,  7, SCCT_Wall,   "DownRight");
-	pTileMapGenerator->AddTileBrush(paBackgroundCels,  8, SCCT_Wall,   "UpLeft");
-	pTileMapGenerator->AddTileBrush(paBackgroundCels,  9, SCCT_Wall,   "UpRight");
-	pTileMapGenerator->AddTileBrush(paBackgroundCels, 10, SCCT_Wall,   "LeftRightDown");
-	pTileMapGenerator->AddTileBrush(paBackgroundCels, 11, SCCT_Wall,   "UpDownLeft");
-	pTileMapGenerator->AddTileBrush(paBackgroundCels, 12, SCCT_Wall,   "UpDownRight");
-	pTileMapGenerator->AddTileBrush(paBackgroundCels, 13, SCCT_Wall,   "LeftRightUp");
-	pTileMapGenerator->AddTileBrush(paBackgroundCels,  1, SCCT_Floor,  "Single", 2);
-	pTileMapGenerator->AddTileBrush(paBackgroundCels,  2, SCCT_Floor,  "Single", 200);
-	pTileMapGenerator->AddTileBrush(paBackgroundCels,  3, SCCT_Floor,  "Single", 1);
-	pTileMapGenerator->AddTileBrush(paBackgroundCels, 14, SCCT_Door,   "DoorUp");
-	pTileMapGenerator->AddTileBrush(paBackgroundCels, 15, SCCT_Door,   "DoorDown");
-	pTileMapGenerator->AddTileBrush(paBackgroundCels, 16, SCCT_Door,   "DoorLeft");
-	pTileMapGenerator->AddTileBrush(paBackgroundCels, 17, SCCT_Door,   "DoorRight");
-	pTileMapGenerator->AddTileBrush(paBackgroundCels, 22, SCCT_Shadow, "ShadowLeft");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels, 26, SCCT_Space,	"Single");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels,  0, SCCT_Wall,	"Single");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels,  0, SCCT_Wall,	"Star");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels,  4, SCCT_Wall,	"UpDown");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels,  5, SCCT_Wall,	"LeftRight");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels,  6, SCCT_Wall,	"DownLeft");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels,  7, SCCT_Wall,	"DownRight");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels,  8, SCCT_Wall,	"UpLeft");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels,  9, SCCT_Wall,	"UpRight");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels, 10, SCCT_Wall,	"LeftRightDown");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels, 11, SCCT_Wall,	"UpDownLeft");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels, 12, SCCT_Wall,	"UpDownRight");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels, 13, SCCT_Wall,	"LeftRightUp");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels,  1, SCCT_Floor,	"Single", 2);
+	pTileMapGenerator->AddTileBrush(paBackgroundCels,  2, SCCT_Floor,	"Single", 200);
+	pTileMapGenerator->AddTileBrush(paBackgroundCels,  3, SCCT_Floor,	"Single", 1);
+	pTileMapGenerator->AddTileBrush(paBackgroundCels, 14, SCCT_Door,	"DoorUp");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels, 15, SCCT_Door,	"DoorDown");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels, 16, SCCT_Door,	"DoorLeft");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels, 17, SCCT_Door,	"DoorRight");
+	pTileMapGenerator->AddTileBrush(paBackgroundCels, 22, SCCT_Shadow,	"ShadowLeft");
 	if (bIncludeShadows)
 	{
 		pTileMapGenerator->AddTileBrush(paBackgroundCels, 23, SCCT_Shadow, "ShadowSingle");
@@ -175,9 +180,9 @@ void TestTileMapGeneratorAddPatterns(Ptr<CTileMapGenerator> pTileMapGenerator, P
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestTileMapGenerator2x2ImageGenerate(void)
+void TestTileMapGenerator3x3ImageGenerate(void)
 {
-	char				szDirectory[] = "Output" _FS_ "TileMapGenerator2x2Generate";
+	char				szDirectory[] = "Output" _FS_ "TileMapGenerator3x3Generate";
 	CIndexTreeMemory	cMemory;
 	CFileUtil			cFileUtil;
 
@@ -229,6 +234,7 @@ void TestTileMapGenerator2x2ImageGenerate(void)
 		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor, SCCT_Wall,		pcWallColour);
 		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor, SCCT_Door,		pcDoorColour);
 		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor, SCCT_Floor,	pcFloorColour);
+		pTileMapGenerator->SetEdgeSource(pcSpaceColour);
 
 		sMapSize = pTileMapGenerator->GetMapSize();
 		sCelSize = pTileMapGenerator->GetCelSize();
@@ -256,7 +262,7 @@ void TestTileMapGenerator2x2ImageGenerate(void)
 		pTileMapGenerator = NULL;
 
 		szOutputFilename.Init(szDirectory);
-		cFileUtil.AppendToPath(&szOutputFilename, "TileMapGenerator2x2Generate");
+		cFileUtil.AppendToPath(&szOutputFilename, "TileMapGenerator3x3Generate");
 		szOutputFilename.Append(".png");
 		bWritten = WriteImage(pDestImage, szOutputFilename.Text(), IT_PNG);
 		AssertTrue(bWritten);
@@ -334,6 +340,7 @@ void TestTileMapGenerator40x40ImageGenerate(void)
 		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor,	SCCT_Door,	 pcDoorColour);
 		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor,	SCCT_Floor,  pcFloorColour);
 		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Shadow,	SCCT_Shadow, pcFloorColour);
+		pTileMapGenerator->SetEdgeSource(pcSpaceColour);
 
 		sMapSize = pTileMapGenerator->GetMapSize();
 		sCelSize = pTileMapGenerator->GetCelSize();
@@ -446,6 +453,7 @@ void TestTileMapGenerator7x5StringGenerate(void)
 		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor,	SCCT_Door,	 pcDoorColour);
 		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor,	SCCT_Floor,  pcFloorColour);
 		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Shadow,	SCCT_Shadow, pcFloorColour);
+		pTileMapGenerator->SetEdgeSource(pcSpaceColour);
 
 		sMapSize = pTileMapGenerator->GetMapSize();
 		sCelSize = pTileMapGenerator->GetCelSize();
@@ -492,6 +500,184 @@ void TestTileMapGenerator7x5StringGenerate(void)
 }
 
 
+struct SDoor
+{
+	SSizeVec2	sPosition;
+	char*		szDoorDirection;
+};
+
+
+typedef CArrayTemplate<SDoor> CArrayDoor;
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void DoorCallback(Ptr<CTileCelBrush> pBrush, size xPosition, size yPosition, void* pvData)
+{
+	CArrayDoor*		pasDoors;
+	SDoor*			psDoor;
+
+	pasDoors = (CArrayDoor*)pvData;
+	psDoor = pasDoors->Add();
+	psDoor->szDoorDirection = pBrush->GetPatternName();
+	psDoor->sPosition.Init(xPosition, yPosition);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTileMapGenerator11x11StringGenerate(void)
+{
+	char				szDirectory[] = "Output" _FS_ "TileMapGenerator11x11StringGenerate";
+	CIndexTreeMemory	cMemory;
+	CFileUtil			cFileUtil;
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	ObjectsInit();
+	{
+		Ptr<CMaps>					pMaps;
+		CImageDivider				cImageDivider;
+		CChars						szInputFilename;
+		CChars						szOutputFilename;
+		Ptr<CRoot>					pRoot;
+		Ptr<CTileMapGenerator>		pTileMapGenerator;
+		Ptr<CArrayImageCel>			paBackgroundCels;
+		CTileCelCharSource*			pcWallColour;
+		CTileCelCharSource*			pcFloorColour;
+		CTileCelCharSource*			pcSpaceColour;
+		CTileCelCharSource*			pcDoorColour;
+		Ptr<CTileMap>				pTileMap;
+		Ptr<CImage>					pDestImage;
+		Ptr<CImageCelBlitterCache>	pBlitterCache;
+		Ptr<CTileCelBrush>			pBrush;
+		SSizeVec2					sMapSize;
+		SSizeVec2					sCelSize;
+		bool						bResult;
+		bool						bWritten;
+		CRandom						cRandom;
+		CArrayDoor					asDoors;
+		SDoor*						psDoor;
+
+		cRandom.Init(2345);
+
+		pRoot = ORoot();
+		pTileMapGenerator = OMalloc<CTileMapGenerator>(&cRandom);
+		pRoot->Add(pTileMapGenerator);
+
+		CArrayChars		aszArrayString;
+
+		aszArrayString.Init("             ",
+							" WWWWWWWWWWW ",
+							" W....W....W ",
+							" W....D....W ",
+							" W....D....W ",
+							" W....W....W ",
+							" WWDDWWWDDWW ",
+							" W....W....W ",
+							" W....D....W ",
+							" W....D....W ",
+							" W....W....W ",
+							" WWWWWWWWWWW ",
+							"             ",
+							NULL);
+
+		pTileMapGenerator->AddTileGridSource("FloorPlan", &aszArrayString);
+
+		paBackgroundCels = TestReadCels("SpaceCrusade", "Tiles.png", 10, 3);
+
+		TestTileMapGeneratorAddPatterns(pTileMapGenerator, paBackgroundCels, true);
+
+		pcWallColour = pTileMapGenerator->AddCharSource('W');
+		pcFloorColour = pTileMapGenerator->AddCharSource('.');
+		pcSpaceColour = pTileMapGenerator->AddCharSource(' ');
+		pcDoorColour = pTileMapGenerator->AddCharSource('D');
+
+		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor,	SCCT_Space,  pcSpaceColour);
+		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor,	SCCT_Wall,	 pcWallColour);
+		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor,	SCCT_Door,	 pcDoorColour);
+		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Floor,	SCCT_Floor,  pcFloorColour);
+		pTileMapGenerator->AddTileGenerator("FloorPlan", SCML_Shadow,	SCCT_Shadow, pcFloorColour);
+		pTileMapGenerator->SetEdgeSource(pcSpaceColour);
+
+		sMapSize = pTileMapGenerator->GetMapSize();
+		sCelSize = pTileMapGenerator->GetCelSize();
+
+		asDoors.Init();
+		pBrush = pTileMapGenerator->GetTileBrush(SCCT_Door, "DoorUp");
+		pBrush->SetCallback(DoorCallback, &asDoors);
+		pBrush = pTileMapGenerator->GetTileBrush(SCCT_Door, "DoorRight");
+		pBrush->SetCallback(DoorCallback, &asDoors);
+
+		pTileMap = pTileMapGenerator->Generate();
+
+		AssertSize(4, asDoors.NumElements());
+		psDoor = asDoors.Get(0);
+		AssertSize(6, psDoor->sPosition.x);
+		AssertSize(4, psDoor->sPosition.y);
+		AssertString("DoorUp", psDoor->szDoorDirection);
+
+		psDoor = asDoors.Get(1);
+		AssertSize(4, psDoor->sPosition.x);
+		AssertSize(6, psDoor->sPosition.y);
+		AssertString("DoorRight", psDoor->szDoorDirection);
+
+		psDoor = asDoors.Get(2);
+		AssertSize(9, psDoor->sPosition.x);
+		AssertSize(6, psDoor->sPosition.y);
+		AssertString("DoorRight", psDoor->szDoorDirection);
+
+		psDoor = asDoors.Get(3);
+		AssertSize(6, psDoor->sPosition.x);
+		AssertSize(9, psDoor->sPosition.y);
+		AssertString("DoorUp", psDoor->szDoorDirection);
+
+		asDoors.Kill();
+
+		pDestImage = OMalloc<CImage>(sMapSize.x * sCelSize.x, sMapSize.y * sCelSize.y, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+		pDestImage->White();
+		pBlitterCache = OMalloc<CImageCelBlitterCache>(pDestImage);
+		
+		pMaps = OMalloc<CMaps>(pBlitterCache, pDestImage);;
+		pRoot->Add(pMaps);
+		pMaps->AddMap(pTileMap);
+
+		pMaps->SetViewportPosition(0, 0);
+
+		bResult = pMaps->CreateCelBlitters();
+		AssertTrue(bResult);
+
+		bResult = pMaps->Blit(false);
+		AssertTrue(bResult);
+
+		pRoot->Remove(pMaps);
+		pRoot->Remove(pTileMapGenerator);
+		pMaps = NULL;
+		pTileMapGenerator = NULL;
+
+		szOutputFilename.Init(szDirectory);
+		cFileUtil.AppendToPath(&szOutputFilename, "TileMapGenerator11x11StringGenerate");
+		szOutputFilename.Append(".png");
+		bWritten = WriteImage(pDestImage, szOutputFilename.Text(), IT_PNG);
+		AssertTrue(bWritten);
+
+		szInputFilename.Init(szOutputFilename);
+		szInputFilename.Replace("Output", "Input");
+
+		AssertFile(szInputFilename, szOutputFilename);
+
+		szOutputFilename.Kill();
+		szInputFilename.Kill();
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -502,10 +688,11 @@ void TestTileMapGenerator(void)
 
 	DataIOInit();
 
-	TestTileMapGenerator2x2ImageGenerate();
+	TestTileMapGenerator3x3ImageGenerate();
 	TestTileMapGenerator40x40ImageGenerate();
 
 	TestTileMapGenerator7x5StringGenerate();
+	TestTileMapGenerator11x11StringGenerate();
 
 	DataIOKill();
 
