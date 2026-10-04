@@ -38,7 +38,7 @@ void TestImageColourAccessorBytes(void)
 									IMAGE_DIFFUSE_RED,		//0xff
 									IMAGE_MASK, 
 									CHANNEL_STOP);
-	cImage.Clear();
+	cImage.Black();
 
 	pcAccessor = CImageAccessorCreator::Create(&cImage, PT_uint8, IMAGE_OPACITY, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 
@@ -102,7 +102,7 @@ void TestImageColourAccessorFloats(void)
 	cImage.AddChannel(IMAGE_NORMAL_X, PT_float32);
 	cImage.SetSize(1, 2);
 	cImage.EndChange();
-	cImage.Clear();
+	cImage.Black();
 
 	pcAccessor = CImageAccessorCreator::Create(&cImage, PT_float32, IMAGE_NORMAL_X, IMAGE_NORMAL_Y, IMAGE_NORMAL_Z, CHANNEL_STOP);
 
@@ -158,7 +158,7 @@ void TestImageColourMultiAccessor(void)
 	cImage.AddChannel(IMAGE_NORMAL_X, PT_float32);
 	cImage.SetSize(1, 2);
 	cImage.EndChange();
-	cImage.Clear();
+	cImage.Black();
 
 	pcAccessor = CImageAccessorCreator::Create(&cImage, IMAGE_NORMAL_X, IMAGE_NORMAL_Y, IMAGE_NORMAL_Z, IMAGE_OPACITY, CHANNEL_STOP);
 

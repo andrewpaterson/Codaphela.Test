@@ -62,8 +62,6 @@ void TestCanvasWriteImage(void)
 		pCanvas = OMalloc<CCanvas>(pTestWindow, CF_R8G8B8, pDraw);
 		pFill->AddComponent(pCanvas);
 
-		pRoot->RemoveAll();
-
 		pTestWindow = NULL;
 		pCanvas = NULL;
 		pTick = NULL;
@@ -72,6 +70,7 @@ void TestCanvasWriteImage(void)
 		pMaps = NULL;
 		pCache = NULL;
 		pDestImage = NULL;
+		pRoot->RemoveAll();
 
 		cNativeFactory.Kill();
 	}

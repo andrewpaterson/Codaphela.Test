@@ -17,7 +17,7 @@ void TestImageDrawBox1(void)
 	Ptr<CImage>			pImage = OMalloc<CImage>(32, 32);
 	CImageColourRGB		cColour;
 
-	pImage->Clear();
+	pImage->Black();
 
 	cDraw.Init(&pImage);
 
@@ -51,7 +51,7 @@ void TestImageDrawBox2(void)
 	CImageColourRGB		cColour;
 	size				i;
 
-	pImage->Clear();
+	pImage->Black();
 
 	cDraw.Init(&pImage);
 
@@ -82,7 +82,7 @@ void TestImageDrawLine(void)
 	Ptr<CImage>			pImage = OMalloc<CImage>(64, 32);
 	CImageColourRGB		cColour;
 
-	pImage->Clear();
+	pImage->Black();
 
 	cDraw.Init(&pImage);
 	cColour.Init(1.0f, 1, 1);
@@ -98,7 +98,7 @@ void TestImageDrawLine(void)
 	WriteImage(pImage, "Output" _FS_ "DrawLine1.png");
 	AssertFileMemory("input" _FS_ "DrawLine1.raw", pImage->GetData(), pImage->GetByteSize());
 
-	pImage->Clear();
+	pImage->Black();
 
 	cColour.Init(0.4f, 0.9f, 0.4f);
 	cDraw.SetColour(&cColour);
@@ -113,7 +113,7 @@ void TestImageDrawLine(void)
 	WriteImage(pImage, "Output" _FS_ "DrawLine2.png");
 	AssertFileMemory("input" _FS_ "DrawLine2.raw", pImage->GetData(), pImage->GetByteSize());
 
-	pImage->Clear();
+	pImage->Black();
 
 	cColour.Init(0.4f, 0.4f, 0.99f);
 	cDraw.SetColour(&cColour);
@@ -147,7 +147,7 @@ void TestImageDrawLineExtents(void)
 	int32				x;
 	int32				y;
 
-	pImage->Clear();
+	pImage->Black();
 
 	cDraw.Init(&pImage);
 	cColour1.Init(1.0f, 0.1f, 0.1f);
@@ -165,7 +165,7 @@ void TestImageDrawLineExtents(void)
 	WriteImage(pImage, "Output" _FS_ "DrawLine4.png");
 	AssertFileMemory("input" _FS_ "DrawLine4.raw", pImage->GetData(), pImage->GetByteSize());
 
-	pImage->Clear();
+	pImage->Black();
 
 	for (y = 0; y < 16; y += 2)
 	{

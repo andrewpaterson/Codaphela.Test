@@ -98,7 +98,7 @@ void TestImageOpacityCopier(char* szDirectory, char* szInputPathName, char* szTe
 		uiWidth = pBackgroundImage->GetWidth();
 		uiHeight = pBackgroundImage->GetHeight();
 		pDestImage = OMalloc<CImage>(uiWidth, uiHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
-		pDestImage->Clear();
+		pDestImage->Black();
 
 		pBackgroundCel = OMalloc<CImageCel>(pBackgroundImage);
 		pMakiCel = OMalloc<CImageCel>(pMakiImage, true);

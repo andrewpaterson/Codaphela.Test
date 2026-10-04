@@ -439,7 +439,7 @@ void TestFontMapFontViewportLayout(void)
 		cTextReader.Kill();
 
 		pDestImage = OMalloc<CImage>(1280, 720, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
-		pDestImage->Clear();
+		pDestImage->Black();
 
 		pBlitterCache = OMalloc<CImageCelBlitterCache>(pDestImage);
 		pRoot->Add(pBlitterCache);

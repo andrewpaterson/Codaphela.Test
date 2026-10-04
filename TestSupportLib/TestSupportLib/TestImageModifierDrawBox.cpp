@@ -33,7 +33,7 @@ void TestImageModifierDrawBox1(void)
 	cImage.AddChannel(IMAGE_DIFFUSE_RED, PT_uint8);
 	cImage.SetSize(4, 4);
 	cImage.EndChange();
-	cImage.Clear();
+	cImage.Black();
 
 	cRect.Init(1, 1, 2, 2);  //End inclusive.
 	cRGB.Init(0.9f, 0.2f, 0.25f);
@@ -47,7 +47,7 @@ void TestImageModifierDrawBox1(void)
 	cImage.BeginChange();
 	cImage.SetSize(8, 8);  //Oops, Set size does not preserve the image.  Also Write Image cannot write out non *4 sized pngs.
 	cImage.EndChange();
-	cImage.Clear();
+	cImage.Black();
 	cBox.Modify(&cImage);
 	cBox.Kill();
 
@@ -84,7 +84,7 @@ void TestImageModifierDrawBox2(void)
 	Ptr<CImage>				pImage;
 
 	pImage = ONMalloc<CImage>("Picture", 32, 32);
-	pImage->Clear();
+	pImage->Black();
 
 	cStack.Init(pImage);
 
