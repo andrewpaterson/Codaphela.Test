@@ -37,16 +37,13 @@ void TestCanvasWriteImage(void)
 		CPointer					pNull;
 		Ptr<CFillContainer>			pFill;
 		Ptr<CMapsCanvasDraw>		pDraw;
-		Ptr<CMaps>					pMaps;
-		Ptr<CImageCelBlitterCache>	pCache;
-		Ptr<CImageCelBlitterCache>	pDestImage;
 		Ptr<CRoot>					pRoot;
-		bool						bResult;
 		CRandom						cRandom;
 		Ptr<CImage>					pFloorPlanImage;
 		Ptr<CTileMap>				pTileMap;
 		Ptr<CTileMapGenerator>		pTileMapGenerator;
 		Ptr<CArrayImageCel>			paBackgroundCels;
+		Ptr<CMaps>					pMaps;
 
 		pFloorPlanImage = ReadSpaceImage("SpaceCrusade", "FloorPlan.png");
 
@@ -69,38 +66,27 @@ void TestCanvasWriteImage(void)
 		pRoot->Add(pTileMapGenerator);
 
 		pTileMapGenerator->AddTileGridSource("FloorPlan", pFloorPlanImage);
-
 		paBackgroundCels = ReadSpaceCels("SpaceCrusade", "Tiles.png", 10, 3);
-
 		AddSpacePatterns(pTileMapGenerator, paBackgroundCels);
 		AddSpaceSources(pTileMapGenerator);
 
+		pTileMap = pTileMapGenerator->Generate();
 
-		pDestImage = OMalloc<CImage>(cNativeFactory.GetWidth(), cNativeFactory.GetHeight(), PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
-		pCache = OMalloc<CImageCelBlitterCache>(pDestImage);
-		pMaps = OMalloc<CMaps>(pCache, pDestImage);
-		pRoot->Add(pMaps);
-
+		pMaps = OMalloc<CMaps>();
+		pMaps->AddMap(pTileMap);
 		pMaps->SetViewportPosition(0, 0);
-
-		bResult = pMaps->CreateCelBlitters();
-		AssertTrue(bResult);
-
 
 		pDraw = OMalloc<CMapsCanvasDraw>(pMaps);
 		pCanvas = OMalloc<CCanvas>(pTestWindow, CFT_RGB, pDraw);
 		pFill->AddComponent(pCanvas);
 
-
+		pTestWindow->Show();
 
 		pTestWindow = NULL;
 		pCanvas = NULL;
 		pTick = NULL;
 		pFill = NULL;
 		pDraw = NULL;
-		pMaps = NULL;
-		pCache = NULL;
-		pDestImage = NULL;
 		pRoot->RemoveAll();
 
 		cNativeFactory.Kill();

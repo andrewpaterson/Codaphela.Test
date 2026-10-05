@@ -347,7 +347,7 @@ void TestTileMapGenerator40x40ImageGenerate(void)
 
 		pTileMap = pTileMapGenerator->Generate();
 
-		pDestImage = OMalloc<CImage>(sMapSize.x * sCelSize.x, sMapSize.y * sCelSize.y, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+		pDestImage = OMalloc<CImage>(sMapSize.x * sCelSize.x, sMapSize.y * sCelSize.y, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
 		pDestImage->White();
 		pBlitterCache = OMalloc<CImageCelBlitterCache>(pDestImage);
 		

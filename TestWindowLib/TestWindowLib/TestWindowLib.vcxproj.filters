@@ -25,9 +25,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Todo.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="TestWindowLib.cpp">
       <Filter>Source</Filter>
     </ClCompile>
