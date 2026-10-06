@@ -194,6 +194,7 @@
     <ClCompile Include="TestFlowContainer.cpp" />
     <ClCompile Include="TestRefWindow.cpp" />
     <ClCompile Include="TestWindowLib.cpp" />
+    <ClCompile Include="TickTestCanvas.cpp" />
     <ClCompile Include="TickTestRefWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -229,6 +230,7 @@
     <ClInclude Include="BorderCanvasDraw.h" />
     <ClInclude Include="SpaceCrusade.h" />
     <ClInclude Include="TestRefWindowCanvasDraw.h" />
+    <ClInclude Include="TickTestCanvas.h" />
     <ClInclude Include="TickTestRefWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

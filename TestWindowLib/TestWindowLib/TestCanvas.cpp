@@ -10,7 +10,7 @@
 #include "TestLib/AssertFile.h"
 #include "TestRefWindowCanvasDraw.h"
 #include "BorderCanvasDraw.h"
-#include "TickTestRefWindow.h"
+#include "TickTestCanvas.h"
 #include "DataTestRefWindow.h"
 #include "SpaceCrusade.h"
 
@@ -32,9 +32,8 @@ void TestCanvasWriteImage(void)
 	{
 		Ptr<CWindow>				pTestWindow;
 		Ptr<CCanvas>				pCanvas;
-		Ptr<CTickTestRefWindow>		pTick;
+		Ptr<CTickTestCanvas>		pTick;
 		SDataTestRefWindow			cData;
-		CPointer					pNull;
 		Ptr<CFillContainer>			pFill;
 		Ptr<CMapsCanvasDraw>		pDraw;
 		Ptr<CRoot>					pRoot;
@@ -46,7 +45,6 @@ void TestCanvasWriteImage(void)
 		Ptr<CMaps>					pMaps;
 		CChars						szExpectedDirectory;
 
-
 		pFloorPlanImage = ReadSpaceImage("SpaceCrusade", "FloorPlan.png");
 
 		cRandom.Init(2345);
@@ -55,8 +53,10 @@ void TestCanvasWriteImage(void)
 
 		pRoot = ORoot();
 
-		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Space Crusade", &cNativeFactory, pTick, pNull);
+		pMaps = OMalloc<CMaps>();
+
+		pTick = OMalloc<CTickTestCanvas>(&cData, pMaps, 25);
+		pTestWindow = OMalloc<CWindow>("Space Crusade", &cNativeFactory, pTick, (CPointer)NULL);
 		gcObjects.ValidateObjectsConsistency();
 
 		pRoot->Add(pTestWindow);
@@ -67,6 +67,8 @@ void TestCanvasWriteImage(void)
 		pTileMapGenerator = OMalloc<CTileMapGenerator>(&cRandom);
 		pRoot->Add(pTileMapGenerator);
 
+		gcObjects.DisableValidation();
+
 		pTileMapGenerator->AddTileGridSource("FloorPlan", pFloorPlanImage);
 		paBackgroundCels = ReadSpaceCels("SpaceCrusade", "Tiles.png", 10, 3);
 		AddSpacePatterns(pTileMapGenerator, paBackgroundCels);
@@ -74,7 +76,6 @@ void TestCanvasWriteImage(void)
 
 		pTileMap = pTileMapGenerator->Generate();
 
-		pMaps = OMalloc<CMaps>();
 		pMaps->AddMap(pTileMap);
 		pMaps->SetViewportPosition(0, 0);
 
@@ -90,6 +91,8 @@ void TestCanvasWriteImage(void)
 		pFill = NULL;
 		pDraw = NULL;
 		pRoot->RemoveAll();
+
+		gcObjects.EnableValidation();
 
 		cNativeFactory.Kill();
 
