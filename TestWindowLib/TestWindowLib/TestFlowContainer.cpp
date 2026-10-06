@@ -283,10 +283,8 @@ void TestFlowContainerRightTopContinue(void)
 
 	{
 		Ptr<CWindow>			pTestWindow;
-		CArrayChars				aszFiles;
 		size					i;
-		CChars*					pszFilename;
-		CChars					szExpectedFilename;
+		CChars					szExpectedDirectory;
 		Ptr<CCanvas>			pCanvas;
 		Ptr<CBorderCanvasDraw>	pDraw;
 		CTickTestRefWindow		cTick;
@@ -343,22 +341,11 @@ void TestFlowContainerRightTopContinue(void)
 		pFlow = NULL;
 		AssertSize(0, gcObjects.NumMemoryIndexes());
 
-		aszFiles.Init();
-		cFileUtil.FindAllFiles(szDirectory, &aszFiles, false, false);
-		AssertSize(1, aszFiles.NumElements());
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
 
-		for (i = 0; i < aszFiles.NumElements(); i++)
-		{
-			pszFilename = aszFiles.Get(i);
-			szExpectedFilename.Init(pszFilename);
-			szExpectedFilename.Replace("Output", "Input");
-
-			AssertImageFile(&szExpectedFilename, pszFilename);
-
-			szExpectedFilename.Kill();
-		}
-
-		aszFiles.Kill();
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
 	}
 
 	cNativeFactory.Kill();
@@ -381,10 +368,8 @@ void TestFlowContainerRightBottomContinue(void)
 
 	{
 		Ptr<CWindow>			pTestWindow;
-		CArrayChars				aszFiles;
 		size					i;
-		CChars*					pszFilename;
-		CChars					szExpectedFilename;
+		CChars					szExpectedDirectory;
 		Ptr<CCanvas>			pCanvas;
 		Ptr<CBorderCanvasDraw>	pDraw;
 		CTickTestRefWindow		cTick;
@@ -441,22 +426,11 @@ void TestFlowContainerRightBottomContinue(void)
 		pFlow = NULL;
 		AssertSize(0, gcObjects.NumMemoryIndexes());
 
-		aszFiles.Init();
-		cFileUtil.FindAllFiles(szDirectory, &aszFiles, false, false);
-		AssertSize(1, aszFiles.NumElements());
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
 
-		for (i = 0; i < aszFiles.NumElements(); i++)
-		{
-			pszFilename = aszFiles.Get(i);
-			szExpectedFilename.Init(pszFilename);
-			szExpectedFilename.Replace("Output", "Input");
-
-			AssertImageFile(&szExpectedFilename, pszFilename);
-
-			szExpectedFilename.Kill();
-		}
-
-		aszFiles.Kill();
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
 	}
 
 	cNativeFactory.Kill();
@@ -479,10 +453,8 @@ void TestFlowContainerRightTopWrap(void)
 
 	{
 		Ptr<CWindow>			pTestWindow;
-		CArrayChars				aszFiles;
 		size					i;
-		CChars*					pszFilename;
-		CChars					szExpectedFilename;
+		CChars					szExpectedDirectory;
 		Ptr<CCanvas>			pCanvas;
 		Ptr<CBorderCanvasDraw>	pDraw;
 		CTickTestRefWindow		cTick;
@@ -539,22 +511,11 @@ void TestFlowContainerRightTopWrap(void)
 		pFlow = NULL;
 		AssertSize(0, gcObjects.NumMemoryIndexes());
 
-		aszFiles.Init();
-		cFileUtil.FindAllFiles(szDirectory, &aszFiles, false, false);
-		AssertSize(1, aszFiles.NumElements());
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
 
-		for (i = 0; i < aszFiles.NumElements(); i++)
-		{
-			pszFilename = aszFiles.Get(i);
-			szExpectedFilename.Init(pszFilename);
-			szExpectedFilename.Replace("Output", "Input");
-
-			AssertImageFile(&szExpectedFilename, pszFilename);
-
-			szExpectedFilename.Kill();
-		}
-
-		aszFiles.Kill();
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
 	}
 
 	cNativeFactory.Kill();
@@ -576,10 +537,8 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRand
 
 	{
 		Ptr<CWindow>			pTestWindow;
-		CArrayChars				aszFiles;
 		size					i;
-		CChars*					pszFilename;
-		CChars					szExpectedFilename;
+		CChars					szExpectedDirectory;
 		Ptr<CCanvas>			pCanvas;
 		Ptr<CBorderCanvasDraw>	pDraw;
 		CTickTestRefWindow		cTick;
@@ -634,22 +593,11 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRand
 		pFlow = NULL;
 		AssertSize(0, gcObjects.NumMemoryIndexes());
 
-		aszFiles.Init();
-		cFileUtil.FindAllFiles(szDirectory, &aszFiles, false, false);
-		AssertSize(1, aszFiles.NumElements());
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
 
-		for (i = 0; i < aszFiles.NumElements(); i++)
-		{
-			pszFilename = aszFiles.Get(i);
-			szExpectedFilename.Init(pszFilename);
-			szExpectedFilename.Replace("Output", "Input");
-
-			AssertImageFile(&szExpectedFilename, pszFilename);
-
-			szExpectedFilename.Kill();
-		}
-
-		aszFiles.Kill();
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
 	}
 
 	cNativeFactory.Kill();
