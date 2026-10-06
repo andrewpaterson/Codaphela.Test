@@ -15,7 +15,7 @@
 #include "SupportLib/ImageCopier.h"
 #include "SupportLib/ImageBlitter.h"
 #include "SupportLib/ImageWriter.h"
-#include "SupportLib/ImageRowBlitterCache.h"
+#include "SupportLib/ImageRowBlitterFactory.h"
 #include "TestLib/Assert.h"
 
 
@@ -61,7 +61,7 @@ void TestImageOpacityCopier(char* szDirectory, char* szInputPathName, char* szTe
 		Ptr<CImage>					pMakiImage;
 		Ptr<CImageCel>				pBackgroundCel;
 		Ptr<CImageCel>				pMakiCel;
-		CImageRowBlitterCache		cCache;
+		CImageRowBlitterFactory		cCache;
 		CArrayChannel				asChannels;
 		SChannel*					psChannel;
 		Ptr<CImage>					pDestImage;

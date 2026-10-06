@@ -7,7 +7,7 @@
 #include "WindowLib/FillContainer.h"
 #include "WindowLib/MapsCanvasDraw.h"
 #include "WinRefLib/WinRefWindowFactory.h"
-#include "TestLib/AssertGeometric.h"
+#include "TestLib/AssertFile.h"
 #include "TestRefWindowCanvasDraw.h"
 #include "BorderCanvasDraw.h"
 #include "TickTestRefWindow.h"
@@ -44,6 +44,8 @@ void TestCanvasWriteImage(void)
 		Ptr<CTileMapGenerator>		pTileMapGenerator;
 		Ptr<CArrayImageCel>			paBackgroundCels;
 		Ptr<CMaps>					pMaps;
+		CChars						szExpectedDirectory;
+
 
 		pFloorPlanImage = ReadSpaceImage("SpaceCrusade", "FloorPlan.png");
 
@@ -90,6 +92,12 @@ void TestCanvasWriteImage(void)
 		pRoot->RemoveAll();
 
 		cNativeFactory.Kill();
+
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
+
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
 	}
 	AssertSize(2, gcObjects.NumMemoryIndexes());  //Root and root-set.
 	ObjectsFlush();

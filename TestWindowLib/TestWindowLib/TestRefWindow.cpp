@@ -6,6 +6,7 @@
 #include "SupportLib/ColourARGB32.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/AssertGeometric.h"
+#include "TestLib/AssertFile.h"
 #include "TestRefWindowCanvasDraw.h"
 #include "BorderCanvasDraw.h"
 #include "TickTestRefWindow.h"
@@ -32,10 +33,7 @@ void TestRefWindowCreation(void)
 		Ptr<CTickTestRefWindow>			pTick;
 		SDataTestRefWindow				cData;
 		Ptr<CRoot>						pRoot;
-		CArrayChars						aszFiles;
-		size							i;
-		CChars*							pszFilename;
-		CChars							szExpectedFilename;
+		CChars							szExpectedDirectory;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 64, szDirectory);
 
@@ -53,25 +51,13 @@ void TestRefWindowCreation(void)
 		pTestWindow = NULL;
 		pDraw = NULL;
 		pTick = NULL;
-
-		aszFiles.Init();
-		cFileUtil.FindAllFiles(szDirectory, &aszFiles, false, false);
-		AssertSize(10, aszFiles.NumElements());
-
-		for (i = 0; i < aszFiles.NumElements(); i++)
-		{
-			pszFilename = aszFiles.Get(i);
-			szExpectedFilename.Init(pszFilename);
-			szExpectedFilename.Replace("Output", "Input");
-
-			AssertFile(szExpectedFilename.Text(), pszFilename->Text());
-
-			szExpectedFilename.Kill();
-		}
-
-		aszFiles.Kill();
-
 		cNativeFactory.Kill();
+
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
+
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
 	}
 	ObjectsFlush();
 	ObjectsKill();
@@ -96,10 +82,7 @@ void TestRefWindowCanvasBorder(void)
 	ObjectsInit();
 	{
 		Ptr<CWindow>					pTestWindow;
-		CArrayChars						aszFiles;
-		size							i;
-		CChars*							pszFilename;
-		CChars							szExpectedFilename;
+		CChars							szExpectedDirectory;
 		Ptr<CBorderCanvasDraw>			pDraw;
 		Ptr<CTickTestRefWindow>			pTick;
 		SDataTestRefWindow				cData;
@@ -115,25 +98,17 @@ void TestRefWindowCanvasBorder(void)
 
 		pTestWindow->Show();
 
-		pTestWindow->Kill();
-
-		aszFiles.Init();
-		cFileUtil.FindAllFiles(szDirectory, &aszFiles, false, false);
-		AssertSize(1, aszFiles.NumElements());
-
-		for (i = 0; i < aszFiles.NumElements(); i++)
-		{
-			pszFilename = aszFiles.Get(i);
-			szExpectedFilename.Init(pszFilename);
-			szExpectedFilename.Replace("Output", "Input");
-
-			AssertFile(szExpectedFilename.Text(), pszFilename->Text());
-
-			szExpectedFilename.Kill();
-		}
-
-		aszFiles.Kill();
+		pRoot->RemoveAll();
+		pTestWindow = NULL;
+		pDraw = NULL;
+		pTick = NULL;
 		cNativeFactory.Kill();
+
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
+
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
 	}
 	ObjectsFlush();
 	ObjectsKill();
