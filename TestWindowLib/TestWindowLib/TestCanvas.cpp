@@ -56,7 +56,7 @@ void TestCanvasWriteImage(void)
 		pMaps = OMalloc<CMaps>();
 
 		pTick = OMalloc<CTickTestCanvas>(&cData, pMaps, 25);
-		pTestWindow = OMalloc<CWindow>("Space Crusade", &cNativeFactory, pTick, (CPointer)NULL);
+		pTestWindow = OMalloc<CWindow>("Space Crusade", &cNativeFactory, pTick, (CPointer)NULL, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
 		gcObjects.ValidateObjectsConsistency();
 
 		pRoot->Add(pTestWindow);
@@ -80,7 +80,7 @@ void TestCanvasWriteImage(void)
 		pMaps->SetViewportPosition(0, 0);
 
 		pDraw = OMalloc<CMapsCanvasDraw>(pMaps);
-		pCanvas = OMalloc<CCanvas>(pTestWindow, CFT_RGB, pDraw);
+		pCanvas = OMalloc<CCanvas>(pTestWindow, pDraw);
 		pFill->AddComponent(pCanvas);
 
 		pTestWindow->Show();

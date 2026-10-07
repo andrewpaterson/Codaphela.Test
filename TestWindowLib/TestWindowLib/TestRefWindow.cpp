@@ -41,7 +41,7 @@ void TestRefWindowCreation(void)
 
 		pTick = OMalloc<CTickTestRefWindow>(&cData, 10);
 		pDraw = OMalloc<CTestRefWindowCanvasDraw>(&cData);
-		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pDraw);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pDraw, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
 
 		pRoot->Add(pTestWindow);
 
@@ -94,7 +94,7 @@ void TestRefWindowCanvasBorder(void)
 
 		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
 		pDraw = OMalloc<CBorderCanvasDraw>(Set32BitColour(1.0f, 0, 0));
-		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pDraw);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pDraw, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
 
 		pTestWindow->Show();
 
