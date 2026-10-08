@@ -3,6 +3,8 @@
 #include "BaseLib/StdRandom.h"
 #include "StandardLib/Objects.h"
 #include "SupportLib/ImageCelBlitterCache.h"
+#include "SupportLib/ImageCopier.h"
+#include "SupportLib/ImageColourFormatConverter.h"
 #include "WindowLib/Window.h"
 #include "WindowLib/FillContainer.h"
 #include "WindowLib/MapsCanvasDraw.h"
@@ -19,7 +21,7 @@
 //																		//
 //																		//
 //////////////////////////////////////////////////////////////////////////
-void TestCanvasWriteImage(void)
+void TestCanvasWriteImageRGB(void)
 {
 	CWinRefWindowFactory	cNativeFactory;
 	CFileUtil				cFileUtil;
@@ -44,6 +46,104 @@ void TestCanvasWriteImage(void)
 		Ptr<CArrayImageCel>			paBackgroundCels;
 		Ptr<CMaps>					pMaps;
 		CChars						szExpectedDirectory;
+		CColourFormatHelper			cHelper;
+
+		pFloorPlanImage = ReadSpaceImage("SpaceCrusade", "FloorPlan.png");
+
+		cRandom.Init(2345);
+
+		cNativeFactory.Init(&gcMemoryAllocator, 320, 200, szDirectory);
+
+		pRoot = ORoot();
+
+		pMaps = OMalloc<CMaps>();
+
+		pTick = OMalloc<CTickTestCanvas>(&cData, pMaps, 1);
+		pTestWindow = OMalloc<CWindow>("Space Crusade", &cNativeFactory, pTick, (CPointer)NULL, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		gcObjects.ValidateObjectsConsistency();
+
+		pTestWindow->GetColourFormat(&cHelper);
+		pRoot->Add(pTestWindow);
+
+		pFill = OMalloc<CFillContainer>(pTestWindow);
+		pTestWindow->SetContainer(pFill);
+
+		pTileMapGenerator = OMalloc<CTileMapGenerator>(&cRandom);
+		pRoot->Add(pTileMapGenerator);
+
+		gcObjects.DisableValidation();
+
+		pTileMapGenerator->AddTileGridSource("FloorPlan", pFloorPlanImage);
+		paBackgroundCels = ReadSpaceCels("SpaceCrusade", "Tiles.png", 10, 3, &cHelper);
+		AddSpacePatterns(pTileMapGenerator, paBackgroundCels);
+		AddSpaceSources(pTileMapGenerator);
+
+		pTileMap = pTileMapGenerator->Generate();
+
+		pMaps->AddMap(pTileMap);
+		pMaps->SetViewportPosition(0, 0);
+
+		pDraw = OMalloc<CMapsCanvasDraw>(pMaps);
+		pCanvas = OMalloc<CCanvas>(pTestWindow, pDraw);
+		pFill->AddComponent(pCanvas);
+
+		pTestWindow->Show();
+
+		pTestWindow = NULL;
+		pCanvas = NULL;
+		pTick = NULL;
+		pFill = NULL;
+		pDraw = NULL;
+		pRoot->RemoveAll();
+
+		gcObjects.EnableValidation();
+
+		cNativeFactory.Kill();
+
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
+
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
+	}
+	AssertSize(2, gcObjects.NumMemoryIndexes());  //Root and root-set.
+	ObjectsFlush();
+	ObjectsKill();
+
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//																		//
+//																		//
+//////////////////////////////////////////////////////////////////////////
+void TestCanvasWriteImageBGRX(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "CanvasWriteImage";
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	ObjectsInit();
+	{
+		Ptr<CWindow>				pTestWindow;
+		Ptr<CCanvas>				pCanvas;
+		Ptr<CTickTestCanvas>		pTick;
+		SDataTestRefWindow			cData;
+		Ptr<CFillContainer>			pFill;
+		Ptr<CMapsCanvasDraw>		pDraw;
+		Ptr<CRoot>					pRoot;
+		CRandom						cRandom;
+		Ptr<CImage>					pFloorPlanImage;
+		Ptr<CTileMap>				pTileMap;
+		Ptr<CTileMapGenerator>		pTileMapGenerator;
+		Ptr<CArrayImageCel>			paBackgroundCels;
+		Ptr<CMaps>					pMaps;
+		CChars						szExpectedDirectory;
+		CColourFormatHelper			cHelper;
 
 		pFloorPlanImage = ReadSpaceImage("SpaceCrusade", "FloorPlan.png");
 
@@ -56,9 +156,10 @@ void TestCanvasWriteImage(void)
 		pMaps = OMalloc<CMaps>();
 
 		pTick = OMalloc<CTickTestCanvas>(&cData, pMaps, 25);
-		pTestWindow = OMalloc<CWindow>("Space Crusade", &cNativeFactory, pTick, (CPointer)NULL, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow = OMalloc<CWindow>("Space Crusade", &cNativeFactory, pTick, (CPointer)NULL, CFT_RGBX, CCO_BGR, CRGB_24bit, ARGB_8bit);
 		gcObjects.ValidateObjectsConsistency();
 
+		pTestWindow->GetColourFormat(&cHelper);
 		pRoot->Add(pTestWindow);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
@@ -70,7 +171,7 @@ void TestCanvasWriteImage(void)
 		gcObjects.DisableValidation();
 
 		pTileMapGenerator->AddTileGridSource("FloorPlan", pFloorPlanImage);
-		paBackgroundCels = ReadSpaceCels("SpaceCrusade", "Tiles.png", 10, 3);
+		paBackgroundCels = ReadSpaceCels("SpaceCrusade", "Tiles.png", 10, 3, &cHelper);
 		AddSpacePatterns(pTileMapGenerator, paBackgroundCels);
 		AddSpaceSources(pTileMapGenerator);
 
@@ -118,7 +219,8 @@ void TestCanvas(void)
 {
 	BeginTests();
 
-	TestCanvasWriteImage();
+	TestCanvasWriteImageBGRX();
+	TestCanvasWriteImageRGB();
 
 	TestStatistics();
 }
