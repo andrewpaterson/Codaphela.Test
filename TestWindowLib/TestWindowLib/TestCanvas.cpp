@@ -4,7 +4,7 @@
 #include "StandardLib/Objects.h"
 #include "SupportLib/ImageCelBlitterCache.h"
 #include "SupportLib/ImageCopier.h"
-#include "SupportLib/ImageColourFormatConverter.h"
+#include "SupportLib/ImageColourConverter.h"
 #include "WindowLib/Window.h"
 #include "WindowLib/FillContainer.h"
 #include "WindowLib/MapsCanvasDraw.h"
@@ -58,7 +58,7 @@ void TestCanvasWriteImageRGB(void)
 
 		pMaps = OMalloc<CMaps>();
 
-		pTick = OMalloc<CTickTestCanvas>(&cData, pMaps, 1);
+		pTick = OMalloc<CTickTestCanvas>(&cData, pMaps, 25);
 		pTestWindow = OMalloc<CWindow>("Space Crusade", &cNativeFactory, pTick, (CPointer)NULL, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
 		gcObjects.ValidateObjectsConsistency();
 
@@ -219,8 +219,8 @@ void TestCanvas(void)
 {
 	BeginTests();
 
-	TestCanvasWriteImageBGRX();
 	TestCanvasWriteImageRGB();
+	TestCanvasWriteImageBGRX();
 
 	TestStatistics();
 }

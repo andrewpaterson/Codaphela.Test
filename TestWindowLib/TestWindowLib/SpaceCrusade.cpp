@@ -1,4 +1,4 @@
-#include "SupportLib/ImageColourFormatConverter.h"
+#include "SupportLib/ImageColourConverter.h"
 #include "TestLib/Assert.h"
 #include "SpaceCrusade.h"
 
@@ -211,7 +211,7 @@ Ptr<CArrayImageCel> ReadSpaceCels(char* szDirectory, char* szFilename, int iColu
 	Ptr<CArrayImageCel>		pCels;
 
 	pImage = ReadSpaceImage(szDirectory, szFilename);
-	pImage = CImageColourFormatConverter::Convert(pImage, pcFormat);
+	pImage = CImageColourConverter::ConvertColour(pImage, pcFormat->meOrder);
 
 	cNumbers.InitGeneral(-1, -1, iColumnCount, iRowCount, 0, 0, 0, 0);
 	cImageDivider.Init(pImage, NULL);
