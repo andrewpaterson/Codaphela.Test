@@ -83,7 +83,7 @@ void TestFileSystemNearest(void)
 void TestFileSystemFindExtension(void)
 {
 	CFileSystem				cSystem;
-	CArraySystemFilePtrs	aFileNodePtrs;
+	CArraySystemFilePtr	aFileNodePtrs;
 
 	cSystem.Init("Finder");
 
@@ -111,7 +111,7 @@ void TestFileSystemFindExtension(void)
 void TestFileSystemGetFiles(void)
 {
 	CFileSystem							cSystem;
-	CArraySystemFilePtrs				cArrayFiles;
+	CArraySystemFilePtr				cArrayFiles;
 
 	cSystem.Init("Finder");
 	cArrayFiles.Init();

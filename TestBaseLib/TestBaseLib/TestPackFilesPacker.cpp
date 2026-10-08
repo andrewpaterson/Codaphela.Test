@@ -3,6 +3,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/PackFilePacker.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

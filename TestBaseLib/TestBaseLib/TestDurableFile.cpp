@@ -8,6 +8,8 @@
 #include "BaseLib/DurableFile.h"
 #include "BaseLib/DurableFileController.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
+
 
 //////////////////////////////////////////////////////////////////////////
 //

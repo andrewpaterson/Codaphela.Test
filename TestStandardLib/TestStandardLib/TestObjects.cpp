@@ -9,6 +9,7 @@
 #include "BaseLib/NamedIndexedHeader.h"
 #include "StandardLib/Objects.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 #include "ObjectTestClasses.h"
 #include "ChunkFileObjectWriterTestClasses.h"
 

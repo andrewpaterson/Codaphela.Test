@@ -6,6 +6,7 @@
 #include "StandardLib/ExternalObjectSerialiser.h"
 #include "StandardLib/MultiFileObjectWriter.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 #include "ObjectTestClasses.h"
 
 

@@ -9,6 +9,7 @@
 #include "StandardLib/ChunkFileObjectWriter.h"
 #include "StandardLib/ExternalObjectSerialiser.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 #include "ChunkFileObjectWriterTestClasses.h"
 
 

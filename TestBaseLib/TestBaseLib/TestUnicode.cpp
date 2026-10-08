@@ -6,6 +6,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/FileCompare.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

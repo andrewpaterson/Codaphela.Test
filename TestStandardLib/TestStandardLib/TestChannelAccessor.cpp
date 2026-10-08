@@ -168,7 +168,7 @@ void TestChannelsAccessorTypeConvert(void)
 	pcChannels->AddChannel(CHANNEL_NAME_BOB, PT_uint32);
 	pcChannels->AddChannel(CHANNEL_NAME_ALICE, PT_uint16);
 	pcChannels->EndChange();
-	pcChannels->Clear();
+	pcChannels->Black();
 
 	cCreator.Init(pcChannels);
 	cCreator.AddAccess(CHANNEL_NAME_JACK, PT_float32);
@@ -229,7 +229,7 @@ void TestChannelsAccessorChannelBitty(void)
 	pcChannels->AddChannel(CHANNEL_NAME_BOB, PT_crumb);
 	pcChannels->AddChannel(CHANNEL_NAME_ALICE, PT_bit);
 	pcChannels->EndChange();
-	pcChannels->Clear();
+	pcChannels->Black();
 	AssertInt(1, pcChannels->GetByteSize());
 	AssertInt(1, pcChannels->GetSize());
 
@@ -315,7 +315,7 @@ void TestChannelsAccessorAccessBitty(void)
 	pcChannels->AddChannel(CHANNEL_NAME_BOB, PT_uint16);
 	pcChannels->AddChannel(CHANNEL_NAME_ALICE, PT_uint16);
 	pcChannels->EndChange();
-	pcChannels->Clear();
+	pcChannels->Black();
 
 	cCreator.Init(pcChannels);
 	cCreator.AddAccess(CHANNEL_NAME_JACK, PT_sixbits);
@@ -359,7 +359,7 @@ void TestChannelsAccessorWorstCase(void)
 	pcChannels->AddChannel(CHANNEL_NAME_BOB, PT_uint32);
 	pcChannels->AddChannel(CHANNEL_NAME_ALICE, PT_uint8);
 	pcChannels->EndChange();
-	pcChannels->Clear();
+	pcChannels->Black();
 	AssertSize(2, pcChannels->GetSize());
 	AssertSize(11, pcChannels->GetByteSize());
 	AssertSize(41, pcChannels->GetBitStride());

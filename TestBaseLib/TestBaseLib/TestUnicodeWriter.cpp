@@ -6,6 +6,7 @@
 #include "BaseLib/UTF8.h"
 #include "BaseLib/UTF16.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////
