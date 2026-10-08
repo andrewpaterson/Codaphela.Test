@@ -17,6 +17,7 @@
 #include "SupportLib/Maps.h"
 #include "SupportLib/MapViewport.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

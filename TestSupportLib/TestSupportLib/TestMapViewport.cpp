@@ -9,7 +9,7 @@
 #include "TestLib/Assert.h"
 #include "TestReadImage.h"
 #include "SupportAssert.h"
-
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

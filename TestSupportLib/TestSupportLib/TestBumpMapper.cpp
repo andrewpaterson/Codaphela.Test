@@ -7,6 +7,7 @@
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/BumpMapper.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

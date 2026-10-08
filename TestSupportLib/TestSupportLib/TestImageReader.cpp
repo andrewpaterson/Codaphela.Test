@@ -9,6 +9,7 @@
 #include "SupportLib/ImageWriter.h"
 #include "TestLib/Assert.h"
 #include "AssertImage.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

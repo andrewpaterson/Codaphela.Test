@@ -12,6 +12,7 @@
 #include "SupportLib/ImageChannelRename.h"
 #include "SupportLib/ImageChannelAdd.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

@@ -5,6 +5,7 @@
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/ImageDraw.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

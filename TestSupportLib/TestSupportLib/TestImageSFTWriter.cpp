@@ -11,6 +11,7 @@
 #include "SupportLib/ImageDivider.h"
 #include "SupportLib/ImageCel.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 #include "TestReadImage.h"
 
 //////////////////////////////////////////////////////////////////////////

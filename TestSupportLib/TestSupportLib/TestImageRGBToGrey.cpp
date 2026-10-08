@@ -7,6 +7,7 @@
 #include "SupportLib/ImageRGBToGrey.h"
 #include "TestLib/Assert.h"
 #include "AssertImage.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

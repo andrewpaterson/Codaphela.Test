@@ -13,6 +13,7 @@
 #include "SupportLib/ImageCopier.h"
 #include "SupportLib/ImageWriter.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 #include "TestReadImage.h"
 
 

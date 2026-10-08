@@ -11,6 +11,7 @@
 #include "SupportLib/ImageCelMaskTransparent.h"
 #include "TestLib/Assert.h"
 #include "TestReadImage.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

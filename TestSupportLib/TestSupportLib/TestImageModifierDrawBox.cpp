@@ -9,6 +9,7 @@
 #include "SupportLib/ImageModifierStack.h"
 #include "SupportLib/ImageModifierDrawBox.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

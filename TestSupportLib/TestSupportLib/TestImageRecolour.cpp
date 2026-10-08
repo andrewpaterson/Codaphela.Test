@@ -8,6 +8,7 @@
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/ImageRecolour.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

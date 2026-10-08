@@ -7,6 +7,7 @@
 #include "SupportLib/ImageToR3G3B2A.h"
 #include "TestLib/Assert.h"
 #include "AssertImage.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

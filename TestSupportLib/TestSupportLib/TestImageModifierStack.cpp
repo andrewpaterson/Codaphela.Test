@@ -9,6 +9,7 @@
 #include "SupportLib/BumpMapper.h"
 #include "SupportLib/ImageResampler.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

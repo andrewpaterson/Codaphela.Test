@@ -12,6 +12,7 @@
 #include "SupportLib/ImageSourceDiskFile.h"
 #include "SupportLib/ImageCombiner.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////

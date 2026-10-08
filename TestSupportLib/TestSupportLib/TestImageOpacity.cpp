@@ -17,6 +17,7 @@
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/ImageRowBlitterFactory.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -71,6 +72,7 @@ void TestImageOpacityCopier(char* szDirectory, char* szInputPathName, char* szTe
 		CChars						szOutputFilename;
 		CChars						szInputFilename;
 		bool						bWritten;
+		bool						bResult;
 
 		pBackgroundImage = TestImageOpacityReadImage("Fighting320.png");
 		pMakiImage = TestImageOpacityReadImage(szInputPathName);
@@ -103,11 +105,15 @@ void TestImageOpacityCopier(char* szDirectory, char* szInputPathName, char* szTe
 		pBackgroundCel = OMalloc<CImageCel>(pBackgroundImage);
 		pMakiCel = OMalloc<CImageCel>(pMakiImage, true);
 
-		cBlitter.Init(pBackgroundCel, pDestImage, &cCache);
+		cBlitter.Init(pBackgroundCel, pDestImage);
+		bResult = cBlitter.Configure(&cCache);
+		AssertTrue(bResult);
 		cBlitter.Blit(0, 0);
 		cBlitter.Kill();
 
-		cBlitter.Init(pMakiCel, pDestImage, &cCache);
+		cBlitter.Init(pMakiCel, pDestImage);
+		bResult = cBlitter.Configure(&cCache);
+		AssertTrue(bResult);
 		cBlitter.Blit(x, y);
 		cBlitter.Kill();
 
