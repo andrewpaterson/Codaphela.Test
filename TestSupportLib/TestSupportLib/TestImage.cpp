@@ -6,6 +6,7 @@
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/Objects.h"
+#include "StandardLib/Array.h"
 #include "SupportLib/Image.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageAccessorCreator.h"
@@ -15,6 +16,73 @@
 #include "TestLib/Assert.h"
 #include "TestLib/AssertFile.h"
 #include "TestReadImage.h"
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CImage> ReallocateImageAndReturn(Ptr<CImage> pImage)
+{
+	Ptr<CImage>	pNewImage;
+
+	pNewImage = OMalloc<CImage>(pImage);
+	pNewImage->White();
+	return pNewImage;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CArray<CImage>> SomethingWeirdIsGoingOn(void)
+{
+	Ptr<CImage>				pImage;
+	Ptr<CArray<CImage>>		pArray;
+
+	pArray = OMalloc<CArray<CImage>>();
+	pImage = OMalloc<CImage>(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, IMAGE_OPACITY, CHANNEL_STOP);
+	pImage->Black();
+
+	pImage = ReallocateImageAndReturn(pImage);
+
+	pArray->Add(pImage);
+
+	return pArray;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImagePassOnstack(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CRoot>				pRoot;
+		Ptr<CArray<CImage>>		pArray;
+		Ptr<CImage>				pImage;
+		uint32*					piData;
+
+		pRoot = ORoot();
+		pArray = SomethingWeirdIsGoingOn();
+		pRoot->Add(pArray);
+
+		pImage = pArray->Get(0);
+		AssertSize(3, pImage->GetWidth());
+		AssertSize(2, pImage->GetHeight());
+
+		piData = (uint32*)pImage->GetData();
+		AssertInt(0xffffffff, *piData);
+
+		pArray = NULL;
+		pRoot->RemoveAll();
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -305,6 +373,7 @@ void TestImage(void)
 
 	DataIOInit();
 
+	TestImagePassOnstack();
 	TestImageKillChannels();
 	TestImageCopier();
 	TestImageCopierRealPNG();
