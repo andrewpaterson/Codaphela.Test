@@ -477,9 +477,14 @@ void TestFindChar(void)
 void TestFindCharIndex(void)
 {
 	char	szDotted[] = "a.b.c";
-	char	szGuard[] = "a\0.";
+    char	szGuard[4];
 	char	szEmpty[] = "\0.";
 	size	uiIndex;
+
+    szGuard[0] = 'a';
+    szGuard[1] = '\0';
+    szGuard[1] = '.';
+    szGuard[1] = '\0';
 
 	uiIndex = FindCharIndex('.', szDotted, 0);
 	AssertSize(1, uiIndex);
@@ -493,7 +498,6 @@ void TestFindCharIndex(void)
 	uiIndex = FindCharIndex('z', szDotted, 0);
 	AssertSize(ARRAY_ELEMENT_NOT_FOUND, uiIndex);
 
-	//Starting on the terminator must not read the '.' after it.
 	uiIndex = FindCharIndex('.', szGuard, 1);
 	AssertSize(ARRAY_ELEMENT_NOT_FOUND, uiIndex);
 
