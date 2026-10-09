@@ -111,6 +111,21 @@ void TestMemICmp(void)
 
     AssertInt(-1, MemICmp(sz2, sz1, 6));
     Pass();
+
+    strcpy(sz1, "Cndrew");
+    AssertInt(1, MemICmp(sz1, sz2, 6));
+    AssertInt(-1, MemICmp(sz2, sz1, 6));
+
+    AssertInt(0, MemICmp("\xC0", "\xC0", 1));
+    AssertInt(0, MemICmp("Z\xE9", "z\xE9", 2));
+
+    //Bytes compare as unsigned, the same as memcmp.  A char difference used to overflow.
+    AssertInt(-1, MemICmp("\x00", "\x40", 1));
+    AssertInt(-1, MemICmp("\x40", "\xC0", 1));
+    AssertInt(-1, MemICmp("\x00", "\xC0", 1));
+    AssertInt(1, MemICmp("\xC0", "\x00", 1));
+    AssertInt(-1, MemICmp("\x0A", "\xF6", 1));
+    AssertInt(1, MemICmp("\x80", "a", 1));
 }
 
 
