@@ -94,7 +94,7 @@ void TestIndexPtrIterate(void)
 	char**							pszResult;
 	size							uiKeyLength;
 	bool							bExists;
-	char							szExpected[6];
+	char							szExpected[32];
 	char*							pszData;
 	CArrayBit						aBit;
 

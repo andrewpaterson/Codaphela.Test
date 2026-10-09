@@ -48,7 +48,7 @@ void TestMapStringIntAndPointerPut(void)
 bool TestNumberMatchesIndex(CMapStringIntAndPointer* pcMap, CArrayInt* paiKeys)
 {
 	size						ui;
-	char						szKey[5];
+	char						szKey[12];
 	CRandom						cRandom;
 	uint						uiKey;
 	CNumber*					pcNumber;
@@ -91,7 +91,7 @@ void TestMapStringIntAndPointerRemove(void)
 	CMapStringIntAndPointer		cMap;
 	size						uiSize;
 	size						ui;
-	char						szKey[5];
+	char						szKey[12];
 	CArrayInt					aiKeys;
 	CRandom						cRandom;
 	uint						uiKey;
@@ -170,7 +170,7 @@ void TestMapStringIntAndPointerIterate(void)
 	CMapStringIntAndPointer		cMap;
 	size						uiSize;
 	size						ui;
-	char						szKey[5];
+	char						szKey[12];
 	CArrayInt					aiKeys;
 	CRandom						cRandom;
 	uint						uiKey;
