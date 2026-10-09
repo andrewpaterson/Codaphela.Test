@@ -1,5 +1,6 @@
 #include "TestLib/Assert.h"
 #include "BaseLib/StringHelper.h"
+#include "BaseLib/ArrayElementNotFound.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -427,6 +428,69 @@ void TestBoolToString()
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFindChar(void)
+{
+	char		szDotted[] = "a.b.c";
+	char		szGuard[] = "x.\0";
+	const char*	sz;
+
+	sz = FindChar(szDotted, '.');
+	AssertPointer(&szDotted[1], (void*)sz);
+
+	sz = FindChar(szDotted, '.', true);
+	AssertPointer(&szDotted[3], (void*)sz);
+
+	sz = FindChar(szDotted, 'z', true);
+	AssertNull((void*)sz);
+
+	sz = FindChar(NULL, '.', true);
+	AssertNull((void*)sz);
+
+	//Searching backwards in an empty string must not read the '.' before it.
+	sz = FindChar(&szGuard[2], '.', true);
+	AssertNull((void*)sz);
+
+	sz = FindChar(&szGuard[2], '.');
+	AssertNull((void*)sz);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFindCharIndex(void)
+{
+	char	szDotted[] = "a.b.c";
+	char	szGuard[] = "a\0.";
+	char	szEmpty[] = "\0.";
+	size	uiIndex;
+
+	uiIndex = FindCharIndex('.', szDotted, 0);
+	AssertSize(1, uiIndex);
+
+	uiIndex = FindCharIndex('.', szDotted, 2);
+	AssertSize(1, uiIndex);
+
+	uiIndex = FindCharIndex('a', szDotted, 0);
+	AssertSize(0, uiIndex);
+
+	uiIndex = FindCharIndex('z', szDotted, 0);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, uiIndex);
+
+	//Starting on the terminator must not read the '.' after it.
+	uiIndex = FindCharIndex('.', szGuard, 1);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, uiIndex);
+
+	uiIndex = FindCharIndex('.', szEmpty, 0);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, uiIndex);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestStringHelper(void)
 {
 	BeginTests();
@@ -445,6 +509,8 @@ void TestStringHelper(void)
     TestCharToString();
     TestCharToWideString();
     TestBoolToString();
+    TestFindChar();
+    TestFindCharIndex();
 
 	TestStatistics();
 }
