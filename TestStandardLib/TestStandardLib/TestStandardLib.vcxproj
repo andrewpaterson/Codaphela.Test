@@ -233,6 +233,7 @@
     <ClCompile Include="TestMapObject.cpp" />
     <ClCompile Include="TestMapUnknownUnknown.cpp" />
     <ClCompile Include="TestObjectFree.cpp" />
+    <ClCompile Include="TestObjectFreeOrdering.cpp" />
     <ClCompile Include="TestStackEmbeddedReInit.cpp" />
     <ClCompile Include="TestEmbeddedStackPointers.cpp" />
     <ClCompile Include="TestFreeEmbedded.cpp" />

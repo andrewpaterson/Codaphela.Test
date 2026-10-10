@@ -179,5 +179,21 @@ public:
 };
 
 
+class CTestNesHolderObject : public CObject
+{
+CONSTRUCTABLE(CTestNesHolderObject)
+DESTRUCTABLE(CTestNesHolderObject)
+public:
+	Ptr<CTestObject>			mpDependsOnForFree;
+	STestObjectFreedNotifier*	mpsFreedNotifier;
+
+	void	Init(STestObjectFreedNotifier* psKilledNotifier, Ptr<CTestObject> pDependsOnForFree);
+	void	Class(void) override;
+	void	Free(void) override;
+
+	void	SetObject(Ptr<CTestObject> pDependsOnForFree);
+};
+
+
 #endif // __OBJECT_TEST_CLASSES_H__
 

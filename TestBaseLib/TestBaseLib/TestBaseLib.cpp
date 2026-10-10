@@ -14,6 +14,7 @@ void TestArrayTemplatePrimitive(void);
 void TestArrayInt(void);
 void TestArrayLong(void);
 void TestArrayTemplate(void);
+void TestArrayTemplatePtr(void);
 void TestArrayVoidPtrGet(void);
 void TestArrayMinimalTemplate(void);
 void TestLogToString(void);
@@ -188,6 +189,7 @@ int __cdecl main(void)
 	TestArrayInt();
 	TestArrayLong();
 	TestArrayInt2D();
+	TestArrayTemplatePtr();
 	TestArrayVoidPtrGet();
 	TestArrayTemplatePrimitive();
 	TestArrayMinimalTemplate();

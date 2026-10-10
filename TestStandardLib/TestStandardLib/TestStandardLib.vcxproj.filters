@@ -294,6 +294,9 @@
     <ClCompile Include="TestFreeEmbedded.cpp">
       <Filter>Source\Object\Object\Embedded</Filter>
     </ClCompile>
+    <ClCompile Include="TestObjectFreeOrdering.cpp">
+      <Filter>Source\Object\Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectTestClasses.h">
