@@ -544,7 +544,7 @@ void CTestNesHolderObject::Free(void)
 {
 	if (mpDependsOnForFree.IsNull())
 	{
-		gcLogger.Error2(__METHOD__, " Depends on objects has been freed prematurely.", NULL);
+		gcLogger.Error2(__METHOD__, " Depends on Object has been freed prematurely.", NULL);
 	}
 	if (mpsFreedNotifier)
 	{

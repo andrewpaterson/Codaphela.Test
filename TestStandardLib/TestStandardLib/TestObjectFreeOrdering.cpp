@@ -13,7 +13,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestObjectFreeOrderingLoopCyclicPointer(void)
+void TestObjectFreeOrderingOutOfOrderOnStack(void)
 {
 	ObjectsInit();
 	{
@@ -56,8 +56,10 @@ void TestObjectFreeOrderingLoopCyclicPointer(void)
 		AssertPointer(pNesHolder2.Object(), pcExpectedNesPointerToObject);
 		apNesObjects.Kill();
 
+		gbLogPointer = true;
 	}
 	AssertSize(0, gcObjects.NumMemoryIndexes());
+	gbLogPointer = false;
 	ObjectsKill();
 }
 
@@ -73,7 +75,7 @@ void TestObjectFreeOrdering(void)
 	TypesInit();
 	DataIOInit();
 
-	TestObjectFreeOrderingLoopCyclicPointer();
+	TestObjectFreeOrderingOutOfOrderOnStack();
 
 	DataIOKill();
 	TypesKill();
