@@ -18,8 +18,8 @@ void TestObjectFreeSelfCyclicPointer(void)
 	ObjectsInit();
 	{
 		Ptr<CTestObject>						pObject;
-		CArrayTemplateEmbeddedBaseObjectPtr		apcHeapFroms;
-		CArrayStackPointer						apcStackFroms;
+		CArrayBaseObjectPtrE32		apcHeapFroms;
+		CArrayStackPointerE32						apcStackFroms;
 		CBaseObject*							pcObject1;
 		CBaseObject*							pcObject2;
 		CPointer*								pcPointer;
@@ -68,8 +68,8 @@ void TestObjectFreeLoopCyclicPointer(void)
 	ObjectsInit();
 	{
 		Ptr<CTestObject>						pObject;
-		CArrayTemplateEmbeddedBaseObjectPtr		apcHeapFroms;
-		CArrayStackPointer						apcStackFroms;
+		CArrayBaseObjectPtrE32		apcHeapFroms;
+		CArrayStackPointerE32						apcStackFroms;
 		CBaseObject*							pcObject1;
 		CBaseObject*							pcObject2;
 		CPointer*								pcPointer;
@@ -115,8 +115,8 @@ void TestObjectFreeLoopCollectionCyclicPointer(void)
 	ObjectsInit();
 	{
 		Ptr<CTestArrayObject>					pObject;
-		CArrayTemplateEmbeddedBaseObjectPtr		apcHeapFroms;
-		CArrayStackPointer						apcStackFroms;
+		CArrayBaseObjectPtrE32		apcHeapFroms;
+		CArrayStackPointerE32						apcStackFroms;
 		CBaseObject*							pcObject2;
 		CPointer*								pcPointer;
 
@@ -161,7 +161,7 @@ void TestObjectFreeStackWithCyclicHeapPointer(void)
 		STestObjectFreedNotifier	sFreed2;
 		Ptr<CTestObject>			pObject1;
 		Ptr<CTestObject>			pObject2;
-		CArrayStackPointer			apcStackFroms;
+		CArrayStackPointerE32			apcStackFroms;
 		CChars						sz;
 
 		AssertSize(0, gcObjects.NumMemoryIndexes());
@@ -230,7 +230,7 @@ void TestObjectFreeStackWithCyclicHeapPointerHeapFrom(void)
 		Ptr<CTestObject>			pObject1;
 		Ptr<CTestObject>			pObject2;
 		Ptr<CTestObject>			pObjectBase;
-		CArrayStackPointer			apcStackFroms;
+		CArrayStackPointerE32			apcStackFroms;
 		CChars						sz;
 
 		AssertSize(0, gcObjects.NumMemoryIndexes());
@@ -286,7 +286,7 @@ void TestObjectFreeStackWithCyclicHeapPointerRootFrom(void)
 		Ptr<CTestObject>			pObject1;
 		Ptr<CTestObject>			pObject2;
 		Ptr<CRoot>					pRoot;
-		CArrayStackPointer			apcStackFroms;
+		CArrayStackPointerE32			apcStackFroms;
 		CChars						sz;
 
 		AssertSize(0, gcObjects.NumMemoryIndexes());

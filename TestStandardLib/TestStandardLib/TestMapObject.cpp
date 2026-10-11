@@ -443,7 +443,7 @@ void TestMapObjectGetPointerTos(void)
 		STestObjectFreedNotifier			sNotifier6;
 		STestObjectFreedNotifier			sNotifier7;
 		STestObjectFreedNotifier			sNotifier8;
-		CArrayTemplateEmbeddedObjectPtr		apcTos;
+		CArrayEmbeddedObjectPtr		apcTos;
 
 		pRoot = ORoot();
 		pMap = OMalloc<CMapObject>();
@@ -614,7 +614,7 @@ void TestMapObjectPointerFromsStack(void)
 		STestObjectFreedNotifier	sNotifier6;
 		STestObjectFreedNotifier	sNotifier7;
 		STestObjectFreedNotifier	sNotifier8;
-		CArrayStackPointer			apcFroms;
+		CArrayStackPointerE32			apcFroms;
 		SStackPointer*				psStack;
 
 		cMap.Init();

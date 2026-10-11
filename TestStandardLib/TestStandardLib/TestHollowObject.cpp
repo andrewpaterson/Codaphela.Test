@@ -27,15 +27,15 @@ void TestHollowObjectAddConstructors(void)
 //////////////////////////////////////////////////////////////////////////
 void TestHollowObjectAllocation(void)
 {
-	CFileUtil								cFileUtil;
-	Ptr<CTestObject>						pObject1;
-	Ptr<CTestObject>						pObject2;
-	Ptr<CTestObject>						pObject3;
-	Ptr<CRoot>								pRoot;
-	CCodabase*								pcDatabase;
-	CSequence*								pcSequence;
-	CArrayTemplateEmbeddedBaseObjectPtr		apcFroms;
-	char									szDirectory[] = "Output" _FS_ "HollowObject1";
+	CFileUtil				cFileUtil;
+	Ptr<CTestObject>		pObject1;
+	Ptr<CTestObject>		pObject2;
+	Ptr<CTestObject>		pObject3;
+	Ptr<CRoot>				pRoot;
+	CCodabase*				pcDatabase;
+	CSequence*				pcSequence;
+	CArrayBaseObjectPtrE32	apcFroms;
+	char					szDirectory[] = "Output" _FS_ "HollowObject1";
 
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.TouchDir(szDirectory);
@@ -103,26 +103,26 @@ void TestHollowObjectAllocation(void)
 //////////////////////////////////////////////////////////////////////////
 void TestHollowObjectMemoryIteration(void)
 {
-	CFileUtil								cFileUtil;
-	Ptr<CTestObject>						pObject1;
-	Ptr<CTestObject>						pObject2;
-	Ptr<CTestObject>						pObject3;
-	Ptr<CRoot>								pRoot;
-	CCodabase*								pcDatabase;
-	CSequence*								pcSequence;
-	STestObjectFreedNotifier				sFreeNotifider1;
-	STestObjectFreedNotifier				sFreeNotifider2;
-	STestObjectFreedNotifier				sFreeNotifider3;
-	CArrayTemplateEmbeddedBaseObjectPtr		apcFroms;
-	SIndexesIterator						sIter;
-	OIndex									oi;
-	CPointer								p;
-	OIndex									oiRoot;
-	OIndex									oiSet;
-	OIndex									oi1;
-	OIndex									oi2;
-	OIndex									oi3;
-	char									szDirectory[] = "Output" _FS_ "HollowObject2";
+	CFileUtil					cFileUtil;
+	Ptr<CTestObject>			pObject1;
+	Ptr<CTestObject>			pObject2;
+	Ptr<CTestObject>			pObject3;
+	Ptr<CRoot>					pRoot;
+	CCodabase*					pcDatabase;
+	CSequence*					pcSequence;
+	STestObjectFreedNotifier	sFreeNotifider1;
+	STestObjectFreedNotifier	sFreeNotifider2;
+	STestObjectFreedNotifier	sFreeNotifider3;
+	CArrayBaseObjectPtrE32		apcFroms;
+	SIndexesIterator			sIter;
+	OIndex						oi;
+	CPointer					p;
+	OIndex						oiRoot;
+	OIndex						oiSet;
+	OIndex						oi1;
+	OIndex						oi2;
+	OIndex						oi3;
+	char						szDirectory[] = "Output" _FS_ "HollowObject2";
 
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.TouchDir(szDirectory);

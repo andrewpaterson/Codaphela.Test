@@ -347,15 +347,15 @@ void TestIndexObjectGetPointerTos(void)
 {
 	ObjectsInit();
 	{
-		Ptr<CRoot>							pRoot;
-		Ptr<CIndexObject>					pIndex;
-		Ptr<CTestObject>					pTest1;
-		Ptr<CTestObject>					pTest2;
-		Ptr<CTestObject>					pTest3;
-		STestObjectFreedNotifier			sNotifier1;
-		STestObjectFreedNotifier			sNotifier2;
-		STestObjectFreedNotifier			sNotifier3;
-		CArrayTemplateEmbeddedObjectPtr		apcTos;
+		Ptr<CRoot>					pRoot;
+		Ptr<CIndexObject>			pIndex;
+		Ptr<CTestObject>			pTest1;
+		Ptr<CTestObject>			pTest2;
+		Ptr<CTestObject>			pTest3;
+		STestObjectFreedNotifier	sNotifier1;
+		STestObjectFreedNotifier	sNotifier2;
+		STestObjectFreedNotifier	sNotifier3;
+		CArrayEmbeddedObjectPtr		apcTos;
 
 		pRoot = ORoot();
 		pIndex = OMalloc<CIndexObject>();
@@ -394,14 +394,14 @@ void TestIndexObjectPointerFromsHeap(void)
 {
 	ObjectsInit();
 	{
-		Ptr<CRoot>							pRoot;
-		Ptr<CIndexObject>					pIndex;
-		Ptr<CTestObject>					pTest1;
-		Ptr<CTestObject>					pTest2;
-		Ptr<CTestObject>					pTest3;
-		STestObjectFreedNotifier			sNotifier1;
-		STestObjectFreedNotifier			sNotifier2;
-		STestObjectFreedNotifier			sNotifier3;
+		Ptr<CRoot>					pRoot;
+		Ptr<CIndexObject>			pIndex;
+		Ptr<CTestObject>			pTest1;
+		Ptr<CTestObject>			pTest2;
+		Ptr<CTestObject>			pTest3;
+		STestObjectFreedNotifier	sNotifier1;
+		STestObjectFreedNotifier	sNotifier2;
+		STestObjectFreedNotifier	sNotifier3;
 
 		pRoot = ORoot();
 		pIndex = OMalloc<CIndexObject>();
@@ -467,13 +467,13 @@ void TestIndexObjectPointerFromsStack(void)
 {
 	ObjectsInit();
 	{
-		CIndexObject						cIndex;
-		Ptr<CTestObject>					pTest1;
-		Ptr<CTestObject>					pTest2;
-		Ptr<CTestObject>					pTest3;
-		STestObjectFreedNotifier			sNotifier1;
-		STestObjectFreedNotifier			sNotifier2;
-		STestObjectFreedNotifier			sNotifier3;
+		CIndexObject				cIndex;
+		Ptr<CTestObject>			pTest1;
+		Ptr<CTestObject>			pTest2;
+		Ptr<CTestObject>			pTest3;
+		STestObjectFreedNotifier	sNotifier1;
+		STestObjectFreedNotifier	sNotifier2;
+		STestObjectFreedNotifier	sNotifier3;
 
 		gcObjects.ValidateObjectsConsistency();
 
@@ -542,13 +542,13 @@ void TestIndexObjectPutOverwrite(void)
 {
 	ObjectsInit();
 	{
-		Ptr<CRoot>							pRoot;
-		Ptr<CIndexObject>					pIndex;
-		Ptr<CTestObject>					pTest1;
-		Ptr<CTestObject>					pTest2;
-		STestObjectFreedNotifier			sNotifier1;
-		STestObjectFreedNotifier			sNotifier2;
-		bool								bResult;
+		Ptr<CRoot>					pRoot;
+		Ptr<CIndexObject>			pIndex;
+		Ptr<CTestObject>			pTest1;
+		Ptr<CTestObject>			pTest2;
+		STestObjectFreedNotifier	sNotifier1;
+		STestObjectFreedNotifier	sNotifier2;
+		bool						bResult;
 
 		pRoot = ORoot();
 		pIndex = OMalloc<CIndexObject>();
@@ -723,19 +723,19 @@ void TestIndexObjectMorphInto(void)
 {
 	ObjectsInit();
 	{
-		Ptr<CRoot>							pRoot;
-		Ptr<CIndexObject>					pIndex1;
-		Ptr<CTestObject>					pTest1;
-		Ptr<CTestTriPointerObject>			pTest2;
-		Ptr<CTestObject>					pTest3;
-		Ptr<CTestTriPointerObject>			pTest4;
-		STestObjectFreedNotifier			sNotifier1;
-		STestObjectFreedNotifier			sNotifier2;
-		STestObjectFreedNotifier			sNotifier3;
-		STestObjectFreedNotifier			sNotifier4;
-		bool								bResult;
-		int64								oid;
-		size								uiRemapped;
+		Ptr<CRoot>					pRoot;
+		Ptr<CIndexObject>			pIndex1;
+		Ptr<CTestObject>			pTest1;
+		Ptr<CTestTriPointerObject>	pTest2;
+		Ptr<CTestObject>			pTest3;
+		Ptr<CTestTriPointerObject>	pTest4;
+		STestObjectFreedNotifier	sNotifier1;
+		STestObjectFreedNotifier	sNotifier2;
+		STestObjectFreedNotifier	sNotifier3;
+		STestObjectFreedNotifier	sNotifier4;
+		bool						bResult;
+		int64						oid;
+		size						uiRemapped;
 
 		pRoot = ORoot();
 		pIndex1 = OMalloc<CIndexObject>(IKR_Yes);
@@ -843,9 +843,9 @@ void TestIndexObjectEmbeddedOnStackKill(void)
 
 	ObjectsInit();
 	{
-		CTestEmbeddedIndex			cEmbedded;
-		Ptr<CTestObject>			pTest;
-		CTestObject*				pcTest;
+		CTestEmbeddedIndex		cEmbedded;
+		Ptr<CTestObject>		pTest;
+		CTestObject*			pcTest;
 
 		cEmbedded.Init(&sFreedNotifier1);
 		pTest = OMalloc<CTestObject>(&sFreedNotifier2);

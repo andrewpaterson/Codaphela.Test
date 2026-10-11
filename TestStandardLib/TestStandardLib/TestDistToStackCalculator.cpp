@@ -1285,7 +1285,7 @@ void TestDistToStackRemoveUnbalancedLargeBroken(void)
 		CTestObject* pcTest3;
 		CTestObject* pcTest4;
 		CTestObject* pcTest5;
-		CArrayBlockObjectPtr* papcKilled;
+		CArrayBaseObjectPtr* papcKilled;
 
 		pRoot = ORoot();
 

@@ -17,14 +17,17 @@ void TestObjectFreeOrderingLoopCyclicPointer(void)
 {
 	ObjectsInit();
 	{
-		Ptr<CTestObject>						pObject1;
-		Ptr<CTestNesHolderObject>				pNesHolder1;
-		Ptr<CTestNesHolderObject>				pNesHolder2;
-		Ptr<CTestObject>						pObject2;
-		STestObjectFreedNotifier				sFreeNotifierO1;
-		STestObjectFreedNotifier				sFreeNotifierN1;
-		STestObjectFreedNotifier				sFreeNotifierN2;
-		STestObjectFreedNotifier				sFreeNotifierO2;
+		Ptr<CTestObject>			pObject1;
+		Ptr<CTestNesHolderObject>	pNesHolder1;
+		Ptr<CTestNesHolderObject>	pNesHolder2;
+		Ptr<CTestObject>			pObject2;
+		STestObjectFreedNotifier	sFreeNotifierO1;
+		STestObjectFreedNotifier	sFreeNotifierN1;
+		STestObjectFreedNotifier	sFreeNotifierN2;
+		STestObjectFreedNotifier	sFreeNotifierO2;
+		CArrayEmbeddedObjectPtrE8	apNesObjects;
+		CEmbeddedObject*			pcExpectedNesPointerToObject;
+		
 
 		AssertSize(0, gcObjects.NumMemoryIndexes());
 
@@ -39,7 +42,19 @@ void TestObjectFreeOrderingLoopCyclicPointer(void)
 		AssertSize(0, pNesHolder2->NumHeapFroms());
 		AssertSize(1, pObject2->NumHeapFroms());
 
-		pObject1->GetNesPointerFroms();
+		apNesObjects.Init();
+		pObject1->GetNesPointerToThis(&apNesObjects);
+		AssertSize(1, apNesObjects.NumElements());
+		pcExpectedNesPointerToObject = apNesObjects.GetPtr(0);
+		AssertPointer(pNesHolder1.Object(), pcExpectedNesPointerToObject);
+		apNesObjects.Kill();
+
+		apNesObjects.Init();
+		pObject2->GetNesPointerToThis(&apNesObjects);
+		AssertSize(1, apNesObjects.NumElements());
+		pcExpectedNesPointerToObject = apNesObjects.GetPtr(0);
+		AssertPointer(pNesHolder2.Object(), pcExpectedNesPointerToObject);
+		apNesObjects.Kill();
 
 	}
 	AssertSize(0, gcObjects.NumMemoryIndexes());

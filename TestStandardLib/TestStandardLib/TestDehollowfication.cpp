@@ -531,7 +531,7 @@ void TestDehollowficationFatFromDatabaseSimple(void)
 		Ptr<CPointerContainer>					pPtr1;
 		Ptr<CPointerContainer>					pPtr2;
 		Ptr<CPointerContainer>					pPtr3;
-		CArrayTemplateEmbeddedBaseObjectPtr		apcFromArray;
+		CArrayBaseObjectPtrE32		apcFromArray;
 
 		pRoot = ORoot();
 		pContainer = ONMalloc<CTestEmbeddedStrings>("Embedded");
@@ -603,7 +603,7 @@ void TestDehollowficationFatFromDatabaseSimple(void)
 		Ptr<CString>							pString1;
 		Ptr<CString>							pString2;
 		Ptr<CString>							pString3;
-		CArrayTemplateEmbeddedBaseObjectPtr		apcFromArray;
+		CArrayBaseObjectPtrE32		apcFromArray;
 		Ptr<CSetObject>							pRootSet2;
 
 		pPtr1 = gcObjects.Get("1");
