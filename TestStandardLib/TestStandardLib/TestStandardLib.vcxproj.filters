@@ -94,6 +94,9 @@
     <Filter Include="Source\Object\Object\Embedded">
       <UniqueIdentifier>{070a75fe-d198-418b-a7bd-fb9aa60b36fd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Object\Object\Free">
+      <UniqueIdentifier>{31c9f2c8-fb73-4e0c-b9ec-a97da3c13943}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestStandardLib.cpp">
@@ -297,6 +300,12 @@
     <ClCompile Include="TestObjectFreeOrdering.cpp">
       <Filter>Source\Object\Object</Filter>
     </ClCompile>
+    <ClCompile Include="TestFreeObjects.cpp">
+      <Filter>Source\Object\Object\Free</Filter>
+    </ClCompile>
+    <ClCompile Include="UnknownObjectHolderTestClasses.cpp">
+      <Filter>Source\Object\Object\Free</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ObjectTestClasses.h">
@@ -340,6 +349,9 @@
     </ClInclude>
     <ClInclude Include="TestSetObject.h">
       <Filter>Source\Object\Object\Collection\Set</Filter>
+    </ClInclude>
+    <ClInclude Include="UnknownObjectHolderTestClasses.h">
+      <Filter>Source\Object\Object\Free</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

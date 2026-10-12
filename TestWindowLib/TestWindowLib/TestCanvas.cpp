@@ -2,6 +2,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/StdRandom.h"
 #include "StandardLib/Objects.h"
+#include "StandardLib/FreeObjects.h"
 #include "SupportLib/ImageCelBlitterCache.h"
 #include "SupportLib/ImageCopier.h"
 #include "SupportLib/ImageColourConverter.h"
@@ -127,6 +128,8 @@ void TestCanvasWriteImageBGRX(void)
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.MakeDir(szDirectory);
 
+	cNativeFactory.Init(&gcMemoryAllocator, 320, 200, szDirectory);
+
 	ObjectsInit();
 	{
 		Ptr<CWindow>				pTestWindow;
@@ -148,8 +151,6 @@ void TestCanvasWriteImageBGRX(void)
 		pFloorPlanImage = ReadSpaceImage("SpaceCrusade", "FloorPlan.png");
 
 		cRandom.Init(2345);
-
-		cNativeFactory.Init(&gcMemoryAllocator, 320, 200, szDirectory);
 
 		pRoot = ORoot();
 
@@ -195,13 +196,162 @@ void TestCanvasWriteImageBGRX(void)
 
 		gcObjects.EnableValidation();
 
-		cNativeFactory.Kill();
-
 		szExpectedDirectory.Init(szDirectory);
 		szExpectedDirectory.Replace("Output", "Input");
 
 		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
 		szExpectedDirectory.Kill();
+	}
+	cNativeFactory.Kill();
+
+	AssertSize(2, gcObjects.NumMemoryIndexes());  //Root and root-set.
+	ObjectsFlush();
+	ObjectsKill();
+
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//																		//
+//																		//
+//////////////////////////////////////////////////////////////////////////
+void TestCanvasImageConvert2(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "CanvasWriteImage";
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	cNativeFactory.Init(&gcMemoryAllocator, 320, 200, szDirectory);
+
+	ObjectsInit();
+	{
+		Ptr<CWindow>				pTestWindow;
+		Ptr<CCanvas>				pCanvas;
+		Ptr<CTickTestCanvas>		pTick;
+		SDataTestRefWindow			cData;
+		Ptr<CFillContainer>			pFill;
+		Ptr<CMapsCanvasDraw>		pDraw;
+		Ptr<CRoot>					pRoot;
+		CRandom						cRandom;
+		Ptr<CImage>					pFloorPlanImage;
+		Ptr<CTileMap>				pTileMap;
+		Ptr<CTileMapGenerator>		pTileMapGenerator;
+		Ptr<CArrayImageCel>			paBackgroundCels;
+		Ptr<CMaps>					pMaps;
+		CColourFormatHelper			cHelper;
+		Ptr<CFreeObjects>			pFree;
+		CImage*						pcNativeCanvasImage;
+
+		pFloorPlanImage = ReadSpaceImage("SpaceCrusade", "FloorPlan.png");
+
+		cRandom.Init(2345);
+
+		pRoot = ORoot();
+
+		pMaps = OMalloc<CMaps>();
+
+		pTick = OMalloc<CTickTestCanvas>(&cData, pMaps, 25);
+		pTestWindow = OMalloc<CWindow>("Space Crusade", &cNativeFactory, pTick, (CPointer)NULL, CFT_RGBX, CCO_BGR, CRGB_24bit, ARGB_8bit);
+		gcObjects.ValidateObjectsConsistency();
+
+		pTestWindow->GetColourFormat(&cHelper);
+		pRoot->Add(pTestWindow);
+
+		pFill = OMalloc<CFillContainer>(pTestWindow);
+		pTestWindow->SetContainer(pFill);
+
+		pTileMapGenerator = OMalloc<CTileMapGenerator>(&cRandom);
+		pRoot->Add(pTileMapGenerator);
+
+		gcObjects.DisableValidation();
+
+		pTileMapGenerator->AddTileGridSource("FloorPlan", pFloorPlanImage);
+		paBackgroundCels = ReadSpaceCels("SpaceCrusade", "Tiles.png", 10, 3, &cHelper);
+		AddSpacePatterns(pTileMapGenerator, paBackgroundCels);
+		AddSpaceSources(pTileMapGenerator);
+
+		pTileMap = pTileMapGenerator->Generate();
+
+		pMaps->AddMap(pTileMap);
+		pMaps->SetViewportPosition(0, 0);
+
+		pDraw = OMalloc<CMapsCanvasDraw>(pMaps);
+		pCanvas = OMalloc<CCanvas>(pTestWindow, pDraw);
+		pFill->AddComponent(pCanvas);
+
+		pCanvas->SetActualSize(10, 10);
+		pCanvas->CreateNativeCanvas();
+		pDraw->Draw(pCanvas);
+
+		pCanvas = NULL;
+		pTick = NULL;
+		pFill = NULL;
+		pDraw = NULL;
+		pRoot->Remove(pTileMapGenerator);
+		pRoot->Remove(pTestWindow);
+
+		AssertSize(1, pRoot->NumObjects());
+		pFree = pRoot->Get(FREE_OBJECTS_NAME);
+		AssertTrue(pFree.IsNotNull());
+
+		AssertSize(1, pFree->NumObjects());
+		pcNativeCanvasImage = (CImage*)pFree->UnsafeGetObject(0);
+
+		gcObjects.EnableValidation();
+	}
+
+	cNativeFactory.Kill();
+
+	AssertSize(2, gcObjects.NumMemoryIndexes());  //Root and root-set.
+	ObjectsFlush();
+	ObjectsKill();
+
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//																		//
+//																		//
+//////////////////////////////////////////////////////////////////////////
+void TestCanvasImageConvert(void)
+{
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "CanvasWriteImage";
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	ObjectsInit();
+	{
+		Ptr<CRoot>					pRoot;
+		Ptr<CImage>					pFloorPlanImage;
+		Ptr<CTileMap>				pTileMap;
+		Ptr<CTileMapGenerator>		pTileMapGenerator;
+		Ptr<CArrayImageCel>			paBackgroundCels;
+		CColourFormatHelper			cHelper;
+
+		pRoot = ORoot();
+
+
+		pTileMapGenerator = OMalloc<CTileMapGenerator>();
+		pRoot->Add(pTileMapGenerator);
+
+		gcObjects.DisableValidation();
+
+		cHelper.Init(CFT_RGBX, CCO_BGR, CRGB_24bit, ARGB_8bit);
+		paBackgroundCels = ReadSpaceCels("SpaceCrusade", "Tiles.png", 10, 3, &cHelper);
+		AssertSize(30, paBackgroundCels->NumElements());
+
+		AddSpacePatterns(pTileMapGenerator, paBackgroundCels);
+
+		pRoot->RemoveAll();
+
+		gcObjects.EnableValidation();
 	}
 	AssertSize(2, gcObjects.NumMemoryIndexes());  //Root and root-set.
 	ObjectsFlush();
@@ -219,7 +369,9 @@ void TestCanvas(void)
 {
 	BeginTests();
 
+	TestCanvasImageConvert();
 	TestCanvasWriteImageRGB();
+	TestCanvasImageConvert2();
 	TestCanvasWriteImageBGRX();
 
 	TestStatistics();

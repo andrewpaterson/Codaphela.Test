@@ -47,7 +47,7 @@ void TestRefWindowCreation(void)
 
 		pTestWindow->Show();
 
-		pRoot->RemoveAll();
+		pRoot->Remove(pTestWindow);
 		pTestWindow = NULL;
 		pDraw = NULL;
 		pTick = NULL;

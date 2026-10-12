@@ -228,6 +228,7 @@
     <ClCompile Include="TestDistToStackCalculator.cpp" />
     <ClCompile Include="TestEmbedded.cpp" />
     <ClCompile Include="TestEmbeddedObjectRemapTos.cpp" />
+    <ClCompile Include="TestFreeObjects.cpp" />
     <ClCompile Include="TestIndexObject.cpp" />
     <ClCompile Include="TestIndexUnknown.cpp" />
     <ClCompile Include="TestMapObject.cpp" />
@@ -276,6 +277,7 @@
     <ClCompile Include="TestUnknowns.cpp" />
     <ClCompile Include="TestUsage.cpp" />
     <ClCompile Include="UnknownKillList.cpp" />
+    <ClCompile Include="UnknownObjectHolderTestClasses.cpp" />
     <ClCompile Include="UnknownTestClasses.cpp" />
     <ClCompile Include="TestArrayType.cpp" />
     <ClCompile Include="TestArrayUnknown.cpp" />
@@ -296,6 +298,7 @@
     <ClInclude Include="TestIndexObject.h" />
     <ClInclude Include="TestMapObject.h" />
     <ClInclude Include="TestSetObject.h" />
+    <ClInclude Include="UnknownObjectHolderTestClasses.h" />
     <ClInclude Include="UnknownKillList.h" />
     <ClInclude Include="UnknownTestClasses.h" />
   </ItemGroup>

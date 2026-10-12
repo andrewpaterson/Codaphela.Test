@@ -60,12 +60,12 @@ void TestArrayCommonObjectPointerRemapping(void)
 
 	AssertInt(6, pArray->NumElements());
 	AssertInt(5, pArray->NonNullElements());
-	AssertNull(pArray->UnsafeGet(0));
-	AssertPointer(&pObject2, pArray->UnsafeGet(1));
-	AssertPointer(&pObject3, pArray->UnsafeGet(2));
-	AssertPointer(&pObject2, pArray->UnsafeGet(3));
-	AssertPointer(&pObject3, pArray->UnsafeGet(4));
-	AssertPointer(&pObject2, pArray->UnsafeGet(5));
+	AssertNull(pArray->UnsafeGetObject(0));
+	AssertPointer(&pObject2, pArray->UnsafeGetObject(1));
+	AssertPointer(&pObject3, pArray->UnsafeGetObject(2));
+	AssertPointer(&pObject2, pArray->UnsafeGetObject(3));
+	AssertPointer(&pObject3, pArray->UnsafeGetObject(4));
+	AssertPointer(&pObject2, pArray->UnsafeGetObject(5));
 
 	AssertInt(5, pArray->NumPointerTos());
 	AssertInt(1, pArray->NumHeapFroms());

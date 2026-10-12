@@ -143,8 +143,8 @@ void TestFlowContainerRightCenteredContinue(void)
 		ARGB32									sColour;
 		CRandom									cRandom;
 		CPointer								pNull;
-		CArrayTemplateEmbeddedBaseObjectPtr		apcHeapFroms;
-		CArrayStackPointer						apcStackFroms;
+		CArrayBaseObjectPtrE32					apcHeapFroms;
+		CArrayStackPointerE32					apcStackFroms;
 		size									uiNumHeaps;
 		CBaseObject*							pcWindowObject;
 		CBaseObject*							pcCanvasObject1a;
