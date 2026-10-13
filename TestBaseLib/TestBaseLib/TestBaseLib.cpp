@@ -1,6 +1,13 @@
+#ifdef _MSC_VER
 #define _CRTDBG_MAP_ALLOC  
+#endif // _MSC_VER
 #include <stdlib.h>  
+#ifdef _MSC_VER
 #include <crtdbg.h>  
+#endif // _MSC_VER
+#ifdef __SANITIZE_ADDRESS__
+#include <sanitizer/lsan_interface.h>
+#endif // __SANITIZE_ADDRESS__
 
 #include "TestLib/Assert.h"
 
@@ -176,7 +183,9 @@ int __cdecl main(void)
 {
 	int iResult;
 
+#ifdef _MSC_VER
 	_CrtSetBreakAlloc(0);
+#endif // _MSC_VER
 	InitTotalStatistics();
 	InitAllocatorDebug();
 
@@ -350,7 +359,12 @@ int __cdecl main(void)
 	FastFunctionsKill();
 
 	iResult = TestTotalStatistics();
+#ifdef _MSC_VER
 	_CrtDumpMemoryLeaks();
+#endif // _MSC_VER
+#ifdef __SANITIZE_ADDRESS__
+	__lsan_do_leak_check();
+#endif // __SANITIZE_ADDRESS__
 	return iResult;
 }
 
