@@ -6,9 +6,14 @@
 //																		//
 //																		//
 //////////////////////////////////////////////////////////////////////////
-void CUnknownObjectHolder::Init(void)
+void CUnknownObjectHolder::Init(STestObjectFreedNotifier* psKilledNotifier)
 {
 	mpcTestObject = gcObjects.AddFreeObject<CTestObject>(OMalloc<CTestObject>());
+	mpsFreedNotifier = psKilledNotifier;
+	if (mpsFreedNotifier)
+	{
+		mpsFreedNotifier->bFreed = false;
+	}
 }
 
 
@@ -20,5 +25,78 @@ void CUnknownObjectHolder::Kill(void)
 {
 	gcObjects.RemoveFreeObject(mpcTestObject);
 	mpcTestObject = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//																		//
+//																		//
+//////////////////////////////////////////////////////////////////////////
+void CObjectWithUnknown::Init(STestObjectFreedNotifier* psKilledNotifier)
+{
+	PreInit();
+	mpsFreedNotifier = psKilledNotifier;
+	if (mpsFreedNotifier)
+	{
+		mpsFreedNotifier->bFreed = false;
+	}
+	mpcHolder = NULL;
+	PostInit();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//																		//
+//																		//
+//////////////////////////////////////////////////////////////////////////
+void CObjectWithUnknown::Class(void)
+{
+	U_Pointer(mpcHolder);
+	U_Pointer(mpsFreedNotifier);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//																		//
+//																		//
+//////////////////////////////////////////////////////////////////////////
+void CObjectWithUnknown::Free(void)
+{
+	SafeKill(mpcHolder);
+	if (mpsFreedNotifier)
+	{
+		mpsFreedNotifier->bFreed = true;
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//																		//
+//																		//
+//////////////////////////////////////////////////////////////////////////
+bool CObjectWithUnknown::Save(CObjectWriter* pcFile)
+{
+	return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//																		//
+//																		//
+//////////////////////////////////////////////////////////////////////////
+bool CObjectWithUnknown::Load(CObjectReader* pcFile)
+{
+	return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//																		//
+//																		//
+//////////////////////////////////////////////////////////////////////////
+void CObjectWithUnknown::AllocateUnknown(STestObjectFreedNotifier* psFreedNotifier)
+{
+	mpcHolder = NewMalloc<CUnknownObjectHolder>();
+	mpcHolder->Init(psFreedNotifier);
 }
 

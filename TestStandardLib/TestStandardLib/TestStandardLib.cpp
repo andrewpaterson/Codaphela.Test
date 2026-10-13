@@ -60,6 +60,7 @@ void TestIndexTreeMemory(void);
 void TestStackEmbeddedReInit(void);
 void TestObjectFree(void);
 void TestObjectFreeOrdering(void);
+void TestFreeObjects(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -127,6 +128,7 @@ int __cdecl main(void)
 	TestStackEmbeddedReInit();
 	TestObjectFree();
 	TestObjectFreeOrdering();
+	TestFreeObjects();
 	TestExternalChannels();
 	TestExternalChannelPadder();
 	TestChannels();

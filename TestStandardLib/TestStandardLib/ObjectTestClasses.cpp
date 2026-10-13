@@ -40,7 +40,6 @@ void CTestObject::Init(STestObjectFreedNotifier* psKilledNotifier)
 	{
 		mpsFreedNotifier->bFreed = false;
 	}
-
 	PostInit();
 }
 
