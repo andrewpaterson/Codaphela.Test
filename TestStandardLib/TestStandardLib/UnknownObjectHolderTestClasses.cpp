@@ -25,6 +25,11 @@ void CUnknownObjectHolder::Kill(void)
 {
 	gcObjects.RemoveFreeObject(mpcTestObject);
 	mpcTestObject = NULL;
+	if (mpsFreedNotifier)
+	{
+		mpsFreedNotifier->bFreed = true;
+	}
+	CUnknown::Kill();
 }
 
 
