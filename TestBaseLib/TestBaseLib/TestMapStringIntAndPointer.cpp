@@ -1,8 +1,8 @@
 #include "BaseLib/MapStringIntAndPointer.h"
 #include "BaseLib/StdRandom.h"
-#include "BaseLIb/Number.h"
+#include "BaseLib/Number.h"
 #include "BaseLib/DataTypes.h"
-#include "BaseLIb/FreeList.h"
+#include "BaseLib/FreeList.h"
 #include "TestLib/Assert.h"
 
 
