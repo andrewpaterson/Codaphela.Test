@@ -75,10 +75,6 @@ endfunction()
 
 vcxproj_sources(BASELIB_SOURCES "${BASELIB_DIR}/BaseLib.vcxproj"
 	EXCLUDE
-		# Winsock.
-		Socket.cpp
-		ConnectSocket.cpp
-		ListenSocket.cpp
 		# Win32 only.
 		WindowsError.cpp
 )
