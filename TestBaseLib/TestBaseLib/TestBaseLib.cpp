@@ -89,7 +89,9 @@ void TestListVariable(void);
 void TestMemoryManager(void);
 void TestArrayInt2D(void);
 void TestTreeTemplate(void);
+#ifdef _WIN32
 void TestWindowsFilesTruncate(void);
+#endif // _WIN32
 void TestMD5File(void);
 void TestDiskFile(void);
 void TestBufferedFile(void);
@@ -252,7 +254,9 @@ int __cdecl main(void)
 	TestArrayDenseTemplate();
 	TestArraySparseTemplate();
 	TestMemoryFile();
+#ifdef _WIN32
 	TestWindowsFilesTruncate();
+#endif // _WIN32
 	TestDiskFile();
 	TestBufferedFile();
 	TestMD5File();
