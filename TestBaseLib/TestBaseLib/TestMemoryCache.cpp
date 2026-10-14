@@ -512,6 +512,10 @@ void TestMemoryCacheReallocate(void)
 	void*			pvH;
 	void*			pvI;
 	void*			psIter;
+	void*			pvCache;
+	size			uiOffsetB;
+	size			uiOffsetC;
+	size			uiOffsetD;
 
 	cCache.Init(128, NULL);
 
@@ -537,22 +541,30 @@ void TestMemoryCacheReallocate(void)
 	AssertCacheElement(&cCache, pvC, 28, 'C');
 	AssertCacheElement(&cCache, pvD, 18, 'D');
 
+	//Resize reallocs the cache which may or may not move it so compare offsets from the start of the cache, not pointers.
+	pvCache = cCache.GetCache();
+	uiOffsetB = (size)pvB - (size)pvCache;
+	uiOffsetC = (size)pvC - (size)pvCache;
+	uiOffsetD = (size)pvD - (size)pvCache;
+
 	cCache.Resize(256);
 	Pass();
 
 	AssertInt(3, cCache.NumElements());
 	AssertInt(106, cCache.GetAllocatedSize());
 
+	pvCache = cCache.GetCache();
 	psIter = cCache.StartIteration();
-	AssertTrue(pvB != psIter);
+	AssertInt(uiOffsetB, (size)psIter - (size)pvCache);
 	AssertCacheElement(&cCache, psIter, 24, 'B');
 
 	psIter = cCache.Iterate(psIter);
-	AssertTrue(pvC != psIter);
+	AssertInt(uiOffsetC, (size)psIter - (size)pvCache);
 	AssertCacheElement(&cCache, psIter, 28, 'C');
 
+	//D had wrapped around to the start of the cache and is moved to after C.
 	psIter = cCache.Iterate(psIter);
-	AssertTrue(pvD != psIter);
+	AssertTrue(uiOffsetD != (size)psIter - (size)pvCache);
 	AssertCacheElement(&cCache, psIter, 18, 'D');
 
 	psIter = cCache.Iterate(psIter);
