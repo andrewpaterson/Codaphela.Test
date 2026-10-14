@@ -1,7 +1,4 @@
-#define _CRTDBG_MAP_ALLOC  
-#include <stdlib.h>  
-#include <crtdbg.h>  
-
+#include "BaseLib/LeakDetector.h"
 #include "TestLib/Assert.h"
 
 
@@ -15,10 +12,9 @@ void TestProject(void);
 //////////////////////////////////////////////////////////////////////////
 int __cdecl main(void)
 {
-	_CrtSetBreakAlloc(0);
-	
 	int	iTotalTestsFailed;
 
+	BreakOnAllocation(0);
 	InitTotalStatistics();
 
 	TestPreprocessor();
@@ -26,7 +22,7 @@ int __cdecl main(void)
 
 	iTotalTestsFailed = TestTotalStatistics();
 
-	_CrtDumpMemoryLeaks();
+	LeakDetection();
 	return iTotalTestsFailed;
 }
 

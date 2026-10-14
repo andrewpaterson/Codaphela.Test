@@ -4,6 +4,7 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TypeNames.h"
+#include "BaseLib/LeakDetector.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Unknowns.h"
@@ -12,7 +13,9 @@
 int __cdecl main(void)
 {
 	CFileUtil		cFileUtil;
+	size			iResult;
 
+	BreakOnAllocation(0);
 	InitTotalStatistics();
 
 	FastFunctionsInit();
@@ -31,6 +34,9 @@ int __cdecl main(void)
 	TypeConverterKill();
 	TypesKill();
 	FastFunctionsKill();
-	return TestTotalStatistics();
+
+	iResult = TestTotalStatistics();
+	LeakDetection();
+	return iResult;
 }
 

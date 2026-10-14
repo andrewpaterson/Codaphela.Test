@@ -1,6 +1,4 @@
-// TestSupportLib.cpp : Defines the entry point for the console application.
-//
-
+#include "BaseLib/LeakDetector.h"
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TypeNames.h"
@@ -22,7 +20,7 @@ int __cdecl main(void)
 {
 	int iResult;
 
-	_CrtSetBreakAlloc(0);
+	BreakOnAllocation(0);
 	InitTotalStatistics();
 
 	FastFunctionsInit();
@@ -45,7 +43,7 @@ int __cdecl main(void)
 	FastFunctionsKill();
 
 	iResult = TestTotalStatistics();
-	_CrtDumpMemoryLeaks();
+	LeakDetection();
 	return iResult;
 }
 
