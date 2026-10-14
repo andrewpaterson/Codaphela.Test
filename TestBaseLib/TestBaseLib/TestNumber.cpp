@@ -774,7 +774,7 @@ void TestNumber(void)
 	TestIntegerPower();
 	TestArithmeticGeometricMean();
 	TestNaturalLogarithm();
-	//TestExponential();
+	TestExponential();
 	TestRoot();
 	TestPower();
 

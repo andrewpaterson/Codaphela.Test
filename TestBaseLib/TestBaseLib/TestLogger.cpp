@@ -9,10 +9,10 @@
 //////////////////////////////////////////////////////////////////////////
 void TestLoggerMemoryOutput(void)
 {
-	CFileUtil	cFileUtil;
-	CMemoryFile	cMemory;
-	CFileBasic	cBasicMemory;
-	char		sz[1024];
+	CFileUtil		cFileUtil;
+	CMemoryFile		cMemory;
+	CFileBasic		cBasicMemory;
+	char			sz[1024];
 
 	gcLogger.Kill();
 
