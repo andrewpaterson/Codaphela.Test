@@ -74,7 +74,7 @@ int __cdecl main(void)
 
 	BreakOnAllocation(0);
 	InitTotalStatistics();
-	InitAllocatorDebug(1 MB);
+	InitAllocatorDebug(2 MB);
 	
 	FastFunctionsInit();
 
