@@ -175,7 +175,7 @@ int __cdecl main(void)
 
 	BreakOnAllocation(0);
 	InitTotalStatistics();
-	InitAllocatorDebug();
+	InitAllocatorDebug(1 MB);
 
 	TestPrimitiveTypes();
 	TestIntegerHelper();
