@@ -65,7 +65,12 @@ void TestPrimitiveTypesPointerArray(void)
 void TestPrimitiveTypesSizes(void)
 {
 	AssertInt(1, sizeof(char));
+#ifdef _WIN32
 	AssertInt(2, sizeof(wchar_t));
+#endif // _WIN32
+#ifdef LINUX_GNU_32
+	AssertInt(4, sizeof(wchar_t));
+#endif // LINUX_GNU_32
 	AssertInt(4, sizeof(int));
 	AssertInt(8, sizeof(int64));
 	AssertInt(4, sizeof(void*));
