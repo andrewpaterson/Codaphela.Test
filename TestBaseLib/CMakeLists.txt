@@ -73,18 +73,11 @@ function(vcxproj_sources OUT_VAR VCXPROJ)
 endfunction()
 
 
-vcxproj_sources(BASELIB_SOURCES "${BASELIB_DIR}/BaseLib.vcxproj"
-	EXCLUDE
-		# Win32 only.
-		WindowsError.cpp
-)
+vcxproj_sources(BASELIB_SOURCES "${BASELIB_DIR}/BaseLib.vcxproj")
 
 vcxproj_sources(TESTLIB_SOURCES "${TESTLIB_DIR}/TestLib.vcxproj")
 
-vcxproj_sources(TESTBASELIB_SOURCES "${TESTBASELIB_DIR}/TestBaseLib.vcxproj"
-	EXCLUDE
-		TestWindowsFiles.cpp
-)
+vcxproj_sources(TESTBASELIB_SOURCES "${TESTBASELIB_DIR}/TestBaseLib.vcxproj")
 
 
 # Matches the Visual Studio configurations, except BREAK_ON_ERROR and
