@@ -1,14 +1,4 @@
-#ifdef _MSC_VER
-#define _CRTDBG_MAP_ALLOC  
-#endif // _MSC_VER
-#include <stdlib.h>  
-#ifdef _MSC_VER
-#include <crtdbg.h>  
-#endif // _MSC_VER
-#ifdef __SANITIZE_ADDRESS__
-#include <sanitizer/lsan_interface.h>
-#endif // __SANITIZE_ADDRESS__
-
+#include "BaseLib/LeakDetector.h"
 #include "TestLib/Assert.h"
 
 
@@ -175,17 +165,15 @@ void TestFatCache(void);
 void TestFat32(void);
 
 
-////////////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 int __cdecl main(void)
 {
 	int iResult;
 
-#ifdef _MSC_VER
-	_CrtSetBreakAlloc(0);
-#endif // _MSC_VER
+	BreakOnAllocation(0);
 	InitTotalStatistics();
 	InitAllocatorDebug();
 
@@ -359,12 +347,7 @@ int __cdecl main(void)
 	FastFunctionsKill();
 
 	iResult = TestTotalStatistics();
-#ifdef _MSC_VER
-	_CrtDumpMemoryLeaks();
-#endif // _MSC_VER
-#ifdef __SANITIZE_ADDRESS__
-	__lsan_do_leak_check();
-#endif // __SANITIZE_ADDRESS__
+	LeakDetection();
 	return iResult;
 }
 

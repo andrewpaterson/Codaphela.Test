@@ -1,3 +1,4 @@
+#include "BaseLib/LeakDetector.h"
 #include <Windows.h>
 #include "TestLib/Assert.h"
 
@@ -71,8 +72,10 @@ int __cdecl main(void)
 {
 	int iResult;
 
-	_CrtSetBreakAlloc(0);
+	BreakOnAllocation(0);
 	InitTotalStatistics();
+	InitAllocatorDebug(64 KB);
+	
 	FastFunctionsInit();
 
 	TestIndexTreeMemory();
@@ -138,7 +141,7 @@ int __cdecl main(void)
 	FastFunctionsKill();
 
 	iResult = TestTotalStatistics();
-	_CrtDumpMemoryLeaks();
+	LeakDetection();
 	return iResult;
 }
 

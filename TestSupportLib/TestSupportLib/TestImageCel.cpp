@@ -75,8 +75,8 @@ void TestImageCelMaskCropBorders(void)
 	cDivider.GenerateFromBorder(pcMask);
 	
 	AssertInt(2, cDivider.GetDestImageCels()->NumElements());
-	pcRect1 = (CImageCelMask*)cDivider.GetDestImageCels()->UnsafeGet(0);
-	pcRect2 = (CImageCelMask*)cDivider.GetDestImageCels()->UnsafeGet(1);
+	pcRect1 = (CImageCelMask*)cDivider.GetDestImageCels()->UnsafeGetObject(0);
+	pcRect2 = (CImageCelMask*)cDivider.GetDestImageCels()->UnsafeGetObject(1);
 	AssertInt(1, pcRect1->GetMask());
 	AssertInt(2, pcRect2->GetMask());
 

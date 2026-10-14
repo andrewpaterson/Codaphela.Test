@@ -481,6 +481,7 @@ void TestTileMapGenerator7x5StringGenerate(void)
 		pRoot->Remove(pTileMapGenerator);
 		pMaps = NULL;
 		pTileMapGenerator = NULL;
+		aszArrayString.Kill();
 
 		szOutputFilename.Init(szDirectory);
 		cFileUtil.AppendToPath(&szOutputFilename, "TileMapGenerator7x5StringGenerate");
@@ -656,6 +657,7 @@ void TestTileMapGenerator11x11StringGenerate(void)
 		bResult = pMaps->Blit(false);
 		AssertTrue(bResult);
 
+		aszArrayString.Kill();
 		pRoot->Remove(pMaps);
 		pRoot->Remove(pTileMapGenerator);
 		pMaps = NULL;
