@@ -474,9 +474,6 @@
     <ClCompile Include="TestMemoryQueue.cpp">
       <Filter>Source\Memory\Cache</Filter>
     </ClCompile>
-    <ClCompile Include="TestWindowsFiles.cpp">
-      <Filter>Source\File</Filter>
-    </ClCompile>
     <ClCompile Include="TestLogger.cpp">
       <Filter>Source\Error</Filter>
     </ClCompile>

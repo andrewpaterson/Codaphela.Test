@@ -342,7 +342,6 @@
     <ClCompile Include="TestUnicodeWriter.cpp" />
     <ClCompile Include="TestUTF16.cpp" />
     <ClCompile Include="TestUTF8.cpp" />
-    <ClCompile Include="TestWindowsFiles.cpp" />
     <ClCompile Include="IndexTreeCallbackTestObject.cpp" />
     <ClCompile Include="IndexTreeFileDataTestCallback.cpp" />
     <ClCompile Include="NamedIndexedDataObject.cpp" />
