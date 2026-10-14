@@ -263,7 +263,7 @@ void TestPackFileIterate(void)
 	CPackFileIterator	cIter;
 	CChars				sz;
 
-	pcDiskFile = DiskFile("Input/Test.Pak");
+	pcDiskFile = DiskFile("Input/Test.PAK");
 	AssertNotNull(pcDiskFile);
 	cPak.Init(pcDiskFile, PFM_Read);
 
@@ -284,7 +284,7 @@ void TestPackFileIterate(void)
 void TestPackFileGetFiles(void)
 {
 #ifdef REBUILD_TEST_PACK_FILES
-	PackDirectory("Input/Test.Pak", "InFile/Giana", "Giana");
+	PackDirectory("Input/Test.PAK", "InFile/Giana", "Giana");
 #endif // REBUILD_TEST_PACK_FILES
 
 	CPackFiles				cPak;
@@ -292,7 +292,7 @@ void TestPackFileGetFiles(void)
 	CChars					sz;
 	CArrayPackFileNodePtrs	cArrayFiles;
 
-	pcDiskFile = DiskFile("Input/Test.Pak");
+	pcDiskFile = DiskFile("Input/Test.PAK");
 	AssertNotNull(pcDiskFile);
 	cPak.Init(pcDiskFile, PFM_Read);
 	cArrayFiles.Init();
