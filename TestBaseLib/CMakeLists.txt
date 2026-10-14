@@ -92,7 +92,7 @@ vcxproj_sources(TESTBASELIB_SOURCES "${TESTBASELIB_DIR}/TestBaseLib.vcxproj"
 
 
 # Matches the Visual Studio configurations, except BREAK_ON_ERROR and
-# BREAK_ON_WARNING: on Linux BREAK() raises SIGINT, which kills the test run
+# BREAK_ON_WARNING: on Linux BREAK() raises SIGTRAP, which kills the test run
 # when no debugger is attached.
 add_library(baselib_options INTERFACE)
 target_include_directories(baselib_options INTERFACE "${COMMON_DIR}")
