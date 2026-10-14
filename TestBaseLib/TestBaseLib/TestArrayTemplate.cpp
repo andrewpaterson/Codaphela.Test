@@ -462,8 +462,8 @@ void TestArrayTemplateRemove(void)
 
 	cArray.Init();
 	psTest1 = cArray.Add();
-	psTest2 = cArray.Add();
 	psTest1->i1 = 0; psTest1->i2 = 0;
+	psTest2 = cArray.Add();
 	psTest2->i1 = 1; psTest2->i2 = 1;
 	cArray.RemoveAt(0, true);
 	psTest1 = cArray.Get(0);
