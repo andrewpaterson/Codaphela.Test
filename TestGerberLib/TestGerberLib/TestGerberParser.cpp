@@ -37,6 +37,8 @@ void TestGerberParserCommandEndOfFile(void)
 	AssertTrue(pcCommand->IsEndOfFile());
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -86,6 +88,8 @@ void TestGerberParserCommandComment(void)
 	AssertTrue(pcCommand->IsEndOfFile());
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -135,6 +139,8 @@ void TestGerberParserCommandFormatSpecifier(void)
 	AssertShort((uint16)5, ui);
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -177,6 +183,8 @@ void TestGerberParserCommandMeasurementMode(void)
 
 	cCommands.Kill();
 
+	szGerberFile.Kill();
+
 
 	szGerberFile.Init("%MOIN*%");
 
@@ -199,6 +207,8 @@ void TestGerberParserCommandMeasurementMode(void)
 
 	cCommands.Kill();
 
+	szGerberFile.Kill();
+
 
 	cMemoryLog.Start(true);
 	szGerberFile.Init("%MOPT*%");
@@ -218,6 +228,8 @@ void TestGerberParserCommandMeasurementMode(void)
 "   ^\n", szSyntaxError);
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -272,6 +284,8 @@ void TestGerberParserCommandPlotMode(void)
 	AssertTrue(pcPlotMode->IsAnticlockwise());
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -316,6 +330,8 @@ void TestGerberParserCommandLoadPolarity(void)
 	AssertFalse(pcPolarity->IsClear());
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -370,6 +386,8 @@ void TestGerberParserCommandLoadMirroring(void)
 	AssertTrue(pcMirroring->IsXY());
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -412,6 +430,8 @@ void TestGerberParserCommandLoadRotation(void)
 	AssertNumber("0.008192", pcRotation->GetRotation());
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -454,6 +474,8 @@ void TestGerberParserCommandLoadScaling(void)
 	AssertNumber("0.008192", pcScaling->GetScaling());
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -529,6 +551,8 @@ void TestGerberParserCommandFileAttribute(void)
 	AssertString("Top", szValue);
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -573,6 +597,8 @@ void TestGerberParserCommandApertureAttribute(void)
 	AssertString("Conductor", szValue);
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -617,6 +643,8 @@ void TestGerberParserCommandObjectAttribute(void)
 	AssertString("R6", szValue);
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -661,6 +689,8 @@ void TestGerberParserCommandDeleteAttribute(void)
 	AssertString("R6", szValue);
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -728,6 +758,8 @@ void TestGerberParserCircleMacro(void)
 	AssertFloat(1.f, pcNumber->FloatValue(), 5);
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -796,6 +828,8 @@ void TestGerberParserVectorLineMacro(void)
 	AssertDouble(0.0, pcValue, 2);
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -862,6 +896,8 @@ void TestGerberParserCenterLineMacro(void)
 	AssertDouble(87.0, pcValue, 2);
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -962,6 +998,8 @@ void TestGerberParserOutlineMacro(void)
 	AssertDouble(45.235456, pcValue, 6);
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -1042,6 +1080,8 @@ void TestGerberParserCommentMacro(void)
 	AssertTrue(pcCommand->IsEndOfFile());
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -1113,6 +1153,8 @@ void TestGerberParserPolygonMacro(void)
 	AssertFloat(1.f, pcNumber->FloatValue(), 5);
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -1184,6 +1226,8 @@ void TestGerberParserThermalMacro(void)
 	AssertFloat(0.175f, pcNumber->FloatValue(), 5);
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -1211,6 +1255,8 @@ void TestGerberParserExample1(void)
 	cParser.Kill();
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 
@@ -1277,6 +1323,8 @@ void TestGerberParserPartialKiCadReal(void)
 	cParser.Kill();
 
 	cCommands.Kill();
+
+	szGerberFile.Kill();
 }
 
 

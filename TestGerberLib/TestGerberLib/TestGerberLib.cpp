@@ -17,7 +17,7 @@ int __cdecl main(void)
 {
 	int iResult;
 
-	_CrtSetBreakAlloc(0);
+	_CrtSetBreakAlloc(1481);
 	InitTotalStatistics();
 
 
