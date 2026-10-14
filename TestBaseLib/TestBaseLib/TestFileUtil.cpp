@@ -56,40 +56,77 @@ void TestFileUtilNaming(void)
 {
 	CFileUtil	cFileUtil;
 	CChars		sz;
+	CChars		szCurrent;
 	CChars		szExpected;
+
+	//FullPath depends on where the tests are run from so compare against the current directory.
+	szCurrent.Init();
+	cFileUtil.CurrentDirectory(&szCurrent);
+	if (szCurrent.EndsWith(_FS_))
+	{
+		szCurrent.RemoveFromEnd(1);
+	}
 
 	sz.Init();
 	cFileUtil.FullPath(&sz);
-	sz.LowerCase();
-	szExpected.Init("D:\\GameEngine\\Test\\TestBaseLib\\TestBaseLib");
-	szExpected.LowerCase();
-	AssertString(szExpected.Text(), sz.Text());
-	szExpected.Kill();
+	AssertStringCase(szCurrent.Text(), sz.Text(), false);
 	sz.Kill();
 
+	szExpected.Init(szCurrent);
+	szExpected.Append(_FS_ "Input");
+	sz.Init("Input");
+	cFileUtil.FullPath(&sz);
+	AssertStringCase(szExpected.Text(), sz.Text(), false);
+	sz.Kill();
+
+	sz.Init("Input" _FS_ "." _FS_ ".." _FS_ "Output" _FS_);
+	cFileUtil.FullPath(&sz);
+	szExpected.Set(szCurrent);
+	szExpected.Append(_FS_ "Output");
+	AssertStringCase(szExpected.Text(), sz.Text(), false);
+	sz.Kill();
+
+	sz.Init(szExpected);
+	cFileUtil.FullPath(&sz);
+	AssertStringCase(szExpected.Text(), sz.Text(), false);
+	sz.Kill();
+	szExpected.Kill();
+	szCurrent.Kill();
+
+	sz.Init(_FS_ "Documents and Settings" _FS_ "Joe" _FS_ ".." _FS_ ".." _FS_);
+	cFileUtil.CollapsePath(&sz);
+	AssertString(_FS_, sz.Text());
+	sz.Kill();
+
+	sz.Init(_FS_ "Documents" _FS_ "and" _FS_ "Settings" _FS_ ".." _FS_ ".." _FS_ "Joe");
+	cFileUtil.CollapsePath(&sz);
+	AssertString(_FS_ "Documents" _FS_ "Joe", sz.Text());
+	sz.Kill();
+
+	sz.Init(_FS_ "Documents" _FS_ "and" _FS_ "Settings" _FS_ ".." _FS_ ".." _FS_ "Joe" _FS_);
+	cFileUtil.CollapsePath(&sz);
+	AssertString(_FS_ "Documents" _FS_ "Joe", sz.Text());
+	sz.Kill();
+
+	sz.Init("." _FS_ "." _FS_ "." _FS_ ".");
+	cFileUtil.CollapsePath(&sz);
+	AssertString("", sz.Text());
+	sz.Kill();
+
+	sz.Init("." _FS_ "." _FS_ "." _FS_);
+	cFileUtil.CollapsePath(&sz);
+	AssertString("", sz.Text());
+	sz.Kill();
+
+	sz.Init(_FS_ ".." _FS_ "..");
+	cFileUtil.CollapsePath(&sz);
+	AssertString("", sz.Text());
+	sz.Kill();
+
+#ifdef _WIN32
 	sz.Init("c:\\Documents and Settings\\Joe\\..\\..\\");
 	cFileUtil.CollapsePath(&sz);
 	AssertStringCase("C:\\", sz.Text(), false);
-	sz.Kill();
-
-	sz.Init("\\Documents\\and\\Settings\\..\\..\\Joe");
-	cFileUtil.CollapsePath(&sz);
-	AssertString("\\Documents\\Joe", sz.Text());
-	sz.Kill();
-
-	sz.Init("\\Documents\\and\\Settings\\..\\..\\Joe\\");
-	cFileUtil.CollapsePath(&sz);
-	AssertString("\\Documents\\Joe", sz.Text());
-	sz.Kill();
-
-	sz.Init(".\\.\\.\\.");
-	cFileUtil.CollapsePath(&sz);
-	AssertString("", sz.Text());
-	sz.Kill();
-
-	sz.Init(".\\.\\.\\");
-	cFileUtil.CollapsePath(&sz);
-	AssertString("", sz.Text());
 	sz.Kill();
 
 	sz.Init("c:\\..");
@@ -101,11 +138,7 @@ void TestFileUtilNaming(void)
 	cFileUtil.CollapsePath(&sz);
 	AssertString("c:", sz.Text());
 	sz.Kill();
-
-	sz.Init("\\..\\..");
-	cFileUtil.CollapsePath(&sz);
-	AssertString("", sz.Text());
-	sz.Kill();
+#endif // _WIN32
 }
 
 
@@ -181,6 +214,19 @@ void TestFileUtilMakeNameFromDirectory(void)
 
 	szDirectory.Kill();
 	szFilename.Kill();
+
+	//Absolute filename with a relative directory.
+	szDirectory.Init("Some" _FS_ "Directory" _FS_);
+	szFilename.Init();
+	cFileUtil.CurrentDirectory(&szFilename);
+	cFileUtil.AppendToPath(&szFilename, "Some" _FS_ "Directory" _FS_ "Filename.txt");
+	cFileUtil.MakeNameFromDirectory(&szName, &szFilename, &szDirectory);
+
+	AssertString("Filename.txt", szName.Text());
+	szName.Kill();
+
+	szDirectory.Kill();
+	szFilename.Kill();
 }
 
 
@@ -246,21 +292,22 @@ void TestFileUtilRemoveLastFromPath(void)
 	CFileUtil	cFileUtil;
 	CChars		szFilename;
 
-	szFilename.Init("home\\directory");
+	szFilename.Init("home" _FS_ "directory");
 	cFileUtil.RemoveLastFromPath(&szFilename);
 	AssertString("home", szFilename.Text());
 	szFilename.Kill();
 
-	szFilename.Init("\\directory");
+	szFilename.Init(_FS_ "directory");
 	cFileUtil.RemoveLastFromPath(&szFilename);
-	AssertString("\\", szFilename.Text());
+	AssertString(_FS_, szFilename.Text());
 	szFilename.Kill();
 
-	szFilename.Init("\\home\\directory");
+	szFilename.Init(_FS_ "home" _FS_ "directory");
 	cFileUtil.RemoveLastFromPath(&szFilename);
-	AssertString("\\home", szFilename.Text());
+	AssertString(_FS_ "home", szFilename.Text());
 	szFilename.Kill();
 
+#ifdef _WIN32
 	szFilename.Init("C:\\directory");
 	cFileUtil.RemoveLastFromPath(&szFilename);
 	AssertString("C:\\", szFilename.Text());
@@ -270,6 +317,7 @@ void TestFileUtilRemoveLastFromPath(void)
 	cFileUtil.RemoveLastFromPath(&szFilename);
 	AssertString("C:\\home", szFilename.Text());
 	szFilename.Kill();
+#endif // _WIN32
 
 	szFilename.Init("directory");
 	cFileUtil.RemoveLastFromPath(&szFilename);
@@ -346,40 +394,42 @@ void TestFileUtilPrependToPath(void)
 	CFileUtil		cFileUtil;
 	CChars			szPathName;
 
-	szPathName.Init("C:\\Games\\R\\Us\\");
+	szPathName.Init("Games" _FS_ "R" _FS_ "Us" _FS_);
 	cFileUtil.PrependToPath(&szPathName, "Extraordinary");
-	AssertString("C:\\Extraordinary\\Games\\R\\Us\\", szPathName.Text());
+	AssertString("Extraordinary" _FS_ "Games" _FS_ "R" _FS_ "Us" _FS_, szPathName.Text());
 	szPathName.Kill();
 
-	szPathName.Init("Games\\R\\Us\\");
+	szPathName.Init(_FS_ "Games" _FS_ "R" _FS_ "Us" _FS_);
 	cFileUtil.PrependToPath(&szPathName, "Extraordinary");
-	AssertString("Extraordinary\\Games\\R\\Us\\", szPathName.Text());
-	szPathName.Kill();
-
-	szPathName.Init("\\Games\\R\\Us\\");
-	cFileUtil.PrependToPath(&szPathName, "Extraordinary");
-	AssertString("\\Extraordinary\\Games\\R\\Us\\", szPathName.Text());
+	AssertString(_FS_ "Extraordinary" _FS_ "Games" _FS_ "R" _FS_ "Us" _FS_, szPathName.Text());
 	szPathName.Kill();
 
 	szPathName.Init("Games");
 	cFileUtil.PrependToPath(&szPathName, "Extraordinary");
-	AssertString("Extraordinary\\Games", szPathName.Text());
+	AssertString("Extraordinary" _FS_ "Games", szPathName.Text());
+	szPathName.Kill();
+
+	szPathName.Init(_FS_);
+	cFileUtil.PrependToPath(&szPathName, "");
+	AssertString(_FS_, szPathName.Text());
+	szPathName.Kill();
+
+	szPathName.Init("");
+	cFileUtil.PrependToPath(&szPathName, "Giana");
+	AssertString("Giana" _FS_, szPathName.Text());
+	szPathName.Kill();
+
+#ifdef _WIN32
+	szPathName.Init("C:\\Games\\R\\Us\\");
+	cFileUtil.PrependToPath(&szPathName, "Extraordinary");
+	AssertString("C:\\Extraordinary\\Games\\R\\Us\\", szPathName.Text());
 	szPathName.Kill();
 
 	szPathName.Init("C:\\");
 	cFileUtil.PrependToPath(&szPathName, "Extraordinary");
 	AssertString("C:\\Extraordinary\\", szPathName.Text());
 	szPathName.Kill();
-
-	szPathName.Init("\\");
-	cFileUtil.PrependToPath(&szPathName, "");
-	AssertString("\\", szPathName.Text());
-	szPathName.Kill();
-
-	szPathName.Init("");
-	cFileUtil.PrependToPath(&szPathName, "Giana");
-	AssertString("Giana\\", szPathName.Text());
-	szPathName.Kill();
+#endif // _WIN32
 }
 
 
@@ -390,13 +440,16 @@ void TestFileUtilPrependToPath(void)
 void TestFileUtilRootDirectory(void)
 {
 	CFileUtil		cFileUtil;
+	AssertTrue(cFileUtil.IsRootDirectory(_FS_));
+	AssertFalse(cFileUtil.IsRootDirectory(_FS_ "A"));
+	AssertFalse(cFileUtil.IsRootDirectory(_FS_ "A" _FS_));
+	AssertFalse(cFileUtil.IsRootDirectory("A" _FS_));
+
+#ifdef _WIN32
 	AssertTrue(cFileUtil.IsRootDirectory("C:\\"));
 	AssertFalse(cFileUtil.IsRootDirectory("C:\\A"));
-	AssertTrue(cFileUtil.IsRootDirectory("\\"));
-	AssertFalse(cFileUtil.IsRootDirectory("\\A"));
 	AssertFalse(cFileUtil.IsRootDirectory("C:\\A\\"));
-	AssertFalse(cFileUtil.IsRootDirectory("\\A\\"));
-	AssertFalse(cFileUtil.IsRootDirectory("A\\"));
+#endif // _WIN32
 
 	AssertFalse(cFileUtil.IsRootDirectory(""));
 }
