@@ -49,7 +49,6 @@ bool TestNumberMatchesIndex(CMapStringIntAndPointer* pcMap, CArrayInt* paiKeys)
 {
 	size						ui;
 	char						szKey[12];
-	CRandom						cRandom;
 	uint						uiKey;
 	CNumber*					pcNumber;
 	uint						uiType;

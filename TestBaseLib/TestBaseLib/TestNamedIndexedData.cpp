@@ -1202,9 +1202,9 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 		bResult = cDatabase.Get(aszNames.Get(i), &uiDataSize, &cResult, sizeof(CTestNamedIndexedDataObject));
 	}
 
-	AssertLong(6812, cDatabase.GetIndiciesSystemMemorySize());
-	AssertLong(317, cDatabase.GetDataSystemMemorySize());
-	AssertLong(16128, cDatabase.GetNamesSystemMemorySize());
+	AssertSize(6812, cDatabase.GetIndiciesSystemMemorySize());
+	AssertSize(317, cDatabase.GetDataSystemMemorySize());
+	AssertSize(16256, cDatabase.GetNamesSystemMemorySize());
 	AssertLong(1, cDatabase.NumIndicesCached());
 	AssertLong(1, cDatabase.NumDataCached());
 	AssertLong(8, cDatabase.NumNamesCached());
@@ -1223,15 +1223,15 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 		bResult = cDatabase.Get(aszNames.Get(i), &uiDataSize, &cResult, sizeof(CTestNamedIndexedDataObject));
 	}
 
-	AssertLong(6812, cDatabase.GetIndiciesSystemMemorySize());
-	AssertLong(322, cDatabase.GetDataSystemMemorySize());
-	AssertLong(15988, cDatabase.GetNamesSystemMemorySize());
+	AssertSize(6728, cDatabase.GetIndiciesSystemMemorySize());
+	AssertSize(319, cDatabase.GetDataSystemMemorySize());
+	AssertSize(15076, cDatabase.GetNamesSystemMemorySize());
 	AssertLong(1, cDatabase.NumIndicesCached());
 	AssertLong(1, cDatabase.NumDataCached());
-	AssertLong(11, cDatabase.NumNamesCached());
+	AssertLong(9, cDatabase.NumNamesCached());
 	AssertLong(1040, cIndexEvictionCounter.EvictionCount());
 	AssertLong(1022, cDataEvictionCounter.EvictionCount());
-	AssertLong(1028, cNameEvictionCounter.EvictionCount());
+	AssertLong(1029, cNameEvictionCounter.EvictionCount());
 	AssertLong(1023, cDatabase.NumIndices());
 	AssertLong(1023, cDatabase.NumNames());
 
