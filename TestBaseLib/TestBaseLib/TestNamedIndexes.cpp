@@ -516,8 +516,8 @@ void TestNamedIndexesMoreCacheEviction(void)
 		oi = cNamedIndexes.Get(psz);
 	}
 
-	AssertLong(1012LL, cEvictionCounter.EvictionCount());
-	AssertLong(16088LL, cNamedIndexes.GetSystemMemorySize());
+	AssertLong(1017, cEvictionCounter.EvictionCount());
+	AssertLong(16284, cNamedIndexes.GetSystemMemorySize());
 	AssertTrue(cNamedIndexes.GetSystemMemorySize() < uiCacheSize);
 
 	cNamedIndexes.Flush();

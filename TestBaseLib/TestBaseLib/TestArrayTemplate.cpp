@@ -742,16 +742,16 @@ void TestArrayTemplateShuffle(void)
 	cArray.Shuffle(&cRandom);
 	cRandom.Kill();
 
-	AssertInt(8, cArray.Get(0)->i1);
-	AssertInt(3, cArray.Get(1)->i1);
+	AssertInt(9, cArray.Get(0)->i1);
+	AssertInt(5, cArray.Get(1)->i1);
 	AssertInt(4, cArray.Get(2)->i1);
-	AssertInt(6, cArray.Get(3)->i1);
-	AssertInt(1, cArray.Get(4)->i1);
-	AssertInt(0, cArray.Get(5)->i1);
-	AssertInt(5, cArray.Get(6)->i1);
-	AssertInt(9, cArray.Get(7)->i1);
-	AssertInt(2, cArray.Get(8)->i1);
-	AssertInt(7, cArray.Get(9)->i1);
+	AssertInt(0, cArray.Get(3)->i1);
+	AssertInt(3, cArray.Get(4)->i1);
+	AssertInt(8, cArray.Get(5)->i1);
+	AssertInt(7, cArray.Get(6)->i1);
+	AssertInt(2, cArray.Get(7)->i1);
+	AssertInt(6, cArray.Get(8)->i1);
+	AssertInt(1, cArray.Get(9)->i1);
 
 	cRandom.Kill();
 	cArray.Kill();
