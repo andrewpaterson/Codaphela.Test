@@ -709,13 +709,13 @@ void TestSetObjectObjectMorphSetEntry(size uiNumElements)
 		pObject = pSet->StartIteration(&sIter);
 		while (pObject.IsNotNull())
 		{
-			iCompare = StrCmp("CTestSaveableObject1", pObject.ClassName());
+			iCompare = StringCompare("CTestSaveableObject1", pObject.ClassName());
 			if (iCompare == 0)
 			{
 				uiNumSaveableObject++;
 			}
 
-			iCompare = StrCmp("CTestEmbeddedObjectWithFields", pObject.ClassName());
+			iCompare = StringCompare("CTestEmbeddedObjectWithFields", pObject.ClassName());
 			if (iCompare == 0)
 			{
 				uiNumEmbeddedObject++;
