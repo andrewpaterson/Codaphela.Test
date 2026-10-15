@@ -4,7 +4,7 @@
 #include "BaseLib/TextParserConfig.h"
 
 
-TRISTATE ParseCustomExactIdentifier(CTextParser* pcTextParser, char* szIdentifier);
+TRISTATE ParseCustomExactIdentifier(CTextParser* pcTextParser, const char* szIdentifier);
 TRISTATE ParseCustomIdentifier(CTextParser* pcTextParser, char* szIdentifier, size* piLength);
 
 

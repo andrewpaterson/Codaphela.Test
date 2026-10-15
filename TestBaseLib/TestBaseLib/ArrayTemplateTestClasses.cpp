@@ -16,7 +16,7 @@ void CTestArrayTemplateItem::Init(int i)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-char* CTestArrayTemplateItem::GetName(void)
+const char* CTestArrayTemplateItem::GetName(void)
 {
 	return "CTestArrayTemplateItem";
 }
@@ -37,7 +37,7 @@ void CTestOverridenArrayTemplateItem::Init(int i)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-char* CTestOverridenArrayTemplateItem::GetName(void)
+const char* CTestOverridenArrayTemplateItem::GetName(void)
 {
 	return "CTestOverridenArrayTemplateItem";
 }

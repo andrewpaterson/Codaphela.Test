@@ -323,7 +323,7 @@ void TestFloatPrinterSubnormal(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertNumberString(char* szExpected, CNumber* pcNumber)
+void AssertNumberString(const char* szExpected, CNumber* pcNumber)
 {
 	CChars		sz;
 

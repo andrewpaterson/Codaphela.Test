@@ -6,7 +6,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CSortedTestObject::Init(int iValue, char* szThreeChars)
+void CSortedTestObject::Init(int iValue, const char* szThreeChars)
 {
 	memcpy(mszThreeChars, szThreeChars, 3);
 	mszThreeChars[3] = 0;

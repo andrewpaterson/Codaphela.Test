@@ -11,7 +11,7 @@ public:
 	void Init(void);
 	void Kill(void);
 
-	int PrintIt(char* szMore, int iNumber);
+	int PrintIt(const char* szMore, int iNumber);
 };
 
 

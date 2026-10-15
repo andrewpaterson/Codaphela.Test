@@ -18,7 +18,7 @@
 #include "TestIndexTreeEvicting.h"
 
 
-void AssertTree(char* szExpected, CIndexTreeEvicting* pcTree);
+void AssertTree(const char* szExpected, CIndexTreeEvicting* pcTree);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -769,7 +769,7 @@ void TestIndexTreeEvictingEmpty(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertTree(char* szExpected, CIndexTreeEvicting* pcTree)
+void AssertTree(const char* szExpected, CIndexTreeEvicting* pcTree)
 {
 	CChars	sz;
 

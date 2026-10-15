@@ -263,7 +263,7 @@ void TestIndexTreeMemoryGet(void)
 	CTestIndexTreeObject	andre;
 	CIndexTreeNodeMemory*	pcNodeBatman;
 	CIndexTreeNodeMemory*	pcNodeBatmam;
-	char*					szBatmam;
+	const char*					szBatmam;
 	CIndexTreeNodeMemory*	pcNodeAndre;
 	CIndexTreeNodeMemory*	pcNodeAndrew;
 	CIndexTreeNodeMemory*	pcNode;

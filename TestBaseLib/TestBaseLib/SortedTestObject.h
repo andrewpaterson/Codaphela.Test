@@ -8,7 +8,7 @@ public:
 	int		miValue;
 	char	mszThreeChars[4];
 
-	void Init(int iValue, char* szThreeChars);
+	void Init(int iValue, const char* szThreeChars);
 };
 
 

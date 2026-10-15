@@ -70,7 +70,7 @@ void CTestIndexBlockDataFree::Clear(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-bool AddToIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, int64 lliData)
+bool AddToIndexBlock(CIndexBlock* pcIndexBlock, const char* szKey, int64 lliData)
 {
 	size				iStrLen;
 
@@ -83,7 +83,7 @@ bool AddToIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, int64 lliData)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-bool GetFromIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, int64** pplli, size* piSize)
+bool GetFromIndexBlock(CIndexBlock* pcIndexBlock, const char* szKey, int64** pplli, size* piSize)
 {
 	size				iStrLen;
 
@@ -96,7 +96,7 @@ bool GetFromIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, int64** pplli, si
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertIndexBlock(CIndexBlock* pcIndexBlock, char* szKey, int64 lliData)
+void AssertIndexBlock(CIndexBlock* pcIndexBlock, const char* szKey, int64 lliData)
 {
 	int64*	plli;
 	size				iStrLen;

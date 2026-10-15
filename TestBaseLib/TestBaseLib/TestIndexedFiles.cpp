@@ -11,7 +11,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertIndexedFile(char* szDirectory, char* szFileName, void* pvExpectedData, int iExpectedLen)
+void AssertIndexedFile(char* szDirectory, const char* szFileName, void* pvExpectedData, int iExpectedLen)
 {
 	CChars		szTemp;
 	CFileUtil	cFileUtil;

@@ -11,7 +11,7 @@ TRISTATE GetCustomIdentifierCharacter(CTextParser* pcTextParser, char* pc, bool 
 //
 //
 /////////////////////////////////////////////////////////////////////////
-TRISTATE ParseCustomExactIdentifier(CTextParser* pcTextParser, char* szIdentifier)
+TRISTATE ParseCustomExactIdentifier(CTextParser* pcTextParser, const char* szIdentifier)
 {
 	char		cCurrent;
 	size		iPos;

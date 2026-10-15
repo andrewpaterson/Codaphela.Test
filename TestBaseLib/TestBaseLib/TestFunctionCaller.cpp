@@ -11,7 +11,7 @@
 void TestSimpleClassFunctionCall(void)
 {
 	CTestFunctionCaller			mcTest;
-	char*						pv;
+	const char*						pv;
 	int							i;
 	SFunctionPointer			func;
 
@@ -56,7 +56,7 @@ void CTestFunctionCaller::Kill(void)
 }
 
 
-int CTestFunctionCaller::PrintIt(char* pv, int i)
+int CTestFunctionCaller::PrintIt(const char* pv, int i)
 {
 	msz.Append(" ");
 	msz.Append(pv);

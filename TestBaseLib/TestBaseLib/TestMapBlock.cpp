@@ -142,7 +142,7 @@ void TestMapBlockInternals(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-bool AddToMapBlock(CMapBlock* pcMapBlock, char* szKey, int64 lliData)
+bool AddToMapBlock(CMapBlock* pcMapBlock, const char* szKey, int64 lliData)
 {
 	size				iStrLen;
 
@@ -155,7 +155,7 @@ bool AddToMapBlock(CMapBlock* pcMapBlock, char* szKey, int64 lliData)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-bool GetFromMapBlock(CMapBlock* pcMapBlock, char* szKey, int64** pplli, size* piSize)
+bool GetFromMapBlock(CMapBlock* pcMapBlock, const char* szKey, int64** pplli, size* piSize)
 {
 	size				iStrLen;
 
@@ -168,7 +168,7 @@ bool GetFromMapBlock(CMapBlock* pcMapBlock, char* szKey, int64** pplli, size* pi
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertMapBlock(CMapBlock* pcMapBlock, char* szKey, int64 lliData)
+void AssertMapBlock(CMapBlock* pcMapBlock, const char* szKey, int64 lliData)
 {
 	int64*	plli;
 	size				iStrLen;

@@ -114,7 +114,7 @@ void TestSetBlockInternals(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-bool AddToSetBlock(CSetBlock* pcSetBlock, char* szKey)
+bool AddToSetBlock(CSetBlock* pcSetBlock, const char* szKey)
 {
 	size				iStrLen;
 
@@ -127,7 +127,7 @@ bool AddToSetBlock(CSetBlock* pcSetBlock, char* szKey)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-char* GetFromSetBlock(CSetBlock* pcSetBlock, char* szKey)
+char* GetFromSetBlock(CSetBlock* pcSetBlock, const char* szKey)
 {
 	size	iStrLen;
 	char*	szData;
@@ -142,7 +142,7 @@ char* GetFromSetBlock(CSetBlock* pcSetBlock, char* szKey)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertSetBlock(CSetBlock* pcSetBlock, char* szKey)
+void AssertSetBlock(CSetBlock* pcSetBlock, const char* szKey)
 {
 	size	iStrLen;
 	char*	szData;
@@ -311,7 +311,7 @@ void TestSetBlockReadWrite(void)
 	CSetString	mszsz;
 	CFileBasic	cFile;
 	CSetString	mszszIn;
-	char*		szResult;
+	const char*	szResult;
 
 	mszsz.Init();
 

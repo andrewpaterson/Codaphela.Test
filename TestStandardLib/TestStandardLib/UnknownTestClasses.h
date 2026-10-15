@@ -23,7 +23,7 @@ CONSTRUCTABLE(CTestNamedUnknown)
 public:
 	CChars	mszName;
 
-	void	Init(char* szName);
+	void	Init(const char* szName);
 	void	Kill(void);
 	char*	GetName(void);
 	bool	Iterable(void);
@@ -41,7 +41,7 @@ public:
 
 	void	Init(int iID);
 	bool	Iterable(void);
-	char*	GetClassName(void);
+	const char*	GetClassName(void);
 	void	Print(CChars* psz);
 };
 
@@ -53,7 +53,7 @@ public:
 	int		miANumber;
 	CChars	mszText;
 
-	void 	Init(int iNumber, char* pszText);
+	void 	Init(int iNumber, const char* pszText);
 	void 	Kill(void);
 	bool	Save(CFileWriter* pcFile);
 	bool	Load(CFileReader* pcFile);

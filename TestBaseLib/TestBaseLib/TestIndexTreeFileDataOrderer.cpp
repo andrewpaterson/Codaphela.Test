@@ -55,7 +55,7 @@ void DumpDataOrdererString(CIndexTreeDataOrderer* pcOrderer)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertIndexTreeFileDataOrdererString(CIndexTreeDataOrderer* pcOrderer, char* szExpected)
+void AssertIndexTreeFileDataOrdererString(CIndexTreeDataOrderer* pcOrderer, const char* szExpected)
 {
 	CChars	sz;
 

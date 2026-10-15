@@ -11,7 +11,7 @@ void TestLogToString(void)
 	BeginTests();
 
 	char	sz[] = "InThe";
-	char*	szResult;
+	const char*	szResult;
 
 
 	szResult = StringToString(&sz[0], &sz[1]);

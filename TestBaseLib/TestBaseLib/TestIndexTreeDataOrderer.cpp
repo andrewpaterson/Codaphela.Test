@@ -12,7 +12,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertIndexTreeDataOrdererString(CIndexTreeDataOrderer* pcOrderer, char* szExpected)
+void AssertIndexTreeDataOrdererString(CIndexTreeDataOrderer* pcOrderer, const char* szExpected)
 {
 	SDataOrderIterator	sIter;
 	size				iSize;

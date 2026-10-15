@@ -7,7 +7,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestIndexTreeObject::Init(char* szName)
+void CTestIndexTreeObject::Init(const char* szName)
 {
 	strcpy(mszName, szName);
 }
@@ -27,7 +27,7 @@ char* CTestIndexTreeObject::GetName(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestIndexTreeObject2::Init(char* szName)
+void CTestIndexTreeObject2::Init(const char* szName)
 {
 	strcpy(mszName, szName);
 }

@@ -5,7 +5,7 @@
 //                                                                      //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
-void CTestNamedUnknown::Init(char* szName)
+void CTestNamedUnknown::Init(const char* szName)
 {
 	mszName.Init(szName);
 }
@@ -101,7 +101,7 @@ bool CTestIterableUnknown::Iterable(void)
 //                                                                      //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
-char* CTestIterableUnknown::GetClassName(void)
+const char* CTestIterableUnknown::GetClassName(void)
 {
 	return "TestIterableUnknown";
 }
@@ -186,7 +186,7 @@ void CTestUnknown::Print(CChars* psz)
 //                                                                      //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
-void CTestUnknownJobbie::Init(int iNumber, char* pszText)
+void CTestUnknownJobbie::Init(int iNumber, const char* pszText)
 {
 	miANumber = iNumber;
 	mszText.Init(pszText);

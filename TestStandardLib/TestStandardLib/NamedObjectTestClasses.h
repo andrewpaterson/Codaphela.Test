@@ -29,7 +29,6 @@ DESTRUCTABLE(CTestNamedObjectSmall)
 public:
 	char	mac[4];
 
-	void Init(char* sz);
 	void Init(const char* sz);
 	void Class(void) override;
 	void Free(void) override;

@@ -13,7 +13,7 @@ class CTestArrayTemplateItem : public STestArrayTemplateItem
 {
 public:
 	virtual void	Init(int i);
-	virtual char*	GetName(void);
+	virtual const char*	GetName(void);
 };
 
 
@@ -21,7 +21,7 @@ class CTestOverridenArrayTemplateItem : public CTestArrayTemplateItem
 {
 public:
 	void	Init(int i);
-	char*	GetName(void);
+	const char*	GetName(void);
 };
 
 

@@ -6,8 +6,8 @@
 #include "TestLib/AssertFile.h"
 
 
-void AssertPakFile(char* szFileName, char* szContents, CFiles* pcFiles);
-void AssertFileName(CMapStringInt* pcMap, int iCount, int iRank, char* szFileName);
+void AssertPakFile(const char* szFileName, const char* szContents, CFiles* pcFiles);
+void AssertFileName(CMapStringInt* pcMap, int iCount, int iRank, const char* szFileName);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -250,7 +250,7 @@ void TestGetFileNames(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertFileName(CMapStringInt* pcMap, int iCount, int iRank, char* szFileName)
+void AssertFileName(CMapStringInt* pcMap, int iCount, int iRank, const char* szFileName)
 {
 	int			iValue;
 
@@ -290,7 +290,7 @@ void TestFilesWholeDirectory(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertPakFile(char* szFileName, char* szContents, CFiles* pcFiles)
+void AssertPakFile(const char* szFileName, const char* szContents, CFiles* pcFiles)
 {
 	CAbstractFile*	pcFile;
 	CTextFile		cTextFile;

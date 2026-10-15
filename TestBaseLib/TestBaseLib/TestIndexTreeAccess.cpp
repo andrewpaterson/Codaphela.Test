@@ -543,7 +543,7 @@ void TestIndexTreeFileAccessFlushBug()
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeFileAccess(char* szSubirectory, EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse, int32 iFlushFrequency)
+void TestIndexTreeFileAccess(const char* szSubirectory, EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse, int32 iFlushFrequency)
 {
 	CIndexTreeFileAccess	cAccess;
 	CIndexTreeFile			cIndexTree;
@@ -575,7 +575,7 @@ void TestIndexTreeFileAccess(char* szSubirectory, EIndexWriteThrough eWriteThrou
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeEvictingAccess(char* szSubirectory, size sCacheSize, EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse, int32 iFlushFrequency)
+void TestIndexTreeEvictingAccess(const char* szSubirectory, size sCacheSize, EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse, int32 iFlushFrequency)
 {
 	CIndexTreeEvictingAccess 						cAccess;
 	CIndexTreeEvicting								cIndexTree;

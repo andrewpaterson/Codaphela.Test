@@ -22,7 +22,7 @@ char	gszIndexTreeString[257];
 //
 //
 //////////////////////////////////////////////////////////////////////////
-char* GetString(CIndexTreeFileAccess* pcAccess, char* szKey)
+char* GetString(CIndexTreeFileAccess* pcAccess, const char* szKey)
 {
 	char*	szResult;
 
@@ -36,7 +36,7 @@ char* GetString(CIndexTreeFileAccess* pcAccess, char* szKey)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertIndexFileEmpty(char* szFileName)
+void AssertIndexFileEmpty(const char* szFileName)
 {
 	CNaiveFile	cNaiveFile;
 	size		i;
@@ -1656,10 +1656,10 @@ void TestIndexTreeFileAddThenAdd(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertContainsFiles(CArrayChars* pacFiles, char* szFirstFile, ...)
+void AssertContainsFiles(CArrayChars* pacFiles, const char* szFirstFile, ...)
 {
 	va_list			vaMarker;
-	char*			szFile;
+	const char*		szFile;
 	CArrayChars		asz;
 	size			i;
 

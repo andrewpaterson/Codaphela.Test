@@ -17,7 +17,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestNamedIndexedDataObject::Init(char* szString, int64 iNumberX, int64 iNumberY)
+void CTestNamedIndexedDataObject::Init(const char* szString, int64 iNumberX, int64 iNumberY)
 {
 	Init();
 	strcpy(mszString, szString);

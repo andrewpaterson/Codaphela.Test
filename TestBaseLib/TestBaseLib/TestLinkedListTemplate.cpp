@@ -105,7 +105,7 @@ void TestLinkedListTemplateWrite(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertLinkedListString(CLinkedListTemplate<char>* pcList, char* szExpected)
+void AssertLinkedListString(CLinkedListTemplate<char>* pcList, const char* szExpected)
 {
 	CChars	sz;
 	char*	pc;

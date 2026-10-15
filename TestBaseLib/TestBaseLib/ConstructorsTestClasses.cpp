@@ -15,7 +15,7 @@ int CConstructorTestSuper1::Method1(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-char* CConstructorTestSuper2::GetName(void)
+const char* CConstructorTestSuper2::GetName(void)
 {
 	return "CConstructorTestSuper2";
 }
@@ -45,7 +45,7 @@ int CConstructorTestSuper2::Method2(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-char* CConstructorTestClass::GetName(void)
+const char* CConstructorTestClass::GetName(void)
 {
 	return "CConstructorTestClass";
 }

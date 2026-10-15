@@ -10,9 +10,9 @@
 void TestListCharsMinimalStuff(void)
 {
 	CListCharsMinimal*	pcListChars;
-	char*				sz1 = "Hello";
-	char*				sz2 = "3rd";
-	char*				sz3 = "World";
+	const char*			sz1 = "Hello";
+	const char*			sz2 = "3rd";
+	const char*			sz3 = "World";
 	int					iLen1 = strlen(sz1);
 	int					iLen2 = strlen(sz2);
 	int					iLen3 = strlen(sz3);

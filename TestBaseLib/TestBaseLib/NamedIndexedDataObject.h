@@ -11,7 +11,7 @@ public:
 	int64			miNumberY;
 
 	void	Init(void);
-	void	Init(char* szString, int64 iNumberX, int64 iNumberY);
+	void	Init(const char* szString, int64 iNumberX, int64 iNumberY);
 
 	size	Size(void);
 };
