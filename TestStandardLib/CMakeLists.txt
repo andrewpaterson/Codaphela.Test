@@ -98,7 +98,9 @@ target_compile_definitions(baselib_options INTERFACE
 )
 # -msse2 -mfpmath=sse: MSVC uses SSE2 for 32-bit code.  The x87 FPU keeps float
 # constants at long double precision, so float comparisons would differ.
-target_compile_options(baselib_options INTERFACE -m32 -msse2 -mfpmath=sse -fpermissive -w)
+# -fno-strict-aliasing: MSVC never optimises on the strict aliasing rule and the
+# code relies on that (e.g. (CUnknown**)&pcTyped), so optimised builds break without it.
+target_compile_options(baselib_options INTERFACE -m32 -msse2 -mfpmath=sse -fno-strict-aliasing -fpermissive -w)
 target_link_options(baselib_options INTERFACE -m32)
 if(BASELIB_ASAN)
 	target_compile_options(baselib_options INTERFACE -fsanitize=address -fno-omit-frame-pointer)
