@@ -55,11 +55,8 @@ void TestObjectFreeOrderingOutOfOrderOnStack(void)
 		pcExpectedNesPointerToObject = apNesObjects.GetPtr(0);
 		AssertPointer(pNesHolder2.Object(), pcExpectedNesPointerToObject);
 		apNesObjects.Kill();
-
-		gbLogPointer = true;
 	}
 	AssertSize(0, gcObjects.NumMemoryIndexes());
-	gbLogPointer = false;
 	ObjectsKill();
 }
 
