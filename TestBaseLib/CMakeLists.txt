@@ -6,11 +6,11 @@
 #   cmake --build build/TestBaseLib
 #   ctest --test-dir build/TestBaseLib --output-on-failure
 #
-# Add -DBASELIB_ASAN=ON for AddressSanitizer / LeakSanitizer (TestBaseLib.cpp
-# calls __lsan_do_leak_check() when built with it).
+# Add -DBASELIB_ASAN=ON for AddressSanitizer and LeakSanitizer.
 #
 # Source lists are read from the .vcxproj files so Visual Studio stays the
-# source of truth.  Test directories contain .cpp files that are test data
+# source of truth.  Building re-runs the configure step automatically when a
+# .vcxproj changes.  Test directories contain .cpp files that are test data
 # (e.g. SDCard.cpp), so never glob *.cpp to find sources.
 
 cmake_minimum_required(VERSION 3.16)
@@ -41,6 +41,9 @@ set(TESTBASELIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/TestBaseLib")
 function(vcxproj_sources OUT_VAR VCXPROJ)
 	cmake_parse_arguments(ARG "" "" "EXCLUDE" ${ARGN})
 	get_filename_component(PROJ_DIR "${VCXPROJ}" DIRECTORY)
+
+	# Re-run the configure step when Visual Studio adds or removes files.
+	set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${VCXPROJ}")
 
 	file(GLOB_RECURSE DISK_FILES RELATIVE "${PROJ_DIR}" "${PROJ_DIR}/*.cpp")
 	foreach(DISK_FILE ${DISK_FILES})
