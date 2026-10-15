@@ -157,6 +157,9 @@
     <ClCompile Include="TestImageWriter.cpp">
       <Filter>Source Files\Image\IO</Filter>
     </ClCompile>
+    <ClCompile Include="TestImageBMP.cpp">
+      <Filter>Source Files\Image\IO</Filter>
+    </ClCompile>
     <ClCompile Include="TestImageSFTWriter.cpp">
       <Filter>Source Files\Image\IO</Filter>
     </ClCompile>
