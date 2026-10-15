@@ -1,4 +1,8 @@
 #include "TestLib/Assert.h"
+#include "BaseLib/Int32Vec2.h"
+#include "BaseLib/Int64Vec2.h"
+#include "BaseLib/Float64Vec3.h"
+#include <stddef.h>
 
 
 struct TestPrimitiveLongStruct
@@ -79,6 +83,55 @@ void TestPrimitiveTypesSizes(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// 64 bit members are aligned to 8 bytes as MSVC does, including inside
+// templates where g++ ignores ALIGN_64 on the template argument.
+//
+//////////////////////////////////////////////////////////////////////////
+struct SAlignmentTestInt64
+{
+	int32		i;
+	int64		l;
+};
+
+struct SAlignmentTestInt64Vec2
+{
+	int32		i;
+	SInt64Vec2	v;
+};
+
+struct SAlignmentTestFloat64Vec3
+{
+	int32			i;
+	SFloat64Vec3	v;
+};
+
+struct SAlignmentTestInt32Vec2
+{
+	int32		i;
+	SInt32Vec2	v;
+};
+
+void TestPrimitiveTypesAlignment(void)
+{
+	AssertInt(8, offsetof(SAlignmentTestInt64, l));
+	AssertInt(16, sizeof(SAlignmentTestInt64));
+
+	AssertInt(8, alignof(SInt64Vec2));
+	AssertInt(8, offsetof(SAlignmentTestInt64Vec2, v));
+	AssertInt(24, sizeof(SAlignmentTestInt64Vec2));
+
+	AssertInt(8, alignof(SFloat64Vec3));
+	AssertInt(8, offsetof(SAlignmentTestFloat64Vec3, v));
+	AssertInt(32, sizeof(SAlignmentTestFloat64Vec3));
+
+	AssertInt(4, alignof(SInt32Vec2));
+	AssertInt(4, offsetof(SAlignmentTestInt32Vec2, v));
+	AssertInt(12, sizeof(SAlignmentTestInt32Vec2));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestPrimitiveTypes(void)
@@ -87,6 +140,7 @@ void TestPrimitiveTypes(void)
 
 	TestPrimitiveTypesSizes();
 	TestPrimitiveTypesPointerArray();
+	TestPrimitiveTypesAlignment();
 
 	TestStatistics();
 }

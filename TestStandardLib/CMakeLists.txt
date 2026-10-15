@@ -100,7 +100,10 @@ target_compile_definitions(baselib_options INTERFACE
 # constants at long double precision, so float comparisons would differ.
 # -fno-strict-aliasing: MSVC never optimises on the strict aliasing rule and the
 # code relies on that (e.g. (CUnknown**)&pcTyped), so optimised builds break without it.
-target_compile_options(baselib_options INTERFACE -m32 -msse2 -mfpmath=sse -fno-strict-aliasing -fpermissive -w)
+# -Wno-ignored-attributes: g++ drops ALIGN_64 when int64/uint64/float64 is a
+# template argument.  Templates that store such a type by value use MSVC_ALIGN
+# instead (see PrimitiveTypes.h), so the warning only reports the drop.
+target_compile_options(baselib_options INTERFACE -m32 -msse2 -mfpmath=sse -fno-strict-aliasing -Wno-ignored-attributes -fpermissive -w)
 target_link_options(baselib_options INTERFACE -m32)
 if(BASELIB_ASAN)
 	target_compile_options(baselib_options INTERFACE -fsanitize=address -fno-omit-frame-pointer)
