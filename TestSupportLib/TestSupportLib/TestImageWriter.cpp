@@ -10,6 +10,64 @@
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Reads Input/szName, writes it to Output/szName and reads it back.  The
+// image read back must have the same size, channels and data.
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertPNGRoundTrip(const char* szName)
+{
+	CChars			szInput;
+	CChars			szOutput;
+	CArraySize		aiExpectedChannels;
+	CArraySize		aiActualChannels;
+	size			i;
+	bool			bResult;
+
+	szInput.Init("Input" _FS_);
+	szInput.Append(szName);
+	szOutput.Init("Output" _FS_);
+	szOutput.Append(szName);
+
+	Ptr<CImage> pcImage = ReadImage(szInput.Text());
+	AssertTrue(pcImage.IsNotNull());
+	bResult = WriteImage(pcImage, szOutput.Text());
+	AssertTrue(bResult);
+	Ptr<CImage> pcComp = ReadImage(szOutput.Text());
+	AssertTrue(pcComp.IsNotNull());
+
+	AssertInt(pcImage->GetWidth(), pcComp->GetWidth());
+	AssertInt(pcImage->GetHeight(), pcComp->GetHeight());
+
+	aiExpectedChannels.Init();
+	aiActualChannels.Init();
+	pcImage->GetAllChannels(&aiExpectedChannels);
+	pcComp->GetAllChannels(&aiActualChannels);
+	AssertSize(aiExpectedChannels.NumElements(), aiActualChannels.NumElements());
+	if (aiExpectedChannels.NumElements() == aiActualChannels.NumElements())
+	{
+		for (i = 0; i < aiExpectedChannels.NumElements(); i++)
+		{
+			AssertSize(aiExpectedChannels.GetValue(i), aiActualChannels.GetValue(i));
+		}
+	}
+	aiExpectedChannels.Kill();
+	aiActualChannels.Kill();
+
+	AssertSize(pcImage->GetByteSize(), pcComp->GetByteSize());
+	if (pcImage->GetByteSize() == pcComp->GetByteSize())
+	{
+		AssertMemory(pcImage->mcChannels.GetData(), pcComp->mcChannels.GetData(), pcImage->GetByteSize());
+	}
+
+	pcImage->Kill();
+	pcComp->Kill();
+	szOutput.Kill();
+	szInput.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestImagePNGWriter(void)
@@ -33,58 +91,23 @@ void TestImagePNGWriter(void)
 	pcImage->Kill();
 	pcComp->Kill();
 
-	//Not testing this unitl I start using PNGLib to write images rather than the GDI+.
-	pcImage = ReadImage("Input" _FS_ "basn0g01.png");
-	WriteImage(pcImage, "Output" _FS_ "basn0g01.png");
-	pcImage->Kill();
+	AssertPNGRoundTrip("basn0g01.png");
+	AssertPNGRoundTrip("basn0g02.png");
+	AssertPNGRoundTrip("basn0g04.png");
+	AssertPNGRoundTrip("basn0g08.png");
+	AssertPNGRoundTrip("basn0g16.png");
+	AssertPNGRoundTrip("basn2c16.png");
 
-	pcImage = ReadImage("Input" _FS_ "basn0g02.png");
-	WriteImage(pcImage, "Output" _FS_ "basn0g02.png");
-	pcImage->Kill();
+	//Palettes are not read yet.
+	//AssertPNGRoundTrip("basn3p01.png");
+	//AssertPNGRoundTrip("basn3p02.png");
+	//AssertPNGRoundTrip("basn3p04.png");
+	//AssertPNGRoundTrip("basn3p08.png");
 
-	pcImage = ReadImage("Input" _FS_ "basn0g04.png");
-	WriteImage(pcImage, "Output" _FS_ "basn0g04.png");
-	pcImage->Kill();
-
-	pcImage = ReadImage("Input" _FS_ "basn0g08.png");
-	WriteImage(pcImage, "Output" _FS_ "basn0g08.png");
-	pcImage->Kill();
-
-	pcImage = ReadImage("Input" _FS_ "basn0g16.png");
-	WriteImage(pcImage, "Output" _FS_ "basn0g16.png");
-	pcImage->Kill();
-
-	pcImage = ReadImage("Input" _FS_ "basn2c16.png");
-	WriteImage(pcImage, "Output" _FS_ "basn2c16.png");
-	pcImage->Kill();
-
-	//pcImage = ReadImage("Input" _FS_ "basn3p01.png");
-	//WriteImage(pcImage, "Output" _FS_ "basn3p01.png");
-
-	//pcImage = ReadImage("Input" _FS_ "basn3p02.png");
-	//WriteImage(pcImage, "Output" _FS_ "basn3p02.png");
-
-	//pcImage = ReadImage("Input" _FS_ "basn3p04.png");
-	//WriteImage(pcImage, "Output" _FS_ "basn3p04.png");
-
-	//pcImage = ReadImage("Input" _FS_ "basn3p08.png");
-	//WriteImage(pcImage, "Output" _FS_ "basn3p08.png");
-
-	pcImage = ReadImage("Input" _FS_ "basn4a08.png");
-	WriteImage(pcImage, "Output" _FS_ "basn4a08.png");
-	pcImage->Kill();
-
-	pcImage = ReadImage("Input" _FS_ "basn4a16.png");
-	WriteImage(pcImage, "Output" _FS_ "basn4a16.png");
-	pcImage->Kill();
-
-	pcImage = ReadImage("Input" _FS_ "basn6a08.png");
-	WriteImage(pcImage, "Output" _FS_ "basn6a08.png");
-	pcImage->Kill();
-
-	pcImage = ReadImage("Input" _FS_ "basn6a16.png");
-	WriteImage(pcImage, "Output" _FS_ "basn6a16.png");
-	pcImage->Kill();
+	AssertPNGRoundTrip("basn4a08.png");
+	AssertPNGRoundTrip("basn4a16.png");
+	AssertPNGRoundTrip("basn6a08.png");
+	AssertPNGRoundTrip("basn6a16.png");
 }
 
 
