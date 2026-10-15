@@ -48,7 +48,7 @@ void TestImageDividerGenerateFromBorder(void)
 	AssertInt(3, pcRectangle->GetSubImage()->mcImageRect.GetHeight());
 
 	WriteImage(pcMask, "Output" _FS_ "splitter.raw");
-	AssertFileMemory("input" _FS_ "splitter.raw", pcMask->mcChannels.GetData(), pcMask->GetByteSize());
+	AssertFileMemory("Input" _FS_ "splitter.raw", pcMask->mcChannels.GetData(), pcMask->GetByteSize());
 
 	cImageDivider.Kill();
 	pcMask = NULL;
@@ -278,7 +278,7 @@ void TestImageDividerGenerateFromBorderWithTransparent(void)
 	AssertInt(25, pcRectangle->GetSubImage()->mcImageRect.GetHeight());
 
 	WriteImage(&pcMask, "Output" _FS_ "cel6.raw");
-	AssertFileMemory("input" _FS_ "cel6.raw", pcMask->mcChannels.GetData(), pcMask->GetByteSize());
+	AssertFileMemory("Input" _FS_ "cel6.raw", pcMask->mcChannels.GetData(), pcMask->GetByteSize());
 
 	cImageDivider.Kill();
 	pcMask = NULL;

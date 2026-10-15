@@ -41,7 +41,7 @@ void TestImageToR3G3B2AConvert(void)
 
 	bResult =  WriteImage(pcImage, "Output" _FS_ "RGBTo8bit.raw");
 	AssertTrue(bResult);
-	AssertFileMemory("input" _FS_ "RGBTo8bit.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "RGBTo8bit.raw", pcImage->GetData(), pcImage->GetByteSize());
 
 	//This is probably unnecessay.
 	pcImage->Kill();

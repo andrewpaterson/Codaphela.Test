@@ -35,7 +35,7 @@ void TestImageDrawBox1(void)
 	cDraw.Kill();
 	WriteImage(pImage, "Output" _FS_ "DrawBox1.raw");
 	WriteImage(pImage, "Output" _FS_ "DrawBox1.png");
-	AssertFileMemory("input" _FS_ "DrawBox1.raw", pImage->GetData(), pImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "DrawBox1.raw", pImage->GetData(), pImage->GetByteSize());
 
 	pImage = NULL;
 }
@@ -67,7 +67,7 @@ void TestImageDrawBox2(void)
 	cDraw.Kill();
 	WriteImage(pImage, "Output" _FS_ "DrawBox2.raw");
 	WriteImage(pImage, "Output" _FS_ "DrawBox2.png");
-	AssertFileMemory("input" _FS_ "DrawBox2.raw", pImage->GetData(), pImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "DrawBox2.raw", pImage->GetData(), pImage->GetByteSize());
 
 	pImage = NULL;
 }
@@ -97,7 +97,7 @@ void TestImageDrawLine(void)
 
 	WriteImage(pImage, "Output" _FS_ "DrawLine1.raw");
 	WriteImage(pImage, "Output" _FS_ "DrawLine1.png");
-	AssertFileMemory("input" _FS_ "DrawLine1.raw", pImage->GetData(), pImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "DrawLine1.raw", pImage->GetData(), pImage->GetByteSize());
 
 	pImage->Black();
 
@@ -112,7 +112,7 @@ void TestImageDrawLine(void)
 
 	WriteImage(pImage, "Output" _FS_ "DrawLine2.raw");
 	WriteImage(pImage, "Output" _FS_ "DrawLine2.png");
-	AssertFileMemory("input" _FS_ "DrawLine2.raw", pImage->GetData(), pImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "DrawLine2.raw", pImage->GetData(), pImage->GetByteSize());
 
 	pImage->Black();
 
@@ -127,7 +127,7 @@ void TestImageDrawLine(void)
 
 	WriteImage(pImage, "Output" _FS_ "DrawLine3.raw");
 	WriteImage(pImage, "Output" _FS_ "DrawLine3.png");
-	AssertFileMemory("input" _FS_ "DrawLine3.raw", pImage->GetData(), pImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "DrawLine3.raw", pImage->GetData(), pImage->GetByteSize());
 
 	cDraw.Kill();
 	cColour.Kill();
@@ -164,7 +164,7 @@ void TestImageDrawLineExtents(void)
 
 	WriteImage(pImage, "Output" _FS_ "DrawLine4.raw");
 	WriteImage(pImage, "Output" _FS_ "DrawLine4.png");
-	AssertFileMemory("input" _FS_ "DrawLine4.raw", pImage->GetData(), pImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "DrawLine4.raw", pImage->GetData(), pImage->GetByteSize());
 
 	pImage->Black();
 
@@ -178,7 +178,7 @@ void TestImageDrawLineExtents(void)
 
 	WriteImage(pImage, "Output" _FS_ "DrawLine5.raw");
 	WriteImage(pImage, "Output" _FS_ "DrawLine5.png");
-	AssertFileMemory("input" _FS_ "DrawLine5.raw", pImage->GetData(), pImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "DrawLine5.raw", pImage->GetData(), pImage->GetByteSize());
 
 	cDraw.Kill();
 	cColour1.Kill();

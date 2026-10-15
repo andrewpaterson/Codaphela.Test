@@ -48,7 +48,7 @@ void TestImageRGBToGrey1(void)
 	AssertInt(1024, pcImage->GetByteSize());
 
 	WriteImage(pcImage, "Output" _FS_ "RGBToGrey.raw");
-	AssertFileMemory("input" _FS_ "RGBToGrey.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "RGBToGrey.raw", pcImage->GetData(), pcImage->GetByteSize());
 
 	//This is probably unnecessay.
 	pcImage->Kill();

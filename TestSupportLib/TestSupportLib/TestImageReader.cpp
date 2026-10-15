@@ -31,7 +31,7 @@ void TestImageReaderRAD(void)
 	acChannels.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "readrad.raw");
-	AssertFileMemory("input" _FS_ "readrad.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "readrad.raw", pcImage->GetData(), pcImage->GetByteSize());
 	pcImage = NULL;
 
 
@@ -48,7 +48,7 @@ void TestImageReaderRAD(void)
 	acChannels.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "readraw.raw");
-	AssertFileMemory("input" _FS_ "readraw.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "readraw.raw", pcImage->GetData(), pcImage->GetByteSize());
 	pcImage = NULL;
 }
 
@@ -69,7 +69,7 @@ void TestImageReaderPNG(void)
 	acChannels.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "basn0g01.raw");
-	AssertFileMemory("input" _FS_ "basn0g01.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "basn0g01.raw", pcImage->GetData(), pcImage->GetByteSize());
 	pcImage = NULL;
 
 
@@ -81,7 +81,7 @@ void TestImageReaderPNG(void)
 	acChannels.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "basn0g02.raw");
-	AssertFileMemory("input" _FS_ "basn0g02.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "basn0g02.raw", pcImage->GetData(), pcImage->GetByteSize());
 	pcImage = NULL;
 
 
@@ -93,7 +93,7 @@ void TestImageReaderPNG(void)
 	acChannels.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "basn0g04.raw");
-	AssertFileMemory("input" _FS_ "basn0g04.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "basn0g04.raw", pcImage->GetData(), pcImage->GetByteSize());
 	pcImage = NULL;
 
 
@@ -105,7 +105,7 @@ void TestImageReaderPNG(void)
 	acChannels.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "basn0g08.raw");
-	AssertFileMemory("input" _FS_ "basn0g08.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "basn0g08.raw", pcImage->GetData(), pcImage->GetByteSize());
 	pcImage = NULL;
 
 
@@ -117,7 +117,7 @@ void TestImageReaderPNG(void)
 	acChannels.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "basn0g16.raw");
-	AssertFileMemory("input" _FS_ "basn0g16.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "basn0g16.raw", pcImage->GetData(), pcImage->GetByteSize());
 	pcImage = NULL;
 
 
@@ -131,7 +131,7 @@ void TestImageReaderPNG(void)
 	acChannels.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "basn2c08.raw");
-	AssertFileMemory("input" _FS_ "basn2c08.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "basn2c08.raw", pcImage->GetData(), pcImage->GetByteSize());
 	pcImage = NULL;
 
 
@@ -145,7 +145,7 @@ void TestImageReaderPNG(void)
 	acChannels.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "basn2c16.raw");
-	AssertFileMemory("input" _FS_ "basn2c16.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "basn2c16.raw", pcImage->GetData(), pcImage->GetByteSize());
 	pcImage = NULL;
 
 
@@ -161,7 +161,7 @@ void TestImageReaderPNG(void)
 	acChannels.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "basn4a08.raw");
-	AssertFileMemory("input" _FS_ "basn4a08.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "basn4a08.raw", pcImage->GetData(), pcImage->GetByteSize());
 	pcImage = NULL;
 
 
@@ -174,7 +174,7 @@ void TestImageReaderPNG(void)
 	acChannels.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "basn4a16.raw");
-	AssertFileMemory("input" _FS_ "basn4a16.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "basn4a16.raw", pcImage->GetData(), pcImage->GetByteSize());
 	pcImage = NULL;
 
 
@@ -189,7 +189,7 @@ void TestImageReaderPNG(void)
 	acChannels.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "basn6a08.raw");
-	AssertFileMemory("input" _FS_ "basn6a08.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "basn6a08.raw", pcImage->GetData(), pcImage->GetByteSize());
 	pcImage = NULL;
 
 
@@ -204,7 +204,7 @@ void TestImageReaderPNG(void)
 	acChannels.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "basn6a16.raw");
-	AssertFileMemory("input" _FS_ "basn6a16.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "basn6a16.raw", pcImage->GetData(), pcImage->GetByteSize());
 	pcImage = NULL;
 }
 
@@ -228,7 +228,7 @@ void TestImageReaderTGA(void)
 	acChannels.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "tar32un.raw");
-	AssertFileMemory("input" _FS_ "tar32un.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "tar32un.raw", pcImage->GetData(), pcImage->GetByteSize());
 	pcImage = NULL;
 
 
@@ -243,7 +243,7 @@ void TestImageReaderTGA(void)
 
 
 	WriteImage(pcImage, "Output" _FS_ "tar24un.raw");
-	AssertFileMemory("input" _FS_ "tar24un.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "tar24un.raw", pcImage->GetData(), pcImage->GetByteSize());
 	pcImage = NULL;
 
 
@@ -257,7 +257,7 @@ void TestImageReaderTGA(void)
 	acChannels.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "tar16un.raw");
-	AssertFileMemory("input" _FS_ "tar16un.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "tar16un.raw", pcImage->GetData(), pcImage->GetByteSize());
 	pcImage = NULL;
 }
 

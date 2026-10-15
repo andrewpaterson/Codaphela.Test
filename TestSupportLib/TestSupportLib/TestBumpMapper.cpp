@@ -16,7 +16,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestBumpMapper1(void)
 {
-	Ptr<CImage> pcSource = ReadImage("Input" _FS_ "HeightMap.png");
+	Ptr<CImage> pcSource = ReadImage("Input" _FS_ "Heightmap.png");
 	Ptr<CImage>	pcDest = OMalloc<CImage>();
 
 	pcDest = ConvertHeightMapTo(true, true, pcSource, IMAGE_DIFFUSE_RED);

@@ -25,7 +25,7 @@ void TestImageGreyToRGB1(void)
 	cGreyToRGB.Kill();
 
 	WriteImage(pcImage, "Output/GreyToRGB.raw");
-	AssertFileMemory("input/GreyToRGB.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input/GreyToRGB.raw", pcImage->GetData(), pcImage->GetByteSize());
 
 	cGreyToRGB.Kill();
 	pcImage->Kill();

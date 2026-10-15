@@ -43,7 +43,7 @@ void TestImageModifierDrawBox1(void)
 
 	WriteImage(&cImage, "Output" _FS_ "Box1.png");
 	WriteImage(&cImage, "Output" _FS_ "Box1.raw");
-	AssertFileMemory("input" _FS_ "Box1.raw", cImage.GetData(), cImage.GetByteSize());
+	AssertFileMemory("Input" _FS_ "Box1.raw", cImage.GetData(), cImage.GetByteSize());
 
 	cImage.BeginChange();
 	cImage.SetSize(8, 8);  //Oops, Set size does not preserve the image.  Also Write Image cannot write out non *4 sized pngs.
@@ -60,7 +60,7 @@ void TestImageModifierDrawBox1(void)
 
 	WriteImage(&cImage, "Output" _FS_ "BoxBorder.png");
 	WriteImage(&cImage, "Output" _FS_ "BoxBorder.raw");
-	AssertFileMemory("input" _FS_ "BoxBorder.raw", cImage.GetData(), cImage.GetByteSize());
+	AssertFileMemory("Input" _FS_ "BoxBorder.raw", cImage.GetData(), cImage.GetByteSize());
 
 	cImage.Kill();
 }
@@ -113,7 +113,7 @@ void TestImageModifierDrawBox2(void)
 
 	WriteImage(pImage, "Output" _FS_ "Box2.png");
 	WriteImage(pImage, "Output" _FS_ "Box2.raw");
-	AssertFileMemory("input" _FS_ "Box2.raw", pImage->GetData(), pImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "Box2.raw", pImage->GetData(), pImage->GetByteSize());
 
 	pImage->Kill();
 

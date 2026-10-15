@@ -34,7 +34,7 @@ void TestImageRecolour1(void)
 	cRecolour.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "recolour.raw");
-	AssertFileMemory("input" _FS_ "recolour.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "recolour.raw", pcImage->GetData(), pcImage->GetByteSize());
 
 	pcImage = NULL;
 }

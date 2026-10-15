@@ -54,7 +54,7 @@ void TestImageSwizzle1(void)
 	cStack.Kill();
 
 	WriteImage(pcImage, "Output" _FS_ "swizzle.raw");
-	AssertFileMemory("input" _FS_ "swizzle.raw", pcImage->GetData(), pcImage->GetByteSize());
+	AssertFileMemory("Input" _FS_ "swizzle.raw", pcImage->GetData(), pcImage->GetByteSize());
 
 	pcImage->Kill();
 }
