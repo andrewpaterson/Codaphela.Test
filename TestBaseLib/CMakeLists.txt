@@ -94,7 +94,9 @@ target_compile_definitions(baselib_options INTERFACE
 	$<$<CONFIG:Debug>:DEBUG>
 	$<$<NOT:$<CONFIG:Debug>>:NDEBUG>
 )
-target_compile_options(baselib_options INTERFACE -m32 -fpermissive -w)
+# -msse2 -mfpmath=sse: MSVC uses SSE2 for 32-bit code.  The x87 FPU keeps float
+# constants at long double precision, so float comparisons would differ.
+target_compile_options(baselib_options INTERFACE -m32 -msse2 -mfpmath=sse -fpermissive -w)
 target_link_options(baselib_options INTERFACE -m32)
 if(BASELIB_ASAN)
 	target_compile_options(baselib_options INTERFACE -fsanitize=address -fno-omit-frame-pointer)

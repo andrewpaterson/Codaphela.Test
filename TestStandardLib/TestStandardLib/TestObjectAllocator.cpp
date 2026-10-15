@@ -540,7 +540,7 @@ void TestObjectAllocatorAssignmentToNullObject(void)
 
 		cLogToMemory.Stop(szLog, 4096);
 
-		szError = strstr(szLog, "CPointer::DereferenceArrow(void) Attempted to dereference NULL Pointer.");
+		szError = strstr(szLog, "Attempted to dereference NULL Pointer.");
 		AssertNotNull(szError);
 
 

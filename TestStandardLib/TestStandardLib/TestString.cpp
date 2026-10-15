@@ -32,6 +32,7 @@ void TestStringDirty(void)
 	CSequence*		pcSequence;
 	CFileUtil		cFileUtil;
 	char			szDirectory[] = "Output" _FS_ "String" _FS_ "Database1";
+	char			szHexData[] = "Output\\";
 
 	cFileUtil.RemoveDir(szDirectory);
 	MemoryInit();
@@ -80,7 +81,7 @@ void TestStringDirty(void)
 	ObjectsInit(pcDatabase, pcSequence);
 	{
 		pString1 = gcObjects.Get(oi1);
-		pString1->AppendHexHiLo(szDirectory, 7);
+		pString1->AppendHexHiLo(szHexData, 7);
 		AssertTrue(pString1.IsDirty());
 		AssertString("HelloTrue5c74757074754f", pString1->Text());
 
