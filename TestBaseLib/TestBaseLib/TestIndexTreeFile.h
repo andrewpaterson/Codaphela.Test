@@ -77,7 +77,7 @@ public:
 		return CIndexTreeFile::ValidateKey((uint8*)pvKey, iKeySize);
 	}
 
-	CIndexTreeNodeFile* GetNode(void* pvKey, int iKeySize)
+	CIndexTreeNodeFile* GetNode(const void* pvKey, int iKeySize)
 	{
 		return CIndexTreeFile::GetNode((uint8*)pvKey, iKeySize);
 	}

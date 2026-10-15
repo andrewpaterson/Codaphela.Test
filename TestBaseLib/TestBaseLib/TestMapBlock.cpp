@@ -17,7 +17,7 @@
 class CTestMapBlock : public CMapBlock
 {
 public:
-	SMNode* GetNode(void* pvKey, size iKeySize)
+	SMNode* GetNode(const void* pvKey, size iKeySize)
 	{
 		return CMapBlock::GetNode(pvKey, iKeySize);
 	}
