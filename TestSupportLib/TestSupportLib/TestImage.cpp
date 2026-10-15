@@ -4,6 +4,7 @@
 #include "BaseLib/Operators.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/Logger.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/Array.h"
@@ -367,6 +368,56 @@ void TestImageCopierRealPNG(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void AssertImageSize(int iWidth, int iHeight, int iExpectedWidth, int iExpectedHeight, size uiExpectedByteSize)
+{
+	CImage	cImage;
+
+	cImage.Init(iWidth, iHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, IMAGE_OPACITY, CHANNEL_STOP);
+	AssertInt(iExpectedWidth, cImage.GetWidth());
+	AssertInt(iExpectedHeight, cImage.GetHeight());
+	AssertSize(uiExpectedByteSize, cImage.GetByteSize());
+	if (uiExpectedByteSize == 0)
+	{
+		AssertNull(cImage.GetData());
+	}
+	else
+	{
+		AssertNotNull(cImage.GetData());
+	}
+	cImage.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Sizes that can't be addressed give an empty (0 x 0) image rather than a
+// wrapped size with too little data.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageSizeLimits(void)
+{
+	SLogConfig	sLogConfig;
+
+	ObjectsInit();
+
+	AssertImageSize(13, 7, 13, 7, 13 * 7 * 4);
+
+	sLogConfig = gcLogger.SetSilent();
+	AssertImageSize(-5, 10, 0, 0, 0);			//Negative width.
+	AssertImageSize(65536, 65536, 0, 0, 0);		//Width * height overflows 32 bits.
+	AssertImageSize(70000, 70000, 0, 0, 0);		//Width * height overflows 32 bits.
+	AssertImageSize(40000, 40000, 0, 0, 0);		//Width * height fits but the bytes (6.4GB) can't be addressed.
+	gcLogger.SetConfig(&sLogConfig);
+
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestImage(void)
 {
 	BeginTests();
@@ -377,6 +428,7 @@ void TestImage(void)
 	TestImageKillChannels();
 	TestImageCopier();
 	TestImageCopierRealPNG();
+	TestImageSizeLimits();
 
 	DataIOKill();
 

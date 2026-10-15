@@ -1,4 +1,5 @@
 #include "BaseLib/GlobalDataTypesIO.h"
+#include "BaseLib/Logger.h"
 #include "StandardLib/Objects.h"
 #include "SupportLib/Image.h"
 #include "SupportLib/ImageReader.h"
@@ -135,6 +136,55 @@ void TestImageBMPReader(void)
 	AssertBMPMatchesPNG("rgb32");
 	AssertBMPMatchesPNG("rgba32v4");
 	AssertBMPMatchesPNG("rgba32v5");
+	AssertBMPMatchesPNG("argb1555");
+	AssertBMPMatchesPNG("alphabitfields");
+	AssertBMPMatchesPNG("bitfields32");
+	AssertBMPMatchesPNG("bitfields32rgbx");
+	AssertBMPMatchesPNG("clrused8");
+	AssertBMPMatchesPNG("rleclipped");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertBMPRejected(const char* szName)
+{
+	CChars	szBMP;
+
+	szBMP.Init("Input" _FS_ "BMP" _FS_ "Bad" _FS_);
+	szBMP.Append(szName);
+
+	Ptr<CImage> pcImage = ReadImage(szBMP.Text());
+	AssertTrue(pcImage.IsNull());
+
+	pcImage = NULL;
+	szBMP.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Malformed bitmaps must be rejected without reading past the file.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageBMPBadFiles(void)
+{
+	SLogConfig	sLogConfig;
+
+	sLogConfig = gcLogger.SetSilent();
+	AssertBMPRejected("badmagic.bmp");
+	AssertBMPRejected("truncated.bmp");
+	AssertBMPRejected("headeronly.bmp");
+	AssertBMPRejected("headerpastend.bmp");
+	AssertBMPRejected("badbitdepth.bmp");
+	AssertBMPRejected("badcompression.bmp");
+	AssertBMPRejected("zerowidth.bmp");
+	AssertBMPRejected("palettepastend.bmp");
+	AssertBMPRejected("hugergb.bmp");
+	AssertBMPRejected("hugerle.bmp");
+	gcLogger.SetConfig(&sLogConfig);
 }
 
 
@@ -254,6 +304,7 @@ void TestImageBMP(void)
 	ObjectsInit();
 
 	TestImageBMPReader();
+	TestImageBMPBadFiles();
 	TestImageBMPWriter();
 
 	ObjectsKill(false);
