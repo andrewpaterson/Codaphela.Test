@@ -76,6 +76,7 @@ int __cdecl main(void)
 	InitAllocatorDebug(2 MB);
 	
 	FastFunctionsInit();
+	NumberInit();
 
 	TestIndexTreeMemory();
 	TestUnknowns();
@@ -137,6 +138,7 @@ int __cdecl main(void)
 	TestChannelsAccessor();
 	TestSingleChannelAccessor();
 
+	NumberKill();
 	FastFunctionsKill();
 
 	iResult = TestTotalStatistics();
