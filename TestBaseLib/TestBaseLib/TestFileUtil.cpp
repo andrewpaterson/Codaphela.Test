@@ -1,6 +1,15 @@
+#include <stdio.h>
+#ifdef LINUX_GNU_32
+#include <sys/stat.h>
+#include <unistd.h>
+#endif // LINUX_GNU_32
+#include "BaseLib/WindowsHeaders.h"
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "TestLib/Assert.h"
+
+
+#define FILE_UTIL_TEST_DIR	"Output" _FS_ "FileUtil"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -459,6 +468,224 @@ void TestFileUtilRootDirectory(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFileUtilWriteFile(const char* szFilename, const char* szText)
+{
+	FILE*	pFile;
+
+	pFile = fopen(szFilename, "w");
+	fputs(szText, pFile);
+	fclose(pFile);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+size TestFileUtilCountEndingWith(CArrayChars* paszFiles, const char* szEnd)
+{
+	size	i;
+	size	uiCount;
+
+	uiCount = 0;
+	for (i = 0; i < paszFiles->NumElements(); i++)
+	{
+		if (paszFiles->Get(i)->EndsWith(szEnd))
+		{
+			uiCount++;
+		}
+	}
+	return uiCount;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFileUtilTouchExisting(void)
+{
+	CFileUtil	cFileUtil;
+
+	cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR);
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR, false));
+
+	//Touch creates a file, or empties it if it already exists.
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Existing.txt", "Content");
+	AssertLong(7, cFileUtil.Size(FILE_UTIL_TEST_DIR _FS_ "Existing.txt"));
+	AssertTrue(cFileUtil.Touch(FILE_UTIL_TEST_DIR _FS_ "Existing.txt"));
+	AssertLong(0, cFileUtil.Size(FILE_UTIL_TEST_DIR _FS_ "Existing.txt"));
+
+	AssertTrue(cFileUtil.Touch(FILE_UTIL_TEST_DIR _FS_ "New.txt"));
+	AssertTrue(cFileUtil.Exists(FILE_UTIL_TEST_DIR _FS_ "New.txt"));
+
+	AssertTrue(cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFileUtilExistsAndSize(void)
+{
+	CFileUtil	cFileUtil;
+
+	cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR);
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR, false));
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Six.txt", "123456");
+
+	AssertTrue(cFileUtil.Exists(FILE_UTIL_TEST_DIR _FS_ "Six.txt"));
+	AssertTrue(cFileUtil.Exists(FILE_UTIL_TEST_DIR));
+	AssertFalse(cFileUtil.Exists(FILE_UTIL_TEST_DIR _FS_ "Missing.txt"));
+
+	//A directory has no size, like a file that does not exist.
+	AssertLong(6, cFileUtil.Size(FILE_UTIL_TEST_DIR _FS_ "Six.txt"));
+	AssertLong(-1, cFileUtil.Size(FILE_UTIL_TEST_DIR));
+	AssertLong(-1, cFileUtil.Size(FILE_UTIL_TEST_DIR _FS_ "Missing.txt"));
+
+	AssertTrue(cFileUtil.MakeDir(FILE_UTIL_TEST_DIR _FS_ "Made"));
+	AssertFalse(cFileUtil.MakeDir(FILE_UTIL_TEST_DIR _FS_ "Made"));
+
+#ifdef LINUX_GNU_32
+	//A file that cannot be read still exists.
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Unreadable.txt", "x");
+	chmod(FILE_UTIL_TEST_DIR _FS_ "Unreadable.txt", 0);
+	AssertTrue(cFileUtil.Exists(FILE_UTIL_TEST_DIR _FS_ "Unreadable.txt"));
+	chmod(FILE_UTIL_TEST_DIR _FS_ "Unreadable.txt", 0644);
+#endif // LINUX_GNU_32
+
+	AssertTrue(cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFileUtilFindHidden(void)
+{
+	CFileUtil		cFileUtil;
+	CArrayChars		aszFiles;
+
+	cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR);
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR _FS_ "Visible", false));
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR _FS_ ".HiddenDir", false));
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Shown.txt", "x");
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ ".Hidden.txt", "x");
+
+	//Linux hides dot files.  Windows uses the hidden attribute.
+#ifdef _WIN32
+	SetFileAttributes(FILE_UTIL_TEST_DIR _FS_ ".HiddenDir", FILE_ATTRIBUTE_HIDDEN);
+	SetFileAttributes(FILE_UTIL_TEST_DIR _FS_ ".Hidden.txt", FILE_ATTRIBUTE_HIDDEN);
+#endif // _WIN32
+
+	aszFiles.Init();
+	AssertTrue(cFileUtil.FindAllFiles(FILE_UTIL_TEST_DIR, &aszFiles, false, false));
+	AssertInt(1, aszFiles.NumElements());
+	AssertInt(1, TestFileUtilCountEndingWith(&aszFiles, "Shown.txt"));
+	aszFiles.Kill();
+
+	aszFiles.Init();
+	AssertTrue(cFileUtil.FindAllFiles(FILE_UTIL_TEST_DIR, &aszFiles, false, true));
+	AssertInt(2, aszFiles.NumElements());
+	AssertInt(1, TestFileUtilCountEndingWith(&aszFiles, ".Hidden.txt"));
+	aszFiles.Kill();
+
+	aszFiles.Init();
+	cFileUtil.FindAllDirectories(FILE_UTIL_TEST_DIR, &aszFiles, false);
+	AssertInt(1, aszFiles.NumElements());
+	AssertInt(1, TestFileUtilCountEndingWith(&aszFiles, "Visible"));
+	aszFiles.Kill();
+
+	aszFiles.Init();
+	cFileUtil.FindAllDirectories(FILE_UTIL_TEST_DIR, &aszFiles, true);
+	AssertInt(2, aszFiles.NumElements());
+	AssertInt(1, TestFileUtilCountEndingWith(&aszFiles, ".HiddenDir"));
+	aszFiles.Kill();
+
+	//A directory that does not exist cannot be searched.
+	aszFiles.Init();
+	AssertFalse(cFileUtil.FindAllFiles(FILE_UTIL_TEST_DIR _FS_ "Missing", &aszFiles, false, false));
+	AssertInt(0, aszFiles.NumElements());
+	aszFiles.Kill();
+
+#ifdef _WIN32
+	SetFileAttributes(FILE_UTIL_TEST_DIR _FS_ ".HiddenDir", FILE_ATTRIBUTE_NORMAL);
+	SetFileAttributes(FILE_UTIL_TEST_DIR _FS_ ".Hidden.txt", FILE_ATTRIBUTE_NORMAL);
+#endif // _WIN32
+	AssertTrue(cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFileUtilCopyDir(void)
+{
+	CFileUtil	cFileUtil;
+
+	cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR);
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "Sub", false));
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "A.txt", "Hello");
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "Sub" _FS_ "B.txt", "World!");
+
+	AssertTrue(cFileUtil.MakeDir(FILE_UTIL_TEST_DIR _FS_ "Dest"));
+	AssertTrue(cFileUtil.CopyDir(FILE_UTIL_TEST_DIR _FS_ "Source", FILE_UTIL_TEST_DIR _FS_ "Dest"));
+	AssertLong(5, cFileUtil.Size(FILE_UTIL_TEST_DIR _FS_ "Dest" _FS_ "A.txt"));
+	AssertLong(6, cFileUtil.Size(FILE_UTIL_TEST_DIR _FS_ "Dest" _FS_ "Sub" _FS_ "B.txt"));
+
+	AssertTrue(cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFileUtilRemoveDir(void)
+{
+	CFileUtil	cFileUtil;
+
+	cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR);
+
+	//A directory that does not exist is already removed.
+	AssertTrue(cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR _FS_ "Missing"));
+
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR _FS_ "Tree" _FS_ "Sub", false));
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Tree" _FS_ "Sub" _FS_ "File.txt", "x");
+	AssertTrue(cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR _FS_ "Tree"));
+	AssertFalse(cFileUtil.Exists(FILE_UTIL_TEST_DIR _FS_ "Tree"));
+
+#ifdef LINUX_GNU_32
+	//A symbolic link to a directory is removed, not followed into.
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR _FS_ "Target", false));
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Target" _FS_ "Keep.txt", "x");
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR _FS_ "Linked", false));
+	AssertInt(0, symlink(".." _FS_ "Target", FILE_UTIL_TEST_DIR _FS_ "Linked" _FS_ "Link"));
+	AssertInt(0, symlink("Nowhere", FILE_UTIL_TEST_DIR _FS_ "Linked" _FS_ "Broken"));
+	AssertTrue(cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR _FS_ "Linked"));
+	AssertFalse(cFileUtil.Exists(FILE_UTIL_TEST_DIR _FS_ "Linked"));
+	AssertTrue(cFileUtil.Exists(FILE_UTIL_TEST_DIR _FS_ "Target" _FS_ "Keep.txt"));
+
+	//A file that cannot be deleted is reported.
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR _FS_ "Locked", false));
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Locked" _FS_ "File.txt", "x");
+	chmod(FILE_UTIL_TEST_DIR _FS_ "Locked", 0555);
+	AssertFalse(cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR _FS_ "Locked"));
+	chmod(FILE_UTIL_TEST_DIR _FS_ "Locked", 0755);
+#endif // LINUX_GNU_32
+
+	AssertTrue(cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR));
+	AssertFalse(cFileUtil.Exists(FILE_UTIL_TEST_DIR));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFileUtil(void)
 {
 	BeginTests();
@@ -476,6 +703,11 @@ void TestFileUtil(void)
 	TestFileUtilTouchDirectoryOnlyFilename();
 	TestFileUtilPrependToPath();
 	TestFileUtilRootDirectory();
+	TestFileUtilTouchExisting();
+	TestFileUtilExistsAndSize();
+	TestFileUtilFindHidden();
+	TestFileUtilCopyDir();
+	TestFileUtilRemoveDir();
 
 	FastFunctionsKill();
 	MemoryKill();
