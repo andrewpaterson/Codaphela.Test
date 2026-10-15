@@ -111,7 +111,7 @@ int __cdecl main(void)
 	TestObjectReaderSimple();
 	TestObjectReaderChunked();
 	TestObjectStackPointers();
-	//TestObjectGraphDeserialiser();
+	TestObjectGraphDeserialiser();
 	TestObjectConverter();
 	TestObjects();
 	TestStackPointers();
