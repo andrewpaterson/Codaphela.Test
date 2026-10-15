@@ -111,7 +111,7 @@ target_compile_definitions(baselib_options INTERFACE
 # -Wno-ignored-attributes: g++ drops ALIGN_64 when int64/uint64/float64 is a
 # template argument.  Templates that store such a type by value use MSVC_ALIGN
 # instead (see PrimitiveTypes.h), so the warning only reports the drop.
-target_compile_options(baselib_options INTERFACE -m32 -msse2 -mfpmath=sse -fno-strict-aliasing -Wno-ignored-attributes -fpermissive -w)
+target_compile_options(baselib_options INTERFACE -m32 -msse2 -mfpmath=sse -fno-strict-aliasing -Wno-ignored-attributes -w)
 target_link_options(baselib_options INTERFACE -m32)
 if(BASELIB_ASAN)
 	target_compile_options(baselib_options INTERFACE -fsanitize=address -fno-omit-frame-pointer)
