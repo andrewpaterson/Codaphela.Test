@@ -77,14 +77,7 @@ void TestObjectGraphDeserialiserBuildGraph1(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRemappingOfOIs(CExternalObjectWriter* pcWriter, CExternalObjectReader* pcReader)
 {
-	Ptr<CTestSaveableObject2>		cBase;
-	Ptr<CTestSaveableObject2>		cStart1;
-	Ptr<CRoot>						cRoot;
-	Ptr<CString>					szOne;
-	Ptr<CString>					cString1;
-	Ptr<CString>					cString2;
 	CExternalObjectSerialiser		cSerialiser;
-	Ptr<CTestSaveableObject1>		cShared;
 	int								i;
 	CExternalObjectDeserialiser		cDeserialiser;
 	CCodabase*						pcDatabase;
@@ -99,25 +92,31 @@ void TestRemappingOfOIs(CExternalObjectWriter* pcWriter, CExternalObjectReader* 
 	TestObjectGraphDeserialiserAddConstructors();
 	TestObjectGraphDeserialiserBuildGraph1();
 
-	cBase = gcObjects.Get("Ow/Start 1");
-	AssertTrue(cBase.IsNotNull());
-	AssertLong(3, cBase->GetIndex());
-	AssertString("Ow/Start 1", cBase.GetName());
-	cString1 = gcObjects.Get(6LL);
-	AssertString("Black", cString1->Text());
-	AssertLong(6LL, cString1->GetIndex());
-	cString2 = gcObjects.Get(7LL);
-	AssertString("Jack", cString2->Text());
-	AssertLong(7LL, cString2->GetIndex());
+	{
+		Ptr<CTestSaveableObject2>	cBase;
+		Ptr<CString>				cString1;
+		Ptr<CString>				cString2;
 
-	cSerialiser.Init(pcWriter);
-	AssertTrue(cSerialiser.Write(&cBase));
-	cSerialiser.Kill();
-	pcWriter->Kill();
+		cBase = gcObjects.Get("Ow/Start 1");
+		AssertTrue(cBase.IsNotNull());
+		AssertLong(3, cBase->GetIndex());
+		AssertString("Ow/Start 1", cBase.GetName());
+		cString1 = gcObjects.Get(6LL);
+		AssertString("Black", cString1->Text());
+		AssertLong(6LL, cString1->GetIndex());
+		cString2 = gcObjects.Get(7LL);
+		AssertString("Jack", cString2->Text());
+		AssertLong(7LL, cString2->GetIndex());
 
-	AssertLong(9LL, pcSequence->PeekNext());
+		cSerialiser.Init(pcWriter);
+		AssertTrue(cSerialiser.Write(&cBase));
+		cSerialiser.Kill();
+		pcWriter->Kill();
 
-	ObjectsFlush();
+		AssertLong(9LL, pcSequence->PeekNext());
+
+		ObjectsFlush();
+	}
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
@@ -131,48 +130,55 @@ void TestRemappingOfOIs(CExternalObjectWriter* pcWriter, CExternalObjectReader* 
 	ObjectsInit(pcDatabase, pcSequence);
 	TestObjectGraphDeserialiserAddConstructors();
 
-	cRoot = ORoot();
-
-	for (i = 0; i < 20; i++)
 	{
-		szOne = OMalloc<CString>("Hello World ");
-		szOne->Append(i);
-		cRoot->Add(szOne);
-		AssertLong(9LL + i, szOne->GetIndex());
+		Ptr<CTestSaveableObject2>	cStart1;
+		Ptr<CRoot>					cRoot;
+		Ptr<CString>				szOne;
+		Ptr<CString>				cString1;
+		Ptr<CTestSaveableObject1>	cShared;
+
+		cRoot = ORoot();
+
+		for (i = 0; i < 20; i++)
+		{
+			szOne = OMalloc<CString>("Hello World ");
+			szOne->Append(i);
+			cRoot->Add(szOne);
+			AssertLong(9LL + i, szOne->GetIndex());
+		}
+
+		cDeserialiser.Init(pcReader, false, &gcObjects);
+	 	cStart1 = cDeserialiser.Read("Ow/Start 1");
+		AssertTrue(cStart1.IsNotNull());
+		AssertLong(29, cStart1->GetIndex());
+
+
+		AssertTrue(cStart1->mp1.IsNotNull());
+		AssertString("CTestSaveableObject1", cStart1->mp1->ClassName());
+		cShared = cStart1->mp1;
+		AssertLong(31, cShared->GetIndex());
+
+		AssertTrue(cStart1->mp2.IsNotNull());
+		AssertString("CString", cStart1->mp2->ClassName());
+		cString1 = cStart1->mp2;
+		AssertLong(30, cString1->GetIndex());
+
+		cDeserialiser.Kill();
+
+		for (i = 0; i < 20; i++)
+		{
+			szOne = OMalloc<CString>("Hello World ");
+			szOne->Append(i + 20);
+			cRoot->Add(szOne);
+			AssertLong(32LL + i, szOne->GetIndex());
+		}
+
+		pcDatabase->ValidateIdentifiers();
+
+		pcReader->Kill();
+
+		ObjectsFlush();
 	}
-
-	cDeserialiser.Init(pcReader, false, &gcObjects);
- 	cStart1 = cDeserialiser.Read("Ow/Start 1");
-	AssertTrue(cStart1.IsNotNull());
-	AssertLong(29, cStart1->GetIndex());
-
-
-	AssertTrue(cStart1->mp1.IsNotNull());
-	AssertString("CTestSaveableObject1", cStart1->mp1->ClassName());
-	cShared = cStart1->mp1;
-	AssertLong(31, cShared->GetIndex());
-
-	AssertTrue(cStart1->mp2.IsNotNull());
-	AssertString("CString", cStart1->mp2->ClassName());
-	cString1 = cStart1->mp2;
-	AssertLong(30, cString1->GetIndex());
-
-	cDeserialiser.Kill();
-
-	for (i = 0; i < 20; i++)
-	{
-		szOne = OMalloc<CString>();
-		szOne->Init("Hello World ");
-		szOne->Append(i + 20);
-		cRoot->Add(szOne);
-		AssertLong(32LL + i, szOne->GetIndex());
-	}
-
-	pcDatabase->ValidateIdentifiers();
-
-	pcReader->Kill();
-
-	ObjectsFlush();
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -189,12 +195,8 @@ void TestObjectGraphDeserialiserReuseName(void)
 	CMultiFileObjectWriter			cWriter;
 	CObjectReaderSimpleDisk			cReader;
 	CFileUtil						cFileUtil;
-	Ptr<CTestSaveableObject2>		cBase;
-	Ptr<CTestSaveableObject2>		cStart1;
-	Ptr<CRoot>						cRoot;
 	CExternalObjectSerialiser		cSerialiser;
 	CExternalObjectDeserialiser		cDeserialiser;
-	Ptr<CTestSaveableObject1>		cShared;
 	CCodabase*						pcDatabase;
 	CSequence*						pcSequence;
 	char							szDirectory[] = "Output" _FS_ "GraphDeserialiser" _FS_ "Reuse";
@@ -214,24 +216,30 @@ void TestObjectGraphDeserialiserReuseName(void)
 	TestObjectGraphDeserialiserAddConstructors();
 	
 
-	cRoot = ORoot();
-	cStart1 = ONMalloc<CTestSaveableObject2>("Ow/Start 1", "Battery");
-	AssertLong(3, cStart1->GetIndex());
+	{
+		Ptr<CTestSaveableObject2>	cBase;
+		Ptr<CTestSaveableObject2>	cStart1;
+		Ptr<CRoot>					cRoot;
 
-	cRoot->Add(cStart1);
+		cRoot = ORoot();
+		cStart1 = ONMalloc<CTestSaveableObject2>("Ow/Start 1", "Battery");
+		AssertLong(3, cStart1->GetIndex());
 
-	cBase = gcObjects.Get("Ow/Start 1");
-	AssertTrue(cBase.IsNotNull());
-	AssertLong(3, cBase->GetIndex());
-	AssertString("Ow/Start 1", cBase.GetName());
+		cRoot->Add(cStart1);
 
-	cSerialiser.Init(&cWriter);
-	AssertTrue(cSerialiser.Write(&cBase));
-	cSerialiser.Kill();
-	cWriter.Kill();
+		cBase = gcObjects.Get("Ow/Start 1");
+		AssertTrue(cBase.IsNotNull());
+		AssertLong(3, cBase->GetIndex());
+		AssertString("Ow/Start 1", cBase.GetName());
+
+		cSerialiser.Init(&cWriter);
+		AssertTrue(cSerialiser.Write(&cBase));
+		cSerialiser.Kill();
+		cWriter.Kill();
 
 
-	ObjectsFlush();
+		ObjectsFlush();
+	}
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -244,23 +252,28 @@ void TestObjectGraphDeserialiserReuseName(void)
 	ObjectsInit(pcDatabase, pcSequence);
 	TestObjectGraphDeserialiserAddConstructors();
 
-	cBase = gcObjects.Get("Ow/Start 1");
+	{
+		Ptr<CTestSaveableObject2>	cBase;
+		Ptr<CTestSaveableObject2>	cStart1;
+
+		cBase = gcObjects.Get("Ow/Start 1");
 
 	
-	cDeserialiser.Init(&cReader, false, &gcObjects);
-	cStart1 = cDeserialiser.Read("Ow/Start 1");
-	AssertTrue(cStart1.IsNotNull());
-	AssertLong(4LL, cStart1->GetIndex());
+		cDeserialiser.Init(&cReader, false, &gcObjects);
+		cStart1 = cDeserialiser.Read("Ow/Start 1");
+		AssertTrue(cStart1.IsNotNull());
+		AssertLong(4LL, cStart1->GetIndex());
 
-	cDeserialiser.Kill();
+		cDeserialiser.Kill();
 
-	pcDatabase->ValidateIdentifiers();
+		pcDatabase->ValidateIdentifiers();
 
-	ObjectsFlush();
+		ObjectsFlush();
 
-	pcDatabase->ValidateIdentifiers();
+		pcDatabase->ValidateIdentifiers();
 
-	cReader.Kill();
+		cReader.Kill();
+	}
 
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
@@ -330,15 +343,10 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 	CChunkFileObjectWriter			cWriterStart1;
 	CChunkFileObjectWriter			cWriterStart2;
 	CFileUtil						cFileUtil;
-	Ptr<CTestSaveableObject2>		cOwStart1;
-	Ptr<CTestSaveableObject2>		cOwStart2;
 	CExternalObjectSerialiser		cSerialiser;
 	CExternalObjectDeserialiser		cDeserialiser;
 	CChunkFileSystemObjectReader		cReaderStart1;
 	CChunkFileSystemObjectReader		cReaderStart2;
-	Ptr<CTestSaveableObject1>		cShared;
-	Ptr<CRoot>						cRoot;
-	CPointer						cObject;
 	int								iNumUnknowns;
 	int								iNumIndexes;
 	int								iNumNames;
@@ -361,32 +369,38 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 	TestObjectGraphDeserialiserAddConstructors();
 	TestObjectGraphDeserialiserBuildGraph1();
 
-	cOwStart1 = gcObjects.Get("Ow/Start 1");
-	cSerialiser.Init(&cWriterStart1);
-	AssertTrue(cSerialiser.Write(&cOwStart1));
-	cSerialiser.Kill();
-	cWriterStart1.Kill();
+	{
+		Ptr<CTestSaveableObject2>	cOwStart1;
+		Ptr<CTestSaveableObject2>	cOwStart2;
+		Ptr<CTestSaveableObject1>	cShared;
 
-	cOwStart2 = gcObjects.Get("Ow/Start 2");
-	cSerialiser.Init(&cWriterStart2);
-	AssertTrue(cSerialiser.Write(&cOwStart2));
-	cSerialiser.Kill();
-	cWriterStart2.Kill();
+		cOwStart1 = gcObjects.Get("Ow/Start 1");
+		cSerialiser.Init(&cWriterStart1);
+		AssertTrue(cSerialiser.Write(&cOwStart1));
+		cSerialiser.Kill();
+		cWriterStart1.Kill();
 
-	cShared = gcObjects.Get("Ow/Shared");
+		cOwStart2 = gcObjects.Get("Ow/Start 2");
+		cSerialiser.Init(&cWriterStart2);
+		AssertTrue(cSerialiser.Write(&cOwStart2));
+		cSerialiser.Kill();
+		cWriterStart2.Kill();
+
+		cShared = gcObjects.Get("Ow/Shared");
 	
-	AssertInt(3, cShared->NumHeapFroms());
-	AssertPointer(&cOwStart1, cShared->GetHeapFrom(0));
-	AssertPointer(&cOwStart2, cShared->GetHeapFrom(1));
-	AssertPointer(&cShared, cShared->GetHeapFrom(2));  //Remember: cShared->mpObject = cShared;
-	AssertInt(2, cOwStart1->NumPointerTos());
-	AssertPointer(&cShared, cOwStart1->TestGetPointerTo(0));
-	AssertPointer(&cOwStart1->mp1, cOwStart1->TestGetPointerTo(0));
-	AssertPointer(&cOwStart1->mp2, cOwStart1->TestGetPointerTo(1));
-	AssertInt(2, cOwStart1->GetDistToRoot());
-	AssertInt(3, cShared->GetDistToRoot());
+		AssertInt(3, cShared->NumHeapFroms());
+		AssertPointer(&cOwStart1, cShared->GetHeapFrom(0));
+		AssertPointer(&cOwStart2, cShared->GetHeapFrom(1));
+		AssertPointer(&cShared, cShared->GetHeapFrom(2));  //Remember: cShared->mpObject = cShared;
+		AssertInt(2, cOwStart1->NumPointerTos());
+		AssertPointer(&cShared, cOwStart1->TestGetPointerTo(0));
+		AssertPointer(&cOwStart1->mp1, cOwStart1->TestGetPointerTo(0));
+		AssertPointer(&cOwStart1->mp2, cOwStart1->TestGetPointerTo(1));
+		AssertInt(2, cOwStart1->GetDistToRoot());
+		AssertInt(3, cShared->GetDistToRoot());
 
-	ObjectsFlush();
+		ObjectsFlush();
+	}
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
@@ -399,66 +413,74 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 	ObjectsInit(pcDatabase, pcSequence);
 
 	TestObjectGraphDeserialiserAddConstructors();
-	cRoot = ORoot();
+	{
+		Ptr<CTestSaveableObject2>	cOwStart1;
+		Ptr<CTestSaveableObject2>	cOwStart2;
+		Ptr<CTestSaveableObject1>	cShared;
+		Ptr<CRoot>					cRoot;
+		CPointer					cObject;
+
+		cRoot = ORoot();
 
 	
-	cReaderStart1.Init("Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping", "Start1");
-	cDeserialiser.Init(&cReaderStart1, false, &gcObjects);
-	cOwStart1 = cDeserialiser.Read("Ow/Start 1");
-	cDeserialiser.Kill();
-	cReaderStart1.Kill();
+		cReaderStart1.Init("Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping", "Start1");
+		cDeserialiser.Init(&cReaderStart1, false, &gcObjects);
+		cOwStart1 = cDeserialiser.Read("Ow/Start 1");
+		cDeserialiser.Kill();
+		cReaderStart1.Kill();
 
-	AssertInt(-1, cOwStart1->GetDistToRoot());
+		AssertInt(-1, cOwStart1->GetDistToRoot());
 	
-	cRoot->Add(cOwStart1);
+		cRoot->Add(cOwStart1);
 
-	cShared = gcObjects.Get("Ow/Shared");
+		cShared = gcObjects.Get("Ow/Shared");
 
-	//Make sure the pointed 'froms' are correctly setup after loading.
-	AssertInt(2, cShared->NumHeapFroms());
-	AssertPointer(&cOwStart1, cShared->GetHeapFrom(0));
-	AssertPointer(&cShared, cShared->GetHeapFrom(1));
-	AssertInt(2, cOwStart1->NumPointerTos());
-	AssertPointer(&cShared, cOwStart1->TestGetPointerTo(0));
-	AssertPointer(&cOwStart1->mp1, cOwStart1->TestGetPointerTo(0));
-	AssertPointer(&cOwStart1->mp2, cOwStart1->TestGetPointerTo(1));
-	AssertInt(2, cOwStart1->GetDistToRoot());
-	AssertInt(3, cShared->GetDistToRoot());
+		//Make sure the pointed 'froms' are correctly setup after loading.
+		AssertInt(2, cShared->NumHeapFroms());
+		AssertPointer(&cOwStart1, cShared->GetHeapFrom(0));
+		AssertPointer(&cShared, cShared->GetHeapFrom(1));
+		AssertInt(2, cOwStart1->NumPointerTos());
+		AssertPointer(&cShared, cOwStart1->TestGetPointerTo(0));
+		AssertPointer(&cOwStart1->mp1, cOwStart1->TestGetPointerTo(0));
+		AssertPointer(&cOwStart1->mp2, cOwStart1->TestGetPointerTo(1));
+		AssertInt(2, cOwStart1->GetDistToRoot());
+		AssertInt(3, cShared->GetDistToRoot());
 
-	AssertInt(89, cOwStart1->mp1->miInt);
-	cOwStart1->mp1->miInt = 66;
+		AssertInt(89, cOwStart1->mp1->miInt);
+		cOwStart1->mp1->miInt = 66;
 
-	iNumUnknowns = gcUnknowns.NumElements();
-	iNumIndexes = (int)gcObjects.NumMemoryIndexes();
-	iNumNames = gcObjects.NumMemoryNames();
+		iNumUnknowns = gcUnknowns.NumElements();
+		iNumIndexes = (int)gcObjects.NumMemoryIndexes();
+		iNumNames = gcObjects.NumMemoryNames();
 
 	
-	cReaderStart2.Init("Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping", "Start2");
-	cDeserialiser.Init(&cReaderStart2, false, &gcObjects);
-	cOwStart2 = cDeserialiser.Read("Ow/Start 2");
-	cDeserialiser.Kill();
-	cReaderStart2.Kill();
+		cReaderStart2.Init("Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping", "Start2");
+		cDeserialiser.Init(&cReaderStart2, false, &gcObjects);
+		cOwStart2 = cDeserialiser.Read("Ow/Start 2");
+		cDeserialiser.Kill();
+		cReaderStart2.Kill();
 
-	AssertInt(iNumUnknowns+1, gcUnknowns.NumElements());
-	AssertInt(iNumIndexes+1, (int)gcObjects.NumMemoryIndexes());
-	AssertInt(iNumNames, (int)gcObjects.NumMemoryNames());
+		AssertInt(iNumUnknowns+1, gcUnknowns.NumElements());
+		AssertInt(iNumIndexes+1, (int)gcObjects.NumMemoryIndexes());
+		AssertInt(iNumNames, (int)gcObjects.NumMemoryNames());
 
-	AssertNotNull(cOwStart2.Object());
-	cRoot->Add(cOwStart2);
+		AssertNotNull(cOwStart2.Object());
+		cRoot->Add(cOwStart2);
 
-	AssertNotNull(&cOwStart2);
-	AssertInt(89, cOwStart2->mp1->miInt);
-	AssertLong(cOwStart1->mp1->GetIndex(), cOwStart2->mp1->GetIndex());
-	AssertInt(89, cOwStart1->mp1->miInt);
-	AssertPointer(&cOwStart1->mp1, &cOwStart2->mp1);
+		AssertNotNull(&cOwStart2);
+		AssertInt(89, cOwStart2->mp1->miInt);
+		AssertLong(cOwStart1->mp1->GetIndex(), cOwStart2->mp1->GetIndex());
+		AssertInt(89, cOwStart1->mp1->miInt);
+		AssertPointer(&cOwStart1->mp1, &cOwStart2->mp1);
 
-	cObject = gcObjects.Get("Ow/Start 2");
-	AssertPointer(&cOwStart2, &cObject);
+		cObject = gcObjects.Get("Ow/Start 2");
+		AssertPointer(&cOwStart2, &cObject);
 
-	cObject = gcObjects.Get(cOwStart2->GetIndex());
-	AssertPointer(&cOwStart2, &cObject);
+		cObject = gcObjects.Get(cOwStart2->GetIndex());
+		AssertPointer(&cOwStart2, &cObject);
 
-	ObjectsFlush();
+		ObjectsFlush();
+	}
 	pcDatabase->Close();
 	SafeKill(pcDatabase);
 	SafeKill(pcSequence);
