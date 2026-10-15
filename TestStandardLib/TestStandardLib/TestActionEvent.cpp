@@ -83,7 +83,7 @@ void TestActionEvent(void)
 	cTarget.Init();
 	cEvent.Init("Frisky", &CTargetForAction::Dingo);
 	cEvent.AddListener(&cTarget);
-	cEvent.Call("Eustance");
+	cEvent.Call((void*)"Eustance");
 	cEvent.Kill();
 	AssertInt(7, cTarget.miCorrectCode);
 	cTarget.Kill();

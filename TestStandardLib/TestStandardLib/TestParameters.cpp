@@ -30,7 +30,7 @@ public:
 		uint64 ulli;
 		char c2;
 
-		SFuncParams::SFuncParams(int q, char c, uint64 ulli, char c2)
+		SFuncParams(int q, char c, uint64 ulli, char c2)
 		{
 			_iParamSize = sizeof(SFuncParams);
 			this->q = q;
@@ -51,7 +51,7 @@ struct SGlobalFuncParams : SParams
 	float z;
 	CChars argz;
 
-	SGlobalFuncParams::SGlobalFuncParams(float x, float y, float z, CChars argz)
+	SGlobalFuncParams(float x, float y, float z, CChars argz)
 	{
 		_iParamSize = sizeof(SGlobalFuncParams);
 		this->x = x;
@@ -94,7 +94,9 @@ void CTestClassFunctionParams::Func(CTestClassFunctionParams::SFuncParams* arg)
 	sz.Init();
 	sz.Append(arg->c2);
 
-	TestGlobalFunc(&SGlobalFuncParams((float)arg->q, (float)arg->c, (float)arg->ulli, sz));
+	SGlobalFuncParams	sParams((float)arg->q, (float)arg->c, (float)arg->ulli, sz);
+
+	TestGlobalFunc(&sParams);
 
 	sz.Kill();
 }
@@ -110,7 +112,9 @@ void TestParameters(void)
 	CTestClassFunctionParams	c;
 
 	ThisMultiCall_Void_Pointer pBlurgFunc = (ThisMultiCall_Void_Pointer)&CTestClassFunctionParams::Func;
-	((CFunctionCallerMultipleInheritance*)&c->*pBlurgFunc)(&CTestClassFunctionParams::SFuncParams(6, 't', 8LL, '2'));
+	CTestClassFunctionParams::SFuncParams	sParams(6, 't', 8LL, '2');
+
+	((CFunctionCallerMultipleInheritance*)&c->*pBlurgFunc)(&sParams);
 
 	TestStatistics();
 }
