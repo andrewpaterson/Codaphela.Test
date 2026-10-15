@@ -8,7 +8,10 @@
 //////////////////////////////////////////////////////////////////////////
 void CUnknownObjectHolder::Init(STestObjectFreedNotifier* psKilledNotifier)
 {
-	mpcTestObject = gcObjects.AddFreeObject<CTestObject>(OMalloc<CTestObject>());
+	Ptr<CTestObject>	pTestObject;
+
+	pTestObject = OMalloc<CTestObject>();
+	mpcTestObject = gcObjects.AddFreeObject<CTestObject>(pTestObject);
 	mpsFreedNotifier = psKilledNotifier;
 	if (mpsFreedNotifier)
 	{

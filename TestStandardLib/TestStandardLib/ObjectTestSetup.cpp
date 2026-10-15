@@ -492,7 +492,7 @@ void CGameWorld::AddPlayer(Ptr<CPlayerVehicle> pPlayer)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CGameWorld::AddTickable(CPointer& pTickable)
+void CGameWorld::AddTickable(const CPointer& pTickable)
 {
 	if (pTickable.IsNotNull())
 	{

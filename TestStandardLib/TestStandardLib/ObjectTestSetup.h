@@ -184,7 +184,7 @@ public:
 
 	void			Tick(void);
 	void			AddPlayer(Ptr<CPlayerVehicle> pPlayer);
-	void			AddTickable(CPointer& pTickable);
+	void			AddTickable(const CPointer& pTickable);
 	void			RemoveTickable(CPointer& pTickable);
 	Ptr<CArray<>>	GetTickables(void);
 };
