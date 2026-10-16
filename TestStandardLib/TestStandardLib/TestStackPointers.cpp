@@ -377,6 +377,54 @@ void TestStackPointersSorting1(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestStackPointersRemoveMissing(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CTestObject>			pTest1;
+		Ptr<CTestObject>			pTest2;
+		Ptr<CTestObject>			pOther;
+		STestObjectFreedNotifier	sFreedNotifier1;
+		STestObjectFreedNotifier	sFreedNotifierOther;
+		EFreeResult					eResult;
+		bool						bResult;
+		SLogConfig					sLogConfig;
+
+		pTest1 = OMalloc<CTestObject>(&sFreedNotifier1);
+		pTest2 = pTest1;
+		pOther = OMalloc<CTestObject>(&sFreedNotifierOther);
+		AssertInt(2, pTest1->NumStackFroms());
+		AssertSize(3, gcStackPointers.NumElements());
+
+		//pOther does not point to pTest1 so removing it must fail and leave pTest1's stack froms alone.
+		sLogConfig = gcLogger.SetSilent();
+		eResult = pTest1->RemoveStackFromTryFree(pOther.This(), true);
+		bResult = pTest1->TestRemoveStackFrom(pOther.This());
+		gcLogger.SetConfig(&sLogConfig);
+
+		AssertTrue(eResult == FR_Error);
+		AssertFalse(bResult);
+		AssertInt(2, pTest1->NumStackFroms());
+		AssertSize(3, gcStackPointers.NumElements());
+		AssertFalse(sFreedNotifier1.bFreed);
+		AssertLong(2, gcObjects.NumMemoryIndexes());
+
+		pTest2 = NULL;
+		AssertInt(1, pTest1->NumStackFroms());
+		AssertSize(2, gcStackPointers.NumElements());
+		AssertFalse(sFreedNotifier1.bFreed);
+	}
+	AssertSize(0, gcStackPointers.NumElements());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestStackPointers(void)
 {
 	BeginTests();
@@ -390,6 +438,7 @@ void TestStackPointers(void)
 	TestStackPointersHeapKillSingle();
 	TestStackPointersHeapKill();
 	TestStackPointersSorting1();
+	TestStackPointersRemoveMissing();
 
 	DataIOKill();
 	TypesKill();
