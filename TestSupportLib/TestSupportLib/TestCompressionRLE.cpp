@@ -1,8 +1,32 @@
 #include <string.h>
+#include "BaseLib/FileBasic.h"
+#include "BaseLib/MemoryFile.h"
 #include "SupportLib/RLEPacketEncoder.h"
 #include "SupportLib/RLEPacketDecoder.h"
 #include "SupportLib/RLEBitmapDecoder.h"
 #include "TestLib/Assert.h"
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void OpenMemoryFile(CFileBasic* pcFile, uint8* puiData, size uiDataSize)
+{
+	pcFile->Init(MemoryFile(puiData, uiDataSize));
+	AssertTrue(pcFile->Open(EFM_Read));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CloseMemoryFile(CFileBasic* pcFile)
+{
+	pcFile->Close();
+	pcFile->Kill();
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -109,67 +133,105 @@ void TestRLEPacketEncoderMultipleBytes(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRLEPacketDecoder(void)
 {
+	CFileBasic			cFile;
 	CRLEPacketDecoder	cDecoder;
-	uint8*				puiElement;
+	bool				bRepeat;
+	uint8				uiElement;
+	uint8				auiElement[2];
 
 	uint8 auiData[] = { 0x82, 9, 0x01, 1, 2 };
-	cDecoder.Init(auiData, 5, 1);
-	puiElement = cDecoder.Next();
-	AssertPointer(&auiData[1], puiElement);
-	AssertSize(2, cDecoder.GetPosition());
+	OpenMemoryFile(&cFile, auiData, sizeof(auiData));
+	cDecoder.Init(&cFile);
+	AssertTrue(cDecoder.Next(&bRepeat));
+	AssertFalse(bRepeat);
+	AssertTrue(cFile.ReadInt8(&uiElement));
+	AssertInt(9, uiElement);
 
-	//Every element of a run is the same pointer.
-	AssertPointer(&auiData[1], cDecoder.Next());
-	AssertPointer(&auiData[1], cDecoder.Next());
-	AssertPointer(&auiData[3], cDecoder.Next());
-	AssertPointer(&auiData[4], cDecoder.Next());
-	AssertSize(5, cDecoder.GetPosition());
-	AssertNull(cDecoder.Next());
+	//The rest of the run is repeated without reading.
+	AssertTrue(cDecoder.Next(&bRepeat));
+	AssertTrue(bRepeat);
+	AssertTrue(cDecoder.Next(&bRepeat));
+	AssertTrue(bRepeat);
+	AssertLong(2, cFile.GetFilePos());
+
+	AssertTrue(cDecoder.Next(&bRepeat));
+	AssertFalse(bRepeat);
+	AssertTrue(cFile.ReadInt8(&uiElement));
+	AssertInt(1, uiElement);
+	AssertTrue(cDecoder.Next(&bRepeat));
+	AssertFalse(bRepeat);
+	AssertTrue(cFile.ReadInt8(&uiElement));
+	AssertInt(2, uiElement);
+	AssertLong(5, cFile.GetFilePos());
+	AssertFalse(cDecoder.Next(&bRepeat));
 	cDecoder.Kill();
+	CloseMemoryFile(&cFile);
 
 	uint8 auiPixels[] = { 0x81, 0xA, 0xB,  0x00, 0xC, 0xD };
-	cDecoder.Init(auiPixels, 6, 2);
-	AssertPointer(&auiPixels[1], cDecoder.Next());
-	AssertPointer(&auiPixels[1], cDecoder.Next());
-	AssertPointer(&auiPixels[4], cDecoder.Next());
-	AssertNull(cDecoder.Next());
+	uint8 auiFirst[] = { 0xA, 0xB };
+	uint8 auiSecond[] = { 0xC, 0xD };
+	OpenMemoryFile(&cFile, auiPixels, sizeof(auiPixels));
+	cDecoder.Init(&cFile);
+	AssertTrue(cDecoder.Next(&bRepeat));
+	AssertFalse(bRepeat);
+	AssertTrue(cFile.ReadData(auiElement, 2));
+	AssertMemory(auiFirst, auiElement, 2);
+	AssertTrue(cDecoder.Next(&bRepeat));
+	AssertTrue(bRepeat);
+	AssertTrue(cDecoder.Next(&bRepeat));
+	AssertFalse(bRepeat);
+	AssertTrue(cFile.ReadData(auiElement, 2));
+	AssertMemory(auiSecond, auiElement, 2);
+	AssertFalse(cDecoder.Next(&bRepeat));
 	cDecoder.Kill();
+	CloseMemoryFile(&cFile);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Truncated data returns NULL rather than reading past the end.
+// Truncated data fails rather than reading past the end.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestRLEPacketDecoderTruncated(void)
 {
+	CFileBasic			cFile;
 	CRLEPacketDecoder	cDecoder;
+	bool				bRepeat;
+	uint8				uiElement;
+	uint8				auiElement[2];
 
+	//No packet header.
 	uint8 auiEmpty[] = { 0 };
-	cDecoder.Init(auiEmpty, 0, 1);
-	AssertNull(cDecoder.Next());
+	OpenMemoryFile(&cFile, auiEmpty, 0);
+	cDecoder.Init(&cFile);
+	AssertFalse(cDecoder.Next(&bRepeat));
 	cDecoder.Kill();
+	CloseMemoryFile(&cFile);
 
 	//A raw packet of three elements with only two present.
 	uint8 auiRaw[] = { 0x02, 1, 2 };
-	cDecoder.Init(auiRaw, 3, 1);
-	AssertPointer(&auiRaw[1], cDecoder.Next());
-	AssertPointer(&auiRaw[2], cDecoder.Next());
-	AssertNull(cDecoder.Next());
+	OpenMemoryFile(&cFile, auiRaw, sizeof(auiRaw));
+	cDecoder.Init(&cFile);
+	AssertTrue(cDecoder.Next(&bRepeat));
+	AssertTrue(cFile.ReadInt8(&uiElement));
+	AssertTrue(cDecoder.Next(&bRepeat));
+	AssertTrue(cFile.ReadInt8(&uiElement));
+	AssertTrue(cDecoder.Next(&bRepeat));
+	AssertFalse(bRepeat);
+	AssertFalse(cFile.ReadInt8(&uiElement));
 	cDecoder.Kill();
+	CloseMemoryFile(&cFile);
 
-	//A run header with no element.
-	uint8 auiRun[] = { 0x80 };
-	cDecoder.Init(auiRun, 1, 1);
-	AssertNull(cDecoder.Next());
-	cDecoder.Kill();
-
-	//A run with only part of a two byte element.
+	//A run header with only part of a two byte element.
 	uint8 auiPartial[] = { 0x80, 1 };
-	cDecoder.Init(auiPartial, 2, 2);
-	AssertNull(cDecoder.Next());
+	OpenMemoryFile(&cFile, auiPartial, sizeof(auiPartial));
+	cDecoder.Init(&cFile);
+	AssertTrue(cDecoder.Next(&bRepeat));
+	AssertFalse(bRepeat);
+	AssertFalse(cFile.ReadData(auiElement, 2));
 	cDecoder.Kill();
+	CloseMemoryFile(&cFile);
 }
 
 
@@ -181,10 +243,12 @@ void TestRLEPacketRoundTrip(void)
 {
 	CRLEPacketEncoder	cEncoder;
 	CRLEPacketDecoder	cDecoder;
+	CFileBasic			cFile;
 	uint8				auiSource[300 * 2];
 	uint8				auiEncoded[300 * 3];
+	uint8				auiElement[2];
 	size				uiSize;
-	uint8*				puiElement;
+	bool				bRepeat;
 	int					i;
 	bool				bSame;
 
@@ -201,20 +265,37 @@ void TestRLEPacketRoundTrip(void)
 	cEncoder.Kill();
 
 	bSame = true;
-	cDecoder.Init(auiEncoded, uiSize, 2);
+	OpenMemoryFile(&cFile, auiEncoded, uiSize);
+	cDecoder.Init(&cFile);
 	for (i = 0; i < 300; i++)
 	{
-		puiElement = cDecoder.Next();
-		if ((puiElement == NULL) || (memcmp(puiElement, &auiSource[i * 2], 2) != 0))
+		if (!cDecoder.Next(&bRepeat) || (!bRepeat && !cFile.ReadData(auiElement, 2)) || (memcmp(auiElement, &auiSource[i * 2], 2) != 0))
 		{
 			bSame = false;
 			break;
 		}
 	}
 	AssertTrue(bSame);
-	AssertSize(uiSize, cDecoder.GetPosition());
-	AssertNull(cDecoder.Next());
+	AssertLong((filePos)uiSize, cFile.GetFilePos());
+	AssertFalse(cDecoder.Next(&bRepeat));
 	cDecoder.Kill();
+	CloseMemoryFile(&cFile);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+bool DecodeBitmapRLE(CRLEBitmapDecoder* pcDecoder, uint8* puiData, size uiDataSize, uint8* puiIndices)
+{
+	CFileBasic	cFile;
+	bool		bResult;
+
+	OpenMemoryFile(&cFile, puiData, uiDataSize);
+	bResult = pcDecoder->Decode(&cFile, puiIndices);
+	CloseMemoryFile(&cFile);
+	return bResult;
 }
 
 
@@ -246,7 +327,7 @@ void TestRLEBitmapDecoderRLE8(void)
 
 	memset(auiIndices, 0xEE, sizeof(auiIndices));
 	cDecoder.Init(4, 3, false);
-	bResult = cDecoder.Decode(auiData, sizeof(auiData), auiIndices);
+	bResult = DecodeBitmapRLE(&cDecoder, auiData, sizeof(auiData), auiIndices);
 	AssertTrue(bResult);
 	AssertMemory(auiExpected, auiIndices, sizeof(auiIndices));
 	cDecoder.Kill();
@@ -272,7 +353,7 @@ void TestRLEBitmapDecoderRLE4(void)
 
 	memset(auiIndices, 0xEE, sizeof(auiIndices));
 	cDecoder.Init(8, 1, true);
-	bResult = cDecoder.Decode(auiData, sizeof(auiData), auiIndices);
+	bResult = DecodeBitmapRLE(&cDecoder, auiData, sizeof(auiData), auiIndices);
 	AssertTrue(bResult);
 	AssertMemory(auiExpected, auiIndices, sizeof(auiIndices));
 	cDecoder.Kill();
@@ -293,19 +374,19 @@ void TestRLEBitmapDecoderEdges(void)
 
 	//An absolute run past the end of the data fails.
 	uint8 auiAbsolute[] = { 0x00, 0x04, 0x01, 0x02 };
-	bResult = cDecoder.Decode(auiAbsolute, sizeof(auiAbsolute), auiIndices);
+	bResult = DecodeBitmapRLE(&cDecoder, auiAbsolute, sizeof(auiAbsolute), auiIndices);
 	AssertFalse(bResult);
 
 	//A delta past the end of the data fails.
 	uint8 auiDelta[] = { 0x00, 0x02, 0x01 };
-	bResult = cDecoder.Decode(auiDelta, sizeof(auiDelta), auiIndices);
+	bResult = DecodeBitmapRLE(&cDecoder, auiDelta, sizeof(auiDelta), auiIndices);
 	AssertFalse(bResult);
 
 	//A missing end of bitmap is allowed.
 	uint8 auiNoEnd[] = { 0x02, 0x05 };
 	uint8 auiNoEndExpected[] = { 0x05, 0x05, 0xEE, 0xEE };
 	memset(auiIndices, 0xEE, sizeof(auiIndices));
-	bResult = cDecoder.Decode(auiNoEnd, sizeof(auiNoEnd), auiIndices);
+	bResult = DecodeBitmapRLE(&cDecoder, auiNoEnd, sizeof(auiNoEnd), auiIndices);
 	AssertTrue(bResult);
 	AssertMemory(auiNoEndExpected, auiIndices, sizeof(auiIndices));
 
@@ -313,7 +394,7 @@ void TestRLEBitmapDecoderEdges(void)
 	uint8 auiBelow[] = { 0x00, 0x00, 0x02, 0x03, 0x00, 0x03, 0x04, 0x05, 0x06, 0x00 };
 	uint8 auiBelowExpected[] = { 0xEE, 0xEE, 0xEE, 0xEE };
 	memset(auiIndices, 0xEE, sizeof(auiIndices));
-	bResult = cDecoder.Decode(auiBelow, sizeof(auiBelow), auiIndices);
+	bResult = DecodeBitmapRLE(&cDecoder, auiBelow, sizeof(auiBelow), auiIndices);
 	AssertTrue(bResult);
 	AssertMemory(auiBelowExpected, auiIndices, sizeof(auiIndices));
 
