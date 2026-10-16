@@ -289,6 +289,66 @@ void TestArrayObjectOnStackRemoveObject(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestArrayObjectOnStackKillContainedHeapObject(void)
+{
+	ObjectsInit();
+	{
+		CArray<CTestSimpleObject>	aArray;
+		STestObjectFreedNotifier	sFreed;
+
+		Ptr<CTestSimpleObject> pTestObject = OMalloc<CTestSimpleObject>(&sFreed, 23);
+		aArray.Init();
+		aArray.Add(pTestObject);
+		AssertSize(1, aArray.NumElements());
+		AssertSize(2, gcStackPointers.NumElements());
+
+		pTestObject->Kill();
+		AssertTrue(sFreed.bFreed);
+		AssertSize(0, gcObjects.NumMemoryIndexes());
+		AssertNull(&pTestObject);
+		AssertSize(0, aArray.NumElements());
+
+		aArray.Kill();
+		AssertSize(0, gcStackPointers.NumElements());
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayObjectOnStackKillContainedStackObject(void)
+{
+	ObjectsInit();
+	{
+		CArray<CTestSimpleObject>	aArray;
+		STestObjectFreedNotifier	sFreed;
+		CTestSimpleObject			cTestObject;
+
+		cTestObject.Init(&sFreed, 23);
+		aArray.Init();
+		aArray.Add(&cTestObject);
+		AssertSize(1, aArray.NumElements());
+
+		cTestObject.Kill();
+		AssertTrue(sFreed.bFreed);
+		AssertSize(0, aArray.NumElements());
+
+		aArray.Kill();
+		AssertSize(0, gcStackPointers.NumElements());
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestArrayObjectConstructorExists(void)
 {
 	CConstructors*	pcConstructors;
@@ -837,6 +897,8 @@ void TestArrayObject(void)
 	TestArrayObjectSneakyOnStack();
 	TestArrayObjectOnStackKill();
 	TestArrayObjectOnStackRemoveObject();
+	TestArrayObjectOnStackKillContainedHeapObject();
+	TestArrayObjectOnStackKillContainedStackObject();
 	TestArrayObjectConstructorExists();
 	TestArrayObjectClassExists();
 	TestArrayObjectExternalSerialisation();
