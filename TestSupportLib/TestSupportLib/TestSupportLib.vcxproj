@@ -215,6 +215,7 @@
     <ClCompile Include="TestImageSwizzle.cpp" />
     <ClCompile Include="TestImageWriter.cpp" />
     <ClCompile Include="TestImageBMP.cpp" />
+    <ClCompile Include="TestImageTGA.cpp" />
     <ClCompile Include="TestRectangleBestPacker.cpp" />
     <ClCompile Include="TestRectanglePow2Packer.cpp" />
     <ClCompile Include="TestMeshColour.cpp" />

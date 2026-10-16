@@ -16,6 +16,7 @@ void TestImageCel(void);
 void TestImageCelsSource(void);
 void TestImageWriter(void);
 void TestImageBMP(void);
+void TestImageTGA(void);
 void TestImageColour(void);
 void TestImageCombiner(void);
 void TestImageDivider(void);
@@ -73,6 +74,7 @@ int __cdecl main(void)
 	TestImageReader();
 	TestImageWriter();
 	TestImageBMP();
+	TestImageTGA();
 	TestImageGreyToRGB();
 	TestImageRGBToGrey();
 	TestImageDivider();

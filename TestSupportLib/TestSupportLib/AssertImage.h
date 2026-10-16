@@ -1,4 +1,5 @@
 #ifndef __ASSERT_IMAGE_H__
+#define __ASSERT_IMAGE_H__
 #include "SupportLib/Image.h"
 
 
@@ -6,6 +7,7 @@
 
 
 bool PrivateAssertChannel(EImagePurpose ePurpose, EChannelType eType, EPrimitiveType ePrimitive, SChannel* psChannel, size iLine, char* szFile);
+void AssertSameImage(Ptr<CImage> pcExpected, Ptr<CImage> pcActual);
 
 
 #endif // __ASSERT_IMAGE_H__

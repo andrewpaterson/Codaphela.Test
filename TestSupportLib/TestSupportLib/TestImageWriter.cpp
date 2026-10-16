@@ -6,6 +6,7 @@
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
 #include "TestLib/Assert.h"
+#include "AssertImage.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -117,26 +118,22 @@ void TestImagePNGWriter(void)
 //////////////////////////////////////////////////////////////////////////
 void TestImageTGAWriter(void)
 {
-	//CImage		pcImage;
-	//CImage		pcComp;
-	//CArrayInt	aiChannels;
+	bool	bResult;
 
-	//Ptr<CImage> pcImage = ReadImage("Input" _FS_ "tar24un.tga");
-	//WriteImage(pcImage, "Output" _FS_ "tar24un.tga");
-	//Ptr<CImage> pcComp = ReadImage("Output" _FS_ "tar24un.tga");
-	//AssertInt(32, pcComp->GetWidth());
-	//AssertInt(32, pcComp->GetHeight());
-	//acChannels.Init();
-	//pcComp->GetAllChannels(&aiChannels);
-	//AssertInt(3, aiChannels.NumElements());
-	//AssertInt(IMAGE_DIFFUSE_RED, aiChannels.GetValue(0));
-	//AssertInt(IMAGE_DIFFUSE_GREEN, aiChannels.GetValue(1));
-	//AssertInt(IMAGE_DIFFUSE_BLUE, aiChannels.GetValue(2));
-	//acChannels.Kill();
-	//AssertMemory(pcImage->mcChannels.GetData(), pcComp->mcChannels.GetData(), pcImage->GetByteSize());
-	//aiChannels.Kill();
-	//pcImage->Kill();
-	//pcComp->Kill();
+	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "tar24un.tga");
+	bResult = WriteImage(pcImage, "Output" _FS_ "tar24un.tga");
+	AssertTrue(bResult);
+	Ptr<CImage> pcComp = ReadImage("Output" _FS_ "tar24un.tga");
+	AssertSameImage(pcImage, pcComp);
+
+	pcImage = ReadImage("Input" _FS_ "tar32un.tga");
+	bResult = WriteImage(pcImage, "Output" _FS_ "tar32un.tga");
+	AssertTrue(bResult);
+	pcComp = ReadImage("Output" _FS_ "tar32un.tga");
+	AssertSameImage(pcImage, pcComp);
+
+	pcImage = NULL;
+	pcComp = NULL;
 }
 
 
