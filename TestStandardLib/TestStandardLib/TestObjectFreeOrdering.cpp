@@ -64,6 +64,83 @@ void TestObjectFreeOrderingOutOfOrderOnStack(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectFreeOrderingAllocate(bool bHolderFirst, Ptr<CTestObject>& pObject, STestObjectFreedNotifier* psFreeNotifierObject, STestObjectFreedNotifier* psFreeNotifierHolder)
+{
+	Ptr<CTestNesHolderObject>	pHolder;
+
+	if (bHolderFirst)
+	{
+		pHolder = OMalloc<CTestNesHolderObject>(psFreeNotifierHolder, (CPointer)NULL);
+		pObject = OMalloc<CTestObject>(psFreeNotifierObject);
+		pHolder->SetObject(pObject);
+	}
+	else
+	{
+		pObject = OMalloc<CTestObject>(psFreeNotifierObject);
+		pHolder = OMalloc<CTestNesHolderObject>(psFreeNotifierHolder, pObject);
+	}
+
+	//The holder is only reachable through the Object it depends on.
+	pObject->mpObject = pHolder;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectFreeOrderingScopeExit(bool bHolderFirst)
+{
+	STestObjectFreedNotifier	sFreeNotifierObject;
+	STestObjectFreedNotifier	sFreeNotifierHolder;
+
+	ObjectsInit();
+	{
+		Ptr<CTestObject>	pObject;
+
+		TestObjectFreeOrderingAllocate(bHolderFirst, pObject, &sFreeNotifierObject, &sFreeNotifierHolder);
+		AssertSize(2, gcObjects.NumMemoryIndexes());
+		AssertFalse(sFreeNotifierObject.bFreed);
+		AssertFalse(sFreeNotifierHolder.bFreed);
+	}
+	AssertTrue(sFreeNotifierObject.bFreed);
+	AssertTrue(sFreeNotifierHolder.bFreed);
+	AssertFalse(sFreeNotifierHolder.bDependsOnFreedFirst);
+	AssertSize(0, gcObjects.NumMemoryIndexes());
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectFreeOrderingExplicitKill(bool bHolderFirst)
+{
+	STestObjectFreedNotifier	sFreeNotifierObject;
+	STestObjectFreedNotifier	sFreeNotifierHolder;
+
+	ObjectsInit();
+	{
+		Ptr<CTestObject>	pObject;
+
+		TestObjectFreeOrderingAllocate(bHolderFirst, pObject, &sFreeNotifierObject, &sFreeNotifierHolder);
+		AssertSize(2, gcObjects.NumMemoryIndexes());
+
+		pObject->Kill();
+		AssertTrue(sFreeNotifierObject.bFreed);
+		AssertTrue(sFreeNotifierHolder.bFreed);
+		AssertFalse(sFreeNotifierHolder.bDependsOnFreedFirst);
+		AssertSize(0, gcObjects.NumMemoryIndexes());
+	}
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectFreeOrdering(void)
 {
 	BeginTests();
@@ -73,6 +150,10 @@ void TestObjectFreeOrdering(void)
 	DataIOInit();
 
 	TestObjectFreeOrderingOutOfOrderOnStack();
+	TestObjectFreeOrderingScopeExit(false);
+	TestObjectFreeOrderingScopeExit(true);
+	TestObjectFreeOrderingExplicitKill(false);
+	TestObjectFreeOrderingExplicitKill(true);
 
 	DataIOKill();
 	TypesKill();

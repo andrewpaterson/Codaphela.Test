@@ -519,6 +519,7 @@ void CTestNesHolderObject::Init(STestObjectFreedNotifier* psKilledNotifier, Ptr<
 	if (mpsFreedNotifier)
 	{
 		mpsFreedNotifier->bFreed = false;
+		mpsFreedNotifier->bDependsOnFreedFirst = false;
 	}
 	mpDependsOnForFree = pDependsOnForFree;
 	PostInit();
@@ -541,10 +542,26 @@ void CTestNesHolderObject::Class(void)
 //////////////////////////////////////////////////////////////////////////
 void CTestNesHolderObject::Free(void)
 {
+	CTestObject*	pcDependsOnForFree;
+
 	if (mpDependsOnForFree.IsNull())
 	{
 		gcLogger.Error2(__METHOD__, " Depends on Object has been freed prematurely.", NULL);
+		if (mpsFreedNotifier)
+		{
+			mpsFreedNotifier->bDependsOnFreedFirst = true;
+		}
 	}
+	else if (mpsFreedNotifier)
+	{
+		//If the depends on Object was freed in the same batch as this it has not been deallocated yet.
+		pcDependsOnForFree = (CTestObject*)mpDependsOnForFree.Object();
+		if ((pcDependsOnForFree->mpsFreedNotifier) && (pcDependsOnForFree->mpsFreedNotifier->bFreed))
+		{
+			mpsFreedNotifier->bDependsOnFreedFirst = true;
+		}
+	}
+
 	if (mpsFreedNotifier)
 	{
 		mpsFreedNotifier->bFreed = true;

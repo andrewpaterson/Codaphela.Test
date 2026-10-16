@@ -11,6 +11,7 @@
 struct STestObjectFreedNotifier
 {
 	bool bFreed;
+	bool bDependsOnFreedFirst;  //Only set by CTestNesHolderObject if the Object it depends on was freed or cleared before it.
 };
 
 
