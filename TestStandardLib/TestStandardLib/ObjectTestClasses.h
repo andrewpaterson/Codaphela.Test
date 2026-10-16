@@ -12,6 +12,8 @@ struct STestObjectFreedNotifier
 {
 	bool bFreed;
 	bool bDependsOnFreedFirst;  //Only set by CTestNesHolderObject if the Object it depends on was freed or cleared before it.
+	bool bObjectNullWhenFreed;  //Only set by CTestObject.
+	bool bTestNullWhenFreed;    //Only set by CTestObject.
 };
 
 
@@ -193,6 +195,35 @@ public:
 	void	Free(void) override;
 
 	void	SetObject(Ptr<CTestObject> pDependsOnForFree);
+};
+
+
+//Like CTestNesHolderObject but releases another Object when it is freed.
+class CTestNesHolderReleaseObject : public CObject
+{
+CONSTRUCTABLE(CTestNesHolderReleaseObject)
+DESTRUCTABLE(CTestNesHolderReleaseObject)
+public:
+	Ptr<CTestObject>			mpDependsOnForFree;
+	CPointer					mpReleasedOnFree;
+	STestObjectFreedNotifier*	mpsFreedNotifier;
+
+	void	Init(STestObjectFreedNotifier* psKilledNotifier, Ptr<CTestObject> pDependsOnForFree);
+	void	Class(void) override;
+	void	Free(void) override;
+};
+
+
+class CTestEmbeddedTestObject : public CObject
+{
+CONSTRUCTABLE(CTestEmbeddedTestObject)
+DESTRUCTABLE(CTestEmbeddedTestObject)
+public:
+	CTestObject		mcEmbedded;
+
+	void	Init(STestObjectFreedNotifier* psEmbeddedFreedNotifier);
+	void	Class(void) override;
+	void	Free(void) override;
 };
 
 

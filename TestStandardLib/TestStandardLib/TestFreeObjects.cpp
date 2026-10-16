@@ -228,6 +228,62 @@ void TestObjectsFreeUnknownInObjectPointerDestructor(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectsFreeRootRemoveAll(void)
+{
+	STestObjectFreedNotifier	sNotifierRooted;
+	STestObjectFreedNotifier	sNotifierFree;
+	SLogConfig					sLogConfig;
+
+	ObjectsInit();
+	{
+		Ptr<CRoot>			pRoot;
+		Ptr<CTestObject>	pRooted;
+		Ptr<CTestObject>	pFree;
+		CTestObject*		pcFree;
+		bool				bResult;
+
+		pRoot = ORoot();
+		pRooted = OMalloc<CTestObject>(&sNotifierRooted);
+		pRoot->Add(pRooted);
+		pRooted = NULL;
+
+		pFree = OMalloc<CTestObject>(&sNotifierFree);
+		pcFree = gcObjects.AddFreeObject<CTestObject>(pFree);
+		pFree = NULL;
+		AssertSize(1, gcObjects.NumFreeObjects());
+		AssertSize(2, pRoot->NumObjects());
+		AssertSize(6, gcObjects.NumMemoryIndexes());
+
+		//Removing all from the Root would free the free Object out from under its owner.
+		sLogConfig = gcLogger.SetSilent();
+		bResult = pRoot->RemoveAll();
+		gcLogger.SetConfig(&sLogConfig);
+		AssertFalse(bResult);
+		AssertFalse(sNotifierRooted.bFreed);
+		AssertFalse(sNotifierFree.bFreed);
+		AssertSize(1, gcObjects.NumFreeObjects());
+		AssertSize(2, pRoot->NumObjects());
+		AssertSize(6, gcObjects.NumMemoryIndexes());
+
+		AssertTrue(gcObjects.RemoveFreeObject(pcFree));
+		AssertTrue(sNotifierFree.bFreed);
+		AssertSize(0, gcObjects.NumFreeObjects());
+
+		AssertTrue(pRoot->RemoveAll());
+		AssertTrue(sNotifierRooted.bFreed);
+		AssertSize(0, pRoot->NumObjects());
+		AssertSize(2, gcObjects.NumMemoryIndexes());
+		gcObjects.ValidateObjectsConsistency();
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFreeObjects(void)
 {
 	BeginTests();
@@ -240,6 +296,7 @@ void TestFreeObjects(void)
 	TestObjectsFreeUnknownOnly();
 	TestObjectsFreeUnknownInObjectAssignNull();
 	TestObjectsFreeUnknownInObjectPointerDestructor();
+	TestObjectsFreeRootRemoveAll();
 
 	DataIOKill();
 	TypesKill();

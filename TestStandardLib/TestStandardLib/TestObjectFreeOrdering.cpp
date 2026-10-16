@@ -107,7 +107,10 @@ void TestObjectFreeOrderingScopeExit(bool bHolderFirst)
 	AssertTrue(sFreeNotifierObject.bFreed);
 	AssertTrue(sFreeNotifierHolder.bFreed);
 	AssertFalse(sFreeNotifierHolder.bDependsOnFreedFirst);
+	//The holder is freed and deallocated in the first batch so the Object's pointer to it is cleared before the Object is freed.
+	AssertTrue(sFreeNotifierObject.bObjectNullWhenFreed);
 	AssertSize(0, gcObjects.NumMemoryIndexes());
+	gcObjects.ValidateObjectsConsistency();
 	ObjectsKill();
 }
 
@@ -132,8 +135,194 @@ void TestObjectFreeOrderingExplicitKill(bool bHolderFirst)
 		AssertTrue(sFreeNotifierObject.bFreed);
 		AssertTrue(sFreeNotifierHolder.bFreed);
 		AssertFalse(sFreeNotifierHolder.bDependsOnFreedFirst);
+		//The holder is freed and deallocated in the first batch so the Object's pointer to it is cleared before the Object is freed.
+		AssertTrue(sFreeNotifierObject.bObjectNullWhenFreed);
 		AssertSize(0, gcObjects.NumMemoryIndexes());
+		gcObjects.ValidateObjectsConsistency();
 	}
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectFreeOrderingStackKill(void)
+{
+	STestObjectFreedNotifier	sFreeNotifierObject;
+	STestObjectFreedNotifier	sFreeNotifierHolder;
+
+	ObjectsInit();
+	{
+		CTestObject					cObject;
+		Ptr<CTestNesHolderObject>	pHolder;
+
+		cObject.Init(&sFreeNotifierObject);
+		pHolder = OMalloc<CTestNesHolderObject>(&sFreeNotifierHolder, &cObject);
+
+		//The holder is only reachable through the Object on the stack that it depends on.
+		cObject.mpObject = pHolder;
+		pHolder = NULL;
+		AssertSize(1, gcObjects.NumMemoryIndexes());
+		AssertFalse(sFreeNotifierHolder.bFreed);
+
+		cObject.Kill();
+		AssertTrue(sFreeNotifierObject.bFreed);
+		AssertTrue(sFreeNotifierHolder.bFreed);
+		AssertFalse(sFreeNotifierHolder.bDependsOnFreedFirst);
+		AssertSize(0, gcObjects.NumMemoryIndexes());
+		gcObjects.ValidateObjectsConsistency();
+	}
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectFreeOrderingExplicitKillTwoPointers(void)
+{
+	STestObjectFreedNotifier	sNotifierKilled;
+	STestObjectFreedNotifier	sNotifierHolder;
+
+	ObjectsInit();
+	{
+		Ptr<CTestObject>	pKilled;
+		Ptr<CTestObject>	pHolder;
+
+		pKilled = OMalloc<CTestObject>(&sNotifierKilled);
+		pHolder = OMalloc<CTestObject>(&sNotifierHolder);
+
+		//The holder has two pointers to the killed Object and is only reachable through it.
+		pHolder->mpObject = pKilled;
+		pHolder->mpTest = pKilled;
+		pKilled->mpObject = pHolder;
+		pHolder = NULL;
+		AssertSize(2, pKilled->NumHeapFroms());
+
+		pKilled->Kill();
+		AssertTrue(sNotifierKilled.bFreed);
+		AssertTrue(sNotifierHolder.bFreed);
+		AssertFalse(sNotifierHolder.bObjectNullWhenFreed);
+		AssertFalse(sNotifierHolder.bTestNullWhenFreed);
+		AssertSize(0, gcObjects.NumMemoryIndexes());
+		gcObjects.ValidateObjectsConsistency();
+	}
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectFreeOrderingExplicitKillEmbeddedPointer(void)
+{
+	STestObjectFreedNotifier	sNotifierKilled;
+	STestObjectFreedNotifier	sNotifierEmbedded;
+
+	ObjectsInit();
+	{
+		Ptr<CTestObject>				pKilled;
+		Ptr<CTestEmbeddedTestObject>	pContainer;
+
+		pKilled = OMalloc<CTestObject>(&sNotifierKilled);
+		pContainer = OMalloc<CTestEmbeddedTestObject>(&sNotifierEmbedded);
+
+		//An Object embedded in the container points to the killed Object and the container is only reachable through it.
+		pContainer->mcEmbedded.mpObject = pKilled;
+		pKilled->mpObject = pContainer;
+		pContainer = NULL;
+
+		pKilled->Kill();
+		AssertTrue(sNotifierKilled.bFreed);
+		AssertTrue(sNotifierEmbedded.bFreed);
+		AssertFalse(sNotifierEmbedded.bObjectNullWhenFreed);
+		AssertSize(0, gcObjects.NumMemoryIndexes());
+		gcObjects.ValidateObjectsConsistency();
+	}
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectFreeOrderingExplicitKillSurvivor(void)
+{
+	STestObjectFreedNotifier	sNotifierKilled;
+	STestObjectFreedNotifier	sNotifierSurvivor;
+
+	ObjectsInit();
+	{
+		Ptr<CRoot>			pRoot;
+		Ptr<CTestObject>	pKilled;
+		Ptr<CTestObject>	pSurvivor;
+
+		pRoot = ORoot();
+		pKilled = OMalloc<CTestObject>(&sNotifierKilled);
+		pSurvivor = OMalloc<CTestObject>(&sNotifierSurvivor);
+		pRoot->Add(pSurvivor);
+
+		//The survivor is reachable from the Root so its pointer to the killed Object must be cleared, not put back.
+		pSurvivor->mpTest = pKilled;
+		AssertSize(1, pKilled->NumHeapFroms());
+
+		pKilled->Kill();
+		AssertTrue(sNotifierKilled.bFreed);
+		AssertFalse(sNotifierSurvivor.bFreed);
+		AssertTrue(pSurvivor->mpTest.IsNull());
+		AssertSize(1, pSurvivor->NumHeapFroms());
+		AssertSize(3, gcObjects.NumMemoryIndexes());
+		gcObjects.ValidateObjectsConsistency();
+
+		pSurvivor = NULL;
+		AssertTrue(pRoot->RemoveAll());
+		AssertTrue(sNotifierSurvivor.bFreed);
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectFreeOrderingNestedRemoval(void)
+{
+	STestObjectFreedNotifier	sNotifierObject;
+	STestObjectFreedNotifier	sNotifierHolder;
+	STestObjectFreedNotifier	sNotifierReleased;
+
+	ObjectsInit();
+	{
+		Ptr<CTestObject>					pObject;
+		Ptr<CTestNesHolderReleaseObject>	pHolder;
+		Ptr<CTestObject>					pReleased;
+
+		//The holder depends on the Object so the Object is freed in the second batch.
+		//When the holder is freed in the first batch it releases an Object that points to the Object.
+		//Freeing the released Object finds the Object again and must not free it a second time.
+		pObject = OMalloc<CTestObject>(&sNotifierObject);
+		pHolder = OMalloc<CTestNesHolderReleaseObject>(&sNotifierHolder, pObject);
+		pReleased = OMalloc<CTestObject>(&sNotifierReleased);
+		pHolder->mpReleasedOnFree = pReleased;
+		pReleased->mpTest = pObject;
+		pObject->mpObject = pHolder;
+		pHolder = NULL;
+		pReleased = NULL;
+		AssertSize(3, gcObjects.NumMemoryIndexes());
+	}
+	AssertTrue(sNotifierObject.bFreed);
+	AssertTrue(sNotifierHolder.bFreed);
+	AssertTrue(sNotifierReleased.bFreed);
+	AssertFalse(sNotifierHolder.bDependsOnFreedFirst);
+	AssertSize(0, gcObjects.NumMemoryIndexes());
+	gcObjects.ValidateObjectsConsistency();
 	ObjectsKill();
 }
 
@@ -208,6 +397,11 @@ void TestObjectFreeOrdering(void)
 	TestObjectFreeOrderingExplicitKill(true);
 	TestObjectFreeOrderingCollection(false);
 	TestObjectFreeOrderingCollection(true);
+	TestObjectFreeOrderingStackKill();
+	TestObjectFreeOrderingExplicitKillTwoPointers();
+	TestObjectFreeOrderingExplicitKillEmbeddedPointer();
+	TestObjectFreeOrderingExplicitKillSurvivor();
+	TestObjectFreeOrderingNestedRemoval();
 
 	DataIOKill();
 	TypesKill();

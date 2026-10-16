@@ -67,6 +67,8 @@ void CTestObject::Free(void)
 	if (mpsFreedNotifier)
 	{
 		mpsFreedNotifier->bFreed = true;
+		mpsFreedNotifier->bObjectNullWhenFreed = mpObject.IsNull();
+		mpsFreedNotifier->bTestNullWhenFreed = mpTest.IsNull();
 	}
 }
 
@@ -576,5 +578,95 @@ void CTestNesHolderObject::Free(void)
 void CTestNesHolderObject::SetObject(Ptr<CTestObject> pDependsOnForFree)
 {
 	mpDependsOnForFree = pDependsOnForFree;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestEmbeddedTestObject::Init(STestObjectFreedNotifier* psEmbeddedFreedNotifier)
+{
+	PreInit();
+	mcEmbedded.Init(psEmbeddedFreedNotifier);
+	PostInit();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestEmbeddedTestObject::Class(void)
+{
+	M_Embedded(mcEmbedded);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestEmbeddedTestObject::Free(void)
+{
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestNesHolderReleaseObject::Init(STestObjectFreedNotifier* psKilledNotifier, Ptr<CTestObject> pDependsOnForFree)
+{
+	PreInit();
+	mpsFreedNotifier = psKilledNotifier;
+	if (mpsFreedNotifier)
+	{
+		mpsFreedNotifier->bFreed = false;
+		mpsFreedNotifier->bDependsOnFreedFirst = false;
+	}
+	mpDependsOnForFree = pDependsOnForFree;
+	PostInit();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestNesHolderReleaseObject::Class(void)
+{
+	Nes(M_Pointer(mpDependsOnForFree));
+	M_Pointer(mpReleasedOnFree);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CTestNesHolderReleaseObject::Free(void)
+{
+	CTestObject*	pcDependsOnForFree;
+
+	//Releasing the Object can free it while this is being freed.
+	mpReleasedOnFree = NULL;
+
+	if (mpsFreedNotifier)
+	{
+		if (mpDependsOnForFree.IsNull())
+		{
+			mpsFreedNotifier->bDependsOnFreedFirst = true;
+		}
+		else
+		{
+			pcDependsOnForFree = (CTestObject*)mpDependsOnForFree.Object();
+			if ((pcDependsOnForFree->mpsFreedNotifier) && (pcDependsOnForFree->mpsFreedNotifier->bFreed))
+			{
+				mpsFreedNotifier->bDependsOnFreedFirst = true;
+			}
+		}
+		mpsFreedNotifier->bFreed = true;
+	}
 }
 
