@@ -306,6 +306,7 @@ void TestCanvasImageConvert2(void)
 		gcObjects.EnableValidation();
 	}
 
+	AssertTrue(ORoot()->RemoveAll());
 	cNativeFactory.Kill();
 
 	AssertSize(2, gcObjects.NumMemoryIndexes());  //Root and root-set.
