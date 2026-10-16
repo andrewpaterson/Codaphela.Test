@@ -43,6 +43,19 @@ void AssertImageFile(CChars* pszExpected, CChars* pszActual)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void AssertFlowContainerObjectsRemoved(void)
+{
+	//Every free Object must have been removed by its owner.  Removing all from the Root then also removes FreeObjects and its Set leaving only the Root and its Set.
+	AssertSize(0, gcObjects.NumFreeObjects());
+	AssertTrue(ORoot()->RemoveAll());
+	AssertSize(2, gcObjects.NumMemoryIndexes());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFlowContainerBasicOnHeap(void)
 {
 	CWinRefWindowFactory	cNativeFactory;
@@ -119,7 +132,7 @@ void TestFlowContainerBasicOnHeap(void)
 		szExpectedDirectory.Kill();
 	}
 
-	AssertSize(0, gcObjects.NumFreeObjects());
+	AssertFlowContainerObjectsRemoved();
 
 	cNativeFactory.Kill();
 	cFileUtil.RemoveDir(szDirectory);
@@ -210,6 +223,8 @@ void TestFlowContainerBasicOnStack(void)
 		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
 		szExpectedDirectory.Kill();
 	}
+
+	AssertFlowContainerObjectsRemoved();
 
 	cNativeFactory.Kill();
 	cFileUtil.RemoveDir(szDirectory);
@@ -361,6 +376,8 @@ void TestFlowContainerRightCenteredContinue(void)
 		szExpectedDirectory.Kill();
 	}
 
+	AssertFlowContainerObjectsRemoved();
+
 	cNativeFactory.Kill();
 	cFileUtil.RemoveDir(szDirectory);
 }
@@ -445,6 +462,8 @@ void TestFlowContainerRightTopContinue(void)
 		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
 		szExpectedDirectory.Kill();
 	}
+
+	AssertFlowContainerObjectsRemoved();
 
 	cNativeFactory.Kill();
 	cFileUtil.RemoveDir(szDirectory);
@@ -531,6 +550,8 @@ void TestFlowContainerRightBottomContinue(void)
 		szExpectedDirectory.Kill();
 	}
 
+	AssertFlowContainerObjectsRemoved();
+
 	cNativeFactory.Kill();
 	cFileUtil.RemoveDir(szDirectory);
 }
@@ -616,6 +637,8 @@ void TestFlowContainerRightTopWrap(void)
 		szExpectedDirectory.Kill();
 	}
 
+	AssertFlowContainerObjectsRemoved();
+
 	cNativeFactory.Kill();
 	cFileUtil.RemoveDir(szDirectory);
 }
@@ -697,6 +720,8 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRand
 		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
 		szExpectedDirectory.Kill();
 	}
+
+	AssertFlowContainerObjectsRemoved();
 
 	cNativeFactory.Kill();
 	cFileUtil.RemoveDir(szDirectory);
