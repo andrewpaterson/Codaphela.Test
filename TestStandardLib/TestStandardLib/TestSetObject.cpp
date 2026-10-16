@@ -131,6 +131,239 @@ void TestSetObjectRemove(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestSetObjectRemoveUnlessLowest(Ptr<CSet<CTestObject>> pSet, Ptr<CTestObject>& pObject, Ptr<CTestObject>& pLowest)
+{
+	if (&pObject != &pLowest)
+	{
+		AssertTrue(pSet->Remove(pObject));
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSetObjectRemoveSortedWithNulls(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CRoot>					pRoot;
+		Ptr<CSet<CTestObject>>		pSet;
+		Ptr<CTestObject>			pObject1;
+		Ptr<CTestObject>			pObject2;
+		Ptr<CTestObject>			pObject3;
+		Ptr<CTestObject>			pObject4;
+		Ptr<CTestObject>			pLowest;
+		Ptr<CTestObject>			pNew;
+
+		pRoot = ORoot();
+		pSet = OMalloc<CSet<CTestObject>>();
+		pRoot->Add(pSet);
+
+		pObject1 = OMalloc<CTestObject>();
+		pObject2 = OMalloc<CTestObject>();
+		pObject3 = OMalloc<CTestObject>();
+		pObject4 = OMalloc<CTestObject>();
+		pSet->Add(pObject1);
+		pSet->Add(pObject2);
+		pSet->Add(pObject3);
+		pSet->Add(pObject4);
+		AssertSize(4, pSet->NumElements());
+
+		//Removing from a set that ignores NULLs leaves NULLs behind.  Remove every Object except the one sorted first so the NULLs are after it.
+		pLowest = pSet->UnsafeGet(0);
+		TestSetObjectRemoveUnlessLowest(pSet, pObject1, pLowest);
+		TestSetObjectRemoveUnlessLowest(pSet, pObject2, pLowest);
+		TestSetObjectRemoveUnlessLowest(pSet, pObject3, pLowest);
+		TestSetObjectRemoveUnlessLowest(pSet, pObject4, pLowest);
+		AssertSize(1, pSet->NumElements());
+
+		AssertTrue(pSet->Contains(pLowest));
+		AssertTrue(pSet->Remove(pLowest));
+		AssertSize(0, pSet->NumElements());
+		AssertFalse(pSet->Contains(pLowest));
+
+		pNew = OMalloc<CTestObject>();
+		AssertTrue(pSet->Add(pObject2));
+		AssertTrue(pSet->Add(pNew));
+		AssertTrue(pSet->Add(pLowest));
+		AssertSize(3, pSet->NumElements());
+		AssertTrue(pSet->Contains(pObject2));
+		AssertTrue(pSet->Contains(pNew));
+		AssertTrue(pSet->Contains(pLowest));
+		AssertFalse(pSet->Contains(pObject3));
+		gcObjects.ValidateObjectsConsistency();
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSetObjectOnStackKillContained(void)
+{
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+
+	ObjectsInit();
+	{
+		CSetObject			cSet;
+		Ptr<CTestObject>	pTest1;
+		Ptr<CTestObject>	pTest2;
+
+		cSet.Init();
+		pTest1 = OMalloc<CTestObject>(&sNotifier1);
+		pTest2 = OMalloc<CTestObject>(&sNotifier2);
+		cSet.Add(pTest1);
+		cSet.Add(pTest2);
+		AssertSize(2, cSet.NumElements());
+		AssertSize(4, gcStackPointers.NumElements());
+
+		pTest1->Kill();
+		AssertTrue(sNotifier1.bFreed);
+		AssertFalse(sNotifier2.bFreed);
+		AssertSize(1, cSet.NumElements());
+		AssertTrue(cSet.Contains(pTest2));
+		AssertSize(2, gcStackPointers.NumElements());
+		AssertLong(1, gcObjects.NumMemoryIndexes());
+
+		cSet.Kill();
+		AssertSize(1, gcStackPointers.NumElements());
+		AssertFalse(sNotifier2.bFreed);
+	}
+	AssertTrue(sNotifier2.bFreed);
+	AssertSize(0, gcStackPointers.NumElements());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSetObjectKillContainedHeap(void)
+{
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+
+	ObjectsInit();
+	{
+		Ptr<CRoot>				pRoot;
+		Ptr<CSet<CTestObject>>	pSet;
+		Ptr<CTestObject>		pTest1;
+		Ptr<CTestObject>		pTest2;
+
+		pRoot = ORoot();
+		pSet = OMalloc<CSet<CTestObject>>();
+		pRoot->Add(pSet);
+		pTest1 = OMalloc<CTestObject>(&sNotifier1);
+		pTest2 = OMalloc<CTestObject>(&sNotifier2);
+		pSet->Add(pTest1);
+		pSet->Add(pTest2);
+		AssertSize(2, pSet->NumElements());
+
+		pTest1->Kill();
+		AssertTrue(sNotifier1.bFreed);
+		AssertFalse(sNotifier2.bFreed);
+		AssertSize(1, pSet->NumElements());
+		AssertTrue(pSet->Contains(pTest2));
+		AssertSize(1, pTest2->NumStackFroms());
+		AssertSize(1, pTest2->NumHeapFroms());
+		gcObjects.ValidateObjectsConsistency();
+
+		pTest2 = NULL;
+		pSet = NULL;
+		AssertFalse(sNotifier2.bFreed);
+		AssertTrue(pRoot->RemoveAll());
+		AssertTrue(sNotifier2.bFreed);
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSetObjectRemoveDuringIterationSorted(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CRoot>					pRoot;
+		Ptr<CSet<CTestObject>>		pSet;
+		Ptr<CTestObject>			apObjects[6];
+		Ptr<CTestObject>			pObject;
+		SSetIterator				sIter;
+		bool						bExists;
+		size						i;
+		size						uiVisited;
+		size						auiTimesVisited[6];
+		bool						abRemoved[6];
+
+		pRoot = ORoot();
+		pSet = OMalloc<CSet<CTestObject>>();
+		pRoot->Add(pSet);
+		for (i = 0; i < 6; i++)
+		{
+			apObjects[i] = OMalloc<CTestObject>();
+			pSet->Add(apObjects[i]);
+			auiTimesVisited[i] = 0;
+			abRemoved[i] = false;
+		}
+		AssertSize(6, pSet->NumElements());
+
+		//Remove every second Object visited.  The set must not be searched while iterating because searching can clean the NULLs left by removing.
+		uiVisited = 0;
+		pObject = pSet->StartIteration(&sIter, &bExists);
+		while (bExists)
+		{
+			for (i = 0; i < 6; i++)
+			{
+				if (&apObjects[i] == &pObject)
+				{
+					auiTimesVisited[i]++;
+					if (uiVisited % 2 == 0)
+					{
+						pSet->RemoveDuringIteration(&sIter);
+						abRemoved[i] = true;
+					}
+					break;
+				}
+			}
+			uiVisited++;
+
+			pObject = pSet->Iterate(&sIter, &bExists);
+		}
+
+		AssertSize(6, uiVisited);
+		for (i = 0; i < 6; i++)
+		{
+			AssertSize(1, auiTimesVisited[i]);
+		}
+		AssertSize(3, pSet->NumElements());
+		for (i = 0; i < 6; i++)
+		{
+			AssertBool(!abRemoved[i], pSet->Contains(apObjects[i]));
+			AssertSize(abRemoved[i] ? 0 : 1, apObjects[i]->NumHeapFroms());
+		}
+		gcObjects.ValidateObjectsConsistency();
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestSetObjectKillCyclic(void)
 {
 	ObjectsInit();
@@ -890,6 +1123,10 @@ void TestSetObject(void)
 	TestSetObjectGet();
 	TestSetObjectAddAll();
 	TestSetObjectRemove();
+	TestSetObjectRemoveSortedWithNulls();
+	TestSetObjectOnStackKillContained();
+	TestSetObjectKillContainedHeap();
+	TestSetObjectRemoveDuringIterationSorted();
 	TestSetObjectKillCyclic();
 	TestSetObjectKillAll();
 	TestSetObjectRemoveAll();

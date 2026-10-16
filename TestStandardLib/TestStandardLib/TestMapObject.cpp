@@ -1318,6 +1318,185 @@ void TestMapObjectEmbeddedInObjectsKill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMapObjectOnStackKillContained(void)
+{
+	STestObjectFreedNotifier	sNotifierKey1;
+	STestObjectFreedNotifier	sNotifierValue1;
+	STestObjectFreedNotifier	sNotifierKey2;
+	STestObjectFreedNotifier	sNotifierValue2;
+
+	ObjectsInit();
+	{
+		CMapObject			cMap;
+		Ptr<CTestObject>	pKey1;
+		Ptr<CTestObject>	pValue1;
+		Ptr<CTestObject>	pKey2;
+		Ptr<CTestObject>	pValue2;
+
+		cMap.Init();
+		pKey1 = OMalloc<CTestObject>(&sNotifierKey1);
+		pValue1 = OMalloc<CTestObject>(&sNotifierValue1);
+		pKey2 = OMalloc<CTestObject>(&sNotifierKey2);
+		pValue2 = OMalloc<CTestObject>(&sNotifierValue2);
+		cMap.Put(pKey1, pValue1);
+		cMap.Put(pKey2, pValue2);
+		AssertSize(2, cMap.NumElements());
+		AssertSize(8, gcStackPointers.NumElements());
+
+		//Kill a key.  The whole entry goes.
+		pKey1->Kill();
+		AssertTrue(sNotifierKey1.bFreed);
+		AssertFalse(sNotifierValue1.bFreed);
+		AssertSize(1, cMap.NumElements());
+		AssertSize(1, pValue1->NumStackFroms());
+		AssertSize(5, gcStackPointers.NumElements());
+
+		//Kill a value.  The entry keeps its key.
+		pValue2->Kill();
+		AssertTrue(sNotifierValue2.bFreed);
+		AssertFalse(sNotifierKey2.bFreed);
+		AssertSize(1, cMap.NumElements());
+		AssertTrue(cMap.Get(pKey2).IsNull());
+		AssertSize(2, pKey2->NumStackFroms());
+
+		cMap.Kill();
+		AssertSize(1, pKey2->NumStackFroms());
+		AssertFalse(sNotifierKey2.bFreed);
+	}
+	AssertTrue(sNotifierKey2.bFreed);
+	AssertTrue(sNotifierValue1.bFreed);
+	AssertSize(0, gcStackPointers.NumElements());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMapObjectKillAllWithNull(void)
+{
+	STestObjectFreedNotifier	sNotifierKey1;
+	STestObjectFreedNotifier	sNotifierValue1;
+	STestObjectFreedNotifier	sNotifierKey2;
+
+	ObjectsInit();
+	{
+		Ptr<CRoot>			pRoot;
+		Ptr<CMapObject>		pMap;
+		Ptr<CTestObject>	pKey;
+		Ptr<CTestObject>	pValue;
+		Ptr<CTestObject>	pNull;
+
+		pRoot = ORoot();
+		pMap = OMalloc<CMapObject>();
+		pRoot->Add(pMap);
+
+		pKey = OMalloc<CTestObject>(&sNotifierKey1);
+		pValue = OMalloc<CTestObject>(&sNotifierValue1);
+		pMap->Put(pKey, pValue);
+		pKey = OMalloc<CTestObject>(&sNotifierKey2);
+		pMap->Put(pKey, pNull);
+		pKey = NULL;
+		pValue = NULL;
+		AssertSize(2, pMap->NumElements());
+
+		pMap->KillAll();
+		AssertTrue(sNotifierKey1.bFreed);
+		AssertTrue(sNotifierValue1.bFreed);
+		AssertTrue(sNotifierKey2.bFreed);
+		AssertSize(0, pMap->NumElements());
+		gcObjects.ValidateObjectsConsistency();
+
+		pMap = NULL;
+		AssertTrue(pRoot->RemoveAll());
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMapObjectKillContainedHeap(void)
+{
+	STestObjectFreedNotifier	sNotifierKey1;
+	STestObjectFreedNotifier	sNotifierValue1;
+	STestObjectFreedNotifier	sNotifierKey2;
+	STestObjectFreedNotifier	sNotifierValue2;
+	STestObjectFreedNotifier	sNotifierKey3;
+	STestObjectFreedNotifier	sNotifierValue3;
+	STestObjectFreedNotifier	sNotifierBoth;
+
+	ObjectsInit();
+	{
+		Ptr<CRoot>			pRoot;
+		Ptr<CMapObject>		pMap;
+		Ptr<CTestObject>	pKey1;
+		Ptr<CTestObject>	pValue1;
+		Ptr<CTestObject>	pKey2;
+		Ptr<CTestObject>	pValue2;
+		Ptr<CTestObject>	pKey3;
+		Ptr<CTestObject>	pValue3;
+		Ptr<CTestObject>	pBoth;
+
+		pRoot = ORoot();
+		pMap = OMalloc<CMapObject>();
+		pRoot->Add(pMap);
+
+		pKey1 = OMalloc<CTestObject>(&sNotifierKey1);
+		pValue1 = OMalloc<CTestObject>(&sNotifierValue1);
+		pKey2 = OMalloc<CTestObject>(&sNotifierKey2);
+		pValue2 = OMalloc<CTestObject>(&sNotifierValue2);
+		pKey3 = OMalloc<CTestObject>(&sNotifierKey3);
+		pValue3 = OMalloc<CTestObject>(&sNotifierValue3);
+		pBoth = OMalloc<CTestObject>(&sNotifierBoth);
+
+		pMap->Put(pKey1, pValue1);
+		pMap->Put(pKey2, pValue2);
+		pMap->Put(pBoth, pValue3);
+		pMap->Put(pKey3, pBoth);
+		AssertSize(4, pMap->NumElements());
+		AssertSize(2, pBoth->NumHeapFroms());
+		gcObjects.ValidateObjectsConsistency();
+
+		//Kill a key.  The whole entry goes and the value is no longer pointed to by the map.
+		pKey1->Kill();
+		AssertTrue(sNotifierKey1.bFreed);
+		AssertFalse(sNotifierValue1.bFreed);
+		AssertSize(3, pMap->NumElements());
+		AssertSize(0, pValue1->NumHeapFroms());
+		gcObjects.ValidateObjectsConsistency();
+
+		//Kill a value.  The map must not be left pointing to it.
+		pValue2->Kill();
+		AssertTrue(sNotifierValue2.bFreed);
+		AssertFalse(sNotifierKey2.bFreed);
+		AssertTrue(pMap->Get(pKey2).IsNull());
+		gcObjects.ValidateObjectsConsistency();
+
+		//Kill an Object that is both a key and a value.
+		pBoth->Kill();
+		AssertTrue(sNotifierBoth.bFreed);
+		AssertFalse(sNotifierKey3.bFreed);
+		AssertFalse(sNotifierValue3.bFreed);
+		AssertTrue(pMap->Get(pKey3).IsNull());
+		AssertSize(0, pValue3->NumHeapFroms());
+		gcObjects.ValidateObjectsConsistency();
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMapObject(void)
 {
 	BeginTests();
@@ -1336,6 +1515,9 @@ void TestMapObject(void)
 	TestMapObjectDetachOnStack();
 	TestMapObjectGetPointerTos();
 	TestMapObjectPointerFromsHeap();
+	TestMapObjectKillContainedHeap();
+	TestMapObjectOnStackKillContained();
+	TestMapObjectKillAllWithNull();
 	TestMapObjectPointerFromsStack();
 	TestMapObjectPutOverwrite();
 	TestMapObjectExternalSerialisation();

@@ -7,6 +7,7 @@
 #include "StandardLib/String.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
+#include "CollectionObjectTestClasses.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -141,6 +142,57 @@ void TestObjectFreeOrderingExplicitKill(bool bHolderFirst)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectFreeOrderingCollection(bool bExplicitKill)
+{
+	STestObjectFreedNotifier	sFreeNotifierObject;
+	size						uiNumChildrenWhenFreed;
+
+	uiNumChildrenWhenFreed = 99;
+	ObjectsInit();
+	{
+		Ptr<CTestObject>		pObject;
+		Ptr<CTestArrayObject>	pHolder;
+
+		pObject = OMalloc<CTestObject>(&sFreeNotifierObject);
+		pHolder = OMalloc<CTestArrayObject>(0);
+		pHolder->mpuiNumChildrenWhenFreed = &uiNumChildrenWhenFreed;
+		pHolder->maChildren.Add(pObject);
+
+		//The holder is only reachable through the Object in its array.
+		pObject->mpObject = pHolder;
+		pHolder = NULL;
+		AssertSize(2, gcObjects.NumMemoryIndexes());
+
+		if (bExplicitKill)
+		{
+			pObject->Kill();
+		}
+		else
+		{
+			pObject = NULL;
+		}
+		AssertTrue(sFreeNotifierObject.bFreed);
+		AssertSize(0, gcObjects.NumMemoryIndexes());
+	}
+
+	if (bExplicitKill)
+	{
+		//KillInternal only puts back pointer fields from Objects killed with the killed Object, not collection entries.
+		//So the holder's array has already lost the killed Object when the holder is freed.
+		AssertSize(0, uiNumChildrenWhenFreed);
+	}
+	else
+	{
+		AssertSize(1, uiNumChildrenWhenFreed);
+	}
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectFreeOrdering(void)
 {
 	BeginTests();
@@ -154,6 +206,8 @@ void TestObjectFreeOrdering(void)
 	TestObjectFreeOrderingScopeExit(true);
 	TestObjectFreeOrderingExplicitKill(false);
 	TestObjectFreeOrderingExplicitKill(true);
+	TestObjectFreeOrderingCollection(false);
+	TestObjectFreeOrderingCollection(true);
 
 	DataIOKill();
 	TypesKill();

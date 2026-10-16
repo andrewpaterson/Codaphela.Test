@@ -349,6 +349,98 @@ void TestArrayObjectOnStackKillContainedStackObject(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestArrayObjectKillContainedHeap(void)
+{
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+
+	ObjectsInit();
+	{
+		Ptr<CRoot>					pRoot;
+		Ptr<CArray<CTestObject>>	pArray;
+		Ptr<CTestObject>			pTest1;
+		Ptr<CTestObject>			pTest2;
+		Ptr<CTestObject>			pGot;
+
+		pRoot = ORoot();
+		pArray = OMalloc<CArray<CTestObject>>();
+		pRoot->Add(pArray);
+		pTest1 = OMalloc<CTestObject>(&sNotifier1);
+		pTest2 = OMalloc<CTestObject>(&sNotifier2);
+		pArray->Add(pTest1);
+		pArray->Add(pTest2);
+		AssertSize(2, pArray->NumElements());
+
+		pTest1->Kill();
+		AssertTrue(sNotifier1.bFreed);
+		AssertFalse(sNotifier2.bFreed);
+		AssertSize(1, pArray->NumElements());
+		pGot = pArray->Get(0);
+		AssertPointer(&pTest2, &pGot);
+		pGot = NULL;
+		AssertSize(1, pTest2->NumHeapFroms());
+		gcObjects.ValidateObjectsConsistency();
+
+		pTest2 = NULL;
+		pArray = NULL;
+		AssertFalse(sNotifier2.bFreed);
+		AssertTrue(pRoot->RemoveAll());
+		AssertTrue(sNotifier2.bFreed);
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayObjectKillAllWithNull(void)
+{
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+	STestObjectFreedNotifier	sNotifier3;
+
+	ObjectsInit();
+	{
+		Ptr<CRoot>					pRoot;
+		Ptr<CArray<CTestObject>>	pArray;
+		Ptr<CTestObject>			pTest;
+		Ptr<CTestObject>			pNull;
+
+		pRoot = ORoot();
+		pArray = OMalloc<CArray<CTestObject>>();
+		pRoot->Add(pArray);
+
+		pTest = OMalloc<CTestObject>(&sNotifier1);
+		pArray->Add(pTest);
+		pArray->Add(pNull);
+		pTest = OMalloc<CTestObject>(&sNotifier2);
+		pArray->Add(pTest);
+		pTest = OMalloc<CTestObject>(&sNotifier3);
+		pArray->Add(pTest);
+		pTest = NULL;
+		AssertSize(4, pArray->NumElements());
+
+		pArray->KillAll();
+		AssertTrue(sNotifier1.bFreed);
+		AssertTrue(sNotifier2.bFreed);
+		AssertTrue(sNotifier3.bFreed);
+		gcObjects.ValidateObjectsConsistency();
+
+		pArray = NULL;
+		AssertTrue(pRoot->RemoveAll());
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestArrayObjectConstructorExists(void)
 {
 	CConstructors*	pcConstructors;
@@ -899,6 +991,8 @@ void TestArrayObject(void)
 	TestArrayObjectOnStackRemoveObject();
 	TestArrayObjectOnStackKillContainedHeapObject();
 	TestArrayObjectOnStackKillContainedStackObject();
+	TestArrayObjectKillContainedHeap();
+	TestArrayObjectKillAllWithNull();
 	TestArrayObjectConstructorExists();
 	TestArrayObjectClassExists();
 	TestArrayObjectExternalSerialisation();

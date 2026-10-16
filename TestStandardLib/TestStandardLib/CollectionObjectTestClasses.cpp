@@ -12,6 +12,7 @@ void CTestArrayObject::Init(int i)
 {
 	PreInit();
 	mi = i;
+	mpuiNumChildrenWhenFreed = NULL;
 	maChildren.Init();
 	PostInit();
 }
@@ -34,6 +35,10 @@ void CTestArrayObject::Class(void)
 //////////////////////////////////////////////////////////////////////////
 void CTestArrayObject::Free(void)
 {
+	if (mpuiNumChildrenWhenFreed)
+	{
+		*mpuiNumChildrenWhenFreed = maChildren.NumElements();
+	}
 }
 
 

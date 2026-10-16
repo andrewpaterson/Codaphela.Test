@@ -13,6 +13,7 @@ DESTRUCTABLE(CTestArrayObject)
 public:
 	CArray<CTestObject>		maChildren;
 	int32					mi;
+	size*					mpuiNumChildrenWhenFreed;
 
 	void				Init(int iNum);
 	void				Class(void) override;

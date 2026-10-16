@@ -538,6 +538,102 @@ void TestIndexObjectPointerFromsStack(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexObjectOnStackKillContained(void)
+{
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+
+	ObjectsInit();
+	{
+		CIndexObject		cIndex;
+		Ptr<CTestObject>	pTest1;
+		Ptr<CTestObject>	pTest2;
+		CPointer			pGot;
+
+		cIndex.Init();
+		pTest1 = OMalloc<CTestObject>(&sNotifier1);
+		pTest2 = OMalloc<CTestObject>(&sNotifier2);
+		cIndex.Put("one", pTest1);
+		cIndex.Put("two", pTest2);
+		AssertSize(2, cIndex.NumElements());
+		AssertSize(4, gcStackPointers.NumElements());
+
+		pTest1->Kill();
+		AssertTrue(sNotifier1.bFreed);
+		AssertFalse(sNotifier2.bFreed);
+		AssertSize(1, cIndex.NumElements());
+		pGot = cIndex.Get("one");
+		AssertTrue(pGot.IsNull());
+		pGot = cIndex.Get("two");
+		AssertPointer(pTest2.Object(), pGot.Object());
+		pGot = NULL;
+		AssertSize(2, gcStackPointers.NumElements());
+
+		cIndex.Kill();
+		AssertSize(1, gcStackPointers.NumElements());
+		AssertFalse(sNotifier2.bFreed);
+	}
+	AssertTrue(sNotifier2.bFreed);
+	AssertSize(0, gcStackPointers.NumElements());
+	AssertLong(0, gcObjects.NumMemoryIndexes());
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexObjectKillContainedHeap(void)
+{
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+
+	ObjectsInit();
+	{
+		Ptr<CRoot>			pRoot;
+		Ptr<CIndexObject>	pIndex;
+		Ptr<CTestObject>	pTest1;
+		Ptr<CTestObject>	pTest2;
+		CPointer			pGot;
+
+		pRoot = ORoot();
+		pIndex = OMalloc<CIndexObject>();
+		pRoot->Add(pIndex);
+		pTest1 = OMalloc<CTestObject>(&sNotifier1);
+		pTest2 = OMalloc<CTestObject>(&sNotifier2);
+		pIndex->Put("one", pTest1);
+		pIndex->Put("two", pTest2);
+		AssertSize(2, pIndex->NumElements());
+
+		pTest1->Kill();
+		AssertTrue(sNotifier1.bFreed);
+		AssertFalse(sNotifier2.bFreed);
+		AssertSize(1, pIndex->NumElements());
+		pGot = pIndex->Get("one");
+		AssertTrue(pGot.IsNull());
+		pGot = pIndex->Get("two");
+		AssertPointer(pTest2.Object(), pGot.Object());
+		pGot = NULL;
+		AssertSize(1, pTest2->NumHeapFroms());
+		gcObjects.ValidateObjectsConsistency();
+
+		pTest2 = NULL;
+		pIndex = NULL;
+		AssertFalse(sNotifier2.bFreed);
+		AssertTrue(pRoot->RemoveAll());
+		AssertTrue(sNotifier2.bFreed);
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIndexObjectPutOverwrite(void)
 {
 	ObjectsInit();
@@ -936,6 +1032,8 @@ void TestIndexObject(void)
 	TestIndexObjectGetPointerTos();
 	TestIndexObjectPointerFromsHeap();
 	TestIndexObjectPointerFromsStack();
+	TestIndexObjectOnStackKillContained();
+	TestIndexObjectKillContainedHeap();
 	TestIndexObjectPutOverwrite();
 	TestIndexObjectSerialisation();
 	TestIndexObjectMorphInto();
