@@ -65,6 +65,7 @@ void TestFlowContainerBasic(void)
 		SDataTestRefWindow	cData;
 		CFlowContainer		cFlow;
 		SContainerBounds	sBounds;
+		SInt32Vec2			sVec;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 30, szDirectory);
 
@@ -90,16 +91,23 @@ void TestFlowContainerBasic(void)
 		cCanvas3.SetDesiredSize(5, 16);
 
 		AssertSize(3, cFlow.NumComponents());
-		AssertInt32Vec2(0, 0, &cCanvas1.GetActualSize());
+		sVec = cCanvas1.GetActualSize();
+		AssertInt32Vec2(0, 0, &sVec);
 
 		cTestWindow.Show();
 
-		AssertInt32Vec2(10, 10, &cCanvas1.GetActualSize());
-		AssertInt32Vec2(20, 20, &cCanvas2.GetActualSize());
-		AssertInt32Vec2(5, 16, &cCanvas3.GetActualSize());
-		AssertInt32Vec2(0, 0, &cCanvas1.GetPosition());
-		AssertInt32Vec2(10, 0, &cCanvas2.GetPosition());
-		AssertInt32Vec2(30, 0, &cCanvas3.GetPosition());
+		sVec = cCanvas1.GetActualSize();
+		AssertInt32Vec2(10, 10, &sVec);
+		sVec = cCanvas2.GetActualSize();
+		AssertInt32Vec2(20, 20, &sVec);
+		sVec = cCanvas3.GetActualSize();
+		AssertInt32Vec2(5, 16, &sVec);
+		sVec = cCanvas1.GetPosition();
+		AssertInt32Vec2(0, 0, &sVec);
+		sVec = cCanvas2.GetPosition();
+		AssertInt32Vec2(10, 0, &sVec);
+		sVec = cCanvas3.GetPosition();
+		AssertInt32Vec2(30, 0, &sVec);
 
 		cCanvas1.GetContainerBounds(&sBounds);
 
