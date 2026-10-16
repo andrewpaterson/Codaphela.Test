@@ -41,6 +41,9 @@
     <Filter Include="Source Files\Image\Colour">
       <UniqueIdentifier>{46a84e3f-0036-4397-b939-b18ca5590243}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Compression">
+      <UniqueIdentifier>{50791f6e-d3f7-45e2-9e61-d531ef620284}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Image\IO">
       <UniqueIdentifier>{22f2a94a-cb59-45ed-977c-b9d8f6afad44}</UniqueIdentifier>
     </Filter>
@@ -162,6 +165,9 @@
     </ClCompile>
     <ClCompile Include="TestImageTGA.cpp">
       <Filter>Source Files\Image\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCompressionRLE.cpp">
+      <Filter>Source Files\Compression</Filter>
     </ClCompile>
     <ClCompile Include="TestImageSFTWriter.cpp">
       <Filter>Source Files\Image\IO</Filter>
