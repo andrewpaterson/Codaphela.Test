@@ -398,7 +398,7 @@ void TestStackPointersRemoveMissing(void)
 
 		//pOther does not point to pTest1 so removing it must fail and leave pTest1's stack froms alone.
 		sLogConfig = gcLogger.SetSilent();
-		eResult = pTest1->RemoveStackFromTryFree(pOther.This(), true);
+		eResult = pTest1->RemoveStackFromTryFree(pOther.This());
 		bResult = pTest1->TestRemoveStackFrom(pOther.This());
 		gcLogger.SetConfig(&sLogConfig);
 
