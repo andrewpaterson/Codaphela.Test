@@ -17,6 +17,7 @@ void TestImageCelsSource(void);
 void TestImageWriter(void);
 void TestImageBMP(void);
 void TestImageTGA(void);
+void TestImagePNG(void);
 void TestCompressionRLE(void);
 void TestImageColour(void);
 void TestImageCombiner(void);
@@ -76,6 +77,7 @@ int __cdecl main(void)
 	TestImageWriter();
 	TestImageBMP();
 	TestImageTGA();
+	TestImagePNG();
 	TestCompressionRLE();
 	TestImageGreyToRGB();
 	TestImageRGBToGrey();

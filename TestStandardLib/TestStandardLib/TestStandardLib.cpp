@@ -16,6 +16,7 @@ void TestExternalChannelPadder(void);
 void TestChannels(void);
 void TestExternalChannels(void);
 void TestSingleChannelAccessor(void);
+void TestCompressionZLib(void);
 void TestActionEvent(void);
 void TestEvent(void);
 void TestObjectGraphSerialiser(void);
@@ -137,6 +138,7 @@ int __cdecl main(void)
 	TestChannels();
 	TestChannelsAccessor();
 	TestSingleChannelAccessor();
+	TestCompressionZLib();
 
 	NumberKill();
 	FastFunctionsKill();

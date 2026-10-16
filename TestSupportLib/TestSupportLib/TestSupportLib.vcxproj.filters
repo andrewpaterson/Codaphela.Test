@@ -166,6 +166,9 @@
     <ClCompile Include="TestImageTGA.cpp">
       <Filter>Source Files\Image\IO</Filter>
     </ClCompile>
+    <ClCompile Include="TestImagePNG.cpp">
+      <Filter>Source Files\Image\IO</Filter>
+    </ClCompile>
     <ClCompile Include="TestCompressionRLE.cpp">
       <Filter>Source Files\Compression</Filter>
     </ClCompile>

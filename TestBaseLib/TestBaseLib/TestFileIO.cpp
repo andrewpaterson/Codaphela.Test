@@ -206,6 +206,55 @@ void TestFileIOLittleEndian(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFileIOBigEndian(void)
+{
+	CMemoryFile		cMemory;
+	CFileBasic		cFile;
+	uint8			abExpected[12] = {0x5a, 0x0a,  0xff, 0xfe,  0xf4, 0x8e, 0x33, 0xa9,  0x80, 0x00, 0x00, 0x01};
+	uint8			ab[12];
+	int16			s;
+	uint16			us;
+	int32			i;
+	uint32			ui;
+
+	cMemory.Init();
+	cFile.Init(&cMemory);
+	AssertTrue(cFile.Open(EFM_Write_Create));
+	AssertTrue(cFile.WriteBigEndianInt16((uint16)0x5a0a));
+	AssertTrue(cFile.WriteBigEndianInt16((int16)-2));
+	AssertTrue(cFile.WriteBigEndianInt32((uint32)0xf48e33a9));
+	AssertTrue(cFile.WriteBigEndianInt32((int32)0x80000001));
+	AssertTrue(cFile.Close());
+
+	//Most significant byte first.
+	AssertTrue(cFile.Open(EFM_Read));
+	AssertTrue(cFile.ReadData(ab, 12));
+	AssertMemory(abExpected, ab, 12);
+
+	AssertTrue(cFile.Seek(0));
+	AssertTrue(cFile.ReadBigEndianInt16(&us));
+	AssertShort((uint16)0x5a0a, us);
+	AssertTrue(cFile.ReadBigEndianInt16(&s));
+	AssertShort((int16)-2, s);
+	AssertTrue(cFile.ReadBigEndianInt32(&ui));
+	AssertInt((uint32)0xf48e33a9, ui);
+	AssertTrue(cFile.ReadBigEndianInt32(&i));
+	AssertInt((int32)0x80000001, i);
+
+	//Reading past the end fails.
+	AssertFalse(cFile.ReadBigEndianInt16(&us));
+	AssertFalse(cFile.ReadBigEndianInt32(&ui));
+
+	AssertTrue(cFile.Close());
+	cFile.Kill();
+	cMemory.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFileIOEnumerator(void)
 {
 	CMemoryFile							cMemory;
@@ -647,6 +696,7 @@ void TestFileIO(void)
 
 	TestFileIOHelpers();
 	TestFileIOLittleEndian();
+	TestFileIOBigEndian();
 	TestFileIOArray();
 	TestFileIOString();
 	TestFileIOEnumerator();

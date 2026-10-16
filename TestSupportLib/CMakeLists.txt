@@ -1,5 +1,5 @@
-# Linux build of TestSupportLib (BaseLib + TestLib + StandardLib + ImageLib +
-# SupportLib + TestSupportLib).
+# Linux build of TestSupportLib (BaseLib + TestLib + StandardLib + SupportLib +
+# TestSupportLib).
 #
 # BaseLib is 32-bit only, so everything is built with -m32 (needs g++-multilib).
 #
@@ -15,8 +15,7 @@
 # so never glob *.cpp to find sources.
 
 cmake_minimum_required(VERSION 3.16)
-# ImageLib contains zlib and libpng, which are C.
-project(TestSupportLib C CXX)
+project(TestSupportLib CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -33,7 +32,6 @@ set(COMMON_DIR "${CODAPHELA_ROOT}/commonlibraries")
 set(BASELIB_DIR "${COMMON_DIR}/BaseLib")
 set(TESTLIB_DIR "${COMMON_DIR}/TestLib")
 set(STANDARDLIB_DIR "${COMMON_DIR}/StandardLib")
-set(IMAGELIB_DIR "${COMMON_DIR}/ImageLib")
 set(SUPPORTLIB_DIR "${COMMON_DIR}/SupportLib")
 set(TESTSUPPORTLIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/TestSupportLib")
 
@@ -86,8 +84,6 @@ vcxproj_sources(TESTLIB_SOURCES "${TESTLIB_DIR}/TestLib.vcxproj")
 
 vcxproj_sources(STANDARDLIB_SOURCES "${STANDARDLIB_DIR}/StandardLib.vcxproj")
 
-vcxproj_sources(IMAGELIB_SOURCES "${IMAGELIB_DIR}/ImageLib.vcxproj")
-
 vcxproj_sources(SUPPORTLIB_SOURCES "${SUPPORTLIB_DIR}/SupportLib.vcxproj")
 
 vcxproj_sources(TESTSUPPORTLIB_SOURCES "${TESTSUPPORTLIB_DIR}/TestSupportLib.vcxproj")
@@ -134,14 +130,11 @@ target_link_libraries(StandardLib PUBLIC BaseLib)
 # The 32-bit Debug configuration of StandardLib (only) defines DEBUG_POINTER.
 target_compile_definitions(StandardLib PRIVATE $<$<CONFIG:Debug>:DEBUG_POINTER>)
 
-add_library(ImageLib STATIC ${IMAGELIB_SOURCES})
-target_link_libraries(ImageLib PUBLIC BaseLib)
-
 add_library(SupportLib STATIC ${SUPPORTLIB_SOURCES})
-target_link_libraries(SupportLib PUBLIC StandardLib ImageLib BaseLib)
+target_link_libraries(SupportLib PUBLIC StandardLib BaseLib)
 
 add_executable(TestSupportLib ${TESTSUPPORTLIB_SOURCES})
-target_link_libraries(TestSupportLib PRIVATE TestLib SupportLib StandardLib ImageLib BaseLib)
+target_link_libraries(TestSupportLib PRIVATE TestLib SupportLib StandardLib BaseLib)
 
 # The tests read their input (Input/ ...) relative to the project directory,
 # as Visual Studio does.

@@ -99,11 +99,10 @@ void TestImagePNGWriter(void)
 	AssertPNGRoundTrip("basn0g16.png");
 	AssertPNGRoundTrip("basn2c16.png");
 
-	//Palettes are not read yet.
-	//AssertPNGRoundTrip("basn3p01.png");
-	//AssertPNGRoundTrip("basn3p02.png");
-	//AssertPNGRoundTrip("basn3p04.png");
-	//AssertPNGRoundTrip("basn3p08.png");
+	AssertPNGRoundTrip("basn3p01.png");
+	AssertPNGRoundTrip("basn3p02.png");
+	AssertPNGRoundTrip("basn3p04.png");
+	AssertPNGRoundTrip("basn3p08.png");
 
 	AssertPNGRoundTrip("basn4a08.png");
 	AssertPNGRoundTrip("basn4a16.png");

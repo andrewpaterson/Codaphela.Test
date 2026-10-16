@@ -4,6 +4,9 @@
     <Filter Include="Source">
       <UniqueIdentifier>{76003f76-e2ce-4113-aec7-4d04752f37e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Compression">
+      <UniqueIdentifier>{2f077dcb-ec3a-421d-97c8-9ae1a5680d15}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Channel">
       <UniqueIdentifier>{bda71b34-5714-4e56-813b-07ad4e201bc1}</UniqueIdentifier>
     </Filter>
@@ -116,6 +119,9 @@
     </ClCompile>
     <ClCompile Include="TestSingleChannelAccessor.cpp">
       <Filter>Source\Channel</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCompressionZLib.cpp">
+      <Filter>Source\Compression</Filter>
     </ClCompile>
     <ClCompile Include="TestActionEvent.cpp">
       <Filter>Source\Events</Filter>
