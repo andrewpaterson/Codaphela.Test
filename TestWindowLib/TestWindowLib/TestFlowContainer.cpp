@@ -238,11 +238,13 @@ void TestFlowContainerRightCenteredContinue(void)
 {
 	CWinRefWindowFactory	cNativeFactory;
 	CFileUtil				cFileUtil;
+	size					uiStartObjects;
 	char					szDirectory[] = "Output" _FS_ "FlowContainerRightCenteredContinue";
 
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.MakeDir(szDirectory);
 
+	uiStartObjects = gcObjects.NumMemoryIndexes();
 	{
 		Ptr<CWindow>							pTestWindow;
 		size									i;
@@ -298,7 +300,7 @@ void TestFlowContainerRightCenteredContinue(void)
 
 		pFlow->SetFlowStyle(CSD_Right, CSW_Continue, CSV_Center);
 		pTestWindow->SetContainer(pFlow);
-		AssertSize(3, gcObjects.NumMemoryIndexes());
+		AssertSize(uiStartObjects + 3, gcObjects.NumMemoryIndexes());
 
 		cRandom.Init(6785);
 		for (i = 0; i < 10; i++)
@@ -320,7 +322,7 @@ void TestFlowContainerRightCenteredContinue(void)
 			pCanvas = NULL;
 			pDraw = NULL;
 
-			AssertSize(3 + (i + 1) * 2, gcObjects.NumMemoryIndexes());
+			AssertSize(uiStartObjects + 3 + (i + 1) * 2, gcObjects.NumMemoryIndexes());
 			AssertSize(6 + i, pTestWindow.NumHeapFroms());
 			AssertSize(1, pTestWindow.NumStackFroms());
 
@@ -347,7 +349,7 @@ void TestFlowContainerRightCenteredContinue(void)
 		pFlow = NULL;
 
 		pTestWindow->Show();
-		AssertSize(34, gcObjects.NumMemoryIndexes());
+		AssertSize(uiStartObjects + 2 + 34, gcObjects.NumMemoryIndexes());  //+2 for GraphFreeObjects and its Set.
 
 		AssertSize(1, pTestWindow.NumStackFroms());
 		apcStackFroms.Init();
@@ -367,7 +369,7 @@ void TestFlowContainerRightCenteredContinue(void)
 		apcHeapFroms.Kill();
 
 		pTestWindow = NULL;
-		AssertSize(0, gcObjects.NumMemoryIndexes());
+		AssertSize(uiStartObjects + 2, gcObjects.NumMemoryIndexes());  //GraphFreeObjects and its Set.
 
 		szExpectedDirectory.Init(szDirectory);
 		szExpectedDirectory.Replace("Output", "Input");
@@ -391,11 +393,13 @@ void TestFlowContainerRightTopContinue(void)
 {
 	CWinRefWindowFactory	cNativeFactory;
 	CFileUtil				cFileUtil;
+	size					uiStartObjects;
 	char					szDirectory[] = "Output" _FS_ "FlowContainerRightTopContinue";
 
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.MakeDir(szDirectory);
 
+	uiStartObjects = gcObjects.NumMemoryIndexes();
 	{
 		Ptr<CWindow>			pTestWindow;
 		size					i;
@@ -442,7 +446,7 @@ void TestFlowContainerRightTopContinue(void)
 			pCanvas = NULL;
 			pDraw = NULL;
 
-			AssertSize(3 + (i + 1) * 2, gcObjects.NumMemoryIndexes());
+			AssertSize(uiStartObjects + 3 + (i + 1) * 2, gcObjects.NumMemoryIndexes());
 			AssertSize(6 + i, pTestWindow.NumHeapFroms());
 			AssertSize(1, pTestWindow.NumStackFroms());
 		}
@@ -450,11 +454,11 @@ void TestFlowContainerRightTopContinue(void)
 		pTestWindow->Show();
 
 
-		AssertSize(34, gcObjects.NumMemoryIndexes());
+		AssertSize(uiStartObjects + 2 + 34, gcObjects.NumMemoryIndexes());  //+2 for GraphFreeObjects and its Set.
 		pTestWindow = NULL;
-		AssertSize(34, gcObjects.NumMemoryIndexes());
+		AssertSize(uiStartObjects + 2 + 34, gcObjects.NumMemoryIndexes());  //+2 for GraphFreeObjects and its Set.
 		pFlow = NULL;
-		AssertSize(0, gcObjects.NumMemoryIndexes());
+		AssertSize(uiStartObjects + 2, gcObjects.NumMemoryIndexes());  //GraphFreeObjects and its Set.
 
 		szExpectedDirectory.Init(szDirectory);
 		szExpectedDirectory.Replace("Output", "Input");
@@ -478,11 +482,13 @@ void TestFlowContainerRightBottomContinue(void)
 {
 	CWinRefWindowFactory	cNativeFactory;
 	CFileUtil				cFileUtil;
+	size					uiStartObjects;
 	char					szDirectory[] = "Output" _FS_ "FlowContainerRightBottomContinue";
 
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.MakeDir(szDirectory);
 
+	uiStartObjects = gcObjects.NumMemoryIndexes();
 	{
 		Ptr<CWindow>			pTestWindow;
 		size					i;
@@ -529,7 +535,7 @@ void TestFlowContainerRightBottomContinue(void)
 			pCanvas = NULL;
 			pDraw = NULL;
 
-			AssertSize(3 + (i + 1) * 2, gcObjects.NumMemoryIndexes());
+			AssertSize(uiStartObjects + 3 + (i + 1) * 2, gcObjects.NumMemoryIndexes());
 			AssertSize(6 + i, pTestWindow.NumHeapFroms());
 			AssertSize(1, pTestWindow.NumStackFroms());
 		}
@@ -537,11 +543,11 @@ void TestFlowContainerRightBottomContinue(void)
 		pTestWindow->Show();
 
 
-		AssertSize(34, gcObjects.NumMemoryIndexes());
+		AssertSize(uiStartObjects + 2 + 34, gcObjects.NumMemoryIndexes());  //+2 for GraphFreeObjects and its Set.
 		pTestWindow = NULL;
-		AssertSize(34, gcObjects.NumMemoryIndexes());
+		AssertSize(uiStartObjects + 2 + 34, gcObjects.NumMemoryIndexes());  //+2 for GraphFreeObjects and its Set.
 		pFlow = NULL;
-		AssertSize(0, gcObjects.NumMemoryIndexes());
+		AssertSize(uiStartObjects + 2, gcObjects.NumMemoryIndexes());  //GraphFreeObjects and its Set.
 
 		szExpectedDirectory.Init(szDirectory);
 		szExpectedDirectory.Replace("Output", "Input");
@@ -565,11 +571,13 @@ void TestFlowContainerRightTopWrap(void)
 {
 	CWinRefWindowFactory	cNativeFactory;
 	CFileUtil				cFileUtil;
+	size					uiStartObjects;
 	char					szDirectory[] = "Output" _FS_ "FlowContainerRightTopWrap";
 
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.MakeDir(szDirectory);
 
+	uiStartObjects = gcObjects.NumMemoryIndexes();
 	{
 		Ptr<CWindow>			pTestWindow;
 		size					i;
@@ -616,7 +624,7 @@ void TestFlowContainerRightTopWrap(void)
 			pCanvas = NULL;
 			pDraw = NULL;
 
-			AssertSize(3 + (i + 1) * 2, gcObjects.NumMemoryIndexes());
+			AssertSize(uiStartObjects + 3 + (i + 1) * 2, gcObjects.NumMemoryIndexes());
 			AssertSize(6 + i, pTestWindow.NumHeapFroms());
 			AssertSize(1, pTestWindow.NumStackFroms());
 		}
@@ -624,11 +632,11 @@ void TestFlowContainerRightTopWrap(void)
 		pTestWindow->Show();
 
 
-		AssertSize(34, gcObjects.NumMemoryIndexes());
+		AssertSize(uiStartObjects + 2 + 34, gcObjects.NumMemoryIndexes());  //+2 for GraphFreeObjects and its Set.
 		pTestWindow = NULL;
-		AssertSize(34, gcObjects.NumMemoryIndexes());
+		AssertSize(uiStartObjects + 2 + 34, gcObjects.NumMemoryIndexes());  //+2 for GraphFreeObjects and its Set.
 		pFlow = NULL;
-		AssertSize(0, gcObjects.NumMemoryIndexes());
+		AssertSize(uiStartObjects + 2, gcObjects.NumMemoryIndexes());  //GraphFreeObjects and its Set.
 
 		szExpectedDirectory.Init(szDirectory);
 		szExpectedDirectory.Replace("Output", "Input");
@@ -652,10 +660,12 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRand
 {
 	CWinRefWindowFactory	cNativeFactory;
 	CFileUtil				cFileUtil;
+	size					uiStartObjects;
 
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.MakeDir(szDirectory);
 
+	uiStartObjects = gcObjects.NumMemoryIndexes();
 	{
 		Ptr<CWindow>			pTestWindow;
 		size					i;
@@ -712,7 +722,7 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRand
 
 		pTestWindow = NULL;
 		pFlow = NULL;
-		AssertSize(0, gcObjects.NumMemoryIndexes());
+		AssertSize(uiStartObjects + 2, gcObjects.NumMemoryIndexes());  //GraphFreeObjects and its Set.
 
 		szExpectedDirectory.Init(szDirectory);
 		szExpectedDirectory.Replace("Output", "Input");
@@ -874,6 +884,7 @@ void TestFlowContainer(void)
 	TestFlowContainerDownRightWrap();
 	TestFlowLongContainerDownRightWrap();
 
+	ObjectsFlush();
 	ObjectsKill();
 	TestStatistics();
 }

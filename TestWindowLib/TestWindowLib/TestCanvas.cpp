@@ -90,6 +90,7 @@ void TestCanvasWriteImageRGB(void)
 
 		pTestWindow->Show();
 
+		pRoot->Remove(pTestWindow);
 		pTestWindow = NULL;
 		pCanvas = NULL;
 		pTick = NULL;
@@ -187,6 +188,7 @@ void TestCanvasWriteImageBGRX(void)
 
 		pTestWindow->Show();
 
+		pRoot->Remove(pTestWindow);
 		pTestWindow = NULL;
 		pCanvas = NULL;
 		pTick = NULL;
