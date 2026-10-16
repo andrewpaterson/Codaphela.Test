@@ -98,7 +98,6 @@ void TestRefWindowCanvasBorder(void)
 
 		pTestWindow->Show();
 
-		pRoot->RemoveAll();
 		pTestWindow = NULL;
 		pDraw = NULL;
 		pTick = NULL;

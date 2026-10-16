@@ -43,7 +43,94 @@ void AssertImageFile(CChars* pszExpected, CChars* pszActual)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFlowContainerBasic(void)
+void TestFlowContainerBasicOnHeap(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "FlowContainerBasic";
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		CChars					szExpectedDirectory;
+		Ptr<CCanvas>			pCanvas1;
+		Ptr<CCanvas>			pCanvas2;
+		Ptr<CCanvas>			pCanvas3;
+		Ptr<CBorderCanvasDraw>	pDraw1;
+		Ptr<CBorderCanvasDraw>	pDraw2;
+		Ptr<CBorderCanvasDraw>	pDraw3;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		Ptr<CFlowContainer>		pFlow;
+		SContainerBounds		sBounds;
+		SInt32Vec2				sVec;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 96, 30, szDirectory);
+
+		cTick.Init(&cData, 1);
+		
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, (CPointer)NULL, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+
+		pDraw1 = OMalloc<CBorderCanvasDraw>(Set32BitColour(1.0f, 0, 0));
+		pCanvas1 = OMalloc<CCanvas>(pTestWindow, pDraw1);
+		pDraw2 = OMalloc<CBorderCanvasDraw>(Set32BitColour(0, 1.0f, 0));
+		pCanvas2 = OMalloc<CCanvas>(pTestWindow, pDraw2);
+		pDraw3 = OMalloc<CBorderCanvasDraw>(Set32BitColour(0, 0, 1.0f));
+		pCanvas3 = OMalloc<CCanvas>(pTestWindow, pDraw3);
+
+		pFlow = OMalloc<CFlowContainer>(pTestWindow);
+		pFlow->SetFlowStyle(CSD_Right, CSW_Continue, CSV_Top);
+		pTestWindow->SetContainer(pFlow);
+
+		pFlow->AddComponent(pCanvas1);
+		pFlow->AddComponent(pCanvas2);
+		pFlow->AddComponent(pCanvas3);
+		pCanvas1->SetDesiredSize(10, 10);
+		pCanvas2->SetDesiredSize(20, 20);
+		pCanvas3->SetDesiredSize(5, 16);
+
+		AssertSize(3, pFlow->NumComponents());
+		sVec = pCanvas1->GetActualSize();
+		AssertInt32Vec2(0, 0, &sVec);
+
+		pTestWindow->Show();
+
+		sVec = pCanvas1->GetActualSize();
+		AssertInt32Vec2(10, 10, &sVec);
+		sVec = pCanvas2->GetActualSize();
+		AssertInt32Vec2(20, 20, &sVec);
+		sVec = pCanvas3->GetActualSize();
+		AssertInt32Vec2(5, 16, &sVec);
+		sVec = pCanvas1->GetPosition();
+		AssertInt32Vec2(0, 0, &sVec);
+		sVec = pCanvas2->GetPosition();
+		AssertInt32Vec2(10, 0, &sVec);
+		sVec = pCanvas3->GetPosition();
+		AssertInt32Vec2(30, 0, &sVec);
+
+		pCanvas1->GetContainerBounds(&sBounds);
+
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
+
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
+	}
+
+	AssertSize(0, gcObjects.NumFreeObjects());
+
+	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainerBasicOnStack(void)
 {
 	CWinRefWindowFactory	cNativeFactory;
 	CFileUtil				cFileUtil;
@@ -111,6 +198,10 @@ void TestFlowContainerBasic(void)
 
 		cCanvas1.GetContainerBounds(&sBounds);
 
+		cCanvas1.Kill();
+		cCanvas2.Kill();
+		cCanvas3.Kill();
+		cFlow.Kill();
 		cTestWindow.Kill();
 
 		szExpectedDirectory.Init(szDirectory);
@@ -123,7 +214,6 @@ void TestFlowContainerBasic(void)
 	cNativeFactory.Kill();
 	cFileUtil.RemoveDir(szDirectory);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -742,7 +832,8 @@ void TestFlowContainer(void)
 	BeginTests();
 	ObjectsInit();
 
-	TestFlowContainerBasic();
+	TestFlowContainerBasicOnHeap();
+	TestFlowContainerBasicOnStack();
 	TestFlowContainerRightCenteredContinue();
 	TestFlowContainerRightTopContinue();
 	TestFlowContainerRightBottomContinue();
