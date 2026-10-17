@@ -6,6 +6,7 @@
 #include "BaseLib/WindowsHeaders.h"
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
+#include "BaseLib/Logger.h"
 #include "TestLib/Assert.h"
 
 
@@ -644,6 +645,144 @@ void TestFileUtilCopyDir(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFileUtilIsDirectory(void)
+{
+	CFileUtil	cFileUtil;
+
+	cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR);
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR _FS_ "Dir", false));
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "File.txt", "x");
+
+	AssertTrue(cFileUtil.IsDirectory(FILE_UTIL_TEST_DIR));
+	AssertTrue(cFileUtil.IsDirectory(FILE_UTIL_TEST_DIR _FS_ "Dir"));
+	AssertFalse(cFileUtil.IsDirectory(FILE_UTIL_TEST_DIR _FS_ "File.txt"));
+	AssertFalse(cFileUtil.IsDirectory(FILE_UTIL_TEST_DIR _FS_ "Missing"));
+
+	AssertTrue(cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFileUtilCopyDirCreatesDestination(void)
+{
+	CFileUtil	cFileUtil;
+
+	cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR);
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "Sub" _FS_ "SubSub", false));
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "Empty", false));
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "A.txt", "Hello");
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "Sub" _FS_ "SubSub" _FS_ "C.txt", "Deep down");
+
+	//The destination and its parent do not exist yet.  A trailing separator on the source is allowed.
+	AssertFalse(cFileUtil.Exists(FILE_UTIL_TEST_DIR _FS_ "Dest"));
+	AssertTrue(cFileUtil.CopyDir(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_, FILE_UTIL_TEST_DIR _FS_ "Dest" _FS_ "Deeper"));
+
+	AssertTrue(cFileUtil.Compare(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "A.txt", FILE_UTIL_TEST_DIR _FS_ "Dest" _FS_ "Deeper" _FS_ "A.txt"));
+	AssertTrue(cFileUtil.Compare(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "Sub" _FS_ "SubSub" _FS_ "C.txt", FILE_UTIL_TEST_DIR _FS_ "Dest" _FS_ "Deeper" _FS_ "Sub" _FS_ "SubSub" _FS_ "C.txt"));
+	AssertTrue(cFileUtil.IsDirectory(FILE_UTIL_TEST_DIR _FS_ "Dest" _FS_ "Deeper" _FS_ "Empty"));
+
+	AssertTrue(cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFileUtilCopyDirOverExisting(void)
+{
+	CFileUtil	cFileUtil;
+
+	cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR);
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "Sub", false));
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "A.txt", "Hello");
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "Sub" _FS_ "B.txt", "World!");
+
+	//Existing files are replaced, even longer ones.  Files only in the destination are kept.
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR _FS_ "Dest" _FS_ "Sub", false));
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Dest" _FS_ "A.txt", "An older and much longer file");
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Dest" _FS_ "Sub" _FS_ "B.txt", "Old");
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Dest" _FS_ "Extra.txt", "Extra");
+
+	AssertTrue(cFileUtil.CopyDir(FILE_UTIL_TEST_DIR _FS_ "Source", FILE_UTIL_TEST_DIR _FS_ "Dest"));
+	AssertTrue(cFileUtil.Compare(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "A.txt", FILE_UTIL_TEST_DIR _FS_ "Dest" _FS_ "A.txt"));
+	AssertTrue(cFileUtil.Compare(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "Sub" _FS_ "B.txt", FILE_UTIL_TEST_DIR _FS_ "Dest" _FS_ "Sub" _FS_ "B.txt"));
+	AssertLong(5, cFileUtil.Size(FILE_UTIL_TEST_DIR _FS_ "Dest" _FS_ "Extra.txt"));
+
+	AssertTrue(cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFileUtilCopyDirFailures(void)
+{
+	CFileUtil	cFileUtil;
+	SLogConfig	sLogConfig;
+
+	cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR);
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "Sub", false));
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "A.txt", "Hello");
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "NotADirectory.txt", "x");
+
+	sLogConfig = gcLogger.SetSilent();
+
+	//A missing source fails without creating the destination.
+	AssertFalse(cFileUtil.CopyDir(FILE_UTIL_TEST_DIR _FS_ "Missing", FILE_UTIL_TEST_DIR _FS_ "Dest"));
+	AssertFalse(cFileUtil.Exists(FILE_UTIL_TEST_DIR _FS_ "Dest"));
+
+	//A file is not a directory.
+	AssertFalse(cFileUtil.CopyDir(FILE_UTIL_TEST_DIR _FS_ "NotADirectory.txt", FILE_UTIL_TEST_DIR _FS_ "Dest"));
+	AssertFalse(cFileUtil.Exists(FILE_UTIL_TEST_DIR _FS_ "Dest"));
+
+	//The destination cannot be the source or inside it.
+	AssertFalse(cFileUtil.CopyDir(FILE_UTIL_TEST_DIR _FS_ "Source", FILE_UTIL_TEST_DIR _FS_ "Source"));
+	AssertFalse(cFileUtil.CopyDir(FILE_UTIL_TEST_DIR _FS_ "Source", FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "Sub" _FS_ "Copy"));
+	AssertFalse(cFileUtil.Exists(FILE_UTIL_TEST_DIR _FS_ "Source" _FS_ "Sub" _FS_ "Copy"));
+
+	//A destination with a similar name is not inside the source.
+	AssertTrue(cFileUtil.CopyDir(FILE_UTIL_TEST_DIR _FS_ "Source", FILE_UTIL_TEST_DIR _FS_ "SourceCopy"));
+	AssertTrue(cFileUtil.Exists(FILE_UTIL_TEST_DIR _FS_ "SourceCopy" _FS_ "A.txt"));
+
+	//The destination cannot be a file.
+	AssertFalse(cFileUtil.CopyDir(FILE_UTIL_TEST_DIR _FS_ "Source", FILE_UTIL_TEST_DIR _FS_ "NotADirectory.txt"));
+
+#ifdef LINUX_GNU_32
+	//A file that cannot be read is reported.
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR _FS_ "Locked", false));
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Locked" _FS_ "Secret.txt", "x");
+	chmod(FILE_UTIL_TEST_DIR _FS_ "Locked" _FS_ "Secret.txt", 0);
+	AssertFalse(cFileUtil.CopyDir(FILE_UTIL_TEST_DIR _FS_ "Locked", FILE_UTIL_TEST_DIR _FS_ "LockedCopy"));
+	chmod(FILE_UTIL_TEST_DIR _FS_ "Locked" _FS_ "Secret.txt", 0644);
+
+	//A sub directory that cannot be read is reported.
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR _FS_ "Hidden" _FS_ "Closed", false));
+	chmod(FILE_UTIL_TEST_DIR _FS_ "Hidden" _FS_ "Closed", 0);
+	AssertFalse(cFileUtil.CopyDir(FILE_UTIL_TEST_DIR _FS_ "Hidden", FILE_UTIL_TEST_DIR _FS_ "HiddenCopy"));
+	chmod(FILE_UTIL_TEST_DIR _FS_ "Hidden" _FS_ "Closed", 0755);
+
+	//A destination that cannot be written to is reported.
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR _FS_ "ReadOnly", false));
+	chmod(FILE_UTIL_TEST_DIR _FS_ "ReadOnly", 0555);
+	AssertFalse(cFileUtil.CopyDir(FILE_UTIL_TEST_DIR _FS_ "Source", FILE_UTIL_TEST_DIR _FS_ "ReadOnly"));
+	chmod(FILE_UTIL_TEST_DIR _FS_ "ReadOnly", 0755);
+#endif // LINUX_GNU_32
+
+	gcLogger.SetConfig(&sLogConfig);
+
+	AssertTrue(cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFileUtilRemoveDir(void)
 {
 	CFileUtil	cFileUtil;
@@ -706,7 +845,11 @@ void TestFileUtil(void)
 	TestFileUtilTouchExisting();
 	TestFileUtilExistsAndSize();
 	TestFileUtilFindHidden();
+	TestFileUtilIsDirectory();
 	TestFileUtilCopyDir();
+	TestFileUtilCopyDirCreatesDestination();
+	TestFileUtilCopyDirOverExisting();
+	TestFileUtilCopyDirFailures();
 	TestFileUtilRemoveDir();
 
 	FastFunctionsKill();
