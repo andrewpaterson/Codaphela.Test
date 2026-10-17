@@ -377,7 +377,6 @@ void TestSharedMemoryResizeOneProcessResizeAndRelease(void)
 	bool					bResult;
 	int						i;
 	char					szMemoryName[] = { "Local\\TestSharedMemoryResizeOneProcessResizeAndRelease" };
-	CRandom					cRandom;
 
 	cSharedOwner.Init(szMemoryName);
 	bResult = cSharedOwner.Create(3000);
