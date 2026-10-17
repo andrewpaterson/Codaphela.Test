@@ -1,7 +1,7 @@
 #ifndef __POOL_PRODUCER_THREAD_H__
 #define __POOL_PRODUCER_THREAD_H__
 #include "ThreadLib/Thread.h"
-#include "ThreadLib/SafeArrayBlock.h"
+#include "BaseLib/SafeArrayBlock.h"
 
 
 class CPoolProducerThread : public CThread

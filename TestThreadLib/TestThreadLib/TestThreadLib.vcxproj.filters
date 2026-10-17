@@ -36,6 +36,9 @@
     <ClCompile Include="TestSafeArrayBlock.cpp">
       <Filter>Source\Data\Array\Basic</Filter>
     </ClCompile>
+    <ClCompile Include="TestMutex.cpp">
+      <Filter>Source\Data\Array\Basic</Filter>
+    </ClCompile>
     <ClCompile Include="TestReferences.cpp">
       <Filter>Source</Filter>
     </ClCompile>

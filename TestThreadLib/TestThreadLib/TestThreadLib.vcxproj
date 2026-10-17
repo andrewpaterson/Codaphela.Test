@@ -195,6 +195,7 @@
     <ClCompile Include="TestThreadPool.cpp" />
     <ClCompile Include="TestReferences.cpp" />
     <ClCompile Include="TestSafeArrayBlock.cpp" />
+    <ClCompile Include="TestMutex.cpp" />
     <ClCompile Include="TestThreadLib.cpp" />
     <ClCompile Include="TestWorkerThreadPool.cpp" />
   </ItemGroup>

@@ -6,6 +6,7 @@
 #include "SupportLib/Maps.h"
 #include "SupportLib/MapViewport.h"
 #include "SupportLib/TileLayerCel.h"
+#include "SupportLib/TileLayerBoolean.h"
 #include "TestLib/Assert.h"
 #include "TestReadImage.h"
 #include "SupportAssert.h"
@@ -127,6 +128,100 @@ void TestMapViewportBlit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMapViewportBooleanLayer(void)
+{
+	ObjectsInit();
+	{
+		CMaps						cMaps;
+		Ptr<CArrayImageCel>			pacBackgroundCels;
+		Ptr<CArrayImageCel>			pSoulSuckerCels;
+		Ptr<CTileMap>				pTileMap;
+		Ptr<CTileLayerBoolean>		pBooleanLayer;
+		Ptr<CTileLayerCel>			pCelLayer;
+		Ptr<CSpriteMap>				pSpriteMap;
+		Ptr<CImage>					pDestImage1;
+		Ptr<CImage>					pDestImage2;
+		Ptr<CImageCelBlitterCache>	pBlitterCache1;
+		Ptr<CImageCelBlitterCache>	pBlitterCache2;
+		bool						bResult;
+		uint8*						puiData;
+		size						uiNonZero;
+		size						i;
+
+		ImageChannelDescriptorInit();
+
+		pacBackgroundCels = TestReadCels("SpaceCrusade", "Tiles.png", 10, 3);
+		pSoulSuckerCels = TestReadCels("SpaceCrusade", "SoulSucker.png", 8, 1);
+
+		pDestImage1 = OMalloc<CImage>(32, 32, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+		pDestImage2 = OMalloc<CImage>(32, 32, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+		memset(pDestImage1->GetData(), 0, pDestImage1->GetByteSize());
+		memset(pDestImage2->GetData(), 0, pDestImage2->GetByteSize());
+		pBlitterCache1 = OMalloc<CImageCelBlitterCache>(pDestImage1);
+		cMaps.Init(pBlitterCache1, pDestImage1);
+
+		//A boolean layer has no blitters and must not stop the cel layer beside it from getting them.
+		pTileMap = OMalloc<CTileMap>();
+		pBooleanLayer = OMalloc<CTileLayerBoolean>(pTileMap, "Boolean", SSizeVec2(4, 4), SSizeVec2(16, 16), 1, SIntVec2(0, 0));
+		pBooleanLayer->SetTile(1, 1, true);
+		pTileMap->AddLayer(pBooleanLayer);
+		pCelLayer = OMalloc<CTileLayerCel>(pTileMap, "Cel", SSizeVec2(4, 4), SSizeVec2(16, 16), 0, SIntVec2(0, 0));
+		pCelLayer->SetTiles(0, 0, pacBackgroundCels, 7, 5, 5, 6);
+		pCelLayer->SetTiles(0, 1, pacBackgroundCels, 19, 2, 2, 4);
+		pTileMap->AddLayer(pCelLayer);
+		cMaps.AddMap(pTileMap);
+
+		pSpriteMap = OMalloc<CSpriteMap>();
+		pSpriteMap->AddSprite(OMalloc<CSprite>(pSoulSuckerCels->Get(7), 8, 8));
+		cMaps.AddMap(pSpriteMap);
+
+		AssertTrue(pTileMap->UsesCelBlitters());
+		AssertFalse(cMaps.HasCelBlitters());
+		bResult = cMaps.CreateCelBlitters();
+		AssertTrue(bResult);
+		AssertTrue(pCelLayer->HasCelBlitters());
+		AssertTrue(cMaps.HasCelBlitters());
+
+		cMaps.SetViewportPosition(4, 4);
+		bResult = cMaps.Blit(false);
+		AssertTrue(bResult);
+
+		puiData = (uint8*)pDestImage1->GetData();
+		uiNonZero = 0;
+		for (i = 0; i < pDestImage1->GetByteSize(); i++)
+		{
+			if (puiData[i] != 0)
+			{
+				uiNonZero++;
+			}
+		}
+		AssertTrue(uiNonZero > 0);
+
+		//Moving to a new cache and image must throw away the blitters made for the old image.
+		pBlitterCache2 = OMalloc<CImageCelBlitterCache>(pDestImage2);
+		cMaps.SetCacheAndViewport(pBlitterCache2, pDestImage2);
+		AssertFalse(cMaps.HasCelBlitters());
+		bResult = cMaps.CreateCelBlitters();
+		AssertTrue(bResult);
+		AssertTrue(cMaps.HasCelBlitters());
+
+		cMaps.SetViewportPosition(4, 4);
+		bResult = cMaps.Blit(false);
+		AssertTrue(bResult);
+		AssertSize(pDestImage1->GetByteSize(), pDestImage2->GetByteSize());
+		AssertMemory(pDestImage1->GetData(), pDestImage2->GetData(), pDestImage1->GetByteSize());
+
+		cMaps.Kill();
+
+		ImageChannelDescriptorKill();
+	}
+	ObjectsKill(false);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMapViewport(void)
 {
 	BeginTests();
@@ -134,6 +229,7 @@ void TestMapViewport(void)
 	DataIOInit();
 
 	TestMapViewportBlit();
+	TestMapViewportBooleanLayer();
 
 	DataIOKill();
 

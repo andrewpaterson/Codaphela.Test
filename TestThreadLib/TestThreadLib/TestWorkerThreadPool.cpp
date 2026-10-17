@@ -3,7 +3,7 @@
 #include "BaseLib/ArrayTemplate.h"
 #include "BaseLib/LogString.h"
 #include "ThreadLib/WorkerThreadPool.h"
-#include "ThreadLib/SafeArrayBlock.h"
+#include "BaseLib/SafeArrayBlock.h"
 #include "TestLib/Assert.h"
 
 

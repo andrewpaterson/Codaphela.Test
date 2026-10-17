@@ -223,6 +223,7 @@
     <ClCompile Include="SortedTestObject.cpp" />
     <ClCompile Include="TestAllocator.cpp" />
     <ClCompile Include="TestArrayBlock.cpp" />
+    <ClCompile Include="TestSafeArrayBlock.cpp" />
     <ClCompile Include="TestArrayBlockSorted.cpp" />
     <ClCompile Include="TestArraySizer.cpp" />
     <ClCompile Include="TestArrayTemplateEmbeddedPtr.cpp" />
@@ -277,6 +278,8 @@
     <ClCompile Include="TestJSONParser.cpp" />
     <ClCompile Include="TestLinkedList.cpp" />
     <ClCompile Include="TestLinkedListBlock.cpp" />
+    <ClCompile Include="TestSafeLinkedListBlock.cpp" />
+    <ClCompile Include="TestMutex.cpp" />
     <ClCompile Include="TestLinkedListTemplate.cpp" />
     <ClCompile Include="TestListBlock.cpp" />
     <ClCompile Include="TestListCharsMinimal.cpp" />

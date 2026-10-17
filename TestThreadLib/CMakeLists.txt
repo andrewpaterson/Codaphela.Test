@@ -115,8 +115,12 @@ if(BASELIB_ASAN)
 endif()
 
 
+# CMutex uses pthreads on Linux.
+find_package(Threads REQUIRED)
+
 add_library(BaseLib STATIC ${BASELIB_SOURCES})
 target_link_libraries(BaseLib PUBLIC baselib_options)
+target_link_libraries(BaseLib PUBLIC Threads::Threads)
 
 # Uses AVX intrinsics unconditionally; MSVC allows that without a flag, g++ does not.
 set_source_files_properties("${BASELIB_DIR}/FastMemcpy.cpp" PROPERTIES COMPILE_OPTIONS -mavx)
@@ -124,10 +128,8 @@ set_source_files_properties("${BASELIB_DIR}/FastMemcpy.cpp" PROPERTIES COMPILE_O
 add_library(TestLib STATIC ${TESTLIB_SOURCES})
 target_link_libraries(TestLib PUBLIC BaseLib)
 
-find_package(Threads REQUIRED)
-
 add_library(ThreadLib STATIC ${THREADLIB_SOURCES})
-target_link_libraries(ThreadLib PUBLIC BaseLib Threads::Threads)
+target_link_libraries(ThreadLib PUBLIC BaseLib)
 
 add_executable(TestThreadLib ${TESTTHREADLIB_SOURCES})
 target_link_libraries(TestThreadLib PRIVATE TestLib ThreadLib BaseLib)

@@ -6,7 +6,7 @@
 #include "BaseLib/Socket.h"
 #include "BaseLib/ListenSocket.h"
 #include "ThreadLib/AtomicInt.h"
-#include "ThreadLib/Mutex.h"
+#include "BaseLib/Mutex.h"
 #include "ThreadLib/NetworkConnection.h"
 #include "ThreadLib/SharedMemoryChannel.h"
 #include "ThreadLib/ProcessFork.h"

@@ -1,7 +1,7 @@
 #ifndef __POOL_CONSUMER_THREAD_H__
 #define __POOL_CONSUMER_THREAD_H__
 #include "ThreadLib/Thread.h"
-#include "ThreadLib/SafeArrayBlock.h"
+#include "BaseLib/SafeArrayBlock.h"
 
 
 class CPoolConsumerThread : public CThread

@@ -1,6 +1,6 @@
 #include "ThreadLib/NativeThread.h"
 #include "BaseLib/GlobalMemory.h"
-#include "ThreadLib/SafeArrayBlock.h"
+#include "BaseLib/SafeArrayBlock.h"
 #include "ThreadLib/WorkerThreadPool.h"
 #include "TestLib/Assert.h"
 #include "PoolProducerThread.h"

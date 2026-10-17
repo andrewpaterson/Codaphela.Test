@@ -5,7 +5,7 @@
 #include "ThreadLib/ThreadPool.h"
 #include "ThreadLib/ThreadsDone.h"
 #include "ThreadLib/AtomicInt.h"
-#include "ThreadLib/SafeArrayBlock.h"
+#include "BaseLib/SafeArrayBlock.h"
 #include "TestLib/Assert.h"
 #include "TestTimeout.h"
 #include "PoolProducerThread.h"

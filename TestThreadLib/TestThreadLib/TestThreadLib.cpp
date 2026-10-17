@@ -15,6 +15,8 @@ int TestProcessChannelMain(int argc, char* argv[]);
 void TestMainProcessDirector(int argc, char* argv[]);
 void TestReferences(void);
 void TestSafeArrayBlock(void);
+void TestMutex(void);
+void TestSafeLinkedListBlock(void);
 void TestWorkerThreadPool(void);
 void TestThread(void);
 void TestThreadPool(void);
@@ -34,7 +36,9 @@ int TestThreadLib(int argc, char* argv[])
 	TestReferences();
 	TestThread();
 	TestWorkerThreadPool();
+	TestMutex();
 	TestSafeArrayBlock();
+	TestSafeLinkedListBlock();
 	TestThreadPool();
 	TestProcessFork();
 	TestSharedMemory();
