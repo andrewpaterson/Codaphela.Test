@@ -11,6 +11,7 @@
 
 void TestRefWindow(void);
 void TestFlowContainer(void);
+void TestFillContainer(void);
 void TestCanvas(void);
 
 
@@ -37,6 +38,7 @@ int __cdecl main(void)
 
 	TestRefWindow();
 	TestFlowContainer();
+	TestFillContainer();
 	TestCanvas();
 
 	cFileUtil.RemoveDir("Output");

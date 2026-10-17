@@ -37,8 +37,8 @@ void TestImageCelCropBorders(void)
 	AssertInt(21, cCel.GetSubImage()->GetImageWidth());
 	AssertInt(24, cCel.GetSubImage()->GetFullHeight());
 	AssertInt(18, cCel.GetSubImage()->GetImageHeight());
-	AssertInt(1, cCel.GetSubImage()->mcImageRect.miLeft);
-	AssertInt(3, cCel.GetSubImage()->mcImageRect.miTop);
+	AssertInt(1, cCel.GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(3, cCel.GetSubImage()->mcImageRect.msTopLeft.y);
 
 	cCel.Kill();
 	pcImage->Kill();
@@ -114,8 +114,8 @@ void TestImageCelTransparentColourCropBorders(void)
 	AssertInt(18, cCel.GetSubImage()->GetImageWidth());
 	AssertInt(24, cCel.GetSubImage()->GetFullHeight());
 	AssertInt(19, cCel.GetSubImage()->GetImageHeight());
-	AssertInt(4, cCel.GetSubImage()->mcImageRect.miLeft);
-	AssertInt(2, cCel.GetSubImage()->mcImageRect.miTop);
+	AssertInt(4, cCel.GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(2, cCel.GetSubImage()->mcImageRect.msTopLeft.y);
 
 	cCel.Kill();
 	pcImage->Kill();

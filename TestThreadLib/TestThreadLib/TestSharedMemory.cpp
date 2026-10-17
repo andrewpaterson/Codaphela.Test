@@ -18,41 +18,36 @@
 //////////////////////////////////////////////////////////////////////////
 void AssertMappedFile(char* szName, int iExpectedMappedCount)
 {
-	HANDLE			hMapFile;
-	SSharedMemoryDescriptor* psDescriptor;
+	CSharedMemoryFile			cMappedFile;
+	SSharedMemoryResult			sResult;
+	SSharedMemoryDescriptor*	psDescriptor;
 
-	hMapFile = OpenFileMapping(
-		FILE_MAP_ALL_ACCESS,
-		false,
-		szName);
+	cMappedFile.Init(szName);
+	sResult = cMappedFile.Open();
 
 	if (iExpectedMappedCount > 0)
 	{
-		if (hMapFile == NULL)
+		if (sResult.IsFailed())
 		{
-			AssertTrue(hMapFile != NULL);
+			AssertTrue(sResult.IsSuccess());
 		}
 		else
 		{
-			psDescriptor = (SSharedMemoryDescriptor*)MapViewOfFile(
-				hMapFile,
-				FILE_MAP_ALL_ACCESS,
-				0,
-				0,
-				sizeof(SSharedMemoryDescriptor));
+			psDescriptor = cMappedFile.Map(0);
 			AssertInt(psDescriptor->iMapCount, iExpectedMappedCount);
-			UnmapViewOfFile(psDescriptor);
-			CloseHandle(hMapFile);
+			cMappedFile.Unmap(psDescriptor);
+			cMappedFile.Close();
 		}
 	}
 	else
 	{
-		if (hMapFile != NULL)
+		if (sResult.IsSuccess())
 		{
-			CloseHandle(hMapFile);
+			cMappedFile.Close();
 		}
-		AssertTrue(hMapFile == NULL);
+		AssertTrue(sResult.IsFailed());
 	}
+	cMappedFile.Kill();
 }
 
 

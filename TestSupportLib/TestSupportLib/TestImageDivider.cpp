@@ -30,20 +30,20 @@ void TestImageDividerGenerateFromBorder(void)
 	cImageDivider.GenerateFromBorder(pcMask);
 	AssertInt(20, cImageDivider.GetDestImageCels()->NumElements());
 	pcRectangle = cImageDivider.GetDestImageCels()->Get(0);
-	AssertInt(1, pcRectangle->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(1, pcRectangle->GetSubImage()->mcImageRect.miTop);
+	AssertInt(1, pcRectangle->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(1, pcRectangle->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(13, pcRectangle->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(13, pcRectangle->GetSubImage()->mcImageRect.GetHeight());
 
 	pcRectangle = cImageDivider.GetDestImageCels()->Get(1);
-	AssertInt(15, pcRectangle->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(1, pcRectangle->GetSubImage()->mcImageRect.miTop);
+	AssertInt(15, pcRectangle->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(1, pcRectangle->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(13, pcRectangle->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(13, pcRectangle->GetSubImage()->mcImageRect.GetHeight());
 
 	pcRectangle = cImageDivider.GetDestImageCels()->Get(17);
-	AssertInt(21, pcRectangle->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(39, pcRectangle->GetSubImage()->mcImageRect.miTop);
+	AssertInt(21, pcRectangle->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(39, pcRectangle->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(3, pcRectangle->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(3, pcRectangle->GetSubImage()->mcImageRect.GetHeight());
 
@@ -76,14 +76,14 @@ void TestImageDividerGenerateFromNumbers(void)
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(12, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(0);
-	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(11);
-	AssertInt(48, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(48, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 	cImageDivider.Kill();
@@ -93,14 +93,14 @@ void TestImageDividerGenerateFromNumbers(void)
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(12, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(0);
-	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(11);
-	AssertInt(48, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(48, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 	cImageDivider.Kill();
@@ -110,14 +110,14 @@ void TestImageDividerGenerateFromNumbers(void)
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(6, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(0);
-	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(5);
-	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 	cImageDivider.Kill();
@@ -127,14 +127,14 @@ void TestImageDividerGenerateFromNumbers(void)
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(8, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(0);
-	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(7);
-	AssertInt(48, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(48, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 	cImageDivider.Kill();
@@ -144,14 +144,14 @@ void TestImageDividerGenerateFromNumbers(void)
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(9, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(0);
-	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(8);
-	AssertInt(48, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(48, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 	cImageDivider.Kill();
@@ -161,14 +161,14 @@ void TestImageDividerGenerateFromNumbers(void)
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(6, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(0);
-	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(5);
-	AssertInt(48, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(48, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 	cImageDivider.Kill();
@@ -178,14 +178,14 @@ void TestImageDividerGenerateFromNumbers(void)
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(9, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(0);
-	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(8);
-	AssertInt(48, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(48, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 	cImageDivider.Kill();
@@ -195,14 +195,14 @@ void TestImageDividerGenerateFromNumbers(void)
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(6, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(0);
-	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(0, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(5);
-	AssertInt(48, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(48, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(16, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 	cImageDivider.Kill();
@@ -231,14 +231,14 @@ void TestImageDividerGenerateFromNumbersWithTransparent(void)
 	cImageDivider.GenerateFromNumbers(&cNumbers);
 	AssertInt(12, cImageDivider.GetDestImageCels()->NumElements());
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(0);
-	AssertInt(1, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(1, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(1, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(1, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(14, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(14, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 
 	pcImageCel = cImageDivider.GetDestImageCels()->Get(11);
-	AssertInt(49, pcImageCel->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.miTop);
+	AssertInt(49, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(32, pcImageCel->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(14, pcImageCel->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(15, pcImageCel->GetSubImage()->mcImageRect.GetHeight());
 	cImageDivider.Kill();
@@ -266,14 +266,14 @@ void TestImageDividerGenerateFromBorderWithTransparent(void)
 	cImageDivider.GenerateFromBorder(&pcMask);
 	AssertInt(2, cImageDivider.GetDestImageCels()->NumElements());
 	pcRectangle = cImageDivider.GetDestImageCels()->Get(0);
-	AssertInt(4, pcRectangle->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(4, pcRectangle->GetSubImage()->mcImageRect.miTop);
+	AssertInt(4, pcRectangle->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(4, pcRectangle->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(18, pcRectangle->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(28, pcRectangle->GetSubImage()->mcImageRect.GetHeight());
 
 	pcRectangle = cImageDivider.GetDestImageCels()->Get(1);
-	AssertInt(9, pcRectangle->GetSubImage()->mcImageRect.miLeft);
-	AssertInt(18, pcRectangle->GetSubImage()->mcImageRect.miTop);
+	AssertInt(9, pcRectangle->GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt(18, pcRectangle->GetSubImage()->mcImageRect.msTopLeft.y);
 	AssertInt(11, pcRectangle->GetSubImage()->mcImageRect.GetWidth());
 	AssertInt(25, pcRectangle->GetSubImage()->mcImageRect.GetHeight());
 
