@@ -409,6 +409,7 @@ void TestSharedMemoryQueueMultiThreadThisProducer(void)
 	}
 	AssertString(szExpected.Text(), szActual.Text());
 
+	cQueue.Kill();
 	cPool.Kill();
 	szExpected.Kill();
 	szActual.Kill();

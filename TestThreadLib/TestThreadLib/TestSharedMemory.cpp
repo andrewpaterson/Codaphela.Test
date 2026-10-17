@@ -500,6 +500,9 @@ void TestSharedMemoryResizeMultiThread(void)
 
 	cSharedOwner.Close();
 	cSharedOwner.Kill();
+
+	cMutex.Close();
+	cMutex.Kill();
 }
 
 
@@ -596,6 +599,9 @@ void TestSharedMemoryResizeMultiProcess(void)
 
 	cSharedOwner.Close();
 	cSharedOwner.Kill();
+
+	cMutex.Close();
+	cMutex.Kill();
 }
 
 

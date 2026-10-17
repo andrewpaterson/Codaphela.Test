@@ -55,6 +55,8 @@ void CSharedMemoryFill::Run(void)
 			cSharedClient.Close();
 			cSharedClient.Kill();
 			cMutex.Unlock();
+			cMutex.Close();
+			cMutex.Kill();
 			cHold.Kill();
 			cDone.Stop();
 			cDone.Kill();
@@ -74,6 +76,8 @@ void CSharedMemoryFill::Run(void)
 			cMutex.Lock();
 			cSharedClient.Kill();
 			cMutex.Unlock();
+			cMutex.Close();
+			cMutex.Kill();
 
 			cDone.Stop();
 			cDone.Kill();

@@ -28,6 +28,7 @@ int TestClientProcessMain(int argc, char* argv[])
 
 		cTextFile.Init("Hello World\n");
 		bResult = cTextFile.Write(szFileName);
+		cTextFile.Kill();
 		if (!bResult)
 		{
 			return -1;

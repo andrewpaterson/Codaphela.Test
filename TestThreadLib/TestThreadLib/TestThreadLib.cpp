@@ -51,6 +51,7 @@ int __cdecl main(int argc, char* argv[])
 {
 	CMainProcessDirector	cDirector;
 	bool					bMainRan;
+	int						iResult;
 
 	cDirector.Init();
 	cDirector.AddRedirect("test", TestThreadLib);
@@ -65,6 +66,9 @@ int __cdecl main(int argc, char* argv[])
 		gcLogger.Error2(__METHOD__, " TestThreadLib must be run with command line parameter [--test param1 --param:2]", NULL);
 		gcLogger.Kill();
 	}
-	return cDirector.GetResult();
+
+	iResult = cDirector.GetResult();
+	cDirector.Kill();
+	return iResult;
 }
 
