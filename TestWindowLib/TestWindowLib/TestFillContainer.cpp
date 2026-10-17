@@ -6,9 +6,11 @@
 #include "WindowLib/ImageCanvasDraw.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/AssertGeometric.h"
+#include "TestLib/AssertFile.h"
 #include "BorderCanvasDraw.h"
 #include "TickTestRefWindow.h"
 #include "DataTestRefWindow.h"
+#include "DarkForest.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -333,6 +335,223 @@ void TestFillContainerImageCanvasDesiredSize(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFillContainerDarkForest(char* szDirectory, int32 iWidth, int32 iHeight, EFillContainerSplit eSplit, int32 iSpacing, EContainerStyleHorizontal eH, EContainerStyleVertical eV, int* paiInsets, size uiNumComponents, SDarkForestComponent* asComponents, SInt32Vec2* asExpectedPositions)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		size					i;
+		CChars					szExpectedDirectory;
+		Ptr<CCanvas>			apCanvas[16];
+		Ptr<CCanvasDraw>		pDraw;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		Ptr<CFillContainer>		pFill;
+		SInsets					sInsets;
+		CColourFormatHelper		cHelper;
+		SDarkForestComponent*	psComponent;
+		SInt32Vec2				sDesired;
+		SInt32Vec2				sVec;
+		CPointer				pNull;
+
+		AssertTrue(uiNumComponents <= 16);
+
+		cNativeFactory.Init(&gcMemoryAllocator, iWidth, iHeight, szDirectory);
+
+		cTick.Init(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow->GetColourFormat(&cHelper);
+
+		pFill = OMalloc<CFillContainer>(pTestWindow);
+		pFill->SetFillStyle(eH, eV);
+		pFill->SetSplit(eSplit, iSpacing);
+		if (paiInsets)
+		{
+			sInsets.Init(paiInsets);
+			pFill->SetInsets(&sInsets);
+		}
+		pTestWindow->SetContainer(pFill);
+
+		for (i = 0; i < uiNumComponents; i++)
+		{
+			psComponent = &asComponents[i];
+			pDraw = CreateDarkForestDraw(psComponent, &cHelper);
+			apCanvas[i] = OMalloc<CCanvas>(pTestWindow, pDraw);
+			apCanvas[i]->SetDesiredSize(psComponent->sDesiredSize.x, psComponent->sDesiredSize.y);
+			pFill->AddComponent(apCanvas[i]);
+			pDraw = NULL;
+		}
+
+		pTestWindow->Show();
+
+		//Where an axis has a desired size and isn't stretched the canvas must have been laid out at exactly that size.
+		for (i = 0; i < uiNumComponents; i++)
+		{
+			sDesired = apCanvas[i]->GetDesiredSize();
+			sVec = apCanvas[i]->GetActualSize();
+			if ((sDesired.x > 0) && (eH != CSH_Stretch))
+			{
+				AssertInt(sDesired.x, sVec.x);
+			}
+			if ((sDesired.y > 0) && (eV != CSV_Stretch))
+			{
+				AssertInt(sDesired.y, sVec.y);
+			}
+			if (asExpectedPositions)
+			{
+				sVec = apCanvas[i]->GetPosition();
+				AssertInt32Vec2(asExpectedPositions[i].x, asExpectedPositions[i].y, &sVec);
+			}
+			apCanvas[i] = NULL;
+		}
+
+		pTestWindow = NULL;
+		pFill = NULL;
+
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
+
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
+	}
+
+	AssertFillContainerObjectsRemoved();
+
+	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFillContainerDarkForestImagesHorizontalCenter(void)
+{
+	SDarkForestComponent	asComponents[5] = {
+		{ "Pine.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Owl.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Moon.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Mushroom.png",	SInt32Vec2(-1, -1), 0 },
+		{ "Wolf.png",		SInt32Vec2(-1, -1), 0 } };
+
+	TestFillContainerDarkForest("Output" _FS_ "FillContainerDarkForestImagesHorizontalCenter", 72, 18, FCS_Horizontal, 1, CSH_Center, CSV_Center, NULL, 5, asComponents, NULL);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFillContainerDarkForestImagesVerticalRightBottomInsets(void)
+{
+	int						aiInsets[4] = { 1, 2, 3, 4 };  //Top, Right, Bottom, Left.
+	SDarkForestComponent	asComponents[4] = {
+		{ "Bat.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Stump.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Fireflies.png",	SInt32Vec2(-1, -1), 0 },
+		{ "Fern.png",		SInt32Vec2(-1, -1), 0 } };
+
+	TestFillContainerDarkForest("Output" _FS_ "FillContainerDarkForestImagesVerticalRightBottomInsets", 20, 64, FCS_Vertical, 2, CSH_Right, CSV_Bottom, aiInsets, 4, asComponents, NULL);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFillContainerDarkForestImagesVerticalStretch(void)
+{
+	//Stretched image canvases are larger than their cels so each cel sits in the top left of its slot.
+	SDarkForestComponent	asComponents[3] = {
+		{ "Mushroom.png",	SInt32Vec2(-1, -1), 0 },
+		{ "Owl.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Stump.png",		SInt32Vec2(-1, -1), 0 } };
+
+	TestFillContainerDarkForest("Output" _FS_ "FillContainerDarkForestImagesVerticalStretch", 16, 40, FCS_Vertical, 1, CSH_Stretch, CSV_Stretch, NULL, 3, asComponents, NULL);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFillContainerDarkForestMixedHorizontalTop(void)
+{
+	//Border canvases without a desired size fill their slots and so show where each slot is.
+	SDarkForestComponent	asComponents[6] = {
+		{ "Owl.png",		SInt32Vec2(-1, -1), 0 },
+		{ NULL,				SInt32Vec2(-1, -1), Set32BitColour((uint8)60, 110, 60) },
+		{ "Wolf.png",		SInt32Vec2(-1, -1), 0 },
+		{ NULL,				SInt32Vec2(-1, -1), Set32BitColour((uint8)150, 30, 30) },
+		{ "Pine.png",		SInt32Vec2(-1, -1), 0 },
+		{ NULL,				SInt32Vec2(-1, 8),	Set32BitColour((uint8)236, 200, 70) } };
+
+	TestFillContainerDarkForest("Output" _FS_ "FillContainerDarkForestMixedHorizontalTop", 84, 18, FCS_Horizontal, 2, CSH_Center, CSV_Top, NULL, 6, asComponents, NULL);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFillContainerDarkForestMixedOverlayCenter(void)
+{
+	//The border fills the inset area and the moon is drawn centred on top of it.
+	int						aiInsets[4] = { 1, 1, 1, 1 };  //Top, Right, Bottom, Left.
+	SDarkForestComponent	asComponents[2] = {
+		{ NULL,				SInt32Vec2(-1, -1), Set32BitColour((uint8)78, 60, 96) },
+		{ "Moon.png",		SInt32Vec2(-1, -1), 0 } };
+
+	TestFillContainerDarkForest("Output" _FS_ "FillContainerDarkForestMixedOverlayCenter", 18, 16, FCS_Overlay, 0, CSH_Center, CSV_Center, aiInsets, 2, asComponents, NULL);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFillContainerDarkForestCenterTooSmall(void)
+{
+	//Each 20x24 slot is larger than its cel so the cel is centred with space all around.
+	SDarkForestComponent	asComponents[3] = {
+		{ "Mushroom.png",	SInt32Vec2(-1, -1), 0 },
+		{ "Fireflies.png",	SInt32Vec2(-1, -1), 0 },
+		{ "Stump.png",		SInt32Vec2(-1, -1), 0 } };
+	SInt32Vec2				asPosition[3] = { SInt32Vec2(6, 8), SInt32Vec2(27, 7), SInt32Vec2(45, 9) };
+
+	TestFillContainerDarkForest("Output" _FS_ "FillContainerDarkForestCenterTooSmall", 60, 24, FCS_Horizontal, 0, CSH_Center, CSV_Center, NULL, 3, asComponents, asPosition);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFillContainerDarkForestCenterTooLarge(void)
+{
+	//The 4 pixel insets leave a 32x8 area split into slots 10, 9 and 9 wide.  Every cel is at least as large as its slot
+	//so it is centred over the slot and spills into the insets and spacing.  An odd overflow puts the extra pixel on the right or bottom.
+	int						aiInsets[4] = { 4, 4, 4, 4 };  //Top, Right, Bottom, Left.
+	SDarkForestComponent	asComponents[3] = {
+		{ "Wolf.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Pine.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Moon.png",		SInt32Vec2(-1, -1), 0 } };
+	SInt32Vec2				asPosition[3] = { SInt32Vec2(3, 3), SInt32Vec2(16, 1), SInt32Vec2(27, 3) };
+
+	TestFillContainerDarkForest("Output" _FS_ "FillContainerDarkForestCenterTooLarge", 40, 16, FCS_Horizontal, 2, CSH_Center, CSV_Center, aiInsets, 3, asComponents, asPosition);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFillContainer(void)
 {
 	BeginTests();
@@ -346,6 +565,13 @@ void TestFillContainer(void)
 	TestFillContainerVerticalSplitCenter();
 	TestFillContainerRequiredSize();
 	TestFillContainerImageCanvasDesiredSize();
+	TestFillContainerDarkForestImagesHorizontalCenter();
+	TestFillContainerDarkForestImagesVerticalRightBottomInsets();
+	TestFillContainerDarkForestImagesVerticalStretch();
+	TestFillContainerDarkForestMixedHorizontalTop();
+	TestFillContainerDarkForestMixedOverlayCenter();
+	TestFillContainerDarkForestCenterTooSmall();
+	TestFillContainerDarkForestCenterTooLarge();
 
 	ObjectsFlush();
 	ObjectsKill();

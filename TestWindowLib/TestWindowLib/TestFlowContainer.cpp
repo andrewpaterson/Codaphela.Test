@@ -11,6 +11,7 @@
 #include "BorderCanvasDraw.h"
 #include "TickTestRefWindow.h"
 #include "DataTestRefWindow.h"
+#include "DarkForest.h"
 
 
 bool gbAssertFile = true;
@@ -1131,6 +1132,173 @@ void TestFlowContainerNested(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFlowContainerDarkForest(char* szDirectory, int32 iWidth, int32 iHeight, EContainerStyleDirection eD, EContainerStyleWrap eW, EContainerStyleVertical eV, EContainerStyleHorizontal eH, size uiNumComponents, SDarkForestComponent* asComponents)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		size					i;
+		CChars					szExpectedDirectory;
+		Ptr<CCanvas>			apCanvas[16];
+		Ptr<CCanvasDraw>		pDraw;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		Ptr<CFlowContainer>		pFlow;
+		CColourFormatHelper		cHelper;
+		SDarkForestComponent*	psComponent;
+		SInt32Vec2				sDesired;
+		SInt32Vec2				sVec;
+		CPointer				pNull;
+
+		cNativeFactory.Init(&gcMemoryAllocator, iWidth, iHeight, szDirectory);
+
+		cTick.Init(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow->GetColourFormat(&cHelper);
+
+		pFlow = OMalloc<CFlowContainer>(pTestWindow);
+		if ((eV != CSV_Unknown) && (eH == CSH_Unknown))
+		{
+			pFlow->SetFlowStyle(eD, eW, eV);
+		}
+		if ((eV == CSV_Unknown) && (eH != CSH_Unknown))
+		{
+			pFlow->SetFlowStyle(eD, eW, eH);
+		}
+		AssertTrue(uiNumComponents <= 16);
+		pTestWindow->SetContainer(pFlow);
+
+		for (i = 0; i < uiNumComponents; i++)
+		{
+			psComponent = &asComponents[i];
+			pDraw = CreateDarkForestDraw(psComponent, &cHelper);
+			apCanvas[i] = OMalloc<CCanvas>(pTestWindow, pDraw);
+			apCanvas[i]->SetDesiredSize(psComponent->sDesiredSize.x, psComponent->sDesiredSize.y);
+			pFlow->AddComponent(apCanvas[i]);
+			pDraw = NULL;
+		}
+
+		pTestWindow->Show();
+
+		//Every canvas must have been laid out at the size it asked for, image canvases at the size of their cel unless overridden.
+		for (i = 0; i < uiNumComponents; i++)
+		{
+			sDesired = apCanvas[i]->GetDesiredSize();
+			AssertTrue((sDesired.x > 0) && (sDesired.y > 0));
+			sVec = apCanvas[i]->GetActualSize();
+			AssertInt32Vec2(sDesired.x, sDesired.y, &sVec);
+			apCanvas[i] = NULL;
+		}
+
+		pTestWindow = NULL;
+		pFlow = NULL;
+
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
+
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
+	}
+
+	AssertFlowContainerObjectsRemoved();
+
+	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainerDarkForestImagesRightTopWrap(void)
+{
+	SDarkForestComponent	asComponents[9] = {
+		{ "Pine.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Owl.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Moon.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Fern.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Mushroom.png",	SInt32Vec2(-1, -1), 0 },
+		{ "Wolf.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Bat.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Fireflies.png",	SInt32Vec2(-1, -1), 0 },
+		{ "Stump.png",		SInt32Vec2(-1, -1), 0 } };
+
+	TestFlowContainerDarkForest("Output" _FS_ "FlowContainerDarkForestImagesRightTopWrap", 40, 48, CSD_Right, CSW_Wrap, CSV_Top, CSH_Unknown, 9, asComponents);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainerDarkForestImagesDownCenterWrap(void)
+{
+	SDarkForestComponent	asComponents[9] = {
+		{ "Moon.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Bat.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Pine.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Wolf.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Fireflies.png",	SInt32Vec2(-1, -1), 0 },
+		{ "Owl.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Fern.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Mushroom.png",	SInt32Vec2(-1, -1), 0 },
+		{ "Stump.png",		SInt32Vec2(-1, -1), 0 } };
+
+	TestFlowContainerDarkForest("Output" _FS_ "FlowContainerDarkForestImagesDownCenterWrap", 48, 32, CSD_Down, CSW_Wrap, CSV_Unknown, CSH_Center, 9, asComponents);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainerDarkForestMixedRightBottomWrap(void)
+{
+	SDarkForestComponent	asComponents[10] = {
+		{ "Owl.png",		SInt32Vec2(-1, -1), 0 },
+		{ NULL,				SInt32Vec2(6, 6),	Set32BitColour((uint8)60, 110, 60) },
+		{ "Pine.png",		SInt32Vec2(-1, -1), 0 },
+		{ NULL,				SInt32Vec2(12, 5),	Set32BitColour((uint8)150, 30, 30) },
+		{ "Mushroom.png",	SInt32Vec2(-1, -1), 0 },
+		{ NULL,				SInt32Vec2(4, 10),	Set32BitColour((uint8)236, 200, 70) },
+		{ "Wolf.png",		SInt32Vec2(-1, -1), 0 },
+		{ NULL,				SInt32Vec2(8, 8),	Set32BitColour((uint8)78, 60, 96) },
+		{ "Fireflies.png",	SInt32Vec2(-1, -1), 0 },
+		{ "Stump.png",		SInt32Vec2(-1, -1), 0 } };
+
+	TestFlowContainerDarkForest("Output" _FS_ "FlowContainerDarkForestMixedRightBottomWrap", 48, 36, CSD_Right, CSW_Wrap, CSV_Bottom, CSH_Unknown, 10, asComponents);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainerDarkForestMixedLeftCenterContinue(void)
+{
+	//The moon canvas is given a desired size larger than its cel so the cel sits in its top left with black beyond.
+	SDarkForestComponent	asComponents[6] = {
+		{ "Bat.png",		SInt32Vec2(-1, -1), 0 },
+		{ NULL,				SInt32Vec2(5, 14),	Set32BitColour((uint8)110, 78, 48) },
+		{ "Moon.png",		SInt32Vec2(14, 14), 0 },
+		{ NULL,				SInt32Vec2(10, 4),	Set32BitColour((uint8)54, 104, 58) },
+		{ "Fern.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Owl.png",		SInt32Vec2(-1, -1), 0 } };
+
+	TestFlowContainerDarkForest("Output" _FS_ "FlowContainerDarkForestMixedLeftCenterContinue", 72, 16, CSD_Left, CSW_Continue, CSV_Center, CSH_Unknown, 6, asComponents);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFlowContainer(void)
 {
 	BeginTests();
@@ -1158,6 +1326,10 @@ void TestFlowContainer(void)
 	TestFlowContainerUpLeftWrap();
 	TestFlowContainerDownStretchContinue();
 	TestFlowContainerNested();
+	TestFlowContainerDarkForestImagesRightTopWrap();
+	TestFlowContainerDarkForestImagesDownCenterWrap();
+	TestFlowContainerDarkForestMixedRightBottomWrap();
+	TestFlowContainerDarkForestMixedLeftCenterContinue();
 
 	ObjectsFlush();
 	ObjectsKill();
