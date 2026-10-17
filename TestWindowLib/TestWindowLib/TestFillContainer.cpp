@@ -552,6 +552,21 @@ void TestFillContainerDarkForestCenterTooLarge(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFillContainerDarkForestCenterPastWindowEdges(void)
+{
+	//The 12x10 wolf is centred in an 8x6 window so it hangs 2 pixels off every edge and must be clipped to the window.
+	SDarkForestComponent	asComponents[1] = {
+		{ "Wolf.png",		SInt32Vec2(-1, -1), 0 } };
+	SInt32Vec2				asPosition[1] = { SInt32Vec2(-2, -2) };
+
+	TestFillContainerDarkForest("Output" _FS_ "FillContainerDarkForestCenterPastWindowEdges", 8, 6, FCS_Overlay, 0, CSH_Center, CSV_Center, NULL, 1, asComponents, asPosition);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFillContainer(void)
 {
 	BeginTests();
@@ -572,6 +587,7 @@ void TestFillContainer(void)
 	TestFillContainerDarkForestMixedOverlayCenter();
 	TestFillContainerDarkForestCenterTooSmall();
 	TestFillContainerDarkForestCenterTooLarge();
+	TestFillContainerDarkForestCenterPastWindowEdges();
 
 	ObjectsFlush();
 	ObjectsKill();

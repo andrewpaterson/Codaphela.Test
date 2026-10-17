@@ -1,6 +1,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/StdRandom.h"
+#include "BaseLib/StringHelper.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/FreeObjects.h"
 #include "SupportLib/ImageCelBlitterCache.h"
@@ -300,8 +301,19 @@ void TestCanvasImageConvert2(void)
 		pFree = pRoot->Get(FREE_OBJECTS_NAME);
 		AssertTrue(pFree.IsNotNull());
 
-		AssertSize(1, pFree->NumObjects());
-		pcNativeCanvasImage = (CImage*)pFree->UnsafeGetObject(0);
+		//The native canvas holds its image and a CImageCel over that image.
+		AssertSize(2, pFree->NumObjects());
+		if (StringCompare(pFree->UnsafeGetObject(0)->ClassName(), "CImage") == 0)
+		{
+			pcNativeCanvasImage = (CImage*)pFree->UnsafeGetObject(0);
+			AssertString("CImageCel", pFree->UnsafeGetObject(1)->ClassName());
+		}
+		else
+		{
+			pcNativeCanvasImage = (CImage*)pFree->UnsafeGetObject(1);
+			AssertString("CImageCel", pFree->UnsafeGetObject(0)->ClassName());
+		}
+		AssertString("CImage", pcNativeCanvasImage->ClassName());
 
 		gcObjects.EnableValidation();
 	}
