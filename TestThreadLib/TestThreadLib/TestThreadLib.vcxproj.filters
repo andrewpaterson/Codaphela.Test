@@ -110,5 +110,8 @@
     <ClInclude Include="TestProcessChannel.h">
       <Filter>Source\SharedMemory</Filter>
     </ClInclude>
+    <ClInclude Include="TestTimeout.h">
+      <Filter>Source\SharedMemory</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

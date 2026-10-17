@@ -3,6 +3,7 @@
 #include "ThreadLib/InterProcessHold.h"
 #include "ThreadLib/InterProcessDone.h"
 #include "SharedMemoryFill.h"
+#include "TestTimeout.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -70,7 +71,8 @@ void CSharedMemoryFill::Run(void)
 			cSharedClient.Close();
 			cMutex.Unlock();
 
-			cHold.Wait();
+			//Fails if the parent never releases the hold.
+			miResult = cHold.Wait(TEST_TIMEOUT) ? 0 : 1;
 			cHold.Kill();
 
 			cMutex.Lock();
@@ -81,8 +83,6 @@ void CSharedMemoryFill::Run(void)
 
 			cDone.Stop();
 			cDone.Kill();
-
-			miResult = 0;
 			return;
 		}
 

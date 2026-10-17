@@ -10,14 +10,11 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestProcessFork(void)
+void TestProcessForkFile(char* szFileName)
 {
-	BeginTests();
-
 	CFileUtil		cFileUtil;
 	int				i;
 	bool			bFileExists;
-	char			szFileName[] = {"Output" _FS_ "test-client-process.txt"};
 	CTextFile		cTextFile;
 
 	cFileUtil.MakeDir("Output");
@@ -46,6 +43,22 @@ void TestProcessFork(void)
 	Pass();
 
 	cFileUtil.Delete(szFileName);
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestProcessFork(void)
+{
+	BeginTests();
+
+	TestProcessForkFile("Output" _FS_ "test-client-process.txt");
+
+	//Each ForkProcess parameter is one argument even with spaces in it.
+	TestProcessForkFile("Output" _FS_ "test client process.txt");
 
 	TestStatistics();
 }

@@ -1,9 +1,10 @@
 #ifndef __TEST_PROCESS_CHANNEL_H__
 #define __TEST_PROCESS_CHANNEL_H__
+#include "TestTimeout.h"
 
 
 //How long the tests wait for a message before failing.
-#define CHANNEL_TEST_TIMEOUT		10000
+#define CHANNEL_TEST_TIMEOUT		TEST_TIMEOUT
 
 //The memory filled by TestChannelResizeMultiProcess.
 #define CHANNEL_FILL_SIZE			16000

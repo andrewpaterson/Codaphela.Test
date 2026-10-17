@@ -10,6 +10,7 @@
 #include "ThreadLib/ThreadsDone.h"
 #include "TestLib/Assert.h"
 #include "SharedMemoryThread.h"
+#include "TestTimeout.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -486,7 +487,7 @@ void TestSharedMemoryResizeMultiThread(void)
 	}
 
 	cHold.Stop();
-	cDone.Wait(4);
+	AssertTrue(cDone.Wait(4, TEST_TIMEOUT));
 	cHold.Kill();
 	cDone.Kill();
 
@@ -589,7 +590,7 @@ void TestSharedMemoryResizeMultiProcess(void)
 	}
 
 	cHold.Stop();
-	cDone.Wait(4);
+	AssertTrue(cDone.Wait(4, TEST_TIMEOUT));
 
 	cHold.Kill();
 	cDone.Kill();

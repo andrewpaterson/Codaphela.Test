@@ -13,6 +13,7 @@
 #include "SharedMemoryQueueProducerThread.h"
 #include "SharedMemoryQueueConsumerThread.h"
 #include "TestSharedMemoryQueue.h"
+#include "TestTimeout.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -292,10 +293,8 @@ void TestSharedMemoryQueueMultiThread(void)
 	pcConsumer4->Start();
 
 
-	while ((cProducersDone.miThreadsStopped.Get() < 1) || (cConsumersDone.miThreadsStopped.Get() < 4))
-	{
-		ThreadYield();
-	}
+	AssertTrue(cProducersDone.Wait(1, TEST_TIMEOUT));
+	AssertTrue(cConsumersDone.Wait(4, TEST_TIMEOUT));
 
 	iTotalTaken = psResult->aiTaken[0] + psResult->aiTaken[1] + psResult->aiTaken[2] + psResult->aiTaken[3];
 	AssertInt(THREADED_SHARED_QUEUE_PRODUCE_SIZE, iTotalTaken);
@@ -391,10 +390,7 @@ void TestSharedMemoryQueueMultiThreadThisProducer(void)
 	bDone = true;
 	cProducersDone.miThreadsStopped.Increment();
 
-	while (cConsumersDone.miThreadsStopped.Get() < 4)
-	{
-		ThreadYield();
-	}
+	AssertTrue(cConsumersDone.Wait(4, TEST_TIMEOUT));
 
 	iTotalTaken = psResult->aiTaken[0] + psResult->aiTaken[1] + psResult->aiTaken[2] + psResult->aiTaken[3];
 	AssertInt(THREADED_SHARED_QUEUE_PRODUCE_SIZE, iTotalTaken);
@@ -485,7 +481,7 @@ void TestSharedMemoryQueueMultiProcessForkDuring(void)
 	bDone = true;
 
 	cProcessesDone.Stop();
-	cProcessesDone.Wait(5);
+	AssertTrue(cProcessesDone.Wait(5, TEST_TIMEOUT));
 
 	cQueue.Kill();
 	cProcessesDone.Kill();
@@ -572,7 +568,7 @@ void TestSharedMemoryQueueMultiProcessForkEarly(void)
 	bDone = true;
 
 	cProcessesDone.Stop();
-	cProcessesDone.Wait(5);
+	AssertTrue(cProcessesDone.Wait(5, TEST_TIMEOUT));
 
 	cQueue.Kill();
 	cProcessesDone.Kill();

@@ -7,6 +7,7 @@
 #include "ThreadLib/AtomicInt.h"
 #include "ThreadLib/SafeArrayBlock.h"
 #include "TestLib/Assert.h"
+#include "TestTimeout.h"
 #include "PoolProducerThread.h"
 #include "PoolConsumerThread.h"
 
@@ -76,10 +77,7 @@ void TestThreadPoolThreadDestroyed(void)
 	}
 	pcConsumer = NULL;
 
-	while(cProducersDone.miThreadsStopped.Get() < 32)
-	{
-		ThreadYield();
-	}
+	AssertTrue(cProducersDone.Wait(32, TEST_TIMEOUT));
 
 	for (i = 0; i < apcConsumers.NumElements(); i++)
 	{
@@ -87,10 +85,7 @@ void TestThreadPoolThreadDestroyed(void)
 		pcConsumer->TryStop();
 	}
 
-	while (cConsumersDone.miThreadsStopped.Get() < 3)
-	{
-		ThreadYield();
-	}
+	AssertTrue(cConsumersDone.Wait(3, TEST_TIMEOUT));
 
 	AssertInt(32000, cTotal.miTotal.Get());
 
