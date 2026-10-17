@@ -321,6 +321,131 @@ void TestDurableFileControllerTwoInOneDirectory(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void AssertDurableFileControllerCrashState(bool bNew)
+{
+	CFileUtil	cFileUtil;
+
+	if (bNew)
+	{
+		AssertFileString("Output" _FS_ "Durable4" _FS_ "Write" _FS_ "1.txt", "New One Longer");
+		AssertFileString("Output" _FS_ "Durable4" _FS_ "Rewrite" _FS_ "1.txt", "New One Longer");
+		AssertFileString("Output" _FS_ "Durable4" _FS_ "Write" _FS_ "2.txt", "New2Two Is Longer");
+		AssertFileString("Output" _FS_ "Durable4" _FS_ "Rewrite" _FS_ "2.txt", "New2Two Is Longer");
+		AssertFileString("Output" _FS_ "Durable4" _FS_ "Write" _FS_ "3.txt", "Three");
+		AssertFileString("Output" _FS_ "Durable4" _FS_ "Rewrite" _FS_ "3.txt", "Three");
+	}
+	else
+	{
+		AssertFileString("Output" _FS_ "Durable4" _FS_ "Write" _FS_ "1.txt", "Old One");
+		AssertFileString("Output" _FS_ "Durable4" _FS_ "Rewrite" _FS_ "1.txt", "Old One");
+		AssertFileString("Output" _FS_ "Durable4" _FS_ "Write" _FS_ "2.txt", "Old Two Is Longer");
+		AssertFileString("Output" _FS_ "Durable4" _FS_ "Rewrite" _FS_ "2.txt", "Old Two Is Longer");
+		AssertBool(false, cFileUtil.Exists("Output" _FS_ "Durable4" _FS_ "Write" _FS_ "3.txt"));
+		AssertBool(false, cFileUtil.Exists("Output" _FS_ "Durable4" _FS_ "Rewrite" _FS_ "3.txt"));
+	}
+	AssertBool(false, cFileUtil.Exists("Output" _FS_ "Durable4" _FS_ "Write" _FS_ "Mark1.Write"));
+	AssertBool(false, cFileUtil.Exists("Output" _FS_ "Durable4" _FS_ "Rewrite" _FS_ "Mark2.Rewrite"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDurableFileControllerCrash(int iCrashPoint)
+{
+	CFileUtil				cFileUtil;
+	CDurableFileController	cController;
+	CDurableFile			cDurableFile1;
+	CDurableFile			cDurableFile2;
+	CDurableFile			cDurableFile3;
+	CDurableFile*			apcFiles[3];
+	int						i;
+	int						iStep;
+	SLogConfig				sLogConfig;
+	char					szDirectory[] = "Output" _FS_ "Durable4" _FS_ "Write";
+	char					szRewrite[] = "Output" _FS_ "Durable4" _FS_ "Rewrite";
+
+	cFileUtil.RemoveDir("Output" _FS_ "Durable4");
+
+	cController.Init(szDirectory, szRewrite);
+	cDurableFile1.Init(&cController, "1.txt", "1.txt");
+	cDurableFile2.Init(&cController, "2.txt", "2.txt");
+	cDurableFile3.Init(&cController, "3.txt", "3.txt");
+
+	AssertTrue(cController.Begin());
+	cDurableFile1.Write("Old One", 7, 1);
+	cDurableFile2.Write("Old Two Is Longer", 17, 1);
+	AssertTrue(cController.End());
+
+	//Change the files, then do the steps of CDurableSet::End one at a time and stop at iCrashPoint as if the process died.
+	AssertTrue(cController.Begin());
+	cDurableFile1.Write(0, "New One Longer", 14, 1);
+	cDurableFile2.Write(0, "New2", 4, 1);
+	cDurableFile3.Write("Three", 5, 1);
+
+	apcFiles[0] = &cDurableFile1;
+	apcFiles[1] = &cDurableFile2;
+	apcFiles[2] = &cDurableFile3;
+
+	iStep = 0;
+	if (iStep++ < iCrashPoint)
+	{
+		AssertTrue(cController.GetDurableSet()->MarkStart());
+	}
+	for (i = 0; i < 3; i++)
+	{
+		if (iStep++ < iCrashPoint)
+		{
+			AssertTrue(apcFiles[i]->Commit());
+		}
+	}
+	if (iStep++ < iCrashPoint)
+	{
+		AssertTrue(cController.GetDurableSet()->MarkRewrite());
+	}
+	for (i = 0; i < 3; i++)
+	{
+		if (iStep++ < iCrashPoint)
+		{
+			AssertTrue(apcFiles[i]->Recommit());
+		}
+	}
+	if (iStep++ < iCrashPoint)
+	{
+		//First half of CDurableSet::MarkFinish.
+		AssertTrue(cFileUtil.Delete("Output" _FS_ "Durable4" _FS_ "Rewrite" _FS_ "Mark2.Rewrite"));
+	}
+
+	//Files left open by the 'crash' are reported as errors when killed.
+	sLogConfig = gcLogger.SetSilent();
+	cDurableFile1.Kill();
+	cDurableFile2.Kill();
+	cDurableFile3.Kill();
+	cController.Kill();
+	gcLogger.SetConfig(&sLogConfig);
+
+	cController.Init(szDirectory, szRewrite);
+	cDurableFile1.Init(&cController, "1.txt", "1.txt");
+	cDurableFile2.Init(&cController, "2.txt", "2.txt");
+	cDurableFile3.Init(&cController, "3.txt", "3.txt");
+	AssertTrue(cController.Recover(&cDurableFile1, &cDurableFile2, &cDurableFile3, NULL));
+	cDurableFile1.Kill();
+	cDurableFile2.Kill();
+	cDurableFile3.Kill();
+	cController.Kill();
+
+	//Until the rewrite mark exists the old files must come back.  After it the new files must.
+	AssertDurableFileControllerCrashState(iCrashPoint > 4);
+
+	cFileUtil.RemoveDir("Output" _FS_ "Durable4");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestDurableFileController(void)
 {
 	TypeConverterInit();
@@ -330,6 +455,16 @@ void TestDurableFileController(void)
 	TestDurableFileControllerDirectoryCreation();
 	TestDurableFileControllerRecovery();
 	TestDurableFileControllerTwoInOneDirectory();
+	TestDurableFileControllerCrash(0);
+	TestDurableFileControllerCrash(1);
+	TestDurableFileControllerCrash(2);
+	TestDurableFileControllerCrash(3);
+	TestDurableFileControllerCrash(4);
+	TestDurableFileControllerCrash(5);
+	TestDurableFileControllerCrash(6);
+	TestDurableFileControllerCrash(7);
+	TestDurableFileControllerCrash(8);
+	TestDurableFileControllerCrash(9);
 
 	TestStatistics();
 	DataMemoryKill();

@@ -14,6 +14,7 @@
 #include "WindowLib/ClearCanvasDraw.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/AssertFile.h"
+#include "TestLib/AssertGeometric.h"
 #include "TestRefWindowCanvasDraw.h"
 #include "BorderCanvasDraw.h"
 #include "TickTestRefWindow.h"
@@ -649,6 +650,113 @@ void TestCanvasMismatchedFormat(void)
 //																		//
 //																		//
 //////////////////////////////////////////////////////////////////////////
+void TestCanvasNested(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "CanvasNested";
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	ObjectsInit();
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CFillContainer>		pWindowFill;
+		Ptr<CCanvas>			pOuter;
+		Ptr<CBorderCanvasDraw>	pOuterDraw;
+		Ptr<CFillContainer>		pOuterFill;
+		Ptr<CCanvas>			pInner;
+		Ptr<CImageCanvasDraw>	pInnerDraw;
+		Ptr<CImageCel>			pWolf;
+		Ptr<CImage>				pWindowImage;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		CColourFormatHelper		cHelper;
+		CPointer				pNull;
+		SInt32Vec2				sVec;
+		uint8*					puiWindow;
+		uint8*					puiWolf;
+		int32					x;
+		int32					y;
+		size					uiWrong;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 32, 24, szDirectory);
+		cTick.Init(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Nested Canvas", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow->GetColourFormat(&cHelper);
+
+		pWindowFill = OMalloc<CFillContainer>(pTestWindow);
+		pWindowFill->SetFillStyle(CSH_Left, CSV_Top);
+		pTestWindow->SetContainer(pWindowFill);
+
+		//An outer canvas with a red border holds a container of its own with the wolf canvas centred in it.
+		pOuterDraw = OMalloc<CBorderCanvasDraw>(Set32BitColour(1.0f, 0, 0));
+		pOuter = OMalloc<CCanvas>(pTestWindow, pOuterDraw);
+		pOuter->SetDesiredSize(20, 16);
+		pWindowFill->AddComponent(pOuter);
+
+		pOuterFill = OMalloc<CFillContainer>(pTestWindow);
+		pOuterFill->SetFillStyle(CSH_Center, CSV_Center);
+		pOuter->SetContainer(pOuterFill);
+
+		pWolf = ReadDarkForestCel("Wolf.png", &cHelper);
+		pInnerDraw = OMalloc<CImageCanvasDraw>(pWolf);
+		pInner = OMalloc<CCanvas>(pTestWindow, pInnerDraw);
+		pOuterFill->AddComponent(pInner);
+
+		pTestWindow->Show();
+
+		sVec = pInner->GetPosition();
+		AssertInt32Vec2(4, 3, &sVec);
+		sVec = pInner->GetActualSize();
+		AssertInt32Vec2(12, 10, &sVec);
+
+		//The inner canvas must be drawn over the outer one, not hidden underneath it.
+		pWindowImage = pTestWindow->GetCanvas()->GetImageOrNull();
+		puiWindow = (uint8*)pWindowImage->GetData();
+		puiWolf = (uint8*)pWolf->GetSourceImage()->GetData();
+		uiWrong = 0;
+		for (y = 0; y < 10; y++)
+		{
+			for (x = 0; x < 12; x++)
+			{
+				if (memcmp(&puiWindow[((4 + x) + (3 + y) * 32) * 3], &puiWolf[(x + y * 12) * 3], 3) != 0)
+				{
+					uiWrong++;
+				}
+			}
+		}
+		AssertSize(0, uiWrong);
+
+		//And the outer canvas's red border is still there around it.
+		AssertInt(255, puiWindow[0]);
+		AssertInt(0, puiWindow[1]);
+		AssertInt(0, puiWindow[2]);
+
+		pWindowImage = NULL;
+		pWolf = NULL;
+		pInner = NULL;
+		pInnerDraw = NULL;
+		pOuterFill = NULL;
+		pOuter = NULL;
+		pOuterDraw = NULL;
+		pWindowFill = NULL;
+		pTestWindow = NULL;
+	}
+	AssertTrue(ORoot()->RemoveAll());
+	cNativeFactory.Kill();
+	ObjectsFlush();
+	ObjectsKill();
+
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//																		//
+//																		//
+//////////////////////////////////////////////////////////////////////////
 void TestCanvas(void)
 {
 	BeginTests();
@@ -660,6 +768,7 @@ void TestCanvas(void)
 	TestCanvasDrawWithoutNativeImage();
 	TestCanvasDrawResize();
 	TestCanvasMismatchedFormat();
+	TestCanvasNested();
 
 	TestStatistics();
 }
