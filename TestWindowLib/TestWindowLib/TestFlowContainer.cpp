@@ -77,7 +77,7 @@ void TestFlowContainerBasicOnHeap(void)
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
-		SContainerBounds		sBounds;
+		CRectangle				cBounds;
 		SInt32Vec2				sVec;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 30, szDirectory);
@@ -123,7 +123,7 @@ void TestFlowContainerBasicOnHeap(void)
 		sVec = pCanvas3->GetPosition();
 		AssertInt32Vec2(30, 0, &sVec);
 
-		pCanvas1->GetContainerBounds(&sBounds);
+		pCanvas1->GetContainerBounds(&cBounds);
 
 		szExpectedDirectory.Init(szDirectory);
 		szExpectedDirectory.Replace("Output", "Input");
@@ -164,7 +164,7 @@ void TestFlowContainerBasicOnStack(void)
 		CTickTestRefWindow	cTick;
 		SDataTestRefWindow	cData;
 		CFlowContainer		cFlow;
-		SContainerBounds	sBounds;
+		CRectangle			cBounds;
 		SInt32Vec2			sVec;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 30, szDirectory);
@@ -209,7 +209,7 @@ void TestFlowContainerBasicOnStack(void)
 		sVec = cCanvas3.GetPosition();
 		AssertInt32Vec2(30, 0, &sVec);
 
-		cCanvas1.GetContainerBounds(&sBounds);
+		cCanvas1.GetContainerBounds(&cBounds);
 
 		cCanvas1.Kill();
 		cCanvas2.Kill();
@@ -254,7 +254,7 @@ void TestFlowContainerRightCenteredContinue(void)
 		CTickTestRefWindow						cTick;
 		SDataTestRefWindow						cData;
 		Ptr<CFlowContainer>						pFlow;
-		SContainerBounds						sBounds;
+		CRectangle								cBounds;
 		ARGB32									sColour;
 		CRandom									cRandom;
 		CPointer								pNull;
@@ -409,7 +409,7 @@ void TestFlowContainerRightTopContinue(void)
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
-		SContainerBounds		sBounds;
+		CRectangle				cBounds;
 		ARGB32					sColour;
 		CRandom					cRandom;
 		CPointer				pNull;
@@ -498,7 +498,7 @@ void TestFlowContainerRightBottomContinue(void)
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
-		SContainerBounds		sBounds;
+		CRectangle				cBounds;
 		ARGB32					sColour;
 		CRandom					cRandom;
 		CPointer				pNull;
@@ -587,7 +587,7 @@ void TestFlowContainerRightTopWrap(void)
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
-		SContainerBounds		sBounds;
+		CRectangle				cBounds;
 		ARGB32					sColour;
 		CRandom					cRandom;
 		CPointer				pNull;
@@ -675,7 +675,7 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRand
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
-		SContainerBounds		sBounds;
+		CRectangle				cBounds;
 		ARGB32					sColour;
 		CRandom					cRandom;
 		CPointer				pNull;
@@ -1026,7 +1026,7 @@ void TestFlowContainerNested(void)
 		Ptr<CFlowContainer>		pInnerFlow;
 		Ptr<CFlowContainer>		pRowFlow;
 		SInt32Vec2				sVec;
-		SContainerBounds		sBounds;
+		CRectangle				cBounds;
 		CPointer				pNull;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 30, szDirectory);
@@ -1095,9 +1095,9 @@ void TestFlowContainerNested(void)
 		sVec = apInner[2]->GetPosition();
 		AssertInt32Vec2(10, 5, &sVec);
 
-		pRowFlow->GetContainerBounds(&sBounds);
-		AssertInt32Vec2(50, 0, &sBounds.msTopLeft);
-		AssertInt32Vec2(7, 14, &sBounds.msSize);
+		pRowFlow->GetContainerBounds(&cBounds);
+		AssertInt32Vec2(50, 0, &cBounds.msTopLeft);
+		AssertInt32Vec2(57, 14, &cBounds.msBottomRight);
 		sVec = apRow[0]->GetPosition();
 		AssertInt32Vec2(50, 0, &sVec);
 		sVec = apRow[1]->GetPosition();
