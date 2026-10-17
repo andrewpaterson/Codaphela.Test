@@ -1,3 +1,6 @@
+#ifdef LINUX_GNU_32
+#include <dirent.h>
+#endif // LINUX_GNU_32
 #include "BaseLib/Logger.h"
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
@@ -321,6 +324,36 @@ void TestDurableFileControllerTwoInOneDirectory(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+int CountOpenFileDescriptors(void)
+{
+#ifdef LINUX_GNU_32
+	DIR*			pDIR;
+	struct dirent*	pDirEnt;
+	int				iCount;
+
+	iCount = 0;
+	pDIR = opendir("/proc/self/fd");
+	if (pDIR != NULL)
+	{
+		pDirEnt = readdir(pDIR);
+		while (pDirEnt != NULL)
+		{
+			iCount++;
+			pDirEnt = readdir(pDIR);
+		}
+		closedir(pDIR);
+	}
+	return iCount;
+#else
+	return 0;
+#endif // LINUX_GNU_32
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void AssertDurableFileControllerCrashState(bool bNew)
 {
 	CFileUtil	cFileUtil;
@@ -365,8 +398,10 @@ void TestDurableFileControllerCrash(int iCrashPoint)
 	SLogConfig				sLogConfig;
 	char					szDirectory[] = "Output" _FS_ "Durable4" _FS_ "Write";
 	char					szRewrite[] = "Output" _FS_ "Durable4" _FS_ "Rewrite";
+	int						iOpenFiles;
 
 	cFileUtil.RemoveDir("Output" _FS_ "Durable4");
+	iOpenFiles = CountOpenFileDescriptors();
 
 	cController.Init(szDirectory, szRewrite);
 	cDurableFile1.Init(&cController, "1.txt", "1.txt");
@@ -424,6 +459,9 @@ void TestDurableFileControllerCrash(int iCrashPoint)
 	cDurableFile3.Kill();
 	cController.Kill();
 	gcLogger.SetConfig(&sLogConfig);
+
+	//A crash releases every open file.  Killing the abandoned files must do the same or Windows cannot open them again.
+	AssertInt(iOpenFiles, CountOpenFileDescriptors());
 
 	//Recover finds the files to copy from the list in the start mark.
 	cController.Init(szDirectory, szRewrite);
