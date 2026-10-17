@@ -11,6 +11,8 @@
 #include "SupportLib/ImageRGBToGrey.h"
 #include "SupportLib/ImageCelSourceSingle.h"
 #include "SupportLib/ImageCelSourceGrid.h"
+#include "SupportLib/ImageCelSourceBorders.h"
+#include "SupportLib/ImageCelMask.h"
 #include "SupportLib/ImageSourceDiskFile.h"
 #include "SupportLib/ImageCombiner.h"
 #include "TestLib/Assert.h"
@@ -156,12 +158,113 @@ void TestImageCelGroupSourceCombine(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestImageCelsSourceBorderMasks(void)
+{
+	DataIOInit();
+	ObjectsInit();
+
+	CImageCelSourceBorders	cBorder;
+	CImageCelsSource		cSource;
+	Ptr<CArrayImageCel>		pCels;
+	CImageCelMask*			pcCel1;
+	CImageCelMask*			pcCel2;
+
+	//A border cel source needs a fill mask so the cels source creates one for each image it divides.
+	cBorder.Init();
+	AssertTrue(cBorder.NeedsMask());
+
+	cSource.Init(false);
+	cSource.AddDiskFileSource("Input" _FS_ "cel4.png", "Cel 4", &cBorder);
+	AssertTrue(cSource.Load());
+
+	AssertSize(1, cSource.GetImages()->NumElements());
+	pCels = cSource.GetImageCels();
+	AssertSize(2, pCels->NumElements());
+	AssertString("CImageCelMask", pCels->UnsafeGetObject(0)->ClassName());
+	AssertString("CImageCelMask", pCels->UnsafeGetObject(1)->ClassName());
+
+	//Each cel is the region its mask value was filled with.
+	pcCel1 = (CImageCelMask*)pCels->UnsafeGetObject(0);
+	pcCel2 = (CImageCelMask*)pCels->UnsafeGetObject(1);
+	AssertInt(1, pcCel1->GetMask());
+	AssertInt(2, pcCel2->GetMask());
+
+	AssertInt(36, pcCel1->GetSubImage()->GetFullWidth());
+	AssertInt(28, pcCel1->GetSubImage()->GetImageWidth());
+	AssertInt(22, pcCel1->GetSubImage()->GetFullHeight());
+	AssertInt(18, pcCel1->GetSubImage()->GetImageHeight());
+
+	AssertInt(31, pcCel2->GetSubImage()->GetFullWidth());
+	AssertInt(25, pcCel2->GetSubImage()->GetImageWidth());
+	AssertInt(22, pcCel2->GetSubImage()->GetFullHeight());
+	AssertInt(11, pcCel2->GetSubImage()->GetImageHeight());
+
+	pCels = NULL;
+	cSource.Kill();
+	cBorder.Kill();
+
+	ObjectsKill(false);
+	DataIOKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageCelsSourceBorderMasksPackOnLoad(void)
+{
+	DataIOInit();
+	ObjectsInit();
+
+	CImageCelSourceBorders	cBorder;
+	CImageCelsSource		cSource;
+	Ptr<CArrayImageCel>		pCels;
+	Ptr<CImageCel>			pCel1;
+	Ptr<CImageCel>			pCel2;
+
+	//Packing combines the cels into a new image so the fill mask is no longer needed by them.
+	cBorder.Init();
+
+	cSource.Init(true);
+	cSource.AddDiskFileSource("Input" _FS_ "cel4.png", "Cel 4", &cBorder);
+	AssertTrue(cSource.Load());
+
+	AssertSize(1, cSource.GetImages()->NumElements());
+	pCels = cSource.GetImageCels();
+	AssertSize(2, pCels->NumElements());
+
+	//The packed cels keep the cropped sizes of the masked regions.
+	pCel1 = pCels->Get(0);
+	pCel2 = pCels->Get(1);
+	AssertInt(28, pCel1->GetSubImage()->GetImageWidth());
+	AssertInt(18, pCel1->GetSubImage()->GetImageHeight());
+	AssertInt(25, pCel2->GetSubImage()->GetImageWidth());
+	AssertInt(11, pCel2->GetSubImage()->GetImageHeight());
+
+	pCel1 = NULL;
+	pCel2 = NULL;
+	pCels = NULL;
+	cSource.Kill();
+	cBorder.Kill();
+
+	ObjectsKill(false);
+	DataIOKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestImageCelsSource(void)
 {
 	BeginTests();
 
 	TestImageCelGroupSourceCombine();
 	TestImageCelsSourceStarControl();
+	TestImageCelsSourceBorderMasks();
+	TestImageCelsSourceBorderMasksPackOnLoad();
 
 	TestStatistics();
 }
