@@ -5,6 +5,7 @@
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/ImageDraw.h"
 #include "SupportLib/ImageCel.h"
+#include "SupportLib/ImageCelBlitterCache.h"
 #include "BaseLib/Logger.h"
 #include "TestLib/Assert.h"
 #include "TestLib/AssertFile.h"
@@ -547,6 +548,55 @@ void TestImageDrawCelDestAlphaRowEnds(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestImageDrawBlitterCacheOnImage(void)
+{
+	Ptr<CImage>					pImage;
+	Ptr<CImage>					pSource;
+	Ptr<CImageCelBlitterCache>	pCache;
+	Ptr<CImageCelBlitterCache>	pNextCache;
+	Ptr<CImageCel>				pCel;
+	size						uiObjects;
+
+	//An image keeps the cache of blitters that draw onto it.  The same cache is returned until the image's size or
+	//format changes, then a new one is made because blitters only work for the image they were made for.
+	uiObjects = gcObjects.NumMemoryIndexes();
+	pImage = OMalloc<CImage>(10, 8, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+	pSource = CreateDrawCelSourceImage(6, 4);
+	pCel = OMalloc<CImageCel>(pSource);
+
+	pCache = pImage->GetBlitterCache();
+	AssertTrue(pCache.IsNotNull());
+	AssertTrue(pCache->Matches(pImage));
+	AssertTrue(pCache->CreateImageBlitter(pCel).IsNotNull());
+	AssertTrue(pImage->GetBlitterCache().Object() == pCache.Object());
+
+	pImage->BeginChange();
+	pImage->SetSize(12, 8);
+	pImage->EndChange();
+	pNextCache = pImage->GetBlitterCache();
+	AssertTrue(pNextCache.Object() != pCache.Object());
+	pCache = pNextCache;
+
+	pImage->ReInit();
+	pNextCache = pImage->GetBlitterCache();
+	AssertTrue(pNextCache.Object() != pCache.Object());
+
+	//The image, its cache and a blitter in it point at each other, but once nothing else does they are all freed.
+	pImage->ReInit(4, 4, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+	AssertTrue(pImage->GetBlitterCache()->CreateImageBlitter(pCel).IsNotNull());
+	pCache = NULL;
+	pNextCache = NULL;
+	pImage = NULL;
+	pCel = NULL;
+	pSource = NULL;
+	AssertSize(uiObjects, gcObjects.NumMemoryIndexes());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestImageDraw(void)
 {
 	BeginTests();
@@ -563,6 +613,7 @@ void TestImageDraw(void)
 	TestImageDrawCelClippingTransparentGaps();
 	TestImageDrawCelRGBX();
 	TestImageDrawCelDestAlphaRowEnds();
+	TestImageDrawBlitterCacheOnImage();
 
 	ObjectsKill(false);
 	DataIOKill();
