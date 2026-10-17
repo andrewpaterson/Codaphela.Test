@@ -54,8 +54,8 @@ void TestObjectGraphWritingStackIsNotWritten(void)
 	TypesInit();
 	DataIOInit();
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	TestObjectGraphWritingAddConstructors();
@@ -119,8 +119,8 @@ void TestObjectGraphWritingStackIsNotWritten(void)
 	AssertNull(&pObj2);
 	AssertNull(&pObj3);
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 

@@ -263,6 +263,91 @@ void TestGridContainerDarkForestImages(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestGridContainerRowSpans(void)
+{
+	//The 20 tall component spans the two 6 tall rows.  With no weights the missing 8 pixels go to the last row.
+	SGridTestComponent	asWithoutWeights[3] = {
+		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(4, 6),   SInt32Vec2(0, 0),   SInt32Vec2(4, 6) },
+		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(4, 6),   SInt32Vec2(0, 10),  SInt32Vec2(4, 6) },
+		{ NULL, 1, 0, 1, 2, 0, 0, SInt32Vec2(4, 20),  SInt32Vec2(4, 0),   SInt32Vec2(4, 20) } };
+
+	//With row weights of 1 and 3 the missing 8 pixels are shared 2 and 6, making the rows 8 and 12 tall.
+	SGridTestComponent	asWithWeights[3] = {
+		{ NULL, 0, 0, 1, 1, 0, 1, SInt32Vec2(4, 6),   SInt32Vec2(0, 1),   SInt32Vec2(4, 6) },
+		{ NULL, 0, 1, 1, 1, 0, 3, SInt32Vec2(4, 6),   SInt32Vec2(0, 11),  SInt32Vec2(4, 6) },
+		{ NULL, 1, 0, 1, 2, 0, 0, SInt32Vec2(4, 20),  SInt32Vec2(4, 0),   SInt32Vec2(4, 20) } };
+
+	TestGridContainerLayout("Output" _FS_ "GridContainerRowSpansWithoutWeights", 8, 20, 3, asWithoutWeights, 8, 20, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerRowSpansWithWeights", 8, 20, 3, asWithWeights, 8, 20, false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGridContainerSpanWeight(void)
+{
+	//A spanning cell's weight is given to the columns it spans when they don't already have that much.  Neither spanned
+	//column has a weight, so the weight goes to the last of them, which then takes all 20 spare pixels.  The spanning
+	//component fills its cell.
+	SGridTestComponent	asToLastColumn[3] = {
+		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(10, 4),  SInt32Vec2(0, 0),   SInt32Vec2(10, 4) },
+		{ NULL, 1, 0, 1, 1, 0, 0, SInt32Vec2(10, 4),  SInt32Vec2(20, 0),  SInt32Vec2(10, 4) },
+		{ NULL, 0, 1, 2, 1, 1, 0, SInt32Vec2(-1, 4),  SInt32Vec2(0, 4),   SInt32Vec2(40, 4) } };
+
+	//Columns 0 and 1 have weights 1 and 3 and the cell spanning them has weight 8, so the missing 4 is shared 1 : 3 making
+	//them 2 and 6.  Column 2 keeps weight 4.  The 24 spare pixels are then shared 2 : 6 : 4, so 4, 12 and 8.  Without the
+	//spanning weight they would have been shared 1 : 3 : 4.
+	SGridTestComponent	asToWeightedColumns[4] = {
+		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 4),  SInt32Vec2(2, 0),   SInt32Vec2(10, 4) },
+		{ NULL, 1, 0, 1, 1, 3, 0, SInt32Vec2(10, 4),  SInt32Vec2(20, 0),  SInt32Vec2(10, 4) },
+		{ NULL, 2, 0, 1, 1, 4, 0, SInt32Vec2(10, 4),  SInt32Vec2(40, 0),  SInt32Vec2(10, 4) },
+		{ NULL, 0, 1, 2, 1, 8, 0, SInt32Vec2(-1, 4),  SInt32Vec2(0, 4),   SInt32Vec2(36, 4) } };
+
+	TestGridContainerLayout("Output" _FS_ "GridContainerSpanWeightToLastColumn", 40, 8, 3, asToLastColumn, 20, 8, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerSpanWeightToWeightedColumns", 54, 8, 4, asToWeightedColumns, 30, 8, false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGridContainerNestedSpans(void)
+{
+	//The 3 column span is added before the 2 column span, but narrower spans are settled first.  The 2 column span puts
+	//its missing 12 pixels into column 1, its last column, then the 3 column span finds 12 of its 30 and puts the other
+	//18 into column 2.  Settled the other way round column 2 would be 30 wide.  The last component fills column 2.
+	SGridTestComponent	asComponents[3] = {
+		{ NULL, 0, 0, 3, 1, 0, 0, SInt32Vec2(30, 4),  SInt32Vec2(0, 0),   SInt32Vec2(30, 4) },
+		{ NULL, 0, 1, 2, 1, 0, 0, SInt32Vec2(12, 4),  SInt32Vec2(0, 4),   SInt32Vec2(12, 4) },
+		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4),  SInt32Vec2(12, 4),  SInt32Vec2(18, 4) } };
+
+	TestGridContainerLayout("Output" _FS_ "GridContainerNestedSpans", 30, 8, 3, asComponents, 30, 8, false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGridContainerClamping(void)
+{
+	//A negative column or row is treated as 0, a span below 1 as 1 and a negative weight as 0.  So the first component is
+	//an ordinary unweighted cell (0, 0) and the two 10 x 10 cells exactly fill the 20 x 20 window.
+	SGridTestComponent	asComponents[2] = {
+		{ NULL, -2, -1, 0, -3, -5, -1, SInt32Vec2(10, 10), SInt32Vec2(0, 0),   SInt32Vec2(10, 10) },
+		{ NULL, 1, 1, 1, 1, 0, 0,      SInt32Vec2(10, 10), SInt32Vec2(10, 10), SInt32Vec2(10, 10) } };
+
+	TestGridContainerLayout("Output" _FS_ "GridContainerClamping", 20, 20, 2, asComponents, 20, 20, false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 Ptr<CCanvas> CreateGridTestCanvas(Ptr<CWindow> pWindow, int32 iWidth, int32 iHeight)
 {
 	Ptr<CCanvas>	pCanvas;
@@ -300,7 +385,7 @@ void TestGridContainerAddAndRemove(void)
 		SInt32Vec2				sVec;
 		CPointer				pNull;
 
-		cNativeFactory.Init(&gcMemoryAllocator, 20, 10, szDirectory);
+		cNativeFactory.Init(&gcMemoryAllocator, 20, 20, szDirectory);
 		cTick.Init(&cData, 1);
 		pTestWindow = OMalloc<CWindow>("Grid Container", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
 		pGrid = OMalloc<CGridContainer>(pTestWindow);
@@ -315,13 +400,14 @@ void TestGridContainerAddAndRemove(void)
 		gcLogger.SetConfig(&sLogConfig);
 		AssertSize(0, pGrid->NumComponents());
 
-		//Three 10 wide components in columns 0, 1 and 2.  Removing the middle one takes its cell with it, so the others stay
-		//in their own cells: column 1 is then empty and the 20 wide grid exactly fills the window.
+		//Three 10 x 10 components in cells (0, 0), (1, 0) and (0, 1).  Removing the middle one takes its cell with it, so the
+		//others stay in their own cells: one column and two rows make a 10 x 20 grid centred in the 20 x 20 window.  If the
+		//cell were left behind the last component would take cell (1, 0) and the grid would be 20 x 10.
 		pCanvas1 = CreateGridTestCanvas(pTestWindow, 10, 10);
 		pCanvas2 = CreateGridTestCanvas(pTestWindow, 10, 10);
 		AssertTrue(pGrid->AddComponent(pCanvas0, 0, 0));
 		AssertTrue(pGrid->AddComponent(pCanvas1, 1, 0));
-		AssertTrue(pGrid->AddComponent(pCanvas2, 2, 0));
+		AssertTrue(pGrid->AddComponent(pCanvas2, 0, 1));
 		AssertSize(3, pGrid->NumComponents());
 
 		AssertTrue(pGridAsComponent->RemoveComponent(pCanvas1));
@@ -330,18 +416,22 @@ void TestGridContainerAddAndRemove(void)
 
 		pTestWindow->Show();
 		sVec = pCanvas0->GetPosition();
-		AssertInt32Vec2(0, 0, &sVec);
+		AssertInt32Vec2(5, 0, &sVec);
 		sVec = pCanvas2->GetPosition();
-		AssertInt32Vec2(10, 0, &sVec);
+		AssertInt32Vec2(5, 10, &sVec);
 
-		//Removing everything removes every cell, so a component added afterwards is laid out on its own.  In column 1 with
-		//an empty column 0 the 10 wide grid is centred in the window.
+		//Removing everything removes every cell, so a component added afterwards gets its own cell.  A component that fills a
+		//weighted cell (1, 1) takes the whole window.  Had the old cells been left behind it would have the empty unweighted
+		//cell (0, 0) instead and be 0 x 0 in the middle of the window.
 		AssertTrue(pGrid->RemoveAllComponents());
 		AssertSize(0, pGrid->NumComponents());
-		AssertTrue(pGrid->AddComponent(pCanvas1, 1, 0));
+		pCanvas1->SetDesiredSize(-1, -1);
+		AssertTrue(pGrid->AddComponent(pCanvas1, 1, 1, 1, 1, 1, 1));
 		pTestWindow->Layout();
 		sVec = pCanvas1->GetPosition();
-		AssertInt32Vec2(5, 0, &sVec);
+		AssertInt32Vec2(0, 0, &sVec);
+		sVec = pCanvas1->GetActualSize();
+		AssertInt32Vec2(20, 20, &sVec);
 
 		pCanvas0 = NULL;
 		pCanvas1 = NULL;
@@ -372,6 +462,10 @@ void TestGridContainer(void)
 	TestGridContainerRowWeights();
 	TestGridContainerSpanWithoutWeights();
 	TestGridContainerSpanWithWeights();
+	TestGridContainerRowSpans();
+	TestGridContainerSpanWeight();
+	TestGridContainerNestedSpans();
+	TestGridContainerClamping();
 	TestGridContainerShrink();
 	TestGridContainerOverlap();
 	TestGridContainerDarkForestImages();

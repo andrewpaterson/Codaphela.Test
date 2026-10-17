@@ -141,8 +141,8 @@ void TestKillBestPractice(void)
 	cFileUtil.RemoveDir("Output" _FS_ "TestKillBestPractice");
 	cFileUtil.TouchDir("Output" _FS_ "TestKillBestPractice");
 
-	pcSequence = CSequenceFactory::Create("Output" _FS_ "TestKillBestPractice");
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "TestKillBestPractice", IWT_Yes);
+	pcSequence = CSequenceFactory::Create("Output" _FS_ "TestKillBestPractice", DS_No);
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "TestKillBestPractice", IWT_Yes, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 
@@ -317,8 +317,8 @@ void TestKillCanFindRoot(void)
 	cFileUtil.RemoveDir("Output" _FS_ "TestKillCanFindRoot");
 	cFileUtil.TouchDir("Output" _FS_ "TestKillCanFindRoot");
 
-	pcSequence = CSequenceFactory::Create("Output" _FS_ "TestKillCanFindRoot");
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "TestKillCanFindRoot", IWT_Yes);
+	pcSequence = CSequenceFactory::Create("Output" _FS_ "TestKillCanFindRoot", DS_No);
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "TestKillCanFindRoot", IWT_Yes, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 

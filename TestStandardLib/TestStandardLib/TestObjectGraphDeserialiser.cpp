@@ -84,8 +84,8 @@ void TestRemappingOfOIs(CExternalObjectWriter* pcWriter, CExternalObjectReader* 
 	CSequence*						pcSequence;
 	char							szDirectory[] = "Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping";
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 
@@ -124,8 +124,8 @@ void TestRemappingOfOIs(CExternalObjectWriter* pcWriter, CExternalObjectReader* 
 	ObjectsKill();
 
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	TestObjectGraphDeserialiserAddConstructors();
@@ -208,8 +208,8 @@ void TestObjectGraphDeserialiserReuseName(void)
 	cReader.Init("Output" _FS_ "GraphDeserialiser" _FS_ "Reuse");
 
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 
@@ -246,8 +246,8 @@ void TestObjectGraphDeserialiserReuseName(void)
 	ObjectsKill();
 
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	TestObjectGraphDeserialiserAddConstructors();
@@ -361,8 +361,8 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 	cWriterStart1.Init(szDirectory, "", "Start1");
 	cWriterStart2.Init(szDirectory, "", "Start2");
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 
@@ -407,8 +407,8 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 	ObjectsKill();
 
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 

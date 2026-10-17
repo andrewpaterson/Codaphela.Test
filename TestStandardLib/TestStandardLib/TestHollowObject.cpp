@@ -41,8 +41,8 @@ void TestHollowObjectAllocation(void)
 	cFileUtil.TouchDir(szDirectory);
 
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	TestHollowObjectAddConstructors();
@@ -69,8 +69,8 @@ void TestHollowObjectAllocation(void)
 	ObjectsKill(false);
 
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	pRoot = ORoot();
@@ -128,8 +128,8 @@ void TestHollowObjectMemoryIteration(void)
 	cFileUtil.TouchDir(szDirectory);
 
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	TestHollowObjectAddConstructors();
@@ -159,8 +159,8 @@ void TestHollowObjectMemoryIteration(void)
 	AssertTrue(sFreeNotifider3.bFreed);
 
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	pRoot = ORoot();

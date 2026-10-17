@@ -76,8 +76,8 @@ void TestObjectReaderSimpleDeserialised(void)
 	CCodabase*						pcDatabase;
 	CSequence*						pcSequence;
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	{

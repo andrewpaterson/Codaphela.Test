@@ -541,6 +541,44 @@ void TestDurableFileControllerIncompleteMark(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestDurableFileControllerNoSync(void)
+{
+	CFileUtil				cFileUtil;
+	CDurableFileController	cController;
+	CDurableFile			cDurableFile1;
+	char					szDirectory[] = "Output" _FS_ "Durable6" _FS_ "Write";
+	char					szRewrite[] = "Output" _FS_ "Durable6" _FS_ "Rewrite";
+
+	cFileUtil.RemoveDir("Output" _FS_ "Durable6");
+
+	cController.Init(szDirectory, szRewrite);
+	AssertTrue(cController.IsSync());
+	cController.SetSync(DS_No);
+	AssertFalse(cController.IsSync());
+
+	//Without syncing the files are still written to both directories and the marks are removed.
+	cDurableFile1.Init(&cController, "1.txt", "1.txt");
+	AssertTrue(cController.Begin());
+	cDurableFile1.Write("Unsynced", 8, 1);
+	AssertTrue(cController.End());
+	AssertFileString("Output" _FS_ "Durable6" _FS_ "Write" _FS_ "1.txt", "Unsynced");
+	AssertFileString("Output" _FS_ "Durable6" _FS_ "Rewrite" _FS_ "1.txt", "Unsynced");
+	AssertBool(false, cFileUtil.Exists("Output" _FS_ "Durable6" _FS_ "Write" _FS_ "Mark1.Write"));
+	AssertBool(false, cFileUtil.Exists("Output" _FS_ "Durable6" _FS_ "Rewrite" _FS_ "Mark2.Rewrite"));
+
+	cController.SetSync(DS_Yes);
+	AssertTrue(cController.IsSync());
+
+	cDurableFile1.Kill();
+	cController.Kill();
+	cFileUtil.RemoveDir("Output" _FS_ "Durable6");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestDurableFileController(void)
 {
 	TypeConverterInit();
@@ -561,6 +599,7 @@ void TestDurableFileController(void)
 	TestDurableFileControllerCrash(8);
 	TestDurableFileControllerCrash(9);
 	TestDurableFileControllerIncompleteMark();
+	TestDurableFileControllerNoSync();
 
 	TestStatistics();
 	DataMemoryKill();

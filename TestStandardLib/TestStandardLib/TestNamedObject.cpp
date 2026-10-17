@@ -58,8 +58,8 @@ void TestNamedObjectName(void)
 	cFileUtil.TouchDir(szDirectory);
 
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	TestNamedObjectAddConstructors(); //This is only important if an object is being loaded.
@@ -110,8 +110,8 @@ void TestNamedObjectName(void)
 	AssertNull(pSet.Object());
 
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_Yes, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 
@@ -188,8 +188,8 @@ void TestNamedOjectReuse(EIndexWriteThrough eWriteThrough)
 	cFileUtil.TouchDir(szDirectory);
 
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, eWriteThrough);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, eWriteThrough, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 
@@ -221,8 +221,8 @@ void TestNamedOjectReuse(EIndexWriteThrough eWriteThrough)
 	AssertNull(pRoot.Object());
 
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, eWriteThrough);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, eWriteThrough, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 

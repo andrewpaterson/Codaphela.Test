@@ -32,8 +32,8 @@ void TestObjectsEvictVsKillUserEvictAfterSave(EIndexWriteThrough eWriteThrough)
 	cFileUtil.RemoveDir(szDirectory);
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, eWriteThrough);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, eWriteThrough, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 

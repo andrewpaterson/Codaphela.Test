@@ -117,8 +117,8 @@ void TestObjectsObjectSave(void)
 	cFileUtil.RemoveDir(szDirectory);
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 
@@ -195,8 +195,8 @@ void TestObjectsFlushNoClear(void)
 	cFileUtil.RemoveDir(szDirectory);
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 
@@ -238,8 +238,8 @@ void TestObjectsFlushDurable(void)
 	cFileUtil.RemoveDir(szDirectory);
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsForDehollowfication();
@@ -294,8 +294,8 @@ void TestObjectsEvict(void)
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsForDehollowfication();
@@ -322,8 +322,8 @@ void TestObjectsEvict(void)
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsForDehollowfication();
@@ -345,8 +345,8 @@ void TestObjectsEvict(void)
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsForDehollowfication();
@@ -373,8 +373,8 @@ void TestObjectsEvict(void)
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsForDehollowfication();
@@ -559,8 +559,8 @@ void TestObjectDehollowfication(void)
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsForDehollowfication();
@@ -576,8 +576,8 @@ void TestObjectDehollowfication(void)
 	SafeKill(pcSequence);
 	ObjectsKill(false);
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsConstructors();
@@ -638,8 +638,8 @@ void TestObjectsFlushClearGetByOid(void)
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	pcSequence = CSequenceFactory::Create(szDirectory); 
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No); 
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsConstructors();
@@ -696,8 +696,8 @@ void TestObjectsFlushClearGetByName(void)
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupObjectsConstructors();
@@ -747,8 +747,8 @@ void TestObjectsFlushRemovesStackPointers(void)
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
 	AssertTrue(cFileUtil.TouchDir(szDirectory));
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 

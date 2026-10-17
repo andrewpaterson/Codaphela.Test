@@ -262,8 +262,8 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupEmbeddedObjectConstructors();
@@ -291,8 +291,8 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	AssertSize(sizeof(CEmbeddedContainer), uiEmbeddedContainerSize);
 	AssertSize(sizeof(CEmbeddedComplex), OBJECT_SIZE + uiEmbeddedTestSize + sizeof(int32) * 2 + sizeof(CArray<>) + uiEmbeddedContainerSize + POINTER_SIZE);
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupEmbeddedObjectConstructors();
@@ -352,8 +352,8 @@ void TestEmbeddedObjectPointTo(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupEmbeddedObjectConstructors();
@@ -379,8 +379,8 @@ void TestEmbeddedObjectPointTo(void)
 	AssertNull(&pContainer);
 
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	SetupEmbeddedObjectConstructors();

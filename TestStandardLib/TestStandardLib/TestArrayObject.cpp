@@ -617,8 +617,8 @@ void TestArrayObjectInternalSerialisation(size uiNumArrayItems)
 	cRandom.Kill();
 	AssertSize(uiNumArrayItems, aiKeyNames.NumElements());
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	{
@@ -756,8 +756,8 @@ void TestArrayObjectInternalSerialisation(size uiNumArrayItems)
 	SafeKill(pcSequence);
 	ObjectsKill(false);
 
-	pcSequence = CSequenceFactory::Create(szDirectory);
-	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 	pcDatabase->Open();
 	ObjectsInit(pcDatabase, pcSequence);
 	{

@@ -25,7 +25,7 @@ void TestSequenceNext(void)
 
 	AssertLong(1LL, FIRST_O_INDEX);
 
-	cConfig = CValueSequenceConfig::Create(szDirectory);
+	cConfig = CValueSequenceConfig::Create(szDirectory, DS_Yes);
 	cSequence.Init(cConfig);
 
 	oi = cSequence.GetNext();
@@ -36,7 +36,7 @@ void TestSequenceNext(void)
 
 	cSequence.Kill();
 
-	cConfig = CValueSequenceConfig::Create(szDirectory);
+	cConfig = CValueSequenceConfig::Create(szDirectory, DS_Yes);
 	cSequence.Init(cConfig);
 
 	oi = cSequence.GetNext();

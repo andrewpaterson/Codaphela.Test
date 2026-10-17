@@ -778,8 +778,8 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 		CCodabase* pcDatabase;
 		CSequence* pcSequence;
 
-		pcSequence = CSequenceFactory::Create(szDirectory);
-		pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+		pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+		pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 		pcDatabase->Open();
 		ObjectsInit(pcDatabase, pcSequence);
 
@@ -872,8 +872,8 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 		AssertNull(&pNamed7);
 		AssertNull(&pNamed8);
 
-		pcSequence = CSequenceFactory::Create(szDirectory);
-		pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+		pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+		pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 		pcDatabase->Open();
 		ObjectsInit(pcDatabase, pcSequence);
 
@@ -908,8 +908,8 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 		ObjectsKill(false);
 
 
-		pcSequence = CSequenceFactory::Create(szDirectory);
-		pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No);
+		pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+		pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
 		pcDatabase->Open();
 		ObjectsInit(pcDatabase, pcSequence);
 

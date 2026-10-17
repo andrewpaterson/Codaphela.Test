@@ -23,7 +23,7 @@ void TestCodabaseFactoryCreate(void)
 
 	cFileUtil.RemoveDir("Output" _FS_ "CodabaseFactory1");
 
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "CodabaseFactory1", IWT_No);
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "CodabaseFactory1", IWT_No, DS_Yes);
 
 	AssertTrue(cFileUtil.Exists("Output" _FS_ "CodabaseFactory1" _FS_ "Primary" _FS_ "Index"));
 	AssertTrue(cFileUtil.Exists("Output" _FS_ "CodabaseFactory1" _FS_ "Primary" _FS_ "Names"));
@@ -68,7 +68,7 @@ void TestCodabaseOperations(void)
 
 	cFileUtil.RemoveDir("Output" _FS_ "Codabase1");
 
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase1", IWT_No);
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase1", IWT_No, DS_Yes);
 	AssertNotNull(pcDatabase);
 	Pass();
 	pcDatabase->Open();
@@ -87,7 +87,7 @@ void TestCodabaseOperations(void)
 	Pass();
 
 
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase1", IWT_No);
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase1", IWT_No, DS_Yes);
 	AssertNotNull(pcDatabase);
 	Pass();
 	pcDatabase->Open();
@@ -122,7 +122,7 @@ void TestCodabaseOperations(void)
 	Pass();
 
 
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase1", IWT_No);
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase1", IWT_No, DS_Yes);
 	AssertNotNull(pcDatabase);
 	Pass();
 	pcDatabase->Open();
@@ -168,7 +168,7 @@ void TestCodabaseSetPutRemove(EIndexWriteThrough eWriteThrough)
 
 	cFileUtil.RemoveDir("Output" _FS_ "Codabase2");
 
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase2", eWriteThrough);
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase2", eWriteThrough, DS_Yes);
 	AssertNotNull(pcDatabase);
 	AssertTrue(pcDatabase->Open());
 
@@ -246,7 +246,7 @@ void TestCodabaseSetPutRemove(EIndexWriteThrough eWriteThrough)
 	Pass();
 
 
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase2", eWriteThrough);
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase2", eWriteThrough, DS_Yes);
 	AssertNotNull(pcDatabase);
 	AssertTrue(pcDatabase->Open());
 
@@ -292,7 +292,7 @@ void TestCodabaseIterate(EIndexWriteThrough eWriteThrough)
 
 	cFileUtil.RemoveDir("Output" _FS_ "Codabase3");
 
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase3", eWriteThrough);
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase3", eWriteThrough, DS_Yes);
 	AssertNotNull(pcDatabase);
 	AssertTrue(pcDatabase->Open());
 
@@ -302,7 +302,7 @@ void TestCodabaseIterate(EIndexWriteThrough eWriteThrough)
 	AssertTrue(pcDatabase->Close());
 	SafeKill(pcDatabase);
 
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase3", eWriteThrough);
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase3", eWriteThrough, DS_Yes);
 	AssertNotNull(pcDatabase);
 	AssertTrue(pcDatabase->Open());
 
@@ -454,7 +454,7 @@ void TestCodabaseCrashRecovery(bool bRewriteMark)
 	cFileUtil.RemoveDir("Output" _FS_ "CodabaseCrash");
 	cFileUtil.RemoveDir("Output" _FS_ "CodabaseCrashSaved");
 
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "CodabaseCrash", IWT_No);
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "CodabaseCrash", IWT_No, DS_Yes);
 	AssertNotNull(pcDatabase);
 	AssertTrue(pcDatabase->Open());
 	AssertTrue(pcDatabase->Add(1LL, "Alpha", szOne, strlen(szOne) + 1));
@@ -464,7 +464,7 @@ void TestCodabaseCrashRecovery(bool bRewriteMark)
 	AssertTrue(cFileUtil.TouchDir("Output" _FS_ "CodabaseCrashSaved" _FS_ "Backup"));
 	AssertTrue(cFileUtil.CopyDir("Output" _FS_ "CodabaseCrash" _FS_ "Backup", "Output" _FS_ "CodabaseCrashSaved" _FS_ "Backup"));
 
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "CodabaseCrash", IWT_No);
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "CodabaseCrash", IWT_No, DS_Yes);
 	AssertNotNull(pcDatabase);
 	AssertTrue(pcDatabase->Open());
 	AssertTrue(pcDatabase->Set(1LL, szTwo, strlen(szTwo) + 1));
@@ -479,7 +479,7 @@ void TestCodabaseCrashRecovery(bool bRewriteMark)
 	WriteCodabaseCrashMarks(bRewriteMark);
 
 	sLogConfig = gcLogger.SetSilent();
-	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "CodabaseCrash", IWT_No);
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "CodabaseCrash", IWT_No, DS_Yes);
 	gcLogger.SetConfig(&sLogConfig);
 	AssertNotNull(pcDatabase);
 	AssertFalse(cFileUtil.Exists("Output" _FS_ "CodabaseCrash" _FS_ "Primary" _FS_ "Mark1.Write"));
