@@ -3,6 +3,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/CharsHelper.h"
 #include "BaseLib/LogFile.h"
+#include "BaseLib/Logger.h"
 #include "BaseLib/CodabaseFactory.h"
 #include "BaseLib/Codabase.h"
 #include "TestLib/Words.h"
@@ -144,6 +145,219 @@ void TestCodabaseOperations(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestCodabaseSetPutRemove(EIndexWriteThrough eWriteThrough)
+{
+	CCodabase*	pcDatabase;
+	CFileUtil	cFileUtil;
+	SLogConfig	sLogConfig;
+	char		szResult[2 KB];
+	char		szName[MAX_KEY_SIZE];
+	uint32		uiDataSize;
+	uint32		uiNameLength;
+	char		szOne[] = "One";
+	char		szTwo[] = "Two";
+	char		szUno[] = "Uno";
+	char		szEins[] = "Eins";
+	char		szVier[] = "Vier";
+	char		szZwei[] = "Zwei";
+	char		szFour[] = "Four";
+	char		szFunf[] = "Funf";
+	char		szBad[] = "Bad";
+
+	cFileUtil.RemoveDir("Output" _FS_ "Codabase2");
+
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase2", eWriteThrough);
+	AssertNotNull(pcDatabase);
+	AssertTrue(pcDatabase->Open());
+
+	AssertTrue(pcDatabase->Add(1LL, "Alpha", szOne, strlen(szOne) + 1));
+	AssertTrue(pcDatabase->Add(2LL, szTwo, strlen(szTwo) + 1));
+	AssertLong(2, pcDatabase->NumIndices());
+	AssertLong(1, pcDatabase->NumNames());
+
+	sLogConfig = gcLogger.SetSilent();
+	AssertFalse(pcDatabase->Add(1LL, "Beta", szBad, strlen(szBad) + 1));
+	AssertFalse(pcDatabase->Add(3LL, "Alpha", szBad, strlen(szBad) + 1));
+	gcLogger.SetConfig(&sLogConfig);
+	AssertFalse(pcDatabase->Contains("Beta"));
+	AssertFalse(pcDatabase->Contains(3LL));
+	AssertLong(1LL, pcDatabase->GetIndex("Alpha"));
+	AssertLong(2, pcDatabase->NumIndices());
+	AssertLong(1, pcDatabase->NumNames());
+
+	AssertTrue(pcDatabase->Set(1LL, szUno, strlen(szUno) + 1));
+	memset(szResult, 0, 2 KB);
+	AssertTrue(pcDatabase->Get("Alpha", szResult));
+	AssertString(szUno, szResult);
+	AssertTrue(pcDatabase->GetName(1LL, szName, &uiNameLength, MAX_KEY_SIZE));
+	AssertString("Alpha", szName);
+
+	AssertTrue(pcDatabase->Set("Alpha", szEins, strlen(szEins) + 1));
+	memset(szResult, 0, 2 KB);
+	AssertTrue(pcDatabase->Get(1LL, &uiDataSize, szResult, 2 KB));
+	AssertInt(5, uiDataSize);
+	AssertString(szEins, szResult);
+
+	AssertTrue(pcDatabase->Set(1LL, szVier));
+	memset(szResult, 0, 2 KB);
+	AssertTrue(pcDatabase->Get(1LL, &uiDataSize, szResult, 2 KB));
+	AssertInt(5, uiDataSize);
+	AssertString(szVier, szResult);
+
+	AssertTrue(pcDatabase->Put(2LL, szZwei, strlen(szZwei) + 1));
+	AssertTrue(pcDatabase->Put(4LL, "Delta", szVier, strlen(szVier) + 1));
+	AssertTrue(pcDatabase->Put(4LL, "Delta", szFour, strlen(szFour) + 1));
+	AssertTrue(pcDatabase->Put(5LL, szFunf, strlen(szFunf) + 1));
+	AssertLong(4, pcDatabase->NumIndices());
+	AssertLong(2, pcDatabase->NumNames());
+
+	sLogConfig = gcLogger.SetSilent();
+	AssertFalse(pcDatabase->Put(6LL, "Alpha", szBad, strlen(szBad) + 1));
+	AssertFalse(pcDatabase->Put(1LL, "Delta", szBad, strlen(szBad) + 1));
+	AssertFalse(pcDatabase->Put(2LL, "Gamma", szBad, strlen(szBad) + 1));
+	AssertFalse(pcDatabase->Put(2LL, (char*)NULL, szBad, strlen(szBad) + 1));
+	AssertFalse(pcDatabase->Put(2LL, "", szBad, strlen(szBad) + 1));
+	gcLogger.SetConfig(&sLogConfig);
+	AssertFalse(pcDatabase->Contains(6LL));
+	AssertFalse(pcDatabase->Contains("Gamma"));
+	AssertLong(4, pcDatabase->NumIndices());
+	AssertLong(2, pcDatabase->NumNames());
+
+	memset(szResult, 0, 2 KB);
+	AssertTrue(pcDatabase->Get(2LL, szResult));
+	AssertString(szZwei, szResult);
+	memset(szResult, 0, 2 KB);
+	AssertTrue(pcDatabase->Get("Delta", szResult));
+	AssertString(szFour, szResult);
+	AssertLong(4LL, pcDatabase->GetIndex("Delta"));
+
+	AssertTrue(pcDatabase->Remove(5LL));
+	AssertTrue(pcDatabase->Remove("Delta"));
+	AssertFalse(pcDatabase->Contains(5LL));
+	AssertFalse(pcDatabase->Contains(4LL));
+	AssertFalse(pcDatabase->Contains("Delta"));
+	AssertLong(2, pcDatabase->NumIndices());
+	AssertLong(1, pcDatabase->NumNames());
+
+	AssertTrue(pcDatabase->Close());
+	SafeKill(pcDatabase);
+	Pass();
+
+
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase2", eWriteThrough);
+	AssertNotNull(pcDatabase);
+	AssertTrue(pcDatabase->Open());
+
+	AssertLong(2, pcDatabase->NumIndices());
+	AssertLong(1, pcDatabase->NumNames());
+	memset(szResult, 0, 2 KB);
+	AssertTrue(pcDatabase->Get("Alpha", szResult));
+	AssertString(szVier, szResult);
+	memset(szResult, 0, 2 KB);
+	AssertTrue(pcDatabase->Get(2LL, szResult));
+	AssertString(szZwei, szResult);
+	AssertFalse(pcDatabase->Contains(4LL));
+	AssertFalse(pcDatabase->Contains(5LL));
+	AssertFalse(pcDatabase->Contains("Delta"));
+	AssertFalse(pcDatabase->Contains("Beta"));
+
+	AssertTrue(pcDatabase->Close());
+	SafeKill(pcDatabase);
+	Pass();
+
+	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "Codabase2"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCodabaseIterate(EIndexWriteThrough eWriteThrough)
+{
+	CCodabase*				pcDatabase;
+	CFileUtil				cFileUtil;
+	SIndexTreeFileIterator	sIter;
+	char					szResult[2 KB];
+	char					szKey[MAX_KEY_SIZE];
+	size					iDataSize;
+	OIndex					oi;
+	bool					bResult;
+	int						iCount;
+	char					szRutherford[] = "Rutherford";
+	char					szBohr[] = "Bohr";
+	char					szPlanck[] = "Planck";
+
+	cFileUtil.RemoveDir("Output" _FS_ "Codabase3");
+
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase3", eWriteThrough);
+	AssertNotNull(pcDatabase);
+	AssertTrue(pcDatabase->Open());
+
+	AssertTrue(pcDatabase->Add(0x0102LL, "Ernest", szRutherford, strlen(szRutherford) + 1));
+	AssertTrue(pcDatabase->Add(0x0203LL, "Niels", szBohr, strlen(szBohr) + 1));
+	AssertTrue(pcDatabase->Add(0x0304LL, szPlanck, strlen(szPlanck) + 1));
+	AssertTrue(pcDatabase->Close());
+	SafeKill(pcDatabase);
+
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "Codabase3", eWriteThrough);
+	AssertNotNull(pcDatabase);
+	AssertTrue(pcDatabase->Open());
+
+	iCount = 0;
+	memset(szResult, 0, 2 KB);
+	oi = pcDatabase->StartIndexIteration(&sIter, szResult, &iDataSize, 2 KB);
+	while (oi != INVALID_O_INDEX)
+	{
+		if (oi == 0x0102LL)
+		{
+			AssertString(szRutherford, szResult);
+			AssertSize(strlen(szRutherford) + 1, iDataSize);
+		}
+		else if (oi == 0x0203LL)
+		{
+			AssertString(szBohr, szResult);
+			AssertSize(strlen(szBohr) + 1, iDataSize);
+		}
+		else if (oi == 0x0304LL)
+		{
+			AssertString(szPlanck, szResult);
+			AssertSize(strlen(szPlanck) + 1, iDataSize);
+		}
+		else
+		{
+			Fail();
+		}
+		iCount++;
+		memset(szResult, 0, 2 KB);
+		oi = pcDatabase->IndexIterate(&sIter, szResult, &iDataSize, 2 KB);
+	}
+	AssertInt(3, iCount);
+
+	iCount = 0;
+	memset(szKey, 0, MAX_KEY_SIZE);
+	bResult = pcDatabase->StartNameIteration(&sIter, szKey, &oi);
+	while (bResult)
+	{
+		AssertLong(pcDatabase->GetIndex(szKey), oi);
+		iCount++;
+		memset(szKey, 0, MAX_KEY_SIZE);
+		bResult = pcDatabase->NameIterate(&sIter, szKey, &oi);
+	}
+	AssertInt(2, iCount);
+
+	AssertTrue(pcDatabase->Close());
+	SafeKill(pcDatabase);
+	Pass();
+
+	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "Codabase3"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestCodabase(void)
 {
 	TypeConverterInit();
@@ -154,6 +368,10 @@ void TestCodabase(void)
 
 	TestCodabaseFactoryCreate();
 	TestCodabaseOperations();
+	TestCodabaseSetPutRemove(IWT_No);
+	TestCodabaseSetPutRemove(IWT_Yes);
+	TestCodabaseIterate(IWT_No);
+	TestCodabaseIterate(IWT_Yes);
 
 	TestStatistics();
 	WordsKill();
