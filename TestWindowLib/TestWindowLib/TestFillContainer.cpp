@@ -3,6 +3,7 @@
 #include "StandardLib/Objects.h"
 #include "WindowLib/Window.h"
 #include "WindowLib/FillContainer.h"
+#include "WindowLib/ImageCanvasDraw.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/AssertGeometric.h"
 #include "BorderCanvasDraw.h"
@@ -256,6 +257,82 @@ void TestFillContainerRequiredSize(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFillContainerImageCanvasDesiredSize(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "FillContainerImageCanvasDesiredSize";
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CCanvas>			pCanvas;
+		Ptr<CImageCanvasDraw>	pDraw;
+		Ptr<CImage>				pImage;
+		Ptr<CImageCel>			pCel;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		Ptr<CFillContainer>		pFill;
+		SInt32Vec2				sVec;
+		CPointer				pNull;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 96, 30, szDirectory);
+
+		cTick.Init(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+
+		pFill = OMalloc<CFillContainer>(pTestWindow);
+		pFill->SetFillStyle(CSH_Left, CSV_Top);
+		pTestWindow->SetContainer(pFill);
+
+		pImage = OMalloc<CImage>(12, 7, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pCel = OMalloc<CImageCel>(pImage);
+		pDraw = OMalloc<CImageCanvasDraw>(pCel);
+		pCanvas = OMalloc<CCanvas>(pTestWindow, pDraw);
+		pFill->AddComponent(pCanvas);
+
+		sVec = pDraw->GetDesiredSize();
+		AssertInt32Vec2(12, 7, &sVec);
+		sVec = pCanvas->GetDesiredSize();
+		AssertInt32Vec2(12, 7, &sVec);
+
+		pTestWindow->Show();
+		sVec = pCanvas->GetActualSize();
+		AssertInt32Vec2(12, 7, &sVec);
+
+		pCanvas->SetDesiredSize(20, 10);
+		sVec = pCanvas->GetDesiredSize();
+		AssertInt32Vec2(20, 10, &sVec);
+
+		pTestWindow->Layout();
+		sVec = pCanvas->GetActualSize();
+		AssertInt32Vec2(20, 10, &sVec);
+
+		pCanvas->SetDesiredSize(-1, -1);
+		sVec = pCanvas->GetDesiredSize();
+		AssertInt32Vec2(12, 7, &sVec);
+
+		pTestWindow = NULL;
+		pFill = NULL;
+		pCanvas = NULL;
+		pDraw = NULL;
+		pCel = NULL;
+		pImage = NULL;
+	}
+
+	AssertFillContainerObjectsRemoved();
+
+	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFillContainer(void)
 {
 	BeginTests();
@@ -268,6 +345,7 @@ void TestFillContainer(void)
 	TestFillContainerHorizontalSplit();
 	TestFillContainerVerticalSplitCenter();
 	TestFillContainerRequiredSize();
+	TestFillContainerImageCanvasDesiredSize();
 
 	ObjectsFlush();
 	ObjectsKill();
