@@ -18,7 +18,6 @@
 
 
 void AssertFilledMemory(char* pcMemory, int iChunkSize);
-void CreateExpectedString(CChars* psz, int iProduce);
 
 
 //The inter process tests of TestProcessFork, TestSharedMemory and
@@ -549,35 +548,6 @@ void ServeChannelQueue(int iThreadId, void* pvClient)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void ProduceChannelQueueElement(SChannelQueueServer* psServer, int iProduce, int* piSize, char* pc)
-{
-	SSharedMemoryQueueElement*	psElement;
-
-	psElement = &psServer->asElements[iProduce];
-	memset(psElement->sz, *pc, *piSize);
-	psElement->sz[*piSize] = '\0';
-	psElement->sHeader.miIndex = iProduce;
-	psElement->sHeader.muiSize = *piSize + 1 + sizeof(SSharedMemoryQueueElementHeader);
-	psServer->iProduced.Increment();
-
-	(*piSize)++;
-	if (*piSize == 256)
-	{
-		*piSize = 100;
-	}
-
-	(*pc)++;
-	if (*pc == 122)
-	{
-		*pc = 33;
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 bool ForkChannelQueueConsumer(CTestChannels* pcChannels, int iProcess, SChannelQueueClient* psClient, SChannelQueueServer* psServer, CWorkerThreadPool* pcPool)
 {
 	char	szProcess[16];
@@ -610,12 +580,8 @@ void TestChannelQueueMultiProcess(ETestTransport eTransport, bool bForkEarly)
 	int						iProcess;
 	int						iConnected;
 	int						iProduce;
-	int						iSize;
-	char					c;
+	SQueueTestSequence		sSequence;
 	int						i;
-	int						iTotalTaken;
-	CChars					szExpected;
-	CChars					szActual;
 
 	sServer.asElements = (SSharedMemoryQueueElement*)malloc(PROCESS_SHARED_QUEUE_PRODUCE_SIZE * sizeof(SSharedMemoryQueueElement));
 	sServer.psResult = (SProcessSharedQueueResult*)malloc(sizeof(SProcessSharedQueueResult));
@@ -640,11 +606,11 @@ void TestChannelQueueMultiProcess(ETestTransport eTransport, bool bForkEarly)
 		}
 	}
 
-	iSize = 100;
-	c = 33;
+	sSequence.Init();
 	for (iProduce = 0; iProduce < PROCESS_SHARED_QUEUE_PRODUCE_SIZE; iProduce++)
 	{
-		ProduceChannelQueueElement(&sServer, iProduce, &iSize, &c);
+		FillQueueElement(&sServer.asElements[iProduce], iProduce, &sSequence);
+		sServer.iProduced.Increment();
 
 		if (!bForkEarly && (iProduce % 1000 == 999) && (iProcess < 4))
 		{
@@ -666,21 +632,8 @@ void TestChannelQueueMultiProcess(ETestTransport eTransport, bool bForkEarly)
 		AssertTrue(asClients[i].bResult);
 	}
 
-	iTotalTaken = sServer.psResult->aiTaken[0] + sServer.psResult->aiTaken[1] + sServer.psResult->aiTaken[2] + sServer.psResult->aiTaken[3];
-	AssertInt(PROCESS_SHARED_QUEUE_PRODUCE_SIZE, iTotalTaken);
+	AssertQueueResult(sServer.psResult->aiTaken, sServer.psResult->aszData, PROCESS_SHARED_QUEUE_PRODUCE_SIZE);
 
-	szExpected.Init();
-	CreateExpectedString(&szExpected, PROCESS_SHARED_QUEUE_PRODUCE_SIZE);
-
-	szActual.Init();
-	for (i = 0; i < PROCESS_SHARED_QUEUE_PRODUCE_SIZE; i++)
-	{
-		szActual.Append(sServer.psResult->aszData[i])->AppendNewLine();
-	}
-	AssertString(szExpected.Text(), szActual.Text());
-
-	szActual.Kill();
-	szExpected.Kill();
 
 	cChannels.Kill();
 	free(sServer.psResult);

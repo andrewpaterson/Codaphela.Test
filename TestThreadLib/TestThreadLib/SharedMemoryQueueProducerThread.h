@@ -3,6 +3,7 @@
 #include "ThreadLib/SharedMemoryQueue.h"
 #include "ThreadLib/Thread.h"
 #include "SharedMemoryQueueTheadElement.h"
+#include "TestSharedMemoryQueue.h"
 #include "SharedMemoryQueueConsumerThread.h"
 
 
@@ -51,8 +52,7 @@ public:
 	{
 		int								iProduce;
 		SSharedMemoryQueueElement		sProducerData;
-		int								iSize;
-		char							c;
+		SQueueTestSequence				sSequence;
 		bool							bDone;
 		CSharedMemoryQueue				cQueue;
 		bool							bResult;
@@ -64,27 +64,11 @@ public:
 		}
 
 		bDone = false;
-		iSize = 100;
-		c = 33;
+		sSequence.Init();
 		for (iProduce = 0; iProduce < THREADED_SHARED_QUEUE_PRODUCE_SIZE; iProduce++)
 		{
-			memset(sProducerData.sz, c, iSize);
-			sProducerData.sz[iSize] = '\0';
-			sProducerData.sHeader.miIndex = iProduce;
-			sProducerData.sHeader.muiSize = iSize + 1 + sizeof(SSharedMemoryQueueElementHeader);
+			FillQueueElement(&sProducerData, iProduce, &sSequence);
 			cQueue.Push(&sProducerData, sProducerData.sHeader.muiSize);
-
-			iSize++;
-			if (iSize == 256)
-			{
-				iSize = 100;
-			}
-
-			c++;
-			if (c == 122)
-			{
-				c = 33;
-			}
 		}
 		bDone = true;
 
