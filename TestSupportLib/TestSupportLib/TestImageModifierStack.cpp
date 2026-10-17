@@ -19,9 +19,6 @@
 void TestImageModifierStack1(void)
 {
 	CImageModifierStack		cStack;
-	CImageRGBToGrey*		pcGrey;
-	CImageHeightToNormals*	pcNormals;
-	CImageResampler*		pcSmall;
 	
 	Ptr<CImage> pcBak = ReadImage("Input/Adelle.png", IT_Unknown, true);
 	AssertTrue(pcBak.IsNotNull());
@@ -30,8 +27,7 @@ void TestImageModifierStack1(void)
 	pcImage->Copy(pcBak);
 	cStack.Init(pcImage);
 
-	pcGrey = cStack.AddModifier<CImageRGBToGrey>();
-	pcGrey->Init(RGBTGS_UseRed);
+	cStack.AddModifier<CImageRGBToGrey>(RGBTGS_UseRed);
 	cStack.ApplyAll();
 
 	WriteImage(pcImage, "Output/AdelleGrey.raw");
@@ -39,8 +35,7 @@ void TestImageModifierStack1(void)
 	pcImage = NULL;
 
 	pcImage = OMallocNoI<CImage>();
-	pcNormals = cStack.AddModifier<CImageHeightToNormals>();
-	pcNormals->Init(IMAGE_DIFFUSE_GREY);
+	cStack.AddModifier<CImageHeightToNormals>(IMAGE_DIFFUSE_GREY);
 	pcImage->Copy(pcBak);
 	cStack.SetImage(pcImage);
 	cStack.ApplyAll();
@@ -50,8 +45,7 @@ void TestImageModifierStack1(void)
 	pcImage = NULL;
 
 	pcImage = OMallocNoI<CImage>();
-	pcSmall = cStack.AddModifier<CImageResampler>();
-	pcSmall->Init(IR_NearestNeighbour, 21, 16);
+	cStack.AddModifier<CImageResampler>(IR_NearestNeighbour, 21, 16);
 	pcImage->Copy(pcBak);
 	cStack.SetImage(pcImage);
 	cStack.ApplyAll();
@@ -71,6 +65,52 @@ void TestImageModifierStack1(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestImageResamplerPowerOf2(void)
+{
+	CImageResampler		cResampler;
+	Ptr<CImage>			pSource;
+	Ptr<CImage>			pSquare;
+	Ptr<CImage>			pDest;
+
+	//21 x 12 rounds up to 32 x 16 and down to 16 x 8.  Auto scales by 1.5 then rounds down, giving 16 x 16.
+	pSource = OMalloc<CImage>(21, 12, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+	pSource->Black();
+
+	cResampler.Init(IR_NearestNeighbour, RS_Up);
+	pDest = cResampler.Modify(pSource);
+	AssertInt(32, pDest->GetWidth());
+	AssertInt(16, pDest->GetHeight());
+	cResampler.Kill();
+
+	cResampler.Init(IR_NearestNeighbour, RS_Down);
+	pDest = cResampler.Modify(pSource);
+	AssertInt(16, pDest->GetWidth());
+	AssertInt(8, pDest->GetHeight());
+	cResampler.Kill();
+
+	cResampler.Init(IR_NearestNeighbour, RS_Auto);
+	pDest = cResampler.Modify(pSource);
+	AssertInt(16, pDest->GetWidth());
+	AssertInt(16, pDest->GetHeight());
+	cResampler.Kill();
+
+	//An image that is already a power of two in size is returned as it is.
+	pSquare = OMalloc<CImage>(16, 8, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+	cResampler.Init(IR_NearestNeighbour, RS_Up);
+	pDest = cResampler.Modify(pSquare);
+	AssertTrue(pDest.Object() == pSquare.Object());
+	cResampler.Kill();
+
+	pDest = NULL;
+	pSquare = NULL;
+	pSource = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestImageModifierStack(void)
 {
 	BeginTests();
@@ -80,6 +120,7 @@ void TestImageModifierStack(void)
 	ImageChannelDescriptorInit();
 
 	TestImageModifierStack1();
+	TestImageResamplerPowerOf2();
 
 	ImageChannelDescriptorKill();
 	ObjectsKill(false);

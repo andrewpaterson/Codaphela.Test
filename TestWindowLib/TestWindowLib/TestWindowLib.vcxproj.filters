@@ -52,6 +52,9 @@
     <ClCompile Include="DarkForest.cpp">
       <Filter>Source\TestCommon</Filter>
     </ClCompile>
+    <ClCompile Include="NoImageRefWindowFactory.cpp">
+      <Filter>Source\TestCommon</Filter>
+    </ClCompile>
     <ClCompile Include="SpaceCrusade.cpp">
       <Filter>Source\TestCommon</Filter>
     </ClCompile>
@@ -73,6 +76,9 @@
       <Filter>Source\TestCommon</Filter>
     </ClInclude>
     <ClInclude Include="DarkForest.h">
+      <Filter>Source\TestCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="NoImageRefWindowFactory.h">
       <Filter>Source\TestCommon</Filter>
     </ClInclude>
     <ClInclude Include="SpaceCrusade.h">

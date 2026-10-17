@@ -193,23 +193,30 @@ void TestImageDrawLineExtents(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CImage> CreateDrawCelSourceImage(int32 iWidth, int32 iHeight)
+Ptr<CImage> CreateDrawCelImage(int32 iWidth, int32 iHeight, EColourFormat eFormat, ERGBAlphaBits eAlphaBits, size uiStride, bool bGaps)
 {
 	Ptr<CImage>		pImage;
 	uint8*			puiData;
 	int32			x;
 	int32			y;
+	size			uiPixel;
 
 	//Every pixel is different so a pixel drawn in the wrong place is always noticed.
-	pImage = OMalloc<CImage>(iWidth, iHeight, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+	//With gaps the fourth byte is opacity in runs of two opaque and two transparent pixels that shift on each row.
+	pImage = OMalloc<CImage>(iWidth, iHeight, eFormat, CCO_RGB, CRGB_24bit, eAlphaBits);
 	puiData = (uint8*)pImage->GetData();
 	for (y = 0; y < iHeight; y++)
 	{
 		for (x = 0; x < iWidth; x++)
 		{
-			puiData[(x + y * iWidth) * 3 + 0] = (uint8)(10 + x * 30);
-			puiData[(x + y * iWidth) * 3 + 1] = (uint8)(20 + y * 40);
-			puiData[(x + y * iWidth) * 3 + 2] = 200;
+			uiPixel = (x + y * iWidth) * uiStride;
+			puiData[uiPixel + 0] = (uint8)(10 + x * 30);
+			puiData[uiPixel + 1] = (uint8)(20 + y * 40);
+			puiData[uiPixel + 2] = 200;
+			if (uiStride == 4)
+			{
+				puiData[uiPixel + 3] = bGaps ? ((((x + y) / 2) % 2 == 0) ? 255 : 0) : 77;
+			}
 		}
 	}
 	return pImage;
@@ -220,7 +227,17 @@ Ptr<CImage> CreateDrawCelSourceImage(int32 iWidth, int32 iHeight)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertDrawCel(Ptr<CImage> pDest, Ptr<CImage> pSource, int32 iDestX, int32 iDestY, CRectangle* pcClip)
+Ptr<CImage> CreateDrawCelSourceImage(int32 iWidth, int32 iHeight)
+{
+	return CreateDrawCelImage(iWidth, iHeight, CFT_RGB, ARGB_None, 3, false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertDrawCelPixels(Ptr<CImage> pDest, size uiDestStride, Ptr<CImage> pSource, size uiSourceStride, bool bSourceGaps, int32 iDestX, int32 iDestY, CRectangle* pcClip)
 {
 	uint8*	puiDest;
 	uint8*	puiSource;
@@ -228,13 +245,13 @@ void AssertDrawCel(Ptr<CImage> pDest, Ptr<CImage> pSource, int32 iDestX, int32 i
 	int32	y;
 	int32	xs;
 	int32	ys;
-	bool	bInSource;
-	bool	bInClip;
+	bool	bDrawn;
 	size	uiDest;
 	size	uiSource;
 	size	uiWrong;
 
-	//A destination pixel must hold the source pixel over it if it is inside the clip, otherwise it must still be black.
+	//A destination pixel must hold the source pixel over it if it is inside the clip and opaque, otherwise it must still be black.
+	//Only the colour bytes are compared.
 	puiDest = (uint8*)pDest->GetData();
 	puiSource = (uint8*)pSource->GetData();
 	uiWrong = 0;
@@ -244,13 +261,21 @@ void AssertDrawCel(Ptr<CImage> pDest, Ptr<CImage> pSource, int32 iDestX, int32 i
 		{
 			xs = x - iDestX;
 			ys = y - iDestY;
-			bInSource = (xs >= 0) && (xs < pSource->GetWidth()) && (ys >= 0) && (ys < pSource->GetHeight());
-			bInClip = (pcClip == NULL) || ((x >= pcClip->msTopLeft.x) && (x < pcClip->msBottomRight.x) && (y >= pcClip->msTopLeft.y) && (y < pcClip->msBottomRight.y));
-
-			uiDest = (x + y * pDest->GetWidth()) * 3;
-			if (bInSource && bInClip)
+			uiSource = 0;
+			bDrawn = (xs >= 0) && (xs < pSource->GetWidth()) && (ys >= 0) && (ys < pSource->GetHeight());
+			bDrawn &= (pcClip == NULL) || ((x >= pcClip->msTopLeft.x) && (x < pcClip->msBottomRight.x) && (y >= pcClip->msTopLeft.y) && (y < pcClip->msBottomRight.y));
+			if (bDrawn)
 			{
-				uiSource = (xs + ys * pSource->GetWidth()) * 3;
+				uiSource = (xs + ys * pSource->GetWidth()) * uiSourceStride;
+				if (bSourceGaps)
+				{
+					bDrawn = puiSource[uiSource + 3] == 255;
+				}
+			}
+
+			uiDest = (x + y * pDest->GetWidth()) * uiDestStride;
+			if (bDrawn)
+			{
 				if ((puiDest[uiDest] != puiSource[uiSource]) || (puiDest[uiDest + 1] != puiSource[uiSource + 1]) || (puiDest[uiDest + 2] != puiSource[uiSource + 2]))
 				{
 					uiWrong++;
@@ -266,6 +291,16 @@ void AssertDrawCel(Ptr<CImage> pDest, Ptr<CImage> pSource, int32 iDestX, int32 i
 		}
 	}
 	AssertSize(0, uiWrong);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertDrawCel(Ptr<CImage> pDest, Ptr<CImage> pSource, int32 iDestX, int32 iDestY, CRectangle* pcClip)
+{
+	AssertDrawCelPixels(pDest, 3, pSource, 3, false, iDestX, iDestY, pcClip);
 }
 
 
@@ -361,6 +396,93 @@ void TestImageDrawCelMismatchedFormat(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestImageDrawCelClippingTransparentGaps(void)
+{
+	CImageDraw		cDraw;
+	Ptr<CImage>		pSource;
+	Ptr<CImage>		pDest;
+	Ptr<CImageCel>	pCel;
+	CRectangle		acClips[4];
+	int32			aiPositions[6][2] = { { 0, 0 }, { 2, 3 }, { -3, 1 }, { 4, -1 }, { 6, 6 }, { -1, -1 } };
+	size			i;
+	size			j;
+
+	//A cel with transparent gaps is blitted as several segments per row.  The narrow clips leave
+	//some segments of a row wholly outside the clip while others in the same row are drawn.
+	pSource = CreateDrawCelImage(9, 3, CFT_RGBA, ARGB_8bit, 4, true);
+	pCel = OMalloc<CImageCel>(pSource);
+	pDest = OMalloc<CImage>(10, 8, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+
+	acClips[0].Init(3, 0, 6, 8);
+	acClips[1].Init(5, 0, 6, 8);
+	acClips[2].Init(0, 1, 10, 2);
+	acClips[3].Init(2, 2, 9, 7);
+
+	cDraw.Init(&pDest);
+	for (i = 0; i < 6; i++)
+	{
+		pDest->Black();
+		AssertTrue(cDraw.DrawCel(aiPositions[i][0], aiPositions[i][1], pCel));
+		AssertDrawCelPixels(pDest, 3, pSource, 4, true, aiPositions[i][0], aiPositions[i][1], NULL);
+
+		for (j = 0; j < 4; j++)
+		{
+			pDest->Black();
+			AssertTrue(cDraw.DrawCel(aiPositions[i][0], aiPositions[i][1], pCel, &acClips[j]));
+			AssertDrawCelPixels(pDest, 3, pSource, 4, true, aiPositions[i][0], aiPositions[i][1], &acClips[j]);
+		}
+	}
+
+	cDraw.Kill();
+	pCel = NULL;
+	pSource = NULL;
+	pDest = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawCelRGBX(void)
+{
+	CImageDraw		cDraw;
+	Ptr<CImage>		pSource;
+	Ptr<CImage>		pDest;
+	Ptr<CImageCel>	pCel;
+	CRectangle		cClip;
+
+	//RGBX has alpha bits for its ignored channel but no opacity channel and must still be drawable.
+	pSource = CreateDrawCelImage(6, 4, CFT_RGBX, ARGB_8bit, 4, false);
+	pCel = OMalloc<CImageCel>(pSource);
+	pDest = OMalloc<CImage>(10, 8, CFT_RGBX, CCO_RGB, CRGB_24bit, ARGB_8bit);
+
+	cDraw.Init(&pDest);
+
+	pDest->Black();
+	AssertTrue(cDraw.DrawCel(2, 1, pCel));
+	AssertDrawCelPixels(pDest, 4, pSource, 4, false, 2, 1, NULL);
+
+	pDest->Black();
+	AssertTrue(cDraw.DrawCel(-2, 5, pCel));
+	AssertDrawCelPixels(pDest, 4, pSource, 4, false, -2, 5, NULL);
+
+	cClip.Init(3, 2, 7, 4);
+	pDest->Black();
+	AssertTrue(cDraw.DrawCel(2, 1, pCel, &cClip));
+	AssertDrawCelPixels(pDest, 4, pSource, 4, false, 2, 1, &cClip);
+
+	cDraw.Kill();
+	pCel = NULL;
+	pSource = NULL;
+	pDest = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestImageDraw(void)
 {
 	BeginTests();
@@ -374,6 +496,8 @@ void TestImageDraw(void)
 	TestImageDrawLineExtents();
 	TestImageDrawCelClipping();
 	TestImageDrawCelMismatchedFormat();
+	TestImageDrawCelClippingTransparentGaps();
+	TestImageDrawCelRGBX();
 
 	ObjectsKill(false);
 	DataIOKill();

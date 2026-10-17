@@ -52,6 +52,82 @@ void TestBumpMapper1(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestBumpMapperHeightToBumpUVs(void)
+{
+	CImageHeightToBumpUVs	cToUVs;
+	Ptr<CImage>				pFlat;
+	Ptr<CImage>				pRamp;
+	Ptr<CImage>				pFlatUVs;
+	Ptr<CImage>				pRampUVs;
+	uint8*					puiFlat;
+	uint8*					puiRamp;
+	int32					x;
+	int32					y;
+	size					uiFlatDifferent;
+	size					uiRampUnchanged;
+
+	//A height map becomes a two channel U V bump map of the same size.  A flat height map bumps nowhere so every
+	//pixel is the same.  A sloping height map bumps every pixel away from its edges.
+	pFlat = OMalloc<CImage>(6, 6, PT_uint8, IMAGE_DIFFUSE_GREY, CHANNEL_STOP);
+	pRamp = OMalloc<CImage>(6, 6, PT_uint8, IMAGE_DIFFUSE_GREY, CHANNEL_STOP);
+	puiFlat = (uint8*)pFlat->GetData();
+	puiRamp = (uint8*)pRamp->GetData();
+	for (y = 0; y < 6; y++)
+	{
+		for (x = 0; x < 6; x++)
+		{
+			puiFlat[x + y * 6] = 128;
+			puiRamp[x + y * 6] = (uint8)(x * 40);
+		}
+	}
+
+	cToUVs.Init(IMAGE_DIFFUSE_GREY);
+	pFlatUVs = cToUVs.Modify(pFlat);
+	pRampUVs = cToUVs.Modify(pRamp);
+	cToUVs.Kill();
+
+	AssertInt(6, pFlatUVs->GetWidth());
+	AssertInt(6, pFlatUVs->GetHeight());
+	AssertTrue(pFlatUVs->HasChannels(IMAGE_BUMP_U, IMAGE_BUMP_V, CHANNEL_STOP));
+	AssertSize(72, pFlatUVs->GetByteSize());
+	AssertSize(72, pRampUVs->GetByteSize());
+
+	puiFlat = (uint8*)pFlatUVs->GetData();
+	puiRamp = (uint8*)pRampUVs->GetData();
+	uiFlatDifferent = 0;
+	for (x = 0; x < 36; x++)
+	{
+		if ((puiFlat[x * 2] != puiFlat[0]) || (puiFlat[x * 2 + 1] != puiFlat[1]))
+		{
+			uiFlatDifferent++;
+		}
+	}
+	AssertSize(0, uiFlatDifferent);
+
+	uiRampUnchanged = 0;
+	for (y = 1; y < 5; y++)
+	{
+		for (x = 1; x < 5; x++)
+		{
+			if ((puiRamp[(x + y * 6) * 2] == puiFlat[0]) && (puiRamp[(x + y * 6) * 2 + 1] == puiFlat[1]))
+			{
+				uiRampUnchanged++;
+			}
+		}
+	}
+	AssertSize(0, uiRampUnchanged);
+
+	pFlat = NULL;
+	pRamp = NULL;
+	pFlatUVs = NULL;
+	pRampUVs = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestBumpMapper(void)
 {
 	BeginTests();
@@ -60,6 +136,7 @@ void TestBumpMapper(void)
 	ObjectsInit();
 
 	TestBumpMapper1();
+	TestBumpMapperHeightToBumpUVs();
 
 	ObjectsKill(false);
 	DataIOKill();

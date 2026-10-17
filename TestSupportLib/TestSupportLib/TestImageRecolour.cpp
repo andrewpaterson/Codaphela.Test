@@ -7,6 +7,7 @@
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/ImageRecolour.h"
+#include "SupportLib/ImageRecolourInvertBlackAndWhite.h"
 #include "TestLib/Assert.h"
 #include "TestLib/AssertFile.h"
 
@@ -44,6 +45,31 @@ void TestImageRecolour1(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestImageRecolourInvertBlackAndWhite(void)
+{
+	CImageRecolourInvertBlackAndWhite	cInvert;
+	Ptr<CImage>							pImage;
+	uint8								auiPixels[16] = { 0, 0, 0, 0,  255, 255, 255, 0,  255, 255, 255, 255,  200, 30, 40, 255 };
+	uint8								auiExpected[16] = { 255, 255, 255, 255,  0, 0, 0, 0,  255, 255, 255, 255,  200, 30, 40, 255 };
+
+	//Transparent black becomes opaque white and transparent white becomes transparent black.  Other pixels are not touched.
+	pImage = OMalloc<CImage>(4, 1, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, IMAGE_OPACITY, CHANNEL_STOP);
+	memcpy(pImage->GetData(), auiPixels, 16);
+
+	cInvert.Init();
+	pImage = cInvert.Modify(pImage);
+	cInvert.Kill();
+
+	AssertSize(16, pImage->GetByteSize());
+	AssertMemory(auiExpected, pImage->GetData(), 16);
+	pImage = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestImageRecolour(void)
 {
 	BeginTests();
@@ -52,6 +78,7 @@ void TestImageRecolour(void)
 	ObjectsInit();
 
 	TestImageRecolour1();
+	TestImageRecolourInvertBlackAndWhite();
 
 	ObjectsKill(false);
 	DataIOKill();

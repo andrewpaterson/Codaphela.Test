@@ -1299,6 +1299,23 @@ void TestFlowContainerDarkForestMixedLeftCenterContinue(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFlowContainerDarkForestImagesRightTopContinuePastEdge(void)
+{
+	//Without wrapping the line carries on past the right edge of the 20 wide window.  The wolf fits, the pine at x 12
+	//loses its last pixel and the moon at x 21 is entirely outside, so all three must be clipped to the window.
+	SDarkForestComponent	asComponents[3] = {
+		{ "Wolf.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Pine.png",		SInt32Vec2(-1, -1), 0 },
+		{ "Moon.png",		SInt32Vec2(-1, -1), 0 } };
+
+	TestFlowContainerDarkForest("Output" _FS_ "FlowContainerDarkForestImagesRightTopContinuePastEdge", 20, 16, CSD_Right, CSW_Continue, CSV_Top, CSH_Unknown, 3, asComponents);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFlowContainer(void)
 {
 	BeginTests();
@@ -1330,6 +1347,7 @@ void TestFlowContainer(void)
 	TestFlowContainerDarkForestImagesDownCenterWrap();
 	TestFlowContainerDarkForestMixedRightBottomWrap();
 	TestFlowContainerDarkForestMixedLeftCenterContinue();
+	TestFlowContainerDarkForestImagesRightTopContinuePastEdge();
 
 	ObjectsFlush();
 	ObjectsKill();

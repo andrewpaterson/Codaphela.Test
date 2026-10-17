@@ -5,6 +5,7 @@
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/Objects.h"
+#include "BaseLib/Logger.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/ImageCelsSource.h"
@@ -257,6 +258,117 @@ void TestImageCelsSourceBorderMasksPackOnLoad(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestImageCelsSourceModifier(void)
+{
+	DataIOInit();
+	ObjectsInit();
+
+	CImageCelSourceSingle	cSingle;
+	CImageCelsSource		cSource;
+	Ptr<CImage>				pImage;
+
+	//The modifiers are applied to every image as it is loaded, before it is divided into cels.
+	cSingle.Init();
+
+	cSource.Init(false);
+	cSource.AddDiskFileSource("Input" _FS_ "cel4.png", "Cel 4", &cSingle);
+	cSource.AddModifier(OMalloc<CImageRGBToGrey>(RGBTGS_UseRed));
+	AssertTrue(cSource.Load());
+
+	AssertSize(1, cSource.GetImages()->NumElements());
+	pImage = cSource.GetImages()->Get(0);
+	AssertTrue(pImage->HasChannel(IMAGE_DIFFUSE_GREY));
+	AssertFalse(pImage->HasChannel(IMAGE_DIFFUSE_RED));
+	AssertFalse(pImage->HasChannel(IMAGE_DIFFUSE_GREEN));
+	AssertFalse(pImage->HasChannel(IMAGE_DIFFUSE_BLUE));
+	AssertSize(1, cSource.GetImageCels()->NumElements());
+
+	pImage = NULL;
+	cSource.Kill();
+	cSingle.Kill();
+
+	ObjectsKill(false);
+	DataIOKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageCelsSourceMemory(void)
+{
+	DataIOInit();
+	ObjectsInit();
+
+	CImageCelSourceSingle	cSingle;
+	CImageCelsSource		cSource;
+	Ptr<CImage>				pImage;
+	Ptr<CImageCel>			pCel;
+
+	//A memory source uses the image it was given rather than loading one.
+	pImage = ReadImage("Input" _FS_ "cel4.png");
+	AssertTrue(pImage.IsNotNull());
+
+	cSingle.Init();
+	cSource.Init(false);
+	cSource.AddMemorySource(pImage, &cSingle);
+	AssertTrue(cSource.Load());
+
+	AssertSize(1, cSource.GetImages()->NumElements());
+	AssertTrue(cSource.GetImages()->Get(0).Object() == pImage.Object());
+	AssertSize(1, cSource.GetImageCels()->NumElements());
+	pCel = cSource.GetImageCels()->Get(0);
+	AssertTrue(pCel->GetSourceImage().Object() == pImage.Object());
+
+	pCel = NULL;
+	pImage = NULL;
+	cSource.Kill();
+	cSingle.Kill();
+
+	ObjectsKill(false);
+	DataIOKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageCelsSourceMissingFile(void)
+{
+	DataIOInit();
+	ObjectsInit();
+
+	CImageCelSourceSingle	cSingle;
+	CImageCelsSource		cSource;
+	SLogConfig				sLogConfig;
+	bool					bResult;
+
+	//A disk file that cannot be read fails the whole load.
+	cSingle.Init();
+	cSource.Init(false);
+	cSource.AddDiskFileSource("Input" _FS_ "DoesNotExist.png", "Missing", &cSingle);
+
+	sLogConfig = gcLogger.SetSilent();
+	bResult = cSource.Load();
+	gcLogger.SetConfig(&sLogConfig);
+
+	AssertFalse(bResult);
+	AssertSize(0, cSource.GetImageCels()->NumElements());
+
+	cSource.Kill();
+	cSingle.Kill();
+
+	ObjectsKill(false);
+	DataIOKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestImageCelsSource(void)
 {
 	BeginTests();
@@ -265,6 +377,9 @@ void TestImageCelsSource(void)
 	TestImageCelsSourceStarControl();
 	TestImageCelsSourceBorderMasks();
 	TestImageCelsSourceBorderMasksPackOnLoad();
+	TestImageCelsSourceModifier();
+	TestImageCelsSourceMemory();
+	TestImageCelsSourceMissingFile();
 
 	TestStatistics();
 }

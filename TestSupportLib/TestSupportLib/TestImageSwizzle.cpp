@@ -22,10 +22,7 @@
 void TestImageSwizzle1(void)
 {
 	CImageModifierStack		cStack;
-	CImageRGBToGrey*		pcRGBToGrey;
-	CImageChannelRename*	pcChannelRename;
-	CImageChannelAdd*		pcChannelAdd;
-	CImageModifierDrawBox*	pcDrawBox;
+	Ptr<CImageChannelAdd>	pChannelAdd;
 	CImageColourRGB			cRGB;
 
 	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "swizzel.png");
@@ -34,21 +31,17 @@ void TestImageSwizzle1(void)
 
 	cStack.Init(pcImage);
 	
-	pcRGBToGrey = cStack.AddModifier<CImageRGBToGrey>();
-	pcRGBToGrey->Init(RGBTGS_OnlyIfChannelsSame);
+	cStack.AddModifier<CImageRGBToGrey>(RGBTGS_OnlyIfChannelsSame);
 
-	pcChannelRename = cStack.AddModifier<CImageChannelRename>();
-	pcChannelRename->Init(IMAGE_DIFFUSE_GREY, IMAGE_OPACITY);
+	cStack.AddModifier<CImageChannelRename>(IMAGE_DIFFUSE_GREY, IMAGE_OPACITY);
 
-	pcChannelAdd = cStack.AddModifier<CImageChannelAdd>();
-	pcChannelAdd->Init(IMAGE_DIFFUSE_RED, PT_uint8);
-	pcChannelAdd->AddChannel(IMAGE_DIFFUSE_GREEN);
-	pcChannelAdd->AddChannel(IMAGE_DIFFUSE_BLUE);
+	pChannelAdd = cStack.AddModifier<CImageChannelAdd>(IMAGE_DIFFUSE_RED, PT_uint8);
+	pChannelAdd->AddChannel(IMAGE_DIFFUSE_GREEN);
+	pChannelAdd->AddChannel(IMAGE_DIFFUSE_BLUE);
+	pChannelAdd = NULL;
 
-	pcDrawBox = cStack.AddModifier<CImageModifierDrawBox>();
-	
 	cRGB.Init(1.0f, 1.0f, 1.0f);
-	pcDrawBox->Init(NULL, &cRGB, true);
+	cStack.AddModifier<CImageModifierDrawBox>((CRectangle*)NULL, &cRGB, true);
 
 	cStack.ApplyAll();
 	cStack.Kill();

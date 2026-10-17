@@ -72,10 +72,6 @@ void TestImageModifierDrawBox1(void)
 //////////////////////////////////////////////////////////////////////////
 void TestImageModifierDrawBox2(void)
 {
-	CImageModifierDrawBox*	pcBackground;
-	CImageModifierDrawBox*	pcBox1;
-	CImageModifierDrawBox*	pcBox2;
-	CImageModifierDrawBox*	pcBox3;
 	CRectangle				cRect;
 	CImageColourRGB			cRed;
 	CImageColourRGB			cGreen;
@@ -89,24 +85,20 @@ void TestImageModifierDrawBox2(void)
 
 	cStack.Init(pImage);
 
-	pcBackground = cStack.AddModifier<CImageModifierDrawBox>();
 	cGrey.Init(0.3f, 0.3f, 0.3f);
-	pcBackground->Init(NULL, &cGrey);
+	cStack.AddModifier<CImageModifierDrawBox>((CRectangle*)NULL, &cGrey);
 
-	pcBox1 = cStack.AddModifier<CImageModifierDrawBox>();
 	cRect.Init(12, 0, 30, 21);
 	cRed.Init(1.0f, 0.2f, 0.2f);
-	pcBox1->Init(&cRect, &cRed);
+	cStack.AddModifier<CImageModifierDrawBox>(&cRect, &cRed);
 
-	pcBox2 = cStack.AddModifier<CImageModifierDrawBox>();
 	cRect.Init(3, 15, 18, 27);
 	cGreen.Init(0.2f, 1.0f, 0.2f);
-	pcBox2->Init(&cRect, &cGreen);
+	cStack.AddModifier<CImageModifierDrawBox>(&cRect, &cGreen);
 
-	pcBox3 = cStack.AddModifier<CImageModifierDrawBox>();
 	cRect.Init(6, 6, 24, 11);
 	cBlue.Init(0.2f, 0.2f, 1.0f);
-	pcBox3->Init(&cRect, &cBlue);
+	cStack.AddModifier<CImageModifierDrawBox>(&cRect, &cBlue);
 
 	cStack.ApplyAll();
 	cStack.Kill();

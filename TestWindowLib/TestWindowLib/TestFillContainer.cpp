@@ -567,6 +567,80 @@ void TestFillContainerDarkForestCenterPastWindowEdges(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFillContainerImageCanvasPartialDesiredSize(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "FillContainerImageCanvasPartialDesiredSize";
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CCanvas>			pCanvas;
+		Ptr<CImageCanvasDraw>	pDraw;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		Ptr<CFillContainer>		pFill;
+		CColourFormatHelper		cHelper;
+		SInt32Vec2				sVec;
+		CPointer				pNull;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 30, 20, szDirectory);
+
+		cTick.Init(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow->GetColourFormat(&cHelper);
+
+		pFill = OMalloc<CFillContainer>(pTestWindow);
+		pFill->SetFillStyle(CSH_Left, CSV_Top);
+		pTestWindow->SetContainer(pFill);
+
+		pDraw = OMalloc<CImageCanvasDraw>(ReadDarkForestCel("Wolf.png", &cHelper));
+		pCanvas = OMalloc<CCanvas>(pTestWindow, pDraw);
+		pFill->AddComponent(pCanvas);
+
+		//The canvas only takes its draw's size when its own desired size is -1, -1.  A partial desired size is the canvas's
+		//own, so the axis left at -1 takes the whole slot rather than the cel's size.
+		pCanvas->SetDesiredSize(10, -1);
+		sVec = pCanvas->GetDesiredSize();
+		AssertInt32Vec2(10, -1, &sVec);
+		pTestWindow->Show();
+		sVec = pCanvas->GetActualSize();
+		AssertInt32Vec2(10, 20, &sVec);
+
+		pCanvas->SetDesiredSize(-1, 6);
+		sVec = pCanvas->GetDesiredSize();
+		AssertInt32Vec2(-1, 6, &sVec);
+		pTestWindow->Layout();
+		sVec = pCanvas->GetActualSize();
+		AssertInt32Vec2(30, 6, &sVec);
+
+		pCanvas->SetDesiredSize(-1, -1);
+		sVec = pCanvas->GetDesiredSize();
+		AssertInt32Vec2(12, 10, &sVec);
+		pTestWindow->Layout();
+		sVec = pCanvas->GetActualSize();
+		AssertInt32Vec2(12, 10, &sVec);
+
+		pTestWindow = NULL;
+		pFill = NULL;
+		pCanvas = NULL;
+		pDraw = NULL;
+	}
+
+	AssertFillContainerObjectsRemoved();
+
+	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFillContainer(void)
 {
 	BeginTests();
@@ -588,6 +662,7 @@ void TestFillContainer(void)
 	TestFillContainerDarkForestCenterTooSmall();
 	TestFillContainerDarkForestCenterTooLarge();
 	TestFillContainerDarkForestCenterPastWindowEdges();
+	TestFillContainerImageCanvasPartialDesiredSize();
 
 	ObjectsFlush();
 	ObjectsKill();
