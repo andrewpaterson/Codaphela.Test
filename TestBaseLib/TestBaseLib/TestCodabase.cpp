@@ -4,6 +4,8 @@
 #include "BaseLib/CharsHelper.h"
 #include "BaseLib/LogFile.h"
 #include "BaseLib/Logger.h"
+#include "BaseLib/TextFile.h"
+#include "BaseLib/ArrayChars.h"
 #include "BaseLib/CodabaseFactory.h"
 #include "BaseLib/Codabase.h"
 #include "TestLib/Words.h"
@@ -358,6 +360,160 @@ void TestCodabaseIterate(EIndexWriteThrough eWriteThrough)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void AddCodabaseCrashFiles(CArrayChars* paszRelative, const char* szDirectory, bool bBackup)
+{
+	CFileUtil	cFileUtil;
+	CArrayChars	aszFiles;
+	size		i;
+	size		uiPrefix;
+	CChars		szRelative;
+	size		iSeparator;
+
+	//FindAllFiles returns full paths.  Backup files are named with a '_' in front of the primary name.
+	aszFiles.Init();
+	cFileUtil.FindAllFiles(szDirectory, &aszFiles, true);
+	uiPrefix = strlen(szDirectory) + 1;
+	for (i = 0; i < aszFiles.NumElements(); i++)
+	{
+		szRelative.Init(strstr(aszFiles.GetText(i), szDirectory) + uiPrefix);
+		if (bBackup)
+		{
+			iSeparator = szRelative.FindFromEnd(_FS_);
+			szRelative.RemoveCharacter(iSeparator + 1);
+		}
+		if (paszRelative->GetIndex(&szRelative) == ARRAY_ELEMENT_NOT_FOUND)
+		{
+			paszRelative->Add(szRelative.Text());
+		}
+		szRelative.Kill();
+	}
+	aszFiles.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void WriteCodabaseCrashMarks(bool bRewriteMark)
+{
+	CFileUtil	cFileUtil;
+	CArrayChars	aszRelative;
+	CTextFile	cMark;
+	CChars		szBackup;
+	size		i;
+	size		iSeparator;
+
+	//Write the marks CDurableSet::End would have written: the primary and backup name of every file, then "#End".
+	aszRelative.Init();
+	AddCodabaseCrashFiles(&aszRelative, "Output" _FS_ "CodabaseCrash" _FS_ "Primary", false);
+	AddCodabaseCrashFiles(&aszRelative, "Output" _FS_ "CodabaseCrash" _FS_ "Backup", true);
+
+	cMark.Init();
+	for (i = 0; i < aszRelative.NumElements(); i++)
+	{
+		szBackup.Init(aszRelative.GetText(i));
+		iSeparator = szBackup.FindFromEnd(_FS_);
+		szBackup.Insert(iSeparator + 1, "_");
+
+		cMark.mcText.Append("Output" _FS_ "CodabaseCrash" _FS_ "Primary" _FS_);
+		cMark.mcText.Append(aszRelative.GetText(i));
+		cMark.mcText.AppendNewLine();
+		cMark.mcText.Append("Output" _FS_ "CodabaseCrash" _FS_ "Backup" _FS_);
+		cMark.mcText.Append(szBackup.Text());
+		cMark.mcText.AppendNewLine();
+		szBackup.Kill();
+	}
+	cMark.mcText.Append("#End");
+	cMark.mcText.AppendNewLine();
+	AssertTrue(cMark.Write("Output" _FS_ "CodabaseCrash" _FS_ "Primary" _FS_ "Mark1.Write"));
+	cMark.Kill();
+	aszRelative.Kill();
+
+	if (bRewriteMark)
+	{
+		AssertTrue(cFileUtil.Touch("Output" _FS_ "CodabaseCrash" _FS_ "Backup" _FS_ "Mark2.Rewrite"));
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCodabaseCrashRecovery(bool bRewriteMark)
+{
+	CCodabase*	pcDatabase;
+	CFileUtil	cFileUtil;
+	SLogConfig	sLogConfig;
+	char		szResult[2 KB];
+	char		szOne[] = "Version One";
+	char		szTwo[] = "Version Two Is Longer";
+	char		szNew[] = "Added in version two";
+
+	cFileUtil.RemoveDir("Output" _FS_ "CodabaseCrash");
+	cFileUtil.RemoveDir("Output" _FS_ "CodabaseCrashSaved");
+
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "CodabaseCrash", IWT_No);
+	AssertNotNull(pcDatabase);
+	AssertTrue(pcDatabase->Open());
+	AssertTrue(pcDatabase->Add(1LL, "Alpha", szOne, strlen(szOne) + 1));
+	AssertTrue(pcDatabase->Close());
+	SafeKill(pcDatabase);
+
+	AssertTrue(cFileUtil.TouchDir("Output" _FS_ "CodabaseCrashSaved" _FS_ "Backup"));
+	AssertTrue(cFileUtil.CopyDir("Output" _FS_ "CodabaseCrash" _FS_ "Backup", "Output" _FS_ "CodabaseCrashSaved" _FS_ "Backup"));
+
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "CodabaseCrash", IWT_No);
+	AssertNotNull(pcDatabase);
+	AssertTrue(pcDatabase->Open());
+	AssertTrue(pcDatabase->Set(1LL, szTwo, strlen(szTwo) + 1));
+	AssertTrue(pcDatabase->Add(2LL, szNew, strlen(szNew) + 1));
+	AssertTrue(pcDatabase->Close());
+	SafeKill(pcDatabase);
+
+	//Put the backup back to version one as if the process died during the commit, with the primary already at version two.
+	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "CodabaseCrash" _FS_ "Backup"));
+	AssertTrue(cFileUtil.TouchDir("Output" _FS_ "CodabaseCrash" _FS_ "Backup"));
+	AssertTrue(cFileUtil.CopyDir("Output" _FS_ "CodabaseCrashSaved" _FS_ "Backup", "Output" _FS_ "CodabaseCrash" _FS_ "Backup"));
+	WriteCodabaseCrashMarks(bRewriteMark);
+
+	sLogConfig = gcLogger.SetSilent();
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "CodabaseCrash", IWT_No);
+	gcLogger.SetConfig(&sLogConfig);
+	AssertNotNull(pcDatabase);
+	AssertFalse(cFileUtil.Exists("Output" _FS_ "CodabaseCrash" _FS_ "Primary" _FS_ "Mark1.Write"));
+	AssertFalse(cFileUtil.Exists("Output" _FS_ "CodabaseCrash" _FS_ "Backup" _FS_ "Mark2.Rewrite"));
+	AssertTrue(pcDatabase->Open());
+
+	memset(szResult, 0, 2 KB);
+	AssertTrue(pcDatabase->Get("Alpha", szResult));
+	if (bRewriteMark)
+	{
+		//The rewrite mark means the primary was complete, so version two is kept.
+		AssertString(szTwo, szResult);
+		AssertTrue(pcDatabase->Contains(2LL));
+		AssertLong(2, pcDatabase->NumIndices());
+	}
+	else
+	{
+		//Without the rewrite mark the primary may be incomplete, so version one comes back.
+		AssertString(szOne, szResult);
+		AssertFalse(pcDatabase->Contains(2LL));
+		AssertLong(1, pcDatabase->NumIndices());
+	}
+	AssertTrue(pcDatabase->Close());
+	SafeKill(pcDatabase);
+
+	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "CodabaseCrash"));
+	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "CodabaseCrashSaved"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestCodabase(void)
 {
 	TypeConverterInit();
@@ -372,6 +528,8 @@ void TestCodabase(void)
 	TestCodabaseSetPutRemove(IWT_Yes);
 	TestCodabaseIterate(IWT_No);
 	TestCodabaseIterate(IWT_Yes);
+	TestCodabaseCrashRecovery(false);
+	TestCodabaseCrashRecovery(true);
 
 	TestStatistics();
 	WordsKill();

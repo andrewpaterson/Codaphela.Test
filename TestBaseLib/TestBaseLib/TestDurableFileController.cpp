@@ -425,20 +425,76 @@ void TestDurableFileControllerCrash(int iCrashPoint)
 	cController.Kill();
 	gcLogger.SetConfig(&sLogConfig);
 
+	//Recover finds the files to copy from the list in the start mark.
 	cController.Init(szDirectory, szRewrite);
-	cDurableFile1.Init(&cController, "1.txt", "1.txt");
-	cDurableFile2.Init(&cController, "2.txt", "2.txt");
-	cDurableFile3.Init(&cController, "3.txt", "3.txt");
-	AssertTrue(cController.Recover(&cDurableFile1, &cDurableFile2, &cDurableFile3, NULL));
-	cDurableFile1.Kill();
-	cDurableFile2.Kill();
-	cDurableFile3.Kill();
+	AssertTrue(cController.Recover());
 	cController.Kill();
 
 	//Until the rewrite mark exists the old files must come back.  After it the new files must.
 	AssertDurableFileControllerCrashState(iCrashPoint > 4);
 
 	cFileUtil.RemoveDir("Output" _FS_ "Durable4");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDurableFileControllerIncompleteMark(void)
+{
+	CFileUtil				cFileUtil;
+	CDurableFileController	cController;
+	CDurableFile			cDurableFile1;
+	CTextFile				cMark;
+	SLogConfig				sLogConfig;
+	char					szDirectory[] = "Output" _FS_ "Durable5" _FS_ "Write";
+	char					szRewrite[] = "Output" _FS_ "Durable5" _FS_ "Rewrite";
+
+	cFileUtil.RemoveDir("Output" _FS_ "Durable5");
+
+	cController.Init(szDirectory, szRewrite);
+	cDurableFile1.Init(&cController, "1.txt", "1.txt");
+	AssertTrue(cController.Begin());
+	cDurableFile1.Write("Kept", 4, 1);
+	AssertTrue(cController.End());
+	cDurableFile1.Kill();
+	cController.Kill();
+
+	//A start mark cut short by a crash, without the "#End" line.  The second path is cut off too.
+	cMark.Init();
+	cMark.mcText.Append("Output" _FS_ "Durable5" _FS_ "Write" _FS_ "1.txt");
+	cMark.mcText.AppendNewLine();
+	cMark.mcText.Append("Output" _FS_ "Durable5" _FS_ "Rew");
+	AssertTrue(cMark.Write("Output" _FS_ "Durable5" _FS_ "Write" _FS_ "Mark1.Write"));
+	cMark.Kill();
+
+	//Only the start mark: no primary file was written yet, so nothing is copied and the files are kept.
+	cController.Init(szDirectory, szRewrite);
+	sLogConfig = gcLogger.SetSilent();
+	AssertTrue(cController.Recover());
+	gcLogger.SetConfig(&sLogConfig);
+	cController.Kill();
+	AssertFileString("Output" _FS_ "Durable5" _FS_ "Write" _FS_ "1.txt", "Kept");
+	AssertFileString("Output" _FS_ "Durable5" _FS_ "Rewrite" _FS_ "1.txt", "Kept");
+	AssertBool(false, cFileUtil.Exists("Output" _FS_ "Durable5" _FS_ "Write" _FS_ "Mark1.Write"));
+
+	//With the rewrite mark the start mark must have been complete, so an incomplete one is an error.
+	cMark.Init();
+	cMark.mcText.Append("Output" _FS_ "Durable5" _FS_ "Write" _FS_ "1.txt");
+	AssertTrue(cMark.Write("Output" _FS_ "Durable5" _FS_ "Write" _FS_ "Mark1.Write"));
+	cMark.Kill();
+	AssertTrue(cFileUtil.Touch("Output" _FS_ "Durable5" _FS_ "Rewrite" _FS_ "Mark2.Rewrite"));
+
+	cController.Init(szDirectory, szRewrite);
+	sLogConfig = gcLogger.SetSilent();
+	AssertFalse(cController.Recover());
+	gcLogger.SetConfig(&sLogConfig);
+	cController.Kill();
+	AssertFileString("Output" _FS_ "Durable5" _FS_ "Write" _FS_ "1.txt", "Kept");
+	AssertFileString("Output" _FS_ "Durable5" _FS_ "Rewrite" _FS_ "1.txt", "Kept");
+
+	cFileUtil.RemoveDir("Output" _FS_ "Durable5");
 }
 
 
@@ -465,6 +521,7 @@ void TestDurableFileController(void)
 	TestDurableFileControllerCrash(7);
 	TestDurableFileControllerCrash(8);
 	TestDurableFileControllerCrash(9);
+	TestDurableFileControllerIncompleteMark();
 
 	TestStatistics();
 	DataMemoryKill();
