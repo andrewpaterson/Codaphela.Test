@@ -56,11 +56,6 @@ int TestSharedMemoryQueue(char* szSharedQueueName, char* szSharedResultName, cha
 	cProcessesDone.Stop();
 	cProcessesDone.Kill();
 
-	//CChars sz;
-	//sz.Init()->Append(iTaken);
-	//MessageBox(NULL, sz.Text(), "ClientMain invoked", MB_OK);
-	//sz.Kill();
-
 	return 0;
 }
 
