@@ -757,6 +757,89 @@ void TestCanvasNested(void)
 //																		//
 //																		//
 //////////////////////////////////////////////////////////////////////////
+void TestCanvasResizeReleasesOldCels(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "CanvasResizeReleasesOldCels";
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	ObjectsInit();
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CFillContainer>		pFill;
+		Ptr<CCanvas>			pImageCanvas;
+		Ptr<CCanvas>			pBorderCanvas;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		CColourFormatHelper		cHelper;
+		CPointer				pNull;
+		size					i;
+		size					uiObjectsAfterFirstPair;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 48, 32, szDirectory);
+		cTick.Init(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Resize Releases Old Cels", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow->GetColourFormat(&cHelper);
+
+		pFill = OMalloc<CFillContainer>(pTestWindow);
+		pFill->SetFillStyle(CSH_Left, CSV_Top);
+		pFill->SetSplit(FCS_Horizontal, 0);
+		pTestWindow->SetContainer(pFill);
+
+		pImageCanvas = OMalloc<CCanvas>(pTestWindow, OMalloc<CImageCanvasDraw>(ReadDarkForestCel("Wolf.png", &cHelper)));
+		pFill->AddComponent(pImageCanvas);
+		pBorderCanvas = OMalloc<CCanvas>(pTestWindow, OMalloc<CBorderCanvasDraw>(Set32BitColour(1.0f, 0, 0)));
+		pFill->AddComponent(pBorderCanvas);
+
+		//Every resize gives the two canvases new images and cels, which are blitted onto the window's image through its
+		//blitter cache.  The cache must let go of the old cels, so the same sizes always leave the same number of objects.
+		pTestWindow->Show();
+		uiObjectsAfterFirstPair = 0;
+		for (i = 0; i < 8; i++)
+		{
+			if (i % 2 == 0)
+			{
+				pImageCanvas->SetDesiredSize(16, 14);
+				pBorderCanvas->SetDesiredSize(10, 10);
+			}
+			else
+			{
+				pImageCanvas->SetDesiredSize(-1, -1);
+				pBorderCanvas->SetDesiredSize(14, 12);
+			}
+			pTestWindow->Paint();
+
+			if (i == 1)
+			{
+				uiObjectsAfterFirstPair = gcObjects.NumMemoryIndexes();
+			}
+			else if (i % 2 == 1)
+			{
+				AssertSize(uiObjectsAfterFirstPair, gcObjects.NumMemoryIndexes());
+			}
+		}
+
+		pBorderCanvas = NULL;
+		pImageCanvas = NULL;
+		pFill = NULL;
+		pTestWindow = NULL;
+	}
+	AssertTrue(ORoot()->RemoveAll());
+	cNativeFactory.Kill();
+	ObjectsFlush();
+	ObjectsKill();
+
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//																		//
+//																		//
+//////////////////////////////////////////////////////////////////////////
 void TestCanvas(void)
 {
 	BeginTests();
@@ -769,6 +852,7 @@ void TestCanvas(void)
 	TestCanvasDrawResize();
 	TestCanvasMismatchedFormat();
 	TestCanvasNested();
+	TestCanvasResizeReleasesOldCels();
 
 	TestStatistics();
 }

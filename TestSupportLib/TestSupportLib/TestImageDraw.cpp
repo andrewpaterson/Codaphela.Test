@@ -1,6 +1,7 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "StandardLib/Objects.h"
+#include "StandardLib/ArrayObject.h"
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/ImageDraw.h"
@@ -597,6 +598,194 @@ void TestImageDrawBlitterCacheOnImage(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+Ptr<CImageCel> CreateDrawCel(void)
+{
+	//A cel and its source image are two objects.
+	return OMalloc<CImageCel>(CreateDrawCelSourceImage(6, 4));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CImage> CreateDrawDest(void)
+{
+	return OMalloc<CImage>(10, 8, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawBlitterCacheCelFreedFirst(void)
+{
+	Ptr<CImage>					pDest;
+	Ptr<CImageCel>				pCel;
+	Ptr<CImageCelBlitterCache>	pCache;
+	size						uiStart;
+
+	//A blitter does not keep its cel alive, so a cel can be freed while the image it was drawn onto lives on.
+	//The cache forgets the cel's blitter and only removes it the next time the cache is used.
+	uiStart = gcObjects.NumMemoryIndexes();
+	pDest = CreateDrawDest();
+	pCel = CreateDrawCel();
+	pCache = pDest->GetBlitterCache();
+	AssertTrue(pCache->CreateImageBlitter(pCel).IsNotNull());
+	AssertSize(1, pCel->NumBlitterCaches());
+	AssertSize(uiStart + 5, gcObjects.NumMemoryIndexes());  //Destination, cache, blitter, cel and its image.
+
+	pCel = NULL;
+	AssertSize(uiStart + 3, gcObjects.NumMemoryIndexes());  //The cel and its image are gone, the forgotten blitter is not yet.
+	AssertSize(0, pCache->NumImageBlitters());
+	AssertSize(uiStart + 2, gcObjects.NumMemoryIndexes());
+
+	//The cache carries on working.
+	pCel = CreateDrawCel();
+	AssertTrue(pCache->CreateImageBlitter(pCel).IsNotNull());
+	AssertSize(1, pCache->NumImageBlitters());
+
+	pCel = NULL;
+	pCache = NULL;
+	pDest = NULL;
+	AssertSize(uiStart, gcObjects.NumMemoryIndexes());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawBlitterCacheDestinationFreedFirst(void)
+{
+	Ptr<CImage>		pDest;
+	Ptr<CImageCel>	pCel;
+	size			uiStart;
+
+	//When the destination is freed its cache and blitters go with it, and the cel forgets the cache.  The cel can then
+	//be drawn onto another image and freed without touching the freed cache.
+	uiStart = gcObjects.NumMemoryIndexes();
+	pDest = CreateDrawDest();
+	pCel = CreateDrawCel();
+	AssertTrue(pDest->GetBlitterCache()->CreateImageBlitter(pCel).IsNotNull());
+	AssertSize(1, pCel->NumBlitterCaches());
+
+	pDest = NULL;
+	AssertSize(0, pCel->NumBlitterCaches());
+	AssertSize(uiStart + 2, gcObjects.NumMemoryIndexes());  //Just the cel and its image.
+
+	pDest = CreateDrawDest();
+	AssertTrue(pDest->GetBlitterCache()->CreateImageBlitter(pCel).IsNotNull());
+	AssertSize(1, pCel->NumBlitterCaches());
+	pCel = NULL;
+	AssertSize(0, pDest->GetBlitterCache()->NumImageBlitters());
+
+	pDest = NULL;
+	AssertSize(uiStart, gcObjects.NumMemoryIndexes());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawBlitterCacheSharedCel(void)
+{
+	Ptr<CImage>		pDest1;
+	Ptr<CImage>		pDest2;
+	Ptr<CImageCel>	pCel;
+	size			uiStart;
+
+	//One cel drawn onto two images is in both images' caches.
+	uiStart = gcObjects.NumMemoryIndexes();
+	pDest1 = CreateDrawDest();
+	pDest2 = CreateDrawDest();
+	pCel = CreateDrawCel();
+	AssertTrue(pDest1->GetBlitterCache()->CreateImageBlitter(pCel).IsNotNull());
+	AssertTrue(pDest2->GetBlitterCache()->CreateImageBlitter(pCel).IsNotNull());
+	AssertTrue(pDest2->GetBlitterCache()->CreateImageBlitter(pCel).IsNotNull());  //The same blitter again.
+	AssertSize(2, pCel->NumBlitterCaches());
+	AssertSize(1, pDest2->GetBlitterCache()->NumImageBlitters());
+
+	pDest1 = NULL;
+	AssertSize(1, pCel->NumBlitterCaches());
+
+	pCel = NULL;
+	AssertSize(0, pDest2->GetBlitterCache()->NumImageBlitters());
+
+	pDest2 = NULL;
+	AssertSize(uiStart, gcObjects.NumMemoryIndexes());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawBlitterCacheCelKilled(void)
+{
+	Ptr<CImage>		pDest;
+	Ptr<CImageCel>	pCel;
+	Ptr<CImageCel>	pOtherPointer;
+	size			uiStart;
+
+	//Killing a cel outright, while other pointers still point at it, also makes the caches forget it.
+	uiStart = gcObjects.NumMemoryIndexes();
+	pDest = CreateDrawDest();
+	pCel = CreateDrawCel();
+	pOtherPointer = pCel;
+	AssertTrue(pDest->GetBlitterCache()->CreateImageBlitter(pCel).IsNotNull());
+
+	pCel->Kill();
+	AssertSize(0, pDest->GetBlitterCache()->NumImageBlitters());
+
+	pCel = NULL;
+	pOtherPointer = NULL;
+	pDest = NULL;
+	AssertSize(uiStart, gcObjects.NumMemoryIndexes());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawBlitterCacheFreedTogether(void)
+{
+	Ptr<CArrayObject>	pHolder;
+	Ptr<CImage>			pDest;
+	Ptr<CImageCel>		pCel;
+	size				i;
+	size				uiStart;
+
+	//When the only thing holding a destination and a cel is freed, the destination, its cache, the blitter, the cel and
+	//its image are all freed in the same kill in whatever order the objects system chooses.  Each must let go of the
+	//others without touching one that has already been freed.  A few cels make some be freed before the cache and some after.
+	uiStart = gcObjects.NumMemoryIndexes();
+	pHolder = OMalloc<CArrayObject>();
+	pDest = CreateDrawDest();
+	pHolder->Add(pDest);
+	for (i = 0; i < 4; i++)
+	{
+		pCel = CreateDrawCel();
+		pHolder->Add(pCel);
+		AssertTrue(pDest->GetBlitterCache()->CreateImageBlitter(pCel).IsNotNull());
+	}
+	pCel = NULL;
+	AssertSize(4, pDest->GetBlitterCache()->NumImageBlitters());
+	pDest = NULL;
+	AssertSize(uiStart + 1 + 2 + 4 + 4 * 2, gcObjects.NumMemoryIndexes());  //Holder, destination and cache, four blitters, four cels and their images.
+
+	pHolder = NULL;
+	AssertSize(uiStart, gcObjects.NumMemoryIndexes());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestImageDraw(void)
 {
 	BeginTests();
@@ -614,6 +803,11 @@ void TestImageDraw(void)
 	TestImageDrawCelRGBX();
 	TestImageDrawCelDestAlphaRowEnds();
 	TestImageDrawBlitterCacheOnImage();
+	TestImageDrawBlitterCacheCelFreedFirst();
+	TestImageDrawBlitterCacheDestinationFreedFirst();
+	TestImageDrawBlitterCacheSharedCel();
+	TestImageDrawBlitterCacheCelKilled();
+	TestImageDrawBlitterCacheFreedTogether();
 
 	ObjectsKill(false);
 	DataIOKill();
