@@ -776,6 +776,137 @@ void TestLogFileMultipleReadsAfterOpens(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestLogFileTruncateMemory(void)
+{
+	CLogFile*		pcLogFile;
+	CMemoryFile*	pcMemoryFile;
+	CFileBasic		cFile;
+	char			sz[32];
+
+	pcMemoryFile = MemoryFile();
+	cFile.Init(pcMemoryFile);
+	cFile.Open(EFM_Write_Create);
+	cFile.WriteData("0123456789ABCDEF", 16);
+	cFile.Close();
+
+	pcLogFile = LogFile(pcMemoryFile);
+	cFile.Init(pcLogFile);
+	AssertTrue(pcLogFile->Begin());
+
+	//A file that is not open for writing cannot be truncated.
+	AssertFalse(cFile.Truncate(4));
+	AssertTrue(cFile.Open(EFM_Read));
+	AssertFalse(cFile.Truncate(4));
+	AssertTrue(cFile.Close());
+
+	AssertTrue(cFile.Open(EFM_ReadWrite));
+	AssertFalse(cFile.Truncate(-1));
+
+	//Shrinking hides the end of the backing file.
+	AssertTrue(cFile.Truncate(10));
+	AssertLong(10, cFile.GetFileLength());
+	memset(sz, 0, 32);
+	AssertTrue(cFile.Seek(0));
+	AssertTrue(cFile.ReadData(sz, 10));
+	AssertString("0123456789", sz);
+	AssertFalse(cFile.ReadData(sz, 1));
+
+	//Writing past the end leaves a gap of zeros, not the old backing file.
+	AssertTrue(cFile.Seek(12));
+	AssertTrue(cFile.WriteData("XY", 2));
+	AssertLong(14, cFile.GetFileLength());
+	memset(sz, 'z', 32);
+	AssertTrue(cFile.Seek(10));
+	AssertTrue(cFile.ReadData(sz, 4));
+	AssertMemory("\0\0XY", sz, 4);
+
+	//Shrinking cuts writes back and removes those past the end.
+	AssertTrue(cFile.Seek(2));
+	AssertTrue(cFile.WriteData("ab", 2));
+	AssertTrue(cFile.Truncate(3));
+	AssertLong(3, cFile.GetFileLength());
+	memset(sz, 0, 32);
+	AssertTrue(cFile.Seek(0));
+	AssertTrue(cFile.ReadData(sz, 3));
+	AssertString("01a", sz);
+
+	//Growing fills with zeros.
+	AssertTrue(cFile.Truncate(6));
+	AssertLong(6, cFile.GetFileLength());
+	memset(sz, 'z', 32);
+	AssertTrue(cFile.Seek(0));
+	AssertTrue(cFile.ReadData(sz, 6));
+	AssertMemory("01a\0\0\0", sz, 6);
+
+	//Truncating to the same size changes nothing.
+	AssertTrue(cFile.Truncate(6));
+	AssertLong(6, cFile.GetFileLength());
+	AssertTrue(cFile.Close());
+
+	//Nothing reaches the backing file until the commit.
+	AssertSize(16, pcMemoryFile->GetBufferSize());
+	AssertTrue(pcLogFile->Commit());
+	AssertSize(6, pcMemoryFile->GetBufferSize());
+	AssertMemory("01a\0\0\0", pcMemoryFile->GetBufferPointer(), 6);
+	AssertTrue(pcLogFile->End());
+
+	cFile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLogFileTruncateDisk(void)
+{
+	CLogFile*		pcLogFile;
+	CFileBasic		cFile;
+	CFileUtil		cFileUtil;
+	char			szDirectory[] = "Output" _FS_ "LogFile8";
+	char			szFileName[] = "Output" _FS_ "LogFile8" _FS_ "File.txt";
+	char			sz[32];
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	cFile.Init(DiskFile(szFileName));
+	AssertTrue(cFile.Open(EFM_Write_Create));
+	AssertTrue(cFile.WriteData("The suspense is killing me!", 27));
+	AssertTrue(cFile.Close());
+	cFile.Kill();
+
+	pcLogFile = LogFile(DiskFile(szFileName));
+	cFile.Init(pcLogFile);
+	AssertTrue(pcLogFile->Begin());
+	AssertTrue(cFile.Open(EFM_ReadWrite));
+	AssertTrue(cFile.Truncate(12));
+	AssertTrue(cFile.Seek(12));
+	AssertTrue(cFile.WriteData(" over", 5));
+	AssertTrue(cFile.Close());
+
+	AssertLong(27, cFileUtil.Size(szFileName));
+	AssertTrue(pcLogFile->Commit());
+	AssertTrue(pcLogFile->End());
+	cFile.Kill();
+
+	AssertLong(17, cFileUtil.Size(szFileName));
+	memset(sz, 0, 32);
+	cFile.Init(DiskFile(szFileName));
+	AssertTrue(cFile.Open(EFM_Read));
+	AssertTrue(cFile.ReadData(sz, 17));
+	AssertTrue(cFile.Close());
+	cFile.Kill();
+	AssertString("The suspense over", sz);
+
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestLogFile(void)
 {
 	TypeConverterInit();
@@ -792,6 +923,8 @@ void TestLogFile(void)
 	TestLogFileCommandsComplex();
 	TestLogFileDelete();
 	TestLogFileMultipleReadsAfterOpens();
+	TestLogFileTruncateMemory();
+	TestLogFileTruncateDisk();
 
 	TestStatistics();
 	DataMemoryKill();

@@ -362,8 +362,8 @@ void AssertDurableFileControllerCrashState(bool bNew)
 	{
 		AssertFileString("Output" _FS_ "Durable4" _FS_ "Write" _FS_ "1.txt", "New One Longer");
 		AssertFileString("Output" _FS_ "Durable4" _FS_ "Rewrite" _FS_ "1.txt", "New One Longer");
-		AssertFileString("Output" _FS_ "Durable4" _FS_ "Write" _FS_ "2.txt", "New2Two Is Longer");
-		AssertFileString("Output" _FS_ "Durable4" _FS_ "Rewrite" _FS_ "2.txt", "New2Two Is Longer");
+		AssertFileString("Output" _FS_ "Durable4" _FS_ "Write" _FS_ "2.txt", "New2");
+		AssertFileString("Output" _FS_ "Durable4" _FS_ "Rewrite" _FS_ "2.txt", "New2");
 		AssertFileString("Output" _FS_ "Durable4" _FS_ "Write" _FS_ "3.txt", "Three");
 		AssertFileString("Output" _FS_ "Durable4" _FS_ "Rewrite" _FS_ "3.txt", "Three");
 	}
@@ -416,6 +416,7 @@ void TestDurableFileControllerCrash(int iCrashPoint)
 	//Change the files, then do the steps of CDurableSet::End one at a time and stop at iCrashPoint as if the process died.
 	AssertTrue(cController.Begin());
 	cDurableFile1.Write(0, "New One Longer", 14, 1);
+	AssertTrue(cDurableFile2.Truncate(0));
 	cDurableFile2.Write(0, "New2", 4, 1);
 	cDurableFile3.Write("Three", 5, 1);
 
