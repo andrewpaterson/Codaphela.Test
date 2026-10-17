@@ -259,6 +259,62 @@ void TestChannelTwoProcesses(ETestTransport eTransport)
 }
 
 
+bool SendLargeThenSmall(CProcessChannel* pcChannel);
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestChannelTooLarge(ETestTransport eTransport)
+{
+	CTestChannels		cChannels;
+	CProcessChannel*	pcChannel;
+	char				acBuffer[CHANNEL_RECEIVE_SIZE];
+	STooLargeReport		sReport;
+	uint32				uiType;
+	size				uiSize;
+	bool				bResult;
+
+	AssertTrue(cChannels.Init(eTransport));
+
+	bResult = cChannels.Fork(0, "toolarge");
+	AssertTrue(bResult);
+	if (bResult)
+	{
+		pcChannel = cChannels.Get(0);
+
+		//The message is dropped but its type and size are returned.
+		uiType = 0;
+		uiSize = 0;
+		AssertInt(CR_TooLarge, pcChannel->Receive(&uiType, acBuffer, CHANNEL_RECEIVE_SIZE, &uiSize, CHANNEL_TEST_TIMEOUT));
+		AssertInt(CTM_Large, uiType);
+		AssertInt(CHANNEL_LARGE_SIZE, (int)uiSize);
+
+		//The channel still works and the next message is complete.
+		AssertInt(CR_Message, pcChannel->Receive(&uiType, acBuffer, CHANNEL_RECEIVE_SIZE, &uiSize, CHANNEL_TEST_TIMEOUT));
+		AssertInt(CTM_Small, uiType);
+		AssertInt((int)strlen(CHANNEL_SMALL_TEXT) + 1, (int)uiSize);
+		AssertString(CHANNEL_SMALL_TEXT, acBuffer);
+
+		//The same the other way, received by the child.
+		AssertTrue(SendLargeThenSmall(pcChannel));
+		AssertTrue(ParentReceive(pcChannel, &uiType, &sReport, sizeof(STooLargeReport), &uiSize));
+		AssertInt(CTM_TooLargeReport, uiType);
+		AssertInt((int)sizeof(STooLargeReport), (int)uiSize);
+		AssertInt(CR_TooLarge, sReport.iLargeResult);
+		AssertInt(CTM_Large, (int)sReport.uiLargeType);
+		AssertInt(CHANNEL_LARGE_SIZE, (int)sReport.uiLargeSize);
+		AssertInt(CR_Message, sReport.iSmallResult);
+		AssertInt(CTM_Small, (int)sReport.uiSmallType);
+		AssertInt((int)strlen(CHANNEL_SMALL_TEXT) + 1, (int)sReport.uiSmallSize);
+		AssertString(CHANNEL_SMALL_TEXT, sReport.szSmall);
+	}
+
+	cChannels.Kill();
+}
+
+
 struct SChannelFillServer
 {
 	CMutex		cMutex;
@@ -649,6 +705,7 @@ void TestProcessChannel(ETestTransport eTransport)
 {
 	TestChannelProcessFork(eTransport);
 	TestChannelTwoProcesses(eTransport);
+	TestChannelTooLarge(eTransport);
 	TestChannelResizeMultiProcessRepeat(eTransport, 100);
 	TestChannelQueueMultiProcess(eTransport, false);
 	TestChannelQueueMultiProcess(eTransport, true);

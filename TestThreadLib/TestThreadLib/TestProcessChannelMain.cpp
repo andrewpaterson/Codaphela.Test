@@ -160,6 +160,58 @@ int TestChannelProcessQueue(CProcessChannel* pcChannel, int iProcessNum)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+bool SendLargeThenSmall(CProcessChannel* pcChannel)
+{
+	char	acLarge[CHANNEL_LARGE_SIZE];
+
+	memset(acLarge, 'x', CHANNEL_LARGE_SIZE);
+	if (!pcChannel->Send(CTM_Large, acLarge, CHANNEL_LARGE_SIZE))
+	{
+		return false;
+	}
+	return pcChannel->Send(CTM_Small, (void*)CHANNEL_SMALL_TEXT, strlen(CHANNEL_SMALL_TEXT) + 1);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+int TestChannelProcessTooLarge(CProcessChannel* pcChannel)
+{
+	STooLargeReport	sReport;
+	char			acBuffer[CHANNEL_RECEIVE_SIZE];
+	uint32			uiType;
+	size			uiSize;
+
+	//The parent receives these into a buffer that is too small.
+	if (!SendLargeThenSmall(pcChannel))
+	{
+		return 1;
+	}
+
+	//The parent sends them too; report what arrived in a buffer that is too small.
+	memset(&sReport, 0, sizeof(STooLargeReport));
+	uiType = 0;
+	uiSize = 0;
+	sReport.iLargeResult = pcChannel->Receive(&uiType, acBuffer, CHANNEL_RECEIVE_SIZE, &uiSize, CHANNEL_TEST_TIMEOUT);
+	sReport.uiLargeType = uiType;
+	sReport.uiLargeSize = (uint32)uiSize;
+
+	uiType = 0;
+	uiSize = 0;
+	sReport.iSmallResult = pcChannel->Receive(&uiType, sReport.szSmall, CHANNEL_RECEIVE_SIZE, &uiSize, CHANNEL_TEST_TIMEOUT);
+	sReport.uiSmallType = uiType;
+	sReport.uiSmallSize = (uint32)uiSize;
+
+	return pcChannel->Send(CTM_TooLargeReport, &sReport, sizeof(STooLargeReport)) ? 0 : 1;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 int TestChannelProcessRun(CProcessChannel* pcChannel, int argc, char* argv[])
 {
 	char*	szTest;
@@ -180,6 +232,10 @@ int TestChannelProcessRun(CProcessChannel* pcChannel, int argc, char* argv[])
 	else if ((strcmp(szTest, "queue") == 0) && (argc == 4))
 	{
 		return TestChannelProcessQueue(pcChannel, atoi(argv[3]));
+	}
+	else if ((strcmp(szTest, "toolarge") == 0) && (argc == 3))
+	{
+		return TestChannelProcessTooLarge(pcChannel);
 	}
 	else
 	{
