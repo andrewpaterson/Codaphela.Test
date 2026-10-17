@@ -11,6 +11,7 @@
 #include "WindowLib/FillContainer.h"
 #include "WindowLib/MapsCanvasDraw.h"
 #include "WindowLib/ImageCanvasDraw.h"
+#include "WindowLib/ClearCanvasDraw.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/AssertFile.h"
 #include "TestRefWindowCanvasDraw.h"
@@ -384,13 +385,14 @@ void TestCanvasImageConvert(void)
 //																		//
 //																		//
 //////////////////////////////////////////////////////////////////////////
-void RenderCanvasDrawFrames(CWinRefWindowFactory* pcFactory, char* szDirectory, size uiNumFrames, SInt32Vec2* asMapsSizes, SInt32Vec2* asImageSizes, SInt32Vec2* asViewports)
+void RenderCanvasDrawFrames(CWinRefWindowFactory* pcFactory, char* szDirectory, size uiNumFrames, SInt32Vec2* asMapsSizes, SInt32Vec2* asImageSizes, SInt32Vec2* asViewports, bool bClearWindow)
 {
 	CFileUtil	cFileUtil;
 
 	//A maps canvas (a tile map with sprites over it) and an image canvas side by side.  Frame 0 is shown, then the canvases
 	//are given each following size in turn and painted again.  Changing a canvas's size recreates its native canvas.
 	//If asViewports is not NULL the maps viewport is moved before each frame too.
+	//If bClearWindow is true the window is given a canvas draw that clears it to black before each frame.
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.MakeDir(szDirectory);
 
@@ -402,6 +404,7 @@ void RenderCanvasDrawFrames(CWinRefWindowFactory* pcFactory, char* szDirectory, 
 		Ptr<CCanvas>				pImageCanvas;
 		Ptr<CMapsCanvasDraw>		pMapsDraw;
 		Ptr<CImageCanvasDraw>		pImageDraw;
+		Ptr<CCanvasDraw>			pWindowDraw;
 		CTickTestRefWindow			cTick;
 		SDataTestRefWindow			cData;
 		CRandom						cRandom;
@@ -413,7 +416,6 @@ void RenderCanvasDrawFrames(CWinRefWindowFactory* pcFactory, char* szDirectory, 
 		Ptr<CSpriteMap>				pSpriteMap;
 		Ptr<CMaps>					pMaps;
 		CColourFormatHelper			cHelper;
-		CPointer					pNull;
 		size						i;
 
 		pcFactory->Init(&gcMemoryAllocator, 48, 32, szDirectory);
@@ -421,7 +423,11 @@ void RenderCanvasDrawFrames(CWinRefWindowFactory* pcFactory, char* szDirectory, 
 		cRandom.Init(2345);
 
 		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Canvas Draw Frames", pcFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		if (bClearWindow)
+		{
+			pWindowDraw = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)0, 0, 0));
+		}
+		pTestWindow = OMalloc<CWindow>("Canvas Draw Frames", pcFactory, &cTick, pWindowDraw, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
 		pTestWindow->GetColourFormat(&cHelper);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
@@ -480,6 +486,7 @@ void RenderCanvasDrawFrames(CWinRefWindowFactory* pcFactory, char* szDirectory, 
 		pImageCanvas = NULL;
 		pMapsDraw = NULL;
 		pImageDraw = NULL;
+		pWindowDraw = NULL;
 		pFloorPlanImage = NULL;
 		pTileMap = NULL;
 		pTileMapGenerator = NULL;
@@ -514,8 +521,8 @@ void TestCanvasDrawWithoutNativeImage(void)
 	//Without a native image the canvas draws blit into an image of their own, resize it when the canvas changes size
 	//and copy it onto the canvas.  That must give exactly the frames drawing straight into the native image does.
 	//The last frame keeps the same size but moves the viewport so the reused image must be drawn into again.
-	RenderCanvasDrawFrames(&cImageFactory, "Output" _FS_ "CanvasDrawNativeImage", 3, asMapsSizes, asImageSizes, asViewports);
-	RenderCanvasDrawFrames(&cNoImageFactory, "Output" _FS_ "CanvasDrawNoNativeImage", 3, asMapsSizes, asImageSizes, asViewports);
+	RenderCanvasDrawFrames(&cImageFactory, "Output" _FS_ "CanvasDrawNativeImage", 3, asMapsSizes, asImageSizes, asViewports, false);
+	RenderCanvasDrawFrames(&cNoImageFactory, "Output" _FS_ "CanvasDrawNoNativeImage", 3, asMapsSizes, asImageSizes, asViewports, false);
 
 	AssertFile("Output" _FS_ "CanvasDrawNativeImage" _FS_ "Frame0.png", "Output" _FS_ "CanvasDrawNoNativeImage" _FS_ "Frame0.png");
 	AssertFile("Output" _FS_ "CanvasDrawNativeImage" _FS_ "Frame1.png", "Output" _FS_ "CanvasDrawNoNativeImage" _FS_ "Frame1.png");
@@ -533,25 +540,27 @@ void TestCanvasDrawWithoutNativeImage(void)
 void TestCanvasDrawResize(void)
 {
 	CWinRefWindowFactory	cResizedFactory;
-	CWinRefWindowFactory	cFreshFactory1;
-	CWinRefWindowFactory	cFreshFactory2;
+	CWinRefWindowFactory	cFreshFactory;
+	CWinRefWindowFactory	cUnclearedFactory;
 	CFileUtil				cFileUtil;
-	SInt32Vec2				asMapsSizes[3] = { SInt32Vec2(20, 16), SInt32Vec2(22, 18), SInt32Vec2(24, 20) };
-	SInt32Vec2				asImageSizes[3] = { SInt32Vec2(-1, -1), SInt32Vec2(16, 14), SInt32Vec2(20, 16) };
+	SInt32Vec2				asMapsSizes[3] = { SInt32Vec2(20, 16), SInt32Vec2(24, 20), SInt32Vec2(20, 16) };
+	SInt32Vec2				asImageSizes[3] = { SInt32Vec2(-1, -1), SInt32Vec2(20, 16), SInt32Vec2(-1, -1) };
 
 	//Resizing a canvas gives it a new image so every blitter made for the old image, the sprites' included, must be remade.
-	//A frame after resizing must therefore be exactly the frame drawn at that size from the start.  The canvases only grow
-	//because the window does not repaint where a shrinking canvas used to be.
-	RenderCanvasDrawFrames(&cResizedFactory, "Output" _FS_ "CanvasDrawResized", 3, asMapsSizes, asImageSizes, NULL);
-	RenderCanvasDrawFrames(&cFreshFactory1, "Output" _FS_ "CanvasDrawFresh1", 1, &asMapsSizes[1], &asImageSizes[1], NULL);
-	RenderCanvasDrawFrames(&cFreshFactory2, "Output" _FS_ "CanvasDrawFresh2", 1, &asMapsSizes[2], &asImageSizes[2], NULL);
+	//A frame after resizing must therefore be exactly the frame drawn at that size from the start.  The window clears
+	//itself each frame so nothing is left behind where the canvases were before they shrank.
+	//Clearing happens before the canvases are drawn, so a single frame is the same whether the window clears or not.
+	RenderCanvasDrawFrames(&cResizedFactory, "Output" _FS_ "CanvasDrawResized", 3, asMapsSizes, asImageSizes, NULL, true);
+	RenderCanvasDrawFrames(&cFreshFactory, "Output" _FS_ "CanvasDrawFresh", 1, &asMapsSizes[1], &asImageSizes[1], NULL, true);
+	RenderCanvasDrawFrames(&cUnclearedFactory, "Output" _FS_ "CanvasDrawUncleared", 1, &asMapsSizes[1], &asImageSizes[1], NULL, false);
 
-	AssertFile("Output" _FS_ "CanvasDrawFresh1" _FS_ "Frame0.png", "Output" _FS_ "CanvasDrawResized" _FS_ "Frame1.png");
-	AssertFile("Output" _FS_ "CanvasDrawFresh2" _FS_ "Frame0.png", "Output" _FS_ "CanvasDrawResized" _FS_ "Frame2.png");
+	AssertFile("Output" _FS_ "CanvasDrawFresh" _FS_ "Frame0.png", "Output" _FS_ "CanvasDrawResized" _FS_ "Frame1.png");
+	AssertFile("Output" _FS_ "CanvasDrawResized" _FS_ "Frame0.png", "Output" _FS_ "CanvasDrawResized" _FS_ "Frame2.png");
+	AssertFile("Output" _FS_ "CanvasDrawUncleared" _FS_ "Frame0.png", "Output" _FS_ "CanvasDrawFresh" _FS_ "Frame0.png");
 
 	cFileUtil.RemoveDir("Output" _FS_ "CanvasDrawResized");
-	cFileUtil.RemoveDir("Output" _FS_ "CanvasDrawFresh1");
-	cFileUtil.RemoveDir("Output" _FS_ "CanvasDrawFresh2");
+	cFileUtil.RemoveDir("Output" _FS_ "CanvasDrawFresh");
+	cFileUtil.RemoveDir("Output" _FS_ "CanvasDrawUncleared");
 }
 
 
