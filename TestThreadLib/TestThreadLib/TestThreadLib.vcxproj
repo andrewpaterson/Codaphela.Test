@@ -76,7 +76,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OptimizeReferences>false</OptimizeReferences>
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
     </Link>
@@ -107,7 +107,7 @@
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OptimizeReferences>false</OptimizeReferences>
       <EnableCOMDATFolding>false</EnableCOMDATFolding>
     </Link>
@@ -141,7 +141,7 @@
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
@@ -174,7 +174,7 @@
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
-      <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>shlwapi.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
@@ -188,6 +188,8 @@
     <ClCompile Include="TestSharedMemory.cpp" />
     <ClCompile Include="TestSharedMemoryMain.cpp" />
     <ClCompile Include="TestSharedMemoryQueue.cpp" />
+    <ClCompile Include="TestProcessChannel.cpp" />
+    <ClCompile Include="TestProcessChannelMain.cpp" />
     <ClCompile Include="TestSharedQueueMain.cpp" />
     <ClCompile Include="TestThread.cpp" />
     <ClCompile Include="TestThreadPool.cpp" />
@@ -216,6 +218,7 @@
     <ClInclude Include="SharedMemoryQueueTheadElement.h" />
     <ClInclude Include="SharedMemoryThread.h" />
     <ClInclude Include="TestSharedMemoryQueue.h" />
+    <ClInclude Include="TestProcessChannel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

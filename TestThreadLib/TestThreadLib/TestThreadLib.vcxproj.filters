@@ -72,6 +72,12 @@
     <ClCompile Include="TestSharedMemoryQueue.cpp">
       <Filter>Source\SharedMemory</Filter>
     </ClCompile>
+    <ClCompile Include="TestProcessChannel.cpp">
+      <Filter>Source\SharedMemory</Filter>
+    </ClCompile>
+    <ClCompile Include="TestProcessChannelMain.cpp">
+      <Filter>Source\SharedMemory</Filter>
+    </ClCompile>
     <ClCompile Include="TestSharedQueueMain.cpp">
       <Filter>Source\SharedMemory</Filter>
     </ClCompile>
@@ -99,6 +105,9 @@
       <Filter>Source\SharedMemory</Filter>
     </ClInclude>
     <ClInclude Include="TestSharedMemoryQueue.h">
+      <Filter>Source\SharedMemory</Filter>
+    </ClInclude>
+    <ClInclude Include="TestProcessChannel.h">
       <Filter>Source\SharedMemory</Filter>
     </ClInclude>
   </ItemGroup>
