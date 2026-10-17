@@ -64,10 +64,11 @@ void TestBumpMapperHeightToBumpUVs(void)
 	int32					x;
 	int32					y;
 	size					uiFlatDifferent;
-	size					uiRampUnchanged;
+	size					uiRampUFlat;
+	size					uiRampVSloped;
 
 	//A height map becomes a two channel U V bump map of the same size.  A flat height map bumps nowhere so every
-	//pixel is the same.  A sloping height map bumps every pixel away from its edges.
+	//pixel is the same.  A height map that only rises across x bumps U but not V away from its edges.
 	pFlat = OMalloc<CImage>(6, 6, PT_uint8, IMAGE_DIFFUSE_GREY, CHANNEL_STOP);
 	pRamp = OMalloc<CImage>(6, 6, PT_uint8, IMAGE_DIFFUSE_GREY, CHANNEL_STOP);
 	puiFlat = (uint8*)pFlat->GetData();
@@ -104,18 +105,24 @@ void TestBumpMapperHeightToBumpUVs(void)
 	}
 	AssertSize(0, uiFlatDifferent);
 
-	uiRampUnchanged = 0;
+	uiRampUFlat = 0;
+	uiRampVSloped = 0;
 	for (y = 1; y < 5; y++)
 	{
 		for (x = 1; x < 5; x++)
 		{
-			if ((puiRamp[(x + y * 6) * 2] == puiFlat[0]) && (puiRamp[(x + y * 6) * 2 + 1] == puiFlat[1]))
+			if (puiRamp[(x + y * 6) * 2] == puiFlat[0])
 			{
-				uiRampUnchanged++;
+				uiRampUFlat++;
+			}
+			if (puiRamp[(x + y * 6) * 2 + 1] != puiFlat[1])
+			{
+				uiRampVSloped++;
 			}
 		}
 	}
-	AssertSize(0, uiRampUnchanged);
+	AssertSize(0, uiRampUFlat);
+	AssertSize(0, uiRampVSloped);
 
 	pFlat = NULL;
 	pRamp = NULL;

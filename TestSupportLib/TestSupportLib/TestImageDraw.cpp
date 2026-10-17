@@ -483,6 +483,70 @@ void TestImageDrawCelRGBX(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestImageDrawCelDestAlphaRowEnds(void)
+{
+	CImageDraw		cDraw;
+	Ptr<CImage>		pSource;
+	Ptr<CImage>		pDest;
+	Ptr<CImageCel>	pCel;
+	uint8			auiOpaque[4] = { 200, 100, 50, 255 };
+	uint8			auiTranslucent[4] = { 60, 120, 180, 128 };
+	uint8			auiClear[4] = { 0, 0, 0, 0 };
+	uint8			auiBackground[4] = { 10, 20, 30, 100 };
+	uint8*			apuiRows[2][8] = { { auiOpaque, auiOpaque, auiClear, auiClear, auiTranslucent, auiTranslucent, auiOpaque, auiOpaque },
+									   { auiTranslucent, auiTranslucent, auiOpaque, auiOpaque, auiClear, auiClear, auiTranslucent, auiTranslucent } };
+	uint8*			puiSource;
+	uint8*			puiDest;
+	int32			x;
+	int32			y;
+
+	//A cel with opacity is split into opaque and translucent segments.  Drawn onto an image with its own opacity each
+	//segment must also write that opacity.  Row 0 ends with an opaque segment and row 1 with a translucent one, and
+	//both kinds also appear in the middle of a row.  The same source pixel drawn over the same background must give
+	//the same result wherever its segment is in the row.
+	pSource = OMalloc<CImage>(8, 2, CFT_RGBA, CCO_RGB, CRGB_24bit, ARGB_8bit);
+	pDest = OMalloc<CImage>(8, 2, CFT_RGBA, CCO_RGB, CRGB_24bit, ARGB_8bit);
+	puiSource = (uint8*)pSource->GetData();
+	puiDest = (uint8*)pDest->GetData();
+	for (y = 0; y < 2; y++)
+	{
+		for (x = 0; x < 8; x++)
+		{
+			memcpy(&puiSource[(x + y * 8) * 4], apuiRows[y][x], 4);
+			memcpy(&puiDest[(x + y * 8) * 4], auiBackground, 4);
+		}
+	}
+	pCel = OMalloc<CImageCel>(pSource);
+
+	cDraw.Init(&pDest);
+	AssertTrue(cDraw.DrawCel(0, 0, pCel));
+	cDraw.Kill();
+
+	//Transparent pixels leave the background alone.
+	AssertMemory(auiBackground, &puiDest[(2 + 0 * 8) * 4], 4);
+	AssertMemory(auiBackground, &puiDest[(4 + 1 * 8) * 4], 4);
+
+	//Opaque pixels replace the background, opacity included.
+	AssertMemory(auiOpaque, &puiDest[(0 + 0 * 8) * 4], 4);
+	AssertMemory(auiOpaque, &puiDest[(2 + 1 * 8) * 4], 4);
+	AssertMemory(auiOpaque, &puiDest[(6 + 0 * 8) * 4], 4);  //Ends row 0.
+	AssertMemory(auiOpaque, &puiDest[(7 + 0 * 8) * 4], 4);
+
+	//Translucent pixels must blend the same way in the middle of row 0, at the start of row 1 and at the end of row 1.
+	AssertMemory(&puiDest[(4 + 0 * 8) * 4], &puiDest[(0 + 1 * 8) * 4], 4);
+	AssertMemory(&puiDest[(4 + 0 * 8) * 4], &puiDest[(6 + 1 * 8) * 4], 4);  //Ends row 1.
+	AssertMemory(&puiDest[(4 + 0 * 8) * 4], &puiDest[(7 + 1 * 8) * 4], 4);
+
+	pCel = NULL;
+	pSource = NULL;
+	pDest = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestImageDraw(void)
 {
 	BeginTests();
@@ -498,6 +562,7 @@ void TestImageDraw(void)
 	TestImageDrawCelMismatchedFormat();
 	TestImageDrawCelClippingTransparentGaps();
 	TestImageDrawCelRGBX();
+	TestImageDrawCelDestAlphaRowEnds();
 
 	ObjectsKill(false);
 	DataIOKill();
