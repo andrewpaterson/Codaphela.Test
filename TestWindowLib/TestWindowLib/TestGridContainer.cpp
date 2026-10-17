@@ -4,6 +4,7 @@
 #include "StandardLib/Objects.h"
 #include "WindowLib/Window.h"
 #include "WindowLib/GridContainer.h"
+#include "WindowLib/FillContainer.h"
 #include "WindowLib/ImageCanvasDraw.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/AssertGeometric.h"
@@ -244,6 +245,149 @@ void TestGridContainerOverlap(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestGridContainerGrowSlivers(void)
+{
+	//The fixed components in row 0 set the columns and the components in row 1 fill them to show how wide each is.
+
+	//61 spare pixels shared 1 : 2 is 20 and 40 with 1 left over.  It goes to the larger column, 50 wide, not the first.
+	SGridTestComponent	asLargest[4] = {
+		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(10, 0), SInt32Vec2(10, 4) },
+		{ NULL, 1, 0, 1, 1, 2, 0, SInt32Vec2(10, 4), SInt32Vec2(50, 0), SInt32Vec2(10, 4) },
+		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(30, 4) },
+		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(30, 4), SInt32Vec2(51, 4) } };
+
+	//5 spare pixels between three equal columns is 1 each with 2 left over, which go to the first two.
+	SGridTestComponent	asTies[6] = {
+		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(1, 0), SInt32Vec2(10, 4) },
+		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(13, 0), SInt32Vec2(10, 4) },
+		{ NULL, 2, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(24, 0), SInt32Vec2(10, 4) },
+		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(12, 4) },
+		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(12, 4), SInt32Vec2(12, 4) },
+		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(24, 4), SInt32Vec2(11, 4) } };
+
+	//4 spare pixels between columns of 5, 20 and 10 is 1 each with 1 left over, which goes to the middle, largest, column.
+	SGridTestComponent	asLargestInMiddle[6] = {
+		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(5, 4), SInt32Vec2(0, 0), SInt32Vec2(5, 4) },
+		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(20, 4), SInt32Vec2(7, 0), SInt32Vec2(20, 4) },
+		{ NULL, 2, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(28, 0), SInt32Vec2(10, 4) },
+		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(6, 4) },
+		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(6, 4), SInt32Vec2(22, 4) },
+		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(28, 4), SInt32Vec2(11, 4) } };
+
+	TestGridContainerLayout("Output" _FS_ "GridContainerGrowSliversLargest", 81, 8, 4, asLargest, 20, 8, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerGrowSliversTies", 35, 8, 6, asTies, 30, 8, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerGrowSliversLargestInMiddle", 39, 8, 6, asLargestInMiddle, 35, 8, false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGridContainerSpanSlivers(void)
+{
+	//The 19 wide span is 7 more than its columns of 8 and 4.  Shared 1 : 1 that is 3 each with 1 left over, which goes to
+	//the larger column, making them 12 and 7.  Row 2 shows the column widths.
+	SGridTestComponent	asComponents[5] = {
+		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(8, 4), SInt32Vec2(2, 0), SInt32Vec2(8, 4) },
+		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(4, 4), SInt32Vec2(13, 0), SInt32Vec2(4, 4) },
+		{ NULL, 0, 1, 2, 1, 0, 0, SInt32Vec2(19, 4), SInt32Vec2(0, 4), SInt32Vec2(19, 4) },
+		{ NULL, 0, 2, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 8), SInt32Vec2(12, 4) },
+		{ NULL, 1, 2, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(12, 8), SInt32Vec2(7, 4) } };
+
+	TestGridContainerLayout("Output" _FS_ "GridContainerSpanSlivers", 19, 12, 5, asComponents, 19, 12, false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGridContainerShrinkSlivers(void)
+{
+	//Columns of 10 and 20, both weighted, 1 pixel too wide.  Shared 1 : 1 each would give 0, so the larger column gives it.
+	SGridTestComponent	asOnePixel[4] = {
+		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(0, 0), SInt32Vec2(10, 4) },
+		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(20, 4), SInt32Vec2(10, 0), SInt32Vec2(20, 4) },
+		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(10, 4) },
+		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(10, 4), SInt32Vec2(19, 4) } };
+
+	//5 pixels too wide.  Each gives 2 and the larger gives the 1 left over, leaving 8 and 17.
+	SGridTestComponent	asFivePixels[4] = {
+		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(-1, 0), SInt32Vec2(10, 4) },
+		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(20, 4), SInt32Vec2(7, 0), SInt32Vec2(20, 4) },
+		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(8, 4) },
+		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(8, 4), SInt32Vec2(17, 4) } };
+
+	//Unweighted columns of 30, 20 and 10 are 7 pixels too wide.  In proportion they give 3, 2 and 1, and the largest gives
+	//the 1 left over, leaving 26, 18 and 9.
+	SGridTestComponent	asProportional[6] = {
+		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(30, 4), SInt32Vec2(-2, 0), SInt32Vec2(30, 4) },
+		{ NULL, 1, 0, 1, 1, 0, 0, SInt32Vec2(20, 4), SInt32Vec2(25, 0), SInt32Vec2(20, 4) },
+		{ NULL, 2, 0, 1, 1, 0, 0, SInt32Vec2(10, 4), SInt32Vec2(44, 0), SInt32Vec2(10, 4) },
+		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(26, 4) },
+		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(26, 4), SInt32Vec2(18, 4) },
+		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(44, 4), SInt32Vec2(9, 4) } };
+
+	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkSliversOnePixel", 29, 8, 4, asOnePixel, 30, 8, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkSliversFivePixels", 25, 8, 4, asFivePixels, 30, 8, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkSliversProportional", 53, 8, 6, asProportional, 60, 8, false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGridContainerEmpty(void)
+{
+	//A grid with nothing in it needs no space and lays out without anything to lay out.
+	TestGridContainerLayout("Output" _FS_ "GridContainerEmpty", 20, 20, 0, NULL, 0, 0, false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGridContainerGaps(void)
+{
+	//Column 1 has nothing in it so it is 0 wide and the component in column 2 sits right next to the one in column 0.
+	SGridTestComponent	asEmptyColumn[2] = {
+		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(6, 6),   SInt32Vec2(0, 0),   SInt32Vec2(6, 6) },
+		{ NULL, 2, 0, 1, 1, 0, 0, SInt32Vec2(6, 6),   SInt32Vec2(6, 0),   SInt32Vec2(6, 6) } };
+
+	//On its own in cell (2, 1) the empty columns and row take no space, so the 10 x 10 grid is centred in the window.
+	SGridTestComponent	asAlone[1] = {
+		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(10, 10), SInt32Vec2(5, 5),   SInt32Vec2(10, 10) } };
+
+	TestGridContainerLayout("Output" _FS_ "GridContainerGapsEmptyColumn", 12, 6, 2, asEmptyColumn, 12, 6, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerGapsAlone", 20, 20, 1, asAlone, 10, 10, false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGridContainerImageInWeightedCell(void)
+{
+	//An image canvas takes the size of its cel, so even in a cell weighted to take the whole window it keeps that size
+	//and is centred.  A border canvas with no desired size fills the same cell.
+	SGridTestComponent	asImage[1] = {
+		{ "Wolf.png", 0, 0, 1, 1, 1, 1, SInt32Vec2(-1, -1), SInt32Vec2(9, 5),   SInt32Vec2(12, 10) } };
+	SGridTestComponent	asBorder[1] = {
+		{ NULL,       0, 0, 1, 1, 1, 1, SInt32Vec2(-1, -1), SInt32Vec2(0, 0),   SInt32Vec2(30, 20) } };
+
+	TestGridContainerLayout("Output" _FS_ "GridContainerImageInWeightedCell", 30, 20, 1, asImage, 12, 10, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerBorderInWeightedCell", 30, 20, 1, asBorder, 0, 0, false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestGridContainerDarkForestImages(void)
 {
 	//Three images on the top row and the wolf spanning the first two columns of the bottom row.  The columns are 9, 9 and
@@ -453,6 +597,163 @@ void TestGridContainerAddAndRemove(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestGridContainerNotAtOrigin(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "GridContainerNotAtOrigin";
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	ObjectsInit();
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CFillContainer>		pFill;
+		Ptr<CGridContainer>		pGrid;
+		Ptr<CCanvas>			pFixed;
+		Ptr<CCanvas>			pFilling;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		SInsets					sInsets;
+		int						aiInsets[4] = { 3, 0, 0, 5 };  //Top, Right, Bottom, Left.
+		SInt32Vec2				sVec;
+		CPointer				pNull;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 30, 20, szDirectory);
+		cTick.Init(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Grid Container", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+
+		//The grid is inside a fill container with insets, so it is laid out in the 25 x 17 area at 5, 3 and every cell must
+		//be offset by that.  A fixed 10 x 10 cell and a weighted cell that fills the rest of the width and the full height.
+		pFill = OMalloc<CFillContainer>(pTestWindow);
+		sInsets.Init(aiInsets);
+		pFill->SetInsets(&sInsets);
+		pTestWindow->SetContainer(pFill);
+		pGrid = OMalloc<CGridContainer>(pTestWindow);
+		pFill->AddComponent(pGrid);
+
+		pFixed = CreateGridTestCanvas(pTestWindow, 10, 10);
+		pFilling = CreateGridTestCanvas(pTestWindow, -1, -1);
+		AssertTrue(pGrid->AddComponent(pFixed, 0, 0));
+		AssertTrue(pGrid->AddComponent(pFilling, 1, 0, 1, 1, 1, 1));
+
+		pTestWindow->Show();
+
+		sVec = pFixed->GetPosition();
+		AssertInt32Vec2(5, 6, &sVec);
+		sVec = pFixed->GetActualSize();
+		AssertInt32Vec2(10, 10, &sVec);
+		sVec = pFilling->GetPosition();
+		AssertInt32Vec2(15, 3, &sVec);
+		sVec = pFilling->GetActualSize();
+		AssertInt32Vec2(15, 17, &sVec);
+
+		pFixed = NULL;
+		pFilling = NULL;
+		pGrid = NULL;
+		pFill = NULL;
+		pTestWindow = NULL;
+	}
+	AssertTrue(ORoot()->RemoveAll());
+	cNativeFactory.Kill();
+	ObjectsFlush();
+	ObjectsKill();
+
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGridContainerRelayout(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "GridContainerRelayout";
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	ObjectsInit();
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CGridContainer>		pGrid;
+		Ptr<CCanvas>			pA;
+		Ptr<CCanvas>			pB;
+		Ptr<CCanvas>			pC;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		SInt32Vec2				sVec;
+		CPointer				pNull;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 40, 10, szDirectory);
+		cTick.Init(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Grid Container", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pGrid = OMalloc<CGridContainer>(pTestWindow);
+		pTestWindow->SetContainer(pGrid);
+
+		//Each layout must come only from the grid as it is now, nothing left over from the layout before.
+		pA = CreateGridTestCanvas(pTestWindow, 10, 10);
+		pB = CreateGridTestCanvas(pTestWindow, 10, 10);
+		AssertTrue(pGrid->AddComponent(pA, 0, 0));
+		AssertTrue(pGrid->AddComponent(pB, 1, 0));
+		pTestWindow->Show();
+		sVec = pA->GetPosition();
+		AssertInt32Vec2(10, 0, &sVec);  //The 20 wide grid centred in 40.
+		sVec = pB->GetPosition();
+		AssertInt32Vec2(20, 0, &sVec);
+
+		//B grows, so its column does too and the 30 wide grid is centred at 5.
+		pB->SetDesiredSize(20, 10);
+		pTestWindow->Layout();
+		sVec = pA->GetPosition();
+		AssertInt32Vec2(5, 0, &sVec);
+		sVec = pB->GetPosition();
+		AssertInt32Vec2(15, 0, &sVec);
+		sVec = pB->GetActualSize();
+		AssertInt32Vec2(20, 10, &sVec);
+
+		//A 4 x 4 component in a new column 2 makes the grid 34 wide, centred at 3.  It is centred in the 10 tall row.
+		pC = CreateGridTestCanvas(pTestWindow, 4, 4);
+		AssertTrue(pGrid->AddComponent(pC, 2, 0));
+		pTestWindow->Layout();
+		sVec = pA->GetPosition();
+		AssertInt32Vec2(3, 0, &sVec);
+		sVec = pB->GetPosition();
+		AssertInt32Vec2(13, 0, &sVec);
+		sVec = pC->GetPosition();
+		AssertInt32Vec2(33, 3, &sVec);
+
+		//Removing B empties column 1, so the grid is 14 wide and centred at 13.
+		AssertTrue(pGrid->RemoveComponent(pB));
+		pTestWindow->Layout();
+		sVec = pA->GetPosition();
+		AssertInt32Vec2(13, 0, &sVec);
+		sVec = pC->GetPosition();
+		AssertInt32Vec2(23, 3, &sVec);
+
+		pA = NULL;
+		pB = NULL;
+		pC = NULL;
+		pGrid = NULL;
+		pTestWindow = NULL;
+	}
+	AssertTrue(ORoot()->RemoveAll());
+	cNativeFactory.Kill();
+	ObjectsFlush();
+	ObjectsKill();
+
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestGridContainer(void)
 {
 	BeginTests();
@@ -466,10 +767,18 @@ void TestGridContainer(void)
 	TestGridContainerSpanWeight();
 	TestGridContainerNestedSpans();
 	TestGridContainerClamping();
+	TestGridContainerEmpty();
+	TestGridContainerGaps();
+	TestGridContainerImageInWeightedCell();
+	TestGridContainerGrowSlivers();
+	TestGridContainerSpanSlivers();
+	TestGridContainerShrinkSlivers();
 	TestGridContainerShrink();
 	TestGridContainerOverlap();
 	TestGridContainerDarkForestImages();
 	TestGridContainerAddAndRemove();
+	TestGridContainerNotAtOrigin();
+	TestGridContainerRelayout();
 
 	TestStatistics();
 }

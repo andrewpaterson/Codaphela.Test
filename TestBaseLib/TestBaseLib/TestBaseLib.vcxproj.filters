@@ -285,6 +285,9 @@
     <ClCompile Include="TestFileUtil.cpp">
       <Filter>Source\File</Filter>
     </ClCompile>
+    <ClCompile Include="TestTextFile.cpp">
+      <Filter>Source\File</Filter>
+    </ClCompile>
     <ClCompile Include="TestMD5File.cpp">
       <Filter>Source\File</Filter>
     </ClCompile>

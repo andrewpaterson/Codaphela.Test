@@ -72,6 +72,7 @@ void TestTextPosition(void);
 void TestTextParser(void);
 void TestEscapeCodes(void);
 void TestFileUtil(void);
+void TestTextFile(void);
 void TestAllocator(void);
 void TestMemoryBlock(void);
 void TestFreeList(void);
@@ -285,6 +286,7 @@ int __cdecl main(void)
 	TestTemporaryMemory();
 	TestStackMemoryCompilation();
 	TestFileUtil();
+	TestTextFile();
 	TestFileFinder();
 	TestChunkFile();
 	TestChunkFileFile();

@@ -907,6 +907,43 @@ void TestLogFileTruncateDisk(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestLogFilePrint(void)
+{
+	CLogFile*		pcLogFile;
+	CMemoryFile*	pcMemoryFile;
+	CFileBasic		cFile;
+	CChars			sz;
+	CChars			szExpected;
+
+	pcMemoryFile = MemoryFile();
+	pcLogFile = LogFile(pcMemoryFile);
+	cFile.Init(pcLogFile);
+	AssertTrue(pcLogFile->Begin());
+
+	AssertTrue(cFile.Open(EFM_ReadWrite_Create));
+	AssertTrue(cFile.WriteData("Hello", 5));
+	AssertTrue(cFile.Truncate(3));
+	AssertTrue(cFile.Close());
+
+	//Every kind of command is printed as itself.
+	szExpected.Init("Log File [Without Name] Commands: 4\n   Open (");
+	szExpected.Append((int)EFM_ReadWrite_Create);
+	szExpected.Append(")\n   Write (0, 3) Hel\n   Truncate (3)\n   Close\n");
+	sz.Init();
+	pcLogFile->Print(&sz);
+	AssertString(szExpected.Text(), sz.Text());
+	sz.Kill();
+	szExpected.Kill();
+
+	pcLogFile->End();
+	cFile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestLogFile(void)
 {
 	TypeConverterInit();
@@ -925,6 +962,7 @@ void TestLogFile(void)
 	TestLogFileMultipleReadsAfterOpens();
 	TestLogFileTruncateMemory();
 	TestLogFileTruncateDisk();
+	TestLogFilePrint();
 
 	TestStatistics();
 	DataMemoryKill();

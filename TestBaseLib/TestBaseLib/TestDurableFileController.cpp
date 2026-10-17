@@ -153,8 +153,10 @@ void TestDurableFileControllerRecovery(void)
 	cFileUtil.Delete("Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "3.txt");
 	cFileUtil.Delete("Output" _FS_ "Durable1" _FS_ "Write"  _FS_ "4.txt");
 
+	//Init only checks its arguments.  Check finds the interrupted commit.
 	bResult = cController.Init(szDirectory, szRewrite);
-	AssertFalse(bResult);
+	AssertTrue(bResult);
+	AssertFalse(cController.Check(false, false));
 
 	cDurableFile1.Init(&cController, "1.txt", "1.txt");
 	cDurableFile2.Init(&cController, "2.txt", "2.txt");
@@ -245,9 +247,9 @@ void TestDurableFileControllerTwoInOneDirectory(void)
 
 	cFileUtil.RemoveDir("Output" _FS_ "Durable3");
 
-	bResult = cController1.Init(szDirectory, szRewrite, "C1_FileNames.Write", "C1_FileNames.Rewrite", "C1_Mark1.Write", "C1_Mark2.Rewrite");
+	bResult = cController1.Init(szDirectory, szRewrite, "C1_Mark1.Write", "C1_Mark2.Rewrite");
 	AssertTrue(bResult); 
-	bResult = cController2.Init(szDirectory, szRewrite, "C2_FileNames.Write", "C2_FileNames.Rewrite", "C2_Mark1.Write", "C2_Mark2.Rewrite");
+	bResult = cController2.Init(szDirectory, szRewrite, "C2_Mark1.Write", "C2_Mark2.Rewrite");
 	AssertTrue(bResult);
 
 	cController1.Begin();
@@ -288,10 +290,12 @@ void TestDurableFileControllerTwoInOneDirectory(void)
 	AssertTrue(cFileUtil.Delete("Output" _FS_ "Durable3" _FS_ "Write"  _FS_ "3.txt"));
 	AssertTrue(cFileUtil.Delete("Output" _FS_ "Durable3" _FS_ "Write"  _FS_ "4.txt"));
 
-	bResult = cController1.Init(szDirectory, szRewrite, "C1_FileNames.Write", "C1_FileNames.Rewrite", "C1_Mark1.Write", "C1_Mark2.Rewrite");
+	bResult = cController1.Init(szDirectory, szRewrite, "C1_Mark1.Write", "C1_Mark2.Rewrite");
 	AssertTrue(bResult);
-	bResult = cController2.Init(szDirectory, szRewrite, "C2_FileNames.Write", "C2_FileNames.Rewrite", "C2_Mark1.Write", "C2_Mark2.Rewrite");
-	AssertFalse(bResult);
+	bResult = cController2.Init(szDirectory, szRewrite, "C2_Mark1.Write", "C2_Mark2.Rewrite");
+	AssertTrue(bResult);
+	AssertTrue(cController1.Check(false, false));
+	AssertFalse(cController2.Check(false, false));
 
 	cDurableFile1.Init(&cController1, "1.txt", "1.txt");
 	cDurableFile2.Init(&cController1, "2.txt", "2.txt");
@@ -385,7 +389,7 @@ void AssertDurableFileControllerCrashState(bool bNew)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestDurableFileControllerCrash(int iCrashPoint)
+void TestDurableFileControllerCrash(int iCrashPoint, bool bPassFiles)
 {
 	CFileUtil				cFileUtil;
 	CDurableFileController	cController;
@@ -464,9 +468,22 @@ void TestDurableFileControllerCrash(int iCrashPoint)
 	//A crash releases every open file.  Killing the abandoned files must do the same or Windows cannot open them again.
 	AssertInt(iOpenFiles, CountOpenFileDescriptors());
 
-	//Recover finds the files to copy from the list in the start mark.
+	//Recover finds the files to copy from the list in the start mark.  Files passed in as well are only copied once.
 	cController.Init(szDirectory, szRewrite);
-	AssertTrue(cController.Recover());
+	if (bPassFiles)
+	{
+		cDurableFile1.Init(&cController, "1.txt", "1.txt");
+		cDurableFile2.Init(&cController, "2.txt", "2.txt");
+		cDurableFile3.Init(&cController, "3.txt", "3.txt");
+		AssertTrue(cController.Recover(&cDurableFile1, &cDurableFile2, &cDurableFile3, NULL));
+		cDurableFile1.Kill();
+		cDurableFile2.Kill();
+		cDurableFile3.Kill();
+	}
+	else
+	{
+		AssertTrue(cController.Recover());
+	}
 	cController.Kill();
 
 	//Until the rewrite mark exists the old files must come back.  After it the new files must.
@@ -579,6 +596,33 @@ void TestDurableFileControllerNoSync(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestDurableFileControllerInit(void)
+{
+	CDurableFileController	cController;
+	SLogConfig				sLogConfig;
+
+	//Init only fails on bad arguments, and the controller can still be killed.
+	sLogConfig = gcLogger.SetSilent();
+	AssertFalse(cController.Init("", "Output" _FS_ "Durable7" _FS_ "Rewrite"));
+	cController.Kill();
+	AssertFalse(cController.Init("Output" _FS_ "Durable7" _FS_ "Same", "Output" _FS_ "Durable7" _FS_ "Same"));
+	cController.Kill();
+	gcLogger.SetConfig(&sLogConfig);
+
+	AssertTrue(cController.Init("Output" _FS_ "Durable7" _FS_ "Write", "Output" _FS_ "Durable7" _FS_ "Rewrite"));
+	AssertTrue(cController.IsDurable());
+	cController.Kill();
+
+	AssertTrue(cController.Init("Output" _FS_ "Durable7" _FS_ "Write"));
+	AssertFalse(cController.IsDurable());
+	cController.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestDurableFileController(void)
 {
 	TypeConverterInit();
@@ -588,18 +632,21 @@ void TestDurableFileController(void)
 	TestDurableFileControllerDirectoryCreation();
 	TestDurableFileControllerRecovery();
 	TestDurableFileControllerTwoInOneDirectory();
-	TestDurableFileControllerCrash(0);
-	TestDurableFileControllerCrash(1);
-	TestDurableFileControllerCrash(2);
-	TestDurableFileControllerCrash(3);
-	TestDurableFileControllerCrash(4);
-	TestDurableFileControllerCrash(5);
-	TestDurableFileControllerCrash(6);
-	TestDurableFileControllerCrash(7);
-	TestDurableFileControllerCrash(8);
-	TestDurableFileControllerCrash(9);
+	TestDurableFileControllerCrash(0, false);
+	TestDurableFileControllerCrash(1, false);
+	TestDurableFileControllerCrash(2, false);
+	TestDurableFileControllerCrash(3, false);
+	TestDurableFileControllerCrash(4, false);
+	TestDurableFileControllerCrash(5, false);
+	TestDurableFileControllerCrash(6, false);
+	TestDurableFileControllerCrash(7, false);
+	TestDurableFileControllerCrash(8, false);
+	TestDurableFileControllerCrash(9, false);
+	TestDurableFileControllerCrash(3, true);
+	TestDurableFileControllerCrash(7, true);
 	TestDurableFileControllerIncompleteMark();
 	TestDurableFileControllerNoSync();
+	TestDurableFileControllerInit();
 
 	TestStatistics();
 	DataMemoryKill();

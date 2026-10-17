@@ -783,6 +783,76 @@ void TestFileUtilCopyDirFailures(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFileUtilWriteLargeFile(const char* szFilename, size iSize)
+{
+	FILE*	pFile;
+	size	i;
+
+	pFile = fopen(szFilename, "wb");
+	for (i = 0; i < iSize; i++)
+	{
+		fputc((int)((i * 7 + i / 251) & 0xff), pFile);
+	}
+	fclose(pFile);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFileUtilCopyAndCompare(void)
+{
+	CFileUtil	cFileUtil;
+	size		iLarge;
+	FILE*		pFile;
+
+	cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR);
+	AssertTrue(cFileUtil.TouchDir(FILE_UTIL_TEST_DIR, false));
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Short.txt", "Short");
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Shirt.txt", "Shirt");
+	TestFileUtilWriteFile(FILE_UTIL_TEST_DIR _FS_ "Long.txt", "A much longer file");
+
+	//A missing source cannot be copied and leaves the destination alone.
+	AssertFalse(cFileUtil.Copy(FILE_UTIL_TEST_DIR _FS_ "Missing.txt", FILE_UTIL_TEST_DIR _FS_ "Long.txt"));
+	AssertLong(18, cFileUtil.Size(FILE_UTIL_TEST_DIR _FS_ "Long.txt"));
+
+	//Copying over a longer file leaves nothing of it.
+	AssertTrue(cFileUtil.Copy(FILE_UTIL_TEST_DIR _FS_ "Short.txt", FILE_UTIL_TEST_DIR _FS_ "Long.txt"));
+	AssertLong(5, cFileUtil.Size(FILE_UTIL_TEST_DIR _FS_ "Long.txt"));
+	AssertTrue(cFileUtil.Compare(FILE_UTIL_TEST_DIR _FS_ "Short.txt", FILE_UTIL_TEST_DIR _FS_ "Long.txt"));
+
+	//Two missing files are the same.  One missing file is different.
+	AssertTrue(cFileUtil.Compare(FILE_UTIL_TEST_DIR _FS_ "Missing1.txt", FILE_UTIL_TEST_DIR _FS_ "Missing2.txt"));
+	AssertFalse(cFileUtil.Compare(FILE_UTIL_TEST_DIR _FS_ "Short.txt", FILE_UTIL_TEST_DIR _FS_ "Missing.txt"));
+	AssertFalse(cFileUtil.Compare(FILE_UTIL_TEST_DIR _FS_ "Missing.txt", FILE_UTIL_TEST_DIR _FS_ "Short.txt"));
+
+	//The same size with different contents.
+	AssertFalse(cFileUtil.Compare(FILE_UTIL_TEST_DIR _FS_ "Short.txt", FILE_UTIL_TEST_DIR _FS_ "Shirt.txt"));
+	AssertTrue(cFileUtil.CompareSize(FILE_UTIL_TEST_DIR _FS_ "Short.txt", FILE_UTIL_TEST_DIR _FS_ "Shirt.txt"));
+
+	//A file bigger than one copy block, with a partial last block.
+	iLarge = FILE_BLOCK_SIZE * 2 + 1000;
+	TestFileUtilWriteLargeFile(FILE_UTIL_TEST_DIR _FS_ "Large.bin", iLarge);
+	AssertTrue(cFileUtil.Copy(FILE_UTIL_TEST_DIR _FS_ "Large.bin", FILE_UTIL_TEST_DIR _FS_ "LargeCopy.bin"));
+	AssertLong(iLarge, cFileUtil.Size(FILE_UTIL_TEST_DIR _FS_ "LargeCopy.bin"));
+	AssertTrue(cFileUtil.Compare(FILE_UTIL_TEST_DIR _FS_ "Large.bin", FILE_UTIL_TEST_DIR _FS_ "LargeCopy.bin"));
+
+	//A difference in the last partial block is found.
+	pFile = fopen(FILE_UTIL_TEST_DIR _FS_ "LargeCopy.bin", "r+b");
+	fseek(pFile, (long)(iLarge - 1), SEEK_SET);
+	fputc(0x5a ^ fgetc(pFile), pFile);
+	fclose(pFile);
+	AssertFalse(cFileUtil.Compare(FILE_UTIL_TEST_DIR _FS_ "Large.bin", FILE_UTIL_TEST_DIR _FS_ "LargeCopy.bin"));
+
+	AssertTrue(cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFileUtilRemoveDir(void)
 {
 	CFileUtil	cFileUtil;
@@ -850,6 +920,7 @@ void TestFileUtil(void)
 	TestFileUtilCopyDirCreatesDestination();
 	TestFileUtilCopyDirOverExisting();
 	TestFileUtilCopyDirFailures();
+	TestFileUtilCopyAndCompare();
 	TestFileUtilRemoveDir();
 
 	FastFunctionsKill();
