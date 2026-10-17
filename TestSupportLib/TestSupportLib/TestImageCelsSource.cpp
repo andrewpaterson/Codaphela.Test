@@ -145,6 +145,7 @@ void TestImageCelGroupSourceCombine(void)
 	pcImage->Kill();
 	cCombiner.Kill();
 	cSource.Kill();
+	cDiskFile.Kill();  //The cels source only releases its pointer to a source it did not create.
 
 	ObjectsKill(false);
 	DataIOKill();
