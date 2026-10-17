@@ -12,6 +12,7 @@
 void TestRefWindow(void);
 void TestFlowContainer(void);
 void TestFillContainer(void);
+void TestGridContainer(void);
 void TestCanvas(void);
 
 
@@ -39,6 +40,7 @@ int __cdecl main(void)
 	TestRefWindow();
 	TestFlowContainer();
 	TestFillContainer();
+	TestGridContainer();
 	TestCanvas();
 
 	cFileUtil.RemoveDir("Output");
