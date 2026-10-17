@@ -1,4 +1,4 @@
-#include <thread>
+#include "ThreadLib/NativeThread.h"
 #include "BaseLib/Logger.h"
 #include "BaseLib/StdRandom.h"
 #include "ThreadLib/ResizableSharedMemory.h"
@@ -219,7 +219,7 @@ void TestSharedMemoryTwoProcesses(void)
 			Pass();
 			break;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+		ThreadSleep(16);
 	}
 	AssertTrue(bAllMatch);
 
@@ -483,7 +483,7 @@ void TestSharedMemoryResizeMultiThread(void)
 			break;
 		}
 
-		std::this_thread::yield();
+		ThreadYield();
 	}
 
 	cHold.Stop();
@@ -583,7 +583,7 @@ void TestSharedMemoryResizeMultiProcess(void)
 			break;
 		}
 
-		std::this_thread::yield();
+		ThreadYield();
 	}
 
 	cHold.Stop();
@@ -629,7 +629,7 @@ void TestSharedMemory(void)
 	TestSharedMemoryResizeOneProcessFill();
 	TestSharedMemoryResizeOneProcessResizeAndRelease();
 	TestSharedMemoryResizeMultiThreadRepeat(100);
-	std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	ThreadSleep(500);
 	TestSharedMemoryResizeMultiProcessRepeat(100);
 
 	TestStatistics();

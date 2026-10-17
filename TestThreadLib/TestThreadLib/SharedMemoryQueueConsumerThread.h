@@ -1,6 +1,6 @@
 #ifndef __SHARED_MEMORY_QUEUE_CONSUMER_THREAD_H__
 #define __SHARED_MEMORY_QUEUE_CONSUMER_THREAD_H__
-#include <thread>
+#include "ThreadLib/NativeThread.h"
 #include "ThreadLib/SharedMemoryQueue.h"
 #include "ThreadLib/Thread.h"
 #include "SharedMemoryQueueTheadElement.h"
@@ -79,9 +79,9 @@ public:
 			}
 			else
 			{
-				std::this_thread::yield();
+				ThreadYield();
 			}
-		} while ((mpcProducersDone->miThreadsStopped < 1) || bResult);
+		} while ((mpcProducersDone->miThreadsStopped.Get() < 1) || bResult);
 		mpsResult->aiTaken[miProcessNum] = iTaken;
 
 		cQueue.Kill();

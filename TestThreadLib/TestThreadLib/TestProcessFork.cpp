@@ -1,4 +1,4 @@
-#include <thread>
+#include "ThreadLib/NativeThread.h"
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TextFile.h"
@@ -29,7 +29,7 @@ void TestProcessFork(void)
 	bFileExists = false;
 	for (i = 0; i < 50; i++)
 	{
-		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+		ThreadSleep(16);
 		bFileExists = cFileUtil.Exists(szFileName);
 		if (bFileExists)
 		{

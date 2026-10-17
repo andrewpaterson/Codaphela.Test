@@ -2,7 +2,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/ArrayTemplate.h"
 #include "BaseLib/LogString.h"
-#include "ThreadLib/VitsenityThreadPool.h"
+#include "ThreadLib/WorkerThreadPool.h"
 #include "ThreadLib/SafeArrayBlock.h"
 #include "TestLib/Assert.h"
 
@@ -50,8 +50,11 @@ public:
 };
 
 
-void RunPusher(int iThreadId, CPusher* pcPusher)
+void RunPusher(int iThreadId, void* pvPusher)
 {
+	CPusher*	pcPusher;
+
+	pcPusher = (CPusher*)pvPusher;
 	pcPusher->Start(iThreadId);
 	pcPusher->Run();
 }
@@ -61,7 +64,7 @@ void RunPusher(int iThreadId, CPusher* pcPusher)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestVitsenityThreadPoolConcurrency(void)
+void TestWorkerThreadPoolConcurrency(void)
 {
 	CSafeArrayBlock				aiArray;
 	CArrayTemplate<CPusher>		acPushers;
@@ -72,9 +75,9 @@ void TestVitsenityThreadPoolConcurrency(void)
 	int							iPrevX;
 	int							iX;
 	size						iGreatherThanCount;
-	CVitsenityThreadPool					cPool;
+	CWorkerThreadPool			cPool;
 
-	iNumHardwareTheads = std::thread::hardware_concurrency();
+	iNumHardwareTheads = NumHardwareThreads();
 	acPushers.Init();
 	aiArray.Init(sizeof(int));
 
@@ -135,9 +138,9 @@ void TestVitsenityThreadPoolConcurrency(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestVitsenityThreadPoolInitialiseAndKill(void)
+void TestWorkerThreadPoolInitialiseAndKill(void)
 {
-	CVitsenityThreadPool		cPool;
+	CWorkerThreadPool		cPool;
 
 	cPool.Init();
 	cPool.Kill();
@@ -147,14 +150,14 @@ void TestVitsenityThreadPoolInitialiseAndKill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestVitsenityThreadPool(void)
+void TestWorkerThreadPool(void)
 {
 	BeginTests();
 	MemoryInit();
 	FastFunctionsInit();
 
-	TestVitsenityThreadPoolInitialiseAndKill();
-	TestVitsenityThreadPoolConcurrency();
+	TestWorkerThreadPoolInitialiseAndKill();
+	TestWorkerThreadPoolConcurrency();
 
 	FastFunctionsKill();
 	MemoryKill();

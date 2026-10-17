@@ -191,11 +191,10 @@
     <ClCompile Include="TestSharedQueueMain.cpp" />
     <ClCompile Include="TestThread.cpp" />
     <ClCompile Include="TestThreadPool.cpp" />
-    <ClCompile Include="VitaliyVitsentiyExample.cpp" />
     <ClCompile Include="TestReferences.cpp" />
     <ClCompile Include="TestSafeArrayBlock.cpp" />
     <ClCompile Include="TestThreadLib.cpp" />
-    <ClCompile Include="TestVitsenityThreadPool.cpp" />
+    <ClCompile Include="TestWorkerThreadPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\CommonLibraries\BaseLib\BaseLib.vcxproj">

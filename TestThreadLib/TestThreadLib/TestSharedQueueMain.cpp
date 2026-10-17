@@ -1,4 +1,4 @@
-#include <thread>
+#include "ThreadLib/NativeThread.h"
 #include "BaseLib/DebugOutput.h"
 #include "BaseLib/Logger.h"
 #include "ThreadLib/SharedMemoryQueue.h"
@@ -42,7 +42,7 @@ int TestSharedMemoryQueue(char* szSharedQueueName, char* szSharedResultName, cha
 		}
 		else
 		{
-			std::this_thread::yield();
+			ThreadYield();
 		}
 	} while ((!cProcessesDone.IsDone(1)) || bResult);
 

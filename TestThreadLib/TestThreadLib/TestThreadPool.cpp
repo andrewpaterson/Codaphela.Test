@@ -4,6 +4,7 @@
 #include "BaseLib/LogString.h"
 #include "ThreadLib/ThreadPool.h"
 #include "ThreadLib/ThreadsDone.h"
+#include "ThreadLib/AtomicInt.h"
 #include "ThreadLib/SafeArrayBlock.h"
 #include "TestLib/Assert.h"
 #include "PoolProducerThread.h"
@@ -13,11 +14,11 @@
 class CConsumerTotal : public CThreadStateNotifer
 {
 public:
-	std::atomic<int> miTotal;
+	CAtomicInt	miTotal;
 
 	void Init(void)
 	{
-		miTotal = 0;
+		miTotal.Set(0);
 	}
 
 	void ThreadStateChanged(CThread* pcThread, EThreadState eState)
@@ -27,7 +28,7 @@ public:
 		if (eState == TS_Stopped)
 		{
 			pcConsumer = (CPoolConsumerThread*)pcThread;
-			miTotal +=  pcConsumer->GetResult();
+			miTotal.Add(pcConsumer->GetResult());
 		}
 	}
 };
@@ -75,9 +76,9 @@ void TestThreadPoolThreadDestroyed(void)
 	}
 	pcConsumer = NULL;
 
-	while(cProducersDone.miThreadsStopped < 32)
+	while(cProducersDone.miThreadsStopped.Get() < 32)
 	{
-		std::this_thread::yield();
+		ThreadYield();
 	}
 
 	for (i = 0; i < apcConsumers.NumElements(); i++)
@@ -86,12 +87,12 @@ void TestThreadPoolThreadDestroyed(void)
 		pcConsumer->TryStop();
 	}
 
-	while (cConsumersDone.miThreadsStopped < 3)
+	while (cConsumersDone.miThreadsStopped.Get() < 3)
 	{
-		std::this_thread::yield();
+		ThreadYield();
 	}
 
-	AssertInt(32000, cTotal.miTotal);
+	AssertInt(32000, cTotal.miTotal.Get());
 
 	apcConsumers.Kill();
 	cPool.Kill();

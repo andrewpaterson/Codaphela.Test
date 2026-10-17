@@ -12,16 +12,16 @@ void TestConstructorVirtual(void)
 {
 	bool bNoVirtualTable;
 
-	bNoVirtualTable = std::is_trivially_default_constructible<CConstructorCallTest1>();
+	bNoVirtualTable = IsTriviallyDefaultConstructible<CConstructorCallTest1>();
 	AssertTrue(bNoVirtualTable);
 
-	bNoVirtualTable = std::is_trivially_default_constructible<CConstructorCallTest2>();
+	bNoVirtualTable = IsTriviallyDefaultConstructible<CConstructorCallTest2>();
 	AssertFalse(bNoVirtualTable);
 
-	bNoVirtualTable = std::is_trivially_default_constructible<CConstructorCallTest3>();
+	bNoVirtualTable = IsTriviallyDefaultConstructible<CConstructorCallTest3>();
 	AssertFalse(bNoVirtualTable);
 
-	bNoVirtualTable = std::is_trivially_default_constructible<CConstructorTestClass>();
+	bNoVirtualTable = IsTriviallyDefaultConstructible<CConstructorTestClass>();
 	AssertFalse(bNoVirtualTable);
 }
 

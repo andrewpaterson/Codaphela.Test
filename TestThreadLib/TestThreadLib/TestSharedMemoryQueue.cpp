@@ -1,4 +1,4 @@
-#include <thread>
+#include "ThreadLib/NativeThread.h"
 #include "BaseLib/Logger.h"
 #include "BaseLib/Chars.h"
 #include "BaseLib/StdRandom.h"
@@ -292,9 +292,9 @@ void TestSharedMemoryQueueMultiThread(void)
 	pcConsumer4->Start();
 
 
-	while ((cProducersDone.miThreadsStopped < 1) || (cConsumersDone.miThreadsStopped < 4))
+	while ((cProducersDone.miThreadsStopped.Get() < 1) || (cConsumersDone.miThreadsStopped.Get() < 4))
 	{
-		std::this_thread::yield();
+		ThreadYield();
 	}
 
 	iTotalTaken = psResult->aiTaken[0] + psResult->aiTaken[1] + psResult->aiTaken[2] + psResult->aiTaken[3];
@@ -389,11 +389,11 @@ void TestSharedMemoryQueueMultiThreadThisProducer(void)
 		}
 	}
 	bDone = true;
-	cProducersDone.miThreadsStopped++;
+	cProducersDone.miThreadsStopped.Increment();
 
-	while (cConsumersDone.miThreadsStopped < 4)
+	while (cConsumersDone.miThreadsStopped.Get() < 4)
 	{
-		std::this_thread::yield();
+		ThreadYield();
 	}
 
 	iTotalTaken = psResult->aiTaken[0] + psResult->aiTaken[1] + psResult->aiTaken[2] + psResult->aiTaken[3];

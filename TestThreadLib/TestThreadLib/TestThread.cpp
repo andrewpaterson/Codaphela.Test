@@ -1,7 +1,7 @@
-#include <thread>
+#include "ThreadLib/NativeThread.h"
 #include "BaseLib/GlobalMemory.h"
 #include "ThreadLib/SafeArrayBlock.h"
-#include "ThreadLib/VitsenityThreadPool.h"
+#include "ThreadLib/WorkerThreadPool.h"
 #include "TestLib/Assert.h"
 #include "PoolProducerThread.h"
 #include "PoolConsumerThread.h"
@@ -59,7 +59,7 @@ void TestThreadStandAlone(void)
 		{
 			break;
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(16));
+		ThreadSleep(16);
 	}
 
 	iTotalResult = cConsumer1.GetResult() + cConsumer2.GetResult();
@@ -86,10 +86,10 @@ void TestThreadInThreadPool(void)
 {
 	int							iTotalResult;
 	CSafeArrayBlock				cQueue;
-	CVitsenityThreadPool		cPool;
+	CWorkerThreadPool			cPool;
 	int							iNumHardwareTheads;
 
-	iNumHardwareTheads = std::thread::hardware_concurrency();
+	iNumHardwareTheads = NumHardwareThreads();
 	cQueue.Init(sizeof(int));
 	cPool.Init();
 

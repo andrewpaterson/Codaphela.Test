@@ -14,7 +14,7 @@ int TestSharedQueueProcessMain(int argc, char* argv[]);
 void TestMainProcessDirector(int argc, char* argv[]);
 void TestReferences(void);
 void TestSafeArrayBlock(void);
-void TestVitsenityThreadPool(void);
+void TestWorkerThreadPool(void);
 void TestThread(void);
 void TestThreadPool(void);
 void TestProcessFork(void);
@@ -31,7 +31,7 @@ int TestThreadLib(int argc, char* argv[])
 	TestMainProcessDirector(argc, argv);
 	TestReferences();
 	TestThread();
-	TestVitsenityThreadPool();
+	TestWorkerThreadPool();
 	TestSafeArrayBlock();
 	TestThreadPool();
 	TestProcessFork();
