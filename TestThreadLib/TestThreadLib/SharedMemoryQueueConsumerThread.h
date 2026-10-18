@@ -1,6 +1,6 @@
 #ifndef __SHARED_MEMORY_QUEUE_CONSUMER_THREAD_H__
 #define __SHARED_MEMORY_QUEUE_CONSUMER_THREAD_H__
-#include "ThreadLib/NativeThread.h"
+#include "BaseLib/NativeThread.h"
 #include "ThreadLib/SharedMemoryQueue.h"
 #include "ThreadLib/Thread.h"
 #include "SharedMemoryQueueTheadElement.h"

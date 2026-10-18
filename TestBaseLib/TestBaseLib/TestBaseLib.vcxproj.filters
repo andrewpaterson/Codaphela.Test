@@ -648,6 +648,12 @@
     <ClCompile Include="TestCodabase.cpp">
       <Filter>Source\Database</Filter>
     </ClCompile>
+    <ClCompile Include="TestWriteTransaction.cpp">
+      <Filter>Source\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="TestReadTransaction.cpp">
+      <Filter>Source\Database</Filter>
+    </ClCompile>
     <ClCompile Include="TestSequence.cpp">
       <Filter>Source\File\Indexed\Sequence</Filter>
     </ClCompile>

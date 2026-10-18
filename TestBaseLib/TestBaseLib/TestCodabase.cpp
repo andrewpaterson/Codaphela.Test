@@ -6,6 +6,7 @@
 #include "BaseLib/Logger.h"
 #include "BaseLib/TextFile.h"
 #include "BaseLib/ArrayChars.h"
+#include "BaseLib/NativeThread.h"
 #include "BaseLib/CodabaseFactory.h"
 #include "BaseLib/Codabase.h"
 #include "TestLib/Words.h"
@@ -510,6 +511,173 @@ void TestCodabaseCrashRecovery(bool bRewriteMark)
 }
 
 
+#define CODABASE_THREADS		4
+#define CODABASE_THREAD_ITEMS	200
+
+
+struct SCodabaseThreadData
+{
+	CCodabase*	pcDatabase;
+	int			iThread;
+	int			iFailures;
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CodabaseThreadData(char* szDest, int iThread, int iItem, bool bUpdated)
+{
+	snprintf(szDest, 64, "%s from thread %d item %d", bUpdated ? "Updated" : "Added", iThread, iItem);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CodabaseThreadName(char* szDest, int iThread, int iItem)
+{
+	snprintf(szDest, 64, "Thread%dItem%d", iThread, iItem);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void CodabaseThread(void* pvData)
+{
+	SCodabaseThreadData*	psData;
+	int						i;
+	OIndex					oi;
+	char					szData[64];
+	char					szName[64];
+	char					szResult[64];
+	bool					bResult;
+
+	//Assert is not thread safe, so failures are counted and checked after the threads end.
+	psData = (SCodabaseThreadData*)pvData;
+	for (i = 0; i < CODABASE_THREAD_ITEMS; i++)
+	{
+		oi = (OIndex)(psData->iThread * 1000 + i + 1);
+		CodabaseThreadData(szData, psData->iThread, i, false);
+		if ((i % 2) == 0)
+		{
+			CodabaseThreadName(szName, psData->iThread, i);
+			bResult = psData->pcDatabase->Add(oi, szName, szData, strlen(szData) + 1);
+		}
+		else
+		{
+			bResult = psData->pcDatabase->Add(oi, szData, strlen(szData) + 1);
+		}
+
+		memset(szResult, 0, 64);
+		bResult = bResult && psData->pcDatabase->Get(oi, szResult);
+		bResult = bResult && (strcmp(szData, szResult) == 0);
+
+		CodabaseThreadData(szData, psData->iThread, i, true);
+		bResult = bResult && psData->pcDatabase->Put(oi, szData, strlen(szData) + 1);
+		bResult = bResult && psData->pcDatabase->Contains(oi);
+		if (!bResult)
+		{
+			psData->iFailures++;
+		}
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertCodabaseThreadItems(CCodabase* pcDatabase)
+{
+	int		iThread;
+	int		i;
+	char	szData[64];
+	char	szName[64];
+	char	szResult[64];
+	int		iWrong;
+
+	iWrong = 0;
+	for (iThread = 0; iThread < CODABASE_THREADS; iThread++)
+	{
+		for (i = 0; i < CODABASE_THREAD_ITEMS; i++)
+		{
+			CodabaseThreadData(szData, iThread, i, true);
+			memset(szResult, 0, 64);
+			if ((i % 2) == 0)
+			{
+				CodabaseThreadName(szName, iThread, i);
+				pcDatabase->Get(szName, szResult);
+			}
+			else
+			{
+				pcDatabase->Get((OIndex)(iThread * 1000 + i + 1), szResult);
+			}
+			if (strcmp(szData, szResult) != 0)
+			{
+				iWrong++;
+			}
+		}
+	}
+	AssertInt(0, iWrong);
+	AssertLong(CODABASE_THREADS * CODABASE_THREAD_ITEMS, pcDatabase->NumIndices());
+	AssertLong(CODABASE_THREADS * CODABASE_THREAD_ITEMS / 2, pcDatabase->NumNames());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCodabaseThreads(void)
+{
+	CCodabase*			pcDatabase;
+	CFileUtil			cFileUtil;
+	CNativeThread		acThreads[CODABASE_THREADS];
+	SCodabaseThreadData	asData[CODABASE_THREADS];
+	int					i;
+
+	cFileUtil.RemoveDir("Output" _FS_ "CodabaseThreads");
+
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "CodabaseThreads", IWT_No, DS_Yes);
+	AssertNotNull(pcDatabase);
+	AssertTrue(pcDatabase->Open());
+
+	//Several threads add, read and change their own objects at the same time.
+	for (i = 0; i < CODABASE_THREADS; i++)
+	{
+		asData[i].pcDatabase = pcDatabase;
+		asData[i].iThread = i;
+		asData[i].iFailures = 0;
+		acThreads[i].Init();
+		AssertTrue(acThreads[i].Start(CodabaseThread, &asData[i]));
+	}
+	for (i = 0; i < CODABASE_THREADS; i++)
+	{
+		acThreads[i].Join();
+		acThreads[i].Kill();
+		AssertInt(0, asData[i].iFailures);
+	}
+
+	AssertCodabaseThreadItems(pcDatabase);
+	AssertTrue(pcDatabase->Close());
+	SafeKill(pcDatabase);
+
+	pcDatabase = CCodabaseFactory::Create("Output" _FS_ "CodabaseThreads", IWT_No, DS_Yes);
+	AssertNotNull(pcDatabase);
+	AssertTrue(pcDatabase->Open());
+	AssertCodabaseThreadItems(pcDatabase);
+	AssertTrue(pcDatabase->Close());
+	SafeKill(pcDatabase);
+
+	AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "CodabaseThreads"));
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -530,6 +698,7 @@ void TestCodabase(void)
 	TestCodabaseIterate(IWT_Yes);
 	TestCodabaseCrashRecovery(false);
 	TestCodabaseCrashRecovery(true);
+	TestCodabaseThreads();
 
 	TestStatistics();
 	WordsKill();

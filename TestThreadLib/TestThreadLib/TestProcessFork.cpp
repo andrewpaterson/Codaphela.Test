@@ -1,4 +1,4 @@
-#include "ThreadLib/NativeThread.h"
+#include "BaseLib/NativeThread.h"
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TextFile.h"

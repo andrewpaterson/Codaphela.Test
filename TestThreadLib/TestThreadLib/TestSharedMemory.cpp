@@ -1,4 +1,4 @@
-#include "ThreadLib/NativeThread.h"
+#include "BaseLib/NativeThread.h"
 #include "BaseLib/Logger.h"
 #include "BaseLib/StdRandom.h"
 #include "ThreadLib/ResizableSharedMemory.h"

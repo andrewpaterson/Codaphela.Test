@@ -1,4 +1,4 @@
-#include "ThreadLib/NativeThread.h"
+#include "BaseLib/NativeThread.h"
 #include "BaseLib/DebugOutput.h"
 #include "BaseLib/Logger.h"
 #include "ThreadLib/SharedMemoryQueue.h"

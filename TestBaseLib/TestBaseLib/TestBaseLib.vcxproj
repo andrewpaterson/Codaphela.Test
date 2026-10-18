@@ -351,6 +351,8 @@
     <ClCompile Include="NamedIndexedDataObject.cpp" />
     <ClCompile Include="TestCalculator.cpp" />
     <ClCompile Include="TestCodabase.cpp" />
+    <ClCompile Include="TestWriteTransaction.cpp" />
+    <ClCompile Include="TestReadTransaction.cpp" />
     <ClCompile Include="TestFat32.cpp" />
     <ClCompile Include="TestFat32Common.cpp" />
     <ClCompile Include="TestFatCache.cpp" />

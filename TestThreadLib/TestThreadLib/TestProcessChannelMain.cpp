@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "BaseLib/Socket.h"
-#include "ThreadLib/NativeThread.h"
+#include "BaseLib/NativeThread.h"
 #include "ThreadLib/NetworkConnection.h"
 #include "ThreadLib/SharedMemoryChannel.h"
 #include "SharedMemoryQueueTheadElement.h"
