@@ -7,6 +7,7 @@
 #include "SupportLib/ImageDraw.h"
 #include "SupportLib/ImageCel.h"
 #include "SupportLib/ImageCelBlitterCache.h"
+#include "SupportLib/ImageBlitterContext.h"
 #include "BaseLib/Logger.h"
 #include "TestLib/Assert.h"
 #include "TestLib/AssertFile.h"
@@ -539,6 +540,462 @@ void TestImageDrawCelDestAlphaRowEnds(void)
 	AssertMemory(&puiDest[(4 + 0 * 8) * 4], &puiDest[(6 + 1 * 8) * 4], 4);  //Ends row 1.
 	AssertMemory(&puiDest[(4 + 0 * 8) * 4], &puiDest[(7 + 1 * 8) * 4], 4);
 
+	//Translucent pixels combine their opacity with the background's: 128 + 100 * (255 - 128) / 255.
+	AssertInt(178, puiDest[(4 + 0 * 8) * 4 + 3]);
+	AssertInt(178, puiDest[(0 + 1 * 8) * 4 + 3]);
+	AssertInt(178, puiDest[(7 + 1 * 8) * 4 + 3]);
+
+	pCel = NULL;
+	pSource = NULL;
+	pDest = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertDrawCelOpacity(Ptr<CImage> pDest, int32 iLeft, int32 iTop, int32 iRight, int32 iBottom, CRectangle* pcClip)
+{
+	uint8*	puiDest;
+	int32	x;
+	int32	y;
+	bool	bDrawn;
+	uint8	uiExpected;
+	size	uiWrong;
+
+	//The fourth byte of an RGBA destination must be opaque where the cel was drawn and still zero everywhere else.
+	puiDest = (uint8*)pDest->GetData();
+	uiWrong = 0;
+	for (y = 0; y < pDest->GetHeight(); y++)
+	{
+		for (x = 0; x < pDest->GetWidth(); x++)
+		{
+			bDrawn = (x >= iLeft) && (x < iRight) && (y >= iTop) && (y < iBottom);
+			bDrawn &= (pcClip == NULL) || ((x >= pcClip->msTopLeft.x) && (x < pcClip->msBottomRight.x) && (y >= pcClip->msTopLeft.y) && (y < pcClip->msBottomRight.y));
+			uiExpected = bDrawn ? 255 : 0;
+			if (puiDest[(x + y * pDest->GetWidth()) * 4 + 3] != uiExpected)
+			{
+				uiWrong++;
+			}
+		}
+	}
+	AssertSize(0, uiWrong);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawCelOpaqueOntoDestOpacity(void)
+{
+	CImageDraw		cDraw;
+	Ptr<CImage>		pSource;
+	Ptr<CImage>		pDest;
+	Ptr<CImageCel>	pCel;
+	CRectangle		cClip;
+
+	//An RGB cel has no opacity of its own.  Drawn onto an RGBA image the colour must be copied unchanged and the
+	//destination opacity set to opaque, not written over one of the colours.
+	pSource = CreateDrawCelSourceImage(6, 4);
+	pCel = OMalloc<CImageCel>(pSource);
+	pDest = OMalloc<CImage>(10, 8, CFT_RGBA, CCO_RGB, CRGB_24bit, ARGB_8bit);
+
+	cDraw.Init(&pDest);
+
+	memset(pDest->GetData(), 0, pDest->GetByteSize());
+	AssertTrue(cDraw.DrawCel(2, 1, pCel));
+	AssertDrawCelPixels(pDest, 4, pSource, 3, false, 2, 1, NULL);
+	AssertDrawCelOpacity(pDest, 2, 1, 8, 5, NULL);
+
+	memset(pDest->GetData(), 0, pDest->GetByteSize());
+	AssertTrue(cDraw.DrawCel(-3, 6, pCel));
+	AssertDrawCelPixels(pDest, 4, pSource, 3, false, -3, 6, NULL);
+	AssertDrawCelOpacity(pDest, -3, 6, 3, 10, NULL);
+
+	cClip.Init(3, 2, 7, 4);
+	memset(pDest->GetData(), 0, pDest->GetByteSize());
+	AssertTrue(cDraw.DrawCel(2, 1, pCel, &cClip));
+	AssertDrawCelPixels(pDest, 4, pSource, 3, false, 2, 1, &cClip);
+	AssertDrawCelOpacity(pDest, 2, 1, 8, 5, &cClip);
+
+	cDraw.Kill();
+	pCel = NULL;
+	pSource = NULL;
+	pDest = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawCelAlignment(void)
+{
+	CImageDraw		cDraw;
+	Ptr<CImage>		pSource;
+	Ptr<CImage>		pDest;
+	Ptr<CImageCel>	pCel;
+	CRectangle		cClip;
+	int32			aiPositions[6][2] = { { 8, 6 }, { 6, 4 }, { 3, 2 }, { 12, 9 }, { 15, 3 }, { 7, 13 } };
+	size			i;
+
+	//A cel aligned to its bottom right is drawn with its bottom right corner at the position given.  The cel must be
+	//both clipped and drawn where its alignment puts it, else it can be drawn outside the destination image.
+	pSource = CreateDrawCelSourceImage(6, 4);
+	pCel = OMalloc<CImageCel>(pSource, 0, 0, 6, 4, 0, 0, 0, 0, SUB_IMAGE_ALIGNMENT_RIGHT | SUB_IMAGE_ALIGNMENT_BOTTOM);
+	pDest = OMalloc<CImage>(10, 8, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+
+	cDraw.Init(&pDest);
+	for (i = 0; i < 6; i++)
+	{
+		pDest->Black();
+		AssertTrue(cDraw.DrawCel(aiPositions[i][0], aiPositions[i][1], pCel));
+		AssertDrawCel(pDest, pSource, aiPositions[i][0] - 6, aiPositions[i][1] - 4, NULL);
+	}
+
+	cClip.Init(3, 2, 7, 5);
+	for (i = 0; i < 6; i++)
+	{
+		pDest->Black();
+		AssertTrue(cDraw.DrawCel(aiPositions[i][0], aiPositions[i][1], pCel, &cClip));
+		AssertDrawCel(pDest, pSource, aiPositions[i][0] - 6, aiPositions[i][1] - 4, &cClip);
+	}
+
+	//Centred, the middle of the cel is at the position given.
+	pCel = OMalloc<CImageCel>(pSource, 0, 0, 6, 4, 0, 0, 0, 0, SUB_IMAGE_ALIGNMENT_CENTER_HORIZONTAL | SUB_IMAGE_ALIGNMENT_CENTER_VERTICAL);
+	pDest->Black();
+	AssertTrue(cDraw.DrawCel(5, 4, pCel));
+	AssertDrawCel(pDest, pSource, 2, 2, NULL);
+
+	pDest->Black();
+	AssertTrue(cDraw.DrawCel(9, 1, pCel));
+	AssertDrawCel(pDest, pSource, 6, -1, NULL);
+
+	cDraw.Kill();
+	pCel = NULL;
+	pSource = NULL;
+	pDest = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawBlitterContextInit(void)
+{
+	CImageBlitterContext	cContext;
+
+	//Init with no images must clear every field, not just the first few bytes.
+	memset(&cContext, 0xAB, sizeof(CImageBlitterContext));
+	cContext.Init();
+
+	AssertSize(0, cContext.miSourcePixelStride);
+	AssertSize(0, cContext.miDestPixelStride);
+	AssertSize(0, cContext.miSourceWidth);
+	AssertSize(0, cContext.miDestWidth);
+	AssertSize(0, cContext.miSourceRowStride);
+	AssertSize(0, cContext.miDestRowStride);
+	AssertSize(0, cContext.muiSourceColourOffset);
+	AssertSize(0, cContext.muiDestColourOffset);
+	AssertSize(0, cContext.muiDestAlphaOffset);
+	AssertSize(0, cContext.muiSourceAlphaOffset);
+	AssertSize(0, cContext.muiColourWidth);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CImage> CreateDrawCelTranslucentImage(int32 iWidth, int32 iHeight)
+{
+	Ptr<CImage>		pImage;
+	uint8*			puiData;
+	int32			x;
+	int32			y;
+	uint8			auiAlpha[8] = { 255, 255, 0, 128, 40, 255, 0, 200 };
+
+	//Opaque, transparent and translucent runs of different lengths in every row.
+	pImage = CreateDrawCelImage(iWidth, iHeight, CFT_RGBA, ARGB_8bit, 4, false);
+	puiData = (uint8*)pImage->GetData();
+	for (y = 0; y < iHeight; y++)
+	{
+		for (x = 0; x < iWidth; x++)
+		{
+			puiData[(x + y * iWidth) * 4 + 3] = auiAlpha[(x + 3 * y) % 8];
+		}
+	}
+	return pImage;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void FillDrawCelBackground(Ptr<CImage> pDest, size uiDestStride, uint8* puiBackground)
+{
+	uint8*	puiDest;
+	size	ui;
+	size	uiNumPixels;
+
+	puiDest = (uint8*)pDest->GetData();
+	uiNumPixels = pDest->GetWidth() * pDest->GetHeight();
+	for (ui = 0; ui < uiNumPixels; ui++)
+	{
+		memcpy(&puiDest[ui * uiDestStride], puiBackground, uiDestStride);
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertDrawCelSized(Ptr<CImage> pDest, size uiDestStride, uint8* puiBackground, Ptr<CImageCel> pCel, size uiSourceStride, int32 iLeft, int32 iTop, int32 iWidth, int32 iHeight, CRectangle* pcClip)
+{
+	CSubImage*		pcSubImage;
+	Ptr<CImage>		pSource;
+	uint8*			puiDest;
+	uint8*			puiSource;
+	uint8*			puiSourcePixel;
+	uint8			auiExpected[4];
+	int32			x;
+	int32			y;
+	int32			xCel;
+	int32			yCel;
+	bool			bInside;
+	uint16			uiAlpha;
+	uint16			uiBlend;
+	size			i;
+	size			uiWrong;
+
+	//Every destination pixel is worked out on its own: the cel pixel under its centre, (2x + 1) * full / (2 * sized),
+	//drawn over the background.  Pixels outside the sized cel, the clip, or the cel's image keep the background.
+	pcSubImage = pCel->GetSubImage();
+	pSource = pCel->GetSourceImage();
+	puiDest = (uint8*)pDest->GetData();
+	puiSource = (uint8*)pSource->GetData();
+	uiWrong = 0;
+	for (y = 0; y < pDest->GetHeight(); y++)
+	{
+		for (x = 0; x < pDest->GetWidth(); x++)
+		{
+			memcpy(auiExpected, puiBackground, uiDestStride);
+
+			bInside = (x >= iLeft) && (x < iLeft + iWidth) && (y >= iTop) && (y < iTop + iHeight);
+			bInside &= (pcClip == NULL) || ((x >= pcClip->msTopLeft.x) && (x < pcClip->msBottomRight.x) && (y >= pcClip->msTopLeft.y) && (y < pcClip->msBottomRight.y));
+			if (bInside)
+			{
+				xCel = ((2 * (x - iLeft) + 1) * pcSubImage->GetFullWidth()) / (2 * iWidth) - pcSubImage->msOffsetTopLeft.x;
+				yCel = ((2 * (y - iTop) + 1) * pcSubImage->GetFullHeight()) / (2 * iHeight) - pcSubImage->msOffsetTopLeft.y;
+				if ((xCel >= 0) && (xCel < pcSubImage->GetImageWidth()) && (yCel >= 0) && (yCel < pcSubImage->GetImageHeight()))
+				{
+					puiSourcePixel = &puiSource[((pcSubImage->mcImageRect.msTopLeft.x + xCel) + (pcSubImage->mcImageRect.msTopLeft.y + yCel) * pSource->GetWidth()) * uiSourceStride];
+					uiAlpha = (uiSourceStride == 4) ? puiSourcePixel[3] : 255;
+					if (uiAlpha == 255)
+					{
+						memcpy(auiExpected, puiSourcePixel, 3);
+						if (uiDestStride == 4)
+						{
+							auiExpected[3] = 255;
+						}
+					}
+					else if (uiAlpha != 0)
+					{
+						uiBlend = (uiAlpha > 128) ? uiAlpha + 1 : uiAlpha;
+						for (i = 0; i < 3; i++)
+						{
+							auiExpected[i] = (uint8)((puiSourcePixel[i] * uiBlend + auiExpected[i] * (256 - uiBlend)) >> 8);
+						}
+						if (uiDestStride == 4)
+						{
+							auiExpected[3] = (uint8)(uiAlpha + (auiExpected[3] * (255 - uiAlpha) + 127) / 255);
+						}
+					}
+				}
+			}
+
+			if (memcmp(&puiDest[(x + y * pDest->GetWidth()) * uiDestStride], auiExpected, uiDestStride) != 0)
+			{
+				uiWrong++;
+			}
+		}
+	}
+	AssertSize(0, uiWrong);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertDrawCelSizes(Ptr<CImageCel> pCel, size uiSourceStride, Ptr<CImage> pDest, size uiDestStride)
+{
+	CImageDraw		cDraw;
+	CRectangle		acClips[3];
+	CRectangle*		pcClip;
+	uint8			auiBackground[4] = { 5, 6, 7, 9 };
+	int32			aiSizes[13][2] = { { 12, 8 }, { 3, 2 }, { 7, 5 }, { 6, 9 }, { 13, 4 }, { 6, 2 }, { 1, 1 }, { 25, 3 }, { 2, 11 }, { 6, 4 }, { 19, 14 }, { 0, 5 }, { 4, -1 } };
+	int32			aiPositions[6][2] = { { 2, 2 }, { -3, -2 }, { 15, 11 }, { -30, -30 }, { 0, 0 }, { 9, -4 } };
+	size			uiSize;
+	size			uiPosition;
+	size			uiClip;
+	int32			x;
+	int32			y;
+	int32			iWidth;
+	int32			iHeight;
+
+	//Every size is drawn through the same blitter so its sized tables must be rebuilt whenever the size changes.
+	//A size of 6x4 is the cel's own and the zero and negative sizes draw nothing.
+	acClips[1].Init(3, 2, 9, 7);
+	acClips[2].Init(5, 0, 6, 16);
+
+	cDraw.Init(&pDest);
+	for (uiSize = 0; uiSize < 13; uiSize++)
+	{
+		iWidth = aiSizes[uiSize][0];
+		iHeight = aiSizes[uiSize][1];
+		for (uiPosition = 0; uiPosition < 6; uiPosition++)
+		{
+			x = aiPositions[uiPosition][0];
+			y = aiPositions[uiPosition][1];
+			for (uiClip = 0; uiClip < 3; uiClip++)
+			{
+				pcClip = (uiClip == 0) ? NULL : &acClips[uiClip];
+				FillDrawCelBackground(pDest, uiDestStride, auiBackground);
+				AssertTrue(cDraw.DrawCel(x, y, iWidth, iHeight, pCel, pcClip));
+				AssertDrawCelSized(pDest, uiDestStride, auiBackground, pCel, uiSourceStride, x, y, iWidth, iHeight, pcClip);
+			}
+		}
+	}
+	cDraw.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawCelSizedOpaque(void)
+{
+	Ptr<CImage>		pSource;
+	Ptr<CImage>		pDest;
+	Ptr<CImageCel>	pCel;
+
+	//The same layout with no destination opacity uses the contiguous blitter, which can only be used one for one.
+	pSource = CreateDrawCelSourceImage(6, 4);
+	pCel = OMalloc<CImageCel>(pSource);
+	pDest = OMalloc<CImage>(20, 16, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+	AssertDrawCelSizes(pCel, 3, pDest, 3);
+
+	//Opaque onto a destination with opacity.
+	pDest = OMalloc<CImage>(20, 16, CFT_RGBA, CCO_RGB, CRGB_24bit, ARGB_8bit);
+	AssertDrawCelSizes(pCel, 3, pDest, 4);
+
+	//Opaque segments between transparent gaps.  Shrinking can drop a segment entirely.
+	pSource = CreateDrawCelImage(6, 4, CFT_RGBA, ARGB_8bit, 4, true);
+	pCel = OMalloc<CImageCel>(pSource);
+	pDest = OMalloc<CImage>(20, 16, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+	AssertDrawCelSizes(pCel, 4, pDest, 3);
+
+	pCel = NULL;
+	pSource = NULL;
+	pDest = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawCelSizedTranslucent(void)
+{
+	Ptr<CImage>		pSource;
+	Ptr<CImage>		pDest;
+	Ptr<CImageCel>	pCel;
+
+	//Translucent and opaque segments, without and with destination opacity.
+	pSource = CreateDrawCelTranslucentImage(6, 4);
+	pCel = OMalloc<CImageCel>(pSource);
+
+	pDest = OMalloc<CImage>(20, 16, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+	AssertDrawCelSizes(pCel, 4, pDest, 3);
+
+	pDest = OMalloc<CImage>(20, 16, CFT_RGBA, CCO_RGB, CRGB_24bit, ARGB_8bit);
+	AssertDrawCelSizes(pCel, 4, pDest, 4);
+
+	pCel = NULL;
+	pSource = NULL;
+	pDest = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawCelSizedBorders(void)
+{
+	Ptr<CImage>		pSource;
+	Ptr<CImage>		pDest;
+	Ptr<CImageCel>	pCel;
+
+	//The cel is the 4x3 part of the source at 1,1 with transparent borders of 1 left, 0 top, 1 right and 1 bottom,
+	//so the full cel is 6x4.  The borders are sized with the rest of the cel.
+	pSource = CreateDrawCelTranslucentImage(7, 5);
+	pCel = OMalloc<CImageCel>(pSource, 1, 1, 5, 4, 1, 0, 1, 1, SUB_IMAGE_ALIGNMENT_LEFT | SUB_IMAGE_ALIGNMENT_TOP);
+	AssertInt(6, pCel->GetSubImage()->GetFullWidth());
+	AssertInt(4, pCel->GetSubImage()->GetFullHeight());
+
+	pDest = OMalloc<CImage>(20, 16, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+	AssertDrawCelSizes(pCel, 4, pDest, 3);
+
+	pCel = NULL;
+	pSource = NULL;
+	pDest = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawCelSizedAlignment(void)
+{
+	CImageDraw		cDraw;
+	Ptr<CImage>		pSource;
+	Ptr<CImage>		pDest;
+	Ptr<CImageCel>	pCel;
+	CRectangle		cClip;
+	uint8			auiBackground[3] = { 5, 6, 7 };
+
+	//A centred 6x4 cel drawn 12x8 is centred on its position.
+	pSource = CreateDrawCelSourceImage(6, 4);
+	pCel = OMalloc<CImageCel>(pSource, 0, 0, 6, 4, 0, 0, 0, 0, SUB_IMAGE_ALIGNMENT_CENTER_HORIZONTAL | SUB_IMAGE_ALIGNMENT_CENTER_VERTICAL);
+	pDest = OMalloc<CImage>(20, 16, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+
+	cDraw.Init(&pDest);
+
+	FillDrawCelBackground(pDest, 3, auiBackground);
+	AssertTrue(cDraw.DrawCel(10, 8, 12, 8, pCel));
+	AssertDrawCelSized(pDest, 3, auiBackground, pCel, 3, 4, 4, 12, 8, NULL);
+
+	FillDrawCelBackground(pDest, 3, auiBackground);
+	AssertTrue(cDraw.DrawCel(1, 15, 12, 8, pCel));
+	AssertDrawCelSized(pDest, 3, auiBackground, pCel, 3, -5, 11, 12, 8, NULL);
+
+	//Aligned to its bottom right and shrunk to 3x2.
+	pCel = OMalloc<CImageCel>(pSource, 0, 0, 6, 4, 0, 0, 0, 0, SUB_IMAGE_ALIGNMENT_RIGHT | SUB_IMAGE_ALIGNMENT_BOTTOM);
+	cClip.Init(0, 0, 9, 7);
+	FillDrawCelBackground(pDest, 3, auiBackground);
+	AssertTrue(cDraw.DrawCel(10, 8, 3, 2, pCel, &cClip));
+	AssertDrawCelSized(pDest, 3, auiBackground, pCel, 3, 7, 6, 3, 2, &cClip);
+
+	cDraw.Kill();
 	pCel = NULL;
 	pSource = NULL;
 	pDest = NULL;
@@ -802,6 +1259,13 @@ void TestImageDraw(void)
 	TestImageDrawCelClippingTransparentGaps();
 	TestImageDrawCelRGBX();
 	TestImageDrawCelDestAlphaRowEnds();
+	TestImageDrawCelOpaqueOntoDestOpacity();
+	TestImageDrawCelAlignment();
+	TestImageDrawBlitterContextInit();
+	TestImageDrawCelSizedOpaque();
+	TestImageDrawCelSizedTranslucent();
+	TestImageDrawCelSizedBorders();
+	TestImageDrawCelSizedAlignment();
 	TestImageDrawBlitterCacheOnImage();
 	TestImageDrawBlitterCacheCelFreedFirst();
 	TestImageDrawBlitterCacheDestinationFreedFirst();
