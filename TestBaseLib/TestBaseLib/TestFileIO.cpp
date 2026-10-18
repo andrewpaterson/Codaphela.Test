@@ -493,6 +493,8 @@ void TestFileIOLinkedListBlockAligned(void)
 	cAlignedIn.Kill();
 }
 
+typedef CArrayTemplate<CFileIOTest>			CArrayFileIOTest;
+typedef CArrayTemplateMinimal<CFileIOTest>	CArrayFileIOTestMinimal;
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -500,19 +502,19 @@ void TestFileIOLinkedListBlockAligned(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFileIOArray(void)
 {
-	CMemoryFile							cMemory;
-	CFileBasic							cFile;
-	CArrayTemplate<CFileIOTest>			acTest;
-	size									i;
-	CFileIOTest*						pcTest;
-	CArrayTemplate<CFileIOTest>			acTestIn;
-	CArrayInt							ai;
-	CArrayInt							aii;
-	size									ii;
-	CArrayBlock							av;
-	CArrayBlock							avi;
-	CArrayTemplateMinimal<CFileIOTest>	asTest;
-	CArrayTemplateMinimal<CFileIOTest>	asTestIn;
+	CMemoryFile					cMemory;
+	CFileBasic					cFile;
+	CArrayFileIOTest			acTest;
+	size						i;
+	CFileIOTest*				pcTest;
+	CArrayFileIOTest			acTestIn;
+	CArrayInt					ai;
+	CArrayInt					aii;
+	size						ii;
+	CArrayBlock					av;
+	CArrayBlock					avi;
+	CArrayFileIOTestMinimal		asTest;
+	CArrayFileIOTestMinimal		asTestIn;
 
 	TestFileIOBegin(&cMemory, &cFile);
 
