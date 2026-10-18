@@ -5,6 +5,7 @@
 #include "WindowLib/Window.h"
 #include "WindowLib/GridContainer.h"
 #include "WindowLib/FillContainer.h"
+#include "WindowLib/FlowContainer.h"
 #include "WindowLib/ImageCanvasDraw.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/AssertGeometric.h"
@@ -668,6 +669,103 @@ void TestGridContainerNotAtOrigin(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void AssertContainerBounds(int32 iLeft, int32 iTop, int32 iRight, int32 iBottom, CContainer* pcContainer)
+{
+	CRectangle	cBounds;
+
+	AssertTrue(pcContainer->GetContainerBounds(&cBounds));
+	AssertInt(iLeft, cBounds.GetLeft());
+	AssertInt(iTop, cBounds.GetTop());
+	AssertInt(iRight, cBounds.GetRight());
+	AssertInt(iBottom, cBounds.GetBottom());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGridContainerActualBounds(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "GridContainerActualBounds";
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	ObjectsInit();
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CFillContainer>		pFill;
+		Ptr<CGridContainer>		pGrid;
+		Ptr<CFlowContainer>		pFlow;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		SInsets					sInsets;
+		int						aiInsets[4] = { 3, 0, 0, 5 };  //Top, Right, Bottom, Left.
+		SInt32Vec2				sVec;
+		CPointer				pNull;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 30, 20, szDirectory);
+		cTick.Init(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Grid Container", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+
+		//A container's actual bounds are the area its parent gave it, insets included and not clipped.  Its container
+		//bounds are the inset area its components are laid out in, clipped to its parent's container bounds.  The grid is
+		//40 x 10 at the top left of the fill's 25 x 17 inset area at 5, 3 so it hangs 15 pixels out of the right side.  The
+		//flow has no desired height and sits along the bottom of the inset area.
+		pFill = OMalloc<CFillContainer>(pTestWindow);
+		sInsets.Init(aiInsets);
+		pFill->SetInsets(&sInsets);
+		pTestWindow->SetContainer(pFill);
+		pGrid = OMalloc<CGridContainer>(pTestWindow);
+		pGrid->SetDesiredSize(40, 10);
+		pGrid->SetAlignment(CSH_Left, CSV_Top);
+		pFill->AddComponent(pGrid);
+		pFlow = OMalloc<CFlowContainer>(pTestWindow);
+		pFlow->SetDesiredSize(-1, 4);
+		pFlow->SetAlignment(CSH_Center, CSV_Bottom);
+		pFill->AddComponent(pFlow);
+
+		pTestWindow->Show();
+
+		sVec = pFill->GetPosition();
+		AssertInt32Vec2(0, 0, &sVec);
+		sVec = pFill->GetActualSize();
+		AssertInt32Vec2(30, 20, &sVec);
+		AssertContainerBounds(5, 3, 30, 20, &pFill);
+
+		sVec = pGrid->GetPosition();
+		AssertInt32Vec2(5, 3, &sVec);
+		sVec = pGrid->GetActualSize();
+		AssertInt32Vec2(40, 10, &sVec);
+		AssertContainerBounds(5, 3, 30, 13, &pGrid);
+
+		sVec = pFlow->GetPosition();
+		AssertInt32Vec2(5, 16, &sVec);
+		sVec = pFlow->GetActualSize();
+		AssertInt32Vec2(25, 4, &sVec);
+		AssertContainerBounds(5, 16, 30, 20, &pFlow);
+
+		pFlow = NULL;
+		pGrid = NULL;
+		pFill = NULL;
+		pTestWindow = NULL;
+	}
+	AssertTrue(ORoot()->RemoveAll());
+	cNativeFactory.Kill();
+	ObjectsFlush();
+	ObjectsKill();
+
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestGridContainerRelayout(void)
 {
 	CWinRefWindowFactory	cNativeFactory;
@@ -778,6 +876,7 @@ void TestGridContainer(void)
 	TestGridContainerDarkForestImages();
 	TestGridContainerAddAndRemove();
 	TestGridContainerNotAtOrigin();
+	TestGridContainerActualBounds();
 	TestGridContainerRelayout();
 
 	TestStatistics();
