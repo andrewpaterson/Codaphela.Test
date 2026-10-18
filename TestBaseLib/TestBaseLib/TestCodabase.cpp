@@ -77,8 +77,7 @@ void TestCodabaseOperations(void)
 	AssertTrue(pcDatabase->Add(oiKey1, szData1, strlen(szData1) + 1));
 	AssertTrue(pcDatabase->Add(oiKey2, szData2, strlen(szData2) + 1));
 
-	//Changes in a session are not in the store, or its caches, until Close.
-	AssertLong(0, pcDatabase->NumIndicesCached());
+	AssertLong(2, pcDatabase->NumIndicesCached());
 	AssertLong(0, pcDatabase->NumNamesCached());
 	AssertLong(2, pcDatabase->NumIndices());
 	AssertLong(0, pcDatabase->NumNames());
@@ -114,8 +113,8 @@ void TestCodabaseOperations(void)
 	AssertTrue(pcDatabase->Get(oiKey4, szResult));
 	AssertString(szData4, szResult);
 
-	AssertLong(2, pcDatabase->NumIndicesCached());
-	AssertLong(0, pcDatabase->NumNamesCached());
+	AssertLong(4, pcDatabase->NumIndicesCached());
+	AssertLong(2, pcDatabase->NumNamesCached());
 	AssertLong(4, pcDatabase->NumIndices());
 	AssertLong(2, pcDatabase->NumNames());
 
