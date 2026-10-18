@@ -5,6 +5,7 @@
 #include "SupportLib/ColourFormat.h"
 #include "SupportLib/ImageCel.h"
 #include "WindowLib/CanvasDraw.h"
+#include "WindowLib/ContainerStyles.h"
 
 
 struct SDarkForestComponent
@@ -12,6 +13,9 @@ struct SDarkForestComponent
 	const char*	szImage;		//NULL for a border canvas.
 	SInt32Vec2	sDesiredSize;	//-1, -1 lets an image canvas take the size of its cel.
 	ARGB32		sBorderColour;
+
+	EContainerStyleHorizontal	eHorizontal;	//Unknown on both axes leaves the canvas's default alignment.
+	EContainerStyleVertical		eVertical;
 };
 
 

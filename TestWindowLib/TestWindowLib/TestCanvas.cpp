@@ -390,7 +390,8 @@ void RenderCanvasDrawFrames(CWinRefWindowFactory* pcFactory, char* szDirectory, 
 {
 	CFileUtil	cFileUtil;
 
-	//A maps canvas (a tile map with sprites over it) and an image canvas side by side.  Frame 0 is shown, then the canvases
+	//A maps canvas (a tile map with sprites over it) aligned to the top left and an image canvas aligned to the top right
+	//of the same fill container, so they sit side by side.  Frame 0 is shown, then the canvases
 	//are given each following size in turn and painted again.  Changing a canvas's size recreates its native canvas.
 	//If asViewports is not NULL the maps viewport is moved before each frame too.
 	//If bClearWindow is true the window is given a canvas draw that clears it to black before each frame.
@@ -432,8 +433,6 @@ void RenderCanvasDrawFrames(CWinRefWindowFactory* pcFactory, char* szDirectory, 
 		pTestWindow->GetColourFormat(&cHelper);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
-		pFill->SetFillStyle(CSH_Left, CSV_Top);
-		pFill->SetSplit(FCS_Horizontal, 0);
 		pTestWindow->SetContainer(pFill);
 
 		pTileMapGenerator = OMalloc<CTileMapGenerator>(&cRandom);
@@ -457,10 +456,12 @@ void RenderCanvasDrawFrames(CWinRefWindowFactory* pcFactory, char* szDirectory, 
 
 		pMapsDraw = OMalloc<CMapsCanvasDraw>(pMaps);
 		pMapsCanvas = OMalloc<CCanvas>(pTestWindow, pMapsDraw);
+		pMapsCanvas->SetAlignment(CSH_Left, CSV_Top);
 		pFill->AddComponent(pMapsCanvas);
 
 		pImageDraw = OMalloc<CImageCanvasDraw>(ReadDarkForestCel("Wolf.png", &cHelper));
 		pImageCanvas = OMalloc<CCanvas>(pTestWindow, pImageDraw);
+		pImageCanvas->SetAlignment(CSH_Right, CSV_Top);
 		pFill->AddComponent(pImageCanvas);
 
 		for (i = 0; i < uiNumFrames; i++)
@@ -687,17 +688,16 @@ void TestCanvasNested(void)
 		pTestWindow->GetColourFormat(&cHelper);
 
 		pWindowFill = OMalloc<CFillContainer>(pTestWindow);
-		pWindowFill->SetFillStyle(CSH_Left, CSV_Top);
 		pTestWindow->SetContainer(pWindowFill);
 
 		//An outer canvas with a red border holds a container of its own with the wolf canvas centred in it.
 		pOuterDraw = OMalloc<CBorderCanvasDraw>(Set32BitColour(1.0f, 0, 0));
 		pOuter = OMalloc<CCanvas>(pTestWindow, pOuterDraw);
 		pOuter->SetDesiredSize(20, 16);
+		pOuter->SetAlignment(CSH_Left, CSV_Top);
 		pWindowFill->AddComponent(pOuter);
 
 		pOuterFill = OMalloc<CFillContainer>(pTestWindow);
-		pOuterFill->SetFillStyle(CSH_Center, CSV_Center);
 		pOuter->SetContainer(pOuterFill);
 
 		pWolf = ReadDarkForestCel("Wolf.png", &cHelper);
@@ -785,13 +785,13 @@ void TestCanvasResizeReleasesOldCels(void)
 		pTestWindow->GetColourFormat(&cHelper);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
-		pFill->SetFillStyle(CSH_Left, CSV_Top);
-		pFill->SetSplit(FCS_Horizontal, 0);
 		pTestWindow->SetContainer(pFill);
 
 		pImageCanvas = OMalloc<CCanvas>(pTestWindow, OMalloc<CImageCanvasDraw>(ReadDarkForestCel("Wolf.png", &cHelper)));
+		pImageCanvas->SetAlignment(CSH_Left, CSV_Top);
 		pFill->AddComponent(pImageCanvas);
 		pBorderCanvas = OMalloc<CCanvas>(pTestWindow, OMalloc<CBorderCanvasDraw>(Set32BitColour(1.0f, 0, 0)));
+		pBorderCanvas->SetAlignment(CSH_Right, CSV_Top);
 		pFill->AddComponent(pBorderCanvas);
 
 		//Every resize gives the two canvases new images and cels, which are blitted onto the window's image through its
