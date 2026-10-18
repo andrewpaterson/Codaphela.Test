@@ -103,13 +103,13 @@ void TestImageOpacityBlitter(char* szDirectory, char* szInputPathName, char* szT
 		pMakiCel = OMalloc<CImageCel>(pMakiImage, true);
 
 		cBlitter.Init(pBackgroundCel, pDestImage);
-		bResult = cBlitter.Configure(&gcImageRowBlitterFactory);
+		bResult = cBlitter.Configure(&gcImageRowBlitterFactory, false);
 		AssertTrue(bResult);
 		cBlitter.Blit(0, 0);
 		cBlitter.Kill();
 
 		cBlitter.Init(pMakiCel, pDestImage);
-		bResult = cBlitter.Configure(&gcImageRowBlitterFactory);
+		bResult = cBlitter.Configure(&gcImageRowBlitterFactory, false);
 		AssertTrue(bResult);
 		cBlitter.Blit(x, y);
 		cBlitter.Kill();
@@ -193,13 +193,13 @@ void TestImageOpacitySizingBlitter(char* szDirectory, char* szInputPathName, cha
 		pMakiCel = OMalloc<CImageCel>(pMakiImage, true);
 
 		cBlitter.Init(pBackgroundCel, pDestImage);
-		bResult = cBlitter.Configure(&gcImageRowBlitterFactory);
+		bResult = cBlitter.Configure(&gcImageRowBlitterFactory, false);
 		AssertTrue(bResult);
 		cBlitter.Blit(0, 0);
 		cBlitter.Kill();
 
 		cBlitter.Init(pMakiCel, pDestImage);
-		bResult = cBlitter.Configure(&gcImageRowBlitterFactory);
+		bResult = cBlitter.Configure(&gcImageRowBlitterFactory, true);
 		AssertTrue(bResult);
 		cBlitter.Blit(x, y, iWidth, iHeight);
 		cBlitter.Kill();

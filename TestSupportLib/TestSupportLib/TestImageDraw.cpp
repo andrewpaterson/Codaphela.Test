@@ -848,6 +848,7 @@ void AssertDrawCelSizes(Ptr<CImageCel> pCel, size uiSourceStride, Ptr<CImage> pD
 	int32			y;
 	int32			iWidth;
 	int32			iHeight;
+	bool			bResult;
 
 	//Every size is drawn through the same blitter so its sized tables must be rebuilt whenever the size changes.
 	//A size of 6x4 is the cel's own and the zero and negative sizes draw nothing.
@@ -867,7 +868,8 @@ void AssertDrawCelSizes(Ptr<CImageCel> pCel, size uiSourceStride, Ptr<CImage> pD
 			{
 				pcClip = (uiClip == 0) ? NULL : &acClips[uiClip];
 				FillDrawCelBackground(pDest, uiDestStride, auiBackground);
-				AssertTrue(cDraw.DrawCel(x, y, iWidth, iHeight, pCel, pcClip));
+				bResult = cDraw.DrawCel(x, y, iWidth, iHeight, pCel, pcClip);
+				AssertTrue(bResult);
 				AssertDrawCelSized(pDest, uiDestStride, auiBackground, pCel, uiSourceStride, x, y, iWidth, iHeight, pcClip);
 			}
 		}
