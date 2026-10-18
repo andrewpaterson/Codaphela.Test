@@ -7,7 +7,6 @@
 #include "BaseLib/Logger.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/NativeThread.h"
-#include "BaseLib/Mutex.h"
 #include "BaseLib/CodabaseFactory.h"
 #include "BaseLib/Codabase.h"
 #include "BaseLib/WriteTransaction.h"
@@ -363,88 +362,6 @@ void TestWriteTransactionDirectSession(void)
 }
 
 
-struct SWriteTransactionWaiter
-{
-	CCodabase*	pcDatabase;
-	CMutex		cMutex;
-	int			iStage;
-
-	void	SetStage(int iNewStage)	{ cMutex.Lock(); iStage = iNewStage; cMutex.Unlock(); }
-	int		GetStage(void)			{ int iResult; cMutex.Lock(); iResult = iStage; cMutex.Unlock(); return iResult; }
-};
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void WriteTransactionWaiter(void* pvData)
-{
-	SWriteTransactionWaiter*	psWaiter;
-	CWriteTransaction*			pcTransaction;
-	char						szSecond[] = "Second";
-
-	psWaiter = (SWriteTransactionWaiter*)pvData;
-	psWaiter->SetStage(1);
-	pcTransaction = psWaiter->pcDatabase->BeginWriteTransaction();
-	psWaiter->SetStage(2);
-	pcTransaction->Set(1LL, szSecond, strlen(szSecond) + 1);
-	pcTransaction->Commit();
-	SafeKill(pcTransaction);
-	psWaiter->SetStage(3);
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void TestWriteTransactionSecondWriterWaits(void)
-{
-	CCodabase*				pcDatabase;
-	CWriteTransaction*		pcTransaction;
-	CFileUtil				cFileUtil;
-	CNativeThread			cThread;
-	SWriteTransactionWaiter	sWaiter;
-	char					szFirst[] = "First";
-	int						i;
-
-	cFileUtil.RemoveDir(WRITE_TRANSACTION_DIR);
-	pcDatabase = CreateWriteTransactionCodabase();
-
-	pcTransaction = pcDatabase->BeginWriteTransaction();
-	AssertTrue(pcTransaction->Set(1LL, szFirst, strlen(szFirst) + 1));
-
-	sWaiter.pcDatabase = pcDatabase;
-	sWaiter.cMutex.Init();
-	sWaiter.iStage = 0;
-	cThread.Init();
-	AssertTrue(cThread.Start(WriteTransactionWaiter, &sWaiter));
-	for (i = 0; (i < 1000) && (sWaiter.GetStage() < 1); i++)
-	{
-		ThreadSleep(1);
-	}
-
-	//The second writer waits while the first is active.  Reading is never blocked.
-	ThreadSleep(50);
-	AssertInt(1, sWaiter.GetStage());
-	AssertCodabaseString(pcDatabase, 1LL, "One");
-
-	AssertTrue(pcTransaction->Commit());
-	SafeKill(pcTransaction);
-	cThread.Join();
-	cThread.Kill();
-	AssertInt(3, sWaiter.GetStage());
-	sWaiter.cMutex.Kill();
-
-	//The second writer committed after the first.
-	AssertCodabaseString(pcDatabase, 1LL, "Second");
-	SafeKill(pcDatabase);
-
-	AssertTrue(cFileUtil.RemoveDir(WRITE_TRANSACTION_DIR));
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -514,7 +431,6 @@ void TestWriteTransaction(void)
 	TestWriteTransactionRules();
 	TestWriteTransactionIteration();
 	TestWriteTransactionDirectSession();
-	TestWriteTransactionSecondWriterWaits();
 	TestWriteTransactionCommitFails();
 
 	TestStatistics();

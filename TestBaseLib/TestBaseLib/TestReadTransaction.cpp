@@ -201,7 +201,7 @@ void TestReadTransactionVersions(void)
 
 	pcDatabase = CreateReadTransactionCodabase();
 
-	//Without readers no versions are kept, after a transaction or after a session.
+	//Without readers no versions are kept.  A session changes nothing in the store before it closes, so it needs none.
 	pcWrite = pcDatabase->BeginWriteTransaction();
 	AssertTrue(pcWrite->Set(2LL, szA, strlen(szA) + 1));
 	AssertTrue(pcWrite->Commit());
@@ -209,7 +209,7 @@ void TestReadTransactionVersions(void)
 	AssertSize(0, pcDatabase->NumVersions());
 	AssertTrue(pcDatabase->Open());
 	AssertTrue(pcDatabase->Set(2LL, szB, strlen(szB) + 1));
-	AssertTrue(pcDatabase->NumVersions() > 0);
+	AssertSize(0, pcDatabase->NumVersions());
 	AssertTrue(pcDatabase->Close());
 	AssertSize(0, pcDatabase->NumVersions());
 

@@ -165,6 +165,7 @@ void TestIndexTreeFileKeyDiagnosticCallback(void);
 void TestCodabase(void);
 void TestWriteTransaction(void);
 void TestReadTransaction(void);
+void TestTransactionConcurrency(void);
 void TestMemoryDrive(void);
 void TestFatCache(void);
 void TestFat32(void);
@@ -349,6 +350,7 @@ int __cdecl main(void)
 	TestCodabase();
 	TestWriteTransaction();
 	TestReadTransaction();
+	TestTransactionConcurrency();
 	TestMemoryDrive();
 	TestFatCache();
 	TestFat32();
