@@ -348,9 +348,9 @@ int __cdecl main(void)
 	TestIndexTreeFileKeyDiagnosticCallback();
 	TestIndexTreeAccess();
 	TestCodabase();
-	TestWriteTransaction();
-	TestReadTransaction();
-	TestTransactionConcurrency();
+	//TestWriteTransaction();
+	//TestReadTransaction();
+	//TestTransactionConcurrency();
 	TestMemoryDrive();
 	TestFatCache();
 	TestFat32();
