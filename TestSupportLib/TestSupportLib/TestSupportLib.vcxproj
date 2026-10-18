@@ -218,6 +218,7 @@
     <ClCompile Include="TestImageTGA.cpp" />
     <ClCompile Include="TestImagePNG.cpp" />
     <ClCompile Include="TestCompressionRLE.cpp" />
+    <ClCompile Include="TestRectangle.cpp" />
     <ClCompile Include="TestRectangleBestPacker.cpp" />
     <ClCompile Include="TestRectanglePow2Packer.cpp" />
     <ClCompile Include="TestMeshColour.cpp" />

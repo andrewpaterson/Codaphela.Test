@@ -178,6 +178,9 @@
     <ClCompile Include="TestImageReader.cpp">
       <Filter>Source Files\Image\IO</Filter>
     </ClCompile>
+    <ClCompile Include="TestRectangle.cpp">
+      <Filter>Source Files\Image\Area</Filter>
+    </ClCompile>
     <ClCompile Include="TestRectangleBestPacker.cpp">
       <Filter>Source Files\Image\Area</Filter>
     </ClCompile>

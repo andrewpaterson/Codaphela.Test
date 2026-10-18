@@ -31,6 +31,7 @@ void TestImageRecolour(void);
 void TestImageRGBToGrey(void);
 void TestImageSwizzle(void);
 void TestRectangleBestPacker(void);
+void TestRectangle(void);
 void TestRectanglePow2Packer(void);
 void TestImageToR3G3B2A(void);
 void TestImageSFTWriter(void);
@@ -85,6 +86,7 @@ int __cdecl main(void)
 	TestBumpMapper();
 	TestPlainTextEditor();
 	TestImageCel();
+	TestRectangle();
 	TestRectangleBestPacker();
 	TestRectanglePow2Packer();
 	TestImageModifierStack();
