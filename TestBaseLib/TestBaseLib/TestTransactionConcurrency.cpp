@@ -64,6 +64,7 @@ void TestLockManagerRules(void)
 	CLockManager	cLocks;
 	CNativeThread	cThread;
 	SLockWaiter		sWaiter;
+	CArrayOIndex	aoiLocked;
 
 	AssertTrue(CLockManager::IsCompatible(LM_Shared, LM_Shared));
 	AssertTrue(CLockManager::IsCompatible(LM_Shared, LM_Update));
@@ -113,6 +114,21 @@ void TestLockManagerRules(void)
 	AssertInt(LM_Exclusive, cLocks.GetMode(1, 100LL));
 	sWaiter.cStage.Kill();
 	cLocks.ReleaseAll(1);
+	AssertSize(0, cLocks.NumLocked());
+
+	//Release only frees the objects it is given.
+	AssertInt(LR_Granted, cLocks.Lock(9, 200LL, LM_Shared));
+	AssertInt(LR_Granted, cLocks.Lock(9, 201LL, LM_Exclusive));
+	AssertInt(LR_Granted, cLocks.Lock(9, 202LL, LM_Update));
+	aoiLocked.Init();
+	aoiLocked.Add(200LL);
+	aoiLocked.Add(201LL);
+	cLocks.Release(9, &aoiLocked);
+	aoiLocked.Kill();
+	AssertSize(1, cLocks.NumLocked());
+	AssertInt(LM_None, cLocks.GetMode(9, 200LL));
+	AssertInt(LM_Update, cLocks.GetMode(9, 202LL));
+	cLocks.ReleaseAll(9);
 	AssertSize(0, cLocks.NumLocked());
 
 	cLocks.Kill();
