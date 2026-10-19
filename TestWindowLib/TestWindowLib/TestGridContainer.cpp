@@ -1,6 +1,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/Logger.h"
+#include "BaseLib/StdRandom.h"
 #include "StandardLib/Objects.h"
 #include "WindowLib/Window.h"
 #include "WindowLib/GridContainer.h"
@@ -22,14 +23,14 @@
 //////////////////////////////////////////////////////////////////////////
 struct SGridTestComponent
 {
-	const char*	szImage;		//NULL for a red border canvas.
+	const char*	szImage;			//NULL for a border canvas.
 	int			iColumn;
 	int			iRow;
 	int			iColumnSpan;
 	int			iRowSpan;
 	int			iWidthWeight;
 	int			iHeightWeight;
-	SInt32Vec2	sDesiredSize;	//-1 on an axis fills the cell on that axis.  -1, -1 on an image canvas takes the cel's size.
+	SInt32Vec2	sDesiredSize;		//-1 on an axis fills the cell on that axis.  -1, -1 on an image canvas takes the cel's size.
 	SInt32Vec2	sExpectedPosition;
 	SInt32Vec2	sExpectedSize;
 };
@@ -39,13 +40,16 @@ struct SGridTestComponent
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestGridContainerLayout(char* szDirectory, int32 iWidth, int32 iHeight, size uiNumComponents, SGridTestComponent* asComponents, int32 iRequiredWidth, int32 iRequiredHeight, bool bCompareFrame)
+void TestGridContainerLayout(char* szDirectory, int32 iWidth, int32 iHeight, size uiNumComponents, SGridTestComponent* asComponents, uint32 iRandomSeed, int32 iExpectedRequiredWidth, int32 iExpectedRequiredHeight)
 {
 	CWinRefWindowFactory	cNativeFactory;
 	CFileUtil				cFileUtil;
+	CRandom					cRandom;
 
 	cFileUtil.RemoveDir(szDirectory);
 	cFileUtil.MakeDir(szDirectory);
+
+	cRandom.Init(iRandomSeed);
 
 	ObjectsInit();
 	{
@@ -61,6 +65,7 @@ void TestGridContainerLayout(char* szDirectory, int32 iWidth, int32 iHeight, siz
 		SInt32Vec2				sVec;
 		CPointer				pNull;
 		size					i;
+		ARGB32					sColour;
 
 		AssertTrue(uiNumComponents <= 8);
 
@@ -81,7 +86,8 @@ void TestGridContainerLayout(char* szDirectory, int32 iWidth, int32 iHeight, siz
 			}
 			else
 			{
-				pDraw = OMalloc<CBorderCanvasDraw>(Set32BitColour(1.0f, 0, 0));
+				sColour = Set32BitColour(cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f, cRandom.Next(0, 255) / 255.0f);
+				pDraw = OMalloc<CBorderCanvasDraw>(sColour);
 			}
 			apCanvas[i] = OMalloc<CCanvas>(pTestWindow, pDraw);
 			apCanvas[i]->SetDesiredSize(psComponent->sDesiredSize.x, psComponent->sDesiredSize.y);
@@ -91,7 +97,7 @@ void TestGridContainerLayout(char* szDirectory, int32 iWidth, int32 iHeight, siz
 
 		pGrid->SetRequiredSize();
 		sVec = pGrid->GetRequiredSize();
-		AssertInt32Vec2(iRequiredWidth, iRequiredHeight, &sVec);
+		AssertInt32Vec2(iExpectedRequiredWidth, iExpectedRequiredHeight, &sVec);
 
 		pTestWindow->Show();
 
@@ -107,18 +113,17 @@ void TestGridContainerLayout(char* szDirectory, int32 iWidth, int32 iHeight, siz
 		pGrid = NULL;
 		pTestWindow = NULL;
 
-		if (bCompareFrame)
-		{
-			szExpectedDirectory.Init(szDirectory);
-			szExpectedDirectory.Replace("Output", "Input");
-			AssertDirectory(szExpectedDirectory.Text(), szDirectory);
-			szExpectedDirectory.Kill();
-		}
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
 	}
 	AssertTrue(ORoot()->RemoveAll());
 	cNativeFactory.Kill();
 	ObjectsFlush();
 	ObjectsKill();
+
+	cRandom.Kill();
 
 	cFileUtil.RemoveDir(szDirectory);
 }
@@ -138,7 +143,7 @@ void TestGridContainerNoWeights(void)
 		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(14, 5),  SInt32Vec2(10, 18), SInt32Vec2(14, 5) },
 		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(4, 4),   SInt32Vec2(25, 18), SInt32Vec2(4, 4) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerNoWeights", 40, 30, 4, asComponents, 20, 17, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerNoWeights", 40, 30, 4, asComponents, 4354, 20, 17);
 }
 
 
@@ -154,7 +159,7 @@ void TestGridContainerColumnWeights(void)
 		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 10), SInt32Vec2(10, 0),  SInt32Vec2(10, 10) },
 		{ NULL, 1, 0, 1, 1, 2, 0, SInt32Vec2(-1, -1), SInt32Vec2(30, 0),  SInt32Vec2(40, 10) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerColumnWeights", 70, 10, 2, asComponents, 10, 10, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerColumnWeights", 70, 10, 2, asComponents, 4674, 10, 10);
 }
 
 
@@ -169,7 +174,7 @@ void TestGridContainerRowWeights(void)
 		{ NULL, 0, 0, 1, 1, 0, 1, SInt32Vec2(8, 8),   SInt32Vec2(0, 5),   SInt32Vec2(8, 8) },
 		{ NULL, 0, 1, 1, 1, 0, 1, SInt32Vec2(8, -1),  SInt32Vec2(0, 19),  SInt32Vec2(8, 11) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerRowWeights", 8, 30, 2, asComponents, 8, 8, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerRowWeights", 8, 30, 2, asComponents, 9844, 8, 8);
 }
 
 
@@ -185,7 +190,7 @@ void TestGridContainerSpanWithoutWeights(void)
 		{ NULL, 1, 0, 1, 1, 0, 0, SInt32Vec2(6, 4),   SInt32Vec2(10, 0),  SInt32Vec2(6, 4) },
 		{ NULL, 0, 1, 2, 1, 0, 0, SInt32Vec2(20, 4),  SInt32Vec2(0, 4),   SInt32Vec2(20, 4) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerSpanWithoutWeights", 20, 8, 3, asComponents, 20, 8, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerSpanWithoutWeights", 20, 8, 3, asComponents, 2673, 20, 8);
 }
 
 
@@ -201,7 +206,7 @@ void TestGridContainerSpanWithWeights(void)
 		{ NULL, 1, 0, 1, 1, 3, 0, SInt32Vec2(6, 4),   SInt32Vec2(11, 0),  SInt32Vec2(6, 4) },
 		{ NULL, 0, 1, 2, 1, 0, 0, SInt32Vec2(20, 4),  SInt32Vec2(0, 4),   SInt32Vec2(20, 4) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerSpanWithWeights", 20, 8, 3, asComponents, 20, 8, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerSpanWithWeights", 20, 8, 3, asComponents, 1234, 20, 8);
 }
 
 
@@ -222,8 +227,8 @@ void TestGridContainerShrink(void)
 		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(20, 4),  SInt32Vec2(-5, 0),  SInt32Vec2(20, 4) },
 		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(20, 4),  SInt32Vec2(0, 0),   SInt32Vec2(20, 4) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkWeightedFirst", 30, 4, 2, asWeightedFirst, 40, 4, false);
-	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkThenEverything", 10, 4, 2, asThenEverything, 40, 4, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkWeightedFirst", 30, 4, 2, asWeightedFirst, 6665, 40, 4);
+	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkThenEverything", 10, 4, 2, asThenEverything, 6665, 40, 4);
 }
 
 
@@ -238,7 +243,7 @@ void TestGridContainerOverlap(void)
 		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(10, 10), SInt32Vec2(0, 0),   SInt32Vec2(10, 10) },
 		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(4, 4),   SInt32Vec2(3, 3),   SInt32Vec2(4, 4) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerOverlap", 10, 10, 2, asComponents, 10, 10, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerOverlap", 10, 10, 2, asComponents, 7936, 10, 10);
 }
 
 
@@ -275,9 +280,9 @@ void TestGridContainerGrowSlivers(void)
 		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(6, 4), SInt32Vec2(22, 4) },
 		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(28, 4), SInt32Vec2(11, 4) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerGrowSliversLargest", 81, 8, 4, asLargest, 20, 8, false);
-	TestGridContainerLayout("Output" _FS_ "GridContainerGrowSliversTies", 35, 8, 6, asTies, 30, 8, false);
-	TestGridContainerLayout("Output" _FS_ "GridContainerGrowSliversLargestInMiddle", 39, 8, 6, asLargestInMiddle, 35, 8, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerGrowSliversLargest", 81, 8, 4, asLargest, 7740, 20, 8);
+	TestGridContainerLayout("Output" _FS_ "GridContainerGrowSliversTies", 35, 8, 6, asTies, 7740, 30, 8);
+	TestGridContainerLayout("Output" _FS_ "GridContainerGrowSliversLargestInMiddle", 39, 8, 6, asLargestInMiddle, 7740, 35, 8);
 }
 
 
@@ -296,7 +301,7 @@ void TestGridContainerSpanSlivers(void)
 		{ NULL, 0, 2, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 8), SInt32Vec2(12, 4) },
 		{ NULL, 1, 2, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(12, 8), SInt32Vec2(7, 4) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerSpanSlivers", 19, 12, 5, asComponents, 19, 12, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerSpanSlivers", 19, 12, 5, asComponents, 2345, 19, 12);
 }
 
 
@@ -330,9 +335,9 @@ void TestGridContainerShrinkSlivers(void)
 		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(26, 4), SInt32Vec2(18, 4) },
 		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(44, 4), SInt32Vec2(9, 4) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkSliversOnePixel", 29, 8, 4, asOnePixel, 30, 8, false);
-	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkSliversFivePixels", 25, 8, 4, asFivePixels, 30, 8, false);
-	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkSliversProportional", 53, 8, 6, asProportional, 60, 8, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkSliversOnePixel", 29, 8, 4, asOnePixel, 8489, 30, 8);
+	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkSliversFivePixels", 25, 8, 4, asFivePixels, 8489, 30, 8);
+	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkSliversProportional", 53, 8, 6, asProportional, 8489, 60, 8);
 }
 
 
@@ -343,7 +348,7 @@ void TestGridContainerShrinkSlivers(void)
 void TestGridContainerEmpty(void)
 {
 	//A grid with nothing in it needs no space and lays out without anything to lay out.
-	TestGridContainerLayout("Output" _FS_ "GridContainerEmpty", 20, 20, 0, NULL, 0, 0, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerEmpty", 20, 20, 0, NULL, 7735, 0, 0);
 }
 
 
@@ -362,8 +367,8 @@ void TestGridContainerGaps(void)
 	SGridTestComponent	asAlone[1] = {
 		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(10, 10), SInt32Vec2(5, 5),   SInt32Vec2(10, 10) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerGapsEmptyColumn", 12, 6, 2, asEmptyColumn, 12, 6, false);
-	TestGridContainerLayout("Output" _FS_ "GridContainerGapsAlone", 20, 20, 1, asAlone, 10, 10, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerGapsEmptyColumn", 12, 6, 2, asEmptyColumn, 6112, 12, 6);
+	TestGridContainerLayout("Output" _FS_ "GridContainerGapsAlone", 20, 20, 1, asAlone, 6112, 10, 10);
 }
 
 
@@ -380,8 +385,8 @@ void TestGridContainerImageInWeightedCell(void)
 	SGridTestComponent	asBorder[1] = {
 		{ NULL,       0, 0, 1, 1, 1, 1, SInt32Vec2(-1, -1), SInt32Vec2(0, 0),   SInt32Vec2(30, 20) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerImageInWeightedCell", 30, 20, 1, asImage, 12, 10, false);
-	TestGridContainerLayout("Output" _FS_ "GridContainerBorderInWeightedCell", 30, 20, 1, asBorder, 0, 0, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerImageInWeightedCell", 30, 20, 1, asImage, 6551, 12, 10);
+	TestGridContainerLayout("Output" _FS_ "GridContainerBorderInWeightedCell", 30, 20, 1, asBorder, 6551, 0, 0);
 }
 
 
@@ -400,7 +405,7 @@ void TestGridContainerDarkForestImages(void)
 		{ "Wolf.png",		0, 1, 2, 1, 0, 0, SInt32Vec2(-1, -1), SInt32Vec2(9, 17),  SInt32Vec2(12, 10) },
 		{ "Mushroom.png",	2, 1, 1, 1, 0, 0, SInt32Vec2(-1, -1), SInt32Vec2(25, 18), SInt32Vec2(8, 8) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerDarkForestImages", 40, 30, 5, asComponents, 28, 24, true);
+	TestGridContainerLayout("Output" _FS_ "GridContainerDarkForestImages", 40, 30, 5, asComponents, 6510, 28, 24);
 }
 
 
@@ -422,8 +427,8 @@ void TestGridContainerRowSpans(void)
 		{ NULL, 0, 1, 1, 1, 0, 3, SInt32Vec2(4, 6),   SInt32Vec2(0, 11),  SInt32Vec2(4, 6) },
 		{ NULL, 1, 0, 1, 2, 0, 0, SInt32Vec2(4, 20),  SInt32Vec2(4, 0),   SInt32Vec2(4, 20) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerRowSpansWithoutWeights", 8, 20, 3, asWithoutWeights, 8, 20, false);
-	TestGridContainerLayout("Output" _FS_ "GridContainerRowSpansWithWeights", 8, 20, 3, asWithWeights, 8, 20, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerRowSpansWithoutWeights", 8, 20, 3, asWithoutWeights, 4510, 8, 20);
+	TestGridContainerLayout("Output" _FS_ "GridContainerRowSpansWithWeights", 8, 20, 3, asWithWeights, 4510, 8, 20);
 }
 
 
@@ -450,8 +455,8 @@ void TestGridContainerSpanWeight(void)
 		{ NULL, 2, 0, 1, 1, 4, 0, SInt32Vec2(10, 4),  SInt32Vec2(40, 0),  SInt32Vec2(10, 4) },
 		{ NULL, 0, 1, 2, 1, 8, 0, SInt32Vec2(-1, 4),  SInt32Vec2(0, 4),   SInt32Vec2(36, 4) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerSpanWeightToLastColumn", 40, 8, 3, asToLastColumn, 20, 8, false);
-	TestGridContainerLayout("Output" _FS_ "GridContainerSpanWeightToWeightedColumns", 54, 8, 4, asToWeightedColumns, 30, 8, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerSpanWeightToLastColumn", 40, 8, 3, asToLastColumn, 6589, 20, 8);
+	TestGridContainerLayout("Output" _FS_ "GridContainerSpanWeightToWeightedColumns", 54, 8, 4, asToWeightedColumns, 6589, 30, 8);
 }
 
 
@@ -469,7 +474,7 @@ void TestGridContainerNestedSpans(void)
 		{ NULL, 0, 1, 2, 1, 0, 0, SInt32Vec2(12, 4),  SInt32Vec2(0, 4),   SInt32Vec2(12, 4) },
 		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4),  SInt32Vec2(12, 4),  SInt32Vec2(18, 4) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerNestedSpans", 30, 8, 3, asComponents, 30, 8, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerNestedSpans", 30, 8, 3, asComponents, 6522, 30, 8);
 }
 
 
@@ -485,7 +490,7 @@ void TestGridContainerClamping(void)
 		{ NULL, -2, -1, 0, -3, -5, -1, SInt32Vec2(10, 10), SInt32Vec2(0, 0),   SInt32Vec2(10, 10) },
 		{ NULL, 1, 1, 1, 1, 0, 0,      SInt32Vec2(10, 10), SInt32Vec2(10, 10), SInt32Vec2(10, 10) } };
 
-	TestGridContainerLayout("Output" _FS_ "GridContainerClamping", 20, 20, 2, asComponents, 20, 20, false);
+	TestGridContainerLayout("Output" _FS_ "GridContainerClamping", 20, 20, 2, asComponents, 6581, 20, 20);
 }
 
 

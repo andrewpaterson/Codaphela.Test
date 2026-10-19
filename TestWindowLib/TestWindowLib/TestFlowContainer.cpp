@@ -657,7 +657,7 @@ void TestFlowContainerRightTopWrap(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRandomSeed, EContainerStyleDirection eD, EContainerStyleWrap eW, EContainerStyleVertical eV, EContainerStyleHorizontal eH)
+void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, uint32 iRandomSeed, EContainerStyleDirection eD, EContainerStyleWrap eW, EContainerStyleVertical eV, EContainerStyleHorizontal eH)
 {
 	CWinRefWindowFactory	cNativeFactory;
 	CFileUtil				cFileUtil;
@@ -743,7 +743,7 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRand
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRandomSeed, EContainerStyleDirection eD, EContainerStyleWrap eW, EContainerStyleVertical eA)
+void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, uint32 iRandomSeed, EContainerStyleDirection eD, EContainerStyleWrap eW, EContainerStyleVertical eA)
 {
 	TestFlowContainer(szDirectory, iWidth, iHeight, iRandomSeed, eD, eW, eA, CSH_Unknown);
 }
@@ -753,7 +753,7 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRand
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, int iRandomSeed, EContainerStyleDirection eD, EContainerStyleWrap eW, EContainerStyleHorizontal eA)
+void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, uint32 iRandomSeed, EContainerStyleDirection eD, EContainerStyleWrap eW, EContainerStyleHorizontal eA)
 {
 	TestFlowContainer(szDirectory, iWidth, iHeight, iRandomSeed, eD, eW, CSV_Unknown, eA);
 }
