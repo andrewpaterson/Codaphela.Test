@@ -33,6 +33,9 @@ struct SGridTestComponent
 	SInt32Vec2	sDesiredSize;		//-1 on an axis fills the cell on that axis.  -1, -1 on an image canvas takes the cel's size.
 	SInt32Vec2	sExpectedPosition;
 	SInt32Vec2	sExpectedSize;
+
+	EContainerStyleHorizontal	eHorizontal;	//Unknown on both axes leaves the canvas's default alignment.
+	EContainerStyleVertical		eVertical;
 };
 
 
@@ -55,7 +58,7 @@ void TestGridContainerLayout(char* szDirectory, int32 iWidth, int32 iHeight, siz
 	{
 		Ptr<CWindow>			pTestWindow;
 		Ptr<CGridContainer>		pGrid;
-		Ptr<CCanvas>			apCanvas[8];
+		Ptr<CCanvas>			apCanvas[9];
 		Ptr<CCanvasDraw>		pDraw;
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
@@ -67,7 +70,7 @@ void TestGridContainerLayout(char* szDirectory, int32 iWidth, int32 iHeight, siz
 		size					i;
 		ARGB32					sColour;
 
-		AssertTrue(uiNumComponents <= 8);
+		AssertTrue(uiNumComponents <= 9);
 
 		cNativeFactory.Init(&gcMemoryAllocator, iWidth, iHeight, szDirectory);
 		cTick.Init(&cData, 1);
@@ -91,6 +94,10 @@ void TestGridContainerLayout(char* szDirectory, int32 iWidth, int32 iHeight, siz
 			}
 			apCanvas[i] = OMalloc<CCanvas>(pTestWindow, pDraw);
 			apCanvas[i]->SetDesiredSize(psComponent->sDesiredSize.x, psComponent->sDesiredSize.y);
+			if ((psComponent->eHorizontal != CSH_Unknown) || (psComponent->eVertical != CSV_Unknown))
+			{
+				apCanvas[i]->SetAlignment(psComponent->eHorizontal, psComponent->eVertical);
+			}
 			pGrid->AddComponent(apCanvas[i], psComponent->iColumn, psComponent->iRow, psComponent->iColumnSpan, psComponent->iRowSpan, psComponent->iWidthWeight, psComponent->iHeightWeight);
 			pDraw = NULL;
 		}
@@ -406,6 +413,31 @@ void TestGridContainerDarkForestImages(void)
 		{ "Mushroom.png",	2, 1, 1, 1, 0, 0, SInt32Vec2(-1, -1), SInt32Vec2(25, 18), SInt32Vec2(8, 8) } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerDarkForestImages", 40, 30, 5, asComponents, 6510, 28, 24);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGridContainerComponentAlignment(void)
+{
+	//Every column and row has a component 30 pixels across so the 90 x 90 grid is evenly weighted.  The 60 spare pixels
+	//make the columns 50 wide and the 30 spare pixels make the rows 40 tall.  Each component is placed in its 50 x 40
+	//cell by its own alignment: the corners and edges by left, right, top and bottom, stretched components fill their
+	//cell on that axis and centred ones sit in the middle.
+	SGridTestComponent	asComponents[9] = {
+		{ NULL,			0, 0, 1, 1, 1, 1, SInt32Vec2(30, 30), SInt32Vec2(0, 0),     SInt32Vec2(30, 30), CSH_Left,		CSV_Top },
+		{ "Owl.png",	1, 0, 1, 1, 1, 1, SInt32Vec2(-1, -1), SInt32Vec2(70, 0),    SInt32Vec2(9, 10),  CSH_Center,		CSV_Top },
+		{ NULL,			2, 0, 1, 1, 1, 1, SInt32Vec2(24, 18), SInt32Vec2(126, 0),   SInt32Vec2(24, 18), CSH_Right,		CSV_Top },
+		{ "Wolf.png",	0, 1, 1, 1, 1, 1, SInt32Vec2(-1, -1), SInt32Vec2(0, 55),    SInt32Vec2(12, 10), CSH_Left,		CSV_Center },
+		{ NULL,			1, 1, 1, 1, 1, 1, SInt32Vec2(30, 30), SInt32Vec2(50, 45),   SInt32Vec2(50, 30), CSH_Stretch,	CSV_Center },
+		{ "Pine.png",	2, 1, 1, 1, 1, 1, SInt32Vec2(-1, -1), SInt32Vec2(141, 53),  SInt32Vec2(9, 14),  CSH_Right,		CSV_Center },
+		{ "Moon.png",	0, 2, 1, 1, 1, 1, SInt32Vec2(-1, -1), SInt32Vec2(0, 110),   SInt32Vec2(10, 10), CSH_Left,		CSV_Bottom },
+		{ NULL,			1, 2, 1, 1, 1, 1, SInt32Vec2(16, 30), SInt32Vec2(67, 80),   SInt32Vec2(16, 40), CSH_Center,		CSV_Stretch },
+		{ NULL,			2, 2, 1, 1, 1, 1, SInt32Vec2(30, 12), SInt32Vec2(120, 108), SInt32Vec2(30, 12), CSH_Right,		CSV_Bottom } };
+
+	TestGridContainerLayout("Output" _FS_ "GridContainerComponentAlignment", 150, 120, 9, asComponents, 3821, 90, 90);
 }
 
 
@@ -879,6 +911,7 @@ void TestGridContainer(void)
 	TestGridContainerShrink();
 	TestGridContainerOverlap();
 	TestGridContainerDarkForestImages();
+	TestGridContainerComponentAlignment();
 	TestGridContainerAddAndRemove();
 	TestGridContainerNotAtOrigin();
 	TestGridContainerActualBounds();

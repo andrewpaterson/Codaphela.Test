@@ -104,6 +104,9 @@ void TestFlowContainerBasicOnHeap(void)
 		pCanvas1->SetDesiredSize(10, 10);
 		pCanvas2->SetDesiredSize(20, 20);
 		pCanvas3->SetDesiredSize(5, 16);
+		pCanvas1->SetAlignment(CSH_Left, CSV_Top);
+		pCanvas2->SetAlignment(CSH_Left, CSV_Top);
+		pCanvas3->SetAlignment(CSH_Left, CSV_Top);
 
 		AssertSize(3, pFlow->NumComponents());
 		sVec = pCanvas1->GetActualSize();
@@ -190,6 +193,9 @@ void TestFlowContainerBasicOnStack(void)
 		cCanvas1.SetDesiredSize(10, 10);
 		cCanvas2.SetDesiredSize(20, 20);
 		cCanvas3.SetDesiredSize(5, 16);
+		cCanvas1.SetAlignment(CSH_Left, CSV_Top);
+		cCanvas2.SetAlignment(CSH_Left, CSV_Top);
+		cCanvas3.SetAlignment(CSH_Left, CSV_Top);
 
 		AssertSize(3, cFlow.NumComponents());
 		sVec = cCanvas1.GetActualSize();
@@ -311,6 +317,7 @@ void TestFlowContainerRightCenteredContinue(void)
 
 			pCanvas = OMalloc<CCanvas>(pTestWindow, pDraw);
 			pFlow->AddComponent(pCanvas);
+			pCanvas->SetAlignment(CSH_Left, CSV_Center);
 
 			if (i % 2 == 0)
 			{
@@ -435,6 +442,7 @@ void TestFlowContainerRightTopContinue(void)
 
 			pCanvas = OMalloc<CCanvas>(pTestWindow, pDraw);
 			pFlow->AddComponent(pCanvas);
+			pCanvas->SetAlignment(CSH_Left, CSV_Top);
 
 			if (i % 2 == 0)
 			{
@@ -524,6 +532,7 @@ void TestFlowContainerRightBottomContinue(void)
 
 			pCanvas = OMalloc<CCanvas>(pTestWindow, pDraw);
 			pFlow->AddComponent(pCanvas);
+			pCanvas->SetAlignment(CSH_Left, CSV_Bottom);
 
 			if (i % 2 == 0)
 			{
@@ -613,6 +622,7 @@ void TestFlowContainerRightTopWrap(void)
 
 			pCanvas = OMalloc<CCanvas>(pTestWindow, pDraw);
 			pFlow->AddComponent(pCanvas);
+			pCanvas->SetAlignment(CSH_Left, CSV_Top);
 
 			if (i % 2 == 0)
 			{
@@ -705,6 +715,7 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, uint32 iR
 
 			pCanvas = OMalloc<CCanvas>(pTestWindow, pDraw);
 			pFlow->AddComponent(pCanvas);
+			pCanvas->SetAlignment(eH, eV);  //The flow's alignment places the block of lines, the component's places it within its line.
 
 			if (i % 2 == 0)
 			{
@@ -863,7 +874,7 @@ void TestFlowLongContainerDownRightWrap(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFlowContainerPositions(char* szDirectory, int32 iWidth, int32 iHeight, EContainerStyleDirection eD, EContainerStyleWrap eW, EContainerStyleVertical eV, EContainerStyleHorizontal eH, size uiNumComponents, SInt32Vec2* asDesiredSizes, SInt32Vec2* asExpectedPositions, SInt32Vec2* asExpectedSizes)
+void TestFlowContainerPositions(char* szDirectory, int32 iWidth, int32 iHeight, EContainerStyleDirection eD, EContainerStyleWrap eW, EContainerStyleVertical eV, EContainerStyleHorizontal eH, size uiNumComponents, SInt32Vec2* asDesiredSizes, SInt32Vec2* asExpectedPositions, SInt32Vec2* asExpectedSizes, EContainerStyleHorizontal* aeHorizontal = NULL, EContainerStyleVertical* aeVertical = NULL)
 {
 	CWinRefWindowFactory	cNativeFactory;
 	CFileUtil				cFileUtil;
@@ -876,7 +887,7 @@ void TestFlowContainerPositions(char* szDirectory, int32 iWidth, int32 iHeight, 
 	{
 		Ptr<CWindow>			pTestWindow;
 		size					i;
-		Ptr<CCanvas>			apCanvas[3];
+		Ptr<CCanvas>			apCanvas[4];
 		Ptr<CBorderCanvasDraw>	pDraw;
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
@@ -906,6 +917,14 @@ void TestFlowContainerPositions(char* szDirectory, int32 iWidth, int32 iHeight, 
 			apCanvas[i] = OMalloc<CCanvas>(pTestWindow, pDraw);
 			pFlow->AddComponent(apCanvas[i]);
 			apCanvas[i]->SetDesiredSize(asDesiredSizes[i].x, asDesiredSizes[i].y);
+			if (aeHorizontal != NULL)
+			{
+				apCanvas[i]->SetAlignment(aeHorizontal[i], aeVertical[i]);
+			}
+			else
+			{
+				apCanvas[i]->SetAlignment(eH, eV);
+			}
 		}
 		pDraw = NULL;
 
@@ -1002,6 +1021,40 @@ void TestFlowContainerDownStretchContinue(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFlowContainerRightComponentAlignmentContinue(void)
+{
+	//Each component places itself across the line by its own alignment.  Without wrapping the line is the whole area.
+	SInt32Vec2					asDesired[4] = { SInt32Vec2(10, 10), SInt32Vec2(10, 10), SInt32Vec2(10, 10), SInt32Vec2(10, 10) };
+	SInt32Vec2					asPosition[4] = { SInt32Vec2(0, 0), SInt32Vec2(10, 10), SInt32Vec2(20, 20), SInt32Vec2(30, 0) };
+	SInt32Vec2					asSize[4] = { SInt32Vec2(10, 10), SInt32Vec2(10, 10), SInt32Vec2(10, 10), SInt32Vec2(10, 30) };
+	EContainerStyleHorizontal	aeHorizontal[4] = { CSH_Left, CSH_Left, CSH_Left, CSH_Left };
+	EContainerStyleVertical		aeVertical[4] = { CSV_Top, CSV_Center, CSV_Bottom, CSV_Stretch };
+
+	TestFlowContainerPositions("Output" _FS_ "FlowContainerRightComponentAlignmentContinue", 96, 30, CSD_Right, CSW_Continue, CSV_Top, CSH_Unknown, 4, asDesired, asPosition, asSize, aeHorizontal, aeVertical);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainerRightComponentAlignmentWrap(void)
+{
+	//The flow's bottom alignment puts the 26 high block of lines at the bottom of the 40 high area.  Within the first 20
+	//thick line each component places itself by its own alignment.
+	SInt32Vec2					asDesired[4] = { SInt32Vec2(10, 20), SInt32Vec2(10, 10), SInt32Vec2(10, 10), SInt32Vec2(20, 6) };
+	SInt32Vec2					asPosition[4] = { SInt32Vec2(0, 14), SInt32Vec2(10, 14), SInt32Vec2(20, 24), SInt32Vec2(0, 34) };
+	EContainerStyleHorizontal	aeHorizontal[4] = { CSH_Left, CSH_Left, CSH_Left, CSH_Left };
+	EContainerStyleVertical		aeVertical[4] = { CSV_Top, CSV_Top, CSV_Bottom, CSV_Center };
+
+	TestFlowContainerPositions("Output" _FS_ "FlowContainerRightComponentAlignmentWrap", 30, 40, CSD_Right, CSW_Wrap, CSV_Bottom, CSH_Unknown, 4, asDesired, asPosition, asDesired, aeHorizontal, aeVertical);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFlowContainerNested(void)
 {
 	CWinRefWindowFactory	cNativeFactory;
@@ -1042,12 +1095,14 @@ void TestFlowContainerNested(void)
 		pDraw = OMalloc<CBorderCanvasDraw>(Set32BitColour(1.0f, 0, 0));
 		pCanvas = OMalloc<CCanvas>(pTestWindow, pDraw);
 		pCanvas->SetDesiredSize(10, 10);
+		pCanvas->SetAlignment(CSH_Left, CSV_Top);
 		pOuterFlow->AddComponent(pCanvas);
 
 		//A wrapping flow inside a canvas that is not at the origin.
 		pDraw = OMalloc<CBorderCanvasDraw>(Set32BitColour(0, 1.0f, 0));
 		pHolder = OMalloc<CCanvas>(pTestWindow, pDraw);
 		pHolder->SetDesiredSize(40, 20);
+		pHolder->SetAlignment(CSH_Left, CSV_Top);
 		pOuterFlow->AddComponent(pHolder);
 
 		pInnerFlow = OMalloc<CFlowContainer>(pTestWindow);
@@ -1064,6 +1119,7 @@ void TestFlowContainerNested(void)
 		//A flow added directly to a flow is laid out at its desired size.
 		pRowFlow = OMalloc<CFlowContainer>(pTestWindow);
 		pRowFlow->SetDesiredSize(7, 14);
+		pRowFlow->SetAlignment(CSH_Left, CSV_Top);
 		pRowFlow->SetFlowStyle(CSD_Down, CSW_Continue, CSH_Left);
 		pOuterFlow->AddComponent(pRowFlow);
 		for (i = 0; i < 2; i++)
@@ -1071,6 +1127,7 @@ void TestFlowContainerNested(void)
 			pDraw = OMalloc<CBorderCanvasDraw>(Set32BitColour(1.0f, 1.0f, 0));
 			apRow[i] = OMalloc<CCanvas>(pTestWindow, pDraw);
 			apRow[i]->SetDesiredSize(6 + (int)i, 7);
+			apRow[i]->SetAlignment(CSH_Left, CSV_Top);
 			pRowFlow->AddComponent(apRow[i]);
 		}
 		pCanvas = NULL;
@@ -1180,6 +1237,14 @@ void TestFlowContainerDarkForest(char* szDirectory, int32 iWidth, int32 iHeight,
 			apCanvas[i] = OMalloc<CCanvas>(pTestWindow, pDraw);
 			apCanvas[i]->SetDesiredSize(psComponent->sDesiredSize.x, psComponent->sDesiredSize.y);
 			pFlow->AddComponent(apCanvas[i]);
+			if ((psComponent->eHorizontal != CSH_Unknown) || (psComponent->eVertical != CSV_Unknown))
+			{
+				apCanvas[i]->SetAlignment(psComponent->eHorizontal, psComponent->eVertical);
+			}
+			else
+			{
+				apCanvas[i]->SetAlignment(eH, eV);
+			}
 			pDraw = NULL;
 		}
 
@@ -1342,6 +1407,8 @@ void TestFlowContainer(void)
 	TestFlowContainerUpRightContinue();
 	TestFlowContainerUpLeftWrap();
 	TestFlowContainerDownStretchContinue();
+	TestFlowContainerRightComponentAlignmentContinue();
+	TestFlowContainerRightComponentAlignmentWrap();
 	TestFlowContainerNested();
 	TestFlowContainerDarkForestImagesRightTopWrap();
 	TestFlowContainerDarkForestImagesDownCenterWrap();
