@@ -354,6 +354,7 @@
     <ClCompile Include="TestWriteTransaction.cpp" />
     <ClCompile Include="TestReadTransaction.cpp" />
     <ClCompile Include="TestTransactionConcurrency.cpp" />
+    <ClCompile Include="TestTransactionHelper.cpp" />
     <ClCompile Include="TestFat32.cpp" />
     <ClCompile Include="TestFat32Common.cpp" />
     <ClCompile Include="TestFatCache.cpp" />
@@ -395,6 +396,7 @@
     <ClInclude Include="ArrayTemplateTestClasses.h" />
     <ClInclude Include="ConstructorCallTestClasses.h" />
     <ClInclude Include="ConstructorsTestClasses.h" />
+    <ClInclude Include="TestTransactionHelper.h" />
     <ClInclude Include="FileIOTestObjects.h" />
     <ClInclude Include="ParserCustomIdentifier.h" />
     <ClInclude Include="SortedTestObject.h" />

@@ -12,45 +12,10 @@
 #include "BaseLib/WriteTransaction.h"
 #include "BaseLib/ReadTransaction.h"
 #include "TestLib/Assert.h"
+#include "TestTransactionHelper.h"
 
 
 #define CONCURRENCY_DIR	"Output" _FS_ "TransactionConcurrency"
-
-
-//A value several threads can set and read safely.
-struct SConcurrencyStage
-{
-	CMutex	cMutex;
-	int		iStage;
-
-	void	Init(void)				{ cMutex.Init(); iStage = 0; }
-	void	Kill(void)				{ cMutex.Kill(); }
-	void	Set(int iNewStage)		{ cMutex.Lock(); iStage = iNewStage; cMutex.Unlock(); }
-	int		Get(void)				{ int iResult; cMutex.Lock(); iResult = iStage; cMutex.Unlock(); return iResult; }
-	void	WaitFor(int iWanted)	{ int i; for (i = 0; (i < 5000) && (Get() < iWanted); i++) { ThreadSleep(1); } }
-};
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-CCodabase* CreateConcurrencyCodabase(void)
-{
-	CCodabase*	pcDatabase;
-	CFileUtil	cFileUtil;
-	char		szOne[] = "One";
-	char		szTwo[] = "Two";
-
-	cFileUtil.RemoveDir(CONCURRENCY_DIR);
-	pcDatabase = CCodabaseFactory::Create(CONCURRENCY_DIR, IWT_No, DS_No);
-	AssertNotNull(pcDatabase);
-	AssertTrue(pcDatabase->Open());
-	AssertTrue(pcDatabase->Add(1LL, "Alpha", szOne, strlen(szOne) + 1));
-	AssertTrue(pcDatabase->Add(2LL, szTwo, strlen(szTwo) + 1));
-	AssertTrue(pcDatabase->Close());
-	return pcDatabase;
-}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -67,24 +32,10 @@ void KillConcurrencyCodabase(CCodabase* pcDatabase)
 }
 
 
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void AssertStoredString(CCodabase* pcDatabase, OIndex oi, const char* szExpected)
-{
-	char	szResult[256];
-
-	memset(szResult, 0, 256);
-	AssertTrue(pcDatabase->Get(oi, szResult));
-	AssertString(szExpected, szResult);
-}
-
-
 struct SLockWaiter
 {
 	CLockManager*		pcLocks;
-	SConcurrencyStage	sStage;
+	CTestStage			cStage;
 	ELockResult			eResult;
 };
 
@@ -98,9 +49,9 @@ void LockWaiter(void* pvData)
 	SLockWaiter*	psWaiter;
 
 	psWaiter = (SLockWaiter*)pvData;
-	psWaiter->sStage.Set(1);
+	psWaiter->cStage.Set(1);
 	psWaiter->eResult = psWaiter->pcLocks->Lock(1, 100LL, LM_Exclusive);
-	psWaiter->sStage.Set(2);
+	psWaiter->cStage.Set(2);
 }
 
 
@@ -147,20 +98,20 @@ void TestLockManagerRules(void)
 	//An older transaction waits.  A younger one behind a waiting writer dies even though it could share with the holder.
 	AssertInt(LR_Granted, cLocks.Lock(5, 100LL, LM_Shared));
 	sWaiter.pcLocks = &cLocks;
-	sWaiter.sStage.Init();
+	sWaiter.cStage.Init();
 	cThread.Init();
 	AssertTrue(cThread.Start(LockWaiter, &sWaiter));
-	sWaiter.sStage.WaitFor(1);
+	sWaiter.cStage.WaitFor(1);
 	ThreadSleep(50);
-	AssertInt(1, sWaiter.sStage.Get());
+	AssertInt(1, sWaiter.cStage.Get());
 	AssertInt(LR_Died, cLocks.Lock(3, 100LL, LM_Shared));
 	cLocks.ReleaseAll(5);
 	cThread.Join();
 	cThread.Kill();
-	AssertInt(2, sWaiter.sStage.Get());
+	AssertInt(2, sWaiter.cStage.Get());
 	AssertInt(LR_Granted, sWaiter.eResult);
 	AssertInt(LM_Exclusive, cLocks.GetMode(1, 100LL));
-	sWaiter.sStage.Kill();
+	sWaiter.cStage.Kill();
 	cLocks.ReleaseAll(1);
 	AssertSize(0, cLocks.NumLocked());
 
@@ -183,7 +134,7 @@ void TestTransactionConcurrencyDie(void)
 	char				szResult[256];
 	int64				iStartNumber;
 
-	pcDatabase = CreateConcurrencyCodabase();
+	pcDatabase = CreateTransactionTestCodabase(CONCURRENCY_DIR, DS_No);
 
 	//Transactions that do not conflict both commit.
 	pcOlder = pcDatabase->BeginWriteTransaction();
@@ -257,7 +208,7 @@ void TestTransactionConcurrencyNames(void)
 	char				szFirst[] = "First";
 	char				szSecond[] = "Second";
 
-	pcDatabase = CreateConcurrencyCodabase();
+	pcDatabase = CreateTransactionTestCodabase(CONCURRENCY_DIR, DS_No);
 
 	//The second transaction to add a name fails straight away.  It does not die and does not wait.
 	pcFirst = pcDatabase->BeginWriteTransaction();
@@ -286,7 +237,7 @@ void TestTransactionConcurrencyNames(void)
 struct SConcurrencyThread
 {
 	CCodabase*			pcDatabase;
-	SConcurrencyStage	sStage;
+	CTestStage			cStage;
 	bool				bResult;
 	bool				bDied;
 };
@@ -305,12 +256,12 @@ void OlderTransactionThread(void* pvData)
 	//Begun before the main thread's transaction, so it is older and waits for it.
 	psData = (SConcurrencyThread*)pvData;
 	pcTransaction = psData->pcDatabase->BeginWriteTransaction();
-	psData->sStage.Set(1);
-	psData->sStage.WaitFor(2);
+	psData->cStage.Set(1);
+	psData->cStage.WaitFor(2);
 	psData->bResult = pcTransaction->Set(1LL, szOlder, strlen(szOlder) + 1);
 	psData->bResult = psData->bResult && pcTransaction->Commit();
 	SafeKill(pcTransaction);
-	psData->sStage.Set(3);
+	psData->cStage.Set(3);
 }
 
 
@@ -326,29 +277,29 @@ void TestTransactionConcurrencyOlderWaits(void)
 	SConcurrencyThread	sData;
 	char				szYounger[] = "Younger";
 
-	pcDatabase = CreateConcurrencyCodabase();
+	pcDatabase = CreateTransactionTestCodabase(CONCURRENCY_DIR, DS_No);
 
 	sData.pcDatabase = pcDatabase;
-	sData.sStage.Init();
+	sData.cStage.Init();
 	cThread.Init();
 	AssertTrue(cThread.Start(OlderTransactionThread, &sData));
-	sData.sStage.WaitFor(1);
+	sData.cStage.WaitFor(1);
 
 	pcYounger = pcDatabase->BeginWriteTransaction();
 	AssertTrue(pcYounger->Set(1LL, szYounger, strlen(szYounger) + 1));
-	sData.sStage.Set(2);
+	sData.cStage.Set(2);
 	ThreadSleep(50);
-	AssertInt(2, sData.sStage.Get());
+	AssertInt(2, sData.cStage.Get());
 
 	//The older transaction was waiting for this one.  It goes on once this one commits.
 	AssertTrue(pcYounger->Commit());
 	SafeKill(pcYounger);
 	cThread.Join();
 	cThread.Kill();
-	AssertInt(3, sData.sStage.Get());
+	AssertInt(3, sData.cStage.Get());
 	AssertTrue(sData.bResult);
 	AssertStoredString(pcDatabase, 1LL, "Older");
-	sData.sStage.Kill();
+	sData.cStage.Kill();
 
 	KillConcurrencyCodabase(pcDatabase);
 }
@@ -367,9 +318,9 @@ void HoldingTransactionThread(void* pvData)
 	psData = (SConcurrencyThread*)pvData;
 	pcTransaction = psData->pcDatabase->BeginWriteTransaction();
 	psData->bResult = pcTransaction->Set(1LL, szHeld, strlen(szHeld) + 1);
-	psData->sStage.Set(1);
+	psData->cStage.Set(1);
 	ThreadSleep(100);
-	psData->sStage.Set(2);
+	psData->cStage.Set(2);
 	psData->bResult = psData->bResult && pcTransaction->Commit();
 	SafeKill(pcTransaction);
 }
@@ -390,7 +341,7 @@ void YoungerThanSessionThread(void* pvData)
 	psData->bResult = pcTransaction->Get(1LL, szResult);
 	psData->bDied = pcTransaction->HasDied();
 	SafeKill(pcTransaction);
-	psData->sStage.Set(1);
+	psData->cStage.Set(1);
 }
 
 
@@ -405,28 +356,28 @@ void TestTransactionConcurrencySession(void)
 	SConcurrencyThread	sData;
 	char				szSession[] = "Session";
 
-	pcDatabase = CreateConcurrencyCodabase();
+	pcDatabase = CreateTransactionTestCodabase(CONCURRENCY_DIR, DS_No);
 
 	//The session is always the oldest.  It waits for a transaction that has the object it wants.
 	sData.pcDatabase = pcDatabase;
-	sData.sStage.Init();
+	sData.cStage.Init();
 	cThread.Init();
 	AssertTrue(cThread.Start(HoldingTransactionThread, &sData));
-	sData.sStage.WaitFor(1);
+	sData.cStage.WaitFor(1);
 	AssertTrue(pcDatabase->Open());
 	AssertTrue(pcDatabase->Set(1LL, szSession, strlen(szSession) + 1));
-	AssertInt(2, sData.sStage.Get());
+	AssertInt(2, sData.cStage.Get());
 	AssertTrue(pcDatabase->Close());
 	cThread.Join();
 	cThread.Kill();
 	AssertTrue(sData.bResult);
 	AssertStoredString(pcDatabase, 1LL, szSession);
-	sData.sStage.Kill();
+	sData.cStage.Kill();
 
 	//A transaction that wants an object the session has dies.
 	AssertTrue(pcDatabase->Open());
 	AssertTrue(pcDatabase->Set(1LL, szSession, strlen(szSession) + 1));
-	sData.sStage.Init();
+	sData.cStage.Init();
 	sData.bDied = false;
 	cThread.Init();
 	AssertTrue(cThread.Start(YoungerThanSessionThread, &sData));
@@ -435,7 +386,7 @@ void TestTransactionConcurrencySession(void)
 	AssertFalse(sData.bResult);
 	AssertTrue(sData.bDied);
 	AssertTrue(pcDatabase->Close());
-	sData.sStage.Kill();
+	sData.cStage.Kill();
 
 	KillConcurrencyCodabase(pcDatabase);
 }
@@ -451,7 +402,7 @@ void TestTransactionConcurrencySession(void)
 struct SBankThread
 {
 	CCodabase*			pcDatabase;
-	SConcurrencyStage*	psTellersFinished;
+	CTestStage*			pcTellersFinished;
 	int					iSeed;
 	int					iCommitted;
 	int					iDeaths;
@@ -553,7 +504,7 @@ void BankAuditor(void* pvData)
 		}
 		psData->iAudits++;
 	}
-	while (psData->psTellersFinished->Get() == 0);
+	while (psData->pcTellersFinished->Get() == 0);
 }
 
 
@@ -570,7 +521,7 @@ void TestTransactionConcurrencyBank(void)
 	CNativeThread		acAuditors[BANK_AUDITORS];
 	SBankThread			asTellers[BANK_TELLERS];
 	SBankThread			asAuditors[BANK_AUDITORS];
-	SConcurrencyStage	sTellersFinished;
+	CTestStage			cTellersFinished;
 	int					i;
 	int					iBalance;
 	int					iTotal;
@@ -587,12 +538,12 @@ void TestTransactionConcurrencyBank(void)
 	AssertTrue(pcTransaction->Commit());
 	SafeKill(pcTransaction);
 
-	sTellersFinished.Init();
+	cTellersFinished.Init();
 	for (i = 0; i < BANK_AUDITORS; i++)
 	{
 		memset(&asAuditors[i], 0, sizeof(SBankThread));
 		asAuditors[i].pcDatabase = pcDatabase;
-		asAuditors[i].psTellersFinished = &sTellersFinished;
+		asAuditors[i].pcTellersFinished = &cTellersFinished;
 		acAuditors[i].Init();
 		AssertTrue(acAuditors[i].Start(BankAuditor, &asAuditors[i]));
 	}
@@ -612,7 +563,7 @@ void TestTransactionConcurrencyBank(void)
 		acTellers[i].Kill();
 		iCommitted += asTellers[i].iCommitted;
 	}
-	sTellersFinished.Set(1);
+	cTellersFinished.Set(1);
 	for (i = 0; i < BANK_AUDITORS; i++)
 	{
 		acAuditors[i].Join();
@@ -620,7 +571,7 @@ void TestTransactionConcurrencyBank(void)
 		AssertInt(0, asAuditors[i].iWrongTotals);
 		AssertTrue(asAuditors[i].iAudits > 0);
 	}
-	sTellersFinished.Kill();
+	cTellersFinished.Kill();
 	AssertTrue(iCommitted > 0);
 
 	//No money was made or lost.

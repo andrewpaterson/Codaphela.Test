@@ -657,6 +657,9 @@
     <ClCompile Include="TestTransactionConcurrency.cpp">
       <Filter>Source\Database</Filter>
     </ClCompile>
+    <ClCompile Include="TestTransactionHelper.cpp">
+      <Filter>Source\Database</Filter>
+    </ClCompile>
     <ClCompile Include="TestSequence.cpp">
       <Filter>Source\File\Indexed\Sequence</Filter>
     </ClCompile>
@@ -802,6 +805,9 @@
     </ClInclude>
     <ClInclude Include="ConstructorsTestClasses.h">
       <Filter>Source\Construtor</Filter>
+    </ClInclude>
+    <ClInclude Include="TestTransactionHelper.h">
+      <Filter>Source\Database</Filter>
     </ClInclude>
     <ClInclude Include="ConstructorCallTestClasses.h">
       <Filter>Source\Construtor</Filter>

@@ -10,45 +10,10 @@
 #include "BaseLib/WriteTransaction.h"
 #include "BaseLib/ReadTransaction.h"
 #include "TestLib/Assert.h"
+#include "TestTransactionHelper.h"
 
 
 #define READ_TRANSACTION_DIR	"Output" _FS_ "ReadTransaction"
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-CCodabase* CreateReadTransactionCodabase(void)
-{
-	CCodabase*	pcDatabase;
-	char		szOne[] = "One";
-	char		szTwo[] = "Two";
-	CFileUtil	cFileUtil;
-
-	cFileUtil.RemoveDir(READ_TRANSACTION_DIR);
-	pcDatabase = CCodabaseFactory::Create(READ_TRANSACTION_DIR, IWT_No, DS_No);
-	AssertNotNull(pcDatabase);
-	AssertTrue(pcDatabase->Open());
-	AssertTrue(pcDatabase->Add(1LL, "Alpha", szOne, strlen(szOne) + 1));
-	AssertTrue(pcDatabase->Add(2LL, szTwo, strlen(szTwo) + 1));
-	AssertTrue(pcDatabase->Close());
-	return pcDatabase;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void AssertReadString(CReadTransaction* pcRead, OIndex oi, const char* szExpected)
-{
-	char	szResult[256];
-
-	memset(szResult, 0, 256);
-	AssertTrue(pcRead->Get(oi, szResult));
-	AssertString(szExpected, szResult);
-}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -86,7 +51,7 @@ void TestReadTransactionWriteTransaction(void)
 	char					szUno[] = "Uno";
 	char					szThree[] = "Three";
 
-	pcDatabase = CreateReadTransactionCodabase();
+	pcDatabase = CreateTransactionTestCodabase(READ_TRANSACTION_DIR, DS_No);
 	pcBefore = pcDatabase->BeginReadTransaction();
 	AssertNotNull(pcBefore);
 
@@ -148,7 +113,7 @@ void TestReadTransactionDirectSession(void)
 	char				szUno[] = "Uno";
 	char				szFour[] = "Four";
 
-	pcDatabase = CreateReadTransactionCodabase();
+	pcDatabase = CreateTransactionTestCodabase(READ_TRANSACTION_DIR, DS_No);
 	pcBefore = pcDatabase->BeginReadTransaction();
 
 	//A session changes the store before it commits.  Readers, even one that begins during the session, see the old state.
@@ -199,7 +164,7 @@ void TestReadTransactionVersions(void)
 	char				szB[] = "B";
 	char				szFive[] = "Five";
 
-	pcDatabase = CreateReadTransactionCodabase();
+	pcDatabase = CreateTransactionTestCodabase(READ_TRANSACTION_DIR, DS_No);
 
 	//Without readers no versions are kept.  A session changes nothing in the store before it closes, so it needs none.
 	pcWrite = pcDatabase->BeginWriteTransaction();
@@ -360,7 +325,7 @@ void TestReadTransactionThreads(void)
 	int						iValue;
 	CWriteTransaction*		pcWrite;
 
-	pcDatabase = CreateReadTransactionCodabase();
+	pcDatabase = CreateTransactionTestCodabase(READ_TRANSACTION_DIR, DS_No);
 	iValue = 0;
 	pcWrite = pcDatabase->BeginWriteTransaction();
 	AssertTrue(pcWrite->Add(10LL, &iValue, sizeof(int)));

@@ -11,57 +11,10 @@
 #include "BaseLib/Codabase.h"
 #include "BaseLib/WriteTransaction.h"
 #include "TestLib/Assert.h"
+#include "TestTransactionHelper.h"
 
 
 #define WRITE_TRANSACTION_DIR	"Output" _FS_ "WriteTransaction"
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-CCodabase* CreateWriteTransactionCodabase(void)
-{
-	CCodabase*	pcDatabase;
-	char		szOne[] = "One";
-	char		szTwo[] = "Two";
-
-	pcDatabase = CCodabaseFactory::Create(WRITE_TRANSACTION_DIR, IWT_No, DS_Yes);
-	AssertNotNull(pcDatabase);
-	AssertTrue(pcDatabase->Open());
-	AssertTrue(pcDatabase->Add(1LL, "Alpha", szOne, strlen(szOne) + 1));
-	AssertTrue(pcDatabase->Add(2LL, szTwo, strlen(szTwo) + 1));
-	AssertTrue(pcDatabase->Close());
-	return pcDatabase;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void AssertCodabaseString(CCodabase* pcDatabase, OIndex oi, const char* szExpected)
-{
-	char	szResult[256];
-
-	memset(szResult, 0, 256);
-	AssertTrue(pcDatabase->Get(oi, szResult));
-	AssertString(szExpected, szResult);
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void AssertTransactionString(CWriteTransaction* pcTransaction, OIndex oi, const char* szExpected)
-{
-	char	szResult[256];
-
-	memset(szResult, 0, 256);
-	AssertTrue(pcTransaction->Get(oi, szResult));
-	AssertString(szExpected, szResult);
-}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -79,7 +32,7 @@ void TestWriteTransactionCommit(void)
 	uint32				uiNameLength;
 
 	cFileUtil.RemoveDir(WRITE_TRANSACTION_DIR);
-	pcDatabase = CreateWriteTransactionCodabase();
+	pcDatabase = CreateTransactionTestCodabase(WRITE_TRANSACTION_DIR, DS_Yes);
 
 	pcTransaction = pcDatabase->BeginWriteTransaction();
 	AssertNotNull(pcTransaction);
@@ -97,7 +50,7 @@ void TestWriteTransactionCommit(void)
 	AssertString("Alpha", szName);
 
 	//Nobody else sees them before the commit.
-	AssertCodabaseString(pcDatabase, 1LL, "One");
+	AssertStoredString(pcDatabase, 1LL, "One");
 	AssertFalse(pcDatabase->Contains(3LL));
 	AssertTrue(pcDatabase->Contains(2LL));
 
@@ -105,8 +58,8 @@ void TestWriteTransactionCommit(void)
 	AssertFalse(pcTransaction->IsActive());
 	SafeKill(pcTransaction);
 
-	AssertCodabaseString(pcDatabase, 1LL, szUno);
-	AssertCodabaseString(pcDatabase, 3LL, szThree);
+	AssertStoredString(pcDatabase, 1LL, szUno);
+	AssertStoredString(pcDatabase, 3LL, szThree);
 	AssertFalse(pcDatabase->Contains(2LL));
 	AssertLong(3LL, pcDatabase->GetIndex("Gamma"));
 	SafeKill(pcDatabase);
@@ -114,8 +67,8 @@ void TestWriteTransactionCommit(void)
 	//The commit is durable.
 	pcDatabase = CCodabaseFactory::Create(WRITE_TRANSACTION_DIR, IWT_No, DS_Yes);
 	AssertNotNull(pcDatabase);
-	AssertCodabaseString(pcDatabase, 1LL, szUno);
-	AssertCodabaseString(pcDatabase, 3LL, szThree);
+	AssertStoredString(pcDatabase, 1LL, szUno);
+	AssertStoredString(pcDatabase, 3LL, szThree);
 	AssertFalse(pcDatabase->Contains(2LL));
 	AssertLong(2, pcDatabase->NumIndices());
 	AssertLong(2, pcDatabase->NumNames());
@@ -138,7 +91,7 @@ void TestWriteTransactionAbort(void)
 	SLogConfig			sLogConfig;
 
 	cFileUtil.RemoveDir(WRITE_TRANSACTION_DIR);
-	pcDatabase = CreateWriteTransactionCodabase();
+	pcDatabase = CreateTransactionTestCodabase(WRITE_TRANSACTION_DIR, DS_Yes);
 
 	pcTransaction = pcDatabase->BeginWriteTransaction();
 	AssertTrue(pcTransaction->Set(1LL, szChanged, strlen(szChanged) + 1));
@@ -152,7 +105,7 @@ void TestWriteTransactionAbort(void)
 	AssertFalse(pcTransaction->Commit());
 	gcLogger.SetConfig(&sLogConfig);
 	SafeKill(pcTransaction);
-	AssertCodabaseString(pcDatabase, 1LL, "One");
+	AssertStoredString(pcDatabase, 1LL, "One");
 	AssertTrue(pcDatabase->Contains(2LL));
 
 	//Killing a transaction before it commits aborts it and lets the next writer in.
@@ -168,7 +121,7 @@ void TestWriteTransactionAbort(void)
 	SafeKill(pcDatabase);
 
 	pcDatabase = CCodabaseFactory::Create(WRITE_TRANSACTION_DIR, IWT_No, DS_Yes);
-	AssertCodabaseString(pcDatabase, 1LL, "One");
+	AssertStoredString(pcDatabase, 1LL, "One");
 	AssertTrue(pcDatabase->Contains(2LL));
 	SafeKill(pcDatabase);
 
@@ -194,7 +147,7 @@ void TestWriteTransactionRules(void)
 	uint32				uiDataSize;
 
 	cFileUtil.RemoveDir(WRITE_TRANSACTION_DIR);
-	pcDatabase = CreateWriteTransactionCodabase();
+	pcDatabase = CreateTransactionTestCodabase(WRITE_TRANSACTION_DIR, DS_Yes);
 	pcTransaction = pcDatabase->BeginWriteTransaction();
 
 	sLogConfig = gcLogger.SetSilent();
@@ -240,12 +193,12 @@ void TestWriteTransactionRules(void)
 	AssertTrue(pcTransaction->Commit());
 	SafeKill(pcTransaction);
 
-	AssertCodabaseString(pcDatabase, 1LL, szReplaced);
+	AssertStoredString(pcDatabase, 1LL, szReplaced);
 	AssertLong(1LL, pcDatabase->GetIndex("Omega"));
 	AssertLong(8LL, pcDatabase->GetIndex("Alpha"));
 	AssertLong(5LL, pcDatabase->GetIndex("Epsilon"));
 	AssertFalse(pcDatabase->Contains(7LL));
-	AssertCodabaseString(pcDatabase, 9LL, szNew);
+	AssertStoredString(pcDatabase, 9LL, szNew);
 	AssertLong(5, pcDatabase->NumIndices());
 	AssertLong(3, pcDatabase->NumNames());
 	AssertTrue(pcDatabase->ValidateIdentifiers());
@@ -273,7 +226,7 @@ void TestWriteTransactionIteration(void)
 	char					szThree[] = "Three";
 
 	cFileUtil.RemoveDir(WRITE_TRANSACTION_DIR);
-	pcDatabase = CreateWriteTransactionCodabase();
+	pcDatabase = CreateTransactionTestCodabase(WRITE_TRANSACTION_DIR, DS_Yes);
 	pcTransaction = pcDatabase->BeginWriteTransaction();
 	AssertTrue(pcTransaction->Set(1LL, szUno, strlen(szUno) + 1));
 	AssertTrue(pcTransaction->Add(3LL, "Gamma", szThree, strlen(szThree) + 1));
@@ -325,14 +278,14 @@ void TestWriteTransactionDirectSession(void)
 	char				szDirect[] = "Direct";
 
 	cFileUtil.RemoveDir(WRITE_TRANSACTION_DIR);
-	pcDatabase = CreateWriteTransactionCodabase();
+	pcDatabase = CreateTransactionTestCodabase(WRITE_TRANSACTION_DIR, DS_Yes);
 
 	//Writing directly needs a session.  Reading does not.
 	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(pcDatabase->Add(9LL, szDirect, strlen(szDirect) + 1));
 	AssertFalse(pcDatabase->Close());
 	gcLogger.SetConfig(&sLogConfig);
-	AssertCodabaseString(pcDatabase, 1LL, "One");
+	AssertStoredString(pcDatabase, 1LL, "One");
 
 	//The thread that has the session cannot begin a transaction, or open a second session: it would wait for itself.
 	AssertTrue(pcDatabase->Open());
@@ -354,7 +307,7 @@ void TestWriteTransactionDirectSession(void)
 	SafeKill(pcDatabase);
 
 	pcDatabase = CCodabaseFactory::Create(WRITE_TRANSACTION_DIR, IWT_No, DS_Yes);
-	AssertCodabaseString(pcDatabase, 9LL, szDirect);
+	AssertStoredString(pcDatabase, 9LL, szDirect);
 	AssertFalse(pcDatabase->Contains(10LL));
 	SafeKill(pcDatabase);
 
@@ -376,7 +329,7 @@ void TestWriteTransactionCommitFails(void)
 	char				szLost[] = "Lost";
 
 	cFileUtil.RemoveDir(WRITE_TRANSACTION_DIR);
-	pcDatabase = CreateWriteTransactionCodabase();
+	pcDatabase = CreateTransactionTestCodabase(WRITE_TRANSACTION_DIR, DS_Yes);
 
 	//The commit cannot create its start mark, so it fails part way.
 	chmod(WRITE_TRANSACTION_DIR _FS_ "Primary", 0555);
@@ -401,13 +354,13 @@ void TestWriteTransactionCommitFails(void)
 	pcDatabase = CCodabaseFactory::Create(WRITE_TRANSACTION_DIR, IWT_No, DS_Yes);
 	AssertNotNull(pcDatabase);
 	AssertFalse(pcDatabase->IsFailed());
-	AssertCodabaseString(pcDatabase, 1LL, "One");
+	AssertStoredString(pcDatabase, 1LL, "One");
 	pcTransaction = pcDatabase->BeginWriteTransaction();
 	AssertNotNull(pcTransaction);
 	AssertTrue(pcTransaction->Set(1LL, szLost, strlen(szLost) + 1));
 	AssertTrue(pcTransaction->Commit());
 	SafeKill(pcTransaction);
-	AssertCodabaseString(pcDatabase, 1LL, szLost);
+	AssertStoredString(pcDatabase, 1LL, szLost);
 	SafeKill(pcDatabase);
 
 	AssertTrue(cFileUtil.RemoveDir(WRITE_TRANSACTION_DIR));
