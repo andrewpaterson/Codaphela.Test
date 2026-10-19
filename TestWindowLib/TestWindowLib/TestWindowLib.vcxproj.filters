@@ -37,6 +37,9 @@
     <ClCompile Include="TestGridContainer.cpp">
       <Filter>Source\Component\Container</Filter>
     </ClCompile>
+    <ClCompile Include="TestBorderLayoutHelper.cpp">
+      <Filter>Source\Component\Container</Filter>
+    </ClCompile>
     <ClCompile Include="TestFlowContainer.cpp">
       <Filter>Source\Component\Container</Filter>
     </ClCompile>
