@@ -5,7 +5,7 @@
 #include "SupportLib/ColourFormat.h"
 #include "SupportLib/ImageCel.h"
 #include "WindowLib/CanvasDraw.h"
-#include "WindowLib/ContainerStyles.h"
+#include "WindowLib/ContainerStyle.h"
 
 
 struct SDarkForestComponent
