@@ -145,10 +145,10 @@ void TestGridContainerNoWeights(void)
 	//Column 0 is 14 wide and column 1 is 6 wide, row 0 is 12 tall and row 1 is 5 tall.  With no weights nothing takes the
 	//spare space so the 20 x 17 grid is centred in the 40 x 30 window, and each component is centred in its cell.
 	SGridTestComponent	asComponents[4] = {
-		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(10, 8),  SInt32Vec2(12, 8),  SInt32Vec2(10, 8) },
-		{ NULL, 1, 0, 1, 1, 0, 0, SInt32Vec2(6, 12),  SInt32Vec2(24, 6),  SInt32Vec2(6, 12) },
-		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(14, 5),  SInt32Vec2(10, 18), SInt32Vec2(14, 5) },
-		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(4, 4),   SInt32Vec2(25, 18), SInt32Vec2(4, 4) } };
+		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(10, 8),  SInt32Vec2(12, 8),  SInt32Vec2(10, 8), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 1, 0, 0, SInt32Vec2(6, 12),  SInt32Vec2(24, 6),  SInt32Vec2(6, 12), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(14, 5),  SInt32Vec2(10, 18), SInt32Vec2(14, 5), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(4, 4),   SInt32Vec2(25, 18), SInt32Vec2(4, 4), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerNoWeights", 40, 30, 4, asComponents, 4354, 20, 17);
 }
@@ -163,8 +163,8 @@ void TestGridContainerColumnWeights(void)
 	//The 60 spare pixels are shared 1 : 2 so column 0 grows from 10 to 30 and column 1 from 0 to 40.  The fixed canvas is
 	//centred in its cell and the canvas without a desired size fills its cell.
 	SGridTestComponent	asComponents[2] = {
-		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 10), SInt32Vec2(10, 0),  SInt32Vec2(10, 10) },
-		{ NULL, 1, 0, 1, 1, 2, 0, SInt32Vec2(-1, -1), SInt32Vec2(30, 0),  SInt32Vec2(40, 10) } };
+		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 10), SInt32Vec2(10, 0),  SInt32Vec2(10, 10), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 1, 2, 0, SInt32Vec2(-1, -1), SInt32Vec2(30, 0),  SInt32Vec2(40, 10), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerColumnWeights", 70, 10, 2, asComponents, 4674, 10, 10);
 }
@@ -178,8 +178,8 @@ void TestGridContainerRowWeights(void)
 {
 	//The 22 spare pixels are shared evenly between the two rows, 8 + 11 and 0 + 11.
 	SGridTestComponent	asComponents[2] = {
-		{ NULL, 0, 0, 1, 1, 0, 1, SInt32Vec2(8, 8),   SInt32Vec2(0, 5),   SInt32Vec2(8, 8) },
-		{ NULL, 0, 1, 1, 1, 0, 1, SInt32Vec2(8, -1),  SInt32Vec2(0, 19),  SInt32Vec2(8, 11) } };
+		{ NULL, 0, 0, 1, 1, 0, 1, SInt32Vec2(8, 8),   SInt32Vec2(0, 5),   SInt32Vec2(8, 8), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 1, 1, 1, 0, 1, SInt32Vec2(8, -1),  SInt32Vec2(0, 19),  SInt32Vec2(8, 11), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerRowWeights", 8, 30, 2, asComponents, 9844, 8, 8);
 }
@@ -193,9 +193,9 @@ void TestGridContainerSpanWithoutWeights(void)
 {
 	//The 20 wide component spans the two 6 wide columns.  With no weights the missing 8 pixels go to the last column.
 	SGridTestComponent	asComponents[3] = {
-		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(6, 4),   SInt32Vec2(0, 0),   SInt32Vec2(6, 4) },
-		{ NULL, 1, 0, 1, 1, 0, 0, SInt32Vec2(6, 4),   SInt32Vec2(10, 0),  SInt32Vec2(6, 4) },
-		{ NULL, 0, 1, 2, 1, 0, 0, SInt32Vec2(20, 4),  SInt32Vec2(0, 4),   SInt32Vec2(20, 4) } };
+		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(6, 4),   SInt32Vec2(0, 0),   SInt32Vec2(6, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 1, 0, 0, SInt32Vec2(6, 4),   SInt32Vec2(10, 0),  SInt32Vec2(6, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 1, 2, 1, 0, 0, SInt32Vec2(20, 4),  SInt32Vec2(0, 4),   SInt32Vec2(20, 4), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerSpanWithoutWeights", 20, 8, 3, asComponents, 2673, 20, 8);
 }
@@ -209,9 +209,9 @@ void TestGridContainerSpanWithWeights(void)
 {
 	//With column weights of 1 and 3 the missing 8 pixels are shared 2 and 6, making the columns 8 and 12 wide.
 	SGridTestComponent	asComponents[3] = {
-		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(6, 4),   SInt32Vec2(1, 0),   SInt32Vec2(6, 4) },
-		{ NULL, 1, 0, 1, 1, 3, 0, SInt32Vec2(6, 4),   SInt32Vec2(11, 0),  SInt32Vec2(6, 4) },
-		{ NULL, 0, 1, 2, 1, 0, 0, SInt32Vec2(20, 4),  SInt32Vec2(0, 4),   SInt32Vec2(20, 4) } };
+		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(6, 4),   SInt32Vec2(1, 0),   SInt32Vec2(6, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 1, 3, 0, SInt32Vec2(6, 4),   SInt32Vec2(11, 0),  SInt32Vec2(6, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 1, 2, 1, 0, 0, SInt32Vec2(20, 4),  SInt32Vec2(0, 4),   SInt32Vec2(20, 4), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerSpanWithWeights", 20, 8, 3, asComponents, 1234, 20, 8);
 }
@@ -226,13 +226,13 @@ void TestGridContainerShrink(void)
 	//The two 20 wide columns need 40 pixels.  In 30 pixels the weighted column gives up the missing 10, leaving its fixed
 	//component centred over a 10 wide cell.
 	SGridTestComponent	asWeightedFirst[2] = {
-		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(20, 4),  SInt32Vec2(0, 0),   SInt32Vec2(20, 4) },
-		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(20, 4),  SInt32Vec2(15, 0),  SInt32Vec2(20, 4) } };
+		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(20, 4),  SInt32Vec2(0, 0),   SInt32Vec2(20, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(20, 4),  SInt32Vec2(15, 0),  SInt32Vec2(20, 4), CSH_Unknown, CSV_Unknown } };
 
 	//In 10 pixels the weighted column gives up all 20 of its pixels and the other column then shrinks to 10.
 	SGridTestComponent	asThenEverything[2] = {
-		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(20, 4),  SInt32Vec2(-5, 0),  SInt32Vec2(20, 4) },
-		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(20, 4),  SInt32Vec2(0, 0),   SInt32Vec2(20, 4) } };
+		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(20, 4),  SInt32Vec2(-5, 0),  SInt32Vec2(20, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(20, 4),  SInt32Vec2(0, 0),   SInt32Vec2(20, 4), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkWeightedFirst", 30, 4, 2, asWeightedFirst, 6665, 40, 4);
 	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkThenEverything", 10, 4, 2, asThenEverything, 6665, 40, 4);
@@ -247,8 +247,8 @@ void TestGridContainerOverlap(void)
 {
 	//Two components in the same cell are both laid out in it.
 	SGridTestComponent	asComponents[2] = {
-		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(10, 10), SInt32Vec2(0, 0),   SInt32Vec2(10, 10) },
-		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(4, 4),   SInt32Vec2(3, 3),   SInt32Vec2(4, 4) } };
+		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(10, 10), SInt32Vec2(0, 0),   SInt32Vec2(10, 10), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(4, 4),   SInt32Vec2(3, 3),   SInt32Vec2(4, 4), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerOverlap", 10, 10, 2, asComponents, 7936, 10, 10);
 }
@@ -264,28 +264,28 @@ void TestGridContainerGrowSlivers(void)
 
 	//61 spare pixels shared 1 : 2 is 20 and 40 with 1 left over.  It goes to the larger column, 50 wide, not the first.
 	SGridTestComponent	asLargest[4] = {
-		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(10, 0), SInt32Vec2(10, 4) },
-		{ NULL, 1, 0, 1, 1, 2, 0, SInt32Vec2(10, 4), SInt32Vec2(50, 0), SInt32Vec2(10, 4) },
-		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(30, 4) },
-		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(30, 4), SInt32Vec2(51, 4) } };
+		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(10, 0), SInt32Vec2(10, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 1, 2, 0, SInt32Vec2(10, 4), SInt32Vec2(50, 0), SInt32Vec2(10, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(30, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(30, 4), SInt32Vec2(51, 4), CSH_Unknown, CSV_Unknown } };
 
 	//5 spare pixels between three equal columns is 1 each with 2 left over, which go to the first two.
 	SGridTestComponent	asTies[6] = {
-		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(1, 0), SInt32Vec2(10, 4) },
-		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(13, 0), SInt32Vec2(10, 4) },
-		{ NULL, 2, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(24, 0), SInt32Vec2(10, 4) },
-		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(12, 4) },
-		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(12, 4), SInt32Vec2(12, 4) },
-		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(24, 4), SInt32Vec2(11, 4) } };
+		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(1, 0), SInt32Vec2(10, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(13, 0), SInt32Vec2(10, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 2, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(24, 0), SInt32Vec2(10, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(12, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(12, 4), SInt32Vec2(12, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(24, 4), SInt32Vec2(11, 4), CSH_Unknown, CSV_Unknown } };
 
 	//4 spare pixels between columns of 5, 20 and 10 is 1 each with 1 left over, which goes to the middle, largest, column.
 	SGridTestComponent	asLargestInMiddle[6] = {
-		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(5, 4), SInt32Vec2(0, 0), SInt32Vec2(5, 4) },
-		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(20, 4), SInt32Vec2(7, 0), SInt32Vec2(20, 4) },
-		{ NULL, 2, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(28, 0), SInt32Vec2(10, 4) },
-		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(6, 4) },
-		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(6, 4), SInt32Vec2(22, 4) },
-		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(28, 4), SInt32Vec2(11, 4) } };
+		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(5, 4), SInt32Vec2(0, 0), SInt32Vec2(5, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(20, 4), SInt32Vec2(7, 0), SInt32Vec2(20, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 2, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(28, 0), SInt32Vec2(10, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(6, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(6, 4), SInt32Vec2(22, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(28, 4), SInt32Vec2(11, 4), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerGrowSliversLargest", 81, 8, 4, asLargest, 7740, 20, 8);
 	TestGridContainerLayout("Output" _FS_ "GridContainerGrowSliversTies", 35, 8, 6, asTies, 7740, 30, 8);
@@ -302,11 +302,11 @@ void TestGridContainerSpanSlivers(void)
 	//The 19 wide span is 7 more than its columns of 8 and 4.  Shared 1 : 1 that is 3 each with 1 left over, which goes to
 	//the larger column, making them 12 and 7.  Row 2 shows the column widths.
 	SGridTestComponent	asComponents[5] = {
-		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(8, 4), SInt32Vec2(2, 0), SInt32Vec2(8, 4) },
-		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(4, 4), SInt32Vec2(13, 0), SInt32Vec2(4, 4) },
-		{ NULL, 0, 1, 2, 1, 0, 0, SInt32Vec2(19, 4), SInt32Vec2(0, 4), SInt32Vec2(19, 4) },
-		{ NULL, 0, 2, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 8), SInt32Vec2(12, 4) },
-		{ NULL, 1, 2, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(12, 8), SInt32Vec2(7, 4) } };
+		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(8, 4), SInt32Vec2(2, 0), SInt32Vec2(8, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(4, 4), SInt32Vec2(13, 0), SInt32Vec2(4, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 1, 2, 1, 0, 0, SInt32Vec2(19, 4), SInt32Vec2(0, 4), SInt32Vec2(19, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 2, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 8), SInt32Vec2(12, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 2, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(12, 8), SInt32Vec2(7, 4), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerSpanSlivers", 19, 12, 5, asComponents, 2345, 19, 12);
 }
@@ -320,27 +320,27 @@ void TestGridContainerShrinkSlivers(void)
 {
 	//Columns of 10 and 20, both weighted, 1 pixel too wide.  Shared 1 : 1 each would give 0, so the larger column gives it.
 	SGridTestComponent	asOnePixel[4] = {
-		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(0, 0), SInt32Vec2(10, 4) },
-		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(20, 4), SInt32Vec2(10, 0), SInt32Vec2(20, 4) },
-		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(10, 4) },
-		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(10, 4), SInt32Vec2(19, 4) } };
+		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(0, 0), SInt32Vec2(10, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(20, 4), SInt32Vec2(10, 0), SInt32Vec2(20, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(10, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(10, 4), SInt32Vec2(19, 4), CSH_Unknown, CSV_Unknown } };
 
 	//5 pixels too wide.  Each gives 2 and the larger gives the 1 left over, leaving 8 and 17.
 	SGridTestComponent	asFivePixels[4] = {
-		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(-1, 0), SInt32Vec2(10, 4) },
-		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(20, 4), SInt32Vec2(7, 0), SInt32Vec2(20, 4) },
-		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(8, 4) },
-		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(8, 4), SInt32Vec2(17, 4) } };
+		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 4), SInt32Vec2(-1, 0), SInt32Vec2(10, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 1, 1, 0, SInt32Vec2(20, 4), SInt32Vec2(7, 0), SInt32Vec2(20, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(8, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(8, 4), SInt32Vec2(17, 4), CSH_Unknown, CSV_Unknown } };
 
 	//Unweighted columns of 30, 20 and 10 are 7 pixels too wide.  In proportion they give 3, 2 and 1, and the largest gives
 	//the 1 left over, leaving 26, 18 and 9.
 	SGridTestComponent	asProportional[6] = {
-		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(30, 4), SInt32Vec2(-2, 0), SInt32Vec2(30, 4) },
-		{ NULL, 1, 0, 1, 1, 0, 0, SInt32Vec2(20, 4), SInt32Vec2(25, 0), SInt32Vec2(20, 4) },
-		{ NULL, 2, 0, 1, 1, 0, 0, SInt32Vec2(10, 4), SInt32Vec2(44, 0), SInt32Vec2(10, 4) },
-		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(26, 4) },
-		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(26, 4), SInt32Vec2(18, 4) },
-		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(44, 4), SInt32Vec2(9, 4) } };
+		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(30, 4), SInt32Vec2(-2, 0), SInt32Vec2(30, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 1, 0, 0, SInt32Vec2(20, 4), SInt32Vec2(25, 0), SInt32Vec2(20, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 2, 0, 1, 1, 0, 0, SInt32Vec2(10, 4), SInt32Vec2(44, 0), SInt32Vec2(10, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(0, 4), SInt32Vec2(26, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(26, 4), SInt32Vec2(18, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4), SInt32Vec2(44, 4), SInt32Vec2(9, 4), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkSliversOnePixel", 29, 8, 4, asOnePixel, 8489, 30, 8);
 	TestGridContainerLayout("Output" _FS_ "GridContainerShrinkSliversFivePixels", 25, 8, 4, asFivePixels, 8489, 30, 8);
@@ -367,12 +367,12 @@ void TestGridContainerGaps(void)
 {
 	//Column 1 has nothing in it so it is 0 wide and the component in column 2 sits right next to the one in column 0.
 	SGridTestComponent	asEmptyColumn[2] = {
-		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(6, 6),   SInt32Vec2(0, 0),   SInt32Vec2(6, 6) },
-		{ NULL, 2, 0, 1, 1, 0, 0, SInt32Vec2(6, 6),   SInt32Vec2(6, 0),   SInt32Vec2(6, 6) } };
+		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(6, 6),   SInt32Vec2(0, 0),   SInt32Vec2(6, 6), CSH_Unknown, CSV_Unknown },
+		{ NULL, 2, 0, 1, 1, 0, 0, SInt32Vec2(6, 6),   SInt32Vec2(6, 0),   SInt32Vec2(6, 6), CSH_Unknown, CSV_Unknown } };
 
 	//On its own in cell (2, 1) the empty columns and row take no space, so the 10 x 10 grid is centred in the window.
 	SGridTestComponent	asAlone[1] = {
-		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(10, 10), SInt32Vec2(5, 5),   SInt32Vec2(10, 10) } };
+		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(10, 10), SInt32Vec2(5, 5),   SInt32Vec2(10, 10), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerGapsEmptyColumn", 12, 6, 2, asEmptyColumn, 6112, 12, 6);
 	TestGridContainerLayout("Output" _FS_ "GridContainerGapsAlone", 20, 20, 1, asAlone, 6112, 10, 10);
@@ -388,9 +388,9 @@ void TestGridContainerImageInWeightedCell(void)
 	//An image canvas takes the size of its cel, so even in a cell weighted to take the whole window it keeps that size
 	//and is centred.  A border canvas with no desired size fills the same cell.
 	SGridTestComponent	asImage[1] = {
-		{ "Wolf.png", 0, 0, 1, 1, 1, 1, SInt32Vec2(-1, -1), SInt32Vec2(9, 5),   SInt32Vec2(12, 10) } };
+		{ "Wolf.png", 0, 0, 1, 1, 1, 1, SInt32Vec2(-1, -1), SInt32Vec2(9, 5),   SInt32Vec2(12, 10), CSH_Unknown, CSV_Unknown } };
 	SGridTestComponent	asBorder[1] = {
-		{ NULL,       0, 0, 1, 1, 1, 1, SInt32Vec2(-1, -1), SInt32Vec2(0, 0),   SInt32Vec2(30, 20) } };
+		{ NULL,       0, 0, 1, 1, 1, 1, SInt32Vec2(-1, -1), SInt32Vec2(0, 0),   SInt32Vec2(30, 20), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerImageInWeightedCell", 30, 20, 1, asImage, 6551, 12, 10);
 	TestGridContainerLayout("Output" _FS_ "GridContainerBorderInWeightedCell", 30, 20, 1, asBorder, 6551, 0, 0);
@@ -406,11 +406,11 @@ void TestGridContainerDarkForestImages(void)
 	//Three images on the top row and the wolf spanning the first two columns of the bottom row.  The columns are 9, 9 and
 	//10 wide and the rows 14 and 10 tall, so the 28 x 24 grid is centred at 6, 3 in the 40 x 30 window.
 	SGridTestComponent	asComponents[5] = {
-		{ "Pine.png",		0, 0, 1, 1, 0, 0, SInt32Vec2(-1, -1), SInt32Vec2(6, 3),   SInt32Vec2(9, 14) },
-		{ "Owl.png",		1, 0, 1, 1, 0, 0, SInt32Vec2(-1, -1), SInt32Vec2(15, 5),  SInt32Vec2(9, 10) },
-		{ "Moon.png",		2, 0, 1, 1, 0, 0, SInt32Vec2(-1, -1), SInt32Vec2(24, 5),  SInt32Vec2(10, 10) },
-		{ "Wolf.png",		0, 1, 2, 1, 0, 0, SInt32Vec2(-1, -1), SInt32Vec2(9, 17),  SInt32Vec2(12, 10) },
-		{ "Mushroom.png",	2, 1, 1, 1, 0, 0, SInt32Vec2(-1, -1), SInt32Vec2(25, 18), SInt32Vec2(8, 8) } };
+		{ "Pine.png",		0, 0, 1, 1, 0, 0, SInt32Vec2(-1, -1), SInt32Vec2(6, 3),   SInt32Vec2(9, 14), CSH_Unknown, CSV_Unknown },
+		{ "Owl.png",		1, 0, 1, 1, 0, 0, SInt32Vec2(-1, -1), SInt32Vec2(15, 5),  SInt32Vec2(9, 10), CSH_Unknown, CSV_Unknown },
+		{ "Moon.png",		2, 0, 1, 1, 0, 0, SInt32Vec2(-1, -1), SInt32Vec2(24, 5),  SInt32Vec2(10, 10), CSH_Unknown, CSV_Unknown },
+		{ "Wolf.png",		0, 1, 2, 1, 0, 0, SInt32Vec2(-1, -1), SInt32Vec2(9, 17),  SInt32Vec2(12, 10), CSH_Unknown, CSV_Unknown },
+		{ "Mushroom.png",	2, 1, 1, 1, 0, 0, SInt32Vec2(-1, -1), SInt32Vec2(25, 18), SInt32Vec2(8, 8), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerDarkForestImages", 40, 30, 5, asComponents, 6510, 28, 24);
 }
@@ -449,15 +449,15 @@ void TestGridContainerRowSpans(void)
 {
 	//The 20 tall component spans the two 6 tall rows.  With no weights the missing 8 pixels go to the last row.
 	SGridTestComponent	asWithoutWeights[3] = {
-		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(4, 6),   SInt32Vec2(0, 0),   SInt32Vec2(4, 6) },
-		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(4, 6),   SInt32Vec2(0, 10),  SInt32Vec2(4, 6) },
-		{ NULL, 1, 0, 1, 2, 0, 0, SInt32Vec2(4, 20),  SInt32Vec2(4, 0),   SInt32Vec2(4, 20) } };
+		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(4, 6),   SInt32Vec2(0, 0),   SInt32Vec2(4, 6), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 1, 1, 1, 0, 0, SInt32Vec2(4, 6),   SInt32Vec2(0, 10),  SInt32Vec2(4, 6), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 2, 0, 0, SInt32Vec2(4, 20),  SInt32Vec2(4, 0),   SInt32Vec2(4, 20), CSH_Unknown, CSV_Unknown } };
 
 	//With row weights of 1 and 3 the missing 8 pixels are shared 2 and 6, making the rows 8 and 12 tall.
 	SGridTestComponent	asWithWeights[3] = {
-		{ NULL, 0, 0, 1, 1, 0, 1, SInt32Vec2(4, 6),   SInt32Vec2(0, 1),   SInt32Vec2(4, 6) },
-		{ NULL, 0, 1, 1, 1, 0, 3, SInt32Vec2(4, 6),   SInt32Vec2(0, 11),  SInt32Vec2(4, 6) },
-		{ NULL, 1, 0, 1, 2, 0, 0, SInt32Vec2(4, 20),  SInt32Vec2(4, 0),   SInt32Vec2(4, 20) } };
+		{ NULL, 0, 0, 1, 1, 0, 1, SInt32Vec2(4, 6),   SInt32Vec2(0, 1),   SInt32Vec2(4, 6), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 1, 1, 1, 0, 3, SInt32Vec2(4, 6),   SInt32Vec2(0, 11),  SInt32Vec2(4, 6), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 2, 0, 0, SInt32Vec2(4, 20),  SInt32Vec2(4, 0),   SInt32Vec2(4, 20), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerRowSpansWithoutWeights", 8, 20, 3, asWithoutWeights, 4510, 8, 20);
 	TestGridContainerLayout("Output" _FS_ "GridContainerRowSpansWithWeights", 8, 20, 3, asWithWeights, 4510, 8, 20);
@@ -474,18 +474,18 @@ void TestGridContainerSpanWeight(void)
 	//column has a weight, so the weight goes to the last of them, which then takes all 20 spare pixels.  The spanning
 	//component fills its cell.
 	SGridTestComponent	asToLastColumn[3] = {
-		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(10, 4),  SInt32Vec2(0, 0),   SInt32Vec2(10, 4) },
-		{ NULL, 1, 0, 1, 1, 0, 0, SInt32Vec2(10, 4),  SInt32Vec2(20, 0),  SInt32Vec2(10, 4) },
-		{ NULL, 0, 1, 2, 1, 1, 0, SInt32Vec2(-1, 4),  SInt32Vec2(0, 4),   SInt32Vec2(40, 4) } };
+		{ NULL, 0, 0, 1, 1, 0, 0, SInt32Vec2(10, 4),  SInt32Vec2(0, 0),   SInt32Vec2(10, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 1, 0, 0, SInt32Vec2(10, 4),  SInt32Vec2(20, 0),  SInt32Vec2(10, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 1, 2, 1, 1, 0, SInt32Vec2(-1, 4),  SInt32Vec2(0, 4),   SInt32Vec2(40, 4), CSH_Unknown, CSV_Unknown } };
 
 	//Columns 0 and 1 have weights 1 and 3 and the cell spanning them has weight 8, so the missing 4 is shared 1 : 3 making
 	//them 2 and 6.  Column 2 keeps weight 4.  The 24 spare pixels are then shared 2 : 6 : 4, so 4, 12 and 8.  Without the
 	//spanning weight they would have been shared 1 : 3 : 4.
 	SGridTestComponent	asToWeightedColumns[4] = {
-		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 4),  SInt32Vec2(2, 0),   SInt32Vec2(10, 4) },
-		{ NULL, 1, 0, 1, 1, 3, 0, SInt32Vec2(10, 4),  SInt32Vec2(20, 0),  SInt32Vec2(10, 4) },
-		{ NULL, 2, 0, 1, 1, 4, 0, SInt32Vec2(10, 4),  SInt32Vec2(40, 0),  SInt32Vec2(10, 4) },
-		{ NULL, 0, 1, 2, 1, 8, 0, SInt32Vec2(-1, 4),  SInt32Vec2(0, 4),   SInt32Vec2(36, 4) } };
+		{ NULL, 0, 0, 1, 1, 1, 0, SInt32Vec2(10, 4),  SInt32Vec2(2, 0),   SInt32Vec2(10, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 0, 1, 1, 3, 0, SInt32Vec2(10, 4),  SInt32Vec2(20, 0),  SInt32Vec2(10, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 2, 0, 1, 1, 4, 0, SInt32Vec2(10, 4),  SInt32Vec2(40, 0),  SInt32Vec2(10, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 1, 2, 1, 8, 0, SInt32Vec2(-1, 4),  SInt32Vec2(0, 4),   SInt32Vec2(36, 4), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerSpanWeightToLastColumn", 40, 8, 3, asToLastColumn, 6589, 20, 8);
 	TestGridContainerLayout("Output" _FS_ "GridContainerSpanWeightToWeightedColumns", 54, 8, 4, asToWeightedColumns, 6589, 30, 8);
@@ -502,9 +502,9 @@ void TestGridContainerNestedSpans(void)
 	//its missing 12 pixels into column 1, its last column, then the 3 column span finds 12 of its 30 and puts the other
 	//18 into column 2.  Settled the other way round column 2 would be 30 wide.  The last component fills column 2.
 	SGridTestComponent	asComponents[3] = {
-		{ NULL, 0, 0, 3, 1, 0, 0, SInt32Vec2(30, 4),  SInt32Vec2(0, 0),   SInt32Vec2(30, 4) },
-		{ NULL, 0, 1, 2, 1, 0, 0, SInt32Vec2(12, 4),  SInt32Vec2(0, 4),   SInt32Vec2(12, 4) },
-		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4),  SInt32Vec2(12, 4),  SInt32Vec2(18, 4) } };
+		{ NULL, 0, 0, 3, 1, 0, 0, SInt32Vec2(30, 4),  SInt32Vec2(0, 0),   SInt32Vec2(30, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 0, 1, 2, 1, 0, 0, SInt32Vec2(12, 4),  SInt32Vec2(0, 4),   SInt32Vec2(12, 4), CSH_Unknown, CSV_Unknown },
+		{ NULL, 2, 1, 1, 1, 0, 0, SInt32Vec2(-1, 4),  SInt32Vec2(12, 4),  SInt32Vec2(18, 4), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerNestedSpans", 30, 8, 3, asComponents, 6522, 30, 8);
 }
@@ -519,8 +519,8 @@ void TestGridContainerClamping(void)
 	//A negative column or row is treated as 0, a span below 1 as 1 and a negative weight as 0.  So the first component is
 	//an ordinary unweighted cell (0, 0) and the two 10 x 10 cells exactly fill the 20 x 20 window.
 	SGridTestComponent	asComponents[2] = {
-		{ NULL, -2, -1, 0, -3, -5, -1, SInt32Vec2(10, 10), SInt32Vec2(0, 0),   SInt32Vec2(10, 10) },
-		{ NULL, 1, 1, 1, 1, 0, 0,      SInt32Vec2(10, 10), SInt32Vec2(10, 10), SInt32Vec2(10, 10) } };
+		{ NULL, -2, -1, 0, -3, -5, -1, SInt32Vec2(10, 10), SInt32Vec2(0, 0),   SInt32Vec2(10, 10), CSH_Unknown, CSV_Unknown },
+		{ NULL, 1, 1, 1, 1, 0, 0,      SInt32Vec2(10, 10), SInt32Vec2(10, 10), SInt32Vec2(10, 10), CSH_Unknown, CSV_Unknown } };
 
 	TestGridContainerLayout("Output" _FS_ "GridContainerClamping", 20, 20, 2, asComponents, 6581, 20, 20);
 }

@@ -547,8 +547,8 @@ void TestFillContainerDarkForestMixedOverlayCenter(void)
 	//The border fills the inset area and the moon is drawn centred on top of it.
 	int						aiInsets[4] = { 1, 1, 1, 1 };  //Top, Right, Bottom, Left.
 	SDarkForestComponent	asComponents[2] = {
-		{ NULL,				SInt32Vec2(-1, -1), Set32BitColour((uint8)78, 60, 96) },
-		{ "Moon.png",		SInt32Vec2(-1, -1), 0 } };
+		{ NULL,				SInt32Vec2(-1, -1), Set32BitColour((uint8)78, 60, 96), CSH_Unknown, CSV_Unknown },
+		{ "Moon.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown } };
 
 	TestFillContainerDarkForest("Output" _FS_ "FillContainerDarkForestMixedOverlayCenter", 18, 16, aiInsets, 2, asComponents, NULL);
 }
@@ -598,7 +598,7 @@ void TestFillContainerDarkForestCenterPastWindowEdges(void)
 {
 	//The 12x10 wolf is centred in an 8x6 window so it hangs 2 pixels off every edge and must be clipped to the window.
 	SDarkForestComponent	asComponents[1] = {
-		{ "Wolf.png",		SInt32Vec2(-1, -1), 0 } };
+		{ "Wolf.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown } };
 	SInt32Vec2				asPosition[1] = { SInt32Vec2(-2, -2) };
 
 	TestFillContainerDarkForest("Output" _FS_ "FillContainerDarkForestCenterPastWindowEdges", 8, 6, NULL, 1, asComponents, asPosition);

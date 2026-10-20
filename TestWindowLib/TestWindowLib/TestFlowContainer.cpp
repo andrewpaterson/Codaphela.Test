@@ -1280,15 +1280,15 @@ void TestFlowContainerDarkForest(char* szDirectory, int32 iWidth, int32 iHeight,
 void TestFlowContainerDarkForestImagesRightTopWrap(void)
 {
 	SDarkForestComponent	asComponents[9] = {
-		{ "Pine.png",		SInt32Vec2(-1, -1), 0 },
-		{ "Owl.png",		SInt32Vec2(-1, -1), 0 },
-		{ "Moon.png",		SInt32Vec2(-1, -1), 0 },
-		{ "Fern.png",		SInt32Vec2(-1, -1), 0 },
-		{ "Mushroom.png",	SInt32Vec2(-1, -1), 0 },
-		{ "Wolf.png",		SInt32Vec2(-1, -1), 0 },
-		{ "Bat.png",		SInt32Vec2(-1, -1), 0 },
-		{ "Fireflies.png",	SInt32Vec2(-1, -1), 0 },
-		{ "Stump.png",		SInt32Vec2(-1, -1), 0 } };
+		{ "Pine.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Owl.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Moon.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Fern.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Mushroom.png",	SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Wolf.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Bat.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Fireflies.png",	SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Stump.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown } };
 
 	TestFlowContainerDarkForest("Output" _FS_ "FlowContainerDarkForestImagesRightTopWrap", 40, 48, CSD_Right, CSW_Wrap, CSV_Top, CSH_Unknown, 9, asComponents);
 }
@@ -1301,15 +1301,15 @@ void TestFlowContainerDarkForestImagesRightTopWrap(void)
 void TestFlowContainerDarkForestImagesDownCenterWrap(void)
 {
 	SDarkForestComponent	asComponents[9] = {
-		{ "Moon.png",		SInt32Vec2(-1, -1), 0 },
-		{ "Bat.png",		SInt32Vec2(-1, -1), 0 },
-		{ "Pine.png",		SInt32Vec2(-1, -1), 0 },
-		{ "Wolf.png",		SInt32Vec2(-1, -1), 0 },
-		{ "Fireflies.png",	SInt32Vec2(-1, -1), 0 },
-		{ "Owl.png",		SInt32Vec2(-1, -1), 0 },
-		{ "Fern.png",		SInt32Vec2(-1, -1), 0 },
-		{ "Mushroom.png",	SInt32Vec2(-1, -1), 0 },
-		{ "Stump.png",		SInt32Vec2(-1, -1), 0 } };
+		{ "Moon.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Bat.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Pine.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Wolf.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Fireflies.png",	SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Owl.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Fern.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Mushroom.png",	SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Stump.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown } };
 
 	TestFlowContainerDarkForest("Output" _FS_ "FlowContainerDarkForestImagesDownCenterWrap", 48, 32, CSD_Down, CSW_Wrap, CSV_Unknown, CSH_Center, 9, asComponents);
 }
@@ -1322,16 +1322,16 @@ void TestFlowContainerDarkForestImagesDownCenterWrap(void)
 void TestFlowContainerDarkForestMixedRightBottomWrap(void)
 {
 	SDarkForestComponent	asComponents[10] = {
-		{ "Owl.png",		SInt32Vec2(-1, -1), 0 },
-		{ NULL,				SInt32Vec2(6, 6),	Set32BitColour((uint8)60, 110, 60) },
-		{ "Pine.png",		SInt32Vec2(-1, -1), 0 },
-		{ NULL,				SInt32Vec2(12, 5),	Set32BitColour((uint8)150, 30, 30) },
-		{ "Mushroom.png",	SInt32Vec2(-1, -1), 0 },
-		{ NULL,				SInt32Vec2(4, 10),	Set32BitColour((uint8)236, 200, 70) },
-		{ "Wolf.png",		SInt32Vec2(-1, -1), 0 },
-		{ NULL,				SInt32Vec2(8, 8),	Set32BitColour((uint8)78, 60, 96) },
-		{ "Fireflies.png",	SInt32Vec2(-1, -1), 0 },
-		{ "Stump.png",		SInt32Vec2(-1, -1), 0 } };
+		{ "Owl.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ NULL,				SInt32Vec2(6, 6),	Set32BitColour((uint8)60, 110, 60), CSH_Unknown, CSV_Unknown },
+		{ "Pine.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ NULL,				SInt32Vec2(12, 5),	Set32BitColour((uint8)150, 30, 30), CSH_Unknown, CSV_Unknown },
+		{ "Mushroom.png",	SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ NULL,				SInt32Vec2(4, 10),	Set32BitColour((uint8)236, 200, 70), CSH_Unknown, CSV_Unknown },
+		{ "Wolf.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ NULL,				SInt32Vec2(8, 8),	Set32BitColour((uint8)78, 60, 96), CSH_Unknown, CSV_Unknown },
+		{ "Fireflies.png",	SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Stump.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown } };
 
 	TestFlowContainerDarkForest("Output" _FS_ "FlowContainerDarkForestMixedRightBottomWrap", 48, 36, CSD_Right, CSW_Wrap, CSV_Bottom, CSH_Unknown, 10, asComponents);
 }
@@ -1345,12 +1345,12 @@ void TestFlowContainerDarkForestMixedLeftCenterContinue(void)
 {
 	//The moon canvas is given a desired size larger than its cel so the cel sits in its top left with black beyond.
 	SDarkForestComponent	asComponents[6] = {
-		{ "Bat.png",		SInt32Vec2(-1, -1), 0 },
-		{ NULL,				SInt32Vec2(5, 14),	Set32BitColour((uint8)110, 78, 48) },
-		{ "Moon.png",		SInt32Vec2(14, 14), 0 },
-		{ NULL,				SInt32Vec2(10, 4),	Set32BitColour((uint8)54, 104, 58) },
-		{ "Fern.png",		SInt32Vec2(-1, -1), 0 },
-		{ "Owl.png",		SInt32Vec2(-1, -1), 0 } };
+		{ "Bat.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ NULL,				SInt32Vec2(5, 14),	Set32BitColour((uint8)110, 78, 48), CSH_Unknown, CSV_Unknown },
+		{ "Moon.png",		SInt32Vec2(14, 14), 0, CSH_Unknown, CSV_Unknown },
+		{ NULL,				SInt32Vec2(10, 4),	Set32BitColour((uint8)54, 104, 58), CSH_Unknown, CSV_Unknown },
+		{ "Fern.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Owl.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown } };
 
 	TestFlowContainerDarkForest("Output" _FS_ "FlowContainerDarkForestMixedLeftCenterContinue", 72, 16, CSD_Left, CSW_Continue, CSV_Center, CSH_Unknown, 6, asComponents);
 }
@@ -1365,9 +1365,9 @@ void TestFlowContainerDarkForestImagesRightTopContinuePastEdge(void)
 	//Without wrapping the line carries on past the right edge of the 20 wide window.  The wolf fits, the pine at x 12
 	//loses its last pixel and the moon at x 21 is entirely outside, so all three must be clipped to the window.
 	SDarkForestComponent	asComponents[3] = {
-		{ "Wolf.png",		SInt32Vec2(-1, -1), 0 },
-		{ "Pine.png",		SInt32Vec2(-1, -1), 0 },
-		{ "Moon.png",		SInt32Vec2(-1, -1), 0 } };
+		{ "Wolf.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Pine.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown },
+		{ "Moon.png",		SInt32Vec2(-1, -1), 0, CSH_Unknown, CSV_Unknown } };
 
 	TestFlowContainerDarkForest("Output" _FS_ "FlowContainerDarkForestImagesRightTopContinuePastEdge", 20, 16, CSD_Right, CSW_Continue, CSV_Top, CSH_Unknown, 3, asComponents);
 }
