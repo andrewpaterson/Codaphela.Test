@@ -16,6 +16,8 @@
 #include "SupportLib/MapFontDraw.h"
 #include "SupportLib/Maps.h"
 #include "SupportLib/MapViewport.h"
+#include "SupportLib/TrueTypeFont.h"
+#include "SupportLib/TrueTypeFontFactory.h"
 #include "TestLib/Assert.h"
 #include "TestLib/AssertFile.h"
 
@@ -500,6 +502,216 @@ void TestFontMapFontViewportLayout(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Rasterises the characters of a text file in a TrueType font into an
+// image and makes a CFont from it.  The font (which holds the image) and
+// the image are added to pRoot.
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CFont> CreateTrueTypeFont(Ptr<CRoot> pRoot, char* szFontFile, float32 fPixelSize, char* szCharacterFile)
+{
+	CTrueTypeFont			cTrueTypeFont;
+	CTrueTypeFontFactory	cFactory;
+	CTextFile				cTextFile;
+	CImageColourRGB			cWhite;
+	CChars					szFilename;
+	Ptr<CImage>				pImage;
+	Ptr<CFont>				pFont;
+
+	szFilename.Init("Input" _FS_ "Fonts" _FS_);
+	szFilename.Append(szFontFile);
+	cTrueTypeFont.Init();
+	if (!cTrueTypeFont.Load(szFilename.Text()))
+	{
+		szFilename.Kill();
+		cTrueTypeFont.Kill();
+		return NULL;
+	}
+	szFilename.Kill();
+
+	cTextFile.Init();
+	if (!cTextFile.Read(szCharacterFile))
+	{
+		cTextFile.Kill();
+		cTrueTypeFont.Kill();
+		return NULL;
+	}
+
+	cWhite.Init(1.0f, 1.0f, 1.0f);
+	cFactory.Init(&cTrueTypeFont, fPixelSize);
+	pImage = cFactory.Rasterise(cTextFile.Text(), &cWhite);
+	pRoot->Add(pImage);
+	pFont = cFactory.Generate(szFontFile, pImage);
+	pRoot->Add(pFont);
+	cFactory.Kill();
+	cTextFile.Kill();
+	cTrueTypeFont.Kill();
+
+	return pFont;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFontTrueTypeCreateFont(void)
+{
+	char		szDirectory[] = "Output" _FS_ "TrueTypeFont";
+	CFileUtil	cFileUtil;
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	ObjectsInit();
+	{
+		Ptr<CRoot>		pRoot;
+		Ptr<CFont>		pFont;
+		Ptr<CImage>		pImage;
+		Ptr<CGlyph>		pGlyph;
+		CSubImage*		pcSubImage;
+		CChars			szOutputFilename;
+		CChars			szInputFilename;
+
+		pRoot = ORoot();
+		pFont = CreateTrueTypeFont(pRoot, "LiberationSans-Regular.ttf", 24.0f, "Input" _FS_ "Text" _FS_ "Test1 LiberationSans-Regular.txt");
+		AssertTrue(pFont.IsNotNull());
+		pImage = pFont->GetImage();
+		AssertTrue(pImage.IsNotNull());
+
+		AssertSize(658, pFont->NumGlyphs());
+		AssertInt(22, pFont->GetAscent());
+		AssertInt(6, pFont->GetDescent());
+		AssertInt(28, pFont->GetLineHeight());
+		AssertInt(7, pFont->GetSpaceWidth());
+		AssertInt(512, pImage->GetWidth());
+		AssertInt(452, pImage->GetHeight());
+
+		//Liberation Sans 'A' advances 1366 units (16 pixels) and is 1409 units high (17 rows), starting 5 rows below the top of the line.
+		pGlyph = pFont->GetGlyph((uint16)'A', 1);
+		AssertTrue(pGlyph.IsNotNull());
+		AssertInt(16, pGlyph->GetFullWidth());
+		AssertInt(28, pGlyph->GetFullHeight());
+		pcSubImage = pGlyph->GetSubImage();
+		AssertInt(0, pcSubImage->GetImageLeft());
+		AssertInt(5, pcSubImage->GetImageTop());
+		AssertInt(16, pcSubImage->GetImageWidth());
+		AssertInt(17, pcSubImage->GetImageHeight());
+
+		//Space has no image, only an advance.
+		pGlyph = pFont->GetGlyph((uint16)' ', 1);
+		AssertTrue(pGlyph.IsNotNull());
+		AssertInt(7, pGlyph->GetFullWidth());
+		AssertInt(28, pGlyph->GetFullHeight());
+		AssertInt(0, pGlyph->GetSubImage()->GetImageWidth());
+
+		//Code points below 0xFF are keyed with one byte, others with more.
+		pGlyph = pFont->GetGlyph((uint16)0x00C1, 1);
+		AssertTrue(pGlyph.IsNotNull());
+		AssertInt(16, pGlyph->GetFullWidth());
+		pGlyph = pFont->GetGlyph((uint32)0x0416, 2);
+		AssertTrue(pGlyph.IsNotNull());
+		pGlyph = pFont->GetGlyph((uint32)0x4E00, 2);
+		AssertTrue(pGlyph.IsNull());
+
+		szOutputFilename.Init(szDirectory);
+		cFileUtil.AppendToPath(&szOutputFilename, "LiberationSans-Regular.png");
+		AssertTrue(WriteImage(pImage, szOutputFilename.Text()));
+
+		szInputFilename.Init(szOutputFilename);
+		szInputFilename.Replace("Output", "Input");
+		AssertFile(szInputFilename, szOutputFilename);
+
+		szOutputFilename.Kill();
+		szInputFilename.Kill();
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFontTrueTypeWriteText(void)
+{
+	char		szDirectory[] = "Output" _FS_ "TrueTypeFont";
+	char		szTextFile[] = "Input" _FS_ "Text" _FS_ "Test1 LiberationSans-Regular.txt";
+	CFileUtil	cFileUtil;
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	ObjectsInit();
+	{
+		Ptr<CRoot>					pRoot;
+		Ptr<CFont>					pFont;
+		Ptr<CText>					pText;
+		CSimpleTextReader			cTextReader;
+		Ptr<CTextLayout>			pLayout;
+		Ptr<CMapFontDraw>			pFontDraw;
+		Ptr<CSpriteMap>				pSpriteMap;
+		Ptr<CMaps>					pMaps;
+		Ptr<CImage>					pDestImage;
+		Ptr<CImageCelBlitterCache>	pBlitterCache;
+		CChars						szOutputFilename;
+		CChars						szInputFilename;
+
+		pRoot = ORoot();
+		pFont = CreateTrueTypeFont(pRoot, "LiberationSans-Regular.ttf", 24.0f, szTextFile);
+		AssertTrue(pFont.IsNotNull());
+
+		cTextReader.Init(&pFont);
+		pText = cTextReader.Read(szTextFile);
+		cTextReader.Kill();
+		AssertTrue(pText.IsNotNull());
+		pRoot->Add(pText);
+		AssertSize(17, pText->NumRuns());
+
+		pDestImage = OMalloc<CImage>(1024, 480, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+		pDestImage->Black();
+		pRoot->Add(pDestImage);
+
+		pBlitterCache = OMalloc<CImageCelBlitterCache>(pDestImage);
+		pRoot->Add(pBlitterCache);
+
+		pMaps = ONMalloc<CMaps>("TrueType Maps", pBlitterCache, pDestImage);
+		pRoot->Add(pMaps);
+
+		pSpriteMap = OMalloc<CSpriteMap>();
+		pRoot->Add(pSpriteMap);
+		pFontDraw = OMalloc<CMapFontDraw>(pSpriteMap);
+		pRoot->Add(pFontDraw);
+		pLayout = OMalloc<CTextLayout>();
+		pRoot->Add(pLayout);
+
+		pSpriteMap->BeginChange();
+		pLayout->Layout(pFontDraw, pText);
+		pSpriteMap->EndChange();
+		pMaps->AddMap(pSpriteMap);
+
+		AssertTrue(pMaps->CreateCelBlitters());
+		pMaps->SetViewportPosition(0, 0);
+		AssertTrue(pMaps->Blit(false));
+
+		szOutputFilename.Init(szDirectory);
+		cFileUtil.AppendToPath(&szOutputFilename, "Test1 LiberationSans-Regular.txt.png");
+		AssertTrue(WriteImage(pDestImage, szOutputFilename.Text()));
+
+		szInputFilename.Init(szOutputFilename);
+		szInputFilename.Replace("Output", "Input");
+		AssertFile(szInputFilename, szOutputFilename);
+
+		szOutputFilename.Kill();
+		szInputFilename.Kill();
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestFont(void)
@@ -513,6 +725,8 @@ void TestFont(void)
 	TestFontGetGlyphsFromText();
 	TestFontMapFontWriteToImage();
 	TestFontMapFontViewportLayout();
+	TestFontTrueTypeCreateFont();
+	TestFontTrueTypeWriteText();
 
 	DataIOKill();
 
