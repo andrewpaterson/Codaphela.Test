@@ -52,11 +52,7 @@ void CTestSetDataFree::Init(CSetBlock* pcSetBlock)
 //////////////////////////////////////////////////////////////////////////
 void CTestSetDataFree::FreeData(void* pvData)
 {
-	SSNode*		psNode;
-	void*		pvKey;
 	
-	psNode = (SSNode*)pvData;
-	pvKey = CSetBlock::GetData(psNode);
 	giSetBlockCallbackData++;
 }
 
@@ -232,11 +228,7 @@ void TestSetBlockAddDuplicate(void)
 	size		ia = 'a';
 	size		ib = 'a';
 	bool		bResult;
-	size		iWorldLen;
-	size		iHelloLen;
 
-	iWorldLen = strlen("World");
-	iHelloLen = strlen("Hello");
 
 	cSet.Init(&CompareInt, true);
 	bResult = cSet.Put(&ia, sizeof(size));

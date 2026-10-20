@@ -679,7 +679,6 @@ void TestIndexObjectPutOverwrite(void)
 void TestIndexObjectSerialisation()
 {
 	CFileUtil	cFileUtil;
-	bool		bResult;
 	char		szDirectory[] = "Output" _FS_ "TestIndexObject";
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
@@ -713,7 +712,7 @@ void TestIndexObjectSerialisation()
 
 		cWriter.Init(szDirectory, "", "File");
 		cSerialiser.Init(&cWriter);
-		bResult = cSerialiser.Write(&pIndexObject);
+		cSerialiser.Write(&pIndexObject);
 		cSerialiser.Kill();
 		cWriter.Kill();
 	}

@@ -70,7 +70,7 @@ bool TestNumberMatchesIndex(CMapStringIntAndPointer* pcMap, CArrayInt* paiKeys)
 		IntToString(szKey, 5, uiKey, 10);
 		pcNumber = (CNumber*)pcMap->Get(szKey, &uiType);
 		iValue = pcNumber->IntValue();
-		if (iValue != uiKey)
+		if (iValue != (int32)uiKey)
 		{
 			bPass = false;
 			break;

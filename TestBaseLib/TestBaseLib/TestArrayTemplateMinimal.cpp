@@ -208,7 +208,6 @@ void TestArrayMinimalTemplateWithVirtualClass(void)
 	CTestOverridenArrayTemplateItem*	pc;
 	CTestOverridenArrayTemplateItem		c;
 	size									iIndex;
-	CTestOverridenArrayTemplateItem		av[5];
 	size									i;
 
 	ac.Init();

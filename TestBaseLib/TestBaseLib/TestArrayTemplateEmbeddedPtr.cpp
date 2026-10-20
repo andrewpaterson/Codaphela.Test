@@ -11,14 +11,12 @@ void TestArrayTemplateEmbeddedPtrAdd(void)
 {
 	CArrayTemplateEmbeddedPtr<int, 5>	cArray;
 	int		ia, ib, ic;
-	int		iSize;
 	int*	pi;
 
 	ia = 1;
 	ib = 2;
 	ic = 3;
 
-	iSize = sizeof(CArrayTemplateEmbeddedPtr<int, 6>);
 
 	cArray.Init();
 	cArray.Add(&ia);

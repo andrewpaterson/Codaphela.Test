@@ -148,12 +148,10 @@ void TestChannelsLoad(void)
 		CExternalObjectSerialiser	cSerialiser;
 		CMultiFileObjectWriter		cWriter;
 		CFileUtil					cFileUtil;
-		CChannels*					pcOld;
 
 		pcChannels = ONMalloc<CChannels>("File");
 		pcChannels.GetIndex();
 
-		pcOld = (CChannels*)pcChannels.Object();
 
 		pcChannels->BeginChange();
 		pcChannels->SetSize(8 * 32);
@@ -227,7 +225,6 @@ void TestChannelsLoad(void)
 		int							x;
 		int							y;
 		CMultiFileObjectWriter		cWriter;
-		CChannels*					pcNew;
 		CChannel*					pcChannel;
 
 		gcObjects.AddConstructor<CChannels>();
@@ -251,7 +248,6 @@ void TestChannelsLoad(void)
 
 		cFileBasic.Kill();
 
-		pcNew = (CChannels*)pcChannels.Object();
 
 		AssertSize(8 * 32 * 3, pcChannels->GetByteSize());
 		AssertSize(3, pcChannels->GetByteStride());

@@ -13,14 +13,12 @@ void TestIndexTreeNodeMemoryInit(void)
 {
 	CIndexTreeNodeMemory*	pcNode;
 	CIndexTreeNodeMemory	pcChildNode;
-	int64					uiObject;
 	CIndexTreeNodeMemory*	pcResult;
 	CTestIndexTreeMemory	cTree;
 	SLogConfig				sLogConfig;
 	
 	cTree.FakeInit(IKR_No);
 
-	uiObject = 0xA27384234FFLL;
 
 	pcNode = (CIndexTreeNodeMemory*)malloc(sizeof(CIndexTreeNodeMemory) + sizeof(CIndexTreeNodeMemory*));  //Node.  No object.  One child.
 	pcNode->Init(&cTree, NULL, 0);

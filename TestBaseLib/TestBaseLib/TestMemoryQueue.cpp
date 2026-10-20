@@ -59,10 +59,7 @@ void TestMemoryQueuePush(void)
 	CMemoryQueue	cQueue;
 	void*			pvQueue;
 	void*			pvTemp;
-	void*			pvA;
-	void*			pvB;
 	void*			pvC;
-	void*			pvD;
 	void*			pvE;
 	void*			pvF;
 	size			uiDataSize;
@@ -74,8 +71,8 @@ void TestMemoryQueuePush(void)
 
 	AssertInt(0, cQueue.NumElements());
 
-	pvA = PushElement(&cQueue, 24, 'A');
-	pvB = PushElement(&cQueue, 20, 'B');
+	PushElement(&cQueue, 24, 'A');
+	PushElement(&cQueue, 20, 'B');
 	AssertInt(2, cQueue.NumElements());
 	AssertInt(68, cQueue.GetAllocatedSize());
 
@@ -92,8 +89,8 @@ void TestMemoryQueuePush(void)
 	AssertTrue(cQueue.IsEmpty());
 	Pass();
 
-	pvA = PushElement(&cQueue, 32, 'A');
-	pvB = PushElement(&cQueue, 32, 'B');
+	PushElement(&cQueue, 32, 'A');
+	PushElement(&cQueue, 32, 'B');
 	AssertInt(2, cQueue.NumElements());
 	AssertInt(88, cQueue.GetAllocatedSize());
 
@@ -118,7 +115,7 @@ void TestMemoryQueuePush(void)
 	AssertInt(132, cQueue.GetAllocatedSize());
 	Pass();
 
-	pvD = PushElement(&cQueue, 32, 'D');
+	PushElement(&cQueue, 32, 'D');
 	pvE = PushElement(&cQueue, 32, 'E');
 	AssertNotNull(pvE);
 	AssertInt(5, cQueue.NumElements());
@@ -162,10 +159,7 @@ void TestMemoryQueuePeek(void)
 {
 	CMemoryQueue	cQueue;
 	void*			pvQueue;
-	void*			pvA;
-	void*			pvB;
 	char			c;
-	void*			pvNext;
 	void*			pv;
 	size			uiDataSize;
 
@@ -174,12 +168,12 @@ void TestMemoryQueuePeek(void)
 
 	AssertInt(0, cQueue.NumElements());
 
-	pvA = PushElement(&cQueue, 28, 'A');
-	pvB = PushElement(&cQueue, 20, 'B');
+	PushElement(&cQueue, 28, 'A');
+	PushElement(&cQueue, 20, 'B');
 
 	for (c = 'C'; c <= 'Z'; c++)
 	{
-		pvNext = PushElement(&cQueue, 20 + (c % 3) * 4, c);
+		PushElement(&cQueue, 20 + (c % 3) * 4, c);
 
 		pv = cQueue.Peek(&uiDataSize);
 		AssertQueueElement(&cQueue, pv, 20 + ((c-2) % 3) * 4, c-2);

@@ -262,7 +262,6 @@ void TestIndexTreeMemoryGet(void)
 	CTestIndexTreeObject	batmam;
 	CTestIndexTreeObject	andre;
 	CIndexTreeNodeMemory*	pcNodeBatman;
-	CIndexTreeNodeMemory*	pcNodeBatmam;
 	const char*					szBatmam;
 	CIndexTreeNodeMemory*	pcNodeAndre;
 	CIndexTreeNodeMemory*	pcNodeAndrew;
@@ -305,7 +304,7 @@ void TestIndexTreeMemoryGet(void)
 	batmam.Init(szBatmam);
 	cAccess.PutStringPtr(szBatmam, &batmam);
 	pcNodeBatman = cIndex.GetNode((uint8*)"Batman", 6);
-	pcNodeBatmam = cIndex.GetNode((uint8*)szBatmam, 6);
+	cIndex.GetNode((uint8*)szBatmam, 6);
 	pcResult = (CTestIndexTreeObject*)cAccess.GetStringPtr(szBatmam);
 	AssertPointer(&batmam, pcResult);
 	avp.Init();
@@ -1181,7 +1180,6 @@ void TestIndexTreeMemoryResizeData(void)
 	CTestIndexTreeMemory	cIndex;
 	CIndexTreeMemoryAccess	cAccess;
 	CIndexTreeNodeMemory*	pcNode;
-	CIndexTreeNodeMemory*	pcOldNode;
 	CIndexTreeNodeMemory*	pcRoot;
 	char					szAAObject[] = "Hello";
 	char					szACObject[] = "Goodbye";
@@ -1197,7 +1195,6 @@ void TestIndexTreeMemoryResizeData(void)
 	AssertTrue(cAccess.PutStringString("AC", szACObject));
 
 	pcNode = cIndex.GetNode((uint8*)"A", 1);
-	pcOldNode = pcNode;
 	AssertInt(3, pcNode->NumIndexes());
 	AssertInt(2, pcNode->NumValidIndexes());
 	AssertInt(0, pcNode->GetDataSize());
@@ -1327,9 +1324,6 @@ void TestIndexTreeMemoryDataFree(void)
 {
 	CTestIndexTreeMemory			cIndex;
 	CIndexTreeMemoryAccess			cAccess;
-	int64							lliLarry;
-	int64							lliThe;
-	int64							lliLamb;
 	CTestIndexTreeMemoryDataFree	cDataFree;
 
 	giIndexTreeMemoryCallbackData = 0;
@@ -1339,9 +1333,6 @@ void TestIndexTreeMemoryDataFree(void)
 	cIndex.SetDataFreeCallback(&cDataFree);
 	cAccess.Init(&cIndex);
 
-	lliLarry = 0x4224f9be509f7b36LL;
-	lliThe = 0x392168ee06b4c0d0;
-	lliLamb = 0xf855181fab7e51e5;
 
 	AssertTrue(cAccess.PutStringString("Larry", "Paige"));
 	AssertString("", gszIndexTreeMemoryCallbackData);
@@ -1621,7 +1612,6 @@ void TestIndexTreeMemoryAllocation(void)
 	CMemoryAllocator	cMemoryAllocator;
 	CIndexTreeMemory	cIndexTree;
 	int64				lliKey1;
-	char* pvData1;
 	CGeneralMemory* pcMemory;
 	size				tRootNodeSize;
 	size				tNodeSize;
@@ -1643,7 +1633,7 @@ void TestIndexTreeMemoryAllocation(void)
 	AssertLong(tRootNodeSize, pcMemory->GetTotalAllocatedMemory());
 
 	lliKey1 = 1;
-	pvData1 = (char*)cIndexTree.Put((uint8*)&lliKey1, sizeof(int64), NULL, 103);
+	cIndexTree.Put((uint8*)&lliKey1, sizeof(int64), NULL, 103);
 	AssertLong(1 /* root node (256 children) */ + 7 /* empty nodes with child */ + 1 /* node with no children but with data */, pcMemory->GetTotalAllocations());
 	Pass();
 	AssertLong(tRootNodeSize + (tNodeSize + tNoDataSize) * 7 + (tDataNodeSize + 103), pcMemory->GetTotalAllocatedMemory());

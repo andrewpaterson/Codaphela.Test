@@ -53,7 +53,6 @@ public:
 		int								iProduce;
 		SSharedMemoryQueueElement		sProducerData;
 		SQueueTestSequence				sSequence;
-		bool							bDone;
 		CSharedMemoryQueue				cQueue;
 		bool							bResult;
 
@@ -63,14 +62,12 @@ public:
 			return;
 		}
 
-		bDone = false;
 		sSequence.Init();
 		for (iProduce = 0; iProduce < THREADED_SHARED_QUEUE_PRODUCE_SIZE; iProduce++)
 		{
 			FillQueueElement(&sProducerData, iProduce, &sSequence);
 			cQueue.Push(&sProducerData, sProducerData.sHeader.muiSize);
 		}
-		bDone = true;
 
 		cQueue.Kill();
 	}

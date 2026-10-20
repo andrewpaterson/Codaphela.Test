@@ -344,7 +344,6 @@ void TestEmbeddedObjectPointTo(void)
 {
 	bool		bResult;
 	CFileUtil	cFileUtil;
-	OIndex		oiComplex;
 	const char*	szClassName;
 	CCodabase*	pcDatabase;
 	CSequence*	pcSequence;
@@ -360,7 +359,6 @@ void TestEmbeddedObjectPointTo(void)
 
 	Ptr<CRoot> pRoot = ORoot();
 	Ptr<CEmbeddedComplex> pComplex = OMalloc<CEmbeddedComplex>();
-	oiComplex = pComplex->GetIndex();
 
 	Ptr<CEmbeddedContainer> pContainer = &pComplex->mcContainer;
 	pRoot->Add(pContainer);

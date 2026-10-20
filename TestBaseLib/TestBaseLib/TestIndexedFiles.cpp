@@ -67,7 +67,6 @@ void TestIndexedFilesInitAndKillWihtoutOpen(void)
 	CDurableFileController	cController;
 	char					szDirectorty[] = "Output" _FS_ "Files2";
 	char					szRewriteDirectorty[] = "Output" _FS_ "_Files2";
-	char					cZero = 0;
 	SLogConfig				sLogConfig;
 
 	cFileUtil.RemoveDirs(szDirectorty, szRewriteDirectorty, NULL);

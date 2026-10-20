@@ -152,13 +152,11 @@ void TestNamedObjectName(void)
 void TestNamedOjectKill(void)
 {
 	Ptr<CTestNamedObject>	pNamedObject;
-	char*					pszName;
 
 	ObjectsInit();
 
 	pNamedObject = ONMalloc<CTestNamedObject>("This is my Name", 7);
 
-	pszName = pNamedObject->GetName();
 
 	//Trying to test that FreeIdentifiers is called and that mon is freed.
 	pNamedObject->Kill();

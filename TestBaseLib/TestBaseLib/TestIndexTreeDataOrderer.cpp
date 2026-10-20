@@ -42,7 +42,6 @@ void TestIndexTreeDataOrdererAccess(void)
 	CIndexTreeMemory				cIndexTree;
 	CIndexTreeMemoryAccess			cAccess;
 	CAccessDataOrderer				cOrderer;
-	char							c;
 	SIndexTreeMemoryUnsafeIterator	sIter;
 	bool							bExists;
 
@@ -58,10 +57,10 @@ void TestIndexTreeDataOrdererAccess(void)
 	cAccess.PutStringChar("0110", 'd');
 	AssertIndexTreeDataOrdererString(&cOrderer, "dcba");
 
-	c = cAccess.GetStringChar("0000");
+	cAccess.GetStringChar("0000");
 	AssertIndexTreeDataOrdererString(&cOrderer, "adcb");
 
-	c = cAccess.GetStringChar("0010");
+	cAccess.GetStringChar("0010");
 	AssertIndexTreeDataOrdererString(&cOrderer, "cadb");
 
 	cAccess.DeleteString("0100");

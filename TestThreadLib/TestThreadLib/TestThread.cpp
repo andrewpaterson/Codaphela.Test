@@ -84,16 +84,13 @@ void TestThreadStandAlone(void)
 //////////////////////////////////////////////////////////////////////////
 void TestThreadInThreadPool(void)
 {
-	int							iTotalResult;
 	CSafeArrayBlock				cQueue;
 	CWorkerThreadPool			cPool;
-	int							iNumHardwareTheads;
 
-	iNumHardwareTheads = NumHardwareThreads();
+	NumHardwareThreads();
 	cQueue.Init(sizeof(int));
 	cPool.Init();
 
-	iTotalResult = 0;
 
 	//You should probably write this test.
 

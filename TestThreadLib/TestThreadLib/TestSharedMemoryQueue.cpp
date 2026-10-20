@@ -349,7 +349,6 @@ void TestSharedMemoryQueueMultiThreadThisProducer(void)
 	SThreadedSharedQueueResult*			psResult;
 	int									iProcess;
 	SQueueTestSequence						sSequence;
-	bool								bDone;
 	int									iProduce;
 	SSharedMemoryQueueElement			sProducerData;
 	char								szQueueName[] = "TestMultiThreadThisProducer";
@@ -366,7 +365,6 @@ void TestSharedMemoryQueueMultiThreadThisProducer(void)
 
 	iProcess = 0;
 
-	bDone = false;
 	sSequence.Init();
 	for (iProduce = 0; iProduce < THREADED_SHARED_QUEUE_PRODUCE_SIZE; iProduce++)
 	{
@@ -381,7 +379,6 @@ void TestSharedMemoryQueueMultiThreadThisProducer(void)
 			iProcess++;
 		}
 	}
-	bDone = true;
 	cProducersDone.miThreadsStopped.Increment();
 
 	AssertTrue(cConsumersDone.Wait(4, TEST_TIMEOUT));
@@ -408,7 +405,6 @@ void TestSharedMemoryQueueMultiProcessForkDuring(void)
 	int								iProduce;
 	SSharedMemoryQueueElement		sProducerData;
 	SQueueTestSequence					sSequence;
-	bool							bDone;
 	CSharedMemory					cResult;
 	SProcessSharedQueueResult*		psResult;
 	CInterProcessDone				cProcessesDone;
@@ -426,7 +422,6 @@ void TestSharedMemoryQueueMultiProcessForkDuring(void)
 	cQueue.Init(szQueueName, 0);
 
 	sSequence.Init();
-	bDone = false;
 	for (iProduce = 0; iProduce < PROCESS_SHARED_QUEUE_PRODUCE_SIZE; iProduce++)
 	{
 		FillQueueElement(&sProducerData, iProduce, &sSequence);
@@ -438,7 +433,6 @@ void TestSharedMemoryQueueMultiProcessForkDuring(void)
 			iProcess++;
 		}
 	}
-	bDone = true;
 
 	cProcessesDone.Stop();
 	AssertTrue(cProcessesDone.Wait(5, TEST_TIMEOUT));
@@ -466,7 +460,6 @@ void TestSharedMemoryQueueMultiProcessForkEarly(void)
 	int								iProduce;
 	SSharedMemoryQueueElement		sProducerData;
 	SQueueTestSequence					sSequence;
-	bool							bDone;
 	CSharedMemory					cResult;
 	SProcessSharedQueueResult* psResult;
 	CInterProcessDone				cProcessesDone;
@@ -485,13 +478,11 @@ void TestSharedMemoryQueueMultiProcessForkEarly(void)
 	ForkProcess("--test-shared-queue", szQueueName, szSharedResultName, szDoneName, "3", false);
 
 	sSequence.Init();
-	bDone = false;
 	for (iProduce = 0; iProduce < PROCESS_SHARED_QUEUE_PRODUCE_SIZE; iProduce++)
 	{
 		FillQueueElement(&sProducerData, iProduce, &sSequence);
 		cQueue.Push(&sProducerData, sProducerData.sHeader.muiSize);
 	}
-	bDone = true;
 
 	cProcessesDone.Stop();
 	AssertTrue(cProcessesDone.Wait(5, TEST_TIMEOUT));

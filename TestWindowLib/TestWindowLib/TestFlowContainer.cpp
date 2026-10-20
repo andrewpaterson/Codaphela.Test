@@ -272,9 +272,7 @@ void TestFlowContainerRightCenteredContinue(void)
 		CBaseObject*							pcCanvasObject1a;
 		CBaseObject*							pcCanvasObject1b;
 		CBaseObject*							pcFocusObject;
-		CBaseObject*							pcObject;
 		CPointer*								pcWindowPointer;
-		CPointer*								pcPointer1;
 		SStackPointer*							psStackPointer;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 24, szDirectory);
@@ -352,7 +350,6 @@ void TestFlowContainerRightCenteredContinue(void)
 		AssertSize(1, pFlow.NumStackFroms());
 		apcStackFroms.Init();
 		pFlow->GetStackFroms(&apcStackFroms);
-		pcPointer1 = apcStackFroms.Get(0)->u.pcPointer;
 		apcStackFroms.Kill();
 		pFlow = NULL;
 
@@ -372,7 +369,6 @@ void TestFlowContainerRightCenteredContinue(void)
 		uiNumHeaps = apcHeapFroms.NumElements();
 		for (i = 0; i < uiNumHeaps; i++)
 		{
-			pcObject = *apcHeapFroms.Get(i);
 		}
 		apcHeapFroms.Kill();
 

@@ -752,7 +752,6 @@ void TestMapObjectPutOverwrite(void)
 void TestMapObjectExternalSerialisation()
 {
 	CFileUtil	cFileUtil;
-	bool		bResult;
 	char		szDirectory[] = "Output" _FS_ "MapObjectExternalSerialisation";
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
@@ -786,7 +785,7 @@ void TestMapObjectExternalSerialisation()
 
 		cWriter.Init(szDirectory, "", "File");
 		cSerialiser.Init(&cWriter);
-		bResult = cSerialiser.Write(&pMapObject);
+		cSerialiser.Write(&pMapObject);
 		cSerialiser.Kill();
 		cWriter.Kill();
 	}

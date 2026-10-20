@@ -11,17 +11,14 @@
 bool PrivateAssertChannel(EImagePurpose ePurpose, EChannelType eType, EPrimitiveType ePrimitive, SChannel* psChannel, size iLine, char* szFile)
 {
 	size			uiActualChannel;
-	EPrimitiveType	eActualPrimitive;
 	size			uiExpectedChannel;
 	CChars			szExpected;
 	CChars			szActual;
 	EImagePurpose	eActualPurpose;
 	EChannelType	eActualType;
-	bool			bFailed;
 
 	uiExpectedChannel = CHANNEL(ePurpose, eType);
 	uiActualChannel = psChannel->iChannel;
-	eActualPrimitive = psChannel->eType;
 
 	if (uiExpectedChannel != uiActualChannel)
 	{
@@ -39,7 +36,7 @@ bool PrivateAssertChannel(EImagePurpose ePurpose, EChannelType eType, EPrimitive
 		szExpected.Append(")");
 		szActual.Append(")");
 
-		bFailed = Failed(szExpected.Text(), szActual.Text(), NULL, iLine, szFile, false);
+		Failed(szExpected.Text(), szActual.Text(), NULL, iLine, szFile, false);
 		szExpected.Kill();
 		szActual.Kill();
 		return false;
@@ -52,7 +49,7 @@ bool PrivateAssertChannel(EImagePurpose ePurpose, EChannelType eType, EPrimitive
 		PrintPrimitiveType(ePrimitive, &szExpected);
 		PrintPrimitiveType(psChannel->eType, &szActual);
 
-		bFailed = Failed(szExpected.Text(), szActual.Text(), NULL, iLine, szFile, false);
+		Failed(szExpected.Text(), szActual.Text(), NULL, iLine, szFile, false);
 		szExpected.Kill();
 		szActual.Kill();
 		return false;

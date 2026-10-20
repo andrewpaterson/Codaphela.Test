@@ -298,7 +298,7 @@ void TestFreeListIteration()
 	
 	while (pi)
 	{
-		if (*pi != ui)
+		if (*pi != (int)ui)
 		{
 			AssertSize((size)*pi, ui);
 			break;

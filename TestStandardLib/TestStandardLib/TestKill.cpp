@@ -324,7 +324,6 @@ void TestKillCanFindRoot(void)
 
 	Ptr<CRoot>			pRoot;
 	Ptr<CGameWorld>		pWorld;
-	CGameWorld*			pcWorld;
 
 	pRoot = ORoot();
 
@@ -421,7 +420,6 @@ void TestKillCanFindRoot(void)
 	pRedJetMaverick = NULL;
 	pHarrier = NULL;
 	pRedJetGoose = NULL;
-	pcWorld = &pWorld;
 	pWorld = NULL;
 
 	AssertLong(2, gcObjects.NumMemoryIndexes());

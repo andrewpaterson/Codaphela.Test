@@ -57,8 +57,6 @@ void TestDataTypesIOMultiple(void)
 	SFloat32Vec2				sf2In;
 	SFloat32Vec3				sf3In;
 	SFloat32Vec4				sf4In;
-	DataIO_FileWriter	fSave;
-	DataIO_FileReader	fLoad;
 	bool				bResult;
 	CMemoryFile			cMemoryFile;
 	CFileBasic			cFile;
@@ -70,8 +68,6 @@ void TestDataTypesIOMultiple(void)
 	cDataIO.Add<SFloat32Vec2>();
 	cDataIO.Add<SFloat32Vec3>();
 	cDataIO.Add<SFloat32Vec4>();
-	fSave = cDataIO.GetFileWriter("SIntVec2");
-	fLoad = cDataIO.GetFileReader("SIntVec2");
 
 	sf2In.Init(0.1f, 2.3f);
 	sf3In.Init(4.5f, 6.7f, 8.9f);

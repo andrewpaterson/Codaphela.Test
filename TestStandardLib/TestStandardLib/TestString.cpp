@@ -124,7 +124,6 @@ void TestStringMemoryIterate(void)
 	{
 		Ptr<CTestEmbeddedStrings>	pContainer;
 		Ptr<CRoot>					pRoot;
-		OIndex						oiContainer;
 		SIndexesIterator			sIter;
 		OIndex						oi;
 		CPointer					pcBaseObject;
@@ -134,7 +133,6 @@ void TestStringMemoryIterate(void)
 
 		pRoot = ORoot();
 		pContainer = OMalloc<CTestEmbeddedStrings>();
-		oiContainer = pContainer->GetIndex();
 		AssertTrue(pContainer.IsDirty());
 
 		pRoot->Add(pContainer);

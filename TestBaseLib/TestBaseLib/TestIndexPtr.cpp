@@ -83,7 +83,6 @@ void TestIndexPtrGet(void)
 void TestIndexPtrIterate(void)
 {
 	CIndexPtr						cIndex;
-	size							iKeySize;
 	size							ui;
 	int64							iKey;
 	char*							szValue;
@@ -99,7 +98,6 @@ void TestIndexPtrIterate(void)
 	CArrayBit						aBit;
 
 	memset(szExpected, 0, 6);
-	iKeySize = sizeof(int64);
 	cIndex.Init();
 
 	szMemory = (char*)malloc(12000 * 6);

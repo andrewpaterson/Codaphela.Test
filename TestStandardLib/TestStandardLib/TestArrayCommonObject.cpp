@@ -21,7 +21,6 @@ void TestArrayCommonObjectPointerRemapping(void)
 	STestObjectFreedNotifier	sFreedNotifier;
 	CPointer					pNull;
 	size						uiNumRemapped;
-	CTestObject*				pcObject1;
 	
 	ObjectsInit();
 
@@ -54,7 +53,6 @@ void TestArrayCommonObjectPointerRemapping(void)
 	AssertInt(0, pObject3->NumHeapFroms());
 	AssertInt(0, pObject3->NumPointerTos());
 
-	pcObject1 = (CTestObject*)pObject1.Object();
 	uiNumRemapped = pObject1.MorphInto(&pObject3);
 	AssertInt(3, uiNumRemapped);
 

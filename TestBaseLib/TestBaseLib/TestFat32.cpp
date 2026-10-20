@@ -456,7 +456,6 @@ void TestFat32OpenWriteMode(void)
 {
 	CMemoryDrive			cMemoryDrive;
 	size					uiLength;
-	void*					pvMemory;
 	EFatCode				eResult;
 	CFatFile				cFatFile;
 	CFatVolume				cVolume;
@@ -466,7 +465,6 @@ void TestFat32OpenWriteMode(void)
 
 	uiLength = 4 MB;
 	cMemoryDrive.Init(uiLength, 512);
-	pvMemory = cMemoryDrive.GetMemory();
 	
 	cMemoryDrive.Erase();
 	uiMaxSectorSize = cMemoryDrive.SetMaxSectorForTesting((uiLength / 512) * 1024);
@@ -692,7 +690,6 @@ void TestFat32CreateFileEntryAndAllocate(void)
 	CMemoryDrive			cMemoryDrive;
 	CDiskFile				cFile;
 	size					uiLength;
-	void*					pvMemory;
 	EFatCode				eResult;
 	CFatVolume				cVolume;
 	uint64					uiMaxSectorSize;
@@ -701,7 +698,6 @@ void TestFat32CreateFileEntryAndAllocate(void)
 
 	uiLength = 4 MB;
 	cMemoryDrive.Init(uiLength, 512);
-	pvMemory = cMemoryDrive.GetMemory();
 
 	cMemoryDrive.Erase();
 	uiMaxSectorSize = cMemoryDrive.SetMaxSectorForTesting((uiLength / 512) * 1024);

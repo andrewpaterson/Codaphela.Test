@@ -68,7 +68,6 @@ void TestRootStackPointers(void)
 		int							iFroms;
 
 		CObject* pcTest1;
-		CObject* pcTest2;
 		CObject* pcTest3;
 
 		pTest1 = OMalloc<CTestObject>(&sKilled1);
@@ -121,7 +120,6 @@ void TestRootStackPointers(void)
 		AssertInt(1, iFroms);
 
 		pcTest3 = &pTest3;
-		pcTest2 = &pTest2;
 
 		iFroms = pTest3->NumHeapFroms();
 		AssertInt(1, iFroms);
@@ -1281,7 +1279,6 @@ void TestRootSetKillAll(void)
 		Ptr<CRoot>					pRoot;
 		STestObjectFreedNotifier	sFreedNotifier1;
 		CTestObject* pcObject;
-		CPointerContainer* pcContainer1;
 		CPointerContainer* pcContainer2;
 		Ptr<CPointerContainer>		pTemp;
 
@@ -1292,7 +1289,6 @@ void TestRootSetKillAll(void)
 		pRoot->Add(pContainer1);
 
 		pcObject = &pObject;
-		pcContainer1 = &pContainer1;
 		pcContainer2 = &pContainer2;
 
 		pTemp = OMalloc<CPointerContainer>(pContainer1);

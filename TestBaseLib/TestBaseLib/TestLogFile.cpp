@@ -362,7 +362,6 @@ void TestLogFileFindHoles(void)
 	int32					iInt3;
 	CArrayIntAndPointer		apvOverlapping;
 	size					i;
-	size						iSize;
 	CMemoryFile*			pcMemoryFile;
 
 	pcMemoryFile = MemoryFile();
@@ -377,7 +376,6 @@ void TestLogFileFindHoles(void)
 	iInt1 = 872349342;
 	iInt2 = 763421934;
 	iInt3 = 158723346;
-	iSize = sizeof(int32);
 
 	apvOverlapping.Init();
 	bResult = pcLogFile->TestFindHoles(1, &apvOverlapping, 0, 1);

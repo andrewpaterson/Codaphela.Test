@@ -161,11 +161,9 @@ void TestArrayTemplateEmbeddedRemove(void)
 
 	int								i1;
 	int								i2;
-	int								i3;
 
 	int*							pi1;
 	int*							pi2;
-	int*							pi3;
 
 	int**							ppi1;
 	int**							ppi2;
@@ -174,11 +172,9 @@ void TestArrayTemplateEmbeddedRemove(void)
 
 	i1 = 1;
 	i2 = 2;
-	i3 = 3;
 
 	pi1 = &i1;
 	pi2 = &i2;
-	pi3 = &i3;
 
 	cArray.Init();
 	ppi1 = cArray.Add(&pi1);

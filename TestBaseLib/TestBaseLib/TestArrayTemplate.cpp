@@ -216,7 +216,7 @@ bool TestArrayTemplateCheckOrder(CTestArrayTemplate* pasTestArrayTemplate, size 
 	for (i = 0; i < iNumElements; i++)
 	{
 		psItem = pasTestArrayTemplate->Get(i);
-		if (!((psItem->i1 == i) && (psItem->i2 == i)))
+		if (!((psItem->i1 == (int)i) && (psItem->i2 == (int)i)))
 		{
 			return false;
 		}

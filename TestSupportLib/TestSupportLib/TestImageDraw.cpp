@@ -837,7 +837,7 @@ void AssertDrawCelSized(Ptr<CImage> pDest, uint32 uiDestStride, uint8* puiBackgr
 				}
 			}
 
-			if (memcmp(&puiDest[(x + y * iWidth) * uiDestStride], auiExpected, uiDestStride) != 0)
+			if (memcmp(&puiDest[(x + y * iDestWidth) * uiDestStride], auiExpected, uiDestStride) != 0)
 			{
 				uiWrong++;
 			}
@@ -868,8 +868,8 @@ void AssertDrawCelSizes(Ptr<CImageCel> pCel, uint32 uiSourceStride, Ptr<CImage> 
 	int32			iHeight;
 	bool			bResult;
 
-	//Every uint32 is drawn through the same blitter so its sized tables must be rebuilt whenever the uint32 changes.
-	//A uint32 of 6x4 is the cel's own and the zero and negative sizes draw nothing.
+	//Every size is drawn through the same blitter so its sized tables must be rebuilt whenever the size changes.
+	//A size of 6x4 is the cel's own and the zero and negative sizes draw nothing.
 	acClips[1].Init(3, 2, 9, 7);
 	acClips[2].Init(5, 0, 6, 16);
 
@@ -1035,7 +1035,7 @@ void TestImageDrawBlitterCacheOnImage(void)
 	Ptr<CImageCel>				pCel;
 	uint32						uiObjects;
 
-	//An image keeps the cache of blitters that draw onto it.  The same cache is returned until the image's uint32 or
+	//An image keeps the cache of blitters that draw onto it.  The same cache is returned until the image's size or
 	//format changes, then a new one is made because blitters only work for the image they were made for.
 	uiObjects = gcObjects.NumMemoryIndexes();
 	pImage = OMalloc<CImage>(10, 8, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);

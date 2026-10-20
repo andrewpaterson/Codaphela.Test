@@ -609,8 +609,6 @@ void TestIndexTreeFileResizeData(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeFileRemoveNearestFirstFlushed(void)
 {
-	char					szAAA[] = "NEAR";
-	char					szA[] = "Florida";
 	CIndexTreeFile			cIndexTree;
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
@@ -1989,7 +1987,6 @@ void TestIndexTreeFileDeleteOnDisk(void)
 	CTestIndexTreeFile		cIndexTree;
 	CIndexTreeFileAccess	cAccess;
 	char					sz[MAX_DATA_SIZE];
-	CIndexTreeNodeFile*		pcNode;
 
 	cHelper.Init("Output" _FS_"IndexTreeB", "primary", "backup", true);
 	cHelper.RemoveWorkingDirectory();
@@ -2011,7 +2008,7 @@ void TestIndexTreeFileDeleteOnDisk(void)
 	cController.Begin();
 	cIndexTree.Init(&cController, NULL, IWT_Yes, IKR_No);
 	AssertNull(cAccess.GetStringString("Hello", sz));
-	pcNode = cIndexTree.GetNode("H", 1);
+	cIndexTree.GetNode("H", 1);
 	cController.End();
 	cIndexTree.Kill();
 
@@ -2366,16 +2363,10 @@ void TestIndexTreeFileEvictDirty(EIndexWriteThrough eWriteThrough)
 	CDurableFileController		cController;
 	CTestIndexTreeFile			cIndexTree;
 	CIndexTreeFileAccess		cAccess;
-	char						szAAA[] = "North";
-	char						szAAAAA[] = "Volcano";
-	char						szA[] = "Tier";
-	char						szAAAB[] = "Abland";
 	CMemoryAllocator			cAllocator;
-	CGeneralMemory*				pcMemory;
 	SLogConfig					sLogConfig;
 
 	cAllocator.Init();
-	pcMemory = cAllocator.GetMemory();
 
 	cHelper.Init("Output" _FS_"IndexTreeFa", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
@@ -2894,7 +2885,6 @@ void TestIndexTreeFileRemoveComplex(EIndexWriteThrough eWriteThrough, EIndexKeyR
 	char						szSmellsLikeTeenSpirit[] = { "Smells Like Teen Spirit" };
 	char						szSeizedPotPlants[] = { "Seized pot plants turn out to be daisies" };
 	char						szCallingFromWindows[] = { "I am calling you from Windows" };
-	char						szDirectory[] = "Output" _FS_ "Database8";
 	CIndexTreeFileAccess		cAccess;
 
 

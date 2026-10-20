@@ -14,7 +14,6 @@ void TestJSONParserRead1(void)
 	CMarkup			cMarkup;
 	CJSONParser		cJSONParser;
 	CChars			sz;
-	CMarkupTag*		pcTag;
 	char			szJSON[] = "\
 {\n\
   \"painting\": [\n\
@@ -44,7 +43,6 @@ void TestJSONParserRead1(void)
 	tResult = cJSONParser.Parse();
 	cJSONParser.Kill();
 
-	pcTag = cMarkup.GetRootTag();
 
 	sz.Init();
 	cMarkup.Print(&sz);
@@ -77,7 +75,6 @@ void TestJSONParserRead2(void)
 	TRISTATE		tResult;
 	CMarkup			cMarkup;
 	CJSONParser		cJSONParser;
-	CMarkupTag*		pcTag;
 	CChars			sz;
 	char			szJSON[] = "\
 {\n\
@@ -110,7 +107,6 @@ void TestJSONParserRead2(void)
 
 	AssertTritrue(tResult);
 
-	pcTag = cMarkup.GetRootTag();
 
 	sz.Init();
 	cMarkup.Print(&sz);
@@ -143,7 +139,6 @@ void TestJSONParserReadAttributes(void)
 	TRISTATE		tResult;
 	CMarkup			cMarkup;
 	CJSONParser		cJSONParser;
-	CMarkupTag*		pcTag;
 	CChars			sz;
 	char			szJSON[] = "\
 {\"widget\": {\n\
@@ -180,9 +175,7 @@ void TestJSONParserReadAttributes(void)
 
 	AssertTritrue(tResult);
 
-	pcTag = cMarkup.GetRootTag();
 
-	pcTag = cMarkup.GetRootTag();
 
 	sz.Init();
 	cMarkup.Print(&sz);
@@ -209,7 +202,6 @@ void TestJSONParser65816SampleTest(void)
 	TRISTATE		tResult;
 	CMarkup			cMarkup;
 	CJSONParser		cJSONParser;
-	CMarkupTag*		pcTag;
 	CChars			sz;
 	char			szJSON[] = "\
 {\n\
@@ -265,7 +257,6 @@ void TestJSONParser65816SampleTest(void)
 
 	AssertTritrue(tResult);
 
-	pcTag = cMarkup.GetRootTag();
 
 	sz.Init();
 	cMarkup.Print(&sz);

@@ -535,13 +535,11 @@ void TestFatCacheReadLimits(void)
 	CMemoryDrive		cMemoryDrive;
 	CDiskFile			cFile;
 	CFatClusterCache	cCache;
-	size				iDataLength;
 	uint32				uiLength;
 	bool				bResult;
 	char*				pcDriveMemory;
 	char				acTestMemory[1 KB];
 
-	iDataLength = 65 KB;
 
 	cMemoryDrive.Init(1 MB, 512);
 	cCache.Init(&cMemoryDrive, 32 KB, 512);
@@ -616,7 +614,6 @@ void TestFatCacheComplex(void)
 	char*				acData;
 	size				iDataLength;
 	uint32				uiLength;
-	bool				bIsZero = false;
 	bool				bResult;
 	char*				pcDriveMemory;
 	char				acTestMemory[2 KB + 1];

@@ -117,7 +117,6 @@ void TestObjectFreeLoopCollectionCyclicPointer(void)
 		Ptr<CTestArrayObject>					pObject;
 		CArrayBaseObjectPtrE32		apcHeapFroms;
 		CArrayStackPointerE32						apcStackFroms;
-		CBaseObject*							pcObject2;
 		CPointer*								pcPointer;
 
 		AssertSize(0, gcObjects.NumMemoryIndexes());
@@ -131,7 +130,6 @@ void TestObjectFreeLoopCollectionCyclicPointer(void)
 		AssertSize(1, pObject.NumHeapFroms());
 		apcHeapFroms.Init();
 		pObject->GetHeapFroms(&apcHeapFroms);
-		pcObject2 = *apcHeapFroms.Get(0);
 		apcHeapFroms.Kill();
 
 		AssertSize(1, pObject.NumStackFroms());

@@ -521,9 +521,7 @@ void TestObjectAllocatorAssignmentToNullObject(void)
 		char					szLog[4096];
 		char* szError;
 		CLogToMemory			cLogToMemory;
-		char* sz;
 
-		sz = (char*)4096;
 
 		TestObjectAllocatorAddConstructors();
 

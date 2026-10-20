@@ -298,11 +298,8 @@ void TestObjectPointerRemappingKilling(void)
 		STestObjectFreedNotifier	sFreedNotifier4;
 		STestObjectFreedNotifier	sFreedNotifier5;
 		int							iNumRemapped;
-		CTestObject* pcObject1;
-		CTestObject* pcObject2;
 		CTestObject* pcObject3;
 		CTestObject* pcObject4;
-		CTestObject* pcObject5;
 
 		pRoot = ORoot();
 
@@ -312,11 +309,8 @@ void TestObjectPointerRemappingKilling(void)
 		pObject4 = OMalloc<CTestObject>(&sFreedNotifier4);
 		pObject5 = OMalloc<CTestObject>(&sFreedNotifier5);
 
-		pcObject1 = (CTestObject*)pObject1.Object();
-		pcObject2 = (CTestObject*)pObject2.Object();
 		pcObject3 = (CTestObject*)pObject3.Object();
 		pcObject4 = (CTestObject*)pObject4.Object();
-		pcObject5 = (CTestObject*)pObject5.Object();
 
 		pRoot->Add(pObject1);
 		pObject1->mpObject = pObject2;
@@ -487,7 +481,6 @@ void TestObjectMorphIntoComplex(void)
 		STestObjectFreedNotifier	sFreedNotifier15;
 		int							iNumRemapped;
 		CTestObject* pcTest1;
-		CTestObject* pcTest3;
 
 		pRoot = ORoot();
 
@@ -573,7 +566,6 @@ void TestObjectMorphIntoComplex(void)
 
 		AssertLong(17, gcObjects.NumMemoryIndexes());
 
-		pcTest3 = (CTestObject*)pTest3.Object();
 		iNumRemapped = pTest3.MorphInto(&pTest10);
 		AssertInt(2, iNumRemapped);
 

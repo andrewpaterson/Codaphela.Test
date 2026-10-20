@@ -486,7 +486,6 @@ void TestArrayObjectClassExists(void)
 void TestArrayObjectExternalSerialisation(void)
 {
 	CFileUtil	cFileUtil;
-	bool		bResult;
 	char		szDirectory[] = "Output" _FS_ "TestArrayObject";
 
 	AssertTrue(cFileUtil.RemoveDir(szDirectory));
@@ -519,7 +518,7 @@ void TestArrayObjectExternalSerialisation(void)
 
 		cWriter.Init(szDirectory, "", "File");
 		cSerialiser.Init(&cWriter);
-		bResult = cSerialiser.Write(&pArray);
+		cSerialiser.Write(&pArray);
 		cSerialiser.Kill();
 		cWriter.Kill();
 	}

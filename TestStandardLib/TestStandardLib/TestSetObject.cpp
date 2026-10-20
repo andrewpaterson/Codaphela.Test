@@ -498,7 +498,6 @@ void TestSetObjectSerialisation(void)
 	CExternalObjectSerialiser		cSerialiser;
 	CChunkFileObjectWriter			cWriter;
 	CFileUtil						cFileUtil;
-	bool							bResult;
 	char							szDirectory[] = "Output" _FS_ "TestSetObject";
 	CExternalObjectDeserialiser		cDeserialiser;
 	CChunkFileSystemObjectReader 	cReader;
@@ -518,7 +517,7 @@ void TestSetObjectSerialisation(void)
 
 	cWriter.Init(szDirectory, "", "File");
 	cSerialiser.Init(&cWriter);
-	bResult = cSerialiser.Write(&pSet);
+	cSerialiser.Write(&pSet);
 	cSerialiser.Kill();
 	cWriter.Kill();
 

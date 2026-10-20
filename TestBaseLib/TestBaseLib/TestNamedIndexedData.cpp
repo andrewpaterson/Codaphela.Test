@@ -965,7 +965,7 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 		AssertLong(1023, cDatabase.NumIndices());  //This causes evictions.
 		AssertLong(1023, cDatabase.NumNames());
 	}
-	else if (eWriteThrough = IWT_No)
+	else if (eWriteThrough == IWT_No)
 	{
 		AssertLong(6716, cDatabase.GetIndiciesSystemMemorySize());
 		AssertLong(322, cDatabase.GetDataSystemMemorySize());
@@ -1022,7 +1022,7 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 		AssertLong(1023, cDatabase.NumNames());
 		AssertLong(0, cDatabase.NumDataCached()); 
 	}
-	else if (eWriteThrough = IWT_No)
+	else if (eWriteThrough == IWT_No)
 	{
 		AssertLong(8156, cDatabase.GetIndiciesSystemMemorySize());
 		AssertLong(4479, cDatabase.GetDataSystemMemorySize());
@@ -1097,7 +1097,6 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 	CTestNamedIndexedDataObject			cObject;
 	CTestNamedIndexedDataObject			cResult;
 	OIndex								oi;
-	bool								bResult;
 	CArrayChars							aszWords;
 	CRandom								cRandom;
 	CChars								sz;
@@ -1174,7 +1173,7 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 		AssertLong(1023, cDatabase.NumIndices());  //This causes evictions.
 		AssertLong(1023, cDatabase.NumNames());
 	}
-	else if (eWriteThrough = IWT_No)
+	else if (eWriteThrough == IWT_No)
 	{
 		AssertLong(6716, cDatabase.GetIndiciesSystemMemorySize());
 		AssertLong(322, cDatabase.GetDataSystemMemorySize());
@@ -1199,7 +1198,7 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 	aszNames.Shuffle(&cRandom);
 	for (i = 0; i < aszNames.NumElements(); i++)
 	{
-		bResult = cDatabase.Get(aszNames.Get(i), &uiDataSize, &cResult, sizeof(CTestNamedIndexedDataObject));
+		cDatabase.Get(aszNames.Get(i), &uiDataSize, &cResult, sizeof(CTestNamedIndexedDataObject));
 	}
 
 	AssertSize(6728, cDatabase.GetIndiciesSystemMemorySize());
@@ -1220,7 +1219,7 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 	aszNames.Shuffle(&cRandom);
 	for (i = 0; i < aszNames.NumElements(); i++)
 	{
-		bResult = cDatabase.Get(aszNames.Get(i), &uiDataSize, &cResult, sizeof(CTestNamedIndexedDataObject));
+		cDatabase.Get(aszNames.Get(i), &uiDataSize, &cResult, sizeof(CTestNamedIndexedDataObject));
 	}
 
 	AssertSize(6812, cDatabase.GetIndiciesSystemMemorySize());

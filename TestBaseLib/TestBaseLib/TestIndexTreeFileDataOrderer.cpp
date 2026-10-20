@@ -75,7 +75,6 @@ void TestIndexTreeFileDataOrdererAccess(EIndexWriteThrough eWriteThrough)
 	CIndexTreeFile					cIndexTree;
 	CIndexTreeFileAccess			cAccess;
 	CAccessDataOrderer				cOrderer;
-	char							c;
 	SIndexTreeFileUnsafeIterator	sIter;
 	bool							bExists;
 	CIndexTreeHelper				cHelper;
@@ -97,10 +96,10 @@ void TestIndexTreeFileDataOrdererAccess(EIndexWriteThrough eWriteThrough)
 	cAccess.PutStringChar("0110", 'd');
 	AssertIndexTreeFileDataOrdererString(&cOrderer, "dcba");
 
-	c = cAccess.GetStringChar("0000");
+	cAccess.GetStringChar("0000");
 	AssertIndexTreeFileDataOrdererString(&cOrderer, "adcb");
 
-	c = cAccess.GetStringChar("0010");
+	cAccess.GetStringChar("0010");
 	AssertIndexTreeFileDataOrdererString(&cOrderer, "cadb");
 
 	cAccess.DeleteString("0100");

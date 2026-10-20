@@ -76,7 +76,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int32 iFlushFrequency)
 		pszKey2 = gaszCommonWords.Get(i);
 		pszKey = pszKey2->Text();
 		iData = pcAccess->GetStringInt(pszKey);
-		if (iData != i)
+		if (iData != (int32)i)
 		{
 			bPassed = false;
 			break;
@@ -251,7 +251,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int32 iFlushFrequency)
 		pszKey2 = gaszCommonWords.Get(i);
 		pszKey = pszKey2->Text();
 		iData = pcAccess->GetStringInt(pszKey);
-		if (iData != i)
+		if (iData != (int32)i)
 		{
 			bPassed = false;
 			break;
@@ -295,10 +295,8 @@ void TestIndexTreeFileAccessFlushEvictBug(void)
 	CTestIndexTreeFile		cIndexTree;
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
-	int32					iFlushFrequency;
 	bool					bResult;
 
-	iFlushFrequency = -1;
 
 	cHelper.Init("Output" _FS_ "IndexTreeFileAccessFlushEvictBug", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
@@ -350,9 +348,7 @@ void TestIndexTreeFileAccessRemoveEvictBug(void)
 	CTestIndexTreeFile		cIndexTree;
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
-	int32					iFlushFrequency;
 
-	iFlushFrequency = -1;
 
 	cHelper.Init("Output" _FS_ "TestIndexTreeFileAccessRemoveEvictBug", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
@@ -415,10 +411,8 @@ void TestIndexTreeFileAccessEvictBug()
 	CIndexTreeFile			cIndexTree;
 	CIndexTreeHelper		cHelper;
 	CDurableFileController	cController;
-	int32					iFlushFrequency;
 	bool					bResult;
 
-	iFlushFrequency = -1;
 
 	cHelper.Init("Output" _FS_ "IndexTreeFileAccessEvictBug", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());

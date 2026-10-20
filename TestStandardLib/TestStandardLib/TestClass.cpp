@@ -34,7 +34,6 @@ void TestClassDefinition(void)
 	CClasses*			pcClasses;
 	CClass*				pcTemp;
 	CField*				pcField;
-	CPointerField*		pcPointerField;
 	EPrimitiveType		eType;
 
 	DataIOInit();
@@ -72,7 +71,6 @@ void TestClassDefinition(void)
 	AssertTrue(pcField->IsPointer());
 	AssertString("mpObject", pcField->GetName());
 	AssertInt(OBJECT_SIZE, pcField->GetOffset());
-	pcPointerField = (CPointerField*)pcField;
 
 	pcField = pcTestClassClass->GetField("mpTest");
 	AssertTrue(pcField->IsPointer());
@@ -253,17 +251,14 @@ void TestClassSerialisation(void)
 		Ptr<CTestClass>					pTestClass;
 		CExternalObjectSerialiser		cSerialiser;
 		CChunkFileObjectWriter			cWriter;
-		bool							bResult;
 		char							szData[] = "0123456789A";
 		CExternalObjectDeserialiser		cGraphDeserialiser;
 		CChunkFileSystemObjectReader 	cReader;
-		OIndex							oi;
 
 		TestClassAddConstructors();
 
 		pTestClass = gcObjects.Malloc<CTestClass>("Burke");
 		pTestClass->Init();
-		oi = pTestClass->GetIndex();
 		pTestClass->mpObject = NULL;;
 		pTestClass->mpTest = NULL;
 		memcpy(pTestClass->mauiData, szData, 12);
@@ -274,7 +269,7 @@ void TestClassSerialisation(void)
 
 		cWriter.Init(szDirectory, "", "File");
 		cSerialiser.Init(&cWriter);
-		bResult = cSerialiser.Write(&pTestClass);
+		cSerialiser.Write(&pTestClass);
 		cSerialiser.Kill();
 		cWriter.Kill();
 

@@ -131,7 +131,6 @@ void TestXMLParserRead(void)
 //////////////////////////////////////////////////////////////////////////
 void TestXMLParserComments(void)
 {
-	TRISTATE		tResult;
 	CMarkup			cMarkup;
 	CXMLParser		cXMLParser;
 	CChars			szDoc;
@@ -153,7 +152,7 @@ void TestXMLParserComments(void)
 
 	cMarkup.Init();
 	cXMLParser.Init(szXML, "", &cMarkup, NULL);
-	tResult = cXMLParser.Parse();
+	cXMLParser.Parse();
 	cXMLParser.Kill();
 
 	szText.Init();
@@ -178,7 +177,6 @@ void TestXMLParserComments(void)
 //////////////////////////////////////////////////////////////////////////
 void TestXMLParserTextToString(void)
 {
-	TRISTATE	tResult;
 	CMarkup		cMarkup;
 	CXMLParser	cXMLParser;
 	CChars		szDoc;
@@ -215,7 +213,7 @@ GEST Service CreateService error = 1073\n\
 
 	cMarkup.Init();
 	cXMLParser.Init(szXML, "", &cMarkup, NULL);
-	tResult = cXMLParser.Parse();
+	cXMLParser.Parse();
 	cXMLParser.Kill();
 
 	szDoc.Init();
@@ -235,7 +233,6 @@ void TestXMLParserNamedReferences(void)
 {
 	CMarkupReference*	pcRef;
 	CMarkupNamedRef*	pcNamedRef;
-	TRISTATE			tResult;
 	CMarkup				cMarkup;
 	CXMLParser			cXMLParser;
 	CMarkupDoc*			pcDoc;
@@ -267,7 +264,7 @@ void TestXMLParserNamedReferences(void)
 
 	cMarkup.Init();
 	cXMLParser.Init(szXML, "", &cMarkup, NULL);
-	tResult = cXMLParser.Parse();
+	cXMLParser.Parse();
 
 	pcDoc = cXMLParser.mpcDoc;
 	AssertInt(3, pcDoc->macRefs.NumElements());
@@ -304,7 +301,6 @@ void TestXMLParserNamedReferences(void)
 void TestXMLParserErrors(void)
 {
 	CXMLParser		cXMLParser;
-	TRISTATE		tResult;
 	CMarkup			cMarkup;
 	CLogger			cLogger;
 	CMemoryFile		cMemory;
@@ -323,7 +319,7 @@ void TestXMLParserErrors(void)
 	sLogConfig = cLogger.SetSilent();
 	cMarkup.Init();
 	cXMLParser.Init(szXML, "InMemory", &cMarkup, &cLogger);
-	tResult = cXMLParser.Parse();
+	cXMLParser.Parse();
 	cMemory.Write(szZero, 1, 1);
 
 	AssertStringStartsWith("WARNING: Expected [=].", (char*)cMemory.GetBufferPointer());

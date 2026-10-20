@@ -549,7 +549,6 @@ void TestDistToStackSplitRootAndStack(void)
 	CTestObject*				pcTestR1;
 	CTestObject*				pcTestR2;
 	CPointerContainer*			pcC;
-	CPointerContainer*			pcL1;
 
 	Ptr<CTestObject>	pTestC = OMalloc<CTestObject>();
 	Ptr<CTestObject>	pTestL1 = OMalloc<CTestObject>();
@@ -583,7 +582,6 @@ void TestDistToStackSplitRootAndStack(void)
 	pcTestR1 = &pTestR1;
 	pcTestR2 = &pTestR2;
 	pcC = &pC;
-	pcL1 = &pL1;
 
 	pTestC = NULL;
 	pTestL1 = NULL;
@@ -709,7 +707,6 @@ void TestDistToStackSetWithStackPointers(void)
 	Ptr<CTestObject>			pTest;
 	CSet<CTestObject>*			pcSet;
 	CPointerContainer*			pcContainer;
-	CTestObject*				pcTest;
 
 	pTest = OMalloc<CTestObject>(&sFreedNotifier);
 	pSet = OMalloc<CSet<CTestObject>>(false);
@@ -722,7 +719,6 @@ void TestDistToStackSetWithStackPointers(void)
 
 	pcSet = &pSet;
 	pcContainer = &pContainer;
-	pcTest = &pTest;
 	pSet = NULL;
 	pContainer = NULL;
 
@@ -774,7 +770,6 @@ void TestDistToStackSetBroken(void)
 	Ptr<CTestObject>			pTest2;
 	Ptr<CTestObject>			pTest3;
 
-	CObject*					pcTest1;
 	CObject*					pcTest2;
 	CObject*					pcTest3;
 	CSetObject*					pcSet;
@@ -812,7 +807,6 @@ void TestDistToStackSetBroken(void)
 	//           pRoot[3](0) 
 	//    
 
-	pcTest1 = &pTest1;
 	pcTest3 = &pTest3;
 	pcTest2 = &pTest2;
 	pTest1 = NULL;

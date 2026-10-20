@@ -21,7 +21,7 @@ void TestMemoryManagerContiguousAllocations(void)
 	uint32			uiMemorySize;
 
 	uiMemorySize = 96;
-	pvStartMemory = malloc(uiMemorySize);
+	pvStartMemory = calloc(1, uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
 	cMemory.DisableEmptyCache();
@@ -93,7 +93,7 @@ void TestMemoryManagerDeallocate1(void)
 	SMMNode*		psNode;
 
 	uiMemorySize = 88;
-	pvStartMemory = malloc(uiMemorySize);
+	pvStartMemory = calloc(1, uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
 	cMemory.DisableEmptyCache();
@@ -157,7 +157,7 @@ void TestMemoryManagerDeallocate2(void)
 	SMMNode*		psNode;
 
 	uiMemorySize = 100;
-	pvStartMemory = malloc(uiMemorySize);
+	pvStartMemory = calloc(1, uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
 	cMemory.DisableEmptyCache();
@@ -232,7 +232,7 @@ void TestMemoryManagerDeallocateAllocate1(void)
 	SMMNode*		psNode;
 
 	uiMemorySize = 100;
-	pvStartMemory = malloc(uiMemorySize);
+	pvStartMemory = calloc(1, uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
 	cMemory.DisableEmptyCache();
@@ -323,7 +323,7 @@ void TestMemoryManagerDeallocateAllocate2(void)
 	SMMNode*		psNode;
 
 	uiMemorySize = 100;
-	pvStartMemory = malloc(uiMemorySize);
+	pvStartMemory = calloc(1, uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
 	cMemory.DisableEmptyCache();
@@ -396,7 +396,7 @@ void TestMemoryManagerDeallocateAllocate3(void)
 	SMMNode*		psNode;
 
 	uiMemorySize = 88;
-	pvStartMemory = malloc(uiMemorySize);
+	pvStartMemory = calloc(1, uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
 	cMemory.DisableEmptyCache();
@@ -499,7 +499,7 @@ void TestMemoryManagerEmptyCache(void)
 	uint32			uiRemovals;
 
 	uiMemorySize = 64 KB;
-	pvStartMemory = malloc(uiMemorySize);
+	pvStartMemory = calloc(1, uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
 
