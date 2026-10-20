@@ -9,6 +9,7 @@
 #include "SupportLib/ImageCelMask.h"
 #include "SupportLib/ImageCelTransparent.h"
 #include "SupportLib/ImageCelMaskTransparent.h"
+#include "SupportLib/ImageCelsWriter.h"
 #include "TestLib/Assert.h"
 #include "TestReadImage.h"
 #include "TestLib/AssertFile.h"
@@ -290,6 +291,184 @@ void TestImageDividerGenerateFromBorderWithTransparent(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void AssertImageDividerCels(CImageDivider* pcImageDivider, char* szImageFileName, char* szName)
+{
+	CChars	szImagePathName;
+	CChars	szExpected;
+	CChars	szOutput;
+	bool	bResult;
+
+	szImagePathName.Init("Input" _FS_);
+	szImagePathName.Append(szImageFileName);
+	szExpected.Init("Input" _FS_);
+	szExpected.Append(szName);
+	szExpected.Append("-expected.cels");
+	szOutput.Init("Output" _FS_);
+	szOutput.Append(szName);
+	szOutput.Append(".cels");
+
+	bResult = CelsWriter(pcImageDivider->GetDestImageCels(), szImagePathName.Text(), szOutput.Text());
+	AssertTrue(bResult);
+	AssertFile(szExpected.Text(), szOutput.Text());
+
+	szOutput.Kill();
+	szExpected.Kill();
+	szImagePathName.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDividerWriteBorder(void)
+{
+	CImageDivider	cImageDivider;
+
+	Ptr<CImage> pcImage = TestReadImage(NULL, "splitter.png");
+	Ptr<CImage> pcMask = OMalloc<CImage>();
+
+	cImageDivider.Init(&pcImage);
+	cImageDivider.GenerateFromBorder(pcMask);
+	AssertInt(20, cImageDivider.GetDestImageCels()->NumElements());
+	AssertImageDividerCels(&cImageDivider, "splitter.png", "DividerBorder");
+
+	cImageDivider.Kill();
+	pcMask = NULL;
+	pcImage = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDividerWriteBorderWithTransparent(void)
+{
+	CImageDivider	cImageDivider;
+	uint32			uiTransparent;
+
+	Ptr<CImage> pcImage = TestReadImage(NULL, "cel6.png");
+	Ptr<CImage> pcMask = OMalloc<CImage>();
+
+	uiTransparent = 0x000000;
+	cImageDivider.Init(&pcImage, (SImageColour*)&uiTransparent);
+	cImageDivider.GenerateFromBorder(&pcMask);
+	AssertInt(2, cImageDivider.GetDestImageCels()->NumElements());
+	AssertImageDividerCels(&cImageDivider, "cel6.png", "DividerBorderTransparent");
+
+	cImageDivider.Kill();
+	pcMask = NULL;
+	pcImage = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDividerWriteNumbers(void)
+{
+	CImageDivider			cImageDivider;
+	CImageDividerNumbers	cNumbers;
+
+	Ptr<CImage> pcImage = TestReadImage(NULL, "grid.png");
+
+	cNumbers.InitGeneral(16, 16, -1, -1, 16, 0, 16, 0);
+	cImageDivider.Init(&pcImage, NULL);
+	cImageDivider.GenerateFromNumbers(&cNumbers);
+	AssertInt(6, cImageDivider.GetDestImageCels()->NumElements());
+	AssertImageDividerCels(&cImageDivider, "grid.png", "DividerNumbers");
+
+	cImageDivider.Kill();
+	pcImage = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDividerWriteNumbersWithTransparent(void)
+{
+	CImageDivider			cImageDivider;
+	CImageDividerNumbers	cNumbers;
+	uint32					uiTransparent;
+
+	Ptr<CImage> pcImage = TestReadImage(NULL, "grid.png");
+
+	uiTransparent = 0x212121ff;
+	cNumbers.InitGeneral(-1, -1, 4, 3, 0, 0, 0, 0);
+	cImageDivider.Init(&pcImage, (SImageColour*)&uiTransparent);
+	cImageDivider.GenerateFromNumbers(&cNumbers);
+	AssertInt(12, cImageDivider.GetDestImageCels()->NumElements());
+	AssertImageDividerCels(&cImageDivider, "grid.png", "DividerNumbersTransparent");
+
+	cImageDivider.Kill();
+	pcImage = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDividerWriteRectangles(void)
+{
+	CImageDivider	cImageDivider;
+	CArrayRectangle	acRectangles;
+
+	Ptr<CImage> pcImage = TestReadImage(NULL, "grid.png");
+
+	acRectangles.Init();
+	acRectangles.Add()->Init(0, 0, 16, 16);
+	acRectangles.Add()->Init(16, 16, 48, 32);
+	acRectangles.Add()->Init(8, 24, 40, 48);
+
+	cImageDivider.Init(&pcImage, NULL);
+	cImageDivider.GenerateFromRectangles(&acRectangles);
+	AssertInt(3, cImageDivider.GetDestImageCels()->NumElements());
+	AssertImageDividerCels(&cImageDivider, "grid.png", "DividerRectangles");
+
+	cImageDivider.Kill();
+	acRectangles.Kill();
+	pcImage = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDividerWriteRectanglesWithTransparent(void)
+{
+	CImageDivider	cImageDivider;
+	CArrayRectangle	acRectangles;
+	uint32			uiTransparent;
+
+	Ptr<CImage> pcImage = TestReadImage(NULL, "grid.png");
+
+	acRectangles.Init();
+	acRectangles.Add()->Init(0, 0, 16, 16);
+	acRectangles.Add()->Init(16, 16, 48, 32);
+	acRectangles.Add()->Init(8, 24, 40, 48);
+
+	uiTransparent = 0x212121ff;
+	cImageDivider.Init(&pcImage, (SImageColour*)&uiTransparent);
+	cImageDivider.GenerateFromRectangles(&acRectangles);
+	AssertInt(3, cImageDivider.GetDestImageCels()->NumElements());
+	AssertImageDividerCels(&cImageDivider, "grid.png", "DividerRectanglesTransparent");
+
+	cImageDivider.Kill();
+	acRectangles.Kill();
+	pcImage = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestImageDivider(void)
 {
 	BeginTests();
@@ -301,6 +480,12 @@ void TestImageDivider(void)
 	TestImageDividerGenerateFromNumbers();
 	TestImageDividerGenerateFromNumbersWithTransparent();
 	TestImageDividerGenerateFromBorderWithTransparent();
+	TestImageDividerWriteBorder();
+	TestImageDividerWriteBorderWithTransparent();
+	TestImageDividerWriteNumbers();
+	TestImageDividerWriteNumbersWithTransparent();
+	TestImageDividerWriteRectangles();
+	TestImageDividerWriteRectanglesWithTransparent();
 
 	ObjectsKill(false);
 	DataIOKill();
