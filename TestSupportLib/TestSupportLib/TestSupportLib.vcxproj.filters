@@ -193,6 +193,9 @@
     <ClCompile Include="TestFont.cpp">
       <Filter>Source Files\Image\Font</Filter>
     </ClCompile>
+    <ClCompile Include="TestTrueTypeFont.cpp">
+      <Filter>Source Files\Image\Font</Filter>
+    </ClCompile>
     <ClCompile Include="TestMapViewport.cpp">
       <Filter>Source Files\Map</Filter>
     </ClCompile>
