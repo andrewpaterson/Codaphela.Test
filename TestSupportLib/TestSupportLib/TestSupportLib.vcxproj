@@ -191,7 +191,6 @@
     <ClCompile Include="AssertImage.cpp" />
     <ClCompile Include="SupportAssert.cpp" />
     <ClCompile Include="TestFont.cpp" />
-    <ClCompile Include="TestTrueTypeFont.cpp" />
     <ClCompile Include="TestImageDraw.cpp" />
     <ClCompile Include="TestImageOpacity.cpp" />
     <ClCompile Include="TestImageRGBAToR3G3B2A.cpp" />
@@ -237,6 +236,7 @@
     <ClCompile Include="TestSphereShape.cpp" />
     <ClCompile Include="TestTileMapGenerator.cpp" />
     <ClCompile Include="TestTriangleShape.cpp" />
+    <ClCompile Include="TestTrueTypeFont.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssertImage.h" />

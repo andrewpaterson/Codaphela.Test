@@ -193,9 +193,6 @@
     <ClCompile Include="TestFont.cpp">
       <Filter>Source Files\Image\Font</Filter>
     </ClCompile>
-    <ClCompile Include="TestTrueTypeFont.cpp">
-      <Filter>Source Files\Image\Font</Filter>
-    </ClCompile>
     <ClCompile Include="TestMapViewport.cpp">
       <Filter>Source Files\Map</Filter>
     </ClCompile>
@@ -210,6 +207,9 @@
     </ClCompile>
     <ClCompile Include="TestReadImage.cpp">
       <Filter>Source Files\Image\Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTrueTypeFont.cpp">
+      <Filter>Source Files\Image\Font</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

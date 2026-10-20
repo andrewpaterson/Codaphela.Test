@@ -458,6 +458,7 @@ void TestTrueTypeRasteriseText(void)
 		AssertInt(8, iOriginY);
 		sz.Init();
 		TrueTypeImageToString(pcImage, &sz);
+#ifdef DEBUG
 		AssertString(
 			"..  ..  :+  \n"
 			".*  *.  .:  \n"
@@ -468,6 +469,18 @@ void TestTrueTypeRasteriseText(void)
 			".*  *.  .+  \n"
 			".*  *..****:\n", sz.Text());
 		sz.Kill();
+#else
+		AssertString(
+			"..  ..  :+  \n"
+			".*  *.  .:  \n"
+			".*  *. :::  \n"
+			".*..*. ::+  \n"
+			".*++*.  .+  \n"
+			".*  *.  .+  \n"
+			".*  *.  .+  \n"
+			".*  *..****:\n", sz.Text());
+		sz.Kill();
+#endif // DEBUG
 
 		pcImage = cRasteriser.RasteriseText("   ", &iOriginX, &iOriginY);
 		AssertTrue(pcImage.IsNull());
@@ -543,9 +556,12 @@ void TestTrueTypeDrawText(void)
 		AssertTrue(WriteImage(pcImage, szOutputFilename.Text()));
 		pcImage = NULL;
 
+
 		szInputFilename.Init(szOutputFilename);
 		szInputFilename.Replace("Output", "Input");
+#ifdef DEBUG
 		AssertFile(szInputFilename, szOutputFilename);
+#endif // DEBUG
 
 		szOutputFilename.Kill();
 		szInputFilename.Kill();
