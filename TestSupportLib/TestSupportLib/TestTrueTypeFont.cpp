@@ -498,6 +498,9 @@ void TestTrueTypeDrawText(void)
 												"JetBrainsMonoNL-Light.ttf", "JetBrainsMonoNL-Regular.ttf", "JetBrainsMonoNL-Bold.ttf", "JetBrainsMonoNL-LightItalic.ttf",
 												"InterVariable.ttf", "InterVariable-Italic.ttf" };
 		float32					afSizes[] = { 11.0f, 16.0f, 24.0f, 40.0f };
+		//Colour channels as bytes; fractions like 9 / 10.0f land on half a byte and round either way under /fp:fast.
+		int						aiReds[] = { 0, 26, 51, 77, 102, 128, 153, 178, 204, 229 };
+		int						aiBlues[] = { 0, 43, 85, 128 };
 		CTrueTypeFont			cFont;
 		CTrueTypeRasteriser		cRasteriser;
 		Ptr<CImage>				pcImage;
@@ -519,7 +522,7 @@ void TestTrueTypeDrawText(void)
 			{
 				cRasteriser.Init(&cFont, afSizes[iSize]);
 				fY += cRasteriser.GetAscent();
-				cColour.Init(iFont / 10.0f, 0.0f, iSize / 6.0f);
+				cColour.Init(aiReds[iFont] / 255.0f, 0.0f, aiBlues[iSize] / 255.0f);
 				AssertTrue(cRasteriser.DrawText(pcImage, 4.25f, fY, "Sphinx of black quartz, judge my vow! \xC3\x81\xC3\xA9 0123 %&@", &cColour));
 				fY += cRasteriser.GetDescent();
 				cRasteriser.Kill();
