@@ -755,6 +755,116 @@ void TestCanvasNested(void)
 
 //////////////////////////////////////////////////////////////////////////
 //																		//
+// An opaque canvas covers what is behind it.  A transparent one is		//
+// blended over it.														//
+//																		//
+//////////////////////////////////////////////////////////////////////////
+void TestCanvasTransparent(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "CanvasTransparent";
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	ObjectsInit();
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CClearCanvasDraw>	pWindowDraw;
+		Ptr<CFillContainer>		pWindowFill;
+		Ptr<CClearCanvasDraw>	pBlueDraw;
+		Ptr<CCanvas>			pOpaque;
+		Ptr<CCanvas>			pTransparent;
+		Ptr<CCanvas>			pEmpty;
+		Ptr<CImage>				pWindowImage;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		uint8*					puiWindow;
+		uint8*					puiPixel;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 12, 4, szDirectory);
+		cTick.Init(&cData, 1);
+		pWindowDraw = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)255, 0, 0));
+		pTestWindow = OMalloc<CWindow>("Transparent Canvas", &cNativeFactory, &cTick, pWindowDraw, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+
+		pWindowFill = OMalloc<CFillContainer>(pTestWindow);
+		pTestWindow->SetContainer(pWindowFill);
+
+		//Both canvases are cleared to half transparent blue.  The opaque one ignores the opacity.
+		pBlueDraw = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)0, 0, 255, 128));
+		pOpaque = OMalloc<CCanvas>(pTestWindow, pBlueDraw);
+		pOpaque->SetDesiredSize(4, 4);
+		pOpaque->SetAlignment(CSH_Left, CSV_Top);
+		pWindowFill->AddComponent(pOpaque);
+
+		pTransparent = OMalloc<CCanvas>(pTestWindow, pBlueDraw);
+		pTransparent->SetDesiredSize(4, 4);
+		pTransparent->SetAlignment(CSH_Center, CSV_Top);
+		pWindowFill->AddComponent(pTransparent);
+
+		//Canvases are opaque unless they are made transparent, which gives their image an opacity channel.
+		AssertFalse(pTransparent->IsTransparent());
+		AssertInt(CFT_RGB, pTransparent->GetColourFormat());
+		AssertInt(ARGB_None, pTransparent->GetAlphaBits());
+		AssertTrue(pTransparent->SetTransparent(true));
+		AssertTrue(pTransparent->IsTransparent());
+		AssertInt(CFT_RGBA, pTransparent->GetColourFormat());
+		AssertInt(ARGB_8bit, pTransparent->GetAlphaBits());
+
+		//A transparent canvas with nothing drawn on it doesn't change what is behind it.
+		pEmpty = OMalloc<CCanvas>(pTestWindow, (CPointer)NULL);
+		pEmpty->SetDesiredSize(4, 4);
+		pEmpty->SetAlignment(CSH_Right, CSV_Top);
+		AssertTrue(pEmpty->SetTransparent(true));
+		pWindowFill->AddComponent(pEmpty);
+
+		pTestWindow->Show();
+
+		pWindowImage = pTestWindow->GetCanvas()->GetImageOrNull();
+		puiWindow = (uint8*)pWindowImage->GetData();
+
+		puiPixel = &puiWindow[(1 + 2 * 12) * 3];
+		AssertInt(0, puiPixel[0]);
+		AssertInt(0, puiPixel[1]);
+		AssertInt(255, puiPixel[2]);
+
+		//Half the blue over half the red.
+		puiPixel = &puiWindow[(5 + 2 * 12) * 3];
+		AssertInt(127, puiPixel[0]);
+		AssertInt(0, puiPixel[1]);
+		AssertInt(128, puiPixel[2]);
+
+		puiPixel = &puiWindow[(9 + 2 * 12) * 3];
+		AssertInt(255, puiPixel[0]);
+		AssertInt(0, puiPixel[1]);
+		AssertInt(0, puiPixel[2]);
+
+		//And opaque again.
+		AssertTrue(pTransparent->SetTransparent(false));
+		AssertInt(CFT_RGB, pTransparent->GetColourFormat());
+		AssertInt(ARGB_None, pTransparent->GetAlphaBits());
+
+		pWindowImage = NULL;
+		pEmpty = NULL;
+		pTransparent = NULL;
+		pOpaque = NULL;
+		pBlueDraw = NULL;
+		pWindowFill = NULL;
+		pWindowDraw = NULL;
+		pTestWindow = NULL;
+	}
+	AssertTrue(ORoot()->RemoveAll());
+	cNativeFactory.Kill();
+	ObjectsFlush();
+	ObjectsKill();
+
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//																		//
 //																		//
 //////////////////////////////////////////////////////////////////////////
 void TestCanvasResizeReleasesOldCels(void)
@@ -852,6 +962,7 @@ void TestCanvas(void)
 	TestCanvasDrawResize();
 	TestCanvasMismatchedFormat();
 	TestCanvasNested();
+	TestCanvasTransparent();
 	TestCanvasResizeReleasesOldCels();
 
 	TestStatistics();

@@ -16,6 +16,7 @@
 #include "SupportLib/ImageBlitter.h"
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/ImageRowBlitterFactory.h"
+#include "SupportLib/ImagePremultipliedBlend.h"
 #include "TestLib/Assert.h"
 #include "TestLib/AssertFile.h"
 
@@ -307,6 +308,87 @@ void TestImageOpacityTranslucentSizingBlitter(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void AssertRGBAPixel(uint8 r, uint8 g, uint8 b, uint8 a, uint8* puiPixel)
+{
+	AssertInt(r, puiPixel[0]);
+	AssertInt(g, puiPixel[1]);
+	AssertInt(b, puiPixel[2]);
+	AssertInt(a, puiPixel[3]);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageOpacityPremultipliedBlend(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CImage>		pSource;
+		Ptr<CImage>		pDest;
+		Ptr<CImage>		pOpaque;
+		uint8			auiSource[8] = { 0, 0, 128, 128,  255, 255, 255, 255 };  //Half transparent blue then white, multiplied by their opacity.
+		uint8			auiDest[12] = { 200, 0, 0, 255,  0, 0, 0, 0,  10, 20, 30, 64 };
+		uint8*			puiDest;
+		uint8*			puiOpaque;
+
+		pSource = OMalloc<CImage>(2, 1, CFT_RGBA, CCO_RGB, CRGB_24bit, ARGB_8bit);
+		memcpy(pSource->GetData(), auiSource, 8);
+		pDest = OMalloc<CImage>(3, 1, CFT_RGBA, CCO_RGB, CRGB_24bit, ARGB_8bit);
+		puiDest = (uint8*)pDest->GetData();
+
+		//Over opaque red, over nothing (the source is unchanged) and clipped off the right.
+		memcpy(puiDest, auiDest, 12);
+		AssertTrue(BlendPremultipliedImage(pSource, pDest, 0, 0));
+		AssertRGBAPixel(100, 0, 128, 255, &puiDest[0]);
+		AssertRGBAPixel(255, 255, 255, 255, &puiDest[4]);
+		AssertRGBAPixel(10, 20, 30, 64, &puiDest[8]);
+
+		memcpy(puiDest, auiDest, 12);
+		AssertTrue(BlendPremultipliedImage(pSource, pDest, 1, 0));
+		AssertRGBAPixel(200, 0, 0, 255, &puiDest[0]);
+		AssertRGBAPixel(0, 0, 128, 128, &puiDest[4]);
+		AssertRGBAPixel(255, 255, 255, 255, &puiDest[8]);
+
+		memcpy(puiDest, auiDest, 12);
+		AssertTrue(BlendPremultipliedImage(pSource, pDest, 2, 0));
+		AssertRGBAPixel(200, 0, 0, 255, &puiDest[0]);
+		AssertRGBAPixel(0, 0, 0, 0, &puiDest[4]);
+		AssertRGBAPixel(5, 10, 143, 160, &puiDest[8]);
+
+		//Clipped off the left and the top.
+		memcpy(puiDest, auiDest, 12);
+		AssertTrue(BlendPremultipliedImage(pSource, pDest, -1, 0));
+		AssertRGBAPixel(255, 255, 255, 255, &puiDest[0]);
+		AssertRGBAPixel(0, 0, 0, 0, &puiDest[4]);
+		AssertTrue(BlendPremultipliedImage(pSource, pDest, 0, -1));
+		AssertRGBAPixel(255, 255, 255, 255, &puiDest[0]);
+		AssertTrue(BlendPremultipliedImage(pSource, pDest, 3, 0));
+		AssertRGBAPixel(10, 20, 30, 64, &puiDest[8]);
+
+		//A destination without opacity only has its colour blended.
+		pOpaque = OMalloc<CImage>(1, 1, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		puiOpaque = (uint8*)pOpaque->GetData();
+		puiOpaque[0] = 200;
+		puiOpaque[1] = 0;
+		puiOpaque[2] = 0;
+		AssertTrue(BlendPremultipliedImage(pSource, pOpaque, 0, 0));
+		AssertInt(100, puiOpaque[0]);
+		AssertInt(0, puiOpaque[1]);
+		AssertInt(128, puiOpaque[2]);
+
+		//The source must have opacity.
+		AssertFalse(BlendPremultipliedImage(pOpaque, pDest, 0, 0));
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestImageOpacity(void)
 {
 	BeginTests();
@@ -317,6 +399,7 @@ void TestImageOpacity(void)
 	TestImageOpacityTranslucentBlitter();
 	TestImageOpacityOpaqueSizingBlitter();
 	TestImageOpacityTranslucentSizingBlitter();
+	TestImageOpacityPremultipliedBlend();
 
 	DataIOKill();
 
