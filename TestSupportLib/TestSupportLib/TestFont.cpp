@@ -18,6 +18,8 @@
 #include "SupportLib/MapViewport.h"
 #include "SupportLib/TrueTypeFont.h"
 #include "SupportLib/TrueTypeFontFactory.h"
+#include "SupportLib/FontWriter.h"
+#include "SupportLib/FontReader.h"
 #include "TestLib/Assert.h"
 #include "TestLib/AssertFile.h"
 
@@ -730,6 +732,150 @@ void TestFontTrueTypeWriteText(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void AssertFontGlyphsEqual(Ptr<CFont> pExpected, Ptr<CFont> pActual)
+{
+	SIndexTreeMemoryIterator	sIter;
+	uint8						auiKey[5];
+	size						uiLength;
+	bool						bExists;
+	Ptr<CGlyph>					pExpectedGlyph;
+	Ptr<CGlyph>					pActualGlyph;
+	CSubImage*					pcExpected;
+	CSubImage*					pcActual;
+	size						uiCount;
+
+	AssertSize(pExpected->NumGlyphs(), pActual->NumGlyphs());
+
+	uiCount = 0;
+	memset(auiKey, 0, 5);
+	bExists = pExpected->StartIteration(&sIter, auiKey, &uiLength, 4);
+	while (bExists)
+	{
+		pExpectedGlyph = pExpected->GetGlyph(auiKey, uiLength);
+		pActualGlyph = pActual->GetGlyph(auiKey, uiLength);
+		AssertTrue(pActualGlyph.IsNotNull());
+		AssertInt(pExpectedGlyph->GetStep(), pActualGlyph->GetStep());
+		AssertTrue(pActual->GetImage() == pActualGlyph->GetSourceImage());
+
+		pcExpected = pExpectedGlyph->GetSubImage();
+		pcActual = pActualGlyph->GetSubImage();
+		AssertInt(pcExpected->mcImageRect.msTopLeft.x, pcActual->mcImageRect.msTopLeft.x);
+		AssertInt(pcExpected->mcImageRect.msTopLeft.y, pcActual->mcImageRect.msTopLeft.y);
+		AssertInt(pcExpected->mcImageRect.msBottomRight.x, pcActual->mcImageRect.msBottomRight.x);
+		AssertInt(pcExpected->mcImageRect.msBottomRight.y, pcActual->mcImageRect.msBottomRight.y);
+		AssertInt(pcExpected->msOffsetTopLeft.x, pcActual->msOffsetTopLeft.x);
+		AssertInt(pcExpected->msOffsetTopLeft.y, pcActual->msOffsetTopLeft.y);
+		AssertInt(pcExpected->msOffsetBottomRight.x, pcActual->msOffsetBottomRight.x);
+		AssertInt(pcExpected->msOffsetBottomRight.y, pcActual->msOffsetBottomRight.y);
+		AssertInt(pcExpected->msAlignment.x, pcActual->msAlignment.x);
+		AssertInt(pcExpected->msAlignment.y, pcActual->msAlignment.y);
+
+		uiCount++;
+		bExists = pExpected->Iterate(&sIter, auiKey, &uiLength, 4);
+	}
+	AssertSize(pExpected->NumGlyphs(), uiCount);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Inter's variable font gives its default instance, Regular.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFontTrueTypeWriteAndRead(void)
+{
+	char		szDirectory[] = "Output" _FS_ "TrueTypeFont";
+	CFileUtil	cFileUtil;
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	ObjectsInit();
+	{
+		Ptr<CRoot>		pRoot;
+		Ptr<CFont>		pFont;
+		Ptr<CFont>		pLoadedFont;
+		Ptr<CImage>		pImage;
+		Ptr<CImage>		pLoadedImage;
+		CChars			szImageFilename;
+		CChars			szCelsFilename;
+		CChars			szFontFilename;
+		CChars			szLoadedImageFilename;
+		CChars			szInputFilename;
+
+		pRoot = ORoot();
+		//Validating every object each time a glyph is added is too slow for hundreds of glyphs; validate once afterwards.
+		gcObjects.DisableValidation();
+		//14 points on a 96 DPI screen.
+		pFont = CreateTrueTypeFont(pRoot, "InterVariable.ttf", 14.0f * 96.0f / 72.0f, "Input" _FS_ "Text" _FS_ "Inter-Regular characters.txt");
+		AssertTrue(pFont.IsNotNull());
+		AssertSize(586, pFont->NumGlyphs());
+		pImage = pFont->GetImage();
+		AssertTrue(pImage.IsNotNull());
+
+		szImageFilename.Init(szDirectory);
+		cFileUtil.AppendToPath(&szImageFilename, "Inter-Regular-14pt.png");
+		szCelsFilename.Init(szDirectory);
+		cFileUtil.AppendToPath(&szCelsFilename, "Inter-Regular-14pt.cels");
+		szFontFilename.Init(szDirectory);
+		cFileUtil.AppendToPath(&szFontFilename, "Inter-Regular-14pt.font");
+
+		AssertTrue(WriteImage(pImage, szImageFilename.Text()));
+		AssertTrue(FontWriter(pFont, szImageFilename.Text(), szCelsFilename.Text(), szFontFilename.Text()));
+
+		pLoadedFont = FontReader(szFontFilename.Text());
+		AssertTrue(pLoadedFont.IsNotNull());
+		pRoot->Add(pLoadedFont);
+		gcObjects.EnableValidation();
+		gcObjects.ValidateObjectsConsistency();
+
+		AssertString("InterVariable.ttf", pLoadedFont->GetName());
+		AssertInt(pFont->GetSpaceWidth(), pLoadedFont->GetSpaceWidth());
+		AssertInt(pFont->GetAscent(), pLoadedFont->GetAscent());
+		AssertInt(pFont->GetDescent(), pLoadedFont->GetDescent());
+		AssertFontGlyphsEqual(pFont, pLoadedFont);
+
+		pLoadedImage = pLoadedFont->GetImage();
+		AssertTrue(pLoadedImage.IsNotNull());
+		AssertTrue(pLoadedImage != pImage);
+		AssertInt(pImage->GetWidth(), pLoadedImage->GetWidth());
+		AssertInt(pImage->GetHeight(), pLoadedImage->GetHeight());
+
+		szInputFilename.Init(szImageFilename);
+		szInputFilename.Replace("Output", "Input");
+		AssertFile(szInputFilename, szImageFilename);
+		szInputFilename.Kill();
+
+		szInputFilename.Init(szCelsFilename);
+		szInputFilename.Replace("Output", "Input");
+		AssertFile(szInputFilename, szCelsFilename);
+		szInputFilename.Kill();
+
+		szInputFilename.Init(szFontFilename);
+		szInputFilename.Replace("Output", "Input");
+		AssertFile(szInputFilename, szFontFilename);
+		szInputFilename.Kill();
+
+		//The loaded image must write the same file as the one it was read from.
+		szLoadedImageFilename.Init(szDirectory);
+		cFileUtil.AppendToPath(&szLoadedImageFilename, "Inter-Regular-14pt Loaded.png");
+		AssertTrue(WriteImage(pLoadedImage, szLoadedImageFilename.Text()));
+		AssertFile(szImageFilename.Text(), szLoadedImageFilename.Text());
+		szLoadedImageFilename.Kill();
+
+		szFontFilename.Kill();
+		szCelsFilename.Kill();
+		szImageFilename.Kill();
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFont(void)
 {
 	BeginTests();
@@ -743,6 +889,7 @@ void TestFont(void)
 	TestFontMapFontViewportLayout();
 	TestFontTrueTypeCreateFont();
 	TestFontTrueTypeWriteText();
+	TestFontTrueTypeWriteAndRead();
 
 	DataIOKill();
 
