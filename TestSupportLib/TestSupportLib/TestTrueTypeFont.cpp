@@ -59,10 +59,10 @@ bool TrueTypeOutlineMatchesBounds(CTrueTypeOutline* pcOutline, STrueTypeGlyphMet
 {
 	size			i;
 	STrueTypePoint*	psPoint;
-	float32			fXMin;
-	float32			fYMin;
-	float32			fXMax;
-	float32			fYMax;
+	int32			iXMin;
+	int32			iYMin;
+	int32			iXMax;
+	int32			iYMax;
 
 	if (pcOutline->NumPoints() == 0)
 	{
@@ -70,19 +70,19 @@ bool TrueTypeOutlineMatchesBounds(CTrueTypeOutline* pcOutline, STrueTypeGlyphMet
 	}
 
 	psPoint = pcOutline->GetPoint(0);
-	fXMin = psPoint->x;
-	fYMin = psPoint->y;
-	fXMax = psPoint->x;
-	fYMax = psPoint->y;
+	iXMin = psPoint->x;
+	iYMin = psPoint->y;
+	iXMax = psPoint->x;
+	iYMax = psPoint->y;
 	for (i = 1; i < pcOutline->NumPoints(); i++)
 	{
 		psPoint = pcOutline->GetPoint(i);
-		fXMin = (psPoint->x < fXMin) ? psPoint->x : fXMin;
-		fYMin = (psPoint->y < fYMin) ? psPoint->y : fYMin;
-		fXMax = (psPoint->x > fXMax) ? psPoint->x : fXMax;
-		fYMax = (psPoint->y > fYMax) ? psPoint->y : fYMax;
+		iXMin = (psPoint->x < iXMin) ? psPoint->x : iXMin;
+		iYMin = (psPoint->y < iYMin) ? psPoint->y : iYMin;
+		iXMax = (psPoint->x > iXMax) ? psPoint->x : iXMax;
+		iYMax = (psPoint->y > iYMax) ? psPoint->y : iYMax;
 	}
-	return (fXMin == psMetrics->iXMin) && (fYMin == psMetrics->iYMin) && (fXMax == psMetrics->iXMax) && (fYMax == psMetrics->iYMax);
+	return (iXMin == psMetrics->iXMin) && (iYMin == psMetrics->iYMin) && (iXMax == psMetrics->iXMax) && (iYMax == psMetrics->iYMax);
 }
 
 
@@ -389,7 +389,7 @@ void TestTrueTypeRasteriseGlyph(void)
 			"    ..     \n"
 			"    +#:    \n"
 			"   .*+*    \n"
-			"   :*.#.   \n"
+			"   +*.#.   \n"
 			"  .*+ *+   \n"
 			"  :*. :*.  \n"
 			"  ++  .*:  \n"
@@ -458,9 +458,8 @@ void TestTrueTypeRasteriseText(void)
 		AssertInt(8, iOriginY);
 		sz.Init();
 		TrueTypeImageToString(pcImage, &sz);
-#ifdef DEBUG
 		AssertString(
-			"..  ..  :+  \n"
+			".:  :.  :+  \n"
 			".*  *.  .:  \n"
 			".*  *. :+:  \n"
 			".*..*. ::+  \n"
@@ -469,18 +468,6 @@ void TestTrueTypeRasteriseText(void)
 			".*  *.  .+  \n"
 			".*  *..****:\n", sz.Text());
 		sz.Kill();
-#else
-		AssertString(
-			"..  ..  :+  \n"
-			".*  *.  .:  \n"
-			".*  *. :::  \n"
-			".*..*. ::+  \n"
-			".*++*.  .+  \n"
-			".*  *.  .+  \n"
-			".*  *.  .+  \n"
-			".*  *..****:\n", sz.Text());
-		sz.Kill();
-#endif // DEBUG
 
 		pcImage = cRasteriser.RasteriseText("   ", &iOriginX, &iOriginY);
 		AssertTrue(pcImage.IsNull());
@@ -559,9 +546,7 @@ void TestTrueTypeDrawText(void)
 
 		szInputFilename.Init(szOutputFilename);
 		szInputFilename.Replace("Output", "Input");
-#ifdef DEBUG
 		AssertFile(szInputFilename, szOutputFilename);
-#endif // DEBUG
 
 		szOutputFilename.Kill();
 		szInputFilename.Kill();

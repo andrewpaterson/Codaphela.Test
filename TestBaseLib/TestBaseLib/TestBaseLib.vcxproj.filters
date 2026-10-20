@@ -519,6 +519,9 @@
     <ClCompile Include="TestIntegerHelper.cpp">
       <Filter>Source\Math\Primitive</Filter>
     </ClCompile>
+    <ClCompile Include="TestFixedPoint.cpp">
+      <Filter>Source\Math\Primitive</Filter>
+    </ClCompile>
     <ClCompile Include="TestNumbers.cpp">
       <Filter>Source\Math\Numbers</Filter>
     </ClCompile>

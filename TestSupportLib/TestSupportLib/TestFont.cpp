@@ -573,7 +573,11 @@ void TestFontTrueTypeCreateFont(void)
 		gcObjects.DisableValidation();
 
 		pRoot = ORoot();
+		//Validating every object each time a glyph is added is too slow for hundreds of glyphs; validate once afterwards.
+		gcObjects.DisableValidation();
 		pFont = CreateTrueTypeFont(pRoot, "LiberationSans-Regular.ttf", 24.0f, "Input" _FS_ "Text" _FS_ "Test1 LiberationSans-Regular.txt");
+		gcObjects.EnableValidation();
+		gcObjects.ValidateObjectsConsistency();
 		AssertTrue(pFont.IsNotNull());
 		pImage = pFont->GetImage();
 		AssertTrue(pImage.IsNotNull());
@@ -663,6 +667,8 @@ void TestFontTrueTypeWriteText(void)
 		gcObjects.DisableValidation();
 
 		pRoot = ORoot();
+		//Validating every object each time a glyph is added is too slow for hundreds of glyphs; validate once afterwards.
+		gcObjects.DisableValidation();
 		pFont = CreateTrueTypeFont(pRoot, "LiberationSans-Regular.ttf", 24.0f, szTextFile);
 		AssertTrue(pFont.IsNotNull());
 
@@ -698,6 +704,8 @@ void TestFontTrueTypeWriteText(void)
 		AssertTrue(pMaps->CreateCelBlitters());
 		pMaps->SetViewportPosition(0, 0);
 		AssertTrue(pMaps->Blit(false));
+		gcObjects.EnableValidation();
+		gcObjects.ValidateObjectsConsistency();
 
 		gcObjects.EnableValidation();
 		gcObjects.ValidateObjectsConsistency();

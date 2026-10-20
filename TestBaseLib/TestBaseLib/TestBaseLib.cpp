@@ -128,6 +128,7 @@ void TestDataTypesIO(void);
 void TestGlobalDataTypesIO(void);
 void TestFloatHelper(void);
 void TestIntegerHelper(void);
+void TestFixedPoint(void);
 void TestFastFunctions(void);
 void TestPropertiesFile(void);
 void TestJSONParser(void);
@@ -186,6 +187,7 @@ int __cdecl main(void)
 	TestPrimitiveTypes();
 	TestIntegerHelper();
 	TestFloatHelper();
+	TestFixedPoint();
 	TestStringHelper();
 	TestTypeConverter();
 	TestArrayBlock();
