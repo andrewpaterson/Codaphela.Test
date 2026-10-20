@@ -476,6 +476,7 @@ void TestFontMapFontViewportLayout(void)
 		AssertTrue(iMilliseconds < 10);
 
 		gcObjects.EnableValidation();
+		gcObjects.ValidateObjectsConsistency();
 
 		szOutputFilename.Init(szDirectory);
 		cFileUtil.AppendToPath(&szOutputFilename, "nuskool_krome_64x64.txt.png");
@@ -502,9 +503,6 @@ void TestFontMapFontViewportLayout(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Rasterises the characters of a text file in a TrueType font into an
-// image and makes a CFont from it.  The font (which holds the image) and
-// the image are added to pRoot.
 //
 //////////////////////////////////////////////////////////////////////////
 Ptr<CFont> CreateTrueTypeFont(Ptr<CRoot> pRoot, char* szFontFile, float32 fPixelSize, char* szCharacterFile)
@@ -572,6 +570,8 @@ void TestFontTrueTypeCreateFont(void)
 		CChars			szOutputFilename;
 		CChars			szInputFilename;
 
+		gcObjects.DisableValidation();
+
 		pRoot = ORoot();
 		pFont = CreateTrueTypeFont(pRoot, "LiberationSans-Regular.ttf", 24.0f, "Input" _FS_ "Text" _FS_ "Test1 LiberationSans-Regular.txt");
 		AssertTrue(pFont.IsNotNull());
@@ -612,6 +612,9 @@ void TestFontTrueTypeCreateFont(void)
 		AssertTrue(pGlyph.IsNotNull());
 		pGlyph = pFont->GetGlyph((uint32)0x4E00, 2);
 		AssertTrue(pGlyph.IsNull());
+
+		gcObjects.EnableValidation();
+		gcObjects.ValidateObjectsConsistency();
 
 		szOutputFilename.Init(szDirectory);
 		cFileUtil.AppendToPath(&szOutputFilename, "LiberationSans-Regular.png");
@@ -657,6 +660,8 @@ void TestFontTrueTypeWriteText(void)
 		CChars						szOutputFilename;
 		CChars						szInputFilename;
 
+		gcObjects.DisableValidation();
+
 		pRoot = ORoot();
 		pFont = CreateTrueTypeFont(pRoot, "LiberationSans-Regular.ttf", 24.0f, szTextFile);
 		AssertTrue(pFont.IsNotNull());
@@ -693,6 +698,9 @@ void TestFontTrueTypeWriteText(void)
 		AssertTrue(pMaps->CreateCelBlitters());
 		pMaps->SetViewportPosition(0, 0);
 		AssertTrue(pMaps->Blit(false));
+
+		gcObjects.EnableValidation();
+		gcObjects.ValidateObjectsConsistency();
 
 		szOutputFilename.Init(szDirectory);
 		cFileUtil.AppendToPath(&szOutputFilename, "Test1 LiberationSans-Regular.txt.png");
