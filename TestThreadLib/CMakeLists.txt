@@ -114,8 +114,7 @@ target_compile_definitions(baselib_options INTERFACE
 # (e.g. Save(CObjectWriter*) hides CUnknown::Save(CFileWriter*)) on purpose.
 # -Wno-comment: ASCII diagrams in comments end lines with a backslash.
 # -Wno-unused-parameter: virtual overrides and callbacks often ignore parameters.
-# -Wno-cast-function-type: FunctionCaller casts member function pointers on purpose.
-target_compile_options(baselib_options INTERFACE -m32 -msse2 -mfpmath=sse -fno-strict-aliasing -Wall -Wextra -Wno-ignored-attributes -Wno-write-strings -Wno-multichar -Wno-class-memaccess -Wno-overloaded-virtual -Wno-comment -Wno-unused-parameter -Wno-cast-function-type)
+target_compile_options(baselib_options INTERFACE -m32 -msse2 -mfpmath=sse -fno-strict-aliasing -Wall -Wextra -Wno-ignored-attributes -Wno-write-strings -Wno-multichar -Wno-class-memaccess -Wno-overloaded-virtual -Wno-comment -Wno-unused-parameter)
 target_link_options(baselib_options INTERFACE -m32)
 if(BASELIB_ASAN)
 	target_compile_options(baselib_options INTERFACE -fsanitize=address -fno-omit-frame-pointer)

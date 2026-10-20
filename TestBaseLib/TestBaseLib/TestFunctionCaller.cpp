@@ -22,7 +22,7 @@ void TestSimpleClassFunctionCall(void)
 	pv = "World!";
 	i = 7;
 
-	i = (((CFunctionCaller*)&mcTest)->*(ThisCall_Int_PointerInt)(func.thisCall))((char*)pv, i);
+	i = (((CFunctionCaller*)&mcTest)->*FunctionCast<ThisCall_Int_PointerInt>(func.thisCall))((char*)pv, i);
 	AssertInt(27, i);
 	AssertString("Yo! How you doing? World! 7", mcTest.msz.Text());
 
