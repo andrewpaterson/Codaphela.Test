@@ -73,6 +73,8 @@ void TestImageCombinerStarControl(void)
 	Ptr<CArrayImageCel>		pacCels;
 	Ptr<CArrayImageCel>		pacLoadedCels;
 	size					uiMaxDebugAllocatorSize;
+	int32					iWidth;
+	int32					iHeight;
 
 	//The combined image is about 18MB, larger than the debug allocation limit set in main.
 	uiMaxDebugAllocatorSize = guiMaxDebugAllocatorSize;
@@ -95,8 +97,10 @@ void TestImageCombinerStarControl(void)
 	cSource.Load();
 	AssertSize(360, cSource.GetImageCels()->NumElements());
 
-	cCombiner.Init(ICL_Best, ICS_Arbitrary, ICC_FromCels);
-	cCombiner.AddCels(cSource.GetImageCels());
+	AssertSize(360, cSource.GetCelFileNames()->NumElements());
+
+	cCombiner.Init(ICL_Best, ICS_Arbitrary, ICC_FromCels, 0, 0, true);
+	cCombiner.AddCels(cSource.GetImageCels(), cSource.GetCelFileNames());
 	pcImage = cCombiner.Combine();
 	gcObjects.EnableValidation();
 	AssertTrue(pcImage.IsNotNull());
@@ -104,23 +108,32 @@ void TestImageCombinerStarControl(void)
 	pacCels = cCombiner.GetCels();
 	AssertSize(360, pacCels->NumElements());
 	AssertTrue(pacCels->Get(0)->GetSourceImage() == pcImage);
+	AssertString("Input/StarControl/Earthling Cruiser/frame0000", pacCels->Get(0)->GetName());
+	AssertString("Input/StarControl/Earthling Cruiser/frame0071", pacCels->Get(71)->GetName());
+	AssertString("Input/StarControl/Ur-Quan Dreadnought/frame0071", pacCels->Get(359)->GetName());
 
 	bResult = WriteImage(pcImage, "Output" _FS_ "StarControl.png", IT_PNG);
 	AssertTrue(bResult);
 	bResult = SaveImageCels(pacCels, "Output" _FS_ "StarControl.png", "Output" _FS_ "StarControl.cels");
 	AssertTrue(bResult);
 
-	pacLoadedCels = LoadImageCels("Output" _FS_ "StarControl.cels");
-	AssertTrue(pacLoadedCels.IsNotNull());
-	AssertSize(360, pacLoadedCels->NumElements());
-	AssertInt(pcImage->GetWidth(), pacLoadedCels->Get(0)->GetSourceImage()->GetWidth());
-	AssertInt(pcImage->GetHeight(), pacLoadedCels->Get(0)->GetSourceImage()->GetHeight());
-	pacLoadedCels = NULL;
+	iWidth = pcImage->GetWidth();
+	iHeight = pcImage->GetHeight();
 
+	//Release the combined cels so the loaded cels can take the same names.
 	pacCels = NULL;
 	pcImage = NULL;
 	cCombiner.Kill();
 	cSource.Kill();
+
+	pacLoadedCels = LoadImageCels("Output" _FS_ "StarControl.cels");
+	AssertTrue(pacLoadedCels.IsNotNull());
+	AssertSize(360, pacLoadedCels->NumElements());
+	AssertInt(iWidth, pacLoadedCels->Get(0)->GetSourceImage()->GetWidth());
+	AssertInt(iHeight, pacLoadedCels->Get(0)->GetSourceImage()->GetHeight());
+	AssertString("Input/StarControl/Earthling Cruiser/frame0000", pacLoadedCels->Get(0)->GetName());
+	AssertString("Input/StarControl/Ur-Quan Dreadnought/frame0071", pacLoadedCels->Get(359)->GetName());
+	pacLoadedCels = NULL;
 
 	InitAllocatorDebug(uiMaxDebugAllocatorSize);
 }
