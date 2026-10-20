@@ -92,8 +92,8 @@ void TrueTypeImageToString(Ptr<CImage> pcImage, CChars* psz)
 {
 	char	aszShades[] = " .:+*#";
 	uint8*	puiData;
-	int		x;
-	int		y;
+	uint32	x;
+	uint32	y;
 	uint8	uiValue;
 
 	puiData = (uint8*)pcImage->GetData();

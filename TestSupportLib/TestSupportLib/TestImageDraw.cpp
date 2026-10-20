@@ -55,7 +55,7 @@ void TestImageDrawBox2(void)
 	CImageDraw			cDraw;
 	Ptr<CImage>			pImage = OMalloc<CImage>(32, 32);
 	CImageColourRGB		cColour;
-	size				i;
+	uint32				i;
 
 	pImage->Black();
 
@@ -196,13 +196,13 @@ void TestImageDrawLineExtents(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CImage> CreateDrawCelImage(int32 iWidth, int32 iHeight, EColourFormat eFormat, ERGBAlphaBits eAlphaBits, size uiStride, bool bGaps)
+Ptr<CImage> CreateDrawCelImage(int32 iWidth, int32 iHeight, EColourFormat eFormat, ERGBAlphaBits eAlphaBits, uint32 uiStride, bool bGaps)
 {
 	Ptr<CImage>		pImage;
 	uint8*			puiData;
 	int32			x;
 	int32			y;
-	size			uiPixel;
+	uint32			uiPixel;
 
 	//Every pixel is different so a pixel drawn in the wrong place is always noticed.
 	//With gaps the fourth byte is opacity in runs of two opaque and two transparent pixels that shift on each row.
@@ -240,7 +240,7 @@ Ptr<CImage> CreateDrawCelSourceImage(int32 iWidth, int32 iHeight)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertDrawCelPixels(Ptr<CImage> pDest, size uiDestStride, Ptr<CImage> pSource, size uiSourceStride, bool bSourceGaps, int32 iDestX, int32 iDestY, CRectangle* pcClip)
+void AssertDrawCelPixels(Ptr<CImage> pDest, uint32 uiDestStride, Ptr<CImage> pSource, uint32 uiSourceStride, bool bSourceGaps, int32 iDestX, int32 iDestY, CRectangle* pcClip)
 {
 	uint8*	puiDest;
 	uint8*	puiSource;
@@ -249,34 +249,42 @@ void AssertDrawCelPixels(Ptr<CImage> pDest, size uiDestStride, Ptr<CImage> pSour
 	int32	xs;
 	int32	ys;
 	bool	bDrawn;
-	size	uiDest;
-	size	uiSource;
-	size	uiWrong;
+	uint32	uiDest;
+	uint32	uiSource;
+	uint32	uiWrong;
+	int32	iDestHeight;
+	int32	iDestWidth;
+	int32	iSourceHeight;
+	int32	iSourceWidth;
 
 	//A destination pixel must hold the source pixel over it if it is inside the clip and opaque, otherwise it must still be black.
 	//Only the colour bytes are compared.
 	puiDest = (uint8*)pDest->GetData();
 	puiSource = (uint8*)pSource->GetData();
 	uiWrong = 0;
-	for (y = 0; y < pDest->GetHeight(); y++)
+	iDestHeight = (int32)pDest->GetImageHeight();
+	iDestWidth = (int32)pDest->GetImageWidth();
+	iSourceHeight = (int32)pSource->GetImageHeight();
+	iSourceWidth = (int32)pSource->GetImageWidth();
+	for (y = 0; y < iDestHeight; y++)
 	{
-		for (x = 0; x < pDest->GetWidth(); x++)
+		for (x = 0; x < iDestWidth; x++)
 		{
 			xs = x - iDestX;
 			ys = y - iDestY;
 			uiSource = 0;
-			bDrawn = (xs >= 0) && (xs < pSource->GetWidth()) && (ys >= 0) && (ys < pSource->GetHeight());
+			bDrawn = (xs >= 0) && (xs < iSourceWidth) && (ys >= 0) && (ys < iSourceHeight);
 			bDrawn &= (pcClip == NULL) || ((x >= pcClip->msTopLeft.x) && (x < pcClip->msBottomRight.x) && (y >= pcClip->msTopLeft.y) && (y < pcClip->msBottomRight.y));
 			if (bDrawn)
 			{
-				uiSource = (xs + ys * pSource->GetWidth()) * uiSourceStride;
+				uiSource = (xs + ys * iSourceWidth) * uiSourceStride;
 				if (bSourceGaps)
 				{
 					bDrawn = puiSource[uiSource + 3] == 255;
 				}
 			}
 
-			uiDest = (x + y * pDest->GetWidth()) * uiDestStride;
+			uiDest = (x + y * iDestWidth) * uiDestStride;
 			if (bDrawn)
 			{
 				if ((puiDest[uiDest] != puiSource[uiSource]) || (puiDest[uiDest + 1] != puiSource[uiSource + 1]) || (puiDest[uiDest + 2] != puiSource[uiSource + 2]))
@@ -319,7 +327,7 @@ void TestImageDrawCelClipping(void)
 	Ptr<CImageCel>	pCel;
 	CRectangle		cClip;
 	int32			aiPositions[10][2] = { { 2, 2 }, { -2, -1 }, { 7, 5 }, { -3, 5 }, { 7, -2 }, { -6, 0 }, { 10, 3 }, { 0, -4 }, { 4, 8 }, { -20, -20 } };
-	size			i;
+	uint32			i;
 
 	//The source is 6x4 and the destination 10x8 so the cel can hang off every edge and corner and fall right outside.
 	pSource = CreateDrawCelSourceImage(6, 4);
@@ -407,8 +415,8 @@ void TestImageDrawCelClippingTransparentGaps(void)
 	Ptr<CImageCel>	pCel;
 	CRectangle		acClips[4];
 	int32			aiPositions[6][2] = { { 0, 0 }, { 2, 3 }, { -3, 1 }, { 4, -1 }, { 6, 6 }, { -1, -1 } };
-	size			i;
-	size			j;
+	uint32			i;
+	uint32			j;
 
 	//A cel with transparent gaps is blitted as several segments per row.  The narrow clips leave
 	//some segments of a row wholly outside the clip while others in the same row are drawn.
@@ -562,19 +570,23 @@ void AssertDrawCelOpacity(Ptr<CImage> pDest, int32 iLeft, int32 iTop, int32 iRig
 	int32	y;
 	bool	bDrawn;
 	uint8	uiExpected;
-	size	uiWrong;
+	uint32	uiWrong;
+	int32	iHeight;
+	int32	iWidth;
 
 	//The fourth byte of an RGBA destination must be opaque where the cel was drawn and still zero everywhere else.
 	puiDest = (uint8*)pDest->GetData();
 	uiWrong = 0;
-	for (y = 0; y < pDest->GetHeight(); y++)
+	iHeight = pDest->GetImageHeight();
+	iWidth = pDest->GetImageWidth();
+	for (y = 0; y < iHeight; y++)
 	{
-		for (x = 0; x < pDest->GetWidth(); x++)
+		for (x = 0; x < iWidth; x++)
 		{
 			bDrawn = (x >= iLeft) && (x < iRight) && (y >= iTop) && (y < iBottom);
 			bDrawn &= (pcClip == NULL) || ((x >= pcClip->msTopLeft.x) && (x < pcClip->msBottomRight.x) && (y >= pcClip->msTopLeft.y) && (y < pcClip->msBottomRight.y));
 			uiExpected = bDrawn ? 255 : 0;
-			if (puiDest[(x + y * pDest->GetWidth()) * 4 + 3] != uiExpected)
+			if (puiDest[(x + y * iWidth) * 4 + 3] != uiExpected)
 			{
 				uiWrong++;
 			}
@@ -639,7 +651,7 @@ void TestImageDrawCelAlignment(void)
 	Ptr<CImageCel>	pCel;
 	CRectangle		cClip;
 	int32			aiPositions[6][2] = { { 8, 6 }, { 6, 4 }, { 3, 2 }, { 12, 9 }, { 15, 3 }, { 7, 13 } };
-	size			i;
+	uint32			i;
 
 	//A cel aligned to its bottom right is drawn with its bottom right corner at the position given.  The cel must be
 	//both clipped and drawn where its alignment puts it, else it can be drawn outside the destination image.
@@ -736,14 +748,16 @@ Ptr<CImage> CreateDrawCelTranslucentImage(int32 iWidth, int32 iHeight)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void FillDrawCelBackground(Ptr<CImage> pDest, size uiDestStride, uint8* puiBackground)
+void FillDrawCelBackground(Ptr<CImage> pDest, uint32 uiDestStride, uint8* puiBackground)
 {
 	uint8*	puiDest;
-	size	ui;
-	size	uiNumPixels;
+	uint32	ui;
+	uint32	uiNumPixels;
+	uint32	iWidth;
 
 	puiDest = (uint8*)pDest->GetData();
-	uiNumPixels = pDest->GetWidth() * pDest->GetHeight();
+	iWidth = pDest->GetImageWidth();
+	uiNumPixels = iWidth * pDest->GetHeight();
 	for (ui = 0; ui < uiNumPixels; ui++)
 	{
 		memcpy(&puiDest[ui * uiDestStride], puiBackground, uiDestStride);
@@ -755,7 +769,7 @@ void FillDrawCelBackground(Ptr<CImage> pDest, size uiDestStride, uint8* puiBackg
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertDrawCelSized(Ptr<CImage> pDest, size uiDestStride, uint8* puiBackground, Ptr<CImageCel> pCel, size uiSourceStride, int32 iLeft, int32 iTop, int32 iWidth, int32 iHeight, CRectangle* pcClip)
+void AssertDrawCelSized(Ptr<CImage> pDest, uint32 uiDestStride, uint8* puiBackground, Ptr<CImageCel> pCel, uint32 uiSourceStride, int32 iLeft, int32 iTop, int32 iWidth, int32 iHeight, CRectangle* pcClip)
 {
 	CSubImage*		pcSubImage;
 	Ptr<CImage>		pSource;
@@ -770,8 +784,10 @@ void AssertDrawCelSized(Ptr<CImage> pDest, size uiDestStride, uint8* puiBackgrou
 	bool			bInside;
 	uint16			uiAlpha;
 	uint16			uiBlend;
-	size			i;
-	size			uiWrong;
+	uint32			i;
+	uint32			uiWrong;
+	int32			iDestHeight;
+	int32			iDestWidth;
 
 	//Every destination pixel is worked out on its own: the cel pixel under its centre, (2x + 1) * full / (2 * sized),
 	//drawn over the background.  Pixels outside the sized cel, the clip, or the cel's image keep the background.
@@ -780,9 +796,11 @@ void AssertDrawCelSized(Ptr<CImage> pDest, size uiDestStride, uint8* puiBackgrou
 	puiDest = (uint8*)pDest->GetData();
 	puiSource = (uint8*)pSource->GetData();
 	uiWrong = 0;
-	for (y = 0; y < pDest->GetHeight(); y++)
+	iDestHeight = pDest->GetImageHeight();
+	iDestWidth = pDest->GetImageWidth();
+	for (y = 0; y < iDestHeight; y++)
 	{
-		for (x = 0; x < pDest->GetWidth(); x++)
+		for (x = 0; x < iDestWidth; x++)
 		{
 			memcpy(auiExpected, puiBackground, uiDestStride);
 
@@ -819,7 +837,7 @@ void AssertDrawCelSized(Ptr<CImage> pDest, size uiDestStride, uint8* puiBackgrou
 				}
 			}
 
-			if (memcmp(&puiDest[(x + y * pDest->GetWidth()) * uiDestStride], auiExpected, uiDestStride) != 0)
+			if (memcmp(&puiDest[(x + y * iWidth) * uiDestStride], auiExpected, uiDestStride) != 0)
 			{
 				uiWrong++;
 			}
@@ -833,7 +851,7 @@ void AssertDrawCelSized(Ptr<CImage> pDest, size uiDestStride, uint8* puiBackgrou
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertDrawCelSizes(Ptr<CImageCel> pCel, size uiSourceStride, Ptr<CImage> pDest, size uiDestStride)
+void AssertDrawCelSizes(Ptr<CImageCel> pCel, uint32 uiSourceStride, Ptr<CImage> pDest, uint32 uiDestStride)
 {
 	CImageDraw		cDraw;
 	CRectangle		acClips[3];
@@ -841,17 +859,17 @@ void AssertDrawCelSizes(Ptr<CImageCel> pCel, size uiSourceStride, Ptr<CImage> pD
 	uint8			auiBackground[4] = { 5, 6, 7, 9 };
 	int32			aiSizes[13][2] = { { 12, 8 }, { 3, 2 }, { 7, 5 }, { 6, 9 }, { 13, 4 }, { 6, 2 }, { 1, 1 }, { 25, 3 }, { 2, 11 }, { 6, 4 }, { 19, 14 }, { 0, 5 }, { 4, -1 } };
 	int32			aiPositions[6][2] = { { 2, 2 }, { -3, -2 }, { 15, 11 }, { -30, -30 }, { 0, 0 }, { 9, -4 } };
-	size			uiSize;
-	size			uiPosition;
-	size			uiClip;
+	uint32			uiSize;
+	uint32			uiPosition;
+	uint32			uiClip;
 	int32			x;
 	int32			y;
 	int32			iWidth;
 	int32			iHeight;
 	bool			bResult;
 
-	//Every size is drawn through the same blitter so its sized tables must be rebuilt whenever the size changes.
-	//A size of 6x4 is the cel's own and the zero and negative sizes draw nothing.
+	//Every uint32 is drawn through the same blitter so its sized tables must be rebuilt whenever the uint32 changes.
+	//A uint32 of 6x4 is the cel's own and the zero and negative sizes draw nothing.
 	acClips[1].Init(3, 2, 9, 7);
 	acClips[2].Init(5, 0, 6, 16);
 
@@ -1015,9 +1033,9 @@ void TestImageDrawBlitterCacheOnImage(void)
 	Ptr<CImageCelBlitterCache>	pCache;
 	Ptr<CImageCelBlitterCache>	pNextCache;
 	Ptr<CImageCel>				pCel;
-	size						uiObjects;
+	uint32						uiObjects;
 
-	//An image keeps the cache of blitters that draw onto it.  The same cache is returned until the image's size or
+	//An image keeps the cache of blitters that draw onto it.  The same cache is returned until the image's uint32 or
 	//format changes, then a new one is made because blitters only work for the image they were made for.
 	uiObjects = gcObjects.NumMemoryIndexes();
 	pImage = OMalloc<CImage>(10, 8, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
@@ -1083,7 +1101,7 @@ void TestImageDrawBlitterCacheCelFreedFirst(void)
 	Ptr<CImage>					pDest;
 	Ptr<CImageCel>				pCel;
 	Ptr<CImageCelBlitterCache>	pCache;
-	size						uiStart;
+	uint32						uiStart;
 
 	//A blitter does not keep its cel alive, so a cel can be freed while the image it was drawn onto lives on.
 	//The cache forgets the cel's blitter and only removes it the next time the cache is used.
@@ -1120,7 +1138,7 @@ void TestImageDrawBlitterCacheDestinationFreedFirst(void)
 {
 	Ptr<CImage>		pDest;
 	Ptr<CImageCel>	pCel;
-	size			uiStart;
+	uint32			uiStart;
 
 	//When the destination is freed its cache and blitters go with it, and the cel forgets the cache.  The cel can then
 	//be drawn onto another image and freed without touching the freed cache.
@@ -1154,7 +1172,7 @@ void TestImageDrawBlitterCacheSharedCel(void)
 	Ptr<CImage>		pDest1;
 	Ptr<CImage>		pDest2;
 	Ptr<CImageCel>	pCel;
-	size			uiStart;
+	uint32			uiStart;
 
 	//One cel drawn onto two images is in both images' caches.
 	uiStart = gcObjects.NumMemoryIndexes();
@@ -1187,7 +1205,7 @@ void TestImageDrawBlitterCacheCelKilled(void)
 	Ptr<CImage>		pDest;
 	Ptr<CImageCel>	pCel;
 	Ptr<CImageCel>	pOtherPointer;
-	size			uiStart;
+	uint32			uiStart;
 
 	//Killing a cel outright, while other pointers still point at it, also makes the caches forget it.
 	uiStart = gcObjects.NumMemoryIndexes();
@@ -1215,8 +1233,8 @@ void TestImageDrawBlitterCacheFreedTogether(void)
 	Ptr<CArrayObject>	pHolder;
 	Ptr<CImage>			pDest;
 	Ptr<CImageCel>		pCel;
-	size				i;
-	size				uiStart;
+	uint32				i;
+	uint32				uiStart;
 
 	//When the only thing holding a destination and a cel is freed, the destination, its cache, the blitter, the cel and
 	//its image are all freed in the same kill in whatever order the objects system chooses.  Each must let go of the
