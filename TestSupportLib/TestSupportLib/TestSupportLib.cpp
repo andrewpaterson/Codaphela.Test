@@ -35,6 +35,7 @@ void TestRectangle(void);
 void TestRectanglePow2Packer(void);
 void TestImageToR3G3B2A(void);
 void TestImageSFTWriter(void);
+void TestImageCelsFile(void);
 void TestFont(void);
 void TestTrueTypeFont(void);
 void TestMaps(void);
@@ -98,6 +99,7 @@ int __cdecl main(void)
 	TestImageCombiner();
 	TestImageToR3G3B2A();
 	TestImageSFTWriter();
+	TestImageCelsFile();
 	TestMaps();
 	TestMapViewport();
 	TestTileMapGenerator();

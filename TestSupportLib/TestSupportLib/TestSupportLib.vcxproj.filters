@@ -175,6 +175,9 @@
     <ClCompile Include="TestImageSFTWriter.cpp">
       <Filter>Source Files\Image\IO</Filter>
     </ClCompile>
+    <ClCompile Include="TestImageCelsFile.cpp">
+      <Filter>Source Files\Image\IO</Filter>
+    </ClCompile>
     <ClCompile Include="TestImageReader.cpp">
       <Filter>Source Files\Image\IO</Filter>
     </ClCompile>
