@@ -114,7 +114,7 @@ void TestImageCombinerStarControl(void)
 
 	bResult = WriteImage(pcImage, "Output" _FS_ "StarControl.png", IT_PNG);
 	AssertTrue(bResult);
-	bResult = SaveImageCels(pacCels, "Output" _FS_ "StarControl.png", "Output" _FS_ "StarControl.cels");
+	bResult = CelsWriter(pacCels, "Output" _FS_ "StarControl.png", "Output" _FS_ "StarControl.cels");
 	AssertTrue(bResult);
 
 	iWidth = pcImage->GetWidth();
@@ -126,7 +126,7 @@ void TestImageCombinerStarControl(void)
 	cCombiner.Kill();
 	cSource.Kill();
 
-	pacLoadedCels = LoadImageCels("Output" _FS_ "StarControl.cels");
+	pacLoadedCels = CelsReader("Output" _FS_ "StarControl.cels");
 	AssertTrue(pacLoadedCels.IsNotNull());
 	AssertSize(360, pacLoadedCels->NumElements());
 	AssertInt(iWidth, pacLoadedCels->Get(0)->GetSourceImage()->GetWidth());

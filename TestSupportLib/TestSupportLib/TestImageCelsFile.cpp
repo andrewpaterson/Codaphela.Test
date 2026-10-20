@@ -67,7 +67,7 @@ void TestImageCelsFileWriteRead(void)
 		acExpected.Add(pacImageCels->Get(i)->GetSubImage());
 	}
 
-	bResult = SaveImageCels(pacImageCels, "Input" _FS_ "MakiWalk.png", "Output" _FS_ "MakiWalk.cels");
+	bResult = CelsWriter(pacImageCels, "Input" _FS_ "MakiWalk.png", "Output" _FS_ "MakiWalk.cels");
 	AssertTrue(bResult);
 	AssertFile("Input" _FS_ "MakiWalk-expected.cels", "Output" _FS_ "MakiWalk.cels");
 
@@ -76,7 +76,7 @@ void TestImageCelsFileWriteRead(void)
 	cImageDivider.Kill();
 	pImage = NULL;
 
-	pacLoadedCels = LoadImageCels("Output" _FS_ "MakiWalk.cels");
+	pacLoadedCels = CelsReader("Output" _FS_ "MakiWalk.cels");
 	AssertTrue(pacLoadedCels.IsNotNull());
 	AssertSize(7, pacLoadedCels->NumElements());
 
@@ -135,7 +135,7 @@ void TestImageCelsFileReadOptional(void)
 	cTextFile.Write("Output" _FS_ "Optional.cels");
 	cTextFile.Kill();
 
-	pacLoadedCels = LoadImageCels("Output" _FS_ "Optional.cels");
+	pacLoadedCels = CelsReader("Output" _FS_ "Optional.cels");
 	AssertTrue(pacLoadedCels.IsNotNull());
 	AssertSize(2, pacLoadedCels->NumElements());
 
@@ -188,7 +188,7 @@ void TestImageCelsFileReadBadIndex(void)
 	cTextFile.Write("Output" _FS_ "BadIndex.cels");
 	cTextFile.Kill();
 
-	pacLoadedCels = LoadImageCels("Output" _FS_ "BadIndex.cels");
+	pacLoadedCels = CelsReader("Output" _FS_ "BadIndex.cels");
 	AssertTrue(pacLoadedCels.IsNull());
 }
 

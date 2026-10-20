@@ -10,9 +10,6 @@
 #include "TestLib/AssertFile.h"
 
 
-#define TRUE_TYPE_FONT_DIRECTORY	"Input" _FS_ "Fonts" _FS_
-
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -22,7 +19,7 @@ bool LoadTrueTypeFont(CTrueTypeFont* pcFont, char* szFontName)
 	CChars	szFilename;
 	bool	bResult;
 
-	szFilename.Init(TRUE_TYPE_FONT_DIRECTORY);
+	szFilename.Init("Input" _FS_ "Fonts" _FS_);
 	szFilename.Append(szFontName);
 	pcFont->Init();
 	bResult = pcFont->Load(szFilename.Text());
