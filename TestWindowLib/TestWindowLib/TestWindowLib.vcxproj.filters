@@ -52,6 +52,9 @@
     <ClCompile Include="TestLabel.cpp">
       <Filter>Source\Component\Drawing</Filter>
     </ClCompile>
+    <ClCompile Include="TestTextArea.cpp">
+      <Filter>Source\Component\Drawing</Filter>
+    </ClCompile>
     <ClCompile Include="TestGridContainer.cpp">
       <Filter>Source\Component\Container</Filter>
     </ClCompile>

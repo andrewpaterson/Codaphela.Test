@@ -16,6 +16,7 @@ void TestGridContainer(void);
 void TestBorderLayoutHelper(void);
 void TestCanvas(void);
 void TestLabel(void);
+void TestTextArea(void);
 void TestComponentInput(void);
 void TestComponentInputDevices(void);
 void TestComponentInputWinRaw(void);
@@ -50,6 +51,7 @@ int __cdecl main(void)
 	TestBorderLayoutHelper();
 	TestCanvas();
 	TestLabel();
+	TestTextArea();
 	TestComponentInput();
 	TestComponentInputDevices();
 	TestComponentInputWinRaw();
