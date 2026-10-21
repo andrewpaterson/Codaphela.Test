@@ -319,11 +319,11 @@ void TestFlowContainerRightCenteredContinue(void)
 
 			if (i % 2 == 0)
 			{
-				pCanvas->SetDesiredSize(5 + i, 5 + i);
+				pCanvas->SetDesiredSize(5 + (int)i, 5 + (int)i);
 			}
 			else
 			{
-				pCanvas->SetDesiredSize(5 + (10 - i), 5 + (10 - i));
+				pCanvas->SetDesiredSize(5 + (10 - (int)i), 5 + (10 - (int)i));
 			}
 			pCanvas = NULL;
 			pDraw = NULL;
@@ -442,11 +442,11 @@ void TestFlowContainerRightTopContinue(void)
 
 			if (i % 2 == 0)
 			{
-				pCanvas->SetDesiredSize(5 + i, 5 + i);
+				pCanvas->SetDesiredSize(5 + (int)i, 5 + (int)i);
 			}
 			else
 			{
-				pCanvas->SetDesiredSize(5 + (10 - i), 5 + (10 - i));
+				pCanvas->SetDesiredSize(5 + (10 - (int)i), 5 + (10 - (int)i));
 			}
 			pCanvas = NULL;
 			pDraw = NULL;
@@ -532,11 +532,11 @@ void TestFlowContainerRightBottomContinue(void)
 
 			if (i % 2 == 0)
 			{
-				pCanvas->SetDesiredSize(5 + i, 5 + i);
+				pCanvas->SetDesiredSize(5 + (int)i, 5 + (int)i);
 			}
 			else
 			{
-				pCanvas->SetDesiredSize(5 + (10 - i), 5 + (10 - i));
+				pCanvas->SetDesiredSize(5 + (10 - (int)i), 5 + (10 - (int)i));
 			}
 			pCanvas = NULL;
 			pDraw = NULL;
@@ -622,11 +622,11 @@ void TestFlowContainerRightTopWrap(void)
 
 			if (i % 2 == 0)
 			{
-				pCanvas->SetDesiredSize(5 + i, 5 + i);
+				pCanvas->SetDesiredSize(5 + (int)i, 5 + (int)i);
 			}
 			else
 			{
-				pCanvas->SetDesiredSize(5 + (10 - i), 5 + (10 - i));
+				pCanvas->SetDesiredSize(5 + (10 - (int)i), 5 + (10 - (int)i));
 			}
 			pCanvas = NULL;
 			pDraw = NULL;
@@ -715,11 +715,11 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, uint32 iR
 
 			if (i % 2 == 0)
 			{
-				pCanvas->SetDesiredSize(5 + i, 5 + i);
+				pCanvas->SetDesiredSize(5 + (int)i, 5 + (int)i);
 			}
 			else
 			{
-				pCanvas->SetDesiredSize(5 + (10 - i), 5 + (10 - i));
+				pCanvas->SetDesiredSize(5 + (10 - (int)i), 5 + (10 - (int)i));
 			}
 			pCanvas = NULL;
 			pDraw = NULL;

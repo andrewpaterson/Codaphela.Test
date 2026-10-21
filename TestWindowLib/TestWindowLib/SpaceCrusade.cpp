@@ -219,7 +219,7 @@ Ptr<CArrayImageCel> ReadSpaceCels(char* szDirectory, char* szFilename, int iColu
 	pCels = cImageDivider.GetDestImageCels();
 
 	AssertTrue(pCels.IsNotNull());
-	AssertInt(iColumnCount * iRowCount, pCels->NumElements());
+	AssertSize((size)(iColumnCount * iRowCount), pCels->NumElements());
 
 	AssertSize(2, pCels.NumStackFroms());
 	AssertSize(0, pCels.NumHeapFroms());
