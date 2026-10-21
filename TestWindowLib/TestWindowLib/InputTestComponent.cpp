@@ -103,6 +103,7 @@ void CInputTestComponent::WordLeft(void) { Log("WordLeft"); }
 void CInputTestComponent::End(void) { Log("End"); }
 void CInputTestComponent::LineUp(void) { Log("LineUp"); }
 void CInputTestComponent::LineDown(void) { Log("LineDown"); }
+bool CInputTestComponent::Wheel(int iRight, int iDown) { Log("Wheel", iRight, iDown); return false; }
 void CInputTestComponent::SelectUp(void) { Log("SelectUp"); }
 void CInputTestComponent::SelectAll(void) { Log("SelectAll"); }
 void CInputTestComponent::Tab(bool bInsert) { Log(bInsert ? "Tab(Insert)" : "Tab(Overwrite)"); }

@@ -339,11 +339,19 @@ void TestComponentInputMouse(void)
 		cDevices.ReleaseButton("Button 3");
 		AssertLog("A:StartDragScroll(10,10);A:ContDragScroll(12,11);A:StopDragScroll(12,11);");
 
+		//The wheel goes to the component under the pointer, sideways with shift.
 		cDevices.PressButton("Wheel Forward");
 		cDevices.ReleaseButton("Wheel Forward");
 		cDevices.PressButton("Wheel Backward");
 		cDevices.ReleaseButton("Wheel Backward");
-		AssertLog("A:LineUp;A:LineDown;");
+		AssertLog("A:Wheel(0,-1);A:Wheel(0,1);");
+		cDevices.Press("Left Shift");
+		cDevices.PressButton("Wheel Forward");
+		cDevices.ReleaseButton("Wheel Forward");
+		cDevices.PressButton("Wheel Backward");
+		cDevices.ReleaseButton("Wheel Backward");
+		cDevices.Release("Left Shift");
+		AssertLog("A:Wheel(-1,0);A:Wheel(1,0);");
 
 		//Nothing is mapped to a control click.
 		cDevices.Press("Left Control");

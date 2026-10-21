@@ -196,6 +196,7 @@
     <ClCompile Include="TestFillContainer.cpp" />
     <ClCompile Include="TestLabel.cpp" />
     <ClCompile Include="TestTextArea.cpp" />
+    <ClCompile Include="TestScrollPane.cpp" />
     <ClCompile Include="TestButton.cpp" />
     <ClCompile Include="TestComponentInput.cpp" />
     <ClCompile Include="TestComponentInputDevices.cpp" />

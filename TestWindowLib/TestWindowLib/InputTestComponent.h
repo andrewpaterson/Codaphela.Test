@@ -51,6 +51,7 @@ public:
 	void	ContDragSelect(int x, int y) override;
 	void	StopDragSelect(int x, int y) override;
 	void	Hover(int x, int y) override;
+	bool	Wheel(int iRight, int iDown) override;
 
 protected:
 	void	Log(const char* szCall);

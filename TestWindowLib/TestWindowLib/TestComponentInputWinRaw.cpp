@@ -247,7 +247,7 @@ void TestComponentInputWinRawDevices(void)
 		cRaw.Mouse(TEST_RI_MOUSE_BUTTON_3_UP);
 		cRaw.Mouse(TEST_RI_MOUSE_WHEEL, 120);
 		cRaw.Mouse(TEST_RI_MOUSE_WHEEL, -120);
-		AssertLog("B:ContextMenu(8,10);B:StartDragScroll(8,10);B:StopDragScroll(8,10);B:LineUp;B:LineDown;");
+		AssertLog("B:ContextMenu(8,10);B:StartDragScroll(8,10);B:StopDragScroll(8,10);B:Wheel(0,-1);B:Wheel(0,1);");
 
 		cRaw.Press(VK_TEST_SHIFT, false, MAKE_LEFT_SHIFT);
 		cRaw.Mouse(TEST_RI_MOUSE_BUTTON_1_DOWN);

@@ -332,6 +332,7 @@ void TestImageOpacityPremultipliedBlend(void)
 		uint8			auiDest[12] = { 200, 0, 0, 255,  0, 0, 0, 0,  10, 20, 30, 64 };
 		uint8*			puiDest;
 		uint8*			puiOpaque;
+		CRectangle		cClip;
 
 		pSource = OMalloc<CImage>(2, 1, CFT_RGBA, CCO_RGB, CRGB_24bit, ARGB_8bit);
 		memcpy(pSource->GetData(), auiSource, 8);
@@ -366,6 +367,24 @@ void TestImageOpacityPremultipliedBlend(void)
 		AssertRGBAPixel(255, 255, 255, 255, &puiDest[0]);
 		AssertTrue(BlendPremultipliedImage(pSource, pDest, 3, 0));
 		AssertRGBAPixel(10, 20, 30, 64, &puiDest[8]);
+
+		//Only the destination pixels inside the clip are blended.
+		memcpy(puiDest, auiDest, 12);
+		cClip.Init(1, 0, 2, 1);
+		AssertTrue(BlendPremultipliedImage(pSource, pDest, 0, 0, &cClip));
+		AssertRGBAPixel(200, 0, 0, 255, &puiDest[0]);
+		AssertRGBAPixel(255, 255, 255, 255, &puiDest[4]);
+		AssertRGBAPixel(10, 20, 30, 64, &puiDest[8]);
+		memcpy(puiDest, auiDest, 12);
+		cClip.Init(-5, -5, 1, 5);
+		AssertTrue(BlendPremultipliedImage(pSource, pDest, 0, 0, &cClip));
+		AssertRGBAPixel(100, 0, 128, 255, &puiDest[0]);
+		AssertRGBAPixel(0, 0, 0, 0, &puiDest[4]);
+		memcpy(puiDest, auiDest, 12);
+		cClip.Init(0, 1, 3, 2);
+		AssertTrue(BlendPremultipliedImage(pSource, pDest, 0, 0, &cClip));
+		AssertRGBAPixel(200, 0, 0, 255, &puiDest[0]);
+		AssertRGBAPixel(0, 0, 0, 0, &puiDest[4]);
 
 		//A destination without opacity only has its colour blended.
 		pOpaque = OMalloc<CImage>(1, 1, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
