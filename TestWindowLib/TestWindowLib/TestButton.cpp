@@ -71,6 +71,50 @@ Ptr<CButtonImages> ReadBlueButtonImages(CColourFormatHelper* pcFormat)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The outlined button from JetBrains' Jewel dark theme.  The outside two
+// pixels of every tile are its focus ring, empty except when selected.
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CButtonImages> ReadJewelButtonImages(CColourFormatHelper* pcFormat)
+{
+	Ptr<CImage>		apStrips[NUM_BUTTON_STATES];
+	char*			aszStates[NUM_BUTTON_STATES] = { (char*)"JewelBorderNormal.png", (char*)"JewelBorderMouseOver.png", (char*)"JewelBorderSelected.png", (char*)"JewelBorderPushed.png" };
+	size			i;
+
+	for (i = 0; i < NUM_BUTTON_STATES; i++)
+	{
+		apStrips[i] = ReadSpaceImage("JewelButton", aszStates[i]);
+		apStrips[i] = CImageColourConverter::ConvertColour(apStrips[i], pcFormat->meOrder);
+	}
+	return OMalloc<CButtonImages>(apStrips[BS_Normal], apStrips[BS_MouseOver], apStrips[BS_Selected], apStrips[BS_Pushed], Set32BitColour((uint8)0x2B, 0x2D, 0x30));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The default button from JetBrains' Jewel dark theme.  It is filled blue,
+// lighter with the pointer over it and darker when pushed.  Selected it has
+// a dark line between its face and its focus ring.
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CButtonImages> ReadJewelDefaultButtonImages(CColourFormatHelper* pcFormat)
+{
+	Ptr<CImage>		apStrips[NUM_BUTTON_STATES];
+	char*			aszStates[NUM_BUTTON_STATES] = { (char*)"JewelDefaultBorderNormal.png", (char*)"JewelDefaultBorderMouseOver.png", (char*)"JewelDefaultBorderSelected.png", (char*)"JewelDefaultBorderPushed.png" };
+	size			i;
+
+	for (i = 0; i < NUM_BUTTON_STATES; i++)
+	{
+		apStrips[i] = ReadSpaceImage("JewelButton", aszStates[i]);
+		apStrips[i] = CImageColourConverter::ConvertColour(apStrips[i], pcFormat->meOrder);
+	}
+	return OMalloc<CButtonImages>(apStrips[BS_Normal], apStrips[BS_MouseOver], apStrips[BS_Selected], apStrips[BS_Pushed],
+									Set32BitColour((uint8)0x35, 0x74, 0xF0), Set32BitColour((uint8)0x46, 0x82, 0xFA), Set32BitColour((uint8)0x35, 0x74, 0xF0), Set32BitColour((uint8)0x36, 0x6A, 0xCE));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // The window is 200x60 with an OK button centred in its left half and a
 // Cancel button centred in its right half.  The grid between them is the
 // background.
@@ -242,8 +286,145 @@ void TestButtonInput(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The window is 300x60 with OK, Cancel and a focusable Name label in three
+// columns.  OK is the default button.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestButtonDefault(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CGridContainer>		pGrid;
+		Ptr<CButtonImages>		pImages;
+		Ptr<CButtonImages>		pDefaultImages;
+		Ptr<CFont>				pFont;
+		Ptr<CButton>			pOK;
+		Ptr<CButton>			pCancel;
+		Ptr<CLabel>				pName;
+		Ptr<CFocus>				pFocus;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		CColourFormatHelper		cHelper;
+		CTestButtonListener		cListener;
+		CPointer				pNull;
+		CChars					szLog;
+		SInt32Vec2				sSize;
+		SInt32Vec2				sDefaultSize;
+		int						y;
+
+		szLog.Init();
+		cListener.Init(&szLog);
+		cNativeFactory.Init(&gcMemoryAllocator, 300, 60, NULL);
+		cTick.Init(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Default Button Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow->GetColourFormat(&cHelper);
+		pFocus = pTestWindow->GetFocus();
+
+		pFont = ReadLabelFont();
+		pImages = ReadJewelButtonImages(&cHelper);
+		pDefaultImages = ReadJewelDefaultButtonImages(&cHelper);
+		AssertInt(Set32BitColour((uint8)0x2B, 0x2D, 0x30), pImages->GetFaceColour(BS_Pushed));
+		AssertInt(Set32BitColour((uint8)0x36, 0x6A, 0xCE), pDefaultImages->GetFaceColour(BS_Pushed));
+
+		pOK = OMalloc<CButton>(pTestWindow, pImages, pDefaultImages, pFont, "OK");
+		pCancel = OMalloc<CButton>(pTestWindow, pImages, pFont, "Cancel");
+		pName = OMalloc<CLabel>(pTestWindow, pFont, "Name");
+		pName->SetCanGetFocus(true);
+		AssertTrue(pOK->AddListener(&cListener));
+		AssertTrue(pCancel->AddListener(&cListener));
+		pGrid = OMalloc<CGridContainer>(pTestWindow);
+		pTestWindow->SetContainer(pGrid);
+		AssertTrue(pGrid->AddComponent(pOK, 0, 0, 1, 1, 1, 1));
+		AssertTrue(pGrid->AddComponent(pCancel, 1, 0, 1, 1, 1, 1));
+		AssertTrue(pGrid->AddComponent(pName, 2, 0, 1, 1, 1, 1));
+		pTestWindow->Layout();
+
+		//Without a default button enter goes nowhere when nothing has focus.
+		AssertTrue(pTestWindow->GetDefaultButton().IsNull());
+		AssertFalse(pOK->IsDefault());
+		AssertTrue(pOK->GetImages() == pImages);
+		pTestWindow->InputCommand(CIC_Enter, true);
+		AssertLog("");
+
+		//The default button takes on its default images.  Default images don't change its size.
+		sSize = pOK->GetDesiredSize();
+		pTestWindow->SetDefaultButton(pOK);
+		AssertTrue(pTestWindow->GetDefaultButton() == pOK);
+		AssertTrue(pOK->IsDefault());
+		AssertTrue(pOK->GetImages() == pDefaultImages);
+		sDefaultSize = pOK->GetDesiredSize();
+		AssertInt32Vec2(sSize.x, sSize.y, &sDefaultSize);
+
+		//With nothing focussed enter clicks the default button.
+		pTestWindow->InputCommand(CIC_Enter, true);
+		AssertLog("OK:Clicked;");
+
+		//A focussed button wants enter for itself.
+		y = pCancel->GetPosition().y + pCancel->GetActualSize().y / 2;
+		pTestWindow->PointerMoved(pCancel->GetPosition().x + pCancel->GetActualSize().x / 2, y);
+		pTestWindow->InputCommand(CIC_ActivateComponent, true);
+		pTestWindow->InputCommand(CIC_ExecuteComponent, true);
+		AssertLog("Cancel:Clicked;");
+		AssertTrue(pCancel->IsFocussed());
+		pTestWindow->InputCommand(CIC_Enter, true);
+		AssertLog("Cancel:Clicked;");
+
+		//A focussed component that doesn't want enter leaves it to the default button.
+		pTestWindow->PointerMoved(pName->GetPosition().x + 1, pName->GetPosition().y + 1);
+		pTestWindow->InputCommand(CIC_ActivateComponent, true);
+		pTestWindow->InputCommand(CIC_ExecuteComponent, true);
+		AssertTrue(pName->IsFocussed());
+		pTestWindow->InputCommand(CIC_Enter, true);
+		AssertLog("OK:Clicked;");
+
+		//The default button clicks itself when focussed, once and not twice.
+		pTestWindow->PointerMoved(pOK->GetPosition().x + pOK->GetActualSize().x / 2, y);
+		pTestWindow->InputCommand(CIC_ActivateComponent, true);
+		pTestWindow->InputCommand(CIC_ExecuteComponent, true);
+		AssertLog("OK:Clicked;");
+		pTestWindow->InputCommand(CIC_Enter, true);
+		AssertLog("OK:Clicked;");
+
+		//Making another button the default takes it from the first.  Cancel has no default images so looks the same.
+		pTestWindow->SetDefaultButton(pCancel);
+		AssertFalse(pOK->IsDefault());
+		AssertTrue(pOK->GetImages() == pImages);
+		AssertTrue(pCancel->IsDefault());
+		AssertTrue(pCancel->GetImages() == pImages);
+
+		pTestWindow->SetDefaultButton(pNull);
+		AssertFalse(pCancel->IsDefault());
+		AssertTrue(pTestWindow->GetDefaultButton().IsNull());
+
+		ValidateLabelObjects();
+
+		pOK = NULL;
+		pCancel = NULL;
+		pName = NULL;
+		pGrid = NULL;
+		pImages = NULL;
+		pDefaultImages = NULL;
+		pFont = NULL;
+		pFocus = NULL;
+		pTestWindow = NULL;
+		szLog.Kill();
+	}
+
+	AssertSize(0, gcObjects.NumFreeObjects());
+	AssertTrue(ORoot()->RemoveAll());
+	AssertSize(2, gcObjects.NumMemoryIndexes());
+	cNativeFactory.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Draws a frame then moves the button on to its next state: normal, mouse
-// over, pushed and then selected once the pointer moves away.
+// over, pushed and then selected once the pointer moves away.  If asked it
+// moves back over the button, which pushes it again as the press is still
+// held.
 //
 //////////////////////////////////////////////////////////////////////////
 class CButtonStatesTick : public CWindowTick
@@ -254,15 +435,17 @@ protected:
 	int32		miFrame;
 	SInt32Vec2	msOver;
 	SInt32Vec2	msAway;
+	bool		mbReturnOver;
 
 public:
-	void Init(SInt32Vec2 sOver, SInt32Vec2 sAway)
+	void Init(SInt32Vec2 sOver, SInt32Vec2 sAway, bool bReturnOver)
 	{
 		PreInit();
 		CWindowTick::Init();
 		miFrame = 0;
 		msOver = sOver;
 		msAway = sAway;
+		mbReturnOver = bReturnOver;
 		PostInit();
 	}
 
@@ -272,6 +455,7 @@ public:
 		U_Int32(miFrame);
 		U_2Int32(msOver);
 		U_2Int32(msAway);
+		U_Bool(mbReturnOver);
 	}
 
 	void Tick(Ptr<CWindow> pWindow, int64 iUpdateTimeInMillieconds, int64 iTotalTimeInMillieconds) override
@@ -291,6 +475,10 @@ public:
 		{
 			pWindow->PointerMoved(msAway.x, msAway.y);
 		}
+		else if ((miFrame == 4) && mbReturnOver)
+		{
+			pWindow->PointerMoved(msOver.x, msOver.y);
+		}
 		else
 		{
 			pWindow->Stop();
@@ -301,16 +489,21 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The Jewel button's last frame is pushed after selected, so the focus
+// ring drawn in the frame before must be gone from its empty band.  With
+// default images the button is made the window's default button.
 //
 //////////////////////////////////////////////////////////////////////////
-void TestButtonStates(void)
+void TestButtonStates(char* szName, Ptr<CButtonImages>(*ReadImages)(CColourFormatHelper*), Ptr<CButtonImages>(*ReadDefaultImages)(CColourFormatHelper*), ARGB32 sBackground, bool bReturnOver)
 {
 	CWinRefWindowFactory	cNativeFactory;
 	CFileUtil				cFileUtil;
-	char					szDirectory[] = "Output" _FS_ "ButtonStates";
+	CChars					szDirectory;
 
-	cFileUtil.RemoveDir(szDirectory);
-	cFileUtil.MakeDir(szDirectory);
+	szDirectory.Init("Output" _FS_);
+	szDirectory.Append(szName);
+	cFileUtil.RemoveDir(szDirectory.Text());
+	cFileUtil.MakeDir(szDirectory.Text());
 
 	{
 		Ptr<CWindow>			pTestWindow;
@@ -325,13 +518,21 @@ void TestButtonStates(void)
 		SInt32Vec2				sPosition;
 		SInt32Vec2				sSize;
 
-		cNativeFactory.Init(&gcMemoryAllocator, 120, 60, szDirectory);
-		pTestWindow = OMalloc<CWindow>("Button States", &cNativeFactory, &cTick, OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)40, 40, 48)), CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		cNativeFactory.Init(&gcMemoryAllocator, 120, 60, szDirectory.Text());
+		pTestWindow = OMalloc<CWindow>("Button States", &cNativeFactory, &cTick, OMalloc<CClearCanvasDraw>(sBackground), CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
 		pTestWindow->GetColourFormat(&cHelper);
 
 		pFont = ReadLabelFont();
-		pImages = ReadBlueButtonImages(&cHelper);
-		pButton = OMalloc<CButton>(pTestWindow, pImages, pFont, "Press Me");
+		pImages = ReadImages(&cHelper);
+		if (ReadDefaultImages)
+		{
+			pButton = OMalloc<CButton>(pTestWindow, pImages, ReadDefaultImages(&cHelper), pFont, "Press Me");
+			pTestWindow->SetDefaultButton(pButton);
+		}
+		else
+		{
+			pButton = OMalloc<CButton>(pTestWindow, pImages, pFont, "Press Me");
+		}
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
 		pFill->AddComponent(pButton);
@@ -339,10 +540,10 @@ void TestButtonStates(void)
 		pTestWindow->Layout();
 		sPosition = pButton->GetPosition();
 		sSize = pButton->GetActualSize();
-		cTick.Init(SInt32Vec2(sPosition.x + sSize.x / 2, sPosition.y + sSize.y / 2), SInt32Vec2(1, 1));
+		cTick.Init(SInt32Vec2(sPosition.x + sSize.x / 2, sPosition.y + sSize.y / 2), SInt32Vec2(1, 1), bReturnOver);
 
 		pTestWindow->Show();
-		AssertInt(BS_Selected, pButton->GetState());
+		AssertInt(bReturnOver ? BS_Pushed : BS_Selected, pButton->GetState());
 
 		ValidateLabelObjects();
 
@@ -354,7 +555,7 @@ void TestButtonStates(void)
 
 		szExpectedDirectory.Init(szDirectory);
 		szExpectedDirectory.Replace("Output", "Input");
-		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory.Text());
 		szExpectedDirectory.Kill();
 	}
 
@@ -362,7 +563,8 @@ void TestButtonStates(void)
 	AssertTrue(ORoot()->RemoveAll());
 	AssertSize(2, gcObjects.NumMemoryIndexes());
 	cNativeFactory.Kill();
-	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.RemoveDir(szDirectory.Text());
+	szDirectory.Kill();
 }
 
 
@@ -376,7 +578,10 @@ void TestButton(void)
 	ObjectsInit();
 
 	TestButtonInput();
-	TestButtonStates();
+	TestButtonDefault();
+	TestButtonStates((char*)"ButtonStates", ReadBlueButtonImages, NULL, Set32BitColour((uint8)40, 40, 48), false);
+	TestButtonStates((char*)"JewelButtonStates", ReadJewelButtonImages, NULL, Set32BitColour((uint8)0x1E, 0x1F, 0x22), true);
+	TestButtonStates((char*)"JewelDefaultButtonStates", ReadJewelButtonImages, ReadJewelDefaultButtonImages, Set32BitColour((uint8)0x1E, 0x1F, 0x22), true);
 
 	ObjectsFlush();
 	ObjectsKill();

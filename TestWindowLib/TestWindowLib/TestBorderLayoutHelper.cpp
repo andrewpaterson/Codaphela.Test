@@ -235,7 +235,7 @@ Ptr<CCanvas> CreateBlueButton(CBorderLayoutHelper* pcBorder, Ptr<CWindow> pWindo
 	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(pImages->GetCel(eState, BBP_Top), true), BLC_Top, -1, 8);
 	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(pImages->GetCel(eState, BBP_TopRight)), BLC_TopRight, -1, -1);
 	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(pImages->GetCel(eState, BBP_Left), true), BLC_Left, 8, -1);
-	pFace = OMalloc<CCanvas>(pWindow, OMalloc<CClearCanvasDraw>(pImages->GetFaceColour()));
+	pFace = OMalloc<CCanvas>(pWindow, OMalloc<CClearCanvasDraw>(pImages->GetFaceColour(BS_Normal)));
 	AssertTrue(pcBorder->AddComponent(pFace, BLC_Center));
 	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(pImages->GetCel(eState, BBP_Right), true), BLC_Right, 8, -1);
 	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(pImages->GetCel(eState, BBP_BottomLeft)), BLC_BottomLeft, -1, -1);
