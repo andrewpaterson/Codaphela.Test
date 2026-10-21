@@ -60,7 +60,7 @@ void TestTreeTemplateInsert(void)
 	pcNode02 = cTree.InsertOnRightOfChildren(pcNode0);
 	pcNode02->Init(99, 7);
 
-	AssertInt(5, cTree.NumElements());
+	AssertSize(5, cTree.NumElements());
 	pcTest = cTree.GetRoot();
 	AssertPointer(pcNode0, pcTest);
 	AssertTrue(pcTest->IsOkay(672, 7645));

@@ -16,9 +16,9 @@ void TestIndexTreeWriterWrite(void)
 {
 	char*					pvData;
 	char*					pvKey;
-	int						iDataSize;
+	size						iDataSize;
 	bool					bExists;
-	int						iKeyLength;
+	size						iKeyLength;
 	CIndexTreeMemory		cIndexTree;
 	CIndexTreeMemoryAccess	cAccess;
 	CMapStringString		cMap;
@@ -41,7 +41,7 @@ void TestIndexTreeWriterWrite(void)
 	cMap.Put("BBB", "waggish");
 	cMap.Put("BBA", "debt");
 	
-	AssertInt(12, cMap.NumElements());
+	AssertSize(12, cMap.NumElements());
 
 	cIndexTree.Init();
 	cAccess.Init(&cIndexTree);
@@ -56,7 +56,7 @@ void TestIndexTreeWriterWrite(void)
 		bExists = cMap.Iterate(&sMapIter, (void**)&pvKey, NULL, (void**)&pvData, NULL);
 	}
 
-	AssertInt(12, cIndexTree.NumElements());
+	AssertSize(12, cIndexTree.NumElements());
 	Pass();
 	AssertTrue(cIndexTree.ValidateIndexTree());
 

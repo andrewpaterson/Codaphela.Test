@@ -36,28 +36,28 @@ void TestDurableSetAdd(void)
 	cController.Begin();
 
 	cController.AddFile(&cDurableFile1);
-	AssertInt(1, cController.NumFiles());
+	AssertSize(1, cController.NumFiles());
 	pcDurableFile = cController.GetFile(0);
 	AssertPointer(&cDurableFile1, pcDurableFile);
 
 	cController.AddFile(&cDurableFile1);
-	AssertInt(1, cController.NumFiles());
+	AssertSize(1, cController.NumFiles());
 	pcDurableFile = cController.GetFile(0);
 	AssertPointer(&cDurableFile1, pcDurableFile);
 
 	cController.AddFile(&cDurableFile2);
-	AssertInt(2, cController.NumFiles());
+	AssertSize(2, cController.NumFiles());
 	cController.AddFile(&cDurableFile3);
-	AssertInt(3, cController.NumFiles());
+	AssertSize(3, cController.NumFiles());
 	cController.AddFile(&cDurableFile4);
-	AssertInt(4, cController.NumFiles());
+	AssertSize(4, cController.NumFiles());
 
 	cController.AddFile(&cDurableFile2);
-	AssertInt(4, cController.NumFiles());
+	AssertSize(4, cController.NumFiles());
 	cController.AddFile(&cDurableFile3);
-	AssertInt(4, cController.NumFiles());
+	AssertSize(4, cController.NumFiles());
 	cController.AddFile(&cDurableFile4);
-	AssertInt(4, cController.NumFiles());
+	AssertSize(4, cController.NumFiles());
 
 	cController.End();
 	cDurableFile1.Kill();

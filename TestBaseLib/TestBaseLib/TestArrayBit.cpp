@@ -18,7 +18,7 @@ void TestArrayBitAdd(void)
 	cArrayBit.Add(true);
 	cArrayBit.Add(false);
 
-	AssertInt(2, cArrayBit.NumElements());
+	AssertSize(2, cArrayBit.NumElements());
 
 	AssertTrue(cArrayBit.Get(0));
 	AssertFalse(cArrayBit.Get(1));
@@ -30,7 +30,7 @@ void TestArrayBitAdd(void)
 	cArrayBit.Add(true);
 	cArrayBit.Add(false);
 
-	AssertInt(8, cArrayBit.NumElements());
+	AssertSize(8, cArrayBit.NumElements());
 
 	AssertTrue(cArrayBit.Get(2));
 	AssertFalse(cArrayBit.Get(3));
@@ -45,7 +45,7 @@ void TestArrayBitAdd(void)
 
 	cArrayBit.Add(ui, 0, 88);
 
-	AssertInt(96, cArrayBit.NumElements());
+	AssertSize(96, cArrayBit.NumElements());
 
 	AssertFalse(cArrayBit.Get(8));
 	AssertTrue(cArrayBit.Get(9));
@@ -62,7 +62,7 @@ void TestArrayBitAdd(void)
 
 	cArrayBit.Add(true);
 
-	AssertInt(97, cArrayBit.NumElements());
+	AssertSize(97, cArrayBit.NumElements());
 	AssertTrue(cArrayBit.Get(96));
 
 	AssertIntHex((uint32)0xcbb78e55, ((uint32*)cArrayBit.GetData())[0]);
@@ -77,11 +77,11 @@ void TestArrayBitAdd(void)
 	cArrayBit.Add(true);
 	cArrayBit.Add(false);
 
-	AssertInt(104, cArrayBit.NumElements());
+	AssertSize(104, cArrayBit.NumElements());
 
 	cArrayBit.Add(true);
 
-	AssertInt(105, cArrayBit.NumElements());
+	AssertSize(105, cArrayBit.NumElements());
 	AssertTrue(cArrayBit.Get(104));
 
 	AssertFalse(cArrayBit.Get(97));
@@ -121,7 +121,7 @@ void TestArrayBitReadWrite(void)
 	
 	cArrayBitIn.Read(&cFile);
 
-	AssertInt(2, cArrayBitIn.NumElements());
+	AssertSize(2, cArrayBitIn.NumElements());
 
 	AssertTrue(cArrayBitIn.Get(0));
 	AssertFalse(cArrayBitIn.Get(1));
@@ -146,7 +146,7 @@ void TestArrayBitReadWrite(void)
 	cArrayBit.Add(true);
 	cArrayBit.Add(false);
 	cArrayBit.Add(true);
-	AssertInt(105, cArrayBit.NumElements());
+	AssertSize(105, cArrayBit.NumElements());
 
 	cFile.Open(EFM_Write_Create);
 	AssertTrue(cArrayBit.Write(&cFile));
@@ -157,7 +157,7 @@ void TestArrayBitReadWrite(void)
 	cFile.Open(EFM_Read);
 	cArrayBitIn.Read(&cFile);
 
-	AssertInt(105, cArrayBitIn.NumElements());
+	AssertSize(105, cArrayBitIn.NumElements());
 	AssertTrue(cArrayBitIn.Get(0));
 	AssertFalse(cArrayBitIn.Get(1));
 	AssertIntHex((uint32)0xcbb78e55, ((uint32*)cArrayBitIn.GetData())[0]);

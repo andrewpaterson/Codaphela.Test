@@ -10,7 +10,11 @@
 //////////////////////////////////////////////////////////////////////////
 void TestDataMemorySizeof(void)
 {
-	AssertInt(52, sizeof(CDataMemory));
+#ifdef BUILD_64
+	AssertSize(104, sizeof(CDataMemory));
+#else
+	AssertSize(52, sizeof(CDataMemory));
+#endif // BUILD_64
 }
 
 
@@ -28,9 +32,13 @@ void TestDataMemoryAdd(void)
 	CArrayVoidPtr	apv;
 
 	cMemory.Init(&gcDataMemoryFreeListParams);
-	AssertInt(0, cMemory.NumElements());
-	AssertInt(16, cMemory.ByteSize());
-	AssertInt(0, cMemory.NumFreeLists());
+	AssertSize(0, cMemory.NumElements());
+#ifdef BUILD_64
+	AssertSize(32, cMemory.ByteSize());
+#else
+	AssertSize(16, cMemory.ByteSize());
+#endif // BUILD_64
+	AssertSize(0, cMemory.NumFreeLists());
 
 
 	apv.Init();
@@ -45,11 +53,16 @@ void TestDataMemoryAdd(void)
 		iAllocated += psz->Length() + 1;
 	}
 
-	AssertInt(433, gaszArchaicDefinitions.NumElements());
-	AssertInt(gaszArchaicDefinitions.NumElements(), cMemory.NumElements());
-	AssertInt(29937, cMemory.ByteSize());
-	AssertInt(8, cMemory.NumFreeLists());
-	AssertInt(13665, iAllocated);
+	AssertSize(433, gaszArchaicDefinitions.NumElements());
+	AssertSize(gaszArchaicDefinitions.NumElements(), cMemory.NumElements());
+#ifdef BUILD_64
+	AssertSize(38498, cMemory.ByteSize());
+	AssertSize(9, cMemory.NumFreeLists());
+#else
+	AssertSize(29937, cMemory.ByteSize());
+	AssertSize(8, cMemory.NumFreeLists());
+#endif // BUILD_64
+	AssertSize(13665, iAllocated);
 
 	for (i = 0; i < apv.NumElements(); i += 2)
 	{
@@ -57,9 +70,13 @@ void TestDataMemoryAdd(void)
 		cMemory.Remove(pv);
 	}
 
-	AssertInt(216, cMemory.NumElements());
-	AssertInt(29937, cMemory.ByteSize());
-	AssertInt(8, cMemory.NumFreeLists());
+	AssertSize(216, cMemory.NumElements());
+#ifdef BUILD_64
+	AssertSize(33164, cMemory.ByteSize());
+#else
+	AssertSize(29937, cMemory.ByteSize());
+#endif // BUILD_64
+	AssertSize(8, cMemory.NumFreeLists());
 
 	for (i = 1; i < apv.NumElements(); i += 2)
 	{
@@ -67,9 +84,13 @@ void TestDataMemoryAdd(void)
 		cMemory.Remove(pv);
 	}
 
-	AssertInt(0, cMemory.NumElements());
-	AssertInt(16, cMemory.ByteSize());
-	AssertInt(0, cMemory.NumFreeLists());
+	AssertSize(0, cMemory.NumElements());
+#ifdef BUILD_64
+	AssertSize(32, cMemory.ByteSize());
+#else
+	AssertSize(16, cMemory.ByteSize());
+#endif // BUILD_64
+	AssertSize(0, cMemory.NumFreeLists());
 
 	apv.Kill();
 
@@ -100,7 +121,7 @@ void TestDataMemoryIteration(void)
 	pv8192 = cMemory.Add(8192);
 	sResult = cMemory.StartIteration(&sIterator);
 	AssertTrue(sResult.bValid);
-	AssertInt(8192, sResult.uiSize);
+	AssertSize(8192, sResult.uiSize);
 	AssertPointer(pv8192, sResult.pvMem);
 
 	sResult = cMemory.Iterate(&sIterator);
@@ -110,12 +131,12 @@ void TestDataMemoryIteration(void)
 	pv48 = cMemory.Add(48);
 	sResult = cMemory.StartIteration(&sIterator);
 	AssertTrue(sResult.bValid);
-	AssertInt(48, sResult.uiSize);
+	AssertSize(48, sResult.uiSize);
 	AssertPointer(pv48, sResult.pvMem);
 
 	sResult = cMemory.Iterate(&sIterator);
 	AssertTrue(sResult.bValid);
-	AssertInt(8192, sResult.uiSize);
+	AssertSize(8192, sResult.uiSize);
 	AssertPointer(pv8192, sResult.pvMem);
 
 	sResult = cMemory.Iterate(&sIterator);
@@ -125,17 +146,17 @@ void TestDataMemoryIteration(void)
 	pv64 = cMemory.Add(64);
 	sResult = cMemory.StartIteration(&sIterator);
 	AssertTrue(sResult.bValid);
-	AssertInt(48, sResult.uiSize);
+	AssertSize(48, sResult.uiSize);
 	AssertPointer(pv48, sResult.pvMem);
 
 	sResult = cMemory.Iterate(&sIterator);
 	AssertTrue(sResult.bValid);
-	AssertInt(64, sResult.uiSize);
+	AssertSize(64, sResult.uiSize);
 	AssertPointer(pv64, sResult.pvMem);
 
 	sResult = cMemory.Iterate(&sIterator);
 	AssertTrue(sResult.bValid);
-	AssertInt(8192, sResult.uiSize);
+	AssertSize(8192, sResult.uiSize);
 	AssertPointer(pv8192, sResult.pvMem);
 
 	sResult = cMemory.Iterate(&sIterator);
@@ -145,12 +166,12 @@ void TestDataMemoryIteration(void)
 	cMemory.Remove(pv8192);
 	sResult = cMemory.StartIteration(&sIterator);
 	AssertTrue(sResult.bValid);
-	AssertInt(48, sResult.uiSize);
+	AssertSize(48, sResult.uiSize);
 	AssertPointer(pv48, sResult.pvMem);
 
 	sResult = cMemory.Iterate(&sIterator);
 	AssertTrue(sResult.bValid);
-	AssertInt(64, sResult.uiSize);
+	AssertSize(64, sResult.uiSize);
 	AssertPointer(pv64, sResult.pvMem);
 
 	sResult = cMemory.Iterate(&sIterator);
@@ -161,22 +182,22 @@ void TestDataMemoryIteration(void)
 	pv9036 = cMemory.Add(9036);
 	sResult = cMemory.StartIteration(&sIterator);
 	AssertTrue(sResult.bValid);
-	AssertInt(48, sResult.uiSize);
+	AssertSize(48, sResult.uiSize);
 	AssertPointer(pv48, sResult.pvMem);
 
 	sResult = cMemory.Iterate(&sIterator);
 	AssertTrue(sResult.bValid);
-	AssertInt(64, sResult.uiSize);
+	AssertSize(64, sResult.uiSize);
 	AssertPointer(pv64, sResult.pvMem);
 
 	sResult = cMemory.Iterate(&sIterator);
 	AssertTrue(sResult.bValid);
-	AssertInt(8192, sResult.uiSize);
+	AssertSize(8192, sResult.uiSize);
 	AssertPointer(pv8192, sResult.pvMem);
 
 	sResult = cMemory.Iterate(&sIterator);
 	AssertTrue(sResult.bValid);
-	AssertInt(9036, sResult.uiSize);
+	AssertSize(9036, sResult.uiSize);
 	AssertPointer(pv9036, sResult.pvMem);
 
 	sResult = cMemory.Iterate(&sIterator);

@@ -104,7 +104,7 @@ void TestMapStringIntAndPointerRemove(void)
 	aiKeys.Init();
 	for (ui = 0; ui < 1024 + 128; ui++)
 	{
-		aiKeys.Add(ui);
+		aiKeys.Add((int)ui);
 	}
 
 	cRandom.Init(89743636);
@@ -186,7 +186,7 @@ void TestMapStringIntAndPointerIterate(void)
 	aiKeys.Init();
 	for (ui = 0; ui < 32; ui++)
 	{
-		aiKeys.Add(ui);
+		aiKeys.Add((int)ui);
 	}
 
 	cRandom.Init(89743636);

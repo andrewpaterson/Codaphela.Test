@@ -482,7 +482,7 @@ void TestNamedIndexesMoreCacheEviction(void)
 			{
 				sz.Append(" ");
 			}
-			iIndex = cRandom.Next(0, iNumWords - 1);
+			iIndex = cRandom.Next(0, (int)(iNumWords - 1));
 			sz.Append(aszWords.Get(iIndex));
 		}
 		cNamedIndexes.Add(sz.Text(), oi);
@@ -490,8 +490,13 @@ void TestNamedIndexesMoreCacheEviction(void)
 		sz.Kill();
 	}
 
+#ifdef BUILD_64
+	AssertLong(1016, cEvictionCounter.EvictionCount());
+	AssertLong(15984, cNamedIndexes.GetSystemMemorySize());
+#else
 	AssertLong(1015, cEvictionCounter.EvictionCount());
 	AssertLong(15692, cNamedIndexes.GetSystemMemorySize());
+#endif // BUILD_64
 	AssertTrue(cNamedIndexes.GetSystemMemorySize() < uiCacheSize);
 
 	cNamedIndexes.Flush();
@@ -516,8 +521,13 @@ void TestNamedIndexesMoreCacheEviction(void)
 		oi = cNamedIndexes.Get(psz);
 	}
 
+#ifdef BUILD_64
+	AssertLong(1018, cEvictionCounter.EvictionCount());
+	AssertLong(15944, cNamedIndexes.GetSystemMemorySize());
+#else
 	AssertLong(1017, cEvictionCounter.EvictionCount());
 	AssertLong(16284, cNamedIndexes.GetSystemMemorySize());
+#endif // BUILD_64
 	AssertTrue(cNamedIndexes.GetSystemMemorySize() < uiCacheSize);
 
 	cNamedIndexes.Flush();

@@ -37,7 +37,7 @@ void AssertElement(void* pvData, size uiDataSize, char cExpected)
 //////////////////////////////////////////////////////////////////////////
 void AssertCacheElement(CMemoryCache* pcCache, void* pvData, size uiDataSize, char cExpected)
 {
-	AssertInt(uiDataSize, pcCache->GetSize(pvData));
+	AssertSize(uiDataSize, pcCache->GetSize(pvData));
 
 	AssertElement(pvData, uiDataSize, cExpected);
 }
@@ -52,7 +52,7 @@ void AssertLinkOrder(CMemoryCache* pcCache)
 	void*					psCacheDesc;
 	void*					psCacheDescReverse;
 	CArrayVoidPtr			cPointers;
-	int						i;
+	size						i;
 
 	AssertPointer(pcCache->GetPrev(pcCache->GetFirst()), pcCache->GetLast());
 	AssertPointer(pcCache->GetNext(pcCache->GetLast()), pcCache->GetFirst());
@@ -96,7 +96,7 @@ void AssertCache(CMemoryCache* pcCache, int iFirstLength, char cFirstChar)
 	void*		psFirst;
 	void*		psLast;
 
-	AssertInt(1, pcCache->NumElements());
+	AssertSize(1, pcCache->NumElements());
 	
 	psFirst = pcCache->GetFirst();
 	AssertNotNull(psFirst);
@@ -122,7 +122,7 @@ void AssertCache(CMemoryCache* pcCache, int iFirstLength, char cFirstChar, int i
 	void*		psFirst;
 	void*		psLast;
 
-	AssertInt(2, pcCache->NumElements());
+	AssertSize(2, pcCache->NumElements());
 
 	psFirst = pcCache->GetFirst();
 	psLast = pcCache->GetLast();
@@ -146,7 +146,7 @@ void AssertCache(CMemoryCache* pcCache, int iLen1, char c1, int iLen2, char c2, 
 	void*		psFirst;
 	void*		psLast;
 
-	AssertInt(3, pcCache->NumElements());
+	AssertSize(3, pcCache->NumElements());
 
 	psFirst = pcCache->GetFirst();
 	psLast = pcCache->GetLast();
@@ -172,7 +172,7 @@ void TestMemoryCacheSimple(void)
 	CMemoryCache	cCache;
 	void*			pvData;
 
-	cCache.Init(64 + sizeof(SMemoryCacheDescriptor), NULL);
+	cCache.Init(52 + 2 * sizeof(SMemoryCacheDescriptor), NULL);
 
 	pvData = cCache.Allocate(52);
 	AssertNotNull(pvData);
@@ -202,7 +202,7 @@ void TestMemoryCacheBrokenExample(void)
 	CMemoryCache	cCache;
 	void*			pvData;
 
-	cCache.Init(64 + sizeof(SMemoryCacheDescriptor), NULL);
+	cCache.Init(52 + 2 * sizeof(SMemoryCacheDescriptor), NULL);
 
 	pvData = cCache.Allocate(20);
 	FillCachedElement(pvData, 20, 'A');
@@ -234,7 +234,7 @@ void TestMemoryCacheEvictAll(void)
 	CMemoryCache	cCache;
 	void*			pvData;
 
-	cCache.Init(64 + sizeof(SMemoryCacheDescriptor), NULL);
+	cCache.Init(52 + 2 * sizeof(SMemoryCacheDescriptor), NULL);
 
 	pvData = cCache.Allocate(17);
 	AssertNotNull(pvData);
@@ -264,7 +264,7 @@ void TestMemoryCacheEvictLeftmost(void)
 	CMemoryCache	cCache;
 	void*			pvData;
 
-	cCache.Init(64 + sizeof(SMemoryCacheDescriptor), NULL);
+	cCache.Init(52 + 2 * sizeof(SMemoryCacheDescriptor), NULL);
 
 	pvData = cCache.Allocate(8);
 	FillCachedElement(pvData, 8, 'A');
@@ -292,73 +292,79 @@ void TestMemoryCacheEvictRightmost(void)
 {
 	CMemoryCache	cCache;
 	void*			pvData;
+	size			uiCacheSize;
+	size			uiLargest;
 
-	cCache.Init(64 + sizeof(SMemoryCacheDescriptor), NULL);
-	AssertInt(0, cCache.GetAllocatedSize());
+	//76 bytes in a 32 bit build.  The sizes below only evict as expected for a cache about this big.
+	uiCacheSize = 40 + 3 * sizeof(SMemoryCacheDescriptor);
+	uiLargest = uiCacheSize - sizeof(SMemoryCacheDescriptor);
+
+	cCache.Init(uiCacheSize, NULL);
+	AssertSize(0, cCache.GetAllocatedSize());
 
 	pvData = cCache.Allocate(8);
 	FillCachedElement(pvData, 8, 'A');
-	AssertInt(8 + sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertSize(8 + sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 
 	pvData = cCache.Allocate(9);
 	FillCachedElement(pvData, 9, 'B');
-	AssertInt(8 + 9 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertSize(8 + 9 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 
 	pvData = cCache.Allocate(8);
 	FillCachedElement(pvData, 8, 'C');
-	AssertInt(8 + 9 + 8 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
-	AssertInt(61, cCache.GetAllocatedSize());
+	AssertSize(8 + 9 + 8 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertSize(25 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 	AssertCache(&cCache, 8, 'A', 9, 'B', 8, 'C');
 
 	pvData = cCache.Allocate(7);
 	FillCachedElement(pvData, 7, 'D');
-	AssertInt(7 + 9 + 8 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
-	AssertInt(60, cCache.GetAllocatedSize());
+	AssertSize(7 + 9 + 8 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertSize(24 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 	AssertCache(&cCache, 9, 'B', 8, 'C', 7, 'D');
 
 	pvData = cCache.Allocate(6);
 	FillCachedElement(pvData, 6, 'E');
-	AssertInt(8 + 7 + 6 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertSize(8 + 7 + 6 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 	AssertCache(&cCache, 8, 'C', 7, 'D', 6, 'E');
 
 	pvData = cCache.Allocate(9);
 	FillCachedElement(pvData, 9, 'F');
-	AssertInt(7 + 6 + 9 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertSize(7 + 6 + 9 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 	AssertCache(&cCache, 7, 'D', 6, 'E', 9, 'F');
 
 	pvData = cCache.Allocate(8);
 	FillCachedElement(pvData, 8, 'A');
-	AssertInt(9 + 8 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
-	AssertInt(41, cCache.GetAllocatedSize());  // out of 76 (35 remain)
+	AssertSize(9 + 8 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertSize(17 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 	AssertCache(&cCache, 9, 'F', 8, 'A');
 
 	pvData = cCache.Allocate(17);
 	FillCachedElement(pvData, 17, 'B');
-	AssertInt(17 + 8 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
-	AssertInt(49, cCache.GetAllocatedSize());  // out of 76 (27 remain)
+	AssertSize(17 + 8 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertSize(25 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 	AssertCache(&cCache, 8, 'A', 17, 'B');
 
 	pvData = cCache.Allocate(9);
 	FillCachedElement(pvData, 9, 'Z');
-	AssertInt(8 + 17 + 9 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertSize(8 + 17 + 9 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 	AssertCache(&cCache, 8, 'A', 17, 'B', 9, 'Z');
 
-	pvData = cCache.Allocate(64);
-	FillCachedElement(pvData, 64, 'Q');
-	AssertInt(64 + sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
-	AssertCache(&cCache, 64, 'Q');
+	pvData = cCache.Allocate(uiLargest);
+	FillCachedElement(pvData, (int)uiLargest, 'Q');
+	AssertSize(uiCacheSize, cCache.GetAllocatedSize());
+	AssertCache(&cCache, (int)uiLargest, 'Q');
 
-	pvData = cCache.Allocate(65);
+	pvData = cCache.Allocate(uiLargest + 1);
 	AssertNull(pvData);
 
 	pvData = cCache.Allocate(32);
 	FillCachedElement(pvData, 32, 'P');
-	AssertInt(32 + sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertSize(32 + sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 	AssertCache(&cCache, 32, 'P');
 
 	pvData = cCache.Allocate(16);
 	FillCachedElement(pvData, 16, 'R');
-	AssertInt(32 + 16 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
+	AssertSize(32 + 16 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 	AssertCache(&cCache, 32, 'P', 16, 'R');
 
 	cCache.Kill();
@@ -376,7 +382,7 @@ void TestMemoryCacheDeallocate(void)
 	void*			pvB;
 	void*			pvC;
 
-	cCache.Init(128, NULL);
+	cCache.Init(80 + 4 * sizeof(SMemoryCacheDescriptor), NULL);
 
 	pvA = cCache.Allocate(8);
 	FillCachedElement(pvA, 8, 'A');
@@ -386,18 +392,18 @@ void TestMemoryCacheDeallocate(void)
 	FillCachedElement(pvC, 8, 'C');
 
 	AssertCache(&cCache, 8, 'A', 9, 'B', 8, 'C');
-	AssertInt(61, cCache.GetAllocatedSize());
+	AssertSize(25 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvA);
 	AssertCache(&cCache, 9, 'B', 8, 'C');
-	AssertInt(41, cCache.GetAllocatedSize());
+	AssertSize(17 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvC);
 	AssertCache(&cCache, 9, 'B');
-	AssertInt(21, cCache.GetAllocatedSize());
+	AssertSize(9 + sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvB);
-	AssertInt(0, cCache.GetAllocatedSize());
+	AssertSize(0, cCache.GetAllocatedSize());
 
 	pvA = cCache.Allocate(8);
 	FillCachedElement(pvA, 8, 'A');
@@ -407,18 +413,18 @@ void TestMemoryCacheDeallocate(void)
 	FillCachedElement(pvC, 8, 'C');
 
 	AssertCache(&cCache, 8, 'A', 9, 'B', 8, 'C');
-	AssertInt(61, cCache.GetAllocatedSize());
+	AssertSize(25 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvB);
 	AssertCache(&cCache, 8, 'A', 8, 'C');
-	AssertInt(40, cCache.GetAllocatedSize());
+	AssertSize(16 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvA);
 	AssertCache(&cCache, 8, 'C');
-	AssertInt(20, cCache.GetAllocatedSize());
+	AssertSize(8 + sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvC);
-	AssertInt(0, cCache.GetAllocatedSize());
+	AssertSize(0, cCache.GetAllocatedSize());
 
 	pvA = cCache.Allocate(8);
 	FillCachedElement(pvA, 8, 'A');
@@ -428,18 +434,18 @@ void TestMemoryCacheDeallocate(void)
 	FillCachedElement(pvC, 8, 'C');
 
 	AssertCache(&cCache, 8, 'A', 9, 'B', 8, 'C');
-	AssertInt(61, cCache.GetAllocatedSize());
+	AssertSize(25 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvB);
 	AssertCache(&cCache, 8, 'A', 8, 'C');
-	AssertInt(40, cCache.GetAllocatedSize());
+	AssertSize(16 + 2 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvC);
 	AssertCache(&cCache, 8, 'A');
-	AssertInt(20, cCache.GetAllocatedSize());
+	AssertSize(8 + sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 
 	cCache.Deallocate(pvA);
-	AssertInt(0, cCache.GetAllocatedSize());
+	AssertSize(0, cCache.GetAllocatedSize());
 
 	cCache.Kill();
 }
@@ -459,7 +465,7 @@ void TestMemoryCachePreallocate(void)
 	void*					pv;
 	CMemoryCacheEvictedData	cEvictedData;
 
-	cCache.Init(128, &cEvictedData);
+	cCache.Init(80 + 4 * sizeof(SMemoryCacheDescriptor), &cEvictedData);
 
 	cEvictedData.Init();
 	pvA = cCache.Allocate(40);
@@ -517,7 +523,7 @@ void TestMemoryCacheReallocate(void)
 	size			uiOffsetC;
 	size			uiOffsetD;
 
-	cCache.Init(128, NULL);
+	cCache.Init(80 + 4 * sizeof(SMemoryCacheDescriptor), NULL);
 
 	pvA = cCache.Allocate(20);
 	FillCachedElement(pvA, 20, 'A');
@@ -535,8 +541,8 @@ void TestMemoryCacheReallocate(void)
 	FillCachedElement(pvD, 18, 'D');
 	AssertTrue(cCache.ValidateCache());
 
-	AssertInt(3, cCache.NumElements());
-	AssertInt(106, cCache.GetAllocatedSize());
+	AssertSize(3, cCache.NumElements());
+	AssertSize(70 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 	AssertCacheElement(&cCache, pvB, 24, 'B');
 	AssertCacheElement(&cCache, pvC, 28, 'C');
 	AssertCacheElement(&cCache, pvD, 18, 'D');
@@ -547,19 +553,19 @@ void TestMemoryCacheReallocate(void)
 	uiOffsetC = (size)pvC - (size)pvCache;
 	uiOffsetD = (size)pvD - (size)pvCache;
 
-	cCache.Resize(256);
+	cCache.Resize(172 + 7 * sizeof(SMemoryCacheDescriptor));
 	Pass();
 
-	AssertInt(3, cCache.NumElements());
-	AssertInt(106, cCache.GetAllocatedSize());
+	AssertSize(3, cCache.NumElements());
+	AssertSize(70 + 3 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 
 	pvCache = cCache.GetCache();
 	psIter = cCache.StartIteration();
-	AssertInt(uiOffsetB, (size)psIter - (size)pvCache);
+	AssertSize(uiOffsetB, (size)psIter - (size)pvCache);
 	AssertCacheElement(&cCache, psIter, 24, 'B');
 
 	psIter = cCache.Iterate(psIter);
-	AssertInt(uiOffsetC, (size)psIter - (size)pvCache);
+	AssertSize(uiOffsetC, (size)psIter - (size)pvCache);
 	AssertCacheElement(&cCache, psIter, 28, 'C');
 
 	//D had wrapped around to the start of the cache and is moved to after C.
@@ -574,8 +580,8 @@ void TestMemoryCacheReallocate(void)
 	pvE = cCache.Allocate(20);
 	FillCachedElement(pvE, 20, 'E');
 
-	AssertInt(4, cCache.NumElements());
-	AssertInt(138, cCache.GetAllocatedSize());
+	AssertSize(4, cCache.NumElements());
+	AssertSize(90 + 4 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 
 	pvF = cCache.Allocate(24);
 	FillCachedElement(pvF, 24, 'F');
@@ -586,8 +592,8 @@ void TestMemoryCacheReallocate(void)
 	pvH = cCache.Allocate(18);
 	FillCachedElement(pvH, 18, 'H');
 
-	AssertInt(7, cCache.NumElements());
-	AssertInt(244, cCache.GetAllocatedSize());
+	AssertSize(7, cCache.NumElements());
+	AssertSize(160 + 7 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 
 	psIter = cCache.StartIteration();
 	AssertCacheElement(&cCache, psIter, 24, 'B');
@@ -617,8 +623,8 @@ void TestMemoryCacheReallocate(void)
 	pvI = cCache.Allocate(32);
 	FillCachedElement(pvI, 32, 'I');
 
-	AssertInt(6, cCache.NumElements());
-	AssertInt(212, cCache.GetAllocatedSize());
+	AssertSize(6, cCache.NumElements());
+	AssertSize(140 + 6 * sizeof(SMemoryCacheDescriptor), cCache.GetAllocatedSize());
 
 	psIter = cCache.StartIteration();
 	AssertCacheElement(&cCache, psIter, 18, 'D');

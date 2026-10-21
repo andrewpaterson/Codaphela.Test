@@ -42,17 +42,17 @@ public:
 		return CIndexTreeFile::GetFile(iFile);
 	}
 
-	int NumNodes(void)
+	size NumNodes(void)
 	{
 		return CIndexTreeFile::NumNodes();
 	}
 
-	int NumMemoryNodes(void)
+	size NumMemoryNodes(void)
 	{
 		return CIndexTreeFile::NumMemoryNodes();
 	}
 
-	int NumMemoryElements(void)
+	size NumMemoryElements(void)
 	{
 		return CIndexTreeFile::NumMemoryElements();
 	}
@@ -72,22 +72,22 @@ public:
 		return CIndexTreeFile::ValidateIndexTree();
 	}
 
-	bool ValidateKey(void* pvKey, int iKeySize)
+	bool ValidateKey(void* pvKey, size iKeySize)
 	{
 		return CIndexTreeFile::ValidateKey((uint8*)pvKey, iKeySize);
 	}
 
-	CIndexTreeNodeFile* GetNode(const void* pvKey, int iKeySize)
+	CIndexTreeNodeFile* GetNode(const void* pvKey, size iKeySize)
 	{
 		return CIndexTreeFile::GetNode((uint8*)pvKey, iKeySize);
 	}
 
-	int GetNodeKeySize(CIndexTreeNodeFile* pcNode)
+	size GetNodeKeySize(CIndexTreeNodeFile* pcNode)
 	{
 		return CIndexTreeFile::GetNodeKeySize(pcNode);
 	}
 
-	int GetNodeKey(CIndexTreeNodeFile* pcNode, uint8* pvDestKey, int iDestKeySize)
+	size GetNodeKey(CIndexTreeNodeFile* pcNode, uint8* pvDestKey, size iDestKeySize)
 	{
 		return CIndexTreeFile::GetNodeKey(pcNode, pvDestKey, iDestKeySize);
 	}

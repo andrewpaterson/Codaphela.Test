@@ -82,31 +82,31 @@ void TestDurableFileWrite(bool bDurable)
 	AssertBool(bDurable, cController.IsDurable());
 	AssertLong(0, cDurableFile.Tell());
 	AssertLong(0, cDurableFile.Size());
-	AssertInt(0, cDurableFile.GetNumWrites());
+	AssertSize(0, cDurableFile.GetNumWrites());
 
 	iResult = cDurableFile.Write(sz1, strlen(sz1), 1);
 	AssertLong(1, iResult);
 	AssertLong(19, cDurableFile.Tell());
 	AssertLong(19, cDurableFile.Size());
 	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
-	AssertInt(1, cDurableFile.GetNumWrites());
+	AssertSize(1, cDurableFile.GetNumWrites());
 
 	iResult = cDurableFile.Write(sz2, strlen(sz2), 1);
 	AssertLong(1, iResult);
 	AssertLong(40, cDurableFile.Tell());
 	AssertLong(40, cDurableFile.Size());
-	AssertInt(1, cDurableFile.GetNumWrites());
+	AssertSize(1, cDurableFile.GetNumWrites());
 
 	iResult = cDurableFile.Write(14, sz3, strlen(sz3), 1);
 	AssertLong(1, iResult);
 	AssertLong(19, cDurableFile.Tell());
 	AssertLong(40, cDurableFile.Size());
-	AssertInt(1, cDurableFile.GetNumWrites());
+	AssertSize(1, cDurableFile.GetNumWrites());
 	AssertMemory(sz4, (char*)cDurableFile.GetWriteData(0), 40);
 
 	cController.End();
 	AssertFalse(cDurableFile.TestGetOpenedSinceBegin());
-	AssertInt(0, cDurableFile.GetNumWrites());
+	AssertSize(0, cDurableFile.GetNumWrites());
 	AssertFalse(cDurableFile.IsBegun());
 
 	AssertFalse(cDurableFile.IsOpen());
@@ -200,13 +200,13 @@ void TestDurableFileComplex(bool bDurable)
 	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
 	AssertLong(8, cDurableFile.Tell());
 	AssertLong(8, cDurableFile.Size());
-	AssertInt(1, cDurableFile.GetNumWrites());
+	AssertSize(1, cDurableFile.GetNumWrites());
 
 	iResult = cDurableFile.Write(10, szC, 2, 2);  // ----bbbb--CCCC
 	AssertLong(2, iResult);
 	AssertLong(14, cDurableFile.Tell());
 	AssertLong(14, cDurableFile.Size());
-	AssertInt(2, cDurableFile.GetNumWrites());
+	AssertSize(2, cDurableFile.GetNumWrites());
 
 	memset(szDest, 0, 5);
 	iResult = cDurableFile.Read(8, szDest, 2, 2);
@@ -216,13 +216,13 @@ void TestDurableFileComplex(bool bDurable)
 	AssertLong(12, cDurableFile.Tell());
 	AssertLong(12, cDurableFile.Tell());
 	AssertLong(14, cDurableFile.Size());
-	AssertInt(2, cDurableFile.GetNumWrites());
+	AssertSize(2, cDurableFile.GetNumWrites());
 	
 	iResult = cDurableFile.Write(12, szE, 1, 4);  // ----bbbb--ccEEEE
 	AssertLong(4, iResult);
 	AssertLong(16, cDurableFile.Tell());
 	AssertLong(16, cDurableFile.Size());
-	AssertInt(2, cDurableFile.GetNumWrites());
+	AssertSize(2, cDurableFile.GetNumWrites());
 
 	memset(szDest, 0, 5);
 	iResult = cDurableFile.Read(14, szDest, 2, 2);
@@ -231,22 +231,22 @@ void TestDurableFileComplex(bool bDurable)
 	AssertLong(16, cDurableFile.Tell());
 	AssertLong(16, cDurableFile.Tell());
 	AssertLong(16, cDurableFile.Size());
-	AssertInt(2, cDurableFile.GetNumWrites());
+	AssertSize(2, cDurableFile.GetNumWrites());
 
-	AssertInt(1, cController.NumFiles());
+	AssertSize(1, cController.NumFiles());
 	AssertString("Output" _FS_ "Durable3" _FS_ "WrittenFile.txt", cDurableFile.GetFilename());
 
 	cController.End();
 	AssertFalse(cDurableFile.TestGetOpenedSinceBegin());
-	AssertInt(0, cDurableFile.GetNumWrites());
+	AssertSize(0, cDurableFile.GetNumWrites());
 
-	AssertInt(0, cController.NumFiles());
+	AssertSize(0, cController.NumFiles());
 
 	cController.Begin();
 	AssertString("Output" _FS_ "Durable3" _FS_ "WrittenFile.txt", cDurableFile.GetFilename());
 	AssertLong(0, cDurableFile.Tell());
 	AssertLong(16, cDurableFile.Size());
-	AssertInt(0, cDurableFile.GetNumWrites());
+	AssertSize(0, cDurableFile.GetNumWrites());
 	AssertFalse(cDurableFile.TestGetOpenedSinceBegin());
 
 	AssertLong(0, cDurableFile.Tell());
@@ -313,14 +313,14 @@ void TestDurableFileRead(bool bDurable)
 	cDurableFile.Init(&cController, "ReadFile.txt", "_ReadFile.txt");
 	cController.Begin();
 	AssertFalse(cDurableFile.TestGetOpenedSinceBegin());
-	AssertInt(0, cController.NumFiles());
+	AssertSize(0, cController.NumFiles());
 
 	memset(szDest, 0, 10);
 	iResult = cDurableFile.Read(szDest, 9, 1);
 	AssertLong(1, iResult);
 	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
-	AssertInt(0, cDurableFile.GetNumWrites());
-	AssertInt(1, cController.NumFiles());
+	AssertSize(0, cDurableFile.GetNumWrites());
+	AssertSize(1, cController.NumFiles());
 	AssertString("Sea lions", szDest);
 	AssertLong(9, cDurableFile.Tell());
 	AssertLong(38, cDurableFile.Size());
@@ -355,8 +355,8 @@ void TestDurableFileRead(bool bDurable)
 
 	cController.End();
 	AssertFalse(cDurableFile.TestGetOpenedSinceBegin());
-	AssertInt(0, cDurableFile.GetNumWrites());
-	AssertInt(0, cController.NumFiles());
+	AssertSize(0, cDurableFile.GetNumWrites());
+	AssertSize(0, cController.NumFiles());
 
 	cDurableFile.Kill();
 	cController.Kill();
@@ -384,10 +384,10 @@ void TestDurableFileWriteRound2(bool bDurable)
 	char					sz2[] = " ";
 	char					sz3[] = "Commander";
 	char					sz4[] = "Mothball";
-	int						iLen1 = strlen(sz1);
-	int						iLen2 = strlen(sz2);
-	int						iLen3 = strlen(sz3);
-	int						iLen4 = strlen(sz4);
+	int						iLen1 = (int)strlen(sz1);
+	int						iLen2 = (int)strlen(sz2);
+	int						iLen3 = (int)strlen(sz3);
+	int						iLen4 = (int)strlen(sz4);
 
 	cFileUtil.MakeDirs(true, szDirectory, szRewrite, NULL);
 
@@ -403,7 +403,7 @@ void TestDurableFileWriteRound2(bool bDurable)
 	AssertLong(14, cDurableFile.Tell());
 	AssertLong(14, cDurableFile.Size());
 	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
-	AssertInt(1, cDurableFile.GetNumWrites());
+	AssertSize(1, cDurableFile.GetNumWrites());
 	AssertFalse(cFileUtil.Exists(szFileName));
 	AssertFalse(cFileUtil.Exists(szRewriteName));
 
@@ -412,28 +412,28 @@ void TestDurableFileWriteRound2(bool bDurable)
 	AssertLong(5, cDurableFile.Tell());
 	AssertLong(14, cDurableFile.Size());
 	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
-	AssertInt(1, cDurableFile.GetNumWrites());
+	AssertSize(1, cDurableFile.GetNumWrites());
 
 	iResult = cDurableFile.Write(0, sz1, 1, iLen1);
 	AssertLong(4, iResult);
 	AssertLong(4, cDurableFile.Tell());
 	AssertLong(14, cDurableFile.Size());
 	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
-	AssertInt(1, cDurableFile.GetNumWrites());
+	AssertSize(1, cDurableFile.GetNumWrites());
 
 	iResult = cDurableFile.Write(iLen1 + iLen2 + iLen3 + iLen2, sz4, 1, iLen4);
 	AssertLong(8, iResult);
 	AssertLong(23, cDurableFile.Tell());
 	AssertLong(23, cDurableFile.Size());
 	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
-	AssertInt(2, cDurableFile.GetNumWrites());
+	AssertSize(2, cDurableFile.GetNumWrites());
 
 	iResult = cDurableFile.Write(iLen1 + iLen2 + iLen3, sz2, 1, iLen2);
 	AssertLong(1, iResult);
 	AssertLong(15, cDurableFile.Tell());
 	AssertLong(23, cDurableFile.Size());
 	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
-	AssertInt(1, cDurableFile.GetNumWrites());
+	AssertSize(1, cDurableFile.GetNumWrites());
 	AssertFalse(cFileUtil.Exists(szFileName));
 	AssertFalse(cFileUtil.Exists(szRewriteName));
 
@@ -475,15 +475,15 @@ void TestDurableFileReadNonExistant(bool bDurable)
 	AssertFalse(cFileUtil.Exists(szRewriteName));
 	cController.Begin(&cDurableFile, NULL);
 	AssertFalse(cDurableFile.TestGetOpenedSinceBegin());
-	AssertInt(1, cController.NumFiles());
+	AssertSize(1, cController.NumFiles());
 
 	memset(szDest, 0, 10);
 	
 	iResult = cDurableFile.Read(szDest, 9, 1);
 	AssertLong(0, iResult);
 	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
-	AssertInt(0, cDurableFile.GetNumWrites());
-	AssertInt(1, cController.NumFiles());
+	AssertSize(0, cDurableFile.GetNumWrites());
+	AssertSize(1, cController.NumFiles());
 	AssertLong(0, cDurableFile.Tell());
 	AssertLong(0, cDurableFile.Size());
 
@@ -492,8 +492,8 @@ void TestDurableFileReadNonExistant(bool bDurable)
 	iResult = cDurableFile.Read(EFSO_SET, 0, szDest, 9, 1);
 	AssertLong(0, iResult);
 	AssertTrue(cDurableFile.TestGetOpenedSinceBegin());
-	AssertInt(0, cDurableFile.GetNumWrites());
-	AssertInt(1, cController.NumFiles());
+	AssertSize(0, cDurableFile.GetNumWrites());
+	AssertSize(1, cController.NumFiles());
 	AssertLong(0, cDurableFile.Tell());
 	AssertLong(0, cDurableFile.Size());
 

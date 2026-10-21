@@ -16,7 +16,7 @@ void TestArrayIntAddFind(void)
 
 	cArray.AddIfUnique(5);
 
-	AssertInt(5, cArray.NumElements());
+	AssertSize(5, cArray.NumElements());
 	AssertInt(1, cArray[0]);
 	AssertInt(2, cArray[1]);
 	AssertInt(3, cArray[2]);
@@ -25,7 +25,7 @@ void TestArrayIntAddFind(void)
 
 	cArray.AddIfUnique(5);
 
-	AssertInt(5, cArray.NumElements());
+	AssertSize(5, cArray.NumElements());
 	AssertInt(1, cArray[0]);
 	AssertInt(2, cArray[1]);
 	AssertInt(3, cArray[2]);
@@ -34,7 +34,7 @@ void TestArrayIntAddFind(void)
 
 	cArray.InsertIntoSorted(2, false);
 
-	AssertInt(6, cArray.NumElements());
+	AssertSize(6, cArray.NumElements());
 	AssertInt(1, cArray[0]);
 	AssertInt(2, cArray[1]);
 	AssertInt(2, cArray[2]);
@@ -58,7 +58,7 @@ void TestArrayIntSortingUsingQuickSort(void)
 	cArray.AddList(-1, 4, 3, 7, 8, 1, 9, 0, 2, 4, 2, -1);
 
 	cArray.QuickSort();
-	AssertInt(10, cArray.NumElements());
+	AssertSize(10, cArray.NumElements());
 	AssertInt(0, cArray[0]);
 	AssertInt(1, cArray[1]);
 	AssertInt(2, cArray[2]);
@@ -71,7 +71,7 @@ void TestArrayIntSortingUsingQuickSort(void)
 	AssertInt(9, cArray[9]);
 
 	cArray.InsertIntoSorted(7, false);
-	AssertInt(11, cArray.NumElements());
+	AssertSize(11, cArray.NumElements());
 	AssertInt(0, cArray[0]);
 	AssertInt(1, cArray[1]);
 	AssertInt(2, cArray[2]);
@@ -85,7 +85,7 @@ void TestArrayIntSortingUsingQuickSort(void)
 	AssertInt(9, cArray[10]);
 
 	cArray.InsertIntoSorted(1, true);
-	AssertInt(11, cArray.NumElements());
+	AssertSize(11, cArray.NumElements());
 	AssertInt(0, cArray[0]);
 	AssertInt(1, cArray[1]);
 	AssertInt(2, cArray[2]);
@@ -115,7 +115,7 @@ void TestArrayIntSortingUsingBubbleSort(void)
 
 	cArray.BubbleSort();
 
-	AssertInt(10, cArray.NumElements());
+	AssertSize(10, cArray.NumElements());
 	AssertInt(0, cArray[0]);
 	AssertInt(1, cArray[1]);
 	AssertInt(2, cArray[2]);
@@ -130,7 +130,7 @@ void TestArrayIntSortingUsingBubbleSort(void)
 	cArray.InsertIntoSorted(7, false);
 	cArray.InsertIntoSorted(1, true);
 
-	AssertInt(11, cArray.NumElements());
+	AssertSize(11, cArray.NumElements());
 	AssertInt(0, cArray[0]);
 	AssertInt(1, cArray[1]);
 	AssertInt(2, cArray[2]);
@@ -157,7 +157,7 @@ void TestArrayIntRemoveDuplicates(void)
 	cArray.Init();
 	cArray.AddList(-1, 1, 1, 2, 3, 3, 3, 4, 5, 5, -1);
 	cArray.RemoveDuplicatesFromSorted();
-	AssertInt(5, cArray.NumElements());
+	AssertSize(5, cArray.NumElements());
 	AssertInt(1, cArray[0]);
 	AssertInt(2, cArray[1]);
 	AssertInt(3, cArray[2]);
@@ -165,6 +165,26 @@ void TestArrayIntRemoveDuplicates(void)
 	AssertInt(5, cArray[4]);
 
 	cArray.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void RemoveAtKiller(CArrayUint* pcArray, CArrayUint* pcKiller)
+{
+	CArrayTemplatePrimitive<size>	cIndices;
+	size							i;
+
+	//RemoveAt takes size indices.
+	cIndices.Init();
+	for (i = 0; i < pcKiller->NumElements(); i++)
+	{
+		cIndices.Add(pcKiller->GetValue(i));
+	}
+	pcArray->RemoveAt(cIndices.GetData(), cIndices.NumElements());
+	cIndices.Kill();
 }
 
 
@@ -183,15 +203,15 @@ void TestArrayIntRemoveAt(void)
 	//                 0  1  2  3  4  5  6  7  8  9  Stop
 	cArray.AddList(-1, 4, 3, 7, 8, 1, 9, 0, 2, 4, 2, -1);
 
-	AssertInt(10, cArray.NumElements());
+	AssertSize(10, cArray.NumElements());
 
 	cKiller.Init();
 	cKiller.AddList(-1, 8, 5, 0, 5, -1);
 	cKiller.MakeUnique();
 
-	cArray.RemoveAt(cKiller.GetData(), cKiller.NumElements());
+	RemoveAtKiller(&cArray, &cKiller);
 
-	AssertInt(7, cArray.NumElements());
+	AssertSize(7, cArray.NumElements());
 
 	AssertInt(3, cArray[0]);
 	AssertInt(7, cArray[1]);
@@ -210,15 +230,15 @@ void TestArrayIntRemoveAt(void)
 	//                 0  1  2  3  4  5  6  7  8  9  Stop
 	cArray.AddList(-1, 4, 3, 7, 8, 1, 9, 0, 2, 4, 2, -1);
 
-	AssertInt(10, cArray.NumElements());
+	AssertSize(10, cArray.NumElements());
 
 	cKiller.Init();
 	cKiller.AddList(-1, 8, 5, 2, -1);
 	cKiller.MakeUnique();
 
-	cArray.RemoveAt(cKiller.GetData(), cKiller.NumElements());
+	RemoveAtKiller(&cArray, &cKiller);
 
-	AssertInt(7, cArray.NumElements());
+	AssertSize(7, cArray.NumElements());
 
 	AssertInt(4, cArray[0]);
 	AssertInt(3, cArray[1]);
@@ -237,15 +257,15 @@ void TestArrayIntRemoveAt(void)
 	//                 0  1  2  3  4  5  6  7  8  9  Stop
 	cArray.AddList(-1, 4, 3, 7, 8, 1, 9, 0, 2, 4, 2, -1);
 
-	AssertInt(10, cArray.NumElements());
+	AssertSize(10, cArray.NumElements());
 
 	cKiller.Init();
 	cKiller.AddList(-1, 0, 1, 2, 7, 8, 9, -1);
 	cKiller.MakeUnique();
 
-	cArray.RemoveAt(cKiller.GetData(), cKiller.NumElements());
+	RemoveAtKiller(&cArray, &cKiller);
 
-	AssertInt(4, cArray.NumElements());
+	AssertSize(4, cArray.NumElements());
 
 	AssertInt(8, cArray[0]);
 	AssertInt(1, cArray[1]);
@@ -261,15 +281,15 @@ void TestArrayIntRemoveAt(void)
 	//                 0  1  2  3  4  5  6  7  8  9  Stop
 	cArray.AddList(-1, 4, 3, 7, 8, 1, 9, 0, 2, 4, 2, -1);
 
-	AssertInt(10, cArray.NumElements());
+	AssertSize(10, cArray.NumElements());
 
 	cKiller.Init();
 	cKiller.AddList(-1, 3, 4, 5, 6, -1);
 	cKiller.MakeUnique();
 
-	cArray.RemoveAt(cKiller.GetData(), cKiller.NumElements());
+	RemoveAtKiller(&cArray, &cKiller);
 
-	AssertInt(6, cArray.NumElements());
+	AssertSize(6, cArray.NumElements());
 
 	AssertInt(4, cArray[0]);
 	AssertInt(3, cArray[1]);
@@ -291,9 +311,9 @@ void TestArrayIntRemoveAt(void)
 	cKiller.AddList(-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1);
 	cKiller.MakeUnique();
 
-	cArray.RemoveAt(cKiller.GetData(), cKiller.NumElements());
+	RemoveAtKiller(&cArray, &cKiller);
 
-	AssertInt(0, cArray.NumElements());
+	AssertSize(0, cArray.NumElements());
 
 	cKiller.Kill();
 	cArray.Kill();
@@ -309,9 +329,9 @@ void TestArrayIntRemoveAt(void)
 	cKiller.AddList(-1, -1);
 	cKiller.MakeUnique();
 
-	cArray.RemoveAt(cKiller.GetData(), cKiller.NumElements());
+	RemoveAtKiller(&cArray, &cKiller);
 
-	AssertInt(10, cArray.NumElements());
+	AssertSize(10, cArray.NumElements());
 
 	AssertInt(4, cArray[0]);
 	AssertInt(3, cArray[1]);
@@ -337,9 +357,9 @@ void TestArrayIntRemoveAt(void)
 	cKiller.AddList(-1, 0, 2, 4, 6, 8, -1);
 	cKiller.MakeUnique();
 
-	cArray.RemoveAt(cKiller.GetData(), cKiller.NumElements());
+	RemoveAtKiller(&cArray, &cKiller);
 
-	AssertInt(5, cArray.NumElements());
+	AssertSize(5, cArray.NumElements());
 
 	AssertInt(3, cArray[0]);
 	AssertInt(8, cArray[1]);
@@ -360,9 +380,9 @@ void TestArrayIntRemoveAt(void)
 	cKiller.AddList(-1, 1, 3, 5, 7, 9, -1);
 	cKiller.MakeUnique();
 
-	cArray.RemoveAt(cKiller.GetData(), cKiller.NumElements());
+	RemoveAtKiller(&cArray, &cKiller);
 
-	AssertInt(5, cArray.NumElements());
+	AssertSize(5, cArray.NumElements());
 
 	AssertInt(4, cArray[0]);
 	AssertInt(7, cArray[1]);

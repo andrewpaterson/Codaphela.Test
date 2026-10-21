@@ -49,6 +49,6 @@ char* CTestIndexTreeObject2::GetName(void)
 //////////////////////////////////////////////////////////////////////////
 int CTestIndexTreeObject2::NameLength(void)
 {
-	return strlen(mszName);
+	return (int)strlen(mszName);
 }
 

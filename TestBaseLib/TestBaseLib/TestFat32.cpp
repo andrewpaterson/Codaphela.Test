@@ -30,7 +30,7 @@ void TestFat32ReadSpecific(void)
 	EFatCode				eResult;
 	CFatFile				cFatFile;
 	bool					bResult;
-	uint32					uiBytesRead;
+	size					uiBytesRead;
 	char					auiFileData[44 KB];
 	char					auiExpectedData[44 KB];
 	CFatVolume				cVolume;
@@ -45,7 +45,7 @@ void TestFat32ReadSpecific(void)
 	cFile.Close();
 	cFile.Kill();
 
-	AssertInt(sizeof(uint8), sizeof(char));
+	AssertSize(sizeof(uint8), sizeof(char));
 
 	eResult = cVolume.Mount(&cMemoryDrive);
 	AssertInt(FAT_SUCCESS, eResult);
@@ -63,7 +63,7 @@ void TestFat32ReadSpecific(void)
 
 	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(12, uiBytesRead);
+	AssertSize(12, uiBytesRead);
 	auiFileData[12] = '\0';
 	AssertString("Mostly Empty", auiFileData);
 
@@ -137,7 +137,7 @@ void TestFat32ReadSpecific(void)
 
 	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(44000, uiBytesRead);
+	AssertSize(44000, uiBytesRead);
 	auiFileData[44000] = '\0';
 
 	cFatFile.Close();
@@ -185,7 +185,7 @@ void TestFat32ReadDirectoryTree(void)
 	SFatDirectoryEntry		sFatFileEntry;
 	char					auiFileData[44 KB];
 	CFatFile				cFatFile;
-	uint32					uiBytesRead;
+	size					uiBytesRead;
 	CFatVolume				cVolume;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
@@ -264,8 +264,8 @@ void TestFat32ReadDirectoryTree(void)
 
 		eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
 		AssertInt(FAT_SUCCESS, eResult);
-		AssertInt(cFatFile.Size(), uiBytesRead);
-		AssertInt(sFatFileEntry.uiSize, uiBytesRead);
+		AssertSize(cFatFile.Size(), uiBytesRead);
+		AssertSize(sFatFileEntry.uiSize, uiBytesRead);
 
 		eResult = cFatFile.Close();
 		AssertInt(FAT_SUCCESS, eResult);
@@ -515,7 +515,7 @@ void TestFat32Write(void)
 	char					auiFileData[4 KB];
 	char					auiFileData2[4 KB];
 	int						i;
-	uint32					uiBytesRead;
+	size					uiBytesRead;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
@@ -799,7 +799,7 @@ void TestFat32CreateDirectoryAfterWrite(void)
 	char*				puiFileData2;
 	int					iLength;
 	CFatFile			cFatFile;
-	uint32				uiBytesRead;
+	size				uiBytesRead;
 	CChars				sz;
 	SFatDirectoryEntry	sFatFileEntry;
 
@@ -850,7 +850,7 @@ void TestFat32CreateDirectoryAfterWrite(void)
 	puiFileData2 = (char*)malloc(iLength);
 	uiBytesRead = 0;
 	cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
-	AssertInt(iLength, uiBytesRead);
+	AssertSize(iLength, uiBytesRead);
 	AssertMemory(puiFileData, puiFileData2, iLength);
 
 	eResult = cFatFile.Close();
@@ -905,7 +905,7 @@ void TestFat32CreateDirectoryAfterWrite(void)
 
 	uiBytesRead = 0;
 	cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
-	AssertInt(iLength, uiBytesRead);
+	AssertSize(iLength, uiBytesRead);
 	AssertMemory(puiFileData, puiFileData2, iLength);
 
 	eResult = cFatFile.Close();
@@ -918,7 +918,7 @@ void TestFat32CreateDirectoryAfterWrite(void)
 
 	uiBytesRead = 0;
 	cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
-	AssertInt(iLength, uiBytesRead);
+	AssertSize(iLength, uiBytesRead);
 	AssertMemory(puiFileData, puiFileData2, iLength);
 
 	eResult = cFatFile.Close();
@@ -972,7 +972,7 @@ void TestFat32GreatWrite(void)
 	CFatFile				cFatFile;
 	char*					puiFileData;
 	char*					puiFileData2;
-	uint32					uiBytesRead;
+	size					uiBytesRead;
 	int						iLength;
 	CChars					sz;
 
@@ -1027,7 +1027,7 @@ void TestFat32GreatWrite(void)
 	memset(puiFileData2, 0, iLength);
 	eResult = cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(iLength, uiBytesRead);
+	AssertSize(iLength, uiBytesRead);
 	AssertInt(0, memcmp(puiFileData, puiFileData2, iLength));
 
 	eResult = cFatFile.Close();
@@ -1041,7 +1041,7 @@ void TestFat32GreatWrite(void)
 	cFatFile.Seek(64 KB + 1024, FAT_SEEK_START);
 	eResult = cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(iLength, uiBytesRead);
+	AssertSize(iLength, uiBytesRead);
 	AssertMemory(&(((uint8*)puiFileData)[64 KB + 1024]), puiFileData2, iLength);
 
 	eResult = cFatFile.Close();
@@ -1093,7 +1093,7 @@ void TestFat32GreatWrite(void)
 	memset(puiFileData2, 0, iLength);
 	eResult = cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(iLength, uiBytesRead);
+	AssertSize(iLength, uiBytesRead);
 	AssertInt(0, memcmp(puiFileData, puiFileData2, iLength));
 
 	eResult = cFatFile.Close();
@@ -1108,7 +1108,7 @@ void TestFat32GreatWrite(void)
 	memset(puiFileData2, 0, iLength);
 	eResult = cFatFile.Read((uint8*)puiFileData2, iLength, &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(iLength, uiBytesRead);
+	AssertSize(iLength, uiBytesRead);
 	AssertInt(0, memcmp(puiFileData, puiFileData2, iLength));
 
 	eResult = cFatFile.Close();
@@ -1138,7 +1138,7 @@ void TestFat32MultipleSmallReads(void)
 	EFatCode				eResult;
 	CFatFile				cFatFile;
 	bool					bResult;
-	uint32					uiBytesRead;
+	size					uiBytesRead;
 	char					auiFileData[44 KB];
 	char					auiExpectedData[44 KB];
 	CFatVolume				cVolume;
@@ -1174,7 +1174,7 @@ void TestFat32MultipleSmallReads(void)
 	{
 		eResult = cFatFile.Read(puiFileData, uiBytesToRead, &uiBytesRead);
 		AssertInt(FAT_SUCCESS, eResult);
-		AssertInt(uiBytesToRead, uiBytesRead);
+		AssertSize(uiBytesToRead, uiBytesRead);
 
 		uiFileSize -= uiBytesToRead;
 		if (uiFileSize == 0)
@@ -1279,7 +1279,7 @@ void TestFat32WriteAndSeek(void)
 	int				i;
 	char*			szSource;
 	char*			szRead;
-	uint32			uiBytesRead;
+	size			uiBytesRead;
 
 	szSource = AllocateStringBuffer(196 KB);
 
@@ -1320,7 +1320,7 @@ void TestFat32WriteAndSeek(void)
 	AssertInt(FAT_SUCCESS, eResult);
 	eResult = cFatFile.Read((uint8*)szRead, 196 KB, &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt((uint32)(196 KB), uiBytesRead);
+	AssertSize((size)(196 KB), uiBytesRead);
 	AssertString(szSource, szRead);
 
 	bAllSuccess = true;
@@ -1341,9 +1341,9 @@ void TestFat32WriteAndSeek(void)
 			break;
 		}
 		
-		if (uiBytesRead != 196 KB - i)
+		if (uiBytesRead != (size)(196 KB - i))
 		{
-			AssertInt((uint32)(196 KB - i), uiBytesRead);
+			AssertSize((size)(196 KB - i), uiBytesRead);
 			bAllSuccess = false;
 			break;
 		}
@@ -1436,7 +1436,7 @@ void TestFat32SeekWriteAndRead2(void)
 	char			szThree[4];
 	char			c;
 	char			szDest[8 KB];
-	uint32			uiBytesRead;
+	size			uiBytesRead;
 	bool			bAllSuccess;
 	
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
@@ -1524,7 +1524,7 @@ void TestFat32SeekWriteAndRead3(void)
 	char			szThree[4];
 	char			c;
 	char			szDest[8 KB];
-	uint32			uiBytesRead;
+	size			uiBytesRead;
 	bool			bAllSuccess;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
@@ -1617,7 +1617,7 @@ void TestFat32RenameSameLength(void)
 	CFatFile		cFatFile;
 	bool			bResult;
 	CFatVolume		cVolume;
-	uint32			uiBytesRead;
+	size			uiBytesRead;
 	char			auiFileData[13];
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
@@ -1642,7 +1642,7 @@ void TestFat32RenameSameLength(void)
 	AssertInt(12, cFatFile.Size());
 	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(12, uiBytesRead);
+	AssertSize(12, uiBytesRead);
 	auiFileData[12] = '\0';
 	AssertString("Mostly Empty", auiFileData);
 	eResult = cFatFile.Close();
@@ -1668,7 +1668,7 @@ void TestFat32RenameShortToLong(void)
 	CFatFile		cFatFile;
 	bool			bResult;
 	CFatVolume		cVolume;
-	uint32			uiBytesRead;
+	size			uiBytesRead;
 	char			auiFileData[13];
 	CChars			sz;
 
@@ -1699,7 +1699,7 @@ void TestFat32RenameShortToLong(void)
 	AssertInt(12, cFatFile.Size());
 	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(12, uiBytesRead);
+	AssertSize(12, uiBytesRead);
 	auiFileData[12] = '\0';
 	AssertString("Mostly Empty", auiFileData);
 	eResult = cFatFile.Close();
@@ -1725,7 +1725,7 @@ void TestFat32CreateFileRenameFileCreateFile(void)
 	CFatFile		cFatFile;
 	bool			bResult;
 	CFatVolume		cVolume;
-	uint32			uiBytesRead;
+	size			uiBytesRead;
 	char			auiFileData[13];
 	CChars			sz;
 
@@ -1764,7 +1764,7 @@ void TestFat32CreateFileRenameFileCreateFile(void)
 	AssertInt(12, cFatFile.Size());
 	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(12, uiBytesRead);
+	AssertSize(12, uiBytesRead);
 	auiFileData[12] = '\0';
 	AssertString("Mostly Empty", auiFileData);
 	eResult = cFatFile.Close();
@@ -2147,7 +2147,7 @@ void TestFat32WriteLargerThanOneClusterAppend(void)
 	CFatVolume		cVolume;
 	char* szSource;
 	char* szRead;
-	uint32			uiBytesRead;
+	size			uiBytesRead;
 	uint64			uiMaxSectorSize;
 	CChars			sz;
 
@@ -2191,7 +2191,7 @@ void TestFat32WriteLargerThanOneClusterAppend(void)
 	memset(szRead, 0xcc, 32769);
 	eResult = cFatFile.Read((uint8*)szRead, 32769, &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(32769, uiBytesRead);
+	AssertSize(32769, uiBytesRead);
 	AssertMemory(szSource, szRead, 32769);
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -2330,7 +2330,7 @@ void TestFat32WriteLargerThanOneClusterOverwrite(void)
 	CFatVolume		cVolume;
 	char*			szSource;
 	char*			szRead;
-	uint32			uiBytesRead;
+	size			uiBytesRead;
 	uint64			uiMaxSectorSize;
 	int32			i;
 	bool			bAllSuccessful;
@@ -2377,7 +2377,7 @@ void TestFat32WriteLargerThanOneClusterOverwrite(void)
 	cFatFile.Seek(0, FAT_SEEK_START);
 	eResult = cFatFile.Read((uint8*)szRead, 32769, &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(32769, uiBytesRead);
+	AssertSize(32769, uiBytesRead);
 	AssertMemory(szSource, szRead, uiBytesRead);
 
 	eResult = cFatFile.Write((uint8*)szSource, 32768 + 64);
@@ -2405,7 +2405,7 @@ void TestFat32WriteLargerThanOneClusterOverwrite(void)
 
 		if (uiBytesRead != 1)
 		{
-			AssertInt(1, uiBytesRead);
+			AssertSize(1, uiBytesRead);
 			bAllSuccessful = false;
 			break;
 
@@ -2442,7 +2442,7 @@ void TestFat32WriteLargerThanOneClusterOverwrite(void)
 
 		if (uiBytesRead != 1)
 		{
-			AssertInt(1, uiBytesRead);
+			AssertSize(1, uiBytesRead);
 			bAllSuccessful = false;
 			break;
 
@@ -2467,7 +2467,7 @@ void TestFat32WriteLargerThanOneClusterOverwrite(void)
 	memset(szRead, 0xcc, 32769);
 	eResult = cFatFile.Read((uint8*)szRead, 32769, &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(32769, uiBytesRead);
+	AssertSize(32769, uiBytesRead);
 	AssertMemory(szSource, szRead, 32768);
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -2531,7 +2531,7 @@ void TestFat32Close(void)
 	CFatVolume		cVolume;
 	char			auiFileData[44 KB];
 	char			auiExpectedData[44 KB];
-	uint32			uiBytesRead;
+	size			uiBytesRead;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
@@ -2573,7 +2573,7 @@ void TestFat32Close(void)
 
 	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(44000, uiBytesRead);
+	AssertSize(44000, uiBytesRead);
 	AssertMemory(auiExpectedData, auiFileData, (int)uiLength);
 
 	eResult = cFatFile.Close();
@@ -2601,7 +2601,7 @@ void TestFat32TruncateToSmall(void)
 	CFatVolume		cVolume;
 	char			auiFileData[44 KB];
 	char			auiExpectedData[44 KB];
-	uint32			uiBytesRead;
+	size			uiBytesRead;
 	CChars			sz;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
@@ -2660,7 +2660,7 @@ void TestFat32TruncateToSmall(void)
 
 	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(1, uiBytesRead);
+	AssertSize(1, uiBytesRead);
 	AssertMemory(auiExpectedData, auiFileData, (int)uiBytesRead);
 
 	eResult = cFatFile.Close();
@@ -2688,7 +2688,7 @@ void TestFat32OpenOverwrite(void)
 	CFatVolume		cVolume;
 	char			auiFileData[44 KB];
 	char			auiExpectedData[44 KB];
-	uint32			uiBytesRead;
+	size			uiBytesRead;
 	CChars			sz;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
@@ -2745,7 +2745,7 @@ void TestFat32OpenOverwrite(void)
 
 	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0, uiBytesRead);
+	AssertSize(0, uiBytesRead);
 
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);
@@ -2772,7 +2772,7 @@ void TestFat32TruncateToZero(void)
 	CFatVolume		cVolume;
 	char			auiFileData[44 KB];
 	char			auiExpectedData[44 KB];
-	uint32			uiBytesRead;
+	size			uiBytesRead;
 	CChars			sz;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
@@ -2830,7 +2830,7 @@ void TestFat32TruncateToZero(void)
 
 	eResult = cFatFile.Read((uint8*)auiFileData, cFatFile.Size(), &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertInt(0, uiBytesRead);
+	AssertSize(0, uiBytesRead);
 
 	eResult = cFatFile.Close();
 	AssertInt(FAT_SUCCESS, eResult);

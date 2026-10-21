@@ -226,7 +226,7 @@ void TestCharsSplit(void)
 	sz.Init("A.B");
 	sz.Split(&cStrings, '.');
 	sz.Kill();
-	AssertInt(2, cStrings.NumElements());
+	AssertSize(2, cStrings.NumElements());
 	AssertString("A", cStrings.Get(0)->Text());
 	AssertString("B", cStrings.Get(1)->Text());
 	cStrings.Kill();
@@ -242,7 +242,7 @@ the Free Software Foundation, either version 3 of the License, or\n\
 	sz.SplitLines(&cStrings);
 	sz.Kill();
 
-	AssertInt(4, cStrings.NumElements());
+	AssertSize(4, cStrings.NumElements());
 	AssertString("Turburust BaseLib is free software: you can redistribute it and/or modify", cStrings.Get(0)->Text());
 	AssertString("it under the terms of the GNU Lesser General Public License as published by", cStrings.Get(1)->Text());
 	AssertString("the Free Software Foundation, either version 3 of the License, or", cStrings.Get(2)->Text());
@@ -252,19 +252,19 @@ the Free Software Foundation, either version 3 of the License, or\n\
 	cStrings.Fake();
 	sz2.SplitLines(&cStrings);
 
-	AssertInt(4, cStrings.NumElements());
+	AssertSize(4, cStrings.NumElements());
 	psz = cStrings.Get(0);
 	AssertPointer(sz2.Text(), psz->Text());
-	AssertInt(73, psz->Length());
+	AssertSize(73, psz->Length());
 	AssertBool(true, psz->Equals("Turburust BaseLib is free software: you can redistribute it and/or modify", 73));
 	psz = cStrings.Get(1);
-	AssertInt(75, psz->Length());
+	AssertSize(75, psz->Length());
 	AssertBool(true, psz->Equals("it under the terms of the GNU Lesser General Public License as published by", 75));
 	psz = cStrings.Get(2);
-	AssertInt(65, psz->Length());
+	AssertSize(65, psz->Length());
 	AssertBool(true, psz->Equals("the Free Software Foundation, either version 3 of the License, or", 65));
 	psz = cStrings.Get(3);
-	AssertInt(35, psz->Length());
+	AssertSize(35, psz->Length());
 	AssertBool(true, psz->Equals("(at your option) any later version.", 35));
 
 	sz2.Kill();
@@ -275,7 +275,7 @@ the Free Software Foundation, either version 3 of the License, or\n\
 	sz.Split(&cStrings, '\\');
 	sz.Kill();
 
-	AssertInt(5, cStrings.NumElements());
+	AssertSize(5, cStrings.NumElements());
 	AssertString("", cStrings.Get(0)->Text());
 	AssertString("Names", cStrings.Get(1)->Text());
 	AssertString("Of", cStrings.Get(2)->Text());
@@ -287,18 +287,18 @@ the Free Software Foundation, either version 3 of the License, or\n\
 	cStrings.Fake();
 	sz.Split(&cStrings, '\\');
 
-	AssertInt(5, cStrings.NumElements());
+	AssertSize(5, cStrings.NumElements());
 
 	psz = cStrings.Get(0);
-	AssertInt(0, psz->Length());
+	AssertSize(0, psz->Length());
 	psz = cStrings.Get(1);
-	AssertInt(5, psz->Length());
+	AssertSize(5, psz->Length());
 	psz = cStrings.Get(2);
-	AssertInt(2, psz->Length());
+	AssertSize(2, psz->Length());
 	psz = cStrings.Get(3);
-	AssertInt(4, psz->Length());
+	AssertSize(4, psz->Length());
 	psz = cStrings.Get(4);
-	AssertInt(0, psz->Length());
+	AssertSize(0, psz->Length());
 
 	cStrings.Kill();
 	sz.Kill();

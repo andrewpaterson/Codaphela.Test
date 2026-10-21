@@ -23,7 +23,7 @@ public:
 		return CIndexTreeMemory::GetRoot();
 	}
 
-	CIndexTreeNodeMemory* GetNode(uint8* pvKey, int iKeySize)
+	CIndexTreeNodeMemory* GetNode(uint8* pvKey, size iKeySize)
 	{
 		return CIndexTreeMemory::GetNode(pvKey, iKeySize);
 	}
@@ -33,12 +33,12 @@ public:
 		return CIndexTreeMemory::ValidateSize();
 	}
 
-	int NumAllocatedNodes(void)
+	size NumAllocatedNodes(void)
 	{
 		return CIndexTreeMemory::NumAllocatedNodes();
 	}
 
-	int RecurseSize(void)
+	size RecurseSize(void)
 	{
 		return CIndexTreeMemory::RecurseSize();
 	}

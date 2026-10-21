@@ -65,11 +65,11 @@ void TestSafeLinkedListBlockWrite(void)
 	cFileUtil.TouchDir(szDirectory);
 
 	cList.Init();
-	sz = (char*)cList.InsertAfterTail(strlen(szHello) + 1);
+	sz = (char*)cList.InsertAfterTail((uint32)strlen(szHello) + 1);
 	strcpy(sz, szHello);
-	sz = (char*)cList.InsertAfterTail(strlen(szWorld) + 1);
+	sz = (char*)cList.InsertAfterTail((uint32)strlen(szWorld) + 1);
 	strcpy(sz, szWorld);
-	sz = (char*)cList.InsertAfterTail(strlen(szLog) + 1);
+	sz = (char*)cList.InsertAfterTail((uint32)strlen(szLog) + 1);
 	strcpy(sz, szLog);
 	AssertInt(3, cList.NumElements());
 

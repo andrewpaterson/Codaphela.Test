@@ -14,15 +14,28 @@
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeNodeFileSizeofs(void)
 {
-	AssertInt(4, sizeof(CIndexTreeNodeFile*));  //The size of a memory pointer must be (at least) 4 bytes less than CIndexTreeChildNode.
-	AssertInt(8, sizeof(CFileDataIndex));  //SizeOf is 16 but only the first 12 bytes are used.
+#ifdef BUILD_64
+	AssertSize(8, sizeof(CIndexTreeNodeFile*));  //The size of a memory pointer must be (at least) 4 bytes less than CIndexTreeChildNode.
+#else
+	AssertSize(4, sizeof(CIndexTreeNodeFile*));  //The size of a memory pointer must be (at least) 4 bytes less than CIndexTreeChildNode.
+#endif // BUILD_64
+	AssertSize(8, sizeof(CFileDataIndex));  //SizeOf is 16 but only the first 12 bytes are used.
 
-	AssertInt(12, sizeof(CIndexTreeChildNode));  //The above is why the union works 
+#ifdef BUILD_64
+	AssertSize(16, sizeof(CIndexTreeChildNode));  //The above is why the union works 
+#else
+	AssertSize(12, sizeof(CIndexTreeChildNode));  //The above is why the union works 
+#endif // BUILD_64
 
-	AssertInt(24, sizeof(CIndexTreeNodeFile));  
-	AssertInt(16, sizeof(CIndexTreeNode));
+#ifdef BUILD_64
+	AssertSize(32, sizeof(CIndexTreeNodeFile));  
+	AssertSize(24, sizeof(CIndexTreeNode));
+#else
+	AssertSize(24, sizeof(CIndexTreeNodeFile));  
+	AssertSize(16, sizeof(CIndexTreeNode));
+#endif // BUILD_64
 	AssertTrue(sizeof(CIndexTreeNodeFile*) <= sizeof(CIndexTreeChildNode) - sizeof(int));
-	AssertInt(4, sizeof(int));  //Just ot be sure.
+	AssertSize(4, sizeof(int));  //Just ot be sure.
 }
 
 
@@ -84,15 +97,15 @@ void TestIndexTreeNodeFileRootMemory(void)
 	AssertFalse(pcNode->ValidateNodesEmpty());
 	gcLogger.SetBreakOnError(true);
 
-	AssertInt(33, pcNode->GetFirstIndex());
-	AssertInt(33, pcNode->GetLastIndex());
+	AssertSize(33, pcNode->GetFirstIndex());
+	AssertSize(33, pcNode->GetLastIndex());
 
 	pcNode->SetMemory(33, &cChildNode);
 	AssertFalse(pcNode->IsEmpty());
 	AssertTrue(pcNode->HasNodes());
 	AssertFalse(pcNode->HasData());
 	Pass();
-	AssertInt(1, pcNode->NumValidIndexes());
+	AssertSize(1, pcNode->NumValidIndexes());
 	Pass();
 	AssertTrue(pcNode->ValidateNodesEmpty());
 	Pass();

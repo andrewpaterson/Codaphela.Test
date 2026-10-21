@@ -67,7 +67,7 @@ void TestPropertiesFileRead(void)
 
 	cFile.Init("Output/Properties.txt");
 	cFile.Read();
-	AssertInt(3, cFile.NumProperties());
+	AssertSize(3, cFile.NumProperties());
 	AssertString("Chaos", cFile.Get("Age"));
 	AssertString("Yodel", cFile.Get("Today"));
 	AssertString("", cFile.Get("Nothing"));

@@ -43,8 +43,8 @@ void TestFreeListAllocatorReadWrite(void)
 
 	AssertInt(16, cAllocIn.GetFreeList()->GetAlignment());
 	AssertInt(4, cAllocIn.GetFreeList()->GetOffset());
-	AssertInt(48, cAllocIn.GetFreeList()->GetElementSize());
-	AssertInt(0, cAllocIn.GetFreeList()->ByteSize());
+	AssertSize(48, cAllocIn.GetFreeList()->GetElementSize());
+	AssertSize(0, cAllocIn.GetFreeList()->ByteSize());
 	cAllocIn.GetFreeList()->GetParams(&sParams);
 	AssertInt(4, sParams.iOffset);
 

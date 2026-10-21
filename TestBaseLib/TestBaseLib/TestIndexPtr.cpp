@@ -106,7 +106,7 @@ void TestIndexPtrIterate(void)
 	{
 		iKey = ui * 0x39e7;
 		szValue = (char*)RemapSinglePointer(szMemory, ui * 6);
-		IntToString(szValue, 6, ui);
+		SizeToString(szValue, 6, ui);
 		bValid &= cIndex.Put((uint8*)&iKey, sizeof(int64), szValue);
 		if (!bValid)
 		{

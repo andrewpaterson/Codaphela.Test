@@ -71,9 +71,9 @@ void TestMapStringInt(void)
 	cMap.Init();
 
 	AssertTrue(cMap.Put("EZ", 15));
-	AssertInt(1, cMap.NumElements());
+	AssertSize(1, cMap.NumElements());
 	AssertTrue(cMap.Put("Dock", 17));
-	AssertInt(2, cMap.NumElements());
+	AssertSize(2, cMap.NumElements());
 
 	AssertTrue(cMap.StartIteration(&sIter, (void**)&szKey, NULL, (void**)&piResult, NULL));
 	AssertNotNull(szKey);
@@ -87,7 +87,7 @@ void TestMapStringInt(void)
 	AssertInt(15, iResult);
 
 	cMap.Put("KingWin", 13);
-	AssertInt(3, cMap.NumElements());
+	AssertSize(3, cMap.NumElements());
 
 	iResult = *cMap.CMapStringTemplate::Get("EZ");
 	AssertInt(15, iResult);

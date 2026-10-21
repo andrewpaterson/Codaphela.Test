@@ -46,7 +46,7 @@ void TestReadTransactionWriteTransaction(void)
 	SIndexTreeFileIterator	sIter;
 	char					szKey[MAX_KEY_SIZE + 1];
 	char					szName[64];
-	uint32					uiNameLength;
+	size					uiNameLength;
 	OIndex					oi;
 	char					szUno[] = "Uno";
 	char					szThree[] = "Three";

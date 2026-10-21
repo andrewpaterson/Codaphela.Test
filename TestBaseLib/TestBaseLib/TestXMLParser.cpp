@@ -38,7 +38,7 @@ void TestXMLParserReadSingleTag(void)
 
 	AssertBool(true, pcTag->Is("Imagine"));
 	uiNumAttributes = pcTag->GetNumAttributes();
-	AssertInt(1, uiNumAttributes);
+	AssertSize(1, uiNumAttributes);
 	szAttribute = (char*)pcTag->GetAttribute(0, &uiType, &szName);
 	AssertInt(PT_char8Pointer, uiType);
 	AssertString("Sourcey", szAttribute);
@@ -267,7 +267,7 @@ void TestXMLParserNamedReferences(void)
 	cXMLParser.Parse();
 
 	pcDoc = cXMLParser.mpcDoc;
-	AssertInt(3, pcDoc->macRefs.NumElements());
+	AssertSize(3, pcDoc->macRefs.NumElements());
 
 	pcRef = *pcDoc->macRefs.Get(0);
 	AssertBool(true, pcRef->IsNamedRef());

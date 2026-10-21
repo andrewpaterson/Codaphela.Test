@@ -15,7 +15,7 @@ void TestFileFinder(void)
 	
 	aszFiles.Init();
 	cFileUtil.FindFilesWithExtension("Finder", "txt", &aszFiles);
-	AssertInt(5, aszFiles.NumElements());
+	AssertSize(5, aszFiles.NumElements());
 
 	AssertFilePath("Finder" _FS_ "Ants.txt", aszFiles.Get(0)->Text());
 	AssertFilePath("Finder" _FS_ "File.txt", aszFiles.Get(1)->Text());
@@ -26,7 +26,7 @@ void TestFileFinder(void)
 
 	aszFiles.Init();
 	cFileUtil.FindFilesWithNameContaining("Finder", "Mar", &aszFiles);
-	AssertInt(3, aszFiles.NumElements());
+	AssertSize(3, aszFiles.NumElements());
 	AssertFilePath("Finder" _FS_ "Glenmark.wav", aszFiles.Get(0)->Text());
 	AssertFilePath("Finder" _FS_ "March.rar", aszFiles.Get(1)->Text());
 	AssertFilePath("Finder" _FS_ "Marching.txt", aszFiles.Get(2)->Text());
@@ -35,7 +35,7 @@ void TestFileFinder(void)
 	aszFiles.Init();
 	cFileUtil.FindAllDirectories("Finder", &aszFiles);
 	aszFiles.QuickSort();
-	AssertInt(3, aszFiles.NumElements());
+	AssertSize(3, aszFiles.NumElements());
 	AssertFilePath("Finder" _FS_ "Lord", aszFiles.Get(0)->Text());
 	AssertFilePath("Finder" _FS_ "Rising", aszFiles.Get(1)->Text());
 	AssertFilePath("Finder" _FS_ "Storm", aszFiles.Get(2)->Text());
@@ -43,7 +43,7 @@ void TestFileFinder(void)
 
 	aszFiles.Init();
 	cFileUtil.FindFilesWithExtension("Finder", "rar", &aszFiles, true);
-	AssertInt(6, aszFiles.NumElements());
+	AssertSize(6, aszFiles.NumElements());
 	AssertFilePath("Finder" _FS_ "Lord" _FS_ "1.rar", aszFiles.Get(0)->Text());
 	AssertFilePath("Finder" _FS_ "Rising" _FS_ "2.rar", aszFiles.Get(1)->Text());
 	AssertFilePath("Finder" _FS_ "Storm" _FS_ "3.rar", aszFiles.Get(2)->Text());
@@ -54,7 +54,7 @@ void TestFileFinder(void)
 
 	aszFiles.Init();
 	cFileUtil.FindAllFiles("Finder", &aszFiles, true);
-	AssertInt(12, aszFiles.NumElements());
+	AssertSize(12, aszFiles.NumElements());
 	aszFiles.Kill();
 
 	TestStatistics();

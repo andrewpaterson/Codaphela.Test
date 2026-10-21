@@ -26,7 +26,7 @@ void AssertQueueElement(CMemoryQueue* pcQueue, void* pvData, size iDataSize, cha
 	CChars						szExpected;
 
 
-	AssertInt(iDataSize, pcQueue->GetSize(pvData));
+	AssertSize(iDataSize, pcQueue->GetSize(pvData));
 
 	szData = (char*)pvData;
 	szExpected.Init();
@@ -69,18 +69,18 @@ void TestMemoryQueuePush(void)
 	pvQueue = malloc(128 + sizeof(SCircularMemoryList));
 	cQueue.Init(pvQueue, 128 + sizeof(SCircularMemoryList));
 
-	AssertInt(0, cQueue.NumElements());
+	AssertSize(0, cQueue.NumElements());
 
 	PushElement(&cQueue, 24, 'A');
 	PushElement(&cQueue, 20, 'B');
-	AssertInt(2, cQueue.NumElements());
-	AssertInt(68, cQueue.GetAllocatedSize());
+	AssertSize(2, cQueue.NumElements());
+	AssertSize(44 + 2 * sizeof(SMemoryCacheDescriptor), cQueue.GetAllocatedSize());
 
 	pv = cQueue.Peek(&uiDataSize);
 	AssertQueueElement(&cQueue, pv, 24, 'A');
 	cQueue.Drop(pv);
 
-	AssertInt(1, cQueue.NumElements());
+	AssertSize(1, cQueue.NumElements());
 
 	pv = cQueue.Peek(&uiDataSize);
 	AssertQueueElement(&cQueue, pv, 20, 'B');
@@ -91,19 +91,19 @@ void TestMemoryQueuePush(void)
 
 	PushElement(&cQueue, 32, 'A');
 	PushElement(&cQueue, 32, 'B');
-	AssertInt(2, cQueue.NumElements());
-	AssertInt(88, cQueue.GetAllocatedSize());
+	AssertSize(2, cQueue.NumElements());
+	AssertSize(64 + 2 * sizeof(SMemoryCacheDescriptor), cQueue.GetAllocatedSize());
 
 	pvC = PushElement(&cQueue, 32, 'C');
 	AssertNull(pvC);
-	AssertInt(2, cQueue.NumElements());
-	AssertInt(88, cQueue.GetAllocatedSize());
+	AssertSize(2, cQueue.NumElements());
+	AssertSize(64 + 2 * sizeof(SMemoryCacheDescriptor), cQueue.GetAllocatedSize());
 	Pass();
 
 	cQueue.ValidateCache();
 
-	pvTemp = malloc(256);
-	cQueue.Remap(pvTemp, 256);
+	pvTemp = malloc(196 + 5 * sizeof(SMemoryCacheDescriptor));
+	cQueue.Remap(pvTemp, 196 + 5 * sizeof(SMemoryCacheDescriptor));
 	free(pvQueue);
 	pvQueue = pvTemp;
 
@@ -111,21 +111,21 @@ void TestMemoryQueuePush(void)
 
 	pvC = PushElement(&cQueue, 32, 'C');
 	AssertNotNull(pvC);
-	AssertInt(3, cQueue.NumElements());
-	AssertInt(132, cQueue.GetAllocatedSize());
+	AssertSize(3, cQueue.NumElements());
+	AssertSize(96 + 3 * sizeof(SMemoryCacheDescriptor), cQueue.GetAllocatedSize());
 	Pass();
 
 	PushElement(&cQueue, 32, 'D');
 	pvE = PushElement(&cQueue, 32, 'E');
 	AssertNotNull(pvE);
-	AssertInt(5, cQueue.NumElements());
-	AssertInt(220, cQueue.GetAllocatedSize());
+	AssertSize(5, cQueue.NumElements());
+	AssertSize(160 + 5 * sizeof(SMemoryCacheDescriptor), cQueue.GetAllocatedSize());
 	Pass();
 
 	pvF = PushElement(&cQueue, 32, 'F');
 	AssertNull(pvF);
-	AssertInt(5, cQueue.NumElements());
-	AssertInt(220, cQueue.GetAllocatedSize());
+	AssertSize(5, cQueue.NumElements());
+	AssertSize(160 + 5 * sizeof(SMemoryCacheDescriptor), cQueue.GetAllocatedSize());
 	Pass();
 
 	cQueue.ValidateCache();
@@ -141,8 +141,8 @@ void TestMemoryQueuePush(void)
 	pv = cQueue.Peek(&uiDataSize);
 	AssertNull(pv);
 
-	AssertInt(0, cQueue.NumElements());
-	AssertInt(0, cQueue.GetAllocatedSize());
+	AssertSize(0, cQueue.NumElements());
+	AssertSize(0, cQueue.GetAllocatedSize());
 	AssertNull(cQueue.GetFirst());
 	AssertNull(cQueue.GetLast());
 
@@ -163,10 +163,11 @@ void TestMemoryQueuePeek(void)
 	void*			pv;
 	size			uiDataSize;
 
-	pvQueue = malloc(128 + sizeof(SCircularMemoryList));
-	cQueue.Init(pvQueue, 128 + sizeof(SCircularMemoryList));
+	//128 bytes in a 32 bit build; room for three elements and their descriptors.
+	pvQueue = malloc(92 + 3 * sizeof(SMemoryCacheDescriptor) + sizeof(SCircularMemoryList));
+	cQueue.Init(pvQueue, 92 + 3 * sizeof(SMemoryCacheDescriptor) + sizeof(SCircularMemoryList));
 
-	AssertInt(0, cQueue.NumElements());
+	AssertSize(0, cQueue.NumElements());
 
 	PushElement(&cQueue, 28, 'A');
 	PushElement(&cQueue, 20, 'B');
@@ -182,7 +183,7 @@ void TestMemoryQueuePeek(void)
 		cQueue.ValidateCache();
 	}
 
-	AssertInt(2, cQueue.NumElements());
+	AssertSize(2, cQueue.NumElements());
 
 	cQueue.Kill();
 	free(pvQueue);
@@ -204,43 +205,47 @@ void TestMemoryQueueRemap(void)
 	int				iExpectedCount;
 	size			uiExpectedAllocatedSize;
 	int				i;
+	size			uiElementSize;
+
+	//Every element is 20 bytes plus its descriptor (32 bytes in a 32 bit build).
+	uiElementSize = 20 + sizeof(SMemoryCacheDescriptor);
 
 	pvQueue = malloc(8 KB);
-	cQueue.Init(pvQueue, 32 + sizeof(SCircularMemoryList));
+	cQueue.Init(pvQueue, uiElementSize + sizeof(SCircularMemoryList));
 
 	pvA = PushElement(&cQueue, 20, 'A');
-	cQueue.Remap(pvQueue, 96 + sizeof(SCircularMemoryList));
+	cQueue.Remap(pvQueue, 3 * uiElementSize + sizeof(SCircularMemoryList));
 	AssertTrue(cQueue.ValidateCache());
-	AssertInt(1, cQueue.NumElements());
+	AssertSize(1, cQueue.NumElements());
 
 	PushElement(&cQueue, 20, 'B');
 	AssertTrue(cQueue.ValidateCache());
-	AssertInt(2, cQueue.NumElements());
+	AssertSize(2, cQueue.NumElements());
 
-	cQueue.Remap(pvQueue, 128 + sizeof(SCircularMemoryList));
+	cQueue.Remap(pvQueue, 4 * uiElementSize + sizeof(SCircularMemoryList));
 	AssertTrue(cQueue.ValidateCache());
-	AssertInt(2, cQueue.NumElements());
+	AssertSize(2, cQueue.NumElements());
 
 	cQueue.Drop(pvA);
 	PushElement(&cQueue, 20, 'C');
-	cQueue.Remap(pvQueue, 160 + sizeof(SCircularMemoryList));
+	cQueue.Remap(pvQueue, 5 * uiElementSize + sizeof(SCircularMemoryList));
 
 	PushElement(&cQueue, 20, 'D');
 	PushElement(&cQueue, 20, 'E');
 	PushElement(&cQueue, 20, 'F');
-	AssertInt(5, cQueue.NumElements());
+	AssertSize(5, cQueue.NumElements());
 	Pass();
 
-	cQueue.Remap(pvQueue, 256 + sizeof(SCircularMemoryList));
+	cQueue.Remap(pvQueue, 8 * uiElementSize + sizeof(SCircularMemoryList));
 	cQueue.ValidateCache();
-	AssertInt(5, cQueue.NumElements());
-	AssertInt(256, cQueue.GetCacheSize());
-	AssertInt(160, cQueue.GetAllocatedSize());
+	AssertSize(5, cQueue.NumElements());
+	AssertSize(8 * uiElementSize, cQueue.GetCacheSize());
+	AssertSize(5 * uiElementSize, cQueue.GetAllocatedSize());
 
 	iExpectedCount = 5;
-	uiExpectedAllocatedSize = 160;
+	uiExpectedAllocatedSize = 5 * uiElementSize;
 	c = 'F' + 1;
-	uiQueueSize = 256 + 32;
+	uiQueueSize = 9 * uiElementSize;
 	for (;;)
 	{
 		cQueue.Pop();
@@ -253,21 +258,21 @@ void TestMemoryQueueRemap(void)
 			break;
 		}
 		AssertTrue(cQueue.ValidateCache());
-		uiExpectedAllocatedSize += 32;
+		uiExpectedAllocatedSize += uiElementSize;
 		iExpectedCount++;
 
 		cQueue.Remap(pvQueue, uiQueueSize + sizeof(SCircularMemoryList));
 		AssertTrue(cQueue.ValidateCache());
 
-		AssertInt(iExpectedCount, cQueue.NumElements());
-		AssertInt(uiExpectedAllocatedSize, cQueue.GetAllocatedSize());
+		AssertSize(iExpectedCount, cQueue.NumElements());
+		AssertSize(uiExpectedAllocatedSize, cQueue.GetAllocatedSize());
 
 		c = c + 2;
-		uiQueueSize += 16;
+		uiQueueSize += uiElementSize / 2;
 	}
 
-	AssertInt(368, cQueue.GetCacheSize());
-	AssertInt(11, cQueue.NumElements());
+	AssertSize(8 * uiElementSize + 7 * (uiElementSize / 2), cQueue.GetCacheSize());
+	AssertSize(11, cQueue.NumElements());
 
 	for (i = 0; i < 11; i++)
 	{

@@ -16,12 +16,12 @@ public:
 		return CIndexTreeEvicting::GetSystemMemorySize();
 	}
 
-	int NumMemoryNodes(void)
+	size NumMemoryNodes(void)
 	{
 		return CIndexTreeEvicting::NumMemoryNodes();
 	}
 
-	int NumMemoryElements(void)
+	size NumMemoryElements(void)
 	{
 		return CIndexTreeEvicting::NumMemoryElements();
 	}

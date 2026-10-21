@@ -21,12 +21,12 @@ void TestListVariableAdd(void)
 	int				iResult;
 
 	cList.Init();
-	AssertInt(0, cList.NumElements());
+	AssertSize(0, cList.NumElements());
 
 	pszData = (char*)cList.Add(5);
 	strcpy(pszData, "Door");
 
-	AssertInt(1, cList.NumElements());
+	AssertSize(1, cList.NumElements());
 	pszResult = (char*)cList.Get(0);
 	AssertString(pszData, pszResult);
 	AssertPointer(pszData, pszResult);
@@ -43,7 +43,7 @@ void TestListVariableAdd(void)
 		{
 			AssertNotNull(pv);
 		}
-		memset(pv, i, i);
+		memset(pv, (int)i, i);
 		uiCount++;
 	}
 	AssertSize(uiCount, cList.NumElements());
@@ -57,7 +57,7 @@ void TestListVariableAdd(void)
 		uiExpectedSize = i * 2 + 1;
 		AssertSize(uiExpectedSize, uiSize);
 		pv = cList.Get(i);
-		memset(pvExpected, i * 2 + 1, uiSize);
+		memset(pvExpected, (int)(i * 2 + 1), uiSize);
 		iResult = memcmp(pvExpected, pv, uiSize);
 		if (iResult != 0)
 		{

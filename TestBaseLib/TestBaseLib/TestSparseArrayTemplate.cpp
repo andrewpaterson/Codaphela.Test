@@ -31,9 +31,9 @@ void TestArraySparseTemplateInsertion(void)
 	psItem = cArray.Set(10);
 	psItem->i1 = 100;
 
-	AssertInt(1, cArray.TestGetRoot()->iLeafDepth);
-	AssertInt(0, cArray.TestGetRoot()->psLeft->iLeafDepth);
-	AssertInt(0, cArray.TestGetRoot()->psRight->iLeafDepth);
+	AssertSize(1, cArray.TestGetRoot()->iLeafDepth);
+	AssertSize(0, cArray.TestGetRoot()->psLeft->iLeafDepth);
+	AssertSize(0, cArray.TestGetRoot()->psRight->iLeafDepth);
 
 	psItem = cArray.Get(50);
 	AssertInt(500, psItem->i1);
@@ -67,9 +67,9 @@ void TestArraySparseTemplateInsertion(void)
 	psItem = cArray.Set(9);
 	psItem->i1 = 90;
 
-	AssertInt(3, cArray.TestGetRoot()->iLeafDepth);
-	AssertInt(2, cArray.TestGetRoot()->psLeft->iLeafDepth);
-	AssertInt(2, cArray.TestGetRoot()->psRight->iLeafDepth);
+	AssertSize(3, cArray.TestGetRoot()->iLeafDepth);
+	AssertSize(2, cArray.TestGetRoot()->psLeft->iLeafDepth);
+	AssertSize(2, cArray.TestGetRoot()->psRight->iLeafDepth);
 
 	psItem = cArray.Get(13);
 	AssertInt(130, psItem->i1);

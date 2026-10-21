@@ -1,6 +1,6 @@
-#ifdef LINUX_GNU_32
+#ifdef LINUX_GNU
 #include <dirent.h>
-#endif // LINUX_GNU_32
+#endif // LINUX_GNU
 #include "BaseLib/Logger.h"
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
@@ -302,8 +302,8 @@ void TestDurableFileControllerTwoInOneDirectory(void)
 	cDurableFile3.Init(&cController2, "3.txt", "3.txt");
 	cDurableFile4.Init(&cController2, "4.txt", "4.txt");
 
-	AssertInt(0, cController1.NumFiles());
-	AssertInt(0, cController2.NumFiles());
+	AssertSize(0, cController1.NumFiles());
+	AssertSize(0, cController2.NumFiles());
 	bResult = cController1.Recover(&cDurableFile1, &cDurableFile2, NULL);
 	AssertTrue(bResult);
 
@@ -330,7 +330,7 @@ void TestDurableFileControllerTwoInOneDirectory(void)
 //////////////////////////////////////////////////////////////////////////
 int CountOpenFileDescriptors(void)
 {
-#ifdef LINUX_GNU_32
+#ifdef LINUX_GNU
 	DIR*			pDIR;
 	struct dirent*	pDirEnt;
 	int				iCount;
@@ -350,7 +350,7 @@ int CountOpenFileDescriptors(void)
 	return iCount;
 #else
 	return 0;
-#endif // LINUX_GNU_32
+#endif // LINUX_GNU
 }
 
 

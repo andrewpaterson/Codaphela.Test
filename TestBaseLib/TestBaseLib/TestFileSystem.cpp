@@ -90,7 +90,7 @@ void TestFileSystemFindExtension(void)
 	aFileNodePtrs.Init();
 	cSystem.GetFiles(&aFileNodePtrs, "rar");
 
-	AssertInt(6, aFileNodePtrs.NumElements());
+	AssertSize(6, aFileNodePtrs.NumElements());
 	
 	AssertFilePath("Finder" _FS_ "Lord" _FS_ "1.rar", (*aFileNodePtrs.Get(0))->File()->GetFullName());
 	AssertFilePath("Finder" _FS_ "Rising" _FS_ "2.rar", (*aFileNodePtrs.Get(1))->File()->GetFullName());
@@ -118,7 +118,7 @@ void TestFileSystemGetFiles(void)
 
 	cSystem.GetFiles(&cArrayFiles);
 
-	AssertInt(12, cArrayFiles.NumElements());
+	AssertSize(12, cArrayFiles.NumElements());
 
 	AssertFilePath("Finder" _FS_ "Lord" _FS_ "1.rar", (*cArrayFiles.Get(0))->File()->GetFullName());
 	AssertFilePath("Finder" _FS_ "Rising" _FS_ "2.rar", (*cArrayFiles.Get(1))->File()->GetFullName());

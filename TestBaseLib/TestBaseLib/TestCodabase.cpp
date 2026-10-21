@@ -155,8 +155,8 @@ void TestCodabaseSetPutRemove(EIndexWriteThrough eWriteThrough)
 	SLogConfig	sLogConfig;
 	char		szResult[2 KB];
 	char		szName[MAX_KEY_SIZE];
-	uint32		uiDataSize;
-	uint32		uiNameLength;
+	size		uiDataSize;
+	size		uiNameLength;
 	char		szOne[] = "One";
 	char		szTwo[] = "Two";
 	char		szUno[] = "Uno";
@@ -198,13 +198,13 @@ void TestCodabaseSetPutRemove(EIndexWriteThrough eWriteThrough)
 	AssertTrue(pcDatabase->Set("Alpha", szEins, strlen(szEins) + 1));
 	memset(szResult, 0, 2 KB);
 	AssertTrue(pcDatabase->Get(1LL, &uiDataSize, szResult, 2 KB));
-	AssertInt(5, uiDataSize);
+	AssertSize(5, uiDataSize);
 	AssertString(szEins, szResult);
 
 	AssertTrue(pcDatabase->Set(1LL, szVier));
 	memset(szResult, 0, 2 KB);
 	AssertTrue(pcDatabase->Get(1LL, &uiDataSize, szResult, 2 KB));
-	AssertInt(5, uiDataSize);
+	AssertSize(5, uiDataSize);
 	AssertString(szVier, szResult);
 
 	AssertTrue(pcDatabase->Put(2LL, szZwei, strlen(szZwei) + 1));

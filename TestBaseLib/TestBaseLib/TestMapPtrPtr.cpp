@@ -39,7 +39,7 @@ void TestMapPtrPtrIterate(void)
 	AssertPointer(pvv1, pvValue);
 
 	cMap.Put(pvk3, pvv3);
-	AssertInt(3, cMap.NumElements());
+	AssertSize(3, cMap.NumElements());
 
 	pvValue = cMap.Get(pvk1);
 	AssertPointer(pvv1, pvValue);

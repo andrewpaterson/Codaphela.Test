@@ -40,7 +40,7 @@ void TestMemoryBlockGlobalMemory(void)
 	CMemoryBlock	cBlock;
 	void*			pvMem;
 
-	AssertInt(0, gcMemory.NumElements());
+	AssertSize(0, gcMemory.NumElements());
 	AssertTrue(gbMemory);
 
 	cBlock.Init(&gcMemoryAllocator);
@@ -48,18 +48,18 @@ void TestMemoryBlockGlobalMemory(void)
 	AssertNotNull(pvMem);
 	AssertPointer(pvMem, cBlock.GetMemory());
 	AssertInt(10, (int)cBlock.GetSize());
-	AssertInt(1, gcMemory.NumElements());
+	AssertSize(1, gcMemory.NumElements());
 
 	pvMem = cBlock.Allocate(20);
 	AssertNotNull(pvMem);
 	AssertPointer(pvMem, cBlock.GetMemory());
 	AssertInt(20, (int)cBlock.GetSize());
-	AssertInt(1, gcMemory.NumElements());
+	AssertSize(1, gcMemory.NumElements());
 
 	cBlock.Kill();
 	AssertNull(cBlock.GetMemory());
 	AssertInt(0, (int)cBlock.GetSize());
-	AssertInt(0, gcMemory.NumElements());
+	AssertSize(0, gcMemory.NumElements());
 
 	MemoryKill();
 	AssertFalse(gbMemory);

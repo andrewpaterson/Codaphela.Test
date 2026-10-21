@@ -35,7 +35,7 @@ void TestChunkFileSimple(void)
 	Pass();
 	AssertTrue(cChunkFile.IsOpen());
 	iChunkNum = cChunkFile.FindFirstChunkWithName("ThisChunk");
-	AssertInt(0, iChunkNum);
+	AssertSize(0, iChunkNum);
 	AssertTrue(cChunkFile.ReadChunkBegin(iChunkNum));
 	Pass();
 	AssertTrue(cChunkFile.ReadClose());
@@ -109,20 +109,20 @@ void TestChunkFilenameing(void)
 
 	AssertTrue(cChunkFile.ReadOpen());
 	iChunkNum = cChunkFile.FindFirstChunkWithName("Rise");
-	AssertInt(0, iChunkNum);
+	AssertSize(0, iChunkNum);
 	AssertTrue(cChunkFile.ReadChunkBegin(iChunkNum));
 	AssertLong(1, cChunkFile.Read(acActual, 10, 1));
 	AssertMemory(acTwentyOne, acActual, 10);
 
 	iChunkNum = cChunkFile.FindFirstChunkWithName("Floopy");
-	AssertInt(0, iChunkNum);
+	AssertSize(0, iChunkNum);
 	AssertTrue(cChunkFile.ReadChunkBegin(iChunkNum));
 	AssertLong(1, cChunkFile.Read(acActual, 10, 1));
 	AssertMemory(acTwentyTwo, acActual, 10);
 	AssertTrue(cChunkFile.ReadChunkEnd());
 
 	iChunkNum = cChunkFile.FindNextChunkWithName();
-	AssertInt(1, iChunkNum);
+	AssertSize(1, iChunkNum);
 	AssertTrue(cChunkFile.ReadChunkBegin(iChunkNum));
 	AssertLong(1, cChunkFile.Read(acActual, 10, 1));
 	AssertMemory(acTwentyThree, acActual, 10);

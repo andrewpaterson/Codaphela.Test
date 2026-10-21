@@ -128,7 +128,7 @@ void TestFileIOHelpers(void)
 	AssertTrue(cFile.ReadBits(abi, 7));
 	AssertMemory(ab, abi, 7);
 	AssertTrue(cFile.ReadIntArray(aii, 3));
-	AssertMemory(ai, aii, 3 * sizeof(size));
+	AssertMemory(ai, aii, 3 * sizeof(int32));
 
 	AssertTrue(cFile.ReadInt32(&i));
 	AssertInt(0x091bfe25, i);
@@ -318,7 +318,7 @@ void TestFileIOTree(void)
 	pcChild->Init(8);
 	pcChild = cTree.InsertOnRightOfChildren(pcRoot);
 	pcChild->Init(99);
-	AssertInt(5, cTree.NumElements());
+	AssertSize(5, cTree.NumElements());
 	AssertTrue(cTree.WriteTreeTemplate(&cFile));
 	pcRoot = cTree.GetRoot();
 	AssertTrue(pcRoot->IsOkay(672));
@@ -331,7 +331,7 @@ void TestFileIOTree(void)
 	pcBlockRoot->Init(1337);
 	pcBlockChild = (CFileIOTest*)cBlock.InsertOnRightOfChildren(pcBlockRoot, sizeof(CFileIOTest));
 	pcBlockChild->Init(54321);
-	AssertInt(2, cBlock.NumElements());
+	AssertSize(2, cBlock.NumElements());
 	AssertTrue(cBlock.WriteTreeUnknown(&cFile));
 
 	cBlock.Kill();
@@ -339,7 +339,7 @@ void TestFileIOTree(void)
 	TestFileIOMiddle(&cFile);
 
 	AssertTrue(cTreeIn.ReadTreeTemplate(&cFile));
-	AssertInt(5, cTreeIn.NumElements());
+	AssertSize(5, cTreeIn.NumElements());
 	pcRootIn = cTreeIn.GetRoot();
 	AssertTrue(pcRootIn->IsOkay(672));
 	pcChildIn = cTreeIn.GetUp(pcRootIn);
@@ -360,7 +360,7 @@ void TestFileIOTree(void)
 	cTreeIn.Kill();
 
 	AssertTrue(cBlockIn.ReadTreeUnknown(&cFile));
-	AssertInt(2, cBlockIn.NumElements());
+	AssertSize(2, cBlockIn.NumElements());
 	pcBlockRoot = (CFileIOTest*)cBlockIn.GetRoot();
 	AssertTrue(pcBlockRoot->IsOkay(1337));
 	pcBlockChild = (CFileIOTest*)cBlockIn.GetUp(pcBlockRoot);
@@ -522,12 +522,12 @@ void TestFileIOArray(void)
 	for (i = 0; i <= 8; i++)
 	{
 		pcTest = acTest.Add();
-		pcTest->Init(i);
+		pcTest->Init((int)i);
 	}
 	ai.Init();
 	for (i = 0; i <= 5; i++)
 	{
-		ai.Add(8-i);
+		ai.Add((int)(8-i));
 	}
 	av.Init(&gcSystemAllocator, 1);
 	av.Resize(12);
@@ -536,16 +536,16 @@ void TestFileIOArray(void)
 	for (i = 0; i <= 10; i++)
 	{
 		pcTest = asTest.Add();
-		pcTest->Init(i*3-2);
+		pcTest->Init((int)(i*3-2));
 	}
 
-	AssertInt(9, acTest.NumElements());
-	AssertInt(16, acTest.AllocatedElements());
-	AssertInt(6, ai.NumElements());
-	AssertInt(8, ai.AllocatedElements());
-	AssertInt(12, av.NumElements());
-	AssertInt(16, av.AllocatedElements());
-	AssertInt(11, asTest.NumElements());
+	AssertSize(9, acTest.NumElements());
+	AssertSize(16, acTest.AllocatedElements());
+	AssertSize(6, ai.NumElements());
+	AssertSize(8, ai.AllocatedElements());
+	AssertSize(12, av.NumElements());
+	AssertSize(16, av.AllocatedElements());
+	AssertSize(11, asTest.NumElements());
 	AssertTrue(acTest.Write(&cFile));
 	AssertTrue(ai.Write(&cFile));
 	AssertTrue(av.Write(&cFile));
@@ -558,31 +558,31 @@ void TestFileIOArray(void)
 	TestFileIOMiddle(&cFile);
 
 	AssertTrue(acTestIn.Read(&cFile));
-	AssertInt(9, acTestIn.NumElements());
-	AssertInt(16, acTestIn.AllocatedElements());
+	AssertSize(9, acTestIn.NumElements());
+	AssertSize(16, acTestIn.AllocatedElements());
 	for (i = 0; i <= 8; i++)
 	{
 		pcTest = acTestIn.Get(i);
-		AssertTrue(pcTest->IsOkay(i));
+		AssertTrue(pcTest->IsOkay((int)i));
 	}
 	AssertTrue(aii.Read(&cFile));
-	AssertInt(6, aii.NumElements());
-	AssertInt(8, aii.AllocatedElements());
+	AssertSize(6, aii.NumElements());
+	AssertSize(8, aii.AllocatedElements());
 	for (i = 0; i <= 5; i++)
 	{
 		ii = aii.GetValue(i);
-		AssertInt(8-i, ii);
+		AssertSize(8-i, ii);
 	}
 	AssertTrue(avi.Read(&cFile));
-	AssertInt(12, avi.NumElements());
-	AssertInt(16, avi.AllocatedElements());
+	AssertSize(12, avi.NumElements());
+	AssertSize(16, avi.AllocatedElements());
 	AssertString("ABCDEFGHIJK", (char*)avi.GetData());
 	AssertTrue(asTestIn.Read(&cFile));
-	AssertInt(11, asTestIn.NumElements());
+	AssertSize(11, asTestIn.NumElements());
 	for (i = 0; i <= 10; i++)
 	{
 		pcTest = asTestIn.Get(i);
-		AssertTrue(pcTest->IsOkay(i*3-2));
+		AssertTrue(pcTest->IsOkay((int)(i*3-2)));
 	}
 
 	asTestIn.Kill();
@@ -623,7 +623,7 @@ void TestFileIOString(void)
 	AssertTrue(szi2.ReadChars(&cFile));
 	AssertString("That means they only eat vegetables, but for you, I think they'd make an exception.", szi2.Text());
 	AssertTrue(cFile.ReadStringLength(&i));
-	AssertInt(4, i);
+	AssertSize(4, i);
 	AssertTrue(cFile.ReadStringChars(szc, i));
 	AssertString("123", szc);
 
@@ -657,7 +657,7 @@ void TestFileIOMap(void)
 	cMap.Put(&i, &ld);
 	i = 4;	ld = 1.9237643187634765139872;
 	cMap.Put(&i, &ld);
-	AssertInt(3, cMap.NumElements());
+	AssertSize(3, cMap.NumElements());
 	AssertTrue(cMap.Write(&cFile));
 
 	mssi.Init(true);
@@ -665,7 +665,7 @@ void TestFileIOMap(void)
 	mssi.Put("eat", 1);
 	mssi.Put("zebra", 12);
 	mssi.Put("for real!", -1);
-	AssertInt(4, mssi.NumElements());
+	AssertSize(4, mssi.NumElements());
 	AssertTrue(mssi.Write(&cFile));
 
 	mssi.Kill();
@@ -673,11 +673,11 @@ void TestFileIOMap(void)
 	TestFileIOMiddle(&cFile);
 
 	AssertTrue(cMapIn.Read(&cFile, &CompareInt));
-	AssertInt(3, cMapIn.NumElements());
+	AssertSize(3, cMapIn.NumElements());
 	//CMapTemplateTemplate doesn't actually have full read and write methods.
 
 	AssertTrue(mssii.Read(&cFile));
-	AssertInt(4, mssii.NumElements());
+	AssertSize(4, mssii.NumElements());
 	//CMapStringInt doesn't actually have full read and write methods.
 
 	mssii.Kill();

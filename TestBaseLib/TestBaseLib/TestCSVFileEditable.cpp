@@ -12,10 +12,10 @@ void TestCSVFileEditableRead(void)
 {
 	CCSVFileEditable	cCSVFile;
 	CMemoryFile*		pcMemoryFile;
-	int					iNumRows;
+	size					iNumRows;
 	SCSVRowEditable*	psRow;
 	CChars*				pszCell;
-	int					iFileLen;
+	size					iFileLen;
 	char				szFile[] = "\
 Header1|Header2\n\
 234|7782\n";
@@ -29,9 +29,9 @@ Header1|Header2\n\
 	cCSVFile.ReadAllLines();
 
 	iNumRows = cCSVFile.NumRows();
-	AssertInt(2, iNumRows);
+	AssertSize(2, iNumRows);
 	psRow = cCSVFile.Get(0);
-	AssertInt(2, psRow->NumCells());
+	AssertSize(2, psRow->NumCells());
 
 	pszCell = psRow->Get(0);
 	AssertString("Header1", pszCell->Text());
@@ -39,7 +39,7 @@ Header1|Header2\n\
 	AssertString("Header2", pszCell->Text());
 
 	psRow = cCSVFile.Get(1);
-	AssertInt(2, psRow->NumCells());
+	AssertSize(2, psRow->NumCells());
 
 	pszCell = psRow->Get(0);
 	AssertString("234", pszCell->Text());

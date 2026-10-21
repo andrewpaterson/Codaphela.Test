@@ -22,8 +22,8 @@ void TestMD5FileWrite(void)
 	uint8			ucLoremMD5[] = {0xfa, 0x5c, 0x89, 0xf3, 0xc8, 0x8b, 0x81, 0xbf, 0xd5, 0xe8, 0x21, 0xb0, 0x31, 0x65, 0x69, 0xaf};
 	int32			iLoremLen;
 
-	iFoxLen = strlen(szFox);
-	iLoremLen = strlen(szLorem);
+	iFoxLen = (int32)strlen(szFox);
+	iLoremLen = (int32)strlen(szLorem);
 
 	cHashFile.Init(MemoryFile());
 	cFile.Init(&cHashFile);

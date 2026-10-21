@@ -136,7 +136,7 @@ void TestPackFileReadWriteMultipleFiles(void)
 
 	bResult = cBasic1.ReadStringLength(&iLen);
 	AssertTrue(bResult);
-	AssertInt(10, iLen);
+	AssertSize(10, iLen);
 
 	bResult = cBasic1.ReadStringChars(sz, iLen);
 	AssertTrue(bResult);
@@ -148,7 +148,7 @@ void TestPackFileReadWriteMultipleFiles(void)
 
 	bResult = cBasic2.ReadStringLength(&iLen);
 	AssertTrue(bResult);
-	AssertInt(7, iLen);
+	AssertSize(7, iLen);
 
 	bResult = cBasic2.ReadStringChars(sz, iLen);
 	AssertTrue(bResult);
@@ -299,7 +299,7 @@ void TestPackFileGetFiles(void)
 
 	cPak.GetFiles(&cArrayFiles);
 
-	AssertInt(3, cArrayFiles.NumElements());
+	AssertSize(3, cArrayFiles.NumElements());
 
 	sz.Init(); AssertStringCase("Giana/Sisters/Document.txt", (*cArrayFiles.Get(0))->GetFullName(&sz), false);  sz.Kill();
 	sz.Init(); AssertStringCase("Giana/Brothers.PAK", (*cArrayFiles.Get(1))->GetFullName(&sz), false);  sz.Kill();

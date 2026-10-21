@@ -32,7 +32,7 @@ void TestXMLFileRead(void)
 
 	szDoc.Init();
 	iLine = cXMLFile.mcMarkup.mpcDoc->Print(&szDoc);
-	AssertInt(11, iLine);
+	AssertSize(11, iLine);
 	AssertString(szExpected, szDoc.Text());
 	szDoc.Kill();
 
@@ -88,7 +88,7 @@ void TestXMLFileReadExternalReference(void)
 
 	szDoc.Init();
 	iLine = cXMLFile.mcMarkup.mpcDoc->Print(&szDoc);
-	AssertInt(11, iLine);
+	AssertSize(11, iLine);
 	AssertString(szExpected, szDoc.Text());
 	szDoc.Kill();
 
@@ -155,7 +155,7 @@ void TestXMLFileRepeatedExternalTags(void)
 
 	szDoc.Init();
 	iLine = cXMLFile.mcMarkup.mpcDoc->Print(&szDoc);
-	AssertInt(18, iLine);
+	AssertSize(18, iLine);
 	AssertString(szExpected, szDoc.Text());
 	szDoc.Kill();
 
@@ -192,7 +192,7 @@ void TestXMLFileRepeatedExternalTags(void)
 		pcExtTag = pcRoot->GetNextTag(&sIter);
 	}
 
-	AssertInt(4, iCount);
+	AssertSize(4, iCount);
 	cXMLFile.Kill();
 }
 

@@ -20,22 +20,38 @@ void TestScratchPadAllocatorPop(void)
 	gcConstructors.Add<CConstructorTestClass>("CConstructorTestClass");
 
 	cAlloc.Init();
-	AssertInt(0, cAlloc.GetScratchPad()->GetUsedSize());
+	AssertSize(0, cAlloc.GetScratchPad()->GetUsedSize());
 
 	pcTest1 = (CConstructorTestClass*)gcConstructors.Construct("CConstructorTestClass", &cAlloc);
-	AssertInt(28, cAlloc.GetScratchPad()->GetUsedSize());
+#ifdef BUILD_64
+	AssertSize(48, cAlloc.GetScratchPad()->GetUsedSize());
+#else
+	AssertSize(28, cAlloc.GetScratchPad()->GetUsedSize());
+#endif // BUILD_64
 
 	pcTest1->k = 7;
 	AssertInt(3, pcTest1->Method1());
 	AssertInt(7, pcTest1->k);
 
 	pcTest2 = (CConstructorTestClass*)gcConstructors.Construct("CConstructorTestClass", &cAlloc);
-	AssertInt(56, cAlloc.GetScratchPad()->GetUsedSize());
+#ifdef BUILD_64
+	AssertSize(96, cAlloc.GetScratchPad()->GetUsedSize());
+#else
+	AssertSize(56, cAlloc.GetScratchPad()->GetUsedSize());
+#endif // BUILD_64
 
 	cAlloc.Free(pcTest1);
-	AssertInt(56, cAlloc.GetScratchPad()->GetUsedSize());
+#ifdef BUILD_64
+	AssertSize(96, cAlloc.GetScratchPad()->GetUsedSize());
+#else
+	AssertSize(56, cAlloc.GetScratchPad()->GetUsedSize());
+#endif // BUILD_64
 	cAlloc.Free(pcTest2);
-	AssertInt(56, cAlloc.GetScratchPad()->GetUsedSize());
+#ifdef BUILD_64
+	AssertSize(96, cAlloc.GetScratchPad()->GetUsedSize());
+#else
+	AssertSize(56, cAlloc.GetScratchPad()->GetUsedSize());
+#endif // BUILD_64
 
 	cAlloc.Kill();
 
@@ -80,8 +96,8 @@ void TestScratchPadAllocatorReadWrite(void)
 	cFile.ReadInt32(&i);
 	AssertInt(124, i);
 
-	AssertInt(0, cAllocIn.GetScratchPad()->GetMemorySize());
-	AssertInt(0, cAllocIn.GetScratchPad()->GetUsedSize());
+	AssertSize(0, cAllocIn.GetScratchPad()->GetMemorySize());
+	AssertSize(0, cAllocIn.GetScratchPad()->GetUsedSize());
 	cAllocIn.GetScratchPad()->GetParams(&sParams);
 	AssertInt(32 KB, sParams.iChunkSize);
 	cFile.Close();

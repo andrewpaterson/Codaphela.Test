@@ -77,18 +77,18 @@ void TestSetBlockInternals(void)
 
 	i = 9;
 	cSet.Put(&i, sizeof(size));
-	AssertInt(2, cSet.NumElements());
+	AssertSize(2, cSet.NumElements());
 
 	paBlock = cSet.GetArray();
 	paBlock->InsertHoldingIntoSorted();
 	psNode1 = (SSNode**)paBlock->GetInSorted(0);
 	psNode2 = (SSNode**)paBlock->GetInSorted(1);
-	AssertInt(sizeof(size), (*psNode1)->iDataSize);
-	AssertInt(sizeof(size), (*psNode2)->iDataSize);
+	AssertSize(sizeof(size), (*psNode1)->iDataSize);
+	AssertSize(sizeof(size), (*psNode2)->iDataSize);
 	piKey = (size*)RemapSinglePointer(*psNode1, sizeof(SSNode));
-	AssertInt(7, *piKey);
+	AssertSize(7, *piKey);
 	piKey = (size*)RemapSinglePointer(*psNode2, sizeof(SSNode));
-	AssertInt(9, *piKey);
+	AssertSize(9, *piKey);
 
 	iKey = 7;
 	piKey = (size*)cSet.Get(&iKey, sizeof(size));
@@ -162,7 +162,7 @@ void TestSetBlockGet(void)
 	AddToSetBlock(&cSet, "cock");
 	AddToSetBlock(&cSet, "cockerel");
 
-	AssertInt(3, cSet.NumElements());
+	AssertSize(3, cSet.NumElements());
 	AssertString("cocker", GetFromSetBlock(&cSet, "cocker"));
 
 	AssertString("cock", GetFromSetBlock(&cSet, "cock"));
@@ -189,12 +189,12 @@ void TestSetBlockGet(void)
 	AddToSetBlock(&cSet, "potentate");
 	AddToSetBlock(&cSet, "sophist");
 	AddToSetBlock(&cSet, "solicitous");
-	AssertInt(16, cSet.NumElements());
+	AssertSize(16, cSet.NumElements());
 	AssertString("solicitous", GetFromSetBlock(&cSet, "solicitous"));
 	AssertString("cock", GetFromSetBlock(&cSet, "cock"));
 
 	AddToSetBlock(&cSet, "resplendent");
-	AssertInt(17, cSet.NumElements());
+	AssertSize(17, cSet.NumElements());
 
 	AssertSetBlock(&cSet, "cocker");
 	AssertSetBlock(&cSet, "cock");
@@ -233,12 +233,12 @@ void TestSetBlockAddDuplicate(void)
 	cSet.Init(&CompareInt, true);
 	bResult = cSet.Put(&ia, sizeof(size));
 	AssertTrue(bResult);
-	AssertInt(1, cSet.NumElements());
+	AssertSize(1, cSet.NumElements());
 	AssertSize('a', *((size*)cSet.Get(&ia, sizeof(size))));
 
 	bResult = cSet.Put(&ib, sizeof(size));
 	AssertTrue(bResult);
-	AssertInt(1, cSet.NumElements());
+	AssertSize(1, cSet.NumElements());
 	AssertSize('a', *((size*)cSet.Get(&ia, sizeof(size))));
 
 	cSet.Kill();
@@ -261,10 +261,10 @@ void TestSetBlockRemove(void)
 	bResult = cSet.Put(&ia, sizeof(size));
 	bResult = cSet.Put(&ib, sizeof(size));
 	bResult = cSet.Put(&ic, sizeof(size));
-	AssertInt(3, cSet.NumElements());
+	AssertSize(3, cSet.NumElements());
 
 	cSet.Remove(&ib, sizeof(size));
-	AssertInt(2, cSet.NumElements());
+	AssertSize(2, cSet.NumElements());
 	bResult = cSet.Get(&ia, sizeof(size));
 	AssertTrue(bResult);
 	bResult = cSet.Get(&ic, sizeof(size));
@@ -273,7 +273,7 @@ void TestSetBlockRemove(void)
 	AssertFalse(bResult);
 
 	cSet.Remove(&ia, sizeof(size));
-	AssertInt(1, cSet.NumElements());
+	AssertSize(1, cSet.NumElements());
 	bResult = cSet.Get(&ia, sizeof(size));
 	AssertFalse(bResult);
 	bResult = cSet.Get(&ic, sizeof(size));
@@ -282,7 +282,7 @@ void TestSetBlockRemove(void)
 	AssertFalse(bResult);
 
 	cSet.Remove(&ic, sizeof(size));
-	AssertInt(0, cSet.NumElements());
+	AssertSize(0, cSet.NumElements());
 	bResult = cSet.Get(&ia, sizeof(size));
 	AssertFalse(bResult);
 	bResult = cSet.Get(&ic, sizeof(size));
@@ -442,7 +442,7 @@ void TestSetBlockRemoveHalf(void)
 	}
 
 	AssertTrue(bResult);
-	AssertInt(1024, mszsz.NumElements());
+	AssertSize(1024, mszsz.NumElements());
 	cRandom.Kill();
 
 	bFailed = false;

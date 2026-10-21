@@ -24,7 +24,7 @@ void TestFilesSimple(void)
 	//Use TestPackFilesPackerSimple to do this.
 
 	cFiles.Init("Input" _FS_ "Game2", "PAK");
-	AssertInt(6, cFiles.GetNumPackFiles());
+	AssertSize(6, cFiles.GetNumPackFiles());
 
 	pcFile = cFiles.GetFile("Sounds/Santa/Seattle.txt");
 	AssertNotNull(pcFile);
@@ -114,7 +114,7 @@ void TestFilesIteration(void)
 	CFileIterator	cIter;
 
 	cFiles.Init("Input" _FS_ "Game2", "PAK");
-	AssertInt(6, cFiles.GetNumPackFiles());
+	AssertSize(6, cFiles.GetNumPackFiles());
 	AssertFilePath("Input" _FS_ "Game2" _FS_ "Sounds" _FS_ "Cheese.PAK", cFiles.GetPackFiles(0)->GetFilename());
 	AssertFilePath("Input" _FS_ "Game2" _FS_ "Sounds" _FS_ "Santa.PAK", cFiles.GetPackFiles(1)->GetFilename());
 	AssertFilePath("Input" _FS_ "Game2" _FS_ "Textures.PAK", cFiles.GetPackFiles(2)->GetFilename());
@@ -218,7 +218,7 @@ void TestGetFileNames(void)
 {
 	CFiles			cFiles;
 	CMapStringInt	cFilenames;
-	int				iNumFiles;
+	size				iNumFiles;
 
 	cFiles.Init("Input" _FS_ "Game2", "PAK");
 
@@ -226,7 +226,7 @@ void TestGetFileNames(void)
 	cFiles.GetFilenames(&cFilenames);
 
 	iNumFiles = cFilenames.NumElements();
-	AssertInt(11, iNumFiles);
+	AssertSize(11, iNumFiles);
 	
 	AssertFileName(&cFilenames, 2, FILE_SYSTEM_RANK, "Models/Cars.txt");
 	AssertFileName(&cFilenames, 2, FILE_SYSTEM_RANK, "Models/Super/Barbie.txt");

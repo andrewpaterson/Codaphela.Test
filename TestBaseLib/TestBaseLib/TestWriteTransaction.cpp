@@ -1,7 +1,7 @@
 #include <stdio.h>
-#ifdef LINUX_GNU_32
+#ifdef LINUX_GNU
 #include <sys/stat.h>
-#endif // LINUX_GNU_32
+#endif // LINUX_GNU
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/Logger.h"
@@ -29,7 +29,7 @@ void TestWriteTransactionCommit(void)
 	char				szUno[] = "Uno";
 	char				szThree[] = "Three";
 	char				szName[64];
-	uint32				uiNameLength;
+	size				uiNameLength;
 
 	cFileUtil.RemoveDir(WRITE_TRANSACTION_DIR);
 	pcDatabase = CreateTransactionTestCodabase(WRITE_TRANSACTION_DIR, DS_Yes);
@@ -144,7 +144,7 @@ void TestWriteTransactionRules(void)
 	char				szLonger[] = "Longer data";
 	char				szReplaced[] = "Replaced";
 	char				szResult[256];
-	uint32				uiDataSize;
+	size				uiDataSize;
 
 	cFileUtil.RemoveDir(WRITE_TRANSACTION_DIR);
 	pcDatabase = CreateTransactionTestCodabase(WRITE_TRANSACTION_DIR, DS_Yes);
@@ -172,10 +172,10 @@ void TestWriteTransactionRules(void)
 	//Set with no size keeps the size, Put changes an existing object.
 	AssertTrue(pcTransaction->Set(5LL, szBad));
 	AssertTrue(pcTransaction->Get(5LL, &uiDataSize, NULL, 0));
-	AssertInt(4, uiDataSize);
+	AssertSize(4, uiDataSize);
 	AssertTrue(pcTransaction->Put(5LL, "Epsilon", szLonger, strlen(szLonger) + 1));
 	AssertTrue(pcTransaction->Get("Epsilon", &uiDataSize, szResult, 256));
-	AssertInt(12, uiDataSize);
+	AssertSize(12, uiDataSize);
 	AssertString(szLonger, szResult);
 
 	//An object added and removed in the same transaction never reaches the Codabase.
@@ -321,7 +321,7 @@ void TestWriteTransactionDirectSession(void)
 //////////////////////////////////////////////////////////////////////////
 void TestWriteTransactionCommitFails(void)
 {
-#ifdef LINUX_GNU_32
+#ifdef LINUX_GNU
 	CCodabase*			pcDatabase;
 	CWriteTransaction*	pcTransaction;
 	CFileUtil			cFileUtil;
@@ -364,7 +364,7 @@ void TestWriteTransactionCommitFails(void)
 	SafeKill(pcDatabase);
 
 	AssertTrue(cFileUtil.RemoveDir(WRITE_TRANSACTION_DIR));
-#endif // LINUX_GNU_32
+#endif // LINUX_GNU
 }
 
 

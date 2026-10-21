@@ -77,13 +77,13 @@ void TestArrayMinimalTemplateInsertBatch()
 	for (i = 0; i < 10; i++)
 	{
 		ps = as.Add();
-		ps->i1 = i;
+		ps->i1 = (int)i;
 		ps->i2 = 255;
 	}
-	AssertInt(10, as.NumElements());
+	AssertSize(10, as.NumElements());
 
 	as.InsertBatch(1, 2, 3, 1);
-	AssertInt(16, as.NumElements());
+	AssertSize(16, as.NumElements());
 	AssertInt(0, as.Get(0)->i1);
 	AssertInt(1, as.Get(3)->i1);
 	AssertInt(2, as.Get(6)->i1);
@@ -100,13 +100,13 @@ void TestArrayMinimalTemplateInsertBatch()
 	for (i = 0; i < 3; i++)
 	{
 		ps = as.Add();
-		ps->i1 = i;
+		ps->i1 = (int)i;
 		ps->i2 = 255;
 	}
-	AssertInt(3, as.NumElements());
+	AssertSize(3, as.NumElements());
 
 	as.InsertBatch(0, 1, 3, 1);
-	AssertInt(6, as.NumElements());
+	AssertSize(6, as.NumElements());
 	AssertInt(0, as.Get(1)->i1);
 	AssertInt(1, as.Get(3)->i1);
 	AssertInt(2, as.Get(5)->i1);
@@ -116,13 +116,13 @@ void TestArrayMinimalTemplateInsertBatch()
 	for (i = 0; i < 3; i++)
 	{
 		ps = as.Add();
-		ps->i1 = i;
+		ps->i1 = (int)i;
 		ps->i2 = 255;
 	}
-	AssertInt(3, as.NumElements());
+	AssertSize(3, as.NumElements());
 
 	as.InsertBatch(0, 1, 3, 2);
-	AssertInt(6, as.NumElements());
+	AssertSize(6, as.NumElements());
 	AssertInt(0, as.Get(1)->i1);
 	AssertInt(1, as.Get(2)->i1);
 	AssertInt(2, as.Get(4)->i1);
@@ -145,13 +145,13 @@ void TestArrayMinimalTemplateRemoveBatch()
 	for (i = 0; i < 10; i++)
 	{
 		ps = as.Add();
-		ps->i1 = i;
+		ps->i1 = (int)i;
 		ps->i2 = 255;
 	}
-	AssertInt(10, as.NumElements());
+	AssertSize(10, as.NumElements());
 
 	as.RemoveBatch(1, 1, 5, 1);
-	AssertInt(5, as.NumElements());
+	AssertSize(5, as.NumElements());
 	AssertInt(0, as.Get(0)->i1);
 	AssertInt(2, as.Get(1)->i1);
 	AssertInt(4, as.Get(2)->i1);
@@ -164,12 +164,12 @@ void TestArrayMinimalTemplateRemoveBatch()
 	for (i = 0; i < 10; i++)
 	{
 		ps = as.Add();
-		ps->i1 = i;
+		ps->i1 = (int)i;
 		ps->i2 = 255;
 	}
 
 	as.RemoveBatch(0, 3, 2, 2);
-	AssertInt(4, as.NumElements());
+	AssertSize(4, as.NumElements());
 	AssertInt(3, as.Get(0)->i1);
 	AssertInt(4, as.Get(1)->i1);
 	AssertInt(8, as.Get(2)->i1);
@@ -181,12 +181,12 @@ void TestArrayMinimalTemplateRemoveBatch()
 	for (i = 0; i < 10; i++)
 	{
 		ps = as.Add();
-		ps->i1 = i;
+		ps->i1 = (int)i;
 		ps->i2 = 255;
 	}
 
 	as.RemoveBatch(0, 4, 2, 6);
-	AssertInt(6, as.NumElements());
+	AssertSize(6, as.NumElements());
 	AssertInt(4, as.Get(0)->i1);
 	AssertInt(5, as.Get(1)->i1);
 	AssertInt(6, as.Get(2)->i1);
@@ -227,7 +227,7 @@ void TestArrayMinimalTemplateWithVirtualClass(void)
 	AssertInt(33, pc->i2);
 
 	pc = ac.AddGetIndex(&iIndex);
-	AssertInt(2, iIndex);
+	AssertSize(2, iIndex);
 	pc->Init(47);
 	AssertInt(47, pc->i1);
 	AssertInt(33, pc->i2);
@@ -249,7 +249,7 @@ void TestArrayMinimalTemplateWithVirtualClass(void)
 	AssertInt(1, pc->i1);
 	AssertInt(33, pc->i2);
 
-	AssertInt(5, ac.NumElements());
+	AssertSize(5, ac.NumElements());
 
 	pc = ac.InsertNumAt(3, 0);
 	pc[0].Init(20);
@@ -266,7 +266,7 @@ void TestArrayMinimalTemplateWithVirtualClass(void)
 	AssertInt(4, pc->i1);
 	AssertInt(33, pc->i2);
 
-	AssertInt(8, ac.NumElements());
+	AssertSize(8, ac.NumElements());
 
 	pc = ac.Push();
 	pc->Init(84);
@@ -279,19 +279,19 @@ void TestArrayMinimalTemplateWithVirtualClass(void)
 	AssertInt(33, pc->i2);
 	AssertPointer(pc, ac.Get(9));
 
-	AssertInt(10, ac.NumElements());
+	AssertSize(10, ac.NumElements());
 
 	iIndex = ac.AddNum(3);
-	AssertInt(10, iIndex);
+	AssertSize(10, iIndex);
 	pc = ac.Get(iIndex);
 	AssertString("CTestOverridenArrayTemplateItem", pc->GetName());
 	AssertString("CTestOverridenArrayTemplateItem", pc[1].GetName());
 	AssertString("CTestOverridenArrayTemplateItem", pc[2].GetName());
 
-	AssertInt(13, ac.NumElements());
+	AssertSize(13, ac.NumElements());
 
 	ac.InsertBatch(1, 2, 3, 1);
-	AssertInt(19, ac.NumElements());
+	AssertSize(19, ac.NumElements());
 	pc = ac.Get(0);
 	AssertInt(20, pc->i1);
 	AssertInt(33, pc->i2);

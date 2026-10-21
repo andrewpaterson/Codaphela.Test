@@ -11,7 +11,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertIndexedFile(char* szDirectory, const char* szFileName, void* pvExpectedData, int iExpectedLen)
+void AssertIndexedFile(char* szDirectory, const char* szFileName, void* pvExpectedData, size iExpectedLen)
 {
 	CChars		szTemp;
 	CFileUtil	cFileUtil;
@@ -102,24 +102,24 @@ void TestIndexedFilesWrite(void)
 	char					szData2[] = "Text's trusty Rights and Export Coordinator, Khadija Caffoor, went to the London Book Fair in March.";
 	char					szData3[] = "Unpleasant nor diminution excellence apartments imprudence the met new.  Draw part them.";
 	char					szData4[] = "Nor hence hoped he after her other known to defer his. For county sister seasonal better had waited.";
-	int						iLen1;
-	int						iLen2;
-	int						iLen3;
-	int						iLen4;
+	size						iLen1;
+	size						iLen2;
+	size						iLen3;
+	size						iLen4;
 	CChars					szTemp;
 	CFileDataIndex			cDataIndex;
 	CFileDataIndex			cDataIndex1;
 	CFileDataIndex			cDataIndex2;
 	CFileDataIndex			cDataIndex3;
 	CFileDataIndex			cDataIndex4;
-	uint32			uiDataSize;
+	size			uiDataSize;
 	char					szData[1024];
 	SLogConfig				sLogConfig;
 
 	iLen1 = strlen(szData1);
 	iLen2 = strlen(szData2);
-	AssertInt(88, iLen1);
-	AssertInt(100, iLen2);
+	AssertSize(88, iLen1);
+	AssertSize(100, iLen2);
 
 	cFileUtil.RemoveDirs(szDirectorty, szRewriteDirectorty, NULL);
 	AssertFalse(cFileUtil.Exists(szDirectorty));
@@ -161,8 +161,8 @@ void TestIndexedFilesWrite(void)
 
 	iLen3 = strlen(szData3);
 	iLen4 = strlen(szData4);
-	AssertInt(88, iLen3);
-	AssertInt(100, iLen4);
+	AssertSize(88, iLen3);
+	AssertSize(100, iLen4);
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
 	cIndexedFiles.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX");
@@ -177,7 +177,7 @@ void TestIndexedFilesWrite(void)
 	AssertTrue(cController.End());
 	AssertLong(2, cIndexedFiles.NumDatas());
 
-	AssertInt(2, cIndexedFiles.NumFiles());
+	AssertSize(2, cIndexedFiles.NumFiles());
 	AssertLong(1, cIndexedFiles.NumDatas(88));
 	AssertLong(0, cIndexedFiles.NumDatas(89));
 	AssertLong(1, cIndexedFiles.NumDatas(100));
@@ -216,7 +216,7 @@ void TestIndexedFilesWrite(void)
 	cIndexedFiles.ReadIndexedFileDescriptors();
 	AssertTrue(cController.End());
 
-	AssertInt(2, cIndexedFiles.NumFiles());
+	AssertSize(2, cIndexedFiles.NumFiles());
 	AssertLong(2, cIndexedFiles.NumDatas(88));
 	AssertLong(0, cIndexedFiles.NumDatas(89));
 	AssertLong(2, cIndexedFiles.NumDatas(100));
@@ -242,7 +242,7 @@ void TestIndexedFilesWrite(void)
 	cIndexedFiles.ReadIndexedFileDescriptors();
 
 	uiDataSize = cIndexedFiles.GetFileDataSize(0);
-	AssertInt(88, uiDataSize);
+	AssertSize(88, uiDataSize);
 
 	cDataIndex.Init(0, 0);
 	memset(szData, 0, 1024);
@@ -255,7 +255,7 @@ void TestIndexedFilesWrite(void)
 	AssertString(szData3, szData);
 
 	uiDataSize = cIndexedFiles.GetFileDataSize(1);
-	AssertInt(100, uiDataSize);
+	AssertSize(100, uiDataSize);
 
 	cDataIndex.Init(1, 0);
 	memset(szData, 0, 1024);

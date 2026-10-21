@@ -42,8 +42,13 @@ void AssertIteration(CFreeList* pcFreeList, void* pvFirst, ...)
 //////////////////////////////////////////////////////////////////////////
 void TestFreeListSizeof(void)
 {
-	AssertInt(32, sizeof(CFreeList));
-	AssertInt(12, sizeof(SFNode));
+#ifdef BUILD_64
+	AssertSize(56, sizeof(CFreeList));
+	AssertSize(24, sizeof(SFNode));
+#else
+	AssertSize(32, sizeof(CFreeList));
+	AssertSize(12, sizeof(SFNode));
+#endif // BUILD_64
 }
 
 
@@ -68,64 +73,64 @@ void TestFreeListAllocation(void)
 	SFNode*		psNode2;
 
 	cFreeList.Init(7, 1);
-	AssertInt(0, cFreeList.GetNumAllocatedChunks());
-	AssertInt(0, cFreeList.NumElements());
+	AssertSize(0, cFreeList.GetNumAllocatedChunks());
+	AssertSize(0, cFreeList.NumElements());
 
 	pv1 = cFreeList.Add();
-	AssertInt(1, cFreeList.GetNumAllocatedChunks());
-	AssertInt(1, cFreeList.NumElements());
+	AssertSize(1, cFreeList.GetNumAllocatedChunks());
+	AssertSize(1, cFreeList.NumElements());
 
 	pv2 = cFreeList.Add();
 	pv3 = cFreeList.Add();
 	pv4 = cFreeList.Add();
 	pv5 = cFreeList.Add();
-	AssertInt(1, cFreeList.GetNumAllocatedChunks());
-	AssertInt(5, cFreeList.NumElements());
+	AssertSize(1, cFreeList.GetNumAllocatedChunks());
+	AssertSize(5, cFreeList.NumElements());
 	AssertIteration(&cFreeList, pv1, pv2, pv3, pv4, pv5, NULL);
 
 	cFreeList.Remove(pv2);
-	AssertInt(1, cFreeList.GetNumAllocatedChunks());
-	AssertInt(4, cFreeList.NumElements());
+	AssertSize(1, cFreeList.GetNumAllocatedChunks());
+	AssertSize(4, cFreeList.NumElements());
 	psNode0 = cFreeList.GetNode(0);
 	pv2 = cFreeList.GetElement(psNode0, 1);
 	AssertNull(pv2);
 	AssertIteration(&cFreeList, pv1, pv3, pv4, pv5, NULL);
 
 	cFreeList.Remove(pv1);
-	AssertInt(1, cFreeList.GetNumAllocatedChunks());
-	AssertInt(3, cFreeList.NumElements());
+	AssertSize(1, cFreeList.GetNumAllocatedChunks());
+	AssertSize(3, cFreeList.NumElements());
 	psNode1 = cFreeList.GetNode(0);
 	AssertPointer(psNode1, psNode0);
 	AssertIteration(&cFreeList, pv3, pv4, pv5, NULL);
 
 	pv6 = cFreeList.Add();
-	AssertInt(1, cFreeList.GetNumAllocatedChunks());
-	AssertInt(4, cFreeList.NumElements());
+	AssertSize(1, cFreeList.GetNumAllocatedChunks());
+	AssertSize(4, cFreeList.NumElements());
 	AssertIteration(&cFreeList, pv6, pv3, pv4, pv5, NULL);
 
 	pv7 = cFreeList.Add();
 	pv8 = cFreeList.Add();
 	pv9 = cFreeList.Add();
 	pv1 = cFreeList.Add();
-	AssertInt(1, cFreeList.GetNumAllocatedChunks());
-	AssertInt(8, cFreeList.NumElements());
+	AssertSize(1, cFreeList.GetNumAllocatedChunks());
+	AssertSize(8, cFreeList.NumElements());
 	AssertIteration(&cFreeList, pv6, pv7, pv3, pv4, pv5, pv8, pv9, pv1, NULL);
 
 	pv2 = cFreeList.Add();
-	AssertInt(2, cFreeList.GetNumAllocatedChunks());
-	AssertInt(9, cFreeList.NumElements());
+	AssertSize(2, cFreeList.GetNumAllocatedChunks());
+	AssertSize(9, cFreeList.NumElements());
 	psNode1 = cFreeList.GetNode(1);
 	AssertFalse(psNode0 == psNode1);  //Make sure the "freed" node is reused.
 	AssertIteration(&cFreeList, pv6, pv7, pv3, pv4, pv5, pv8, pv9, pv1, pv2, NULL);
 
 	cFreeList.Remove(pv2);
-	AssertInt(1, cFreeList.GetNumAllocatedChunks());
-	AssertInt(8, cFreeList.NumElements());
+	AssertSize(1, cFreeList.GetNumAllocatedChunks());
+	AssertSize(8, cFreeList.NumElements());
 	AssertIteration(&cFreeList, pv6, pv7, pv3, pv4, pv5, pv8, pv9, pv1, NULL);
 
 	pv2 = cFreeList.Add();
-	AssertInt(2, cFreeList.GetNumAllocatedChunks());
-	AssertInt(9, cFreeList.NumElements());
+	AssertSize(2, cFreeList.GetNumAllocatedChunks());
+	AssertSize(9, cFreeList.NumElements());
 	psNode2 = cFreeList.GetNode(1);
 	AssertPointer(psNode1, psNode2);  //Make sure the "freed" node is reused.
 	AssertIteration(&cFreeList, pv6, pv7, pv3, pv4, pv5, pv8, pv9, pv1, pv2, NULL);
@@ -164,7 +169,7 @@ void TestFreeListAlignment(void)
 		for (k = 0; k < 9; k++)
 		{
 			pv = pcFreeList->Add();
-			AssertInt(0, ((int32)pv) % iAlignment);
+			AssertInt(0, (int32)((ptr)pv % iAlignment));
 			psNode = pcFreeList->FindNode(pv, false);
 			AssertTrue(psNode->iOffset < iAlignment);
 		}
@@ -179,45 +184,45 @@ void TestFreeListAlignment(void)
 	cArray.Kill();
 
 	cFreeList.Init(10, 16);
-	AssertInt(16, cFreeList.GetElementStride());
-	AssertInt(10, cFreeList.GetElementSize());
+	AssertSize(16, cFreeList.GetElementStride());
+	AssertSize(10, cFreeList.GetElementSize());
 	cFreeList.Kill();
 
 	cFreeList.Init(20, 16);
-	AssertInt(32, cFreeList.GetElementStride());
-	AssertInt(20, cFreeList.GetElementSize());
+	AssertSize(32, cFreeList.GetElementStride());
+	AssertSize(20, cFreeList.GetElementSize());
 	cFreeList.Kill();
 
 	cFreeList.Init(1, 4);
-	AssertInt(4, cFreeList.GetElementStride());
+	AssertSize(4, cFreeList.GetElementStride());
 	cFreeList.Kill();
 
 	cFreeList.Init(2, 4);
-	AssertInt(4, cFreeList.GetElementStride());
+	AssertSize(4, cFreeList.GetElementStride());
 	cFreeList.Kill();
 
 	cFreeList.Init(3, 4);
-	AssertInt(4, cFreeList.GetElementStride());
+	AssertSize(4, cFreeList.GetElementStride());
 	cFreeList.Kill();
 
 	cFreeList.Init(4, 4);
-	AssertInt(4, cFreeList.GetElementStride());
+	AssertSize(4, cFreeList.GetElementStride());
 	cFreeList.Kill();
 
 	cFreeList.Init(5, 4);
-	AssertInt(8, cFreeList.GetElementStride());
+	AssertSize(8, cFreeList.GetElementStride());
 	cFreeList.Kill();
 
 	cFreeList.Init(6, 4);
-	AssertInt(8, cFreeList.GetElementStride());
+	AssertSize(8, cFreeList.GetElementStride());
 	cFreeList.Kill();
 
 	cFreeList.Init(7, 4);
-	AssertInt(8, cFreeList.GetElementStride());
+	AssertSize(8, cFreeList.GetElementStride());
 	cFreeList.Kill();
 
 	cFreeList.Init(8, 4);
-	AssertInt(8, cFreeList.GetElementStride());
+	AssertSize(8, cFreeList.GetElementStride());
 	cFreeList.Kill();
 }
 
@@ -253,11 +258,11 @@ void TestFreeListOffsetAlignment(void)
 					pv = pcFreeList->Add();
 					if (iOffset >= 0)
 					{
-						AssertInt(iOffset % iAlignment, ((int32)pv) % iAlignment);
+						AssertInt(iOffset % iAlignment, (int32)((ptr)pv % iAlignment));
 					}
 					else
 					{
-						AssertInt(iAlignment - (-iOffset % iAlignment), ((int32)pv) % iAlignment);
+						AssertInt(iAlignment - (-iOffset % iAlignment), (int32)((ptr)pv % iAlignment));
 					}
 				}
 			}
@@ -340,7 +345,7 @@ void TestFreeListRemoveDuringIteration1()
 
 	while (pi)
 	{
-		AssertInt(500 - ui, cFreeList.NumElements());
+		AssertSize(500 - ui, cFreeList.NumElements());
 		cFreeList.RemoveDuringIteration(&sIter);
 		ui++;
 
@@ -378,7 +383,7 @@ void TestFreeListRemoveDuringIteration2()
 
 	while (pi)
 	{
-		AssertInt(501 - ui, cFreeList.NumElements());
+		AssertSize(501 - ui, cFreeList.NumElements());
 		cFreeList.RemoveDuringIteration(&sIter);
 		ui++;
 
@@ -389,7 +394,7 @@ void TestFreeListRemoveDuringIteration2()
 
 		pi = (int*)cFreeList.Iterate(&sIter);
 	}
-	AssertInt(1, cFreeList.NumElements());
+	AssertSize(1, cFreeList.NumElements());
 	AssertInt(498, *pi);
 
 	ui = 499;
@@ -434,7 +439,7 @@ void TestFreeListRemoveDuringIteration3()
 
 	while (pi)
 	{
-		AssertInt(507 - ui, cFreeList.NumElements());
+		AssertSize(507 - ui, cFreeList.NumElements());
 		cFreeList.RemoveDuringIteration(&sIter);
 		ui++;
 
@@ -445,7 +450,7 @@ void TestFreeListRemoveDuringIteration3()
 
 		pi = (int*)cFreeList.Iterate(&sIter);
 	}
-	AssertInt(7, cFreeList.NumElements());
+	AssertSize(7, cFreeList.NumElements());
 	AssertInt(492, *pi);
 
 	ui = 493;
@@ -485,7 +490,7 @@ void TestFreeListRemoveDuringIteration4()
 
 	while (pi)
 	{
-		AssertInt(500 - ui, cFreeList.NumElements());
+		AssertSize(500 - ui, cFreeList.NumElements());
 		cFreeList.RemoveDuringIteration(&sIter);
 		ui++;
 

@@ -67,44 +67,44 @@ void TestAllocatorFreeList(void)
 
 	cAlloc.Init(256);
 	pcBlock = cAlloc.GetFreeList();
-	AssertInt(0, pcBlock->NumElements());
+	AssertSize(0, pcBlock->NumElements());
 
 	pv1 = cAlloc.Malloc(256);
 	AssertNotNull(pv1);
-	AssertInt(1, pcBlock->NumElements());
+	AssertSize(1, pcBlock->NumElements());
 	AssertPointer(pcBlock->Get(0), pv1);
 
 	pv2 = cAlloc.Malloc(255);
 	AssertNotNull(pv2);
-	AssertInt(2, pcBlock->NumElements());
+	AssertSize(2, pcBlock->NumElements());
 	AssertPointer(pcBlock->Get(1), pv2);
 
 	pv3 = cAlloc.Malloc(1);
 	AssertNotNull(pv3);
-	AssertInt(3, pcBlock->NumElements());
+	AssertSize(3, pcBlock->NumElements());
 	AssertPointer(pcBlock->Get(2), pv3);
 
 	pv4 = cAlloc.Malloc(256);
 	AssertNotNull(pv4);
-	AssertInt(4, pcBlock->NumElements());
+	AssertSize(4, pcBlock->NumElements());
 	AssertPointer(pcBlock->Get(3), pv4);
 
 	pv = cAlloc.Realloc(pv1, 255);
 	AssertPointer(pv1, pv);
-	AssertInt(4, pcBlock->NumElements());
+	AssertSize(4, pcBlock->NumElements());
 
 	pv = cAlloc.Malloc(257);
 	AssertNull(pv);
-	AssertInt(4, pcBlock->NumElements());
+	AssertSize(4, pcBlock->NumElements());
 
 	cAlloc.Free(pv2);
-	AssertInt(3, pcBlock->NumElements());
+	AssertSize(3, pcBlock->NumElements());
 	cAlloc.Free(pv1);
-	AssertInt(2, pcBlock->NumElements());
+	AssertSize(2, pcBlock->NumElements());
 	cAlloc.Free(pv4);
-	AssertInt(1, pcBlock->NumElements());
+	AssertSize(1, pcBlock->NumElements());
 	cAlloc.Free(pv3);
-	AssertInt(0, pcBlock->NumElements());
+	AssertSize(0, pcBlock->NumElements());
 
 	cAlloc.Kill();
 }

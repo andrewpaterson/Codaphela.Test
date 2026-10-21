@@ -101,34 +101,34 @@ void TestMapBlockInternals(void)
 
 	i = 9; j = 21;
 	cMap.Put(&i, sizeof(size), &j, sizeof(size));
-	AssertInt(2, cMap.NumElements());
+	AssertSize(2, cMap.NumElements());
 
 	paBlock = cMap.GetArray();
 	paBlock->InsertHoldingIntoSorted();
 	psNode1 = (SMNode**)paBlock->GetInSorted(0);
 	psNode2 = (SMNode**)paBlock->GetInSorted(1);
-	AssertInt(sizeof(size), (*psNode1)->iValueSize);
-	AssertInt(sizeof(size), (*psNode1)->iKeySize);
-	AssertInt(sizeof(size), (*psNode2)->iValueSize);
-	AssertInt(sizeof(size), (*psNode2)->iKeySize);
+	AssertSize(sizeof(size), (*psNode1)->iValueSize);
+	AssertSize(sizeof(size), (*psNode1)->iKeySize);
+	AssertSize(sizeof(size), (*psNode2)->iValueSize);
+	AssertSize(sizeof(size), (*psNode2)->iKeySize);
 	piKey = (size*)RemapSinglePointer(*psNode1, sizeof(SMNode));
-	AssertInt(7, *piKey);
+	AssertSize(7, *piKey);
 	piData = (size*)RemapSinglePointer(piKey, (size)sizeof(size));
-	AssertInt(43, *piData);
+	AssertSize(43, *piData);
 	piKey = (size*)RemapSinglePointer(*psNode2, sizeof(SMNode));
-	AssertInt(9, *piKey);
+	AssertSize(9, *piKey);
 	piData = (size*)RemapSinglePointer(piKey, (size)sizeof(size));
-	AssertInt(21, *piData);
+	AssertSize(21, *piData);
 
 	iKey = 7; piData = NULL;
 	cMap.Get(&iKey, sizeof(size), (void**)&piData, NULL);
 	AssertNotNull(piData);
-	AssertInt(43, *piData);
+	AssertSize(43, *piData);
 
 	iKey = 9; piData = NULL;
 	cMap.Get(&iKey, sizeof(size), (void**)&piData, NULL);
 	AssertNotNull(piData);
-	AssertInt(21, *piData);
+	AssertSize(21, *piData);
 
 	iKey = 3; piData = NULL;
 	cMap.Get(&iKey, sizeof(size), (void**)&piData, NULL);
@@ -205,14 +205,14 @@ void TestMapBlockGet(void)
 	AddToMapBlock(&cMap, "cock", llia[1]);
 	AddToMapBlock(&cMap, "cockerel", llia[2]);
 
-	AssertInt(3, cMap.NumElements());
+	AssertSize(3, cMap.NumElements());
 	AssertTrue(GetFromMapBlock(&cMap, "cocker", &plli, &iSize));
 	AssertLong(llia[0], *plli);
-	AssertInt(sizeof(int64), iSize);
+	AssertSize(sizeof(int64), iSize);
 
 	AssertTrue(GetFromMapBlock(&cMap, "cock", &plli, &iSize));
 	AssertLong(llia[1], *plli);
-	AssertInt(sizeof(int64), iSize);
+	AssertSize(sizeof(int64), iSize);
 
 	AssertTrue(GetFromMapBlock(&cMap, "cockerel", &plli, &iSize));
 	AssertLong(llia[2], *plli);
@@ -234,26 +234,26 @@ void TestMapBlockGet(void)
 	AddToMapBlock(&cMap, "ignominy", llia[10]);
 	AssertTrue(GetFromMapBlock(&cMap, "inimical", &plli, &iSize));
 	AssertLong(llia[9], *plli);
-	AssertInt(sizeof(int64), iSize);
+	AssertSize(sizeof(int64), iSize);
 	AssertTrue(GetFromMapBlock(&cMap, "cocker", &plli, &iSize));
 	AssertLong(llia[0], *plli);
-	AssertInt(sizeof(int64), iSize);
+	AssertSize(sizeof(int64), iSize);
 
 	AddToMapBlock(&cMap, "voluble", llia[11]);
 	AddToMapBlock(&cMap, "intransigent", llia[12]);
 	AddToMapBlock(&cMap, "potentate", llia[13]);
 	AddToMapBlock(&cMap, "sophist", llia[14]);
 	AddToMapBlock(&cMap, "solicitous", llia[15]);
-	AssertInt(16, cMap.NumElements());
+	AssertSize(16, cMap.NumElements());
 	AssertTrue(GetFromMapBlock(&cMap, "solicitous", &plli, &iSize));
 	AssertLong(llia[15], *plli);
-	AssertInt(sizeof(int64), iSize);
+	AssertSize(sizeof(int64), iSize);
 	AssertTrue(GetFromMapBlock(&cMap, "cock", &plli, &iSize));
 	AssertLong(llia[1], *plli);
-	AssertInt(sizeof(int64), iSize);
+	AssertSize(sizeof(int64), iSize);
 
 	AddToMapBlock(&cMap, "resplendent", llia[16]);
-	AssertInt(17, cMap.NumElements());
+	AssertSize(17, cMap.NumElements());
 
 	AssertMapBlock(&cMap, "cocker", llia[0]);
 	AssertMapBlock(&cMap, "cock", llia[1]);
@@ -296,12 +296,12 @@ void TestMapBlockAddDuplicate(void)
 	cMap.Init(&CompareInt, true);
 	bResult = cMap.Put(&ia, sizeof(size), "Hello", iHelloLen + 1);
 	AssertTrue(bResult);
-	AssertInt(1, cMap.NumElements());
+	AssertSize(1, cMap.NumElements());
 	AssertString("Hello", (char*)cMap.Get(&ia, sizeof(size)));
 
 	bResult = cMap.Put(&ib, sizeof(size), "World", iWorldLen + 1);
 	AssertTrue(bResult);
-	AssertInt(1, cMap.NumElements());
+	AssertSize(1, cMap.NumElements());
 	AssertString("World", (char*)cMap.Get(&ia, sizeof(size)));
 
 	cMap.Kill();
@@ -325,10 +325,10 @@ void TestMapBlockRemove(void)
 	bResult = cMap.Put(&ia, sizeof(size), "Hello", strlen("Hello") + 1);
 	bResult = cMap.Put(&ib, sizeof(size), "World", strlen("World") + 1);
 	bResult = cMap.Put(&ic, sizeof(size), "Rogue", strlen("Rogue") + 1);
-	AssertInt(3, cMap.NumElements());
+	AssertSize(3, cMap.NumElements());
 
 	cMap.Remove(&ib, sizeof(size));
-	AssertInt(2, cMap.NumElements());
+	AssertSize(2, cMap.NumElements());
 	bResult = cMap.Get(&ia, sizeof(size), (void**)&szData, NULL);
 	AssertTrue(bResult);
 	AssertString(szData, "Hello");
@@ -339,7 +339,7 @@ void TestMapBlockRemove(void)
 	AssertFalse(bResult);
 
 	cMap.Remove(&ia, sizeof(size));
-	AssertInt(1, cMap.NumElements());
+	AssertSize(1, cMap.NumElements());
 	bResult = cMap.Get(&ia, sizeof(size), (void**)&szData, NULL);
 	AssertFalse(bResult);
 	bResult = cMap.Get(&ic, sizeof(size), (void**)&szData, NULL);
@@ -349,7 +349,7 @@ void TestMapBlockRemove(void)
 	AssertFalse(bResult);
 
 	cMap.Remove(&ic, sizeof(size));
-	AssertInt(0, cMap.NumElements());
+	AssertSize(0, cMap.NumElements());
 	bResult = cMap.Get(&ia, sizeof(size), (void**)&szData, NULL);
 	AssertFalse(bResult);
 	bResult = cMap.Get(&ic, sizeof(size), (void**)&szData, NULL);
@@ -431,7 +431,7 @@ void TestMapBlockDataMemoryUnchanged(void)
 	{
 		MakeKey(&cRandom, &aszWords, &sz);
 
-		mszsz.Put(sz.Text(), IntToString(i));
+		mszsz.Put(sz.Text(), SizeToString(i));
 		szData = mszsz.Get(sz.Text());
 		aszData[i] = szData;
 
@@ -492,7 +492,7 @@ void TestMapBlockRemoveHalf(void)
 	{
 		MakeKey(&cRandom, &aszWords, &sz);
 
-		mszsz.Put(sz.Text(), IntToString(i));
+		mszsz.Put(sz.Text(), SizeToString(i));
 		szData = mszsz.Get(sz.Text());
 		aszData[i] = szData;
 
@@ -513,7 +513,7 @@ void TestMapBlockRemoveHalf(void)
 	}
 
 	AssertTrue(bResult);
-	AssertInt(1024, mszsz.NumElements());
+	AssertSize(1024, mszsz.NumElements());
 	cRandom.Kill();
 
 	bFailed = false;
@@ -568,18 +568,18 @@ void TestMapBlockPutDifferenceSizeDuplicates(void)
 	SMNode*				pcNode;
 
 	cAllocator.Init(&gcSystemAllocator);
-	AssertInt(0, cAllocator.AllocatedUserSize());
+	AssertSize(0, cAllocator.AllocatedUserSize());
 
 	cIndex.Init(&cAllocator);
 	cAccess.Init(&cIndex);
-	AssertInt(0, cIndex.NumElements());
-	AssertInt(cAllocator.AllocatedUserSize(), cIndex.ByteSize());
+	AssertSize(0, cIndex.NumElements());
+	AssertSize(cAllocator.AllocatedUserSize(), cIndex.ByteSize());
 
 	iKeyLength = strlen("Spoedling");
 	AssertNull(cIndex.GetNode("Spoedling", iKeyLength));
 
 	AssertTrue(cAccess.PutStringData("SpoedlingZ", szKerfuffle, 10));
-	AssertInt(1, cIndex.NumElements());
+	AssertSize(1, cIndex.NumElements());
 
 	//AssertInt(cAllocator.AllocatedUserSize(), cIndex.ByteSize());
 	pcNode = cIndex.GetNode("Spoedling", iKeyLength);
@@ -588,7 +588,7 @@ void TestMapBlockPutDifferenceSizeDuplicates(void)
 	AssertNotNull(pcNode);
 
 	AssertTrue(cAccess.PutStringData("Spoedling", szTwo, 3));
-	AssertInt(2, cIndex.NumElements());
+	AssertSize(2, cIndex.NumElements());
 	//AssertInt(cAllocator.AllocatedUserSize(), cIndex.ByteSize());
 	AssertString("kerfuffle", cAccess.GetStringString("SpoedlingZ", szResult));
 	AssertString("22", cAccess.GetStringString("Spoedling", szResult));
@@ -597,7 +597,7 @@ void TestMapBlockPutDifferenceSizeDuplicates(void)
 	AssertNotNull(pcNode);
 
 	AssertTrue(cAccess.PutStringData("Spoedling", szOtherTwo, 3));
-	AssertInt(2, cIndex.NumElements());
+	AssertSize(2, cIndex.NumElements());
 	//AssertInt(cAllocator.AllocatedUserSize(), cIndex.ByteSize());
 	AssertString("kerfuffle", cAccess.GetStringString("SpoedlingZ", szResult));
 	AssertString("OT", cAccess.GetStringString("Spoedling", szResult));
@@ -606,7 +606,7 @@ void TestMapBlockPutDifferenceSizeDuplicates(void)
 	AssertNotNull(pcNode);
 
 	AssertTrue(cAccess.PutStringData("Spoedling", szThree, 4));
-	AssertInt(2, cIndex.NumElements());
+	AssertSize(2, cIndex.NumElements());
 	//AssertInt(cAllocator.AllocatedUserSize(), cIndex.ByteSize());
 	AssertString("kerfuffle", cAccess.GetStringString("SpoedlingZ", szResult));
 	AssertString("333", cAccess.GetStringString("Spoedling", szResult));
@@ -615,7 +615,7 @@ void TestMapBlockPutDifferenceSizeDuplicates(void)
 	AssertNotNull(pcNode);
 
 	AssertTrue(cAccess.PutStringData("Spoedling", szOne, 2));
-	AssertInt(2, cIndex.NumElements());
+	AssertSize(2, cIndex.NumElements());
 	//AssertInt(cAllocator.AllocatedUserSize(), cIndex.ByteSize());
 	AssertString("kerfuffle", cAccess.GetStringString("SpoedlingZ", szResult));
 	AssertString("1", cAccess.GetStringString("Spoedling", szResult));
@@ -625,7 +625,7 @@ void TestMapBlockPutDifferenceSizeDuplicates(void)
 
 	cAccess.Kill();
 	cIndex.Kill();
-	AssertInt(0, cAllocator.AllocatedUserSize());
+	AssertSize(0, cAllocator.AllocatedUserSize());
 }
 
 
@@ -646,31 +646,31 @@ void TestMapBlockDataFree(void)
 	cMap.SetDataFreeCallback(&cDataFree);
 	cAccess.Init(&cMap);
 
-	AssertInt(0, giMapBlockCallbackData);
+	AssertSize(0, giMapBlockCallbackData);
 	cAccess.PutIntString(7, "Jimmy!");
 	AssertString("", gszMapBlockCallbackData);
-	AssertInt(0, giMapBlockCallbackData);
+	AssertSize(0, giMapBlockCallbackData);
 	cAccess.DeleteInt(7);
 	AssertString("Jimmy!", gszMapBlockCallbackData);
-	AssertInt(1, giMapBlockCallbackData);
+	AssertSize(1, giMapBlockCallbackData);
 
 	cDataFree.Clear();
 	cAccess.PutIntString(7, "Jimmy's not gone.");
 	AssertString("", gszMapBlockCallbackData);
 	cAccess.PutIntString(7, "Oh, never mind.");
 	AssertString("Jimmy's not gone.", gszMapBlockCallbackData);
-	AssertInt(2, giMapBlockCallbackData);
+	AssertSize(2, giMapBlockCallbackData);
 
 	cDataFree.Clear();
 	cAccess.PutIntString(7, "Jimmy is Back!!");
 	AssertString("Oh, never mind.", gszMapBlockCallbackData);     
-	AssertInt(3, giMapBlockCallbackData);
+	AssertSize(3, giMapBlockCallbackData);
 
 	cDataFree.Clear();
 	cAccess.Kill();
 	cMap.Kill();
 
-	AssertInt(4, giMapBlockCallbackData);
+	AssertSize(4, giMapBlockCallbackData);
 	AssertString("Jimmy is Back!!", gszMapBlockCallbackData);
 }
 
@@ -722,29 +722,29 @@ void TestMapBlockIterate(void)
 	TestMapCopyKey(acKey, pvKey, iKeySize);
 	AssertString("ABC", acKey);
 	AssertString("XYZ", pvData);
-	AssertInt(3, iKeySize);
-	AssertInt(4, iDataSize);
+	AssertSize(3, iKeySize);
+	AssertSize(4, iDataSize);
 	bExists = cMap.Iterate(&sIter, (void**)&pvKey, &iKeySize, (void**)&pvData, &iDataSize);
 	AssertTrue(bExists);
 	TestMapCopyKey(acKey, pvKey, iKeySize);
 	AssertString("Blame", acKey);
 	AssertString("Canada", pvData);
-	AssertInt(5, iKeySize);
-	AssertInt(7, iDataSize);
+	AssertSize(5, iKeySize);
+	AssertSize(7, iDataSize);
 	bExists = cMap.Iterate(&sIter, (void**)&pvKey, &iKeySize, (void**)&pvData, &iDataSize);
 	AssertTrue(bExists);
 	TestMapCopyKey(acKey, pvKey, iKeySize);
 	AssertString("Collision", acKey);
 	AssertString("Detection", pvData);
-	AssertInt(9, iKeySize);
-	AssertInt(10, iDataSize);
+	AssertSize(9, iKeySize);
+	AssertSize(10, iDataSize);
 	bExists = cMap.Iterate(&sIter, (void**)&pvKey, &iKeySize, (void**)&pvData, &iDataSize);
 	AssertTrue(bExists);
 	TestMapCopyKey(acKey, pvKey, iKeySize);
 	AssertString("Retro", acKey);
 	AssertString("Evolved", pvData);
-	AssertInt(5, iKeySize);
-	AssertInt(8, iDataSize);
+	AssertSize(5, iKeySize);
+	AssertSize(8, iDataSize);
 	bExists = cMap.Iterate(&sIter, (void**)&pvKey, &iKeySize, (void**)&pvData, &iDataSize);
 	AssertFalse(bExists);
 
@@ -762,29 +762,29 @@ void TestMapBlockIterate(void)
 	TestMapCopyKey(acKey, pvKey, iKeySize);
 	AssertString("ABC", acKey);
 	AssertString("XYZ", pvData);
-	AssertInt(3, iKeySize);
-	AssertInt(4, iDataSize);
+	AssertSize(3, iKeySize);
+	AssertSize(4, iDataSize);
 	bExists = cMapIn.Iterate(&sIter, (void**)&pvKey, &iKeySize, (void**)&pvData, &iDataSize);
 	AssertTrue(bExists);
 	TestMapCopyKey(acKey, pvKey, iKeySize);
 	AssertString("Blame", acKey);
 	AssertString("Canada", pvData);
-	AssertInt(5, iKeySize);
-	AssertInt(7, iDataSize);
+	AssertSize(5, iKeySize);
+	AssertSize(7, iDataSize);
 	bExists = cMapIn.Iterate(&sIter, (void**)&pvKey, &iKeySize, (void**)&pvData, &iDataSize);
 	AssertTrue(bExists);
 	TestMapCopyKey(acKey, pvKey, iKeySize);
 	AssertString("Collision", acKey);
 	AssertString("Detection", pvData);
-	AssertInt(9, iKeySize);
-	AssertInt(10, iDataSize);
+	AssertSize(9, iKeySize);
+	AssertSize(10, iDataSize);
 	bExists = cMapIn.Iterate(&sIter, (void**)&pvKey, &iKeySize, (void**)&pvData, &iDataSize);
 	AssertTrue(bExists);
 	TestMapCopyKey(acKey, pvKey, iKeySize);
 	AssertString("Retro", acKey);
 	AssertString("Evolved", pvData);
-	AssertInt(5, iKeySize);
-	AssertInt(8, iDataSize);
+	AssertSize(5, iKeySize);
+	AssertSize(8, iDataSize);
 	bExists = cMapIn.Iterate(&sIter, (void**)&pvKey, &iKeySize, (void**)&pvData, &iDataSize);
 	AssertFalse(bExists);
 

@@ -14,19 +14,19 @@ void TestArrayTemplateEmbeddedAdd(void)
 	int*							piEmbeddedData;
 
 	cArray.Init();
-	AssertInt(0, cArray.NumElements());
+	AssertSize(0, cArray.NumElements());
 	piEmbeddedData = cArray.GetData();
 
 	pi = cArray.Add();
 	*pi = 7;
-	AssertInt(1, cArray.NumElements());
+	AssertSize(1, cArray.NumElements());
 	AssertPointer(piEmbeddedData, cArray.GetData());
 
 	pi = cArray.Get(0);
 	AssertInt(7,* pi);
 
 	cArray.AddNum(4);
-	AssertInt(5, cArray.NumElements());
+	AssertSize(5, cArray.NumElements());
 	AssertPointer(piEmbeddedData, cArray.GetData());
 	*cArray.Get(1) = 6;
 	*cArray.Get(2) = 5;
@@ -37,7 +37,7 @@ void TestArrayTemplateEmbeddedAdd(void)
 
 	pi = cArray.Add();
 	*pi = 22;
-	AssertInt(6, cArray.NumElements());
+	AssertSize(6, cArray.NumElements());
 	AssertPointer(piEmbeddedData, cArray.GetData());
 	AssertInt(7, *cArray.Get(0));
 	AssertInt(22, *cArray.Get(5));
@@ -46,7 +46,7 @@ void TestArrayTemplateEmbeddedAdd(void)
 
 	pi = cArray.Add();
 	*pi = 20;
-	AssertInt(7, cArray.NumElements());
+	AssertSize(7, cArray.NumElements());
 	AssertFalse(piEmbeddedData == cArray.GetData());
 
 	AssertInt(7, *cArray.Get(0));
@@ -77,7 +77,7 @@ void TestArrayTemplateEmbeddedRemoveAt(void)
 	piEmbeddedData = cArray.GetData();
 	cArray.AddNum(6);
 	AssertFalse(piEmbeddedData == cArray.GetData());
-	AssertInt(6, cArray.NumElements());
+	AssertSize(6, cArray.NumElements());
 
 	*cArray.Get(0) = 7;
 	*cArray.Get(1) = 6;
@@ -95,7 +95,7 @@ void TestArrayTemplateEmbeddedRemoveAt(void)
 	
 	cArray.Resize(5);
 	AssertPointer(piEmbeddedData, cArray.GetData());
-	AssertInt(5, cArray.NumElements());
+	AssertSize(5, cArray.NumElements());
 
 	AssertInt(7, *cArray.Get(0));
 	AssertInt(6, *cArray.Get(1));
@@ -105,12 +105,12 @@ void TestArrayTemplateEmbeddedRemoveAt(void)
 
 	pi = cArray.Add();
 	*pi = 20;
-	AssertInt(6, cArray.NumElements());
+	AssertSize(6, cArray.NumElements());
 	AssertFalse(piEmbeddedData == cArray.GetData());
 
 	cArray.RemoveAt(2);
 	AssertPointer(piEmbeddedData, cArray.GetData());
-	AssertInt(5, cArray.NumElements());
+	AssertSize(5, cArray.NumElements());
 
 	AssertInt(7, *cArray.Get(0));
 	AssertInt(6, *cArray.Get(1));
@@ -120,7 +120,7 @@ void TestArrayTemplateEmbeddedRemoveAt(void)
 
 	cArray.RemoveAt(3);
 	AssertPointer(piEmbeddedData, cArray.GetData());
-	AssertInt(4, cArray.NumElements());
+	AssertSize(4, cArray.NumElements());
 
 	AssertInt(7, *cArray.Get(0));
 	AssertInt(6, *cArray.Get(1));
@@ -129,19 +129,19 @@ void TestArrayTemplateEmbeddedRemoveAt(void)
 
 	i = 8;
 	cArray.InsertAt(&i, 4);
-	AssertInt(5, cArray.NumElements());
+	AssertSize(5, cArray.NumElements());
 	AssertInt(8, *cArray.Get(4));
 
 	i = 9;
 	cArray.InsertAt(&i, 5);
 	AssertFalse(piEmbeddedData == cArray.GetData());
-	AssertInt(6, cArray.NumElements());
+	AssertSize(6, cArray.NumElements());
 	AssertInt(8, *cArray.Get(4));
 	AssertInt(9, *cArray.Get(5));
 
 	cArray.RemoveAt(5);
 	AssertPointer(piEmbeddedData, cArray.GetData());
-	AssertInt(5, cArray.NumElements());
+	AssertSize(5, cArray.NumElements());
 
 	AssertInt(7, *cArray.Get(0));
 	AssertInt(6, *cArray.Get(1));
@@ -183,20 +183,20 @@ void TestArrayTemplateEmbeddedRemove(void)
 	iIndex = cArray.GetIndex(&pi1);
 	AssertSize(ARRAY_ELEMENT_NOT_FOUND, iIndex);
 	iIndex = cArray.GetIndex(ppi1);
-	AssertInt(0, iIndex);
+	AssertSize(0, iIndex);
 	iIndex = cArray.GetIndex(&pi2);
 	AssertSize(ARRAY_ELEMENT_NOT_FOUND, iIndex);
 	iIndex = cArray.GetIndex(ppi2);
-	AssertInt(1, iIndex);
+	AssertSize(1, iIndex);
 
 	iIndex = cArray.Find(&pi1);
-	AssertInt(0, iIndex);
+	AssertSize(0, iIndex);
 	iIndex = cArray.Find(ppi1);
-	AssertInt(0, iIndex);
+	AssertSize(0, iIndex);
 	iIndex = cArray.Find(&pi2);
-	AssertInt(1, iIndex);
+	AssertSize(1, iIndex);
 	iIndex = cArray.Find(ppi2);
-	AssertInt(1, iIndex);
+	AssertSize(1, iIndex);
 
 	cArray.Remove(&pi1);
 	iIndex = cArray.Find(&pi1);
@@ -214,10 +214,18 @@ typedef CArrayTemplateEmbedded<CTestOverridenArrayTemplateItem, 3> CTestArrayTem
 //////////////////////////////////////////////////////////////////////////
 void TestArrayTemplateEmbeddedSizeof(void)
 {
-	AssertInt(36, 3 * sizeof(CTestOverridenArrayTemplateItem));
-	AssertInt(24, sizeof(CArrayTemplate<CTestOverridenArrayTemplateItem>));
+#ifdef BUILD_64
+	AssertSize(48, 3 * sizeof(CTestOverridenArrayTemplateItem));
+	AssertSize(48, sizeof(CArrayTemplate<CTestOverridenArrayTemplateItem>));
 
-	AssertInt(sizeof(int) + 3 * sizeof(CTestOverridenArrayTemplateItem), sizeof(CTestArrayTemplateEmbedded));
+	//The int is padded to the alignment of the item's virtual function table pointer.
+	AssertSize(sizeof(void*) + 3 * sizeof(CTestOverridenArrayTemplateItem), sizeof(CTestArrayTemplateEmbedded));
+#else
+	AssertSize(36, 3 * sizeof(CTestOverridenArrayTemplateItem));
+	AssertSize(24, sizeof(CArrayTemplate<CTestOverridenArrayTemplateItem>));
+
+	AssertSize(sizeof(int) + 3 * sizeof(CTestOverridenArrayTemplateItem), sizeof(CTestArrayTemplateEmbedded));
+#endif // BUILD_64
 }
 
 
@@ -254,7 +262,7 @@ void TestArrayTemplateEmbeddedAllocationWithVirtualClass(void)
 	AssertInt(33, pc->i2);
 	AssertPointer(ac.Get(3), pc);
 
-	AssertInt(4, ac.NumElements());
+	AssertSize(4, ac.NumElements());
 
 	pc = ac.InsertAt(3);
 	pc->Init(9);
@@ -281,28 +289,28 @@ void TestArrayTemplateEmbeddedChangeChunkSize(void)
 	size							i;
 
 	cArray.Init();
-	AssertInt(0, cArray.NumElements());
+	AssertSize(0, cArray.NumElements());
 	piEmbeddedData = cArray.GetData();
 
 	for (i = 0; i < 3; i++)
 	{
 		pi = cArray.Add();
-		*pi = i + 1;
+		*pi = (int)i + 1;
 	}
-	AssertInt(3, cArray.NumElements());
+	AssertSize(3, cArray.NumElements());
 	AssertPointer(piEmbeddedData, cArray.GetData());
 	AssertTrue(cArray.IsEmbedded());
 	AssertFalse(cArray.IsArray());
 
 	pi = cArray.Add();
-	*pi = i + 1;
+	*pi = (int)i + 1;
 	AssertFalse(cArray.IsEmbedded());
 	AssertTrue(cArray.IsArray());
 
 	cArray.RemoveAt(0);
 	AssertTrue(cArray.IsEmbedded());
 	AssertFalse(cArray.IsArray());
-	AssertInt(3, cArray.NumElements());
+	AssertSize(3, cArray.NumElements());
 	AssertInt(2, *cArray.Get(0));
 	AssertInt(3, *cArray.Get(1));
 	AssertInt(4, *cArray.Get(2));
@@ -310,9 +318,9 @@ void TestArrayTemplateEmbeddedChangeChunkSize(void)
 	for (i = 5; i < 30; i++)
 	{
 		pi = cArray.Add();
-		*pi = i;
+		*pi = (int)i;
 	}
-	AssertInt(28, cArray.NumElements());
+	AssertSize(28, cArray.NumElements());
 	AssertFalse(cArray.IsEmbedded());
 	AssertTrue(cArray.IsArray());
 

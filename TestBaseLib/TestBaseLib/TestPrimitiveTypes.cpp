@@ -26,9 +26,9 @@ public:
 //////////////////////////////////////////////////////////////////////////
 void TestPrimitiveTypesPointerArray(void)
 {
-	AssertInt(16, sizeof(TestPrimitiveLongStruct));
-	AssertInt(4, sizeof(TestPrimitiveLongStruct*));
-	AssertInt(256 * sizeof(TestPrimitiveLongStruct*), sizeof(TestPrimitivePointerArrayStruct));
+	AssertSize(16, sizeof(TestPrimitiveLongStruct));
+	AssertSize(sizeof(void*), sizeof(TestPrimitiveLongStruct*));
+	AssertSize(256 * sizeof(TestPrimitiveLongStruct*), sizeof(TestPrimitivePointerArrayStruct));
 
 	TestPrimitiveLongStruct*			p1;
 	TestPrimitiveLongStruct*			p2;
@@ -68,16 +68,22 @@ void TestPrimitiveTypesPointerArray(void)
 //////////////////////////////////////////////////////////////////////////
 void TestPrimitiveTypesSizes(void)
 {
-	AssertInt(1, sizeof(char));
+	AssertSize(1, sizeof(char));
 #ifdef _WIN32
-	AssertInt(2, sizeof(wchar_t));
+	AssertSize(2, sizeof(wchar_t));
 #endif // _WIN32
-#ifdef LINUX_GNU_32
-	AssertInt(4, sizeof(wchar_t));
-#endif // LINUX_GNU_32
-	AssertInt(4, sizeof(int));
-	AssertInt(8, sizeof(int64));
-	AssertInt(4, sizeof(void*));
+#ifdef LINUX_GNU
+	AssertSize(4, sizeof(wchar_t));
+#endif // LINUX_GNU
+	AssertSize(4, sizeof(int));
+	AssertSize(8, sizeof(int64));
+#ifdef BUILD_64
+	AssertSize(8, sizeof(void*));
+	AssertSize(8, sizeof(size));
+#else
+	AssertSize(4, sizeof(void*));
+	AssertSize(4, sizeof(size));
+#endif // BUILD_64
 }
 
 
@@ -113,20 +119,20 @@ struct SAlignmentTestInt32Vec2
 
 void TestPrimitiveTypesAlignment(void)
 {
-	AssertInt(8, offsetof(SAlignmentTestInt64, l));
-	AssertInt(16, sizeof(SAlignmentTestInt64));
+	AssertSize(8, offsetof(SAlignmentTestInt64, l));
+	AssertSize(16, sizeof(SAlignmentTestInt64));
 
-	AssertInt(8, alignof(SInt64Vec2));
-	AssertInt(8, offsetof(SAlignmentTestInt64Vec2, v));
-	AssertInt(24, sizeof(SAlignmentTestInt64Vec2));
+	AssertSize(8, alignof(SInt64Vec2));
+	AssertSize(8, offsetof(SAlignmentTestInt64Vec2, v));
+	AssertSize(24, sizeof(SAlignmentTestInt64Vec2));
 
-	AssertInt(8, alignof(SFloat64Vec3));
-	AssertInt(8, offsetof(SAlignmentTestFloat64Vec3, v));
-	AssertInt(32, sizeof(SAlignmentTestFloat64Vec3));
+	AssertSize(8, alignof(SFloat64Vec3));
+	AssertSize(8, offsetof(SAlignmentTestFloat64Vec3, v));
+	AssertSize(32, sizeof(SAlignmentTestFloat64Vec3));
 
-	AssertInt(4, alignof(SInt32Vec2));
-	AssertInt(4, offsetof(SAlignmentTestInt32Vec2, v));
-	AssertInt(12, sizeof(SAlignmentTestInt32Vec2));
+	AssertSize(4, alignof(SInt32Vec2));
+	AssertSize(4, offsetof(SAlignmentTestInt32Vec2, v));
+	AssertSize(12, sizeof(SAlignmentTestInt32Vec2));
 }
 
 

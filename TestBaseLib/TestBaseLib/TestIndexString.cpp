@@ -64,9 +64,9 @@ void TestIndexStringInt(void)
 	cIndex.Init();
 
 	AssertTrue(cIndex.Put("EZ", 15));
-	AssertInt(1, cIndex.NumElements());
+	AssertSize(1, cIndex.NumElements());
 	AssertTrue(cIndex.Put("Dock", 17));
-	AssertInt(2, cIndex.NumElements());
+	AssertSize(2, cIndex.NumElements());
 
 	AssertTrue(cIndex.StartIteration(&sIter, &iResult, szDestKey, &uiKeySize, 32));
 	AssertString("Dock", szDestKey);
@@ -77,7 +77,7 @@ void TestIndexStringInt(void)
 	AssertInt(15, iResult);
 
 	cIndex.Put("KingWin", 13);
-	AssertInt(3, cIndex.NumElements());
+	AssertSize(3, cIndex.NumElements());
 
 	iResult = cIndex.Get("EZ");
 	AssertInt(15, iResult);

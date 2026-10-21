@@ -42,7 +42,7 @@ void TestMapIntTemplate(void)
 	d = -3.0; cMap.Put((int)d, &d);
 	d = -4.0; cMap.Put((int)d, &d);
 	d = 0.0; cMap.Put((int)d, &d);
-	AssertInt(9, cMap.NumElements());
+	AssertSize(9, cMap.NumElements());
 
 	AssertNull(cMap.Get(-5));
 	e = -4.0; d = *cMap.Get((int)e);
@@ -71,7 +71,7 @@ void TestMapIntTemplate(void)
 
 	i = -4;
 	AssertTrue(cMap.Remove(i));
-	AssertInt(8, cMap.NumElements());
+	AssertSize(8, cMap.NumElements());
 	AssertNull(cMap.Get(i));
 	e = -3.0; 
 	d = *cMap.Get((int)e);
@@ -80,7 +80,7 @@ void TestMapIntTemplate(void)
 
 	i = -3;
 	AssertTrue(cMap.Remove(i));
-	AssertInt(7, cMap.NumElements());
+	AssertSize(7, cMap.NumElements());
 	AssertNull(cMap.Get(i));
 	e = -2.0; 
 	d = *cMap.Get((int)e);
@@ -89,7 +89,7 @@ void TestMapIntTemplate(void)
 
 	i = 3;
 	AssertTrue(cMap.Remove(i));
-	AssertInt(6, cMap.NumElements());
+	AssertSize(6, cMap.NumElements());
 	AssertNull(cMap.Get(i));
 	e = 4.0; 
 	d = *cMap.Get((int)e);
@@ -98,7 +98,7 @@ void TestMapIntTemplate(void)
 
 	i = 0;
 	AssertTrue(cMap.Remove(i));
-	AssertInt(5, cMap.NumElements());
+	AssertSize(5, cMap.NumElements());
 	AssertNull(cMap.Get(i));
 	e = 4.0; 
 	d = *cMap.Get((int)e);
@@ -108,7 +108,7 @@ void TestMapIntTemplate(void)
 
 	i = 1;
 	AssertTrue(cMap.Remove(i));
-	AssertInt(4, cMap.NumElements());
+	AssertSize(4, cMap.NumElements());
 	AssertNull(cMap.Get(i));
 	e = -2.0; 
 	d = *cMap.Get((int)e);
@@ -118,9 +118,9 @@ void TestMapIntTemplate(void)
 	AssertTrue(cMap.Remove(-2));
 	AssertTrue(cMap.Remove(-1));
 	AssertTrue(cMap.Remove(4));
-	AssertInt(1, cMap.NumElements());
+	AssertSize(1, cMap.NumElements());
 	AssertTrue(cMap.Remove(2));
-	AssertInt(0, cMap.NumElements());
+	AssertSize(0, cMap.NumElements());
 	AssertFalse(cMap.Remove(2));
 
 	cMap.Kill();
@@ -146,7 +146,7 @@ void TestMapIntInt(void)
 	AssertInt(15, iResult);
 
 	cMap.Put(3, 13);
-	AssertInt(3, cMap.NumElements());
+	AssertSize(3, cMap.NumElements());
 
 	iResult = *cMap.Get(5);
 	AssertInt(15, iResult);
@@ -156,9 +156,9 @@ void TestMapIntInt(void)
 	AssertInt(17, iResult);
 	AssertNull(cMap.Get(1));
 
-	AssertInt(0, cMap.GetArray()->GetSortedSize());
-	AssertInt(3, cMap.GetArray()->GetHoldingSize());
-	AssertInt(4, (*(SMNode**)cMap.GetArray()->GetInHolding(0, 0))->iKeySize);
+	AssertSize(0, cMap.GetArray()->GetSortedSize());
+	AssertSize(3, cMap.GetArray()->GetHoldingSize());
+	AssertSize(4, (*(SMNode**)cMap.GetArray()->GetInHolding(0, 0))->iKeySize);
 
 	cMap.InsertHoldingIntoSorted();
 	cMap.GetInSorted(0, (void**)&piKey, (void**)&piValue);

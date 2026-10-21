@@ -19,17 +19,17 @@ void TestMemoryAllocatorFree(void)
 	gcConstructors.Add<CConstructorTestClass>("CConstructorTestClass");
 
 	cAlloc.Init();
-	AssertInt(0, cAlloc.GetMemory()->NumElements());
+	AssertSize(0, cAlloc.GetMemory()->NumElements());
 
 	pcTest = (CConstructorTestClass*)gcConstructors.Construct("CConstructorTestClass", &cAlloc);
-	AssertInt(1, cAlloc.GetMemory()->NumElements());
+	AssertSize(1, cAlloc.GetMemory()->NumElements());
 
 	pcTest->k = 7;
 	AssertInt(3, pcTest->Method1());
 	AssertInt(7, pcTest->k);
 	
 	cAlloc.Free(pcTest);
-	AssertInt(0, cAlloc.GetMemory()->NumElements());
+	AssertSize(0, cAlloc.GetMemory()->NumElements());
 
 	cAlloc.Kill();
 
@@ -80,28 +80,36 @@ void TestMemoryAllocatorReadWrite(void)
 	cFile.Kill();
 	AssertInt(124, i);
 
-	AssertInt(16, cAllocIn.GetMemory()->ByteSize());
-	AssertInt(16, cAllocIn.GetMemory()->GetDefaultAlignment());
-	AssertInt(56, cAllocIn.GetMemory()->GetFreeListParams()->GetFreeListSizeLimit());
-	AssertInt(3, cAllocIn.GetMemory()->GetFreeListParams()->NumParams());
+#ifdef BUILD_64
+	AssertSize(32, cAllocIn.GetMemory()->ByteSize());
+#else
+	AssertSize(16, cAllocIn.GetMemory()->ByteSize());
+#endif // BUILD_64
+	AssertSize(16, cAllocIn.GetMemory()->GetDefaultAlignment());
+#ifdef BUILD_64
+	AssertSize(72, cAllocIn.GetMemory()->GetFreeListParams()->GetFreeListSizeLimit());
+#else
+	AssertSize(56, cAllocIn.GetMemory()->GetFreeListParams()->GetFreeListSizeLimit());
+#endif // BUILD_64
+	AssertSize(3, cAllocIn.GetMemory()->GetFreeListParams()->NumParams());
 
 	psBlockParams = cAllocIn.GetMemory()->GetFreeListParams()->GetFreeListParams(0);
 	AssertNotNull(psBlockParams);
-	AssertInt(32*32, psBlockParams->iChunkSize);
-	AssertInt(17, psBlockParams->iMinElementSize);
-	AssertInt(24, psBlockParams->iMaxElementSize);
+	AssertSize(32*32, psBlockParams->iChunkSize);
+	AssertSize(17, psBlockParams->iMinElementSize);
+	AssertSize(24, psBlockParams->iMaxElementSize);
 
 	psBlockParams = cAllocIn.GetMemory()->GetFreeListParams()->GetFreeListParams(1);
 	AssertNotNull(psBlockParams);
-	AssertInt(28*32, psBlockParams->iChunkSize);
-	AssertInt(25, psBlockParams->iMinElementSize);
-	AssertInt(32, psBlockParams->iMaxElementSize);
+	AssertSize(28*32, psBlockParams->iChunkSize);
+	AssertSize(25, psBlockParams->iMinElementSize);
+	AssertSize(32, psBlockParams->iMaxElementSize);
 
 	psBlockParams = cAllocIn.GetMemory()->GetFreeListParams()->GetFreeListParams(2);
 	AssertNotNull(psBlockParams);
-	AssertInt(24*32, psBlockParams->iChunkSize);
-	AssertInt(33, psBlockParams->iMinElementSize);
-	AssertInt(40, psBlockParams->iMaxElementSize);
+	AssertSize(24*32, psBlockParams->iChunkSize);
+	AssertSize(33, psBlockParams->iMinElementSize);
+	AssertSize(40, psBlockParams->iMaxElementSize);
 
 	psBlockParams = cAllocIn.GetMemory()->GetFreeListParams()->GetFreeListParams(3);
 	AssertNull(psBlockParams);

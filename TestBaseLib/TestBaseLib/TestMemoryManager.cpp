@@ -20,7 +20,7 @@ void TestMemoryManagerContiguousAllocations(void)
 	void*			pvMem4;
 	uint32			uiMemorySize;
 
-	uiMemorySize = 96;
+	uiMemorySize = (uint32)(10 + 20 + 30 + 3 * MM_NODE_HEADER_SIZE);
 	pvStartMemory = calloc(1, uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
@@ -34,8 +34,8 @@ void TestMemoryManagerContiguousAllocations(void)
 	AssertNotNull(pvMem2);
 	AssertNotNull(pvMem3);
 	AssertNull(pvMem4);
-	AssertInt(10 + MM_NODE_HEADER_SIZE, (size)pvMem2 - (size)pvMem1);
-	AssertInt(20 + MM_NODE_HEADER_SIZE, (size)pvMem3 - (size)pvMem2);
+	AssertSize(10 + MM_NODE_HEADER_SIZE, (size)pvMem2 - (size)pvMem1);
+	AssertSize(20 + MM_NODE_HEADER_SIZE, (size)pvMem3 - (size)pvMem2);
 
 	cMemory.Kill();
 
@@ -49,10 +49,10 @@ void TestMemoryManagerContiguousAllocations(void)
 //////////////////////////////////////////////////////////////////////////
 SMMNode* AssertNode(SMMNode* psNode, uint32 uiExpectedSize, bool bUsed)
 {
-	uint32 uiActualSize;
+	size uiActualSize;
 
 	uiActualSize = GetMMNodeDataSize(psNode) - MM_NODE_HEADER_SIZE;
-	AssertInt(uiExpectedSize, uiActualSize);
+	AssertSize(uiExpectedSize, uiActualSize);
 	AssertBool(bUsed, FixBool(psNode->uiFlags & MM_NODE_USED));
 	return (SMMNode*)psNode->psNext;
 }
@@ -64,13 +64,13 @@ SMMNode* AssertNode(SMMNode* psNode, uint32 uiExpectedSize, bool bUsed)
 //////////////////////////////////////////////////////////////////////////
 SMMNode* AssertNode(SMMNode* psNode, uint32 uiExpectedUserSize, uint32 uiExpectedNodeSize, bool bUsed)
 {
-	uint32 uiActualUserSize;
-	uint32 uiActualNodeSize;
+	size uiActualUserSize;
+	size uiActualNodeSize;
 
 	uiActualUserSize = GetMMNodeDataSize(psNode) - MM_NODE_HEADER_SIZE;
 	uiActualNodeSize = ((size)(psNode->psNext) - (size)psNode) - MM_NODE_HEADER_SIZE;
-	AssertInt(uiExpectedUserSize, uiActualUserSize);
-	AssertInt(uiExpectedNodeSize, uiActualNodeSize);
+	AssertSize(uiExpectedUserSize, uiActualUserSize);
+	AssertSize(uiExpectedNodeSize, uiActualNodeSize);
 	AssertBool(bUsed, FixBool(psNode->uiFlags & MM_NODE_USED));
 	return (SMMNode*)psNode->psNext;
 }
@@ -92,7 +92,7 @@ void TestMemoryManagerDeallocate1(void)
 	uint32			uiMemorySize;
 	SMMNode*		psNode;
 
-	uiMemorySize = 88;
+	uiMemorySize = (uint32)(4 * (10 + MM_NODE_HEADER_SIZE));
 	pvStartMemory = calloc(1, uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
@@ -118,14 +118,14 @@ void TestMemoryManagerDeallocate1(void)
 	
 	cMemory.Deallocate(pvMem1);
 	psNode = cMemory.StartIteration();
-	psNode = AssertNode(psNode, 32, false);
+	psNode = AssertNode(psNode, (uint32)(10 + 10 + MM_NODE_HEADER_SIZE), false);
 	psNode = AssertNode(psNode, 10, true);
 	psNode = AssertNode(psNode, 10, true);
 	AssertNull(psNode);
 
 	cMemory.Deallocate(pvMem3);
 	psNode = cMemory.StartIteration();
-	psNode = AssertNode(psNode, 54, false);
+	psNode = AssertNode(psNode, (uint32)(10 + 10 + 10 + 2 * MM_NODE_HEADER_SIZE), false);
 	psNode = AssertNode(psNode, 10, true);
 	AssertNull(psNode);
 
@@ -156,7 +156,7 @@ void TestMemoryManagerDeallocate2(void)
 	uint32			uiMemorySize;
 	SMMNode*		psNode;
 
-	uiMemorySize = 100;
+	uiMemorySize = (uint32)(5 * (8 + MM_NODE_HEADER_SIZE));
 	pvStartMemory = calloc(1, uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
@@ -195,13 +195,13 @@ void TestMemoryManagerDeallocate2(void)
 	cMemory.Deallocate(pvMem3);
 	psNode = cMemory.StartIteration();
 	psNode = AssertNode(psNode, 8, true);
-	psNode = AssertNode(psNode, 48, false);
+	psNode = AssertNode(psNode, (uint32)(8 + 8 + 8 + 2 * MM_NODE_HEADER_SIZE), false);
 	psNode = AssertNode(psNode, 8, true);
 	AssertNull(psNode);
 
 	cMemory.Deallocate(pvMem1);
 	psNode = cMemory.StartIteration();
-	psNode = AssertNode(psNode, 68, false);
+	psNode = AssertNode(psNode, (uint32)(8 + 8 + 8 + 8 + 3 * MM_NODE_HEADER_SIZE), false);
 	psNode = AssertNode(psNode, 8, true);
 	AssertNull(psNode);
 
@@ -231,7 +231,7 @@ void TestMemoryManagerDeallocateAllocate1(void)
 	uint32			uiMemorySize;
 	SMMNode*		psNode;
 
-	uiMemorySize = 100;
+	uiMemorySize = (uint32)(4 * (8 + MM_NODE_HEADER_SIZE) + 20);
 	pvStartMemory = calloc(1, uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
@@ -274,21 +274,21 @@ void TestMemoryManagerDeallocateAllocate1(void)
 	cMemory.Deallocate(pvMem3);
 	psNode = cMemory.StartIteration();
 	psNode = AssertNode(psNode, 8, true);
-	psNode = AssertNode(psNode, 28, false);
+	psNode = AssertNode(psNode, (uint32)(8 + 8 + MM_NODE_HEADER_SIZE), false);
 	psNode = AssertNode(psNode, 8, true);
 	AssertNull(psNode);
 
 	pvMem2 = cMemory.Allocate(16);
 	psNode = cMemory.StartIteration();
 	psNode = AssertNode(psNode, 8, true);
-	psNode = AssertNode(psNode, 16, 28, true);
+	psNode = AssertNode(psNode, 16, (uint32)(8 + 8 + MM_NODE_HEADER_SIZE), true);
 	psNode = AssertNode(psNode, 8, true);
 	AssertNull(psNode);
 
 	cMemory.Deallocate(pvMem2);
 	psNode = cMemory.StartIteration();
 	psNode = AssertNode(psNode, 8, true);
-	psNode = AssertNode(psNode, 28, false);
+	psNode = AssertNode(psNode, (uint32)(8 + 8 + MM_NODE_HEADER_SIZE), false);
 	psNode = AssertNode(psNode, 8, true);
 	AssertNull(psNode);
 
@@ -322,7 +322,7 @@ void TestMemoryManagerDeallocateAllocate2(void)
 	uint32			uiMemorySize;
 	SMMNode*		psNode;
 
-	uiMemorySize = 100;
+	uiMemorySize = (uint32)(4 * (8 + MM_NODE_HEADER_SIZE) + 20);
 	pvStartMemory = calloc(1, uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
@@ -349,14 +349,14 @@ void TestMemoryManagerDeallocateAllocate2(void)
 	cMemory.Deallocate(pvMem3);
 	psNode = cMemory.StartIteration();
 	psNode = AssertNode(psNode, 8, true);
-	psNode = AssertNode(psNode, 28, false);
+	psNode = AssertNode(psNode, (uint32)(8 + 8 + MM_NODE_HEADER_SIZE), false);
 	psNode = AssertNode(psNode, 8, true);
 	AssertNull(psNode);
 
 	pvMem2 = cMemory.Allocate(16);
 	psNode = cMemory.StartIteration();
 	psNode = AssertNode(psNode, 8, true);
-	psNode = AssertNode(psNode, 16, 28, true);
+	psNode = AssertNode(psNode, 16, (uint32)(8 + 8 + MM_NODE_HEADER_SIZE), true);
 	psNode = AssertNode(psNode, 8, true);
 	AssertNull(psNode);
 
@@ -395,7 +395,7 @@ void TestMemoryManagerDeallocateAllocate3(void)
 	uint32			uiMemorySize;
 	SMMNode*		psNode;
 
-	uiMemorySize = 88;
+	uiMemorySize = (uint32)(12 + 8 + 12 + 8 + 4 * MM_NODE_HEADER_SIZE);
 	pvStartMemory = calloc(1, uiMemorySize);
 	pvEndMemory = RemapSinglePointer(pvStartMemory, (uiMemorySize - 1));
 	cMemory.Init(pvStartMemory, pvEndMemory);
@@ -421,21 +421,21 @@ void TestMemoryManagerDeallocateAllocate3(void)
 
 	cMemory.Deallocate(pvMem2);
 	psNode = cMemory.StartIteration();
-	psNode = AssertNode(psNode, 32, false);
+	psNode = AssertNode(psNode, (uint32)(12 + 8 + MM_NODE_HEADER_SIZE), false);
 	psNode = AssertNode(psNode, 12, 12, true);
 	psNode = AssertNode(psNode, 8, true);
 	AssertNull(psNode);
 
 	pvMem1 = cMemory.Allocate(16);
 	psNode = cMemory.StartIteration();
-	psNode = AssertNode(psNode, 16, 32, true);
+	psNode = AssertNode(psNode, 16, (uint32)(12 + 8 + MM_NODE_HEADER_SIZE), true);
 	psNode = AssertNode(psNode, 12, 12, true);
 	psNode = AssertNode(psNode, 8, true);
 	AssertNull(psNode);
 
 	cMemory.Deallocate(pvMem1);
 	psNode = cMemory.StartIteration();
-	psNode = AssertNode(psNode, 32, false);
+	psNode = AssertNode(psNode, (uint32)(12 + 8 + MM_NODE_HEADER_SIZE), false);
 	psNode = AssertNode(psNode, 12, 12, true);
 	psNode = AssertNode(psNode, 8, true);
 	AssertNull(psNode);
@@ -451,13 +451,13 @@ void TestMemoryManagerDeallocateAllocate3(void)
 	cMemory.Deallocate(pvMem3);
 	psNode = cMemory.StartIteration();
 	psNode = AssertNode(psNode, 15, 15, true);
-	psNode = AssertNode(psNode, 29, false);
+	psNode = AssertNode(psNode, (uint32)(17 + MM_NODE_HEADER_SIZE), false);
 	psNode = AssertNode(psNode, 8, true);
 	AssertNull(psNode);
 
 	cMemory.Deallocate(pvMem1);
 	psNode = cMemory.StartIteration();
-	psNode = AssertNode(psNode, 56, false);
+	psNode = AssertNode(psNode, (uint32)(32 + 2 * MM_NODE_HEADER_SIZE), false);
 	psNode = AssertNode(psNode, 8, true);
 	AssertNull(psNode);
 
@@ -497,6 +497,26 @@ void TestMemoryManagerEmptyCache(void)
 	CRandom			cRandom;
 	void**			ppv;
 	uint32			uiRemovals;
+	uint32			uiExpectedAllocations;
+	uint32			uiExpectedTail;
+	uint32			uiExpectedAllocationsAfterRemoval;
+	uint32			uiExpectedTailAfterRemoval;
+	uint32			uiExpectedUsedAfterRemoval;
+
+	//The node header holds two pointers so fewer allocations fit in a 64 bit build.
+#ifdef BUILD_64
+	uiExpectedAllocations = 526;
+	uiExpectedTail = 102;
+	uiExpectedAllocationsAfterRemoval = 328;
+	uiExpectedTailAfterRemoval = 246;
+	uiExpectedUsedAfterRemoval = 40906;
+#else
+	uiExpectedAllocations = 582;
+	uiExpectedTail = 52;
+	uiExpectedAllocationsAfterRemoval = 382;
+	uiExpectedTailAfterRemoval = 52;
+	uiExpectedUsedAfterRemoval = 42753;
+#endif // BUILD_64
 
 	uiMemorySize = 64 KB;
 	pvStartMemory = calloc(1, uiMemorySize);
@@ -529,12 +549,12 @@ void TestMemoryManagerEmptyCache(void)
 	uiTotalSize = cMemory.GetTotalSize();
 	AssertInt((uint32)(64 KB), uiTotalSize);
 	uiAllocations = cMemory.GetNumAllocations(false);
-	AssertInt(582, uiAllocations);
-	AssertInt(582, apvAllocations.NumElements());
+	AssertInt(uiExpectedAllocations, uiAllocations);
+	AssertSize(uiExpectedAllocations, apvAllocations.NumElements());
 	uiRemainingSize = cMemory.GetRemaingTailSize();
-	AssertInt(52, uiRemainingSize);
+	AssertInt(uiExpectedTail, uiRemainingSize);
 	uiUsedSize = cMemory.GetUsedAllocationSize();
-	AssertInt(65484, uiUsedSize);
+	AssertInt((uint32)(64 KB) - uiExpectedTail, uiUsedSize);
 	uiUnusedSize = cMemory.GetUnusedAllocationSize();
 	AssertInt(0, uiUnusedSize);
 	AssertInt((uint32)(64 KB), uiRemainingSize + uiUsedSize + uiUnusedSize);
@@ -543,8 +563,12 @@ void TestMemoryManagerEmptyCache(void)
 	cRandom.Init(3456897);
 	for (i = 0; i < 100; i++)
 	{
-		iIndex = cRandom.Next(0, apvAllocations.NumElements() - 1);
+		iIndex = cRandom.Next(0, (int)(apvAllocations.NumElements() - 1));
 		iToRemove = cRandom.Next(0, 2);
+		if (iIndex + iToRemove >= (int32)apvAllocations.NumElements())
+		{
+			iToRemove = (int32)apvAllocations.NumElements() - 1 - iIndex;
+		}
 		for (j = iToRemove; j >= 0; j--)
 		{
 			ppv = apvAllocations.Get(iIndex + j);
@@ -554,19 +578,19 @@ void TestMemoryManagerEmptyCache(void)
 			uiRemovals++;
 		}
 		uiAllocations = cMemory.GetNumAllocations(false);
-		AssertInt(582, uiAllocations + uiRemovals);
+		AssertInt(uiExpectedAllocations, uiAllocations + uiRemovals);
 	}
 	
 	uiTotalSize = cMemory.GetTotalSize();
 	AssertInt((uint32)(64 KB), uiTotalSize);
 	uiAllocations = cMemory.GetNumAllocations(false);
-	AssertInt(382, uiAllocations);
+	AssertInt(uiExpectedAllocationsAfterRemoval, uiAllocations);
 	uiRemainingSize = cMemory.GetRemaingTailSize();
-	AssertInt(52, uiRemainingSize);
+	AssertInt(uiExpectedTailAfterRemoval, uiRemainingSize);
 	uiUsedSize = cMemory.GetUsedAllocationSize();
-	AssertInt(42753, uiUsedSize);
+	AssertInt(uiExpectedUsedAfterRemoval, uiUsedSize);
 	uiUnusedSize = cMemory.GetUnusedAllocationSize();
-	AssertInt(22731, uiUnusedSize);
+	AssertInt((uint32)(64 KB) - uiExpectedTailAfterRemoval - uiExpectedUsedAfterRemoval, uiUnusedSize);
 	AssertInt((uint32)(64 KB), uiRemainingSize + uiUsedSize + uiUnusedSize);
 
 	apvAllocations.Kill();

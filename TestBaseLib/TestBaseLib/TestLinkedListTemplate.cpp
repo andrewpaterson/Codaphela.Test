@@ -29,15 +29,15 @@ void TestLinkedListTemplateIndexOf(void)
 	pi3 = cList.InsertAfterTail();
 	*pi3 = 1;
 
-	AssertInt(0, cList.IndexOf(pi1));
-	AssertInt(1, cList.IndexOf(pi2));
-	AssertInt(2, cList.IndexOf(pi3));
+	AssertSize(0, cList.IndexOf(pi1));
+	AssertSize(1, cList.IndexOf(pi2));
+	AssertSize(2, cList.IndexOf(pi3));
 
 	cList.BubbleSort(&CompareInt);
 
-	AssertInt(2, cList.IndexOf(pi1));
-	AssertInt(1, cList.IndexOf(pi2));
-	AssertInt(0, cList.IndexOf(pi3));
+	AssertSize(2, cList.IndexOf(pi1));
+	AssertSize(1, cList.IndexOf(pi2));
+	AssertSize(0, cList.IndexOf(pi3));
 
 	cList.Kill();
 }
@@ -65,7 +65,7 @@ void TestLinkedListTemplateWrite(void)
 	(*cList.Add()) = 3498489579023845LL;
 	(*cList.Add()) = 9837459843598451LL;
 	(*cList.Add()) = 6409377732684332LL;
-	AssertInt(3, cList.NumElements());
+	AssertSize(3, cList.NumElements());
 
 	pcDisk = DiskFile(szFile);
 	AssertTrue(pcDisk->Open(EFM_Write_Create));
@@ -77,7 +77,7 @@ void TestLinkedListTemplateWrite(void)
 	cList.Kill();
 
 	cList.Init();
-	AssertInt(0, cList.NumElements());
+	AssertSize(0, cList.NumElements());
 
 	pcDisk = DiskFile(szFile);
 	AssertTrue(pcDisk->Open(EFM_Read));

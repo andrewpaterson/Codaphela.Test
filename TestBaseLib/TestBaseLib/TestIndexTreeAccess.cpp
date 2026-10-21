@@ -61,7 +61,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int32 iFlushFrequency)
 	{
 		pszKey2 = gaszCommonWords.Get(i);
 		pszKey = pszKey2->Text();
-		iData = i;
+		iData = (int32)i;
 		pcAccess->PutStringInt(pszKey, iData);
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
@@ -181,7 +181,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int32 iFlushFrequency)
 		i--;
 		pszKey2 = gaszCommonWords.Get(i);
 		pszKey = pszKey2->Text();
-		lliData = ((int64)1000 - i) * 86509465456456LL;
+		lliData = ((int64)1000 - (int64)i) * 86509465456456LL;
 		pcAccess->PutStringLong(pszKey, lliData);
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
@@ -198,7 +198,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int32 iFlushFrequency)
 		pszKey2 = gaszCommonWords.Get(i);
 		pszKey = pszKey2->Text();
 		lliData = pcAccess->GetStringLong(pszKey);
-		if (lliData != ((int64)1000 - i) * 86509465456456LL)
+		if (lliData != ((int64)1000 - (int64)i) * 86509465456456LL)
 		{
 			bPassed = false;
 			break;
@@ -238,7 +238,7 @@ void TestIndexTreeAccessString(CIndexAccess* pcAccess, int32 iFlushFrequency)
 	{
 		pszKey2 = gaszCommonWords.Get(i);
 		pszKey = pszKey2->Text();
-		pcAccess->PutStringInt(pszKey, i);
+		pcAccess->PutStringInt(pszKey, (int32)i);
 		Flush(pcAccess, iFlushFrequency, &iFlush);
 	}
 	Pass();
@@ -488,7 +488,7 @@ void TestIndexTreeFileAccessFlushBug()
 		pszKey2 = gaszCommonWords.Get(i);
 		pszKey = pszKey2->Text();
 		iData = i;
-		cAccess.PutStringInt(pszKey, iData);
+		cAccess.PutStringInt(pszKey, (int32)iData);
 		Flush(&cAccess, iFlushFrequency, &iFlush);
 	}
 	AssertLong(iCount, cAccess.NumElements());

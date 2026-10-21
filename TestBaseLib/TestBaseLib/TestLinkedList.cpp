@@ -63,7 +63,7 @@ void TestLinkedListInsert(void)
 	cList.Init();
 	cList.InsertBeforeHead(psNode1);
 	cList.InsertBeforeHead(psNode2);
-	AssertInt(2, cList.NumElements());
+	AssertSize(2, cList.NumElements());
 	psNode = cList.GetHead();
 	AssertPointer(psNode2, psNode);
 	psNode = cList.GetNext(psNode);
@@ -76,7 +76,7 @@ void TestLinkedListInsert(void)
 	cList.Init();
 	cList.InsertAfterTail(psNode1);
 	cList.InsertAfterTail(psNode2);
-	AssertInt(2, cList.NumElements());
+	AssertSize(2, cList.NumElements());
 	psNode = cList.GetHead();
 	AssertPointer(psNode1, psNode);
 	psNode = cList.GetNext(psNode);
@@ -90,7 +90,7 @@ void TestLinkedListInsert(void)
 	cList.InsertAfterTail(psNode2);
 	cList.InsertAfterTail(psNode3);
 	cList.InsertBeforeHead(psNode1);
-	AssertInt(3, cList.NumElements());
+	AssertSize(3, cList.NumElements());
 	psNode = cList.GetHead();
 	AssertPointer(psNode1, psNode);
 	psNode = cList.GetNext(psNode);
@@ -143,7 +143,7 @@ void TestLinkedListSwap(void)
 	cList.Init();
 	cList.InsertAfterTail(psNode1);
 	cList.InsertAfterTail(psNode2);
-	AssertInt(2, cList.NumElements());
+	AssertSize(2, cList.NumElements());
 	psNode = cList.GetHead();
 	AssertPointer(psNode1, psNode);
 	psNode = cList.GetNext(psNode);
@@ -152,7 +152,7 @@ void TestLinkedListSwap(void)
 	AssertNull(psNode);
 
 	cList.Swap(psNode1, psNode2);
-	AssertInt(2, cList.NumElements());
+	AssertSize(2, cList.NumElements());
 	psNode = cList.GetHead();
 	AssertPointer(psNode2, psNode);
 	psNode = cList.GetNext(psNode);
@@ -162,7 +162,7 @@ void TestLinkedListSwap(void)
 
 	cList.InsertAfterNode(psNode1, psNode3);
 	cList.Swap(psNode1, psNode2);
-	AssertInt(3, cList.NumElements());
+	AssertSize(3, cList.NumElements());
 	psNode = cList.GetHead();
 	AssertPointer(psNode1, psNode);
 	psNode = cList.GetNext(psNode);
@@ -173,7 +173,7 @@ void TestLinkedListSwap(void)
 	AssertNull(psNode);
 
 	cList.Swap(psNode2, psNode3);
-	AssertInt(3, cList.NumElements());
+	AssertSize(3, cList.NumElements());
 	psNode = cList.GetHead();
 	AssertPointer(psNode1, psNode);
 	psNode = cList.GetNext(psNode);
@@ -184,7 +184,7 @@ void TestLinkedListSwap(void)
 	AssertNull(psNode);
 
 	cList.Swap(psNode1, psNode2);
-	AssertInt(3, cList.NumElements());
+	AssertSize(3, cList.NumElements());
 	psNode = cList.GetHead();
 	AssertPointer(psNode2, psNode);
 	psNode = cList.GetNext(psNode);
@@ -196,7 +196,7 @@ void TestLinkedListSwap(void)
 
 	cList.InsertAfterNode(psNode2, psNode4);
 	cList.Swap(psNode3, psNode4);
-	AssertInt(4, cList.NumElements());
+	AssertSize(4, cList.NumElements());
 	psNode = cList.GetHead();
 	AssertPointer(psNode2, psNode);
 	psNode = cList.GetNext(psNode);
@@ -211,7 +211,7 @@ void TestLinkedListSwap(void)
 	cList.Swap(psNode1, psNode4);
 	cList.Swap(psNode1, psNode3);
 	cList.Swap(psNode1, psNode2);
-	AssertInt(4, cList.NumElements());
+	AssertSize(4, cList.NumElements());
 	psNode = cList.GetHead();
 	AssertPointer(psNode1, psNode);
 	psNode = cList.GetNext(psNode);
@@ -229,7 +229,7 @@ void TestLinkedListSwap(void)
 	cList.Swap(psNode3, psNode2);
 	cList.Swap(psNode3, psNode1);
 	cList.Swap(psNode2, psNode1);
-	AssertInt(4, cList.NumElements());
+	AssertSize(4, cList.NumElements());
 	psNode = cList.GetHead();
 	AssertPointer(psNode4, psNode);
 	psNode = cList.GetNext(psNode);
@@ -243,7 +243,7 @@ void TestLinkedListSwap(void)
 
 	cList.BubbleSort(CompareInt, sizeof(SLLNode));
 
-	AssertInt(4, cList.NumElements());
+	AssertSize(4, cList.NumElements());
 	psNode = cList.GetHead();
 	AssertPointer(psNode1, psNode);
 	psNode = cList.GetNext(psNode);
@@ -294,38 +294,38 @@ void TestLinkedListIndexOf(void)
 	cList.InsertAfterTail(psNode3);
 	cList.InsertAfterTail(psNode4);
 
-	AssertInt(4, cList.NumElements());
-	AssertInt(0, cList.IndexOf(psNode1));
-	AssertInt(1, cList.IndexOf(psNode2));
-	AssertInt(2, cList.IndexOf(psNode3));
-	AssertInt(3, cList.IndexOf(psNode4));
-	AssertInt(-1, cList.IndexOf(NULL));
+	AssertSize(4, cList.NumElements());
+	AssertSize(0, cList.IndexOf(psNode1));
+	AssertSize(1, cList.IndexOf(psNode2));
+	AssertSize(2, cList.IndexOf(psNode3));
+	AssertSize(3, cList.IndexOf(psNode4));
+	AssertSize(-1, cList.IndexOf(NULL));
 
 	cList.InsertBeforeHead(psNode0);
 	Pass();
-	AssertInt(5, cList.NumElements());
-	AssertInt(0, cList.IndexOf(psNode0));
-	AssertInt(1, cList.IndexOf(psNode1));
-	AssertInt(2, cList.IndexOf(psNode2));
-	AssertInt(3, cList.IndexOf(psNode3));
-	AssertInt(4, cList.IndexOf(psNode4));
-	AssertInt(-1, cList.IndexOf(NULL));
+	AssertSize(5, cList.NumElements());
+	AssertSize(0, cList.IndexOf(psNode0));
+	AssertSize(1, cList.IndexOf(psNode1));
+	AssertSize(2, cList.IndexOf(psNode2));
+	AssertSize(3, cList.IndexOf(psNode3));
+	AssertSize(4, cList.IndexOf(psNode4));
+	AssertSize(-1, cList.IndexOf(NULL));
 
 	cList.BubbleSort(CompareIntReverse, sizeof(SLLNode));
 	Pass();
-	AssertInt(5, cList.NumElements());
-	AssertInt(0, cList.IndexOf(psNode4));
-	AssertInt(1, cList.IndexOf(psNode3));
-	AssertInt(2, cList.IndexOf(psNode2));
-	AssertInt(3, cList.IndexOf(psNode1));
-	AssertInt(4, cList.IndexOf(psNode0));
-	AssertInt(-1, cList.IndexOf(NULL));
+	AssertSize(5, cList.NumElements());
+	AssertSize(0, cList.IndexOf(psNode4));
+	AssertSize(1, cList.IndexOf(psNode3));
+	AssertSize(2, cList.IndexOf(psNode2));
+	AssertSize(3, cList.IndexOf(psNode1));
+	AssertSize(4, cList.IndexOf(psNode0));
+	AssertSize(-1, cList.IndexOf(NULL));
 
 	cList.InsertIntoSorted(CompareIntReverse, psNode6, sizeof(SLLNode));
 	Pass();
-	AssertInt(6, cList.NumElements());
-	AssertInt(0, cList.IndexOf(psNode6));
-	AssertInt(-1, cList.IndexOf(psNode5));
+	AssertSize(6, cList.NumElements());
+	AssertSize(0, cList.IndexOf(psNode6));
+	AssertSize(-1, cList.IndexOf(psNode5));
 
 	cList.Kill();
 

@@ -153,26 +153,42 @@ void TestIndexTreeEvictingEvictRandom(EIndexWriteThrough eWriteThrough, EIndexKe
 	sSize = cIndexTree.GetRoot()->CalculateNodeSize();
 	AssertLong(2062LL, sSize);
 	sSize = cIndexTree.GetSystemMemorySize();
+#ifdef BUILD_64
+	AssertLong(4136LL, sSize);
+#else
 	AssertLong(3100LL, sSize);
+#endif // BUILD_64
 
 	cAccess.PutLongInt(1LL, 57);
 	sSize = cIndexTree.GetRoot()->CalculateNodeSize();
 	AssertLong(2062LL, sSize);
 	sSize = cIndexTree.GetSystemMemorySize();
+#ifdef BUILD_64
+	AssertLong(4596LL, sSize);
+#else
 	AssertLong(3424LL, sSize);
+#endif // BUILD_64
 
 	cAccess.Flush();
 	sSize = cIndexTree.GetRoot()->CalculateNodeSize();
 	AssertSize(2062LL, sSize);
 	sSize = cIndexTree.GetSystemMemorySize();
+#ifdef BUILD_64
+	AssertSize(4596LL, sSize);
+#else
 	AssertSize(3424LL, sSize);
+#endif // BUILD_64
 
 	cAccess.DeleteLong(1LL);
 	cAccess.Flush();
 	sSize = cIndexTree.GetRoot()->CalculateNodeSize();
 	AssertSize(2062LL, sSize);
 	sSize = cIndexTree.GetSystemMemorySize();
+#ifdef BUILD_64
+	AssertSize(4136LL, sSize);
+#else
 	AssertSize(3100LL, sSize);
+#endif // BUILD_64
 
 
 	cController.End();
@@ -201,6 +217,7 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	int									x;
 	int									y;
 	CIndexTreeEvictionStrategyRandom	cStrategy;
+	size								uiCacheSize;
 	
 	cAllocator.Init();
 	pcMemory = cAllocator.GetMemory();
@@ -210,39 +227,61 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	cController.Begin();
 	cEvictedNodes.Init();
 	cStrategy.Init(15);
-	cIndexTree.Init(&cController, "Here", 3656, &cEvictedNodes, LifeLocal<CIndexTreeEvictionStrategy>(&cStrategy), NULL, LifeLocal<CMallocator>(&cAllocator), eWriteThrough, IKR_No);
+	//Room for one key.  The nodes are bigger in a 64 bit build.
+#ifdef BUILD_64
+	uiCacheSize = 5000;
+#else
+	uiCacheSize = 3656;
+#endif // BUILD_64
+	cIndexTree.Init(&cController, "Here", uiCacheSize, &cEvictedNodes, LifeLocal<CIndexTreeEvictionStrategy>(&cStrategy), NULL, LifeLocal<CMallocator>(&cAllocator), eWriteThrough, IKR_No);
 	cAccess.Init(&cIndexTree);
 
+#ifdef BUILD_64
+	AssertLong(4128, pcMemory->GetTotalAllocatedMemory());
+#else
 	AssertLong(3096, pcMemory->GetTotalAllocatedMemory());
+#endif // BUILD_64
 	x = 1234;
 	cAccess.PutStringInt("Tomato", x);
+#ifdef BUILD_64
+	AssertLong(4428LL, pcMemory->GetTotalAllocatedMemory());
+#else
 	AssertLong(3316LL, pcMemory->GetTotalAllocatedMemory());
-	AssertInt(1, cIndexTree.NumMemoryElements());
-	AssertInt(7, cIndexTree.NumMemoryNodes());
-	AssertInt(7, strlen("Tomato") + 1);  //6 nodes for Tomato + the root node.
-	AssertInt(0, cEvictedNodes.NumElements());
+#endif // BUILD_64
+	AssertSize(1, cIndexTree.NumMemoryElements());
+	AssertSize(7, cIndexTree.NumMemoryNodes());
+	AssertSize(7, strlen("Tomato") + 1);  //6 nodes for Tomato + the root node.
+	AssertSize(0, cEvictedNodes.NumElements());
 	cEvictedNodes.Clear();
 
 	y = 567890;
 	cAccess.PutStringInt("Plantation", y);
 
+#ifdef BUILD_64
+	AssertLong(4620LL, pcMemory->GetTotalAllocatedMemory());
+#else
 	AssertLong(3460LL, pcMemory->GetTotalAllocatedMemory());
-	AssertInt(1, cEvictedNodes.NumElements());
+#endif // BUILD_64
+	AssertSize(1, cEvictedNodes.NumElements());
 	AssertString("Tomato", (char*)cEvictedNodes.GetKey(0));
 	AssertInt(x, *((int*)cEvictedNodes.GetData(0)));
-	AssertInt(1, cIndexTree.NumMemoryElements());
-	AssertInt(11, cIndexTree.NumMemoryNodes());
-	AssertInt(11, strlen("Plantation") + 1);  //10 nodes for Plantation + the root node.
+	AssertSize(1, cIndexTree.NumMemoryElements());
+	AssertSize(11, cIndexTree.NumMemoryNodes());
+	AssertSize(11, strlen("Plantation") + 1);  //10 nodes for Plantation + the root node.
 	cEvictedNodes.Clear();
 
 	AssertInt(1234, cAccess.GetStringInt("Tomato"));
 
+#ifdef BUILD_64
+	AssertLong(4444LL, pcMemory->GetTotalAllocatedMemory());
+#else
 	AssertLong(3328LL, pcMemory->GetTotalAllocatedMemory());
-	AssertInt(1, cEvictedNodes.NumElements());
+#endif // BUILD_64
+	AssertSize(1, cEvictedNodes.NumElements());
 	AssertString("Plantation", (char*)cEvictedNodes.GetKey(0));
 	AssertInt(y, *((int*)cEvictedNodes.GetData(0)));
-	AssertInt(1, cIndexTree.NumMemoryElements());
-	AssertInt(7, cIndexTree.NumMemoryNodes());
+	AssertSize(1, cIndexTree.NumMemoryElements());
+	AssertSize(7, cIndexTree.NumMemoryNodes());
 
 	cController.End();
 
@@ -286,29 +325,53 @@ void TestIndexTreeEvictingEvictWithChildren(void)
 	AssertTrue(cAccess.PutStringString(szAlbatros, szAlbatros));
 	AssertTrue(cAccess.PutStringString(szAlba, szAlba));
 	AssertTrue(cAccess.PutStringString(szAlbaquerque, szAlbaquerque));
+#ifdef BUILD_64
+	AssertLong(4962LL, pcMemory->GetTotalAllocatedMemory());
+#else
 	AssertLong(3710LL, pcMemory->GetTotalAllocatedMemory());
+#endif // BUILD_64
 
 	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(cAccess.EvictString(szAlba));
 	gcLogger.SetConfig(&sLogConfig);
+#ifdef BUILD_64
+	AssertLong(4962LL, pcMemory->GetTotalAllocatedMemory());
+#else
 	AssertLong(3710LL, pcMemory->GetTotalAllocatedMemory());
+#endif // BUILD_64
 	Pass();
 
 	AssertTrue(cAccess.EvictString(szAlbatros));
+#ifdef BUILD_64
+	AssertLong(4753LL, pcMemory->GetTotalAllocatedMemory());
+#else
 	AssertLong(3557LL, pcMemory->GetTotalAllocatedMemory());
+#endif // BUILD_64
 
 	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(cAccess.EvictString(szAlba));
 	gcLogger.SetConfig(&sLogConfig);
+#ifdef BUILD_64
+	AssertLong(4753LL, pcMemory->GetTotalAllocatedMemory());
+#else
 	AssertLong(3557LL, pcMemory->GetTotalAllocatedMemory());
+#endif // BUILD_64
 	Pass();
 
 	AssertTrue(cAccess.EvictString(szAlbaquerque));
+#ifdef BUILD_64
+	AssertLong(4397LL, pcMemory->GetTotalAllocatedMemory());
+#else
 	AssertLong(3293LL, pcMemory->GetTotalAllocatedMemory());
+#endif // BUILD_64
 	Pass();
 
 	AssertTrue(cAccess.EvictString(szAlba));
+#ifdef BUILD_64
+	AssertLong(4128LL, pcMemory->GetTotalAllocatedMemory());
+#else
 	AssertLong(3096LL, pcMemory->GetTotalAllocatedMemory());
+#endif // BUILD_64
 
 	cController.End();
 	cIndexTree.Kill();
@@ -348,13 +411,21 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 	cController.Begin();
 	cIndexTree.Init(&cController, NULL, 8192, NULL, LifeNull<CIndexTreeEvictionStrategy>(), NULL, LifeLocal<CMallocator>(&cAllocator), IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
+#ifdef BUILD_64
+	AssertLong(4128LL, pcMemory->GetTotalAllocatedMemory());
+#else
 	AssertLong(3096LL, pcMemory->GetTotalAllocatedMemory());
+#endif // BUILD_64
 	Pass();
 
 	AssertTrue(cAccess.PutStringString(szAlbatros, szAlbatros));
 	AssertTrue(cAccess.PutStringString(szAlba, szAlba));
 	AssertTrue(cAccess.PutStringString(szAlbaquerque, szAlbaquerque));
+#ifdef BUILD_64
+	AssertLong(4962LL, pcMemory->GetTotalAllocatedMemory());
+#else
 	AssertLong(3710LL, pcMemory->GetTotalAllocatedMemory());
+#endif // BUILD_64
 	Pass();
 
 	AssertTree(
@@ -494,7 +565,11 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 		"   Both:   s(X)",
 		&cIndexTree);
 	AssertTrue(cIndexTree.IsFlushed());
+#ifdef BUILD_64
+	AssertLong(4962LL, pcMemory->GetTotalAllocatedMemory());
+#else
 	AssertLong(3710LL, pcMemory->GetTotalAllocatedMemory());
+#endif // BUILD_64
 
 	szResult = cAccess.GetStringString(szAlbatros);
 	AssertString(szAlbatros, szResult.Text());	szResult.Kill();
@@ -506,7 +581,11 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 
 	AssertTrue(cAccess.PutStringString(szAlbatros, szBatcave));
 	AssertTrue(cAccess.PutStringString(szAlba, szBathroom));
+#ifdef BUILD_64
+	AssertLong(4965LL, pcMemory->GetTotalAllocatedMemory());
+#else
 	AssertLong(3713LL, pcMemory->GetTotalAllocatedMemory());
+#endif // BUILD_64
 	Pass();
 
 	szResult = cAccess.GetStringString(szAlbatros);
@@ -619,7 +698,11 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 	cController.Begin();
 	cIndexTree.Init(&cController, NULL, 8192, NULL, LifeNull<CIndexTreeEvictionStrategy>(), NULL, LifeLocal<CMallocator>(&cAllocator), IWT_No, IKR_No);
 	cAccess.Init(&cIndexTree);
+#ifdef BUILD_64
+	AssertLong(4160, pcMemory->GetTotalAllocatedMemory());
+#else
 	AssertLong(3120, pcMemory->GetTotalAllocatedMemory());
+#endif // BUILD_64
 
 	szResult = cAccess.GetStringString(szAlbatros);
 	AssertString(szBatcave, szResult.Text());	szResult.Kill();
@@ -656,6 +739,7 @@ void TestIndexTreeEvictingEvictLastAccessed(void)
 	int										i;
 	size									sSize;
 	char*									szEvictedKey;
+	size									uiCacheSize;
 
 	for (i = 0; i < 1023; i++)
 	{
@@ -669,48 +753,82 @@ void TestIndexTreeEvictingEvictLastAccessed(void)
 	cController.Begin();
 	cOrderer.Init();
 	cStrategy.Init(LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
-	cIndexTree.Init(&cController, "Sub", 8 KB, &cIndexTreeEvictedList, LifeLocal<CIndexTreeEvictionStrategy>(&cStrategy), NULL, IWT_No, IKR_No, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
+	//Room for three keys.  The nodes are bigger in a 64 bit build.
+#ifdef BUILD_64
+	uiCacheSize = 9 KB;
+#else
+	uiCacheSize = 8 KB;
+#endif // BUILD_64
+	cIndexTree.Init(&cController, "Sub", uiCacheSize, &cIndexTreeEvictedList, LifeLocal<CIndexTreeEvictionStrategy>(&cStrategy), NULL, IWT_No, IKR_No, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
 	cAccess.Init(&cIndexTree);
 
 	sSize = cIndexTree.GetSystemMemorySize();
+#ifdef BUILD_64
+	AssertLong(4136LL, sSize);
+#else
 	AssertLong(3100LL, sSize);
-	AssertInt(0, cIndexTreeEvictedList.NumElements());
+#endif // BUILD_64
+	AssertSize(0, cIndexTreeEvictedList.NumElements());
 
 	cAccess.PutStringString("A0000001", szData);
 	sSize = cIndexTree.GetSystemMemorySize();
+#ifdef BUILD_64
+	AssertLong(5616LL, sSize);
+#else
 	AssertLong(4444LL, sSize);
-	AssertInt(0, cIndexTreeEvictedList.NumElements());
+#endif // BUILD_64
+	AssertSize(0, cIndexTreeEvictedList.NumElements());
 
 	cAccess.PutStringString("B0000002", szData);
 	sSize = cIndexTree.GetSystemMemorySize();
+#ifdef BUILD_64
+	AssertLong(7096LL, sSize);
+#else
 	AssertLong(5788LL, sSize);
-	AssertInt(0, cIndexTreeEvictedList.NumElements());
+#endif // BUILD_64
+	AssertSize(0, cIndexTreeEvictedList.NumElements());
 
 	cAccess.PutStringString("C0000003", szData);
 	sSize = cIndexTree.GetSystemMemorySize();
+#ifdef BUILD_64
+	AssertLong(8576LL, sSize);
+#else
 	AssertLong(7132LL, sSize);
-	AssertInt(0, cIndexTreeEvictedList.NumElements());
+#endif // BUILD_64
+	AssertSize(0, cIndexTreeEvictedList.NumElements());
 
 	cAccess.PutStringString("D0000004", szData);
 	sSize = cIndexTree.GetSystemMemorySize();
+#ifdef BUILD_64
+	AssertLong(8576LL, sSize);
+#else
 	AssertLong(7132LL, sSize);
-	AssertInt(1, cIndexTreeEvictedList.NumElements());
+#endif // BUILD_64
+	AssertSize(1, cIndexTreeEvictedList.NumElements());
 	szEvictedKey = (char*)cIndexTreeEvictedList.GetKey(0);
 	AssertString("A0000001", szEvictedKey);
 	cIndexTreeEvictedList.Clear();
 
 	cAccess.PutStringString("E0000005", szData);
 	sSize = cIndexTree.GetSystemMemorySize();
+#ifdef BUILD_64
+	AssertLong(8576LL, sSize);
+#else
 	AssertLong(7132LL, sSize);
-	AssertInt(1, cIndexTreeEvictedList.NumElements());
+#endif // BUILD_64
+	AssertSize(1, cIndexTreeEvictedList.NumElements());
 	szEvictedKey = (char*)cIndexTreeEvictedList.GetKey(0);
 	AssertString("B0000002", szEvictedKey);
 	cIndexTreeEvictedList.Clear();
 
 	cAccess.PutStringString("G0000006", szData);
 	sSize = cIndexTree.GetSystemMemorySize();
+#ifdef BUILD_64
+	AssertLong(8576LL, sSize);
+#else
 	AssertLong(7132LL, sSize);
-	AssertInt(1, cIndexTreeEvictedList.NumElements());
+#endif // BUILD_64
+	AssertSize(1, cIndexTreeEvictedList.NumElements());
 	szEvictedKey = (char*)cIndexTreeEvictedList.GetKey(0);
 	AssertString("C0000003", szEvictedKey);
 

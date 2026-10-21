@@ -15,7 +15,7 @@ void TestArrayTemplatePrimitive(void)
 	CArrayFloat32	aFloats;
 	CArrayFloat64	aDoubles;
 	CArrayInt64		aLongs;
-	int				iIndex;
+	size				iIndex;
 
 	BeginTests();
 
@@ -27,9 +27,9 @@ void TestArrayTemplatePrimitive(void)
 	aFloats.Init();
 	aFloats.InsertAt(5.1f, 0);
 	AssertFloat(5.1f, aFloats.GetValue(0), 2);
-	AssertInt(1, aFloats.AllocatedElements());
-	AssertInt(1, aFloats.ChunkSize());
-	AssertInt(1, aFloats.NumElements());
+	AssertSize(1, aFloats.AllocatedElements());
+	AssertSize(1, aFloats.ChunkSize());
+	AssertSize(1, aFloats.NumElements());
 	aFloats.Kill();
 
 	aDoubles.Init();
@@ -46,7 +46,7 @@ void TestArrayTemplatePrimitive(void)
 	aLongs.Init();
 	aLongs.AddList(0LL, 4LL, 0x3122345482773411LL, 2LL, 1LL, 0LL);
 	iIndex = aLongs.Find(0x3122345482773411LL);
-	AssertInt(1, iIndex);
+	AssertSize(1, iIndex);
 	aLongs.Kill();
 
 	TestStatistics();

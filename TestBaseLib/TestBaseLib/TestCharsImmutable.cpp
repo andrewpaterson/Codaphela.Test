@@ -69,7 +69,11 @@ void TestCharsImmutableSizeof(void)
 {
 	if (sizeof(int) == 4)
 	{
+#ifdef BUILD_64
+		AssertSize(32, sizeof(CCharsImmutable));
+#else
 		AssertSize(16, sizeof(CCharsImmutable));
+#endif // BUILD_64
 	}
 }
 

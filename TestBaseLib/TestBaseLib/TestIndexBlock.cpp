@@ -133,14 +133,14 @@ void TestIndexBlockGet(void)
 	AddToIndexBlock(&cIndexBlock, "cock", llia[1]);
 	AddToIndexBlock(&cIndexBlock, "cockerel", llia[2]);
 
-	AssertInt(3, cIndexBlock.NumElements());
+	AssertSize(3, cIndexBlock.NumElements());
 	AssertTrue(GetFromIndexBlock(&cIndexBlock, "cocker", &plli, &iSize));
 	AssertLong(llia[0], *plli);
-	AssertInt(sizeof(int64), iSize);
+	AssertSize(sizeof(int64), iSize);
 
 	AssertTrue(GetFromIndexBlock(&cIndexBlock, "cock", &plli, &iSize));
 	AssertLong(llia[1], *plli);
-	AssertInt(sizeof(int64), iSize);
+	AssertSize(sizeof(int64), iSize);
 
 	AssertTrue(GetFromIndexBlock(&cIndexBlock, "cockerel", &plli, &iSize));
 	AssertLong(llia[2], *plli);
@@ -162,26 +162,26 @@ void TestIndexBlockGet(void)
 	AddToIndexBlock(&cIndexBlock, "ignominy", llia[10]);
 	AssertTrue(GetFromIndexBlock(&cIndexBlock, "inimical", &plli, &iSize));
 	AssertLong(llia[9], *plli);
-	AssertInt(sizeof(int64), iSize);
+	AssertSize(sizeof(int64), iSize);
 	AssertTrue(GetFromIndexBlock(&cIndexBlock, "cocker", &plli, &iSize));
 	AssertLong(llia[0], *plli);
-	AssertInt(sizeof(int64), iSize);
+	AssertSize(sizeof(int64), iSize);
 
 	AddToIndexBlock(&cIndexBlock, "voluble", llia[11]);
 	AddToIndexBlock(&cIndexBlock, "intransigent", llia[12]);
 	AddToIndexBlock(&cIndexBlock, "potentate", llia[13]);
 	AddToIndexBlock(&cIndexBlock, "sophist", llia[14]);
 	AddToIndexBlock(&cIndexBlock, "solicitous", llia[15]);
-	AssertInt(16, cIndexBlock.NumElements());
+	AssertSize(16, cIndexBlock.NumElements());
 	AssertTrue(GetFromIndexBlock(&cIndexBlock, "solicitous", &plli, &iSize));
 	AssertLong(llia[15], *plli);
-	AssertInt(sizeof(int64), iSize);
+	AssertSize(sizeof(int64), iSize);
 	AssertTrue(GetFromIndexBlock(&cIndexBlock, "cock", &plli, &iSize));
 	AssertLong(llia[1], *plli);
-	AssertInt(sizeof(int64), iSize);
+	AssertSize(sizeof(int64), iSize);
 
 	AddToIndexBlock(&cIndexBlock, "resplendent", llia[16]);
-	AssertInt(17, cIndexBlock.NumElements());
+	AssertSize(17, cIndexBlock.NumElements());
 
 	AssertIndexBlock(&cIndexBlock, "cocker", llia[0]);
 	AssertIndexBlock(&cIndexBlock, "cock", llia[1]);
@@ -224,12 +224,12 @@ void TestIndexBlockAddDuplicate(void)
 	cIndexBlock.Init();
 	bResult = cIndexBlock.Put((uint8*)&ia, sizeof(size), "Hello", iHelloLen + 1);
 	AssertTrue(bResult);
-	AssertInt(1, cIndexBlock.NumElements());
+	AssertSize(1, cIndexBlock.NumElements());
 	AssertString("Hello", (char*)cIndexBlock.Get((uint8*)&ia, sizeof(size)));
 
 	bResult = cIndexBlock.Put((uint8*)&ib, sizeof(size), "World", iWorldLen + 1);
 	AssertTrue(bResult);
-	AssertInt(1, cIndexBlock.NumElements());
+	AssertSize(1, cIndexBlock.NumElements());
 	AssertString("World", (char*)cIndexBlock.Get((uint8*)&ia, sizeof(size)));
 
 	cIndexBlock.Kill();
@@ -253,10 +253,10 @@ void TestIndexBlockRemove(void)
 	bResult = cIndexBlock.Put((uint8*)&ia, sizeof(size), "Hello", strlen("Hello") + 1);
 	bResult = cIndexBlock.Put((uint8*)&ib, sizeof(size), "World", strlen("World") + 1);
 	bResult = cIndexBlock.Put((uint8*)&ic, sizeof(size), "Rogue", strlen("Rogue") + 1);
-	AssertInt(3, cIndexBlock.NumElements());
+	AssertSize(3, cIndexBlock.NumElements());
 
 	cIndexBlock.Remove((uint8*)&ib, sizeof(size));
-	AssertInt(2, cIndexBlock.NumElements());
+	AssertSize(2, cIndexBlock.NumElements());
 	bResult = cIndexBlock.Get((uint8*)&ia, sizeof(size), (void**)&szData, NULL);
 	AssertTrue(bResult);
 	AssertString(szData, "Hello");
@@ -267,7 +267,7 @@ void TestIndexBlockRemove(void)
 	AssertFalse(bResult);
 
 	cIndexBlock.Remove((uint8*)&ia, sizeof(size));
-	AssertInt(1, cIndexBlock.NumElements());
+	AssertSize(1, cIndexBlock.NumElements());
 	bResult = cIndexBlock.Get((uint8*)&ia, sizeof(size), (void**)&szData, NULL);
 	AssertFalse(bResult);
 	bResult = cIndexBlock.Get((uint8*)&ic, sizeof(size), (void**)&szData, NULL);
@@ -277,7 +277,7 @@ void TestIndexBlockRemove(void)
 	AssertFalse(bResult);
 
 	cIndexBlock.Remove((uint8*)&ic, sizeof(size));
-	AssertInt(0, cIndexBlock.NumElements());
+	AssertSize(0, cIndexBlock.NumElements());
 	bResult = cIndexBlock.Get((uint8*)&ia, sizeof(size), (void**)&szData, NULL);
 	AssertFalse(bResult);
 	bResult = cIndexBlock.Get((uint8*)&ic, sizeof(size), (void**)&szData, NULL);
@@ -373,26 +373,26 @@ void TestIndexBlockIterate(void)
 	AssertTrue(bExists);
 	AssertString("ABC", szKey);
 	AssertString("XYZ", pvData);
-	AssertInt(3, uiKeySize);
-	AssertInt(4, uiDataSize);
+	AssertSize(3, uiKeySize);
+	AssertSize(4, uiDataSize);
 	bExists = cIndex.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
 	AssertTrue(bExists);
 	AssertString("Blame", szKey);
 	AssertString("Canada", pvData);
-	AssertInt(5, uiKeySize);
-	AssertInt(7, uiDataSize);
+	AssertSize(5, uiKeySize);
+	AssertSize(7, uiDataSize);
 	bExists = cIndex.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
 	AssertTrue(bExists);
 	AssertString("Collision", szKey);
 	AssertString("Detection", pvData);
-	AssertInt(9, uiKeySize);
-	AssertInt(10, uiDataSize);
+	AssertSize(9, uiKeySize);
+	AssertSize(10, uiDataSize);
 	bExists = cIndex.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
 	AssertTrue(bExists);
 	AssertString("Retro", szKey);
 	AssertString("Evolved", pvData);
-	AssertInt(5, uiKeySize);
-	AssertInt(8, uiDataSize);
+	AssertSize(5, uiKeySize);
+	AssertSize(8, uiDataSize);
 	bExists = cIndex.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
 	AssertFalse(bExists);
 
@@ -411,26 +411,26 @@ void TestIndexBlockIterate(void)
 	AssertTrue(bExists);
 	AssertString("ABC", szKey);
 	AssertString("XYZ", pvData);
-	AssertInt(3, uiKeySize);
-	AssertInt(4, uiDataSize);
+	AssertSize(3, uiKeySize);
+	AssertSize(4, uiDataSize);
 	bExists = cIndexIn.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
 	AssertTrue(bExists);
 	AssertString("Blame", szKey);
 	AssertString("Canada", pvData);
-	AssertInt(5, uiKeySize);
-	AssertInt(7, uiDataSize);
+	AssertSize(5, uiKeySize);
+	AssertSize(7, uiDataSize);
 	bExists = cIndexIn.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
 	AssertTrue(bExists);
 	AssertString("Collision", szKey);
 	AssertString("Detection", pvData);
-	AssertInt(9, uiKeySize);
-	AssertInt(10, uiDataSize);
+	AssertSize(9, uiKeySize);
+	AssertSize(10, uiDataSize);
 	bExists = cIndexIn.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
 	AssertTrue(bExists);
 	AssertString("Retro", szKey);
 	AssertString("Evolved", pvData);
-	AssertInt(5, uiKeySize);
-	AssertInt(8, uiDataSize);
+	AssertSize(5, uiKeySize);
+	AssertSize(8, uiDataSize);
 	bExists = cIndexIn.Iterate(&sIter, (void**)&pvData, &uiDataSize, szKey, &uiKeySize, MAX_KEY_SIZE);
 	AssertFalse(bExists);
 
@@ -469,7 +469,7 @@ void TestIndexBlockDataMemoryUnchanged(void)
 	{
 		MakeKey(&cRandom, &aszWords, &sz);
 
-		szData = cAccess.PutStringString(sz.Text(), IntToString(i));
+		szData = cAccess.PutStringString(sz.Text(), SizeToString(i));
 		aszData[i] = szData;
 
 		sz.Kill();
@@ -532,7 +532,7 @@ void TestIndexBlockRemoveHalf(void)
 	{
 		MakeKey(&cRandom, &aszWords, &sz);
 
-		szData = cAccess.PutStringString(sz.Text(), IntToString(i));
+		szData = cAccess.PutStringString(sz.Text(), SizeToString(i));
 		aszData[i] = szData;
 
 		sz.Kill();
@@ -552,7 +552,7 @@ void TestIndexBlockRemoveHalf(void)
 	}
 
 	AssertTrue(bResult);
-	AssertInt(1024, cIndex.NumElements());
+	AssertSize(1024, cIndex.NumElements());
 	cRandom.Kill();
 
 	bFailed = false;

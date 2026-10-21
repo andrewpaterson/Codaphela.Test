@@ -28,6 +28,7 @@ void TestIndexTreeFileKeyDiagnosticCallbackStuff(void)
 	char											szData[1024];
 	int												i;
 	CChars											sz;
+	size											uiCacheSize;
 
 	for (i = 0; i < 1023; i++)
 	{
@@ -42,7 +43,13 @@ void TestIndexTreeFileKeyDiagnosticCallbackStuff(void)
 	cEvictionStrategy.Init(LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
 	cController.Begin();
 	cCallback.Init();
-	cIndexTree.Init(&cController, NULL, 8 KB, NULL, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), NULL, IWT_No, IKR_No, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
+	//Room for three keys.  The nodes are bigger in a 64 bit build.
+#ifdef BUILD_64
+	uiCacheSize = 9 KB;
+#else
+	uiCacheSize = 8 KB;
+#endif // BUILD_64
+	cIndexTree.Init(&cController, NULL, uiCacheSize, NULL, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), NULL, IWT_No, IKR_No, LifeLocal<CIndexTreeDataOrderer>(&cOrderer));
 	cIndexTree.SetDiagnosticCallback(&cCallback);
 	cAccess.Init(&cIndexTree);
 

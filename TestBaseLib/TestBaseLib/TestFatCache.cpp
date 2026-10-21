@@ -112,7 +112,7 @@ void TestFatCacheWrite(void)
 
 	uiLength = 511;
 	cCache.Write((uint8*)pvData, 0, 0, 0, &uiLength, 3);
-	AssertInt(511, strlen((char*)cCache.GetCache()));
+	AssertSize(511, strlen((char*)cCache.GetCache()));
 	AssertString("!!!###$$$%%%&&&'''((()))***+++,,,---...///000111222333444555666777888999:::;;;<<<===>>>???@@@AAABBBCCCDDDEEEFFFGGGHHHIIIJJJKKKLLLMMMNNNOOOPPPQQQRRRSSSTTTUUUVVVWWWXXXYYYZZZ[[[]]]^^^___```aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnnooopppqqqrrrssstttuuuvvvwwwxxxyyyzzz{{{|||}}}~~~€€€‚‚‚ƒƒƒ„„„………†††‡‡‡ˆˆˆ‰‰‰ŠŠŠ‹‹‹ŒŒŒ‘‘‘’’’“““”””•••–––———˜˜˜™™™ššš›››œœœŸŸŸ   ¡¡¡¢¢¢£££¤¤¤¥¥¥¦¦¦§§§¨¨¨©©©ªªª«««¬¬¬­­­®®®¯¯¯°°°±±±²²²³³³´´´µµµ¶¶¶···¸¸¸¹¹¹ººº»»»¼¼¼½½½¾¾¾¿¿¿ÀÀÀÁÁÁÂÂÂÃÃÃÄÄÄÅÅÅÆÆÆÇÇÇÈÈÈÉÉÉÊÊÊËËËÌÌÌÍ", 
 		(char*)cCache.GetCache());
 	AssertTrue(cCache.IsSectorDirty(0));
@@ -122,7 +122,7 @@ void TestFatCacheWrite(void)
 
 	uiLength = 1;
 	cCache.Write((uint8*)pvData, 0, 0, 511, &uiLength, 511);
-	AssertInt(512, strlen((char*)cCache.GetCache()));
+	AssertSize(512, strlen((char*)cCache.GetCache()));
 	AssertString("!!!###$$$%%%&&&'''((()))***+++,,,---...///000111222333444555666777888999:::;;;<<<===>>>???@@@AAABBBCCCDDDEEEFFFGGGHHHIIIJJJKKKLLLMMMNNNOOOPPPQQQRRRSSSTTTUUUVVVWWWXXXYYYZZZ[[[]]]^^^___```aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnnooopppqqqrrrssstttuuuvvvwwwxxxyyyzzz{{{|||}}}~~~€€€‚‚‚ƒƒƒ„„„………†††‡‡‡ˆˆˆ‰‰‰ŠŠŠ‹‹‹ŒŒŒ‘‘‘’’’“““”””•••–––———˜˜˜™™™ššš›››œœœŸŸŸ   ¡¡¡¢¢¢£££¤¤¤¥¥¥¦¦¦§§§¨¨¨©©©ªªª«««¬¬¬­­­®®®¯¯¯°°°±±±²²²³³³´´´µµµ¶¶¶···¸¸¸¹¹¹ººº»»»¼¼¼½½½¾¾¾¿¿¿ÀÀÀÁÁÁÂÂÂÃÃÃÄÄÄÅÅÅÆÆÆÇÇÇÈÈÈÉÉÉÊÊÊËËËÌÌÌÍ!",
 		(char*)cCache.GetCache());
 	AssertTrue(cCache.IsSectorDirty(0));
@@ -132,23 +132,23 @@ void TestFatCacheWrite(void)
 
 	uiLength = 512 + 256;
 	cCache.Write((uint8*)pvData, 0, 0, 1, &uiLength, 512);
-	AssertInt(512 + 256 + 1, strlen((char*)cCache.GetCache()));
+	AssertSize(512 + 256 + 1, strlen((char*)cCache.GetCache()));
 	AssertString("!!!!###$$$%%%&&&'''((()))***+++,,,---...///000111222333444555666777888999:::;;;<<<===>>>???@@@AAABBBCCCDDDEEEFFFGGGHHHIIIJJJKKKLLLMMMNNNOOOPPPQQQRRRSSSTTTUUUVVVWWWXXXYYYZZZ[[[]]]^^^___```aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnnooopppqqqrrrssstttuuuvvvwwwxxxyyyzzz{{{|||}}}~~~€€€‚‚‚ƒƒƒ„„„………†††‡‡‡ˆˆˆ‰‰‰ŠŠŠ‹‹‹ŒŒŒ‘‘‘’’’“““”””•••–––———˜˜˜™™™ššš›››œœœŸŸŸ   ¡¡¡¢¢¢£££¤¤¤¥¥¥¦¦¦§§§¨¨¨©©©ªªª«««¬¬¬­­­®®®¯¯¯°°°±±±²²²³³³´´´µµµ¶¶¶···¸¸¸¹¹¹ººº»»»¼¼¼½½½¾¾¾¿¿¿ÀÀÀÁÁÁÂÂÂÃÃÃÄÄÄÅÅÅÆÆÆÇÇÇÈÈÈÉÉÉÊÊÊËËËÌÌÌÍÍÍÎÎÎÏÏÏĞĞĞÑÑÑÒÒÒÓÓÓÔÔÔÕÕÕÖÖÖ×××ØØØÙÙÙÚÚÚÛÛÛÜÜÜİİİŞŞŞßßßàààáááâââãããäääåååæææçççèèèéééêêêëëëìììíííîîîïïïğğğñññòòòóóóôôôõõõööö÷÷÷øøøùùùúúúûûûüüüııışşşÿÿÿ!!!###$$$%%%&&&'''((()))***+++,,,---...///000111222333444555666777888999:::;;;<<<===>>>???@@@AAABBBCCCDDD",
 		(char*)cCache.GetCache());
 
 	uiLength = 512 + 512 + 1;
 	cCache.Write((uint8*)pvData, 0, 0, 16, &uiLength, 512 + 256 + 1);
-	AssertInt(16 + 512 + 512 + 1, strlen((char*)cCache.GetCache()));
+	AssertSize(16 + 512 + 512 + 1, strlen((char*)cCache.GetCache()));
 	AssertString("!!!!###$$$%%%&&&!!!###$$$%%%&&&'''((()))***+++,,,---...///000111222333444555666777888999:::;;;<<<===>>>???@@@AAABBBCCCDDDEEEFFFGGGHHHIIIJJJKKKLLLMMMNNNOOOPPPQQQRRRSSSTTTUUUVVVWWWXXXYYYZZZ[[[]]]^^^___```aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnnooopppqqqrrrssstttuuuvvvwwwxxxyyyzzz{{{|||}}}~~~€€€‚‚‚ƒƒƒ„„„………†††‡‡‡ˆˆˆ‰‰‰ŠŠŠ‹‹‹ŒŒŒ‘‘‘’’’“““”””•••–––———˜˜˜™™™ššš›››œœœŸŸŸ   ¡¡¡¢¢¢£££¤¤¤¥¥¥¦¦¦§§§¨¨¨©©©ªªª«««¬¬¬­­­®®®¯¯¯°°°±±±²²²³³³´´´µµµ¶¶¶···¸¸¸¹¹¹ººº»»»¼¼¼½½½¾¾¾¿¿¿ÀÀÀÁÁÁÂÂÂÃÃÃÄÄÄÅÅÅÆÆÆÇÇÇÈÈÈÉÉÉÊÊÊËËËÌÌÌÍÍÍÎÎÎÏÏÏĞĞĞÑÑÑÒÒÒÓÓÓÔÔÔÕÕÕÖÖÖ×××ØØØÙÙÙÚÚÚÛÛÛÜÜÜİİİŞŞŞßßßàààáááâââãããäääåååæææçççèèèéééêêêëëëìììíííîîîïïïğğğñññòòòóóóôôôõõõööö÷÷÷øøøùùùúúúûûûüüüııışşşÿÿÿ!!!###$$$%%%&&&'''((()))***+++,,,---...///000111222333444555666777888999:::;;;<<<===>>>???@@@AAABBBCCCDDDEEEFFFGGGHHHIIIJJJKKKLLLMMMNNNOOOPPPQQQRRRSSSTTTUUUVVVWWWXXXYYYZZZ[[[]]]^^^___```aaabbbcccdddeeefffggghhhiiijjjkkklllmmmnnnooopppqqqrrrssstttuuuvvvwwwxxxyyyzzz{{{|||}}}~~~€€€‚‚‚ƒƒƒ„„„………†††‡‡‡ˆˆˆ‰‰‰ŠŠŠ‹‹‹ŒŒŒ‘‘‘’’’“““”””•••–––———˜˜˜™™™ššš››",
 		(char*)cCache.GetCache());
 
-	uiLength = iDataLength;
+	uiLength = (uint32)iDataLength;
 	cCache.Write((uint8*)pvData, 0, 0, 0, &uiLength, 16 + 512 + 512 + 1);
 	AssertMemory(pvData, cCache.GetCache(), 32768);
 	AssertTrue(cCache.IsSectorDirty(0));
 	AssertTrue(cCache.IsSectorDirty(63));
 
-	uiLength = iDataLength;
+	uiLength = (uint32)iDataLength;
 	cCache.Clear();
 	cCache.Write((uint8*)pvData, 0, 0, 0, &uiLength, 0);
 	AssertMemory(pvData, cCache.GetCache(), 32768);
@@ -295,7 +295,7 @@ void TestFatCacheDiscontiguousWrites(void)
 	pcMemory = (uint8*)cMemoryDrive.GetMemory();
 
 	iStart = FindFirstByte(pcMemory, 33, 32 KB);
-	AssertInt(-1, iStart);
+	AssertSize(-1, iStart);
 
 	cCache.Flush();
 
@@ -326,19 +326,19 @@ void TestFatCacheDiscontiguousWrites(void)
 		}
 	}
 
-	AssertInt(512 * 0, aiZeroIndices[0]);
-	AssertInt(512 * 1, aiNonZeroIndices[0]);
+	AssertSize(512 * 0, aiZeroIndices[0]);
+	AssertSize(512 * 1, aiNonZeroIndices[0]);
 
-	AssertInt(512 * 3, aiZeroIndices[1]);
-	AssertInt(512 * 5, aiNonZeroIndices[1]);
+	AssertSize(512 * 3, aiZeroIndices[1]);
+	AssertSize(512 * 5, aiNonZeroIndices[1]);
 
-	AssertInt(512 * 8, aiZeroIndices[2]);
-	AssertInt(512 * 11, aiNonZeroIndices[2]);
+	AssertSize(512 * 8, aiZeroIndices[2]);
+	AssertSize(512 * 11, aiNonZeroIndices[2]);
 
-	AssertInt(512 * 12, aiZeroIndices[3]);
-	AssertInt(512 * 13, aiNonZeroIndices[3]);
+	AssertSize(512 * 12, aiZeroIndices[3]);
+	AssertSize(512 * 13, aiNonZeroIndices[3]);
 
-	AssertInt(512 * 14, aiZeroIndices[4]);
+	AssertSize(512 * 14, aiZeroIndices[4]);
 
 	cCache.Kill();
 

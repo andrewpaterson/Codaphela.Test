@@ -62,6 +62,6 @@ int CTestFunctionCaller::PrintIt(const char* pv, int i)
 	msz.Append(pv);
 	msz.Append(" ");
 	msz.Append(i);
-	return msz.Length();
+	return (int)msz.Length();
 }
 

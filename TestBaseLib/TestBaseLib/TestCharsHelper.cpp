@@ -31,7 +31,7 @@ void TestCharsHelperIntersect(void)
     aszResult.Init();
     CCharsHelper::Intersect(&aszResult, &aszOne, &aszTwo);
 
-    AssertInt(3, aszResult.NumElements());
+    AssertSize(3, aszResult.NumElements());
     AssertString("Are", aszResult.Get(0)->Text());
     AssertString("Hello", aszResult.Get(1)->Text());
     AssertString("How", aszResult.Get(2)->Text());

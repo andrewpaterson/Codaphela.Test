@@ -12,7 +12,7 @@
 void TestChunkFileFileRead(void)
 {
 	CChunkFile		cChunkFile;
-	int				iChunkNum;
+	size				iChunkNum;
 	char			szZ[] = {"Z"};
 	CChunkFileFile	cChunkFileFile;
 	char			cz;
@@ -26,7 +26,7 @@ void TestChunkFileFileRead(void)
 
 	AssertTrue(cChunkFile.ReadOpen());
 	iChunkNum = cChunkFile.FindFirstChunkWithName("Zynaps");
-	AssertInt(0, iChunkNum);
+	AssertSize(0, iChunkNum);
 	AssertTrue(cChunkFile.ReadChunkBegin(iChunkNum));
 
 	cChunkFileFile.Init(&cChunkFile);

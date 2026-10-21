@@ -21,7 +21,7 @@ void TestArrayInt2DRemoval(void)
 	AssertInt(10, iValue);
 
 	cArray.RemoveRow(8);
-	AssertInt(8, cArray.miHeight);
+	AssertSize(8, cArray.miHeight);
 
 	cArray.RemoveRow(4);
 	iValue = cArray.Get(0, 4);
@@ -37,7 +37,7 @@ void TestArrayInt2DRemoval(void)
 	AssertInt(1, iValue);
 
 	cArray.RemoveColumn(8);
-	AssertInt(8, cArray.miWidth);
+	AssertSize(8, cArray.miWidth);
 
 	cArray.RemoveColumn(4);
 	iValue = cArray.Get(4, 0);
@@ -91,7 +91,7 @@ void TestArrayInt2DInsertion(void)
 	}
 
 	cArray.SetSize(20, 20);
-	AssertInt(400, cArray.mcArray.NumElements());
+	AssertSize(400, cArray.mcArray.NumElements());
 	cArray.Fill(0, 0, 20, 20, 0x3e987c34);
 
 	cArray.AddColumn();
