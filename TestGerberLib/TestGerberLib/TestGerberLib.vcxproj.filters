@@ -16,6 +16,12 @@
     <ClCompile Include="TestGerberLib.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="TestExcellon.cpp">
+      <Filter>Source\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="TestGerberInterpreter.cpp">
+      <Filter>Source\Parser</Filter>
+    </ClCompile>
     <ClCompile Include="TestGerberParser.cpp">
       <Filter>Source\Parser</Filter>
     </ClCompile>

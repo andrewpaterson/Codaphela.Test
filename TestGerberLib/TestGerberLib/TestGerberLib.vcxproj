@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{9BA313F9-68F2-497D-85A6-39EA5B62003B}</ProjectGuid>
+    <ProjectGuid>{4317C562-98F6-4E22-8E79-B3B5171B09B7}</ProjectGuid>
     <RootNamespace>TestGerberLib</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
@@ -224,6 +224,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="TestGerberLib.cpp" />
+    <ClCompile Include="TestExcellon.cpp" />
+    <ClCompile Include="TestGerberInterpreter.cpp" />
     <ClCompile Include="TestGerberParser.cpp" />
   </ItemGroup>
   <ItemGroup>
