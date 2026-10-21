@@ -419,6 +419,44 @@ void TestImageSizeLimits(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// An image can draw onto memory it doesn't own (e.g. a WinGDI DIB
+// section).  Black and White must still clear it.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageBlackWhiteUserData(void)
+{
+	Ptr<CImage>	pImage;
+	uint8		auiData[3 * 2 * 4 + 1];
+	size		i;
+
+	ObjectsInit();
+
+	memset(auiData, 0x5A, sizeof(auiData));
+	pImage = OMalloc<CImage>(3, 2, (void*)auiData, PT_uint8, IMAGE_DIFFUSE_BLUE, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_RED, IMAGE_OPACITY, CHANNEL_STOP);
+	AssertPointer(auiData, pImage->GetData());
+
+	pImage->Black();
+	for (i = 0; i < 3 * 2 * 4; i++)
+	{
+		AssertInt(0, auiData[i]);
+	}
+	AssertInt(0x5A, auiData[3 * 2 * 4]);
+
+	pImage->White();
+	for (i = 0; i < 3 * 2 * 4; i++)
+	{
+		AssertInt(0xFF, auiData[i]);
+	}
+	AssertInt(0x5A, auiData[3 * 2 * 4]);
+
+	pImage = NULL;
+
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestImage(void)
@@ -432,6 +470,7 @@ void TestImage(void)
 	TestImageCopier();
 	TestImageCopierRealPNG();
 	TestImageSizeLimits();
+	TestImageBlackWhiteUserData();
 
 	DataIOKill();
 

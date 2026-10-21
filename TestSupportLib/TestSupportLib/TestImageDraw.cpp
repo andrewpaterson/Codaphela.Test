@@ -8,6 +8,7 @@
 #include "SupportLib/ImageCel.h"
 #include "SupportLib/ImageCelBlitterCache.h"
 #include "SupportLib/ImageBlitterContext.h"
+#include "SupportLib/ImageColourConverter.h"
 #include "BaseLib/Logger.h"
 #include "TestLib/Assert.h"
 #include "TestLib/AssertFile.h"
@@ -894,6 +895,84 @@ void TestImageDrawCelOpaqueOntoDestOpacity(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void AssertDrawCelTranslucentPixels(Ptr<CImage> pDest, size uiRed, size uiGreen, size uiBlue, size uiOpacity)
+{
+	uint8*	puiData;
+	size	i;
+	uint8	auiColour[3] = { 200, 100, 50 };
+	uint8	auiAlpha[4] = { 0, 64, 128, 255 };
+	size	uiExpected;
+
+	//Drawn onto transparent black a straight alpha source must leave its colour multiplied by its opacity.
+	puiData = (uint8*)pDest->GetData();
+	for (i = 0; i < 4; i++)
+	{
+		uiExpected = (auiColour[0] * (auiAlpha[i] > 128 ? auiAlpha[i] + 1 : auiAlpha[i])) >> 8;
+		AssertInt((int)uiExpected, puiData[i * 4 + uiRed]);
+		uiExpected = (auiColour[1] * (auiAlpha[i] > 128 ? auiAlpha[i] + 1 : auiAlpha[i])) >> 8;
+		AssertInt((int)uiExpected, puiData[i * 4 + uiGreen]);
+		uiExpected = (auiColour[2] * (auiAlpha[i] > 128 ? auiAlpha[i] + 1 : auiAlpha[i])) >> 8;
+		AssertInt((int)uiExpected, puiData[i * 4 + uiBlue]);
+		AssertInt(auiAlpha[i], puiData[i * 4 + uiOpacity]);
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawCelTranslucentBGROntoDestOpacity(void)
+{
+	CImageDraw		cDraw;
+	Ptr<CImage>		pSource;
+	Ptr<CImage>		pConverted;
+	Ptr<CImage>		pDest;
+	Ptr<CImageCel>	pCel;
+	uint8*			puiData;
+	size			i;
+	uint8			auiAlpha[4] = { 0, 64, 128, 255 };
+
+	//A font atlas is A,R,G,B.  Converted to the WinGDI order it is A,B,G,R and is drawn onto a B,G,R,A canvas.
+	pSource = OMalloc<CImage>(4, 1, PT_uint8, IMAGE_OPACITY, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+	puiData = (uint8*)pSource->GetData();
+	for (i = 0; i < 4; i++)
+	{
+		puiData[i * 4 + 0] = auiAlpha[i];
+		puiData[i * 4 + 1] = 200;
+		puiData[i * 4 + 2] = 100;
+		puiData[i * 4 + 3] = 50;
+	}
+
+	pDest = OMalloc<CImage>(4, 1, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, IMAGE_OPACITY, CHANNEL_STOP);
+	memset(pDest->GetData(), 0, pDest->GetByteSize());
+	pCel = OMalloc<CImageCel>(pSource);
+	cDraw.Init(&pDest);
+	AssertTrue(cDraw.DrawCel(0, 0, pCel));
+	AssertDrawCelTranslucentPixels(pDest, 0, 1, 2, 3);
+	cDraw.Kill();
+
+	pConverted = CImageColourConverter::ConvertColour(pSource, CCO_BGR);
+	AssertInt(CCO_BGR, pConverted->GetColourOrder());
+	pDest = OMalloc<CImage>(4, 1, PT_uint8, IMAGE_DIFFUSE_BLUE, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_RED, IMAGE_OPACITY, CHANNEL_STOP);
+	memset(pDest->GetData(), 0, pDest->GetByteSize());
+	pCel = OMalloc<CImageCel>(pConverted);
+	cDraw.Init(&pDest);
+	AssertTrue(cDraw.DrawCel(0, 0, pCel));
+	AssertDrawCelTranslucentPixels(pDest, 2, 1, 0, 3);
+	cDraw.Kill();
+
+	pCel = NULL;
+	pConverted = NULL;
+	pSource = NULL;
+	pDest = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestImageDrawCelAlignment(void)
 {
 	CImageDraw		cDraw;
@@ -1532,6 +1611,7 @@ void TestImageDraw(void)
 	TestImageDrawCelRGBX();
 	TestImageDrawCelDestAlphaRowEnds();
 	TestImageDrawCelOpaqueOntoDestOpacity();
+	TestImageDrawCelTranslucentBGROntoDestOpacity();
 	TestImageDrawCelAlignment();
 	TestImageDrawBlitterContextInit();
 	TestImageDrawCelSizedOpaque();
