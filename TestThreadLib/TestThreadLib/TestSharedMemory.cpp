@@ -258,10 +258,10 @@ void AssertFilledMemory(char* pcMemory, int iChunkSize)
 		sz.Append(pcMemory, iChunkSize);
 		sz.AppendNewLine();
 
-		iA = sz.Count('A');
-		iB = sz.Count('B');
-		iC = sz.Count('C');
-		iD = sz.Count('D');
+		iA = (int)sz.Count('A');
+		iB = (int)sz.Count('B');
+		iC = (int)sz.Count('C');
+		iD = (int)sz.Count('D');
 		sz.Kill();
 
 		bOneEqualsChunkSize = (iA == iChunkSize || iB == iChunkSize || iC == iChunkSize || iD == iChunkSize);

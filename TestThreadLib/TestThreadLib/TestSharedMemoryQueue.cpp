@@ -27,61 +27,71 @@ void TestSharedMemoryQueueBasic(void)
 	bool				bResult;
 	CChars				sz;
 	char				szData[4 KB];
-	size_t				uiDataSize;
+	size					uiDataSize;
+	size					uiOneElementCacheSize;
+	size					uiTwoElementCacheSize;
+
+#ifdef BUILD_64
+	uiOneElementCacheSize = 44;
+	uiTwoElementCacheSize = 108;
+#else
+	uiOneElementCacheSize = 32;
+	uiTwoElementCacheSize = 84;
+#endif // BUILD_64
 
 	bResult = cQueue.Init("TestSharedMemoryQueueBasic", 20 + sizeof(SMemoryCacheDescriptor));
 	AssertTrue(bResult);
 	AssertTrue(cQueue.IsEmpty());
-	AssertInt(32, cQueue.GetCacheSize());
+	AssertSize(uiOneElementCacheSize, cQueue.GetCacheSize());
 
 	sz.Init('A', 19);
 	bResult = cQueue.Push(sz.Text(), sz.Length() + 1);  sz.Kill();
 	AssertTrue(bResult);
 	AssertFalse(cQueue.IsEmpty());
-	AssertInt(32, cQueue.GetCacheSize());
+	AssertSize(uiOneElementCacheSize, cQueue.GetCacheSize());
 	Pass();
 
 	bResult = cQueue.Pop(szData, &uiDataSize, 4 KB);
 	AssertTrue(bResult);
-	AssertInt(20, uiDataSize);
+	AssertSize(20, uiDataSize);
 	AssertString("AAAAAAAAAAAAAAAAAAA", szData);
 	AssertTrue(cQueue.IsEmpty());
-	AssertInt(32, cQueue.GetCacheSize());
+	AssertSize(uiOneElementCacheSize, cQueue.GetCacheSize());
 	Pass();
 
 	bResult = cQueue.Pop(szData, &uiDataSize, 4 KB);
 	AssertFalse(bResult);
-	AssertInt(0, uiDataSize);
+	AssertSize(0, uiDataSize);
 	AssertTrue(cQueue.IsEmpty());
 
 	sz.Init('B', 19);
 	bResult = cQueue.Push(sz.Text(), sz.Length() + 1);  sz.Kill();
 	AssertTrue(bResult);
 	AssertFalse(cQueue.IsEmpty());
-	AssertInt(32, cQueue.GetCacheSize());
+	AssertSize(uiOneElementCacheSize, cQueue.GetCacheSize());
 	cQueue.ValidateQueue();
 	Pass();
 
 	sz.Init('C', 19);
 	bResult = cQueue.Push(sz.Text(), sz.Length() + 1);  sz.Kill();
 	AssertTrue(bResult);
-	AssertInt(84, cQueue.GetCacheSize());
+	AssertSize(uiTwoElementCacheSize, cQueue.GetCacheSize());
 	Pass();
 
 	bResult = cQueue.Pop(szData, &uiDataSize, 4 KB);
 	AssertTrue(bResult);
-	AssertInt(20, uiDataSize);
+	AssertSize(20, uiDataSize);
 	AssertString("BBBBBBBBBBBBBBBBBBB", szData);
 	AssertFalse(cQueue.IsEmpty());
-	AssertInt(84, cQueue.GetCacheSize());
+	AssertSize(uiTwoElementCacheSize, cQueue.GetCacheSize());
 	Pass();
 
 	bResult = cQueue.Pop(szData, &uiDataSize, 4 KB);
 	AssertTrue(bResult);
-	AssertInt(20, uiDataSize);
+	AssertSize(20, uiDataSize);
 	AssertString("CCCCCCCCCCCCCCCCCCC", szData);
 	AssertTrue(cQueue.IsEmpty());
-	AssertInt(84, cQueue.GetCacheSize());
+	AssertSize(uiTwoElementCacheSize, cQueue.GetCacheSize());
 	Pass();
 
 	cQueue.Kill();
@@ -128,7 +138,7 @@ void FillQueueElement(SSharedMemoryQueueElement* psElement, int iIndex, SQueueTe
 	memset(psElement->sz, psSequence->c, psSequence->iSize);
 	psElement->sz[psSequence->iSize] = '\0';
 	psElement->sHeader.miIndex = iIndex;
-	psElement->sHeader.muiSize = psSequence->iSize + 1 + sizeof(SSharedMemoryQueueElementHeader);
+	psElement->sHeader.muiSize = (unsigned int)(psSequence->iSize + 1 + sizeof(SSharedMemoryQueueElementHeader));
 	psSequence->Next();
 }
 
@@ -193,7 +203,7 @@ void TestSharedMemoryQueueOne(void)
 	char				acProducerData[256];
 	char				aacData[4][256];
 	SQueueTestSequence		sSequence;
-	size_t				uiSize;
+	size					uiSize;
 	bool				bResult;
 	int					iProduce;
 	int					iTaken;
@@ -512,8 +522,8 @@ void TestSharedMemoryQueueLongNames(void)
 	int					i;
 	int					j;
 	char*				pcData;
-	size_t				uiSize;
-	size_t				uiDataSize;
+	size					uiSize;
+	size					uiDataSize;
 
 	//A name that fits is not changed.  A longer one keeps its start and ends
 	//with a hash of all of it; the Java client shortens names the same way.

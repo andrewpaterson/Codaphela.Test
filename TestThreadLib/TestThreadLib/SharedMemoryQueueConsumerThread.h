@@ -58,7 +58,7 @@ public:
 	{
 		bool						bResult;
 		SSharedMemoryQueueElement	sConsumerData;
-		size_t						uiSize;
+		size							uiSize;
 		int							iTaken;
 		CSharedMemoryQueue			cQueue;
 

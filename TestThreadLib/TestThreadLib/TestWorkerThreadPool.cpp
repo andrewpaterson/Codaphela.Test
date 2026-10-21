@@ -84,10 +84,10 @@ void TestWorkerThreadPoolConcurrency(void)
 	for (i = 0; i < iNumHardwareTheads * 2; i++)
 	{
 		pcPusher = acPushers.Add();
-		pcPusher->Init(i + 101, &aiArray);
+		pcPusher->Init((int)i + 101, &aiArray);
 	}
 
-	cPool.Init(iNumHardwareTheads * 2);
+	cPool.Init((int)(iNumHardwareTheads * 2));
 	for (i = 0; i < iNumHardwareTheads * 2; i++)
 	{
 		pcPusher = acPushers.Get(i);
@@ -108,7 +108,7 @@ void TestWorkerThreadPoolConcurrency(void)
 		}
 	}
 
-	AssertInt((iNumHardwareTheads * TEST_THREAD_INTEGER_COUNT * 2),  aiArray.NumElements());
+	AssertSize(iNumHardwareTheads * TEST_THREAD_INTEGER_COUNT * 2, aiArray.NumElements());
 	Pass();
 
 	iGreatherThanCount = 0;
