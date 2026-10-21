@@ -31,7 +31,7 @@ void TestGerberParserCommandEndOfFile(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(1, uiNumCommands);
+	AssertSize(1, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsEndOfFile());
@@ -69,7 +69,7 @@ void TestGerberParserCommandComment(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(3, uiNumCommands);
+	AssertSize(3, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsComment());
@@ -118,7 +118,7 @@ void TestGerberParserCommandFormatSpecifier(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(1, uiNumCommands);
+	AssertSize(1, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsFormatSpecifier());
@@ -170,7 +170,7 @@ void TestGerberParserCommandMeasurementMode(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(1, uiNumCommands);
+	AssertSize(1, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsMeasurementMode());
@@ -195,7 +195,7 @@ void TestGerberParserCommandMeasurementMode(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(1, uiNumCommands);
+	AssertSize(1, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsMeasurementMode());
@@ -256,7 +256,7 @@ void TestGerberParserCommandPlotMode(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(3, uiNumCommands);
+	AssertSize(3, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsPlotMode());
@@ -314,7 +314,7 @@ void TestGerberParserCommandLoadPolarity(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(2, uiNumCommands);
+	AssertSize(2, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsLoadPolarity());
@@ -362,7 +362,7 @@ void TestGerberParserCommandLoadMirroring(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(4, uiNumCommands);
+	AssertSize(4, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsLoadMirroring());
@@ -416,7 +416,7 @@ void TestGerberParserCommandLoadRotation(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(2, uiNumCommands);
+	AssertSize(2, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsLoadRotation());
@@ -460,7 +460,7 @@ void TestGerberParserCommandLoadScaling(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(2, uiNumCommands);
+	AssertSize(2, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsLoadScaling());
@@ -508,7 +508,7 @@ void TestGerberParserCommandFileAttribute(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(3, uiNumCommands);
+	AssertSize(3, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsFileAttribute());
@@ -582,7 +582,7 @@ void TestGerberParserCommandApertureAttribute(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(1, uiNumCommands);
+	AssertSize(1, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsApertureAttribute());
@@ -628,7 +628,7 @@ void TestGerberParserCommandObjectAttribute(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(1, uiNumCommands);
+	AssertSize(1, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsObjectAttribute());
@@ -674,7 +674,7 @@ void TestGerberParserCommandDeleteAttribute(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(1, uiNumCommands);
+	AssertSize(1, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsObjectAttribute());
@@ -724,14 +724,14 @@ void TestGerberParserCircleMacro(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(2, uiNumCommands);
+	AssertSize(2, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsApertureMacro());
 
 	pcApetureMacro = (CGerberCommandApertureMacro*)pcCommand;
 	uiNumPrimitives = pcApetureMacro->NumPrimitives();
-	AssertInt(1, uiNumPrimitives);
+	AssertSize(1, uiNumPrimitives);
 
 	pcPrimitive = pcApetureMacro->GetPrimitive(0);
 	AssertTrue(pcPrimitive->IsCircle());
@@ -793,14 +793,14 @@ void TestGerberParserVectorLineMacro(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(2, uiNumCommands);
+	AssertSize(2, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsApertureMacro());
 
 	pcApetureMacro = (CGerberCommandApertureMacro*)pcCommand;
 	uiNumPrimitives = pcApetureMacro->NumPrimitives();
-	AssertInt(1, uiNumPrimitives);
+	AssertSize(1, uiNumPrimitives);
 
 	pcPrimitive = pcApetureMacro->GetPrimitive(0);
 	AssertTrue(pcPrimitive->IsVectorLine());
@@ -863,7 +863,7 @@ void TestGerberParserCenterLineMacro(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(2, uiNumCommands);
+	AssertSize(2, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsApertureMacro());
@@ -871,7 +871,7 @@ void TestGerberParserCenterLineMacro(void)
 
 	pcApetureMacro = (CGerberCommandApertureMacro*)pcCommand;
 	uiNumPrimitives = pcApetureMacro->NumPrimitives();
-	AssertInt(1, uiNumPrimitives);
+	AssertSize(1, uiNumPrimitives);
 
 	pcPrimitive = pcApetureMacro->GetPrimitive(0);
 	AssertTrue(pcPrimitive->IsCenterLine());
@@ -933,14 +933,14 @@ void TestGerberParserOutlineMacro(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(2, uiNumCommands);
+	AssertSize(2, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsApertureMacro());
 
 	pcApetureMacro = (CGerberCommandApertureMacro*)pcCommand;
 	uiNumPrimitives = pcApetureMacro->NumPrimitives();
-	AssertInt(1, uiNumPrimitives);
+	AssertSize(1, uiNumPrimitives);
 
 	pcPrimitive = pcApetureMacro->GetPrimitive(0);
 	AssertTrue(pcPrimitive->IsOutline());
@@ -1037,14 +1037,14 @@ void TestGerberParserCommentMacro(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(2, uiNumCommands);
+	AssertSize(2, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsApertureMacro());
 
 	pcApetureMacro = (CGerberCommandApertureMacro*)pcCommand;
 	uiNumPrimitives = pcApetureMacro->NumPrimitives();
-	AssertInt(6, uiNumPrimitives);
+	AssertSize(6, uiNumPrimitives);
 
 	pcPrimitive = pcApetureMacro->GetPrimitive(0);
 	AssertTrue(pcPrimitive->IsComment());
@@ -1115,14 +1115,14 @@ void TestGerberParserPolygonMacro(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(2, uiNumCommands);
+	AssertSize(2, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsApertureMacro());
 
 	pcApetureMacro = (CGerberCommandApertureMacro*)pcCommand;
 	uiNumPrimitives = pcApetureMacro->NumPrimitives();
-	AssertInt(1, uiNumPrimitives);
+	AssertSize(1, uiNumPrimitives);
 
 	pcPrimitive = pcApetureMacro->GetPrimitive(0);
 	AssertTrue(pcPrimitive->IsPolygon());
@@ -1188,14 +1188,14 @@ void TestGerberParserThermalMacro(void)
 
 	AssertTritrue(tResult);
 	uiNumCommands = cCommands.NumCommands();
-	AssertInt(2, uiNumCommands);
+	AssertSize(2, uiNumCommands);
 
 	pcCommand = cCommands.GetCommand(0);
 	AssertTrue(pcCommand->IsApertureMacro());
 
 	pcApetureMacro = (CGerberCommandApertureMacro*)pcCommand;
 	uiNumPrimitives = pcApetureMacro->NumPrimitives();
-	AssertInt(1, uiNumPrimitives);
+	AssertSize(1, uiNumPrimitives);
 
 	pcPrimitive = pcApetureMacro->GetPrimitive(0);
 	AssertTrue(pcPrimitive->IsThermal());

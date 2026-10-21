@@ -436,7 +436,6 @@ void TestW65C816ResetVectorTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 {
 	uint32					uiAddress;
 	bool					bRead;
-	bool					bWrite;
 	bool					bValidAddress;
 	uint8					uiData;
 	CTestW65C816Context*	pcContext;
@@ -449,7 +448,6 @@ void TestW65C816ResetVectorTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 	uiAddress = pcMPU->GetAddress()->Get();
 	uiAddress |= pcMPU->GetBank() << 16;
 
-	bWrite = pcMPU->GetRWB()->IsLow();
 	bRead = pcMPU->GetRWB()->IsHigh();
 
 	bValidAddress = pcMPU->GetVDA()->IsHigh() || pcMPU->GetVPA()->IsHigh();

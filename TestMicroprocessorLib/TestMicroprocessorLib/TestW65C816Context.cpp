@@ -104,7 +104,7 @@ void CTestW65C816Context::Init(char* szMemoryFileame)
 	
 	Init(uiSize, 0xff);
 
-	uiSize = cFile.Read(mauiMemory, uiSize, 1);
+	uiSize = (uint32)cFile.Read(mauiMemory, uiSize, 1);
 	cFile.Close();
 	cDisk.Kill();
 	cFile.Kill();
@@ -490,7 +490,7 @@ void TestW65C81ContextPrint(CMetaW65C816* pcMPU, CTestW65C816Context* pcContext)
 	{
 		if ((bReset && pcContext->mbPrintReset) ||
 			(bStop && pcContext->mbPrintStop) ||
-			!bReset && !bStop)
+			(!bReset && !bStop))
 		{
 			psz = pcContext->GetSequence();
 			uiPreviousStart = psz->Length();
