@@ -5,7 +5,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
-    <None Include="Todo.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
