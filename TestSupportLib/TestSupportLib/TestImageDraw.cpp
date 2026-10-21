@@ -142,31 +142,23 @@ void TestImageDrawLine(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The image is cleared then the semicircle is drawn in magenta.
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CImage> DrawHalfCircleImage(int iDiameter, EImageDrawHalf eHalf, float32 fOpacity)
+Ptr<CImage> DrawSemicircleImage(int iWidth, int iHeight, int x, int y, int iDiameter, int iStartAngle, int iEndAngle, float32 fOpacity, bool bFilled)
 {
 	CImageDraw			cDraw;
 	Ptr<CImage>			pImage;
 	CImageColourARGB	cColour;
-	int					iHalfWidth;
 
-	iHalfWidth = (iDiameter + 1) / 2;
-	if ((eHalf == IDH_Left) || (eHalf == IDH_Right))
-	{
-		pImage = OMalloc<CImage>(iHalfWidth, iDiameter, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, IMAGE_OPACITY, CHANNEL_STOP);
-	}
-	else
-	{
-		pImage = OMalloc<CImage>(iDiameter, iHalfWidth, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, IMAGE_OPACITY, CHANNEL_STOP);
-	}
+	pImage = OMalloc<CImage>(iWidth, iHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, IMAGE_OPACITY, CHANNEL_STOP);
 	pImage->Black();
 
 	cDraw.Init(&pImage);
 	cColour.Init(fOpacity, 1.0f, 0.0f, 1.0f);
 	cDraw.SetColour(&cColour);
 	cColour.Kill();
-	AssertTrue(cDraw.DrawFilledHalfCircle(0, 0, iDiameter, eHalf));
+	AssertTrue(cDraw.DrawSemicircle(x, y, iDiameter, iStartAngle, iEndAngle, bFilled));
 	cDraw.Kill();
 	return pImage;
 }
@@ -177,7 +169,7 @@ Ptr<CImage> DrawHalfCircleImage(int iDiameter, EImageDrawHalf eHalf, float32 fOp
 // The image's channels are red, green, blue then opacity.
 //
 //////////////////////////////////////////////////////////////////////////
-uint8 GetHalfCircleChannel(Ptr<CImage> pImage, int x, int y, int iChannel)
+uint8 GetCircleChannel(Ptr<CImage> pImage, int x, int y, int iChannel)
 {
 	uint8*	puiData;
 
@@ -190,9 +182,9 @@ uint8 GetHalfCircleChannel(Ptr<CImage> pImage, int x, int y, int iChannel)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-uint8 GetHalfCircleOpacity(Ptr<CImage> pImage, int x, int y)
+uint8 GetCircleOpacity(Ptr<CImage> pImage, int x, int y)
 {
-	return GetHalfCircleChannel(pImage, x, y, 3);
+	return GetCircleChannel(pImage, x, y, 3);
 }
 
 
@@ -200,7 +192,7 @@ uint8 GetHalfCircleOpacity(Ptr<CImage> pImage, int x, int y)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestImageDrawFilledHalfCircle(void)
+void TestImageDrawSemicircle(void)
 {
 	Ptr<CImage>			pLeft;
 	Ptr<CImage>			pRight;
@@ -215,23 +207,22 @@ void TestImageDrawFilledHalfCircle(void)
 	bool				bSymmetric;
 	uint8				uiOpacity;
 
-	//An even diameter: the circle's centre is on the corner between pixels in the middle of the flat side.
-	pLeft = DrawHalfCircleImage(8, IDH_Left, 1.0f);
-	AssertInt(4, pLeft->GetWidth());
-	AssertInt(8, pLeft->GetHeight());
+	//The left half of an even diameter circle: its centre is on the corner between pixels in the middle of the image's
+	//right side.
+	pLeft = DrawSemicircleImage(4, 8, 0, 0, 8, 90, 270, 1.0f, true);
 
 	//Inside the circle is the colour, outside is untouched and the edge is between.  The colour isn't multiplied by
 	//the edge's opacity.
-	AssertInt(255, GetHalfCircleOpacity(pLeft, 3, 3));
-	AssertInt(255, GetHalfCircleOpacity(pLeft, 3, 4));
-	AssertInt(255, GetHalfCircleChannel(pLeft, 3, 3, 0));
-	AssertInt(0, GetHalfCircleChannel(pLeft, 3, 3, 1));
-	AssertInt(255, GetHalfCircleChannel(pLeft, 3, 3, 2));
-	AssertInt(0, GetHalfCircleOpacity(pLeft, 0, 0));
-	AssertInt(0, GetHalfCircleChannel(pLeft, 0, 0, 0));
-	uiOpacity = GetHalfCircleOpacity(pLeft, 0, 3);
+	AssertInt(255, GetCircleOpacity(pLeft, 3, 3));
+	AssertInt(255, GetCircleOpacity(pLeft, 3, 4));
+	AssertInt(255, GetCircleChannel(pLeft, 3, 3, 0));
+	AssertInt(0, GetCircleChannel(pLeft, 3, 3, 1));
+	AssertInt(255, GetCircleChannel(pLeft, 3, 3, 2));
+	AssertInt(0, GetCircleOpacity(pLeft, 0, 0));
+	AssertInt(0, GetCircleChannel(pLeft, 0, 0, 0));
+	uiOpacity = GetCircleOpacity(pLeft, 0, 3);
 	AssertTrue((uiOpacity > 0) && (uiOpacity < 255));
-	AssertInt(255, GetHalfCircleChannel(pLeft, 0, 3, 0));
+	AssertInt(255, GetCircleChannel(pLeft, 0, 3, 0));
 
 	//The half circle is symmetric about its middle.
 	bSymmetric = true;
@@ -239,51 +230,147 @@ void TestImageDrawFilledHalfCircle(void)
 	{
 		for (x = 0; x < 4; x++)
 		{
-			bSymmetric &= GetHalfCircleOpacity(pLeft, x, y) == GetHalfCircleOpacity(pLeft, x, 7 - y);
+			bSymmetric &= GetCircleOpacity(pLeft, x, y) == GetCircleOpacity(pLeft, x, 7 - y);
 		}
 	}
 	AssertTrue(bSymmetric);
 
-	//The other halves are the left half mirrored and turned.
-	pRight = DrawHalfCircleImage(8, IDH_Right, 1.0f);
-	pTop = DrawHalfCircleImage(8, IDH_Top, 1.0f);
-	pBottom = DrawHalfCircleImage(8, IDH_Bottom, 1.0f);
-	AssertInt(8, pTop->GetWidth());
-	AssertInt(4, pTop->GetHeight());
+	//The other halves are the left half mirrored and turned.  The right half's circle starts left of the image and an
+	//end angle before the start goes on round through 0.
+	pRight = DrawSemicircleImage(4, 8, -4, 0, 8, 270, 90, 1.0f, true);
+	pTop = DrawSemicircleImage(8, 4, 0, 0, 8, 0, 180, 1.0f, true);
+	pBottom = DrawSemicircleImage(8, 4, 0, -4, 8, 180, 360, 1.0f, true);
 	bSymmetric = true;
 	for (y = 0; y < 8; y++)
 	{
 		for (x = 0; x < 4; x++)
 		{
-			bSymmetric &= GetHalfCircleOpacity(pRight, x, y) == GetHalfCircleOpacity(pLeft, 3 - x, y);
-			bSymmetric &= GetHalfCircleOpacity(pTop, y, x) == GetHalfCircleOpacity(pLeft, x, y);
-			bSymmetric &= GetHalfCircleOpacity(pBottom, y, x) == GetHalfCircleOpacity(pLeft, 3 - x, y);
+			bSymmetric &= GetCircleOpacity(pRight, x, y) == GetCircleOpacity(pLeft, 3 - x, y);
+			bSymmetric &= GetCircleOpacity(pTop, y, x) == GetCircleOpacity(pLeft, x, y);
+			bSymmetric &= GetCircleOpacity(pBottom, y, x) == GetCircleOpacity(pLeft, 3 - x, y);
 		}
 	}
 	AssertTrue(bSymmetric);
 
-	//An odd diameter: the flat side still lies on the box's edge so the outside column is only partly covered.
-	pImage = DrawHalfCircleImage(7, IDH_Left, 1.0f);
-	AssertInt(4, pImage->GetWidth());
-	AssertInt(7, pImage->GetHeight());
-	AssertInt(255, GetHalfCircleOpacity(pImage, 3, 3));
-	uiOpacity = GetHalfCircleOpacity(pImage, 0, 3);
+	//The top left quarter is the top of the left half and nothing else.
+	pImage = DrawSemicircleImage(8, 8, 0, 0, 8, 90, 180, 1.0f, true);
+	bSymmetric = true;
+	for (y = 0; y < 8; y++)
+	{
+		for (x = 0; x < 8; x++)
+		{
+			if ((x < 4) && (y < 4))
+			{
+				bSymmetric &= GetCircleOpacity(pImage, x, y) == GetCircleOpacity(pLeft, x, y);
+			}
+			else
+			{
+				bSymmetric &= GetCircleOpacity(pImage, x, y) == 0;
+			}
+		}
+	}
+	AssertTrue(bSymmetric);
+
+	//More than half: three quarters leaves out the bottom right.  Angles can be negative.
+	pImage = DrawSemicircleImage(8, 8, 0, 0, 8, -360, -90, 1.0f, true);
+	bSymmetric = true;
+	for (y = 0; y < 8; y++)
+	{
+		for (x = 0; x < 4; x++)
+		{
+			bSymmetric &= GetCircleOpacity(pImage, x, y) == GetCircleOpacity(pLeft, x, y);
+			if (y < 4)
+			{
+				bSymmetric &= GetCircleOpacity(pImage, 7 - x, y) == GetCircleOpacity(pLeft, x, y);
+			}
+			else
+			{
+				bSymmetric &= GetCircleOpacity(pImage, 7 - x, y) == 0;
+			}
+		}
+	}
+	AssertTrue(bSymmetric);
+
+	//An odd diameter: the centre is in the middle of a pixel.  A whole circle clipped by the image keeps all of its
+	//middle column.
+	pImage = DrawSemicircleImage(7, 7, 0, 0, 7, 0, 360, 1.0f, true);
+	AssertInt(255, GetCircleOpacity(pImage, 3, 3));
+	uiOpacity = GetCircleOpacity(pImage, 0, 3);
 	AssertTrue((uiOpacity > 0) && (uiOpacity < 255));
 	bSymmetric = true;
 	for (y = 0; y < 7; y++)
 	{
+		for (x = 0; x < 7; x++)
+		{
+			bSymmetric &= GetCircleOpacity(pImage, x, y) == GetCircleOpacity(pImage, 6 - x, y);
+			bSymmetric &= GetCircleOpacity(pImage, x, y) == GetCircleOpacity(pImage, x, 6 - y);
+		}
+	}
+	AssertTrue(bSymmetric);
+	pTop = DrawSemicircleImage(4, 7, 0, 0, 7, 0, 360, 1.0f, true);
+	for (y = 0; y < 7; y++)
+	{
 		for (x = 0; x < 4; x++)
 		{
-			bSymmetric &= GetHalfCircleOpacity(pImage, x, y) == GetHalfCircleOpacity(pImage, x, 6 - y);
+			bSymmetric &= GetCircleOpacity(pTop, x, y) == GetCircleOpacity(pImage, x, y);
 		}
 	}
 	AssertTrue(bSymmetric);
 
 	//The colour's opacity scales every pixel's.
-	pImage = DrawHalfCircleImage(8, IDH_Left, 0.5f);
-	uiOpacity = GetHalfCircleOpacity(pImage, 3, 3);
+	pImage = DrawSemicircleImage(4, 8, 0, 0, 8, 90, 270, 0.5f, true);
+	uiOpacity = GetCircleOpacity(pImage, 3, 3);
 	AssertTrue((uiOpacity == 127) || (uiOpacity == 128));
-	AssertTrue(GetHalfCircleOpacity(pImage, 0, 3) < GetHalfCircleOpacity(pLeft, 0, 3));
+	AssertTrue(GetCircleOpacity(pImage, 0, 3) < GetCircleOpacity(pLeft, 0, 3));
+
+	//Not filled: only the curved edge, one pixel thick, is drawn.  The middle and the flat side are left alone.
+	pImage = DrawSemicircleImage(4, 8, 0, 0, 8, 90, 270, 1.0f, false);
+	AssertInt(0, GetCircleOpacity(pImage, 3, 3));
+	AssertInt(0, GetCircleOpacity(pImage, 3, 4));
+	AssertInt(0, GetCircleOpacity(pImage, 0, 0));
+	AssertTrue(GetCircleOpacity(pImage, 0, 3) > 0);
+	AssertTrue(GetCircleOpacity(pImage, 3, 0) > 0);
+	bSymmetric = true;
+	for (y = 0; y < 8; y++)
+	{
+		for (x = 0; x < 4; x++)
+		{
+			bSymmetric &= GetCircleOpacity(pImage, x, y) == GetCircleOpacity(pImage, x, 7 - y);
+			bSymmetric &= GetCircleOpacity(pImage, x, y) <= GetCircleOpacity(pLeft, x, y);
+		}
+	}
+	AssertTrue(bSymmetric);
+
+	//Drawing over what is already there blends.  The same colour over itself stays the same colour and its edges get
+	//more opaque.
+	pImage = DrawSemicircleImage(4, 8, 0, 0, 8, 90, 270, 1.0f, true);
+	cDraw.Init(&pImage);
+	cColour.Init(1.0f, 0.0f, 1.0f);
+	cDraw.SetColour(&cColour);
+	cColour.Kill();
+	AssertTrue(cDraw.DrawSemicircle(0, 0, 8, 90, 270, true));
+	cDraw.Kill();
+	AssertInt(255, GetCircleOpacity(pImage, 3, 3));
+	AssertInt(255, GetCircleChannel(pImage, 0, 3, 0));
+	AssertInt(0, GetCircleChannel(pImage, 0, 3, 1));
+	AssertInt(255, GetCircleChannel(pImage, 0, 3, 2));
+	AssertTrue(GetCircleOpacity(pImage, 0, 3) > GetCircleOpacity(pLeft, 0, 3));
+
+	//A smaller circle in a different colour mixes with the one under it along its edge.
+	cDraw.Init(&pImage);
+	cColour.Init(0.0f, 1.0f, 0.0f);
+	cDraw.SetColour(&cColour);
+	cColour.Kill();
+	AssertTrue(cDraw.DrawSemicircle(2, 2, 4, 90, 270, true));
+	cDraw.Kill();
+	AssertInt(255, GetCircleOpacity(pImage, 3, 3));
+	AssertInt(0, GetCircleChannel(pImage, 3, 3, 0));
+	AssertInt(255, GetCircleChannel(pImage, 3, 3, 1));
+	AssertInt(255, GetCircleOpacity(pImage, 2, 3));
+	AssertTrue(GetCircleChannel(pImage, 2, 3, 0) > 0);
+	AssertTrue(GetCircleChannel(pImage, 2, 3, 1) > 0);
+	AssertInt(255, GetCircleChannel(pImage, 1, 3, 0));
+	AssertInt(0, GetCircleChannel(pImage, 1, 3, 1));
 
 	//An image without opacity can't show the anti-aliased edge.
 	pImage = OMalloc<CImage>(4, 8, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
@@ -292,7 +379,7 @@ void TestImageDrawFilledHalfCircle(void)
 	cDraw.SetColour(&cColour);
 	cColour.Kill();
 	sLogConfig = gcLogger.SetSilent();
-	AssertFalse(cDraw.DrawFilledHalfCircle(0, 0, 8, IDH_Left));
+	AssertFalse(cDraw.DrawSemicircle(0, 0, 8, 90, 270, true));
 	gcLogger.SetConfig(&sLogConfig);
 	cDraw.Kill();
 
@@ -1438,7 +1525,7 @@ void TestImageDraw(void)
 	TestImageDrawBox2();
 	TestImageDrawLine();
 	TestImageDrawLineExtents();
-	TestImageDrawFilledHalfCircle();
+	TestImageDrawSemicircle();
 	TestImageDrawCelClipping();
 	TestImageDrawCelMismatchedFormat();
 	TestImageDrawCelClippingTransparentGaps();

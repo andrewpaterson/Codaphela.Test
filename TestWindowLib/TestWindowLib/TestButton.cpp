@@ -8,6 +8,7 @@
 #include "WindowLib/FillContainer.h"
 #include "WindowLib/ClearCanvasDraw.h"
 #include "WindowLib/Button.h"
+#include "WindowLib/JewelButtonImages.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/AssertGeometric.h"
 #include "TestLib/AssertFile.h"
@@ -66,50 +67,6 @@ Ptr<CButtonImages> ReadBlueButtonImages(CColourFormatHelper* pcFormat)
 		apStrips[i] = CImageColourConverter::ConvertColour(apStrips[i], pcFormat->meOrder);
 	}
 	return OMalloc<CButtonImages>(apStrips[BS_Normal], apStrips[BS_MouseOver], apStrips[BS_Selected], apStrips[BS_Pushed], Set32BitColour((uint8)115, 151, 255));
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-// The outlined button from JetBrains' Jewel dark theme.  The outside two
-// pixels of every tile are its focus ring, empty except when selected.
-//
-//////////////////////////////////////////////////////////////////////////
-Ptr<CButtonImages> ReadJewelButtonImages(CColourFormatHelper* pcFormat)
-{
-	Ptr<CImage>		apStrips[NUM_BUTTON_STATES];
-	char*			aszStates[NUM_BUTTON_STATES] = { (char*)"JewelBorderNormal.png", (char*)"JewelBorderMouseOver.png", (char*)"JewelBorderSelected.png", (char*)"JewelBorderPushed.png" };
-	size			i;
-
-	for (i = 0; i < NUM_BUTTON_STATES; i++)
-	{
-		apStrips[i] = ReadSpaceImage("JewelButton", aszStates[i]);
-		apStrips[i] = CImageColourConverter::ConvertColour(apStrips[i], pcFormat->meOrder);
-	}
-	return OMalloc<CButtonImages>(apStrips[BS_Normal], apStrips[BS_MouseOver], apStrips[BS_Selected], apStrips[BS_Pushed], Set32BitColour((uint8)0x2B, 0x2D, 0x30));
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-// The default button from JetBrains' Jewel dark theme.  It is filled blue,
-// lighter with the pointer over it and darker when pushed.  Selected it has
-// a dark line between its face and its focus ring.
-//
-//////////////////////////////////////////////////////////////////////////
-Ptr<CButtonImages> ReadJewelDefaultButtonImages(CColourFormatHelper* pcFormat)
-{
-	Ptr<CImage>		apStrips[NUM_BUTTON_STATES];
-	char*			aszStates[NUM_BUTTON_STATES] = { (char*)"JewelDefaultBorderNormal.png", (char*)"JewelDefaultBorderMouseOver.png", (char*)"JewelDefaultBorderSelected.png", (char*)"JewelDefaultBorderPushed.png" };
-	size			i;
-
-	for (i = 0; i < NUM_BUTTON_STATES; i++)
-	{
-		apStrips[i] = ReadSpaceImage("JewelButton", aszStates[i]);
-		apStrips[i] = CImageColourConverter::ConvertColour(apStrips[i], pcFormat->meOrder);
-	}
-	return OMalloc<CButtonImages>(apStrips[BS_Normal], apStrips[BS_MouseOver], apStrips[BS_Selected], apStrips[BS_Pushed],
-									Set32BitColour((uint8)0x35, 0x74, 0xF0), Set32BitColour((uint8)0x46, 0x82, 0xFA), Set32BitColour((uint8)0x35, 0x74, 0xF0), Set32BitColour((uint8)0x36, 0x6A, 0xCE));
 }
 
 
@@ -323,8 +280,8 @@ void TestButtonDefault(void)
 		pFocus = pTestWindow->GetFocus();
 
 		pFont = ReadLabelFont();
-		pImages = ReadJewelButtonImages(&cHelper);
-		pDefaultImages = ReadJewelDefaultButtonImages(&cHelper);
+		pImages = CJewelButtonImages::CreateButtonImages(&cHelper);
+		pDefaultImages = CJewelButtonImages::CreateDefaultButtonImages(&cHelper);
 		AssertInt(Set32BitColour((uint8)0x2B, 0x2D, 0x30), pImages->GetFaceColour(BS_Pushed));
 		AssertInt(Set32BitColour((uint8)0x36, 0x6A, 0xCE), pDefaultImages->GetFaceColour(BS_Pushed));
 
@@ -580,8 +537,8 @@ void TestButton(void)
 	TestButtonInput();
 	TestButtonDefault();
 	TestButtonStates((char*)"ButtonStates", ReadBlueButtonImages, NULL, Set32BitColour((uint8)40, 40, 48), false);
-	TestButtonStates((char*)"JewelButtonStates", ReadJewelButtonImages, NULL, Set32BitColour((uint8)0x1E, 0x1F, 0x22), true);
-	TestButtonStates((char*)"JewelDefaultButtonStates", ReadJewelButtonImages, ReadJewelDefaultButtonImages, Set32BitColour((uint8)0x1E, 0x1F, 0x22), true);
+	TestButtonStates((char*)"JewelButtonStates", CJewelButtonImages::CreateButtonImages, NULL, Set32BitColour((uint8)0x1E, 0x1F, 0x22), true);
+	TestButtonStates((char*)"JewelDefaultButtonStates", CJewelButtonImages::CreateButtonImages, CJewelButtonImages::CreateDefaultButtonImages, Set32BitColour((uint8)0x1E, 0x1F, 0x22), true);
 
 	ObjectsFlush();
 	ObjectsKill();
