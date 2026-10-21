@@ -424,6 +424,20 @@ void TestArrayTemplateEmbeddedPrimitiveSorted(void)
 	cArray.Add(5);
 	AssertSize(3, cArray.FindFinalContiguousInSorted());
 	cArray.Kill();
+
+	cArray.Init();
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, cArray.FindFinalContiguousInSorted());
+	cArray.Add(0);
+	AssertSize(0, cArray.FindFinalContiguousInSorted());
+	cArray.Add(2);
+	AssertSize(0, cArray.FindFinalContiguousInSorted());
+	cArray.Kill();
+
+	cArray.Init();
+	cArray.Add(1);
+	cArray.Add(2);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, cArray.FindFinalContiguousInSorted());
+	cArray.Kill();
 }
 
 

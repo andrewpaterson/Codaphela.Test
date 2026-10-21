@@ -56,10 +56,10 @@ void TestDataMemoryAdd(void)
 	AssertSize(433, gaszArchaicDefinitions.NumElements());
 	AssertSize(gaszArchaicDefinitions.NumElements(), cMemory.NumElements());
 #ifdef BUILD_64
-	AssertSize(39050, cMemory.ByteSize());
+	AssertSize(39122, cMemory.ByteSize());
 	AssertSize(9, cMemory.NumFreeLists());
 #else
-	AssertSize(30341, cMemory.ByteSize());
+	AssertSize(30373, cMemory.ByteSize());
 	AssertSize(8, cMemory.NumFreeLists());
 #endif // BUILD_64
 	AssertSize(13665, iAllocated);
@@ -69,12 +69,13 @@ void TestDataMemoryAdd(void)
 		pv = apv.GetPtr(i);
 		cMemory.Remove(pv);
 	}
+	cMemory.Compact();
 
 	AssertSize(216, cMemory.NumElements());
 #ifdef BUILD_64
-	AssertSize(33676, cMemory.ByteSize());
+	AssertSize(33740, cMemory.ByteSize());
 #else
-	AssertSize(30341, cMemory.ByteSize());
+	AssertSize(30373, cMemory.ByteSize());
 #endif // BUILD_64
 	AssertSize(8, cMemory.NumFreeLists());
 
@@ -85,6 +86,8 @@ void TestDataMemoryAdd(void)
 	}
 
 	AssertSize(0, cMemory.NumElements());
+	AssertSize(8, cMemory.NumFreeLists());
+	cMemory.Compact();
 #ifdef BUILD_64
 	AssertSize(32, cMemory.ByteSize());
 #else

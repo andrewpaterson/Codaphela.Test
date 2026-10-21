@@ -87,7 +87,7 @@ void TestMemoryAllocatorReadWrite(void)
 #endif // BUILD_64
 	AssertSize(16, cAllocIn.GetMemory()->GetDefaultAlignment());
 #ifdef BUILD_64
-	AssertSize(72, cAllocIn.GetMemory()->GetFreeListParams()->GetFreeListSizeLimit());
+	AssertSize(64, cAllocIn.GetMemory()->GetFreeListParams()->GetFreeListSizeLimit());
 #else
 	AssertSize(56, cAllocIn.GetMemory()->GetFreeListParams()->GetFreeListSizeLimit());
 #endif // BUILD_64

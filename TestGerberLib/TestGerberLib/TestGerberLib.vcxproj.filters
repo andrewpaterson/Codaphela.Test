@@ -25,6 +25,9 @@
     <ClCompile Include="TestGerberParser.cpp">
       <Filter>Source\Parser</Filter>
     </ClCompile>
+    <ClCompile Include="TestGerberRaster.cpp">
+      <Filter>Source\Parser</Filter>
+    </ClCompile>
     <ClCompile Include="TestGerberVector.cpp">
       <Filter>Source\Parser</Filter>
     </ClCompile>

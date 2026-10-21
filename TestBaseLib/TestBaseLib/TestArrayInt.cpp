@@ -399,6 +399,39 @@ void TestArrayIntRemoveAt(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestArrayIntFindFinalContiguousInSorted(void)
+{
+	CArrayInt	cArray;
+
+	cArray.Init();
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, cArray.FindFinalContiguousInSorted());
+	cArray.Add(0);
+	AssertSize(0, cArray.FindFinalContiguousInSorted());
+	cArray.Add(2);
+	AssertSize(0, cArray.FindFinalContiguousInSorted());
+	cArray.Kill();
+
+	cArray.Init();
+	cArray.Add(0);
+	cArray.Add(1);
+	cArray.Add(2);
+	AssertSize(2, cArray.FindFinalContiguousInSorted());
+	cArray.Add(4);
+	AssertSize(2, cArray.FindFinalContiguousInSorted());
+	cArray.Kill();
+
+	cArray.Init();
+	cArray.Add(1);
+	cArray.Add(2);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, cArray.FindFinalContiguousInSorted());
+	cArray.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestArrayInt(void)
 {
 	BeginTests();
@@ -409,6 +442,7 @@ void TestArrayInt(void)
 	TestArrayIntSortingUsingBubbleSort();
 	TestArrayIntRemoveDuplicates();
 	TestArrayIntRemoveAt();
+	TestArrayIntFindFinalContiguousInSorted();
 
 	FastFunctionsKill();
 	TestStatistics();

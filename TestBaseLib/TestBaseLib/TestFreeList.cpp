@@ -43,10 +43,10 @@ void AssertIteration(CFreeList* pcFreeList, void* pvFirst, ...)
 void TestFreeListSizeof(void)
 {
 #ifdef BUILD_64
-	AssertSize(64, sizeof(CFreeList));
+	AssertSize(72, sizeof(CFreeList));
 	AssertSize(40, sizeof(SFNode));
 #else
-	AssertSize(36, sizeof(CFreeList));
+	AssertSize(40, sizeof(CFreeList));
 	AssertSize(24, sizeof(SFNode));
 #endif // BUILD_64
 }

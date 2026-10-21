@@ -157,7 +157,7 @@ add_library(SupportLib STATIC ${SUPPORTLIB_SOURCES})
 target_link_libraries(SupportLib PUBLIC StandardLib BaseLib)
 
 add_library(GerberLib STATIC ${GERBERLIB_SOURCES})
-target_link_libraries(GerberLib PUBLIC BaseLib)
+target_link_libraries(GerberLib PUBLIC SupportLib BaseLib)
 
 add_executable(TestGerberLib ${TESTGERBERLIB_SOURCES})
 target_link_libraries(TestGerberLib PRIVATE TestLib GerberLib SupportLib StandardLib BaseLib)

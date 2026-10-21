@@ -324,7 +324,7 @@ void TestSetUnknownSorted(size uiNumElements)
 	{
 		pcTest = cSet.Add<CTestNamedUnknown>();
 		pcTest->Init(SizeToString(iNum));
-		apTests.Add((CUnknown**)&pcTest);
+		apTests.Add(pcTest);
 	}
 
 	iNum = cSet.NumElements();

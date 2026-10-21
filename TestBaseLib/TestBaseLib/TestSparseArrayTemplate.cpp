@@ -110,11 +110,43 @@ void TestArraySparseTemplateInsertion(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestArraySparseTemplateSetData(void)
+{
+	CTestSparseArray				cArray;
+	STestArraySparseTemplateItem	sItem;
+	STestArraySparseTemplateItem*	psItem;
+
+	cArray.Init();
+	AssertNull(cArray.Get(7));
+
+	sItem.i1 = 70;
+	psItem = cArray.Set(7, &sItem);
+	AssertNotNull(psItem);
+	AssertInt(70, psItem->i1);
+	AssertPointer(psItem, cArray.Get(7));
+
+	sItem.i1 = 30;
+	cArray.Set(3, &sItem);
+	sItem.i1 = 71;
+	AssertPointer(psItem, cArray.Set(7, &sItem));
+	AssertInt(71, cArray.Get(7)->i1);
+	AssertInt(30, cArray.Get(3)->i1);
+	AssertNull(cArray.Get(5));
+
+	cArray.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestArraySparseTemplate(void)
 {
 	BeginTests();
 
 	TestArraySparseTemplateInsertion();
+	TestArraySparseTemplateSetData();
 
 	TestStatistics();
 }

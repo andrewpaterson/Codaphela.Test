@@ -32,13 +32,17 @@ void TestUnknownListAddKill(void)
 	AssertSize(1, pcFreeList->NumElements());
 	AssertSize(1, pcMemory->NumElements());
 #ifdef BUILD_64
-	AssertSize(883, pcMemory->ByteSize());
+	AssertSize(65640, pcMemory->ByteSize());
 #else
-	AssertSize(451, pcMemory->ByteSize());
+	AssertSize(65592, pcMemory->ByteSize());
 #endif // BUILD_64
 
 	pcTest->Init();
 	pcTest->Kill();
+	pcFreeList = pcMemory->GetFreeList(sizeof(CTestUnknown));
+	AssertNotNull(pcFreeList);
+	AssertSize(0, pcFreeList->NumElements());
+	pcMemory->Compact();
 	pcFreeList = pcMemory->GetFreeList(sizeof(CTestUnknown));
 	AssertNull(pcFreeList);
 	AssertSize(0, pcMemory->NumElements());

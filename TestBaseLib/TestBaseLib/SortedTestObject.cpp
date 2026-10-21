@@ -1,3 +1,4 @@
+#include <string.h>
 #include "BaseLib/IntegerHelper.h"
 #include "SortedTestObject.h"
 
