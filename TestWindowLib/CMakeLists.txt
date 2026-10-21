@@ -104,7 +104,7 @@ vcxproj_sources(TESTWINDOWLIB_SOURCES "${TESTWINDOWLIB_DIR}/TestWindowLib.vcxpro
 add_library(baselib_options INTERFACE)
 target_include_directories(baselib_options INTERFACE "${COMMON_DIR}")
 target_compile_definitions(baselib_options INTERFACE
-	LINUX_GNU_32
+	LINUX_GNU
 	$<$<CONFIG:Debug>:_DEBUG>
 	$<$<CONFIG:Debug>:DEBUG>
 	$<$<NOT:$<CONFIG:Debug>>:NDEBUG>

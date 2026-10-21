@@ -49,6 +49,12 @@
     <ClCompile Include="TestButton.cpp">
       <Filter>Source\Component\Drawing</Filter>
     </ClCompile>
+    <ClCompile Include="TestButtonBar.cpp">
+      <Filter>Source\Component\Drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="TestList.cpp">
+      <Filter>Source\Component\Drawing</Filter>
+    </ClCompile>
     <ClCompile Include="TestLabel.cpp">
       <Filter>Source\Component\Drawing</Filter>
     </ClCompile>

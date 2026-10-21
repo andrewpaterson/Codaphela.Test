@@ -68,6 +68,7 @@ void TestScrollBarImages(void)
 		Ptr<CScrollBarImages>	pImages;
 		Ptr<CImageCel>			pCel;
 		CSubImage*				pcSubImage;
+		CColourFormatHelper		cFormat;
 
 		pImages = OMalloc<CScrollBarImages>(7, Set32BitColour((uint8)200, (uint8)200, (uint8)200, (uint8)128));
 		AssertInt(7, pImages->GetThickness());
@@ -90,6 +91,16 @@ void TestScrollBarImages(void)
 		pcSubImage = pCel->GetSubImage();
 		AssertInt(7, pcSubImage->GetFullWidth());
 		AssertInt(1, pcSubImage->GetFullHeight());
+
+		AssertInt(CCO_RGB, pCel->GetSourceImage()->GetColourOrder());
+
+		//The pieces are blitted onto the window's canvases so they are made in the window's colour order.
+		cFormat.Init(CFT_RGBX, CCO_BGR, CRGB_24bit, ARGB_8bit);
+		pImages = OMalloc<CScrollBarImages>(7, Set32BitColour((uint8)200, (uint8)100, (uint8)50, (uint8)128), &cFormat);
+		pCel = pImages->GetCel(SBO_Vertical, SBP_Middle);
+		AssertInt(CCO_BGR, pCel->GetSourceImage()->GetColourOrder());
+		pCel = pImages->GetCel(SBO_Horizontal, SBP_Start);
+		AssertInt(CCO_BGR, pCel->GetSourceImage()->GetColourOrder());
 
 		pCel = NULL;
 		pImages = NULL;

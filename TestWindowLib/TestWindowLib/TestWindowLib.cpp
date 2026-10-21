@@ -22,6 +22,8 @@ void TestComponentInput(void);
 void TestComponentInputDevices(void);
 void TestComponentInputWinRaw(void);
 void TestButton(void);
+void TestButtonBar(void);
+void TestList(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -58,6 +60,8 @@ int __cdecl main(void)
 	TestComponentInputDevices();
 	TestComponentInputWinRaw();
 	TestButton();
+	TestButtonBar();
+	TestList();
 
 	cFileUtil.RemoveDir("Output");
 
