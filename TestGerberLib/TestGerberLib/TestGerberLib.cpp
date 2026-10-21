@@ -14,6 +14,7 @@
 void TestGerberParser(void);
 void TestGerberInterpreter(void);
 void TestExcellon(void);
+void TestGerberWriter(void);
 
 
 int __cdecl main(void)
@@ -32,6 +33,7 @@ int __cdecl main(void)
 	TestGerberParser();
 	TestGerberInterpreter();
 	TestExcellon();
+	TestGerberWriter();
 
 	MemoryKill();
 	TypeConverterKill();

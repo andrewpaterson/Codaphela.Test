@@ -134,7 +134,7 @@ void TestGerberParserCommandFormatSpecifier(void)
 	AssertShort((uint16)2, ui);
 
 	ui = pcFormatSpecifier->GetXDecimals();
-	AssertShort((uint16)5, ui);
+	AssertShort((uint16)6, ui);
 
 	ui = pcFormatSpecifier->GetYWholeNumbers();
 	AssertShort((uint16)3, ui);
