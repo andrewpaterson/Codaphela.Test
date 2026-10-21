@@ -16,6 +16,7 @@ void TestGridContainer(void);
 void TestBorderLayoutHelper(void);
 void TestCanvas(void);
 void TestLabel(void);
+void TestComponentInput(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -46,6 +47,7 @@ int __cdecl main(void)
 	TestBorderLayoutHelper();
 	TestCanvas();
 	TestLabel();
+	TestComponentInput();
 
 	cFileUtil.RemoveDir("Output");
 

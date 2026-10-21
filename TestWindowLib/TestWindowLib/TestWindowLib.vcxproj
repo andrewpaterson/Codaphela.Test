@@ -195,6 +195,8 @@
     <ClCompile Include="TestCanvas.cpp" />
     <ClCompile Include="TestFillContainer.cpp" />
     <ClCompile Include="TestLabel.cpp" />
+    <ClCompile Include="TestComponentInput.cpp" />
+    <ClCompile Include="InputTestComponent.cpp" />
     <ClCompile Include="TestGridContainer.cpp" />
     <ClCompile Include="TestBorderLayoutHelper.cpp" />
     <ClCompile Include="TestFlowContainer.cpp" />
@@ -235,6 +237,7 @@
     <ClInclude Include="SpaceCrusade.h" />
     <ClInclude Include="TestRefWindowCanvasDraw.h" />
     <ClInclude Include="TickTestCanvas.h" />
+    <ClInclude Include="InputTestComponent.h" />
     <ClInclude Include="TickTestRefWindow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
