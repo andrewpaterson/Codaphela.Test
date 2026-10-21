@@ -31,6 +31,9 @@ void TestAdd(void)
 	AssertNumber("10", cNumber1.Init("30")->Add(cNumber2.Init("-20")));
 	AssertNumber("-10", cNumber1.Init("-30")->Add(cNumber2.Init("20")));
 	AssertNumber("10", cNumber1.Init("-20")->Add(cNumber2.Init("30")));
+	AssertNumber("0.5", cNumber1.Init("2.5")->Add(cNumber2.Init("-2")));
+	AssertNumber("-0.5", cNumber1.Init("-2.5")->Add(cNumber2.Init("2")));
+	AssertNumber("-1.5", cNumber1.Init("0.5")->Add(cNumber2.Init("-2")));
 
 	CNumber* pcNumber1;
 	CNumber* pcNumber2;
@@ -76,6 +79,8 @@ void TestSubtract(void)
 	AssertNumber("10", cNumber1.Init("30")->Subtract(cNumber2.Init("20")));
 	AssertNumber("-10", cNumber1.Init("-30")->Subtract(cNumber2.Init("-20")));
 	AssertNumber("10", cNumber1.Init("-20")->Subtract(cNumber2.Init("-30")));
+	AssertNumber("0.5", cNumber1.Init("2.5")->Subtract(cNumber2.Init("2")));
+	AssertNumber("-0.5", cNumber1.Init("2")->Subtract(cNumber2.Init("2.5")));
 
 	AssertInt(0, gcNumberControl.NumElements());
 }
@@ -731,6 +736,19 @@ void TestPrivateSubtract(void)
 
 	cNumber1.Init("12345")->PrivateSubtract(cNumber2.Init("0.6789"));
 	AssertNumber("12344.3211", &cNumber1);
+
+	//The last digit of this is a decimal and the last digit of the other is a whole number.
+	cNumber1.Init("2.5")->PrivateSubtract(cNumber2.Init("2"));
+	AssertNumber("0.5", &cNumber1);
+
+	cNumber1.Init("10.5")->PrivateSubtract(cNumber2.Init("3"));
+	AssertNumber("7.5", &cNumber1);
+
+	cNumber1.Init("100.25")->PrivateSubtract(cNumber2.Init("100"));
+	AssertNumber("0.25", &cNumber1);
+
+	cNumber1.Init("432.001")->PrivateSubtract(cNumber2.Init("30"));
+	AssertNumber("402.001", &cNumber1);
 
 	CNumber		cNumber3;
 	CNumber		cNumber4;

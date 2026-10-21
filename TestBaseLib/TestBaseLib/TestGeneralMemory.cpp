@@ -13,9 +13,9 @@
 void TestGeneralMemorySizeof(void)
 {
 #ifdef BUILD_64
-	AssertSize(216, sizeof(CGeneralMemory));
+	AssertSize(248, sizeof(CGeneralMemory));
 #else
-	AssertSize(108, sizeof(CGeneralMemory));
+	AssertSize(124, sizeof(CGeneralMemory));
 #endif // BUILD_64
 }
 
