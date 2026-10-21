@@ -33,7 +33,7 @@ void TestMeshOBJReader(void)
 		bResult = ReadMesh(&cMesh, "Input/Shape/Smoothing.OBJ");
 
 		iNumCorners = cMesh.NumCorners();
-		iNumNormals = cMesh.mcNormals.mcNormals.NumElements();
+		iNumNormals = (int)cMesh.mcNormals.mcNormals.NumElements();
 
 		AssertTrue(bResult);
 		AssertInt(162, iNumCorners);

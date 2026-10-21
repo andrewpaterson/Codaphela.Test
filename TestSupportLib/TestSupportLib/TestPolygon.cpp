@@ -35,7 +35,7 @@ void TestPolygonAddTriangle(void)
 	cPolygon.AddTriangle(&cTriangle1);
 	cPolygon.AddTriangle(&cTriangle2);
 
-	AssertInt(4, cPolygon.mapsPositions.NumElements());
+	AssertSize(4, cPolygon.mapsPositions.NumElements());
 	AssertPointer(&sPos1, *((SFloat32Vec3**)cPolygon.mapsPositions.Get(0)));
 	AssertPointer(&sPos2, *((SFloat32Vec3**)cPolygon.mapsPositions.Get(1)));
 	AssertPointer(&sPos4, *((SFloat32Vec3**)cPolygon.mapsPositions.Get(2)));

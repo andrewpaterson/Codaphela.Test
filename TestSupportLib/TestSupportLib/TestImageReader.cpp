@@ -24,7 +24,7 @@ void TestImageReaderRAD(void)
 	AssertTrue(pcImage.IsNotNull());
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(3, acChannels.NumElements());
+	AssertSize(3, acChannels.NumElements());
 	AssertChannel(IP_Diffuse, CT_Red, PT_uint8, acChannels.Get(0));
 	AssertChannel(IP_Diffuse, CT_Green, PT_uint8, acChannels.Get(1));
 	AssertChannel(IP_Diffuse, CT_Blue, PT_uint8, acChannels.Get(2));
@@ -41,7 +41,7 @@ void TestImageReaderRAD(void)
 	AssertTrue(pcImage.IsNotNull());
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(3, acChannels.NumElements());
+	AssertSize(3, acChannels.NumElements());
 	AssertChannel(IP_Diffuse, CT_Red, PT_uint8, acChannels.Get(0));
 	AssertChannel(IP_Diffuse, CT_Green, PT_uint8, acChannels.Get(1));
 	AssertChannel(IP_Diffuse, CT_Blue, PT_uint8, acChannels.Get(2));
@@ -64,7 +64,7 @@ void TestImageReaderPNG(void)
 	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "basn0g01.png");
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(1, acChannels.NumElements());
+	AssertSize(1, acChannels.NumElements());
 	AssertChannel(IP_Diffuse, CT_Intensity, PT_uint8, acChannels.Get(0));
 	acChannels.Kill();
 
@@ -76,7 +76,7 @@ void TestImageReaderPNG(void)
 	pcImage = ReadImage("Input" _FS_ "basn0g02.png");
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(1, acChannels.NumElements());
+	AssertSize(1, acChannels.NumElements());
 	AssertChannel(IP_Diffuse, CT_Intensity, PT_uint8, acChannels.Get(0));
 	acChannels.Kill();
 
@@ -88,7 +88,7 @@ void TestImageReaderPNG(void)
 	pcImage = ReadImage("Input" _FS_ "basn0g04.png");
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(1, acChannels.NumElements());
+	AssertSize(1, acChannels.NumElements());
 	AssertChannel(IP_Diffuse, CT_Intensity, PT_uint8, acChannels.Get(0));
 	acChannels.Kill();
 
@@ -100,7 +100,7 @@ void TestImageReaderPNG(void)
 	pcImage = ReadImage("Input" _FS_ "basn0g08.png");
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(1, acChannels.NumElements());
+	AssertSize(1, acChannels.NumElements());
 	AssertChannel(IP_Diffuse, CT_Intensity, PT_uint8, acChannels.Get(0));
 	acChannels.Kill();
 
@@ -112,7 +112,7 @@ void TestImageReaderPNG(void)
 	pcImage = ReadImage("Input" _FS_ "basn0g16.png");
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(1, acChannels.NumElements());
+	AssertSize(1, acChannels.NumElements());
 	AssertChannel(IP_Diffuse, CT_Intensity, PT_uint16, acChannels.Get(0));
 	acChannels.Kill();
 
@@ -124,7 +124,7 @@ void TestImageReaderPNG(void)
 	pcImage = ReadImage("Input" _FS_ "basn2c08.png");
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(3, acChannels.NumElements());
+	AssertSize(3, acChannels.NumElements());
 	AssertChannel(IP_Diffuse, CT_Red, PT_uint8, acChannels.Get(0));
 	AssertChannel(IP_Diffuse, CT_Green, PT_uint8, acChannels.Get(1));
 	AssertChannel(IP_Diffuse, CT_Blue, PT_uint8, acChannels.Get(2));
@@ -138,7 +138,7 @@ void TestImageReaderPNG(void)
 	pcImage = ReadImage("Input" _FS_ "basn2c16.png");
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(3, acChannels.NumElements());
+	AssertSize(3, acChannels.NumElements());
 	AssertChannel(IP_Diffuse, CT_Red, PT_uint16, acChannels.Get(0));
 	AssertChannel(IP_Diffuse, CT_Green, PT_uint16, acChannels.Get(1));
 	AssertChannel(IP_Diffuse, CT_Blue, PT_uint16, acChannels.Get(2));
@@ -152,10 +152,10 @@ void TestImageReaderPNG(void)
 	pcImage = ReadImage("Input" _FS_ "basn4a08.png");
 	AssertInt(32, pcImage->GetWidth());
 	AssertInt(32, pcImage->GetHeight());
-	AssertInt(2048, pcImage->GetByteSize());
+	AssertSize(2048, pcImage->GetByteSize());
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(2, acChannels.NumElements());
+	AssertSize(2, acChannels.NumElements());
 	AssertChannel(IP_Opacity, CT_Intensity, PT_uint8, acChannels.Get(0));
 	AssertChannel(IP_Diffuse, CT_Intensity, PT_uint8, acChannels.Get(1));
 	acChannels.Kill();
@@ -168,7 +168,7 @@ void TestImageReaderPNG(void)
 	pcImage = ReadImage("Input" _FS_ "basn4a16.png");
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(2, acChannels.NumElements());
+	AssertSize(2, acChannels.NumElements());
 	AssertChannel(IP_Opacity, CT_Intensity, PT_uint16, acChannels.Get(0));
 	AssertChannel(IP_Diffuse, CT_Intensity, PT_uint16, acChannels.Get(1));
 	acChannels.Kill();
@@ -181,7 +181,7 @@ void TestImageReaderPNG(void)
 	pcImage = ReadImage("Input" _FS_ "basn6a08.png");
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(4, acChannels.NumElements());
+	AssertSize(4, acChannels.NumElements());
 	AssertChannel(IP_Opacity, CT_Intensity, PT_uint8, acChannels.Get(0));
 	AssertChannel(IP_Diffuse, CT_Red, PT_uint8, acChannels.Get(1));
 	AssertChannel(IP_Diffuse, CT_Green, PT_uint8, acChannels.Get(2));
@@ -196,7 +196,7 @@ void TestImageReaderPNG(void)
 	pcImage = ReadImage("Input" _FS_ "basn6a16.png");
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(4, acChannels.NumElements());
+	AssertSize(4, acChannels.NumElements());
 	AssertChannel(IP_Opacity, CT_Intensity, PT_uint16, acChannels.Get(0));
 	AssertChannel(IP_Diffuse, CT_Red, PT_uint16, acChannels.Get(1));
 	AssertChannel(IP_Diffuse, CT_Green, PT_uint16, acChannels.Get(2));
@@ -220,7 +220,7 @@ void TestImageReaderTGA(void)
 	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "tar32un.tga");
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(4, acChannels.NumElements());
+	AssertSize(4, acChannels.NumElements());
 	AssertChannel(IP_Opacity, CT_Intensity, PT_uint8, acChannels.Get(0));
 	AssertChannel(IP_Diffuse, CT_Red, PT_uint8, acChannels.Get(1));
 	AssertChannel(IP_Diffuse, CT_Green, PT_uint8, acChannels.Get(2));
@@ -235,7 +235,7 @@ void TestImageReaderTGA(void)
 	pcImage = ReadImage("Input" _FS_ "tar24un.tga");
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(3, acChannels.NumElements());
+	AssertSize(3, acChannels.NumElements());
 	AssertChannel(IP_Diffuse, CT_Red, PT_uint8, acChannels.Get(0));
 	AssertChannel(IP_Diffuse, CT_Green, PT_uint8, acChannels.Get(1));
 	AssertChannel(IP_Diffuse, CT_Blue, PT_uint8, acChannels.Get(2));
@@ -250,7 +250,7 @@ void TestImageReaderTGA(void)
 	pcImage = ReadImage("Input" _FS_ "tar16un.tga");
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(3, acChannels.NumElements());
+	AssertSize(3, acChannels.NumElements());
 	AssertChannel(IP_Diffuse, CT_Red, PT_uint8, acChannels.Get(0));
 	AssertChannel(IP_Diffuse, CT_Green, PT_uint8, acChannels.Get(1));
 	AssertChannel(IP_Diffuse, CT_Blue, PT_uint8, acChannels.Get(2));

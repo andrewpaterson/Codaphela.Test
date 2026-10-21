@@ -18,7 +18,7 @@ void TestMeshFaceReturn(void)
 	CMFRet	r1;
 	CMFRet	r2;
 
-	AssertInt(8, sizeof(CMFRet));
+	AssertSize(8, sizeof(CMFRet));
 
 	r.Pack(17, 5, 6, 7, 3);
 	

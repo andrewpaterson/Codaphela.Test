@@ -393,12 +393,19 @@ void TestTextAreaFillContainer(void)
 //////////////////////////////////////////////////////////////////////////
 //
 // A text area that isn't word wrapped is the size of its text and placed
-// by its alignment.
+// by its alignment.  The shown frame is written to
+// Output/TextAreaNoWordWrapFill.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestTextAreaNoWordWrapFillContainer(void)
 {
 	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	const char*				szDirectory;
+
+	szDirectory = "Output" _FS_ "TextAreaNoWordWrapFill";
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
 
 	{
 		Ptr<CWindow>			pTestWindow;
@@ -411,7 +418,7 @@ void TestTextAreaNoWordWrapFillContainer(void)
 		CPointer				pNull;
 		int32					iTextWidth;
 
-		cNativeFactory.Init(&gcMemoryAllocator, 200, 100, NULL);
+		cNativeFactory.Init(&gcMemoryAllocator, 200, 100, (char*)szDirectory);
 		cTick.Init(&cData, 1);
 		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
 
@@ -445,6 +452,7 @@ void TestTextAreaNoWordWrapFillContainer(void)
 
 	AssertLabelObjectsRemoved();
 	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 

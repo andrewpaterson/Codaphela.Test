@@ -245,7 +245,7 @@ void TestImageCopier(void)
 		cImageDest.Init(3, 2, PT_uint16, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pcChannelsDest = &cImageDest.mcChannels;
 		cImageDest.Black();
-		AssertInt(3*2 * 3*2, cImageDest.GetByteSize());
+		AssertSize(3*2 * 3*2, cImageDest.GetByteSize());
 
 		cImageSource.Init(3, 2, szSourceRGB, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pcChannelsSource = &cImageSource.mcChannels;
@@ -264,7 +264,7 @@ void TestImageCopier(void)
 		cImageDest.Init(3, 2, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pcChannelsDest = &cImageDest.mcChannels;
 		cImageDest.Black();
-		AssertInt(3*2 * 3, cImageDest.GetByteSize());
+		AssertSize(3*2 * 3, cImageDest.GetByteSize());
 
 		cImageSource.Init(3, 2, szSourceR2G2B2, PT_uint16, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pcChannelsSource = &cImageSource.mcChannels;
@@ -404,9 +404,12 @@ void TestImageSizeLimits(void)
 
 	sLogConfig = gcLogger.SetSilent();
 	AssertImageSize(-5, 10, 0, 0, 0);			//Negative width.
+#ifndef BUILD_64
+	//These can be addressed in a 64 bit build, where they would allocate 6.4GB to 19.6GB.
 	AssertImageSize(65536, 65536, 0, 0, 0);		//Width * height overflows 32 bits.
 	AssertImageSize(70000, 70000, 0, 0, 0);		//Width * height overflows 32 bits.
 	AssertImageSize(40000, 40000, 0, 0, 0);		//Width * height fits but the bytes (6.4GB) can't be addressed.
+#endif // BUILD_64
 	gcLogger.SetConfig(&sLogConfig);
 
 	ObjectsFlush();

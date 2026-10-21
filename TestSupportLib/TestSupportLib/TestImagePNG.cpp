@@ -99,7 +99,7 @@ void TestImagePNGPalettes(void)
 	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "PNG" _FS_ "palettetrns.png");
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(4, acChannels.NumElements());
+	AssertSize(4, acChannels.NumElements());
 	AssertChannel(IP_Opacity, CT_Intensity, PT_uint8, acChannels.Get(0));
 	AssertChannel(IP_Diffuse, CT_Red, PT_uint8, acChannels.Get(1));
 	AssertChannel(IP_Diffuse, CT_Green, PT_uint8, acChannels.Get(2));
@@ -109,7 +109,7 @@ void TestImagePNGPalettes(void)
 	pcImage = ReadImage("Input" _FS_ "PNG" _FS_ "palettegrey.png");
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(1, acChannels.NumElements());
+	AssertSize(1, acChannels.NumElements());
 	AssertChannel(IP_Diffuse, CT_Intensity, PT_uint8, acChannels.Get(0));
 	acChannels.Kill();
 	pcImage = NULL;

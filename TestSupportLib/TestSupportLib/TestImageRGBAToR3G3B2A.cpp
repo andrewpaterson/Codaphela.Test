@@ -29,15 +29,15 @@ void TestImageToR3G3B2AConvert(void)
 
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);
-	AssertInt(3, acChannels.NumElements());
+	AssertSize(3, acChannels.NumElements());
 	AssertChannel(IP_Diffuse, CT_Blue, PT_crumb, acChannels.Get(2));
 	AssertChannel(IP_Diffuse, CT_Green, PT_tribble, acChannels.Get(1));
 	AssertChannel(IP_Diffuse, CT_Red, PT_tribble, acChannels.Get(0));
 	acChannels.Kill();
 	AssertInt(24, pcImage->GetWidth());
 	AssertInt(24, pcImage->GetHeight());
-	AssertInt(576, pcImage->GetChannels()->GetSize());
-	AssertInt(576, pcImage->GetByteSize());
+	AssertSize(576, pcImage->GetChannels()->GetSize());
+	AssertSize(576, pcImage->GetByteSize());
 
 	bResult =  WriteImage(pcImage, "Output" _FS_ "RGBTo8bit.raw");
 	AssertTrue(bResult);

@@ -1288,7 +1288,7 @@ void TestImageDrawBlitterCacheOnImage(void)
 
 	//An image keeps the cache of blitters that draw onto it.  The same cache is returned until the image's size or
 	//format changes, then a new one is made because blitters only work for the image they were made for.
-	uiObjects = gcObjects.NumMemoryIndexes();
+	uiObjects = (uint32)gcObjects.NumMemoryIndexes();
 	pImage = OMalloc<CImage>(10, 8, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
 	pSource = CreateDrawCelSourceImage(6, 4);
 	pCel = OMalloc<CImageCel>(pSource);
@@ -1356,7 +1356,7 @@ void TestImageDrawBlitterCacheCelFreedFirst(void)
 
 	//A blitter does not keep its cel alive, so a cel can be freed while the image it was drawn onto lives on.
 	//The cache forgets the cel's blitter and only removes it the next time the cache is used.
-	uiStart = gcObjects.NumMemoryIndexes();
+	uiStart = (uint32)gcObjects.NumMemoryIndexes();
 	pDest = CreateDrawDest();
 	pCel = CreateDrawCel();
 	pCache = pDest->GetBlitterCache();
@@ -1393,7 +1393,7 @@ void TestImageDrawBlitterCacheDestinationFreedFirst(void)
 
 	//When the destination is freed its cache and blitters go with it, and the cel forgets the cache.  The cel can then
 	//be drawn onto another image and freed without touching the freed cache.
-	uiStart = gcObjects.NumMemoryIndexes();
+	uiStart = (uint32)gcObjects.NumMemoryIndexes();
 	pDest = CreateDrawDest();
 	pCel = CreateDrawCel();
 	AssertTrue(pDest->GetBlitterCache()->CreateImageBlitter(pCel).IsNotNull());
@@ -1426,7 +1426,7 @@ void TestImageDrawBlitterCacheSharedCel(void)
 	uint32			uiStart;
 
 	//One cel drawn onto two images is in both images' caches.
-	uiStart = gcObjects.NumMemoryIndexes();
+	uiStart = (uint32)gcObjects.NumMemoryIndexes();
 	pDest1 = CreateDrawDest();
 	pDest2 = CreateDrawDest();
 	pCel = CreateDrawCel();
@@ -1459,7 +1459,7 @@ void TestImageDrawBlitterCacheCelKilled(void)
 	uint32			uiStart;
 
 	//Killing a cel outright, while other pointers still point at it, also makes the caches forget it.
-	uiStart = gcObjects.NumMemoryIndexes();
+	uiStart = (uint32)gcObjects.NumMemoryIndexes();
 	pDest = CreateDrawDest();
 	pCel = CreateDrawCel();
 	pOtherPointer = pCel;
@@ -1490,7 +1490,7 @@ void TestImageDrawBlitterCacheFreedTogether(void)
 	//When the only thing holding a destination and a cel is freed, the destination, its cache, the blitter, the cel and
 	//its image are all freed in the same kill in whatever order the objects system chooses.  Each must let go of the
 	//others without touching one that has already been freed.  A few cels make some be freed before the cache and some after.
-	uiStart = gcObjects.NumMemoryIndexes();
+	uiStart = (uint32)gcObjects.NumMemoryIndexes();
 	pHolder = OMalloc<CArrayObject>();
 	pDest = CreateDrawDest();
 	pHolder->Add(pDest);

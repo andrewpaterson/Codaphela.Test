@@ -93,25 +93,25 @@ void TestPlane(void)
 
 	pcPolygon = cMeshEditor.mcPolygons.mcPolygons.Get(0);
 	AssertInt(0, pcPolygon->miName);
-	AssertInt(2, pcPolygon->maiFaces.NumElements());
+	AssertSize(2, pcPolygon->maiFaces.NumElements());
 	AssertInt(0, pcPolygon->maiFaces.GetValue(0));
 	AssertInt(1, pcPolygon->maiFaces.GetValue(1));
 
 	pcPolygon = cMeshEditor.mcPolygons.mcPolygons.Get(1);
 	AssertInt(0, pcPolygon->miName);
-	AssertInt(2, pcPolygon->maiFaces.NumElements());
+	AssertSize(2, pcPolygon->maiFaces.NumElements());
 	AssertInt(2, pcPolygon->maiFaces.GetValue(0));
 	AssertInt(3, pcPolygon->maiFaces.GetValue(1));
 
 	pcPolygon = cMeshEditor.mcPolygons.mcPolygons.Get(2);
 	AssertInt(0, pcPolygon->miName);
-	AssertInt(2, pcPolygon->maiFaces.NumElements());
+	AssertSize(2, pcPolygon->maiFaces.NumElements());
 	AssertInt(4, pcPolygon->maiFaces.GetValue(0));
 	AssertInt(5, pcPolygon->maiFaces.GetValue(1));
 
 	pcPolygon = cMeshEditor.mcPolygons.mcPolygons.Get(3);
 	AssertInt(0, pcPolygon->miName);
-	AssertInt(2, pcPolygon->maiFaces.NumElements());
+	AssertSize(2, pcPolygon->maiFaces.NumElements());
 	AssertInt(6, pcPolygon->maiFaces.GetValue(0));
 	AssertInt(7, pcPolygon->maiFaces.GetValue(1));
 }
@@ -584,7 +584,7 @@ void AssertFace(CMeshFace* pcMeshFace, int iCorner1, int iCorner2, int iCorner3)
 //////////////////////////////////////////////////////////////////////////
 void AssertCornerCount(CMeshCorner* pcMeshCorner, int iEdgeCount, int iFaceCount)
 {
-	AssertInt(iEdgeCount, pcMeshCorner->aiEdge.NumElements());
-	AssertInt(iFaceCount, pcMeshCorner->aiFace.NumElements());
+	AssertSize(iEdgeCount, pcMeshCorner->aiEdge.NumElements());
+	AssertSize(iFaceCount, pcMeshCorner->aiFace.NumElements());
 }
 

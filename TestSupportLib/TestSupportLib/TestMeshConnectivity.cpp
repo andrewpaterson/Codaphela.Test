@@ -42,10 +42,10 @@ void TestMeshEdgeConnectivity(void)
 	cMeshEditor.Collapse();
 
 	pcConn = cMesh.GetConnectivity();
-	AssertInt(9, pcConn->mcEdges.NumElements());
-	AssertInt(6, pcConn->mcCorners.NumElements());
-	AssertInt(6, pcConn->mcCornerEdgesMap.NumElements());
-	AssertInt(4, pcConn->mcFaces.NumElements());
+	AssertSize(9, pcConn->mcEdges.NumElements());
+	AssertSize(6, pcConn->mcCorners.NumElements());
+	AssertSize(6, pcConn->mcCornerEdgesMap.NumElements());
+	AssertSize(4, pcConn->mcFaces.NumElements());
 
 	AssertCornerFaces(pcConn->mcCorners.Get(0),  1,  0);
 	AssertCornerFaces(pcConn->mcCorners.Get(1),  2,  0, 1);
@@ -64,7 +64,7 @@ void TestMeshEdgeConnectivity(void)
 	for (i = 0; i < pcConn->mcCornerEdgesMap.NumElements(); i++)
 	{
 		pcCornerEdgesMap = pcConn->mcCornerEdgesMap.Get(i);
-		AssertInt(pcCornerEdgesMap->maiEdgeIndex.NumElements(), pcCornerEdgesMap->maiLargerCornerIndex.NumElements());
+		AssertSize(pcCornerEdgesMap->maiEdgeIndex.NumElements(), pcCornerEdgesMap->maiLargerCornerIndex.NumElements());
 	}
 
 	AssertEdgeCorners(pcConn->mcEdges.Get(0), 0, 1);
@@ -99,7 +99,7 @@ void AssertCornerFaces(CMeshCorner* pcCorner, size iNumFaces, ...)
 	size			i;
 	size			iFaceNum;
 
-	AssertInt(iNumFaces, pcCorner->aiFace.NumElements());
+	AssertSize(iNumFaces, pcCorner->aiFace.NumElements());
 	if (iNumFaces != pcCorner->aiFace.NumElements())
 	{
 		return;
@@ -109,7 +109,7 @@ void AssertCornerFaces(CMeshCorner* pcCorner, size iNumFaces, ...)
 	for (i = 0; i < iNumFaces; i++)
 	{
 		iFaceNum = va_arg(vaMarker, size);
-		AssertInt(iFaceNum, pcCorner->aiFace.GetValue(i));
+		AssertSize(iFaceNum, pcCorner->aiFace.GetValue(i));
 	}
 	va_end(vaMarker);
 }
@@ -126,7 +126,7 @@ void AssertCornerEdges(CMeshCorner* pcCorner, size iNumEdges, ...)
 	size			i;
 	size			iEdgeNum;
 
-	AssertInt(iNumEdges, pcCorner->aiEdge.NumElements());
+	AssertSize(iNumEdges, pcCorner->aiEdge.NumElements());
 	if (iNumEdges != pcCorner->aiEdge.NumElements())
 	{
 		return;
@@ -136,7 +136,7 @@ void AssertCornerEdges(CMeshCorner* pcCorner, size iNumEdges, ...)
 	for (i = 0; i < iNumEdges; i++)
 	{
 		iEdgeNum = va_arg(vaMarker, size);
-		AssertInt(iEdgeNum, pcCorner->aiEdge.GetValue(i));
+		AssertSize(iEdgeNum, pcCorner->aiEdge.GetValue(i));
 	}
 	va_end(vaMarker);
 }

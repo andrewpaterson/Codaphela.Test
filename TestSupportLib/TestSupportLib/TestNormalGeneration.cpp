@@ -47,9 +47,9 @@ void TestMeshSmoothGroupsOneAndZero(void)
 	cMeshEditor.Touch();
 
 	AssertInt(48, cMesh.NumFaces());
-	AssertInt(48, pcSmoothing->mcSmoothingGroups.NumElements());
+	AssertSize(48, pcSmoothing->mcSmoothingGroups.NumElements());
 	AssertInt(26, cMesh.NumCorners());
-	AssertInt(48 + 26, cMesh.mcNormals.mcNormals.NumElements());
+	AssertSize(48 + 26, cMesh.mcNormals.mcNormals.NumElements());
 
 	for (i = 0; i < 48; i++)
 	{
@@ -70,9 +70,9 @@ void TestMeshSmoothGroupsOneAndZero(void)
 	cMeshEditor.Touch();
 
 	AssertInt(48, cMesh.NumFaces());
-	AssertInt(48, pcSmoothing->mcSmoothingGroups.NumElements());
+	AssertSize(48, pcSmoothing->mcSmoothingGroups.NumElements());
 	AssertInt(26, cMesh.NumCorners());
-	AssertInt(48, cMesh.mcNormals.mcNormals.NumElements());
+	AssertSize(48, cMesh.mcNormals.mcNormals.NumElements());
 
 	for (i = 0; i < 48; i++)
 	{
@@ -132,12 +132,12 @@ void TestMeshSmoothGroupsNamed(void)
 	cMeshEditor.Touch();
 
 	AssertInt(48, cMesh.NumFaces());
-	AssertInt(48, pcSmoothing->mcSmoothingGroups.NumElements());
+	AssertSize(48, pcSmoothing->mcSmoothingGroups.NumElements());
 	AssertInt(26, cMesh.NumCorners());
 	AssertInt(72, cMesh.NumEdges());
 	AssertInt(48, cMeshEditor.NumVisibleEdges(1));
 	AssertInt(6, cMeshEditor.mcPolygons.NumUniqueNames());
-	AssertInt(48 + 54, cMesh.mcNormals.mcNormals.NumElements());
+	AssertSize(48 + 54, cMesh.mcNormals.mcNormals.NumElements());
 
 	WriteMesh(&cMesh, "Output/NormalsNamed2x2x2.OBJ");
 
@@ -189,7 +189,7 @@ void TestMeshSmoothFaces(void)
 
 	AssertInt(48, cMesh.NumFaces());
 	AssertInt(26, cMesh.NumCorners());
-	AssertInt(48 + 26, cMesh.mcNormals.mcNormals.NumElements());
+	AssertSize(48 + 26, cMesh.mcNormals.mcNormals.NumElements());
 
 	for (i = 0; i < 48; i++)
 	{
@@ -252,7 +252,7 @@ void TestMeshFlatFaces(void)
 
 	AssertInt(48, cMesh.NumFaces());
 	AssertInt(26, cMesh.NumCorners());
-	AssertInt(48, cMesh.mcNormals.mcNormals.NumElements());
+	AssertSize(48, cMesh.mcNormals.mcNormals.NumElements());
 
 	for (i = 0; i < 48; i++)
 	{

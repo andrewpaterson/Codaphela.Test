@@ -1,4 +1,5 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/FileUtil.h"
 #include "StandardLib/ClassDefines.h"
 #include "StandardLib/Objects.h"
 #include "WindowLib/Window.h"
@@ -294,12 +295,19 @@ void TestListInput(void)
 // A 100x40 window with a 40x10 white item in each of four rows filling it.
 // Row 1 is selected and the pointer is over row 2.  The selected row is
 // red under its item and the hovered row green, both across the window;
-// the other rows show the black background.
+// the other rows show the black background.  The painted frame is written
+// to Output/ListDraw.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestListDraw(void)
 {
 	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	const char*				szDirectory;
+
+	szDirectory = "Output" _FS_ "ListDraw";
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
 
 	{
 		Ptr<CWindow>			pTestWindow;
@@ -312,7 +320,7 @@ void TestListDraw(void)
 		uint8*					puiPixels;
 		uint8*					puiPixel;
 
-		cNativeFactory.Init(&gcMemoryAllocator, 100, 40, NULL);
+		cNativeFactory.Init(&gcMemoryAllocator, 100, 40, (char*)szDirectory);
 		cTick.Init(&cData, 1);
 		pTestWindow = OMalloc<CWindow>("List Draw Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
 
@@ -363,6 +371,7 @@ void TestListDraw(void)
 	AssertTrue(ORoot()->RemoveAll());
 	AssertSize(2, gcObjects.NumMemoryIndexes());
 	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 

@@ -1,7 +1,10 @@
 # Linux build of TestSupportLib (BaseLib + TestLib + StandardLib + SupportLib +
 # TestSupportLib).
 #
-# BaseLib is 32-bit only, so everything is built with -m32 (needs g++-multilib).
+# Builds 32-bit (-m32, needs g++-multilib) by default.  Add -DBASELIB_64=ON
+# for a 64-bit build, in its own build directory:
+#
+#   cmake -S test/TestSupportLib -B build/TestSupportLib64 -G Ninja -DBASELIB_64=ON
 #
 #   cmake -S test/TestSupportLib -B build/TestSupportLib -G Ninja -DCMAKE_BUILD_TYPE=Debug
 #   cmake --build build/TestSupportLib
@@ -26,6 +29,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 option(BASELIB_ASAN "Build with AddressSanitizer and LeakSanitizer" OFF)
+option(BASELIB_64 "Build 64-bit instead of 32-bit" OFF)
 
 get_filename_component(CODAPHELA_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../.." ABSOLUTE)
 set(COMMON_DIR "${CODAPHELA_ROOT}/commonlibraries")
@@ -100,7 +104,7 @@ target_compile_definitions(baselib_options INTERFACE
 	$<$<CONFIG:Debug>:DEBUG>
 	$<$<NOT:$<CONFIG:Debug>>:NDEBUG>
 )
-# -msse2 -mfpmath=sse: MSVC uses SSE2 for 32-bit code.  The x87 FPU keeps float
+# -m32 -msse2 -mfpmath=sse: MSVC uses SSE2 for 32-bit code.  The x87 FPU keeps float
 # constants at long double precision, so float comparisons would differ.
 # -fno-strict-aliasing: MSVC never optimises on the strict aliasing rule and the
 # code relies on that (e.g. (CUnknown**)&pcTyped), so optimised builds break without it.
@@ -114,8 +118,13 @@ target_compile_definitions(baselib_options INTERFACE
 # (e.g. Save(CObjectWriter*) hides CUnknown::Save(CFileWriter*)) on purpose.
 # -Wno-comment: ASCII diagrams in comments end lines with a backslash.
 # -Wno-unused-parameter: virtual overrides and callbacks often ignore parameters.
-target_compile_options(baselib_options INTERFACE -m32 -msse2 -mfpmath=sse -fno-strict-aliasing -Wall -Wextra -Wno-ignored-attributes -Wno-write-strings -Wno-multichar -Wno-class-memaccess -Wno-overloaded-virtual -Wno-comment -Wno-unused-parameter)
-target_link_options(baselib_options INTERFACE -m32)
+if(BASELIB_64)
+	set(BASELIB_ARCH_OPTIONS -m64)
+else()
+	set(BASELIB_ARCH_OPTIONS -m32 -msse2 -mfpmath=sse)
+endif()
+target_compile_options(baselib_options INTERFACE ${BASELIB_ARCH_OPTIONS} -fno-strict-aliasing -Wall -Wextra -Wno-ignored-attributes -Wno-write-strings -Wno-multichar -Wno-class-memaccess -Wno-overloaded-virtual -Wno-comment -Wno-unused-parameter)
+target_link_options(baselib_options INTERFACE $<IF:$<BOOL:${BASELIB_64}>,-m64,-m32>)
 if(BASELIB_ASAN)
 	target_compile_options(baselib_options INTERFACE -fsanitize=address -fno-omit-frame-pointer)
 	target_link_options(baselib_options INTERFACE -fsanitize=address)
@@ -138,7 +147,7 @@ target_link_libraries(TestLib PUBLIC BaseLib)
 add_library(StandardLib STATIC ${STANDARDLIB_SOURCES})
 target_link_libraries(StandardLib PUBLIC BaseLib)
 
-# The 32-bit Debug configuration of StandardLib (only) defines DEBUG_POINTER.
+# The Debug configurations of StandardLib (only) define DEBUG_POINTER.
 target_compile_definitions(StandardLib PRIVATE $<$<CONFIG:Debug>:DEBUG_POINTER>)
 
 add_library(SupportLib STATIC ${SUPPORTLIB_SOURCES})
