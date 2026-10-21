@@ -47,7 +47,7 @@ void TestPreprocessorSimpleReplacement(void)
 #define D9(P,Q)  D5(P)  D5(Q) \n\
 D9(Hello, World)", &szDest);
 
-	AssertString("Hello  World  \n", szDest.Text());
+	AssertString("Hello World\n", szDest.Text());
 	szDest.Kill();
 }
 
@@ -110,15 +110,16 @@ void DoStuff()\n\
 }\n\
 ", &szDest);
 
-	//Actually I don't know what this is supposed to look like.  Just make the test pass for now.
+	//D4 and the " " in D8 are empty here: the quotes end and restart the C++ string literal this test is written in.
+	//D6 pastes ")" with "D4", which is not a valid token.  That is undefined; the tokens are kept apart, as MSVC does.
 	AssertString("\
 void DoStuff()\n\
 {\n\
-char sz6[]=\"Hello\"  \"World\";\n\
+char sz6[]=\"Hello\" \"World\";\n\
 char sz1[] = \"Hello\" \"World\";\n\
 char sz3[] = \"Hello\" \"World\";\n\
 char sz5[] = \"Hello\"\"World\";\n\
-char sz4[] = \"Hello\"  \"World\";\n\
+char sz4[] = \"Hello\" \"World\";\n\
 char sz2[] = \"Hello\"\"World\";\n\
 }\n\
 ", szDest.Text());
@@ -140,7 +141,7 @@ int x = ++y / z;\n\
 int dufi = SOME_FOO_1(1, 2), dasf = SOME_FOO_2, ewqr = SOME_FOO_3;\n\
 ", &szDest);
 
-	AssertString("int dufi = 0xDE + 1 - 2 +1 , dasf = 0xE2 , ewqr = 0x00000080L ;\n", szDest.Text());
+	AssertString("int dufi = 0xDE + 1 - 2 +1, dasf = 0xE2, ewqr = 0x00000080L;\n", szDest.Text());
 	szDest.Kill();
 
 	szDest.Init();
@@ -150,9 +151,10 @@ char g_Char = \'\\n\';\n\
 char g_Char2 = \'\"\';\n\
 ", &szDest);
 
-	AssertString("char gsz[] = (\"//@  Don\\'t Collapse me please     ! /*     \");\n\
+	//Literals keep their spelling.
+	AssertString("char gsz[] = (\"//@  Don't Collapse me please     ! /*     \");\n\
 char g_Char = \'\\n\';\n\
-char g_Char2 = \'\\\"\';\n\
+char g_Char2 = \'\"\';\n\
 ", szDest.Text());
 	szDest.Kill();
 
@@ -401,7 +403,7 @@ void TestPreprocessorBlockSkipping(void)
 
 	szName.Init("None.cpp");
 
-	cFile.Init(szName.Text(), NULL, false, false);
+	cFile.Init(szName.Text(), NULL, false);
 	cFile.SetContents("\
 					   Start\n\
 					   #if 1\n\
@@ -428,7 +430,7 @@ void TestPreprocessorBlockSkipping(void)
 	cConfig.Kill();
 	cFile.Kill();
 
-	cFile.Init(szName.Text(), NULL, false, false);
+	cFile.Init(szName.Text(), NULL, false);
 	cFile.SetContents("\
 					  Start\n\
 					  #if 0\n\
@@ -474,7 +476,7 @@ void TestPreprocessorParentheses(void)
 
 	szName.Init("None.cpp");
 
-	cFile.Init(szName.Text(), NULL, false, false);
+	cFile.Init(szName.Text(), NULL, false);
 	cFile.SetContents("\
 #if (defined _M_ARM || defined _M_HYBRID_X86_ARM64) && !defined _M_CEE_PURE\n\
 Unexpected\n\
@@ -522,7 +524,7 @@ void TestPreprocessorSimpleVariadic(void)
 
 	szName.Init("None.cpp");
 
-	cFile.Init(szName.Text(), NULL, false, false);
+	cFile.Init(szName.Text(), NULL, false);
 	cFile.SetContents("\
 #define _CRT_UNPARENTHESIZE_(FIRST, ARGS ...) ARGS\n\
 Expected\n\
@@ -558,7 +560,7 @@ void TestPreprocessorComplexVariadic(void)
 
 	szName.Init("None.cpp");
 
-	cFile.Init(szName.Text(), NULL, false, false);
+	cFile.Init(szName.Text(), NULL, false);
 	cFile.SetContents("\
 #define CHECK1(x, a...) if (!(x)) { printf(a); }\n\
 CHECK1(0, \"here % s % s % s\", \"are\", \"some\", \"varargs(1)\\n\");\n\
@@ -594,7 +596,7 @@ void TestPreprocessorRedefinedVariadic(void)
 
 	szName.Init("None.cpp");
 
-	cFile.Init(szName.Text(), NULL, false, false);
+	cFile.Init(szName.Text(), NULL, false);
 	cFile.SetContents("\
 #define _CRT_UNPARENTHESIZE_(...) __VA_ARGS__\n\
 Expected1\n\
@@ -644,7 +646,7 @@ void TestPreprocessorHasInclude(void)
 	cHeaderFiles.Init();
 	cHeaderNames.Init(szDirectory.Text(), &cHeaderFiles, false, true);
 
-	cFile.Init(szName.Text(), NULL, false, false);
+	cFile.Init(szName.Text(), NULL, false);
 	cFile.SetContents("\
 #if defined __has_include\n\
 #  if __has_include (<Header.h>)\n\
@@ -712,7 +714,7 @@ void TestPreprocessorExistingEmpty(void)
 
 	szName.Init("None.cpp");
 
-	cFile.Init(szName.Text(), NULL, false, false);
+	cFile.Init(szName.Text(), NULL, false);
 	cFile.SetContents("\
 #if EMPTY > 1997L\n\
 Should not get here\n\
@@ -755,7 +757,7 @@ void TestPreprocessorRedefinedEmpty(void)
 
 	szName.Init("None.cpp");
 
-	cFile.Init(szName.Text(), NULL, false, false);
+	cFile.Init(szName.Text(), NULL, false);
 	cFile.SetContents("\
 #if defined(EMPTY)\n\
 #define REEMPTY EMPTY\n\
@@ -870,7 +872,8 @@ void TestPreprocessorDefineBrackettedOmmitted(void)
 F Surfe();\n\
 ", &szDest);
 
-	AssertString("Surfe();\n", szDest.Text());
+	//A function-like macro name that is not followed by ( is not replaced.  [cpp.replace] 10
+	AssertString("F Surfe();\n", szDest.Text());
 	szDest.Kill();
 
 
@@ -893,7 +896,8 @@ void TestPreprocessorHashedArgumentExpansion()
 char	gszF1[] = D3(F1(H));\
 ", &szDest);
 
-	AssertString("char gszF1[] = \"H__H\";\n", szDest.Text());
+	//The argument of # is not macro replaced.  [cpp.subst] 1
+	AssertString("char gszF1[] = \"F1(H)\";\n", szDest.Text());
 	szDest.Kill();
 
 
@@ -917,7 +921,7 @@ void TestPreprocessorHasCPPNameSpaceAttribute()
 
 	szName.Init("None.cpp");
 
-	cFile.Init(szName.Text(), NULL, false, false);
+	cFile.Init(szName.Text(), NULL, false);
 	cFile.SetContents("\
 #ifndef __has_cpp_attribute\n\
 #define _KNOWN_SEMANTICS_1\n\
@@ -938,14 +942,15 @@ void TestPreprocessorHasCPPNameSpaceAttribute()
 
 	AssertString("", szDest.Text());
 
+	//__has_cpp_attribute counts as defined, as it does for MSVC and g++ (and C++20 [cpp.cond]), but knows no attributes.
 	pcDefine = cPreprocessor.GetDefine("_KNOWN_SEMANTICS_1", true);
-	AssertNotNull(pcDefine);
+	AssertNull(pcDefine);
 	pcDefine = cPreprocessor.GetDefine("_KNOWN_SEMANTICS_2", true);
 	AssertNull(pcDefine);
 	pcDefine = cPreprocessor.GetDefine("_KNOWN_SEMANTICS_3", true);
 	AssertNull(pcDefine);
 	pcDefine = cPreprocessor.GetDefine("_KNOWN_SEMANTICS_4", true);
-	AssertNull(pcDefine);
+	AssertNotNull(pcDefine);
 
 	cPreprocessor.Kill();
 	szName.Kill();
@@ -983,6 +988,375 @@ Maths is still okay\n\
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestPreprocessorStandardExample3(void)
+{
+	CChars	szDest;
+
+	//C++14 [cpp.scope] / C11 6.10.3.5 EXAMPLE 3: rescanning and nested replacement.
+	szDest.Init();
+	CPreprocessor::Preprocess(
+		"#define x 3\n"
+		"#define f(a) f(x * (a))\n"
+		"#undef x\n"
+		"#define x 2\n"
+		"#define g f\n"
+		"#define z z[0]\n"
+		"#define h g(~\n"
+		"#define m(a) a(w)\n"
+		"#define w 0,1\n"
+		"#define t(a) a\n"
+		"#define p() int\n"
+		"#define q(x) x\n"
+		"#define r(x,y) x ## y\n"
+		"#define str(x) # x\n"
+		"f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);\n"
+		"g(x+(3,4)-w) | h 5) & m\n"
+		"(f)^m(m);\n"
+		"p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };\n"
+		"char c[2][6] = { str(hello), str() };\n", &szDest);
+
+	AssertString(
+		"f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);\n"
+		"f(2 * (2+(3,4)-0,1)) | f(2 * (~ 5)) & f(2 * (0,1))^m(0,1);\n"
+		"int i[] = { 1, 23, 4, 5, };\n"
+		"char c[2][6] = { \"hello\", \"\" };\n", szDest.Text());
+	szDest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorStandardExample4(void)
+{
+	CChars	szDest;
+
+	//C11 6.10.3.5 EXAMPLE 4: # and ##.
+	szDest.Init();
+	CPreprocessor::Preprocess(
+		"#define str(s) # s\n"
+		"#define xstr(s) str(s)\n"
+		"#define debug(s, t) printf(\"x\" # s \"= %d, x\" # t \"= %s\", \\\n"
+		" x ## s, x ## t)\n"
+		"#define INCFILE(n) vers ## n\n"
+		"#define glue(a, b) a ## b\n"
+		"#define xglue(a, b) glue(a, b)\n"
+		"#define HIGHLOW \"hello\"\n"
+		"#define LOW LOW \", world\"\n"
+		"debug(1, 2);\n"
+		"fputs(str(strncmp(\"abc\\0d\", \"abc\", '\\4') // this goes away\n"
+		" == 0) str(: @\\n), s);\n"
+		"xstr(INCFILE(2).h)\n"
+		"glue(HIGH, LOW);\n"
+		"xglue(HIGH, LOW)\n", &szDest);
+
+	AssertString(
+		"printf(\"x\" \"1\" \"= %d, x\" \"2\" \"= %s\", x1, x2);\n"
+		"fputs(\"strncmp(\\\"abc\\\\0d\\\", \\\"abc\\\", '\\\\4') == 0\" \": @\\n\", s);\n"
+		"\"vers2.h\"\n"
+		"\"hello\";\n"
+		"\"hello\" \", world\"\n", szDest.Text());
+	szDest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorStandardExample5(void)
+{
+	CChars	szDest;
+
+	//C11 6.10.3.5 EXAMPLE 5: placemarkers.
+	szDest.Init();
+	CPreprocessor::Preprocess(
+		"#define t(x,y,z) x ## y ## z\n"
+		"int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),\n"
+		" t(10,,), t(,11,), t(,,12), t(,,) };\n", &szDest);
+
+	AssertString(
+		"int j[] = { 123, 45, 67, 89,\n"
+		"10, 11, 12, };\n", szDest.Text());
+	szDest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorStandardExample7(void)
+{
+	CChars	szDest;
+
+	//C11 6.10.3.5 EXAMPLE 7: variadic macros, and the GNU , ## __VA_ARGS__.
+	szDest.Init();
+	CPreprocessor::Preprocess(
+		"#define debug(...) fprintf(stderr, __VA_ARGS__)\n"
+		"#define showlist(...) puts(#__VA_ARGS__)\n"
+		"#define report(test, ...) ((test)?puts(#test):\\\n"
+		" printf(__VA_ARGS__))\n"
+		"debug(\"Flag\");\n"
+		"debug(\"X = %d\\n\", x);\n"
+		"showlist(The first, second, and third items.);\n"
+		"report(x>y, \"x is %d but y is %d\", x, y);\n"
+		"#define F(...) f(0 __VA_ARGS__)\n"
+		"#define G(X, ...) f(0, X __VA_ARGS__)\n"
+		"#define SDEF(sname, ...) S sname = { __VA_ARGS__ }\n"
+		"#define EMP\n"
+		"F(a,b,c) F() F(EMP) G(a,b,c) G(a,) G(a)\n"
+		"SDEF(foo); SDEF(bar, 1, 2);\n"
+		"#define GNU(fmt, ...) printf(fmt, ## __VA_ARGS__)\n"
+		"GNU(\"a\") GNU(\"b\", 1, 2)\n", &szDest);
+
+	AssertString(
+		"fprintf(stderr, \"Flag\");\n"
+		"fprintf(stderr, \"X = %d\\n\", x);\n"
+		"puts(\"The first, second, and third items.\");\n"
+		"((x>y)?puts(\"x>y\"): printf(\"x is %d but y is %d\", x, y));\n"
+		"f(0 a,b,c) f(0) f(0) f(0, a b,c) f(0, a) f(0, a)\n"
+		"S foo = { }; S bar = { 1, 2 };\n"
+		"printf(\"a\") printf(\"b\", 1, 2)\n", szDest.Text());
+	szDest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorConditionalArithmetic(void)
+{
+	CChars	szDest;
+
+	//#if is evaluated in intmax_t and uintmax_t.  [cpp.cond]
+	szDest.Init();
+	CPreprocessor::Preprocess(
+		"#define V 0x700\n"
+		"#if (V >= 0x1400) || (V >= 0xE00 && V < 0x1000)\n"
+		"bad1\n"
+		"#endif\n"
+		"#if 0xE00 == 3584 && 0x700 == 1792 && 1 < 0x1000\n"
+		"good1\n"
+		"#endif\n"
+		"#if 201402L >= 201103L && 0xFFFFFFFFUL > 5u && 1'000 == 1000\n"
+		"good2\n"
+		"#endif\n"
+		"#if -1 < 0 && (1 << 4) == 16 && 'A' == 65 && 7 / 2 == 3 && true && !false\n"
+		"good3\n"
+		"#endif\n"
+		"#if -1 > 0u\n"
+		"good4\n"
+		"#endif\n"
+		"#if 1 ? 2 : 0\n"
+		"good5\n"
+		"#endif\n"
+		"#if 0 && (1 / 0)\n"
+		"bad2\n"
+		"#endif\n", &szDest);
+
+	AssertString("good1\ngood2\ngood3\ngood4\ngood5\n", szDest.Text());
+	szDest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorSkippedConditionals(void)
+{
+	CChars	szDest;
+
+	//Conditionals in skipped groups are not evaluated, and unknown directives in them are ignored.  [cpp.cond] 6
+	szDest.Init();
+	CPreprocessor::Preprocess(
+		"#ifdef UNDEFINED\n"
+		"#if NOT_A_MACRO (1) +\n"
+		"#warning not here\n"
+		"#unknown_directive\n"
+		"#elif 1 / 0\n"
+		"bad\n"
+		"#endif\n"
+		"#else\n"
+		"good\n"
+		"#endif\n"
+		"#if 1\n"
+		"first\n"
+		"#elif 1 / 0\n"
+		"bad\n"
+		"#else\n"
+		"bad\n"
+		"#endif\n", &szDest);
+
+	AssertString("good\nfirst\n", szDest.Text());
+	szDest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorNumbersAndPunctuators(void)
+{
+	CChars	szDest;
+
+	//pp-numbers include letters, '.', exponent signs and digit separators.  [lex.ppnumber]
+	szDest.Init();
+	CPreprocessor::Preprocess(
+		"#define CAT(a, b) a ## b\n"
+		"int a = 0x10'0000 + 201402L + .5f + 1.5e+3 + 0x1p-3 + 0b1010;\n"
+		"a<<=b->*c; x = y ... z; CAT(<, <=) CAT(-, >) CAT(x, 1) CAT(1, e) CAT(L, \"s\")\n"
+		"char c = L'x'; const char* s = u8\"y\";\n", &szDest);
+
+	AssertString(
+		"int a = 0x10'0000 + 201402L + .5f + 1.5e+3 + 0x1p-3 + 0b1010;\n"
+		"a<<=b->*c; x = y ... z; <<= -> x1 1e L\"s\"\n"
+		"char c = L'x'; const char* s = u8\"y\";\n", szDest.Text());
+	szDest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorMultiLineArguments(void)
+{
+	CChars	szDest;
+
+	//Macro arguments can cover lines, and directives in them are processed (as g++ and MSVC do).
+	szDest.Init();
+	CPreprocessor::Preprocess(
+		"#define F(a, b) [a|b]\n"
+		"#define G F\n"
+		"x F(1,\n"
+		"    2) y\n"
+		"G\n"
+		"(3,\n"
+		"#define FOUR 4\n"
+		"FOUR) FOUR\n"
+		"F", &szDest);
+
+	AssertString(
+		"x [1|2] y\n"
+		"[3|4] 4\n"
+		"F\n", szDest.Text());
+	szDest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorLocations(void)
+{
+	CTranslationUnit		cFile;
+	CPreprocessor			cPreprocessor;
+	CConfig					cConfig;
+	CPreprocessedTokens*	pcTokens;
+	SPreprocessedToken*		psToken;
+	SMacroExpansion*		psExpansion;
+	SInactiveRegion*		psRegion;
+	CArrayPPComments*		pacComments;
+	CChars					szDest;
+
+	cFile.Init("Locations.cpp", NULL, false);
+	cFile.SetContents(
+		"#define TWO 2  // two\n"
+		"int a = TWO;\n"
+		"#if 0\n"
+		"skipped\n"
+		"#else\n"
+		"/* c */ int b;\n"
+		"#endif\n"
+		"#define ADD(x, y) x + y\n"
+		"int c = ADD(a,\n"
+		"            TWO);\n");
+
+	cConfig.Init("");
+	cPreprocessor.Init(&cConfig);
+	AssertTrue(cPreprocessor.PreprocessTranslationUnit(&cFile));
+
+	szDest.Init();
+	cFile.Print(&szDest);
+	AssertString("int a = 2;\nint b;\nint c = a + 2;\n", szDest.Text());
+	szDest.Kill();
+
+	pcTokens = cFile.GetTokens();
+	AssertSize(15, pcTokens->NumTokens());
+
+	//Tokens from the source are where they were written.
+	psToken = pcTokens->Get(1);
+	AssertTrue(psToken->Is("a"));
+	AssertPointer(&cFile, psToken->pcFile);
+	AssertInt(1, psToken->iLine);
+	AssertInt(4, psToken->iColumn);
+	AssertInt(-1, psToken->iExpansion);
+	AssertInt(PTF_LEADING_SPACE, psToken->uiFlags);
+
+	//Tokens from a macro body are where the #define wrote them, and refer to the expansion that made them.
+	psToken = pcTokens->Get(3);
+	AssertTrue(psToken->Is("2"));
+	AssertInt(0, psToken->iLine);
+	AssertInt(12, psToken->iColumn);
+	AssertInt(0, psToken->iExpansion);
+	psExpansion = pcTokens->GetExpansion(0);
+	AssertInt(3, psExpansion->uiNameLength);
+	AssertInt(1, psExpansion->iLine);
+	AssertInt(8, psExpansion->iColumn);
+	AssertInt(-1, psExpansion->iParent);
+
+	psToken = pcTokens->Get(5);
+	AssertTrue(psToken->Is("int"));
+	AssertInt(PTF_START_OF_LINE, psToken->uiFlags);
+	AssertInt(5, psToken->iLine);
+	AssertInt(8, psToken->iColumn);
+
+	//Arguments keep their own locations.
+	psToken = pcTokens->Get(11);
+	AssertTrue(psToken->Is("a"));
+	AssertInt(8, psToken->iLine);
+	AssertInt(12, psToken->iColumn);
+	AssertInt(-1, psToken->iExpansion);
+	psToken = pcTokens->Get(12);
+	AssertTrue(psToken->Is("+"));
+	AssertInt(7, psToken->iLine);
+	AssertInt(20, psToken->iColumn);
+	AssertInt(1, psToken->iExpansion);
+	psToken = pcTokens->Get(13);
+	AssertTrue(psToken->Is("2"));
+	AssertInt(2, psToken->iExpansion);
+	psExpansion = pcTokens->GetExpansion(2);
+	AssertInt(9, psExpansion->iLine);
+	AssertInt(12, psExpansion->iColumn);
+
+	//Only the lines skipped by #if 0.
+	AssertSize(1, pcTokens->NumInactiveRegions());
+	psRegion = pcTokens->GetInactiveRegion(0);
+	AssertInt(3, psRegion->iStartLine);
+	AssertInt(3, psRegion->iEndLine);
+
+	pacComments = cFile.GetComments();
+	AssertSize(2, pacComments->NumElements());
+	AssertInt(15, pacComments->Get(0)->iStart);
+	AssertInt(6, pacComments->Get(0)->iLength);
+	AssertInt(55, pacComments->Get(1)->iStart);
+	AssertInt(7, pacComments->Get(1)->iLength);
+
+	cPreprocessor.Kill();
+	cConfig.Kill();
+	cFile.Kill();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestPreprocessor(void)
 {
 	BeginTests();
@@ -1014,6 +1388,15 @@ void TestPreprocessor(void)
 	TestPreprocessorDefineBrackettedOmmitted();
 	TestPreprocessorHasCPPNameSpaceAttribute();
 	TestPreprocessorNegativeExpression();
+	TestPreprocessorStandardExample3();
+	TestPreprocessorStandardExample4();
+	TestPreprocessorStandardExample5();
+	TestPreprocessorStandardExample7();
+	TestPreprocessorConditionalArithmetic();
+	TestPreprocessorSkippedConditionals();
+	TestPreprocessorNumbersAndPunctuators();
+	TestPreprocessorMultiLineArguments();
+	TestPreprocessorLocations();
 
 	NumberKill();
 	OperatorsKill();

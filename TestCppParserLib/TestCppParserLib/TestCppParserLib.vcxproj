@@ -77,7 +77,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -134,10 +140,14 @@
       <BrowseInformation>true</BrowseInformation>
       <OpenMPSupport>true</OpenMPSupport>
       <SDLCheck>true</SDLCheck>
+      <CallingConvention>VectorCall</CallingConvention>
+      <ExceptionHandling>false</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
+      <TargetMachine>MachineX64</TargetMachine>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
@@ -193,7 +203,7 @@
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
@@ -203,11 +213,14 @@
       <OpenMPSupport>true</OpenMPSupport>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <SDLCheck>false</SDLCheck>
+      <Optimization>MaxSpeed</Optimization>
+      <CallingConvention>VectorCall</CallingConvention>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <TargetMachine>MachineX64</TargetMachine>
       <IgnoreSpecificDefaultLibraries>
       </IgnoreSpecificDefaultLibraries>
       <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -219,6 +232,9 @@
     <ClCompile Include="TestCppParserLib.cpp" />
     <ClCompile Include="TestPreprocessor.cpp" />
     <ClCompile Include="TestProject.cpp" />
+    <ClCompile Include="TestCppTokeniser.cpp" />
+    <ClCompile Include="TestCppParser.cpp" />
+    <ClCompile Include="TestCppHighlighter.cpp" />
     <ClCompile Include="TestUnit1.cpp" />
     <ClCompile Include="TestUnit2.cpp" />
     <ClCompile Include="TestUnit3.cpp" />

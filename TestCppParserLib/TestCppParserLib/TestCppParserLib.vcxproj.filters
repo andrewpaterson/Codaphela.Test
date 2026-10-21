@@ -11,6 +11,9 @@
     <Filter Include="Source\Project">
       <UniqueIdentifier>{17298909-da20-4fd5-ac3b-7266b6802ccb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Parser">
+      <UniqueIdentifier>{7db195a5-6b29-4e91-bf72-e70af7eaa064}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestCppParserLib.cpp">
@@ -27,6 +30,15 @@
     </ClCompile>
     <ClCompile Include="TestProject.cpp">
       <Filter>Source\Project</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCppTokeniser.cpp">
+      <Filter>Source\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCppParser.cpp">
+      <Filter>Source\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCppHighlighter.cpp">
+      <Filter>Source\Parser</Filter>
     </ClCompile>
     <ClCompile Include="TestUnit3.cpp">
       <Filter>Source\Project</Filter>

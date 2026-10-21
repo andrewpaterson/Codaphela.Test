@@ -4,6 +4,9 @@
 
 void TestPreprocessor(void);
 void TestProject(void);
+void TestCppTokeniser(void);
+void TestCppParser(void);
+void TestCppHighlighter(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -19,6 +22,9 @@ int __cdecl main(void)
 
 	TestPreprocessor();
 	TestProject();
+	TestCppTokeniser();
+	TestCppParser();
+	TestCppHighlighter();
 
 	iTotalTestsFailed = TestTotalStatistics();
 
