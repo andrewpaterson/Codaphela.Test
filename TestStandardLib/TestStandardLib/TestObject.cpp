@@ -20,14 +20,18 @@ void TestObjectSize(void)
 {
 	ObjectsInit();
 
-	AssertInt(16, sizeof(CUnknown));
-	AssertInt(EMBEDDED_OBJECT_SIZE, sizeof(CEmbeddedObject));
-	AssertInt(BASE_OBJECT_SIZE, sizeof(CBaseObject));  //Check your struct alignement.  This is too large.
-	AssertInt(OBJECT_SIZE, sizeof(CObject));
-	AssertInt(OBJECT_SIZE + 16, sizeof(CRoot));
-	AssertInt(OBJECT_SIZE + 8, sizeof(CSetObject));
-	AssertInt(OBJECT_SIZE + 8, sizeof(CArrayObject));
-	AssertInt(POINTER_SIZE, sizeof(CPointer));
+#ifdef BUILD_64
+	AssertSize(32, sizeof(CUnknown));
+#else
+	AssertSize(16, sizeof(CUnknown));
+#endif // BUILD_64
+	AssertSize(EMBEDDED_OBJECT_SIZE, sizeof(CEmbeddedObject));
+	AssertSize(BASE_OBJECT_SIZE, sizeof(CBaseObject));  //Check your struct alignement.  This is too large.
+	AssertSize(OBJECT_SIZE, sizeof(CObject));
+	AssertSize(OBJECT_SIZE + POINTER_SIZE + 8, sizeof(CRoot));
+	AssertSize(OBJECT_SIZE + 8, sizeof(CSetObject));
+	AssertSize(OBJECT_SIZE + 8, sizeof(CArrayObject));
+	AssertSize(POINTER_SIZE, sizeof(CPointer));
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -49,7 +53,7 @@ void TestObjectMorphIntoSimple(void)
 	STestObjectFreedNotifier	sFreedNotifier2;
 	STestObjectFreedNotifier	sFreedNotifier3;
 	STestObjectFreedNotifier	sFreedNotifier10;
-	int							iNumRemapped;
+	size						iNumRemapped;
 	CTestObject*				pcTest1;
 
 	ObjectsInit();
@@ -86,19 +90,19 @@ void TestObjectMorphIntoSimple(void)
 	//        -
 
 	iNumRemapped = pTest3.MorphInto(&pTest10);
-	AssertInt(2, iNumRemapped);  //This includes stack pointers and heap pointers.
+	AssertSize(2, iNumRemapped);  //This includes stack pointers and heap pointers.
 	AssertPointer(&pTest10, &pTest3);
 
 	AssertPointer(&pTest2, &pTest1->mpObject);
 	AssertPointer(&pTest10, &pTest1->mpTest);
 
-	AssertInt(1, pTest10->NumHeapFroms());
+	AssertSize(1, pTest10->NumHeapFroms());
 	AssertPointer(&pTest1, pTest10->GetHeapFrom(0));
-	AssertInt(0, pTest10->NumPointerTos());
+	AssertSize(0, pTest10->NumPointerTos());
 
-	AssertInt(1, pTest2->NumHeapFroms());
+	AssertSize(1, pTest2->NumHeapFroms());
 	AssertPointer(&pTest1, pTest2->GetHeapFrom(0));
-	AssertInt(0, pTest2->NumPointerTos());
+	AssertSize(0, pTest2->NumPointerTos());
 
 	AssertTrue(sFreedNotifier3.bFreed);
 
@@ -220,7 +224,7 @@ void TestObjectPointerRemapping(void)
 		STestObjectFreedNotifier	sFreedNotifier1;
 		STestObjectFreedNotifier	sFreedNotifier2;
 		STestObjectFreedNotifier	sFreedNotifier3;
-		int							iNumRemapped;
+		size						iNumRemapped;
 		CTestObject* pcObject2;
 		CPointer					p4;
 		CPointer					p5;
@@ -234,12 +238,12 @@ void TestObjectPointerRemapping(void)
 		pRoot->Add(pObject1);
 		pObject1->mpObject = pObject2;
 
-		AssertInt(1, pObject1->NumPointerTos());
-		AssertInt(1, pObject1->NumHeapFroms());
-		AssertInt(0, pObject2->NumPointerTos());
-		AssertInt(1, pObject2->NumHeapFroms());
-		AssertInt(0, pObject3->NumPointerTos());
-		AssertInt(0, pObject3->NumHeapFroms());
+		AssertSize(1, pObject1->NumPointerTos());
+		AssertSize(1, pObject1->NumHeapFroms());
+		AssertSize(0, pObject2->NumPointerTos());
+		AssertSize(1, pObject2->NumHeapFroms());
+		AssertSize(0, pObject3->NumPointerTos());
+		AssertSize(0, pObject3->NumHeapFroms());
 		AssertLong(5, gcObjects.NumMemoryIndexes());
 		AssertLong(5, gcUnknowns.NumElements());
 		AssertLong(4LL, pObject2.GetIndex());
@@ -249,7 +253,7 @@ void TestObjectPointerRemapping(void)
 
 		pcObject2 = (CTestObject*)pObject2.Object();
 		iNumRemapped = pObject2.MorphInto(&pObject3);
-		AssertInt(2, iNumRemapped);
+		AssertSize(2, iNumRemapped);
 		AssertTrue(sFreedNotifier2.bFreed);
 		AssertFalse(sFreedNotifier3.bFreed);
 
@@ -260,9 +264,9 @@ void TestObjectPointerRemapping(void)
 		AssertLong(4, gcUnknowns.NumElements());
 		AssertLong(5LL, pObject3.GetIndex());  //Index of 5 because Pointer.MorphInto does not swap indices.
 
-		AssertInt(1, pObject1->NumPointerTos());
+		AssertSize(1, pObject1->NumPointerTos());
 		AssertPointer(&pObject3, pObject1->TestGetPointerTo(0));
-		AssertInt(1, pObject1->NumHeapFroms());
+		AssertSize(1, pObject1->NumHeapFroms());
 		AssertPointer(pRoot->TestGetSet(), pObject1->GetHeapFrom(0));
 
 		p4 = gcObjects.Get(4LL);
@@ -297,7 +301,7 @@ void TestObjectPointerRemappingKilling(void)
 		STestObjectFreedNotifier	sFreedNotifier3;
 		STestObjectFreedNotifier	sFreedNotifier4;
 		STestObjectFreedNotifier	sFreedNotifier5;
-		int							iNumRemapped;
+		size						iNumRemapped;
 		CTestObject* pcObject3;
 		CTestObject* pcObject4;
 
@@ -320,18 +324,18 @@ void TestObjectPointerRemappingKilling(void)
 		AssertFalse(pcObject3->HasStackFroms());
 		AssertTrue(pcObject3->HasHeapFroms());
 
-		AssertInt(0, pObject4->NumPointerTos());
+		AssertSize(0, pObject4->NumPointerTos());
 		pObject4->mpObject = pObject5;
-		AssertInt(1, pObject4->NumPointerTos());
+		AssertSize(1, pObject4->NumPointerTos());
 
 		iNumRemapped = pObject2.MorphInto(&pObject4);
-		AssertInt(2, iNumRemapped);
+		AssertSize(2, iNumRemapped);
 
 		AssertPointer(pcObject4, &pObject4);
 		AssertPointer(&pObject4, &pObject2);
 		AssertPointer(&pObject4, &pObject1->mpObject);
 
-		AssertInt(1, pObject4->NumPointerTos());
+		AssertSize(1, pObject4->NumPointerTos());
 		AssertPointer(&pObject5, &pObject4->mpObject);
 
 		AssertFalse(sFreedNotifier4.bFreed);
@@ -479,7 +483,7 @@ void TestObjectMorphIntoComplex(void)
 		STestObjectFreedNotifier	sFreedNotifier13;
 		STestObjectFreedNotifier	sFreedNotifier14;
 		STestObjectFreedNotifier	sFreedNotifier15;
-		int							iNumRemapped;
+		size						iNumRemapped;
 		CTestObject* pcTest1;
 
 		pRoot = ORoot();
@@ -567,22 +571,22 @@ void TestObjectMorphIntoComplex(void)
 		AssertLong(17, gcObjects.NumMemoryIndexes());
 
 		iNumRemapped = pTest3.MorphInto(&pTest10);
-		AssertInt(2, iNumRemapped);
+		AssertSize(2, iNumRemapped);
 
 		AssertPointer(&pTest2, &pTest1->mpObject);
 		AssertPointer(&pTest10, &pTest1->mpTest);
 
-		AssertInt(1, pTest10->NumHeapFroms());
+		AssertSize(1, pTest10->NumHeapFroms());
 		AssertPointer(&pTest1, pTest10->GetHeapFrom(0));
-		AssertInt(2, pTest10->NumPointerTos());
+		AssertSize(2, pTest10->NumPointerTos());
 		AssertPointer(&pTest11, pTest10->TestGetPointerTo(0));
 		AssertPointer(&pTest12, pTest10->TestGetPointerTo(1));
 		AssertPointer(&pTest11, &pTest10->mpObject);
 		AssertPointer(&pTest12, &pTest10->mpTest);
 
-		AssertInt(1, pTest2->NumHeapFroms());
+		AssertSize(1, pTest2->NumHeapFroms());
 		AssertPointer(&pTest1, pTest2->GetHeapFrom(0));
-		AssertInt(1, pTest2->NumPointerTos());
+		AssertSize(1, pTest2->NumPointerTos());
 		AssertPointer(&pTest15, pTest2->TestGetPointerTo(0));
 		AssertPointer(&pTest15, &pTest2->mpObject);
 
@@ -603,9 +607,9 @@ void TestObjectMorphIntoComplex(void)
 		AssertFalse(sFreedNotifier14.bFreed);
 		AssertFalse(sFreedNotifier15.bFreed);
 
-		AssertInt(1, pTest6->NumHeapFroms());
+		AssertSize(1, pTest6->NumHeapFroms());
 		AssertPointer(&pTest4, pTest6->GetHeapFrom(0));
-		AssertInt(2, pTest6->NumPointerTos());
+		AssertSize(2, pTest6->NumPointerTos());
 
 		AssertInt(6, pTest6->GetDistToRoot());
 		AssertInt(7, pTest8->GetDistToRoot());

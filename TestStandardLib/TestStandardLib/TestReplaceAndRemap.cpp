@@ -41,7 +41,7 @@ void TestObjectReplaceNoPointers(void)
 		OIndex						oi3;
 
 		TestReplaceAndRemapAddConstructors();
-		AssertInt(0, gcUnknowns.NumElements());
+		AssertSize(0, gcUnknowns.NumElements());
 
 		pRoot = ORoot();
 		pObject1 = ONMalloc<CTestObject>("Pavel", &sFreeNotifider1);
@@ -55,7 +55,7 @@ void TestObjectReplaceNoPointers(void)
 		AssertLong(4, gcObjects.NumMemoryNames());
 		AssertFalse(oi1 == oi3);
 		AssertString("GraphRoot", pRoot->GetName());
-		AssertInt(5, gcUnknowns.NumElements());
+		AssertSize(5, gcUnknowns.NumElements());
 
 		gcObjects.TestRemoveMemoryIdentifiers(&pObject3);
 		gcObjects.ReplaceBaseObject(&pObject1, &pObject3);
@@ -67,7 +67,7 @@ void TestObjectReplaceNoPointers(void)
 		AssertFalse(sFreeNotifider3.bFreed);
 		pObject4 = pRoot->GetFirst<CTestObject>();
 		AssertPointer(&pObject3, &pObject4);
-		AssertInt(4, gcUnknowns.NumElements());
+		AssertSize(4, gcUnknowns.NumElements());
 
 		pObject4 = gcObjects.Get("Pavel");
 		AssertNull(&pObject4);
@@ -107,7 +107,7 @@ void TestObjectReplaceWithHeapPointers(void)
 		OIndex						oi5;
 
 		TestReplaceAndRemapAddConstructors();
-		AssertInt(0, gcUnknowns.NumElements());
+		AssertSize(0, gcUnknowns.NumElements());
 
 		pRoot = ORoot();
 		pObject1 = ONMalloc<CTestSaveableObject2>("Pavel", "Pavel");
@@ -149,7 +149,7 @@ void TestObjectReplaceWithHeapPointers(void)
 		pRoot = NULL;
 		AssertLong(7, gcObjects.NumMemoryIndexes());
 		AssertLong(5, gcObjects.NumMemoryNames());
-		AssertInt(7, gcUnknowns.NumElements());
+		AssertSize(7, gcUnknowns.NumElements());
 		AssertFalse(oi1 == oi2);
 		AssertFalse(oi1 == oi3);
 		AssertFalse(oi1 == oi4);
@@ -172,7 +172,7 @@ void TestObjectReplaceWithHeapPointers(void)
 
 		AssertLong(4, gcObjects.NumMemoryIndexes());
 		AssertLong(2, gcObjects.NumMemoryNames());
-		AssertInt(4, gcUnknowns.NumElements());
+		AssertSize(4, gcUnknowns.NumElements());
 		AssertTrue(sFreeNotifider3.bFreed);
 		AssertFalse(sFreeNotifider4.bFreed);
 
@@ -226,7 +226,7 @@ void TestObjectReplaceWithStackPointers(void)
 		OIndex						oi5;
 
 		TestReplaceAndRemapAddConstructors();
-		AssertInt(0, gcUnknowns.NumElements());
+		AssertSize(0, gcUnknowns.NumElements());
 
 		pRoot = ORoot();
 		pObject1 = ONMalloc<CTestSaveableObject2>("Pavel", "Pavel");
@@ -268,7 +268,7 @@ void TestObjectReplaceWithStackPointers(void)
 		pRoot = NULL;
 		AssertLong(7, gcObjects.NumMemoryIndexes());
 		AssertLong(5, gcObjects.NumMemoryNames());
-		AssertInt(7, gcUnknowns.NumElements());
+		AssertSize(7, gcUnknowns.NumElements());
 		AssertFalse(oi1 == oi2);
 		AssertFalse(oi1 == oi3);
 		AssertFalse(oi1 == oi4);
@@ -291,7 +291,7 @@ void TestObjectReplaceWithStackPointers(void)
 
 		AssertLong(4, gcObjects.NumMemoryIndexes());
 		AssertLong(2, gcObjects.NumMemoryNames());
-		AssertInt(4, gcUnknowns.NumElements());
+		AssertSize(4, gcUnknowns.NumElements());
 		AssertTrue(sFreeNotifider3.bFreed);
 		AssertFalse(sFreeNotifider4.bFreed);
 

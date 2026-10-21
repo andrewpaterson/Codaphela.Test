@@ -25,8 +25,8 @@ void TestEmbeddedStackPointersKill(void)
 	cComplex.mai[1] = 7890;
 
 	cComplex.mpTest = OMalloc<CTestObject>(&sFreedNotifier);
-	AssertInt(0, cComplex.NumStackFroms());
-	AssertInt(1, cComplex.mpTest->NumStackFroms());
+	AssertSize(0, cComplex.NumStackFroms());
+	AssertSize(1, cComplex.mpTest->NumStackFroms());
 	AssertLong(1, gcObjects.NumMemoryIndexes());
 
 	cComplex.Kill();
@@ -95,12 +95,12 @@ void TestEmbeddedStackPointersEmbeddedDistPassThruPointer(void)
 	cComplex.mai[1] = 7890;
 
 	AssertInt(0, cComplex.GetDistToStack());
-	AssertInt(0, cComplex.NumStackFroms());
+	AssertSize(0, cComplex.NumStackFroms());
 
 	Ptr<CEmbeddedComplex> pComplex;
 	pComplex = &cComplex;
 
-	AssertInt(1, cComplex.NumStackFroms());
+	AssertSize(1, cComplex.NumStackFroms());
 	AssertInt(1234, pComplex->mai[0]);
 	AssertInt(7890, pComplex->mai[1]);
 
@@ -112,14 +112,14 @@ void TestEmbeddedStackPointersEmbeddedDistPassThruPointer(void)
 	cComplex.mpTest = pTest;
 
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest->GetDistToStack());
-	AssertInt(2, pComplex->mpTest->NumStackFroms());
-	AssertInt(1, cComplex.NumStackFroms());
+	AssertSize(2, pComplex->mpTest->NumStackFroms());
+	AssertSize(1, cComplex.NumStackFroms());
 
 	pTest = NULL;
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest->GetDistToStack());
 	AssertLong(1, gcObjects.NumMemoryIndexes());
-	AssertInt(1, pComplex->mpTest->NumStackFroms());
-	AssertInt(1, cComplex.NumStackFroms());
+	AssertSize(1, pComplex->mpTest->NumStackFroms());
+	AssertSize(1, cComplex.NumStackFroms());
 
 	cComplex.Kill();
 
@@ -145,20 +145,20 @@ void TestEmbeddedStackPointersEmbeddedDistDirect(void)
 	cComplex.mai[1] = 7890;
 
 	AssertInt(0, cComplex.GetDistToStack());
-	AssertInt(0, cComplex.NumStackFroms());
+	AssertSize(0, cComplex.NumStackFroms());
 
 	Ptr<CEmbeddedComplex> pComplex;
 	pComplex = &cComplex;
 
-	AssertInt(1, cComplex.NumStackFroms());
+	AssertSize(1, cComplex.NumStackFroms());
 	AssertInt(1234, pComplex->mai[0]);
 	AssertInt(7890, pComplex->mai[1]);
 
 	AssertInt(0, cComplex.GetDistToStack());
 
 	cComplex.mpTest = OMalloc<CEmbeddedTest>();
-	AssertInt(1, pComplex->mpTest->NumStackFroms());
-	AssertInt(1, cComplex.NumStackFroms());
+	AssertSize(1, pComplex->mpTest->NumStackFroms());
+	AssertSize(1, cComplex.NumStackFroms());
 
 	pcTest = (CEmbeddedTest*)cComplex.mpTest.Object();
 	AssertInt(UNKNOWN_DIST_TO_STACK, pcTest->GetDistToStack());
@@ -206,9 +206,9 @@ void TestEmbeddedStackPointersComplex(void)
 		pTestObject2 = OMalloc<CTestObject>(&sFreedNotifier2);
 
 		AssertInt(0, cComplexOnStack1.GetDistToStack());
-		AssertInt(0, cComplexOnStack1.NumStackFroms());
+		AssertSize(0, cComplexOnStack1.NumStackFroms());
 		AssertInt(0, cComplexOnStack2.GetDistToStack());
-		AssertInt(0, cComplexOnStack2.NumStackFroms());
+		AssertSize(0, cComplexOnStack2.NumStackFroms());
 
 		cComplexOnStack1.mpTest = &cComplexOnStack2;
 		cComplexOnStack1.mcSimple.mpTest = &cComplexOnStack2;
@@ -216,11 +216,11 @@ void TestEmbeddedStackPointersComplex(void)
 		cComplexOnStack2.mcContainer.mcOne.mpTest = pTestObject1;
 
 		AssertInt(0, cComplexOnStack1.GetDistToStack());
-		AssertInt(0, cComplexOnStack1.NumStackFroms());
-		AssertInt(3, cComplexOnStack1.NumPointerTos());
+		AssertSize(0, cComplexOnStack1.NumStackFroms());
+		AssertSize(3, cComplexOnStack1.NumPointerTos());
 		AssertInt(0, cComplexOnStack2.GetDistToStack());
-		AssertInt(2, cComplexOnStack2.NumStackFroms());
-		AssertInt(1, cComplexOnStack2.NumPointerTos());
+		AssertSize(2, cComplexOnStack2.NumStackFroms());
+		AssertSize(1, cComplexOnStack2.NumPointerTos());
 
 		AssertFalse(sFreedNotifier1.bFreed);
 		AssertFalse(sFreedNotifier2.bFreed);
@@ -229,9 +229,9 @@ void TestEmbeddedStackPointersComplex(void)
 		AssertFalse(sFreedNotifier2.bFreed);
 
 		AssertInt(0, cComplexOnStack1.GetDistToStack());
-		AssertInt(0, cComplexOnStack1.NumStackFroms());
+		AssertSize(0, cComplexOnStack1.NumStackFroms());
 		AssertInt(0, cComplexOnStack2.GetDistToStack());
-		AssertInt(2, cComplexOnStack2.NumStackFroms());
+		AssertSize(2, cComplexOnStack2.NumStackFroms());
 	}
 
 	ObjectsKill();

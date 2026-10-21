@@ -18,7 +18,7 @@ void TestSetTypeInstantiation(void)
 	CTestUnknown*			pcTest1;
 	CTestUnknown*			pcTest2;
 	CTestUnknown*			pcTest;
-	int						iSize;
+	size					iSize;
 	const char*				szName;
 	SSetIterator			sIter;
 	int						iCount;
@@ -40,7 +40,7 @@ void TestSetTypeInstantiation(void)
 		bExists = cSet.Iterate(&sIter, &pcTest);
 	}
 	AssertInt(2, iCount);
-	AssertInt(2, cSet.NumElements());
+	AssertSize(2, cSet.NumElements());
 
 	//This test is not correct.  The order is not guaranteed.
 	//However it necessary to make the template compile.
@@ -60,13 +60,17 @@ void TestSetTypeInstantiation(void)
 	bExists = cSet.Iterate(&sIter, &pcTest);
 	AssertFalse(bExists);
 
-	AssertInt(1, cSet.NumElements());
+	AssertSize(1, cSet.NumElements());
 
 	cSet.Remove(pcTest2);
-	AssertInt(0, cSet.NumElements());
+	AssertSize(0, cSet.NumElements());
 
 	iSize = cSet.ClassSize();
+#ifdef BUILD_64
+	AssertSize(104, iSize);
+#else
 	AssertInt(52, iSize);
+#endif // BUILD_64
 
 	szName = cSet.ClassName();
 	AssertString("CSetType", szName);
@@ -118,7 +122,7 @@ void TestSetTypeAddAll(void)
 	cSet.KillElements(false);
 	cSet.Kill();
 
-	AssertInt(49, cDest.NumElements());
+	AssertSize(49, cDest.NumElements());
 
 	for (i = 0; i < 25; i++)
 	{

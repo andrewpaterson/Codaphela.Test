@@ -708,7 +708,7 @@ void TestIndexObjectSerialisation()
 		pIndexObject->Put("Tokka", pContainer3);
 
 		AssertLong(5, gcObjects.NumMemoryIndexes());
-		AssertInt(3, pIndexObject->NumElements());
+		AssertSize(3, pIndexObject->NumElements());
 
 		cWriter.Init(szDirectory, "", "File");
 		cSerialiser.Init(&cWriter);

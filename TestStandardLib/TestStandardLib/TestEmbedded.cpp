@@ -136,17 +136,17 @@ void TestEmbeddedObjectRemoveDistToRoot(void)
 	AssertInt(3, pMissile->mcMissile1.GetDistToRoot());
 	AssertInt(3, pMissile->mcMissile2.GetDistToRoot());
 	AssertInt(5, pHarrier->GetDistToRoot());
-	AssertInt(1, pHarrier->NumHeapFroms());
+	AssertSize(1, pHarrier->NumHeapFroms());
 
 	pMissile->mcMissile1.SetTarget(pHarrier);
 	AssertInt(4, pHarrier->GetDistToRoot());
-	AssertInt(2, pHarrier->NumHeapFroms());
+	AssertSize(2, pHarrier->NumHeapFroms());
 
 	pWorld->RemoveTickable(pHolder);
 	pHolder = NULL;
 
 	AssertInt(4, pHarrier->GetDistToRoot());
-	AssertInt(1, pHarrier->NumHeapFroms());
+	AssertSize(1, pHarrier->NumHeapFroms());
 
 	pRoot->Add(pHarrier);
 	AssertInt(2, pHarrier->GetDistToRoot());
@@ -192,31 +192,31 @@ void TestEmbeddedObjectKill(void)
 	pClusterMissile->SetKillString(szClusterMissileState);
 	pClusterMissile->mcMissile1.SetKillString(szMissile1State);
 
-	AssertInt(2, pClusterMissile->NumHeapFroms());
-	AssertInt(1, pClusterMissile->CEmbeddedObject::NumHeapFroms());
-	AssertInt(1, pClusterMissile->mcMissile1.NumHeapFroms());
+	AssertSize(2, pClusterMissile->NumHeapFroms());
+	AssertSize(1, pClusterMissile->CEmbeddedObject::NumHeapFroms());
+	AssertSize(1, pClusterMissile->mcMissile1.NumHeapFroms());
 	strcpy(szClusterMissileState, "Alive");
 	strcpy(szMissile1State, "Alive");
 
 	pPointerPointer->Clear();
 
-	AssertInt(1, pClusterMissile->NumHeapFroms());
-	AssertInt(1, pClusterMissile->CEmbeddedObject::NumHeapFroms());
-	AssertInt(0, pClusterMissile->mcMissile1.NumHeapFroms());
+	AssertSize(1, pClusterMissile->NumHeapFroms());
+	AssertSize(1, pClusterMissile->CEmbeddedObject::NumHeapFroms());
+	AssertSize(0, pClusterMissile->mcMissile1.NumHeapFroms());
 	AssertString("Alive", szClusterMissileState);
 	AssertString("Alive", szMissile1State);
 
 	pPointerPointer->mp = &pClusterMissile->mcMissile1;
 
-	AssertInt(2, pClusterMissile->NumHeapFroms());
-	AssertInt(1, pClusterMissile->CEmbeddedObject::NumHeapFroms());
-	AssertInt(1, pClusterMissile->mcMissile1.NumHeapFroms());
+	AssertSize(2, pClusterMissile->NumHeapFroms());
+	AssertSize(1, pClusterMissile->CEmbeddedObject::NumHeapFroms());
+	AssertSize(1, pClusterMissile->mcMissile1.NumHeapFroms());
 
 	pPointerPointer2->Clear();
 
-	AssertInt(1, pClusterMissile->NumHeapFroms());
-	AssertInt(0, pClusterMissile->CEmbeddedObject::NumHeapFroms());
-	AssertInt(1, pClusterMissile->mcMissile1.NumHeapFroms());
+	AssertSize(1, pClusterMissile->NumHeapFroms());
+	AssertSize(0, pClusterMissile->CEmbeddedObject::NumHeapFroms());
+	AssertSize(1, pClusterMissile->mcMissile1.NumHeapFroms());
 	AssertString("Alive", szClusterMissileState);
 	AssertString("Alive", szMissile1State);
 
@@ -416,9 +416,9 @@ void TestEmbeddedGetEmbeddedIndex(void)
 
 	cComplex.Init();
 
-	AssertInt(0, cComplex.TestGetNumEmbeddedFromFlags());
+	AssertSize(0, cComplex.TestGetNumEmbeddedFromFlags());
 	AssertSize(6, cComplex.NumEmbedded());
-	AssertInt(6, cComplex.TestGetNumEmbeddedFromFlags());
+	AssertSize(6, cComplex.TestGetNumEmbeddedFromFlags());
 
 	AssertSize(1, cComplex.mcSimple.NumEmbedded());
 	AssertSize(1, cComplex.ma.NumEmbedded());
@@ -426,13 +426,13 @@ void TestEmbeddedGetEmbeddedIndex(void)
 	AssertSize(1, cComplex.mcContainer.mcOne.NumEmbedded());
 	AssertSize(1, cComplex.mcContainer.mcOne.NumEmbedded());
 
-	AssertInt(0, cComplex.GetEmbeddedIndex(&cComplex));
-	AssertInt(1, cComplex.GetEmbeddedIndex(&cComplex.mcSimple));
-	AssertInt(2, cComplex.GetEmbeddedIndex(&cComplex.ma));
-	AssertInt(3, cComplex.GetEmbeddedIndex(&cComplex.mcContainer));
-	AssertInt(4, cComplex.GetEmbeddedIndex(&cComplex.mcContainer.mcOne));
-	AssertInt(5, cComplex.GetEmbeddedIndex(&cComplex.mcContainer.mcTwo));
-	AssertInt(-1, cComplex.GetEmbeddedIndex(NULL));
+	AssertSize(0, cComplex.GetEmbeddedIndex(&cComplex));
+	AssertSize(1, cComplex.GetEmbeddedIndex(&cComplex.mcSimple));
+	AssertSize(2, cComplex.GetEmbeddedIndex(&cComplex.ma));
+	AssertSize(3, cComplex.GetEmbeddedIndex(&cComplex.mcContainer));
+	AssertSize(4, cComplex.GetEmbeddedIndex(&cComplex.mcContainer.mcOne));
+	AssertSize(5, cComplex.GetEmbeddedIndex(&cComplex.mcContainer.mcTwo));
+	AssertSize(-1, cComplex.GetEmbeddedIndex(NULL));
 
 	ObjectsKill(false);
 }
@@ -497,12 +497,12 @@ void TestEmbeddedObjectClass(void)
 	CPointer*			pcPtr5;
 
 	//Class not yet called.  Always call Class.
-	AssertInt(0, cComplex.GetNumFieldPointerTos());
+	AssertSize(0, cComplex.GetNumFieldPointerTos());
 	AssertSize(1, cComplex.NumEmbedded());
 
 	cComplex.ClearFlagNumEmbedded();
 	cComplex.Init();
-	AssertInt(5, cComplex.GetNumFieldPointerTos());
+	AssertSize(5, cComplex.GetNumFieldPointerTos());
 	AssertSize(6, cComplex.NumEmbedded());
 
 	pcPtr0 = cComplex.GetFieldPointerTo(0);
@@ -519,12 +519,12 @@ void TestEmbeddedObjectClass(void)
 	AssertPointer(cComplex.mcContainer.mcTwo.mpTest.This(), pcPtr4);
 	AssertNull(pcPtr5);
 
-	AssertInt(0, cComplex.GetFieldPointerToIndex(pcPtr0));
-	AssertInt(1, cComplex.GetFieldPointerToIndex(pcPtr1));
-	AssertInt(2, cComplex.GetFieldPointerToIndex(pcPtr2));
-	AssertInt(3, cComplex.GetFieldPointerToIndex(pcPtr3));
-	AssertInt(4, cComplex.GetFieldPointerToIndex(pcPtr4));
-	AssertInt(-1, cComplex.GetFieldPointerToIndex(NULL));
+	AssertSize(0, cComplex.GetFieldPointerToIndex(pcPtr0));
+	AssertSize(1, cComplex.GetFieldPointerToIndex(pcPtr1));
+	AssertSize(2, cComplex.GetFieldPointerToIndex(pcPtr2));
+	AssertSize(3, cComplex.GetFieldPointerToIndex(pcPtr3));
+	AssertSize(4, cComplex.GetFieldPointerToIndex(pcPtr4));
+	AssertSize(-1, cComplex.GetFieldPointerToIndex(NULL));
 
 	ObjectsKill(false);
 }

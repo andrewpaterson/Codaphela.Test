@@ -153,12 +153,12 @@ void TestClearDistToRootToValidDistComplex(void)
 		AssertInt(10, p8c->GetDistToRoot());
 		AssertInt(11, p9c->GetDistToRoot());
 
-		AssertInt(3, pTest1b->NumHeapFroms());
+		AssertSize(3, pTest1b->NumHeapFroms());
 		AssertInt(24, (int)gcObjects.NumMemoryIndexes());
 		p3b->mp.UnsafeClearObject();
 		pTest1b->TestRemoveHeapFrom(p3b.BaseObject());
 		AssertInt(24, (int)gcObjects.NumMemoryIndexes());
-		AssertInt(2, pTest1b->NumHeapFroms());
+		AssertSize(2, pTest1b->NumHeapFroms());
 
 		cDistParameters.Init();
 		pTest1b->CollectValidDistStartingObjectsAndSetClearedToRoot(NULL, &cDistParameters);
@@ -169,10 +169,10 @@ void TestClearDistToRootToValidDistComplex(void)
 		AssertInt(CLEARED_DIST_TO_ROOT, pTest2d->GetDistToRoot());
 		AssertInt(CLEARED_DIST_TO_ROOT, pTest2e->GetDistToRoot());
 
-		AssertInt(2, cDistParameters.NumExpectedDists());
+		AssertSize(2, cDistParameters.NumExpectedDists());
 		AssertPointer(pTest1a.BaseObject(), cDistParameters.GetExpectedDist(0)->pcObject);
 		AssertPointer(pTest1c.BaseObject(), cDistParameters.GetExpectedDist(1)->pcObject);
-		AssertInt(9, cDistParameters.GetExpectedDist(0)->iExpectedDist);
+		AssertSize(9, cDistParameters.GetExpectedDist(0)->iExpectedDist);
 		AssertInt(12, cDistParameters.GetExpectedDist(1)->iExpectedDist);
 
 		cDistParameters.Kill();
@@ -232,10 +232,10 @@ void TestClearDistToRootToValidDistSimpleLeft(void)
 		AssertInt(4, pTest2->GetDistToRoot());
 		AssertInt(4, pTest3->GetDistToRoot());
 
-		AssertInt(1, pTest2->NumHeapFroms());
+		AssertSize(1, pTest2->NumHeapFroms());
 		pTest1->mpTest.UnsafeClearObject();
 		pTest2->TestRemoveHeapFrom(pTest1.BaseObject());
-		AssertInt(0, pTest2->NumHeapFroms());
+		AssertSize(0, pTest2->NumHeapFroms());
 
 		cDistParameters.Init();
 
@@ -244,7 +244,7 @@ void TestClearDistToRootToValidDistSimpleLeft(void)
 		AssertInt(UNATTACHED_DIST_TO_ROOT, pTest2->GetDistToRoot());
 		AssertInt(4, pTest3->GetDistToRoot());
 
-		AssertInt(0, cDistParameters.NumExpectedDists());
+		AssertSize(0, cDistParameters.NumExpectedDists());
 
 
 		cDistParameters.Kill();
@@ -302,10 +302,10 @@ void TestClearDistToRootToValidDistSimpleRight(void)
 		AssertInt(4, pTest2->GetDistToRoot());
 		AssertInt(4, pTest3->GetDistToRoot());
 
-		AssertInt(2, pTest3->NumHeapFroms());
+		AssertSize(2, pTest3->NumHeapFroms());
 		pTest1->mpObject.UnsafeClearObject();
 		pTest3->TestRemoveHeapFrom(pTest1.BaseObject());
-		AssertInt(1, pTest3->NumHeapFroms());
+		AssertSize(1, pTest3->NumHeapFroms());
 
 		cDistParameters.Init();
 
@@ -313,9 +313,9 @@ void TestClearDistToRootToValidDistSimpleRight(void)
 
 		AssertInt(CLEARED_DIST_TO_ROOT, pTest3->GetDistToRoot());
 
-		AssertInt(1, cDistParameters.NumExpectedDists());
+		AssertSize(1, cDistParameters.NumExpectedDists());
 		AssertPointer(pTest3.BaseObject(), cDistParameters.GetExpectedDist(0)->pcObject);
-		AssertInt(5, cDistParameters.GetExpectedDist(0)->iExpectedDist);
+		AssertSize(5, cDistParameters.GetExpectedDist(0)->iExpectedDist);
 
 		cDistParameters.Kill();
 	}
@@ -1250,7 +1250,7 @@ void TestUpdateEmbeddedObjectTosDetachedScenarioA(void)
 		AssertInt(8, pRTest7l->GetDistToRoot());
 		AssertInt(8, pRTest8->GetDistToRoot());
 
-		AssertInt(8, cDistParameters.NumTouched());
+		AssertSize(8, cDistParameters.NumTouched());
 
 		cDistParameters.Kill();
 	}
@@ -1839,7 +1839,7 @@ void TestClearDistToRootToValidDistBroken(void)
 		cDistParameters.Init();
 		pTest1b->CollectValidDistStartingObjectsAndSetClearedToRoot(NULL, &cDistParameters);
 
-		AssertInt(1, cDistParameters.NumExpectedDists());
+		AssertSize(1, cDistParameters.NumExpectedDists());
 		psDistToRoot = cDistParameters.GetLowestExpectedDist();
 		AssertLong(6LL, psDistToRoot->pcObject->GetIndex());
 		AssertInt(4, psDistToRoot->iExpectedDist);
@@ -1907,7 +1907,7 @@ void TestDistToRootLinear(void)
 		AssertInt(UNATTACHED_DIST_TO_ROOT, p1->GetDistToRoot());
 		AssertInt(UNATTACHED_DIST_TO_ROOT, p2->GetDistToRoot());
 
-		AssertInt(2, cDistParameters.NumTouched());
+		AssertSize(2, cDistParameters.NumTouched());
 
 		cDistParameters.Kill();
 	}
@@ -2264,9 +2264,9 @@ void TestDistToRootToUpdated(void)
 		pcSet->UnsafeRemove(pcTest1);
 		pcTest1->TestRemoveHeapFrom(pcSet);
 
-		AssertInt(0, pcSet->NumElements());
-		AssertInt(1, pcTest1->NumHeapFroms()); //pointed to from pTest2
-		AssertInt(1, pcTest1->NumStackFroms());
+		AssertSize(0, pcSet->NumElements());
+		AssertSize(1, pcTest1->NumHeapFroms()); //pointed to from pTest2
+		AssertSize(1, pcTest1->NumStackFroms());
 
 		cDistParameters.Init();
 
@@ -2474,8 +2474,8 @@ void TestDistToRootComplex(void)
 	pTest22->mpTest = pTest24;
 	pTest22->mpObject = pTest19;
 
-	AssertInt(3, pTest18->NumHeapFroms());
-	AssertInt(3, pTest19->NumHeapFroms());
+	AssertSize(3, pTest18->NumHeapFroms());
+	AssertSize(3, pTest19->NumHeapFroms());
 
 	pTest3 = NULL;
 	pTest4  = NULL;

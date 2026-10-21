@@ -28,7 +28,7 @@ void TestMapUnknownUnknownAdd(void)
 	gcUnknowns.AddConstructor<CTestNamedUnknown>();
 	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
 	gcUnknowns.AddConstructor<CTestIterableUnknown>();
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cMap.Init();
 
@@ -84,7 +84,7 @@ void TestMapUnknownUnknownIterate(void)
 	gcUnknowns.AddConstructor<CTestNamedUnknown>();
 	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
 	gcUnknowns.AddConstructor<CTestIterableUnknown>();
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cMap.Init();
 
@@ -192,7 +192,7 @@ void TestMapUnknownUnknownGet(void)
 	gcUnknowns.AddConstructor<CTestNamedUnknown>();
 	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
 	gcUnknowns.AddConstructor<CTestIterableUnknown>();
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	aPtrs.Init();
 	cMap.Init();
@@ -202,7 +202,7 @@ void TestMapUnknownUnknownGet(void)
 		pcKey = gcUnknowns.Add<CTestNamedUnknown>();
 		pcValue = gcUnknowns.Add<CTestUnknownJobbie>();
 		pcKey->Init(SizeToString(ui));
-		pcValue->Init((ui + 1) * 7, SizeToString(ui));
+		pcValue->Init((int)((ui + 1) * 7), SizeToString(ui));
 		aPtrs.Add(pcKey);
 		cMap.Put(pcKey, pcValue);
 	}
@@ -277,7 +277,7 @@ void TestMapUnknownUnknownLoad(void)
 	gcUnknowns.AddConstructor<CTestNamedUnknown>();
 	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
 	gcUnknowns.AddConstructor<CTestIterableUnknown>();
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cFileUtil.RemoveDir("Output" _FS_ "MapUnknownUnknown");
 	cFileUtil.MakeDir("Output" _FS_ "MapUnknownUnknown");
@@ -289,11 +289,11 @@ void TestMapUnknownUnknownLoad(void)
 		pcKey = gcUnknowns.Add<CTestNamedUnknown>();
 		pcValue = gcUnknowns.Add<CTestUnknownJobbie>();
 		pcKey->Init(SizeToString(ui));
-		pcValue->Init((ui + 1) * 7, SizeToString(ui));
+		pcValue->Init((int)((ui + 1) * 7), SizeToString(ui));
 		cMap.Put(pcKey, pcValue);
 	}
 	AssertSize(12000, cMap.NumElements());
-	AssertInt(24000, gcUnknowns.NumElements());
+	AssertSize(24000, gcUnknowns.NumElements());
 
 	cFile.Init(DiskFile("Output" _FS_ "MapUnknownUnknown" _FS_ "Map.dat"));
 	bResult = cFile.WriteOpen();
@@ -309,7 +309,7 @@ void TestMapUnknownUnknownLoad(void)
 
 	cFile.Kill();
 	cMap.Kill();
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cFile.Init(DiskFile("Output" _FS_ "MapUnknownUnknown" _FS_ "Map.dat"));
 	bResult = cFile.ReadOpen();
@@ -321,8 +321,8 @@ void TestMapUnknownUnknownLoad(void)
 	bResult = cFile.ReadClose();
 	AssertTrue(bResult);
 	cFile.Kill();
-	AssertInt(12000, cMap.NumElements());
-	AssertInt(24000, gcUnknowns.NumElements());
+	AssertSize(12000, cMap.NumElements());
+	AssertSize(24000, gcUnknowns.NumElements());
 
 	aPtrs.Init();
 	aBits.Init();

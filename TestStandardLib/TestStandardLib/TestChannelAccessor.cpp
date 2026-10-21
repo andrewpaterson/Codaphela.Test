@@ -73,7 +73,7 @@ void TestChannelsAccessorContiguous(void)
 	cCreator.AddAccess(CHANNEL_NAME_BOB, CHANNEL_NAME_ALICE, PT_Undefined);
 	pcAccessor = cCreator.CreateAndKill();
 	AssertString("CChannelsAccessorContiguous", pcAccessor->ClassName());
-	AssertInt(6, pcAccessor->GetByteSize());
+	AssertSize(6, pcAccessor->GetByteSize());
 	pvData = pcAccessor->Get(1);
 	AssertInt(784, *(int*)pvData);
 	pvData = RemapSinglePointer(pvData, 4);
@@ -230,8 +230,8 @@ void TestChannelsAccessorChannelBitty(void)
 	pcChannels->AddChannel(CHANNEL_NAME_ALICE, PT_bit);
 	pcChannels->EndChange();
 	pcChannels->Black();
-	AssertInt(1, pcChannels->GetByteSize());
-	AssertInt(1, pcChannels->GetSize());
+	AssertSize(1, pcChannels->GetByteSize());
+	AssertSize(1, pcChannels->GetSize());
 
 	cCreator.Init(pcChannels);
 	cCreator.AddAccess(CHANNEL_NAME_JACK, PT_uint8);
@@ -253,8 +253,8 @@ void TestChannelsAccessorChannelBitty(void)
 	pcChannels->BeginChange();
 	pcChannels->SetSize(2);
 	pcChannels->EndChange();
-	AssertInt(1, pcChannels->GetByteSize());
-	AssertInt(2, pcChannels->GetSize());
+	AssertSize(1, pcChannels->GetByteSize());
+	AssertSize(2, pcChannels->GetSize());
 
 	cCreator.Init(pcChannels);
 	cCreator.AddAccess(CHANNEL_NAME_JACK, PT_uint8);

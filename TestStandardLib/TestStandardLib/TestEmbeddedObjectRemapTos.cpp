@@ -58,15 +58,15 @@ void TestEmbeddedObjectRemapTosActual(void)
 		Ptr<CPointerContainer>	pPointerHollowEmbedded1 = OMalloc<CPointerContainer>(pHollowEmbedded1);
 		Ptr<CPointerContainer>	pPointerHollowEmbedded2 = OMalloc<CPointerContainer>(pHollowEmbedded2);
 
-		AssertInt(3, pHollow.Object()->NumHeapFroms());
-		AssertInt(1, pHollow.Object()->CEmbeddedObject::NumHeapFroms());
-		AssertInt(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumHeapFroms());
-		AssertInt(1, pHollowEmbedded2.Object()->CEmbeddedObject::NumHeapFroms());
+		AssertSize(3, pHollow.Object()->NumHeapFroms());
+		AssertSize(1, pHollow.Object()->CEmbeddedObject::NumHeapFroms());
+		AssertSize(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumHeapFroms());
+		AssertSize(1, pHollowEmbedded2.Object()->CEmbeddedObject::NumHeapFroms());
 
-		AssertInt(3, pHollow.Object()->NumStackFroms());
-		AssertInt(1, pHollow.Object()->CEmbeddedObject::NumStackFroms());
-		AssertInt(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumStackFroms());
-		AssertInt(1, pHollowEmbedded2.Object()->CEmbeddedObject::NumStackFroms());
+		AssertSize(3, pHollow.Object()->NumStackFroms());
+		AssertSize(1, pHollow.Object()->CEmbeddedObject::NumStackFroms());
+		AssertSize(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumStackFroms());
+		AssertSize(1, pHollowEmbedded2.Object()->CEmbeddedObject::NumStackFroms());
 
 		pRoot->Add(pHollow);
 
@@ -99,15 +99,15 @@ void TestEmbeddedObjectRemapTosActual(void)
 		AssertPointer(pHollowEmbedded1.Object(), pPointerHollowEmbedded1->mp.Object());
 		AssertPointer(pHollowEmbedded2.Object(), pPointerHollowEmbedded2->mp.Object());
 
-		AssertInt(5, pHollow.Object()->NumHeapFroms());  //pPointerObject and pPointerHollow now both point to the same object.  pRoot.Set is the fifth.
-		AssertInt(3, pHollow.Object()->CEmbeddedObject::NumHeapFroms());
-		AssertInt(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumHeapFroms());
-		AssertInt(1, pHollowEmbedded2.Object()->CEmbeddedObject::NumHeapFroms());
+		AssertSize(5, pHollow.Object()->NumHeapFroms());  //pPointerObject and pPointerHollow now both point to the same object.  pRoot.Set is the fifth.
+		AssertSize(3, pHollow.Object()->CEmbeddedObject::NumHeapFroms());
+		AssertSize(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumHeapFroms());
+		AssertSize(1, pHollowEmbedded2.Object()->CEmbeddedObject::NumHeapFroms());
 
-		AssertInt(4, pHollow.Object()->NumStackFroms());  //pObject and pHollow now both point to the same object.
-		AssertInt(2, pHollow.Object()->CEmbeddedObject::NumStackFroms());
-		AssertInt(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumStackFroms());
-		AssertInt(1, pHollowEmbedded2.Object()->CEmbeddedObject::NumStackFroms());
+		AssertSize(4, pHollow.Object()->NumStackFroms());  //pObject and pHollow now both point to the same object.
+		AssertSize(2, pHollow.Object()->CEmbeddedObject::NumStackFroms());
+		AssertSize(1, pHollowEmbedded1.Object()->CEmbeddedObject::NumStackFroms());
+		AssertSize(1, pHollowEmbedded2.Object()->CEmbeddedObject::NumStackFroms());
 	}
 	ObjectsFlush();
 	ObjectsKill();

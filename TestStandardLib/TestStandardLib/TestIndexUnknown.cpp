@@ -28,7 +28,7 @@ void TestIndexUnknownAdd(void)
 	gcUnknowns.AddConstructor<CTestNamedUnknown>();
 	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
 	gcUnknowns.AddConstructor<CTestIterableUnknown>();
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cIndex.Init();
 
@@ -74,7 +74,7 @@ void TestIndexUnknownIterate(void)
 	gcUnknowns.AddConstructor<CTestNamedUnknown>();
 	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
 	gcUnknowns.AddConstructor<CTestIterableUnknown>();
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cIndex.Init();
 
@@ -139,14 +139,14 @@ void TestIndexUnknownGet(void)
 	gcUnknowns.AddConstructor<CTestNamedUnknown>();
 	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
 	gcUnknowns.AddConstructor<CTestIterableUnknown>();
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cIndex.Init();
 
 	for (ui = 0; ui < 12000; ui++)
 	{
 		pcValue = gcUnknowns.Add<CTestUnknownJobbie>();
-		pcValue->Init((ui + 1) * 7, SizeToString(ui));
+		pcValue->Init((int)((ui + 1) * 7), SizeToString(ui));
 		szKey = SizeToString(ui);
 		cIndex.Put(szKey, pcValue);
 	}
@@ -211,7 +211,7 @@ void TestIndexUnknownLoad(void)
 	gcUnknowns.AddConstructor<CTestNamedUnknown>();
 	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
 	gcUnknowns.AddConstructor<CTestIterableUnknown>();
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cFileUtil.RemoveDir("Output" _FS_ "IndexUnknown");
 	cFileUtil.MakeDir("Output" _FS_ "IndexUnknown");
@@ -221,12 +221,12 @@ void TestIndexUnknownLoad(void)
 	for (ui = 0; ui < 12000; ui++)
 	{
 		pcValue1 = gcUnknowns.Add<CTestUnknownJobbie>();
-		pcValue1->Init((ui + 1) * 7, SizeToString(ui));
+		pcValue1->Init((int)((ui + 1) * 7), SizeToString(ui));
 		szKey1 = SizeToString(ui);
 		cIndex.Put(szKey1, pcValue1);
 	}
 	AssertSize(12000, cIndex.NumElements());
-	AssertInt(12000, gcUnknowns.NumElements());
+	AssertSize(12000, gcUnknowns.NumElements());
 
 	cFile.Init(DiskFile("Output" _FS_ "IndexUnknown" _FS_ "Map.dat"));
 	bResult = cFile.WriteOpen();
@@ -240,7 +240,7 @@ void TestIndexUnknownLoad(void)
 
 	cFile.Kill();
 	cIndex.Kill();
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cFile.Init(DiskFile("Output" _FS_ "IndexUnknown" _FS_ "Map.dat"));
 	bResult = cFile.ReadOpen();
@@ -252,8 +252,8 @@ void TestIndexUnknownLoad(void)
 	bResult = cFile.ReadClose();
 	AssertTrue(bResult);
 	cFile.Kill();
-	AssertInt(12000, cIndexIn.NumElements());
-	AssertInt(12000, gcUnknowns.NumElements());
+	AssertSize(12000, cIndexIn.NumElements());
+	AssertSize(12000, gcUnknowns.NumElements());
 
 	ui = 0;
 	bValid = false;

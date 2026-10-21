@@ -237,6 +237,14 @@ void TestMapObjectIterate(void)
 		STestObjectFreedNotifier	sNotifier8;
 		SMapIterator				sIter;
 		CMapEntry					cEntry;
+#ifdef BUILD_64
+		const char*					aszNames[5] = { "shnork", "shniqu", "shnerp", "booger", "bozzul" };
+		void*						apvValues[5];
+		bool						abFound[5] = { false, false, false, false, false };
+		size						i;
+		size						iExpected;
+		char*						szName;
+#endif // BUILD_64
 
 		pRoot = ORoot();
 		pMap = OMalloc<CMapObject>();
@@ -261,6 +269,35 @@ void TestMapObjectIterate(void)
 
 		//Iteration order depends on allocation order in GeneralMemory.  Which should be stable.
 		cEntry.Init();
+#ifdef BUILD_64
+		//The map is sorted by key address and 64 bit allocations are not in address order, so the entries can come in any order.
+		apvValues[0] = &pValue3;
+		apvValues[1] = NULL;
+		apvValues[2] = &pValue2;
+		apvValues[3] = &pValue1;
+		apvValues[4] = NULL;
+		cEntry = pMap->StartIteration(&sIter);
+		for (i = 0; i < 5; i++)
+		{
+			AssertTrue(cEntry.Exists());
+			szName = cEntry.Key().GetName();
+			for (iExpected = 0; iExpected < 5; iExpected++)
+			{
+				if (strcmp(aszNames[iExpected], szName) == 0)
+				{
+					break;
+				}
+			}
+			AssertTrue(iExpected < 5);
+			AssertFalse(abFound[iExpected]);
+			abFound[iExpected] = true;
+			AssertPointer(apvValues[iExpected], &cEntry.Value());
+			if (i < 4)
+			{
+				cEntry = pMap->Iterate(&sIter);
+			}
+		}
+#else
 		cEntry = pMap->StartIteration(&sIter);
 		AssertTrue(cEntry.Exists());
 		AssertString("shnork", cEntry.Key().GetName());
@@ -285,6 +322,7 @@ void TestMapObjectIterate(void)
 		AssertTrue(cEntry.Exists());
 		AssertString("bozzul", cEntry.Key().GetName());
 		AssertNull(&cEntry.Value());
+#endif // BUILD_64
 
 		cEntry = pMap->Iterate(&sIter);
 		AssertFalse(cEntry.Exists());
@@ -781,7 +819,7 @@ void TestMapObjectExternalSerialisation()
 		pMapObject->Put(OMalloc<CString>("Tokka"), pContainer3);
 
 		AssertLong(8, gcObjects.NumMemoryIndexes());
-		AssertInt(3, pMapObject->NumElements());
+		AssertSize(3, pMapObject->NumElements());
 
 		cWriter.Init(szDirectory, "", "File");
 		cSerialiser.Init(&cWriter);
@@ -810,7 +848,7 @@ void TestMapObjectExternalSerialisation()
 		pMapObject = cDeserialiser.Read("Orbis");
 		AssertNotNull(&pMapObject);
 		AssertLong(8, gcObjects.NumMemoryIndexes());
-		AssertInt(3, pMapObject->NumElements());
+		AssertSize(3, pMapObject->NumElements());
 		cDeserialiser.Kill();
 		cReader.Kill();
 

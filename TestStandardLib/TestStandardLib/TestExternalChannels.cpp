@@ -127,7 +127,7 @@ void TestContiguousExternalChannels(void)
 	cExternalChannel.SetData((char*)&vSourse);
 	cExternalChannel.SetSize(4);
 	cExternalChannel.EndChange();
-	AssertInt(4, cExternalChannel.GetSize());
+	AssertSize(4, cExternalChannel.GetSize());
 
 	cChannels.Init();
 	cChannels.BeginChange();
@@ -137,7 +137,7 @@ void TestContiguousExternalChannels(void)
 	cChannels.AddChannel(0, PT_uint8);
 	cChannels.SetSize(4);
 	cChannels.EndChange();
-	AssertInt(4, cChannels.GetSize());
+	AssertSize(4, cChannels.GetSize());
 
 	CChannelsCopier cCopy;
 

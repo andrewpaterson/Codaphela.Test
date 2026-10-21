@@ -22,7 +22,7 @@ void TestArrayTypeInstantiation(void)
 	CTestUnknown*							pcTest3;
 	CTestUnknown*							pcTest4;
 	CTestUnknown*							pcTest;
-	int										iSize;
+	size									iSize;
 	const char*								szName;
 	
 	cArray.Init();
@@ -58,7 +58,11 @@ void TestArrayTypeInstantiation(void)
 	AssertPointer(pcTest1, pcTest);
 
 	iSize = cArray.ClassSize();
+#ifdef BUILD_64
+	AssertSize(104, iSize);
+#else
 	AssertInt(52, iSize);
+#endif // BUILD_64
 
 	szName = cArray.ClassName();
 	AssertString("CArrayUnknownTemplate", szName);
@@ -85,7 +89,7 @@ void TestArrayTypeLoad(void)
 	CTestUnknown*				pcTest;
 	bool						bResult;
 
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cArray.Init();
 	pcTest = cArray.Add();
@@ -111,7 +115,7 @@ void TestArrayTypeLoad(void)
 	cFile.Kill();
 	cArray.Kill();
 
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cFile.Init(DiskFile("Output" _FS_ "ArrayType" _FS_ "Array.dat"));
 	bResult = cFile.ReadOpen();
@@ -125,8 +129,8 @@ void TestArrayTypeLoad(void)
 
 	cFile.Kill();
 
-	AssertInt(4, cArray.NumElements());
-	AssertInt(4, gcUnknowns.NumElements());
+	AssertSize(4, cArray.NumElements());
+	AssertSize(4, gcUnknowns.NumElements());
 
 	AssertInt(3, cArray.Get(0)->miCount);
 	AssertInt(2, cArray.Get(1)->miCount);
@@ -135,7 +139,7 @@ void TestArrayTypeLoad(void)
 
 	cArray.Kill();
 
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cFileUtil.RemoveDir("Output" _FS_ "ArrayType");
 

@@ -70,35 +70,43 @@ void TestClassDefinition(void)
 	pcField = pcTestClassClass->GetField("mpObject");
 	AssertTrue(pcField->IsPointer());
 	AssertString("mpObject", pcField->GetName());
-	AssertInt(OBJECT_SIZE, pcField->GetOffset());
+	AssertSize(OBJECT_SIZE, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mpTest");
 	AssertTrue(pcField->IsPointer());
-	AssertInt(OBJECT_SIZE + 8, pcField->GetOffset());
+	AssertSize(OBJECT_SIZE + POINTER_SIZE, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mInt");
 	AssertTrue(pcField->IsPrimitive());
 	AssertString("mInt", pcField->GetName());
-	AssertInt(OBJECT_SIZE + 16, pcField->GetOffset());
+	AssertSize(OBJECT_SIZE + POINTER_SIZE * 2, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("miUnmanagedInt");
 	AssertTrue(pcField->IsUnmanaged());
 	AssertFalse(pcField->IsArray());
 	AssertString("miUnmanagedInt", pcField->GetName());
-	AssertInt(OBJECT_SIZE + 24, pcField->GetOffset());
+	AssertSize(OBJECT_SIZE + POINTER_SIZE * 2 + 8, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mTiny");
 	AssertTrue(pcField->IsEmbeddedObject());
 	AssertString("mTiny", pcField->GetName());
-	AssertInt(OBJECT_SIZE + 32, pcField->GetOffset());
+	AssertSize(OBJECT_SIZE + POINTER_SIZE * 2 + 16, pcField->GetOffset());
 
 	pcField = pcTestClassClass->GetField("mDouble");
 	AssertTrue(pcField->IsPrimitive());
+#ifdef BUILD_64
+	AssertSize(OBJECT_SIZE + 344, pcField->GetOffset());
+#else
 	AssertInt(OBJECT_SIZE + 200, pcField->GetOffset());
+#endif // BUILD_64
 
 	pcField = pcTestClassClass->GetField("mauiData");
 	AssertTrue(pcField->IsUnmanaged());
+#ifdef BUILD_64
+	AssertSize(OBJECT_SIZE + 360, pcField->GetOffset());
+#else
 	AssertInt(OBJECT_SIZE + 216, pcField->GetOffset());
+#endif // BUILD_64
 
 	pTestClass = NULL;
 
@@ -149,7 +157,7 @@ void TestClassOnStackOutOfFrame(void)
 	pcField = pcTestClassClass->GetField("mpObject");
 	AssertTrue(pcField->IsPointer());
 	AssertString("mpObject", pcField->GetName());
-	AssertInt(OBJECT_SIZE, pcField->GetOffset());
+	AssertSize(OBJECT_SIZE, pcField->GetOffset());
 	pcPointerField = (CPointerField*)pcField;
 
 

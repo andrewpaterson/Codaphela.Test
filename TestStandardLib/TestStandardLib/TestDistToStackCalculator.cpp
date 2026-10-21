@@ -21,9 +21,9 @@ void TestDistToStackSimpleOneStep(void)
 	Ptr<CPointerContainer>	p2 = ONMalloc<CPointerContainer>("Pointer B");
 	Ptr<CPointerContainer>	p3 = ONMalloc<CPointerContainer>("Pointer C");
 
-	AssertInt(0, p2->NumHeapFroms());
-	AssertInt(0, p1->NumHeapFroms());
-	AssertInt(0, p3->NumHeapFroms());
+	AssertSize(0, p2->NumHeapFroms());
+	AssertSize(0, p1->NumHeapFroms());
+	AssertSize(0, p3->NumHeapFroms());
 	AssertInt(UNKNOWN_DIST_TO_STACK, p1.Object()->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, p2.Object()->GetDistToStack());
 	AssertInt(UNKNOWN_DIST_TO_STACK, p3.Object()->GetDistToStack());
@@ -38,7 +38,7 @@ void TestDistToStackSimpleOneStep(void)
 	//
 
 	p3->mp = p2;
-	AssertInt(1, p2->NumHeapFroms());
+	AssertSize(1, p2->NumHeapFroms());
 
 	//  
 	//      x
@@ -53,7 +53,7 @@ void TestDistToStackSimpleOneStep(void)
 	//
 
 	p3 = NULL;
-	AssertInt(0, p2->NumHeapFroms());
+	AssertSize(0, p2->NumHeapFroms());
 
 	//  
 	//  x   x 
@@ -86,7 +86,7 @@ void TestDistToStackSimpleTwoStep(void)
 	Ptr<CPointerContainer>	p2 = ONMalloc<CPointerContainer>("Pointer B");
 	Ptr<CPointerContainer>	p3 = ONMalloc<CPointerContainer>("Pointer C");
 	AssertInt(3, (int)gcObjects.NumMemoryIndexes());
-	AssertInt(0, p2->NumHeapFroms());
+	AssertSize(0, p2->NumHeapFroms());
 
 	//
 	//     x
@@ -101,7 +101,7 @@ void TestDistToStackSimpleTwoStep(void)
 	//
 
 	p3->mp = p2;
-	AssertInt(1, p2->NumHeapFroms());
+	AssertSize(1, p2->NumHeapFroms());
 
 	p3->mp = NULL;
 
@@ -114,7 +114,7 @@ void TestDistToStackSimpleTwoStep(void)
 	//  .   .   .
 	//
 
-	AssertInt(0, p2->NumHeapFroms());
+	AssertSize(0, p2->NumHeapFroms());
 	AssertInt(3, (int)gcObjects.NumMemoryIndexes());
 	p3 = NULL;
 
@@ -160,11 +160,11 @@ void TestDistToStackSimpleHeap(void)
 	Ptr<CPointerContainer>	p3 = ONMalloc<CPointerContainer>("Pointer C");
 
 	AssertInt(3, (int)gcObjects.NumMemoryIndexes());
-	AssertInt(0, p2->NumHeapFroms());
+	AssertSize(0, p2->NumHeapFroms());
 
-	AssertInt(1, p2->NumStackFroms());
-	AssertInt(1, p1->NumStackFroms());
-	AssertInt(1, p3->NumStackFroms());
+	AssertSize(1, p2->NumStackFroms());
+	AssertSize(1, p1->NumStackFroms());
+	AssertSize(1, p3->NumStackFroms());
 
 	//
 	//     x
@@ -179,8 +179,8 @@ void TestDistToStackSimpleHeap(void)
 	//
 
 	p3->mp = p2;
-	AssertInt(1, p2->NumHeapFroms());
-	AssertInt(1, p2->NumStackFroms());
+	AssertSize(1, p2->NumHeapFroms());
+	AssertSize(1, p2->NumStackFroms());
 
 	pc3 = &p3;
 	pc2 = &p2;
@@ -191,10 +191,10 @@ void TestDistToStackSimpleHeap(void)
 	p2.BaseObject()->TestRemoveStackFrom(p2.This());
 	p2.UnsafeClearObject();
 
-	AssertInt(1, pc2->NumHeapFroms());
-	AssertInt(0, pc2->NumStackFroms());
-	AssertInt(1, p1->NumStackFroms());
-	AssertInt(1, p3->NumStackFroms());
+	AssertSize(1, pc2->NumHeapFroms());
+	AssertSize(0, pc2->NumStackFroms());
+	AssertSize(1, p1->NumStackFroms());
+	AssertSize(1, p3->NumStackFroms());
 
 	cParameters.Init();
 	cDistToStackCalculator.Calculate(pc2, &cParameters);
@@ -282,8 +282,8 @@ void TestDistToStackRootCyclicWithStackPointerA(void)
 
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 
-	AssertInt(3, cDistParameters.NumDetachedFromRoot());
-	AssertInt(0, cDistParameters.NumCompletelyDetached());
+	AssertSize(3, cDistParameters.NumDetachedFromRoot());
+	AssertSize(0, cDistParameters.NumCompletelyDetached());
 
 	cDistParameters.ClearTouchedFlags();
 	cDistParameters.Kill();
@@ -355,8 +355,8 @@ void TestDistToStackRootCyclicWithStackPointerB(void)
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 	cDistParameters.ClearTouchedFlags();
 
-	AssertInt(3, cDistParameters.NumDetachedFromRoot());
-	AssertInt(0, cDistParameters.NumCompletelyDetached());
+	AssertSize(3, cDistParameters.NumDetachedFromRoot());
+	AssertSize(0, cDistParameters.NumCompletelyDetached());
 
 	cDistParameters.Kill();
 
@@ -427,8 +427,8 @@ void TestDistToStackRootCyclicWithStackPointerC(void)
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 	cDistParameters.ClearTouchedFlags();
 
-	AssertInt(3, cDistParameters.NumDetachedFromRoot());
-	AssertInt(0, cDistParameters.NumCompletelyDetached());
+	AssertSize(3, cDistParameters.NumDetachedFromRoot());
+	AssertSize(0, cDistParameters.NumCompletelyDetached());
 
 	cDistParameters.Kill();
 
@@ -498,8 +498,8 @@ void TestDistToStackRootCyclicWithoutStackPointer(void)
 	p2 = NULL;
 	p3 = NULL;
 
-	AssertInt(2, pc1->NumHeapFroms());
-	AssertInt(0, pc1->NumStackFroms());
+	AssertSize(2, pc1->NumHeapFroms());
+	AssertSize(0, pc1->NumStackFroms());
 
 	p0->mp.UnsafeClearObject();
 	pc1->TestRemoveHeapFrom(p0.BaseObject());
@@ -514,8 +514,8 @@ void TestDistToStackRootCyclicWithoutStackPointer(void)
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 	cDistParameters.ClearTouchedFlags();
 
-	AssertInt(3, cDistParameters.NumDetachedFromRoot());
-	AssertInt(3, cDistParameters.NumCompletelyDetached());
+	AssertSize(3, cDistParameters.NumDetachedFromRoot());
+	AssertSize(3, cDistParameters.NumCompletelyDetached());
 	AssertPointer(pc1, cDistParameters.GetCompletelyDetached(0));
 	AssertPointer(pc3, cDistParameters.GetCompletelyDetached(1));
 	AssertPointer(pc2, cDistParameters.GetCompletelyDetached(2));
@@ -603,13 +603,13 @@ void TestDistToStackSplitRootAndStack(void)
 	AssertInt(4, pcTestL2->GetDistToRoot());
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pcTestR2->GetDistToRoot());
 
-	AssertInt(3, cDistParameters.NumTouched());
+	AssertSize(3, cDistParameters.NumTouched());
 
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 	cDistParameters.ClearTouchedFlags();
 
-	AssertInt(3, cDistParameters.NumDetachedFromRoot());
-	AssertInt(1, cDistParameters.NumCompletelyDetached());
+	AssertSize(3, cDistParameters.NumDetachedFromRoot());
+	AssertSize(1, cDistParameters.NumCompletelyDetached());
 	AssertPointer(pcTestC, cDistParameters.GetCompletelyDetached(0));
 
 
@@ -669,8 +669,8 @@ void TestDistToStackSetWithoutStackPointers(void)
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 	cDistParameters.ClearTouchedFlags();
 
-	AssertInt(2, cDistParameters.NumDetachedFromRoot());
-	AssertInt(2, cDistParameters.NumCompletelyDetached());
+	AssertSize(2, cDistParameters.NumDetachedFromRoot());
+	AssertSize(2, cDistParameters.NumCompletelyDetached());
 	AssertPointer(pcSet, cDistParameters.GetCompletelyDetached(0));
 	AssertPointer(pcTest, cDistParameters.GetCompletelyDetached(1));
 
@@ -731,8 +731,8 @@ void TestDistToStackSetWithStackPointers(void)
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 	cDistParameters.ClearTouchedFlags();
 
-	AssertInt(2, cDistParameters.NumDetachedFromRoot());
-	AssertInt(1, cDistParameters.NumCompletelyDetached());
+	AssertSize(2, cDistParameters.NumDetachedFromRoot());
+	AssertSize(1, cDistParameters.NumCompletelyDetached());
 	AssertPointer(pcSet, cDistParameters.GetCompletelyDetached(0));
 
 	AssertLong(5, gcObjects.NumMemoryIndexes());
@@ -815,13 +815,13 @@ void TestDistToStackSetBroken(void)
 
 	AssertLong(5, gcObjects.NumMemoryIndexes());
 	AssertInt(3, pcTest2->GetDistToRoot());
-	AssertInt(2, pcTest2->NumHeapFroms());
+	AssertSize(2, pcTest2->NumHeapFroms());
 	
 	pcSet = pRoot->TestGetSet();
 	pcSet->UnsafeRemove(pcTest3);
 	pcTest3->TestRemoveHeapFrom(pcSet);
 
-	AssertInt(2, pcTest2->NumHeapFroms());
+	AssertSize(2, pcTest2->NumHeapFroms());
 
 	cDistParameters.Init();
 	cDistToRootCalculator.Calculate(pcTest3, &cDistParameters);
@@ -830,8 +830,8 @@ void TestDistToStackSetBroken(void)
 	cDistToStackCalculator.CalculateFromTouched(&cDistParameters);
 	cDistParameters.ClearTouchedFlags();
 
-	AssertInt(1, cDistParameters.NumDetachedFromRoot());
-	AssertInt(1, cDistParameters.NumCompletelyDetached());
+	AssertSize(1, cDistParameters.NumDetachedFromRoot());
+	AssertSize(1, cDistParameters.NumCompletelyDetached());
 	AssertPointer(pcTest3, cDistParameters.GetCompletelyDetached(0));
 
 	AssertLong(5, gcObjects.NumMemoryIndexes());
@@ -891,12 +891,12 @@ void TestDistToStackNoStackHeapFromBroken(void)
 
 	AssertFalse(sNotifier1.bFreed);
 	AssertFalse(sNotifier2.bFreed);
-	AssertInt(1, pcTest1->NumHeapFroms());
-	AssertInt(0, pcTest1->NumStackFroms());
-	AssertInt(0, pcTest1->NumPointerTos());
-	AssertInt(0, pcTest2->NumHeapFroms());
-	AssertInt(1, pcTest2->NumStackFroms());
-	AssertInt(1, pcTest2->NumPointerTos());
+	AssertSize(1, pcTest1->NumHeapFroms());
+	AssertSize(0, pcTest1->NumStackFroms());
+	AssertSize(0, pcTest1->NumPointerTos());
+	AssertSize(0, pcTest2->NumHeapFroms());
+	AssertSize(1, pcTest2->NumStackFroms());
+	AssertSize(1, pcTest2->NumPointerTos());
 
 	pTest2 = NULL;
 
@@ -954,12 +954,12 @@ void TestDistToStackNoHeapA(void)
 	AssertTrue(pTest2->mpTest.IsNull());
 	Pass();
 
-	AssertInt(0, pcTest1->NumHeapFroms());
-	AssertInt(0, pcTest1->NumStackFroms());
-	AssertInt(0, pcTest1->NumPointerTos());
-	AssertInt(0, pcTest2->NumHeapFroms());
-	AssertInt(1, pcTest2->NumStackFroms());
-	AssertInt(0, pcTest2->NumPointerTos());
+	AssertSize(0, pcTest1->NumHeapFroms());
+	AssertSize(0, pcTest1->NumStackFroms());
+	AssertSize(0, pcTest1->NumPointerTos());
+	AssertSize(0, pcTest2->NumHeapFroms());
+	AssertSize(1, pcTest2->NumStackFroms());
+	AssertSize(0, pcTest2->NumPointerTos());
 
 	pTest2 = NULL;
 
@@ -1012,12 +1012,12 @@ void TestDistToStackNoHeapB(void)
 	AssertFalse(sNotifier2.bFreed);
 	Pass();
 
-	AssertInt(0, pcTest1->NumHeapFroms());
-	AssertInt(0, pcTest1->NumStackFroms());
-	AssertInt(0, pcTest1->NumPointerTos());
-	AssertInt(0, pcTest2->NumHeapFroms());
-	AssertInt(1, pcTest2->NumStackFroms());
-	AssertInt(0, pcTest2->NumPointerTos());
+	AssertSize(0, pcTest1->NumHeapFroms());
+	AssertSize(0, pcTest1->NumStackFroms());
+	AssertSize(0, pcTest1->NumPointerTos());
+	AssertSize(0, pcTest2->NumHeapFroms());
+	AssertSize(1, pcTest2->NumStackFroms());
+	AssertSize(0, pcTest2->NumPointerTos());
 
 	pTest2 = NULL;
 
@@ -1073,9 +1073,9 @@ void TestDistToStackNoHeapC(void)
 	AssertTrue(cTest1.mpTest.IsNull());
 	Pass();
 
-	AssertInt(0, pcTest1->NumHeapFroms());
-	AssertInt(0, pcTest1->NumStackFroms());
-	AssertInt(0, pcTest1->NumPointerTos());
+	AssertSize(0, pcTest1->NumHeapFroms());
+	AssertSize(0, pcTest1->NumStackFroms());
+	AssertSize(0, pcTest1->NumPointerTos());
 
 	ObjectsFlush();
 	ObjectsKill();
@@ -1313,8 +1313,8 @@ void TestDistToStackRemoveUnbalancedLargeBroken(void)
 		AssertInt(4, pTest1->GetDistToRoot());
 		AssertInt(5, pTop1->GetDistToRoot());
 		AssertInt(3, pTop2->GetDistToRoot());
-		AssertInt(2, pSet->NumElements());
-		AssertInt(2, pSet->NumPointerTos());
+		AssertSize(2, pSet->NumElements());
+		AssertSize(2, pSet->NumPointerTos());
 
 		pcTest2 = &pTest2;
 		pcTest3 = &pTest3;
@@ -1367,7 +1367,7 @@ void TestDistToStackRemoveUnbalancedLargeBroken(void)
 		cDistToStackCalculator.Calculate(pcTest2, &cParameters);
 
 		papcKilled = cParameters.GetCompletelyDetachedArray();
-		AssertInt(4, papcKilled->NumElements());
+		AssertSize(4, papcKilled->NumElements());
 
 		cParameters.Kill();
 	}

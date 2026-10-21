@@ -57,7 +57,7 @@ void TestSetObjectGet(void)
 	pSaveable->miInt = 3;
 	pacStuff->Add(pSaveable);
 
-	AssertInt(2, pacStuff->NumElements());
+	AssertSize(2, pacStuff->NumElements());
 	AssertInt(7, pacStuff->UnsafeGet(0)->miInt);
 	AssertInt(3, pacStuff->UnsafeGet(1)->miInt);
 
@@ -86,7 +86,7 @@ void TestSetObjectAddAll(void)
 
 	pacMore->AddAll(pacStuff);
 
-	AssertInt(3, pacMore->NumElements());
+	AssertSize(3, pacMore->NumElements());
 	AssertInt(7, pacMore->UnsafeGet(0)->miInt);
 	AssertInt(3, pacMore->UnsafeGet(1)->miInt);
 	AssertInt(5, pacMore->UnsafeGet(2)->miInt);
@@ -118,7 +118,7 @@ void TestSetObjectRemove(void)
 
 	pacStuff->Remove(pSaveable);
 
-	AssertInt(2, pacStuff->NumElements());
+	AssertSize(2, pacStuff->NumElements());
 	AssertInt(7, pacStuff->UnsafeGet(0)->miInt);
 	AssertInt(3, pacStuff->UnsafeGet(1)->miInt);
 
@@ -425,10 +425,10 @@ void TestSetObjectKillAll(void)
 	pSet->Add(pContainer1);
 
 	AssertLong(6, gcObjects.NumMemoryIndexes());
-	AssertInt(1, pSet->NumElements());
+	AssertSize(1, pSet->NumElements());
 
 	pSet->KillAll();
-	AssertInt(0, pSet->NumElements());
+	AssertSize(0, pSet->NumElements());
 	AssertLong(5, gcObjects.NumMemoryIndexes());
 	AssertNotNull(&pSet);
 	AssertNull(&pContainer1);
@@ -465,10 +465,10 @@ void TestSetObjectRemoveAll(void)
 	pSet->Add(pContainer1);
 
 	AssertLong(6, gcObjects.NumMemoryIndexes());
-	AssertInt(1, pSet->NumElements());
+	AssertSize(1, pSet->NumElements());
 
 	pSet->RemoveAll();
-	AssertInt(0, pSet->NumElements());
+	AssertSize(0, pSet->NumElements());
 	AssertLong(6, gcObjects.NumMemoryIndexes());
 	AssertNotNull(&pSet);
 	AssertInt(UNATTACHED_DIST_TO_ROOT, pContainer1->GetDistToRoot());
@@ -513,7 +513,7 @@ void TestSetObjectSerialisation(void)
 	pSet->Add(pContainer2);
 
 	AssertLong(4, gcObjects.NumMemoryIndexes());
-	AssertInt(2, pSet->NumElements());
+	AssertSize(2, pSet->NumElements());
 
 	cWriter.Init(szDirectory, "", "File");
 	cSerialiser.Init(&cWriter);
@@ -874,7 +874,7 @@ void TestSetObjectObjectMorphSetEntry(size uiNumElements)
 		for (ui = 0; ui < uiNumElements; ui++)
 		{
 			pSaveable = OMalloc<CTestSaveableObject1>();
-			pSaveable->miInt = uiNumElements - ui;
+			pSaveable->miInt = (int)(uiNumElements - ui);
 			pSaveable->mszString.Init(SizeToString(ui));
 			psFreedNotifier = asFreedNotifiers.Get(ui);
 			pSaveable->mpObject = OMalloc<CTestObject>(psFreedNotifier);
@@ -956,8 +956,8 @@ void TestSetObjectObjectMorphSetEntry(size uiNumElements)
 			pObject = pSet->Iterate(&sIter);
 		}
 
-		AssertInt(uiNumElements - 1, uiNumSaveableObject);
-		AssertInt(1, uiNumEmbeddedObject);
+		AssertSize(uiNumElements - 1, uiNumSaveableObject);
+		AssertSize(1, uiNumEmbeddedObject);
 
 		AssertSize(2 * (uiNumElements - 1) + 1 + 3, gcObjects.NumMemoryIndexes());
 

@@ -39,25 +39,25 @@ void TestArrayCommonObjectPointerRemapping(void)
 	pArray->Add(pObject2);
 	pArray->Add(pObject1);
 	pArray->Add(pObject2);
-	AssertInt(6, pArray->NumElements());
-	AssertInt(5, pArray->NonNullElements());
+	AssertSize(6, pArray->NumElements());
+	AssertSize(5, pArray->NonNullElements());
 
 	sFreedNotifier.bFreed = false;
 
-	AssertInt(5, pArray->NumPointerTos());
-	AssertInt(1, pArray->NumHeapFroms());
-	AssertInt(2, pObject1->NumHeapFroms());
-	AssertInt(0, pObject1->NumPointerTos());
-	AssertInt(3, pObject2->NumHeapFroms());
-	AssertInt(0, pObject2->NumPointerTos());
-	AssertInt(0, pObject3->NumHeapFroms());
-	AssertInt(0, pObject3->NumPointerTos());
+	AssertSize(5, pArray->NumPointerTos());
+	AssertSize(1, pArray->NumHeapFroms());
+	AssertSize(2, pObject1->NumHeapFroms());
+	AssertSize(0, pObject1->NumPointerTos());
+	AssertSize(3, pObject2->NumHeapFroms());
+	AssertSize(0, pObject2->NumPointerTos());
+	AssertSize(0, pObject3->NumHeapFroms());
+	AssertSize(0, pObject3->NumPointerTos());
 
 	uiNumRemapped = pObject1.MorphInto(&pObject3);
-	AssertInt(3, uiNumRemapped);
+	AssertSize(3, uiNumRemapped);
 
-	AssertInt(6, pArray->NumElements());
-	AssertInt(5, pArray->NonNullElements());
+	AssertSize(6, pArray->NumElements());
+	AssertSize(5, pArray->NonNullElements());
 	AssertNull(pArray->UnsafeGetObject(0));
 	AssertPointer(&pObject2, pArray->UnsafeGetObject(1));
 	AssertPointer(&pObject3, pArray->UnsafeGetObject(2));
@@ -65,13 +65,13 @@ void TestArrayCommonObjectPointerRemapping(void)
 	AssertPointer(&pObject3, pArray->UnsafeGetObject(4));
 	AssertPointer(&pObject2, pArray->UnsafeGetObject(5));
 
-	AssertInt(5, pArray->NumPointerTos());
-	AssertInt(1, pArray->NumHeapFroms());
+	AssertSize(5, pArray->NumPointerTos());
+	AssertSize(1, pArray->NumHeapFroms());
 	AssertTrue(sFreedNotifier.bFreed);
-	AssertInt(3, pObject2->NumHeapFroms());
-	AssertInt(0, pObject2->NumPointerTos());
-	AssertInt(2, pObject3->NumHeapFroms());
-	AssertInt(0, pObject3->NumPointerTos());
+	AssertSize(3, pObject2->NumHeapFroms());
+	AssertSize(0, pObject2->NumPointerTos());
+	AssertSize(2, pObject3->NumHeapFroms());
+	AssertSize(0, pObject3->NumPointerTos());
 
 	ObjectsFlush();
 	ObjectsKill(false);

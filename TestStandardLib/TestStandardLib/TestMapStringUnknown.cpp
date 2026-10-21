@@ -21,23 +21,23 @@ void TestMapStringUnknownPut(void)
 
 	cMap.Init();
 
-	AssertInt(0, cMap.NumElements());
+	AssertSize(0, cMap.NumElements());
 
 	pcTest = cMap.Put<CTestUnknownJobbie>("Hello");
 	pcTest->Init(7, "1st");
-	AssertInt(1, cMap.NumElements());
+	AssertSize(1, cMap.NumElements());
 
 	pcTest = cMap.Put<CTestUnknownJobbie>("World");
 	pcTest->Init(19, "A pony");
-	AssertInt(2, cMap.NumElements());
+	AssertSize(2, cMap.NumElements());
 
 	pcTest = cMap.Put<CTestUnknownJobbie>("Aardvark");
 	pcTest->Init(4, "Restore");
-	AssertInt(3, cMap.NumElements());
+	AssertSize(3, cMap.NumElements());
 
 	pcTest = cMap.Put<CTestUnknownJobbie>(NULL);
 	AssertNull(pcTest);
-	AssertInt(3, cMap.NumElements());
+	AssertSize(3, cMap.NumElements());
 
 	cMap.Kill();
 
@@ -69,8 +69,8 @@ void TestMapStringUnknownGet(void)
 	pcTest->Init(19, "A pony");
 	pcTest = cMap.Put<CTestUnknownJobbie>("Aardvark");
 	pcTest->Init(4, "Restore");
-	AssertInt(3, cMap.NumElements());
-	AssertInt(3, gcUnknowns.NumElements());
+	AssertSize(3, cMap.NumElements());
+	AssertSize(3, gcUnknowns.NumElements());
 
 	pcTest = (CTestUnknownJobbie*)cMap.Get("World");
 	AssertInt(19, pcTest->miANumber);
@@ -79,18 +79,18 @@ void TestMapStringUnknownGet(void)
 	pcA1 = UMalloc(CTestUnknownJobbie);
 	pcA1->Init(999, "Grand");
 	cMap.Put("Thesaurus", pcA1);
-	AssertInt(4, cMap.NumElements());
-	AssertInt(4, gcUnknowns.NumElements());
+	AssertSize(4, cMap.NumElements());
+	AssertSize(4, gcUnknowns.NumElements());
 	pcA2 = UMalloc(CTestUnknownJobbie);
 	pcA2->Init(17, "Replaced!");
 	cMap.Put("World", pcA2);
-	AssertInt(4, cMap.NumElements());
-	AssertInt(4, gcUnknowns.NumElements());
+	AssertSize(4, cMap.NumElements());
+	AssertSize(4, gcUnknowns.NumElements());
 	pcA3 = UMalloc(CTestUnknownJobbie);
 	pcA3->Init(32, "Another");
 	cMap.Put("Jump", pcA3);
-	AssertInt(5, cMap.NumElements());
-	AssertInt(5, gcUnknowns.NumElements());
+	AssertSize(5, cMap.NumElements());
+	AssertSize(5, gcUnknowns.NumElements());
 
 	pcTest = (CTestUnknownJobbie*)cMap.Get("World");
 	AssertPointer(pcA2, pcTest);
@@ -108,7 +108,7 @@ void TestMapStringUnknownGet(void)
 
 	cMap.Kill();
 
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	UnknownsKill();
 	MemoryKill();
@@ -135,7 +135,7 @@ void TestMapStringUnknownIterate(void)
 
 	cMap.Init();
 
-	AssertInt(0, cMap.NumElements());
+	AssertSize(0, cMap.NumElements());
 
 	pcTest1 = cMap.Put<CTestUnknownJobbie>("World");
 	pcTest1->Init(19, "A pony");
@@ -143,7 +143,7 @@ void TestMapStringUnknownIterate(void)
 	pcTest2->Init(7, "1st");
 	pcTest3 = cMap.Put<CTestUnknownJobbie>("Aardvark");
 	pcTest3->Init(4, "Restore");
-	AssertInt(3, cMap.NumElements());
+	AssertSize(3, cMap.NumElements());
 
 	bResult = cMap.StartIteration(&sIter, &pszKey, &pcValue);
 	AssertTrue(bResult);
@@ -182,22 +182,22 @@ void TestMapStringUnknownNoOverwrite(void)
 
 	cMap.Init(true, false);
 
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	pcTest = cMap.Put<CTestUnknownJobbie>("One");
 	pcTest->Init(2, "");
 	AssertNotNull(pcTest);
-	AssertInt(1, gcUnknowns.NumElements());
+	AssertSize(1, gcUnknowns.NumElements());
 
 	sLogConfig = gcLogger.SetSilent();
 	pcTest = cMap.Put<CTestUnknownJobbie>("One");
 	AssertNull(pcTest);
-	AssertInt(1, gcUnknowns.NumElements());
+	AssertSize(1, gcUnknowns.NumElements());
 	gcLogger.SetConfig(&sLogConfig);
 
 	cMap.Kill();
 
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	UnknownsKill();
 	MemoryKill();
@@ -220,7 +220,7 @@ void TestMapStringUnknownLoad(void)
 	bool					bResult;
 
 	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cFileUtil.RemoveDir("Output" _FS_ "MapStringUnknown");
 	cFileUtil.MakeDir("Output" _FS_ "MapStringUnknown");
@@ -245,11 +245,11 @@ void TestMapStringUnknownLoad(void)
 
 	bResult = cFile.WriteClose();
 	AssertTrue(bResult);
-	AssertInt(4, gcUnknowns.NumElements());
+	AssertSize(4, gcUnknowns.NumElements());
 
 	cFile.Kill();
 	cMap.Kill();
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cFile.Init(DiskFile("Output" _FS_ "MapStringUnknown" _FS_ "Map.dat"));
 	bResult = cFile.ReadOpen();
@@ -262,8 +262,8 @@ void TestMapStringUnknownLoad(void)
 	AssertTrue(bResult);
 
 	cFile.Kill();
-	AssertInt(4, cMap.NumElements());
-	AssertInt(4, gcUnknowns.NumElements());
+	AssertSize(4, cMap.NumElements());
+	AssertSize(4, gcUnknowns.NumElements());
 
 	pcTest = (CTestUnknownJobbie*)cMap.Get("Hello");
 	AssertInt(7, pcTest->miANumber);
@@ -280,10 +280,10 @@ void TestMapStringUnknownLoad(void)
 	pcTest = (CTestUnknownJobbie*)cMap.Get("Yurk");
 	AssertInt(8, pcTest->miANumber);
 	AssertString("Yurk", pcTest->mszText.Text());
-	AssertInt(4, gcUnknowns.NumElements());
+	AssertSize(4, gcUnknowns.NumElements());
 
 	cMap.Kill();
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cFileUtil.RemoveDir("Output" _FS_ "MapStringUnknown");
 

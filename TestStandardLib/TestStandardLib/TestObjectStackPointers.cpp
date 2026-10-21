@@ -18,7 +18,7 @@ void TestObjectStackPointersSingle(void)
 
 	Ptr<CTestObject> ptr = OMalloc<CTestObject>(&sNotifier);
 
-	AssertInt(1, ptr->NumStackFroms());
+	AssertSize(1, ptr->NumStackFroms());
 	AssertFalse(sNotifier.bFreed);
 
 	ptr = NULL;
@@ -42,7 +42,7 @@ void TestObjectStackPointersSingleWithRoot(void)
 
 	Ptr<CTestObject> ptr = OMalloc<CTestObject>(&sNotifier);
 
-	AssertInt(1, ptr->NumStackFroms());
+	AssertSize(1, ptr->NumStackFroms());
 	AssertFalse(sNotifier.bFreed);
 	
 	Ptr<CRoot>	pRoot = ORoot();

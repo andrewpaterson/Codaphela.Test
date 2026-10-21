@@ -212,23 +212,23 @@ void TestPointerHeapNotInGraphFreeStack(void)
 	Ptr<CTestObject> pTest1 = OMalloc<CTestObject>(&sNotifier1);
 	Ptr<CTestObject> pTest2 = OMalloc<CTestObject>(&sNotifier2);
 
-	AssertInt(0, pTest1->NumHeapFroms());
-	AssertInt(1, pTest1->NumStackFroms());
-	AssertInt(0, pTest1->NumPointerTos());
-	AssertInt(0, pTest2->NumHeapFroms());
-	AssertInt(1, pTest2->NumStackFroms());
-	AssertInt(0, pTest2->NumPointerTos());
+	AssertSize(0, pTest1->NumHeapFroms());
+	AssertSize(1, pTest1->NumStackFroms());
+	AssertSize(0, pTest1->NumPointerTos());
+	AssertSize(0, pTest2->NumHeapFroms());
+	AssertSize(1, pTest2->NumStackFroms());
+	AssertSize(0, pTest2->NumPointerTos());
 	AssertFalse(sNotifier1.bFreed);
 	AssertFalse(sNotifier2.bFreed);
 
 	pTest2->mpObject = pTest1;
 
-	AssertInt(1, pTest1->NumHeapFroms());
-	AssertInt(1, pTest1->NumStackFroms());
-	AssertInt(0, pTest1->NumPointerTos());
-	AssertInt(0, pTest2->NumHeapFroms());
-	AssertInt(1, pTest2->NumStackFroms());
-	AssertInt(1, pTest2->NumPointerTos());
+	AssertSize(1, pTest1->NumHeapFroms());
+	AssertSize(1, pTest1->NumStackFroms());
+	AssertSize(0, pTest1->NumPointerTos());
+	AssertSize(0, pTest2->NumHeapFroms());
+	AssertSize(1, pTest2->NumStackFroms());
+	AssertSize(1, pTest2->NumPointerTos());
 
 	pcTest2 = (CTestObject*)pTest2.Object();
 	pcTest1 = (CTestObject*)pTest1.Object();
@@ -236,12 +236,12 @@ void TestPointerHeapNotInGraphFreeStack(void)
 
 	AssertFalse(sNotifier1.bFreed);
 	AssertFalse(sNotifier2.bFreed);
-	AssertInt(1, pcTest1->NumHeapFroms());
-	AssertInt(0, pcTest1->NumStackFroms());
-	AssertInt(0, pcTest1->NumPointerTos());
-	AssertInt(0, pcTest2->NumHeapFroms());
-	AssertInt(1, pcTest2->NumStackFroms());
-	AssertInt(1, pcTest2->NumPointerTos());
+	AssertSize(1, pcTest1->NumHeapFroms());
+	AssertSize(0, pcTest1->NumStackFroms());
+	AssertSize(0, pcTest1->NumPointerTos());
+	AssertSize(0, pcTest2->NumHeapFroms());
+	AssertSize(1, pcTest2->NumStackFroms());
+	AssertSize(1, pcTest2->NumPointerTos());
 
 	pTest2 = NULL;
 

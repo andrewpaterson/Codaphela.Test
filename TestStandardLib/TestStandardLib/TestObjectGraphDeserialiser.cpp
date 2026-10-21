@@ -347,9 +347,9 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 	CExternalObjectDeserialiser		cDeserialiser;
 	CChunkFileSystemObjectReader		cReaderStart1;
 	CChunkFileSystemObjectReader		cReaderStart2;
-	int								iNumUnknowns;
+	size							iNumUnknowns;
 	int								iNumIndexes;
-	int								iNumNames;
+	size							iNumNames;
 	CCodabase*						pcDatabase;
 	CSequence*						pcSequence;
 	char							szDirectory[] = "Output" _FS_ "GraphDeserialiser" _FS_ "Simple" _FS_ "Remapping";
@@ -388,11 +388,11 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 
 		cShared = gcObjects.Get("Ow/Shared");
 	
-		AssertInt(3, cShared->NumHeapFroms());
+		AssertSize(3, cShared->NumHeapFroms());
 		AssertPointer(&cOwStart1, cShared->GetHeapFrom(0));
 		AssertPointer(&cOwStart2, cShared->GetHeapFrom(1));
 		AssertPointer(&cShared, cShared->GetHeapFrom(2));  //Remember: cShared->mpObject = cShared;
-		AssertInt(2, cOwStart1->NumPointerTos());
+		AssertSize(2, cOwStart1->NumPointerTos());
 		AssertPointer(&cShared, cOwStart1->TestGetPointerTo(0));
 		AssertPointer(&cOwStart1->mp1, cOwStart1->TestGetPointerTo(0));
 		AssertPointer(&cOwStart1->mp2, cOwStart1->TestGetPointerTo(1));
@@ -436,10 +436,10 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 		cShared = gcObjects.Get("Ow/Shared");
 
 		//Make sure the pointed 'froms' are correctly setup after loading.
-		AssertInt(2, cShared->NumHeapFroms());
+		AssertSize(2, cShared->NumHeapFroms());
 		AssertPointer(&cOwStart1, cShared->GetHeapFrom(0));
 		AssertPointer(&cShared, cShared->GetHeapFrom(1));
-		AssertInt(2, cOwStart1->NumPointerTos());
+		AssertSize(2, cOwStart1->NumPointerTos());
 		AssertPointer(&cShared, cOwStart1->TestGetPointerTo(0));
 		AssertPointer(&cOwStart1->mp1, cOwStart1->TestGetPointerTo(0));
 		AssertPointer(&cOwStart1->mp2, cOwStart1->TestGetPointerTo(1));
@@ -460,9 +460,9 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 		cDeserialiser.Kill();
 		cReaderStart2.Kill();
 
-		AssertInt(iNumUnknowns+1, gcUnknowns.NumElements());
+		AssertSize(iNumUnknowns+1, gcUnknowns.NumElements());
 		AssertInt(iNumIndexes+1, (int)gcObjects.NumMemoryIndexes());
-		AssertInt(iNumNames, (int)gcObjects.NumMemoryNames());
+		AssertSize(iNumNames, gcObjects.NumMemoryNames());
 
 		AssertNotNull(cOwStart2.Object());
 		cRoot->Add(cOwStart2);

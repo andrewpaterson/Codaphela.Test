@@ -16,6 +16,21 @@
 #include "UnknownObjectHolderTestClasses.h"
 
 
+#ifdef BUILD_64
+#define GRAPH_ROOT_SIZE					"312"
+#define GRAPH_SET_OBJECT_SIZE			"296"
+#define GRAPH_OBJECT_SIZE				"288"
+#define GRAPH_TEST_OBJECT_SIZE			"336"
+#define GRAPH_OBJECT_WITH_UNKNOWN_SIZE	"304"
+#else
+#define GRAPH_ROOT_SIZE					"176"
+#define GRAPH_SET_OBJECT_SIZE			"168"
+#define GRAPH_OBJECT_SIZE				"160"
+#define GRAPH_TEST_OBJECT_SIZE			"184"
+#define GRAPH_OBJECT_WITH_UNKNOWN_SIZE	"168"
+#endif // BUILD_64
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -36,11 +51,11 @@ void TestObjectsFreeUnknownOnly(void)
 		gcObjects.PrintGraph(&sz, false);
 		AssertString("\
 -------------------------- Graph --------------------------- \n\
- [ 0]:CRoot(176) Index:1 Name:GraphRoot Froms:0,1\n\
-    [ 1]:CSetObject(168) Index:2 Froms:1,0\n\
-       [ 2]:CObject(160) Index:4 Name:GraphFreeObjects Froms:1,0\n\
-          [ 3]:CSetObject(168) Index:5 Froms:1,0\n\
-             [ 4]:CTestObject(184) Index:3 Froms:1,0\n\
+ [ 0]:CRoot(" GRAPH_ROOT_SIZE ") Index:1 Name:GraphRoot Froms:0,1\n\
+    [ 1]:CSetObject(" GRAPH_SET_OBJECT_SIZE ") Index:2 Froms:1,0\n\
+       [ 2]:CObject(" GRAPH_OBJECT_SIZE ") Index:4 Name:GraphFreeObjects Froms:1,0\n\
+          [ 3]:CSetObject(" GRAPH_SET_OBJECT_SIZE ") Index:5 Froms:1,0\n\
+             [ 4]:CTestObject(" GRAPH_TEST_OBJECT_SIZE ") Index:3 Froms:1,0\n\
 ------------------------------------------------------------ \n", sz.Text());
 		sz.Kill();
 
@@ -50,10 +65,10 @@ void TestObjectsFreeUnknownOnly(void)
 		gcObjects.PrintGraph(&sz, false);
 		AssertString("\
 -------------------------- Graph --------------------------- \n\
- [ 0]:CRoot(176) Index:1 Name:GraphRoot Froms:0,1\n\
-    [ 1]:CSetObject(168) Index:2 Froms:1,0\n\
-       [ 2]:CObject(160) Index:4 Name:GraphFreeObjects Froms:1,0\n\
-          [ 3]:CSetObject(168) Index:5 Froms:1,0\n\
+ [ 0]:CRoot(" GRAPH_ROOT_SIZE ") Index:1 Name:GraphRoot Froms:0,1\n\
+    [ 1]:CSetObject(" GRAPH_SET_OBJECT_SIZE ") Index:2 Froms:1,0\n\
+       [ 2]:CObject(" GRAPH_OBJECT_SIZE ") Index:4 Name:GraphFreeObjects Froms:1,0\n\
+          [ 3]:CSetObject(" GRAPH_SET_OBJECT_SIZE ") Index:5 Froms:1,0\n\
 ------------------------------------------------------------ \n", sz.Text());
 		sz.Kill();	
 	}
@@ -124,9 +139,9 @@ void TestObjectsFreeUnknownInObjectAssignNull(void)
 		gcObjects.PrintGraph(&sz, false);
 		AssertString("\
 -------------------------- Graph --------------------------- \n\
- [ 0]:CRoot(176) Index:1 Name:GraphRoot Froms:0,2\n\
-    [ 1]:CSetObject(168) Index:2 Froms:1,0\n\
-       [ 2]:CObjectWithUnknown(168) Index:3 Froms:1,1\n\
+ [ 0]:CRoot(" GRAPH_ROOT_SIZE ") Index:1 Name:GraphRoot Froms:0,2\n\
+    [ 1]:CSetObject(" GRAPH_SET_OBJECT_SIZE ") Index:2 Froms:1,0\n\
+       [ 2]:CObjectWithUnknown(" GRAPH_OBJECT_WITH_UNKNOWN_SIZE ") Index:3 Froms:1,1\n\
 ------------------------------------------------------------ \n", sz.Text());
 		sz.Kill();
 
@@ -137,12 +152,12 @@ void TestObjectsFreeUnknownInObjectAssignNull(void)
 		gcObjects.PrintGraph(&sz, false);
 		AssertString("\
 -------------------------- Graph --------------------------- \n\
- [ 0]:CRoot(176) Index:1 Name:GraphRoot Froms:0,2\n\
-    [ 1]:CSetObject(168) Index:2 Froms:1,0\n\
-       [ 2]:CObjectWithUnknown(168) Index:3 Froms:1,1\n\
-       [ 2]:CObject(160) Index:5 Name:GraphFreeObjects Froms:1,0\n\
-          [ 3]:CSetObject(168) Index:6 Froms:1,0\n\
-             [ 4]:CTestObject(184) Index:4 Froms:1,0\n\
+ [ 0]:CRoot(" GRAPH_ROOT_SIZE ") Index:1 Name:GraphRoot Froms:0,2\n\
+    [ 1]:CSetObject(" GRAPH_SET_OBJECT_SIZE ") Index:2 Froms:1,0\n\
+       [ 2]:CObjectWithUnknown(" GRAPH_OBJECT_WITH_UNKNOWN_SIZE ") Index:3 Froms:1,1\n\
+       [ 2]:CObject(" GRAPH_OBJECT_SIZE ") Index:5 Name:GraphFreeObjects Froms:1,0\n\
+          [ 3]:CSetObject(" GRAPH_SET_OBJECT_SIZE ") Index:6 Froms:1,0\n\
+             [ 4]:CTestObject(" GRAPH_TEST_OBJECT_SIZE ") Index:4 Froms:1,0\n\
 ------------------------------------------------------------ \n", sz.Text());
 		sz.Kill();
 		gcObjects.ValidateObjectsConsistency();
@@ -154,11 +169,11 @@ void TestObjectsFreeUnknownInObjectAssignNull(void)
 		gcObjects.PrintGraph(&sz, false);
 		AssertString("\
 -------------------------- Graph --------------------------- \n\
- [ 0]:CRoot(176) Index:1 Name:GraphRoot Froms:0,2\n\
-    [ 1]:CSetObject(168) Index:2 Froms:1,0\n\
-       [ 2]:CObject(160) Index:5 Name:GraphFreeObjects Froms:1,0\n\
-          [ 3]:CSetObject(168) Index:6 Froms:1,0\n\
-             [ 4]:CTestObject(184) Index:4 Froms:1,0\n\
+ [ 0]:CRoot(" GRAPH_ROOT_SIZE ") Index:1 Name:GraphRoot Froms:0,2\n\
+    [ 1]:CSetObject(" GRAPH_SET_OBJECT_SIZE ") Index:2 Froms:1,0\n\
+       [ 2]:CObject(" GRAPH_OBJECT_SIZE ") Index:5 Name:GraphFreeObjects Froms:1,0\n\
+          [ 3]:CSetObject(" GRAPH_SET_OBJECT_SIZE ") Index:6 Froms:1,0\n\
+             [ 4]:CTestObject(" GRAPH_TEST_OBJECT_SIZE ") Index:4 Froms:1,0\n\
 ------------------------------------------------------------ \n", sz.Text());
 		sz.Kill();
 		gcObjects.ValidateObjectsConsistency();
@@ -195,9 +210,9 @@ void TestObjectsFreeUnknownInObjectPointerDestructor(void)
 		gcObjects.PrintGraph(&sz, false);
 		AssertString("\
 -------------------------- Graph --------------------------- \n\
- [ 0]:CRoot(176) Index:1 Name:GraphRoot Froms:0,2\n\
-    [ 1]:CSetObject(168) Index:2 Froms:1,0\n\
-       [ 2]:CObjectWithUnknown(168) Index:3 Froms:1,1\n\
+ [ 0]:CRoot(" GRAPH_ROOT_SIZE ") Index:1 Name:GraphRoot Froms:0,2\n\
+    [ 1]:CSetObject(" GRAPH_SET_OBJECT_SIZE ") Index:2 Froms:1,0\n\
+       [ 2]:CObjectWithUnknown(" GRAPH_OBJECT_WITH_UNKNOWN_SIZE ") Index:3 Froms:1,1\n\
 ------------------------------------------------------------ \n", sz.Text());
 		sz.Kill();
 
@@ -208,12 +223,12 @@ void TestObjectsFreeUnknownInObjectPointerDestructor(void)
 		gcObjects.PrintGraph(&sz, false);
 		AssertString("\
 -------------------------- Graph --------------------------- \n\
- [ 0]:CRoot(176) Index:1 Name:GraphRoot Froms:0,2\n\
-    [ 1]:CSetObject(168) Index:2 Froms:1,0\n\
-       [ 2]:CObjectWithUnknown(168) Index:3 Froms:1,1\n\
-       [ 2]:CObject(160) Index:5 Name:GraphFreeObjects Froms:1,0\n\
-          [ 3]:CSetObject(168) Index:6 Froms:1,0\n\
-             [ 4]:CTestObject(184) Index:4 Froms:1,0\n\
+ [ 0]:CRoot(" GRAPH_ROOT_SIZE ") Index:1 Name:GraphRoot Froms:0,2\n\
+    [ 1]:CSetObject(" GRAPH_SET_OBJECT_SIZE ") Index:2 Froms:1,0\n\
+       [ 2]:CObjectWithUnknown(" GRAPH_OBJECT_WITH_UNKNOWN_SIZE ") Index:3 Froms:1,1\n\
+       [ 2]:CObject(" GRAPH_OBJECT_SIZE ") Index:5 Name:GraphFreeObjects Froms:1,0\n\
+          [ 3]:CSetObject(" GRAPH_SET_OBJECT_SIZE ") Index:6 Froms:1,0\n\
+             [ 4]:CTestObject(" GRAPH_TEST_OBJECT_SIZE ") Index:4 Froms:1,0\n\
 ------------------------------------------------------------ \n", sz.Text());
 		sz.Kill();
 

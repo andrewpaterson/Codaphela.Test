@@ -81,7 +81,7 @@ void TestHollowObjectAllocation(void)
 	AssertNotNull(&pObject1);
 	apcFroms.Init();
 	pObject1->GetHeapFroms(&apcFroms);
-	AssertInt(1, apcFroms.NumElements());
+	AssertSize(1, apcFroms.NumElements());
 	AssertPointer(pRoot->TestGetSet(), (*apcFroms.Get(0)));
 
 	AssertFalse(pObject1->IsDirty());

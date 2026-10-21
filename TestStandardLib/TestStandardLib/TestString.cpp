@@ -464,15 +464,15 @@ void TestStringTests(void)
 
 		pString1->Append(" in Manila");
 
-		AssertInt(7, pString1->Find("in"));
-		AssertInt(7, pString1->Find(7, "in"));
-		AssertInt(17, pString1->Find(8, "in"));
-		AssertInt(-1, pString1->Find("Nope"));
+		AssertSize(7, pString1->Find("in"));
+		AssertSize(7, pString1->Find(7, "in"));
+		AssertSize(17, pString1->Find(8, "in"));
+		AssertSize(-1, pString1->Find("Nope"));
 
-		AssertInt(17, pString1->FindFromEnd("in"));
-		AssertInt(17, pString1->FindFromEnd(17, "in"));
-		AssertInt(7, pString1->FindFromEnd(16, "in"));
-		AssertInt(-1, pString1->FindFromEnd("Nope"));
+		AssertSize(17, pString1->FindFromEnd("in"));
+		AssertSize(17, pString1->FindFromEnd(17, "in"));
+		AssertSize(7, pString1->FindFromEnd(16, "in"));
+		AssertSize(-1, pString1->FindFromEnd("Nope"));
 	}
 	ObjectsKill();
 	DataIOKill();
@@ -499,7 +499,7 @@ void TestStringSplit(void)
 		AssertLong(1LL, gcObjects.NumMemoryIndexes());
 
 		paDest = pString->Split(',');
-		AssertInt(10, paDest->Length());
+		AssertSize(10, paDest->Length());
 		AssertLong(12LL, gcObjects.NumMemoryIndexes());
 
 		AssertString("And", paDest->Get(0)->Text());
@@ -524,7 +524,7 @@ void TestStringSplit(void)
 		AssertLong(1LL, gcObjects.NumMemoryIndexes());
 
 		paDest = pString->Split(',');
-		AssertInt(10, paDest->Length());
+		AssertSize(10, paDest->Length());
 		AssertLong(12LL, gcObjects.NumMemoryIndexes());
 
 		paDest = NULL;

@@ -20,7 +20,7 @@ void TestArrayAllocation(void)
 	CTestNamedUnknown*						pcTest1;
 	CTestNamedUnknown*						pcTest2;
 	CTestNamedUnknown*						pcTest3;
-	int										iNum;
+	size									iNum;
 	CTestNamedUnknown*						pcTest;
 	SIteratorTemplate<CTestNamedUnknown>	sIter;
 
@@ -37,7 +37,7 @@ void TestArrayAllocation(void)
 	cArray.Add(pcTest3);
 	
 	iNum = cArray.NumElements();
-	AssertInt(3, iNum);
+	AssertSize(3, iNum);
 	pcTest = (CTestNamedUnknown*)cArray.Get(0);
 	AssertString("The One", pcTest->GetName());
 	pcTest = (CTestNamedUnknown*)cArray.Get(1);
@@ -48,7 +48,7 @@ void TestArrayAllocation(void)
 	cArray.Remove(1);
 
 	iNum = cArray.NumElements();
-	AssertInt(2, iNum);
+	AssertSize(2, iNum);
 	pcTest = (CTestNamedUnknown*)cArray.Get(0);
 	AssertString("The One", pcTest->GetName());
 	pcTest = (CTestNamedUnknown*)cArray.Get(1);
@@ -82,7 +82,7 @@ void TestRemoval(void)
 	CTestNamedUnknown*						pcTest1;
 	CTestNamedUnknown*						pcTest2;
 	CTestNamedUnknown*						pcTest3;
-	int										iNum;
+	size									iNum;
 	CTestNamedUnknown*						pcTest;
 	SIteratorTemplate<CTestNamedUnknown>	sIter;
 	SSetIterator							sSetIter;
@@ -101,7 +101,7 @@ void TestRemoval(void)
 	cArray.Add(pcTest3);
 
 	iNum = cArray.NumElements();
-	AssertInt(3, iNum);
+	AssertSize(3, iNum);
 
 	cArray.StartIteration(&sSetIter, NULL);
 	cArray.RemoveDuringIteration(&sSetIter);
@@ -112,7 +112,7 @@ void TestRemoval(void)
 	cArray.Iterate(&sSetIter, NULL);
 
 	iNum = cArray.NumElements();
-	AssertInt(0, iNum);
+	AssertSize(0, iNum);
 
 	cArray.RemoveDuringIteration(&sSetIter);
 
@@ -134,7 +134,7 @@ void TestRemoval(void)
 	cArray.Add(pcTest3);
 
 	iNum = cArray.NumElements();
-	AssertInt(3, iNum);
+	AssertSize(3, iNum);
 
 	bExists = cArray.StartIteration(&sSetIter, (CUnknown**)&pcTest);
 	AssertTrue(bExists);
@@ -147,14 +147,14 @@ void TestRemoval(void)
 
 	cArray.RemoveDuringIteration(&sSetIter);
 	iNum = cArray.NumElements();
-	AssertInt(1, iNum);
+	AssertSize(1, iNum);
 	bExists = cArray.Iterate(&sSetIter, (CUnknown**)&pcTest);
 	AssertTrue(bExists);
 	AssertString("There can be only three", pcTest->GetName());
 
 	cArray.RemoveDuringIteration(&sSetIter);
 	iNum = cArray.NumElements();
-	AssertInt(0, iNum);
+	AssertSize(0, iNum);
 	bExists = cArray.Iterate(&sSetIter, NULL);
 	AssertFalse(bExists);
 
@@ -194,27 +194,27 @@ void TestIteration(void)
 	bExists = cArray.StartIteration(&sSetIter, (CUnknown**)&pcTest);
 	AssertTrue(bExists);
 	AssertString("A", pcTest->GetName());
-	AssertInt(0, sSetIter.iIndex);
+	AssertSize(0, sSetIter.iIndex);
 	bExists = cArray.Iterate(&sSetIter, (CUnknown**)&pcTest);
 	AssertTrue(bExists);
 	AssertString("B", pcTest->GetName());
-	AssertInt(1, sSetIter.iIndex);
+	AssertSize(1, sSetIter.iIndex);
 	bExists = cArray.Iterate(&sSetIter, (CUnknown**)&pcTest);
 	AssertTrue(bExists);
 	AssertString("C", pcTest->GetName());
-	AssertInt(2, sSetIter.iIndex);
+	AssertSize(2, sSetIter.iIndex);
 	bExists = cArray.Iterate(&sSetIter, (CUnknown**)&pcTest);
 	AssertTrue(bExists);
 	AssertString("D", pcTest->GetName());
-	AssertInt(3, sSetIter.iIndex);
+	AssertSize(3, sSetIter.iIndex);
 	bExists = cArray.Iterate(&sSetIter, (CUnknown**)&pcTest);
 	AssertFalse(bExists);
 	AssertNull(pcTest);
-	AssertInt(4, sSetIter.iIndex);
+	AssertSize(4, sSetIter.iIndex);
 	bExists = cArray.Iterate(&sSetIter, (CUnknown**)&pcTest);
 	AssertFalse(bExists);
 	AssertNull(pcTest);
-	AssertInt(4, sSetIter.iIndex);
+	AssertSize(4, sSetIter.iIndex);
 
 	
 	cArray.Kill();
@@ -242,12 +242,12 @@ void TestArrayUnknownLoad(void)
 	bool				bResult;
 	CUnknown*			pcUnknown;
 
-	AssertInt(0, gcConstructors.NumConstructors());
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcConstructors.NumConstructors());
+	AssertSize(0, gcUnknowns.NumElements());
 	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
 	gcUnknowns.AddConstructor<CTestUnknown>();
-	AssertInt(0, gcUnknowns.NumElements());
-	AssertInt(2, gcConstructors.NumConstructors());
+	AssertSize(0, gcUnknowns.NumElements());
+	AssertSize(2, gcConstructors.NumConstructors());
 
 	cFileUtil.RemoveDir("Output" _FS_ "ArrayUnknown");
 	cFileUtil.TouchDir("Output" _FS_ "ArrayUnknown");
@@ -275,7 +275,7 @@ void TestArrayUnknownLoad(void)
 	cFile.Kill();
 	cArray.Kill();
 
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cFile.Init(DiskFile("Output" _FS_ "ArrayUnknown" _FS_ "Array.dat"));
 	bResult = cFile.ReadOpen();
@@ -289,8 +289,8 @@ void TestArrayUnknownLoad(void)
 
 	cFile.Kill();
 
-	AssertInt(4, cArray.NumElements());
-	AssertInt(4, gcUnknowns.NumElements());
+	AssertSize(4, cArray.NumElements());
+	AssertSize(4, gcUnknowns.NumElements());
 
 	pcUnknown = cArray.Get(0);
 	AssertString("CTestUnknown", pcUnknown->ClassName());
@@ -312,7 +312,7 @@ void TestArrayUnknownLoad(void)
 
 	cArray.Kill();
 
-	AssertInt(0, gcUnknowns.NumElements());
+	AssertSize(0, gcUnknowns.NumElements());
 
 	cFileUtil.RemoveDir("Output" _FS_ "ArrayUnknown");
 

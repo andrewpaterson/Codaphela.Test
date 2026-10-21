@@ -374,13 +374,13 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	AssertSize(3, pacPointers->NumElements());
 	pcField = (CPointerField*)pacPointers->GetPtr(0);
 	AssertString("mpObjectA", pcField->GetName());
-	AssertInt(OBJECT_SIZE + uiBoolSize, pcField->GetOffset());
+	AssertSize(OBJECT_SIZE + uiBoolSize, pcField->GetOffset());
 	pcField = (CPointerField*)pacPointers->GetPtr(1);
 	AssertString("mpObjectB", pcField->GetName());
-	AssertInt(OBJECT_SIZE + uiBoolSize + POINTER_SIZE + uiTestObjectSize, pcField->GetOffset());
+	AssertSize(OBJECT_SIZE + uiBoolSize + POINTER_SIZE + uiTestObjectSize, pcField->GetOffset());
 	pcField = (CPointerField*)pacPointers->GetPtr(2);
 	AssertString("mpObjectC", pcField->GetName());
-	AssertInt(OBJECT_SIZE + uiBoolSize + POINTER_SIZE + uiTestObjectSize + POINTER_SIZE + uiTestObjectSize, pcField->GetOffset());
+	AssertSize(OBJECT_SIZE + uiBoolSize + POINTER_SIZE + uiTestObjectSize + POINTER_SIZE + uiTestObjectSize, pcField->GetOffset());
 
 	pcObject = (CTestEmbeddedObjectWithFields*)pObject.Object();
 	pcpPtr = (CPointer*)RemapSinglePointer(pcObject, pcField->GetOffset());

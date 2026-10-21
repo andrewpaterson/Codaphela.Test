@@ -54,7 +54,7 @@ void TestArrayObjectGet(void)
 	pSaveable->miInt = 3;
 	pacStuff->Add(pSaveable);
 
-	AssertInt(2, pacStuff->NumElements());
+	AssertSize(2, pacStuff->NumElements());
 	AssertInt(7, pacStuff->Get(0)->miInt);
 	AssertInt(3, pacStuff->Get(1)->miInt);
 
@@ -76,7 +76,7 @@ void TestArrayObjectInsert(void)
 	pSaveable->miInt = 3;
 	pacStuff->Insert(0, pSaveable);
 
-	AssertInt(2, pacStuff->NumElements());
+	AssertSize(2, pacStuff->NumElements());
 	AssertInt(3, pacStuff->Get(0)->miInt);
 	AssertInt(7, pacStuff->Get(1)->miInt);
 
@@ -102,14 +102,14 @@ void TestArrayObjectAddAll(void)
 	pSaveable = OMalloc<CTestSaveableObject1>();
 	pSaveable->miInt = 5;
 
-	AssertInt(0, pSaveable->NumHeapFroms());
+	AssertSize(0, pSaveable->NumHeapFroms());
 	pacStuff->Insert(0, pSaveable);
-	AssertInt(1, pSaveable->NumHeapFroms());
+	AssertSize(1, pSaveable->NumHeapFroms());
 	gcObjects.ValidateObjectsConsistency();
 
 	pacMore->AddAll(pacStuff);
 
-	AssertInt(3, pacMore->NumElements());
+	AssertSize(3, pacMore->NumElements());
 	AssertInt(5, pacMore->Get(0)->miInt);
 	AssertInt(3, pacMore->Get(1)->miInt);
 	AssertInt(7, pacMore->Get(2)->miInt);
@@ -141,7 +141,7 @@ void TestArrayObjectRemove(void)
 
 	pacStuff->RemoveAt(1);
 
-	AssertInt(2, pacStuff->NumElements());
+	AssertSize(2, pacStuff->NumElements());
 	AssertInt(5, pacStuff->Get(0)->miInt);
 	AssertInt(7, pacStuff->Get(1)->miInt);
 
@@ -514,7 +514,7 @@ void TestArrayObjectExternalSerialisation(void)
 		pArray->Add(pContainer3);
 
 		AssertLong(5, gcObjects.NumMemoryIndexes());
-		AssertInt(3, pArray->NumElements());
+		AssertSize(3, pArray->NumElements());
 
 		cWriter.Init(szDirectory, "", "File");
 		cSerialiser.Init(&cWriter);

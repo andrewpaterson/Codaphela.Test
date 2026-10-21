@@ -18,7 +18,7 @@ void TestSetUnknownRemoveDuringIteration1(void)
 	CTestNamedUnknown*						pcTest1;
 	CTestNamedUnknown*						pcTest2;
 	CTestNamedUnknown*						pcTest3;
-	int										iNum;
+	size									iNum;
 	CTestNamedUnknown*						pcTest;
 	SIteratorTemplate<CTestNamedUnknown>	sIter;
 	SSetIterator							sSetIter;
@@ -36,7 +36,7 @@ void TestSetUnknownRemoveDuringIteration1(void)
 	cSet.Add(pcTest3);
 
 	iNum = cSet.NumElements();
-	AssertInt(3, iNum);
+	AssertSize(3, iNum);
 	cSet.StartIteration(&sSetIter, (CUnknown**)&pcTest);
 	AssertString("The One", pcTest->GetName());
 	cSet.Iterate(&sSetIter, (CUnknown**)&pcTest);
@@ -47,7 +47,7 @@ void TestSetUnknownRemoveDuringIteration1(void)
 	cSet.Remove(pcTest2);
 
 	iNum = cSet.NumElements();
-	AssertInt(2, iNum);
+	AssertSize(2, iNum);
 	cSet.StartIteration(&sSetIter, (CUnknown**)&pcTest);
 	AssertString("The One", pcTest->GetName());
 	cSet.Iterate(&sSetIter, (CUnknown**)&pcTest);
@@ -65,7 +65,7 @@ void TestSetUnknownRemoveDuringIteration1(void)
 	cSet.RemoveDuringIteration(&sSetIter);
 
 	iNum = cSet.NumElements();
-	AssertInt(0, iNum);
+	AssertSize(0, iNum);
 
 	cSet.RemoveDuringIteration(&sSetIter);
 
@@ -92,7 +92,7 @@ void TestSetUnknownRemoveDuringIteration2(void)
 	CTestNamedUnknown*						pcTest1;
 	CTestNamedUnknown*						pcTest2;
 	CTestNamedUnknown*						pcTest3;
-	int										iNum;
+	size									iNum;
 	CTestNamedUnknown*						pcTest;
 	SIteratorTemplate<CTestNamedUnknown>	sIter;
 	SSetIterator							sSetIter;
@@ -111,7 +111,7 @@ void TestSetUnknownRemoveDuringIteration2(void)
 	cSet.Add(pcTest3);
 
 	iNum = cSet.NumElements();
-	AssertInt(3, iNum);
+	AssertSize(3, iNum);
 
 	cSet.StartIteration(&sSetIter, NULL);
 	cSet.RemoveDuringIteration(&sSetIter);
@@ -121,7 +121,7 @@ void TestSetUnknownRemoveDuringIteration2(void)
 	cSet.RemoveDuringIteration(&sSetIter);
 
 	iNum = cSet.NumElements();
-	AssertInt(0, iNum);
+	AssertSize(0, iNum);
 	cSet.Iterate(&sSetIter, NULL);
 
 	cSet.RemoveDuringIteration(&sSetIter);
@@ -144,7 +144,7 @@ void TestSetUnknownRemoveDuringIteration2(void)
 	cSet.Add(pcTest3);
 
 	iNum = cSet.NumElements();
-	AssertInt(3, iNum);
+	AssertSize(3, iNum);
 
 	bExists = cSet.StartIteration(&sSetIter, (CUnknown**)&pcTest);
 	AssertString("The One", pcTest->GetName());
@@ -155,14 +155,14 @@ void TestSetUnknownRemoveDuringIteration2(void)
 
 	cSet.RemoveDuringIteration(&sSetIter);
 	iNum = cSet.NumElements();
-	AssertInt(1, iNum);
+	AssertSize(1, iNum);
 	bExists = cSet.Iterate(&sSetIter, (CUnknown**)&pcTest);
 	AssertNotNull(pcTest);
 	AssertString("There can be only three", pcTest->GetName());
 
 	cSet.RemoveDuringIteration(&sSetIter);
 	iNum = cSet.NumElements();
-	AssertInt(0, iNum);
+	AssertSize(0, iNum);
 	bExists = cSet.Iterate(&sSetIter, (CUnknown**)&pcTest);
 	AssertFalse(bExists);
 
@@ -203,8 +203,8 @@ void TestSetUnknownCleanNulls(void)
 
 	cSet.SetChunkSize(4);
 
-	AssertInt(32, cSet.NumElements());
-	AssertInt(32, cSet.UnsafeNumElements());
+	AssertSize(32, cSet.NumElements());
+	AssertSize(32, cSet.UnsafeNumElements());
 
 	cSet.Remove(apUnknowns[0]);
 	cSet.Remove(apUnknowns[2]);
@@ -220,8 +220,8 @@ void TestSetUnknownCleanNulls(void)
 	cSet.Remove(apUnknowns[27]);
 	cSet.Remove(apUnknowns[28]);
 
-	AssertInt(21, cSet.NumElements());
-	AssertInt(32, cSet.UnsafeNumElements());
+	AssertSize(21, cSet.NumElements());
+	AssertSize(32, cSet.UnsafeNumElements());
 	
 	AssertPointer(NULL,          cSet.UnsafeGet(0));
 	AssertPointer(apUnknowns[1], cSet.UnsafeGet(1));
@@ -258,8 +258,8 @@ void TestSetUnknownCleanNulls(void)
 
 	//CleanNullsIfNecessary happens here.
 	cSet.Remove(apUnknowns[29]);
-	AssertInt(20, cSet.NumElements());
-	AssertInt(20, cSet.UnsafeNumElements());
+	AssertSize(20, cSet.NumElements());
+	AssertSize(20, cSet.UnsafeNumElements());
 
 	AssertPointer(apUnknowns[1], cSet.UnsafeGet(0));
 	AssertPointer(apUnknowns[4], cSet.UnsafeGet(1));
@@ -289,12 +289,12 @@ void TestSetUnknownCleanNulls(void)
 		cSet.Iterate(&sSetIter, NULL);
 	}
 
-	AssertInt(1, cSet.NumElements());
+	AssertSize(1, cSet.NumElements());
 
 	bResult = cSet.Remove(apUnknowns[31]);
 	AssertTrue(bResult);
 
-	AssertInt(0, cSet.NumElements());
+	AssertSize(0, cSet.NumElements());
 
 	cSet.Kill();
 
@@ -328,7 +328,7 @@ void TestSetUnknownSorted(size uiNumElements)
 	}
 
 	iNum = cSet.NumElements();
-	AssertInt(uiNumElements, iNum);
+	AssertSize(uiNumElements, iNum);
 
 	AssertTrue(cSet.IsSorted());
 	AssertTrue(cSet.CalculateIsSorted());
@@ -355,7 +355,7 @@ void TestSetUnknownSorted(size uiNumElements)
 	}
 
 	iNum = cSet.NumElements();
-	AssertInt(uiNumElements / 2, iNum);
+	AssertSize(uiNumElements / 2, iNum);
 
 	AssertTrue(cSet.IsSorted());
 	AssertTrue(cSet.CalculateIsSorted());

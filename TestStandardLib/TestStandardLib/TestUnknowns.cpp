@@ -23,21 +23,25 @@ void TestUnknownListAddKill(void)
 	cUnknowns.Init(cLifeMalloc, "Test1", &gcConstructors);
 	pcMemory = pcMalloc->GetMemory();
 	AssertNotNull(pcMemory);
-	AssertInt(0, pcMemory->NumElements());
+	AssertSize(0, pcMemory->NumElements());
 	AssertTrue(pcMemory->ByteSize() <= 64);
 
 	pcTest = cUnknowns.Add<CTestUnknown>();
 	AssertPointer(&cUnknowns, pcTest->GetUnknownsThisIn());
 	pcFreeList = pcMemory->GetFreeList(sizeof(CTestUnknown));
-	AssertInt(1, pcFreeList->NumElements());
-	AssertInt(1, pcMemory->NumElements());
-	AssertInt(435, pcMemory->ByteSize());
+	AssertSize(1, pcFreeList->NumElements());
+	AssertSize(1, pcMemory->NumElements());
+#ifdef BUILD_64
+	AssertSize(859, pcMemory->ByteSize());
+#else
+	AssertSize(435, pcMemory->ByteSize());
+#endif // BUILD_64
 
 	pcTest->Init();
 	pcTest->Kill();
 	pcFreeList = pcMemory->GetFreeList(sizeof(CTestUnknown));
 	AssertNull(pcFreeList);
-	AssertInt(0, pcMemory->NumElements());
+	AssertSize(0, pcMemory->NumElements());
 	AssertTrue(pcMemory->ByteSize() <= 64);
 
 	cUnknowns.Kill();
@@ -163,18 +167,18 @@ void TestUnknownListRemoveDuringIteration(void)
 	pcTest = cUnknowns.Iterate(&sIter);
 	AssertInt(3, pcTest->miID);
 	cUnknowns.RemoveDuringIteration(&sIter);
-	AssertInt(2, cUnknowns.GetIterableListsHeadNumElements());
-	AssertInt(2, cUnknowns.NumElements());
+	AssertSize(2, cUnknowns.GetIterableListsHeadNumElements());
+	AssertSize(2, cUnknowns.NumElements());
 
 	pcTest = cUnknowns.Iterate(&sIter);
 	AssertInt(4, pcTest->miID);
 	cUnknowns.RemoveDuringIteration(&sIter);
-	AssertInt(1, cUnknowns.GetIterableListsHeadNumElements());
-	AssertInt(1, cUnknowns.NumElements());
+	AssertSize(1, cUnknowns.GetIterableListsHeadNumElements());
+	AssertSize(1, cUnknowns.NumElements());
 
 	pcTest = cUnknowns.Iterate(&sIter);
 	cUnknowns.RemoveDuringIteration(&sIter);
-	AssertInt(0, cUnknowns.GetIterableListsHeadNumElements());
+	AssertSize(0, cUnknowns.GetIterableListsHeadNumElements());
 
 	cUnknowns.Kill();
 

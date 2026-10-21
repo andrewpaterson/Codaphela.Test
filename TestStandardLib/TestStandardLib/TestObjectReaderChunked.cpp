@@ -208,7 +208,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertPointer(&cA1, &cBase);
 	
 	AssertNotNull(&cA1->mcArray);
-	AssertInt(6, cA1->mcArray->NumElements())
+	AssertSize(6, cA1->mcArray->NumElements())
 	sz2 = cA1->mcArray->Get(0);
 	AssertString("Ye!", sz2->Text());
 	cTemp = cA1->mcArray->Get(1);
@@ -237,7 +237,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertPointer(&cA2, &cA1->mcArray->Get(5));
 
 	AssertNotNull(&cA2->mcArray);
-	AssertInt(4, cA2->mcArray->NumElements());
+	AssertSize(4, cA2->mcArray->NumElements());
 	AssertPointer(&cI3, &cA2->mcArray->Get(0));
 	AssertPointer(&cNS2, &cA2->mcArray->Get(1));
 	AssertPointer(&cNS3, &cNS2->mpAnother);

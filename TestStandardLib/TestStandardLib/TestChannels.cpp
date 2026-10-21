@@ -33,7 +33,7 @@ void TestChannelsStuff(void)
 	cChannels.SetSize(4);
 	cChannels.AddChannel(0, PT_uint8);
 	cChannels.EndChange();
-	AssertInt(4*1, cChannels.GetByteSize());
+	AssertSize(4*1, cChannels.GetByteSize());
 
 	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 0, PT_uint8);
 	pcAccessor->Set(0, &(c = 'A'));
@@ -46,7 +46,7 @@ void TestChannelsStuff(void)
 	cChannels.BeginChange();
 	cChannels.AddChannel(1, 2, PT_uint8);
 	cChannels.EndChange();
-	AssertInt(4*3, cChannels.GetByteSize());
+	AssertSize(4*3, cChannels.GetByteSize());
 
 	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 1, PT_uint8);
 	pcAccessor->Set(0, &(c = 'B'));
@@ -67,7 +67,7 @@ void TestChannelsStuff(void)
 	cChannels.BeginChange();
 	cChannels.AddChannel(3, PT_uint8);
 	cChannels.EndChange();
-	AssertInt(4*4, cChannels.GetByteSize());
+	AssertSize(4*4, cChannels.GetByteSize());
 
 	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 0, PT_uint8);
 
@@ -106,8 +106,8 @@ void TestChannelsStuff(void)
 	pcAccessor3 = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 100, PT_uint8);
 	AssertNotNull(pcAccessor);
 	AssertNotNull(pcAccessor2);
-	AssertInt(4, cChannels.GetSize());
-	AssertInt(4*3, cChannels.GetByteSize());
+	AssertSize(4, cChannels.GetSize());
+	AssertSize(4*3, cChannels.GetByteSize());
 	AssertChar('S', *((char*)pcAccessor->Get(1)));
 	AssertChar('V', *((char*)pcAccessor2->Get(3)));
 	AssertChar('R', *((char*)pcAccessor3->Get(3)));
@@ -159,7 +159,7 @@ void TestChannelsLoad(void)
 		pcChannels->AddChannel(1, PT_uint8);
 		pcChannels->AddChannel(2, PT_uint8);
 		pcChannels->EndChange();
-		AssertInt(8 * 32 * 3, pcChannels->GetByteSize());
+		AssertSize(8 * 32 * 3, pcChannels->GetByteSize());
 
 		pcAccessorR = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 0);
 		pcAccessorG = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcChannels, 1);
@@ -357,7 +357,7 @@ void TestChannelsCopier16bitTo8bit(void)
 	pcSource->SetSize(4);
 	pcSource->AddChannel(0, PT_uint16);
 	pcSource->EndChange();
-	AssertInt(4 * 2, pcSource->GetByteSize());
+	AssertSize(4 * 2, pcSource->GetByteSize());
 
 	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcSource, 0);
 	ui16 = 0xfeff; pcAccessor->Set(0, &ui16);
@@ -378,7 +378,7 @@ void TestChannelsCopier16bitTo8bit(void)
 	pcDest->SetSize(4);
 	pcDest->AddChannel(0, PT_uint8);
 	pcDest->EndChange();
-	AssertInt(4 * 1, pcDest->GetByteSize());
+	AssertSize(4 * 1, pcDest->GetByteSize());
 
 	CChannelsCopier	cCopier;
 
@@ -424,7 +424,7 @@ void TestChannelsCopier24bitTo8bit(void)
 	pcSource->AddChannel(1, PT_uint8);
 	pcSource->AddChannel(2, PT_uint8);
 	pcSource->EndChange();
-	AssertInt(4 * 3, pcSource->GetByteSize());
+	AssertSize(4 * 3, pcSource->GetByteSize());
 
 	pcAccessor0 = CChannelsAccessorCreator::CreateSingleChannelAccessor(&pcSource, 0);
 	ui8 = 0xfe; pcAccessor0->Set(0, &ui8);
@@ -455,7 +455,7 @@ void TestChannelsCopier24bitTo8bit(void)
 	pcDest->AddChannel(1, PT_tribble);
 	pcDest->AddChannel(0, PT_tribble);
 	pcDest->EndChange();
-	AssertInt(4 * 1, pcDest->GetByteSize());
+	AssertSize(4 * 1, pcDest->GetByteSize());
 
 	CChannelsCopier	cCopier;
 

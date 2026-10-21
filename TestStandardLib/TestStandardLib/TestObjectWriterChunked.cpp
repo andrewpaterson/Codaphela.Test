@@ -65,7 +65,7 @@ void TestChunkFileObjectWriterSerialised(void)
 
 		cWriter.Init("Output" _FS_ "ChunkFileObjectWriter" _FS_ "Test", "Base" _FS_ "Level 1", "ChunkFile");
 
-		AssertInt(3, pcObject1->mcArray->NumElements());
+		AssertSize(3, pcObject1->mcArray->NumElements());
 		AssertLong(3, pcObject1->mcArray->Get(0).GetIndex());
 		AssertLong(4, pcObject1->mcArray->Get(1).GetIndex());
 		AssertLong(5, pcObject1->mcArray->Get(2).GetIndex());

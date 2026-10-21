@@ -30,7 +30,7 @@ void TestKillSelfPointer1(void)
 	pObject->mpNamedTest1 = pObject;
 
 	pRoot->Add(pObject);
-	AssertInt(1, pRoot->NumObjects());
+	AssertSize(1, pRoot->NumObjects());
 
 	AssertLong(3, gcObjects.NumMemoryIndexes());
 
@@ -40,7 +40,7 @@ void TestKillSelfPointer1(void)
 	//pObject should be destroyed here and not cause a stack overflow.
 	bResult = pRoot->Remove(pvObject);
 	AssertTrue(bResult);
-	AssertInt(0, pRoot->NumObjects());
+	AssertSize(0, pRoot->NumObjects());
 
 	AssertLong(2, gcObjects.NumMemoryIndexes());
 
@@ -69,14 +69,14 @@ void TestKillSelfPointer2(void)
 	pObject->mpNamedTest1 = pObject;
 
 	pRoot->Add(pObject);
-	AssertInt(1, pRoot->NumObjects());
+	AssertSize(1, pRoot->NumObjects());
 
 	AssertLong(3, gcObjects.NumMemoryIndexes());
 
 	//pObject should not be destroyed here and not cause a stack overflow.
 	bResult = pRoot->Remove(pObject);
 	AssertTrue(bResult);
-	AssertInt(0, pRoot->NumObjects());
+	AssertSize(0, pRoot->NumObjects());
 	AssertLong(3, gcObjects.NumMemoryIndexes());
 
 	//If there were cyclic pointers then the object cannot tell it should be freed when a stack pointer is removed.
@@ -208,8 +208,8 @@ void TestKillBestPractice(void)
 	AssertInt(4, pMissile1.GetDistToRoot());
 	AssertInt(4, pMissile2.GetDistToRoot());
 	AssertInt(4, pMissile3.GetDistToRoot());
-	AssertInt(2, pRedJetMaverick->NumHeapFroms());
-	AssertInt(3, pHarrier->GetMissiles()->NumElements());
+	AssertSize(2, pRedJetMaverick->NumHeapFroms());
+	AssertSize(3, pHarrier->GetMissiles()->NumElements());
 
 	OIndex oiMissile3 = pMissile3->GetIndex();
 	AssertLong(12LL, oiMissile3);
@@ -231,8 +231,8 @@ void TestKillBestPractice(void)
 	AssertInt(4, pRedJetMaverick.GetDistToRoot());
 	AssertInt(4, pMissile1.GetDistToRoot());
 	AssertInt(4, pMissile2.GetDistToRoot());
-	AssertInt(1, pRedJetMaverick->NumHeapFroms());
-	AssertInt(2, pHarrier->GetMissiles()->NumElements());
+	AssertSize(1, pRedJetMaverick->NumHeapFroms());
+	AssertSize(2, pHarrier->GetMissiles()->NumElements());
 
 	AssertString("Kill not called", sGooseBefore.cPicture.mszPretenedImAPicture);
 	AssertString("Kill not called", sGooseAfter.cPicture.mszPretenedImAPicture);
@@ -240,10 +240,10 @@ void TestKillBestPractice(void)
 	pRedJetGoose->Kill();
 	AssertString("012345678901234", sGooseBefore.cPicture.mszPretenedImAPicture);
 	AssertString("Alas I am Dead!", sGooseAfter.cPicture.mszPretenedImAPicture);
-	AssertInt(1, pMissile1->NumPointerTos());
+	AssertSize(1, pMissile1->NumPointerTos());
 	CPointer pTarget1(pMissile1->GetTarget());
 	AssertTrue(pTarget1.IsNull());
-	AssertInt(1, pMissile2->NumPointerTos());
+	AssertSize(1, pMissile2->NumPointerTos());
 	CPointer pTarget2 = pMissile2->GetTarget();
 	AssertTrue(pTarget2.IsNull());
 	AssertLong(10, gcObjects.NumMemoryIndexes());
@@ -259,7 +259,7 @@ void TestKillBestPractice(void)
 
 	pMissile1->Kill();
 	pMissile2->Kill();
-	AssertInt(0, pHarrier->GetMissiles()->NumElements());
+	AssertSize(0, pHarrier->GetMissiles()->NumElements());
 	AssertTrue(pMissile1.IsNull());
 	AssertTrue(pMissile2.IsNull());
 

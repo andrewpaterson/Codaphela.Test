@@ -137,7 +137,7 @@ void TestObjectConverterDragonExistingHollows(void)
 		AssertTrue(pcObjectSource->IsMultiSource());
 
 		pcObjectMultipleSource = (CObjectSourceChunked*)pcObjectSource;
-		AssertInt(4, pcObjectMultipleSource->NumNames());
+		AssertSize(4, pcObjectMultipleSource->NumNames());
 		AssertString("Diamond End", pcObjectMultipleSource->GetName(0));
 		AssertString("Double Start", pcObjectMultipleSource->GetName(1));
 		AssertString("NamedString 1", pcObjectMultipleSource->GetName(2));
@@ -236,7 +236,7 @@ void TestObjectConverterText(void)
 	{
 		CObjectConverterText	cTextConverter;
 		char					szTextInFile[] = { "This is text\nin a file.\n" };
-		int						iTextLen;
+		size					iTextLen;
 		CMemoryFile				cMemoryFile;
 		CObjectSource* pcObjectSource;
 		CPointer				pcObject;

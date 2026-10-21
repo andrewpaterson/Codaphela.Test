@@ -28,7 +28,11 @@ void TestNamedObjectAddConstructors(void)
 //////////////////////////////////////////////////////////////////////////
 void TestNamedObjectSize(void)
 {
-	AssertInt(160, sizeof(CObject));
+#ifdef BUILD_64
+	AssertSize(288, sizeof(CObject));
+#else
+	AssertSize(160, sizeof(CObject));
+#endif // BUILD_64
 }
 
 
@@ -128,7 +132,7 @@ void TestNamedObjectName(void)
 	AssertFalse(pSet.IsHollow());
 	AssertInt(1, pSet.GetDistToRoot());
 
-	AssertInt(1, pSet->NumElements());
+	AssertSize(1, pSet->NumElements());
 	pResult3 = pSet->UnsafeGet(0);
 	AssertTrue(pResult3.IsNotNull());
 	AssertLong(oiNamed3, pResult3.GetIndex());

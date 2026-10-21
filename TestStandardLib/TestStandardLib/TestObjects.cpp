@@ -111,7 +111,7 @@ void TestObjectsObjectSave(void)
 	CIndexTreeEvictionStrategyRandom	cEvictionStrategy;
 	char								szDirectory[] = "Output" _FS_ "ObjectSave";
 	CCodabase*							pcDatabase;
-	int									iSerialisedSize;
+	size								iSerialisedSize;
 	CSequence*							pcSequence;
 
 	cFileUtil.RemoveDir(szDirectory);
@@ -137,7 +137,7 @@ void TestObjectsObjectSave(void)
 	AssertLong(9, gcObjects.NumMemoryIndexes());
 	AssertLong(6, gcObjects.NumMemoryNames());
 	iSerialisedSize = pDouble->SerialisedSize();
-	AssertInt(174, pDouble->SerialisedSize());
+	AssertSize(174, pDouble->SerialisedSize());
 	AssertLong(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLong(1, pcDatabase->NumDataCached());
 	Pass();
@@ -145,7 +145,7 @@ void TestObjectsObjectSave(void)
 	AssertTrue(pDouble.BaseObject()->Flush());
 	AssertLong(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
-	AssertInt(174, iSerialisedSize);
+	AssertSize(174, iSerialisedSize);
 	AssertLong(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLong(1, pcDatabase->NumDataCached());
 	
@@ -155,18 +155,18 @@ void TestObjectsObjectSave(void)
 	AssertTrue(pDouble.BaseObject()->Flush());
 	AssertLong(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
-	AssertInt(188, iSerialisedSize);
+	AssertSize(188, iSerialisedSize);
 	AssertLong(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLong(1, pcDatabase->NumDataCached());
 
 	pDouble->mszString = OMalloc<CString>("Different Object");
 
 	iSerialisedSize = pDouble->SerialisedSize();
-	AssertInt(188, iSerialisedSize);
+	AssertSize(188, iSerialisedSize);
 	AssertTrue(pDouble.BaseObject()->Flush());
 	AssertLong(1, pcDatabase->NumIndices());
 	iSerialisedSize = pDouble->SerialisedSize();
-	AssertInt(188, iSerialisedSize);
+	AssertSize(188, iSerialisedSize);
 	AssertLong(1, pcDatabase->NumDataCached(NamedIndexedHeaderSize(pDouble->GetName(), iSerialisedSize)));
 	AssertLong(1, pcDatabase->NumDataCached());
 
@@ -516,8 +516,8 @@ void TestObjectsObjectKillInArrayInGraph(void)
 	pRoot->Add(cA1);
 	pRoot->Add(cA2);
 
-	AssertInt(1, cA1->NumPointerTos());
-	AssertInt(1, cA2->NumPointerTos());
+	AssertSize(1, cA1->NumPointerTos());
+	AssertSize(1, cA2->NumPointerTos());
 	AssertLong(6, gcObjects.NumMemoryIndexes());
 	pRoot = NULL;
 	cS1 = NULL;
@@ -526,8 +526,8 @@ void TestObjectsObjectKillInArrayInGraph(void)
 	cNS1->Kill();
 	AssertLong(4, gcObjects.NumMemoryIndexes());
 
-	AssertInt(0, cA1->NumPointerTos());
-	AssertInt(0, cA2->NumPointerTos());
+	AssertSize(0, cA1->NumPointerTos());
+	AssertSize(0, cA2->NumPointerTos());
 
 	cA1 = NULL;
 	cA2 = NULL;
