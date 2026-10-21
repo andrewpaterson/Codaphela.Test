@@ -12,7 +12,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestLib", "..\..\CommonLibr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ElectroncisLib", "..\..\CommonLibraries\ElectronicsLib\ElectroncisLib.vcxproj", "{44E72455-232B-4892-8EDD-B7D3DADE8436}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestElectronicsLib", "TestElectronicsLib\TestElectronicsLib.vcxproj", "{9BA313F9-68F2-497D-85A6-39EA5B62003B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestElectronicsLib", "TestElectronicsLib\TestElectronicsLib.vcxproj", "{343F1580-6579-4EC3-BAB7-B71A6E052023}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,12 +54,12 @@ Global
 		{D06D265E-A503-42F8-A93A-A0A1C0B058FF}.Release|Win32.Build.0 = Release|Win32
 		{D06D265E-A503-42F8-A93A-A0A1C0B058FF}.Release|x64.ActiveCfg = Release|x64
 		{D06D265E-A503-42F8-A93A-A0A1C0B058FF}.Release|x64.Build.0 = Release|x64
-		{9BA313F9-68F2-497D-85A6-39EA5B62003B}.Debug|Win32.ActiveCfg = Debug|Win32
-		{9BA313F9-68F2-497D-85A6-39EA5B62003B}.Debug|Win32.Build.0 = Debug|Win32
-		{9BA313F9-68F2-497D-85A6-39EA5B62003B}.Debug|x64.ActiveCfg = Debug|Win32
-		{9BA313F9-68F2-497D-85A6-39EA5B62003B}.Release|Win32.ActiveCfg = Release|Win32
-		{9BA313F9-68F2-497D-85A6-39EA5B62003B}.Release|Win32.Build.0 = Release|Win32
-		{9BA313F9-68F2-497D-85A6-39EA5B62003B}.Release|x64.ActiveCfg = Release|Win32
+		{343F1580-6579-4EC3-BAB7-B71A6E052023}.Debug|Win32.ActiveCfg = Debug|Win32
+		{343F1580-6579-4EC3-BAB7-B71A6E052023}.Debug|Win32.Build.0 = Debug|Win32
+		{343F1580-6579-4EC3-BAB7-B71A6E052023}.Debug|x64.ActiveCfg = Debug|Win32
+		{343F1580-6579-4EC3-BAB7-B71A6E052023}.Release|Win32.ActiveCfg = Release|Win32
+		{343F1580-6579-4EC3-BAB7-B71A6E052023}.Release|Win32.Build.0 = Release|Win32
+		{343F1580-6579-4EC3-BAB7-B71A6E052023}.Release|x64.ActiveCfg = Release|Win32
 		{44E72455-232B-4892-8EDD-B7D3DADE8436}.Debug|Win32.ActiveCfg = Debug|Win32
 		{44E72455-232B-4892-8EDD-B7D3DADE8436}.Debug|Win32.Build.0 = Debug|Win32
 		{44E72455-232B-4892-8EDD-B7D3DADE8436}.Debug|x64.ActiveCfg = Debug|x64

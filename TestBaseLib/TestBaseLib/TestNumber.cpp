@@ -769,6 +769,26 @@ void TestPrivateSubtract(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestNumberDoubleValue(void)
+{
+	CNumber	cNumber;
+
+	AssertDouble(11.344, cNumber.Init("11.344")->DoubleValue(), 6);
+	AssertDouble(-11.344, cNumber.Init("-11.344")->DoubleValue(), 6);
+	AssertDouble(-0.5, cNumber.Init("-0.5")->DoubleValue(), 6);
+	AssertDouble(-1.0, cNumber.Init("-1")->DoubleValue(), 6);
+	AssertDouble(0.0, cNumber.Init("0")->DoubleValue(), 6);
+	AssertDouble(-64.77, cNumber.Init("-64.77")->DoubleValue(), 6);
+	AssertFloat(-2.5f, cNumber.Init("-2.5")->FloatValue(), 4);
+	AssertFloat(-0.25f, cNumber.Init("-0.25")->FloatValue(), 4);
+	AssertFloat(3.75f, cNumber.Init("3.75")->FloatValue(), 4);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestNumber(void)
 {
 	BeginTests();
@@ -777,6 +797,7 @@ void TestNumber(void)
 	NumberInit();
 
 	TestPrivateSubtract();
+	TestNumberDoubleValue();
 	TestInit();
 	TestConstants();
 	TestCopy();

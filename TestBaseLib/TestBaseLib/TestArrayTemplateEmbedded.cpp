@@ -1,4 +1,5 @@
 #include "BaseLib/ArrayTemplateEmbedded.h"
+#include "BaseLib/ArrayTemplateEmbeddedPrimitive.h"
 #include "TestLib/Assert.h"
 #include "ArrayTemplateTestClasses.h"
 
@@ -347,6 +348,89 @@ void TestArrayTemplateEmbeddedChangeChunkSize(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestArrayTemplateEmbeddedPrimitiveSorted(void)
+{
+	CArrayTemplateEmbeddedPrimitive<int, 4>	cArray;
+	CArrayTemplateEmbeddedPrimitive<int, 4>	cOther;
+	CArrayTemplateEmbeddedPrimitive<int, 4>	cBoth;
+
+	cArray.Init();
+	cArray.InsertIntoSorted(5, false);
+	cArray.InsertIntoSorted(1, false);
+	cArray.InsertIntoSorted(4, false);
+	AssertTrue(cArray.IsEmbedded());
+	cArray.InsertIntoSorted(2, false);
+	cArray.InsertIntoSorted(3, false);
+	cArray.InsertIntoSorted(6, false);
+	AssertTrue(cArray.IsArray());
+	AssertSize(6, cArray.NumElements());
+	AssertTrue(cArray.IsSorted());
+	AssertInt(1, cArray.GetValue(0));
+	AssertInt(3, cArray.GetValue(2));
+	AssertInt(6, cArray.GetValue(5));
+
+	AssertTrue(cArray.RemoveFromSorted(4));
+	AssertFalse(cArray.RemoveFromSorted(7));
+	AssertSize(5, cArray.NumElements());
+	AssertInt(5, cArray.GetValue(3));
+
+	cArray.InsertIntoSorted(3, false);
+	AssertSize(6, cArray.NumElements());
+	AssertTrue(cArray.RemoveDuplicatesFromSorted());
+	AssertFalse(cArray.RemoveDuplicatesFromSorted());
+	AssertSize(5, cArray.NumElements());
+	AssertInt(3, cArray.GetValue(2));
+	AssertInt(5, cArray.GetValue(3));
+	cArray.Kill();
+
+	cArray.Init();
+	cArray.Add(9);
+	cArray.Add(3);
+	cArray.Add(7);
+	cArray.BubbleSort();
+	AssertTrue(cArray.IsEmbedded());
+	AssertInt(3, cArray.GetValue(0));
+	AssertInt(9, cArray.GetValue(2));
+	cArray.Add(1);
+	cArray.Add(8);
+	cArray.Add(3);
+	cArray.MakeUnique();
+	AssertTrue(cArray.IsSorted());
+	AssertSize(5, cArray.NumElements());
+	AssertInt(1, cArray.GetValue(0));
+	AssertInt(9, cArray.GetValue(4));
+
+	cOther.Init();
+	cOther.Add(8);
+	cOther.Add(2);
+	cOther.Add(1);
+	cOther.QuickSort();
+	AssertInt(1, cOther.GetValue(0));
+	AssertInt(8, cOther.GetValue(2));
+	cBoth.Init();
+	cBoth.Intersect(&cArray, &cOther);
+	AssertSize(2, cBoth.NumElements());
+	AssertInt(1, cBoth.GetValue(0));
+	AssertInt(8, cBoth.GetValue(1));
+	cBoth.Kill();
+	cOther.Kill();
+	cArray.Kill();
+
+	cArray.Init();
+	cArray.Add(0);
+	cArray.Add(1);
+	cArray.Add(2);
+	cArray.Add(3);
+	cArray.Add(5);
+	AssertSize(3, cArray.FindFinalContiguousInSorted());
+	cArray.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestArrayTemplateEmbedded(void)
 {
 	BeginTests();
@@ -358,6 +442,7 @@ void TestArrayTemplateEmbedded(void)
 	TestArrayTemplateEmbeddedSizeof();
 	TestArrayTemplateEmbeddedAllocationWithVirtualClass();
 	TestArrayTemplateEmbeddedChangeChunkSize();
+	TestArrayTemplateEmbeddedPrimitiveSorted();
 
 	FastFunctionsKill();
 	TestStatistics();

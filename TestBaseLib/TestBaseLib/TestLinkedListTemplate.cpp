@@ -47,6 +47,24 @@ void TestLinkedListTemplateIndexOf(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestLinkedListTemplateByteSize(void)
+{
+	CLinkedListTemplate<int>	cList;
+
+	cList.Init();
+	AssertSize(0, cList.ByteSize());
+	*cList.InsertAfterTail() = 1;
+	*cList.InsertAfterTail() = 2;
+	*cList.InsertAfterTail() = 3;
+	AssertSize(3 * (sizeof(SLLNode) + sizeof(int)), cList.ByteSize());
+	cList.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestLinkedListTemplateWrite(void)
 {
 	CLinkedListTemplate<int64>	cList;
@@ -232,6 +250,7 @@ void TestLinkedListTemplate(void)
 	FastFunctionsInit();
 
 	TestLinkedListTemplateIndexOf();
+	TestLinkedListTemplateByteSize();
 	TestLinkedListTemplateWrite();
 	TestLinkedListTemplateMoveTo();
 

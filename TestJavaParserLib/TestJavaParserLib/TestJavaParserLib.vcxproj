@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{005795B4-42DF-4725-8058-549AF2BBDDAF}</ProjectGuid>
+    <ProjectGuid>{B052A304-A560-4DB2-BA38-C12208D15322}</ProjectGuid>
     <RootNamespace>TestJavaParserLib</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
@@ -240,7 +240,7 @@
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\..\..\CommonLibraries\JavaParserLib\JavaParserLib.vcxproj">
-      <Project>{4d010c1e-4dce-4271-9b1c-87bbf0bc761c}</Project>
+      <Project>{fb452970-4cb4-4b45-b8f0-be391e157adb}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\..\CommonLibraries\StandardLib\StandardLib.vcxproj">
       <Project>{2cfa23fa-6565-4744-8b75-9790b21cc0e5}</Project>

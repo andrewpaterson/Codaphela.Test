@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{9BA313F9-68F2-497D-85A6-39EA5B62003B}</ProjectGuid>
+    <ProjectGuid>{343F1580-6579-4EC3-BAB7-B71A6E052023}</ProjectGuid>
     <RootNamespace>TestElectronicsLib</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
