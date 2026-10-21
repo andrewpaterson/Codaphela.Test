@@ -9,6 +9,7 @@
 #include "ThreadLib/ThreadPool.h"
 #include "ThreadLib/ThreadsDone.h"
 #include "ThreadLib/InterProcessDone.h"
+#include "ThreadLib/InterProcessName.h"
 #include "TestLib/Assert.h"
 #include "SharedMemoryQueueProducerThread.h"
 #include "SharedMemoryQueueConsumerThread.h"
@@ -502,11 +503,87 @@ void TestSharedMemoryQueueMultiProcessForkEarly(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestSharedMemoryQueueLongNames(void)
+{
+	CChars				sz;
+	CChars				szName;
+	CSharedMemoryQueue	acQueue[2];
+	bool				bResult;
+	int					i;
+	int					j;
+	char*				pcData;
+	size_t				uiSize;
+	size_t				uiDataSize;
+
+	//A name that fits is not changed.  A longer one keeps its start and ends
+	//with a hash of all of it; the Java client shortens names the same way.
+	ShortenInterProcessName(&sz, "Local\\SharedMemory:WiredSkunk.1003935-1.1:A", 63);
+	AssertString("Local\\SharedMemory:WiredSkunk.1003935-1.1:A", sz.Text());
+	sz.Kill();
+	ShortenInterProcessName(&sz, "Local\\SharedMemory:WiredSkunkConnectTest1009196.1009196-12.1:B", 59);
+	AssertString("Local\\SharedMemory:WiredSkunkConnectTest10#2e0481ef1ac956c8", sz.Text());
+	sz.Kill();
+	ShortenInterProcessName(&sz, "Local\\SharedMemory:WiredSkunkConnectTest1009196.1009196-12.1:A", 59);
+	AssertString("Local\\SharedMemory:WiredSkunkConnectTest10#2e0484ef1ac95be1", sz.Text());
+	sz.Kill();
+
+	//Two queues whose names are too long and only differ at the end do not
+	//share their memory, however many times it grows.
+	for (i = 0; i < 2; i++)
+	{
+		szName.Init("TestSharedMemoryQueueLongNames");
+		szName.Append('x', 50);
+		szName.Append(i == 0 ? ":A" : ":B");
+		bResult = acQueue[i].Init(szName.Text(), 0);
+		szName.Kill();
+		AssertTrue(bResult);
+	}
+
+	//Each element is twice the size of the one before so the memory is
+	//replaced by a larger file many times (more than ten).
+	pcData = (char*)malloc(1 MB);
+	for (j = 0; j < 16; j++)
+	{
+		uiSize = (size_t)32 << j;
+		for (i = 0; i < 2; i++)
+		{
+			memset(pcData, 'A' + i, uiSize);
+			bResult = acQueue[i].Push(pcData, uiSize);
+			AssertTrue(bResult);
+		}
+	}
+	for (j = 0; j < 16; j++)
+	{
+		uiSize = (size_t)32 << j;
+		for (i = 0; i < 2; i++)
+		{
+			bResult = acQueue[i].Pop(pcData, &uiDataSize, 1 MB);
+			AssertTrue(bResult);
+			AssertInt((int)uiSize, (int)uiDataSize);
+			AssertChar('A' + i, pcData[0]);
+			AssertChar('A' + i, pcData[uiDataSize - 1]);
+		}
+	}
+	free(pcData);
+
+	for (i = 0; i < 2; i++)
+	{
+		AssertTrue(acQueue[i].IsEmpty());
+		acQueue[i].Kill();
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestSharedMemoryQueue(void)
 {
 	BeginTests();
 
 	TestSharedMemoryQueueBasic();
+	TestSharedMemoryQueueLongNames();
 	TestSharedMemoryQueueOne();
 	TestSharedMemoryQueueMultiThread();
 	TestSharedMemoryQueueMultiThreadThisProducer();

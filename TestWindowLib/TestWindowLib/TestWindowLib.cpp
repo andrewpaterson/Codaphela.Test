@@ -17,6 +17,9 @@ void TestBorderLayoutHelper(void);
 void TestCanvas(void);
 void TestLabel(void);
 void TestComponentInput(void);
+void TestComponentInputDevices(void);
+void TestComponentInputWinRaw(void);
+void TestButton(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -48,6 +51,9 @@ int __cdecl main(void)
 	TestCanvas();
 	TestLabel();
 	TestComponentInput();
+	TestComponentInputDevices();
+	TestComponentInputWinRaw();
+	TestButton();
 
 	cFileUtil.RemoveDir("Output");
 

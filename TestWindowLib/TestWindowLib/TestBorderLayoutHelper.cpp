@@ -4,10 +4,9 @@
 #include "StandardLib/Objects.h"
 #include "WindowLib/Window.h"
 #include "WindowLib/BorderLayoutHelper.h"
-#include "SupportLib/ImageAccessorCreator.h"
-#include "SupportLib/ImageColourConverter.h"
 #include "WindowLib/ImageCanvasDraw.h"
 #include "WindowLib/ClearCanvasDraw.h"
+#include "WindowLib/ButtonImages.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/AssertGeometric.h"
 #include "TestLib/AssertFile.h"
@@ -16,6 +15,9 @@
 #include "DataTestRefWindow.h"
 #include "DarkForest.h"
 #include "SpaceCrusade.h"
+
+
+Ptr<CButtonImages> ReadBlueButtonImages(CColourFormatHelper* pcFormat);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -200,51 +202,6 @@ void TestBorderLayoutHelperAlignment(void)
 }
 
 
-Ptr<CImageCel> CreateBlueButtonCel(Ptr<CImage> pStrip, int iTile, int iQuarterTurns)
-{
-	Ptr<CImage>		pTile;
-	CImageAccessor*	pcSource;
-	CImageAccessor*	pcDest;
-	int				x;
-	int				y;
-	int				iTop;
-
-	//The strip is eight 8 x 8 tiles from the top down: the top, right, bottom and left edges then the top left, top right,
-	//bottom right and bottom left corners.  Every edge is drawn with its outside along its top so the right, bottom and
-	//left edges are turned clockwise by one, two and three quarters to put their outsides on the outside of the button.
-	iTop = iTile * 8;
-	if (iQuarterTurns == 0)
-	{
-		return OMalloc<CImageCel>(pStrip, 0, iTop, 8, iTop + 8);
-	}
-
-	pTile = OMalloc<CImage>(8, 8, pStrip);
-	pcSource = CImageAccessorCreator::Create(&pStrip);
-	pcDest = CImageAccessorCreator::Create(&pTile);
-	for (y = 0; y < 8; y++)
-	{
-		for (x = 0; x < 8; x++)
-		{
-			if (iQuarterTurns == 1)
-			{
-				pcDest->Set(x, y, pcSource->Get(y, iTop + 7 - x));
-			}
-			else if (iQuarterTurns == 2)
-			{
-				pcDest->Set(x, y, pcSource->Get(7 - x, iTop + 7 - y));
-			}
-			else
-			{
-				pcDest->Set(x, y, pcSource->Get(7 - y, iTop + x));
-			}
-		}
-	}
-	pcSource->Kill();
-	pcDest->Kill();
-	return OMalloc<CImageCel>(pTile);
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -263,31 +220,27 @@ void AddBlueButtonPiece(CBorderLayoutHelper* pcBorder, Ptr<CWindow> pWindow, Ptr
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CCanvas> CreateBlueButton(CBorderLayoutHelper* pcBorder, Ptr<CWindow> pWindow, char* szFilename, CColourFormatHelper* pcFormat)
+Ptr<CCanvas> CreateBlueButton(CBorderLayoutHelper* pcBorder, Ptr<CWindow> pWindow, Ptr<CButtonImages> pImages, EButtonState eState)
 {
-	Ptr<CImage>			pStrip;
 	Ptr<CGridContainer>	pGrid;
 	Ptr<CCanvas>		pFace;
 
 	//Like the old WindowLib's label: 8 x 8 corners, 8 pixel edges stretched along the sides and a 100 x 24 face filled
 	//with the colour the tiles fade into.  Returns the face.
-	pStrip = ReadSpaceImage("BlueButton", szFilename);
-	pStrip = CImageColourConverter::ConvertColour(pStrip, pcFormat->meOrder);
-
 	pcBorder->Init(pWindow);
 	pGrid = pcBorder->GetContainer();
 	pGrid->SetDesiredSize(116, 40);
 
-	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(CreateBlueButtonCel(pStrip, 4, 0)), BLC_TopLeft, -1, -1);
-	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(CreateBlueButtonCel(pStrip, 0, 0), true), BLC_Top, -1, 8);
-	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(CreateBlueButtonCel(pStrip, 5, 0)), BLC_TopRight, -1, -1);
-	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(CreateBlueButtonCel(pStrip, 3, 3), true), BLC_Left, 8, -1);
-	pFace = OMalloc<CCanvas>(pWindow, OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)115, 151, 255)));
+	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(pImages->GetCel(eState, BBP_TopLeft)), BLC_TopLeft, -1, -1);
+	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(pImages->GetCel(eState, BBP_Top), true), BLC_Top, -1, 8);
+	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(pImages->GetCel(eState, BBP_TopRight)), BLC_TopRight, -1, -1);
+	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(pImages->GetCel(eState, BBP_Left), true), BLC_Left, 8, -1);
+	pFace = OMalloc<CCanvas>(pWindow, OMalloc<CClearCanvasDraw>(pImages->GetFaceColour()));
 	AssertTrue(pcBorder->AddComponent(pFace, BLC_Center));
-	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(CreateBlueButtonCel(pStrip, 1, 1), true), BLC_Right, 8, -1);
-	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(CreateBlueButtonCel(pStrip, 7, 0)), BLC_BottomLeft, -1, -1);
-	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(CreateBlueButtonCel(pStrip, 2, 2), true), BLC_Bottom, -1, 8);
-	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(CreateBlueButtonCel(pStrip, 6, 0)), BLC_BottomRight, -1, -1);
+	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(pImages->GetCel(eState, BBP_Right), true), BLC_Right, 8, -1);
+	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(pImages->GetCel(eState, BBP_BottomLeft)), BLC_BottomLeft, -1, -1);
+	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(pImages->GetCel(eState, BBP_Bottom), true), BLC_Bottom, -1, 8);
+	AddBlueButtonPiece(pcBorder, pWindow, OMalloc<CImageCanvasDraw>(pImages->GetCel(eState, BBP_BottomRight)), BLC_BottomRight, -1, -1);
 	return pFace;
 }
 
@@ -319,19 +272,20 @@ void TestBorderLayoutHelperBlueButtons(void)
 		SInt32Vec2				sVec;
 		CPointer				pNull;
 		size					i;
-		char*					aszStates[4] = { (char*)"BlueBorderNormal.png", (char*)"BlueBorderMouseOver.png", (char*)"BlueBorderSelected.png", (char*)"BlueBorderPushed.png" };
+		Ptr<CButtonImages>		pImages;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 132, 184, szDirectory);
 		cTick.Init(&cData, 1);
 		pTestWindow = OMalloc<CWindow>("Blue Buttons", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
 		pTestWindow->GetColourFormat(&cHelper);
+		pImages = ReadBlueButtonImages(&cHelper);
 
 		//One button for each state, each centred in a 132 x 46 row.
 		pColumn = OMalloc<CGridContainer>(pTestWindow);
 		pTestWindow->SetContainer(pColumn);
 		for (i = 0; i < 4; i++)
 		{
-			apFaces[i] = CreateBlueButton(&acBorders[i], pTestWindow, aszStates[i], &cHelper);
+			apFaces[i] = CreateBlueButton(&acBorders[i], pTestWindow, pImages, (EButtonState)i);
 			pColumn->AddComponent(acBorders[i].GetContainer(), 0, (int)i, 1, 1, 1, 1);
 		}
 
@@ -354,6 +308,7 @@ void TestBorderLayoutHelperBlueButtons(void)
 
 		pButton = NULL;
 		pColumn = NULL;
+		pImages = NULL;
 		pTestWindow = NULL;
 
 		szExpectedDirectory.Init(szDirectory);

@@ -25,6 +25,18 @@ public:
 	void	MovedOutof(void) override;
 
 	void	Up(void) override;
+	void	Left(void) override;
+	void	WordLeft(void) override;
+	void	End(void) override;
+	void	LineUp(void) override;
+	void	LineDown(void) override;
+	void	SelectUp(void) override;
+	void	SelectAll(void) override;
+	void	Tab(bool bInsert) override;
+	void	BackTab(void) override;
+	void	Enter(void) override;
+	void	EndEnter(void) override;
+	void	Copy(CChars* pszDest) override;
 	void	Printable(char c, bool bInsert) override;
 	void	Space(bool bInsert) override;
 	void	Paste(char* szSource) override;

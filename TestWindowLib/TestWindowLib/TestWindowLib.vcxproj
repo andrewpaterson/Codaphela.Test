@@ -195,7 +195,10 @@
     <ClCompile Include="TestCanvas.cpp" />
     <ClCompile Include="TestFillContainer.cpp" />
     <ClCompile Include="TestLabel.cpp" />
+    <ClCompile Include="TestButton.cpp" />
     <ClCompile Include="TestComponentInput.cpp" />
+    <ClCompile Include="TestComponentInputDevices.cpp" />
+    <ClCompile Include="TestComponentInputWinRaw.cpp" />
     <ClCompile Include="InputTestComponent.cpp" />
     <ClCompile Include="TestGridContainer.cpp" />
     <ClCompile Include="TestBorderLayoutHelper.cpp" />
@@ -206,6 +209,10 @@
     <ClCompile Include="TickTestRefWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\CommonLibraries\InputLib\InputLib.vcxproj">
+      <Project>{2f64aa34-f1cc-43fe-90ee-90e66824ee55}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\CommonLibraries\BaseLib\BaseLib.vcxproj">
       <Project>{e25d2dac-0e80-42b2-8fa7-99b837cf7588}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

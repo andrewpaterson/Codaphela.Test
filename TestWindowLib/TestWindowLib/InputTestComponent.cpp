@@ -98,6 +98,18 @@ void CInputTestComponent::FocusLost(void) { Log("Lost"); }
 void CInputTestComponent::MovedInto(void) { Log("Into"); }
 void CInputTestComponent::MovedOutof(void) { Log("Outof"); }
 void CInputTestComponent::Up(void) { Log("Up"); }
+void CInputTestComponent::Left(void) { Log("Left"); }
+void CInputTestComponent::WordLeft(void) { Log("WordLeft"); }
+void CInputTestComponent::End(void) { Log("End"); }
+void CInputTestComponent::LineUp(void) { Log("LineUp"); }
+void CInputTestComponent::LineDown(void) { Log("LineDown"); }
+void CInputTestComponent::SelectUp(void) { Log("SelectUp"); }
+void CInputTestComponent::SelectAll(void) { Log("SelectAll"); }
+void CInputTestComponent::Tab(bool bInsert) { Log(bInsert ? "Tab(Insert)" : "Tab(Overwrite)"); }
+void CInputTestComponent::BackTab(void) { Log("BackTab"); }
+void CInputTestComponent::Enter(void) { Log("Enter"); }
+void CInputTestComponent::EndEnter(void) { Log("EndEnter"); }
+void CInputTestComponent::Copy(CChars* pszDest) { Log("Copy"); }
 void CInputTestComponent::ActivateComponent(int x, int y) { Log("Activate", x, y); }
 void CInputTestComponent::ExecuteComponent(int x, int y) { Log("Execute", x, y); }
 void CInputTestComponent::ContextMenu(int x, int y) { Log("ContextMenu", x, y); }

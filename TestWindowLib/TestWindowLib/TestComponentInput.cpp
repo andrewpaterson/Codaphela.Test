@@ -283,11 +283,21 @@ void TestComponentInputActivation(void)
 		pTestWindow->InputCommand(CIC_Up, true);
 		AssertLog("B:Up;");
 
+		//A press outside the window, on its title bar say, isn't for any component.
 		pTestWindow->PointerLeft();
 		AssertLog("A:Outof;");
 		AssertFalse(pFocus->IsPointerIn());
 		pTestWindow->InputCommand(CIC_ActivateComponent, true);
-		AssertLog("B:Lost;");
+		pTestWindow->InputCommand(CIC_StartDragSelect, true);
+		AssertLog("");
+		AssertTrue(pFocus->GetFocussedComponent() == pB);
+
+		//While the mouse is captured the pointer can be outside the window.
+		pTestWindow->PointerMoved(10, 32);
+		pTestWindow->InputCommand(CIC_ContextMenu, true);
+		AssertLog("");
+		pTestWindow->InputCommand(CIC_Up, true);
+		AssertLog("B:Up;");
 
 		pTestWindow = NULL;
 		pGrid = NULL;

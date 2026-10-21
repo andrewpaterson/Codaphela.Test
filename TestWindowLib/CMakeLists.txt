@@ -1,5 +1,5 @@
 # Linux build of TestWindowLib (BaseLib + TestLib + StandardLib + SupportLib +
-# WindowLib + WinRefLib + TestWindowLib).
+# InputLib + WindowLib + WinRefLib + TestWindowLib).
 #
 # BaseLib is 32-bit only, so everything is built with -m32 (needs g++-multilib).
 #
@@ -33,6 +33,7 @@ set(BASELIB_DIR "${COMMON_DIR}/BaseLib")
 set(TESTLIB_DIR "${COMMON_DIR}/TestLib")
 set(STANDARDLIB_DIR "${COMMON_DIR}/StandardLib")
 set(SUPPORTLIB_DIR "${COMMON_DIR}/SupportLib")
+set(INPUTLIB_DIR "${COMMON_DIR}/InputLib")
 set(WINDOWLIB_DIR "${COMMON_DIR}/WindowLib")
 set(WINREFLIB_DIR "${COMMON_DIR}/WinRefLib")
 set(TESTWINDOWLIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/TestWindowLib")
@@ -87,6 +88,8 @@ vcxproj_sources(TESTLIB_SOURCES "${TESTLIB_DIR}/TestLib.vcxproj")
 vcxproj_sources(STANDARDLIB_SOURCES "${STANDARDLIB_DIR}/StandardLib.vcxproj")
 
 vcxproj_sources(SUPPORTLIB_SOURCES "${SUPPORTLIB_DIR}/SupportLib.vcxproj")
+
+vcxproj_sources(INPUTLIB_SOURCES "${INPUTLIB_DIR}/InputLib.vcxproj")
 
 vcxproj_sources(WINDOWLIB_SOURCES "${WINDOWLIB_DIR}/WindowLib.vcxproj")
 
@@ -150,14 +153,17 @@ target_compile_definitions(StandardLib PRIVATE $<$<CONFIG:Debug>:DEBUG_POINTER>)
 add_library(SupportLib STATIC ${SUPPORTLIB_SOURCES})
 target_link_libraries(SupportLib PUBLIC StandardLib BaseLib)
 
+add_library(InputLib STATIC ${INPUTLIB_SOURCES})
+target_link_libraries(InputLib PUBLIC StandardLib BaseLib)
+
 add_library(WindowLib STATIC ${WINDOWLIB_SOURCES})
-target_link_libraries(WindowLib PUBLIC SupportLib StandardLib BaseLib)
+target_link_libraries(WindowLib PUBLIC InputLib SupportLib StandardLib BaseLib)
 
 add_library(WinRefLib STATIC ${WINREFLIB_SOURCES})
 target_link_libraries(WinRefLib PUBLIC WindowLib SupportLib StandardLib BaseLib)
 
 add_executable(TestWindowLib ${TESTWINDOWLIB_SOURCES})
-target_link_libraries(TestWindowLib PRIVATE TestLib WinRefLib WindowLib SupportLib StandardLib BaseLib)
+target_link_libraries(TestWindowLib PRIVATE TestLib WinRefLib WindowLib InputLib SupportLib StandardLib BaseLib)
 
 # The tests read their input (Input/ ...) relative to the project directory,
 # as Visual Studio does.
