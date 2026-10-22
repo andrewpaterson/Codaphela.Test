@@ -193,6 +193,9 @@
     <ClCompile Include="TestRectangleLinePacker.cpp">
       <Filter>Source Files\Image\Area</Filter>
     </ClCompile>
+    <ClCompile Include="TestRectangleBestPackerWithRotation.cpp">
+      <Filter>Source Files\Image\Area</Filter>
+    </ClCompile>
     <ClCompile Include="TestMaps.cpp">
       <Filter>Source Files\Map</Filter>
     </ClCompile>

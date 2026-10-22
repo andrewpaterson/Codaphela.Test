@@ -34,6 +34,7 @@ void TestRectangleBestPacker(void);
 void TestRectangle(void);
 void TestRectanglePow2Packer(void);
 void TestRectangleLinePacker(void);
+void TestRectangleBestPackerWithRotation(void);
 void TestImageToR3G3B2A(void);
 void TestImageSFTWriter(void);
 void TestImageCelsFile(void);
@@ -93,6 +94,7 @@ int __cdecl main(void)
 	TestRectangleBestPacker();
 	TestRectanglePow2Packer();
 	TestRectangleLinePacker();
+	TestRectangleBestPackerWithRotation();
 	TestImageModifierStack();
 	TestImageModifierDrawBox();
 	TestImageDraw();
