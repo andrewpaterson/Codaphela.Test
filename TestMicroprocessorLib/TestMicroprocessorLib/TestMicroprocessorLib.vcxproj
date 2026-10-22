@@ -233,6 +233,15 @@
     <ClCompile Include="TestMicroprocessorLib.cpp" />
     <ClCompile Include="TestW65C816Add.cpp" />
     <ClCompile Include="TestW65C816Context.cpp" />
+    <ClCompile Include="TestW65C816Timing.cpp" />
+    <ClCompile Include="TestW65C816Decimal.cpp" />
+    <ClCompile Include="TestW65C816DirectPage.cpp" />
+    <ClCompile Include="TestW65C816BlockMove.cpp" />
+    <ClCompile Include="TestW65C816Interrupt.cpp" />
+    <ClCompile Include="TestW65C816Branch.cpp" />
+    <ClCompile Include="TestW65C816Stack.cpp" />
+    <ClCompile Include="TestW65C816Mode.cpp" />
+    <ClCompile Include="TestW65C816Logic.cpp" />
     <ClCompile Include="TestW65C816Load.cpp" />
     <ClCompile Include="TestW65C816Reset.cpp" />
     <ClCompile Include="TestW65C816Subtract.cpp" />

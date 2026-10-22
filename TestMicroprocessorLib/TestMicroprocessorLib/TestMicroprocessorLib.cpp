@@ -14,6 +14,15 @@ void TestW65C816Add(void);
 void TestW65C816Subtract(void);
 void TestW65C816Arithmetic(void);
 void TestW65C816Load(void);
+void TestW65C816Logic(void);
+void TestW65C816Mode(void);
+void TestW65C816Stack(void);
+void TestW65C816Branch(void);
+void TestW65C816Interrupt(void);
+void TestW65C816BlockMove(void);
+void TestW65C816DirectPage(void);
+void TestW65C816Decimal(void);
+void TestW65C816Timing(void);
 
 
 int __cdecl main(void)
@@ -34,6 +43,15 @@ int __cdecl main(void)
 	TestW65C816Add();
 	TestW65C816Subtract();
 	TestW65C816Load();
+	TestW65C816Logic();
+	TestW65C816Mode();
+	TestW65C816Stack();
+	TestW65C816Branch();
+	TestW65C816Interrupt();
+	TestW65C816BlockMove();
+	TestW65C816DirectPage();
+	TestW65C816Decimal();
+	TestW65C816Timing();
 	TestW65C816Arithmetic();
 
 	UnknownsKill();

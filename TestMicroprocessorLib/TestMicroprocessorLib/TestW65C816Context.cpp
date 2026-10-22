@@ -33,6 +33,7 @@ void CTestW65C816Context::Init(uint32 uiMemorySize, uint8 uiFill)
 	muiStartOfPrevPrevLine = 0;
 	muiLastAddress = 0;
 	muiInstructions = 0;
+	muiMaxInstructions = 0;
 
 	mbPrintAddressBus = false;
 	mbPrintDataBus = false;
@@ -407,6 +408,10 @@ uint64 CTestW65C816Context::Run(CMetaW65C816* pcMPU)
 	for (i = 0;; i++)
 	{
 		bRunning = pcMPU->TickInstruction();
+		if ((muiMaxInstructions != 0) && (i >= muiMaxInstructions))
+		{
+			break;
+		}
 		if (!bRunning)
 		{
 			if (mbEnablePrint)
@@ -588,7 +593,7 @@ void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C816InContext(CTestW65C816Context* pcContext, char* szExpected)
+void TestW65C816RunInContext(CTestW65C816Context* pcContext, char* szExpected)
 {
 	CMetaW65C816	cMPU;
 	uint64			uiInstructions;
@@ -596,6 +601,10 @@ void TestW65C816InContext(CTestW65C816Context* pcContext, char* szExpected)
 	CInstructionFactory::GetInstance()->Init();
 
 	pcContext->SetPrint(true, true, true, false, false, true, true, true, true, false, false, false, true, true);
+	if (pcContext->muiMaxInstructions == 0)
+	{
+		pcContext->muiMaxInstructions = 10000;
+	}
 
 	cMPU.Init(TestW65C81ContextTickHigh, TestW65C81ContextTickLow, pcContext);
 
@@ -605,11 +614,24 @@ void TestW65C816InContext(CTestW65C816Context* pcContext, char* szExpected)
 
 	AssertLong(pcContext->muiInstructions, uiInstructions);
 
-	AssertString(szExpected, pcContext->SequenceText());
-
-	pcContext->Kill();
+	if (szExpected)
+	{
+		AssertString(szExpected, pcContext->SequenceText());
+	}
 
 	CInstructionFactory::GetInstance()->Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestW65C816InContext(CTestW65C816Context* pcContext, char* szExpected)
+{
+	TestW65C816RunInContext(pcContext, szExpected);
+
+	pcContext->Kill();
 }
 
 

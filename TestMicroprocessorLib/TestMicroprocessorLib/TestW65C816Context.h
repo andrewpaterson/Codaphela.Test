@@ -55,6 +55,7 @@ public:
 
 	uint32			muiLastAddress;
 	size			muiInstructions;
+	uint64			muiMaxInstructions;
 	CMetaW65C816*	mpcMPU;
 
 public:
@@ -90,6 +91,7 @@ void TestW65C81ContextTickLow(CMetaW65C816* pcMPU, void* pvContext);
 void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext);
 
 
+void TestW65C816RunInContext(CTestW65C816Context* pcContext, char* szExpected);
 void TestW65C816InContext(CTestW65C816Context* pcContext, char* szExpected);
 
 
