@@ -25,7 +25,7 @@ void CTestRefWindowCanvasDraw::Init(SDataTestRefWindow* pcData)
 //////////////////////////////////////////////////////////////////////////
 bool CTestRefWindowCanvasDraw::Draw(Ptr<CCanvas> pCanvas)
 {
-    CRectangle      cRect;
+    CInt32Rect      cRect;
     ARGB32          sGrey;
     ARGB32          sGreen;
     ARGB32          sBlue;

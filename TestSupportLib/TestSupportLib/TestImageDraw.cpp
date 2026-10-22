@@ -494,7 +494,7 @@ Ptr<CImage> CreateDrawCelSourceImage(int32 iWidth, int32 iHeight)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertDrawCelPixels(Ptr<CImage> pDest, uint32 uiDestStride, Ptr<CImage> pSource, uint32 uiSourceStride, bool bSourceGaps, int32 iDestX, int32 iDestY, CRectangle* pcClip)
+void AssertDrawCelPixels(Ptr<CImage> pDest, uint32 uiDestStride, Ptr<CImage> pSource, uint32 uiSourceStride, bool bSourceGaps, int32 iDestX, int32 iDestY, CInt32Rect* pcClip)
 {
 	uint8*	puiDest;
 	uint8*	puiSource;
@@ -563,7 +563,7 @@ void AssertDrawCelPixels(Ptr<CImage> pDest, uint32 uiDestStride, Ptr<CImage> pSo
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertDrawCel(Ptr<CImage> pDest, Ptr<CImage> pSource, int32 iDestX, int32 iDestY, CRectangle* pcClip)
+void AssertDrawCel(Ptr<CImage> pDest, Ptr<CImage> pSource, int32 iDestX, int32 iDestY, CInt32Rect* pcClip)
 {
 	AssertDrawCelPixels(pDest, 3, pSource, 3, false, iDestX, iDestY, pcClip);
 }
@@ -803,7 +803,7 @@ void TestImageDrawCelClipping(void)
 	Ptr<CImage>		pSource;
 	Ptr<CImage>		pDest;
 	Ptr<CImageCel>	pCel;
-	CRectangle		cClip;
+	CInt32Rect		cClip;
 	int32			aiPositions[10][2] = { { 2, 2 }, { -2, -1 }, { 7, 5 }, { -3, 5 }, { 7, -2 }, { -6, 0 }, { 10, 3 }, { 0, -4 }, { 4, 8 }, { -20, -20 } };
 	uint32			i;
 
@@ -891,7 +891,7 @@ void TestImageDrawCelClippingTransparentGaps(void)
 	Ptr<CImage>		pSource;
 	Ptr<CImage>		pDest;
 	Ptr<CImageCel>	pCel;
-	CRectangle		acClips[4];
+	CInt32Rect		acClips[4];
 	int32			aiPositions[6][2] = { { 0, 0 }, { 2, 3 }, { -3, 1 }, { 4, -1 }, { 6, 6 }, { -1, -1 } };
 	uint32			i;
 	uint32			j;
@@ -939,7 +939,7 @@ void TestImageDrawCelRGBX(void)
 	Ptr<CImage>		pSource;
 	Ptr<CImage>		pDest;
 	Ptr<CImageCel>	pCel;
-	CRectangle		cClip;
+	CInt32Rect		cClip;
 
 	//RGBX has alpha bits for its ignored channel but no opacity channel and must still be drawable.
 	pSource = CreateDrawCelImage(6, 4, CFT_RGBX, ARGB_8bit, 4, false);
@@ -1041,7 +1041,7 @@ void TestImageDrawCelDestAlphaRowEnds(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertDrawCelOpacity(Ptr<CImage> pDest, int32 iLeft, int32 iTop, int32 iRight, int32 iBottom, CRectangle* pcClip)
+void AssertDrawCelOpacity(Ptr<CImage> pDest, int32 iLeft, int32 iTop, int32 iRight, int32 iBottom, CInt32Rect* pcClip)
 {
 	uint8*	puiDest;
 	int32	x;
@@ -1084,7 +1084,7 @@ void TestImageDrawCelOpaqueOntoDestOpacity(void)
 	Ptr<CImage>		pSource;
 	Ptr<CImage>		pDest;
 	Ptr<CImageCel>	pCel;
-	CRectangle		cClip;
+	CInt32Rect		cClip;
 
 	//An RGB cel has no opacity of its own.  Drawn onto an RGBA image the colour must be copied unchanged and the
 	//destination opacity set to opaque, not written over one of the colours.
@@ -1205,7 +1205,7 @@ void TestImageDrawCelAlignment(void)
 	Ptr<CImage>		pSource;
 	Ptr<CImage>		pDest;
 	Ptr<CImageCel>	pCel;
-	CRectangle		cClip;
+	CInt32Rect		cClip;
 	int32			aiPositions[6][2] = { { 8, 6 }, { 6, 4 }, { 3, 2 }, { 12, 9 }, { 15, 3 }, { 7, 13 } };
 	uint32			i;
 
@@ -1325,7 +1325,7 @@ void FillDrawCelBackground(Ptr<CImage> pDest, uint32 uiDestStride, uint8* puiBac
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertDrawCelSized(Ptr<CImage> pDest, uint32 uiDestStride, uint8* puiBackground, Ptr<CImageCel> pCel, uint32 uiSourceStride, int32 iLeft, int32 iTop, int32 iWidth, int32 iHeight, CRectangle* pcClip)
+void AssertDrawCelSized(Ptr<CImage> pDest, uint32 uiDestStride, uint8* puiBackground, Ptr<CImageCel> pCel, uint32 uiSourceStride, int32 iLeft, int32 iTop, int32 iWidth, int32 iHeight, CInt32Rect* pcClip)
 {
 	CSubImage*		pcSubImage;
 	Ptr<CImage>		pSource;
@@ -1408,8 +1408,8 @@ void AssertDrawCelSized(Ptr<CImage> pDest, uint32 uiDestStride, uint8* puiBackgr
 void AssertDrawCelSizes(Ptr<CImageCel> pCel, uint32 uiSourceStride, Ptr<CImage> pDest, uint32 uiDestStride)
 {
 	CImageDraw		cDraw;
-	CRectangle		acClips[3];
-	CRectangle*		pcClip;
+	CInt32Rect		acClips[3];
+	CInt32Rect*		pcClip;
 	uint8			auiBackground[4] = { 5, 6, 7, 9 };
 	int32			aiSizes[13][2] = { { 12, 8 }, { 3, 2 }, { 7, 5 }, { 6, 9 }, { 13, 4 }, { 6, 2 }, { 1, 1 }, { 25, 3 }, { 2, 11 }, { 6, 4 }, { 19, 14 }, { 0, 5 }, { 4, -1 } };
 	int32			aiPositions[6][2] = { { 2, 2 }, { -3, -2 }, { 15, 11 }, { -30, -30 }, { 0, 0 }, { 9, -4 } };
@@ -1544,7 +1544,7 @@ void TestImageDrawCelSizedAlignment(void)
 	Ptr<CImage>		pSource;
 	Ptr<CImage>		pDest;
 	Ptr<CImageCel>	pCel;
-	CRectangle		cClip;
+	CInt32Rect		cClip;
 	uint8			auiBackground[3] = { 5, 6, 7 };
 
 	//A centred 6x4 cel drawn 12x8 is centred on its position.

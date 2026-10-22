@@ -19,7 +19,7 @@
 void TestImageRecolour1(void)
 {
 	CImageRecolour		cRecolour;
-	CRectangle			cRect;
+	CInt32Rect			cRect;
 	CImageColourRGB		o1, o2, o3, n1, n2, n3;
 
 	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "recolour.png");

@@ -36,7 +36,7 @@ Ptr<CScrollBarImages> CreateScrollBarImages(void)
 //////////////////////////////////////////////////////////////////////////
 void AssertScrollThumb(int32 iLeft, int32 iTop, int32 iRight, int32 iBottom, Ptr<CScrollBar> pScrollBar)
 {
-	CRectangle	cThumb;
+	CInt32Rect	cThumb;
 
 	pScrollBar->GetThumbBounds(&cThumb);
 	AssertInt(iLeft, cThumb.GetLeft());

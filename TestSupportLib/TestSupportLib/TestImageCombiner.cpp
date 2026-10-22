@@ -179,7 +179,7 @@ void TestImageCombinerUserSpecifiedSize(void)
 	Ptr<CImage>			pcSource;
 	Ptr<CImage>			pcImage;
 	Ptr<CArrayImageCel>	pacCels;
-	CRectangle*			pcRect;
+	CInt32Rect*			pcRect;
 	size				i;
 
 	pcSource = OMalloc<CImage>(12, 4, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
@@ -235,7 +235,7 @@ void TestImageCombinerUserSpecifiedSize(void)
 //////////////////////////////////////////////////////////////////////////
 void AssertCombinedCelRect(Ptr<CArrayImageCel> pacCels, size iIndex, int iLeft, int iTop, int iRight, int iBottom)
 {
-	CRectangle*	pcRect;
+	CInt32Rect*	pcRect;
 
 	pcRect = &pacCels->Get(iIndex)->GetSubImage()->mcImageRect;
 	AssertInt(iLeft, pcRect->msTopLeft.x);

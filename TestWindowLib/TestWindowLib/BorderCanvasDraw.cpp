@@ -22,7 +22,7 @@ void CBorderCanvasDraw::Init(ARGB32 sColour)
 //////////////////////////////////////////////////////////////////////////
 bool CBorderCanvasDraw::Draw(Ptr<CCanvas> pCanvas)
 {
-    CRectangle      cRect;
+    CInt32Rect      cRect;
     ARGB32	        sBlack;
     ARGB32	        sGrey;
     SInt32Vec2      sSize;

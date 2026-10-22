@@ -78,7 +78,7 @@ void TestFlowContainerBasicOnHeap(void)
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
-		CRectangle				cBounds;
+		CInt32Rect				cBounds;
 		SInt32Vec2				sVec;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 30, szDirectory);
@@ -168,7 +168,7 @@ void TestFlowContainerBasicOnStack(void)
 		CTickTestRefWindow	cTick;
 		SDataTestRefWindow	cData;
 		CFlowContainer		cFlow;
-		CRectangle			cBounds;
+		CInt32Rect			cBounds;
 		SInt32Vec2			sVec;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 30, szDirectory);
@@ -261,7 +261,7 @@ void TestFlowContainerRightCenteredContinue(void)
 		CTickTestRefWindow						cTick;
 		SDataTestRefWindow						cData;
 		Ptr<CFlowContainer>						pFlow;
-		CRectangle								cBounds;
+		CInt32Rect								cBounds;
 		ARGB32									sColour;
 		CRandom									cRandom;
 		CPointer								pNull;
@@ -413,7 +413,7 @@ void TestFlowContainerRightTopContinue(void)
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
-		CRectangle				cBounds;
+		CInt32Rect				cBounds;
 		ARGB32					sColour;
 		CRandom					cRandom;
 		CPointer				pNull;
@@ -503,7 +503,7 @@ void TestFlowContainerRightBottomContinue(void)
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
-		CRectangle				cBounds;
+		CInt32Rect				cBounds;
 		ARGB32					sColour;
 		CRandom					cRandom;
 		CPointer				pNull;
@@ -593,7 +593,7 @@ void TestFlowContainerRightTopWrap(void)
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
-		CRectangle				cBounds;
+		CInt32Rect				cBounds;
 		ARGB32					sColour;
 		CRandom					cRandom;
 		CPointer				pNull;
@@ -682,7 +682,7 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, uint32 iR
 		CTickTestRefWindow		cTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
-		CRectangle				cBounds;
+		CInt32Rect				cBounds;
 		ARGB32					sColour;
 		CRandom					cRandom;
 		CPointer				pNull;
@@ -1076,7 +1076,7 @@ void TestFlowContainerNested(void)
 		Ptr<CFlowContainer>		pInnerFlow;
 		Ptr<CFlowContainer>		pRowFlow;
 		SInt32Vec2				sVec;
-		CRectangle				cBounds;
+		CInt32Rect				cBounds;
 		CPointer				pNull;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 30, szDirectory);

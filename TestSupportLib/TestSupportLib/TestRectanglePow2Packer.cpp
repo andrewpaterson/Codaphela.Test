@@ -9,9 +9,9 @@
 void TestRectanglePow2PackerStuff(void)
 {
 	CRectanglePow2Packer	cPacker;
-	CRectangle				cRect1;
-	CRectangle				cRect2;
-	CRectangle				cRect3;
+	CInt32Rect				cRect1;
+	CInt32Rect				cRect2;
+	CInt32Rect				cRect3;
 	char					sz1[] = "1";
 	char					sz2[] = "2";
 	char					sz3[] = "3";

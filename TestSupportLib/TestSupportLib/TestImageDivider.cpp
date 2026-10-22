@@ -416,7 +416,7 @@ void TestImageDividerWriteNumbersWithTransparent(void)
 void TestImageDividerWriteRectangles(void)
 {
 	CImageDivider	cImageDivider;
-	CArrayRectangle	acRectangles;
+	CArrayInt32Rect	acRectangles;
 
 	Ptr<CImage> pcImage = TestReadImage(NULL, "grid.png");
 
@@ -443,7 +443,7 @@ void TestImageDividerWriteRectangles(void)
 void TestImageDividerWriteRectanglesWithTransparent(void)
 {
 	CImageDivider	cImageDivider;
-	CArrayRectangle	acRectangles;
+	CArrayInt32Rect	acRectangles;
 	uint32			uiTransparent;
 
 	Ptr<CImage> pcImage = TestReadImage(NULL, "grid.png");

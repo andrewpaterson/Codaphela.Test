@@ -9,8 +9,8 @@
 void TestRectangleLinePackerLeftToRight(void)
 {
 	CRectangleLinePacker	cPacker;
-	CRectangle				cRect1;
-	CRectangle				cRect2;
+	CInt32Rect				cRect1;
+	CInt32Rect				cRect2;
 	char					sz1[] = "1";
 	char					sz2[] = "2";
 	CArrayPackedRectangle	macRects;
@@ -60,8 +60,8 @@ void TestRectangleLinePackerLeftToRight(void)
 void TestRectangleLinePackerTopToBottom(void)
 {
 	CRectangleLinePacker	cPacker;
-	CRectangle				cRect1;
-	CRectangle				cRect2;
+	CInt32Rect				cRect1;
+	CInt32Rect				cRect2;
 	CArrayPackedRectangle	macRects;
 	CPackedRectangle*		pcPackedRect;
 	SInt32Vec2				sImageSize;
@@ -107,7 +107,7 @@ void TestRectangleLinePackerTopToBottom(void)
 void TestRectangleLinePackerRejectsEmptyRectangles(void)
 {
 	CRectangleLinePacker	cPacker;
-	CRectangle				cRect;
+	CInt32Rect				cRect;
 	CArrayPackedRectangle	macRects;
 
 	cPacker.Init(true, false, 0, 0);
@@ -141,8 +141,8 @@ void TestRectangleLinePackerRejectsEmptyRectangles(void)
 void TestRectangleLinePackerPow2(void)
 {
 	CRectangleLinePacker	cPacker;
-	CRectangle				cRect1;
-	CRectangle				cRect2;
+	CInt32Rect				cRect1;
+	CInt32Rect				cRect2;
 	CArrayPackedRectangle	macRects;
 	CPackedRectangle*		pcPackedRect;
 	SInt32Vec2				sImageSize;

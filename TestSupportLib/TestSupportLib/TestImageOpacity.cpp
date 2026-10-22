@@ -332,7 +332,7 @@ void TestImageOpacityPremultipliedBlend(void)
 		uint8			auiDest[12] = { 200, 0, 0, 255,  0, 0, 0, 0,  10, 20, 30, 64 };
 		uint8*			puiDest;
 		uint8*			puiOpaque;
-		CRectangle		cClip;
+		CInt32Rect		cClip;
 
 		pSource = OMalloc<CImage>(2, 1, CFT_RGBA, CCO_RGB, CRGB_24bit, ARGB_8bit);
 		memcpy(pSource->GetData(), auiSource, 8);

@@ -13,12 +13,12 @@ void TestRectanglePackerHorizontalAllSameSize(void)
 	CPackAttempt*			pcBestAttempt;
 	CPackedLine*			pcLine;
 	CPackRectangleAttempt*	pcRect;
-	CRectangle				cRect1;
-	CRectangle				cRect2;
-	CRectangle				cRect3;
-	CRectangle				cRect4;
-	CRectangle				cRect5;
-	CRectangle				cRect6;
+	CInt32Rect				cRect1;
+	CInt32Rect				cRect2;
+	CInt32Rect				cRect3;
+	CInt32Rect				cRect4;
+	CInt32Rect				cRect5;
+	CInt32Rect				cRect6;
 	char					sz1[] = "1";
 	char					sz2[] = "2";
 	char					sz3[] = "3";
@@ -97,14 +97,14 @@ void TestRectanglePackerSquareAllSameSize(void)
 	CRectangleBestPacker		cPacker;
 	CPackAttempt*			pcBestAttempt;
 	CPackedLine*			pcLine;
-	CRectangle				cRect1;
-	CRectangle				cRect2;
-	CRectangle				cRect3;
-	CRectangle				cRect4;
-	CRectangle				cRect5;
-	CRectangle				cRect6;
-	CRectangle				cRect7;
-	CRectangle				cRect8;
+	CInt32Rect				cRect1;
+	CInt32Rect				cRect2;
+	CInt32Rect				cRect3;
+	CInt32Rect				cRect4;
+	CInt32Rect				cRect5;
+	CInt32Rect				cRect6;
+	CInt32Rect				cRect7;
+	CInt32Rect				cRect8;
 	char					sz1[] = "1";
 	char					sz2[] = "2";
 	char					sz3[] = "3";
@@ -170,14 +170,14 @@ void TestRectanglePackerSquareAllSameSize(void)
 //////////////////////////////////////////////////////////////////////////
 void AddPowerOf2Sizes(CRectangleBestPacker* pcPacker)
 {
-	CRectangle				cRect1;
-	CRectangle				cRect2;
-	CRectangle				cRect3;
-	CRectangle				cRect4;
-	CRectangle				cRect5;
-	CRectangle				cRect6;
-	CRectangle				cRect7;
-	CRectangle				cRect8;
+	CInt32Rect				cRect1;
+	CInt32Rect				cRect2;
+	CInt32Rect				cRect3;
+	CInt32Rect				cRect4;
+	CInt32Rect				cRect5;
+	CInt32Rect				cRect6;
+	CInt32Rect				cRect7;
+	CInt32Rect				cRect8;
 
 	cRect1.Init(0, 0, 8, 8);
 	cRect2.Init(0, 0, 8, 8);
@@ -269,7 +269,7 @@ void TestRectanglePackerSquareThinRectangles(void)
 {
 	CRectangleBestPacker	cPacker;
 	CPackAttempt*			pcBestAttempt;
-	CRectangle				cRect;
+	CInt32Rect				cRect;
 	int						i;
 
 	cPacker.Init(0, 0);
@@ -390,9 +390,9 @@ void TestRectanglePackerGetPackedRectangles(void)
 {
 	CRectangleBestPacker	cPacker;
 	CPackAttempt*			pcBestAttempt;
-	CRectangle				cRect1;
-	CRectangle				cRect2;
-	CRectangle				cRect3;
+	CInt32Rect				cRect1;
+	CInt32Rect				cRect2;
+	CInt32Rect				cRect3;
 	char					sz1[] = "1";
 	char					sz2[] = "2";
 	char					sz3[] = "3";
@@ -452,9 +452,9 @@ void TestRectanglePackerGetPackedRectanglesWithEdges(void)
 {
 	CRectangleBestPacker		cPacker;
 	CPackAttempt*			pcBestAttempt;
-	CRectangle				cRect1;
-	CRectangle				cRect2;
-	CRectangle				cRect3;
+	CInt32Rect				cRect1;
+	CInt32Rect				cRect2;
+	CInt32Rect				cRect3;
 	char					sz1[] = "1";
 	char					sz2[] = "2";
 	char					sz3[] = "3";
@@ -546,7 +546,7 @@ void TestRectanglePackerInnerEdgeBelow(void)
 {
 	CRectangleBestPacker	cPacker;
 	CPackAttempt*			pcBestAttempt;
-	CRectangle				cRect;
+	CInt32Rect				cRect;
 	CChars					szRep;
 	CArrayPackedRectangle	macRects;
 
@@ -594,7 +594,7 @@ void TestRectanglePackerWidestNotFirst(void)
 	CRectangleBestPacker	cPacker;
 	CPackAttempt*			pcBestAttempt;
 	CPackAttempt*			pcAttempt;
-	CRectangle				cRect;
+	CInt32Rect				cRect;
 	CChars					szRep;
 	size					i;
 
@@ -685,7 +685,7 @@ void TestRectanglePackerEmpty(void)
 void TestRectanglePackerNoAttemptFits(void)
 {
 	CRectangleBestPacker	cPacker;
-	CRectangle				cRect;
+	CInt32Rect				cRect;
 	CArrayPackedRectangle	macRects;
 	SInt32Vec2				sImageSize;
 
@@ -755,7 +755,7 @@ void AddRandomRectangles(CRectanglePacker* pcPacker, uint32* puiSeed, size* puiN
 {
 	size		i;
 	size		uiNumRectangles;
-	CRectangle	cRect;
+	CInt32Rect	cRect;
 
 	uiNumRectangles = 2 + RectanglePackerRandom(puiSeed) % 20;
 	for (i = 0; i < uiNumRectangles; i++)
@@ -824,7 +824,7 @@ void TestRectanglePackerAttemptBeforeRectangles(void)
 {
 	CRectangleBestPacker	cPacker;
 	CPackAttempt*			pcBestAttempt;
-	CRectangle				cRect;
+	CInt32Rect				cRect;
 	CChars					szRep;
 	CArrayPackedRectangle	macRects;
 	SInt32Vec2				sImageSize;
@@ -890,7 +890,7 @@ void TestRectanglePackerAttemptBeforeRectangles(void)
 void TestRectanglePackerRejectsEmptyRectangles(void)
 {
 	CRectangleBestPacker	cPacker;
-	CRectangle				cRect;
+	CInt32Rect				cRect;
 
 	cPacker.Init(0, 0);
 
@@ -921,7 +921,7 @@ void TestRectanglePackerRejectsEmptyRectangles(void)
 void TestRectanglePackerDefaultAttemptRange(void)
 {
 	CRectangleBestPacker	cPacker;
-	CRectangle				cRect;
+	CInt32Rect				cRect;
 	CArrayPackAttempt*		pacAttempts;
 
 	cPacker.Init(0, 0);
@@ -972,7 +972,7 @@ void TestRectanglePackerInvalidAttemptsSortLast(void)
 	CRectangleBestPacker	cPacker;
 	CPackAttempt*			pcBestAttempt;
 	CPackAttempt*			pcAttempt;
-	CRectangle				cRect;
+	CInt32Rect				cRect;
 	CArrayPackAttempt*		pacAttempts;
 
 	cPacker.Init(0, 0);
@@ -1020,7 +1020,7 @@ void TestRectanglePackerLargeAreas(void)
 {
 	CRectangleBestPacker	cPacker;
 	CPackAttempt*			pcBestAttempt;
-	CRectangle				cRect;
+	CInt32Rect				cRect;
 
 	//Boards in micrometres: two 50mm squares cover 5,000,000,000 square micrometres, more than 32 bits hold.
 	cPacker.Init(0, 1600);

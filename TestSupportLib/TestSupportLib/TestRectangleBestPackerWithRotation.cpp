@@ -30,8 +30,8 @@ void TestRectanglePackerRotateToFit(void)
 {
 	CRectangleBestPacker	cPacker;
 	CPackAttempt*			pcBestAttempt;
-	CRectangle				cRect1;
-	CRectangle				cRect2;
+	CInt32Rect				cRect1;
+	CInt32Rect				cRect2;
 	char					sz1[] = "1";
 	char					sz2[] = "2";
 	CChars					szRep;
@@ -84,7 +84,7 @@ void TestRectanglePackerRotateToFit(void)
 //////////////////////////////////////////////////////////////////////////
 void AddWideAndTallRectangles(CRectangleBestPacker* pcPacker, char* sz1, char* sz2, char* sz3)
 {
-	CRectangle	cRect;
+	CInt32Rect	cRect;
 
 	cRect.Init(0, 0, 2, 9);
 	pcPacker->AddRectangle(&cRect, sz1);
@@ -159,7 +159,7 @@ void TestRectanglePackerRotateWideAndTall(void)
 //////////////////////////////////////////////////////////////////////////
 void AddCrossedRectangles(CRectangleBestPacker* pcPacker)
 {
-	CRectangle	cRect;
+	CInt32Rect	cRect;
 	int			i;
 
 	for (i = 0; i < 5; i++)
@@ -229,7 +229,7 @@ void TestRectanglePackerWithRotationRandom(void)
 	CArrayPackedRectangle				macRects;
 	CPackedRectangle*					pcPackedRect;
 	SInt32Vec2							sImageSize;
-	CRectangle							cRect;
+	CInt32Rect							cRect;
 	uint32								uiSeed;
 	int									iTrial;
 	size								i;

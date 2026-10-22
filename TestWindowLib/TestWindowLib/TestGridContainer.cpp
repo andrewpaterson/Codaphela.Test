@@ -708,7 +708,7 @@ void TestGridContainerNotAtOrigin(void)
 //////////////////////////////////////////////////////////////////////////
 void AssertContainerBounds(int32 iLeft, int32 iTop, int32 iRight, int32 iBottom, CContainer* pcContainer)
 {
-	CRectangle	cBounds;
+	CInt32Rect	cBounds;
 
 	AssertTrue(pcContainer->GetContainerBounds(&cBounds));
 	AssertInt(iLeft, cBounds.GetLeft());

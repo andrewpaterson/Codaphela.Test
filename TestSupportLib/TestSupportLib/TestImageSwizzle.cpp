@@ -41,7 +41,7 @@ void TestImageSwizzle1(void)
 	pChannelAdd = NULL;
 
 	cRGB.Init(1.0f, 1.0f, 1.0f);
-	cStack.AddModifier<CImageModifierDrawBox>((CRectangle*)NULL, &cRGB, true);
+	cStack.AddModifier<CImageModifierDrawBox>((CInt32Rect*)NULL, &cRGB, true);
 
 	cStack.ApplyAll();
 	cStack.Kill();

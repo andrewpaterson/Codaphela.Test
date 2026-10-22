@@ -21,7 +21,7 @@ void TestImageModifierDrawBox1(void)
 
 	CImage					cImage;
 	CImageModifierDrawBox	cBox;
-	CRectangle				cRect;
+	CInt32Rect				cRect;
 	CImageColourRGB			cRGB;
 
 	cImage.Init();
@@ -72,7 +72,7 @@ void TestImageModifierDrawBox1(void)
 //////////////////////////////////////////////////////////////////////////
 void TestImageModifierDrawBox2(void)
 {
-	CRectangle				cRect;
+	CInt32Rect				cRect;
 	CImageColourRGB			cRed;
 	CImageColourRGB			cGreen;
 	CImageColourRGB			cBlue;
@@ -86,7 +86,7 @@ void TestImageModifierDrawBox2(void)
 	cStack.Init(pImage);
 
 	cGrey.Init(0.3f, 0.3f, 0.3f);
-	cStack.AddModifier<CImageModifierDrawBox>((CRectangle*)NULL, &cGrey);
+	cStack.AddModifier<CImageModifierDrawBox>((CInt32Rect*)NULL, &cGrey);
 
 	cRect.Init(12, 0, 30, 21);
 	cRed.Init(1.0f, 0.2f, 0.2f);
