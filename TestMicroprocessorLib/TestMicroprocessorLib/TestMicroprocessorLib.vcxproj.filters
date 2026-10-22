@@ -40,6 +40,15 @@
     <ClCompile Include="TestW65C816Load.cpp">
       <Filter>Source\wdc\W65C816</Filter>
     </ClCompile>
+    <ClCompile Include="TestW65C02.cpp">
+      <Filter>Source\wdc\W65C816</Filter>
+    </ClCompile>
+    <ClCompile Include="TestW65C02SingleStep.cpp">
+      <Filter>Source\wdc\W65C816</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSingleStep.cpp">
+      <Filter>Source\wdc\W65C816</Filter>
+    </ClCompile>
     <ClCompile Include="TestW65C816SingleStep.cpp">
       <Filter>Source\wdc\W65C816</Filter>
     </ClCompile>
@@ -73,6 +82,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestW65C816Context.h">
+      <Filter>Source\wdc\W65C816\Context</Filter>
+    </ClInclude>
+    <ClInclude Include="TestSingleStep.h">
       <Filter>Source\wdc\W65C816\Context</Filter>
     </ClInclude>
   </ItemGroup>

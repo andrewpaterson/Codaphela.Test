@@ -233,6 +233,9 @@
     <ClCompile Include="TestMicroprocessorLib.cpp" />
     <ClCompile Include="TestW65C816Add.cpp" />
     <ClCompile Include="TestW65C816Context.cpp" />
+    <ClCompile Include="TestW65C02.cpp" />
+    <ClCompile Include="TestW65C02SingleStep.cpp" />
+    <ClCompile Include="TestSingleStep.cpp" />
     <ClCompile Include="TestW65C816SingleStep.cpp" />
     <ClCompile Include="TestW65C816Timing.cpp" />
     <ClCompile Include="TestW65C816Decimal.cpp" />
@@ -269,6 +272,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestW65C816Context.h" />
+    <ClInclude Include="TestSingleStep.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
