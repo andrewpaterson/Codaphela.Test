@@ -16,6 +16,26 @@ void TestPrintFunction(const char* szString)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestRedirectPrintfLongParameter(void)
+{
+	char	szLong[2001];
+
+	//Longer than eprintf's 1KB stack buffer so the formatted parameter is malloc'd.
+	memset(szLong, 'x', 2000);
+	szLong[2000] = 0;
+
+	gszTestPrintFunction.Init();
+	SetPrintFunction(TestPrintFunction);
+	eprintf("%s", szLong);
+	AssertString(szLong, gszTestPrintFunction.Text());
+	gszTestPrintFunction.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestRedirectPrintf(void)
 {
 	BeginTests();
@@ -25,6 +45,8 @@ void TestRedirectPrintf(void)
 	eprintf("%s %s\n", "Hello", "World");
 	AssertString("Hello World\n", gszTestPrintFunction.Text());
 	gszTestPrintFunction.Kill();
+
+	TestRedirectPrintfLongParameter();
 
 	TestStatistics();
 }
