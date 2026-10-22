@@ -803,6 +803,50 @@ void TestTrueTypeFontFactoryColours(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A glyph's full width is its advance rounded to whole pixels.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTrueTypeFontDescriptionWidths(void)
+{
+	ObjectsInit();
+	{
+		CTrueTypeFont				cFont;
+		CTrueTypeFontFactory		cFactory;
+		Ptr<CFontDescription>		pDescription;
+		CSubImage					cSubImage;
+
+		//Liberation Sans is proportional: A and B 11, space 4, g and e acute 9.
+		AssertTrue(LoadTrueTypeFont(&cFont, "LiberationSans-Regular.ttf"));
+		cFactory.Init(&cFont, 16.0f);
+		pDescription = cFactory.Describe("Liberation Sans 16px", "AB g\xC3\xA9");
+		cFactory.Kill();
+		cFont.Kill();
+		AssertSize(44 / 5, pDescription->GetAverageWidth());
+		AssertFalse(pDescription->IsFixedWidth());
+		AssertSize((size)pDescription->GetLineHeight(), pDescription->GetAverageHeight());
+
+		//Putting a glyph works the widths out again.
+		cSubImage.Init(0, 0, 0, 0, 56, 0, 0, 24);
+		pDescription->PutGlyph((uint32)'W', 1, &cSubImage, 56);
+		AssertSize(100 / 6, pDescription->GetAverageWidth());
+
+		//JetBrains Mono is fixed width.
+		AssertTrue(LoadTrueTypeFont(&cFont, "JetBrainsMonoNL-Regular.ttf"));
+		cFactory.Init(&cFont, 16.0f);
+		pDescription = cFactory.Describe("JetBrains Mono 16px", "AB g\xC3\xA9");
+		cFactory.Kill();
+		cFont.Kill();
+		AssertSize(10, pDescription->GetAverageWidth());
+		AssertTrue(pDescription->IsFixedWidth());
+
+		pDescription = NULL;
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestTrueTypeFont(void)
@@ -821,6 +865,7 @@ void TestTrueTypeFont(void)
 	TestTrueTypeDrawText();
 	TestTrueTypeFontFactoryLazyGlyphs();
 	TestTrueTypeFontFactoryColours();
+	TestTrueTypeFontDescriptionWidths();
 
 	DataIOKill();
 

@@ -289,6 +289,116 @@ void TestArrayObjectOnStackRemoveObject(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestArrayObjectRemoveDuplicates(void)
+{
+	STestObjectFreedNotifier	sFreed;
+	STestObjectFreedNotifier	sOtherFreed;
+	STestObjectFreedNotifier	sOnlyInArrayFreed;
+	CBaseObject*				pcOnlyInArray;
+
+	ObjectsInit();
+	{
+		Ptr<CRoot>			pRoot;
+		Ptr<CArrayObject>	pArray;
+		Ptr<CTestObject>	pObject;
+		Ptr<CTestObject>	pOther;
+		Ptr<CTestObject>	pOnlyInArray;
+
+		pRoot = ORoot();
+		pArray = OMalloc<CArrayObject>();
+		pRoot->Add(pArray);
+		pObject = OMalloc<CTestObject>(&sFreed);
+		pOther = OMalloc<CTestObject>(&sOtherFreed);
+
+		pArray->Add(pObject);
+		pArray->Add(pOther);
+		pArray->Add(pObject);
+		pArray->Add(pObject);
+		AssertSize(4, pArray->NumElements());
+		AssertSize(3, pObject->NumHeapFroms());
+		AssertSize(1, pOther->NumHeapFroms());
+
+		//Remove takes out every copy of the Object, so it must take out the from for every copy.
+		AssertTrue(pArray->Remove(pObject));
+		AssertSize(1, pArray->NumElements());
+		AssertPointer(&pOther, pArray->Get(0).Object());
+		AssertSize(0, pObject->NumHeapFroms());
+		AssertFalse(pObject->ContainsFrom(&pArray));
+		AssertSize(1, pOther->NumHeapFroms());
+		AssertFalse(sFreed.bFreed);
+
+		//With no froms left the Object is freed when the stack lets go of it.
+		pObject = NULL;
+		AssertTrue(sFreed.bFreed);
+		AssertFalse(sOtherFreed.bFreed);
+
+		//An Object only held by the array is freed by removing its last copy, not before.
+		pOnlyInArray = OMalloc<CTestObject>(&sOnlyInArrayFreed);
+		pArray->Add(pOnlyInArray);
+		pArray->Add(pOnlyInArray);
+		pcOnlyInArray = &pOnlyInArray;
+		pOnlyInArray = NULL;
+		AssertFalse(sOnlyInArrayFreed.bFreed);
+		AssertSize(2, pcOnlyInArray->NumHeapFroms());
+		AssertTrue(((CArrayCommonObject*)&pArray)->Remove(pcOnlyInArray));
+		AssertTrue(sOnlyInArrayFreed.bFreed);
+		AssertSize(1, pArray->NumElements());
+
+		pRoot = NULL;
+		pArray = NULL;
+		pOther = NULL;
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayObjectOnStackRemoveDuplicates(void)
+{
+	STestObjectFreedNotifier	sFreed;
+
+	ObjectsInit();
+	{
+		CArray<CTestSimpleObject>	aArray;
+		Ptr<CTestSimpleObject>		pTestObject;
+
+		pTestObject = OMalloc<CTestSimpleObject>(&sFreed, 23);
+		AssertSize(1, gcStackPointers.NumElements());
+
+		aArray.Init();
+		aArray.Add(pTestObject);
+		aArray.Add(pTestObject);
+		aArray.Add(pTestObject);
+		AssertSize(3, aArray.NumElements());
+		AssertSize(4, gcStackPointers.NumElements());
+		AssertSize(4, pTestObject->NumStackFroms());
+
+		//Every copy's stack from goes with the copies.
+		AssertTrue(aArray.Remove(pTestObject));
+		AssertSize(0, aArray.NumElements());
+		AssertSize(1, gcStackPointers.NumElements());
+		AssertSize(1, pTestObject->NumStackFroms());
+		AssertFalse(sFreed.bFreed);
+
+		pTestObject = NULL;
+		AssertTrue(sFreed.bFreed);
+		AssertSize(0, gcStackPointers.NumElements());
+
+		aArray.Kill();
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestArrayObjectOnStackKillContainedHeapObject(void)
 {
 	ObjectsInit();
@@ -988,6 +1098,8 @@ void TestArrayObject(void)
 	TestArrayObjectSneakyOnStack();
 	TestArrayObjectOnStackKill();
 	TestArrayObjectOnStackRemoveObject();
+	TestArrayObjectRemoveDuplicates();
+	TestArrayObjectOnStackRemoveDuplicates();
 	TestArrayObjectOnStackKillContainedHeapObject();
 	TestArrayObjectOnStackKillContainedStackObject();
 	TestArrayObjectKillContainedHeap();
