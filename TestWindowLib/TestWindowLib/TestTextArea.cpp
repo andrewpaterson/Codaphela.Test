@@ -191,7 +191,7 @@ void TestTextAreaWordWrap(void)
 		Ptr<CWindow>			pTestWindow;
 		Ptr<CFont>				pFont;
 		Ptr<CTextArea>			pTextArea;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInt32Vec2				sSize;
 		SInt32Vec2				sPosition;
@@ -200,8 +200,9 @@ void TestTextAreaWordWrap(void)
 		int32					iWidth;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 64, 32, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFont = ReadLabelFont();
 		AssertTrue(pFont.IsNotNull());
@@ -293,7 +294,9 @@ void TestTextAreaWordWrap(void)
 
 		pTextArea = NULL;
 		pFont = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 	}
 
 	AssertLabelObjectsRemoved();
@@ -329,7 +332,7 @@ void TestTextAreaFillContainer(void)
 		Ptr<CFillContainer>		pFill;
 		Ptr<CClearCanvasDraw>	pBackground;
 		Ptr<CTextArea>			pTextArea;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInt32Vec2				sVec;
 		SInsets					sInsets;
@@ -338,10 +341,11 @@ void TestTextAreaFillContainer(void)
 		CPointer				pNull;
 
 		cNativeFactory.Init(&gcMemoryAllocator, iWidth, iHeight, szDirectory);
-		cTick.Init(&cData, 1);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
 		//The text area is transparent, it is drawn over the window's background.
 		pBackground = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)40, 60, 110));
-		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, pTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		aiInsets[BEI_Top] = 5;
@@ -375,7 +379,9 @@ void TestTextAreaFillContainer(void)
 		pTextArea = NULL;
 		pFont = NULL;
 		pFill = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pBackground = NULL;
 
 		szExpectedDirectory.Init(szDirectory);
@@ -412,15 +418,16 @@ void TestTextAreaNoWordWrapFillContainer(void)
 		Ptr<CFont>				pFont;
 		Ptr<CFillContainer>		pFill;
 		Ptr<CTextArea>			pTextArea;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInt32Vec2				sVec;
 		CPointer				pNull;
 		int32					iTextWidth;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 200, 100, (char*)szDirectory);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
@@ -447,7 +454,9 @@ void TestTextAreaNoWordWrapFillContainer(void)
 		pTextArea = NULL;
 		pFont = NULL;
 		pFill = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 	}
 
 	AssertLabelObjectsRemoved();
@@ -472,7 +481,7 @@ void TestTextAreaSpans(void)
 		Ptr<CTextArea>			pTextArea;
 		Ptr<CTextArea>			pShared;
 		Ptr<CFontColours>		pColours;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInt32Vec2				sSize;
 		SInt32Vec2				sTextSize;
@@ -481,8 +490,9 @@ void TestTextAreaSpans(void)
 		CPointer				pNull;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 64, 32, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFont = ReadLabelFont();
 		AssertTrue(pFont.IsNotNull());
@@ -557,7 +567,9 @@ void TestTextAreaSpans(void)
 		pColours = NULL;
 		pTextArea = NULL;
 		pFont = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 	}
 
 	AssertLabelObjectsRemoved();
@@ -587,16 +599,17 @@ void TestTextAreaSpansFillContainer(void)
 		Ptr<CFillContainer>		pFill;
 		Ptr<CClearCanvasDraw>	pBackground;
 		Ptr<CTextArea>			pTextArea;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInsets					sInsets;
 		int						aiInsets[4];
 		CChars					szExpectedDirectory;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 200, 160, szDirectory);
-		cTick.Init(&cData, 1);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
 		pBackground = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)30, 31, 34));
-		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, pTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		aiInsets[BEI_Top] = 5;
@@ -629,7 +642,9 @@ void TestTextAreaSpansFillContainer(void)
 		pTextArea = NULL;
 		pFont = NULL;
 		pFill = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pBackground = NULL;
 
 		szExpectedDirectory.Init(szDirectory);
@@ -693,7 +708,7 @@ void TestTextAreaStyles(void)
 		Ptr<CWindow>			pTestWindow;
 		Ptr<CFontFamily>		pFamily;
 		Ptr<CTextArea>			pTextArea;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInt32Vec2				sSize;
 		SInt32Vec2				sBaseSize;
@@ -704,8 +719,9 @@ void TestTextAreaStyles(void)
 		int32					iBoldWider;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 64, 32, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFamily = CreateTextAreaFamily(16.0f);
 		pTextArea = OMalloc<CTextArea>(pTestWindow, pFamily, "aaa bbb ccc");
@@ -768,7 +784,9 @@ void TestTextAreaStyles(void)
 
 		pTextArea = NULL;
 		pFamily = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 	}
 
 	AssertLabelObjectsRemoved();
@@ -798,7 +816,7 @@ void TestTextAreaStylesFillContainer(void)
 		Ptr<CFillContainer>		pFill;
 		Ptr<CClearCanvasDraw>	pBackground;
 		Ptr<CTextArea>			pTextArea;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInsets					sInsets;
 		int						aiInsets[4];
@@ -806,9 +824,10 @@ void TestTextAreaStylesFillContainer(void)
 		STextStyleOverride		sOverride;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 240, 160, szDirectory);
-		cTick.Init(&cData, 1);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
 		pBackground = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)30, 31, 34));
-		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, pTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		aiInsets[BEI_Top] = 5;
@@ -819,6 +838,8 @@ void TestTextAreaStylesFillContainer(void)
 		pFill->SetInsets(&sInsets);
 		pTestWindow->SetContainer(pFill);
 
+		//Validating every object each time a glyph's sprite points to it is too slow; ValidateLabelObjects validates once.
+		gcObjects.DisableValidation();
 		pFamily = CreateTextAreaFamily(15.0f);
 		szText = "Text in bold, italic and bold italic.  BIG and small words share a baseline, and Coloured Bold wraps.";
 		pTextArea = OMalloc<CTextArea>(pTestWindow, pFamily, szText);
@@ -857,7 +878,9 @@ void TestTextAreaStylesFillContainer(void)
 		pTextArea = NULL;
 		pFamily = NULL;
 		pFill = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pBackground = NULL;
 
 		szExpectedDirectory.Init(szDirectory);
@@ -886,7 +909,7 @@ void TestTextAreaScripts(void)
 		Ptr<CWindow>			pTestWindow;
 		Ptr<CFontFamily>		pFamily;
 		Ptr<CTextArea>			pTextArea;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInt32Vec2				sSize;
 		CPointer				pNull;
@@ -901,8 +924,9 @@ void TestTextAreaScripts(void)
 		int32					iDescent;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 64, 32, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFamily = CreateTextAreaFamily(16.0f);
 		sStyle.Init();
@@ -953,7 +977,9 @@ void TestTextAreaScripts(void)
 		pSuperscript = NULL;
 		pRegular = NULL;
 		pFamily = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 	}
 
 	AssertLabelObjectsRemoved();
@@ -983,7 +1009,7 @@ void TestTextAreaScriptsFillContainer(void)
 		Ptr<CFillContainer>		pFill;
 		Ptr<CClearCanvasDraw>	pBackground;
 		Ptr<CTextArea>			pTextArea;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInsets					sInsets;
 		int						aiInsets[4];
@@ -993,9 +1019,10 @@ void TestTextAreaScriptsFillContainer(void)
 		STextStyleOverride		sOverride;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 240, 120, szDirectory);
-		cTick.Init(&cData, 1);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
 		pBackground = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)30, 31, 34));
-		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, pTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		aiInsets[BEI_Top] = 5;
@@ -1006,6 +1033,8 @@ void TestTextAreaScriptsFillContainer(void)
 		pFill->SetInsets(&sInsets);
 		pTestWindow->SetContainer(pFill);
 
+		//Validating every object each time a glyph's sprite points to it is too slow; ValidateLabelObjects validates once.
+		gcObjects.DisableValidation();
 		pFamily = CreateTextAreaFamily(16.0f);
 		szText = "E = mc2 and H2O.  Ca2+ ions.  x2 + y2 = z2 where x2 is BIG2 and a footnote1.";
 		pTextArea = OMalloc<CTextArea>(pTestWindow, pFamily, szText);
@@ -1041,7 +1070,9 @@ void TestTextAreaScriptsFillContainer(void)
 		pTextArea = NULL;
 		pFamily = NULL;
 		pFill = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pBackground = NULL;
 
 		szExpectedDirectory.Init(szDirectory);
@@ -1081,7 +1112,7 @@ void TestTextAreaDecorationsFillContainer(void)
 		Ptr<CFillContainer>		pFill;
 		Ptr<CClearCanvasDraw>	pBackground;
 		Ptr<CTextArea>			pTextArea;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInsets					sInsets;
 		int						aiInsets[4];
@@ -1092,9 +1123,10 @@ void TestTextAreaDecorationsFillContainer(void)
 		SInt32Vec2				sDecoratedSize;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 260, 180, szDirectory);
-		cTick.Init(&cData, 1);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
 		pBackground = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)30, 31, 34));
-		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, pTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		aiInsets[BEI_Top] = 5;
@@ -1105,6 +1137,8 @@ void TestTextAreaDecorationsFillContainer(void)
 		pFill->SetInsets(&sInsets);
 		pTestWindow->SetContainer(pFill);
 
+		//Validating every object each time a glyph's sprite points to it is too slow; ValidateLabelObjects validates once.
+		gcObjects.DisableValidation();
 		pFamily = CreateTextAreaFamily(16.0f);
 		szText = "Underlined, overlined and struck through words.  A coloured underline crosses BIG and small words and x2 then wraps onto the next lines.";
 		pTextArea = OMalloc<CTextArea>(pTestWindow, pFamily, szText);
@@ -1159,7 +1193,9 @@ void TestTextAreaDecorationsFillContainer(void)
 		pTextArea = NULL;
 		pFamily = NULL;
 		pFill = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pBackground = NULL;
 
 		szExpectedDirectory.Init(szDirectory);
@@ -1222,7 +1258,7 @@ void TestTextAreaUnderlineOverlineFillContainer(void)
 		Ptr<CFillContainer>		pFill;
 		Ptr<CClearCanvasDraw>	pBackground;
 		Ptr<CTextArea>			pTextArea;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInsets					sInsets;
 		int						aiInsets[4];
@@ -1230,9 +1266,10 @@ void TestTextAreaUnderlineOverlineFillContainer(void)
 		STextStyleOverride		sOverride;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 300, 380, szDirectory);
-		cTick.Init(&cData, 1);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
 		pBackground = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)30, 31, 34));
-		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, pTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		aiInsets[BEI_Top] = 8;
@@ -1243,6 +1280,8 @@ void TestTextAreaUnderlineOverlineFillContainer(void)
 		pFill->SetInsets(&sInsets);
 		pTestWindow->SetContainer(pFill);
 
+		//Validating every object each time a glyph's sprite points to it is too slow; ValidateLabelObjects validates once.
+		gcObjects.DisableValidation();
 		pFamily = CreateTextAreaFamily(16.0f);
 		//A blank line between each so an overline isn't taken for the line above's underline.
 		szText = "Underline only\n\n"
@@ -1322,7 +1361,9 @@ void TestTextAreaUnderlineOverlineFillContainer(void)
 		pTextArea = NULL;
 		pFamily = NULL;
 		pFill = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pBackground = NULL;
 
 		szExpectedDirectory.Init(szDirectory);

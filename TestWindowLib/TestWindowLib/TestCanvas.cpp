@@ -407,7 +407,7 @@ void RenderCanvasDrawFrames(CWinRefWindowFactory* pcFactory, char* szDirectory, 
 		Ptr<CMapsCanvasDraw>		pMapsDraw;
 		Ptr<CImageCanvasDraw>		pImageDraw;
 		Ptr<CCanvasDraw>			pWindowDraw;
-		CTickTestRefWindow			cTick;
+		Ptr<CTickTestRefWindow>	pTick;
 		SDataTestRefWindow			cData;
 		CRandom						cRandom;
 		Ptr<CImage>					pFloorPlanImage;
@@ -424,18 +424,23 @@ void RenderCanvasDrawFrames(CWinRefWindowFactory* pcFactory, char* szDirectory, 
 		pFloorPlanImage = ReadSpaceImage("SpaceCrusade", "FloorPlan.png");
 		cRandom.Init(2345);
 
-		cTick.Init(&cData, 1);
+		//Allocated, not on the stack, because the window is rooted and stack objects can't be under the root.
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
 		if (bClearWindow)
 		{
 			pWindowDraw = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)0, 0, 0));
 		}
-		pTestWindow = OMalloc<CWindow>("Canvas Draw Frames", pcFactory, &cTick, pWindowDraw, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow = OMalloc<CWindow>("Canvas Draw Frames", pcFactory, pTick, pWindowDraw, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		//Rooted so that pointing to the window's (and the generator's) many objects doesn't make the objects work out
+		//again which of them are still on the stack.
+		ORoot()->Add(pTestWindow);
 		pTestWindow->GetColourFormat(&cHelper);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
 
 		pTileMapGenerator = OMalloc<CTileMapGenerator>(&cRandom);
+		ORoot()->Add(pTileMapGenerator);
 
 		gcObjects.DisableValidation();
 
@@ -482,7 +487,11 @@ void RenderCanvasDrawFrames(CWinRefWindowFactory* pcFactory, char* szDirectory, 
 			}
 		}
 
+		//The window is unrooted first so that it (and its native canvases' free objects) is freed before RemoveAll.
+		ORoot()->Remove(pTestWindow);
+		ORoot()->Remove(pTileMapGenerator);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pFill = NULL;
 		pMapsCanvas = NULL;
 		pImageCanvas = NULL;
@@ -587,7 +596,7 @@ size DrawBorderCanvasInFormat(EColourOrder eCanvasOrder)
 		Ptr<CCanvas>			pCanvas;
 		Ptr<CBorderCanvasDraw>	pDraw;
 		Ptr<CImage>				pWindowImage;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SLogConfig				sLogConfig;
 		CPointer				pNull;
@@ -595,8 +604,9 @@ size DrawBorderCanvasInFormat(EColourOrder eCanvasOrder)
 		size					i;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 24, 16, szDirectory);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Mismatched Format", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Mismatched Format", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
@@ -623,7 +633,9 @@ size DrawBorderCanvasInFormat(EColourOrder eCanvasOrder)
 		pCanvas = NULL;
 		pDraw = NULL;
 		pFill = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 	}
 	AssertTrue(ORoot()->RemoveAll());
 	cNativeFactory.Kill();
@@ -671,7 +683,7 @@ void TestCanvasNested(void)
 		Ptr<CImageCanvasDraw>	pInnerDraw;
 		Ptr<CImageCel>			pWolf;
 		Ptr<CImage>				pWindowImage;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		CColourFormatHelper		cHelper;
 		CPointer				pNull;
@@ -683,8 +695,9 @@ void TestCanvasNested(void)
 		size					uiWrong;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 32, 24, szDirectory);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Nested Canvas", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Nested Canvas", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pTestWindow->GetColourFormat(&cHelper);
 
 		pWindowFill = OMalloc<CFillContainer>(pTestWindow);
@@ -742,7 +755,9 @@ void TestCanvasNested(void)
 		pOuter = NULL;
 		pOuterDraw = NULL;
 		pWindowFill = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 	}
 	AssertTrue(ORoot()->RemoveAll());
 	cNativeFactory.Kill();
@@ -778,15 +793,16 @@ void TestCanvasTransparent(void)
 		Ptr<CCanvas>			pTransparent;
 		Ptr<CCanvas>			pEmpty;
 		Ptr<CImage>				pWindowImage;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		uint8*					puiWindow;
 		uint8*					puiPixel;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 12, 4, szDirectory);
-		cTick.Init(&cData, 1);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
 		pWindowDraw = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)255, 0, 0));
-		pTestWindow = OMalloc<CWindow>("Transparent Canvas", &cNativeFactory, &cTick, pWindowDraw, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow = OMalloc<CWindow>("Transparent Canvas", &cNativeFactory, pTick, pWindowDraw, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pWindowFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pWindowFill);
@@ -852,7 +868,9 @@ void TestCanvasTransparent(void)
 		pBlueDraw = NULL;
 		pWindowFill = NULL;
 		pWindowDraw = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 	}
 	AssertTrue(ORoot()->RemoveAll());
 	cNativeFactory.Kill();
@@ -882,7 +900,7 @@ void TestCanvasResizeReleasesOldCels(void)
 		Ptr<CFillContainer>		pFill;
 		Ptr<CCanvas>			pImageCanvas;
 		Ptr<CCanvas>			pBorderCanvas;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		CColourFormatHelper		cHelper;
 		CPointer				pNull;
@@ -890,8 +908,9 @@ void TestCanvasResizeReleasesOldCels(void)
 		size					uiObjectsAfterFirstPair;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 48, 32, szDirectory);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Resize Releases Old Cels", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Resize Releases Old Cels", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pTestWindow->GetColourFormat(&cHelper);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
@@ -935,7 +954,9 @@ void TestCanvasResizeReleasesOldCels(void)
 		pBorderCanvas = NULL;
 		pImageCanvas = NULL;
 		pFill = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 	}
 	AssertTrue(ORoot()->RemoveAll());
 	cNativeFactory.Kill();

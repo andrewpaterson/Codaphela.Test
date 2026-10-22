@@ -95,9 +95,11 @@ void TestRefWindowCanvasBorder(void)
 		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
 		pDraw = OMalloc<CBorderCanvasDraw>(Set32BitColour(1.0f, 0, 0));
 		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pDraw, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pTestWindow->Show();
 
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
 		pDraw = NULL;
 		pTick = NULL;

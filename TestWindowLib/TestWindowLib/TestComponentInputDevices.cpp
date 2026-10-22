@@ -116,7 +116,7 @@ void TestComponentInputKeyboard(void)
 		Ptr<CGridContainer>			pGrid;
 		Ptr<CInputTestComponent>	pA;
 		Ptr<CInputTestComponent>	pB;
-		CTickTestRefWindow			cTick;
+		Ptr<CTickTestRefWindow>			pTick;
 		SDataTestRefWindow			cData;
 		CPointer					pNull;
 		CChars						szLog;
@@ -125,8 +125,9 @@ void TestComponentInputKeyboard(void)
 
 		szLog.Init();
 		cNativeFactory.Init(&gcMemoryAllocator, 64, 32, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Input Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Input Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pGrid = OMalloc<CGridContainer>(pTestWindow);
 		pTestWindow->SetContainer(pGrid);
 		pA = OMalloc<CInputTestComponent>(pTestWindow, "A", &szLog, true);
@@ -261,7 +262,9 @@ void TestComponentInputKeyboard(void)
 		cComponentInput.Kill();
 		cDevices.Kill();
 
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pGrid = NULL;
 		pA = NULL;
 		pB = NULL;
@@ -288,7 +291,7 @@ void TestComponentInputMouse(void)
 		Ptr<CGridContainer>			pGrid;
 		Ptr<CInputTestComponent>	pA;
 		Ptr<CInputTestComponent>	pB;
-		CTickTestRefWindow			cTick;
+		Ptr<CTickTestRefWindow>			pTick;
 		SDataTestRefWindow			cData;
 		CPointer					pNull;
 		CChars						szLog;
@@ -297,8 +300,9 @@ void TestComponentInputMouse(void)
 
 		szLog.Init();
 		cNativeFactory.Init(&gcMemoryAllocator, 64, 32, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Input Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Input Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pGrid = OMalloc<CGridContainer>(pTestWindow);
 		pTestWindow->SetContainer(pGrid);
 		pA = OMalloc<CInputTestComponent>(pTestWindow, "A", &szLog, true);
@@ -369,7 +373,9 @@ void TestComponentInputMouse(void)
 
 		cDevices.Kill();
 
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pGrid = NULL;
 		pA = NULL;
 		pB = NULL;

@@ -56,7 +56,7 @@ void TestFillContainerPositions(char* szDirectory, int32 iWidth, int32 iHeight, 
 		size					i;
 		Ptr<CCanvas>			apCanvas[4];
 		Ptr<CBorderCanvasDraw>	pDraw;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFillContainer>		pFill;
 		SInsets					sInsets;
@@ -68,8 +68,9 @@ void TestFillContainerPositions(char* szDirectory, int32 iWidth, int32 iHeight, 
 
 		cNativeFactory.Init(&gcMemoryAllocator, iWidth, iHeight, szDirectory);
 
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		if (paiInsets)
@@ -105,7 +106,9 @@ void TestFillContainerPositions(char* szDirectory, int32 iWidth, int32 iHeight, 
 			apCanvas[i] = NULL;
 		}
 
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pFill = NULL;
 	}
 
@@ -224,7 +227,7 @@ void TestFillContainerRequiredSize(void)
 		Ptr<CWindow>			pTestWindow;
 		Ptr<CCanvas>			pCanvas;
 		Ptr<CBorderCanvasDraw>	pDraw;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFillContainer>		pFill;
 		SInsets					sInsets;
@@ -234,8 +237,9 @@ void TestFillContainerRequiredSize(void)
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 30, szDirectory);
 
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
@@ -276,7 +280,9 @@ void TestFillContainerRequiredSize(void)
 		sVec = pFill->GetRequiredSize();
 		AssertInt32Vec2(26, 19, &sVec);
 
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pFill = NULL;
 	}
 
@@ -306,7 +312,7 @@ void TestFillContainerImageCanvasDesiredSize(void)
 		Ptr<CImageCanvasDraw>	pDraw;
 		Ptr<CImage>				pImage;
 		Ptr<CImageCel>			pCel;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFillContainer>		pFill;
 		SInt32Vec2				sVec;
@@ -314,8 +320,9 @@ void TestFillContainerImageCanvasDesiredSize(void)
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 30, szDirectory);
 
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
@@ -348,7 +355,9 @@ void TestFillContainerImageCanvasDesiredSize(void)
 		sVec = pCanvas->GetDesiredSize();
 		AssertInt32Vec2(12, 7, &sVec);
 
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pFill = NULL;
 		pCanvas = NULL;
 		pDraw = NULL;
@@ -381,7 +390,7 @@ void TestFillContainerDarkForest(char* szDirectory, int32 iWidth, int32 iHeight,
 		CChars					szExpectedDirectory;
 		Ptr<CCanvas>			apCanvas[16];
 		Ptr<CCanvasDraw>		pDraw;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFillContainer>		pFill;
 		SInsets					sInsets;
@@ -395,8 +404,9 @@ void TestFillContainerDarkForest(char* szDirectory, int32 iWidth, int32 iHeight,
 
 		cNativeFactory.Init(&gcMemoryAllocator, iWidth, iHeight, szDirectory);
 
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pTestWindow->GetColourFormat(&cHelper);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
@@ -444,7 +454,9 @@ void TestFillContainerDarkForest(char* szDirectory, int32 iWidth, int32 iHeight,
 			apCanvas[i] = NULL;
 		}
 
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pFill = NULL;
 
 		szExpectedDirectory.Init(szDirectory);
@@ -622,7 +634,7 @@ void TestFillContainerImageCanvasPartialDesiredSize(void)
 		Ptr<CWindow>			pTestWindow;
 		Ptr<CCanvas>			pCanvas;
 		Ptr<CImageCanvasDraw>	pDraw;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFillContainer>		pFill;
 		CColourFormatHelper		cHelper;
@@ -631,8 +643,9 @@ void TestFillContainerImageCanvasPartialDesiredSize(void)
 
 		cNativeFactory.Init(&gcMemoryAllocator, 30, 20, szDirectory);
 
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pTestWindow->GetColourFormat(&cHelper);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
@@ -666,7 +679,9 @@ void TestFillContainerImageCanvasPartialDesiredSize(void)
 		sVec = pCanvas->GetActualSize();
 		AssertInt32Vec2(12, 10, &sVec);
 
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pFill = NULL;
 		pCanvas = NULL;
 		pDraw = NULL;

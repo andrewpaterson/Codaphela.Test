@@ -29,14 +29,15 @@ void TestButtonBarLayout(void)
 		Ptr<CButtonBar>			pBar;
 		Ptr<CCanvas>			pA;
 		Ptr<CCanvas>			pB;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		CPointer				pNull;
 		SInt32Vec2				sVec;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 200, 60, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Button Bar Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Button Bar Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pGrid = OMalloc<CGridContainer>(pTestWindow);
 		pTestWindow->SetContainer(pGrid);
 
@@ -124,7 +125,9 @@ void TestButtonBarLayout(void)
 		pBar = NULL;
 		pTop = NULL;
 		pGrid = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 	}
 
 	AssertSize(0, gcObjects.NumFreeObjects());

@@ -76,7 +76,7 @@ void TestListInput(void)
 		Ptr<CWindow>			pTestWindow;
 		Ptr<CList>				pList;
 		Ptr<CFocus>				pFocus;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		CTestListListener		cListener;
 		CPointer				pNull;
@@ -90,8 +90,9 @@ void TestListInput(void)
 		szLog.Init();
 		cListener.Init(&szLog);
 		cNativeFactory.Init(&gcMemoryAllocator, 100, 100, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("List Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("List Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pFocus = pTestWindow->GetFocus();
 
 		pList = OMalloc<CList>(pTestWindow);
@@ -279,7 +280,9 @@ void TestListInput(void)
 
 		pList = NULL;
 		pFocus = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		szLog.Kill();
 	}
 
@@ -313,7 +316,7 @@ void TestListDraw(void)
 		Ptr<CWindow>			pTestWindow;
 		Ptr<CList>				pList;
 		Ptr<CCanvas>			pItem;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		CPointer				pNull;
 		int32					i;
@@ -321,8 +324,9 @@ void TestListDraw(void)
 		uint8*					puiPixel;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 100, 40, (char*)szDirectory);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("List Draw Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("List Draw Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pList = OMalloc<CList>(pTestWindow);
 		pList->SetHighlightColours(Set32BitColour((uint8)0xFF, (uint8)0, (uint8)0), Set32BitColour((uint8)0, (uint8)0xFF, (uint8)0));
@@ -364,7 +368,9 @@ void TestListDraw(void)
 
 		pItem = NULL;
 		pList = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 	}
 
 	AssertSize(0, gcObjects.NumFreeObjects());

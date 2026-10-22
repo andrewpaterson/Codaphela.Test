@@ -128,14 +128,15 @@ void TestScrollPaneLayout(void)
 		Ptr<CCanvas>			pContent;
 		Ptr<CScrollBar>			pHorizontal;
 		Ptr<CScrollBar>			pVertical;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInt32Vec2				sVec;
 		CPointer				pNull;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 200, 100, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Scroll Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Scroll Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
 
@@ -248,7 +249,9 @@ void TestScrollPaneLayout(void)
 		pContent = NULL;
 		pScrollPane = NULL;
 		pFill = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 	}
 
 	AssertScrollPaneObjectsRemoved();
@@ -272,14 +275,15 @@ void TestScrollPaneDrag(void)
 		Ptr<CCanvas>			pContent;
 		Ptr<CScrollBar>			pVertical;
 		Ptr<CScrollBar>			pHorizontal;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInt32Vec2				sVec;
 		CPointer				pNull;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 200, 100, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Scroll Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Scroll Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
 
@@ -371,7 +375,9 @@ void TestScrollPaneDrag(void)
 		pContent = NULL;
 		pScrollPane = NULL;
 		pFill = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 	}
 
 	AssertScrollPaneObjectsRemoved();
@@ -395,14 +401,15 @@ void TestScrollPaneWheel(void)
 		Ptr<CScrollPane>		pInner;
 		Ptr<CCanvas>			pContent;
 		Ptr<CScrollBarImages>	pImages;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInt32Vec2				sVec;
 		CPointer				pNull;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 200, 100, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Scroll Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Scroll Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
 
@@ -481,7 +488,9 @@ void TestScrollPaneWheel(void)
 		pContent = NULL;
 		pScrollPane = NULL;
 		pFill = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 	}
 
 	AssertScrollPaneObjectsRemoved();
@@ -514,7 +523,7 @@ void TestScrollPaneDraw(char* szName, int32 iWidth, int32 iHeight, const char* s
 		Ptr<CClearCanvasDraw>	pBackground;
 		Ptr<CScrollPane>		pScrollPane;
 		Ptr<CTextArea>			pTextArea;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInsets					sInsets;
 		int						aiInsets[4];
@@ -523,9 +532,10 @@ void TestScrollPaneDraw(char* szName, int32 iWidth, int32 iHeight, const char* s
 		SInt32Vec2				sVec;
 
 		cNativeFactory.Init(&gcMemoryAllocator, iWidth, iHeight, szDirectory.Text());
-		cTick.Init(&cData, 1);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
 		pBackground = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)40, (uint8)60, (uint8)110));
-		pTestWindow = OMalloc<CWindow>("Scroll Window", &cNativeFactory, &cTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow = OMalloc<CWindow>("Scroll Window", &cNativeFactory, pTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		aiInsets[BEI_Top] = 10;
@@ -557,7 +567,9 @@ void TestScrollPaneDraw(char* szName, int32 iWidth, int32 iHeight, const char* s
 		pScrollPane = NULL;
 		pFont = NULL;
 		pFill = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pBackground = NULL;
 
 		szExpectedDirectory.Init(szDirectory);

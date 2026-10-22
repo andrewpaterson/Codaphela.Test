@@ -89,7 +89,7 @@ void TestButtonInput(void)
 		Ptr<CButton>			pOK;
 		Ptr<CButton>			pCancel;
 		Ptr<CFocus>				pFocus;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		CColourFormatHelper		cHelper;
 		CTestButtonListener		cListener;
@@ -105,8 +105,9 @@ void TestButtonInput(void)
 		szLog.Init();
 		cListener.Init(&szLog);
 		cNativeFactory.Init(&gcMemoryAllocator, 200, 60, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Button Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Button Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pTestWindow->GetColourFormat(&cHelper);
 		pFocus = pTestWindow->GetFocus();
 
@@ -230,7 +231,9 @@ void TestButtonInput(void)
 		pImages = NULL;
 		pFont = NULL;
 		pFocus = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		szLog.Kill();
 	}
 
@@ -261,7 +264,7 @@ void TestButtonDefault(void)
 		Ptr<CButton>			pCancel;
 		Ptr<CLabel>				pName;
 		Ptr<CFocus>				pFocus;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		CColourFormatHelper		cHelper;
 		CTestButtonListener		cListener;
@@ -274,8 +277,9 @@ void TestButtonDefault(void)
 		szLog.Init();
 		cListener.Init(&szLog);
 		cNativeFactory.Init(&gcMemoryAllocator, 300, 60, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Default Button Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Default Button Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pTestWindow->GetColourFormat(&cHelper);
 		pFocus = pTestWindow->GetFocus();
 
@@ -365,7 +369,9 @@ void TestButtonDefault(void)
 		pDefaultImages = NULL;
 		pFont = NULL;
 		pFocus = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		szLog.Kill();
 	}
 
@@ -395,15 +401,22 @@ protected:
 	bool		mbReturnOver;
 
 public:
-	void Init(SInt32Vec2 sOver, SInt32Vec2 sAway, bool bReturnOver)
+	//The positions are set with SetPositions once the button has been laid out.
+	void Init(bool bReturnOver)
 	{
 		PreInit();
 		CWindowTick::Init();
 		miFrame = 0;
-		msOver = sOver;
-		msAway = sAway;
+		msOver.Init(0, 0);
+		msAway.Init(0, 0);
 		mbReturnOver = bReturnOver;
 		PostInit();
+	}
+
+	void SetPositions(SInt32Vec2 sOver, SInt32Vec2 sAway)
+	{
+		msOver = sOver;
+		msAway = sAway;
 	}
 
 	void Class(void) override
@@ -468,7 +481,7 @@ void TestButtonStates(char* szName, Ptr<CButtonImages>(*ReadImages)(CColourForma
 		Ptr<CButtonImages>		pImages;
 		Ptr<CFont>				pFont;
 		Ptr<CButton>			pButton;
-		CButtonStatesTick		cTick;
+		Ptr<CButtonStatesTick>		pTick;
 		CColourFormatHelper		cHelper;
 		CPointer				pNull;
 		CChars					szExpectedDirectory;
@@ -476,7 +489,10 @@ void TestButtonStates(char* szName, Ptr<CButtonImages>(*ReadImages)(CColourForma
 		SInt32Vec2				sSize;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 120, 60, szDirectory.Text());
-		pTestWindow = OMalloc<CWindow>("Button States", &cNativeFactory, &cTick, OMalloc<CClearCanvasDraw>(sBackground), CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		//The tick is allocated, not on the stack, because the window is rooted and stack objects can't be under the root.
+		pTick = OMalloc<CButtonStatesTick>(bReturnOver);
+		pTestWindow = OMalloc<CWindow>("Button States", &cNativeFactory, pTick, OMalloc<CClearCanvasDraw>(sBackground), CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pTestWindow->GetColourFormat(&cHelper);
 
 		pFont = ReadLabelFont();
@@ -497,7 +513,7 @@ void TestButtonStates(char* szName, Ptr<CButtonImages>(*ReadImages)(CColourForma
 		pTestWindow->Layout();
 		sPosition = pButton->GetPosition();
 		sSize = pButton->GetActualSize();
-		cTick.Init(SInt32Vec2(sPosition.x + sSize.x / 2, sPosition.y + sSize.y / 2), SInt32Vec2(1, 1), bReturnOver);
+		pTick->SetPositions(SInt32Vec2(sPosition.x + sSize.x / 2, sPosition.y + sSize.y / 2), SInt32Vec2(1, 1));
 
 		pTestWindow->Show();
 		AssertInt(bReturnOver ? BS_Pushed : BS_Selected, pButton->GetState());
@@ -508,7 +524,9 @@ void TestButtonStates(char* szName, Ptr<CButtonImages>(*ReadImages)(CColourForma
 		pFill = NULL;
 		pImages = NULL;
 		pFont = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 
 		szExpectedDirectory.Init(szDirectory);
 		szExpectedDirectory.Replace("Output", "Input");

@@ -63,14 +63,15 @@ void TestLabelRequiredSize(void)
 		Ptr<CWindow>			pTestWindow;
 		Ptr<CFont>				pFont;
 		Ptr<CLabel>				pLabel;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInt32Vec2				sSize;
 		CPointer				pNull;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 64, 32, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Label Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Label Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFont = ReadLabelFont();
 		AssertTrue(pFont.IsNotNull());
@@ -115,7 +116,9 @@ void TestLabelRequiredSize(void)
 
 		pLabel = NULL;
 		pFont = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 	}
 
 	AssertLabelObjectsRemoved();
@@ -170,7 +173,7 @@ void TestLabelFillContainerAlignments(void)
 		Ptr<CFillContainer>		pFill;
 		Ptr<CClearCanvasDraw>	pBackground;
 		Ptr<CLabel>				apLabels[6];
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		SInt32Vec2				sRequired;
 		SInt32Vec2				sVec;
@@ -179,10 +182,11 @@ void TestLabelFillContainerAlignments(void)
 		size					i;
 
 		cNativeFactory.Init(&gcMemoryAllocator, iWidth, iHeight, szDirectory);
-		cTick.Init(&cData, 1);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
 		//The labels are transparent, they are drawn over the window's background.
 		pBackground = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)40, 60, 110));
-		pTestWindow = OMalloc<CWindow>("Label Window", &cNativeFactory, &cTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow = OMalloc<CWindow>("Label Window", &cNativeFactory, pTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
@@ -234,7 +238,9 @@ void TestLabelFillContainerAlignments(void)
 		}
 		pFont = NULL;
 		pFill = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pBackground = NULL;
 
 		szExpectedDirectory.Init(szDirectory);
@@ -270,17 +276,18 @@ void TestLabelRedraw(void)
 		Ptr<CFillContainer>		pFill;
 		Ptr<CClearCanvasDraw>	pBackground;
 		Ptr<CLabel>				pLabel;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		CChars					szFrame0;
 		CChars					szFrame;
 		CPointer				pNull;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 80, 24, szDirectory);
-		cTick.Init(&cData, 3);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 3);
 		//The labels are transparent, they are drawn over the window's background.
 		pBackground = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)40, 60, 110));
-		pTestWindow = OMalloc<CWindow>("Label Window", &cNativeFactory, &cTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow = OMalloc<CWindow>("Label Window", &cNativeFactory, pTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
@@ -296,7 +303,9 @@ void TestLabelRedraw(void)
 		pLabel = NULL;
 		pFont = NULL;
 		pFill = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pBackground = NULL;
 
 		szFrame0.Init(szDirectory);

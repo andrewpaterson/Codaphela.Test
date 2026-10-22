@@ -36,15 +36,16 @@ void TestComponentInputFocus(void)
 		Ptr<CInputTestComponent>	pB;
 		Ptr<CInputTestComponent>	pC;
 		Ptr<CFocus>					pFocus;
-		CTickTestRefWindow			cTick;
+		Ptr<CTickTestRefWindow>			pTick;
 		SDataTestRefWindow			cData;
 		CPointer					pNull;
 		CChars						szLog;
 
 		szLog.Init();
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 32, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Input Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Input Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pFocus = pTestWindow->GetFocus();
 
 		pGrid = OMalloc<CGridContainer>(pTestWindow);
@@ -130,7 +131,9 @@ void TestComponentInputFocus(void)
 
 		gcObjects.ValidateObjectsConsistency();
 
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pGrid = NULL;
 		pA = NULL;
 		pa = NULL;
@@ -162,15 +165,16 @@ void TestComponentInputDrag(void)
 		Ptr<CGridContainer>			pGrid;
 		Ptr<CInputTestComponent>	pA;
 		Ptr<CInputTestComponent>	pB;
-		CTickTestRefWindow			cTick;
+		Ptr<CTickTestRefWindow>			pTick;
 		SDataTestRefWindow			cData;
 		CPointer					pNull;
 		CChars						szLog;
 
 		szLog.Init();
 		cNativeFactory.Init(&gcMemoryAllocator, 64, 32, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Input Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Input Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pGrid = OMalloc<CGridContainer>(pTestWindow);
 		pTestWindow->SetContainer(pGrid);
@@ -211,7 +215,9 @@ void TestComponentInputDrag(void)
 		pTestWindow->InputCommand(CIC_StopDragSelect, true);
 		AssertLog("A:StopDragSelect(7,6);");
 
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pGrid = NULL;
 		pA = NULL;
 		pB = NULL;
@@ -241,15 +247,16 @@ void TestComponentInputActivation(void)
 		Ptr<CInputTestComponent>	pA;
 		Ptr<CInputTestComponent>	pB;
 		Ptr<CFocus>					pFocus;
-		CTickTestRefWindow			cTick;
+		Ptr<CTickTestRefWindow>			pTick;
 		SDataTestRefWindow			cData;
 		CPointer					pNull;
 		CChars						szLog;
 
 		szLog.Init();
 		cNativeFactory.Init(&gcMemoryAllocator, 64, 32, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Input Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Input Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pFocus = pTestWindow->GetFocus();
 
 		pGrid = OMalloc<CGridContainer>(pTestWindow);
@@ -299,7 +306,9 @@ void TestComponentInputActivation(void)
 		pTestWindow->InputCommand(CIC_Up, true);
 		AssertLog("B:Up;");
 
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pGrid = NULL;
 		pA = NULL;
 		pB = NULL;
@@ -332,15 +341,16 @@ void TestComponentInputRemoveAndLayout(void)
 		Ptr<CInputTestComponent>	pB;
 		Ptr<CInputTestComponent>	pC;
 		Ptr<CFocus>					pFocus;
-		CTickTestRefWindow			cTick;
+		Ptr<CTickTestRefWindow>			pTick;
 		SDataTestRefWindow			cData;
 		CPointer					pNull;
 		CChars						szLog;
 
 		szLog.Init();
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 32, NULL);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Input Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Input Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pFocus = pTestWindow->GetFocus();
 
 		pGrid = OMalloc<CGridContainer>(pTestWindow);
@@ -386,7 +396,9 @@ void TestComponentInputRemoveAndLayout(void)
 		pTestWindow->Layout();
 		AssertLog("");
 
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pGrid = NULL;
 		pA = NULL;
 		pa = NULL;

@@ -56,7 +56,7 @@ void TestBorderLayoutHelperLayout(char* szDirectory, int32 iWidth, int32 iHeight
 		Ptr<CGridContainer>		pGrid;
 		Ptr<CCanvas>			apCanvas[9];
 		Ptr<CCanvasDraw>		pDraw;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		CColourFormatHelper		cHelper;
 		SBorderTestComponent*	psComponent;
@@ -69,8 +69,9 @@ void TestBorderLayoutHelperLayout(char* szDirectory, int32 iWidth, int32 iHeight
 		AssertTrue(uiNumComponents <= 9);
 
 		cNativeFactory.Init(&gcMemoryAllocator, iWidth, iHeight, szDirectory);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Border Layout", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Border Layout", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pTestWindow->GetColourFormat(&cHelper);
 
 		cBorder.Init(pTestWindow);
@@ -116,7 +117,9 @@ void TestBorderLayoutHelperLayout(char* szDirectory, int32 iWidth, int32 iHeight
 
 		cBorder.Kill();
 		pGrid = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 
 		szExpectedDirectory.Init(szDirectory);
 		szExpectedDirectory.Replace("Output", "Input");
@@ -265,7 +268,7 @@ void TestBorderLayoutHelperBlueButtons(void)
 		Ptr<CGridContainer>		pButton;
 		Ptr<CCanvas>			apFaces[4];
 		CBorderLayoutHelper		acBorders[4];
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		CColourFormatHelper		cHelper;
 		CChars					szExpectedDirectory;
@@ -275,8 +278,9 @@ void TestBorderLayoutHelperBlueButtons(void)
 		Ptr<CButtonImages>		pImages;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 132, 184, szDirectory);
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Blue Buttons", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Blue Buttons", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pTestWindow->GetColourFormat(&cHelper);
 		pImages = ReadBlueButtonImages(&cHelper);
 
@@ -309,7 +313,9 @@ void TestBorderLayoutHelperBlueButtons(void)
 		pButton = NULL;
 		pColumn = NULL;
 		pImages = NULL;
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 
 		szExpectedDirectory.Init(szDirectory);
 		szExpectedDirectory.Replace("Output", "Input");

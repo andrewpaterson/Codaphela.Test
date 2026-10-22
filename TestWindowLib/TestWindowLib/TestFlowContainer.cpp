@@ -75,7 +75,7 @@ void TestFlowContainerBasicOnHeap(void)
 		Ptr<CBorderCanvasDraw>	pDraw1;
 		Ptr<CBorderCanvasDraw>	pDraw2;
 		Ptr<CBorderCanvasDraw>	pDraw3;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>	pTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
 		CInt32Rect				cBounds;
@@ -83,9 +83,10 @@ void TestFlowContainerBasicOnHeap(void)
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 30, szDirectory);
 
-		cTick.Init(&cData, 1);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
 		
-		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, (CPointer)NULL, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, (CPointer)NULL, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pDraw1 = OMalloc<CBorderCanvasDraw>(Set32BitColour(1.0f, 0, 0));
 		pCanvas1 = OMalloc<CCanvas>(pTestWindow, pDraw1);
@@ -134,6 +135,8 @@ void TestFlowContainerBasicOnHeap(void)
 
 		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
 		szExpectedDirectory.Kill();
+
+		ORoot()->Remove(pTestWindow);
 	}
 
 	AssertFlowContainerObjectsRemoved();
@@ -679,7 +682,7 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, uint32 iR
 		CChars					szExpectedDirectory;
 		Ptr<CCanvas>			pCanvas;
 		Ptr<CBorderCanvasDraw>	pDraw;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
 		CInt32Rect				cBounds;
@@ -689,8 +692,9 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, uint32 iR
 
 		cNativeFactory.Init(&gcMemoryAllocator, iWidth, iHeight, szDirectory);
 
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFlow = OMalloc<CFlowContainer>(pTestWindow);
 		if ((eV != CSV_Unknown) && (eH == CSH_Unknown))
@@ -728,7 +732,9 @@ void TestFlowContainer(char* szDirectory, int32 iWidth, int32 iHeight, uint32 iR
 		pTestWindow->Show();
 
 
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pFlow = NULL;
 		AssertSize(uiStartObjects + 2, gcObjects.NumMemoryIndexes());  //GraphFreeObjects and its Set.
 
@@ -885,7 +891,7 @@ void TestFlowContainerPositions(char* szDirectory, int32 iWidth, int32 iHeight, 
 		size					i;
 		Ptr<CCanvas>			apCanvas[4];
 		Ptr<CBorderCanvasDraw>	pDraw;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
 		SInt32Vec2				sVec;
@@ -893,8 +899,9 @@ void TestFlowContainerPositions(char* szDirectory, int32 iWidth, int32 iHeight, 
 
 		cNativeFactory.Init(&gcMemoryAllocator, iWidth, iHeight, szDirectory);
 
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pFlow = OMalloc<CFlowContainer>(pTestWindow);
 		if (eH == CSH_Unknown)
@@ -935,7 +942,9 @@ void TestFlowContainerPositions(char* szDirectory, int32 iWidth, int32 iHeight, 
 			apCanvas[i] = NULL;
 		}
 
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pFlow = NULL;
 		AssertSize(uiStartObjects + 2, gcObjects.NumMemoryIndexes());  //GraphFreeObjects and its Set.
 	}
@@ -1070,7 +1079,7 @@ void TestFlowContainerNested(void)
 		Ptr<CCanvas>			apRow[2];
 		Ptr<CCanvas>			pHolder;
 		Ptr<CBorderCanvasDraw>	pDraw;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pOuterFlow;
 		Ptr<CFlowContainer>		pInnerFlow;
@@ -1081,8 +1090,9 @@ void TestFlowContainerNested(void)
 
 		cNativeFactory.Init(&gcMemoryAllocator, 96, 30, szDirectory);
 
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 
 		pOuterFlow = OMalloc<CFlowContainer>(pTestWindow);
 		pOuterFlow->SetFlowStyle(CSD_Right, CSW_Continue, CSV_Top);
@@ -1166,7 +1176,9 @@ void TestFlowContainerNested(void)
 			apRow[i] = NULL;
 		}
 
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pOuterFlow = NULL;
 		pInnerFlow = NULL;
 		pRowFlow = NULL;
@@ -1199,7 +1211,7 @@ void TestFlowContainerDarkForest(char* szDirectory, int32 iWidth, int32 iHeight,
 		CChars					szExpectedDirectory;
 		Ptr<CCanvas>			apCanvas[16];
 		Ptr<CCanvasDraw>		pDraw;
-		CTickTestRefWindow		cTick;
+		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
 		Ptr<CFlowContainer>		pFlow;
 		CColourFormatHelper		cHelper;
@@ -1210,8 +1222,9 @@ void TestFlowContainerDarkForest(char* szDirectory, int32 iWidth, int32 iHeight,
 
 		cNativeFactory.Init(&gcMemoryAllocator, iWidth, iHeight, szDirectory);
 
-		cTick.Init(&cData, 1);
-		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
 		pTestWindow->GetColourFormat(&cHelper);
 
 		pFlow = OMalloc<CFlowContainer>(pTestWindow);
@@ -1256,7 +1269,9 @@ void TestFlowContainerDarkForest(char* szDirectory, int32 iWidth, int32 iHeight,
 			apCanvas[i] = NULL;
 		}
 
+		ORoot()->Remove(pTestWindow);
 		pTestWindow = NULL;
+		pTick = NULL;
 		pFlow = NULL;
 
 		szExpectedDirectory.Init(szDirectory);
