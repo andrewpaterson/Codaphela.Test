@@ -5,7 +5,7 @@
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Unknowns.h"
-#include "MicroprocessorLib/MetaTrace.h"
+#include "MicroprocessorLib/W65MetaTrace.h"
 #include "TestLib/Assert.h"
 
 

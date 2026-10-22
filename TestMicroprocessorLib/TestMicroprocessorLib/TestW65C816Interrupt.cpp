@@ -2,8 +2,8 @@
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "MicroprocessorLib/W65C816.h"
-#include "MicroprocessorLib/InstructionFactory.h"
-#include "MicroprocessorLib/MetaW65C816.h"
+#include "MicroprocessorLib/W65C816InstructionFactory.h"
+#include "MicroprocessorLib/W65C816Meta.h"
 #include "TestLib/Assert.h"
 #include "TestW65C816Context.h"
 
@@ -31,7 +31,7 @@ public:
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C816InterruptTickHigh(CMetaW65C816* pcMPU, void* pvContext)
+void TestW65C816InterruptTickHigh(CW65C816Meta* pcMPU, void* pvContext)
 {
 	// Pulls IRQB or NMIB low when the opcode at the given address is fetched and
 	// lets it go when the interrupt vector is read (VPB low), as interrupt
@@ -79,10 +79,10 @@ void TestW65C816InterruptTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816InterruptRunInContext(CTestW65C816InterruptContext* pcContext, char* szExpected)
 {
-	CMetaW65C816	cMPU;
+	CW65C816Meta	cMPU;
 	uint64			uiInstructions;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	pcContext->SetPrint(false, false, true, false, false, true, false, false, true, true, false, false, true, true);
 	pcContext->muiMaxInstructions = 10000;
@@ -100,7 +100,7 @@ void TestW65C816InterruptRunInContext(CTestW65C816InterruptContext* pcContext, c
 	AssertLong(pcContext->muiInstructions, uiInstructions);
 	AssertString(szExpected, pcContext->SequenceText());
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 

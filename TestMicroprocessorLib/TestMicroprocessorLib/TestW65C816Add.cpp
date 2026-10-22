@@ -4,8 +4,8 @@
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/LogToMemory.h"
 #include "MicroprocessorLib/W65C816.h"
-#include "MicroprocessorLib/InstructionFactory.h"
-#include "MicroprocessorLib/MetaW65C816.h"
+#include "MicroprocessorLib/W65C816InstructionFactory.h"
+#include "MicroprocessorLib/W65C816Meta.h"
 #include "TestLib/Assert.h"
 #include "TestW65C816Context.h"
 
@@ -16,11 +16,11 @@
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816AddADCImmediateFullLog(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x10000, 0xea);
 	cTestContext.SetPrint(true, true, true, true, true, true, true, true, true, true, false, false, false, false);
@@ -59,7 +59,7 @@ void TestW65C816AddADCImmediateFullLog(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 

@@ -2,7 +2,7 @@
 #define __TEST_SINGLE_STEP_H__
 #include "BaseLib/Chars.h"
 #include "BaseLib/ArraySparseTemplate.h"
-#include "MicroprocessorLib/MetaW65C.h"
+#include "MicroprocessorLib/W65CMeta.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -113,7 +113,7 @@ class CSingleStepProcessor
 public:
 	virtual void		Init(CTestSingleStepContext* pcContext) = 0;
 	virtual void		Kill(void) = 0;
-	virtual CMetaW65C*	GetMeta(void) = 0;
+	virtual CW65CMeta*	GetMeta(void) = 0;
 	virtual CW65CCore*	GetCPU(void) = 0;
 	virtual void		SetState(SSingleStepState* psState) = 0;  //Registers the core does not set.
 	virtual uint8		GetSignalMask(void) = 0;  //The signals the tests give.
@@ -122,7 +122,7 @@ public:
 };
 
 
-void TestSingleStepRecordCycle(CMetaW65C* pcMPU, CTestSingleStepContext* pcContext, uint8 uiSignals, bool bEnabled);
+void TestSingleStepRecordCycle(CW65CMeta* pcMPU, CTestSingleStepContext* pcContext, uint8 uiSignals, bool bEnabled);
 void TestSingleStepFile(CSingleStepProcessor* pcProcessor, char* szDirectory, char* szName, uint8 uiOpcode);
 
 

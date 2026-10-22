@@ -9,7 +9,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestSingleStepRecordCycle(CMetaW65C* pcMPU, CTestSingleStepContext* pcContext, uint8 uiSignals, bool bEnabled)
+void TestSingleStepRecordCycle(CW65CMeta* pcMPU, CTestSingleStepContext* pcContext, uint8 uiSignals, bool bEnabled)
 {
 	//Records the bus cycle and acts as the memory.  The tests only enable memory when
 	//bEnabled (VDA, VPA or VPB for the W65C816S).
@@ -294,7 +294,7 @@ bool TestSingleStepRunTest(CSingleStepProcessor* pcProcessor, CSingleStepReader*
 	uint16							uiCycles;
 	uint16							i;
 	CTestSingleStepContext			cContext;
-	CMetaW65C*						pcMPU;
+	CW65CMeta*						pcMPU;
 	CW65CCore*						pcCPU;
 	CSingleStepReader				cRam;
 	uint32							uiAddress;

@@ -3,8 +3,8 @@
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "MicroprocessorLib/W65C816.h"
-#include "MicroprocessorLib/InstructionFactory.h"
-#include "MicroprocessorLib/MetaW65C816.h"
+#include "MicroprocessorLib/W65C816InstructionFactory.h"
+#include "MicroprocessorLib/W65C816Meta.h"
 #include "TestLib/Assert.h"
 #include "TestSingleStep.h"
 
@@ -22,7 +22,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C816SingleStepTickHigh(CMetaW65C816* pcMPU, void* pvContext)
+void TestW65C816SingleStepTickHigh(CW65C816Meta* pcMPU, void* pvContext)
 {
 	uint8	uiSignals;
 	bool	bEnabled;
@@ -47,7 +47,7 @@ void TestW65C816SingleStepTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C816SingleStepTickLow(CMetaW65C816* pcMPU, void* pvContext)
+void TestW65C816SingleStepTickLow(CW65C816Meta* pcMPU, void* pvContext)
 {
 }
 
@@ -55,12 +55,12 @@ void TestW65C816SingleStepTickLow(CMetaW65C816* pcMPU, void* pvContext)
 class CSingleStepW65C816 : public CSingleStepProcessor
 {
 protected:
-	CMetaW65C816	mcMPU;
+	CW65C816Meta	mcMPU;
 
 public:
 	void		Init(CTestSingleStepContext* pcContext) override	{ mcMPU.Init(TestW65C816SingleStepTickHigh, TestW65C816SingleStepTickLow, pcContext); }
 	void		Kill(void) override									{ mcMPU.Kill(); }
-	CMetaW65C*	GetMeta(void) override								{ return &mcMPU; }
+	CW65CMeta*	GetMeta(void) override								{ return &mcMPU; }
 	CW65CCore*	GetCPU(void) override								{ return mcMPU.GetMPU(); }
 	uint8		GetSignalMask(void) override						{ return 0xFF; }
 	uint8		GetStatusMask(void) override						{ return 0xFF; }
@@ -89,7 +89,7 @@ void TestW65C816SingleStep(void)
 	BeginTests();
 
 	DataIOInit();
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	for (iOpcode = 0; iOpcode < 256; iOpcode++)
 	{
@@ -99,7 +99,7 @@ void TestW65C816SingleStep(void)
 		TestSingleStepFile(&cProcessor, "SingleStep", szName, (uint8)iOpcode);
 	}
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 	DataIOKill();
 
 	TestStatistics();

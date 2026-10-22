@@ -1,6 +1,6 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/DiskFile.h"
-#include "MicroprocessorLib/InstructionFactory.h"
+#include "MicroprocessorLib/W65C816InstructionFactory.h"
 #include "TestLib/Assert.h"
 #include "TestW65C816Context.h"
 
@@ -397,7 +397,7 @@ void MergeEndCycleString(CTestW65C816Context* pcContext, bool bFetchOpcode, size
 //
 //
 //////////////////////////////////////////////////////////////////////////
-uint64 CTestW65C816Context::Run(CMetaW65C816* pcMPU)
+uint64 CTestW65C816Context::Run(CW65C816Meta* pcMPU)
 {
 	uint64		i;
 	bool		bRunning;
@@ -435,7 +435,7 @@ uint64 CTestW65C816Context::Run(CMetaW65C816* pcMPU)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C81ContextDebugSpew(CMetaW65C816* pcMPU, CTestW65C816Context* pcContext)
+void TestW65C81ContextDebugSpew(CW65C816Meta* pcMPU, CTestW65C816Context* pcContext)
 {
 	CChars					szTemp;
 
@@ -479,7 +479,7 @@ void TestW65C81ContextDebugSpew(CMetaW65C816* pcMPU, CTestW65C816Context* pcCont
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C81ContextPrint(CMetaW65C816* pcMPU, CTestW65C816Context* pcContext)
+void TestW65C81ContextPrint(CW65C816Meta* pcMPU, CTestW65C816Context* pcContext)
 {
 	bool					bReset;
 	bool					bStop;
@@ -542,7 +542,7 @@ void TestW65C81ContextPrint(CMetaW65C816* pcMPU, CTestW65C816Context* pcContext)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C81ContextTickLow(CMetaW65C816* pcMPU, void* pvContext)
+void TestW65C81ContextTickLow(CW65C816Meta* pcMPU, void* pvContext)
 {
 }
 
@@ -551,7 +551,7 @@ void TestW65C81ContextTickLow(CMetaW65C816* pcMPU, void* pvContext)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext)
+void TestW65C81ContextTickHigh(CW65C816Meta* pcMPU, void* pvContext)
 {
 	uint32					uiAddress;
 	bool					bRead;
@@ -595,10 +595,10 @@ void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816RunInContext(CTestW65C816Context* pcContext, char* szExpected)
 {
-	CMetaW65C816	cMPU;
+	CW65C816Meta	cMPU;
 	uint64			uiInstructions;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	pcContext->SetPrint(true, true, true, false, false, true, true, true, true, false, false, false, true, true);
 	if (pcContext->muiMaxInstructions == 0)
@@ -619,7 +619,7 @@ void TestW65C816RunInContext(CTestW65C816Context* pcContext, char* szExpected)
 		AssertString(szExpected, pcContext->SequenceText());
 	}
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 

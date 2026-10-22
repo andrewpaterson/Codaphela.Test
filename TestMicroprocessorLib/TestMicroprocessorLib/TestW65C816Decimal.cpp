@@ -2,8 +2,8 @@
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "MicroprocessorLib/W65C816.h"
-#include "MicroprocessorLib/InstructionFactory.h"
-#include "MicroprocessorLib/MetaW65C816.h"
+#include "MicroprocessorLib/W65C816InstructionFactory.h"
+#include "MicroprocessorLib/W65C816Meta.h"
 #include "TestLib/Assert.h"
 #include "TestW65C816Context.h"
 

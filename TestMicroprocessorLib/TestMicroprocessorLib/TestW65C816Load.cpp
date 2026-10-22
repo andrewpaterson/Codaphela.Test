@@ -4,8 +4,8 @@
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/LogToMemory.h"
 #include "MicroprocessorLib/W65C816.h"
-#include "MicroprocessorLib/InstructionFactory.h"
-#include "MicroprocessorLib/MetaW65C816.h"
+#include "MicroprocessorLib/W65C816InstructionFactory.h"
+#include "MicroprocessorLib/W65C816Meta.h"
 #include "TestLib/Assert.h"
 #include "TestW65C816Context.h"
 
@@ -16,11 +16,11 @@
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDAImmediate(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x10000, 0xea, 0x0200);
 	cTestContext.SetPrint(true, true, true, true, true, true, true, true, true, true, false, false, true, false);
@@ -75,7 +75,7 @@ void TestW65C816LoadLDAImmediate(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -85,11 +85,11 @@ void TestW65C816LoadLDAImmediate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDAAbsolute(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x10000, 0xea, 0x0200);
 	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, true, false, false, true, false);
@@ -133,7 +133,7 @@ void TestW65C816LoadLDAAbsolute(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -143,11 +143,11 @@ void TestW65C816LoadLDAAbsolute(void)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDAAbsoluteIndexedWithY(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x20000, 0xea, 0x0200);
 	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, false, false, false, false, false);
@@ -195,7 +195,7 @@ void TestW65C816LoadLDAAbsoluteIndexedWithY(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -205,11 +205,11 @@ void TestW65C816LoadLDAAbsoluteIndexedWithY(void)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDAAbsoluteIndexedWithX(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x20000, 0xea, 0x0200);
 	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, true, false, false, false, false);
@@ -258,7 +258,7 @@ void TestW65C816LoadLDAAbsoluteIndexedWithX(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -269,11 +269,11 @@ void TestW65C816LoadLDAAbsoluteIndexedWithX(void)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDAAbsoluteLongIndexedWithX(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x30000, 0xea, 0x0200);
 	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, true, false, false, false, false);
@@ -326,7 +326,7 @@ void TestW65C816LoadLDAAbsoluteLongIndexedWithX(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -336,11 +336,11 @@ void TestW65C816LoadLDAAbsoluteLongIndexedWithX(void)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDAAbsoluteLong(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x20000, 0xea, 0x0200);
 	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, false, false, false, false, false);
@@ -386,7 +386,7 @@ void TestW65C816LoadLDAAbsoluteLong(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -396,11 +396,11 @@ void TestW65C816LoadLDAAbsoluteLong(void)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDAStackRelative(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x10000, 0xea, 0x0200);
 	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, true, false, false, false, false);
@@ -468,7 +468,7 @@ void TestW65C816LoadLDAStackRelative(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -478,11 +478,11 @@ void TestW65C816LoadLDAStackRelative(void)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDAStackRelativeIndirectIndexedWithY(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x10000, 0xea, 0x0200);
 	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, true, false, false, false, false);
@@ -560,7 +560,7 @@ void TestW65C816LoadLDAStackRelativeIndirectIndexedWithY(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -570,11 +570,11 @@ void TestW65C816LoadLDAStackRelativeIndirectIndexedWithY(void)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDADirectPage(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x10000, 0xea, 0x0200);
 	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, false, true, false, false, false);
@@ -632,7 +632,7 @@ void TestW65C816LoadLDADirectPage(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -642,11 +642,11 @@ void TestW65C816LoadLDADirectPage(void)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDADirectPageIndirect(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x20000, 0xea, 0x0200);
 	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, false, true, false, false, false);
@@ -708,7 +708,7 @@ void TestW65C816LoadLDADirectPageIndirect(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -718,11 +718,11 @@ void TestW65C816LoadLDADirectPageIndirect(void)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDADirectPageIndexedWithX(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x20000, 0xea, 0x0200);
 	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, false, true, false, false, false);
@@ -781,7 +781,7 @@ void TestW65C816LoadLDADirectPageIndexedWithX(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -791,11 +791,11 @@ void TestW65C816LoadLDADirectPageIndexedWithX(void)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDADirectPageIndirectLong(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x20000, 0xea, 0x0200);
 	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, false, true, false, false, false);
@@ -859,7 +859,7 @@ void TestW65C816LoadLDADirectPageIndirectLong(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -869,11 +869,11 @@ void TestW65C816LoadLDADirectPageIndirectLong(void)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDADirectPageIndirectIndexedWithY(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x30000, 0xea, 0x0200);
 	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, true, true, true, false, false);
@@ -976,7 +976,7 @@ void TestW65C816LoadLDADirectPageIndirectIndexedWithY(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -986,11 +986,11 @@ void TestW65C816LoadLDADirectPageIndirectIndexedWithY(void)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDADirectPageIndirectLongIndexedWithY(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x30000, 0xea, 0x0200);
 	cTestContext.SetPrint(true, true, true, true, true, true, true, true, true, true, true, true, true, false);
@@ -1078,7 +1078,7 @@ void TestW65C816LoadLDADirectPageIndirectLongIndexedWithY(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -1088,11 +1088,11 @@ void TestW65C816LoadLDADirectPageIndirectLongIndexedWithY(void)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816LoadLDADirectPageIndexedIndirectWithX(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x10000, 0xea, 0x0200);
 	cTestContext.SetPrint(false, false, true, true, true, true, true, true, true, false, true, false, false, false);
@@ -1142,7 +1142,7 @@ void TestW65C816LoadLDADirectPageIndexedIndirectWithX(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 

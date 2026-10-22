@@ -4,13 +4,13 @@
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/LogToMemory.h"
 #include "MicroprocessorLib/W65C816.h"
-#include "MicroprocessorLib/InstructionFactory.h"
-#include "MicroprocessorLib/MetaW65C816.h"
+#include "MicroprocessorLib/W65C816InstructionFactory.h"
+#include "MicroprocessorLib/W65C816Meta.h"
 #include "TestLib/Assert.h"
 #include "TestW65C816Context.h"
 
 
-void TestW65C816Reset(CW65C816* pcW65C816, CMetaTrace* pcPhi2, CMetaTrace* pcVPA, CMetaTrace* pcVDA, CMetaTrace* pcVPB, CMetaTrace* pcRWB);
+void TestW65C816Reset(CW65C816* pcW65C816, CW65MetaTrace* pcPhi2, CW65MetaTrace* pcVPA, CW65MetaTrace* pcVDA, CW65MetaTrace* pcVPB, CW65MetaTrace* pcRWB);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ void AssertCycle(CW65C816* pcW65C816, int16 iExpected)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertAddress(CW65C816Pins* pcW65C816, CTimeline* pcTimeline, uint16 uiAddress)
+void AssertAddress(CW65C816Pins* pcW65C816, CW65Timeline* pcTimeline, uint16 uiAddress)
 {
 	uint16	uiPinsAddress;
 
@@ -70,7 +70,7 @@ void AssertAddress(CW65C816Pins* pcW65C816, CTimeline* pcTimeline, uint16 uiAddr
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertData(CW65C816Pins* pcW65C816, CTimeline* pcTimeline, uint8 uiData)
+void AssertData(CW65C816Pins* pcW65C816, CW65Timeline* pcTimeline, uint8 uiData)
 {
 	uint8	uiPinsData;
 
@@ -83,7 +83,7 @@ void AssertData(CW65C816Pins* pcW65C816, CTimeline* pcTimeline, uint8 uiData)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertSignals(bool bVPA, bool bVDA, bool bVPB, bool bRWB, CMetaTrace* pcVPA, CMetaTrace* pcVDA, CMetaTrace* pcVPB ,CMetaTrace* pcRWB)
+void AssertSignals(bool bVPA, bool bVDA, bool bVPB, bool bRWB, CW65MetaTrace* pcVPA, CW65MetaTrace* pcVDA, CW65MetaTrace* pcVPB ,CW65MetaTrace* pcRWB)
 {
 	bool bPinsVPA;
 	bool bPinsVDA;
@@ -106,7 +106,7 @@ void AssertSignals(bool bVPA, bool bVDA, bool bVPB, bool bRWB, CMetaTrace* pcVPA
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertPhi2Low(CMetaTrace* pcPhi2)
+void AssertPhi2Low(CW65MetaTrace* pcPhi2)
 {
 	AssertTrue(pcPhi2->IsLow());
 }
@@ -116,7 +116,7 @@ void AssertPhi2Low(CMetaTrace* pcPhi2)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertPhi2High(CMetaTrace* pcPhi2)
+void AssertPhi2High(CW65MetaTrace* pcPhi2)
 {
 	AssertTrue(pcPhi2->IsHigh());
 }
@@ -130,13 +130,13 @@ void TestW65C816OnlyInitAndKill(void)
 {
 	CW65C816		cW65C816;
 	CW65C816Pins	cPins;
-	CMetaBus8		cData;
-	CMetaBus16		cAddress;
-	CMetaTrace		cPhi2;
-	CMetaTrace		cResB;
-	CMetaTrace		cRWB;
+	CW65MetaBus8		cData;
+	CW65MetaBus16		cAddress;
+	CW65MetaTrace		cPhi2;
+	CW65MetaTrace		cResB;
+	CW65MetaTrace		cRWB;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cData.Init();
 	cAddress.Init();
@@ -153,7 +153,7 @@ void TestW65C816OnlyInitAndKill(void)
 	cRWB.Kill();
 	cAddress.Kill();
 	cData.Kill();
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -165,16 +165,16 @@ void TestW65C816ResetReleaseBeforePhi2Falling(void)
 {
 	CW65C816		cW65C816;
 	CW65C816Pins	cPins;
-	CMetaBus8		cData;
-	CMetaBus16		cAddress;
-	CMetaTrace		cPhi2;
-	CMetaTrace		cResB;
-	CMetaTrace		cRWB;
-	CMetaTrace		cVPA;
-	CMetaTrace		cVDA;
-	CMetaTrace		cVPB;
+	CW65MetaBus8		cData;
+	CW65MetaBus16		cAddress;
+	CW65MetaTrace		cPhi2;
+	CW65MetaTrace		cResB;
+	CW65MetaTrace		cRWB;
+	CW65MetaTrace		cVPA;
+	CW65MetaTrace		cVDA;
+	CW65MetaTrace		cVPB;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cData.Init();
 	cAddress.Init();
@@ -235,7 +235,7 @@ void TestW65C816ResetReleaseBeforePhi2Falling(void)
 	cRWB.Kill();
 	cAddress.Kill();
 	cData.Kill();
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -247,16 +247,16 @@ void TestW65C816ResetReleaseBeforePhi2Rising(void)
 {
 	CW65C816		cW65C816;
 	CW65C816Pins	cPins;
-	CMetaBus8		cData;
-	CMetaBus16		cAddress;
-	CMetaTrace		cPhi2;
-	CMetaTrace		cResB;
-	CMetaTrace		cRWB;
-	CMetaTrace		cVPA;
-	CMetaTrace		cVDA;
-	CMetaTrace		cVPB;
+	CW65MetaBus8		cData;
+	CW65MetaBus16		cAddress;
+	CW65MetaTrace		cPhi2;
+	CW65MetaTrace		cResB;
+	CW65MetaTrace		cRWB;
+	CW65MetaTrace		cVPA;
+	CW65MetaTrace		cVDA;
+	CW65MetaTrace		cVPB;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cData.Init();
 	cAddress.Init();
@@ -327,7 +327,7 @@ void TestW65C816ResetReleaseBeforePhi2Rising(void)
 	cRWB.Kill();
 	cAddress.Kill();
 	cData.Kill();
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 
@@ -335,7 +335,7 @@ void TestW65C816ResetReleaseBeforePhi2Rising(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C816Reset(CW65C816* pcW65C816, CMetaTrace* pcPhi2, CMetaTrace* pcVPA, CMetaTrace* pcVDA, CMetaTrace* pcVPB, CMetaTrace* pcRWB)
+void TestW65C816Reset(CW65C816* pcW65C816, CW65MetaTrace* pcPhi2, CW65MetaTrace* pcVPA, CW65MetaTrace* pcVDA, CW65MetaTrace* pcVPB, CW65MetaTrace* pcRWB)
 {
 	CW65C816Pins*	pcPins;
 	
@@ -423,7 +423,7 @@ void TestW65C816Reset(CW65C816* pcW65C816, CMetaTrace* pcPhi2, CMetaTrace* pcVPA
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C816ResetVectorTickLow(CMetaW65C816* pcMPU, void* pvContext)
+void TestW65C816ResetVectorTickLow(CW65C816Meta* pcMPU, void* pvContext)
 {
 }
 
@@ -432,7 +432,7 @@ void TestW65C816ResetVectorTickLow(CMetaW65C816* pcMPU, void* pvContext)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C816ResetVectorTickHigh(CMetaW65C816* pcMPU, void* pvContext)
+void TestW65C816ResetVectorTickHigh(CW65C816Meta* pcMPU, void* pvContext)
 {
 	uint32					uiAddress;
 	bool					bRead;
@@ -472,12 +472,12 @@ void TestW65C816ResetVectorTickHigh(CMetaW65C816* pcMPU, void* pvContext)
 //////////////////////////////////////////////////////////////////////////
 void TestW65C816ResetVector(void)
 {
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	size					i;
 	bool					bRunning;
 	CTestW65C816Context		cTestContext;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init(0x10000, 0xea);
 	cTestContext.SetByte(0xfffc, 0x00);
@@ -520,7 +520,7 @@ void TestW65C816ResetVector(void)
 				 "STP: (3)  IO              A.0001  X.0001  Y.0001  PC.00:0204  S.01fc\n", cTestContext.SequenceText());
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 }
 
 

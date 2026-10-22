@@ -3,7 +3,7 @@
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "MicroprocessorLib/W65C02.h"
 #include "MicroprocessorLib/W65C02InstructionFactory.h"
-#include "MicroprocessorLib/MetaW65C02.h"
+#include "MicroprocessorLib/W65C02Meta.h"
 #include "TestLib/Assert.h"
 
 
@@ -62,7 +62,7 @@ public:
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C02TickHigh(CMetaW65C02* pcMPU, void* pvContext)
+void TestW65C02TickHigh(CW65C02Meta* pcMPU, void* pvContext)
 {
 	CTestW65C02Context*	pcContext;
 	uint16				uiAddress;
@@ -106,7 +106,7 @@ void TestW65C02TickHigh(CMetaW65C02* pcMPU, void* pvContext)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C02TickLow(CMetaW65C02* pcMPU, void* pvContext)
+void TestW65C02TickLow(CW65C02Meta* pcMPU, void* pvContext)
 {
 }
 
@@ -115,7 +115,7 @@ void TestW65C02TickLow(CMetaW65C02* pcMPU, void* pvContext)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-size TestW65C02Run(CMetaW65C02* pcMPU, CTestW65C02Context* pcContext)
+size TestW65C02Run(CW65C02Meta* pcMPU, CTestW65C02Context* pcContext)
 {
 	//Runs from reset until STP.  Returns the number of instructions.
 	size	uiInstructions;
@@ -142,7 +142,7 @@ void TestW65C02Reset(void)
 {
 	//Reset: emulation mode, I set, D clear, the program starts at the reset vector.
 	CTestW65C02Context	cContext;
-	CMetaW65C02			cMPU;
+	CW65C02Meta			cMPU;
 	CW65C02*			pcCPU;
 
 	cContext.Init(0x0200);
@@ -177,7 +177,7 @@ void TestW65C02IRQ(void)
 {
 	//IRQ pushes PC and P with B clear, sets I and clears D, and uses vector FFFE.
 	CTestW65C02Context	cContext;
-	CMetaW65C02			cMPU;
+	CW65C02Meta			cMPU;
 	CW65C02*			pcCPU;
 
 	cContext.Init(0x0200);
@@ -211,7 +211,7 @@ void TestW65C02NMI(void)
 {
 	//NMI is taken with I set and uses vector FFFA.
 	CTestW65C02Context	cContext;
-	CMetaW65C02			cMPU;
+	CW65C02Meta			cMPU;
 	CW65C02*			pcCPU;
 
 	cContext.Init(0x0200);
@@ -237,7 +237,7 @@ void TestW65C02BRKAndRTI(void)
 {
 	//BRK pushes the address after its signature byte and P with B set.  RTI returns there.
 	CTestW65C02Context	cContext;
-	CMetaW65C02			cMPU;
+	CW65C02Meta			cMPU;
 	CW65C02*			pcCPU;
 
 	cContext.Init(0x0200);
@@ -272,7 +272,7 @@ void TestW65C02WAIWithInterruptsDisabled(void)
 {
 	//Datasheet: with I set an IRQ ends WAI and execution continues after it, without the handler.
 	CTestW65C02Context	cContext;
-	CMetaW65C02			cMPU;
+	CW65C02Meta			cMPU;
 	CW65C02*			pcCPU;
 
 	cContext.Init(0x0200);
@@ -303,7 +303,7 @@ void TestW65C02SetOverflow(void)
 {
 	//A falling edge on SOB sets V.
 	CTestW65C02Context	cContext;
-	CMetaW65C02			cMPU;
+	CW65C02Meta			cMPU;
 	CW65C02*			pcCPU;
 
 	cContext.Init(0x0200);

@@ -4,8 +4,8 @@
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/LogToMemory.h"
 #include "MicroprocessorLib/W65C816.h"
-#include "MicroprocessorLib/InstructionFactory.h"
-#include "MicroprocessorLib/MetaW65C816.h"
+#include "MicroprocessorLib/W65C816InstructionFactory.h"
+#include "MicroprocessorLib/W65C816Meta.h"
 #include "TestLib/Assert.h"
 #include "TestW65C816Context.h"
 
@@ -24,12 +24,12 @@ void TestW65C816Arithmetic(void)
 
 	DataIOInit();
 
-	CMetaW65C816			cMPU;
+	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
 	CTestW65C816Context		cTestContext;
 	uint8					uiError;
 
-	CInstructionFactory::GetInstance()->Init();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	cTestContext.Init("TestArithmetic.bin");
 	cTestContext.mbEnablePrint = false;
@@ -46,7 +46,7 @@ void TestW65C816Arithmetic(void)
 
 	cTestContext.Kill();
 
-	CInstructionFactory::GetInstance()->Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
 
 	DataIOKill();
 

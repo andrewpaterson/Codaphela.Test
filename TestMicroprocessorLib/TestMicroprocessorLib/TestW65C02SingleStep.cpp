@@ -4,7 +4,7 @@
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "MicroprocessorLib/W65C02.h"
 #include "MicroprocessorLib/W65C02InstructionFactory.h"
-#include "MicroprocessorLib/MetaW65C02.h"
+#include "MicroprocessorLib/W65C02Meta.h"
 #include "TestLib/Assert.h"
 #include "TestSingleStep.h"
 
@@ -23,7 +23,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C02SingleStepTickHigh(CMetaW65C02* pcMPU, void* pvContext)
+void TestW65C02SingleStepTickHigh(CW65C02Meta* pcMPU, void* pvContext)
 {
 	//Every W65C02S cycle reads or writes memory.  RWB is not driven before the first cycle.
 	uint8	uiSignals;
@@ -39,7 +39,7 @@ void TestW65C02SingleStepTickHigh(CMetaW65C02* pcMPU, void* pvContext)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C02SingleStepTickLow(CMetaW65C02* pcMPU, void* pvContext)
+void TestW65C02SingleStepTickLow(CW65C02Meta* pcMPU, void* pvContext)
 {
 }
 
@@ -47,12 +47,12 @@ void TestW65C02SingleStepTickLow(CMetaW65C02* pcMPU, void* pvContext)
 class CSingleStepW65C02 : public CSingleStepProcessor
 {
 protected:
-	CMetaW65C02		mcMPU;
+	CW65C02Meta		mcMPU;
 
 public:
 	void		Init(CTestSingleStepContext* pcContext) override	{ mcMPU.Init(TestW65C02SingleStepTickHigh, TestW65C02SingleStepTickLow, pcContext); }
 	void		Kill(void) override									{ mcMPU.Kill(); }
-	CMetaW65C*	GetMeta(void) override								{ return &mcMPU; }
+	CW65CMeta*	GetMeta(void) override								{ return &mcMPU; }
 	CW65CCore*	GetCPU(void) override								{ return mcMPU.GetMPU(); }
 	void		SetState(SSingleStepState* psState) override		{ }
 	uint8		GetSignalMask(void) override						{ return SINGLE_STEP_READ; }

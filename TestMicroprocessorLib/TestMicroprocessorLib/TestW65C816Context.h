@@ -2,7 +2,7 @@
 #define __TEST_W65C816_CONTEXT_H__
 #include "BaseLib/PrimitiveTypes.h"
 #include "BaseLib/Chars.h"
-#include "MicroprocessorLib/MetaW65C816.h"
+#include "MicroprocessorLib/W65C816Meta.h"
 
 
 class CTestW65C816Context
@@ -56,7 +56,7 @@ public:
 	uint32			muiLastAddress;
 	size			muiInstructions;
 	uint64			muiMaxInstructions;
-	CMetaW65C816*	mpcMPU;
+	CW65C816Meta*	mpcMPU;
 
 public:
 	void		Init(uint32 uiMemorySize, uint8 uiFill);
@@ -68,7 +68,7 @@ public:
 	void		DebugSpew(void);
 	void		Kill(void);
 
-	uint64		Run(CMetaW65C816* pcMPU);
+	uint64		Run(CW65C816Meta* pcMPU);
 	void		StripToInstruction(char* szInstruction);
 
 	uint8*		GetMemory(void);
@@ -87,8 +87,8 @@ public:
 };
 
 
-void TestW65C81ContextTickLow(CMetaW65C816* pcMPU, void* pvContext);
-void TestW65C81ContextTickHigh(CMetaW65C816* pcMPU, void* pvContext);
+void TestW65C81ContextTickLow(CW65C816Meta* pcMPU, void* pvContext);
+void TestW65C81ContextTickHigh(CW65C816Meta* pcMPU, void* pvContext);
 
 
 void TestW65C816RunInContext(CTestW65C816Context* pcContext, char* szExpected);
