@@ -380,6 +380,7 @@ void TestFontFamilyLazyGlyphs(void)
 		pFamily = NULL;
 		ORoot()->RemoveAll();
 	}
+	ObjectsFlush();
 	ObjectsKill(false);
 }
 
@@ -475,6 +476,7 @@ void TestFontFamilyLazyMatchesRasterise(void)
 		pFamily = NULL;
 		ORoot()->RemoveAll();
 	}
+	ObjectsFlush();
 	ObjectsKill(false);
 }
 

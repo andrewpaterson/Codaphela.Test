@@ -322,6 +322,7 @@ void TestImageCombiner(void)
 	TestImageCombinerUserSpecifiedSize();
 	TestImageCombinerLineLayoutGaps();
 
+	ObjectsFlush();
 	ObjectsKill(false);
 	DataIOKill();
 	
