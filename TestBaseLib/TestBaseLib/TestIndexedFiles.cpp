@@ -39,6 +39,7 @@ void TestIndexedFilesWorkingDirectory(void)
 	cFileUtil.RemoveDirs(szDirectorty, szRewriteDirectorty, NULL);
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
+	cController.SetSync(DS_No);
 	cController.Begin();
 	cIndexedFiles.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX");
 	AssertTrue(cIndexedFiles.ReadIndexedFileDescriptors());
@@ -72,6 +73,7 @@ void TestIndexedFilesInitAndKillWihtoutOpen(void)
 	cFileUtil.RemoveDirs(szDirectorty, szRewriteDirectorty, NULL);
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
+	cController.SetSync(DS_No);
 	cIndexedFiles.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX");
 	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(cIndexedFiles.ReadIndexedFileDescriptors());
@@ -126,6 +128,7 @@ void TestIndexedFilesWrite(void)
 	AssertFalse(cFileUtil.Exists(szRewriteDirectorty));
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
+	cController.SetSync(DS_No);
 	cIndexedFiles.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX");
 
 	AssertTrue(cController.Begin());
@@ -165,6 +168,7 @@ void TestIndexedFilesWrite(void)
 	AssertSize(100, iLen4);
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
+	cController.SetSync(DS_No);
 	cIndexedFiles.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX");
 
 	sLogConfig = gcLogger.SetSilent();
@@ -211,6 +215,7 @@ void TestIndexedFilesWrite(void)
 	szTemp.Kill();
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
+	cController.SetSync(DS_No);
 	cIndexedFiles.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX");
 	AssertTrue(cController.Begin());
 	cIndexedFiles.ReadIndexedFileDescriptors();
@@ -227,6 +232,7 @@ void TestIndexedFilesWrite(void)
 
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
+	cController.SetSync(DS_No);
 	cIndexedFiles.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX");
 	AssertTrue(cController.Begin());
 	AssertTrue(cIndexedFiles.ReadIndexedFileDescriptors());
@@ -237,6 +243,7 @@ void TestIndexedFilesWrite(void)
 	cController.Kill();
 
 	cController.Init(szDirectorty, szRewriteDirectorty);
+	cController.SetSync(DS_No);
 	cIndexedFiles.Init(&cController, NULL, "DAT", "Files.IDX", "_Files.IDX");
 	cController.Begin();
 	cIndexedFiles.ReadIndexedFileDescriptors();

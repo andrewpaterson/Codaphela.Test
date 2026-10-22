@@ -82,6 +82,7 @@ void TestIndexTreeFileDataOrdererAccess(EIndexWriteThrough eWriteThrough)
 
 	cHelper.Init("Output" _FS_"IndexTreeDataOrderer1", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cOrderer.Init();
@@ -167,6 +168,7 @@ void TestIndexTreeFileDataOrdererRemapListNodes(EIndexWriteThrough eWriteThrough
 
 	cHelper.Init("Output" _FS_"IndexTreeDataOrderer2", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cOrderer.Init();
@@ -247,6 +249,7 @@ void TestIndexTreeFileDataOrdererModification(EIndexWriteThrough eWriteThrough)
 
 	cHelper.Init("Output" _FS_"IndexTreeDataOrderer3", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cOrderer.Init();
@@ -322,6 +325,7 @@ void TestIndexTreeFileDataOrdererCreation(EIndexWriteThrough eWriteThrough)
 
 	cHelper.Init("Output" _FS_"IndexTreeDataOrderer4", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cOrderer.Init();
@@ -369,6 +373,7 @@ void TestIndexTreeFileDataOrdererEviction(EIndexWriteThrough eWriteThrough)
 
 	cHelper.Init("Output" _FS_"IndexTreeDataOrderer4", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cOrderer.Init();

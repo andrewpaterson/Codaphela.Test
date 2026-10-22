@@ -35,6 +35,7 @@ void TestIndexTreeFileIteratorUnsafeIterate(void)
 
 	cHelper.Init("Output" _FS_ "IndexTreeIterator1", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cIndexTree.Init(&cController, NULL, IWT_No, IKR_No);
@@ -112,6 +113,7 @@ void TestIndexTreeFileIteratorIterate(void)
 
 	cHelper.Init("Output" _FS_ "IndexTreeIterator2", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cIndexTree.Init(&cController, NULL, IWT_No, IKR_No);

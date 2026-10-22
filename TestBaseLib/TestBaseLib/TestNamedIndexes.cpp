@@ -31,6 +31,7 @@ void TestNamedIndexesAdd(void)
 	cFileUtil.MakeDirs(true, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
+	cController.SetSync(DS_No);
 	cController.Begin();
 
 	cEvictionStrategy.Init();
@@ -117,6 +118,7 @@ void TestNamedIndexesRemove(void)
 	cFileUtil.MakeDirs(true, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
+	cController.SetSync(DS_No);
 	cController.Begin();
 	
 	cEvictionStrategy.Init();
@@ -219,6 +221,7 @@ void TestNamedIndexesCacheEviction(void)
 	cFileUtil.MakeDirs(true, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
+	cController.SetSync(DS_No);
 	cController.Begin();
 
 	cEvictionStrategy.Init();
@@ -313,6 +316,7 @@ void TestNamedIndexesLoad(void)
 	cFileUtil.MakeDirs(true, szDirectory, szRewriteDirectory, NULL);
 
 	cController.Init(szDirectory, szRewriteDirectory);
+	cController.SetSync(DS_No);
 	AssertTrue(cController.Begin());
 
 	cEvictionStrategy.Init();
@@ -372,6 +376,7 @@ void TestNamedIndexesLoad(void)
 
 	cEvictionStrategy.Init();
 	cController.Init(szDirectory, szRewriteDirectory);
+	cController.SetSync(DS_No);
 	AssertTrue(cController.Begin());
 	cConfig = CValueNamedIndexesConfig::Create(NULL, 16 KB, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), IWT_No);
 	cNamedIndexes.Init(&cController, cConfig);
@@ -467,6 +472,7 @@ void TestNamedIndexesMoreCacheEviction(void)
 	cEvictionCounter.Init();
 
 	cController.Init(szDirectory, szRewriteDirectory);
+	cController.SetSync(DS_No);
 	AssertTrue(cController.Begin());
 
 	uiCacheSize = 16 KB;
@@ -509,6 +515,7 @@ void TestNamedIndexesMoreCacheEviction(void)
 	cEvictionStrategy.Init(67);
 	cEvictionCounter.Init();
 	cController.Init(szDirectory, szRewriteDirectory);
+	cController.SetSync(DS_No);
 	AssertTrue(cController.Begin());
 	cConfig = CValueNamedIndexesConfig::Create(NULL, uiCacheSize, LifeLocal<CIndexTreeEvictionStrategy>(&cEvictionStrategy), IWT_No, &cEvictionCounter);
 	cNamedIndexes.Init(&cController, cConfig);

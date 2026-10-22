@@ -38,6 +38,7 @@ void TestIndexTreeFileKeyDiagnosticCallbackStuff(void)
 
 	cHelper.Init("Output" _FS_ "IndexTreeEvictingDiagnostic", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cOrderer.Init();
 	cEvictionStrategy.Init(LifeLocal<CIndexTreeDataOrderer>(&cOrderer));

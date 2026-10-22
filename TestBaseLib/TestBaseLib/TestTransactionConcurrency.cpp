@@ -465,11 +465,14 @@ void BankTeller(void* pvData)
 		{
 			bResult = pcTransaction->Get((OIndex)(iFrom + 1), &iFromBalance);
 			bResult = bResult && pcTransaction->Get((OIndex)(iTo + 1), &iToBalance);
-			iFromBalance -= iAmount;
-			iToBalance += iAmount;
-			bResult = bResult && pcTransaction->Set((OIndex)(iFrom + 1), &iFromBalance, sizeof(int));
-			bResult = bResult && pcTransaction->Set((OIndex)(iTo + 1), &iToBalance, sizeof(int));
-			bResult = bResult && pcTransaction->Commit();
+			if (bResult)
+			{
+				iFromBalance -= iAmount;
+				iToBalance += iAmount;
+				bResult = pcTransaction->Set((OIndex)(iFrom + 1), &iFromBalance, sizeof(int));
+				bResult = bResult && pcTransaction->Set((OIndex)(iTo + 1), &iToBalance, sizeof(int));
+				bResult = bResult && pcTransaction->Commit();
+			}
 			if (bResult)
 			{
 				psData->iCommitted++;

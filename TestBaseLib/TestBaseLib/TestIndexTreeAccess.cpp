@@ -300,6 +300,7 @@ void TestIndexTreeFileAccessFlushEvictBug(void)
 
 	cHelper.Init("Output" _FS_ "IndexTreeFileAccessFlushEvictBug", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cIndexTree.Init(&cController, NULL, IWT_No, IKR_No);
@@ -352,6 +353,7 @@ void TestIndexTreeFileAccessRemoveEvictBug(void)
 
 	cHelper.Init("Output" _FS_ "TestIndexTreeFileAccessRemoveEvictBug", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cIndexTree.Init(&cController, NULL, IWT_No, IKR_No);
@@ -416,6 +418,7 @@ void TestIndexTreeFileAccessEvictBug()
 
 	cHelper.Init("Output" _FS_ "IndexTreeFileAccessEvictBug", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cIndexTree.Init(&cController, NULL, IWT_No, IKR_No);
@@ -476,6 +479,7 @@ void TestIndexTreeFileAccessFlushBug()
 
 	cHelper.Init("Output" _FS_ "IndexTreeFileAccessFlushBug", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cIndexTree.Init(&cController, NULL, IWT_No, IKR_Yes);
@@ -546,6 +550,7 @@ void TestIndexTreeFileAccess(const char* szSubirectory, EIndexWriteThrough eWrit
 
 	cHelper.Init("Output" _FS_ "IndexTreeFileAccess", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cIndexTree.Init(&cController, szSubirectory, eWriteThrough, eKeyReverse);
@@ -580,6 +585,7 @@ void TestIndexTreeEvictingAccess(const char* szSubirectory, size sCacheSize, EIn
 
 	cHelper.Init("Output" _FS_ "IndexTreeEvictingAccess", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cEvictionStrategy.Init(15);
 	cController.Begin();

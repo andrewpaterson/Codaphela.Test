@@ -36,6 +36,7 @@ void TestIndexTreeEvictingAdd(EIndexWriteThrough eWriteThrough, EIndexKeyReverse
 
 	cHelper.Init("Output" _FS_"IndexTreeEvicting0", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cIndexTree.Init(&cController, NULL, 8 KB, NULL, LifeNull<CIndexTreeEvictionStrategy>(), NULL, eWriteThrough, eKeyReverse);
@@ -143,6 +144,7 @@ void TestIndexTreeEvictingEvictRandom(EIndexWriteThrough eWriteThrough, EIndexKe
 
 	cHelper.Init("Output" _FS_"IndexTreeEvicting0a", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 	cIndexTreeEvictedList.Init();
 	cController.Begin();
 	cStrategy.Init(15);
@@ -223,6 +225,7 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	pcMemory = cAllocator.GetMemory();
 	cHelper.Init("Output" _FS_"IndexTreeEvicting1", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cEvictedNodes.Init();
@@ -317,6 +320,7 @@ void TestIndexTreeEvictingEvictWithChildren(void)
 	pcMemory = cAllocator.GetMemory();
 	cHelper.Init("Output" _FS_"IndexTreeEvicting2", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cIndexTree.Init(&cController, NULL, 8192, NULL, LifeNull<CIndexTreeEvictionStrategy>(), NULL, LifeLocal<CMallocator>(&cAllocator), IWT_No, IKR_No);
@@ -407,6 +411,7 @@ void TestIndexTreeEvictingFlushWithChildren(void)
 	pcMemory = cAllocator.GetMemory();
 	cHelper.Init("Output" _FS_"IndexTreeEvicting3", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cIndexTree.Init(&cController, NULL, 8192, NULL, LifeNull<CIndexTreeEvictionStrategy>(), NULL, LifeLocal<CMallocator>(&cAllocator), IWT_No, IKR_No);
@@ -749,6 +754,7 @@ void TestIndexTreeEvictingEvictLastAccessed(void)
 
 	cHelper.Init("Output" _FS_"IndexTreeEvicting4", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 	cIndexTreeEvictedList.Init();
 	cController.Begin();
 	cOrderer.Init();
@@ -861,6 +867,7 @@ void TestIndexTreeEvictingEmpty(void)
 
 	cHelper.Init("Output" _FS_ "IndexTreeEvicting5", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cDataOrderer.Init();
 	cEvictionStrategy.Init(LifeLocal<CIndexTreeDataOrderer>(&cDataOrderer));

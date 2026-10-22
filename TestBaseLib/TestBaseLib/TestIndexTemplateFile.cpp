@@ -30,6 +30,7 @@ void TestIndexTreeTemplateFileStuff(void)
 
 	cHelper.Init("Output" _FS_"IndexTree0", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cIndexTree.Init(&cController, NULL, IWT_Yes, IKR_No);

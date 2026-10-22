@@ -33,6 +33,7 @@ void TestIndexedFileWrite(void)
 	szRewrite.Init("Output" _FS_ "_IndexedFile" _FS_ "_File.DAT");
 
 	cController.Init(szDirectory, szRewriteDirectory);
+	cController.SetSync(DS_No);
 	cController.Begin();
 
 	cIndexedFile.Init(&cController, 0, "File.DAT", "_File.DAT", 9, 0);
@@ -69,6 +70,7 @@ void TestIndexedFileWrite(void)
 
 
 	cController.Init(szDirectory, szRewriteDirectory);
+	cController.SetSync(DS_No);
 	cController.Begin();
 
 	cIndexedFile.Init(&cController, 0, "File.DAT", "_File.DAT", 9, 0);

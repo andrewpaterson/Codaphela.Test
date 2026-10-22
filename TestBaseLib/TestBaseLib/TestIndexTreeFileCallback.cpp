@@ -35,6 +35,7 @@ void TestIndexTreeFileCallbackWorks(void)
 
 	cHelper.Init("Output" _FS_"IndexTreeCallback", "primary", "backup", true);
 	cController.Init(cHelper.GetPrimaryDirectory(), cHelper.GetBackupDirectory());
+	cController.SetSync(DS_No);
 
 	cController.Begin();
 	cIndexTree.Init(&cController, NULL, &cDataCallback, IWT_Yes, IKR_No);
