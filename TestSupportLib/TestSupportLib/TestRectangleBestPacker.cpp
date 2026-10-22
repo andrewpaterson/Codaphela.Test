@@ -1,4 +1,5 @@
 #include "SupportLib/RectangleBestPacker.h"
+#include "SupportLib/RectanglePow2Packer.h"
 #include "TestLib/Assert.h"
 
 
@@ -247,14 +248,64 @@ void TestRectanglePackerSquarePowerOf2Sizes(void)
 
 	pcBestAttempt = cPacker.GetBestAttempt();
 	AssertSize(2, pcBestAttempt->macLines.NumElements());
-	AssertInt(16, pcBestAttempt->miWidth);
-	AssertInt(12, pcBestAttempt->miHeight);
+	AssertInt(14, pcBestAttempt->miMaxWidth);
+	AssertInt(14, pcBestAttempt->miWidth);
+	AssertInt(16, pcBestAttempt->miHeight);
 
 	szRep.Init();
 	pcBestAttempt->Print(&szRep);
-	AssertString("Lines[2] Size[16, 12]\n[(0, 0) 8:8], [(8, 0) 8:8]\n[(0, 0) 4:4], [(4, 0) 4:4], [(8, 0) 4:4], [(12, 0) 2:2], [(12, 2) 2:2], [(14, 0) 1:1]\n", szRep.Text());
+	AssertString("Lines[2] Size[14, 16]\n[(0, 0) 8:8], [(8, 0) 4:4], [(8, 4) 4:4], [(12, 0) 2:2], [(12, 2) 2:2], [(12, 4) 1:1]\n[(0, 0) 8:8], [(8, 0) 4:4]\n", szRep.Text());
 	szRep.Kill();
 
+	cPacker.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestRectanglePackerSquareThinRectangles(void)
+{
+	CRectangleBestPacker	cPacker;
+	CPackAttempt*			pcBestAttempt;
+	CRectangle				cRect;
+	int						i;
+
+	cPacker.Init(0, 0);
+	for (i = 0; i < 10; i++)
+	{
+		cRect.Init(0, 0, 10, 1);
+		cPacker.AddRectangle(&cRect, NULL);
+	}
+
+	//The side of a square with the rectangles' area is 10.
+	cPacker.AddSquareAttempt();
+	cPacker.Pack();
+
+	pcBestAttempt = cPacker.GetBestAttempt();
+	AssertNotNull(pcBestAttempt);
+	AssertInt(10, pcBestAttempt->miMaxWidth);
+	AssertInt(10, pcBestAttempt->miWidth);
+	AssertInt(10, pcBestAttempt->miHeight);
+	cPacker.Kill();
+
+	//With a one pixel gap each rectangle covers 11x2 so the side is ceil(sqrt(220)) - 1 = 14, still one rectangle per row.
+	cPacker.Init(0, 1);
+	for (i = 0; i < 10; i++)
+	{
+		cRect.Init(0, 0, 10, 1);
+		cPacker.AddRectangle(&cRect, NULL);
+	}
+
+	cPacker.AddSquareAttempt();
+	cPacker.Pack();
+
+	pcBestAttempt = cPacker.GetBestAttempt();
+	AssertNotNull(pcBestAttempt);
+	AssertInt(14, pcBestAttempt->miMaxWidth);
+	AssertInt(10, pcBestAttempt->miWidth);
+	AssertInt(19, pcBestAttempt->miHeight);
 	cPacker.Kill();
 }
 
@@ -461,6 +512,510 @@ void TestRectanglePackerGetPackedRectanglesWithEdges(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+bool ArePackedRectanglesSeparated(CArrayPackedRectangle* pacRects, int iInnerEdgeWidth)
+{
+	size				i;
+	size				j;
+	CPackedRectangle*	pcRect1;
+	CPackedRectangle*	pcRect2;
+
+	for (i = 0; i < pacRects->NumElements(); i++)
+	{
+		pcRect1 = pacRects->Get(i);
+		for (j = i + 1; j < pacRects->NumElements(); j++)
+		{
+			pcRect2 = pacRects->Get(j);
+			if (!((pcRect1->msBottomRight.x + iInnerEdgeWidth <= pcRect2->msTopLeft.x) ||
+				  (pcRect2->msBottomRight.x + iInnerEdgeWidth <= pcRect1->msTopLeft.x) ||
+				  (pcRect1->msBottomRight.y + iInnerEdgeWidth <= pcRect2->msTopLeft.y) ||
+				  (pcRect2->msBottomRight.y + iInnerEdgeWidth <= pcRect1->msTopLeft.y)))
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestRectanglePackerInnerEdgeBelow(void)
+{
+	CRectangleBestPacker	cPacker;
+	CPackAttempt*			pcBestAttempt;
+	CRectangle				cRect;
+	CChars					szRep;
+	CArrayPackedRectangle	macRects;
+
+	cPacker.Init(0, 1);
+
+	cRect.Init(0, 0, 8, 1);
+	cPacker.AddRectangle(&cRect, NULL);
+	cRect.Init(0, 0, 7, 5);
+	cPacker.AddRectangle(&cRect, NULL);
+	cRect.Init(0, 0, 7, 7);
+	cPacker.AddRectangle(&cRect, NULL);
+	cRect.Init(0, 0, 12, 8);
+	cPacker.AddRectangle(&cRect, NULL);
+	cRect.Init(0, 0, 2, 2);
+	cPacker.AddRectangle(&cRect, NULL);
+
+	cPacker.AddAttempt(29);
+	cPacker.Pack();
+
+	pcBestAttempt = cPacker.GetBestAttempt();
+	AssertNotNull(pcBestAttempt);
+
+	//The 8:1 rectangle must not be placed below the 7:7 rectangle at (13, 8) where it would cover the gap column at x = 20.
+	szRep.Init();
+	pcBestAttempt->Print(&szRep);
+	AssertString("Lines[2] Size[28, 10]\n[(0, 0) 12:8], [(13, 0) 7:7], [(21, 0) 7:5], [(21, 6) 2:2]\n[(0, 0) 8:1]\n", szRep.Text());
+	szRep.Kill();
+
+	macRects.Init();
+	cPacker.GetPackedRectangles(&macRects);
+	AssertSize(5, macRects.NumElements());
+	AssertTrue(ArePackedRectanglesSeparated(&macRects, 1));
+	macRects.Kill();
+
+	cPacker.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestRectanglePackerWidestNotFirst(void)
+{
+	CRectangleBestPacker	cPacker;
+	CPackAttempt*			pcBestAttempt;
+	CPackAttempt*			pcAttempt;
+	CRectangle				cRect;
+	CChars					szRep;
+	size					i;
+
+	cPacker.Init(0, 0);
+
+	cRect.Init(0, 0, 2, 3);
+	cPacker.AddRectangle(&cRect, NULL);
+	cRect.Init(0, 0, 10, 2);
+	cPacker.AddRectangle(&cRect, NULL);
+	cRect.Init(0, 0, 4, 4);
+	cPacker.AddRectangle(&cRect, NULL);
+
+	AssertInt(10, cPacker.GetSourcesMinWidth());
+	AssertInt(16, cPacker.GetSourcesMaxWidth());
+
+	cPacker.AddVerticalAttempt();
+	cPacker.Pack();
+
+	pcBestAttempt = cPacker.GetBestAttempt();
+	AssertNotNull(pcBestAttempt);
+	AssertInt(10, pcBestAttempt->miMaxWidth);
+
+	szRep.Init();
+	pcBestAttempt->Print(&szRep);
+	AssertString("Lines[2] Size[10, 6]\n[(0, 0) 10:2]\n[(0, 0) 4:4], [(4, 0) 2:3]\n", szRep.Text());
+	szRep.Kill();
+	cPacker.Kill();
+
+	//Every default attempt is at least as wide as the widest rectangle so none of them can fail.
+	cPacker.Init(0, 0);
+
+	cRect.Init(0, 0, 2, 3);
+	cPacker.AddRectangle(&cRect, NULL);
+	cRect.Init(0, 0, 10, 2);
+	cPacker.AddRectangle(&cRect, NULL);
+	cRect.Init(0, 0, 4, 4);
+	cPacker.AddRectangle(&cRect, NULL);
+
+	cPacker.Pack();
+
+	AssertTrue(cPacker.GetPackAttempts()->NumElements() > 0);
+	for (i = 0; i < cPacker.GetPackAttempts()->NumElements(); i++)
+	{
+		pcAttempt = cPacker.GetPackAttempts()->Get(i);
+		AssertTrue(pcAttempt->miMaxWidth >= 10);
+		AssertTrue(pcAttempt->mbValid);
+	}
+	cPacker.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestRectanglePackerEmpty(void)
+{
+	CRectangleBestPacker	cPacker;
+	CArrayPackedRectangle	macRects;
+	SInt32Vec2				sImageSize;
+
+	cPacker.Init(2, 1);
+	cPacker.Pack();
+
+	AssertNull(cPacker.GetBestAttempt());
+	macRects.Init();
+	cPacker.GetPackedRectangles(&macRects);
+	AssertSize(0, macRects.NumElements());
+	macRects.Kill();
+
+	sImageSize = cPacker.GetPackedImageSize();
+	AssertInt(0, sImageSize.x);
+	AssertInt(0, sImageSize.y);
+	cPacker.Kill();
+
+	cPacker.Init(2, 1);
+	cPacker.AddAttempt(10);
+	cPacker.Pack();
+	AssertNull(cPacker.GetBestAttempt());
+	cPacker.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestRectanglePackerNoAttemptFits(void)
+{
+	CRectangleBestPacker	cPacker;
+	CRectangle				cRect;
+	CArrayPackedRectangle	macRects;
+	SInt32Vec2				sImageSize;
+
+	cPacker.Init(0, 0);
+
+	cRect.Init(0, 0, 10, 2);
+	cPacker.AddRectangle(&cRect, NULL);
+
+	cPacker.AddAttempt(5);
+	cPacker.Pack();
+
+	AssertNull(cPacker.GetBestAttempt());
+	macRects.Init();
+	cPacker.GetPackedRectangles(&macRects);
+	AssertSize(0, macRects.NumElements());
+	macRects.Kill();
+
+	sImageSize = cPacker.GetPackedImageSize();
+	AssertInt(0, sImageSize.x);
+	AssertInt(0, sImageSize.y);
+
+	cPacker.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+bool ArePackedRectanglesInside(CArrayPackedRectangle* pacRects, SInt32Vec2 sImageSize, int iOutsideEdgeWidth)
+{
+	size				i;
+	CPackedRectangle*	pcRect;
+
+	for (i = 0; i < pacRects->NumElements(); i++)
+	{
+		pcRect = pacRects->Get(i);
+		if ((pcRect->msTopLeft.x < iOutsideEdgeWidth) ||
+			(pcRect->msTopLeft.y < iOutsideEdgeWidth) ||
+			(pcRect->msBottomRight.x > sImageSize.x - iOutsideEdgeWidth) ||
+			(pcRect->msBottomRight.y > sImageSize.y - iOutsideEdgeWidth))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+int RectanglePackerRandom(uint32* puiSeed)
+{
+	//Own generator so every platform packs the same rectangles.
+	*puiSeed = *puiSeed * 1103515245 + 12345;
+	return (int)((*puiSeed >> 16) & 0x7fff);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AddRandomRectangles(CRectanglePacker* pcPacker, uint32* puiSeed, size* puiNumRectangles)
+{
+	size		i;
+	size		uiNumRectangles;
+	CRectangle	cRect;
+
+	uiNumRectangles = 2 + RectanglePackerRandom(puiSeed) % 20;
+	for (i = 0; i < uiNumRectangles; i++)
+	{
+		cRect.Init(0, 0, 1 + RectanglePackerRandom(puiSeed) % 20, 1 + RectanglePackerRandom(puiSeed) % 20);
+		pcPacker->AddRectangle(&cRect, (void*)(i + 1));
+	}
+	*puiNumRectangles = uiNumRectangles;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestRectanglePackerRandomGaps(void)
+{
+	CRectangleBestPacker	cBestPacker;
+	CRectanglePow2Packer	cPow2Packer;
+	CArrayPackedRectangle	macRects;
+	SInt32Vec2				sImageSize;
+	uint32					uiSeed;
+	size					uiNumRectangles;
+	int						iTrial;
+
+	uiSeed = 1;
+	for (iTrial = 0; iTrial < 300; iTrial++)
+	{
+		cBestPacker.Init(2, 1);
+		AddRandomRectangles(&cBestPacker, &uiSeed, &uiNumRectangles);
+		cBestPacker.Pack();
+		AssertNotNull(cBestPacker.GetBestAttempt());
+
+		macRects.Init();
+		cBestPacker.GetPackedRectangles(&macRects);
+		sImageSize = cBestPacker.GetPackedImageSize();
+		AssertSize(uiNumRectangles, macRects.NumElements());
+		AssertTrue(ArePackedRectanglesSeparated(&macRects, 1));
+		AssertTrue(ArePackedRectanglesInside(&macRects, sImageSize, 2));
+		macRects.Kill();
+		cBestPacker.Kill();
+
+		cPow2Packer.Init(2, 1);
+		AddRandomRectangles(&cPow2Packer, &uiSeed, &uiNumRectangles);
+		cPow2Packer.Pack();
+
+		macRects.Init();
+		cPow2Packer.GetPackedRectangles(&macRects);
+		sImageSize = cPow2Packer.GetPackedImageSize();
+		AssertSize(uiNumRectangles, macRects.NumElements());
+		AssertTrue(ArePackedRectanglesSeparated(&macRects, 1));
+		AssertTrue(ArePackedRectanglesInside(&macRects, sImageSize, 2));
+		AssertInt(0, sImageSize.x & (sImageSize.x - 1));
+		AssertInt(0, sImageSize.y & (sImageSize.y - 1));
+		macRects.Kill();
+		cPow2Packer.Kill();
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestRectanglePackerAttemptBeforeRectangles(void)
+{
+	CRectangleBestPacker	cPacker;
+	CPackAttempt*			pcBestAttempt;
+	CRectangle				cRect;
+	CChars					szRep;
+	CArrayPackedRectangle	macRects;
+	SInt32Vec2				sImageSize;
+
+	cPacker.Init(0, 0);
+
+	//The attempt takes the rectangles from the packer when it packs, not when it is added.
+	cPacker.AddAttempt(10);
+
+	cRect.Init(0, 0, 2, 3);
+	cPacker.AddRectangle(&cRect, NULL);
+	cRect.Init(0, 0, 10, 2);
+	cPacker.AddRectangle(&cRect, NULL);
+	cRect.Init(0, 0, 4, 4);
+	cPacker.AddRectangle(&cRect, NULL);
+
+	cPacker.Pack();
+	pcBestAttempt = cPacker.GetBestAttempt();
+	AssertNotNull(pcBestAttempt);
+	szRep.Init();
+	pcBestAttempt->Print(&szRep);
+	AssertString("Lines[2] Size[10, 6]\n[(0, 0) 10:2]\n[(0, 0) 4:4], [(4, 0) 2:3]\n", szRep.Text());
+	szRep.Kill();
+
+	//Packing again gives the same result and no rectangle is packed twice.
+	cPacker.Pack();
+	pcBestAttempt = cPacker.GetBestAttempt();
+	AssertNotNull(pcBestAttempt);
+	szRep.Init();
+	pcBestAttempt->Print(&szRep);
+	AssertString("Lines[2] Size[10, 6]\n[(0, 0) 10:2]\n[(0, 0) 4:4], [(4, 0) 2:3]\n", szRep.Text());
+	szRep.Kill();
+
+	macRects.Init();
+	cPacker.GetPackedRectangles(&macRects);
+	AssertSize(3, macRects.NumElements());
+	macRects.Kill();
+
+	//A rectangle added between packs is included in the next pack.
+	cRect.Init(0, 0, 6, 2);
+	cPacker.AddRectangle(&cRect, NULL);
+	cPacker.Pack();
+	pcBestAttempt = cPacker.GetBestAttempt();
+	AssertNotNull(pcBestAttempt);
+
+	macRects.Init();
+	cPacker.GetPackedRectangles(&macRects);
+	sImageSize = cPacker.GetPackedImageSize();
+	AssertSize(4, macRects.NumElements());
+	AssertTrue(ArePackedRectanglesSeparated(&macRects, 0));
+	AssertTrue(ArePackedRectanglesInside(&macRects, sImageSize, 0));
+	AssertTrue(sImageSize.x <= 10);
+	macRects.Kill();
+
+	cPacker.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestRectanglePackerRejectsEmptyRectangles(void)
+{
+	CRectangleBestPacker	cPacker;
+	CRectangle				cRect;
+
+	cPacker.Init(0, 0);
+
+	cRect.Init(0, 0, 0, 5);
+	AssertFalse(cPacker.AddRectangle(&cRect, NULL));
+	cRect.Init(0, 0, 5, 0);
+	AssertFalse(cPacker.AddRectangle(&cRect, NULL));
+	cRect.Init(5, 0, 2, 3);
+	AssertFalse(cPacker.AddRectangle(&cRect, NULL));
+	cRect.Init(0, 5, 3, 2);
+	AssertFalse(cPacker.AddRectangle(&cRect, NULL));
+	AssertSize(0, cPacker.GetSourceRectangles()->NumElements());
+	AssertInt(0, cPacker.GetSourceArea());
+
+	cRect.Init(0, 0, 3, 3);
+	AssertTrue(cPacker.AddRectangle(&cRect, NULL));
+	AssertSize(1, cPacker.GetSourceRectangles()->NumElements());
+	AssertInt(9, cPacker.GetSourceArea());
+
+	cPacker.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestRectanglePackerDefaultAttemptRange(void)
+{
+	CRectangleBestPacker	cPacker;
+	CRectangle				cRect;
+	CArrayPackAttempt*		pacAttempts;
+
+	cPacker.Init(0, 0);
+
+	cRect.Init(0, 0, 2, 3);
+	cPacker.AddRectangle(&cRect, NULL);
+	cRect.Init(0, 0, 10, 2);
+	cPacker.AddRectangle(&cRect, NULL);
+	cRect.Init(0, 0, 4, 4);
+	cPacker.AddRectangle(&cRect, NULL);
+
+	//The attempts run from a single row down to the widest rectangle, one for each width in between.
+	cPacker.AddDefaultAttempts();
+	pacAttempts = cPacker.GetPackAttempts();
+	AssertSize(7, pacAttempts->NumElements());
+	AssertInt(16, pacAttempts->Get(0)->miMaxWidth);
+	AssertInt(10, pacAttempts->Tail()->miMaxWidth);
+	cPacker.Kill();
+
+	//The single row includes a gap between each rectangle.
+	cPacker.Init(0, 1);
+
+	cRect.Init(0, 0, 2, 3);
+	cPacker.AddRectangle(&cRect, NULL);
+	cRect.Init(0, 0, 10, 2);
+	cPacker.AddRectangle(&cRect, NULL);
+	cRect.Init(0, 0, 4, 4);
+	cPacker.AddRectangle(&cRect, NULL);
+
+	cPacker.AddDefaultAttempts();
+	pacAttempts = cPacker.GetPackAttempts();
+	AssertInt(18, pacAttempts->Get(0)->miMaxWidth);
+	AssertInt(10, pacAttempts->Tail()->miMaxWidth);
+
+	//The single row attempt packs every rectangle on one line.
+	cPacker.Pack();
+	AssertNotNull(cPacker.GetBestAttempt());
+	cPacker.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestRectanglePackerInvalidAttemptsSortLast(void)
+{
+	CRectangleBestPacker	cPacker;
+	CPackAttempt*			pcBestAttempt;
+	CPackAttempt*			pcAttempt;
+	CRectangle				cRect;
+	CArrayPackAttempt*		pacAttempts;
+
+	cPacker.Init(0, 0);
+
+	cRect.Init(0, 0, 10, 2);
+	cPacker.AddRectangle(&cRect, NULL);
+	cRect.Init(0, 0, 4, 4);
+	cPacker.AddRectangle(&cRect, NULL);
+
+	//5 and 3 are narrower than the 10 wide rectangle.  12 packs into 10x6 and 16 packs into 14x4.
+	cPacker.AddAttempt(5);
+	cPacker.AddAttempt(12);
+	cPacker.AddAttempt(3);
+	cPacker.AddAttempt(16);
+	cPacker.Pack();
+
+	pcBestAttempt = cPacker.GetBestAttempt();
+	AssertNotNull(pcBestAttempt);
+	AssertInt(16, pcBestAttempt->miMaxWidth);
+	AssertInt(14, pcBestAttempt->miWidth);
+	AssertInt(4, pcBestAttempt->miHeight);
+
+	pacAttempts = cPacker.GetPackAttempts();
+	AssertSize(4, pacAttempts->NumElements());
+
+	pcAttempt = pacAttempts->Get(1);
+	AssertTrue(pcAttempt->mbValid);
+	AssertInt(12, pcAttempt->miMaxWidth);
+	AssertInt(60, pcAttempt->miArea);
+
+	pcAttempt = pacAttempts->Get(2);
+	AssertFalse(pcAttempt->mbValid);
+	pcAttempt = pacAttempts->Get(3);
+	AssertFalse(pcAttempt->mbValid);
+
+	cPacker.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestRectangleBestPacker(void)
 {
 	BeginTests();
@@ -469,10 +1024,20 @@ void TestRectangleBestPacker(void)
 	TestRectanglePackerSquareAllSameSize();
 	TestRectanglePackerHorizontalPowerOf2Sizes();
 	TestRectanglePackerSquarePowerOf2Sizes();
+	TestRectanglePackerSquareThinRectangles();
 	TestRectanglePackerVerticalPowerOf2Sizes();
 	TestRectanglePackerDefault();
 	TestRectanglePackerGetPackedRectangles();
 	TestRectanglePackerGetPackedRectanglesWithEdges();
+	TestRectanglePackerInnerEdgeBelow();
+	TestRectanglePackerWidestNotFirst();
+	TestRectanglePackerEmpty();
+	TestRectanglePackerNoAttemptFits();
+	TestRectanglePackerRandomGaps();
+	TestRectanglePackerAttemptBeforeRectangles();
+	TestRectanglePackerRejectsEmptyRectangles();
+	TestRectanglePackerDefaultAttemptRange();
+	TestRectanglePackerInvalidAttemptsSortLast();
 
 	TestStatistics();
 }

@@ -135,8 +135,8 @@ void TestImageCelGroupSourceCombine(void)
 
 	if (pcImage.IsNotNull())
 	{
-		AssertInt(630, pcImage->GetWidth());
-		AssertInt(109, pcImage->GetHeight());
+		AssertInt(777, pcImage->GetWidth());
+		AssertInt(88, pcImage->GetHeight());
 		WriteImage(&pcImage, "Output" _FS_ "StarControl.raw");
 		AssertFileMemory("Input" _FS_ "StarControl.raw", pcImage->mcChannels.GetData(), pcImage->GetByteSize());
 	}

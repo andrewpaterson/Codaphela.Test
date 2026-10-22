@@ -109,11 +109,38 @@ void TestRectanglePow2PackerStuff(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestRectanglePow2PackerEmpty(void)
+{
+	CRectanglePow2Packer	cPacker;
+	CArrayPackedRectangle	macRects;
+	SInt32Vec2				sImageSize;
+
+	cPacker.Init(2, 1);
+	cPacker.Pack();
+
+	macRects.Init();
+	cPacker.GetPackedRectangles(&macRects);
+	AssertSize(0, macRects.NumElements());
+	macRects.Kill();
+
+	sImageSize = cPacker.GetPackedImageSize();
+	AssertInt(0, sImageSize.x);
+	AssertInt(0, sImageSize.y);
+
+	cPacker.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestRectanglePow2Packer(void)
 {
 	BeginTests();
 
 	TestRectanglePow2PackerStuff();
+	TestRectanglePow2PackerEmpty();
 
 	TestStatistics();
 }

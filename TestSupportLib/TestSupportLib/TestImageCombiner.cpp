@@ -143,6 +143,163 @@ void TestImageCombinerStarControl(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestImageCombinerEmptyCels(void)
+{
+	CImageCombiner	cCombiner;
+	Ptr<CImage>		pcSource;
+	Ptr<CImage>		pcImage;
+
+	pcSource = OMalloc<CImage>(4, 4, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+
+	//Every cel is empty so nothing is packed.
+	cCombiner.Init(ICL_Best, ICS_Arbitrary, ICC_FromCels);
+	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 0, 0, 0, 0));
+	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 0, 0, 0, 0));
+	pcImage = cCombiner.Combine();
+	AssertTrue(pcImage.IsNull());
+	cCombiner.Kill();
+
+	cCombiner.Init(ICL_Best, ICS_PowerOf2, ICC_FromCels);
+	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 0, 0, 0, 0));
+	pcImage = cCombiner.Combine();
+	AssertTrue(pcImage.IsNull());
+	cCombiner.Kill();
+
+	pcSource = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageCombinerUserSpecifiedSize(void)
+{
+	CImageCombiner		cCombiner;
+	Ptr<CImage>			pcSource;
+	Ptr<CImage>			pcImage;
+	Ptr<CArrayImageCel>	pacCels;
+	CRectangle*			pcRect;
+	size				i;
+
+	pcSource = OMalloc<CImage>(12, 4, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+
+	//Three 4x4 cels in a row with a one pixel outside edge exactly fill 14x6.
+	cCombiner.Init(ICL_Best, 14, 6, ICC_FromCels, 1, 0);
+	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 0, 0, 4, 4));
+	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 4, 0, 8, 4));
+	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 8, 0, 12, 4));
+	pcImage = cCombiner.Combine();
+	AssertTrue(pcImage.IsNotNull());
+	AssertInt(14, pcImage->GetWidth());
+	AssertInt(6, pcImage->GetHeight());
+
+	pacCels = cCombiner.GetCels();
+	AssertSize(3, pacCels->NumElements());
+	for (i = 0; i < pacCels->NumElements(); i++)
+	{
+		pcRect = &pacCels->Get(i)->GetSubImage()->mcImageRect;
+		AssertInt(4, pcRect->GetWidth());
+		AssertInt(4, pcRect->GetHeight());
+		AssertInt(1, pcRect->msTopLeft.y);
+		AssertTrue(pcRect->msTopLeft.x >= 1);
+		AssertTrue(pcRect->msBottomRight.x <= 13);
+	}
+	pacCels = NULL;
+	pcImage = NULL;
+	cCombiner.Kill();
+
+	//Inside the outside edge 13x6 is only 11 wide so the third cel needs a second row, which is too high.
+	cCombiner.Init(ICL_Best, 13, 6, ICC_FromCels, 1, 0);
+	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 0, 0, 4, 4));
+	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 4, 0, 8, 4));
+	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 8, 0, 12, 4));
+	pcImage = cCombiner.Combine();
+	AssertTrue(pcImage.IsNull());
+	cCombiner.Kill();
+
+	//No attempt can hold a 4 wide cel in 3 pixels.
+	cCombiner.Init(ICL_Best, 3, 8, ICC_FromCels, 0, 0);
+	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 0, 0, 4, 4));
+	pcImage = cCombiner.Combine();
+	AssertTrue(pcImage.IsNull());
+	cCombiner.Kill();
+
+	pcSource = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertCombinedCelRect(Ptr<CArrayImageCel> pacCels, size iIndex, int iLeft, int iTop, int iRight, int iBottom)
+{
+	CRectangle*	pcRect;
+
+	pcRect = &pacCels->Get(iIndex)->GetSubImage()->mcImageRect;
+	AssertInt(iLeft, pcRect->msTopLeft.x);
+	AssertInt(iTop, pcRect->msTopLeft.y);
+	AssertInt(iRight, pcRect->msBottomRight.x);
+	AssertInt(iBottom, pcRect->msBottomRight.y);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageCombinerLineLayoutGaps(void)
+{
+	CImageCombiner		cCombiner;
+	Ptr<CImage>			pcSource;
+	Ptr<CImage>			pcImage;
+	Ptr<CArrayImageCel>	pacCels;
+
+	pcSource = OMalloc<CImage>(8, 4, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+
+	//A 3x4 and a 4x4 cel side by side with a one pixel outside edge and a one pixel gap.
+	cCombiner.Init(ICL_LeftToRight, ICS_Arbitrary, ICC_FromCels, 1, 1);
+	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 0, 0, 3, 4));
+	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 4, 0, 8, 4));
+	pcImage = cCombiner.Combine();
+	AssertTrue(pcImage.IsNotNull());
+	AssertInt(10, pcImage->GetWidth());
+	AssertInt(6, pcImage->GetHeight());
+
+	pacCels = cCombiner.GetCels();
+	AssertSize(2, pacCels->NumElements());
+	AssertCombinedCelRect(pacCels, 0, 1, 1, 4, 5);
+	AssertCombinedCelRect(pacCels, 1, 5, 1, 9, 5);
+	pacCels = NULL;
+	pcImage = NULL;
+	cCombiner.Kill();
+
+	//The same cels one above the other.
+	cCombiner.Init(ICL_TopToBottom, ICS_Arbitrary, ICC_FromCels, 1, 1);
+	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 0, 0, 3, 4));
+	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 4, 0, 8, 4));
+	pcImage = cCombiner.Combine();
+	AssertTrue(pcImage.IsNotNull());
+	AssertInt(6, pcImage->GetWidth());
+	AssertInt(11, pcImage->GetHeight());
+
+	pacCels = cCombiner.GetCels();
+	AssertSize(2, pacCels->NumElements());
+	AssertCombinedCelRect(pacCels, 0, 1, 1, 4, 5);
+	AssertCombinedCelRect(pacCels, 1, 1, 6, 5, 10);
+	pacCels = NULL;
+	pcImage = NULL;
+	cCombiner.Kill();
+
+	pcSource = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestImageCombiner(void)
 {
 	BeginTests();
@@ -152,6 +309,9 @@ void TestImageCombiner(void)
 
 	TestImageCombinerMask();
 	TestImageCombinerStarControl();
+	TestImageCombinerEmptyCels();
+	TestImageCombinerUserSpecifiedSize();
+	TestImageCombinerLineLayoutGaps();
 
 	ObjectsKill(false);
 	DataIOKill();
