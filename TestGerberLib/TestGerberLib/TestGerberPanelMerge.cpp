@@ -4,6 +4,10 @@
 #include "BaseLib/NumberControl.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/StringHelper.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "StandardLib/Objects.h"
+#include "SupportLib/ImageWriter.h"
+#include "SupportLib/ImageReader.h"
 #include "GerberLib/GerberLayerMerger.h"
 #include "GerberLib/ExcellonDrillMerger.h"
 #include "GerberLib/GerberPanelFiles.h"
@@ -12,6 +16,7 @@
 #include "GerberLib/GerberVectoriser.h"
 #include "GerberLib/ExcellonParser.h"
 #include "GerberLib/ExcellonInterpreter.h"
+#include "GerberLib/GerberBoardRenderer.h"
 #include "TestLib/Assert.h"
 
 
@@ -437,8 +442,8 @@ void TestGerberPanelTabsTwoBoards(void)
 	CGerberVectorImage		cImage;
 	int						i;
 
-	//Side by side, the Clock Doubler on the left.  The Clock Transition's left edge is straight from 11.165 to
-	//16.165 beside the Clock Doubler's straight right edge, so there is room for one tab there.
+	//Side by side, the Clock Doubler on the left.  The edges face each other from y = 1.600267 to 25.73, so one tab
+	//goes in the middle, where both edges are straight.
 	cSets.Init();
 	AssertNotNull(cSets.Add("Input" _FS_ "KiCad" _FS_ "Clock Doubler"));
 	AssertNotNull(cSets.Add("Input" _FS_ "KiCad" _FS_ "Clock Transition"));
@@ -457,8 +462,8 @@ void TestGerberPanelTabsTwoBoards(void)
 	AssertTrue(psTab->bAcrossX);
 	AssertDouble(1.6 + 18.796003, psTab->fEdgeA, 6);
 	AssertDouble(1.6 + 18.797 + 1.6, psTab->fEdgeB, 6);
-	AssertDouble(11.165, psTab->fStart, 6);
-	AssertDouble(16.165, psTab->fEnd, 6);
+	AssertDouble(11.165133, psTab->fStart, 6);
+	AssertDouble(16.165133, psTab->fEnd, 6);
 
 	//Six 0.5mm holes 0.8mm apart along each edge, just outside it in the tab.
 	asHoles.Init();
@@ -468,7 +473,7 @@ void TestGerberPanelTabsTwoBoards(void)
 	{
 		AssertDouble(psTab->fEdgeA + 0.25, asHoles.Get(i * 2)->x, 9);
 		AssertDouble(psTab->fEdgeB - 0.25, asHoles.Get(i * 2 + 1)->x, 9);
-		AssertDouble(13.665 + (i - 2.5) * 0.8, asHoles.Get(i * 2)->y, 9);
+		AssertDouble(13.665133 + (i - 2.5) * 0.8, asHoles.Get(i * 2)->y, 6);
 	}
 	asHoles.Kill();
 
@@ -494,6 +499,58 @@ void TestGerberPanelTabsTwoBoards(void)
 	cImage.Kill();
 	cCommands.Kill();
 	szText.Kill();
+
+	cFiles.Kill();
+	cPanel.Kill();
+	cSets.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGerberPanelTabsNotch(void)
+{
+	CGerberFileSets			cSets;
+	CGerberPanel			cPanel;
+	CGerberPanelFiles		cFiles;
+	CGerberPanelTabs*		pcTabs;
+	SGerberPanelTab*		psTab;
+	CFloat64Rect			cBelow;
+	CFloat64Rect			cAbove;
+	float64					fNotch;
+
+	//One board above the other; their 18.8mm ends face each other and each has a notch in the middle.  The end is one
+	//edge, so it gets one tab, beside the notch rather than one either side of it.
+	cSets.Init();
+	AssertNotNull(cSets.Add("Input" _FS_ "KiCad" _FS_ "Clock Doubler"));
+	AssertNotNull(cSets.Add("Input" _FS_ "KiCad" _FS_ "State Reader 8bit"));
+	cPanel.Init(1.6, 1.6, false);
+	AssertTrue(cPanel.Pack(&cSets));
+	cFiles.Init(&cPanel);
+	AssertTrue(cFiles.Calculate());
+
+	pcTabs = cFiles.GetTabs();
+	AssertSize(1, pcTabs->NumTabs());
+	AssertSize(1, pcTabs->NumMoved());
+	AssertSize(0, pcTabs->NumDropped());
+	psTab = pcTabs->GetTab(0);
+	AssertFalse(psTab->bAcrossX);
+	AssertDouble(5.0, psTab->fEnd - psTab->fStart, 9);
+
+	//The notch is in the middle of the end; the tab is clear of it but on the end.
+	cFiles.GetOutlines()->GetOuterLoop(psTab->uiBoardA)->GetBounds(&cBelow);
+	cFiles.GetOutlines()->GetOuterLoop(psTab->uiBoardB)->GetBounds(&cAbove);
+	//Lined up, apart from the packer rounding each board out to the micrometre.
+	AssertTrue(fabs(cBelow.msTopLeft.x - cAbove.msTopLeft.x) < 0.01);
+	fNotch = (cBelow.msTopLeft.x + cBelow.msBottomRight.x) / 2;
+	AssertTrue((psTab->fEnd < fNotch - 0.889) || (psTab->fStart > fNotch + 0.889));
+	AssertTrue(psTab->fStart > cBelow.msTopLeft.x);
+	AssertTrue(psTab->fEnd < cBelow.msBottomRight.x);
+
+	//So the two outlines join into one.
+	AssertSize(1, cFiles.GetEdgeCuts()->NumLoops());
 
 	cFiles.Kill();
 	cPanel.Kill();
@@ -539,6 +596,91 @@ void TestGerberPanelTabsNotJoined(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+size CountRenderedColour(Ptr<CImage> pcImage, int r, int g, int b, int iTolerance)
+{
+	uint8*	puiPixels;
+	size	i;
+	size	uiNumPixels;
+	size	uiCount;
+
+	puiPixels = (uint8*)pcImage->GetData();
+	uiNumPixels = (size)pcImage->GetWidth() * pcImage->GetHeight();
+	uiCount = 0;
+	for (i = 0; i < uiNumPixels; i++)
+	{
+		if ((abs(puiPixels[i * 3] - r) <= iTolerance) && (abs(puiPixels[i * 3 + 1] - g) <= iTolerance) && (abs(puiPixels[i * 3 + 2] - b) <= iTolerance))
+		{
+			uiCount++;
+		}
+	}
+	return uiCount;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertRenderedColour(Ptr<CImage> pcImage, int x, int y, int r, int g, int b)
+{
+	uint8*	puiPixel;
+
+	puiPixel = &((uint8*)pcImage->GetData())[((size)y * pcImage->GetWidth() + x) * 3];
+	AssertInt(r, puiPixel[0]);
+	AssertInt(g, puiPixel[1]);
+	AssertInt(b, puiPixel[2]);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertRenderedImage(const char* szExpected, Ptr<CImage> pcActual)
+{
+	Ptr<CImage>	pcExpected;
+	uint8*		puiExpected;
+	uint8*		puiActual;
+	size		i;
+	size		uiNumPixels;
+	size		uiDifferent;
+
+	//Anti-aliased edges may come out a little differently with another compiler, so a few pixels may differ.
+	pcExpected = ReadImage((char*)szExpected);
+	AssertTrue(pcExpected.IsNotNull());
+	if (pcExpected.IsNull())
+	{
+		return;
+	}
+	AssertInt((int)pcExpected->GetWidth(), (int)pcActual->GetWidth());
+	AssertInt((int)pcExpected->GetHeight(), (int)pcActual->GetHeight());
+	AssertSize(pcExpected->GetByteSize(), pcActual->GetByteSize());
+	if ((pcExpected->GetWidth() != pcActual->GetWidth()) || (pcExpected->GetHeight() != pcActual->GetHeight()) || (pcExpected->GetByteSize() != pcActual->GetByteSize()))
+	{
+		pcExpected = NULL;
+		return;
+	}
+
+	puiExpected = (uint8*)pcExpected->GetData();
+	puiActual = (uint8*)pcActual->GetData();
+	uiNumPixels = (size)pcActual->GetWidth() * pcActual->GetHeight();
+	uiDifferent = 0;
+	for (i = 0; i < uiNumPixels; i++)
+	{
+		if ((abs(puiExpected[i * 3] - puiActual[i * 3]) > 8) || (abs(puiExpected[i * 3 + 1] - puiActual[i * 3 + 1]) > 8) || (abs(puiExpected[i * 3 + 2] - puiActual[i * 3 + 2]) > 8))
+		{
+			uiDifferent++;
+		}
+	}
+	AssertTrue(uiDifferent <= uiNumPixels / 1000);
+	pcExpected = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestGerberPanelFilesAllBoards(void)
 {
 	CGerberFileSets			cSets;
@@ -559,6 +701,13 @@ void TestGerberPanelFilesAllBoards(void)
 	size					i;
 	size					uiObjects;
 	size					uiOutside;
+	CGerberBoardRenderer	cRenderer;
+	Ptr<CImage>				pcFront;
+	Ptr<CImage>				pcBack;
+	CArrayFloat64Vec2		asBites;
+	CFloat64Rect*			pcBounds;
+	int						x;
+	int						y;
 
 	cSets.Init();
 	AssertTrue(cSets.AddDirectories("Input" _FS_ "KiCad"));
@@ -645,8 +794,40 @@ void TestGerberPanelFilesAllBoards(void)
 	AssertSize(12 * pcTabs->NumTabs(), cListener.masHoles.NumElements());
 	cListener.Kill();
 
+	//Pictures of the front and the back, left in Output/Panel to look at.  At 20 pixels per millimetre with a 2mm margin.
+	cRenderer.Init(20.0, 2.0);
+	pcFront = cRenderer.Render(&cPanelSet, GBS_Top);
+	pcBack = cRenderer.Render(&cPanelSet, GBS_Bottom);
+	cRenderer.Kill();
+	AssertTrue(pcFront.IsNotNull());
+	AssertTrue(pcBack.IsNotNull());
+	pcBounds = cPanelSet.GetOutlineBounds();
+	AssertInt((int)ceil((pcBounds->GetWidth() + 4) * 20), (int)pcFront->GetWidth());
+	AssertInt((int)ceil((pcBounds->GetHeight() + 4) * 20), (int)pcFront->GetHeight());
+	AssertInt((int)pcFront->GetWidth(), (int)pcBack->GetWidth());
+	AssertTrue(WriteImage(pcFront, "Output" _FS_ "Panel" _FS_ "Panel-Front.png"));
+	AssertTrue(WriteImage(pcBack, "Output" _FS_ "Panel" _FS_ "Panel-Back.png"));
+	AssertRenderedImage("Input" _FS_ "Panel" _FS_ "Panel-Front.png", pcFront);
+	AssertRenderedImage("Input" _FS_ "Panel" _FS_ "Panel-Back.png", pcBack);
+
+	//A mouse bite shows the bench through on both sides; the back is mirrored.
+	asBites.Init();
+	pcTabs->GetMouseBites(&asBites);
+	x = (int)floor((asBites.Get(0)->x - (pcBounds->msTopLeft.x - 2)) * 20);
+	y = (int)floor(((pcBounds->msBottomRight.y + 2) - asBites.Get(0)->y) * 20);
+	AssertRenderedColour(pcFront, x, y, 30, 30, 34);
+	AssertRenderedColour(pcBack, pcBack->GetWidth() - 1 - x, y, 30, 30, 34);
+	asBites.Kill();
+
+	//Gold pads on both sides; silkscreen only on the front as the boards have none on the back.
+	AssertTrue(CountRenderedColour(pcFront, 212, 175, 55, 6) > 1000);
+	AssertTrue(CountRenderedColour(pcBack, 212, 175, 55, 6) > 1000);
+	AssertTrue(CountRenderedColour(pcFront, 245, 245, 240, 6) > 1000);
+	AssertSize(0, CountRenderedColour(pcBack, 245, 245, 240, 6));
+	pcFront = NULL;
+	pcBack = NULL;
+
 	cPanelSet.Kill();
-	cFileUtil.RemoveDir("Output");
 
 	cFiles.Kill();
 	cPanel.Kill();
@@ -662,16 +843,21 @@ void TestGerberPanelMerge(void)
 {
 	TypeConverterInit();
 	NumberInit();
+	DataIOInit();
+	ObjectsInit();
 	BeginTests();
 
 	TestGerberLayerMergeTwoBoards();
 	TestGerberLayerMergeRotated();
 	TestExcellonDrillMerge();
 	TestGerberPanelTabsTwoBoards();
+	TestGerberPanelTabsNotch();
 	TestGerberPanelTabsNotJoined();
 	TestGerberPanelFilesAllBoards();
 
 	TestStatistics();
+	ObjectsKill(false);
+	DataIOKill();
 	NumberKill();
 	TypeConverterKill();
 }

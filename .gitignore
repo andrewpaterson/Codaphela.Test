@@ -28,6 +28,7 @@ TestInputLib/TestInputLib/Log.txt
 TestCoreLib/TestCoreLib/Output
 TestCoreLib/TestCoreLib/Release
 TestCoreLib/Release
+TestGerberLib/TestGerberLib/Output/*
 *.VC.db
 *.suo
 *.sdf
@@ -90,3 +91,5 @@ TestCoreLib/Release
 /TestSupportLib/Release/*
 /TestSupportLib/TestSupportLib/Release/*
 /TestGerberLib/Release/*
+
+TestMicroprocessorLib/Log.txt
