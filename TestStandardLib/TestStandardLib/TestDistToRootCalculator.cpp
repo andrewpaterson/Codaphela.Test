@@ -7,6 +7,8 @@
 #include "StandardLib/String.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
+#include "NamedObjectTestClasses.h"
+#include "EmbeddedObjectTestClasses.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -2659,6 +2661,192 @@ void TestDistToRootComplex(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// pX is reached the long way, Root(0) ... Long A(2) -> Long B(3) ->
+// Long C(4) -> X(5).
+//
+//////////////////////////////////////////////////////////////////////////
+void AddLongWayToX(Ptr<CRoot> pRoot, CPointer pX)
+{
+	Ptr<CPointerContainer>	pLongC;
+	Ptr<CPointerContainer>	pLongB;
+	Ptr<CPointerContainer>	pLongA;
+
+	pLongC = ONMalloc<CPointerContainer>("Long C", pX);
+	pLongB = ONMalloc<CPointerContainer>("Long B", pLongC);
+	pLongA = ONMalloc<CPointerContainer>("Long A", pLongB);
+	pRoot->Add(pLongA);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// An object with two pointers to the same object.  Removing one leaves the
+// other, so the object pointed to is still one further from the root.
+//
+//      X(3 then 5)
+//      ||      \
+//      A(2)    Long C(4) <- Long B(3) <- Long A(2)
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToRootTwoPointersFromOneObject(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CRoot>			pRoot;
+		Ptr<CTestObject>	pX;
+		Ptr<CTestObject>	pA;
+
+		pRoot = ORoot();
+		pX = OMalloc<CTestObject>();
+		AddLongWayToX(pRoot, pX);
+		AssertInt(5, pX->GetDistToRoot());
+
+		pA = OMalloc<CTestObject>();
+		pRoot->Add(pA);
+		pA->mpTest = pX;
+		pA->mpObject = pX;
+		AssertInt(2, pA->GetDistToRoot());
+		AssertInt(3, pX->GetDistToRoot());
+		AssertSize(3, pX.NumHeapFroms());
+
+		pA->mpObject = NULL;
+		AssertSize(2, pX.NumHeapFroms());
+		AssertInt(3, pX->GetDistToRoot());
+
+		pA->mpTest = NULL;
+		AssertSize(1, pX.NumHeapFroms());
+		AssertInt(5, pX->GetDistToRoot());
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// As TestDistToRootTwoPointersFromOneObject but the two pointers are in an
+// object embedded in A (as a CWindow's CFocus points at its focussed and
+// mouse over component).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToRootTwoPointersFromOneEmbeddedObject(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CRoot>							pRoot;
+		Ptr<CTestNamedObject>				pX;
+		Ptr<CTestNamedObjectWithEmbedded>	pA;
+		CPointer							pNull;
+		Ptr<CTestNamedObjectSmall>			pNullSmall;
+
+		pRoot = ORoot();
+		pX = OMalloc<CTestNamedObject>(3);
+		AddLongWayToX(pRoot, pX);
+		AssertInt(5, pX->GetDistToRoot());
+
+		pA = OMalloc<CTestNamedObjectWithEmbedded>(0, 0, 1, 2, pNull, pNullSmall);
+		pRoot->Add(pA);
+		pA->mNamedTest1.mpNamedTest1 = pX;
+		pA->mNamedTest1.mpNamedTest2 = pX;
+		AssertInt(2, pA->GetDistToRoot());
+		AssertInt(3, pX->GetDistToRoot());
+
+		pA->mNamedTest1.mpNamedTest2 = NULL;
+		AssertInt(3, pX->GetDistToRoot());
+
+		pA->mNamedTest1.mpNamedTest1 = NULL;
+		AssertInt(5, pX->GetDistToRoot());
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// As TestDistToRootTwoPointersFromOneObject but each pointer is in a
+// different object embedded in A.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToRootTwoPointersFromTwoEmbeddedObjects(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CRoot>					pRoot;
+		Ptr<CTestObject>			pX;
+		Ptr<CEmbeddedContainer>		pA;
+
+		pRoot = ORoot();
+		pX = OMalloc<CTestObject>();
+		AddLongWayToX(pRoot, pX);
+		AssertInt(5, pX->GetDistToRoot());
+
+		pA = OMalloc<CEmbeddedContainer>();
+		pRoot->Add(pA);
+		pA->mcOne.mpTest = pX;
+		pA->mcTwo.mpTest = pX;
+		AssertInt(2, pA->GetDistToRoot());
+		AssertInt(3, pX->GetDistToRoot());
+
+		pA->mcTwo.mpTest = NULL;
+		AssertInt(3, pX->GetDistToRoot());
+
+		pA->mcOne.mpTest = NULL;
+		AssertInt(5, pX->GetDistToRoot());
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// As a CWindow (W) points at its focussed component (P) and its mouse over
+// component (Q), a child of P.  Q points back at its parent and its window.
+// Clearing the mouse over makes Q one further from the root, which must not
+// make W or P further.
+//
+//      Root(0) -> W(2) -> P(3) <-> Q(3 then 4)
+//                 ^ \____________^ |
+//                 |_________________|
+//
+//////////////////////////////////////////////////////////////////////////
+void TestDistToRootBackPointerToRootedObject(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CRoot>				pRoot;
+		Ptr<CTestNamedObject>	pW;
+		Ptr<CTestNamedObject>	pP;
+		Ptr<CTestNamedObject>	pQ;
+
+		pRoot = ORoot();
+		pW = OMalloc<CTestNamedObject>(1);
+		pRoot->Add(pW);
+		pP = OMalloc<CTestNamedObject>(2);
+		pQ = OMalloc<CTestNamedObject>(3);
+		pP->mpNamedTest1 = pQ;
+		pQ->mpNamedTest1 = pP;
+		pQ->mpNamedTest2 = pW;
+		pW->mpNamedTest1 = pP;
+		pW->mpNamedTest2 = pQ;
+		AssertInt(2, pW->GetDistToRoot());
+		AssertInt(3, pP->GetDistToRoot());
+		AssertInt(3, pQ->GetDistToRoot());
+
+		pW->mpNamedTest2 = NULL;
+		AssertInt(2, pW->GetDistToRoot());
+		AssertInt(3, pP->GetDistToRoot());
+		AssertInt(4, pQ->GetDistToRoot());
+		gcObjects.ValidateObjectsConsistency();
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestDistToRoot(void)
@@ -2693,6 +2881,10 @@ void TestDistToRoot(void)
 	TestDistToRootLinearToStackScenarioA();
 	TestDistToRootLinearToStackScenarioB();
 	TestDistToRootComplex();
+	TestDistToRootTwoPointersFromOneObject();
+	TestDistToRootTwoPointersFromOneEmbeddedObject();
+	TestDistToRootTwoPointersFromTwoEmbeddedObjects();
+	TestDistToRootBackPointerToRootedObject();
 
 	DataIOKill();
 	TypesKill();
