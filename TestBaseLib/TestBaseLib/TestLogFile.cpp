@@ -237,6 +237,188 @@ void TestLogFileWriteMemory(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void AssertLogFileContents(CFileBasic* pcFile, const char* szExpected, size uiLength)
+{
+	char	sz[64];
+
+	AssertTrue(uiLength < 64);
+	AssertTrue(pcFile->Seek(0));
+	AssertSize(1, pcFile->Read(sz, uiLength, 1));
+	sz[uiLength] = '\0';
+	AssertString(szExpected, sz);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLogFileExtendLastWrite(void)
+{
+	CLogFile*				pcLogFile;
+	CMemoryFile*			pcMemoryFile;
+	CFileBasic				cFile;
+	CLogFileCommandWrite*	psWrite;
+	CLogFileCommandWrite*	psMoved;
+
+	pcMemoryFile = MemoryFile();
+	pcLogFile = LogFile(pcMemoryFile);
+	cFile.Init(pcLogFile);
+
+	pcLogFile->Begin();
+	AssertTrue(cFile.Open(EFM_ReadWrite_Create));
+
+	//Appending just after the last write grows it.
+	AssertTrue(cFile.WriteData("abcd", 4));
+	AssertTrue(cFile.WriteData("efgh", 4));
+	AssertSize(1, pcLogFile->GetNumWrites());
+	AssertSize(8, pcLogFile->GetWriteSize(0));
+	AssertLogFileContents(&cFile, "abcdefgh", 8);
+
+	//The first growth doubled the allocation so the next append fits without moving.
+	psWrite = pcLogFile->GetWriteData(0);
+	AssertTrue(cFile.Seek(8));
+	AssertTrue(cFile.WriteData("ij", 2));
+	AssertSize(1, pcLogFile->GetNumWrites());
+	AssertSize(10, pcLogFile->GetWriteSize(0));
+	AssertPointer(psWrite, pcLogFile->GetWriteData(0));
+	AssertLogFileContents(&cFile, "abcdefghij", 10);
+
+	//Writing inside the last write overwrites it in place.
+	AssertTrue(cFile.Seek(2));
+	AssertTrue(cFile.WriteData("XY", 2));
+	AssertSize(1, pcLogFile->GetNumWrites());
+	AssertSize(10, pcLogFile->GetWriteSize(0));
+	AssertPointer(psWrite, pcLogFile->GetWriteData(0));
+	AssertLogFileContents(&cFile, "abXYefghij", 10);
+
+	//Writing from inside the last write to past its end grows it.
+	AssertTrue(cFile.Seek(8));
+	AssertTrue(cFile.WriteData("IJKL", 4));
+	AssertSize(1, pcLogFile->GetNumWrites());
+	AssertSize(12, pcLogFile->GetWriteSize(0));
+	AssertLogFileContents(&cFile, "abXYefghIJKL", 12);
+
+	//Writing before the start of the last write is amalgamated.
+	psWrite = pcLogFile->GetWriteData(0);
+	AssertTrue(cFile.Seek(20));
+	AssertTrue(cFile.WriteData("uvw", 3));
+	AssertSize(2, pcLogFile->GetNumWrites());
+	AssertTrue(cFile.Seek(18));
+	AssertTrue(cFile.WriteData("st", 2));
+	AssertSize(2, pcLogFile->GetNumWrites());
+	AssertPointer(psWrite, pcLogFile->GetWriteData(0));
+	AssertLong(18, pcLogFile->GetWriteData(1)->iPosition);
+	AssertSize(5, pcLogFile->GetWriteSize(1));
+
+	//Appending to a write that is not the last command is amalgamated and moves that write to the end.
+	AssertTrue(cFile.Seek(12));
+	AssertTrue(cFile.WriteData("mn", 2));
+	AssertSize(2, pcLogFile->GetNumWrites());
+	AssertLong(18, pcLogFile->GetWriteData(0)->iPosition);
+	AssertLong(0, pcLogFile->GetWriteData(1)->iPosition);
+	AssertSize(14, pcLogFile->GetWriteSize(1));
+
+	//Bridging the two writes amalgamates all three into one.
+	AssertTrue(cFile.Seek(14));
+	AssertTrue(cFile.WriteData("opqr", 4));
+	AssertSize(1, pcLogFile->GetNumWrites());
+	AssertSize(23, pcLogFile->GetWriteSize(0));
+	AssertLogFileContents(&cFile, "abXYefghIJKLmnopqrstuvw", 23);
+
+	AssertTrue(pcLogFile->Commit());
+	AssertTrue(cFile.Close());
+	AssertTrue(pcLogFile->Commit());
+	pcLogFile->End();
+	AssertLong(23, pcMemoryFile->Size());
+	AssertMemory("abXYefghIJKLmnopqrstuvw", pcMemoryFile->GetBufferPointer(), 23);
+
+	//A write after another command (here an open) is not the last command, so it is not grown.
+	pcLogFile->Begin();
+	AssertTrue(cFile.Open(EFM_ReadWrite_Create));
+	AssertTrue(cFile.WriteData("ABCD", 4));
+	AssertTrue(cFile.Close());
+	AssertTrue(cFile.Open(EFM_ReadWrite_Create));
+	psWrite = pcLogFile->GetWriteData(0);
+	AssertTrue(cFile.Seek(4));
+	AssertTrue(cFile.WriteData("EF", 2));
+	AssertSize(1, pcLogFile->GetNumWrites());
+	AssertSize(6, pcLogFile->GetWriteSize(0));
+	psMoved = pcLogFile->GetWriteData(0);
+	AssertFalse(psWrite == psMoved);
+	AssertTrue(pcLogFile->Commit());
+	AssertTrue(cFile.Close());
+	AssertTrue(pcLogFile->Commit());
+	pcLogFile->End();
+	AssertLong(23, pcMemoryFile->Size());
+	AssertMemory("ABCDEFghIJKLmnopqrstuvw", pcMemoryFile->GetBufferPointer(), 23);
+
+	cFile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLogFileExtendLastWriteLarge(void)
+{
+	CLogFile*		pcLogFile;
+	CMemoryFile*	pcMemoryFile;
+	CFileBasic		cFile;
+	size			i;
+	size			j;
+	uint8			auiChunk[1000];
+	uint8*			puiData;
+	bool			bMatch;
+
+	pcMemoryFile = MemoryFile();
+	pcLogFile = LogFile(pcMemoryFile);
+	cFile.Init(pcLogFile);
+
+	pcLogFile->Begin();
+	AssertTrue(cFile.Open(EFM_ReadWrite_Create));
+
+	//Grow one write from a free list sized allocation to a large one, well past the largest free list element.
+	for (i = 0; i < 300; i++)
+	{
+		for (j = 0; j < 1000; j++)
+		{
+			auiChunk[j] = (uint8)(i + j * 7);
+		}
+		AssertSize(1, cFile.Write(auiChunk, 1000, 1));
+		AssertSize(1, pcLogFile->GetNumWrites());
+		AssertSize((i + 1) * 1000, pcLogFile->GetWriteSize(0));
+	}
+
+	AssertTrue(pcLogFile->Commit());
+	AssertTrue(cFile.Close());
+	AssertTrue(pcLogFile->Commit());
+	pcLogFile->End();
+
+	AssertLong(300000, pcMemoryFile->Size());
+	puiData = (uint8*)pcMemoryFile->GetBufferPointer();
+	bMatch = true;
+	for (i = 0; i < 300; i++)
+	{
+		for (j = 0; j < 1000; j++)
+		{
+			if (puiData[i * 1000 + j] != (uint8)(i + j * 7))
+			{
+				bMatch = false;
+			}
+		}
+	}
+	AssertTrue(bMatch);
+
+	cFile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestLogFileWriteDiskSingle(void)
 {
 	CLogFile*		pcLogFile;
@@ -951,6 +1133,8 @@ void TestLogFile(void)
 	TestLogFileOpen();
 	TestLogFileRead();
 	TestLogFileWriteMemory();
+	TestLogFileExtendLastWrite();
+	TestLogFileExtendLastWriteLarge();
 	TestLogFileWriteDiskSingle();
 	TestLogFileWriteDisk();
 	TestLogFileFindHoles();

@@ -124,29 +124,29 @@ void TestGerberRasterCurves(void)
 	float64			fLens;
 
 	//Circles; the flattened arcs keep the area.
-	AssertRelative(GERBER_PI, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,2*%\nD10*\nX2000000Y2000000D03*\n", 0, 0, 4, 4, 40, &cRaster), 0.0002);
+	AssertRelative(N_PI_64, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,2*%\nD10*\nX2000000Y2000000D03*\n", 0, 0, 4, 4, 40, &cRaster), 0.0002);
 	cRaster.Kill();
 	//A 4 pixel radius; the 8 bit coverage of its few edge pixels limits it to about 0.2%.
-	AssertRelative(GERBER_PI * 0.16, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,0.8*%\nD10*\nX2000000Y2000000D03*\n", 0, 0, 4, 4, 10, &cRaster), 0.005);
+	AssertRelative(N_PI_64 * 0.16, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,0.8*%\nD10*\nX2000000Y2000000D03*\n", 0, 0, 4, 4, 10, &cRaster), 0.005);
 	cRaster.Kill();
-	AssertRelative(GERBER_PI * 100, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,20*%\nD10*\nX15000000Y15000000D03*\n", 0, 0, 30, 30, 20, &cRaster), 0.0001);
+	AssertRelative(N_PI_64 * 100, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,20*%\nD10*\nX15000000Y15000000D03*\n", 0, 0, 30, 30, 20, &cRaster), 0.0001);
 	cRaster.Kill();
 
 	//A circle with a hole.
-	AssertRelative(GERBER_PI * 0.75, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,2X1*%\nD10*\nX2000000Y2000000D03*\n", 0, 0, 4, 4, 40, &cRaster), 0.0005);
+	AssertRelative(N_PI_64 * 0.75, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,2X1*%\nD10*\nX2000000Y2000000D03*\n", 0, 0, 4, 4, 40, &cRaster), 0.0005);
 	AssertInt(0, cRaster.Get(80, 80));
 	AssertInt(255, cRaster.Get(80, 50));
 	cRaster.Kill();
 
 	//A draw and a quarter arc.
-	AssertRelative(2 * 0.2 + GERBER_PI * 0.01, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,0.2*%\nD10*\nG01*\nX1000000Y1000000D02*\nX3000000D01*\n", 0, 0, 4, 2, 40, &cRaster), 0.001);
+	AssertRelative(2 * 0.2 + N_PI_64 * 0.01, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,0.2*%\nD10*\nG01*\nX1000000Y1000000D02*\nX3000000D01*\n", 0, 0, 4, 2, 40, &cRaster), 0.001);
 	cRaster.Kill();
-	AssertRelative(GERBER_PI * 0.11, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,0.2*%\nD10*\nG75*\nG03*\nX2000000Y1000000D02*\nX1000000Y2000000I-1000000J0D01*\n", 0, 0, 3, 3, 40, &cRaster), 0.002);
+	AssertRelative(N_PI_64 * 0.11, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,0.2*%\nD10*\nG75*\nG03*\nX2000000Y1000000D02*\nX1000000Y2000000I-1000000J0D01*\n", 0, 0, 3, 3, 40, &cRaster), 0.002);
 	cRaster.Kill();
 
 	//Two overlapping dark circles cover their union once.
 	fLens = 2 * acos(0.5) - 0.5 * sqrt(3.0);
-	AssertRelative(2 * GERBER_PI - fLens, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,2*%\nD10*\nX2000000Y2000000D03*\nX3000000D03*\n", 0, 0, 5, 4, 40, &cRaster), 0.0005);
+	AssertRelative(2 * N_PI_64 - fLens, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,2*%\nD10*\nX2000000Y2000000D03*\nX3000000D03*\n", 0, 0, 5, 4, 40, &cRaster), 0.0005);
 	cRaster.Kill();
 }
 
@@ -161,7 +161,7 @@ void TestGerberRasterPolarity(void)
 
 	//A clear circle punches a hole in the rectangle before it and the dark circle after it covers the hole again.  Where
 	//the edges of the hole and the circle meet their coverage is combined, so those pixels end a little short of dark.
-	AssertRelative(8 - GERBER_PI * 0.25, RasteriseGerberText(
+	AssertRelative(8 - N_PI_64 * 0.25, RasteriseGerberText(
 		"%FSLAX26Y26*%\n%MOMM*%\n%ADD10R,4X2*%\n%ADD11C,1*%\n"
 		"D10*\nX3000000Y2000000D03*\n"
 		"%LPC*%\nD11*\nX3000000Y2000000D03*\n", 0, 0, 6, 4, 40, &cRaster), 0.0005);
@@ -192,11 +192,11 @@ void TestGerberRasterMacros(void)
 	CGerberRaster	cRaster;
 
 	//Exposure off erases the earlier parts of the flash only: the donut hole shows the rectangle beneath it.
-	AssertRelative(GERBER_PI * 0.75, RasteriseGerberText(
+	AssertRelative(N_PI_64 * 0.75, RasteriseGerberText(
 		"%FSLAX26Y26*%\n%MOMM*%\n%AMDONUT*1,1,2,0,0*1,0,1,0,0*%\n%ADD10DONUT*%\n"
 		"D10*\nX2000000Y2000000D03*\n", 0, 0, 4, 4, 40, &cRaster), 0.0005);
 	cRaster.Kill();
-	AssertRelative(GERBER_PI * 0.75 + GERBER_PI * 0.25, RasteriseGerberText(
+	AssertRelative(N_PI_64 * 0.75 + N_PI_64 * 0.25, RasteriseGerberText(
 		"%FSLAX26Y26*%\n%MOMM*%\n%AMDONUT*1,1,2,0,0*1,0,1,0,0*%\n%ADD10DONUT*%\n%ADD11R,1X1*%\n"
 		"D11*\nX2000000Y2000000D03*\n"
 		"D10*\nX2000000Y2000000D03*\n", 0, 0, 4, 4, 40, &cRaster), 0.0005);
@@ -204,7 +204,7 @@ void TestGerberRasterMacros(void)
 	cRaster.Kill();
 
 	//Primitives winding opposite ways still add: a clockwise square inside a circle.
-	AssertRelative(GERBER_PI, RasteriseGerberText(
+	AssertRelative(N_PI_64, RasteriseGerberText(
 		"%FSLAX26Y26*%\n%MOMM*%\n%AMMIXED*1,1,2,0,0*4,1,4,-0.5,-0.5,-0.5,0.5,0.5,0.5,0.5,-0.5,-0.5,-0.5,0*%\n%ADD10MIXED*%\n"
 		"D10*\nX2000000Y2000000D03*\n", 0, 0, 4, 4, 40, &cRaster), 0.0005);
 	AssertInt(255, cRaster.Get(80, 80));
@@ -221,9 +221,9 @@ void TestGerberRasterClipping(void)
 	CGerberRaster	cRaster;
 
 	//Only the part inside the raster is drawn; edges left of it still count.
-	AssertRelative(GERBER_PI / 2, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,2*%\nD10*\nX0Y0D03*\n", 0, -2, 2, 2, 40, &cRaster), 0.0005);
+	AssertRelative(N_PI_64 / 2, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,2*%\nD10*\nX0Y0D03*\n", 0, -2, 2, 2, 40, &cRaster), 0.0005);
 	cRaster.Kill();
-	AssertRelative(GERBER_PI / 4, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,2*%\nD10*\nX0Y0D03*\n", -2, -2, 0, 0, 40, &cRaster), 0.0005);
+	AssertRelative(N_PI_64 / 4, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,2*%\nD10*\nX0Y0D03*\n", -2, -2, 0, 0, 40, &cRaster), 0.0005);
 	cRaster.Kill();
 	AssertDouble(0, RasteriseGerberText("%FSLAX26Y26*%\n%MOMM*%\n%ADD10C,2*%\nD10*\nX10000000Y0D03*\n", -2, -2, 2, 2, 40, &cRaster), 9);
 	cRaster.Kill();
@@ -263,7 +263,7 @@ void TestGerberRasterKiCadAdder16Bit(void)
 	cRasteriser.Init();
 	AssertTrue(cRasteriser.Rasterise(&cImage, &cRaster));
 	cRasteriser.Kill();
-	fExact = 83 * GERBER_PI * 0.19939 * 0.19939 + 56 * GERBER_PI * 0.50038 * 0.50038;
+	fExact = 83 * N_PI_64 * 0.19939 * 0.19939 + 56 * N_PI_64 * 0.50038 * 0.50038;
 	AssertRelative(fExact, cRaster.Area(), 0.0002);
 	cRaster.Kill();
 	cImage.Kill();

@@ -1,3 +1,4 @@
+#include <math.h>
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "StandardLib/Objects.h"
@@ -10,6 +11,7 @@
 #include "SupportLib/ImageBlitterContext.h"
 #include "SupportLib/ImageColourConverter.h"
 #include "BaseLib/Logger.h"
+#include "BaseLib/Numbers.h"
 #include "TestLib/Assert.h"
 #include "TestLib/AssertFile.h"
 
@@ -569,6 +571,230 @@ void AssertDrawCel(Ptr<CImage> pDest, Ptr<CImage> pSource, int32 iDestX, int32 i
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A black image with opacity to draw anti-aliased shapes on, and a draw
+// set to opaque magenta.
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CImage> BeginShapeImage(CImageDraw* pcDraw, int iWidth, int iHeight)
+{
+	Ptr<CImage>			pImage;
+	CImageColourARGB	cColour;
+
+	pImage = OMalloc<CImage>(iWidth, iHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, IMAGE_OPACITY, CHANNEL_STOP);
+	pImage->Black();
+
+	pcDraw->Init(&pImage);
+	cColour.Init(1.0f, 1.0f, 0.0f, 1.0f);
+	pcDraw->SetColour(&cColour);
+	cColour.Kill();
+	return pImage;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The opacity of the whole image in pixels.
+//
+//////////////////////////////////////////////////////////////////////////
+float64 SumShapeOpacity(Ptr<CImage> pImage)
+{
+	int		x;
+	int		y;
+	int		iSum;
+
+	iSum = 0;
+	for (y = 0; y < (int)pImage->GetHeight(); y++)
+	{
+		for (x = 0; x < (int)pImage->GetWidth(); x++)
+		{
+			iSum += GetCircleOpacity(pImage, x, y);
+		}
+	}
+	return iSum / 255.0;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// True if the image is the same mirrored left to right and top to bottom,
+// and within one about its diagonal (if bDiagonal and it is square); the
+// coverage rasteriser cuts edges at rows and columns differently.
+//
+//////////////////////////////////////////////////////////////////////////
+bool IsShapeSymmetric(Ptr<CImage> pImage, bool bDiagonal)
+{
+	int		x;
+	int		y;
+	int		iWidth;
+	int		iHeight;
+	bool	bSymmetric;
+
+	iWidth = pImage->GetWidth();
+	iHeight = pImage->GetHeight();
+	bSymmetric = true;
+	for (y = 0; y < iHeight; y++)
+	{
+		for (x = 0; x < iWidth; x++)
+		{
+			bSymmetric &= GetCircleOpacity(pImage, x, y) == GetCircleOpacity(pImage, iWidth - 1 - x, y);
+			bSymmetric &= GetCircleOpacity(pImage, x, y) == GetCircleOpacity(pImage, x, iHeight - 1 - y);
+			if (bDiagonal && (iWidth == iHeight))
+			{
+				bSymmetric &= abs(GetCircleOpacity(pImage, x, y) - GetCircleOpacity(pImage, y, x)) <= 1;
+			}
+		}
+	}
+	return bSymmetric;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageDrawShapes(void)
+{
+	CImageDraw			cDraw;
+	Ptr<CImage>			pImage;
+	CVectorPath			cPath;
+	SFloat64Vec2		asPoints[3];
+	SFloat64Vec2		sOrigin;
+	SLogConfig			sLogConfig;
+	int					x;
+	int					y;
+	bool				bInside;
+	float64				fArea;
+
+	//A circle covers its area and is symmetric about its middle, which is on a pixel corner.
+	pImage = BeginShapeImage(&cDraw, 32, 32);
+	AssertTrue(cDraw.DrawCircle(16, 16, 10));
+	cDraw.Kill();
+	fArea = SumShapeOpacity(pImage);
+	AssertTrue(fabs(fArea - N_PI_64 * 100) < 1);
+	AssertTrue(IsShapeSymmetric(pImage, true));
+	AssertInt(255, GetCircleOpacity(pImage, 16, 16));
+	AssertInt(255, GetCircleChannel(pImage, 16, 16, 0));
+	AssertInt(0, GetCircleChannel(pImage, 16, 16, 1));
+	AssertInt(0, GetCircleOpacity(pImage, 0, 0));
+
+	//And in the middle of a pixel.
+	pImage = BeginShapeImage(&cDraw, 21, 21);
+	AssertTrue(cDraw.DrawCircle(10.5, 10.5, 7.25));
+	cDraw.Kill();
+	AssertTrue(IsShapeSymmetric(pImage, true));
+
+	//A rectangle on pixel edges fills exactly its pixels.  One half a pixel from an edge half covers that edge.
+	pImage = BeginShapeImage(&cDraw, 8, 8);
+	AssertTrue(cDraw.DrawRectangle(2, 1, 6, 4));
+	cDraw.Kill();
+	bInside = true;
+	for (y = 0; y < 8; y++)
+	{
+		for (x = 0; x < 8; x++)
+		{
+			bInside &= GetCircleOpacity(pImage, x, y) == (((x >= 2) && (x < 6) && (y >= 1) && (y < 4)) ? 255 : 0);
+		}
+	}
+	AssertTrue(bInside);
+	pImage = BeginShapeImage(&cDraw, 8, 8);
+	AssertTrue(cDraw.DrawRectangle(2.5, 1, 6, 4));
+	cDraw.Kill();
+	AssertTrue(abs(GetCircleOpacity(pImage, 2, 2) - 128) <= 1);
+	AssertInt(255, GetCircleOpacity(pImage, 3, 2));
+	AssertInt(0, GetCircleOpacity(pImage, 1, 2));
+
+	//A rounded rectangle has full sides and anti-aliased corners.
+	pImage = BeginShapeImage(&cDraw, 16, 16);
+	AssertTrue(cDraw.DrawRoundedRectangle(2, 2, 14, 14, 4));
+	cDraw.Kill();
+	AssertTrue(IsShapeSymmetric(pImage, true));
+	AssertInt(255, GetCircleOpacity(pImage, 2, 8));
+	AssertInt(255, GetCircleOpacity(pImage, 8, 2));
+	AssertInt(0, GetCircleOpacity(pImage, 2, 2));
+	fArea = SumShapeOpacity(pImage);
+	AssertTrue(fabs(fArea - (144 - 4 * (16 - N_PI_64 * 4))) < 0.5);
+
+	//A ring leaves its middle alone.  A sector is the part of the circle between its angles; 0 is right and 90 up.
+	pImage = BeginShapeImage(&cDraw, 32, 32);
+	AssertTrue(cDraw.DrawRing(16, 16, 12, 8, 0, 360));
+	cDraw.Kill();
+	AssertTrue(IsShapeSymmetric(pImage, true));
+	AssertInt(0, GetCircleOpacity(pImage, 16, 16));
+	AssertInt(255, GetCircleOpacity(pImage, 26, 16));
+	AssertTrue(fabs(SumShapeOpacity(pImage) - N_PI_64 * (144 - 64)) < 1);
+	pImage = BeginShapeImage(&cDraw, 32, 32);
+	AssertTrue(cDraw.DrawSector(16, 16, 12, 0, 90));
+	cDraw.Kill();
+	AssertInt(255, GetCircleOpacity(pImage, 20, 12));
+	AssertInt(0, GetCircleOpacity(pImage, 12, 12));
+	AssertInt(0, GetCircleOpacity(pImage, 20, 20));
+	AssertTrue(fabs(SumShapeOpacity(pImage) - N_PI_64 * 36) < 0.5);
+
+	//A stroke is a line with round ends.
+	pImage = BeginShapeImage(&cDraw, 16, 16);
+	AssertTrue(cDraw.DrawStroke(4, 8, 12, 8, 2));
+	cDraw.Kill();
+	AssertInt(255, GetCircleOpacity(pImage, 8, 7));
+	AssertInt(255, GetCircleOpacity(pImage, 8, 8));
+	AssertInt(0, GetCircleOpacity(pImage, 8, 6));
+	AssertTrue(IsShapeSymmetric(pImage, false));
+	AssertTrue(fabs(SumShapeOpacity(pImage) - (16 + N_PI_64)) < 0.1);
+
+	//A polygon.
+	pImage = BeginShapeImage(&cDraw, 16, 16);
+	asPoints[0].Init(2, 2);
+	asPoints[1].Init(14, 2);
+	asPoints[2].Init(2, 14);
+	AssertTrue(cDraw.DrawPolygon(asPoints, 3));
+	cDraw.Kill();
+	AssertTrue(fabs(SumShapeOpacity(pImage) - 72) < 0.1);
+	AssertInt(255, GetCircleOpacity(pImage, 3, 3));
+	AssertInt(0, GetCircleOpacity(pImage, 12, 12));
+
+	//A path in other units with y up: millimetres at 2 pixels to the millimetre with the image's top left at 0, 8 mm.
+	//Its second part has exposure off and erases a hole.
+	pImage = BeginShapeImage(&cDraw, 16, 16);
+	cPath.Init();
+	cPath.BeginPart(true);
+	asPoints[0].Init(1, 1);
+	asPoints[1].Init(7, 7);
+	AddVectorRectangle(&cPath, &asPoints[0], &asPoints[1]);
+	cPath.BeginPart(false);
+	asPoints[0].Init(4, 4);
+	cPath.AddCircle(&asPoints[0], 1, false);
+	sOrigin.Init(0, 8);
+	AssertTrue(cDraw.DrawPath(&cPath, &sOrigin, 2, true));
+	cPath.Kill();
+	cDraw.Kill();
+	AssertInt(255, GetCircleOpacity(pImage, 2, 2));
+	AssertInt(255, GetCircleOpacity(pImage, 13, 13));
+	AssertInt(0, GetCircleOpacity(pImage, 1, 1));
+	AssertInt(0, GetCircleOpacity(pImage, 7, 7));
+	AssertInt(0, GetCircleOpacity(pImage, 8, 8));
+	AssertTrue(IsShapeSymmetric(pImage, true));
+	AssertTrue(fabs(SumShapeOpacity(pImage) - (144 - N_PI_64 * 4)) < 0.5);
+
+	//Shapes outside the image or empty draw nothing.
+	pImage = BeginShapeImage(&cDraw, 8, 8);
+	AssertTrue(cDraw.DrawCircle(-20, -20, 4));
+	AssertTrue(cDraw.DrawRectangle(5, 5, 5, 7));
+	cDraw.Kill();
+	AssertTrue(SumShapeOpacity(pImage) == 0);
+
+	//An image without opacity can't show the anti-aliased edge.
+	pImage = OMalloc<CImage>(8, 8, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+	cDraw.Init(&pImage);
+	sLogConfig = gcLogger.SetSilent();
+	AssertFalse(cDraw.DrawCircle(4, 4, 3));
+	gcLogger.SetConfig(&sLogConfig);
+	cDraw.Kill();
+
+	pImage = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestImageDrawCelClipping(void)
@@ -903,15 +1129,15 @@ void AssertDrawCelTranslucentPixels(Ptr<CImage> pDest, size uiRed, size uiGreen,
 	uint8	auiAlpha[4] = { 0, 64, 128, 255 };
 	size	uiExpected;
 
-	//Drawn onto transparent black a straight alpha source must leave its colour multiplied by its opacity.
+	//Drawn onto transparent black a straight alpha source must leave its colour multiplied by its opacity, rounded.
 	puiData = (uint8*)pDest->GetData();
 	for (i = 0; i < 4; i++)
 	{
-		uiExpected = (auiColour[0] * (auiAlpha[i] > 128 ? auiAlpha[i] + 1 : auiAlpha[i])) >> 8;
+		uiExpected = (auiColour[0] * auiAlpha[i] + 127) / 255;
 		AssertInt((int)uiExpected, puiData[i * 4 + uiRed]);
-		uiExpected = (auiColour[1] * (auiAlpha[i] > 128 ? auiAlpha[i] + 1 : auiAlpha[i])) >> 8;
+		uiExpected = (auiColour[1] * auiAlpha[i] + 127) / 255;
 		AssertInt((int)uiExpected, puiData[i * 4 + uiGreen]);
-		uiExpected = (auiColour[2] * (auiAlpha[i] > 128 ? auiAlpha[i] + 1 : auiAlpha[i])) >> 8;
+		uiExpected = (auiColour[2] * auiAlpha[i] + 127) / 255;
 		AssertInt((int)uiExpected, puiData[i * 4 + uiBlue]);
 		AssertInt(auiAlpha[i], puiData[i * 4 + uiOpacity]);
 	}
@@ -1113,7 +1339,6 @@ void AssertDrawCelSized(Ptr<CImage> pDest, uint32 uiDestStride, uint8* puiBackgr
 	int32			yCel;
 	bool			bInside;
 	uint16			uiAlpha;
-	uint16			uiBlend;
 	uint32			i;
 	uint32			uiWrong;
 	int32			iDestHeight;
@@ -1154,10 +1379,9 @@ void AssertDrawCelSized(Ptr<CImage> pDest, uint32 uiDestStride, uint8* puiBackgr
 					}
 					else if (uiAlpha != 0)
 					{
-						uiBlend = (uiAlpha > 128) ? uiAlpha + 1 : uiAlpha;
 						for (i = 0; i < 3; i++)
 						{
-							auiExpected[i] = (uint8)((puiSourcePixel[i] * uiBlend + auiExpected[i] * (256 - uiBlend)) >> 8);
+							auiExpected[i] = (uint8)((puiSourcePixel[i] * uiAlpha + auiExpected[i] * (255 - uiAlpha) + 127) / 255);
 						}
 						if (uiDestStride == 4)
 						{
@@ -1605,6 +1829,7 @@ void TestImageDraw(void)
 	TestImageDrawLine();
 	TestImageDrawLineExtents();
 	TestImageDrawSemicircle();
+	TestImageDrawShapes();
 	TestImageDrawCelClipping();
 	TestImageDrawCelMismatchedFormat();
 	TestImageDrawCelClippingTransparentGaps();

@@ -1,6 +1,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/DiskFile.h"
+#include "BaseLib/BufferedFile.h"
 #include "TestLib/Assert.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/ArrayUnknown.h"
@@ -262,7 +263,7 @@ void TestArrayUnknownLoad(void)
 	pcTest = cArray.Add<CTestUnknown>();
 	pcTest->Init(0);
 
-	cFile.Init(DiskFile("Output" _FS_ "ArrayUnknown" _FS_ "Array.dat"));
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "ArrayUnknown" _FS_ "Array.dat")));
 	bResult = cFile.WriteOpen();
 	AssertTrue(bResult);
 
@@ -277,7 +278,7 @@ void TestArrayUnknownLoad(void)
 
 	AssertSize(0, gcUnknowns.NumElements());
 
-	cFile.Init(DiskFile("Output" _FS_ "ArrayUnknown" _FS_ "Array.dat"));
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "ArrayUnknown" _FS_ "Array.dat")));
 	bResult = cFile.ReadOpen();
 	AssertTrue(bResult);
 

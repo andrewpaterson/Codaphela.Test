@@ -123,6 +123,69 @@ void TestSequenceCrashRecovery(bool bRewriteMark)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestSequenceBlocks(void)
+{
+	CSequence					cSequence;
+	CLifeInit<CSequenceConfig>	cConfig;
+	char						szDirectory[] = "Output" _FS_ "SequenceBlocks";
+	CFileUtil					cFileUtil;
+
+	cFileUtil.RemoveDir(szDirectory);
+
+	cConfig = CValueSequenceConfig::Create(szDirectory, DS_No, 4);
+	AssertTrue(cSequence.Init(cConfig));
+	AssertLong(1LL, cSequence.GetNext());
+	AssertLong(2LL, cSequence.GetNext());
+	AssertLong(3LL, cSequence.PeekNext());
+
+	//Keep the files as they are while the block 1..4 is reserved.
+	AssertTrue(cFileUtil.Copy("Output" _FS_ "SequenceBlocks" _FS_ "Primary" _FS_ "Sequence.DAT", "Output" _FS_ "SequenceBlocks" _FS_ "Primary.DAT"));
+	AssertTrue(cFileUtil.Copy("Output" _FS_ "SequenceBlocks" _FS_ "Backup" _FS_ "_Sequence.DAT", "Output" _FS_ "SequenceBlocks" _FS_ "Backup.DAT"));
+
+	AssertLong(3LL, cSequence.GetNext());
+	AssertLong(4LL, cSequence.GetNext());
+	AssertLong(5LL, cSequence.GetNext());
+	AssertLong(6LL, cSequence.GetNext());
+	cSequence.Kill();
+
+	//A clean close gives back the rest of the block.
+	cConfig = CValueSequenceConfig::Create(szDirectory, DS_No, 4);
+	AssertTrue(cSequence.Init(cConfig));
+	AssertLong(7LL, cSequence.GetNext());
+	cSequence.Kill();
+
+	//Dying while the block 1..4 was reserved skips the rest of the block.
+	AssertTrue(cFileUtil.Copy("Output" _FS_ "SequenceBlocks" _FS_ "Primary.DAT", "Output" _FS_ "SequenceBlocks" _FS_ "Primary" _FS_ "Sequence.DAT"));
+	AssertTrue(cFileUtil.Copy("Output" _FS_ "SequenceBlocks" _FS_ "Backup.DAT", "Output" _FS_ "SequenceBlocks" _FS_ "Backup" _FS_ "_Sequence.DAT"));
+	cConfig = CValueSequenceConfig::Create(szDirectory, DS_No, 4);
+	AssertTrue(cSequence.Init(cConfig));
+	AssertLong(5LL, cSequence.GetNext());
+	cSequence.Kill();
+
+	//A block size of zero writes every index, the same as a block size of one.
+	cFileUtil.RemoveDir(szDirectory);
+	cConfig = CValueSequenceConfig::Create(szDirectory, DS_No, 0);
+	AssertTrue(cSequence.Init(cConfig));
+	AssertLong(1LL, cSequence.GetNext());
+	AssertTrue(cFileUtil.Copy("Output" _FS_ "SequenceBlocks" _FS_ "Primary" _FS_ "Sequence.DAT", "Output" _FS_ "SequenceBlocks" _FS_ "Primary.DAT"));
+	AssertTrue(cFileUtil.Copy("Output" _FS_ "SequenceBlocks" _FS_ "Backup" _FS_ "_Sequence.DAT", "Output" _FS_ "SequenceBlocks" _FS_ "Backup.DAT"));
+	AssertLong(2LL, cSequence.GetNext());
+	cSequence.Kill();
+	AssertTrue(cFileUtil.Copy("Output" _FS_ "SequenceBlocks" _FS_ "Primary.DAT", "Output" _FS_ "SequenceBlocks" _FS_ "Primary" _FS_ "Sequence.DAT"));
+	AssertTrue(cFileUtil.Copy("Output" _FS_ "SequenceBlocks" _FS_ "Backup.DAT", "Output" _FS_ "SequenceBlocks" _FS_ "Backup" _FS_ "_Sequence.DAT"));
+	cConfig = CValueSequenceConfig::Create(szDirectory, DS_No, 0);
+	AssertTrue(cSequence.Init(cConfig));
+	AssertLong(2LL, cSequence.GetNext());
+	cSequence.Kill();
+
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestSequence(void)
 {
 	TypeConverterInit();
@@ -133,6 +196,7 @@ void TestSequence(void)
 	TestSequenceNext();
 	TestSequenceCrashRecovery(false);
 	TestSequenceCrashRecovery(true);
+	TestSequenceBlocks();
 
 	TestStatistics();
 	DataMemoryKill();

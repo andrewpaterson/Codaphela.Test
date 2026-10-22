@@ -1,11 +1,16 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "BaseLib/FileUtil.h"
+#include "BaseLib/UTF8.h"
 #include "BaseLib/Logger.h"
 #include "StandardLib/Objects.h"
 #include "SupportLib/ImageWriter.h"
 #include "SupportLib/TrueTypeFont.h"
 #include "SupportLib/TrueTypeRasteriser.h"
+#include "SupportLib/TrueTypeFontFactory.h"
+#include "SupportLib/SimpleTextReader.h"
+#include "SupportLib/GlyphListFontDraw.h"
+#include "SupportLib/TextLayout.h"
 #include "TestLib/Assert.h"
 #include "TestLib/AssertFile.h"
 
@@ -560,6 +565,106 @@ void TestTrueTypeDrawText(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestTrueTypeFontFactoryLazyGlyphs(void)
+{
+	ObjectsInit();
+	{
+		CTrueTypeFont				cFont;
+		CTrueTypeFontFactory		cFactory;
+		CImageColourRGB				cColour;
+		Ptr<CImage>					pImage;
+		Ptr<CFont>					pFont;
+		Ptr<CGlyph>					pGlyphA;
+		Ptr<CGlyph>					pGlyph;
+		SGlyphDescription*			psDescription;
+		CUTF8						cUTF8;
+		CSimpleTextReader			cReader;
+		Ptr<CText>					pText;
+		Ptr<CTextLayout>			pLayout;
+		Ptr<CGlyphListFontDraw>		pDraw;
+
+		AssertTrue(LoadTrueTypeFont(&cFont, "LiberationSans-Regular.ttf"));
+		cFactory.Init(&cFont, 16.0f);
+		cColour.Init(0.0f, 0.0f, 0.0f);
+		pImage = cFactory.Rasterise("AB g\xC3\xA9", &cColour);
+		pFont = cFactory.Generate("Liberation Sans 16px", pImage);
+		cFactory.Kill();
+		AssertTrue(pFont.IsNotNull());
+		AssertTrue(pFont->GetImage() == pImage);
+
+		//Every character is described but no glyph has been generated.
+		AssertSize(5, pFont->NumGlyphs());
+		AssertSize(0, pFont->NumGeneratedGlyphs());
+
+		//Measuring uses the descriptions.
+		AssertSize(22, pFont->CalculateWidth("AB"));
+		AssertSize(0, pFont->NumGeneratedGlyphs());
+
+		pGlyphA = pFont->GetGlyph((uint32)'A', 1);
+		AssertTrue(pGlyphA.IsNotNull());
+		AssertSize(1, pFont->NumGeneratedGlyphs());
+		AssertInt(11, pGlyphA->GetStep());
+		AssertTrue(pGlyphA->GetSourceImage() == pImage);
+		psDescription = pFont->GetGlyphDescription((uint8*)"A", 1);
+		AssertNotNull(psDescription);
+		AssertInt(psDescription->cSubImage.GetSourceLeft(), pGlyphA->GetSubImage()->GetSourceLeft());
+		AssertInt(psDescription->cSubImage.GetSourceTop(), pGlyphA->GetSubImage()->GetSourceTop());
+		AssertInt(psDescription->cSubImage.GetImageWidth(), pGlyphA->GetSubImage()->GetImageWidth());
+		AssertInt(psDescription->cSubImage.GetImageHeight(), pGlyphA->GetSubImage()->GetImageHeight());
+		AssertInt(11, pGlyphA->GetFullWidth());
+		AssertInt(pFont->GetLineHeight(), pGlyphA->GetFullHeight());
+
+		//Asked for again it is the same glyph.
+		pGlyph = pFont->GetGlyph((uint32)'A', 1);
+		AssertTrue(pGlyph == pGlyphA);
+		AssertSize(1, pFont->NumGeneratedGlyphs());
+
+		cUTF8.Init("\xC3\xA9");
+		pGlyph = pFont->GetGlyph(&cUTF8);
+		cUTF8.Kill();
+		AssertTrue(pGlyph.IsNotNull());
+		AssertSize(2, pFont->NumGeneratedGlyphs());
+
+		//A character the font doesn't have.
+		pGlyph = pFont->GetGlyph((uint32)'Z', 1);
+		AssertTrue(pGlyph.IsNull());
+		AssertNull(pFont->GetGlyphDescription((uint8*)"Z", 1));
+		AssertSize(2, pFont->NumGeneratedGlyphs());
+
+		//Laying out text generates the glyphs drawn and no others.
+		cUTF8.Init("gAg");
+		cReader.Init(&pFont);
+		pText = cReader.Read(&cUTF8, true);
+		cReader.Kill();
+		cUTF8.Kill();
+		pLayout = OMalloc<CTextLayout>();
+		pDraw = OMalloc<CGlyphListFontDraw>();
+		pDraw->Begin();
+		pLayout->Layout(pDraw, pText);
+		pDraw->End();
+		AssertSize(3, pDraw->GetGlyphs()->NumElements());
+		AssertSize(3, pFont->NumGeneratedGlyphs());
+		AssertPointer(&pGlyphA, pDraw->GetGlyphs()->Get(1)->pcGlyph);
+		AssertPointer(pDraw->GetGlyphs()->Get(0)->pcGlyph, pDraw->GetGlyphs()->Get(2)->pcGlyph);
+		AssertSize(5, pFont->NumGlyphs());
+
+		pGlyph = NULL;
+		pGlyphA = NULL;
+		pText = NULL;
+		pLayout = NULL;
+		pDraw = NULL;
+		pFont = NULL;
+		pImage = NULL;
+		cFont.Kill();
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestTrueTypeFont(void)
 {
 	BeginTests();
@@ -574,6 +679,7 @@ void TestTrueTypeFont(void)
 	TestTrueTypeRasteriseGlyph();
 	TestTrueTypeRasteriseText();
 	TestTrueTypeDrawText();
+	TestTrueTypeFontFactoryLazyGlyphs();
 
 	DataIOKill();
 

@@ -1,6 +1,7 @@
 #include "BaseLib/GlobalMemory.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/DiskFile.h"
+#include "BaseLib/BufferedFile.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/MapStringUnknown.h"
 #include "TestLib/Assert.h"
@@ -236,7 +237,7 @@ void TestMapStringUnknownLoad(void)
 	pcTest = cMap.Put<CTestUnknownJobbie>("Yurk");
 	pcTest->Init(8, "Yurk");
 
-	cFile.Init(DiskFile("Output" _FS_ "MapStringUnknown" _FS_ "Map.dat"));
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "MapStringUnknown" _FS_ "Map.dat")));
 	bResult = cFile.WriteOpen();
 	AssertTrue(bResult);
 
@@ -251,7 +252,7 @@ void TestMapStringUnknownLoad(void)
 	cMap.Kill();
 	AssertSize(0, gcUnknowns.NumElements());
 
-	cFile.Init(DiskFile("Output" _FS_ "MapStringUnknown" _FS_ "Map.dat"));
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "MapStringUnknown" _FS_ "Map.dat")));
 	bResult = cFile.ReadOpen();
 	AssertTrue(bResult);
 

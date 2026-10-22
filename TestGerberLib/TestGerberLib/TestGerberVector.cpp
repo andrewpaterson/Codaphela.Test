@@ -76,7 +76,7 @@ size CountContours(CGerberVectorObject* pcObject)
 	uiContours = 0;
 	for (i = 0; i < pcObject->NumSegments(); i++)
 	{
-		if (pcObject->GetSegment(i)->eType == GVS_Move)
+		if (pcObject->GetSegment(i)->eType == VS_Move)
 		{
 			uiContours++;
 		}
@@ -138,20 +138,20 @@ void TestGerberVectorApertures(void)
 
 	AssertSize(9, cImage.NumObjects());
 
-	AssertDouble(GERBER_PI, cImage.GetObject(0)->Area(), 6);
+	AssertDouble(N_PI_64, cImage.GetObject(0)->Area(), 6);
 	AssertBounds(cImage.GetObject(0), -1, -1, 1, 1);
 
 	//The hole is a contour winding the other way.
-	AssertDouble(GERBER_PI * 0.75, cImage.GetObject(1)->Area(), 6);
+	AssertDouble(N_PI_64 * 0.75, cImage.GetObject(1)->Area(), 6);
 	AssertSize(2, CountContours(cImage.GetObject(1)));
 
 	AssertDouble(2, cImage.GetObject(2)->Area(), 6);
 	AssertBounds(cImage.GetObject(2), 19.5, -1, 20.5, 1);
-	AssertDouble(2 - GERBER_PI * 0.0625, cImage.GetObject(3)->Area(), 6);
+	AssertDouble(2 - N_PI_64 * 0.0625, cImage.GetObject(3)->Area(), 6);
 
-	AssertDouble(2 + GERBER_PI * 0.25, cImage.GetObject(4)->Area(), 6);
+	AssertDouble(2 + N_PI_64 * 0.25, cImage.GetObject(4)->Area(), 6);
 	AssertBounds(cImage.GetObject(4), 38.5, -0.5, 41.5, 0.5);
-	AssertDouble(2 + GERBER_PI * 0.25, cImage.GetObject(5)->Area(), 6);
+	AssertDouble(2 + N_PI_64 * 0.25, cImage.GetObject(5)->Area(), 6);
 	AssertBounds(cImage.GetObject(5), 49.5, -1.5, 50.5, 1.5);
 
 	AssertDouble(3 * sqrt(3.0) / 2, cImage.GetObject(6)->Area(), 6);
@@ -161,7 +161,7 @@ void TestGerberVectorApertures(void)
 	AssertDouble(2, cImage.GetObject(7)->Area(), 6);
 	AssertBounds(cImage.GetObject(7), 70 - sqrt(0.5), 10 - sqrt(0.5), 70 + sqrt(0.5), 10 + sqrt(0.5));
 
-	AssertDouble(GERBER_PI * 0.25, cImage.GetObject(8)->Area(), 6);
+	AssertDouble(N_PI_64 * 0.25, cImage.GetObject(8)->Area(), 6);
 
 	cImage.Kill();
 }
@@ -204,24 +204,24 @@ void TestGerberVectorStrokes(void)
 	AssertSize(0, CountContours(cImage.GetObject(5)));
 	AssertFalse(cImage.GetObject(5)->HasBounds());
 
-	AssertDouble(0.1 + GERBER_PI * 0.0025, cImage.GetObject(0)->Area(), 6);
+	AssertDouble(0.1 + N_PI_64 * 0.0025, cImage.GetObject(0)->Area(), 6);
 	AssertBounds(cImage.GetObject(0), -0.05, -0.05, 1.05, 0.05);
 
 	//A zero length draw is a circle.
-	AssertDouble(GERBER_PI * 0.0025, cImage.GetObject(1)->Area(), 6);
+	AssertDouble(N_PI_64 * 0.0025, cImage.GetObject(1)->Area(), 6);
 	AssertBounds(cImage.GetObject(1), 0.95, -0.05, 1.05, 0.05);
 
 	//A quarter arc: an annular sector and two half circle caps.
-	AssertDouble(GERBER_PI * 0.11, cImage.GetObject(2)->Area(), 6);
+	AssertDouble(N_PI_64 * 0.11, cImage.GetObject(2)->Area(), 6);
 	AssertBounds(cImage.GetObject(2), -0.1, -0.1, 1.1, 1.1);
 
 	//A full circle is a ring.
-	AssertDouble(GERBER_PI * 0.4, cImage.GetObject(3)->Area(), 6);
+	AssertDouble(N_PI_64 * 0.4, cImage.GetObject(3)->Area(), 6);
 	AssertSize(2, CountContours(cImage.GetObject(3)));
 	AssertBounds(cImage.GetObject(3), -1.1, -1.1, 1.1, 1.1);
 
 	//A clockwise quarter winds the other way.
-	AssertDouble(-GERBER_PI * 0.11, cImage.GetObject(4)->Area(), 6);
+	AssertDouble(-N_PI_64 * 0.11, cImage.GetObject(4)->Area(), 6);
 	AssertBounds(cImage.GetObject(4), -0.1, -0.1, 1.1, 1.1);
 
 	cImage.Kill();
@@ -269,7 +269,7 @@ void TestGerberVectorRegions(void)
 
 	AssertSize(2, cImage.NumObjects());
 	AssertTrue(cImage.GetObject(0)->IsDark());
-	AssertDouble(4 + GERBER_PI / 2, cImage.GetObject(0)->Area(), 6);
+	AssertDouble(4 + N_PI_64 / 2, cImage.GetObject(0)->Area(), 6);
 	AssertBounds(cImage.GetObject(0), 0, 0, 2, 3);
 
 	AssertFalse(cImage.GetObject(1)->IsDark());
@@ -327,7 +327,7 @@ void TestGerberVectorTransforms(void)
 	AssertDouble(fabs(cImage.GetObject(1)->Area()), fabs(cImage.GetObject(2)->Area()), 6);
 
 	//Scaling applies to flashes and to the stroke width.
-	AssertDouble(GERBER_PI * 4, cImage.GetObject(3)->Area(), 6);
+	AssertDouble(N_PI_64 * 4, cImage.GetObject(3)->Area(), 6);
 	AssertBounds(cImage.GetObject(4), -0.1, -0.1, 1.1, 0.1);
 
 	cImage.Kill();
@@ -340,7 +340,7 @@ void TestGerberVectorTransforms(void)
 		"%ADD10C,0.1*%\n"
 		"D10*\n"
 		"X1000000Y-2000000D03*\n", &cImage);
-	AssertDouble(GERBER_PI * 1.27 * 1.27, cImage.GetObject(0)->Area(), 6);
+	AssertDouble(N_PI_64 * 1.27 * 1.27, cImage.GetObject(0)->Area(), 6);
 	AssertBounds(cImage.GetObject(0), 25.4 - 1.27, -50.8 - 1.27, 25.4 + 1.27, -50.8 + 1.27);
 	cImage.Kill();
 }
@@ -545,7 +545,7 @@ void TestGerberVectorFiles(void)
 	cInterpreter.Kill();
 	cVectoriser.Kill();
 	AssertSize(139, cImage.NumObjects());
-	AssertDouble(GERBER_PI * 0.19939 * 0.19939, cImage.GetObject(0)->Area(), 6);
+	AssertDouble(N_PI_64 * 0.19939 * 0.19939, cImage.GetObject(0)->Area(), 6);
 	AssertBounds(cImage.GetObject(0), 1.27 - 0.19939, -64.77 - 0.19939, 1.27 + 0.19939, -64.77 + 0.19939);
 	cImage.Kill();
 	cDrills.Kill();
