@@ -26,6 +26,14 @@ void TestW65C816BlockMove(void);
 void TestW65C816DirectPage(void);
 void TestW65C816Decimal(void);
 void TestW65C816Timing(void);
+void Test65C64(void);
+void Test65C64Interrupt(void);
+void Test65C64MultiplyDivide(void);
+void Test65C64Subcopy(void);
+void Test65C64Bits(void);
+void Test65C64Operand(void);
+void Test65C64Block(void);
+void Test65C64Vector(void);
 
 
 int __cdecl main(void)
@@ -59,6 +67,14 @@ int __cdecl main(void)
 	TestW65C02SingleStep();
 	TestW65C02();
 	TestW65C816Arithmetic();
+	Test65C64();
+	Test65C64Interrupt();
+	Test65C64MultiplyDivide();
+	Test65C64Subcopy();
+	Test65C64Bits();
+	Test65C64Operand();
+	Test65C64Block();
+	Test65C64Vector();
 
 	UnknownsKill();
 	MemoryKill();

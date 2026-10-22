@@ -249,6 +249,15 @@
     <ClCompile Include="TestW65C816Load.cpp" />
     <ClCompile Include="TestW65C816Reset.cpp" />
     <ClCompile Include="TestW65C816Subtract.cpp" />
+    <ClCompile Include="Test65C64.cpp" />
+    <ClCompile Include="Test65C64Context.cpp" />
+    <ClCompile Include="Test65C64Interrupt.cpp" />
+    <ClCompile Include="Test65C64MultiplyDivide.cpp" />
+    <ClCompile Include="Test65C64Subcopy.cpp" />
+    <ClCompile Include="Test65C64Bits.cpp" />
+    <ClCompile Include="Test65C64Operand.cpp" />
+    <ClCompile Include="Test65C64Block.cpp" />
+    <ClCompile Include="Test65C64Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
@@ -273,6 +282,7 @@
   <ItemGroup>
     <ClInclude Include="TestW65C816Context.h" />
     <ClInclude Include="TestSingleStep.h" />
+    <ClInclude Include="Test65C64Context.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
