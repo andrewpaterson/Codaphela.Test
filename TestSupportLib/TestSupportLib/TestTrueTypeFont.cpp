@@ -11,6 +11,9 @@
 #include "SupportLib/SimpleTextReader.h"
 #include "SupportLib/GlyphListFontDraw.h"
 #include "SupportLib/TextLayout.h"
+#include "SupportLib/FontColours.h"
+#include "SupportLib/ImageAccessorCreator.h"
+#include "SupportLib/ImageColourConverter.h"
 #include "TestLib/Assert.h"
 #include "TestLib/AssertFile.h"
 
@@ -847,6 +850,231 @@ void TestTrueTypeFontDescriptionWidths(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A font of characters in white, made from Liberation Sans 16px.
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CFont> CreateWhiteTrueTypeFont(char* szCharacters)
+{
+	CTrueTypeFont				cFont;
+	CTrueTypeFontFactory		cFactory;
+	CImageColourRGB				cWhite;
+	Ptr<CFontDescription>		pDescription;
+	Ptr<CFont>					pFont;
+
+	if (!LoadTrueTypeFont(&cFont, "LiberationSans-Regular.ttf"))
+	{
+		return NULL;
+	}
+	cFactory.Init(&cFont, 16.0f);
+	cWhite.Init(1.0f, 1.0f, 1.0f);
+	pDescription = cFactory.Describe("Liberation Sans 16px", szCharacters);
+	pFont = OMalloc<CFont>(pDescription, cFactory.Rasterise(pDescription, &cWhite));
+	cFactory.Kill();
+	cFont.Kill();
+	return pFont;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The red, green, blue and opacity of a pixel, whatever order the image
+// has them in.
+//
+//////////////////////////////////////////////////////////////////////////
+void GetPixelRGBA(Ptr<CImage> pImage, int32 x, int32 y, uint8* puiRGBA)
+{
+	CImageAccessorCreator	cCreator;
+	CImageAccessor*			pcAccessor;
+
+	cCreator.Init(&pImage);
+	cCreator.AddAccess(IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, IMAGE_OPACITY, PT_uint8);
+	pcAccessor = cCreator.CreateAndKill();
+	memcpy(puiRGBA, pcAccessor->Get(x, y), 4);
+	pcAccessor->Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The most opaque pixel of the glyph's part of its image, as red, green,
+// blue and opacity.
+//
+//////////////////////////////////////////////////////////////////////////
+void GetMostOpaqueGlyphRGBA(Ptr<CGlyph> pGlyph, uint8* puiRGBA)
+{
+	Ptr<CImage>		pImage;
+	CSubImage*		pcSubImage;
+	uint8			auiPixel[4];
+	int32			x;
+	int32			y;
+
+	pImage = pGlyph->GetSourceImage();
+	pcSubImage = pGlyph->GetSubImage();
+	memset(puiRGBA, 0, 4);
+	for (y = pcSubImage->mcImageRect.msTopLeft.y; y < pcSubImage->mcImageRect.msBottomRight.y; y++)
+	{
+		for (x = pcSubImage->mcImageRect.msTopLeft.x; x < pcSubImage->mcImageRect.msBottomRight.x; x++)
+		{
+			GetPixelRGBA(pImage, x, y, auiPixel);
+			if (auiPixel[3] > puiRGBA[3])
+			{
+				memcpy(puiRGBA, auiPixel, 4);
+			}
+		}
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTrueTypeFontColours(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CFont>				pWhite;
+		Ptr<CFontColours>		pColours;
+		Ptr<CFont>				pRed;
+		Ptr<CFont>				pHalfRed;
+		Ptr<CFont>				pBGRWhite;
+		Ptr<CFont>				pBGRRed;
+		Ptr<CFontColours>		pBGRColours;
+		uint8					auiRGBA[4];
+
+		pWhite = CreateWhiteTrueTypeFont("AB");
+		AssertTrue(pWhite.IsNotNull());
+		pColours = OMalloc<CFontColours>(pWhite);
+
+		//White is the white font.
+		AssertTrue(pColours->GetFont(FONT_COLOURS_WHITE) == pWhite);
+		AssertTrue(pColours->GetWhite() == pWhite);
+		AssertSize(0, pColours->NumColours());
+
+		//A colour is made once and shares the white font's description.
+		pRed = pColours->GetFont(Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00));
+		AssertTrue(pRed.IsNotNull());
+		AssertTrue(pRed != pWhite);
+		AssertTrue(pRed->GetDescription() == pWhite->GetDescription());
+		AssertTrue(pRed->GetImage() != pWhite->GetImage());
+		AssertSize(1, pColours->NumColours());
+		AssertTrue(pColours->GetFont(Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00)) == pRed);
+		AssertSize(1, pColours->NumColours());
+
+		//The colour is set and the coverage kept.
+		GetMostOpaqueGlyphRGBA(pRed->GetGlyph((uint32)'A', 1), auiRGBA);
+		AssertInt(255, auiRGBA[0]);
+		AssertInt(0, auiRGBA[1]);
+		AssertInt(0, auiRGBA[2]);
+		AssertInt(255, auiRGBA[3]);
+		AssertSize(0, CountOpacityDifferences(pWhite->GetImage(), pRed->GetImage()));
+
+		//An alpha scales the opacity.
+		pHalfRed = pColours->GetFont(Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00, (uint8)0x80));
+		AssertSize(2, pColours->NumColours());
+		GetMostOpaqueGlyphRGBA(pHalfRed->GetGlyph((uint32)'A', 1), auiRGBA);
+		AssertInt(255, auiRGBA[0]);
+		AssertInt(128, auiRGBA[3]);
+
+		//A white font in blue, green, red order is recoloured in that order.
+		pBGRWhite = OMalloc<CFont>(pWhite->GetDescription(), CImageColourConverter::ConvertColour(pWhite->GetImage(), CCO_BGR));
+		AssertInt(CCO_BGR, pBGRWhite->GetImage()->GetColourOrder());
+		pBGRColours = OMalloc<CFontColours>(pBGRWhite);
+		pBGRRed = pBGRColours->GetFont(Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00));
+		AssertInt(CCO_BGR, pBGRRed->GetImage()->GetColourOrder());
+		GetMostOpaqueGlyphRGBA(pBGRRed->GetGlyph((uint32)'A', 1), auiRGBA);
+		AssertInt(255, auiRGBA[0]);
+		AssertInt(0, auiRGBA[1]);
+		AssertInt(0, auiRGBA[2]);
+		AssertInt(255, auiRGBA[3]);
+
+		pBGRRed = NULL;
+		pBGRColours = NULL;
+		pBGRWhite = NULL;
+		pHalfRed = NULL;
+		pRed = NULL;
+		pColours = NULL;
+		pWhite = NULL;
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A font change starts a new run.  A change in the middle of a character
+// takes effect at the next character.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTrueTypeFontColoursTextRuns(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CFont>				pWhite;
+		Ptr<CFontColours>		pColours;
+		Ptr<CFont>				pRed;
+		CArrayTextFontChange	asChanges;
+		STextFontChange*		psChange;
+		CSimpleTextReader		cReader;
+		CUTF8					cUTF8;
+		Ptr<CText>				pText;
+		Ptr<CTextLayout>		pLayout;
+		Ptr<CGlyphListFontDraw>	pDraw;
+		CArrayGlyphPosition*	pasGlyphs;
+
+		pWhite = CreateWhiteTrueTypeFont("abcd\xC3\xA9");
+		pColours = OMalloc<CFontColours>(pWhite);
+		pRed = pColours->GetFont(Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00));
+
+		//"ab", e acute (2 bytes), "cd".  Red from the middle of the e acute to before the d.
+		asChanges.Init();
+		psChange = asChanges.Add();
+		psChange->uiPosition = 3;
+		psChange->pcFont = &pRed;
+		psChange = asChanges.Add();
+		psChange->uiPosition = 5;
+		psChange->pcFont = &pWhite;
+
+		cUTF8.Init("ab\xC3\xA9" "cd");
+		cReader.Init(&pWhite);
+		pText = cReader.Read(&cUTF8, true, &asChanges);
+		cReader.Kill();
+		cUTF8.Kill();
+		asChanges.Kill();
+
+		AssertSize(3, pText->NumRuns());
+		AssertPointer(&pWhite, pText->GetRun(0)->GetFont());
+		AssertPointer(&pRed, pText->GetRun(1)->GetFont());
+		AssertPointer(&pWhite, pText->GetRun(2)->GetFont());
+
+		pLayout = OMalloc<CTextLayout>();
+		pDraw = OMalloc<CGlyphListFontDraw>();
+		pDraw->Begin();
+		pLayout->Layout(pDraw, pText);
+		pDraw->End();
+		pasGlyphs = pDraw->GetGlyphs();
+		AssertSize(5, pasGlyphs->NumElements());
+		AssertPointer(&pWhite->GetImage(), &pasGlyphs->Get(2)->pcGlyph->GetSourceImage());
+		AssertPointer(&pRed->GetImage(), &pasGlyphs->Get(3)->pcGlyph->GetSourceImage());
+		AssertPointer(&pWhite->GetImage(), &pasGlyphs->Get(4)->pcGlyph->GetSourceImage());
+
+		//The glyphs are placed as if the text were all one colour.
+		AssertInt(pasGlyphs->Get(2)->sPosition.x + pasGlyphs->Get(2)->pcGlyph->GetStep(), pasGlyphs->Get(3)->sPosition.x);
+		AssertInt(pasGlyphs->Get(2)->sPosition.y, pasGlyphs->Get(3)->sPosition.y);
+
+		pDraw = NULL;
+		pLayout = NULL;
+		pText = NULL;
+		pRed = NULL;
+		pColours = NULL;
+		pWhite = NULL;
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestTrueTypeFont(void)
@@ -866,6 +1094,8 @@ void TestTrueTypeFont(void)
 	TestTrueTypeFontFactoryLazyGlyphs();
 	TestTrueTypeFontFactoryColours();
 	TestTrueTypeFontDescriptionWidths();
+	TestTrueTypeFontColours();
+	TestTrueTypeFontColoursTextRuns();
 
 	DataIOKill();
 

@@ -458,6 +458,194 @@ void TestTextAreaNoWordWrapFillContainer(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Spans colour ranges of the text's bytes.  Colours are only made when the
+// text area is laid out or drawn, and don't change its size.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTextAreaSpans(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CFont>				pFont;
+		Ptr<CTextArea>			pTextArea;
+		Ptr<CTextArea>			pShared;
+		Ptr<CFontColours>		pColours;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		SInt32Vec2				sSize;
+		SInt32Vec2				sTextSize;
+		SInt32Vec2				sPosition;
+		SInt32Vec2				sArea;
+		CPointer				pNull;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 64, 32, NULL);
+		cTick.Init(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+
+		pFont = ReadLabelFont();
+		AssertTrue(pFont.IsNotNull());
+
+		pTextArea = OMalloc<CTextArea>(pTestWindow, pFont, "aaa bbb\nccc");
+		AssertTrue(pTextArea->GetFont() == pFont);
+		AssertInt(FONT_COLOURS_WHITE, pTextArea->GetColour());
+		AssertInt(FONT_COLOURS_WHITE, pTextArea->GetColourAt(0));
+		sTextSize = pTextArea->GetTextSize();
+
+		//A span must be inside the text.  An empty span isn't kept.
+		AssertTrue(pTextArea->AddSpan(4, 3, Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00)));
+		AssertSize(1, pTextArea->NumSpans());
+		AssertFalse(pTextArea->AddSpan(5, 10, Set32BitColour((uint8)0x00, (uint8)0xFF, (uint8)0x00)));
+		AssertFalse(pTextArea->AddSpan(12, 0, Set32BitColour((uint8)0x00, (uint8)0xFF, (uint8)0x00)));
+		AssertTrue(pTextArea->AddSpan(11, 0, Set32BitColour((uint8)0x00, (uint8)0xFF, (uint8)0x00)));
+		AssertSize(1, pTextArea->NumSpans());
+		AssertInt(Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00), pTextArea->GetColourAt(4));
+		AssertInt(Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00), pTextArea->GetColourAt(6));
+		AssertInt(FONT_COLOURS_WHITE, pTextArea->GetColourAt(7));
+
+		//Where spans overlap the last added wins.
+		AssertTrue(pTextArea->AddSpan(0, 6, Set32BitColour((uint8)0x00, (uint8)0xFF, (uint8)0x00)));
+		AssertInt(Set32BitColour((uint8)0x00, (uint8)0xFF, (uint8)0x00), pTextArea->GetColourAt(0));
+		AssertInt(Set32BitColour((uint8)0x00, (uint8)0xFF, (uint8)0x00), pTextArea->GetColourAt(5));
+		AssertInt(Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00), pTextArea->GetColourAt(6));
+
+		//Text outside the spans is in the text area's colour.
+		pTextArea->SetColour(Set32BitColour((uint8)0x00, (uint8)0x00, (uint8)0xFF));
+		AssertInt(Set32BitColour((uint8)0x00, (uint8)0x00, (uint8)0xFF), pTextArea->GetColour());
+		AssertInt(Set32BitColour((uint8)0x00, (uint8)0x00, (uint8)0xFF), pTextArea->GetColourAt(9));
+
+		//No colour is made until the text area is laid out, and the colours don't change its size.
+		AssertSize(0, pTextArea->GetFontColours()->NumColours());
+		sPosition.Init(0, 0);
+		sArea.Init(64, 32);
+		pTextArea->Layout(sPosition, sArea);
+		AssertSize(3, pTextArea->GetFontColours()->NumColours());
+		sSize = pTextArea->GetTextSize();
+		AssertInt32Vec2(sTextSize.x, sTextSize.y, &sSize);
+
+		pTextArea->ClearSpans();
+		AssertSize(0, pTextArea->NumSpans());
+		AssertInt(Set32BitColour((uint8)0x00, (uint8)0x00, (uint8)0xFF), pTextArea->GetColourAt(4));
+
+		//New text has no spans.
+		pTextArea->AddSpan(0, 3, Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00));
+		pTextArea->SetText("aaa bbb\nccc");
+		AssertSize(0, pTextArea->NumSpans());
+
+		//Appended text is spanned in its colour and laid out straight away.
+		pTextArea->AppendText("\nddd", Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00));
+		AssertString("aaa bbb\nccc\nddd", pTextArea->GetText());
+		AssertSize(1, pTextArea->NumSpans());
+		AssertInt(Set32BitColour((uint8)0x00, (uint8)0x00, (uint8)0xFF), pTextArea->GetColourAt(10));
+		AssertInt(Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00), pTextArea->GetColourAt(11));
+		AssertInt(Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00), pTextArea->GetColourAt(14));
+		sSize = pTextArea->GetTextSize();
+		AssertInt(72, sSize.y);
+
+		//Text areas can share colours.
+		pColours = pTextArea->GetFontColours();
+		pShared = OMalloc<CTextArea>(pTestWindow, pColours, "ccc");
+		AssertTrue(pShared->GetFontColours() == pColours);
+		pShared->SetColour(Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00));
+		pShared->Layout(sPosition, sArea);
+		AssertSize(3, pColours->NumColours());
+
+		ValidateLabelObjects();
+
+		pShared = NULL;
+		pColours = NULL;
+		pTextArea = NULL;
+		pFont = NULL;
+		pTestWindow = NULL;
+	}
+
+	AssertLabelObjectsRemoved();
+	cNativeFactory.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A word wrapped text area in colours.  Spans overlap, one starts inside
+// a word and crosses a wrapped line, and one is translucent.  The shown frame is written to
+// Output/TextAreaSpans.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTextAreaSpansFillContainer(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "TextAreaSpans";
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CFont>				pFont;
+		Ptr<CFillContainer>		pFill;
+		Ptr<CClearCanvasDraw>	pBackground;
+		Ptr<CTextArea>			pTextArea;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		SInsets					sInsets;
+		int						aiInsets[4];
+		CChars					szExpectedDirectory;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 200, 160, szDirectory);
+		cTick.Init(&cData, 1);
+		pBackground = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)30, 31, 34));
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+
+		pFill = OMalloc<CFillContainer>(pTestWindow);
+		aiInsets[BEI_Top] = 5;
+		aiInsets[BEI_Right] = 8;
+		aiInsets[BEI_Bottom] = 5;
+		aiInsets[BEI_Left] = 8;
+		sInsets.Init(aiInsets);
+		pFill->SetInsets(&sInsets);
+		pTestWindow->SetContainer(pFill);
+
+		pFont = ReadLabelFont();
+		AssertTrue(pFont.IsNotNull());
+
+		pTextArea = OMalloc<CTextArea>(pTestWindow, pFont, "The quick brown fox jumps over the lazy dog.\nPack my box with five dozen liquor jugs.");
+		pTextArea->SetWordWrap(true);
+		pTextArea->SetAlignment(CSH_Left, CSV_Top);
+		pTextArea->SetColour(Set32BitColour((uint8)0xBC, (uint8)0xBE, (uint8)0xC4));
+		AssertTrue(pTextArea->AddSpan(4, 5, Set32BitColour((uint8)0xCF, (uint8)0x8E, (uint8)0x6D)));		//quick
+		AssertTrue(pTextArea->AddSpan(10, 5, Set32BitColour((uint8)0xC7, (uint8)0x7D, (uint8)0xBA)));		//brown
+		AssertTrue(pTextArea->AddSpan(16, 3, Set32BitColour((uint8)0x6A, (uint8)0xAB, (uint8)0x73)));		//fox
+		AssertTrue(pTextArea->AddSpan(17, 22, Set32BitColour((uint8)0x56, (uint8)0xA8, (uint8)0xF5)));	//ox jumps over the lazy: inside a word, across the wrap
+		AssertTrue(pTextArea->AddSpan(26, 4, Set32BitColour((uint8)0xFF, (uint8)0xC6, (uint8)0x6D)));		//over
+		AssertTrue(pTextArea->AddSpan(53, 3, Set32BitColour((uint8)0xFF, (uint8)0xFF, (uint8)0xFF, (uint8)0x80)));		//box, translucent
+		pFill->AddComponent(pTextArea);
+
+		pTestWindow->Show();
+
+		ValidateLabelObjects();
+
+		pTextArea = NULL;
+		pFont = NULL;
+		pFill = NULL;
+		pTestWindow = NULL;
+		pBackground = NULL;
+
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
+	}
+
+	AssertLabelObjectsRemoved();
+	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestTextArea(void)
@@ -469,6 +657,8 @@ void TestTextArea(void)
 	TestTextAreaWordWrap();
 	TestTextAreaFillContainer();
 	TestTextAreaNoWordWrapFillContainer();
+	TestTextAreaSpans();
+	TestTextAreaSpansFillContainer();
 
 	ObjectsFlush();
 	ObjectsKill();

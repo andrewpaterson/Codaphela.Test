@@ -232,6 +232,7 @@
     <ClCompile Include="TestRectangle.cpp" />
     <ClCompile Include="TestRectangleBestPacker.cpp" />
     <ClCompile Include="TestRectanglePow2Packer.cpp" />
+    <ClCompile Include="TestRectangleLinePacker.cpp" />
     <ClCompile Include="TestMeshColour.cpp" />
     <ClCompile Include="TestMeshConnectivity.cpp" />
     <ClCompile Include="TestMeshFaceReturn.cpp" />
