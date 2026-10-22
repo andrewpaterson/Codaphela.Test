@@ -38,6 +38,15 @@ void Test65C64BlockDecode(void)
 	AssertInt(I65_Illegal, sDecoded.eInstruction);
 	Decode65C64(Op65Block(K65_AND, false, false, 0, R65_Zero), &sDecoded);
 	AssertInt(I65_Illegal, sDecoded.eInstruction);
+	Decode65C64(Op65Block(7, false, false, 0, R65_X), &sDecoded);
+	AssertInt(I65_Illegal, sDecoded.eInstruction);
+	Decode65C64(Op65Block(9, false, false, 0, R65_X), &sDecoded);
+	AssertInt(I65_Illegal, sDecoded.eInstruction);
+	Decode65C64(Op65Block(11, false, false, 0, R65_X), &sDecoded);
+	AssertInt(I65_Illegal, sDecoded.eInstruction);
+	Decode65C64(Op65Block(10, false, false, 0, R65_X), &sDecoded);
+	AssertInt(I65_Bcmp, sDecoded.eInstruction);
+	AssertInt(MA65_Read, sDecoded.eAccess);
 	Decode65C64(Op65Block(K65_READ_COPY, false, false, 0, R65_X), &sDecoded);
 	AssertInt(I65_Bpcpy, sDecoded.eInstruction);
 	AssertInt(MA65_ReadWrite, sDecoded.eAccess);
@@ -216,7 +225,8 @@ void Test65C64BlockAndDecrement(void)
 //////////////////////////////////////////////////////////////////////////
 //
 // Block copy only writes: three 16 bit copies of X from an odd address.  n and z are
-// not changed, so a stop on not zero after cpy A, 3 (z clear) stops after the first element.
+// not changed.  Its stop bits are ignored: with stop on not zero and z clear it still
+// copies all four elements.
 //
 //////////////////////////////////////////////////////////////////////////
 void Test65C64BlockCopyRegister(void)
@@ -271,11 +281,16 @@ void Test65C64BlockCopyRegister(void)
 
 	AssertSize(2, Test65C64Step(&sTest));
 	AssertSize(1, Test65C64Step(&sTest));
-	AssertSize(2, Test65C64Step(&sTest));
-	AssertShortHex((uint16)0xBEEF, pcContext->GetWord(0x2100));
-	AssertShortHex((uint16)0x0000, pcContext->GetWord(0x2102));
-	AssertIntHex(0x2102, pcMPU->GetV());
-	AssertLongLongIntHex(2LL, pcMPU->GetA());
+	AssertFalse(pcMPU->IsFlagSet(STATUS65_ZERO));
+	for (i = 0; i < 4; i++)
+	{
+		AssertSize(2, Test65C64Step(&sTest));
+	}
+	AssertIntHex(0xBEEFBEEF, pcContext->GetLong(0x2100));
+	AssertIntHex(0xBEEFBEEF, pcContext->GetLong(0x2104));
+	AssertIntHex(0x2108, pcMPU->GetV());
+	AssertLongLongIntHex(0xFFLL, pcMPU->GetA());
+	AssertTrue(pcMPU->IsFlagSet(STATUS65_OVERFLOW));
 
 	AssertFalse(sTest.cMeta.TickInstruction());
 	Test65C64End(&sTest);
@@ -405,6 +420,205 @@ void Test65C64BlockPreOperations(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Block test, or, xor, add, subtract and compare, each over two elements (compare over
+// four, stopping at the first equal one).  Test and compare do not write.
+//
+//////////////////////////////////////////////////////////////////////////
+void Test65C64BlockOperations(void)
+{
+	STest65C64			sTest;
+	C65C64*				pcMPU;
+	CTest65C64Context*	pcContext;
+	uint32				uiNext;
+
+	Test65C64Begin(&sTest, 0x1000);
+	pcContext = sTest.pcContext;
+	pcContext->SetWord(0x2400, 0x01F0);
+	pcContext->SetWord(0x2410, 0xF010);
+	pcContext->SetWord(0x2420, 0xFF0F);
+	pcContext->SetLong(0x2430, 0x1234FFFF);
+	pcContext->SetWord(0x2440, 0x0510);
+	pcContext->SetLong(0x2450, 0x030F0201);
+	pcContext->Op(Op65RI(C65_CPY, R65_X, 1), 0x0F);
+	pcContext->Op(Op65Wth(R65_B, 2));
+	pcContext->Op(Op65RE(C65_CPY, R65_B, 1));
+
+	pcContext->Op(Op65RI(C65_CPY, R65_V, 2), 0x2400);
+	pcContext->Op(Op65RE(C65_CPY, R65_A, 1));
+	pcContext->Op(Op65Block(3, false, false, 0, R65_X));
+	pcContext->Op(Op65RI(C65_CPY, R65_V, 2), 0x2410);
+	pcContext->Op(Op65RE(C65_CPY, R65_A, 1));
+	pcContext->Op(Op65Block(4, false, false, 0, R65_X));
+	pcContext->Op(Op65RI(C65_CPY, R65_V, 2), 0x2420);
+	pcContext->Op(Op65RE(C65_CPY, R65_A, 1));
+	pcContext->Op(Op65Block(5, false, false, 0, R65_X));
+	pcContext->Op(Op65RI(C65_CPY, R65_V, 2), 0x2430);
+	pcContext->Op(Op65RE(C65_CPY, R65_A, 1));
+	pcContext->Op(Op65Block(6, false, false, 0, R65_B));
+	pcContext->Op(Op65RI(C65_CPY, R65_V, 2), 0x2440);
+	pcContext->Op(Op65RE(C65_CPY, R65_A, 1));
+	pcContext->Op(Op65Block(8, false, false, 0, R65_X));
+	pcContext->Op(Op65RI(C65_CPY, R65_V, 2), 0x2450);
+	pcContext->Op(Op65RE(C65_CPY, R65_A, 3));
+	uiNext = pcContext->Here() + 2;
+	pcContext->Op(Op65Block(10, false, true, STOP65_ZERO, R65_X));
+	pcContext->Op(Op65Stp());
+
+	Test65C64Reset(&sTest);
+	pcMPU = Test65C64MPU(&sTest);
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertSize(1, Test65C64Step(&sTest));
+
+	//btst: $F0 and $0F is 0, $01 and $0F is not.  No writes.
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertTrue(pcContext->masCycles[1].bRead);
+	AssertShortHex((uint16)STATUS65_ZERO, Test65C64VNZ(&sTest));
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertShortHex((uint16)STATUS65_OVERFLOW, Test65C64VNZ(&sTest));
+	AssertShortHex((uint16)0x01F0, pcContext->GetWord(0x2400));
+
+	//bor.
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertSize(3, Test65C64Step(&sTest));
+	AssertSize(3, Test65C64Step(&sTest));
+	AssertShortHex((uint16)(STATUS65_OVERFLOW | STATUS65_NEGATIVE), Test65C64VNZ(&sTest));
+	AssertShortHex((uint16)0xFF1F, pcContext->GetWord(0x2410));
+
+	//bxor.
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertSize(3, Test65C64Step(&sTest));
+	AssertShortHex((uint16)STATUS65_ZERO, Test65C64VNZ(&sTest));
+	AssertSize(3, Test65C64Step(&sTest));
+	AssertShortHex((uint16)0xF000, pcContext->GetWord(0x2420));
+
+	//badd, 16 bit elements (B is 16 bits).
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertSize(3, Test65C64Step(&sTest));
+	AssertShortHex((uint16)STATUS65_ZERO, Test65C64VNZ(&sTest));
+	AssertSize(3, Test65C64Step(&sTest));
+	AssertIntHex(0x12350000, pcContext->GetLong(0x2430));
+	AssertIntHex(0x2434, pcMPU->GetV());
+
+	//bsub: [V] - R.
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertSize(3, Test65C64Step(&sTest));
+	AssertSize(3, Test65C64Step(&sTest));
+	AssertShortHex((uint16)(STATUS65_OVERFLOW | STATUS65_NEGATIVE), Test65C64VNZ(&sTest));
+	AssertShortHex((uint16)0xF601, pcContext->GetWord(0x2440));
+
+	//bcmp stops at the element equal to R and writes nothing.
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertIntHex(uiNext, pcMPU->GetProgramCounter());
+	AssertShortHex((uint16)STATUS65_ZERO, Test65C64VNZ(&sTest));
+	AssertIntHex(0x030F0201, pcContext->GetLong(0x2450));
+	AssertIntHex(0x2453, pcMPU->GetV());
+	AssertLongLongIntHex(0LL, pcMPU->GetA());
+
+	AssertFalse(sTest.cMeta.TickInstruction());
+	Test65C64End(&sTest);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The two programs on the spreadsheet's Example Block Move sheet, as written there.
+// W, V and A are pulled from an aligned stack.
+//
+//////////////////////////////////////////////////////////////////////////
+void Test65C64BlockMoveSheet(void)
+{
+	STest65C64			sTest;
+	C65C64*				pcMPU;
+	CTest65C64Context*	pcContext;
+	size				i;
+	size				uiCycles;
+
+	Test65C64Begin(&sTest, 0x1000);
+	pcContext = sTest.pcContext;
+	for (i = 0; i < 16; i++)
+	{
+		pcContext->SetByte((uint32)(0x4000 + i), (uint8)(0x30 + i));
+		pcContext->SetByte((uint32)(0x5000 + i), (uint8)(0x60 + i));
+	}
+
+	//Example 1: V is the source, A the destination, W the byte count (from offset W down to 8).
+	pcContext->SetLong(0x3000, 16);
+	pcContext->SetLong(0x3004, 0x4000 - 8);
+	pcContext->SetLong(0x3008, 0x4800 - 8);
+	//Example 2: W is the source, V the destination, A + 1 is the number of 64 bit values.
+	pcContext->SetLong(0x3010, 0x5000);
+	pcContext->SetLong(0x3014, 0x5800);
+	pcContext->SetLong(0x3018, 1);
+
+	pcContext->Op(Op65RI(C65_CPY, R65_S, 2), 0x2FFF);
+	pcContext->Op(Op65Wth(R65_A, 4));
+	pcContext->Op(Op65Wth(R65_B, 8));
+	pcContext->Op(Op65Pull(R65_S, M65_A | M65_V | M65_W));
+	pcContext->Op(Op65M2(C65_CPY, false, R65_B, OPERAND_MODE_REGISTER_REGISTER, R65_V, R65_W));
+	pcContext->Op(Op65M2(C65_CPY, true, R65_B, OPERAND_MODE_REGISTER_REGISTER, R65_A, R65_W));
+	pcContext->Op(Op65RE(C65_SUB, R65_W, 8));
+	pcContext->Op(Op65Branch(B65_CLEAR, F65_Z, 0, -8));
+
+	pcContext->Op(Op65RI(C65_CPY, R65_S, 2), 0x300F);
+	pcContext->Op(Op65Wtth(R65_X, R65_Y, 4));
+	pcContext->Op(Op65Wth(R65_A, 4));
+	pcContext->Op(Op65Pull(R65_S, M65_A | M65_V | M65_W));
+	pcContext->Op(Op65Vector(0, false, false, 0, false, WIDTH65_64));
+	pcContext->Op(Op65Stp());
+
+	Test65C64Reset(&sTest);
+	pcMPU = Test65C64MPU(&sTest);
+
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertSize(7, Test65C64Step(&sTest));
+	AssertIntHex(16, pcMPU->GetW());
+	AssertIntHex(0x4000 - 8, pcMPU->GetV());
+	AssertLongLongIntHex(0x4800 - 8, pcMPU->GetA());
+	for (i = 0; i < 2; i++)
+	{
+		AssertSize(5, Test65C64Step(&sTest));
+		AssertSize(5, Test65C64Step(&sTest));
+		AssertSize(1, Test65C64Step(&sTest));
+		AssertSize(1, Test65C64Step(&sTest));
+	}
+	for (i = 0; i < 16; i++)
+	{
+		AssertByteHex((uint8)(0x30 + i), pcContext->GetByte((uint32)(0x4800 + i)));
+	}
+
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertSize(7, Test65C64Step(&sTest));
+	uiCycles = Test65C64Step(&sTest);
+	uiCycles += Test65C64Step(&sTest);
+	AssertSize(18, uiCycles);
+	for (i = 0; i < 16; i++)
+	{
+		AssertByteHex((uint8)(0x60 + i), pcContext->GetByte((uint32)(0x5800 + i)));
+	}
+	AssertTrue(pcMPU->IsFlagSet(STATUS65_OVERFLOW));
+
+	AssertFalse(sTest.cMeta.TickInstruction());
+	Test65C64End(&sTest);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void Test65C64Block(void)
@@ -423,6 +637,8 @@ void Test65C64Block(void)
 	Test65C64BlockCopyRegister();
 	Test65C64BlockPrecopy();
 	Test65C64BlockPreOperations();
+	Test65C64BlockOperations();
+	Test65C64BlockMoveSheet();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
 	DataIOKill();
