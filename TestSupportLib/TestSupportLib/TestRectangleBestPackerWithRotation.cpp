@@ -181,7 +181,7 @@ void TestRectanglePackerWithRotationDefault(void)
 	CRectangleBestPacker				cPacker;
 	CRectangleBestPackerWithRotation	cRotationPacker;
 	CPackAttempt*						pcBestAttempt;
-	int									iArea;
+	int64								iArea;
 	CArrayPackedRectangle				macRects;
 	CPackedRectangle*					pcPackedRect;
 	size								i;
@@ -200,7 +200,7 @@ void TestRectanglePackerWithRotationDefault(void)
 	cRotationPacker.Pack();
 	pcBestAttempt = cRotationPacker.GetBestAttempt();
 	AssertNotNull(pcBestAttempt);
-	AssertInt(100, pcBestAttempt->miArea);
+	AssertLong(100, pcBestAttempt->miArea);
 	AssertTrue(iArea > 100);
 
 	macRects.Init();
@@ -237,7 +237,7 @@ void TestRectanglePackerWithRotationRandom(void)
 	size								uiIndex;
 	int									aiWidths[32];
 	int									aiHeights[32];
-	int									iArea;
+	int64								iArea;
 	bool								bAnyRotated;
 
 	bAnyRotated = false;

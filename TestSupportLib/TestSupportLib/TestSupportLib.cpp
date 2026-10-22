@@ -40,6 +40,7 @@ void TestImageSFTWriter(void);
 void TestImageCelsFile(void);
 void TestFont(void);
 void TestTrueTypeFont(void);
+void TestFontFamily(void);
 void TestMaps(void);
 void TestMapViewport(void);
 void TestTileMapGenerator(void);
@@ -109,6 +110,7 @@ int __cdecl main(void)
 	TestTileMapGenerator();
 	TestFont();
 	TestTrueTypeFont();
+	TestFontFamily();
 	TestImageCelsSource();
 	TestHalfSpace();
 	TestPolygon();

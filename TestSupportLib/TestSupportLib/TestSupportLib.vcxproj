@@ -250,6 +250,7 @@
     <ClCompile Include="TestTileMapGenerator.cpp" />
     <ClCompile Include="TestTriangleShape.cpp" />
     <ClCompile Include="TestTrueTypeFont.cpp" />
+    <ClCompile Include="TestFontFamily.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AssertImage.h" />

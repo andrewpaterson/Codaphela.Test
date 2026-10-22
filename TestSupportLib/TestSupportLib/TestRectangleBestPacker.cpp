@@ -360,7 +360,7 @@ void TestRectanglePackerDefault(void)
 	AssertSize(1, pcBestAttempt->macLines.NumElements());
 	AssertInt(24, pcBestAttempt->miWidth);
 	AssertInt(8, pcBestAttempt->miHeight);
-	AssertInt(7, pcBestAttempt->GetWastedArea());
+	AssertLong(7, pcBestAttempt->GetWastedArea());
 
 	szRep.Init();
 	pcBestAttempt->Print(&szRep);
@@ -371,7 +371,7 @@ void TestRectanglePackerDefault(void)
 	AssertSize(2, pcWorstAttempt->macLines.NumElements());
 	AssertInt(22, pcWorstAttempt->miWidth);
 	AssertInt(12, pcWorstAttempt->miHeight);
-	AssertInt(79, pcWorstAttempt->GetWastedArea());
+	AssertLong(79, pcWorstAttempt->GetWastedArea());
 
 	szRep.Init();
 	pcWorstAttempt->Print(&szRep);
@@ -903,12 +903,12 @@ void TestRectanglePackerRejectsEmptyRectangles(void)
 	cRect.Init(0, 5, 3, 2);
 	AssertFalse(cPacker.AddRectangle(&cRect, NULL));
 	AssertSize(0, cPacker.GetSourceRectangles()->NumElements());
-	AssertInt(0, cPacker.GetSourceArea());
+	AssertLong(0, cPacker.GetSourceArea());
 
 	cRect.Init(0, 0, 3, 3);
 	AssertTrue(cPacker.AddRectangle(&cRect, NULL));
 	AssertSize(1, cPacker.GetSourceRectangles()->NumElements());
-	AssertInt(9, cPacker.GetSourceArea());
+	AssertLong(9, cPacker.GetSourceArea());
 
 	cPacker.Kill();
 }
@@ -1001,13 +1001,40 @@ void TestRectanglePackerInvalidAttemptsSortLast(void)
 	pcAttempt = pacAttempts->Get(1);
 	AssertTrue(pcAttempt->mbValid);
 	AssertInt(12, pcAttempt->miMaxWidth);
-	AssertInt(60, pcAttempt->miArea);
+	AssertLong(60, pcAttempt->miArea);
 
 	pcAttempt = pacAttempts->Get(2);
 	AssertFalse(pcAttempt->mbValid);
 	pcAttempt = pacAttempts->Get(3);
 	AssertFalse(pcAttempt->mbValid);
 
+	cPacker.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestRectanglePackerLargeAreas(void)
+{
+	CRectangleBestPacker	cPacker;
+	CPackAttempt*			pcBestAttempt;
+	CRectangle				cRect;
+
+	//Boards in micrometres: two 50mm squares cover 5,000,000,000 square micrometres, more than 32 bits hold.
+	cPacker.Init(0, 1600);
+	cRect.Init(0, 0, 50000, 50000);
+	cPacker.AddRectangle(&cRect, NULL);
+	cPacker.AddRectangle(&cRect, NULL);
+	AssertLong(5000000000LL, cPacker.GetSourceArea());
+
+	cPacker.Pack();
+	pcBestAttempt = cPacker.GetBestAttempt();
+	AssertNotNull(pcBestAttempt);
+	AssertLong((int64)pcBestAttempt->miWidth * (int64)pcBestAttempt->miHeight, pcBestAttempt->miArea);
+	AssertLong(5000000000LL + 1600LL * 50000LL, pcBestAttempt->miArea);
+	AssertLong(1600LL * 50000LL, pcBestAttempt->GetWastedArea());
 	cPacker.Kill();
 }
 
@@ -1038,6 +1065,7 @@ void TestRectangleBestPacker(void)
 	TestRectanglePackerRejectsEmptyRectangles();
 	TestRectanglePackerDefaultAttemptRange();
 	TestRectanglePackerInvalidAttemptsSortLast();
+	TestRectanglePackerLargeAreas();
 
 	TestStatistics();
 }
