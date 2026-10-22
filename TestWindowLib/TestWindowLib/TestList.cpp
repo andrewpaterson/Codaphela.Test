@@ -4,7 +4,7 @@
 #include "StandardLib/Objects.h"
 #include "WindowLib/Window.h"
 #include "WindowLib/ClearCanvasDraw.h"
-#include "WindowLib/List.h"
+#include "WindowLib/ListContainer.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/AssertGeometric.h"
 #include "TickTestRefWindow.h"
@@ -33,14 +33,14 @@ public:
 	void SelectionChanged(CUnknown* pcSource, void* pvContext) override
 	{
 		mpszLog->Append("Selected:");
-		mpszLog->Append(((CList*)pcSource)->GetSelected());
+		mpszLog->Append(((CListContainer*)pcSource)->GetSelected());
 		mpszLog->Append(";");
 	}
 
 	void ItemActivated(CUnknown* pcSource, void* pvContext) override
 	{
 		mpszLog->Append("Activated:");
-		mpszLog->Append(((CList*)pcSource)->GetSelected());
+		mpszLog->Append(((CListContainer*)pcSource)->GetSelected());
 		mpszLog->Append(";");
 	}
 };
@@ -74,9 +74,9 @@ void TestListInput(void)
 
 	{
 		Ptr<CWindow>			pTestWindow;
-		Ptr<CList>				pList;
+		Ptr<CListContainer>		pList;
 		Ptr<CFocus>				pFocus;
-		Ptr<CTickTestRefWindow>		pTick;
+		Ptr<CTickTestRefWindow>	pTick;
 		SDataTestRefWindow		cData;
 		CTestListListener		cListener;
 		CPointer				pNull;
@@ -96,7 +96,7 @@ void TestListInput(void)
 		ORoot()->Add(pTestWindow);
 		pFocus = pTestWindow->GetFocus();
 
-		pList = OMalloc<CList>(pTestWindow);
+		pList = OMalloc<CListContainer>(pTestWindow);
 		AssertTrue(pList->AddListener(&cListener));
 		pTestWindow->SetContainer(pList);
 		for (i = 0; i < 5; i++)
@@ -318,9 +318,9 @@ void TestListDraw(void)
 
 	{
 		Ptr<CWindow>			pTestWindow;
-		Ptr<CList>				pList;
+		Ptr<CListContainer>		pList;
 		Ptr<CCanvas>			pItem;
-		Ptr<CTickTestRefWindow>		pTick;
+		Ptr<CTickTestRefWindow>	pTick;
 		SDataTestRefWindow		cData;
 		CPointer				pNull;
 		int32					i;
@@ -332,7 +332,7 @@ void TestListDraw(void)
 		pTestWindow = OMalloc<CWindow>("List Draw Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
 		ORoot()->Add(pTestWindow);
 
-		pList = OMalloc<CList>(pTestWindow);
+		pList = OMalloc<CListContainer>(pTestWindow);
 		pList->SetHighlightColours(Set32BitColour((uint8)0xFF, (uint8)0, (uint8)0), Set32BitColour((uint8)0, (uint8)0xFF, (uint8)0));
 		pTestWindow->SetContainer(pList);
 		for (i = 0; i < 4; i++)

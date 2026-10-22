@@ -15,6 +15,7 @@
 #include "TickTestRefWindow.h"
 #include "DataTestRefWindow.h"
 #include "SpaceCrusade.h"
+#include "DarkForest.h"
 
 
 Ptr<CFont> ReadLabelFont(void);
@@ -545,6 +546,146 @@ void TestButtonStates(char* szName, Ptr<CButtonImages>(*ReadImages)(CColourForma
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Three buttons wider than they need, side by side in a grid: an icon
+// with a caption, an icon alone and a caption alone.  An icon is on the
+// left with its caption aligned left beside it, the padding in from the
+// face.  An icon or a caption alone is centred.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestButtonIcons(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "ButtonIcons";
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CTickTestRefWindow>	pTick;
+		SDataTestRefWindow		cData;
+		Ptr<CGridContainer>		pGrid;
+		Ptr<CButtonImages>		pImages;
+		Ptr<CFont>				pFont;
+		Ptr<CImageCel>			pWolf;
+		Ptr<CImageCel>			pMoon;
+		Ptr<CButton>			pBoth;
+		Ptr<CButton>			pIconOnly;
+		Ptr<CButton>			pCaptionOnly;
+		CColourFormatHelper		cHelper;
+		CChars					szExpectedDirectory;
+		SInt32Vec2				sFace;
+		SInt32Vec2				sFaceSize;
+		SInt32Vec2				sVec;
+		int32					iWolfWidth;
+		int32					iMoonWidth;
+		int32					iCaptionWidth;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 300, 60, szDirectory);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Button Icons", &cNativeFactory, pTick, OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)0x1E, 0x1F, 0x22)), CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
+		pTestWindow->GetColourFormat(&cHelper);
+
+		pFont = ReadLabelFont();
+		pImages = CJewelButtonImages::CreateButtonImages(&cHelper);
+		pWolf = ReadDarkForestCel("Wolf.png", &cHelper);
+		pMoon = ReadDarkForestCel("Moon.png", &cHelper);
+		iWolfWidth = pWolf->GetSubImage()->GetFullWidth();
+		iMoonWidth = pMoon->GetSubImage()->GetFullWidth();
+
+		pBoth = OMalloc<CButton>(pTestWindow, pImages, pWolf, pFont, "Open");
+		pIconOnly = OMalloc<CButton>(pTestWindow, pImages, pMoon, pFont, (char*)NULL);
+		pCaptionOnly = OMalloc<CButton>(pTestWindow, pImages, pFont, "Open");
+		pBoth->SetDesiredSize(100, -1);
+		pIconOnly->SetDesiredSize(100, -1);
+		pCaptionOnly->SetDesiredSize(100, -1);
+		pGrid = OMalloc<CGridContainer>(pTestWindow);
+		pTestWindow->SetContainer(pGrid);
+		pGrid->AddComponent(pBoth, 0, 0);
+		pGrid->AddComponent(pIconOnly, 1, 0);
+		pGrid->AddComponent(pCaptionOnly, 2, 0);
+
+		//The caption decides the height of a button with one, the icon of one without.
+		iCaptionWidth = pBoth->GetCaptionLabel()->GetDesiredSize().x;
+		sVec = pBoth->GetDesiredSize();
+		AssertInt32Vec2(100, 24 + 2 * 2 + 8 * 2, &sVec);
+		sVec = pIconOnly->GetDesiredSize();
+		AssertInt32Vec2(100, pMoon->GetSubImage()->GetFullHeight() + 2 * 2 + 8 * 2, &sVec);
+
+		pTestWindow->Show();
+
+		//The face is inside the eight pixel border, the content eight in from the face's sides.
+		sFace = pBoth->GetPosition();
+		sFace.x += 8;
+		sFace.y += 8;
+		sVec = pBoth->GetIconComponent()->GetPosition();
+		AssertInt(sFace.x + 8, sVec.x);
+		sVec = pBoth->GetIconComponent()->GetActualSize();
+		AssertInt(iWolfWidth + 4, sVec.x);
+		sVec = pBoth->GetCaptionLabel()->GetPosition();
+		AssertInt(sFace.x + 8 + iWolfWidth + 4, sVec.x);
+		AssertInt(sFace.y + 2, sVec.y);
+
+		//An icon alone is centred.
+		sFace = pIconOnly->GetPosition();
+		sFace.x += 8;
+		sFace.y += 8;
+		sFaceSize = pIconOnly->GetActualSize();
+		sFaceSize.x -= 16;
+		sVec = pIconOnly->GetIconComponent()->GetPosition();
+		AssertInt(sFace.x + 8 + (sFaceSize.x - 16 - iMoonWidth) / 2, sVec.x);
+		AssertFalse(pIconOnly->GetCaptionLabel()->GetParent().IsNotNull());
+
+		//As is a caption alone.
+		sFace = pCaptionOnly->GetPosition();
+		sFace.x += 8;
+		sVec = pCaptionOnly->GetCaptionLabel()->GetPosition();
+		AssertInt(sFace.x + 8 + (100 - 16 - 16 - iCaptionWidth) / 2, sVec.x);
+
+		//Taking the caption away centres the icon, giving it back puts it on the left again.
+		pBoth->SetCaption("");
+		pTestWindow->Layout();
+		sFace = pBoth->GetPosition();
+		sFace.x += 8;
+		sVec = pBoth->GetIconComponent()->GetPosition();
+		AssertInt(sFace.x + 8 + (100 - 16 - 16 - iWolfWidth) / 2, sVec.x);
+		pBoth->SetCaption("Open");
+		pTestWindow->Layout();
+		sVec = pBoth->GetIconComponent()->GetPosition();
+		AssertInt(sFace.x + 8, sVec.x);
+
+		ValidateLabelObjects();
+
+		pBoth = NULL;
+		pIconOnly = NULL;
+		pCaptionOnly = NULL;
+		pGrid = NULL;
+		pImages = NULL;
+		pFont = NULL;
+		pWolf = NULL;
+		pMoon = NULL;
+		ORoot()->Remove(pTestWindow);
+		pTestWindow = NULL;
+		pTick = NULL;
+
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
+	}
+
+	AssertSize(0, gcObjects.NumFreeObjects());
+	AssertTrue(ORoot()->RemoveAll());
+	AssertSize(2, gcObjects.NumMemoryIndexes());
+	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestButton(void)
@@ -554,6 +695,7 @@ void TestButton(void)
 
 	TestButtonInput();
 	TestButtonDefault();
+	TestButtonIcons();
 	TestButtonStates((char*)"ButtonStates", ReadBlueButtonImages, NULL, Set32BitColour((uint8)40, 40, 48), false);
 	TestButtonStates((char*)"JewelButtonStates", CJewelButtonImages::CreateButtonImages, NULL, Set32BitColour((uint8)0x1E, 0x1F, 0x22), true);
 	TestButtonStates((char*)"JewelDefaultButtonStates", CJewelButtonImages::CreateButtonImages, CJewelButtonImages::CreateDefaultButtonImages, Set32BitColour((uint8)0x1E, 0x1F, 0x22), true);

@@ -250,6 +250,7 @@
     <ClCompile Include="TestBorderLayoutHelper.cpp" />
     <ClCompile Include="TestFlowContainer.cpp" />
     <ClCompile Include="TestNestedContainers.cpp" />
+    <ClCompile Include="TestMenu.cpp" />
     <ClCompile Include="TestRefWindow.cpp" />
     <ClCompile Include="TestWindowLib.cpp" />
     <ClCompile Include="TickTestCanvas.cpp" />
