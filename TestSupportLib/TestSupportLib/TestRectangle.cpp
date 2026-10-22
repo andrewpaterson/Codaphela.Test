@@ -53,11 +53,32 @@ void TestRectangleClipTo(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestRectangleGetArea(void)
+{
+	CRectangle	cRect;
+
+	cRect.Init(2, 3, 12, 8);
+	AssertLong(50, cRect.GetArea());
+
+	//A 50mm square in micrometres is more than 32 bits hold.
+	cRect.Init(0, 0, 50000, 50000);
+	AssertLong(2500000000LL, cRect.GetArea());
+
+	cRect.Init(-60000, -70000, 60000, 70000);
+	AssertLong(16800000000LL, cRect.GetArea());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestRectangle(void)
 {
 	BeginTests();
 
 	TestRectangleClipTo();
+	TestRectangleGetArea();
 
 	TestStatistics();
 }
