@@ -13,6 +13,7 @@ void TestRefWindow(void);
 void TestFlowContainer(void);
 void TestFillContainer(void);
 void TestGridContainer(void);
+void TestNestedContainers(void);
 void TestBorderLayoutHelper(void);
 void TestCanvas(void);
 void TestLabel(void);
@@ -51,6 +52,7 @@ int __cdecl main(void)
 	TestFlowContainer();
 	TestFillContainer();
 	TestGridContainer();
+	TestNestedContainers();
 	TestBorderLayoutHelper();
 	TestCanvas();
 	TestLabel();

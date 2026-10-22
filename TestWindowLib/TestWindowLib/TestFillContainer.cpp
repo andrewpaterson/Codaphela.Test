@@ -376,7 +376,7 @@ void TestFillContainerImageCanvasDesiredSize(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFillContainerDarkForest(char* szDirectory, int32 iWidth, int32 iHeight, int* paiInsets, size uiNumComponents, SDarkForestComponent* asComponents, SInt32Vec2* asExpectedPositions)
+void TestFillContainerDarkForest(char* szDirectory, int32 iWidth, int32 iHeight, int* paiInsets, size uiNumComponents, SDarkForestComponent* asComponents, SInt32Vec2* asExpectedPositions, bool bClipsChildren = true)
 {
 	CWinRefWindowFactory	cNativeFactory;
 	CFileUtil				cFileUtil;
@@ -415,6 +415,7 @@ void TestFillContainerDarkForest(char* szDirectory, int32 iWidth, int32 iHeight,
 			sInsets.Init(paiInsets);
 			pFill->SetInsets(&sInsets);
 		}
+		pFill->SetClipsChildren(bClipsChildren);
 		pTestWindow->SetContainer(pFill);
 
 		for (i = 0; i < uiNumComponents; i++)
@@ -589,8 +590,9 @@ void TestFillContainerDarkForestRowAlignments(void)
 //////////////////////////////////////////////////////////////////////////
 void TestFillContainerDarkForestLargerThanArea(void)
 {
-	//The 4 pixel insets leave a 34 x 8 area at 4, 4 and every cel is taller than it.  A centred cel spills into the insets
-	//above and below, with an odd overflow putting the extra pixel at the bottom.  A bottom aligned cel spills only above.
+	//The 4 pixel insets leave a 34 x 8 area at 4, 4 and every cel is taller than it.  A centred cel overflows into the insets
+	//above and below, with an odd overflow putting the extra pixel at the bottom.  A bottom aligned cel overflows only above.
+	//The container clips its children so nothing is drawn in the insets.
 	int						aiInsets[4] = { 4, 4, 4, 4 };  //Top, Right, Bottom, Left.
 	SDarkForestComponent	asComponents[3] = {
 		{ "Wolf.png",		SInt32Vec2(-1, -1), 0, CSH_Left,	CSV_Center },
@@ -599,6 +601,104 @@ void TestFillContainerDarkForestLargerThanArea(void)
 	SInt32Vec2				asPosition[3] = { SInt32Vec2(4, 3), SInt32Vec2(18, 4), SInt32Vec2(28, 2) };
 
 	TestFillContainerDarkForest("Output" _FS_ "FillContainerDarkForestLargerThanArea", 42, 16, aiInsets, 3, asComponents, asPosition);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFillContainerDarkForestLargerThanAreaUnclipped(void)
+{
+	//As TestFillContainerDarkForestLargerThanArea but with clipping turned off the cels are drawn over the insets.
+	int						aiInsets[4] = { 4, 4, 4, 4 };  //Top, Right, Bottom, Left.
+	SDarkForestComponent	asComponents[3] = {
+		{ "Wolf.png",		SInt32Vec2(-1, -1), 0, CSH_Left,	CSV_Center },
+		{ "Fireflies.png",	SInt32Vec2(-1, -1), 0, CSH_Center,	CSV_Center },
+		{ "Moon.png",		SInt32Vec2(-1, -1), 0, CSH_Right,	CSV_Bottom } };
+	SInt32Vec2				asPosition[3] = { SInt32Vec2(4, 3), SInt32Vec2(18, 4), SInt32Vec2(28, 2) };
+
+	TestFillContainerDarkForest("Output" _FS_ "FillContainerDarkForestLargerThanAreaUnclipped", 42, 16, aiInsets, 3, asComponents, asPosition, false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFillContainerClipFindComponent(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "FillContainerClipFindComponent";
+	int						aiInsets[4] = { 4, 4, 4, 4 };  //Top, Right, Bottom, Left.
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CCanvas>			pCanvas;
+		Ptr<CBorderCanvasDraw>	pDraw;
+		Ptr<CTickTestRefWindow>	pTick;
+		SDataTestRefWindow		cData;
+		Ptr<CFillContainer>		pFill;
+		SInsets					sInsets;
+		SInt32Vec2				sVec;
+		CPointer				pNull;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 42, 16, szDirectory);
+
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
+
+		pFill = OMalloc<CFillContainer>(pTestWindow);
+		sInsets.Init(aiInsets);
+		pFill->SetInsets(&sInsets);
+		pTestWindow->SetContainer(pFill);
+
+		//The canvas is 10 high in the 8 high area inside the insets so it overflows one pixel into the top and bottom insets.
+		pDraw = OMalloc<CBorderCanvasDraw>(Set32BitColour(1.0f, 0, 0));
+		pCanvas = OMalloc<CCanvas>(pTestWindow, pDraw);
+		pCanvas->SetDesiredSize(10, 10);
+		pCanvas->SetAlignment(CSH_Left, CSV_Center);
+		pFill->AddComponent(pCanvas);
+		pDraw = NULL;
+
+		pTestWindow->Show();
+
+		sVec = pCanvas->GetPosition();
+		AssertInt32Vec2(4, 3, &sVec);
+		AssertTrue(pFill->ClipsChildren());
+
+		//Where the canvas is cut off by the container it can't be found, the container is found instead.
+		AssertTrue(pTestWindow->FindComponentAt(6, 8) == pCanvas);
+		AssertTrue(pTestWindow->FindComponentAt(6, 3) == pFill);
+		AssertTrue(pTestWindow->FindComponentAt(6, 12) == pFill);
+		AssertTrue(pTestWindow->FindComponentAt(6, 11) == pCanvas);
+		AssertTrue(pTestWindow->FindComponentAt(20, 8) == pFill);
+
+		//Without clipping the canvas is drawn over the insets so it is found there.
+		pFill->SetClipsChildren(false);
+		AssertFalse(pFill->ClipsChildren());
+		AssertTrue(pTestWindow->FindComponentAt(6, 8) == pCanvas);
+		AssertTrue(pTestWindow->FindComponentAt(6, 3) == pCanvas);
+		AssertTrue(pTestWindow->FindComponentAt(6, 12) == pCanvas);
+		AssertTrue(pTestWindow->FindComponentAt(6, 13) == pFill);
+		AssertTrue(pTestWindow->FindComponentAt(20, 8) == pFill);
+
+		pCanvas = NULL;
+		ORoot()->Remove(pTestWindow);
+		pTestWindow = NULL;
+		pTick = NULL;
+		pFill = NULL;
+	}
+
+	AssertFillContainerObjectsRemoved();
+
+	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
 }
 
 
@@ -718,6 +818,8 @@ void TestFillContainer(void)
 	TestFillContainerDarkForestMixedOverlayCenter();
 	TestFillContainerDarkForestRowAlignments();
 	TestFillContainerDarkForestLargerThanArea();
+	TestFillContainerDarkForestLargerThanAreaUnclipped();
+	TestFillContainerClipFindComponent();
 	TestFillContainerDarkForestCenterPastWindowEdges();
 	TestFillContainerImageCanvasPartialDesiredSize();
 

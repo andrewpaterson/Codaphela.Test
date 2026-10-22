@@ -73,6 +73,9 @@
     <ClCompile Include="TestFlowContainer.cpp">
       <Filter>Source\Component\Container</Filter>
     </ClCompile>
+    <ClCompile Include="TestNestedContainers.cpp">
+      <Filter>Source\Component\Container</Filter>
+    </ClCompile>
     <ClCompile Include="BorderCanvasDraw.cpp">
       <Filter>Source\TestCommon</Filter>
     </ClCompile>

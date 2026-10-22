@@ -249,6 +249,7 @@
     <ClCompile Include="TestGridContainer.cpp" />
     <ClCompile Include="TestBorderLayoutHelper.cpp" />
     <ClCompile Include="TestFlowContainer.cpp" />
+    <ClCompile Include="TestNestedContainers.cpp" />
     <ClCompile Include="TestRefWindow.cpp" />
     <ClCompile Include="TestWindowLib.cpp" />
     <ClCompile Include="TickTestCanvas.cpp" />

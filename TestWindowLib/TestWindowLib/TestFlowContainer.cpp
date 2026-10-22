@@ -876,7 +876,7 @@ void TestFlowLongContainerDownRightWrap(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFlowContainerPositions(char* szDirectory, int32 iWidth, int32 iHeight, EContainerStyleDirection eD, EContainerStyleWrap eW, EContainerStyleVertical eV, EContainerStyleHorizontal eH, size uiNumComponents, SInt32Vec2* asDesiredSizes, SInt32Vec2* asExpectedPositions, SInt32Vec2* asExpectedSizes, EContainerStyleHorizontal* aeHorizontal = NULL, EContainerStyleVertical* aeVertical = NULL)
+void TestFlowContainerPositions(char* szDirectory, int32 iWidth, int32 iHeight, EContainerStyleDirection eD, EContainerStyleWrap eW, EContainerStyleVertical eV, EContainerStyleHorizontal eH, size uiNumComponents, SInt32Vec2* asDesiredSizes, SInt32Vec2* asExpectedPositions, SInt32Vec2* asExpectedSizes, EContainerStyleHorizontal* aeHorizontal = NULL, EContainerStyleVertical* aeVertical = NULL, int* paiInsets = NULL)
 {
 	CWinRefWindowFactory	cNativeFactory;
 	CFileUtil				cFileUtil;
@@ -890,6 +890,7 @@ void TestFlowContainerPositions(char* szDirectory, int32 iWidth, int32 iHeight, 
 		Ptr<CWindow>			pTestWindow;
 		size					i;
 		Ptr<CCanvas>			apCanvas[4];
+		SInsets					sInsets;
 		Ptr<CBorderCanvasDraw>	pDraw;
 		Ptr<CTickTestRefWindow>		pTick;
 		SDataTestRefWindow		cData;
@@ -911,6 +912,11 @@ void TestFlowContainerPositions(char* szDirectory, int32 iWidth, int32 iHeight, 
 		else
 		{
 			pFlow->SetFlowStyle(eD, eW, eH);
+		}
+		if (paiInsets)
+		{
+			sInsets.Init(paiInsets);
+			pFlow->SetInsets(&sInsets);
 		}
 		pTestWindow->SetContainer(pFlow);
 
@@ -1053,6 +1059,145 @@ void TestFlowContainerRightComponentAlignmentWrap(void)
 	EContainerStyleVertical		aeVertical[4] = { CSV_Top, CSV_Top, CSV_Bottom, CSV_Center };
 
 	TestFlowContainerPositions("Output" _FS_ "FlowContainerRightComponentAlignmentWrap", 30, 40, CSD_Right, CSW_Wrap, CSV_Bottom, CSH_Unknown, 4, asDesired, asPosition, asDesired, aeHorizontal, aeVertical);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainerInsets(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "FlowContainerInsets";
+	int						aiInsets[4] = { 2, 3, 4, 5 };  //Top, Right, Bottom, Left.
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CCanvas>			apCanvas[3];
+		Ptr<CBorderCanvasDraw>	pDraw;
+		Ptr<CTickTestRefWindow>	pTick;
+		SDataTestRefWindow		cData;
+		Ptr<CFlowContainer>		pFlow;
+		SInt32Vec2				sVec;
+		CInt32Rect				cBounds;
+		CPointer				pNull;
+		SInsets					sInsets;
+		size					i;
+		SInt32Vec2				asDesired[3] = { SInt32Vec2(10, 10), SInt32Vec2(20, 20), SInt32Vec2(5, 16) };
+
+		cNativeFactory.Init(&gcMemoryAllocator, 96, 30, szDirectory);
+
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Reference Test Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
+
+		pFlow = OMalloc<CFlowContainer>(pTestWindow);
+		pFlow->SetFlowStyle(CSD_Right, CSW_Continue, CSV_Top);
+		pTestWindow->SetContainer(pFlow);
+
+		for (i = 0; i < 3; i++)
+		{
+			pDraw = OMalloc<CBorderCanvasDraw>(Set32BitColour(1.0f, 0, 0));
+			apCanvas[i] = OMalloc<CCanvas>(pTestWindow, pDraw);
+			pFlow->AddComponent(apCanvas[i]);
+			apCanvas[i]->SetDesiredSize(asDesired[i].x, asDesired[i].y);
+			apCanvas[i]->SetAlignment(CSH_Left, CSV_Top);
+		}
+		pDraw = NULL;
+
+		pFlow->SetRequiredSize();
+		sVec = pFlow->GetRequiredSize();
+		AssertInt32Vec2(35, 20, &sVec);
+
+		//The insets add to the required size on both axes.
+		sInsets.Init(aiInsets);
+		pFlow->SetInsets(&sInsets);
+		pFlow->SetRequiredSize();
+		sVec = pFlow->GetRequiredSize();
+		AssertInt32Vec2(43, 26, &sVec);
+
+		//The components flow from the inside of the top left inset.  The container bounds are the area inside the insets
+		//but the actual bounds are the whole area.
+		pTestWindow->Show();
+
+		sVec = apCanvas[0]->GetPosition();
+		AssertInt32Vec2(5, 2, &sVec);
+		sVec = apCanvas[1]->GetPosition();
+		AssertInt32Vec2(15, 2, &sVec);
+		sVec = apCanvas[2]->GetPosition();
+		AssertInt32Vec2(35, 2, &sVec);
+		for (i = 0; i < 3; i++)
+		{
+			sVec = apCanvas[i]->GetActualSize();
+			AssertInt32Vec2(asDesired[i].x, asDesired[i].y, &sVec);
+		}
+
+		AssertTrue(pFlow->GetContainerBounds(&cBounds));
+		AssertInt(5, cBounds.GetLeft());
+		AssertInt(2, cBounds.GetTop());
+		AssertInt(93, cBounds.GetRight());
+		AssertInt(26, cBounds.GetBottom());
+		sVec = pFlow->GetPosition();
+		AssertInt32Vec2(0, 0, &sVec);
+		sVec = pFlow->GetActualSize();
+		AssertInt32Vec2(96, 30, &sVec);
+
+		//Flowing down the main axis is the height.
+		pFlow->SetFlowStyle(CSD_Down, CSW_Continue, CSH_Left);
+		pFlow->SetRequiredSize();
+		sVec = pFlow->GetRequiredSize();
+		AssertInt32Vec2(28, 52, &sVec);
+
+		for (i = 0; i < 3; i++)
+		{
+			apCanvas[i] = NULL;
+		}
+		ORoot()->Remove(pTestWindow);
+		pTestWindow = NULL;
+		pTick = NULL;
+		pFlow = NULL;
+	}
+
+	AssertFlowContainerObjectsRemoved();
+
+	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainerRightTopWrapInsets(void)
+{
+	//The two components would fit on one line of the 50 wide area but not on the 39 wide line inside the insets.
+	int			aiInsets[4] = { 2, 6, 3, 5 };  //Top, Right, Bottom, Left.
+	SInt32Vec2	asDesired[2] = { SInt32Vec2(20, 10), SInt32Vec2(20, 10) };
+	SInt32Vec2	asPosition[2] = { SInt32Vec2(5, 2), SInt32Vec2(5, 12) };
+
+	TestFlowContainerPositions("Output" _FS_ "FlowContainerRightTopWrapInsets", 50, 30, CSD_Right, CSW_Wrap, CSV_Top, CSH_Unknown, 2, asDesired, asPosition, asDesired, NULL, NULL, aiInsets);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFlowContainerLeftBottomWrapInsets(void)
+{
+	//Like TestFlowContainerLeftBottomWrap but the lines are 88 long, right aligned against the right inset, and the 25
+	//high block of lines sits on the bottom inset of the 28 high area inside the insets.
+	int			aiInsets[4] = { 1, 3, 1, 5 };  //Top, Right, Bottom, Left.
+	SInt32Vec2	asDesired[3] = { SInt32Vec2(40, 10), SInt32Vec2(30, 20), SInt32Vec2(40, 5) };
+	SInt32Vec2	asPosition[3] = { SInt32Vec2(53, 14), SInt32Vec2(23, 4), SInt32Vec2(53, 24) };
+
+	TestFlowContainerPositions("Output" _FS_ "FlowContainerLeftBottomWrapInsets", 96, 30, CSD_Left, CSW_Wrap, CSV_Bottom, CSH_Unknown, 3, asDesired, asPosition, asDesired, NULL, NULL, aiInsets);
 }
 
 
@@ -1420,6 +1565,9 @@ void TestFlowContainer(void)
 	TestFlowContainerDownStretchContinue();
 	TestFlowContainerRightComponentAlignmentContinue();
 	TestFlowContainerRightComponentAlignmentWrap();
+	TestFlowContainerInsets();
+	TestFlowContainerRightTopWrapInsets();
+	TestFlowContainerLeftBottomWrapInsets();
 	TestFlowContainerNested();
 	TestFlowContainerDarkForestImagesRightTopWrap();
 	TestFlowContainerDarkForestImagesDownCenterWrap();
