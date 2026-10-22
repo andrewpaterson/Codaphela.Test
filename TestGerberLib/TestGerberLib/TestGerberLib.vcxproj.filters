@@ -34,6 +34,9 @@
     <ClCompile Include="TestGerberPanel.cpp">
       <Filter>Source\Parser</Filter>
     </ClCompile>
+    <ClCompile Include="TestGerberPanelMerge.cpp">
+      <Filter>Source\Parser</Filter>
+    </ClCompile>
     <ClCompile Include="TestGerberVector.cpp">
       <Filter>Source\Parser</Filter>
     </ClCompile>

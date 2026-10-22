@@ -33,6 +33,13 @@ void TestAdd(void)
 	AssertNumber("10", cNumber1.Init("-20")->Add(cNumber2.Init("30")));
 	AssertNumber("0.5", cNumber1.Init("2.5")->Add(cNumber2.Init("-2")));
 	AssertNumber("-0.5", cNumber1.Init("-2.5")->Add(cNumber2.Init("2")));
+
+	//Zero's first digit is the units digit; numbers below one used to compare smaller than it.
+	AssertNumber("-0.025", cNumber1.Init("-0.025")->Add(cNumber2.Init("0")));
+	AssertNumber("0.025", cNumber1.Init("0.025")->Add(cNumber2.Init("0")));
+	AssertNumber("-0.025", cNumber1.Init("0")->Add(cNumber2.Init("-0.025")));
+	AssertNumber("-0.5", cNumber1.Init("-0.5")->Add(cNumber2.Init("0")));
+	AssertNumber("0", cNumber1.Init("0")->Add(cNumber2.Init("0")));
 	AssertNumber("-1.5", cNumber1.Init("0.5")->Add(cNumber2.Init("-2")));
 
 	CNumber* pcNumber1;
@@ -81,6 +88,11 @@ void TestSubtract(void)
 	AssertNumber("10", cNumber1.Init("-20")->Subtract(cNumber2.Init("-30")));
 	AssertNumber("0.5", cNumber1.Init("2.5")->Subtract(cNumber2.Init("2")));
 	AssertNumber("-0.5", cNumber1.Init("2")->Subtract(cNumber2.Init("2.5")));
+
+	AssertNumber("0.025", cNumber1.Init("0.025")->Subtract(cNumber2.Init("0")));
+	AssertNumber("-0.025", cNumber1.Init("-0.025")->Subtract(cNumber2.Init("0")));
+	AssertNumber("0.025", cNumber1.Init("0")->Subtract(cNumber2.Init("-0.025")));
+	AssertNumber("-0.025", cNumber1.Init("0")->Subtract(cNumber2.Init("0.025")));
 
 	AssertInt(0, gcNumberControl.NumElements());
 }

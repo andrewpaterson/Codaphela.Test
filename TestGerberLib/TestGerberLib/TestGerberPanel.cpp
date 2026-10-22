@@ -37,7 +37,7 @@ void AssertGerberPanel(CGerberPanel* pcPanel, CGerberFileSets* pcSets, float64 f
 	CGerberFileSet*			pcSet;
 	SFloat64Vec2			sMinimum;
 	SFloat64Vec2			sMaximum;
-	SFloat64Vec2			sSize;
+	CFloat64Rect*			pcBounds;
 	float64					fTolerance;
 
 	fTolerance = 0.0000001;
@@ -55,37 +55,37 @@ void AssertGerberPanel(CGerberPanel* pcPanel, CGerberFileSets* pcSets, float64 f
 		//The board's real outline corners land inside its rounded slot, which is at most a micrometre bigger each side.
 		sMinimum.Init(1e30, 1e30);
 		sMaximum.Init(-1e30, -1e30);
-		IncludePlacedPoint(pcPlacement, pcSet->GetOutlineMinimum()->x, pcSet->GetOutlineMinimum()->y, &sMinimum, &sMaximum);
-		IncludePlacedPoint(pcPlacement, pcSet->GetOutlineMaximum()->x, pcSet->GetOutlineMinimum()->y, &sMinimum, &sMaximum);
-		IncludePlacedPoint(pcPlacement, pcSet->GetOutlineMinimum()->x, pcSet->GetOutlineMaximum()->y, &sMinimum, &sMaximum);
-		IncludePlacedPoint(pcPlacement, pcSet->GetOutlineMaximum()->x, pcSet->GetOutlineMaximum()->y, &sMinimum, &sMaximum);
-		AssertTrue(sMinimum.x >= pcPlacement->msMinimum.x - fTolerance);
-		AssertTrue(sMinimum.y >= pcPlacement->msMinimum.y - fTolerance);
-		AssertTrue(sMaximum.x <= pcPlacement->msMaximum.x + fTolerance);
-		AssertTrue(sMaximum.y <= pcPlacement->msMaximum.y + fTolerance);
-		AssertTrue(sMinimum.x - pcPlacement->msMinimum.x < 0.001 + fTolerance);
-		AssertTrue(sMinimum.y - pcPlacement->msMinimum.y < 0.001 + fTolerance);
-		AssertTrue(pcPlacement->msMaximum.x - sMaximum.x < 0.001 + fTolerance);
-		AssertTrue(pcPlacement->msMaximum.y - sMaximum.y < 0.001 + fTolerance);
+		pcBounds = pcSet->GetOutlineBounds();
+		IncludePlacedPoint(pcPlacement, pcBounds->msTopLeft.x, pcBounds->msTopLeft.y, &sMinimum, &sMaximum);
+		IncludePlacedPoint(pcPlacement, pcBounds->msBottomRight.x, pcBounds->msTopLeft.y, &sMinimum, &sMaximum);
+		IncludePlacedPoint(pcPlacement, pcBounds->msTopLeft.x, pcBounds->msBottomRight.y, &sMinimum, &sMaximum);
+		IncludePlacedPoint(pcPlacement, pcBounds->msBottomRight.x, pcBounds->msBottomRight.y, &sMinimum, &sMaximum);
+		AssertTrue(sMinimum.x >= pcPlacement->mcBounds.msTopLeft.x - fTolerance);
+		AssertTrue(sMinimum.y >= pcPlacement->mcBounds.msTopLeft.y - fTolerance);
+		AssertTrue(sMaximum.x <= pcPlacement->mcBounds.msBottomRight.x + fTolerance);
+		AssertTrue(sMaximum.y <= pcPlacement->mcBounds.msBottomRight.y + fTolerance);
+		AssertTrue(sMinimum.x - pcPlacement->mcBounds.msTopLeft.x < 0.001 + fTolerance);
+		AssertTrue(sMinimum.y - pcPlacement->mcBounds.msTopLeft.y < 0.001 + fTolerance);
+		AssertTrue(pcPlacement->mcBounds.msBottomRight.x - sMaximum.x < 0.001 + fTolerance);
+		AssertTrue(pcPlacement->mcBounds.msBottomRight.y - sMaximum.y < 0.001 + fTolerance);
 
 		//A turned board swaps its width and height.
-		sSize = pcSet->GetOutlineSize();
 		if (pcPlacement->mbRotated)
 		{
-			AssertDouble(sSize.y, sMaximum.x - sMinimum.x, 6);
-			AssertDouble(sSize.x, sMaximum.y - sMinimum.y, 6);
+			AssertDouble(pcBounds->GetHeight(), sMaximum.x - sMinimum.x, 6);
+			AssertDouble(pcBounds->GetWidth(), sMaximum.y - sMinimum.y, 6);
 		}
 		else
 		{
-			AssertDouble(sSize.x, sMaximum.x - sMinimum.x, 6);
-			AssertDouble(sSize.y, sMaximum.y - sMinimum.y, 6);
+			AssertDouble(pcBounds->GetWidth(), sMaximum.x - sMinimum.x, 6);
+			AssertDouble(pcBounds->GetHeight(), sMaximum.y - sMinimum.y, 6);
 		}
 
 		//Clear of the panel's sides.
-		AssertTrue(pcPlacement->msMinimum.x >= fEdge - fTolerance);
-		AssertTrue(pcPlacement->msMinimum.y >= fEdge - fTolerance);
-		AssertTrue(pcPlacement->msMaximum.x <= pcPanel->GetSize()->x - fEdge + fTolerance);
-		AssertTrue(pcPlacement->msMaximum.y <= pcPanel->GetSize()->y - fEdge + fTolerance);
+		AssertTrue(pcPlacement->mcBounds.msTopLeft.x >= fEdge - fTolerance);
+		AssertTrue(pcPlacement->mcBounds.msTopLeft.y >= fEdge - fTolerance);
+		AssertTrue(pcPlacement->mcBounds.msBottomRight.x <= pcPanel->GetSize()->x - fEdge + fTolerance);
+		AssertTrue(pcPlacement->mcBounds.msBottomRight.y <= pcPanel->GetSize()->y - fEdge + fTolerance);
 	}
 
 	//At least a router bit between every two boards.
@@ -95,10 +95,10 @@ void AssertGerberPanel(CGerberPanel* pcPanel, CGerberFileSets* pcSets, float64 f
 		for (j = i + 1; j < pcPanel->NumPlacements(); j++)
 		{
 			pcOther = pcPanel->GetPlacement(j);
-			AssertTrue((pcPlacement->msMaximum.x + fGap <= pcOther->msMinimum.x + fTolerance) ||
-					   (pcOther->msMaximum.x + fGap <= pcPlacement->msMinimum.x + fTolerance) ||
-					   (pcPlacement->msMaximum.y + fGap <= pcOther->msMinimum.y + fTolerance) ||
-					   (pcOther->msMaximum.y + fGap <= pcPlacement->msMinimum.y + fTolerance));
+			AssertTrue((pcPlacement->mcBounds.msBottomRight.x + fGap <= pcOther->mcBounds.msTopLeft.x + fTolerance) ||
+					   (pcOther->mcBounds.msBottomRight.x + fGap <= pcPlacement->mcBounds.msTopLeft.x + fTolerance) ||
+					   (pcPlacement->mcBounds.msBottomRight.y + fGap <= pcOther->mcBounds.msTopLeft.y + fTolerance) ||
+					   (pcOther->mcBounds.msBottomRight.y + fGap <= pcPlacement->mcBounds.msTopLeft.y + fTolerance));
 		}
 	}
 }
@@ -133,15 +133,15 @@ void TestGerberPanelTwoBoards(void)
 	//The taller board leads the line.
 	pcPlacement = cPanel.GetPlacement(pcDoubler);
 	AssertFalse(pcPlacement->mbRotated);
-	AssertDouble(1.6, pcPlacement->msMinimum.x, 6);
-	AssertDouble(1.6, pcPlacement->msMinimum.y, 6);
+	AssertDouble(1.6, pcPlacement->mcBounds.msTopLeft.x, 6);
+	AssertDouble(1.6, pcPlacement->mcBounds.msTopLeft.y, 6);
 	AssertDouble(1.6 + 1.778, pcPlacement->msOffset.x, 6);
 	AssertDouble(1.6 + 30.554, pcPlacement->msOffset.y, 6);
 
 	pcPlacement = cPanel.GetPlacement(pcTransition);
 	AssertFalse(pcPlacement->mbRotated);
-	AssertDouble(1.6 + 18.797 + 1.6, pcPlacement->msMinimum.x, 6);
-	AssertDouble(1.6, pcPlacement->msMinimum.y, 6);
+	AssertDouble(1.6 + 18.797 + 1.6, pcPlacement->mcBounds.msTopLeft.x, 6);
+	AssertDouble(1.6, pcPlacement->mcBounds.msTopLeft.y, 6);
 	AssertDouble(1.6 + 18.797 + 1.6 + 1.905, pcPlacement->msOffset.x, 6);
 	AssertDouble(1.6 + 18.415, pcPlacement->msOffset.y, 6);
 	cPanel.Kill();

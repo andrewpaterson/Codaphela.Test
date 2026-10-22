@@ -230,6 +230,7 @@
     <ClCompile Include="TestGerberRaster.cpp" />
     <ClCompile Include="TestGerberFileSet.cpp" />
     <ClCompile Include="TestGerberPanel.cpp" />
+    <ClCompile Include="TestGerberPanelMerge.cpp" />
     <ClCompile Include="TestGerberVector.cpp" />
     <ClCompile Include="TestGerberWriter.cpp" />
   </ItemGroup>

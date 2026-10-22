@@ -176,6 +176,7 @@ bool GetGerberOutlineBounds(char* szText, SFloat64Vec2* psMinimum, SFloat64Vec2*
 	CGerberCommands			cCommands;
 	CGerberInterpreter		cInterpreter;
 	CGerberOutlineBounds	cBounds;
+	CFloat64Rect			cRect;
 	bool					bResult;
 
 	cCommands.Init();
@@ -184,7 +185,9 @@ bool GetGerberOutlineBounds(char* szText, SFloat64Vec2* psMinimum, SFloat64Vec2*
 	cInterpreter.Init(&cCommands, &cBounds);
 	AssertTrue(cInterpreter.Interpret());
 	cInterpreter.Kill();
-	bResult = cBounds.GetBounds(psMinimum, psMaximum);
+	bResult = cBounds.GetBounds(&cRect);
+	*psMinimum = cRect.msTopLeft;
+	*psMaximum = cRect.msBottomRight;
 	cBounds.Kill();
 	cCommands.Kill();
 	return bResult;
@@ -261,7 +264,6 @@ void TestGerberFileSetOutlineBounds(void)
 {
 	CGerberFileSets		cSets;
 	CGerberFileSet*		pcSet;
-	SFloat64Vec2		sSize;
 	size				i;
 
 	//Centre line bounds of each board's edge cuts, worked out from gerbonara's lines and arcs.
@@ -288,17 +290,16 @@ void TestGerberFileSetOutlineBounds(void)
 		pcSet = cSets.Get(i);
 		AssertString(aszNames[i], pcSet->GetName());
 		AssertTrue(pcSet->HasOutlineBounds());
-		AssertDouble(afBounds[i][0], pcSet->GetOutlineMinimum()->x, 6);
-		AssertDouble(afBounds[i][1], pcSet->GetOutlineMinimum()->y, 6);
-		AssertDouble(afBounds[i][2], pcSet->GetOutlineMaximum()->x, 6);
-		AssertDouble(afBounds[i][3], pcSet->GetOutlineMaximum()->y, 6);
+		AssertDouble(afBounds[i][0], pcSet->GetOutlineBounds()->msTopLeft.x, 6);
+		AssertDouble(afBounds[i][1], pcSet->GetOutlineBounds()->msTopLeft.y, 6);
+		AssertDouble(afBounds[i][2], pcSet->GetOutlineBounds()->msBottomRight.x, 6);
+		AssertDouble(afBounds[i][3], pcSet->GetOutlineBounds()->msBottomRight.y, 6);
 	}
 
 	//The Clock Doubler is 18.796 by 33.17 mm.  Its top right corner arc ends 3nm right of the straight edge.
 	pcSet = cSets.Get("Clock Doubler");
-	sSize = pcSet->GetOutlineSize();
-	AssertDouble(18.796003, sSize.x, 6);
-	AssertDouble(33.169933, sSize.y, 6);
+	AssertDouble(18.796003, pcSet->GetOutlineBounds()->GetWidth(), 6);
+	AssertDouble(33.169933, pcSet->GetOutlineBounds()->GetHeight(), 6);
 
 	cSets.Kill();
 }

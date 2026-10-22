@@ -19,6 +19,7 @@ void TestGerberVector(void);
 void TestGerberRaster(void);
 void TestGerberFileSet(void);
 void TestGerberPanel(void);
+void TestGerberPanelMerge(void);
 
 
 int __cdecl main(void)
@@ -42,6 +43,7 @@ int __cdecl main(void)
 	TestGerberRaster();
 	TestGerberFileSet();
 	TestGerberPanel();
+	TestGerberPanelMerge();
 
 	MemoryKill();
 	TypeConverterKill();
