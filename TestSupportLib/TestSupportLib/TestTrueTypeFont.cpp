@@ -850,10 +850,11 @@ void TestTrueTypeFontDescriptionWidths(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// A font of characters in white, made from Liberation Sans 16px.
+// A font of characters in white, made from a TrueType font in
+// Input/Fonts.
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CFont> CreateWhiteTrueTypeFont(char* szCharacters)
+Ptr<CFont> CreateWhiteTrueTypeFontFrom(char* szFontName, char* szCharacters, float32 fPixelSize)
 {
 	CTrueTypeFont				cFont;
 	CTrueTypeFontFactory		cFactory;
@@ -861,17 +862,28 @@ Ptr<CFont> CreateWhiteTrueTypeFont(char* szCharacters)
 	Ptr<CFontDescription>		pDescription;
 	Ptr<CFont>					pFont;
 
-	if (!LoadTrueTypeFont(&cFont, "LiberationSans-Regular.ttf"))
+	if (!LoadTrueTypeFont(&cFont, szFontName))
 	{
 		return NULL;
 	}
-	cFactory.Init(&cFont, 16.0f);
+	cFactory.Init(&cFont, fPixelSize);
 	cWhite.Init(1.0f, 1.0f, 1.0f);
-	pDescription = cFactory.Describe("Liberation Sans 16px", szCharacters);
+	pDescription = cFactory.Describe(szFontName, szCharacters);
 	pFont = OMalloc<CFont>(pDescription, cFactory.Rasterise(pDescription, &cWhite));
 	cFactory.Kill();
 	cFont.Kill();
 	return pFont;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A font of characters in white, made from Liberation Sans.
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CFont> CreateWhiteTrueTypeFont(char* szCharacters, float32 fPixelSize)
+{
+	return CreateWhiteTrueTypeFontFrom("LiberationSans-Regular.ttf", szCharacters, fPixelSize);
 }
 
 
@@ -942,7 +954,7 @@ void TestTrueTypeFontColours(void)
 		Ptr<CFontColours>		pBGRColours;
 		uint8					auiRGBA[4];
 
-		pWhite = CreateWhiteTrueTypeFont("AB");
+		pWhite = CreateWhiteTrueTypeFont("AB", 16.0f);
 		AssertTrue(pWhite.IsNotNull());
 		pColours = OMalloc<CFontColours>(pWhite);
 
@@ -1022,18 +1034,16 @@ void TestTrueTypeFontColoursTextRuns(void)
 		Ptr<CGlyphListFontDraw>	pDraw;
 		CArrayGlyphPosition*	pasGlyphs;
 
-		pWhite = CreateWhiteTrueTypeFont("abcd\xC3\xA9");
+		pWhite = CreateWhiteTrueTypeFont("abcd\xC3\xA9", 16.0f);
 		pColours = OMalloc<CFontColours>(pWhite);
 		pRed = pColours->GetFont(Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00));
 
 		//"ab", e acute (2 bytes), "cd".  Red from the middle of the e acute to before the d.
 		asChanges.Init();
 		psChange = asChanges.Add();
-		psChange->uiPosition = 3;
-		psChange->pcFont = &pRed;
+		psChange->Init(3, &pRed);
 		psChange = asChanges.Add();
-		psChange->uiPosition = 5;
-		psChange->pcFont = &pWhite;
+		psChange->Init(5, &pWhite);
 
 		cUTF8.Init("ab\xC3\xA9" "cd");
 		cReader.Init(&pWhite);
@@ -1075,6 +1085,341 @@ void TestTrueTypeFontColoursTextRuns(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Lays out szText in pSmall with the bytes from uiBigStart to uiBigEnd in
+// pBig.
+//
+//////////////////////////////////////////////////////////////////////////
+void LayoutMixedSizes(Ptr<CTextLayout> pLayout, Ptr<CGlyphListFontDraw> pDraw, Ptr<CFont> pSmall, Ptr<CFont> pBig, char* szText, size uiBigStart, size uiBigEnd)
+{
+	CArrayTextFontChange	asChanges;
+	STextFontChange*		psChange;
+	CSimpleTextReader		cReader;
+	CUTF8					cUTF8;
+	Ptr<CText>				pText;
+
+	asChanges.Init();
+	psChange = asChanges.Add();
+	psChange->Init(uiBigStart, &pBig);
+	psChange = asChanges.Add();
+	psChange->Init(uiBigEnd, &pSmall);
+
+	cUTF8.Init(szText);
+	cReader.Init(&pSmall);
+	pText = cReader.Read(&cUTF8, true, &asChanges);
+	cReader.Kill();
+	cUTF8.Kill();
+	asChanges.Kill();
+
+	pDraw->Begin();
+	pLayout->Layout(pDraw, pText);
+	pDraw->End();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Glyphs of different sizes on a line share a baseline.  A line is as high
+// as the largest ascent plus the largest descent of the glyphs on it.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTrueTypeFontMixedSizeLayout(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CFont>				pSmall;
+		Ptr<CFont>				pBig;
+		Ptr<CTextLayout>		pLayout;
+		Ptr<CGlyphListFontDraw>	pDraw;
+		CArrayGlyphPosition*	pasGlyphs;
+		SInt32Vec2				sSize;
+		int32					iSmallAscent;
+		int32					iSmallHeight;
+		int32					iBigAscent;
+		int32					iBigHeight;
+		int32					iWidth;
+
+		pSmall = CreateWhiteTrueTypeFont("ab ", 16.0f);
+		pBig = CreateWhiteTrueTypeFont("AB", 32.0f);
+		iSmallAscent = pSmall->GetAscent();
+		iSmallHeight = pSmall->GetLineHeight();
+		iBigAscent = pBig->GetAscent();
+		iBigHeight = pBig->GetLineHeight();
+		AssertTrue(iBigAscent > iSmallAscent);
+		AssertTrue(pBig->GetDescent() > pSmall->GetDescent());
+
+		pLayout = OMalloc<CTextLayout>();
+		pDraw = OMalloc<CGlyphListFontDraw>();
+
+		//"aA b" then "b" on its own line.
+		LayoutMixedSizes(pLayout, pDraw, pSmall, pBig, "aA b\nb", 1, 2);
+		pasGlyphs = pDraw->GetGlyphs();
+		AssertSize(5, pasGlyphs->NumElements());
+		AssertInt(iBigAscent - iSmallAscent, pasGlyphs->Get(0)->sPosition.y);
+		AssertInt(0, pasGlyphs->Get(1)->sPosition.y);
+		AssertInt(iBigAscent - iSmallAscent, pasGlyphs->Get(2)->sPosition.y);
+		AssertInt(iBigAscent - iSmallAscent, pasGlyphs->Get(3)->sPosition.y);
+		AssertInt(iBigHeight, pasGlyphs->Get(4)->sPosition.y);
+		AssertInt(0, pasGlyphs->Get(4)->sPosition.x);
+		sSize = pLayout->GetSize();
+		AssertInt(iBigHeight + iSmallHeight, sSize.y);
+
+		//An empty line is as high as the font it is in.
+		LayoutMixedSizes(pLayout, pDraw, pSmall, pBig, "a\n\nA", 3, 4);
+		pasGlyphs = pDraw->GetGlyphs();
+		AssertSize(2, pasGlyphs->NumElements());
+		AssertInt(0, pasGlyphs->Get(0)->sPosition.y);
+		AssertInt(iSmallHeight * 2, pasGlyphs->Get(1)->sPosition.y);
+		sSize = pLayout->GetSize();
+		AssertInt(iSmallHeight * 2 + iBigHeight, sSize.y);
+
+		//A big word wrapped to the next line leaves the first line only as high as the small glyphs on it.
+		//Wide enough for BB but not for aa BB.
+		iWidth = pBig->GetGlyph((uint32)'B', 1)->GetFullWidth() * 2 + 1;
+		pLayout->SetWidth(iWidth);
+		LayoutMixedSizes(pLayout, pDraw, pSmall, pBig, "aa BB", 3, 5);
+		pasGlyphs = pDraw->GetGlyphs();
+		AssertSize(5, pasGlyphs->NumElements());
+		AssertInt(0, pasGlyphs->Get(0)->sPosition.y);
+		AssertInt(0, pasGlyphs->Get(3)->sPosition.x);
+		AssertInt(iSmallHeight, pasGlyphs->Get(3)->sPosition.y);
+		AssertInt(iSmallHeight, pasGlyphs->Get(4)->sPosition.y);
+		sSize = pLayout->GetSize();
+		AssertInt(iSmallHeight + iBigHeight, sSize.y);
+
+		pDraw = NULL;
+		pLayout = NULL;
+		pBig = NULL;
+		pSmall = NULL;
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Different typefaces on a line share a baseline.  The line's ascent and
+// descent can come from different fonts.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTrueTypeFontMixedTypefaceLayout(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CFont>				pLiberation;
+		Ptr<CFont>				pMono;
+		Ptr<CFont>				pInter;
+		CArrayTextFontChange	asChanges;
+		STextFontChange*		psChange;
+		CSimpleTextReader		cReader;
+		CUTF8					cUTF8;
+		Ptr<CText>				pText;
+		Ptr<CTextLayout>		pLayout;
+		Ptr<CGlyphListFontDraw>	pDraw;
+		CArrayGlyphPosition*	pasGlyphs;
+		SInt32Vec2				sSize;
+		int32					iRowAscent;
+		int32					iRowDescent;
+
+		pLiberation = CreateWhiteTrueTypeFontFrom("LiberationSans-Regular.ttf", "abX", 20.0f);
+		pMono = CreateWhiteTrueTypeFontFrom("JetBrainsMonoNL-Regular.ttf", "abX", 17.0f);
+		pInter = CreateWhiteTrueTypeFontFrom("InterVariable.ttf", "abX", 16.0f);
+
+		//Liberation Sans has the most ascent and JetBrains Mono the most descent.
+		AssertTrue(pLiberation->GetAscent() > pMono->GetAscent());
+		AssertTrue(pLiberation->GetAscent() > pInter->GetAscent());
+		AssertTrue(pMono->GetDescent() > pLiberation->GetDescent());
+		AssertTrue(pMono->GetDescent() > pInter->GetDescent());
+		iRowAscent = pLiberation->GetAscent();
+		iRowDescent = pMono->GetDescent();
+
+		//"a" in Liberation Sans, "X" in JetBrains Mono, "b" in Inter, then "b" in Inter on its own line.
+		asChanges.Init();
+		psChange = asChanges.Add();
+		psChange->Init(1, &pMono);
+		psChange = asChanges.Add();
+		psChange->Init(2, &pInter);
+		cUTF8.Init("aXb\nb");
+		cReader.Init(&pLiberation);
+		pText = cReader.Read(&cUTF8, true, &asChanges);
+		cReader.Kill();
+		cUTF8.Kill();
+		asChanges.Kill();
+		//A line feed ends a run so the second line's b is a run of its own.
+		AssertSize(4, pText->NumRuns());
+
+		pLayout = OMalloc<CTextLayout>();
+		pDraw = OMalloc<CGlyphListFontDraw>();
+		pDraw->Begin();
+		pLayout->Layout(pDraw, pText);
+		pDraw->End();
+		pasGlyphs = pDraw->GetGlyphs();
+		AssertSize(4, pasGlyphs->NumElements());
+		AssertInt(iRowAscent - pLiberation->GetAscent(), pasGlyphs->Get(0)->sPosition.y);
+		AssertInt(iRowAscent - pMono->GetAscent(), pasGlyphs->Get(1)->sPosition.y);
+		AssertInt(iRowAscent - pInter->GetAscent(), pasGlyphs->Get(2)->sPosition.y);
+		AssertInt(pasGlyphs->Get(0)->pcGlyph->GetFullWidth(), pasGlyphs->Get(1)->sPosition.x);
+		AssertInt(pasGlyphs->Get(1)->sPosition.x + pasGlyphs->Get(1)->pcGlyph->GetFullWidth(), pasGlyphs->Get(2)->sPosition.x);
+		AssertInt(iRowAscent + iRowDescent, pasGlyphs->Get(3)->sPosition.y);
+		sSize = pLayout->GetSize();
+		AssertInt(iRowAscent + iRowDescent + pInter->GetLineHeight(), sSize.y);
+
+		pDraw = NULL;
+		pLayout = NULL;
+		pText = NULL;
+		pInter = NULL;
+		pMono = NULL;
+		pLiberation = NULL;
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The underline, strikeout, superscript and subscript from the post and
+// OS/2 tables, in font units and as pixels in a description.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTrueTypeFontScriptAndLineMetrics(void)
+{
+	ObjectsInit();
+	{
+		CTrueTypeFont			cFont;
+		CTrueTypeFontFactory	cFactory;
+		Ptr<CFontDescription>	pDescription;
+
+		AssertTrue(LoadTrueTypeFont(&cFont, "LiberationSans-Regular.ttf"));
+		AssertTrue(cFont.HasPost());
+		AssertInt(-367, cFont.GetUnderlinePosition());
+		AssertInt(150, cFont.GetUnderlineThickness());
+		AssertTrue(cFont.HasOS2());
+		AssertInt(530, cFont.GetStrikeoutPosition());
+		AssertInt(102, cFont.GetStrikeoutSize());
+		AssertInt(1331, cFont.GetSuperscriptYSize());
+		AssertInt(977, cFont.GetSuperscriptYOffset());
+		AssertInt(1331, cFont.GetSubscriptYSize());
+		AssertInt(283, cFont.GetSubscriptYOffset());
+
+		//At 16 pixels an em is 2048 units.
+		cFactory.Init(&cFont, 16.0f);
+		pDescription = cFactory.Describe("Liberation Sans 16px", "AB");
+		cFactory.Kill();
+		cFont.Kill();
+		AssertInt(3, pDescription->GetUnderlineTop());
+		AssertInt(1, pDescription->GetUnderlineThickness());
+		AssertInt(-4, pDescription->GetStrikeoutTop());
+		AssertInt(1, pDescription->GetStrikeoutThickness());
+		AssertFloat(1331.0f / 2048.0f, pDescription->GetSuperscriptScale(), 6);
+		AssertInt(8, pDescription->GetSuperscriptShift());
+		AssertFloat(1331.0f / 2048.0f, pDescription->GetSubscriptScale(), 6);
+		AssertInt(2, pDescription->GetSubscriptShift());
+
+		//At 20 pixels an em is 1000 units.  A subscript shift of 1.5 pixels rounds to 2.
+		AssertTrue(LoadTrueTypeFont(&cFont, "JetBrainsMonoNL-Regular.ttf"));
+		cFactory.Init(&cFont, 20.0f);
+		pDescription = cFactory.Describe("JetBrains Mono 20px", "AB");
+		cFactory.Kill();
+		cFont.Kill();
+		AssertInt(3, pDescription->GetUnderlineTop());
+		AssertInt(1, pDescription->GetUnderlineThickness());
+		AssertInt(-6, pDescription->GetStrikeoutTop());
+		AssertInt(1, pDescription->GetStrikeoutThickness());
+		AssertFloat(0.6f, pDescription->GetSuperscriptScale(), 6);
+		AssertInt(7, pDescription->GetSuperscriptShift());
+		AssertFloat(0.6f, pDescription->GetSubscriptScale(), 6);
+		AssertInt(2, pDescription->GetSubscriptShift());
+
+		//A font without the tables, ascent 15 and descent 4.
+		pDescription = OMalloc<CFontDescription>((char*)"Estimated", (int16)4, (int16)15, (int16)4, 0, 0);
+		AssertInt(1, pDescription->GetUnderlineTop());
+		AssertInt(1, pDescription->GetUnderlineThickness());
+		AssertInt(-5, pDescription->GetStrikeoutTop());
+		AssertInt(1, pDescription->GetStrikeoutThickness());
+		AssertFloat(0.65f, pDescription->GetSuperscriptScale(), 6);
+		AssertInt(7, pDescription->GetSuperscriptShift());
+		AssertFloat(0.65f, pDescription->GetSubscriptScale(), 6);
+		AssertInt(3, pDescription->GetSubscriptShift());
+
+		pDescription = NULL;
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A run moved up (superscript) or down (subscript) sits that far from the
+// line's baseline, and the line grows to fit it.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTrueTypeFontScriptLayout(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CFont>				pBig;
+		Ptr<CFont>				pSmall;
+		CArrayTextFontChange	asChanges;
+		CSimpleTextReader		cReader;
+		CUTF8					cUTF8;
+		Ptr<CText>				pText;
+		Ptr<CTextLayout>		pLayout;
+		Ptr<CGlyphListFontDraw>	pDraw;
+		CArrayGlyphPosition*	pasGlyphs;
+		SInt32Vec2				sSize;
+		int32					iRowAscent;
+		int32					iRowDescent;
+
+		pBig = CreateWhiteTrueTypeFontFrom("LiberationSans-Regular.ttf", "xy2", 20.0f);
+		pSmall = CreateWhiteTrueTypeFontFrom("LiberationSans-Regular.ttf", "xy2", 13.0f);
+
+		//Raised 10 the small 2 reaches above the big x, lowered 4 it reaches below the big y.
+		AssertTrue(pSmall->GetAscent() + 10 > pBig->GetAscent());
+		AssertTrue(pSmall->GetDescent() + 4 > pBig->GetDescent());
+		iRowAscent = pSmall->GetAscent() + 10;
+		iRowDescent = pSmall->GetDescent() + 4;
+
+		//x, a superscript 2, y, a subscript 2.
+		asChanges.Init();
+		asChanges.Add()->Init(1, &pSmall, 10);
+		asChanges.Add()->Init(2, &pBig);
+		asChanges.Add()->Init(3, &pSmall, -4);
+		cUTF8.Init("x2y2");
+		cReader.Init(&pBig);
+		pText = cReader.Read(&cUTF8, true, &asChanges);
+		cReader.Kill();
+		cUTF8.Kill();
+		asChanges.Kill();
+		AssertSize(4, pText->NumRuns());
+		AssertInt(10, pText->GetRun(1)->GetBaselineShift());
+		AssertInt(-4, pText->GetRun(3)->GetBaselineShift());
+
+		pLayout = OMalloc<CTextLayout>();
+		pDraw = OMalloc<CGlyphListFontDraw>();
+		pDraw->Begin();
+		pLayout->Layout(pDraw, pText);
+		pDraw->End();
+		pasGlyphs = pDraw->GetGlyphs();
+		AssertSize(4, pasGlyphs->NumElements());
+		AssertInt(iRowAscent - pBig->GetAscent(), pasGlyphs->Get(0)->sPosition.y);
+		AssertInt(0, pasGlyphs->Get(1)->sPosition.y);
+		AssertInt(iRowAscent - pBig->GetAscent(), pasGlyphs->Get(2)->sPosition.y);
+		AssertInt(iRowAscent - (pSmall->GetAscent() - 4), pasGlyphs->Get(3)->sPosition.y);
+		sSize = pLayout->GetSize();
+		AssertInt(iRowAscent + iRowDescent, sSize.y);
+		AssertTrue(sSize.y > pBig->GetLineHeight());
+
+		pDraw = NULL;
+		pLayout = NULL;
+		pText = NULL;
+		pSmall = NULL;
+		pBig = NULL;
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestTrueTypeFont(void)
@@ -1096,6 +1441,10 @@ void TestTrueTypeFont(void)
 	TestTrueTypeFontDescriptionWidths();
 	TestTrueTypeFontColours();
 	TestTrueTypeFontColoursTextRuns();
+	TestTrueTypeFontMixedSizeLayout();
+	TestTrueTypeFontMixedTypefaceLayout();
+	TestTrueTypeFontScriptAndLineMetrics();
+	TestTrueTypeFontScriptLayout();
 
 	DataIOKill();
 

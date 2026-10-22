@@ -646,6 +646,418 @@ void TestTextAreaSpansFillContainer(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Liberation Sans in its four faces, with the characters the style tests
+// use.
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CFontFamily> CreateTextAreaFamily(float32 fDefaultPixelSize)
+{
+	Ptr<CFontFamily>	pFamily;
+
+	pFamily = OMalloc<CFontFamily>("Liberation Sans", " !+,.0123456789=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", fDefaultPixelSize, CCO_RGB);
+	AssertTrue(pFamily->SetFace(FS_Regular, "Input" _FS_ "Fonts" _FS_ "LiberationSans-Regular.ttf"));
+	AssertTrue(pFamily->SetFace(FS_Bold, "Input" _FS_ "Fonts" _FS_ "LiberationSans-Bold.ttf"));
+	AssertTrue(pFamily->SetFace(FS_Italic, "Input" _FS_ "Fonts" _FS_ "LiberationSans-Italic.ttf"));
+	AssertTrue(pFamily->SetFace(FS_BoldItalic, "Input" _FS_ "Fonts" _FS_ "LiberationSans-BoldItalic.ttf"));
+	return pFamily;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Adds a span over the first szWord in szText.
+//
+//////////////////////////////////////////////////////////////////////////
+void AddTextAreaWordSpan(Ptr<CTextArea> pTextArea, const char* szText, const char* szWord, STextStyleOverride* psOverride)
+{
+	const char*	szFound;
+
+	szFound = strstr(szText, szWord);
+	AssertNotNull((void*)szFound);
+	AssertTrue(pTextArea->AddSpan(szFound - szText, strlen(szWord), psOverride));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Spans override parts of the text area's style.  Overlapping spans
+// combine, each property from the last span that sets it.  A span that
+// changes the face or size changes the size of the text.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTextAreaStyles(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CFontFamily>		pFamily;
+		Ptr<CTextArea>			pTextArea;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		SInt32Vec2				sSize;
+		SInt32Vec2				sBaseSize;
+		CPointer				pNull;
+		STextStyleOverride		sOverride;
+		STextStyle				sStyle;
+		ARGB32					sRed;
+		int32					iBoldWider;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 64, 32, NULL);
+		cTick.Init(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+
+		pFamily = CreateTextAreaFamily(16.0f);
+		pTextArea = OMalloc<CTextArea>(pTestWindow, pFamily, "aaa bbb ccc");
+		AssertTrue(pTextArea->GetFontFamily() == pFamily);
+		pTextArea->GetStyle(&sStyle);
+		AssertFalse(sStyle.bBold);
+		AssertFalse(sStyle.bItalic);
+		AssertTrue(sStyle.fPixelSize == 0.0f);
+		AssertInt(FONT_COLOURS_WHITE, sStyle.sColour);
+		sBaseSize = pTextArea->GetTextSize();
+		AssertInt(pFamily->GetColours(FS_Regular, 16.0f)->GetWhite()->GetLineHeight(), sBaseSize.y);
+
+		//Bold bbb is wider.
+		iBoldWider = 3 * (pFamily->GetColours(FS_Bold, 16.0f)->GetWhite()->GetGlyph((uint32)'b', 1)->GetFullWidth() - pFamily->GetColours(FS_Regular, 16.0f)->GetWhite()->GetGlyph((uint32)'b', 1)->GetFullWidth());
+		AssertTrue(iBoldWider > 0);
+		sOverride.Init();
+		sOverride.SetBold(true);
+		AssertTrue(pTextArea->AddSpan(4, 3, &sOverride));
+		sSize = pTextArea->GetTextSize();
+		AssertInt32Vec2(sBaseSize.x + iBoldWider, sBaseSize.y, &sSize);
+
+		//32 pixel ccc makes the line as high as the bigger font.
+		sOverride.Init();
+		sOverride.SetPixelSize(32.0f);
+		AssertTrue(pTextArea->AddSpan(8, 3, &sOverride));
+		sSize = pTextArea->GetTextSize();
+		AssertInt(pFamily->GetColours(FS_Regular, 32.0f)->GetWhite()->GetLineHeight(), sSize.y);
+
+		//A colour over all of them only changes the colour.
+		sRed = Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00);
+		AssertTrue(pTextArea->AddSpan(2, 7, sRed));
+		pTextArea->GetStyleAt(5, &sStyle);
+		AssertTrue(sStyle.bBold);
+		AssertFalse(sStyle.bItalic);
+		AssertTrue(sStyle.fPixelSize == 0.0f);
+		AssertInt(sRed, sStyle.sColour);
+		pTextArea->GetStyleAt(8, &sStyle);
+		AssertFalse(sStyle.bBold);
+		AssertTrue(sStyle.fPixelSize == 32.0f);
+		AssertInt(sRed, sStyle.sColour);
+		pTextArea->GetStyleAt(9, &sStyle);
+		AssertTrue(sStyle.fPixelSize == 32.0f);
+		AssertInt(FONT_COLOURS_WHITE, sStyle.sColour);
+		AssertInt(FONT_COLOURS_WHITE, pTextArea->GetColourAt(0));
+
+		//Without the spans the text is its first size again.
+		pTextArea->ClearSpans();
+		sSize = pTextArea->GetTextSize();
+		AssertInt32Vec2(sBaseSize.x, sBaseSize.y, &sSize);
+
+		//The text area's own style.
+		sStyle.Init(false, false, 32.0f, sRed);
+		pTextArea->SetStyle(&sStyle);
+		sSize = pTextArea->GetTextSize();
+		AssertInt(pFamily->GetColours(FS_Regular, 32.0f)->GetWhite()->GetLineHeight(), sSize.y);
+		AssertTrue(pTextArea->GetFont() == pFamily->GetColours(FS_Regular, 32.0f)->GetWhite());
+		AssertInt(sRed, pTextArea->GetColour());
+
+		ValidateLabelObjects();
+
+		pTextArea = NULL;
+		pFamily = NULL;
+		pTestWindow = NULL;
+	}
+
+	AssertLabelObjectsRemoved();
+	cNativeFactory.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A word wrapped text area in faces, sizes and colours.  The shown frame
+// is written to Output/TextAreaStyles.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTextAreaStylesFillContainer(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "TextAreaStyles";
+	const char*				szText;
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CFontFamily>		pFamily;
+		Ptr<CFillContainer>		pFill;
+		Ptr<CClearCanvasDraw>	pBackground;
+		Ptr<CTextArea>			pTextArea;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		SInsets					sInsets;
+		int						aiInsets[4];
+		CChars					szExpectedDirectory;
+		STextStyleOverride		sOverride;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 240, 160, szDirectory);
+		cTick.Init(&cData, 1);
+		pBackground = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)30, 31, 34));
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+
+		pFill = OMalloc<CFillContainer>(pTestWindow);
+		aiInsets[BEI_Top] = 5;
+		aiInsets[BEI_Right] = 8;
+		aiInsets[BEI_Bottom] = 5;
+		aiInsets[BEI_Left] = 8;
+		sInsets.Init(aiInsets);
+		pFill->SetInsets(&sInsets);
+		pTestWindow->SetContainer(pFill);
+
+		pFamily = CreateTextAreaFamily(15.0f);
+		szText = "Text in bold, italic and bold italic.  BIG and small words share a baseline, and Coloured Bold wraps.";
+		pTextArea = OMalloc<CTextArea>(pTestWindow, pFamily, szText);
+		pTextArea->SetWordWrap(true);
+		pTextArea->SetAlignment(CSH_Left, CSV_Top);
+		pTextArea->SetColour(Set32BitColour((uint8)0xBC, (uint8)0xBE, (uint8)0xC4));
+
+		sOverride.Init();
+		sOverride.SetBold(true);
+		AddTextAreaWordSpan(pTextArea, szText, "bold,", &sOverride);
+		sOverride.Init();
+		sOverride.SetItalic(true);
+		AddTextAreaWordSpan(pTextArea, szText, "italic", &sOverride);
+		sOverride.Init();
+		sOverride.SetBold(true);
+		sOverride.SetItalic(true);
+		AddTextAreaWordSpan(pTextArea, szText, "bold italic", &sOverride);
+		sOverride.Init();
+		sOverride.SetPixelSize(28.0f);
+		AddTextAreaWordSpan(pTextArea, szText, "BIG", &sOverride);
+		sOverride.Init();
+		sOverride.SetPixelSize(10.0f);
+		AddTextAreaWordSpan(pTextArea, szText, "small", &sOverride);
+		sOverride.Init();
+		sOverride.SetColour(Set32BitColour((uint8)0xCF, (uint8)0x8E, (uint8)0x6D));
+		AddTextAreaWordSpan(pTextArea, szText, "Coloured Bold wraps", &sOverride);
+		sOverride.Init();
+		sOverride.SetBold(true);
+		AddTextAreaWordSpan(pTextArea, szText, "Bold wraps", &sOverride);
+		pFill->AddComponent(pTextArea);
+
+		pTestWindow->Show();
+
+		ValidateLabelObjects();
+
+		pTextArea = NULL;
+		pFamily = NULL;
+		pFill = NULL;
+		pTestWindow = NULL;
+		pBackground = NULL;
+
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
+	}
+
+	AssertLabelObjectsRemoved();
+	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Superscript and subscript spans are smaller and moved up or down, and
+// the line grows to fit them.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTextAreaScripts(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CFontFamily>		pFamily;
+		Ptr<CTextArea>			pTextArea;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		SInt32Vec2				sSize;
+		CPointer				pNull;
+		STextStyleOverride		sOverride;
+		STextStyle				sStyle;
+		Ptr<CFont>				pRegular;
+		Ptr<CFont>				pSuperscript;
+		Ptr<CFont>				pSubscript;
+		int16					iSuperscriptShift;
+		int16					iSubscriptShift;
+		int32					iAscent;
+		int32					iDescent;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 64, 32, NULL);
+		cTick.Init(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+
+		pFamily = CreateTextAreaFamily(16.0f);
+		sStyle.Init();
+		pRegular = pFamily->GetRunFont(&sStyle, &iSuperscriptShift);
+		sStyle.ePosition = TP_Superscript;
+		pSuperscript = pFamily->GetRunFont(&sStyle, &iSuperscriptShift);
+		sStyle.ePosition = TP_Subscript;
+		pSubscript = pFamily->GetRunFont(&sStyle, &iSubscriptShift);
+		AssertTrue(iSuperscriptShift > 0);
+		AssertTrue(iSubscriptShift < 0);
+		AssertTrue(pSuperscript->GetLineHeight() < pRegular->GetLineHeight());
+
+		//"E=mc2 H2O"
+		pTextArea = OMalloc<CTextArea>(pTestWindow, pFamily, "E=mc2 H2O");
+		sSize = pTextArea->GetTextSize();
+		AssertInt(pRegular->GetLineHeight(), sSize.y);
+
+		//The superscript 2 reaches above the regular text.
+		sOverride.Init();
+		sOverride.SetPosition(TP_Superscript);
+		AssertTrue(pTextArea->AddSpan(4, 1, &sOverride));
+		pTextArea->GetStyleAt(4, &sStyle);
+		AssertInt(TP_Superscript, sStyle.ePosition);
+		pTextArea->GetStyleAt(3, &sStyle);
+		AssertInt(TP_Normal, sStyle.ePosition);
+		iAscent = pSuperscript->GetAscent() + iSuperscriptShift;
+		AssertTrue(iAscent > pRegular->GetAscent());
+		sSize = pTextArea->GetTextSize();
+		AssertInt(iAscent + pRegular->GetDescent(), sSize.y);
+
+		//The subscript 2 reaches below it.
+		sOverride.Init();
+		sOverride.SetPosition(TP_Subscript);
+		AssertTrue(pTextArea->AddSpan(7, 1, &sOverride));
+		iDescent = pSubscript->GetDescent() - iSubscriptShift;
+		AssertTrue(iDescent > pRegular->GetDescent());
+		sSize = pTextArea->GetTextSize();
+		AssertInt(iAscent + iDescent, sSize.y);
+
+		pTextArea->ClearSpans();
+		sSize = pTextArea->GetTextSize();
+		AssertInt(pRegular->GetLineHeight(), sSize.y);
+
+		ValidateLabelObjects();
+
+		pTextArea = NULL;
+		pSubscript = NULL;
+		pSuperscript = NULL;
+		pRegular = NULL;
+		pFamily = NULL;
+		pTestWindow = NULL;
+	}
+
+	AssertLabelObjectsRemoved();
+	cNativeFactory.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Superscript and subscript in a word wrapped text area, with sizes and
+// colours.  The shown frame is written to Output/TextAreaScripts.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTextAreaScriptsFillContainer(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "TextAreaScripts";
+	const char*				szText;
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CFontFamily>		pFamily;
+		Ptr<CFillContainer>		pFill;
+		Ptr<CClearCanvasDraw>	pBackground;
+		Ptr<CTextArea>			pTextArea;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		SInsets					sInsets;
+		int						aiInsets[4];
+		CChars					szExpectedDirectory;
+		STextStyleOverride		sSuperscript;
+		STextStyleOverride		sSubscript;
+		STextStyleOverride		sOverride;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 240, 120, szDirectory);
+		cTick.Init(&cData, 1);
+		pBackground = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)30, 31, 34));
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+
+		pFill = OMalloc<CFillContainer>(pTestWindow);
+		aiInsets[BEI_Top] = 5;
+		aiInsets[BEI_Right] = 8;
+		aiInsets[BEI_Bottom] = 5;
+		aiInsets[BEI_Left] = 8;
+		sInsets.Init(aiInsets);
+		pFill->SetInsets(&sInsets);
+		pTestWindow->SetContainer(pFill);
+
+		pFamily = CreateTextAreaFamily(16.0f);
+		szText = "E = mc2 and H2O.  Ca2+ ions.  x2 + y2 = z2 where x2 is BIG2 and a footnote1.";
+		pTextArea = OMalloc<CTextArea>(pTestWindow, pFamily, szText);
+		pTextArea->SetWordWrap(true);
+		pTextArea->SetAlignment(CSH_Left, CSV_Top);
+		pTextArea->SetColour(Set32BitColour((uint8)0xBC, (uint8)0xBE, (uint8)0xC4));
+
+		sSuperscript.Init();
+		sSuperscript.SetPosition(TP_Superscript);
+		sSubscript.Init();
+		sSubscript.SetPosition(TP_Subscript);
+		AssertTrue(pTextArea->AddSpan(6, 1, &sSuperscript));		//mc2
+		AssertTrue(pTextArea->AddSpan(13, 1, &sSubscript));		//H2O
+		AssertTrue(pTextArea->AddSpan(20, 2, &sSuperscript));		//Ca2+
+		AssertTrue(pTextArea->AddSpan(31, 1, &sSuperscript));		//x2
+		AssertTrue(pTextArea->AddSpan(36, 1, &sSuperscript));		//y2
+		AssertTrue(pTextArea->AddSpan(41, 1, &sSuperscript));		//z2
+		AssertTrue(pTextArea->AddSpan(50, 1, &sSubscript));		//x2
+		sOverride.Init();
+		sOverride.SetPixelSize(28.0f);
+		AddTextAreaWordSpan(pTextArea, szText, "BIG2", &sOverride);
+		AssertTrue(pTextArea->AddSpan(58, 1, &sSuperscript));		//BIG2
+		sOverride.Init();
+		sOverride.SetPosition(TP_Superscript);
+		sOverride.SetColour(Set32BitColour((uint8)0x56, (uint8)0xA8, (uint8)0xF5));
+		AssertTrue(pTextArea->AddSpan(74, 1, &sOverride));		//footnote1
+		pFill->AddComponent(pTextArea);
+
+		pTestWindow->Show();
+
+		ValidateLabelObjects();
+
+		pTextArea = NULL;
+		pFamily = NULL;
+		pFill = NULL;
+		pTestWindow = NULL;
+		pBackground = NULL;
+
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
+	}
+
+	AssertLabelObjectsRemoved();
+	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestTextArea(void)
@@ -659,6 +1071,10 @@ void TestTextArea(void)
 	TestTextAreaNoWordWrapFillContainer();
 	TestTextAreaSpans();
 	TestTextAreaSpansFillContainer();
+	TestTextAreaStyles();
+	TestTextAreaStylesFillContainer();
+	TestTextAreaScripts();
+	TestTextAreaScriptsFillContainer();
 
 	ObjectsFlush();
 	ObjectsKill();
