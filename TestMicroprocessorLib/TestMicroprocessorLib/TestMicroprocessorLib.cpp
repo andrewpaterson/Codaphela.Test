@@ -14,6 +14,7 @@ void TestW65C816Add(void);
 void TestW65C816Subtract(void);
 void TestW65C816Arithmetic(void);
 void TestW65C816Load(void);
+void TestW65C816SingleStep(void);
 void TestW65C816Logic(void);
 void TestW65C816Mode(void);
 void TestW65C816Stack(void);
@@ -52,6 +53,7 @@ int __cdecl main(void)
 	TestW65C816DirectPage();
 	TestW65C816Decimal();
 	TestW65C816Timing();
+	TestW65C816SingleStep();
 	TestW65C816Arithmetic();
 
 	UnknownsKill();

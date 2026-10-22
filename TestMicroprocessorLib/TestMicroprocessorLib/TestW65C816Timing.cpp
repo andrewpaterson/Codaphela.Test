@@ -519,6 +519,8 @@ void TestW65C816TimingSignalsReadModifyWrite(void)
 	// Table 5-7 1d and notes 3, 17: MLB is low for the read, modify and write cycles.
 	// In emulation mode RWB is low for the modify cycle as well as the write.  The
 	// cycle numbers are the rows of table 5-7, 4a and 6a are skipped for 8 bit data.
+	// Table 5-7 puts the modify cycle at AA+1 but with 8 bit data it is at AA (as in
+	// the SingleStepTests).
 	CTestW65C816Context		cTestContext;
 
 	cTestContext.Init(0x10000, 0xea, 0x0200);
@@ -532,7 +534,7 @@ void TestW65C816TimingSignalsReadModifyWrite(void)
 		"INC: (2)    Addr.00:0201  RWB1 VPA1 VDA0 VPB1 MLB1\n"\
 		"INC: (3)    Addr.00:0202  RWB1 VPA1 VDA0 VPB1 MLB1\n"\
 		"INC: (4)    Addr.00:3000  RWB1 VPA0 VDA1 VPB1 MLB0\n"\
-		"INC: (6)    Addr.00:3001  RWB0 VPA0 VDA0 VPB1 MLB0\n"\
+		"INC: (6)    Addr.00:3000  RWB0 VPA0 VDA0 VPB1 MLB0\n"\
 		"INC: (8)    Addr.00:3000  RWB0 VPA0 VDA1 VPB1 MLB0\n"\
 		"OPC: (1)    Addr.00:0203  RWB1 VPA1 VDA1 VPB1 MLB1\n");
 }

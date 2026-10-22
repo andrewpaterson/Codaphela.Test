@@ -233,6 +233,7 @@
     <ClCompile Include="TestMicroprocessorLib.cpp" />
     <ClCompile Include="TestW65C816Add.cpp" />
     <ClCompile Include="TestW65C816Context.cpp" />
+    <ClCompile Include="TestW65C816SingleStep.cpp" />
     <ClCompile Include="TestW65C816Timing.cpp" />
     <ClCompile Include="TestW65C816Decimal.cpp" />
     <ClCompile Include="TestW65C816DirectPage.cpp" />
