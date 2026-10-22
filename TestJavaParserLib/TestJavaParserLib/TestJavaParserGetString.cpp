@@ -24,11 +24,11 @@ TRISTATE ParseString(char* sz, void* szDest, size* piLength, uint16* piWidth)
 //																		//
 //																		//
 //////////////////////////////////////////////////////////////////////////
-void AssertZtring(TRISTATE tResult, char* szActual, char* szExpected, int iLengthActual, int iLengthExpected, int iWidthActual, int iWidthExpected)
+void AssertZtring(TRISTATE tResult, char* szActual, char* szExpected, size iLengthActual, size iLengthExpected, int iWidthActual, int iWidthExpected)
 {
 	AssertTristate(TRITRUE, tResult);
 	AssertString(szExpected, szActual);
-	AssertInt(iLengthExpected, iLengthActual);
+	AssertSize(iLengthExpected, iLengthActual);
 	AssertInt(iWidthExpected, iWidthActual);
 }
 
@@ -38,7 +38,7 @@ void AssertZtring(TRISTATE tResult, char* szActual, char* szExpected, int iLengt
 //////////////////////////////////////////////////////////////////////////
 void TestJavaParserGetStringSizeofChar16(void)
 {
-	AssertInt(2, sizeof(char16));
+	AssertSize(2, sizeof(char16));
 }
 
 

@@ -67,7 +67,7 @@ void TestJavaSyntaxParser(void)
 {
 	BeginTests();
 
-	AssertInt(28, sizeof(CIdentifierArray));
+	AssertSize(28, sizeof(CIdentifierArray));
 	TestJavaSyntaxParserStuff();
 
 	TestStatistics();

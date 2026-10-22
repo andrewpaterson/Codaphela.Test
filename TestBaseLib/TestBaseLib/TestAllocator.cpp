@@ -44,7 +44,7 @@ void TestAllocatorNull(void)
 	AssertNull(pv);
 	pv = cAlloc.Realloc(NULL, 10000);
 	AssertNull(pv);
-	pv = cAlloc.Realloc((void*)0xffffffff, 10000);
+	pv = cAlloc.Realloc((void*)(size)0xffffffff, 10000);
 	AssertNull(pv);
 
 	cAlloc.Free(pv);

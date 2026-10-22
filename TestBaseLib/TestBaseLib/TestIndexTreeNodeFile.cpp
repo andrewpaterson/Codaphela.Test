@@ -51,7 +51,7 @@ void TestIndexTreeNodeFileUnion(void)
 	cChild.u.mcFile.Init();
 	AssertInt(0, cChild.iType);
 
-	cChild.u.mpcMemory = (CIndexTreeNodeFile*)0x80808080;
+	cChild.u.mpcMemory = (CIndexTreeNodeFile*)(size)0x80808080;
 	AssertInt(0, cChild.iType);
 	AssertFalse(cChild.IsValid());
 

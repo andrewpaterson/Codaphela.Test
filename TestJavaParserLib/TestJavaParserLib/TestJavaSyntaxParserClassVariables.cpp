@@ -50,11 +50,11 @@ class Clazz\n\
 
 	papcImports = pcFile->GetImports();
 	AssertNotNull(papcImports);
-	AssertInt(0, papcImports->NumElements());
+	AssertSize(0, papcImports->NumElements());
 
 	papcClasses = pcFile->GetClasses();
 	AssertNotNull(papcClasses);
-	AssertInt(1, papcClasses->NumElements());
+	AssertSize(1, papcClasses->NumElements());
 
 	pcClass = (CJavaSyntaxClass*)papcClasses->GetPtr(0);
 	AssertTrue(pcClass->IsClassCommon());
@@ -69,7 +69,7 @@ class Clazz\n\
 	AssertNotNull(pcBlock);
 	papcStatements = pcBlock->GetStatements();
 	AssertNotNull(papcStatements);
-	AssertInt(2, papcStatements->NumElements());
+	AssertSize(2, papcStatements->NumElements());
 	pcStatement = papcStatements->GetPtr(0);
 	AssertTrue(pcStatement->IsStatement());
 	AssertTrue(pcStatement->IsVariableDeclaration());
@@ -150,11 +150,11 @@ class Clazz<Y>\n\
 
 	papcImports = pcFile->GetImports();
 	AssertNotNull(papcImports);
-	AssertInt(0, papcImports->NumElements());
+	AssertSize(0, papcImports->NumElements());
 
 	papcClasses = pcFile->GetClasses();
 	AssertNotNull(papcClasses);
-	AssertInt(1, papcClasses->NumElements());
+	AssertSize(1, papcClasses->NumElements());
 
 	pcClass = (CJavaSyntaxClass*)papcClasses->GetPtr(0);
 	AssertTrue(pcClass->IsClassCommon());
@@ -169,7 +169,7 @@ class Clazz<Y>\n\
 	AssertNotNull(pcBlock);
 	papcStatements = pcBlock->GetStatements();
 	AssertNotNull(papcStatements);
-	AssertInt(3, papcStatements->NumElements());
+	AssertSize(3, papcStatements->NumElements());
 
 	pcStatement = papcStatements->GetPtr(0);
 	AssertTrue(pcStatement->IsStatement());
@@ -194,12 +194,12 @@ class Clazz<Y>\n\
 	AssertTrue(pcDeclaration->IsReferenceType());
 	AssertNull(pcDeclaration->GetPrimitiveType());
 	pcReferenceType = pcDeclaration->GetReferenceType();
-	AssertInt(1, pcReferenceType->NumElements());
+	AssertSize(1, pcReferenceType->NumElements());
 	AssertString("List", pcReferenceType->GetPtr(0)->GetIdentifer());
 
 	pcGeneric = pcDeclaration->GetGeneric();
 	apcGenerics = pcGeneric->GetGenerics();
-	AssertInt(1, apcGenerics->NumElements());
+	AssertSize(1, apcGenerics->NumElements());
 	pcType = (CJavaSyntaxType*)apcGenerics->GetPtr(0);
 	AssertTrue(pcType->IsTypeCommon());
 	AssertTrue(pcType->IsType());
@@ -208,7 +208,7 @@ class Clazz<Y>\n\
 	pcGeneric = pcType->GetGeneric();
 
 	apcGenerics = pcGeneric->GetGenerics();
-	AssertInt(2, apcGenerics->NumElements());
+	AssertSize(2, apcGenerics->NumElements());
 	pcExtent = (CJavaSyntaxExtent*)apcGenerics->GetPtr(0);
 	AssertTrue(pcExtent->IsTypeCommon());
 	AssertFalse(pcExtent->IsType());
@@ -287,6 +287,109 @@ class Clazz\n\
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestJavaSyntaxParserClassVariablesNewInitialisation(void)
+{
+	CTokenParserEnvironment		cTokenParser;
+	CJavaSyntaxParser			cSyntaxParser;
+	CJavaSyntaxMemory			cSyntaxMemory;
+	CJavaSyntaxFile*			pcFile;
+	CClassCommonArray*			papcClasses;
+	CJavaSyntaxClass*			pcClass;
+	CStatementArray*			papcStatements;
+	char						szFilename[] = __ENGINE_FUNCTION__".Java";
+	char						szFileContents[] = "\
+class Clazz\n\
+{\n\
+  Pair pair = new Pair(1, \"x\");\n\
+  Map<String, Integer> map = new HashMap<String, Integer>();\n\
+  int i = 3;\n\
+}\n\
+";
+
+	cTokenParser.Init(szFilename, szFileContents, false);
+	AssertTrue(cTokenParser.Parse());
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+	AssertTrue(cSyntaxParser.Parse());
+
+	pcFile = cSyntaxParser.GetSyntaxFile();
+	papcClasses = pcFile->GetClasses();
+	AssertSize(1, papcClasses->NumElements());
+	pcClass = (CJavaSyntaxClass*)papcClasses->GetPtr(0);
+	papcStatements = pcClass->GetBlock()->GetStatements();
+	AssertSize(3, papcStatements->NumElements());
+	AssertTrue(papcStatements->GetPtr(0)->IsVariableDeclaration());
+	AssertTrue(papcStatements->GetPtr(1)->IsVariableDeclaration());
+	AssertTrue(papcStatements->GetPtr(2)->IsVariableDeclaration());
+
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestJavaSyntaxParserClassVariablesNewInitialisationErrors(void)
+{
+	CTokenParserEnvironment		cTokenParser;
+	CJavaSyntaxParser			cSyntaxParser;
+	CJavaSyntaxMemory			cSyntaxMemory;
+	char						szFilename[] = __ENGINE_FUNCTION__".Java";
+	char						szUnclosed[] = "\
+class Clazz\n\
+{\n\
+  Date date = new Date(;\n\
+}\n\
+";
+	char						szNoSemicolon[] = "\
+class Clazz\n\
+{\n\
+  Date date = new Date()\n\
+}\n\
+";
+	char						szBadGeneric[] = "\
+class Clazz\n\
+{\n\
+  List list = new List<;\n\
+}\n\
+";
+
+	cTokenParser.Init(szFilename, szUnclosed, false);
+	AssertTrue(cTokenParser.Parse());
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+	AssertFalse(cSyntaxParser.Parse());
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+
+	cTokenParser.Init(szFilename, szNoSemicolon, false);
+	AssertTrue(cTokenParser.Parse());
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+	AssertFalse(cSyntaxParser.Parse());
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+
+	cTokenParser.Init(szFilename, szBadGeneric, false);
+	AssertTrue(cTokenParser.Parse());
+	cSyntaxMemory.Init();
+	cSyntaxParser.Init(&cSyntaxMemory, cTokenParser.GetParser());
+	AssertFalse(cSyntaxParser.Parse());
+	cSyntaxParser.Kill();
+	cSyntaxMemory.Kill();
+	cTokenParser.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestJavaSyntaxParserClassVariables(void)
 {
 	BeginTests();
@@ -294,6 +397,8 @@ void TestJavaSyntaxParserClassVariables(void)
 	TestJavaSyntaxParserClassVariablesSimpleDeclaration();
 	TestJavaSyntaxParserClassVariablesGenericDeclaration();
 	TestJavaSyntaxParserClassVariablesSimpleInitialisation();
+	TestJavaSyntaxParserClassVariablesNewInitialisation();
+	TestJavaSyntaxParserClassVariablesNewInitialisationErrors();
 
 	TestStatistics();
 }

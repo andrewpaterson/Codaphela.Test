@@ -24,7 +24,7 @@ void TestScratchPadAllocatorPop(void)
 
 	pcTest1 = (CConstructorTestClass*)gcConstructors.Construct("CConstructorTestClass", &cAlloc);
 #ifdef BUILD_64
-	AssertSize(48, cAlloc.GetScratchPad()->GetUsedSize());
+	AssertSize(56, cAlloc.GetScratchPad()->GetUsedSize());
 #else
 	AssertSize(28, cAlloc.GetScratchPad()->GetUsedSize());
 #endif // BUILD_64
@@ -35,20 +35,20 @@ void TestScratchPadAllocatorPop(void)
 
 	pcTest2 = (CConstructorTestClass*)gcConstructors.Construct("CConstructorTestClass", &cAlloc);
 #ifdef BUILD_64
-	AssertSize(96, cAlloc.GetScratchPad()->GetUsedSize());
+	AssertSize(112, cAlloc.GetScratchPad()->GetUsedSize());
 #else
 	AssertSize(56, cAlloc.GetScratchPad()->GetUsedSize());
 #endif // BUILD_64
 
 	cAlloc.Free(pcTest1);
 #ifdef BUILD_64
-	AssertSize(96, cAlloc.GetScratchPad()->GetUsedSize());
+	AssertSize(112, cAlloc.GetScratchPad()->GetUsedSize());
 #else
 	AssertSize(56, cAlloc.GetScratchPad()->GetUsedSize());
 #endif // BUILD_64
 	cAlloc.Free(pcTest2);
 #ifdef BUILD_64
-	AssertSize(96, cAlloc.GetScratchPad()->GetUsedSize());
+	AssertSize(112, cAlloc.GetScratchPad()->GetUsedSize());
 #else
 	AssertSize(56, cAlloc.GetScratchPad()->GetUsedSize());
 #endif // BUILD_64
