@@ -199,6 +199,9 @@
     <ClCompile Include="TestMaps.cpp">
       <Filter>Source Files\Map</Filter>
     </ClCompile>
+    <ClCompile Include="TestGeometryMap.cpp">
+      <Filter>Source Files\Map</Filter>
+    </ClCompile>
     <ClCompile Include="TestFont.cpp">
       <Filter>Source Files\Image\Font</Filter>
     </ClCompile>

@@ -1058,6 +1058,287 @@ void TestTextAreaScriptsFillContainer(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Underlined, overlined and struck through text in a word wrapped text
+// area.  One underline runs across a colour, sizes and a superscript and
+// wraps onto the next lines.  Decorations don't change the text's size.
+// The shown frame is written to Output/TextAreaDecorations.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTextAreaDecorationsFillContainer(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "TextAreaDecorations";
+	const char*				szText;
+	const char*				szFound;
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CFontFamily>		pFamily;
+		Ptr<CFillContainer>		pFill;
+		Ptr<CClearCanvasDraw>	pBackground;
+		Ptr<CTextArea>			pTextArea;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		SInsets					sInsets;
+		int						aiInsets[4];
+		CChars					szExpectedDirectory;
+		STextStyleOverride		sOverride;
+		STextStyle				sStyle;
+		SInt32Vec2				sSize;
+		SInt32Vec2				sDecoratedSize;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 260, 180, szDirectory);
+		cTick.Init(&cData, 1);
+		pBackground = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)30, 31, 34));
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+
+		pFill = OMalloc<CFillContainer>(pTestWindow);
+		aiInsets[BEI_Top] = 5;
+		aiInsets[BEI_Right] = 8;
+		aiInsets[BEI_Bottom] = 5;
+		aiInsets[BEI_Left] = 8;
+		sInsets.Init(aiInsets);
+		pFill->SetInsets(&sInsets);
+		pTestWindow->SetContainer(pFill);
+
+		pFamily = CreateTextAreaFamily(16.0f);
+		szText = "Underlined, overlined and struck through words.  A coloured underline crosses BIG and small words and x2 then wraps onto the next lines.";
+		pTextArea = OMalloc<CTextArea>(pTestWindow, pFamily, szText);
+		pTextArea->SetWordWrap(true);
+		pTextArea->SetAlignment(CSH_Left, CSV_Top);
+		pTextArea->SetColour(Set32BitColour((uint8)0xBC, (uint8)0xBE, (uint8)0xC4));
+		sSize = pTextArea->GetTextSize();
+
+		sOverride.Init();
+		sOverride.SetUnderline(true);
+		AddTextAreaWordSpan(pTextArea, szText, "Underlined", &sOverride);
+		sOverride.Init();
+		sOverride.SetOverline(true);
+		AddTextAreaWordSpan(pTextArea, szText, "overlined", &sOverride);
+		sOverride.Init();
+		sOverride.SetStrikethrough(true);
+		AddTextAreaWordSpan(pTextArea, szText, "struck through", &sOverride);
+		sOverride.Init();
+		sOverride.SetUnderline(true);
+		AddTextAreaWordSpan(pTextArea, szText, "A coloured underline crosses BIG and small words and x2 then wraps onto the next lines", &sOverride);
+		sDecoratedSize = pTextArea->GetTextSize();
+		AssertInt32Vec2(sSize.x, sSize.y, &sDecoratedSize);
+
+		szFound = strstr(szText, "Underlined");
+		pTextArea->GetStyleAt(szFound - szText, &sStyle);
+		AssertTrue(sStyle.bUnderline);
+		AssertFalse(sStyle.bOverline);
+		AssertInt(TD_Underline, sStyle.GetDecorations());
+		szFound = strstr(szText, "struck");
+		pTextArea->GetStyleAt(szFound - szText, &sStyle);
+		AssertInt(TD_Strikethrough, sStyle.GetDecorations());
+
+		sOverride.Init();
+		sOverride.SetColour(Set32BitColour((uint8)0xCF, (uint8)0x8E, (uint8)0x6D));
+		AddTextAreaWordSpan(pTextArea, szText, "coloured", &sOverride);
+		sOverride.Init();
+		sOverride.SetPixelSize(28.0f);
+		AddTextAreaWordSpan(pTextArea, szText, "BIG", &sOverride);
+		sOverride.Init();
+		sOverride.SetPixelSize(10.0f);
+		AddTextAreaWordSpan(pTextArea, szText, "small", &sOverride);
+		sOverride.Init();
+		sOverride.SetPosition(TP_Superscript);
+		szFound = strstr(szText, "x2");
+		AssertTrue(pTextArea->AddSpan(szFound - szText + 1, 1, &sOverride));
+		pFill->AddComponent(pTextArea);
+
+		pTestWindow->Show();
+
+		ValidateLabelObjects();
+
+		pTextArea = NULL;
+		pFamily = NULL;
+		pFill = NULL;
+		pTestWindow = NULL;
+		pBackground = NULL;
+
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
+	}
+
+	AssertLabelObjectsRemoved();
+	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Adds a span over the first szWord in szText that underlines and or
+// overlines it, and optionally sets a colour.
+//
+//////////////////////////////////////////////////////////////////////////
+void AddTextAreaLinesSpan(Ptr<CTextArea> pTextArea, const char* szText, const char* szWord, bool bUnderline, bool bOverline)
+{
+	STextStyleOverride	sOverride;
+
+	sOverride.Init();
+	if (bUnderline)
+	{
+		sOverride.SetUnderline(true);
+	}
+	if (bOverline)
+	{
+		sOverride.SetOverline(true);
+	}
+	AddTextAreaWordSpan(pTextArea, szText, szWord, &sOverride);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Underlines and overlines: alone and together, on bold, italic and big
+// text, across sizes, colours, superscript and subscript, and on
+// translucent text.  The shown frame is written to
+// Output/TextAreaUnderlineOverline.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTextAreaUnderlineOverlineFillContainer(void)
+{
+	CWinRefWindowFactory	cNativeFactory;
+	CFileUtil				cFileUtil;
+	char					szDirectory[] = "Output" _FS_ "TextAreaUnderlineOverline";
+	const char*				szText;
+	const char*				szFound;
+
+	cFileUtil.RemoveDir(szDirectory);
+	cFileUtil.MakeDir(szDirectory);
+
+	{
+		Ptr<CWindow>			pTestWindow;
+		Ptr<CFontFamily>		pFamily;
+		Ptr<CFillContainer>		pFill;
+		Ptr<CClearCanvasDraw>	pBackground;
+		Ptr<CTextArea>			pTextArea;
+		CTickTestRefWindow		cTick;
+		SDataTestRefWindow		cData;
+		SInsets					sInsets;
+		int						aiInsets[4];
+		CChars					szExpectedDirectory;
+		STextStyleOverride		sOverride;
+
+		cNativeFactory.Init(&gcMemoryAllocator, 300, 380, szDirectory);
+		cTick.Init(&cData, 1);
+		pBackground = OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)30, 31, 34));
+		pTestWindow = OMalloc<CWindow>("Text Area Window", &cNativeFactory, &cTick, pBackground, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+
+		pFill = OMalloc<CFillContainer>(pTestWindow);
+		aiInsets[BEI_Top] = 8;
+		aiInsets[BEI_Right] = 8;
+		aiInsets[BEI_Bottom] = 8;
+		aiInsets[BEI_Left] = 8;
+		sInsets.Init(aiInsets);
+		pFill->SetInsets(&sInsets);
+		pTestWindow->SetContainer(pFill);
+
+		pFamily = CreateTextAreaFamily(16.0f);
+		//A blank line between each so an overline isn't taken for the line above's underline.
+		szText = "Underline only\n\n"
+				 "Overline only\n\n"
+				 "Under and over\n\n"
+				 "Bold Italic BIG lines\n\n"
+				 "Over tall SHORT and tiny\n\n"
+				 "Red green and blue lines\n\n"
+				 "Area r2 and log2 lined\n\n"
+				 "Faded half lines";
+		pTextArea = OMalloc<CTextArea>(pTestWindow, pFamily, szText);
+		pTextArea->SetWordWrap(true);
+		pTextArea->SetAlignment(CSH_Left, CSV_Top);
+		pTextArea->SetColour(Set32BitColour((uint8)0xBC, (uint8)0xBE, (uint8)0xC4));
+
+		AddTextAreaLinesSpan(pTextArea, szText, "Underline only", true, false);
+		AddTextAreaLinesSpan(pTextArea, szText, "Overline only", false, true);
+		AddTextAreaLinesSpan(pTextArea, szText, "Under and over", true, true);
+
+		//Both lines on bold, italic and big text, each placed by its own font.
+		AddTextAreaLinesSpan(pTextArea, szText, "Bold", true, true);
+		AddTextAreaLinesSpan(pTextArea, szText, "Italic", true, true);
+		AddTextAreaLinesSpan(pTextArea, szText, "BIG", true, true);
+		sOverride.Init();
+		sOverride.SetBold(true);
+		AddTextAreaWordSpan(pTextArea, szText, "Bold", &sOverride);
+		sOverride.Init();
+		sOverride.SetItalic(true);
+		AddTextAreaWordSpan(pTextArea, szText, "Italic", &sOverride);
+		sOverride.Init();
+		sOverride.SetPixelSize(26.0f);
+		AddTextAreaWordSpan(pTextArea, szText, "BIG", &sOverride);
+
+		//One overline (and underline) across three sizes, placed by the biggest.
+		AddTextAreaLinesSpan(pTextArea, szText, "Over tall SHORT and tiny", true, true);
+		sOverride.Init();
+		sOverride.SetPixelSize(24.0f);
+		AddTextAreaWordSpan(pTextArea, szText, "tall", &sOverride);
+		sOverride.Init();
+		sOverride.SetPixelSize(11.0f);
+		AddTextAreaWordSpan(pTextArea, szText, "tiny", &sOverride);
+
+		//The lines change colour with the text and stay straight.
+		AddTextAreaLinesSpan(pTextArea, szText, "Red green and blue lines", true, true);
+		sOverride.Init();
+		sOverride.SetColour(Set32BitColour((uint8)0xE0, (uint8)0x60, (uint8)0x60));
+		AddTextAreaWordSpan(pTextArea, szText, "Red", &sOverride);
+		sOverride.Init();
+		sOverride.SetColour(Set32BitColour((uint8)0x6A, (uint8)0xAB, (uint8)0x73));
+		AddTextAreaWordSpan(pTextArea, szText, "green", &sOverride);
+		sOverride.Init();
+		sOverride.SetColour(Set32BitColour((uint8)0x56, (uint8)0xA8, (uint8)0xF5));
+		AddTextAreaWordSpan(pTextArea, szText, "blue", &sOverride);
+
+		//A superscript and a subscript inside lined text don't bend the lines.
+		AddTextAreaLinesSpan(pTextArea, szText, "Area r2 and log2 lined", true, true);
+		sOverride.Init();
+		sOverride.SetPosition(TP_Superscript);
+		szFound = strstr(szText, "r2");
+		AssertTrue(pTextArea->AddSpan(szFound - szText + 1, 1, &sOverride));
+		sOverride.Init();
+		sOverride.SetPosition(TP_Subscript);
+		szFound = strstr(szText, "log2");
+		AssertTrue(pTextArea->AddSpan(szFound - szText + 3, 1, &sOverride));
+
+		//Translucent text has translucent lines.
+		AddTextAreaLinesSpan(pTextArea, szText, "Faded half lines", true, true);
+		sOverride.Init();
+		sOverride.SetColour(Set32BitColour((uint8)0xFF, (uint8)0xFF, (uint8)0xFF, (uint8)0x60));
+		AddTextAreaWordSpan(pTextArea, szText, "Faded half lines", &sOverride);
+		pFill->AddComponent(pTextArea);
+
+		pTestWindow->Show();
+
+		ValidateLabelObjects();
+
+		pTextArea = NULL;
+		pFamily = NULL;
+		pFill = NULL;
+		pTestWindow = NULL;
+		pBackground = NULL;
+
+		szExpectedDirectory.Init(szDirectory);
+		szExpectedDirectory.Replace("Output", "Input");
+		AssertDirectory(szExpectedDirectory.Text(), szDirectory);
+		szExpectedDirectory.Kill();
+	}
+
+	AssertLabelObjectsRemoved();
+	cNativeFactory.Kill();
+	cFileUtil.RemoveDir(szDirectory);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestTextArea(void)
@@ -1075,6 +1356,8 @@ void TestTextArea(void)
 	TestTextAreaStylesFillContainer();
 	TestTextAreaScripts();
 	TestTextAreaScriptsFillContainer();
+	TestTextAreaDecorationsFillContainer();
+	TestTextAreaUnderlineOverlineFillContainer();
 
 	ObjectsFlush();
 	ObjectsKill();

@@ -1420,6 +1420,171 @@ void TestTrueTypeFontScriptLayout(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Lays out szText starting in pFont with the changes, then kills them.
+//
+//////////////////////////////////////////////////////////////////////////
+void LayoutWithChanges(Ptr<CTextLayout> pLayout, Ptr<CGlyphListFontDraw> pDraw, Ptr<CFont> pFont, char* szText, CArrayTextFontChange* pasChanges)
+{
+	CSimpleTextReader	cReader;
+	CUTF8				cUTF8;
+	Ptr<CText>			pText;
+
+	cUTF8.Init(szText);
+	cReader.Init(&pFont);
+	pText = cReader.Read(&cUTF8, true, pasChanges);
+	cReader.Kill();
+	cUTF8.Kill();
+	pasChanges->ReInit();
+
+	pDraw->Begin();
+	pLayout->Layout(pDraw, pText);
+	pDraw->End();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertTextRectangle(int32 x, int32 y, int32 iWidth, int32 iHeight, ARGB32 sColour, STextDrawRectangle* psRectangle)
+{
+	AssertInt(x, psRectangle->x);
+	AssertInt(y, psRectangle->y);
+	AssertInt(iWidth, psRectangle->iWidth);
+	AssertInt(iHeight, psRectangle->iHeight);
+	AssertInt(sColour, psRectangle->sColour);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Underlines, overlines and strikethroughs are drawn along each decorated
+// stretch of a line, placed by the largest font in the stretch.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTrueTypeFontDecorationLayout(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CFont>					pSmall;
+		Ptr<CFont>					pBig;
+		Ptr<CFontDescription>		pSmallDescription;
+		Ptr<CFontDescription>		pBigDescription;
+		CArrayTextFontChange		asChanges;
+		Ptr<CTextLayout>			pLayout;
+		Ptr<CGlyphListFontDraw>		pDraw;
+		CArrayGlyphPosition*		pasGlyphs;
+		CArrayTextDrawRectangle*	pasRectangles;
+		ARGB32						sRed;
+		ARGB32						sBlue;
+		int32						iA;
+		int32						iB;
+		int32						iSpace;
+		int32						iBaseline;
+		int32						iBigA;
+
+		pSmall = CreateWhiteTrueTypeFontFrom("LiberationSans-Regular.ttf", "ab ", 16.0f);
+		pBig = CreateWhiteTrueTypeFontFrom("LiberationSans-Regular.ttf", "ab ", 32.0f);
+		pSmallDescription = pSmall->GetDescription();
+		pBigDescription = pBig->GetDescription();
+		iA = pSmall->GetGlyph((uint32)'a', 1)->GetFullWidth();
+		iB = pSmall->GetGlyph((uint32)'b', 1)->GetFullWidth();
+		iSpace = pSmall->GetGlyph((uint32)' ', 1)->GetFullWidth();
+		iBigA = pBig->GetGlyph((uint32)'a', 1)->GetFullWidth();
+		sRed = Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00);
+		sBlue = Set32BitColour((uint8)0x00, (uint8)0x00, (uint8)0xFF);
+		asChanges.Init();
+		pLayout = OMalloc<CTextLayout>();
+		pDraw = OMalloc<CGlyphListFontDraw>();
+
+		//All of "ab ab" underlined in red: one line, the underline's thickness, below the baseline.
+		asChanges.Add()->Init(0, &pSmall, 0, TD_Underline, sRed);
+		LayoutWithChanges(pLayout, pDraw, pSmall, "ab ab", &asChanges);
+		pasRectangles = pDraw->GetRectangles();
+		AssertSize(1, pasRectangles->NumElements());
+		iBaseline = pSmall->GetAscent();
+		AssertTextRectangle(0, iBaseline + pSmallDescription->GetUnderlineTop(), iA + iB + iSpace + iA + iB, pSmallDescription->GetUnderlineThickness(), sRed, pasRectangles->Get(0));
+
+		//Wrapped after the space, the space at the end of the first line isn't underlined.
+		pLayout->SetWidth(iA + iB + iSpace + iA);
+		asChanges.Add()->Init(0, &pSmall, 0, TD_Underline, sRed);
+		LayoutWithChanges(pLayout, pDraw, pSmall, "ab ab", &asChanges);
+		pasRectangles = pDraw->GetRectangles();
+		AssertSize(2, pasRectangles->NumElements());
+		AssertTextRectangle(0, iBaseline + pSmallDescription->GetUnderlineTop(), iA + iB, pSmallDescription->GetUnderlineThickness(), sRed, pasRectangles->Get(0));
+		AssertTextRectangle(0, pSmall->GetLineHeight() + iBaseline + pSmallDescription->GetUnderlineTop(), iA + iB, pSmallDescription->GetUnderlineThickness(), sRed, pasRectangles->Get(1));
+		pLayout->SetWidth(-1);
+
+		//"aab" with the middle a big: one line placed and as thick as the big font says.
+		asChanges.Add()->Init(0, &pSmall, 0, TD_Underline, sRed);
+		asChanges.Add()->Init(1, &pBig, 0, TD_Underline, sRed);
+		asChanges.Add()->Init(2, &pSmall, 0, TD_Underline, sRed);
+		LayoutWithChanges(pLayout, pDraw, pSmall, "aab", &asChanges);
+		pasRectangles = pDraw->GetRectangles();
+		AssertSize(1, pasRectangles->NumElements());
+		iBaseline = pBig->GetAscent();
+		AssertTrue(pBigDescription->GetUnderlineTop() != pSmallDescription->GetUnderlineTop());
+		AssertTextRectangle(0, iBaseline + pBigDescription->GetUnderlineTop(), iA + iBigA + iB, pBigDescription->GetUnderlineThickness(), sRed, pasRectangles->Get(0));
+
+		//The underline changes colour with the text but stays straight.
+		asChanges.Add()->Init(0, &pSmall, 0, TD_Underline, sRed);
+		asChanges.Add()->Init(2, &pSmall, 0, TD_Underline, sBlue);
+		LayoutWithChanges(pLayout, pDraw, pSmall, "abab", &asChanges);
+		pasRectangles = pDraw->GetRectangles();
+		AssertSize(2, pasRectangles->NumElements());
+		iBaseline = pSmall->GetAscent();
+		AssertTextRectangle(0, iBaseline + pSmallDescription->GetUnderlineTop(), iA + iB, pSmallDescription->GetUnderlineThickness(), sRed, pasRectangles->Get(0));
+		AssertTextRectangle(iA + iB, iBaseline + pSmallDescription->GetUnderlineTop(), iA + iB, pSmallDescription->GetUnderlineThickness(), sBlue, pasRectangles->Get(1));
+
+		//An overline along the top of the ascent and a strikethrough through the middle.
+		asChanges.Add()->Init(0, &pSmall, 0, TD_Overline | TD_Strikethrough, sRed);
+		LayoutWithChanges(pLayout, pDraw, pSmall, "ab", &asChanges);
+		pasRectangles = pDraw->GetRectangles();
+		AssertSize(2, pasRectangles->NumElements());
+		AssertTextRectangle(0, 0, iA + iB, pSmallDescription->GetUnderlineThickness(), sRed, pasRectangles->Get(0));
+		AssertTextRectangle(0, iBaseline + pSmallDescription->GetStrikeoutTop(), iA + iB, pSmallDescription->GetStrikeoutThickness(), sRed, pasRectangles->Get(1));
+		AssertTrue(pSmallDescription->GetStrikeoutTop() < 0);
+
+		//A raised b underlined on its own has its line raised with it.
+		asChanges.Add()->Init(1, &pSmall, 8, TD_Underline, sRed);
+		LayoutWithChanges(pLayout, pDraw, pSmall, "ab", &asChanges);
+		pasRectangles = pDraw->GetRectangles();
+		AssertSize(1, pasRectangles->NumElements());
+		iBaseline = pSmall->GetAscent() + 8;
+		AssertTextRectangle(iA, iBaseline - 8 + pSmallDescription->GetUnderlineTop(), iB, pSmallDescription->GetUnderlineThickness(), sRed, pasRectangles->Get(0));
+
+		//A space that isn't underlined splits the underline.
+		asChanges.Add()->Init(0, &pSmall, 0, TD_Underline, sRed);
+		asChanges.Add()->Init(2, &pSmall);
+		asChanges.Add()->Init(3, &pSmall, 0, TD_Underline, sRed);
+		LayoutWithChanges(pLayout, pDraw, pSmall, "ab ab", &asChanges);
+		pasRectangles = pDraw->GetRectangles();
+		pasGlyphs = pDraw->GetGlyphs();
+		AssertSize(5, pasGlyphs->NumElements());
+		AssertSize(2, pasRectangles->NumElements());
+		AssertInt(0, pasRectangles->Get(0)->x);
+		AssertInt(iA + iB, pasRectangles->Get(0)->iWidth);
+		AssertInt(iA + iB + iSpace, pasRectangles->Get(1)->x);
+		AssertInt(iA + iB, pasRectangles->Get(1)->iWidth);
+
+		//Nothing decorated, nothing drawn.
+		LayoutWithChanges(pLayout, pDraw, pSmall, "ab ab", &asChanges);
+		AssertSize(0, pDraw->GetRectangles()->NumElements());
+
+		asChanges.Kill();
+		pDraw = NULL;
+		pLayout = NULL;
+		pBigDescription = NULL;
+		pSmallDescription = NULL;
+		pBig = NULL;
+		pSmall = NULL;
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestTrueTypeFont(void)
@@ -1445,6 +1610,7 @@ void TestTrueTypeFont(void)
 	TestTrueTypeFontMixedTypefaceLayout();
 	TestTrueTypeFontScriptAndLineMetrics();
 	TestTrueTypeFontScriptLayout();
+	TestTrueTypeFontDecorationLayout();
 
 	DataIOKill();
 
