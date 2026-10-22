@@ -831,14 +831,15 @@ void TestFontTrueTypeWriteAndRead(void)
 		pLoadedFont = FontReader(szFontFilename.Text());
 		AssertTrue(pLoadedFont.IsNotNull());
 		pRoot->Add(pLoadedFont);
-		gcObjects.EnableValidation();
-		gcObjects.ValidateObjectsConsistency();
 
 		AssertString("InterVariable.ttf", pLoadedFont->GetFontName());
 		AssertInt(pFont->GetSpaceWidth(), pLoadedFont->GetSpaceWidth());
 		AssertInt(pFont->GetAscent(), pLoadedFont->GetAscent());
 		AssertInt(pFont->GetDescent(), pLoadedFont->GetDescent());
+		//Comparing makes every glyph of both fonts so is also done without validating each one.
 		AssertFontGlyphsEqual(pFont, pLoadedFont);
+		gcObjects.EnableValidation();
+		gcObjects.ValidateObjectsConsistency();
 
 		pLoadedImage = pLoadedFont->GetImage();
 		AssertTrue(pLoadedImage.IsNotNull());

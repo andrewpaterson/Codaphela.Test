@@ -63,9 +63,9 @@ void TestImageCombinerMask(void)
 void TestImageCombinerStarControl(void)
 {
 	CImageCelSourceSingle	cSingle;
-	CImageCombiner			cCombiner;
+	Ptr<CImageCombiner>		pCombiner;
 	Ptr<CImage>				pcImage;
-	CImageCelsSource		cSource;
+	Ptr<CImageCelsSource>	pSource;
 	CFileUtil				cFileUtil;
 	CArrayChars				aszDirectories;
 	size					i;
@@ -80,8 +80,13 @@ void TestImageCombinerStarControl(void)
 	uiMaxDebugAllocatorSize = guiMaxDebugAllocatorSize;
 	InitAllocatorDebug(32 MB);
 
+	//Validating every object each time one is added is too slow for hundreds of cels; validate once at the end.
+	gcObjects.DisableValidation();
+
+	//The objects are rooted so that pointing to them doesn't make the objects work out again which are on the stack.
 	cSingle.Init();
-	cSource.Init(true);
+	pSource = OMalloc<CImageCelsSource>(true);
+	ORoot()->Add(pSource);
 
 	aszDirectories.Init();
 	cFileUtil.FindAllDirectories("Input" _FS_ "StarControl", &aszDirectories);
@@ -89,23 +94,22 @@ void TestImageCombinerStarControl(void)
 	AssertSize(5, aszDirectories.NumElements());
 	for (i = 0; i < aszDirectories.NumElements(); i++)
 	{
-		cSource.AddDiskFileSources(aszDirectories.Get(i)->Text(), "frame", NULL, &cSingle);
+		pSource->AddDiskFileSources(aszDirectories.Get(i)->Text(), "frame", NULL, &cSingle);
 	}
 	aszDirectories.Kill();
 
-	gcObjects.DisableValidation();
-	cSource.Load();
-	AssertSize(360, cSource.GetImageCels()->NumElements());
+	pSource->Load();
+	AssertSize(360, pSource->GetImageCels()->NumElements());
 
-	AssertSize(360, cSource.GetCelFileNames()->NumElements());
+	AssertSize(360, pSource->GetCelFileNames()->NumElements());
 
-	cCombiner.Init(ICL_Best, ICS_Arbitrary, ICC_FromCels, 0, 0, true);
-	cCombiner.AddCels(cSource.GetImageCels(), cSource.GetCelFileNames());
-	pcImage = cCombiner.Combine();
-	gcObjects.EnableValidation();
+	pCombiner = OMalloc<CImageCombiner>(ICL_Best, ICS_Arbitrary, ICC_FromCels, 0, 0, true);
+	ORoot()->Add(pCombiner);
+	pCombiner->AddCels(pSource->GetImageCels(), pSource->GetCelFileNames());
+	pcImage = pCombiner->Combine();
 	AssertTrue(pcImage.IsNotNull());
 
-	pacCels = cCombiner.GetCels();
+	pacCels = pCombiner->GetCels();
 	AssertSize(360, pacCels->NumElements());
 	AssertTrue(pacCels->Get(0)->GetSourceImage() == pcImage);
 	AssertString("Input/StarControl/Earthling Cruiser/frame0000", pacCels->Get(0)->GetName());
@@ -123,8 +127,10 @@ void TestImageCombinerStarControl(void)
 	//Release the combined cels so the loaded cels can take the same names.
 	pacCels = NULL;
 	pcImage = NULL;
-	cCombiner.Kill();
-	cSource.Kill();
+	ORoot()->Remove(pCombiner);
+	ORoot()->Remove(pSource);
+	pCombiner = NULL;
+	pSource = NULL;
 
 	pacLoadedCels = CelsReader("Output" _FS_ "StarControl.cels");
 	AssertTrue(pacLoadedCels.IsNotNull());
@@ -133,6 +139,9 @@ void TestImageCombinerStarControl(void)
 	AssertInt(iHeight, pacLoadedCels->Get(0)->GetSourceImage()->GetHeight());
 	AssertString("Input/StarControl/Earthling Cruiser/frame0000", pacLoadedCels->Get(0)->GetName());
 	AssertString("Input/StarControl/Ur-Quan Dreadnought/frame0071", pacLoadedCels->Get(359)->GetName());
+
+	gcObjects.EnableValidation();
+	gcObjects.ValidateObjectsConsistency();
 	pacLoadedCels = NULL;
 
 	InitAllocatorDebug(uiMaxDebugAllocatorSize);

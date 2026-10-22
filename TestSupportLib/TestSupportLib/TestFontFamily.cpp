@@ -3,6 +3,8 @@
 #include "BaseLib/Logger.h"
 #include "StandardLib/Objects.h"
 #include "SupportLib/FontFamily.h"
+#include "SupportLib/TrueTypeFontFactory.h"
+#include "SupportLib/ImageAccessorCreator.h"
 #include "TestLib/Assert.h"
 
 
@@ -258,6 +260,227 @@ void TestFontFamilySuperscriptAndSubscript(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The number of pixels with any opacity in the rectangle (right and bottom
+// exclusive).
+//
+//////////////////////////////////////////////////////////////////////////
+size CountOpaquePixels(Ptr<CImage> pImage, int32 iLeft, int32 iTop, int32 iRight, int32 iBottom)
+{
+	CImageAccessorCreator	cCreator;
+	CImageAccessor*			pcAccessor;
+	uint8					uiOpacity;
+	int32					x;
+	int32					y;
+	size					uiCount;
+
+	cCreator.Init(&pImage);
+	cCreator.AddAccess(IMAGE_OPACITY, PT_uint8);
+	pcAccessor = cCreator.CreateAndKill();
+	uiCount = 0;
+	for (y = iTop; y < iBottom; y++)
+	{
+		for (x = iLeft; x < iRight; x++)
+		{
+			pcAccessor->Get(x, y, &uiOpacity);
+			if (uiOpacity != 0)
+			{
+				uiCount++;
+			}
+		}
+	}
+	pcAccessor->Kill();
+	return uiCount;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+size CountGlyphOpaquePixels(Ptr<CFont> pFont, SGlyphDescription* psDescription)
+{
+	CInt32Rect*	pcRect;
+
+	pcRect = &psDescription->cSubImage.mcImageRect;
+	return CountOpaquePixels(pFont->GetImage(), pcRect->msTopLeft.x, pcRect->msTopLeft.y, pcRect->msBottomRight.x, pcRect->msBottomRight.y);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A family's sizes start with empty images.  A glyph's pixels are drawn
+// when it is first asked for, a coloured font's from its white font's.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFontFamilyLazyGlyphs(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CFontFamily>		pFamily;
+		Ptr<CFontColours>		pColours;
+		Ptr<CFont>				pWhite;
+		Ptr<CFont>				pRed;
+		Ptr<CFontDescription>	pDescription;
+		SGlyphDescription*		psA;
+		SGlyphDescription*		psB;
+		SGlyphDescription*		psLowerA;
+		SGlyphDescription*		psLowerB;
+		Ptr<CImage>				pImage;
+		ARGB32					sRed;
+
+		pFamily = CreateLiberationFamily(16.0f, CCO_Unknown);
+		ORoot()->Add(pFamily);
+		sRed = Set32BitColour((uint8)0xFF, (uint8)0x00, (uint8)0x00);
+
+		pColours = pFamily->GetColours(FS_Regular, 0.0f);
+		pWhite = pColours->GetWhite();
+		pDescription = pWhite->GetDescription();
+		AssertTrue(pWhite->IsLazy());
+		AssertTrue(pDescription->GetRasteriser().IsNotNull());
+		psA = pDescription->GetGlyph((uint8*)"A", 1);
+		psB = pDescription->GetGlyph((uint8*)"B", 1);
+		psLowerA = pDescription->GetGlyph((uint8*)"a", 1);
+		psLowerB = pDescription->GetGlyph((uint8*)"b", 1);
+		AssertTrue(psA->iSourceGlyph > 0);
+
+		//Nothing is drawn until it is asked for.
+		pImage = pWhite->GetImage();
+		AssertSize(0, CountOpaquePixels(pImage, 0, 0, pImage->GetWidth(), pImage->GetHeight()));
+		AssertFalse(pWhite->HasPixels(psA));
+		AssertFalse(pWhite->HasPixels(psB));
+
+		pWhite->GetGlyph((uint32)'A', 1);
+		AssertTrue(pWhite->HasPixels(psA));
+		AssertFalse(pWhite->HasPixels(psB));
+		AssertTrue(CountGlyphOpaquePixels(pWhite, psA) > 0);
+		AssertSize(0, CountGlyphOpaquePixels(pWhite, psB));
+		AssertSize(CountGlyphOpaquePixels(pWhite, psA), CountOpaquePixels(pImage, 0, 0, pImage->GetWidth(), pImage->GetHeight()));
+
+		//A colour of a lazy font is lazy too.  Its b draws the white font's b first.
+		pRed = pColours->GetFont(sRed);
+		AssertTrue(pRed->IsLazy());
+		AssertSize(0, CountOpaquePixels(pRed->GetImage(), 0, 0, pImage->GetWidth(), pImage->GetHeight()));
+		pRed->GetGlyph((uint32)'b', 1);
+		AssertTrue(pRed->HasPixels(psLowerB));
+		AssertTrue(pWhite->HasPixels(psLowerB));
+		AssertFalse(pRed->HasPixels(psA));
+		AssertSize(CountGlyphOpaquePixels(pWhite, psLowerB), CountGlyphOpaquePixels(pRed, psLowerB));
+		AssertSize(0, CountGlyphOpaquePixels(pRed, psA));
+
+		//A cel made for writing the font draws the glyph too.
+		AssertFalse(pWhite->HasPixels(psLowerA));
+		pWhite->CreateCel(psLowerA);
+		AssertTrue(pWhite->HasPixels(psLowerA));
+
+		pImage = NULL;
+		pDescription = NULL;
+		pRed = NULL;
+		pWhite = NULL;
+		pColours = NULL;
+		pFamily = NULL;
+		ORoot()->RemoveAll();
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// With every glyph asked for, a lazy font's image is exactly the image
+// CTrueTypeFontFactory::Rasterise makes, and a lazy colour has the opacity
+// and, where there is any, the colour that recolouring the whole image
+// gives.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFontFamilyLazyMatchesRasterise(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CFontFamily>			pFamily;
+		Ptr<CFontColours>			pLazyColours;
+		Ptr<CFontColours>			pEagerColours;
+		Ptr<CFont>					pLazy;
+		Ptr<CFont>					pEager;
+		Ptr<CFont>					pLazyRed;
+		Ptr<CFont>					pEagerRed;
+		CTrueTypeFont				cFont;
+		CTrueTypeFontFactory		cFactory;
+		CImageColourRGB				cWhite;
+		Ptr<CFontDescription>		pDescription;
+		SIndexTreeMemoryIterator	sIter;
+		uint8						auiKey[64];
+		size						uiKeyLength;
+		bool						bExists;
+		size						uiBytes;
+		uint8*						puiLazy;
+		uint8*						puiEager;
+		size						i;
+		size						uiDifferences;
+		ARGB32						sRed;
+
+		sRed = Set32BitColour((uint8)0xC0, (uint8)0x40, (uint8)0x20, (uint8)0x90);
+		pFamily = CreateLiberationFamily(20.0f, CCO_Unknown);
+		ORoot()->Add(pFamily);
+		pLazyColours = pFamily->GetColours(FS_Italic, 0.0f);
+		pLazy = pLazyColours->GetWhite();
+		pLazyRed = pLazyColours->GetFont(sRed);
+
+		cFont.Init();
+		AssertTrue(cFont.Load((char*)FAMILY_FONTS "LiberationSans-Italic.ttf"));
+		cFactory.Init(&cFont, 20.0f);
+		pDescription = cFactory.Describe((char*)"Eager", (char*)"AB ab");
+		cWhite.Init(1.0f, 1.0f, 1.0f);
+		pEager = OMalloc<CFont>(pDescription, cFactory.Rasterise(pDescription, &cWhite));
+		cFactory.Kill();
+		cFont.Kill();
+		pEagerColours = OMalloc<CFontColours>(pEager);
+		ORoot()->Add(pEagerColours);
+		pEagerRed = pEagerColours->GetFont(sRed);
+		AssertFalse(pEager->IsLazy());
+		AssertFalse(pEagerRed->IsLazy());
+
+		bExists = pLazy->StartIteration(&sIter, auiKey, &uiKeyLength, 64);
+		while (bExists)
+		{
+			pLazyRed->GetGlyph(auiKey, uiKeyLength);
+			bExists = pLazy->Iterate(&sIter, auiKey, &uiKeyLength, 64);
+		}
+
+		AssertInt(pEager->GetImage()->GetWidth(), pLazy->GetImage()->GetWidth());
+		AssertInt(pEager->GetImage()->GetHeight(), pLazy->GetImage()->GetHeight());
+		uiBytes = (size)pLazy->GetImage()->GetWidth() * pLazy->GetImage()->GetHeight() * 4;
+		AssertMemory(pEager->GetImage()->GetData(), pLazy->GetImage()->GetData(), uiBytes);
+
+		//Opacity, red, green, blue.  Eager recolouring also colours pixels with no opacity.
+		puiLazy = (uint8*)pLazyRed->GetImage()->GetData();
+		puiEager = (uint8*)pEagerRed->GetImage()->GetData();
+		uiDifferences = 0;
+		for (i = 0; i < uiBytes; i += 4)
+		{
+			if ((puiLazy[i] != puiEager[i]) || ((puiLazy[i] != 0) && (memcmp(&puiLazy[i + 1], &puiEager[i + 1], 3) != 0)))
+			{
+				uiDifferences++;
+			}
+		}
+		AssertSize(0, uiDifferences);
+		AssertTrue(CountOpaquePixels(pLazyRed->GetImage(), 0, 0, pLazyRed->GetImage()->GetWidth(), pLazyRed->GetImage()->GetHeight()) > 0);
+
+		pEagerRed = NULL;
+		pEagerColours = NULL;
+		pEager = NULL;
+		pDescription = NULL;
+		pLazyRed = NULL;
+		pLazy = NULL;
+		pLazyColours = NULL;
+		pFamily = NULL;
+		ORoot()->RemoveAll();
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestFontFamily(void)
@@ -271,6 +494,8 @@ void TestFontFamily(void)
 	TestFontFamilyOneFont();
 	TestFontFamilyColourOrder();
 	TestFontFamilySuperscriptAndSubscript();
+	TestFontFamilyLazyGlyphs();
+	TestFontFamilyLazyMatchesRasterise();
 
 	DataIOKill();
 

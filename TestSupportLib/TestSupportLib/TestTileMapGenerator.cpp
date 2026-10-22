@@ -346,6 +346,9 @@ void TestTileMapGenerator40x40ImageGenerate(void)
 		sMapSize = pTileMapGenerator->GetMapSize();
 		sCelSize = pTileMapGenerator->GetCelSize();
 
+		//Validating every object each time one is added is too slow for the thousands of tiles and their blitters; validate
+		//once afterwards.
+		gcObjects.DisableValidation();
 		pTileMap = pTileMapGenerator->Generate();
 
 		pDestImage = OMalloc<CImage>(sMapSize.x * sCelSize.x, sMapSize.y * sCelSize.y, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
@@ -363,6 +366,8 @@ void TestTileMapGenerator40x40ImageGenerate(void)
 
 		bResult = pMaps->Blit(false);
 		AssertTrue(bResult);
+		gcObjects.EnableValidation();
+		gcObjects.ValidateObjectsConsistency();
 
 		pRoot->Remove(pMaps);
 		pRoot->Remove(pTileMapGenerator);
