@@ -86,6 +86,7 @@ void TestListInput(void)
 		int32					iTop;
 		int32					iHeight;
 		int						x;
+		SLogConfig				sLogConfig;
 
 		szLog.Init();
 		cListener.Init(&szLog);
@@ -106,7 +107,10 @@ void TestListInput(void)
 		AssertTrue(pList->IsRowEnabled(1));
 		AssertFalse(pList->IsRowEnabled(2));
 		AssertFalse(pList->IsRowEnabled(5));
+		gcLogger.GetConfig(&sLogConfig);
+		gcLogger.SetBreakOnError(false);
 		AssertFalse(pList->AddToRow(5, CreateListItem(pTestWindow, 10, 10, 0)));
+		gcLogger.SetConfig(&sLogConfig);
 
 		//The list needs its rows' size.
 		sVec = pList->GetDesiredSize();

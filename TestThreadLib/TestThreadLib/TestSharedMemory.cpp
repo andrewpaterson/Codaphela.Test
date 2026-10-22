@@ -114,6 +114,7 @@ void TestSharedMemoryResizeOneProcess(void)
 	char*			pcClient;
 	int				i;
 	int				iStillMapped;
+	SLogConfig		sLogConfig;
 
 	cSharedOwner.Init("Local\\TestSharedMemoryResizeOneProcess");
 	bResult = cSharedOwner.Create(3940);
@@ -140,9 +141,10 @@ void TestSharedMemoryResizeOneProcess(void)
 	cSharedOwner.Close();
 
 	cSharedNewOwner.Init("Local\\TestSharedMemoryResizeOneProcess");
+	gcLogger.GetConfig(&sLogConfig);
 	gcLogger.SetBreakOnError(false);
 	bResult = cSharedNewOwner.Create(3940 + 16);
-	gcLogger.SetBreakOnError(true);
+	gcLogger.SetConfig(&sLogConfig);
 	AssertFalse(bResult);
 	cSharedNewOwner.Kill();
 

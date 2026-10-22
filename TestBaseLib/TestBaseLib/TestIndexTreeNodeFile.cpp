@@ -77,6 +77,7 @@ void TestIndexTreeNodeFileRootMemory(void)
 	CTestIndexTreeFile		cIndex;
 	CIndexTreeNodeFile		cChildNode;
 	CIndexTreeChildNode*	pcResult;
+	SLogConfig				sLogConfig;
 
 	cIndex.FakeInit(IKR_No);
 
@@ -93,9 +94,10 @@ void TestIndexTreeNodeFileRootMemory(void)
 	AssertTrue(pcNode->HasNodes());
 	AssertFalse(pcNode->HasData());
 
+	gcLogger.GetConfig(&sLogConfig);
 	gcLogger.SetBreakOnError(false);
 	AssertFalse(pcNode->ValidateNodesEmpty());
-	gcLogger.SetBreakOnError(true);
+	gcLogger.SetConfig(&sLogConfig);
 
 	AssertSize(33, pcNode->GetFirstIndex());
 	AssertSize(33, pcNode->GetLastIndex());

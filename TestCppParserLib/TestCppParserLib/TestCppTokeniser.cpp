@@ -2,6 +2,7 @@
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/Operators.h"
+#include "BaseLib/Logger.h"
 #include "CppParserLib/Preprocessor.h"
 #include "CppParserLib/CppTokeniser.h"
 #include "CppParserLib/CTReservedWord.h"
@@ -273,6 +274,10 @@ void TestCppTokeniserErrors(void)
 {
 	CTranslationUnit	cFile;
 	CCPPTokeniser		cTokeniser;
+	SLogConfig			sLogConfig;
+
+	gcLogger.GetConfig(&sLogConfig);
+	gcLogger.SetBreakOnError(false);
 
 	AssertFalse(TokeniseText(&cFile, &cTokeniser, "int x = 12q;"));
 	cTokeniser.Kill();
@@ -285,6 +290,8 @@ void TestCppTokeniserErrors(void)
 	AssertFalse(TokeniseText(&cFile, &cTokeniser, "char c = '';"));
 	cTokeniser.Kill();
 	cFile.Kill();
+
+	gcLogger.SetConfig(&sLogConfig);
 }
 
 
