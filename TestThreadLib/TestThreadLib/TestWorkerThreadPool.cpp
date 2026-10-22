@@ -3,6 +3,7 @@
 #include "BaseLib/ArrayTemplate.h"
 #include "BaseLib/LogString.h"
 #include "ThreadLib/WorkerThreadPool.h"
+#include "ThreadLib/AtomicInt.h"
 #include "BaseLib/SafeArrayBlock.h"
 #include "TestLib/Assert.h"
 
@@ -16,7 +17,7 @@ private:
 	int					mix;
 	int					miThreadId;
 	CSafeArrayBlock*	mpcArray;
-	bool				mbRunning;
+	CAtomicInt			miRunning;
 
 public:
 	void Init(int x, CSafeArrayBlock* pcArray)
@@ -24,7 +25,7 @@ public:
 		mix = x;
 		mpcArray = pcArray;
 		miThreadId = -1;
-		mbRunning = true;
+		miRunning.Set(1);
 	}
 
 	void Start(int iThreadId)
@@ -40,12 +41,12 @@ public:
 		{
 			mpcArray->Add(&mix);
 		}
-		mbRunning = false;
+		miRunning.Set(0);
 	}
 
 	bool IsDone(void)
 	{
-		return !mbRunning;
+		return miRunning.Get() == 0;
 	}
 };
 
