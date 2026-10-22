@@ -514,6 +514,7 @@ Ptr<CFont> CreateTrueTypeFont(Ptr<CRoot> pRoot, char* szFontFile, float32 fPixel
 	CTextFile				cTextFile;
 	CImageColourRGB			cWhite;
 	CChars					szFilename;
+	Ptr<CFontDescription>	pDescription;
 	Ptr<CImage>				pImage;
 	Ptr<CFont>				pFont;
 
@@ -538,10 +539,14 @@ Ptr<CFont> CreateTrueTypeFont(Ptr<CRoot> pRoot, char* szFontFile, float32 fPixel
 
 	cWhite.Init(1.0f, 1.0f, 1.0f);
 	cFactory.Init(&cTrueTypeFont, fPixelSize);
-	pImage = cFactory.Rasterise(cTextFile.Text(), &cWhite);
-	pRoot->Add(pImage);
-	pFont = cFactory.Generate(szFontFile, pImage);
-	pRoot->Add(pFont);
+	pDescription = cFactory.Describe(szFontFile, cTextFile.Text());
+	pImage = cFactory.Rasterise(pDescription, &cWhite);
+	if (pImage.IsNotNull())
+	{
+		pRoot->Add(pImage);
+		pFont = OMalloc<CFont>(pDescription, pImage);
+		pRoot->Add(pFont);
+	}
 	cFactory.Kill();
 	cTextFile.Kill();
 	cTrueTypeFont.Kill();
@@ -829,7 +834,7 @@ void TestFontTrueTypeWriteAndRead(void)
 		gcObjects.EnableValidation();
 		gcObjects.ValidateObjectsConsistency();
 
-		AssertString("InterVariable.ttf", pLoadedFont->GetName());
+		AssertString("InterVariable.ttf", pLoadedFont->GetFontName());
 		AssertInt(pFont->GetSpaceWidth(), pLoadedFont->GetSpaceWidth());
 		AssertInt(pFont->GetAscent(), pLoadedFont->GetAscent());
 		AssertInt(pFont->GetDescent(), pLoadedFont->GetDescent());

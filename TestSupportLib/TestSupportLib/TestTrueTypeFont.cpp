@@ -572,6 +572,7 @@ void TestTrueTypeFontFactoryLazyGlyphs(void)
 		CTrueTypeFont				cFont;
 		CTrueTypeFontFactory		cFactory;
 		CImageColourRGB				cColour;
+		Ptr<CFontDescription>		pDescription;
 		Ptr<CImage>					pImage;
 		Ptr<CFont>					pFont;
 		Ptr<CGlyph>					pGlyphA;
@@ -586,11 +587,14 @@ void TestTrueTypeFontFactoryLazyGlyphs(void)
 		AssertTrue(LoadTrueTypeFont(&cFont, "LiberationSans-Regular.ttf"));
 		cFactory.Init(&cFont, 16.0f);
 		cColour.Init(0.0f, 0.0f, 0.0f);
-		pImage = cFactory.Rasterise("AB g\xC3\xA9", &cColour);
-		pFont = cFactory.Generate("Liberation Sans 16px", pImage);
+		pDescription = cFactory.Describe("Liberation Sans 16px", "AB g\xC3\xA9");
+		AssertTrue(pDescription.IsNotNull());
+		pImage = cFactory.Rasterise(pDescription, &cColour);
 		cFactory.Kill();
-		AssertTrue(pFont.IsNotNull());
+		AssertTrue(pImage.IsNotNull());
+		pFont = OMalloc<CFont>(pDescription, pImage);
 		AssertTrue(pFont->GetImage() == pImage);
+		AssertTrue(pFont->GetDescription() == pDescription);
 
 		//Every character is described but no glyph has been generated.
 		AssertSize(5, pFont->NumGlyphs());
@@ -655,6 +659,142 @@ void TestTrueTypeFontFactoryLazyGlyphs(void)
 		pDraw = NULL;
 		pFont = NULL;
 		pImage = NULL;
+		pDescription = NULL;
+		cFont.Kill();
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The pixel with the most opacity in the glyph's part of its image.
+// Opacity, red, green and blue bytes.
+//
+//////////////////////////////////////////////////////////////////////////
+uint8* GetMostOpaqueGlyphPixel(Ptr<CGlyph> pGlyph)
+{
+	Ptr<CImage>		pImage;
+	CSubImage*		pcSubImage;
+	uint8*			puiPixel;
+	uint8*			puiMost;
+	int				x;
+	int				y;
+
+	pImage = pGlyph->GetSourceImage();
+	pcSubImage = pGlyph->GetSubImage();
+	puiMost = NULL;
+	for (y = pcSubImage->mcImageRect.msTopLeft.y; y < pcSubImage->mcImageRect.msBottomRight.y; y++)
+	{
+		for (x = pcSubImage->mcImageRect.msTopLeft.x; x < pcSubImage->mcImageRect.msBottomRight.x; x++)
+		{
+			puiPixel = &((uint8*)pImage->GetData())[(y * pImage->GetWidth() + x) * 4];
+			if ((puiMost == NULL) || (puiPixel[0] > puiMost[0]))
+			{
+				puiMost = puiPixel;
+			}
+		}
+	}
+	return puiMost;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Opacity, red, green and blue bytes.
+//
+//////////////////////////////////////////////////////////////////////////
+size CountOpacityDifferences(Ptr<CImage> pImage1, Ptr<CImage> pImage2)
+{
+	size	i;
+	size	uiNumPixels;
+	size	uiCount;
+	uint8*	puiData1;
+	uint8*	puiData2;
+
+	uiNumPixels = (size)pImage1->GetWidth() * pImage1->GetHeight();
+	puiData1 = (uint8*)pImage1->GetData();
+	puiData2 = (uint8*)pImage2->GetData();
+	uiCount = 0;
+	for (i = 0; i < uiNumPixels; i++)
+	{
+		if (puiData1[i * 4] != puiData2[i * 4])
+		{
+			uiCount++;
+		}
+	}
+	return uiCount;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Fonts of different colours share one description, each with its own
+// image and its own glyphs.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTrueTypeFontFactoryColours(void)
+{
+	ObjectsInit();
+	{
+		CTrueTypeFont				cFont;
+		CTrueTypeFontFactory		cFactory;
+		CImageColourRGB				cBlack;
+		CImageColourRGB				cRed;
+		Ptr<CFontDescription>		pDescription;
+		Ptr<CFont>					pBlack;
+		Ptr<CFont>					pRed;
+		Ptr<CGlyph>					pBlackA;
+		Ptr<CGlyph>					pRedA;
+		uint8*						puiBlackPixel;
+		uint8*						puiRedPixel;
+
+		AssertTrue(LoadTrueTypeFont(&cFont, "LiberationSans-Regular.ttf"));
+		cFactory.Init(&cFont, 16.0f);
+		cBlack.Init(0.0f, 0.0f, 0.0f);
+		cRed.Init(1.0f, 0.0f, 0.0f);
+		pDescription = cFactory.Describe("Liberation Sans 16px", "AB");
+		pBlack = OMalloc<CFont>(pDescription, cFactory.Rasterise(pDescription, &cBlack));
+		pRed = OMalloc<CFont>(pDescription, cFactory.Rasterise(pDescription, &cRed));
+		cFactory.Kill();
+
+		AssertTrue(pBlack->GetDescription() == pRed->GetDescription());
+		AssertTrue(pBlack->GetImage() != pRed->GetImage());
+		AssertInt(pDescription->GetImageWidth(), pRed->GetImage()->GetWidth());
+		AssertInt(pDescription->GetImageHeight(), pRed->GetImage()->GetHeight());
+		AssertSize(2, pDescription->NumGlyphs());
+		AssertSize(0, pDescription->GetGlyph((uint8*)"A", 1)->uiIndex);
+		AssertSize(1, pDescription->GetGlyph((uint8*)"B", 1)->uiIndex);
+
+		//Each font generates its own glyphs.
+		pBlackA = pBlack->GetGlyph((uint32)'A', 1);
+		AssertSize(1, pBlack->NumGeneratedGlyphs());
+		AssertSize(0, pRed->NumGeneratedGlyphs());
+		pRedA = pRed->GetGlyph((uint32)'A', 1);
+		AssertSize(1, pRed->NumGeneratedGlyphs());
+		AssertTrue(pBlackA != pRedA);
+		AssertTrue(pBlackA->GetSourceImage() == pBlack->GetImage());
+		AssertTrue(pRedA->GetSourceImage() == pRed->GetImage());
+		AssertInt(pBlackA->GetSubImage()->GetSourceLeft(), pRedA->GetSubImage()->GetSourceLeft());
+		AssertInt(pBlackA->GetSubImage()->GetSourceTop(), pRedA->GetSubImage()->GetSourceTop());
+		AssertInt(pBlackA->GetStep(), pRedA->GetStep());
+
+		//The same coverage in each colour.
+		puiBlackPixel = GetMostOpaqueGlyphPixel(pBlackA);
+		puiRedPixel = GetMostOpaqueGlyphPixel(pRedA);
+		AssertInt(255, puiBlackPixel[0]);
+		AssertInt(0, puiBlackPixel[1]);
+		AssertInt(255, puiRedPixel[0]);
+		AssertInt(255, puiRedPixel[1]);
+		AssertInt(0, puiRedPixel[2]);
+		AssertInt(0, puiRedPixel[3]);
+		AssertSize(0, CountOpacityDifferences(pBlack->GetImage(), pRed->GetImage()));
+
+		pBlackA = NULL;
+		pRedA = NULL;
+		pBlack = NULL;
+		pRed = NULL;
+		pDescription = NULL;
 		cFont.Kill();
 	}
 	ObjectsKill(false);
@@ -680,6 +820,7 @@ void TestTrueTypeFont(void)
 	TestTrueTypeRasteriseText();
 	TestTrueTypeDrawText();
 	TestTrueTypeFontFactoryLazyGlyphs();
+	TestTrueTypeFontFactoryColours();
 
 	DataIOKill();
 

@@ -29,9 +29,9 @@ void TestNamedObjectAddConstructors(void)
 void TestNamedObjectSize(void)
 {
 #ifdef BUILD_64
-	AssertSize(288, sizeof(CObject));
+	AssertSize(344, sizeof(CObject));
 #else
-	AssertSize(160, sizeof(CObject));
+	AssertSize(184, sizeof(CObject));
 #endif // BUILD_64
 }
 

@@ -7,6 +7,8 @@
 #include "StandardLib/Pointer.h"
 #include "StandardLib/Root.h"
 #include "StandardLib/PointerContainer.h"
+#include "StandardLib/SetObject.h"
+#include "StandardLib/ArrayObject.h"
 #include "TestLib/Assert.h"
 #include "TestBaseObject.h"
 #include "ObjectTestClasses.h"
@@ -763,6 +765,78 @@ void TestObjectStackKill(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectHeapFromsObjectsAndCollections(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CTestObject>			pTarget;
+		Ptr<CTestObject>			pHolder;
+		Ptr<CSetObject>				pSet;
+		Ptr<CArrayObject>			pArray;
+		CArrayBaseObjectPtrE32		apcFroms;
+
+		pTarget = OMalloc<CTestObject>();
+		pHolder = OMalloc<CTestObject>();
+		pSet = OMalloc<CSetObject>();
+		pArray = OMalloc<CArrayObject>();
+
+		//Froms from Objects come before froms from Collections, whatever order they were added in.
+		pSet->Add(pTarget);
+		pHolder->mpTest = pTarget;
+		pArray->Add(pTarget);
+		pArray->Add(pTarget);
+		AssertSize(4, pTarget->NumHeapFroms());
+		AssertPointer(&pHolder, pTarget->GetHeapFrom(0));
+		AssertPointer(&pSet, pTarget->GetHeapFrom(1));
+		AssertPointer(&pArray, pTarget->GetHeapFrom(2));
+		AssertPointer(&pArray, pTarget->GetHeapFrom(3));
+		AssertTrue(pTarget->ContainsFrom(&pHolder));
+		AssertTrue(pTarget->ContainsFrom(&pSet));
+		AssertTrue(pTarget->ContainsFrom(&pArray));
+
+		apcFroms.Init();
+		pTarget->GetHeapFroms(&apcFroms);
+		AssertSize(4, apcFroms.NumElements());
+		AssertPointer(&pHolder, apcFroms.GetPtr(0));
+		AssertPointer(&pSet, apcFroms.GetPtr(1));
+		AssertPointer(&pArray, apcFroms.GetPtr(2));
+		AssertPointer(&pArray, apcFroms.GetPtr(3));
+		apcFroms.Kill();
+
+		pSet->Remove(pTarget);
+		AssertSize(3, pTarget->NumHeapFroms());
+		AssertPointer(&pHolder, pTarget->GetHeapFrom(0));
+		AssertPointer(&pArray, pTarget->GetHeapFrom(1));
+		AssertPointer(&pArray, pTarget->GetHeapFrom(2));
+		AssertFalse(pTarget->ContainsFrom(&pSet));
+
+		pHolder->mpTest = NULL;
+		AssertSize(2, pTarget->NumHeapFroms());
+		AssertPointer(&pArray, pTarget->GetHeapFrom(0));
+		AssertPointer(&pArray, pTarget->GetHeapFrom(1));
+		AssertFalse(pTarget->ContainsFrom(&pHolder));
+
+		AssertTrue(pArray->Remove((size)1));
+		AssertSize(1, pTarget->NumHeapFroms());
+		AssertPointer(&pArray, pTarget->GetHeapFrom(0));
+		AssertTrue(pArray->Remove((size)0));
+		AssertSize(0, pTarget->NumHeapFroms());
+		AssertFalse(pTarget->ContainsFrom(&pArray));
+
+		pTarget = NULL;
+		pHolder = NULL;
+		pSet = NULL;
+		pArray = NULL;
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectStackDetach(void)
 {
 	ObjectsInit();
@@ -1027,6 +1101,7 @@ void TestObject(void)
 	TestObjectGetObjects();
 	TestObjectStackKill();
 	TestObjectStackDetach();
+	TestObjectHeapFromsObjectsAndCollections();
 	TestObjectPointerRemapping();
 	TestObjectPointerRemappingKilling();
 	TestObjectRootUnattachment();

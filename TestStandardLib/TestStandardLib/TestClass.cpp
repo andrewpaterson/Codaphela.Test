@@ -95,17 +95,17 @@ void TestClassDefinition(void)
 	pcField = pcTestClassClass->GetField("mDouble");
 	AssertTrue(pcField->IsPrimitive());
 #ifdef BUILD_64
-	AssertSize(OBJECT_SIZE + 344, pcField->GetOffset());
+	AssertSize(OBJECT_SIZE + 400, pcField->GetOffset());
 #else
-	AssertInt(OBJECT_SIZE + 200, pcField->GetOffset());
+	AssertInt(OBJECT_SIZE + 224, pcField->GetOffset());
 #endif // BUILD_64
 
 	pcField = pcTestClassClass->GetField("mauiData");
 	AssertTrue(pcField->IsUnmanaged());
 #ifdef BUILD_64
-	AssertSize(OBJECT_SIZE + 360, pcField->GetOffset());
+	AssertSize(OBJECT_SIZE + 416, pcField->GetOffset());
 #else
-	AssertInt(OBJECT_SIZE + 216, pcField->GetOffset());
+	AssertInt(OBJECT_SIZE + 240, pcField->GetOffset());
 #endif // BUILD_64
 
 	pTestClass = NULL;
