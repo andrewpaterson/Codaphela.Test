@@ -192,10 +192,12 @@ static void TestCPP65TickLow(C65C64Meta* pcMPU, void* pvContext)
 //
 // Preprocesses, parses and generates szSource, as a whole program with its start up
 // if bProgram.  The assembly is appended to pszAssembly and every stage's errors to
-// pszErrors.  The labels it uses but does not define are added to paszExternals.
+// pszErrors.  The labels it uses but does not define are added to paszExternals.  A
+// unit of a program of several (szUnit is its prefix) shares paszEmitted and adds to
+// the initialisers and finalisers.
 //
 //////////////////////////////////////////////////////////////////////////
-bool TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSource, bool bProgram, CArrayChars* paszExternals)
+bool TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSource, bool bProgram, CArrayChars* paszExternals, const char* szUnit, CArrayChars* paszEmitted, CArrayChars* paszInitialise, CArrayChars* paszFinalise)
 {
 	CTranslationUnit	cFile;
 	CPreprocessor		cPreprocessor;
@@ -256,10 +258,18 @@ bool TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSou
 	cParser.Kill();
 
 	cGenerator.Init(&cTree);
+	if (szUnit)
+	{
+		cGenerator.SetUnit(szUnit, paszEmitted);
+	}
 	bResult &= bProgram ? cGenerator.GenerateProgram(pszAssembly) : cGenerator.Generate(pszAssembly);
 	if (paszExternals)
 	{
 		cGenerator.GetExternals(paszExternals);
+	}
+	if (szUnit)
+	{
+		cGenerator.GetStartUp(paszInitialise, paszFinalise);
 	}
 	pszErrors->Append(cGenerator.GetErrors()->Text());
 	cGenerator.Kill();
@@ -511,13 +521,13 @@ static void TestCPP65DefinedLabels(CArrayChars* paszLabels, const char* szAssemb
 //////////////////////////////////////////////////////////////////////////
 //
 // Compiles the units (paths under commonlibraries, or under this test's directory
-// when they start with "Input"), links them and runs the program from reset.  The
-// units in a directory are a library.  The labels in szStubs (space separated,
-// sorted) must be exactly the ones used but defined by no unit; each is a stp so a
-// call to one stops the program.  Returns A when main returns.
+// when they start with "Input") and szSource if it is given, links them and loads
+// the program.  The units in a directory are a library.  The labels in szStubs
+// (space separated, sorted) must be exactly the ones used but defined by no unit;
+// each is a stp so a call to one stops the program.
 //
 //////////////////////////////////////////////////////////////////////////
-int32 TestCPP65RunProject(const char** aszUnits, const char* szStubs, size uiMaxInstructions)
+bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const char* szStubs, const char* szSource)
 {
 	CProject			cProject;
 	CLibrary*			pcLibrary;
@@ -541,12 +551,10 @@ int32 TestCPP65RunProject(const char** aszUnits, const char* szStubs, size uiMax
 	CArrayChars			aszFinalise;
 	CArrayChars			aszExternals;
 	CArrayChars			aszDefined;
-	STestCPP65Run		sRun;
 	int					iUnit;
 	int					iSlash;
 	size				i;
-	int32				iResult;
-	bool				bDone;
+	bool				bResult;
 
 	cProject.Init(false);
 	szDirectory.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "Libc65");
@@ -598,6 +606,10 @@ int32 TestCPP65RunProject(const char** aszUnits, const char* szStubs, size uiMax
 	aszInitialise.Init();
 	aszFinalise.Init();
 	aszExternals.Init();
+	if (szSource)
+	{
+		TestCPP65Generate(&szUnits, &szErrors, szSource, false, &aszExternals, "U0_", &aszEmitted, &aszInitialise, &aszFinalise);
+	}
 	iUnit = 0;
 	for (pcFile = cProject.Start(&sIter, "65C64"); pcFile; pcFile = cProject.Iterate(&sIter))
 	{
@@ -653,16 +665,7 @@ int32 TestCPP65RunProject(const char** aszUnits, const char* szStubs, size uiMax
 	}
 	AssertString(szStubs, szMissing.Text());
 
-	iResult = 0;
-	if (szErrors.Empty())
-	{
-		AssertTrue(TestCPP65BeginAssembly(&sRun, szProgram.Text()));
-		bDone = TestCPP65Run(&sRun, uiMaxInstructions) < uiMaxInstructions;
-		AssertTrue(bDone);
-		AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
-		iResult = (int32)TestCPP65MPU(&sRun)->GetA();
-		TestCPP65End(&sRun);
-	}
+	bResult = szErrors.Empty() && TestCPP65BeginAssembly(psRun, szProgram.Text());
 
 	szMissing.Kill();
 	aszDefined.Kill();
@@ -674,5 +677,42 @@ int32 TestCPP65RunProject(const char** aszUnits, const char* szStubs, size uiMax
 	szErrors.Kill();
 	szUnits.Kill();
 	cProject.Kill();
+	return bResult;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Builds a project (see TestCPP65BeginProject) and runs it.  Returns A when main
+// returns.
+//
+//////////////////////////////////////////////////////////////////////////
+int32 TestCPP65RunProject(const char** aszUnits, const char* szStubs, size uiMaxInstructions, const char* szSource)
+{
+	STestCPP65Run	sRun;
+	int32			iResult;
+
+	iResult = 0;
+	if (TestCPP65BeginProject(&sRun, aszUnits, szStubs, szSource))
+	{
+		AssertTrue(TestCPP65Run(&sRun, uiMaxInstructions) < uiMaxInstructions);
+		AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
+		iResult = (int32)TestCPP65MPU(&sRun)->GetA();
+		TestCPP65End(&sRun);
+	}
 	return iResult;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Compiles and runs szSource with Libc65's soft float runtime.  Returns what main
+// returned.
+//
+//////////////////////////////////////////////////////////////////////////
+int32 TestCPP65MainFloat(const char* szSource)
+{
+	static const char*	aszUnits[] = { "Libc65/softfloat.cpp", NULL };
+
+	return TestCPP65RunProject(aszUnits, "", 20000000, szSource);
 }

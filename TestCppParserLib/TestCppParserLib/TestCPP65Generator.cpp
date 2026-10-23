@@ -1,4 +1,5 @@
 #include <string.h>
+#include <math.h>
 #include "MicroprocessorLib/65C64InstructionFactory.h"
 #include "TestCPP65Context.h"
 #include "BaseLib/FileUtil.h"
@@ -11,6 +12,8 @@
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/Operators.h"
 #include "BaseLib/NumberControl.h"
+#include "BaseLib/FloatHelper.h"
+#include "BaseLib/ArrayInt.h"
 #include "TestLib/Assert.h"
 
 
@@ -1094,6 +1097,509 @@ void TestCPP65GeneratorProject(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The result of a op b in C++ for float (bDouble false) or double values given as
+// bits: the result's bits for + - * and /, 0 or 1 for comparisons.
+//
+//////////////////////////////////////////////////////////////////////////
+static uint64 TestCPP65ExpectedFloat(const char* szOperator, uint64 ulliA, uint64 ulliB, bool bDouble)
+{
+	volatile float	fA;
+	volatile float	fB;
+	volatile float	fResult;
+	volatile double	dA;
+	volatile double	dB;
+	volatile double	dResult;
+	uint32			uiA;
+	uint32			uiB;
+	uint32			uiResult;
+	uint64			ulliResult;
+	bool			bResult;
+
+	uiA = (uint32)ulliA;
+	uiB = (uint32)ulliB;
+	memcpy((void*)&fA, &uiA, 4);
+	memcpy((void*)&fB, &uiB, 4);
+	memcpy((void*)&dA, &ulliA, 8);
+	memcpy((void*)&dB, &ulliB, 8);
+	fResult = 0;
+	dResult = 0;
+	if (strcmp(szOperator, "+") == 0)			{ fResult = fA + fB;	dResult = dA + dB; }
+	else if (strcmp(szOperator, "-") == 0)		{ fResult = fA - fB;	dResult = dA - dB; }
+	else if (strcmp(szOperator, "*") == 0)		{ fResult = fA * fB;	dResult = dA * dB; }
+	else if (strcmp(szOperator, "/") == 0)		{ fResult = fA / fB;	dResult = dA / dB; }
+	else
+	{
+		if (strcmp(szOperator, "<") == 0)			bResult = bDouble ? (dA < dB) : (fA < fB);
+		else if (strcmp(szOperator, "<=") == 0)		bResult = bDouble ? (dA <= dB) : (fA <= fB);
+		else if (strcmp(szOperator, ">") == 0)		bResult = bDouble ? (dA > dB) : (fA > fB);
+		else if (strcmp(szOperator, ">=") == 0)		bResult = bDouble ? (dA >= dB) : (fA >= fB);
+		else if (strcmp(szOperator, "==") == 0)		bResult = bDouble ? (dA == dB) : (fA == fB);
+		else										bResult = bDouble ? (dA != dB) : (fA != fB);
+		return bResult ? 1 : 0;
+	}
+	if (bDouble)
+	{
+		memcpy(&ulliResult, (void*)&dResult, 8);
+		return ulliResult;
+	}
+	memcpy(&uiResult, (void*)&fResult, 4);
+	return uiResult;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Generates a program that works out a op b for every pair of values, as a value
+// (Value) and as a branch (Branch), and checks each against C++, bit for bit.
+//
+//////////////////////////////////////////////////////////////////////////
+static void AssertCPP65FloatOperator(const char* szOperator, bool bDouble)
+{
+	STestCPP65Run	sRun;
+	CChars			szSource;
+	const char*		szType;
+	const char*		szBits;
+	size			uiValues;
+	size			i;
+	size			j;
+	uint32			uiAddress;
+	uint64			ulliExpected;
+	uint64			ulliActual;
+	bool			bCompare;
+	int				iBytes;
+
+	static const uint64	aulliFloats[] = { 0, 0x80000000, 0x3F800000, 0xBF800000, 0x3F000000, 0x40400000, 0x3EAAAAAB, 0x000116C2, 0x00800000, 0x7F7FFFFF, 0x7F800000, 0xFF800000, 0x7FC00000, 0x7149F2CA, 0x42F6E979, 0xC0E80000, 0x00000001, 0x4B800001 };
+	static const uint64	aulliDoubles[] = { 0, 0x8000000000000000ULL, 0x3FF0000000000000ULL, 0xBFF0000000000000ULL, 0x3FE0000000000000ULL, 0x4008000000000000ULL, 0x3FD5555555555555ULL, 0x0000B5E620F48000ULL, 0x0010000000000000ULL, 0x7FEFFFFFFFFFFFFFULL, 0x7FF0000000000000ULL, 0xFFF0000000000000ULL, 0x7FF8000000000000ULL, 0x46293E5939A08CEAULL, 0x405EDD2F1A9FBE77ULL, 0xC01D000000000000ULL, 0x0000000000000001ULL, 0x4340000000000001ULL };
+	const uint64*		aulliValues;
+
+	aulliValues = bDouble ? aulliDoubles : aulliFloats;
+	uiValues = bDouble ? sizeof(aulliDoubles) / sizeof(uint64) : sizeof(aulliFloats) / sizeof(uint64);
+	szType = bDouble ? "double" : "float";
+	szBits = bDouble ? "unsigned long long" : "unsigned";
+	iBytes = bDouble ? 8 : 4;
+	bCompare = (strlen(szOperator) == 2) || (szOperator[0] == '<') || (szOperator[0] == '>');
+
+	szSource.Init();
+	szSource.Append(bCompare ? "int" : szType)->Append(" Value(")->Append(szType)->Append(" a, ")->Append(szType)->Append(" b) { return a ")->Append(szOperator)->Append(" b; }\n");
+	szSource.Append("int Branch(")->Append(szType)->Append(" a, ")->Append(szType)->Append(" b) { if (a ")->Append(szOperator)->Append(" b) return 1; return 0; }\n");
+	szSource.Append(szBits)->Append(" gauiValues[] = {");
+	for (i = 0; i < uiValues; i++)
+	{
+		szSource.Append(aulliValues[i])->Append("ULL, ");
+	}
+	szSource.Append("};\n");
+	szSource.Append("int main()\n{\n");
+	szSource.Append("\t")->Append(szBits)->Append("* p = (")->Append(szBits)->Append("*)0x100000;\n");
+	szSource.Append("\tfor (int i = 0; i < ")->Append((int)uiValues)->Append("; i++)\n\t{\n");
+	szSource.Append("\t\tfor (int j = 0; j < ")->Append((int)uiValues)->Append("; j++)\n\t\t{\n");
+	szSource.Append("\t\t\t")->Append(szType)->Append(" a = *(")->Append(szType)->Append("*)&gauiValues[i];\n");
+	szSource.Append("\t\t\t")->Append(szType)->Append(" b = *(")->Append(szType)->Append("*)&gauiValues[j];\n");
+	if (bCompare)
+	{
+		szSource.Append("\t\t\t*p++ = Value(a, b);\n");
+	}
+	else
+	{
+		szSource.Append("\t\t\t")->Append(szType)->Append(" r = Value(a, b);\n");
+		szSource.Append("\t\t\t*p++ = *(")->Append(szBits)->Append("*)&r;\n");
+	}
+	szSource.Append("\t\t\t*p++ = Branch(a, b);\n");
+	szSource.Append("\t\t}\n\t}\n\treturn 0;\n}\n");
+
+	static const char*	aszUnits[] = { "Libc65/softfloat.cpp", NULL };
+	AssertTrue(TestCPP65BeginProject(&sRun, aszUnits, "", szSource.Text()));
+	AssertTrue(TestCPP65Run(&sRun, 60000000) < 60000000);
+	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
+
+	uiAddress = TEST_CPP65_RESULTS;
+	for (i = 0; i < uiValues; i++)
+	{
+		for (j = 0; j < uiValues; j++)
+		{
+			ulliExpected = TestCPP65ExpectedFloat(szOperator, aulliValues[i], aulliValues[j], bDouble);
+			ulliActual = sRun.pcContext->GetLong(uiAddress);
+			if (bDouble)
+			{
+				ulliActual |= (uint64)sRun.pcContext->GetLong(uiAddress + 4) << 32;
+			}
+			AssertLongLongIntHex((int64)ulliExpected, ulliActual);
+			uiAddress += iBytes;
+
+			//A branch on a value is on it not being zero (a NaN is not).
+			if (!bCompare)
+			{
+				ulliExpected = (((ulliExpected << 1) & (bDouble ? ~(uint64)0 : 0xFFFFFFFF)) != 0) ? 1 : 0;
+			}
+			AssertLongLongIntHex((int64)ulliExpected, (uint64)sRun.pcContext->GetLong(uiAddress) | (bDouble ? (uint64)sRun.pcContext->GetLong(uiAddress + 4) << 32 : 0));
+			uiAddress += iBytes;
+		}
+	}
+	TestCPP65End(&sRun);
+	szSource.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Converts each integer to float and double, and each double (in range) to every
+// integer type and to float, on the 65C64 and in C++.
+//
+//////////////////////////////////////////////////////////////////////////
+static void AssertCPP65FloatConversions(void)
+{
+	STestCPP65Run	sRun;
+	CChars			szSource;
+	size			i;
+	uint32			uiAddress;
+	volatile float	fValue;
+	volatile double	dValue;
+	uint32			uiBits;
+	uint64			ulliBits;
+
+	static const int64	alliIntegers[] = { 0, 1, -1, 7, -100, 16777217, -16777217, 2147483647, (int64)0x80000000LL, (int64)0xFFFFFFFFLL, 9007199254740993LL, -9007199254740993LL, 0x7FFFFFFFFFFFFFFFLL, (int64)0x8000000000000000ULL, 123456789123LL };
+	static const double	adDoubles[] = { 0.0, -0.0, 0.5, -0.5, 1.9999, -1.9999, 100.75, -128.0, 127.5, 255.9, 32767.0, -32768.0, 65535.5, 2147483647.0, -2147483648.0, 4294967295.0, 1e18, -1e18, 3.4028234e38, 1e-45, 1e-300 };
+
+	szSource.Init();
+	szSource.Append("long long galliIntegers[] = {");
+	for (i = 0; i < sizeof(alliIntegers) / sizeof(int64); i++)
+	{
+		szSource.Append((uint64)alliIntegers[i])->Append("ULL, ");
+	}
+	szSource.Append("};\nunsigned long long gaulliDoubles[] = {");
+	for (i = 0; i < sizeof(adDoubles) / sizeof(double); i++)
+	{
+		memcpy(&ulliBits, &adDoubles[i], 8);
+		szSource.Append(ulliBits)->Append("ULL, ");
+	}
+	szSource.Append("};\n");
+	szSource.Append(
+		"unsigned* gp = (unsigned*)0x100000;\n"
+		"void Float(float f) { *gp++ = *(unsigned*)&f; }\n"
+		"void Double(double d) { *gp++ = (unsigned)*(unsigned long long*)&d; *gp++ = (unsigned)(*(unsigned long long*)&d >> 32); }\n"
+		"int main()\n"
+		"{\n"
+		"\tfor (int i = 0; i < ")->Append((int)(sizeof(alliIntegers) / sizeof(int64)))->Append("; i++)\n"
+		"\t{\n"
+		"\t\tlong long l = galliIntegers[i]; int n = (int)l; unsigned u = (unsigned)l; unsigned long long ul = (unsigned long long)l; short s = (short)l; unsigned char c = (unsigned char)l;\n"
+		"\t\tFloat(l); Float(n); Float(u); Float(ul); Float(s); Float(c);\n"
+		"\t\tDouble(l); Double(n); Double(u); Double(ul); Double(s); Double(c);\n"
+		"\t}\n"
+		"\tfor (int i = 0; i < ")->Append((int)(sizeof(adDoubles) / sizeof(double)))->Append("; i++)\n"
+		"\t{\n"
+		"\t\tdouble d = *(double*)&gaulliDoubles[i]; float f = (float)d;\n"
+		"\t\tFloat(f); Double(f);\n"
+		"\t\tif (d > -2147483649.0 && d < 2147483648.0) { *gp++ = (int)d; *gp++ = (int)f; } else { *gp++ = 0; *gp++ = 0; }\n"
+		"\t\tif (d > -1.0 && d < 4294967296.0) { *gp++ = (unsigned)d; } else { *gp++ = 0; }\n"
+		"\t\tif (d > -9.3e18 && d < 9.3e18) { long long l = (long long)d; *gp++ = (unsigned)l; *gp++ = (unsigned)(l >> 32); } else { *gp++ = 0; *gp++ = 0; }\n"
+		"\t\tif (d > -129.0 && d < 128.0) { char c = (char)d; *gp++ = c; } else { *gp++ = 0; }\n"
+		"\t\tif (d > -1.0 && d < 65536.0) { unsigned short s = (unsigned short)f; *gp++ = s; } else { *gp++ = 0; }\n"
+		"\t}\n"
+		"\treturn 0;\n"
+		"}\n");
+
+	static const char*	aszUnits[] = { "Libc65/softfloat.cpp", NULL };
+	AssertTrue(TestCPP65BeginProject(&sRun, aszUnits, "", szSource.Text()));
+	AssertTrue(TestCPP65Run(&sRun, 20000000) < 20000000);
+	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
+
+	uiAddress = TEST_CPP65_RESULTS;
+	for (i = 0; i < sizeof(alliIntegers) / sizeof(int64); i++)
+	{
+		int64	l = alliIntegers[i];
+		int32	n = (int32)l;
+		uint32	u = (uint32)l;
+		uint64	ul = (uint64)l;
+		int16	sh = (int16)l;
+		uint8	c = (uint8)l;
+
+		fValue = (float)l;	memcpy(&uiBits, (void*)&fValue, 4);	AssertIntHex(uiBits, sRun.pcContext->GetLong(uiAddress));	uiAddress += 4;
+		fValue = (float)n;	memcpy(&uiBits, (void*)&fValue, 4);	AssertIntHex(uiBits, sRun.pcContext->GetLong(uiAddress));	uiAddress += 4;
+		fValue = (float)u;	memcpy(&uiBits, (void*)&fValue, 4);	AssertIntHex(uiBits, sRun.pcContext->GetLong(uiAddress));	uiAddress += 4;
+		fValue = (float)ul;	memcpy(&uiBits, (void*)&fValue, 4);	AssertIntHex(uiBits, sRun.pcContext->GetLong(uiAddress));	uiAddress += 4;
+		fValue = (float)sh;	memcpy(&uiBits, (void*)&fValue, 4);	AssertIntHex(uiBits, sRun.pcContext->GetLong(uiAddress));	uiAddress += 4;
+		fValue = (float)c;	memcpy(&uiBits, (void*)&fValue, 4);	AssertIntHex(uiBits, sRun.pcContext->GetLong(uiAddress));	uiAddress += 4;
+		dValue = (double)l;		memcpy(&ulliBits, (void*)&dValue, 8);	AssertLongLongIntHex((int64)ulliBits, (int64)(sRun.pcContext->GetLong(uiAddress) | ((uint64)sRun.pcContext->GetLong(uiAddress + 4) << 32)));	uiAddress += 8;
+		dValue = (double)n;		memcpy(&ulliBits, (void*)&dValue, 8);	AssertLongLongIntHex((int64)ulliBits, (int64)(sRun.pcContext->GetLong(uiAddress) | ((uint64)sRun.pcContext->GetLong(uiAddress + 4) << 32)));	uiAddress += 8;
+		dValue = (double)u;		memcpy(&ulliBits, (void*)&dValue, 8);	AssertLongLongIntHex((int64)ulliBits, (int64)(sRun.pcContext->GetLong(uiAddress) | ((uint64)sRun.pcContext->GetLong(uiAddress + 4) << 32)));	uiAddress += 8;
+		dValue = (double)ul;	memcpy(&ulliBits, (void*)&dValue, 8);	AssertLongLongIntHex((int64)ulliBits, (int64)(sRun.pcContext->GetLong(uiAddress) | ((uint64)sRun.pcContext->GetLong(uiAddress + 4) << 32)));	uiAddress += 8;
+		dValue = (double)sh;	memcpy(&ulliBits, (void*)&dValue, 8);	AssertLongLongIntHex((int64)ulliBits, (int64)(sRun.pcContext->GetLong(uiAddress) | ((uint64)sRun.pcContext->GetLong(uiAddress + 4) << 32)));	uiAddress += 8;
+		dValue = (double)c;		memcpy(&ulliBits, (void*)&dValue, 8);	AssertLongLongIntHex((int64)ulliBits, (int64)(sRun.pcContext->GetLong(uiAddress) | ((uint64)sRun.pcContext->GetLong(uiAddress + 4) << 32)));	uiAddress += 8;
+	}
+	for (i = 0; i < sizeof(adDoubles) / sizeof(double); i++)
+	{
+		double	d = adDoubles[i];
+		float	f = (float)d;
+		int64	l;
+
+		memcpy(&uiBits, &f, 4);
+		AssertIntHex(uiBits, sRun.pcContext->GetLong(uiAddress));	uiAddress += 4;
+		dValue = f;	memcpy(&ulliBits, (void*)&dValue, 8);	AssertLongLongIntHex((int64)ulliBits, (int64)(sRun.pcContext->GetLong(uiAddress) | ((uint64)sRun.pcContext->GetLong(uiAddress + 4) << 32)));	uiAddress += 8;
+		if ((d > -2147483649.0) && (d < 2147483648.0))
+		{
+			AssertInt((int32)d, (int32)sRun.pcContext->GetLong(uiAddress));
+			AssertInt((f >= -2147483648.0f) && (f < 2147483648.0f) ? (int32)f : (int32)0x80000000, (int32)sRun.pcContext->GetLong(uiAddress + 4));
+		}
+		uiAddress += 8;
+		if ((d > -1.0) && (d < 4294967296.0))
+		{
+			AssertIntHex((uint32)d, sRun.pcContext->GetLong(uiAddress));
+		}
+		uiAddress += 4;
+		if ((d > -9.3e18) && (d < 9.3e18))
+		{
+			l = (int64)d;
+			AssertLongLongIntHex(l, (int64)(sRun.pcContext->GetLong(uiAddress) | ((uint64)sRun.pcContext->GetLong(uiAddress + 4) << 32)));
+		}
+		uiAddress += 8;
+		if ((d > -129.0) && (d < 128.0))
+		{
+			AssertInt((int8)d, (int32)sRun.pcContext->GetLong(uiAddress));
+		}
+		uiAddress += 4;
+		if ((d > -1.0) && (d < 65536.0))
+		{
+			AssertInt((uint16)f, (int32)sRun.pcContext->GetLong(uiAddress));
+		}
+		uiAddress += 4;
+	}
+	TestCPP65End(&sRun);
+	szSource.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Libc65's math.cpp on the 65C64 against the C library, bit for bit.
+//
+//////////////////////////////////////////////////////////////////////////
+static void AssertCPP65Math(void)
+{
+	STestCPP65Run	sRun;
+	CChars			szSource;
+	size			i;
+	size			j;
+	uint32			uiAddress;
+	uint64			ulliBits;
+	uint64			aulliExpected[13];
+	double			d;
+	double			dInteger;
+	float			f;
+	int				iExponent;
+	uint32			uiBits;
+
+	static const double	adValues[] = { 0.0, -0.0, 0.25, -0.5, 0.5, 1.5, -1.5, 2.5, -2.5, 3.75, -3.75, 1e-310, -7e-320, 4503599627370495.5, -4503599627370497.0, 1e300, 123456.789, -0.7, 2.0, 1e22 };
+
+	szSource.Init();
+	szSource.Append("#include <math.h>\nunsigned long long gaulliValues[] = {");
+	for (i = 0; i < sizeof(adValues) / sizeof(double); i++)
+	{
+		memcpy(&ulliBits, &adValues[i], 8);
+		szSource.Append(ulliBits)->Append("ULL, ");
+	}
+	szSource.Append("};\n");
+	szSource.Append(
+		"unsigned long long* gp = (unsigned long long*)0x100000;\n"
+		"void Put(double d) { *gp++ = *(unsigned long long*)&d; }\n"
+		"int main()\n"
+		"{\n"
+		"\tint e; double ip;\n"
+		"\tfor (int i = 0; i < ")->Append((int)(sizeof(adValues) / sizeof(double)))->Append("; i++)\n"
+		"\t{\n"
+		"\t\tdouble x = *(double*)&gaulliValues[i]; float f = (float)x;\n"
+		"\t\tPut(fabs(x)); Put(sqrt(fabs(x))); Put(trunc(x)); Put(floor(x)); Put(ceil(x)); Put(round(x));\n"
+		"\t\tPut(frexp(x, &e)); *gp++ = e; Put(ldexp(x, 10)); Put(modf(x, &ip)); Put(ip); Put(fmod(x, 0.7)); Put(fmod(x, -3.0));\n"
+		"\t\t*gp++ = *(unsigned*)&f; float g = sqrtf(fabsf(f)); *gp++ = *(unsigned*)&g; g = floorf(f); *gp++ = *(unsigned*)&g;\n"
+		"\t}\n"
+		"\treturn 0;\n"
+		"}\n");
+
+	static const char*	aszUnits[] = { "Libc65/softfloat.cpp", "Libc65/math.cpp", NULL };
+	AssertTrue(TestCPP65BeginProject(&sRun, aszUnits, "", szSource.Text()));
+	AssertTrue(TestCPP65Run(&sRun, 60000000) < 60000000);
+	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
+
+	uiAddress = TEST_CPP65_RESULTS;
+	for (i = 0; i < sizeof(adValues) / sizeof(double); i++)
+	{
+		d = adValues[i];
+		f = (float)d;
+		j = 0;
+		aulliExpected[j++] = 0;
+		#define CPP65_EXPECT(x)	{ volatile double dExpected = (x); memcpy(&aulliExpected[j], (void*)&dExpected, 8); j++; }
+		j = 0;
+		CPP65_EXPECT(fabs(d));
+		CPP65_EXPECT(sqrt(fabs(d)));
+		CPP65_EXPECT(trunc(d));
+		CPP65_EXPECT(floor(d));
+		CPP65_EXPECT(ceil(d));
+		CPP65_EXPECT(round(d));
+		CPP65_EXPECT(frexp(d, &iExponent));
+		aulliExpected[j++] = (uint64)(int64)iExponent;
+		CPP65_EXPECT(ldexp(d, 10));
+		CPP65_EXPECT(modf(d, &dInteger));
+		CPP65_EXPECT(dInteger);
+		CPP65_EXPECT(fmod(d, 0.7));
+		CPP65_EXPECT(fmod(d, -3.0));
+		#undef CPP65_EXPECT
+		for (j = 0; j < 13; j++)
+		{
+			ulliBits = sRun.pcContext->GetLong(uiAddress) | ((uint64)sRun.pcContext->GetLong(uiAddress + 4) << 32);
+			if (j == 7)
+			{
+				//The exponent is an int.
+				ulliBits = (uint64)(int64)(int32)ulliBits;
+			}
+			AssertLongLongIntHex((int64)aulliExpected[j], (int64)ulliBits);
+			uiAddress += 8;
+		}
+		memcpy(&uiBits, &f, 4);
+		AssertIntHex(uiBits, sRun.pcContext->GetLong(uiAddress));
+		f = sqrtf(fabsf((float)d));
+		memcpy(&uiBits, &f, 4);
+		AssertIntHex(uiBits, sRun.pcContext->GetLong(uiAddress + 8));
+		f = floorf((float)d);
+		memcpy(&uiBits, &f, 4);
+		AssertIntHex(uiBits, sRun.pcContext->GetLong(uiAddress + 16));
+		uiAddress += 24;
+	}
+	TestCPP65End(&sRun);
+	szSource.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// float and double, worked out by Libc65's soft float runtime.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorFloat(void)
+{
+	AssertInt(7, TestCPP65MainFloat("int main() { float f = 3.5f; return (int)(f * 2.0f); }"));
+	AssertInt(-3, TestCPP65MainFloat("int main() { double d = -7.0; return (int)(d / 2); }"));
+	AssertInt(1, TestCPP65MainFloat("int main() { float f = 0.1f; double d = f; return d > 0.1 && f < 0.2f && f == 0.1f; }"));
+
+	static const char*	aszOperators[] = { "+", "-", "*", "/", "<", "<=", ">", ">=", "==", "!=" };
+	size				i;
+
+	AssertCPP65FloatConversions();
+	AssertCPP65Math();
+
+	//Globals and constants: data, folded as the target would.
+	AssertInt(1, TestCPP65MainFloat(
+		"float gf = 1.5f; double gd = -2.25; double gs[3] = { 1, 2.5, 3.0f }; float gx = 0.1f * 3; double gy = (float)0.1 + 1e-30;\n"
+		"int main() { float x = 0.1f; x = x * 3; double y = (float)0.1; y = y + 1e-30; return gf == 1.5f && gd == -2.25 && gs[0] + gs[1] + gs[2] == 6.5 && gx == x && gy == y && sizeof(long double) == 8; }"));
+
+	//Compound assignment, increments, negation, ?:, ! and mixed integers.
+	AssertInt(1, TestCPP65MainFloat(
+		"int main()\n"
+		"{\n"
+		"\tfloat f = 1.0f; double d = 10.0; int i = 3; long long l = 5;\n"
+		"\tf += 2; f *= i; f -= 0.5f; f /= 2;\n"
+		"\td++; ++d; d--; d += l; d = -d;\n"
+		"\tfloat g = f++; float h = --f;\n"
+		"\tdouble z = 0.0; double nz = -z;\n"
+		"\ti = (int)(i * 2.5);\n"
+		"\treturn f == 4.25f && g == 4.25f && h == 4.25f && d == -16.0 && !z && !nz && i == 7 && (i > 0 ? 1.5 : 2) == 1.5 && (f ? 1 : 0) && (1.0f / 0.0f > 1e30);\n"
+		"}\n"));
+
+	//Through pointers, fields, arrays and parameters; varargs get doubles.
+	AssertInt(1, TestCPP65MainFloat(
+		"#include <stdarg.h>\n"
+		"struct SPoint { char c; float x; double y; };\n"
+		"double Sum(int n, ...) { va_list ap; va_start(ap, n); double t = 0; for (int i = 0; i < n; i++) { t += va_arg(ap, double); } va_end(ap); return t; }\n"
+		"float Scale(float f, short s) { return f * s; }\n"
+		"int main()\n"
+		"{\n"
+		"\tSPoint p; SPoint* pp = &p; double a[4]; float* pf = &p.x;\n"
+		"\tp.x = 2.5f; pp->y = 0.25; *pf += 1; a[2] = pp->x; a[1] = p.y;\n"
+		"\tfor (int i = 0; i < 4; i++) { a[i] = (i == 2) ? a[i] : i * 0.5; }\n"
+		"\tpp->x++; a[3]--;\n"
+		"\treturn p.x == 4.5f && a[2] == 3.5 && a[3] == 0.5 && Sum(3, 1.5f, 2.0, a[2]) == 7.0 && Scale(1.25f, -4) == -5.0f && sizeof(SPoint) == 16;\n"
+		"}\n"));
+
+	for (i = 0; i < sizeof(aszOperators) / sizeof(char*); i++)
+	{
+		AssertCPP65FloatOperator(aszOperators[i], false);
+		AssertCPP65FloatOperator(aszOperators[i], true);
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The FloatHelper results worked out natively, in the order the 65C64 stores them.
+//
+//////////////////////////////////////////////////////////////////////////
+static CArrayInt	gaiFloatHelperResults;
+
+
+static void FloatHelperFloat32(float32 f)
+{
+	uint32	ui;
+
+	memcpy(&ui, &f, 4);
+	gaiFloatHelperResults.Add((int)ui);
+}
+
+
+static void FloatHelperFloat64(float64 d)
+{
+	uint64	ulli;
+
+	memcpy(&ulli, &d, 8);
+	gaiFloatHelperResults.Add((int)(uint32)ulli);
+	gaiFloatHelperResults.Add((int)(uint32)(ulli >> 32));
+}
+
+
+static void FloatHelperInteger(int i)
+{
+	gaiFloatHelperResults.Add(i);
+}
+
+
+static void FloatHelperExpected(void)
+{
+#define FLOAT32(x)	FloatHelperFloat32(x)
+#define FLOAT64(x)	FloatHelperFloat64(x)
+#define INTEGER(x)	FloatHelperInteger(x)
+#include "Input/CPP65/FloatHelperProject/FloatHelperCalls.h"
+#undef FLOAT32
+#undef FLOAT64
+#undef INTEGER
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// BaseLib's FloatHelper on the 65C64 against the same calls natively.  sin, cos and
+// pow are not in Libc65 yet; the calls avoid them.
+//
+//////////////////////////////////////////////////////////////////////////
+static void AssertCPP65FloatHelper(void)
+{
+	STestCPP65Run	sRun;
+	size			i;
+
+	static const char*	aszUnits[] = { "BaseLib/FloatHelper.cpp", "Libc65/softfloat.cpp", "Libc65/math.cpp", "Input/CPP65/FloatHelperProject/Main.cpp", NULL };
+
+	gaiFloatHelperResults.Init();
+	FloatHelperExpected();
+	AssertTrue(TestCPP65BeginProject(&sRun, aszUnits, "_cos _pow _powl _sin"));
+	AssertTrue(TestCPP65Run(&sRun, 20000000) < 20000000);
+	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
+	AssertInt((int)gaiFloatHelperResults.NumElements(), (int32)TestCPP65MPU(&sRun)->GetA());
+	for (i = 0; i < gaiFloatHelperResults.NumElements(); i++)
+	{
+		AssertIntHex((uint32)gaiFloatHelperResults.GetValue(i), sRun.pcContext->GetLong(TEST_CPP65_RESULTS + 4 * (uint32)i));
+	}
+	TestCPP65End(&sRun);
+	gaiFloatHelperResults.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // BaseLib code with the Libc65 code it needs, run on the 65C64.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -1109,6 +1615,13 @@ void TestCPP65GeneratorBaseLib(void)
 
 	//CFreeList is a stub over malloc.
 	AssertInt(0xF, TestCPP65RunProject(aszRedBlackTree, ""));
+
+	//Static functions and globals are each unit's own.
+	static const char*	aszStatic[] = { "Input/CPP65/StaticProject/Other.cpp", NULL };
+	AssertInt(11 + 22 * 100, TestCPP65RunProject(aszStatic, "", 100000, "static int giValue = 10;\nstatic int Value(void) { return 1; }\nint Other(void);\nint main() { return Value() + giValue + Other() * 100; }\n"));
+
+	//floats, against the same calls natively.
+	AssertCPP65FloatHelper();
 
 	//MT19937 against its reference sequence, and Libc65's time.
 	AssertInt(0xFF, TestCPP65RunProject(aszMersenneTwister, ""));
@@ -1142,7 +1655,7 @@ static void AssertCPP65Error(const char* szExpected, const char* szSource)
 //////////////////////////////////////////////////////////////////////////
 void TestCPP65GeneratorErrors(void)
 {
-	AssertCPP65Error("Generated.cpp (1, 27): Floating point is not supported by the 65C64 generator yet [f]\n", "float f; int g() { return f; }");
+	AssertCPP65Error("Generated.cpp (1, 27): The operands must be integers [f]\n", "float f; int g() { return f % 2; }");
 	AssertCPP65Error("Generated.cpp (1, 1): This declaration is not supported by the 65C64 generator yet [namespace]\n", "namespace N { int x; }");
 	AssertCPP65Error("Generated.cpp (1, 58): Objects cannot be passed by value by the 65C64 generator yet; pass a pointer or a reference [q]\n", "struct P { int x; }; int f(P p); int g() { P q; return f(q); }");
 	AssertCPP65Error("Generated.cpp (1, 19): Only placement new is supported by the 65C64 generator yet [new]\n", "int* f() { return new int; }");
@@ -1177,6 +1690,7 @@ void TestCPP65Generator(void)
 	TestCPP65GeneratorClasses();
 	TestCPP65GeneratorArrayTemplate();
 	TestCPP65GeneratorProject();
+	TestCPP65GeneratorFloat();
 	TestCPP65GeneratorBaseLib();
 	TestCPP65GeneratorErrors();
 
