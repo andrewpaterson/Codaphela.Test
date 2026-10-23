@@ -57,7 +57,7 @@ void AssertCycle(CW65C816* pcW65C816, int16 iExpected)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertAddress(CW65C816Pins* pcW65C816, CW65Timeline* pcTimeline, uint16 uiAddress)
+void AssertAddress(CW65C816Pins* pcW65C816, CTimeline* pcTimeline, uint16 uiAddress)
 {
 	uint16	uiPinsAddress;
 
@@ -70,7 +70,7 @@ void AssertAddress(CW65C816Pins* pcW65C816, CW65Timeline* pcTimeline, uint16 uiA
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertData(CW65C816Pins* pcW65C816, CW65Timeline* pcTimeline, uint8 uiData)
+void AssertData(CW65C816Pins* pcW65C816, CTimeline* pcTimeline, uint8 uiData)
 {
 	uint8	uiPinsData;
 

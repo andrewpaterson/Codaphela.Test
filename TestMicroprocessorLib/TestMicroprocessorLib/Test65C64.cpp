@@ -551,6 +551,53 @@ void Test65C64Arithmetic(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// cmp sets v like sub (the user, 2026-10-23) but leaves the register.
+//
+//////////////////////////////////////////////////////////////////////////
+void Test65C64CompareOverflow(void)
+{
+	STest65C64			sTest;
+	C65C64*				pcMPU;
+	CTest65C64Context*	pcContext;
+
+	Test65C64Begin(&sTest, 0x1000);
+	pcContext = sTest.pcContext;
+	pcContext->Op(Op65RI(C65_CPY, R65_A, 1), 0x80);
+	pcContext->Op(Op65RI(C65_CMP, R65_A, 1), 0x01);
+	pcContext->Op(Op65RI(C65_CMP, R65_A, 1), 0x80);
+	pcContext->Op(Op65RI(C65_CPY, R65_A, 1), 0x7F);
+	pcContext->Op(Op65RI(C65_CMP, R65_A, 1), 0xFF);
+	pcContext->Op(Op65RI(C65_CMP, R65_A, 1), 0x01);
+	pcContext->Op(Op65Stp());
+
+	Test65C64Reset(&sTest);
+	pcMPU = Test65C64MPU(&sTest);
+
+	//-128 - 1 overflows.
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertLongLongIntHex(0x80LL, pcMPU->GetA());
+	AssertShortHex((uint16)(STATUS65_CARRY | STATUS65_OVERFLOW), Test65C64Flags(&sTest));
+
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertShortHex((uint16)(STATUS65_ZERO | STATUS65_CARRY), Test65C64Flags(&sTest));
+
+	//127 - -1 overflows.
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertLongLongIntHex(0x7FLL, pcMPU->GetA());
+	AssertShortHex((uint16)(STATUS65_NEGATIVE | STATUS65_OVERFLOW), Test65C64Flags(&sTest));
+
+	//A compare that does not overflow clears v.
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertShortHex((uint16)STATUS65_CARRY, Test65C64Flags(&sTest));
+
+	Test65C64End(&sTest);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void Test65C64Subroutine(void)
@@ -1014,6 +1061,7 @@ void Test65C64(void)
 	Test65C64Indirect();
 	Test65C64Store();
 	Test65C64Arithmetic();
+	Test65C64CompareOverflow();
 	Test65C64Subroutine();
 	Test65C64SubroutinePushStatusAndRelative();
 	Test65C64Branch();
