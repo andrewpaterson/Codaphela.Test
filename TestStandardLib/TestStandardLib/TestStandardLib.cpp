@@ -62,6 +62,7 @@ void TestStackEmbeddedReInit(void);
 void TestObjectFree(void);
 void TestObjectFreeOrdering(void);
 void TestFreeObjects(void);
+void TestOrderer(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -133,6 +134,7 @@ int __cdecl main(void)
 	TestObjectFree();
 	TestObjectFreeOrdering();
 	TestFreeObjects();
+	TestOrderer();
 	TestExternalChannels();
 	TestExternalChannelPadder();
 	TestChannels();

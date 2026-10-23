@@ -4,6 +4,9 @@
     <Filter Include="Source">
       <UniqueIdentifier>{76003f76-e2ce-4113-aec7-4d04752f37e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Dependency">
+      <UniqueIdentifier>{df965982-5dad-4468-9ceb-c81627c135c5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source\Compression">
       <UniqueIdentifier>{2f077dcb-ec3a-421d-97c8-9ae1a5680d15}</UniqueIdentifier>
     </Filter>
@@ -308,6 +311,9 @@
     </ClCompile>
     <ClCompile Include="TestFreeObjects.cpp">
       <Filter>Source\Object\Object\Free</Filter>
+    </ClCompile>
+    <ClCompile Include="TestOrderer.cpp">
+      <Filter>Source\Dependency</Filter>
     </ClCompile>
     <ClCompile Include="UnknownObjectHolderTestClasses.cpp">
       <Filter>Source\Object\Object\Free</Filter>
