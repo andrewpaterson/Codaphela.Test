@@ -254,18 +254,75 @@ bool TestAsm65Begin(STestAsm65Run* psRun, const char* szSource, uint32 uiResetAd
 	CAsm65Assembler	cAssembler;
 	bool			bResult;
 
+	bResult = TestAsm65Assemble(&cAssembler, szSource);
+	TestAsm65BeginOutput(psRun, cAssembler.GetOutput(), uiResetAddress);
+	cAssembler.Kill();
+	return bResult;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Loads assembled or linked bytes and runs reset.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestAsm65BeginOutput(STestAsm65Run* psRun, CAsm65Output* pcOutput, uint32 uiResetAddress)
+{
 	psRun->pcContext = (CTestAsm65Context*)malloc(sizeof(CTestAsm65Context));
 	psRun->pcContext->Init();
 	psRun->pcContext->SetLong(VECTOR_65C64_BASE + 4 * VECTOR_65C64_RESET, uiResetAddress);
 	psRun->uiInstructions = 0;
 
-	bResult = TestAsm65Assemble(&cAssembler, szSource);
-	psRun->pcContext->Load(cAssembler.GetOutput());
-	cAssembler.Kill();
+	psRun->pcContext->Load(pcOutput);
 
 	psRun->cMeta.Init(TestAsm65TickHigh, TestAsm65TickLow, psRun->pcContext);
 	psRun->cMeta.TickInstruction();
 	psRun->pcContext->muiCycles = 0;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Assembles an absolute program (one .org) as an object instead, links it with its
+// text at uiTextAddress and runs reset at the start of the text.
+//
+//////////////////////////////////////////////////////////////////////////
+bool TestAsm65BeginLinked(STestAsm65Run* psRun, const char* szSource, uint32 uiTextAddress)
+{
+	CAsm65Assembler	cAssembler;
+	CAsm65Object	cObject;
+	CAsm65Linker	cLinker;
+	CChars			szObjectSource;
+	size			uiOrigin;
+	size			uiEnd;
+	bool			bResult;
+
+	szObjectSource.Init(szSource);
+	uiOrigin = szObjectSource.Find(0, ".org");
+	AssertTrue(uiOrigin < szObjectSource.Length());
+	uiEnd = szObjectSource.Find(uiOrigin, '\n');
+	szObjectSource.Kill();
+
+	szObjectSource.Init();
+	szObjectSource.AppendSubString(szSource, 0, uiOrigin);
+	szObjectSource.Append(".section text");
+	szObjectSource.Append(&szSource[uiEnd]);
+
+	cObject.Init("program");
+	cAssembler.Init();
+	bResult = cAssembler.AssembleObject(szObjectSource.Text(), &cObject);
+	AssertString("", cAssembler.GetErrors());
+	cAssembler.Kill();
+	szObjectSource.Kill();
+
+	cLinker.Init();
+	cLinker.SetAddress(ASK65_Text, uiTextAddress);
+	cLinker.AddObject(&cObject);
+	bResult &= cLinker.Link();
+	AssertString("", cLinker.GetErrors());
+	TestAsm65BeginOutput(psRun, cLinker.GetOutput(), uiTextAddress);
+	cLinker.Kill();
+	cObject.Kill();
 	return bResult;
 }
 

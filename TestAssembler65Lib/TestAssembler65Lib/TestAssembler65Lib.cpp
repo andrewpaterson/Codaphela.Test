@@ -26,6 +26,8 @@ void TestAsm65Strings(void);
 void TestAsm65Sha256(void);
 void TestAsm65Life(void);
 void TestAsm65Quicksort(void);
+void TestAsm65Object(void);
+void TestAsm65Linker(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -64,6 +66,8 @@ int __cdecl main(void)
 	TestAsm65Sha256();
 	TestAsm65Life();
 	TestAsm65Quicksort();
+	TestAsm65Object();
+	TestAsm65Linker();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
 	ObjectsKill(false);

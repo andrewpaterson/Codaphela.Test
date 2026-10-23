@@ -247,6 +247,8 @@
     <ClCompile Include="TestAsm65Sha256.cpp" />
     <ClCompile Include="TestAsm65Life.cpp" />
     <ClCompile Include="TestAsm65Quicksort.cpp" />
+    <ClCompile Include="TestAsm65Object.cpp" />
+    <ClCompile Include="TestAsm65Linker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\CommonLibraries\BaseLib\BaseLib.vcxproj">

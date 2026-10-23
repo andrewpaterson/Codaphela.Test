@@ -506,6 +506,135 @@ void TestMapUnknownUnknownLoadNull(void)
 //                                                                      //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
+void TestMapUnknownUnknownReplaceValue(void)
+{
+	MemoryInit();
+	UnknownsInit();
+
+	CMapUnknownUnknown		cMap;
+	CTestNamedUnknown*		pcKey;
+	CTestUnknownJobbie*		pcValue1;
+	CTestUnknownJobbie*		pcValue2;
+
+	gcUnknowns.AddConstructor<CTestNamedUnknown>();
+	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cMap.Init();
+
+	pcKey = gcUnknowns.Add<CTestNamedUnknown>();
+	pcKey->Init("Key");
+	pcValue1 = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcValue1->Init(1, "One");
+	pcValue2 = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcValue2->Init(2, "Two");
+
+	AssertTrue(cMap.Put(pcKey, pcValue1));
+	AssertSize(3, gcUnknowns.NumElements());
+
+	//The old value is killed, the key is kept.
+	AssertTrue(cMap.Put(pcKey, pcValue2));
+	AssertSize(1, cMap.NumElements());
+	AssertSize(2, gcUnknowns.NumElements());
+	AssertPointer(pcValue2, cMap.Get(pcKey));
+	AssertString("Key", pcKey->mszName.Text());
+
+	cMap.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	UnknownsKill();
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
+void TestMapUnknownUnknownReplaceSameValue(void)
+{
+	MemoryInit();
+	UnknownsInit();
+
+	CMapUnknownUnknown		cMap;
+	CTestNamedUnknown*		pcKey;
+	CTestUnknownJobbie*		pcValue;
+
+	gcUnknowns.AddConstructor<CTestNamedUnknown>();
+	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cMap.Init();
+
+	pcKey = gcUnknowns.Add<CTestNamedUnknown>();
+	pcKey->Init("Key");
+	pcValue = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcValue->Init(1, "One");
+
+	AssertTrue(cMap.Put(pcKey, pcValue));
+	AssertTrue(cMap.Put(pcKey, pcValue));
+	AssertSize(1, cMap.NumElements());
+	AssertSize(2, gcUnknowns.NumElements());
+	AssertPointer(pcValue, cMap.Get(pcKey));
+	AssertInt(1, pcValue->miANumber);
+	AssertString("Key", pcKey->mszName.Text());
+
+	cMap.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	UnknownsKill();
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
+void TestMapUnknownUnknownNoOverwrite(void)
+{
+	MemoryInit();
+	UnknownsInit();
+
+	CMapUnknownUnknown		cMap;
+	CTestNamedUnknown*		pcKey;
+	CTestUnknownJobbie*		pcValue1;
+	CTestUnknownJobbie*		pcValue2;
+
+	gcUnknowns.AddConstructor<CTestNamedUnknown>();
+	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cMap.Init(true, false);
+	AssertFalse(cMap.IsOverwriteExisting());
+
+	pcKey = gcUnknowns.Add<CTestNamedUnknown>();
+	pcKey->Init("Key");
+	pcValue1 = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcValue1->Init(1, "One");
+	pcValue2 = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcValue2->Init(2, "Two");
+
+	AssertTrue(cMap.Put(pcKey, pcValue1));
+	AssertFalse(cMap.Put(pcKey, pcValue2));
+	AssertSize(1, cMap.NumElements());
+	AssertSize(3, gcUnknowns.NumElements());
+	AssertPointer(pcValue1, cMap.Get(pcKey));
+
+	//pcValue2 was never added so the map doesn't own it.
+	pcValue2->Kill();
+	cMap.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	UnknownsKill();
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
 void TestMapUnknownUnknown(void)
 {
 	BeginTests();
@@ -515,6 +644,9 @@ void TestMapUnknownUnknown(void)
 	TestMapUnknownUnknownGet();
 	TestMapUnknownUnknownLoad();
 	TestMapUnknownUnknownLoadNull();
+	TestMapUnknownUnknownReplaceValue();
+	TestMapUnknownUnknownReplaceSameValue();
+	TestMapUnknownUnknownNoOverwrite();
 
 	TestStatistics();
 }
