@@ -449,13 +449,29 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 //////////////////////////////////////////////////////////////////////////
 bool TestLibc65Run(STestLibc65Run* psRun, size uiMaxInstructions)
 {
+	if (TestLibc65RunToStop(psRun, uiMaxInstructions))
+	{
+		return psRun->cMeta.GetMPU()->GetS() == CPP65_STACK_TOP;
+	}
+	return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Runs until the processor stops, wherever the stack is (exit stops the program from inside a call).
+// Returns false if it did not stop within uiMaxInstructions.
+//
+//////////////////////////////////////////////////////////////////////////
+bool TestLibc65RunToStop(STestLibc65Run* psRun, size uiMaxInstructions)
+{
 	size	i;
 
 	for (i = 0; i < uiMaxInstructions; i++)
 	{
 		if (!psRun->cMeta.TickInstruction())
 		{
-			return psRun->cMeta.GetMPU()->GetS() == CPP65_STACK_TOP;
+			return true;
 		}
 	}
 	return false;

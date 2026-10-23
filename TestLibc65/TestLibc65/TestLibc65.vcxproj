@@ -235,6 +235,8 @@
     <ClCompile Include="TestLibc65Ctype.cpp" />
     <ClCompile Include="TestLibc65Stdlib.cpp" />
     <ClCompile Include="TestLibc65Time.cpp" />
+    <ClCompile Include="TestLibc65Stdarg.cpp" />
+    <ClCompile Include="TestLibc65Limits.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestLibc65Context.h" />

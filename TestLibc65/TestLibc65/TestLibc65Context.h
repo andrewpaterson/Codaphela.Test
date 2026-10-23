@@ -43,6 +43,7 @@ struct STestLibc65Run
 
 bool	TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* szStubs, const char* szSource);
 bool	TestLibc65Run(STestLibc65Run* psRun, size uiMaxInstructions);
+bool	TestLibc65RunToStop(STestLibc65Run* psRun, size uiMaxInstructions);
 int32	TestLibc65Return(STestLibc65Run* psRun);
 int32	TestLibc65Result(STestLibc65Run* psRun, size uiIndex);
 char*	TestLibc65Bytes(STestLibc65Run* psRun, uint32 uiOffset);

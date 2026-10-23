@@ -44,6 +44,7 @@ struct STestAsm65Run
 
 
 bool		TestAsm65Assemble(CAsm65Assembler* pcAssembler, const char* szSource);
+bool		TestAsm65AssembleObject(CAsm65Object* pcObject, const char* szSource);
 uint16		TestAsm65Word(CAsm65Assembler* pcAssembler, uint32 uiAddress);
 bool		TestAsm65ReadSource(CChars* pszSource, const char* szFilename);
 bool		TestAsm65Begin(STestAsm65Run* psRun, const char* szSource, uint32 uiResetAddress);

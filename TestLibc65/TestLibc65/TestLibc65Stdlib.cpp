@@ -342,11 +342,155 @@ void TestLibc65StdlibAllocation(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestLibc65StdlibAllocationOverflow(void)
+{
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", NULL };
+	STestLibc65Run		sRun;
+	size				i;
+
+	//Sizes whose rounding or header, or count times size, don't fit in a size_t must fail, not wrap to a small
+	//block.
+	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "",
+		"#include <stdlib.h>\n"
+		"int main()\n"
+		"{\n"
+		"	int*	p;\n"
+		"	char*	pc;\n"
+		"	p = (int*)0x100000;\n"
+		"	*p++ = malloc(0xFFFFFFFD) == NULL;\n"
+		"	*p++ = malloc(0xFFFFFFF8) == NULL;\n"
+		"	*p++ = malloc(0x7FFFFFFF) == NULL;\n"
+		"	*p++ = calloc(0x10000, 0x10001) == NULL;\n"
+		"	*p++ = calloc(0x40000001, 4) == NULL;\n"
+		"	*p++ = realloc(NULL, 0xFFFFFFFD) == NULL;\n"
+		"	pc = (char*)malloc(16);\n"
+		"	*p++ = pc != NULL;\n"
+		"	*p++ = realloc(pc, 0xFFFFFFFD) == NULL;\n"
+		"	return 0;\n"
+		"}\n"));
+	AssertTrue(TestLibc65Run(&sRun, 2000000));
+
+	for (i = 0; i < 8; i++)
+	{
+		AssertInt(1, TestLibc65Result(&sRun, i));
+	}
+
+	TestLibc65End(&sRun);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLibc65StdlibFragmentation(void)
+{
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", NULL };
+	STestLibc65Run		sRun;
+
+	//Only one block is ever allocated, each a little bigger than the last, so the 512KB heap must not run out.
+	//Freed neighbours have to be joined (or the top of the heap given back) for that.
+	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "",
+		"#include <stdlib.h>\n"
+		"int main()\n"
+		"{\n"
+		"	int*	p;\n"
+		"	char*	pc;\n"
+		"	int		iFailed;\n"
+		"	p = (int*)0x100000;\n"
+		"	iFailed = 0;\n"
+		"	for (int i = 0; i < 400; i++)\n"
+		"	{\n"
+		"		pc = (char*)malloc(64 + 8 * i);\n"
+		"		if (pc == NULL)\n"
+		"		{\n"
+		"			iFailed++;\n"
+		"		}\n"
+		"		free(pc);\n"
+		"	}\n"
+		"	*p++ = iFailed;\n"
+		"	iFailed = 0;\n"
+		"	for (int i = 0; i < 2000; i++)\n"
+		"	{\n"
+		"		pc = (char*)malloc(1000);\n"
+		"		if (pc == NULL)\n"
+		"		{\n"
+		"			iFailed++;\n"
+		"		}\n"
+		"		free(pc);\n"
+		"	}\n"
+		"	*p++ = iFailed;\n"
+		"	return 0;\n"
+		"}\n"));
+	AssertTrue(TestLibc65Run(&sRun, 20000000));
+
+	AssertInt(0, TestLibc65Result(&sRun, 0));
+	AssertInt(0, TestLibc65Result(&sRun, 1));
+
+	TestLibc65End(&sRun);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLibc65StdlibExit(void)
+{
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", NULL };
+	STestLibc65Run		sRun;
+
+	//exit stops the program as returning from main would: the destructors of globals run and the status is
+	//what main would have returned.  Nothing after the call to exit runs.
+	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "",
+		"#include <stdlib.h>\n"
+		"struct SFinal\n"
+		"{\n"
+		"	~SFinal()\n"
+		"	{\n"
+		"		*(int*)0x100004 = 99;\n"
+		"	}\n"
+		"};\n"
+		"SFinal gsFinal;\n"
+		"void Deep(int i)\n"
+		"{\n"
+		"	if (i == 0)\n"
+		"	{\n"
+		"		exit(3);\n"
+		"	}\n"
+		"	Deep(i - 1);\n"
+		"	*(int*)0x100008 = 1;\n"
+		"}\n"
+		"int main()\n"
+		"{\n"
+		"	*(int*)0x100000 = 1;\n"
+		"	Deep(5);\n"
+		"	*(int*)0x100000 = 2;\n"
+		"	return 7;\n"
+		"}\n"));
+	AssertTrue(TestLibc65RunToStop(&sRun, 2000000));
+
+	AssertInt(3, TestLibc65Return(&sRun));
+	AssertInt(1, TestLibc65Result(&sRun, 0));
+	AssertInt(99, TestLibc65Result(&sRun, 1));
+	AssertInt(0, TestLibc65Result(&sRun, 2));
+
+	TestLibc65End(&sRun);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestLibc65Stdlib(void)
 {
 	BeginTests();
 
 	TestLibc65StdlibAllocation();
+	TestLibc65StdlibAllocationOverflow();
+	TestLibc65StdlibFragmentation();
+	TestLibc65StdlibExit();
 	TestLibc65StdlibQsort();
 	TestLibc65StdlibRand();
 	TestLibc65StdlibStrtol();

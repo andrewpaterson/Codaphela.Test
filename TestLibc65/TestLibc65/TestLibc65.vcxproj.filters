@@ -25,6 +25,12 @@
     <ClCompile Include="TestLibc65Time.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="TestLibc65Stdarg.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLibc65Limits.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestLibc65Context.h">

@@ -4,6 +4,7 @@
 #include "MicroprocessorLib/W65C816Meta.h"
 #include "MicroprocessorLib/65C64Meta.h"
 #include "MicroprocessorLib/W65C816InstructionFactory.h"
+#include "MicroprocessorLib/65C64InstructionFactory.h"
 #include "TestCircuitBoard.h"
 #include "TestW65C816Context.h"
 #include "Test65C64Context.h"
@@ -353,6 +354,7 @@ void TestProcessorChipsW65C816(void)
 	CW65C816InstructionFactory::GetInstance()->Init();
 	LoadW65C816Program(&cMetaContext);
 	cMetaContext.mbEnablePrint = false;
+	cMetaContext.muiMaxInstructions = 100;
 	cMeta.Init(TestW65C81ContextTickHigh, TestW65C81ContextTickLow, &cMetaContext);
 	cMetaContext.Run(&cMeta);
 	AssertTrue(cMeta.GetMPU()->IsStopped());
@@ -396,6 +398,7 @@ void TestProcessorChipsW65C816(void)
 
 	cBoard.Start();
 	cBoard.mpcTimeline->RunToTime(3 * CHIP_CLOCK_PERIOD);
+
 	cBoard.Write(pcReset, true);
 	for (uiCycles = 0; uiCycles < CHIP_MAX_CYCLES; uiCycles++)
 	{
@@ -468,6 +471,7 @@ void TestProcessorChips65C64(void)
 	size				uiCycles;
 	size				i;
 
+	C65C64InstructionFactory::GetInstance()->Init();
 	pcMetaContext = (CTest65C64Context*)malloc(sizeof(CTest65C64Context));
 	Load65C64Program(pcMetaContext);
 	cMeta.Init(Test65C64TickHigh, Test65C64TickLow, pcMetaContext);
@@ -519,6 +523,7 @@ void TestProcessorChips65C64(void)
 
 	cBoard.Start();
 	cBoard.mpcTimeline->RunToTime(3 * CHIP_CLOCK_PERIOD);
+
 	cBoard.Write(pcReset, true);
 	for (uiCycles = 0; uiCycles < CHIP_MAX_CYCLES; uiCycles++)
 	{
@@ -541,6 +546,7 @@ void TestProcessorChips65C64(void)
 	cMeta.Kill();
 	free(pcMetaContext);
 	free(pcChipContext);
+	C65C64InstructionFactory::GetInstance()->Kill();
 }
 
 

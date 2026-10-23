@@ -13,6 +13,7 @@
 #include "BaseLib/Operators.h"
 #include "BaseLib/NumberControl.h"
 #include "BaseLib/FloatHelper.h"
+#include "BaseLib/Quaternion.h"
 #include "BaseLib/ArrayInt.h"
 #include "TestLib/Assert.h"
 
@@ -766,6 +767,79 @@ void TestCPP65GeneratorPrograms(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCPP65GeneratorClasses(void)
 {
+	//Objects by value: arguments are copies, results are made in the caller's temporaries.
+	AssertInt(1, TestCPP65Main(
+		"struct SPoint { int x; int y; char c; };\n"
+		"SPoint Make(int x, int y) { SPoint p; p.x = x; p.y = y; p.c = 'c'; return p; }\n"
+		"int Sum(SPoint p) { int s = p.x + p.y; p.x = 1000; return s; }\n"
+		"SPoint Swap(SPoint p) { int t = p.x; p.x = p.y; p.y = t; return p; }\n"
+		"SPoint Twice(SPoint p) { return Swap(Swap(p)); }\n"
+		"SPoint Aggregate(int i) { return { i, i * 2, 'a' }; }\n"
+		"int Depth(int n) { SPoint p = Make(n, n); if (n == 0) return 0; return Make(n, 0).x + Depth(n - 1); }\n"
+		"int main()\n"
+		"{\n"
+		"\tSPoint a = Make(3, 4); SPoint b; b = Swap(a); SPoint c(Twice(a));\n"
+		"\tint i = Sum(a); int j = Make(7, 8).y; int k = Sum(Swap(Make(1, 2)));\n"
+		"\treturn a.x == 3 && b.x == 4 && b.y == 3 && c.x == 3 && c.y == 4 && c.c == 'c' && i == 7 && j == 8 && k == 3 && Aggregate(5).y == 10 && Depth(10) == 55 && sizeof(SPoint) == 12;\n"
+		"}\n"));
+
+	//A class without a copy constructor whose fields have them: its bytes, then the fields' copy constructors.
+	AssertInt(1, TestCPP65Main(
+		"int giCopies = 0;\n"
+		"struct CInner { int i; CInner() { i = 0; } CInner(const CInner& c) { i = c.i + 100; giCopies++; } };\n"
+		"struct CBase { int b; CBase() { b = 0; } CBase(const CBase& c) { b = c.b + 1; giCopies++; } };\n"
+		"struct CMiddle { CInner aInner[2]; char c; };\n"
+		"struct COuter : CBase { int x; CMiddle sMiddle; CInner sInner; };\n"
+		"COuter Copy(COuter o) { return o; }\n"
+		"int main()\n"
+		"{\n"
+		"\tCOuter a; a.b = 5; a.x = 7; a.sMiddle.aInner[1].i = 3; a.sMiddle.c = 'q'; a.sInner.i = 9;\n"
+		"\tCOuter b = Copy(a);\n"
+		"\treturn b.b == 7 && b.x == 7 && b.sMiddle.aInner[1].i == 203 && b.sMiddle.aInner[0].i == 200 && b.sMiddle.c == 'q' && b.sInner.i == 209 && giCopies == 8;\n"
+		"}\n"));
+
+	//Copy constructors, destructors of temporaries and arguments, operators and a template like BaseLib's SVec3.
+	//Objects made by calls and operators are made where they go (as C++17 requires), so the only copy is Dot's
+	//argument.
+	AssertInt(1, TestCPP65Main(
+		"int giCopies = 0; int giDestroyed = 0;\n"
+		"template<class M>\n"
+		"class SVec\n"
+		"{\n"
+		"public:\n"
+		"\tM x; M y;\n"
+		"\tSVec() {}\n"
+		"\tSVec(M x, M y) { this->x = x; this->y = y; }\n"
+		"\tSVec(const SVec& v) { x = v.x; y = v.y; giCopies++; }\n"
+		"\tSVec& operator = (const SVec& v) { x = v.x; y = v.y; return *this; }\n"
+		"\tSVec operator + (const SVec& v) const { return SVec(x + v.x, y + v.y); }\n"
+		"\tSVec operator - () const { return SVec(-x, -y); }\n"
+		"\tbool operator == (const SVec& v) const { return x == v.x && y == v.y; }\n"
+		"\tbool operator != (const SVec& v) const { return !(*this == v); }\n"
+		"\tM Dot(SVec v) const { return x * v.x + y * v.y; }\n"
+		"};\n"
+		"template<class M>\n"
+		"SVec<M> operator * (M f, const SVec<M>& v) { return SVec<M>(f * v.x, f * v.y); }\n"
+		"struct CCounted { int i; CCounted(int i) { this->i = i; } ~CCounted() { giDestroyed += i; } int Get() { return i; } };\n"
+		"CCounted MakeCounted(int i) { return CCounted(i); }\n"
+		"int Take(CCounted c) { return c.i; }\n"
+		"struct CShape { virtual SVec<int> Centre() { return SVec<int>(1, 1); } };\n"
+		"struct CBox : CShape { int w; CBox() { w = 6; } SVec<int> Centre() { return SVec<int>(w / 2, w); } };\n"
+		"SVec<int> Centre(CShape* p) { return p->Centre(); }\n"
+		"int main()\n"
+		"{\n"
+		"\tSVec<int> a(1, 2); SVec<int> b(10, 20);\n"
+		"\tSVec<int> c = a + b + a;\n"
+		"\tSVec<int> d = -c;\n"
+		"\tSVec<int> e = 3 * a;\n"
+		"\tint iCopies = giCopies;\n"
+		"\tint iDot = a.Dot(b);\n"
+		"\tbool bEqual = (a + a == SVec<int>(2, 4)) && (a != b);\n"
+		"\tint iGot = MakeCounted(5).Get() + Take(CCounted(7)) + Take(MakeCounted(11));\n"
+		"\tCBox cBox; SVec<int> f = Centre(&cBox);\n"
+		"\treturn c.x == 12 && c.y == 24 && d.x == -12 && e.y == 6 && iDot == 50 && bEqual && iGot == 23 && giDestroyed == 23 && f.x == 3 && f.y == 6 && iCopies == 0 && giCopies == 1;\n"
+		"}\n"));
+
 	//Multiple polymorphic bases: secondary vtables with thunks, overridden at two levels, and a secondary
 	//base's own secondary vtable.
 	AssertInt(42 + 1000 * 140 + 8 + 10 * 8 + 100000 * 3 + 7, TestCPP65Main(
@@ -1711,6 +1785,73 @@ static void FloatHelperExpected(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The SQuaternion results worked out natively, in the order the 65C64 stores them.
+//
+//////////////////////////////////////////////////////////////////////////
+static CArrayInt	gaiQuaternionResults;
+
+
+static void QuaternionNative(SQuaternion q)
+{
+	uint32	ui;
+
+	memcpy(&ui, &q.x, 4);
+	gaiQuaternionResults.Add((int)ui);
+	memcpy(&ui, &q.y, 4);
+	gaiQuaternionResults.Add((int)ui);
+	memcpy(&ui, &q.z, 4);
+	gaiQuaternionResults.Add((int)ui);
+	memcpy(&ui, &q.w, 4);
+	gaiQuaternionResults.Add((int)ui);
+}
+
+
+static void QuaternionInteger(int i)
+{
+	gaiQuaternionResults.Add(i);
+}
+
+
+static void QuaternionExpected(void)
+{
+#define QUATERNION(x)	QuaternionNative(x)
+#define INTEGER(x)		QuaternionInteger((int)(x))
+#include "Input/CPP65/QuaternionProject/QuaternionCalls.h"
+#undef QUATERNION
+#undef INTEGER
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// BaseLib's SQuaternion, a value type (its objects passed and returned by value,
+// with member, friend and assignment operators), on the 65C64 against natively.
+//
+//////////////////////////////////////////////////////////////////////////
+static void AssertCPP65Quaternion(void)
+{
+	STestCPP65Run	sRun;
+	size			i;
+
+	static const char*	aszUnits[] = { "BaseLib/Quaternion.cpp", "Libc65/softfloat.cpp", "Input/CPP65/QuaternionProject/Main.cpp", NULL };
+
+	gaiQuaternionResults.Init();
+	QuaternionExpected();
+	AssertTrue(TestCPP65BeginProject(&sRun, aszUnits, ""));
+	AssertTrue(TestCPP65Run(&sRun, 20000000) < 20000000);
+	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
+	AssertInt((int)gaiQuaternionResults.NumElements(), (int32)TestCPP65MPU(&sRun)->GetA());
+	for (i = 0; i < gaiQuaternionResults.NumElements(); i++)
+	{
+		AssertIntHex((uint32)gaiQuaternionResults.GetValue(i), sRun.pcContext->GetLong(TEST_CPP65_RESULTS + 4 * (uint32)i));
+	}
+	TestCPP65End(&sRun);
+	gaiQuaternionResults.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // BaseLib's FloatHelper on the 65C64 against the same calls natively.  The calls
 // avoid sin, cos and pow, whose last bit may differ from the C library's.
 //
@@ -1761,6 +1902,7 @@ void TestCPP65GeneratorBaseLib(void)
 
 	//floats, against the same calls natively.
 	AssertCPP65FloatHelper();
+	AssertCPP65Quaternion();
 
 	//MT19937 against its reference sequence, and Libc65's time.
 	AssertInt(0xFF, TestCPP65RunProject(aszMersenneTwister, ""));
@@ -1796,7 +1938,6 @@ void TestCPP65GeneratorErrors(void)
 {
 	AssertCPP65Error("Generated.cpp (1, 27): The operands must be integers [f]\n", "float f; int g() { return f % 2; }");
 	AssertCPP65Error("Generated.cpp (1, 1): This declaration is not supported by the 65C64 generator yet [namespace]\n", "namespace N { int x; }");
-	AssertCPP65Error("Generated.cpp (1, 58): Objects cannot be passed by value by the 65C64 generator yet; pass a pointer or a reference [q]\n", "struct P { int x; }; int f(P p); int g() { P q; return f(q); }");
 	AssertCPP65Error("Generated.cpp (1, 19): Only placement new is supported by the 65C64 generator yet [new]\n", "int* f() { return new int; }");
 	AssertCPP65Error("Generated.cpp (1, 44): Objects can only be copied or used through pointers by the 65C64 generator yet [p]\n", "struct P { int x; }; int f() { P p; return p; }");
 	AssertCPP65Error("Generated.cpp (1, 32): No function matches the arguments [f]\n", "int f(int a); int g() { return f(); }");

@@ -12,6 +12,8 @@ void TestLibc65String(void);
 void TestLibc65Ctype(void);
 void TestLibc65Stdlib(void);
 void TestLibc65Time(void);
+void TestLibc65Stdarg(void);
+void TestLibc65Limits(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -37,6 +39,8 @@ int __cdecl main(void)
 	TestLibc65Ctype();
 	TestLibc65Stdlib();
 	TestLibc65Time();
+	TestLibc65Stdarg();
+	TestLibc65Limits();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
 	NumberKill();

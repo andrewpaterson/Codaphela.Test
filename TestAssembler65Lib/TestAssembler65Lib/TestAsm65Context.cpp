@@ -209,6 +209,24 @@ bool TestAsm65Assemble(CAsm65Assembler* pcAssembler, const char* szSource)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Assembles into an initialised object and asserts there are no errors.
+//
+//////////////////////////////////////////////////////////////////////////
+bool TestAsm65AssembleObject(CAsm65Object* pcObject, const char* szSource)
+{
+	CAsm65Assembler	cAssembler;
+	bool			bResult;
+
+	cAssembler.Init();
+	bResult = cAssembler.AssembleObject(szSource, pcObject);
+	AssertString("", cAssembler.GetErrors());
+	cAssembler.Kill();
+	return bResult;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 uint16 TestAsm65Word(CAsm65Assembler* pcAssembler, uint32 uiAddress)
@@ -289,7 +307,6 @@ void TestAsm65BeginOutput(STestAsm65Run* psRun, CAsm65Output* pcOutput, uint32 u
 //////////////////////////////////////////////////////////////////////////
 bool TestAsm65BeginLinked(STestAsm65Run* psRun, const char* szSource, uint32 uiTextAddress)
 {
-	CAsm65Assembler	cAssembler;
 	CAsm65Object	cObject;
 	CAsm65Linker	cLinker;
 	CChars			szObjectSource;
@@ -309,10 +326,7 @@ bool TestAsm65BeginLinked(STestAsm65Run* psRun, const char* szSource, uint32 uiT
 	szObjectSource.Append(&szSource[uiEnd]);
 
 	cObject.Init("program");
-	cAssembler.Init();
-	bResult = cAssembler.AssembleObject(szObjectSource.Text(), &cObject);
-	AssertString("", cAssembler.GetErrors());
-	cAssembler.Kill();
+	bResult = TestAsm65AssembleObject(&cObject, szObjectSource.Text());
 	szObjectSource.Kill();
 
 	cLinker.Init();
