@@ -1931,6 +1931,64 @@ static void AssertCPP65FloatHelper(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// new and delete, of single objects and arrays, over Libc65's operator new and
+// operator delete (new.cpp) and malloc.  An array of objects is constructed first to
+// last and destroyed last first; deleting a null pointer does nothing; delete calls a
+// virtual destructor.  Memory given back is used again.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorNewDelete(void)
+{
+	static const char*	aszUnits[] = { "Libc65/new.cpp", "Libc65/stdlib.cpp", "Libc65/string.cpp", "Libc65/ctype.cpp", NULL };
+
+	AssertInt(7, TestCPP65RunProject(aszUnits, "", 20000000, "int main() { int* p = new int(7); int r = *p; delete p; return r; }\n"));
+
+	AssertInt(2600 + 50 + 5, TestCPP65RunProject(aszUnits, "", 20000000,
+		"int giMade;\n"
+		"int giGone;\n"
+		"struct C { int m; C() : m(3) { giMade++; } C(int v) : m(v) { giMade++; } ~C() { giGone++; } };\n"
+		"int main()\n"
+		"{\n"
+		"	C* p = new C(5);\n"
+		"	int r = p->m;\n"
+		"	delete p;\n"
+		"	C* a = new C[4];\n"
+		"	for (int i = 0; i < 4; i++) r += a[i].m;\n"
+		"	delete[] a;\n"
+		"	int* q = new int[10];\n"
+		"	for (int i = 0; i < 10; i++) q[i] = i;\n"
+		"	r += q[9];\n"
+		"	delete[] q;\n"
+		"	delete (C*)0;\n"
+		"	return r * 100 + giMade * 10 + giGone;\n"
+		"}\n"));
+
+	AssertInt(321, TestCPP65RunProject(aszUnits, "", 20000000,
+		"int giLog;\n"
+		"struct B { virtual ~B() { giLog = giLog * 10 + 1; } };\n"
+		"struct D : B { ~D() { giLog = giLog * 10 + 2; } };\n"
+		"struct E { int m; E() : m(0) {} ~E() { giLog = giLog * 10 + 3; } };\n"
+		"int main()\n"
+		"{\n"
+		"	E* e = new E[1];\n"
+		"	delete[] e;\n"
+		"	B* p = new D;\n"
+		"	delete p;\n"
+		"	return giLog;\n"
+		"}\n"));
+
+	AssertInt(1000, TestCPP65RunProject(aszUnits, "", 20000000,
+		"int main()\n"
+		"{\n"
+		"	int n = 0;\n"
+		"	for (int i = 0; i < 1000; i++) { int* p = new int[1000]; if (p) n++; delete[] p; }\n"
+		"	return n;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Programs whose functions are loaded from a drive when they are first called give
 // the same results.  Only some of the units are loaded: the ones a run calls.
 //
@@ -2030,7 +2088,7 @@ void TestCPP65GeneratorErrors(void)
 {
 	AssertCPP65Error("Generated.cpp (1, 27): The operands must be integers [f]\n", "float f; int g() { return f % 2; }");
 	AssertCPP65Error("Generated.cpp (1, 1): This declaration is not supported by the 65C64 generator yet [namespace]\n", "namespace N { int x; }");
-	AssertCPP65Error("Generated.cpp (1, 19): Only placement new is supported by the 65C64 generator yet [new]\n", "int* f() { return new int; }");
+	AssertCPP65Error("Generated.cpp (1, 19): Only new Type[count] (one dimension, no initialiser list) is supported by the 65C64 generator yet [new]\n", "int* f() { return new int[2]{1, 2}; }");
 	AssertCPP65Error("Generated.cpp (1, 44): Objects can only be copied or used through pointers by the 65C64 generator yet [p]\n", "struct P { int x; }; int f() { P p; return p; }");
 	AssertCPP65Error("Generated.cpp (1, 32): No function matches the arguments [f]\n", "int f(int a); int g() { return f(); }");
 	AssertCPP65Error("Generated.cpp (1, 16): break outside a loop or switch [break]\n", "void f(void) { break; }");
@@ -2060,6 +2118,7 @@ void TestCPP65Generator(void)
 	TestCPP65GeneratorPrograms();
 	TestCPP65GeneratorClasses();
 	TestCPP65GeneratorExtern();
+	TestCPP65GeneratorNewDelete();
 	TestCPP65GeneratorArrayTemplate();
 	TestCPP65GeneratorProject();
 	TestCPP65GeneratorFloat();
