@@ -139,6 +139,31 @@ void TestAsm65ProgramsSignExtend(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// stab without a repeat writes one bit, at an index that needs an operand word (6 to 63 or a register) too.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestAsm65ProgramsStatusToBit(void)
+{
+	STestAsm65Run	sRun;
+
+	AssertTrue(TestAsm65Begin(&sRun,
+		".org $1000\n"
+		"	wtth (A, X), 4\n"
+		"	cpy A, 0\n"
+		"	cpy X, 9\n"
+		"	stab (A, 31), 1\n"
+		"	stab (A, X), 1\n"
+		"	stab (A, 2), 1\n"
+		"	stp\n", 0x1000));
+
+	TestAsm65Run(&sRun, 10);
+	AssertLongLongIntHex(0x80000204LL, TestAsm65MPU(&sRun)->GetA());
+	TestAsm65End(&sRun);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // A subroutine that sums a table of bytes, with forward references.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -195,6 +220,7 @@ void TestAsm65Programs(void)
 	TestAsm65ProgramsVectorMove();
 	TestAsm65ProgramsArithmeticShift();
 	TestAsm65ProgramsSignExtend();
+	TestAsm65ProgramsStatusToBit();
 	TestAsm65ProgramsSubroutine();
 
 	TestStatistics();

@@ -475,6 +475,31 @@ void TestSoundBittyMixed(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestSoundPrint(void)
+{
+	CChars	sz;
+
+	Ptr<CSound> pcSound = OMalloc<CSound>(8000, 2, PT_int16, SOUND_LEFT, SOUND_RIGHT, CHANNEL_STOP);
+	pcSound->SetSample(0, 0, 0.5);
+	pcSound->SetSample(0, 1, -1.0);
+	pcSound->SetSample(1, 0, 0.0);
+	pcSound->SetSample(1, 1, 0.25);
+
+	sz.Init();
+	pcSound->Print(&sz);
+	AssertTrue(sz.Contains("8000Hz  2 frames  Channels[(PT_int16)\"Front Left\"][(PT_int16)\"Front Right\"]"));
+	AssertTrue(sz.Contains(" 16384 -32768"));
+	AssertTrue(sz.Contains(" 0 8192"));
+	sz.Kill();
+
+	pcSound = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestSound(void)
 {
 	BeginTests();
@@ -492,6 +517,7 @@ void TestSound(void)
 	TestSoundBittyConversion();
 	TestSoundBittyPacked();
 	TestSoundBittyMixed();
+	TestSoundPrint();
 
 	ObjectsKill(false);
 	DataIOKill();

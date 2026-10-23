@@ -237,6 +237,8 @@
     <ClCompile Include="TestLibc65Time.cpp" />
     <ClCompile Include="TestLibc65Stdarg.cpp" />
     <ClCompile Include="TestLibc65Limits.cpp" />
+    <ClCompile Include="TestLibc65SoftFloat.cpp" />
+    <ClCompile Include="TestLibc65SoftFloatReference.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestLibc65Context.h" />

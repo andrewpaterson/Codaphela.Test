@@ -22,6 +22,7 @@ void TestScrollPane(void);
 void TestComponentInput(void);
 void TestComponentInputDevices(void);
 void TestComponentInputWinRaw(void);
+void TestInputSourceChannel(void);
 void TestButton(void);
 void TestButtonBar(void);
 void TestList(void);
@@ -66,6 +67,7 @@ int __cdecl main(void)
 	TestComponentInput();
 	TestComponentInputDevices();
 	TestComponentInputWinRaw();
+	TestInputSourceChannel();
 	TestButton();
 	TestButtonBar();
 	TestList();

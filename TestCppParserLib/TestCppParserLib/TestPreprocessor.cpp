@@ -3,7 +3,6 @@
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/FileUtil.h"
-#include "BaseLib/Operators.h"
 #include "CppParserLib/Preprocessor.h"
 #include "CppParserLib/HeaderFileMap.h"
 #include "TestLib/Assert.h"
@@ -1421,7 +1420,6 @@ void TestPreprocessor(void)
 	TypesInit();
 	FastFunctionsInit();
 	TypeConverterInit();
-	OperatorsInit();
 	NumberInit();
 
 	TestPreprocessorSimple();
@@ -1457,7 +1455,6 @@ void TestPreprocessor(void)
 	TestPreprocessorErrors();
 
 	NumberKill();
-	OperatorsKill();
 	TypeConverterKill();
 	FastFunctionsKill();
 	TypesKill();

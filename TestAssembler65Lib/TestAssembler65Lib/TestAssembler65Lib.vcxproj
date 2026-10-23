@@ -249,6 +249,8 @@
     <ClCompile Include="TestAsm65Quicksort.cpp" />
     <ClCompile Include="TestAsm65Object.cpp" />
     <ClCompile Include="TestAsm65Linker.cpp" />
+    <ClCompile Include="TestAsm65Drive.cpp" />
+    <ClCompile Include="TestAsm65Lazy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\CommonLibraries\BaseLib\BaseLib.vcxproj">

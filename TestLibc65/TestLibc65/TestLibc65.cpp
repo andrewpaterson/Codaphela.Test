@@ -2,7 +2,6 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
-#include "BaseLib/Operators.h"
 #include "BaseLib/NumberControl.h"
 #include "MicroprocessorLib/65C64InstructionFactory.h"
 #include "TestLib/Assert.h"
@@ -14,6 +13,7 @@ void TestLibc65Stdlib(void);
 void TestLibc65Time(void);
 void TestLibc65Stdarg(void);
 void TestLibc65Limits(void);
+void TestLibc65SoftFloat(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -31,7 +31,6 @@ int __cdecl main(void)
 	TypesInit();
 	FastFunctionsInit();
 	TypeConverterInit();
-	OperatorsInit();
 	NumberInit();
 	C65C64InstructionFactory::GetInstance()->Init();
 
@@ -41,10 +40,10 @@ int __cdecl main(void)
 	TestLibc65Time();
 	TestLibc65Stdarg();
 	TestLibc65Limits();
+	TestLibc65SoftFloat();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
 	NumberKill();
-	OperatorsKill();
 	TypeConverterKill();
 	FastFunctionsKill();
 	TypesKill();

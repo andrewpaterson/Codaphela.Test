@@ -151,7 +151,6 @@ void TestIndexedFiles(void);
 void TestIndexTreeNodeFile(void);
 void TestIndexedData(void);
 void TestSequence(void);
-void TestOperators(void);
 void TestFunctionCaller(void);
 void TestNumber(void);
 void TestFloatPrinter(void);
@@ -325,7 +324,6 @@ int __cdecl main(void)
 	TestXMLParser();
 	TestXMLFile();
 	TestFloatPrinter();
-	TestOperators();
 	TestFunctionCaller();
 	TestLogFile();
 	TestDurableSet();

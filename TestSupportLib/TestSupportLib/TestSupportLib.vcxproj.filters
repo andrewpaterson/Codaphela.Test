@@ -178,6 +178,12 @@
     <ClCompile Include="TestSoundResampler.cpp">
       <Filter>Source Files\Sound</Filter>
     </ClCompile>
+    <ClCompile Include="TestSoundCel.cpp">
+      <Filter>Source Files\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="TestModPlayer.cpp">
+      <Filter>Source Files\Sound</Filter>
+    </ClCompile>
     <ClCompile Include="TestImageTGA.cpp">
       <Filter>Source Files\Image\IO</Filter>
     </ClCompile>

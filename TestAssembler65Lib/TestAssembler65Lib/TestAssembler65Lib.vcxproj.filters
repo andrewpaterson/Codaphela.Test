@@ -66,6 +66,12 @@
     <ClCompile Include="TestAsm65Linker.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="TestAsm65Drive.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="TestAsm65Lazy.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestAsm65Context.h">

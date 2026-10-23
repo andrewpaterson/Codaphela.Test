@@ -1,7 +1,6 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
-#include "BaseLib/Operators.h"
 #include "BaseLib/Logger.h"
 #include "CppParserLib/Preprocessor.h"
 #include "CppParserLib/CppTokeniser.h"
@@ -313,7 +312,6 @@ void TestCppTokeniser(void)
 	TypesInit();
 	FastFunctionsInit();
 	TypeConverterInit();
-	OperatorsInit();
 	NumberInit();
 
 	TestCppTokeniserKeywordsAndPunctuators();
@@ -324,7 +322,6 @@ void TestCppTokeniser(void)
 	TestCppTokeniserErrors();
 
 	NumberKill();
-	OperatorsKill();
 	TypeConverterKill();
 	FastFunctionsKill();
 	TypesKill();

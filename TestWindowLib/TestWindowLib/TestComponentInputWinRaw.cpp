@@ -1,5 +1,4 @@
 #include "BaseLib/GlobalMemory.h"
-#include "BaseLib/Operators.h"
 #include "StandardLib/Objects.h"
 #include "InputLib/Input.h"
 #include "InputLib/NativeInput.h"
@@ -294,14 +293,12 @@ void TestComponentInputWinRawDevices(void)
 void TestComponentInputWinRaw(void)
 {
 	BeginTests();
-	OperatorsInit();
 	ObjectsInit();
 
 	TestComponentInputWinRawDevices();
 
 	ObjectsFlush();
 	ObjectsKill();
-	OperatorsKill();
 	TestStatistics();
 }
 

@@ -1,7 +1,6 @@
 #include "BaseLib/Logger.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
-#include "BaseLib/Operators.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "InputLib/Input.h"
 //#include "WinInputLib/WinInput.h"
@@ -106,7 +105,6 @@ void TestInputChords(void)
 	FastFunctionsInit();
 	TypesInit();
 	TypeConverterInit();
-	OperatorsInit();
 	MemoryInit();
 	DataIOInit();
 	ObjectsInit();
@@ -249,7 +247,6 @@ void TestInputChords(void)
 	ObjectsKill();
 	DataIOKill();
 	MemoryKill();
-	OperatorsKill();
 	TypeConverterKill();
 	TypesKill();
 	FastFunctionsKill();

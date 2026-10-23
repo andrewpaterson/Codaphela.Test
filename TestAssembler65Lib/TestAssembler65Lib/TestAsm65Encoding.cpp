@@ -233,6 +233,8 @@ void TestAsm65EncodingState(void)
 	AssertAsm("stab (A, Y, X, -1), n", "0x87df 0xe2c0");
 	AssertAsm("stab (A, 0), f", "0xc45f");
 	AssertAsm("stab (A, 2, 10), 1", "0x275f 0x0928");
+	AssertAsm("stab (A, 40), 1", "0x275f 0xa104");
+	AssertAsm("stab (A, X), c", "0x47df 0xc104");
 	AssertAsm("stat f, c", "0xc87f");
 }
 

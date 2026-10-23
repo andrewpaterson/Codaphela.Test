@@ -1,5 +1,4 @@
 #include "BaseLib/GlobalMemory.h"
-#include "BaseLib/Operators.h"
 #include "StandardLib/Objects.h"
 #include "InputLib/Input.h"
 #include "WindowLib/Window.h"
@@ -396,7 +395,6 @@ void TestComponentInputMouse(void)
 void TestComponentInputDevices(void)
 {
 	BeginTests();
-	OperatorsInit();
 	ObjectsInit();
 
 	TestComponentInputKeyboard();
@@ -404,7 +402,6 @@ void TestComponentInputDevices(void)
 
 	ObjectsFlush();
 	ObjectsKill();
-	OperatorsKill();
 	TestStatistics();
 }
 

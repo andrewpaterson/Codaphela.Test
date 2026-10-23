@@ -28,6 +28,8 @@ void TestAsm65Life(void);
 void TestAsm65Quicksort(void);
 void TestAsm65Object(void);
 void TestAsm65Linker(void);
+void TestAsm65Drive(void);
+void TestAsm65Lazy(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -68,6 +70,8 @@ int __cdecl main(void)
 	TestAsm65Quicksort();
 	TestAsm65Object();
 	TestAsm65Linker();
+	TestAsm65Drive();
+	TestAsm65Lazy();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
 	ObjectsKill(false);

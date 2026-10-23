@@ -1,7 +1,6 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
-#include "BaseLib/Operators.h"
 #include "CppParserLib/Preprocessor.h"
 #include "CppParserLib/CppTokeniser.h"
 #include "CppParserLib/CppParser.h"
@@ -504,7 +503,6 @@ void TestCppParser(void)
 	TypesInit();
 	FastFunctionsInit();
 	TypeConverterInit();
-	OperatorsInit();
 	NumberInit();
 
 	TestCppParserDeclarations();
@@ -515,7 +513,6 @@ void TestCppParser(void)
 	TestCppParserErrorRecovery();
 
 	NumberKill();
-	OperatorsKill();
 	TypeConverterKill();
 	FastFunctionsKill();
 	TypesKill();

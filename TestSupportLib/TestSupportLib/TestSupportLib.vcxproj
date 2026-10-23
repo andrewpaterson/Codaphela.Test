@@ -262,6 +262,8 @@
     <ClCompile Include="TestSound.cpp" />
     <ClCompile Include="TestSoundWAV.cpp" />
     <ClCompile Include="TestSoundResampler.cpp" />
+    <ClCompile Include="TestSoundCel.cpp" />
+    <ClCompile Include="TestModPlayer.cpp" />
     <ClCompile Include="TestImageTGA.cpp" />
     <ClCompile Include="TestImagePNG.cpp" />
     <ClCompile Include="TestCompressionRLE.cpp" />

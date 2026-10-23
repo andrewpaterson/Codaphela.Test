@@ -4,6 +4,8 @@
 #include "Assembler65Lib/Asm65Assembler.h"
 #include "BaseLib/TextFile.h"
 #include "BaseLib/FileUtil.h"
+#include "BaseLib/ConstructorCall.h"
+#include "BaseLib/PointerFunctions.h"
 #include "CppParserLib/CPP65Generator.h"
 #include "TestLib/Assert.h"
 
@@ -84,15 +86,29 @@ bool TestCPP65Begin(STestCPP65Run* psRun, const char* szSource)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Loads a linked program into new memory and runs reset.
+// Loads a linked program into new memory and runs reset.  A program linked lazily
+// gets a drive with its units from TEST_CPP65_FIRST_SECTOR.
 //
 //////////////////////////////////////////////////////////////////////////
 bool TestCPP65BeginBuilt(STestCPP65Run* psRun, CCPP65Builder* pcBuilder)
 {
+	CArrayUint8*	pcImage;
+
 	psRun->pcContext = (CAsm65Memory*)malloc(sizeof(CAsm65Memory));
 	psRun->pcContext->Init();
 	psRun->uiInstructions = 0;
 	psRun->pcContext->LoadProgram(pcBuilder->GetOutput(), CPP65_PROGRAM_ADDRESS);
+
+	psRun->pcDrive = NULL;
+	psRun->uiUnits = pcBuilder->NumUnits();
+	if (psRun->uiUnits > 0)
+	{
+		pcImage = pcBuilder->GetLazyImage();
+		psRun->pcDrive = NewMalloc<CMemoryDrive>();
+		psRun->pcDrive->Init(TEST_CPP65_FIRST_SECTOR * TEST_CPP65_SECTOR_SIZE + pcImage->NumElements(), TEST_CPP65_SECTOR_SIZE);
+		memcpy((uint8*)psRun->pcDrive->GetMemory() + TEST_CPP65_FIRST_SECTOR * TEST_CPP65_SECTOR_SIZE, pcImage->GetData(), pcImage->NumElements());
+		psRun->pcContext->SetDrive(psRun->pcDrive);
+	}
 
 	psRun->cMeta.Init(CAsm65Memory::TickHigh, CAsm65Memory::TickLow, psRun->pcContext);
 	psRun->cMeta.TickInstruction();
@@ -163,6 +179,7 @@ void TestCPP65End(STestCPP65Run* psRun)
 	AssertSize(0, psRun->pcContext->NumBadAccesses());
 	psRun->cMeta.Kill();
 	free(psRun->pcContext);
+	SafeKill(psRun->pcDrive);
 }
 
 
@@ -277,7 +294,7 @@ int32 TestCPP65Main(const char* szSource)
 // stops the program.  pszMap, if given, gets the linker's map.
 //
 //////////////////////////////////////////////////////////////////////////
-bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const char* szStubs, const char* szSource, CChars* pszMap)
+bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const char* szStubs, const char* szSource, CChars* pszMap, bool bLazy)
 {
 	CCPP65Builder	cBuilder;
 	CFileUtil		cFileUtil;
@@ -291,6 +308,10 @@ bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const ch
 
 	cBuilder.Init();
 	TestCPP65AddIncludeDirectories(&cBuilder);
+	if (bLazy)
+	{
+		cBuilder.SetLazy(TEST_CPP65_SECTOR_SIZE, TEST_CPP65_FIRST_SECTOR);
+	}
 
 	bResult = cBuilder.AddStartUp();
 	if (szSource)
@@ -367,12 +388,40 @@ int32 TestCPP65RunProject(const char** aszUnits, const char* szStubs, size uiMax
 
 //////////////////////////////////////////////////////////////////////////
 //
+// TestCPP65RunProject with the functions loaded when they are first called.  Returns A
+// when main returns; *puiUnits is how many units there are and *puiLoads how many were
+// loaded.
+//
+//////////////////////////////////////////////////////////////////////////
+int32 TestCPP65RunProjectLazy(const char** aszUnits, const char* szStubs, size* puiUnits, size* puiLoads, const char* szSource)
+{
+	STestCPP65Run	sRun;
+	int32			iResult;
+
+	iResult = 0;
+	*puiUnits = 0;
+	*puiLoads = 0;
+	if (TestCPP65BeginProject(&sRun, aszUnits, szStubs, szSource, NULL, true))
+	{
+		AssertTrue(TestCPP65Run(&sRun, 20000000) < 20000000);
+		AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
+		iResult = (int32)TestCPP65MPU(&sRun)->GetA();
+		*puiUnits = sRun.uiUnits;
+		*puiLoads = sRun.pcContext->NumDriveReads();
+		TestCPP65End(&sRun);
+	}
+	return iResult;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Compiles and runs szSource with Libc65's soft float runtime.  Returns what main returned.
 //
 //////////////////////////////////////////////////////////////////////////
 int32 TestCPP65MainFloat(const char* szSource)
 {
-	static const char*	aszUnits[] = { "Libc65/softfloat.cpp", NULL };
+	static const char*	aszUnits[] = { "Libc65/softfloat.cpp", "Libc65/softfloat.asm", NULL };
 
 	return TestCPP65RunProject(aszUnits, "", 20000000, szSource);
 }

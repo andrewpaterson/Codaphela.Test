@@ -10,7 +10,6 @@
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
-#include "BaseLib/Operators.h"
 #include "BaseLib/NumberControl.h"
 #include "BaseLib/FloatHelper.h"
 #include "BaseLib/Quaternion.h"
@@ -395,7 +394,7 @@ void TestCPP65GeneratorConvention(void)
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "int main() { return 0; }", true));
 	AssertString("", szErrors.Text());
 	AssertTrue(szAssembly.StartsWith(
-		"\t\t.section text, keep\n"
+		"\t\t.section text, keep, resident\n"
 		"Start:\n"
 		"\t\tcpy S, $1fffff\n"
 		"\t\tcpy W, 0\n"
@@ -1277,7 +1276,7 @@ static void AssertCPP65FloatOperator(const char* szOperator, bool bDouble)
 	szSource.Append("\t\t\t*p++ = Branch(a, b);\n");
 	szSource.Append("\t\t}\n\t}\n\treturn 0;\n}\n");
 
-	static const char*	aszUnits[] = { "Libc65/softfloat.cpp", NULL };
+	static const char*	aszUnits[] = { "Libc65/softfloat.cpp", "Libc65/softfloat.asm", NULL };
 	AssertTrue(TestCPP65BeginProject(&sRun, aszUnits, "", szSource.Text()));
 	AssertTrue(TestCPP65Run(&sRun, 60000000) < 60000000);
 	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
@@ -1368,7 +1367,7 @@ static void AssertCPP65FloatConversions(void)
 		"\treturn 0;\n"
 		"}\n");
 
-	static const char*	aszUnits[] = { "Libc65/softfloat.cpp", NULL };
+	static const char*	aszUnits[] = { "Libc65/softfloat.cpp", "Libc65/softfloat.asm", NULL };
 	AssertTrue(TestCPP65BeginProject(&sRun, aszUnits, "", szSource.Text()));
 	AssertTrue(TestCPP65Run(&sRun, 20000000) < 20000000);
 	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
@@ -1484,7 +1483,7 @@ static void AssertCPP65Math(void)
 		"\treturn 0;\n"
 		"}\n");
 
-	static const char*	aszUnits[] = { "Libc65/softfloat.cpp", "Libc65/math.cpp", NULL };
+	static const char*	aszUnits[] = { "Libc65/softfloat.cpp", "Libc65/softfloat.asm", "Libc65/math.cpp", NULL };
 	AssertTrue(TestCPP65BeginProject(&sRun, aszUnits, "", szSource.Text()));
 	AssertTrue(TestCPP65Run(&sRun, 60000000) < 60000000);
 	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
@@ -1630,7 +1629,7 @@ static void AssertCPP65Transcendentals(void)
 		"\treturn 0;\n"
 		"}\n");
 
-	static const char*	aszUnits[] = { "Libc65/softfloat.cpp", "Libc65/math.cpp", NULL };
+	static const char*	aszUnits[] = { "Libc65/softfloat.cpp", "Libc65/softfloat.asm", "Libc65/math.cpp", NULL };
 	AssertTrue(TestCPP65BeginProject(&sRun, aszUnits, "", szSource.Text()));
 	AssertTrue(TestCPP65Run(&sRun, 200000000) < 200000000);
 	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
@@ -1830,7 +1829,7 @@ static void AssertCPP65Quaternion(void)
 	STestCPP65Run	sRun;
 	size			i;
 
-	static const char*	aszUnits[] = { "BaseLib/Quaternion.cpp", "Libc65/softfloat.cpp", "Input/CPP65/QuaternionProject/Main.cpp", NULL };
+	static const char*	aszUnits[] = { "BaseLib/Quaternion.cpp", "Libc65/softfloat.cpp", "Libc65/softfloat.asm", "Input/CPP65/QuaternionProject/Main.cpp", NULL };
 
 	gaiQuaternionResults.Init();
 	QuaternionExpected();
@@ -1858,7 +1857,7 @@ static void AssertCPP65FloatHelper(void)
 	STestCPP65Run	sRun;
 	size			i;
 
-	static const char*	aszUnits[] = { "BaseLib/FloatHelper.cpp", "Libc65/softfloat.cpp", "Libc65/math.cpp", "Input/CPP65/FloatHelperProject/Main.cpp", NULL };
+	static const char*	aszUnits[] = { "BaseLib/FloatHelper.cpp", "Libc65/softfloat.cpp", "Libc65/softfloat.asm", "Libc65/math.cpp", "Input/CPP65/FloatHelperProject/Main.cpp", NULL };
 
 	gaiFloatHelperResults.Init();
 	FloatHelperExpected();
@@ -1872,6 +1871,47 @@ static void AssertCPP65FloatHelper(void)
 	}
 	TestCPP65End(&sRun);
 	gaiFloatHelperResults.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Programs whose functions are loaded from a drive when they are first called give
+// the same results.  Only some of the units are loaded: the ones a run calls.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorLazy(void)
+{
+	static const char*	aszMD5[] = { "BaseLib/MD5.cpp", "Libc65/string.cpp", "Input/CPP65/MD5Project/Main.cpp", NULL };
+	static const char*	aszRedBlackTree[] = { "BaseLib/RedBlackTree.cpp", "Libc65/string.cpp", "Libc65/stdlib.cpp", "Libc65/ctype.cpp", "Input/CPP65/RedBlackTreeProject/FreeListStub.cpp", "Input/CPP65/RedBlackTreeProject/Main.cpp", NULL };
+	static const char*	aszSort[] = { "BaseLib/QuickSort.cpp", "BaseLib/BubbleSort.cpp", "BaseLib/BinarySearch.cpp", "Input/CPP65/SortProject/MemSwpStub.cpp", "Input/CPP65/SortProject/Main.cpp", NULL };
+	static const char*	aszFloat[] = { "Libc65/softfloat.cpp", "Libc65/softfloat.asm", NULL };
+	static const char*	aszNone[] = { NULL };
+	size				uiUnits;
+	size				uiLoads;
+
+	AssertInt(0x3F, TestCPP65RunProjectLazy(aszMD5, "", &uiUnits, &uiLoads));
+	AssertTrue((uiLoads > 0) && (uiLoads <= uiUnits));
+	AssertInt(0xF, TestCPP65RunProjectLazy(aszRedBlackTree, "", &uiUnits, &uiLoads));
+	AssertTrue((uiLoads > 0) && (uiLoads <= uiUnits));
+	AssertInt(0x7, TestCPP65RunProjectLazy(aszSort, "", &uiUnits, &uiLoads));
+	AssertTrue((uiLoads > 0) && (uiLoads <= uiUnits));
+	AssertInt(6 + 9, TestCPP65RunProjectLazy(aszFloat, "", &uiUnits, &uiLoads, "int main() { float f = 1.5f; double d = 2.25; return (int)(f * 4 + d * 4); }\n"));
+	AssertTrue((uiLoads > 0) && (uiLoads < uiUnits));
+
+	//A global object, a virtual call, a function pointer and recursion.  Unused is left out; Twice is loaded
+	//when Apply calls it through the pointer.
+	AssertInt(5 + 10 + 6 + 120, TestCPP65RunProjectLazy(aszNone, "", &uiUnits, &uiLoads,
+		"struct S { int m; S(int v) : m(v) {} ~S() { *(int*)0x100000 = m; } };\n"
+		"S gS(5);\n"
+		"struct B { virtual int F() { return 1; } };\n"
+		"struct D : B { int F() { return 10; } };\n"
+		"int Twice(int x) { return x * 2; }\n"
+		"int Apply(int (*f)(int), int x) { return f(x); }\n"
+		"int Fact(int n) { return n <= 1 ? 1 : n * Fact(n - 1); }\n"
+		"int Unused() { return 99; }\n"
+		"int main() { D d; B* p = &d; return gS.m + p->F() + Apply(Twice, 3) + Fact(5); }\n"));
+	AssertTrue((uiLoads > 0) && (uiLoads <= uiUnits));
 }
 
 
@@ -1954,7 +1994,6 @@ void TestCPP65Generator(void)
 	TypesInit();
 	FastFunctionsInit();
 	TypeConverterInit();
-	OperatorsInit();
 	NumberInit();
 	C65C64InstructionFactory::GetInstance()->Init();
 
@@ -1970,11 +2009,11 @@ void TestCPP65Generator(void)
 	TestCPP65GeneratorProject();
 	TestCPP65GeneratorFloat();
 	TestCPP65GeneratorBaseLib();
+	TestCPP65GeneratorLazy();
 	TestCPP65GeneratorErrors();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
 	NumberKill();
-	OperatorsKill();
 	TypeConverterKill();
 	FastFunctionsKill();
 	TypesKill();

@@ -4,7 +4,6 @@
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TextFile.h"
-#include "BaseLib/Operators.h"
 #include "TestLib/Assert.h"
 #include "JavaParserLib/JavaTokenParserEnvironment.h"
 #include "JavaParserLib/JavaSyntaxParser.h"

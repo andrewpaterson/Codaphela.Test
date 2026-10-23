@@ -2,7 +2,6 @@
 #include "BaseLib/PointerRemapper.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
-#include "BaseLib/Operators.h"
 #include "CppParserLib/Project.h"
 #include "TestLib/Assert.h"
 
@@ -16,7 +15,6 @@ void TestNoInclude(void)
 	TypesInit();
 	FastFunctionsInit();
 	TypeConverterInit();
-	OperatorsInit();
 	NumberInit();
 
 	CProject			cProject;
@@ -38,7 +36,6 @@ void TestNoInclude(void)
 	cProject.Kill();
 
 	NumberKill();
-	OperatorsKill();
 	TypeConverterKill();
 	FastFunctionsKill();
 	TypesKill();
@@ -54,7 +51,6 @@ void TestOneInclude(void)
 	TypesInit();
 	FastFunctionsInit();
 	TypeConverterInit();
-	OperatorsInit();
 	NumberInit();
 
 	CProject			cProject;
@@ -79,7 +75,6 @@ void TestOneInclude(void)
 	cProject.Kill();
 
 	NumberKill();
-	OperatorsKill();
 	TypeConverterKill();
 	FastFunctionsKill();
 	TypesKill();
@@ -95,7 +90,6 @@ void TestReinclude(void)
 	TypesInit();
 	FastFunctionsInit();
 	TypeConverterInit();
-	OperatorsInit();
 	NumberInit();
 
 	CProject			cProject;
@@ -134,7 +128,6 @@ void TestReinclude(void)
 	cProject.Kill();
 
 	NumberKill();
-	OperatorsKill();
 	TypeConverterKill();
 	FastFunctionsKill();
 	TypesKill();

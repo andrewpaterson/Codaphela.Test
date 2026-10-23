@@ -259,6 +259,247 @@ void TestGeometryMapInMaps(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Lines have a thickness and are centred on points at pixel centres.  A
+// square cap reaches half the thickness past each end so a one pixel line
+// covers its end pixels exactly, a butt cap stops at the ends and covers
+// half of them.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGeometryMapLines(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CImage>			pImage;
+		Ptr<CGeometryMap>	pMap;
+		CInt32Rect			cViewport;
+		ARGB32				sWhite;
+		uint8				auiRGBA[4];
+		int					x;
+		int					y;
+
+		pImage = OMalloc<CImage>(16, 12, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+		pImage->Black();
+		pMap = OMalloc<CGeometryMap>();
+		pMap->SetViewport(pImage);
+		sWhite = Set32BitColour((uint8)255, (uint8)255, (uint8)255);
+
+		pMap->AddLine(1, 1, 5, 1, 1, sWhite);
+		pMap->AddLine(1, 3, 5, 3, 1, sWhite, GLC_Butt);
+		pMap->AddLine(9, 1, 9, 4, 3, sWhite);
+		pMap->AddLine(1, 5, 5, 5, 0, sWhite);
+		pMap->AddLine(1, 5, 1, 5, 2, sWhite, GLC_Butt);
+		AssertSize(3, pMap->NumCommands());
+		AssertInt(GC_Line, pMap->GetCommand(0)->eType);
+		AssertInt(GLC_Square, pMap->GetCommand(0)->eCap);
+		AssertInt(GLC_Butt, pMap->GetCommand(1)->eCap);
+
+		//A square capped dot.
+		pMap->AddLine(13, 1, 13, 1, 1, sWhite);
+		AssertSize(4, pMap->NumCommands());
+
+		cViewport.Init(0, 0, 16, 12);
+		AssertTrue(pMap->Blit(&cViewport, false));
+
+		for (x = 1; x <= 5; x++)
+		{
+			AssertGeometryPixel(255, 255, 255, 255, pImage, x, 1);
+			AssertGeometryPixel(0, 0, 0, 255, pImage, x, 0);
+			AssertGeometryPixel(0, 0, 0, 255, pImage, x, 2);
+		}
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 0, 1);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 6, 1);
+
+		AssertGeometryPixel(128, 128, 128, 255, pImage, 1, 3);
+		AssertGeometryPixel(255, 255, 255, 255, pImage, 2, 3);
+		AssertGeometryPixel(255, 255, 255, 255, pImage, 4, 3);
+		AssertGeometryPixel(128, 128, 128, 255, pImage, 5, 3);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 0, 3);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 6, 3);
+
+		//Three thick from row 1 to row 4 with square caps is columns 8 to 10 and rows 0 to 5.
+		for (y = 0; y <= 5; y++)
+		{
+			AssertGeometryPixel(0, 0, 0, 255, pImage, 7, y);
+			for (x = 8; x <= 10; x++)
+			{
+				AssertGeometryPixel(255, 255, 255, 255, pImage, x, y);
+			}
+			AssertGeometryPixel(0, 0, 0, 255, pImage, 11, y);
+		}
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 9, 6);
+
+		AssertGeometryPixel(255, 255, 255, 255, pImage, 13, 1);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 12, 1);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 14, 1);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 13, 0);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 13, 2);
+
+		//A diagonal line is the same either side of the diagonal.
+		pImage->Black();
+		pMap->Clear();
+		pMap->AddLine(2, 2, 9, 9, 2, sWhite);
+		AssertTrue(pMap->Blit(&cViewport, false));
+		AssertGeometryPixel(255, 255, 255, 255, pImage, 5, 5);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 9, 2);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 2, 9);
+		for (y = 0; y < 12; y++)
+		{
+			for (x = 0; x < 12; x++)
+			{
+				GetGeometryPixel(pImage, x, y, auiRGBA);
+				AssertGeometryPixel(auiRGBA[0], auiRGBA[1], auiRGBA[2], 255, pImage, y, x);
+			}
+		}
+
+		//A round cap is a half circle past the end.
+		pImage->Black();
+		pMap->Clear();
+		pMap->AddLine(3, 5, 10, 5, 5, sWhite, GLC_Round);
+		AssertTrue(pMap->Blit(&cViewport, false));
+		AssertGeometryPixel(249, 249, 249, 255, pImage, 1, 5);
+		AssertGeometryPixel(255, 255, 255, 255, pImage, 2, 5);
+		AssertGeometryPixel(255, 255, 255, 255, pImage, 11, 5);
+		AssertGeometryPixel(249, 249, 249, 255, pImage, 12, 5);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 0, 5);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 13, 5);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 0, 3);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 13, 7);
+		AssertGeometryPixel(255, 255, 255, 255, pImage, 6, 3);
+		AssertGeometryPixel(255, 255, 255, 255, pImage, 6, 7);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 6, 8);
+
+		pMap = NULL;
+		pImage = NULL;
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Filled circles, such as trace junctions, and circle outlines with a
+// thickness centred on the radius.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGeometryMapCircles(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CImage>			pImage;
+		Ptr<CGeometryMap>	pMap;
+		CInt32Rect			cViewport;
+		ARGB32				sWhite;
+		uint8				auiRGBA[4];
+		uint8				auiMirror[4];
+		int					x;
+		int					y;
+
+		pImage = OMalloc<CImage>(24, 12, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+		pImage->Black();
+		pMap = OMalloc<CGeometryMap>();
+		pMap->SetViewport(pImage);
+		sWhite = Set32BitColour((uint8)255, (uint8)255, (uint8)255);
+
+		pMap->AddFilledCircle(5, 5, 3, sWhite);
+		pMap->AddCircle(17, 5, 4, 1, sWhite);
+		pMap->AddFilledCircle(5, 5, 0, sWhite);
+		pMap->AddCircle(5, 5, 3, 0, sWhite);
+		AssertSize(2, pMap->NumCommands());
+		AssertInt(GC_FilledCircle, pMap->GetCommand(0)->eType);
+		AssertInt(GC_Circle, pMap->GetCommand(1)->eType);
+		AssertInt(2, pMap->GetCommand(0)->cBounds.msTopLeft.x);
+		AssertInt(9, pMap->GetCommand(0)->cBounds.msBottomRight.x);
+
+		cViewport.Init(0, 0, 24, 12);
+		AssertTrue(pMap->Blit(&cViewport, false));
+
+		AssertGeometryPixel(255, 255, 255, 255, pImage, 5, 5);
+		AssertGeometryPixel(255, 255, 255, 255, pImage, 4, 4);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 5, 1);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 1, 5);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 2, 2);
+
+		//The filled circle and the ring are the same mirrored across both axes.
+		for (y = 0; y <= 5; y++)
+		{
+			for (x = 0; x <= 5; x++)
+			{
+				GetGeometryPixel(pImage, x, y, auiRGBA);
+				AssertGeometryPixel(auiRGBA[0], auiRGBA[1], auiRGBA[2], 255, pImage, 10 - x, y);
+				AssertGeometryPixel(auiRGBA[0], auiRGBA[1], auiRGBA[2], 255, pImage, x, 10 - y);
+				AssertGeometryPixel(auiRGBA[0], auiRGBA[1], auiRGBA[2], 255, pImage, 10 - x, 10 - y);
+
+				GetGeometryPixel(pImage, 12 + x, y, auiRGBA);
+				GetGeometryPixel(pImage, 22 - x, 10 - y, auiMirror);
+				AssertInt(auiRGBA[0], auiMirror[0]);
+			}
+		}
+
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 17, 5);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 17, 3);
+		AssertGeometryPixel(251, 251, 251, 255, pImage, 17, 1);
+		AssertGeometryPixel(251, 251, 251, 255, pImage, 21, 5);
+		AssertGeometryPixel(251, 251, 251, 255, pImage, 13, 5);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 17, 0);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 22, 5);
+
+		//An outline thicker than the circle is wide fills it.
+		pImage->Black();
+		pMap->Clear();
+		pMap->AddCircle(5, 5, 1, 4, sWhite);
+		AssertTrue(pMap->Blit(&cViewport, false));
+		AssertGeometryPixel(255, 255, 255, 255, pImage, 5, 5);
+		AssertGeometryPixel(255, 255, 255, 255, pImage, 3, 5);
+		AssertGeometryPixel(0, 0, 0, 255, pImage, 1, 5);
+
+		pMap = NULL;
+		pImage = NULL;
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Lines and circles blend as rectangles do: a translucent colour on an
+// image cleared to nothing leaves premultiplied pixels, and they are
+// drawn at the viewport rectangle's position.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestGeometryMapShapeOpacityAndViewport(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CImage>			pImage;
+		Ptr<CGeometryMap>	pMap;
+		CInt32Rect			cViewport;
+
+		pImage = OMalloc<CImage>(8, 8, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, IMAGE_OPACITY, CHANNEL_STOP);
+		pImage->Black();
+		pMap = OMalloc<CGeometryMap>();
+		pMap->SetViewport(pImage);
+		pMap->AddLine(10, 11, 14, 11, 1, Set32BitColour((uint8)255, (uint8)0, (uint8)0, (uint8)128));
+		pMap->AddFilledCircle(13, 14, 1.5, Set32BitColour((uint8)0, (uint8)0, (uint8)255));
+		pMap->AddLine(-10, -10, 2, -10, 1, Set32BitColour((uint8)255, (uint8)255, (uint8)255));
+
+		cViewport.Init(8, 8, 16, 16);
+		AssertTrue(pMap->Blit(&cViewport, false));
+		AssertGeometryPixel(128, 0, 0, 128, pImage, 2, 3);
+		AssertGeometryPixel(128, 0, 0, 128, pImage, 6, 3);
+		AssertGeometryPixel(0, 0, 0, 0, pImage, 1, 3);
+		AssertGeometryPixel(0, 0, 0, 0, pImage, 7, 3);
+		AssertGeometryPixel(0, 0, 255, 255, pImage, 5, 6);
+		AssertGeometryPixel(0, 0, 0, 0, pImage, 0, 0);
+
+		pMap = NULL;
+		pImage = NULL;
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestGeometryMap(void)
@@ -272,6 +513,9 @@ void TestGeometryMap(void)
 	TestGeometryMapViewport();
 	TestGeometryMapColourOrder();
 	TestGeometryMapInMaps();
+	TestGeometryMapLines();
+	TestGeometryMapCircles();
+	TestGeometryMapShapeOpacityAndViewport();
 
 	DataIOKill();
 

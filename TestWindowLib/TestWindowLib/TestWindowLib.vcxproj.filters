@@ -40,6 +40,9 @@
     <ClCompile Include="TestComponentInputDevices.cpp">
       <Filter>Source\Component\Window</Filter>
     </ClCompile>
+    <ClCompile Include="TestInputSourceChannel.cpp">
+      <Filter>Source\Component\Window</Filter>
+    </ClCompile>
     <ClCompile Include="TestComponentInput.cpp">
       <Filter>Source\Component\Window</Filter>
     </ClCompile>

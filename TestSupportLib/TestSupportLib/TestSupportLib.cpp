@@ -62,6 +62,8 @@ void TestImageResampler(void);
 void TestSound(void);
 void TestSoundWAV(void);
 void TestSoundResampler(void);
+void TestSoundCel(void);
+void TestModPlayer(void);
 
 
 int __cdecl main(void)
@@ -135,6 +137,8 @@ int __cdecl main(void)
 	TestSound();
 	TestSoundWAV();
 	TestSoundResampler();
+	TestSoundCel();
+	TestModPlayer();
 
 	cFileUtil.RemoveDir("Output");
 

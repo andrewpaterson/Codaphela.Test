@@ -579,9 +579,6 @@
     <ClCompile Include="TestFastFunctions.cpp">
       <Filter>Source\Memory</Filter>
     </ClCompile>
-    <ClCompile Include="TestOperators.cpp">
-      <Filter>Source\Script</Filter>
-    </ClCompile>
     <ClCompile Include="TestXMLParser.cpp">
       <Filter>Source\Text</Filter>
     </ClCompile>

@@ -4,21 +4,27 @@
 #include "BaseLib/PrimitiveTypes.h"
 #include "BaseLib/Chars.h"
 #include "BaseLib/ArrayChars.h"
+#include "BaseLib/MemoryDrive.h"
 #include "Assembler65Lib/Asm65Memory.h"
 #include "CppParserLib/CPP65Generator.h"
 #include "CppParserLib/CPP65Builder.h"
 
 
 #define TEST_CPP65_RESULTS		0x100000
+#define TEST_CPP65_SECTOR_SIZE	512
+#define TEST_CPP65_FIRST_SECTOR	1
 
 
 //A compiled program running from reset in CAsm65Memory: pseudo registers below 0001:0000, the program from
-//0001:0000, results at 0010:0000 and the stack from 001F:FFFC down.
+//0001:0000, results at 0010:0000 and the stack from 001F:FFFC down.  A program linked lazily has its units on
+//pcDrive (uiUnits of them).
 struct STestCPP65Run
 {
 	CAsm65Memory*	pcContext;
+	CMemoryDrive*	pcDrive;
 	C65C64Meta		cMeta;
 	size			uiInstructions;
+	size			uiUnits;
 };
 
 
@@ -34,8 +40,9 @@ C65C64*		TestCPP65MPU(STestCPP65Run* psRun);
 void		TestCPP65End(STestCPP65Run* psRun);
 int32		TestCPP65Main(const char* szSource);
 int32		TestCPP65MainFile(const char* szFilename);
-bool		TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const char* szStubs, const char* szSource = NULL, CChars* pszMap = NULL);
+bool		TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const char* szStubs, const char* szSource = NULL, CChars* pszMap = NULL, bool bLazy = false);
 int32		TestCPP65RunProject(const char** aszUnits, const char* szStubs, size uiMaxInstructions = 20000000, const char* szSource = NULL);
+int32		TestCPP65RunProjectLazy(const char** aszUnits, const char* szStubs, size* puiUnits, size* puiLoads, const char* szSource = NULL);
 int32		TestCPP65MainFloat(const char* szSource);
 
 
