@@ -249,8 +249,8 @@ void TestSoundBadAccess(void)
 	AssertTrue(pcSound->GetSamples(0, 4, 0, af));
 	AssertDouble(0.0, pcSound->GetSample(4, 0), 12);
 
-	//Samples that aren't whole bytes can't be read as floats.
-	pcSound = OMalloc<CSound>(8000, 4, PT_nybble, SOUND_LEFT, SOUND_RIGHT, CHANNEL_STOP);
+	//64 bit integers aren't sample types.
+	pcSound = OMalloc<CSound>(8000, 4, PT_int64, SOUND_LEFT, SOUND_RIGHT, CHANNEL_STOP);
 	AssertFalse(pcSound->CanAccessSamples());
 	AssertFalse(pcSound->GetSamples(1, 0, 4, af));
 
@@ -301,6 +301,178 @@ void TestSoundChannels(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Bit sized samples are offset binary: the middle code is silence.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSoundBittyConversion(void)
+{
+	EPrimitiveType	aeTypes[5] = { PT_crumb, PT_tribble, PT_nybble, PT_nickle, PT_sixbits };
+	int				aiBits[5] = { 2, 3, 4, 5, 6 };
+	size			t;
+	int				iCode;
+	int				iHalf;
+	int				iMismatches;
+	uint64			uiCode;		//As big as any sample so the conversions can't write past it.
+	uint64			uiBack;
+	float64			fSample;
+
+	iMismatches = 0;
+	for (t = 0; t < 5; t++)
+	{
+		AssertTrue(IsSampleType(aeTypes[t]));
+		AssertInt(aiBits[t], GetBittySampleBits(aeTypes[t]));
+		iHalf = 1 << (aiBits[t] - 1);
+		for (iCode = 0; iCode < (1 << aiBits[t]); iCode++)
+		{
+			uiCode = (uint64)iCode;
+			fSample = ConvertSampleToFloat(&uiCode, aeTypes[t]);
+			if (fSample != (float64)(iCode - iHalf) / iHalf)
+			{
+				iMismatches++;
+			}
+			uiBack = 0;
+			ConvertSampleFromFloat(&uiBack, aeTypes[t], fSample);
+			if (uiBack != uiCode)
+			{
+				iMismatches++;
+			}
+		}
+
+		//Out of range samples are clamped.
+		ConvertSampleFromFloat(&uiBack, aeTypes[t], 1.0);
+		if (uiBack != (uint64)((1 << aiBits[t]) - 1))
+		{
+			iMismatches++;
+		}
+		ConvertSampleFromFloat(&uiBack, aeTypes[t], -3.0);
+		if (uiBack != 0)
+		{
+			iMismatches++;
+		}
+	}
+	AssertInt(0, iMismatches);
+
+	uiCode = 8;
+	AssertDouble(0.0, ConvertSampleToFloat(&uiCode, PT_nybble), 12);
+	uiCode = 15;
+	AssertDouble(0.875, ConvertSampleToFloat(&uiCode, PT_nybble), 12);
+
+	//A bit has no middle.
+	uiCode = 0;
+	AssertDouble(-1.0, ConvertSampleToFloat(&uiCode, PT_bit), 12);
+	uiCode = 1;
+	AssertDouble(1.0, ConvertSampleToFloat(&uiCode, PT_bit), 12);
+	ConvertSampleFromFloat(&uiCode, PT_bit, -0.01);
+	AssertInt(0, (int)uiCode);
+	ConvertSampleFromFloat(&uiCode, PT_bit, 0.0);
+	AssertInt(1, (int)uiCode);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Two nybbles a frame: left in the low bits, right in the high bits.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSoundBittyPacked(void)
+{
+	uint8*	pui;
+
+	Ptr<CSound> pcSound = OMalloc<CSound>(8000, 3, PT_nybble, SOUND_LEFT, SOUND_RIGHT, CHANNEL_STOP);
+	AssertTrue(pcSound->CanAccessSamples());
+	AssertSize(1, pcSound->GetFrameByteStride());
+	AssertSize(3, pcSound->GetByteSize());
+
+	pcSound->SetSample(0, 0, -1.0);
+	pcSound->SetSample(0, 1, 0.875);
+	pcSound->SetSample(1, 0, 0.0);
+	pcSound->SetSample(1, 1, -0.5);
+	pcSound->SetSample(2, 0, 0.25);
+	pcSound->SetSample(2, 1, -0.125);
+
+	pui = (uint8*)pcSound->GetData();
+	AssertInt(0xF0, pui[0]);
+	AssertInt(0x48, pui[1]);
+	AssertInt(0x7A, pui[2]);
+
+	AssertDouble(-1.0, pcSound->GetSample(0, 0), 12);
+	AssertDouble(0.875, pcSound->GetSample(0, 1), 12);
+	AssertDouble(-0.5, pcSound->GetSample(1, 1), 12);
+	AssertDouble(0.25, pcSound->GetSample(2, 0), 12);
+
+	pcSound->Silence();
+	AssertInt(0x88, pui[0]);
+	AssertInt(0x88, pui[1]);
+	AssertInt(0x88, pui[2]);
+	AssertDouble(0.0, pcSound->GetSample(2, 1), 12);
+
+	pcSound = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A crumb, an int8 two bits into the frame and a tribble: 13 bits a
+// frame.  Writing one channel leaves the others alone.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSoundBittyMixed(void)
+{
+	size	i;
+	int		iMismatches;
+	float64	afCrumb[17];
+	float64	afInt8[17];
+	float64	afTribble[17];
+	float64	afRead[17];
+
+	Ptr<CSound> pcSound = OMalloc<CSound>();
+	pcSound->BeginChange();
+	pcSound->AddChannel(SOUND_LEFT, PT_crumb);
+	pcSound->AddChannel(SOUND_RIGHT, PT_int8);
+	pcSound->AddChannel(SOUND_LOW_FREQUENCY, PT_tribble);
+	pcSound->SetSampleRate(11025);
+	pcSound->SetNumFrames(17);
+	AssertTrue(pcSound->EndChange());
+	AssertTrue(pcSound->CanAccessSamples());
+	AssertSize(13, pcSound->GetFrameBitStride());
+	AssertSize(28, pcSound->GetByteSize());
+
+	for (i = 0; i < 17; i++)
+	{
+		afCrumb[i] = (float64)((int)(i % 4) - 2) / 2.0;
+		afInt8[i] = (float64)((int)(i * 37 % 256) - 128) / 128.0;
+		afTribble[i] = (float64)((int)(i * 3 % 8) - 4) / 4.0;
+	}
+	pcSound->Silence();
+	AssertTrue(pcSound->SetSamples(1, 0, 17, afInt8));
+	AssertTrue(pcSound->SetSamples(0, 0, 17, afCrumb));
+	AssertTrue(pcSound->SetSamples(2, 0, 17, afTribble));
+
+	iMismatches = 0;
+	AssertTrue(pcSound->GetSamples(0, 0, 17, afRead));
+	for (i = 0; i < 17; i++)
+	{
+		iMismatches += afRead[i] != afCrumb[i] ? 1 : 0;
+	}
+	AssertTrue(pcSound->GetSamples(1, 0, 17, afRead));
+	for (i = 0; i < 17; i++)
+	{
+		iMismatches += afRead[i] != afInt8[i] ? 1 : 0;
+	}
+	AssertTrue(pcSound->GetSamples(2, 0, 17, afRead));
+	for (i = 0; i < 17; i++)
+	{
+		iMismatches += afRead[i] != afTribble[i] ? 1 : 0;
+		iMismatches += pcSound->GetSample(i, 2) != afTribble[i] ? 1 : 0;
+	}
+	AssertInt(0, iMismatches);
+
+	pcSound = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestSound(void)
@@ -317,6 +489,9 @@ void TestSound(void)
 	TestSoundChange();
 	TestSoundBadAccess();
 	TestSoundChannels();
+	TestSoundBittyConversion();
+	TestSoundBittyPacked();
+	TestSoundBittyMixed();
 
 	ObjectsKill(false);
 	DataIOKill();
