@@ -125,6 +125,28 @@ else()
 endif()
 target_compile_options(baselib_options INTERFACE ${BASELIB_ARCH_OPTIONS} -fno-strict-aliasing -Wall -Wextra -Wno-ignored-attributes -Wno-write-strings -Wno-multichar -Wno-class-memaccess -Wno-overloaded-virtual -Wno-comment -Wno-unused-parameter)
 target_link_options(baselib_options INTERFACE $<IF:$<BOOL:${BASELIB_64}>,-m64,-m32>)
+# The Visual Studio configurations all use /arch:AVX2, which lets MSVC use AVX2, FMA, BMI, LZCNT and POPCNT
+# instructions and defines __AVX2__ (PNGWriter.cpp has an AVX2 path).  -march=haswell is the same set.  Floating
+# point results don't change: with CMAKE_CXX_EXTENSIONS OFF g++ doesn't contract a * b + c into FMA instructions.
+target_compile_options(baselib_options INTERFACE -march=haswell)
+
+# Release options matching the Visual Studio Release configurations.  -O3 (from CMAKE_BUILD_TYPE) covers /O2 /Ob2 /Oi.
+# -ffunction-sections -fdata-sections and --gc-sections: /Gy and /OPT:REF, so unused functions are dropped.
+# -fno-stack-protector: /GS-.  Many Linux distributions turn the stack protector on by default.
+# -fno-math-errno -fno-trapping-math: the parts of /fp:fast that don't change results (sqrt can be inlined, for
+# example).  -ffast-math would go further than /fp:fast and assume there are no NaNs or infinities.
+# /GL and /LTCG (whole program optimisation) are -flto, turned on by CMAKE_INTERPROCEDURAL_OPTIMIZATION below.
+# /Gv (vectorcall) has no g++ equivalent: 64-bit Linux already passes vectors in registers, and changing the
+# 32-bit calling convention would break calls into libc.
+target_compile_options(baselib_options INTERFACE "$<$<NOT:$<CONFIG:Debug>>:-ffunction-sections;-fdata-sections;-fno-stack-protector;-fno-math-errno;-fno-trapping-math>")
+target_link_options(baselib_options INTERFACE "$<$<NOT:$<CONFIG:Debug>>:-Wl,--gc-sections>")
+include(CheckIPOSupported)
+check_ipo_supported(RESULT BASELIB_IPO_SUPPORTED LANGUAGES CXX)
+if(BASELIB_IPO_SUPPORTED)
+	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
+	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELWITHDEBINFO ON)
+endif()
+
 if(BASELIB_ASAN)
 	target_compile_options(baselib_options INTERFACE -fsanitize=address -fno-omit-frame-pointer)
 	target_link_options(baselib_options INTERFACE -fsanitize=address)
