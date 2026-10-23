@@ -96,7 +96,12 @@ TestAssembler65Lib/TestAssembler65Lib/Output/*
 TestMicroprocessorLib/Log.txt
 
 TestAssembler65Lib/TestAssembler65Lib/Log.txt
-/TestAssembler65Lib/*
+/TestAssembler65Lib/Debug/*
+/TestAssembler65Lib/Release/*
+/TestAssembler65Lib/x64/*
+/TestAssembler65Lib/TestAssembler65Lib/Debug/*
+/TestAssembler65Lib/TestAssembler65Lib/Release/*
+/TestAssembler65Lib/TestAssembler65Lib/x64/*
 /TestStandardLib/TestStandardLib/x64/Debug/*
 /TestStandardLib/TestStandardLib/x64/Release/*
 /TestStandardLib/x64/Debug/*
