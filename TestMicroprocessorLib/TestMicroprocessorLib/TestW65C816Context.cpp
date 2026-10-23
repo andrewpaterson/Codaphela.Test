@@ -487,12 +487,12 @@ void TestW65C81ContextPrint(CW65C816Meta* pcMPU, CTestW65C816Context* pcContext)
 	CChars*					psz;
 	size					uiPreviousStart;
 
-	bFetchOpcode = pcMPU->IsFetchOpcodeCycle();
-	bReset = pcMPU->IsResetInstruction();
-	bStop = pcMPU->IsStopInstruction();
-
 	if (pcContext->mbEnablePrint)
 	{
+		bFetchOpcode = pcMPU->IsFetchOpcodeCycle();
+		bReset = pcMPU->IsResetInstruction();
+		bStop = pcMPU->IsStopInstruction();
+
 		if ((bReset && pcContext->mbPrintReset) ||
 			(bStop && pcContext->mbPrintStop) ||
 			(!bReset && !bStop))
