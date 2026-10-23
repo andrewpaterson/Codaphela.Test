@@ -27,15 +27,16 @@ void TestReplaceAndRemapAddConstructors(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectReplaceNoPointers(void)
 {
+	STestObjectFreedNotifier	sFreeNotifider1;
+	STestObjectFreedNotifier	sFreeNotifider2;
+	STestObjectFreedNotifier	sFreeNotifider3;
+
 	ObjectsInit();
 	{
 		Ptr<CTestObject>			pObject1;
 		Ptr<CTestObject>			pObject2;
 		Ptr<CTestObject>			pObject3;
 		Ptr<CTestObject>			pObject4;
-		STestObjectFreedNotifier	sFreeNotifider1;
-		STestObjectFreedNotifier	sFreeNotifider2;
-		STestObjectFreedNotifier	sFreeNotifider3;
 		Ptr<CRoot>					pRoot;
 		OIndex						oi1;
 		OIndex						oi3;
@@ -89,6 +90,9 @@ void TestObjectReplaceNoPointers(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectReplaceWithHeapPointers(void)
 {
+	STestObjectFreedNotifier	sFreeNotifider3;
+	STestObjectFreedNotifier	sFreeNotifider4;
+
 	ObjectsInit();
 	{
 		Ptr<CTestSaveableObject2>	pObject1;
@@ -97,8 +101,6 @@ void TestObjectReplaceWithHeapPointers(void)
 		Ptr<CTestObject>			pObject4;
 		Ptr<CTestEmbeddedStrings>	pObject5;
 		Ptr<>						pTest;
-		STestObjectFreedNotifier	sFreeNotifider3;
-		STestObjectFreedNotifier	sFreeNotifider4;
 		Ptr<CRoot>					pRoot;
 		OIndex						oi1;
 		OIndex						oi2;
@@ -208,6 +210,9 @@ void TestObjectReplaceWithHeapPointers(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectReplaceWithStackPointers(void)
 {
+	STestObjectFreedNotifier	sFreeNotifider3;
+	STestObjectFreedNotifier	sFreeNotifider4;
+
 	ObjectsInit();
 	{
 		Ptr<CTestSaveableObject2>	pObject1;
@@ -216,8 +221,6 @@ void TestObjectReplaceWithStackPointers(void)
 		Ptr<CTestObject>			pObject4;
 		Ptr<CTestEmbeddedStrings>	pObject5;
 		Ptr<>						pTest;
-		STestObjectFreedNotifier	sFreeNotifider3;
-		STestObjectFreedNotifier	sFreeNotifider4;
 		Ptr<CRoot>					pRoot;
 		OIndex						oi1;
 		OIndex						oi2;

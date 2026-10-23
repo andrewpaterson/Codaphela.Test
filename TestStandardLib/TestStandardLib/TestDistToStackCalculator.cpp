@@ -1254,19 +1254,20 @@ void TestDistToStackCyclicWithScenarioA(void)
 //////////////////////////////////////////////////////////////////////////
 void TestDistToStackRemoveUnbalancedLargeBroken(void)
 {
+	STestObjectFreedNotifier	sKilled1;
+	STestObjectFreedNotifier	sKilled2;
+	STestObjectFreedNotifier	sKilled3;
+	STestObjectFreedNotifier	sKilled4;
+	STestObjectFreedNotifier	sKilled5;
+	STestObjectFreedNotifier	sKilledTop1;
+	STestObjectFreedNotifier	sKilledTop2;
+
 	ObjectsInit();
 	{
 		CDistCalculatorParameters	cParameters;
 		CDistToStackCalculator		cDistToStackCalculator;
 
 		Ptr<CRoot>					pRoot;
-		STestObjectFreedNotifier	sKilled1;
-		STestObjectFreedNotifier	sKilled2;
-		STestObjectFreedNotifier	sKilled3;
-		STestObjectFreedNotifier	sKilled4;
-		STestObjectFreedNotifier	sKilled5;
-		STestObjectFreedNotifier	sKilledTop1;
-		STestObjectFreedNotifier	sKilledTop2;
 		Ptr<CTestObject>			pTest1;
 		Ptr<CTestObject>			pTest2;
 		Ptr<CTestObject>			pTest3;

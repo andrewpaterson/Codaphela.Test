@@ -217,15 +217,16 @@ void TestObjectRootRemove(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectPointerRemapping(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier3;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
 		Ptr<CTestObject>			pObject1;
 		Ptr<CTestObject>			pObject2;
 		Ptr<CTestObject>			pObject3;
-		STestObjectFreedNotifier	sFreedNotifier1;
-		STestObjectFreedNotifier	sFreedNotifier2;
-		STestObjectFreedNotifier	sFreedNotifier3;
 		size						iNumRemapped;
 		CTestObject* pcObject2;
 		CPointer					p4;
@@ -290,6 +291,12 @@ void TestObjectPointerRemapping(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectPointerRemappingKilling(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier3;
+	STestObjectFreedNotifier	sFreedNotifier4;
+	STestObjectFreedNotifier	sFreedNotifier5;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
@@ -298,11 +305,6 @@ void TestObjectPointerRemappingKilling(void)
 		Ptr<CTestObject>			pObject3;
 		Ptr<CTestObject>			pObject4;
 		Ptr<CTestObject>			pObject5;
-		STestObjectFreedNotifier	sFreedNotifier1;
-		STestObjectFreedNotifier	sFreedNotifier2;
-		STestObjectFreedNotifier	sFreedNotifier3;
-		STestObjectFreedNotifier	sFreedNotifier4;
-		STestObjectFreedNotifier	sFreedNotifier5;
 		size						iNumRemapped;
 		CTestObject* pcObject3;
 		CTestObject* pcObject4;
@@ -358,6 +360,12 @@ void TestObjectPointerRemappingKilling(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectPointerRemappingSimplerComplex(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier10;
+	STestObjectFreedNotifier	sFreedNotifier11;
+	STestObjectFreedNotifier	sFreedNotifier12;
+	STestObjectFreedNotifier	sFreedNotifier13;
+	STestObjectFreedNotifier	sFreedNotifier14;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
@@ -366,11 +374,6 @@ void TestObjectPointerRemappingSimplerComplex(void)
 		Ptr<CTestObject>			pTest12;
 		Ptr<CTestObject>			pTest13;
 		Ptr<CTestObject>			pTest14;
-		STestObjectFreedNotifier	sFreedNotifier10;
-		STestObjectFreedNotifier	sFreedNotifier11;
-		STestObjectFreedNotifier	sFreedNotifier12;
-		STestObjectFreedNotifier	sFreedNotifier13;
-		STestObjectFreedNotifier	sFreedNotifier14;
 		CTestObject* pcTest10;
 
 		pRoot = ORoot();
@@ -452,6 +455,22 @@ void TestObjectPointerRemappingSimplerComplex(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectMorphIntoComplex(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier3;
+	STestObjectFreedNotifier	sFreedNotifier4;
+	STestObjectFreedNotifier	sFreedNotifier5;
+	STestObjectFreedNotifier	sFreedNotifier6;
+	STestObjectFreedNotifier	sFreedNotifier7;
+	STestObjectFreedNotifier	sFreedNotifier8;
+	STestObjectFreedNotifier	sFreedNotifier9;
+	STestObjectFreedNotifier	sFreedNotifier10;
+	STestObjectFreedNotifier	sFreedNotifier11;
+	STestObjectFreedNotifier	sFreedNotifier12;
+	STestObjectFreedNotifier	sFreedNotifier13;
+	STestObjectFreedNotifier	sFreedNotifier14;
+	STestObjectFreedNotifier	sFreedNotifier15;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
@@ -470,21 +489,6 @@ void TestObjectMorphIntoComplex(void)
 		Ptr<CTestObject>			pTest13;
 		Ptr<CTestObject>			pTest14;
 		Ptr<CTestObject>			pTest15;
-		STestObjectFreedNotifier	sFreedNotifier1;
-		STestObjectFreedNotifier	sFreedNotifier2;
-		STestObjectFreedNotifier	sFreedNotifier3;
-		STestObjectFreedNotifier	sFreedNotifier4;
-		STestObjectFreedNotifier	sFreedNotifier5;
-		STestObjectFreedNotifier	sFreedNotifier6;
-		STestObjectFreedNotifier	sFreedNotifier7;
-		STestObjectFreedNotifier	sFreedNotifier8;
-		STestObjectFreedNotifier	sFreedNotifier9;
-		STestObjectFreedNotifier	sFreedNotifier10;
-		STestObjectFreedNotifier	sFreedNotifier11;
-		STestObjectFreedNotifier	sFreedNotifier12;
-		STestObjectFreedNotifier	sFreedNotifier13;
-		STestObjectFreedNotifier	sFreedNotifier14;
-		STestObjectFreedNotifier	sFreedNotifier15;
 		size						iNumRemapped;
 		CTestObject* pcTest1;
 
@@ -703,12 +707,13 @@ void TestObjectMorphIntoComplex(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectGetObjects(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier1;
+
 	ObjectsInit();
 	{
 		CTestObject					cObject;
 		CObjects* pcObjects;
 		Ptr<CTestObject>			pObject1;
-		STestObjectFreedNotifier	sFreedNotifier1;
 		Ptr<CRoot>					pRoot;
 
 		pcObjects = cObject.GetObjectsThisIn();
@@ -737,11 +742,12 @@ void TestObjectGetObjects(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectStackKill(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier;
+
 	ObjectsInit();
 	{
 		Ptr<CTestObject>			pObject1;
 		Ptr<CTestObject>			pObject2;
-		STestObjectFreedNotifier	sFreedNotifier;
 
 		pObject1 = OMalloc<CTestObject>(&sFreedNotifier);
 		AssertFalse(sFreedNotifier.bFreed);
@@ -856,13 +862,14 @@ void TestObjectStackDetach(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectRootUnattachment(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier;
+
 	ObjectsInit();
 	{
 		Ptr<CPointerContainer>		pContainer1;
 		Ptr<CPointerContainer>		pContainer2;
 		Ptr<CTestObject>			pObject;
 		Ptr<CRoot>					pRoot;
-		STestObjectFreedNotifier	sFreedNotifier;
 		CTestObject* pcObject;
 		CPointerContainer* pcContainer1;
 		CPointerContainer* pcContainer2;
@@ -913,13 +920,14 @@ void TestObjectRootUnattachment(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectKillOnHeap(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier;
+
 	ObjectsInit();
 	{
 		Ptr<CPointerContainer>		pContainer1;
 		Ptr<CPointerContainer>		pContainer2;
 		Ptr<CTestObject>			pObject;
 		Ptr<CRoot>					pRoot;
-		STestObjectFreedNotifier	sFreedNotifier;
 		CTestObject* pcObject;
 		CPointerContainer* pcContainer1;
 		CPointerContainer* pcContainer2;
@@ -957,10 +965,11 @@ void TestObjectKillOnHeap(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectKillPointerOnStack(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier;
+
 	ObjectsInit();
 	{
 		Ptr<CTestObject>			pObject;
-		STestObjectFreedNotifier	sFreedNotifier;
 
 		pObject = OMalloc<CTestObject>(&sFreedNotifier);
 		pObject.Kill();
@@ -978,10 +987,11 @@ void TestObjectKillPointerOnStack(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectKillObjectOnStack(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier;
+
 	ObjectsInit();
 	{
 		CTestObject					cObject;
-		STestObjectFreedNotifier	sFreedNotifier;
 
 		cObject.Init(&sFreedNotifier);
 		cObject.Kill();
@@ -999,13 +1009,14 @@ void TestObjectKillObjectOnStack(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectSetUnattachment(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier1;
+
 	ObjectsInit();
 	{
 		Ptr<CPointerContainer>		pContainer1;
 		Ptr<CPointerContainer>		pContainer2;
 		Ptr<CTestObject>			pObject;
 		Ptr<CRoot>					pRoot;
-		STestObjectFreedNotifier	sFreedNotifier1;
 		CTestObject* pcObject;
 		CPointerContainer* pcContainer1;
 		CPointerContainer* pcContainer2;

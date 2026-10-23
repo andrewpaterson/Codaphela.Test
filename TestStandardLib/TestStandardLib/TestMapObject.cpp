@@ -27,6 +27,13 @@ void TestMapObjectAddConstructors(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapObjectPut(void)
 {
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+	STestObjectFreedNotifier	sNotifier3;
+	STestObjectFreedNotifier	sNotifier4;
+	STestObjectFreedNotifier	sNotifier5;
+	STestObjectFreedNotifier	sNotifier6;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
@@ -37,12 +44,6 @@ void TestMapObjectPut(void)
 		Ptr<CTestObject>			pValue1;
 		Ptr<CTestObject>			pValue2;
 		Ptr<CTestObject>			pValue3;
-		STestObjectFreedNotifier	sNotifier1;
-		STestObjectFreedNotifier	sNotifier2;
-		STestObjectFreedNotifier	sNotifier3;
-		STestObjectFreedNotifier	sNotifier4;
-		STestObjectFreedNotifier	sNotifier5;
-		STestObjectFreedNotifier	sNotifier6;
 
 		pRoot = ORoot();
 		pMap = OMalloc<CMapObject>();
@@ -80,16 +81,17 @@ void TestMapObjectPut(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapObjectDetachInHeap(void)
 {
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+	STestObjectFreedNotifier	sNotifier3;
+	STestObjectFreedNotifier	sNotifier4;
+	STestObjectFreedNotifier	sNotifier5;
+	STestObjectFreedNotifier	sNotifier6;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
 		Ptr<CMapObject>				pMap;
-		STestObjectFreedNotifier	sNotifier1;
-		STestObjectFreedNotifier	sNotifier2;
-		STestObjectFreedNotifier	sNotifier3;
-		STestObjectFreedNotifier	sNotifier4;
-		STestObjectFreedNotifier	sNotifier5;
-		STestObjectFreedNotifier	sNotifier6;
 
 		pRoot = ORoot();
 		pMap = OMalloc<CMapObject>();
@@ -129,15 +131,16 @@ void TestMapObjectDetachInHeap(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapObjectKillOnStack(void)
 {
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+	STestObjectFreedNotifier	sNotifier3;
+	STestObjectFreedNotifier	sNotifier4;
+	STestObjectFreedNotifier	sNotifier5;
+	STestObjectFreedNotifier	sNotifier6;
+
 	ObjectsInit();
 	{
 		CMapObject					cMap;
-		STestObjectFreedNotifier	sNotifier1;
-		STestObjectFreedNotifier	sNotifier2;
-		STestObjectFreedNotifier	sNotifier3;
-		STestObjectFreedNotifier	sNotifier4;
-		STestObjectFreedNotifier	sNotifier5;
-		STestObjectFreedNotifier	sNotifier6;
 
 		cMap.Init();
 		cMap.Put(ONMalloc<CTestObject>("shnork", &sNotifier4), OMalloc<CTestObject>(&sNotifier1));
@@ -215,6 +218,15 @@ void TestMapObjectMapEntry(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapObjectIterate(void)
 {
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+	STestObjectFreedNotifier	sNotifier3;
+	STestObjectFreedNotifier	sNotifier4;
+	STestObjectFreedNotifier	sNotifier5;
+	STestObjectFreedNotifier	sNotifier6;
+	STestObjectFreedNotifier	sNotifier7;
+	STestObjectFreedNotifier	sNotifier8;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
@@ -227,14 +239,6 @@ void TestMapObjectIterate(void)
 		Ptr<CTestObject>			pKey3;
 		Ptr<CTestObject>			pKey4;
 		Ptr<CTestObject>			pKey5;
-		STestObjectFreedNotifier	sNotifier1;
-		STestObjectFreedNotifier	sNotifier2;
-		STestObjectFreedNotifier	sNotifier3;
-		STestObjectFreedNotifier	sNotifier4;
-		STestObjectFreedNotifier	sNotifier5;
-		STestObjectFreedNotifier	sNotifier6;
-		STestObjectFreedNotifier	sNotifier7;
-		STestObjectFreedNotifier	sNotifier8;
 		SMapIterator				sIter;
 		CMapEntry					cEntry;
 #ifdef BUILD_64
@@ -338,6 +342,13 @@ void TestMapObjectIterate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapObjectRemove(void)
 {
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+	STestObjectFreedNotifier	sNotifier3;
+	STestObjectFreedNotifier	sNotifier4;
+	STestObjectFreedNotifier	sNotifier5;
+	STestObjectFreedNotifier	sNotifier6;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
@@ -348,12 +359,6 @@ void TestMapObjectRemove(void)
 		Ptr<CTestObject>			pValue1;
 		Ptr<CTestObject>			pValue2;
 		Ptr<CTestObject>			pValue3;
-		STestObjectFreedNotifier	sNotifier1;
-		STestObjectFreedNotifier	sNotifier2;
-		STestObjectFreedNotifier	sNotifier3;
-		STestObjectFreedNotifier	sNotifier4;
-		STestObjectFreedNotifier	sNotifier5;
-		STestObjectFreedNotifier	sNotifier6;
 
 		pRoot = ORoot();
 		pMap = OMalloc<CMapObject>();
@@ -404,14 +409,15 @@ void TestMapObjectRemove(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapObjectDetachOnStack(void)
 {
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+	STestObjectFreedNotifier	sNotifier3;
+	STestObjectFreedNotifier	sNotifier4;
+	STestObjectFreedNotifier	sNotifier5;
+	STestObjectFreedNotifier	sNotifier6;
+
 	ObjectsInit();
 	{
-		STestObjectFreedNotifier	sNotifier1;
-		STestObjectFreedNotifier	sNotifier2;
-		STestObjectFreedNotifier	sNotifier3;
-		STestObjectFreedNotifier	sNotifier4;
-		STestObjectFreedNotifier	sNotifier5;
-		STestObjectFreedNotifier	sNotifier6;
 		bool						bExists;
 		SMapIterator				sIter;
 		CTestObject*				pcKey;
@@ -461,6 +467,15 @@ void TestMapObjectDetachOnStack(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapObjectGetPointerTos(void)
 {
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+	STestObjectFreedNotifier	sNotifier3;
+	STestObjectFreedNotifier	sNotifier4;
+	STestObjectFreedNotifier	sNotifier5;
+	STestObjectFreedNotifier	sNotifier6;
+	STestObjectFreedNotifier	sNotifier7;
+	STestObjectFreedNotifier	sNotifier8;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>							pRoot;
@@ -473,14 +488,6 @@ void TestMapObjectGetPointerTos(void)
 		Ptr<CTestObject>					pKey3;
 		Ptr<CTestObject>					pKey4;
 		Ptr<CTestObject>					pKey5;
-		STestObjectFreedNotifier			sNotifier1;
-		STestObjectFreedNotifier			sNotifier2;
-		STestObjectFreedNotifier			sNotifier3;
-		STestObjectFreedNotifier			sNotifier4;
-		STestObjectFreedNotifier			sNotifier5;
-		STestObjectFreedNotifier			sNotifier6;
-		STestObjectFreedNotifier			sNotifier7;
-		STestObjectFreedNotifier			sNotifier8;
 		CArrayEmbeddedObjectPtr		apcTos;
 
 		pRoot = ORoot();
@@ -529,6 +536,15 @@ void TestMapObjectGetPointerTos(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapObjectPointerFromsHeap(void)
 {
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+	STestObjectFreedNotifier	sNotifier3;
+	STestObjectFreedNotifier	sNotifier4;
+	STestObjectFreedNotifier	sNotifier5;
+	STestObjectFreedNotifier	sNotifier6;
+	STestObjectFreedNotifier	sNotifier7;
+	STestObjectFreedNotifier	sNotifier8;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
@@ -541,14 +557,6 @@ void TestMapObjectPointerFromsHeap(void)
 		Ptr<CTestObject>			pValue1;
 		Ptr<CTestObject>			pValue2;
 		Ptr<CTestObject>			pValue3;
-		STestObjectFreedNotifier	sNotifier1;
-		STestObjectFreedNotifier	sNotifier2;
-		STestObjectFreedNotifier	sNotifier3;
-		STestObjectFreedNotifier	sNotifier4;
-		STestObjectFreedNotifier	sNotifier5;
-		STestObjectFreedNotifier	sNotifier6;
-		STestObjectFreedNotifier	sNotifier7;
-		STestObjectFreedNotifier	sNotifier8;
 
 		pRoot = ORoot();
 		pMap = OMalloc<CMapObject>();
@@ -633,6 +641,15 @@ void TestMapObjectPointerFromsHeap(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapObjectPointerFromsStack(void)
 {
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+	STestObjectFreedNotifier	sNotifier3;
+	STestObjectFreedNotifier	sNotifier4;
+	STestObjectFreedNotifier	sNotifier5;
+	STestObjectFreedNotifier	sNotifier6;
+	STestObjectFreedNotifier	sNotifier7;
+	STestObjectFreedNotifier	sNotifier8;
+
 	ObjectsInit();
 	{
 		CMapObject					cMap;
@@ -644,14 +661,6 @@ void TestMapObjectPointerFromsStack(void)
 		Ptr<CTestObject>			pValue1;
 		Ptr<CTestObject>			pValue2;
 		Ptr<CTestObject>			pValue3;
-		STestObjectFreedNotifier	sNotifier1;
-		STestObjectFreedNotifier	sNotifier2;
-		STestObjectFreedNotifier	sNotifier3;
-		STestObjectFreedNotifier	sNotifier4;
-		STestObjectFreedNotifier	sNotifier5;
-		STestObjectFreedNotifier	sNotifier6;
-		STestObjectFreedNotifier	sNotifier7;
-		STestObjectFreedNotifier	sNotifier8;
 		CArrayStackPointerE32			apcFroms;
 		SStackPointer*				psStack;
 
@@ -744,6 +753,10 @@ void TestMapObjectPointerFromsStack(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapObjectPutOverwrite(void)
 {
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+	STestObjectFreedNotifier	sNotifier3;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
@@ -751,9 +764,6 @@ void TestMapObjectPutOverwrite(void)
 		Ptr<CTestObject>			pKey1;
 		Ptr<CTestObject>			pValue1;
 		Ptr<CTestObject>			pValue2;
-		STestObjectFreedNotifier	sNotifier1;
-		STestObjectFreedNotifier	sNotifier2;
-		STestObjectFreedNotifier	sNotifier3;
 		bool						bResult;
 
 		pRoot = ORoot();
@@ -956,6 +966,16 @@ void TestMapObjectClassExists(void)
 //////////////////////////////////////////////////////////////////////////
 void TestMapObjectMorphInto(void)
 {
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+	STestObjectFreedNotifier	sNotifier3;
+	STestObjectFreedNotifier	sNotifier4;
+	STestObjectFreedNotifier	sNotifier5;
+	STestObjectFreedNotifier	sNotifier6;
+	STestObjectFreedNotifier	sNotifier7;
+	STestObjectFreedNotifier	sNotifier8;
+	STestObjectFreedNotifier	sNotifier9;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
@@ -969,15 +989,6 @@ void TestMapObjectMorphInto(void)
 		Ptr<CTestTriPointerObject>	pValue2;
 		Ptr<CTestObject>			pValue3;
 		Ptr<CTestTriPointerObject>	pValue4;
-		STestObjectFreedNotifier	sNotifier1;
-		STestObjectFreedNotifier	sNotifier2;
-		STestObjectFreedNotifier	sNotifier3;
-		STestObjectFreedNotifier	sNotifier4;
-		STestObjectFreedNotifier	sNotifier5;
-		STestObjectFreedNotifier	sNotifier6;
-		STestObjectFreedNotifier	sNotifier7;
-		STestObjectFreedNotifier	sNotifier8;
-		STestObjectFreedNotifier	sNotifier9;
 		bool						bResult;
 		size						uiRemapped;
 
@@ -1219,12 +1230,13 @@ void TestMapObjectInternalSerialisation(size uiNumMapItems)
 //////////////////////////////////////////////////////////////////////////
 void TestMapObjectEmbeddedOnHeapKill(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier3;
+	STestObjectFreedNotifier	sFreedNotifier4;
+
 	ObjectsInit();
 	{
-		STestObjectFreedNotifier	sFreedNotifier1;
-		STestObjectFreedNotifier	sFreedNotifier2;
-		STestObjectFreedNotifier	sFreedNotifier3;
-		STestObjectFreedNotifier	sFreedNotifier4;
 		Ptr<CTestEmbeddedMap>		pEmbedded;
 		Ptr<CTestObject>			pTest;
 		CTestObject*				pcTest;

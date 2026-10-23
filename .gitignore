@@ -29,6 +29,7 @@ TestCoreLib/TestCoreLib/Output
 TestCoreLib/TestCoreLib/Release
 TestCoreLib/Release
 TestGerberLib/TestGerberLib/Output/*
+TestAssembler65Lib/TestAssembler65Lib/Output/*
 *.VC.db
 *.suo
 *.sdf
@@ -93,3 +94,5 @@ TestGerberLib/TestGerberLib/Output/*
 /TestGerberLib/Release/*
 
 TestMicroprocessorLib/Log.txt
+
+TestAssembler65Lib/TestAssembler65Lib/Log.txt

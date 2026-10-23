@@ -16,16 +16,17 @@
 //////////////////////////////////////////////////////////////////////////
 void TestObjectFreeOrderingOutOfOrderOnStack(void)
 {
+	STestObjectFreedNotifier	sFreeNotifierO1;
+	STestObjectFreedNotifier	sFreeNotifierN1;
+	STestObjectFreedNotifier	sFreeNotifierN2;
+	STestObjectFreedNotifier	sFreeNotifierO2;
+
 	ObjectsInit();
 	{
 		Ptr<CTestObject>			pObject1;
 		Ptr<CTestNesHolderObject>	pNesHolder1;
 		Ptr<CTestNesHolderObject>	pNesHolder2;
 		Ptr<CTestObject>			pObject2;
-		STestObjectFreedNotifier	sFreeNotifierO1;
-		STestObjectFreedNotifier	sFreeNotifierN1;
-		STestObjectFreedNotifier	sFreeNotifierN2;
-		STestObjectFreedNotifier	sFreeNotifierO2;
 		CArrayEmbeddedObjectPtrE8	apNesObjects;
 		CEmbeddedObject*			pcExpectedNesPointerToObject;
 		

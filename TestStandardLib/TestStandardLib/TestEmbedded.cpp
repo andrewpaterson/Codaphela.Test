@@ -592,6 +592,14 @@ void TestEmbeddedObjectKillSanity(void)
 //////////////////////////////////////////////////////////////////////////
 void TestEmbeddedObjectKillFreesEmbedded(void)
 {
+	STestObjectFreedNotifier	sNotifierContainer;
+	STestObjectFreedNotifier	sNotifierOne;
+	STestObjectFreedNotifier	sNotifierTwo;
+	STestObjectFreedNotifier	sNotifierThree;
+	STestObjectFreedNotifier	sNotifierA;
+	STestObjectFreedNotifier	sNotifierB;
+	STestObjectFreedNotifier	sNotifierC;
+
 	ObjectsInit();
 
 	{
@@ -604,13 +612,6 @@ void TestEmbeddedObjectKillFreesEmbedded(void)
 		Ptr<CTestObject>					pTestB;
 		Ptr<CTestObject>					pTestC;
 
-		STestObjectFreedNotifier			sNotifierContainer;
-		STestObjectFreedNotifier			sNotifierOne;
-		STestObjectFreedNotifier			sNotifierTwo;
-		STestObjectFreedNotifier			sNotifierThree;
-		STestObjectFreedNotifier			sNotifierA;
-		STestObjectFreedNotifier			sNotifierB;
-		STestObjectFreedNotifier			sNotifierC;
 
 		CTestObject							cTestD;
 		CTestObject							cTestE;

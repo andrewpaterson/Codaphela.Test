@@ -129,12 +129,16 @@ target_compile_options(baselib_options INTERFACE -march=haswell)
 # Release options matching the Visual Studio Release configurations.  -O3 (from CMAKE_BUILD_TYPE) covers /O2 /Ob2 /Oi.
 # -ffunction-sections -fdata-sections and --gc-sections: /Gy and /OPT:REF, so unused functions are dropped.
 # -fno-stack-protector: /GS-.  Many Linux distributions turn the stack protector on by default.
+# -U_FORTIFY_SOURCE: MSVC has no equivalent, and many Linux distributions turn it on by default.  Fortified
+# strcpy aborts on names stored past the end of their object (CField::Init) once LTO can see the object size.
+# -fno-lifetime-dse: MSVC keeps stores made in a destructor.  CObject::~CObject frees embedded objects (CMapObject)
+# after their own destructors have run, so g++ dropping those stores as dead crashes the second Kill.
 # -fno-math-errno -fno-trapping-math: the parts of /fp:fast that don't change results (sqrt can be inlined, for
 # example).  -ffast-math would go further than /fp:fast and assume there are no NaNs or infinities.
 # /GL and /LTCG (whole program optimisation) are -flto, turned on by CMAKE_INTERPROCEDURAL_OPTIMIZATION below.
 # /Gv (vectorcall) has no g++ equivalent: 64-bit Linux already passes vectors in registers, and changing the
 # 32-bit calling convention would break calls into libc.
-target_compile_options(baselib_options INTERFACE "$<$<NOT:$<CONFIG:Debug>>:-ffunction-sections;-fdata-sections;-fno-stack-protector;-fno-math-errno;-fno-trapping-math>")
+target_compile_options(baselib_options INTERFACE "$<$<NOT:$<CONFIG:Debug>>:-ffunction-sections;-fdata-sections;-fno-stack-protector;-U_FORTIFY_SOURCE;-fno-lifetime-dse;-fno-math-errno;-fno-trapping-math>")
 target_link_options(baselib_options INTERFACE "$<$<NOT:$<CONFIG:Debug>>:-Wl,--gc-sections>")
 include(CheckIPOSupported)
 check_ipo_supported(RESULT BASELIB_IPO_SUPPORTED LANGUAGES CXX)

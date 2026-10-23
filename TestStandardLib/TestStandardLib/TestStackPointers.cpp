@@ -379,13 +379,14 @@ void TestStackPointersSorting1(void)
 //////////////////////////////////////////////////////////////////////////
 void TestStackPointersRemoveMissing(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifierOther;
+
 	ObjectsInit();
 	{
 		Ptr<CTestObject>			pTest1;
 		Ptr<CTestObject>			pTest2;
 		Ptr<CTestObject>			pOther;
-		STestObjectFreedNotifier	sFreedNotifier1;
-		STestObjectFreedNotifier	sFreedNotifierOther;
 		EFreeResult					eResult;
 		bool						bResult;
 		SLogConfig					sLogConfig;

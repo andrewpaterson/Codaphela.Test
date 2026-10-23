@@ -188,6 +188,9 @@ void TestEmbeddedStackPointersComplex(Ptr<CEmbeddedComplex> pComplexOnStack1, Pt
 //////////////////////////////////////////////////////////////////////////
 void TestEmbeddedStackPointersComplex(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+
 	ObjectsInit();
 
 	//CEmbeddedComplex destructor must be called before ObjectsKill.
@@ -195,9 +198,7 @@ void TestEmbeddedStackPointersComplex(void)
 		CEmbeddedComplex			cComplexOnStack1;
 		CEmbeddedComplex			cComplexOnStack2;
 		Ptr<CTestObject>			pTestObject1;
-		STestObjectFreedNotifier	sFreedNotifier1;
 		Ptr<CTestObject>			pTestObject2;
-		STestObjectFreedNotifier	sFreedNotifier2;
 
 		cComplexOnStack1.Init();
 		cComplexOnStack2.Init();

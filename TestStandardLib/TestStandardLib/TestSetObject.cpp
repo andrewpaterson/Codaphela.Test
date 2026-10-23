@@ -992,10 +992,11 @@ void TestSetObjectObjectMorphSetEntry(size uiNumElements)
 //////////////////////////////////////////////////////////////////////////
 void TestSetObjectEmbeddedOnHeapKill(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+
 	ObjectsInit();
 	{
-		STestObjectFreedNotifier	sFreedNotifier1;
-		STestObjectFreedNotifier	sFreedNotifier2;
 		Ptr<CTestEmbeddedSet>		pEmbedded;
 		Ptr<CTestObject>			pTest;
 		CTestObject*				pcTest;

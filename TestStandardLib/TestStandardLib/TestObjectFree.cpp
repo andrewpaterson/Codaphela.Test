@@ -153,10 +153,11 @@ void TestObjectFreeLoopCollectionCyclicPointer(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectFreeStackWithCyclicHeapPointer(void)
 {
+	STestObjectFreedNotifier	sFreed1;
+	STestObjectFreedNotifier	sFreed2;
+
 	ObjectsInit();
 	{
-		STestObjectFreedNotifier	sFreed1;
-		STestObjectFreedNotifier	sFreed2;
 		Ptr<CTestObject>			pObject1;
 		Ptr<CTestObject>			pObject2;
 		CArrayStackPointerE32			apcStackFroms;
@@ -220,11 +221,12 @@ void TestObjectFreeStackWithCyclicHeapPointer(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectFreeStackWithCyclicHeapPointerHeapFrom(void)
 {
+	STestObjectFreedNotifier	sFreed1;
+	STestObjectFreedNotifier	sFreed2;
+	STestObjectFreedNotifier	sFreedBase;
+
 	ObjectsInit();
 	{
-		STestObjectFreedNotifier	sFreed1;
-		STestObjectFreedNotifier	sFreed2;
-		STestObjectFreedNotifier	sFreedBase;
 		Ptr<CTestObject>			pObject1;
 		Ptr<CTestObject>			pObject2;
 		Ptr<CTestObject>			pObjectBase;
@@ -277,10 +279,11 @@ void TestObjectFreeStackWithCyclicHeapPointerHeapFrom(void)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectFreeStackWithCyclicHeapPointerRootFrom(void)
 {
+	STestObjectFreedNotifier	sFreed1;
+	STestObjectFreedNotifier	sFreed2;
+
 	ObjectsInit();
 	{
-		STestObjectFreedNotifier	sFreed1;
-		STestObjectFreedNotifier	sFreed2;
 		Ptr<CTestObject>			pObject1;
 		Ptr<CTestObject>			pObject2;
 		Ptr<CRoot>					pRoot;

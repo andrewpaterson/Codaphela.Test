@@ -56,12 +56,12 @@ void TestRootDistance(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootStackPointers(void)
 {
+	STestObjectFreedNotifier	sKilled1;
+	STestObjectFreedNotifier	sKilled2;
+	STestObjectFreedNotifier	sKilled3;
+
 	ObjectsInit();
 	{
-		STestObjectFreedNotifier	sKilled1;
-		STestObjectFreedNotifier	sKilled2;
-		STestObjectFreedNotifier	sKilled3;
-
 		Ptr<CRoot>					pRoot;
 		Ptr<CTestObject>			pTest1;
 		Ptr<CTestObject>			pTest2;
@@ -153,15 +153,16 @@ void TestRootStackPointers(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveSimple(void)
 {
+	STestObjectFreedNotifier	sKilled2;
+	STestObjectFreedNotifier	sKilled3;
+	STestObjectFreedNotifier	sKilled4;
+	STestObjectFreedNotifier	sKilled5;
+	STestObjectFreedNotifier	sKilledTop1;
+	STestObjectFreedNotifier	sKilledTop2;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
-		STestObjectFreedNotifier	sKilled2;
-		STestObjectFreedNotifier	sKilled3;
-		STestObjectFreedNotifier	sKilled4;
-		STestObjectFreedNotifier	sKilled5;
-		STestObjectFreedNotifier	sKilledTop1;
-		STestObjectFreedNotifier	sKilledTop2;
 		Ptr<CTestObject>			pTest2;
 		Ptr<CTestObject>			pTest3;
 		Ptr<CTestObject>			pTest4;
@@ -448,15 +449,16 @@ void TestRootGraphRemoveSimple(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveComplex(void)
 {
+	STestObjectFreedNotifier	sKilled2;
+	STestObjectFreedNotifier	sKilled3;
+	STestObjectFreedNotifier	sKilled4;
+	STestObjectFreedNotifier	sKilled5;
+	STestObjectFreedNotifier	sKilledTop1;
+	STestObjectFreedNotifier	sKilledTop2;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
-		STestObjectFreedNotifier	sKilled2;
-		STestObjectFreedNotifier	sKilled3;
-		STestObjectFreedNotifier	sKilled4;
-		STestObjectFreedNotifier	sKilled5;
-		STestObjectFreedNotifier	sKilledTop1;
-		STestObjectFreedNotifier	sKilledTop2;
 		Ptr<CTestObject>			pTest2;
 		Ptr<CTestObject>			pTest3;
 		Ptr<CTestObject>			pTest4;
@@ -634,16 +636,17 @@ void TestRootGraphRemoveComplex(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveUnbalancedLarge(void)
 {
+	STestObjectFreedNotifier	sKilled1;
+	STestObjectFreedNotifier	sKilled2;
+	STestObjectFreedNotifier	sKilled3;
+	STestObjectFreedNotifier	sKilled4;
+	STestObjectFreedNotifier	sKilled5;
+	STestObjectFreedNotifier	sKilledTop1;
+	STestObjectFreedNotifier	sKilledTop2;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
-		STestObjectFreedNotifier	sKilled1;
-		STestObjectFreedNotifier	sKilled2;
-		STestObjectFreedNotifier	sKilled3;
-		STestObjectFreedNotifier	sKilled4;
-		STestObjectFreedNotifier	sKilled5;
-		STestObjectFreedNotifier	sKilledTop1;
-		STestObjectFreedNotifier	sKilledTop2;
 		Ptr<CTestObject>			pTest1;
 		Ptr<CTestObject>			pTest2;
 		Ptr<CTestObject>			pTest3;
@@ -760,16 +763,17 @@ void TestRootGraphRemoveUnbalancedLarge(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveUnbalancedSmall(void)
 {
+	STestObjectFreedNotifier	sKilled1;
+	STestObjectFreedNotifier	sKilled2;
+	STestObjectFreedNotifier	sKilled3;
+	STestObjectFreedNotifier	sKilled4;
+	STestObjectFreedNotifier	sKilled5;
+	STestObjectFreedNotifier	sKilledTop1;
+	STestObjectFreedNotifier	sKilledTop2;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
-		STestObjectFreedNotifier	sKilled1;
-		STestObjectFreedNotifier	sKilled2;
-		STestObjectFreedNotifier	sKilled3;
-		STestObjectFreedNotifier	sKilled4;
-		STestObjectFreedNotifier	sKilled5;
-		STestObjectFreedNotifier	sKilledTop1;
-		STestObjectFreedNotifier	sKilledTop2;
 		Ptr<CTestObject>			pTest1;
 		Ptr<CTestObject>			pTest2;
 		Ptr<CTestObject>			pTest3;
@@ -881,17 +885,18 @@ void TestRootGraphRemoveUnbalancedSmall(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveMostlyBalanced(void)
 {
+	STestObjectFreedNotifier	sKilled1;
+	STestObjectFreedNotifier	sKilled2;
+	STestObjectFreedNotifier	sKilled3;
+	STestObjectFreedNotifier	sKilled4;
+	STestObjectFreedNotifier	sKilled5;
+	STestObjectFreedNotifier	sKilled6;
+	STestObjectFreedNotifier	sKilledTop1;
+	STestObjectFreedNotifier	sKilledTop2;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
-		STestObjectFreedNotifier	sKilled1;
-		STestObjectFreedNotifier	sKilled2;
-		STestObjectFreedNotifier	sKilled3;
-		STestObjectFreedNotifier	sKilled4;
-		STestObjectFreedNotifier	sKilled5;
-		STestObjectFreedNotifier	sKilled6;
-		STestObjectFreedNotifier	sKilledTop1;
-		STestObjectFreedNotifier	sKilledTop2;
 		Ptr<CTestObject>			pTest1;
 		Ptr<CTestObject>			pTest2;
 		Ptr<CTestObject>			pTest3;
@@ -1014,6 +1019,17 @@ void TestRootGraphRemoveMostlyBalanced(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootGraphRemoveErrorFromPointerRemapping(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+	STestObjectFreedNotifier	sFreedNotifier3;
+	STestObjectFreedNotifier	sFreedNotifier4;
+	STestObjectFreedNotifier	sFreedNotifier5;
+	STestObjectFreedNotifier	sFreedNotifier6;
+	STestObjectFreedNotifier	sFreedNotifier7;
+	STestObjectFreedNotifier	sFreedNotifier8;
+	STestObjectFreedNotifier	sFreedNotifier9;
+	STestObjectFreedNotifier	sFreedNotifier15;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
@@ -1027,16 +1043,6 @@ void TestRootGraphRemoveErrorFromPointerRemapping(void)
 		Ptr<CTestObject>			pTest8;
 		Ptr<CTestObject>			pTest9;
 		Ptr<CTestObject>			pTest15;
-		STestObjectFreedNotifier	sFreedNotifier1;
-		STestObjectFreedNotifier	sFreedNotifier2;
-		STestObjectFreedNotifier	sFreedNotifier3;
-		STestObjectFreedNotifier	sFreedNotifier4;
-		STestObjectFreedNotifier	sFreedNotifier5;
-		STestObjectFreedNotifier	sFreedNotifier6;
-		STestObjectFreedNotifier	sFreedNotifier7;
-		STestObjectFreedNotifier	sFreedNotifier8;
-		STestObjectFreedNotifier	sFreedNotifier9;
-		STestObjectFreedNotifier	sFreedNotifier15;
 
 		pRoot = ORoot();
 
@@ -1224,13 +1230,14 @@ void TestRootGraphRemoveErrorFromObjectConverter(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootSetRemoveAll(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier1;
+
 	ObjectsInit();
 	{
 		Ptr<CPointerContainer>		pContainer1;
 		Ptr<CPointerContainer>		pContainer2;
 		Ptr<CTestObject>			pObject;
 		Ptr<CRoot>					pRoot;
-		STestObjectFreedNotifier	sFreedNotifier1;
 		CTestObject* pcObject;
 		CPointerContainer* pcContainer1;
 		CPointerContainer* pcContainer2;
@@ -1272,13 +1279,14 @@ void TestRootSetRemoveAll(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootSetKillAll(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier1;
+
 	ObjectsInit();
 	{
 		Ptr<CPointerContainer>		pContainer1;
 		Ptr<CPointerContainer>		pContainer2;
 		Ptr<CTestObject>			pObject;
 		Ptr<CRoot>					pRoot;
-		STestObjectFreedNotifier	sFreedNotifier1;
 		CTestObject* pcObject;
 		CPointerContainer* pcContainer2;
 		Ptr<CPointerContainer>		pTemp;
@@ -1321,13 +1329,14 @@ void TestRootSetKillAll(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootKillWithStackPointers(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier1;
+
 	ObjectsInit();
 	{
 		Ptr<CPointerContainer>		pContainer1;
 		Ptr<CPointerContainer>		pContainer2;
 		Ptr<CTestObject>			pObject;
 		Ptr<CRoot>					pRoot;
-		STestObjectFreedNotifier	sFreedNotifier1;
 
 		pObject = OMalloc<CTestObject>(&sFreedNotifier1);
 		pContainer2 = OMalloc<CPointerContainer>(pObject);
@@ -1361,13 +1370,14 @@ void TestRootKillWithStackPointers(void)
 //////////////////////////////////////////////////////////////////////////
 void TestRootKill(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier1;
+
 	ObjectsInit();
 	{
 		Ptr<CPointerContainer>		pContainer1;
 		Ptr<CPointerContainer>		pContainer2;
 		Ptr<CTestObject>			pObject;
 		Ptr<CRoot>					pRoot;
-		STestObjectFreedNotifier	sFreedNotifier1;
 
 		AssertLong(0, gcObjects.NumMemoryIndexes());
 		AssertLong(0, gcUnknowns.NumElements());

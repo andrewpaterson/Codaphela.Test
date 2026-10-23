@@ -84,6 +84,11 @@ void TestArrayCommonObjectPointerRemapping(void)
 //////////////////////////////////////////////////////////////////////////
 void TestArrayCommonObjectMorphInto(void)
 {
+	STestObjectFreedNotifier	sNotifier1;
+	STestObjectFreedNotifier	sNotifier2;
+	STestObjectFreedNotifier	sNotifier3;
+	STestObjectFreedNotifier	sNotifier4;
+
 	ObjectsInit();
 	{
 		Ptr<CRoot>					pRoot;
@@ -92,10 +97,6 @@ void TestArrayCommonObjectMorphInto(void)
 		Ptr<CTestTriPointerObject>	pTest2;
 		Ptr<CTestObject>			pTest3;
 		Ptr<CTestTriPointerObject>	pTest4;
-		STestObjectFreedNotifier	sNotifier1;
-		STestObjectFreedNotifier	sNotifier2;
-		STestObjectFreedNotifier	sNotifier3;
-		STestObjectFreedNotifier	sNotifier4;
 		bool						bResult;
 		size						uiRemapped;
 

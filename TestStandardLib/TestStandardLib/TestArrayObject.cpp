@@ -401,10 +401,11 @@ void TestArrayObjectOnStackRemoveDuplicates(void)
 //////////////////////////////////////////////////////////////////////////
 void TestArrayObjectOnStackKillContainedHeapObject(void)
 {
+	STestObjectFreedNotifier	sFreed;
+
 	ObjectsInit();
 	{
 		CArray<CTestSimpleObject>	aArray;
-		STestObjectFreedNotifier	sFreed;
 
 		Ptr<CTestSimpleObject> pTestObject = OMalloc<CTestSimpleObject>(&sFreed, 23);
 		aArray.Init();
@@ -432,10 +433,11 @@ void TestArrayObjectOnStackKillContainedHeapObject(void)
 //////////////////////////////////////////////////////////////////////////
 void TestArrayObjectOnStackKillContainedStackObject(void)
 {
+	STestObjectFreedNotifier	sFreed;
+
 	ObjectsInit();
 	{
 		CArray<CTestSimpleObject>	aArray;
-		STestObjectFreedNotifier	sFreed;
 		CTestSimpleObject			cTestObject;
 
 		cTestObject.Init(&sFreed, 23);
@@ -971,10 +973,11 @@ void TestArrayObjectInternalSerialisation(size uiNumArrayItems)
 //////////////////////////////////////////////////////////////////////////
 void TestArrayObjectEmbeddedOnHeapKill(void)
 {
+	STestObjectFreedNotifier	sFreedNotifier1;
+	STestObjectFreedNotifier	sFreedNotifier2;
+
 	ObjectsInit();
 	{
-		STestObjectFreedNotifier	sFreedNotifier1;
-		STestObjectFreedNotifier	sFreedNotifier2;
 		Ptr<CTestEmbeddedArray>		pEmbedded;
 		Ptr<CTestObject>			pTest;
 		CTestObject*				pcTest;
