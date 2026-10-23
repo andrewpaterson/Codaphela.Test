@@ -258,6 +258,7 @@
     <ClCompile Include="Test65C64Operand.cpp" />
     <ClCompile Include="Test65C64Block.cpp" />
     <ClCompile Include="Test65C64Vector.cpp" />
+    <ClCompile Include="TestTimeline.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

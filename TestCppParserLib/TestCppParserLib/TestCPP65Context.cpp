@@ -2,7 +2,11 @@
 #include <stdlib.h>
 #include "TestCPP65Context.h"
 #include "Assembler65Lib/Asm65Assembler.h"
+#include "BaseLib/TextFile.h"
+#include "BaseLib/FileUtil.h"
 #include "CppParserLib/Preprocessor.h"
+#include "CppParserLib/HeaderFileMap.h"
+#include "CppParserLib/HeaderFiles.h"
 #include "CppParserLib/CppTokeniser.h"
 #include "CppParserLib/CppParser.h"
 #include "CppParserLib/CPP65Generator.h"
@@ -187,10 +191,10 @@ static void TestCPP65TickLow(C65C64Meta* pcMPU, void* pvContext)
 //
 // Preprocesses, parses and generates szSource, as a whole program with its start up
 // if bProgram.  The assembly is appended to pszAssembly and every stage's errors to
-// pszErrors.
+// pszErrors.  The labels it uses but does not define are added to paszExternals.
 //
 //////////////////////////////////////////////////////////////////////////
-bool TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSource, bool bProgram)
+bool TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSource, bool bProgram, CArrayChars* paszExternals)
 {
 	CTranslationUnit	cFile;
 	CPreprocessor		cPreprocessor;
@@ -198,11 +202,41 @@ bool TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSou
 	CCPPSyntaxTree		cTree;
 	CCPPParser			cParser;
 	CCPP65Generator		cGenerator;
+	CHeaderFileMap		cHeaderFileMap;
+	CHeaderFiles		cStandard;
+	CHeaderFiles		cLibraries;
+	CHeaderFiles		cInput;
+	CHeaderFiles		cBaseLib;
+	CFileUtil			cFileUtil;
+	CChars				szDirectory;
 	bool				bResult;
+
+	//<stdint.h> and the rest are the 65C64's (Libc65), "BaseLib/..." are the libraries'.
+	cHeaderFileMap.Init();
+	szDirectory.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "Libc65");
+	cFileUtil.FullPath(&szDirectory);
+	cStandard.Init(szDirectory.Text(), &cHeaderFileMap, false, true);
+	szDirectory.Kill();
+	szDirectory.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries");
+	cFileUtil.FullPath(&szDirectory);
+	cLibraries.Init(szDirectory.Text(), &cHeaderFileMap, true, false);
+	szDirectory.Kill();
+	szDirectory.Init("Input" _FS_ "CPP65");
+	cFileUtil.FullPath(&szDirectory);
+	cInput.Init(szDirectory.Text(), &cHeaderFileMap, true, false);
+	szDirectory.Kill();
+	szDirectory.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "BaseLib");
+	cFileUtil.FullPath(&szDirectory);
+	cBaseLib.Init(szDirectory.Text(), &cHeaderFileMap, false, false);
+	szDirectory.Kill();
 
 	cFile.Init("Generated.cpp", NULL, false);
 	cFile.SetContents((char*)szSource);
 	cPreprocessor.Init(NULL);
+	cPreprocessor.AddIncludeDirectory(&cStandard);
+	cPreprocessor.AddIncludeDirectory(&cLibraries);
+	cPreprocessor.AddIncludeDirectory(&cInput);
+	cPreprocessor.AddIncludeDirectory(&cBaseLib);
 	bResult = cPreprocessor.PreprocessTranslationUnit(&cFile);
 	pszErrors->Append(cPreprocessor.GetErrors()->Text());
 	cPreprocessor.Kill();
@@ -219,12 +253,21 @@ bool TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSou
 
 	cGenerator.Init(&cTree);
 	bResult &= bProgram ? cGenerator.GenerateProgram(pszAssembly) : cGenerator.Generate(pszAssembly);
+	if (paszExternals)
+	{
+		cGenerator.GetExternals(paszExternals);
+	}
 	pszErrors->Append(cGenerator.GetErrors()->Text());
 	cGenerator.Kill();
 
 	cTree.Kill();
 	cTokeniser.Kill();
 	cFile.Kill();
+	cBaseLib.Kill();
+	cInput.Kill();
+	cLibraries.Kill();
+	cStandard.Kill();
+	cHeaderFileMap.Kill();
 	return bResult;
 }
 
@@ -236,8 +279,28 @@ bool TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSou
 //////////////////////////////////////////////////////////////////////////
 bool TestCPP65Begin(STestCPP65Run* psRun, const char* szSource)
 {
-	CChars				szAssembly;
-	CChars				szErrors;
+	CChars	szAssembly;
+	CChars	szErrors;
+	bool	bResult;
+
+	szAssembly.Init();
+	szErrors.Init();
+	bResult = TestCPP65Generate(&szAssembly, &szErrors, szSource, true);
+	AssertString("", szErrors.Text());
+	bResult &= TestCPP65BeginAssembly(psRun, szAssembly.Text());
+	szErrors.Kill();
+	szAssembly.Kill();
+	return bResult;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Assembles a program, loads it and runs reset.
+//
+//////////////////////////////////////////////////////////////////////////
+bool TestCPP65BeginAssembly(STestCPP65Run* psRun, const char* szAssembly)
+{
 	CAsm65Assembler		cAssembler;
 	bool				bResult;
 
@@ -246,18 +309,11 @@ bool TestCPP65Begin(STestCPP65Run* psRun, const char* szSource)
 	psRun->pcContext->SetLong(VECTOR_65C64_BASE + 4 * VECTOR_65C64_RESET, CPP65_PROGRAM_ADDRESS);
 	psRun->uiInstructions = 0;
 
-	szAssembly.Init();
-	szErrors.Init();
-	bResult = TestCPP65Generate(&szAssembly, &szErrors, szSource, true);
-	AssertString("", szErrors.Text());
-
 	cAssembler.Init();
-	bResult &= cAssembler.Assemble(szAssembly.Text());
+	bResult = cAssembler.Assemble(szAssembly);
 	AssertString("", cAssembler.GetErrors());
 	psRun->pcContext->Load(cAssembler.GetOutput());
 	cAssembler.Kill();
-	szErrors.Kill();
-	szAssembly.Kill();
 
 	psRun->cMeta.Init(TestCPP65TickHigh, TestCPP65TickLow, psRun->pcContext);
 	psRun->cMeta.TickInstruction();
@@ -306,6 +362,92 @@ void TestCPP65End(STestCPP65Run* psRun)
 	AssertSize(0, psRun->pcContext->muiBadAccesses);
 	psRun->cMeta.Kill();
 	free(psRun->pcContext);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Compiles szSource (as a program with its start up if bProgram) and assembles it,
+// with a stub for each label it uses but does not define.  Returns the number of
+// externals.
+//
+//////////////////////////////////////////////////////////////////////////
+int TestCPP65Assemble(const char* szSource, bool bProgram)
+{
+	CChars				szAssembly;
+	CChars				szErrors;
+	CArrayChars			aszExternals;
+	CAsm65Assembler		cAssembler;
+	size				i;
+	int					iExternals;
+
+	szAssembly.Init();
+	szErrors.Init();
+	aszExternals.Init();
+	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, szSource, bProgram, &aszExternals));
+	AssertString("", szErrors.Text());
+	for (i = 0; i < aszExternals.NumElements(); i++)
+	{
+		szAssembly.Append(aszExternals.GetText(i));
+		szAssembly.Append(":\n\t\tstp\n");
+	}
+
+	cAssembler.Init();
+	AssertTrue(cAssembler.Assemble(szAssembly.Text()));
+	AssertString("", cAssembler.GetErrors());
+	cAssembler.Kill();
+
+	iExternals = (int)aszExternals.NumElements();
+	aszExternals.Kill();
+	szErrors.Kill();
+	szAssembly.Kill();
+	return iExternals;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// TestCPP65Assemble on a file of the libraries, as a translation unit.
+//
+//////////////////////////////////////////////////////////////////////////
+int TestCPP65AssembleLibraryFile(const char* szFilename)
+{
+	CTextFile	cFile;
+	CChars		szPath;
+	int			iExternals;
+
+	szPath.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_);
+	szPath.Append(szFilename);
+	cFile.Init();
+	AssertTrue(cFile.Read(szPath.Text()));
+	cFile.PassifyNewlines();
+	iExternals = TestCPP65Assemble(cFile.Text(), false);
+	cFile.Kill();
+	szPath.Kill();
+	return iExternals;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Compiles and runs Input/CPP65/szFilename.  Returns what main returned.
+//
+//////////////////////////////////////////////////////////////////////////
+int32 TestCPP65MainFile(const char* szFilename)
+{
+	CTextFile	cFile;
+	CChars		szPath;
+	int32		iResult;
+
+	szPath.Init("Input" _FS_ "CPP65" _FS_);
+	szPath.Append(szFilename);
+	cFile.Init();
+	AssertTrue(cFile.Read(szPath.Text()));
+	cFile.PassifyNewlines();
+	iResult = TestCPP65Main(cFile.Text());
+	cFile.Kill();
+	szPath.Kill();
+	return iResult;
 }
 
 

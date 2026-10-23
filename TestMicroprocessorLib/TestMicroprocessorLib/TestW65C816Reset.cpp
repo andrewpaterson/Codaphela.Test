@@ -10,7 +10,7 @@
 #include "TestW65C816Context.h"
 
 
-void TestW65C816Reset(CW65C816* pcW65C816, CW65MetaTrace* pcPhi2, CW65MetaTrace* pcVPA, CW65MetaTrace* pcVDA, CW65MetaTrace* pcVPB, CW65MetaTrace* pcRWB);
+void TestW65C816Reset(CW65C816* pcW65C816, CMetaTrace* pcPhi2, CMetaTrace* pcVPA, CMetaTrace* pcVDA, CMetaTrace* pcVPB, CMetaTrace* pcRWB);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ void AssertData(CW65C816Pins* pcW65C816, CTimeline* pcTimeline, uint8 uiData)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertSignals(bool bVPA, bool bVDA, bool bVPB, bool bRWB, CW65MetaTrace* pcVPA, CW65MetaTrace* pcVDA, CW65MetaTrace* pcVPB ,CW65MetaTrace* pcRWB)
+void AssertSignals(bool bVPA, bool bVDA, bool bVPB, bool bRWB, CMetaTrace* pcVPA, CMetaTrace* pcVDA, CMetaTrace* pcVPB ,CMetaTrace* pcRWB)
 {
 	bool bPinsVPA;
 	bool bPinsVDA;
@@ -106,7 +106,7 @@ void AssertSignals(bool bVPA, bool bVDA, bool bVPB, bool bRWB, CW65MetaTrace* pc
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertPhi2Low(CW65MetaTrace* pcPhi2)
+void AssertPhi2Low(CMetaTrace* pcPhi2)
 {
 	AssertTrue(pcPhi2->IsLow());
 }
@@ -116,7 +116,7 @@ void AssertPhi2Low(CW65MetaTrace* pcPhi2)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertPhi2High(CW65MetaTrace* pcPhi2)
+void AssertPhi2High(CMetaTrace* pcPhi2)
 {
 	AssertTrue(pcPhi2->IsHigh());
 }
@@ -130,11 +130,11 @@ void TestW65C816OnlyInitAndKill(void)
 {
 	CW65C816		cW65C816;
 	CW65C816Pins	cPins;
-	CW65MetaBus8		cData;
-	CW65MetaBus16		cAddress;
-	CW65MetaTrace		cPhi2;
-	CW65MetaTrace		cResB;
-	CW65MetaTrace		cRWB;
+	CMetaBus8		cData;
+	CMetaBus16		cAddress;
+	CMetaTrace		cPhi2;
+	CMetaTrace		cResB;
+	CMetaTrace		cRWB;
 
 	CW65C816InstructionFactory::GetInstance()->Init();
 
@@ -165,14 +165,14 @@ void TestW65C816ResetReleaseBeforePhi2Falling(void)
 {
 	CW65C816		cW65C816;
 	CW65C816Pins	cPins;
-	CW65MetaBus8		cData;
-	CW65MetaBus16		cAddress;
-	CW65MetaTrace		cPhi2;
-	CW65MetaTrace		cResB;
-	CW65MetaTrace		cRWB;
-	CW65MetaTrace		cVPA;
-	CW65MetaTrace		cVDA;
-	CW65MetaTrace		cVPB;
+	CMetaBus8		cData;
+	CMetaBus16		cAddress;
+	CMetaTrace		cPhi2;
+	CMetaTrace		cResB;
+	CMetaTrace		cRWB;
+	CMetaTrace		cVPA;
+	CMetaTrace		cVDA;
+	CMetaTrace		cVPB;
 
 	CW65C816InstructionFactory::GetInstance()->Init();
 
@@ -247,14 +247,14 @@ void TestW65C816ResetReleaseBeforePhi2Rising(void)
 {
 	CW65C816		cW65C816;
 	CW65C816Pins	cPins;
-	CW65MetaBus8		cData;
-	CW65MetaBus16		cAddress;
-	CW65MetaTrace		cPhi2;
-	CW65MetaTrace		cResB;
-	CW65MetaTrace		cRWB;
-	CW65MetaTrace		cVPA;
-	CW65MetaTrace		cVDA;
-	CW65MetaTrace		cVPB;
+	CMetaBus8		cData;
+	CMetaBus16		cAddress;
+	CMetaTrace		cPhi2;
+	CMetaTrace		cResB;
+	CMetaTrace		cRWB;
+	CMetaTrace		cVPA;
+	CMetaTrace		cVDA;
+	CMetaTrace		cVPB;
 
 	CW65C816InstructionFactory::GetInstance()->Init();
 
@@ -335,7 +335,7 @@ void TestW65C816ResetReleaseBeforePhi2Rising(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestW65C816Reset(CW65C816* pcW65C816, CW65MetaTrace* pcPhi2, CW65MetaTrace* pcVPA, CW65MetaTrace* pcVDA, CW65MetaTrace* pcVPB, CW65MetaTrace* pcRWB)
+void TestW65C816Reset(CW65C816* pcW65C816, CMetaTrace* pcPhi2, CMetaTrace* pcVPA, CMetaTrace* pcVDA, CMetaTrace* pcVPB, CMetaTrace* pcRWB)
 {
 	CW65C816Pins*	pcPins;
 	

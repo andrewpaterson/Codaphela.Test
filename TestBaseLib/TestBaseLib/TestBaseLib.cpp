@@ -40,6 +40,7 @@ void TestDate(void);
 void TestNumbers(void);
 void TestArrayDenseTemplate(void);
 void TestArraySparseTemplate(void);
+void TestRedBlackTree(void);
 void TestArrayBlockSorted(void);
 void TestChars(void);
 void TestCharsImmutable(void);
@@ -260,6 +261,7 @@ int __cdecl main(void)
 	TestArrayTemplate();
 	TestArrayDenseTemplate();
 	TestArraySparseTemplate();
+	TestRedBlackTree();
 	TestMemoryFile();
 	TestDiskFile();
 	TestBufferedFile();

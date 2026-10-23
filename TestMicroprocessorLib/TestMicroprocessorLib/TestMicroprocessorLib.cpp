@@ -5,7 +5,7 @@
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalMemory.h"
 #include "StandardLib/Unknowns.h"
-#include "MicroprocessorLib/W65MetaTrace.h"
+#include "MicroprocessorLib/MetaTrace.h"
 #include "TestLib/Assert.h"
 
 
@@ -34,6 +34,7 @@ void Test65C64Bits(void);
 void Test65C64Operand(void);
 void Test65C64Block(void);
 void Test65C64Vector(void);
+void TestTimeline(void);
 
 
 int __cdecl main(void)
@@ -75,6 +76,7 @@ int __cdecl main(void)
 	Test65C64Operand();
 	Test65C64Block();
 	Test65C64Vector();
+	TestTimeline();
 
 	UnknownsKill();
 	MemoryKill();

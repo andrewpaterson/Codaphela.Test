@@ -1,6 +1,11 @@
 #include <string.h>
 #include "MicroprocessorLib/65C64InstructionFactory.h"
 #include "TestCPP65Context.h"
+#include "BaseLib/FileUtil.h"
+#include "CppParserLib/Project.h"
+#include "CppParserLib/CppTokeniser.h"
+#include "CppParserLib/CppParser.h"
+#include "CppParserLib/CPP65Generator.h"
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
@@ -695,10 +700,11 @@ void TestCPP65GeneratorClasses(void)
 	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
 	TestCPP65End(&sRun);
 
-	//A virtual call loads the vtable pointer through X and calls through the vtable.
+	//A virtual call loads the vtable pointer through X and calls through the vtable.  The vtable is written
+	//when an object of the class is made.
 	szAssembly.Init();
 	szErrors.Init();
-	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "struct A { int m; virtual int f() { return m; } };\nint Call(A* p) { return p->f(); }"));
+	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "struct A { int m; virtual int f() { return m; } };\nint Call(A* p) { return p->f(); }\nint Make() { A a; return Call(&a); }"));
 	AssertString("", szErrors.Text());
 	AssertTrue(szAssembly.Contains(
 		"_Call:\n"
@@ -720,6 +726,129 @@ void TestCPP65GeneratorClasses(void)
 		"\t\t.long _A__f\n"));
 	szErrors.Kill();
 	szAssembly.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// BaseLib's CArrayTemplate, with the 65C64's standard headers.  The CArrayBlock
+// functions it calls are in ArrayBlockStub.h.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorArrayTemplate(void)
+{
+	AssertInt(268, TestCPP65MainFile("ArrayTemplateInt.cpp"));
+	AssertInt(553, TestCPP65MainFile("ArrayTemplateStruct.cpp"));
+
+	//Every member: the 40 CArrayBlock functions they call are in ArrayBlock.cpp.
+	AssertInt(40, TestCPP65Assemble("#include \"BaseLib/ArrayTemplate.h\"\ntemplate class CArrayTemplate<int>;\nint main() { return 0; }\n"));
+	//ArrayBlock.cpp itself compiles and assembles.  Its externals (about 30) are the functions and globals of
+	//other BaseLib files and the C library; the count isn't pinned as BaseLib changes.
+	AssertTrue(TestCPP65AssembleLibraryFile("BaseLib" _FS_ "ArrayBlock.cpp") > 0);
+	AssertInt(40, TestCPP65Assemble("#include \"BaseLib/ArrayTemplate.h\"\nstruct SNode { SNode* psNext; char c; SNode() { psNext = 0; c = 'n'; } };\ntemplate class CArrayTemplate<SNode>;\nint main() { return 0; }\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// CArrayTemplate<CTestClass> in a project of three translation units, added by
+// hand: Main.cpp, TestClass.cpp (CTestClass, and a function that also uses the
+// array) and ArrayBlockStub.cpp (the CArrayBlock functions).  Each unit is compiled
+// with its own label prefix; the inline and template functions they both use are
+// written once.  The units are joined under one start up, assembled and run.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorProject(void)
+{
+	CProject			cProject;
+	CLibrary*			pcLibrary;
+	CTranslationUnit*	pcFile;
+	SProcessIter		sIter;
+	CCPPTokeniser		cTokeniser;
+	CCPPSyntaxTree		cTree;
+	CCPPParser			cParser;
+	CCPP65Generator		cGenerator;
+	CFileUtil			cFileUtil;
+	CChars				szDirectory;
+	CChars				szUnits;
+	CChars				szProgram;
+	CChars				szUnit;
+	CArrayChars			aszEmitted;
+	CArrayChars			aszInitialise;
+	CArrayChars			aszFinalise;
+	STestCPP65Run		sRun;
+	int					iUnit;
+
+	cProject.Init(false);
+	szDirectory.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "Libc65");
+	cFileUtil.FullPath(&szDirectory);
+	cProject.AddIncludeDirectory(szDirectory.Text(), false, true);
+	szDirectory.Kill();
+	szDirectory.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries");
+	cFileUtil.FullPath(&szDirectory);
+	cProject.AddIncludeDirectory(szDirectory.Text(), true, false);
+	szDirectory.Kill();
+
+	pcLibrary = cProject.AddLibrary("ArrayTemplateProject", "Input" _FS_ "CPP65" _FS_ "ArrayTemplateProject", false);
+	pcLibrary->AddHeaderFile("TestClass.h");
+	pcLibrary->AddHeaderFile("ArrayBlockStub.h");
+	pcLibrary->AddTranslationUnit("Main.cpp");
+	pcLibrary->AddTranslationUnit("TestClass.cpp");
+	pcLibrary->AddTranslationUnit("ArrayBlockStub.cpp");
+	pcLibrary->AddConfiguration("65C64");
+	AssertTrue(cProject.Process("65C64"));
+
+	szUnits.Init();
+	aszEmitted.Init();
+	aszInitialise.Init();
+	aszFinalise.Init();
+	iUnit = 0;
+	for (pcFile = cProject.Start(&sIter, "65C64"); pcFile; pcFile = cProject.Iterate(&sIter))
+	{
+		iUnit++;
+		cTokeniser.Init();
+		AssertTrue(cTokeniser.Tokenise(pcFile->GetTokens()));
+		cTree.Init(&cTokeniser);
+		cParser.Init(&cTokeniser, &cTree);
+		AssertTrue(cParser.Parse());
+		cParser.Kill();
+
+		szUnit.Init("U");
+		szUnit.Append(iUnit);
+		szUnit.Append('_');
+		cGenerator.Init(&cTree);
+		cGenerator.SetUnit(szUnit.Text(), &aszEmitted);
+		AssertTrue(cGenerator.Generate(&szUnits));
+		AssertString("", cGenerator.GetErrors()->Text());
+		cGenerator.GetStartUp(&aszInitialise, &aszFinalise);
+		cGenerator.Kill();
+		szUnit.Kill();
+
+		cTree.Kill();
+		cTokeniser.Kill();
+	}
+	AssertInt(3, iUnit);
+
+	//No unit has global objects (CTestClass::siMade is constant data), so there is nothing to initialise.  Get is
+	//used by Main.cpp and TestClass.cpp but written once (assembling would fail on a label written twice).
+	AssertInt(0, (int)aszInitialise.NumElements());
+	AssertTrue(aszEmitted.GetIndex("_CArrayTemplate__T_C10CTestClass__Get") != ARRAY_ELEMENT_NOT_FOUND);
+
+	szProgram.Init();
+	CCPP65Generator::AppendStartUp(&szProgram, &aszInitialise, &aszFinalise);
+	szProgram.Append(szUnits);
+	AssertTrue(TestCPP65BeginAssembly(&sRun, szProgram.Text()));
+	AssertTrue(TestCPP65Run(&sRun, 1000000) < 1000000);
+	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
+	AssertInt(4031, (int32)TestCPP65MPU(&sRun)->GetA());
+	TestCPP65End(&sRun);
+
+	szProgram.Kill();
+	aszFinalise.Kill();
+	aszInitialise.Kill();
+	aszEmitted.Kill();
+	szUnits.Kill();
+	cProject.Kill();
 }
 
 
@@ -747,12 +876,12 @@ static void AssertCPP65Error(const char* szExpected, const char* szSource)
 //////////////////////////////////////////////////////////////////////////
 void TestCPP65GeneratorErrors(void)
 {
-	AssertCPP65Error("Generated.cpp (1, 1): Floating point is not supported by the 65C64 generator yet [float]\n", "float f;");
-	AssertCPP65Error("Generated.cpp (1, 1): 64 bit integers are not supported by the 65C64 generator yet [long]\n", "long long l;");
+	AssertCPP65Error("Generated.cpp (1, 27): Floating point is not supported by the 65C64 generator yet [f]\n", "float f; int g() { return f; }");
+	AssertCPP65Error("Generated.cpp (1, 31): 64 bit integers are not supported by the 65C64 generator yet [l]\n", "long long l; int g() { return l; }");
 	AssertCPP65Error("Generated.cpp (1, 1): This declaration is not supported by the 65C64 generator yet [namespace]\n", "namespace N { int x; }");
-	AssertCPP65Error("Generated.cpp (1, 43): Multiple inheritance is not supported by the 65C64 generator yet [struct]\n", "struct A { int a; }; struct B { int b; }; struct C : A, B {};");
-	AssertCPP65Error("Generated.cpp (1, 28): Parameters can only be integers and pointers in the 65C64 generator yet [P]\n", "struct P { int x; }; int f(P p);");
-	AssertCPP65Error("Generated.cpp (1, 1): Unions are not supported by the 65C64 generator yet [union]\n", "union U { int a; char b; };");
+	AssertCPP65Error("Generated.cpp (1, 63): Only the first base class can be polymorphic in the 65C64 generator yet [struct]\n", "struct A { virtual int f(); }; struct B { virtual int g(); }; struct C : A, B {}; C gC;");
+	AssertCPP65Error("Generated.cpp (1, 58): Objects cannot be passed by value by the 65C64 generator yet; pass a pointer or a reference [q]\n", "struct P { int x; }; int f(P p); int g() { P q; return f(q); }");
+	AssertCPP65Error("Generated.cpp (1, 19): Only placement new is supported by the 65C64 generator yet [new]\n", "int* f() { return new int; }");
 	AssertCPP65Error("Generated.cpp (1, 44): Objects can only be copied or used through pointers by the 65C64 generator yet [p]\n", "struct P { int x; }; int f() { P p; return p; }");
 	AssertCPP65Error("Generated.cpp (1, 32): No function matches the arguments [f]\n", "int f(int a); int g() { return f(); }");
 	AssertCPP65Error("Generated.cpp (1, 16): break outside a loop or switch [break]\n", "void f(void) { break; }");
@@ -781,6 +910,8 @@ void TestCPP65Generator(void)
 	TestCPP65GeneratorStatements();
 	TestCPP65GeneratorPrograms();
 	TestCPP65GeneratorClasses();
+	TestCPP65GeneratorArrayTemplate();
+	TestCPP65GeneratorProject();
 	TestCPP65GeneratorErrors();
 
 	C65C64InstructionFactory::GetInstance()->Kill();

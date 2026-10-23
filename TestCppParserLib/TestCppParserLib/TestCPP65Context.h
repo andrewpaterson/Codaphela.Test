@@ -3,6 +3,7 @@
 #include "MicroprocessorLib/65C64Meta.h"
 #include "BaseLib/PrimitiveTypes.h"
 #include "BaseLib/Chars.h"
+#include "BaseLib/ArrayChars.h"
 #include "Assembler65Lib/Asm65Output.h"
 #include "CppParserLib/CPP65Generator.h"
 
@@ -43,12 +44,16 @@ struct STestCPP65Run
 };
 
 
-bool		TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSource, bool bProgram = false);
+bool		TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSource, bool bProgram = false, CArrayChars* paszExternals = NULL);
+int			TestCPP65Assemble(const char* szSource, bool bProgram = true);
+int			TestCPP65AssembleLibraryFile(const char* szFilename);
 bool		TestCPP65Begin(STestCPP65Run* psRun, const char* szSource);
+bool		TestCPP65BeginAssembly(STestCPP65Run* psRun, const char* szAssembly);
 size		TestCPP65Run(STestCPP65Run* psRun, size uiMaxInstructions);
 C65C64*		TestCPP65MPU(STestCPP65Run* psRun);
 void		TestCPP65End(STestCPP65Run* psRun);
 int32		TestCPP65Main(const char* szSource);
+int32		TestCPP65MainFile(const char* szFilename);
 
 
 #endif // __TEST_CPP65_CONTEXT_H__
