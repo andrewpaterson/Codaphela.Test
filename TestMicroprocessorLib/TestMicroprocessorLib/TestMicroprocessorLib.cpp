@@ -37,6 +37,7 @@ void Test65C64Vector(void);
 void TestTimeline(void);
 void TestVoltageConfiguration(void);
 void TestLogicPort(void);
+void TestPassive(void);
 
 
 int __cdecl main(void)
@@ -81,6 +82,7 @@ int __cdecl main(void)
 	TestTimeline();
 	TestVoltageConfiguration();
 	TestLogicPort();
+	TestPassive();
 
 	UnknownsKill();
 	MemoryKill();

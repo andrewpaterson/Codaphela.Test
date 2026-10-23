@@ -4,7 +4,8 @@
 #include "MicroprocessorLib/LongTime.h"
 #include "MicroprocessorLib/Voltage.h"
 #include "MicroprocessorLib/Timeline.h"
-#include "MicroprocessorLib/Circuit.h"
+#include "MicroprocessorLib/CircuitSimulation.h"
+#include "MicroprocessorLib/PowerSource.h"
 #include "MicroprocessorLib/PowerInPort.h"
 #include "MicroprocessorLib/PowerOutPort.h"
 #include "MicroprocessorLib/LogicPort.h"
@@ -18,29 +19,6 @@
 #include "MicroprocessorLib/MetaBus8.h"
 #include "MicroprocessorLib/MetaBus16.h"
 #include "TestLib/Assert.h"
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-// A power supply: one power out port.
-//
-//////////////////////////////////////////////////////////////////////////
-class CTestPowerSource : public CPortHolder
-{
-public:
-	CPowerOutPort*	mpcOut;
-
-	void Init(float32 fVoltage)
-	{
-		CPortHolder::Init();
-		mpcOut = NewMalloc<CPowerOutPort>();
-		mpcOut->Init("Out", this, fVoltage);
-	}
-
-	void TraceConnected(CTimeline* pcTimeline, CPort* pcPort) {}
-	char* GetName(void) { return (char*)"Power"; }
-	void AppendDescription(CChars* psz) { psz->Append("Power"); }
-};
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -77,13 +55,13 @@ CONSTRUCTABLE(CTestBuffer);
 public:
 	CChars*		mpszLog;
 
-	void Init(CCircuit* pcCircuit, const char* szName, CVoltageConfigurationSource* pcSource, CChars* pszLog)
+	void Init(CSubcircuitSimulation* pcSimulation, const char* szName, CVoltageConfigurationSource* pcSource, CChars* pszLog)
 	{
 		CTestBufferPins*	pcPins;
 
 		pcPins = NewMalloc<CTestBufferPins>();
 		pcPins->Init(pcSource);
-		CIntegratedCircuit::Init(pcCircuit, szName, pcPins);
+		CIntegratedCircuit::Init(pcSimulation, szName, pcPins);
 		mpszLog = pszLog;
 	}
 
@@ -132,13 +110,13 @@ CONSTRUCTABLE(CTestClock);
 public:
 	int64	miPeriod;
 
-	void Init(CCircuit* pcCircuit, const char* szName, CVoltageConfigurationSource* pcSource, int64 iPeriod)
+	void Init(CSubcircuitSimulation* pcSimulation, const char* szName, CVoltageConfigurationSource* pcSource, int64 iPeriod)
 	{
 		CTestBufferPins*	pcPins;
 
 		pcPins = NewMalloc<CTestBufferPins>();
 		pcPins->Init(pcSource);
-		CIntegratedCircuit::Init(pcCircuit, szName, pcPins);
+		CIntegratedCircuit::Init(pcSimulation, szName, pcPins);
 		miPeriod = iPeriod;
 	}
 
@@ -179,10 +157,10 @@ public:
 class CTestLogicCircuit
 {
 public:
-	CTimeline					mcTimeline;
-	CCircuit					mcCircuit;
-	CTestPowerSource			mcVCCSource;
-	CTestPowerSource			mcGNDSource;
+	CCircuitSimulation			mcSimulation;
+	CTimeline*					mpcTimeline;
+	CCircuit*					mpcCircuit;
+	CSubcircuitSimulation*		mpcTop;
 	CTrace*						mpcVCC;
 	CTrace*						mpcGND;
 	CFixedVoltageConfiguration	mcFixed;
@@ -192,14 +170,14 @@ public:
 	{
 		CEvent::ResetNextID();
 		CTrace::ResetNextID();
-		mcTimeline.Init();
-		mcCircuit.Init(&mcTimeline);
-		mpcVCC = mcCircuit.AddTrace();
-		mpcGND = mcCircuit.AddTrace();
-		mcVCCSource.Init(4.0f);
-		mcGNDSource.Init(0.0f);
-		mcVCCSource.mpcOut->Connect(mpcVCC);
-		mcGNDSource.mpcOut->Connect(mpcGND);
+		mcSimulation.Init("Test");
+		mpcTimeline = mcSimulation.GetTimeline();
+		mpcCircuit = mcSimulation.GetCircuit();
+		mpcTop = mcSimulation.GetSubcircuitTopSimulation();
+		mpcVCC = mpcCircuit->AddTrace();
+		mpcGND = mpcCircuit->AddTrace();
+		AddPower("VCC", 4.0f)->GetPowerOutPort()->Connect(mpcVCC);
+		AddPower("GND", 0.0f)->GetPowerOutPort()->Connect(mpcGND);
 
 		//Outputs 0V and 4V, inputs low at 1V and high at 3V, 1024 to propagate: holds of 512 and slews of 1024.
 		mcFixed.Init(4.0f, 1.0f, 3.0f, 0.0f, 4.0f, 1024, 1024);
@@ -208,12 +186,18 @@ public:
 
 	void Kill(void)
 	{
-		mcVCCSource.Kill();
-		mcGNDSource.Kill();
-		mcCircuit.Kill();
-		mcTimeline.Kill();
+		mcSimulation.Kill();
 		mcFixed.Kill();
 		mszLog.Kill();
+	}
+
+	CPowerSource* AddPower(const char* szName, float32 fVoltage)
+	{
+		CPowerSource*	pcPower;
+
+		pcPower = NewMalloc<CPowerSource>();
+		pcPower->Init(mpcTop, szName, fVoltage);
+		return pcPower;
 	}
 
 	void Power(CIntegratedCircuit* pcIntegratedCircuit)
@@ -227,7 +211,7 @@ public:
 		CTestBuffer*	pcBuffer;
 
 		pcBuffer = NewMalloc<CTestBuffer>();
-		pcBuffer->Init(&mcCircuit, szName, pcSource, &mszLog);
+		pcBuffer->Init(mpcTop, szName, pcSource, &mszLog);
 		Power(pcBuffer);
 		return pcBuffer;
 	}
@@ -245,48 +229,48 @@ void TestLogicPortTrace(void)
 {
 	CTestLogicCircuit	cTest;
 	CTrace*				pcTrace;
-	CTestPowerSource	cHigh;
-	CTestPowerSource	cLow;
+	CPowerSource*		pcHigh;
+	CPowerSource*		pcLow;
 	CChars				sz;
 	SLogConfig			sLogConfig;
 
 	cTest.Init();
-	pcTrace = cTest.mcCircuit.AddTrace();
+	pcTrace = cTest.mpcCircuit->AddTrace();
 	AssertLong(3, pcTrace->GetID());
 	AssertFalse(IsVoltage(pcTrace->GetVoltage(0)));
 	AssertFloat(0.0f, pcTrace->GetShortVoltage(0), 3);
 
-	cHigh.Init(4.0f);
-	cLow.Init(1.0f);
-	AssertTrue(cHigh.mpcOut->Connect(pcTrace));
+	pcHigh = cTest.AddPower("High", 4.0f);
+	pcLow = cTest.AddPower("Low", 1.0f);
+	AssertTrue(pcHigh->GetPowerOutPort()->Connect(pcTrace));
 	AssertFloat(4.0f, pcTrace->GetVoltage(0), 3);
-	AssertTrue(cLow.mpcOut->Connect(pcTrace));
+	AssertTrue(pcLow->GetPowerOutPort()->Connect(pcTrace));
 	AssertFloat(2.5f, pcTrace->GetVoltage(0), 3);
 	AssertFloat(3.0f, pcTrace->GetShortVoltage(0), 3);
 	AssertFloat(1.0f, pcTrace->GetMinimumVoltage(0), 3);
 	AssertFloat(4.0f, pcTrace->GetMaximumVoltage(0), 3);
 	AssertSize(2, pcTrace->NumConnectedPorts());
-	AssertLong(3, cHigh.mpcOut->GetTraceID());
+	AssertLong(3, pcHigh->GetPowerOutPort()->GetTraceID());
 
 	sz.Init();
 	pcTrace->AppendVoltage(&sz, 0);
 	AssertString("2.5V", sz.Text());
 	sz.Clear();
-	cHigh.mpcOut->AppendDescription(&sz);
-	AssertString("Out (4.0V)", sz.Text());
+	pcHigh->GetPowerOutPort()->AppendDescription(&sz);
+	AssertString("Power (4.0V)", sz.Text());
 	sz.Kill();
 
 	sLogConfig = gcLogger.SetSilent();
-	AssertFalse(cHigh.mpcOut->Connect(pcTrace));
+	AssertFalse(pcHigh->GetPowerOutPort()->Connect(pcTrace));
 	gcLogger.SetConfig(&sLogConfig);
 
-	cHigh.mpcOut->Disconnect(&cTest.mcTimeline);
+	pcHigh->GetPowerOutPort()->Disconnect(cTest.mpcTimeline);
 	AssertSize(1, pcTrace->NumConnectedPorts());
 	AssertFloat(1.0f, pcTrace->GetVoltage(0), 3);
-	AssertLong(0, cHigh.mpcOut->GetTraceID());
+	AssertLong(0, pcHigh->GetPowerOutPort()->GetTraceID());
 
-	cHigh.Kill();
-	cLow.Kill();
+	AssertTrue(cTest.mpcCircuit->Remove(pcLow));
+	SafeKill(pcLow);
 	AssertSize(0, pcTrace->NumConnectedPorts());
 	cTest.Kill();
 }
@@ -312,15 +296,15 @@ void TestLogicPortSlewAndTransition(void)
 	cTest.Init();
 	pcDriver = cTest.AddBuffer("D", &cTest.mcFixed);
 	pcBuffer = cTest.AddBuffer("U1", &cTest.mcFixed);
-	cTest.mcCircuit.SimulationStarted();
+	cTest.mcSimulation.SimulationStarted();
 	AssertTrue(pcBuffer->IsPowered(0));
 	AssertTrue(pcBuffer->IsStateless());
 
 	pcDriverOut = pcDriver->GetBufferPins()->mpcOut;
 	pcBufferIn = pcBuffer->GetBufferPins()->mpcIn;
 	pcBufferOut = pcBuffer->GetBufferPins()->mpcOut;
-	pcA = cTest.mcCircuit.AddTrace();
-	pcB = cTest.mcCircuit.AddTrace();
+	pcA = cTest.mpcCircuit->AddTrace();
+	pcB = cTest.mpcCircuit->AddTrace();
 	pcDriverOut->Connect(pcA);
 	pcBufferIn->Connect(pcA);
 	pcBufferOut->Connect(pcB);
@@ -328,15 +312,15 @@ void TestLogicPortSlewAndTransition(void)
 	AssertInt(TV_Undriven, pcBufferIn->ReadValue(0).eValue);
 
 	//Hold 512 then slew 0V to 4V over 1024, crossing 3V at 512 + 768.
-	pcDriverOut->Write(&cTest.mcTimeline, true);
+	pcDriverOut->Write(cTest.mpcTimeline, true);
 	AssertSize(1, pcDriverOut->NumEvents());
 	sz.Init();
 	pcDriverOut->AppendEvents(&sz);
 	AssertString("Events [1]:  Slew: Time [512] ---- -> 4.0V,  ", sz.Text());
 	sz.Kill();
 
-	AssertTrue(cTest.mcTimeline.RunToTime(512));
-	AssertLong(512, cTest.mcTimeline.GetTime());
+	AssertTrue(cTest.mpcTimeline->RunToTime(512));
+	AssertLong(512, cTest.mpcTimeline->GetTime());
 	AssertTrue(pcDriverOut->GetOutput()->IsSlew());
 	AssertLong(1024, pcDriverOut->GetOutput()->GetSlewTime());
 	AssertFloat(0.0f, pcDriverOut->GetOutput()->GetStartVoltage(), 3);
@@ -353,27 +337,27 @@ void TestLogicPortSlewAndTransition(void)
 	AssertFloat(4.0f, pcA->GetVoltage(1536), 3);
 	AssertFalse(IsVoltage(pcA->GetVoltage(1537)));  //Until the drive executes.
 
-	AssertTrue(cTest.mcTimeline.RunToTime(1280 - 512));
+	AssertTrue(cTest.mpcTimeline->RunToTime(1280 - 512));
 	AssertLog("U1:1@1280;");
 	AssertSize(1, pcBufferOut->NumEvents());
 	AssertLong(1280 + 512, pcBufferOut->GetEvent(0)->GetTime());
 
-	cTest.mcTimeline.Run();
-	AssertLong(1280 + 512 + 1024, cTest.mcTimeline.GetTime());
+	cTest.mpcTimeline->Run();
+	AssertLong(1280 + 512 + 1024, cTest.mpcTimeline->GetTime());
 	AssertTrue(pcDriverOut->GetOutput()->IsDrive());
-	AssertFloat(4.0f, pcA->GetVoltage(cTest.mcTimeline.GetTime()), 3);
-	AssertFloat(4.0f, pcB->GetVoltage(cTest.mcTimeline.GetTime()), 3);
-	AssertInt(TV_High, pcBufferIn->Read(&cTest.mcTimeline).eValue);
+	AssertFloat(4.0f, pcA->GetVoltage(cTest.mpcTimeline->GetTime()), 3);
+	AssertFloat(4.0f, pcB->GetVoltage(cTest.mpcTimeline->GetTime()), 3);
+	AssertInt(TV_High, pcBufferIn->Read(cTest.mpcTimeline).eValue);
 	AssertSize(0, pcDriverOut->NumEvents());
 	AssertSize(0, pcBufferIn->NumEvents());
 	AssertSize(0, pcBufferOut->NumEvents());
 	AssertLog("");
 
 	//Falling at 2816: hold 512, slew 4V to 0V, crossing 1V 768 later.
-	pcDriverOut->Write(&cTest.mcTimeline, false);
-	cTest.mcTimeline.Run();
+	pcDriverOut->Write(cTest.mpcTimeline, false);
+	cTest.mpcTimeline->Run();
 	AssertLog("U1:0@4096;");
-	AssertFloat(0.0f, pcB->GetVoltage(cTest.mcTimeline.GetTime()), 3);
+	AssertFloat(0.0f, pcB->GetVoltage(cTest.mpcTimeline->GetTime()), 3);
 
 	cTest.Kill();
 }
@@ -392,21 +376,21 @@ void TestLogicPortImpedance(void)
 
 	cTest.Init();
 	pcDriver = cTest.AddBuffer("D", &cTest.mcFixed);
-	cTest.mcCircuit.SimulationStarted();
+	cTest.mcSimulation.SimulationStarted();
 	pcDriverOut = pcDriver->GetBufferPins()->mpcOut;
-	pcA = cTest.mcCircuit.AddTrace();
+	pcA = cTest.mpcCircuit->AddTrace();
 	pcDriverOut->Connect(pcA);
 
-	pcDriverOut->Write(&cTest.mcTimeline, true);
-	cTest.mcTimeline.Run();
-	AssertFloat(4.0f, pcA->GetVoltage(cTest.mcTimeline.GetTime()), 3);
+	pcDriverOut->Write(cTest.mpcTimeline, true);
+	cTest.mpcTimeline->Run();
+	AssertFloat(4.0f, pcA->GetVoltage(cTest.mpcTimeline->GetTime()), 3);
 
 	//0.01ns later.
-	pcDriverOut->WriteImpedance(&cTest.mcTimeline);
-	AssertLong(cTest.mcTimeline.GetTime() + 10, pcDriverOut->GetEvent(0)->GetTime());
-	cTest.mcTimeline.Run();
-	AssertFalse(IsVoltage(pcA->GetVoltage(cTest.mcTimeline.GetTime())));
-	AssertInt(TV_Undriven, pcDriverOut->Read(&cTest.mcTimeline).eValue);
+	pcDriverOut->WriteImpedance(cTest.mpcTimeline);
+	AssertLong(cTest.mpcTimeline->GetTime() + 10, pcDriverOut->GetEvent(0)->GetTime());
+	cTest.mpcTimeline->Run();
+	AssertFalse(IsVoltage(pcA->GetVoltage(cTest.mpcTimeline->GetTime())));
+	AssertInt(TV_Undriven, pcDriverOut->Read(cTest.mpcTimeline).eValue);
 
 	cTest.Kill();
 }
@@ -426,29 +410,29 @@ void TestLogicPortSlewInterrupted(void)
 
 	cTest.Init();
 	pcDriver = cTest.AddBuffer("D", &cTest.mcFixed);
-	cTest.mcCircuit.SimulationStarted();
+	cTest.mcSimulation.SimulationStarted();
 	pcDriverOut = pcDriver->GetBufferPins()->mpcOut;
-	pcA = cTest.mcCircuit.AddTrace();
+	pcA = cTest.mpcCircuit->AddTrace();
 	pcDriverOut->Connect(pcA);
 
-	pcDriverOut->Write(&cTest.mcTimeline, true);
-	cTest.mcTimeline.RunToTime(1024);  //Slewing since 512, at 2V.
+	pcDriverOut->Write(cTest.mpcTimeline, true);
+	cTest.mpcTimeline->RunToTime(1024);  //Slewing since 512, at 2V.
 	AssertFloat(2.0f, pcA->GetVoltage(1024), 3);
 	AssertSize(1, pcDriverOut->NumEvents());
 
 	//Falling, so a hold of 512.  The first slew's drive runs first at 1536, so the second slew starts from 4V.
-	pcDriverOut->Write(&cTest.mcTimeline, false);
+	pcDriverOut->Write(cTest.mpcTimeline, false);
 	AssertSize(2, pcDriverOut->NumEvents());
-	cTest.mcTimeline.RunToTime(512);
-	AssertLong(1536, cTest.mcTimeline.GetTime());
+	cTest.mpcTimeline->RunToTime(512);
+	AssertLong(1536, cTest.mpcTimeline->GetTime());
 	AssertTrue(pcDriverOut->GetOutput()->IsSlew());
 	AssertFloat(4.0f, pcDriverOut->GetOutput()->GetStartVoltage(), 3);
 	AssertLong(1024, pcDriverOut->GetOutput()->GetSlewTime());
 	AssertSize(1, pcDriverOut->NumEvents());
 	AssertLong(2560, pcDriverOut->GetEvent(0)->GetTime());
 
-	cTest.mcTimeline.Run();
-	AssertLong(2560, cTest.mcTimeline.GetTime());
+	cTest.mpcTimeline->Run();
+	AssertLong(2560, cTest.mpcTimeline->GetTime());
 	AssertFloat(0.0f, pcA->GetVoltage(2560), 3);
 
 	cTest.Kill();
@@ -474,17 +458,17 @@ void TestLogicPortNoPower(void)
 	cFamily.Add(&cConfiguration, LOGIC_LEVEL_TTL);
 
 	pcDriver = NewMalloc<CTestBuffer>();
-	pcDriver->Init(&cTest.mcCircuit, "D", &cFamily, &cTest.mszLog);
-	cTest.mcCircuit.SimulationStarted();
+	pcDriver->Init(cTest.mpcTop, "D", &cFamily, &cTest.mszLog);
+	cTest.mcSimulation.SimulationStarted();
 	pcDriverOut = pcDriver->GetBufferPins()->mpcOut;
 	AssertFalse(pcDriver->IsPowered(0));
 
-	pcDriverOut->Write(&cTest.mcTimeline, true);
+	pcDriverOut->Write(cTest.mpcTimeline, true);
 	AssertSize(0, pcDriverOut->NumEvents());
 
 	cTest.Power(pcDriver);
 	AssertTrue(pcDriver->IsPowered(0));
-	pcDriverOut->Write(&cTest.mcTimeline, true);
+	pcDriverOut->Write(cTest.mpcTimeline, true);
 	AssertSize(1, pcDriverOut->NumEvents());
 	AssertLong(512, pcDriverOut->GetEvent(0)->GetTime());
 
@@ -503,26 +487,25 @@ void TestLogicPortTraceConnected(void)
 	CTestLogicCircuit	cTest;
 	CTestBuffer*		pcBuffer;
 	CLogicPort*			pcBufferIn;
-	CTestPowerSource	cHigh;
+	CPowerSource*		pcHigh;
 	CTrace*				pcA;
 
 	cTest.Init();
 	pcBuffer = cTest.AddBuffer("U1", &cTest.mcFixed);
-	cTest.mcCircuit.SimulationStarted();
+	cTest.mcSimulation.SimulationStarted();
 	pcBufferIn = pcBuffer->GetBufferPins()->mpcIn;
 
-	pcA = cTest.mcCircuit.AddTrace();
-	cHigh.Init(4.0f);
-	cHigh.mpcOut->Connect(pcA);
+	pcA = cTest.mpcCircuit->AddTrace();
+	pcHigh = cTest.AddPower("High", 4.0f);
+	pcHigh->GetPowerOutPort()->Connect(pcA);
 	pcBufferIn->Connect(pcA);
-	pcBufferIn->TraceConnected(&cTest.mcTimeline);
+	pcBufferIn->TraceConnected(cTest.mpcTimeline);
 	AssertSize(1, pcBufferIn->NumEvents());
 	AssertLong(1, pcBufferIn->GetEvent(0)->GetTime());
 
-	cTest.mcTimeline.Run();
+	cTest.mpcTimeline->Run();
 	AssertLog("U1:1@1;");
 
-	cHigh.Kill();
 	cTest.Kill();
 }
 
@@ -544,24 +527,24 @@ void TestLogicPortDisconnect(void)
 	cTest.Init();
 	pcDriver = cTest.AddBuffer("D", &cTest.mcFixed);
 	pcBuffer = cTest.AddBuffer("U1", &cTest.mcFixed);
-	cTest.mcCircuit.SimulationStarted();
+	cTest.mcSimulation.SimulationStarted();
 	pcDriverOut = pcDriver->GetBufferPins()->mpcOut;
-	pcA = cTest.mcCircuit.AddTrace();
+	pcA = cTest.mpcCircuit->AddTrace();
 	pcDriverOut->Connect(pcA);
 	pcBuffer->GetBufferPins()->mpcIn->Connect(pcA);
 
-	pcDriverOut->Write(&cTest.mcTimeline, true);
-	AssertSize(1, cTest.mcTimeline.NumSimultaneousEvents());
-	pcDriverOut->Disconnect(&cTest.mcTimeline);
-	AssertSize(0, cTest.mcTimeline.NumSimultaneousEvents());
+	pcDriverOut->Write(cTest.mpcTimeline, true);
+	AssertSize(1, cTest.mpcTimeline->NumSimultaneousEvents());
+	pcDriverOut->Disconnect(cTest.mpcTimeline);
+	AssertSize(0, cTest.mpcTimeline->NumSimultaneousEvents());
 	AssertSize(0, pcDriverOut->NumEvents());
 	AssertNull(pcDriverOut->GetTrace());
 	AssertSize(1, pcA->NumConnectedPorts());
 
 	pcDriverOut->Connect(pcA);
-	pcDriverOut->Write(&cTest.mcTimeline, true);
-	cTest.mcTimeline.RunToTime(512);
-	AssertSize(2, cTest.mcTimeline.NumSimultaneousEvents());  //The drive and the transition.
+	pcDriverOut->Write(cTest.mpcTimeline, true);
+	cTest.mpcTimeline->RunToTime(512);
+	AssertSize(2, cTest.mpcTimeline->NumSimultaneousEvents());  //The drive and the transition.
 
 	cTest.Kill();
 }
@@ -583,18 +566,18 @@ void TestLogicPortTick(void)
 
 	cTest.Init();
 	pcClock = NewMalloc<CTestClock>();
-	pcClock->Init(&cTest.mcCircuit, "Clock", &cTest.mcFixed, 10000);
+	pcClock->Init(cTest.mpcTop, "Clock", &cTest.mcFixed, 10000);
 	cTest.Power(pcClock);
 	pcBuffer = cTest.AddBuffer("U1", &cTest.mcFixed);
-	pcClockTrace = cTest.mcCircuit.AddTrace();
+	pcClockTrace = cTest.mpcCircuit->AddTrace();
 	((CTestBufferPins*)pcClock->GetPins())->mpcOut->Connect(pcClockTrace);
 	pcBuffer->GetBufferPins()->mpcIn->Connect(pcClockTrace);
 
-	cTest.mcCircuit.SimulationStarted();
+	cTest.mcSimulation.SimulationStarted();
 	AssertFalse(pcClock->IsStateless());
 	AssertSize(1, pcClock->NumEvents());
 
-	cTest.mcTimeline.RunToTime(45000);
+	cTest.mpcTimeline->RunToTime(45000);
 	AssertSize(4, pcClock->GetClockState()->muiTicks);
 	AssertLog("U1:1@11280;U1:0@21280;U1:1@31280;U1:0@41280;");
 
@@ -638,11 +621,11 @@ void TestLogicPortPins(void)
 	{
 		apcBits[i] = cTest.AddBuffer("", &cTest.mcFixed);
 		cData.Add(apcBits[i]->GetBufferPins()->mpcOut);
-		pcTrace = cTest.mcCircuit.AddTrace();
+		pcTrace = cTest.mpcCircuit->AddTrace();
 		apcBits[i]->GetBufferPins()->mpcOut->Connect(pcTrace);
 	}
 	pcSignals = cTest.AddBuffer("", &cTest.mcFixed);
-	cTest.mcCircuit.SimulationStarted();
+	cTest.mcSimulation.SimulationStarted();
 	AssertSize(8, cData.GetWidth());
 	AssertNull(cData.GetPort(8));
 
@@ -651,22 +634,22 @@ void TestLogicPortPins(void)
 	cMetaPHI2.Init(true);
 	cPins.Init(&cMetaAddress, &cData, &cMetaPHI2, pcSignals->GetBufferPins()->mpcIn, pcSignals->GetBufferPins()->mpcOut);
 
-	cPins.WriteAddress(&cTest.mcTimeline, 0x1234);
+	cPins.WriteAddress(cTest.mpcTimeline, 0x1234);
 	AssertInt(0x1234, cMetaAddress.Get());
-	AssertInt(0x1234, cPins.ReadAddress(&cTest.mcTimeline));
+	AssertInt(0x1234, cPins.ReadAddress(cTest.mpcTimeline));
 
-	cPins.WriteData(&cTest.mcTimeline, 0xA5);
-	AssertInt(0, cPins.ReadData(&cTest.mcTimeline));  //Not slewed yet.
-	cTest.mcTimeline.Run();
-	AssertInt(0xA5, cPins.ReadData(&cTest.mcTimeline));
-	AssertInt(TV_High, cPins.ReadPhi2(&cTest.mcTimeline).eValue);
-	AssertInt(TV_Undriven, cPins.ReadRES(&cTest.mcTimeline).eValue);
-	AssertInt(TV_Undriven, cPins.ReadSOB(&cTest.mcTimeline).eValue);  //Not connected.
+	cPins.WriteData(cTest.mpcTimeline, 0xA5);
+	AssertInt(0, cPins.ReadData(cTest.mpcTimeline));  //Not slewed yet.
+	cTest.mpcTimeline->Run();
+	AssertInt(0xA5, cPins.ReadData(cTest.mpcTimeline));
+	AssertInt(TV_High, cPins.ReadPhi2(cTest.mpcTimeline).eValue);
+	AssertInt(TV_Undriven, cPins.ReadRES(cTest.mpcTimeline).eValue);
+	AssertInt(TV_Undriven, cPins.ReadSOB(cTest.mpcTimeline).eValue);  //Not connected.
 
-	cData.WriteImpedance(&cTest.mcTimeline);
-	cTest.mcTimeline.Run();
-	AssertInt(0, cPins.ReadData(&cTest.mcTimeline));
-	AssertInt(TV_Undriven, apcBits[0]->GetBufferPins()->mpcOut->Read(&cTest.mcTimeline).eValue);
+	cData.WriteImpedance(cTest.mpcTimeline);
+	cTest.mpcTimeline->Run();
+	AssertInt(0, cPins.ReadData(cTest.mpcTimeline));
+	AssertInt(TV_Undriven, apcBits[0]->GetBufferPins()->mpcOut->Read(cTest.mpcTimeline).eValue);
 
 	cPins.Kill();
 	cData.Kill();

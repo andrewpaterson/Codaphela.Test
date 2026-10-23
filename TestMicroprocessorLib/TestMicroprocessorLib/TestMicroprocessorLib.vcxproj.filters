@@ -121,6 +121,9 @@
     <ClCompile Include="TestLogicPort.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="TestPassive.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestW65C816Context.h">

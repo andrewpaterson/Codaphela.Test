@@ -513,6 +513,11 @@ void TestStringSplit(void)
 		AssertString("far", paDest->Get(8)->Text());
 		AssertString("Away", paDest->Get(9)->Text());
 
+		AssertString("And,the,Aardvark,walked,over,the,Hill,and,far,Away", pString->Text());
+		AssertSize(50, pString->Length());
+		pString->Append(",Again");
+		AssertString("And,the,Aardvark,walked,over,the,Hill,and,far,Away,Again", pString->Text());
+
 		pString = NULL;
 		AssertLong(11LL, gcObjects.NumMemoryIndexes());
 		paDest->Clear();

@@ -261,6 +261,7 @@
     <ClCompile Include="TestTimeline.cpp" />
     <ClCompile Include="TestVoltageConfiguration.cpp" />
     <ClCompile Include="TestLogicPort.cpp" />
+    <ClCompile Include="TestPassive.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
