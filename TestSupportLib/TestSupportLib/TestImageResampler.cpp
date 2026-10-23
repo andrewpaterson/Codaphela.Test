@@ -484,14 +484,14 @@ float64 ResampledWaveError(EImageResample eResample)
 //////////////////////////////////////////////////////////////////////////
 void TestImageResamplerMethods(void)
 {
-	float64	iNearest;
+	float64	fNearest;
 	float64	fBilinear;
 	float64	fBicubic;
 
-	iNearest = ResampledWaveError(IR_NearestNeighbour);
+	fNearest = ResampledWaveError(IR_NearestNeighbour);
 	fBilinear = ResampledWaveError(IR_Bilinear);
 	fBicubic = ResampledWaveError(IR_Bicubic);
-	AssertTrue(fBilinear < iNearest);
+	AssertTrue(fBilinear < fNearest);
 	AssertTrue(fBicubic < fBilinear);
 	AssertTrue(fBicubic < 0.01);
 }
@@ -583,7 +583,7 @@ int CountBlended(Ptr<CImage> pcImage, int32 iLow, int32 iHigh)
 void TestImageResampleSmartSmooth(void)
 {
 	float64		afSource[9 * 6];
-	float64		aiSmart[20 * 11];
+	float64		afSmart[20 * 11];
 	float64		afBilinear[20 * 11];
 	int			i;
 	int			iMismatches;
@@ -597,7 +597,7 @@ void TestImageResampleSmartSmooth(void)
 
 	Ptr<CImage> pcSmart = MakeResampleDest(pcSource, 20, 11);
 	AssertTrue(ResampleSmart(pcSource, pcSmart));
-	GetResampleFloats(pcSmart, 0, aiSmart);
+	GetResampleFloats(pcSmart, 0, afSmart);
 	Ptr<CImage> pcBilinear = MakeResampleDest(pcSource, 20, 11);
 	AssertTrue(ResampleBilinear(pcSource, pcBilinear));
 	GetResampleFloats(pcBilinear, 0, afBilinear);
@@ -605,7 +605,7 @@ void TestImageResampleSmartSmooth(void)
 	iMismatches = 0;
 	for (i = 0; i < 20 * 11; i++)
 	{
-		if (fabs(aiSmart[i] - afBilinear[i]) > 1e-12)
+		if (fabs(afSmart[i] - afBilinear[i]) > 1e-12)
 		{
 			iMismatches++;
 		}
