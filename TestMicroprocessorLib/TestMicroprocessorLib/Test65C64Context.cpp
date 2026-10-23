@@ -353,33 +353,6 @@ size Test65C64Run(C65C64Meta* pcMPU, CTest65C64Context* pcContext, size uiMaxIns
 //
 //
 //////////////////////////////////////////////////////////////////////////
-static uint16 RegisterIndex(E65Register eRegister, const E65Register* aeList, int iSize)
-{
-	int	i;
-
-	for (i = 0; i < iSize; i++)
-	{
-		if (aeList[i] == eRegister)
-		{
-			return (uint16)i;
-		}
-	}
-	return 0xFFFF;
-}
-
-
-static const E65Register gaeTestNoneWXY[4] = { R65_Zero, R65_W, R65_X, R65_Y };
-static const E65Register gaeTestVWXY[4] = { R65_V, R65_W, R65_X, R65_Y };
-static const E65Register gaeTestABSV[4] = { R65_A, R65_B, R65_S, R65_V };
-static const E65Register gaeTestABXY[4] = { R65_A, R65_B, R65_X, R65_Y };
-static const E65Register gaeTestSVWY[4] = { R65_S, R65_V, R65_W, R65_Y };
-static const E65Register gaeTestXY[2] = { R65_X, R65_Y };
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 static uint16 ImmediateIndex(uint8 uiBytes)
 {
 	return (uiBytes == 8) ? 7 : uiBytes;
@@ -452,7 +425,7 @@ uint16 Op65M(uint8 uiCode, bool bSwap, E65Register eRegister, uint8 uiMode, E65R
 {
 	if (IsArithmetic(uiCode))
 	{
-		return (uint16)((bSwap << 15) | (eRegister << 11) | (RegisterIndex(eAddress, gaeTestNoneWXY, 4) << 9) | (uiMode << 5) | (bSigned << 4) | uiCode);
+		return (uint16)((bSwap << 15) | (eRegister << 11) | ((uint16)Get65C64RegisterIndex(eAddress, gae65NoneWXY, 4) << 9) | (uiMode << 5) | (bSigned << 4) | uiCode);
 	}
 	return (uint16)((bSwap << 15) | (eRegister << 11) | (eAddress << 8) | (uiMode << 4) | uiCode);
 }
@@ -471,7 +444,7 @@ uint16 Op65ME(uint8 uiCode, int iValue, uint8 uiMode, E65Register eAddress)
 	uiField = (uint16)(uiSign ? iValue + 8 : iValue - 1);
 	if (IsArithmetic(uiCode))
 	{
-		return (uint16)((uiSign << 15) | (1 << 14) | (uiField << 11) | (RegisterIndex(eAddress, gaeTestNoneWXY, 4) << 9) | (uiMode << 5) | uiCode);
+		return (uint16)((uiSign << 15) | (1 << 14) | (uiField << 11) | ((uint16)Get65C64RegisterIndex(eAddress, gae65NoneWXY, 4) << 9) | (uiMode << 5) | uiCode);
 	}
 	return (uint16)((uiSign << 15) | (1 << 14) | (uiField << 11) | (eAddress << 8) | (uiMode << 4) | uiCode);
 }
@@ -485,9 +458,9 @@ uint16 Op65M2(uint8 uiCode, bool bSwap, E65Register eRegister, uint8 uiMode, E65
 {
 	if (IsArithmetic(uiCode))
 	{
-		return (uint16)((bSwap << 15) | (eRegister << 12) | (RegisterIndex(eSecond, gaeTestXY, 2) << 11) | (RegisterIndex(eFirst, gaeTestABSV, 4) << 9) | (uiMode << 5) | (bSigned << 4) | uiCode);
+		return (uint16)((bSwap << 15) | (eRegister << 12) | ((uint16)Get65C64RegisterIndex(eSecond, gae65XY, 2) << 11) | ((uint16)Get65C64RegisterIndex(eFirst, gae65ABSV, 4) << 9) | (uiMode << 5) | (bSigned << 4) | uiCode);
 	}
-	return (uint16)((bSwap << 15) | (eRegister << 12) | (RegisterIndex(eSecond, gaeTestVWXY, 4) << 10) | (RegisterIndex(eFirst, gaeTestABSV, 4) << 8) | (uiMode << 4) | uiCode);
+	return (uint16)((bSwap << 15) | (eRegister << 12) | ((uint16)Get65C64RegisterIndex(eSecond, gae65VWXY, 4) << 10) | ((uint16)Get65C64RegisterIndex(eFirst, gae65ABSV, 4) << 8) | (uiMode << 4) | uiCode);
 }
 
 
@@ -497,7 +470,7 @@ uint16 Op65M2(uint8 uiCode, bool bSwap, E65Register eRegister, uint8 uiMode, E65
 //////////////////////////////////////////////////////////////////////////
 uint16 Op65Jump(E65Register eStack, uint8 uiMode, uint8 uiField, bool bPushP, bool bPushC, bool bRelative)
 {
-	return (uint16)((RegisterIndex(eStack, gaeTestSVWY, 4) << 14) | (uiField << 11) | (uiMode << 7) | (bPushP << 6) | (bPushC << 5) | (bRelative << 4) | 10);
+	return (uint16)(((uint16)Get65C64RegisterIndex(eStack, gae65SVWY, 4) << 14) | (uiField << 11) | (uiMode << 7) | (bPushP << 6) | (bPushC << 5) | (bRelative << 4) | 10);
 }
 
 
@@ -507,7 +480,7 @@ uint16 Op65Jump(E65Register eStack, uint8 uiMode, uint8 uiField, bool bPushP, bo
 //////////////////////////////////////////////////////////////////////////
 uint16 Op65Return(E65Register eStack, bool bPullP, bool bPullC, bool bRti)
 {
-	return (uint16)((RegisterIndex(eStack, gaeTestSVWY, 4) << 14) | (bPullP << 9) | (bPullC << 8) | (bRti << 7) | (0 << 4) | 11);
+	return (uint16)(((uint16)Get65C64RegisterIndex(eStack, gae65SVWY, 4) << 14) | (bPullP << 9) | (bPullC << 8) | (bRti << 7) | (0 << 4) | 11);
 }
 
 
@@ -537,7 +510,7 @@ uint16 Op65Cep(uint8 uiMask)
 //////////////////////////////////////////////////////////////////////////
 uint16 Op65Wth(E65Register eRegister, uint8 uiBytes)
 {
-	return (uint16)((RegisterIndex(eRegister, gaeTestABXY, 4) << 14) | (1 << 11) | ((uiBytes - 1) << 8) | (2 << 6) | (1 << 4) | 11);
+	return (uint16)(((uint16)Get65C64RegisterIndex(eRegister, gae65ABXY, 4) << 14) | (1 << 11) | ((uiBytes - 1) << 8) | (2 << 6) | (1 << 4) | 11);
 }
 
 
@@ -547,7 +520,7 @@ uint16 Op65Wth(E65Register eRegister, uint8 uiBytes)
 //////////////////////////////////////////////////////////////////////////
 uint16 Op65Wtth(E65Register eFirst, E65Register eSecond, uint8 uiBytes)
 {
-	return (uint16)((RegisterIndex(eFirst, gaeTestABXY, 4) << 14) | (RegisterIndex(eSecond, gaeTestABXY, 4) << 12) | (1 << 11) | ((uiBytes - 1) << 8) | (3 << 6) | (1 << 4) | 11);
+	return (uint16)(((uint16)Get65C64RegisterIndex(eFirst, gae65ABXY, 4) << 14) | ((uint16)Get65C64RegisterIndex(eSecond, gae65ABXY, 4) << 12) | (1 << 11) | ((uiBytes - 1) << 8) | (3 << 6) | (1 << 4) | 11);
 }
 
 
@@ -779,7 +752,7 @@ uint16 Op65SubcopyIndices(bool bBits, bool bSourceRegister, uint8 uiSource, bool
 //////////////////////////////////////////////////////////////////////////
 uint16 Op65Gwth(E65Register eQuery, bool bDecrement, E65Register eDestination)
 {
-	return (uint16)((RegisterIndex(eQuery, gaeTestABXY, 4) << 14) | (bDecrement << 13) | (eDestination << 10) | (2 << 6) | (3 << 4) | 11);
+	return (uint16)(((uint16)Get65C64RegisterIndex(eQuery, gae65ABXY, 4) << 14) | (bDecrement << 13) | (eDestination << 10) | (2 << 6) | (3 << 4) | 11);
 }
 
 
@@ -789,7 +762,7 @@ uint16 Op65Gwth(E65Register eQuery, bool bDecrement, E65Register eDestination)
 //////////////////////////////////////////////////////////////////////////
 uint16 Op65Wthx(E65Register eRegister, bool bSigned, uint8 uiBytes)
 {
-	return (uint16)((RegisterIndex(eRegister, gaeTestABXY, 4) << 14) | (bSigned << 11) | ((uiBytes - 1) << 8) | (3 << 6) | (3 << 4) | 11);
+	return (uint16)(((uint16)Get65C64RegisterIndex(eRegister, gae65ABXY, 4) << 14) | (bSigned << 11) | ((uiBytes - 1) << 8) | (3 << 6) | (3 << 4) | 11);
 }
 
 
@@ -799,12 +772,11 @@ uint16 Op65Wthx(E65Register eRegister, bool bSigned, uint8 uiBytes)
 //////////////////////////////////////////////////////////////////////////
 uint16 Op65Branch(uint8 uiCondition, uint8 uiFirst, uint8 uiSecond, int iOffset)
 {
-	static const int	aiOffsets[8] = { 2, 4, 6, 8, -4, -6, -8, -10 };
-	uint16				uiIndex;
+	uint16	uiIndex;
 
 	for (uiIndex = 0; uiIndex < 8; uiIndex++)
 	{
-		if (aiOffsets[uiIndex] == iOffset)
+		if (gai65BranchOffsets[uiIndex] == iOffset)
 		{
 			break;
 		}

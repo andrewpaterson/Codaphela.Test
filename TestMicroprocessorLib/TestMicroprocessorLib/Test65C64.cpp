@@ -595,6 +595,102 @@ void Test65C64Subroutine(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void Test65C64SubroutinePushStatusAndRelative(void)
+{
+	STest65C64			sTest;
+	C65C64*				pcMPU;
+	CTest65C64Context*	pcContext;
+
+	Test65C64Begin(&sTest, 0x1000);
+	pcContext = sTest.pcContext;
+	pcContext->Op(Op65Sep(STATUS65_CARRY | STATUS65_NEGATIVE));
+	pcContext->OpLong(Op65Jump(R65_S, OPERAND_MODE_IMMEDIATE, 4, true, true, false), 0x1100);
+	pcContext->Op(Op65Jump(R65_S, OPERAND_MODE_IMMEDIATE, 1, false, true, true), 0x0078);
+	pcContext->Op(Op65RI(C65_CPY, R65_X, 1), 0x00D4);
+	pcContext->Op(Op65Jump(R65_S, OPERAND_MODE_REGISTER, R65_X, true, true, true));
+	pcContext->Op(Op65Stp());
+	pcContext->Org(0x1100);
+	pcContext->Op(Op65Cep(STATUS65_CARRY));
+	pcContext->Op(Op65RE(C65_CPY, R65_A, 1));
+	pcContext->Op(Op65Return(R65_S, true, true, false));
+	pcContext->Org(0x1084);
+	pcContext->Op(Op65RE(C65_CPY, R65_Y, 2));
+	pcContext->Op(Op65Return(R65_S, false, true, false));
+	pcContext->Org(0x0FE6);
+	pcContext->Op(Op65Cep(STATUS65_NEGATIVE));
+	pcContext->Op(Op65RE(C65_CPY, R65_B, 3));
+	pcContext->Op(Op65Return(R65_S, true, true, false));
+
+	Test65C64Reset(&sTest);
+	pcMPU = Test65C64MPU(&sTest);
+
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertShortHex((uint16)0x00C9, pcMPU->GetP());
+
+	//jsr pushing C then P: the opcode, 2 operand words, 2 words of C and 1 of P.
+	AssertSize(6, Test65C64Step(&sTest));
+	AssertIntHex(0x1100, pcMPU->GetProgramCounter());
+	AssertIntHex(0x0001FFF9, pcMPU->GetS());
+	AssertIntHex(0x1008, pcContext->GetLong(0x1FFFC));
+	AssertShortHex((uint16)0x00C9, pcContext->GetWord(0x1FFFA));
+	AssertFalse(pcContext->masCycles[3].bRead);
+	AssertIntHex(0x1FFFC, pcContext->masCycles[3].uiAddress);
+	AssertIntHex(0x1FFFE, pcContext->masCycles[4].uiAddress);
+	AssertFalse(pcContext->masCycles[5].bRead);
+	AssertIntHex(0x1FFFA, pcContext->masCycles[5].uiAddress);
+
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertShortHex((uint16)0x00C8, pcMPU->GetP());
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertLongLongIntHex(1LL, pcMPU->GetA());
+
+	//ret pulling P then C.
+	AssertSize(4, Test65C64Step(&sTest));
+	AssertIntHex(0x1008, pcMPU->GetProgramCounter());
+	AssertIntHex(0x0001FFFF, pcMPU->GetS());
+	AssertShortHex((uint16)0x00C9, pcMPU->GetP());
+
+	//brsr with an 8 bit immediate: relative to the next instruction (0x100C).
+	AssertSize(4, Test65C64Step(&sTest));
+	AssertIntHex(0x1084, pcMPU->GetProgramCounter());
+	AssertIntHex(0x0001FFFB, pcMPU->GetS());
+	AssertIntHex(0x100C, pcContext->GetLong(0x1FFFC));
+
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertLongLongIntHex(2LL, pcMPU->GetY());
+	AssertSize(3, Test65C64Step(&sTest));
+	AssertIntHex(0x100C, pcMPU->GetProgramCounter());
+	AssertIntHex(0x0001FFFF, pcMPU->GetS());
+
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertLongLongIntHex(0xD4LL, pcMPU->GetX());
+
+	//brsr pushing P with an 8 bit register: X (-44) is sign extended, relative to 0x1012.
+	AssertSize(4, Test65C64Step(&sTest));
+	AssertIntHex(0x0FE6, pcMPU->GetProgramCounter());
+	AssertIntHex(0x0001FFF9, pcMPU->GetS());
+	AssertIntHex(0x1012, pcContext->GetLong(0x1FFFC));
+	AssertShortHex((uint16)0x00C9, pcContext->GetWord(0x1FFFA));
+
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertShortHex((uint16)0x00C1, pcMPU->GetP());
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertLongLongIntHex(3LL, pcMPU->GetB());
+	AssertSize(4, Test65C64Step(&sTest));
+	AssertIntHex(0x1012, pcMPU->GetProgramCounter());
+	AssertIntHex(0x0001FFFF, pcMPU->GetS());
+	AssertShortHex((uint16)0x00C9, pcMPU->GetP());
+
+	AssertFalse(sTest.cMeta.TickInstruction());
+	AssertIntHex(0x1014, pcMPU->GetProgramCounter());
+	Test65C64End(&sTest);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void Test65C64Branch(void)
 {
 	STest65C64			sTest;
@@ -919,6 +1015,7 @@ void Test65C64(void)
 	Test65C64Store();
 	Test65C64Arithmetic();
 	Test65C64Subroutine();
+	Test65C64SubroutinePushStatusAndRelative();
 	Test65C64Branch();
 	Test65C64PushPull();
 	Test65C64State();
