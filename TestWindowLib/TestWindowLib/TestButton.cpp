@@ -8,6 +8,7 @@
 #include "WindowLib/FillContainer.h"
 #include "WindowLib/ClearCanvasDraw.h"
 #include "WindowLib/Button.h"
+#include "WindowLib/WindowTheme.h"
 #include "WindowLib/JewelButtonImages.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/AssertGeometric.h"
@@ -73,6 +74,21 @@ Ptr<CButtonImages> ReadBlueButtonImages(CColourFormatHelper* pcFormat)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A theme with only a font and button images, all a button needs.
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CWindowTheme> CreateButtonTheme(Ptr<CFont> pFont, Ptr<CButtonImages> pImages, Ptr<CButtonImages> pDefaultImages)
+{
+	Ptr<CWindowTheme>	pTheme;
+
+	pTheme = OMalloc<CWindowTheme>(pFont);
+	pTheme->SetButtonImages(pImages, pDefaultImages);
+	return pTheme;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // The window is 200x60 with an OK button centred in its left half and a
 // Cancel button centred in its right half.  The grid between them is the
 // background.
@@ -86,6 +102,7 @@ void TestButtonInput(void)
 		Ptr<CWindow>			pTestWindow;
 		Ptr<CGridContainer>		pGrid;
 		Ptr<CButtonImages>		pImages;
+		Ptr<CWindowTheme>		pTheme;
 		Ptr<CFont>				pFont;
 		Ptr<CButton>			pOK;
 		Ptr<CButton>			pCancel;
@@ -116,8 +133,9 @@ void TestButtonInput(void)
 		pImages = ReadBlueButtonImages(&cHelper);
 		AssertInt(8, pImages->GetTileSize());
 
-		pOK = OMalloc<CButton>(pTestWindow, pImages, pFont, "OK");
-		pCancel = OMalloc<CButton>(pTestWindow, pImages, pFont, "Cancel");
+		pTheme = CreateButtonTheme(pFont, pImages, NULL);
+		pOK = OMalloc<CButton>(pTestWindow, pTheme, "OK");
+		pCancel = OMalloc<CButton>(pTestWindow, pTheme, "Cancel");
 		AssertTrue(pOK->AddListener(&cListener));
 		AssertTrue(pCancel->AddListener(&cListener));
 		pGrid = OMalloc<CGridContainer>(pTestWindow);
@@ -230,6 +248,7 @@ void TestButtonInput(void)
 		pCancel = NULL;
 		pGrid = NULL;
 		pImages = NULL;
+		pTheme = NULL;
 		pFont = NULL;
 		pFocus = NULL;
 		ORoot()->Remove(pTestWindow);
@@ -260,6 +279,7 @@ void TestButtonDefault(void)
 		Ptr<CGridContainer>		pGrid;
 		Ptr<CButtonImages>		pImages;
 		Ptr<CButtonImages>		pDefaultImages;
+		Ptr<CWindowTheme>		pTheme;
 		Ptr<CFont>				pFont;
 		Ptr<CButton>			pOK;
 		Ptr<CButton>			pCancel;
@@ -290,8 +310,9 @@ void TestButtonDefault(void)
 		AssertInt(Set32BitColour((uint8)0x2B, 0x2D, 0x30), pImages->GetFaceColour(BS_Pushed));
 		AssertInt(Set32BitColour((uint8)0x36, 0x6A, 0xCE), pDefaultImages->GetFaceColour(BS_Pushed));
 
-		pOK = OMalloc<CButton>(pTestWindow, pImages, pDefaultImages, pFont, "OK");
-		pCancel = OMalloc<CButton>(pTestWindow, pImages, pFont, "Cancel");
+		pTheme = CreateButtonTheme(pFont, pImages, pDefaultImages);
+		pOK = OMalloc<CButton>(pTestWindow, pTheme, "OK");
+		pCancel = OMalloc<CButton>(pTestWindow, pTheme, "Cancel");
 		pName = OMalloc<CLabel>(pTestWindow, pFont, "Name");
 		pName->SetCanGetFocus(true);
 		AssertTrue(pOK->AddListener(&cListener));
@@ -349,12 +370,12 @@ void TestButtonDefault(void)
 		pTestWindow->InputCommand(CIC_Enter, true);
 		AssertLog("OK:Clicked;");
 
-		//Making another button the default takes it from the first.  Cancel has no default images so looks the same.
+		//Making another button the default takes it, and the default images, from the first.
 		pTestWindow->SetDefaultButton(pCancel);
 		AssertFalse(pOK->IsDefault());
 		AssertTrue(pOK->GetImages() == pImages);
 		AssertTrue(pCancel->IsDefault());
-		AssertTrue(pCancel->GetImages() == pImages);
+		AssertTrue(pCancel->GetImages() == pDefaultImages);
 
 		pTestWindow->SetDefaultButton(pNull);
 		AssertFalse(pCancel->IsDefault());
@@ -367,6 +388,7 @@ void TestButtonDefault(void)
 		pName = NULL;
 		pGrid = NULL;
 		pImages = NULL;
+		pTheme = NULL;
 		pDefaultImages = NULL;
 		pFont = NULL;
 		pFocus = NULL;
@@ -500,12 +522,12 @@ void TestButtonStates(char* szName, Ptr<CButtonImages>(*ReadImages)(CColourForma
 		pImages = ReadImages(&cHelper);
 		if (ReadDefaultImages)
 		{
-			pButton = OMalloc<CButton>(pTestWindow, pImages, ReadDefaultImages(&cHelper), pFont, "Press Me");
+			pButton = OMalloc<CButton>(pTestWindow, CreateButtonTheme(pFont, pImages, ReadDefaultImages(&cHelper)), "Press Me");
 			pTestWindow->SetDefaultButton(pButton);
 		}
 		else
 		{
-			pButton = OMalloc<CButton>(pTestWindow, pImages, pFont, "Press Me");
+			pButton = OMalloc<CButton>(pTestWindow, CreateButtonTheme(pFont, pImages, NULL), "Press Me");
 		}
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
@@ -567,6 +589,7 @@ void TestButtonIcons(void)
 		SDataTestRefWindow		cData;
 		Ptr<CGridContainer>		pGrid;
 		Ptr<CButtonImages>		pImages;
+		Ptr<CWindowTheme>		pTheme;
 		Ptr<CFont>				pFont;
 		Ptr<CImageCel>			pWolf;
 		Ptr<CImageCel>			pMoon;
@@ -595,9 +618,10 @@ void TestButtonIcons(void)
 		iWolfWidth = pWolf->GetSubImage()->GetFullWidth();
 		iMoonWidth = pMoon->GetSubImage()->GetFullWidth();
 
-		pBoth = OMalloc<CButton>(pTestWindow, pImages, pWolf, pFont, "Open");
-		pIconOnly = OMalloc<CButton>(pTestWindow, pImages, pMoon, pFont, (char*)NULL);
-		pCaptionOnly = OMalloc<CButton>(pTestWindow, pImages, pFont, "Open");
+		pTheme = CreateButtonTheme(pFont, pImages, NULL);
+		pBoth = OMalloc<CButton>(pTestWindow, pTheme, pWolf, "Open");
+		pIconOnly = OMalloc<CButton>(pTestWindow, pTheme, pMoon, (char*)NULL);
+		pCaptionOnly = OMalloc<CButton>(pTestWindow, pTheme, "Open");
 		pBoth->SetDesiredSize(100, -1);
 		pIconOnly->SetDesiredSize(100, -1);
 		pCaptionOnly->SetDesiredSize(100, -1);
@@ -663,6 +687,7 @@ void TestButtonIcons(void)
 		pCaptionOnly = NULL;
 		pGrid = NULL;
 		pImages = NULL;
+		pTheme = NULL;
 		pFont = NULL;
 		pWolf = NULL;
 		pMoon = NULL;

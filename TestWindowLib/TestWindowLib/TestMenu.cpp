@@ -100,6 +100,7 @@ Ptr<CFont> GenerateMenuFont(Ptr<CWindow> pWindow)
 //////////////////////////////////////////////////////////////////////////
 struct STestMenus
 {
+	Ptr<CWindowTheme>	pTheme;
 	Ptr<CMenuStyle>		pStyle;
 	Ptr<CMenuBar>		pBar;
 	Ptr<CMenuContainer>	pFile;
@@ -111,6 +112,7 @@ struct STestMenus
 
 	void Kill(void)
 	{
+		pTheme = NULL;
 		pStyle = NULL;
 		pBar = NULL;
 		pFile = NULL;
@@ -136,26 +138,28 @@ void CreateTestMenus(Ptr<CWindow> pWindow, STestMenus* psMenus)
 
 	pWindow->GetColourFormat(&cHelper);
 	psMenus->pStyle = OMalloc<CMenuStyle>(pWindow, GenerateMenuFont(pWindow));
+	psMenus->pTheme = OMalloc<CWindowTheme>(psMenus->pStyle->GetFont());
+	psMenus->pTheme->SetMenuStyle(psMenus->pStyle);
 
-	psMenus->pRecent = OMalloc<CMenuContainer>(pWindow, psMenus->pStyle);
+	psMenus->pRecent = OMalloc<CMenuContainer>(pWindow, psMenus->pTheme);
 	psMenus->pRecent->AddItem("One");
 	psMenus->pRecent->AddItem("Two");
 
-	psMenus->pFile = OMalloc<CMenuContainer>(pWindow, psMenus->pStyle);
+	psMenus->pFile = OMalloc<CMenuContainer>(pWindow, psMenus->pTheme);
 	psMenus->pFile->AddItem("New", ReadDarkForestCel("Pine.png", &cHelper));
 	psMenus->pFile->AddItem("Open", ReadDarkForestCel("Wolf.png", &cHelper));
 	psMenus->pFile->AddItem("Recent", NULL, psMenus->pRecent);
 	psMenus->pFile->AddSeparator();
 	psMenus->pFile->AddItem("Exit", ReadDarkForestCel("Moon.png", &cHelper));
 
-	psMenus->pEdit = OMalloc<CMenuContainer>(pWindow, psMenus->pStyle);
+	psMenus->pEdit = OMalloc<CMenuContainer>(pWindow, psMenus->pTheme);
 	psMenus->pEdit->AddItem("Undo");
 	psMenus->pEdit->AddItem("Redo");
 	psMenus->pEdit->AddSeparator();
 	psMenus->pEdit->AddItem("Copy");
 	psMenus->pEdit->AddItem("Paste");
 
-	psMenus->pBar = OMalloc<CMenuBar>(pWindow, psMenus->pStyle);
+	psMenus->pBar = OMalloc<CMenuBar>(pWindow, psMenus->pTheme);
 	psMenus->pFileItem = psMenus->pBar->AddMenu("File", psMenus->pFile);
 	psMenus->pEditItem = psMenus->pBar->AddMenu("Edit", psMenus->pEdit);
 

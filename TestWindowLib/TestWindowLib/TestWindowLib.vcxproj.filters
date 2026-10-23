@@ -103,6 +103,18 @@
     <ClCompile Include="TickTestCanvas.cpp">
       <Filter>Source\Component\Drawing</Filter>
     </ClCompile>
+    <ClCompile Include="TestTextField.cpp">
+      <Filter>Source\Component\Drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCheckBox.cpp">
+      <Filter>Source\Component\Drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="TestComboBox.cpp">
+      <Filter>Source\Component\Drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="TestDialog.cpp">
+      <Filter>Source\Component\Drawing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataTestRefWindow.h">
@@ -131,6 +143,9 @@
     </ClInclude>
     <ClInclude Include="TickTestCanvas.h">
       <Filter>Source\Component\Drawing</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptFramesTick.h">
+      <Filter>Source\TestCommon</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

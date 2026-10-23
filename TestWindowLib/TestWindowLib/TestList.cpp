@@ -96,7 +96,7 @@ void TestListInput(void)
 		ORoot()->Add(pTestWindow);
 		pFocus = pTestWindow->GetFocus();
 
-		pList = OMalloc<CListContainer>(pTestWindow);
+		pList = OMalloc<CListContainer>(pTestWindow, OMalloc<CWindowTheme>(Ptr<CFont>()));
 		AssertTrue(pList->AddListener(&cListener));
 		pTestWindow->SetContainer(pList);
 		for (i = 0; i < 5; i++)
@@ -332,7 +332,7 @@ void TestListDraw(void)
 		pTestWindow = OMalloc<CWindow>("List Draw Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
 		ORoot()->Add(pTestWindow);
 
-		pList = OMalloc<CListContainer>(pTestWindow);
+		pList = OMalloc<CListContainer>(pTestWindow, OMalloc<CWindowTheme>(Ptr<CFont>()));
 		pList->SetHighlightColours(Set32BitColour((uint8)0xFF, (uint8)0, (uint8)0), Set32BitColour((uint8)0, (uint8)0xFF, (uint8)0));
 		pTestWindow->SetContainer(pList);
 		for (i = 0; i < 4; i++)

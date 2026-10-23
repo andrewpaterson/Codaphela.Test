@@ -6,6 +6,7 @@
 #include "WindowLib/FillContainer.h"
 #include "WindowLib/ClearCanvasDraw.h"
 #include "WindowLib/ScrollPane.h"
+#include "WindowLib/WindowTheme.h"
 #include "WindowLib/TextArea.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/AssertGeometric.h"
@@ -27,6 +28,21 @@ void ValidateLabelObjects(void);
 Ptr<CScrollBarImages> CreateScrollBarImages(void)
 {
 	return OMalloc<CScrollBarImages>(8, Set32BitColour((uint8)200, (uint8)200, (uint8)200, (uint8)128));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A theme with only scroll bar images, all a scroll pane needs.
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CWindowTheme> CreateScrollPaneTheme(Ptr<CScrollBarImages> pImages)
+{
+	Ptr<CWindowTheme>	pTheme;
+
+	pTheme = OMalloc<CWindowTheme>(Ptr<CFont>());
+	pTheme->SetScrollBarImages(pImages);
+	return pTheme;
 }
 
 
@@ -140,7 +156,7 @@ void TestScrollPaneLayout(void)
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
 
-		pScrollPane = OMalloc<CScrollPane>(pTestWindow, CreateScrollBarImages());
+		pScrollPane = OMalloc<CScrollPane>(pTestWindow, CreateScrollPaneTheme(CreateScrollBarImages()));
 		pFill->AddComponent(pScrollPane);
 		pContent = OMalloc<CCanvas>(pTestWindow, OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)90, (uint8)30, (uint8)30)));
 		pContent->SetDesiredSize(400, 300);
@@ -287,7 +303,7 @@ void TestScrollPaneDrag(void)
 		pFill = OMalloc<CFillContainer>(pTestWindow);
 		pTestWindow->SetContainer(pFill);
 
-		pScrollPane = OMalloc<CScrollPane>(pTestWindow, CreateScrollBarImages());
+		pScrollPane = OMalloc<CScrollPane>(pTestWindow, CreateScrollPaneTheme(CreateScrollBarImages()));
 		pFill->AddComponent(pScrollPane);
 		pContent = OMalloc<CCanvas>(pTestWindow, OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)90, (uint8)30, (uint8)30)));
 		pContent->SetDesiredSize(400, 300);
@@ -414,7 +430,7 @@ void TestScrollPaneWheel(void)
 		pTestWindow->SetContainer(pFill);
 
 		pImages = CreateScrollBarImages();
-		pScrollPane = OMalloc<CScrollPane>(pTestWindow, pImages);
+		pScrollPane = OMalloc<CScrollPane>(pTestWindow, CreateScrollPaneTheme(pImages));
 		pFill->AddComponent(pScrollPane);
 		pContent = OMalloc<CCanvas>(pTestWindow, OMalloc<CClearCanvasDraw>(Set32BitColour((uint8)90, (uint8)30, (uint8)30)));
 		pContent->SetDesiredSize(400, 300);
@@ -462,7 +478,7 @@ void TestScrollPaneWheel(void)
 		AssertInt32Vec2(0, 122, &sVec);
 
 		//An inner scroll pane that can only scroll horizontally passes vertical turns to the outer one.
-		pInner = OMalloc<CScrollPane>(pTestWindow, pImages);
+		pInner = OMalloc<CScrollPane>(pTestWindow, CreateScrollPaneTheme(pImages));
 		pInner->SetDesiredSize(-1, 300);
 		pScrollPane->SetContent(pInner);
 		pInner->SetContent(pContent);
@@ -549,7 +565,7 @@ void TestScrollPaneDraw(char* szName, int32 iWidth, int32 iHeight, const char* s
 		pFont = ReadLabelFont();
 		AssertTrue(pFont.IsNotNull());
 
-		pScrollPane = OMalloc<CScrollPane>(pTestWindow, CreateScrollBarImages());
+		pScrollPane = OMalloc<CScrollPane>(pTestWindow, CreateScrollPaneTheme(CreateScrollBarImages()));
 		pFill->AddComponent(pScrollPane);
 		pTextArea = OMalloc<CTextArea>(pTestWindow, pFont, szText);
 		pTextArea->SetWordWrap(bWordWrap);

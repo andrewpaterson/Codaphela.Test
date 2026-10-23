@@ -26,6 +26,10 @@ void TestButton(void);
 void TestButtonBar(void);
 void TestList(void);
 void TestMenu(void);
+void TestTextField(void);
+void TestCheckBox(void);
+void TestComboBox(void);
+void TestDialog(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -66,6 +70,10 @@ int __cdecl main(void)
 	TestButtonBar();
 	TestList();
 	TestMenu();
+	TestTextField();
+	TestCheckBox();
+	TestComboBox();
+	TestDialog();
 
 	cFileUtil.RemoveDir("Output");
 

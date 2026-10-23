@@ -255,6 +255,10 @@
     <ClCompile Include="TestWindowLib.cpp" />
     <ClCompile Include="TickTestCanvas.cpp" />
     <ClCompile Include="TickTestRefWindow.cpp" />
+    <ClCompile Include="TestTextField.cpp" />
+    <ClCompile Include="TestCheckBox.cpp" />
+    <ClCompile Include="TestComboBox.cpp" />
+    <ClCompile Include="TestDialog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\CommonLibraries\InputLib\InputLib.vcxproj">
@@ -294,6 +298,7 @@
     <ClInclude Include="TickTestCanvas.h" />
     <ClInclude Include="InputTestComponent.h" />
     <ClInclude Include="TickTestRefWindow.h" />
+    <ClInclude Include="ScriptFramesTick.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
