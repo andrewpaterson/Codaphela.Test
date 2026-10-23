@@ -184,7 +184,7 @@ target_link_libraries(StandardLib PUBLIC BaseLib)
 target_compile_definitions(StandardLib PRIVATE $<$<CONFIG:Debug>:DEBUG_POINTER>)
 
 add_library(CppParserLib STATIC ${CPPPARSERLIB_SOURCES})
-target_link_libraries(CppParserLib PUBLIC StandardLib BaseLib)
+target_link_libraries(CppParserLib PUBLIC Assembler65Lib MicroprocessorLib StandardLib BaseLib)
 
 add_library(MicroprocessorLib STATIC ${MICROPROCESSORLIB_SOURCES})
 target_link_libraries(MicroprocessorLib PUBLIC StandardLib BaseLib)

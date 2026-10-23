@@ -7,7 +7,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-static void AssertText(const char* szExpected, CTestAsm65Context* pcContext, uint32 uiAddress, int iLength)
+static void AssertText(const char* szExpected, CAsm65Memory* pcContext, uint32 uiAddress, int iLength)
 {
 	CChars	sz;
 	int		i;

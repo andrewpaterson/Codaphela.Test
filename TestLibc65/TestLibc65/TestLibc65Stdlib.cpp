@@ -441,7 +441,8 @@ void TestLibc65StdlibExit(void)
 	STestLibc65Run		sRun;
 
 	//exit stops the program as returning from main would: the destructors of globals run and the status is
-	//what main would have returned.  Nothing after the call to exit runs.
+	//what main would have returned.  Nothing after the call to exit runs.  gsFinal is only there for its
+	//destructor, so it is marked used (the linker leaves out globals nothing uses).
 	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "",
 		"#include <stdlib.h>\n"
 		"struct SFinal\n"
@@ -451,7 +452,7 @@ void TestLibc65StdlibExit(void)
 		"		*(int*)0x100004 = 99;\n"
 		"	}\n"
 		"};\n"
-		"SFinal gsFinal;\n"
+		"SFinal gsFinal __attribute__((used));\n"
 		"void Deep(int i)\n"
 		"{\n"
 		"	if (i == 0)\n"
@@ -483,6 +484,44 @@ void TestLibc65StdlibExit(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestLibc65StdlibUnderscoreExit(void)
+{
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "ctype.cpp", NULL };
+	STestLibc65Run		sRun;
+
+	//_Exit stops at once with the status: the destructors of globals don't run.  gsFinal is marked used so
+	//it is linked.
+	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "",
+		"#include <stdlib.h>\n"
+		"struct SFinal\n"
+		"{\n"
+		"	~SFinal()\n"
+		"	{\n"
+		"		*(int*)0x100004 = 99;\n"
+		"	}\n"
+		"};\n"
+		"SFinal gsFinal __attribute__((used));\n"
+		"int main()\n"
+		"{\n"
+		"	*(int*)0x100000 = 1;\n"
+		"	_Exit(4);\n"
+		"	*(int*)0x100000 = 2;\n"
+		"	return 7;\n"
+		"}\n"));
+	AssertTrue(TestLibc65RunToStop(&sRun, 2000000));
+
+	AssertInt(4, TestLibc65Return(&sRun));
+	AssertInt(1, TestLibc65Result(&sRun, 0));
+	AssertInt(0, TestLibc65Result(&sRun, 1));
+
+	TestLibc65End(&sRun);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestLibc65Stdlib(void)
 {
 	BeginTests();
@@ -491,6 +530,7 @@ void TestLibc65Stdlib(void)
 	TestLibc65StdlibAllocationOverflow();
 	TestLibc65StdlibFragmentation();
 	TestLibc65StdlibExit();
+	TestLibc65StdlibUnderscoreExit();
 	TestLibc65StdlibQsort();
 	TestLibc65StdlibRand();
 	TestLibc65StdlibStrtol();

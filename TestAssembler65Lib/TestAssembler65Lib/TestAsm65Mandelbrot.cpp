@@ -66,7 +66,7 @@ static uint32 MandelbrotColour(int64 iCx, int64 iCy)
 // PNG.
 //
 //////////////////////////////////////////////////////////////////////////
-static void WriteMandelbrotPNG(CTestAsm65Context* pcContext, char* szFilename)
+static void WriteMandelbrotPNG(CAsm65Memory* pcContext, char* szFilename)
 {
 	Ptr<CImage>	pcImage;
 	uint8*		puiPixel;

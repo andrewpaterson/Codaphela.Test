@@ -1,16 +1,8 @@
-#include <string.h>
 #include <stdlib.h>
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/ArrayChars.h"
-#include "Assembler65Lib/Asm65Assembler.h"
-#include "Assembler65Lib/Asm65Linker.h"
-#include "CppParserLib/Preprocessor.h"
-#include "CppParserLib/HeaderFileMap.h"
-#include "CppParserLib/HeaderFiles.h"
-#include "CppParserLib/CppTokeniser.h"
-#include "CppParserLib/CppParser.h"
 #include "CppParserLib/CPP65Generator.h"
-#include "CppParserLib/Project.h"
+#include "CppParserLib/CPP65Builder.h"
 #include "TestLib/Assert.h"
 #include "TestLibc65Context.h"
 
@@ -21,262 +13,15 @@
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The full path of szRelative (to this test's directory).
 //
 //////////////////////////////////////////////////////////////////////////
-void CTestLibc65Memory::Init(void)
+static void TestLibc65FullPath(CChars* pszDirectory, const char* szRelative)
 {
-	memset(mauiLow, 0, sizeof(mauiLow));
-	memset(mauiHigh, 0, sizeof(mauiHigh));
-	muiBadAccesses = 0;
-}
+	CFileUtil	cFileUtil;
 
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-uint8* CTestLibc65Memory::Byte(uint32 uiAddress)
-{
-	if (uiAddress < TEST_LIBC65_LOW_SIZE)
-	{
-		return &mauiLow[uiAddress];
-	}
-	if (uiAddress >= TEST_LIBC65_HIGH_BASE)
-	{
-		return &mauiHigh[uiAddress - TEST_LIBC65_HIGH_BASE];
-	}
-	return NULL;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-uint8 CTestLibc65Memory::GetByte(uint32 uiAddress)
-{
-	uint8*	puiByte;
-
-	puiByte = Byte(uiAddress);
-	if (puiByte)
-	{
-		return *puiByte;
-	}
-	muiBadAccesses++;
-	return 0;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void CTestLibc65Memory::SetByte(uint32 uiAddress, uint8 uiValue)
-{
-	uint8*	puiByte;
-
-	puiByte = Byte(uiAddress);
-	if (puiByte)
-	{
-		*puiByte = uiValue;
-	}
-	else
-	{
-		muiBadAccesses++;
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-uint16 CTestLibc65Memory::GetWord(uint32 uiAddress)
-{
-	return (uint16)(GetByte(uiAddress) | (GetByte(uiAddress + 1) << 8));
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-uint32 CTestLibc65Memory::GetLong(uint32 uiAddress)
-{
-	return (uint32)GetWord(uiAddress) | ((uint32)GetWord(uiAddress + 2) << 16);
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void CTestLibc65Memory::SetLong(uint32 uiAddress, uint32 uiValue)
-{
-	int	i;
-
-	for (i = 0; i < 4; i++)
-	{
-		SetByte(uiAddress + i, (uint8)(uiValue >> (8 * i)));
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-void CTestLibc65Memory::Load(CAsm65Output* pcOutput)
-{
-	size			i;
-	size			j;
-	SAsm65Segment*	psSegment;
-
-	for (i = 0; i < pcOutput->NumSegments(); i++)
-	{
-		psSegment = pcOutput->GetSegment(i);
-		for (j = 0; j < psSegment->cBytes.NumElements(); j++)
-		{
-			SetByte(psSegment->uiAddress + (uint32)j, psSegment->cBytes.GetValue(j));
-		}
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-// Memory responds while PHI2 is high.
-//
-//////////////////////////////////////////////////////////////////////////
-static void TestLibc65TickHigh(C65C64Meta* pcMPU, void* pvContext)
-{
-	CTestLibc65Memory*	pcMemory;
-	uint32				uiAddress;
-	uint16				uiData;
-
-	pcMemory = (CTestLibc65Memory*)pvContext;
-	if (!pcMPU->GetRWB()->IsHigh() && !pcMPU->GetRWB()->IsLow())
-	{
-		return;
-	}
-	if (!pcMPU->GetVPA()->IsHigh() && !pcMPU->GetVDA()->IsHigh() && pcMPU->GetVPB()->IsHigh())
-	{
-		return;
-	}
-
-	uiAddress = pcMPU->GetAddress()->Get();
-	if (pcMPU->GetRWB()->IsHigh())
-	{
-		pcMPU->GetData()->Set(pcMemory->GetWord(uiAddress));
-	}
-	else
-	{
-		uiData = pcMPU->GetData()->Get();
-		if (pcMPU->GetLowerByte()->IsHigh())
-		{
-			pcMemory->SetByte(uiAddress, (uint8)uiData);
-		}
-		if (pcMPU->GetUpperByte()->IsHigh())
-		{
-			pcMemory->SetByte(uiAddress + 1, (uint8)(uiData >> 8));
-		}
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
-static void TestLibc65TickLow(C65C64Meta* pcMPU, void* pvContext)
-{
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-// Preprocesses, parses and generates szSource as an object's assembly.  Libc65 is the system include
-// directory.
-//
-//////////////////////////////////////////////////////////////////////////
-static void TestLibc65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSource)
-{
-	CTranslationUnit	cFile;
-	CPreprocessor		cPreprocessor;
-	CCPPTokeniser		cTokeniser;
-	CCPPSyntaxTree		cTree;
-	CCPPParser			cParser;
-	CCPP65Generator		cGenerator;
-	CHeaderFileMap		cHeaderFileMap;
-	CHeaderFiles		cStandard;
-	CHeaderFiles		cLibraries;
-	CFileUtil			cFileUtil;
-	CChars				szDirectory;
-	CConfig				cConfig;
-
-	cHeaderFileMap.Init();
-	szDirectory.Init(TEST_LIBC65_DIRECTORY);
-	cFileUtil.FullPath(&szDirectory);
-	cStandard.Init(szDirectory.Text(), &cHeaderFileMap, false, true);
-	szDirectory.Kill();
-	szDirectory.Init(TEST_LIBC65_LIBRARIES);
-	cFileUtil.FullPath(&szDirectory);
-	cLibraries.Init(szDirectory.Text(), &cHeaderFileMap, true, false);
-	szDirectory.Kill();
-
-	cConfig.Init("65C64");
-	CCPP65Generator::AddDefines(&cConfig);
-
-	cFile.Init("Test.cpp", NULL, false);
-	cFile.SetContents((char*)szSource);
-	cPreprocessor.Init(&cConfig);
-	cPreprocessor.AddIncludeDirectory(&cStandard);
-	cPreprocessor.AddIncludeDirectory(&cLibraries);
-	cPreprocessor.PreprocessTranslationUnit(&cFile);
-	pszErrors->Append(cPreprocessor.GetErrors()->Text());
-	cPreprocessor.Kill();
-
-	cTokeniser.Init();
-	cTokeniser.Tokenise(cFile.GetTokens());
-	pszErrors->Append(cTokeniser.GetErrors()->Text());
-
-	cTree.Init(&cTokeniser);
-	cParser.Init(&cTokeniser, &cTree);
-	cParser.Parse();
-	pszErrors->Append(cTree.GetErrors()->Text());
-	cParser.Kill();
-
-	cGenerator.Init(&cTree);
-	cGenerator.Generate(pszAssembly);
-	pszErrors->Append(cGenerator.GetErrors()->Text());
-	cGenerator.Kill();
-
-	cTree.Kill();
-	cTokeniser.Kill();
-	cFile.Kill();
-	cConfig.Kill();
-	cLibraries.Kill();
-	cStandard.Kill();
-	cHeaderFileMap.Kill();
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-// Assembles szAssembly into a new object of pcObjects.
-//
-//////////////////////////////////////////////////////////////////////////
-static CAsm65Object* TestLibc65Assemble(CAsm65Library* pcObjects, const char* szName, const char* szAssembly)
-{
-	CAsm65Assembler	cAssembler;
-	CAsm65Object*	pcObject;
-
-	pcObject = pcObjects->AddObject(szName);
-	cAssembler.Init();
-	cAssembler.AssembleObject(szAssembly, pcObject);
-	AssertString("", cAssembler.GetErrors());
-	cAssembler.Kill();
-	return pcObject;
+	pszDirectory->Init(szRelative);
+	cFileUtil.FullPath(pszDirectory);
 }
 
 
@@ -290,98 +35,34 @@ static CAsm65Object* TestLibc65Assemble(CAsm65Library* pcObjects, const char* sz
 //////////////////////////////////////////////////////////////////////////
 bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* szStubs, const char* szSource)
 {
-	CProject			cProject;
-	CLibrary*			pcLibrary;
-	CTranslationUnit*	pcFile;
-	SProcessIter		sIter;
-	CCPPTokeniser		cTokeniser;
-	CCPPSyntaxTree		cTree;
-	CCPPParser			cParser;
-	CCPP65Generator		cGenerator;
-	CAsm65Library		cObjects;
-	CAsm65Library		cLibc65;
-	CAsm65Linker		cLinker;
-	CFileUtil			cFileUtil;
-	CChars				szDirectory;
-	CChars				szAssembly;
-	CChars				szErrors;
-	CChars				szMissing;
-	CArrayChars			aszMissing;
-	int					iUnit;
-	size				i;
-	bool				bResult;
+	CCPP65Builder	cBuilder;
+	CChars			szLibc65;
+	CChars			szLibraries;
+	CChars			szMissing;
+	CArrayChars		aszMissing;
+	size			i;
+	bool			bResult;
 
-	cProject.Init(false);
-	szDirectory.Init(TEST_LIBC65_DIRECTORY);
-	cFileUtil.FullPath(&szDirectory);
-	cProject.AddIncludeDirectory(szDirectory.Text(), false, true);
-	pcLibrary = cProject.AddLibrary("Libc65", szDirectory.Text(), false);
-	CCPP65Generator::AddDefines(pcLibrary->AddConfiguration("65C64"));
-	szDirectory.Kill();
-	szDirectory.Init(TEST_LIBC65_LIBRARIES);
-	cFileUtil.FullPath(&szDirectory);
-	cProject.AddIncludeDirectory(szDirectory.Text(), true, false);
-	szDirectory.Kill();
+	TestLibc65FullPath(&szLibc65, TEST_LIBC65_DIRECTORY);
+	TestLibc65FullPath(&szLibraries, TEST_LIBC65_LIBRARIES);
+	cBuilder.Init();
+	cBuilder.AddIncludeDirectory(szLibc65.Text(), false, true);
+	cBuilder.AddIncludeDirectory(szLibraries.Text(), true, false);
 
+	bResult = cBuilder.AddStartUp();
+	bResult &= cBuilder.AddSource("Test.cpp", szSource);
 	for (i = 0; aszUnits[i]; i++)
 	{
-		pcLibrary->AddTranslationUnit((char*)aszUnits[i]);
+		cBuilder.AddUnit("Libc65", szLibc65.Text(), aszUnits[i], true);
 	}
-	AssertTrue(cProject.Process("65C64"));
-
-	szErrors.Init();
-	cObjects.Init("objects");
-	cLibc65.Init("Libc65");
-	cLinker.Init();
-
-	szAssembly.Init();
-	CCPP65Generator::AppendStartUp(&szAssembly);
-	cLinker.AddObject(TestLibc65Assemble(&cObjects, "start up", szAssembly.Text()));
-	szAssembly.Kill();
-
-	szAssembly.Init();
-	TestLibc65Generate(&szAssembly, &szErrors, szSource);
-	cLinker.AddObject(TestLibc65Assemble(&cObjects, "Test.cpp", szAssembly.Text()));
-	szAssembly.Kill();
-
-	iUnit = 0;
-	for (pcFile = cProject.Start(&sIter, "65C64"); pcFile; pcFile = cProject.Iterate(&sIter))
-	{
-		iUnit++;
-		cTokeniser.Init();
-		cTokeniser.Tokenise(pcFile->GetTokens());
-		szErrors.Append(cTokeniser.GetErrors()->Text());
-		cTree.Init(&cTokeniser);
-		cParser.Init(&cTokeniser, &cTree);
-		cParser.Parse();
-		szErrors.Append(cTree.GetErrors()->Text());
-		cParser.Kill();
-
-		szAssembly.Init();
-		cGenerator.Init(&cTree);
-		cGenerator.Generate(&szAssembly);
-		szErrors.Append(cGenerator.GetErrors()->Text());
-		cGenerator.Kill();
-		TestLibc65Assemble(&cLibc65, pcFile->ShortName(), szAssembly.Text());
-		szAssembly.Kill();
-		cTree.Kill();
-		cTokeniser.Kill();
-	}
-	AssertInt((int)i, iUnit);
-	AssertString("", szErrors.Text());
-
-	cLinker.AddLibrary(&cLibc65);
-	cLinker.SetStubMissing(true);
-	cLinker.SetAddress(ASK65_Text, CPP65_PROGRAM_ADDRESS);
-	cLinker.SetLimit(CPP65_HEAP_ADDRESS);
-	bResult = szErrors.Empty() && cLinker.Link();
-	AssertString("", cLinker.GetErrors());
+	bResult &= cBuilder.Link();
+	AssertString("", cBuilder.GetErrors());
 
 	//What is used but written by no linked unit.
 	aszMissing.Init();
-	for (i = 0; i < cLinker.NumMissing(); i++)
+	for (i = 0; i < cBuilder.NumMissing(); i++)
 	{
-		aszMissing.Add(cLinker.GetMissing(i));
+		aszMissing.Add(cBuilder.GetMissing(i));
 	}
 	aszMissing.QuickSort(true);
 	szMissing.Init();
@@ -398,21 +79,19 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 	psRun->pcMemory = NULL;
 	if (bResult)
 	{
-		psRun->pcMemory = (CTestLibc65Memory*)malloc(sizeof(CTestLibc65Memory));
+		psRun->pcMemory = (CAsm65Memory*)malloc(sizeof(CAsm65Memory));
 		psRun->pcMemory->Init();
 		psRun->pcMemory->SetLong(VECTOR_65C64_BASE + 4 * VECTOR_65C64_RESET, CPP65_PROGRAM_ADDRESS);
-		psRun->pcMemory->Load(cLinker.GetOutput());
-		psRun->cMeta.Init(TestLibc65TickHigh, TestLibc65TickLow, psRun->pcMemory);
+		psRun->pcMemory->Load(cBuilder.GetOutput());
+		psRun->cMeta.Init(CAsm65Memory::TickHigh, CAsm65Memory::TickLow, psRun->pcMemory);
 		psRun->cMeta.TickInstruction();
 	}
 
 	szMissing.Kill();
 	aszMissing.Kill();
-	cLinker.Kill();
-	cLibc65.Kill();
-	cObjects.Kill();
-	szErrors.Kill();
-	cProject.Kill();
+	cBuilder.Kill();
+	szLibraries.Kill();
+	szLibc65.Kill();
 	return bResult;
 }
 
@@ -495,7 +174,7 @@ void TestLibc65End(STestLibc65Run* psRun)
 {
 	if (psRun->pcMemory)
 	{
-		AssertSize(0, psRun->pcMemory->muiBadAccesses);
+		AssertSize(0, psRun->pcMemory->NumBadAccesses());
 		psRun->cMeta.Kill();
 		free(psRun->pcMemory);
 		psRun->pcMemory = NULL;

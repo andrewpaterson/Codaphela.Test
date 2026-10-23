@@ -11,7 +11,7 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-static void AppendText(CChars* psz, CTestAsm65Context* pcContext, uint32 uiAddress)
+static void AppendText(CChars* psz, CAsm65Memory* pcContext, uint32 uiAddress)
 {
 	uint8	uiByte;
 

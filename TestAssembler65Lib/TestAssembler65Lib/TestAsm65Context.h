@@ -5,41 +5,15 @@
 #include "MicroprocessorLib/65C64Meta.h"
 #include "Assembler65Lib/Asm65Assembler.h"
 #include "Assembler65Lib/Asm65Linker.h"
-
-
-#define TEST_ASM65_LOW_SIZE		0x200000
-#define TEST_ASM65_HIGH_BASE	0xFFFFF000
-#define TEST_ASM65_HIGH_SIZE	0x1000
-
-
-//Memory for a 65C64 running assembled code: 2MB at 0000:0000 (enough for a 400 x 400
-//32 bit image at 0010:0000) and the 4KB vector page at FFFF:F000.
-class CTestAsm65Context
-{
-public:
-	uint8	mauiLow[TEST_ASM65_LOW_SIZE];
-	uint8	mauiHigh[TEST_ASM65_HIGH_SIZE];
-	size	muiBadAccesses;
-	size	muiCycles;
-
-	void	Init(void);
-	uint8*	Byte(uint32 uiAddress);
-	uint8	GetByte(uint32 uiAddress);
-	void	SetByte(uint32 uiAddress, uint8 uiValue);
-	uint16	GetWord(uint32 uiAddress);
-	uint32	GetLong(uint32 uiAddress);
-	uint64	GetQuad(uint32 uiAddress);
-	void	SetLong(uint32 uiAddress, uint32 uiValue);
-	void	Load(CAsm65Output* pcOutput);
-};
+#include "Assembler65Lib/Asm65Memory.h"
 
 
 //An assembled program running from reset.
 struct STestAsm65Run
 {
-	CTestAsm65Context*	pcContext;
-	C65C64Meta			cMeta;
-	size				uiInstructions;
+	CAsm65Memory*	pcContext;
+	C65C64Meta		cMeta;
+	size			uiInstructions;
 };
 
 

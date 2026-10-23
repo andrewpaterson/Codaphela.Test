@@ -322,7 +322,7 @@ void TestCPP65GeneratorAssembly(void)
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "int Add(int a, int b) { return a + b; }"));
 	AssertString("", szErrors.Text());
 	AssertString(
-		"\t\t.section text\n"
+		"\t\t.section text._Add\n"
 		"\t\t.global _Add\n"
 		"_Add:\n"
 		"\t\tpsh V\n"
@@ -342,7 +342,7 @@ void TestCPP65GeneratorAssembly(void)
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "int gTotal = 5;\nvoid Count(char c) { int x = c; if (x > 3) gTotal += x; }"));
 	AssertString("", szErrors.Text());
 	AssertString(
-		"\t\t.section text\n"
+		"\t\t.section text._Count\n"
 		"\t\t.global _Count\n"
 		"_Count:\n"
 		"\t\tpsh V\n"
@@ -370,7 +370,7 @@ void TestCPP65GeneratorAssembly(void)
 		"\t\tpul V\n"
 		"\t\tret\n"
 		"\n"
-		"\t\t.section data\n"
+		"\t\t.section data._gTotal\n"
 		"\t\t.align 4\n"
 		"\t\t.global _gTotal\n"
 		"_gTotal:\n"
@@ -395,7 +395,7 @@ void TestCPP65GeneratorConvention(void)
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "int main() { return 0; }", true));
 	AssertString("", szErrors.Text());
 	AssertTrue(szAssembly.StartsWith(
-		"\t\t.section text\n"
+		"\t\t.section text, keep\n"
 		"Start:\n"
 		"\t\tcpy S, $1fffff\n"
 		"\t\tcpy W, 0\n"
@@ -436,7 +436,7 @@ void TestCPP65GeneratorConvention(void)
 	szErrors.Init();
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "int f(int a, int b) { return (a + b) * (a - b); }"));
 	AssertString(
-		"\t\t.section text\n"
+		"\t\t.section text._f\n"
 		"\t\t.global _f\n"
 		"_f:\n"
 		"\t\tpsh V\n"
@@ -1018,7 +1018,8 @@ void TestCPP65GeneratorClasses(void)
 		"}\n"));
 
 	//Locals are destroyed last first at the end of their block, globals last first by
-	//R_Finalise after main.
+	//their R_Finalise after main.  Nothing uses gA and gB, so the linker leaves them (and
+	//their constructors and destructors) out...
 	AssertTrue(TestCPP65Begin(&sRun,
 		"struct D\n"
 		"{\n"
@@ -1028,6 +1029,23 @@ void TestCPP65GeneratorClasses(void)
 		"};\n"
 		"D gA(1);\n"
 		"D gB(2);\n"
+		"int main() { { D x(3); D y(4); } return *(int*)0x100000; }\n"));
+	AssertTrue(TestCPP65Run(&sRun, 100000) < 100000);
+	AssertInt(43, (int32)TestCPP65MPU(&sRun)->GetA());
+	AssertInt(43, (int32)sRun.pcContext->GetLong(TEST_CPP65_RESULTS));
+	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
+	TestCPP65End(&sRun);
+
+	//...unless they are marked used.
+	AssertTrue(TestCPP65Begin(&sRun,
+		"struct D\n"
+		"{\n"
+		"	int m;\n"
+		"	D(int v) : m(v) {}\n"
+		"	~D() { int* p = (int*)0x100000; *p = *p * 10 + m; }\n"
+		"};\n"
+		"D gA __attribute__((used)) (1);\n"
+		"D gB __attribute__((__used__)) (2);\n"
 		"int main() { { D x(3); D y(4); } return *(int*)0x100000; }\n"));
 	AssertTrue(TestCPP65Run(&sRun, 100000) < 100000);
 	AssertInt(43, (int32)TestCPP65MPU(&sRun)->GetA());
@@ -1835,8 +1853,8 @@ void TestCPP65GeneratorBaseLib(void)
 	static const char*	aszSort[] = { "BaseLib/QuickSort.cpp", "BaseLib/BubbleSort.cpp", "BaseLib/BinarySearch.cpp", "Input/CPP65/SortProject/MemSwpStub.cpp", "Input/CPP65/SortProject/Main.cpp", NULL };
 	static const char*	aszRedBlackTree[] = { "BaseLib/RedBlackTree.cpp", "Libc65/string.cpp", "Libc65/stdlib.cpp", "Libc65/ctype.cpp", "Input/CPP65/RedBlackTreeProject/FreeListStub.cpp", "Input/CPP65/RedBlackTreeProject/Main.cpp", NULL };
 
-	//MD5Dump makes a CChars, which is not compiled here.
-	AssertInt(0x3F, TestCPP65RunProject(aszMD5, "_CChars__AppendHexLoHi _CChars__AppendNewLine _CChars__Dump _CChars__Init _CChars__Kill"));
+	//MD5Dump makes a CChars, which is not compiled here, but nothing calls MD5Dump so it is left out.
+	AssertInt(0x3F, TestCPP65RunProject(aszMD5, ""));
 
 	//CFreeList is a stub over malloc.
 	AssertInt(0xF, TestCPP65RunProject(aszRedBlackTree, ""));
