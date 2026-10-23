@@ -97,7 +97,7 @@ void TestImageOpacityBlitter(char* szDirectory, char* szInputPathName, char* szT
 
 		uiWidth = pBackgroundImage->GetWidth();
 		uiHeight = pBackgroundImage->GetHeight();
-		pDestImage = OMalloc<CImage>(uiWidth, uiHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+		pDestImage = OMalloc<CImage>((uint32)uiWidth, (uint32)uiHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pDestImage->Black();
 
 		pBackgroundCel = OMalloc<CImageCel>(pBackgroundImage);
@@ -187,7 +187,7 @@ void TestImageOpacitySizingBlitter(char* szDirectory, char* szInputPathName, cha
 
 		uiWidth = pBackgroundImage->GetWidth();
 		uiHeight = pBackgroundImage->GetHeight();
-		pDestImage = OMalloc<CImage>(uiWidth, uiHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+		pDestImage = OMalloc<CImage>((uint32)uiWidth, (uint32)uiHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		pDestImage->Black();
 
 		pBackgroundCel = OMalloc<CImageCel>(pBackgroundImage);

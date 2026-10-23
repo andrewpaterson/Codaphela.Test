@@ -337,7 +337,7 @@ void TestImageCopierRealPNG(void)
 
 		uiWidth = pImage->GetWidth() / 2;
 		uiHeight = pImage->GetHeight();
-		pDestImage = OMalloc<CImage>(uiWidth, uiHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+		pDestImage = OMalloc<CImage>((uint32)uiWidth, (uint32)uiHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 		AssertFalse(pDestImage.IsNull());
 
 		pDestImage->Black();

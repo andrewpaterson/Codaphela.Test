@@ -5,6 +5,7 @@
 #include "SupportLib/ImageReader.h"
 #include "SupportLib/ImageWriter.h"
 #include "TestLib/Assert.h"
+#include "TestLib/AssertFile.h"
 #include "AssertImage.h"
 
 
@@ -185,6 +186,61 @@ void TestImagePNGBadFiles(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Reads szInput and writes it out again, which must give exactly
+// Input/PNG/Written/szName.png.
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertPNGWrittenAsExpected(const char* szInput, const char* szName)
+{
+	CChars	szOutput;
+	CChars	szExpected;
+
+	szOutput.Init("Output" _FS_ "Written");
+	szOutput.Append(szName);
+	szOutput.Append(".png");
+	szExpected.Init("Input" _FS_ "PNG" _FS_ "Written" _FS_);
+	szExpected.Append(szName);
+	szExpected.Append(".png");
+
+	Ptr<CImage> pcImage = ReadImage((char*)szInput);
+	AssertTrue(pcImage.IsNotNull());
+	AssertTrue(WriteImage(pcImage, szOutput.Text(), IT_PNG));
+	AssertFile(szExpected.Text(), szOutput.Text());
+
+	pcImage = NULL;
+	szExpected.Kill();
+	szOutput.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Each row is written with whichever filter suits it best, so changes to
+// how filters are chosen must not change the file.  The expected files
+// were written by the byte at a time filter code.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImagePNGWrite(void)
+{
+	AssertPNGWrittenAsExpected("Input" _FS_ "PNG" _FS_ "filtersgrey8-expected.png", "grey8");
+	AssertPNGWrittenAsExpected("Input" _FS_ "PNG" _FS_ "filtersgrey16-expected.png", "grey16");
+	AssertPNGWrittenAsExpected("Input" _FS_ "PNG" _FS_ "filtersgreyalpha16-expected.png", "greyalpha16");
+	AssertPNGWrittenAsExpected("Input" _FS_ "PNG" _FS_ "interlacedgreyalpha8-expected.png", "greyalpha8");
+	AssertPNGWrittenAsExpected("Input" _FS_ "PNG" _FS_ "filtersrgb8-expected.png", "rgb8");
+	AssertPNGWrittenAsExpected("Input" _FS_ "PNG" _FS_ "interlacedrgb16-expected.png", "rgb16");
+	AssertPNGWrittenAsExpected("Input" _FS_ "PNG" _FS_ "interlacedrgba8-expected.png", "rgba8");
+	AssertPNGWrittenAsExpected("Input" _FS_ "PNG" _FS_ "filtersrgba16-expected.png", "rgba16");
+	AssertPNGWrittenAsExpected("Input" _FS_ "PNG" _FS_ "interlaced1x1-expected.png", "1x1");
+	AssertPNGWrittenAsExpected("Input" _FS_ "PNG" _FS_ "interlaced3x2-expected.png", "3x2");
+	AssertPNGWrittenAsExpected("Input" _FS_ "Adelle.png", "Adelle");
+	AssertPNGWrittenAsExpected("Input" _FS_ "HeightMap.png", "HeightMap");
+	AssertPNGWrittenAsExpected("Input" _FS_ "MakiStand.png", "MakiStand");
+	AssertPNGWrittenAsExpected("Input" _FS_ "Fighting320.png", "Fighting320");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestImagePNG(void)
@@ -199,6 +255,7 @@ void TestImagePNG(void)
 	TestImagePNGPalettes();
 	TestImagePNGChunks();
 	TestImagePNGBadFiles();
+	TestImagePNGWrite();
 
 	ObjectsKill(false);
 	DataIOKill();

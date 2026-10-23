@@ -364,6 +364,184 @@ void TestCompressionDeflate(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The CRC-32 of puiData deflated, with its compressed size added to
+// puiTotalSize.
+//
+//////////////////////////////////////////////////////////////////////////
+uint32 DeflatedCRC(uint8* puiData, size uiDataSize, bool bZLib, size* puiTotalSize)
+{
+	CMemoryFile		cMemory;
+	CCRC32			cCRC;
+
+	cMemory.Init();
+	AssertTrue(DeflateMemory(puiData, uiDataSize, bZLib, &cMemory));
+	*puiTotalSize += cMemory.GetBufferSize();
+	cCRC.Init();
+	cCRC.Update((uint8*)cMemory.GetBufferPointer(), cMemory.GetBufferSize());
+	cMemory.Kill();
+	AssertDeflateRoundTrip(puiData, uiDataSize, bZLib);
+	return cCRC.Get();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Changes to how matches are found must not change which matches are
+// found.  The expected output was written by the byte at a time match
+// finder.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCompressionDeflateMatches(void)
+{
+	uint8*			puiData;
+	size			i;
+	size			uiLength;
+	size			uiTotalSize;
+	uint32			uiRandom;
+	uint32			uiCRC;
+	CCRC32			cCRCs;
+	const char*		aszWords[] = { "the ", "a ", "tile ", "map ", "image ", "pixel ", "channel ", "opacity ", "blit ", "star ", "control ", "deflate ", "png ", "of ", "and ", "with " };
+
+	puiData = (uint8*)malloc(200000);
+	uiTotalSize = 0;
+	cCRCs.Init();
+
+	//Text made of repeated words, which gives many matches of many lengths.
+	uiRandom = 1;
+	i = 0;
+	while (i < 60000)
+	{
+		uiRandom = uiRandom * 1103515245 + 12345;
+		uiLength = strlen(aszWords[(uiRandom >> 16) & 15]);
+		memcpy(&puiData[i], aszWords[(uiRandom >> 16) & 15], uiLength);
+		i += uiLength;
+	}
+	uiCRC = DeflatedCRC(puiData, 60000, true, &uiTotalSize);
+	cCRCs.Update((uint8*)&uiCRC, sizeof(uint32));
+
+	//A pattern repeated for longer than the longest match, then broken every so often.
+	for (i = 0; i < 100000; i++)
+	{
+		puiData[i] = (uint8)("abcdefg"[i % 7]);
+		if ((i % 1009) == 0)
+		{
+			puiData[i] = 'X';
+		}
+	}
+	uiCRC = DeflatedCRC(puiData, 100000, true, &uiTotalSize);
+	cCRCs.Update((uint8*)&uiCRC, sizeof(uint32));
+
+	//An image like gradient with noise in the low bits.
+	for (i = 0; i < 100000; i++)
+	{
+		uiRandom = uiRandom * 1103515245 + 12345;
+		puiData[i] = (uint8)(((i % 256) + (i / 1024)) & 0xFC) | (uint8)((uiRandom >> 16) & 3);
+	}
+	uiCRC = DeflatedCRC(puiData, 100000, false, &uiTotalSize);
+	cCRCs.Update((uint8*)&uiCRC, sizeof(uint32));
+
+	//Short inputs whose matches are cut short by the end of the data, either side of 8 bytes.
+	for (uiLength = 1; uiLength <= 40; uiLength++)
+	{
+		for (i = 0; i < uiLength; i++)
+		{
+			puiData[i] = (uint8)("abcabcabcabdabcab"[i % 17]);
+		}
+		uiCRC = DeflatedCRC(puiData, uiLength, false, &uiTotalSize);
+		cCRCs.Update((uint8*)&uiCRC, sizeof(uint32));
+	}
+
+	AssertSize(79768, uiTotalSize);
+	AssertInt((uint32)0xB8EF328D, cCRCs.Get());
+	free(puiData);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Codes longer than the decoder's lookup table and bytes after the end
+// of the stream.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCompressionInflateCodes(void)
+{
+	uint8*			puiData;
+	size			i;
+	size			j;
+	uint32			uiRandom;
+	CMemoryFile		cMemory;
+	CMemoryFile		cFollowed;
+	CFileBasic		cFile;
+	CInflater		cInflater;
+	CArrayUint8		acOutput;
+	uint8			uiByte;
+	uint8			auiFollowing[2] = { 0xA5, 0x5A };
+	size			uiCompressedSize;
+	bool			bResult;
+
+	puiData = (uint8*)malloc(100000);
+
+	//Symbols with halving frequencies need codes up to the longest allowed.  The data is random so there are few matches.
+	uiRandom = 7;
+	for (i = 0; i < 100000; i++)
+	{
+		uiRandom = uiRandom * 1103515245 + 12345;
+		j = 0;
+		while ((j < 20) && ((uiRandom >> (j + 8)) & 1))
+		{
+			j++;
+		}
+		puiData[i] = (uint8)(j * 7);
+	}
+	AssertDeflateRoundTrip(puiData, 100000, true);
+	AssertDeflateRoundTrip(puiData, 100000, false);
+
+	//Inflate reads no further than the end of the stream.
+	for (j = 0; j < 2; j++)
+	{
+		cMemory.Init();
+		AssertTrue(DeflateMemory(puiData, 3000, j == 0, &cMemory));
+		uiCompressedSize = cMemory.GetBufferSize();
+
+		cFollowed.Init();
+		cFile.Init(&cFollowed);
+		AssertTrue(cFile.Open(EFM_Write_Create));
+		AssertTrue(cFile.WriteData(cMemory.GetBufferPointer(), uiCompressedSize));
+		AssertTrue(cFile.WriteData(auiFollowing, 2));
+		AssertTrue(cFile.Close());
+
+		AssertTrue(cFile.Open(EFM_Read));
+		acOutput.Init();
+		cInflater.Init(&cFile, j == 0);
+		AssertTrue(cInflater.Inflate(&acOutput));
+		cInflater.Kill();
+		AssertSize(3000, acOutput.NumElements());
+		AssertMemory(puiData, acOutput.GetData(), 3000);
+		AssertTrue(cFile.ReadInt8(&uiByte));
+		AssertInt(0xA5, uiByte);
+		acOutput.Kill();
+		AssertTrue(cFile.Close());
+		cFile.Kill();
+		cFollowed.Kill();
+
+		//Every truncation of the stream fails.
+		bResult = false;
+		for (i = 0; i < uiCompressedSize; i++)
+		{
+			acOutput.Init();
+			bResult |= InflateMemory((uint8*)cMemory.GetBufferPointer(), i, j == 0, &acOutput);
+			acOutput.Kill();
+		}
+		AssertFalse(bResult);
+		cMemory.Kill();
+	}
+
+	free(puiData);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCompressionZLib(void)
@@ -377,6 +555,8 @@ void TestCompressionZLib(void)
 	TestCompressionInflateRaw();
 	TestCompressionInflateBad();
 	TestCompressionDeflate();
+	TestCompressionDeflateMatches();
+	TestCompressionInflateCodes();
 
 	MemoryKill();
 	TestStatistics();

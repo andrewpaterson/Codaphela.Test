@@ -108,7 +108,7 @@ void AssertCornerFaces(CMeshCorner* pcCorner, size iNumFaces, ...)
 	va_start(vaMarker, iNumFaces);
 	for (i = 0; i < iNumFaces; i++)
 	{
-		iFaceNum = va_arg(vaMarker, size);
+		iFaceNum = (size)va_arg(vaMarker, int);  //The face numbers are passed as int literals.
 		AssertSize(iFaceNum, pcCorner->aiFace.GetValue(i));
 	}
 	va_end(vaMarker);
@@ -135,7 +135,7 @@ void AssertCornerEdges(CMeshCorner* pcCorner, size iNumEdges, ...)
 	va_start(vaMarker, iNumEdges);
 	for (i = 0; i < iNumEdges; i++)
 	{
-		iEdgeNum = va_arg(vaMarker, size);
+		iEdgeNum = (size)va_arg(vaMarker, int);  //The edge numbers are passed as int literals.
 		AssertSize(iEdgeNum, pcCorner->aiEdge.GetValue(i));
 	}
 	va_end(vaMarker);

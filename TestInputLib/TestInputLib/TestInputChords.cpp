@@ -58,13 +58,13 @@ void AssertEvents(CInput* pcInput, CProgramDeviceDetail* pcDetail, CPlayer* pcPl
 		pcEvent = cArray.Get(i);
 		pcDetail->AddEvent(pcEvent->szName, pcEvent->fValue);
 		pcInput->Update();
-		AssertInt(0, pcPlayer->GetEvents()->NumElements());
+		AssertSize(0, pcPlayer->GetEvents()->NumElements());
 	}
 
 	pcEvent = cArray.Get(i);
 	pcDetail->AddEvent(pcEvent->szName, pcEvent->fValue);
 	pcInput->Update();
-	AssertInt(1, pcPlayer->GetEvents()->NumElements());
+	AssertSize(1, pcPlayer->GetEvents()->NumElements());
 	AssertString(szExpectedAction, pcPlayer->GetEvents()->GetText(0));
 
 	cArray.Kill();
@@ -146,21 +146,21 @@ void TestInputChords(void)
 
 	pcDetail->AddEvent("W", 1.0f);
 	cInput.Update();
-	AssertInt(0, cPlayer1.GetEvents()->NumElements());
+	AssertSize(0, cPlayer1.GetEvents()->NumElements());
 
 	pcDetail->AddEvent("W", 0.0f);
 	cInput.Update();
-	AssertInt(0, cPlayer1.GetEvents()->NumElements());
+	AssertSize(0, cPlayer1.GetEvents()->NumElements());
 
 	pcDetail->AddEvent("W", 1.0f);
 	cInput.Update();
-	AssertInt(1, cPlayer1.GetEvents()->NumElements());
+	AssertSize(1, cPlayer1.GetEvents()->NumElements());
 	AssertString("Player 1 Up: Up", cPlayer1.GetEvents()->GetText(0));
 	cPlayer1.GetEvents()->ReInit();
 
 	pcDetail->AddEvent("W", 0.0f);
 	cInput.Update();
-	AssertInt(0, cPlayer1.GetEvents()->NumElements());
+	AssertSize(0, cPlayer1.GetEvents()->NumElements());
 
 	AssertEvents(&cInput, pcDetail, &cPlayer1, "Player 1 Up: Up",  "W\0 1", "W\0 0", "W\0 1", NULL);
 	pcDetail->AddEvent("W", 0.0f);
@@ -224,19 +224,19 @@ void TestInputChords(void)
 	cPlayer1.GetEvents()->ReInit();
 	pcDetail->AddEvent("W", 1.0f);
 	cInput.Update();
-	AssertInt(0, cPlayer1.GetEvents()->NumElements());
+	AssertSize(0, cPlayer1.GetEvents()->NumElements());
 
 	pcDetail->AddEvent("Cursor Left", 1.0f);
 	cInput.Update();
-	AssertInt(0, cPlayer1.GetEvents()->NumElements());
+	AssertSize(0, cPlayer1.GetEvents()->NumElements());
 
 	pcDetail->AddEvent("W", 0.0f);
 	cInput.Update();
-	AssertInt(0, cPlayer1.GetEvents()->NumElements());
+	AssertSize(0, cPlayer1.GetEvents()->NumElements());
 
 	pcDetail->AddEvent("W", 1.0f);
 	cInput.Update();
-	AssertInt(1, cPlayer1.GetEvents()->NumElements());
+	AssertSize(1, cPlayer1.GetEvents()->NumElements());
 	AssertString("Player 1 Up: Up", cPlayer1.GetEvents()->GetText(0));
 	cPlayer1.GetEvents()->ReInit();
 
