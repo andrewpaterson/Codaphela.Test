@@ -233,8 +233,11 @@
     <ClCompile Include="TestPreprocessor.cpp" />
     <ClCompile Include="TestProject.cpp" />
     <ClCompile Include="TestCppTokeniser.cpp" />
+    <ClCompile Include="TestCppErrors.cpp" />
     <ClCompile Include="TestCppParser.cpp" />
     <ClCompile Include="TestCppHighlighter.cpp" />
+    <ClCompile Include="TestCPP65Context.cpp" />
+    <ClCompile Include="TestCPP65Generator.cpp" />
     <ClCompile Include="TestUnit1.cpp" />
     <ClCompile Include="TestUnit2.cpp" />
     <ClCompile Include="TestUnit3.cpp" />
@@ -243,6 +246,7 @@
   <ItemGroup>
     <ClInclude Include="TestHeader.h" />
     <ClInclude Include="TestHeader2.h" />
+    <ClInclude Include="TestCPP65Context.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
@@ -254,6 +258,14 @@
     </ProjectReference>
     <ProjectReference Include="..\..\..\CommonLibraries\CppParserLib\CppParserLib.vcxproj">
       <Project>{4d010c1e-4dce-4271-9b1c-87bbf0bc761c}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\CommonLibraries\MicroprocessorLib\MicroprocessorLib.vcxproj">
+      <Project>{0bf6f66e-80b2-44cf-897c-0f305aaf6af0}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\CommonLibraries\Assembler65Lib\Assembler65Lib.vcxproj">
+      <Project>{785fc14c-ccfc-45f8-bf51-2fd3049cea4a}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\..\..\CommonLibraries\StandardLib\StandardLib.vcxproj">

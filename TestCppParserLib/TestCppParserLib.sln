@@ -11,6 +11,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CppParserLib", "..\..\Commo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestLib", "..\..\CommonLibraries\TestLib\TestLib.vcxproj", "{D06D265E-A503-42F8-A93A-A0A1C0B058FF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MicroprocessorLib", "..\..\CommonLibraries\MicroprocessorLib\MicroprocessorLib.vcxproj", "{0BF6F66E-80B2-44CF-897C-0F305AAF6AF0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Assembler65Lib", "..\..\CommonLibraries\Assembler65Lib\Assembler65Lib.vcxproj", "{785FC14C-CCFC-45F8-BF51-2FD3049CEA4A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0BF6F66E-80B2-44CF-897C-0F305AAF6AF0} = {0BF6F66E-80B2-44CF-897C-0F305AAF6AF0}
+	EndProjectSection
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestCppParserLib", "TestCppParserLib\TestCppParserLib.vcxproj", "{005795B4-42DF-4725-8058-549AF2BBDDAF}"
 EndProject
 Global
@@ -53,6 +60,22 @@ Global
 		{D06D265E-A503-42F8-A93A-A0A1C0B058FF}.Release|Win32.Build.0 = Release|Win32
 		{D06D265E-A503-42F8-A93A-A0A1C0B058FF}.Release|x64.ActiveCfg = Release|x64
 		{D06D265E-A503-42F8-A93A-A0A1C0B058FF}.Release|x64.Build.0 = Release|x64
+		{0BF6F66E-80B2-44CF-897C-0F305AAF6AF0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0BF6F66E-80B2-44CF-897C-0F305AAF6AF0}.Debug|Win32.Build.0 = Debug|Win32
+		{0BF6F66E-80B2-44CF-897C-0F305AAF6AF0}.Debug|x64.ActiveCfg = Debug|x64
+		{0BF6F66E-80B2-44CF-897C-0F305AAF6AF0}.Debug|x64.Build.0 = Debug|x64
+		{0BF6F66E-80B2-44CF-897C-0F305AAF6AF0}.Release|Win32.ActiveCfg = Release|Win32
+		{0BF6F66E-80B2-44CF-897C-0F305AAF6AF0}.Release|Win32.Build.0 = Release|Win32
+		{0BF6F66E-80B2-44CF-897C-0F305AAF6AF0}.Release|x64.ActiveCfg = Release|x64
+		{0BF6F66E-80B2-44CF-897C-0F305AAF6AF0}.Release|x64.Build.0 = Release|x64
+		{785FC14C-CCFC-45F8-BF51-2FD3049CEA4A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{785FC14C-CCFC-45F8-BF51-2FD3049CEA4A}.Debug|Win32.Build.0 = Debug|Win32
+		{785FC14C-CCFC-45F8-BF51-2FD3049CEA4A}.Debug|x64.ActiveCfg = Debug|x64
+		{785FC14C-CCFC-45F8-BF51-2FD3049CEA4A}.Debug|x64.Build.0 = Debug|x64
+		{785FC14C-CCFC-45F8-BF51-2FD3049CEA4A}.Release|Win32.ActiveCfg = Release|Win32
+		{785FC14C-CCFC-45F8-BF51-2FD3049CEA4A}.Release|Win32.Build.0 = Release|Win32
+		{785FC14C-CCFC-45F8-BF51-2FD3049CEA4A}.Release|x64.ActiveCfg = Release|x64
+		{785FC14C-CCFC-45F8-BF51-2FD3049CEA4A}.Release|x64.Build.0 = Release|x64
 		{005795B4-42DF-4725-8058-549AF2BBDDAF}.Debug|Win32.ActiveCfg = Debug|Win32
 		{005795B4-42DF-4725-8058-549AF2BBDDAF}.Debug|Win32.Build.0 = Debug|Win32
 		{005795B4-42DF-4725-8058-549AF2BBDDAF}.Debug|x64.ActiveCfg = Debug|x64

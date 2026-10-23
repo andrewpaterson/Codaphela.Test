@@ -1,5 +1,6 @@
 # Linux build of TestCppParserLib (BaseLib + TestLib + StandardLib + CppParserLib +
-# TestCppParserLib).
+# MicroprocessorLib + Assembler65Lib + TestCppParserLib).  The 65C64 generator tests
+# assemble the generated code and run it on the 65C64 simulator.
 #
 # Builds 32-bit (-m32, needs g++-multilib) by default.  Add -DBASELIB_64=ON
 # for a 64-bit build, in its own build directory:
@@ -37,6 +38,8 @@ set(BASELIB_DIR "${COMMON_DIR}/BaseLib")
 set(TESTLIB_DIR "${COMMON_DIR}/TestLib")
 set(STANDARDLIB_DIR "${COMMON_DIR}/StandardLib")
 set(CPPPARSERLIB_DIR "${COMMON_DIR}/CppParserLib")
+set(MICROPROCESSORLIB_DIR "${COMMON_DIR}/MicroprocessorLib")
+set(ASSEMBLER65LIB_DIR "${COMMON_DIR}/Assembler65Lib")
 set(TESTCPPPARSERLIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/TestCppParserLib")
 
 
@@ -89,6 +92,10 @@ vcxproj_sources(TESTLIB_SOURCES "${TESTLIB_DIR}/TestLib.vcxproj")
 vcxproj_sources(STANDARDLIB_SOURCES "${STANDARDLIB_DIR}/StandardLib.vcxproj")
 
 vcxproj_sources(CPPPARSERLIB_SOURCES "${CPPPARSERLIB_DIR}/CppParserLib.vcxproj")
+
+vcxproj_sources(MICROPROCESSORLIB_SOURCES "${MICROPROCESSORLIB_DIR}/MicroprocessorLib.vcxproj")
+
+vcxproj_sources(ASSEMBLER65LIB_SOURCES "${ASSEMBLER65LIB_DIR}/Assembler65Lib.vcxproj")
 
 vcxproj_sources(TESTCPPPARSERLIB_SOURCES "${TESTCPPPARSERLIB_DIR}/TestCppParserLib.vcxproj")
 
@@ -179,6 +186,12 @@ target_compile_definitions(StandardLib PRIVATE $<$<CONFIG:Debug>:DEBUG_POINTER>)
 add_library(CppParserLib STATIC ${CPPPARSERLIB_SOURCES})
 target_link_libraries(CppParserLib PUBLIC StandardLib BaseLib)
 
+add_library(MicroprocessorLib STATIC ${MICROPROCESSORLIB_SOURCES})
+target_link_libraries(MicroprocessorLib PUBLIC StandardLib BaseLib)
+
+add_library(Assembler65Lib STATIC ${ASSEMBLER65LIB_SOURCES})
+target_link_libraries(Assembler65Lib PUBLIC MicroprocessorLib StandardLib BaseLib)
+
 add_executable(TestCppParserLib ${TESTCPPPARSERLIB_SOURCES})
 
 # TestUnit*.cpp are also input to the preprocessor tests, which check line
@@ -187,7 +200,7 @@ set_source_files_properties(
 	"${TESTCPPPARSERLIB_DIR}/TestUnit1.cpp"
 	"${TESTCPPPARSERLIB_DIR}/TestUnit2.cpp"
 	PROPERTIES COMPILE_OPTIONS -Wno-unused-but-set-variable)
-target_link_libraries(TestCppParserLib PRIVATE TestLib CppParserLib StandardLib BaseLib)
+target_link_libraries(TestCppParserLib PRIVATE TestLib CppParserLib Assembler65Lib MicroprocessorLib StandardLib BaseLib)
 
 # The tests read their input (Input/ ...) relative to the project directory,
 # as Visual Studio does.

@@ -1355,6 +1355,63 @@ void TestPreprocessorLocations(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The preprocessor's errors for szSource, one a line.
+//
+//////////////////////////////////////////////////////////////////////////
+static bool PreprocessErrors(char* szSource, CChars* pszErrors)
+{
+	CTranslationUnit	cFile;
+	CPreprocessor		cPreprocessor;
+	bool				bResult;
+
+	cFile.Init("Errors.cpp", NULL, false);
+	cFile.SetContents(szSource);
+	cPreprocessor.Init(NULL);
+	bResult = cPreprocessor.PreprocessTranslationUnit(&cFile);
+	pszErrors->Append(cPreprocessor.GetErrors()->Text());
+	cPreprocessor.Kill();
+	cFile.Kill();
+	return bResult;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestPreprocessorErrors(void)
+{
+	CChars	szErrors;
+
+	szErrors.Init();
+	AssertTrue(PreprocessErrors("int x;\n", &szErrors));
+	AssertString("", szErrors.Text());
+	szErrors.Kill();
+
+	szErrors.Init();
+	PreprocessErrors("int x;\n#frobnicate 3\n", &szErrors);
+	AssertString("Errors.cpp (2, 2): Unknown directive #frobnicate 3\n", szErrors.Text());
+	szErrors.Kill();
+
+	szErrors.Init();
+	PreprocessErrors("#endif\n", &szErrors);
+	AssertString("Errors.cpp (1, 7): #elif, #else or #endif without #if.\n", szErrors.Text());
+	szErrors.Kill();
+
+	szErrors.Init();
+	PreprocessErrors("#include \"Missing.h\"\n", &szErrors);
+	AssertString("Errors.cpp (1, 10): Could not include file \"Missing.h\"\n", szErrors.Text());
+	szErrors.Kill();
+
+	szErrors.Init();
+	PreprocessErrors("#if 1\nint x;\n", &szErrors);
+	AssertString("Errors.cpp: Unterminated conditional directive.\n", szErrors.Text());
+	szErrors.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestPreprocessor(void)
@@ -1397,6 +1454,7 @@ void TestPreprocessor(void)
 	TestPreprocessorNumbersAndPunctuators();
 	TestPreprocessorMultiLineArguments();
 	TestPreprocessorLocations();
+	TestPreprocessorErrors();
 
 	NumberKill();
 	OperatorsKill();

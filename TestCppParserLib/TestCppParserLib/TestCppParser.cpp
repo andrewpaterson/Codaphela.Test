@@ -473,6 +473,10 @@ int b = 2;\n\
 void f(void) { int c = 3 +; c++; }"));
 	AssertInt(2, sParsed.iErrors);
 	AssertInt(2, (int)sParsed.cTree.NumErrors());
+	AssertString("Parsed.cpp (1, 9): Expected an expression. [;]", sParsed.cTree.GetError(0));
+	AssertInt(sParsed.FindToken(";", 0), sParsed.cTree.GetErrorToken(0));
+	AssertString("Parsed.cpp (3, 27): Expected an expression. [;]", sParsed.cTree.GetErrors()->Get(1));
+	AssertInt(2, sParsed.cTree.GetErrors()->GetLine(1));
 
 	sz.Init();
 	AssertString("\

@@ -14,6 +14,9 @@
     <Filter Include="Source\Parser">
       <UniqueIdentifier>{7db195a5-6b29-4e91-bf72-e70af7eaa064}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Generator65">
+      <UniqueIdentifier>{afe39279-3487-443b-ad0d-c2f366ab3b9e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestCppParserLib.cpp">
@@ -34,8 +37,17 @@
     <ClCompile Include="TestCppTokeniser.cpp">
       <Filter>Source\Parser</Filter>
     </ClCompile>
+    <ClCompile Include="TestCppErrors.cpp">
+      <Filter>Source\Parser</Filter>
+    </ClCompile>
     <ClCompile Include="TestCppParser.cpp">
       <Filter>Source\Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCPP65Context.cpp">
+      <Filter>Source\Generator65</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCPP65Generator.cpp">
+      <Filter>Source\Generator65</Filter>
     </ClCompile>
     <ClCompile Include="TestCppHighlighter.cpp">
       <Filter>Source\Parser</Filter>
@@ -50,6 +62,9 @@
   <ItemGroup>
     <ClInclude Include="TestHeader.h">
       <Filter>Source\Project</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCPP65Context.h">
+      <Filter>Source\Generator65</Filter>
     </ClInclude>
     <ClInclude Include="TestHeader2.h">
       <Filter>Source\Project</Filter>

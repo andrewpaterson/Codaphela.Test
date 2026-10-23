@@ -274,24 +274,31 @@ void TestCppTokeniserErrors(void)
 {
 	CTranslationUnit	cFile;
 	CCPPTokeniser		cTokeniser;
-	SLogConfig			sLogConfig;
 
-	gcLogger.GetConfig(&sLogConfig);
-	gcLogger.SetBreakOnError(false);
-
+	//Errors are kept in the tokeniser's list.  Their tokens are preprocessed token indices.
 	AssertFalse(TokeniseText(&cFile, &cTokeniser, "int x = 12q;"));
+	AssertSize(1, cTokeniser.GetErrors()->NumErrors());
+	AssertString("Tokens.cpp (1, 9): Invalid integer literal suffix. [12q]\n", cTokeniser.GetErrors()->Text());
+	AssertInt(3, cTokeniser.GetErrors()->GetToken(0));
+	AssertInt(0, cTokeniser.GetErrors()->GetLine(0));
+	AssertInt(8, cTokeniser.GetErrors()->GetColumn(0));
 	cTokeniser.Kill();
 	cFile.Kill();
 
 	AssertFalse(TokeniseText(&cFile, &cTokeniser, "int x = 0x1FFFFFFFFFFFFFFFF;"));
+	AssertString("Tokens.cpp (1, 9): Integer literal is too large. [0x1FFFFFFFFFFFFFFFF]\n", cTokeniser.GetErrors()->Text());
 	cTokeniser.Kill();
 	cFile.Kill();
 
-	AssertFalse(TokeniseText(&cFile, &cTokeniser, "char c = '';"));
+	AssertFalse(TokeniseText(&cFile, &cTokeniser, "char c = '';\nint y = 1; int z = 2q;"));
+	AssertString("Tokens.cpp (1, 10): Empty character literal. ['']\nTokens.cpp (2, 20): Invalid integer literal suffix. [2q]\n", cTokeniser.GetErrors()->Text());
 	cTokeniser.Kill();
 	cFile.Kill();
 
-	gcLogger.SetConfig(&sLogConfig);
+	AssertTrue(TokeniseText(&cFile, &cTokeniser, "int x = 12;"));
+	AssertSize(0, cTokeniser.GetErrors()->NumErrors());
+	cTokeniser.Kill();
+	cFile.Kill();
 }
 
 
