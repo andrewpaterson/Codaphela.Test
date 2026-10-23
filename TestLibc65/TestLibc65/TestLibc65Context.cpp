@@ -39,7 +39,6 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 	CChars			szLibc65;
 	CChars			szLibraries;
 	CChars			szMissing;
-	CArrayChars		aszMissing;
 	size			i;
 	bool			bResult;
 
@@ -59,21 +58,8 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 	AssertString("", cBuilder.GetErrors());
 
 	//What is used but written by no linked unit.
-	aszMissing.Init();
-	for (i = 0; i < cBuilder.NumMissing(); i++)
-	{
-		aszMissing.Add(cBuilder.GetMissing(i));
-	}
-	aszMissing.QuickSort(true);
 	szMissing.Init();
-	for (i = 0; i < aszMissing.NumElements(); i++)
-	{
-		if (!szMissing.Empty())
-		{
-			szMissing.Append(' ');
-		}
-		szMissing.Append(aszMissing.GetText(i));
-	}
+	cBuilder.GetMissingNames(&szMissing);
 	AssertString(szStubs, szMissing.Text());
 
 	psRun->pcMemory = NULL;
@@ -81,14 +67,12 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 	{
 		psRun->pcMemory = (CAsm65Memory*)malloc(sizeof(CAsm65Memory));
 		psRun->pcMemory->Init();
-		psRun->pcMemory->SetLong(VECTOR_65C64_BASE + 4 * VECTOR_65C64_RESET, CPP65_PROGRAM_ADDRESS);
-		psRun->pcMemory->Load(cBuilder.GetOutput());
+		psRun->pcMemory->LoadProgram(cBuilder.GetOutput(), CPP65_PROGRAM_ADDRESS);
 		psRun->cMeta.Init(CAsm65Memory::TickHigh, CAsm65Memory::TickLow, psRun->pcMemory);
 		psRun->cMeta.TickInstruction();
 	}
 
 	szMissing.Kill();
-	aszMissing.Kill();
 	cBuilder.Kill();
 	szLibraries.Kill();
 	szLibc65.Kill();

@@ -544,7 +544,7 @@ void TestCPP65GeneratorConversions(void)
 		"int main() { return Mix(\"ilsi\", -5, 0x100000000LL, gText, (unsigned char)200) == 0x100000000LL + 199; }"));
 	AssertInt(1, TestCPP65Main(
 		"int Same(const char* a, const char* b) { while (*a && (*a == *b)) { a++; b++; } return *a == *b; }\n"
-		"struct CName { int Get() { return Same(__PRETTY_FUNCTION__, \"CName::Get\") && Same(__func__, \"Get\") && Same(__FUNCTION__ \".x\", \"Get.x\"); } };\n"
+		"struct CName { int Get() { return Same(__PRETTY_FUNCTION__, \"CName::Get\") && Same(__func__, \"Get\") && Same(__FUNCTION__ \".x\", \"Get.x\") && Same(__FUNCSIG__, \"CName::Get\") && Same(__FUNCDNAME__ \".x\", \"_CName__Get.x\"); } };\n"
 		"int main() { CName c; return c.Get() && Same(__FUNCTION__, \"main\") && Same(\"a\" \"bc\", \"abc\") && __65C64__; }"));
 	AssertInt(0 + 4 * 32 + 16 * 31, TestCPP65Main(CPP65_BUILTINS
 		"int main() { return Ctz(1) + 4 * Ctz(0) + 16 * Ctz(0x80000000); }"));
@@ -1077,6 +1077,40 @@ void TestCPP65GeneratorClasses(void)
 	AssertTrue(szAssembly.Contains(
 		"_A__2:\n"
 		"\t\t.long _A__f\n"));
+	szErrors.Kill();
+	szAssembly.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// extern declares a global without defining it, and so does extern "C" without
+// braces (as if it were extern); with an initialiser, or in extern "C" { }, it is a
+// definition.  A second definition would be an error.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorExtern(void)
+{
+	CChars	szAssembly;
+	CChars	szErrors;
+
+	AssertInt(7 + 5 + 3 + 2, TestCPP65Main(
+		"extern int gPlain;\n"
+		"extern \"C\" int gCount;\n"
+		"extern \"C\" int gInitialised = 5;\n"
+		"extern int gExtern = 3;\n"
+		"extern \"C\" { int gBraced = 2; }\n"
+		"int gPlain = 0;\n"
+		"int gCount = 7;\n"
+		"int main() { return gCount + gInitialised + gExtern + gBraced + gPlain; }\n"));
+
+	//Only declared: it is an external of the object, not data.
+	szAssembly.Init();
+	szErrors.Init();
+	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "extern \"C\" char gStart;\nint Get() { return (int)&gStart; }\n"));
+	AssertString("", szErrors.Text());
+	AssertFalse(szAssembly.Contains("_gStart:"));
+	AssertTrue(szAssembly.Contains("cpy A, _gStart"));
 	szErrors.Kill();
 	szAssembly.Kill();
 }
@@ -1931,6 +1965,7 @@ void TestCPP65Generator(void)
 	TestCPP65GeneratorStatements();
 	TestCPP65GeneratorPrograms();
 	TestCPP65GeneratorClasses();
+	TestCPP65GeneratorExtern();
 	TestCPP65GeneratorArrayTemplate();
 	TestCPP65GeneratorProject();
 	TestCPP65GeneratorFloat();

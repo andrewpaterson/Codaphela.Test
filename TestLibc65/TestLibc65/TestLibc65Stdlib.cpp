@@ -518,6 +518,130 @@ void TestLibc65StdlibUnderscoreExit(void)
 }
 
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A program that logs at 0010:0000 onwards: main logs 0, the atexit functions 1 and 2, gsFinal's destructor 9.
+// main ends with szEnd.
+//
+//////////////////////////////////////////////////////////////////////////
+static void TestLibc65StdlibAtExitProgram(STestLibc65Run* psRun, const char* szEnd)
+{
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "ctype.cpp", NULL };
+	CChars				szSource;
+
+	szSource.Init(
+		"#include <stdlib.h>\n"
+		"int giNext;\n"
+		"void Log(int i)\n"
+		"{\n"
+		"	((int*)0x100000)[giNext] = i;\n"
+		"	giNext++;\n"
+		"}\n"
+		"struct SFinal\n"
+		"{\n"
+		"	~SFinal()\n"
+		"	{\n"
+		"		Log(9);\n"
+		"	}\n"
+		"};\n"
+		"SFinal gsFinal __attribute__((used));\n"
+		"void First() { Log(1); }\n"
+		"void Second() { Log(2); }\n"
+		"int main()\n"
+		"{\n"
+		"	if (atexit(First) != 0) return 10;\n"
+		"	if (atexit(Second) != 0) return 11;\n"
+		"	Log(0);\n");
+	szSource.Append(szEnd);
+	szSource.Append("}\n");
+	AssertTrue(TestLibc65Begin(psRun, aszUnits, "", szSource.Text()));
+	szSource.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// main logged 0, then the atexit functions ran last first (2 and 1), then gsFinal's destructor (9).
+//
+//////////////////////////////////////////////////////////////////////////
+static void TestLibc65StdlibAssertExitLog(STestLibc65Run* psRun)
+{
+	AssertInt(0, TestLibc65Result(psRun, 0));
+	AssertInt(2, TestLibc65Result(psRun, 1));
+	AssertInt(1, TestLibc65Result(psRun, 2));
+	AssertInt(9, TestLibc65Result(psRun, 3));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The atexit functions run last first, before the destructors of globals, when main returns and when exit is
+// called; _Exit runs neither.  At most 32 functions can be registered.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLibc65StdlibAtExit(void)
+{
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "ctype.cpp", NULL };
+	STestLibc65Run		sRun;
+
+	TestLibc65StdlibAtExitProgram(&sRun, "	return 5;\n");
+	AssertTrue(TestLibc65Run(&sRun, 2000000));
+	AssertInt(5, TestLibc65Return(&sRun));
+	TestLibc65StdlibAssertExitLog(&sRun);
+	TestLibc65End(&sRun);
+
+	TestLibc65StdlibAtExitProgram(&sRun, "	exit(6);\n	return 5;\n");
+	AssertTrue(TestLibc65RunToStop(&sRun, 2000000));
+	AssertInt(6, TestLibc65Return(&sRun));
+	TestLibc65StdlibAssertExitLog(&sRun);
+	TestLibc65End(&sRun);
+
+	TestLibc65StdlibAtExitProgram(&sRun, "	_Exit(4);\n	return 5;\n");
+	AssertTrue(TestLibc65RunToStop(&sRun, 2000000));
+	AssertInt(4, TestLibc65Return(&sRun));
+	AssertInt(0, TestLibc65Result(&sRun, 0));
+	AssertInt(0, TestLibc65Result(&sRun, 1));
+	TestLibc65End(&sRun);
+
+	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "",
+		"#include <stdlib.h>\n"
+		"int giCount;\n"
+		"void Count() { giCount++; *(int*)0x100000 = giCount; }\n"
+		"int main()\n"
+		"{\n"
+		"	for (int i = 0; i < 32; i++)\n"
+		"	{\n"
+		"		if (atexit(Count) != 0) return 1;\n"
+		"	}\n"
+		"	if (atexit(Count) != -1) return 2;\n"
+		"	return 0;\n"
+		"}\n"));
+	AssertTrue(TestLibc65Run(&sRun, 2000000));
+	AssertInt(0, TestLibc65Return(&sRun));
+	AssertInt(32, TestLibc65Result(&sRun, 0));
+	TestLibc65End(&sRun);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// abort stops at once with EXIT_FAILURE: neither the atexit functions nor the destructors of globals run.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLibc65StdlibAbort(void)
+{
+	STestLibc65Run	sRun;
+
+	TestLibc65StdlibAtExitProgram(&sRun, "	abort();\n	return 5;\n");
+	AssertTrue(TestLibc65RunToStop(&sRun, 2000000));
+	AssertInt(1, TestLibc65Return(&sRun));
+	AssertInt(0, TestLibc65Result(&sRun, 0));
+	AssertInt(0, TestLibc65Result(&sRun, 1));
+	TestLibc65End(&sRun);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -531,6 +655,8 @@ void TestLibc65Stdlib(void)
 	TestLibc65StdlibFragmentation();
 	TestLibc65StdlibExit();
 	TestLibc65StdlibUnderscoreExit();
+	TestLibc65StdlibAtExit();
+	TestLibc65StdlibAbort();
 	TestLibc65StdlibQsort();
 	TestLibc65StdlibRand();
 	TestLibc65StdlibStrtol();

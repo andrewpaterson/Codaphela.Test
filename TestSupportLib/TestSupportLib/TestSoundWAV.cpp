@@ -365,11 +365,54 @@ void TestSoundWAVWriterBad(void)
 	pcSound = OMalloc<CSound>(8000, 10, PT_int16, SOUND_IGNORED, CHANNEL_STOP);
 	AssertFalse(SaveWAV(pcSound, "Output" _FS_ "ignored.wav"));
 
-	pcSound = OMalloc<CSound>(8000, 10, PT_nybble, SOUND_MONO, CHANNEL_STOP);
-	AssertFalse(SaveWAV(pcSound, "Output" _FS_ "nybble.wav"));
+	pcSound = OMalloc<CSound>(8000, 10, PT_int64, SOUND_MONO, CHANNEL_STOP);
+	AssertFalse(SaveWAV(pcSound, "Output" _FS_ "int64.wav"));
 	gcLogger.SetConfig(&sLogConfig);
 
 	pcSound = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Bit sized sounds are written as 8 bit PCM.  Every code is exact in 8
+// bits (a nybble's n is 16n).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSoundWAVWriterBitty(void)
+{
+	size		i;
+	uint8*		pui;
+	int			iMismatches;
+
+	Ptr<CSound> pcSound = OMalloc<CSound>(16000, 16, PT_nybble, SOUND_LEFT, SOUND_RIGHT, CHANNEL_STOP);
+	for (i = 0; i < 16; i++)
+	{
+		pcSound->SetSample(i, 0, ((float64)i - 8.0) / 8.0);
+		pcSound->SetSample(i, 1, (7.0 - (float64)i) / 8.0);
+	}
+	AssertWAVRoundTrip(pcSound, "nybble.wav", WSF_Default, PT_uint8, 0.0);
+
+	Ptr<CSound> pcRead = LoadWAV("Output" _FS_ "nybble.wav");
+	pui = (uint8*)pcRead->GetData();
+	iMismatches = 0;
+	for (i = 0; i < 16; i++)
+	{
+		iMismatches += pui[i * 2] != i * 16 ? 1 : 0;
+		iMismatches += pui[i * 2 + 1] != (15 - i) * 16 ? 1 : 0;
+	}
+	AssertInt(0, iMismatches);
+
+	pcSound = MakeWAVTestSound(8000, 100, PT_sixbits, 1);
+	for (i = 0; i < 100; i++)
+	{
+		pcSound->SetSample(i, 0, (float64)((int)(i % 64) - 32) / 32.0);
+	}
+	AssertWAVRoundTrip(pcSound, "sixbits.wav", WSF_Default, PT_uint8, 0.0);
+	AssertWAVRoundTrip(pcSound, "sixbits16.wav", WSF_PCM16, PT_int16, 0.0);
+
+	pcSound = NULL;
+	pcRead = NULL;
 }
 
 
@@ -389,6 +432,7 @@ void TestSoundWAV(void)
 	TestSoundWAVWriter();
 	TestSoundWAVWriterChannelOrder();
 	TestSoundWAVWriterBad();
+	TestSoundWAVWriterBitty();
 
 	ObjectsKill(false);
 	DataIOKill();

@@ -102,10 +102,8 @@ void TestAsm65BeginOutput(STestAsm65Run* psRun, CAsm65Output* pcOutput, uint32 u
 {
 	psRun->pcContext = (CAsm65Memory*)malloc(sizeof(CAsm65Memory));
 	psRun->pcContext->Init();
-	psRun->pcContext->SetLong(VECTOR_65C64_BASE + 4 * VECTOR_65C64_RESET, uiResetAddress);
 	psRun->uiInstructions = 0;
-
-	psRun->pcContext->Load(pcOutput);
+	psRun->pcContext->LoadProgram(pcOutput, uiResetAddress);
 
 	psRun->cMeta.Init(CAsm65Memory::TickHigh, CAsm65Memory::TickLow, psRun->pcContext);
 	psRun->cMeta.TickInstruction();

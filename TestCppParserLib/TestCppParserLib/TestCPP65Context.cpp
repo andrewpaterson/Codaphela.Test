@@ -91,9 +91,8 @@ bool TestCPP65BeginBuilt(STestCPP65Run* psRun, CCPP65Builder* pcBuilder)
 {
 	psRun->pcContext = (CAsm65Memory*)malloc(sizeof(CAsm65Memory));
 	psRun->pcContext->Init();
-	psRun->pcContext->SetLong(VECTOR_65C64_BASE + 4 * VECTOR_65C64_RESET, CPP65_PROGRAM_ADDRESS);
 	psRun->uiInstructions = 0;
-	psRun->pcContext->Load(pcBuilder->GetOutput());
+	psRun->pcContext->LoadProgram(pcBuilder->GetOutput(), CPP65_PROGRAM_ADDRESS);
 
 	psRun->cMeta.Init(CAsm65Memory::TickHigh, CAsm65Memory::TickLow, psRun->pcContext);
 	psRun->cMeta.TickInstruction();
@@ -286,7 +285,6 @@ bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const ch
 	CChars			szLibrary;
 	CChars			szFile;
 	CChars			szMissing;
-	CArrayChars		aszMissing;
 	int				iSlash;
 	size			i;
 	bool			bResult;
@@ -331,21 +329,8 @@ bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const ch
 	}
 
 	//What is used but written by no unit.
-	aszMissing.Init();
-	for (i = 0; i < cBuilder.NumMissing(); i++)
-	{
-		aszMissing.Add(cBuilder.GetMissing(i));
-	}
-	aszMissing.QuickSort(true);
 	szMissing.Init();
-	for (i = 0; i < aszMissing.NumElements(); i++)
-	{
-		if (!szMissing.Empty())
-		{
-			szMissing.Append(' ');
-		}
-		szMissing.Append(aszMissing.GetText(i));
-	}
+	cBuilder.GetMissingNames(&szMissing);
 	AssertString(szStubs, szMissing.Text());
 	if (pszMap)
 	{
@@ -353,7 +338,6 @@ bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const ch
 	}
 
 	szMissing.Kill();
-	aszMissing.Kill();
 	cBuilder.Kill();
 	return bResult;
 }
