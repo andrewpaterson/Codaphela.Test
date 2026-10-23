@@ -35,6 +35,8 @@ void Test65C64Operand(void);
 void Test65C64Block(void);
 void Test65C64Vector(void);
 void TestTimeline(void);
+void TestVoltageConfiguration(void);
+void TestLogicPort(void);
 
 
 int __cdecl main(void)
@@ -77,6 +79,8 @@ int __cdecl main(void)
 	Test65C64Block();
 	Test65C64Vector();
 	TestTimeline();
+	TestVoltageConfiguration();
+	TestLogicPort();
 
 	UnknownsKill();
 	MemoryKill();

@@ -157,6 +157,52 @@ void TestArrayCommonObjectMorphInto(void)
 	ObjectsKill(false);
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayCommonObjectInsertNull(void)
+{
+	Ptr<CArrayObject>			pArray;
+	Ptr<CRoot>					pRoot;
+	Ptr<CTestSaveableObject1>	pObject1;
+	Ptr<CTestSaveableObject1>	pObject2;
+	CPointer					pNull;
+
+	ObjectsInit();
+
+	pRoot = ORoot();
+	pArray = OMalloc<CArrayObject>();
+	pRoot->Add(pArray);
+
+	pObject1 = ONMalloc<CTestSaveableObject1>("Fred");
+	pObject2 = ONMalloc<CTestSaveableObject1>("Barney");
+	pNull = NULL;
+
+	pArray->Add(pObject1);
+	pArray->Add(pNull);
+	AssertSize(2, pArray->NumElements());
+	AssertSize(1, pArray->NonNullElements());
+
+	AssertTrue(pArray->Insert(0, pNull));
+	AssertSize(3, pArray->NumElements());
+	AssertSize(1, pArray->NonNullElements());
+
+	AssertTrue(pArray->Insert(2, pObject2));
+	AssertSize(4, pArray->NumElements());
+	AssertSize(2, pArray->NonNullElements());
+
+	AssertNull(pArray->UnsafeGetObject(0));
+	AssertPointer(&pObject1, pArray->UnsafeGetObject(1));
+	AssertPointer(&pObject2, pArray->UnsafeGetObject(2));
+	AssertNull(pArray->UnsafeGetObject(3));
+
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -170,6 +216,7 @@ void TestArrayCommonObject(void)
 
 	TestArrayCommonObjectPointerRemapping();
 	TestArrayCommonObjectMorphInto();
+	TestArrayCommonObjectInsertNull();
 
 	DataIOKill();
 	TypesKill();

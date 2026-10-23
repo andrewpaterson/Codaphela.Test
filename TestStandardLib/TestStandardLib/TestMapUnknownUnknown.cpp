@@ -402,6 +402,110 @@ void TestMapUnknownUnknownLoad(void)
 //                                                                      //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
+void TestMapUnknownUnknownLoadNull(void)
+{
+	MemoryInit();
+	UnknownsInit();
+
+	CMapUnknownUnknown		cMap;
+	CFileUtil				cFileUtil;
+	CTestNamedUnknown*		pcKey;
+	CTestUnknownJobbie*		pcValue;
+	CUnknown*				pcTestKey;
+	CUnknown*				pcTestValue;
+	CChunkFile				cFile;
+	bool					bResult;
+	SMapIterator			sIter;
+	bool					bExists;
+	size					uiNulls;
+	size					uiValues;
+
+	gcUnknowns.AddConstructor<CTestNamedUnknown>();
+	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cFileUtil.RemoveDir("Output" _FS_ "MapUnknownUnknownNull");
+	cFileUtil.MakeDir("Output" _FS_ "MapUnknownUnknownNull");
+
+	cMap.Init();
+
+	pcKey = gcUnknowns.Add<CTestNamedUnknown>();
+	pcKey->Init("Something");
+	pcValue = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcValue->Init(7, "Something");
+	AssertTrue(cMap.Put(pcKey, pcValue));
+
+	pcKey = gcUnknowns.Add<CTestNamedUnknown>();
+	pcKey->Init("Nothing");
+	AssertTrue(cMap.Put(pcKey, NULL));
+	AssertSize(2, cMap.NumElements());
+	AssertSize(3, gcUnknowns.NumElements());
+
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "MapUnknownUnknownNull" _FS_ "Map.dat")));
+	bResult = cFile.WriteOpen();
+	AssertTrue(bResult);
+
+	bResult = cMap.Save(&cFile);
+	AssertTrue(bResult);
+
+	bResult = cFile.WriteClose();
+	AssertTrue(bResult);
+
+	cFile.Kill();
+	cMap.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "MapUnknownUnknownNull" _FS_ "Map.dat")));
+	bResult = cFile.ReadOpen();
+	AssertTrue(bResult);
+
+	bResult = cMap.Load(&cFile);
+	AssertTrue(bResult);
+
+	bResult = cFile.ReadClose();
+	AssertTrue(bResult);
+	cFile.Kill();
+	AssertSize(2, cMap.NumElements());
+	AssertSize(3, gcUnknowns.NumElements());
+
+	uiNulls = 0;
+	uiValues = 0;
+	bExists = cMap.StartIteration(&sIter, &pcTestKey, &pcTestValue);
+	while (bExists)
+	{
+		pcKey = (CTestNamedUnknown*)pcTestKey;
+		if (pcTestValue == NULL)
+		{
+			AssertString("Nothing", pcKey->mszName.Text());
+			uiNulls++;
+		}
+		else
+		{
+			pcValue = (CTestUnknownJobbie*)pcTestValue;
+			AssertString("Something", pcKey->mszName.Text());
+			AssertInt(7, pcValue->miANumber);
+			AssertString("Something", pcValue->mszText.Text());
+			uiValues++;
+		}
+		bExists = cMap.Iterate(&sIter, &pcTestKey, &pcTestValue);
+	}
+	AssertSize(1, uiNulls);
+	AssertSize(1, uiValues);
+
+	cMap.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cFileUtil.RemoveDir("Output" _FS_ "MapUnknownUnknownNull");
+
+	UnknownsKill();
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
 void TestMapUnknownUnknown(void)
 {
 	BeginTests();
@@ -410,6 +514,7 @@ void TestMapUnknownUnknown(void)
 	TestMapUnknownUnknownIterate();
 	TestMapUnknownUnknownGet();
 	TestMapUnknownUnknownLoad();
+	TestMapUnknownUnknownLoadNull();
 
 	TestStatistics();
 }

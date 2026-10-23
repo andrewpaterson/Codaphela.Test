@@ -297,6 +297,85 @@ void TestMapStringUnknownLoad(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestMapStringUnknownLoadNull(void)
+{
+	MemoryInit();
+	UnknownsInit();
+
+	CMapStringUnknown		cMap;
+	CTestUnknownJobbie*		pcTest;
+	CChunkFile				cFile;
+	CFileUtil				cFileUtil;
+	bool					bResult;
+
+	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cFileUtil.RemoveDir("Output" _FS_ "MapStringUnknownNull");
+	cFileUtil.MakeDir("Output" _FS_ "MapStringUnknownNull");
+
+	cMap.Init();
+
+	pcTest = cMap.Put<CTestUnknownJobbie>("Hello");
+	pcTest->Init(7, "1st");
+	AssertTrue(cMap.Put("Nothing", (CUnknown*)NULL));
+	pcTest = cMap.Put<CTestUnknownJobbie>("World");
+	pcTest->Init(19, "A pony");
+	AssertSize(3, cMap.NumElements());
+	AssertSize(2, gcUnknowns.NumElements());
+
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "MapStringUnknownNull" _FS_ "Map.dat")));
+	bResult = cFile.WriteOpen();
+	AssertTrue(bResult);
+
+	bResult = cMap.Save(&cFile);
+	AssertTrue(bResult);
+
+	bResult = cFile.WriteClose();
+	AssertTrue(bResult);
+
+	cFile.Kill();
+	cMap.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "MapStringUnknownNull" _FS_ "Map.dat")));
+	bResult = cFile.ReadOpen();
+	AssertTrue(bResult);
+
+	bResult = cMap.Load(&cFile);
+	AssertTrue(bResult);
+
+	bResult = cFile.ReadClose();
+	AssertTrue(bResult);
+
+	cFile.Kill();
+	AssertSize(3, cMap.NumElements());
+	AssertSize(2, gcUnknowns.NumElements());
+
+	pcTest = (CTestUnknownJobbie*)cMap.Get("Hello");
+	AssertInt(7, pcTest->miANumber);
+	AssertString("1st", pcTest->mszText.Text());
+
+	AssertNull(cMap.Get("Nothing"));
+
+	pcTest = (CTestUnknownJobbie*)cMap.Get("World");
+	AssertInt(19, pcTest->miANumber);
+	AssertString("A pony", pcTest->mszText.Text());
+
+	cMap.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cFileUtil.RemoveDir("Output" _FS_ "MapStringUnknownNull");
+
+	UnknownsKill();
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestMapStringUnknown(void)
 {
 	BeginTests();
@@ -306,6 +385,7 @@ void TestMapStringUnknown(void)
 	TestMapStringUnknownIterate();
 	TestMapStringUnknownNoOverwrite();
 	TestMapStringUnknownLoad();
+	TestMapStringUnknownLoadNull();
 
 	TestStatistics();
 }
