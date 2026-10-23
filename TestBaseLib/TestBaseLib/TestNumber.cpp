@@ -709,6 +709,37 @@ void TestCopy(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestUnderflow(void)
+{
+	CNumber				cNumber1;
+	UNumber(4, 4)		uNumber2;
+
+	cNumber1.Init("0.0000000000001");
+	uNumber2.c.Copy(&cNumber1, 4, 4);
+	AssertTrue(uNumber2.c.IsZero());
+	AssertTrue(uNumber2.c.IsUnderflow());
+
+	cNumber1.Init("0.00012345");
+	uNumber2.c.Copy(&cNumber1, 4, 4);
+	AssertNumber("0.0001", &uNumber2.c);
+	AssertTrue(uNumber2.c.IsUnderflow());
+
+	cNumber1.Init("0.001");
+	cNumber1.Shift(-15);
+	AssertTrue(cNumber1.IsZero());
+	AssertTrue(cNumber1.IsUnderflow());
+
+	cNumber1.Init("0.001");
+	cNumber1.Shift(-13);
+	AssertNumber("0.0000000000000001", &cNumber1);
+	AssertFalse(cNumber1.IsUnderflow());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestArithmeticGeometricMean(void)
 {
 	CNumber				cNumber1;
@@ -813,6 +844,7 @@ void TestNumber(void)
 	TestInit();
 	TestConstants();
 	TestCopy();
+	TestUnderflow();
 	TestIntValue();
 	TestGreaterThan();
 	TestGreaterThanOrEquals();
