@@ -1469,6 +1469,144 @@ static void AssertCPP65Math(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The distance in ulps between two doubles; 0 for two NaNs.
+//
+//////////////////////////////////////////////////////////////////////////
+static uint64 TestCPP65Ulps(double dActual, double dExpected)
+{
+	int64	lliActual;
+	int64	lliExpected;
+
+	if ((dActual != dActual) || (dExpected != dExpected))
+	{
+		return ((dActual != dActual) && (dExpected != dExpected)) ? 0 : 0xFFFFFFFFFFFFFFFFULL;
+	}
+	memcpy(&lliActual, &dActual, 8);
+	memcpy(&lliExpected, &dExpected, 8);
+	lliActual = (lliActual < 0) ? (int64)0x8000000000000000ULL - lliActual : lliActual;
+	lliExpected = (lliExpected < 0) ? (int64)0x8000000000000000ULL - lliExpected : lliExpected;
+	return (lliActual > lliExpected) ? (uint64)(lliActual - lliExpected) : (uint64)(lliExpected - lliActual);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// math.cpp's transcendental functions on the 65C64 against the C library's long
+// double ones, rounded: within an ulp.  The arguments are special values and ones
+// that are hard for each function.
+//
+//////////////////////////////////////////////////////////////////////////
+static void AssertCPP65Transcendentals(void)
+{
+	STestCPP65Run	sRun;
+	CChars			szSource;
+	size			i;
+	size			j;
+	uint32			uiAddress;
+	uint64			ulliBits;
+	double			adActual[10];
+	double			adExpected[10];
+	double			dX;
+	double			dY;
+
+	static const double	adValues[] =
+	{
+		0.0, -0.0, 1.0, -1.0, 0.5, -0.5, 2.0, 1e-310, -4e-320, 1e-8, 0.1, 0.7853981633974483, 1.5707963267948966, -3.141592653589793,
+		2.356194490192345, 10.0, -100.25, 709.78, -745.0, 1e5, 524288.5, 1.2e15, -5.3193726483265414e255, 1.7976931348623157e308,
+		0.999999999999, 1.0000000001, 0.1875, 0.30000000000000004, 1.0 / 0.0, -1.0 / 0.0, 0.0 / 0.0
+	};
+	static const double	adPowPairs[][2] =
+	{
+		{ 2.0, 10.0 }, { 2.0, -1074.0 }, { 2.0, 0.5 }, { 10.0, -3.0 }, { -2.0, 3.0 }, { -2.0, 4.0 }, { -2.0, 0.5 }, { 0.0, -1.0 },
+		{ -0.0, -1.0 }, { -0.0, -2.0 }, { -0.0, 3.0 }, { 0.0, 0.0 }, { 0.0 / 0.0, 0.0 }, { 1.0, 0.0 / 0.0 }, { -1.0, 1.0 / 0.0 },
+		{ 0.5, 1.0 / 0.0 }, { 0.5, -1.0 / 0.0 }, { 1.0 / 0.0, -2.0 }, { -1.0 / 0.0, 3.0 }, { -1.0 / 0.0, -3.0 }, { 1.6047705625191471, -32.0 },
+		{ 10775875.572735816, 26.531882830247795 }, { 0.999999, 1e9 }, { 1.0000001, -1e10 }, { 123.456, 7.89 }, { 3.0, 646.0 },
+		{ 2.5, -1000.0 }, { 1e-300, 0.5 }, { 7.0, 1.0 / 3.0 }
+	};
+
+	szSource.Init();
+	szSource.Append("#include <math.h>\nunsigned long long gaulliValues[] = {");
+	for (i = 0; i < sizeof(adValues) / sizeof(double); i++)
+	{
+		memcpy(&ulliBits, &adValues[i], 8);
+		szSource.Append(ulliBits)->Append("ULL, ");
+	}
+	szSource.Append("};\nunsigned long long gaulliPairs[] = {");
+	for (i = 0; i < sizeof(adPowPairs) / sizeof(adPowPairs[0]); i++)
+	{
+		for (j = 0; j < 2; j++)
+		{
+			memcpy(&ulliBits, &adPowPairs[i][j], 8);
+			szSource.Append(ulliBits)->Append("ULL, ");
+		}
+	}
+	szSource.Append("};\n");
+	szSource.Append(
+		"unsigned long long* gp = (unsigned long long*)0x100000;\n"
+		"void Put(double d) { *gp++ = *(unsigned long long*)&d; }\n"
+		"int main()\n"
+		"{\n"
+		"\tfor (int i = 0; i < ")->Append((int)(sizeof(adValues) / sizeof(double)))->Append("; i++)\n"
+		"\t{\n"
+		"\t\tdouble x = *(double*)&gaulliValues[i];\n"
+		"\t\tPut(exp(x)); Put(log(x)); Put(log10(x)); Put(sin(x)); Put(cos(x)); Put(tan(x)); Put(atan(x)); Put(asin(x)); Put(acos(x)); Put(atan2(x, 0.75));\n"
+		"\t}\n"
+		"\tfor (int i = 0; i < ")->Append((int)(sizeof(adPowPairs) / sizeof(adPowPairs[0])))->Append("; i++)\n"
+		"\t{\n"
+		"\t\tdouble x = *(double*)&gaulliPairs[2 * i]; double y = *(double*)&gaulliPairs[2 * i + 1];\n"
+		"\t\tPut(pow(x, y)); Put(atan2(x, y));\n"
+		"\t}\n"
+		"\treturn 0;\n"
+		"}\n");
+
+	static const char*	aszUnits[] = { "Libc65/softfloat.cpp", "Libc65/math.cpp", NULL };
+	AssertTrue(TestCPP65BeginProject(&sRun, aszUnits, "", szSource.Text()));
+	AssertTrue(TestCPP65Run(&sRun, 200000000) < 200000000);
+	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
+
+	uiAddress = TEST_CPP65_RESULTS;
+	for (i = 0; i < sizeof(adValues) / sizeof(double); i++)
+	{
+		dX = adValues[i];
+		adExpected[0] = (double)expl(dX);
+		adExpected[1] = (double)logl(dX);
+		adExpected[2] = (double)log10l(dX);
+		adExpected[3] = (double)sinl(dX);
+		adExpected[4] = (double)cosl(dX);
+		adExpected[5] = (double)tanl(dX);
+		adExpected[6] = (double)atanl(dX);
+		adExpected[7] = (double)asinl(dX);
+		adExpected[8] = (double)acosl(dX);
+		adExpected[9] = (double)atan2l(dX, 0.75L);
+		for (j = 0; j < 10; j++)
+		{
+			ulliBits = sRun.pcContext->GetLong(uiAddress) | ((uint64)sRun.pcContext->GetLong(uiAddress + 4) << 32);
+			memcpy(&adActual[j], &ulliBits, 8);
+			uiAddress += 8;
+			AssertTrue(TestCPP65Ulps(adActual[j], adExpected[j]) <= 1);
+		}
+	}
+	for (i = 0; i < sizeof(adPowPairs) / sizeof(adPowPairs[0]); i++)
+	{
+		dX = adPowPairs[i][0];
+		dY = adPowPairs[i][1];
+		adExpected[0] = (double)powl(dX, dY);
+		adExpected[1] = (double)atan2l(dX, dY);
+		for (j = 0; j < 2; j++)
+		{
+			ulliBits = sRun.pcContext->GetLong(uiAddress) | ((uint64)sRun.pcContext->GetLong(uiAddress + 4) << 32);
+			memcpy(&adActual[j], &ulliBits, 8);
+			uiAddress += 8;
+			AssertTrue(TestCPP65Ulps(adActual[j], adExpected[j]) <= 1);
+		}
+	}
+	TestCPP65End(&sRun);
+	szSource.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // float and double, worked out by Libc65's soft float runtime.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -1483,6 +1621,7 @@ void TestCPP65GeneratorFloat(void)
 
 	AssertCPP65FloatConversions();
 	AssertCPP65Math();
+	AssertCPP65Transcendentals();
 
 	//Globals and constants: data, folded as the target would.
 	AssertInt(1, TestCPP65MainFloat(
@@ -1572,8 +1711,8 @@ static void FloatHelperExpected(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// BaseLib's FloatHelper on the 65C64 against the same calls natively.  sin, cos and
-// pow are not in Libc65 yet; the calls avoid them.
+// BaseLib's FloatHelper on the 65C64 against the same calls natively.  The calls
+// avoid sin, cos and pow, whose last bit may differ from the C library's.
 //
 //////////////////////////////////////////////////////////////////////////
 static void AssertCPP65FloatHelper(void)
@@ -1585,7 +1724,7 @@ static void AssertCPP65FloatHelper(void)
 
 	gaiFloatHelperResults.Init();
 	FloatHelperExpected();
-	AssertTrue(TestCPP65BeginProject(&sRun, aszUnits, "_cos _pow _powl _sin"));
+	AssertTrue(TestCPP65BeginProject(&sRun, aszUnits, ""));
 	AssertTrue(TestCPP65Run(&sRun, 20000000) < 20000000);
 	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
 	AssertInt((int)gaiFloatHelperResults.NumElements(), (int32)TestCPP65MPU(&sRun)->GetA());
