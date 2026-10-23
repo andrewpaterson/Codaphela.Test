@@ -1,3 +1,4 @@
+#include "MicroprocessorLib/SlewEvent.h"
 #include "TestCircuitBoard.h"
 #include "TestLib/Assert.h"
 
@@ -247,6 +248,75 @@ void TestStandardRemoveComponent(void)
 	cBoard.Run();
 	AssertInt(TV_Undriven, cBoard.Value(pcAnd));
 	AssertInt(TV_Undriven, cBoard.Value(pcNot));
+
+	cBoard.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The descriptions and lookups Logicim's views and debugging use.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestStandardDescriptions(void)
+{
+	CTestBoard		cBoard;
+	CAndGatePins*	pcPins;
+	CAndGate*		pcGate;
+	CPowerSource*	pcPower;
+	CTrace*			pcOut;
+	CChars			sz;
+	CEvent*			pcEvent;
+	CPortEvent*		pcPortEvent;
+
+	cBoard.Init();
+	pcPins = NewMalloc<CAndGatePins>();
+	pcPins->Init(2, cBoard.mpcFamily);
+	pcGate = NewMalloc<CAndGate>();
+	pcGate->Init(cBoard.mpcTop, "U1", pcPins);
+	cBoard.Power(pcGate);
+	pcOut = cBoard.NewTrace();
+	pcPins->GetOutput()->Connect(pcOut);
+	pcPins->GetInput(0)->Connect(cBoard.Input("A", true));
+	pcPins->GetInput(1)->Connect(cBoard.Input("B", true));
+	cBoard.Start();
+
+	AssertTrue(pcPins->GetComponent() == pcGate);
+	AssertString(AND_GATE_TYPE, pcPins->GetType());
+
+	sz.Init();
+	pcPins->GetOutput()->AppendDebugString(&sz);
+	AssertString("U1.Output(3)", sz.Text());
+	sz.Clear();
+	pcPins->GetOutput()->AppendType(&sz);
+	AssertString("Logic", sz.Text());
+	sz.Clear();
+	pcPins->GetVoltageCommon()->AppendType(&sz);
+	AssertString("PowerIn", sz.Text());
+	sz.Clear();
+
+	pcPower = (CPowerSource*)cBoard.mpcVCC->GetConnectedPort(0)->GetHolder()->GetComponent();
+	AssertString("Power Source", pcPower->GetType());
+	pcPower->GetPowerOutPort()->AppendDebugString(&sz);
+	AssertString("Power.Power (3.3V)", sz.Text());
+	sz.Clear();
+
+	//A port event knows its chip and its port's owner.
+	cBoard.Run();
+	pcPins->GetOutput()->Write(cBoard.mpcTimeline, false);
+	pcEvent = pcPins->GetOutput()->GetEvent(0);
+	AssertTrue(pcEvent->GetIntegratedCircuit() == pcGate);
+	pcPortEvent = (CPortEvent*)pcEvent;
+	pcPortEvent->AppendPortOwner(&sz);
+	AssertString("AND Gate \"U1\"", sz.Text());
+	sz.Clear();
+	((CSlewEvent*)pcEvent)->AppendDebugString(&sz);
+	AssertString("U1.Output(3)", sz.Text());
+	sz.Kill();
+
+	//Disconnecting the gate takes its own events off the timeline; it has none.
+	cBoard.mcSimulation.GetCircuit()->DisconnectComponent(pcGate, cBoard.mpcTimeline);
+	AssertSize(1, pcPins->GetOutput()->NumEvents());
 
 	cBoard.Kill();
 }
@@ -1104,6 +1174,7 @@ void TestStandardIntegratedCircuits(void)
 	TestStandardUndrivenSpreads();
 	TestStandardRemoveComponent();
 	TestStandardLiveWiring();
+	TestStandardDescriptions();
 	TestStandardNandLogic();
 	TestStandardNandMultiplexer();
 	TestStandardHalfAdder();
