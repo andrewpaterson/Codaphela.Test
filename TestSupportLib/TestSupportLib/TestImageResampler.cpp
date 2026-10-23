@@ -8,6 +8,9 @@
 #include "SupportLib/ImageResampleBilinear.h"
 #include "SupportLib/ImageResampleBicubic.h"
 #include "SupportLib/ImageResampleSmart.h"
+#include "SupportLib/ImageReader.h"
+#include "SupportLib/ImageWriter.h"
+#include "AssertImage.h"
 #include "TestLib/Assert.h"
 
 
@@ -876,6 +879,208 @@ void TestImageResampleSmartOpacity(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Red, green and blue of pcImage, each an array of pixels.
+//
+//////////////////////////////////////////////////////////////////////////
+void GetRealImageRGB(Ptr<CImage> pcImage, int32** papaiRGB)
+{
+	size	uiNumPixels;
+	size	c;
+	EChannel aeChannels[3] = { IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE };
+
+	uiNumPixels = (size)pcImage->GetWidth() * pcImage->GetHeight();
+	for (c = 0; c < 3; c++)
+	{
+		papaiRGB[c] = (int32*)malloc(sizeof(int32) * uiNumPixels);
+		GetResampleIntegers(pcImage, pcImage->GetChannels()->GetIndexOfChannel(aeChannels[c]), papaiRGB[c]);
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The RMS difference (0 to 255) between two images the same size.
+//
+//////////////////////////////////////////////////////////////////////////
+float64 RealImageError(Ptr<CImage> pcImage, Ptr<CImage> pcTruth)
+{
+	int32*	apaiImage[3];
+	int32*	apaiTruth[3];
+	size	uiNumPixels;
+	size	i;
+	size	c;
+	float64	fSum;
+	float64	fDifference;
+
+	uiNumPixels = (size)pcImage->GetWidth() * pcImage->GetHeight();
+	GetRealImageRGB(pcImage, apaiImage);
+	GetRealImageRGB(pcTruth, apaiTruth);
+	fSum = 0.0;
+	for (c = 0; c < 3; c++)
+	{
+		for (i = 0; i < uiNumPixels; i++)
+		{
+			fDifference = (float64)(apaiImage[c][i] - apaiTruth[c][i]);
+			fSum += fDifference * fDifference;
+		}
+		free(apaiImage[c]);
+		free(apaiTruth[c]);
+	}
+	return sqrt(fSum / (uiNumPixels * 3));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The fraction of neighbouring pixel pairs that differ by a lot (more
+// than 48 in red, green or blue): how many hard edges there are.
+//
+//////////////////////////////////////////////////////////////////////////
+float64 RealImageHardEdges(Ptr<CImage> pcImage)
+{
+	int32*	apaiRGB[3];
+	uint32	uiWidth;
+	uint32	uiHeight;
+	uint32	x;
+	uint32	y;
+	size	c;
+	size	uiPixel;
+	size	uiHard;
+	size	uiPairs;
+	bool	bHorizontal;
+	bool	bVertical;
+
+	uiWidth = pcImage->GetWidth();
+	uiHeight = pcImage->GetHeight();
+	GetRealImageRGB(pcImage, apaiRGB);
+	uiHard = 0;
+	uiPairs = 0;
+	for (y = 0; y + 1 < uiHeight; y++)
+	{
+		for (x = 0; x + 1 < uiWidth; x++)
+		{
+			uiPixel = (size)y * uiWidth + x;
+			bHorizontal = false;
+			bVertical = false;
+			for (c = 0; c < 3; c++)
+			{
+				bHorizontal |= abs(apaiRGB[c][uiPixel] - apaiRGB[c][uiPixel + 1]) > 48;
+				bVertical |= abs(apaiRGB[c][uiPixel] - apaiRGB[c][uiPixel + uiWidth]) > 48;
+			}
+			uiHard += (bHorizontal ? 1 : 0) + (bVertical ? 1 : 0);
+			uiPairs += 2;
+		}
+	}
+	for (c = 0; c < 3; c++)
+	{
+		free(apaiRGB[c]);
+	}
+	return (float64)uiHard / (float64)uiPairs;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<CImage> ResampleRealImage(Ptr<CImage> pcSource, EImageResample eResample, const char* szName)
+{
+	CImageResampler	cResampler;
+	CChars			szFile;
+	Ptr<CImage>		pcDest;
+
+	cResampler.Init(eResample, 640, 512);
+	pcDest = cResampler.Modify(pcSource);
+	cResampler.Kill();
+
+	AssertInt(640, pcDest->GetWidth());
+	AssertInt(512, pcDest->GetHeight());
+	AssertTrue(pcDest->IsSameFormat(pcSource));
+
+	szFile.Init("Output" _FS_ "RevoyLofiCyberpunk-");
+	szFile.Append(szName);
+	szFile.Append(".png");
+	AssertTrue(WriteImage(pcDest, szFile.Text()));
+	szFile.Kill();
+	return pcDest;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A 160 x 128 crop of David Revoy's "lofi cyberpunk" (CC BY 4.0, see
+// Input/Resample/RevoyLofiCyberpunk.txt) resampled 4x by every method and
+// compared with the same crop made at 640 x 512 from the original.  The
+// results are written to Output/RevoyLofiCyberpunk-*.png.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestImageResamplerRealImage(void)
+{
+	float64		fNearestError;
+	float64		fBilinearError;
+	float64		fBicubicError;
+	float64		fSmartError;
+	float64		fTruthEdges;
+	float64		fNearestEdges;
+	float64		fBilinearEdges;
+	float64		fBicubicEdges;
+	float64		fSmartEdges;
+
+	Ptr<CImage> pcSource = ReadImage("Input" _FS_ "Resample" _FS_ "RevoyLofiCyberpunk.png");
+	Ptr<CImage> pcTruth = ReadImage("Input" _FS_ "Resample" _FS_ "RevoyLofiCyberpunk-640.png");
+	AssertTrue(pcSource.IsNotNull());
+	AssertTrue(pcTruth.IsNotNull());
+	if (pcSource.IsNull() || pcTruth.IsNull())
+	{
+		return;
+	}
+	AssertInt(160, pcSource->GetWidth());
+	AssertInt(128, pcSource->GetHeight());
+
+	Ptr<CImage> pcNearest = ResampleRealImage(pcSource, IR_NearestNeighbour, "Nearest");
+	Ptr<CImage> pcBilinear = ResampleRealImage(pcSource, IR_Bilinear, "Bilinear");
+	Ptr<CImage> pcBicubic = ResampleRealImage(pcSource, IR_Bicubic, "Bicubic");
+	Ptr<CImage> pcSmart = ResampleRealImage(pcSource, IR_Smart, "Smart");
+
+	fNearestError = RealImageError(pcNearest, pcTruth);
+	fBilinearError = RealImageError(pcBilinear, pcTruth);
+	fBicubicError = RealImageError(pcBicubic, pcTruth);
+	fSmartError = RealImageError(pcSmart, pcTruth);
+
+	fTruthEdges = RealImageHardEdges(pcTruth);
+	fNearestEdges = RealImageHardEdges(pcNearest);
+	fBilinearEdges = RealImageHardEdges(pcBilinear);
+	fBicubicEdges = RealImageHardEdges(pcBicubic);
+	fSmartEdges = RealImageHardEdges(pcSmart);
+
+	//Measured: nearest 9.5, bilinear 8.6, bicubic 8.3 and smart 9.0.  The original is painted with soft strokes, which bilinear and
+	//bicubic suit, but smart is still closer than nearest neighbour.
+	AssertTrue(fBicubicError < fBilinearError);
+	AssertTrue(fBilinearError < fSmartError);
+	AssertTrue(fSmartError < fNearestError);
+
+	//Measured: 1.1% of neighbouring pixels in the original are hard edges, nearest 0.54%, smart 0.48% and bilinear and bicubic none.
+	//Smart keeps most of the hard edges nearest neighbour keeps.
+	AssertTrue(fNearestEdges < fTruthEdges);
+	AssertTrue(fSmartEdges > fNearestEdges * 0.8);
+	AssertTrue(fBilinearEdges < fSmartEdges * 0.1);
+	AssertTrue(fBicubicEdges < fSmartEdges * 0.1);
+
+	Ptr<CImage> pcExpected = ReadImage("Input" _FS_ "Resample" _FS_ "RevoyLofiCyberpunk-Smart-expected.png");
+	AssertSameImage(pcExpected, pcSmart);
+	pcExpected = NULL;
+
+	pcSource = NULL;
+	pcTruth = NULL;
+	pcNearest = NULL;
+	pcBilinear = NULL;
+	pcBicubic = NULL;
+	pcSmart = NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestImageResampler(void)
@@ -901,6 +1106,7 @@ void TestImageResampler(void)
 	TestImageResampleSmartOpacity();
 	TestImageResamplerMethods();
 	TestImageResamplerModify();
+	TestImageResamplerRealImage();
 
 	ObjectsKill(false);
 	DataIOKill();
