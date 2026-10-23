@@ -302,7 +302,7 @@ bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const ch
 	CChars			szLibrary;
 	CChars			szFile;
 	CChars			szMissing;
-	int				iSlash;
+	size			iSlash;
 	size			i;
 	bool			bResult;
 
