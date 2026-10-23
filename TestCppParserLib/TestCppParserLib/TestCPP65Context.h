@@ -44,7 +44,7 @@ struct STestCPP65Run
 };
 
 
-bool		TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSource, bool bProgram = false, CArrayChars* paszExternals = NULL, const char* szUnit = NULL, CArrayChars* paszEmitted = NULL, CArrayChars* paszInitialise = NULL, CArrayChars* paszFinalise = NULL);
+bool		TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSource, bool bProgram = false, CArrayChars* paszExternals = NULL);
 int			TestCPP65Assemble(const char* szSource, bool bProgram = true);
 int			TestCPP65AssembleLibraryFile(const char* szFilename);
 bool		TestCPP65Begin(STestCPP65Run* psRun, const char* szSource);
@@ -54,7 +54,7 @@ C65C64*		TestCPP65MPU(STestCPP65Run* psRun);
 void		TestCPP65End(STestCPP65Run* psRun);
 int32		TestCPP65Main(const char* szSource);
 int32		TestCPP65MainFile(const char* szFilename);
-bool		TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const char* szStubs, const char* szSource = NULL);
+bool		TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const char* szStubs, const char* szSource = NULL, CChars* pszMap = NULL);
 int32		TestCPP65RunProject(const char** aszUnits, const char* szStubs, size uiMaxInstructions = 20000000, const char* szSource = NULL);
 int32		TestCPP65MainFloat(const char* szSource);
 

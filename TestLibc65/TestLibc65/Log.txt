@@ -1,0 +1,55 @@
+-----------------------------------------------------------
+- Log File: [Log.txt]
+-----------------------------------------------------------
+
+--------------- /home/r2d2/Codaphela/test/TestLibc65/TestLibc65/TestLibc65String.cpp ---------------
+Tests Run: 58
+Passed: 58
+Failed: 0
+Time:   0.04s
+
+--------------- /home/r2d2/Codaphela/test/TestLibc65/TestLibc65/TestLibc65Ctype.cpp ---------------
+Tests Run: 783
+Passed: 783
+Failed: 0
+Time:   0.05s
+
+--------------- /home/r2d2/Codaphela/test/TestLibc65/TestLibc65/TestLibc65Stdlib.cpp ---------------
+Failed: /home/r2d2/Codaphela/test/TestLibc65/TestLibc65/TestLibc65Stdlib.cpp line 471
+Expected: true
+Actual:   false
+
+Failed: /home/r2d2/Codaphela/test/TestLibc65/TestLibc65/TestLibc65Stdlib.cpp line 475
+Expected: 99
+Actual:   0
+
+Tests Run: 240
+Passed: 238
+Failed: 2
+Time:   0.42s
+
+--------------- /home/r2d2/Codaphela/test/TestLibc65/TestLibc65/TestLibc65Time.cpp ---------------
+Tests Run: 236
+Passed: 236
+Failed: 0
+Time:   0.07s
+
+--------------- /home/r2d2/Codaphela/test/TestLibc65/TestLibc65/TestLibc65Stdarg.cpp ---------------
+Tests Run: 29
+Passed: 29
+Failed: 0
+Time:   0.03s
+
+--------------- /home/r2d2/Codaphela/test/TestLibc65/TestLibc65/TestLibc65Limits.cpp ---------------
+Tests Run: 92
+Passed: 92
+Failed: 0
+Time:   0.06s
+
+------------------------------ Total Results ------------------------------
+Total Tests Run: 1438
+Total Passed: 1436
+Total Failed: 2
+
+Total Time:   0.67s
+

@@ -3,6 +3,7 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/ArrayChars.h"
 #include "Assembler65Lib/Asm65Assembler.h"
+#include "Assembler65Lib/Asm65Linker.h"
 #include "CppParserLib/Preprocessor.h"
 #include "CppParserLib/HeaderFileMap.h"
 #include "CppParserLib/HeaderFiles.h"
@@ -194,11 +195,11 @@ static void TestLibc65TickLow(C65C64Meta* pcMPU, void* pvContext)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Preprocesses, parses and generates szSource as the unit prefixed szUnit.  Libc65 is the system include
+// Preprocesses, parses and generates szSource as an object's assembly.  Libc65 is the system include
 // directory.
 //
 //////////////////////////////////////////////////////////////////////////
-static void TestLibc65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSource, const char* szUnit, CArrayChars* paszExternals, CArrayChars* paszEmitted, CArrayChars* paszInitialise, CArrayChars* paszFinalise)
+static void TestLibc65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSource)
 {
 	CTranslationUnit	cFile;
 	CPreprocessor		cPreprocessor;
@@ -246,10 +247,7 @@ static void TestLibc65Generate(CChars* pszAssembly, CChars* pszErrors, const cha
 	cParser.Kill();
 
 	cGenerator.Init(&cTree);
-	cGenerator.SetUnit(szUnit, paszEmitted);
 	cGenerator.Generate(pszAssembly);
-	cGenerator.GetExternals(paszExternals);
-	cGenerator.GetStartUp(paszInitialise, paszFinalise);
 	pszErrors->Append(cGenerator.GetErrors()->Text());
 	cGenerator.Kill();
 
@@ -265,40 +263,29 @@ static void TestLibc65Generate(CChars* pszAssembly, CChars* pszErrors, const cha
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Adds the labels defined in szAssembly (a name at the start of a line, followed by a colon) to paszLabels.
+// Assembles szAssembly into a new object of pcObjects.
 //
 //////////////////////////////////////////////////////////////////////////
-static void TestLibc65DefinedLabels(CArrayChars* paszLabels, const char* szAssembly)
+static CAsm65Object* TestLibc65Assemble(CAsm65Library* pcObjects, const char* szName, const char* szAssembly)
 {
-	const char*	szLine;
-	const char*	szEnd;
-	CChars		szLabel;
+	CAsm65Assembler	cAssembler;
+	CAsm65Object*	pcObject;
 
-	szLine = szAssembly;
-	while (*szLine)
-	{
-		szEnd = szLine;
-		while ((*szEnd != '\0') && (*szEnd != '\n'))
-		{
-			szEnd++;
-		}
-		if ((szEnd > szLine + 1) && (szLine[0] != '\t') && (szLine[0] != ' ') && (szLine[0] != ';') && (szEnd[-1] == ':'))
-		{
-			szLabel.Init();
-			szLabel.Append(szLine, (int)(szEnd - szLine - 1));
-			paszLabels->AddIfUnique(szLabel);
-			szLabel.Kill();
-		}
-		szLine = (*szEnd == '\n') ? szEnd + 1 : szEnd;
-	}
+	pcObject = pcObjects->AddObject(szName);
+	cAssembler.Init();
+	cAssembler.AssembleObject(szAssembly, pcObject);
+	AssertString("", cAssembler.GetErrors());
+	cAssembler.Kill();
+	return pcObject;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Compiles szSource and the Libc65 units (file names in commonlibraries/Libc65, NULL terminated), links them
-// and loads the program at reset.  The labels in szStubs (space separated, sorted) must be exactly the ones
-// used but defined by no unit; each is a stp so a call to one stops the program.
+// Compiles szSource and the Libc65 units (file names in commonlibraries/Libc65, NULL terminated) and links
+// the start up and szSource with the Libc65 units as a library (a unit is linked when something needs it).
+// Loads the program at reset.  The labels in szStubs (space separated, sorted) must be exactly the ones
+// used but defined by no linked unit; the linker makes each a stp so a call to one stops the program.
 //
 //////////////////////////////////////////////////////////////////////////
 bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* szStubs, const char* szSource)
@@ -311,19 +298,15 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 	CCPPSyntaxTree		cTree;
 	CCPPParser			cParser;
 	CCPP65Generator		cGenerator;
-	CAsm65Assembler		cAssembler;
+	CAsm65Library		cObjects;
+	CAsm65Library		cLibc65;
+	CAsm65Linker		cLinker;
 	CFileUtil			cFileUtil;
 	CChars				szDirectory;
-	CChars				szUnits;
-	CChars				szProgram;
-	CChars				szUnit;
+	CChars				szAssembly;
 	CChars				szErrors;
 	CChars				szMissing;
-	CArrayChars			aszEmitted;
-	CArrayChars			aszInitialise;
-	CArrayChars			aszFinalise;
-	CArrayChars			aszExternals;
-	CArrayChars			aszDefined;
+	CArrayChars			aszMissing;
 	int					iUnit;
 	size				i;
 	bool				bResult;
@@ -346,14 +329,20 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 	}
 	AssertTrue(cProject.Process("65C64"));
 
-	szUnits.Init();
 	szErrors.Init();
-	aszEmitted.Init();
-	aszInitialise.Init();
-	aszFinalise.Init();
-	aszExternals.Init();
+	cObjects.Init("objects");
+	cLibc65.Init("Libc65");
+	cLinker.Init();
 
-	TestLibc65Generate(&szUnits, &szErrors, szSource, "U0_", &aszExternals, &aszEmitted, &aszInitialise, &aszFinalise);
+	szAssembly.Init();
+	CCPP65Generator::AppendStartUp(&szAssembly);
+	cLinker.AddObject(TestLibc65Assemble(&cObjects, "start up", szAssembly.Text()));
+	szAssembly.Kill();
+
+	szAssembly.Init();
+	TestLibc65Generate(&szAssembly, &szErrors, szSource);
+	cLinker.AddObject(TestLibc65Assemble(&cObjects, "Test.cpp", szAssembly.Text()));
+	szAssembly.Kill();
 
 	iUnit = 0;
 	for (pcFile = cProject.Start(&sIter, "65C64"); pcFile; pcFile = cProject.Iterate(&sIter))
@@ -368,74 +357,61 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 		szErrors.Append(cTree.GetErrors()->Text());
 		cParser.Kill();
 
-		szUnit.Init("U");
-		szUnit.Append(iUnit);
-		szUnit.Append('_');
+		szAssembly.Init();
 		cGenerator.Init(&cTree);
-		cGenerator.SetUnit(szUnit.Text(), &aszEmitted);
-		cGenerator.Generate(&szUnits);
+		cGenerator.Generate(&szAssembly);
 		szErrors.Append(cGenerator.GetErrors()->Text());
-		cGenerator.GetStartUp(&aszInitialise, &aszFinalise);
-		cGenerator.GetExternals(&aszExternals);
 		cGenerator.Kill();
-		szUnit.Kill();
+		TestLibc65Assemble(&cLibc65, pcFile->ShortName(), szAssembly.Text());
+		szAssembly.Kill();
 		cTree.Kill();
 		cTokeniser.Kill();
 	}
 	AssertInt((int)i, iUnit);
 	AssertString("", szErrors.Text());
 
-	szProgram.Init();
-	CCPP65Generator::AppendStartUp(&szProgram, &aszInitialise, &aszFinalise);
-	szProgram.Append(szUnits);
+	cLinker.AddLibrary(&cLibc65);
+	cLinker.SetStubMissing(true);
+	cLinker.SetAddress(ASK65_Text, CPP65_PROGRAM_ADDRESS);
+	cLinker.SetLimit(CPP65_HEAP_ADDRESS);
+	bResult = szErrors.Empty() && cLinker.Link();
+	AssertString("", cLinker.GetErrors());
 
-	//What is used but not written by any unit.
-	aszDefined.Init();
-	TestLibc65DefinedLabels(&aszDefined, szProgram.Text());
-	szMissing.Init();
-	aszExternals.QuickSort(true);
-	for (i = 0; i < aszExternals.NumElements(); i++)
+	//What is used but written by no linked unit.
+	aszMissing.Init();
+	for (i = 0; i < cLinker.NumMissing(); i++)
 	{
-		if (aszDefined.GetIndex(aszExternals.GetText(i)) == ARRAY_ELEMENT_NOT_FOUND)
+		aszMissing.Add(cLinker.GetMissing(i));
+	}
+	aszMissing.QuickSort(true);
+	szMissing.Init();
+	for (i = 0; i < aszMissing.NumElements(); i++)
+	{
+		if (!szMissing.Empty())
 		{
-			if (!szMissing.Empty())
-			{
-				szMissing.Append(' ');
-			}
-			szMissing.Append(aszExternals.GetText(i));
-			szProgram.Append(aszExternals.GetText(i));
-			szProgram.Append(":\n\t\tstp\n");
+			szMissing.Append(' ');
 		}
+		szMissing.Append(aszMissing.GetText(i));
 	}
 	AssertString(szStubs, szMissing.Text());
 
-	bResult = szErrors.Empty();
 	psRun->pcMemory = NULL;
 	if (bResult)
 	{
 		psRun->pcMemory = (CTestLibc65Memory*)malloc(sizeof(CTestLibc65Memory));
 		psRun->pcMemory->Init();
 		psRun->pcMemory->SetLong(VECTOR_65C64_BASE + 4 * VECTOR_65C64_RESET, CPP65_PROGRAM_ADDRESS);
-
-		cAssembler.Init();
-		bResult = cAssembler.Assemble(szProgram.Text());
-		AssertString("", cAssembler.GetErrors());
-		psRun->pcMemory->Load(cAssembler.GetOutput());
-		cAssembler.Kill();
-
+		psRun->pcMemory->Load(cLinker.GetOutput());
 		psRun->cMeta.Init(TestLibc65TickHigh, TestLibc65TickLow, psRun->pcMemory);
 		psRun->cMeta.TickInstruction();
 	}
 
 	szMissing.Kill();
-	aszDefined.Kill();
-	szProgram.Kill();
-	aszExternals.Kill();
-	aszFinalise.Kill();
-	aszInitialise.Kill();
-	aszEmitted.Kill();
+	aszMissing.Kill();
+	cLinker.Kill();
+	cLibc65.Kill();
+	cObjects.Kill();
 	szErrors.Kill();
-	szUnits.Kill();
 	cProject.Kill();
 	return bResult;
 }

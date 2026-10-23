@@ -322,6 +322,8 @@ void TestCPP65GeneratorAssembly(void)
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "int Add(int a, int b) { return a + b; }"));
 	AssertString("", szErrors.Text());
 	AssertString(
+		"\t\t.section text\n"
+		"\t\t.global _Add\n"
 		"_Add:\n"
 		"\t\tpsh V\n"
 		"\t\tcpy V, S\n"
@@ -340,6 +342,8 @@ void TestCPP65GeneratorAssembly(void)
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "int gTotal = 5;\nvoid Count(char c) { int x = c; if (x > 3) gTotal += x; }"));
 	AssertString("", szErrors.Text());
 	AssertString(
+		"\t\t.section text\n"
+		"\t\t.global _Count\n"
 		"_Count:\n"
 		"\t\tpsh V\n"
 		"\t\tsub S, 4\n"
@@ -366,7 +370,9 @@ void TestCPP65GeneratorAssembly(void)
 		"\t\tpul V\n"
 		"\t\tret\n"
 		"\n"
+		"\t\t.section data\n"
 		"\t\t.align 4\n"
+		"\t\t.global _gTotal\n"
 		"_gTotal:\n"
 		"\t\t.long 5\n", szAssembly.Text());
 	szErrors.Kill();
@@ -389,20 +395,30 @@ void TestCPP65GeneratorConvention(void)
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "int main() { return 0; }", true));
 	AssertString("", szErrors.Text());
 	AssertTrue(szAssembly.StartsWith(
-		"\t\t.org $10000\n"
+		"\t\t.section text\n"
 		"Start:\n"
 		"\t\tcpy S, $1fffff\n"
 		"\t\tcpy W, 0\n"
 		"\t\twtth (A, B), 4\n"
 		"\t\twtth (X, Y), 4\n"
-		"\t\tjsr _main\n"
-		"\t\tstp\n"));
+		"\t\tcpy Y, __init_start\n"
+		"StartInitialise:\n"
+		"\t\tcmp Y, __init_end\n"
+		"\t\tbras c, StartMain\n"
+		"\t\tpsh Y\n"
+		"\t\tjsr [Y]\n"
+		"\t\tpul Y\n"
+		"\t\tadd Y, 4\n"
+		"\t\tbra StartInitialise\n"
+		"StartMain:\n"
+		"\t\tjsr _main\n"));
 	szErrors.Kill();
 	szAssembly.Kill();
 
 	//main's return address is at 001F:FFFC, the caller's V below it, then x.
 	AssertIntHex(0x1FFFF4, TestCPP65Main("int main() { int x = 5; return (int)&x; }"));
-	AssertInt(1, TestCPP65Main("int main() { unsigned r = *(unsigned*)0x1FFFFC; return r > 0x10000 && r < 0x10020; }"));
+	//It is in the start up, at the start of the text.
+	AssertInt(1, TestCPP65Main("int main() { unsigned r = *(unsigned*)0x1FFFFC; return r > 0x10000 && r < 0x10060; }"));
 
 	//Arguments take their own size: 1 + 2 + 4 + 1 bytes.
 	AssertInt(-1 - 300 + 100000 + 200, TestCPP65Main(
@@ -420,6 +436,8 @@ void TestCPP65GeneratorConvention(void)
 	szErrors.Init();
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "int f(int a, int b) { return (a + b) * (a - b); }"));
 	AssertString(
+		"\t\t.section text\n"
+		"\t\t.global _f\n"
 		"_f:\n"
 		"\t\tpsh V\n"
 		"\t\tcpy V, S\n"
@@ -1068,104 +1086,31 @@ void TestCPP65GeneratorArrayTemplate(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// CArrayTemplate<CTestClass> in a project of three translation units, added by
-// hand: Main.cpp, TestClass.cpp (CTestClass, and a function that also uses the
-// array) and ArrayBlockStub.cpp (the CArrayBlock functions).  Each unit is compiled
-// with its own label prefix; the inline and template functions they both use are
-// written once.  The units are joined under one start up, assembled and run.
+// CArrayTemplate<CTestClass> in a project of three translation units: Main.cpp,
+// TestClass.cpp (CTestClass, and a function that also uses the array) and
+// ArrayBlockStub.cpp (the CArrayBlock functions).  Each unit is an object; the
+// inline and template functions both use are written by both, each in a COMDAT
+// section, and the linker keeps the first.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCPP65GeneratorProject(void)
 {
-	CProject			cProject;
-	CLibrary*			pcLibrary;
-	CTranslationUnit*	pcFile;
-	SProcessIter		sIter;
-	CCPPTokeniser		cTokeniser;
-	CCPPSyntaxTree		cTree;
-	CCPPParser			cParser;
-	CCPP65Generator		cGenerator;
-	CFileUtil			cFileUtil;
-	CChars				szDirectory;
-	CChars				szUnits;
-	CChars				szProgram;
-	CChars				szUnit;
-	CArrayChars			aszEmitted;
-	CArrayChars			aszInitialise;
-	CArrayChars			aszFinalise;
+	static const char*	aszUnits[] = { "Input/CPP65/ArrayTemplateProject/Main.cpp", "Input/CPP65/ArrayTemplateProject/TestClass.cpp", "Input/CPP65/ArrayTemplateProject/ArrayBlockStub.cpp", NULL };
 	STestCPP65Run		sRun;
-	int					iUnit;
+	CChars				szMap;
 
-	cProject.Init(false);
-	szDirectory.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "Libc65");
-	cFileUtil.FullPath(&szDirectory);
-	cProject.AddIncludeDirectory(szDirectory.Text(), false, true);
-	szDirectory.Kill();
-	szDirectory.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries");
-	cFileUtil.FullPath(&szDirectory);
-	cProject.AddIncludeDirectory(szDirectory.Text(), true, false);
-	szDirectory.Kill();
-
-	pcLibrary = cProject.AddLibrary("ArrayTemplateProject", "Input" _FS_ "CPP65" _FS_ "ArrayTemplateProject", false);
-	pcLibrary->AddHeaderFile("TestClass.h");
-	pcLibrary->AddHeaderFile("ArrayBlockStub.h");
-	pcLibrary->AddTranslationUnit("Main.cpp");
-	pcLibrary->AddTranslationUnit("TestClass.cpp");
-	pcLibrary->AddTranslationUnit("ArrayBlockStub.cpp");
-	CCPP65Generator::AddDefines(pcLibrary->AddConfiguration("65C64"));
-	AssertTrue(cProject.Process("65C64"));
-
-	szUnits.Init();
-	aszEmitted.Init();
-	aszInitialise.Init();
-	aszFinalise.Init();
-	iUnit = 0;
-	for (pcFile = cProject.Start(&sIter, "65C64"); pcFile; pcFile = cProject.Iterate(&sIter))
-	{
-		iUnit++;
-		cTokeniser.Init();
-		AssertTrue(cTokeniser.Tokenise(pcFile->GetTokens()));
-		cTree.Init(&cTokeniser);
-		cParser.Init(&cTokeniser, &cTree);
-		AssertTrue(cParser.Parse());
-		cParser.Kill();
-
-		szUnit.Init("U");
-		szUnit.Append(iUnit);
-		szUnit.Append('_');
-		cGenerator.Init(&cTree);
-		cGenerator.SetUnit(szUnit.Text(), &aszEmitted);
-		AssertTrue(cGenerator.Generate(&szUnits));
-		AssertString("", cGenerator.GetErrors()->Text());
-		cGenerator.GetStartUp(&aszInitialise, &aszFinalise);
-		cGenerator.Kill();
-		szUnit.Kill();
-
-		cTree.Kill();
-		cTokeniser.Kill();
-	}
-	AssertInt(3, iUnit);
-
-	//No unit has global objects (CTestClass::siMade is constant data), so there is nothing to initialise.  Get is
-	//used by Main.cpp and TestClass.cpp but written once (assembling would fail on a label written twice).
-	AssertInt(0, (int)aszInitialise.NumElements());
-	AssertTrue(aszEmitted.GetIndex("_CArrayTemplate__T_C10CTestClass__Get") != ARRAY_ELEMENT_NOT_FOUND);
-
-	szProgram.Init();
-	CCPP65Generator::AppendStartUp(&szProgram, &aszInitialise, &aszFinalise);
-	szProgram.Append(szUnits);
-	AssertTrue(TestCPP65BeginAssembly(&sRun, szProgram.Text()));
+	szMap.Init();
+	AssertTrue(TestCPP65BeginProject(&sRun, aszUnits, "", NULL, &szMap));
 	AssertTrue(TestCPP65Run(&sRun, 1000000) < 1000000);
 	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
 	AssertInt(4031, (int32)TestCPP65MPU(&sRun)->GetA());
 	TestCPP65End(&sRun);
 
-	szProgram.Kill();
-	aszFinalise.Kill();
-	aszInitialise.Kill();
-	aszEmitted.Kill();
-	szUnits.Kill();
-	cProject.Kill();
+	//Get is used by Main.cpp and TestClass.cpp: TestClass.cpp's copy is dropped.  No unit has global objects
+	//(CTestClass::siMade is constant data), so there is no init table.
+	AssertTrue(szMap.Contains("  text._CArrayTemplate__T_C10CTestClass__Get comdat text._CArrayTemplate__T_C10CTestClass__Get (TestClass.cpp)\n"));
+	AssertFalse(szMap.Contains(" init "));
+	szMap.Kill();
 }
 
 
@@ -1888,7 +1833,7 @@ void TestCPP65GeneratorBaseLib(void)
 	static const char*	aszMD5[] = { "BaseLib/MD5.cpp", "Libc65/string.cpp", "Input/CPP65/MD5Project/Main.cpp", NULL };
 	static const char*	aszMersenneTwister[] = { "BaseLib/MersenneTwister.cpp", "Libc65/time.cpp", "Input/CPP65/MersenneTwisterProject/Main.cpp", NULL };
 	static const char*	aszSort[] = { "BaseLib/QuickSort.cpp", "BaseLib/BubbleSort.cpp", "BaseLib/BinarySearch.cpp", "Input/CPP65/SortProject/MemSwpStub.cpp", "Input/CPP65/SortProject/Main.cpp", NULL };
-	static const char*	aszRedBlackTree[] = { "BaseLib/RedBlackTree.cpp", "Libc65/string.cpp", "Libc65/stdlib.cpp", "Input/CPP65/RedBlackTreeProject/FreeListStub.cpp", "Input/CPP65/RedBlackTreeProject/Main.cpp", NULL };
+	static const char*	aszRedBlackTree[] = { "BaseLib/RedBlackTree.cpp", "Libc65/string.cpp", "Libc65/stdlib.cpp", "Libc65/ctype.cpp", "Input/CPP65/RedBlackTreeProject/FreeListStub.cpp", "Input/CPP65/RedBlackTreeProject/Main.cpp", NULL };
 
 	//MD5Dump makes a CChars, which is not compiled here.
 	AssertInt(0x3F, TestCPP65RunProject(aszMD5, "_CChars__AppendHexLoHi _CChars__AppendNewLine _CChars__Dump _CChars__Init _CChars__Kill"));

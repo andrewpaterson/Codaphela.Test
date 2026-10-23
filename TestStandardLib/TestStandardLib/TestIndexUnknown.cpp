@@ -483,6 +483,67 @@ void TestIndexUnknownLoadNull(void)
 //                                                                      //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexUnknownReplaceValues(void)
+{
+	MemoryInit();
+	UnknownsInit();
+
+	CIndexUnknown				cMap;
+	CIndexUnknown				cNoOverwrite;
+	CTestUnknownJobbie*		pcValue1;
+	CTestUnknownJobbie*		pcValue2;
+
+	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cMap.Init();
+	pcValue1 = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcValue1->Init(1, "One");
+	pcValue2 = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcValue2->Init(2, "Two");
+
+	//Putting the same value again keeps it.
+	AssertTrue(cMap.Put("Key", pcValue1));
+	AssertTrue(cMap.Put("Key", pcValue1));
+	AssertSize(1, cMap.NumElements());
+	AssertSize(2, gcUnknowns.NumElements());
+	AssertPointer(pcValue1, cMap.Get("Key"));
+	AssertInt(1, pcValue1->miANumber);
+
+	//A new value replaces the old one, which is killed.
+	AssertTrue(cMap.Put("Key", pcValue2));
+	AssertSize(1, cMap.NumElements());
+	AssertSize(1, gcUnknowns.NumElements());
+	AssertPointer(pcValue2, cMap.Get("Key"));
+
+	cMap.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	//Without overwriting the first value stays.
+	cNoOverwrite.Init(true, false);
+	pcValue1 = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcValue1->Init(1, "One");
+	pcValue2 = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcValue2->Init(2, "Two");
+	AssertTrue(cNoOverwrite.Put("Key", pcValue1));
+	AssertFalse(cNoOverwrite.Put("Key", pcValue2));
+	AssertSize(1, cNoOverwrite.NumElements());
+	AssertPointer(pcValue1, cNoOverwrite.Get("Key"));
+	AssertSize(2, gcUnknowns.NumElements());
+
+	pcValue2->Kill();
+	cNoOverwrite.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	UnknownsKill();
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
 void TestIndexUnknown(void)
 {
 	BeginTests();
@@ -494,6 +555,7 @@ void TestIndexUnknown(void)
 	TestIndexUnknownRemoveValue();
 	TestIndexUnknownRemoveDuplicateValue();
 	TestIndexUnknownLoadNull();
+	TestIndexUnknownReplaceValues();
 
 	TestStatistics();
 }

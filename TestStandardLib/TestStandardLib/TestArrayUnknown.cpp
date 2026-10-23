@@ -326,6 +326,72 @@ void TestArrayUnknownLoad(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestArrayUnknownLoadNull(void)
+{
+	MemoryInit();
+	UnknownsInit();
+
+	CArrayUnknown		cArray;
+	CChunkFile			cFile;
+	CFileUtil			cFileUtil;
+	CTestUnknown*		pcTest;
+	CTestUnknownJobbie*	pcTestJobbie;
+	CUnknown*			pcUnknown;
+
+	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
+	gcUnknowns.AddConstructor<CTestUnknown>();
+
+	cFileUtil.RemoveDir("Output" _FS_ "ArrayUnknownNull");
+	cFileUtil.TouchDir("Output" _FS_ "ArrayUnknownNull");
+
+	cArray.Init();
+	pcTest = cArray.Add<CTestUnknown>();
+	pcTest->Init(1);
+	AssertTrue(cArray.Add((CUnknown*)NULL));
+	pcTestJobbie = cArray.Add<CTestUnknownJobbie>();
+	pcTestJobbie->Init(2, "Two");
+	AssertTrue(cArray.Insert(0, (CUnknown*)NULL));
+	AssertSize(4, cArray.NumElements());
+	AssertSize(2, gcUnknowns.NumElements());
+
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "ArrayUnknownNull" _FS_ "Array.dat")));
+	AssertTrue(cFile.WriteOpen());
+	AssertTrue(cArray.Save(&cFile));
+	AssertTrue(cFile.WriteClose());
+	cFile.Kill();
+	cArray.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "ArrayUnknownNull" _FS_ "Array.dat")));
+	AssertTrue(cFile.ReadOpen());
+	AssertTrue(cArray.Load(&cFile));
+	AssertTrue(cFile.ReadClose());
+	cFile.Kill();
+
+	AssertSize(4, cArray.NumElements());
+	AssertSize(2, gcUnknowns.NumElements());
+	AssertNull(cArray.Get(0));
+	pcUnknown = cArray.Get(1);
+	AssertString("CTestUnknown", pcUnknown->ClassName());
+	AssertInt(1, ((CTestUnknown*)pcUnknown)->miCount);
+	AssertNull(cArray.Get(2));
+	pcUnknown = cArray.Get(3);
+	AssertString("CTestUnknownJobbie", pcUnknown->ClassName());
+	AssertInt(2, ((CTestUnknownJobbie*)pcUnknown)->miANumber);
+
+	cArray.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cFileUtil.RemoveDir("Output" _FS_ "ArrayUnknownNull");
+
+	UnknownsKill();
+	MemoryKill();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestArrayUnknown(void)
 {
 	BeginTests();
@@ -334,6 +400,7 @@ void TestArrayUnknown(void)
 	TestIteration();
 	TestRemoval();
 	TestArrayUnknownLoad();
+	TestArrayUnknownLoadNull();
 
 	TestStatistics();
 }

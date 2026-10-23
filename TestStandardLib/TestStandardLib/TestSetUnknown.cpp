@@ -1,7 +1,11 @@
 #include "BaseLib/GlobalMemory.h"
 #include "TestLib/Assert.h"
+#include "BaseLib/BufferedFile.h"
+#include "BaseLib/DiskFile.h"
+#include "BaseLib/FileUtil.h"
 #include "StandardLib/Unknowns.h"
 #include "StandardLib/SetUnknown.h"
+#include "StandardLib/ArrayUnknown.h"
 #include "UnknownTestClasses.h"
 
 
@@ -394,6 +398,129 @@ void TestSetUnknownSorted(size uiNumElements)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestSetUnknownLoadAfterRemove(void)
+{
+	MemoryInit();
+	UnknownsInit();
+
+	CSetUnknown			cSet;
+	CChunkFile			cFile;
+	CFileUtil			cFileUtil;
+	CTestUnknown*		pcTest;
+	CTestUnknown*		pcRemoved;
+	SSetIterator		sIter;
+	CUnknown*			pcUnknown;
+	int					iSum;
+	size				uiCount;
+	bool				bExists;
+
+	gcUnknowns.AddConstructor<CTestUnknown>();
+
+	cFileUtil.RemoveDir("Output" _FS_ "SetUnknownRemoved");
+	cFileUtil.TouchDir("Output" _FS_ "SetUnknownRemoved");
+
+	//Removing from a set leaves a NULL in its place.  Saving must not count it as an element.
+	cSet.Init(false);
+	pcTest = cSet.Add<CTestUnknown>();
+	pcTest->Init(1);
+	pcRemoved = cSet.Add<CTestUnknown>();
+	pcRemoved->Init(10);
+	pcTest = cSet.Add<CTestUnknown>();
+	pcTest->Init(100);
+	AssertSize(1, cSet.Remove(pcRemoved));
+	AssertSize(2, cSet.NumElements());
+	AssertSize(2, gcUnknowns.NumElements());
+
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "SetUnknownRemoved" _FS_ "Set.dat")));
+	AssertTrue(cFile.WriteOpen());
+	AssertTrue(cSet.Save(&cFile));
+	AssertTrue(cFile.WriteClose());
+	cFile.Kill();
+	cSet.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "SetUnknownRemoved" _FS_ "Set.dat")));
+	AssertTrue(cFile.ReadOpen());
+	AssertTrue(cSet.Load(&cFile));
+	AssertTrue(cFile.ReadClose());
+	cFile.Kill();
+
+	AssertSize(2, cSet.NumElements());
+	AssertSize(2, gcUnknowns.NumElements());
+	iSum = 0;
+	uiCount = 0;
+	bExists = cSet.StartIteration(&sIter, &pcUnknown);
+	while (bExists)
+	{
+		iSum += ((CTestUnknown*)pcUnknown)->miCount;
+		uiCount++;
+		bExists = cSet.Iterate(&sIter, &pcUnknown);
+	}
+	AssertSize(2, uiCount);
+	AssertInt(101, iSum);
+
+	cSet.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cFileUtil.RemoveDir("Output" _FS_ "SetUnknownRemoved");
+
+	UnknownsKill();
+	MemoryKill();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSetUnknownAddAllWithNulls(void)
+{
+	MemoryInit();
+	UnknownsInit();
+
+	CSetUnknown			cSet;
+	CArrayUnknown		cArray;
+	CTestUnknown*		pcTest;
+	SSetIterator		sIter;
+	CUnknown*			pcUnknown;
+	size				uiCount;
+	bool				bExists;
+
+	//The array keeps its NULL as an element; the set ignores NULLs, so it must not count it.
+	cArray.Init();
+	cArray.KillElements(false);
+	pcTest = cArray.Add<CTestUnknown>();
+	pcTest->Init(1);
+	AssertTrue(cArray.Add((CUnknown*)NULL));
+	pcTest = cArray.Add<CTestUnknown>();
+	pcTest->Init(2);
+	AssertSize(3, cArray.NumElements());
+
+	cSet.Init(false);
+	AssertTrue(cSet.AddAll(&cArray));
+	AssertSize(2, cSet.NumElements());
+
+	uiCount = 0;
+	bExists = cSet.StartIteration(&sIter, &pcUnknown);
+	while (bExists)
+	{
+		uiCount++;
+		bExists = cSet.Iterate(&sIter, &pcUnknown);
+	}
+	AssertSize(2, uiCount);
+
+	cArray.Kill();
+	cSet.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	UnknownsKill();
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestSetUnknown(void)
 {
 	BeginTests();
@@ -401,6 +528,8 @@ void TestSetUnknown(void)
 	TestSetUnknownRemoveDuringIteration1();
 	TestSetUnknownRemoveDuringIteration2();
 	TestSetUnknownCleanNulls();
+	TestSetUnknownLoadAfterRemove();
+	TestSetUnknownAddAllWithNulls();
 	TestSetUnknownSorted(4);
 	TestSetUnknownSorted(10000);
 

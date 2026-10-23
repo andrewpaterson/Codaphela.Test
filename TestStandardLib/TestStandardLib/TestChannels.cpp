@@ -184,6 +184,61 @@ void TestChannelsRemoveBeforeSize(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestChannelsAddDuplicate(void)
+{
+	ObjectsInit();
+
+	CChannels	cChannels;
+
+	cChannels.Init();
+	cChannels.BeginChange();
+	cChannels.SetSize(2);
+	cChannels.AddChannel(0, PT_uint8);
+	cChannels.EndChange();
+	AssertSize(2, cChannels.GetByteSize());
+
+	//A change that adds a channel which already exists adds none of its channels.
+	cChannels.BeginChange();
+	cChannels.AddChannel(1, PT_uint8);
+	cChannels.AddChannel(0, PT_uint8);
+	AssertFalse(cChannels.EndChange());
+	AssertSize(1, cChannels.GetNumChannels());
+	AssertFalse(cChannels.HasChannel(1));
+	AssertSize(8, cChannels.GetBitStride());
+	AssertSize(2, cChannels.GetByteSize());
+
+	//Nor does one that adds the same channel twice.
+	cChannels.BeginChange();
+	cChannels.AddChannel(2, PT_uint8);
+	cChannels.AddChannel(2, PT_uint8);
+	AssertFalse(cChannels.EndChange());
+	AssertSize(1, cChannels.GetNumChannels());
+	AssertSize(2, cChannels.GetByteSize());
+
+	//Removing a channel and adding it back in one change is allowed.
+	cChannels.BeginChange();
+	AssertTrue(cChannels.RemoveChannel(0));
+	cChannels.AddChannel(0, PT_uint16);
+	AssertTrue(cChannels.EndChange());
+	AssertSize(1, cChannels.GetNumChannels());
+	AssertSize(16, cChannels.GetBitStride());
+
+	cChannels.BeginChange();
+	cChannels.AddChannel(1, PT_uint8);
+	AssertTrue(cChannels.EndChange());
+	AssertSize(2, cChannels.GetNumChannels());
+	AssertSize(2 * 3, cChannels.GetByteSize());
+
+	cChannels.Kill();
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestChannelsLoad(void)
 {
 	ObjectsInit();
@@ -545,6 +600,7 @@ void TestChannels(void)
 
 	TestChannelsStuff();
 	TestChannelsRemoveBeforeSize();
+	TestChannelsAddDuplicate();
 	TestChannelsLoad();
 	TestChannelsCopier16bitTo8bit();
 	TestChannelsCopier24bitTo8bit();

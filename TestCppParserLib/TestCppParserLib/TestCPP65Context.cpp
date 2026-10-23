@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "TestCPP65Context.h"
 #include "Assembler65Lib/Asm65Assembler.h"
+#include "Assembler65Lib/Asm65Linker.h"
 #include "BaseLib/TextFile.h"
 #include "BaseLib/FileUtil.h"
 #include "CppParserLib/Preprocessor.h"
@@ -190,14 +191,12 @@ static void TestCPP65TickLow(C65C64Meta* pcMPU, void* pvContext)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Preprocesses, parses and generates szSource, as a whole program with its start up
-// if bProgram.  The assembly is appended to pszAssembly and every stage's errors to
-// pszErrors.  The labels it uses but does not define are added to paszExternals.  A
-// unit of a program of several (szUnit is its prefix) shares paszEmitted and adds to
-// the initialisers and finalisers.
+// Compiles szSource (as a program with its start up if bProgram) into the assembly of
+// an object, appended to pszAssembly, and the errors to pszErrors.  The labels it uses
+// but does not define are added to paszExternals.
 //
 //////////////////////////////////////////////////////////////////////////
-bool TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSource, bool bProgram, CArrayChars* paszExternals, const char* szUnit, CArrayChars* paszEmitted, CArrayChars* paszInitialise, CArrayChars* paszFinalise)
+bool TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSource, bool bProgram, CArrayChars* paszExternals)
 {
 	CTranslationUnit	cFile;
 	CPreprocessor		cPreprocessor;
@@ -258,18 +257,10 @@ bool TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSou
 	cParser.Kill();
 
 	cGenerator.Init(&cTree);
-	if (szUnit)
-	{
-		cGenerator.SetUnit(szUnit, paszEmitted);
-	}
 	bResult &= bProgram ? cGenerator.GenerateProgram(pszAssembly) : cGenerator.Generate(pszAssembly);
 	if (paszExternals)
 	{
 		cGenerator.GetExternals(paszExternals);
-	}
-	if (szUnit)
-	{
-		cGenerator.GetStartUp(paszInitialise, paszFinalise);
 	}
 	pszErrors->Append(cGenerator.GetErrors()->Text());
 	cGenerator.Kill();
@@ -311,27 +302,70 @@ bool TestCPP65Begin(STestCPP65Run* psRun, const char* szSource)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Assembles a program, loads it and runs reset.
+// Assembles one object (the start up must be its first code), adds it to the linker.
 //
 //////////////////////////////////////////////////////////////////////////
-bool TestCPP65BeginAssembly(STestCPP65Run* psRun, const char* szAssembly)
+static bool TestCPP65AddObject(CAsm65Linker* pcLinker, CAsm65Library* pcObjects, const char* szName, const char* szAssembly)
 {
-	CAsm65Assembler		cAssembler;
-	bool				bResult;
+	CAsm65Assembler	cAssembler;
+	CAsm65Object*	pcObject;
+	bool			bResult;
+
+	pcObject = pcObjects->AddObject(szName);
+	cAssembler.Init();
+	bResult = cAssembler.AssembleObject(szAssembly, pcObject);
+	AssertString("", cAssembler.GetErrors());
+	cAssembler.Kill();
+	pcLinker->AddObject(pcObject);
+	return bResult;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Links, loads the program and runs reset.  The text starts at CPP65_PROGRAM_ADDRESS
+// and the program must end below the heap.
+//
+//////////////////////////////////////////////////////////////////////////
+static bool TestCPP65BeginLinked(STestCPP65Run* psRun, CAsm65Linker* pcLinker)
+{
+	bool	bResult;
+
+	pcLinker->SetAddress(ASK65_Text, CPP65_PROGRAM_ADDRESS);
+	pcLinker->SetLimit(CPP65_HEAP_ADDRESS);
+	bResult = pcLinker->Link();
+	AssertString("", pcLinker->GetErrors());
 
 	psRun->pcContext = (CTestCPP65Context*)malloc(sizeof(CTestCPP65Context));
 	psRun->pcContext->Init();
 	psRun->pcContext->SetLong(VECTOR_65C64_BASE + 4 * VECTOR_65C64_RESET, CPP65_PROGRAM_ADDRESS);
 	psRun->uiInstructions = 0;
-
-	cAssembler.Init();
-	bResult = cAssembler.Assemble(szAssembly);
-	AssertString("", cAssembler.GetErrors());
-	psRun->pcContext->Load(cAssembler.GetOutput());
-	cAssembler.Kill();
+	psRun->pcContext->Load(pcLinker->GetOutput());
 
 	psRun->cMeta.Init(TestCPP65TickHigh, TestCPP65TickLow, psRun->pcContext);
 	psRun->cMeta.TickInstruction();
+	return bResult;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Assembles a program (one object with its start up), links it, loads it and runs
+// reset.
+//
+//////////////////////////////////////////////////////////////////////////
+bool TestCPP65BeginAssembly(STestCPP65Run* psRun, const char* szAssembly)
+{
+	CAsm65Library	cObjects;
+	CAsm65Linker	cLinker;
+	bool			bResult;
+
+	cObjects.Init("objects");
+	cLinker.Init();
+	bResult = TestCPP65AddObject(&cLinker, &cObjects, "program", szAssembly);
+	bResult &= TestCPP65BeginLinked(psRun, &cLinker);
+	cLinker.Kill();
+	cObjects.Kill();
 	return bResult;
 }
 
@@ -382,9 +416,8 @@ void TestCPP65End(STestCPP65Run* psRun)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Compiles szSource (as a program with its start up if bProgram) and assembles it,
-// with a stub for each label it uses but does not define.  Returns the number of
-// externals.
+// Compiles szSource (as a program with its start up if bProgram) and assembles it as
+// an object.  Returns the number of labels it uses but does not define.
 //
 //////////////////////////////////////////////////////////////////////////
 int TestCPP65Assemble(const char* szSource, bool bProgram)
@@ -393,7 +426,7 @@ int TestCPP65Assemble(const char* szSource, bool bProgram)
 	CChars				szErrors;
 	CArrayChars			aszExternals;
 	CAsm65Assembler		cAssembler;
-	size				i;
+	CAsm65Object		cObject;
 	int					iExternals;
 
 	szAssembly.Init();
@@ -401,16 +434,13 @@ int TestCPP65Assemble(const char* szSource, bool bProgram)
 	aszExternals.Init();
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, szSource, bProgram, &aszExternals));
 	AssertString("", szErrors.Text());
-	for (i = 0; i < aszExternals.NumElements(); i++)
-	{
-		szAssembly.Append(aszExternals.GetText(i));
-		szAssembly.Append(":\n\t\tstp\n");
-	}
 
+	cObject.Init("unit");
 	cAssembler.Init();
-	AssertTrue(cAssembler.Assemble(szAssembly.Text()));
+	AssertTrue(cAssembler.AssembleObject(szAssembly.Text(), &cObject));
 	AssertString("", cAssembler.GetErrors());
 	cAssembler.Kill();
+	cObject.Kill();
 
 	iExternals = (int)aszExternals.NumElements();
 	aszExternals.Kill();
@@ -488,46 +518,16 @@ int32 TestCPP65Main(const char* szSource)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Adds the labels defined in szAssembly (a name at the start of a line, followed by
-// a colon) to paszLabels.
-//
-//////////////////////////////////////////////////////////////////////////
-static void TestCPP65DefinedLabels(CArrayChars* paszLabels, const char* szAssembly)
-{
-	const char*	szLine;
-	const char*	szEnd;
-	CChars		szLabel;
-
-	szLine = szAssembly;
-	while (*szLine)
-	{
-		szEnd = szLine;
-		while ((*szEnd != '\0') && (*szEnd != '\n'))
-		{
-			szEnd++;
-		}
-		if ((szEnd > szLine + 1) && (szLine[0] != '\t') && (szLine[0] != ' ') && (szLine[0] != ';') && (szEnd[-1] == ':'))
-		{
-			szLabel.Init();
-			szLabel.Append(szLine, (int)(szEnd - szLine - 1));
-			paszLabels->AddIfUnique(szLabel);
-			szLabel.Kill();
-		}
-		szLine = (*szEnd == '\n') ? szEnd + 1 : szEnd;
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
 // Compiles the units (paths under commonlibraries, or under this test's directory
-// when they start with "Input") and szSource if it is given, links them and loads
-// the program.  The units in a directory are a library.  The labels in szStubs
-// (space separated, sorted) must be exactly the ones used but defined by no unit;
-// each is a stp so a call to one stops the program.
+// when they start with "Input") and szSource if it is given, each into an object,
+// links them after the start up and loads the program.  The units in a directory
+// share a CLibrary (their include settings).  The labels in szStubs (space
+// separated, sorted) must be exactly the ones used but defined by no unit; the
+// linker makes each a stp so a call to one stops the program.  pszMap, if given,
+// gets the linker's map.
 //
 //////////////////////////////////////////////////////////////////////////
-bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const char* szStubs, const char* szSource)
+bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const char* szStubs, const char* szSource, CChars* pszMap)
 {
 	CProject			cProject;
 	CLibrary*			pcLibrary;
@@ -541,16 +541,12 @@ bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const ch
 	CChars				szDirectory;
 	CChars				szLibrary;
 	CChars				szFile;
-	CChars				szUnits;
-	CChars				szProgram;
-	CChars				szUnit;
+	CChars				szAssembly;
 	CChars				szErrors;
 	CChars				szMissing;
-	CArrayChars			aszEmitted;
-	CArrayChars			aszInitialise;
-	CArrayChars			aszFinalise;
-	CArrayChars			aszExternals;
-	CArrayChars			aszDefined;
+	CArrayChars			aszMissing;
+	CAsm65Library		cObjects;
+	CAsm65Linker		cLinker;
 	int					iUnit;
 	int					iSlash;
 	size				i;
@@ -600,15 +596,22 @@ bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const ch
 	}
 	AssertTrue(cProject.Process("65C64"));
 
-	szUnits.Init();
 	szErrors.Init();
-	aszEmitted.Init();
-	aszInitialise.Init();
-	aszFinalise.Init();
-	aszExternals.Init();
+	cObjects.Init("objects");
+	cLinker.Init();
+	cLinker.SetStubMissing(true);
+	bResult = true;
+
+	szAssembly.Init();
+	CCPP65Generator::AppendStartUp(&szAssembly);
+	bResult &= TestCPP65AddObject(&cLinker, &cObjects, "start up", szAssembly.Text());
+	szAssembly.Kill();
 	if (szSource)
 	{
-		TestCPP65Generate(&szUnits, &szErrors, szSource, false, &aszExternals, "U0_", &aszEmitted, &aszInitialise, &aszFinalise);
+		szAssembly.Init();
+		TestCPP65Generate(&szAssembly, &szErrors, szSource, false);
+		bResult &= TestCPP65AddObject(&cLinker, &cObjects, "source", szAssembly.Text());
+		szAssembly.Kill();
 	}
 	iUnit = 0;
 	for (pcFile = cProject.Start(&sIter, "65C64"); pcFile; pcFile = cProject.Iterate(&sIter))
@@ -623,17 +626,13 @@ bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const ch
 		szErrors.Append(cTree.GetErrors()->Text());
 		cParser.Kill();
 
-		szUnit.Init("U");
-		szUnit.Append(iUnit);
-		szUnit.Append('_');
+		szAssembly.Init();
 		cGenerator.Init(&cTree);
-		cGenerator.SetUnit(szUnit.Text(), &aszEmitted);
-		cGenerator.Generate(&szUnits);
+		cGenerator.Generate(&szAssembly);
 		szErrors.Append(cGenerator.GetErrors()->Text());
-		cGenerator.GetStartUp(&aszInitialise, &aszFinalise);
-		cGenerator.GetExternals(&aszExternals);
 		cGenerator.Kill();
-		szUnit.Kill();
+		bResult &= TestCPP65AddObject(&cLinker, &cObjects, pcFile->ShortName(), szAssembly.Text());
+		szAssembly.Kill();
 
 		cTree.Kill();
 		cTokeniser.Kill();
@@ -641,41 +640,35 @@ bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const ch
 	AssertInt((int)i, iUnit);
 	AssertString("", szErrors.Text());
 
-	szProgram.Init();
-	CCPP65Generator::AppendStartUp(&szProgram, &aszInitialise, &aszFinalise);
-	szProgram.Append(szUnits);
+	bResult &= szErrors.Empty() && TestCPP65BeginLinked(psRun, &cLinker);
 
-	//What is used but not written by any unit.
-	aszDefined.Init();
-	TestCPP65DefinedLabels(&aszDefined, szProgram.Text());
-	szMissing.Init();
-	aszExternals.QuickSort(true);
-	for (i = 0; i < aszExternals.NumElements(); i++)
+	//What is used but written by no unit.
+	aszMissing.Init();
+	for (i = 0; i < cLinker.NumMissing(); i++)
 	{
-		if (aszDefined.GetIndex(aszExternals.GetText(i)) == ARRAY_ELEMENT_NOT_FOUND)
+		aszMissing.Add(cLinker.GetMissing(i));
+	}
+	aszMissing.QuickSort(true);
+	szMissing.Init();
+	for (i = 0; i < aszMissing.NumElements(); i++)
+	{
+		if (!szMissing.Empty())
 		{
-			if (!szMissing.Empty())
-			{
-				szMissing.Append(' ');
-			}
-			szMissing.Append(aszExternals.GetText(i));
-			szProgram.Append(aszExternals.GetText(i));
-			szProgram.Append(":\n\t\tstp\n");
+			szMissing.Append(' ');
 		}
+		szMissing.Append(aszMissing.GetText(i));
 	}
 	AssertString(szStubs, szMissing.Text());
-
-	bResult = szErrors.Empty() && TestCPP65BeginAssembly(psRun, szProgram.Text());
+	if (pszMap)
+	{
+		pszMap->Append(cLinker.GetMap());
+	}
 
 	szMissing.Kill();
-	aszDefined.Kill();
-	szProgram.Kill();
-	aszExternals.Kill();
-	aszFinalise.Kill();
-	aszInitialise.Kill();
-	aszEmitted.Kill();
+	aszMissing.Kill();
+	cLinker.Kill();
+	cObjects.Kill();
 	szErrors.Kill();
-	szUnits.Kill();
 	cProject.Kill();
 	return bResult;
 }

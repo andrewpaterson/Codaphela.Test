@@ -255,6 +255,43 @@ void TestFileIOBigEndian(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestFileIOStringTruncated(void)
+{
+	CMemoryFile		cMemory;
+	CFileBasic		cFile;
+	char			sz[8];
+	int32			i;
+
+	cMemory.Init();
+	cFile.Init(&cMemory);
+	AssertTrue(cFile.Open(EFM_Write_Create));
+	AssertTrue(cFile.WriteString("A string longer than the buffer"));
+	AssertTrue(cFile.WriteInt32(1234567));
+	AssertTrue(cFile.WriteString("Short"));
+	AssertTrue(cFile.WriteInt32(-89));
+	AssertTrue(cFile.Close());
+
+	//A string too long for the buffer is cut short and the rest of it skipped, so the next read follows it.
+	AssertTrue(cFile.Open(EFM_Read));
+	AssertTrue(cFile.ReadString(sz, 8));
+	AssertString("A strin", sz);
+	AssertTrue(cFile.ReadInt32(&i));
+	AssertInt(1234567, i);
+	AssertTrue(cFile.ReadString(sz, 8));
+	AssertString("Short", sz);
+	AssertTrue(cFile.ReadInt32(&i));
+	AssertInt(-89, i);
+	AssertTrue(cFile.Close());
+
+	cFile.Kill();
+	cMemory.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestFileIOEnumerator(void)
 {
 	CMemoryFile							cMemory;
@@ -701,6 +738,7 @@ void TestFileIO(void)
 	TestFileIOBigEndian();
 	TestFileIOArray();
 	TestFileIOString();
+	TestFileIOStringTruncated();
 	TestFileIOEnumerator();
 	TestFileIOTree();
 	TestFileIOLinkList();
