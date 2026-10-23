@@ -1078,6 +1078,19 @@ void TestCPP65GeneratorClasses(void)
 		"\t\t.long _A__f\n"));
 	szErrors.Kill();
 	szAssembly.Kill();
+
+	//A field of an unnamed nested class.
+	AssertInt(1, TestCPP65Main(
+		"struct COuter { int a; struct { short x; int y; } sInner; char c; void Set() { a = 1; sInner.x = 2; sInner.y = 3; c = 4; } };\n"
+		"int main() { COuter o; o.Set(); return o.a + o.sInner.x + o.sInner.y + o.c == 10 && sizeof(COuter) == 16; }\n"));
+
+	//An unnamed union in a class template (like BaseLib's CStackMemory) is a different class in each instance.
+	AssertInt(1, TestCPP65Main(
+		"template<int I> struct CStack { union { char ac[I]; char* pc; } u; int Size() { return sizeof(u); } char* Init() { u.pc = 0; return u.ac; } int Fits(int i); };\n"
+		"template<int I> int CStack<I>::Fits(int i) { short s = (short)I; return (i > I) ? -s : I * 2; }\n"
+		"typedef struct { int a; } SPlain;\n"
+		"template<class M> int Plain(M m) { SPlain s; s.a = (int)m; return s.a; }\n"
+		"int main() { CStack<16> a; CStack<40> b; return a.Size() == 16 && b.Size() == 40 && a.Init() == (char*)&a && Plain(3) == 3 && a.Fits(17) == -16 && b.Fits(17) == 80; }\n"));
 }
 
 
@@ -1989,6 +2002,58 @@ void TestCPP65GeneratorNewDelete(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Member templates: defined in a class and outside it, in a class and in a class
+// template (using both the class's and its own parameters), deduced and explicit
+// arguments, static, and called unqualified from another member.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorMemberTemplates(void)
+{
+	AssertInt(1, TestCPP65Main(
+		"struct CValue\n"
+		"{\n"
+		"\tint m;\n"
+		"\tCValue() { m = 1; }\n"
+		"\ttemplate<class T> T Twice(T t) { return t + t + (T)m; }\n"
+		"\ttemplate<class T> T As(void) { return (T)(m + 1000); }\n"
+		"\ttemplate<class T> int Size(T* p);\n"
+		"\ttemplate<class T> static T Max(T a, T b) { return a > b ? a : b; }\n"
+		"\tint Use(void) { return Twice(20) + Max(3, 4); }\n"
+		"};\n"
+		"template<class T> int CValue::Size(T* p) { return (int)sizeof(T) + m; }\n"
+		"struct CDerived : CValue { int d; };\n"
+		"int main()\n"
+		"{\n"
+		"\tCValue c;\n"
+		"\tCDerived e;\n"
+		"\tlong long ll = 0;\n"
+		"\tchar ch = c.Twice((char)3);\n"
+		"\treturn c.Twice(10) == 21 && ch == 7 && c.As<short>() == 1001 && c.Size(&ll) == 9 && c.Size(&ch) == 2 && CValue::Max(5, 2) == 5 && c.Use() == 45 && e.Twice(4) == 9;\n"
+		"}\n"));
+
+	AssertInt(1, TestCPP65Main(
+		"template<class M>\n"
+		"struct SBox\n"
+		"{\n"
+		"\tM m;\n"
+		"\tSBox(M v) { m = v; }\n"
+		"\ttemplate<class N> M Add(N n) { return m + (M)n; }\n"
+		"\ttemplate<class N> N Mul(N n);\n"
+		"\ttemplate<class N> SBox<N> Convert(void) { return SBox<N>((N)m); }\n"
+		"};\n"
+		"template<class M> template<class N> N SBox<M>::Mul(N n) { return (N)m * n; }\n"
+		"int main()\n"
+		"{\n"
+		"\tSBox<int> a(5);\n"
+		"\tSBox<char> b(2);\n"
+		"\tSBox<short> c = a.Convert<short>();\n"
+		"\treturn a.Add((char)3) == 8 && b.Add(300) == 46 && a.Mul(7) == 35 && b.Mul((short)1000) == 2000 && c.m == 5 && sizeof(c) == 2;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Programs whose functions are loaded from a drive when they are first called give
 // the same results.  Only some of the units are loaded: the ones a run calls.
 //
@@ -2093,6 +2158,7 @@ void TestCPP65GeneratorErrors(void)
 	AssertCPP65Error("Generated.cpp (1, 32): No function matches the arguments [f]\n", "int f(int a); int g() { return f(); }");
 	AssertCPP65Error("Generated.cpp (1, 16): break outside a loop or switch [break]\n", "void f(void) { break; }");
 	AssertCPP65Error("Generated.cpp (1, 31): A static local variable needs a constant initialiser in the 65C64 generator yet [a]\n", "int f(int a) { static int s = a; return s; }");
+	AssertCPP65Error("Generated.cpp (1, 70): The member template has not been defined [c]\n", "struct C { template<class T> int F(T t); }; int main() { C c; return c.F(1); }");
 }
 
 
@@ -2119,6 +2185,7 @@ void TestCPP65Generator(void)
 	TestCPP65GeneratorClasses();
 	TestCPP65GeneratorExtern();
 	TestCPP65GeneratorNewDelete();
+	TestCPP65GeneratorMemberTemplates();
 	TestCPP65GeneratorArrayTemplate();
 	TestCPP65GeneratorProject();
 	TestCPP65GeneratorFloat();

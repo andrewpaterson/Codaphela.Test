@@ -361,6 +361,251 @@ void TestOrdererParentsFirst(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Subcircuit types for the subcircuit tests: each fulfils its own name and
+// requires the names of the subcircuits it has instances of.
+//
+//////////////////////////////////////////////////////////////////////////
+const char*		gaszOrdererSubcircuits[] = { "Main", "ALU", "Adder", "Registers", "FlipFlop" };
+const char*		gaszOrdererSubcircuitInstances[][3] = {	{ "ALU", "Registers", NULL },
+														{ "Adder", NULL, NULL },
+														{ NULL, NULL, NULL },
+														{ "FlipFlop", "FlipFlop", NULL },
+														{ NULL, NULL, NULL } };
+#define NUM_ORDERER_SUBCIRCUITS	5
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+Ptr<COrderer> NewSubcircuitOrderer(Ptr<CTestInteger>* apSubcircuits)
+{
+	Ptr<COrderer>	pOrderer;
+	size			i;
+	size			j;
+
+	pOrderer = OMalloc<COrderer>();
+	for (i = 0; i < NUM_ORDERER_SUBCIRCUITS; i++)
+	{
+		pOrderer->AddFulfilment(apSubcircuits[i], gaszOrdererSubcircuits[i]);
+		for (j = 0; gaszOrdererSubcircuitInstances[i][j] != NULL; j++)
+		{
+			pOrderer->AddRequirement(apSubcircuits[i], gaszOrdererSubcircuitInstances[i][j]);
+		}
+	}
+	return pOrderer;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// As Logicim's CircuitEditor saves subcircuits: each subcircuit comes after
+// the subcircuits it has instances of, so they can be loaded in order.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestOrdererSubcircuitSave(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CRoot>					pRoot;
+		Ptr<CTestInteger>			apSubcircuits[NUM_ORDERER_SUBCIRCUITS];
+		Ptr<COrderer>				pOrderer;
+		Ptr<CArray<CBaseObject>>	pOrdered;
+		size						i;
+
+		pRoot = ORoot();
+		for (i = 0; i < NUM_ORDERER_SUBCIRCUITS; i++)
+		{
+			apSubcircuits[i] = OMalloc<CTestInteger>((int32)i, 0, 0);
+			pRoot->Add(apSubcircuits[i]);
+		}
+		pOrderer = NewSubcircuitOrderer(apSubcircuits);
+		pOrdered = OMalloc<CArray<CBaseObject>>();
+		pRoot->Add(pOrderer, pOrdered);
+
+		//Pass 1: Adder, FlipFlop.  Pass 2: ALU, Registers.  Pass 3: Main.
+		AssertTrue(pOrderer->Order(pOrdered));
+		AssertSize(5, pOrdered->NumElements());
+		AssertOrdered(apSubcircuits[2], pOrdered, 0);
+		AssertOrdered(apSubcircuits[4], pOrdered, 1);
+		AssertOrdered(apSubcircuits[1], pOrdered, 2);
+		AssertOrdered(apSubcircuits[3], pOrdered, 3);
+		AssertOrdered(apSubcircuits[0], pOrdered, 4);
+
+		//An instance of Main in FlipFlop is recursive and the subcircuits can't be saved.  Only Adder and ALU don't
+		//use FlipFlop.
+		pOrderer->AddRequirement(apSubcircuits[4], "Main");
+		pOrdered->RemoveAll();
+		AssertFalse(pOrderer->Order(pOrdered));
+		AssertSize(2, pOrdered->NumElements());
+		AssertOrdered(apSubcircuits[2], pOrdered, 0);
+		AssertOrdered(apSubcircuits[1], pOrdered, 1);
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// As Logicim finds the subcircuits that can be instanced in the one being
+// edited: a subcircuit is allowed if requiring it from the edited one can
+// still be ordered, so a subcircuit never contains itself however deeply.
+// CanRequire answers without changing pOrderer; the answer is checked
+// against a new orderer with the requirement added, as Logicim does it.
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertAllowedSubcircuitInstances(const char* szExpected, Ptr<CRoot> pRoot, Ptr<COrderer> pOrderer, Ptr<CTestInteger>* apSubcircuits, size uiCurrent)
+{
+	Ptr<COrderer>				pRebuilt;
+	Ptr<CArray<CBaseObject>>	pOrdered;
+	size						i;
+	CChars						szAllowed;
+	bool						bAllowed;
+
+	szAllowed.Init();
+	for (i = 0; i < NUM_ORDERER_SUBCIRCUITS; i++)
+	{
+		if (i != uiCurrent)
+		{
+			bAllowed = pOrderer->CanRequire(apSubcircuits[uiCurrent], gaszOrdererSubcircuits[i]);
+			if (bAllowed)
+			{
+				szAllowed.Append(gaszOrdererSubcircuits[i]);
+				szAllowed.Append(" ");
+			}
+
+			pRebuilt = NewSubcircuitOrderer(apSubcircuits);
+			pOrdered = OMalloc<CArray<CBaseObject>>();
+			pRoot->Add(pRebuilt, pOrdered);
+			pRebuilt->AddRequirement(apSubcircuits[uiCurrent], gaszOrdererSubcircuits[i]);
+			AssertBool(pRebuilt->Order(pOrdered), bAllowed);
+			pRoot->Remove(pOrdered);
+			pRoot->Remove(pRebuilt);
+		}
+	}
+	AssertString(szExpected, szAllowed.Text());
+	szAllowed.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestOrdererSubcircuitInstances(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CRoot>					pRoot;
+		Ptr<CTestInteger>			apSubcircuits[NUM_ORDERER_SUBCIRCUITS];
+		Ptr<COrderer>				pOrderer;
+		Ptr<CArray<CBaseObject>>	pOrdered;
+		size						i;
+
+		pRoot = ORoot();
+		for (i = 0; i < NUM_ORDERER_SUBCIRCUITS; i++)
+		{
+			apSubcircuits[i] = OMalloc<CTestInteger>((int32)i, 0, 0);
+			pRoot->Add(apSubcircuits[i]);
+		}
+		pOrderer = NewSubcircuitOrderer(apSubcircuits);
+		pRoot->Add(pOrderer);
+
+		AssertAllowedSubcircuitInstances("ALU Adder Registers FlipFlop ", pRoot, pOrderer, apSubcircuits, 0);
+		AssertAllowedSubcircuitInstances("Adder Registers FlipFlop ", pRoot, pOrderer, apSubcircuits, 1);
+		AssertAllowedSubcircuitInstances("Registers FlipFlop ", pRoot, pOrderer, apSubcircuits, 2);
+		AssertAllowedSubcircuitInstances("ALU Adder FlipFlop ", pRoot, pOrderer, apSubcircuits, 3);
+		AssertAllowedSubcircuitInstances("ALU Adder ", pRoot, pOrderer, apSubcircuits, 4);
+
+		//CanRequire didn't add any requirements.
+		AssertSize(5, pOrderer->NumObjects());
+		AssertSize(1, pOrderer->GetHolder(apSubcircuits[1])->GetRequirements()->NumElements());
+		AssertSize(0, pOrderer->GetHolder(apSubcircuits[4])->GetRequirements()->NumElements());
+		pOrdered = OMalloc<CArray<CBaseObject>>();
+		pRoot->Add(pOrdered);
+		AssertTrue(pOrderer->Order(pOrdered));
+		AssertSize(5, pOrdered->NumElements());
+		AssertOrdered(apSubcircuits[2], pOrdered, 0);
+		AssertOrdered(apSubcircuits[0], pOrdered, 4);
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A requirement it already has, its own name, a name nothing fulfils and a
+// name fulfilled later are checked as Order would.  An object not in the
+// orderer can require any fulfilled name.  Nothing can be required once
+// the objects can't be ordered.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestOrdererCanRequire(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CRoot>					pRoot;
+		Ptr<CTestInteger>			pA;
+		Ptr<CTestInteger>			pB;
+		Ptr<CTestInteger>			pC;
+		Ptr<CTestInteger>			pOutside;
+		Ptr<COrderer>				pOrderer;
+		Ptr<CArray<CBaseObject>>	pOrdered;
+
+		pRoot = ORoot();
+		pA = OMalloc<CTestInteger>(1, 0, 0);
+		pB = OMalloc<CTestInteger>(2, 0, 0);
+		pC = OMalloc<CTestInteger>(3, 0, 0);
+		pOutside = OMalloc<CTestInteger>(4, 0, 0);
+		pRoot->Add(pA, pB, pC);
+		pRoot->Add(pOutside);
+
+		pOrderer = OMalloc<COrderer>();
+		pRoot->Add(pOrderer);
+		AssertFalse(pOrderer->CanRequire(pA, "A"));
+		AssertFalse(pOrderer->CanRequire(pOutside, "A"));
+
+		pOrderer->AddFulfilment(pA, "A");
+		pOrderer->AddFulfilment(pB, "B");
+		pOrderer->AddRequirement(pB, "A");
+		pOrderer->AddFulfilment(pC, "C");
+
+		AssertTrue(pOrderer->CanRequire(pB, "A"));
+		AssertTrue(pOrderer->CanRequire(pA, "C"));
+		AssertTrue(pOrderer->CanRequire(pC, "B"));
+		AssertFalse(pOrderer->CanRequire(pA, "B"));
+		AssertFalse(pOrderer->CanRequire(pA, "A"));
+		AssertFalse(pOrderer->CanRequire(pC, "Missing"));
+		AssertFalse(pOrderer->CanRequire(pC, "c"));
+
+		AssertTrue(pOrderer->CanRequire(pOutside, "B"));
+		AssertFalse(pOrderer->CanRequire(pOutside, "Missing"));
+		AssertTrue(pOrderer->GetHolder(pOutside).IsNull());
+		AssertSize(3, pOrderer->NumObjects());
+
+		//C requires B so neither A nor B can require C.
+		pOrderer->AddRequirement(pC, "B");
+		AssertFalse(pOrderer->CanRequire(pA, "C"));
+		AssertFalse(pOrderer->CanRequire(pB, "C"));
+		AssertTrue(pOrderer->CanRequire(pC, "A"));
+
+		//Already unorderable.
+		pOrderer->AddRequirement(pA, "C");
+		pOrdered = OMalloc<CArray<CBaseObject>>();
+		pRoot->Add(pOrdered);
+		AssertFalse(pOrderer->Order(pOrdered));
+		AssertFalse(pOrderer->CanRequire(pC, "A"));
+		AssertFalse(pOrderer->CanRequire(pOutside, "A"));
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // The orderer is saved with its objects and their names, and still finds
 // its objects' holders when loaded.
 //
@@ -485,6 +730,9 @@ void TestOrderer(void)
 	TestOrdererPasses();
 	TestOrdererUnsatisfiable();
 	TestOrdererParentsFirst();
+	TestOrdererSubcircuitSave();
+	TestOrdererSubcircuitInstances();
+	TestOrdererCanRequire();
 	TestOrdererSaveAndLoad();
 
 	DataIOKill();
