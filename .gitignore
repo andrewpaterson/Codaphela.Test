@@ -131,3 +131,7 @@ TestAssembler65Lib/TestAssembler65Lib/Log.txt
 /TestThreadLib/TestThreadLib/x64/Release/*
 /TestThreadLib/x64/Debug/*
 /TestThreadLib/x64/Release/*
+/TestWindowLib/TestWindowLib/x64/Debug/*
+/TestWindowLib/TestWindowLib/x64/Release/*
+/TestWindowLib/x64/Debug/*
+/TestWindowLib/x64/Release/*
