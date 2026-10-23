@@ -5,6 +5,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Source Files\Sound">
+      <UniqueIdentifier>{c6993c73-7ef7-4325-a66b-0f996aefe06d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Image">
       <UniqueIdentifier>{da8e2d3d-708a-4bb1-b2da-7c806f02d090}</UniqueIdentifier>
     </Filter>
@@ -162,6 +165,18 @@
     </ClCompile>
     <ClCompile Include="TestImageBMP.cpp">
       <Filter>Source Files\Image\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="TestImageResampler.cpp">
+      <Filter>Source Files\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSound.cpp">
+      <Filter>Source Files\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSoundWAV.cpp">
+      <Filter>Source Files\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSoundResampler.cpp">
+      <Filter>Source Files\Sound</Filter>
     </ClCompile>
     <ClCompile Include="TestImageTGA.cpp">
       <Filter>Source Files\Image\IO</Filter>

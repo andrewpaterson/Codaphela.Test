@@ -258,6 +258,10 @@
     <ClCompile Include="TestImageSwizzle.cpp" />
     <ClCompile Include="TestImageWriter.cpp" />
     <ClCompile Include="TestImageBMP.cpp" />
+    <ClCompile Include="TestImageResampler.cpp" />
+    <ClCompile Include="TestSound.cpp" />
+    <ClCompile Include="TestSoundWAV.cpp" />
+    <ClCompile Include="TestSoundResampler.cpp" />
     <ClCompile Include="TestImageTGA.cpp" />
     <ClCompile Include="TestImagePNG.cpp" />
     <ClCompile Include="TestCompressionRLE.cpp" />

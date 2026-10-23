@@ -58,6 +58,10 @@ void TestMeshShapes(void);
 void TestMeshConnectivity(void);
 void TestNormalGeneration(void);
 void TestMeshOBJReader(void);
+void TestImageResampler(void);
+void TestSound(void);
+void TestSoundWAV(void);
+void TestSoundResampler(void);
 
 
 int __cdecl main(void)
@@ -98,6 +102,7 @@ int __cdecl main(void)
 	TestRectangleLinePacker();
 	TestRectangleBestPackerWithRotation();
 	TestImageModifierStack();
+	TestImageResampler();
 	TestImageModifierDrawBox();
 	TestImageDraw();
 	TestImageRecolour();
@@ -127,6 +132,9 @@ int __cdecl main(void)
 	TestMeshConnectivity();
 	TestNormalGeneration();
 	//TestMeshOBJReader();  Source OBJ file is missing
+	TestSound();
+	TestSoundWAV();
+	TestSoundResampler();
 
 	cFileUtil.RemoveDir("Output");
 
