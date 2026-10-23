@@ -10,6 +10,7 @@
 #include "CppParserLib/CppTokeniser.h"
 #include "CppParserLib/CppParser.h"
 #include "CppParserLib/CPP65Generator.h"
+#include "CppParserLib/Project.h"
 #include "TestLib/Assert.h"
 
 
@@ -209,6 +210,7 @@ bool TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSou
 	CHeaderFiles		cBaseLib;
 	CFileUtil			cFileUtil;
 	CChars				szDirectory;
+	CConfig				cConfig;
 	bool				bResult;
 
 	//<stdint.h> and the rest are the 65C64's (Libc65), "BaseLib/..." are the libraries'.
@@ -230,9 +232,11 @@ bool TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSou
 	cBaseLib.Init(szDirectory.Text(), &cHeaderFileMap, false, false);
 	szDirectory.Kill();
 
+	cConfig.Init("65C64");
+	CCPP65Generator::AddDefines(&cConfig);
 	cFile.Init("Generated.cpp", NULL, false);
 	cFile.SetContents((char*)szSource);
-	cPreprocessor.Init(NULL);
+	cPreprocessor.Init(&cConfig);
 	cPreprocessor.AddIncludeDirectory(&cStandard);
 	cPreprocessor.AddIncludeDirectory(&cLibraries);
 	cPreprocessor.AddIncludeDirectory(&cInput);
@@ -263,6 +267,7 @@ bool TestCPP65Generate(CChars* pszAssembly, CChars* pszErrors, const char* szSou
 	cTree.Kill();
 	cTokeniser.Kill();
 	cFile.Kill();
+	cConfig.Kill();
 	cBaseLib.Kill();
 	cInput.Kill();
 	cLibraries.Kill();
@@ -467,5 +472,207 @@ int32 TestCPP65Main(const char* szSource)
 	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
 	iResult = (int32)TestCPP65MPU(&sRun)->GetA();
 	TestCPP65End(&sRun);
+	return iResult;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Adds the labels defined in szAssembly (a name at the start of a line, followed by
+// a colon) to paszLabels.
+//
+//////////////////////////////////////////////////////////////////////////
+static void TestCPP65DefinedLabels(CArrayChars* paszLabels, const char* szAssembly)
+{
+	const char*	szLine;
+	const char*	szEnd;
+	CChars		szLabel;
+
+	szLine = szAssembly;
+	while (*szLine)
+	{
+		szEnd = szLine;
+		while ((*szEnd != '\0') && (*szEnd != '\n'))
+		{
+			szEnd++;
+		}
+		if ((szEnd > szLine + 1) && (szLine[0] != '\t') && (szLine[0] != ' ') && (szLine[0] != ';') && (szEnd[-1] == ':'))
+		{
+			szLabel.Init();
+			szLabel.Append(szLine, (int)(szEnd - szLine - 1));
+			paszLabels->AddIfUnique(szLabel);
+			szLabel.Kill();
+		}
+		szLine = (*szEnd == '\n') ? szEnd + 1 : szEnd;
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Compiles the units (paths under commonlibraries, or under this test's directory
+// when they start with "Input"), links them and runs the program from reset.  The
+// units in a directory are a library.  The labels in szStubs (space separated,
+// sorted) must be exactly the ones used but defined by no unit; each is a stp so a
+// call to one stops the program.  Returns A when main returns.
+//
+//////////////////////////////////////////////////////////////////////////
+int32 TestCPP65RunProject(const char** aszUnits, const char* szStubs, size uiMaxInstructions)
+{
+	CProject			cProject;
+	CLibrary*			pcLibrary;
+	CTranslationUnit*	pcFile;
+	SProcessIter		sIter;
+	CCPPTokeniser		cTokeniser;
+	CCPPSyntaxTree		cTree;
+	CCPPParser			cParser;
+	CCPP65Generator		cGenerator;
+	CFileUtil			cFileUtil;
+	CChars				szDirectory;
+	CChars				szLibrary;
+	CChars				szFile;
+	CChars				szUnits;
+	CChars				szProgram;
+	CChars				szUnit;
+	CChars				szErrors;
+	CChars				szMissing;
+	CArrayChars			aszEmitted;
+	CArrayChars			aszInitialise;
+	CArrayChars			aszFinalise;
+	CArrayChars			aszExternals;
+	CArrayChars			aszDefined;
+	STestCPP65Run		sRun;
+	int					iUnit;
+	int					iSlash;
+	size				i;
+	int32				iResult;
+	bool				bDone;
+
+	cProject.Init(false);
+	szDirectory.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "Libc65");
+	cFileUtil.FullPath(&szDirectory);
+	cProject.AddIncludeDirectory(szDirectory.Text(), false, true);
+	szDirectory.Kill();
+	szDirectory.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries");
+	cFileUtil.FullPath(&szDirectory);
+	cProject.AddIncludeDirectory(szDirectory.Text(), true, false);
+	szDirectory.Kill();
+	szDirectory.Init("Input" _FS_ "CPP65");
+	cFileUtil.FullPath(&szDirectory);
+	cProject.AddIncludeDirectory(szDirectory.Text(), true, false);
+	szDirectory.Kill();
+
+	for (i = 0; aszUnits[i]; i++)
+	{
+		szLibrary.Init(aszUnits[i]);
+		iSlash = szLibrary.FindFromEnd('/');
+		szFile.Init(szLibrary.Text(iSlash + 1));
+		szLibrary.SetLength(iSlash);
+		pcLibrary = cProject.GetLibrary(szLibrary.Text());
+		if (!pcLibrary)
+		{
+			if (szLibrary.StartsWith("Input"))
+			{
+				szDirectory.Init(szLibrary);
+			}
+			else
+			{
+				szDirectory.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_);
+				szDirectory.Append(szLibrary);
+			}
+			szDirectory.Replace('/', FILE_SEPARATOR[0]);
+			cFileUtil.FullPath(&szDirectory);
+			pcLibrary = cProject.AddLibrary(szLibrary.Text(), szDirectory.Text(), false);
+			CCPP65Generator::AddDefines(pcLibrary->AddConfiguration("65C64"));
+			szDirectory.Kill();
+		}
+		pcLibrary->AddTranslationUnit(szFile.Text());
+		szFile.Kill();
+		szLibrary.Kill();
+	}
+	AssertTrue(cProject.Process("65C64"));
+
+	szUnits.Init();
+	szErrors.Init();
+	aszEmitted.Init();
+	aszInitialise.Init();
+	aszFinalise.Init();
+	aszExternals.Init();
+	iUnit = 0;
+	for (pcFile = cProject.Start(&sIter, "65C64"); pcFile; pcFile = cProject.Iterate(&sIter))
+	{
+		iUnit++;
+		cTokeniser.Init();
+		cTokeniser.Tokenise(pcFile->GetTokens());
+		szErrors.Append(cTokeniser.GetErrors()->Text());
+		cTree.Init(&cTokeniser);
+		cParser.Init(&cTokeniser, &cTree);
+		cParser.Parse();
+		szErrors.Append(cTree.GetErrors()->Text());
+		cParser.Kill();
+
+		szUnit.Init("U");
+		szUnit.Append(iUnit);
+		szUnit.Append('_');
+		cGenerator.Init(&cTree);
+		cGenerator.SetUnit(szUnit.Text(), &aszEmitted);
+		cGenerator.Generate(&szUnits);
+		szErrors.Append(cGenerator.GetErrors()->Text());
+		cGenerator.GetStartUp(&aszInitialise, &aszFinalise);
+		cGenerator.GetExternals(&aszExternals);
+		cGenerator.Kill();
+		szUnit.Kill();
+
+		cTree.Kill();
+		cTokeniser.Kill();
+	}
+	AssertInt((int)i, iUnit);
+	AssertString("", szErrors.Text());
+
+	szProgram.Init();
+	CCPP65Generator::AppendStartUp(&szProgram, &aszInitialise, &aszFinalise);
+	szProgram.Append(szUnits);
+
+	//What is used but not written by any unit.
+	aszDefined.Init();
+	TestCPP65DefinedLabels(&aszDefined, szProgram.Text());
+	szMissing.Init();
+	aszExternals.QuickSort(true);
+	for (i = 0; i < aszExternals.NumElements(); i++)
+	{
+		if (aszDefined.GetIndex(aszExternals.GetText(i)) == ARRAY_ELEMENT_NOT_FOUND)
+		{
+			if (!szMissing.Empty())
+			{
+				szMissing.Append(' ');
+			}
+			szMissing.Append(aszExternals.GetText(i));
+			szProgram.Append(aszExternals.GetText(i));
+			szProgram.Append(":\n\t\tstp\n");
+		}
+	}
+	AssertString(szStubs, szMissing.Text());
+
+	iResult = 0;
+	if (szErrors.Empty())
+	{
+		AssertTrue(TestCPP65BeginAssembly(&sRun, szProgram.Text()));
+		bDone = TestCPP65Run(&sRun, uiMaxInstructions) < uiMaxInstructions;
+		AssertTrue(bDone);
+		AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
+		iResult = (int32)TestCPP65MPU(&sRun)->GetA();
+		TestCPP65End(&sRun);
+	}
+
+	szMissing.Kill();
+	aszDefined.Kill();
+	szProgram.Kill();
+	aszExternals.Kill();
+	aszFinalise.Kill();
+	aszInitialise.Kill();
+	aszEmitted.Kill();
+	szErrors.Kill();
+	szUnits.Kill();
+	cProject.Kill();
 	return iResult;
 }

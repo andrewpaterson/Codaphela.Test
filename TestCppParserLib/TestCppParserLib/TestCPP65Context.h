@@ -54,6 +54,7 @@ C65C64*		TestCPP65MPU(STestCPP65Run* psRun);
 void		TestCPP65End(STestCPP65Run* psRun);
 int32		TestCPP65Main(const char* szSource);
 int32		TestCPP65MainFile(const char* szFilename);
+int32		TestCPP65RunProject(const char** aszUnits, const char* szStubs, size uiMaxInstructions = 20000000);
 
 
 #endif // __TEST_CPP65_CONTEXT_H__
