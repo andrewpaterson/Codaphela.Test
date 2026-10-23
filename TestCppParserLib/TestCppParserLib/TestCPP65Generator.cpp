@@ -14,6 +14,18 @@
 #include "TestLib/Assert.h"
 
 
+//Short names for GCC's builtins in the test programs.
+#define CPP65_BUILTINS \
+	"#define Ctz(x) __builtin_ctz(x)\n" \
+	"#define Clz(x) __builtin_clz(x)\n" \
+	"#define Ctz64(x) __builtin_ctzll(x)\n" \
+	"#define Clz64(x) __builtin_clzll(x)\n" \
+	"#define PopCount(x) __builtin_popcount(x)\n" \
+	"#define PopCount64(x) __builtin_popcountll(x)\n" \
+	"#define Expect(x, e) __builtin_expect(x, e)\n" \
+	"#define Unreachable() __builtin_unreachable()\n"
+
+
 static const int32	gaiValues[] = { 0, 1, -1, 2, -2, 7, -7, 31, 100, -100, 12345, -98765, 65536, 2147483647, (int32)0x80000000 };
 static const int32	gaiShifts[] = { 0, 1, 4, 15, 16, 31 };
 static const int64	gaiValues64[] = { 0, 1, -1, 2, -7, 100, -98765, 2147483647, (int64)0x80000000LL, (int64)0xFFFFFFFFLL, (int64)0x100000000LL, 0x123456789ABCDEFLL, -0x123456789ABCDEFLL, 0x7FFFFFFFFFFFFFFFLL, (int64)0x8000000000000000LL };
@@ -512,12 +524,18 @@ void TestCPP65GeneratorConversions(void)
 		"int Same(const char* a, const char* b) { while (*a && (*a == *b)) { a++; b++; } return *a == *b; }\n"
 		"struct CName { int Get() { return Same(__PRETTY_FUNCTION__, \"CName::Get\") && Same(__func__, \"Get\") && Same(__FUNCTION__ \".x\", \"Get.x\"); } };\n"
 		"int main() { CName c; return c.Get() && Same(__FUNCTION__, \"main\") && Same(\"a\" \"bc\", \"abc\") && __65C64__; }"));
-	AssertInt(0 + 4 * 32 + 16 * 31, TestCPP65Main("int main() { return __builtin_ctz(1) + 4 * __builtin_ctz(0) + 16 * __builtin_ctz(0x80000000); }"));
-	AssertInt(31 + 4 * 32 + 16 * 0 + 64 * 20, TestCPP65Main("int main() { return __builtin_clz(1) + 4 * __builtin_clz(0) + 16 * __builtin_clz(0x80000000) + 64 * __builtin_clz(0xFFF); }"));
-	AssertInt(40 + 4 * 64 + 16 * 63, TestCPP65Main("int main() { return __builtin_ctzll(0x10000000000LL) + 4 * __builtin_ctzll(0) + 16 * __builtin_clzll(1); }"));
-	AssertInt(0 + 4 * 1 + 16 * 32 + 64 * 12, TestCPP65Main("int main() { return __builtin_popcount(0) + 4 * __builtin_popcount(0x80000000) + 16 * __builtin_popcount(-1) + 64 * __builtin_popcount(0x1234567); }"));
-	AssertInt(64 + 4 * 2, TestCPP65Main("int main() { return __builtin_popcountll(-1LL) + 4 * __builtin_popcountll(0x8000000000000001LL); }"));
-	AssertInt(5, TestCPP65Main("int main() { int x = 5; if (__builtin_expect(x == 5, 1)) return x; __builtin_unreachable(); }"));
+	AssertInt(0 + 4 * 32 + 16 * 31, TestCPP65Main(CPP65_BUILTINS
+		"int main() { return Ctz(1) + 4 * Ctz(0) + 16 * Ctz(0x80000000); }"));
+	AssertInt(31 + 4 * 32 + 16 * 0 + 64 * 20, TestCPP65Main(CPP65_BUILTINS
+		"int main() { return Clz(1) + 4 * Clz(0) + 16 * Clz(0x80000000) + 64 * Clz(0xFFF); }"));
+	AssertInt(40 + 4 * 64 + 16 * 63, TestCPP65Main(CPP65_BUILTINS
+		"int main() { return Ctz64(0x10000000000LL) + 4 * Ctz64(0) + 16 * Clz64(1); }"));
+	AssertInt(0 + 4 * 1 + 16 * 32 + 64 * 12, TestCPP65Main(CPP65_BUILTINS
+		"int main() { return PopCount(0) + 4 * PopCount(0x80000000) + 16 * PopCount(-1) + 64 * PopCount(0x1234567); }"));
+	AssertInt(64 + 4 * 2, TestCPP65Main(CPP65_BUILTINS
+		"int main() { return PopCount64(-1LL) + 4 * PopCount64(0x8000000000000001LL); }"));
+	AssertInt(5, TestCPP65Main(CPP65_BUILTINS
+		"int main() { int x = 5; if (Expect(x == 5, 1)) return x; Unreachable(); }"));
 	AssertInt(-1, TestCPP65Main("int main() { int i = -1; long long l = i; return (int)(l >> 32); }"));
 	AssertInt(0, TestCPP65Main("int main() { unsigned u = 0xFFFFFFFF; long long l = u; return (int)(l >> 32); }"));
 	AssertInt(0xFFFFFF, TestCPP65Main("int main() { char c = -1; unsigned long long l = c; return (int)(l >> 40); }"));
@@ -1083,6 +1101,7 @@ void TestCPP65GeneratorBaseLib(void)
 {
 	static const char*	aszMD5[] = { "BaseLib/MD5.cpp", "Libc65/string.cpp", "Input/CPP65/MD5Project/Main.cpp", NULL };
 	static const char*	aszMersenneTwister[] = { "BaseLib/MersenneTwister.cpp", "Libc65/time.cpp", "Input/CPP65/MersenneTwisterProject/Main.cpp", NULL };
+	static const char*	aszSort[] = { "BaseLib/QuickSort.cpp", "BaseLib/BubbleSort.cpp", "BaseLib/BinarySearch.cpp", "Input/CPP65/SortProject/MemSwpStub.cpp", "Input/CPP65/SortProject/Main.cpp", NULL };
 	static const char*	aszRedBlackTree[] = { "BaseLib/RedBlackTree.cpp", "Libc65/string.cpp", "Libc65/stdlib.cpp", "Input/CPP65/RedBlackTreeProject/FreeListStub.cpp", "Input/CPP65/RedBlackTreeProject/Main.cpp", NULL };
 
 	//MD5Dump makes a CChars, which is not compiled here.
@@ -1093,6 +1112,9 @@ void TestCPP65GeneratorBaseLib(void)
 
 	//MT19937 against its reference sequence, and Libc65's time.
 	AssertInt(0xFF, TestCPP65RunProject(aszMersenneTwister, ""));
+
+	//QuickSort has an unnamed struct and gotos.  MemSwp is a stub (StringHelper has floating point).
+	AssertInt(0x7, TestCPP65RunProject(aszSort, ""));
 }
 
 
@@ -1127,7 +1149,7 @@ void TestCPP65GeneratorErrors(void)
 	AssertCPP65Error("Generated.cpp (1, 44): Objects can only be copied or used through pointers by the 65C64 generator yet [p]\n", "struct P { int x; }; int f() { P p; return p; }");
 	AssertCPP65Error("Generated.cpp (1, 32): No function matches the arguments [f]\n", "int f(int a); int g() { return f(); }");
 	AssertCPP65Error("Generated.cpp (1, 16): break outside a loop or switch [break]\n", "void f(void) { break; }");
-	AssertCPP65Error("Generated.cpp (1, 40): A static local variable needs a constant initialiser in the 65C64 generator yet [a]\n", "int f(int a) { static int s = a; return s; }");
+	AssertCPP65Error("Generated.cpp (1, 31): A static local variable needs a constant initialiser in the 65C64 generator yet [a]\n", "int f(int a) { static int s = a; return s; }");
 }
 
 
