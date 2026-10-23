@@ -666,6 +666,104 @@ void TestDehollowficationFatFromDatabaseSimple(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestDehollowficationFatFromDatabaseEmbeddedPointer(void)
+{
+	ForceFatHollows();
+
+	CCodabase*					pcDatabase;
+	CSequence*					pcSequence;
+	CFileUtil					cFileUtil;
+	char						szDirectory[] = "Output" _FS_ "Dehollowfication" _FS_ "Database4";
+
+	cFileUtil.RemoveDir(szDirectory);
+
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+	gcObjects.AddConstructor<CTestEmbeddedStrings>();
+	{
+		Ptr<CRoot>					pRoot;
+		Ptr<CTestEmbeddedStrings>	pContainer;
+		Ptr<CPointerContainer>		pPtr1;
+		Ptr<CPointerContainer>		pPtr2;
+
+		pRoot = ORoot();
+		pContainer = ONMalloc<CTestEmbeddedStrings>("Embedded");
+		pPtr1 = ONMalloc<CPointerContainer>("1");
+		pPtr2 = ONMalloc<CPointerContainer>("2");
+		pRoot->Add(pPtr1);
+		pRoot->Add(pPtr2);
+
+		pPtr1->mp = &pContainer;
+		pPtr2->mp = &pContainer->mString2;
+
+		pContainer->mString1.Set("Goldberry is first");
+		pContainer->mString2.Set("Jane is great");
+		pContainer->mString3.Set("Baby Wooglers");
+
+		AssertSize(1, pContainer->CEmbeddedObject::NumHeapFroms());
+		AssertSize(1, pContainer->mString2.NumHeapFroms());
+	}
+	ObjectsFlush();
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill(false);
+
+	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
+	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);
+	pcDatabase->Open();
+	ObjectsInit(pcDatabase, pcSequence);
+	{
+		Ptr<CTestEmbeddedStrings>	pContainer;
+		Ptr<CPointerContainer>		pPtr1;
+		Ptr<CPointerContainer>		pPtr2;
+		Ptr<CString>				pString2;
+		CEmbeddedObject*			pcHollowEmbedded;
+
+		//Loading "2" first makes the fat hollow with a heap from on its embedded hollow for mString2.
+		pPtr2 = gcObjects.Get("2");
+		pPtr1 = gcObjects.Get("1");
+
+		AssertString("CHollowObject", pPtr1->PointerObject()->ClassName());
+		AssertTrue(((CHollowObject*)pPtr1->PointerObject())->IsFatHollow());
+		pcHollowEmbedded = pPtr2->mp.Object();
+		AssertTrue(pcHollowEmbedded->IsHollow());
+		AssertPointer(pPtr1->mp.Object(), pcHollowEmbedded->GetEmbeddingContainer());
+		AssertSize(1, pcHollowEmbedded->CEmbeddedObject::NumHeapFroms());
+
+		&(pPtr1->mp);
+		AssertString("CTestEmbeddedStrings", pPtr1->PointerObject()->ClassName());
+		pContainer = pPtr1->mp;
+
+		//The pointer to the embedded hollow must now point to the real embedded object.
+		AssertPointer(&pContainer->mString2, pPtr2->mp.Object());
+		AssertSize(1, pContainer->mString2.NumHeapFroms());
+		AssertPointer(&pPtr2, pContainer->mString2.GetHeapFrom(0));
+		AssertSize(1, pContainer->CEmbeddedObject::NumHeapFroms());
+		AssertSize(0, pContainer->mString1.NumHeapFroms());
+		AssertSize(0, pContainer->mString3.NumHeapFroms());
+
+		pString2 = pPtr2->mp;
+		AssertString("Jane is great", pString2->Text());
+	}
+	ObjectsFlush();
+	pcDatabase->Close();
+	SafeKill(pcDatabase);
+	SafeKill(pcSequence);
+	ObjectsKill(false);
+
+	cFileUtil.RemoveDir(szDirectory);
+
+	UnforceFatHollows();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestDehollowfication(void)
 {
 	BeginTests();
@@ -679,6 +777,7 @@ void TestDehollowfication(void)
 	TestDehollowficationFromDatabaseOfTwoPointers();
 	TestDehollowficationFromChunkFileSource();
 	TestDehollowficationFatFromDatabaseSimple();
+	TestDehollowficationFatFromDatabaseEmbeddedPointer();
 
 	DataIOKill();
 	TypesKill();

@@ -7,6 +7,7 @@
 #include "StandardLib/Set.h"
 #include "TestLib/Assert.h"
 #include "ObjectTestClasses.h"
+#include "EmbeddedObjectTestClasses.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -1381,6 +1382,60 @@ void TestDistToStackRemoveUnbalancedLargeBroken(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestDistToStackClosestHeapFromToStackEmbedded(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CEmbeddedContainer>	pContainer;
+		Ptr<CPointerContainer>	pFar;
+		Ptr<CPointerContainer>	pNear;
+		CBaseObject*			pcFar;
+		CBaseObject*			pcNear;
+		CBaseObject*			pcClosest;
+
+		pContainer = OMalloc<CEmbeddedContainer>();
+		pFar = OMalloc<CPointerContainer>();
+		pNear = OMalloc<CPointerContainer>();
+
+		//
+		//  Far[3]  Near[1]
+		//    |       |
+		//    |     mcOne
+		//    |       |
+		//   Container
+		//
+
+		pFar->mp = pContainer;
+		pNear->mp = pContainer->GetOne();
+		AssertSize(2, pContainer->NumHeapFroms());
+		AssertSize(1, pContainer->mcOne.NumHeapFroms());
+
+		pcFar = &pFar;
+		pcNear = &pNear;
+		AssertInt(UNATTACHED_DIST_TO_ROOT, pcFar->GetDistToRoot());
+		AssertInt(UNATTACHED_DIST_TO_ROOT, pcNear->GetDistToRoot());
+
+		pcFar->SetDistToStack(3);
+		pcNear->SetDistToStack(1);
+
+		//The from to the embedded object is closer to the stack than the from to the container.
+		pcClosest = pContainer->GetClosestHeapFromToStack();
+		AssertPointer(pcNear, pcClosest);
+
+		pcFar->SetDistToStack(UNKNOWN_DIST_TO_STACK);
+		pcNear->SetDistToStack(UNKNOWN_DIST_TO_STACK);
+
+		gcObjects.ValidateObjectsConsistency();
+	}
+	ObjectsFlush();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestDistToStack(void)
 {
 	BeginTests();
@@ -1405,6 +1460,7 @@ void TestDistToStack(void)
 	TestDistToStackCyclicWithScenarioA();
 	TestDistToStackSetBroken();
 	TestDistToStackRemoveUnbalancedLargeBroken();
+	TestDistToStackClosestHeapFromToStackEmbedded();
 
 	DataIOKill();
 	TypesKill();

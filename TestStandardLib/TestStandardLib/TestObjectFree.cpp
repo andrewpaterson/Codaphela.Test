@@ -9,6 +9,44 @@
 #include "CollectionObjectTestClasses.h"
 
 
+size	guiSetDirtyAfterFreed = 0;
+
+
+class CTestDirtyAfterFreed : public CObject
+{
+CONSTRUCTABLE(CTestDirtyAfterFreed)
+DESTRUCTABLE(CTestDirtyAfterFreed)
+public:
+	Ptr<>	mp;
+
+	void Init(void)
+	{
+		PreInit();
+		PostInit();
+	}
+
+	void Class(void) override
+	{
+		M_Pointer(mp);
+	}
+
+	void Free(void) override
+	{
+	}
+
+	void SetDirty(bool bDirty) override
+	{
+		if (muiFlags & OBJECT_FLAGS_FREED)
+		{
+			//Only reached if a freed object is used.  Don't touch it any further.
+			guiSetDirtyAfterFreed++;
+			return;
+		}
+		CObject::SetDirty(bDirty);
+	}
+};
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -356,6 +394,48 @@ void TestObjectFreeStackWithCyclicHeapPointerRootFrom(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectFreeEmbeddingFreedByPointTo(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CTestDirtyAfterFreed>	pA;
+		Ptr<CTestDirtyAfterFreed>	pOld;
+		CTestDirtyAfterFreed*		pcA;
+
+		guiSetDirtyAfterFreed = 0;
+
+		pA = OMalloc<CTestDirtyAfterFreed>();
+		pOld = OMalloc<CTestDirtyAfterFreed>();
+		pA->mp = pOld;
+		pOld->mp = pA;
+		pOld = NULL;
+		AssertSize(2, gcObjects.NumMemoryIndexes());
+
+		//
+		//  A <--> Old
+		//  |
+		//  pA (stack)
+		//
+
+		//Return leaves A alive with no stack froms.  Nothing holds A or Old but each other.
+		pcA = (CTestDirtyAfterFreed*)pA.Return();
+		AssertSize(0, pcA->NumStackFroms());
+		AssertSize(2, gcObjects.NumMemoryIndexes());
+
+		//Removing A's pointer to Old frees Old, and A with it.  PointTo must not use A after that.
+		pcA->mp = NULL;
+
+		AssertSize(0, gcObjects.NumMemoryIndexes());
+		AssertSize(0, guiSetDirtyAfterFreed);
+	}
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectFree(void)
 {
 	BeginTests();
@@ -370,6 +450,7 @@ void TestObjectFree(void)
 	TestObjectFreeStackWithCyclicHeapPointer();
 	TestObjectFreeStackWithCyclicHeapPointerHeapFrom();
 	TestObjectFreeStackWithCyclicHeapPointerRootFrom();
+	TestObjectFreeEmbeddingFreedByPointTo();
 
 	DataIOKill();
 	TypesKill();
