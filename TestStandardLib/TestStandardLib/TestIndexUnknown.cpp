@@ -286,6 +286,203 @@ void TestIndexUnknownLoad(void)
 //                                                                      //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
+void TestIndexUnknownRemoveValue(void)
+{
+	MemoryInit();
+	UnknownsInit();
+
+	CIndexUnknown			cIndex;
+	CTestUnknownJobbie*		pcA;
+	CTestUnknownJobbie*		pcB;
+	CTestUnknownJobbie*		pcC;
+	CTestUnknownJobbie*		pcD;
+
+	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cIndex.Init();
+
+	pcA = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcB = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcC = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcD = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcA->Init(1, "A");
+	pcB->Init(2, "B");
+	pcC->Init(3, "C");
+	pcD->Init(4, "D");
+	cIndex.Put("A", pcA);
+	cIndex.Put("B", pcB);
+	cIndex.Put("C", pcC);
+	cIndex.Put("D", pcD);
+	AssertSize(4, gcUnknowns.NumElements());
+
+	//Middle.
+	AssertSize(1, cIndex.Remove(pcB));
+	AssertSize(3, cIndex.NumElements());
+	AssertSize(3, gcUnknowns.NumElements());
+	AssertPointer(pcA, cIndex.Get("A"));
+	AssertNull(cIndex.Get("B"));
+	AssertPointer(pcC, cIndex.Get("C"));
+	AssertPointer(pcD, cIndex.Get("D"));
+
+	//Last.
+	AssertSize(1, cIndex.Remove(pcD));
+	AssertSize(2, cIndex.NumElements());
+	AssertPointer(pcA, cIndex.Get("A"));
+	AssertPointer(pcC, cIndex.Get("C"));
+	AssertNull(cIndex.Get("D"));
+
+	//First.
+	AssertSize(1, cIndex.Remove(pcA));
+	AssertSize(1, cIndex.NumElements());
+	AssertNull(cIndex.Get("A"));
+	AssertPointer(pcC, cIndex.Get("C"));
+	AssertSize(1, gcUnknowns.NumElements());
+
+	cIndex.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	UnknownsKill();
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
+void TestIndexUnknownRemoveDuplicateValue(void)
+{
+	MemoryInit();
+	UnknownsInit();
+
+	CIndexUnknown			cIndex;
+	CTestUnknownJobbie*		pcA;
+	CTestUnknownJobbie*		pcB;
+
+	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
+
+	//The same value under two keys must not be killed twice, so the index doesn't kill its elements.
+	cIndex.Init(false);
+
+	pcA = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcB = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcA->Init(1, "A");
+	pcB->Init(2, "B");
+	cIndex.Put("A", pcA);
+	cIndex.Put("B", pcB);
+	cIndex.Put("C", pcA);
+	cIndex.Put("D", pcB);
+	cIndex.Put("E", pcA);
+
+	AssertSize(2, cIndex.Remove(pcB));
+	AssertSize(3, cIndex.NumElements());
+	AssertPointer(pcA, cIndex.Get("A"));
+	AssertNull(cIndex.Get("B"));
+	AssertPointer(pcA, cIndex.Get("C"));
+	AssertNull(cIndex.Get("D"));
+	AssertPointer(pcA, cIndex.Get("E"));
+
+	AssertSize(3, cIndex.Remove(pcA));
+	AssertSize(0, cIndex.NumElements());
+	AssertSize(0, cIndex.Remove(pcA));
+
+	cIndex.Kill();
+	pcA->Kill();
+	pcB->Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	UnknownsKill();
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
+void TestIndexUnknownLoadNull(void)
+{
+	MemoryInit();
+	UnknownsInit();
+	DataOrderersInit();
+
+	CIndexUnknown				cIndex;
+	CIndexUnknown				cIndexIn;
+	CFileUtil					cFileUtil;
+	CTestUnknownJobbie*			pcValue;
+	CChunkFile					cFile;
+	bool						bResult;
+
+	gcUnknowns.AddConstructor<CTestUnknownJobbie>();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cFileUtil.RemoveDir("Output" _FS_ "IndexUnknownNull");
+	cFileUtil.MakeDir("Output" _FS_ "IndexUnknownNull");
+
+	cIndex.Init();
+
+	pcValue = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcValue->Init(7, "Hello");
+	AssertTrue(cIndex.Put("Hello", pcValue));
+	AssertTrue(cIndex.Put("Nothing", (CUnknown*)NULL));
+	pcValue = gcUnknowns.Add<CTestUnknownJobbie>();
+	pcValue->Init(19, "World");
+	AssertTrue(cIndex.Put("World", pcValue));
+	AssertSize(3, cIndex.NumElements());
+	AssertSize(2, gcUnknowns.NumElements());
+
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "IndexUnknownNull" _FS_ "Index.dat")));
+	bResult = cFile.WriteOpen();
+	AssertTrue(bResult);
+
+	bResult = cIndex.Save(&cFile);
+	AssertTrue(bResult);
+
+	bResult = cFile.WriteClose();
+	AssertTrue(bResult);
+
+	cFile.Kill();
+	cIndex.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cFile.Init(BufferedFile(DiskFile("Output" _FS_ "IndexUnknownNull" _FS_ "Index.dat")));
+	bResult = cFile.ReadOpen();
+	AssertTrue(bResult);
+
+	bResult = cIndexIn.Load(&cFile);
+	AssertTrue(bResult);
+
+	bResult = cFile.ReadClose();
+	AssertTrue(bResult);
+	cFile.Kill();
+	AssertSize(3, cIndexIn.NumElements());
+	AssertSize(2, gcUnknowns.NumElements());
+
+	pcValue = (CTestUnknownJobbie*)cIndexIn.Get("Hello");
+	AssertInt(7, pcValue->miANumber);
+	AssertNull(cIndexIn.Get("Nothing"));
+	pcValue = (CTestUnknownJobbie*)cIndexIn.Get("World");
+	AssertInt(19, pcValue->miANumber);
+
+	AssertTrue(cIndexIn.Remove("Nothing"));
+	AssertSize(2, cIndexIn.NumElements());
+
+	cIndexIn.Kill();
+	AssertSize(0, gcUnknowns.NumElements());
+
+	cFileUtil.RemoveDir("Output" _FS_ "IndexUnknownNull");
+
+	DataOrderersKill();
+	UnknownsKill();
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//                                                                      //
+//////////////////////////////////////////////////////////////////////////
 void TestIndexUnknown(void)
 {
 	BeginTests();
@@ -294,6 +491,9 @@ void TestIndexUnknown(void)
 	TestIndexUnknownIterate();
 	TestIndexUnknownGet();
 	TestIndexUnknownLoad();
+	TestIndexUnknownRemoveValue();
+	TestIndexUnknownRemoveDuplicateValue();
+	TestIndexUnknownLoadNull();
 
 	TestStatistics();
 }

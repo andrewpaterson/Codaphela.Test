@@ -6,6 +6,8 @@
 #include "StandardLib/Objects.h"
 #include "StandardLib/ChunkFileObjectWriter.h"
 #include "StandardLib/ChunkFileSystemObjectReader.h"
+#include "StandardLib/UnmanagedField.h"
+#include "StandardLib/Classes.h"
 #include "TestLib/Assert.h"
 #include "TestBaseObject.h"
 #include "TestClass.h"
@@ -326,6 +328,120 @@ void TestClassSerialisation(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestClassUnmanagedVectorClasses(void)
+{
+	CUnmanagedClasses*	pcUnmanaged;
+
+	DataIOInit();
+	ObjectsInit();
+
+	pcUnmanaged = gcObjects.GetClasses()->GetUnmanagedClasses();
+	AssertInt(PT_M2float32, pcUnmanaged->GetFloat2()->GetType());
+	AssertInt(PT_M3float32, pcUnmanaged->GetFloat3()->GetType());
+	AssertInt(PT_M4float32, pcUnmanaged->GetFloat4()->GetType());
+	AssertInt(PT_M2float64, pcUnmanaged->GetDouble2()->GetType());
+	AssertInt(PT_M3float64, pcUnmanaged->GetDouble3()->GetType());
+	AssertInt(PT_M4float64, pcUnmanaged->GetDouble4()->GetType());
+	AssertInt(PT_M4x4float32, pcUnmanaged->GetFloat4x4()->GetType());
+	AssertSize(sizeof(SFloat4x4), pcUnmanaged->GetFloat4x4()->GetSizeOf());
+
+	ObjectsKill();
+	DataIOKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestClassUnmanagedMatrixSerialisation(void)
+{
+	char		szDirectory[] = "Output" _FS_ "TestClassMatrix";
+	CFileUtil	cFileUtil;
+	float*		pf;
+	size		i;
+
+	DataIOInit();
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	AssertTrue(cFileUtil.TouchDir(szDirectory));
+
+	ObjectsInit();
+
+	{
+		Ptr<CTestMatrixClass>			pTestClass;
+		CExternalObjectSerialiser		cSerialiser;
+		CChunkFileObjectWriter			cWriter;
+		CArrayVoidPtr*					papvFields;
+		CUnmanagedField*				pcField;
+
+		gcObjects.AddConstructor<CTestMatrixClass>();
+
+		pTestClass = gcObjects.Malloc<CTestMatrixClass>("Matrix");
+		pTestClass->Init();
+		pf = (float*)&pTestClass->msMatrix;
+		for (i = 0; i < 16; i++)
+		{
+			pf[i] = (float)(i + 1);
+		}
+		pTestClass->miAfter = 12345;
+
+		papvFields = pTestClass->GetClass()->GetUnmanagedFields();
+		AssertSize(2, papvFields->NumElements());
+		pcField = (CUnmanagedField*)papvFields->GetPtr(0);
+		AssertNotNull(pcField->GetClass());
+		AssertString("msMatrix", pcField->GetName());
+		AssertSize(sizeof(SFloat4x4), pcField->GetSizeOf());
+		AssertSize(1, pcField->GetLength());
+
+		cWriter.Init(szDirectory, "", "File");
+		cSerialiser.Init(&cWriter);
+		cSerialiser.Write(&pTestClass);
+		cSerialiser.Kill();
+		cWriter.Kill();
+
+		pTestClass = NULL;
+	}
+
+	ObjectsKill();
+
+	ObjectsInit();
+
+	{
+		Ptr<CTestMatrixClass>			pTestClass;
+		CExternalObjectDeserialiser		cGraphDeserialiser;
+		CChunkFileSystemObjectReader 	cReader;
+
+		gcObjects.AddConstructor<CTestMatrixClass>();
+
+		cReader.Init(szDirectory, "File");
+		cGraphDeserialiser.Init(&cReader, false, &gcObjects);
+		pTestClass = cGraphDeserialiser.Read("Matrix");
+		AssertNotNull(&pTestClass);
+
+		cGraphDeserialiser.Kill();
+		cReader.Kill();
+
+		pf = (float*)&pTestClass->msMatrix;
+		for (i = 0; i < 16; i++)
+		{
+			AssertFloat((float)(i + 1), pf[i], 3);
+		}
+		AssertInt(12345, pTestClass->miAfter);
+
+		pTestClass = NULL;
+	}
+
+	ObjectsKill();
+
+	AssertTrue(cFileUtil.RemoveDir(szDirectory));
+	DataIOKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestClassHeapObjectEmbeddedPointers(void)
 {
 	Ptr<CTestClass>		pTestClass1;
@@ -369,6 +485,8 @@ void TestClass(void)
 	TestClassOnStack();
 	TestClassName();
 	TestClassSerialisation();
+	TestClassUnmanagedVectorClasses();
+	TestClassUnmanagedMatrixSerialisation();
 	TestClassHeapObjectEmbeddedPointers();
 
 	TypesKill();

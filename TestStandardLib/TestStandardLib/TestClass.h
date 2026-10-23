@@ -5,6 +5,7 @@
 #include "StandardLib/Array.h"
 #include "StandardLib/Integer.h"
 #include "StandardLib/Float.h"
+#include "BaseLib/Float4x4.h"
 
 
 class CTinyTestClass : public CObject
@@ -70,6 +71,34 @@ public:
 	void Free(void)
 	{
 		mInt = -1;
+	}
+};
+
+
+class CTestMatrixClass : public CObject
+{
+CONSTRUCTABLE(CTestMatrixClass)
+DESTRUCTABLE(CTestMatrixClass)
+public:
+	SFloat4x4	msMatrix;
+	int32		miAfter;
+
+	void Init(void)
+	{
+		PreInit();
+		memset(&msMatrix, 0, sizeof(SFloat4x4));
+		miAfter = 0;
+		PostInit();
+	}
+
+	void Class(void)
+	{
+		Unmanaged4x4Float(&msMatrix, "msMatrix");
+		UnmanagedInt32(&miAfter, "miAfter");
+	}
+
+	void Free(void)
+	{
 	}
 };
 

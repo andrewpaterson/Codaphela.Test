@@ -130,6 +130,60 @@ void TestChannelsStuff(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestChannelsRemoveBeforeSize(void)
+{
+	ObjectsInit();
+
+	CChannels					cChannels;
+	CChannelsAccessor*			pcAccessor;
+	char						c;
+
+	cChannels.Init();
+
+	cChannels.BeginChange();
+	cChannels.AddChannel(0, 1, 2, PT_uint8);
+	cChannels.EndChange();
+	AssertSize(3, cChannels.GetNumChannels());
+	AssertSize(24, cChannels.GetBitStride());
+
+	cChannels.BeginChange();
+	AssertTrue(cChannels.RemoveChannel(1));
+	cChannels.EndChange();
+	AssertSize(2, cChannels.GetNumChannels());
+	AssertTrue(cChannels.HasChannel(0));
+	AssertFalse(cChannels.HasChannel(1));
+	AssertTrue(cChannels.HasChannel(2));
+	AssertSize(16, cChannels.GetBitStride());
+
+	cChannels.BeginChange();
+	cChannels.SetSize(3);
+	cChannels.EndChange();
+	AssertSize(3*2, cChannels.GetByteSize());
+
+	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 0, PT_uint8);
+	pcAccessor->Set(0, &(c = 'A'));
+	pcAccessor->Set(1, &(c = 'a'));
+	pcAccessor->Set(2, &(c = 'A'));
+	pcAccessor->Kill();
+
+	pcAccessor = CChannelsAccessorCreator::CreateSingleChannelAccessor(&cChannels, 2, PT_uint8);
+	pcAccessor->Set(0, &(c = 'C'));
+	pcAccessor->Set(1, &(c = 'c'));
+	pcAccessor->Set(2, &(c = 'C'));
+	pcAccessor->Kill();
+
+	AssertMemory("ACacAC", cChannels.GetData(), 6);
+
+	cChannels.Kill();
+
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestChannelsLoad(void)
 {
 	ObjectsInit();
@@ -490,6 +544,7 @@ void TestChannels(void)
 	DataIOInit();
 
 	TestChannelsStuff();
+	TestChannelsRemoveBeforeSize();
 	TestChannelsLoad();
 	TestChannelsCopier16bitTo8bit();
 	TestChannelsCopier24bitTo8bit();
