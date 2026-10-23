@@ -1805,26 +1805,48 @@ static void FloatHelperExpected(void)
 //
 //////////////////////////////////////////////////////////////////////////
 static CArrayInt	gaiQuaternionResults;
+static CArrayInt	gaiQuaternionIsFloat;
+
+
+static void QuaternionFloat(float f)
+{
+	uint32	ui;
+
+	memcpy(&ui, &f, 4);
+	gaiQuaternionResults.Add((int)ui);
+	gaiQuaternionIsFloat.Add(1);
+}
 
 
 static void QuaternionNative(SQuaternion q)
 {
-	uint32	ui;
-
-	memcpy(&ui, &q.x, 4);
-	gaiQuaternionResults.Add((int)ui);
-	memcpy(&ui, &q.y, 4);
-	gaiQuaternionResults.Add((int)ui);
-	memcpy(&ui, &q.z, 4);
-	gaiQuaternionResults.Add((int)ui);
-	memcpy(&ui, &q.w, 4);
-	gaiQuaternionResults.Add((int)ui);
+	QuaternionFloat(q.x);
+	QuaternionFloat(q.y);
+	QuaternionFloat(q.z);
+	QuaternionFloat(q.w);
 }
 
 
 static void QuaternionInteger(int i)
 {
 	gaiQuaternionResults.Add(i);
+	gaiQuaternionIsFloat.Add(0);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The distance in ulps between two floats given as bits.
+//
+//////////////////////////////////////////////////////////////////////////
+static uint64 TestCPP65FloatUlps(uint32 uiActual, uint32 uiExpected)
+{
+	int64	lliActual;
+	int64	lliExpected;
+
+	lliActual = (uiActual & 0x80000000) ? -(int64)(uiActual & 0x7FFFFFFF) : (int64)uiActual;
+	lliExpected = (uiExpected & 0x80000000) ? -(int64)(uiExpected & 0x7FFFFFFF) : (int64)uiExpected;
+	return (lliActual > lliExpected) ? (uint64)(lliActual - lliExpected) : (uint64)(lliExpected - lliActual);
 }
 
 
@@ -1848,10 +1870,13 @@ static void AssertCPP65Quaternion(void)
 {
 	STestCPP65Run	sRun;
 	size			i;
+	uint32			uiExpected;
+	uint32			uiActual;
 
 	static const char*	aszUnits[] = { "BaseLib/Quaternion.cpp", "Libc65/softfloat.cpp", "Libc65/softfloat.asm", "Input/CPP65/QuaternionProject/Main.cpp", NULL };
 
 	gaiQuaternionResults.Init();
+	gaiQuaternionIsFloat.Init();
 	QuaternionExpected();
 	AssertTrue(TestCPP65BeginProject(&sRun, aszUnits, ""));
 	AssertTrue(TestCPP65Run(&sRun, 20000000) < 20000000);
@@ -1859,9 +1884,19 @@ static void AssertCPP65Quaternion(void)
 	AssertInt((int)gaiQuaternionResults.NumElements(), (int32)TestCPP65MPU(&sRun)->GetA());
 	for (i = 0; i < gaiQuaternionResults.NumElements(); i++)
 	{
-		AssertIntHex((uint32)gaiQuaternionResults.GetValue(i), sRun.pcContext->GetLong(TEST_CPP65_RESULTS + 4 * (uint32)i));
+		uiExpected = (uint32)gaiQuaternionResults.GetValue(i);
+		uiActual = sRun.pcContext->GetLong(TEST_CPP65_RESULTS + 4 * (uint32)i);
+#ifndef _DEBUG
+		//Release is /fp:fast, which can reorder or fuse the native float maths and move its result by an ulp.
+		if (gaiQuaternionIsFloat.GetValue(i) && (TestCPP65FloatUlps(uiActual, uiExpected) <= 1))
+		{
+			uiExpected = uiActual;
+		}
+#endif // _DEBUG
+		AssertIntHex(uiExpected, uiActual);
 	}
 	TestCPP65End(&sRun);
+	gaiQuaternionIsFloat.Kill();
 	gaiQuaternionResults.Kill();
 }
 

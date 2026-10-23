@@ -1,4 +1,5 @@
 #include "BaseLib/ConstructorCall.h"
+#include "BaseLib/Logger.h"
 #include "BaseLib/PointerFunctions.h"
 #include "MicroprocessorLib/LongTime.h"
 #include "MicroprocessorLib/Timeline.h"
@@ -134,6 +135,7 @@ void TestTimelineOrder(void)
 	CTestLogEvent*			pcPast;
 	STimelineData			sData;
 	CSimultaneousEvents*	pcEvents;
+	SLogConfig				sLogConfig;
 
 	szLog.Init();
 	cTimeline.Init();
@@ -172,7 +174,9 @@ void TestTimelineOrder(void)
 	//An event at or before the current time isn't added and stays the caller's.
 	pcPast = NewTestLogEvent(30, "Past", &szLog);
 	AssertFalse(cTimeline.AddEvent(pcPast));
+	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(cTimeline.AddFutureEvent(pcPast));
+	gcLogger.SetConfig(&sLogConfig);
 	AssertSize(0, cTimeline.NumSimultaneousEvents());
 	SafeKill(pcPast);
 	AssertLog("freed:Past;");
@@ -180,7 +184,9 @@ void TestTimelineOrder(void)
 	//An event can't be added twice.
 	pcPast = NewTestLogEvent(40, "Twice", &szLog);
 	AssertTrue(cTimeline.AddFutureEvent(pcPast));
+	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(cTimeline.AddFutureEvent(pcPast));
+	gcLogger.SetConfig(&sLogConfig);
 	AssertSize(1, cTimeline.GetFirstSimultaneousEvents()->NumEvents());
 
 	cTimeline.Save(&sData);
@@ -303,6 +309,7 @@ void TestTimelineChangesWhileRunning(void)
 	CTestLogEvent*	pcB;
 	CTestLogEvent*	pcC;
 	CTestLogEvent*	pcOwned;
+	SLogConfig		sLogConfig;
 
 	szLog.Init();
 	cTimeline.Init();
@@ -335,7 +342,9 @@ void TestTimelineChangesWhileRunning(void)
 	pcA = NewTestLogEvent(20, "A", &szLog);
 	pcA->mpcAddOnExecute = NewTestLogEvent(20, "Now", &szLog);
 	cTimeline.AddFutureEvent(pcA);
+	sLogConfig = gcLogger.SetSilent();
 	cTimeline.Run();
+	gcLogger.SetConfig(&sLogConfig);
 	AssertLog("A@20;freed:Now;removed:A;freed:A;");
 	AssertSize(0, cTimeline.NumSimultaneousEvents());
 

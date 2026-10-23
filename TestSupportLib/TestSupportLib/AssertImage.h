@@ -8,6 +8,7 @@
 
 bool PrivateAssertChannel(EImagePurpose ePurpose, EChannelType eType, EPrimitiveType ePrimitive, SChannel* psChannel, size iLine, char* szFile);
 void AssertSameImage(Ptr<CImage> pcExpected, Ptr<CImage> pcActual);
+void AssertSameImage(Ptr<CImage> pcExpected, Ptr<CImage> pcActual, int iAllowedMismatches);
 
 
 #endif // __ASSERT_IMAGE_H__

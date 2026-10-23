@@ -1,4 +1,5 @@
 #include "BaseLib/GlobalMemory.h"
+#include "BaseLib/Logger.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalDataTypesIO.h"
@@ -189,6 +190,7 @@ void TestChannelsAddDuplicate(void)
 	ObjectsInit();
 
 	CChannels	cChannels;
+	SLogConfig	sLogConfig;
 
 	cChannels.Init();
 	cChannels.BeginChange();
@@ -201,7 +203,9 @@ void TestChannelsAddDuplicate(void)
 	cChannels.BeginChange();
 	cChannels.AddChannel(1, PT_uint8);
 	cChannels.AddChannel(0, PT_uint8);
+	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(cChannels.EndChange());
+	gcLogger.SetConfig(&sLogConfig);
 	AssertSize(1, cChannels.GetNumChannels());
 	AssertFalse(cChannels.HasChannel(1));
 	AssertSize(8, cChannels.GetBitStride());
@@ -211,7 +215,9 @@ void TestChannelsAddDuplicate(void)
 	cChannels.BeginChange();
 	cChannels.AddChannel(2, PT_uint8);
 	cChannels.AddChannel(2, PT_uint8);
+	sLogConfig = gcLogger.SetSilent();
 	AssertFalse(cChannels.EndChange());
+	gcLogger.SetConfig(&sLogConfig);
 	AssertSize(1, cChannels.GetNumChannels());
 	AssertSize(2, cChannels.GetByteSize());
 

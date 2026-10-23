@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdlib.h>
 #include "BaseLib/TypeNames.h"
 #include "TestLib/Assert.h"
 #include "AssertImage.h"
@@ -63,11 +64,82 @@ bool PrivateAssertChannel(EImagePurpose ePurpose, EChannelType eType, EPrimitive
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Whether one pixel's value for a channel is the same in both images.  In
+// release, which is /fp:fast, the float maths that made the value can be
+// reordered or fused and land it one step away, so 8 and 16 bit values can
+// be off by one and float values by an ulp.
+//
+//////////////////////////////////////////////////////////////////////////
+static bool SameChannelValue(uint8* puiExpected, uint8* puiActual, EPrimitiveType eType, size uiByteSize)
+{
+	if (memcmp(puiExpected, puiActual, uiByteSize) == 0)
+	{
+		return true;
+	}
+
+#ifndef _DEBUG
+	uint8	ui8Expected;
+	uint8	ui8Actual;
+	uint16	ui16Expected;
+	uint16	ui16Actual;
+	int32	iExpected;
+	int32	iActual;
+	int64	lliExpected;
+	int64	lliActual;
+
+	if (eType == PT_uint8)
+	{
+		memcpy(&ui8Expected, puiExpected, 1);
+		memcpy(&ui8Actual, puiActual, 1);
+		return abs((int)ui8Expected - (int)ui8Actual) <= 1;
+	}
+	else if (eType == PT_uint16)
+	{
+		memcpy(&ui16Expected, puiExpected, 2);
+		memcpy(&ui16Actual, puiActual, 2);
+		return abs((int)ui16Expected - (int)ui16Actual) <= 1;
+	}
+	else if (eType == PT_float32)
+	{
+		//Signed magnitude bits in order, so neighbouring floats are one apart.
+		memcpy(&iExpected, puiExpected, 4);
+		memcpy(&iActual, puiActual, 4);
+		lliExpected = (iExpected < 0) ? -(int64)(iExpected & 0x7FFFFFFF) : (int64)iExpected;
+		lliActual = (iActual < 0) ? -(int64)(iActual & 0x7FFFFFFF) : (int64)iActual;
+		return ((lliExpected - lliActual) <= 1) && ((lliActual - lliExpected) <= 1);
+	}
+	else if (eType == PT_float64)
+	{
+		memcpy(&lliExpected, puiExpected, 8);
+		memcpy(&lliActual, puiActual, 8);
+		lliExpected = (lliExpected < 0) ? (int64)0x8000000000000000ULL - lliExpected : lliExpected;
+		lliActual = (lliActual < 0) ? (int64)0x8000000000000000ULL - lliActual : lliActual;
+		return ((lliExpected - lliActual) <= 1) && ((lliActual - lliExpected) <= 1);
+	}
+#endif // _DEBUG
+
+	return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Compares channel by channel so images with the same channels in a
 // different order (LoadPNG puts opacity first) are the same.
 //
 //////////////////////////////////////////////////////////////////////////
 void AssertSameImage(Ptr<CImage> pcExpected, Ptr<CImage> pcActual)
+{
+	AssertSameImage(pcExpected, pcActual, 0);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// As above but up to iAllowedMismatches channel values may differ.
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertSameImage(Ptr<CImage> pcExpected, Ptr<CImage> pcActual, int iAllowedMismatches)
 {
 	CArraySize		aiExpectedChannels;
 	CArraySize		aiActualChannels;
@@ -126,11 +198,15 @@ void AssertSameImage(Ptr<CImage> pcExpected, Ptr<CImage> pcActual)
 		}
 		for (iPixel = 0; iPixel < iNumPixels; iPixel++)
 		{
-			if (memcmp(&puiExpected[iPixel * uiExpectedStride + pcExpectedChannel->miByteOffset], &puiActual[iPixel * uiActualStride + pcActualChannel->miByteOffset], pcExpectedChannel->miByteSize) != 0)
+			if (!SameChannelValue(&puiExpected[iPixel * uiExpectedStride + pcExpectedChannel->miByteOffset], &puiActual[iPixel * uiActualStride + pcActualChannel->miByteOffset], pcExpectedChannel->eType, pcExpectedChannel->miByteSize))
 			{
 				iMismatches++;
 			}
 		}
+	}
+	if (iMismatches <= iAllowedMismatches)
+	{
+		iMismatches = 0;
 	}
 	AssertInt(0, iMismatches);
 
