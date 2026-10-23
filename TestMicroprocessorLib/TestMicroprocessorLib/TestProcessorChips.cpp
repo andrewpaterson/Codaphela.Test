@@ -1,0 +1,646 @@
+#include "MicroprocessorLib/W65C816Chip.h"
+#include "MicroprocessorLib/65C64Chip.h"
+#include "MicroprocessorLib/Oscilloscope.h"
+#include "MicroprocessorLib/W65C816Meta.h"
+#include "MicroprocessorLib/65C64Meta.h"
+#include "MicroprocessorLib/W65C816InstructionFactory.h"
+#include "TestCircuitBoard.h"
+#include "TestW65C816Context.h"
+#include "Test65C64Context.h"
+#include "TestLib/Assert.h"
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// What a test RAM reads and writes.
+//
+//////////////////////////////////////////////////////////////////////////
+class CTestRamMemory
+{
+public:
+	virtual uint8	GetByte(uint32 uiAddress) =0;
+	virtual void	SetByte(uint32 uiAddress, uint8 uiValue) =0;
+};
+
+
+class CTestW65C816Memory : public CTestRamMemory
+{
+public:
+	CTestW65C816Context*	mpcContext;
+
+	uint8	GetByte(uint32 uiAddress) { return mpcContext->GetByte(uiAddress); }
+	void	SetByte(uint32 uiAddress, uint8 uiValue) { mpcContext->SetByte(uiAddress, uiValue); }
+};
+
+
+class CTest65C64Memory : public CTestRamMemory
+{
+public:
+	CTest65C64Context*	mpcContext;
+
+	uint8	GetByte(uint32 uiAddress) { return mpcContext->GetByte(uiAddress); }
+	void	SetByte(uint32 uiAddress, uint8 uiValue) { mpcContext->SetByte(uiAddress, uiValue); }
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The pins of a test RAM for either processor's bus.  The 65C64's has
+// VPB and the byte lanes; the W65C816's takes the bank off the data bus.
+//
+//////////////////////////////////////////////////////////////////////////
+class CTestRamPins : public CPins
+{
+public:
+	CLogicPortBus	mcAddress;
+	CLogicPortBus	mcData;
+	CLogicPort*		mpcPHI2;
+	CLogicPort*		mpcRWB;
+	CLogicPort*		mpcVDA;
+	CLogicPort*		mpcVPA;
+	CLogicPort*		mpcVPB;
+	CLogicPort*		mpcLowerByte;
+	CLogicPort*		mpcUpperByte;
+
+	CLogicPort* AddPort(EPortType eType, const char* szName, size i, CVoltageConfigurationSource* pcSource)
+	{
+		CLogicPort*	pcPort;
+		CChars		sz;
+
+		sz.Init(szName);
+		if (i != (size)-1)
+		{
+			sz.Append(' ');
+			sz.Append(i);
+		}
+		pcPort = NewMalloc<CLogicPort>();
+		pcPort->Init(eType, this, sz.Text(), pcSource);
+		sz.Kill();
+		return pcPort;
+	}
+
+	void Init(CVoltageConfigurationSource* pcSource, size uiAddressBits, size uiDataBits, bool b65C64)
+	{
+		size	i;
+
+		CPins::Init();
+		mcAddress.Init();
+		for (i = 0; i < uiAddressBits; i++)
+		{
+			mcAddress.Add(AddPort(PT_Input, "Address", i, pcSource));
+		}
+		mcData.Init();
+		for (i = 0; i < uiDataBits; i++)
+		{
+			mcData.Add(AddPort(PT_Bidirectional, "Data", i, pcSource));
+		}
+		mpcPHI2 = AddPort(PT_Input, "PHI2", -1, pcSource);
+		mpcRWB = AddPort(PT_Input, "RWB", -1, pcSource);
+		mpcVDA = AddPort(PT_Input, "VDA", -1, pcSource);
+		mpcVPA = AddPort(PT_Input, "VPA", -1, pcSource);
+		mpcVPB = NULL;
+		mpcLowerByte = NULL;
+		mpcUpperByte = NULL;
+		if (b65C64)
+		{
+			mpcVPB = AddPort(PT_Input, "VPB", -1, pcSource);
+			mpcLowerByte = AddPort(PT_Input, "Lower Byte", -1, pcSource);
+			mpcUpperByte = AddPort(PT_Input, "Upper Byte", -1, pcSource);
+		}
+	}
+
+	void Kill(void)
+	{
+		mcAddress.Kill();
+		mcData.Kill();
+		CPins::Kill();
+	}
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Memory on the bus.  When PHI2 rises it takes the address (and the
+// W65C816's bank off the data bus) and drives the data for a valid read.
+// When PHI2 falls it stores the data for a valid write, and stops driving.
+//
+//////////////////////////////////////////////////////////////////////////
+class CTestRam : public CIntegratedCircuit
+{
+CONSTRUCTABLE(CTestRam);
+public:
+	CTestRamMemory*	mpcMemory;
+	bool			mb65C64;
+	uint32			muiAddress;
+	bool			mbValid;
+	bool			mbWrite;
+	bool			mbLower;
+	bool			mbUpper;
+	bool			mbDriving;
+	size			muiReads;
+	size			muiWrites;
+
+	void Init(CSubcircuitSimulation* pcSimulation, CTestRamPins* pcPins, CTestRamMemory* pcMemory, bool b65C64)
+	{
+		CIntegratedCircuit::Init(pcSimulation, "RAM", pcPins);
+		mpcMemory = pcMemory;
+		mb65C64 = b65C64;
+		mbValid = false;
+		mbDriving = false;
+		muiReads = 0;
+		muiWrites = 0;
+	}
+
+	CTestRamPins* GetRamPins(void) { return (CTestRamPins*)mpcPins; }
+	const char* GetType(void) { return "Test RAM"; }
+	CState* CreateState(void) { return NewMalloc<CState>(); }
+	void SimulationStarted(CTimeline* pcTimeline) {}
+
+	void InputTransition(CTimeline* pcTimeline, CLogicPort* pcPort)
+	{
+		CTestRamPins*	pcPins;
+		STraceValue		sClock;
+		STraceValue		sRWB;
+		uint32			uiData;
+
+		pcPins = GetRamPins();
+		if (pcPort != pcPins->mpcPHI2)
+		{
+			return;
+		}
+
+		sClock = pcPort->Read(pcTimeline);
+		if (sClock.IsHigh())
+		{
+			muiAddress = pcPins->mcAddress.Read(pcTimeline);
+			sRWB = pcPins->mpcRWB->Read(pcTimeline);
+			mbWrite = sRWB.IsLow();
+			if (mb65C64)
+			{
+				mbValid = pcPins->mpcVPA->Read(pcTimeline).IsHigh() || pcPins->mpcVDA->Read(pcTimeline).IsHigh() || pcPins->mpcVPB->Read(pcTimeline).IsLow();
+				mbLower = pcPins->mpcLowerByte->Read(pcTimeline).IsHigh();
+				mbUpper = pcPins->mpcUpperByte->Read(pcTimeline).IsHigh();
+			}
+			else
+			{
+				muiAddress |= (pcPins->mcData.Read(pcTimeline) & 0xFF) << 16;
+				mbValid = pcPins->mpcVPA->Read(pcTimeline).IsHigh() || pcPins->mpcVDA->Read(pcTimeline).IsHigh();
+			}
+			mbValid = mbValid && (sRWB.IsHigh() || sRWB.IsLow());
+
+			if (mbValid && !mbWrite)
+			{
+				uiData = mpcMemory->GetByte(muiAddress);
+				if (mb65C64)
+				{
+					uiData |= (uint32)mpcMemory->GetByte(muiAddress + 1) << 8;
+				}
+				pcPins->mcData.Write(pcTimeline, uiData);
+				mbDriving = true;
+				muiReads++;
+			}
+		}
+		else if (sClock.IsLow())
+		{
+			if (mbValid && mbWrite)
+			{
+				uiData = pcPins->mcData.Read(pcTimeline);
+				if (!mb65C64)
+				{
+					mpcMemory->SetByte(muiAddress, (uint8)uiData);
+				}
+				else
+				{
+					if (mbLower)
+					{
+						mpcMemory->SetByte(muiAddress, (uint8)uiData);
+					}
+					if (mbUpper)
+					{
+						mpcMemory->SetByte(muiAddress + 1, (uint8)(uiData >> 8));
+					}
+				}
+				muiWrites++;
+			}
+			if (mbDriving)
+			{
+				pcPins->mcData.WriteImpedance(pcTimeline);
+				mbDriving = false;
+			}
+			mbValid = false;
+		}
+	}
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A clock of fFrequency on a new trace.
+//
+//////////////////////////////////////////////////////////////////////////
+CTrace* AddChipClock(CTestBoard* pcBoard, float32 fFrequency, CClockOscillator** ppcClock)
+{
+	CClockOscillatorPins*	pcPins;
+	CClockOscillator*		pcClock;
+	CTrace*					pcTrace;
+
+	pcPins = NewMalloc<CClockOscillatorPins>();
+	pcPins->Init(pcBoard->mpcFamily, false);
+	pcClock = NewMalloc<CClockOscillator>();
+	pcClock->Init(pcBoard->mpcTop, "Clock", pcPins, fFrequency);
+	pcBoard->Power(pcClock);
+	pcTrace = pcBoard->NewTrace();
+	pcPins->GetOutput()->Connect(pcTrace);
+	if (ppcClock)
+	{
+		*ppcClock = pcClock;
+	}
+	return pcTrace;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Connects each port of the two buses to a shared new trace.
+//
+//////////////////////////////////////////////////////////////////////////
+void ConnectBuses(CTestBoard* pcBoard, CLogicPortBus* pcFirst, CLogicPortBus* pcSecond)
+{
+	size	i;
+	CTrace*	pcTrace;
+
+	for (i = 0; i < pcFirst->GetWidth(); i++)
+	{
+		pcTrace = pcBoard->NewTrace();
+		pcFirst->GetPort(i)->Connect(pcTrace);
+		pcSecond->GetPort(i)->Connect(pcTrace);
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A trace shared by two ports.
+//
+//////////////////////////////////////////////////////////////////////////
+void ConnectPorts(CTestBoard* pcBoard, CLogicPort* pcFirst, CLogicPort* pcSecond)
+{
+	CTrace*	pcTrace;
+
+	pcTrace = pcBoard->NewTrace();
+	pcFirst->Connect(pcTrace);
+	if (pcSecond)
+	{
+		pcSecond->Connect(pcTrace);
+	}
+}
+
+
+#define CHIP_CLOCK_FREQUENCY	(1 * FREQUENCY_MHZ)
+#define CHIP_CLOCK_PERIOD		NanosecondsToTime((int64)1000)
+#define CHIP_MAX_CYCLES			200
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// LDA #$42, STA $0300, INC $0300, LDA $0300, CLC, ADC #$10, STA $0301,
+// STP at $0200, in emulation mode.
+//
+//////////////////////////////////////////////////////////////////////////
+void LoadW65C816Program(CTestW65C816Context* pcContext)
+{
+	pcContext->Init(0x10000, 0, 0x0200);
+	pcContext->SetOpcd(0x0200, 0xA9);
+	pcContext->SetByte(0x42);
+	pcContext->SetOpcd(0x8D);
+	pcContext->SetShort(0x0300);
+	pcContext->SetOpcd(0xEE);
+	pcContext->SetShort(0x0300);
+	pcContext->SetOpcd(0xAD);
+	pcContext->SetShort(0x0300);
+	pcContext->SetOpcd(0x18);
+	pcContext->SetOpcd(0x69);
+	pcContext->SetByte(0x10);
+	pcContext->SetOpcd(0x8D);
+	pcContext->SetShort(0x0301);
+	pcContext->SetOpcd(0xDB);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The program on the ideal meta processor, then on the chip with the test
+// RAM, at 1MHz on LVC traces.  Reset is held for three cycles.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestProcessorChipsW65C816(void)
+{
+	CTestW65C816Context	cMetaContext;
+	CW65C816Meta		cMeta;
+	CTestW65C816Context	cChipContext;
+	CTestW65C816Memory	cMemory;
+	CTestBoard			cBoard;
+	CW65C816ChipPins*	pcPins;
+	CW65C816Chip*		pcChip;
+	CTestRamPins*		pcRamPins;
+	CTestRam*			pcRam;
+	CConstant*			pcReset;
+	CTrace*				pcResetTrace;
+	CTrace*				pcHigh;
+	CTrace*				pcClock;
+	size				uiCycles;
+
+	CW65C816InstructionFactory::GetInstance()->Init();
+	LoadW65C816Program(&cMetaContext);
+	cMetaContext.mbEnablePrint = false;
+	cMeta.Init(TestW65C81ContextTickHigh, TestW65C81ContextTickLow, &cMetaContext);
+	cMetaContext.Run(&cMeta);
+	AssertTrue(cMeta.GetMPU()->IsStopped());
+	AssertIntHex(0x53, cMeta.GetMPU()->GetA() & 0xFF);
+	AssertIntHex(0x43, cMetaContext.GetByte(0x0300));
+	AssertIntHex(0x53, cMetaContext.GetByte(0x0301));
+
+	LoadW65C816Program(&cChipContext);
+	cMemory.mpcContext = &cChipContext;
+	cBoard.Init();
+	pcClock = AddChipClock(&cBoard, CHIP_CLOCK_FREQUENCY, NULL);
+	pcReset = cBoard.Input("RESB", 0, 1, &pcResetTrace);
+	pcHigh = cBoard.Input("High", true);
+
+	pcPins = NewMalloc<CW65C816ChipPins>();
+	pcPins->Init(cBoard.mpcFamily);
+	pcChip = NewMalloc<CW65C816Chip>();
+	pcChip->Init(cBoard.mpcTop, "U1", pcPins);
+	cBoard.Power(pcChip);
+	AssertString(W65C816_CHIP_TYPE, pcChip->GetType());
+	AssertString("Address 15", pcPins->GetAddress()->GetPort(15)->GetName());
+
+	pcRamPins = NewMalloc<CTestRamPins>();
+	pcRamPins->Init(cBoard.mpcFamily, 16, 8, false);
+	pcRam = NewMalloc<CTestRam>();
+	pcRam->Init(cBoard.mpcTop, pcRamPins, &cMemory, false);
+	cBoard.Power(pcRam);
+
+	ConnectBuses(&cBoard, pcPins->GetAddress(), &pcRamPins->mcAddress);
+	ConnectBuses(&cBoard, pcPins->GetData(), &pcRamPins->mcData);
+	pcPins->GetPHI2()->Connect(pcClock);
+	pcRamPins->mpcPHI2->Connect(pcClock);
+	ConnectPorts(&cBoard, pcPins->GetRWB(), pcRamPins->mpcRWB);
+	ConnectPorts(&cBoard, pcPins->GetVDA(), pcRamPins->mpcVDA);
+	ConnectPorts(&cBoard, pcPins->GetVPA(), pcRamPins->mpcVPA);
+	pcPins->GetRESB()->Connect(pcResetTrace);
+	pcPins->GetBE()->Connect(pcHigh);
+	pcPins->GetIRQB()->Connect(pcHigh);
+	pcPins->GetNMIB()->Connect(pcHigh);
+	pcPins->GetABORTB()->Connect(pcHigh);
+
+	cBoard.Start();
+	cBoard.mpcTimeline->RunToTime(3 * CHIP_CLOCK_PERIOD);
+	cBoard.Write(pcReset, true);
+	for (uiCycles = 0; uiCycles < CHIP_MAX_CYCLES; uiCycles++)
+	{
+		cBoard.mpcTimeline->RunToTime(CHIP_CLOCK_PERIOD);
+		if (pcChip->GetMPU()->IsStopped())
+		{
+			break;
+		}
+	}
+
+	AssertTrue(pcChip->GetMPU()->IsStopped());
+	AssertIntHex(cMeta.GetMPU()->GetA(), pcChip->GetMPU()->GetA());
+	AssertIntHex(cMetaContext.GetByte(0x0300), cChipContext.GetByte(0x0300));
+	AssertIntHex(cMetaContext.GetByte(0x0301), cChipContext.GetByte(0x0301));
+	AssertSize(3, pcRam->muiWrites);
+	AssertTrue(pcRam->muiReads > 10);
+
+	cBoard.Kill();
+	cMeta.Kill();
+	cMetaContext.Kill();
+	cChipContext.Kill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Loads a long from $2000, adds 1, stores it at $4001 (odd, so the byte
+// lanes split it), adds 1 to the word at $4010 and stops.
+//
+//////////////////////////////////////////////////////////////////////////
+void Load65C64Program(CTest65C64Context* pcContext)
+{
+	size	i;
+
+	pcContext->Init(0x1000);
+	for (i = 0; i < 9; i++)
+	{
+		pcContext->SetByte((uint32)(0x2000 + i), (uint8)(0x11 * (i + 1)));
+	}
+	pcContext->SetWord(0x4010, 0x1234);
+	pcContext->Op(Op65Wth(R65_A, 4));
+	pcContext->OpLong(Op65M(C65_CPY, false, R65_A, OPERAND_MODE_ABSOLUTE, R65_Zero), 0x2000);
+	pcContext->Op(Op65RE(C65_ADD, R65_A, 1));
+	pcContext->OpLong(Op65M(C65_CPY, true, R65_A, OPERAND_MODE_ABSOLUTE, R65_Zero), 0x4001);
+	pcContext->OpLong(Op65ME(C65_ADD, 1, OPERAND_MODE_ABSOLUTE, R65_Zero), 0x4010);
+	pcContext->Op(Op65Stp());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestProcessorChips65C64(void)
+{
+	CTest65C64Context*	pcMetaContext;
+	C65C64Meta			cMeta;
+	CTest65C64Context*	pcChipContext;
+	CTest65C64Memory	cMemory;
+	CTestBoard			cBoard;
+	C65C64ChipPins*		pcPins;
+	C65C64Chip*			pcChip;
+	CTestRamPins*		pcRamPins;
+	CTestRam*			pcRam;
+	CConstant*			pcReset;
+	CTrace*				pcResetTrace;
+	CTrace*				pcHigh;
+	CTrace*				pcClock;
+	size				uiCycles;
+	size				i;
+
+	pcMetaContext = (CTest65C64Context*)malloc(sizeof(CTest65C64Context));
+	Load65C64Program(pcMetaContext);
+	cMeta.Init(Test65C64TickHigh, Test65C64TickLow, pcMetaContext);
+	Test65C64Run(&cMeta, pcMetaContext, 100);
+	AssertTrue(cMeta.GetMPU()->IsStopped());
+	AssertLongLongIntHex(0x44332212LL, cMeta.GetMPU()->GetA());
+	AssertIntHex(0x12, pcMetaContext->GetByte(0x4001));
+	AssertIntHex(0x44, pcMetaContext->GetByte(0x4004));
+	AssertIntHex(0x1235, pcMetaContext->GetWord(0x4010));
+
+	pcChipContext = (CTest65C64Context*)malloc(sizeof(CTest65C64Context));
+	Load65C64Program(pcChipContext);
+	cMemory.mpcContext = pcChipContext;
+	cBoard.Init();
+	pcClock = AddChipClock(&cBoard, CHIP_CLOCK_FREQUENCY, NULL);
+	pcReset = cBoard.Input("RESB", 0, 1, &pcResetTrace);
+	pcHigh = cBoard.Input("High", true);
+
+	pcPins = NewMalloc<C65C64ChipPins>();
+	pcPins->Init(cBoard.mpcFamily);
+	pcChip = NewMalloc<C65C64Chip>();
+	pcChip->Init(cBoard.mpcTop, "U1", pcPins);
+	cBoard.Power(pcChip);
+	AssertString(C65C64_CHIP_TYPE, pcChip->GetType());
+	AssertString("Address 31", pcPins->GetAddress()->GetPort(31)->GetName());
+
+	pcRamPins = NewMalloc<CTestRamPins>();
+	pcRamPins->Init(cBoard.mpcFamily, 32, 16, true);
+	pcRam = NewMalloc<CTestRam>();
+	pcRam->Init(cBoard.mpcTop, pcRamPins, &cMemory, true);
+	cBoard.Power(pcRam);
+
+	ConnectBuses(&cBoard, pcPins->GetAddress(), &pcRamPins->mcAddress);
+	ConnectBuses(&cBoard, pcPins->GetData(), &pcRamPins->mcData);
+	pcPins->GetPHI2()->Connect(pcClock);
+	pcRamPins->mpcPHI2->Connect(pcClock);
+	ConnectPorts(&cBoard, pcPins->GetRWB(), pcRamPins->mpcRWB);
+	ConnectPorts(&cBoard, pcPins->GetVDA(), pcRamPins->mpcVDA);
+	ConnectPorts(&cBoard, pcPins->GetVPA(), pcRamPins->mpcVPA);
+	ConnectPorts(&cBoard, pcPins->GetVPB(), pcRamPins->mpcVPB);
+	ConnectPorts(&cBoard, pcPins->GetLowerByte(), pcRamPins->mpcLowerByte);
+	ConnectPorts(&cBoard, pcPins->GetUpperByte(), pcRamPins->mpcUpperByte);
+	pcPins->GetRESB()->Connect(pcResetTrace);
+	for (i = 0; i < NUM_65C64_EDGE_INTERRUPTS; i++)
+	{
+		pcPins->GetEIRQB(i)->Connect(pcHigh);
+	}
+	pcPins->GetLIRQB()->Connect(pcHigh);
+
+	cBoard.Start();
+	cBoard.mpcTimeline->RunToTime(3 * CHIP_CLOCK_PERIOD);
+	cBoard.Write(pcReset, true);
+	for (uiCycles = 0; uiCycles < CHIP_MAX_CYCLES; uiCycles++)
+	{
+		cBoard.mpcTimeline->RunToTime(CHIP_CLOCK_PERIOD);
+		if (pcChip->GetMPU()->IsStopped())
+		{
+			break;
+		}
+	}
+
+	AssertTrue(pcChip->GetMPU()->IsStopped());
+	AssertLongLongIntHex(cMeta.GetMPU()->GetA(), pcChip->GetMPU()->GetA());
+	for (i = 0; i < 0x20; i++)
+	{
+		AssertIntHex(pcMetaContext->GetByte(0x4000 + (uint32)i), pcChipContext->GetByte(0x4000 + (uint32)i));
+	}
+	AssertSize(0, pcChipContext->muiBadAccesses);
+
+	cBoard.Kill();
+	cMeta.Kill();
+	free(pcMetaContext);
+	free(pcChipContext);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A 10MHz clock sampled at 100MHz, 10 samples a cycle: high for five,
+// low for five.  An unconnected input samples 0V.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestProcessorChipsOscilloscope(void)
+{
+	CTestBoard			cBoard;
+	COscilloscopePins*	pcPins;
+	COscilloscope*		pcScope;
+	COscilloscopeState*	pcState;
+	CTrace*				pcClock;
+	size				i;
+	size				uiHigh;
+	size				uiLow;
+
+	cBoard.Init();
+	pcClock = AddChipClock(&cBoard, 10 * FREQUENCY_MHZ, NULL);
+	pcPins = NewMalloc<COscilloscopePins>();
+	pcPins->Init(2);
+	pcScope = NewMalloc<COscilloscope>();
+	pcScope->Init(cBoard.mpcTop, "Scope", pcPins, 100 * FREQUENCY_MHZ, 10, 10);
+	pcPins->GetInput(0)->Connect(pcClock);
+	AssertString(OSCILLOSCOPE_TYPE, pcScope->GetType());
+	AssertString("Input 1", pcPins->GetInput(1)->GetName());
+	AssertLong(NanosecondsToTime((int64)10), pcScope->GetSampleTime());
+
+	cBoard.Start();
+	pcState = pcScope->GetOscilloscopeState();
+	AssertSize(2, pcState->GetInputCount());
+	AssertSize(100, pcState->GetSampleCount());
+
+	//A microsecond is 100 samples, round to the start of the ring.
+	cBoard.mpcTimeline->RunToTime(NanosecondsToTime((int64)1000));
+	AssertSize(0, pcState->GetTickPosition());
+
+	uiHigh = 0;
+	uiLow = 0;
+	for (i = 0; i < 100; i++)
+	{
+		if (pcState->GetMaxVoltage(0, i) > 3.0f)
+		{
+			uiHigh++;
+		}
+		else if (pcState->GetMaxVoltage(0, i) < 0.3f)
+		{
+			uiLow++;
+		}
+		AssertFloat(pcState->GetMaxVoltage(0, i), pcState->GetMinVoltage(0, i), 3);
+		AssertFloat(0.0f, pcState->GetMaxVoltage(1, i), 3);
+	}
+	AssertTrue(uiHigh >= 40);
+	AssertTrue(uiLow >= 40);
+
+	//The logic port with no voltage configuration doesn't read a level.
+	AssertInt(TV_Undriven, pcPins->GetInput(0)->Read(cBoard.mpcTimeline).eValue);
+
+	cBoard.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Logicim's Simulation: removing an event through the circuit simulation.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestProcessorChipsRemoveEvent(void)
+{
+	CTestBoard			cBoard;
+	CClockOscillator*	pcClock;
+
+	cBoard.Init();
+	AddChipClock(&cBoard, 10 * FREQUENCY_MHZ, &pcClock);
+	cBoard.Start();
+	AssertSize(1, pcClock->NumEvents());
+	AssertTrue(cBoard.mcSimulation.RemoveEvent(pcClock->GetEvent(0)));
+	AssertSize(0, pcClock->NumEvents());
+	AssertFalse(cBoard.mcSimulation.RunSimultaneous());
+	AssertLong(0, cBoard.mcSimulation.GetTime());
+	cBoard.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestProcessorChips(void)
+{
+	BeginTests();
+
+	TestProcessorChipsW65C816();
+	TestProcessorChips65C64();
+	TestProcessorChipsOscilloscope();
+	TestProcessorChipsRemoveEvent();
+
+	TestStatistics();
+}
+

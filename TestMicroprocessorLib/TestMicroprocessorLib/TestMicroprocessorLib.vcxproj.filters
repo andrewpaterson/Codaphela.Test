@@ -127,6 +127,9 @@
     <ClCompile Include="TestStandardIntegratedCircuits.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="TestProcessorChips.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestW65C816Context.h">
@@ -137,6 +140,9 @@
     </ClInclude>
     <ClInclude Include="Test65C64Context.h">
       <Filter>Source\Codaphela\65C64</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCircuitBoard.h">
+      <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

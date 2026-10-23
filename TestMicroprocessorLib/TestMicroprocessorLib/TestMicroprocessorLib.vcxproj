@@ -263,6 +263,7 @@
     <ClCompile Include="TestLogicPort.cpp" />
     <ClCompile Include="TestPassive.cpp" />
     <ClCompile Include="TestStandardIntegratedCircuits.cpp" />
+    <ClCompile Include="TestProcessorChips.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
@@ -288,6 +289,7 @@
     <ClInclude Include="TestW65C816Context.h" />
     <ClInclude Include="TestSingleStep.h" />
     <ClInclude Include="Test65C64Context.h" />
+    <ClInclude Include="TestCircuitBoard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
