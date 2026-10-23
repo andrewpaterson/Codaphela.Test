@@ -4,6 +4,9 @@
     <Filter Include="Source">
       <UniqueIdentifier>{25556eb3-e102-477a-a581-4a1e81b9cd0a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{59ec23b7-a95e-4406-9286-2895dd536d2e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestAssembler65Lib.cpp">
@@ -77,5 +80,40 @@
     <ClInclude Include="TestAsm65Context.h">
       <Filter>Source</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Input\Base64.asm">
+      <Filter>Resource</Filter>
+    </None>
+    <None Include="Input\Bignum.asm">
+      <Filter>Resource</Filter>
+    </None>
+    <None Include="Input\Brainfuck.asm">
+      <Filter>Resource</Filter>
+    </None>
+    <None Include="Input\Life.asm">
+      <Filter>Resource</Filter>
+    </None>
+    <None Include="Input\Mandelbrot.asm">
+      <Filter>Resource</Filter>
+    </None>
+    <None Include="Input\Queens.asm">
+      <Filter>Resource</Filter>
+    </None>
+    <None Include="Input\Quicksort.asm">
+      <Filter>Resource</Filter>
+    </None>
+    <None Include="Input\Relocate.asm">
+      <Filter>Resource</Filter>
+    </None>
+    <None Include="Input\Sha256.asm">
+      <Filter>Resource</Filter>
+    </None>
+    <None Include="Input\Sieve.asm">
+      <Filter>Resource</Filter>
+    </None>
+    <None Include="Input\Strings.asm">
+      <Filter>Resource</Filter>
+    </None>
   </ItemGroup>
 </Project>

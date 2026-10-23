@@ -1165,6 +1165,13 @@ void TestCPP65GeneratorProject(void)
 }
 
 
+//The expected values below are worked out by C++ on the host and must follow IEEE 754.
+//Under /fp:fast NaN comparisons (and x != x) are wrong, so the host maths is precise here.
+#ifdef _MSC_VER
+#pragma float_control(precise, on, push)
+#endif // _MSC_VER
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 // The result of a op b in C++ for float (bDouble false) or double values given as
@@ -1653,6 +1660,14 @@ static void AssertCPP65Transcendentals(void)
 			ulliBits = sRun.pcContext->GetLong(uiAddress) | ((uint64)sRun.pcContext->GetLong(uiAddress + 4) << 32);
 			memcpy(&adActual[j], &ulliBits, 8);
 			uiAddress += 8;
+#ifndef BUILD_64
+			//The 32 bit C library's sin, cos and tan lose accuracy for large arguments (by up to 20 ulps at 1e5 and
+			//with no correct digits from 1e15) so they can't be the expected values there.  The 64 bit build checks them.
+			if ((j >= 3) && (j <= 5) && (fabs(dX) > 1000.0))
+			{
+				continue;
+			}
+#endif // BUILD_64
 			AssertTrue(TestCPP65Ulps(adActual[j], adExpected[j]) <= 1);
 		}
 	}
@@ -1673,6 +1688,11 @@ static void AssertCPP65Transcendentals(void)
 	TestCPP65End(&sRun);
 	szSource.Kill();
 }
+
+
+#ifdef _MSC_VER
+#pragma float_control(pop)
+#endif // _MSC_VER
 
 
 //////////////////////////////////////////////////////////////////////////

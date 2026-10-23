@@ -277,6 +277,19 @@
   <ItemGroup>
     <ClInclude Include="TestAsm65Context.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Input\Base64.asm" />
+    <None Include="Input\Bignum.asm" />
+    <None Include="Input\Brainfuck.asm" />
+    <None Include="Input\Life.asm" />
+    <None Include="Input\Mandelbrot.asm" />
+    <None Include="Input\Queens.asm" />
+    <None Include="Input\Quicksort.asm" />
+    <None Include="Input\Relocate.asm" />
+    <None Include="Input\Sha256.asm" />
+    <None Include="Input\Sieve.asm" />
+    <None Include="Input\Strings.asm" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
