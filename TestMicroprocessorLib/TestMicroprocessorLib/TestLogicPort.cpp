@@ -292,6 +292,7 @@ void TestLogicPortSlewAndTransition(void)
 	CTrace*				pcA;
 	CTrace*				pcB;
 	CChars				sz;
+	int64				iT;
 
 	cTest.Init();
 	pcDriver = cTest.AddBuffer("D", &cTest.mcFixed);
@@ -311,39 +312,60 @@ void TestLogicPortSlewAndTransition(void)
 
 	AssertInt(TV_Undriven, pcBufferIn->ReadValue(0).eValue);
 
-	//Hold 512 then slew 0V to 4V over 1024, crossing 3V at 512 + 768.
+	//An undriven trace driven high takes the level at once, after the hold of 512, and the buffer sees it next tick.
+	pcDriverOut->Write(cTest.mpcTimeline, true);
+	AssertTrue(cTest.mpcTimeline->RunToTime(512));
+	AssertTrue(pcDriverOut->GetOutput()->IsSlew());
+	AssertFloat(4.0f, pcDriverOut->GetOutput()->GetStartVoltage(), 3);
+	AssertLong(1, pcDriverOut->GetOutput()->GetSlewTime());
+	AssertInt(TV_High, pcBufferIn->ReadValue(512).eValue);
+	AssertLong(513, pcBufferIn->GetEvent(0)->GetTime());
+	cTest.mpcTimeline->Run();
+	AssertLog("U1:1@513;");
+	AssertLong(1026, cTest.mpcTimeline->GetTime());  //The buffer's output, driven from undriven too.
+	AssertFloat(4.0f, pcB->GetVoltage(1026), 3);
+
+	//Falling at 1026: hold 512, slew 4V to 0V over 1024, crossing 1V 768 later.
+	pcDriverOut->Write(cTest.mpcTimeline, false);
+	cTest.mpcTimeline->Run();
+	AssertLog("U1:0@2306;");
+	AssertLong(2306 + 512 + 1024, cTest.mpcTimeline->GetTime());
+	AssertFloat(0.0f, pcB->GetVoltage(cTest.mpcTimeline->GetTime()), 3);
+	iT = cTest.mpcTimeline->GetTime();
+
+	//Rising from 0V: hold 512 then slew 0V to 4V over 1024, crossing 3V at 512 + 768.
 	pcDriverOut->Write(cTest.mpcTimeline, true);
 	AssertSize(1, pcDriverOut->NumEvents());
 	sz.Init();
 	pcDriverOut->AppendEvents(&sz);
-	AssertString("Events [1]:  Slew: Time [512] ---- -> 4.0V,  ", sz.Text());
+	AssertString("Events [1]:  Slew: Time [4354] ---- -> 4.0V,  ", sz.Text());
 	sz.Kill();
 
 	AssertTrue(cTest.mpcTimeline->RunToTime(512));
-	AssertLong(512, cTest.mpcTimeline->GetTime());
+	AssertLong(iT + 512, cTest.mpcTimeline->GetTime());
 	AssertTrue(pcDriverOut->GetOutput()->IsSlew());
 	AssertLong(1024, pcDriverOut->GetOutput()->GetSlewTime());
 	AssertFloat(0.0f, pcDriverOut->GetOutput()->GetStartVoltage(), 3);
 	AssertSize(1, pcDriverOut->NumEvents());  //The drive at the end of the slew.
 	AssertSize(1, pcBufferIn->NumEvents());  //The transition.
-	AssertLong(1536, pcDriverOut->GetEvent(0)->GetTime());
-	AssertLong(1280, pcBufferIn->GetEvent(0)->GetTime());
+	AssertLong(iT + 1536, pcDriverOut->GetEvent(0)->GetTime());
+	AssertLong(iT + 1280, pcBufferIn->GetEvent(0)->GetTime());
 
-	AssertFloat(0.0f, pcA->GetVoltage(512), 3);
-	AssertFloat(2.0f, pcA->GetVoltage(1024), 3);
-	AssertInt(TV_Unsettled, pcBufferIn->ReadValue(1024).eValue);
-	AssertFloat(3.0f, pcA->GetVoltage(1280), 3);
-	AssertInt(TV_High, pcBufferIn->ReadValue(1280).eValue);
-	AssertFloat(4.0f, pcA->GetVoltage(1536), 3);
-	AssertFalse(IsVoltage(pcA->GetVoltage(1537)));  //Until the drive executes.
+	AssertFloat(0.0f, pcA->GetVoltage(iT + 512), 3);
+	AssertFloat(2.0f, pcA->GetVoltage(iT + 1024), 3);
+	AssertInt(TV_Unsettled, pcBufferIn->ReadValue(iT + 1024).eValue);
+	AssertFloat(3.0f, pcA->GetVoltage(iT + 1280), 3);
+	AssertInt(TV_High, pcBufferIn->ReadValue(iT + 1280).eValue);
+	AssertFloat(4.0f, pcA->GetVoltage(iT + 1536), 3);
+	AssertFalse(IsVoltage(pcA->GetVoltage(iT + 1537)));  //Until the drive executes.
 
 	AssertTrue(cTest.mpcTimeline->RunToTime(1280 - 512));
-	AssertLog("U1:1@1280;");
+	AssertLog("U1:1@5122;");
 	AssertSize(1, pcBufferOut->NumEvents());
-	AssertLong(1280 + 512, pcBufferOut->GetEvent(0)->GetTime());
+	AssertLong(iT + 1280 + 512, pcBufferOut->GetEvent(0)->GetTime());
 
 	cTest.mpcTimeline->Run();
-	AssertLong(1280 + 512 + 1024, cTest.mpcTimeline->GetTime());
+	AssertLong(iT + 1280 + 512 + 1024, cTest.mpcTimeline->GetTime());
 	AssertTrue(pcDriverOut->GetOutput()->IsDrive());
 	AssertFloat(4.0f, pcA->GetVoltage(cTest.mpcTimeline->GetTime()), 3);
 	AssertFloat(4.0f, pcB->GetVoltage(cTest.mpcTimeline->GetTime()), 3);
@@ -353,11 +375,98 @@ void TestLogicPortSlewAndTransition(void)
 	AssertSize(0, pcBufferOut->NumEvents());
 	AssertLog("");
 
-	//Falling at 2816: hold 512, slew 4V to 0V, crossing 1V 768 later.
+	cTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Driving low from undriven doesn't change the voltage, which starts
+// from the low voltage out, but the inputs on the trace still see it.
+// Driving low again on a driven trace is not a transition.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLogicPortUndrivenToLow(void)
+{
+	CTestLogicCircuit	cTest;
+	CTestBuffer*		pcDriver;
+	CTestBuffer*		pcBuffer;
+	CLogicPort*			pcDriverOut;
+	CTrace*				pcA;
+
+	cTest.Init();
+	pcDriver = cTest.AddBuffer("D", &cTest.mcFixed);
+	pcBuffer = cTest.AddBuffer("U1", &cTest.mcFixed);
+	cTest.mcSimulation.SimulationStarted();
+	pcDriverOut = pcDriver->GetBufferPins()->mpcOut;
+	pcA = cTest.mpcCircuit->AddTrace();
+	pcDriverOut->Connect(pcA);
+	pcBuffer->GetBufferPins()->mpcIn->Connect(pcA);
+
+	//A hold of 512, the average of the two as the voltage doesn't change, then a transition one later.
+	pcDriverOut->Write(cTest.mpcTimeline, false);
+	AssertTrue(cTest.mpcTimeline->RunToTime(512));
+	AssertSize(1, pcBuffer->GetBufferPins()->mpcIn->NumEvents());
+	AssertLong(513, pcBuffer->GetBufferPins()->mpcIn->GetEvent(0)->GetTime());
+	cTest.mpcTimeline->Run();
+	AssertLog("U1:0@513;");
+
 	pcDriverOut->Write(cTest.mpcTimeline, false);
 	cTest.mpcTimeline->Run();
-	AssertLog("U1:0@4096;");
-	AssertFloat(0.0f, pcB->GetVoltage(cTest.mpcTimeline->GetTime()), 3);
+	AssertLog("");
+	AssertInt(TV_Low, pcBuffer->GetBufferPins()->mpcIn->Read(cTest.mpcTimeline).eValue);
+
+	cTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A driver going to high impedance leaves its trace undriven; the input
+// on it sees that next tick.  High impedance drops a later pending slew,
+// so the last write wins.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLogicPortImpedanceSeen(void)
+{
+	CTestLogicCircuit	cTest;
+	CTestBuffer*		pcDriver;
+	CTestBuffer*		pcBuffer;
+	CLogicPort*			pcDriverOut;
+	CTrace*				pcA;
+	int64				iT;
+
+	cTest.Init();
+	pcDriver = cTest.AddBuffer("D", &cTest.mcFixed);
+	pcBuffer = cTest.AddBuffer("U1", &cTest.mcFixed);
+	cTest.mcSimulation.SimulationStarted();
+	pcDriverOut = pcDriver->GetBufferPins()->mpcOut;
+	pcA = cTest.mpcCircuit->AddTrace();
+	pcDriverOut->Connect(pcA);
+	pcBuffer->GetBufferPins()->mpcIn->Connect(pcA);
+
+	pcDriverOut->Write(cTest.mpcTimeline, true);
+	cTest.mpcTimeline->Run();
+	AssertLog("U1:1@513;");
+	iT = cTest.mpcTimeline->GetTime();
+	AssertLong(2049, iT);  //The buffer slewed its unconnected output from 0V too.
+
+	//The drive of NaN at 10 (0.01ns), the transition the tick after.
+	pcDriverOut->WriteImpedance(cTest.mpcTimeline);
+	cTest.mpcTimeline->Run();
+	AssertLong(iT + 11, cTest.mpcTimeline->GetTime());
+	AssertLog("U1:-@2060;");
+	AssertFalse(IsVoltage(pcA->GetVoltage(cTest.mpcTimeline->GetTime())));
+
+	//Driven high again, then at once high impedance: the slew is dropped.
+	pcDriverOut->Write(cTest.mpcTimeline, true);
+	AssertSize(1, pcDriverOut->NumEvents());
+	pcDriverOut->WriteImpedance(cTest.mpcTimeline);
+	AssertSize(1, pcDriverOut->NumEvents());
+	AssertTrue(pcDriverOut->GetEvent(0)->IsDriveEvent());
+	cTest.mpcTimeline->Run();
+	AssertLog("");
+	AssertFalse(IsVoltage(pcA->GetVoltage(cTest.mpcTimeline->GetTime())));
 
 	cTest.Kill();
 }
@@ -407,6 +516,7 @@ void TestLogicPortSlewInterrupted(void)
 	CTestBuffer*		pcDriver;
 	CLogicPort*			pcDriverOut;
 	CTrace*				pcA;
+	int64				iT;
 
 	cTest.Init();
 	pcDriver = cTest.AddBuffer("D", &cTest.mcFixed);
@@ -415,25 +525,31 @@ void TestLogicPortSlewInterrupted(void)
 	pcA = cTest.mpcCircuit->AddTrace();
 	pcDriverOut->Connect(pcA);
 
+	//Driven low first, from undriven: the slew at 512 and its drive at 513.
+	pcDriverOut->Write(cTest.mpcTimeline, false);
+	cTest.mpcTimeline->Run();
+	iT = cTest.mpcTimeline->GetTime();
+	AssertLong(513, iT);
+
 	pcDriverOut->Write(cTest.mpcTimeline, true);
 	cTest.mpcTimeline->RunToTime(1024);  //Slewing since 512, at 2V.
-	AssertFloat(2.0f, pcA->GetVoltage(1024), 3);
+	AssertFloat(2.0f, pcA->GetVoltage(iT + 1024), 3);
 	AssertSize(1, pcDriverOut->NumEvents());
 
 	//Falling, so a hold of 512.  The first slew's drive runs first at 1536, so the second slew starts from 4V.
 	pcDriverOut->Write(cTest.mpcTimeline, false);
 	AssertSize(2, pcDriverOut->NumEvents());
 	cTest.mpcTimeline->RunToTime(512);
-	AssertLong(1536, cTest.mpcTimeline->GetTime());
+	AssertLong(iT + 1536, cTest.mpcTimeline->GetTime());
 	AssertTrue(pcDriverOut->GetOutput()->IsSlew());
 	AssertFloat(4.0f, pcDriverOut->GetOutput()->GetStartVoltage(), 3);
 	AssertLong(1024, pcDriverOut->GetOutput()->GetSlewTime());
 	AssertSize(1, pcDriverOut->NumEvents());
-	AssertLong(2560, pcDriverOut->GetEvent(0)->GetTime());
+	AssertLong(iT + 2560, pcDriverOut->GetEvent(0)->GetTime());
 
 	cTest.mpcTimeline->Run();
-	AssertLong(2560, cTest.mpcTimeline->GetTime());
-	AssertFloat(0.0f, pcA->GetVoltage(2560), 3);
+	AssertLong(iT + 2560, cTest.mpcTimeline->GetTime());
+	AssertFloat(0.0f, pcA->GetVoltage(iT + 2560), 3);
 
 	cTest.Kill();
 }
@@ -544,7 +660,8 @@ void TestLogicPortDisconnect(void)
 	pcDriverOut->Connect(pcA);
 	pcDriverOut->Write(cTest.mpcTimeline, true);
 	cTest.mpcTimeline->RunToTime(512);
-	AssertSize(2, cTest.mpcTimeline->NumSimultaneousEvents());  //The drive and the transition.
+	AssertSize(1, cTest.mpcTimeline->NumSimultaneousEvents());  //The drive and the transition, both next tick.
+	AssertSize(2, cTest.mpcTimeline->GetFirstSimultaneousEvents()->NumEvents());
 
 	cTest.Kill();
 }
@@ -579,7 +696,7 @@ void TestLogicPortTick(void)
 
 	cTest.mpcTimeline->RunToTime(45000);
 	AssertSize(4, pcClock->GetClockState()->muiTicks);
-	AssertLog("U1:1@11280;U1:0@21280;U1:1@31280;U1:0@41280;");
+	AssertLog("U1:1@10513;U1:0@21280;U1:1@31280;U1:0@41280;");
 
 	sz.Init();
 	pcClock->AppendDescription(&sz);
@@ -702,7 +819,9 @@ void TestLogicPort(void)
 	TestLogicPortIdealSignals();
 	TestLogicPortTrace();
 	TestLogicPortSlewAndTransition();
+	TestLogicPortUndrivenToLow();
 	TestLogicPortImpedance();
+	TestLogicPortImpedanceSeen();
 	TestLogicPortSlewInterrupted();
 	TestLogicPortNoPower();
 	TestLogicPortTraceConnected();

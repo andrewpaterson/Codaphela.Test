@@ -38,6 +38,7 @@ void TestTimeline(void);
 void TestVoltageConfiguration(void);
 void TestLogicPort(void);
 void TestPassive(void);
+void TestStandardIntegratedCircuits(void);
 
 
 int __cdecl main(void)
@@ -83,6 +84,7 @@ int __cdecl main(void)
 	TestVoltageConfiguration();
 	TestLogicPort();
 	TestPassive();
+	TestStandardIntegratedCircuits();
 
 	UnknownsKill();
 	MemoryKill();

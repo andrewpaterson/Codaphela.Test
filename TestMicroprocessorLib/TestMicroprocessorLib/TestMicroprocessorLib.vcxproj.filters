@@ -124,6 +124,9 @@
     <ClCompile Include="TestPassive.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="TestStandardIntegratedCircuits.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestW65C816Context.h">
