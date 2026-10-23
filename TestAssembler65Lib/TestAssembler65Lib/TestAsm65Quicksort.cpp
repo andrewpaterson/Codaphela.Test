@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include "BaseLib/Chars.h"
+#include "BaseLib/QuickSort.h"
 #include "TestLib/Assert.h"
 #include "TestAsm65Context.h"
 
@@ -44,7 +44,7 @@ static void AssertQuicksort(uint32 uiMask)
 		x = x * 1664525 + 1013904223;
 		auiExpected[i] = x & uiMask;
 	}
-	qsort(auiExpected, QUICKSORT_COUNT, sizeof(uint32), CompareUint32);
+	QuickSort(CompareUint32, auiExpected, sizeof(uint32), QUICKSORT_COUNT);
 
 	szSource.Init("COUNT = ");
 	szSource.Append(QUICKSORT_COUNT);
