@@ -123,3 +123,11 @@ TestAssembler65Lib/TestAssembler65Lib/Log.txt
 /TestMicroprocessorLib/TestMicroprocessorLib/x64/Release/*
 /TestMicroprocessorLib/x64/Debug/*
 /TestMicroprocessorLib/x64/Release/*
+/TestSupportLib/TestSupportLib/x64/Debug/*
+/TestSupportLib/TestSupportLib/x64/Release/*
+/TestSupportLib/x64/Debug/*
+/TestSupportLib/x64/Release/*
+/TestThreadLib/TestThreadLib/x64/Debug/*
+/TestThreadLib/TestThreadLib/x64/Release/*
+/TestThreadLib/x64/Debug/*
+/TestThreadLib/x64/Release/*
