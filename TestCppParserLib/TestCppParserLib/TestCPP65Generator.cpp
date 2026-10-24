@@ -2256,6 +2256,362 @@ void TestCPP65GeneratorBaseLibConstructs(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Constructs StandardLib's Ptr uses: a function template declared before it is
+// defined, operator-> on an object, using Base::operator= in a class, unary
+// operator& and operator!, conversion functions (explicit or not), converting
+// (and explicit) constructors in overload ranking, a non-type template parameter
+// deduced from a base class instance, and overloads on T& and const T& and on const
+// member functions.  TestStandardLib's own tests needed casts to classes, &(c = x),
+// pointers to virtual member functions and overloaded function templates.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorStandardLibConstructs(void)
+{
+	AssertInt(7, TestCPP65Main(
+		"template<class M> class P { public: M* mp; M* operator -> () { return mp; } };\n"
+		"struct S { int x; void Init(int a) { x = a; } int Get() { return x; } };\n"
+		"S gs;\n"
+		"template <class T, typename ... Args> P<T> Make(Args ... args);\n"
+		"template <class T, typename ... Args> P<T> Make(Args ... args) { P<T> p; p.mp = &gs; p->Init(args...); return p; }\n"
+		"int main() { P<S> p = Make<S>(7); return p->Get(); }\n"));
+
+	AssertInt(21, TestCPP65Main(
+		"struct E { int v; };\n"
+		"class CP\n"
+		"{\n"
+		"public:\n"
+		"\tE* mp;\n"
+		"\tCP() { mp = 0; }\n"
+		"\tCP(E* p) { mp = p; }\n"
+		"\tCP(const CP& c) { mp = c.mp; }\n"
+		"\tvoid operator = (E* p) { mp = p; }\n"
+		"\tvoid operator = (const CP& c) { mp = c.mp; }\n"
+		"\tE* operator & () { return mp; }\n"
+		"\tbool operator ! () { return mp == 0; }\n"
+		"};\n"
+		"template<class M = E>\n"
+		"class P : public CP\n"
+		"{\n"
+		"public:\n"
+		"\tP() : CP() {}\n"
+		"\tP(E* p) : CP(p) {}\n"
+		"\tP(const CP& c) : CP(c) {}\n"
+		"\tP(const P& c) : CP(c) {}\n"
+		"\tusing CP::operator =;\n"
+		"\tP& operator = (const P& c) { CP::operator = (c); return *this; }\n"
+		"\tM* operator -> () { return (M*)mp; }\n"
+		"\tM* operator & () { return (M*)mp; }\n"
+		"\texplicit operator bool() const { return mp != 0; }\n"
+		"};\n"
+		"E ge;\n"
+		"CP Get() { CP c(&ge); return c; }\n"
+		"P<> gp;\n"
+		"P<E> Make() { return &gp; }\n"
+		"int main()\n"
+		"{\n"
+		"\tP<> p;\n"
+		"\tP<E> q;\n"
+		"\tint r = 0;\n"
+		"\tp = 0;\n"
+		"\tif (!p) r += 1;\n"
+		"\tp = Get();\n"
+		"\tq = p;\n"
+		"\tge.v = 5;\n"
+		"\tgp = &ge;\n"
+		"\tif (q) r += 10;\n"
+		"\tr += Make()->v;\n"
+		"\treturn r + q->v;\n"
+		"}\n"));
+
+	AssertInt(211, TestCPP65Main(
+		"struct E { int v; };\n"
+		"class P { public: E* mp; P() { mp = 0; } P(E* p) { mp = p; } P(const P& c) { mp = c.mp; } };\n"
+		"int Order(P a, P b) { return (a.mp ? 1 : 0) + (b.mp ? 2 : 0); }\n"
+		"int Order(P a) { return Order(a, 0) + 10; }\n"
+		"int main() { E e; P p(&e); return Order(p) + Order(0, p) * 100; }\n"));
+
+	AssertInt(96, TestCPP65Main(
+		"template<class M, int I> class A { public: M am[I]; template<int J> int Copy(A<M, J>* p); };\n"
+		"template<class M, int I> template<int J> int A<M, I>::Copy(A<M, J>* p) { return J * 10 + I; }\n"
+		"template<class M, int I> class AP : public A<M*, I> { };\n"
+		"int main() { A<int*, 3> a; AP<int, 4> b; A<int*, 5> c; return a.Copy(&b) + a.Copy(&c); }\n"));
+
+	AssertInt(2111010, TestCPP65Main(
+		"class CP\n"
+		"{\n"
+		"public:\n"
+		"\tint k;\n"
+		"\tCP() { k = 1; }\n"
+		"\tCP(CP& c) { k = 10; }\n"
+		"\tCP(const CP& c) { k = 100; }\n"
+		"\tvoid operator = (CP& c) { k = 1000; }\n"
+		"\tvoid operator = (const CP& c) { k = 10000; }\n"
+		"\tint Get(CP& c) { return 1; }\n"
+		"\tint Get(const CP& c) { return 2; }\n"
+		"};\n"
+		"CP Make() { CP c; return c; }\n"
+		"int main()\n"
+		"{\n"
+		"\tCP a;\n"
+		"\tCP b(a);\n"
+		"\tCP c;\n"
+		"\tint r;\n"
+		"\tc = a;\n"
+		"\tr = b.k + c.k;\n"
+		"\tc = Make();\n"
+		"\tr += c.k;\n"
+		"\treturn r + a.Get(a) * 100000 + a.Get(Make()) * 1000000;\n"
+		"}\n"));
+
+	//Conversion functions convert objects in initialisers, assignments, arguments, returns and casts; explicit
+	//ones only in casts and conditions.  An explicit constructor does not convert.
+	AssertInt(9711170, TestCPP65Main(
+		"struct E { int v; };\n"
+		"class CNumber\n"
+		"{\n"
+		"public:\n"
+		"\tint\tm;\n"
+		"\tCNumber(int i) { m = i; }\n"
+		"\toperator int() const { return m; }\n"
+		"\texplicit operator bool() const { return m != 0; }\n"
+		"};\n"
+		"class CRatio\n"
+		"{\n"
+		"public:\n"
+		"\tint\tn;\n"
+		"\texplicit CRatio(int i) { n = i * 100; }\n"
+		"\tCRatio(E* p) { n = p->v; }\n"
+		"};\n"
+		"int Twice(int x) { return x * 2; }\n"
+		"int Pick(CRatio r) { return r.n; }\n"
+		"int Pick(long long l) { return 7; }\n"
+		"int AsInt(CNumber c) { return c; }\n"
+		"int main()\n"
+		"{\n"
+		"\tCNumber a(5);\n"
+		"\tCNumber z(0);\n"
+		"\tE e;\n"
+		"\tint r;\n"
+		"\tint i = a;\n"
+		"\tlong long l = a;\n"
+		"\te.v = 9;\n"
+		"\tr = i + (int)l;\n"
+		"\tr += Twice(a);\n"
+		"\ti = z;\n"
+		"\tr += i;\n"
+		"\tif (a) r += 100;\n"
+		"\tif (!z) r += 1000;\n"
+		"\tr += static_cast<bool>(a) ? 10000 : 0;\n"
+		"\tr += Pick(3) * 100000;\n"
+		"\tr += Pick(&e) * 1000000;\n"
+		"\tr += AsInt(a) * 10;\n"
+		"\treturn r;\n"
+		"}\n"));
+
+	//const objects (const variables and references, const fields, through pointers to const and in const member
+	//functions) choose const member functions and const T& overloads.
+	AssertInt(444442485, TestCPP65Main(
+		"class C\n"
+		"{\n"
+		"public:\n"
+		"\tint m;\n"
+		"\tint Get() { return 1; }\n"
+		"\tint Get() const { return 2; }\n"
+		"\tint Both() const { return Get() * 10 + this->Get(); }\n"
+		"\tint Mine() { return Get(); }\n"
+		"\tint operator [] (int i) { return 3; }\n"
+		"\tint operator [] (int i) const { return 4; }\n"
+		"};\n"
+		"int Take(C& c) { return 1; }\n"
+		"int Take(const C& c) { return 2; }\n"
+		"int Take(int& i) { return 3; }\n"
+		"int Take(const int& i) { return 4; }\n"
+		"struct S { C c; const C k; int i; S() : k() {} };\n"
+		"int main()\n"
+		"{\n"
+		"\tC a;\n"
+		"\tconst C b = a;\n"
+		"\tconst C* p = &a;\n"
+		"\tC* q = &a;\n"
+		"\tS s;\n"
+		"\tconst S& t = s;\n"
+		"\tconst int ci = 1;\n"
+		"\tint r = 0;\n"
+		"\tr += a.Get() + b.Get() * 10 + p->Get() * 100 + q->Get() * 1000;\n"
+		"\tr += a.Both() * 10000 + a.Mine() * 1000000;\n"
+		"\tr += (Take(a) + Take(b) * 10 + Take(*p) * 100 + Take(s.c) * 1000 + Take(s.k) * 10000 + Take(t.c) * 100000);\n"
+		"\tr += (Take(s.i) + Take(ci) * 10 + Take(t.i) * 100) * 1000000;\n"
+		"\tr += a[0] + b[0] * 10;\n"
+		"\treturn r;\n"
+		"}\n"));
+
+	//A conversion function's result that matches the parameter beats one that needs converting.
+	AssertInt(1, TestCPP65Main(
+		"class CInt { public: int m; CInt(int i) { m = i; } operator int() const { return m; } };\n"
+		"int P(int e, int a) { return 1; }\n"
+		"int P(int e, unsigned a) { return 2; }\n"
+		"int P(unsigned e, unsigned a) { return 3; }\n"
+		"int main() { CInt c(5); return P(7, c); }\n"));
+
+	//(Class)x and static_cast<Class>(x) make a temporary, also as a variadic argument.
+	AssertInt(55150, TestCPP65Main(
+		"struct E { int v; };\n"
+		"class CP { public: E* mp; CP() { mp = 0; } CP(E* p) { mp = p; } CP(const CP& c) { mp = c.mp; } };\n"
+		"class P : public CP { public: int k; P() : CP() { k = 3; } P(E* p) : CP(p) { k = 4; } };\n"
+		"int Get(CP c) { return c.mp ? c.mp->v : 100; }\n"
+		"template<typename ... Args> int Pass(Args ... args) { return Get(args...); }\n"
+		"int main()\n"
+		"{\n"
+		"\tE e; e.v = 5;\n"
+		"\tP p(&e);\n"
+		"\tCP a = (CP)p;\n"
+		"\tCP b = static_cast<CP>(&e);\n"
+		"\treturn Get((CP)0) + Pass((CP)&e) * 1000 + a.mp->v * 10 + Get(b) * 10000;\n"
+		"}\n"));
+
+	//&(c = 'A') is c's address after the assignment.
+	AssertInt(7130, TestCPP65Main(
+		"int Read(char* p) { return *p; }\n"
+		"int main() { char c; int i = 5; int* p = &(i += 2); return Read(&(c = 'A')) + *p * 1000 + c; }\n"));
+
+	//Pointers to virtual member functions call through the object's vtable; pointers to members compare.
+	AssertInt(10807012, TestCPP65Main(
+		"struct B { int m; virtual int F(int x) { return x + 1; } virtual int G(int x) { return x * 2; } int H(int x) { return x - m; } };\n"
+		"struct D : B { int F(int x) override { return x + 100; } };\n"
+		"typedef int (B::*FB)(int);\n"
+		"int Call(B* p, FB f, int x) { return (p->*f)(x); }\n"
+		"int main() { B b; D d; b.m = 1; d.m = 2; FB f = &B::F; return Call(&b, f, 1) + Call(&d, f, 1) * 10 + Call(&d, &B::G, 3) * 1000 + Call(&d, &B::H, 10) * 100000 + (f == &B::F) * 10000000; }\n"));
+
+	//A member template whose parameter is a pointer to a member of its template parameter.
+	AssertInt(1, TestCPP65Main(
+		"struct U { int u; };\n"
+		"struct A { int k; void F(U* p, void* q) {} };\n"
+		"typedef void (A::*FA)(U*, void*);\n"
+		"class C\n"
+		"{\n"
+		"public:\n"
+		"\tFA mf;\n"
+		"\ttemplate <class M> void SetFunction(void(M::*f)(U*, void*));\n"
+		"};\n"
+		"template <class M> void C::SetFunction(void(M::*f)(U*, void*)) { mf = (FA)f; }\n"
+		"int main() { C c; c.SetFunction(&A::F); return c.mf == &A::F; }\n"));
+
+	//Overloaded function and member templates (also on const) instantiated with the same arguments are different
+	//functions.
+	AssertInt(212114, TestCPP65Main(
+		"struct C\n"
+		"{\n"
+		"\tint m;\n"
+		"\ttemplate<class M> int Add(void) { return Add<M>(10); }\n"
+		"\ttemplate<class M> int Add(int i) { return i + (int)sizeof(M); }\n"
+		"\ttemplate<class M> int Get(void) { return 1; }\n"
+		"\ttemplate<class M> int Get(void) const { return 2; }\n"
+		"};\n"
+		"template<class M> int F(M m) { return 1; }\n"
+		"template<class M> int F(M m, int i) { return 2; }\n"
+		"int main() { C c; const C& d = c; return c.Add<int>() + c.Get<char>() * 100 + d.Get<char>() * 1000 + F<int>(1) * 10000 + F<int>(1, 2) * 100000; }\n"));
+
+	//= default copy assignment is the implicit copy.
+	AssertInt(943, TestCPP65Main(
+		"template<class M, int I> class A { public: M ma[I]; int n; A& operator = (const A&) = default; };\n"
+		"template<class M, int I> class AP : public A<M*, I> { };\n"
+		"struct S { int k; virtual int F() { return k; } S& operator=(const S&) = default; };\n"
+		"int main() { AP<int, 2> a, b; int x = 3; b.ma[1] = &x; b.n = 4; a = b; S s, t; t.k = 9; s = t; return *a.ma[1] + a.n * 10 + s.F() * 100; }\n"));
+
+	//A function that returns without return destroys its object parameters too.
+	AssertInt(111, TestCPP65Main(
+		"int giLive = 0;\n"
+		"class P\n"
+		"{\n"
+		"public:\n"
+		"\tint m;\n"
+		"\tP() { m = 0; giLive++; }\n"
+		"\tP(const P& c) { m = c.m; giLive++; }\n"
+		"\t~P() { giLive--; }\n"
+		"};\n"
+		"struct S { int k; void A(P a) { k = a.m; } void B(int i, P a) { k = a.m; } };\n"
+		"int F(P a) { return a.m; }\n"
+		"int main()\n"
+		"{\n"
+		"\tint r = 0;\n"
+		"\tS s;\n"
+		"\tP a;\n"
+		"\ts.A(a); r += giLive;\n"
+		"\ts.B(1, a); r += giLive * 10;\n"
+		"\tF(a); r += giLive * 100;\n"
+		"\treturn r;\n"
+		"}\n"));
+
+	//sizeof a field that is an array is the array's size.
+	AssertInt(12807128, TestCPP65Main(
+		"typedef unsigned int uint32;\n"
+		"#define N 30\n"
+		"class C { public: uint32 ma[N + 2]; char mb[7]; int Size() { return (int)sizeof(ma) + (int)sizeof(mb) * 1000 + (int)sizeof(this->ma) * 100000; } };\n"
+		"int main() { C c; return c.Size(); }\n"));
+	AssertInt(4281640, TestCPP65Main(
+		"struct S { int ma[10]; char mc; short ms[3]; };\n"
+		"S gs;\n"
+		"int g[7];\n"
+		"int main() { S s; S* p = &s; return (int)sizeof(s.ma) + (int)sizeof(p->ms) * 100 + (int)sizeof(gs.mc) * 1000 + (int)sizeof(g) * 10000 + (int)sizeof(p->ma[2]) * 1000000; }\n"));
+
+	//#pragma pack(push, n), pack(pop), pack(n) and pack() lay classes out like MSVC.
+	AssertInt(16682634, TestCPP65Main(
+		"struct SName { int miLength; char msz[4]; };\n"
+		"#pragma pack(push, 1)\n"
+		"class CS\n"
+		"{\n"
+		"public:\n"
+		"\tunsigned int miLength;\n"
+		"\tchar mszMagic[4];\n"
+		"\tchar mszType[4];\n"
+		"\tunsigned int miIgnored;\n"
+		"\tlong long moi;\n"
+		"\tunsigned short muiSize;\n"
+		"\tSName msName;\n"
+		"};\n"
+		"#pragma pack(pop)\n"
+		"struct B { char c; int a; };\n"
+		"#pragma pack(2)\n"
+		"struct C { char c; int a; };\n"
+		"#pragma pack()\n"
+		"struct D { char c; long long a; };\n"
+		"int main() { CS s; return (int)sizeof(CS) + (int)((char*)&s.msName - (char*)&s) * 100 + (int)sizeof(B) * 10000 + (int)sizeof(C) * 100000 + (int)sizeof(D) * 1000000; }\n"));
+
+	//Temporary objects in if, while and for conditions are destroyed whichever way the condition goes.
+	AssertInt(1010000, TestCPP65Main(
+		"int giLive = 0;\n"
+		"struct T { int k; int Text() { return k; } };\n"
+		"T gt;\n"
+		"class P\n"
+		"{\n"
+		"public:\n"
+		"\tT* mp;\n"
+		"\tP() { mp = &gt; giLive++; }\n"
+		"\tP(const P& c) { mp = c.mp; giLive++; }\n"
+		"\t~P() { giLive--; }\n"
+		"\tT* operator -> () { return mp; }\n"
+		"};\n"
+		"P Get(int i) { P p; return p; }\n"
+		"bool Check(int a, int b) { return a == b; }\n"
+		"int main()\n"
+		"{\n"
+		"\tint r = 0;\n"
+		"\tgt.k = 3;\n"
+		"\tif (!Check(3, Get(0)->Text())) r += 1;\n"
+		"\tr += giLive * 10;\n"
+		"\twhile (Check(4, Get(1)->Text())) { r += 1000; }\n"
+		"\tr += giLive * 100;\n"
+		"\tfor (int i = 0; Check(i, Get(2)->Text() - 3); i++) { r += 10000; }\n"
+		"\tr += giLive * 100000;\n"
+		"\tr += (Check(3, Get(3)->Text()) ? 1 : 2) * 1000000;\n"
+		"\tr += giLive * 10000000;\n"
+		"\treturn r;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Every BaseLib .cpp file compiles for the 65C64 and links (with a main that uses
 // none of it).
 //
@@ -2268,6 +2624,25 @@ void TestCPP65GeneratorAllBaseLib(void)
 	szErrors.Init();
 	uiFiles = TestCPP65CompileLibrary("BaseLib", &szErrors);
 	AssertTrue(uiFiles > 350);
+	AssertString("", szErrors.Text());
+	szErrors.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Every StandardLib .cpp file compiles for the 65C64 and links (with a main that
+// uses none of it).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorAllStandardLib(void)
+{
+	CChars	szErrors;
+	size	uiFiles;
+
+	szErrors.Init();
+	uiFiles = TestCPP65CompileLibrary("StandardLib", &szErrors);
+	AssertTrue(uiFiles > 100);
 	AssertString("", szErrors.Text());
 	szErrors.Kill();
 }
@@ -2437,11 +2812,13 @@ void TestCPP65Generator(void)
 	TestCPP65GeneratorVariadicTemplates();
 	TestCPP65GeneratorOverloadRanking();
 	TestCPP65GeneratorBaseLibConstructs();
+	TestCPP65GeneratorStandardLibConstructs();
 	TestCPP65GeneratorArrayTemplate();
 	TestCPP65GeneratorProject();
 	TestCPP65GeneratorFloat();
 	TestCPP65GeneratorBaseLib();
 	TestCPP65GeneratorAllBaseLib();
+	TestCPP65GeneratorAllStandardLib();
 	TestCPP65GeneratorLazy();
 	TestCPP65GeneratorLockstep();
 	TestCPP65GeneratorErrors();

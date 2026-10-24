@@ -1,3 +1,4 @@
+#include <string.h>
 #include "BaseLib/ConstructorCall.h"
 #include "BaseLib/PointerFunctions.h"
 #include "BaseLib/GlobalDataTypesIO.h"
@@ -27,6 +28,14 @@
 #include "LogicimLib/BufferView.h"
 #include "LogicimLib/CircuitFile.h"
 #include "LogicimLib/StateXML.h"
+#include "LogicimLib/W65C816View.h"
+#include "LogicimLib/ClockView.h"
+#include "LogicimLib/ValueView.h"
+#include "LogicimLib/TunnelView.h"
+#include "LogicimLib/PowerSourceView.h"
+#include "MicroprocessorLib/W65C816Chip.h"
+#include "MicroprocessorLib/W65C816InstructionFactory.h"
+#include "MicroprocessorLib/65C64Chip.h"
 #include "TestLib/Assert.h"
 
 
@@ -499,6 +508,425 @@ void TestSimulationStateErrors(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A W65C816 reading NOPs (0xEA) off its data bus, clocked at 4MHz, with
+// its reset, interrupt, RDY and BE inputs held high through tunnels.
+//
+//////////////////////////////////////////////////////////////////////////
+CW65C816View* AddNOPProcessorViews(CCircuitView* pcCircuit)
+{
+	CW65C816View*		pcMPU;
+	CClockView*			pcClock;
+	CConstantView*		pcData;
+	CPositivePowerView*	pcPower;
+	CTunnelView*		pcTunnel;
+	SInt32Vec2			sPosition;
+	SInt32Vec2			sMinimum;
+	SInt32Vec2			sMaximum;
+	SFloat64Vec2		sTunnelMinimum;
+	SFloat64Vec2		sTunnelMaximum;
+	const char*			aszHigh[] = { "RESB", "NMIB", "IRQB", "ABORTB", "RDY", "BE" };
+	size				i;
+
+	pcMPU = NewMalloc<CW65C816View>();
+	pcMPU->Init(0, 0, ROT_West, "MPU", "LVC", false);
+	pcCircuit->Add(pcMPU);
+
+	sPosition = pcMPU->GetPortView("PHI2")->GetGridPosition();
+	pcClock = NewMalloc<CClockView>();
+	pcClock->Init(sPosition.x - 4, sPosition.y + 1, ROT_North, "Clock", "LVC", false, 4000000, false);
+	pcCircuit->Add(pcClock);
+	pcCircuit->AddTrace(sPosition.x - 4, sPosition.y, sPosition.x, sPosition.y);
+
+	sPosition = pcMPU->GetPortView("Data 0")->GetGridPosition();
+	sMinimum.Init(-1, 0);
+	sMaximum.Init(1, 2);
+	pcData = NewMalloc<CConstantView>();
+	pcData->Init(sPosition.x, sPosition.y, ROT_East, "Data", "LVC", false, 8, RADIX_Hexadecimal, sMinimum, sMaximum);
+	pcCircuit->Add(pcData);
+
+	sTunnelMinimum.Init(-0.65, -3);
+	sTunnelMaximum.Init(0.65, 0);
+	pcPower = NewMalloc<CPositivePowerView>();
+	pcPower->Init(-30, -20, ROT_North, "High", 3.3f);
+	pcCircuit->Add(pcPower);
+	pcTunnel = NewMalloc<CTunnelView>();
+	pcTunnel->Init(-30, -19, ROT_South, "high", false, sTunnelMinimum, sTunnelMaximum);
+	pcCircuit->Add(pcTunnel);
+	for (i = 0; i < sizeof(aszHigh) / sizeof(const char*); i++)
+	{
+		sPosition = pcMPU->GetPortView(aszHigh[i])->GetGridPosition();
+		pcTunnel = NewMalloc<CTunnelView>();
+		pcTunnel->Init(sPosition.x, sPosition.y, ROT_East, "high", false, sTunnelMinimum, sTunnelMaximum);
+		pcCircuit->Add(pcTunnel);
+	}
+	return pcMPU;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Every register, flag and latch of a W65C816's core comes back as it was
+// saved.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSimulationStateW65C816Core(void)
+{
+	CFamilyVoltageConfigurationStore	cFamilies;
+	CCircuitSimulation					cSimulation;
+	CW65C816Chip*						apcChip[2];
+	CW65C816ChipPins*					pcPins;
+	SW65CCoreState						sSet;
+	SW65CCoreState						sGot;
+	size								i;
+	CXMLWriter							cSaved;
+	CXMLWriter							cLoaded;
+	CStateXML*							pcStateXML;
+
+	CW65C816InstructionFactory::GetInstance()->Init();
+	ObjectsInit();
+	cFamilies.Init();
+	AssertTrue(cFamilies.Load("Input" _FS_ "PropagationTimes.csv"));
+	cSimulation.Init("Core");
+	for (i = 0; i < 2; i++)
+	{
+		pcPins = NewMalloc<CW65C816ChipPins>();
+		pcPins->Init(cFamilies.Get("LVC"));
+		apcChip[i] = NewMalloc<CW65C816Chip>();
+		apcChip[i]->Init(cSimulation.GetSubcircuitTopSimulation(), "MPU", pcPins);
+	}
+
+	apcChip[0]->GetMPU()->GetState(&sSet);
+	sSet.bEmulationFlag = false;
+	sSet.bZeroFlag = true;
+	sSet.bNegativeFlag = true;
+	sSet.bDecimalFlag = true;
+	sSet.bInterruptDisableFlag = false;
+	sSet.bAccumulatorWidthFlag = true;
+	sSet.bIndexWidthFlag = false;
+	sSet.bCarryFlag = true;
+	sSet.bOverflowFlag = true;
+	sSet.bBreakFlag = true;
+	sSet.uiAccumulator = 0x1234;
+	sSet.uiXIndex = 0x2345;
+	sSet.uiYIndex = 0x3456;
+	sSet.uiDataBank = 0x45;
+	sSet.uiDirectPage = 0x5678;
+	sSet.cProgramCounter.Init(0x67, 0x789A);
+	sSet.uiStackPointer = 0x89AB;
+	sSet.iCycle = 3;
+	sSet.iNextCycle = 4;
+	sSet.uiOpcodeIndex = 0xA9;
+	sSet.bStopped = false;
+	sSet.bWaiting = true;
+	sSet.uiEmulationStatusBits = 0x30;
+	sSet.uiAbortProcessRegister = 0x9A;
+	sSet.uiAbortAccumulator = 0xABCD;
+	sSet.uiAbortXIndex = 0xBCDE;
+	sSet.uiAbortYIndex = 0xCDEF;
+	sSet.uiAbortDataBank = 0xDE;
+	sSet.uiAbortDirectPage = 0xEF01;
+	sSet.cAbortProgramCounter.Init(0xF0, 0x0123);
+	sSet.uiAbortStackPointer = 0x1357;
+	sSet.cAddress.Init(0x24, 0x6802);
+	sSet.uiData = 0x468A;
+	sSet.uiIOData = 0x57;
+	sSet.uiDirectOffset = 0x79;
+	sSet.cNewProgramCounter.Init(0x9B, 0xBDF0);
+	sSet.bBusEnable = false;
+	sSet.bIrq = true;
+	sSet.bAbort = true;
+	sSet.bNextInstruction = true;
+	sSet.bNmi = true;
+	sSet.bPreviousClockLow = true;
+	sSet.bPreviousClockHigh = false;
+	sSet.uiResetCount = 2;
+	apcChip[0]->GetMPU()->SetState(&sSet);
+
+	SaveAndLoadState(apcChip[0], apcChip[1]);
+	apcChip[1]->GetMPU()->GetState(&sGot);
+	AssertBool(sSet.bEmulationFlag, sGot.bEmulationFlag);
+	AssertBool(sSet.bDecimalFlag, sGot.bDecimalFlag);
+	AssertBool(sSet.bWaiting, sGot.bWaiting);
+	AssertBool(sSet.bPreviousClockLow, sGot.bPreviousClockLow);
+	AssertInt(0x1234, sGot.uiAccumulator);
+	AssertInt(0x45, sGot.uiDataBank);
+	AssertInt(0x67, sGot.cProgramCounter.GetBank());
+	AssertInt(0x789A, sGot.cProgramCounter.GetOffset());
+	AssertInt(3, sGot.iCycle);
+	AssertInt(0xA9, sGot.uiOpcodeIndex);
+	AssertInt(0xF0, sGot.cAbortProgramCounter.GetBank());
+	AssertInt(0x6802, sGot.cAddress.GetOffset());
+	AssertInt(0x9B, sGot.cNewProgramCounter.GetBank());
+	AssertInt(2, sGot.uiResetCount);
+
+	//The whole state saves the same from both.
+	pcStateXML = FindStateXMLForIntegratedCircuit(apcChip[0]);
+	cSaved.Init();
+	pcStateXML->Save(&cSaved, apcChip[0]);
+	cLoaded.Init();
+	pcStateXML->Save(&cLoaded, apcChip[1]);
+	AssertString(cSaved.GetText(), cLoaded.GetText());
+	cLoaded.Kill();
+	cSaved.Kill();
+
+	cSimulation.Kill();
+	cFamilies.Kill();
+	ObjectsKill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Sets the state on the first chip, saves it, loads it into the second and
+// asserts the second's whole state is the same.
+//
+//////////////////////////////////////////////////////////////////////////
+void Assert65C64StateLoads(C65C64Chip* pcSaved, C65C64Chip* pcLoaded, S65C64CoreState* psState)
+{
+	S65C64CoreState	sSaved;
+	S65C64CoreState	sLoaded;
+
+	pcSaved->GetMPU()->SetState(psState);
+	SaveAndLoadState(pcSaved, pcLoaded);
+	memset(&sSaved, 0, sizeof(S65C64CoreState));
+	pcSaved->GetMPU()->GetState(&sSaved);
+	memset(&sLoaded, 0, sizeof(S65C64CoreState));
+	pcLoaded->GetMPU()->GetState(&sLoaded);
+	AssertMemory(&sSaved, &sLoaded, sizeof(S65C64CoreState));
+	AssertInt(psState->eInstruction, sLoaded.eInstruction);
+	AssertInt(psState->eDecoded, sLoaded.eDecoded);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Every register, latch and transfer of a 65C64's core comes back as it
+// was saved, as do which instruction it's running and what it decoded.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSimulationState65C64Core(void)
+{
+	CFamilyVoltageConfigurationStore	cFamilies;
+	CCircuitSimulation					cSimulation;
+	C65C64Chip*							apcChip[2];
+	C65C64ChipPins*						pcPins;
+	S65C64CoreState						sState;
+	size								i;
+
+	ObjectsInit();
+	cFamilies.Init();
+	AssertTrue(cFamilies.Load("Input" _FS_ "PropagationTimes.csv"));
+	cSimulation.Init("Core");
+	for (i = 0; i < 2; i++)
+	{
+		pcPins = NewMalloc<C65C64ChipPins>();
+		pcPins->Init(cFamilies.Get("LVC"));
+		apcChip[i] = NewMalloc<C65C64Chip>();
+		apcChip[i]->Init(cSimulation.GetSubcircuitTopSimulation(), "MPU", pcPins);
+	}
+
+	//An interrupt part way through with a transfer pending.
+	memset(&sState, 0, sizeof(S65C64CoreState));
+	sState.uiA = 0xFEDCBA9876543210ULL;
+	sState.uiB = 0x0123456789ABCDEFULL;
+	sState.uiX = 0x8000000000000001ULL;
+	sState.uiY = 0x42;
+	sState.uiS = 0x0001FFF0;
+	sState.uiV = 0x12345678;
+	sState.uiW = 0x9ABCDEF0;
+	sState.uiC = 0x00001010;
+	sState.uiP = 0x05C3;
+	sState.uiInterruptDepth = 2;
+	sState.uiDI = 0xFFFFFFFFFFFFFFFFULL;
+	sState.uiOperationBytes = 4;
+	sState.auiOperandWords[0] = 0x1111;
+	sState.auiOperandWords[3] = 0xFFFF;
+	sState.uiPointerAddress = 0x4000;
+	sState.uiPointer = 0x2000;
+	sState.uiNumPointerWords = 2;
+	sState.uiEffectiveAddress = 0x4001;
+	sState.uiVectorAddress = 0xFFFFFFE8;
+	sState.uiVector = 0x00003000;
+	sState.asTransfers[0].uiAddress = 0x0001FFFC;
+	sState.asTransfers[0].uiBytes = 4;
+	sState.asTransfers[0].uiValue = 0x1010;
+	sState.aePulled[0] = R65_Zero;
+	sState.asTransfers[1].uiAddress = 0x0001FFFA;
+	sState.asTransfers[1].uiBytes = 2;
+	sState.asTransfers[1].uiValue = 0x05C3;
+	sState.aePulled[1] = R65_Y;
+	sState.uiNumTransfers = 2;
+	sState.asReadWords[0].uiAddress = 0xFFFFFFE8;
+	sState.asReadWords[0].uiTransfer = 1;
+	sState.asReadWords[0].uiLanes = 3;
+	sState.uiNumReadWords = 1;
+	sState.asWriteWords[0].uiAddress = 0x0001FFFC;
+	sState.asWriteWords[0].uiTransfer = 0;
+	sState.asWriteWords[0].uiLanes = 3;
+	sState.asWriteWords[1].uiAddress = 0x0001FFFA;
+	sState.asWriteWords[1].uiTransfer = 1;
+	sState.asWriteWords[1].uiLanes = 1;
+	sState.uiNumWriteWords = 2;
+	sState.uiOpcode = 0x4045;
+	sState.eDecoded = DK65_Interrupt;
+	sState.uiDecodedVector = VECTOR_65C64_LEVEL;
+	sState.eInstruction = IK65_Interrupt;
+	sState.iCycle = 3;
+	sState.iNextCycle = 4;
+	sState.bNextInstruction = false;
+	sState.bWaiting = true;
+	sState.uiWakeMask = 0x1F;
+	sState.uiPendingEdges = 0x0A;
+	sState.uiEdgeLow = 0x05;
+	sState.bLevelInterrupt = true;
+	sState.uiIOData = 0xBEEF;
+	sState.bPreviousClockLow = true;
+	sState.bReset = true;
+	Assert65C64StateLoads(apcChip[0], apcChip[1], &sState);
+
+	//An instruction from its opcode.
+	memset(&sState, 0, sizeof(S65C64CoreState));
+	sState.uiS = 0x0001FFFF;
+	sState.uiC = 0x00001008;
+	sState.uiOpcode = 0x0820;
+	sState.eDecoded = DK65_Opcode;
+	sState.eInstruction = IK65_Opcode;
+	sState.iCycle = 2;
+	sState.iNextCycle = 3;
+	Assert65C64StateLoads(apcChip[0], apcChip[1], &sState);
+
+	cSimulation.Kill();
+	cFamilies.Kill();
+	ObjectsKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The text without its id="n" attributes.
+//
+//////////////////////////////////////////////////////////////////////////
+void RemoveEventIDs(CChars* psz, const char* szText)
+{
+	const char*	szID;
+	const char*	szEnd;
+
+	for (;;)
+	{
+		szID = strstr(szText, " id=\"");
+		if (szID == NULL)
+		{
+			psz->Append(szText);
+			return;
+		}
+		psz->Append(szText, szID - szText);
+		szEnd = strchr(szID + 5, '"');
+		szText = (szEnd != NULL) ? szEnd + 1 : szID + 5;
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A W65C816 saved part way through running NOPs and loaded into another
+// simulation saves the same and then runs on exactly as the original.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSimulationStateW65C816RoundTrip(void)
+{
+	CFamilyVoltageConfigurationStore	cFamilies;
+	CCircuitSimulation					cOriginal;
+	CCircuitSimulation					cLoaded;
+	CCircuitView						cOriginalView;
+	CCircuitView						cLoadedView;
+	CW65C816View*						pcMPU;
+	CConstant*							pcData;
+	CXMLWriter							cOriginalText;
+	CXMLWriter							cLoadedText;
+	CFileUtil							cFileUtil;
+	SW65CCoreState						sState;
+	uint16								uiFirstPC;
+	CW65C816Chip*						pcOriginalChip;
+	CW65C816Chip*						pcLoadedChip;
+	CChars								szOriginal;
+	CChars								szLoaded;
+
+	CW65C816InstructionFactory::GetInstance()->Init();
+	ObjectsInit();
+	CEvent::ResetNextID();
+	CTrace::ResetNextID();
+	cFamilies.Init();
+	AssertTrue(cFamilies.Load("Input" _FS_ "PropagationTimes.csv"));
+
+	cOriginal.Init("MPU");
+	cOriginalView.Init();
+	pcMPU = AddNOPProcessorViews(&cOriginalView);
+	AssertTrue(cOriginalView.CreateSimulation(&cOriginal, &cFamilies));
+	pcData = (CConstant*)cOriginalView.GetComponent(2)->GetComponent();
+	pcData->SetConstantValue(0xEA);
+	pcData->SimulationStarted(cOriginal.GetTimeline());
+	cOriginal.RunToTime(NanosecondsToTime((int64)10000));
+	pcOriginalChip = (CW65C816Chip*)pcMPU->GetComponent();
+	pcOriginalChip->GetMPU()->GetState(&sState);
+	uiFirstPC = sState.cProgramCounter.GetOffset();
+	AssertFalse(sState.bStopped);
+
+	cFileUtil.MakeDir("Output");
+	AssertTrue(SaveCircuitFile(&cOriginalView, &cOriginal, "Output" _FS_ "MPU.xml"));
+
+	cLoaded.Init("MPU");
+	cLoadedView.Init();
+	AssertTrue(LoadCircuitFile(&cLoadedView, &cLoaded, &cFamilies, "Output" _FS_ "MPU.xml"));
+	AssertLong(cOriginal.GetTime(), cLoaded.GetTime());
+
+	cOriginalText.Init();
+	SaveCircuitXML(&cOriginalView, &cOriginal, &cOriginalText);
+	AssertTrue(strstr(cOriginalText.GetText(), "<W65C816State ") != NULL);
+	cLoadedText.Init();
+	SaveCircuitXML(&cLoadedView, &cLoaded, &cLoadedText);
+	AssertString(cOriginalText.GetText(), cLoadedText.GetText());
+	cLoadedText.Kill();
+	cOriginalText.Kill();
+
+	//Both simulations take new event ids from the one counter, so the ids of events made since differ.
+	cOriginal.RunToTime(NanosecondsToTime((int64)10000));
+	cLoaded.RunToTime(NanosecondsToTime((int64)10000));
+	cOriginalText.Init();
+	SaveCircuitXML(&cOriginalView, &cOriginal, &cOriginalText);
+	cLoadedText.Init();
+	SaveCircuitXML(&cLoadedView, &cLoaded, &cLoadedText);
+	szOriginal.Init();
+	RemoveEventIDs(&szOriginal, cOriginalText.GetText());
+	szLoaded.Init();
+	RemoveEventIDs(&szLoaded, cLoadedText.GetText());
+	AssertString(szOriginal.Text(), szLoaded.Text());
+	szLoaded.Kill();
+	szOriginal.Kill();
+	cLoadedText.Kill();
+	cOriginalText.Kill();
+
+	//NOPs move the program counter on a byte at a time.
+	pcLoadedChip = (CW65C816Chip*)cLoadedView.GetComponent(0)->GetComponent();
+	pcLoadedChip->GetMPU()->GetState(&sState);
+	AssertTrue(sState.cProgramCounter.GetOffset() != uiFirstPC);
+	AssertInt(0xEA, sState.uiOpcodeIndex);
+
+	cLoadedView.Kill();
+	cLoaded.Kill();
+	cOriginalView.Kill();
+	cOriginal.Kill();
+	cFamilies.Kill();
+	ObjectsKill();
+	CW65C816InstructionFactory::GetInstance()->Kill();
+
+	cFileUtil.Delete("Output" _FS_ "MPU.xml");
+	cFileUtil.RemoveDir("Output");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestSimulationState(void)
@@ -509,6 +937,9 @@ void TestSimulationState(void)
 
 	TestSimulationStateStates();
 	TestSimulationStateRingRoundTrip();
+	TestSimulationStateW65C816Core();
+	TestSimulationState65C64Core();
+	TestSimulationStateW65C816RoundTrip();
 	TestSimulationStateFreshStart();
 	TestSimulationStateErrors();
 

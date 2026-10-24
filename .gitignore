@@ -159,3 +159,11 @@ TestBaseLib65/TestBaseLib65/Output/*
 TestLogicimLib/TestLogicimLib/Log.txt
 
 TestBaseLib65/TestBaseLib65/Log.txt
+
+TestStandardLib65/TestStandardLib65/Log.txt
+TestStandardLib65/TestStandardLib65/Post/*
+TestStandardLib65/TestStandardLib65/Output/*
+
+TestStandardLib65/TestStandardLib65/Out_TestArrayObject/*
+
+..gitignore.swp

@@ -483,6 +483,119 @@ void TestFontFamilyLazyMatchesRasterise(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The opacity of a pixel of a font's image, which is opacity first.
+//
+//////////////////////////////////////////////////////////////////////////
+uint8 GetFontImageOpacity(Ptr<CFont> pFont, int32 x, int32 y)
+{
+	return ((uint8*)pFont->GetImage()->GetData())[((size)y * pFont->GetImage()->GetWidth() + x) * 4];
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A clockwise font is its own size of the family.  Each glyph is the
+// upright glyph turned a quarter clockwise about the pen: same step, the
+// image turned and the offsets moved round with it.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFontFamilyClockwise(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CFontFamily>	pFamily;
+		Ptr<CFontColours>	pUprightColours;
+		Ptr<CFontColours>	pClockwiseColours;
+		Ptr<CFont>			pUpright;
+		Ptr<CFont>			pClockwise;
+		Ptr<CGlyph>			pUprightGlyph;
+		Ptr<CGlyph>			pClockwiseGlyph;
+		CSubImage*			pcUp;
+		CSubImage*			pcTurned;
+		const char*			szCharacters;
+		size				i;
+		int32				x;
+		int32				y;
+		size				uiDifferences;
+		size				uiOpaque;
+
+		pFamily = CreateLiberationFamily(20.0f, CCO_Unknown);
+		ORoot()->Add(pFamily);
+		pUprightColours = pFamily->GetColours(FS_Regular, 0.0f);
+		pClockwiseColours = pFamily->GetColours(FS_Regular, 0.0f, FT_Clockwise);
+		AssertTrue(pUprightColours != pClockwiseColours);
+		AssertTrue(pFamily->GetColours(FS_Regular, 20.0f, FT_Clockwise) == pClockwiseColours);
+		AssertSize(2, pFamily->NumSizes());
+
+		pUpright = pUprightColours->GetWhite();
+		pClockwise = pClockwiseColours->GetWhite();
+		AssertString("Liberation Sans Regular 20px clockwise", pClockwise->GetFontName());
+		AssertInt(FT_Upright, pUpright->GetDescription()->GetTurn());
+		AssertInt(FT_Clockwise, pClockwise->GetDescription()->GetTurn());
+		AssertInt(pUpright->GetAscent(), pClockwise->GetAscent());
+		AssertInt(pUpright->GetDescent(), pClockwise->GetDescent());
+		AssertSize(pUpright->CalculateWidth((char*)"AB ab"), pClockwise->CalculateWidth((char*)"AB ab"));
+
+		szCharacters = "AB ab";
+		uiOpaque = 0;
+		for (i = 0; szCharacters[i] != '\0'; i++)
+		{
+			pUprightGlyph = pUpright->GetGlyph((uint32)szCharacters[i], 1);
+			pClockwiseGlyph = pClockwise->GetGlyph((uint32)szCharacters[i], 1);
+			AssertInt(pUprightGlyph->GetStep(), pClockwiseGlyph->GetStep());
+
+			pcUp = pUprightGlyph->GetSubImage();
+			pcTurned = pClockwiseGlyph->GetSubImage();
+			AssertInt(pUpright->GetLineHeight(), pcTurned->GetFullWidth());
+			AssertInt(pUprightGlyph->GetStep(), pcTurned->GetFullHeight());
+			AssertInt(pcUp->GetImageHeight(), pcTurned->GetImageWidth());
+			AssertInt(pcUp->GetImageWidth(), pcTurned->GetImageHeight());
+			if (pcUp->GetImageWidth() == 0)
+			{
+				continue;
+			}
+			AssertInt(pcUp->msOffsetBottomRight.y, pcTurned->msOffsetTopLeft.x);
+			AssertInt(pcUp->msOffsetTopLeft.x, pcTurned->msOffsetTopLeft.y);
+			AssertInt(pcUp->msOffsetTopLeft.y, pcTurned->msOffsetBottomRight.x);
+			AssertInt(pcUp->msOffsetBottomRight.x, pcTurned->msOffsetBottomRight.y);
+
+			//The upright glyph's top row is the turned glyph's right column.
+			uiDifferences = 0;
+			for (y = 0; y < pcTurned->GetImageHeight(); y++)
+			{
+				for (x = 0; x < pcTurned->GetImageWidth(); x++)
+				{
+					if (GetFontImageOpacity(pClockwise, pcTurned->mcImageRect.msTopLeft.x + x, pcTurned->mcImageRect.msTopLeft.y + y) !=
+						GetFontImageOpacity(pUpright, pcUp->mcImageRect.msTopLeft.x + y, pcUp->mcImageRect.msTopLeft.y + pcTurned->GetImageWidth() - 1 - x))
+					{
+						uiDifferences++;
+					}
+					if (GetFontImageOpacity(pClockwise, pcTurned->mcImageRect.msTopLeft.x + x, pcTurned->mcImageRect.msTopLeft.y + y) != 0)
+					{
+						uiOpaque++;
+					}
+				}
+			}
+			AssertSize(0, uiDifferences);
+		}
+		AssertTrue(uiOpaque > 100);
+
+		pClockwiseGlyph = NULL;
+		pUprightGlyph = NULL;
+		pClockwise = NULL;
+		pUpright = NULL;
+		pClockwiseColours = NULL;
+		pUprightColours = NULL;
+		pFamily = NULL;
+		ORoot()->RemoveAll();
+	}
+	ObjectsFlush();
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestFontFamily(void)
@@ -498,6 +611,7 @@ void TestFontFamily(void)
 	TestFontFamilySuperscriptAndSubscript();
 	TestFontFamilyLazyGlyphs();
 	TestFontFamilyLazyMatchesRasterise();
+	TestFontFamilyClockwise();
 
 	DataIOKill();
 

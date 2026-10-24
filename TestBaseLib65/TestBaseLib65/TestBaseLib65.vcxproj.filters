@@ -13,8 +13,14 @@
     <ClCompile Include="TestBaseLib65Tests.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="TestProject65.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="TestProject65.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

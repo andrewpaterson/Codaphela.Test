@@ -231,11 +231,15 @@
   <ItemGroup>
     <ClCompile Include="TestBaseLib65.cpp" />
     <ClCompile Include="TestBaseLib65Tests.cpp" />
+    <ClCompile Include="TestProject65.cpp" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TestProject65.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\CommonLibraries\BaseLib\BaseLib.vcxproj">

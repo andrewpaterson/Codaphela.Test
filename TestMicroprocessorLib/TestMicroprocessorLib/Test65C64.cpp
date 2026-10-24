@@ -1042,6 +1042,47 @@ void Test65C64BlockCopy(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The factory's instructions are made by the first Init and freed by the
+// last Kill.  A Kill too many does nothing.
+//
+//////////////////////////////////////////////////////////////////////////
+void Test65C64FactoryUsers(void)
+{
+	C65C64InstructionFactory*	pcFactory;
+	C65Instruction*				pcReset;
+	size						uiNumForms;
+
+	pcFactory = C65C64InstructionFactory::GetInstance();
+	AssertNull(pcFactory->GetReset());
+
+	pcFactory->Init();
+	pcReset = pcFactory->GetReset();
+	uiNumForms = pcFactory->NumForms();
+	AssertNotNull(pcReset);
+	pcFactory->Init();
+	AssertPointer(pcReset, pcFactory->GetReset());
+	AssertSize(uiNumForms, pcFactory->NumForms());
+
+	pcFactory->Kill();
+	AssertPointer(pcReset, pcFactory->GetReset());
+	AssertSize(uiNumForms, pcFactory->NumForms());
+	AssertNotNull(pcFactory->GetInstruction(0x0009));
+
+	pcFactory->Kill();
+	AssertNull(pcFactory->GetReset());
+	AssertSize(0, pcFactory->NumForms());
+	AssertNull(pcFactory->GetInstruction(0x0009));
+
+	pcFactory->Kill();
+	pcFactory->Init();
+	AssertNotNull(pcFactory->GetReset());
+	pcFactory->Kill();
+	AssertNull(pcFactory->GetReset());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void Test65C64(void)
@@ -1051,6 +1092,7 @@ void Test65C64(void)
 	BeginTests();
 
 	DataIOInit();
+	Test65C64FactoryUsers();
 	C65C64InstructionFactory::GetInstance()->Init();
 
 	Test65C64Encoding();

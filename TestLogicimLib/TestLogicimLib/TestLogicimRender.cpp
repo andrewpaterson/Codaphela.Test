@@ -2,6 +2,7 @@
 #include "StandardLib/Objects.h"
 #include "SupportLib/Image.h"
 #include "SupportLib/GeometryMap.h"
+#include "SupportLib/SpriteMap.h"
 #include "SupportLib/PNGWriter.h"
 #include "TestLib/Assert.h"
 #include "TestLib/AssertFile.h"
@@ -13,10 +14,11 @@
 // Needs the objects initialised.
 //
 //////////////////////////////////////////////////////////////////////////
-bool RenderCircuitPNG(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32 iWidth, int32 iHeight, float64 fZoom, int64 iTime, bool bGrid, const char* szOutput)
+bool RenderCircuitPNG(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32 iWidth, int32 iHeight, float64 fZoom, int64 iTime, bool bGrid, const char* szOutput, CCircuitFonts* pcFonts)
 {
 	Ptr<CImage>			pImage;
 	Ptr<CGeometryMap>	pMap;
+	Ptr<CSpriteMap>		pSprites;
 	CCircuitViewport	cViewport;
 	CCircuitPainter		cPainter;
 	CInt32Rect			cRect;
@@ -25,10 +27,13 @@ bool RenderCircuitPNG(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32
 	pImage = OMalloc<CImage>(iWidth, iHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 	pMap = OMalloc<CGeometryMap>();
 	pMap->SetViewport(pImage);
+	pSprites = OMalloc<CSpriteMap>();
+	pSprites->SetViewport(pImage);
+	pSprites->SetBlitterCache(pSprites->CreateBlitterCache());
 
 	cViewport.Init(iWidth, iHeight);
 	cViewport.SetZoom(fZoom);
-	cPainter.Init(&cViewport, &pMap, pcColours, iTime);
+	cPainter.Init(&cViewport, &pMap, &pSprites, pcColours, pcFonts, iTime);
 
 	pMap->AddRectangle(0, 0, iWidth, iHeight, pcColours->msBackground);
 	if (bGrid)
@@ -39,6 +44,7 @@ bool RenderCircuitPNG(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32
 
 	cRect.Init(0, 0, iWidth, iHeight);
 	bResult = pMap->Blit(&cRect, false);
+	bResult &= pSprites->Blit(&cRect, true);
 	bResult &= SavePNG(pImage, (char*)szOutput);
 
 	cPainter.Kill();
@@ -53,7 +59,7 @@ bool RenderCircuitPNG(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32
 // output is removed when it matches.
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertRenderedCircuit(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32 iWidth, int32 iHeight, float64 fZoom, int64 iTime, bool bGrid, const char* szName)
+void AssertRenderedCircuit(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32 iWidth, int32 iHeight, float64 fZoom, int64 iTime, bool bGrid, const char* szName, CCircuitFonts* pcFonts)
 {
 	CFileUtil	cFileUtil;
 	CChars		szOutput;
@@ -68,7 +74,7 @@ void AssertRenderedCircuit(CCircuitView* pcCircuit, CCircuitColours* pcColours, 
 	szInput.Append(szName);
 	szInput.Append(".png");
 
-	AssertTrue(RenderCircuitPNG(pcCircuit, pcColours, iWidth, iHeight, fZoom, iTime, bGrid, szOutput.Text()));
+	AssertTrue(RenderCircuitPNG(pcCircuit, pcColours, iWidth, iHeight, fZoom, iTime, bGrid, szOutput.Text(), pcFonts));
 	bMatched = PrivateAssertFile(szInput.Text(), szOutput.Text(), NULL, __LINE__, __FILE__);
 	Validate(bMatched);
 	if (bMatched)

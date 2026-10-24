@@ -1,0 +1,20 @@
+#ifndef __TEST_PROJECT_65_H__
+#define __TEST_PROJECT_65_H__
+#include "BaseLib/PrimitiveTypes.h"
+
+
+//A test project (such as TestBaseLib) whose tests are compiled with the 65C64 generator and each run on the 65C64.
+struct STestProject65
+{
+	const char*		szTestProject;		//The test project's name: its directory is ../../<name>/<name> and its main is in <name>.cpp.
+	const char**	aszLibraries;		//The commonlibraries projects it uses, in link order, NULL ended.
+	const char**	aszExcluded;		//The tests that are not run, NULL ended.
+	size			uiMinPrograms;		//At least this many tests are run,
+	int				iMinTestsRun;		//and between them at least this many of their asserts.
+};
+
+
+void TestProject65RunTests(STestProject65* psProject);
+
+
+#endif // __TEST_PROJECT_65_H__

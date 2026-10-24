@@ -3,6 +3,8 @@
   <ItemGroup>
     <ClCompile Include="TestLogicimLib.cpp" />
     <ClCompile Include="TestCircuitFile.cpp" />
+    <ClCompile Include="TestTextViews.cpp" />
+    <ClCompile Include="TestWiring.cpp" />
     <ClCompile Include="TestGateViews.cpp" />
     <ClCompile Include="TestLogicimRender.cpp" />
     <ClCompile Include="TestSimulationState.cpp" />

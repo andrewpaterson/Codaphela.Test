@@ -11,6 +11,8 @@
 void TestGateViews(void);
 void TestCircuitFile(void);
 void TestSimulationState(void);
+void TestTextViews(void);
+void TestWiring(void);
 
 
 int __cdecl main(void)
@@ -28,6 +30,8 @@ int __cdecl main(void)
 	TestGateViews();
 	TestCircuitFile();
 	TestSimulationState();
+	TestTextViews();
+	TestWiring();
 
 	MemoryKill();
 	TypeConverterKill();

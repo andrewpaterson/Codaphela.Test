@@ -1,3 +1,4 @@
+#include <string.h>
 #include "MicroprocessorLib/W65C816Chip.h"
 #include "MicroprocessorLib/65C64Chip.h"
 #include "MicroprocessorLib/Oscilloscope.h"
@@ -633,6 +634,321 @@ void TestProcessorChipsRemoveEvent(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A W65C816 chip running LoadW65C816Program from a test RAM, reset
+// released and ready to clock.
+//
+//////////////////////////////////////////////////////////////////////////
+struct SW65C816Computer
+{
+	CTestW65C816Context	cContext;
+	CTestW65C816Memory	cMemory;
+	CTestBoard			cBoard;
+	CW65C816Chip*		pcChip;
+	CConstant*			pcReset;
+
+	void Init(void)
+	{
+		CW65C816ChipPins*	pcPins;
+		CTestRamPins*		pcRamPins;
+		CTestRam*			pcRam;
+		CTrace*				pcResetTrace;
+		CTrace*				pcHigh;
+		CTrace*				pcClock;
+
+		LoadW65C816Program(&cContext);
+		cMemory.mpcContext = &cContext;
+		cBoard.Init();
+		pcClock = AddChipClock(&cBoard, CHIP_CLOCK_FREQUENCY, NULL);
+		pcReset = cBoard.Input("RESB", 0, 1, &pcResetTrace);
+		pcHigh = cBoard.Input("High", true);
+		pcPins = NewMalloc<CW65C816ChipPins>();
+		pcPins->Init(cBoard.mpcFamily);
+		pcChip = NewMalloc<CW65C816Chip>();
+		pcChip->Init(cBoard.mpcTop, "U1", pcPins);
+		cBoard.Power(pcChip);
+		pcRamPins = NewMalloc<CTestRamPins>();
+		pcRamPins->Init(cBoard.mpcFamily, 16, 8, false);
+		pcRam = NewMalloc<CTestRam>();
+		pcRam->Init(cBoard.mpcTop, pcRamPins, &cMemory, false);
+		cBoard.Power(pcRam);
+		ConnectBuses(&cBoard, pcPins->GetAddress(), &pcRamPins->mcAddress);
+		ConnectBuses(&cBoard, pcPins->GetData(), &pcRamPins->mcData);
+		pcPins->GetPHI2()->Connect(pcClock);
+		pcRamPins->mpcPHI2->Connect(pcClock);
+		ConnectPorts(&cBoard, pcPins->GetRWB(), pcRamPins->mpcRWB);
+		ConnectPorts(&cBoard, pcPins->GetVDA(), pcRamPins->mpcVDA);
+		ConnectPorts(&cBoard, pcPins->GetVPA(), pcRamPins->mpcVPA);
+		pcPins->GetRESB()->Connect(pcResetTrace);
+		pcPins->GetBE()->Connect(pcHigh);
+		pcPins->GetIRQB()->Connect(pcHigh);
+		pcPins->GetNMIB()->Connect(pcHigh);
+		pcPins->GetABORTB()->Connect(pcHigh);
+	}
+
+	void Start(void)
+	{
+		cBoard.Start();
+		cBoard.mpcTimeline->RunToTime(3 * CHIP_CLOCK_PERIOD);
+		cBoard.Write(pcReset, true);
+	}
+
+	bool Cycle(void)
+	{
+		cBoard.mpcTimeline->RunToTime(CHIP_CLOCK_PERIOD);
+		return pcChip->GetMPU()->IsStopped();
+	}
+
+	//Padding is cleared so states can be compared whole.
+	void GetState(SW65CCoreState* psState)
+	{
+		memset(psState, 0, sizeof(SW65CCoreState));
+		pcChip->GetMPU()->GetState(psState);
+	}
+
+	void Kill(void)
+	{
+		cBoard.Kill();
+		cContext.Kill();
+	}
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The same with a 65C64 running Load65C64Program.
+//
+//////////////////////////////////////////////////////////////////////////
+struct S65C64Computer
+{
+	CTest65C64Context*	pcContext;
+	CTest65C64Memory	cMemory;
+	CTestBoard			cBoard;
+	C65C64Chip*			pcChip;
+	CConstant*			pcReset;
+
+	void Init(void)
+	{
+		C65C64ChipPins*		pcPins;
+		CTestRamPins*		pcRamPins;
+		CTestRam*			pcRam;
+		CTrace*				pcResetTrace;
+		CTrace*				pcHigh;
+		CTrace*				pcClock;
+		size				i;
+
+		pcContext = (CTest65C64Context*)malloc(sizeof(CTest65C64Context));
+		Load65C64Program(pcContext);
+		cMemory.mpcContext = pcContext;
+		cBoard.Init();
+		pcClock = AddChipClock(&cBoard, CHIP_CLOCK_FREQUENCY, NULL);
+		pcReset = cBoard.Input("RESB", 0, 1, &pcResetTrace);
+		pcHigh = cBoard.Input("High", true);
+		pcPins = NewMalloc<C65C64ChipPins>();
+		pcPins->Init(cBoard.mpcFamily);
+		pcChip = NewMalloc<C65C64Chip>();
+		pcChip->Init(cBoard.mpcTop, "U1", pcPins);
+		cBoard.Power(pcChip);
+		pcRamPins = NewMalloc<CTestRamPins>();
+		pcRamPins->Init(cBoard.mpcFamily, 32, 16, true);
+		pcRam = NewMalloc<CTestRam>();
+		pcRam->Init(cBoard.mpcTop, pcRamPins, &cMemory, true);
+		cBoard.Power(pcRam);
+		ConnectBuses(&cBoard, pcPins->GetAddress(), &pcRamPins->mcAddress);
+		ConnectBuses(&cBoard, pcPins->GetData(), &pcRamPins->mcData);
+		pcPins->GetPHI2()->Connect(pcClock);
+		pcRamPins->mpcPHI2->Connect(pcClock);
+		ConnectPorts(&cBoard, pcPins->GetRWB(), pcRamPins->mpcRWB);
+		ConnectPorts(&cBoard, pcPins->GetVDA(), pcRamPins->mpcVDA);
+		ConnectPorts(&cBoard, pcPins->GetVPA(), pcRamPins->mpcVPA);
+		ConnectPorts(&cBoard, pcPins->GetVPB(), pcRamPins->mpcVPB);
+		ConnectPorts(&cBoard, pcPins->GetLowerByte(), pcRamPins->mpcLowerByte);
+		ConnectPorts(&cBoard, pcPins->GetUpperByte(), pcRamPins->mpcUpperByte);
+		pcPins->GetRESB()->Connect(pcResetTrace);
+		for (i = 0; i < NUM_65C64_EDGE_INTERRUPTS; i++)
+		{
+			pcPins->GetEIRQB(i)->Connect(pcHigh);
+		}
+		pcPins->GetLIRQB()->Connect(pcHigh);
+	}
+
+	void Start(void)
+	{
+		cBoard.Start();
+		cBoard.mpcTimeline->RunToTime(3 * CHIP_CLOCK_PERIOD);
+		cBoard.Write(pcReset, true);
+	}
+
+	bool Cycle(void)
+	{
+		cBoard.mpcTimeline->RunToTime(CHIP_CLOCK_PERIOD);
+		return pcChip->GetMPU()->IsStopped();
+	}
+
+	void GetState(S65C64CoreState* psState)
+	{
+		memset(psState, 0, sizeof(S65C64CoreState));
+		pcChip->GetMPU()->GetState(psState);
+	}
+
+	void Kill(void)
+	{
+		cBoard.Kill();
+		free(pcContext);
+	}
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Registers and latches changed so a core that isn't given a whole state
+// goes wrong.
+//
+//////////////////////////////////////////////////////////////////////////
+void ScrambleCoreState(SW65CCoreState* psState)
+{
+	psState->uiAccumulator ^= 0x5A5A;
+	psState->uiXIndex ^= 0xA5A5;
+	psState->uiYIndex ^= 0x1234;
+	psState->uiStackPointer ^= 0x00F0;
+	psState->cProgramCounter.Init(0x12, 0x3456);
+	psState->cAddress.Init(0x00, 0x0123);
+	psState->uiData ^= 0x5A;
+	psState->iCycle = 0;
+	psState->iNextCycle = 1;
+	psState->bCarryFlag = !psState->bCarryFlag;
+	psState->bPreviousClockLow = !psState->bPreviousClockLow;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void ScrambleCoreState(S65C64CoreState* psState)
+{
+	psState->uiA ^= 0x5A5A5A5A5A5A5A5AULL;
+	psState->uiX ^= 0xA5A5;
+	psState->uiC ^= 0x1000;
+	psState->uiS ^= 0x0100;
+	psState->uiDI ^= 0x77;
+	psState->uiNumTransfers = 0;
+	psState->uiNumReadWords = 0;
+	psState->uiNumWriteWords = 0;
+	psState->eDecoded = DK65_None;
+	psState->eInstruction = IK65_FetchNext;
+	psState->iCycle = 0;
+	psState->iNextCycle = 1;
+	psState->uiIOData ^= 0x5A5A;
+	psState->bPreviousClockLow = !psState->bPreviousClockLow;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Two computers run the same program.  After uiCycles the second's core is
+// scrambled and then given the first's state.  Both must stop together
+// with the same core and memory.  Returns false once the first stopped
+// before uiCycles, past the end of the program.
+//
+//////////////////////////////////////////////////////////////////////////
+template<class COMPUTER, class STATE>
+bool RunChipStateLockstep(size uiCycles, uint32 uiFirstAddress, uint32 uiLastAddress)
+{
+	COMPUTER	cFirst;
+	COMPUTER	cSecond;
+	STATE		sState;
+	STATE		sSecondState;
+	size		i;
+	bool		bFirstStopped;
+	bool		bSecondStopped;
+	uint32		uiAddress;
+	bool		bRunning;
+
+	cFirst.Init();
+	cSecond.Init();
+	cFirst.Start();
+	cSecond.Start();
+	bRunning = true;
+	for (i = 0; i < uiCycles; i++)
+	{
+		if (cFirst.Cycle())
+		{
+			bRunning = false;
+			break;
+		}
+		cSecond.Cycle();
+	}
+
+	if (bRunning)
+	{
+		cSecond.GetState(&sState);
+		ScrambleCoreState(&sState);
+		cSecond.pcChip->GetMPU()->SetState(&sState);
+		cFirst.GetState(&sState);
+		cSecond.pcChip->GetMPU()->SetState(&sState);
+		cSecond.GetState(&sSecondState);
+		AssertMemory(&sState, &sSecondState, sizeof(STATE));
+
+		bFirstStopped = false;
+		bSecondStopped = false;
+		for (i = 0; (i < CHIP_MAX_CYCLES) && !bFirstStopped; i++)
+		{
+			bFirstStopped = cFirst.Cycle();
+			bSecondStopped = cSecond.Cycle();
+			AssertBool(bFirstStopped, bSecondStopped);
+		}
+		AssertTrue(bFirstStopped);
+		cFirst.GetState(&sState);
+		cSecond.GetState(&sSecondState);
+		AssertMemory(&sState, &sSecondState, sizeof(STATE));
+		for (uiAddress = uiFirstAddress; uiAddress <= uiLastAddress; uiAddress++)
+		{
+			AssertIntHex(cFirst.cMemory.mpcContext->GetByte(uiAddress), cSecond.cMemory.mpcContext->GetByte(uiAddress));
+		}
+	}
+
+	cSecond.Kill();
+	cFirst.Kill();
+	return bRunning;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A core's state taken at any cycle of a program and given to another
+// core carries on exactly as the first.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestProcessorChipsCoreState(void)
+{
+	size	uiCycles;
+
+	CW65C816InstructionFactory::GetInstance()->Init();
+	for (uiCycles = 1; uiCycles < CHIP_MAX_CYCLES; uiCycles++)
+	{
+		if (!RunChipStateLockstep<SW65C816Computer, SW65CCoreState>(uiCycles, 0x0300, 0x0301))
+		{
+			break;
+		}
+	}
+	AssertTrue(uiCycles > 10);
+	CW65C816InstructionFactory::GetInstance()->Kill();
+
+	C65C64InstructionFactory::GetInstance()->Init();
+	for (uiCycles = 1; uiCycles < CHIP_MAX_CYCLES; uiCycles++)
+	{
+		if (!RunChipStateLockstep<S65C64Computer, S65C64CoreState>(uiCycles, 0x4000, 0x401F))
+		{
+			break;
+		}
+	}
+	AssertTrue(uiCycles > 10);
+	C65C64InstructionFactory::GetInstance()->Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestProcessorChips(void)
@@ -643,6 +959,7 @@ void TestProcessorChips(void)
 	TestProcessorChips65C64();
 	TestProcessorChipsOscilloscope();
 	TestProcessorChipsRemoveEvent();
+	TestProcessorChipsCoreState();
 
 	TestStatistics();
 }
