@@ -324,11 +324,11 @@ void TestClockNotch(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void SetConstant(CConstantView* pcView, int64 iValue, CCircuitSimulation* pcSimulation)
+void SetConstant(CConstantView* pcView, int64 iValue, CViewPath* pcViewPath, CCircuitSimulation* pcSimulation)
 {
 	CConstant*	pcConstant;
 
-	pcConstant = (CConstant*)pcView->GetComponent();
+	pcConstant = (CConstant*)pcView->GetComponent(pcViewPath, pcSimulation);
 	pcConstant->SetConstantValue(iValue);
 	pcConstant->SimulationStarted(pcSimulation->GetTimeline());
 }
@@ -345,6 +345,8 @@ void TestTextViewsRender(void)
 	CFamilyVoltageConfigurationStore	cFamilies;
 	CCircuitSimulation					cSimulation;
 	CCircuitView						cCircuit;
+	CViewPaths							cPaths;
+	CViewPath*							pcPath;
 	CCircuitColours						cColours;
 	CCircuitFonts						cFonts;
 	CConstantView*						pcConstant8;
@@ -365,6 +367,8 @@ void TestTextViewsRender(void)
 	AssertTrue(cFamilies.Load("Input" _FS_ "PropagationTimes.csv"));
 	cSimulation.Init("Text");
 	cCircuit.Init();
+	cPaths.Init();
+	pcPath = cPaths.AddTop(&cCircuit);
 	cColours.InitLogicim();
 
 	pcConstant8 = NewMalloc<CConstantView>();
@@ -401,38 +405,39 @@ void TestTextViewsRender(void)
 	cCircuit.Add(pcCounter);
 
 	//Starting resets the constants to 0, so their values are set after and driven again.
-	AssertTrue(cCircuit.CreateSimulation(&cSimulation, &cFamilies));
-	SetConstant(pcConstant8, 0xA5, &cSimulation);
-	SetConstant(pcConstant1, 1, &cSimulation);
-	SetConstant(pcConstantNorth, 1234, &cSimulation);
-	((CCounter*)pcCounter->GetComponent())->SetCount(0xC);
+	AssertTrue(cCircuit.CreateSimulation(pcPath, &cSimulation, &cFamilies));
+	SetConstant(pcConstant8, 0xA5, pcPath, &cSimulation);
+	SetConstant(pcConstant1, 1, pcPath, &cSimulation);
+	SetConstant(pcConstantNorth, 1234, pcPath, &cSimulation);
+	((CCounter*)pcCounter->GetComponent(pcPath, &cSimulation))->SetCount(0xC);
 	cSimulation.GetTimeline()->Run();
 
 	szValue.Init();
-	pcProbe8->GetValueText(&szValue, cSimulation.GetTime());
+	pcProbe8->GetValueText(&szValue, pcPath, &cSimulation);
 	AssertString("A5", szValue.Text());
 	szValue.ReInit();
-	pcProbe1->GetValueText(&szValue, cSimulation.GetTime());
+	pcProbe1->GetValueText(&szValue, pcPath, &cSimulation);
 	AssertString("1", szValue.Text());
 	szValue.ReInit();
 	//Without a wire there's no trace to read (as Logicim).
-	pcConstantNorth->GetValueText(&szValue, cSimulation.GetTime());
+	pcConstantNorth->GetValueText(&szValue, pcPath, &cSimulation);
 	AssertString(".....", szValue.Text());
 	szValue.ReInit();
-	pcProbeSouth->GetValueText(&szValue, cSimulation.GetTime());
+	pcProbeSouth->GetValueText(&szValue, pcPath, &cSimulation);
 	AssertString("....", szValue.Text());
 	szValue.ReInit();
-	pcProbe8->GetValueText(&szValue, -1);
+	pcProbe8->GetValueText(&szValue, NULL, NULL);
 	AssertString("", szValue.Text());
 	szValue.Kill();
 
-	AssertRenderedCircuit(&cCircuit, &cColours, 1400, 340, 1.5, cSimulation.GetTime(), true, "TextViews", &cFonts);
+	AssertRenderedCircuit(&cCircuit, &cColours, 1400, 340, 1.5, pcPath, &cSimulation, true, "TextViews", &cFonts);
 	cColours.Kill();
 	cColours.InitDark();
-	AssertRenderedCircuit(&cCircuit, &cColours, 1400, 340, 1.5, cSimulation.GetTime(), true, "TextViewsDark", &cFonts);
-	AssertRenderedCircuit(&cCircuit, &cColours, 700, 170, 0.75, cSimulation.GetTime(), false, "TextViewsSmall", &cFonts);
+	AssertRenderedCircuit(&cCircuit, &cColours, 1400, 340, 1.5, pcPath, &cSimulation, true, "TextViewsDark", &cFonts);
+	AssertRenderedCircuit(&cCircuit, &cColours, 700, 170, 0.75, pcPath, &cSimulation, false, "TextViewsSmall", &cFonts);
 
 	cCircuit.Kill();
+	cPaths.Kill();
 	cSimulation.Kill();
 	cFamilies.Kill();
 	cColours.Kill();

@@ -14,7 +14,7 @@
 // Needs the objects initialised.
 //
 //////////////////////////////////////////////////////////////////////////
-bool RenderCircuitPNG(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32 iWidth, int32 iHeight, float64 fZoom, int64 iTime, bool bGrid, const char* szOutput, CCircuitFonts* pcFonts)
+bool RenderCircuitPNG(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32 iWidth, int32 iHeight, float64 fZoom, CViewPath* pcViewPath, CCircuitSimulation* pcSimulation, bool bGrid, const char* szOutput, CCircuitFonts* pcFonts)
 {
 	Ptr<CImage>			pImage;
 	Ptr<CGeometryMap>	pMap;
@@ -33,7 +33,7 @@ bool RenderCircuitPNG(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32
 
 	cViewport.Init(iWidth, iHeight);
 	cViewport.SetZoom(fZoom);
-	cPainter.Init(&cViewport, &pMap, &pSprites, pcColours, pcFonts, iTime);
+	cPainter.Init(&cViewport, &pMap, &pSprites, pcColours, pcFonts, pcViewPath, pcSimulation);
 
 	pMap->AddRectangle(0, 0, iWidth, iHeight, pcColours->msBackground);
 	if (bGrid)
@@ -59,7 +59,7 @@ bool RenderCircuitPNG(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32
 // output is removed when it matches.
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertRenderedCircuit(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32 iWidth, int32 iHeight, float64 fZoom, int64 iTime, bool bGrid, const char* szName, CCircuitFonts* pcFonts)
+void AssertRenderedCircuit(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32 iWidth, int32 iHeight, float64 fZoom, CViewPath* pcViewPath, CCircuitSimulation* pcSimulation, bool bGrid, const char* szName, CCircuitFonts* pcFonts)
 {
 	CFileUtil	cFileUtil;
 	CChars		szOutput;
@@ -74,7 +74,7 @@ void AssertRenderedCircuit(CCircuitView* pcCircuit, CCircuitColours* pcColours, 
 	szInput.Append(szName);
 	szInput.Append(".png");
 
-	AssertTrue(RenderCircuitPNG(pcCircuit, pcColours, iWidth, iHeight, fZoom, iTime, bGrid, szOutput.Text(), pcFonts));
+	AssertTrue(RenderCircuitPNG(pcCircuit, pcColours, iWidth, iHeight, fZoom, pcViewPath, pcSimulation, bGrid, szOutput.Text(), pcFonts));
 	bMatched = PrivateAssertFile(szInput.Text(), szOutput.Text(), NULL, __LINE__, __FILE__);
 	Validate(bMatched);
 	if (bMatched)

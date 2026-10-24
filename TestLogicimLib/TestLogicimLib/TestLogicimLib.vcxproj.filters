@@ -8,6 +8,8 @@
     <ClCompile Include="TestGateViews.cpp" />
     <ClCompile Include="TestLogicimRender.cpp" />
     <ClCompile Include="TestSimulationState.cpp" />
+    <ClCompile Include="TestViewPaths.cpp" />
+    <ClCompile Include="TestSubcircuits.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestLogicimRender.h" />

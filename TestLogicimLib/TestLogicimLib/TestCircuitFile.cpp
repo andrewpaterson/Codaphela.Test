@@ -204,7 +204,7 @@ void TestCircuitFileFactory(void)
 	size				i;
 	CComponentView*		pcView;
 
-	AssertSize(22, NumComponentViewTypes());
+	AssertSize(23, NumComponentViewTypes());
 	for (i = 0; i < NumComponentViewTypes(); i++)
 	{
 		pcView = NewComponentView(GetComponentViewXMLName(i));
@@ -229,6 +229,8 @@ void TestCircuitFileRoundTrip(void)
 	CCircuitSimulation					cSimulation;
 	CCircuitView						cSaved;
 	CCircuitView						cLoaded;
+	CViewPaths							cPaths;
+	CViewPath*							pcPath;
 	CCircuitColours						cColours;
 	CXMLWriter							cSavedText;
 	CXMLWriter							cLoadedText;
@@ -284,12 +286,15 @@ void TestCircuitFileRoundTrip(void)
 	AssertTrue(cFamilies.Load("Input" _FS_ "PropagationTimes.csv"));
 	cSimulation.Init("Ground");
 	cLoaded.Init();
+	cPaths.Init();
+	pcPath = cPaths.AddTop(&cLoaded);
 	cColours.InitLogicim();
 	AssertTrue(LoadCircuitFile(&cLoaded, "Input" _FS_ "GroundInverters.xml"));
-	AssertTrue(cLoaded.CreateSimulation(&cSimulation, &cFamilies));
+	AssertTrue(cLoaded.CreateSimulation(pcPath, &cSimulation, &cFamilies));
 	cSimulation.GetTimeline()->Run();
-	AssertRenderedCircuit(&cLoaded, &cColours, 420, 160, 2, cSimulation.GetTime(), true, "GroundInverters");
+	AssertRenderedCircuit(&cLoaded, &cColours, 420, 160, 2, pcPath, &cSimulation, true, "GroundInverters");
 	cLoaded.Kill();
+	cPaths.Kill();
 	cSimulation.Kill();
 	cFamilies.Kill();
 	ObjectsKill();

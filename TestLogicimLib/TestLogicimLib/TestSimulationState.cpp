@@ -81,7 +81,7 @@ void AddRingOscillatorViews(CCircuitView* pcCircuit)
 // loaded simulation is wired on quietly, as if it had always been there.
 //
 //////////////////////////////////////////////////////////////////////////
-CPowerSource* AddRingEnable(CCircuitSimulation* pcSimulation, CCircuitView* pcCircuit, float32 fVoltage, bool bLive)
+CPowerSource* AddRingEnable(CCircuitSimulation* pcSimulation, CCircuitView* pcCircuit, CViewPath* pcViewPath, float32 fVoltage, bool bLive)
 {
 	CPowerSource*	pcSupply;
 
@@ -89,11 +89,11 @@ CPowerSource* AddRingEnable(CCircuitSimulation* pcSimulation, CCircuitView* pcCi
 	pcSupply->Init(pcSimulation->GetSubcircuitTopSimulation(), "Enable", fVoltage);
 	if (bLive)
 	{
-		AssertTrue(pcSupply->GetPowerOutPort()->ConnectLive(pcCircuit->GetTrace(0)->GetTrace(0), pcSimulation->GetTimeline()));
+		AssertTrue(pcSupply->GetPowerOutPort()->ConnectLive(pcCircuit->GetTrace(0)->GetTrace(pcViewPath, pcSimulation, 0), pcSimulation->GetTimeline()));
 	}
 	else
 	{
-		AssertTrue(pcSupply->GetPowerOutPort()->Connect(pcCircuit->GetTrace(0)->GetTrace(0)));
+		AssertTrue(pcSupply->GetPowerOutPort()->Connect(pcCircuit->GetTrace(0)->GetTrace(pcViewPath, pcSimulation, 0)));
 	}
 	return pcSupply;
 }
@@ -113,6 +113,9 @@ void TestSimulationStateRingRoundTrip(void)
 	CCircuitSimulation					cLoaded;
 	CCircuitView						cOriginalView;
 	CCircuitView						cLoadedView;
+	CViewPaths							cPaths;
+	CViewPath*							pcOriginalPath;
+	CViewPath*							pcLoadedPath;
 	CPowerSource*						pcLow;
 	CXMLWriter							cOriginalText;
 	CXMLWriter							cLoadedText;
@@ -134,36 +137,39 @@ void TestSimulationStateRingRoundTrip(void)
 
 	cOriginal.Init("Ring");
 	cOriginalView.Init();
+	cPaths.Init();
+	pcOriginalPath = cPaths.AddTop(&cOriginalView);
 	AddRingOscillatorViews(&cOriginalView);
-	AssertTrue(cOriginalView.CreateSimulation(&cOriginal, &cFamilies));
-	pcLow = AddRingEnable(&cOriginal, &cOriginalView, 0.0f, true);
+	AssertTrue(cOriginalView.CreateSimulation(pcOriginalPath, &cOriginal, &cFamilies));
+	pcLow = AddRingEnable(&cOriginal, &cOriginalView, pcOriginalPath, 0.0f, true);
 	cOriginal.GetTimeline()->Run();
 	pcLow->GetPowerOutPort()->Disconnect(cOriginal.GetTimeline());
-	AddRingEnable(&cOriginal, &cOriginalView, fVcc, true);
+	AddRingEnable(&cOriginal, &cOriginalView, pcOriginalPath, fVcc, true);
 	cOriginal.RunToTime(NanosecondsToTime((int64)37));
 	AssertTrue(cOriginal.GetTimeline()->NumSimultaneousEvents() > 0);
 
 	cFileUtil.MakeDir("Output");
-	AssertTrue(SaveCircuitFile(&cOriginalView, &cOriginal, "Output" _FS_ "Ring.xml"));
+	AssertTrue(SaveCircuitFile(&cOriginalView, pcOriginalPath, &cOriginal, "Output" _FS_ "Ring.xml"));
 
 	cLoaded.Init("Ring");
 	cLoadedView.Init();
-	AssertTrue(LoadCircuitFile(&cLoadedView, &cLoaded, &cFamilies, "Output" _FS_ "Ring.xml"));
-	AddRingEnable(&cLoaded, &cLoadedView, fVcc, false);
+	pcLoadedPath = cPaths.AddTop(&cLoadedView);
+	AssertTrue(LoadCircuitFile(&cLoadedView, pcLoadedPath, &cLoaded, &cFamilies, "Output" _FS_ "Ring.xml"));
+	AddRingEnable(&cLoaded, &cLoadedView, pcLoadedPath, fVcc, false);
 	AssertLong(cOriginal.GetTime(), cLoaded.GetTime());
 	AssertSize(cOriginal.GetTimeline()->NumSimultaneousEvents(), cLoaded.GetTimeline()->NumSimultaneousEvents());
 
 	cOriginalText.Init();
-	SaveCircuitXML(&cOriginalView, &cOriginal, &cOriginalText);
+	SaveCircuitXML(&cOriginalView, pcOriginalPath, &cOriginal, &cOriginalText);
 	cLoadedText.Init();
-	SaveCircuitXML(&cLoadedView, &cLoaded, &cLoadedText);
+	SaveCircuitXML(&cLoadedView, pcLoadedPath, &cLoaded, &cLoadedText);
 	AssertString(cOriginalText.GetText(), cLoadedText.GetText());
 	cLoadedText.Kill();
 	cOriginalText.Kill();
 
 	bSame = true;
 	iTransitions = 0;
-	fLastNandVoltage = cOriginalView.GetTrace(1)->GetTrace(0)->GetVoltage(cOriginal.GetTime());
+	fLastNandVoltage = cOriginalView.GetTrace(1)->GetTrace(pcOriginalPath, &cOriginal, 0)->GetVoltage(cOriginal.GetTime());
 	for (iStep = 0; (iStep < 300) && bSame; iStep++)
 	{
 		cOriginal.RunToTime(NanosecondsToTime((int64)1));
@@ -171,11 +177,11 @@ void TestSimulationStateRingRoundTrip(void)
 		bSame = cOriginal.GetTime() == cLoaded.GetTime();
 		for (i = 0; (i < cOriginalView.NumTraces()) && bSame; i++)
 		{
-			fOriginal = cOriginalView.GetTrace(i)->GetTrace(0)->GetVoltage(cOriginal.GetTime());
-			fLoaded = cLoadedView.GetTrace(i)->GetTrace(0)->GetVoltage(cLoaded.GetTime());
+			fOriginal = cOriginalView.GetTrace(i)->GetTrace(pcOriginalPath, &cOriginal, 0)->GetVoltage(cOriginal.GetTime());
+			fLoaded = cLoadedView.GetTrace(i)->GetTrace(pcLoadedPath, &cLoaded, 0)->GetVoltage(cLoaded.GetTime());
 			bSame = (fOriginal == fLoaded) || (!IsVoltage(fOriginal) && !IsVoltage(fLoaded));
 		}
-		fOriginal = cOriginalView.GetTrace(1)->GetTrace(0)->GetVoltage(cOriginal.GetTime());
+		fOriginal = cOriginalView.GetTrace(1)->GetTrace(pcOriginalPath, &cOriginal, 0)->GetVoltage(cOriginal.GetTime());
 		if ((fOriginal > fVcc / 2) != (fLastNandVoltage > fVcc / 2))
 		{
 			iTransitions++;
@@ -190,6 +196,7 @@ void TestSimulationStateRingRoundTrip(void)
 	cLoaded.Kill();
 	cOriginalView.Kill();
 	cOriginal.Kill();
+	cPaths.Kill();
 	cFamilies.Kill();
 	ObjectsKill();
 
@@ -209,6 +216,8 @@ void TestSimulationStateFreshStart(void)
 	CFamilyVoltageConfiguration*		pcFamily;
 	CCircuitSimulation					cSimulation;
 	CCircuitView						cCircuit;
+	CViewPaths							cPaths;
+	CViewPath*							pcPath;
 	float32								fVcc;
 
 	ObjectsInit();
@@ -220,11 +229,14 @@ void TestSimulationStateFreshStart(void)
 	fVcc = pcFamily->GetDefaultVoltageConfiguration(DEFAULT_LOGIC_LEVEL)->GetVcc();
 	cSimulation.Init("Ground");
 	cCircuit.Init();
-	AssertTrue(LoadCircuitFile(&cCircuit, &cSimulation, &cFamilies, "Input" _FS_ "GroundInverters.xml"));
+	cPaths.Init();
+	pcPath = cPaths.AddTop(&cCircuit);
+	AssertTrue(LoadCircuitFile(&cCircuit, pcPath, &cSimulation, &cFamilies, "Input" _FS_ "GroundInverters.xml"));
 	cSimulation.GetTimeline()->Run();
-	AssertInt(TV_High, pcFamily->GetValue(cCircuit.GetTrace(2)->GetTrace(0)->GetVoltage(cSimulation.GetTime()), fVcc));
-	AssertInt(TV_High, pcFamily->GetValue(cCircuit.GetTrace(3)->GetTrace(0)->GetVoltage(cSimulation.GetTime()), fVcc));
+	AssertInt(TV_High, pcFamily->GetValue(cCircuit.GetTrace(2)->GetTrace(pcPath, &cSimulation, 0)->GetVoltage(cSimulation.GetTime()), fVcc));
+	AssertInt(TV_High, pcFamily->GetValue(cCircuit.GetTrace(3)->GetTrace(pcPath, &cSimulation, 0)->GetVoltage(cSimulation.GetTime()), fVcc));
 	cCircuit.Kill();
+	cPaths.Kill();
 	cSimulation.Kill();
 	cFamilies.Kill();
 	ObjectsKill();
@@ -446,6 +458,7 @@ bool LoadSimulationText(const char* szSimulation)
 	CFamilyVoltageConfigurationStore	cFamilies;
 	CCircuitSimulation					cSimulation;
 	CCircuitView						cCircuit;
+	CViewPaths							cPaths;
 	CTextFile							cText;
 	CFileUtil							cFileUtil;
 	CChars								sz;
@@ -468,8 +481,10 @@ bool LoadSimulationText(const char* szSimulation)
 	cFamilies.Load("Input" _FS_ "PropagationTimes.csv");
 	cSimulation.Init("Bad");
 	cCircuit.Init();
-	bResult = LoadCircuitFile(&cCircuit, &cSimulation, &cFamilies, "Output" _FS_ "BadSimulation.xml");
+	cPaths.Init();
+	bResult = LoadCircuitFile(&cCircuit, cPaths.AddTop(&cCircuit), &cSimulation, &cFamilies, "Output" _FS_ "BadSimulation.xml");
 	cCircuit.Kill();
+	cPaths.Kill();
 	cSimulation.Kill();
 	cFamilies.Kill();
 	ObjectsKill();
@@ -840,6 +855,9 @@ void TestSimulationStateW65C816RoundTrip(void)
 	CCircuitSimulation					cLoaded;
 	CCircuitView						cOriginalView;
 	CCircuitView						cLoadedView;
+	CViewPaths							cPaths;
+	CViewPath*							pcOriginalPath;
+	CViewPath*							pcLoadedPath;
 	CW65C816View*						pcMPU;
 	CConstant*							pcData;
 	CXMLWriter							cOriginalText;
@@ -861,30 +879,33 @@ void TestSimulationStateW65C816RoundTrip(void)
 
 	cOriginal.Init("MPU");
 	cOriginalView.Init();
+	cPaths.Init();
+	pcOriginalPath = cPaths.AddTop(&cOriginalView);
 	pcMPU = AddNOPProcessorViews(&cOriginalView);
-	AssertTrue(cOriginalView.CreateSimulation(&cOriginal, &cFamilies));
-	pcData = (CConstant*)cOriginalView.GetComponent(2)->GetComponent();
+	AssertTrue(cOriginalView.CreateSimulation(pcOriginalPath, &cOriginal, &cFamilies));
+	pcData = (CConstant*)cOriginalView.GetComponent(2)->GetComponent(pcOriginalPath, &cOriginal);
 	pcData->SetConstantValue(0xEA);
 	pcData->SimulationStarted(cOriginal.GetTimeline());
 	cOriginal.RunToTime(NanosecondsToTime((int64)10000));
-	pcOriginalChip = (CW65C816Chip*)pcMPU->GetComponent();
+	pcOriginalChip = (CW65C816Chip*)pcMPU->GetComponent(pcOriginalPath, &cOriginal);
 	pcOriginalChip->GetMPU()->GetState(&sState);
 	uiFirstPC = sState.cProgramCounter.GetOffset();
 	AssertFalse(sState.bStopped);
 
 	cFileUtil.MakeDir("Output");
-	AssertTrue(SaveCircuitFile(&cOriginalView, &cOriginal, "Output" _FS_ "MPU.xml"));
+	AssertTrue(SaveCircuitFile(&cOriginalView, pcOriginalPath, &cOriginal, "Output" _FS_ "MPU.xml"));
 
 	cLoaded.Init("MPU");
 	cLoadedView.Init();
-	AssertTrue(LoadCircuitFile(&cLoadedView, &cLoaded, &cFamilies, "Output" _FS_ "MPU.xml"));
+	pcLoadedPath = cPaths.AddTop(&cLoadedView);
+	AssertTrue(LoadCircuitFile(&cLoadedView, pcLoadedPath, &cLoaded, &cFamilies, "Output" _FS_ "MPU.xml"));
 	AssertLong(cOriginal.GetTime(), cLoaded.GetTime());
 
 	cOriginalText.Init();
-	SaveCircuitXML(&cOriginalView, &cOriginal, &cOriginalText);
+	SaveCircuitXML(&cOriginalView, pcOriginalPath, &cOriginal, &cOriginalText);
 	AssertTrue(strstr(cOriginalText.GetText(), "<W65C816State ") != NULL);
 	cLoadedText.Init();
-	SaveCircuitXML(&cLoadedView, &cLoaded, &cLoadedText);
+	SaveCircuitXML(&cLoadedView, pcLoadedPath, &cLoaded, &cLoadedText);
 	AssertString(cOriginalText.GetText(), cLoadedText.GetText());
 	cLoadedText.Kill();
 	cOriginalText.Kill();
@@ -893,9 +914,9 @@ void TestSimulationStateW65C816RoundTrip(void)
 	cOriginal.RunToTime(NanosecondsToTime((int64)10000));
 	cLoaded.RunToTime(NanosecondsToTime((int64)10000));
 	cOriginalText.Init();
-	SaveCircuitXML(&cOriginalView, &cOriginal, &cOriginalText);
+	SaveCircuitXML(&cOriginalView, pcOriginalPath, &cOriginal, &cOriginalText);
 	cLoadedText.Init();
-	SaveCircuitXML(&cLoadedView, &cLoaded, &cLoadedText);
+	SaveCircuitXML(&cLoadedView, pcLoadedPath, &cLoaded, &cLoadedText);
 	szOriginal.Init();
 	RemoveEventIDs(&szOriginal, cOriginalText.GetText());
 	szLoaded.Init();
@@ -907,7 +928,7 @@ void TestSimulationStateW65C816RoundTrip(void)
 	cOriginalText.Kill();
 
 	//NOPs move the program counter on a byte at a time.
-	pcLoadedChip = (CW65C816Chip*)cLoadedView.GetComponent(0)->GetComponent();
+	pcLoadedChip = (CW65C816Chip*)cLoadedView.GetComponent(0)->GetComponent(pcLoadedPath, &cLoaded);
 	pcLoadedChip->GetMPU()->GetState(&sState);
 	AssertTrue(sState.cProgramCounter.GetOffset() != uiFirstPC);
 	AssertInt(0xEA, sState.uiOpcodeIndex);
@@ -916,6 +937,7 @@ void TestSimulationStateW65C816RoundTrip(void)
 	cLoaded.Kill();
 	cOriginalView.Kill();
 	cOriginal.Kill();
+	cPaths.Kill();
 	cFamilies.Kill();
 	ObjectsKill();
 	CW65C816InstructionFactory::GetInstance()->Kill();

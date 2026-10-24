@@ -3,10 +3,10 @@
 #include "LogicimLib/CircuitView.h"
 
 
-//Draws the circuit on its background (and grid) into an RGB image and saves it as szOutput (a PNG).  Text is drawn
-//if there are fonts.
-bool RenderCircuitPNG(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32 iWidth, int32 iHeight, float64 fZoom, int64 iTime, bool bGrid, const char* szOutput, CCircuitFonts* pcFonts = NULL);
-void AssertRenderedCircuit(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32 iWidth, int32 iHeight, float64 fZoom, int64 iTime, bool bGrid, const char* szName, CCircuitFonts* pcFonts = NULL);
+//Draws the circuit on its background (and grid) into an RGB image and saves it as szOutput (a PNG), as it is in the
+//simulation of the view path (or disconnected if the simulation is NULL).  Text is drawn if there are fonts.
+bool RenderCircuitPNG(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32 iWidth, int32 iHeight, float64 fZoom, CViewPath* pcViewPath, CCircuitSimulation* pcSimulation, bool bGrid, const char* szOutput, CCircuitFonts* pcFonts = NULL);
+void AssertRenderedCircuit(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32 iWidth, int32 iHeight, float64 fZoom, CViewPath* pcViewPath, CCircuitSimulation* pcSimulation, bool bGrid, const char* szName, CCircuitFonts* pcFonts = NULL);
 
 
 #endif // __TEST_LOGICIM_RENDER_H__
