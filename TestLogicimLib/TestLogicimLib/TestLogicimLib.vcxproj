@@ -224,6 +224,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="TestLogicimLib.cpp" />
+    <ClCompile Include="TestCircuitFile.cpp" />
     <ClCompile Include="TestGateViews.cpp" />
     <ClCompile Include="TestLogicimRender.cpp" />
   </ItemGroup>

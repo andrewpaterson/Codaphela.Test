@@ -9,6 +9,7 @@
 
 
 void TestGateViews(void);
+void TestCircuitFile(void);
 
 
 int __cdecl main(void)
@@ -24,6 +25,7 @@ int __cdecl main(void)
 	MemoryInit();
 
 	TestGateViews();
+	TestCircuitFile();
 
 	MemoryKill();
 	TypeConverterKill();
