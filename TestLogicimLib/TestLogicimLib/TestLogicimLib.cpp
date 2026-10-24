@@ -8,7 +8,7 @@
 #include "TestLib/Assert.h"
 
 
-void TestLogicimLibBuild(void);
+void TestGateViews(void);
 
 
 int __cdecl main(void)
@@ -23,7 +23,7 @@ int __cdecl main(void)
 	TypeConverterInit();
 	MemoryInit();
 
-	TestLogicimLibBuild();
+	TestGateViews();
 
 	MemoryKill();
 	TypeConverterKill();

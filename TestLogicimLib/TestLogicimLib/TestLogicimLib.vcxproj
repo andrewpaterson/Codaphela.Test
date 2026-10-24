@@ -224,7 +224,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="TestLogicimLib.cpp" />
-    <ClCompile Include="TestLogicimLibBuild.cpp" />
+    <ClCompile Include="TestGateViews.cpp" />
+    <ClCompile Include="TestLogicimRender.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TestLogicimRender.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\CommonLibraries\BaseLib\BaseLib.vcxproj">

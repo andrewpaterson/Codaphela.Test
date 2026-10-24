@@ -2,15 +2,15 @@
 - Log File: [Log.txt]
 -----------------------------------------------------------
 
---------------- /home/r2d2/Codaphela/test/TestLogicimLib/TestLogicimLib/TestLogicimLibBuild.cpp ---------------
-Tests Run: 3
-Passed: 3
+--------------- /home/r2d2/Codaphela/test/TestLogicimLib/TestLogicimLib/TestGateViews.cpp ---------------
+Tests Run: 201
+Passed: 201
 Failed: 0
 
 ------------------------------ Total Results ------------------------------
-Total Tests Run: 3
-Total Passed: 3
+Total Tests Run: 201
+Total Passed: 201
 Total Failed: 0
 
-Total Time:   0.00s
+Total Time:   0.25s
 

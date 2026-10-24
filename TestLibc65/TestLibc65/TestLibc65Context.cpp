@@ -152,6 +152,7 @@ void TestLibc65End(STestLibc65Run* psRun)
 	{
 		AssertSize(0, psRun->pcMemory->NumBadAccesses());
 		psRun->cMPU.Kill();
+		psRun->pcMemory->Kill();
 		free(psRun->pcMemory);
 		psRun->pcMemory = NULL;
 	}
