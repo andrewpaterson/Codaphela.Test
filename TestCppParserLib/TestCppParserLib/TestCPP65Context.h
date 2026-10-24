@@ -44,6 +44,7 @@ bool		TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const c
 int32		TestCPP65RunProject(const char** aszUnits, const char* szStubs, size uiMaxInstructions = 20000000, const char* szSource = NULL);
 int32		TestCPP65RunProjectLazy(const char** aszUnits, const char* szStubs, size* puiUnits, size* puiLoads, const char* szSource = NULL);
 int32		TestCPP65MainFloat(const char* szSource);
+size		TestCPP65CompileLibrary(const char* szLibrary, CChars* pszErrors);
 
 
 #endif // __TEST_CPP65_CONTEXT_H__

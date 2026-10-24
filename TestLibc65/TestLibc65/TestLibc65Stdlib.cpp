@@ -644,6 +644,44 @@ void TestLibc65StdlibAbort(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// signal and raise (signal.cpp): a handler is called once (it is reset to SIG_DFL),
+// an ignored signal does nothing, a signal without a handler stops the program like
+// abort, and bad signal numbers fail.  errno is a global starting at 0.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLibc65StdlibSignal(void)
+{
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "ctype.cpp", "signal.cpp", NULL };
+	STestLibc65Run		sRun;
+
+	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "",
+		"#include <signal.h>\n"
+		"#include <errno.h>\n"
+		"int giSeen;\n"
+		"void Handle(int iSignal) { giSeen = giSeen * 100 + iSignal; }\n"
+		"int main()\n"
+		"{\n"
+		"	if (errno != 0) return 1;\n"
+		"	errno = ERANGE;\n"
+		"	if (signal(SIGINT, Handle) != SIG_DFL) return 2;\n"
+		"	if (raise(SIGINT) != 0) return 3;\n"
+		"	if (signal(SIGINT, SIG_IGN) != SIG_DFL) return 4;\n"
+		"	if (raise(SIGINT) != 0) return 5;\n"
+		"	if ((signal(0, Handle) != SIG_ERR) || (raise(99) != -1)) return 6;\n"
+		"	signal(SIGTERM, Handle);\n"
+		"	raise(SIGTERM);\n"
+		"	if ((giSeen != 215) || (errno != ERANGE)) return 7;\n"
+		"	raise(SIGABRT);\n"
+		"	return 8;\n"
+		"}\n"));
+	AssertTrue(TestLibc65RunToStop(&sRun, 2000000));
+	AssertInt(1, TestLibc65Return(&sRun));
+	TestLibc65End(&sRun);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65Stdlib(void)
@@ -657,6 +695,7 @@ void TestLibc65Stdlib(void)
 	TestLibc65StdlibUnderscoreExit();
 	TestLibc65StdlibAtExit();
 	TestLibc65StdlibAbort();
+	TestLibc65StdlibSignal();
 	TestLibc65StdlibQsort();
 	TestLibc65StdlibRand();
 	TestLibc65StdlibStrtol();

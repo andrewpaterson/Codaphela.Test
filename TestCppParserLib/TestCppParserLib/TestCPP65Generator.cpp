@@ -2054,6 +2054,226 @@ void TestCPP65GeneratorMemberTemplates(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Explicit and partial specialisations of class templates (of pointers, const,
+// instances of another template and constants, with a member defined outside a
+// partial specialisation) and explicit specialisations of function templates
+// (with explicit and deduced arguments).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorSpecialisation(void)
+{
+	AssertInt(1, TestCPP65Main(
+		"template<class T> struct SAlign { int Get() { return 10; } };\n"
+		"template<class T> struct SAlign<T*> { int Get(); int Base() { SAlign<T> s; return s.Get(); } };\n"
+		"template<class T> int SAlign<T*>::Get() { return 20; }\n"
+		"template<class T> struct SAlign<const T> { int Get() { return 30; } };\n"
+		"template<> struct SAlign<char> { int Get() { return 40; } };\n"
+		"template<int N> struct SFactorial { int Get() { SFactorial<N - 1> s; return N * s.Get(); } };\n"
+		"template<> struct SFactorial<0> { int Get() { return 1; } };\n"
+		"template<class T> struct SBox { T t; };\n"
+		"template<class T> struct SAlign<SBox<T> > { int Get() { SAlign<T> s; return 50 + s.Get(); } };\n"
+		"template<class T> int Size(T t) { return 100; }\n"
+		"template<> int Size<char>(char t) { return 200; }\n"
+		"template<> int Size(short t) { return 300; }\n"
+		"int main()\n"
+		"{\n"
+		"\tSAlign<int> a; SAlign<int*> b; SAlign<char> c; SAlign<const int> d; SAlign<char*> e; SAlign<SBox<char> > f; SFactorial<5> g;\n"
+		"\treturn a.Get() == 10 && b.Get() == 20 && c.Get() == 40 && d.Get() == 30 && e.Base() == 40 && f.Get() == 90 && g.Get() == 120 && Size(1) == 100 && Size('c') == 200 && Size((short)1) == 300 && sizeof(SAlign<int*>) == 1;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Pointers to member functions and fields: &Class::member (also with the class a
+// template parameter and a member of a base), casts between them, and calls and
+// accesses with .* and ->*.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorMemberPointers(void)
+{
+	AssertInt(1, TestCPP65Main(
+		"struct SIO { int miBase; };\n"
+		"class CFile;\n"
+		"struct CNumber\n"
+		"{\n"
+		"\tint\t\tx;\n"
+		"\tint\t\ty;\n"
+		"\tbool\tSave(CFile* p) { return x == 7; }\n"
+		"\tint\t\tAdd(int a, int b) { return x + y + a + b; }\n"
+		"};\n"
+		"typedef bool (SIO::*FWriter)(CFile*);\n"
+		"template<class Class>\n"
+		"FWriter GetWriter(void)\n"
+		"{\n"
+		"\tbool (Class::* f)(CFile*);\n"
+		"\tf = &Class::Save;\n"
+		"\treturn (FWriter)f;\n"
+		"}\n"
+		"int main()\n"
+		"{\n"
+		"\tCNumber n; n.x = 7; n.y = 3;\n"
+		"\tint CNumber::* pm = &CNumber::y;\n"
+		"\tint (CNumber::* pa)(int, int) = &CNumber::Add;\n"
+		"\tCNumber* p = &n;\n"
+		"\tFWriter fw = GetWriter<CNumber>();\n"
+		"\tbool b = (((SIO*)p)->*fw)((CFile*)0);\n"
+		"\tn.*pm = 5;\n"
+		"\treturn b && (p->*pm) == 5 && (n.*pa)(1, 2) == 15 && (p->*pa)(10, 20) == 42 && sizeof(pm) == 4;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Function templates with a parameter pack, forwarded with args... to a call, with
+// packs of zero, one and three types.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorVariadicTemplates(void)
+{
+	AssertInt(1, TestCPP65Main(
+		"struct CThing\n"
+		"{\n"
+		"\tint\tm;\n"
+		"\tvoid Init(void) { m = 1; }\n"
+		"\tvoid Init(int a) { m = a; }\n"
+		"\tvoid Init(int a, char b, int* c) { m = a + b + *c; }\n"
+		"};\n"
+		"template <class SpecificClass, class SuperClass, typename ... Args>\n"
+		"SuperClass* Make(SpecificClass* p, Args ... args)\n"
+		"{\n"
+		"\tp->Init(args...);\n"
+		"\treturn p;\n"
+		"}\n"
+		"template <typename ... Args>\n"
+		"int Count(Args ... args) { return 7; }\n"
+		"int main()\n"
+		"{\n"
+		"\tCThing a, b, c; int i = 100;\n"
+		"\tMake<CThing, CThing>(&a);\n"
+		"\tMake<CThing, CThing>(&b, 5);\n"
+		"\tMake<CThing, CThing>(&c, 10, (char)2, &i);\n"
+		"\treturn a.m == 1 && b.m == 5 && c.m == 112 && Count() == 7 && Count(1, 2.0, \"x\") == 7;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Overloads are chosen by the best conversion of each argument: exact, then
+// promotion (char and short to int, an enum to int), then conversion.  An enum is a
+// type of its own.  A cast to a pointer to a function chooses an overloaded
+// function.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorOverloadRanking(void)
+{
+	AssertInt(1, TestCPP65Main(
+		"int F(int i) { return 1; }\n"
+		"int F(unsigned int u) { return 2; }\n"
+		"int F(long long l) { return 3; }\n"
+		"int F(char c) { return 4; }\n"
+		"enum EColour { Red, Green };\n"
+		"int G(int i) { return 10; }\n"
+		"int G(EColour e) { return 20; }\n"
+		"int H(int i, EColour e) { return 30; }\n"
+		"int H(int i, int j) { return 40; }\n"
+		"void Convert(void* pvDest, void* pvSource) { *(int*)pvDest = 1; }\n"
+		"void Convert(int* piDest, char* pcSource) { *piDest = 2; }\n"
+		"typedef void (*FConvert)(void*, void*);\n"
+		"int main()\n"
+		"{\n"
+		"\tFConvert f = (FConvert)&Convert;\n"
+		"\tint i = 0;\n"
+		"\tf(&i, &i);\n"
+		"\treturn F((short)1) == 1 && F((unsigned short)1) == 1 && F('c') == 4 && F(1u) == 2 && F(2LL) == 3 && G(1) == 10 && G(Green) == 20 && G((int)Red) == 10 && H(1, Green) == 30 && H(1, 2) == 40 && i == 1;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Constructs BaseLib uses: local classes (and a local unnamed union), a member
+// defined with its class named twice, anonymous unions, calls through fields that
+// point to functions, addresses of function template instances, non-type template
+// arguments passed to a base class, and __builtin_alloca.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorBaseLibConstructs(void)
+{
+	AssertInt(1, TestCPP65Main(
+		"struct CNumber { int a; int b; };\n"
+		"#define UNumber(p, q) union { CNumber c; char a[p + q + 8]; }\n"
+		"int Local(int x)\n"
+		"{\n"
+		"\tstruct SPoint { int x; int y; int Sum() { return x + y; } };\n"
+		"\tSPoint p; p.x = x; p.y = 2;\n"
+		"\tUNumber(4, 4) u;\n"
+		"\tu.c.a = 5; u.c.b = 6;\n"
+		"\treturn p.Sum() + u.c.a + u.c.b + (int)sizeof(u);\n"
+		"}\n"
+		"struct CBlock { int m; void* Add(void); };\n"
+		"void* CBlock::CBlock::Add(void) { m = 3; return this; }\n"
+		"int main() { CBlock b; b.Add(); return Local(1) == 1 + 2 + 5 + 6 + 16 && b.m == 3; }\n"));
+
+	AssertInt(1, TestCPP65Main(
+		"template<class M> int ComparePrimitive(const void* a, const void* b) { return *(M*)a - *(M*)b; }\n"
+		"typedef int (*FCompare)(const void*, const void*);\n"
+		"int Call(FCompare f, int a, int b) { return f(&a, &b); }\n"
+		"typedef void (*CCall)(void);\n"
+		"struct SFunctionPointer { union { CCall cCall; int (*pfInt)(void); }; int x; };\n"
+		"int Five(void) { return 5; }\n"
+		"int main()\n"
+		"{\n"
+		"\tSFunctionPointer s; s.pfInt = &Five; s.x = 3;\n"
+		"\tFCompare f = ComparePrimitive<short>;\n"
+		"\treturn Call(&ComparePrimitive<int>, 7, 2) == 5 && f == &ComparePrimitive<short> && s.pfInt() == 5 && s.x == 3 && sizeof(s) == 8 && (void*)s.cCall == (void*)&Five;\n"
+		"}\n"));
+
+	AssertInt(1, TestCPP65Main(
+		"typedef signed char int8;\n"
+		"template<class M, int8 I> class CBase { public: M ma[I]; int Num() { return I; } };\n"
+		"template<class M, int8 I> class CDerived : public CBase<M, I> { public: int Get() { return CBase<M, I>::Num(); } };\n"
+		"class CInt : public CDerived<int, 4> { public: int All() { return Num() + Get(); } };\n"
+		"int main() { CInt c; return c.All() == 8 && sizeof(c) == 16; }\n"));
+
+	AssertInt(1, TestCPP65Main(
+		"int Sum(int n)\n"
+		"{\n"
+		"\tint* p = (int*)__builtin_alloca(n * sizeof(int));\n"
+		"\tchar* c = (char*)__builtin_alloca(3);\n"
+		"\tint t = 0;\n"
+		"\tfor (int i = 0; i < n; i++) p[i] = i;\n"
+		"\tc[0] = 1; c[2] = 2;\n"
+		"\tfor (int i = 0; i < n; i++) t += p[i];\n"
+		"\treturn t + c[0] + c[2];\n"
+		"}\n"
+		"int main() { int a = 7; int r = Sum(10) + Sum(3); return r == 45 + 3 + 3 + 3 && a == 7; }\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Every BaseLib .cpp file compiles for the 65C64 and links (with a main that uses
+// none of it).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorAllBaseLib(void)
+{
+	CChars	szErrors;
+	size	uiFiles;
+
+	szErrors.Init();
+	uiFiles = TestCPP65CompileLibrary("BaseLib", &szErrors);
+	AssertTrue(uiFiles > 350);
+	AssertString("", szErrors.Text());
+	szErrors.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Programs whose functions are loaded from a drive when they are first called give
 // the same results.  Only some of the units are loaded: the ones a run calls.
 //
@@ -2074,7 +2294,7 @@ void TestCPP65GeneratorLazy(void)
 	AssertTrue((uiLoads > 0) && (uiLoads <= uiUnits));
 	AssertInt(0x7, TestCPP65RunProjectLazy(aszSort, "", &uiUnits, &uiLoads));
 	AssertTrue((uiLoads > 0) && (uiLoads <= uiUnits));
-	AssertInt(6 + 9, TestCPP65RunProjectLazy(aszFloat, "", &uiUnits, &uiLoads, "int main() { float f = 1.5f; double d = 2.25; return (int)(f * 4 + d * 4); }\n"));
+	AssertInt(6 + 9, TestCPP65RunProjectLazy(aszFloat, "", &uiUnits, &uiLoads, "int Never(float x) { return (int)(x * 100); }\nint main() { float f = 1.5f; double d = 2.25; if (f > 10.0f) return Never(f); return (int)(f * 4 + d * 4); }\n"));
 	AssertTrue((uiLoads > 0) && (uiLoads < uiUnits));
 
 	//A global object, a virtual call, a function pointer and recursion.  Unused is left out; Twice is loaded
@@ -2158,6 +2378,7 @@ void TestCPP65GeneratorErrors(void)
 	AssertCPP65Error("Generated.cpp (1, 32): No function matches the arguments [f]\n", "int f(int a); int g() { return f(); }");
 	AssertCPP65Error("Generated.cpp (1, 16): break outside a loop or switch [break]\n", "void f(void) { break; }");
 	AssertCPP65Error("Generated.cpp (1, 31): A static local variable needs a constant initialiser in the 65C64 generator yet [a]\n", "int f(int a) { static int s = a; return s; }");
+	AssertCPP65Error("Generated.cpp (1, 149): More than one specialisation of the class template matches equally [s]\n", "template<class A, class B> struct S {}; template<class A, class B> struct S<A*, B> {}; template<class A, class B> struct S<A, B*> {}; S<int*, int*> s; int main() { return 0; }");
 	AssertCPP65Error("Generated.cpp (1, 70): The member template has not been defined [c]\n", "struct C { template<class T> int F(T t); }; int main() { C c; return c.F(1); }");
 }
 
@@ -2186,10 +2407,16 @@ void TestCPP65Generator(void)
 	TestCPP65GeneratorExtern();
 	TestCPP65GeneratorNewDelete();
 	TestCPP65GeneratorMemberTemplates();
+	TestCPP65GeneratorSpecialisation();
+	TestCPP65GeneratorMemberPointers();
+	TestCPP65GeneratorVariadicTemplates();
+	TestCPP65GeneratorOverloadRanking();
+	TestCPP65GeneratorBaseLibConstructs();
 	TestCPP65GeneratorArrayTemplate();
 	TestCPP65GeneratorProject();
 	TestCPP65GeneratorFloat();
 	TestCPP65GeneratorBaseLib();
+	TestCPP65GeneratorAllBaseLib();
 	TestCPP65GeneratorLazy();
 	TestCPP65GeneratorErrors();
 

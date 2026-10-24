@@ -22,10 +22,26 @@ uint64_t	SoftFloatToUnsignedLongLong(uint32_t ui);
 uint64_t	SoftFloatToDouble(uint32_t ui);
 uint32_t	SoftFloatSqrt(uint32_t ui);
 uint32_t	SoftDoubleToFloat(uint64_t ulli);
+uint64_t	SoftDoubleAdd(uint64_t ulliA, uint64_t ulliB);
+uint64_t	SoftDoubleSubtract(uint64_t ulliA, uint64_t ulliB);
+uint64_t	SoftDoubleMultiply(uint64_t ulliA, uint64_t ulliB);
+uint64_t	SoftDoubleDivide(uint64_t ulliA, uint64_t ulliB);
+int			SoftDoubleCompare(uint64_t ulliA, uint64_t ulliB);
+uint64_t	SoftDoubleFromInt(int32_t i);
+uint64_t	SoftDoubleFromUnsigned(uint32_t ui);
+uint64_t	SoftDoubleFromLongLong(int64_t lli);
+uint64_t	SoftDoubleFromUnsignedLongLong(uint64_t ulli);
+int32_t		SoftDoubleToInt(uint64_t ulli);
+uint32_t	SoftDoubleToUnsigned(uint64_t ulli);
+int64_t		SoftDoubleToLongLong(uint64_t ulli);
+uint64_t	SoftDoubleToUnsignedLongLong(uint64_t ulli);
+uint64_t	SoftDoubleSqrt(uint64_t ulli);
 
 
-//Where the test program reads its arguments (8 bytes each) and writes its results (8 bytes each).
+//Where the test program reads its arguments (8 bytes each, a double's second argument from
+//TEST_SOFT_FLOAT_SECONDS) and writes its results (8 bytes each).
 #define TEST_SOFT_FLOAT_ARGUMENTS	0x110000
+#define TEST_SOFT_FLOAT_SECONDS		0x138000
 #define TEST_SOFT_FLOAT_RESULTS		0x160000
 #define TEST_SOFT_FLOAT_MAX_CASES	0x5000
 
@@ -40,6 +56,13 @@ enum ETestSoftFloatKind
 	TSFK_IntToFloat,
 	TSFK_LongLongToFloat,
 	TSFK_DoubleToFloat,
+	TSFK_DoubleDoubleToDouble,
+	TSFK_DoubleDoubleToInt,
+	TSFK_DoubleToDouble,
+	TSFK_DoubleToInt,
+	TSFK_DoubleToLongLong,
+	TSFK_IntToDouble,
+	TSFK_LongLongToDouble,
 };
 
 
@@ -59,6 +82,20 @@ static const uint32	gauiTestSoftFloatSpecials[] =
 	0x00000001, 0x80000001, 0x007FFFFF, 0x807FFFFF, 0x00400000, 0x00800000, 0x80800000, 0x7F7FFFFF, 0xFF7FFFFF,
 	0x3F800000, 0xBF800000, 0x3F7FFFFF, 0x3FFFFFFF, 0x40000000, 0x3F000000, 0x4B000000, 0x4AFFFFFF, 0x4EFFFFFF,
 	0x4F000000, 0xCF000000, 0xCF000001, 0x4F800000, 0x5F000000, 0xDF000000, 0x5F800000, 0x1F800000, 0x20000000,
+};
+
+
+//Doubles where the special cases are, as for floats.
+static const uint64	gaulliTestSoftDoubleSpecials[] =
+{
+	0x0000000000000000ULL, 0x8000000000000000ULL, 0x7FF0000000000000ULL, 0xFFF0000000000000ULL, 0x7FF8000000000000ULL,
+	0xFFF8000000000000ULL, 0x7FF0000000000001ULL, 0xFFF7FFFFFFFFFFFFULL, 0x7FF4123456789ABCULL, 0x0000000000000001ULL,
+	0x8000000000000001ULL, 0x000FFFFFFFFFFFFFULL, 0x800FFFFFFFFFFFFFULL, 0x0008000000000000ULL, 0x0010000000000000ULL,
+	0x8010000000000000ULL, 0x7FEFFFFFFFFFFFFFULL, 0xFFEFFFFFFFFFFFFFULL, 0x3FF0000000000000ULL, 0xBFF0000000000000ULL,
+	0x3FEFFFFFFFFFFFFFULL, 0x3FFFFFFFFFFFFFFFULL, 0x4000000000000000ULL, 0x3FE0000000000000ULL, 0x4330000000000000ULL,
+	0x432FFFFFFFFFFFFFULL, 0x41DFFFFFFFC00000ULL, 0x41E0000000000000ULL, 0xC1E0000000000000ULL, 0xC1E0000000200000ULL,
+	0x41F0000000000000ULL, 0x43E0000000000000ULL, 0xC3E0000000000000ULL, 0x43F0000000000000ULL, 0x1FF0000000000000ULL,
+	0x2000000000000000ULL,
 };
 
 
@@ -191,6 +228,50 @@ static uint64 TestSoftFloatRandomDouble(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A double that is often near ulliNear, at the edges of the exponents, subnormal, special, or
+// has few fraction bits, as TestSoftFloatRandomFloat.
+//
+//////////////////////////////////////////////////////////////////////////
+static uint64 TestSoftFloatRandomDoubleNear(uint64 ulliNear)
+{
+	uint64	ulli;
+	uint64	ulliSign;
+	uint64	ulliFraction;
+	int		iExponent;
+
+	ulli = TestSoftFloatRandom();
+	ulliSign = TestSoftFloatRandom() & 0x8000000000000000ULL;
+	ulliFraction = TestSoftFloatRandom() & 0xFFFFFFFFFFFFFULL;
+	switch (ulli % 12)
+	{
+	case 0:
+	case 1:
+		return TestSoftFloatRandom();
+	case 2:
+		return gaulliTestSoftDoubleSpecials[(ulli >> 8) % (sizeof(gaulliTestSoftDoubleSpecials) / sizeof(uint64))];
+	case 3:
+		return ulliSign | (ulliFraction >> ((ulli >> 8) % 53));
+	case 4:
+		return ulliSign | (((ulli >> 8) % 60) << 52) | ulliFraction;
+	case 5:
+		return ulliSign | ((2046 - (ulli >> 8) % 60) << 52) | ulliFraction;
+	case 6:
+	case 7:
+		iExponent = (int)((ulliNear >> 52) & 2047) + (int)((ulli >> 8) % 121) - 60;
+		iExponent = (iExponent < 0) ? 0 : ((iExponent > 2046) ? 2046 : iExponent);
+		return ulliSign | ((uint64)iExponent << 52) | ulliFraction;
+	case 8:
+		return (ulliNear ^ ulliSign) + (uint64)((int)((ulli >> 8) % 9) - 4);
+	case 9:
+		return ulliSign | ((900 + (ulli >> 8) % 200) << 52) | (ulliFraction & (0xFFFFFFFFFFFFFULL << ((ulli >> 20) % 53)));
+	default:
+		return ulliSign | ((512 + (ulli >> 8) % 1024) << 52) | ulliFraction;
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Every pair of special floats (or every special float) and then uiRandom random cases.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -205,7 +286,30 @@ static void TestSoftFloatMakeCases(STestSoftFloatCases* psCases, ETestSoftFloatK
 	gulliTestSoftFloatRandom = 0x9E3779B97F4A7C15ULL + eKind;
 	uiSpecials = sizeof(gauiTestSoftFloatSpecials) / sizeof(uint32);
 	psCases->uiCount = 0;
-	if ((eKind == TSFK_FloatFloatToFloat) || (eKind == TSFK_FloatFloatToInt))
+	if ((eKind == TSFK_DoubleDoubleToDouble) || (eKind == TSFK_DoubleDoubleToInt))
+	{
+		uiSpecials = sizeof(gaulliTestSoftDoubleSpecials) / sizeof(uint64);
+		for (i = 0; i < uiSpecials; i++)
+		{
+			for (j = 0; j < uiSpecials; j++)
+			{
+				psCases->auiFirst[psCases->uiCount] = gaulliTestSoftDoubleSpecials[i];
+				psCases->auiSecond[psCases->uiCount] = gaulliTestSoftDoubleSpecials[j];
+				psCases->uiCount++;
+			}
+		}
+	}
+	else if ((eKind == TSFK_DoubleToDouble) || (eKind == TSFK_DoubleToInt) || (eKind == TSFK_DoubleToLongLong))
+	{
+		uiSpecials = sizeof(gaulliTestSoftDoubleSpecials) / sizeof(uint64);
+		for (i = 0; i < uiSpecials; i++)
+		{
+			psCases->auiFirst[psCases->uiCount] = gaulliTestSoftDoubleSpecials[i];
+			psCases->auiSecond[psCases->uiCount] = 0;
+			psCases->uiCount++;
+		}
+	}
+	else if ((eKind == TSFK_FloatFloatToFloat) || (eKind == TSFK_FloatFloatToInt))
 	{
 		for (i = 0; i < uiSpecials; i++)
 		{
@@ -231,10 +335,20 @@ static void TestSoftFloatMakeCases(STestSoftFloatCases* psCases, ETestSoftFloatK
 	{
 		switch (eKind)
 		{
+		case TSFK_DoubleDoubleToDouble:
+		case TSFK_DoubleDoubleToInt:
+		case TSFK_DoubleToDouble:
+		case TSFK_DoubleToInt:
+		case TSFK_DoubleToLongLong:
+			ulliFirst = TestSoftFloatRandomDoubleNear(TestSoftFloatRandom());
+			ulliSecond = TestSoftFloatRandomDoubleNear(ulliFirst);
+			break;
+		case TSFK_IntToDouble:
 		case TSFK_IntToFloat:
 			ulliFirst = TestSoftFloatRandomInteger(32);
 			ulliSecond = 0;
 			break;
+		case TSFK_LongLongToDouble:
 		case TSFK_LongLongToFloat:
 			ulliFirst = TestSoftFloatRandomInteger(64);
 			ulliSecond = 0;
@@ -283,6 +397,20 @@ static uint64 TestSoftFloatReference(const char* szName, uint64 ulliFirst, uint6
 	if (strcmp(szName, "SoftFloatFromLongLong") == 0)			return SoftFloatFromLongLong((int64_t)ulliFirst);
 	if (strcmp(szName, "SoftFloatFromUnsignedLongLong") == 0)	return SoftFloatFromUnsignedLongLong(ulliFirst);
 	if (strcmp(szName, "SoftDoubleToFloat") == 0)				return SoftDoubleToFloat(ulliFirst);
+	if (strcmp(szName, "SoftDoubleAdd") == 0)					return SoftDoubleAdd(ulliFirst, ulliSecond);
+	if (strcmp(szName, "SoftDoubleSubtract") == 0)				return SoftDoubleSubtract(ulliFirst, ulliSecond);
+	if (strcmp(szName, "SoftDoubleMultiply") == 0)				return SoftDoubleMultiply(ulliFirst, ulliSecond);
+	if (strcmp(szName, "SoftDoubleDivide") == 0)				return SoftDoubleDivide(ulliFirst, ulliSecond);
+	if (strcmp(szName, "SoftDoubleCompare") == 0)				return (uint32)SoftDoubleCompare(ulliFirst, ulliSecond);
+	if (strcmp(szName, "SoftDoubleSqrt") == 0)					return SoftDoubleSqrt(ulliFirst);
+	if (strcmp(szName, "SoftDoubleToInt") == 0)					return (uint32)SoftDoubleToInt(ulliFirst);
+	if (strcmp(szName, "SoftDoubleToUnsigned") == 0)			return SoftDoubleToUnsigned(ulliFirst);
+	if (strcmp(szName, "SoftDoubleToLongLong") == 0)			return (uint64)SoftDoubleToLongLong(ulliFirst);
+	if (strcmp(szName, "SoftDoubleToUnsignedLongLong") == 0)	return SoftDoubleToUnsignedLongLong(ulliFirst);
+	if (strcmp(szName, "SoftDoubleFromInt") == 0)				return SoftDoubleFromInt((int32_t)uiFirst);
+	if (strcmp(szName, "SoftDoubleFromUnsigned") == 0)			return SoftDoubleFromUnsigned(uiFirst);
+	if (strcmp(szName, "SoftDoubleFromLongLong") == 0)			return SoftDoubleFromLongLong((int64_t)ulliFirst);
+	if (strcmp(szName, "SoftDoubleFromUnsignedLongLong") == 0)	return SoftDoubleFromUnsignedLongLong(ulliFirst);
 	return 0;
 }
 
@@ -304,6 +432,13 @@ static void TestSoftFloatProgram(CChars* pszSource, const char* szName, ETestSof
 		"uint32_t NAME(uint32_t ui);\n",
 		"uint32_t NAME(uint64_t ulli);\n",
 		"uint32_t NAME(uint64_t ulli);\n",
+		"uint64_t NAME(uint64_t ulliA, uint64_t ulliB);\n",
+		"int NAME(uint64_t ulliA, uint64_t ulliB);\n",
+		"uint64_t NAME(uint64_t ulli);\n",
+		"uint32_t NAME(uint64_t ulli);\n",
+		"uint64_t NAME(uint64_t ulli);\n",
+		"uint64_t NAME(uint32_t ui);\n",
+		"uint64_t NAME(uint64_t ulli);\n",
 	};
 	static const char*	aszCalls[] =
 	{
@@ -315,6 +450,13 @@ static void TestSoftFloatProgram(CChars* pszSource, const char* szName, ETestSof
 		"		puiResult[2 * i] = NAME(puiArgument[2 * i]);\n",
 		"		puiResult[2 * i] = NAME(pulliArgument[i]);\n",
 		"		puiResult[2 * i] = NAME(pulliArgument[i]);\n",
+		"		pulliResult[i] = NAME(pulliArgument[i], pulliSecond[i]);\n",
+		"		puiResult[2 * i] = (uint32_t)NAME(pulliArgument[i], pulliSecond[i]);\n",
+		"		pulliResult[i] = NAME(pulliArgument[i]);\n",
+		"		puiResult[2 * i] = NAME(pulliArgument[i]);\n",
+		"		pulliResult[i] = NAME(pulliArgument[i]);\n",
+		"		pulliResult[i] = NAME(puiArgument[2 * i]);\n",
+		"		pulliResult[i] = NAME(pulliArgument[i]);\n",
 	};
 
 	pszSource->Init();
@@ -324,6 +466,7 @@ static void TestSoftFloatProgram(CChars* pszSource, const char* szName, ETestSof
 	pszSource->Append("{\n");
 	pszSource->Append("	uint32_t*	puiArgument = (uint32_t*)")->Append(TEST_SOFT_FLOAT_ARGUMENTS)->Append(";\n");
 	pszSource->Append("	uint64_t*	pulliArgument = (uint64_t*)")->Append(TEST_SOFT_FLOAT_ARGUMENTS)->Append(";\n");
+	pszSource->Append("	uint64_t*	pulliSecond = (uint64_t*)")->Append(TEST_SOFT_FLOAT_SECONDS)->Append(";\n");
 	pszSource->Append("	uint32_t*	puiResult = (uint32_t*)")->Append(TEST_SOFT_FLOAT_RESULTS)->Append(";\n");
 	pszSource->Append("	uint64_t*	pulliResult = (uint64_t*)")->Append(TEST_SOFT_FLOAT_RESULTS)->Append(";\n");
 	pszSource->Append("	for (int i = 0; i < ")->Append((int)uiCount)->Append("; i++)\n");
@@ -333,6 +476,28 @@ static void TestSoftFloatProgram(CChars* pszSource, const char* szName, ETestSof
 	pszSource->Append("	return 0;\n");
 	pszSource->Append("}\n");
 	pszSource->Replace("NAME", szName);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Whether the first argument is 8 bytes (a long long or a double).
+//
+//////////////////////////////////////////////////////////////////////////
+static bool TestSoftFloatWideArgument(ETestSoftFloatKind eKind)
+{
+	return (eKind == TSFK_LongLongToFloat) || (eKind == TSFK_DoubleToFloat) || (eKind >= TSFK_DoubleDoubleToDouble && eKind <= TSFK_DoubleToLongLong) || (eKind == TSFK_LongLongToDouble);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Whether the result is 8 bytes.
+//
+//////////////////////////////////////////////////////////////////////////
+static bool TestSoftFloatWideResult(ETestSoftFloatKind eKind)
+{
+	return (eKind == TSFK_FloatToLongLong) || (eKind == TSFK_DoubleDoubleToDouble) || (eKind == TSFK_DoubleToDouble) || (eKind == TSFK_DoubleToLongLong) || (eKind == TSFK_IntToDouble) || (eKind == TSFK_LongLongToDouble);
 }
 
 
@@ -365,9 +530,10 @@ static void TestSoftFloatFunction(const char* szName, ETestSoftFloatKind eKind, 
 		{
 			ulliArgument = psCases->auiFirst[i];
 			uiSecond = (uint32)psCases->auiSecond[i];
-			if ((eKind == TSFK_LongLongToFloat) || (eKind == TSFK_DoubleToFloat))
+			if (TestSoftFloatWideArgument(eKind))
 			{
 				memcpy(sRun.pcMemory->Byte(TEST_SOFT_FLOAT_ARGUMENTS + 8 * (uint32)i), &ulliArgument, 8);
+				memcpy(sRun.pcMemory->Byte(TEST_SOFT_FLOAT_SECONDS + 8 * (uint32)i), &psCases->auiSecond[i], 8);
 			}
 			else
 			{
@@ -375,12 +541,12 @@ static void TestSoftFloatFunction(const char* szName, ETestSoftFloatKind eKind, 
 				sRun.pcMemory->SetLong(TEST_SOFT_FLOAT_ARGUMENTS + 8 * (uint32)i + 4, uiSecond);
 			}
 		}
-		AssertTrue(TestLibc65Run(&sRun, 200 * psCases->uiCount + 1000));
+		AssertTrue(TestLibc65Run(&sRun, 400 * psCases->uiCount + 1000));
 		for (i = 0; i < psCases->uiCount; i++)
 		{
 			ulliExpected = TestSoftFloatReference(szName, psCases->auiFirst[i], psCases->auiSecond[i]);
 			ulliResult = sRun.pcMemory->GetQuad(TEST_SOFT_FLOAT_RESULTS + 8 * (uint32)i);
-			if (eKind != TSFK_FloatToLongLong)
+			if (!TestSoftFloatWideResult(eKind))
 			{
 				ulliResult &= 0xFFFFFFFF;
 				ulliExpected &= 0xFFFFFFFF;
@@ -430,6 +596,29 @@ void TestLibc65SoftFloatConversions(void)
 //////////////////////////////////////////////////////////////////////////
 //
 // The float operators in C++, which the generator calls softfloat.asm for.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLibc65SoftFloatDouble(void)
+{
+	TestSoftFloatFunction("SoftDoubleAdd", TSFK_DoubleDoubleToDouble, 3000);
+	TestSoftFloatFunction("SoftDoubleSubtract", TSFK_DoubleDoubleToDouble, 3000);
+	TestSoftFloatFunction("SoftDoubleMultiply", TSFK_DoubleDoubleToDouble, 3000);
+	TestSoftFloatFunction("SoftDoubleDivide", TSFK_DoubleDoubleToDouble, 3000);
+	TestSoftFloatFunction("SoftDoubleCompare", TSFK_DoubleDoubleToInt, 3000);
+	TestSoftFloatFunction("SoftDoubleSqrt", TSFK_DoubleToDouble, 3000);
+	TestSoftFloatFunction("SoftDoubleToInt", TSFK_DoubleToInt, 3000);
+	TestSoftFloatFunction("SoftDoubleToUnsigned", TSFK_DoubleToInt, 3000);
+	TestSoftFloatFunction("SoftDoubleToLongLong", TSFK_DoubleToLongLong, 3000);
+	TestSoftFloatFunction("SoftDoubleToUnsignedLongLong", TSFK_DoubleToLongLong, 3000);
+	TestSoftFloatFunction("SoftDoubleFromInt", TSFK_IntToDouble, 3000);
+	TestSoftFloatFunction("SoftDoubleFromUnsigned", TSFK_IntToDouble, 3000);
+	TestSoftFloatFunction("SoftDoubleFromLongLong", TSFK_LongLongToDouble, 3000);
+	TestSoftFloatFunction("SoftDoubleFromUnsignedLongLong", TSFK_LongLongToDouble, 3000);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65SoftFloatOperators(void)
@@ -497,6 +686,7 @@ void TestLibc65SoftFloat(void)
 
 	TestLibc65SoftFloatArithmetic();
 	TestLibc65SoftFloatConversions();
+	TestLibc65SoftFloatDouble();
 	TestLibc65SoftFloatOperators();
 
 	TestStatistics();

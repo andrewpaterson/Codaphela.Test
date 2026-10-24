@@ -287,6 +287,52 @@ int32 TestCPP65Main(const char* szSource)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Compiles every .cpp file of a library under commonlibraries (szLibrary, such as "BaseLib") as a link library,
+// with a main that uses none of it, and links.  pszErrors gets the compiler's and linker's errors.  Returns how
+// many files were compiled.
+//
+//////////////////////////////////////////////////////////////////////////
+size TestCPP65CompileLibrary(const char* szLibrary, CChars* pszErrors)
+{
+	CCPP65Builder	cBuilder;
+	CFileUtil		cFileUtil;
+	CArrayChars		aszFiles;
+	CChars			szDirectory;
+	CChars*			pszFile;
+	size			i;
+	size			iSlash;
+
+	cBuilder.Init();
+	TestCPP65AddIncludeDirectories(&cBuilder);
+	cBuilder.SetStubMissing(true);
+	cBuilder.AddStartUp();
+	cBuilder.AddSource("Main.cpp", "int main() { return 0; }\n");
+
+	szDirectory.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_);
+	szDirectory.Append(szLibrary);
+	cFileUtil.FullPath(&szDirectory);
+	aszFiles.Init();
+	cFileUtil.FindFilesWithExtension(szDirectory.Text(), "cpp", &aszFiles);
+	aszFiles.QuickSort();
+	for (i = 0; i < aszFiles.NumElements(); i++)
+	{
+		pszFile = aszFiles.Get(i);
+		iSlash = pszFile->FindFromEnd(FILE_SEPARATOR[0]);
+		cBuilder.AddUnit(szLibrary, szDirectory.Text(), pszFile->Text(iSlash + 1), true);
+	}
+
+	cBuilder.Link();
+	pszErrors->Append(cBuilder.GetErrors());
+	i = aszFiles.NumElements();
+	aszFiles.Kill();
+	szDirectory.Kill();
+	cBuilder.Kill();
+	return i;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Compiles the units (paths under commonlibraries, or under this test's directory when they start with "Input")
 // and szSource if it is given, each into an object, links them after the start up and loads the program.  The
 // units in a directory share a CLibrary (their include settings).  The labels in szStubs (space separated,
