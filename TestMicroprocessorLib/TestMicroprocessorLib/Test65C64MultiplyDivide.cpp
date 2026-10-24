@@ -299,6 +299,50 @@ void Test65C64DivideWidth(uint8 uiYBytes, uint8 uiBBytes, uint64 uiDividend, uin
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A B that is not 0 at the start is the top half of the dividend: (B 2^64 + Y) / A, the
+// quotient in Y and the remainder in B, as long as B is below A (the quotient fits).
+//
+//////////////////////////////////////////////////////////////////////////
+void Test65C64DivideHighB(uint64 uiHigh, uint64 uiLow, uint64 uiDivisor, uint64 uiQuotient, uint64 uiRemainder)
+{
+	STest65C64			sTest;
+	C65C64*				pcMPU;
+	CTest65C64Context*	pcContext;
+	size				i;
+
+	Test65C64Begin(&sTest, 0x1000);
+	pcContext = sTest.pcContext;
+	pcContext->Op(Op65Wth(R65_Y, 8));
+	pcContext->Op(Op65Wth(R65_A, 8));
+	pcContext->Op(Op65Wth(R65_B, 8));
+	pcContext->OpQuad(Op65RI(C65_CPY, R65_Y, 8), uiLow);
+	pcContext->OpQuad(Op65RI(C65_CPY, R65_A, 8), uiDivisor);
+	pcContext->Op(Op65RR(C65_CPY, R65_W, R65_Zero));
+	pcContext->OpQuad(Op65RI(C65_CPY, R65_B, 8), uiHigh);
+	pcContext->Op(Op65Div());
+	pcContext->Op(Op65Stp());
+
+	Test65C64Reset(&sTest);
+	pcMPU = Test65C64MPU(&sTest);
+	for (i = 0; i < 7; i++)
+	{
+		Test65C64Step(&sTest);
+	}
+	for (i = 0; i < 16; i++)
+	{
+		AssertSize(1, Test65C64Step(&sTest));
+	}
+	AssertTrue(pcMPU->IsFlagSet(STATUS65_OVERFLOW));
+	AssertLongLongIntHex((int64)uiQuotient, pcMPU->GetY());
+	AssertLongLongIntHex((int64)uiRemainder, pcMPU->GetB());
+
+	AssertFalse(sTest.cMeta.TickInstruction());
+	Test65C64End(&sTest);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void Test65C64MultiplyDivide(void)
@@ -325,6 +369,11 @@ void Test65C64MultiplyDivide(void)
 
 	//A 64 bit remainder shifted 4 bits needs 68 bits.
 	Test65C64DivideWidth(8, 8, 0xFFFFFFFFFFFFFFFFULL, 0xF000000000000001ULL, 1, 0x0FFFFFFFFFFFFFFEULL);
+
+	//128 by 64 bits, with the dividend's top half in B.
+	Test65C64DivideHighB(0x0123456789ABCDEFULL, 0xFEDCBA9876543210ULL, 0x0FEDCBA987654321ULL, 0x1249249249249247ULL, 0x0EB5B8284F51C1E9ULL);
+	Test65C64DivideHighB(0x000FFFFFFFFFFFFEULL, 0x8000000000000000ULL, 0x0010000000000001ULL, 0xFFFFFFFFFFFFD800ULL, 0x2800ULL);
+	Test65C64DivideHighB(0x000FFFFFFFFFFFFFULL, 0, 0x0010000000000000ULL, 0xFFFFFFFFFFFFF000ULL, 0);
 
 	C65C64InstructionFactory::GetInstance()->Kill();
 	DataIOKill();
