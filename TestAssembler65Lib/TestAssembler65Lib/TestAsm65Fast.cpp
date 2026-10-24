@@ -125,7 +125,9 @@ static size TestAsm65FastLockstep(CAsm65Output* pcOutput, uint32 uiResetAddress,
 
 	cFast.Kill();
 	cMeta.Kill();
+	pcFastMemory->Kill();
 	free(pcFastMemory);
+	pcSimMemory->Kill();
 	free(pcSimMemory);
 	return uiStep;
 }

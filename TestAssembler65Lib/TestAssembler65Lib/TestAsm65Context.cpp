@@ -203,5 +203,6 @@ void TestAsm65End(STestAsm65Run* psRun)
 {
 	AssertSize(0, psRun->pcContext->NumBadAccesses());
 	psRun->cMPU.Kill();
+	psRun->pcContext->Kill();
 	free(psRun->pcContext);
 }

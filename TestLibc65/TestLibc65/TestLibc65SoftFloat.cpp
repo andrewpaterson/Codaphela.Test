@@ -6,6 +6,8 @@
 
 
 //Libc65/softfloat.cpp compiled natively (TestLibc65SoftFloatReference.cpp).
+extern "C"
+{
 uint32_t	SoftFloatAdd(uint32_t uiA, uint32_t uiB);
 uint32_t	SoftFloatSubtract(uint32_t uiA, uint32_t uiB);
 uint32_t	SoftFloatMultiply(uint32_t uiA, uint32_t uiB);
@@ -36,6 +38,7 @@ uint32_t	SoftDoubleToUnsigned(uint64_t ulli);
 int64_t		SoftDoubleToLongLong(uint64_t ulli);
 uint64_t	SoftDoubleToUnsignedLongLong(uint64_t ulli);
 uint64_t	SoftDoubleSqrt(uint64_t ulli);
+}
 
 
 //Where the test program reads its arguments (8 bytes each, a double's second argument from
@@ -461,6 +464,7 @@ static void TestSoftFloatProgram(CChars* pszSource, const char* szName, ETestSof
 
 	pszSource->Init();
 	pszSource->Append("#include <stdint.h>\n");
+	pszSource->Append("extern \"C\" ");
 	pszSource->Append(aszDeclarations[eKind]);
 	pszSource->Append("int main(void)\n");
 	pszSource->Append("{\n");

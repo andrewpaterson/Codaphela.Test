@@ -172,6 +172,7 @@ void TestCPP65End(STestCPP65Run* psRun)
 {
 	AssertSize(0, psRun->pcContext->NumBadAccesses());
 	psRun->cMPU.Kill();
+	psRun->pcContext->Kill();
 	free(psRun->pcContext);
 	SafeKill(psRun->pcDrive);
 }
@@ -474,7 +475,8 @@ int32 TestCPP65RunProjectLockstep(const char** aszUnits, const char* szStubs, si
 
 	//The fast processor has run reset, which only reads memory.
 	pcSimMemory = (CAsm65Memory*)malloc(sizeof(CAsm65Memory));
-	memcpy(pcSimMemory, sRun.pcContext, sizeof(CAsm65Memory));
+	pcSimMemory->Init(sRun.pcContext->GetLowSize());
+	pcSimMemory->CopyFrom(sRun.pcContext);
 	cMeta.Init(CAsm65Memory::TickHigh, CAsm65Memory::TickLow, pcSimMemory);
 	cMeta.TickInstruction();
 	pcSim = cMeta.GetMPU();
@@ -530,6 +532,7 @@ int32 TestCPP65RunProjectLockstep(const char** aszUnits, const char* szStubs, si
 	iResult = (int32)pcFast->GetA();
 
 	cMeta.Kill();
+	pcSimMemory->Kill();
 	free(pcSimMemory);
 	TestCPP65End(&sRun);
 	return iResult;

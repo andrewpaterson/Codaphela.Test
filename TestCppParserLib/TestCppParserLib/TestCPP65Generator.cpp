@@ -321,9 +321,9 @@ void TestCPP65GeneratorAssembly(void)
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "int Add(int a, int b) { return a + b; }"));
 	AssertString("", szErrors.Text());
 	AssertString(
-		"\t\t.section text._Add\n"
-		"\t\t.global _Add\n"
-		"_Add:\n"
+		"\t\t.section text._Add__Fii\n"
+		"\t\t.global _Add__Fii\n"
+		"_Add__Fii:\n"
 		"\t\tpsh V\n"
 		"\t\tcpy V, S\n"
 		"\t\tcpy A, [9 + V]\n"
@@ -341,9 +341,9 @@ void TestCPP65GeneratorAssembly(void)
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "int gTotal = 5;\nvoid Count(char c) { int x = c; if (x > 3) gTotal += x; }"));
 	AssertString("", szErrors.Text());
 	AssertString(
-		"\t\t.section text._Count\n"
-		"\t\t.global _Count\n"
-		"_Count:\n"
+		"\t\t.section text._Count__Fc\n"
+		"\t\t.global _Count__Fc\n"
+		"_Count__Fc:\n"
 		"\t\tpsh V\n"
 		"\t\tsub S, 4\n"
 		"\t\tcpy V, S\n"
@@ -435,9 +435,9 @@ void TestCPP65GeneratorConvention(void)
 	szErrors.Init();
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "int f(int a, int b) { return (a + b) * (a - b); }"));
 	AssertString(
-		"\t\t.section text._f\n"
-		"\t\t.global _f\n"
-		"_f:\n"
+		"\t\t.section text._f__Fii\n"
+		"\t\t.global _f__Fii\n"
+		"_f__Fii:\n"
 		"\t\tpsh V\n"
 		"\t\tcpy V, S\n"
 		"\t\tcpy A, [9 + V]\n"
@@ -574,7 +574,8 @@ void TestCPP65GeneratorConversions(void)
 	AssertInt(20, TestCPP65Main("int main() { long long l = 0x200000000LL; switch (l) { case 1: return 10; case 0x200000000LL: return 20; default: return 30; } }"));
 	AssertInt(7, TestCPP65Main("struct D { int* p; ~D() { *p = 7; } };\nint g;\nlong long f() { D d; d.p = &g; return 0x500000000LL; }\nint main() { long long l = f(); return (l == 0x500000000LL) ? g : 0; }"));
 	AssertInt(1, TestCPP65Main("int main() { long long a[3]; a[0] = 1; a[1] = 0x100000000LL; a[2] = a[0] + a[1]; long long* p = &a[2]; return *p == 0x100000001LL && sizeof(a) == 24; }"));
-	AssertInt(1, TestCPP65Main("struct S { char c; long long l; int i; };\nint main() { S s; s.l = -2; s.i = 5; return s.l + s.i == 3 && sizeof(S) == 16; }"));
+	//A long long is 8 byte aligned in a class, as MSVC lays it out.
+	AssertInt(1, TestCPP65Main("struct S { char c; long long l; int i; };\nint main() { S s; s.l = -2; s.i = 5; return s.l + s.i == 3 && sizeof(S) == 24; }"));
 }
 
 
@@ -1059,7 +1060,7 @@ void TestCPP65GeneratorClasses(void)
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "struct A { int m; virtual int f() { return m; } };\nint Call(A* p) { return p->f(); }\nint Make() { A a; return Call(&a); }"));
 	AssertString("", szErrors.Text());
 	AssertTrue(szAssembly.Contains(
-		"_Call:\n"
+		"_Call__FPC1A:\n"
 		"\t\tpsh V\n"
 		"\t\tcpy V, S\n"
 		"\t\tcpy A, [9 + V]\n"
