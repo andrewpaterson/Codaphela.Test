@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Logicim version="1">
+  <Circuit>
+    <Ground name="" x="-8" y="-3" rotation="North"/>
+    <Inverter name="" x="-3" y="-2" rotation="West" family="LVC" explicitPowerPorts="false" inputCount="1" inputWidth="1"/>
+    <Ground name="" x="-4" y="3" rotation="North"/>
+    <Inverter name="" x="-3" y="3" rotation="West" family="LVC" explicitPowerPorts="false" inputCount="1" inputWidth="1"/>
+    <Trace x0="-8" y0="-3" x1="-4" y1="-3"/>
+    <Trace x0="-4" y0="-3" x1="-4" y1="-2"/>
+    <Trace x0="-1" y0="-2" x1="6" y1="-2"/>
+    <Trace x0="-1" y0="3" x1="6" y1="3"/>
+  </Circuit>
+</Logicim>

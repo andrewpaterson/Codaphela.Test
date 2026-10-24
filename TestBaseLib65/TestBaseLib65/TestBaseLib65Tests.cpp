@@ -3,6 +3,9 @@
 #include "BaseLib/TextFile.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/ArrayChars.h"
+#include "BaseLib/StringHelper.h"
+#include "BaseLib/ConstructorCall.h"
+#include "BaseLib/PointerFunctions.h"
 #include "Assembler65Lib/Asm65Memory.h"
 #include "Assembler65Lib/Asm65HostFiles.h"
 #include "MicroprocessorLib/Fast65C64.h"
@@ -73,7 +76,7 @@ static bool TestBaseLib65IsExcluded(const char* szTest)
 
 	for (i = 0; gaszTestBaseLib65Excluded[i]; i++)
 	{
-		if (strcmp(gaszTestBaseLib65Excluded[i], szTest) == 0)
+		if (StringCompare(gaszTestBaseLib65Excluded[i], szTest) == 0)
 		{
 			return true;
 		}
@@ -84,33 +87,64 @@ static bool TestBaseLib65IsExcluded(const char* szTest)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Whether szLine (in main) is a call to a test, Test...();.  pszName gets the test's name.
+//
+//////////////////////////////////////////////////////////////////////////
+static bool TestBaseLib65TestCall(const char* szLine, CChars* pszName)
+{
+	pszName->Init(szLine);
+	pszName->StripWhitespace();
+	if (pszName->StartsWith("Test") && pszName->EndsWith("();"))
+	{
+		pszName->RemoveFromEnd(3);
+		return true;
+	}
+	pszName->Kill();
+	return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Whether szLine starts main.
+//
+//////////////////////////////////////////////////////////////////////////
+static bool TestBaseLib65MainStart(const char* szLine)
+{
+	CChars	szStripped;
+	bool	bMain;
+
+	szStripped.Init(szLine);
+	szStripped.StripWhitespace();
+	bMain = szStripped.StartsWith("int __cdecl main");
+	szStripped.Kill();
+	return bMain;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Each test TestBaseLib.cpp's main calls, in order (once each).
 //
 //////////////////////////////////////////////////////////////////////////
 static void TestBaseLib65ListTests(CArrayChars* paszLines, CArrayChars* paszTests)
 {
-	CChars	szLine;
+	CChars	szName;
 	size	i;
 	bool	bMain;
 
 	bMain = false;
 	for (i = 0; i < paszLines->NumElements(); i++)
 	{
-		szLine.Init(paszLines->GetText(i));
-		szLine.StripWhitespace();
-		if (szLine.StartsWith("int __cdecl main"))
+		bMain |= TestBaseLib65MainStart(paszLines->GetText(i));
+		if (bMain && TestBaseLib65TestCall(paszLines->GetText(i), &szName))
 		{
-			bMain = true;
-		}
-		if (bMain && szLine.StartsWith("Test") && szLine.EndsWith("();"))
-		{
-			szLine.RemoveFromEnd(3);
-			if (!paszTests->Contains(szLine.Text()))
+			if (!paszTests->Contains(szName.Text()))
 			{
-				paszTests->Add(szLine.Text());
+				paszTests->Add(szName.Text());
 			}
+			szName.Kill();
 		}
-		szLine.Kill();
 	}
 }
 
@@ -123,8 +157,8 @@ static void TestBaseLib65ListTests(CArrayChars* paszLines, CArrayChars* paszTest
 //////////////////////////////////////////////////////////////////////////
 static void TestBaseLib65SingleTestMain(CArrayChars* paszLines, const char* szTest, CChars* pszDest)
 {
-	CChars	szLine;
 	CChars	szName;
+	char*	szLine;
 	size	i;
 	bool	bMain;
 	bool	bDone;
@@ -135,37 +169,27 @@ static void TestBaseLib65SingleTestMain(CArrayChars* paszLines, const char* szTe
 	bFastFunctions = false;
 	for (i = 0; i < paszLines->NumElements(); i++)
 	{
-		szLine.Init(paszLines->GetText(i));
-		szLine.StripWhitespace();
-		if (szLine.StartsWith("int __cdecl main"))
-		{
-			bMain = true;
-		}
-		if (bMain && szLine.Equals("FastFunctionsInit();"))
-		{
-			bFastFunctions = true;
-		}
+		szLine = paszLines->GetText(i);
+		bMain |= TestBaseLib65MainStart(szLine);
+		bFastFunctions |= bMain && (strstr(szLine, "FastFunctionsInit();") != NULL);
 
-		if (bMain && szLine.StartsWith("Test") && szLine.EndsWith("();"))
+		if (bMain && TestBaseLib65TestCall(szLine, &szName))
 		{
-			szName.Init(szLine.Text());
-			szName.RemoveFromEnd(3);
 			if (!bDone && szName.Equals(szTest))
 			{
 				if (!bFastFunctions)
 				{
 					pszDest->Append("\tFastFunctionsInit();\n");
 				}
-				pszDest->Append(paszLines->GetText(i))->AppendNewLine();
+				pszDest->Append(szLine)->AppendNewLine();
 				bDone = true;
 			}
 			szName.Kill();
 		}
 		else
 		{
-			pszDest->Append(paszLines->GetText(i))->AppendNewLine();
+			pszDest->Append(szLine)->AppendNewLine();
 		}
-		szLine.Kill();
 	}
 }
 
@@ -293,7 +317,7 @@ static bool TestBaseLib65Run(CCPP65Builder* pcBuilder, CChars* pszConsole)
 	uint64				uiSteps;
 	bool				bReturned;
 
-	pcMemory = (CAsm65Memory*)malloc(sizeof(CAsm65Memory));
+	pcMemory = NewMalloc<CAsm65Memory>();
 	pcMemory->Init(TEST_BASELIB65_MEMORY_SIZE);
 	pcMemory->LoadProgram(pcBuilder->GetOutput(), CPP65_PROGRAM_ADDRESS);
 	pcMemory->SetConsole(pszConsole);
@@ -312,8 +336,7 @@ static bool TestBaseLib65Run(CCPP65Builder* pcBuilder, CChars* pszConsole)
 
 	cMPU.Kill();
 	cHostFiles.Kill();
-	pcMemory->Kill();
-	free(pcMemory);
+	SafeKill(pcMemory);
 	return bReturned;
 }
 

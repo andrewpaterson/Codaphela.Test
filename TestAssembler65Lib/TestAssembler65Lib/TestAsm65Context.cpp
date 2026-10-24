@@ -1,5 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
+#include "BaseLib/PointerFunctions.h"
+#include "BaseLib/ConstructorCall.h"
 #include "BaseLib/TextFile.h"
 #include "TestLib/Assert.h"
 #include "TestAsm65Context.h"
@@ -100,7 +102,7 @@ bool TestAsm65Begin(STestAsm65Run* psRun, const char* szSource, uint32 uiResetAd
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65BeginOutput(STestAsm65Run* psRun, CAsm65Output* pcOutput, uint32 uiResetAddress)
 {
-	psRun->pcContext = (CAsm65Memory*)malloc(sizeof(CAsm65Memory));
+	psRun->pcContext = NewMalloc<CAsm65Memory>();
 	psRun->pcContext->Init();
 	psRun->uiInstructions = 0;
 	psRun->pcContext->LoadProgram(pcOutput, uiResetAddress);
@@ -203,6 +205,5 @@ void TestAsm65End(STestAsm65Run* psRun)
 {
 	AssertSize(0, psRun->pcContext->NumBadAccesses());
 	psRun->cMPU.Kill();
-	psRun->pcContext->Kill();
-	free(psRun->pcContext);
+	SafeKill(psRun->pcContext);
 }

@@ -153,3 +153,9 @@ TestLibc65/TestLibc65/Log.txt
 /TestLibc65/x64/Debug/*
 /TestLibc65/x64/Release/*
 /TestLibc65/TestLibc65/Post/*
+TestBaseLib65/TestBaseLib65/Post/*
+TestBaseLib65/TestBaseLib65/Output/*
+
+TestLogicimLib/TestLogicimLib/Log.txt
+
+TestBaseLib65/TestBaseLib65/Log.txt

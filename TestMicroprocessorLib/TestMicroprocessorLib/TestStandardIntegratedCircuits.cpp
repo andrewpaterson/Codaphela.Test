@@ -757,7 +757,7 @@ void TestStandardConstantAndProbe(void)
 	AssertString(PROBE_TYPE, pcProbe->GetType());
 	AssertLong(0, cBoard.Read(pcProbe));
 	cBoard.Start();
-	AssertLong(0xA5, pcConstant->GetConstantState()->GetConstantValue());
+	AssertLong(0xA5, pcConstant->GetConstantValue());
 	cBoard.Run();
 	AssertLong(0xA5, cBoard.Read(pcProbe));
 	AssertString("Output 7", pcConstant->GetConstantPins()->GetOutput(7)->GetName());
@@ -805,16 +805,14 @@ void TestStandardClock(void)
 	CClockOscillator*	pcClock;
 	CTrace*				pcOut;
 	CTrace*				pcOutInverse;
-	SLogConfig			sLogConfig;
 
 	cBoard.Init();
 	pcClock = AddClock(&cBoard, &pcOut, &pcOutInverse);
 	AssertLong(CLOCK_HALF_CYCLE, pcClock->GetHalfCycleTime());
 	AssertString(CLOCK_OSCILLATOR_TYPE, pcClock->GetType());
 
-	sLogConfig = gcLogger.SetSilent();
-	AssertFalse(IsVoltage(pcClock->GetInternalVoltage(0)));
-	gcLogger.SetConfig(&sLogConfig);
+	//Low until its first tick.
+	AssertFloat(0.2f, pcClock->GetInternalVoltage(0), 3);
 
 	cBoard.Start();
 	AssertFloat(0.2f, pcClock->GetInternalVoltage(0), 3);
@@ -936,7 +934,7 @@ void TestStandardDFlipFlop(void)
 
 	//Q and QB are not driven until the state first changes.
 	AssertInt(TV_Undriven, cBoard.Value(pcQ));
-	AssertFalse(pcFlipFlop->GetDTypeFlipFlopState()->GetState());
+	AssertFalse(pcFlipFlop->GetState());
 
 	//Rising clock takes D.
 	cBoard.Write(pcClock, true);
@@ -1133,7 +1131,7 @@ void TestStandardCounter(void)
 		}
 	}
 	AssertSize(0, uiFailures);
-	AssertInt(5, pcCounter->GetCounterState()->GetState());
+	AssertInt(5, pcCounter->GetCount());
 
 	sz.Init();
 	pcCounter->AppendCounterValueHex(&sz);

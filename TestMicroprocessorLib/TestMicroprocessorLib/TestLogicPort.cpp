@@ -66,7 +66,6 @@ public:
 	}
 
 	CTestBufferPins* GetBufferPins(void) { return (CTestBufferPins*)mpcPins; }
-	CState* CreateState(void) { return NewMalloc<CStateless>(); }
 	void SimulationStarted(CTimeline* pcTimeline) {}
 	const char* GetType(void) { return "Buffer"; }
 
@@ -95,20 +94,13 @@ public:
 // Toggles its output every period, from ticks.
 //
 //////////////////////////////////////////////////////////////////////////
-class CTestClockState : public CState
-{
-CONSTRUCTABLE(CTestClockState);
-public:
-	bool	mbHigh;
-	size	muiTicks;
-};
-
-
 class CTestClock : public CIntegratedCircuit
 {
 CONSTRUCTABLE(CTestClock);
 public:
 	int64	miPeriod;
+	bool	mbHigh;
+	size	muiTicks;
 
 	void Init(CSubcircuitSimulation* pcSimulation, const char* szName, CVoltageConfigurationSource* pcSource, int64 iPeriod)
 	{
@@ -118,20 +110,16 @@ public:
 		pcPins->Init(pcSource);
 		CIntegratedCircuit::Init(pcSimulation, szName, pcPins);
 		miPeriod = iPeriod;
+		ResetState();
 	}
 
-	CTestClockState* GetClockState(void) { return (CTestClockState*)mpcState; }
 	const char* GetType(void) { return "Clock"; }
 	void InputTransition(CTimeline* pcTimeline, CLogicPort* pcPort) {}
 
-	CState* CreateState(void)
+	void ResetState(void)
 	{
-		CTestClockState*	pcState;
-
-		pcState = NewMalloc<CTestClockState>();
-		pcState->mbHigh = false;
-		pcState->muiTicks = 0;
-		return pcState;
+		mbHigh = false;
+		muiTicks = 0;
 	}
 
 	void SimulationStarted(CTimeline* pcTimeline)
@@ -141,9 +129,9 @@ public:
 
 	void ExecuteTick(CTimeline* pcTimeline)
 	{
-		GetClockState()->mbHigh = !GetClockState()->mbHigh;
-		GetClockState()->muiTicks++;
-		((CTestBufferPins*)mpcPins)->mpcOut->Write(pcTimeline, GetClockState()->mbHigh);
+		mbHigh = !mbHigh;
+		muiTicks++;
+		((CTestBufferPins*)mpcPins)->mpcOut->Write(pcTimeline, mbHigh);
 		CTickEvent::Schedule(miPeriod, this, pcTimeline);
 	}
 };
@@ -299,7 +287,6 @@ void TestLogicPortSlewAndTransition(void)
 	pcBuffer = cTest.AddBuffer("U1", &cTest.mcFixed);
 	cTest.mcSimulation.SimulationStarted();
 	AssertTrue(pcBuffer->IsPowered(0));
-	AssertTrue(pcBuffer->IsStateless());
 
 	pcDriverOut = pcDriver->GetBufferPins()->mpcOut;
 	pcBufferIn = pcBuffer->GetBufferPins()->mpcIn;
@@ -678,8 +665,6 @@ void TestLogicPortTick(void)
 	CTestBuffer*		pcBuffer;
 	CTrace*				pcClockTrace;
 	CChars				sz;
-	SLogConfig			sLogConfig;
-	CStateless*			pcState;
 
 	cTest.Init();
 	pcClock = NewMalloc<CTestClock>();
@@ -691,11 +676,10 @@ void TestLogicPortTick(void)
 	pcBuffer->GetBufferPins()->mpcIn->Connect(pcClockTrace);
 
 	cTest.mcSimulation.SimulationStarted();
-	AssertFalse(pcClock->IsStateless());
 	AssertSize(1, pcClock->NumEvents());
 
 	cTest.mpcTimeline->RunToTime(45000);
-	AssertSize(4, pcClock->GetClockState()->muiTicks);
+	AssertSize(4, pcClock->muiTicks);
 	AssertLog("U1:1@10513;U1:0@21280;U1:1@31280;U1:0@41280;");
 
 	sz.Init();
@@ -703,12 +687,10 @@ void TestLogicPortTick(void)
 	AssertString("Clock \"Clock\"", sz.Text());
 	sz.Kill();
 
-	pcState = NewMalloc<CStateless>();
-	sLogConfig = gcLogger.SetSilent();
-	AssertFalse(pcClock->SetState(pcState));
-	AssertFalse(pcClock->SetState(NULL));
-	gcLogger.SetConfig(&sLogConfig);
-	SafeKill(pcState);
+	//Starting again resets what it remembers.
+	cTest.mcSimulation.SimulationStarted();
+	AssertSize(0, pcClock->muiTicks);
+	AssertFalse(pcClock->mbHigh);
 
 	cTest.Kill();
 }

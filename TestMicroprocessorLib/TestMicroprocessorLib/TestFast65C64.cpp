@@ -187,24 +187,6 @@ static void TestFast65C64ContextWriteByte(void* pvContext, uint32 uiAddress, uin
 //
 //
 //////////////////////////////////////////////////////////////////////////
-static void TestFast65C64CompareValue(CChars* psz, const char* szName, uint64 uiSim, uint64 uiFast)
-{
-	if (uiSim != uiFast)
-	{
-		psz->Append(" ");
-		psz->Append(szName);
-		psz->Append(" sim 0x");
-		psz->AppendHexHiLo(&uiSim, 8);
-		psz->Append(" fast 0x");
-		psz->AppendHexHiLo(&uiFast, 8);
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//////////////////////////////////////////////////////////////////////////
 static void TestFast65C64AppendValue(CChars* psz, const char* szName, uint64 uiValue)
 {
 	psz->Append(" ");
@@ -229,29 +211,6 @@ static void TestFast65C64AppendState(CChars* psz, C65C64* pcSim)
 	TestFast65C64AppendValue(psz, "W", pcSim->GetW());
 	TestFast65C64AppendValue(psz, "C", pcSim->GetProgramCounter());
 	TestFast65C64AppendValue(psz, "P", pcSim->GetP());
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-// Appends what differs to psz.
-//
-//////////////////////////////////////////////////////////////////////////
-static void TestFast65C64CompareState(CChars* psz, C65C64* pcSim, CFast65C64* pcFast)
-{
-	TestFast65C64CompareValue(psz, "A", pcSim->GetA(), pcFast->GetA());
-	TestFast65C64CompareValue(psz, "B", pcSim->GetB(), pcFast->GetB());
-	TestFast65C64CompareValue(psz, "X", pcSim->GetX(), pcFast->GetX());
-	TestFast65C64CompareValue(psz, "Y", pcSim->GetY(), pcFast->GetY());
-	TestFast65C64CompareValue(psz, "S", pcSim->GetS(), pcFast->GetS());
-	TestFast65C64CompareValue(psz, "V", pcSim->GetV(), pcFast->GetV());
-	TestFast65C64CompareValue(psz, "W", pcSim->GetW(), pcFast->GetW());
-	TestFast65C64CompareValue(psz, "C", pcSim->GetProgramCounter(), pcFast->GetProgramCounter());
-	TestFast65C64CompareValue(psz, "P", pcSim->GetP(), pcFast->GetP());
-	TestFast65C64CompareValue(psz, "Depth", pcSim->GetInterruptDepth(), pcFast->GetInterruptDepth());
-	TestFast65C64CompareValue(psz, "Stopped", pcSim->IsStopped(), pcFast->IsStopped());
-	TestFast65C64CompareValue(psz, "Waiting", pcSim->IsWaiting(), pcFast->IsWaiting());
-	TestFast65C64CompareValue(psz, "Pending", pcSim->GetPendingEdges(), pcFast->GetPendingEdges());
 }
 
 
@@ -355,7 +314,7 @@ void TestFast65C64Fuzz(bool bFlat, uint64 uiSeed)
 		cFast.TestSetP(uiP);
 
 		sz.Init();
-		TestFast65C64CompareState(&sz, pcSim, &cFast);
+		cFast.AppendDifferences(pcSim, &sz);
 		if (TestFast65C64Failed(&sz))
 		{
 			sz.Kill();
@@ -377,9 +336,9 @@ void TestFast65C64Fuzz(bool bFlat, uint64 uiSeed)
 			uiSteps++;
 
 			sz.Init();
-			TestFast65C64CompareState(&sz, pcSim, &cFast);
-			TestFast65C64CompareValue(&sz, "Running", bSim, bFast);
-			TestFast65C64CompareValue(&sz, "Cycles", uiSimCycles, uiFastCycles);
+			cFast.AppendDifferences(pcSim, &sz);
+			cFast.AppendDifference(&sz, "Running", bSim, bFast);
+			cFast.AppendDifference(&sz, "Cycles", uiSimCycles, uiFastCycles);
 			if (memcmp(psSimMemory->mauiBytes, psFastMemory->mauiBytes, TEST_FAST_65C64_FUZZ_SIZE) != 0)
 			{
 				sz.Append(" Memory differs");
@@ -467,10 +426,10 @@ static bool TestFast65C64Step(STestFast65C64Pair* psPair)
 	bFast = psPair->cFast.Step();
 
 	sz.Init();
-	TestFast65C64CompareState(&sz, psPair->cMeta.GetMPU(), &psPair->cFast);
-	TestFast65C64CompareValue(&sz, "Running", bSim, bFast);
-	TestFast65C64CompareValue(&sz, "Cycles", psPair->pcSimContext->muiTotalCycles, psPair->cFast.NumCycles() - psPair->uiFastResetCycles);
-	TestFast65C64CompareValue(&sz, "BadAccesses", psPair->pcSimContext->muiBadAccesses, psPair->pcFastContext->muiBadAccesses);
+	psPair->cFast.AppendDifferences(psPair->cMeta.GetMPU(), &sz);
+	psPair->cFast.AppendDifference(&sz, "Running", bSim, bFast);
+	psPair->cFast.AppendDifference(&sz, "Cycles", psPair->pcSimContext->muiTotalCycles, psPair->cFast.NumCycles() - psPair->uiFastResetCycles);
+	psPair->cFast.AppendDifference(&sz, "BadAccesses", psPair->pcSimContext->muiBadAccesses, psPair->pcFastContext->muiBadAccesses);
 	if ((memcmp(psPair->pcSimContext->mauiLow, psPair->pcFastContext->mauiLow, TEST_65C64_LOW_SIZE) != 0) ||
 		(memcmp(psPair->pcSimContext->mauiHigh, psPair->pcFastContext->mauiHigh, TEST_65C64_HIGH_SIZE) != 0))
 	{

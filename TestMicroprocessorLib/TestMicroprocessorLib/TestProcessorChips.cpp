@@ -154,7 +154,6 @@ public:
 
 	CTestRamPins* GetRamPins(void) { return (CTestRamPins*)mpcPins; }
 	const char* GetType(void) { return "Test RAM"; }
-	CState* CreateState(void) { return NewMalloc<CState>(); }
 	void SimulationStarted(CTimeline* pcTimeline) {}
 
 	void InputTransition(CTimeline* pcTimeline, CLogicPort* pcPort)
@@ -561,7 +560,6 @@ void TestProcessorChipsOscilloscope(void)
 	CTestBoard			cBoard;
 	COscilloscopePins*	pcPins;
 	COscilloscope*		pcScope;
-	COscilloscopeState*	pcState;
 	CTrace*				pcClock;
 	size				i;
 	size				uiHigh;
@@ -579,28 +577,27 @@ void TestProcessorChipsOscilloscope(void)
 	AssertLong(NanosecondsToTime((int64)10), pcScope->GetSampleTime());
 
 	cBoard.Start();
-	pcState = pcScope->GetOscilloscopeState();
-	AssertSize(2, pcState->GetInputCount());
-	AssertSize(100, pcState->GetSampleCount());
+	AssertSize(2, pcScope->GetInputCount());
+	AssertSize(100, pcScope->GetSampleCount());
 
 	//A microsecond is 100 samples, round to the start of the ring.
 	cBoard.mpcTimeline->RunToTime(NanosecondsToTime((int64)1000));
-	AssertSize(0, pcState->GetTickPosition());
+	AssertSize(0, pcScope->GetTickPosition());
 
 	uiHigh = 0;
 	uiLow = 0;
 	for (i = 0; i < 100; i++)
 	{
-		if (pcState->GetMaxVoltage(0, i) > 3.0f)
+		if (pcScope->GetMaxVoltage(0, i) > 3.0f)
 		{
 			uiHigh++;
 		}
-		else if (pcState->GetMaxVoltage(0, i) < 0.3f)
+		else if (pcScope->GetMaxVoltage(0, i) < 0.3f)
 		{
 			uiLow++;
 		}
-		AssertFloat(pcState->GetMaxVoltage(0, i), pcState->GetMinVoltage(0, i), 3);
-		AssertFloat(0.0f, pcState->GetMaxVoltage(1, i), 3);
+		AssertFloat(pcScope->GetMaxVoltage(0, i), pcScope->GetMinVoltage(0, i), 3);
+		AssertFloat(0.0f, pcScope->GetMaxVoltage(1, i), 3);
 	}
 	AssertTrue(uiHigh >= 40);
 	AssertTrue(uiLow >= 40);

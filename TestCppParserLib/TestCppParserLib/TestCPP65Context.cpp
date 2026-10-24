@@ -1,6 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
-#include "MicroprocessorLib/65C64Meta.h"
+#include "Assembler65Lib/Asm65Lockstep.h"
 #include "TestCPP65Context.h"
 #include "Assembler65Lib/Asm65Assembler.h"
 #include "BaseLib/TextFile.h"
@@ -95,7 +95,7 @@ bool TestCPP65BeginBuilt(STestCPP65Run* psRun, CCPP65Builder* pcBuilder)
 {
 	CArrayUint8*	pcImage;
 
-	psRun->pcContext = (CAsm65Memory*)malloc(sizeof(CAsm65Memory));
+	psRun->pcContext = NewMalloc<CAsm65Memory>();
 	psRun->pcContext->Init();
 	psRun->uiInstructions = 0;
 	psRun->pcContext->LoadProgram(pcBuilder->GetOutput(), CPP65_PROGRAM_ADDRESS);
@@ -172,8 +172,7 @@ void TestCPP65End(STestCPP65Run* psRun)
 {
 	AssertSize(0, psRun->pcContext->NumBadAccesses());
 	psRun->cMPU.Kill();
-	psRun->pcContext->Kill();
-	free(psRun->pcContext);
+	SafeKill(psRun->pcContext);
 	SafeKill(psRun->pcDrive);
 }
 
@@ -429,24 +428,6 @@ int32 TestCPP65RunProject(const char** aszUnits, const char* szStubs, size uiMax
 
 //////////////////////////////////////////////////////////////////////////
 //
-//
-//////////////////////////////////////////////////////////////////////////
-static void TestCPP65Compare(CChars* psz, const char* szName, uint64 uiSim, uint64 uiFast)
-{
-	if (uiSim != uiFast)
-	{
-		psz->Append(" ");
-		psz->Append(szName);
-		psz->Append(" sim 0x");
-		psz->AppendHexHiLo(&uiSim, 8);
-		psz->Append(" fast 0x");
-		psz->AppendHexHiLo(&uiFast, 8);
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-//
 // TestCPP65RunProject on CFast65C64 and C65C64 side by side, each with its own copy of memory.  The registers
 // must agree after every instruction and memory at the end.  *puiInstructions is how many instructions ran.
 //
@@ -454,86 +435,23 @@ static void TestCPP65Compare(CChars* psz, const char* szName, uint64 uiSim, uint
 int32 TestCPP65RunProjectLockstep(const char** aszUnits, const char* szStubs, size uiMaxInstructions, size* puiInstructions)
 {
 	STestCPP65Run	sRun;
-	CAsm65Memory*	pcSimMemory;
-	C65C64Meta		cMeta;
-	C65C64*			pcSim;
-	CFast65C64*		pcFast;
+	CAsm65Lockstep	cLockstep;
 	int32			iResult;
-	size			uiStep;
-	bool			bSim;
-	bool			bFast;
-	uint32			uiC;
-	CChars			sz;
-	CChars			szWhere;
 
-	iResult = 0;
 	*puiInstructions = 0;
 	if (!TestCPP65BeginProject(&sRun, aszUnits, szStubs))
 	{
 		return 0;
 	}
 
-	//The fast processor has run reset, which only reads memory.
-	pcSimMemory = (CAsm65Memory*)malloc(sizeof(CAsm65Memory));
-	pcSimMemory->Init(sRun.pcContext->GetLowSize());
-	pcSimMemory->CopyFrom(sRun.pcContext);
-	cMeta.Init(CAsm65Memory::TickHigh, CAsm65Memory::TickLow, pcSimMemory);
-	cMeta.TickInstruction();
-	pcSim = cMeta.GetMPU();
-	pcFast = TestCPP65MPU(&sRun);
+	cLockstep.Init(sRun.pcContext, &sRun.cMPU);
+	*puiInstructions = cLockstep.Run(uiMaxInstructions, 0);
+	AssertString("", cLockstep.GetDifferences());
+	cLockstep.Kill();
 
-	sz.Init();
-	bSim = true;
-	bFast = true;
-	for (uiStep = 0; (uiStep < uiMaxInstructions) && bSim && bFast; uiStep++)
-	{
-		uiC = pcSim->GetProgramCounter();
-		bSim = cMeta.TickInstruction();
-		bFast = pcFast->Step();
-
-		TestCPP65Compare(&sz, "A", pcSim->GetA(), pcFast->GetA());
-		TestCPP65Compare(&sz, "B", pcSim->GetB(), pcFast->GetB());
-		TestCPP65Compare(&sz, "X", pcSim->GetX(), pcFast->GetX());
-		TestCPP65Compare(&sz, "Y", pcSim->GetY(), pcFast->GetY());
-		TestCPP65Compare(&sz, "S", pcSim->GetS(), pcFast->GetS());
-		TestCPP65Compare(&sz, "V", pcSim->GetV(), pcFast->GetV());
-		TestCPP65Compare(&sz, "W", pcSim->GetW(), pcFast->GetW());
-		TestCPP65Compare(&sz, "C", pcSim->GetProgramCounter(), pcFast->GetProgramCounter());
-		TestCPP65Compare(&sz, "P", pcSim->GetP(), pcFast->GetP());
-		TestCPP65Compare(&sz, "Running", bSim, bFast);
-		if (!sz.Empty())
-		{
-			szWhere.Init("Step ");
-			szWhere.Append((int)uiStep);
-			szWhere.Append(" at 0x");
-			szWhere.AppendHexHiLo(&uiC, 4);
-			szWhere.Append(":");
-			sz.Insert(0, &szWhere);
-			szWhere.Kill();
-			break;
-		}
-	}
-
-	if (sz.Empty())
-	{
-		if ((memcmp(pcSimMemory->Byte(0), sRun.pcContext->Byte(0), ASM65_MEMORY_LOW_SIZE) != 0) ||
-			(memcmp(pcSimMemory->Byte(ASM65_MEMORY_HIGH_BASE), sRun.pcContext->Byte(ASM65_MEMORY_HIGH_BASE), ASM65_MEMORY_HIGH_SIZE) != 0))
-		{
-			sz.Append("Memory differs");
-		}
-		TestCPP65Compare(&sz, "BadAccesses", pcSimMemory->NumBadAccesses(), sRun.pcContext->NumBadAccesses());
-	}
-	AssertString("", sz.Text());
-	sz.Kill();
-
-	*puiInstructions = uiStep;
-	AssertTrue(pcFast->IsStopped());
-	AssertIntHex(CPP65_STACK_TOP, pcFast->GetS());
-	iResult = (int32)pcFast->GetA();
-
-	cMeta.Kill();
-	pcSimMemory->Kill();
-	free(pcSimMemory);
+	AssertTrue(sRun.cMPU.IsStopped());
+	AssertIntHex(CPP65_STACK_TOP, sRun.cMPU.GetS());
+	iResult = (int32)sRun.cMPU.GetA();
 	TestCPP65End(&sRun);
 	return iResult;
 }

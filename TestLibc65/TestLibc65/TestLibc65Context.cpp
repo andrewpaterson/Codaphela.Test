@@ -1,4 +1,6 @@
 #include <stdlib.h>
+#include "BaseLib/PointerFunctions.h"
+#include "BaseLib/ConstructorCall.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/ArrayChars.h"
 #include "CppParserLib/CPP65Generator.h"
@@ -65,7 +67,7 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 	psRun->pcMemory = NULL;
 	if (bResult)
 	{
-		psRun->pcMemory = (CAsm65Memory*)malloc(sizeof(CAsm65Memory));
+		psRun->pcMemory = NewMalloc<CAsm65Memory>();
 		psRun->pcMemory->Init();
 		psRun->pcMemory->LoadProgram(cBuilder.GetOutput(), CPP65_PROGRAM_ADDRESS);
 		psRun->pcMemory->InitFast(&psRun->cMPU);
@@ -152,9 +154,7 @@ void TestLibc65End(STestLibc65Run* psRun)
 	{
 		AssertSize(0, psRun->pcMemory->NumBadAccesses());
 		psRun->cMPU.Kill();
-		psRun->pcMemory->Kill();
-		free(psRun->pcMemory);
-		psRun->pcMemory = NULL;
+		SafeKill(psRun->pcMemory);
 	}
 }
 
