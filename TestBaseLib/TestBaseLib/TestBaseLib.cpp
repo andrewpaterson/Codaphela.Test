@@ -136,6 +136,7 @@ void TestPropertiesFile(void);
 void TestJSONParser(void);
 void TestXMLParser(void);
 void TestXMLFile(void);
+void TestXMLWriter(void);
 void TestLogFile(void);
 void TestDurableFile(void);
 void TestDurableSet(void);
@@ -325,6 +326,7 @@ int __cdecl main(void)
 	TestJSONParser();
 	TestXMLParser();
 	TestXMLFile();
+	TestXMLWriter();
 	TestFloatPrinter();
 	TestFunctionCaller();
 	TestLogFile();

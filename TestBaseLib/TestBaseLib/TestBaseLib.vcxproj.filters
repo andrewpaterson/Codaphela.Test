@@ -573,6 +573,9 @@
     <ClCompile Include="TestXMLFile.cpp">
       <Filter>Source\File\XML</Filter>
     </ClCompile>
+    <ClCompile Include="TestXMLWriter.cpp">
+      <Filter>Source\File\XML</Filter>
+    </ClCompile>
     <ClCompile Include="TestFunctionCaller.cpp">
       <Filter>Source\Function</Filter>
     </ClCompile>
