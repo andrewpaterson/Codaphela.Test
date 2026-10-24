@@ -454,8 +454,8 @@ void RenderCanvasDrawFrames(CWinRefWindowFactory* pcFactory, char* szDirectory, 
 		pMaps->AddMap(pTileMap);
 		paSpriteCels = ReadSpaceCels("SpaceCrusade", "SoulSucker.png", 8, 1, &cHelper);
 		pSpriteMap = OMalloc<CSpriteMap>();
-		pSpriteMap->AddSprite(OMalloc<CSprite>(paSpriteCels->Get(7), 2, 2));
-		pSpriteMap->AddSprite(OMalloc<CSprite>(paSpriteCels->Get(2), 9, 7));
+		pSpriteMap->AddSprite(paSpriteCels->Get(7), 2, 2);
+		pSpriteMap->AddSprite(paSpriteCels->Get(2), 9, 7);
 		pMaps->AddMap(pSpriteMap);
 		pMaps->SetViewportPosition(0, 0);
 

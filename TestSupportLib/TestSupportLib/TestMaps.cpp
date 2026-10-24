@@ -76,10 +76,10 @@ void TestMapsTinySpriteMap(void)
 		pSpriteMap = OMalloc<CSpriteMap>();
 		cMaps.AddMap(pSpriteMap);
 
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel1, 0, 0));
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel2, 4, 0));
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel3, 0, 4));
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel4, 4, 4));
+		pSpriteMap->AddSprite(pCel1, 0, 0);
+		pSpriteMap->AddSprite(pCel2, 4, 0);
+		pSpriteMap->AddSprite(pCel3, 0, 4);
+		pSpriteMap->AddSprite(pCel4, 4, 4);
 
 		AssertSize(4, pSpriteMap->NumSprites());
 
@@ -102,6 +102,101 @@ void TestMapsTinySpriteMap(void)
 
 		szOutputFilename.Kill();
 		szInputFilename.Kill();
+	}
+	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMapsSpriteMapSharedCels(void)
+{
+	ObjectsInit();
+	{
+		Ptr<CRoot>					pRoot;
+		Ptr<CArrayImageCel>			pCels;
+		Ptr<CSpriteMap>				pSpriteMap;
+		Ptr<CImageCel>				pCel1;
+		Ptr<CImageCel>				pCel2;
+		Ptr<CImage>					pViewport;
+		Ptr<CImageCelBlitterCache>	pCache;
+		Ptr<CImage>					pWholeMap;
+		CInt32Rect					cViewportRect;
+		SSprite*					psSprite;
+
+		ImageChannelDescriptorInit();
+
+		pRoot = ORoot();
+		pCels = TestReadCels("MapsSpriteMap", "TinySprites.png", 2, 2);
+		pRoot->Add(pCels);
+		pCel1 = pCels->Get(0);
+		pCel2 = pCels->Get(1);
+
+		pSpriteMap = OMalloc<CSpriteMap>();
+		pRoot->Add(pSpriteMap);
+
+		AssertFalse(pSpriteMap->AddSprite(NULL, 0, 0));
+		AssertTrue(pSpriteMap->AddSprite(pCel1, 0, 0));
+		AssertTrue(pSpriteMap->AddSprite(pCel2, 4, 0));
+		AssertTrue(pSpriteMap->AddSprite(pCel1, 0, 4));
+		AssertTrue(pSpriteMap->AddSprite(pCel1, 4, 4));
+
+		AssertSize(4, pSpriteMap->NumSprites());
+		AssertSize(2, pSpriteMap->NumCels());
+		AssertPointer(pCel1.Object(), pSpriteMap->GetCel(0).Object());
+		AssertPointer(pCel2.Object(), pSpriteMap->GetCel(1).Object());
+		psSprite = pSpriteMap->GetSprite(2);
+		AssertSize(0, psSprite->uiCel);
+		AssertInt(0, psSprite->sPosition.x);
+		AssertInt(4, psSprite->sPosition.y);
+		AssertSize(1, pSpriteMap->GetSprite(1)->uiCel);
+		AssertNull(pSpriteMap->GetSprite(4));
+
+		pWholeMap = pSpriteMap->WriteToImage();
+		AssertTrue(pWholeMap.IsNotNull());
+		AssertInt(8, pWholeMap->GetWidth());
+		AssertInt(8, pWholeMap->GetHeight());
+
+		pViewport = pSpriteMap->CreateViewportImage();
+		pSpriteMap->SetViewport(pViewport);
+		AssertFalse(pSpriteMap->HasCelBlitters());
+		pCache = pSpriteMap->CreateBlitterCache();
+		pSpriteMap->SetBlitterCache(pCache);
+		AssertFalse(pSpriteMap->HasCelBlitters());
+		cViewportRect.Init(0, 0, 8, 8);
+		AssertFalse(pSpriteMap->Blit(&cViewportRect, false));
+		AssertTrue(pSpriteMap->Blit(&cViewportRect, true));
+		AssertTrue(pSpriteMap->HasCelBlitters());
+		AssertSize(2, pCache->NumImageBlitters());
+		AssertTrue(pSpriteMap->Blit(&cViewportRect, false));
+
+		pSpriteMap->ClearCelBlitters();
+		AssertFalse(pSpriteMap->HasCelBlitters());
+		AssertTrue(pSpriteMap->CreateCelBlitters());
+		AssertTrue(pSpriteMap->HasCelBlitters());
+		AssertSize(2, pCache->NumImageBlitters());
+
+		pSpriteMap->Clear();
+		AssertSize(0, pSpriteMap->NumSprites());
+		AssertSize(0, pSpriteMap->NumCels());
+		AssertTrue(pSpriteMap->AddSprite(pCel2, 0, 0));
+		AssertSize(1, pSpriteMap->NumCels());
+		AssertPointer(pCel2.Object(), pSpriteMap->GetCel(0).Object());
+
+		pCache = NULL;
+		pViewport = NULL;
+		pWholeMap = NULL;
+		pRoot->Remove(pSpriteMap);
+		pRoot->Remove(pCels);
+		pSpriteMap = NULL;
+		pCels = NULL;
+		pCel1 = NULL;
+		pCel2 = NULL;
+		pRoot = NULL;
+
+		ImageChannelDescriptorKill();
 	}
 	ObjectsKill(false);
 }
@@ -309,12 +404,12 @@ void TestMapsSpriteMap(void)
 		pSpriteMap = OMalloc<CSpriteMap>();
 		cMaps.AddMap(pSpriteMap);
 
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel1, 18, 29));
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel2, 2, 36));
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel3, 31, 9));
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel4, 39, 27));
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel5, 11, 3));
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel6, 25, 19));
+		pSpriteMap->AddSprite(pCel1, 18, 29);
+		pSpriteMap->AddSprite(pCel2, 2, 36);
+		pSpriteMap->AddSprite(pCel3, 31, 9);
+		pSpriteMap->AddSprite(pCel4, 39, 27);
+		pSpriteMap->AddSprite(pCel5, 11, 3);
+		pSpriteMap->AddSprite(pCel6, 25, 19);
 
 		AssertSize(6, pSpriteMap->NumSprites());
 		
@@ -353,6 +448,7 @@ void TestMaps(void)
 	DataIOInit();
 
 	TestMapsTinySpriteMap();
+	TestMapsSpriteMapSharedCels();
 	TestMapsTileMap();
 	TestMapsSpriteMap();
 

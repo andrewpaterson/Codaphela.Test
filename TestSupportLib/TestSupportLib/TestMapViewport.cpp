@@ -84,12 +84,12 @@ void TestMapViewportBlit(void)
 		pSpriteMap = OMalloc<CSpriteMap>();
 		cMaps.AddMap(pSpriteMap);
 
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel1, 0, 0));
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel2, 16, 16));
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel3, 0, 32));
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel4, 32, 0));
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel5, 32, 32));
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pCel6, 48, 16));
+		pSpriteMap->AddSprite(pCel1, 0, 0);
+		pSpriteMap->AddSprite(pCel2, 16, 16);
+		pSpriteMap->AddSprite(pCel3, 0, 32);
+		pSpriteMap->AddSprite(pCel4, 32, 0);
+		pSpriteMap->AddSprite(pCel5, 32, 32);
+		pSpriteMap->AddSprite(pCel6, 48, 16);
 
 		bResult = cMaps.CreateCelBlitters();
 		AssertTrue(bResult);
@@ -172,7 +172,7 @@ void TestMapViewportBooleanLayer(void)
 		cMaps.AddMap(pTileMap);
 
 		pSpriteMap = OMalloc<CSpriteMap>();
-		pSpriteMap->AddSprite(OMalloc<CSprite>(pSoulSuckerCels->Get(7), 8, 8));
+		pSpriteMap->AddSprite(pSoulSuckerCels->Get(7), 8, 8);
 		cMaps.AddMap(pSpriteMap);
 
 		AssertTrue(pTileMap->UsesCelBlitters());
