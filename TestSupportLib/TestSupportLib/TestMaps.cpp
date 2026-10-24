@@ -198,6 +198,7 @@ void TestMapsSpriteMapSharedCels(void)
 
 		ImageChannelDescriptorKill();
 	}
+	ObjectsFlush();
 	ObjectsKill(false);
 }
 

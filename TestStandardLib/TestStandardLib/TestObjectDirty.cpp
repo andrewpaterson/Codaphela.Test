@@ -487,6 +487,69 @@ void TestObjectDirtyString(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestObjectDirtyChangeRoot(void)
+{
+	Ptr<CRoot>					pRoot;
+	Ptr<CTestObjectWithFields>	pObject;
+
+	TestObjectDirtyAddConstructors();
+
+	pRoot = ORoot();
+	pObject = OMalloc<CTestObjectWithFields>();
+	pRoot->Add(pObject);
+	pRoot->Remove(pObject);
+	AssertTrue(pRoot.IsDirty());
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Without a database there is nothing to save to so ObjectsFlush marks
+// the objects as saved.  A root changed and then killed without being
+// flushed is reported as dirty, even though its objects were removed.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestObjectDirtyKillRootWithoutDatabase(void)
+{
+	char			szLog[4096];
+	CLogToMemory	cLogToMemory;
+
+	MemoryInit();
+	TypesInit();
+	DataIOInit();
+
+
+	ObjectsInit();
+	TestObjectDirtyChangeRoot();
+
+	cLogToMemory.Start(true);
+	ObjectsKill(false);
+	cLogToMemory.Stop(szLog, 4096);
+	AssertNotNull(strstr(szLog, "Object [CRoot:1:\"GraphRoot\"] is dirty."));
+
+
+	ObjectsInit();
+	TestObjectDirtyChangeRoot();
+
+	AssertTrue(ObjectsFlush());
+	AssertFalse(ORoot().IsDirty());
+
+	cLogToMemory.Start(true);
+	ObjectsKill(false);
+	cLogToMemory.Stop(szLog, 4096);
+	AssertString("", szLog);
+
+
+	DataIOKill();
+	TypesKill();
+	MemoryKill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestObjectDirty(void)
 {
 	BeginTests();
@@ -496,6 +559,7 @@ void TestObjectDirty(void)
 	TestObjectDirtyOnPointerAssignment();
 	TestObjectDirtyOnPrimitiveAssignmentWithEmbedded();
 	TestObjectDirtyString();
+	TestObjectDirtyKillRootWithoutDatabase();
 
 	TestStatistics();
 }
