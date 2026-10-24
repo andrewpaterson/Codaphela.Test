@@ -112,6 +112,9 @@
     <ClCompile Include="Test65C64Vector.cpp">
       <Filter>Source\Codaphela\65C64</Filter>
     </ClCompile>
+    <ClCompile Include="TestFast65C64.cpp">
+      <Filter>Source\Codaphela\65C64</Filter>
+    </ClCompile>
     <ClCompile Include="TestTimeline.cpp">
       <Filter>Source</Filter>
     </ClCompile>

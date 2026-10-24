@@ -21,6 +21,9 @@
     <ClCompile Include="TestAsm65Encoding.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="TestAsm65Fast.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
     <ClCompile Include="TestAsm65Labels.cpp">
       <Filter>Source</Filter>
     </ClCompile>

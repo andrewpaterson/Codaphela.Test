@@ -105,8 +105,8 @@ void TestAsm65BeginOutput(STestAsm65Run* psRun, CAsm65Output* pcOutput, uint32 u
 	psRun->uiInstructions = 0;
 	psRun->pcContext->LoadProgram(pcOutput, uiResetAddress);
 
-	psRun->cMeta.Init(CAsm65Memory::TickHigh, CAsm65Memory::TickLow, psRun->pcContext);
-	psRun->cMeta.TickInstruction();
+	psRun->pcContext->InitFast(&psRun->cMPU);
+	psRun->cMPU.Reset();
 }
 
 
@@ -179,14 +179,7 @@ size TestAsm65Run(STestAsm65Run* psRun, size uiMaxInstructions)
 {
 	size	i;
 
-	for (i = 0; i < uiMaxInstructions; i++)
-	{
-		if (!psRun->cMeta.TickInstruction())
-		{
-			psRun->uiInstructions += i + 1;
-			return i + 1;
-		}
-	}
+	i = psRun->cMPU.Run(uiMaxInstructions);
 	psRun->uiInstructions += i;
 	return i;
 }
@@ -196,9 +189,9 @@ size TestAsm65Run(STestAsm65Run* psRun, size uiMaxInstructions)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-C65C64* TestAsm65MPU(STestAsm65Run* psRun)
+CFast65C64* TestAsm65MPU(STestAsm65Run* psRun)
 {
-	return psRun->cMeta.GetMPU();
+	return &psRun->cMPU;
 }
 
 
@@ -209,6 +202,6 @@ C65C64* TestAsm65MPU(STestAsm65Run* psRun)
 void TestAsm65End(STestAsm65Run* psRun)
 {
 	AssertSize(0, psRun->pcContext->NumBadAccesses());
-	psRun->cMeta.Kill();
+	psRun->cMPU.Kill();
 	free(psRun->pcContext);
 }

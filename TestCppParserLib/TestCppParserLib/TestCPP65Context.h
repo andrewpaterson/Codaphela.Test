@@ -1,6 +1,6 @@
 #ifndef __TEST_CPP65_CONTEXT_H__
 #define __TEST_CPP65_CONTEXT_H__
-#include "MicroprocessorLib/65C64Meta.h"
+#include "MicroprocessorLib/Fast65C64.h"
 #include "BaseLib/PrimitiveTypes.h"
 #include "BaseLib/Chars.h"
 #include "BaseLib/ArrayChars.h"
@@ -22,7 +22,7 @@ struct STestCPP65Run
 {
 	CAsm65Memory*	pcContext;
 	CMemoryDrive*	pcDrive;
-	C65C64Meta		cMeta;
+	CFast65C64		cMPU;
 	size			uiInstructions;
 	size			uiUnits;
 };
@@ -36,12 +36,13 @@ bool		TestCPP65Begin(STestCPP65Run* psRun, const char* szSource);
 bool		TestCPP65BeginAssembly(STestCPP65Run* psRun, const char* szAssembly);
 bool		TestCPP65BeginBuilt(STestCPP65Run* psRun, CCPP65Builder* pcBuilder);
 size		TestCPP65Run(STestCPP65Run* psRun, size uiMaxInstructions);
-C65C64*		TestCPP65MPU(STestCPP65Run* psRun);
+CFast65C64*	TestCPP65MPU(STestCPP65Run* psRun);
 void		TestCPP65End(STestCPP65Run* psRun);
 int32		TestCPP65Main(const char* szSource);
 int32		TestCPP65MainFile(const char* szFilename);
 bool		TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const char* szStubs, const char* szSource = NULL, CChars* pszMap = NULL, bool bLazy = false);
 int32		TestCPP65RunProject(const char** aszUnits, const char* szStubs, size uiMaxInstructions = 20000000, const char* szSource = NULL);
+int32		TestCPP65RunProjectLockstep(const char** aszUnits, const char* szStubs, size uiMaxInstructions, size* puiInstructions);
 int32		TestCPP65RunProjectLazy(const char** aszUnits, const char* szStubs, size* puiUnits, size* puiLoads, const char* szSource = NULL);
 int32		TestCPP65MainFloat(const char* szSource);
 size		TestCPP65CompileLibrary(const char* szLibrary, CChars* pszErrors);

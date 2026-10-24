@@ -2,7 +2,7 @@
 #define __TEST_ASM65_CONTEXT_H__
 #include "BaseLib/PrimitiveTypes.h"
 #include "BaseLib/Chars.h"
-#include "MicroprocessorLib/65C64Meta.h"
+#include "MicroprocessorLib/Fast65C64.h"
 #include "Assembler65Lib/Asm65Assembler.h"
 #include "Assembler65Lib/Asm65Linker.h"
 #include "Assembler65Lib/Asm65Memory.h"
@@ -12,7 +12,7 @@
 struct STestAsm65Run
 {
 	CAsm65Memory*	pcContext;
-	C65C64Meta		cMeta;
+	CFast65C64		cMPU;
 	size			uiInstructions;
 };
 
@@ -26,7 +26,7 @@ bool		TestAsm65BeginFile(STestAsm65Run* psRun, const char* szFilename, uint32 ui
 void		TestAsm65BeginOutput(STestAsm65Run* psRun, CAsm65Output* pcOutput, uint32 uiResetAddress);
 bool		TestAsm65BeginLinked(STestAsm65Run* psRun, const char* szSource, uint32 uiTextAddress);
 size		TestAsm65Run(STestAsm65Run* psRun, size uiMaxInstructions);
-C65C64*		TestAsm65MPU(STestAsm65Run* psRun);
+CFast65C64*	TestAsm65MPU(STestAsm65Run* psRun);
 void		TestAsm65End(STestAsm65Run* psRun);
 
 

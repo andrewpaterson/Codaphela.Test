@@ -233,6 +233,7 @@
     <ClCompile Include="TestAsm65Context.cpp" />
     <ClCompile Include="TestAsm65Tokeniser.cpp" />
     <ClCompile Include="TestAsm65Encoding.cpp" />
+    <ClCompile Include="TestAsm65Fast.cpp" />
     <ClCompile Include="TestAsm65Labels.cpp" />
     <ClCompile Include="TestAsm65Errors.cpp" />
     <ClCompile Include="TestAsm65Programs.cpp" />

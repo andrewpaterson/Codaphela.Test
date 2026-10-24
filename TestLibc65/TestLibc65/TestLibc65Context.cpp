@@ -68,8 +68,8 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 		psRun->pcMemory = (CAsm65Memory*)malloc(sizeof(CAsm65Memory));
 		psRun->pcMemory->Init();
 		psRun->pcMemory->LoadProgram(cBuilder.GetOutput(), CPP65_PROGRAM_ADDRESS);
-		psRun->cMeta.Init(CAsm65Memory::TickHigh, CAsm65Memory::TickLow, psRun->pcMemory);
-		psRun->cMeta.TickInstruction();
+		psRun->pcMemory->InitFast(&psRun->cMPU);
+		psRun->cMPU.Reset();
 	}
 
 	szMissing.Kill();
@@ -90,7 +90,7 @@ bool TestLibc65Run(STestLibc65Run* psRun, size uiMaxInstructions)
 {
 	if (TestLibc65RunToStop(psRun, uiMaxInstructions))
 	{
-		return psRun->cMeta.GetMPU()->GetS() == CPP65_STACK_TOP;
+		return psRun->cMPU.GetS() == CPP65_STACK_TOP;
 	}
 	return false;
 }
@@ -104,16 +104,8 @@ bool TestLibc65Run(STestLibc65Run* psRun, size uiMaxInstructions)
 //////////////////////////////////////////////////////////////////////////
 bool TestLibc65RunToStop(STestLibc65Run* psRun, size uiMaxInstructions)
 {
-	size	i;
-
-	for (i = 0; i < uiMaxInstructions; i++)
-	{
-		if (!psRun->cMeta.TickInstruction())
-		{
-			return true;
-		}
-	}
-	return false;
+	psRun->cMPU.Run(uiMaxInstructions);
+	return psRun->cMPU.IsStopped();
 }
 
 
@@ -124,7 +116,7 @@ bool TestLibc65RunToStop(STestLibc65Run* psRun, size uiMaxInstructions)
 //////////////////////////////////////////////////////////////////////////
 int32 TestLibc65Return(STestLibc65Run* psRun)
 {
-	return (int32)psRun->cMeta.GetMPU()->GetA();
+	return (int32)psRun->cMPU.GetA();
 }
 
 
@@ -159,7 +151,7 @@ void TestLibc65End(STestLibc65Run* psRun)
 	if (psRun->pcMemory)
 	{
 		AssertSize(0, psRun->pcMemory->NumBadAccesses());
-		psRun->cMeta.Kill();
+		psRun->cMPU.Kill();
 		free(psRun->pcMemory);
 		psRun->pcMemory = NULL;
 	}

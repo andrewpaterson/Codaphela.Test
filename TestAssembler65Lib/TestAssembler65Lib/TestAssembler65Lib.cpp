@@ -30,6 +30,7 @@ void TestAsm65Object(void);
 void TestAsm65Linker(void);
 void TestAsm65Drive(void);
 void TestAsm65Lazy(void);
+void TestAsm65Fast(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -72,6 +73,7 @@ int __cdecl main(void)
 	TestAsm65Linker();
 	TestAsm65Drive();
 	TestAsm65Lazy();
+	TestAsm65Fast();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
 	ObjectsKill(false);

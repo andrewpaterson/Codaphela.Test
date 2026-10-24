@@ -2385,6 +2385,30 @@ void TestCPP65GeneratorErrors(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// BaseLib projects (one with soft float) run on CFast65C64 and C65C64 in lockstep.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorLockstep(void)
+{
+	static const char*	aszMD5[] = { "BaseLib/MD5.cpp", "Libc65/string.cpp", "Input/CPP65/MD5Project/Main.cpp", NULL };
+	static const char*	aszSort[] = { "BaseLib/QuickSort.cpp", "BaseLib/BubbleSort.cpp", "BaseLib/BinarySearch.cpp", "Input/CPP65/SortProject/MemSwpStub.cpp", "Input/CPP65/SortProject/Main.cpp", NULL };
+	static const char*	aszRedBlackTree[] = { "BaseLib/RedBlackTree.cpp", "Libc65/string.cpp", "Libc65/stdlib.cpp", "Libc65/ctype.cpp", "Input/CPP65/RedBlackTreeProject/FreeListStub.cpp", "Input/CPP65/RedBlackTreeProject/Main.cpp", NULL };
+	static const char*	aszQuaternion[] = { "BaseLib/Quaternion.cpp", "Libc65/softfloat.cpp", "Libc65/softfloat.asm", "Input/CPP65/QuaternionProject/Main.cpp", NULL };
+	size				uiInstructions;
+
+	AssertInt(0x3F, TestCPP65RunProjectLockstep(aszMD5, "", 20000000, &uiInstructions));
+	AssertTrue(uiInstructions > 1000);
+	AssertInt(0x7, TestCPP65RunProjectLockstep(aszSort, "", 20000000, &uiInstructions));
+	AssertTrue(uiInstructions > 1000);
+	AssertInt(0xF, TestCPP65RunProjectLockstep(aszRedBlackTree, "", 20000000, &uiInstructions));
+	AssertTrue(uiInstructions > 1000);
+	TestCPP65RunProjectLockstep(aszQuaternion, "", 20000000, &uiInstructions);
+	AssertTrue(uiInstructions > 1000);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCPP65Generator(void)
@@ -2418,6 +2442,7 @@ void TestCPP65Generator(void)
 	TestCPP65GeneratorBaseLib();
 	TestCPP65GeneratorAllBaseLib();
 	TestCPP65GeneratorLazy();
+	TestCPP65GeneratorLockstep();
 	TestCPP65GeneratorErrors();
 
 	C65C64InstructionFactory::GetInstance()->Kill();

@@ -1,6 +1,6 @@
 #ifndef __TEST_LIBC65_CONTEXT_H__
 #define __TEST_LIBC65_CONTEXT_H__
-#include "MicroprocessorLib/65C64Meta.h"
+#include "MicroprocessorLib/Fast65C64.h"
 #include "BaseLib/PrimitiveTypes.h"
 #include "Assembler65Lib/Asm65Memory.h"
 
@@ -15,7 +15,7 @@
 struct STestLibc65Run
 {
 	CAsm65Memory*	pcMemory;
-	C65C64Meta		cMeta;
+	CFast65C64		cMPU;
 };
 
 
