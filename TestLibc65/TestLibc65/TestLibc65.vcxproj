@@ -242,6 +242,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestLibc65Context.h" />
+    <ClInclude Include="TestLibc65StringCases.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

@@ -1,5 +1,7 @@
+#include "BaseLib/TextFile.h"
 #include "TestLib/Assert.h"
 #include "TestLibc65Context.h"
+#include "TestLibc65StringCases.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -10,7 +12,7 @@
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65StringFunctions(void)
 {
-	static const char*	aszUnits[] = { "string.cpp", NULL };
+	static const char*	aszUnits[] = { "string.cpp", "string.asm", NULL };
 	static const int32	aiExpected[] =
 	{
 		0, 1, 11,								//strlen
@@ -99,6 +101,8 @@ void TestLibc65StringFunctions(void)
 		"	memcpy(pc + 80, \"0123456789\", 10);\n"
 		"	memmove(pc + 80, pc + 82, 6);\n"
 		"	memset(pc + 96, 0x141, 4);\n"
+		"	memcpy(pc + 112, \"0123456789ABCDEF\", 16);\n"
+		"	memmove(pc + 116, pc + 112, 10);\n"
 		"	return 0;\n"
 		"}\n"));
 	AssertTrue(TestLibc65Run(&sRun, 2000000));
@@ -116,6 +120,53 @@ void TestLibc65StringFunctions(void)
 	AssertMemory("0101234589", TestLibc65Bytes(&sRun, 64), 10);
 	AssertMemory("2345676789", TestLibc65Bytes(&sRun, 80), 10);
 	AssertMemory("AAAA\0", TestLibc65Bytes(&sRun, 96), 5);
+	AssertMemory("01230123456789EF", TestLibc65Bytes(&sRun, 112), 16);
+
+	TestLibc65End(&sRun);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// TestLibc65StringCases.h's random cases (any length, alignment and overlap, empty strings, bytes above $7F,
+// searches for the zero) give the same results with Libc65's string.asm on the 65C64 as with the host's C library.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLibc65StringRandomCases(void)
+{
+	static const char*	aszUnits[] = { "string.cpp", "string.asm", NULL };
+	STestLibc65Run		sRun;
+	CTextFile			cFile;
+	CChars				szSource;
+	unsigned char		aucA[STRING_CASES_BUFFER];
+	unsigned char		aucB[STRING_CASES_BUFFER];
+	int					aiResults[STRING_CASES_COUNT * 32];
+	int					iCount;
+	int					i;
+
+	cFile.Init();
+	AssertTrue(cFile.Read("TestLibc65StringCases.h"));
+	cFile.PassifyNewlines();
+	szSource.Init(cFile.Text());
+	cFile.Kill();
+	szSource.Append(
+		"int main()\n"
+		"{\n"
+		"	int*	p;\n"
+		"	p = (int*)0x100000;\n"
+		"	p[0] = RunStringCases(p + 1, (unsigned char*)0x110000, (unsigned char*)0x111000);\n"
+		"	return 0;\n"
+		"}\n");
+	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "", szSource.Text()));
+	szSource.Kill();
+	AssertTrue(TestLibc65Run(&sRun, 100000000));
+
+	iCount = RunStringCases(aiResults, aucA, aucB);
+	AssertInt(iCount, TestLibc65Result(&sRun, 0));
+	for (i = 0; i < iCount; i++)
+	{
+		AssertInt(aiResults[i], TestLibc65Result(&sRun, 1 + i));
+	}
 
 	TestLibc65End(&sRun);
 }
@@ -130,6 +181,7 @@ void TestLibc65String(void)
 	BeginTests();
 
 	TestLibc65StringFunctions();
+	TestLibc65StringRandomCases();
 
 	TestStatistics();
 }

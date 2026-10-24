@@ -15,14 +15,14 @@ Count	= $0100
 
 		.org $1000
 Start:
-		wtth (A, X), 4
-		wth Y, 4
-		wth B, 8
+		wtth (A, X), 32
+		wth Y, 32
+		wth B, 64
 		cpy B, $0101010101010101	; fill the sieve with 1s, 8 bytes a step
 		cpy V, Sieve
 		cpy A, N / 8 - 1		; the block copy runs until A goes negative
 		bcpy B, V, +1, A
-		wth B, 1				; B is one byte from here on
+		wth B, 8				; B is one byte from here on
 		cpy B, 0				; 0 and 1 are not prime
 		cpy [Sieve], B
 		cpy [Sieve + 1], B

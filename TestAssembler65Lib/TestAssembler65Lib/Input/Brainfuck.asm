@@ -13,9 +13,9 @@ Output	= $40000
 
 		.org $1000
 Start:
-		wth B, 1
-		wtth (A, X), 4
-		wth Y, 4
+		wth B, 8
+		wtth (A, X), 32
+		wth Y, 32
 		cpy V, Code
 		cpy W, Tape
 		cpy Y, Output

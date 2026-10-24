@@ -96,8 +96,8 @@ void TestAsm65LazyCalls(void)
 
 	AssertTrue(LazyBegin(&sTest, &sRun, LAZY_CODE_END, 16,
 		"	.section text, keep\n"
-		"	wtth (A, B), 4\n"
-		"	wtth (X, Y), 4\n"
+		"	wtth (A, B), 32\n"
+		"	wtth (X, Y), 32\n"
 		"	cpy A, 1\n"
 		"	jsr Twice\n"
 		"	jsr Twice\n"
@@ -141,8 +141,8 @@ void TestAsm65LazyAddresses(void)
 
 	AssertTrue(LazyBegin(&sTest, &sRun, LAZY_CODE_END, 16,
 		"	.section text, keep\n"
-		"	wtth (A, B), 4\n"
-		"	wtth (X, Y), 4\n"
+		"	wtth (A, B), 32\n"
+		"	wtth (X, Y), 32\n"
 		"	cpy A, 0\n"
 		"	cpy X, [Pointer]\n"
 		"	cmp X, Inner\n"
@@ -190,8 +190,8 @@ void TestAsm65LazyResident(void)
 
 	AssertTrue(LazyBegin(&sTest, &sRun, LAZY_CODE_END, 16,
 		"	.section text, keep\n"
-		"	wtth (A, B), 4\n"
-		"	wtth (X, Y), 4\n"
+		"	wtth (A, B), 32\n"
+		"	wtth (X, Y), 32\n"
 		"	cpy A, 3\n"
 		"	jsr Twice\n"
 		"	jsr Fixed\n"
@@ -229,8 +229,8 @@ void TestAsm65LazyFailures(void)
 
 	szStart =
 		"	.section text, keep\n"
-		"	wtth (A, B), 4\n"
-		"	wtth (X, Y), 4\n"
+		"	wtth (A, B), 32\n"
+		"	wtth (X, Y), 32\n"
 		"	jsr Big\n"
 		"	stp\n";
 	szBig =

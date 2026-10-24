@@ -369,6 +369,9 @@
     <ClCompile Include="TestFreeListAllocator.cpp">
       <Filter>Source\Memory\FreeList</Filter>
     </ClCompile>
+    <ClCompile Include="TestTrueMallocator.cpp">
+      <Filter>Source\Memory\FreeList</Filter>
+    </ClCompile>
     <ClCompile Include="TestTrackingAllocator.cpp">
       <Filter>Source\Memory\Manager</Filter>
     </ClCompile>

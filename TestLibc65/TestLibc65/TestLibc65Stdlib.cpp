@@ -21,7 +21,7 @@ struct STestLibc65Conversion
 //////////////////////////////////////////////////////////////////////////
 static void TestLibc65StdlibConversions(const char* szFunction, STestLibc65Conversion* asConversions, size uiConversions)
 {
-	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "ctype.cpp", NULL };
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "string.asm", "ctype.cpp", NULL };
 	STestLibc65Run		sRun;
 	CChars				szSource;
 	size				i;
@@ -137,7 +137,7 @@ static int32 TestLibc65Rand(void)
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65StdlibRand(void)
 {
-	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "ctype.cpp", NULL };
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "string.asm", "ctype.cpp", NULL };
 	STestLibc65Run		sRun;
 	size				i;
 	size				j;
@@ -187,7 +187,7 @@ void TestLibc65StdlibRand(void)
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65StdlibQsort(void)
 {
-	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "ctype.cpp", NULL };
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "string.asm", "ctype.cpp", NULL };
 	static const int32	aiAscending[] = { -2, 0, 1, 3, 3, 5, 5, 7, 8, 9 };
 	static const int32	aiDescending[] = { 9, 8, 7, 5, 5, 3, 3, 1, 0, -2 };
 	static const int32	aiPairs[] = { 1, 30, 2, 20, 3, 10 };
@@ -264,7 +264,7 @@ void TestLibc65StdlibQsort(void)
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65StdlibAllocation(void)
 {
-	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "ctype.cpp", NULL };
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "string.asm", "ctype.cpp", NULL };
 	STestLibc65Run		sRun;
 	size				i;
 
@@ -344,7 +344,7 @@ void TestLibc65StdlibAllocation(void)
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65StdlibAllocationOverflow(void)
 {
-	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "ctype.cpp", NULL };
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "string.asm", "ctype.cpp", NULL };
 	STestLibc65Run		sRun;
 	size				i;
 
@@ -385,7 +385,7 @@ void TestLibc65StdlibAllocationOverflow(void)
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65StdlibFragmentation(void)
 {
-	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "ctype.cpp", NULL };
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "string.asm", "ctype.cpp", NULL };
 	STestLibc65Run		sRun;
 
 	//Only one block is ever allocated, each a little bigger than the last, so the 512KB heap must not run out.
@@ -437,7 +437,7 @@ void TestLibc65StdlibFragmentation(void)
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65StdlibExit(void)
 {
-	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "ctype.cpp", NULL };
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "string.asm", "ctype.cpp", NULL };
 	STestLibc65Run		sRun;
 
 	//exit stops the program as returning from main would: the destructors of globals run and the status is
@@ -486,7 +486,7 @@ void TestLibc65StdlibExit(void)
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65StdlibUnderscoreExit(void)
 {
-	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "ctype.cpp", NULL };
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "string.asm", "ctype.cpp", NULL };
 	STestLibc65Run		sRun;
 
 	//_Exit stops at once with the status: the destructors of globals don't run.  gsFinal is marked used so
@@ -527,7 +527,7 @@ void TestLibc65StdlibUnderscoreExit(void)
 //////////////////////////////////////////////////////////////////////////
 static void TestLibc65StdlibAtExitProgram(STestLibc65Run* psRun, const char* szEnd)
 {
-	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "ctype.cpp", NULL };
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "string.asm", "ctype.cpp", NULL };
 	CChars				szSource;
 
 	szSource.Init(
@@ -582,7 +582,7 @@ static void TestLibc65StdlibAssertExitLog(STestLibc65Run* psRun)
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65StdlibAtExit(void)
 {
-	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "ctype.cpp", NULL };
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "string.asm", "ctype.cpp", NULL };
 	STestLibc65Run		sRun;
 
 	TestLibc65StdlibAtExitProgram(&sRun, "	return 5;\n");
@@ -651,7 +651,7 @@ void TestLibc65StdlibAbort(void)
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65StdlibSignal(void)
 {
-	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "ctype.cpp", "signal.cpp", NULL };
+	static const char*	aszUnits[] = { "stdlib.cpp", "string.cpp", "string.asm", "ctype.cpp", "signal.cpp", NULL };
 	STestLibc65Run		sRun;
 
 	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "",

@@ -17,8 +17,8 @@ Generation	= $0108
 
 		.org $1000
 Start:
-		wtth (A, X), 4
-		wth B, 1
+		wtth (A, X), 32
+		wth B, 8
 		cpy A, GENERATIONS
 		cpy [Generation], A
 

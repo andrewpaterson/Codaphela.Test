@@ -207,12 +207,17 @@ void TestAsm65EncodingState(void)
 {
 	AssertAsm("sep (c, n)", "0x091b");
 	AssertAsm("cep l", "0x405b");
-	AssertAsm("wth A, 4", "0x0b9b");
+	AssertAsm("wth A, 32", "0x0b9b");
+	AssertAsm("wth A, 8", "0x089b");
+	AssertAsm("wth A, 16", "0x099b");
+	AssertAsm("wth A, 64", "0x0f9b");
+	AssertAsm("wth A, 4", "ERRORS 2:8: A width is 8, 16, 32 or 64 bits '4'\n");
+	AssertAsm("wthx A, 24", "ERRORS 2:9: A width is 8, 16, 32 or 64 bits '24'\n");
 	AssertAsm("wth B, X", "0x469b");
-	AssertAsm("wtth (X, Y), 4", "0xbbdb");
+	AssertAsm("wtth (X, Y), 32", "0xbbdb");
 	AssertAsm("gwth Y, (A, -1)", "0x3cbb");
 	AssertAsm("gwth Y, A", "0x1cbb");
-	AssertAsm("wthx A, 4:s", "0x0bfb");
+	AssertAsm("wthx A, 32:s", "0x0bfb");
 	AssertAsm("mul", "0x000e");
 	AssertAsm("div", "0x004e");
 	AssertAsm("neg A, B", "0x228e");

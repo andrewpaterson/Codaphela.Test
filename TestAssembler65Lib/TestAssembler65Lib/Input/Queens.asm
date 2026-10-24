@@ -11,8 +11,8 @@ Count	= $0100
 
 		.org $1000
 Start:
-		wtth (A, B), 4
-		wtth (X, Y), 4
+		wtth (A, B), 32
+		wtth (X, Y), 32
 		cpy [Count], 0
 		cpy A, 0
 		cpy B, 0

@@ -11,8 +11,8 @@ Data	= $4000
 
 		.org $1000
 Start:
-		wtth (A, B), 4
-		wtth (X, Y), 4
+		wtth (A, B), 32
+		wtth (X, Y), 32
 		cpy V, Data				; fill Data
 		cpy X, SEED
 

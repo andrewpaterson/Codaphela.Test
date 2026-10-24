@@ -31,6 +31,7 @@ static void TestLibc65FullPath(CChars* pszDirectory, const char* szRelative)
 //
 // Compiles szSource and the Libc65 units (file names in commonlibraries/Libc65, NULL terminated) and links
 // the start up and szSource with the Libc65 units as a library (a unit is linked when something needs it).
+// BaseLib's TrueMallocator.cpp, which malloc uses, is in the library too.
 // Loads the program at reset.  The labels in szStubs (space separated, sorted) must be exactly the ones
 // used but defined by no linked unit; the linker makes each a stp so a call to one stops the program.
 //
@@ -40,6 +41,7 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 	CCPP65Builder	cBuilder;
 	CChars			szLibc65;
 	CChars			szLibraries;
+	CChars			szBaseLib;
 	CChars			szMissing;
 	size			i;
 	bool			bResult;
@@ -56,6 +58,9 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 	{
 		cBuilder.AddUnit("Libc65", szLibc65.Text(), aszUnits[i], true);
 	}
+	TestLibc65FullPath(&szBaseLib, TEST_LIBC65_LIBRARIES _FS_ "BaseLib");
+	cBuilder.AddUnit("BaseLib", szBaseLib.Text(), "TrueMallocator.cpp", true);
+	szBaseLib.Kill();
 	bResult &= cBuilder.Link();
 	AssertString("", cBuilder.GetErrors());
 

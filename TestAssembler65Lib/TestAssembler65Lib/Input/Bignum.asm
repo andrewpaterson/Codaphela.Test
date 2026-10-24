@@ -26,9 +26,9 @@ FibonacciText	= $0128
 
 		.org $1000
 Start:
-		wth A, 4
-		wth B, 1
-		wtth (X, Y), 8
+		wth A, 32
+		wth B, 8
+		wtth (X, Y), 64
 		cpy [Number], 1			; 1! = 1
 		cpy V, Number + 4
 		cpy [End], V

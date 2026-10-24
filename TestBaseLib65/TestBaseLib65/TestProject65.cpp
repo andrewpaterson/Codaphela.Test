@@ -40,7 +40,7 @@
 #define TEST_PROJECT65_MAX_STEPS		4000000000ULL
 
 
-static const char* gaszTestProject65Libc65[] = { "string.cpp", "stdlib.cpp", "ctype.cpp", "time.cpp", "math.cpp", "softfloat.cpp", "softfloat.asm", "new.cpp", "signal.cpp", "stdio.cpp", "host.cpp", NULL };
+static const char* gaszTestProject65Libc65[] = { "string.cpp", "string.asm", "stdlib.cpp", "ctype.cpp", "time.cpp", "math.cpp", "softfloat.cpp", "softfloat.asm", "new.cpp", "signal.cpp", "stdio.cpp", "host.cpp", NULL };
 
 
 //////////////////////////////////////////////////////////////////////////

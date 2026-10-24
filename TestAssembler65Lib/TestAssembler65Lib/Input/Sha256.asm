@@ -31,16 +31,16 @@ Schedule	= $3800				; W[0] to W[63]
 
 		.org $1000
 Start:
-		wtth (A, B), 4
-		wtth (X, Y), 4
+		wtth (A, B), 32
+		wtth (X, Y), 32
 		cpy W, Message			; Block = the message, $80, zeros, the length
 		cpy V, Block
 		cpy A, MESSAGE_LENGTH - 1
 		vcpy W, V, +1, A, 8
-		wth B, 1
+		wth B, 8
 		cpy B, $80
 		cpy [Block + MESSAGE_LENGTH], B
-		wth B, 4
+		wth B, 32
 		cpy A, MESSAGE_LENGTH * 8
 		jsr Swap
 		cpy [Block + BLOCKS * 64 - 4], B

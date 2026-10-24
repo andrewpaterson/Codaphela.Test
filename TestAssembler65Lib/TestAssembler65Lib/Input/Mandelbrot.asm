@@ -30,8 +30,8 @@ ROWS	= $0138
 
 		.org $1000
 Start:
-		wtth (A, B), 8
-		wtth (X, Y), 8
+		wtth (A, B), 64
+		wtth (X, Y), 64
 		cpy V, Image			; V points at the next pixel
 		cpy A, YMIN
 		cpy [CY], A

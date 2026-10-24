@@ -23,8 +23,8 @@ void TestAsm65ProgramsBlockMove(void)
 
 	AssertTrue(TestAsm65Begin(&sRun,
 		".org $1000\n"
-		"	wth A, 4\n"
-		"	wth B, 8\n"
+		"	wth A, 32\n"
+		"	wth B, 64\n"
 		"	pul (A, V, W), S\n"
 		"Loop:\n"
 		"	cpy B, [V + W]\n"
@@ -65,8 +65,8 @@ void TestAsm65ProgramsVectorMove(void)
 
 	AssertTrue(TestAsm65Begin(&sRun,
 		".org $1000\n"
-		"	wtth (X, Y), 4\n"
-		"	wth A, 4\n"
+		"	wtth (X, Y), 32\n"
+		"	wth A, 32\n"
 		"	pul (A, V, W), S\n"
 		"	vcpy W, V, +1, A, 64\n"
 		"	stp\n"
@@ -101,7 +101,7 @@ void TestAsm65ProgramsArithmeticShift(void)
 
 	AssertTrue(TestAsm65Begin(&sRun,
 		".org $1000\n"
-		"	wtth (A, X), 8\n"
+		"	wtth (A, X), 64\n"
 		"	cpy A, -64\n"
 		"	cpy X, 3\n"
 		"	shr A, X\n"
@@ -118,6 +118,32 @@ void TestAsm65ProgramsArithmeticShift(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A register operand to wth holds the width in bits, rounded up to 8, 16, 32 or 64.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestAsm65ProgramsRegisterWidth(void)
+{
+	STestAsm65Run	sRun;
+
+	AssertTrue(TestAsm65Begin(&sRun,
+		".org $1000\n"
+		"	cpy X, 16\n"
+		"	wth A, X\n"
+		"	gwth Y, A\n"
+		"	cpy X, 20\n"
+		"	wtth (A, B), X\n"
+		"	gwth X, B\n"
+		"	stp\n", 0x1000));
+
+	TestAsm65Run(&sRun, 20);
+	AssertLong(16, TestAsm65MPU(&sRun)->GetY());
+	AssertLong(32, TestAsm65MPU(&sRun)->GetX());
+	TestAsm65End(&sRun);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // A negative 16 bit immediate sign extends to A's width (32 bits here).
 //
 //////////////////////////////////////////////////////////////////////////
@@ -127,7 +153,7 @@ void TestAsm65ProgramsSignExtend(void)
 
 	AssertTrue(TestAsm65Begin(&sRun,
 		".org $1000\n"
-		"	wth A, 4\n"
+		"	wth A, 32\n"
 		"	cpy A, -32768:16\n"
 		"	stp\n", 0x1000));
 
@@ -148,7 +174,7 @@ void TestAsm65ProgramsStatusToBit(void)
 
 	AssertTrue(TestAsm65Begin(&sRun,
 		".org $1000\n"
-		"	wtth (A, X), 4\n"
+		"	wtth (A, X), 32\n"
 		"	cpy A, 0\n"
 		"	cpy X, 9\n"
 		"	stab (A, 31), 1\n"
@@ -173,10 +199,10 @@ void TestAsm65ProgramsSubroutine(void)
 
 	AssertTrue(TestAsm65Begin(&sRun,
 		".org $1000\n"
-		"	wtth (A, X), 8\n"
+		"	wtth (A, X), 64\n"
 		"	cpy X, 0\n"
 		"	jsr Sum\n"
-		"	wth A, 4\n"
+		"	wth A, 32\n"
 		"	psh A\n"
 		"	pul [Result]\n"
 		"	stp\n"
@@ -220,6 +246,7 @@ void TestAsm65Programs(void)
 	TestAsm65ProgramsVectorMove();
 	TestAsm65ProgramsArithmeticShift();
 	TestAsm65ProgramsSignExtend();
+	TestAsm65ProgramsRegisterWidth();
 	TestAsm65ProgramsStatusToBit();
 	TestAsm65ProgramsSubroutine();
 

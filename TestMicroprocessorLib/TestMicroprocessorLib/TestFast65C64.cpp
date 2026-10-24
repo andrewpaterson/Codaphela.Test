@@ -565,7 +565,7 @@ void TestFast65C64Unaligned(void)
 	pcContext->SetLong(0x2001, 0x00003001);
 	pcContext->SetQuad(0x3001, 0x1122334455667788ULL);
 
-	//wth A, 8; cpy A, [0000:2001] (indirect) then a push and pull of A on an even S.
+	//wth A, 64; cpy A, [0000:2001] (indirect) then a push and pull of A on an even S.
 	pcContext->Op(Op65Wth(R65_A, 8));
 	pcContext->OpLong(Op65M(C65_CPY, false, R65_A, OPERAND_MODE_ABSOLUTE_INDIRECT, R65_Zero), 0x2001);
 	pcContext->Op(Op65RE(C65_SUB, R65_S, 1));

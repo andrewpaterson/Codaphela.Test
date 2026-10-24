@@ -42,6 +42,9 @@
     <ClInclude Include="TestLibc65Context.h">
       <Filter>Source</Filter>
     </ClInclude>
+    <ClInclude Include="TestLibc65StringCases.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Log.txt" />

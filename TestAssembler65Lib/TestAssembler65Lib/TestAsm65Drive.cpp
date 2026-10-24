@@ -36,7 +36,7 @@ static void TestAsm65DriveCommand(CChars* pszSource, uint32 uiSector, uint32 uiA
 {
 	pszSource->Init(
 		"	.org $1000\n"
-		"	wtth (A, X), 4\n"
+		"	wtth (A, X), 32\n"
 		"	cpy A, ");
 	pszSource->Append(uiSector);
 	pszSource->Append("\n	cpy [$FF0000], A\n	cpy A, ");

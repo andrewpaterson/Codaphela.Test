@@ -22,7 +22,7 @@ void TestAsm65ErrorsStatements(void)
 		"	brk 2000\n"
 		"A:	nop\n"
 		"	cpy [$10], 100\n"
-		"	wth V, 2\n"
+		"	wth V, 16\n"
 		"	cpy A, B C\n"
 		"	add A, [V + W]\n"));
 	AssertString(

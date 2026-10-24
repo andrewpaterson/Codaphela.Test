@@ -79,6 +79,7 @@ void TestAllocator(void);
 void TestMemoryBlock(void);
 void TestFreeList(void);
 void TestFreeListAllocator(void);
+void TestTrueMallocator(void);
 void TestIndexTreeNodeMemory(void);
 void TestIndexTreeMemory(void);
 void TestIndexTreeMemoryIterator(void);
@@ -249,6 +250,7 @@ int __cdecl main(void)
 	TestAllocator();
 	TestFreeList();
 	TestFreeListAllocator();
+	TestTrueMallocator();
 	TestCharsHelper();
 	TestUTF8();
 	TestUTF16();

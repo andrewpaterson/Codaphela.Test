@@ -29,7 +29,7 @@ static const char* gaszTestBaseLib65Excluded[] =
 	"TestFat32",
 
 	//Expects a bigger block, malloc'ed after free, at another address (as MSVC and glibc give it).  Libc65's malloc
-	//gives back the block just freed at the top of the heap.
+	//joins the block just freed to the free memory after it, so the bigger block starts in the same place.
 	"TestTemporaryMemory",
 
 	NULL

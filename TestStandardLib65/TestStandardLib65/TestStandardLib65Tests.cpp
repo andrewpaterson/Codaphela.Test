@@ -15,9 +15,8 @@ static const char* gaszTestStandardLib65Libraries[] = { "TestLib", "StandardLib"
 //The tests that are not run.
 static const char* gaszTestStandardLib65Excluded[] =
 {
-	//Billions of instructions natively, more than the 4G instructions each program gets here (they pass when given
-	//longer: TestSetUnknown in 5.0G 65C64 instructions, TestCompressionZLib in 8.8G).
-	"TestSetUnknown",
+	//More than the 4G instructions each program gets here.  They pass when given longer: TestCompressionZLib in 5.1G
+	//65C64 instructions, TestMapObject in 9.7G, TestSetObject in 12.7G and TestArrayObject in 20.0G.
 	"TestCompressionZLib",
 	"TestArrayObject",
 	"TestSetObject",
@@ -40,8 +39,8 @@ void TestStandardLib65Tests(void)
 	sProject.szTestProject = "TestStandardLib";
 	sProject.aszLibraries = gaszTestStandardLib65Libraries;
 	sProject.aszExcluded = gaszTestStandardLib65Excluded;
-	sProject.uiMinPrograms = 56;
-	sProject.iMinTestsRun = 4758;
+	sProject.uiMinPrograms = 57;
+	sProject.iMinTestsRun = 4877;
 	TestProject65RunTests(&sProject);
 
 	TestStatistics();

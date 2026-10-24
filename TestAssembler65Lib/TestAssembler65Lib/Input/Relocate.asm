@@ -14,7 +14,7 @@ Where		= $0218				; C as the payload ran (the address after its psh C)
 
 		.org $1000
 Loader:
-		wth A, 4
+		wth A, 32
 		cpy W, Payload
 		cpy [Origin], W
 		cpy V, Destination
@@ -23,8 +23,8 @@ Loader:
 		jmp Destination
 
 Payload:
-		wtth (X, Y), 8
-		wtth (A, B), 8
+		wtth (X, Y), 64
+		wtth (A, B), 64
 		cpy X, 0
 		cpy Y, 100
 

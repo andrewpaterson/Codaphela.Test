@@ -185,7 +185,7 @@ void TestAsm65LinkerOffsetAddresses(void)
 	const char*		szSource;
 
 	szSource =
-		"	wth A, 4\n"
+		"	wth A, 32\n"
 		"	cpy A, [Value:16]\n"
 		"	add A, Value:16\n"
 		"	stp\n"
@@ -308,7 +308,7 @@ void TestAsm65LinkerInitFini(void)
 
 	LinkTestInit(&sTest);
 	LinkTestObject(&sTest,
-		"	wtth (A, X), 4\n"
+		"	wtth (A, X), 32\n"
 		"	cpy A, 0\n"
 		"	cpy X, __init_start\n"
 		"NextInit:\n"
@@ -372,7 +372,7 @@ void TestAsm65LinkerLibrary(void)
 
 	LinkTestInit(&sTest);
 	LinkTestObject(&sTest,
-		"	wth A, 4\n"
+		"	wth A, 32\n"
 		"	cpy A, 1\n"
 		"	jsr Outer\n"
 		"	stp\n");
@@ -521,7 +521,7 @@ void TestAsm65LinkerRemoveUnused(void)
 
 	szSource =
 		"	.section text, keep\n"
-		"	wtth (A, X), 4\n"
+		"	wtth (A, X), 32\n"
 		"	cpy A, 0\n"
 		"	cpy X, __init_start\n"
 		"NextInit:\n"
@@ -612,7 +612,7 @@ void TestAsm65LinkerRemoveUnusedLibrary(void)
 	sTest.cLinker.SetRemoveUnused(true);
 	LinkTestObject(&sTest,
 		"	.section text, keep\n"
-		"	wtth (A, X), 4\n"
+		"	wtth (A, X), 32\n"
 		"	cpy A, 0\n"
 		"	cpy X, __init_start\n"
 		"NextInit:\n"

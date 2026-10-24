@@ -347,10 +347,10 @@ void TestCPP65GeneratorAssembly(void)
 		"\t\tpsh V\n"
 		"\t\tsub S, 4\n"
 		"\t\tcpy V, S\n"
-		"\t\twth Y, 1\n"
+		"\t\twth Y, 8\n"
 		"\t\tcpy Y, [13 + V]\n"
 		"\t\tcpy A, Y:s\n"
-		"\t\twth Y, 4\n"
+		"\t\twth Y, 32\n"
 		"\t\tcpy [1 + V], A\n"
 		"\t\tcpy A, [1 + V]\n"
 		"\t\tcpy B, 3\n"
@@ -398,8 +398,8 @@ void TestCPP65GeneratorConvention(void)
 		"Start:\n"
 		"\t\tcpy S, $1fffff\n"
 		"\t\tcpy W, 0\n"
-		"\t\twtth (A, B), 4\n"
-		"\t\twtth (X, Y), 4\n"
+		"\t\twtth (A, B), 32\n"
+		"\t\twtth (X, Y), 32\n"
 		"\t\tcpy Y, __init_start\n"
 		"StartInitialise:\n"
 		"\t\tcmp Y, __init_end\n"
@@ -1953,7 +1953,7 @@ static void AssertCPP65FloatHelper(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCPP65GeneratorNewDelete(void)
 {
-	static const char*	aszUnits[] = { "Libc65/new.cpp", "Libc65/stdlib.cpp", "Libc65/string.cpp", "Libc65/ctype.cpp", NULL };
+	static const char*	aszUnits[] = { "Libc65/new.cpp", "Libc65/stdlib.cpp", "BaseLib/TrueMallocator.cpp", "Libc65/string.cpp", "Libc65/string.asm", "Libc65/ctype.cpp", NULL };
 
 	AssertInt(7, TestCPP65RunProject(aszUnits, "", 20000000, "int main() { int* p = new int(7); int r = *p; delete p; return r; }\n"));
 
@@ -2607,6 +2607,39 @@ void TestCPP65GeneratorStandardLibConstructs(void)
 		"\tr += giLive * 10000000;\n"
 		"\treturn r;\n"
 		"}\n"));
+
+	//memcpy (and __builtin_memcpy) of a constant number of bytes, up to 64, is copied in place: 8, 4, 2 and 1
+	//bytes at a time at any alignment, returning the destination.  Nothing calls memcpy, which isn't linked.
+	AssertInt(63, TestCPP65Main(
+		"#include <string.h>\n"
+		"unsigned char gaSource[80];\n"
+		"unsigned char gaDest[80];\n"
+		"int Same(int iDest, int iSource, int n)\n"
+		"{\n"
+		"\tfor (int i = 0; i < n; i++)\n"
+		"\t{\n"
+		"\t\tif (gaDest[iDest + i] != gaSource[iSource + i]) return 0;\n"
+		"\t}\n"
+		"\treturn (gaDest[iDest + n] == 0xEE) && ((iDest == 0) || (gaDest[iDest - 1] == 0xEE));\n"
+		"}\n"
+		"void Clear(void)\n"
+		"{\n"
+		"\tfor (int i = 0; i < 80; i++) gaDest[i] = 0xEE;\n"
+		"}\n"
+		"int main()\n"
+		"{\n"
+		"\tint r = 0;\n"
+		"\tvoid* pv;\n"
+		"\tunsigned long long ull;\n"
+		"\tfor (int i = 0; i < 80; i++) gaSource[i] = (unsigned char)(i * 7 + 1);\n"
+		"\tClear(); memcpy(gaDest + 3, gaSource + 1, 1); r += Same(3, 1, 1);\n"
+		"\tClear(); memcpy(gaDest + 5, gaSource + 1, 7); r += Same(5, 1, 7) * 2;\n"
+		"\tClear(); memcpy(gaDest + 1, gaSource + 2, 15); r += Same(1, 2, 15) * 4;\n"
+		"\tClear(); pv = __builtin_memcpy(gaDest + 2, gaSource + 1, 37); r += (Same(2, 1, 37) && (pv == gaDest + 2)) * 8;\n"
+		"\tClear(); pv = memcpy(gaDest, gaSource + 1, 64); r += (Same(0, 1, 64) && (pv == gaDest)) * 16;\n"
+		"\tmemcpy(&ull, gaSource + 3, sizeof(ull)); r += (ull == *(unsigned long long*)(gaSource + 3)) * 32;\n"
+		"\treturn r;\n"
+		"}\n"));
 }
 
 
@@ -2656,8 +2689,8 @@ void TestCPP65GeneratorAllStandardLib(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCPP65GeneratorLazy(void)
 {
-	static const char*	aszMD5[] = { "BaseLib/MD5.cpp", "Libc65/string.cpp", "Input/CPP65/MD5Project/Main.cpp", NULL };
-	static const char*	aszRedBlackTree[] = { "BaseLib/RedBlackTree.cpp", "Libc65/string.cpp", "Libc65/stdlib.cpp", "Libc65/ctype.cpp", "Input/CPP65/RedBlackTreeProject/FreeListStub.cpp", "Input/CPP65/RedBlackTreeProject/Main.cpp", NULL };
+	static const char*	aszMD5[] = { "BaseLib/MD5.cpp", "Libc65/string.cpp", "Libc65/string.asm", "Input/CPP65/MD5Project/Main.cpp", NULL };
+	static const char*	aszRedBlackTree[] = { "BaseLib/RedBlackTree.cpp", "Libc65/string.cpp", "Libc65/string.asm", "Libc65/stdlib.cpp", "BaseLib/TrueMallocator.cpp", "Libc65/ctype.cpp", "Input/CPP65/RedBlackTreeProject/FreeListStub.cpp", "Input/CPP65/RedBlackTreeProject/Main.cpp", NULL };
 	static const char*	aszSort[] = { "BaseLib/QuickSort.cpp", "BaseLib/BubbleSort.cpp", "BaseLib/BinarySearch.cpp", "Input/CPP65/SortProject/MemSwpStub.cpp", "Input/CPP65/SortProject/Main.cpp", NULL };
 	static const char*	aszFloat[] = { "Libc65/softfloat.cpp", "Libc65/softfloat.asm", NULL };
 	static const char*	aszNone[] = { NULL };
@@ -2696,10 +2729,10 @@ void TestCPP65GeneratorLazy(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCPP65GeneratorBaseLib(void)
 {
-	static const char*	aszMD5[] = { "BaseLib/MD5.cpp", "Libc65/string.cpp", "Input/CPP65/MD5Project/Main.cpp", NULL };
+	static const char*	aszMD5[] = { "BaseLib/MD5.cpp", "Libc65/string.cpp", "Libc65/string.asm", "Input/CPP65/MD5Project/Main.cpp", NULL };
 	static const char*	aszMersenneTwister[] = { "BaseLib/MersenneTwister.cpp", "Libc65/time.cpp", "Input/CPP65/MersenneTwisterProject/Main.cpp", NULL };
 	static const char*	aszSort[] = { "BaseLib/QuickSort.cpp", "BaseLib/BubbleSort.cpp", "BaseLib/BinarySearch.cpp", "Input/CPP65/SortProject/MemSwpStub.cpp", "Input/CPP65/SortProject/Main.cpp", NULL };
-	static const char*	aszRedBlackTree[] = { "BaseLib/RedBlackTree.cpp", "Libc65/string.cpp", "Libc65/stdlib.cpp", "Libc65/ctype.cpp", "Input/CPP65/RedBlackTreeProject/FreeListStub.cpp", "Input/CPP65/RedBlackTreeProject/Main.cpp", NULL };
+	static const char*	aszRedBlackTree[] = { "BaseLib/RedBlackTree.cpp", "Libc65/string.cpp", "Libc65/string.asm", "Libc65/stdlib.cpp", "BaseLib/TrueMallocator.cpp", "Libc65/ctype.cpp", "Input/CPP65/RedBlackTreeProject/FreeListStub.cpp", "Input/CPP65/RedBlackTreeProject/Main.cpp", NULL };
 
 	//MD5Dump makes a CChars, which is not compiled here, but nothing calls MD5Dump so it is left out.
 	AssertInt(0x3F, TestCPP65RunProject(aszMD5, ""));
@@ -2766,9 +2799,9 @@ void TestCPP65GeneratorErrors(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCPP65GeneratorLockstep(void)
 {
-	static const char*	aszMD5[] = { "BaseLib/MD5.cpp", "Libc65/string.cpp", "Input/CPP65/MD5Project/Main.cpp", NULL };
+	static const char*	aszMD5[] = { "BaseLib/MD5.cpp", "Libc65/string.cpp", "Libc65/string.asm", "Input/CPP65/MD5Project/Main.cpp", NULL };
 	static const char*	aszSort[] = { "BaseLib/QuickSort.cpp", "BaseLib/BubbleSort.cpp", "BaseLib/BinarySearch.cpp", "Input/CPP65/SortProject/MemSwpStub.cpp", "Input/CPP65/SortProject/Main.cpp", NULL };
-	static const char*	aszRedBlackTree[] = { "BaseLib/RedBlackTree.cpp", "Libc65/string.cpp", "Libc65/stdlib.cpp", "Libc65/ctype.cpp", "Input/CPP65/RedBlackTreeProject/FreeListStub.cpp", "Input/CPP65/RedBlackTreeProject/Main.cpp", NULL };
+	static const char*	aszRedBlackTree[] = { "BaseLib/RedBlackTree.cpp", "Libc65/string.cpp", "Libc65/string.asm", "Libc65/stdlib.cpp", "BaseLib/TrueMallocator.cpp", "Libc65/ctype.cpp", "Input/CPP65/RedBlackTreeProject/FreeListStub.cpp", "Input/CPP65/RedBlackTreeProject/Main.cpp", NULL };
 	static const char*	aszQuaternion[] = { "BaseLib/Quaternion.cpp", "Libc65/softfloat.cpp", "Libc65/softfloat.asm", "Input/CPP65/QuaternionProject/Main.cpp", NULL };
 	size				uiInstructions;
 

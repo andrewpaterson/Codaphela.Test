@@ -13,8 +13,8 @@ CompareSame		= $0120
 
 		.org $1000
 Start:
-		wth A, 4
-		wth B, 1
+		wth A, 32
+		wth B, 8
 
 ; strlen(Text): btst stops at the zero (D = [V] and $FF is zero).  V is then past it.
 		cpy B, $FF

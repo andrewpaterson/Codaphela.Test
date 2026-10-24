@@ -265,6 +265,7 @@
     <ClCompile Include="TestFloat64Vec3.cpp" />
     <ClCompile Include="TestFloatHelper.cpp" />
     <ClCompile Include="TestFreeListAllocator.cpp" />
+    <ClCompile Include="TestTrueMallocator.cpp" />
     <ClCompile Include="TestGlobalDataTypesIO.cpp" />
     <ClCompile Include="TestIndexBlock.cpp" />
     <ClCompile Include="TestIndexPtr.cpp" />
