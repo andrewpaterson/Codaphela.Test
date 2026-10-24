@@ -1,0 +1,16 @@
+-----------------------------------------------------------
+- Log File: [Log.txt]
+-----------------------------------------------------------
+
+--------------- /home/r2d2/Codaphela/test/TestLogicimLib/TestLogicimLib/TestLogicimLibBuild.cpp ---------------
+Tests Run: 3
+Passed: 3
+Failed: 0
+
+------------------------------ Total Results ------------------------------
+Total Tests Run: 3
+Total Passed: 3
+Total Failed: 0
+
+Total Time:   0.00s
+
