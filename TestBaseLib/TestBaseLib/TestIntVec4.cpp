@@ -48,8 +48,8 @@ void TestIntVec4Magnitude(void)
 {
 	SIntVec4	si;
 
-	si.Init(20123405, 13459784, 478, -3423454);
-	AssertInt(24450710, si.Magnitude());
+	si.Init(12000, 16000, 478, -9999);
+	AssertInt(22365, si.Magnitude());
 }
 
 

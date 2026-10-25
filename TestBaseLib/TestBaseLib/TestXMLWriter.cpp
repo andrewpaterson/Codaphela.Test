@@ -100,7 +100,7 @@ void TestXMLWriterReadBack(void)
 	AssertNotNull(pcItem);
 	AssertString("U1 <&> \"x\"", pcItem->GetStringAttribute("name"));
 	AssertTrue(pcItem->GetInt32Attribute("x", &i32));
-	AssertInt(-17, i32);
+	AssertInt((int32)-17, i32);
 	AssertTrue(pcItem->GetInt64Attribute("time", &i64));
 	AssertLong(123456789012LL, i64);
 	AssertTrue(pcItem->GetBoolAttribute("explicit", &b));

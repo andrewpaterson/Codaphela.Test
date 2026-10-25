@@ -73,12 +73,12 @@ void TestScratchPadAllocatorReadWrite(void)
 	cFile.Open(EFM_Read);
 
 	cFile.ReadInt32(&i);
-	AssertInt(789, i);
+	AssertInt((int32)789, i);
 
 	AssertTrue(cAllocIn.Read(&cFile));
 
 	cFile.ReadInt32(&i);
-	AssertInt(124, i);
+	AssertInt((int32)124, i);
 
 	AssertSize(0, cAllocIn.GetScratchPad()->GetMemorySize());
 	AssertSize(0, cAllocIn.GetScratchPad()->GetUsedSize());

@@ -71,22 +71,22 @@ void TestGeneralMemoryAdd(void)
 	AssertSize(4, psAlloc->uiSize);
 	AssertPointer(pcList, CFreeList::GetSlabNode(psAlloc)->pcList);
 	AssertPointer(pv1, pv4);
-	*((int*)pv4) = MEM_TEST_INT_1;
+	*((int32*)pv4) = MEM_TEST_INT_1;
 
 	pv5 = cMemory.Grow(pv4, 5);
 	psAlloc = GENERAL_MEMORY_GET_ALLOCATION(pv4);
 	AssertSize(5, psAlloc->uiSize);
 	AssertPointer(pcList, CFreeList::GetSlabNode(psAlloc)->pcList);
 	AssertPointer(pv1, pv5);
-	AssertInt(MEM_TEST_INT_1, *((int*)pv5));
+	AssertInt(MEM_TEST_INT_1, *((int32*)pv5));
 
 	pv8 = cMemory.Grow(pv5, 8);
 	psAlloc = GENERAL_MEMORY_GET_ALLOCATION(pv8);
 	AssertSize(8, psAlloc->uiSize);
 	AssertPointer(pcList, CFreeList::GetSlabNode(psAlloc)->pcList);
 	AssertPointer(pv1, pv8);
-	AssertInt(MEM_TEST_INT_1, *((int*)pv8));
-	((int*)pv8)[1] = MEM_TEST_INT_2;
+	AssertInt(MEM_TEST_INT_1, *((int32*)pv8));
+	((int32*)pv8)[1] = MEM_TEST_INT_2;
 
 	pv9 = cMemory.Grow(pv8, 9);
 	psAlloc = GENERAL_MEMORY_GET_ALLOCATION(pv9);
@@ -94,8 +94,8 @@ void TestGeneralMemoryAdd(void)
 	pcList = cMemory.GetFreeList(9, 4, 0);	AssertNotNull(pcList);
 	AssertPointer(pcList, CFreeList::GetSlabNode(psAlloc)->pcList);
 	AssertFalse(pv1 == pv9);
-	AssertInt(MEM_TEST_INT_1, *((int*)pv9));
-	AssertInt(MEM_TEST_INT_2, ((int*)pv9)[1]);
+	AssertInt(MEM_TEST_INT_1, *((int32*)pv9));
+	AssertInt(MEM_TEST_INT_2, ((int32*)pv9)[1]);
 	pcList = cMemory.GetFreeList(8, 4, 0);
 	AssertNotNull(pcList);
 	AssertSize(0, pcList->NumElements());
@@ -113,13 +113,13 @@ void TestGeneralMemoryAdd(void)
 	cMemory.Init();
 
 	pv4 = cMemory.Add(4);
-	*((int*)pv4) = MEM_TEST_INT_1;
+	*((int32*)pv4) = MEM_TEST_INT_1;
 	pv8 = cMemory.Grow(pv4, 8);
-	((int*)pv8)[1] = MEM_TEST_INT_2;
+	((int32*)pv8)[1] = MEM_TEST_INT_2;
 
 	pv = cMemory.Add(4);
-	*((int*)pv) = MEM_TEST_INT_1;
-	AssertInt(MEM_TEST_INT_2, ((int*)pv8)[1]);
+	*((int32*)pv) = MEM_TEST_INT_1;
+	AssertInt(MEM_TEST_INT_2, ((int32*)pv8)[1]);
 
 	cMemory.Kill();
 }

@@ -556,7 +556,7 @@ void TestMemoryManagerEmptyCache(void)
 	uiUsedSize = cMemory.GetUsedAllocationSize();
 	AssertInt((uint32)(64 KB) - uiExpectedTail, uiUsedSize);
 	uiUnusedSize = cMemory.GetUnusedAllocationSize();
-	AssertInt(0, uiUnusedSize);
+	AssertInt((uint32)0, uiUnusedSize);
 	AssertInt((uint32)(64 KB), uiRemainingSize + uiUsedSize + uiUnusedSize);
 
 	uiRemovals = 0;

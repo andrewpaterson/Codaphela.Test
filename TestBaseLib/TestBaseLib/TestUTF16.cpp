@@ -404,7 +404,7 @@ void TestUTF16Example6(void)
 	c32 = cUTF16.GetCodePointUint32();
 	AssertIntHex(0x1F9B0, c32);
 	c32 = cUTF16.GetCodePointUint32();
-	AssertIntHex(0, c32);
+	AssertIntHex((uint32)0, c32);
 
 	c32 = cUTF16.GetUTF16ElementUint32(0x1F469);
 	c32 = ReverseUTF16Endianness(c32);

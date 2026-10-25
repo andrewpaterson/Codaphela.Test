@@ -34,12 +34,12 @@ void TestFreeListAllocatorReadWrite(void)
 	cFile.Open(EFM_Read);
 
 	cFile.ReadInt32(&i);
-	AssertInt(789, i);
+	AssertInt((int32)789, i);
 
 	AssertTrue(cAllocIn.Read(&cFile));
 
 	cFile.ReadInt32(&i);
-	AssertInt(124, i);
+	AssertInt((int32)124, i);
 
 	AssertInt(16, cAllocIn.GetFreeList()->GetAlignment());
 	AssertInt(4, cAllocIn.GetFreeList()->GetOffset());

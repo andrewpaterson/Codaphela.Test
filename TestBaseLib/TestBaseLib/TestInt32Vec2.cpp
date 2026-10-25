@@ -16,8 +16,8 @@ void TestInt32Vec2Add(void)
 
 	sia += sib;
 
-	AssertInt(5, sia.x);
-	AssertInt(5, sia.y);
+	AssertInt((int32)5, sia.x);
+	AssertInt((int32)5, sia.y);
 }
 
 

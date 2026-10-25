@@ -64,14 +64,14 @@ void TestLineDirection(void)
 	AssertInt(LD_North, cLine.GetDirection());
 	AssertTrue(cLine.IsNorthSouth());
 	AssertFalse(cLine.IsEastWest());
-	AssertInt(0, cLine.GetX());
+	AssertInt((int32)0, cLine.GetX());
 	cLine.Init(0, 5, 0, 0);
 	AssertInt(LD_South, cLine.GetDirection());
 	cLine.Init(0, 0, 5, 0);
 	AssertInt(LD_West, cLine.GetDirection());
 	AssertTrue(cLine.IsEastWest());
 	AssertFalse(cLine.IsNorthSouth());
-	AssertInt(0, cLine.GetY());
+	AssertInt((int32)0, cLine.GetY());
 	cLine.Init(5, 0, 0, 0);
 	AssertInt(LD_East, cLine.GetDirection());
 	cLine.Init(0, 0, 1, 1);
@@ -95,22 +95,22 @@ void TestLineDirection(void)
 	AssertLine("(3, 4) -> (3, -2)", &cLine);
 	AssertInt(LD_South, cLine.GetDirection());
 
-	AssertInt(3, cLine.GetMinimumX());
-	AssertInt(3, cLine.GetMaximumX());
-	AssertInt(-2, cLine.GetMinimumY());
-	AssertInt(4, cLine.GetMaximumY());
-	AssertInt(6, cLine.GetLength());
+	AssertInt((int32)3, cLine.GetMinimumX());
+	AssertInt((int32)3, cLine.GetMaximumX());
+	AssertInt((int32)-2, cLine.GetMinimumY());
+	AssertInt((int32)4, cLine.GetMaximumY());
+	AssertInt((int32)6, cLine.GetLength());
 	cLine.GetCenter(&sPosition);
-	AssertInt(3, sPosition.x);
-	AssertInt(1, sPosition.y);
+	AssertInt((int32)3, sPosition.x);
+	AssertInt((int32)1, sPosition.y);
 	cLine.GetBoundingBox(&sPosition, &sDimension);
-	AssertInt(3, sPosition.x);
-	AssertInt(-2, sPosition.y);
-	AssertInt(0, sDimension.x);
-	AssertInt(6, sDimension.y);
+	AssertInt((int32)3, sPosition.x);
+	AssertInt((int32)-2, sPosition.y);
+	AssertInt((int32)0, sDimension.x);
+	AssertInt((int32)6, sDimension.y);
 
 	cLine.Init(0, 0, 3, 4);
-	AssertInt(5, cLine.GetLength());
+	AssertInt((int32)5, cLine.GetLength());
 }
 
 
@@ -205,15 +205,15 @@ void TestLineOverlap(void)
 
 	cLine.Init(0, 0, 10, 0);
 	cOther.Init(5, 0, 15, 0);
-	AssertInt(5, LineOverlapLength(&cLine, &cOther));
+	AssertInt((int32)5, LineOverlapLength(&cLine, &cOther));
 	cOther.Init(-5, 0, 3, 0);
-	AssertInt(3, LineOverlapLength(&cLine, &cOther));
+	AssertInt((int32)3, LineOverlapLength(&cLine, &cOther));
 	cOther.Init(2, 0, 4, 0);
-	AssertInt(2, LineOverlapLength(&cLine, &cOther));
+	AssertInt((int32)2, LineOverlapLength(&cLine, &cOther));
 	cOther.Init(2, 1, 4, 1);
-	AssertInt(0, LineOverlapLength(&cLine, &cOther));
+	AssertInt((int32)0, LineOverlapLength(&cLine, &cOther));
 	cOther.Init(2, 0, 2, 4);
-	AssertInt(0, LineOverlapLength(&cLine, &cOther));
+	AssertInt((int32)0, LineOverlapLength(&cLine, &cOther));
 }
 
 
@@ -366,14 +366,14 @@ void TestLinePositions(void)
 	AssertSize(2, cPositions.NumColumns());
 	AssertSize(4, cPositions.NumPositions());
 	pcColumn = cPositions.GetColumn(0);
-	AssertInt(0, pcColumn->GetX());
+	AssertInt((int32)0, pcColumn->GetX());
 	AssertSize(2, pcColumn->NumYs());
-	AssertInt(0, pcColumn->GetY(0));
-	AssertInt(3, pcColumn->GetY(1));
+	AssertInt((int32)0, pcColumn->GetY(0));
+	AssertInt((int32)3, pcColumn->GetY(1));
 	pcColumn = cPositions.GetColumn(1);
-	AssertInt(4, pcColumn->GetX());
-	AssertInt(0, pcColumn->GetY(0));
-	AssertInt(3, pcColumn->GetY(1));
+	AssertInt((int32)4, pcColumn->GetX());
+	AssertInt((int32)0, pcColumn->GetY(0));
+	AssertInt((int32)3, pcColumn->GetY(1));
 	cPositions.Kill();
 
 	cPositions.Init();
@@ -383,19 +383,19 @@ void TestLinePositions(void)
 	cPositions.Add(-1, 7);
 	AssertSize(2, cPositions.NumColumns());
 	AssertSize(3, cPositions.NumPositions());
-	AssertInt(5, cPositions.GetColumn(0)->GetX());
-	AssertInt(2, cPositions.GetColumn(0)->GetY(0));
-	AssertInt(-4, cPositions.GetColumn(0)->GetY(1));
+	AssertInt((int32)5, cPositions.GetColumn(0)->GetX());
+	AssertInt((int32)2, cPositions.GetColumn(0)->GetY(0));
+	AssertInt((int32)-4, cPositions.GetColumn(0)->GetY(1));
 
 	asPositions.Init();
 	cPositions.CalculatePositions(&asPositions);
 	AssertSize(3, asPositions.NumElements());
-	AssertInt(-1, asPositions.Get(0)->x);
-	AssertInt(7, asPositions.Get(0)->y);
-	AssertInt(5, asPositions.Get(1)->x);
-	AssertInt(-4, asPositions.Get(1)->y);
-	AssertInt(5, asPositions.Get(2)->x);
-	AssertInt(2, asPositions.Get(2)->y);
+	AssertInt((int32)-1, asPositions.Get(0)->x);
+	AssertInt((int32)7, asPositions.Get(0)->y);
+	AssertInt((int32)5, asPositions.Get(1)->x);
+	AssertInt((int32)-4, asPositions.Get(1)->y);
+	AssertInt((int32)5, asPositions.Get(2)->x);
+	AssertInt((int32)2, asPositions.Get(2)->y);
 	asPositions.Kill();
 	cPositions.Kill();
 }
@@ -474,8 +474,8 @@ void TestLineSplitter(void)
 	asJunctions.Init();
 	CalculateLineJunctions(&cPositions, &cCache, &asJunctions);
 	AssertSize(1, asJunctions.NumElements());
-	AssertInt(5, asJunctions.Get(0)->x);
-	AssertInt(0, asJunctions.Get(0)->y);
+	AssertInt((int32)5, asJunctions.Get(0)->x);
+	AssertInt((int32)0, asJunctions.Get(0)->y);
 
 	asJunctions.ReInit();
 	asJunctions.Add()->Init(8, 0);

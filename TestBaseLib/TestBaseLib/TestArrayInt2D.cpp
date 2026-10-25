@@ -92,7 +92,7 @@ void TestArrayInt2DInsertion(void)
 
 	cArray.SetSize(20, 20);
 	AssertSize(400, cArray.mcArray.NumElements());
-	cArray.Fill(0, 0, 20, 20, 0x3e987c34);
+	cArray.Fill(0, 0, 20, 20, 0x7C34);
 
 	cArray.AddColumn();
 	cArray.Set(20, 0, 0);
@@ -100,7 +100,7 @@ void TestArrayInt2DInsertion(void)
 	for (x = 0; x < 20; x++)
 	{
 		iValue = cArray.Get(x, 0);
-		AssertInt(0x3e987c34, iValue);
+		AssertInt(0x7C34, iValue);
 	}
 	iValue = cArray.Get(20, 0);
 	AssertInt(0, iValue);
@@ -113,7 +113,7 @@ void TestArrayInt2DInsertion(void)
 		if (x != 10)
 		{
 			iValue = cArray.Get(x, 0);
-			AssertInt(0x3e987c34, iValue);
+			AssertInt(0x7C34, iValue);
 		}
 	}
 	iValue = cArray.Get(21, 0);
@@ -127,7 +127,7 @@ void TestArrayInt2DInsertion(void)
 	for (y = 0; y < 20; y++)
 	{
 		iValue = cArray.Get(0, y);
-		AssertInt(0x3e987c34, iValue);
+		AssertInt(0x7C34, iValue);
 	}
 	iValue = cArray.Get(0, 20);
 	AssertInt(0, iValue);
@@ -140,7 +140,7 @@ void TestArrayInt2DInsertion(void)
 		if (y != 10)
 		{
 			iValue = cArray.Get(0, y);
-			AssertInt(0x3e987c34, iValue);
+			AssertInt(0x7C34, iValue);
 		}
 	}
 	iValue = cArray.Get(0, 21);

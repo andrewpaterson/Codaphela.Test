@@ -123,7 +123,7 @@ void TestRedBlackTreeAdd(void)
 	AssertNull(AddTestRedBlackTreeItem(&cTree, 30, -1));
 	AssertSize(1000, cTree.NumElements());
 	iTime = 30;
-	AssertInt(10, cTree.Get(&iTime)->iValue);
+	AssertInt((int32)10, cTree.Get(&iTime)->iValue);
 
 	iTime = 31;
 	AssertNull(cTree.Get(&iTime));
@@ -142,7 +142,7 @@ void TestRedBlackTreeAdd(void)
 		i++;
 		psItem = cTree.Iterate(&sIter);
 	}
-	AssertInt(1000, i);
+	AssertInt((int32)1000, i);
 
 	cTree.Kill();
 
@@ -174,23 +174,23 @@ void TestRedBlackTreeFind(void)
 
 	iTime = 5;
 	AssertNull(cTree.GetOnOrBefore(&iTime));
-	AssertInt(1, cTree.GetOnOrAfter(&iTime)->iValue);
+	AssertInt((int32)1, cTree.GetOnOrAfter(&iTime)->iValue);
 	iTime = 10;
-	AssertInt(1, cTree.GetOnOrBefore(&iTime)->iValue);
-	AssertInt(1, cTree.GetOnOrAfter(&iTime)->iValue);
+	AssertInt((int32)1, cTree.GetOnOrBefore(&iTime)->iValue);
+	AssertInt((int32)1, cTree.GetOnOrAfter(&iTime)->iValue);
 	iTime = 15;
-	AssertInt(1, cTree.GetOnOrBefore(&iTime)->iValue);
-	AssertInt(2, cTree.GetOnOrAfter(&iTime)->iValue);
+	AssertInt((int32)1, cTree.GetOnOrBefore(&iTime)->iValue);
+	AssertInt((int32)2, cTree.GetOnOrAfter(&iTime)->iValue);
 	iTime = 29;
-	AssertInt(2, cTree.GetOnOrBefore(&iTime)->iValue);
-	AssertInt(3, cTree.GetOnOrAfter(&iTime)->iValue);
+	AssertInt((int32)2, cTree.GetOnOrBefore(&iTime)->iValue);
+	AssertInt((int32)3, cTree.GetOnOrAfter(&iTime)->iValue);
 	iTime = 35;
-	AssertInt(3, cTree.GetOnOrBefore(&iTime)->iValue);
+	AssertInt((int32)3, cTree.GetOnOrBefore(&iTime)->iValue);
 	AssertNull(cTree.GetOnOrAfter(&iTime));
 
 	iTime = 20;
-	AssertInt(1, cTree.GetPrevious(cTree.Get(&iTime))->iValue);
-	AssertInt(3, cTree.GetNext(cTree.Get(&iTime))->iValue);
+	AssertInt((int32)1, cTree.GetPrevious(cTree.Get(&iTime))->iValue);
+	AssertInt((int32)3, cTree.GetNext(cTree.Get(&iTime))->iValue);
 	AssertNull(cTree.GetPrevious(cTree.GetFirst()));
 	AssertNull(cTree.GetNext(cTree.GetLast()));
 
@@ -227,7 +227,7 @@ void TestRedBlackTreeIterateRange(void)
 		i++;
 		psItem = cTree.Iterate(&sIter);
 	}
-	AssertInt(7, i);
+	AssertInt((int32)7, i);
 
 	iStart = 30;
 	iEnd = 60;
@@ -239,7 +239,7 @@ void TestRedBlackTreeIterateRange(void)
 		i++;
 		psItem = cTree.Iterate(&sIter);
 	}
-	AssertInt(7, i);
+	AssertInt((int32)7, i);
 
 	iStart = 75;
 	i = 8;
@@ -250,7 +250,7 @@ void TestRedBlackTreeIterateRange(void)
 		i++;
 		psItem = cTree.Iterate(&sIter);
 	}
-	AssertInt(11, i);
+	AssertInt((int32)11, i);
 
 	iEnd = 30;
 	i = 1;
@@ -261,7 +261,7 @@ void TestRedBlackTreeIterateRange(void)
 		i++;
 		psItem = cTree.Iterate(&sIter);
 	}
-	AssertInt(4, i);
+	AssertInt((int32)4, i);
 
 	iStart = 31;
 	iEnd = 39;
@@ -298,13 +298,13 @@ void TestRedBlackTreePut(void)
 	sItem.iTime = 7;
 	sItem.iValue = 71;
 	AssertPointer(psItem, cTree.Put(&sItem));
-	AssertInt(71, psItem->iValue);
+	AssertInt((int32)71, psItem->iValue);
 	AssertSize(1, cTree.NumElements());
 
 	sItem.iTime = 8;
 	sItem.iValue = 80;
 	psItem = cTree.Put(&sItem);
-	AssertInt(80, psItem->iValue);
+	AssertInt((int32)80, psItem->iValue);
 	AssertSize(2, cTree.NumElements());
 	iTime = 8;
 	AssertPointer(psItem, cTree.Get(&iTime));
@@ -354,7 +354,7 @@ void TestRedBlackTreeRemove(void)
 		i += 2;
 		psItem = cTree.Iterate(&sIter);
 	}
-	AssertInt(101, i);
+	AssertInt((int32)101, i);
 
 	while (!cTree.IsEmpty())
 	{

@@ -8,6 +8,7 @@
 #include "CppParserLib/IRVerifier.h"
 #include "CppParserLib/IR65Backend.h"
 #include "CppParserLib/IR65Flags.h"
+#include "CppParserLib/IR65Peephole.h"
 #include "CppParserLib/IR65Widths.h"
 #include "TestLib/Assert.h"
 #include "TestCPP65Context.h"
@@ -535,6 +536,8 @@ void TestIR65BackendMemory(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIR65BackendCalls(void)
 {
+	CChars	szAssembly;
+
 	AssertInt(1 + 20 + 300, TestIR65Main(
 		"function i32 @_SumAll(i32 %count, ...)\n{\n"
 		"entry:\n"
@@ -566,6 +569,23 @@ void TestIR65BackendCalls(void)
 		"\t%f = copy ptr @_Double__Fi\n"
 		"\t%r = call i32 %f(i32 6)\n"
 		"\tret i32 %r\n}\n"));
+
+	//The pointer is called through where it was pushed, twice.
+	szAssembly.Init();
+	AssertInt(6 + 7, (int32)TestIR65Run(
+		"function i32 @_Increment__Fi(i32 %x)\n{\nb:\n\t%r = add i32 %x, 1\n\tret i32 %r\n}\n\n"
+		"function i32 @_Twice(ptr %f, i32 %x)\n{\nb:\n"
+		"\t%a = call i32 %f(i32 %x)\n"
+		"\t%b = call i32 %f(i32 %a)\n"
+		"\t%r = add i32 %a, %b\n"
+		"\tret i32 %r\n}\n\n"
+		"function i32 @_main()\n{\nb:\n"
+		"\t%f = copy ptr @_Increment__Fi\n"
+		"\t%r = call i32 @_Twice(ptr %f, i32 5)\n"
+		"\tret i32 %r\n}\n", false, &szAssembly));
+	AssertTrue(szAssembly.Contains("jsr [13 + V]"));
+	AssertFalse(szAssembly.Contains("jsr A"));
+	szAssembly.Kill();
 
 	AssertInt(7 + 5, TestIR65Main(
 		"global @_gObject, align 4 { i32 7 }\n\n"
@@ -1181,6 +1201,196 @@ void TestIR65BackendFlags(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// CIR65Peephole on szCode, as a whole function.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR65PeepholeOptimise(const char* szExpected, const char* szCode)
+{
+	CIR65Peephole	cPeephole;
+	CChars			sz;
+
+	sz.Init(szCode);
+	cPeephole.Init();
+	cPeephole.Optimise(&sz, 0);
+	cPeephole.Kill();
+	AssertString(szExpected, sz.Text());
+	sz.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A cpy of what the register already holds goes: a register, a constant
+// or the function's own memory, unchanged since (across a label the ways
+// in agree on), when the flags it sets aren't read.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR65BackendPeepholeCopies(void)
+{
+	//B still holds [9 + V]; A holds [12 + W] after storing it; X holds what A did.
+	TestIR65PeepholeOptimise(
+		"_F:\n"
+		"\t\tcpy B, [9 + V]\n"
+		"\t\tcpy X, [6 + B]\n"
+		"\t\tcpy A, [4 + B]\n"
+		"\t\tcpy [12 + W], A\n"
+		"\t\tcpy X, A\n"
+		"\t\tadd X, [12 + W]\n"
+		"\t\tret\n",
+		"_F:\n"
+		"\t\tcpy B, [9 + V]\n"
+		"\t\tcpy X, [6 + B]\n"
+		"\t\tcpy B, [9 + V]\n"
+		"\t\tcpy A, [4 + B]\n"
+		"\t\tcpy [12 + W], A\n"
+		"\t\tcpy A, [12 + W]\n"
+		"\t\tcpy X, A\n"
+		"\t\tcpy A, X\n"
+		"\t\tadd X, [12 + W]\n"
+		"\t\tret\n");
+
+	//Kept: z of the second cpy is read; [8 + V] may be written through X; [X] may be volatile; a call changes
+	//everything; A is 16 bits wide; B changed.
+	TestIR65PeepholeOptimise(
+		"_F:\n"
+		"\t\tcpy A, [4 + W]\n"
+		"\t\tcpy X, A\n"
+		"\t\tcpy A, [4 + W]\n"
+		"\t\tbras z, L1\n"
+		"\t\tcpy A, [8 + V]\n"
+		"\t\tcpy [X], 0\n"
+		"\t\tcpy A, [8 + V]\n"
+		"\t\tcpy A, [X]\n"
+		"\t\tcpy A, [X]\n"
+		"\t\tcpy Y, 5\n"
+		"\t\tjsr _G\n"
+		"\t\tcpy Y, 5\n"
+		"\t\twth A, 16\n"
+		"\t\tcpy A, [4 + W]\n"
+		"\t\tcpy A, [4 + W]\n"
+		"\t\twth A, 32\n"
+		"\t\tcpy A, B\n"
+		"\t\tadd B, 1\n"
+		"\t\tcpy A, B\n"
+		"L1:\n"
+		"\t\tret\n",
+		"_F:\n"
+		"\t\tcpy A, [4 + W]\n"
+		"\t\tcpy X, A\n"
+		"\t\tcpy A, [4 + W]\n"
+		"\t\tbras z, L1\n"
+		"\t\tcpy A, [8 + V]\n"
+		"\t\tcpy [X], 0\n"
+		"\t\tcpy A, [8 + V]\n"
+		"\t\tcpy A, [X]\n"
+		"\t\tcpy A, [X]\n"
+		"\t\tcpy Y, 5\n"
+		"\t\tjsr _G\n"
+		"\t\tcpy Y, 5\n"
+		"\t\twth A, 16\n"
+		"\t\tcpy A, [4 + W]\n"
+		"\t\tcpy A, [4 + W]\n"
+		"\t\twth A, 32\n"
+		"\t\tcpy A, B\n"
+		"\t\tadd B, 1\n"
+		"\t\tcpy A, B\n"
+		"L1:\n"
+		"\t\tret\n");
+
+	//[8 + W] can't be written through a pointer; both ways into L1 have X = 1, only one has Y = 2.
+	TestIR65PeepholeOptimise(
+		"_F:\n"
+		"\t\tcpy A, [8 + W]\n"
+		"\t\tcpy [X], B\n"
+		"\t\tcpy X, 1\n"
+		"\t\tcmp A, B\n"
+		"\t\tbras z, L1\n"
+		"\t\tcpy Y, 2\n"
+		"L1:\n"
+		"\t\tcpy Y, 2\n"
+		"\t\tret\n",
+		"_F:\n"
+		"\t\tcpy A, [8 + W]\n"
+		"\t\tcpy [X], B\n"
+		"\t\tcpy A, [8 + W]\n"
+		"\t\tcpy X, 1\n"
+		"\t\tcmp A, B\n"
+		"\t\tbras z, L1\n"
+		"\t\tcpy Y, 2\n"
+		"L1:\n"
+		"\t\tcpy X, 1\n"
+		"\t\tcpy Y, 2\n"
+		"\t\tret\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A branch round a bra becomes the opposite branch; a jump to a jump goes
+// straight on; a bra to a ret is a ret; then the code nothing reaches goes.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR65BackendPeepholeJumps(void)
+{
+	TestIR65PeepholeOptimise(
+		"_F:\n"
+		"\t\tcmp A, 1\n"
+		"\t\tbras z, L4\n"
+		"L1:\n"
+		"\t\tcpy X, 0\n"
+		"\t\tbrac z, L2\n"
+		"\t\tcpy A, 2\n"
+		"\t\tret\n"
+		"L2:\n"
+		"\t\tcpy A, 3\n"
+		"\t\tret\n"
+		"L4:\n"
+		"\t\tcpy Y, A\n"
+		"L5:\n"
+		"\t\tret\n",
+		"_F:\n"
+		"\t\tcmp A, 1\n"
+		"\t\tbrac z, L1\n"
+		"\t\tbra L3\n"
+		"L1:\n"
+		"\t\tcpy X, 0\n"
+		"\t\tbrac z, L2\n"
+		"\t\tcpy A, 2\n"
+		"\t\tbra L5\n"
+		"L2:\n"
+		"\t\tcpy A, 3\n"
+		"\t\tbra L5\n"
+		"L3:\n"
+		"\t\tbra L4\n"
+		"L4:\n"
+		"\t\tcpy Y, A\n"
+		"L5:\n"
+		"\t\tret\n");
+
+	//braso has no opposite (its bra to a ret is a ret); a branch to the next line goes.
+	TestIR65PeepholeOptimise(
+		"_F:\n"
+		"\t\tcmp A, 1\n"
+		"\t\tbraso (n, v), L1\n"
+		"\t\tret\n"
+		"L1:\n"
+		"\t\tcpy A, 2\n"
+		"L2:\n"
+		"\t\tret\n",
+		"_F:\n"
+		"\t\tcmp A, 1\n"
+		"\t\tbraso (n, v), L1\n"
+		"\t\tbra L2\n"
+		"L1:\n"
+		"\t\tcpy A, 2\n"
+		"\t\tbras z, L2\n"
+		"L2:\n"
+		"\t\tret\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestIR65Backend(void)
@@ -1205,6 +1415,8 @@ void TestIR65Backend(void)
 	TestIR65BackendAllocation();
 	TestIR65BackendWidths();
 	TestIR65BackendFlags();
+	TestIR65BackendPeepholeCopies();
+	TestIR65BackendPeepholeJumps();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
 	NumberKill();

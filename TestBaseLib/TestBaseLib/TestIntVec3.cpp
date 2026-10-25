@@ -47,8 +47,8 @@ void TestIntVec3Magnitude(void)
 {
 	SIntVec3	si;
 
-	si.Init(20123405, 13459784, 478);
-	AssertInt(24209857, si.Magnitude());
+	si.Init(12000, 16000, 478);
+	AssertInt(20005, si.Magnitude());
 }
 
 

@@ -639,8 +639,8 @@ void TestIntValue(void)
 {
 	CNumber	cNumber;
 
-	AssertInt(1, cNumber.Init("1")->IntValue());
-	AssertInt(432, cNumber.Init("432")->IntValue());
+	AssertInt((int32)1, cNumber.Init("1")->IntValue());
+	AssertInt((int32)432, cNumber.Init("432")->IntValue());
 	AssertInt(-2001002003, cNumber.Init("-2001002003")->IntValue());
 }
 

@@ -1,9 +1,11 @@
 #ifndef __TEST_PROJECT_65_H__
 #define __TEST_PROJECT_65_H__
 #include "BaseLib/PrimitiveTypes.h"
+#include "CppParserLib/CPPTarget.h"
 
 
-//A test project (such as TestBaseLib) whose tests are compiled with the 65C64 generator and each run on the 65C64.
+//A test project (such as TestBaseLib) whose tests are compiled with the 65C64 generator and each run on the 65C64, or
+//compiled for the W65C816 and run on it when geTestProject65Target says so.
 struct STestProject65
 {
 	const char*		szTestProject;		//The test project's name: its directory is ../../<name>/<name> and its main is in <name>.cpp.
@@ -14,7 +16,11 @@ struct STestProject65
 };
 
 
+extern ECPPTarget	geTestProject65Target;
+
+
 void TestProject65RunTests(STestProject65* psProject);
+void TestProject65ChooseTarget(int argc, char** argv);
 
 
 #endif // __TEST_PROJECT_65_H__

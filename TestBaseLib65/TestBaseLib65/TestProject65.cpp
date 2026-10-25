@@ -9,6 +9,7 @@
 #include "Assembler65Lib/Asm65Memory.h"
 #include "Assembler65Lib/Asm65HostFiles.h"
 #include "MicroprocessorLib/Fast65C64.h"
+#include "MicroprocessorLib/Fast65C816.h"
 #include "CppParserLib/CPP65Builder.h"
 #include "CppParserLib/CPP65Generator.h"
 #include "TestLib/Assert.h"
@@ -22,7 +23,8 @@
 // the real source.  Each test that the test project's main calls is then linked as its own program, the main's
 // file with only that test's call left in its main (a whole test project does not fit below the 65C64's stack), and
 // run on a CFast65C64.  The programs read and write a copy of the test project's directory through the host file
-// device.
+// device.  For the W65C816 (geTestProject65Target) the units in 65C64 assembly are left out, the memory is 16MB (24
+// bit addresses) and the programs run on a CFast65C816.
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -31,13 +33,18 @@
 #define TEST_PROJECT65_PROJECTS			TEST_PROJECT65_COMMON _FS_
 #define TEST_PROJECT65_TESTS			".." _FS_ ".." _FS_
 
-//64MB, so the heap is from 0100:0000 (past the devices) to 0400:0000.
+//64MB, so the heap is from 0100:0000 (past the devices) to 0400:0000.  The W65C816's 16MB has it from 0020:0000 to
+//the devices.
 #define TEST_PROJECT65_MEMORY_SIZE		0x4000000
+#define TEST_PROJECT816_MEMORY_SIZE		0x1000000
 
 //The program ends below the stack (001F:FFFF down): its heap is above 2MB.
 #define TEST_PROJECT65_PROGRAM_LIMIT	0x1C0000
 
 #define TEST_PROJECT65_MAX_STEPS		4000000000ULL
+
+
+ECPPTarget	geTestProject65Target = CPPT_65C64;
 
 
 static const char* gaszTestProject65Libc65[] = { "string.cpp", "string.asm", "stdlib.cpp", "ctype.cpp", "time.cpp", "math.cpp", "softfloat.cpp", "softfloat.asm", "new.cpp", "signal.cpp", "stdio.cpp", "host.cpp", NULL };
@@ -329,7 +336,10 @@ static void TestProject65AddProjects(STestProject65* psProject, CCPP65Builder* p
 	cFileUtil.FullPath(&szPath);
 	for (i = 0; gaszTestProject65Libc65[i]; i++)
 	{
-		pcBuilder->AddUnit("Libc65", szPath.Text(), gaszTestProject65Libc65[i], true);
+		if ((geTestProject65Target == CPPT_65C64) || (strcmp(strrchr(gaszTestProject65Libc65[i], '.'), ".asm") != 0))
+		{
+			pcBuilder->AddUnit("Libc65", szPath.Text(), gaszTestProject65Libc65[i], true);
+		}
 	}
 	szPath.Kill();
 	pcBuilder->SetLimit(TEST_PROJECT65_PROGRAM_LIMIT);
@@ -347,30 +357,55 @@ static bool TestProject65Run(STestProject65* psProject, CCPP65Builder* pcBuilder
 	CAsm65Memory*		pcMemory;
 	CAsm65HostFiles		cHostFiles;
 	CFast65C64			cMPU;
+	CFast65C816			cMPU816;
 	CChars				szOutput;
 	uint64				uiSteps;
 	bool				bReturned;
+	bool				bW65C816;
 
+	bW65C816 = geTestProject65Target == CPPT_W65C816;
 	pcMemory = NewMalloc<CAsm65Memory>();
-	pcMemory->Init(TEST_PROJECT65_MEMORY_SIZE);
-	pcMemory->LoadProgram(pcBuilder->GetOutput(), CPP65_PROGRAM_ADDRESS);
+	if (bW65C816)
+	{
+		pcMemory->Init(TEST_PROJECT816_MEMORY_SIZE);
+		pcMemory->Load(pcBuilder->GetOutput());
+	}
+	else
+	{
+		pcMemory->Init(TEST_PROJECT65_MEMORY_SIZE);
+		pcMemory->LoadProgram(pcBuilder->GetOutput(), CPP65_PROGRAM_ADDRESS);
+	}
 	pcMemory->SetConsole(pszConsole);
 	cHostFiles.Init();
 	TestProject65OutputDirectory(psProject, &szOutput);
 	cHostFiles.SetDirectory(szOutput.Text());
 	szOutput.Kill();
 	pcMemory->SetHostFiles(&cHostFiles);
-	pcMemory->InitFast(&cMPU);
-	cMPU.Reset();
 
 	//Run takes a size, which is 32 bits in a 32 bit build.
-	for (uiSteps = 0; (uiSteps < TEST_PROJECT65_MAX_STEPS) && !cMPU.IsStopped(); uiSteps += 1000000)
+	if (bW65C816)
 	{
-		cMPU.Run(1000000);
+		pcMemory->InitFast816(&cMPU816);
+		cMPU816.Reset();
+		for (uiSteps = 0; (uiSteps < TEST_PROJECT65_MAX_STEPS) && !cMPU816.IsStopped(); uiSteps += 1000000)
+		{
+			cMPU816.Run(1000000);
+		}
+		bReturned = cMPU816.IsStopped() && (cMPU816.GetS() == GetCPPTarget(CPPT_W65C816)->uiStackTop);
+		cMPU816.Kill();
 	}
-	bReturned = cMPU.IsStopped() && (cMPU.GetS() == CPP65_STACK_TOP);
+	else
+	{
+		pcMemory->InitFast(&cMPU);
+		cMPU.Reset();
+		for (uiSteps = 0; (uiSteps < TEST_PROJECT65_MAX_STEPS) && !cMPU.IsStopped(); uiSteps += 1000000)
+		{
+			cMPU.Run(1000000);
+		}
+		bReturned = cMPU.IsStopped() && (cMPU.GetS() == CPP65_STACK_TOP);
+		cMPU.Kill();
+	}
 
-	cMPU.Kill();
 	cHostFiles.Kill();
 	SafeKill(pcMemory);
 	return bReturned;
@@ -406,6 +441,7 @@ void TestProject65RunTests(STestProject65* psProject)
 	TestProject65CopyDirectory(psProject);
 
 	cBuilder.Init();
+	cBuilder.SetTarget(geTestProject65Target);
 	TestProject65AddProjects(psProject, &cBuilder);
 	bCompiled = cBuilder.Compile();
 	AssertString("", cBuilder.GetErrors());
@@ -480,3 +516,15 @@ void TestProject65RunTests(STestProject65* psProject)
 	aszLines.Kill();
 	cBuilder.Kill();
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The 65C64 unless the test's command line is "816".
+//
+//////////////////////////////////////////////////////////////////////////
+void TestProject65ChooseTarget(int argc, char** argv)
+{
+	geTestProject65Target = ((argc > 1) && (strcmp(argv[1], "816") == 0)) ? CPPT_W65C816 : CPPT_65C64;
+}
+

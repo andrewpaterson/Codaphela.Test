@@ -280,7 +280,7 @@ void TestFileIOStringTruncated(void)
 	AssertTrue(cFile.ReadString(sz, 8));
 	AssertString("Short", sz);
 	AssertTrue(cFile.ReadInt32(&i));
-	AssertInt(-89, i);
+	AssertInt((int32)-89, i);
 	AssertTrue(cFile.Close());
 
 	cFile.Kill();

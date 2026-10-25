@@ -273,7 +273,7 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	AssertSize(11, strlen("Plantation") + 1);  //10 nodes for Plantation + the root node.
 	cEvictedNodes.Clear();
 
-	AssertInt(1234, cAccess.GetStringInt("Tomato"));
+	AssertInt((int32)1234, cAccess.GetStringInt("Tomato"));
 
 #ifdef BUILD_64
 	AssertLong(4444LL, pcMemory->GetTotalAllocatedMemory());

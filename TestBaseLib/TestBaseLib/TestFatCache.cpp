@@ -376,7 +376,7 @@ void TestFatCacheRead(void)
 	uiLength = 32 KB;
 	bResult = cCache.Read((uint8*)pvData, 0, 0, 0, &uiLength, 32 KB);
 	AssertTrue(bResult);
-	AssertInt(0, uiLength);
+	AssertInt((uint32)0, uiLength);
 	AssertMemory(pcMemory, pvData, 32 KB);
 	AssertTrue(cCache.IsSectorCached(0));
 	AssertTrue(cCache.IsSectorCached(63));
@@ -385,7 +385,7 @@ void TestFatCacheRead(void)
 	uiLength = 256;
 	bResult = cCache.Read((uint8*)pvData, 0, 0, 128, &uiLength, 32 KB);
 	AssertTrue(bResult);
-	AssertInt(0, uiLength);
+	AssertInt((uint32)0, uiLength);
 	AssertMemory(&pcMemory[128], pvData, 256);
 	AssertTrue(cCache.IsSectorCached(0));
 	AssertFalse(cCache.IsSectorCached(1));
@@ -393,7 +393,7 @@ void TestFatCacheRead(void)
 	uiLength = 256;
 	bResult = cCache.Read((uint8*)pvData, 0, 0, 384, &uiLength, 32 KB);
 	AssertTrue(bResult);
-	AssertInt(0, uiLength);
+	AssertInt((uint32)0, uiLength);
 	AssertMemory(&pcMemory[384], pvData, 256);
 	AssertTrue(cCache.IsSectorCached(0));
 	AssertTrue(cCache.IsSectorCached(1));
@@ -402,7 +402,7 @@ void TestFatCacheRead(void)
 	uiLength = 256;
 	bResult = cCache.Read((uint8*)pvData, 0, 0, 32384, &uiLength, 32 KB);
 	AssertTrue(bResult);
-	AssertInt(0, uiLength);
+	AssertInt((uint32)0, uiLength);
 	AssertMemory(&pcMemory[32384], pvData, 256);
 	AssertFalse(cCache.IsSectorCached(62));
 	AssertTrue(cCache.IsSectorCached(63));
@@ -410,7 +410,7 @@ void TestFatCacheRead(void)
 	uiLength = 256;
 	bResult = cCache.Read((uint8*)pvData, 0, 0, 16256, &uiLength, 32 KB);
 	AssertTrue(bResult);
-	AssertInt(0, uiLength);
+	AssertInt((uint32)0, uiLength);
 	AssertMemory(&pcMemory[16256], pvData, 256);
 	AssertFalse(cCache.IsSectorCached(30));
 	AssertTrue(cCache.IsSectorCached(31));
@@ -420,20 +420,20 @@ void TestFatCacheRead(void)
 	uiLength = 32 KB;
 	bResult = cCache.Read((uint8*)pvData, 0, 0, 0, &uiLength, 32 KB);
 	AssertTrue(bResult);
-	AssertInt(0, uiLength);
+	AssertInt((uint32)0, uiLength);
 	AssertMemory(pcMemory, pvData, 32 KB);
 
 	cCache.Clear();
 	uiLength = 256;
 	bResult = cCache.Read((uint8*)pvData, 0, 0, 16256, &uiLength, 32 KB);
 	AssertTrue(bResult);
-	AssertInt(0, uiLength);
+	AssertInt((uint32)0, uiLength);
 	AssertMemory(&pcMemory[16256], pvData, 256);
 
 	uiLength = 32 KB;
 	bResult = cCache.Read((uint8*)pvData, 0, 0, 0, &uiLength, 32 KB);
 	AssertTrue(bResult);
-	AssertInt(0, uiLength);
+	AssertInt((uint32)0, uiLength);
 	AssertMemory(pcMemory, pvData, 32 KB);
 
 	cCache.Kill();
@@ -470,12 +470,12 @@ void TestFatCacheWriteLimits(void)
 	uiLength = 1;
 	bResult = cCache.Write((uint8*)pvData, 0, 0, 1, &uiLength, 0);
 	AssertFalse(bResult);
-	AssertInt(1, uiLength);
+	AssertInt((uint32)1, uiLength);
 
 	uiLength = 1;
 	bResult = cCache.Write((uint8*)pvData, 0, 0, 0, &uiLength, 0);
 	AssertTrue(bResult);
-	AssertInt(0, uiLength);
+	AssertInt((uint32)0, uiLength);
 	AssertTrue(cCache.IsSectorCached(0));
 	AssertTrue(cCache.IsSectorDirty(0));
 
@@ -483,12 +483,12 @@ void TestFatCacheWriteLimits(void)
 	uiLength = 1;
 	bResult = cCache.Write((uint8*)pvData, 0, 0, 511, &uiLength, 510);
 	AssertFalse(bResult);
-	AssertInt(1, uiLength);
+	AssertInt((uint32)1, uiLength);
 
 	uiLength = 1;
 	bResult = cCache.Write((uint8*)pvData, 0, 0, 511, &uiLength, 511);
 	AssertTrue(bResult);
-	AssertInt(0, uiLength);
+	AssertInt((uint32)0, uiLength);
 	AssertTrue(cCache.IsSectorCached(0));
 	AssertTrue(cCache.IsSectorDirty(0));
 
@@ -496,12 +496,12 @@ void TestFatCacheWriteLimits(void)
 	uiLength = 1;
 	bResult = cCache.Write((uint8*)pvData, 0, 0, 512, &uiLength, 511);
 	AssertFalse(bResult);
-	AssertInt(1, uiLength);
+	AssertInt((uint32)1, uiLength);
 
 	uiLength = 1;
 	bResult = cCache.Write((uint8*)pvData, 0, 0, 512, &uiLength, 512);
 	AssertTrue(bResult);
-	AssertInt(0, uiLength);
+	AssertInt((uint32)0, uiLength);
 	AssertFalse(cCache.IsSectorCached(0));
 	AssertFalse(cCache.IsSectorDirty(0));
 	AssertTrue(cCache.IsSectorCached(1));
@@ -552,13 +552,13 @@ void TestFatCacheReadLimits(void)
 	uiLength = 1;
 	bResult = cCache.Read((uint8*)acTestMemory, 0, 0, 1, &uiLength, 0);
 	AssertFalse(bResult);
-	AssertInt(1, uiLength);
+	AssertInt((uint32)1, uiLength);
 
 	memset(acTestMemory, 0, 1 KB);
 	uiLength = 2;
 	bResult = cCache.Read((uint8*)acTestMemory, 0, 0, 0, &uiLength, 1);
 	AssertTrue(bResult);
-	AssertInt(1, uiLength);
+	AssertInt((uint32)1, uiLength);
 	AssertString("A", acTestMemory);
 
 	cCache.Clear();
@@ -566,7 +566,7 @@ void TestFatCacheReadLimits(void)
 	uiLength = 513;
 	bResult = cCache.Read((uint8*)acTestMemory, 0, 0, 0, &uiLength, 512);
 	AssertTrue(bResult);
-	AssertInt(1, uiLength);
+	AssertInt((uint32)1, uiLength);
 	AssertString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
 		acTestMemory);
 	AssertTrue(cCache.IsSectorCached(0));
@@ -577,7 +577,7 @@ void TestFatCacheReadLimits(void)
 	uiLength = 2;
 	bResult = cCache.Read((uint8*)acTestMemory, 0, 0, 32767, &uiLength, 32768);
 	AssertTrue(bResult);
-	AssertInt(1, uiLength);
+	AssertInt((uint32)1, uiLength);
 	AssertString("\x81", acTestMemory);
 	AssertFalse(cCache.IsSectorCached(62));
 	AssertTrue(cCache.IsSectorCached(63));
@@ -587,7 +587,7 @@ void TestFatCacheReadLimits(void)
 	uiLength = 3;
 	bResult = cCache.Read((uint8*)acTestMemory, 0, 0, 32767, &uiLength, 32768);
 	AssertTrue(bResult);
-	AssertInt(2, uiLength);
+	AssertInt((uint32)2, uiLength);
 	AssertString("\x81", acTestMemory);
 	AssertFalse(cCache.IsSectorCached(62));
 	AssertTrue(cCache.IsSectorCached(63));
@@ -630,12 +630,12 @@ void TestFatCacheComplex(void)
 	uiLength = 1 KB;
 	bResult = cCache.Read((uint8*)acTestMemory, 1, 0, 677, &uiLength, 32 KB);
 	AssertTrue(bResult);
-	AssertInt(0, uiLength);
+	AssertInt((uint32)0, uiLength);
 
 	uiLength = 333;
 	bResult = cCache.Write((uint8*)acData, 1, 0, 439, &uiLength, 32 KB);
 	AssertTrue(bResult);
-	AssertInt(0, uiLength);
+	AssertInt((uint32)0, uiLength);
 	AssertTrue(cCache.IsSectorCached(0));
 	AssertTrue(cCache.IsSectorCached(1));
 	AssertTrue(cCache.IsSectorCached(2));
@@ -655,7 +655,7 @@ DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
 	uiLength = 1 KB;
 	bResult = cCache.Read((uint8*)acTestMemory, 1, 0, 0, &uiLength, 32 KB);
 	AssertTrue(bResult);
-	AssertInt(0, uiLength);
+	AssertInt((uint32)0, uiLength);
 
 	acTestMemory[1 KB] = '\0';
 	AssertString("\
@@ -666,7 +666,7 @@ acTestMemory);
 	uiLength = 2 KB;
 	bResult = cCache.Read((uint8*)acTestMemory, 1, 0, 0, &uiLength, 32 KB);
 	AssertTrue(bResult);
-	AssertInt(0, uiLength);
+	AssertInt((uint32)0, uiLength);
 
 	acTestMemory[2 KB] = '\0';
 	AssertString("\
@@ -687,7 +687,7 @@ DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
 	uiLength = 1;
 	bResult = cCache.Read((uint8*)acTestMemory, 0, 0, 477, &uiLength, 32 KB);
 	AssertTrue(bResult);
-	AssertInt(0, uiLength);
+	AssertInt((uint32)0, uiLength);
 	AssertTrue(cCache.IsSectorCached(0));
 	AssertFalse(cCache.IsSectorCached(1));
 	AssertFalse(cCache.IsSectorCached(2));

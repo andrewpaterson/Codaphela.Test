@@ -156,17 +156,17 @@ void TestPackFileReadWriteMultipleFiles(void)
 
 	bResult = cBasic1.ReadInt32(&iNumber);
 	AssertTrue(bResult);
-	AssertInt(1032, iNumber);
+	AssertInt((int32)1032, iNumber);
 
 	bResult = cBasic2.ReadInt32(&iNumber);
 	AssertTrue(bResult);
-	AssertInt(743, iNumber);
+	AssertInt((int32)743, iNumber);
 
 	cBasic2.Close();
 
 	bResult = cBasic1.ReadInt32(&iNumber);
 	AssertTrue(bResult);
-	AssertInt(-8, iNumber);
+	AssertInt((int32)-8, iNumber);
 
 	bResult = cBasic2.ReadInt32(&iNumber);
 	AssertFalse(bResult);

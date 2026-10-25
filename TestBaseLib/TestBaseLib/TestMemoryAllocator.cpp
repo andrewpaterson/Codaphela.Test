@@ -71,14 +71,14 @@ void TestMemoryAllocatorReadWrite(void)
 	cFile.Open(EFM_Read);
 
 	cFile.ReadInt32(&i);
-	AssertInt(789, i);
+	AssertInt((int32)789, i);
 
 	AssertTrue(cAllocIn.Read(&cFile));
 
 	cFile.ReadInt32(&i);
 	cFile.Close();
 	cFile.Kill();
-	AssertInt(124, i);
+	AssertInt((int32)124, i);
 
 #ifdef BUILD_64
 	AssertSize(32, cAllocIn.GetMemory()->ByteSize());

@@ -302,15 +302,15 @@ void TestListBlockPushPop(void)
 	cList.Pop(&sItem);
 	AssertSize(5, cList.NumElements());
 	AssertSize(5, cList.NumElementsFromFreeList());
-	AssertInt(6, sItem.mi1);
-	AssertInt(606, sItem.mi2);
+	AssertInt((int32)6, sItem.mi1);
+	AssertInt((int32)606, sItem.mi2);
 
 	cList.Pop();
 	cList.Pop(&sItem);
 	AssertSize(3, cList.NumElements());
 	AssertSize(3, cList.NumElementsFromFreeList());
-	AssertInt(4, sItem.mi1);
-	AssertInt(404, sItem.mi2);
+	AssertInt((int32)4, sItem.mi1);
+	AssertInt((int32)404, sItem.mi2);
 
 	psItem4 = (STestListBlockItem*)cList.InsertAt(0); psItem4->Init(4, 404);
 	AssertSize(4, cList.NumElements());

@@ -368,9 +368,9 @@ void TestIndexTreeFileAccessRemoveEvictBug(void)
 	AssertTrue(cAccess.ValidateIndex());
 	Pass();
 
-	AssertInt(0x03, cAccess.GetStringInt("any"));
-	AssertInt(0x04, cAccess.GetStringInt("anyone"));
-	AssertInt(0x05, cAccess.GetStringInt("anything"));
+	AssertInt((int32)0x03, cAccess.GetStringInt("any"));
+	AssertInt((int32)0x04, cAccess.GetStringInt("anyone"));
+	AssertInt((int32)0x05, cAccess.GetStringInt("anything"));
 	Pass();
 	AssertTrue(cAccess.ValidateIndex());
 	Pass();

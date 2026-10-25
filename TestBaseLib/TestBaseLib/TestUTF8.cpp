@@ -333,7 +333,7 @@ void TestUTF8Example5(void)
 	uiUTF8ElementLength = cUTF8.PeekUTFBytes();
 	AssertSize(3, uiUTF8ElementLength);
 	c32 = cUTF8.GetCodePointUint32();
-	AssertIntHex(0x2665, c32);
+	AssertIntHex((uint32)0x2665, c32);
 	uiUTF8ElementLength = cUTF8.PeekUTFBytes();
 	AssertSize(4, uiUTF8ElementLength);
 	c32 = cUTF8.GetCodePointUint32();
@@ -377,7 +377,7 @@ void TestUTF8Example6(void)
 	c32 = cUTF8.GetCodePointUint32();
 	AssertIntHex(0x1F9B0, c32);
 	c32 = cUTF8.GetCodePointUint32();
-	AssertIntHex(0, c32);
+	AssertIntHex((uint32)0, c32);
 
 	c32 = cUTF8.GetUTF8ElementUint32(0x1F469);
 	c32 = ReverseIntEndianness(c32);

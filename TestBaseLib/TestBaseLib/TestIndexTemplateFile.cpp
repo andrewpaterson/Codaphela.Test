@@ -41,7 +41,7 @@ void TestIndexTreeTemplateFileStuff(void)
 
 	AssertTrue(cAccess.PutKeyData((uint8*)cObject1.GetName(), cObject1.NameLength(), &cObject1, sizeof(CTestIndexTreeObject2)));
 	AssertTrue(cAccess.PutKeyData((uint8*)cObject2.GetName(), cObject2.NameLength(), &cObject2, sizeof(CTestIndexTreeObject2)));
-	AssertInt(2, cIndexTree.NumElements());
+	AssertInt((uint32)2, cIndexTree.NumElements());
 		
 	AssertTrue(cIndexTree.Get((uint8*)cObject1.GetName(), cObject1.NameLength(), &cResult, NULL, 0));
 	AssertString("Hello", cResult.GetName());
@@ -54,12 +54,12 @@ void TestIndexTreeTemplateFileStuff(void)
 	AssertString("Haplo", cResult.GetName());
 	AssertFalse(cIndexTree.Get((uint8*)cObject1.GetName(), cObject1.NameLength(), &cResult, NULL, 0));
 	AssertFalse(cIndexTree.Get((uint8*)"Hap", 3, &cResult, NULL, 0));
-	AssertInt(1, cIndexTree.NumElements());
+	AssertInt((uint32)1, cIndexTree.NumElements());
 
 	AssertTrue(cIndexTree.Remove((uint8*)cObject2.GetName(), cObject2.NameLength()));
 	AssertFalse(cIndexTree.Get((uint8*)cObject2.GetName(), cObject2.NameLength(), &cResult, NULL, 0));
 	AssertFalse(cIndexTree.Get((uint8*)cObject1.GetName(), cObject1.NameLength(), &cResult, NULL, 0));
-	AssertInt(0, cIndexTree.NumElements());
+	AssertInt((uint32)0, cIndexTree.NumElements());
 
 	cController.End();
 

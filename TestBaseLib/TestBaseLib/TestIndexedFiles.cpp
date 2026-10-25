@@ -137,13 +137,13 @@ void TestIndexedFilesWrite(void)
 
 	cDataIndex1 = cIndexedFiles.WriteNew(szData1, iLen1);
 	AssertTrue(cDataIndex1.HasFile());
-	AssertInt(0, cDataIndex1.miFile);
+	AssertInt((uint32)0, cDataIndex1.miFile);
 	AssertLong(0, cDataIndex1.muiIndex);
 	AssertLong(1, cIndexedFiles.NumDatas());
 
 	cDataIndex2 = cIndexedFiles.WriteNew(szData2, iLen2);
 	AssertTrue(cDataIndex2.HasFile());
-	AssertInt(1, cDataIndex2.miFile);
+	AssertInt((uint32)1, cDataIndex2.miFile);
 	AssertLong(0, cDataIndex2.muiIndex);
 	AssertLong(2, cIndexedFiles.NumDatas());
 	
@@ -191,13 +191,13 @@ void TestIndexedFilesWrite(void)
 
 	cDataIndex3 = cIndexedFiles.WriteNew(szData3, iLen3);
 	AssertTrue(cDataIndex3.HasFile());
-	AssertInt(0, cDataIndex3.miFile);
+	AssertInt((uint32)0, cDataIndex3.miFile);
 	AssertLong(1, cDataIndex3.muiIndex);
 	AssertLong(3, cIndexedFiles.NumDatas());
 
 	cDataIndex4 = cIndexedFiles.WriteNew(szData4, iLen4);
 	AssertTrue(cDataIndex4.HasFile());
-	AssertInt(1, cDataIndex4.miFile);
+	AssertInt((uint32)1, cDataIndex4.miFile);
 	AssertLong(1, cDataIndex4.muiIndex);
 	AssertLong(4, cIndexedFiles.NumDatas());
 	
