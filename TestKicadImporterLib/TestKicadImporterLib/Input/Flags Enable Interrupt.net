@@ -1,0 +1,3512 @@
+(export
+	(version "E")
+	(design
+		(source "D:\\gameengine\\Test\\TestKicadImporterLib\\TestKicadImporterLib\\Input\\Flags Enable Interrupt.kicad_sch")
+		(date "2026-10-25T13:00:01")
+		(tool "Eeschema 10.0.3")
+		(sheet
+			(number "1")
+			(name "/")
+			(tstamps "/")
+			(title_block
+				(title "Flags, Enable and Interrupt")
+				(company)
+				(rev "V1")
+				(date "2024-02-19")
+				(source "Flags Enable Interrupt.kicad_sch")
+				(comment
+					(number "1")
+					(value "")
+				)
+				(comment
+					(number "2")
+					(value "")
+				)
+				(comment
+					(number "3")
+					(value "")
+				)
+				(comment
+					(number "4")
+					(value "")
+				)
+				(comment
+					(number "5")
+					(value "")
+				)
+				(comment
+					(number "6")
+					(value "")
+				)
+				(comment
+					(number "7")
+					(value "")
+				)
+				(comment
+					(number "8")
+					(value "")
+				)
+				(comment
+					(number "9")
+					(value "")
+				)
+			)
+		)
+	)
+	(components
+		(comp
+			(ref "C1")
+			(value "1μF")
+			(footprint "SamacSys_Parts:C_0805")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:C_0805")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_0805")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "capacitor cap")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "9970d398-0c41-4282-9065-1d84dc8097d8")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C2")
+			(value "1μF")
+			(footprint "SamacSys_Parts:C_0805")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:C_0805")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_0805")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "capacitor cap")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "696d6131-effb-4a2a-a6a8-5939ca20a6e3")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C4")
+			(value "10µF")
+			(footprint "SamacSys_Parts:C_0805")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:C_0805")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_0805")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "capacitor cap")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "917f04ae-f97d-4894-bd1f-ee221fa78eea")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C5")
+			(value "10µF")
+			(footprint "SamacSys_Parts:C_0805")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:C_0805")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_0805")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "capacitor cap")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "ca8a3ba5-4963-4a20-bcbe-311314889adc")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C7")
+			(value "1μF")
+			(footprint "SamacSys_Parts:C_0805")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:C_0805")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_0805")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "capacitor cap")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "da44bfec-7b4a-454f-9652-b0b428658f74")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C8")
+			(value "1μF")
+			(footprint "SamacSys_Parts:C_0805")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:C_0805")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_0805")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "capacitor cap")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "0eae648c-123c-45c0-9703-1fc02d7beaa3")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C9")
+			(value "1μF")
+			(footprint "SamacSys_Parts:C_0805")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:C_0805")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_0805")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "capacitor cap")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "6bafbff7-3803-4a4a-bc37-8c3eeba4f0a9")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "IC1")
+			(value "74LVC1G11GW-Q100H")
+			(footprint "SamacSys_Parts:SOP65P210X110-6N")
+			(datasheet "https://assets.nexperia.com/documents/data-sheet/74LVC1G11_Q100.pdf")
+			(description "3-input AND gate")
+			(fields
+				(field
+					(name "Height") "1.1")
+				(field
+					(name "Manufacturer_Name") "Nexperia")
+				(field
+					(name "Manufacturer_Part_Number") "74LVC1G11GW-Q100H")
+				(field
+					(name "Mouser Part Number") "771-74LVC1G11GWQ100H")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC1G11GW-Q100H?qs=cbprxTG2Yq8FEeh2WZ6ztg%3D%3D")
+				(field
+					(name "Silkscreen") "'1G11")
+				(field
+					(name "Garbage") "74LVC1G11-Q100 - Single 3-input AND gate@en-us")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOP65P210X110-6N")
+				(field
+					(name "Datasheet") "https://assets.nexperia.com/documents/data-sheet/74LVC1G11_Q100.pdf")
+				(field
+					(name "Description") "3-input AND gate")
+			)
+			(libsource
+				(lib "Nexperia")
+				(part "74LVC1G11GW-Q100H")
+				(description "3-input AND gate")
+			)
+			(property
+				(name "Height")
+				(value "1.1")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Nexperia")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "74LVC1G11GW-Q100H")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "771-74LVC1G11GWQ100H")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC1G11GW-Q100H?qs=cbprxTG2Yq8FEeh2WZ6ztg%3D%3D")
+			)
+			(property
+				(name "Silkscreen")
+				(value "'1G11")
+			)
+			(property
+				(name "Garbage")
+				(value "74LVC1G11-Q100 - Single 3-input AND gate@en-us")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "6ce01ea6-d239-4717-a7a5-0eaac9e8d2a3")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "4")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "IC2")
+			(value "74LVC74APW,118")
+			(footprint "SamacSys_Parts:SOP65P640X110-14N")
+			(datasheet "https://assets.nexperia.com/documents/data-sheet/74LVC74A.pdf")
+			(description "D-type flip-flop")
+			(fields
+				(field
+					(name "Height") "1.1")
+				(field
+					(name "Mouser Part Number") "771-74LVC74APW-T")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC74APW118?qs=me8TqzrmIYVtXwVfet0lzw%3D%3D")
+				(field
+					(name "Manufacturer_Name") "Nexperia")
+				(field
+					(name "Manufacturer_Part_Number") "74LVC74APW,118")
+				(field
+					(name "Silkscreen") "74LVC74")
+				(field
+					(name "Garbage") "74LVC74A - Dual D-type flip-flop with set and reset; positive-edge trigger@en-us")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOP65P640X110-14N")
+				(field
+					(name "Datasheet") "https://assets.nexperia.com/documents/data-sheet/74LVC74A.pdf")
+				(field
+					(name "Description") "D-type flip-flop")
+			)
+			(libsource
+				(lib "Nexperia")
+				(part "74LVC74APW,118")
+				(description "D-type flip-flop")
+			)
+			(property
+				(name "Height")
+				(value "1.1")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "771-74LVC74APW-T")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC74APW118?qs=me8TqzrmIYVtXwVfet0lzw%3D%3D")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Nexperia")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "74LVC74APW,118")
+			)
+			(property
+				(name "Silkscreen")
+				(value "74LVC74")
+			)
+			(property
+				(name "Garbage")
+				(value "74LVC74A - Dual D-type flip-flop with set and reset; positive-edge trigger@en-us")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "f368f107-795d-4597-a6e3-9c28f3250756")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "11")
+						)
+						(pin
+							(num "10")
+						)
+						(pin
+							(num "12")
+						)
+						(pin
+							(num "13")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "9")
+						)
+						(pin
+							(num "8")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "IC3")
+			(value "74LVC04APW,118")
+			(footprint "SamacSys_Parts:SOP65P640X110-14N")
+			(datasheet "https://assets.nexperia.com/documents/data-sheet/74LVC04A.pdf")
+			(description "6-input inverter")
+			(fields
+				(field
+					(name "Height") "1.1")
+				(field
+					(name "Manufacturer_Name") "Nexperia")
+				(field
+					(name "Manufacturer_Part_Number") "74LVC04APW,118")
+				(field
+					(name "Mouser Part Number") "771-74LVC04APW-T")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC04APW118?qs=me8TqzrmIYUA5zXidd9%2F4g%3D%3D")
+				(field
+					(name "Silkscreen") "74LVC04")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOP65P640X110-14N")
+				(field
+					(name "Datasheet") "https://assets.nexperia.com/documents/data-sheet/74LVC04A.pdf")
+				(field
+					(name "Description") "6-input inverter")
+			)
+			(libsource
+				(lib "")
+				(part "74LVC04APW,118_Multi_5")
+				(description "6-input inverter")
+			)
+			(property
+				(name "Height")
+				(value "1.1")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Nexperia")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "74LVC04APW,118")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "771-74LVC04APW-T")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC04APW118?qs=me8TqzrmIYUA5zXidd9%2F4g%3D%3D")
+			)
+			(property
+				(name "Silkscreen")
+				(value "74LVC04")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "fba3b77d-b4a4-4a7b-843d-23ddcf0107c4" "e9466158-6556-467b-99a8-1a36aef7277d"
+				"bddcfd24-ed0b-4226-ba03-8465d7d06dee" "5e6cf37d-2fec-40bc-9d7f-64cca69bed00"
+				"4df23723-0bfd-4aa8-91de-3606da22b56e" "4547493a-80c1-4b89-8ece-fa2b5c345b9c"
+			)
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+				(unit
+					(name "B")
+					(pins
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "4")
+						)
+					)
+				)
+				(unit
+					(name "C")
+					(pins
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "6")
+						)
+					)
+				)
+				(unit
+					(name "D")
+					(pins
+						(pin
+							(num "9")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "8")
+						)
+					)
+				)
+				(unit
+					(name "E")
+					(pins
+						(pin
+							(num "11")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "10")
+						)
+					)
+				)
+				(unit
+					(name "F")
+					(pins
+						(pin
+							(num "13")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "12")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "IC5")
+			(value "AP7365-33WG-7")
+			(footprint "SamacSys_Parts:SOT95P285X130-5N")
+			(datasheet "https://componentsearchengine.com/Datasheets/1/AP7365-33WG-7.pdf")
+			(description "3.3V LDO voltage regulator")
+			(fields
+				(field
+					(name "Height") "1.3")
+				(field
+					(name "Manufacturer_Name") "Diodes Inc.")
+				(field
+					(name "Manufacturer_Part_Number") "AP7365-33WG-7")
+				(field
+					(name "Mouser Part Number") "621-AP7365-33WG-7")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Diodes-Incorporated/AP7365-33WG-7?qs=abZ1nkZpTuOZFvxvoFPL0w%3D%3D")
+				(field
+					(name "Arrow Part Number") "AP7365-33WG-7")
+				(field
+					(name "Arrow Price/Stock") "https://www.arrow.com/en/products/ap7365-33wg-7/diodes-incorporated?region=nac")
+				(field
+					(name "Silkscreen") "AP7365")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOT95P285X130-5N")
+				(field
+					(name "Datasheet") "https://componentsearchengine.com/Datasheets/1/AP7365-33WG-7.pdf")
+				(field
+					(name "Description") "3.3V LDO voltage regulator")
+			)
+			(libsource
+				(lib "Diodes_Inc")
+				(part "AP7365-33WG-7")
+				(description "3.3V LDO voltage regulator")
+			)
+			(property
+				(name "Height")
+				(value "1.3")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Diodes Inc.")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "AP7365-33WG-7")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "621-AP7365-33WG-7")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Diodes-Incorporated/AP7365-33WG-7?qs=abZ1nkZpTuOZFvxvoFPL0w%3D%3D")
+			)
+			(property
+				(name "Arrow Part Number")
+				(value "AP7365-33WG-7")
+			)
+			(property
+				(name "Arrow Price/Stock")
+				(value "https://www.arrow.com/en/products/ap7365-33wg-7/diodes-incorporated?region=nac")
+			)
+			(property
+				(name "Silkscreen")
+				(value "AP7365")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "b4ee3465-e6d3-4314-a2ec-3e4d6aa12bf0")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "4")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "IC6")
+			(value "74LVC573APW,118")
+			(footprint "SamacSys_Parts:SOP65P640X110-20N")
+			(datasheet "https://assets.nexperia.com/documents/data-sheet/74LVC573A.pdf")
+			(description "8-bit D-type latch")
+			(fields
+				(field
+					(name "Height") "1.1")
+				(field
+					(name "Mouser Part Number") "771-74LVC573APW-T")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC573APW118/?qs=me8TqzrmIYU4mlL%252B5pgpig%3D%3D")
+				(field
+					(name "Manufacturer_Name") "Nexperia")
+				(field
+					(name "Manufacturer_Part_Number") "74LVC573APW,118")
+				(field
+					(name "Silkscreen") "74LVC573")
+				(field
+					(name "Garbage") "74LVC573A - Octal D-type transparent latch with 5 V tolerant inputs/outputs; 3-state@en-us")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOP65P640X110-20N")
+				(field
+					(name "Datasheet") "https://assets.nexperia.com/documents/data-sheet/74LVC573A.pdf")
+				(field
+					(name "Description") "8-bit D-type latch")
+			)
+			(libsource
+				(lib "Nexperia")
+				(part "74LVC573APW,118")
+				(description "8-bit D-type latch")
+			)
+			(property
+				(name "Height")
+				(value "1.1")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "771-74LVC573APW-T")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC573APW118/?qs=me8TqzrmIYU4mlL%252B5pgpig%3D%3D")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Nexperia")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "74LVC573APW,118")
+			)
+			(property
+				(name "Silkscreen")
+				(value "74LVC573")
+			)
+			(property
+				(name "Garbage")
+				(value "74LVC573A - Octal D-type transparent latch with 5 V tolerant inputs/outputs; 3-state@en-us")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "76bcc807-4eb8-45df-9cee-552cc0b46ac6")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "11")
+						)
+						(pin
+							(num "9")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "10")
+						)
+						(pin
+							(num "20")
+						)
+						(pin
+							(num "12")
+						)
+						(pin
+							(num "13")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "15")
+						)
+						(pin
+							(num "16")
+						)
+						(pin
+							(num "17")
+						)
+						(pin
+							(num "18")
+						)
+						(pin
+							(num "19")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "IC7")
+			(value "74LVC00APW,112")
+			(footprint "SamacSys_Parts:SOP65P640X110-14N")
+			(datasheet "https://assets.nexperia.com/documents/data-sheet/74LVC00A.pdf")
+			(description "2-input NAND gate")
+			(fields
+				(field
+					(name "Height") "1.1")
+				(field
+					(name "Mouser Part Number") "771-74LVC00APW")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC00APW112?qs=me8TqzrmIYU0xOmva6VdmA%3D%3D")
+				(field
+					(name "Manufacturer_Name") "Nexperia")
+				(field
+					(name "Manufacturer_Part_Number") "74LVC00APW,112")
+				(field
+					(name "Silkscreen") "74LVC00")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOP65P640X110-14N")
+				(field
+					(name "Datasheet") "https://assets.nexperia.com/documents/data-sheet/74LVC00A.pdf")
+				(field
+					(name "Description") "2-input NAND gate")
+			)
+			(libsource
+				(lib "Nexperia")
+				(part "74LVC00APW,112_Multi")
+				(description "2-input NAND gate")
+			)
+			(property
+				(name "Height")
+				(value "1.1")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "771-74LVC00APW")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC00APW112?qs=me8TqzrmIYU0xOmva6VdmA%3D%3D")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Nexperia")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "74LVC00APW,112")
+			)
+			(property
+				(name "Silkscreen")
+				(value "74LVC00")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "4a2eb24b-3ac1-44eb-bbb3-e3831f619f1b" "a7bd419a-b1dc-4151-b5c6-147a5519c6ca"
+				"b1390d74-1450-4341-ab22-3a526e3d59af" "1f2aa815-d983-4f62-9757-18476e4762c9"
+			)
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "3")
+						)
+					)
+				)
+				(unit
+					(name "B")
+					(pins
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "6")
+						)
+					)
+				)
+				(unit
+					(name "C")
+					(pins
+						(pin
+							(num "9")
+						)
+						(pin
+							(num "10")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "8")
+						)
+					)
+				)
+				(unit
+					(name "D")
+					(pins
+						(pin
+							(num "12")
+						)
+						(pin
+							(num "13")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "11")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "IC8")
+			(value "74LVC573APW,118")
+			(footprint "SamacSys_Parts:SOP65P640X110-20N")
+			(datasheet "https://assets.nexperia.com/documents/data-sheet/74LVC573A.pdf")
+			(description "8-bit D-type latch")
+			(fields
+				(field
+					(name "Height") "1.1")
+				(field
+					(name "Mouser Part Number") "771-74LVC573APW-T")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC573APW118/?qs=me8TqzrmIYU4mlL%252B5pgpig%3D%3D")
+				(field
+					(name "Manufacturer_Name") "Nexperia")
+				(field
+					(name "Manufacturer_Part_Number") "74LVC573APW,118")
+				(field
+					(name "Silkscreen") "74LVC573")
+				(field
+					(name "Garbage") "74LVC573A - Octal D-type transparent latch with 5 V tolerant inputs/outputs; 3-state@en-us")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOP65P640X110-20N")
+				(field
+					(name "Datasheet") "https://assets.nexperia.com/documents/data-sheet/74LVC573A.pdf")
+				(field
+					(name "Description") "8-bit D-type latch")
+			)
+			(libsource
+				(lib "Nexperia")
+				(part "74LVC573APW,118")
+				(description "8-bit D-type latch")
+			)
+			(property
+				(name "Height")
+				(value "1.1")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "771-74LVC573APW-T")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC573APW118/?qs=me8TqzrmIYU4mlL%252B5pgpig%3D%3D")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Nexperia")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "74LVC573APW,118")
+			)
+			(property
+				(name "Silkscreen")
+				(value "74LVC573")
+			)
+			(property
+				(name "Garbage")
+				(value "74LVC573A - Octal D-type transparent latch with 5 V tolerant inputs/outputs; 3-state@en-us")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "f9117565-7490-4c60-8162-f7eda9e74687")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "11")
+						)
+						(pin
+							(num "9")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "10")
+						)
+						(pin
+							(num "20")
+						)
+						(pin
+							(num "12")
+						)
+						(pin
+							(num "13")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "15")
+						)
+						(pin
+							(num "16")
+						)
+						(pin
+							(num "17")
+						)
+						(pin
+							(num "18")
+						)
+						(pin
+							(num "19")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J1")
+			(value "Board 2x16 W15.24mm")
+			(footprint "SamacSys_Parts:DIP-32_Board_W15.24mm")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:DIP-32_Board_W15.24mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "Board_02x16_W15.24mm")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "HCP65 Connector Board")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Connector*:*_2x??_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "59e0d580-dccf-40d8-ac2f-5e6eac0cfd46")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "9")
+						)
+						(pin
+							(num "10")
+						)
+						(pin
+							(num "11")
+						)
+						(pin
+							(num "12")
+						)
+						(pin
+							(num "13")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "15")
+						)
+						(pin
+							(num "16")
+						)
+						(pin
+							(num "32")
+						)
+						(pin
+							(num "31")
+						)
+						(pin
+							(num "30")
+						)
+						(pin
+							(num "29")
+						)
+						(pin
+							(num "28")
+						)
+						(pin
+							(num "27")
+						)
+						(pin
+							(num "26")
+						)
+						(pin
+							(num "25")
+						)
+						(pin
+							(num "24")
+						)
+						(pin
+							(num "23")
+						)
+						(pin
+							(num "22")
+						)
+						(pin
+							(num "21")
+						)
+						(pin
+							(num "20")
+						)
+						(pin
+							(num "19")
+						)
+						(pin
+							(num "18")
+						)
+						(pin
+							(num "17")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "NT1")
+			(value "NetTie_2")
+			(footprint "NetTie:NetTie-2_SMD_Pad0.5mm")
+			(description "Net tie, 2 pins")
+			(fields
+				(field
+					(name "Footprint") "NetTie:NetTie-2_SMD_Pad0.5mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Net tie, 2 pins")
+			)
+			(libsource
+				(lib "Device")
+				(part "NetTie_2")
+				(description "Net tie, 2 pins")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
+			)
+			(property
+				(name "ki_keywords")
+				(value "net tie short")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Net*Tie*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "ac1969db-6efa-43b2-950c-a6294753e362")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "NT2")
+			(value "NetTie_2")
+			(footprint "NetTie:NetTie-2_SMD_Pad0.5mm")
+			(description "Net tie, 2 pins")
+			(fields
+				(field
+					(name "Footprint") "NetTie:NetTie-2_SMD_Pad0.5mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Net tie, 2 pins")
+			)
+			(libsource
+				(lib "Device")
+				(part "NetTie_2")
+				(description "Net tie, 2 pins")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "../../../../gameengine/Test/TestKicadImporterLib/TestKicadImporterLib/Input/Flags Enable Interrupt.kicad_sch")
+			)
+			(property
+				(name "exclude_from_bom")
+			)
+			(property
+				(name "ki_keywords")
+				(value "net tie short")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Net*Tie*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "37658e6c-db1c-4780-99b1-5fd2feb9e251")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+	)
+	(groups)
+	(variants)
+	(libparts
+		(libpart
+			(lib "")
+			(part "74LVC04APW,118_Multi_5")
+			(description "6-input inverter")
+			(docs "https://assets.nexperia.com/documents/data-sheet/74LVC04A.pdf")
+			(fields
+				(field
+					(name "Reference") "IC")
+				(field
+					(name "Value") "74LVC04APW,118")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOP65P640X110-14N")
+				(field
+					(name "Datasheet") "https://assets.nexperia.com/documents/data-sheet/74LVC04A.pdf")
+				(field
+					(name "Description") "6-input inverter")
+				(field
+					(name "Height") "1.1")
+				(field
+					(name "Manufacturer_Name") "Nexperia")
+				(field
+					(name "Manufacturer_Part_Number") "74LVC04APW,118")
+				(field
+					(name "Mouser Part Number") "771-74LVC04APW-T")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC04APW118?qs=me8TqzrmIYUA5zXidd9%2F4g%3D%3D")
+				(field
+					(name "Silkscreen") "74LVC04")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "1A")
+					(type "input")
+				)
+				(pin
+					(num "2")
+					(name "1Y")
+					(type "output")
+				)
+				(pin
+					(num "3")
+					(name "2A")
+					(type "input")
+				)
+				(pin
+					(num "4")
+					(name "2Y")
+					(type "output")
+				)
+				(pin
+					(num "5")
+					(name "3A")
+					(type "input")
+				)
+				(pin
+					(num "6")
+					(name "3Y")
+					(type "output")
+				)
+				(pin
+					(num "7")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "8")
+					(name "4Y")
+					(type "output")
+				)
+				(pin
+					(num "9")
+					(name "4A")
+					(type "input")
+				)
+				(pin
+					(num "10")
+					(name "5Y")
+					(type "output")
+				)
+				(pin
+					(num "11")
+					(name "5A")
+					(type "input")
+				)
+				(pin
+					(num "12")
+					(name "6Y")
+					(type "output")
+				)
+				(pin
+					(num "13")
+					(name "6A")
+					(type "input")
+				)
+				(pin
+					(num "14")
+					(name "3V")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Device")
+			(part "NetTie_2")
+			(description "Net tie, 2 pins")
+			(footprints
+				(fp "Net*Tie*")
+			)
+			(fields
+				(field
+					(name "Reference") "NT")
+				(field
+					(name "Value") "NetTie_2")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Net tie, 2 pins")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "2")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Diodes_Inc")
+			(part "AP7365-33WG-7")
+			(description "3.3V LDO voltage regulator")
+			(docs "https://componentsearchengine.com/Datasheets/1/AP7365-33WG-7.pdf")
+			(fields
+				(field
+					(name "Reference") "IC")
+				(field
+					(name "Value") "AP7365-33WG-7")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOT95P285X130-5N")
+				(field
+					(name "Datasheet") "https://componentsearchengine.com/Datasheets/1/AP7365-33WG-7.pdf")
+				(field
+					(name "Description") "3.3V LDO voltage regulator")
+				(field
+					(name "Height") "1.3")
+				(field
+					(name "Manufacturer_Name") "Diodes Inc.")
+				(field
+					(name "Manufacturer_Part_Number") "AP7365-33WG-7")
+				(field
+					(name "Mouser Part Number") "621-AP7365-33WG-7")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Diodes-Incorporated/AP7365-33WG-7?qs=abZ1nkZpTuOZFvxvoFPL0w%3D%3D")
+				(field
+					(name "Arrow Part Number") "AP7365-33WG-7")
+				(field
+					(name "Arrow Price/Stock") "https://www.arrow.com/en/products/ap7365-33wg-7/diodes-incorporated?region=nac")
+				(field
+					(name "Silkscreen") "AP7365")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "6VIn")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "EN")
+					(type "input")
+				)
+				(pin
+					(num "4")
+					(name "ADJ")
+					(type "passive")
+				)
+				(pin
+					(num "5")
+					(name "3.3VOut")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "HCP65")
+			(part "Board_02x16_W15.24mm")
+			(footprints
+				(fp "Connector*:*_2x??_*")
+			)
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "Board 2x16 W15.24mm")
+				(field
+					(name "Footprint") "SamacSys_Parts:DIP-32_Board_W15.24mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "5")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "6")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "7")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "8")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "9")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "10")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "11")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "12")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "13")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "14")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "15")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "16")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "17")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "18")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "19")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "20")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "21")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "22")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "23")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "24")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "25")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "26")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "27")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "28")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "29")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "30")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "31")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "32")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "HCP65")
+			(part "C_0805")
+			(footprints
+				(fp "C_*")
+			)
+			(fields
+				(field
+					(name "Reference") "C")
+				(field
+					(name "Value") "?μF")
+				(field
+					(name "Footprint") "SamacSys_Parts:C_0805")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Nexperia")
+			(part "74LVC00APW,112_Multi")
+			(description "2-input NAND gate")
+			(docs "https://assets.nexperia.com/documents/data-sheet/74LVC00A.pdf")
+			(fields
+				(field
+					(name "Reference") "IC")
+				(field
+					(name "Value") "74LVC00APW,112")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOP65P640X110-14N")
+				(field
+					(name "Datasheet") "https://assets.nexperia.com/documents/data-sheet/74LVC00A.pdf")
+				(field
+					(name "Description") "2-input NAND gate")
+				(field
+					(name "Height") "1.1")
+				(field
+					(name "Mouser Part Number") "771-74LVC00APW")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC00APW112?qs=me8TqzrmIYU0xOmva6VdmA%3D%3D")
+				(field
+					(name "Manufacturer_Name") "Nexperia")
+				(field
+					(name "Manufacturer_Part_Number") "74LVC00APW,112")
+				(field
+					(name "Silkscreen") "74LVC00")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "1A")
+					(type "input")
+				)
+				(pin
+					(num "2")
+					(name "1B")
+					(type "input")
+				)
+				(pin
+					(num "3")
+					(name "1Y")
+					(type "output")
+				)
+				(pin
+					(num "4")
+					(name "2A")
+					(type "input")
+				)
+				(pin
+					(num "5")
+					(name "2B")
+					(type "input")
+				)
+				(pin
+					(num "6")
+					(name "2Y")
+					(type "output")
+				)
+				(pin
+					(num "7")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "8")
+					(name "3Y")
+					(type "output")
+				)
+				(pin
+					(num "9")
+					(name "3A")
+					(type "input")
+				)
+				(pin
+					(num "10")
+					(name "3B")
+					(type "input")
+				)
+				(pin
+					(num "11")
+					(name "4Y")
+					(type "output")
+				)
+				(pin
+					(num "12")
+					(name "4A")
+					(type "input")
+				)
+				(pin
+					(num "13")
+					(name "4B")
+					(type "input")
+				)
+				(pin
+					(num "14")
+					(name "3V")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Nexperia")
+			(part "74LVC1G11GW-Q100H")
+			(description "3-input AND gate")
+			(docs "https://assets.nexperia.com/documents/data-sheet/74LVC1G11_Q100.pdf")
+			(fields
+				(field
+					(name "Reference") "IC")
+				(field
+					(name "Value") "74LVC1G11GW-Q100H")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOP65P210X110-6N")
+				(field
+					(name "Datasheet") "https://assets.nexperia.com/documents/data-sheet/74LVC1G11_Q100.pdf")
+				(field
+					(name "Description") "3-input AND gate")
+				(field
+					(name "Height") "1.1")
+				(field
+					(name "Manufacturer_Name") "Nexperia")
+				(field
+					(name "Manufacturer_Part_Number") "74LVC1G11GW-Q100H")
+				(field
+					(name "Mouser Part Number") "771-74LVC1G11GWQ100H")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC1G11GW-Q100H?qs=cbprxTG2Yq8FEeh2WZ6ztg%3D%3D")
+				(field
+					(name "Silkscreen") "'1G11")
+				(field
+					(name "Garbage") "74LVC1G11-Q100 - Single 3-input AND gate@en-us")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "A")
+					(type "input")
+				)
+				(pin
+					(num "2")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "B")
+					(type "input")
+				)
+				(pin
+					(num "4")
+					(name "Y")
+					(type "output")
+				)
+				(pin
+					(num "5")
+					(name "3V")
+					(type "passive")
+				)
+				(pin
+					(num "6")
+					(name "C")
+					(type "input")
+				)
+			)
+		)
+		(libpart
+			(lib "Nexperia")
+			(part "74LVC573APW,118")
+			(description "8-bit D-type latch")
+			(docs "https://assets.nexperia.com/documents/data-sheet/74LVC573A.pdf")
+			(fields
+				(field
+					(name "Reference") "IC")
+				(field
+					(name "Value") "74LVC573APW,118")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOP65P640X110-20N")
+				(field
+					(name "Datasheet") "https://assets.nexperia.com/documents/data-sheet/74LVC573A.pdf")
+				(field
+					(name "Description") "8-bit D-type latch")
+				(field
+					(name "Height") "1.1")
+				(field
+					(name "Mouser Part Number") "771-74LVC573APW-T")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC573APW118/?qs=me8TqzrmIYU4mlL%252B5pgpig%3D%3D")
+				(field
+					(name "Manufacturer_Name") "Nexperia")
+				(field
+					(name "Manufacturer_Part_Number") "74LVC573APW,118")
+				(field
+					(name "Silkscreen") "74LVC573")
+				(field
+					(name "Garbage") "74LVC573A - Octal D-type transparent latch with 5 V tolerant inputs/outputs; 3-state@en-us")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "~{OE}")
+					(type "input")
+				)
+				(pin
+					(num "2")
+					(name "D0")
+					(type "input")
+				)
+				(pin
+					(num "3")
+					(name "D1")
+					(type "input")
+				)
+				(pin
+					(num "4")
+					(name "D2")
+					(type "input")
+				)
+				(pin
+					(num "5")
+					(name "D3")
+					(type "input")
+				)
+				(pin
+					(num "6")
+					(name "D4")
+					(type "input")
+				)
+				(pin
+					(num "7")
+					(name "D5")
+					(type "input")
+				)
+				(pin
+					(num "8")
+					(name "D6")
+					(type "input")
+				)
+				(pin
+					(num "9")
+					(name "D7")
+					(type "input")
+				)
+				(pin
+					(num "10")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "11")
+					(name "LE")
+					(type "input")
+				)
+				(pin
+					(num "12")
+					(name "Q7")
+					(type "tri_state")
+				)
+				(pin
+					(num "13")
+					(name "Q6")
+					(type "tri_state")
+				)
+				(pin
+					(num "14")
+					(name "Q5")
+					(type "tri_state")
+				)
+				(pin
+					(num "15")
+					(name "Q4")
+					(type "tri_state")
+				)
+				(pin
+					(num "16")
+					(name "Q3")
+					(type "tri_state")
+				)
+				(pin
+					(num "17")
+					(name "Q2")
+					(type "tri_state")
+				)
+				(pin
+					(num "18")
+					(name "Q1")
+					(type "tri_state")
+				)
+				(pin
+					(num "19")
+					(name "Q0")
+					(type "tri_state")
+				)
+				(pin
+					(num "20")
+					(name "3V")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Nexperia")
+			(part "74LVC74APW,118")
+			(description "D-type flip-flop")
+			(docs "https://assets.nexperia.com/documents/data-sheet/74LVC74A.pdf")
+			(fields
+				(field
+					(name "Reference") "IC")
+				(field
+					(name "Value") "74LVC74APW,118")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOP65P640X110-14N")
+				(field
+					(name "Datasheet") "https://assets.nexperia.com/documents/data-sheet/74LVC74A.pdf")
+				(field
+					(name "Description") "D-type flip-flop")
+				(field
+					(name "Height") "1.1")
+				(field
+					(name "Mouser Part Number") "771-74LVC74APW-T")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Nexperia/74LVC74APW118?qs=me8TqzrmIYVtXwVfet0lzw%3D%3D")
+				(field
+					(name "Manufacturer_Name") "Nexperia")
+				(field
+					(name "Manufacturer_Part_Number") "74LVC74APW,118")
+				(field
+					(name "Silkscreen") "74LVC74")
+				(field
+					(name "Garbage") "74LVC74A - Dual D-type flip-flop with set and reset; positive-edge trigger@en-us")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "~{1RD}")
+					(type "input")
+				)
+				(pin
+					(num "2")
+					(name "1D")
+					(type "input")
+				)
+				(pin
+					(num "3")
+					(name "1CP")
+					(type "input")
+				)
+				(pin
+					(num "4")
+					(name "~{1SD}")
+					(type "input")
+				)
+				(pin
+					(num "5")
+					(name "1Q")
+					(type "output")
+				)
+				(pin
+					(num "6")
+					(name "~{1Q}")
+					(type "output")
+				)
+				(pin
+					(num "7")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "8")
+					(name "~{2Q}")
+					(type "output")
+				)
+				(pin
+					(num "9")
+					(name "2Q")
+					(type "output")
+				)
+				(pin
+					(num "10")
+					(name "~{2SD}")
+					(type "input")
+				)
+				(pin
+					(num "11")
+					(name "2CP")
+					(type "input")
+				)
+				(pin
+					(num "12")
+					(name "2D")
+					(type "input")
+				)
+				(pin
+					(num "13")
+					(name "~{2RD}")
+					(type "input")
+				)
+				(pin
+					(num "14")
+					(name "3V")
+					(type "passive")
+				)
+			)
+		)
+	)
+	(libraries
+		(library
+			(logical "Device")
+			(uri "${KICAD10_SYMBOL_DIR}/Device.kicad_sym")
+		)
+		(library
+			(logical "Diodes_Inc")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/Diodes_Inc.kicad_sym")
+		)
+		(library
+			(logical "HCP65")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/HCP65.kicad_sym")
+		)
+		(library
+			(logical "Nexperia")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/Nexperia.kicad_sym")
+		)
+	)
+	(nets
+		(net
+			(code "1")
+			(name "/3.3V")
+			(class "Default")
+			(node
+				(ref "C1")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C2")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C5")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C7")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C8")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C9")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC1")
+				(pin "5")
+				(pinfunction "3V_5")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC2")
+				(pin "1")
+				(pinfunction "~{1RD}_1")
+				(pintype "input")
+			)
+			(node
+				(ref "IC2")
+				(pin "14")
+				(pinfunction "3V_14")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC3")
+				(pin "14")
+				(pinfunction "3V_14")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC5")
+				(pin "5")
+				(pinfunction "3.3VOut_5")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC6")
+				(pin "20")
+				(pinfunction "3V_20")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC7")
+				(pin "14")
+				(pinfunction "3V_14")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC8")
+				(pin "20")
+				(pinfunction "3V_20")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "3")
+			(name "/Enable Bit High")
+			(class "Default")
+			(node
+				(ref "IC7")
+				(pin "2")
+				(pinfunction "1B_2")
+				(pintype "input")
+			)
+			(node
+				(ref "NT1")
+				(pin "2")
+				(pinfunction "2_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "4")
+			(name "/Enable Bit_Low")
+			(class "Default")
+			(node
+				(ref "IC3")
+				(pin "5")
+				(pinfunction "3A_5")
+				(pintype "input")
+			)
+			(node
+				(ref "NT2")
+				(pin "2")
+				(pinfunction "2_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "6")
+			(name "/F_{Interrupt Enable}")
+			(class "Default")
+			(node
+				(ref "IC7")
+				(pin "13")
+				(pinfunction "4B_13")
+				(pintype "input")
+			)
+			(node
+				(ref "IC8")
+				(pin "12")
+				(pinfunction "Q7_12")
+				(pintype "tri_state")
+			)
+		)
+		(net
+			(code "7")
+			(name "/Interrupt Enable")
+			(class "Default")
+			(node
+				(ref "IC1")
+				(pin "3")
+				(pinfunction "B_3")
+				(pintype "input")
+			)
+			(node
+				(ref "IC3")
+				(pin "10")
+				(pinfunction "5Y_10")
+				(pintype "output")
+			)
+		)
+		(net
+			(code "8")
+			(name "/Set Disable")
+			(class "Default")
+			(node
+				(ref "IC3")
+				(pin "9")
+				(pinfunction "4A_9")
+				(pintype "input")
+			)
+			(node
+				(ref "IC7")
+				(pin "8")
+				(pinfunction "3Y_8")
+				(pintype "output")
+			)
+		)
+		(net
+			(code "9")
+			(name "/~{Clear Interrupt}")
+			(class "Default")
+			(node
+				(ref "IC1")
+				(pin "4")
+				(pinfunction "Y_4")
+				(pintype "output")
+			)
+			(node
+				(ref "IC2")
+				(pin "4")
+				(pinfunction "~{1SD}_4")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "10")
+			(name "/~{Enable Bit}")
+			(class "Default")
+			(node
+				(ref "IC3")
+				(pin "6")
+				(pinfunction "3Y_6")
+				(pintype "output")
+			)
+			(node
+				(ref "IC7")
+				(pin "5")
+				(pinfunction "2B_5")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "11")
+			(name "/~{Interrupt Enable}")
+			(class "Default")
+			(node
+				(ref "IC3")
+				(pin "11")
+				(pinfunction "5A_11")
+				(pintype "input")
+			)
+			(node
+				(ref "IC7")
+				(pin "11")
+				(pinfunction "4Y_11")
+				(pintype "output")
+			)
+		)
+		(net
+			(code "12")
+			(name "/~{Read Flags}")
+			(class "Default")
+			(node
+				(ref "IC3")
+				(pin "4")
+				(pinfunction "2Y_4")
+				(pintype "output")
+			)
+			(node
+				(ref "IC6")
+				(pin "1")
+				(pinfunction "~{OE}_1")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "13")
+			(name "/~{Set Disable}")
+			(class "Default")
+			(node
+				(ref "IC2")
+				(pin "13")
+				(pinfunction "~{2RD}_13")
+				(pintype "input")
+			)
+			(node
+				(ref "IC3")
+				(pin "8")
+				(pinfunction "4Y_8")
+				(pintype "output")
+			)
+		)
+		(net
+			(code "14")
+			(name "/~{Set Enable}")
+			(class "Default")
+			(node
+				(ref "IC2")
+				(pin "10")
+				(pinfunction "~{2SD}_10")
+				(pintype "input")
+			)
+			(node
+				(ref "IC7")
+				(pin "3")
+				(pinfunction "1Y_3")
+				(pintype "output")
+			)
+		)
+		(net
+			(code "15")
+			(name "/~{Write Clear Interrupt}")
+			(class "Default")
+			(node
+				(ref "IC1")
+				(pin "6")
+				(pinfunction "C_6")
+				(pintype "input")
+			)
+			(node
+				(ref "IC3")
+				(pin "2")
+				(pinfunction "1Y_2")
+				(pintype "output")
+			)
+		)
+		(net
+			(code "16")
+			(name "5V")
+			(class "Default")
+			(node
+				(ref "C4")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC5")
+				(pin "1")
+				(pinfunction "6VIn_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC5")
+				(pin "3")
+				(pinfunction "EN_3")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "17")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "17")
+			(name "CLK")
+			(class "Default")
+			(node
+				(ref "IC2")
+				(pin "3")
+				(pinfunction "1CP_3")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "18")
+			(name "D0")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "19")
+				(pinfunction "Q0_19")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "IC8")
+				(pin "2")
+				(pinfunction "D0_2")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "16")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "19")
+			(name "D1")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "18")
+				(pinfunction "Q1_18")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "IC8")
+				(pin "3")
+				(pinfunction "D1_3")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "15")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "20")
+			(name "D2")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "17")
+				(pinfunction "Q2_17")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "IC8")
+				(pin "4")
+				(pinfunction "D2_4")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "14")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "21")
+			(name "D3")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "16")
+				(pinfunction "Q3_16")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "IC8")
+				(pin "5")
+				(pinfunction "D3_5")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "13")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "22")
+			(name "D4")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "15")
+				(pinfunction "Q4_15")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "IC8")
+				(pin "6")
+				(pinfunction "D4_6")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "11")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "23")
+			(name "D5")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "14")
+				(pinfunction "Q5_14")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "IC8")
+				(pin "7")
+				(pinfunction "D5_7")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "10")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "24")
+			(name "D6")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "13")
+				(pinfunction "Q6_13")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "IC8")
+				(pin "8")
+				(pinfunction "D6_8")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "9")
+				(pintype "passive")
+			)
+			(node
+				(ref "NT1")
+				(pin "1")
+				(pinfunction "1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "NT2")
+				(pin "1")
+				(pinfunction "1_1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "25")
+			(name "D7")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "12")
+				(pinfunction "Q7_12")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "IC8")
+				(pin "9")
+				(pinfunction "D7_9")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "8")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "26")
+			(name "Enable")
+			(class "Default")
+			(node
+				(ref "IC1")
+				(pin "1")
+				(pinfunction "A_1")
+				(pintype "input")
+			)
+			(node
+				(ref "IC2")
+				(pin "9")
+				(pinfunction "2Q_9")
+				(pintype "output")
+			)
+			(node
+				(ref "IC6")
+				(pin "8")
+				(pinfunction "D6_8")
+				(pintype "input")
+			)
+			(node
+				(ref "IC7")
+				(pin "12")
+				(pinfunction "4A_12")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "27")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "27")
+			(name "F0")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "2")
+				(pinfunction "D0_2")
+				(pintype "input")
+			)
+			(node
+				(ref "IC8")
+				(pin "19")
+				(pinfunction "Q0_19")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "J1")
+				(pin "18")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "28")
+			(name "F1")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "3")
+				(pinfunction "D1_3")
+				(pintype "input")
+			)
+			(node
+				(ref "IC8")
+				(pin "18")
+				(pinfunction "Q1_18")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "J1")
+				(pin "19")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "29")
+			(name "F2")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "4")
+				(pinfunction "D2_4")
+				(pintype "input")
+			)
+			(node
+				(ref "IC8")
+				(pin "17")
+				(pinfunction "Q2_17")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "J1")
+				(pin "20")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "30")
+			(name "F3")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "5")
+				(pinfunction "D3_5")
+				(pintype "input")
+			)
+			(node
+				(ref "IC8")
+				(pin "16")
+				(pinfunction "Q3_16")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "J1")
+				(pin "22")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "31")
+			(name "F4")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "6")
+				(pinfunction "D4_6")
+				(pintype "input")
+			)
+			(node
+				(ref "IC8")
+				(pin "15")
+				(pinfunction "Q4_15")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "J1")
+				(pin "23")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "32")
+			(name "F5")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "7")
+				(pinfunction "D5_7")
+				(pintype "input")
+			)
+			(node
+				(ref "IC8")
+				(pin "14")
+				(pinfunction "Q5_14")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "J1")
+				(pin "24")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "33")
+			(name "GND")
+			(class "Default")
+			(node
+				(ref "C1")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C2")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C4")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C5")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C7")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C8")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C9")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC1")
+				(pin "2")
+				(pinfunction "GND_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC2")
+				(pin "11")
+				(pinfunction "2CP_11")
+				(pintype "input")
+			)
+			(node
+				(ref "IC2")
+				(pin "12")
+				(pinfunction "2D_12")
+				(pintype "input")
+			)
+			(node
+				(ref "IC2")
+				(pin "7")
+				(pinfunction "GND_7")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC3")
+				(pin "13")
+				(pinfunction "6A_13")
+				(pintype "input")
+			)
+			(node
+				(ref "IC3")
+				(pin "7")
+				(pinfunction "GND_7")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC5")
+				(pin "2")
+				(pinfunction "GND_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC6")
+				(pin "10")
+				(pinfunction "GND_10")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC7")
+				(pin "7")
+				(pinfunction "GND_7")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC8")
+				(pin "1")
+				(pinfunction "~{OE}_1")
+				(pintype "input")
+			)
+			(node
+				(ref "IC8")
+				(pin "10")
+				(pinfunction "GND_10")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "12")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "21")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "28")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "5")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "34")
+			(name "Interrupt")
+			(class "Default")
+			(node
+				(ref "IC2")
+				(pin "6")
+				(pinfunction "~{1Q}_6")
+				(pintype "output")
+			)
+			(node
+				(ref "IC6")
+				(pin "9")
+				(pinfunction "D7_9")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "30")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "35")
+			(name "Net-(IC7B-2Y)")
+			(class "Default")
+			(node
+				(ref "IC7")
+				(pin "10")
+				(pinfunction "3B_10")
+				(pintype "input")
+			)
+			(node
+				(ref "IC7")
+				(pin "6")
+				(pinfunction "2Y_6")
+				(pintype "output")
+			)
+		)
+		(net
+			(code "36")
+			(name "Read Flags")
+			(class "Default")
+			(node
+				(ref "IC3")
+				(pin "3")
+				(pinfunction "2A_3")
+				(pintype "input")
+			)
+			(node
+				(ref "IC6")
+				(pin "11")
+				(pinfunction "LE_11")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "6")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "37")
+			(name "Write Clear Interrupt")
+			(class "Default")
+			(node
+				(ref "IC3")
+				(pin "1")
+				(pinfunction "1A_1")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "3")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "38")
+			(name "Write Flags")
+			(class "Default")
+			(node
+				(ref "IC7")
+				(pin "1")
+				(pinfunction "1A_1")
+				(pintype "input")
+			)
+			(node
+				(ref "IC7")
+				(pin "4")
+				(pinfunction "2A_4")
+				(pintype "input")
+			)
+			(node
+				(ref "IC8")
+				(pin "11")
+				(pinfunction "LE_11")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "7")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "39")
+			(name "unconnected-(IC3F-6Y-Pad12)")
+			(class "Default")
+			(node
+				(ref "IC3")
+				(pin "12")
+				(pinfunction "6Y_12")
+				(pintype "output+no_connect")
+			)
+		)
+		(net
+			(code "40")
+			(name "unconnected-(IC5-ADJ-Pad4)")
+			(class "Default")
+			(node
+				(ref "IC5")
+				(pin "4")
+				(pinfunction "ADJ_4")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "41")
+			(name "unconnected-(IC8-Q6-Pad13)")
+			(class "Default")
+			(node
+				(ref "IC8")
+				(pin "13")
+				(pinfunction "Q6_13")
+				(pintype "tri_state+no_connect")
+			)
+		)
+		(net
+			(code "42")
+			(name "unconnected-(J1-Pad25)")
+			(class "Default")
+			(node
+				(ref "J1")
+				(pin "25")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "43")
+			(name "unconnected-(J1-Pad31)")
+			(class "Default")
+			(node
+				(ref "J1")
+				(pin "31")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "44")
+			(name "~{Enable}")
+			(class "Default")
+			(node
+				(ref "IC2")
+				(pin "8")
+				(pinfunction "~{2Q}_8")
+				(pintype "output")
+			)
+			(node
+				(ref "J1")
+				(pin "26")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "45")
+			(name "~{Interrupt}")
+			(class "Default")
+			(node
+				(ref "IC2")
+				(pin "5")
+				(pinfunction "1Q_5")
+				(pintype "output")
+			)
+			(node
+				(ref "J1")
+				(pin "29")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "46")
+			(name "~{Reset}")
+			(class "Default")
+			(node
+				(ref "IC7")
+				(pin "9")
+				(pinfunction "3A_9")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "32")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "47")
+			(name "~{Set Interrupt on CLK}")
+			(class "Default")
+			(node
+				(ref "IC2")
+				(pin "2")
+				(pinfunction "1D_2")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "4")
+				(pintype "passive")
+			)
+		)
+	)
+)

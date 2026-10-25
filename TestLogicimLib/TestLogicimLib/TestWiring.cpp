@@ -172,8 +172,8 @@ CTrace* GetPortViewTrace(SWiringTest* psTest, CComponentView* pcView, size uiPor
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Tunnels with the same name, ignoring case and the spaces around it, are
-// one net; others aren't.  A double sided tunnel joins its two ends.
+// Tunnels with the same name, ignoring the spaces around it, are one net;
+// others, even with only the case different, aren't.  A double sided tunnel joins its two ends.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestWiringTunnels(void)
@@ -190,12 +190,12 @@ void TestWiringTunnels(void)
 	pcConstant = AddWiringConstant(&sTest.cCircuit, 0, 0, ROT_East, 8, RADIX_Hexadecimal);
 	sTest.cCircuit.AddTrace(0, 0, 4, 0);
 	pcTunnel = AddWiringTunnel(&sTest.cCircuit, 4, 0, ROT_East, "Bus", false, 3);
-	AssertString("bus", pcTunnel->GetConnectionName());
+	AssertString("Bus", pcTunnel->GetConnectionName());
 	AssertFalse(pcTunnel->MakesComponent());
-	AddWiringTunnel(&sTest.cCircuit, 20, 0, ROT_West, " BUS ", false, 3);
+	AddWiringTunnel(&sTest.cCircuit, 20, 0, ROT_West, " Bus ", false, 3);
 	sTest.cCircuit.AddTrace(20, 0, 24, 0);
 	pcProbe = AddWiringProbe(&sTest.cCircuit, 24, 0, ROT_West, 8, RADIX_Hexadecimal);
-	AddWiringTunnel(&sTest.cCircuit, 20, 10, ROT_West, "Bus2", false, 3);
+	AddWiringTunnel(&sTest.cCircuit, 20, 10, ROT_West, "BUS", false, 3);
 	sTest.cCircuit.AddTrace(20, 10, 24, 10);
 	pcOther = AddWiringProbe(&sTest.cCircuit, 24, 10, ROT_West, 8, RADIX_Hexadecimal);
 

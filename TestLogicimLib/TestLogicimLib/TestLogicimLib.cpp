@@ -14,6 +14,7 @@ void TestSimulationState(void);
 void TestTextViews(void);
 void TestWiring(void);
 void TestTraceAutoConnector(void);
+void TestInverterPackageViews(void);
 void TestViewPaths(void);
 void TestSubcircuits(void);
 void TestCircuitEditor(void);
@@ -37,6 +38,7 @@ int __cdecl main(void)
 	TestTextViews();
 	TestWiring();
 	TestTraceAutoConnector();
+	TestInverterPackageViews();
 	TestViewPaths();
 	TestSubcircuits();
 	TestCircuitEditor();

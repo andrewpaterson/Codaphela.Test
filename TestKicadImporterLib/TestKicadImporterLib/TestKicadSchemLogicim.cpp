@@ -1,4 +1,5 @@
 #include "BaseLib/FileUtil.h"
+#include "BaseLib/TextFile.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "BaseLib/DataMemory.h"
 #include "BaseLib/Chars.h"
@@ -12,9 +13,11 @@
 
 
 #define KICAD_SCHEM_LOGICIM_FONTS		"Input" _FS_ "Fonts"
+#define KICAD_SCHEM_LOGICIM_TEST_BITS	64
 
 
 extern char gszKicadSchemTestFile[];
+extern char gszKicadSchemBusTestFile[];
 extern char gszKicadSchemNetlistTestFile[];
 
 
@@ -25,6 +28,7 @@ extern char gszKicadSchemNetlistTestFile[];
 void TestKicadSchemLogicFunction(void)
 {
 	CChars	szFamily;
+	CChars	szPartType;
 
 	szFamily.Init();
 	AssertInt(KSLF_And, ParseKicadSchemLogicFunction("Nexperia:74LVC08APW,112_Multi", &szFamily));
@@ -48,6 +52,16 @@ void TestKicadSchemLogicFunction(void)
 	AssertInt(KSLF_None, ParseKicadSchemLogicFunction("W65C02S", &szFamily));
 	AssertInt(KSLF_None, ParseKicadSchemLogicFunction("1748", &szFamily));
 	AssertInt(KSLF_None, ParseKicadSchemLogicFunction(NULL, &szFamily));
+	szFamily.Kill();
+
+	szFamily.Init();
+	szPartType.Init();
+	AssertInt(KSLF_Inverter, ParseKicadSchemLogicFunction("Nexperia:74LVC2G04GW-Q100H_Multi", &szFamily, &szPartType));
+	AssertString("2G04", szPartType.Text());
+	AssertInt(KSLF_Inverter, ParseKicadSchemLogicFunction("SN74LVC14APWR", &szFamily, &szPartType));
+	AssertString("14", szPartType.Text());
+	AssertString("LVC", szFamily.Text());
+	szPartType.Kill();
 	szFamily.Kill();
 
 	AssertString("Nand", KicadSchemLogicFunctionName(KSLF_Nand));
@@ -239,8 +253,9 @@ void AppendKicadSchemLogicimPort(CChars* psz, CPortView* pcPortView)
 //
 // The circuit's ports joined as Logicim's wiring joins them (see
 // CCircuitWiring::JoinLevel): wires that touch, ports on wires, ports at
-// the same place and ports of tunnels with the same name.  Every subnet's
-// terminals must be joined, and nothing of two different nets.
+// the same place and ports of tunnels with the same name; and their bits
+// where splitters join them.  Every subnet's terminals must be joined, and
+// no bit can be of two different nets.
 //
 //////////////////////////////////////////////////////////////////////////
 void AssertKicadSchemLogicimWired(CKicadSchemLogicimConverter* pcConverter)
@@ -261,6 +276,10 @@ void AssertKicadSchemLogicimWired(CKicadSchemLogicimConverter* pcConverter)
 	size							uiSubnet;
 	CChars							szFirst;
 	CChars							szThis;
+	CArrayInt						aiBits;
+	CArrayPortBitJoin				asJoins;
+	SPortBitJoin*					psJoin;
+	int								iBit;
 
 	pcCircuit = pcConverter->GetCircuit();
 	apcPorts.Init();
@@ -302,8 +321,29 @@ void AssertKicadSchemLogicimWired(CKicadSchemLogicimConverter* pcConverter)
 		}
 	}
 
+	//The bits of each group, joined where components (splitters) join them.
+	aiBits.Init();
+	for (i = 0; i < aiParents.NumElements() * KICAD_SCHEM_LOGICIM_TEST_BITS; i++)
+	{
+		aiBits.Add((int)i);
+	}
+	for (i = 0; i < pcCircuit->NumComponents(); i++)
+	{
+		asJoins.Init();
+		pcCircuit->GetComponent(i)->GetBitJoins(&asJoins);
+		for (j = 0; j < asJoins.NumElements(); j++)
+		{
+			psJoin = asJoins.Get(j);
+			AssertTrue((psJoin->uiFromBit < KICAD_SCHEM_LOGICIM_TEST_BITS) && (psJoin->uiToBit < KICAD_SCHEM_LOGICIM_TEST_BITS));
+			JoinKicadSchemLogicimRoots(&aiBits,
+				FindKicadSchemLogicimRoot(&aiParents, (int)(uiTraces + apcPorts.Find(psJoin->pcFrom))) * KICAD_SCHEM_LOGICIM_TEST_BITS + (int)psJoin->uiFromBit,
+				FindKicadSchemLogicimRoot(&aiParents, (int)(uiTraces + apcPorts.Find(psJoin->pcTo))) * KICAD_SCHEM_LOGICIM_TEST_BITS + (int)psJoin->uiToBit);
+		}
+		asJoins.Kill();
+	}
+
 	apcGroupNets.Init();
-	for (i = 0; i < aiParents.NumElements(); i++)
+	for (i = 0; i < aiBits.NumElements(); i++)
 	{
 		apcGroupNets.Add(NULL);
 	}
@@ -317,18 +357,22 @@ void AssertKicadSchemLogicimWired(CKicadSchemLogicimConverter* pcConverter)
 		psTerminal = pcConverter->GetTerminal(i);
 		iGroup = FindKicadSchemLogicimRoot(&aiParents, (int)(uiTraces + apcPorts.Find(psTerminal->pcPortView)));
 
-		//Nothing of another net.
+		//Nothing of another net, bit for bit (a bus's own terminals are many nets).
 		pcNet = psTerminal->pcSubnet->GetNet();
-		if (apcGroupNets.GetPtr(iGroup) == NULL)
+		iBit = FindKicadSchemLogicimRoot(&aiBits, iGroup * KICAD_SCHEM_LOGICIM_TEST_BITS);
+		if (!psTerminal->bBus)
 		{
-			apcGroupNets.SetPtr(iGroup, pcNet);
+			if (apcGroupNets.GetPtr(iBit) == NULL)
+			{
+				apcGroupNets.SetPtr(iBit, pcNet);
+			}
 		}
-		if (apcGroupNets.GetPtr(iGroup) != pcNet)
+		if ((!psTerminal->bBus) && (apcGroupNets.GetPtr(iBit) != pcNet))
 		{
 			//Names the two nets that are joined.
 			szFirst.Init(pcConverter->GetCircuit()->GetTypeName());
 			szFirst.Append(": ");
-			szFirst.Append(apcGroupNets.GetPtr(iGroup)->GetName());
+			szFirst.Append(apcGroupNets.GetPtr(iBit)->GetName());
 			szThis.Init(pcNet->GetName());
 			szThis.Append(" at ");
 			AppendKicadSchemLogicimPort(&szThis, psTerminal->pcPortView);
@@ -362,6 +406,7 @@ void AssertKicadSchemLogicimWired(CKicadSchemLogicimConverter* pcConverter)
 
 	aiSubnetGroups.Kill();
 	apcGroupNets.Kill();
+	aiBits.Kill();
 	aiParents.Kill();
 	apcPorts.Kill();
 }
@@ -392,7 +437,7 @@ CComponentView* FindKicadSchemLogicimComponent(CCircuitView* pcCircuit, const ch
 // Output/name.xml, which must load back.
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertKicadSchemLogicimConverts(char* szName, size uiMinimumGates, size uiMinimumPlaceholders, const char* szFirstGate, char* szText = NULL, size uiPowers = 0)
+void AssertKicadSchemLogicimConverts(char* szName, size uiMinimumGates, size uiMinimumPlaceholders, const char* szFirstGate, char* szText = NULL, size uiPowers = 0, size uiSplitters = 0)
 {
 	CKicadSchemFile					cFile;
 	CKicadSchemNetlist				cNetlist;
@@ -441,6 +486,8 @@ void AssertKicadSchemLogicimConverts(char* szName, size uiMinimumGates, size uiM
 	}
 	AssertSize(0, cConverter.NumOverlaps());
 	AssertSize(uiPowers, cConverter.NumPowers());
+	AssertSize(uiSplitters, cConverter.NumSplitters());
+	AssertTrue(cConverter.GetExcessKnotsAfter() <= cConverter.GetExcessKnotsBefore());
 	if (szFirstGate != NULL)
 	{
 		AssertNotNull(FindKicadSchemLogicimComponent(cConverter.GetCircuit(), szFirstGate));
@@ -494,20 +541,63 @@ void AssertKicadSchemLogicimConverts(char* szName, size uiMinimumGates, size uiM
 
 //////////////////////////////////////////////////////////////////////////
 //
+// How many of the element the converted Output/name.xml has.
+//
+//////////////////////////////////////////////////////////////////////////
+void AssertKicadSchemLogicimElements(char* szName, char* szElement, int iExpected)
+{
+	CTextFile	cFile;
+	CChars		szPath;
+	CChars		szTag;
+	int			iCount;
+	char*		sz;
+
+	szPath.Init("Output" _FS_);
+	szPath.Append(szName);
+	szPath.Append(".xml");
+	cFile.Init();
+	AssertTrue(cFile.Read(szPath.Text()));
+	szTag.Init("<");
+	szTag.Append(szElement);
+	szTag.Append(' ');
+	iCount = 0;
+	for (sz = strstr(cFile.Text(), szTag.Text()); sz != NULL; sz = strstr(sz + 1, szTag.Text()))
+	{
+		iCount++;
+	}
+	AssertInt(iExpected, iCount);
+	szTag.Kill();
+	cFile.Kill();
+	szPath.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestKicadSchemLogicimConvert(void)
 {
 	AssertKicadSchemLogicimConverts("Importer Test", 2, 0, "U1B", gszKicadSchemTestFile, 1);
 	AssertKicadSchemLogicimConverts("Netlist Test", 0, 1, NULL, gszKicadSchemNetlistTestFile, 1);
+	AssertKicadSchemLogicimConverts("Bus Test", 0, 2, NULL, gszKicadSchemBusTestFile, 0, 3);
 	AssertKicadSchemLogicimConverts("Clock Oscillator", 0, 3, NULL);
-	AssertKicadSchemLogicimConverts("Clock Hold V1 to V2", 0, 2, NULL);
+	AssertKicadSchemLogicimConverts("Clock Hold V1 to V2", 0, 2, NULL, NULL, 0, 1);
 	AssertKicadSchemLogicimConverts("LSF0204", 0, 1, NULL);
 	AssertKicadSchemLogicimConverts("LED Display", 0, 2, NULL);
 	AssertKicadSchemLogicimConverts("LCD Dual 7 Segment Tester", 0, 1, NULL);
 	AssertKicadSchemLogicimConverts("Power and Reset", 0, 1, NULL);
 	AssertKicadSchemLogicimConverts("HCP65 MPU NMI", 10, 1, "IC8A");
 	AssertKicadSchemLogicimConverts("Triple MPU Clock Generator", 10, 1, NULL);
+	AssertKicadSchemLogicimConverts("Flags Enable Interrupt", 0, 1, NULL, NULL, 0, 4);
+	AssertKicadSchemLogicimConverts("UART Board", 0, 1, NULL, NULL, 0, 10);
+
+	//A 74LVC04 drawn as units is units, and drawn whole is a package.
+	AssertKicadSchemLogicimElements("HCP65 MPU NMI", "InverterUnit", 6);
+	AssertKicadSchemLogicimElements("HCP65 MPU NMI", "InverterPackage", 0);
+	AssertKicadSchemLogicimElements("Flags Enable Interrupt", "InverterUnit", 6);
+	AssertKicadSchemLogicimElements("Triple MPU Clock Generator", "InverterPackage", 1);
+	AssertKicadSchemLogicimElements("Triple MPU Clock Generator", "InverterUnit", 0);
 }
 
 
