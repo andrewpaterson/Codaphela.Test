@@ -92,6 +92,8 @@ void TestInverterPackageViewGeometry(void)
 void TestInverterUnitViewGeometry(void)
 {
 	CInverterUnitView*	pcUnit;
+	CInverterUnitView*	pcNext;
+	int					i;
 
 	pcUnit = NewMalloc<CInverterUnitView>();
 	pcUnit->Init(10, 4, ROT_East, "U5", "LVC", false, "04", 2);
@@ -104,7 +106,41 @@ void TestInverterUnitViewGeometry(void)
 	AssertGridPosition(9, 4, pcUnit->GetPortView("Input"));
 	AssertGridPosition(12, 4, pcUnit->GetPortView("Output"));
 	AssertTrue(pcUnit->GetPortView("Output")->IsInverting());
+	AssertInt(6, pcUnit->GetUnitCount());
+
+	//Each unit makes the next, as it is, until the part's last.
+	pcNext = (CInverterUnitView*)pcUnit->NewNextUnit();
+	AssertNotNull(pcNext);
+	AssertChar('D', pcNext->GetUnitLetter());
+	AssertString("U5", pcNext->GetName());
+	AssertString("LVC", pcNext->GetFamily());
+	AssertString("04", pcNext->GetPartType());
+	AssertInt(10, pcNext->GetPosition().x);
 	SafeKill(pcUnit);
+	pcUnit = pcNext;
+	for (i = 0; i < 2; i++)
+	{
+		pcNext = (CInverterUnitView*)pcUnit->NewNextUnit();
+		AssertNotNull(pcNext);
+		SafeKill(pcUnit);
+		pcUnit = pcNext;
+	}
+	AssertChar('F', pcUnit->GetUnitLetter());
+	AssertNull(pcUnit->NewNextUnit());
+	SafeKill(pcUnit);
+
+	pcUnit = NewMalloc<CInverterUnitView>();
+	pcUnit->Init(0, 0, ROT_East, "U7", "LVC", false, "2G04", 0);
+	AssertInt(2, pcUnit->GetUnitCount());
+	pcNext = (CInverterUnitView*)pcUnit->NewNextUnit();
+	AssertNotNull(pcNext);
+	AssertNull(pcNext->NewNextUnit());
+	SafeKill(pcNext);
+	SafeKill(pcUnit);
+
+	AssertInt(6, CInverterPackageView::GetPartUnitCount("14"));
+	AssertInt(1, CInverterPackageView::GetPartUnitCount("1G04"));
+	AssertInt(3, CInverterPackageView::GetPartUnitCount("3G14"));
 }
 
 

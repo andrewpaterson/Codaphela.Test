@@ -12,6 +12,7 @@
 #include "MicroprocessorLib/Event.h"
 #include "MicroprocessorLib/Timeline.h"
 #include "LogicimLib/BufferView.h"
+#include "LogicimLib/InverterPackageView.h"
 #include "LogicimLib/PowerSourceView.h"
 #include "LogicimLib/ValueView.h"
 #include "LogicimLib/LabelView.h"
@@ -19,6 +20,8 @@
 #include "LogicimLib/SubcircuitInstanceView.h"
 #include "LogicimLib/CircuitEditor.h"
 #include "LogicimLib/ComponentLibraries.h"
+#include "LogicimLib/ComponentProperties.h"
+#include "LogicimLib/Radix.h"
 #include "LogicimLib/ComponentPlacement.h"
 #include "LogicimLib/ComponentViewFactory.h"
 #include "BaseLib/PointerFunctions.h"
@@ -425,6 +428,64 @@ void TestCircuitEditorMoveFromJunction(void)
 	sTest.Run();
 	AssertInt(TV_High, sTest.GetLevel(16, -8));
 	AssertInt(TV_High, sTest.GetLevel(4, 6));
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A ground wired down, across and down to an inverter's input.  Dragging
+// the wire across down stretches it: while it's dragged the circuit isn't
+// changed; when it's dropped new wire joins its ends back to the wires
+// they were on, so the inverter is still driven.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorMoveWire(void)
+{
+	SEditorTest			sTest;
+	CCircuitView*		pcMain;
+	CGroundView*		pcGround;
+	size				uiTraces;
+	SInt32Vec2			sPoint;
+
+	sTest.Init();
+	pcMain = sTest.cEditor.AddCircuit("Main");
+	pcGround = NewMalloc<CGroundView>();
+	pcGround->Init(0, -1, ROT_North, "");
+	pcMain->Add(pcGround);
+	pcMain->AddTrace(0, -1, 0, 5);
+	pcMain->AddTrace(0, 5, 10, 5);
+	pcMain->AddTrace(10, 5, 10, 10);
+	AddTestInverter(pcMain, 11, 10);
+	pcMain->AddTrace(13, 10, 18, 10);
+	AssertTrue(sTest.cEditor.Simulate("Main"));
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(15, 10));
+
+	sTest.Click(5, 5);
+	AssertSize(1, sTest.cEditor.GetSelection()->NumTraces());
+	uiTraces = pcMain->NumTraces();
+	sTest.Press(5, 5);
+	sTest.PointAt(5, 8);
+	AssertTrue(sTest.cEditor.IsEditing());
+	AssertSize(uiTraces, pcMain->NumTraces());
+	sPoint.Init(5, 8);
+	AssertNotNull(pcMain->GetTraceAt(sPoint));
+
+	sTest.Release(5, 8);
+	AssertFalse(sTest.cEditor.IsEditing());
+	sPoint.Init(5, 5);
+	AssertNull(pcMain->GetTraceAt(sPoint));
+	sPoint.Init(0, 7);
+	AssertNotNull(pcMain->GetTraceAt(sPoint));
+	sPoint.Init(10, 6);
+	AssertNotNull(pcMain->GetTraceAt(sPoint));
+	AssertSize(1, sTest.cEditor.GetSelection()->NumTraces());
+	sPoint.Init(5, 8);
+	AssertTrue(sTest.cEditor.GetSelection()->GetTrace(0)->Contains(sPoint));
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(15, 10));
 
 	sTest.Kill();
 }
@@ -919,13 +980,15 @@ void TestCircuitEditorComponentLibraries(void)
 	}
 
 	psLogic = GetComponentLibrary(0);
-	AssertString("Logic Gates", psLogic->szName);
+	AssertString("Generic Logic", psLogic->szName);
+	AssertString("74' Series", GetComponentLibrary(1)->szName);
+	AssertString("InverterPackage", GetComponentLibrary(1)->asEntries[0].szXMLName);
 	AssertString("AndGate", psLogic->asEntries[0].szXMLName);
 	AssertTrue(ComponentMatchesFilter(psLogic, &psLogic->asEntries[0], ""));
 	AssertTrue(ComponentMatchesFilter(psLogic, &psLogic->asEntries[0], "  "));
 	AssertTrue(ComponentMatchesFilter(psLogic, &psLogic->asEntries[0], "and"));
 	AssertTrue(ComponentMatchesFilter(psLogic, &psLogic->asEntries[0], "AND gate"));
-	AssertTrue(ComponentMatchesFilter(psLogic, &psLogic->asEntries[0], "gates high"));
+	AssertTrue(ComponentMatchesFilter(psLogic, &psLogic->asEntries[0], "generic high"));
 	AssertFalse(ComponentMatchesFilter(psLogic, &psLogic->asEntries[0], "and clock"));
 	AssertFalse(ComponentMatchesFilter(psLogic, &psLogic->asEntries[0], "xor"));
 	AssertTrue(TextMatchesFilter("Inverter", "VERT"));
@@ -936,6 +999,79 @@ void TestCircuitEditorComponentLibraries(void)
 	KillTestCircuitFonts(&cFonts);
 	ObjectsFlush();
 	ObjectsKill(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Placing a unit of a part placed as its units goes straight on to placing
+// its next unit, under the pointer, until the part's last is placed.
+// Stopping the edit while placing a unit stops there.  Deleting a unit
+// deletes all its part's units.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorPlaceUnits(void)
+{
+	SEditorTest				sTest;
+	CCircuitView*			pcMain;
+	CInverterUnitView*		pcUnit;
+	int						i;
+
+	sTest.Init();
+	pcMain = sTest.cEditor.AddCircuit("Main");
+	AssertTrue(sTest.cEditor.Simulate("Main"));
+
+	sTest.PointAt(0, 0);
+	AssertTrue(sTest.cEditor.StartPlaceComponent("InverterUnit"));
+	for (i = 0; i < 6; i++)
+	{
+		AssertTrue(sTest.cEditor.IsEditing());
+		AssertSize(i + 1, pcMain->NumComponents());
+		sTest.Click(6 * i, 0);
+	}
+	AssertFalse(sTest.cEditor.IsEditing());
+	AssertSize(6, pcMain->NumComponents());
+	for (i = 0; i < 6; i++)
+	{
+		pcUnit = (CInverterUnitView*)pcMain->GetComponent(i);
+		AssertString("InverterUnit", pcUnit->GetXMLName());
+		AssertChar((char)('A' + i), pcUnit->GetUnitLetter());
+		AssertInt(6 * i, pcUnit->GetPosition().x);
+		AssertNotNull(pcUnit->GetComponent(sTest.cEditor.GetViewPath(), sTest.cEditor.GetSimulation()));
+	}
+
+	//Stopped while placing the second unit: only the first is placed.
+	sTest.PointAt(0, 10);
+	AssertTrue(sTest.cEditor.StartPlaceComponent("InverterUnit"));
+	sTest.Click(0, 10);
+	AssertTrue(sTest.cEditor.IsEditing());
+	AssertSize(8, pcMain->NumComponents());
+	sTest.cEditor.StopEdit();
+	AssertFalse(sTest.cEditor.IsEditing());
+	AssertSize(7, pcMain->NumComponents());
+
+	//A component of one isn't followed by anything.
+	sTest.PointAt(0, 20);
+	AssertTrue(sTest.cEditor.StartPlaceComponent("Inverter"));
+	sTest.Click(0, 20);
+	AssertFalse(sTest.cEditor.IsEditing());
+	AssertSize(8, pcMain->NumComponents());
+
+	//The units are named as one part, and the next part's as another.
+	AssertString("U1", pcMain->GetComponent(0)->GetName());
+	AssertString("U1", pcMain->GetComponent(5)->GetName());
+	AssertString("U2", pcMain->GetComponent(6)->GetName());
+
+	//Deleting one unit deletes its part's other units, and nothing else.
+	sTest.cEditor.StopEdit();
+	sTest.PointAt(12, 0);
+	AssertTrue(sTest.cEditor.GetHover() == pcMain->GetComponent(2));
+	AssertTrue(sTest.cEditor.Delete());
+	AssertSize(2, pcMain->NumComponents());
+	AssertString("U2", pcMain->GetComponent(0)->GetName());
+	AssertString("Inverter", pcMain->GetComponent(1)->GetXMLName());
+
+	sTest.Kill();
 }
 
 
@@ -958,6 +1094,7 @@ void TestCircuitEditorPlaceEveryComponent(void)
 	SComponentLibrary*		psLibrary;
 	size					i;
 	size					j;
+	size					k;
 	int32					x;
 
 	sTest.Init(&cFonts);
@@ -975,6 +1112,12 @@ void TestCircuitEditorPlaceEveryComponent(void)
 			sTest.PointAt(x, 0);
 			AssertTrue(sTest.cEditor.StartPlaceComponent(psLibrary->asEntries[j].szXMLName));
 			sTest.Click(x, 0);
+			for (k = 0; (k < 26) && sTest.cEditor.IsEditing(); k++)
+			{
+				//A part placed as its units goes on to its next unit.
+				x += 6;
+				sTest.Click(x, 0);
+			}
 			AssertFalse(sTest.cEditor.IsEditing());
 			pcView = pcMain->GetComponent(pcMain->NumComponents() - 1);
 			AssertString(psLibrary->asEntries[j].szXMLName, pcView->GetXMLName());
@@ -1000,6 +1143,232 @@ void TestCircuitEditorPlaceEveryComponent(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The view saved as XML, for comparing.
+//
+//////////////////////////////////////////////////////////////////////////
+static void SaveViewText(CComponentView* pcView, CChars* pszText)
+{
+	CXMLWriter	cWriter;
+
+	cWriter.Init();
+	pcView->SaveXML(&cWriter);
+	pszText->Init(cWriter.GetText());
+	cWriter.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Every component in the libraries, and a subcircuit instance, made again
+// from its own properties is the same component: it saves the same.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorPropertiesRoundTrip(void)
+{
+	SEditorTest				sTest;
+	CCircuitFonts			cFonts;
+	CCircuitView*			pcMain;
+	CComponentView*			pcView;
+	CComponentView*			pcNew;
+	CComponentProperties	cProperties;
+	SComponentLibrary*		psLibrary;
+	CChars					szBefore;
+	CChars					szAfter;
+	size					i;
+	size					j;
+	size					k;
+	int32					x;
+
+	sTest.Init(&cFonts);
+	LoadTestCircuitFonts(&cFonts);
+	AddEditorInverterSubcircuit(&sTest.cEditor, &cFonts);
+	pcMain = sTest.cEditor.AddCircuit("Main");
+	AssertTrue(sTest.cEditor.Simulate("Main"));
+
+	x = 0;
+	for (i = 0; i < NumComponentLibraries(); i++)
+	{
+		psLibrary = GetComponentLibrary(i);
+		for (j = 0; j < psLibrary->uiNumEntries; j++)
+		{
+			sTest.PointAt(x, 0);
+			AssertTrue(sTest.cEditor.StartPlaceComponent(psLibrary->asEntries[j].szXMLName));
+			sTest.Click(x, 0);
+			x += 60;
+		}
+	}
+	sTest.PointAt(x, 0);
+	AssertTrue(sTest.cEditor.StartPlaceSubcircuit("Inverter"));
+	sTest.Click(x, 0);
+
+	for (k = 0; k < pcMain->NumComponents(); k++)
+	{
+		pcView = pcMain->GetComponent(k);
+		SaveViewText(pcView, &szBefore);
+		cProperties.Init();
+		sTest.cEditor.GetProperties(pcView, &cProperties);
+		AssertTrue(cProperties.NumProperties() > 0);
+		AssertString("name", cProperties.Get(StringCompare(pcView->GetXMLName(), "Subcircuit") == 0 ? 1 : 0)->szName.Text());
+		pcNew = sTest.cEditor.SetProperties(pcView, &cProperties, pcView->GetRotation());
+		AssertNotNull(pcNew);
+		AssertPointer(pcNew, pcMain->GetComponent(k));
+		if (pcNew->MakesComponent())
+		{
+			AssertNotNull(pcNew->GetComponent(sTest.cEditor.GetViewPath(), sTest.cEditor.GetSimulation()));
+		}
+		SaveViewText(pcNew, &szAfter);
+		AssertString(szBefore.Text(), szAfter.Text());
+		szAfter.Kill();
+		szBefore.Kill();
+		cProperties.Kill();
+	}
+	sTest.cEditor.GetSimulation()->RunToTime(1000000);
+
+	KillTestCircuitFonts(&cFonts);
+	sTest.Kill(true);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A gate's properties are its name, then its family (a choice of the
+// families) and power, then its own, labelled as Logicim labels its
+// fields.  A pin's are split by dividers.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorPropertiesListed(void)
+{
+	SEditorTest				sTest;
+	CCircuitView*			pcMain;
+	CComponentProperties	cProperties;
+	SComponentProperty*		psProperty;
+	CPinView*				pcPin;
+	SInt32Vec2				sMinimum;
+	SInt32Vec2				sMaximum;
+
+	sTest.Init();
+	pcMain = sTest.cEditor.AddCircuit("Main");
+	AddTestInverter(pcMain, 0, 0);
+	sMinimum.Init(-2, -1);
+	sMaximum.Init(0, 1);
+	pcPin = NewMalloc<CPinView>();
+	pcPin->Init(10, 0, ROT_East, "In", "LVC", false, 1, RADIX_Binary, sMinimum, sMaximum);
+	pcMain->Add(pcPin);
+	AssertTrue(sTest.cEditor.Simulate("Main"));
+
+	cProperties.Init();
+	sTest.cEditor.GetProperties(pcMain->GetComponent(0), &cProperties);
+	AssertSize(5, cProperties.NumProperties());
+	psProperty = cProperties.Get((size)0);
+	AssertString("name", psProperty->szName.Text());
+	AssertString("Name", psProperty->szLabel.Text());
+	AssertInt(CPT_Text, psProperty->eType);
+	psProperty = cProperties.Get(1);
+	AssertString("Family", psProperty->szLabel.Text());
+	AssertInt(CPT_Choice, psProperty->eType);
+	AssertString("LVC", psProperty->szValue.Text());
+	AssertTrue(psProperty->aszChoices.NumElements() > 1);
+	AssertTrue(psProperty->aszChoices.Contains("LVC"));
+	psProperty = cProperties.Get(2);
+	AssertString("Explicit power ports", psProperty->szLabel.Text());
+	AssertInt(CPT_Boolean, psProperty->eType);
+	AssertString("false", psProperty->szValue.Text());
+	psProperty = cProperties.Get(3);
+	AssertString("Input count", psProperty->szLabel.Text());
+	AssertInt(CPT_Integer, psProperty->eType);
+	AssertString("1", psProperty->szValue.Text());
+	AssertString("Input width", cProperties.Get(4)->szLabel.Text());
+	cProperties.Kill();
+
+	cProperties.Init();
+	sTest.cEditor.GetProperties(pcPin, &cProperties);
+	AssertString("bitWidth", cProperties.Get(1)->szName.Text());
+	AssertInt(CPT_Divider, cProperties.Get("instanceLocation")->eType);
+	AssertString("Instance location", cProperties.Get("instanceLocation")->szLabel.Text());
+	AssertString("Left", cProperties.Get("alignment")->szValue.Text());
+	AssertString("Centre", cProperties.Get("anchour")->szValue.Text());
+	AssertInt(CPT_Divider, cProperties.Get("instanceDisplay")->eType);
+	AssertString("Binary", cProperties.Get("radix")->szValue.Text());
+	cProperties.Kill();
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Editing a wired inverter's properties keeps it wired and selected: given
+// a new name and a width out of range, which is clamped (and can't be
+// wired), then its width back, it still drives its output, and the
+// circuit's components and traces don't pile up; turned, it stays where
+// it is.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorPropertiesEdited(void)
+{
+	SEditorTest				sTest;
+	CCircuitView*			pcMain;
+	CInverterView*			pcInverter;
+	CComponentView*			pcNew;
+	CComponentProperties	cProperties;
+	CCircuit*				pcCircuit;
+	SFloat64Vec2			sCentre;
+	size					uiIntegratedCircuits;
+	size					uiTraces;
+	SLogConfig				sLogConfig;
+
+	sTest.Init();
+	pcMain = sTest.cEditor.AddCircuit("Main");
+	AddGroundAndOutput(pcMain);
+	pcInverter = AddTestInverter(pcMain, -3, -2);
+	AssertTrue(sTest.cEditor.Simulate("Main"));
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(3, -2));
+	pcCircuit = sTest.cEditor.GetSimulation()->GetCircuit();
+	uiIntegratedCircuits = pcCircuit->NumIntegratedCircuits();
+	uiTraces = pcCircuit->NumTraces();
+
+	sCentre = GetCentre(pcInverter);
+	sTest.Click(sCentre.x, sCentre.y);
+	AssertPointer(pcInverter, sTest.cEditor.GetPropertiesComponent());
+	cProperties.Init();
+	sTest.cEditor.GetProperties(pcInverter, &cProperties);
+	AssertTrue(cProperties.SetValue("name", "U1"));
+	AssertTrue(cProperties.SetValue("inputWidth", "100"));
+	gcLogger.GetConfig(&sLogConfig);
+	gcLogger.SetSilent();
+	pcNew = sTest.cEditor.SetProperties(pcInverter, &cProperties, ROT_East);
+	gcLogger.SetConfig(&sLogConfig);
+	cProperties.Kill();
+	AssertNotNull(pcNew);
+	AssertString("U1", pcNew->GetName());
+	AssertInt(RADIX_MAX_BIT_WIDTH, ((CInverterView*)pcNew)->GetInputWidth());
+	AssertTrue(sTest.cEditor.GetSelection()->Contains(pcNew));
+
+	cProperties.Init();
+	sTest.cEditor.GetProperties(pcNew, &cProperties);
+	AssertTrue(cProperties.SetValue("inputWidth", "1"));
+	pcNew = sTest.cEditor.SetProperties(pcNew, &cProperties, ROT_East);
+	cProperties.Kill();
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(3, -2));
+	AssertSize(uiIntegratedCircuits, pcCircuit->NumIntegratedCircuits());
+	AssertSize(uiTraces, pcCircuit->NumTraces());
+
+	cProperties.Init();
+	sTest.cEditor.GetProperties(pcNew, &cProperties);
+	pcNew = sTest.cEditor.SetProperties(pcNew, &cProperties, ROT_South);
+	cProperties.Kill();
+	AssertInt(ROT_South, pcNew->GetRotation());
+	AssertInt(-3, pcNew->GetPosition().x);
+	AssertInt(-2, pcNew->GetPosition().y);
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCircuitEditor(void)
@@ -1012,6 +1381,7 @@ void TestCircuitEditor(void)
 	TestCircuitEditorPlace();
 	TestCircuitEditorMove();
 	TestCircuitEditorMoveFromJunction();
+	TestCircuitEditorMoveWire();
 	TestCircuitEditorRotateAndDelete();
 	TestCircuitEditorSaveLoad();
 	TestCircuitEditorTraceLines();
@@ -1020,6 +1390,10 @@ void TestCircuitEditor(void)
 	TestCircuitEditorSubcircuit();
 	TestCircuitEditorComponentLibraries();
 	TestCircuitEditorPlaceEveryComponent();
+	TestCircuitEditorPlaceUnits();
+	TestCircuitEditorPropertiesRoundTrip();
+	TestCircuitEditorPropertiesListed();
+	TestCircuitEditorPropertiesEdited();
 
 	DataMemoryKill();
 	DataIOKill();
