@@ -5,11 +5,13 @@
     <ClCompile Include="TestCircuitFile.cpp" />
     <ClCompile Include="TestTextViews.cpp" />
     <ClCompile Include="TestWiring.cpp" />
+    <ClCompile Include="TestTraceAutoConnector.cpp" />
     <ClCompile Include="TestGateViews.cpp" />
     <ClCompile Include="TestLogicimRender.cpp" />
     <ClCompile Include="TestSimulationState.cpp" />
     <ClCompile Include="TestViewPaths.cpp" />
     <ClCompile Include="TestSubcircuits.cpp" />
+    <ClCompile Include="TestCircuitEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestLogicimRender.h" />

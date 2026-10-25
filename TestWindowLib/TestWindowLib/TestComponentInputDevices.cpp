@@ -356,12 +356,19 @@ void TestComponentInputMouse(void)
 		cDevices.Release("Left Shift");
 		AssertLog("A:Wheel(-1,0);A:Wheel(1,0);");
 
-		//Nothing is mapped to a control click.
+		//A control click, and a control shift click, drag a selection as a shift click does.
 		cDevices.Press("Left Control");
 		cDevices.PressButton("Button 1");
 		cDevices.ReleaseButton("Button 1");
 		cDevices.Release("Left Control");
-		AssertLog("");
+		AssertLog("A:StartDragSelect(12,11);A:StopDragSelect(12,11);");
+		cDevices.Press("Left Control");
+		cDevices.Press("Left Shift");
+		cDevices.PressButton("Button 1");
+		cDevices.ReleaseButton("Button 1");
+		cDevices.Release("Left Shift");
+		cDevices.Release("Left Control");
+		AssertLog("A:StartDragSelect(12,11);A:StopDragSelect(12,11);");
 
 		//Once killed the devices are disabled and nothing is heard.
 		cComponentInput.Kill();

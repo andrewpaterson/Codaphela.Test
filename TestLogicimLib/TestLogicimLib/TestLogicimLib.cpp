@@ -13,8 +13,10 @@ void TestCircuitFile(void);
 void TestSimulationState(void);
 void TestTextViews(void);
 void TestWiring(void);
+void TestTraceAutoConnector(void);
 void TestViewPaths(void);
 void TestSubcircuits(void);
+void TestCircuitEditor(void);
 
 
 int __cdecl main(void)
@@ -34,8 +36,10 @@ int __cdecl main(void)
 	TestSimulationState();
 	TestTextViews();
 	TestWiring();
+	TestTraceAutoConnector();
 	TestViewPaths();
 	TestSubcircuits();
+	TestCircuitEditor();
 
 	MemoryKill();
 	TypeConverterKill();
