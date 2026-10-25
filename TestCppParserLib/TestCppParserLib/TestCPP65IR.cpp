@@ -160,7 +160,7 @@ void TestCPP65IRMembers(void)
 		"struct CSquare : CShape { int miSide; virtual int Area() { return miSide * miSide; } };\n"
 		"struct CLine : CShape { virtual int Area() { return 20; } };\n"
 		"int Area(CShape* p) { return p->Area(); }\n"
-		"int main() { CSquare s; s.miSide = 3; CLine l; CShape b; return Area(&s) + 1 + Area(&l) + b.Twice() + (s.Twice() - 18); }", 6));
+		"int main() { CSquare s; s.miSide = 3; CLine l; CShape b; return Area(&s) + 1 + Area(&l) + b.Twice() + (s.Twice() - 18); }", 9));
 	AssertInt(100 + 2 + 3, TestCPP65IRMain(
 		"struct CA { int a; int GetA() { return a; } };\n"
 		"struct CB { int b; int GetB() { return b; } };\n"
@@ -267,7 +267,7 @@ void TestCPP65IRConstructors(void)
 		"struct CBase { int miPad; int Base(int i) { return i + 1; } };\n"
 		"struct CCalc : CBase { int miValue; int Add(int i) { return miValue + i; } virtual int Get() { return 9; } };\n"
 		"int main() { CCalc c; c.miValue = 20; CCalc* p = &c; int (CCalc::*f)(int) = &CCalc::Add; int (CBase::*b)(int) = &CBase::Base;\n"
-		"int (CCalc::*g)() = &CCalc::Get; int CCalc::*m = &CCalc::miValue; int r = (c.*f)(1); c.*m = 11; return r + (p->*f)(1) + (c.*b)(4) + (p->*g)(); }", 4));
+		"int (CCalc::*g)() = &CCalc::Get; int CCalc::*m = &CCalc::miValue; int r = (c.*f)(1); c.*m = 11; return r + (p->*f)(1) + (c.*b)(4) + (p->*g)(); }", 5));
 
 	//A member pointer from 0 is null and false; == compares them; a base's field is the derived class's (its offset added).
 	AssertInt(1 + 20 + 3, TestCPP65IRMain(
@@ -349,7 +349,7 @@ void TestCPP65IRObjectsByValue(void)
 		"struct CBase { int mi; virtual int Who() { return 1; } };\n"
 		"struct CDerived : CBase { int mj; virtual int Who() { return 2; } };\n"
 		"CCounted Five() { return CCounted(5); }\n"
-		"int main() { CCounted a = Five(); CCounted b = a; CDerived d; d.mi = 2; CBase c; c = d; return b.mi * 100 + c.mi * 10 + c.Who() + giCopies - 1; }", 6));
+		"int main() { CCounted a = Five(); CCounted b = a; CDerived d; d.mi = 2; CBase c; c = d; return b.mi * 100 + c.mi * 10 + c.Who() + giCopies - 1; }", 8));
 
 	//A derived object passed by value as its base is a base (its vtable is the base's); an object argument is copied
 	//when it is worked out, before the arguments left of it change it.
@@ -360,7 +360,7 @@ void TestCPP65IRObjectsByValue(void)
 		"int H(CB& r) { return G(r); }\n"
 		"struct SA { int x; };\n"
 		"int K(int n, SA a) { return a.x; }\n"
-		"int main() { CD d; SA a; a.x = 3; return H(d) * 100 + K(a.x = 5, a); }", 7));
+		"int main() { CD d; SA a; a.x = 3; return H(d) * 100 + K(a.x = 5, a); }", 9));
 }
 
 
@@ -390,6 +390,85 @@ void TestCPP65IRStringCompare(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A virtual call through a pointer to an object whose vtable was just
+// stored: the vtable's entry is known, so the call is direct (and inlined).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65IRDevirtualise(void)
+{
+	const char*	szSource;
+	CChars		szAssembly;
+	CChars		szErrors;
+	CChars		szUse;
+	bool		bDefault;
+
+	szSource =
+		"struct CShape { virtual int Area() { return 1; } };\n"
+		"struct CSquare : CShape { int miSide; virtual int Area() { return miSide * miSide; } };\n"
+		"int Use(int i) { CSquare c; c.miSide = i; CShape* p = &c; return p->Area(); }\n"
+		"int main() { return Use(5); }\n";
+	AssertInt(25, TestCPP65IRMain(szSource, 6));
+
+	bDefault = CCPP65Generator::GetDefaultUseIR();
+	CCPP65Generator::SetDefaultUseIR(true);
+	szAssembly.Init();
+	szErrors.Init();
+	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, szSource, true));
+	szUse.Init();
+	szUse.AppendSubString(szAssembly, szAssembly.Find("_Use__Fi:"), szAssembly.Length());
+	szUse.SetLength(szUse.Find("\t\tret"));
+	AssertFalse(szUse.Contains("jsr"));
+	szUse.Kill();
+	szErrors.Kill();
+	szAssembly.Kill();
+	CCPP65Generator::SetDefaultUseIR(bDefault);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A function too big to inline is inlined when it is called with a
+// constant it compares (the comparisons fold).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65IRInlineConstants(void)
+{
+	const char*	szSource;
+	CChars		szAssembly;
+	CChars		szErrors;
+	CChars		szMain;
+	bool		bDefault;
+
+	szSource =
+		"int ga = 7; int gb = 3;\n"
+		"int Pick(int iKind, int a, int b)\n"
+		"{\n"
+		"	if (iKind == 0) return a + b; if (iKind == 1) return a - b; if (iKind == 2) return a * b;\n"
+		"	if (iKind == 3) return a & b; if (iKind == 4) return a | b; if (iKind == 5) return a ^ b;\n"
+		"	if (iKind == 6) return a << b; if (iKind == 7) return a >> b; if (iKind == 8) return a % b;\n"
+		"	return 0;\n"
+		"}\n"
+		"int main() { return Pick(2, ga, gb) + Pick(8, ga, gb); }\n";
+	AssertInt(22, TestCPP65IRMain(szSource, 2));
+
+	bDefault = CCPP65Generator::GetDefaultUseIR();
+	CCPP65Generator::SetDefaultUseIR(true);
+	szAssembly.Init();
+	szErrors.Init();
+	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, szSource, true));
+	szMain.Init();
+	szMain.AppendSubString(szAssembly, szAssembly.Find("_main:"), szAssembly.Length());
+	szMain.SetLength(szMain.Find("\t\tret"));
+	AssertFalse(szMain.Contains("jsr _Pick"));
+	szMain.Kill();
+	szErrors.Kill();
+	szAssembly.Kill();
+	CCPP65Generator::SetDefaultUseIR(bDefault);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCPP65IR(void)
@@ -411,6 +490,8 @@ void TestCPP65IR(void)
 	TestCPP65IRConstructors();
 	TestCPP65IRObjectsByValue();
 	TestCPP65IRStringCompare();
+	TestCPP65IRDevirtualise();
+	TestCPP65IRInlineConstants();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
 	NumberKill();

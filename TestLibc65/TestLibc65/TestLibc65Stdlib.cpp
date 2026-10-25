@@ -37,9 +37,9 @@ static void TestLibc65StdlibConversions(const char* szFunction, STestLibc65Conve
 		szSource.Append(' ')->Append(asConversions[i].iBase)->Append(',');
 	}
 	szSource.Append(" };\n");
-	szSource.Append("int main()\n{\n\tint* p = (int*)0x100000;\n\tchar* pszEnd;\n");
+	szSource.Append("int main()\n{\n\tlong* p = (long*)0x100000;\n\tchar* pszEnd;\n");
 	szSource.Append("\tfor (int i = 0; i < ")->Append((int)uiConversions)->Append("; i++)\n\t{\n");
-	szSource.Append("\t\t*p++ = (int)")->Append(szFunction)->Append("(gaszText[i], &pszEnd, gaiBase[i]);\n");
+	szSource.Append("\t\t*p++ = (long)")->Append(szFunction)->Append("(gaszText[i], &pszEnd, gaiBase[i]);\n");
 	szSource.Append("\t\t*p++ = (int)(pszEnd - gaszText[i]);\n");
 	szSource.Append("\t}\n\treturn 0;\n}\n");
 
@@ -146,7 +146,7 @@ void TestLibc65StdlibRand(void)
 		"#include <stdlib.h>\n"
 		"int main()\n"
 		"{\n"
-		"	int* p = (int*)0x100000;\n"
+		"	long* p = (long*)0x100000;\n"
 		"	for (int i = 0; i < 5; i++)\n"
 		"	{\n"
 		"		*p++ = rand();\n"
@@ -219,7 +219,7 @@ void TestLibc65StdlibQsort(void)
 		"int giOne = 4;\n"
 		"int main()\n"
 		"{\n"
-		"	int* p = (int*)0x100000;\n"
+		"	long* p = (long*)0x100000;\n"
 		"	qsort(gaiA, 10, sizeof(int), Ascending);\n"
 		"	qsort(gaiB, 10, sizeof(int), Descending);\n"
 		"	qsort(gasPairs, 3, sizeof(SPair), ByKey);\n"
@@ -273,7 +273,7 @@ void TestLibc65StdlibAllocation(void)
 		"#include <string.h>\n"
 		"int main()\n"
 		"{\n"
-		"	int*	p;\n"
+		"	long*	p;\n"
 		"	char*	a;\n"
 		"	char*	b;\n"
 		"	char*	c;\n"
@@ -281,7 +281,7 @@ void TestLibc65StdlibAllocation(void)
 		"	char*	e;\n"
 		"	char*	f;\n"
 		"	int		iZero;\n"
-		"	p = (int*)0x100000;\n"
+		"	p = (long*)0x100000;\n"
 		"	a = (char*)malloc(10);\n"
 		"	*p++ = a != NULL;\n"
 		"	*p++ = ((unsigned int)a & 3) == 0;\n"
@@ -314,9 +314,9 @@ void TestLibc65StdlibAllocation(void)
 		"	*p++ = abs(-5);\n"
 		"	*p++ = abs(5);\n"
 		"	*p++ = abs(0);\n"
-		"	*p++ = (int)labs(-2147483647L);\n"
+		"	*p++ = labs(-2147483647L);\n"
 		"	*p++ = atoi(\"  -12abc\");\n"
-		"	*p++ = (int)atol(\"2147483647\");\n"
+		"	*p++ = atol(\"2147483647\");\n"
 		"	*p++ = atoi(\"\");\n"
 		"	return 0;\n"
 		"}\n"));
@@ -354,9 +354,9 @@ void TestLibc65StdlibAllocationOverflow(void)
 		"#include <stdlib.h>\n"
 		"int main()\n"
 		"{\n"
-		"	int*	p;\n"
+		"	long*	p;\n"
 		"	char*	pc;\n"
-		"	p = (int*)0x100000;\n"
+		"	p = (long*)0x100000;\n"
 		"	*p++ = malloc(0xFFFFFFFD) == NULL;\n"
 		"	*p++ = malloc(0xFFFFFFF8) == NULL;\n"
 		"	*p++ = malloc(0x7FFFFFFF) == NULL;\n"
@@ -394,10 +394,10 @@ void TestLibc65StdlibFragmentation(void)
 		"#include <stdlib.h>\n"
 		"int main()\n"
 		"{\n"
-		"	int*	p;\n"
+		"	long*	p;\n"
 		"	char*	pc;\n"
 		"	int		iFailed;\n"
-		"	p = (int*)0x100000;\n"
+		"	p = (long*)0x100000;\n"
 		"	iFailed = 0;\n"
 		"	for (int i = 0; i < 400; i++)\n"
 		"	{\n"
@@ -449,7 +449,7 @@ void TestLibc65StdlibExit(void)
 		"{\n"
 		"	~SFinal()\n"
 		"	{\n"
-		"		*(int*)0x100004 = 99;\n"
+		"		*(long*)0x100004 = 99;\n"
 		"	}\n"
 		"};\n"
 		"SFinal gsFinal __attribute__((used));\n"
@@ -460,13 +460,13 @@ void TestLibc65StdlibExit(void)
 		"		exit(3);\n"
 		"	}\n"
 		"	Deep(i - 1);\n"
-		"	*(int*)0x100008 = 1;\n"
+		"	*(long*)0x100008 = 1;\n"
 		"}\n"
 		"int main()\n"
 		"{\n"
-		"	*(int*)0x100000 = 1;\n"
+		"	*(long*)0x100000 = 1;\n"
 		"	Deep(5);\n"
-		"	*(int*)0x100000 = 2;\n"
+		"	*(long*)0x100000 = 2;\n"
 		"	return 7;\n"
 		"}\n"));
 	AssertTrue(TestLibc65RunToStop(&sRun, 2000000));
@@ -497,15 +497,15 @@ void TestLibc65StdlibUnderscoreExit(void)
 		"{\n"
 		"	~SFinal()\n"
 		"	{\n"
-		"		*(int*)0x100004 = 99;\n"
+		"		*(long*)0x100004 = 99;\n"
 		"	}\n"
 		"};\n"
 		"SFinal gsFinal __attribute__((used));\n"
 		"int main()\n"
 		"{\n"
-		"	*(int*)0x100000 = 1;\n"
+		"	*(long*)0x100000 = 1;\n"
 		"	_Exit(4);\n"
-		"	*(int*)0x100000 = 2;\n"
+		"	*(long*)0x100000 = 2;\n"
 		"	return 7;\n"
 		"}\n"));
 	AssertTrue(TestLibc65RunToStop(&sRun, 2000000));
@@ -535,7 +535,7 @@ static void TestLibc65StdlibAtExitProgram(STestLibc65Run* psRun, const char* szE
 		"int giNext;\n"
 		"void Log(int i)\n"
 		"{\n"
-		"	((int*)0x100000)[giNext] = i;\n"
+		"	((long*)0x100000)[giNext] = i;\n"
 		"	giNext++;\n"
 		"}\n"
 		"struct SFinal\n"
@@ -607,7 +607,7 @@ void TestLibc65StdlibAtExit(void)
 	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "",
 		"#include <stdlib.h>\n"
 		"int giCount;\n"
-		"void Count() { giCount++; *(int*)0x100000 = giCount; }\n"
+		"void Count() { giCount++; *(long*)0x100000 = giCount; }\n"
 		"int main()\n"
 		"{\n"
 		"	for (int i = 0; i < 32; i++)\n"

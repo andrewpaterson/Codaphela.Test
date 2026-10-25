@@ -38,11 +38,11 @@ void TestLibc65StringFunctions(void)
 		"}\n"
 		"int main()\n"
 		"{\n"
-		"	int*		p;\n"
+		"	long*		p;\n"
 		"	char*		pc;\n"
 		"	const char*	sz;\n"
 		"	char		ac[16];\n"
-		"	p = (int*)0x100000;\n"
+		"	p = (long*)0x100000;\n"
 		"	pc = (char*)0x108000;\n"
 		"	*p++ = strlen(\"\");\n"
 		"	*p++ = strlen(\"a\");\n"
@@ -140,7 +140,7 @@ void TestLibc65StringRandomCases(void)
 	CChars				szSource;
 	unsigned char		aucA[STRING_CASES_BUFFER];
 	unsigned char		aucB[STRING_CASES_BUFFER];
-	int					aiResults[STRING_CASES_COUNT * 32];
+	int32_t				aiResults[STRING_CASES_COUNT * 32];
 	int					iCount;
 	int					i;
 
@@ -152,8 +152,8 @@ void TestLibc65StringRandomCases(void)
 	szSource.Append(
 		"int main()\n"
 		"{\n"
-		"	int*	p;\n"
-		"	p = (int*)0x100000;\n"
+		"	int32_t*	p;\n"
+		"	p = (int32_t*)0x100000;\n"
 		"	p[0] = RunStringCases(p + 1, (unsigned char*)0x110000, (unsigned char*)0x111000);\n"
 		"	return 0;\n"
 		"}\n");

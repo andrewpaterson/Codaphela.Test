@@ -20,7 +20,7 @@ int main()
 	CRedBlackTree	cTree;
 	SKeyValue		sElement;
 	SKeyValue*		psElement;
-	unsigned		uiRandom;
+	uint32			uiRandom;
 	int				iPassed;
 	int				iAdded;
 	int				iPrevious;

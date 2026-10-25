@@ -7,6 +7,7 @@
 #include "CppParserLib/IRParser.h"
 #include "CppParserLib/IRVerifier.h"
 #include "CppParserLib/IR65Backend.h"
+#include "CppParserLib/IR65Flags.h"
 #include "CppParserLib/IR65Widths.h"
 #include "TestLib/Assert.h"
 #include "TestCPP65Context.h"
@@ -27,10 +28,8 @@ const char*	gszTestIR65DivideSigned =
 	"\t\tabs Y, A\n"
 	"\t\tabs A, B\n"
 	"\t\tcpy B, 0\n"
-	"\t\tpsh W\n"
-	"\t\tcpy W, 0\n"
 	"\t\tdiv\n"
-	"\t\tpul W\n"
+	"\t\tcpy W, 0\n"
 	"\t\tpul X\n"
 	"\t\tcmp X, 0\n"
 	"\t\tbrac n, R_DivideSigned1\n"
@@ -56,10 +55,8 @@ const char*	gszTestIR65DivideSigned64 =
 	"\t\tabs Y, A\n"
 	"\t\tabs A, B\n"
 	"\t\tcpy B, 0\n"
-	"\t\tpsh W\n"
-	"\t\tcpy W, 0\n"
 	"\t\tdiv\n"
-	"\t\tpul W\n"
+	"\t\tcpy W, 0\n"
 	"\t\tpul X\n"
 	"\t\tcmp X, 0\n"
 	"\t\tbrac n, R_DivideSigned641\n"
@@ -884,7 +881,8 @@ void TestIR65WidthsOptimise(const char* szExpected, const char* szCode)
 //
 // A wthx whose extended bits are never read goes; widths are only set
 // before the instructions that need them, once before a loop, and two
-// registers going to one width share a wtth.  A string's length counted
+// registers going to one width share a wtth.  A runtime routine called
+// with other widths leaves them unknown.  A string's length counted
 // through a byte only compared keeps its register narrow in the loop.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -992,6 +990,25 @@ void TestIR65BackendWidths(void)
 		"\t\tcpy A, 5\n"
 		"\t\tret\n");
 
+	//A runtime routine called with A and B 64 bits wide leaves them so: they are set back before A is stored.
+	TestIR65WidthsOptimise(
+		"_F:\n"
+		"\t\twtth (A, B), 64\n"
+		"\t\tcpy A, [0 + W]\n"
+		"\t\tcpy B, [8 + W]\n"
+		"\t\tjsr R_DivideSigned64\n"
+		"\t\twtth (A, B), 32\n"
+		"\t\tcpy [16 + W], A\n"
+		"\t\tret\n",
+		"_F:\n"
+		"\t\twtth (A, B), 64\n"
+		"\t\tcpy A, [0 + W]\n"
+		"\t\tcpy B, [8 + W]\n"
+		"\t\tjsr R_DivideSigned64\n"
+		"\t\twtth (A, B), 32\n"
+		"\t\tcpy [16 + W], A\n"
+		"\t\tret\n");
+
 	//An instruction the pass doesn't know leaves the code as it was.
 	TestIR65WidthsOptimise(
 		"_F:\n"
@@ -1038,6 +1055,132 @@ void TestIR65BackendWidths(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// CIR65Flags on szCode, as a whole function.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR65FlagsOptimise(const char* szExpected, const char* szCode)
+{
+	CIR65Flags	cFlags;
+	CChars		sz;
+
+	sz.Init(szCode);
+	cFlags.Init();
+	cFlags.Optimise(&sz, 0);
+	cFlags.Kill();
+	AssertString(szExpected, sz.Text());
+	sz.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A cmp R, 0 after n and z were set from R goes when only n and z are read
+// after it; a cmp the flags already hold goes (across a label both ways
+// into agree on); a cmp whose operand changed, or whose c is read, stays.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR65BackendFlags(void)
+{
+	//and set n and z from A; the cpy X, A from both X and A.
+	TestIR65FlagsOptimise(
+		"_F:\n"
+		"\t\tand A, 255\n"
+		"\t\tbras z, L1\n"
+		"\t\tcpy X, A\n"
+		"\t\tbras n, L1\n"
+		"\t\tret\n"
+		"L1:\n"
+		"\t\tret\n",
+		"_F:\n"
+		"\t\tand A, 255\n"
+		"\t\tcmp A, 0\n"
+		"\t\tbras z, L1\n"
+		"\t\tcpy X, A\n"
+		"\t\tcmp A, 0\n"
+		"\t\tbras n, L1\n"
+		"\t\tret\n"
+		"L1:\n"
+		"\t\tret\n");
+
+	//The second cmp's flags are the first's (L1 is reached from the branch, and by falling through a psh, which sets
+	//no flags).
+	TestIR65FlagsOptimise(
+		"_F:\n"
+		"\t\tcmp X, [4 + W]\n"
+		"\t\tbras z, L1\n"
+		"\t\tpsh A\n"
+		"L1:\n"
+		"\t\tbrac c, L2\n"
+		"\t\tret\n"
+		"L2:\n"
+		"\t\tret\n",
+		"_F:\n"
+		"\t\tcmp X, [4 + W]\n"
+		"\t\tbras z, L1\n"
+		"\t\tpsh A\n"
+		"L1:\n"
+		"\t\tcmp X, [4 + W]\n"
+		"\t\tbrac c, L2\n"
+		"\t\tret\n"
+		"L2:\n"
+		"\t\tret\n");
+
+	//cpy A, 1 sets the flags, X changes, [4 + W] is written, and c is read after a cmp A, 0: all stay.
+	TestIR65FlagsOptimise(
+		"_F:\n"
+		"\t\tcmp X, [4 + W]\n"
+		"\t\tadd X, 1\n"
+		"\t\tcmp X, [4 + W]\n"
+		"\t\tcpy [4 + W], A\n"
+		"\t\tcmp X, [4 + W]\n"
+		"\t\tbras z, L1\n"
+		"\t\tadd A, 1\n"
+		"\t\tcmp A, 0\n"
+		"\t\tbrac c, L1\n"
+		"\t\tret\n"
+		"L1:\n"
+		"\t\tret\n",
+		"_F:\n"
+		"\t\tcmp X, [4 + W]\n"
+		"\t\tadd X, 1\n"
+		"\t\tcmp X, [4 + W]\n"
+		"\t\tcpy [4 + W], A\n"
+		"\t\tcmp X, [4 + W]\n"
+		"\t\tbras z, L1\n"
+		"\t\tadd A, 1\n"
+		"\t\tcmp A, 0\n"
+		"\t\tbrac c, L1\n"
+		"\t\tret\n"
+		"L1:\n"
+		"\t\tret\n");
+
+	//The ways into L1 disagree (n and z of A, of X): the cmp stays.
+	TestIR65FlagsOptimise(
+		"_F:\n"
+		"\t\tcpy A, [0 + W]\n"
+		"\t\tbras z, L1\n"
+		"\t\tcpy X, [4 + W]\n"
+		"L1:\n"
+		"\t\tcmp A, 0\n"
+		"\t\tbras z, L2\n"
+		"\t\tret\n"
+		"L2:\n"
+		"\t\tret\n",
+		"_F:\n"
+		"\t\tcpy A, [0 + W]\n"
+		"\t\tbras z, L1\n"
+		"\t\tcpy X, [4 + W]\n"
+		"L1:\n"
+		"\t\tcmp A, 0\n"
+		"\t\tbras z, L2\n"
+		"\t\tret\n"
+		"L2:\n"
+		"\t\tret\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestIR65Backend(void)
@@ -1061,6 +1204,7 @@ void TestIR65Backend(void)
 	TestIR65BackendFloat();
 	TestIR65BackendAllocation();
 	TestIR65BackendWidths();
+	TestIR65BackendFlags();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
 	NumberKill();

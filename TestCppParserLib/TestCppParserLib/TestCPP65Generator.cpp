@@ -448,10 +448,8 @@ void TestCPP65GeneratorConvention(void)
 		"\t\tcpy B, [13 + V]\n"
 		"\t\tadd A, B\n"
 		"\t\tcpy B, [0 + W]\n"
-		"\t\tpsh W\n"
-		"\t\tcpy W, 0\n"
 		"\t\tmul\n"
-		"\t\tpul W\n"
+		"\t\tcpy W, 0\n"
 		"\t\tcpy A, Y\n"
 		"L1:\n"
 		"\t\tpul V\n"
@@ -1976,7 +1974,7 @@ void TestCPP65GeneratorFloat(void)
 // The FloatHelper results worked out natively, in the order the 65C64 stores them.
 //
 //////////////////////////////////////////////////////////////////////////
-static CArrayInt	gaiFloatHelperResults;
+CArrayInt	gaiFloatHelperResults;
 
 
 static void FloatHelperFloat32(float32 f)
@@ -2004,7 +2002,7 @@ static void FloatHelperInteger(int i)
 }
 
 
-static void FloatHelperExpected(void)
+void FloatHelperExpected(void)
 {
 #define FLOAT32(x)	FloatHelperFloat32(x)
 #define FLOAT64(x)	FloatHelperFloat64(x)
@@ -2021,8 +2019,8 @@ static void FloatHelperExpected(void)
 // The SQuaternion results worked out natively, in the order the 65C64 stores them.
 //
 //////////////////////////////////////////////////////////////////////////
-static CArrayInt	gaiQuaternionResults;
-static CArrayInt	gaiQuaternionIsFloat;
+CArrayInt	gaiQuaternionResults;
+CArrayInt	gaiQuaternionIsFloat;
 
 
 static void QuaternionFloat(float f)
@@ -2056,7 +2054,7 @@ static void QuaternionInteger(int i)
 // The distance in ulps between two floats given as bits.
 //
 //////////////////////////////////////////////////////////////////////////
-static uint64 TestCPP65FloatUlps(uint32 uiActual, uint32 uiExpected)
+uint64 TestCPP65FloatUlps(uint32 uiActual, uint32 uiExpected)
 {
 	int64	lliActual;
 	int64	lliExpected;
@@ -2067,7 +2065,7 @@ static uint64 TestCPP65FloatUlps(uint32 uiActual, uint32 uiExpected)
 }
 
 
-static void QuaternionExpected(void)
+void QuaternionExpected(void)
 {
 #define QUATERNION(x)	QuaternionNative(x)
 #define INTEGER(x)		QuaternionInteger((int)(x))

@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "BaseLib/PointerFunctions.h"
 #include "BaseLib/ConstructorCall.h"
 #include "BaseLib/FileUtil.h"
@@ -11,6 +12,14 @@
 
 #define TEST_LIBC65_DIRECTORY		".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "Libc65"
 #define TEST_LIBC65_LIBRARIES		".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries"
+
+
+//The W65C816 runs more instructions for the same C++ (a 16 bit int, soft float in C++ rather than softfloat.asm):
+//its runs may take this many times the 65C64's instructions.
+#define TEST_LIBC65_816_INSTRUCTIONS	400
+
+
+ECPPTarget	geTestLibc65Target = CPPT_65C64;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -29,10 +38,25 @@ static void TestLibc65FullPath(CChars* pszDirectory, const char* szRelative)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Whether szUnit is 65C64 assembly (.asm).
+//
+//////////////////////////////////////////////////////////////////////////
+static bool TestLibc65IsAssembly(const char* szUnit)
+{
+	const char*	szDot;
+
+	szDot = strrchr(szUnit, '.');
+	return szDot && (strcmp(szDot, ".asm") == 0);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Compiles szSource and the Libc65 units (file names in commonlibraries/Libc65, NULL terminated) and links
 // the start up and szSource with the Libc65 units as a library (a unit is linked when something needs it).
 // BaseLib's TrueMallocator.cpp, which malloc uses, is in the library too.
-// Loads the program at reset.  The labels in szStubs (space separated, sorted) must be exactly the ones
+// Loads the program at reset.  On the W65C816 the units in 65C64 assembly (.asm) are left out: their .cpp units
+// have the same functions for it.  The labels in szStubs (space separated, sorted) must be exactly the ones
 // used but defined by no linked unit; the linker makes each a stp so a call to one stops the program.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -49,6 +73,7 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 	TestLibc65FullPath(&szLibc65, TEST_LIBC65_DIRECTORY);
 	TestLibc65FullPath(&szLibraries, TEST_LIBC65_LIBRARIES);
 	cBuilder.Init();
+	cBuilder.SetTarget(geTestLibc65Target);
 	cBuilder.AddIncludeDirectory(szLibc65.Text(), false, true);
 	cBuilder.AddIncludeDirectory(szLibraries.Text(), true, false);
 
@@ -56,7 +81,10 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 	bResult &= cBuilder.AddSource("Test.cpp", szSource);
 	for (i = 0; aszUnits[i]; i++)
 	{
-		cBuilder.AddUnit("Libc65", szLibc65.Text(), aszUnits[i], true);
+		if ((geTestLibc65Target == CPPT_65C64) || !TestLibc65IsAssembly(aszUnits[i]))
+		{
+			cBuilder.AddUnit("Libc65", szLibc65.Text(), aszUnits[i], true);
+		}
 	}
 	TestLibc65FullPath(&szBaseLib, TEST_LIBC65_LIBRARIES _FS_ "BaseLib");
 	cBuilder.AddUnit("BaseLib", szBaseLib.Text(), "TrueMallocator.cpp", true);
@@ -74,9 +102,18 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 	{
 		psRun->pcMemory = NewMalloc<CAsm65Memory>();
 		psRun->pcMemory->Init();
-		psRun->pcMemory->LoadProgram(cBuilder.GetOutput(), CPP65_PROGRAM_ADDRESS);
-		psRun->pcMemory->InitFast(&psRun->cMPU);
-		psRun->cMPU.Reset();
+		if (geTestLibc65Target == CPPT_W65C816)
+		{
+			psRun->pcMemory->Load(cBuilder.GetOutput());
+			psRun->pcMemory->InitFast816(&psRun->cMPU816);
+			psRun->cMPU816.Reset();
+		}
+		else
+		{
+			psRun->pcMemory->LoadProgram(cBuilder.GetOutput(), CPP65_PROGRAM_ADDRESS);
+			psRun->pcMemory->InitFast(&psRun->cMPU);
+			psRun->cMPU.Reset();
+		}
 	}
 
 	szMissing.Kill();
@@ -97,6 +134,10 @@ bool TestLibc65Run(STestLibc65Run* psRun, size uiMaxInstructions)
 {
 	if (TestLibc65RunToStop(psRun, uiMaxInstructions))
 	{
+		if (geTestLibc65Target == CPPT_W65C816)
+		{
+			return psRun->cMPU816.GetS() == GetCPPTarget(CPPT_W65C816)->uiStackTop;
+		}
 		return psRun->cMPU.GetS() == CPP65_STACK_TOP;
 	}
 	return false;
@@ -111,6 +152,12 @@ bool TestLibc65Run(STestLibc65Run* psRun, size uiMaxInstructions)
 //////////////////////////////////////////////////////////////////////////
 bool TestLibc65RunToStop(STestLibc65Run* psRun, size uiMaxInstructions)
 {
+	if (geTestLibc65Target == CPPT_W65C816)
+	{
+		uiMaxInstructions = (uiMaxInstructions > SIZE_MAX / TEST_LIBC65_816_INSTRUCTIONS) ? SIZE_MAX : uiMaxInstructions * TEST_LIBC65_816_INSTRUCTIONS;
+		psRun->cMPU816.Run(uiMaxInstructions);
+		return psRun->cMPU816.IsStopped();
+	}
 	psRun->cMPU.Run(uiMaxInstructions);
 	return psRun->cMPU.IsStopped();
 }
@@ -123,13 +170,17 @@ bool TestLibc65RunToStop(STestLibc65Run* psRun, size uiMaxInstructions)
 //////////////////////////////////////////////////////////////////////////
 int32 TestLibc65Return(STestLibc65Run* psRun)
 {
+	if (geTestLibc65Target == CPPT_W65C816)
+	{
+		return (int16)psRun->cMPU816.GetC();
+	}
 	return (int32)psRun->cMPU.GetA();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 //
-// The int at index uiIndex of the test's results (from TEST_LIBC65_RESULTS).
+// The long at index uiIndex of the test's results (from TEST_LIBC65_RESULTS).
 //
 //////////////////////////////////////////////////////////////////////////
 int32 TestLibc65Result(STestLibc65Run* psRun, size uiIndex)
@@ -158,7 +209,14 @@ void TestLibc65End(STestLibc65Run* psRun)
 	if (psRun->pcMemory)
 	{
 		AssertSize(0, psRun->pcMemory->NumBadAccesses());
-		psRun->cMPU.Kill();
+		if (geTestLibc65Target == CPPT_W65C816)
+		{
+			psRun->cMPU816.Kill();
+		}
+		else
+		{
+			psRun->cMPU.Kill();
+		}
 		SafeKill(psRun->pcMemory);
 	}
 }

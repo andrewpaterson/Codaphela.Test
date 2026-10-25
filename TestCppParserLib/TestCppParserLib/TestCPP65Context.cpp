@@ -327,9 +327,52 @@ size TestCPP65CompileLibrary(const char* szLibrary, CChars* pszErrors)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Compiles the units (paths under commonlibraries, or under this test's directory when they start with "Input")
-// and szSource if it is given, each into an object, links them after the start up and loads the program.  The
-// units in a directory share a CLibrary (their include settings).  The labels in szStubs (space separated,
+// Adds the units (paths under commonlibraries, or under this test's directory when they start with "Input"), each
+// to be compiled into an object.  The units in a directory share a CLibrary (their include settings).  Units in
+// 65C64 assembly (.asm) are left out unless bAssembly.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65AddUnits(CCPP65Builder* pcBuilder, const char** aszUnits, bool bAssembly)
+{
+	CFileUtil	cFileUtil;
+	CChars		szDirectory;
+	CChars		szLibrary;
+	CChars		szFile;
+	size		iSlash;
+	size		i;
+
+	for (i = 0; aszUnits[i]; i++)
+	{
+		szLibrary.Init(aszUnits[i]);
+		iSlash = szLibrary.FindFromEnd('/');
+		szFile.Init(szLibrary.Text(iSlash + 1));
+		szLibrary.SetLength(iSlash);
+		if (bAssembly || !szFile.EndsWithIgnoreCase(".asm"))
+		{
+			if (szLibrary.StartsWith("Input"))
+			{
+				szDirectory.Init(szLibrary);
+			}
+			else
+			{
+				szDirectory.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_);
+				szDirectory.Append(szLibrary);
+			}
+			szDirectory.Replace('/', FILE_SEPARATOR[0]);
+			cFileUtil.FullPath(&szDirectory);
+			pcBuilder->AddUnit(szLibrary.Text(), szDirectory.Text(), szFile.Text());
+			szDirectory.Kill();
+		}
+		szFile.Kill();
+		szLibrary.Kill();
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Compiles the units (see TestCPP65AddUnits) and szSource if it is given, each into an object, links them after
+// the start up and loads the program.  The labels in szStubs (space separated,
 // sorted) must be exactly the ones used but defined by no unit; the linker makes each a stp so a call to one
 // stops the program.  pszMap, if given, gets the linker's map.
 //
@@ -337,13 +380,7 @@ size TestCPP65CompileLibrary(const char* szLibrary, CChars* pszErrors)
 bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const char* szStubs, const char* szSource, CChars* pszMap, bool bLazy)
 {
 	CCPP65Builder	cBuilder;
-	CFileUtil		cFileUtil;
-	CChars			szDirectory;
-	CChars			szLibrary;
-	CChars			szFile;
 	CChars			szMissing;
-	size			iSlash;
-	size			i;
 	bool			bResult;
 
 	cBuilder.Init();
@@ -358,28 +395,7 @@ bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const ch
 	{
 		bResult &= cBuilder.AddSource("source", szSource);
 	}
-	for (i = 0; aszUnits[i]; i++)
-	{
-		szLibrary.Init(aszUnits[i]);
-		iSlash = szLibrary.FindFromEnd('/');
-		szFile.Init(szLibrary.Text(iSlash + 1));
-		szLibrary.SetLength(iSlash);
-		if (szLibrary.StartsWith("Input"))
-		{
-			szDirectory.Init(szLibrary);
-		}
-		else
-		{
-			szDirectory.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_);
-			szDirectory.Append(szLibrary);
-		}
-		szDirectory.Replace('/', FILE_SEPARATOR[0]);
-		cFileUtil.FullPath(&szDirectory);
-		cBuilder.AddUnit(szLibrary.Text(), szDirectory.Text(), szFile.Text());
-		szDirectory.Kill();
-		szFile.Kill();
-		szLibrary.Kill();
-	}
+	TestCPP65AddUnits(&cBuilder, aszUnits, true);
 
 	//A program that doesn't build isn't loaded.
 	bResult &= cBuilder.Link();

@@ -148,9 +148,9 @@ void TestLibc65TimeGmtime(void)
 	}
 	szSource.Append(" };\n");
 	szSource.Append(
-		"void Write(int** pp, struct tm* ps)\n"
+		"void Write(long** pp, struct tm* ps)\n"
 		"{\n"
-		"	int* p = *pp;\n"
+		"	long* p = *pp;\n"
 		"	*p++ = ps->tm_sec;\n"
 		"	*p++ = ps->tm_min;\n"
 		"	*p++ = ps->tm_hour;\n"
@@ -164,7 +164,7 @@ void TestLibc65TimeGmtime(void)
 		"}\n"
 		"int main()\n"
 		"{\n"
-		"	int* p = (int*)0x100000;\n"
+		"	long* p = (long*)0x100000;\n"
 		"	struct tm s;\n");
 	szSource.Append("\tfor (int i = 0; i < ")->Append((int)uiTimes)->Append("; i++)\n");
 	szSource.Append(
@@ -172,7 +172,7 @@ void TestLibc65TimeGmtime(void)
 		"		s = *gmtime(&gaTimes[i]);\n"
 		"		Write(&p, &s);\n"
 		"		Write(&p, localtime(&gaTimes[i]));\n"
-		"		*p++ = (int)mktime(&s);\n"
+		"		*p++ = (long)mktime(&s);\n"
 		"	}\n"
 		"	return 0;\n"
 		"}\n");
@@ -206,10 +206,10 @@ void TestLibc65TimeMktimeNormalise(void)
 
 	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "",
 		"#include <time.h>\n"
-		"void Write(int** pp, long lTime, struct tm* ps)\n"
+		"void Write(long** pp, long lTime, struct tm* ps)\n"
 		"{\n"
-		"	int* p = *pp;\n"
-		"	*p++ = (int)lTime;\n"
+		"	long* p = *pp;\n"
+		"	*p++ = lTime;\n"
 		"	*p++ = ps->tm_sec;\n"
 		"	*p++ = ps->tm_min;\n"
 		"	*p++ = ps->tm_hour;\n"
@@ -223,7 +223,7 @@ void TestLibc65TimeMktimeNormalise(void)
 		"}\n"
 		"int main()\n"
 		"{\n"
-		"	int* p = (int*)0x100000;\n"
+		"	long* p = (long*)0x100000;\n"
 		"	struct tm s;\n"
 		"	time_t t;\n"
 		"	s.tm_year = 99;\n"
@@ -244,10 +244,10 @@ void TestLibc65TimeMktimeNormalise(void)
 		"	s.tm_sec = 0;\n"
 		"	Write(&p, mktime(&s), &s);\n"
 		"	t = 5;\n"
-		"	*p++ = (int)time(NULL);\n"
-		"	*p++ = (int)time(&t);\n"
-		"	*p++ = (int)t;\n"
-		"	*p++ = (int)clock();\n"
+		"	*p++ = (long)time(NULL);\n"
+		"	*p++ = (long)time(&t);\n"
+		"	*p++ = (long)t;\n"
+		"	*p++ = (long)clock();\n"
 		"	return 0;\n"
 		"}\n"));
 	AssertTrue(TestLibc65Run(&sRun, 20000000));

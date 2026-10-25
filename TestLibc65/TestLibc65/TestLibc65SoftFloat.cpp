@@ -507,13 +507,13 @@ static bool TestSoftFloatWideResult(ETestSoftFloatKind eKind)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Runs szName from Libc65/softfloat.asm on the 65C64 for the special cases and uiRandom random ones and checks
+// Runs szName from Libc65/softfloat.asm on the 65C64 (softfloat.cpp on the W65C816) for the special cases and uiRandom random ones and checks
 // every result is the same, bit for bit, as softfloat.cpp's natively.
 //
 //////////////////////////////////////////////////////////////////////////
 static void TestSoftFloatFunction(const char* szName, ETestSoftFloatKind eKind, size uiRandom)
 {
-	static const char*		aszUnits[] = { "softfloat.asm", NULL };
+	static const char*		aszUnits[] = { "softfloat.asm", "softfloat.cpp", NULL };
 	STestSoftFloatCases*	psCases;
 	STestLibc65Run			sRun;
 	CChars					szSource;
@@ -631,12 +631,12 @@ void TestLibc65SoftFloatOperators(void)
 	STestLibc65Run		sRun;
 
 	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "",
-		"int*	gp = (int*)0x100000;\n"
+		"long*	gp = (long*)0x100000;\n"
 		"float	gfThree = 3.0f;\n"
 		"float	gfFour = 4.0f;\n"
 		"float	gfNegative = -7.9f;\n"
 		"float	gfLarge = 4000000000.0f;\n"
-		"int		giOdd = 16777217;\n"
+		"long	glOdd = 16777217;\n"
 		"float	gfTenth = 0.1f;\n"
 		"double	gdHuge = 1e40;\n"
 		"float Hypotenuse(float a, float b)\n"
@@ -653,13 +653,13 @@ void TestLibc65SoftFloatOperators(void)
 		"	*gp++ = (int)f;\n"
 		"	*gp++ = f == 5.0f;\n"
 		"	*gp++ = f < 5.5f;\n"
-		"	*gp++ = (int)(1.0f / gfThree * 3000000.0f);\n"
+		"	*gp++ = (long)(1.0f / gfThree * 3000000.0f);\n"
 		"	*gp++ = (int)gfNegative;\n"
-		"	*gp++ = (int)(unsigned int)gfLarge;\n"
-		"	f = giOdd;\n"
-		"	*gp++ = (int)f;\n"
+		"	*gp++ = (long)(unsigned long)gfLarge;\n"
+		"	f = glOdd;\n"
+		"	*gp++ = (long)f;\n"
 		"	d = gfTenth;\n"
-		"	*gp++ = (int)(d * 1e9);\n"
+		"	*gp++ = (long)(d * 1e9);\n"
 		"	f = (float)gdHuge;\n"
 		"	*gp++ = f > 3.4e38f;\n"
 		"	*gp++ = (f - f) == (f - f);\n"

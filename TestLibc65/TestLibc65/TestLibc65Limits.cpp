@@ -4,7 +4,8 @@
 
 //////////////////////////////////////////////////////////////////////////
 //
-// The sizes the 65C64's headers promise: char 8 bits, short 16, int and long 32, long long 64, pointers 32.
+// The sizes the 65C64's headers promise: char 8 bits, short 16, int and long 32, long long 64, pointers 32.  The
+// W65C816's int is 16 bits.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65LimitsSizes(void)
@@ -25,7 +26,7 @@ void TestLibc65LimitsSizes(void)
 		"#include <stdint.h>\n"
 		"int main()\n"
 		"{\n"
-		"	int* p = (int*)0x100000;\n"
+		"	long* p = (long*)0x100000;\n"
 		"	*p++ = sizeof(char);\n"
 		"	*p++ = sizeof(short);\n"
 		"	*p++ = sizeof(int);\n"
@@ -57,7 +58,7 @@ void TestLibc65LimitsSizes(void)
 
 	for (i = 0; i < sizeof(aiExpected) / sizeof(int32); i++)
 	{
-		AssertInt(aiExpected[i], TestLibc65Result(&sRun, i));
+		AssertInt(((i == 2) && (geTestLibc65Target == CPPT_W65C816)) ? 2 : aiExpected[i], TestLibc65Result(&sRun, i));
 	}
 
 	TestLibc65End(&sRun);
@@ -66,7 +67,8 @@ void TestLibc65LimitsSizes(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// The limits' values, and that the types really wrap at them.
+// The limits' values, and that the types really wrap at them.  The W65C816's INT_MIN, INT_MAX and UINT_MAX are
+// 16 bits'.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65LimitsValues(void)
@@ -85,17 +87,19 @@ void TestLibc65LimitsValues(void)
 		(int32)0xFFFFFFFF, 0x7FFFFFFF, (int32)0x80000000,		//SIZE_MAX PTRDIFF_MAX PTRDIFF_MIN
 		1, 1, 1, 1, 1, 1, 1, 1,									//wrapping
 	};
+	static const int32	aiExpected816[] = { -32768, 32767, 65535 };	//INT_MIN INT_MAX UINT_MAX
 	STestLibc65Run		sRun;
+	int32				iExpected;
 	size				i;
 
 	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "",
 		"#include <limits.h>\n"
 		"#include <stdint.h>\n"
-		"int* gp;\n"
+		"long* gp;\n"
 		"void Long(long long ll)\n"
 		"{\n"
-		"	*gp++ = (int)ll;\n"
-		"	*gp++ = (int)(ll >> 32);\n"
+		"	*gp++ = (long)ll;\n"
+		"	*gp++ = (long)(ll >> 32);\n"
 		"}\n"
 		"int main()\n"
 		"{\n"
@@ -107,7 +111,7 @@ void TestLibc65LimitsValues(void)
 		"	uint16_t		u16;\n"
 		"	unsigned int	ui;\n"
 		"	unsigned long long	ull;\n"
-		"	gp = (int*)0x100000;\n"
+		"	gp = (long*)0x100000;\n"
 		"	*gp++ = CHAR_BIT;\n"
 		"	*gp++ = SCHAR_MIN;\n"
 		"	*gp++ = SCHAR_MAX;\n"
@@ -119,10 +123,10 @@ void TestLibc65LimitsValues(void)
 		"	*gp++ = USHRT_MAX;\n"
 		"	*gp++ = INT_MIN;\n"
 		"	*gp++ = INT_MAX;\n"
-		"	*gp++ = (int)UINT_MAX;\n"
-		"	*gp++ = (int)LONG_MIN;\n"
-		"	*gp++ = (int)LONG_MAX;\n"
-		"	*gp++ = (int)ULONG_MAX;\n"
+		"	*gp++ = (long)UINT_MAX;\n"
+		"	*gp++ = LONG_MIN;\n"
+		"	*gp++ = LONG_MAX;\n"
+		"	*gp++ = (long)ULONG_MAX;\n"
 		"	Long(LLONG_MIN);\n"
 		"	Long(LLONG_MAX);\n"
 		"	Long((long long)ULLONG_MAX);\n"
@@ -134,11 +138,11 @@ void TestLibc65LimitsValues(void)
 		"	*gp++ = UINT16_MAX;\n"
 		"	*gp++ = INT32_MIN;\n"
 		"	*gp++ = INT32_MAX;\n"
-		"	*gp++ = (int)UINT32_MAX;\n"
+		"	*gp++ = (long)UINT32_MAX;\n"
 		"	Long(INT64_MIN);\n"
 		"	Long(INT64_MAX);\n"
 		"	Long((long long)UINT64_MAX);\n"
-		"	*gp++ = (int)SIZE_MAX;\n"
+		"	*gp++ = (long)SIZE_MAX;\n"
 		"	*gp++ = PTRDIFF_MAX;\n"
 		"	*gp++ = PTRDIFF_MIN;\n"
 		"	c = (char)200;\n"
@@ -166,7 +170,12 @@ void TestLibc65LimitsValues(void)
 
 	for (i = 0; i < sizeof(aiExpected) / sizeof(int32); i++)
 	{
-		AssertInt(aiExpected[i], TestLibc65Result(&sRun, i));
+		iExpected = aiExpected[i];
+		if ((geTestLibc65Target == CPPT_W65C816) && (i >= 9) && (i < 12))
+		{
+			iExpected = aiExpected816[i - 9];
+		}
+		AssertInt(iExpected, TestLibc65Result(&sRun, i));
 	}
 
 	TestLibc65End(&sRun);

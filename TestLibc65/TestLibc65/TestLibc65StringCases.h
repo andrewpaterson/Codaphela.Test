@@ -1,18 +1,20 @@
 //Random cases for the memory and string functions, run the same way on the 65C64 (with Libc65's string.asm and
-//string.cpp) and natively (with the host's C library, the reference).  Each case writes ints to piResults: pointers
-//returned as offsets from their buffer (-1 for NULL), lengths, the signs of comparisons and a hash of the memory
-//written.  The two runs must give the same ints.  pucA and pucB are buffers of STRING_CASES_BUFFER bytes.
+//string.cpp) or the W65C816 (string.cpp) and natively (with the host's C library, the reference).  Each case writes
+//int32_ts to piResults: pointers returned as offsets from their buffer (-1 for NULL), lengths, the signs of
+//comparisons and a hash of the memory written.  The two runs must give the same values.  pucA and pucB are buffers
+//of STRING_CASES_BUFFER bytes.  The random numbers and the hash are 32 bits whatever the size of an int.
 #include <string.h>
+#include <stdint.h>
 
 
 #define STRING_CASES_BUFFER		640
 #define STRING_CASES_COUNT		60
 
 
-unsigned int	guiStringCasesSeed;
+uint32_t	guiStringCasesSeed;
 
 
-unsigned int StringCasesRandom(unsigned int uiLimit)
+uint32_t StringCasesRandom(uint32_t uiLimit)
 {
 	guiStringCasesSeed = guiStringCasesSeed * 1103515245u + 12345u;
 	return (guiStringCasesSeed >> 8) % uiLimit;
@@ -44,17 +46,17 @@ void StringCasesString(unsigned char* puc, int iLength, int iAlphabet)
 }
 
 
-int StringCasesHash(unsigned char* puc, int iBytes)
+int32_t StringCasesHash(unsigned char* puc, int iBytes)
 {
-	unsigned int	uiHash;
-	int				i;
+	uint32_t	uiHash;
+	int			i;
 
 	uiHash = 0;
 	for (i = 0; i < iBytes; i++)
 	{
 		uiHash = uiHash * 31 + puc[i];
 	}
-	return (int)uiHash;
+	return (int32_t)uiHash;
 }
 
 
@@ -70,7 +72,7 @@ int StringCasesOffset(void* pv, unsigned char* pucBase)
 }
 
 
-int RunStringCases(int* piResults, unsigned char* pucA, unsigned char* pucB)
+int RunStringCases(int32_t* piResults, unsigned char* pucA, unsigned char* pucB)
 {
 	int				iCount;
 	int				i;

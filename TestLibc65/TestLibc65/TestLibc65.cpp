@@ -1,3 +1,4 @@
+#include <string.h>
 #include "BaseLib/LeakDetector.h"
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeNames.h"
@@ -5,6 +6,7 @@
 #include "BaseLib/NumberControl.h"
 #include "MicroprocessorLib/65C64InstructionFactory.h"
 #include "TestLib/Assert.h"
+#include "TestLibc65Context.h"
 
 
 void TestLibc65String(void);
@@ -18,13 +20,18 @@ void TestLibc65SoftFloat(void);
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Libc65 is compiled with CppParserLib's 65C64 generator and run on MicroprocessorLib's 65C64.
+// Libc65 is compiled with CppParserLib's 65C64 generator and run on MicroprocessorLib's 65C64, or with "816" for
+// the W65C816 compiler and run on its fast core.
 //
 //////////////////////////////////////////////////////////////////////////
-int __cdecl main(void)
+int __cdecl main(int argc, char** argv)
 {
 	int	iTotalTestsFailed;
 
+	if ((argc > 1) && (strcmp(argv[1], "816") == 0))
+	{
+		geTestLibc65Target = CPPT_W65C816;
+	}
 	BreakOnAllocation(0);
 	InitTotalStatistics();
 

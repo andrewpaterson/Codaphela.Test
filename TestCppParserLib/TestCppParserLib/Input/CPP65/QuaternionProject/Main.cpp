@@ -2,21 +2,21 @@
 
 
 //The results go to 0010:0000, a long each.
-unsigned*	gpuiResult = (unsigned*)0x100000;
+uint32*	gpuiResult = (uint32*)0x100000;
 
 
 void QuaternionResult(SQuaternion q)
 {
-	*gpuiResult++ = *(unsigned*)&q.x;
-	*gpuiResult++ = *(unsigned*)&q.y;
-	*gpuiResult++ = *(unsigned*)&q.z;
-	*gpuiResult++ = *(unsigned*)&q.w;
+	*gpuiResult++ = *(uint32*)&q.x;
+	*gpuiResult++ = *(uint32*)&q.y;
+	*gpuiResult++ = *(uint32*)&q.z;
+	*gpuiResult++ = *(uint32*)&q.w;
 }
 
 
 void IntegerResult(int i)
 {
-	*gpuiResult++ = (unsigned)i;
+	*gpuiResult++ = (uint32)i;
 }
 
 
@@ -27,6 +27,6 @@ void IntegerResult(int i)
 int main()
 {
 #include "QuaternionCalls.h"
-	return (int)(gpuiResult - (unsigned*)0x100000);
+	return (int)(gpuiResult - (uint32*)0x100000);
 }
 

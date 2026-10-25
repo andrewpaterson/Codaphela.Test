@@ -49,6 +49,9 @@
     <ClCompile Include="TestIR816Backend.cpp">
       <Filter>Source\Parser</Filter>
     </ClCompile>
+    <ClCompile Include="TestCPP816.cpp">
+      <Filter>Source\Parser</Filter>
+    </ClCompile>
     <ClCompile Include="TestCPP65IR.cpp">
       <Filter>Source\Parser</Filter>
     </ClCompile>
