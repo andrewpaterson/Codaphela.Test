@@ -10,6 +10,7 @@ void TestCppParser(void);
 void TestCppHighlighter(void);
 void TestIR(void);
 void TestIR65Backend(void);
+void TestIR816Backend(void);
 void TestCPP65IR(void);
 void TestCPP65Generator(void);
 
@@ -33,6 +34,7 @@ int __cdecl main(void)
 	TestCppHighlighter();
 	TestIR();
 	TestIR65Backend();
+	TestIR816Backend();
 	TestCPP65Generator();
 	TestCPP65IR();
 

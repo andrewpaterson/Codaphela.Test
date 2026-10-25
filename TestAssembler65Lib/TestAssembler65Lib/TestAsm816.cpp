@@ -6,6 +6,7 @@
 #include "MicroprocessorLib/Fast65C816.h"
 #include "Assembler65Lib/Asm816Assembler.h"
 #include "Assembler65Lib/Asm65Linker.h"
+#include "Assembler65Lib/Asm816Lockstep.h"
 #include "TestLib/Assert.h"
 
 
@@ -78,7 +79,6 @@ void TestAsm816Opcodes(void)
 	bool						bSame;
 
 	pcFactory = CW65C816InstructionFactory::GetInstance();
-	pcFactory->Init();
 	szDifferences.Init();
 	for (i = 0; i < 256; i++)
 	{
@@ -102,7 +102,6 @@ void TestAsm816Opcodes(void)
 	}
 	AssertString("", szDifferences.Text());
 	szDifferences.Kill();
-	pcFactory->Kill();
 }
 
 
@@ -568,6 +567,153 @@ void TestAsm816Run(void)
 }
 
 
+//The vectors and the reset stub in bank 0 (placed with at), the program in bank 1 and two
+//big sections the linker keeps inside banks.
+static const char* gszTestAsm816Banks =
+	".section rodata.Vectors, at $FFFC\n"
+	"\t.word ResetStub\n"
+	".section text.ResetStub, at $FF00\n"
+	"ResetStub:\n"
+	"\tjml Start\n"
+	".section text.Start\n"
+	".global Start\n"
+	"Start:\n"
+	"\tclc\n"
+	"\txce\n"
+	"\trep (m, x)\n"
+	"\tlda $1234\n"
+	"\tsta [Result]:24\n"
+	"\tjsl InBig\n"
+	"\tsep m\n"
+	"\tlda 'O'\n"
+	"\tsta [$FF0100]:24\n"
+	"\tlda 'K'\n"
+	"\tsta [$FF0100]:24\n"
+	"\tstp\n"
+	".section text.Fixed, at $010100\n"
+	"Fixed:\n"
+	"\t.space 4\n"
+	".section text.Big\n"
+	"\t.space $8000\n"
+	".section text.Bigger\n"
+	".global InBig\n"
+	"InBig:\n"
+	"\t.width A, 16\n"
+	"\tlda $5678\n"
+	"\tsta [Result + 2]:24\n"
+	"\trtl\n"
+	"\t.space $8FF0\n"
+	".section bss.Result\n"
+	".global Result\n"
+	"Result:\n"
+	"\t.space 4\n";
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+static bool TestAsm816LinkBanks(CAsm65Linker* pcLinker, CAsm65Object* pcObject, const char* szSource, uint32 uiText)
+{
+	CAsm816Assembler	cAssembler;
+
+	pcObject->Init("banks");
+	cAssembler.Init();
+	AssertTrue(cAssembler.AssembleObject(szSource, pcObject));
+	AssertString("", cAssembler.GetErrors());
+	cAssembler.Kill();
+
+	pcLinker->Init();
+	pcLinker->SetBankSize(0x10000);
+	pcLinker->AddObject(pcObject);
+	pcLinker->SetAddress(ASK65_Text, uiText);
+	return pcLinker->Link();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestAsm816Banks(void)
+{
+	CAsm65Object		cObject;
+	CAsm65Linker		cLinker;
+	CFast65C816			cFast;
+	uint8*				puiMemory;
+	SAsm65Segment*		psSegment;
+	int64				iStart;
+	int64				iInBig;
+	int64				iResult;
+	size				i;
+	CAsm65Memory		cMemory;
+	CAsm816Lockstep		cLockstep;
+	CChars				szConsole;
+
+	AssertTrue(TestAsm816LinkBanks(&cLinker, &cObject, gszTestAsm816Banks, 0x010000));
+	AssertString("", cLinker.GetErrors());
+	AssertTrue(cLinker.GetSymbol("Start", &iStart));
+	AssertTrue(cLinker.GetSymbol("InBig", &iInBig));
+	AssertTrue(cLinker.GetSymbol("Result", &iResult));
+	AssertInt(0x010000, (int)iStart);
+
+	//text.Big ($8000 bytes) can't start before Fixed's end, text.Bigger ($9000) can't fit in bank 1.
+	AssertTrue(strstr(cLinker.GetMap(), "text.Fixed") != NULL);
+	AssertInt(0x020000, (int)iInBig);
+
+	//On CFast65C816 and the CW65C816 simulator in lockstep, with CAsm65Memory's console.
+	szConsole.Init();
+	cMemory.Init(TEST_ASM816_RUN_MEMORY);
+	cMemory.SetConsole(&szConsole);
+	cMemory.Load(cLinker.GetOutput());
+	cMemory.InitFast816(&cFast);
+	cFast.Reset();
+	cLockstep.Init(&cMemory, &cFast);
+	cLockstep.Run(1000, 1);
+	AssertString("", cLockstep.GetDifferences());
+	AssertTrue(cLockstep.IsStopped());
+	AssertString("OK", szConsole.Text());
+	AssertInt(0x5678, cMemory.GetWord((uint32)iResult + 2));
+	AssertInt(0, (int)cMemory.NumBadAccesses());
+	cLockstep.Kill();
+	cFast.Kill();
+	cMemory.Kill();
+	szConsole.Kill();
+
+	puiMemory = (uint8*)malloc(TEST_ASM816_RUN_MEMORY);
+	memset(puiMemory, 0, TEST_ASM816_RUN_MEMORY);
+	for (i = 0; i < cLinker.GetOutput()->NumSegments(); i++)
+	{
+		psSegment = cLinker.GetOutput()->GetSegment(i);
+		memcpy(&puiMemory[psSegment->uiAddress], psSegment->cBytes.GetData(), psSegment->cBytes.NumElements());
+	}
+	cLinker.Kill();
+	cObject.Kill();
+
+	cFast.Init(TestAsm816Read, TestAsm816Write, NULL, puiMemory, TEST_ASM816_RUN_MEMORY);
+	cFast.Reset();
+	cFast.Run(100);
+	AssertTrue(cFast.IsStopped());
+	AssertInt(0x1234, puiMemory[iResult] | (puiMemory[iResult + 1] << 8));
+	AssertInt(0x5678, puiMemory[iResult + 2] | (puiMemory[iResult + 3] << 8));
+	cFast.Kill();
+	free(puiMemory);
+
+	//Only sections with an address may be in bank 0.
+	AssertFalse(TestAsm816LinkBanks(&cLinker, &cObject, gszTestAsm816Banks, 0x8000));
+	AssertTrue(strstr(cLinker.GetErrors(), "Only a section with an address (at) can be in bank 0 'text.Start'") != NULL);
+	cLinker.Kill();
+	cObject.Kill();
+
+	//Sections with addresses can't overlap or cross the end of a bank.
+	AssertFalse(TestAsm816LinkBanks(&cLinker, &cObject, ".section text.A, at $10000\n.space 8\n.section text.B, at $10004\n.space 8\n.section text.C, at $1FFFE\n.space 4\n", 0x010000));
+	AssertTrue(strstr(cLinker.GetErrors(), "Section overlaps another section with an address 'text.B'") != NULL);
+	AssertTrue(strstr(cLinker.GetErrors(), "Section crosses the end of a bank 'text.C'") != NULL);
+	cLinker.Kill();
+	cObject.Kill();
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -575,13 +721,16 @@ void TestAsm816Run(void)
 void TestAsm816(void)
 {
 	BeginTests();
+	CW65C816InstructionFactory::GetInstance()->Init();
 
 	TestAsm816Opcodes();
 	TestAsm816Encoding();
 	TestAsm816Errors();
 	TestAsm816Object();
 	TestAsm816Run();
+	TestAsm816Banks();
 
+	CW65C816InstructionFactory::GetInstance()->Kill();
 	TestStatistics();
 }
 

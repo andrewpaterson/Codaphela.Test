@@ -7,6 +7,7 @@
 #include "CppParserLib/IRParser.h"
 #include "CppParserLib/IRVerifier.h"
 #include "CppParserLib/IR65Backend.h"
+#include "CppParserLib/IR65Widths.h"
 #include "TestLib/Assert.h"
 #include "TestCPP65Context.h"
 
@@ -862,6 +863,181 @@ void TestIR65BackendAllocation(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// CIR65Widths on szCode, as a whole function.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR65WidthsOptimise(const char* szExpected, const char* szCode)
+{
+	CIR65Widths	cWidths;
+	CChars		sz;
+
+	sz.Init(szCode);
+	cWidths.Init();
+	cWidths.Optimise(&sz, 0);
+	cWidths.Kill();
+	AssertString(szExpected, sz.Text());
+	sz.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A wthx whose extended bits are never read goes; widths are only set
+// before the instructions that need them, once before a loop, and two
+// registers going to one width share a wtth.  A string's length counted
+// through a byte only compared keeps its register narrow in the loop.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR65BackendWidths(void)
+{
+	CChars	szAssembly;
+	CChars	szCount;
+
+	//The byte is only compared: Y stays 8 bits through the loop and is set back to 32 for the return.
+	TestIR65WidthsOptimise(
+		"_F:\n"
+		"\t\tcpy X, 0\n"
+		"\t\twth Y, 8\n"
+		"L1:\n"
+		"\t\tcpy Y, [[0 + W]]\n"
+		"\t\tcmp Y, 0\n"
+		"\t\tbras z, L2\n"
+		"\t\tadd [0 + W], 1\n"
+		"\t\tadd X, 1\n"
+		"\t\tbra L1\n"
+		"L2:\n"
+		"\t\tcpy A, X\n"
+		"\t\twth Y, 32\n"
+		"\t\tret\n",
+		"_F:\n"
+		"\t\tcpy X, 0\n"
+		"L1:\n"
+		"\t\twth Y, 8\n"
+		"\t\tcpy Y, [[0 + W]]\n"
+		"\t\twthx Y, 32\n"
+		"\t\twth Y, 8\n"
+		"\t\tcmp Y, 0\n"
+		"\t\twth Y, 32\n"
+		"\t\tbras z, L2\n"
+		"\t\tadd [0 + W], 1\n"
+		"\t\tadd X, 1\n"
+		"\t\tbra L1\n"
+		"L2:\n"
+		"\t\tcpy A, X\n"
+		"\t\tret\n");
+
+	//The extended bits are returned, so the wthx stays.
+	TestIR65WidthsOptimise(
+		"_F:\n"
+		"\t\twth A, 8\n"
+		"\t\tcpy A, [X]\n"
+		"\t\twthx A, 32:s\n"
+		"\t\tret\n",
+		"_F:\n"
+		"\t\twth A, 8\n"
+		"\t\tcpy A, [X]\n"
+		"\t\twthx A, 32:s\n"
+		"\t\tret\n");
+
+	//B is next needed at 16 bits too, so it is set with A; both ways from the branch return, so both go back to 32
+	//bits once before it.
+	TestIR65WidthsOptimise(
+		"_F:\n"
+		"\t\twtth (A, B), 16\n"
+		"\t\tcpy A, [X]\n"
+		"\t\tcpy B, [Y]\n"
+		"\t\tcmp A, B\n"
+		"\t\twtth (A, B), 32\n"
+		"\t\tbras z, L1\n"
+		"\t\tcpy A, 0\n"
+		"\t\tret\n"
+		"L1:\n"
+		"\t\tret\n",
+		"_F:\n"
+		"\t\twth A, 16\n"
+		"\t\tcpy A, [X]\n"
+		"\t\twth A, 32\n"
+		"\t\twth B, 16\n"
+		"\t\tcpy B, [Y]\n"
+		"\t\twth B, 32\n"
+		"\t\twtth (A, B), 16\n"
+		"\t\tcmp A, B\n"
+		"\t\twtth (A, B), 32\n"
+		"\t\tbras z, L1\n"
+		"\t\tcpy A, 0\n"
+		"\t\tret\n"
+		"L1:\n"
+		"\t\tret\n");
+
+	//Both ways into L1 need A at 32 bits: the narrow way sets it before the label.
+	TestIR65WidthsOptimise(
+		"_F:\n"
+		"\t\tcmp X, 0\n"
+		"\t\tbras z, L1\n"
+		"\t\twth A, 8\n"
+		"\t\tcpy A, [X]\n"
+		"\t\tcpy [0 + W], A\n"
+		"\t\twth A, 32\n"
+		"L1:\n"
+		"\t\tcpy A, 5\n"
+		"\t\tret\n",
+		"_F:\n"
+		"\t\tcmp X, 0\n"
+		"\t\tbras z, L1\n"
+		"\t\twth A, 8\n"
+		"\t\tcpy A, [X]\n"
+		"\t\tcpy [0 + W], A\n"
+		"\t\twth A, 32\n"
+		"L1:\n"
+		"\t\tcpy A, 5\n"
+		"\t\tret\n");
+
+	//An instruction the pass doesn't know leaves the code as it was.
+	TestIR65WidthsOptimise(
+		"_F:\n"
+		"\t\twth A, 8\n"
+		"\t\tgwth X, A\n"
+		"\t\twth A, 32\n"
+		"\t\tret\n",
+		"_F:\n"
+		"\t\twth A, 8\n"
+		"\t\tgwth X, A\n"
+		"\t\twth A, 32\n"
+		"\t\tret\n");
+
+	szAssembly.Init();
+	AssertInt(5, (int32)TestIR65Run(
+		"global @_gsz, align 1 { i8 104, i8 101, i8 108, i8 108, i8 111, i8 0 }\n\n"
+		"function i32 @_Count__FPc(ptr %p), local\n"
+		"{\n"
+		"entry:\n"
+		"\tjmp loop\n"
+		"loop:\n"
+		"\t%q = phi ptr [entry, %p], [body, %q2]\n"
+		"\t%n = phi i32 [entry, 0], [body, %n2]\n"
+		"\t%c = load i8 %q\n"
+		"\t%z = eq i8 %c, 0\n"
+		"\tbrif %z, exit, body\n"
+		"body:\n"
+		"\t%q2 = ptradd ptr %q, 1\n"
+		"\t%n2 = add i32 %n, 1\n"
+		"\tjmp loop\n"
+		"exit:\n"
+		"\tret i32 %n\n"
+		"}\n\n"
+		"function i32 @_main()\n{\nb:\n"
+		"\t%r = call i32 @_Count__FPc(ptr @_gsz)\n"
+		"\tret i32 %r\n}\n", false, &szAssembly));
+	szCount.Init();
+	szCount.AppendSubString(szAssembly, 0, szAssembly.Find("\t\t.section text._main"));
+	AssertFalse(szCount.Contains("wthx"));
+	szCount.Kill();
+	szAssembly.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestIR65Backend(void)
@@ -884,6 +1060,7 @@ void TestIR65Backend(void)
 	TestIR65BackendCalls();
 	TestIR65BackendFloat();
 	TestIR65BackendAllocation();
+	TestIR65BackendWidths();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
 	NumberKill();

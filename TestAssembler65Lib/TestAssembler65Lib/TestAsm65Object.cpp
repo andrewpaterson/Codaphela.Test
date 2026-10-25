@@ -213,7 +213,7 @@ void TestAsm65ObjectSectionOptions(void)
 	szDump.Kill();
 
 	AssertObjectError("1:33: Unknown section 'data.gMissing'\n", "	.section init.Make, associated data.gMissing\n	.long 0\n");
-	AssertObjectError("1:23: Expected comdat, associated, keep or resident 'always'\n", "	.section text.Start, always\n");
+	AssertObjectError("1:23: Expected comdat, associated, keep, resident or at 'always'\n", "	.section text.Start, always\n");
 
 	AssembleObject(&szDump, "	.section text.Fixed, comdat, resident\n	stp\n");
 	AssertString(
