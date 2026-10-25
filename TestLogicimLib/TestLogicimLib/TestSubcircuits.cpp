@@ -75,8 +75,8 @@ static CPinView* AddTestPin(CCircuitView* pcCircuit, int32 x, int32 y, const cha
 	SInt32Vec2		sMinimum;
 	SInt32Vec2		sMaximum;
 
-	sMinimum.Init(-1, 0);
-	sMaximum.Init(1, 2);
+	sMinimum.Init(-2, -1);
+	sMaximum.Init(0, 1);
 	pcPin = NewMalloc<CPinView>();
 	pcPin->Init(x, y, ROT_North, szName, "LVC", false, 1, RADIX_Binary, sMinimum, sMaximum);
 	pcPin->SetSubcircuitAppearance(eAlignment, eAnchour, 0, false, false);
@@ -100,7 +100,7 @@ static CCircuitView* AddInverterSubcircuit(CCircuitViews* pcCircuits)
 	AddTestPin(pcCircuit, -8, 3, "In", PA_Left, PAN_Centre);
 	pcCircuit->AddTrace(-8, 3, -4, 3);
 	pcInverter = NewMalloc<CInverterView>();
-	pcInverter->Init(-3, 3, ROT_West, "", "LVC", false, 1, 1);
+	pcInverter->Init(-3, 3, ROT_East, "", "LVC", false, 1, 1);
 	pcCircuit->Add(pcInverter);
 	pcCircuit->AddTrace(-1, 3, 3, 3);
 	AddTestPin(pcCircuit, 3, 3, "Out", PA_Right, PAN_Centre);
@@ -120,11 +120,11 @@ static CSubcircuitInstanceView* AddTestInstance(CCircuitView* pcCircuit, int32 x
 	CSubcircuitInstanceView*	pcInstance;
 	SSubcircuitInstanceLayout	sLayout;
 
-	sLayout.sBoxMinimum.Init(-1, -2);
-	sLayout.sBoxMaximum.Init(1, 2);
-	sLayout.fTypeX = 0;
-	sLayout.fCommentX = 0;
-	sLayout.fNameX = 0;
+	sLayout.sBoxMinimum.Init(-2, -1);
+	sLayout.sBoxMaximum.Init(2, 1);
+	sLayout.fTypeY = 0;
+	sLayout.fCommentY = 0;
+	sLayout.fNameY = 0;
 	pcInstance = NewMalloc<CSubcircuitInstanceView>();
 	pcInstance->Init(x, y, ROT_North, szName, "", pcSubcircuit->GetTypeName(), &sLayout);
 	AssertTrue(pcInstance->SetInstanceCircuitView(pcSubcircuit));
@@ -144,8 +144,8 @@ static CConstantView* AddTestConstant(CCircuitView* pcCircuit, SInt32Vec2 sPosit
 	SInt32Vec2		sMinimum;
 	SInt32Vec2		sMaximum;
 
-	sMinimum.Init(-1, 0);
-	sMaximum.Init(1, 2);
+	sMinimum.Init(-2, -1);
+	sMaximum.Init(0, 1);
 	pcConstant = NewMalloc<CConstantView>();
 	pcConstant->Init(sPosition.x, sPosition.y, ROT_South, "", "LVC", false, 1, RADIX_Binary, sMinimum, sMaximum);
 	pcCircuit->Add(pcConstant);
@@ -163,8 +163,8 @@ static CProbeView* AddTestProbe(CCircuitView* pcCircuit, SInt32Vec2 sPosition)
 	SInt32Vec2		sMinimum;
 	SInt32Vec2		sMaximum;
 
-	sMinimum.Init(-1, 0);
-	sMaximum.Init(1, 2);
+	sMinimum.Init(-2, -1);
+	sMaximum.Init(0, 1);
 	pcProbe = NewMalloc<CProbeView>();
 	pcProbe->Init(sPosition.x, sPosition.y, ROT_North, "", "LVC", false, 1, RADIX_Binary, sMinimum, sMaximum);
 	pcCircuit->Add(pcProbe);
@@ -1235,10 +1235,10 @@ void TestSubcircuitLayoutRender(void)
 	pcTop = sTest.cCircuits.Add("Top");
 
 	pcInstance = NewMalloc<CSubcircuitInstanceView>();
-	pcInstance->Init(-9, 0, ROT_West, "U1", "Not", pcInverter, &cFonts);
+	pcInstance->Init(-9, 0, ROT_East, "U1", "Not", pcInverter, &cFonts);
 	pcTop->Add(pcInstance);
 	pcChipInstance = NewMalloc<CSubcircuitInstanceView>();
-	pcChipInstance->Init(10, 0, ROT_West, "", "", pcChip, &cFonts);
+	pcChipInstance->Init(10, 0, ROT_East, "", "", pcChip, &cFonts);
 	pcTop->Add(pcChipInstance);
 	pcConstant = AddTestConstant(pcTop, GetPinPosition(pcInstance, "In"));
 	AddTestProbe(pcTop, GetPinPosition(pcInstance, "Out"));
@@ -1255,7 +1255,7 @@ void TestSubcircuitLayoutRender(void)
 
 	//An instance given the kept layout, as one loaded, puts its pins where they were measured.
 	pcLoaded = NewMalloc<CSubcircuitInstanceView>();
-	pcLoaded->Init(10, 0, ROT_West, "", "", "Chip", pcChipInstance->GetLayout());
+	pcLoaded->Init(10, 0, ROT_East, "", "", "Chip", pcChipInstance->GetLayout());
 	AssertTrue(pcLoaded->SetInstanceCircuitView(pcChip));
 	AssertSize(pcChipInstance->NumPins(), pcLoaded->NumPins());
 	AssertInt(GetPinPosition(pcChipInstance, "Clock").x, GetPinPosition(pcLoaded, "Clock").x);

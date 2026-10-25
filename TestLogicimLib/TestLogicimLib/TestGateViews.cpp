@@ -49,8 +49,9 @@ void AssertGridPosition(int32 x, int32 y, CPortView* pcPortView)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Rotating right goes North, West, South, East.  West turns North's up
-// (-y) to the right (+x), as Logicim's components place them.
+// Rotating right (clockwise) goes North, East, South, West.  East leaves
+// a point as it is: a component is drawn facing East.  North turns its
+// front (+x) up (-y), South down and West to the left.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestRotation(void)
@@ -58,37 +59,43 @@ void TestRotation(void)
 	SInt32Vec2		sPoint;
 	SFloat64Vec2	sFloat;
 
-	AssertInt(ROT_West, RotateRight(ROT_North));
-	AssertInt(ROT_South, RotateRight(ROT_West));
-	AssertInt(ROT_East, RotateRight(ROT_South));
-	AssertInt(ROT_North, RotateRight(ROT_East));
-	AssertInt(ROT_East, RotateLeft(ROT_North));
+	AssertInt(ROT_East, RotateRight(ROT_North));
+	AssertInt(ROT_South, RotateRight(ROT_East));
+	AssertInt(ROT_West, RotateRight(ROT_South));
+	AssertInt(ROT_North, RotateRight(ROT_West));
+	AssertInt(ROT_West, RotateLeft(ROT_North));
 	AssertInt(ROT_South, OppositeRotation(ROT_North));
-	AssertInt(ROT_East, RotateRight(ROT_North, -1));
+	AssertInt(ROT_West, RotateRight(ROT_North, -1));
 	AssertInt(ROT_North, RotateRight(ROT_North, 8));
 	AssertInt(ROT_Cannot, RotateRight(ROT_Cannot));
-	AssertInt(270, RotationToDegrees(ROT_West));
+	AssertInt(0, RotationToDegrees(ROT_East));
+	AssertInt(90, RotationToDegrees(ROT_North));
+	AssertInt(270, RotationToDegrees(ROT_South));
 	AssertTrue(IsRotationEastWest(ROT_East));
 	AssertFalse(IsRotationEastWest(ROT_South));
 	AssertString("West", RotationToString(ROT_West));
 
-	sPoint.Init(0, -2);
-	RotatePoint(ROT_West, &sPoint);
+	sPoint.Init(2, 0);
+	RotatePoint(ROT_East, &sPoint);
 	AssertInt(2, sPoint.x);
 	AssertInt(0, sPoint.y);
-	sPoint.Init(0, -2);
-	RotatePoint(ROT_East, &sPoint);
-	AssertInt(-2, sPoint.x);
-	AssertInt(0, sPoint.y);
-	sPoint.Init(1, -2);
+	sPoint.Init(2, 0);
+	RotatePoint(ROT_North, &sPoint);
+	AssertInt(0, sPoint.x);
+	AssertInt(-2, sPoint.y);
+	sPoint.Init(2, 0);
 	RotatePoint(ROT_South, &sPoint);
-	AssertInt(-1, sPoint.x);
+	AssertInt(0, sPoint.x);
 	AssertInt(2, sPoint.y);
+	sPoint.Init(2, 1);
+	RotatePoint(ROT_West, &sPoint);
+	AssertInt(-2, sPoint.x);
+	AssertInt(-1, sPoint.y);
 
-	sFloat.Init(0.5, -1.5);
-	RotatePoint(ROT_West, &sFloat);
-	AssertDouble(1.5, sFloat.x, 3);
-	AssertDouble(0.5, sFloat.y, 3);
+	sFloat.Init(1.5, 0.5);
+	RotatePoint(ROT_North, &sFloat);
+	AssertDouble(0.5, sFloat.x, 3);
+	AssertDouble(-1.5, sFloat.y, 3);
 }
 
 
@@ -207,9 +214,9 @@ void TestLogicGateViewGeometry(void)
 	AssertGridPosition(11, 21, pcAnd->GetPortView("Input 1"));
 	AssertGridPosition(10, 18, pcAnd->GetPortView("Output"));
 	AssertTrue(pcAnd->GetLocalBounds(&sMinimum, &sMaximum));
-	AssertBounds(-1.5, -2, 1.5, 1, &sMinimum, &sMaximum);
+	AssertBounds(-1, -1.5, 2, 1.5, &sMinimum, &sMaximum);
 
-	pcAnd->SetRotation(ROT_West);
+	pcAnd->SetRotation(ROT_East);
 	AssertGridPosition(9, 19, pcAnd->GetPortView("Input 0"));
 	AssertGridPosition(9, 21, pcAnd->GetPortView("Input 1"));
 	AssertGridPosition(12, 20, pcAnd->GetPortView("Output"));
@@ -228,7 +235,7 @@ void TestLogicGateViewGeometry(void)
 	AssertGridPosition(0, -3, pcNand->GetPortView("Output"));
 	AssertTrue(pcNand->GetPortView("Output")->IsInverting());
 	AssertTrue(pcNand->GetLocalBounds(&sMinimum, &sMaximum));
-	AssertBounds(-1.5, -3, 1.5, 1, &sMinimum, &sMaximum);
+	AssertBounds(-1, -1.5, 3, 1.5, &sMinimum, &sMaximum);
 	SafeKill(pcNand);
 
 	//Exclusive OR inputs are a grid unit further back for the second curve; four inputs widen the gate.
@@ -243,12 +250,12 @@ void TestLogicGateViewGeometry(void)
 	AssertGridPosition(2, -2, pcXor->GetPortView((size)0));
 	AssertGridPosition(0, 2, pcXor->GetPortView("Output"));
 	AssertTrue(pcXor->GetLocalBounds(&sMinimum, &sMaximum));
-	AssertDouble(-2.5, sMinimum.x, 1);
-	AssertDouble(2, sMaximum.y, 3);
+	AssertDouble(-2.5, sMinimum.y, 1);
+	AssertDouble(-2, sMinimum.x, 3);
 	SafeKill(pcXor);
 
 	pcInverter = NewMalloc<CInverterView>();
-	pcInverter->Init(0, 0, ROT_East, "", "LVC", false, 2, 1);
+	pcInverter->Init(0, 0, ROT_West, "", "LVC", false, 2, 1);
 	AssertString("Inverter", pcInverter->GetType());
 	AssertSize(4, pcInverter->NumPortViews());
 	AssertGridPosition(1, 1, pcInverter->GetPortView("Input 0"));
@@ -314,29 +321,29 @@ void TestGateViewsRender(void)
 	cColours.InitLogicim();
 
 	pcAnd = NewMalloc<CAndGateView>();
-	pcAnd->Init(-30, -5, ROT_West, "", "LVC", false, 2, 1);
+	pcAnd->Init(-30, -5, ROT_East, "", "LVC", false, 2, 1);
 	cCircuit.Add(pcAnd);
 	pcNand = NewMalloc<CNandGateView>();
-	pcNand->Init(-20, -5, ROT_West, "", "LVC", false, 2, 1);
+	pcNand->Init(-20, -5, ROT_East, "", "LVC", false, 2, 1);
 	cCircuit.Add(pcNand);
 	pcOr = NewMalloc<COrGateView>();
-	pcOr->Init(-10, -5, ROT_West, "", "LVC", false, 2, 1);
+	pcOr->Init(-10, -5, ROT_East, "", "LVC", false, 2, 1);
 	cCircuit.Add(pcOr);
 	pcNor = NewMalloc<CNorGateView>();
-	pcNor->Init(0, -5, ROT_West, "", "LVC", false, 2, 1);
+	pcNor->Init(0, -5, ROT_East, "", "LVC", false, 2, 1);
 	cCircuit.Add(pcNor);
 	pcXor = NewMalloc<CXorGateView>();
-	pcXor->Init(10, -5, ROT_West, "", "LVC", false, 2, 1);
+	pcXor->Init(10, -5, ROT_East, "", "LVC", false, 2, 1);
 	cCircuit.Add(pcXor);
 	pcXnor = NewMalloc<CXnorGateView>();
-	pcXnor->Init(20, -5, ROT_West, "", "LVC", false, 2, 1);
+	pcXnor->Init(20, -5, ROT_East, "", "LVC", false, 2, 1);
 	cCircuit.Add(pcXnor);
 	pcBuffer = NewMalloc<CBufferView>();
-	pcBuffer->Init(30, -5, ROT_West, "", "LVC", false, 1, 1);
+	pcBuffer->Init(30, -5, ROT_East, "", "LVC", false, 1, 1);
 	cCircuit.Add(pcBuffer);
 
 	pcInverter = NewMalloc<CInverterView>();
-	pcInverter->Init(-30, 6, ROT_West, "", "LVC", false, 1, 1);
+	pcInverter->Init(-30, 6, ROT_East, "", "LVC", false, 1, 1);
 	cCircuit.Add(pcInverter);
 	pcAnd = NewMalloc<CAndGateView>();
 	pcAnd->Init(-20, 6, ROT_North, "", "LVC", false, 4, 1);
@@ -345,10 +352,10 @@ void TestGateViewsRender(void)
 	pcOr->Init(-8, 6, ROT_South, "", "LVC", false, 5, 1);
 	cCircuit.Add(pcOr);
 	pcXnor = NewMalloc<CXnorGateView>();
-	pcXnor->Init(5, 6, ROT_East, "", "LVC", false, 3, 1);
+	pcXnor->Init(5, 6, ROT_West, "", "LVC", false, 3, 1);
 	cCircuit.Add(pcXnor);
 	pcNor = NewMalloc<CNorGateView>();
-	pcNor->Init(17, 6, ROT_West, "", "LVC", true, 2, 1);
+	pcNor->Init(17, 6, ROT_East, "", "LVC", true, 2, 1);
 	cCircuit.Add(pcNor);
 	pcBuffer = NewMalloc<CBufferView>();
 	pcBuffer->Init(29, 6, ROT_North, "", "LVC", false, 3, 1);
@@ -389,7 +396,7 @@ void TestCircuitViewJunctions(void)
 
 	cCircuit.Init();
 	pcInverter = NewMalloc<CInverterView>();
-	pcInverter->Init(0, 0, ROT_West, "", "LVC", false, 1, 1);
+	pcInverter->Init(0, 0, ROT_East, "", "LVC", false, 1, 1);
 	cCircuit.Add(pcInverter);
 
 	pcIn = cCircuit.AddTrace(-6, 0, -1, 0);
@@ -455,10 +462,10 @@ void TestCircuitViewSimulation(void)
 	cColours.InitLogicim();
 
 	pcInverter = NewMalloc<CInverterView>();
-	pcInverter->Init(-10, 0, ROT_West, "U1", "LVC", false, 1, 1);
+	pcInverter->Init(-10, 0, ROT_East, "U1", "LVC", false, 1, 1);
 	cCircuit.Add(pcInverter);
 	pcAnd = NewMalloc<CAndGateView>();
-	pcAnd->Init(2, 0, ROT_West, "U2", "LVC", false, 2, 1);
+	pcAnd->Init(2, 0, ROT_East, "U2", "LVC", false, 2, 1);
 	cCircuit.Add(pcAnd);
 
 	pcIn = cCircuit.AddTrace(-18, 0, -11, 0);
@@ -552,10 +559,10 @@ void TestCircuitViewGroundDrivesInverters(void)
 	cCircuit.Add(pcGround);
 	AssertString("Ground", pcGround->GetType());
 	AssertTrue(pcGround->GetLocalBounds(&sMinimum, &sMaximum));
-	AssertBounds(-0.9, 0, 0.9, 1.166, &sMinimum, &sMaximum);
+	AssertBounds(-1.166, -0.9, 0, 0.9, &sMinimum, &sMaximum);
 	cCircuit.AddTraces(-8, -3, -4, -2);
 	pcInverter = NewMalloc<CInverterView>();
-	pcInverter->Init(-3, -2, ROT_West, "", "LVC", false, 1, 1);
+	pcInverter->Init(-3, -2, ROT_East, "", "LVC", false, 1, 1);
 	cCircuit.Add(pcInverter);
 	pcOut1 = cCircuit.AddTrace(-1, -2, 6, -2);
 
@@ -563,7 +570,7 @@ void TestCircuitViewGroundDrivesInverters(void)
 	pcGround->Init(-4, 3, ROT_North, "");
 	cCircuit.Add(pcGround);
 	pcInverter = NewMalloc<CInverterView>();
-	pcInverter->Init(-3, 3, ROT_West, "", "LVC", false, 1, 1);
+	pcInverter->Init(-3, 3, ROT_East, "", "LVC", false, 1, 1);
 	cCircuit.Add(pcInverter);
 	pcOut2 = cCircuit.AddTrace(-1, 3, 6, 3);
 
@@ -622,13 +629,13 @@ void TestCircuitViewRingOscillator(void)
 	pcPath = cPaths.AddTop(&cCircuit);
 
 	pcNand = NewMalloc<CNandGateView>();
-	pcNand->Init(-17, 0, ROT_West, "U1", "LVC", false, 2, 1);
+	pcNand->Init(-17, 0, ROT_East, "U1", "LVC", false, 2, 1);
 	cCircuit.Add(pcNand);
 	pcInverter = NewMalloc<CInverterView>();
-	pcInverter->Init(-11, 0, ROT_West, "U2", "LVC", false, 1, 1);
+	pcInverter->Init(-11, 0, ROT_East, "U2", "LVC", false, 1, 1);
 	cCircuit.Add(pcInverter);
 	pcInverter = NewMalloc<CInverterView>();
-	pcInverter->Init(-6, 0, ROT_West, "U3", "LVC", false, 1, 1);
+	pcInverter->Init(-6, 0, ROT_East, "U3", "LVC", false, 1, 1);
 	cCircuit.Add(pcInverter);
 	pcEnable = cCircuit.AddTrace(-25, -1, -18, -1);
 	pcRing = cCircuit.AddTrace(-14, 0, -12, 0);

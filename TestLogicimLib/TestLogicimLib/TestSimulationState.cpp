@@ -52,16 +52,16 @@ void AddRingOscillatorViews(CCircuitView* pcCircuit)
 	CBufferView*	pcBuffer;
 
 	pcNand = NewMalloc<CNandGateView>();
-	pcNand->Init(-17, 0, ROT_West, "U1", "LVC", false, 2, 1);
+	pcNand->Init(-17, 0, ROT_East, "U1", "LVC", false, 2, 1);
 	pcCircuit->Add(pcNand);
 	pcInverter = NewMalloc<CInverterView>();
-	pcInverter->Init(-11, 0, ROT_West, "U2", "LVC", false, 1, 1);
+	pcInverter->Init(-11, 0, ROT_East, "U2", "LVC", false, 1, 1);
 	pcCircuit->Add(pcInverter);
 	pcInverter = NewMalloc<CInverterView>();
-	pcInverter->Init(-6, 0, ROT_West, "U3", "LVC", false, 1, 1);
+	pcInverter->Init(-6, 0, ROT_East, "U3", "LVC", false, 1, 1);
 	pcCircuit->Add(pcInverter);
 	pcBuffer = NewMalloc<CBufferView>();
-	pcBuffer->Init(2, 0, ROT_West, "U4", "LVC", false, 1, 1);
+	pcBuffer->Init(2, 0, ROT_East, "U4", "LVC", false, 1, 1);
 	pcCircuit->Add(pcBuffer);
 	pcCircuit->AddTrace(-25, -1, -18, -1);
 	pcCircuit->AddTrace(-14, 0, -12, 0);
@@ -464,8 +464,8 @@ bool LoadSimulationText(const char* szSimulation)
 	CChars								sz;
 	bool								bResult;
 
-	sz.Init("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Logicim version=\"1\"><Circuit>");
-	sz.Append("<Inverter name=\"\" x=\"0\" y=\"0\" rotation=\"West\" family=\"LVC\" inputCount=\"1\" inputWidth=\"1\"/>");
+	sz.Init("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Logicim version=\"2\"><Circuit>");
+	sz.Append("<Inverter name=\"\" x=\"0\" y=\"0\" rotation=\"East\" family=\"LVC\" inputCount=\"1\" inputWidth=\"1\"/>");
 	sz.Append("<Ground name=\"\" x=\"-1\" y=\"0\" rotation=\"North\"/>");
 	sz.Append("</Circuit>");
 	sz.Append(szSimulation);
@@ -543,7 +543,7 @@ CW65C816View* AddNOPProcessorViews(CCircuitView* pcCircuit)
 	size				i;
 
 	pcMPU = NewMalloc<CW65C816View>();
-	pcMPU->Init(0, 0, ROT_West, "MPU", "LVC", false);
+	pcMPU->Init(0, 0, ROT_East, "MPU", "LVC", false);
 	pcCircuit->Add(pcMPU);
 
 	sPosition = pcMPU->GetPortView("PHI2")->GetGridPosition();
@@ -553,16 +553,16 @@ CW65C816View* AddNOPProcessorViews(CCircuitView* pcCircuit)
 	pcCircuit->AddTrace(sPosition.x - 4, sPosition.y, sPosition.x, sPosition.y);
 
 	sPosition = pcMPU->GetPortView("Data 0")->GetGridPosition();
-	sMinimum.Init(-1, 0);
-	sMaximum.Init(1, 2);
+	sMinimum.Init(-2, -1);
+	sMaximum.Init(0, 1);
 	pcData = NewMalloc<CConstantView>();
-	pcData->Init(sPosition.x, sPosition.y, ROT_East, "Data", "LVC", false, 8, RADIX_Hexadecimal, sMinimum, sMaximum);
+	pcData->Init(sPosition.x, sPosition.y, ROT_West, "Data", "LVC", false, 8, RADIX_Hexadecimal, sMinimum, sMaximum);
 	pcCircuit->Add(pcData);
 
-	sTunnelMinimum.Init(-0.65, -3);
-	sTunnelMaximum.Init(0.65, 0);
+	sTunnelMinimum.Init(0, -0.65);
+	sTunnelMaximum.Init(3, 0.65);
 	pcPower = NewMalloc<CPositivePowerView>();
-	pcPower->Init(-30, -20, ROT_North, "High", 3.3f);
+	pcPower->Init(-30, -20, ROT_South, "High", 3.3f);
 	pcCircuit->Add(pcPower);
 	pcTunnel = NewMalloc<CTunnelView>();
 	pcTunnel->Init(-30, -19, ROT_South, "high", false, sTunnelMinimum, sTunnelMaximum);
@@ -571,7 +571,7 @@ CW65C816View* AddNOPProcessorViews(CCircuitView* pcCircuit)
 	{
 		sPosition = pcMPU->GetPortView(aszHigh[i])->GetGridPosition();
 		pcTunnel = NewMalloc<CTunnelView>();
-		pcTunnel->Init(sPosition.x, sPosition.y, ROT_East, "high", false, sTunnelMinimum, sTunnelMaximum);
+		pcTunnel->Init(sPosition.x, sPosition.y, ROT_West, "high", false, sTunnelMinimum, sTunnelMaximum);
 		pcCircuit->Add(pcTunnel);
 	}
 	return pcMPU;

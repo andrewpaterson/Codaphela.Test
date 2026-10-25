@@ -197,36 +197,37 @@ void TestValueViewMeasuredBox(void)
 
 	//One hexadecimal digit: 0.6 + 0.5 is 2.
 	cConstant.Init(0, 0, ROT_North, "", "LVC", false, 1, RADIX_Hexadecimal, &cFonts);
-	AssertValueBox(-1, 0, 1, 2, &cConstant);
+	AssertValueBox(-2, -1, 0, 1, &cConstant);
 	AssertTrue(cConstant.GetLocalBounds(&sMinimum, &sMaximum));
-	AssertDouble(-1.0, sMinimum.x, 9);
-	AssertDouble(0.0, sMinimum.y, 9);
-	AssertDouble(1.0, sMaximum.x, 9);
-	AssertDouble(2.0, sMaximum.y, 9);
+	AssertDouble(-2.0, sMinimum.x, 9);
+	AssertDouble(-1.0, sMinimum.y, 9);
+	AssertDouble(0.0, sMaximum.x, 9);
+	AssertDouble(1.0, sMaximum.y, 9);
 	cConstant.Kill();
 
 	//Eight digits: 4.8 + 0.5 is 6.
 	cConstant.Init(0, 0, ROT_North, "", "LVC", false, 8, RADIX_Binary, &cFonts);
-	AssertValueBox(-1, 0, 1, 6, &cConstant);
+	AssertValueBox(-6, -1, 0, 1, &cConstant);
 	cConstant.Kill();
 	cConstant.Init(0, 0, ROT_North, "", "LVC", false, 32, RADIX_Hexadecimal, &cFonts);
-	AssertValueBox(-1, 0, 1, 6, &cConstant);
+	AssertValueBox(-6, -1, 0, 1, &cConstant);
 	cConstant.Kill();
 
 	//65535: 3.0 + 0.5 is 4.
 	cProbe.Init(0, 0, ROT_North, "", "LVC", false, 16, RADIX_Decimal, &cFonts);
-	AssertValueBox(-1, 0, 1, 4, &cProbe);
+	AssertValueBox(-4, -1, 0, 1, &cProbe);
 	AssertSize(1, cProbe.NumPortViews());
 	AssertSize(16, cProbe.GetPortView((size)0)->NumPortNames());
 	AssertString("Input 15", cProbe.GetPortView((size)0)->GetPortName(15));
 	cProbe.Kill();
 
 	cProbe.Init(0, 0, ROT_North, "", "LVC", true, 1, RADIX_Binary, &cFonts);
-	AssertValueBox(-1, 0, 1, 2, &cProbe);
+	AssertValueBox(-2, -1, 0, 1, &cProbe);
 	AssertSize(3, cProbe.NumPortViews());
 	AssertInt(-1, cProbe.GetPortView("VCC")->GetRelativePosition().x);
-	AssertInt(1, cProbe.GetPortView("VCC")->GetRelativePosition().y);
-	AssertInt(1, cProbe.GetPortView("GND")->GetRelativePosition().x);
+	AssertInt(-1, cProbe.GetPortView("VCC")->GetRelativePosition().y);
+	AssertInt(-1, cProbe.GetPortView("GND")->GetRelativePosition().x);
+	AssertInt(1, cProbe.GetPortView("GND")->GetRelativePosition().y);
 	cProbe.Kill();
 
 	KillTestCircuitFonts(&cFonts);
@@ -250,9 +251,9 @@ void TestValueViewBoxKept(void)
 	CXMLWriter		cWriter;
 	CFileUtil		cFileUtil;
 	char			szExpected[] = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
-<Logicim version=\"1\">\n\
+<Logicim version=\"2\">\n\
   <Circuit>\n\
-    <Constant name=\"K\" x=\"3\" y=\"4\" rotation=\"West\" family=\"LVC\" explicitPowerPorts=\"false\" bitWidth=\"8\" radix=\"binary\" left=\"-1\" top=\"0\" right=\"1\" bottom=\"6\"/>\n\
+    <Constant name=\"K\" x=\"3\" y=\"4\" rotation=\"East\" family=\"LVC\" explicitPowerPorts=\"false\" bitWidth=\"8\" radix=\"binary\" left=\"-6\" top=\"-1\" right=\"0\" bottom=\"1\"/>\n\
   </Circuit>\n\
 </Logicim>\n";
 
@@ -260,7 +261,7 @@ void TestValueViewBoxKept(void)
 	LoadTestCircuitFonts(&cFonts);
 	cSaved.Init();
 	pcConstant = NewMalloc<CConstantView>();
-	pcConstant->Init(3, 4, ROT_West, "K", "LVC", false, 8, RADIX_Binary, &cFonts);
+	pcConstant->Init(3, 4, ROT_East, "K", "LVC", false, 8, RADIX_Binary, &cFonts);
 	cSaved.Add(pcConstant);
 	cWriter.Init();
 	SaveCircuitXML(&cSaved, &cWriter);
@@ -280,7 +281,7 @@ void TestValueViewBoxKept(void)
 	AssertString("Constant", pcConstant->GetType());
 	AssertInt(8, pcConstant->GetBitWidth());
 	AssertInt(RADIX_Binary, pcConstant->GetRadix());
-	AssertValueBox(-1, 0, 1, 6, pcConstant);
+	AssertValueBox(-6, -1, 0, 1, pcConstant);
 	cLoaded.Kill();
 	cFileUtil.Delete("Output" _FS_ "Constant.xml");
 	cFileUtil.RemoveDir("Output");
@@ -303,19 +304,19 @@ void TestClockNotch(void)
 	AssertTrue(cFlipFlop.GetPortView("CP")->IsClock());
 	AssertFalse(cFlipFlop.GetPortView("D")->IsClock());
 	asNotch = cFlipFlop.GetPortView("CP")->GetClockNotch();
-	AssertDouble(-2.5, asNotch[0].x, 9);
-	AssertDouble(3.0, asNotch[0].y, 9);
-	AssertDouble(-3.0, asNotch[1].x, 9);
-	AssertDouble(2.5, asNotch[1].y, 9);
-	AssertDouble(-3.5, asNotch[2].x, 9);
-	AssertDouble(3.0, asNotch[2].y, 9);
+	AssertDouble(-3.0, asNotch[0].x, 9);
+	AssertDouble(-2.5, asNotch[0].y, 9);
+	AssertDouble(-2.5, asNotch[1].x, 9);
+	AssertDouble(-3.0, asNotch[1].y, 9);
+	AssertDouble(-3.0, asNotch[2].x, 9);
+	AssertDouble(-3.5, asNotch[2].y, 9);
 	cFlipFlop.Kill();
 
 	cCounter.Init(0, 0, ROT_North, "", "LVC", false, 4, 15);
 	AssertTrue(cCounter.GetPortView("Clock")->IsClock());
 	asNotch = cCounter.GetPortView("Clock")->GetClockNotch();
-	AssertDouble(-6.0, asNotch[1].x, 9);
-	AssertDouble(5.5, asNotch[1].y, 9);
+	AssertDouble(-5.5, asNotch[1].x, 9);
+	AssertDouble(-6.0, asNotch[1].y, 9);
 	cCounter.Kill();
 }
 
@@ -372,18 +373,18 @@ void TestTextViewsRender(void)
 	cColours.InitLogicim();
 
 	pcConstant8 = NewMalloc<CConstantView>();
-	pcConstant8->Init(-38, -8, ROT_West, "", "LVC", false, 8, RADIX_Hexadecimal, &cFonts);
+	pcConstant8->Init(-38, -8, ROT_East, "", "LVC", false, 8, RADIX_Hexadecimal, &cFonts);
 	cCircuit.Add(pcConstant8);
 	pcProbe8 = NewMalloc<CProbeView>();
-	pcProbe8->Init(-24, -8, ROT_East, "", "LVC", false, 8, RADIX_Hexadecimal, &cFonts);
+	pcProbe8->Init(-24, -8, ROT_West, "", "LVC", false, 8, RADIX_Hexadecimal, &cFonts);
 	cCircuit.Add(pcProbe8);
 	cCircuit.AddTrace(-38, -8, -24, -8);
 
 	pcConstant1 = NewMalloc<CConstantView>();
-	pcConstant1->Init(-38, 0, ROT_West, "", "LVC", false, 1, RADIX_Binary, &cFonts);
+	pcConstant1->Init(-38, 0, ROT_East, "", "LVC", false, 1, RADIX_Binary, &cFonts);
 	cCircuit.Add(pcConstant1);
 	pcProbe1 = NewMalloc<CProbeView>();
-	pcProbe1->Init(-28, 0, ROT_East, "", "LVC", false, 1, RADIX_Binary, &cFonts);
+	pcProbe1->Init(-28, 0, ROT_West, "", "LVC", false, 1, RADIX_Binary, &cFonts);
 	cCircuit.Add(pcProbe1);
 	cCircuit.AddTrace(-38, 0, -28, 0);
 
@@ -395,13 +396,13 @@ void TestTextViewsRender(void)
 	cCircuit.Add(pcProbeSouth);
 
 	pcFlipFlop = NewMalloc<CDTypeFlipFlopView>();
-	pcFlipFlop->Init(-2, 0, ROT_West, "", "LVC", false);
+	pcFlipFlop->Init(-2, 0, ROT_East, "", "LVC", false);
 	cCircuit.Add(pcFlipFlop);
 	pcFlipFlop = NewMalloc<CDTypeFlipFlopView>();
 	pcFlipFlop->Init(11, 0, ROT_North, "", "LVC", false);
 	cCircuit.Add(pcFlipFlop);
 	pcCounter = NewMalloc<CCounterView>();
-	pcCounter->Init(31, 0, ROT_West, "", "LVC", false, 4, 15);
+	pcCounter->Init(31, 0, ROT_East, "", "LVC", false, 4, 15);
 	cCircuit.Add(pcCounter);
 
 	//Starting resets the constants to 0, so their values are set after and driven again.

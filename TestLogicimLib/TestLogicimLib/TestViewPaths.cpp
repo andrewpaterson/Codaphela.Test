@@ -109,7 +109,7 @@ static void AddGroundedInverter(CCircuitView* pcCircuit, CInverterView** ppcInve
 	pcGround->Init(-4, 3, ROT_North, "");
 	pcCircuit->Add(pcGround);
 	*ppcInverter = NewMalloc<CInverterView>();
-	(*ppcInverter)->Init(-3, 3, ROT_West, "", "LVC", false, 1, 1);
+	(*ppcInverter)->Init(-3, 3, ROT_East, "", "LVC", false, 1, 1);
 	pcCircuit->Add(*ppcInverter);
 	*ppcOut = pcCircuit->AddTrace(-1, 3, 6, 3);
 }

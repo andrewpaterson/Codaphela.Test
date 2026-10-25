@@ -84,8 +84,8 @@ CConstantView* AddWiringConstant(CCircuitView* pcCircuit, int32 x, int32 y, ERot
 	SInt32Vec2		sMinimum;
 	SInt32Vec2		sMaximum;
 
-	sMinimum.Init(-1, 0);
-	sMaximum.Init(1, 2);
+	sMinimum.Init(-2, -1);
+	sMaximum.Init(0, 1);
 	pcConstant = NewMalloc<CConstantView>();
 	pcConstant->Init(x, y, eRotation, "", "LVC", false, iBitWidth, eRadix, sMinimum, sMaximum);
 	pcCircuit->Add(pcConstant);
@@ -103,8 +103,8 @@ CProbeView* AddWiringProbe(CCircuitView* pcCircuit, int32 x, int32 y, ERotation 
 	SInt32Vec2		sMinimum;
 	SInt32Vec2		sMaximum;
 
-	sMinimum.Init(-1, 0);
-	sMaximum.Init(1, 2);
+	sMinimum.Init(-2, -1);
+	sMaximum.Init(0, 1);
 	pcProbe = NewMalloc<CProbeView>();
 	pcProbe->Init(x, y, eRotation, "", "LVC", false, iBitWidth, eRadix, sMinimum, sMaximum);
 	pcCircuit->Add(pcProbe);
@@ -122,8 +122,8 @@ CTunnelView* AddWiringTunnel(CCircuitView* pcCircuit, int32 x, int32 y, ERotatio
 	SFloat64Vec2	sMinimum;
 	SFloat64Vec2	sMaximum;
 
-	sMinimum.Init(-0.65, -fLength);
-	sMaximum.Init(0.65, 0);
+	sMinimum.Init(0, -0.65);
+	sMaximum.Init(fLength, 0.65);
 	pcTunnel = NewMalloc<CTunnelView>();
 	pcTunnel->Init(x, y, eRotation, szName, bDoubleSided, sMinimum, sMaximum);
 	pcCircuit->Add(pcTunnel);
@@ -187,27 +187,27 @@ void TestWiringTunnels(void)
 	CTunnelView*	pcTunnel;
 
 	sTest.Init();
-	pcConstant = AddWiringConstant(&sTest.cCircuit, 0, 0, ROT_West, 8, RADIX_Hexadecimal);
+	pcConstant = AddWiringConstant(&sTest.cCircuit, 0, 0, ROT_East, 8, RADIX_Hexadecimal);
 	sTest.cCircuit.AddTrace(0, 0, 4, 0);
-	pcTunnel = AddWiringTunnel(&sTest.cCircuit, 4, 0, ROT_West, "Bus", false, 3);
+	pcTunnel = AddWiringTunnel(&sTest.cCircuit, 4, 0, ROT_East, "Bus", false, 3);
 	AssertString("bus", pcTunnel->GetConnectionName());
 	AssertFalse(pcTunnel->MakesComponent());
-	AddWiringTunnel(&sTest.cCircuit, 20, 0, ROT_East, " BUS ", false, 3);
+	AddWiringTunnel(&sTest.cCircuit, 20, 0, ROT_West, " BUS ", false, 3);
 	sTest.cCircuit.AddTrace(20, 0, 24, 0);
-	pcProbe = AddWiringProbe(&sTest.cCircuit, 24, 0, ROT_East, 8, RADIX_Hexadecimal);
-	AddWiringTunnel(&sTest.cCircuit, 20, 10, ROT_East, "Bus2", false, 3);
+	pcProbe = AddWiringProbe(&sTest.cCircuit, 24, 0, ROT_West, 8, RADIX_Hexadecimal);
+	AddWiringTunnel(&sTest.cCircuit, 20, 10, ROT_West, "Bus2", false, 3);
 	sTest.cCircuit.AddTrace(20, 10, 24, 10);
-	pcOther = AddWiringProbe(&sTest.cCircuit, 24, 10, ROT_East, 8, RADIX_Hexadecimal);
+	pcOther = AddWiringProbe(&sTest.cCircuit, 24, 10, ROT_West, 8, RADIX_Hexadecimal);
 
 	//Double sided, 4 long: its ends are at 0, 20 and 0, 16.
-	pcConstant2 = AddWiringConstant(&sTest.cCircuit, -6, 20, ROT_West, 4, RADIX_Hexadecimal);
+	pcConstant2 = AddWiringConstant(&sTest.cCircuit, -6, 20, ROT_East, 4, RADIX_Hexadecimal);
 	sTest.cCircuit.AddTrace(-6, 20, 0, 20);
 	pcTunnel = AddWiringTunnel(&sTest.cCircuit, 0, 20, ROT_North, "Through", true, 4);
 	AssertSize(2, pcTunnel->NumPortViews());
 	AssertInt(0, pcTunnel->GetPortView(1)->GetGridPosition().x);
 	AssertInt(16, pcTunnel->GetPortView(1)->GetGridPosition().y);
 	sTest.cCircuit.AddTrace(0, 16, 6, 16);
-	pcDouble = AddWiringProbe(&sTest.cCircuit, 6, 16, ROT_East, 4, RADIX_Hexadecimal);
+	pcDouble = AddWiringProbe(&sTest.cCircuit, 6, 16, ROT_West, 4, RADIX_Hexadecimal);
 
 	AssertTrue(sTest.cCircuit.CreateSimulation(sTest.pcPath, &sTest.cSimulation, &sTest.cFamilies));
 	SetWiringConstant(pcConstant, 0x5A, &sTest);
@@ -384,17 +384,17 @@ void TestWiringPinAndLabel(void)
 	SFloat64Vec2	sFloatMaximum;
 
 	sTest.Init();
-	pcConstant = AddWiringConstant(&sTest.cCircuit, 0, 0, ROT_West, 4, RADIX_Hexadecimal);
+	pcConstant = AddWiringConstant(&sTest.cCircuit, 0, 0, ROT_East, 4, RADIX_Hexadecimal);
 	sTest.cCircuit.AddTrace(0, 0, 6, 0);
-	sMinimum.Init(-1, 0);
-	sMaximum.Init(1, 2);
+	sMinimum.Init(-2, -1);
+	sMaximum.Init(0, 1);
 	pcPin = NewMalloc<CPinView>();
-	pcPin->Init(6, 0, ROT_East, "D", "LVC", false, 4, RADIX_Hexadecimal, sMinimum, sMaximum);
+	pcPin->Init(6, 0, ROT_West, "D", "LVC", false, 4, RADIX_Hexadecimal, sMinimum, sMaximum);
 	sTest.cCircuit.Add(pcPin);
-	sFloatMinimum.Init(-0.5, -3);
-	sFloatMaximum.Init(0.5, 0.25);
+	sFloatMinimum.Init(-0.25, -0.5);
+	sFloatMaximum.Init(3, 0.5);
 	pcLabel = NewMalloc<CLabelView>();
-	pcLabel->Init(0, 6, ROT_West, "Note", TA_Left, false, true, true, sFloatMinimum, sFloatMaximum);
+	pcLabel->Init(0, 6, ROT_East, "Note", TA_Left, false, true, true, sFloatMinimum, sFloatMaximum);
 	sTest.cCircuit.Add(pcLabel);
 
 	AssertTrue(sTest.cCircuit.CreateSimulation(sTest.pcPath, &sTest.cSimulation, &sTest.cFamilies));
@@ -435,10 +435,10 @@ void TestWiringClockAndOscilloscope(void)
 	AssertInt(-1, pcClock->GetPortView("Output")->GetGridPosition().y);
 	sTest.cCircuit.AddTrace(0, -1, 0, -4);
 	sTest.cCircuit.AddTrace(0, -4, 6, -4);
-	pcProbe = AddWiringProbe(&sTest.cCircuit, 6, -4, ROT_East, 1, RADIX_Binary);
+	pcProbe = AddWiringProbe(&sTest.cCircuit, 6, -4, ROT_West, 1, RADIX_Binary);
 	sTest.cCircuit.AddTrace(0, -4, 0, -10);
 	pcScope = NewMalloc<COscilloscopeView>();
-	pcScope->Init(0, -10, ROT_North, "Scope", "LVC", 1, 4, 8, 2, 100000000);
+	pcScope->Init(0, -10, ROT_East, "Scope", "LVC", 1, 4, 8, 2, 100000000);
 	sTest.cCircuit.Add(pcScope);
 
 	AssertTrue(sTest.cCircuit.CreateSimulation(sTest.pcPath, &sTest.cSimulation, &sTest.cFamilies));
@@ -494,7 +494,7 @@ void TestWiringW65C816(void)
 	cColours.InitLogicim();
 	LoadTestCircuitFonts(&cFonts);
 	pcMPU = NewMalloc<CW65C816View>();
-	pcMPU->Init(0, 0, ROT_West, "MPU", "LVC", false);
+	pcMPU->Init(0, 0, ROT_East, "MPU", "LVC", false);
 	sTest.cCircuit.Add(pcMPU);
 	AssertTrue(pcMPU->GetPortView("PHI2")->IsClock());
 	AssertSize(16, pcMPU->GetPortView("Address 0")->NumPortNames());
@@ -539,7 +539,7 @@ void TestWiring65C64(void)
 	cColours.InitLogicim();
 	LoadTestCircuitFonts(&cFonts);
 	pcMPU = NewMalloc<C65C64View>();
-	pcMPU->Init(0, 0, ROT_West, "CPU", "LVC", false);
+	pcMPU->Init(0, 0, ROT_East, "CPU", "LVC", false);
 	sTest.cCircuit.Add(pcMPU);
 	AssertTrue(pcMPU->GetPortView("PHI2")->IsClock());
 	AssertTrue(pcMPU->GetPortView("RESB")->IsInverting());
@@ -598,13 +598,13 @@ void TestWiringRenderViews(void)
 	cCircuit.Init();
 
 	pcClock = NewMalloc<CClockView>();
-	pcClock->Init(-40, -6, ROT_West, "", "LVC", false, 25000000, false);
+	pcClock->Init(-40, -6, ROT_East, "", "LVC", false, 25000000, false);
 	cCircuit.Add(pcClock);
 	pcPower = NewMalloc<CPositivePowerView>();
-	pcPower->Init(-32, -6, ROT_North, "", 3.3f);
+	pcPower->Init(-32, -6, ROT_South, "", 3.3f);
 	cCircuit.Add(pcPower);
 	pcPin = NewMalloc<CPinView>();
-	pcPin->Init(-26, -6, ROT_West, "Pin", "LVC", false, 1, RADIX_Binary, &cFonts);
+	pcPin->Init(-26, -6, ROT_East, "Pin", "LVC", false, 1, RADIX_Binary, &cFonts);
 	cCircuit.Add(pcPin);
 	pcSplitter = NewMalloc<CSplitterView>();
 	pcSplitter->Init(-18, -6, ROT_North, "", 2, 2, 2, SA_LeftHanded, -1);
@@ -616,29 +616,29 @@ void TestWiringRenderViews(void)
 	pcLabel->Init(-8, -6, ROT_North, "  ", TA_Left, false, true, true, &cFonts);
 	cCircuit.Add(pcLabel);
 	pcScope = NewMalloc<COscilloscopeView>();
-	pcScope->Init(0, -8, ROT_North, "", "LVC", 2, 32, 30, 4, 6000000000.0);
+	pcScope->Init(0, -8, ROT_East, "", "LVC", 2, 32, 30, 4, 6000000000.0);
 	cCircuit.Add(pcScope);
 
 	pcClock = NewMalloc<CClockView>();
-	pcClock->Init(-42, 8, ROT_West, "", "LVC", false, 25000000, true);
+	pcClock->Init(-42, 8, ROT_East, "", "LVC", false, 25000000, true);
 	cCircuit.Add(pcClock);
 	pcPower = NewMalloc<CPositivePowerView>();
-	pcPower->Init(-38, 8, ROT_North, "", 5.0f);
+	pcPower->Init(-38, 8, ROT_South, "", 5.0f);
 	cCircuit.Add(pcPower);
 	pcPin = NewMalloc<CPinView>();
-	pcPin->Init(-22, 8, ROT_West, "Address", "LVC", false, 8, RADIX_Hexadecimal, &cFonts);
+	pcPin->Init(-22, 8, ROT_East, "Address", "LVC", false, 8, RADIX_Hexadecimal, &cFonts);
 	cCircuit.Add(pcPin);
 	pcSplitter = NewMalloc<CSplitterView>();
 	pcSplitter->Init(-14, 8, ROT_North, "", 8, 3, 2, SA_RightHanded, 1);
 	cCircuit.Add(pcSplitter);
 	pcTunnel = NewMalloc<CTunnelView>();
-	pcTunnel->Init(-2, 8, ROT_West, "Bus", false, &cFonts);
+	pcTunnel->Init(-2, 8, ROT_East, "Bus", false, &cFonts);
 	cCircuit.Add(pcTunnel);
 	pcTunnel = NewMalloc<CTunnelView>();
-	pcTunnel->Init(0, 12, ROT_East, "Data", true, &cFonts);
+	pcTunnel->Init(0, 12, ROT_West, "Data", true, &cFonts);
 	cCircuit.Add(pcTunnel);
 	pcLabel = NewMalloc<CLabelView>();
-	pcLabel->Init(18, 8, ROT_West, "Centred label", TA_Centre, true, false, true, &cFonts);
+	pcLabel->Init(18, 8, ROT_East, "Centred label", TA_Centre, true, false, true, &cFonts);
 	cCircuit.Add(pcLabel);
 	pcLabel = NewMalloc<CLabelView>();
 	pcLabel->Init(24, 12, ROT_North, "Down", TA_Left, false, false, false, &cFonts);

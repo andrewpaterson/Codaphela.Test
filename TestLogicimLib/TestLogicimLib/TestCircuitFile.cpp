@@ -64,10 +64,10 @@ void AddEveryCircuitFileView(CCircuitView* pcCircuit)
 	C65C64View*		pc65C64;
 
 	pcAnd = NewMalloc<CAndGateView>();
-	pcAnd->Init(-30, -5, ROT_West, "U1", "LVC", false, 2, 1);
+	pcAnd->Init(-30, -5, ROT_East, "U1", "LVC", false, 2, 1);
 	pcCircuit->Add(pcAnd);
 	pcNand = NewMalloc<CNandGateView>();
-	pcNand->Init(-20, -5, ROT_East, "Nand <&> \"1\"", "HC", true, 3, 1);
+	pcNand->Init(-20, -5, ROT_West, "Nand <&> \"1\"", "HC", true, 3, 1);
 	pcCircuit->Add(pcNand);
 	pcOr = NewMalloc<COrGateView>();
 	pcOr->Init(-10, -5, ROT_South, "", "LVC", false, 4, 2);
@@ -76,68 +76,69 @@ void AddEveryCircuitFileView(CCircuitView* pcCircuit)
 	pcNor->Init(0, -5, ROT_North, "", "LVC", false, 2, 1);
 	pcCircuit->Add(pcNor);
 	pcXor = NewMalloc<CXorGateView>();
-	pcXor->Init(10, -5, ROT_West, "", "LVC", false, 2, 1);
+	pcXor->Init(10, -5, ROT_East, "", "LVC", false, 2, 1);
 	pcCircuit->Add(pcXor);
 	pcXnor = NewMalloc<CXnorGateView>();
-	pcXnor->Init(20, -5, ROT_West, "", "LVC", false, 5, 1);
+	pcXnor->Init(20, -5, ROT_East, "", "LVC", false, 5, 1);
 	pcCircuit->Add(pcXnor);
 	pcBuffer = NewMalloc<CBufferView>();
-	pcBuffer->Init(30, -5, ROT_West, "", "LVC", false, 3, 8);
+	pcBuffer->Init(30, -5, ROT_East, "", "LVC", false, 3, 8);
 	pcCircuit->Add(pcBuffer);
 	pcInverter = NewMalloc<CInverterView>();
-	pcInverter->Init(-3, 6, ROT_West, "", "LVC", false, 1, 1);
+	pcInverter->Init(-3, 6, ROT_East, "", "LVC", false, 1, 1);
 	pcCircuit->Add(pcInverter);
 	pcGround = NewMalloc<CGroundView>();
 	pcGround->Init(-8, 6, ROT_North, "G");
 	pcCircuit->Add(pcGround);
-	sBoxMinimum.Init(-1, 0);
-	sBoxMaximum.Init(1, 3);
+	sBoxMinimum.Init(-3, -1);
+	sBoxMaximum.Init(0, 1);
 	pcConstant = NewMalloc<CConstantView>();
-	pcConstant->Init(-20, 12, ROT_West, "K", "LVC", false, 8, RADIX_Hexadecimal, sBoxMinimum, sBoxMaximum);
+	pcConstant->Init(-20, 12, ROT_East, "K", "LVC", false, 8, RADIX_Hexadecimal, sBoxMinimum, sBoxMaximum);
 	pcCircuit->Add(pcConstant);
-	sBoxMaximum.Init(2, 7);
+	sBoxMinimum.Init(-7, -1);
+	sBoxMaximum.Init(0, 2);
 	pcProbe = NewMalloc<CProbeView>();
-	pcProbe->Init(-10, 12, ROT_East, "P", "HC", true, 4, RADIX_Decimal, sBoxMinimum, sBoxMaximum);
+	pcProbe->Init(-10, 12, ROT_West, "P", "HC", true, 4, RADIX_Decimal, sBoxMinimum, sBoxMaximum);
 	pcCircuit->Add(pcProbe);
 	pcFlipFlop = NewMalloc<CDTypeFlipFlopView>();
-	pcFlipFlop->Init(5, 12, ROT_West, "F", "LVC", true);
+	pcFlipFlop->Init(5, 12, ROT_East, "F", "LVC", true);
 	pcCircuit->Add(pcFlipFlop);
 	pcCounter = NewMalloc<CCounterView>();
 	pcCounter->Init(25, 12, ROT_South, "C", "LVC", false, 8, 200);
 	pcCircuit->Add(pcCounter);
 	pcClock = NewMalloc<CClockView>();
-	pcClock->Init(40, -5, ROT_West, "Clk", "LVC", false, 1000000, true);
+	pcClock->Init(40, -5, ROT_East, "Clk", "LVC", false, 1000000, true);
 	pcCircuit->Add(pcClock);
 	pcPower = NewMalloc<CPositivePowerView>();
-	pcPower->Init(-35, 6, ROT_North, "+5", 5.0f);
+	pcPower->Init(-35, 6, ROT_South, "+5", 5.0f);
 	pcCircuit->Add(pcPower);
-	sBoxMinimum.Init(-1, 0);
-	sBoxMaximum.Init(1, 3);
+	sBoxMinimum.Init(-3, -1);
+	sBoxMaximum.Init(0, 1);
 	pcPin = NewMalloc<CPinView>();
-	pcPin->Init(-25, 20, ROT_West, "D", "LVC", false, 4, RADIX_Binary, sBoxMinimum, sBoxMaximum);
+	pcPin->Init(-25, 20, ROT_East, "D", "LVC", false, 4, RADIX_Binary, sBoxMinimum, sBoxMaximum);
 	pcPin->SetSubcircuitAppearance(PA_Right, PAN_Positive, 2, true, false);
 	pcCircuit->Add(pcPin);
 	pcMPU = NewMalloc<CW65C816View>();
-	pcMPU->Init(0, 30, ROT_West, "MPU", "LVC", false);
+	pcMPU->Init(0, 30, ROT_East, "MPU", "LVC", false);
 	pcCircuit->Add(pcMPU);
 	pcScope = NewMalloc<COscilloscopeView>();
-	pcScope->Init(30, 20, ROT_North, "Scope", "LVC", 2, 8, 4, 3, 1000000000);
+	pcScope->Init(30, 20, ROT_East, "Scope", "LVC", 2, 8, 4, 3, 1000000000);
 	pcCircuit->Add(pcScope);
 	pcSplitter = NewMalloc<CSplitterView>();
 	pcSplitter->Init(10, 6, ROT_North, "", 8, 2, 2, SA_LeftHanded, -1);
 	pcCircuit->Add(pcSplitter);
-	sFloatMinimum.Init(-0.75, -3.25);
-	sFloatMaximum.Init(0.75, 0);
+	sFloatMinimum.Init(0, -0.75);
+	sFloatMaximum.Init(3.25, 0.75);
 	pcTunnel = NewMalloc<CTunnelView>();
 	pcTunnel->Init(14, 6, ROT_North, "Bus", false, sFloatMinimum, sFloatMaximum);
 	pcCircuit->Add(pcTunnel);
-	sFloatMinimum.Init(-0.5, -2.25);
-	sFloatMaximum.Init(0.5, 0.25);
+	sFloatMinimum.Init(-0.25, -0.5);
+	sFloatMaximum.Init(2.25, 0.5);
 	pcLabel = NewMalloc<CLabelView>();
-	pcLabel->Init(-40, 0, ROT_East, "Note", TA_Centre, true, false, true, sFloatMinimum, sFloatMaximum);
+	pcLabel->Init(-40, 0, ROT_West, "Note", TA_Centre, true, false, true, sFloatMinimum, sFloatMaximum);
 	pcCircuit->Add(pcLabel);
 	pc65C64 = NewMalloc<C65C64View>();
-	pc65C64->Init(70, 30, ROT_West, "CPU", "LVC", false);
+	pc65C64->Init(70, 30, ROT_East, "CPU", "LVC", false);
 	pcCircuit->Add(pc65C64);
 	pcCircuit->AddTraces(-8, 6, -4, 7);
 	pcCircuit->AddTrace(-1, 6, 6, 6);
@@ -154,30 +155,30 @@ void TestCircuitFileXML(void)
 	CCircuitView	cCircuit;
 	CXMLWriter		cWriter;
 	char			szExpected[] = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n\
-<Logicim version=\"1\">\n\
+<Logicim version=\"2\">\n\
   <Circuit>\n\
-    <AndGate name=\"U1\" x=\"-30\" y=\"-5\" rotation=\"West\" family=\"LVC\" explicitPowerPorts=\"false\" inputCount=\"2\" inputWidth=\"1\"/>\n\
-    <NandGate name=\"Nand &lt;&amp;&gt; &quot;1&quot;\" x=\"-20\" y=\"-5\" rotation=\"East\" family=\"HC\" explicitPowerPorts=\"true\" inputCount=\"3\" inputWidth=\"1\"/>\n\
+    <AndGate name=\"U1\" x=\"-30\" y=\"-5\" rotation=\"East\" family=\"LVC\" explicitPowerPorts=\"false\" inputCount=\"2\" inputWidth=\"1\"/>\n\
+    <NandGate name=\"Nand &lt;&amp;&gt; &quot;1&quot;\" x=\"-20\" y=\"-5\" rotation=\"West\" family=\"HC\" explicitPowerPorts=\"true\" inputCount=\"3\" inputWidth=\"1\"/>\n\
     <OrGate name=\"\" x=\"-10\" y=\"-5\" rotation=\"South\" family=\"LVC\" explicitPowerPorts=\"false\" inputCount=\"4\" inputWidth=\"2\"/>\n\
     <NorGate name=\"\" x=\"0\" y=\"-5\" rotation=\"North\" family=\"LVC\" explicitPowerPorts=\"false\" inputCount=\"2\" inputWidth=\"1\"/>\n\
-    <XorGate name=\"\" x=\"10\" y=\"-5\" rotation=\"West\" family=\"LVC\" explicitPowerPorts=\"false\" inputCount=\"2\" inputWidth=\"1\"/>\n\
-    <XnorGate name=\"\" x=\"20\" y=\"-5\" rotation=\"West\" family=\"LVC\" explicitPowerPorts=\"false\" inputCount=\"5\" inputWidth=\"1\"/>\n\
-    <Buffer name=\"\" x=\"30\" y=\"-5\" rotation=\"West\" family=\"LVC\" explicitPowerPorts=\"false\" inputCount=\"3\" inputWidth=\"8\"/>\n\
-    <Inverter name=\"\" x=\"-3\" y=\"6\" rotation=\"West\" family=\"LVC\" explicitPowerPorts=\"false\" inputCount=\"1\" inputWidth=\"1\"/>\n\
+    <XorGate name=\"\" x=\"10\" y=\"-5\" rotation=\"East\" family=\"LVC\" explicitPowerPorts=\"false\" inputCount=\"2\" inputWidth=\"1\"/>\n\
+    <XnorGate name=\"\" x=\"20\" y=\"-5\" rotation=\"East\" family=\"LVC\" explicitPowerPorts=\"false\" inputCount=\"5\" inputWidth=\"1\"/>\n\
+    <Buffer name=\"\" x=\"30\" y=\"-5\" rotation=\"East\" family=\"LVC\" explicitPowerPorts=\"false\" inputCount=\"3\" inputWidth=\"8\"/>\n\
+    <Inverter name=\"\" x=\"-3\" y=\"6\" rotation=\"East\" family=\"LVC\" explicitPowerPorts=\"false\" inputCount=\"1\" inputWidth=\"1\"/>\n\
     <Ground name=\"G\" x=\"-8\" y=\"6\" rotation=\"North\"/>\n\
-    <Constant name=\"K\" x=\"-20\" y=\"12\" rotation=\"West\" family=\"LVC\" explicitPowerPorts=\"false\" bitWidth=\"8\" radix=\"hexadecimal\" left=\"-1\" top=\"0\" right=\"1\" bottom=\"3\"/>\n\
-    <Probe name=\"P\" x=\"-10\" y=\"12\" rotation=\"East\" family=\"HC\" explicitPowerPorts=\"true\" bitWidth=\"4\" radix=\"decimal\" left=\"-1\" top=\"0\" right=\"2\" bottom=\"7\"/>\n\
-    <DTypeFlipFlop name=\"F\" x=\"5\" y=\"12\" rotation=\"West\" family=\"LVC\" explicitPowerPorts=\"true\"/>\n\
+    <Constant name=\"K\" x=\"-20\" y=\"12\" rotation=\"East\" family=\"LVC\" explicitPowerPorts=\"false\" bitWidth=\"8\" radix=\"hexadecimal\" left=\"-3\" top=\"-1\" right=\"0\" bottom=\"1\"/>\n\
+    <Probe name=\"P\" x=\"-10\" y=\"12\" rotation=\"West\" family=\"HC\" explicitPowerPorts=\"true\" bitWidth=\"4\" radix=\"decimal\" left=\"-7\" top=\"-1\" right=\"0\" bottom=\"2\"/>\n\
+    <DTypeFlipFlop name=\"F\" x=\"5\" y=\"12\" rotation=\"East\" family=\"LVC\" explicitPowerPorts=\"true\"/>\n\
     <Counter name=\"C\" x=\"25\" y=\"12\" rotation=\"South\" family=\"LVC\" explicitPowerPorts=\"false\" bitWidth=\"8\" terminalValue=\"200\"/>\n\
-    <Clock name=\"Clk\" x=\"40\" y=\"-5\" rotation=\"West\" family=\"LVC\" explicitPowerPorts=\"false\" frequency=\"1000000\" inverseOut=\"true\"/>\n\
-    <PositivePower name=\"+5\" x=\"-35\" y=\"6\" rotation=\"North\" voltage=\"5\"/>\n\
-    <Pin name=\"D\" x=\"-25\" y=\"20\" rotation=\"West\" family=\"LVC\" explicitPowerPorts=\"false\" bitWidth=\"4\" radix=\"binary\" left=\"-1\" top=\"0\" right=\"1\" bottom=\"3\" alignment=\"right\" anchour=\"positive\" weight=\"2\" inverting=\"true\" clockNotch=\"false\"/>\n\
-    <W65C816 name=\"MPU\" x=\"0\" y=\"30\" rotation=\"West\" family=\"LVC\" explicitPowerPorts=\"false\"/>\n\
-    <Oscilloscope name=\"Scope\" x=\"30\" y=\"20\" rotation=\"North\" family=\"LVC\" inputCount=\"2\" numberOfDivsWide=\"8\" samplesPerDiv=\"4\" divHeight=\"3\" sampleFrequency=\"1000000000\"/>\n\
+    <Clock name=\"Clk\" x=\"40\" y=\"-5\" rotation=\"East\" family=\"LVC\" explicitPowerPorts=\"false\" frequency=\"1000000\" inverseOut=\"true\"/>\n\
+    <PositivePower name=\"+5\" x=\"-35\" y=\"6\" rotation=\"South\" voltage=\"5\"/>\n\
+    <Pin name=\"D\" x=\"-25\" y=\"20\" rotation=\"East\" family=\"LVC\" explicitPowerPorts=\"false\" bitWidth=\"4\" radix=\"binary\" left=\"-3\" top=\"-1\" right=\"0\" bottom=\"1\" alignment=\"right\" anchour=\"positive\" weight=\"2\" inverting=\"true\" clockNotch=\"false\"/>\n\
+    <W65C816 name=\"MPU\" x=\"0\" y=\"30\" rotation=\"East\" family=\"LVC\" explicitPowerPorts=\"false\"/>\n\
+    <Oscilloscope name=\"Scope\" x=\"30\" y=\"20\" rotation=\"East\" family=\"LVC\" inputCount=\"2\" numberOfDivsWide=\"8\" samplesPerDiv=\"4\" divHeight=\"3\" sampleFrequency=\"1000000000\"/>\n\
     <Splitter name=\"\" x=\"10\" y=\"6\" rotation=\"North\" bitWidth=\"8\" fanOut=\"2\" gridSpacing=\"2\" appearance=\"left_handed\" endOffset=\"-1\" splitIndices=\"0 0 0 0 1 1 1 1\"/>\n\
-    <Tunnel name=\"Bus\" x=\"14\" y=\"6\" rotation=\"North\" doubleSided=\"false\" left=\"-0.75\" top=\"-3.25\" right=\"0.75\" bottom=\"0\"/>\n\
-    <Label name=\"Note\" x=\"-40\" y=\"0\" rotation=\"East\" alignment=\"center\" bold=\"true\" fill=\"false\" border=\"true\" left=\"-0.5\" top=\"-2.25\" right=\"0.5\" bottom=\"0.25\"/>\n\
-    <MPU65C64 name=\"CPU\" x=\"70\" y=\"30\" rotation=\"West\" family=\"LVC\" explicitPowerPorts=\"false\"/>\n\
+    <Tunnel name=\"Bus\" x=\"14\" y=\"6\" rotation=\"North\" doubleSided=\"false\" left=\"0\" top=\"-0.75\" right=\"3.25\" bottom=\"0.75\"/>\n\
+    <Label name=\"Note\" x=\"-40\" y=\"0\" rotation=\"West\" alignment=\"center\" bold=\"true\" fill=\"false\" border=\"true\" left=\"-0.25\" top=\"-0.5\" right=\"2.25\" bottom=\"0.5\"/>\n\
+    <MPU65C64 name=\"CPU\" x=\"70\" y=\"30\" rotation=\"East\" family=\"LVC\" explicitPowerPorts=\"false\"/>\n\
     <Trace x0=\"-8\" y0=\"6\" x1=\"-4\" y1=\"6\"/>\n\
     <Trace x0=\"-4\" y0=\"6\" x1=\"-4\" y1=\"7\"/>\n\
     <Trace x0=\"-1\" y0=\"6\" x1=\"6\" y1=\"6\"/>\n\
@@ -350,50 +351,50 @@ void TestCircuitFileErrors(void)
 	sz.Kill();
 
 	sz.Init(szHeader);
-	sz.Append("<Logicim version=\"2\"><Circuit/></Logicim>\n");
+	sz.Append("<Logicim version=\"1\"><Circuit/></Logicim>\n");
 	AssertFalse(LoadCircuitText(&cCircuit, sz.Text()));
 	sz.Kill();
 
 	sz.Init(szHeader);
-	sz.Append("<Logicim version=\"1\"></Logicim>\n");
+	sz.Append("<Logicim version=\"2\"></Logicim>\n");
 	AssertFalse(LoadCircuitText(&cCircuit, sz.Text()));
 	sz.Kill();
 
 	sz.Init(szHeader);
-	sz.Append("<Logicim version=\"1\"><Circuit><Ground x=\"1\" y=\"2\" rotation=\"West\"/><Toaster/></Circuit></Logicim>\n");
+	sz.Append("<Logicim version=\"2\"><Circuit><Ground x=\"1\" y=\"2\" rotation=\"South\"/><Toaster/></Circuit></Logicim>\n");
 	AssertFalse(LoadCircuitText(&cCircuit, sz.Text()));
 	AssertSize(1, cCircuit.NumComponents());
 	AssertString("", cCircuit.GetComponent(0)->GetName());
 	sz.Kill();
 
 	sz.Init(szHeader);
-	sz.Append("<Logicim version=\"1\"><Circuit><Ground x=\"1\" y=\"two\" rotation=\"West\"/></Circuit></Logicim>\n");
+	sz.Append("<Logicim version=\"2\"><Circuit><Ground x=\"1\" y=\"two\" rotation=\"South\"/></Circuit></Logicim>\n");
 	AssertFalse(LoadCircuitText(&cCircuit, sz.Text()));
 	sz.Kill();
 
 	sz.Init(szHeader);
-	sz.Append("<Logicim version=\"1\"><Circuit><Ground x=\"1\" y=\"2\" rotation=\"Up\"/></Circuit></Logicim>\n");
+	sz.Append("<Logicim version=\"2\"><Circuit><Ground x=\"1\" y=\"2\" rotation=\"Up\"/></Circuit></Logicim>\n");
 	AssertFalse(LoadCircuitText(&cCircuit, sz.Text()));
 	sz.Kill();
 
 	sz.Init(szHeader);
-	sz.Append("<Logicim version=\"1\"><Circuit><AndGate x=\"1\" y=\"2\" rotation=\"West\" inputCount=\"2\" inputWidth=\"1\"/></Circuit></Logicim>\n");
+	sz.Append("<Logicim version=\"2\"><Circuit><AndGate x=\"1\" y=\"2\" rotation=\"East\" inputCount=\"2\" inputWidth=\"1\"/></Circuit></Logicim>\n");
 	AssertFalse(LoadCircuitText(&cCircuit, sz.Text()));
 	sz.Kill();
 
 	sz.Init(szHeader);
-	sz.Append("<Logicim version=\"1\"><Circuit><OrGate x=\"1\" y=\"2\" rotation=\"West\" family=\"LVC\" inputCount=\"0\" inputWidth=\"1\"/></Circuit></Logicim>\n");
+	sz.Append("<Logicim version=\"2\"><Circuit><OrGate x=\"1\" y=\"2\" rotation=\"East\" family=\"LVC\" inputCount=\"0\" inputWidth=\"1\"/></Circuit></Logicim>\n");
 	AssertFalse(LoadCircuitText(&cCircuit, sz.Text()));
 	sz.Kill();
 
 	sz.Init(szHeader);
-	sz.Append("<Logicim version=\"1\"><Circuit><Trace x0=\"1\" y0=\"2\" x1=\"3\"/></Circuit></Logicim>\n");
+	sz.Append("<Logicim version=\"2\"><Circuit><Trace x0=\"1\" y0=\"2\" x1=\"3\"/></Circuit></Logicim>\n");
 	AssertFalse(LoadCircuitText(&cCircuit, sz.Text()));
 	sz.Kill();
 
 	//Explicit power ports default to implicit; nothing else was added by the failures.
 	sz.Init(szHeader);
-	sz.Append("<Logicim version=\"1\"><Circuit><OrGate x=\"1\" y=\"2\" rotation=\"West\" family=\"LVC\" inputCount=\"3\" inputWidth=\"1\"/></Circuit></Logicim>\n");
+	sz.Append("<Logicim version=\"2\"><Circuit><OrGate x=\"1\" y=\"2\" rotation=\"East\" family=\"LVC\" inputCount=\"3\" inputWidth=\"1\"/></Circuit></Logicim>\n");
 	AssertTrue(LoadCircuitText(&cCircuit, sz.Text()));
 	sz.Kill();
 	AssertSize(2, cCircuit.NumComponents());
