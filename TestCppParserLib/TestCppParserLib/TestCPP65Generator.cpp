@@ -525,6 +525,161 @@ void TestCPP65GeneratorConversions(void)
 		"int Other() { static int siCalls = 1; return ++siCalls; }\n"
 		"int Days(int i) { static const int aiDays[3] = { 31, 28, 31 }; return aiDays[i]; }\n"
 		"int main() { Count(); Count(); Other(); return Count() + 10 * Other() - 10 + 100 * Days(2); }"));
+	AssertInt('F' + 'r' + 'G' + 'O', TestCPP65Main(
+		"const char* gszName = \"Global\";\n"
+		"const char* Month(int i) { static const char* aszMonths[] = { \"Jan\", \"Feb\", \"Mar\" }; static char* szOne = \"One\"; return i < 3 ? aszMonths[i] : szOne; }\n"
+		"int main() { return Month(1)[0] + Month(2)[2] + gszName[0] + Month(5)[0]; }"));
+	AssertInt(12, TestCPP65Main(
+		"enum EMode { M_A, M_B };\n"
+		"int Pick(EMode e, ...) { return e == M_B ? 10 : 1; }\n"
+		"int Pick(int i, ...) { return 100; }\n"
+		"int main() { bool b = true; return Pick(b ? M_B : M_A, 0) + Pick(!b ? M_B : M_A, 0) + (b ? M_B : M_A); }"));
+	AssertInt(5 + 70 + 300 + 4000, TestCPP65Main(
+		"class CBase { public: int i; int miScale; int Get(void) { return i * miScale; } };\n"
+		"class COther { public: int k; virtual int Virtual(void) { return k; } };\n"
+		"class CDerived : public CBase { public: int j; };\n"
+		"class CMulti : public COther, public CBase { public: int m; };\n"
+		"typedef int (CDerived::*DFunc)(void);\n"
+		"typedef int CDerived::*DField;\n"
+		"typedef int CMulti::*MField;\n"
+		"int Call(CDerived* p, DFunc f) { return (p->*f)(); }\n"
+		"int Field(CDerived* p, DField f) { return p->*f; }\n"
+		"int FieldM(CMulti* p, MField f) { return p->*f; }\n"
+		"int main()\n"
+		"{\n"
+		"\tCDerived d; CMulti m; int (CBase::*g)(void) = &CBase::Get;\n"
+		"\td.i = 5; d.miScale = 1; d.j = 7; m.k = 1; m.i = 30; m.miScale = 10; m.m = 2;\n"
+		"\treturn Call(&d, &CBase::Get) + Field(&d, &CDerived::j) * 10 + (m.*g)() + FieldM(&m, &CBase::miScale) * 400;\n"
+		"}"));
+	AssertInt(3 + 'b' + 20, TestCPP65Main(
+		"typedef int (*MainFunc)(int argc, char* argv[]);\n"
+		"int Count(int argc, char* argv[]) { __builtin_ia32_pause(); return argc + argv[1][0]; }\n"
+		"int Run(MainFunc f, int argc, char* argv[]) { return f(argc, argv); }\n"
+		"int Grid(int a[][2]) { return a[1][1]; }\n"
+		"int main() { char a[] = \"a\"; char b[] = \"b\"; char* av[] = { a, b }; int g[2][2]; g[1][1] = 20; return Run(Count, 3, av) + Grid(g); }"));
+	AssertInt(105, TestCPP65Main(
+		"struct CA { int a; int GetA() { return a; } };\n"
+		"struct CB { int b; int GetB() { return b; } };\n"
+		"struct CC : CA, CB { int c; int All() { return GetA() + GetB() * 0 + c + b; } };\n"
+		"CB* AsB(CC* p) { return p; }\n"
+		"int main() { CC c; c.a = 100; c.b = 2; c.c = 3; CB* pb = AsB(&c); CC* n = 0; return c.All() + (AsB(n) == 0 ? 0 : 1000) + pb->GetB() - 2; }"));
+	AssertInt(1100, TestCPP65Main(
+		"void* gapv[16]; int giCount = 0; int giBad = 0; int giMade = 0;\n"
+		"class CSource { public: char* mszName; bool IsNamed(char c) { return mszName[0] == c; } };\n"
+		"template<class M>\n"
+		"class CPtr\n"
+		"{\n"
+		"public:\n"
+		"\tM* mp;\n"
+		"\tCPtr() { mp = 0; gapv[giCount++] = this; giMade++; }\n"
+		"\tCPtr(M* p) { mp = p; gapv[giCount++] = this; giMade++; }\n"
+		"\tCPtr(const CPtr& c) { mp = c.mp; gapv[giCount++] = this; giMade++; }\n"
+		"\t~CPtr() { int k; for (k = 0; k < giCount; k++) { if (gapv[k] == this) { gapv[k] = gapv[--giCount]; return; } } giBad++; }\n"
+		"\tM* operator -> () { return mp; }\n"
+		"};\n"
+		"class CGen\n"
+		"{\n"
+		"public:\n"
+		"\tCSource* mpcSource; int miType;\n"
+		"\tint GetCelType(void) { return miType; }\n"
+		"\tCPtr<CSource> GetSource(void) { return mpcSource; }\n"
+		"};\n"
+		"int Match(CGen* pg, int iType, char c)\n"
+		"{\n"
+		"\tint n = 0;\n"
+		"\tint i;\n"
+		"\tfor (i = 0; i < 3; i++)\n"
+		"\t{\n"
+		"\t\tif ((pg->GetCelType() == iType) && pg->GetSource()->IsNamed(c)) n++;\n"
+		"\t\tif ((pg->GetCelType() != iType) || pg->GetSource()->IsNamed(c)) n += 10;\n"
+		"\t\tn += (pg->GetCelType() == iType) ? (pg->GetSource()->IsNamed(c) ? 100 : 200) : 300;\n"
+		"\t}\n"
+		"\treturn n;\n"
+		"}\n"
+		"int main(void)\n"
+		"{\n"
+		"\tCSource s; s.mszName = \"A\";\n"
+		"\tCGen g; g.mpcSource = &s; g.miType = 3;\n"
+		"\tint r = Match(&g, 3, 'A') + Match(&g, 4, 'A') * 1000;\n"
+		"\treturn (r == 333 + 1000 * 930) * 100 + giBad * 10 + giCount + (giMade == 9) * 1000;\n"
+		"}\n"));
+	AssertInt(3303, TestCPP65Main(
+		"int main()\n"
+		"{\n"
+		"\tint aiPositions[3][2] = { { 2, 2 }, { -2, -1 }, { 7 } };\n"
+		"\tint aiFlat[2][2] = { 1, 2, 3 };\n"
+		"\tchar aszNames[2][4] = { \"ab\", { 'x', 'y' } };\n"
+		"\tint aai[2][2][2] = { { { 1, 2 }, { 3, 4 } }, { 5, 6, 7 } };\n"
+		"\tint* apiRows[2][2] = { { &aiFlat[0][0], &aiFlat[0][1] }, { &aiFlat[1][0], 0 } };\n"
+		"\treturn aiPositions[1][1] + aiPositions[2][0] * 10 + aiPositions[2][1] * 100 + aiFlat[1][0] * 1000 + aiFlat[1][1] * 10000 + aszNames[0][1] + aszNames[1][1] + aszNames[1][2] + aai[1][1][0] + aai[1][1][1] * 3 + aai[0][1][1] + *apiRows[1][0] + (apiRows[1][1] == 0);\n"
+		"}"));
+	AssertInt(1 + 10 + 3, TestCPP65Main(
+		"template<class M> class CEnum { public: M m; };\n"
+		"class CParser\n"
+		"{\n"
+		"public:\n"
+		"\ttemplate<class M> int Get(CEnum<M>* p, int* pi, bool b = true);\n"
+		"};\n"
+		"template<class M> int CParser::Get(CEnum<M>* p, int* pi, bool b) { *pi = b ? 1 : 10; return p->m; }\n"
+		"int main() { CParser c; CEnum<int> e; int i; int j; e.m = 3; c.Get(&e, &i); return i + (c.Get(&e, &j, false) - 3) + j + e.m; }"));
+	AssertInt(7 + 30 + 300 + 1000, TestCPP65Main(
+		"template<class M, class N>\n"
+		"class SVec2\n"
+		"{\n"
+		"public:\n"
+		"\tM x; M y;\n"
+		"\tSVec2() {};\n"
+		"\tSVec2<M, N>(M x, M y);\n"
+		"\tSVec2<M, N>(const M* p) { x = p[0]; y = p[1]; }\n"
+		"\tSVec2<M, N>(const SVec2<M, N>& v);\n"
+		"\tSVec2<M, N>& operator = (const SVec2<M, N>& v);\n"
+		"};\n"
+		"template<class M, class N> SVec2<M, N>::SVec2(M fx, M fy) { x = fx; y = fy; }\n"
+		"template<class M, class N> SVec2<M, N>::SVec2(const SVec2<M, N>& v) { x = v.x; y = v.y; }\n"
+		"template<class M, class N> SVec2<M, N>& SVec2<M, N>::operator = (const SVec2<M, N>& v) { x = v.x; y = v.y; return *this; }\n"
+		"class SIntVec2 : public SVec2<int, long long>\n"
+		"{\n"
+		"public:\n"
+		"\tusing SVec2<int, long long>::SVec2;\n"
+		"\tusing SVec2<int, long long>::operator=;\n"
+		"\tint Sum(void) { return x + y; }\n"
+		"};\n"
+		"int Take(SIntVec2 v) { return v.Sum(); }\n"
+		"int main() { int ai[2] = { 400, 600 }; SIntVec2 a(3, 4); SIntVec2 b; b = SIntVec2(10, 20); SIntVec2 c(ai); return a.Sum() + b.Sum() + Take(SIntVec2(100, 200)) + c.Sum(); }"));
+	AssertInt(45000 + 290 + 0, TestCPP65Main(
+		"class CPtr\n"
+		"{\n"
+		"public:\n"
+		"\tint* mp;\n"
+		"\tCPtr() { mp = 0; }\n"
+		"\tCPtr(int* p) { mp = p; }\n"
+		"\tCPtr(const CPtr& c) { mp = c.mp; }\n"
+		"\t~CPtr() { mp = 0; }\n"
+		"\tint Get(void) { return mp ? *mp : -1; }\n"
+		"};\n"
+		"int giValue = 42;\n"
+		"CPtr Make(void) { return CPtr(&giValue); }\n"
+		"int Take(int a, CPtr c, int b) { return a + c.Get() + b; }\n"
+		"template<class... Args> int Forward(Args... args) { return Take(args...); }\n"
+		"int main()\n"
+		"{\n"
+		"\tbool b = true; CPtr x = b ? Make() : CPtr(); CPtr y = !b ? Make() : CPtr();\n"
+		"\treturn Take(1, b ? Make() : CPtr(), 2) * 1000 + Forward(10, !b ? Make() : CPtr(), 20) * 10 + x.Get() - y.Get() - 43;\n"
+		"}"));
+	AssertInt(110 + 40 + 130 + 208, TestCPP65Main(
+		"typedef int (*Func)(void* p, int i);\n"
+		"class CMem\n"
+		"{\n"
+		"public:\n"
+		"\tint miBase;\n"
+		"\tstatic int Read(void* p, int i);\n"
+		"\tstatic int Twice(void* p, int i) { return 2 * i; }\n"
+		"\tint Use(void);\n"
+		"};\n"
+		"int Call(Func f, void* p, int i) { return f(p, i); }\n"
+		"int CMem::Read(void* p, int i) { return ((CMem*)p)->miBase + i; }\n"
+		"int CMem::Use(void) { Func f = Read; return Call(Read, this, 1) + Call(Twice, this, 2) + f(this, 3); }\n"
+		"int main() { CMem c; c.miBase = 100; Func f = &CMem::Read; return Call(CMem::Read, &c, 10) + Call(CMem::Twice, &c, 20) + f(&c, 30) + c.Use(); }"));
 	AssertInt(1 + 2 + 3 + 1 + 1000, TestCPP65Main(
 		"#include <stdarg.h>\n"
 		"int Sum(char n, ...) { va_list ap; va_start(ap, n); int t = 0; for (int i = 0; i < n; i++) { t += va_arg(ap, int); } va_end(ap); return t; }\n"
@@ -1463,6 +1618,53 @@ static void AssertCPP65FloatConversions(void)
 // Libc65's math.cpp on the 65C64 against the C library, bit for bit.
 //
 //////////////////////////////////////////////////////////////////////////
+static void AssertCPP65MathExtras(void)
+{
+	STestCPP65Run	sRun;
+	CChars			szSource;
+	double			dExpected;
+	uint64			ulliBits;
+
+	//hypot is checked natively too (within an ulp of the correctly rounded hypotl on millions of values).
+	dExpected = (double)hypotl(1e300L, 1e300L);
+	memcpy(&ulliBits, &dExpected, 8);
+
+	szSource.Init();
+	szSource.Append(
+		"#include <math.h>\n"
+		"#include <stdlib.h>\n"
+		"unsigned long long gulliExpected = ")->Append(ulliBits)->Append("ULL;\n"
+		"int main()\n"
+		"{\n"
+		"\tint r = 0; char* e; static const double ad[] = { HUGE_VAL, -HUGE_VAL }; double h = hypot(1e300, 1e300);\n"
+		"\tif (hypot(3.0, 4.0) == 5.0) r |= 1;\n"
+		"\tif (*(unsigned long long*)&h == gulliExpected) r |= 2;\n"
+		"\tif ((hypot(INFINITY, NAN) == HUGE_VAL) && (hypot(-NAN, -INFINITY) == HUGE_VAL)) r |= 4;\n"
+		"\tif (isnan(hypot(NAN, 1.0)) && (hypot(-0.0, 0.0) == 0.0) && (hypot(1e-310, 0.0) == 1e-310)) r |= 8;\n"
+		"\tif ((lround(2.5) == 3) && (lround(-2.5) == -3) && (lround(-0.4) == 0) && (lroundf(1.5f) == 2)) r |= 16;\n"
+		"\tif ((llround(1e15 + 0.5) == 1000000000000001LL) && (llroundf(-1.5f) == -2)) r |= 32;\n"
+		"\tif (isnan(NAN) && !isnan(1.0) && isnan((double)NAN) && !isnan(2.0f)) r |= 64;\n"
+		"\tif (isinf(HUGE_VAL) && isinf(-HUGE_VALF) && !isinf(1e308) && isfinite(1.0) && !isfinite(NAN) && !isfinite(-INFINITY)) r |= 128;\n"
+		"\tif ((asinf(1.0f) == (float)1.5707963267948966) && (acosf(1.0f) == 0.0f)) r |= 256;\n"
+		"\tif ((strtold(\"2.5x\", &e) == 2.5) && (*e == 'x')) r |= 512;\n"
+		"\tif (hypotf(5.0f, 12.0f) == 13.0f) r |= 1024;\n"
+		"\tif ((ad[0] > 1e308) && (ad[1] < -1e308) && (HUGE_VAL * 0.5 == HUGE_VAL)) r |= 2048;\n"
+		"\treturn r;\n"
+		"}\n");
+
+	static const char*	aszUnits[] = { "Libc65/softfloat.cpp", "Libc65/softfloat.asm", "Libc65/math.cpp", "Libc65/stdlib.cpp", "Libc65/ctype.cpp", NULL };
+	AssertTrue(TestCPP65BeginProject(&sRun, aszUnits, "", szSource.Text()));
+	AssertTrue(TestCPP65Run(&sRun, 20000000) < 20000000);
+	AssertIntHex(4095, (int)TestCPP65MPU(&sRun)->GetA());
+	TestCPP65End(&sRun);
+	szSource.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 static void AssertCPP65Math(void)
 {
 	STestCPP65Run	sRun;
@@ -1725,6 +1927,7 @@ void TestCPP65GeneratorFloat(void)
 
 	AssertCPP65FloatConversions();
 	AssertCPP65Math();
+	AssertCPP65MathExtras();
 	AssertCPP65Transcendentals();
 
 	//Globals and constants: data, folded as the target would.

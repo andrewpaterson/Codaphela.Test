@@ -8,6 +8,9 @@ void TestProject(void);
 void TestCppTokeniser(void);
 void TestCppParser(void);
 void TestCppHighlighter(void);
+void TestIR(void);
+void TestIR65Backend(void);
+void TestCPP65IR(void);
 void TestCPP65Generator(void);
 
 
@@ -28,7 +31,10 @@ int __cdecl main(void)
 	TestCppTokeniser();
 	TestCppParser();
 	TestCppHighlighter();
+	TestIR();
+	TestIR65Backend();
 	TestCPP65Generator();
+	TestCPP65IR();
 
 	iTotalTestsFailed = TestTotalStatistics();
 

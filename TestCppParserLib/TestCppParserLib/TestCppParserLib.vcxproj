@@ -234,6 +234,9 @@
     <ClCompile Include="TestProject.cpp" />
     <ClCompile Include="TestCppTokeniser.cpp" />
     <ClCompile Include="TestCppErrors.cpp" />
+    <ClCompile Include="TestIR.cpp" />
+    <ClCompile Include="TestIR65Backend.cpp" />
+    <ClCompile Include="TestCPP65IR.cpp" />
     <ClCompile Include="TestCppParser.cpp" />
     <ClCompile Include="TestCppHighlighter.cpp" />
     <ClCompile Include="TestCPP65Context.cpp" />
