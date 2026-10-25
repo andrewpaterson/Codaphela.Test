@@ -1,0 +1,713 @@
+(export
+	(version "E")
+	(design
+		(source "D:\\gameengine\\Test\\TestKicadImporterLib\\TestKicadImporterLib\\Input\\LSF0204.kicad_sch")
+		(date "2026-10-25T07:33:04")
+		(tool "Eeschema 10.0.3")
+		(sheet
+			(number "1")
+			(name "/")
+			(tstamps "/")
+			(title_block
+				(title)
+				(company)
+				(rev)
+				(date)
+				(source "LSF0204.kicad_sch")
+				(comment
+					(number "1")
+					(value "")
+				)
+				(comment
+					(number "2")
+					(value "")
+				)
+				(comment
+					(number "3")
+					(value "")
+				)
+				(comment
+					(number "4")
+					(value "")
+				)
+				(comment
+					(number "5")
+					(value "")
+				)
+				(comment
+					(number "6")
+					(value "")
+				)
+				(comment
+					(number "7")
+					(value "")
+				)
+				(comment
+					(number "8")
+					(value "")
+				)
+				(comment
+					(number "9")
+					(value "")
+				)
+			)
+		)
+	)
+	(components
+		(comp
+			(ref "2.2KOhm")
+			(value "MFR-12FTF52-0R")
+			(footprint "RESAD1100W50L340D190")
+			(datasheet "https://www.mouser.co.za/datasheet/2/447/Yageo_LR_MFR_1-1714151.pdf")
+			(description "2.2K")
+			(fields
+				(field
+					(name "Height")
+				)
+				(field
+					(name "Manufacturer_Name") "YAGEO (PHYCOMP)")
+				(field
+					(name "Manufacturer_Part_Number") "MFR-12FTF52-0R")
+				(field
+					(name "Mouser Part Number") "603-MFR-12FTF52-0R")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/YAGEO/MFR-12FTF52-0R?qs=oAGoVhmvjhzqGHRLNGXNHg%3D%3D")
+				(field
+					(name "Arrow Part Number")
+				)
+				(field
+					(name "Arrow Price/Stock")
+				)
+				(field
+					(name "Footprint") "RESAD1100W50L340D190")
+				(field
+					(name "Datasheet") "https://www.mouser.co.za/datasheet/2/447/Yageo_LR_MFR_1-1714151.pdf")
+				(field
+					(name "Description") "2.2K")
+			)
+			(libsource
+				(lib "Yageo")
+				(part "MFR-12FTF52-0R")
+				(description "Metal Film Resistors - Through Hole 0 OHM 1/6W 1%")
+			)
+			(property
+				(name "Height")
+				(value "")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "YAGEO (PHYCOMP)")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "MFR-12FTF52-0R")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "603-MFR-12FTF52-0R")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/YAGEO/MFR-12FTF52-0R?qs=oAGoVhmvjhzqGHRLNGXNHg%3D%3D")
+			)
+			(property
+				(name "Arrow Part Number")
+				(value "")
+			)
+			(property
+				(name "Arrow Price/Stock")
+				(value "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/LSF0204.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "6e299cdf-fb46-4f47-a74c-ac36379679c5")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "2.2KOhm?")
+			(value "MFR-12FTF52-0R")
+			(footprint "RESAD1100W50L340D190")
+			(datasheet "https://www.mouser.co.za/datasheet/2/447/Yageo_LR_MFR_1-1714151.pdf")
+			(description "2.2K")
+			(fields
+				(field
+					(name "Height")
+				)
+				(field
+					(name "Manufacturer_Name") "YAGEO (PHYCOMP)")
+				(field
+					(name "Manufacturer_Part_Number") "MFR-12FTF52-0R")
+				(field
+					(name "Mouser Part Number") "603-MFR-12FTF52-0R")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/YAGEO/MFR-12FTF52-0R?qs=oAGoVhmvjhzqGHRLNGXNHg%3D%3D")
+				(field
+					(name "Arrow Part Number")
+				)
+				(field
+					(name "Arrow Price/Stock")
+				)
+				(field
+					(name "Footprint") "RESAD1100W50L340D190")
+				(field
+					(name "Datasheet") "https://www.mouser.co.za/datasheet/2/447/Yageo_LR_MFR_1-1714151.pdf")
+				(field
+					(name "Description") "2.2K")
+			)
+			(libsource
+				(lib "Yageo")
+				(part "MFR-12FTF52-0R")
+				(description "Metal Film Resistors - Through Hole 0 OHM 1/6W 1%")
+			)
+			(property
+				(name "Height")
+				(value "")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "YAGEO (PHYCOMP)")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "MFR-12FTF52-0R")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "603-MFR-12FTF52-0R")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/YAGEO/MFR-12FTF52-0R?qs=oAGoVhmvjhzqGHRLNGXNHg%3D%3D")
+			)
+			(property
+				(name "Arrow Part Number")
+				(value "")
+			)
+			(property
+				(name "Arrow Price/Stock")
+				(value "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/LSF0204.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "c29a07ad-bcc2-43cf-ab21-b7071c7f823f" "6e6e1f38-a22d-4c24-a20f-f2d995a77339"
+				"40ed909e-5fb6-4610-a3b4-d11778c94a94" "971cc643-7103-452b-8f4a-dc456504152b"
+				"3645d193-27e1-44fc-b587-e3d6a2004227" "5694f23a-ea52-4dcb-9165-05e6d148153c"
+				"15f685d6-bebb-4670-9640-849e27143c9b"
+			)
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "IC?")
+			(value "LSF0204PW-Q100J")
+			(footprint "SOP65P640X110-14N")
+			(datasheet "https://assets.nexperia.com/documents/data-sheet/LSF0204_Q100.pdf")
+			(description "Voltage Translator")
+			(fields
+				(field
+					(name "Height") "1.1")
+				(field
+					(name "Mouser Part Number") "771-LSF0204PW-Q100J")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Nexperia/LSF0204PW-Q100J?qs=DPoM0jnrROXA8naUdxkzeA%3D%3D")
+				(field
+					(name "Manufacturer_Name") "Nexperia")
+				(field
+					(name "Manufacturer_Part_Number") "LSF0204PW-Q100J")
+				(field
+					(name "Silk") "LSF0204PW")
+				(field
+					(name "Footprint") "SOP65P640X110-14N")
+				(field
+					(name "Datasheet") "https://assets.nexperia.com/documents/data-sheet/LSF0204_Q100.pdf")
+				(field
+					(name "Description") "Voltage Translator")
+			)
+			(libsource
+				(lib "Nexperia")
+				(part "LSF0204PW-Q100J")
+				(description "Voltage Translator")
+			)
+			(property
+				(name "Height")
+				(value "1.1")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "771-LSF0204PW-Q100J")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Nexperia/LSF0204PW-Q100J?qs=DPoM0jnrROXA8naUdxkzeA%3D%3D")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Nexperia")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "LSF0204PW-Q100J")
+			)
+			(property
+				(name "Silk")
+				(value "LSF0204PW")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/LSF0204.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "e832f35d-a8b3-4653-ae21-66d42b7cbbec")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "13")
+						)
+						(pin
+							(num "12")
+						)
+						(pin
+							(num "11")
+						)
+						(pin
+							(num "10")
+						)
+						(pin
+							(num "9")
+						)
+						(pin
+							(num "8")
+						)
+					)
+				)
+			)
+		)
+	)
+	(groups)
+	(variants)
+	(libparts
+		(libpart
+			(lib "Nexperia")
+			(part "LSF0204PW-Q100J")
+			(description "Voltage Translator")
+			(docs "https://assets.nexperia.com/documents/data-sheet/LSF0204_Q100.pdf")
+			(fields
+				(field
+					(name "Reference") "IC")
+				(field
+					(name "Value") "LSF0204PW-Q100J")
+				(field
+					(name "Footprint") "SOP65P640X110-14N")
+				(field
+					(name "Datasheet") "https://assets.nexperia.com/documents/data-sheet/LSF0204_Q100.pdf")
+				(field
+					(name "Description") "Voltage Translator")
+				(field
+					(name "Height") "1.1")
+				(field
+					(name "Mouser Part Number") "771-LSF0204PW-Q100J")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Nexperia/LSF0204PW-Q100J?qs=DPoM0jnrROXA8naUdxkzeA%3D%3D")
+				(field
+					(name "Manufacturer_Name") "Nexperia")
+				(field
+					(name "Manufacturer_Part_Number") "LSF0204PW-Q100J")
+				(field
+					(name "Silk") "LSF0204PW")
+				(field
+					(name "Garbage") "Translation - Voltage Levels ANALOG & LOGIC ICS")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "REFA")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "A1")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "A2")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "A3")
+					(type "passive")
+				)
+				(pin
+					(num "5")
+					(name "A4")
+					(type "passive")
+				)
+				(pin
+					(num "6")
+					(name "N.C._1")
+					(type "passive")
+				)
+				(pin
+					(num "7")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "8")
+					(name "EN")
+					(type "passive")
+				)
+				(pin
+					(num "9")
+					(name "N.C._2")
+					(type "passive")
+				)
+				(pin
+					(num "10")
+					(name "B4")
+					(type "passive")
+				)
+				(pin
+					(num "11")
+					(name "B3")
+					(type "passive")
+				)
+				(pin
+					(num "12")
+					(name "B2")
+					(type "passive")
+				)
+				(pin
+					(num "13")
+					(name "B1")
+					(type "passive")
+				)
+				(pin
+					(num "14")
+					(name "REFB")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Yageo")
+			(part "MFR-12FTF52-0R")
+			(description "Metal Film Resistors - Through Hole 0 OHM 1/6W 1%")
+			(docs "https://www.mouser.co.za/datasheet/2/447/Yageo_LR_MFR_1-1714151.pdf")
+			(fields
+				(field
+					(name "Reference") "R")
+				(field
+					(name "Value") "MFR-12FTF52-0R")
+				(field
+					(name "Footprint") "RESAD1100W50L340D190")
+				(field
+					(name "Datasheet") "https://www.mouser.co.za/datasheet/2/447/Yageo_LR_MFR_1-1714151.pdf")
+				(field
+					(name "Description") "Metal Film Resistors - Through Hole 0 OHM 1/6W 1%")
+				(field
+					(name "Height")
+				)
+				(field
+					(name "Manufacturer_Name") "YAGEO (PHYCOMP)")
+				(field
+					(name "Manufacturer_Part_Number") "MFR-12FTF52-0R")
+				(field
+					(name "Mouser Part Number") "603-MFR-12FTF52-0R")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/YAGEO/MFR-12FTF52-0R?qs=oAGoVhmvjhzqGHRLNGXNHg%3D%3D")
+				(field
+					(name "Arrow Part Number")
+				)
+				(field
+					(name "Arrow Price/Stock")
+				)
+				(field
+					(name "Garbage") "Metal Film Resistors - Through Hole 0 OHM 1/6W 1%")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+	)
+	(libraries
+		(library
+			(logical "Nexperia")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/Nexperia.kicad_sym")
+		)
+		(library
+			(logical "Yageo")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/Yageo.kicad_sym")
+		)
+	)
+	(nets
+		(net
+			(code "1")
+			(name "/3.3V")
+			(class "Default")
+			(node
+				(ref "2.2KOhm?")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC?")
+				(pin "1")
+				(pinfunction "REFA_1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "2")
+			(name "/5V")
+			(class "Default")
+			(node
+				(ref "2.2KOhm")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "2.2KOhm?")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC?")
+				(pin "14")
+				(pinfunction "REFB_14")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC?")
+				(pin "8")
+				(pinfunction "EN_8")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "3")
+			(name "/A1")
+			(class "Default")
+			(node
+				(ref "2.2KOhm?")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC?")
+				(pin "2")
+				(pinfunction "A1_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "4")
+			(name "/A2")
+			(class "Default")
+			(node
+				(ref "2.2KOhm?")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC?")
+				(pin "3")
+				(pinfunction "A2_3")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "5")
+			(name "/A3")
+			(class "Default")
+			(node
+				(ref "2.2KOhm?")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC?")
+				(pin "4")
+				(pinfunction "A3_4")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "6")
+			(name "/A4")
+			(class "Default")
+			(node
+				(ref "2.2KOhm?")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC?")
+				(pin "5")
+				(pinfunction "A4_5")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "7")
+			(name "/B1")
+			(class "Default")
+			(node
+				(ref "2.2KOhm")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC?")
+				(pin "13")
+				(pinfunction "B1_13")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "8")
+			(name "/B2")
+			(class "Default")
+			(node
+				(ref "2.2KOhm?")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC?")
+				(pin "12")
+				(pinfunction "B2_12")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "9")
+			(name "/B3")
+			(class "Default")
+			(node
+				(ref "2.2KOhm?")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC?")
+				(pin "11")
+				(pinfunction "B3_11")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "10")
+			(name "/B4")
+			(class "Default")
+			(node
+				(ref "2.2KOhm?")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC?")
+				(pin "10")
+				(pinfunction "B4_10")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "11")
+			(name "/GND")
+			(class "Default")
+			(node
+				(ref "IC?")
+				(pin "7")
+				(pinfunction "GND_7")
+				(pintype "passive")
+			)
+		)
+	)
+)

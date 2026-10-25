@@ -1,0 +1,3295 @@
+(export
+	(version "E")
+	(design
+		(source "D:\\gameengine\\Test\\TestKicadImporterLib\\TestKicadImporterLib\\Input\\Power and Reset.kicad_sch")
+		(date "2026-10-25T07:33:05")
+		(tool "Eeschema 10.0.3")
+		(sheet
+			(number "1")
+			(name "/")
+			(tstamps "/")
+			(title_block
+				(title "Power and Reset")
+				(company)
+				(rev "V1")
+				(date "2025-04-23")
+				(source "Power and Reset.kicad_sch")
+				(comment
+					(number "1")
+					(value "")
+				)
+				(comment
+					(number "2")
+					(value "")
+				)
+				(comment
+					(number "3")
+					(value "")
+				)
+				(comment
+					(number "4")
+					(value "")
+				)
+				(comment
+					(number "5")
+					(value "")
+				)
+				(comment
+					(number "6")
+					(value "")
+				)
+				(comment
+					(number "7")
+					(value "")
+				)
+				(comment
+					(number "8")
+					(value "")
+				)
+				(comment
+					(number "9")
+					(value "")
+				)
+			)
+		)
+	)
+	(components
+		(comp
+			(ref "C1")
+			(value "100μF")
+			(footprint "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_Radial_D6.3mm_P2.50mm")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "Polarised Capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "aa663f00-ba20-4e9d-ab02-1d9068e5e232")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C2")
+			(value "100μF")
+			(footprint "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_Radial_D6.3mm_P2.50mm")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "Polarised Capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "bd978220-8e96-4d6a-bb21-87cd80b5289e")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C3")
+			(value "100μF")
+			(footprint "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_Radial_D6.3mm_P2.50mm")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "Polarised Capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "df1d2a33-f53b-44da-a6d5-8ec283b8af4e")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C4")
+			(value "100μF")
+			(footprint "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_Radial_D6.3mm_P2.50mm")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "Polarised Capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "3ef668ea-37b6-48b5-9ae1-c44db0d2cbc4")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C5")
+			(value "100μF")
+			(footprint "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_Radial_D6.3mm_P2.50mm")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "Polarised Capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "326b55c3-247d-4b1e-88bc-ca1e39bf4e77")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C6")
+			(value "100μF")
+			(footprint "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_Radial_D6.3mm_P2.50mm")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "Polarised Capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "3f767b56-5dcf-45c7-9f45-82f99704d95a")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C7")
+			(value "100μF")
+			(footprint "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_Radial_D6.3mm_P2.50mm")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "Polarised Capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "7c74908b-bac2-4f87-a855-be993e659618")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C8")
+			(value "100μF")
+			(footprint "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_Radial_D6.3mm_P2.50mm")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "Polarised Capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "a671a357-e2ed-44d3-ac7a-c07582404f93")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "D1")
+			(value "1N5819RL")
+			(footprint "SamacSys_Parts:DIOAD1414W86L464D238")
+			(datasheet "http://www.st.com/web/en/resource/technical/document/datasheet/CD00001625.pdf")
+			(description "40V Schottky diode")
+			(fields
+				(field
+					(name "Height")
+				)
+				(field
+					(name "Manufacturer_Name") "STMicroelectronics")
+				(field
+					(name "Manufacturer_Part_Number") "1N5819RL")
+				(field
+					(name "Mouser Part Number") "511-1N5819-TR")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/STMicroelectronics/1N5819RL?qs=mRqUSD7FX17%2FYMiCEfKDjA%3D%3D")
+				(field
+					(name "Footprint") "SamacSys_Parts:DIOAD1414W86L464D238")
+				(field
+					(name "Datasheet") "http://www.st.com/web/en/resource/technical/document/datasheet/CD00001625.pdf")
+				(field
+					(name "Description") "40V Schottky diode")
+			)
+			(libsource
+				(lib "ST_Microelectronics")
+				(part "1N5819RL")
+				(description "40V Schottky diode")
+			)
+			(property
+				(name "Height")
+				(value "")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "STMicroelectronics")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "1N5819RL")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "511-1N5819-TR")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/STMicroelectronics/1N5819RL?qs=mRqUSD7FX17%2FYMiCEfKDjA%3D%3D")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "c8d0a694-6ddb-45f1-aee5-eea2c7fc40ad")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "IC1")
+			(value "L7812ACD2T-TR")
+			(footprint "SamacSys_Parts:TO254P1542X460-3N")
+			(datasheet "http://www.st.com/web/en/resource/technical/document/datasheet/CD00000444.pdf")
+			(description "Voltage Regulator 12V 1A D2PAK STMicroelectronics L7812ACD2T-TR, Single Linear Voltage Regulator, 1.5A 12 V, +/-2%, 3-Pin D2PAK")
+			(fields
+				(field
+					(name "Height") "4.6")
+				(field
+					(name "Manufacturer_Name") "STMicroelectronics")
+				(field
+					(name "Manufacturer_Part_Number") "L7812ACD2T-TR")
+				(field
+					(name "Silkscreen") "L7812ACD2T-TR")
+				(field
+					(name "Footprint") "SamacSys_Parts:TO254P1542X460-3N")
+				(field
+					(name "Datasheet") "http://www.st.com/web/en/resource/technical/document/datasheet/CD00000444.pdf")
+				(field
+					(name "Description") "Voltage Regulator 12V 1A D2PAK STMicroelectronics L7812ACD2T-TR, Single Linear Voltage Regulator, 1.5A 12 V, +/-2%, 3-Pin D2PAK")
+			)
+			(libsource
+				(lib "ST_Microelectronics")
+				(part "L7812ACD2T-TR")
+				(description "Voltage Regulator 12V 1A D2PAK STMicroelectronics L7812ACD2T-TR, Single Linear Voltage Regulator, 1.5A 12 V, +/-2%, 3-Pin D2PAK")
+			)
+			(property
+				(name "Height")
+				(value "4.6")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "STMicroelectronics")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "L7812ACD2T-TR")
+			)
+			(property
+				(name "Silkscreen")
+				(value "L7812ACD2T-TR")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "2a25baeb-2d21-4685-80c4-54b92905380b")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "IC2")
+			(value "LD1117S50C")
+			(footprint "SamacSys_Parts:LD1117S33C")
+			(datasheet "https://www.st.com/resource/en/datasheet/ld1117.pdf")
+			(description "IC: voltage regulator; LDO, linear, fixed; 5.0V; 0.95A; SOT223; SMD")
+			(fields
+				(field
+					(name "Height") "1.8")
+				(field
+					(name "Manufacturer_Name") "STMicroelectronics")
+				(field
+					(name "Manufacturer_Part_Number") "LD1117S50C")
+				(field
+					(name "Silkscreen") "LD1117S50")
+				(field
+					(name "Garbage") "IC: voltage regulator; LDO, linear, fixed; 5.0V; 0.95A; SOT223; SMD")
+				(field
+					(name "Footprint") "SamacSys_Parts:LD1117S33C")
+				(field
+					(name "Datasheet") "https://www.st.com/resource/en/datasheet/ld1117.pdf")
+				(field
+					(name "Description") "IC: voltage regulator; LDO, linear, fixed; 5.0V; 0.95A; SOT223; SMD")
+			)
+			(libsource
+				(lib "ST_Microelectronics")
+				(part "LD1117S50C")
+				(description "IC: voltage regulator; LDO, linear, fixed; 5.0V; 0.95A; SOT223; SMD")
+			)
+			(property
+				(name "Height")
+				(value "1.8")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "STMicroelectronics")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "LD1117S50C")
+			)
+			(property
+				(name "Silkscreen")
+				(value "LD1117S50")
+			)
+			(property
+				(name "Garbage")
+				(value "IC: voltage regulator; LDO, linear, fixed; 5.0V; 0.95A; SOT223; SMD")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "83cee3b5-f082-4023-aa2e-e78945d7cfff")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "4")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "IC3")
+			(value "DS1813R-10+T&R")
+			(footprint "SamacSys_Parts:SOT95P237X112-3N")
+			(datasheet "https://componentsearchengine.com/Datasheets/2/DS1813R-10+T&R.pdf")
+			(description "5V voltage supervisor")
+			(fields
+				(field
+					(name "Height") "1.12")
+				(field
+					(name "Mouser Part Number") "700-DS1813R-10T&R")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Maxim-Integrated/DS1813R-10%2bTR?qs=0Y9aZN%252BMVCUEX%2FgvPX%252B6Nw%3D%3D")
+				(field
+					(name "Manufacturer_Name") "Maxim Integrated")
+				(field
+					(name "Manufacturer_Part_Number") "DS1813R-10+T&R")
+				(field
+					(name "Silkscreen") "DS1813")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOT95P237X112-3N")
+				(field
+					(name "Datasheet") "https://componentsearchengine.com/Datasheets/2/DS1813R-10+T&R.pdf")
+				(field
+					(name "Description") "5V voltage supervisor")
+			)
+			(libsource
+				(lib "Maxim")
+				(part "DS1813R-10+T&R")
+				(description "5V voltage supervisor")
+			)
+			(property
+				(name "Height")
+				(value "1.12")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "700-DS1813R-10T&R")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Maxim-Integrated/DS1813R-10%2bTR?qs=0Y9aZN%252BMVCUEX%2FgvPX%252B6Nw%3D%3D")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Maxim Integrated")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "DS1813R-10+T&R")
+			)
+			(property
+				(name "Silkscreen")
+				(value "DS1813")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "14c68f18-bbe4-4279-bbe8-dd120d31c01c")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "1")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "IC4")
+			(value "74LVC1G17GV,125")
+			(footprint "SamacSys_Parts:SOT95P275X110-5N")
+			(datasheet "https://assets.nexperia.com/documents/data-sheet/74LVC1G17.pdf")
+			(description "Schmitt buffer")
+			(fields
+				(field
+					(name "Height") "1.1")
+				(field
+					(name "Manufacturer_Name") "Nexperia")
+				(field
+					(name "Manufacturer_Part_Number") "74LVC1G17GV,125")
+				(field
+					(name "Silkscreen") "'1G17")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOT95P275X110-5N")
+				(field
+					(name "Datasheet") "https://assets.nexperia.com/documents/data-sheet/74LVC1G17.pdf")
+				(field
+					(name "Description") "Schmitt buffer")
+			)
+			(libsource
+				(lib "Nexperia")
+				(part "74LVC1G17GV,125")
+				(description "Schmitt buffer")
+			)
+			(property
+				(name "Height")
+				(value "1.1")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Nexperia")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "74LVC1G17GV,125")
+			)
+			(property
+				(name "Silkscreen")
+				(value "'1G17")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "52afa400-6be3-46b7-8fe0-211a2ee43c7d")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "4")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "IC5")
+			(value "LD1117S33C")
+			(footprint "SamacSys_Parts:LD1117S33C")
+			(datasheet "https://www.st.com/resource/en/datasheet/ld1117.pdf")
+			(description "IC: voltage regulator; LDO, linear, fixed; 3.3V; 0.95A; SOT223; SMD")
+			(fields
+				(field
+					(name "Height") "1.8")
+				(field
+					(name "Manufacturer_Name") "STMicroelectronics")
+				(field
+					(name "Manufacturer_Part_Number") "LD1117S33C")
+				(field
+					(name "Silkscreen") "LD1117S33")
+				(field
+					(name "Footprint") "SamacSys_Parts:LD1117S33C")
+				(field
+					(name "Datasheet") "https://www.st.com/resource/en/datasheet/ld1117.pdf")
+				(field
+					(name "Description") "IC: voltage regulator; LDO, linear, fixed; 3.3V; 0.95A; SOT223; SMD")
+			)
+			(libsource
+				(lib "ST_Microelectronics")
+				(part "LD1117S33C")
+				(description "IC: voltage regulator; LDO, linear, fixed; 3.3V; 0.95A; SOT223; SMD")
+			)
+			(property
+				(name "Height")
+				(value "1.8")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "STMicroelectronics")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "LD1117S33C")
+			)
+			(property
+				(name "Silkscreen")
+				(value "LD1117S33")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "9b6a3718-4c14-44e9-a329-75e9b99ecce0")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "4")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "IC7")
+			(value "74LVC1G17GV,125")
+			(footprint "SamacSys_Parts:SOT95P275X110-5N")
+			(datasheet "https://assets.nexperia.com/documents/data-sheet/74LVC1G17.pdf")
+			(description "Schmitt buffer")
+			(fields
+				(field
+					(name "Height") "1.1")
+				(field
+					(name "Manufacturer_Name") "Nexperia")
+				(field
+					(name "Manufacturer_Part_Number") "74LVC1G17GV,125")
+				(field
+					(name "Silkscreen") "'1G17")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOT95P275X110-5N")
+				(field
+					(name "Datasheet") "https://assets.nexperia.com/documents/data-sheet/74LVC1G17.pdf")
+				(field
+					(name "Description") "Schmitt buffer")
+			)
+			(libsource
+				(lib "Nexperia")
+				(part "74LVC1G17GV,125")
+				(description "Schmitt buffer")
+			)
+			(property
+				(name "Height")
+				(value "1.1")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Nexperia")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "74LVC1G17GV,125")
+			)
+			(property
+				(name "Silkscreen")
+				(value "'1G17")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "773b4cc5-537e-4680-9451-6dcdcc5e07eb")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "4")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J1")
+			(value "448-376")
+			(footprint "SamacSys_Parts:448376")
+			(datasheet "https://docs.rs-online.com/902a/0900766b81582446.pdf")
+			(description "DC socket")
+			(fields
+				(field
+					(name "Height") "11")
+				(field
+					(name "Manufacturer_Name") "RS Components")
+				(field
+					(name "Manufacturer_Part_Number") "448-376")
+				(field
+					(name "Mouser Part Number")
+				)
+				(field
+					(name "Mouser Price/Stock")
+				)
+				(field
+					(name "Arrow Part Number")
+				)
+				(field
+					(name "Arrow Price/Stock")
+				)
+				(field
+					(name "Footprint") "SamacSys_Parts:448376")
+				(field
+					(name "Datasheet") "https://docs.rs-online.com/902a/0900766b81582446.pdf")
+				(field
+					(name "Description") "DC socket")
+			)
+			(libsource
+				(lib "RS_Components")
+				(part "448-376")
+				(description "DC socket")
+			)
+			(property
+				(name "Height")
+				(value "11")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "RS Components")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "448-376")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "")
+			)
+			(property
+				(name "Arrow Part Number")
+				(value "")
+			)
+			(property
+				(name "Arrow Price/Stock")
+				(value "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "330cb1c6-5a60-4868-82d9-ec2892ce799f")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "INNER")
+						)
+						(pin
+							(num "SHL1")
+						)
+						(pin
+							(num "SHL2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J2")
+			(value "Conn_01x20")
+			(footprint "SamacSys_Parts:SIP_20_Pins")
+			(description "Generic connector, single row, 01x20, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:SIP_20_Pins")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x20, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(libsource
+				(lib "Connector_Generic")
+				(part "Conn_01x20")
+				(description "Generic connector, single row, 01x20, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "connector")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Connector*:*_1x??_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "0ec32ab8-8026-46f7-ac42-a97714f37ae9")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "9")
+						)
+						(pin
+							(num "10")
+						)
+						(pin
+							(num "11")
+						)
+						(pin
+							(num "12")
+						)
+						(pin
+							(num "13")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "15")
+						)
+						(pin
+							(num "16")
+						)
+						(pin
+							(num "17")
+						)
+						(pin
+							(num "18")
+						)
+						(pin
+							(num "19")
+						)
+						(pin
+							(num "20")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J3")
+			(value "Conn_01x20")
+			(footprint "SamacSys_Parts:SIP_20_Pins")
+			(description "Generic connector, single row, 01x20, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:SIP_20_Pins")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x20, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(libsource
+				(lib "Connector_Generic")
+				(part "Conn_01x20")
+				(description "Generic connector, single row, 01x20, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "connector")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Connector*:*_1x??_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "774efff1-6a3d-444a-90ed-08664e1eb6af")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "9")
+						)
+						(pin
+							(num "10")
+						)
+						(pin
+							(num "11")
+						)
+						(pin
+							(num "12")
+						)
+						(pin
+							(num "13")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "15")
+						)
+						(pin
+							(num "16")
+						)
+						(pin
+							(num "17")
+						)
+						(pin
+							(num "18")
+						)
+						(pin
+							(num "19")
+						)
+						(pin
+							(num "20")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J4")
+			(value "Pin_Header_01x20")
+			(footprint "SamacSys_Parts:PinHeader_1x20_P2.54mm_Vertical")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:PinHeader_1x20_P2.54mm_Vertical")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "Pin_Header_01x32")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Connector*:*_1x??_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "92358da6-09dc-42f6-9433-812d62593c1d")
+			(units
+				(unit
+					(name "A")
+					(pins)
+				)
+			)
+		)
+		(comp
+			(ref "J5")
+			(value "Pin_Header_01x20")
+			(footprint "SamacSys_Parts:PinHeader_1x20_P2.54mm_Vertical")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:PinHeader_1x20_P2.54mm_Vertical")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "Pin_Header_01x32")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Connector*:*_1x??_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "7064a932-0135-4ded-a2b3-3552a30508e8")
+			(units
+				(unit
+					(name "A")
+					(pins)
+				)
+			)
+		)
+		(comp
+			(ref "LED1")
+			(value "LED_Small_Filled")
+			(footprint "SamacSys_Parts:LED_D5.0mm")
+			(description "Light emitting diode, small symbol, filled shape")
+			(fields
+				(field
+					(name "Sim.Pins") "1=K 2=A")
+				(field
+					(name "Footprint") "SamacSys_Parts:LED_D5.0mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Light emitting diode, small symbol, filled shape")
+			)
+			(libsource
+				(lib "Device")
+				(part "LED_Small_Filled")
+				(description "Light emitting diode, small symbol, filled shape")
+			)
+			(property
+				(name "Sim.Pins")
+				(value "1=K 2=A")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "LED diode light-emitting-diode")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "LED* LED_SMD:* LED_THT:*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "0174ee03-bb54-4941-831f-d597edf3f46c")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R1")
+			(value "4.7KΩ")
+			(footprint "SamacSys_Parts:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "HCP65")
+				(part "R_Axial_D1.6mm_P5.08mm")
+				(description "Resistor")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "5da106ff-11b9-4aef-b76c-61fe50a225b2")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "R4")
+			(value "10KΩ")
+			(footprint "SamacSys_Parts:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal")
+			(description "Resistor")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(libsource
+				(lib "HCP65")
+				(part "R_Axial_D1.6mm_P5.08mm")
+				(description "Resistor")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "R resistor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "R_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "89b65887-f2ea-4e23-a326-727cbf49d053")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "S1")
+			(value "GPTS203211B")
+			(footprint "SamacSys_Parts:GPTS203211B")
+			(datasheet "http://switches-connectors-custom.cwind.com/Asset/GPTS203211BR2.pdf")
+			(description "Pushbutton Switches SPST ON-OFF")
+			(fields
+				(field
+					(name "Height")
+				)
+				(field
+					(name "Manufacturer_Name") "CW Industries")
+				(field
+					(name "Manufacturer_Part_Number") "GPTS203211B")
+				(field
+					(name "Mouser Part Number") "629-GPTS203211B")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/CW-Industries/GPTS203211B?qs=sajaCoHCXPR%252BmLwibobs6Q%3D%3D")
+				(field
+					(name "Silkscreen") "GPTS203211B")
+				(field
+					(name "Footprint") "SamacSys_Parts:GPTS203211B")
+				(field
+					(name "Datasheet") "http://switches-connectors-custom.cwind.com/Asset/GPTS203211BR2.pdf")
+				(field
+					(name "Description") "Pushbutton Switches SPST ON-OFF")
+			)
+			(libsource
+				(lib "Maxim")
+				(part "GPTS203211B")
+				(description "Pushbutton Switches SPST ON-OFF")
+			)
+			(property
+				(name "Height")
+				(value "")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "CW Industries")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "GPTS203211B")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "629-GPTS203211B")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/CW-Industries/GPTS203211B?qs=sajaCoHCXPR%252BmLwibobs6Q%3D%3D")
+			)
+			(property
+				(name "Silkscreen")
+				(value "GPTS203211B")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "931d6b0d-237f-4a13-9f79-9a47d930f2af")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "S2")
+			(value "DTS-62N-V")
+			(footprint "SamacSys_Parts:DTS62NV")
+			(datasheet "http://akizukidenshi.com/download/ds/cosland/DTS-6-V.PDF")
+			(description "Tactile Switch")
+			(fields
+				(field
+					(name "Height") "7")
+				(field
+					(name "Manufacturer_Name") "Diptronics")
+				(field
+					(name "Manufacturer_Part_Number") "DTS-62N-V")
+				(field
+					(name "Mouser Part Number") "113-DTS-62N-V")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Diptronics/DTS-62N-V?qs=gTYE2QTfZfSKTB5KYn%252Brkw%3D%3D")
+				(field
+					(name "Arrow Part Number")
+				)
+				(field
+					(name "Arrow Price/Stock")
+				)
+				(field
+					(name "Garbage") "Tactile Switches Through Hole 6*6")
+				(field
+					(name "Footprint") "SamacSys_Parts:DTS62NV")
+				(field
+					(name "Datasheet") "http://akizukidenshi.com/download/ds/cosland/DTS-6-V.PDF")
+				(field
+					(name "Description") "Tactile Switch")
+			)
+			(libsource
+				(lib "Diptronic")
+				(part "DTS-62N-V")
+				(description "Tactile Switch")
+			)
+			(property
+				(name "Height")
+				(value "7")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Diptronics")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "DTS-62N-V")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "113-DTS-62N-V")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Diptronics/DTS-62N-V?qs=gTYE2QTfZfSKTB5KYn%252Brkw%3D%3D")
+			)
+			(property
+				(name "Arrow Part Number")
+				(value "")
+			)
+			(property
+				(name "Arrow Price/Stock")
+				(value "")
+			)
+			(property
+				(name "Garbage")
+				(value "Tactile Switches Through Hole 6*6")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Power and Reset.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "b256e47c-1834-4b49-b026-51e396b54260")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+					)
+				)
+			)
+		)
+	)
+	(groups)
+	(variants)
+	(libparts
+		(libpart
+			(lib "Connector_Generic")
+			(part "Conn_01x20")
+			(description "Generic connector, single row, 01x20, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			(footprints
+				(fp "Connector*:*_1x??_*")
+			)
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "Conn_01x20")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x20, script generated (kicad-library-utils/schlib/autogen/connector/)")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "Pin_1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "Pin_2")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "Pin_3")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "Pin_4")
+					(type "passive")
+				)
+				(pin
+					(num "5")
+					(name "Pin_5")
+					(type "passive")
+				)
+				(pin
+					(num "6")
+					(name "Pin_6")
+					(type "passive")
+				)
+				(pin
+					(num "7")
+					(name "Pin_7")
+					(type "passive")
+				)
+				(pin
+					(num "8")
+					(name "Pin_8")
+					(type "passive")
+				)
+				(pin
+					(num "9")
+					(name "Pin_9")
+					(type "passive")
+				)
+				(pin
+					(num "10")
+					(name "Pin_10")
+					(type "passive")
+				)
+				(pin
+					(num "11")
+					(name "Pin_11")
+					(type "passive")
+				)
+				(pin
+					(num "12")
+					(name "Pin_12")
+					(type "passive")
+				)
+				(pin
+					(num "13")
+					(name "Pin_13")
+					(type "passive")
+				)
+				(pin
+					(num "14")
+					(name "Pin_14")
+					(type "passive")
+				)
+				(pin
+					(num "15")
+					(name "Pin_15")
+					(type "passive")
+				)
+				(pin
+					(num "16")
+					(name "Pin_16")
+					(type "passive")
+				)
+				(pin
+					(num "17")
+					(name "Pin_17")
+					(type "passive")
+				)
+				(pin
+					(num "18")
+					(name "Pin_18")
+					(type "passive")
+				)
+				(pin
+					(num "19")
+					(name "Pin_19")
+					(type "passive")
+				)
+				(pin
+					(num "20")
+					(name "Pin_20")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Device")
+			(part "LED_Small_Filled")
+			(description "Light emitting diode, small symbol, filled shape")
+			(footprints
+				(fp "LED*")
+				(fp "LED_SMD:*")
+				(fp "LED_THT:*")
+			)
+			(fields
+				(field
+					(name "Reference") "D")
+				(field
+					(name "Value") "LED_Small_Filled")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Light emitting diode, small symbol, filled shape")
+				(field
+					(name "Sim.Pins") "1=K 2=A")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "K")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "A")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Diptronic")
+			(part "DTS-62N-V")
+			(description "Tactile Switch")
+			(docs "http://akizukidenshi.com/download/ds/cosland/DTS-6-V.PDF")
+			(fields
+				(field
+					(name "Reference") "S")
+				(field
+					(name "Value") "DTS-62N-V")
+				(field
+					(name "Footprint") "SamacSys_Parts:DTS62NV")
+				(field
+					(name "Datasheet") "http://akizukidenshi.com/download/ds/cosland/DTS-6-V.PDF")
+				(field
+					(name "Description") "Tactile Switch")
+				(field
+					(name "Height") "7")
+				(field
+					(name "Manufacturer_Name") "Diptronics")
+				(field
+					(name "Manufacturer_Part_Number") "DTS-62N-V")
+				(field
+					(name "Mouser Part Number") "113-DTS-62N-V")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Diptronics/DTS-62N-V?qs=gTYE2QTfZfSKTB5KYn%252Brkw%3D%3D")
+				(field
+					(name "Arrow Part Number")
+				)
+				(field
+					(name "Arrow Price/Stock")
+				)
+				(field
+					(name "Garbage") "Tactile Switches Through Hole 6*6")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "C1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "C2")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "N1")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "N2")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "HCP65")
+			(part "C_Radial_D6.3mm_P2.50mm")
+			(footprints
+				(fp "CP_*")
+			)
+			(fields
+				(field
+					(name "Reference") "C")
+				(field
+					(name "Value") "?μF")
+				(field
+					(name "Footprint") "SamacSys_Parts:CP_Radial_D6.3mm_P2.50mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "HCP65")
+			(part "Pin_Header_01x32")
+			(footprints
+				(fp "Connector*:*_1x??_*")
+			)
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "Pin_Header_01x32")
+				(field
+					(name "Footprint") "SamacSys_Parts:PinHeader_1x32_P2.54mm_Vertical")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+		)
+		(libpart
+			(lib "HCP65")
+			(part "R_Axial_D1.6mm_P5.08mm")
+			(description "Resistor")
+			(footprints
+				(fp "R_*")
+			)
+			(fields
+				(field
+					(name "Reference") "R")
+				(field
+					(name "Value") "?Ω")
+				(field
+					(name "Footprint") "SamacSys_Parts:R_Axial_DIN0204_L3.6mm_D1.6mm_P5.08mm_Horizontal")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Resistor")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Maxim")
+			(part "DS1813R-10+T&R")
+			(description "5V voltage supervisor")
+			(docs "https://componentsearchengine.com/Datasheets/2/DS1813R-10+T&R.pdf")
+			(fields
+				(field
+					(name "Reference") "IC")
+				(field
+					(name "Value") "DS1813R-10+T&R")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOT95P237X112-3N")
+				(field
+					(name "Datasheet") "https://componentsearchengine.com/Datasheets/2/DS1813R-10+T&R.pdf")
+				(field
+					(name "Description") "5V voltage supervisor")
+				(field
+					(name "Height") "1.12")
+				(field
+					(name "Mouser Part Number") "700-DS1813R-10T&R")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Maxim-Integrated/DS1813R-10%2bTR?qs=0Y9aZN%252BMVCUEX%2FgvPX%252B6Nw%3D%3D")
+				(field
+					(name "Manufacturer_Name") "Maxim Integrated")
+				(field
+					(name "Manufacturer_Part_Number") "DS1813R-10+T&R")
+				(field
+					(name "Silkscreen") "DS1813")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "~{RST}")
+					(type "output")
+				)
+				(pin
+					(num "2")
+					(name "5V")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "GND")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Maxim")
+			(part "GPTS203211B")
+			(description "Pushbutton Switches SPST ON-OFF")
+			(docs "http://switches-connectors-custom.cwind.com/Asset/GPTS203211BR2.pdf")
+			(fields
+				(field
+					(name "Reference") "S")
+				(field
+					(name "Value") "GPTS203211B")
+				(field
+					(name "Footprint") "SamacSys_Parts:GPTS203211B")
+				(field
+					(name "Datasheet") "http://switches-connectors-custom.cwind.com/Asset/GPTS203211BR2.pdf")
+				(field
+					(name "Description") "Pushbutton Switches SPST ON-OFF")
+				(field
+					(name "Height")
+				)
+				(field
+					(name "Manufacturer_Name") "CW Industries")
+				(field
+					(name "Manufacturer_Part_Number") "GPTS203211B")
+				(field
+					(name "Mouser Part Number") "629-GPTS203211B")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/CW-Industries/GPTS203211B?qs=sajaCoHCXPR%252BmLwibobs6Q%3D%3D")
+				(field
+					(name "Silkscreen") "GPTS203211B")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "2")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Nexperia")
+			(part "74LVC1G17GV,125")
+			(description "Schmitt buffer")
+			(docs "https://assets.nexperia.com/documents/data-sheet/74LVC1G17.pdf")
+			(fields
+				(field
+					(name "Reference") "IC")
+				(field
+					(name "Value") "74LVC1G17GV,125")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOT95P275X110-5N")
+				(field
+					(name "Datasheet") "https://assets.nexperia.com/documents/data-sheet/74LVC1G17.pdf")
+				(field
+					(name "Description") "Schmitt buffer")
+				(field
+					(name "Height") "1.1")
+				(field
+					(name "Manufacturer_Name") "Nexperia")
+				(field
+					(name "Manufacturer_Part_Number") "74LVC1G17GV,125")
+				(field
+					(name "Silkscreen") "'1G17")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "n.c.")
+					(type "no_connect")
+				)
+				(pin
+					(num "2")
+					(name "A")
+					(type "input")
+				)
+				(pin
+					(num "3")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "Y")
+					(type "passive")
+				)
+				(pin
+					(num "5")
+					(name "3V")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "RS_Components")
+			(part "448-376")
+			(description "DC socket")
+			(docs "https://docs.rs-online.com/902a/0900766b81582446.pdf")
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "448-376")
+				(field
+					(name "Footprint") "SamacSys_Parts:448376")
+				(field
+					(name "Datasheet") "https://docs.rs-online.com/902a/0900766b81582446.pdf")
+				(field
+					(name "Description") "DC socket")
+				(field
+					(name "Height") "11")
+				(field
+					(name "Manufacturer_Name") "RS Components")
+				(field
+					(name "Manufacturer_Part_Number") "448-376")
+				(field
+					(name "Mouser Part Number")
+				)
+				(field
+					(name "Mouser Price/Stock")
+				)
+				(field
+					(name "Arrow Part Number")
+				)
+				(field
+					(name "Arrow Price/Stock")
+				)
+			)
+			(pins
+				(pin
+					(num "INNER")
+					(name "VCC")
+					(type "passive")
+				)
+				(pin
+					(num "SHL1")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "SHL2")
+					(name "GND")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "ST_Microelectronics")
+			(part "1N5819RL")
+			(description "40V Schottky diode")
+			(docs "http://www.st.com/web/en/resource/technical/document/datasheet/CD00001625.pdf")
+			(fields
+				(field
+					(name "Reference") "D")
+				(field
+					(name "Value") "1N5819RL")
+				(field
+					(name "Footprint") "SamacSys_Parts:DIOAD1414W86L464D238")
+				(field
+					(name "Datasheet") "http://www.st.com/web/en/resource/technical/document/datasheet/CD00001625.pdf")
+				(field
+					(name "Description") "40V Schottky diode")
+				(field
+					(name "Height")
+				)
+				(field
+					(name "Manufacturer_Name") "STMicroelectronics")
+				(field
+					(name "Manufacturer_Part_Number") "1N5819RL")
+				(field
+					(name "Mouser Part Number") "511-1N5819-TR")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/STMicroelectronics/1N5819RL?qs=mRqUSD7FX17%2FYMiCEfKDjA%3D%3D")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "ST_Microelectronics")
+			(part "L7812ACD2T-TR")
+			(description "Voltage Regulator 12V 1A D2PAK STMicroelectronics L7812ACD2T-TR, Single Linear Voltage Regulator, 1.5A 12 V, +/-2%, 3-Pin D2PAK")
+			(docs "http://www.st.com/web/en/resource/technical/document/datasheet/CD00000444.pdf")
+			(fields
+				(field
+					(name "Reference") "IC")
+				(field
+					(name "Value") "L7812ACD2T-TR")
+				(field
+					(name "Footprint") "SamacSys_Parts:TO254P1542X460-3N")
+				(field
+					(name "Datasheet") "http://www.st.com/web/en/resource/technical/document/datasheet/CD00000444.pdf")
+				(field
+					(name "Description") "Voltage Regulator 12V 1A D2PAK STMicroelectronics L7812ACD2T-TR, Single Linear Voltage Regulator, 1.5A 12 V, +/-2%, 3-Pin D2PAK")
+				(field
+					(name "Height") "4.6")
+				(field
+					(name "Manufacturer_Name") "STMicroelectronics")
+				(field
+					(name "Manufacturer_Part_Number") "L7812ACD2T-TR")
+				(field
+					(name "Silkscreen") "L7812ACD2T-TR")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "35VIn")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "N.C.")
+					(type "no_connect")
+				)
+				(pin
+					(num "3")
+					(name "12VOut")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "GND")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "ST_Microelectronics")
+			(part "LD1117S33C")
+			(description "IC: voltage regulator; LDO, linear, fixed; 3.3V; 0.95A; SOT223; SMD")
+			(docs "https://www.st.com/resource/en/datasheet/ld1117.pdf")
+			(fields
+				(field
+					(name "Reference") "IC")
+				(field
+					(name "Value") "LD1117S33C")
+				(field
+					(name "Footprint") "SamacSys_Parts:LD1117S33C")
+				(field
+					(name "Datasheet") "https://www.st.com/resource/en/datasheet/ld1117.pdf")
+				(field
+					(name "Description") "IC: voltage regulator; LDO, linear, fixed; 3.3V; 0.95A; SOT223; SMD")
+				(field
+					(name "Height") "1.8")
+				(field
+					(name "Manufacturer_Name") "STMicroelectronics")
+				(field
+					(name "Manufacturer_Part_Number") "LD1117S33C")
+				(field
+					(name "Silkscreen") "LD1117S33")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "3.3VOut")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "15VIn")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "3.3VOut")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "ST_Microelectronics")
+			(part "LD1117S50C")
+			(description "IC: voltage regulator; LDO, linear, fixed; 5.0V; 0.95A; SOT223; SMD")
+			(docs "https://www.st.com/resource/en/datasheet/ld1117.pdf")
+			(fields
+				(field
+					(name "Reference") "IC")
+				(field
+					(name "Value") "LD1117S50C")
+				(field
+					(name "Footprint") "SamacSys_Parts:LD1117S33C")
+				(field
+					(name "Datasheet") "https://www.st.com/resource/en/datasheet/ld1117.pdf")
+				(field
+					(name "Description") "IC: voltage regulator; LDO, linear, fixed; 5.0V; 0.95A; SOT223; SMD")
+				(field
+					(name "Height") "1.8")
+				(field
+					(name "Manufacturer_Name") "STMicroelectronics")
+				(field
+					(name "Manufacturer_Part_Number") "LD1117S50C")
+				(field
+					(name "Silkscreen") "LD1117S50")
+				(field
+					(name "Garbage") "IC: voltage regulator; LDO, linear, fixed; 5.0V; 0.95A; SOT223; SMD")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "5.0VOut")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "15VIn")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "5.0VOut")
+					(type "passive")
+				)
+			)
+		)
+	)
+	(libraries
+		(library
+			(logical "Connector_Generic")
+			(uri "${KICAD10_SYMBOL_DIR}/Connector_Generic.kicad_sym")
+		)
+		(library
+			(logical "Device")
+			(uri "${KICAD10_SYMBOL_DIR}/Device.kicad_sym")
+		)
+		(library
+			(logical "Diptronic")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/Diptronic.kicad_sym")
+		)
+		(library
+			(logical "HCP65")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/HCP65.kicad_sym")
+		)
+		(library
+			(logical "Maxim")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/Maxim.kicad_sym")
+		)
+		(library
+			(logical "Nexperia")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/Nexperia.kicad_sym")
+		)
+		(library
+			(logical "RS_Components")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/RS_Components.kicad_sym")
+		)
+		(library
+			(logical "ST_Microelectronics")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/ST_Microelectronics.kicad_sym")
+		)
+	)
+	(nets
+		(net
+			(code "1")
+			(name "/3.3V")
+			(class "Default")
+			(node
+				(ref "C7")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C8")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC5")
+				(pin "2")
+				(pinfunction "3.3VOut_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC5")
+				(pin "4")
+				(pinfunction "3.3VOut_4")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC7")
+				(pin "5")
+				(pinfunction "3V_5")
+				(pintype "passive")
+			)
+			(node
+				(ref "J3")
+				(pin "18")
+				(pinfunction "Pin_18_18")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "2")
+			(name "/5V")
+			(class "Default")
+			(node
+				(ref "C5")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C6")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC2")
+				(pin "2")
+				(pinfunction "5.0VOut_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC2")
+				(pin "4")
+				(pinfunction "5.0VOut_4")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC3")
+				(pin "2")
+				(pinfunction "5V_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC4")
+				(pin "5")
+				(pinfunction "3V_5")
+				(pintype "passive")
+			)
+			(node
+				(ref "J2")
+				(pin "3")
+				(pinfunction "Pin_3_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "J3")
+				(pin "3")
+				(pinfunction "Pin_3_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "LED1")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "passive")
+			)
+			(node
+				(ref "R1")
+				(pin "1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "3")
+			(name "/12V")
+			(class "Default")
+			(node
+				(ref "C2")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C3")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C4")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC1")
+				(pin "3")
+				(pinfunction "12VOut_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC2")
+				(pin "3")
+				(pinfunction "15VIn_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC5")
+				(pin "3")
+				(pinfunction "15VIn_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "J3")
+				(pin "20")
+				(pinfunction "Pin_20_20")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "4")
+			(name "/18V")
+			(class "Default")
+			(node
+				(ref "C1")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "D1")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC1")
+				(pin "1")
+				(pinfunction "35VIn_1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "5")
+			(name "/18V Source")
+			(class "Default")
+			(node
+				(ref "J1")
+				(pin "INNER")
+				(pinfunction "VCC_INNER")
+				(pintype "passive")
+			)
+			(node
+				(ref "J2")
+				(pin "10")
+				(pinfunction "Pin_10_10")
+				(pintype "passive")
+			)
+			(node
+				(ref "S1")
+				(pin "2")
+				(pinfunction "2_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "6")
+			(name "/18V Switched")
+			(class "Default")
+			(node
+				(ref "D1")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "J2")
+				(pin "11")
+				(pinfunction "Pin_11_11")
+				(pintype "passive")
+			)
+			(node
+				(ref "S1")
+				(pin "1")
+				(pinfunction "1_1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "7")
+			(name "/GND")
+			(class "Default")
+			(node
+				(ref "C1")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C2")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C3")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C4")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C5")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C6")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C7")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C8")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC1")
+				(pin "4")
+				(pinfunction "GND_4")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC2")
+				(pin "1")
+				(pinfunction "GND_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC3")
+				(pin "3")
+				(pinfunction "GND_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC4")
+				(pin "3")
+				(pinfunction "GND_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC5")
+				(pin "1")
+				(pinfunction "GND_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC7")
+				(pin "3")
+				(pinfunction "GND_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "SHL1")
+				(pinfunction "GND_SHL1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "SHL2")
+				(pinfunction "GND_SHL2")
+				(pintype "passive")
+			)
+			(node
+				(ref "J2")
+				(pin "14")
+				(pinfunction "Pin_14_14")
+				(pintype "passive")
+			)
+			(node
+				(ref "J2")
+				(pin "7")
+				(pinfunction "Pin_7_7")
+				(pintype "passive")
+			)
+			(node
+				(ref "J3")
+				(pin "14")
+				(pinfunction "Pin_14_14")
+				(pintype "passive")
+			)
+			(node
+				(ref "J3")
+				(pin "7")
+				(pinfunction "Pin_7_7")
+				(pintype "passive")
+			)
+			(node
+				(ref "R4")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "S2")
+				(pin "1")
+				(pinfunction "C1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "S2")
+				(pin "2")
+				(pinfunction "C2_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "8")
+			(name "/~{Reset} SW")
+			(class "Default")
+			(node
+				(ref "IC3")
+				(pin "1")
+				(pinfunction "~{RST}_1")
+				(pintype "output")
+			)
+			(node
+				(ref "IC4")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "input")
+			)
+			(node
+				(ref "J2")
+				(pin "8")
+				(pinfunction "Pin_8_8")
+				(pintype "passive")
+			)
+			(node
+				(ref "R1")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "S2")
+				(pin "3")
+				(pinfunction "N1_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "S2")
+				(pin "4")
+				(pinfunction "N2_4")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "9")
+			(name "/~{Reset}_{3.3V}")
+			(class "Default")
+			(node
+				(ref "IC7")
+				(pin "4")
+				(pinfunction "Y_4")
+				(pintype "passive")
+			)
+			(node
+				(ref "J3")
+				(pin "12")
+				(pinfunction "Pin_12_12")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "10")
+			(name "/~{Reset}_{5V}")
+			(class "Default")
+			(node
+				(ref "IC4")
+				(pin "4")
+				(pinfunction "Y_4")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC7")
+				(pin "2")
+				(pinfunction "A_2")
+				(pintype "input")
+			)
+			(node
+				(ref "J3")
+				(pin "9")
+				(pinfunction "Pin_9_9")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "11")
+			(name "Net-(LED1-K)")
+			(class "Default")
+			(node
+				(ref "LED1")
+				(pin "1")
+				(pinfunction "K_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "R4")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "12")
+			(name "unconnected-(IC1-N.C.-Pad2)")
+			(class "Default")
+			(node
+				(ref "IC1")
+				(pin "2")
+				(pinfunction "N.C._2")
+				(pintype "no_connect")
+			)
+		)
+		(net
+			(code "13")
+			(name "unconnected-(IC4-n.c.-Pad1)")
+			(class "Default")
+			(node
+				(ref "IC4")
+				(pin "1")
+				(pinfunction "n.c._1")
+				(pintype "no_connect")
+			)
+		)
+		(net
+			(code "14")
+			(name "unconnected-(IC7-n.c.-Pad1)")
+			(class "Default")
+			(node
+				(ref "IC7")
+				(pin "1")
+				(pinfunction "n.c._1")
+				(pintype "no_connect")
+			)
+		)
+		(net
+			(code "15")
+			(name "unconnected-(J2-Pin_1-Pad1)")
+			(class "Default")
+			(node
+				(ref "J2")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "16")
+			(name "unconnected-(J2-Pin_2-Pad2)")
+			(class "Default")
+			(node
+				(ref "J2")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "17")
+			(name "unconnected-(J2-Pin_4-Pad4)")
+			(class "Default")
+			(node
+				(ref "J2")
+				(pin "4")
+				(pinfunction "Pin_4_4")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "18")
+			(name "unconnected-(J2-Pin_5-Pad5)")
+			(class "Default")
+			(node
+				(ref "J2")
+				(pin "5")
+				(pinfunction "Pin_5_5")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "19")
+			(name "unconnected-(J2-Pin_6-Pad6)")
+			(class "Default")
+			(node
+				(ref "J2")
+				(pin "6")
+				(pinfunction "Pin_6_6")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "20")
+			(name "unconnected-(J2-Pin_9-Pad9)")
+			(class "Default")
+			(node
+				(ref "J2")
+				(pin "9")
+				(pinfunction "Pin_9_9")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "21")
+			(name "unconnected-(J2-Pin_12-Pad12)")
+			(class "Default")
+			(node
+				(ref "J2")
+				(pin "12")
+				(pinfunction "Pin_12_12")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "22")
+			(name "unconnected-(J2-Pin_13-Pad13)")
+			(class "Default")
+			(node
+				(ref "J2")
+				(pin "13")
+				(pinfunction "Pin_13_13")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "23")
+			(name "unconnected-(J2-Pin_15-Pad15)")
+			(class "Default")
+			(node
+				(ref "J2")
+				(pin "15")
+				(pinfunction "Pin_15_15")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "24")
+			(name "unconnected-(J2-Pin_16-Pad16)")
+			(class "Default")
+			(node
+				(ref "J2")
+				(pin "16")
+				(pinfunction "Pin_16_16")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "25")
+			(name "unconnected-(J2-Pin_17-Pad17)")
+			(class "Default")
+			(node
+				(ref "J2")
+				(pin "17")
+				(pinfunction "Pin_17_17")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "26")
+			(name "unconnected-(J2-Pin_18-Pad18)")
+			(class "Default")
+			(node
+				(ref "J2")
+				(pin "18")
+				(pinfunction "Pin_18_18")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "27")
+			(name "unconnected-(J2-Pin_19-Pad19)")
+			(class "Default")
+			(node
+				(ref "J2")
+				(pin "19")
+				(pinfunction "Pin_19_19")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "28")
+			(name "unconnected-(J2-Pin_20-Pad20)")
+			(class "Default")
+			(node
+				(ref "J2")
+				(pin "20")
+				(pinfunction "Pin_20_20")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "29")
+			(name "unconnected-(J3-Pin_1-Pad1)")
+			(class "Default")
+			(node
+				(ref "J3")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "30")
+			(name "unconnected-(J3-Pin_2-Pad2)")
+			(class "Default")
+			(node
+				(ref "J3")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "31")
+			(name "unconnected-(J3-Pin_4-Pad4)")
+			(class "Default")
+			(node
+				(ref "J3")
+				(pin "4")
+				(pinfunction "Pin_4_4")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "32")
+			(name "unconnected-(J3-Pin_5-Pad5)")
+			(class "Default")
+			(node
+				(ref "J3")
+				(pin "5")
+				(pinfunction "Pin_5_5")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "33")
+			(name "unconnected-(J3-Pin_6-Pad6)")
+			(class "Default")
+			(node
+				(ref "J3")
+				(pin "6")
+				(pinfunction "Pin_6_6")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "34")
+			(name "unconnected-(J3-Pin_8-Pad8)")
+			(class "Default")
+			(node
+				(ref "J3")
+				(pin "8")
+				(pinfunction "Pin_8_8")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "35")
+			(name "unconnected-(J3-Pin_10-Pad10)")
+			(class "Default")
+			(node
+				(ref "J3")
+				(pin "10")
+				(pinfunction "Pin_10_10")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "36")
+			(name "unconnected-(J3-Pin_11-Pad11)")
+			(class "Default")
+			(node
+				(ref "J3")
+				(pin "11")
+				(pinfunction "Pin_11_11")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "37")
+			(name "unconnected-(J3-Pin_13-Pad13)")
+			(class "Default")
+			(node
+				(ref "J3")
+				(pin "13")
+				(pinfunction "Pin_13_13")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "38")
+			(name "unconnected-(J3-Pin_15-Pad15)")
+			(class "Default")
+			(node
+				(ref "J3")
+				(pin "15")
+				(pinfunction "Pin_15_15")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "39")
+			(name "unconnected-(J3-Pin_16-Pad16)")
+			(class "Default")
+			(node
+				(ref "J3")
+				(pin "16")
+				(pinfunction "Pin_16_16")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "40")
+			(name "unconnected-(J3-Pin_17-Pad17)")
+			(class "Default")
+			(node
+				(ref "J3")
+				(pin "17")
+				(pinfunction "Pin_17_17")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "41")
+			(name "unconnected-(J3-Pin_19-Pad19)")
+			(class "Default")
+			(node
+				(ref "J3")
+				(pin "19")
+				(pinfunction "Pin_19_19")
+				(pintype "passive+no_connect")
+			)
+		)
+	)
+)

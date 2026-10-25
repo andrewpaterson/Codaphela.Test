@@ -1,0 +1,609 @@
+(export
+	(version "E")
+	(design
+		(source "D:\\gameengine\\Test\\TestKicadImporterLib\\TestKicadImporterLib\\Input\\Clock Oscillator.kicad_sch")
+		(date "2026-10-25T07:33:03")
+		(tool "Eeschema 10.0.3")
+		(sheet
+			(number "1")
+			(name "/")
+			(tstamps "/")
+			(title_block
+				(title "Clock Oscillator")
+				(company)
+				(rev "V1")
+				(date "2023-12-06")
+				(source "Clock Oscillator.kicad_sch")
+				(comment
+					(number "1")
+					(value "")
+				)
+				(comment
+					(number "2")
+					(value "")
+				)
+				(comment
+					(number "3")
+					(value "")
+				)
+				(comment
+					(number "4")
+					(value "")
+				)
+				(comment
+					(number "5")
+					(value "")
+				)
+				(comment
+					(number "6")
+					(value "")
+				)
+				(comment
+					(number "7")
+					(value "")
+				)
+				(comment
+					(number "8")
+					(value "")
+				)
+				(comment
+					(number "9")
+					(value "")
+				)
+			)
+		)
+	)
+	(components
+		(comp
+			(ref "C2")
+			(value "1μF")
+			(footprint "SamacSys_Parts:C_0805")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:C_0805")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_0805")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Clock Oscillator.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "capacitor cap")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "C_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "696d6131-effb-4a2a-a6a8-5939ca20a6e3")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J1")
+			(value "Conn_01x03_Pin")
+			(footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
+			(description "Generic connector, single row, 01x03, script generated")
+			(fields
+				(field
+					(name "Footprint") "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x03, script generated")
+			)
+			(libsource
+				(lib "Connector")
+				(part "Conn_01x03_Pin")
+				(description "Generic connector, single row, 01x03, script generated")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Clock Oscillator.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "connector")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Connector*:*_1x??_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "438ef4db-20ac-42e2-8e52-b92b5d5c9068")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J2")
+			(value "Conn_01x03_Pin")
+			(footprint "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
+			(description "Generic connector, single row, 01x03, script generated")
+			(fields
+				(field
+					(name "Footprint") "Connector_PinHeader_2.54mm:PinHeader_1x03_P2.54mm_Vertical")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x03, script generated")
+			)
+			(libsource
+				(lib "Connector")
+				(part "Conn_01x03_Pin")
+				(description "Generic connector, single row, 01x03, script generated")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Clock Oscillator.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "connector")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Connector*:*_1x??_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "090d9d5d-1a7c-49ee-81d6-6f2936916bd4")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "Y1")
+			(value "XLH735100.000000I")
+			(footprint "SamacSys_Parts:XLH735100000000I")
+			(datasheet "https://www.renesas.com/us/en/document/dst/xl-family-low-phase-noise-quartz-based-pll-oscillators-datasheet")
+			(description "clock oscillator 100MHz")
+			(fields
+				(field
+					(name "Height") "1.45")
+				(field
+					(name "Mouser Part Number") "972-XLH735100000000I")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Renesas-IDT/XLH735100000000I?qs=itIaUkCn8qAdqSTL6ktHsw%3D%3D")
+				(field
+					(name "Manufacturer_Name") "Renesas Electronics")
+				(field
+					(name "Manufacturer_Part_Number") "XLH735100.000000I")
+				(field
+					(name "Silkscreen") "XLH735100")
+				(field
+					(name "Garbage") "SMD Crystal Oscillator 100MHz 3.3V 15pF 4-Pin CLCC Cut Tape")
+				(field
+					(name "Footprint") "SamacSys_Parts:XLH735100000000I")
+				(field
+					(name "Datasheet") "https://www.renesas.com/us/en/document/dst/xl-family-low-phase-noise-quartz-based-pll-oscillators-datasheet")
+				(field
+					(name "Description") "clock oscillator 100MHz")
+			)
+			(libsource
+				(lib "Renesas")
+				(part "XLH735100.000000I")
+				(description "clock oscillator 100MHz")
+			)
+			(property
+				(name "Height")
+				(value "1.45")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "972-XLH735100000000I")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Renesas-IDT/XLH735100000000I?qs=itIaUkCn8qAdqSTL6ktHsw%3D%3D")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Renesas Electronics")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "XLH735100.000000I")
+			)
+			(property
+				(name "Silkscreen")
+				(value "XLH735100")
+			)
+			(property
+				(name "Garbage")
+				(value "SMD Crystal Oscillator 100MHz 3.3V 15pF 4-Pin CLCC Cut Tape")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Clock Oscillator.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "c9706dd7-8709-41ee-a0fd-6eb81a01e015")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "4")
+						)
+					)
+				)
+			)
+		)
+	)
+	(groups)
+	(variants)
+	(libparts
+		(libpart
+			(lib "Connector")
+			(part "Conn_01x03_Pin")
+			(description "Generic connector, single row, 01x03, script generated")
+			(footprints
+				(fp "Connector*:*_1x??_*")
+			)
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "Conn_01x03_Pin")
+				(field
+					(name "Footprint")
+				)
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Generic connector, single row, 01x03, script generated")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "Pin_1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "Pin_2")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "Pin_3")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "HCP65")
+			(part "C_0805")
+			(footprints
+				(fp "C_*")
+			)
+			(fields
+				(field
+					(name "Reference") "C")
+				(field
+					(name "Value") "?μF")
+				(field
+					(name "Footprint") "SamacSys_Parts:C_0805")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Renesas")
+			(part "XLH735100.000000I")
+			(description "clock oscillator 100MHz")
+			(docs "https://www.renesas.com/us/en/document/dst/xl-family-low-phase-noise-quartz-based-pll-oscillators-datasheet")
+			(fields
+				(field
+					(name "Reference") "Y")
+				(field
+					(name "Value") "XLH735100.000000I")
+				(field
+					(name "Footprint") "SamacSys_Parts:XLH735100000000I")
+				(field
+					(name "Datasheet") "https://www.renesas.com/us/en/document/dst/xl-family-low-phase-noise-quartz-based-pll-oscillators-datasheet")
+				(field
+					(name "Description") "clock oscillator 100MHz")
+				(field
+					(name "Height") "1.45")
+				(field
+					(name "Mouser Part Number") "972-XLH735100000000I")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Renesas-IDT/XLH735100000000I?qs=itIaUkCn8qAdqSTL6ktHsw%3D%3D")
+				(field
+					(name "Manufacturer_Name") "Renesas Electronics")
+				(field
+					(name "Manufacturer_Part_Number") "XLH735100.000000I")
+				(field
+					(name "Silkscreen") "XLH735100")
+				(field
+					(name "Garbage") "SMD Crystal Oscillator 100MHz 3.3V 15pF 4-Pin CLCC Cut Tape")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "E/D")
+					(type "no_connect")
+				)
+				(pin
+					(num "2")
+					(name "NC")
+					(type "no_connect")
+				)
+				(pin
+					(num "3")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "OUT")
+					(type "output")
+				)
+				(pin
+					(num "5")
+					(name "OUT2")
+					(type "no_connect")
+				)
+				(pin
+					(num "6")
+					(name "3V")
+					(type "passive")
+				)
+			)
+		)
+	)
+	(libraries
+		(library
+			(logical "Connector")
+			(uri "${KICAD10_SYMBOL_DIR}/Connector.kicad_sym")
+		)
+		(library
+			(logical "HCP65")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/HCP65.kicad_sym")
+		)
+		(library
+			(logical "Renesas")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/Renesas.kicad_sym")
+		)
+	)
+	(nets
+		(net
+			(code "1")
+			(name "/3.3V")
+			(class "Default")
+			(node
+				(ref "C2")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J2")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "Y1")
+				(pin "6")
+				(pinfunction "3V_6")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "2")
+			(name "/CLK")
+			(class "Default")
+			(node
+				(ref "J2")
+				(pin "3")
+				(pinfunction "Pin_3_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "Y1")
+				(pin "4")
+				(pinfunction "OUT_4")
+				(pintype "output")
+			)
+		)
+		(net
+			(code "3")
+			(name "/GND")
+			(class "Default")
+			(node
+				(ref "C2")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "3")
+				(pinfunction "Pin_3_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "Y1")
+				(pin "3")
+				(pinfunction "GND_3")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "4")
+			(name "/~{Reset}")
+			(class "Default")
+			(node
+				(ref "J1")
+				(pin "1")
+				(pinfunction "Pin_1_1")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "5")
+			(name "unconnected-(J1-Pin_2-Pad2)")
+			(class "Default")
+			(node
+				(ref "J1")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "6")
+			(name "unconnected-(J2-Pin_2-Pad2)")
+			(class "Default")
+			(node
+				(ref "J2")
+				(pin "2")
+				(pinfunction "Pin_2_2")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "7")
+			(name "unconnected-(Y1-E{slash}D-Pad1)")
+			(class "Default")
+			(node
+				(ref "Y1")
+				(pin "1")
+				(pinfunction "E/D_1")
+				(pintype "no_connect")
+			)
+		)
+		(net
+			(code "8")
+			(name "unconnected-(Y1-NC-Pad2)")
+			(class "Default")
+			(node
+				(ref "Y1")
+				(pin "2")
+				(pinfunction "NC_2")
+				(pintype "no_connect")
+			)
+		)
+		(net
+			(code "9")
+			(name "unconnected-(Y1-OUT2-Pad5)")
+			(class "Default")
+			(node
+				(ref "Y1")
+				(pin "5")
+				(pinfunction "OUT2_5")
+				(pintype "no_connect")
+			)
+		)
+	)
+)

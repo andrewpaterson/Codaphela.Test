@@ -289,6 +289,67 @@ void TestTextParserGetFloatLiteral(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+TRISTATE TextParserGetFloat(char* szText, float64* pf)
+{
+	CTextParser cTextParser;
+	TRISTATE	tResult;
+
+	cTextParser.Init(szText);
+	tResult = cTextParser.GetFloat(pf);
+	cTextParser.Kill();
+	return tResult;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTextParserGetFloat(void)
+{
+	float64		f;
+	float32		f32;
+	CTextParser cTextParser;
+	TRISTATE	tResult;
+
+	AssertTritrue(TextParserGetFloat("1.5", &f));
+	AssertDouble(1.5, f, 10);
+	AssertTritrue(TextParserGetFloat("-1.5", &f));
+	AssertDouble(-1.5, f, 10);
+	AssertTritrue(TextParserGetFloat("0.635", &f));
+	AssertDouble(0.635, f, 10);
+	AssertTritrue(TextParserGetFloat("-0.635", &f));
+	AssertDouble(-0.635, f, 10);
+	AssertTritrue(TextParserGetFloat("+0.25", &f));
+	AssertDouble(0.25, f, 10);
+	AssertTritrue(TextParserGetFloat("42", &f));
+	AssertDouble(42.0, f, 10);
+	AssertTritrue(TextParserGetFloat("-42", &f));
+	AssertDouble(-42.0, f, 10);
+	AssertTritrue(TextParserGetFloat("  101.6", &f));
+	AssertDouble(101.6, f, 10);
+	AssertTritrue(TextParserGetFloat(".5", &f));
+	AssertDouble(0.5, f, 10);
+
+	AssertTrifalse(TextParserGetFloat("abc", &f));
+	AssertTrierror(TextParserGetFloat("1.x", &f));
+	AssertTrierror(TextParserGetFloat("", &f));
+
+	cTextParser.Init("-0.5 2.25");
+	tResult = cTextParser.GetFloat(&f32);
+	AssertTritrue(tResult);
+	AssertFloat(-0.5f, f32, 6);
+	tResult = cTextParser.GetFloat(&f32);
+	AssertTritrue(tResult);
+	AssertFloat(2.25f, f32, 6);
+	cTextParser.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestTextParserGetIdentifierWithWhitespace()
 {
 	TRISTATE	tResult;
@@ -353,6 +414,7 @@ void TestTextParser(void)
 	TestTextParserGetIdentifier();
 	TestTextParserGetIntegerLiteral();
 	TestTextParserGetFloatLiteral();
+	TestTextParserGetFloat();
 	TestTextParserGetIdentifierWithWhitespace();
 	TestTextParserGetString();
 

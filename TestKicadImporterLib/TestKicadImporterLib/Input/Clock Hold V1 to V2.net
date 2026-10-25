@@ -1,0 +1,1578 @@
+(export
+	(version "E")
+	(design
+		(source "D:\\gameengine\\Test\\TestKicadImporterLib\\TestKicadImporterLib\\Input\\Clock Hold V1 to V2.kicad_sch")
+		(date "2026-10-25T07:33:02")
+		(tool "Eeschema 10.0.3")
+		(sheet
+			(number "1")
+			(name "/")
+			(tstamps "/")
+			(title_block
+				(title "W65C816 Clock Hold")
+				(company)
+				(rev "V2")
+				(date "2026-01-29")
+				(source "Clock Hold V1 to V2.kicad_sch")
+				(comment
+					(number "1")
+					(value "")
+				)
+				(comment
+					(number "2")
+					(value "")
+				)
+				(comment
+					(number "3")
+					(value "")
+				)
+				(comment
+					(number "4")
+					(value "")
+				)
+				(comment
+					(number "5")
+					(value "")
+				)
+				(comment
+					(number "6")
+					(value "")
+				)
+				(comment
+					(number "7")
+					(value "")
+				)
+				(comment
+					(number "8")
+					(value "")
+				)
+				(comment
+					(number "9")
+					(value "")
+				)
+			)
+		)
+	)
+	(components
+		(comp
+			(ref "B22")
+			(value "W65C816 Clock Hold")
+			(footprint "HCP65_Parts:HCP65_W65C816_Clock_Hold")
+			(description "W65C816 Clock Hold")
+			(fields
+				(field
+					(name "Silkscreen") "W65C816 Clock Hold")
+				(field
+					(name "Footprint") "HCP65_Parts:HCP65_W65C816_Clock_Hold")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "W65C816 Clock Hold")
+			)
+			(libsource
+				(lib "HCP65")
+				(part "W65C816 Clock Hold")
+				(description "W65C816 Clock Hold")
+			)
+			(property
+				(name "Silkscreen")
+				(value "W65C816 Clock Hold")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Clock Hold V1 to V2.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "HCP65 W65C816 Clock Hold")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "72122cc3-af37-447f-8e2d-3d224caf1a40")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "23")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "12")
+						)
+						(pin
+							(num "11")
+						)
+						(pin
+							(num "10")
+						)
+						(pin
+							(num "19")
+						)
+						(pin
+							(num "24")
+						)
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "13")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "9")
+						)
+						(pin
+							(num "16")
+						)
+						(pin
+							(num "21")
+						)
+						(pin
+							(num "22")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "15")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "17")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "20")
+						)
+						(pin
+							(num "18")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "B23")
+			(value "Hold Count")
+			(footprint "HCP65_Parts:HCP65_Hold_Count")
+			(description "Hold Count")
+			(fields
+				(field
+					(name "Silkscreen") "Hold Count")
+				(field
+					(name "Footprint") "HCP65_Parts:HCP65_Hold_Count")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Hold Count")
+			)
+			(libsource
+				(lib "HCP65")
+				(part "Hold Count")
+				(description "Hold Count")
+			)
+			(property
+				(name "Silkscreen")
+				(value "Hold Count")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Clock Hold V1 to V2.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "HCP65 Hold Count")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "68d98a93-163c-4754-b8d7-0c88c221917f")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "10")
+						)
+						(pin
+							(num "11")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "22")
+						)
+						(pin
+							(num "23")
+						)
+						(pin
+							(num "24")
+						)
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "13")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "9")
+						)
+						(pin
+							(num "16")
+						)
+						(pin
+							(num "21")
+						)
+						(pin
+							(num "19")
+						)
+						(pin
+							(num "18")
+						)
+						(pin
+							(num "20")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "15")
+						)
+						(pin
+							(num "17")
+						)
+						(pin
+							(num "12")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "J1")
+			(value "Board 2x16 W22.86mm")
+			(footprint "SamacSys_Parts:DIP-32_Board_W22.86mm_Nak")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:DIP-32_Board_W22.86mm_Nak")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "Board_02x16_W22.86mm")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/Clock Hold V1 to V2.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "HCP65 Connector Board")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "Connector*:*_2x??_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "6ec2fe1b-0ebb-4c1b-b4de-37a0ab9c0b6c")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "9")
+						)
+						(pin
+							(num "10")
+						)
+						(pin
+							(num "11")
+						)
+						(pin
+							(num "12")
+						)
+						(pin
+							(num "13")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "15")
+						)
+						(pin
+							(num "16")
+						)
+						(pin
+							(num "32")
+						)
+						(pin
+							(num "31")
+						)
+						(pin
+							(num "30")
+						)
+						(pin
+							(num "29")
+						)
+						(pin
+							(num "28")
+						)
+						(pin
+							(num "27")
+						)
+						(pin
+							(num "26")
+						)
+						(pin
+							(num "25")
+						)
+						(pin
+							(num "24")
+						)
+						(pin
+							(num "23")
+						)
+						(pin
+							(num "22")
+						)
+						(pin
+							(num "21")
+						)
+						(pin
+							(num "20")
+						)
+						(pin
+							(num "19")
+						)
+						(pin
+							(num "18")
+						)
+						(pin
+							(num "17")
+						)
+					)
+				)
+			)
+		)
+	)
+	(groups)
+	(variants)
+	(libparts
+		(libpart
+			(lib "HCP65")
+			(part "Board_02x16_W22.86mm")
+			(footprints
+				(fp "Connector*:*_2x??_*")
+			)
+			(fields
+				(field
+					(name "Reference") "J")
+				(field
+					(name "Value") "Board 2x16 W22.86mm")
+				(field
+					(name "Footprint") "SamacSys_Parts:DIP-32_Board_W22.86mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "5")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "6")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "7")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "8")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "9")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "10")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "11")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "12")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "13")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "14")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "15")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "16")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "17")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "18")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "19")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "20")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "21")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "22")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "23")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "24")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "25")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "26")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "27")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "28")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "29")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "30")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "31")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "32")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "HCP65")
+			(part "Hold Count")
+			(description "Hold Count")
+			(fields
+				(field
+					(name "Reference") "B")
+				(field
+					(name "Value") "Hold Count")
+				(field
+					(name "Footprint") "HCP65_Parts:HCP65_Hold_Count")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "Hold Count")
+				(field
+					(name "Silkscreen") "Hold Count")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "5V")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "N.C.")
+					(type "no_connect")
+				)
+				(pin
+					(num "3")
+					(name "N.C.")
+					(type "no_connect")
+				)
+				(pin
+					(num "4")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "5")
+					(name "Hold0")
+					(type "input")
+				)
+				(pin
+					(num "6")
+					(name "Hold1")
+					(type "input")
+				)
+				(pin
+					(num "7")
+					(name "Hold2")
+					(type "input")
+				)
+				(pin
+					(num "8")
+					(name "Hold3")
+					(type "input")
+				)
+				(pin
+					(num "9")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "10")
+					(name "CLK_High_Pulse")
+					(type "input")
+				)
+				(pin
+					(num "11")
+					(name "~{CLK_High_Pulse}")
+					(type "input")
+				)
+				(pin
+					(num "12")
+					(name "Presence")
+					(type "output")
+				)
+				(pin
+					(num "13")
+					(name "5V")
+					(type "passive")
+				)
+				(pin
+					(num "14")
+					(name "Count2")
+					(type "output")
+				)
+				(pin
+					(num "15")
+					(name "Count1")
+					(type "output")
+				)
+				(pin
+					(num "16")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "17")
+					(name "Count0")
+					(type "output")
+				)
+				(pin
+					(num "18")
+					(name "~{L=C}")
+					(type "output")
+				)
+				(pin
+					(num "19")
+					(name "L=C")
+					(type "output")
+				)
+				(pin
+					(num "20")
+					(name "Count3")
+					(type "output")
+				)
+				(pin
+					(num "21")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "22")
+					(name "N.C.")
+					(type "no_connect")
+				)
+				(pin
+					(num "23")
+					(name "N.C.")
+					(type "no_connect")
+				)
+				(pin
+					(num "24")
+					(name "N.C.")
+					(type "no_connect")
+				)
+			)
+		)
+		(libpart
+			(lib "HCP65")
+			(part "W65C816 Clock Hold")
+			(description "W65C816 Clock Hold")
+			(fields
+				(field
+					(name "Reference") "B")
+				(field
+					(name "Value") "W65C816 Clock Hold")
+				(field
+					(name "Footprint") "HCP65_Parts:HCP65_W65C816_Clock_Hold")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description") "W65C816 Clock Hold")
+				(field
+					(name "Silkscreen") "W65C816 Clock Hold")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "5V")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "CLK_High_Pulse")
+					(type "output")
+				)
+				(pin
+					(num "3")
+					(name "CLK")
+					(type "output")
+				)
+				(pin
+					(num "4")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "5")
+					(name "~{Hold_High}")
+					(type "input")
+				)
+				(pin
+					(num "6")
+					(name "CLK_IN")
+					(type "input")
+				)
+				(pin
+					(num "7")
+					(name "~{CLK}")
+					(type "output")
+				)
+				(pin
+					(num "8")
+					(name "PHI2")
+					(type "output")
+				)
+				(pin
+					(num "9")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "10")
+					(name "N.C.")
+					(type "no_connect")
+				)
+				(pin
+					(num "11")
+					(name "N.C.")
+					(type "no_connect")
+				)
+				(pin
+					(num "12")
+					(name "~{Hold_Low}")
+					(type "input")
+				)
+				(pin
+					(num "13")
+					(name "5V")
+					(type "passive")
+				)
+				(pin
+					(num "14")
+					(name "CLK_Low_Pulse")
+					(type "output")
+				)
+				(pin
+					(num "15")
+					(name "~{CLK_High_Pulse}")
+					(type "output")
+				)
+				(pin
+					(num "16")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "17")
+					(name "~{CLK_Low_Pulse}")
+					(type "output")
+				)
+				(pin
+					(num "18")
+					(name "Presence")
+					(type "output")
+				)
+				(pin
+					(num "19")
+					(name "N.C.")
+					(type "no_connect")
+				)
+				(pin
+					(num "20")
+					(name "~{PHI2}")
+					(type "output")
+				)
+				(pin
+					(num "21")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "22")
+					(name "Reset")
+					(type "output")
+				)
+				(pin
+					(num "23")
+					(name "~{Reset}")
+					(type "input")
+				)
+				(pin
+					(num "24")
+					(name "N.C.")
+					(type "no_connect")
+				)
+			)
+		)
+	)
+	(libraries
+		(library
+			(logical "HCP65")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/HCP65.kicad_sym")
+		)
+	)
+	(nets
+		(net
+			(code "2")
+			(name "/~{CHP}")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "15")
+				(pinfunction "~{CLK_High_Pulse}_15")
+				(pintype "output")
+			)
+			(node
+				(ref "B23")
+				(pin "11")
+				(pinfunction "~{CLK_High_Pulse}_11")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "3")
+			(name "3.3V")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "12")
+				(pinfunction "~{Hold_Low}_12")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "14")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "4")
+			(name "5V")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "1")
+				(pinfunction "5V_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "B22")
+				(pin "13")
+				(pinfunction "5V_13")
+				(pintype "passive")
+			)
+			(node
+				(ref "B23")
+				(pin "1")
+				(pinfunction "5V_1")
+				(pintype "passive")
+			)
+			(node
+				(ref "B23")
+				(pin "13")
+				(pinfunction "5V_13")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "17")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "5")
+			(name "C0")
+			(class "Default")
+			(node
+				(ref "B23")
+				(pin "17")
+				(pinfunction "Count0_17")
+				(pintype "output")
+			)
+			(node
+				(ref "J1")
+				(pin "24")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "6")
+			(name "C1")
+			(class "Default")
+			(node
+				(ref "B23")
+				(pin "15")
+				(pinfunction "Count1_15")
+				(pintype "output")
+			)
+			(node
+				(ref "J1")
+				(pin "23")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "7")
+			(name "C2")
+			(class "Default")
+			(node
+				(ref "B23")
+				(pin "14")
+				(pinfunction "Count2_14")
+				(pintype "output")
+			)
+			(node
+				(ref "J1")
+				(pin "22")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "8")
+			(name "C3")
+			(class "Default")
+			(node
+				(ref "B23")
+				(pin "20")
+				(pinfunction "Count3_20")
+				(pintype "output")
+			)
+			(node
+				(ref "J1")
+				(pin "20")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "9")
+			(name "CHP")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "2")
+				(pinfunction "CLK_High_Pulse_2")
+				(pintype "output")
+			)
+			(node
+				(ref "B23")
+				(pin "10")
+				(pinfunction "CLK_High_Pulse_10")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "10")
+			(name "CLK")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "3")
+				(pinfunction "CLK_3")
+				(pintype "output")
+			)
+			(node
+				(ref "J1")
+				(pin "3")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "11")
+			(name "CLK IN")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "6")
+				(pinfunction "CLK_IN_6")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "6")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "12")
+			(name "CLP")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "14")
+				(pinfunction "CLK_Low_Pulse_14")
+				(pintype "output")
+			)
+			(node
+				(ref "J1")
+				(pin "15")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "13")
+			(name "GND")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "16")
+				(pinfunction "GND_16")
+				(pintype "passive")
+			)
+			(node
+				(ref "B22")
+				(pin "21")
+				(pinfunction "GND_21")
+				(pintype "passive")
+			)
+			(node
+				(ref "B22")
+				(pin "4")
+				(pinfunction "GND_4")
+				(pintype "passive")
+			)
+			(node
+				(ref "B22")
+				(pin "9")
+				(pinfunction "GND_9")
+				(pintype "passive")
+			)
+			(node
+				(ref "B23")
+				(pin "16")
+				(pinfunction "GND_16")
+				(pintype "passive")
+			)
+			(node
+				(ref "B23")
+				(pin "21")
+				(pinfunction "GND_21")
+				(pintype "passive")
+			)
+			(node
+				(ref "B23")
+				(pin "4")
+				(pinfunction "GND_4")
+				(pintype "passive")
+			)
+			(node
+				(ref "B23")
+				(pin "9")
+				(pinfunction "GND_9")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "12")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "21")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "28")
+				(pintype "passive")
+			)
+			(node
+				(ref "J1")
+				(pin "5")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "14")
+			(name "H0")
+			(class "Default")
+			(node
+				(ref "B23")
+				(pin "5")
+				(pinfunction "Hold0_5")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "9")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "15")
+			(name "H1")
+			(class "Default")
+			(node
+				(ref "B23")
+				(pin "6")
+				(pinfunction "Hold1_6")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "10")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "16")
+			(name "H2")
+			(class "Default")
+			(node
+				(ref "B23")
+				(pin "7")
+				(pinfunction "Hold2_7")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "11")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "17")
+			(name "H3")
+			(class "Default")
+			(node
+				(ref "B23")
+				(pin "8")
+				(pinfunction "Hold3_8")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "13")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "18")
+			(name "L=C")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "5")
+				(pinfunction "~{Hold_High}_5")
+				(pintype "input")
+			)
+			(node
+				(ref "B23")
+				(pin "19")
+				(pinfunction "L=C_19")
+				(pintype "output")
+			)
+			(node
+				(ref "J1")
+				(pin "19")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "19")
+			(name "PHI2")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "8")
+				(pinfunction "PHI2_8")
+				(pintype "output")
+			)
+			(node
+				(ref "J1")
+				(pin "8")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "20")
+			(name "Reset")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "22")
+				(pinfunction "Reset_22")
+				(pintype "output")
+			)
+			(node
+				(ref "J1")
+				(pin "25")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "21")
+			(name "unconnected-(B22-N.C.-Pad10)")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "10")
+				(pinfunction "N.C._10")
+				(pintype "no_connect")
+			)
+		)
+		(net
+			(code "22")
+			(name "unconnected-(B22-N.C.-Pad11)")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "11")
+				(pinfunction "N.C._11")
+				(pintype "no_connect")
+			)
+		)
+		(net
+			(code "23")
+			(name "unconnected-(B22-N.C.-Pad19)")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "19")
+				(pinfunction "N.C._19")
+				(pintype "no_connect")
+			)
+		)
+		(net
+			(code "24")
+			(name "unconnected-(B22-N.C.-Pad24)")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "24")
+				(pinfunction "N.C._24")
+				(pintype "no_connect")
+			)
+		)
+		(net
+			(code "25")
+			(name "unconnected-(B22-Presence-Pad18)")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "18")
+				(pinfunction "Presence_18")
+				(pintype "output+no_connect")
+			)
+		)
+		(net
+			(code "26")
+			(name "unconnected-(B22-~{CLK_Low_Pulse}-Pad17)")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "17")
+				(pinfunction "~{CLK_Low_Pulse}_17")
+				(pintype "output+no_connect")
+			)
+		)
+		(net
+			(code "27")
+			(name "unconnected-(B23-N.C.-Pad2)")
+			(class "Default")
+			(node
+				(ref "B23")
+				(pin "2")
+				(pinfunction "N.C._2")
+				(pintype "no_connect")
+			)
+		)
+		(net
+			(code "28")
+			(name "unconnected-(B23-N.C.-Pad3)")
+			(class "Default")
+			(node
+				(ref "B23")
+				(pin "3")
+				(pinfunction "N.C._3")
+				(pintype "no_connect")
+			)
+		)
+		(net
+			(code "29")
+			(name "unconnected-(B23-N.C.-Pad22)")
+			(class "Default")
+			(node
+				(ref "B23")
+				(pin "22")
+				(pinfunction "N.C._22")
+				(pintype "no_connect")
+			)
+		)
+		(net
+			(code "30")
+			(name "unconnected-(B23-N.C.-Pad23)")
+			(class "Default")
+			(node
+				(ref "B23")
+				(pin "23")
+				(pinfunction "N.C._23")
+				(pintype "no_connect")
+			)
+		)
+		(net
+			(code "31")
+			(name "unconnected-(B23-N.C.-Pad24)")
+			(class "Default")
+			(node
+				(ref "B23")
+				(pin "24")
+				(pinfunction "N.C._24")
+				(pintype "no_connect")
+			)
+		)
+		(net
+			(code "32")
+			(name "unconnected-(B23-Presence-Pad12)")
+			(class "Default")
+			(node
+				(ref "B23")
+				(pin "12")
+				(pinfunction "Presence_12")
+				(pintype "output+no_connect")
+			)
+		)
+		(net
+			(code "33")
+			(name "unconnected-(J1-Pad4)")
+			(class "Default")
+			(node
+				(ref "J1")
+				(pin "4")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "34")
+			(name "unconnected-(J1-Pad16)")
+			(class "Default")
+			(node
+				(ref "J1")
+				(pin "16")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "35")
+			(name "unconnected-(J1-Pad27)")
+			(class "Default")
+			(node
+				(ref "J1")
+				(pin "27")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "36")
+			(name "unconnected-(J1-Pad29)")
+			(class "Default")
+			(node
+				(ref "J1")
+				(pin "29")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "37")
+			(name "unconnected-(J1-Pad30)")
+			(class "Default")
+			(node
+				(ref "J1")
+				(pin "30")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "38")
+			(name "unconnected-(J1-Pad31)")
+			(class "Default")
+			(node
+				(ref "J1")
+				(pin "31")
+				(pintype "passive+no_connect")
+			)
+		)
+		(net
+			(code "39")
+			(name "~{CLK}")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "7")
+				(pinfunction "~{CLK}_7")
+				(pintype "output")
+			)
+			(node
+				(ref "J1")
+				(pin "7")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "40")
+			(name "~{L=C}")
+			(class "Default")
+			(node
+				(ref "B23")
+				(pin "18")
+				(pinfunction "~{L=C}_18")
+				(pintype "output")
+			)
+			(node
+				(ref "J1")
+				(pin "18")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "41")
+			(name "~{PHI2}")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "20")
+				(pinfunction "~{PHI2}_20")
+				(pintype "output")
+			)
+			(node
+				(ref "J1")
+				(pin "26")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "42")
+			(name "~{Reset}")
+			(class "Default")
+			(node
+				(ref "B22")
+				(pin "23")
+				(pinfunction "~{Reset}_23")
+				(pintype "input")
+			)
+			(node
+				(ref "J1")
+				(pin "32")
+				(pintype "passive")
+			)
+		)
+	)
+)

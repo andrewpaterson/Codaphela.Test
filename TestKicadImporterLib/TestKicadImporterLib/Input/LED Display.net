@@ -1,0 +1,2233 @@
+(export
+	(version "E")
+	(design
+		(source "D:\\gameengine\\Test\\TestKicadImporterLib\\TestKicadImporterLib\\Input\\LED Display.kicad_sch")
+		(date "2026-10-25T07:33:04")
+		(tool "Eeschema 10.0.3")
+		(sheet
+			(number "1")
+			(name "/")
+			(tstamps "/")
+			(title_block
+				(title)
+				(company)
+				(rev)
+				(date)
+				(source "LED Display.kicad_sch")
+				(comment
+					(number "1")
+					(value "")
+				)
+				(comment
+					(number "2")
+					(value "")
+				)
+				(comment
+					(number "3")
+					(value "")
+				)
+				(comment
+					(number "4")
+					(value "")
+				)
+				(comment
+					(number "5")
+					(value "")
+				)
+				(comment
+					(number "6")
+					(value "")
+				)
+				(comment
+					(number "7")
+					(value "")
+				)
+				(comment
+					(number "8")
+					(value "")
+				)
+				(comment
+					(number "9")
+					(value "")
+				)
+			)
+		)
+	)
+	(components
+		(comp
+			(ref "C1")
+			(value "1μF")
+			(footprint "SamacSys_Parts:CP_Radial_D4.0mm_P2.00mm")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:CP_Radial_D4.0mm_P2.00mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_Radial_D4.0mm_P2.00mm")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/LED Display.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "Polarised Capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "e0f732fd-cd17-4e22-a76a-7520a9f5c653")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C2")
+			(value "1μF")
+			(footprint "SamacSys_Parts:CP_Radial_D4.0mm_P2.00mm")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:CP_Radial_D4.0mm_P2.00mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_Radial_D4.0mm_P2.00mm")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/LED Display.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "Polarised Capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "52e44f24-40c6-41c8-93be-f4fde5183635")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "C3")
+			(value "1μF")
+			(footprint "SamacSys_Parts:CP_Radial_D4.0mm_P2.00mm")
+			(fields
+				(field
+					(name "Footprint") "SamacSys_Parts:CP_Radial_D4.0mm_P2.00mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(libsource
+				(lib "HCP65")
+				(part "C_Radial_D4.0mm_P2.00mm")
+				(description "")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/LED Display.kicad_sch")
+			)
+			(property
+				(name "ki_keywords")
+				(value "Polarised Capacitor")
+			)
+			(property
+				(name "ki_fp_filters")
+				(value "CP_*")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "e275be13-3cc7-4d4b-a18a-5aa7c06ce4c6")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "DS2")
+			(value "KCDC03-123")
+			(footprint "SamacSys_Parts:KCDC03123")
+			(datasheet "http://www.kingbright.com/attachments/file/psearch/000/00/20160808bak/KCDC03-123(Ver.10A).pdf")
+			(description "green 7-seg, 2-digit LED display")
+			(fields
+				(field
+					(name "Height") "4.1")
+				(field
+					(name "Manufacturer_Name") "Kingbright")
+				(field
+					(name "Manufacturer_Part_Number") "KCDC03-123")
+				(field
+					(name "Mouser Part Number") "N/A")
+				(field
+					(name "Mouser Price/Stock") "http://www.mouser.com/Search/ProductDetail.aspx?qs=2JU0tDl2GZ3i3Ngnh7RV3w%3d%3d")
+				(field
+					(name "Silkscreen") "KCDC03-123")
+				(field
+					(name "Footprint") "SamacSys_Parts:KCDC03123")
+				(field
+					(name "Datasheet") "http://www.kingbright.com/attachments/file/psearch/000/00/20160808bak/KCDC03-123(Ver.10A).pdf")
+				(field
+					(name "Description") "green 7-seg, 2-digit LED display")
+			)
+			(libsource
+				(lib "Kingbright")
+				(part "KCDC03-123")
+				(description "green 7-seg, 2-digit LED display")
+			)
+			(property
+				(name "Height")
+				(value "4.1")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Kingbright")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "KCDC03-123")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "N/A")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "http://www.mouser.com/Search/ProductDetail.aspx?qs=2JU0tDl2GZ3i3Ngnh7RV3w%3d%3d")
+			)
+			(property
+				(name "Silkscreen")
+				(value "KCDC03-123")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/LED Display.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "cac378d5-1da3-41ca-930c-138402acb869")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "9")
+						)
+						(pin
+							(num "10")
+						)
+						(pin
+							(num "20")
+						)
+						(pin
+							(num "19")
+						)
+						(pin
+							(num "18")
+						)
+						(pin
+							(num "17")
+						)
+						(pin
+							(num "16")
+						)
+						(pin
+							(num "15")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "13")
+						)
+						(pin
+							(num "12")
+						)
+						(pin
+							(num "11")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "IC6")
+			(value "ATF16V8BQL-15XU")
+			(footprint "SamacSys_Parts:DIP-20_W15.24mm_Socket")
+			(datasheet "http://www.microchip.com/mymicrochip/filehandler.aspx?ddocname=en589395")
+			(description "250 gate SPLD 15nS")
+			(fields
+				(field
+					(name "Height") "1.2")
+				(field
+					(name "Manufacturer_Name") "Microchip")
+				(field
+					(name "Manufacturer_Part_Number") "ATF16V8BQL-15XU")
+				(field
+					(name "Mouser Part Number") "556-AF16V8BQL15XU")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Microchip-Technology/ATF16V8BQL-15XU?qs=2nyfZ6BV3ojQExtk%2F%2FdRRA%3D%3D")
+				(field
+					(name "Silkscreen") "ATF16V8")
+				(field
+					(name "Footprint") "SamacSys_Parts:DIP-20_W15.24mm_Socket")
+				(field
+					(name "Datasheet") "http://www.microchip.com/mymicrochip/filehandler.aspx?ddocname=en589395")
+				(field
+					(name "Description") "250 gate SPLD 15nS")
+			)
+			(libsource
+				(lib "Microchip")
+				(part "ATF16V8BQL-15XU")
+				(description "250 gate SPLD 15nS")
+			)
+			(property
+				(name "Height")
+				(value "1.2")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Microchip")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "ATF16V8BQL-15XU")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "556-AF16V8BQL15XU")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Microchip-Technology/ATF16V8BQL-15XU?qs=2nyfZ6BV3ojQExtk%2F%2FdRRA%3D%3D")
+			)
+			(property
+				(name "Silkscreen")
+				(value "ATF16V8")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/LED Display.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "9480445a-d327-472b-9f36-313b6d4147ef")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "9")
+						)
+						(pin
+							(num "11")
+						)
+						(pin
+							(num "10")
+						)
+						(pin
+							(num "20")
+						)
+						(pin
+							(num "12")
+						)
+						(pin
+							(num "13")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "15")
+						)
+						(pin
+							(num "16")
+						)
+						(pin
+							(num "17")
+						)
+						(pin
+							(num "18")
+						)
+						(pin
+							(num "19")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "IC14")
+			(value "ATF16V8BQL-15XU")
+			(footprint "SamacSys_Parts:DIP-20_W15.24mm_Socket")
+			(datasheet "http://www.microchip.com/mymicrochip/filehandler.aspx?ddocname=en589395")
+			(description "250 gate SPLD 15nS")
+			(fields
+				(field
+					(name "Height") "1.2")
+				(field
+					(name "Manufacturer_Name") "Microchip")
+				(field
+					(name "Manufacturer_Part_Number") "ATF16V8BQL-15XU")
+				(field
+					(name "Mouser Part Number") "556-AF16V8BQL15XU")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Microchip-Technology/ATF16V8BQL-15XU?qs=2nyfZ6BV3ojQExtk%2F%2FdRRA%3D%3D")
+				(field
+					(name "Silkscreen") "ATF16V8")
+				(field
+					(name "Footprint") "SamacSys_Parts:DIP-20_W15.24mm_Socket")
+				(field
+					(name "Datasheet") "http://www.microchip.com/mymicrochip/filehandler.aspx?ddocname=en589395")
+				(field
+					(name "Description") "250 gate SPLD 15nS")
+			)
+			(libsource
+				(lib "Microchip")
+				(part "ATF16V8BQL-15XU")
+				(description "250 gate SPLD 15nS")
+			)
+			(property
+				(name "Height")
+				(value "1.2")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Microchip")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "ATF16V8BQL-15XU")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "556-AF16V8BQL15XU")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Microchip-Technology/ATF16V8BQL-15XU?qs=2nyfZ6BV3ojQExtk%2F%2FdRRA%3D%3D")
+			)
+			(property
+				(name "Silkscreen")
+				(value "ATF16V8")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/LED Display.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "e9afe307-7330-480b-876b-51785aba35ce")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "5")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "9")
+						)
+						(pin
+							(num "11")
+						)
+						(pin
+							(num "10")
+						)
+						(pin
+							(num "20")
+						)
+						(pin
+							(num "12")
+						)
+						(pin
+							(num "13")
+						)
+						(pin
+							(num "14")
+						)
+						(pin
+							(num "15")
+						)
+						(pin
+							(num "16")
+						)
+						(pin
+							(num "17")
+						)
+						(pin
+							(num "18")
+						)
+						(pin
+							(num "19")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "RN8")
+			(value "CAY16-221J4LF")
+			(footprint "SamacSys_Parts:CAY16-F4")
+			(datasheet "https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf")
+			(description "220Ω 4-array resistor")
+			(fields
+				(field
+					(name "Height") "0.6")
+				(field
+					(name "Manufacturer_Name") "Bourns")
+				(field
+					(name "Manufacturer_Part_Number") "CAY16-221J4LF")
+				(field
+					(name "Mouser Part Number") "652-CAY16-221J4LF")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Bourns/CAY16-221J4LF?qs=BKfsZh40Pd9sAo64tUrb9Q%3D%3D")
+				(field
+					(name "Arrow Part Number") "CAY16-221J4LF")
+				(field
+					(name "Arrow Price/Stock") "https://www.arrow.com/en/products/cay16-221j4lf/bourns?region=nac")
+				(field
+					(name "Silkscreen") "220Ω")
+				(field
+					(name "Garbage") "Bourns CAY16 Series 220 +/-5% Isolated SMT Resistor Array, 4 Resistors, 0.25W total 1206 (3216M) package Convex")
+				(field
+					(name "Footprint") "SamacSys_Parts:CAY16-F4")
+				(field
+					(name "Datasheet") "https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf")
+				(field
+					(name "Description") "220Ω 4-array resistor")
+			)
+			(libsource
+				(lib "Bourns")
+				(part "CAY16-221J4LF")
+				(description "220Ω 4-array resistor")
+			)
+			(property
+				(name "Height")
+				(value "0.6")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Bourns")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "CAY16-221J4LF")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "652-CAY16-221J4LF")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Bourns/CAY16-221J4LF?qs=BKfsZh40Pd9sAo64tUrb9Q%3D%3D")
+			)
+			(property
+				(name "Arrow Part Number")
+				(value "CAY16-221J4LF")
+			)
+			(property
+				(name "Arrow Price/Stock")
+				(value "https://www.arrow.com/en/products/cay16-221j4lf/bourns?region=nac")
+			)
+			(property
+				(name "Silkscreen")
+				(value "220Ω")
+			)
+			(property
+				(name "Garbage")
+				(value "Bourns CAY16 Series 220 +/-5% Isolated SMT Resistor Array, 4 Resistors, 0.25W total 1206 (3216M) package Convex")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/LED Display.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "024137de-e2f7-4643-a78c-22b562153e15")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "5")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "RN9")
+			(value "CAY16-221J4LF")
+			(footprint "SamacSys_Parts:CAY16-F4")
+			(datasheet "https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf")
+			(description "220Ω 4-array resistor")
+			(fields
+				(field
+					(name "Height") "0.6")
+				(field
+					(name "Manufacturer_Name") "Bourns")
+				(field
+					(name "Manufacturer_Part_Number") "CAY16-221J4LF")
+				(field
+					(name "Mouser Part Number") "652-CAY16-221J4LF")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Bourns/CAY16-221J4LF?qs=BKfsZh40Pd9sAo64tUrb9Q%3D%3D")
+				(field
+					(name "Arrow Part Number") "CAY16-221J4LF")
+				(field
+					(name "Arrow Price/Stock") "https://www.arrow.com/en/products/cay16-221j4lf/bourns?region=nac")
+				(field
+					(name "Silkscreen") "220Ω")
+				(field
+					(name "Garbage") "Bourns CAY16 Series 220 +/-5% Isolated SMT Resistor Array, 4 Resistors, 0.25W total 1206 (3216M) package Convex")
+				(field
+					(name "Footprint") "SamacSys_Parts:CAY16-F4")
+				(field
+					(name "Datasheet") "https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf")
+				(field
+					(name "Description") "220Ω 4-array resistor")
+			)
+			(libsource
+				(lib "Bourns")
+				(part "CAY16-221J4LF")
+				(description "220Ω 4-array resistor")
+			)
+			(property
+				(name "Height")
+				(value "0.6")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Bourns")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "CAY16-221J4LF")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "652-CAY16-221J4LF")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Bourns/CAY16-221J4LF?qs=BKfsZh40Pd9sAo64tUrb9Q%3D%3D")
+			)
+			(property
+				(name "Arrow Part Number")
+				(value "CAY16-221J4LF")
+			)
+			(property
+				(name "Arrow Price/Stock")
+				(value "https://www.arrow.com/en/products/cay16-221j4lf/bourns?region=nac")
+			)
+			(property
+				(name "Silkscreen")
+				(value "220Ω")
+			)
+			(property
+				(name "Garbage")
+				(value "Bourns CAY16 Series 220 +/-5% Isolated SMT Resistor Array, 4 Resistors, 0.25W total 1206 (3216M) package Convex")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/LED Display.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "5175d092-cfd6-4868-99e9-df34a6f0a216")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "5")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "RN10")
+			(value "CAY16-221J4LF")
+			(footprint "SamacSys_Parts:CAY16-F4")
+			(datasheet "https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf")
+			(description "220Ω 4-array resistor")
+			(fields
+				(field
+					(name "Height") "0.6")
+				(field
+					(name "Manufacturer_Name") "Bourns")
+				(field
+					(name "Manufacturer_Part_Number") "CAY16-221J4LF")
+				(field
+					(name "Mouser Part Number") "652-CAY16-221J4LF")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Bourns/CAY16-221J4LF?qs=BKfsZh40Pd9sAo64tUrb9Q%3D%3D")
+				(field
+					(name "Arrow Part Number") "CAY16-221J4LF")
+				(field
+					(name "Arrow Price/Stock") "https://www.arrow.com/en/products/cay16-221j4lf/bourns?region=nac")
+				(field
+					(name "Silkscreen") "220Ω")
+				(field
+					(name "Garbage") "Bourns CAY16 Series 220 +/-5% Isolated SMT Resistor Array, 4 Resistors, 0.25W total 1206 (3216M) package Convex")
+				(field
+					(name "Footprint") "SamacSys_Parts:CAY16-F4")
+				(field
+					(name "Datasheet") "https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf")
+				(field
+					(name "Description") "220Ω 4-array resistor")
+			)
+			(libsource
+				(lib "Bourns")
+				(part "CAY16-221J4LF")
+				(description "220Ω 4-array resistor")
+			)
+			(property
+				(name "Height")
+				(value "0.6")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Bourns")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "CAY16-221J4LF")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "652-CAY16-221J4LF")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Bourns/CAY16-221J4LF?qs=BKfsZh40Pd9sAo64tUrb9Q%3D%3D")
+			)
+			(property
+				(name "Arrow Part Number")
+				(value "CAY16-221J4LF")
+			)
+			(property
+				(name "Arrow Price/Stock")
+				(value "https://www.arrow.com/en/products/cay16-221j4lf/bourns?region=nac")
+			)
+			(property
+				(name "Silkscreen")
+				(value "220Ω")
+			)
+			(property
+				(name "Garbage")
+				(value "Bourns CAY16 Series 220 +/-5% Isolated SMT Resistor Array, 4 Resistors, 0.25W total 1206 (3216M) package Convex")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/LED Display.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "6dce74a2-7156-42c2-b1a8-77b75369a916")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "5")
+						)
+					)
+				)
+			)
+		)
+		(comp
+			(ref "RN11")
+			(value "CAY16-221J4LF")
+			(footprint "SamacSys_Parts:CAY16-F4")
+			(datasheet "https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf")
+			(description "220Ω 4-array resistor")
+			(fields
+				(field
+					(name "Height") "0.6")
+				(field
+					(name "Manufacturer_Name") "Bourns")
+				(field
+					(name "Manufacturer_Part_Number") "CAY16-221J4LF")
+				(field
+					(name "Mouser Part Number") "652-CAY16-221J4LF")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Bourns/CAY16-221J4LF?qs=BKfsZh40Pd9sAo64tUrb9Q%3D%3D")
+				(field
+					(name "Arrow Part Number") "CAY16-221J4LF")
+				(field
+					(name "Arrow Price/Stock") "https://www.arrow.com/en/products/cay16-221j4lf/bourns?region=nac")
+				(field
+					(name "Silkscreen") "220Ω")
+				(field
+					(name "Garbage") "Bourns CAY16 Series 220 +/-5% Isolated SMT Resistor Array, 4 Resistors, 0.25W total 1206 (3216M) package Convex")
+				(field
+					(name "Footprint") "SamacSys_Parts:CAY16-F4")
+				(field
+					(name "Datasheet") "https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf")
+				(field
+					(name "Description") "220Ω 4-array resistor")
+			)
+			(libsource
+				(lib "Bourns")
+				(part "CAY16-221J4LF")
+				(description "220Ω 4-array resistor")
+			)
+			(property
+				(name "Height")
+				(value "0.6")
+			)
+			(property
+				(name "Manufacturer_Name")
+				(value "Bourns")
+			)
+			(property
+				(name "Manufacturer_Part_Number")
+				(value "CAY16-221J4LF")
+			)
+			(property
+				(name "Mouser Part Number")
+				(value "652-CAY16-221J4LF")
+			)
+			(property
+				(name "Mouser Price/Stock")
+				(value "https://www.mouser.co.uk/ProductDetail/Bourns/CAY16-221J4LF?qs=BKfsZh40Pd9sAo64tUrb9Q%3D%3D")
+			)
+			(property
+				(name "Arrow Part Number")
+				(value "CAY16-221J4LF")
+			)
+			(property
+				(name "Arrow Price/Stock")
+				(value "https://www.arrow.com/en/products/cay16-221j4lf/bourns?region=nac")
+			)
+			(property
+				(name "Silkscreen")
+				(value "220Ω")
+			)
+			(property
+				(name "Garbage")
+				(value "Bourns CAY16 Series 220 +/-5% Isolated SMT Resistor Array, 4 Resistors, 0.25W total 1206 (3216M) package Convex")
+			)
+			(property
+				(name "Sheetname")
+				(value "")
+			)
+			(property
+				(name "Sheetfile")
+				(value "Input/LED Display.kicad_sch")
+			)
+			(sheetpath
+				(names "/")
+				(tstamps "/")
+			)
+			(tstamps "22812b19-8880-4b3c-a56d-df185b35c5e1")
+			(units
+				(unit
+					(name "A")
+					(pins
+						(pin
+							(num "1")
+						)
+						(pin
+							(num "2")
+						)
+						(pin
+							(num "3")
+						)
+						(pin
+							(num "4")
+						)
+						(pin
+							(num "8")
+						)
+						(pin
+							(num "7")
+						)
+						(pin
+							(num "6")
+						)
+						(pin
+							(num "5")
+						)
+					)
+				)
+			)
+		)
+	)
+	(groups)
+	(variants)
+	(libparts
+		(libpart
+			(lib "Bourns")
+			(part "CAY16-221J4LF")
+			(description "220Ω 4-array resistor")
+			(docs "https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf")
+			(fields
+				(field
+					(name "Reference") "RN")
+				(field
+					(name "Value") "CAY16-221J4LF")
+				(field
+					(name "Footprint") "SamacSys_Parts:CAY16-F4")
+				(field
+					(name "Datasheet") "https://www.bourns.com/docs/Product-Datasheets/CATCAY.pdf")
+				(field
+					(name "Description") "220Ω 4-array resistor")
+				(field
+					(name "Height") "0.6")
+				(field
+					(name "Manufacturer_Name") "Bourns")
+				(field
+					(name "Manufacturer_Part_Number") "CAY16-221J4LF")
+				(field
+					(name "Mouser Part Number") "652-CAY16-221J4LF")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Bourns/CAY16-221J4LF?qs=BKfsZh40Pd9sAo64tUrb9Q%3D%3D")
+				(field
+					(name "Arrow Part Number") "CAY16-221J4LF")
+				(field
+					(name "Arrow Price/Stock") "https://www.arrow.com/en/products/cay16-221j4lf/bourns?region=nac")
+				(field
+					(name "Silkscreen") "220Ω")
+				(field
+					(name "Garbage") "Bourns CAY16 Series 220 +/-5% Isolated SMT Resistor Array, 4 Resistors, 0.25W total 1206 (3216M) package Convex")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "R1")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "R2")
+					(type "passive")
+				)
+				(pin
+					(num "3")
+					(name "R3")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "R4")
+					(type "passive")
+				)
+				(pin
+					(num "5")
+					(name "R4")
+					(type "passive")
+				)
+				(pin
+					(num "6")
+					(name "R3")
+					(type "passive")
+				)
+				(pin
+					(num "7")
+					(name "R2")
+					(type "passive")
+				)
+				(pin
+					(num "8")
+					(name "R1")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "HCP65")
+			(part "C_Radial_D4.0mm_P2.00mm")
+			(footprints
+				(fp "CP_*")
+			)
+			(fields
+				(field
+					(name "Reference") "C")
+				(field
+					(name "Value") "?μF")
+				(field
+					(name "Footprint") "SamacSys_Parts:CP_Radial_D4.0mm_P2.00mm")
+				(field
+					(name "Datasheet")
+				)
+				(field
+					(name "Description")
+				)
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "")
+					(type "passive")
+				)
+				(pin
+					(num "2")
+					(name "")
+					(type "passive")
+				)
+			)
+		)
+		(libpart
+			(lib "Kingbright")
+			(part "KCDC03-123")
+			(description "green 7-seg, 2-digit LED display")
+			(docs "http://www.kingbright.com/attachments/file/psearch/000/00/20160808bak/KCDC03-123(Ver.10A).pdf")
+			(fields
+				(field
+					(name "Reference") "DS")
+				(field
+					(name "Value") "KCDC03-123")
+				(field
+					(name "Footprint") "SamacSys_Parts:KCDC03123")
+				(field
+					(name "Datasheet") "http://www.kingbright.com/attachments/file/psearch/000/00/20160808bak/KCDC03-123(Ver.10A).pdf")
+				(field
+					(name "Description") "green 7-seg, 2-digit LED display")
+				(field
+					(name "Height") "4.1")
+				(field
+					(name "Manufacturer_Name") "Kingbright")
+				(field
+					(name "Manufacturer_Part_Number") "KCDC03-123")
+				(field
+					(name "Mouser Part Number") "N/A")
+				(field
+					(name "Mouser Price/Stock") "http://www.mouser.com/Search/ProductDetail.aspx?qs=2JU0tDl2GZ3i3Ngnh7RV3w%3d%3d")
+				(field
+					(name "Silkscreen") "KCDC03-123")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "E-Seg_{(Left)}")
+					(type "input")
+				)
+				(pin
+					(num "2")
+					(name "D-Seg_{(Left)}")
+					(type "input")
+				)
+				(pin
+					(num "3")
+					(name "Cathode_{(Left)}")
+					(type "passive")
+				)
+				(pin
+					(num "4")
+					(name "C-Seg_{(Left)}")
+					(type "input")
+				)
+				(pin
+					(num "5")
+					(name "Dot_{(Left)}")
+					(type "input")
+				)
+				(pin
+					(num "6")
+					(name "E-Seg_{(Right)}")
+					(type "input")
+				)
+				(pin
+					(num "7")
+					(name "D-Seg_{(Right)}")
+					(type "input")
+				)
+				(pin
+					(num "8")
+					(name "Cathode_{(Right)}")
+					(type "passive")
+				)
+				(pin
+					(num "9")
+					(name "C-Seg_{(Right)}")
+					(type "input")
+				)
+				(pin
+					(num "10")
+					(name "Dot_{(Right)}")
+					(type "input")
+				)
+				(pin
+					(num "11")
+					(name "B-Seg_{(Right)}")
+					(type "input")
+				)
+				(pin
+					(num "12")
+					(name "A-Seg_{(Right)}")
+					(type "input")
+				)
+				(pin
+					(num "13")
+					(name "Cathode_{(Right)}")
+					(type "passive")
+				)
+				(pin
+					(num "14")
+					(name "F-Seg_{(Right)}")
+					(type "input")
+				)
+				(pin
+					(num "15")
+					(name "G-Seg_{(Right)}")
+					(type "input")
+				)
+				(pin
+					(num "16")
+					(name "B-Seg_{(Left)}")
+					(type "input")
+				)
+				(pin
+					(num "17")
+					(name "A-Seg_{(Left)}")
+					(type "input")
+				)
+				(pin
+					(num "18")
+					(name "Cathode_{(Left)}")
+					(type "passive")
+				)
+				(pin
+					(num "19")
+					(name "F-Seg_{(Left)}")
+					(type "input")
+				)
+				(pin
+					(num "20")
+					(name "G-Seg_{(Left)}")
+					(type "input")
+				)
+			)
+		)
+		(libpart
+			(lib "Microchip")
+			(part "ATF16V8BQL-15XU")
+			(description "250 gate SPLD 15nS")
+			(docs "http://www.microchip.com/mymicrochip/filehandler.aspx?ddocname=en589395")
+			(fields
+				(field
+					(name "Reference") "IC")
+				(field
+					(name "Value") "ATF16V8BQL-15XU")
+				(field
+					(name "Footprint") "SamacSys_Parts:SOP65P640X120-20N")
+				(field
+					(name "Datasheet") "http://www.microchip.com/mymicrochip/filehandler.aspx?ddocname=en589395")
+				(field
+					(name "Description") "250 gate SPLD 15nS")
+				(field
+					(name "Height") "1.2")
+				(field
+					(name "Manufacturer_Name") "Microchip")
+				(field
+					(name "Manufacturer_Part_Number") "ATF16V8BQL-15XU")
+				(field
+					(name "Mouser Part Number") "556-AF16V8BQL15XU")
+				(field
+					(name "Mouser Price/Stock") "https://www.mouser.co.uk/ProductDetail/Microchip-Technology/ATF16V8BQL-15XU?qs=2nyfZ6BV3ojQExtk%2F%2FdRRA%3D%3D")
+				(field
+					(name "Silkscreen") "ATF16V8")
+			)
+			(pins
+				(pin
+					(num "1")
+					(name "CLK/IN")
+					(type "input")
+				)
+				(pin
+					(num "2")
+					(name "IN1")
+					(type "input")
+				)
+				(pin
+					(num "3")
+					(name "IN2")
+					(type "input")
+				)
+				(pin
+					(num "4")
+					(name "IN3/PD")
+					(type "input")
+				)
+				(pin
+					(num "5")
+					(name "IN4")
+					(type "input")
+				)
+				(pin
+					(num "6")
+					(name "IN5")
+					(type "input")
+				)
+				(pin
+					(num "7")
+					(name "IN6")
+					(type "input")
+				)
+				(pin
+					(num "8")
+					(name "IN7")
+					(type "input")
+				)
+				(pin
+					(num "9")
+					(name "IN8")
+					(type "input")
+				)
+				(pin
+					(num "10")
+					(name "GND")
+					(type "passive")
+				)
+				(pin
+					(num "11")
+					(name "IN9/~{OE}")
+					(type "input")
+				)
+				(pin
+					(num "12")
+					(name "I/O0")
+					(type "tri_state")
+				)
+				(pin
+					(num "13")
+					(name "I/O1")
+					(type "tri_state")
+				)
+				(pin
+					(num "14")
+					(name "I/O2")
+					(type "tri_state")
+				)
+				(pin
+					(num "15")
+					(name "I/O3")
+					(type "tri_state")
+				)
+				(pin
+					(num "16")
+					(name "I/O4")
+					(type "tri_state")
+				)
+				(pin
+					(num "17")
+					(name "I/O5")
+					(type "tri_state")
+				)
+				(pin
+					(num "18")
+					(name "I/O6")
+					(type "tri_state")
+				)
+				(pin
+					(num "19")
+					(name "I/O7")
+					(type "tri_state")
+				)
+				(pin
+					(num "20")
+					(name "5V")
+					(type "passive")
+				)
+			)
+		)
+	)
+	(libraries
+		(library
+			(logical "Bourns")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/Bourns.kicad_sym")
+		)
+		(library
+			(logical "HCP65")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/HCP65.kicad_sym")
+		)
+		(library
+			(logical "Kingbright")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/Kingbright.kicad_sym")
+		)
+		(library
+			(logical "Microchip")
+			(uri "${_658_COMPUTER_}/Kicad/Symbols/Microchip.kicad_sym")
+		)
+	)
+	(nets
+		(net
+			(code "1")
+			(name "/5V")
+			(class "Default")
+			(node
+				(ref "C1")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C2")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "C3")
+				(pin "1")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC14")
+				(pin "20")
+				(pinfunction "5V_20")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC6")
+				(pin "20")
+				(pinfunction "5V_20")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "2")
+			(name "/Cathode")
+			(class "Default")
+			(node
+				(ref "C3")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "DS2")
+				(pin "13")
+				(pinfunction "Cathode_{(Right)}_13")
+				(pintype "passive")
+			)
+			(node
+				(ref "DS2")
+				(pin "18")
+				(pinfunction "Cathode_{(Left)}_18")
+				(pintype "passive")
+			)
+			(node
+				(ref "DS2")
+				(pin "3")
+				(pinfunction "Cathode_{(Left)}_3")
+				(pintype "passive")
+			)
+			(node
+				(ref "DS2")
+				(pin "8")
+				(pinfunction "Cathode_{(Right)}_8")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "3")
+			(name "/Digit L bit 0")
+			(class "Default")
+			(node
+				(ref "IC14")
+				(pin "2")
+				(pinfunction "IN1_2")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "4")
+			(name "/Digit L bit 1")
+			(class "Default")
+			(node
+				(ref "IC14")
+				(pin "3")
+				(pinfunction "IN2_3")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "5")
+			(name "/Digit L bit 2")
+			(class "Default")
+			(node
+				(ref "IC14")
+				(pin "4")
+				(pinfunction "IN3/PD_4")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "6")
+			(name "/Digit L bit 3")
+			(class "Default")
+			(node
+				(ref "IC14")
+				(pin "5")
+				(pinfunction "IN4_5")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "7")
+			(name "/Digit R bit 0")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "2")
+				(pinfunction "IN1_2")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "8")
+			(name "/Digit R bit 1")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "3")
+				(pinfunction "IN2_3")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "9")
+			(name "/Digit R bit 2")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "4")
+				(pinfunction "IN3/PD_4")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "10")
+			(name "/Digit R bit 3")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "5")
+				(pinfunction "IN4_5")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "11")
+			(name "/GND")
+			(class "Default")
+			(node
+				(ref "C1")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "C2")
+				(pin "2")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC14")
+				(pin "1")
+				(pinfunction "CLK/IN_1")
+				(pintype "input")
+			)
+			(node
+				(ref "IC14")
+				(pin "10")
+				(pinfunction "GND_10")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC14")
+				(pin "11")
+				(pinfunction "IN9/~{OE}_11")
+				(pintype "input")
+			)
+			(node
+				(ref "IC14")
+				(pin "6")
+				(pinfunction "IN5_6")
+				(pintype "input")
+			)
+			(node
+				(ref "IC14")
+				(pin "7")
+				(pinfunction "IN6_7")
+				(pintype "input")
+			)
+			(node
+				(ref "IC14")
+				(pin "8")
+				(pinfunction "IN7_8")
+				(pintype "input")
+			)
+			(node
+				(ref "IC6")
+				(pin "1")
+				(pinfunction "CLK/IN_1")
+				(pintype "input")
+			)
+			(node
+				(ref "IC6")
+				(pin "10")
+				(pinfunction "GND_10")
+				(pintype "passive")
+			)
+			(node
+				(ref "IC6")
+				(pin "11")
+				(pinfunction "IN9/~{OE}_11")
+				(pintype "input")
+			)
+			(node
+				(ref "IC6")
+				(pin "6")
+				(pinfunction "IN5_6")
+				(pintype "input")
+			)
+			(node
+				(ref "IC6")
+				(pin "7")
+				(pinfunction "IN6_7")
+				(pintype "input")
+			)
+			(node
+				(ref "IC6")
+				(pin "8")
+				(pinfunction "IN7_8")
+				(pintype "input")
+			)
+		)
+		(net
+			(code "12")
+			(name "/Left Digit 0 A segment")
+			(class "Default")
+			(node
+				(ref "IC14")
+				(pin "12")
+				(pinfunction "I/O0_12")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "RN8")
+				(pin "7")
+				(pinfunction "R2_7")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "13")
+			(name "/Left Digit 0 B segment")
+			(class "Default")
+			(node
+				(ref "IC14")
+				(pin "13")
+				(pinfunction "I/O1_13")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "RN8")
+				(pin "6")
+				(pinfunction "R3_6")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "14")
+			(name "/Left Digit 0 C segment")
+			(class "Default")
+			(node
+				(ref "IC14")
+				(pin "14")
+				(pinfunction "I/O2_14")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "RN8")
+				(pin "5")
+				(pinfunction "R4_5")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "15")
+			(name "/Left Digit 0 D segment")
+			(class "Default")
+			(node
+				(ref "IC14")
+				(pin "15")
+				(pinfunction "I/O3_15")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "RN10")
+				(pin "8")
+				(pinfunction "R1_8")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "16")
+			(name "/Left Digit 0 E segment")
+			(class "Default")
+			(node
+				(ref "IC14")
+				(pin "16")
+				(pinfunction "I/O4_16")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "RN10")
+				(pin "7")
+				(pinfunction "R2_7")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "17")
+			(name "/Left Digit 0 F segment")
+			(class "Default")
+			(node
+				(ref "IC14")
+				(pin "17")
+				(pinfunction "I/O5_17")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "RN10")
+				(pin "6")
+				(pinfunction "R3_6")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "18")
+			(name "/Left Digit 0 G segment")
+			(class "Default")
+			(node
+				(ref "IC14")
+				(pin "18")
+				(pinfunction "I/O6_18")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "RN10")
+				(pin "5")
+				(pinfunction "R4_5")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "19")
+			(name "/Left Ω Digit 0 A segment")
+			(class "Default")
+			(node
+				(ref "DS2")
+				(pin "17")
+				(pinfunction "A-Seg_{(Left)}_17")
+				(pintype "input")
+			)
+			(node
+				(ref "RN8")
+				(pin "2")
+				(pinfunction "R2_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "20")
+			(name "/Left Ω Digit 0 B segment")
+			(class "Default")
+			(node
+				(ref "DS2")
+				(pin "16")
+				(pinfunction "B-Seg_{(Left)}_16")
+				(pintype "input")
+			)
+			(node
+				(ref "RN8")
+				(pin "3")
+				(pinfunction "R3_3")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "21")
+			(name "/Left Ω Digit 0 C segment")
+			(class "Default")
+			(node
+				(ref "DS2")
+				(pin "4")
+				(pinfunction "C-Seg_{(Left)}_4")
+				(pintype "input")
+			)
+			(node
+				(ref "RN8")
+				(pin "4")
+				(pinfunction "R4_4")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "22")
+			(name "/Left Ω Digit 0 D segment")
+			(class "Default")
+			(node
+				(ref "DS2")
+				(pin "2")
+				(pinfunction "D-Seg_{(Left)}_2")
+				(pintype "input")
+			)
+			(node
+				(ref "RN10")
+				(pin "1")
+				(pinfunction "R1_1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "23")
+			(name "/Left Ω Digit 0 E segment")
+			(class "Default")
+			(node
+				(ref "DS2")
+				(pin "1")
+				(pinfunction "E-Seg_{(Left)}_1")
+				(pintype "input")
+			)
+			(node
+				(ref "RN10")
+				(pin "2")
+				(pinfunction "R2_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "24")
+			(name "/Left Ω Digit 0 F segment")
+			(class "Default")
+			(node
+				(ref "DS2")
+				(pin "19")
+				(pinfunction "F-Seg_{(Left)}_19")
+				(pintype "input")
+			)
+			(node
+				(ref "RN10")
+				(pin "3")
+				(pinfunction "R3_3")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "25")
+			(name "/Left Ω Digit 0 G segment")
+			(class "Default")
+			(node
+				(ref "DS2")
+				(pin "20")
+				(pinfunction "G-Seg_{(Left)}_20")
+				(pintype "input")
+			)
+			(node
+				(ref "RN10")
+				(pin "4")
+				(pinfunction "R4_4")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "26")
+			(name "/Right Digit 0 A segment")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "12")
+				(pinfunction "I/O0_12")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "RN9")
+				(pin "7")
+				(pinfunction "R2_7")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "27")
+			(name "/Right Digit 0 B segment")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "13")
+				(pinfunction "I/O1_13")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "RN9")
+				(pin "6")
+				(pinfunction "R3_6")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "28")
+			(name "/Right Digit 0 C segment")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "14")
+				(pinfunction "I/O2_14")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "RN9")
+				(pin "5")
+				(pinfunction "R4_5")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "29")
+			(name "/Right Digit 0 D segment")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "15")
+				(pinfunction "I/O3_15")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "RN11")
+				(pin "8")
+				(pinfunction "R1_8")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "30")
+			(name "/Right Digit 0 E segment")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "16")
+				(pinfunction "I/O4_16")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "RN11")
+				(pin "7")
+				(pinfunction "R2_7")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "31")
+			(name "/Right Digit 0 F segment")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "17")
+				(pinfunction "I/O5_17")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "RN11")
+				(pin "6")
+				(pinfunction "R3_6")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "32")
+			(name "/Right Digit 0 G segment")
+			(class "Default")
+			(node
+				(ref "IC6")
+				(pin "18")
+				(pinfunction "I/O6_18")
+				(pintype "tri_state")
+			)
+			(node
+				(ref "RN11")
+				(pin "5")
+				(pinfunction "R4_5")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "33")
+			(name "/Right Ω Digit 0 A segment")
+			(class "Default")
+			(node
+				(ref "DS2")
+				(pin "12")
+				(pinfunction "A-Seg_{(Right)}_12")
+				(pintype "input")
+			)
+			(node
+				(ref "RN9")
+				(pin "2")
+				(pinfunction "R2_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "34")
+			(name "/Right Ω Digit 0 B segment")
+			(class "Default")
+			(node
+				(ref "DS2")
+				(pin "11")
+				(pinfunction "B-Seg_{(Right)}_11")
+				(pintype "input")
+			)
+			(node
+				(ref "RN9")
+				(pin "3")
+				(pinfunction "R3_3")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "35")
+			(name "/Right Ω Digit 0 C segment")
+			(class "Default")
+			(node
+				(ref "DS2")
+				(pin "9")
+				(pinfunction "C-Seg_{(Right)}_9")
+				(pintype "input")
+			)
+			(node
+				(ref "RN9")
+				(pin "4")
+				(pinfunction "R4_4")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "36")
+			(name "/Right Ω Digit 0 D segment")
+			(class "Default")
+			(node
+				(ref "DS2")
+				(pin "7")
+				(pinfunction "D-Seg_{(Right)}_7")
+				(pintype "input")
+			)
+			(node
+				(ref "RN11")
+				(pin "1")
+				(pinfunction "R1_1")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "37")
+			(name "/Right Ω Digit 0 E segment")
+			(class "Default")
+			(node
+				(ref "DS2")
+				(pin "6")
+				(pinfunction "E-Seg_{(Right)}_6")
+				(pintype "input")
+			)
+			(node
+				(ref "RN11")
+				(pin "2")
+				(pinfunction "R2_2")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "38")
+			(name "/Right Ω Digit 0 F segment")
+			(class "Default")
+			(node
+				(ref "DS2")
+				(pin "14")
+				(pinfunction "F-Seg_{(Right)}_14")
+				(pintype "input")
+			)
+			(node
+				(ref "RN11")
+				(pin "3")
+				(pinfunction "R3_3")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "39")
+			(name "/Right Ω Digit 0 G segment")
+			(class "Default")
+			(node
+				(ref "DS2")
+				(pin "15")
+				(pinfunction "G-Seg_{(Right)}_15")
+				(pintype "input")
+			)
+			(node
+				(ref "RN11")
+				(pin "4")
+				(pinfunction "R4_4")
+				(pintype "passive")
+			)
+		)
+		(net
+			(code "40")
+			(name "/~{Digit Enable}")
+			(class "Default")
+			(node
+				(ref "IC14")
+				(pin "9")
+				(pinfunction "IN8_9")
+				(pintype "input")
+			)
+			(node
+				(ref "IC6")
+				(pin "9")
+				(pinfunction "IN8_9")
+				(pintype "input")
+			)
+		)
+	)
+)
