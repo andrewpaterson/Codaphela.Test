@@ -283,6 +283,21 @@ void TestIR65BackendNarrow(void)
 		"\t%a = add i8 100, 200\n"
 		"\t%s = zext i8 %a to i32\n"
 		"\tret i32 %s\n}\n"));
+	//Signed i8 and i16 comparisons at their own width, of parameters (so not folded): -1 < 1, 1 > -1, -2 <= -2,
+	//-32768 < 32767, 100 > -1 (an immediate), 127 >= -128.
+	AssertInt(111111, TestIR65Main(
+		"function i32 @_C__Fcc(i8 %a, i8 %b, i16 %c, i16 %d), local\n{\nb:\n"
+		"\t%1 = slt i8 %a, %b\n\t%2 = sgt i8 %b, %a\n\t%3 = sle i8 %a, %a\n\t%4 = slt i16 %c, %d\n"
+		"\t%5 = sgt i8 %b, -1\n\t%6 = sge i8 %b, %a\n"
+		"\t%z1 = zext i1 %1 to i32\n\t%z2 = zext i1 %2 to i32\n\t%z3 = zext i1 %3 to i32\n\t%z4 = zext i1 %4 to i32\n\t%z5 = zext i1 %5 to i32\n\t%z6 = zext i1 %6 to i32\n"
+		"\t%m1 = mul i32 %z1, 100000\n\t%m2 = mul i32 %z2, 10000\n\t%m3 = mul i32 %z3, 1000\n\t%m4 = mul i32 %z4, 100\n\t%m5 = mul i32 %z5, 10\n"
+		"\t%s1 = add i32 %m1, %m2\n\t%s2 = add i32 %s1, %m3\n\t%s3 = add i32 %s2, %m4\n\t%s4 = add i32 %s3, %m5\n\t%s5 = add i32 %s4, %z6\n"
+		"\tret i32 %s5\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%r = call i32 @_C__Fcc(i8 -1, i8 1, i16 -32768, i16 32767)\n\tret i32 %r\n}\n"));
+	AssertInt(1, TestIR65Main(
+		"function i32 @_D__Fcc(i8 %a, i8 %b), local\n{\nb:\n\t%c = sge i8 %a, %b\n\t%z = zext i1 %c to i32\n\tret i32 %z\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%r = call i32 @_D__Fcc(i8 127, i8 -128)\n\tret i32 %r\n}\n"));
+
 	//sext of an i1 is 0 or -1, and so compares below 0.
 	AssertInt(-1 * 10 + 1, TestIR65Main(
 		"function i32 @_Flag__Fi(i32 %x), local\n{\nb:\n\t%c = ne i32 %x, 0\n\t%s = sext i1 %c to i32\n\t%n = slt i1 %c, 0\n\t%z = zext i1 %n to i32\n\t%m = mul i32 %s, 10\n\t%r = add i32 %m, %z\n\tret i32 %r\n}\n\n"
@@ -307,6 +322,18 @@ void TestIR65BackendNarrow(void)
 		"\t%a = lshr i16 -8, 2\n"
 		"\t%s = zext i16 %a to i32\n"
 		"\tret i32 %s\n}\n"));
+	//A three way compare: the ne after the slt branches on the slt's flags.  -1 * 100 + 0 * 10 + 1, twice.
+	AssertInt(-99 * 2, TestIR65Main(
+		"function i32 @_Cmp__Fcc(i8 %a, i8 %b), local\n{\nx:\n\t%l = slt i8 %a, %b\n\tbrif %l, y, z\ny:\n\tret i32 -1\n"
+		"z:\n\t%g = ne i8 %a, %b\n\tbrif %g, w, v\nw:\n\tret i32 1\nv:\n\tret i32 0\n}\n\n"
+		"function i32 @_Cmp__Fii(i32 %a, i32 %b), local\n{\nx:\n\t%l = slt i32 %a, %b\n\tbrif %l, y, z\ny:\n\tret i32 -1\n"
+		"z:\n\t%g = ne i32 %b, %a\n\tbrif %g, w, v\nw:\n\tret i32 1\nv:\n\tret i32 0\n}\n\n"
+		"function i32 @_main()\n{\nb:\n"
+		"\t%1 = call i32 @_Cmp__Fcc(i8 -2, i8 2)\n\t%2 = call i32 @_Cmp__Fcc(i8 -2, i8 -2)\n\t%3 = call i32 @_Cmp__Fcc(i8 3, i8 -2)\n"
+		"\t%4 = call i32 @_Cmp__Fii(i32 1, i32 2)\n\t%5 = call i32 @_Cmp__Fii(i32 2, i32 2)\n\t%6 = call i32 @_Cmp__Fii(i32 3, i32 2)\n"
+		"\t%m1 = mul i32 %1, 100\n\t%m2 = mul i32 %2, 10\n\t%m4 = mul i32 %4, 100\n\t%m5 = mul i32 %5, 10\n"
+		"\t%s1 = add i32 %m1, %m2\n\t%s2 = add i32 %s1, %3\n\t%s3 = add i32 %s2, %m4\n\t%s4 = add i32 %s3, %m5\n\t%s5 = add i32 %s4, %6\n"
+		"\tret i32 %s5\n}\n"));
 }
 
 
