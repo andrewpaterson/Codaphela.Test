@@ -238,6 +238,27 @@ void TestKicadSchemNetlistBuses(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The names sorted and joined by spaces.
+//
+//////////////////////////////////////////////////////////////////////////
+void AppendSortedNames(CChars* psz, CArrayChars* paszNames)
+{
+	size	i;
+
+	paszNames->QuickSort();
+	for (i = 0; i < paszNames->NumElements(); i++)
+	{
+		if (i != 0)
+		{
+			psz->Append(' ');
+		}
+		psz->Append(paszNames->GetText(i));
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // The unique reference.pin of the net's pins, sorted and joined by
 // spaces.  Power symbols aren't in KiCad's netlists.
 //
@@ -268,15 +289,7 @@ void GetKicadSchemNetPinNames(CChars* psz, CKicadSchemFile* pcFile, CKicadSchemN
 			}
 		}
 	}
-	aszPins.QuickSort();
-	for (i = 0; i < aszPins.NumElements(); i++)
-	{
-		if (i != 0)
-		{
-			psz->Append(' ');
-		}
-		psz->Append(aszPins.GetText(i));
-	}
+	AppendSortedNames(psz, &aszPins);
 	aszPins.Kill();
 }
 
@@ -305,15 +318,7 @@ void GetKicadNetlistNodeNames(CChars* psz, CKicadSchemExpression* pcNet)
 			szPin.Kill();
 		}
 	}
-	aszPins.QuickSort();
-	for (i = 0; i < aszPins.NumElements(); i++)
-	{
-		if (i != 0)
-		{
-			psz->Append(' ');
-		}
-		psz->Append(aszPins.GetText(i));
-	}
+	AppendSortedNames(psz, &aszPins);
 	aszPins.Kill();
 }
 
