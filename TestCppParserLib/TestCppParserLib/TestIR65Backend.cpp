@@ -11,6 +11,9 @@
 #include "TestCPP65Context.h"
 
 
+#define TEST_IR65_STEPS		20000000		//The most steps a test program may take.
+
+
 //The generator's R_DivideSigned and R_DivideSigned64 (CCPP65Generator::AppendDivideSigned), for programs that
 //are only IR.
 const char*	gszTestIR65DivideSigned =
@@ -146,7 +149,7 @@ int64 TestIR65Run(const char* szIR, bool bFloat = false, CChars* pszAssembly = N
 	lliResult = -1;
 	if (bResult && TestCPP65BeginBuilt(&sRun, &cBuilder))
 	{
-		AssertTrue(TestCPP65Run(&sRun, 20000000) < 20000000);
+		AssertTrue(TestCPP65Run(&sRun, TEST_IR65_STEPS) < TEST_IR65_STEPS);
 		AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
 		lliResult = (int64)TestCPP65MPU(&sRun)->GetA();
 		TestCPP65End(&sRun);
@@ -322,6 +325,61 @@ void TestIR65BackendNarrow(void)
 		"\t%a = lshr i16 -8, 2\n"
 		"\t%s = zext i16 %a to i32\n"
 		"\tret i32 %s\n}\n"));
+	//x > 0 compares with 1, so it can't branch on n alone: INT_MIN > 0 is false, INT_MIN <= 0 true, 5 > 0 true, -1 > -1 false.
+	AssertInt(110, TestIR65Main(
+		"function i32 @_P__Fiii(i32 %a, i32 %b, i32 %c), local\n{\nb:\n"
+		"\t%1 = sgt i32 %a, 0\n\t%2 = sle i32 %a, 0\n\t%3 = sgt i32 %b, 0\n\t%4 = sgt i32 %c, -1\n"
+		"\t%z1 = zext i1 %1 to i32\n\t%z2 = zext i1 %2 to i32\n\t%z3 = zext i1 %3 to i32\n\t%z4 = zext i1 %4 to i32\n"
+		"\t%m1 = mul i32 %z1, 1000\n\t%m2 = mul i32 %z2, 100\n\t%m3 = mul i32 %z3, 10\n"
+		"\t%s1 = add i32 %m1, %m2\n\t%s2 = add i32 %s1, %m3\n\t%s3 = add i32 %s2, %z4\n\tret i32 %s3\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%r = call i32 @_P__Fiii(i32 -2147483648, i32 5, i32 -1)\n\tret i32 %r\n}\n"));
+
+	//Narrow x > c and x <= c compare with c + 1: 1 > 0, 0 > 0, 5 <= 5, 6 <= 5, -128 <= -1, 127 > 127 (not adjusted), -1 > -2.
+	AssertInt(1010101, TestIR65Main(
+		"function i32 @_N__Fssccccc(i16 %a, i16 %b, i8 %c, i8 %d, i8 %e, i8 %f, i8 %g), local\n{\nb:\n"
+		"\t%1 = sgt i16 %a, 0\n\t%2 = sgt i16 %b, 0\n\t%3 = sle i8 %c, 5\n\t%4 = sle i8 %d, 5\n\t%5 = sle i8 %e, -1\n\t%6 = sgt i8 %f, 127\n\t%7 = sgt i8 %g, -2\n"
+		"\t%z1 = zext i1 %1 to i32\n\t%z2 = zext i1 %2 to i32\n\t%z3 = zext i1 %3 to i32\n\t%z4 = zext i1 %4 to i32\n\t%z5 = zext i1 %5 to i32\n\t%z6 = zext i1 %6 to i32\n\t%z7 = zext i1 %7 to i32\n"
+		"\t%m1 = mul i32 %z1, 1000000\n\t%m2 = mul i32 %z2, 100000\n\t%m3 = mul i32 %z3, 10000\n\t%m4 = mul i32 %z4, 1000\n\t%m5 = mul i32 %z5, 100\n\t%m6 = mul i32 %z6, 10\n"
+		"\t%s1 = add i32 %m1, %m2\n\t%s2 = add i32 %s1, %m3\n\t%s3 = add i32 %s2, %m4\n\t%s4 = add i32 %s3, %m5\n\t%s5 = add i32 %s4, %m6\n\t%s6 = add i32 %s5, %z7\n"
+		"\tret i32 %s6\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%r = call i32 @_N__Fssccccc(i16 1, i16 0, i8 5, i8 6, i8 -128, i8 127, i8 -1)\n\tret i32 %r\n}\n"));
+
+	//A comparison with 0 of a value just copied branches on the flags the cpy set: a call's result kept in X and a load.
+	AssertInt(-3 * 100 + 2 * 10 + 1, TestIR65Main(
+		"function i32 @_F__Fi(i32 %a), local\n{\nb:\n\tret i32 %a\n}\n\n"
+		"function i32 @_G__FPi(i32 %a, ptr %p), local\n{\n"
+		"b:\n\t%r = call i32 @_F__Fi(i32 %a)\n\t%n = slt i32 %r, 0\n\tbrif %n, neg, pos\n"
+		"neg:\n\t%m = mul i32 %r, 100\n\tret i32 %m\n"
+		"pos:\n\t%v = load i32 %p\n\t%z = eq i32 %v, 0\n\tbrif %z, zero, more\n"
+		"zero:\n\tret i32 1\n"
+		"more:\n\t%w = mul i32 %v, 10\n\tret i32 %w\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%s = slot ptr 4, 4\n\tstore i32 2, %s\n\t%t = slot ptr 4, 4\n\tstore i32 0, %t\n"
+		"\t%1 = call i32 @_G__FPi(i32 -3, ptr %s)\n\t%2 = call i32 @_G__FPi(i32 5, ptr %s)\n\t%3 = call i32 @_G__FPi(i32 0, ptr %t)\n"
+		"\t%a = add i32 %1, %2\n\t%b = add i32 %a, %3\n\tret i32 %b\n}\n"));
+
+	//...and in the block only that branch goes to: a call's result is 0, below 0 or above.
+	AssertInt(0 * 100 + 1 * 10 + 2, TestIR65Main(
+		"function i32 @_F__Fi(i32 %a), local\n{\nb:\n\tret i32 %a\n}\n\n"
+		"function i32 @_S__Fi(i32 %a), local\n{\n"
+		"b:\n\t%r = call i32 @_F__Fi(i32 %a)\n\t%z = eq i32 %r, 0\n\tbrif %z, zero, nonzero\n"
+		"zero:\n\tret i32 0\n"
+		"nonzero:\n\t%n = slt i32 %r, 0\n\tbrif %n, neg, pos\n"
+		"neg:\n\tret i32 1\n"
+		"pos:\n\tret i32 2\n}\n\n"
+		"function i32 @_main()\n{\nb:\n"
+		"\t%1 = call i32 @_S__Fi(i32 0)\n\t%2 = call i32 @_S__Fi(i32 -7)\n\t%3 = call i32 @_S__Fi(i32 9)\n"
+		"\t%m1 = mul i32 %1, 100\n\t%m2 = mul i32 %2, 10\n\t%a = add i32 %m1, %m2\n\t%b = add i32 %a, %3\n\tret i32 %b\n}\n"));
+
+	//Signed compares with 0 branch on n alone: -5 < 0, 0 >= 0, 7 >= 0, -1 < 0 (i8), 0 < 0 (i8).
+	AssertInt(11110, TestIR65Main(
+		"function i32 @_Z__Fiic(i32 %a, i32 %b, i32 %c, i8 %d, i8 %e), local\n{\nb:\n"
+		"\t%1 = slt i32 %a, 0\n\t%2 = sge i32 %b, 0\n\t%3 = sge i32 %c, 0\n\t%4 = slt i8 %d, 0\n\t%5 = slt i8 %e, 0\n"
+		"\t%z1 = zext i1 %1 to i32\n\t%z2 = zext i1 %2 to i32\n\t%z3 = zext i1 %3 to i32\n\t%z4 = zext i1 %4 to i32\n\t%z5 = zext i1 %5 to i32\n"
+		"\t%m1 = mul i32 %z1, 10000\n\t%m2 = mul i32 %z2, 1000\n\t%m3 = mul i32 %z3, 100\n\t%m4 = mul i32 %z4, 10\n"
+		"\t%s1 = add i32 %m1, %m2\n\t%s2 = add i32 %s1, %m3\n\t%s3 = add i32 %s2, %m4\n\t%s4 = add i32 %s3, %z5\n"
+		"\tret i32 %s4\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%r = call i32 @_Z__Fiic(i32 -5, i32 0, i32 7, i8 -1, i8 0)\n\tret i32 %r\n}\n"));
+
 	//A three way compare: the ne after the slt branches on the slt's flags.  -1 * 100 + 0 * 10 + 1, twice.
 	AssertInt(-99 * 2, TestIR65Main(
 		"function i32 @_Cmp__Fcc(i8 %a, i8 %b), local\n{\nx:\n\t%l = slt i8 %a, %b\n\tbrif %l, y, z\ny:\n\tret i32 -1\n"
@@ -347,6 +405,38 @@ void TestIR65BackendDivide(void)
 	AssertInt(-1, TestIR65Main("function i32 @_main()\n{\nb:\n\t%a = srem i32 -7, 2\n\tret i32 %a\n}\n"));
 	AssertInt(2147483644, TestIR65Main("function i32 @_main()\n{\nb:\n\t%a = udiv i32 -7, 2\n\tret i32 %a\n}\n"));
 	AssertInt(1, TestIR65Main("function i32 @_main()\n{\nb:\n\t%a = urem i32 -7, 2\n\tret i32 %a\n}\n"));
+	//Multipliers of two bits or a run of bits are shifts: 13 * 10 + 13 * 7 + 13 * 24 + -3 * 3 + 13 * 1536 + 13 * 3 (i8, wraps to 39).
+	AssertInt(13 * 10 + 13 * 7 + 13 * 24 - 3 * 3 + 13 * 1536 + 39, TestIR65Main(
+		"function i32 @_M__Fiic(i32 %a, i32 %b, i8 %c), local\n{\nb:\n"
+		"\t%1 = mul i32 %a, 10\n\t%2 = mul i32 %a, 7\n\t%3 = mul i32 %a, 24\n\t%4 = mul i32 %b, 3\n\t%5 = mul i32 %a, 1536\n\t%6 = mul i8 %c, 3\n"
+		"\t%z = zext i8 %6 to i32\n"
+		"\t%s1 = add i32 %1, %2\n\t%s2 = add i32 %s1, %3\n\t%s3 = add i32 %s2, %4\n\t%s4 = add i32 %s3, %5\n\t%s5 = add i32 %s4, %z\n"
+		"\tret i32 %s5\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%r = call i32 @_M__Fiic(i32 13, i32 -3, i8 13)\n\tret i32 %r\n}\n"));
+
+	//A multiplier below 256 that shifts can't do is one mul step (B 8 bits wide): 1234567 * 11 + 1234567 * 255 + (13 * -3 as i8).
+	AssertInt(1234567 * 11 + 1234567 * 255 + 217, TestIR65Main(
+		"function i32 @_B__Fic(i32 %a, i8 %c), local\n{\nb:\n"
+		"\t%1 = mul i32 %a, 11\n\t%2 = mul i32 %a, 255\n\t%3 = mul i8 %c, -3\n\t%z = zext i8 %3 to i32\n"
+		"\t%s1 = add i32 %1, %2\n\t%s2 = add i32 %s1, %z\n\tret i32 %s2\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%r = call i32 @_B__Fic(i32 1234567, i8 13)\n\tret i32 %r\n}\n"));
+
+	//A narrow load only a sext uses is sign extended as it is read: -2 (i8) and -300 (i16), and an i8 sext to i16 (kept zero extended).
+	AssertInt(-2 - 300 + 65534, TestIR65Main(
+		"function i32 @_main()\n{\nb:\n"
+		"\t%p = slot ptr 4, 4\n\tstore i32 -300, %p\n\t%q = slot ptr 4, 4\n\tstore i32 -2, %q\n"
+		"\t%1 = load i8 %q\n\t%2 = sext i8 %1 to i32\n\t%3 = load i16 %p\n\t%4 = sext i16 %3 to i32\n"
+		"\t%5 = load i8 %q\n\t%6 = sext i8 %5 to i16\n\t%7 = zext i16 %6 to i32\n"
+		"\t%s = add i32 %2, %4\n\t%t = add i32 %s, %7\n\tret i32 %t\n}\n"));
+
+	//udiv and urem of the same operands share a div, with an instruction between them, in either order: 1234 / 10 * 1000 + 1234 % 10 and
+	//1234 % 100 * 1000 + 1234 / 100.
+	AssertInt(123 * 1000 + 4 + 34 * 1000 + 12, TestIR65Main(
+		"function i32 @_D__Fjj(i32 %a, i32 %b, i32 %c), local\n{\nb:\n"
+		"\t%q = udiv i32 %a, %b\n\t%m = mul i32 %q, 1000\n\t%r = urem i32 %a, %b\n\t%s = add i32 %m, %r\n"
+		"\t%r2 = urem i32 %a, %c\n\t%m2 = mul i32 %r2, 1000\n\t%q2 = udiv i32 %a, %c\n\t%s2 = add i32 %m2, %q2\n"
+		"\t%t = add i32 %s, %s2\n\tret i32 %t\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%r = call i32 @_D__Fjj(i32 1234, i32 10, i32 100)\n\tret i32 %r\n}\n"));
 	AssertInt(-14, TestIR65Main(
 		"function i32 @_main()\n{\nb:\n"
 		"\t%a = sdiv i8 -100, 7\n"
@@ -747,6 +837,26 @@ void TestIR65BackendAllocation(void)
 		"\t%v = call i64 @_Seven__F()\n"
 		"\t%r = add i64 %s2, %v\n"
 		"\tret i64 %r\n}\n"));
+	//A string compare's pointers are only addresses and steps, so the bytes get X and Y and the pointers are read through
+	//([[n + W]]): "abc" against "abd" is -1.
+	szAssembly.Init();
+	AssertLong(-1, (int32)TestIR65Run(
+		"function i32 @_Compare__FPcPc(ptr %a, ptr %b), local\n{\n"
+		"entry:\n\tjmp loop\n"
+		"loop:\n"
+		"\t%p = phi ptr [entry, %a], [next, %p2]\n"
+		"\t%q = phi ptr [entry, %b], [next, %q2]\n"
+		"\t%p2 = ptradd ptr %p, 1\n\t%x = load i8 %p\n\t%q2 = ptradd ptr %q, 1\n\t%y = load i8 %q\n"
+		"\t%z = eq i8 %x, 0\n\tbrif %z, done, next\n"
+		"next:\n\t%e = eq i8 %x, %y\n\tbrif %e, loop, done\n"
+		"done:\n\t%l = slt i8 %x, %y\n\tbrif %l, less, more\n"
+		"less:\n\tret i32 -1\n"
+		"more:\n\t%g = sgt i8 %x, %y\n\t%r = zext i1 %g to i32\n\tret i32 %r\n}\n\n"
+		"function i32 @_main()\n{\nb:\n"
+		"\t%s = slot ptr 4, 4\n\tstore i32 6513249, %s\n\t%t = slot ptr 4, 4\n\tstore i32 6578785, %t\n"
+		"\t%r = call i32 @_Compare__FPcPc(ptr %s, ptr %t)\n\tret i32 %r\n}\n", false, &szAssembly));
+	AssertTrue(szAssembly.Contains("cpy X, [[") && szAssembly.Contains("cpy Y, [["));
+	szAssembly.Kill();
 }
 
 

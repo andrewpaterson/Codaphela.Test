@@ -13,7 +13,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // Runs szSource with the generator writing function bodies as IR, and
-// checks puiWritten of its functions were (if not NULL).
+// checks uiWritten of its functions were (not for a float result).
 //
 //////////////////////////////////////////////////////////////////////////
 int32 TestCPP65IRMain(const char* szSource, size uiWritten, bool bFloat = false)
@@ -137,7 +137,7 @@ void TestCPP65IRCalls(void)
 	AssertInt(12 + 3, TestCPP65IRMain(
 		"int Double(int x) { return x + x; }\n"
 		"int Apply(int (*f)(int), int x) { return f(x); }\n"
-		"int main() { int (*p)(int) = &Double; return Apply(p, 6) + p(1) + 1; }", 2));
+		"int main() { int (*p)(int) = &Double; return Apply(p, 6) + p(1) + 1; }", 3));
 	AssertInt(15, TestCPP65IRMain(
 		"float Scale(float x, float s) { return x * s; }\n"
 		"int main() { float a = 1.5f + 2.25f; double d = Scale(a, 4.0f); return (int)d; }", 0, true));
@@ -250,6 +250,70 @@ void TestCPP65IRConstructors(void)
 		"int main() { CShape* p = new CSquare(); int s = p->Sides(); delete p; CShape* q = 0; delete q; return LogValue() * 10 + s; }");
 	AssertInt(13424, TestCPP65IRMain(sz.Text(), 11));
 	sz.Kill();
+
+	//Temporaries that need destroying go at the end of their full expression, last made first (+ works out its right
+	//operand first); an object's operator+= is its member function.
+	sz.Init(szLog);
+	sz.Append(
+		"struct CTemp { int miId; CTemp(int i) { miId = i; Log(i); } ~CTemp() { Log(miId + 5); } int Get() { return miId; } CTemp& operator+=(int i) { miId += i; return *this; } };\n"
+		"CTemp Make(int i) { return CTemp(i); }\n"
+		"int main() { int a = Make(1).Get() + Make(2).Get(); int r; { CTemp t(3); t += 1; r = t.Get(); } int b = CTemp(1).Get(); if ((a != 3) || (r != 4) || (b != 1)) return -1; return LogValue(); }");
+	AssertInt(21673916, TestCPP65IRMain(sz.Text(), 8));
+	sz.Kill();
+
+	//Pointers to members: a member function (called on an object and through a pointer, a base's from a derived object,
+	//a virtual one through the vtable's thunk) and a field's offset kept in locals.
+	AssertInt(21 + 12 + 5 + 9, TestCPP65IRMain(
+		"struct CBase { int miPad; int Base(int i) { return i + 1; } };\n"
+		"struct CCalc : CBase { int miValue; int Add(int i) { return miValue + i; } virtual int Get() { return 9; } };\n"
+		"int main() { CCalc c; c.miValue = 20; CCalc* p = &c; int (CCalc::*f)(int) = &CCalc::Add; int (CBase::*b)(int) = &CBase::Base;\n"
+		"int (CCalc::*g)() = &CCalc::Get; int CCalc::*m = &CCalc::miValue; int r = (c.*f)(1); c.*m = 11; return r + (p->*f)(1) + (c.*b)(4) + (p->*g)(); }", 4));
+
+	//A member pointer from 0 is null and false; == compares them; a base's field is the derived class's (its offset added).
+	AssertInt(1 + 20 + 3, TestCPP65IRMain(
+		"struct CBase { int miPad; int miBase; };\n"
+		"struct CMore { int miMore; };\n"
+		"struct CBoth : CMore, CBase { int miValue; int Get() { return 3; } };\n"
+		"int main() { int (CBoth::*h)() = 0; if (h) return -1; h = &CBoth::Get; if (!(h == &CBoth::Get) || (h != &CBoth::Get) || !h) return -2;\n"
+		"int CBase::*b = &CBase::miBase; int CBoth::*d = b; CBoth o; o.miBase = 20; o.miValue = 1; int CBoth::*v = &CBoth::miValue; return (o.*v) + (o.*d) + (o.*h)(); }", 2));
+
+	//A function's name, &f and a static member's name are its address; a cast picks one of an overload.
+	AssertInt(3 + 20 + 100 + 7, TestCPP65IRMain(
+		"int Three() { return 3; }\n"
+		"int Seven(int i) { return 7; } int Seven(char c) { return 8; }\n"
+		"struct CMath { static int Twice(int i) { return i * 2; } int Use() { int (*f)(int) = Twice; return f(10); } };\n"
+		"int Apply(int (*f)(int), int i) { return f(i); }\n"
+		"int main() { int (*a)() = Three; int (*b)(int) = &CMath::Twice; CMath m; int (*c)(int) = (int (*)(int))&Seven;\n"
+		"return a() + m.Use() + Apply(b, 50) + c(1); }", 7));
+
+	//Calls through a table of function pointers, *pf and a function a call returns; a field that is an array of objects.
+	AssertInt(2 + 30 + 4 + 50, TestCPP65IRMain(
+		"int Two(int i) { return 2; } int Times(int i) { return i * 10; }\n"
+		"typedef int (*FInt)(int);\n"
+		"FInt gaf[2] = { Two, Times };\n"
+		"FInt Pick(int i) { return gaf[i]; }\n"
+		"struct CCell { int miValue; }; struct CRow { int miCount; CCell macCells[3]; };\n"
+		"int main() { FInt pf = Times; CRow r; r.macCells[2].miValue = 50; return gaf[0](9) + (*pf)(3) + Pick(0)(1) * 2 + r.macCells[2].miValue; }", 4));
+
+	//f(args...) passes the pack's elements; object.pf() and pf() in a member call through a field.
+	AssertInt(321 + 8 + 12, TestCPP65IRMain(
+		"int Add3(int a, int b, int c) { return a + b * 10 + c * 100; }\n"
+		"template<typename... T> int Forward(T... args) { return Add3(args...); }\n"
+		"int Twice(int i) { return i * 2; }\n"
+		"struct CHolder { int (*mpf)(int); int Use() { return mpf(6); } };\n"
+		"int main() { CHolder h; h.mpf = Twice; return Forward(1, 2, 3) + h.mpf(4) + h.Use(); }", 5));
+
+	//memcpy of a small constant count is loads and stores (7 bytes: 4, 2 and 1); it returns Dest.
+	AssertInt(0x07060504 + 0x0302 + 0x01 + 1, TestCPP65IRMain(
+		"void* memcpy(void* pvDest, const void* pvSource, unsigned int uiCount);\n"
+		"int main() { unsigned char ac[8] = { 4, 5, 6, 7, 2, 3, 1, 9 }; unsigned char ad[8] = { 0, 0, 0, 0, 0, 0, 0, 0 }; void* p = memcpy(ad, ac, 7);\n"
+		"return *(int*)ad + ad[4] + ad[5] * 256 + ad[6] + ad[7] + (p == ad); }", 1));
+
+	//An object's operator-> gives the pointer for a call and for a field.
+	AssertInt(42 + 7, TestCPP65IRMain(
+		"struct CThing { int miValue; int Twice() { return miValue * 2; } };\n"
+		"struct CHandle { CThing* mp; CThing* operator->() { return mp; } };\n"
+		"int main() { CThing t; t.miValue = 21; CHandle h; h.mp = &t; int r = h->Twice(); h->miValue = 7; return r + t.miValue; }", 3));
 
 	//Placement new makes the object at the address given.
 	AssertInt(9 + 30, TestCPP65IRMain(

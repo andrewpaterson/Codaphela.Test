@@ -123,6 +123,9 @@ public:
 
 
 void TestSingleStepRecordCycle(CW65CMeta* pcMPU, CTestSingleStepContext* pcContext, uint8 uiSignals, bool bEnabled);
+void TestSingleStepReadState(CSingleStepReader* pcReader, SSingleStepState* psState);
+void TestSingleStepAppendHex(CChars* psz, uint32 uiValue, int iDigits);
+bool TestSingleStepCompareRegister(CChars* pszError, char* szName, uint32 uiExpected, uint32 uiActual, int iDigits);
 void TestSingleStepFile(CSingleStepProcessor* pcProcessor, char* szDirectory, char* szName, uint8 uiOpcode);
 
 
