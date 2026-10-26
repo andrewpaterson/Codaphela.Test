@@ -11,6 +11,8 @@
 #include "MicroprocessorLib/Trace.h"
 #include "MicroprocessorLib/Event.h"
 #include "MicroprocessorLib/Timeline.h"
+#include "MicroprocessorLib/LogicPort.h"
+#include "LogicimLib/ClockView.h"
 #include "LogicimLib/BufferView.h"
 #include "LogicimLib/InverterPackageView.h"
 #include "LogicimLib/PowerSourceView.h"
@@ -1164,8 +1166,9 @@ static void PointAtPixel(SEditorTest* psTest, CCircuitViewport* pcViewport, int3
 //////////////////////////////////////////////////////////////////////////
 //
 // The editor painted through the viewport into an image as the circuit
-// canvas paints it (see CCircuitPainter::InitImage), and the box around the pixels of its hover colour that
-// aren't blended with anything.  False if there are none.
+// canvas paints it (see CCircuitPainter::InitImage), and the box around
+// the pixels of its hover colour that aren't blended with anything.  False
+// if there are none.
 //
 //////////////////////////////////////////////////////////////////////////
 static bool GetPaintedHoverBox(CCircuitEditor* pcEditor, CCircuitViewport* pcViewport, CCircuitColours* pcColours, SInt32Vec2* psMinimum, SInt32Vec2* psMaximum)
@@ -1289,6 +1292,299 @@ void TestCircuitEditorPortHover(void)
 
 	cViewport.Kill();
 	cColours.Kill();
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The pointer aimed at a point in grid space on a canvas showing the
+// circuit through the viewport: the pixel nearest it, as the canvas passes
+// it to the editor.
+//
+//////////////////////////////////////////////////////////////////////////
+static SFloat64Vec2 AimAt(CCircuitViewport* pcViewport, float64 x, float64 y)
+{
+	SFloat64Vec2	sGrid;
+	SFloat64Vec2	sScreen;
+
+	sGrid.Init(x, y);
+	pcViewport->GridToScreen(&sScreen, &sGrid);
+	sScreen.Init(floor(sScreen.x + 0.5), floor(sScreen.y + 0.5));
+	pcViewport->ScreenToGrid(&sGrid, &sScreen);
+	return sGrid;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+static void MoveOnCanvas(CCircuitEditor* pcEditor, CCircuitViewport* pcViewport, float64 x, float64 y)
+{
+	pcEditor->PointerMoved(AimAt(pcViewport, x, y));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+static void PressOnCanvas(CCircuitEditor* pcEditor, CCircuitViewport* pcViewport, float64 x, float64 y)
+{
+	MoveOnCanvas(pcEditor, pcViewport, x, y);
+	pcEditor->ButtonPressed(AimAt(pcViewport, x, y));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+static void ReleaseOnCanvas(CCircuitEditor* pcEditor, CCircuitViewport* pcViewport, float64 x, float64 y)
+{
+	MoveOnCanvas(pcEditor, pcViewport, x, y);
+	pcEditor->ButtonReleased(AimAt(pcViewport, x, y));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A drag through each of the points in turn, as a wire is drawn: pressed
+// on the first, released on the last.
+//
+//////////////////////////////////////////////////////////////////////////
+static void DragOnCanvas(CCircuitEditor* pcEditor, CCircuitViewport* pcViewport, SInt32Vec2* asPoints, size uiNumPoints)
+{
+	size	i;
+
+	PressOnCanvas(pcEditor, pcViewport, asPoints[0].x, asPoints[0].y);
+	for (i = 1; i < uiNumPoints; i++)
+	{
+		MoveOnCanvas(pcEditor, pcViewport, asPoints[i].x, asPoints[i].y);
+	}
+	ReleaseOnCanvas(pcEditor, pcViewport, asPoints[uiNumPoints - 1].x, asPoints[uiNumPoints - 1].y);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Placed as from the component chooser: the pointer on the canvas at the
+// grid point, the component picked, and a click to put it down.
+//
+//////////////////////////////////////////////////////////////////////////
+static CComponentView* PlaceOnCanvas(CCircuitEditor* pcEditor, CCircuitViewport* pcViewport, const char* szXMLName, int32 x, int32 y)
+{
+	CCircuitView*	pcCircuit;
+
+	pcCircuit = pcEditor->GetCircuit();
+	MoveOnCanvas(pcEditor, pcViewport, x, y);
+	AssertTrue(pcEditor->StartPlaceComponent(szXMLName));
+	PressOnCanvas(pcEditor, pcViewport, x, y);
+	ReleaseOnCanvas(pcEditor, pcViewport, x, y);
+	AssertFalse(pcEditor->IsEditing());
+	return pcCircuit->GetComponent(pcCircuit->NumComponents() - 1);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The simulation running on, as the tester's tick runs it; it can't while
+// an edit is in progress.
+//
+//////////////////////////////////////////////////////////////////////////
+static void RunOnCanvas(CCircuitEditor* pcEditor, int64 iTimeForward)
+{
+	AssertTrue(pcEditor->CanRun());
+	pcEditor->GetSimulation()->RunToTime(iTimeForward);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The simulated port of a component's port view.
+//
+//////////////////////////////////////////////////////////////////////////
+static CLogicPort* GetSimulatedPort(CCircuitEditor* pcEditor, CComponentView* pcComponent, const char* szPortName)
+{
+	CPortView*	pcPortView;
+	CPort*		pcPort;
+
+	pcPortView = pcComponent->GetPortView(szPortName);
+	AssertNotNull(pcPortView);
+	AssertSize(1, pcPortView->NumPorts(pcEditor->GetViewPath(), pcEditor->GetSimulation()));
+	pcPort = pcPortView->GetPort(pcEditor->GetViewPath(), pcEditor->GetSimulation(), 0);
+	AssertTrue(pcPort->IsLogicPort());
+	return (CLogicPort*)pcPort;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The rising edges of the voltage a port drives, sampled: their number and
+// the average time between them.
+//
+//////////////////////////////////////////////////////////////////////////
+struct SRisingEdges
+{
+	CLogicPort*	pcPort;
+	bool		bHigh;
+	size		uiRises;
+	int64		iFirstRise;
+	int64		iLastRise;
+
+	void Init(CLogicPort* pcLogicPort, int64 iTime)
+	{
+		pcPort = pcLogicPort;
+		bHigh = IsHigh(iTime);
+		uiRises = 0;
+		iFirstRise = 0;
+		iLastRise = 0;
+	}
+
+	//NaN, when the port doesn't drive, isn't high.
+	bool IsHigh(int64 iTime)
+	{
+		return pcPort->GetVoltageOut(iTime) > pcPort->GetVCC(iTime) / 2;
+	}
+
+	void Sample(int64 iTime)
+	{
+		bool	bNowHigh;
+
+		bNowHigh = IsHigh(iTime);
+		if (bNowHigh && !bHigh)
+		{
+			if (uiRises == 0)
+			{
+				iFirstRise = iTime;
+			}
+			iLastRise = iTime;
+			uiRises++;
+		}
+		bHigh = bNowHigh;
+	}
+
+	int64 GetPeriod(void)
+	{
+		return (uiRises < 2) ? 0 : (iLastRise - iFirstRise) / (int64)(uiRises - 1);
+	}
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Drawn on the canvas, zoomed in: a D flip flop is placed and a clock
+// beside it, and a wire is dragged from the clock's output to the flip
+// flop's clock input.  The simulation runs a while and is paused, and a
+// wire drawn round it clear of its box, from the flip flop's inverted
+// output out, down, under it, up its left side and into its D input (as
+// three drags, each from the end of the last), feeds it back.  Both wires
+// join their ports in the simulation, and once it runs again Q toggles on
+// every rising clock, at half the clock's frequency.  It starts by
+// itself, as the flip flop drives Q and QB from when it's made.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorDrawClockDivider(void)
+{
+	SEditorTest			sTest;
+	CCircuitEditor*		pcEditor;
+	CCircuitViewport	cViewport;
+	CComponentView*		pcFlipFlop;
+	CComponentView*		pcClock;
+	CLogicPort*			pcClockOut;
+	CLogicPort*			pcClockIn;
+	CLogicPort*			pcData;
+	CLogicPort*			pcInverted;
+	CLogicPort*			pcQ;
+	SInt32Vec2			sClockOut;
+	SInt32Vec2			sClockIn;
+	SInt32Vec2			sData;
+	SInt32Vec2			sInverted;
+	SInt32Vec2			asClockWire[3];
+	SInt32Vec2			asOutAndDown[3];
+	SInt32Vec2			asUnderAndUp[3];
+	SInt32Vec2			asIn[2];
+	SFloat64Vec2		sMinimum;
+	SFloat64Vec2		sMaximum;
+	SRisingEdges		sClockEdges;
+	SRisingEdges		sQEdges;
+	int64				iClockPeriod;
+	int64				iStep;
+	int64				iTime;
+	int32				iLeft;
+	int32				iRight;
+	int32				iBottom;
+
+	sTest.Init();
+	pcEditor = &sTest.cEditor;
+	pcEditor->AddCircuit("Main");
+	AssertTrue(pcEditor->Simulate("Main"));
+	cViewport.Init(801, 601);
+	cViewport.SetZoom(4);
+
+	pcFlipFlop = PlaceOnCanvas(pcEditor, &cViewport, "DTypeFlipFlop", 0, 0);
+	sClockIn = pcFlipFlop->GetPortView("CP")->GetGridPosition();
+	sData = pcFlipFlop->GetPortView("D")->GetGridPosition();
+	sInverted = pcFlipFlop->GetPortView("QB")->GetGridPosition();
+	pcClock = PlaceOnCanvas(pcEditor, &cViewport, "Clock", sClockIn.x - 5, sClockIn.y);
+	sClockOut = pcClock->GetPortView("Output")->GetGridPosition();
+	AssertInt(sClockIn.y, sClockOut.y);
+	iClockPeriod = (int64)(1024.0 * 1000000000.0 / ((CClockView*)pcClock)->GetFrequency());
+
+	asClockWire[0] = sClockOut;
+	asClockWire[1].Init((sClockOut.x + sClockIn.x) / 2, sClockOut.y);
+	asClockWire[2] = sClockIn;
+	DragOnCanvas(pcEditor, &cViewport, asClockWire, 3);
+
+	RunOnCanvas(pcEditor, iClockPeriod * 5);
+
+	//Paused: from the inverted output out, down, under the flip flop, up past its left side and into D, two grid
+	//units clear of its box all the way round.
+	AssertTrue(pcFlipFlop->GetBoundingBox(&sMinimum, &sMaximum));
+	iLeft = (int32)floor(sMinimum.x) - 2;
+	iRight = (int32)ceil(sMaximum.x) + 2;
+	iBottom = (int32)ceil(sMaximum.y) + 2;
+	asOutAndDown[0] = sInverted;
+	asOutAndDown[1].Init(iRight, sInverted.y);
+	asOutAndDown[2].Init(iRight, iBottom);
+	DragOnCanvas(pcEditor, &cViewport, asOutAndDown, 3);
+	asUnderAndUp[0] = asOutAndDown[2];
+	asUnderAndUp[1].Init(iLeft, iBottom);
+	asUnderAndUp[2].Init(iLeft, sData.y);
+	DragOnCanvas(pcEditor, &cViewport, asUnderAndUp, 3);
+	asIn[0] = asUnderAndUp[2];
+	asIn[1] = sData;
+	DragOnCanvas(pcEditor, &cViewport, asIn, 2);
+
+	pcClockOut = GetSimulatedPort(pcEditor, pcClock, "Output");
+	pcClockIn = GetSimulatedPort(pcEditor, pcFlipFlop, "CP");
+	pcInverted = GetSimulatedPort(pcEditor, pcFlipFlop, "QB");
+	pcData = GetSimulatedPort(pcEditor, pcFlipFlop, "D");
+	pcQ = GetSimulatedPort(pcEditor, pcFlipFlop, "Q");
+	AssertNotNull(pcClockIn->GetTrace());
+	AssertPointer(pcClockOut->GetTrace(), pcClockIn->GetTrace());
+	AssertNotNull(pcData->GetTrace());
+	AssertPointer(pcInverted->GetTrace(), pcData->GetTrace());
+	AssertFalse(pcClockIn->GetTrace() == pcData->GetTrace());
+
+	//Running again, sampled at a hundredth of the clock's period.
+	iStep = iClockPeriod / 100;
+	iTime = pcEditor->GetSimulation()->GetTime();
+	sClockEdges.Init(pcClockOut, iTime);
+	sQEdges.Init(pcQ, iTime);
+	for (iTime = 0; iTime < iClockPeriod * 20; iTime += iStep)
+	{
+		RunOnCanvas(pcEditor, iStep);
+		sClockEdges.Sample(pcEditor->GetSimulation()->GetTime());
+		sQEdges.Sample(pcEditor->GetSimulation()->GetTime());
+	}
+	AssertTrue(sClockEdges.uiRises >= 19);
+	AssertTrue(sQEdges.uiRises >= 9);
+	AssertTrue(llabs(sClockEdges.GetPeriod() - iClockPeriod) <= iStep);
+	AssertTrue(llabs(sQEdges.GetPeriod() - 2 * iClockPeriod) <= iStep);
+
+	cViewport.Kill();
 	sTest.Kill();
 }
 
@@ -1531,6 +1827,7 @@ void TestCircuitEditor(void)
 
 	TestCircuitEditorSelection();
 	TestCircuitEditorPortHover();
+	TestCircuitEditorDrawClockDivider();
 	TestCircuitEditorPlace();
 	TestCircuitEditorMove();
 	TestCircuitEditorMoveFromJunction();

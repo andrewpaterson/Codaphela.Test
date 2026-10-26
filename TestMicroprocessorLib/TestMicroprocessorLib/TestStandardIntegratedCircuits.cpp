@@ -932,8 +932,9 @@ void TestStandardDFlipFlop(void)
 	cBoard.Start();
 	cBoard.Run();
 
-	//Q and QB are not driven until the state first changes.
-	AssertInt(TV_Undriven, cBoard.Value(pcQ));
+	//Q and QB are driven from the low state it starts in.
+	AssertInt(TV_Low, cBoard.Value(pcQ));
+	AssertInt(TV_High, cBoard.Value(pcQB));
 	AssertFalse(pcFlipFlop->GetState());
 
 	//Rising clock takes D.
@@ -983,8 +984,8 @@ void TestStandardDFlipFlop(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Pulses the active low set and then reset of the flip-flops so their
-// outputs are driven, and low.
+// Pulses the active low set and then reset of the flip-flops, which
+// leaves them all low however they started.
 //
 //////////////////////////////////////////////////////////////////////////
 void PowerOnReset(CTestBoard* pcBoard, CConstant* pcSet, CConstant* pcReset)
@@ -1119,6 +1120,13 @@ void TestStandardCounter(void)
 	pcPins->GetTerminalOutput()->Connect(apcCount[4]);
 	pcProbe = cBoard.Probe(apcCount, 5);
 	cBoard.Start();
+
+	//Before the first rising clock the count and terminal count are driven from the zero it starts at.
+	cBoard.mpcTimeline->RunToTime(NanosecondsToTime((int64)10));
+	for (i = 0; i < 5; i++)
+	{
+		AssertInt(TV_Low, cBoard.Value(apcCount[i]));
+	}
 
 	//Counts 1 to 9 then wraps; terminal count (bit 4) is high at 9.
 	uiFailures = 0;
