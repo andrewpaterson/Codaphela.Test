@@ -5,6 +5,8 @@
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/XMLWriter.h"
 #include "BaseLib/Logger.h"
+#include "BaseLib/MemoryFile.h"
+#include "BaseLib/StringHelper.h"
 #include "StandardLib/Objects.h"
 #include "MicroprocessorLib/CircuitSimulation.h"
 #include "MicroprocessorLib/FamilyVoltageConfigurationStore.h"
@@ -21,6 +23,8 @@
 #include "TestLogicimRender.h"
 #include "LogicimLib/SubcircuitInstanceView.h"
 #include "LogicimLib/CircuitEditor.h"
+#include "LogicimLib/UndoStack.h"
+#include "BaseLib/ArrayElementNotFound.h"
 #include "LogicimLib/ComponentLibraries.h"
 #include "LogicimLib/ComponentProperties.h"
 #include "LogicimLib/Radix.h"
@@ -1748,11 +1752,58 @@ void TestCircuitEditorPropertiesListed(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// What's logged until StopLogCapture is kept as well as written to the
+// log as usual.
+//
+//////////////////////////////////////////////////////////////////////////
+static void StartLogCapture(CMemoryFile* pcCapture)
+{
+	pcCapture->Init();
+	gcLogger.AddOutput(pcCapture);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+static void StopLogCapture(CMemoryFile* pcCapture, CChars* pszLogged)
+{
+	gcLogger.RemoveOutput(pcCapture);
+	pszLogged->Init();
+	pszLogged->Append((char*)pcCapture->GetBufferPointer(), (size)pcCapture->Size());
+	pcCapture->Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The number of times szText is in szLogged.
+//
+//////////////////////////////////////////////////////////////////////////
+static size CountLogged(CChars* pszLogged, const char* szText)
+{
+	size	uiCount;
+	char*	sz;
+
+	uiCount = 0;
+	sz = strstr(pszLogged->Text(), szText);
+	while (sz != NULL)
+	{
+		uiCount++;
+		sz = strstr(sz + strlen(szText), szText);
+	}
+	return uiCount;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Editing a wired inverter's properties keeps it wired and selected: given
 // a new name and a width out of range, which is clamped (and can't be
-// wired), then its width back, it still drives its output, and the
-// circuit's components and traces don't pile up; turned, it stays where
-// it is.
+// wired, which is logged as the one error), then its width back, it still
+// drives its output with nothing logged, and the circuit's components
+// and traces don't pile up; turned, it stays where it is.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCircuitEditorPropertiesEdited(void)
@@ -1767,6 +1818,8 @@ void TestCircuitEditorPropertiesEdited(void)
 	size					uiIntegratedCircuits;
 	size					uiTraces;
 	SLogConfig				sLogConfig;
+	CMemoryFile				cCapture;
+	CChars					szLogged;
 
 	sTest.Init();
 	pcMain = sTest.cEditor.AddCircuit("Main");
@@ -1788,9 +1841,14 @@ void TestCircuitEditorPropertiesEdited(void)
 	AssertTrue(cProperties.SetValue("inputWidth", "100"));
 	gcLogger.GetConfig(&sLogConfig);
 	gcLogger.SetSilent();
+	StartLogCapture(&cCapture);
 	pcNew = sTest.cEditor.SetProperties(pcInverter, &cProperties, ROT_East);
+	StopLogCapture(&cCapture, &szLogged);
 	gcLogger.SetConfig(&sLogConfig);
 	cProperties.Kill();
+	AssertSize(1, CountLogged(&szLogged, "ERROR: "));
+	AssertSize(1, CountLogged(&szLogged, "Ports of different widths are connected at [-4, -2]."));
+	szLogged.Kill();
 	AssertNotNull(pcNew);
 	AssertString("U1", pcNew->GetName());
 	AssertInt(RADIX_MAX_BIT_WIDTH, ((CInverterView*)pcNew)->GetInputWidth());
@@ -1799,8 +1857,12 @@ void TestCircuitEditorPropertiesEdited(void)
 	cProperties.Init();
 	sTest.cEditor.GetProperties(pcNew, &cProperties);
 	AssertTrue(cProperties.SetValue("inputWidth", "1"));
+	StartLogCapture(&cCapture);
 	pcNew = sTest.cEditor.SetProperties(pcNew, &cProperties, ROT_East);
+	StopLogCapture(&cCapture, &szLogged);
 	cProperties.Kill();
+	AssertSize(0, szLogged.Length());
+	szLogged.Kill();
 	sTest.Run();
 	AssertInt(TV_High, sTest.GetLevel(3, -2));
 	AssertSize(uiIntegratedCircuits, pcCircuit->NumIntegratedCircuits());
@@ -1814,6 +1876,783 @@ void TestCircuitEditorPropertiesEdited(void)
 	AssertInt(-3, pcNew->GetPosition().x);
 	AssertInt(-2, pcNew->GetPosition().y);
 
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The stack from the editor's undo plan: the start, edit A, a selection,
+// edit B and two selections.  Undo goes back to before the last edit,
+// redo forward to after the next one (or to the end), and stepping one
+// snapshot at a time.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorUndoStack(void)
+{
+	CUndoStack	cStack;
+
+	cStack.Init();
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, cStack.FindUndo(false));
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, cStack.FindRedo(false));
+	cStack.Push((char*)"start", false);
+	cStack.Push((char*)"A", false);
+	cStack.Push((char*)"select", true);
+	cStack.Push((char*)"B", false);
+	cStack.Push((char*)"select again", true);
+	cStack.Push((char*)"select once more", true);
+	AssertSize(6, cStack.NumSnapshots());
+	AssertSize(5, cStack.GetCurrent());
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, cStack.FindRedo(false));
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, cStack.FindRedo(true));
+
+	AssertSize(2, cStack.FindUndo(false));
+	AssertSize(4, cStack.FindUndo(true));
+	cStack.MoveTo(2);
+	AssertSize(0, cStack.FindUndo(false));
+	AssertSize(3, cStack.FindRedo(false));
+	AssertSize(3, cStack.FindRedo(true));
+	cStack.MoveTo(0);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, cStack.FindUndo(false));
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, cStack.FindUndo(true));
+	AssertSize(1, cStack.FindRedo(false));
+	cStack.MoveTo(3);
+	AssertSize(5, cStack.FindRedo(false));
+	AssertSize(4, cStack.FindRedo(true));
+
+	//Only selections after the start: undo has nothing to go back before.
+	cStack.MoveTo(2);
+	cStack.Push((char*)"C", false);
+	AssertSize(4, cStack.NumSnapshots());
+	AssertSize(3, cStack.GetCurrent());
+	AssertString("C", cStack.Get(3));
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, cStack.FindRedo(false));
+	cStack.Kill();
+
+	cStack.Init(3);
+	cStack.Push((char*)"start", false);
+	cStack.Push((char*)"select", true);
+	AssertSize(ARRAY_ELEMENT_NOT_FOUND, cStack.FindUndo(false));
+	AssertSize(0, cStack.FindUndo(true));
+	cStack.Push((char*)"a", false);
+	cStack.Push((char*)"b", false);
+	AssertSize(3, cStack.NumSnapshots());
+	AssertSize(2, cStack.GetCurrent());
+	AssertString("select", cStack.Get(0));
+	AssertString("b", cStack.Get(2));
+	cStack.Clear();
+	AssertSize(0, cStack.NumSnapshots());
+	cStack.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+static void SaveEditorText(CCircuitEditor* pcEditor, CChars* pszText)
+{
+	CXMLWriter	cWriter;
+
+	cWriter.Init();
+	pcEditor->SaveXML(&cWriter);
+	pszText->Init(cWriter.GetText());
+	cWriter.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The project, simulation and all, is as it was saved in szExpected.
+//
+//////////////////////////////////////////////////////////////////////////
+static void AssertEditorText(CChars* pszExpected, CCircuitEditor* pcEditor)
+{
+	CChars	szText;
+
+	SaveEditorText(pcEditor, &szText);
+	AssertString(pszExpected->Text(), szText.Text());
+	szText.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Placing an inverter, selecting it and deleting it.  Undo goes back to
+// before the delete, with it selected, then to before the placement,
+// past the selection; redo goes forward to after the placement, then
+// past the selection to after the delete; stepping goes through the
+// selection.  A change after undoing drops what could be redone, turning
+// is undone with the placement rotation, and an edit in progress is
+// discarded.  The views are made again by each undo, so they're looked up
+// afresh.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorUndo(void)
+{
+	SEditorTest			sTest;
+	CCircuitEditor*		pcEditor;
+	CCircuitView*		pcMain;
+	CUndoStack*			pcUndo;
+	CChars				szStart;
+	CChars				szPlaced;
+	CChars				szSelected;
+	CChars				szDeleted;
+	SFloat64Vec2		sCentre;
+
+	sTest.Init();
+	pcEditor = &sTest.cEditor;
+	pcUndo = pcEditor->GetUndoStack();
+	pcMain = pcEditor->AddCircuit("Main");
+	AddGroundAndOutput(pcMain);
+	AssertSize(0, pcUndo->NumSnapshots());
+	AssertTrue(pcEditor->Simulate("Main"));
+	AssertSize(1, pcUndo->NumSnapshots());
+	AssertTrue(pcEditor->Simulate("Main"));
+	AssertSize(1, pcUndo->NumSnapshots());
+	AssertFalse(pcEditor->CanUndo());
+	AssertFalse(pcEditor->CanUndo(true));
+	AssertFalse(pcEditor->CanRedo());
+	SaveEditorText(pcEditor, &szStart);
+
+	sTest.PointAt(-2.9, -2.2);
+	AssertTrue(pcEditor->StartPlaceComponent("Inverter"));
+	sTest.Click(-2.9, -2.2);
+	AssertSize(2, pcEditor->GetCircuit()->NumComponents());
+	AssertSize(2, pcUndo->NumSnapshots());
+	AssertFalse(pcUndo->IsSelectionOnly(1));
+	SaveEditorText(pcEditor, &szPlaced);
+
+	sCentre = GetCentre(pcEditor->GetCircuit()->GetComponent(1));
+	sTest.Click(sCentre.x, sCentre.y);
+	AssertSize(1, pcEditor->GetSelection()->NumComponents());
+	AssertSize(3, pcUndo->NumSnapshots());
+	AssertTrue(pcUndo->IsSelectionOnly(2));
+	SaveEditorText(pcEditor, &szSelected);
+
+	AssertTrue(pcEditor->Delete());
+	AssertSize(1, pcEditor->GetCircuit()->NumComponents());
+	AssertSize(4, pcUndo->NumSnapshots());
+	SaveEditorText(pcEditor, &szDeleted);
+
+	AssertTrue(pcEditor->Undo());
+	AssertSize(2, pcUndo->GetCurrent());
+	AssertEditorText(&szSelected, pcEditor);
+	AssertSize(2, pcEditor->GetCircuit()->NumComponents());
+	AssertSize(1, pcEditor->GetSelection()->NumComponents());
+	AssertPointer(pcEditor->GetCircuit()->GetComponent(1), pcEditor->GetSelection()->GetComponent(0));
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(3, -2));
+
+	AssertTrue(pcEditor->Undo());
+	AssertSize(0, pcUndo->GetCurrent());
+	AssertEditorText(&szStart, pcEditor);
+	AssertSize(1, pcEditor->GetCircuit()->NumComponents());
+	AssertFalse(pcEditor->CanUndo());
+	AssertFalse(pcEditor->Undo());
+	AssertSize(0, pcUndo->GetCurrent());
+
+	AssertTrue(pcEditor->Redo());
+	AssertSize(1, pcUndo->GetCurrent());
+	AssertEditorText(&szPlaced, pcEditor);
+	AssertTrue(pcEditor->GetSelection()->IsEmpty());
+	AssertTrue(pcEditor->Redo());
+	AssertSize(3, pcUndo->GetCurrent());
+	AssertEditorText(&szDeleted, pcEditor);
+	AssertFalse(pcEditor->CanRedo());
+	AssertFalse(pcEditor->Redo());
+
+	AssertTrue(pcEditor->Undo(true));
+	AssertSize(2, pcUndo->GetCurrent());
+	AssertEditorText(&szSelected, pcEditor);
+	AssertTrue(pcEditor->Undo(true));
+	AssertSize(1, pcUndo->GetCurrent());
+	AssertEditorText(&szPlaced, pcEditor);
+	AssertTrue(pcEditor->Redo(true));
+	AssertSize(2, pcUndo->GetCurrent());
+	AssertEditorText(&szSelected, pcEditor);
+
+	AssertTrue(pcEditor->Undo(true));
+	sCentre = GetCentre(pcEditor->GetCircuit()->GetComponent(1));
+	sTest.PointAt(sCentre.x, sCentre.y);
+	AssertPointer(pcEditor->GetCircuit()->GetComponent(1), pcEditor->GetHover());
+	pcEditor->RotateRight();
+	AssertInt(ROT_South, pcEditor->GetCircuit()->GetComponent(1)->GetRotation());
+	AssertInt(ROT_South, pcEditor->GetCreationRotation());
+	AssertSize(3, pcUndo->NumSnapshots());
+	AssertFalse(pcEditor->CanRedo());
+	AssertTrue(pcEditor->Undo());
+	AssertSize(1, pcUndo->GetCurrent());
+	AssertEditorText(&szPlaced, pcEditor);
+	AssertInt(ROT_East, pcEditor->GetCircuit()->GetComponent(1)->GetRotation());
+	AssertInt(ROT_East, pcEditor->GetCreationRotation());
+
+	sTest.PointAt(20, 20);
+	AssertTrue(pcEditor->StartPlaceComponent("Ground"));
+	AssertTrue(pcEditor->IsEditing());
+	AssertFalse(pcEditor->CanUndo());
+	AssertTrue(pcEditor->Undo());
+	AssertFalse(pcEditor->IsEditing());
+	AssertSize(0, pcUndo->GetCurrent());
+	AssertEditorText(&szStart, pcEditor);
+
+	szDeleted.Kill();
+	szSelected.Kill();
+	szPlaced.Kill();
+	szStart.Kill();
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Moving a selected inverter is undone to where it was, still wired and
+// selected, and redone to where it went.  Clicking it again without
+// moving it changes nothing and isn't saved.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorUndoMove(void)
+{
+	SEditorTest			sTest;
+	CCircuitEditor*		pcEditor;
+	CCircuitView*		pcMain;
+	CUndoStack*			pcUndo;
+	CChars				szSelected;
+	CChars				szMoved;
+	SFloat64Vec2		sCentre;
+
+	sTest.Init();
+	pcEditor = &sTest.cEditor;
+	pcUndo = pcEditor->GetUndoStack();
+	pcMain = pcEditor->AddCircuit("Main");
+	AddGroundAndOutput(pcMain);
+	AddTestInverter(pcMain, -3, -2);
+	AssertTrue(pcEditor->Simulate("Main"));
+	sTest.Run();
+
+	sCentre = GetCentre(pcEditor->GetCircuit()->GetComponent(1));
+	sTest.Click(sCentre.x, sCentre.y);
+	AssertSize(2, pcUndo->NumSnapshots());
+	AssertTrue(pcUndo->IsSelectionOnly(1));
+	SaveEditorText(pcEditor, &szSelected);
+
+	sTest.Click(sCentre.x, sCentre.y);
+	AssertSize(2, pcUndo->NumSnapshots());
+
+	sTest.Drag(sCentre.x, sCentre.y, sCentre.x, sCentre.y + 10);
+	AssertInt(8, pcEditor->GetCircuit()->GetComponent(1)->GetPosition().y);
+	AssertSize(3, pcUndo->NumSnapshots());
+	AssertFalse(pcUndo->IsSelectionOnly(2));
+	SaveEditorText(pcEditor, &szMoved);
+
+	AssertTrue(pcEditor->Undo());
+	AssertSize(1, pcUndo->GetCurrent());
+	AssertEditorText(&szSelected, pcEditor);
+	AssertInt(-3, pcEditor->GetCircuit()->GetComponent(1)->GetPosition().x);
+	AssertInt(-2, pcEditor->GetCircuit()->GetComponent(1)->GetPosition().y);
+	AssertTrue(pcEditor->GetSelection()->Contains(pcEditor->GetCircuit()->GetComponent(1)));
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(6, -2));
+
+	AssertTrue(pcEditor->Redo());
+	AssertSize(2, pcUndo->GetCurrent());
+	AssertEditorText(&szMoved, pcEditor);
+	AssertInt(8, pcEditor->GetCircuit()->GetComponent(1)->GetPosition().y);
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(6, 8));
+
+	szMoved.Kill();
+	szSelected.Kill();
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A wire pulled from an inverter's output is undone and redone, and the
+// simulation follows it.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorUndoPullWire(void)
+{
+	SEditorTest			sTest;
+	CCircuitEditor*		pcEditor;
+	CCircuitView*		pcMain;
+	CGroundView*		pcGround;
+	CUndoStack*			pcUndo;
+	size				uiTraces;
+	SInt32Vec2			sPoint;
+
+	sTest.Init();
+	pcEditor = &sTest.cEditor;
+	pcUndo = pcEditor->GetUndoStack();
+	pcMain = pcEditor->AddCircuit("Main");
+	pcGround = NewMalloc<CGroundView>();
+	pcGround->Init(-8, -3, ROT_North, "");
+	pcMain->Add(pcGround);
+	pcMain->AddTraces(-8, -3, -4, -2);
+	AddTestInverter(pcMain, -3, -2);
+	AssertTrue(pcEditor->Simulate("Main"));
+	uiTraces = pcMain->NumTraces();
+	sPoint.Init(3, -2);
+
+	sTest.Press(-1, -2);
+	sTest.PointAt(3, -2);
+	sTest.PointAt(6, -2);
+	AssertSize(1, pcUndo->NumSnapshots());
+	sTest.Release(6, -2);
+	AssertSize(uiTraces + 1, pcEditor->GetCircuit()->NumTraces());
+	AssertSize(2, pcUndo->NumSnapshots());
+	AssertFalse(pcUndo->IsSelectionOnly(1));
+
+	AssertTrue(pcEditor->Undo());
+	AssertSize(uiTraces, pcEditor->GetCircuit()->NumTraces());
+	AssertNull(pcEditor->GetCircuit()->GetTraceAt(sPoint));
+
+	AssertTrue(pcEditor->Redo());
+	AssertSize(uiTraces + 1, pcEditor->GetCircuit()->NumTraces());
+	AssertNotNull(pcEditor->GetCircuit()->GetTraceAt(sPoint));
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(3, -2));
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Renaming a selected inverter is undone to its old name, still
+// selected, and redone.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorUndoProperties(void)
+{
+	SEditorTest				sTest;
+	CCircuitEditor*			pcEditor;
+	CCircuitView*			pcMain;
+	CComponentView*			pcInverter;
+	CComponentProperties	cProperties;
+	CUndoStack*				pcUndo;
+	SFloat64Vec2			sCentre;
+
+	sTest.Init();
+	pcEditor = &sTest.cEditor;
+	pcUndo = pcEditor->GetUndoStack();
+	pcMain = pcEditor->AddCircuit("Main");
+	AddGroundAndOutput(pcMain);
+	AddTestInverter(pcMain, -3, -2);
+	AssertTrue(pcEditor->Simulate("Main"));
+
+	pcInverter = pcEditor->GetCircuit()->GetComponent(1);
+	sCentre = GetCentre(pcInverter);
+	sTest.Click(sCentre.x, sCentre.y);
+	cProperties.Init();
+	pcEditor->GetProperties(pcInverter, &cProperties);
+	AssertTrue(cProperties.SetValue("name", "U1"));
+	AssertNotNull(pcEditor->SetProperties(pcInverter, &cProperties, ROT_East));
+	cProperties.Kill();
+	AssertString("U1", pcEditor->GetCircuit()->GetComponent(1)->GetName());
+	AssertSize(3, pcUndo->NumSnapshots());
+	AssertFalse(pcUndo->IsSelectionOnly(2));
+
+	AssertTrue(pcEditor->Undo());
+	AssertSize(1, pcUndo->GetCurrent());
+	AssertString("", pcEditor->GetCircuit()->GetComponent(1)->GetName());
+	AssertTrue(pcEditor->GetSelection()->Contains(pcEditor->GetCircuit()->GetComponent(1)));
+
+	AssertTrue(pcEditor->Redo());
+	AssertString("U1", pcEditor->GetCircuit()->GetComponent(1)->GetName());
+	AssertTrue(pcEditor->GetSelection()->Contains(pcEditor->GetCircuit()->GetComponent(1)));
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(3, -2));
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Turning a component while it's placed isn't saved until it's put down;
+// undoing the placement takes it away and turns new components back.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorUndoPlaceTurned(void)
+{
+	SEditorTest			sTest;
+	CCircuitEditor*		pcEditor;
+	CUndoStack*			pcUndo;
+
+	sTest.Init();
+	pcEditor = &sTest.cEditor;
+	pcUndo = pcEditor->GetUndoStack();
+	AddGroundAndOutput(pcEditor->AddCircuit("Main"));
+	AssertTrue(pcEditor->Simulate("Main"));
+	AssertInt(ROT_East, pcEditor->GetCreationRotation());
+
+	sTest.PointAt(10, 10);
+	AssertTrue(pcEditor->StartPlaceComponent("Inverter"));
+	pcEditor->RotateRight();
+	AssertSize(1, pcUndo->NumSnapshots());
+	AssertFalse(pcEditor->CanUndo());
+	sTest.Click(10, 10);
+	AssertSize(2, pcEditor->GetCircuit()->NumComponents());
+	AssertInt(ROT_South, pcEditor->GetCircuit()->GetComponent(1)->GetRotation());
+	AssertInt(ROT_South, pcEditor->GetCreationRotation());
+	AssertSize(2, pcUndo->NumSnapshots());
+
+	AssertTrue(pcEditor->Undo());
+	AssertSize(1, pcEditor->GetCircuit()->NumComponents());
+	AssertInt(ROT_East, pcEditor->GetCreationRotation());
+
+	AssertTrue(pcEditor->Redo());
+	AssertSize(2, pcEditor->GetCircuit()->NumComponents());
+	AssertInt(ROT_South, pcEditor->GetCircuit()->GetComponent(1)->GetRotation());
+	AssertInt(ROT_South, pcEditor->GetCreationRotation());
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A rectangle, a click on a wire and a click on nothing each change only
+// the selection; one that leaves it as it was isn't saved.  With nothing
+// but selections since the start undo has nothing to go back before and
+// stepping goes back through each selection; redo goes past them all to
+// the next change.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorUndoSelections(void)
+{
+	SEditorTest			sTest;
+	CCircuitEditor*		pcEditor;
+	CCircuitView*		pcMain;
+	CUndoStack*			pcUndo;
+	CCircuitSelection*	pcSelection;
+	SFloat64Vec2		sA;
+
+	sTest.Init();
+	pcEditor = &sTest.cEditor;
+	pcUndo = pcEditor->GetUndoStack();
+	pcSelection = pcEditor->GetSelection();
+	pcMain = pcEditor->AddCircuit("Main");
+	AddTestInverter(pcMain, -3, -2);
+	AddTestInverter(pcMain, -3, 3);
+	pcMain->AddTrace(-1, -2, 6, -2);
+	AssertTrue(pcEditor->Simulate("Main"));
+	sA = GetCentre(pcMain->GetComponent(0));
+
+	sTest.Drag(-10, -5, 0, 0);
+	AssertSize(1, pcSelection->NumComponents());
+	AssertSize(2, pcUndo->NumSnapshots());
+	AssertTrue(pcUndo->IsSelectionOnly(1));
+	sTest.Drag(-10, -5, 0, 0);
+	AssertSize(2, pcUndo->NumSnapshots());
+
+	sTest.Click(3, -2);
+	AssertSize(1, pcSelection->NumTraces());
+	AssertSize(3, pcUndo->NumSnapshots());
+	AssertTrue(pcUndo->IsSelectionOnly(2));
+
+	sTest.Click(20.2, 20.2);
+	AssertTrue(pcSelection->IsEmpty());
+	AssertSize(4, pcUndo->NumSnapshots());
+	AssertTrue(pcUndo->IsSelectionOnly(3));
+	sTest.Click(20.2, 20.2);
+	AssertSize(4, pcUndo->NumSnapshots());
+
+	sTest.Click(sA.x, sA.y);
+	AssertSize(5, pcUndo->NumSnapshots());
+	AssertFalse(pcEditor->CanUndo());
+	AssertFalse(pcEditor->Undo());
+	AssertSize(4, pcUndo->GetCurrent());
+	AssertTrue(pcEditor->CanUndo(true));
+
+	AssertTrue(pcEditor->Delete());
+	AssertSize(1, pcEditor->GetCircuit()->NumComponents());
+	AssertSize(6, pcUndo->NumSnapshots());
+
+	AssertTrue(pcEditor->Undo());
+	AssertSize(4, pcUndo->GetCurrent());
+	AssertSize(2, pcEditor->GetCircuit()->NumComponents());
+	AssertSize(1, pcSelection->NumComponents());
+	AssertPointer(pcEditor->GetCircuit()->GetComponent(0), pcSelection->GetComponent(0));
+
+	AssertTrue(pcEditor->Undo(true));
+	AssertTrue(pcSelection->IsEmpty());
+	AssertTrue(pcEditor->Undo(true));
+	AssertSize(0, pcSelection->NumComponents());
+	AssertSize(1, pcSelection->NumTraces());
+	AssertTrue(pcEditor->Undo(true));
+	AssertSize(1, pcSelection->NumComponents());
+	AssertSize(0, pcSelection->NumTraces());
+	AssertTrue(pcEditor->Undo(true));
+	AssertSize(0, pcUndo->GetCurrent());
+	AssertTrue(pcSelection->IsEmpty());
+	AssertFalse(pcEditor->CanUndo(true));
+
+	AssertTrue(pcEditor->Redo());
+	AssertSize(5, pcUndo->GetCurrent());
+	AssertSize(1, pcEditor->GetCircuit()->NumComponents());
+	AssertTrue(pcSelection->IsEmpty());
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Undoing takes the simulation back to the time it was saved at.
+// Starting to edit another circuit can be undone; the circuit being
+// edited comes back with it.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorUndoSimulation(void)
+{
+	SEditorTest			sTest;
+	CCircuitEditor*		pcEditor;
+	CCircuitView*		pcMain;
+	CUndoStack*			pcUndo;
+	SFloat64Vec2		sCentre;
+	int64				iStart;
+	int64				iSettled;
+
+	sTest.Init();
+	pcEditor = &sTest.cEditor;
+	pcUndo = pcEditor->GetUndoStack();
+	pcMain = pcEditor->AddCircuit("Main");
+	pcEditor->AddCircuit("Other");
+	AddGroundAndOutput(pcMain);
+	AddTestInverter(pcMain, -3, -2);
+	AssertTrue(pcEditor->Simulate("Main"));
+	AssertSize(1, pcUndo->NumSnapshots());
+	iStart = pcEditor->GetSimulation()->GetTime();
+
+	sTest.Run();
+	iSettled = pcEditor->GetSimulation()->GetTime();
+	AssertTrue(iSettled > iStart);
+	AssertInt(TV_High, sTest.GetLevel(3, -2));
+	sCentre = GetCentre(pcEditor->GetCircuit()->GetComponent(1));
+	sTest.Click(sCentre.x, sCentre.y);
+
+	AssertTrue(pcEditor->Undo(true));
+	AssertLong(iStart, pcEditor->GetSimulation()->GetTime());
+	AssertTrue(sTest.GetLevel(3, -2) != TV_High);
+	AssertTrue(pcEditor->Redo(true));
+	AssertLong(iSettled, pcEditor->GetSimulation()->GetTime());
+	AssertInt(TV_High, sTest.GetLevel(3, -2));
+
+	AssertTrue(pcEditor->Simulate("Other"));
+	AssertString("Other", pcEditor->GetCircuit()->GetTypeName());
+	AssertSize(3, pcUndo->NumSnapshots());
+	AssertFalse(pcUndo->IsSelectionOnly(2));
+	AssertTrue(pcEditor->Undo());
+	AssertString("Main", pcEditor->GetCircuit()->GetTypeName());
+	AssertSize(1, pcUndo->GetCurrent());
+	AssertTrue(pcEditor->GetSelection()->Contains(pcEditor->GetCircuit()->GetComponent(1)));
+	AssertTrue(pcEditor->Redo());
+	AssertString("Other", pcEditor->GetCircuit()->GetTypeName());
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A saved project keeps its selection.  Loading one is saved for undo,
+// after what was there before, which undoing goes back to.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorUndoLoad(void)
+{
+	SEditorTest			sTest;
+	CCircuitEditor		cLoaded;
+	CCircuitEditor*		pcEditor;
+	CCircuitView*		pcMain;
+	CUndoStack*			pcUndo;
+	CFileUtil			cFileUtil;
+	SFloat64Vec2		sCentre;
+
+	sTest.Init();
+	pcEditor = &sTest.cEditor;
+	pcUndo = pcEditor->GetUndoStack();
+	pcMain = pcEditor->AddCircuit("Main");
+	AddGroundAndOutput(pcMain);
+	AddTestInverter(pcMain, -3, -2);
+	AssertTrue(pcEditor->Simulate("Main"));
+	sCentre = GetCentre(pcMain->GetComponent(1));
+	sTest.Click(sCentre.x, sCentre.y);
+	pcEditor->SetModifiers(false, true);
+	sTest.Click(3, -2);
+	pcEditor->SetModifiers(false, false);
+	AssertSize(1, pcEditor->GetSelection()->NumComponents());
+	AssertSize(1, pcEditor->GetSelection()->NumTraces());
+
+	cFileUtil.MakeDir("Output");
+	AssertTrue(pcEditor->Save("Output" _FS_ "Undo.xml"));
+
+	cLoaded.Init(&sTest.cFamilies, NULL);
+	AssertTrue(cLoaded.Load("Output" _FS_ "Undo.xml"));
+	AssertSize(1, cLoaded.GetUndoStack()->NumSnapshots());
+	AssertFalse(cLoaded.CanUndo(true));
+	AssertSize(1, cLoaded.GetSelection()->NumComponents());
+	AssertPointer(cLoaded.GetCircuit()->GetComponent(1), cLoaded.GetSelection()->GetComponent(0));
+	AssertSize(1, cLoaded.GetSelection()->NumTraces());
+	AssertTrue(cLoaded.GetSelection()->GetTrace(0)->Contains(sTest.cEditor.GetSelection()->GetTrace(0)->GetStart()));
+	cLoaded.Kill();
+
+	AssertTrue(pcEditor->Delete());
+	AssertSize(1, pcEditor->GetCircuit()->NumComponents());
+	AssertSize(4, pcUndo->NumSnapshots());
+	AssertTrue(pcEditor->Load("Output" _FS_ "Undo.xml"));
+	AssertSize(5, pcUndo->NumSnapshots());
+	AssertSize(2, pcEditor->GetCircuit()->NumComponents());
+	AssertTrue(pcEditor->Undo());
+	AssertSize(3, pcUndo->GetCurrent());
+	AssertSize(1, pcEditor->GetCircuit()->NumComponents());
+	AssertTrue(pcEditor->Redo());
+	AssertSize(2, pcEditor->GetCircuit()->NumComponents());
+	AssertSize(1, pcEditor->GetSelection()->NumComponents());
+
+	sTest.Kill();
+	cFileUtil.Delete("Output" _FS_ "Undo.xml");
+	cFileUtil.RemoveDir("Output");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Placing an instance of a subcircuit is undone with its path, its
+// instance simulation and its subcircuit's components, and redone with
+// them.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorUndoSubcircuit(void)
+{
+	SEditorTest			sTest;
+	CCircuitFonts		cFonts;
+	CCircuitEditor*		pcEditor;
+	CCircuitSimulation*	pcSimulation;
+	size				uiPaths;
+	size				uiIntegratedCircuits;
+
+	sTest.Init(&cFonts);
+	LoadTestCircuitFonts(&cFonts);
+	pcEditor = &sTest.cEditor;
+	AddEditorInverterSubcircuit(pcEditor, &cFonts);
+	pcEditor->AddCircuit("Main");
+	AssertTrue(pcEditor->Simulate("Main"));
+	uiPaths = pcEditor->GetCircuits()->GetViewPaths()->NumViewPaths();
+	uiIntegratedCircuits = pcEditor->GetSimulation()->GetCircuit()->NumIntegratedCircuits();
+
+	sTest.PointAt(0, 0);
+	AssertTrue(pcEditor->StartPlaceSubcircuit("Inverter"));
+	sTest.Click(5, 5);
+	AssertSize(1, pcEditor->GetCircuit()->NumComponents());
+	AssertSize(2, pcEditor->GetUndoStack()->NumSnapshots());
+
+	AssertTrue(pcEditor->Undo());
+	pcSimulation = pcEditor->GetSimulation();
+	AssertSize(0, pcEditor->GetCircuit()->NumComponents());
+	AssertSize(uiPaths, pcEditor->GetCircuits()->GetViewPaths()->NumViewPaths());
+	AssertSize(0, pcSimulation->NumInstanceSimulations());
+	AssertSize(uiIntegratedCircuits, pcSimulation->GetCircuit()->NumIntegratedCircuits());
+
+	AssertTrue(pcEditor->Redo());
+	pcSimulation = pcEditor->GetSimulation();
+	AssertSize(1, pcEditor->GetCircuit()->NumComponents());
+	AssertString("Inverter", ((CSubcircuitInstanceView*)pcEditor->GetCircuit()->GetComponent(0))->GetTypeName());
+	AssertSize(uiPaths + 1, pcEditor->GetCircuits()->GetViewPaths()->NumViewPaths());
+	AssertSize(1, pcSimulation->NumInstanceSimulations());
+	AssertSize(uiIntegratedCircuits + 1, pcSimulation->GetCircuit()->NumIntegratedCircuits());
+	AssertNotNull(pcEditor->GetCircuit()->GetComponent(0)->GetComponent(pcEditor->GetViewPath(), pcSimulation));
+
+	KillTestCircuitFonts(&cFonts);
+	sTest.Kill(true);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The editor keeps the last hundred snapshots.  Once the start has gone,
+// only selections are left, so undo has nothing to go back before but
+// stepping does.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorUndoLimit(void)
+{
+	SEditorTest			sTest;
+	CCircuitEditor*		pcEditor;
+	CCircuitView*		pcMain;
+	CUndoStack*			pcUndo;
+	SFloat64Vec2		sA;
+	size				i;
+
+	sTest.Init();
+	pcEditor = &sTest.cEditor;
+	pcUndo = pcEditor->GetUndoStack();
+	pcMain = pcEditor->AddCircuit("Main");
+	AddTestInverter(pcMain, -3, -2);
+	AssertTrue(pcEditor->Simulate("Main"));
+	sA = GetCentre(pcMain->GetComponent(0));
+
+	for (i = 0; i < 60; i++)
+	{
+		sTest.Click(sA.x, sA.y);
+		sTest.Click(20.2, 20.2);
+	}
+	AssertSize(UNDO_STACK_MAXIMUM, pcUndo->NumSnapshots());
+	AssertSize(UNDO_STACK_MAXIMUM - 1, pcUndo->GetCurrent());
+	AssertTrue(pcUndo->IsSelectionOnly(0));
+	AssertFalse(pcEditor->CanUndo());
+	AssertTrue(pcEditor->Undo(true));
+	AssertSize(UNDO_STACK_MAXIMUM - 2, pcUndo->GetCurrent());
+	AssertSize(1, pcEditor->GetSelection()->NumComponents());
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A snapshot that can't be loaded leaves the project, and where the undo
+// stack is, as they were.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorUndoBadSnapshot(void)
+{
+	SEditorTest			sTest;
+	CCircuitEditor*		pcEditor;
+	CUndoStack*			pcUndo;
+	CChars				szPlaced;
+	SLogConfig			sLogConfig;
+
+	sTest.Init();
+	pcEditor = &sTest.cEditor;
+	pcUndo = pcEditor->GetUndoStack();
+	AddGroundAndOutput(pcEditor->AddCircuit("Main"));
+	AssertTrue(pcEditor->Simulate("Main"));
+	sTest.PointAt(-3, -2);
+	AssertTrue(pcEditor->StartPlaceComponent("Inverter"));
+	sTest.Click(-3, -2);
+	SaveEditorText(pcEditor, &szPlaced);
+
+	pcUndo->Push((char*)"<Logicim version=\"2\"><Circuits><Circuit type=\"Main\"><Nonsense/></Circuit></Circuits></Logicim>", false);
+	pcUndo->MoveTo(1);
+	gcLogger.GetConfig(&sLogConfig);
+	gcLogger.SetSilent();
+	AssertFalse(pcEditor->Redo());
+	pcUndo->MoveTo(2);
+	pcUndo->Push((char*)"Not XML at all", false);
+	pcUndo->MoveTo(1);
+	AssertFalse(pcEditor->Redo(true));
+	gcLogger.SetConfig(&sLogConfig);
+	AssertSize(1, pcUndo->GetCurrent());
+	AssertEditorText(&szPlaced, pcEditor);
+	sTest.Run();
+	AssertInt(TV_High, sTest.GetLevel(3, -2));
+
+	szPlaced.Kill();
 	sTest.Kill();
 }
 
@@ -1847,6 +2686,18 @@ void TestCircuitEditor(void)
 	TestCircuitEditorPropertiesRoundTrip();
 	TestCircuitEditorPropertiesListed();
 	TestCircuitEditorPropertiesEdited();
+	TestCircuitEditorUndoStack();
+	TestCircuitEditorUndo();
+	TestCircuitEditorUndoMove();
+	TestCircuitEditorUndoPullWire();
+	TestCircuitEditorUndoProperties();
+	TestCircuitEditorUndoPlaceTurned();
+	TestCircuitEditorUndoSelections();
+	TestCircuitEditorUndoSimulation();
+	TestCircuitEditorUndoLoad();
+	TestCircuitEditorUndoSubcircuit();
+	TestCircuitEditorUndoLimit();
+	TestCircuitEditorUndoBadSnapshot();
 
 	DataMemoryKill();
 	DataIOKill();
