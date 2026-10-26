@@ -1623,8 +1623,9 @@ static void AssertCPP65MathExtras(void)
 	double			dExpected;
 	uint64			ulliBits;
 
-	//hypot is checked natively too (within an ulp of the correctly rounded hypotl on millions of values).
-	dExpected = (double)hypotl(1e300L, 1e300L);
+	//hypot is checked natively too (within an ulp of the correctly rounded hypotl on millions of values).  MSVC's
+	//hypotl is its old _hypot, which overflows here, so this is hypot's (correctly rounded) result.
+	dExpected = hypot(1e300, 1e300);
 	memcpy(&ulliBits, &dExpected, 8);
 
 	szSource.Init();

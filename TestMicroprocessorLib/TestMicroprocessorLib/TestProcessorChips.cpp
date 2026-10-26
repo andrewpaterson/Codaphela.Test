@@ -832,8 +832,6 @@ void ScrambleCoreState(S65C64CoreState* psState)
 	psState->uiS ^= 0x0100;
 	psState->uiDI ^= 0x77;
 	psState->uiNumTransfers = 0;
-	psState->uiNumReadWords = 0;
-	psState->uiNumWriteWords = 0;
 	psState->eDecoded = DK65_None;
 	psState->eInstruction = IK65_FetchNext;
 	psState->iCycle = 0;

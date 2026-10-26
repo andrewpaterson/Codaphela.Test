@@ -1067,14 +1067,17 @@ void TestCircuitEditorPlaceUnits(void)
 	AssertString("U1", pcMain->GetComponent(5)->GetName());
 	AssertString("U2", pcMain->GetComponent(6)->GetName());
 
-	//Deleting one unit deletes its part's other units, and nothing else.
+	//Deleting one unit deletes only that unit.
 	sTest.cEditor.StopEdit();
 	sTest.PointAt(12, 0);
 	AssertTrue(sTest.cEditor.GetHover() == pcMain->GetComponent(2));
 	AssertTrue(sTest.cEditor.Delete());
-	AssertSize(2, pcMain->NumComponents());
-	AssertString("U2", pcMain->GetComponent(0)->GetName());
-	AssertString("Inverter", pcMain->GetComponent(1)->GetXMLName());
+	AssertSize(7, pcMain->NumComponents());
+	AssertChar('B', ((CInverterUnitView*)pcMain->GetComponent(1))->GetUnitLetter());
+	AssertChar('D', ((CInverterUnitView*)pcMain->GetComponent(2))->GetUnitLetter());
+	AssertString("U1", pcMain->GetComponent(4)->GetName());
+	AssertString("U2", pcMain->GetComponent(5)->GetName());
+	AssertString("Inverter", pcMain->GetComponent(6)->GetXMLName());
 
 	sTest.Kill();
 }

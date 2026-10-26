@@ -27,7 +27,6 @@
 #include "LogicimLib/AndGateView.h"
 #include "LogicimLib/BufferView.h"
 #include "LogicimLib/CircuitFile.h"
-#include "LogicimLib/StateXML.h"
 #include "LogicimLib/W65C816View.h"
 #include "LogicimLib/ClockView.h"
 #include "LogicimLib/ValueView.h"
@@ -245,6 +244,20 @@ void TestSimulationStateFreshStart(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The IC's state element, as a saved simulation has it.
+//
+//////////////////////////////////////////////////////////////////////////
+void SaveStateXML(CXMLWriter* pcWriter, CIntegratedCircuit* pcIntegratedCircuit)
+{
+	AssertTrue(pcIntegratedCircuit->GetStateXMLName() != NULL);
+	pcWriter->Begin(pcIntegratedCircuit->GetStateXMLName());
+	pcIntegratedCircuit->SaveXML(pcWriter);
+	pcWriter->End();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Saves what the IC remembers inside a root element, reads the file back
 // and loads it into the other IC.
 //
@@ -253,15 +266,12 @@ void SaveAndLoadState(CIntegratedCircuit* pcSaved, CIntegratedCircuit* pcLoaded)
 {
 	CXMLWriter	cWriter;
 	CXMLFile	cFile;
-	CStateXML*	pcStateXML;
 	CFileUtil	cFileUtil;
 	CMarkupTag*	pcTag;
 
-	pcStateXML = FindStateXMLForIntegratedCircuit(pcSaved);
-	AssertNotNull(pcStateXML);
 	cWriter.Init();
 	cWriter.Begin("Root");
-	pcStateXML->Save(&cWriter, pcSaved);
+	SaveStateXML(&cWriter, pcSaved);
 	cWriter.End();
 	cFileUtil.MakeDir("Output");
 	AssertTrue(cWriter.Write("Output" _FS_ "State.xml"));
@@ -269,10 +279,9 @@ void SaveAndLoadState(CIntegratedCircuit* pcSaved, CIntegratedCircuit* pcLoaded)
 
 	cFile.Init();
 	AssertTrue(cFile.Read("State.xml", "Output"));
-	pcTag = cFile.mcMarkup.mpcDoc->GetRootTag()->GetTag(pcStateXML->GetXMLName());
+	pcTag = cFile.mcMarkup.mpcDoc->GetRootTag()->GetTag(pcLoaded->GetStateXMLName());
 	AssertNotNull(pcTag);
-	AssertTrue(FindStateXMLForElement(pcStateXML->GetXMLName()) == pcStateXML);
-	AssertTrue(pcStateXML->Load(pcTag, pcLoaded));
+	AssertTrue(pcLoaded->LoadXML(pcTag));
 	cFile.Kill();
 
 	cFileUtil.Delete("Output" _FS_ "State.xml");
@@ -289,13 +298,11 @@ void AssertSameStateXML(CIntegratedCircuit* pcFresh, CIntegratedCircuit* pcInteg
 {
 	CXMLWriter	cFresh;
 	CXMLWriter	cOther;
-	CStateXML*	pcStateXML;
 
-	pcStateXML = FindStateXMLForIntegratedCircuit(pcFresh);
 	cFresh.Init();
-	pcStateXML->Save(&cFresh, pcFresh);
+	SaveStateXML(&cFresh, pcFresh);
 	cOther.Init();
-	pcStateXML->Save(&cOther, pcIntegratedCircuit);
+	SaveStateXML(&cOther, pcIntegratedCircuit);
 	AssertString(cFresh.GetText(), cOther.GetText());
 	cOther.Kill();
 	cFresh.Kill();
@@ -440,8 +447,7 @@ void TestSimulationStateStates(void)
 	pcAndPins->Init(2, pcFamily);
 	pcAnd = NewMalloc<CAndGate>();
 	pcAnd->Init(pcTop, "And", pcAndPins);
-	AssertNull(FindStateXMLForIntegratedCircuit(pcAnd));
-	AssertNull(FindStateXMLForElement("Toaster"));
+	AssertTrue(pcAnd->GetStateXMLName() == NULL);
 
 	cSimulation.Kill();
 	cFamilies.Kill();
@@ -593,9 +599,6 @@ void TestSimulationStateW65C816Core(void)
 	SW65CCoreState						sSet;
 	SW65CCoreState						sGot;
 	size								i;
-	CXMLWriter							cSaved;
-	CXMLWriter							cLoaded;
-	CStateXML*							pcStateXML;
 
 	CW65C816InstructionFactory::GetInstance()->Init();
 	ObjectsInit();
@@ -610,7 +613,7 @@ void TestSimulationStateW65C816Core(void)
 		apcChip[i]->Init(cSimulation.GetSubcircuitTopSimulation(), "MPU", pcPins);
 	}
 
-	apcChip[0]->GetMPU()->GetState(&sSet);
+	memset(&sSet, 0, sizeof(SW65CCoreState));
 	sSet.bEmulationFlag = false;
 	sSet.bZeroFlag = true;
 	sSet.bNegativeFlag = true;
@@ -674,15 +677,9 @@ void TestSimulationStateW65C816Core(void)
 	AssertInt(0x9B, sGot.cNewProgramCounter.GetBank());
 	AssertInt(2, sGot.uiResetCount);
 
-	//The whole state saves the same from both.
-	pcStateXML = FindStateXMLForIntegratedCircuit(apcChip[0]);
-	cSaved.Init();
-	pcStateXML->Save(&cSaved, apcChip[0]);
-	cLoaded.Init();
-	pcStateXML->Save(&cLoaded, apcChip[1]);
-	AssertString(cSaved.GetText(), cLoaded.GetText());
-	cLoaded.Kill();
-	cSaved.Kill();
+	//The whole state comes back, so no field is missing from what's saved, and saves the same from both.
+	AssertMemory(&sSet, &sGot, sizeof(SW65CCoreState));
+	AssertSameStateXML(apcChip[0], apcChip[1]);
 
 	cSimulation.Kill();
 	cFamilies.Kill();
@@ -765,24 +762,16 @@ void TestSimulationState65C64Core(void)
 	sState.uiVector = 0x00003000;
 	sState.asTransfers[0].uiAddress = 0x0001FFFC;
 	sState.asTransfers[0].uiBytes = 4;
+	sState.asTransfers[0].bWrite = true;
 	sState.asTransfers[0].uiValue = 0x1010;
 	sState.aePulled[0] = R65_Zero;
 	sState.asTransfers[1].uiAddress = 0x0001FFFA;
 	sState.asTransfers[1].uiBytes = 2;
+	sState.asTransfers[1].bRead = true;
+	sState.asTransfers[1].bWrite = true;
 	sState.asTransfers[1].uiValue = 0x05C3;
 	sState.aePulled[1] = R65_Y;
 	sState.uiNumTransfers = 2;
-	sState.asReadWords[0].uiAddress = 0xFFFFFFE8;
-	sState.asReadWords[0].uiTransfer = 1;
-	sState.asReadWords[0].uiLanes = 3;
-	sState.uiNumReadWords = 1;
-	sState.asWriteWords[0].uiAddress = 0x0001FFFC;
-	sState.asWriteWords[0].uiTransfer = 0;
-	sState.asWriteWords[0].uiLanes = 3;
-	sState.asWriteWords[1].uiAddress = 0x0001FFFA;
-	sState.asWriteWords[1].uiTransfer = 1;
-	sState.asWriteWords[1].uiLanes = 1;
-	sState.uiNumWriteWords = 2;
 	sState.uiOpcode = 0x4045;
 	sState.eDecoded = DK65_Interrupt;
 	sState.uiDecodedVector = VECTOR_65C64_LEVEL;
