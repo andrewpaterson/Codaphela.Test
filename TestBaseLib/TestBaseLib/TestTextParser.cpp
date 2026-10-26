@@ -331,9 +331,36 @@ void TestTextParserGetFloat(void)
 	AssertTritrue(TextParserGetFloat(".5", &f));
 	AssertDouble(0.5, f, 10);
 
+	//Negative numbers with a zero whole part: the whole part parses as -0.0.
+	AssertTritrue(TextParserGetFloat("-0.5", &f));
+	AssertDouble(-0.5, f, 10);
+	AssertTritrue(TextParserGetFloat("-0.001", &f));
+	AssertDouble(-0.001, f, 10);
+	AssertTritrue(TextParserGetFloat("-0.999", &f));
+	AssertDouble(-0.999, f, 10);
+	AssertTritrue(TextParserGetFloat("-0.000001", &f));
+	AssertDouble(-0.000001, f, 10);
+	AssertTrue(f < 0.0);
+	AssertTritrue(TextParserGetFloat("-00.25", &f));
+	AssertDouble(-0.25, f, 10);
+	AssertTritrue(TextParserGetFloat("  -0.75", &f));
+	AssertDouble(-0.75, f, 10);
+	AssertTritrue(TextParserGetFloat("-0.0", &f));
+	AssertDouble(0.0, f, 10);
+	AssertTritrue(TextParserGetFloat("-0", &f));
+	AssertDouble(0.0, f, 10);
+	AssertTritrue(TextParserGetFloat("+0.75", &f));
+	AssertDouble(0.75, f, 10);
+	AssertTritrue(TextParserGetFloat("-1.0", &f));
+	AssertDouble(-1.0, f, 10);
+	AssertTritrue(TextParserGetFloat("-10.05", &f));
+	AssertDouble(-10.05, f, 10);
+
 	AssertTrifalse(TextParserGetFloat("abc", &f));
 	AssertTrierror(TextParserGetFloat("1.x", &f));
 	AssertTrierror(TextParserGetFloat("", &f));
+	AssertTrierror(TextParserGetFloat("1.-5", &f));
+	AssertTrierror(TextParserGetFloat("-0.-5", &f));
 
 	cTextParser.Init("-0.5 2.25");
 	tResult = cTextParser.GetFloat(&f32);
@@ -342,6 +369,32 @@ void TestTextParserGetFloat(void)
 	tResult = cTextParser.GetFloat(&f32);
 	AssertTritrue(tResult);
 	AssertFloat(2.25f, f32, 6);
+	cTextParser.Kill();
+
+	//Signs must not carry over from one number to the next.
+	cTextParser.Init("-0.25 0.25 -0.125 .5 -2.5 0.75");
+	AssertTritrue(cTextParser.GetFloat(&f));
+	AssertDouble(-0.25, f, 10);
+	AssertTritrue(cTextParser.GetFloat(&f));
+	AssertDouble(0.25, f, 10);
+	AssertTritrue(cTextParser.GetFloat(&f));
+	AssertDouble(-0.125, f, 10);
+	AssertTritrue(cTextParser.GetFloat(&f));
+	AssertDouble(0.5, f, 10);
+	AssertTritrue(cTextParser.GetFloat(&f));
+	AssertDouble(-2.5, f, 10);
+	AssertTritrue(cTextParser.GetFloat(&f));
+	AssertDouble(0.75, f, 10);
+	cTextParser.Kill();
+
+	//Parsing stops at the end of the number.
+	cTextParser.Init("-0.125,-0.5)");
+	AssertTritrue(cTextParser.GetFloat(&f32));
+	AssertFloat(-0.125f, f32, 6);
+	AssertTritrue(cTextParser.GetExactCharacter(','));
+	AssertTritrue(cTextParser.GetFloat(&f32));
+	AssertFloat(-0.5f, f32, 6);
+	AssertTritrue(cTextParser.GetExactCharacter(')'));
 	cTextParser.Kill();
 }
 
