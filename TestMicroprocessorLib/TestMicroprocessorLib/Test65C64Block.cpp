@@ -627,7 +627,6 @@ void Test65C64Block(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 	C65C64InstructionFactory::GetInstance()->Init();
 
 	Test65C64BlockDecode();
@@ -641,7 +640,6 @@ void Test65C64Block(void)
 	Test65C64BlockMoveSheet();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

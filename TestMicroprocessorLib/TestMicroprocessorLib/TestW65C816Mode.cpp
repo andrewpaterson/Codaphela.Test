@@ -560,7 +560,6 @@ void TestW65C816Mode(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 
 	TestW65C816ModeREPAndSEPNative();
 	TestW65C816ModeREPAndSEPEmulation();
@@ -576,7 +575,6 @@ void TestW65C816Mode(void)
 	TestW65C816ModeTransferStackNative();
 	TestW65C816ModeTransferDirectPage();
 
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

@@ -333,7 +333,6 @@ void TestW65C02(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 	CW65C02InstructionFactory::GetInstance()->Init();
 
 	TestW65C02Reset();
@@ -344,7 +343,6 @@ void TestW65C02(void)
 	TestW65C02SetOverflow();
 
 	CW65C02InstructionFactory::GetInstance()->Kill();
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

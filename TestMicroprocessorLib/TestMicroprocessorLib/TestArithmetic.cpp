@@ -22,7 +22,6 @@ void TestW65C816Arithmetic(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 
 	CW65C816Meta			cMPU;
 	uint64					uiInstructions;
@@ -48,7 +47,6 @@ void TestW65C816Arithmetic(void)
 
 	CW65C816InstructionFactory::GetInstance()->Kill();
 
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

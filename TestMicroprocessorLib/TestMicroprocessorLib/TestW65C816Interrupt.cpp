@@ -532,7 +532,6 @@ void TestW65C816Interrupt(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 
 	TestW65C816InterruptBRKEmulation();
 	TestW65C816InterruptBRKNative();
@@ -547,7 +546,6 @@ void TestW65C816Interrupt(void)
 	TestW65C816InterruptNMIEmulation();
 	TestW65C816InterruptNMINative();
 
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

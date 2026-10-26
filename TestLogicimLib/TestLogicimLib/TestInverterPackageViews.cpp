@@ -253,8 +253,7 @@ void TestInverterPackageViewSimulation(void)
 	AssertTrue(pcPackage->GetPortView("Output 3")->GetPort(pcPath, &cSimulation, 0)->GetTrace() == pcOut->GetTrace(pcPath, &cSimulation, 0));
 	AssertTrue(pcUnit->GetPortView("Input")->GetPort(pcPath, &cSimulation, 0)->GetTrace() == pcUnitIn->GetTrace(pcPath, &cSimulation, 0));
 
-	pcSupply = NewMalloc<CPowerSource>();
-	pcSupply->Init(cSimulation.GetSubcircuitTopSimulation(), "Supply", fVcc);
+	pcSupply = &OMalloc<CPowerSource>(cSimulation.GetSubcircuitTopSimulation(), "Supply", fVcc);
 	AssertTrue(pcSupply->GetPowerOutPort()->ConnectLive(pcIn->GetTrace(pcPath, &cSimulation, 0), cSimulation.GetTimeline()));
 	cSimulation.GetTimeline()->Run();
 	AssertInt(TV_High, pcFamily->GetValue(pcIn->GetTrace(pcPath, &cSimulation, 0)->GetVoltage(cSimulation.GetTime()), fVcc));

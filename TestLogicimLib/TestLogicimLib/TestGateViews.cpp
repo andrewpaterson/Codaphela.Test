@@ -488,8 +488,7 @@ void TestCircuitViewSimulation(void)
 	AssertRenderedCircuit(&cCircuit, &cColours, 600, 160, 2, NULL, NULL, false, "InverterAndDisconnected");
 
 	//Wired on to the running simulation, as the editor would.
-	pcSupply = NewMalloc<CPowerSource>();
-	pcSupply->Init(cSimulation.GetSubcircuitTopSimulation(), "Supply", fVcc);
+	pcSupply = &OMalloc<CPowerSource>(cSimulation.GetSubcircuitTopSimulation(), "Supply", fVcc);
 	AssertTrue(pcSupply->GetPowerOutPort()->ConnectLive(pcIn->GetTrace(pcPath, &cSimulation, 0), cSimulation.GetTimeline()));
 	cSimulation.GetTimeline()->Run();
 	AssertInt(TV_High, pcFamily->GetValue(pcIn->GetTrace(pcPath, &cSimulation, 0)->GetVoltage(cSimulation.GetTime()), fVcc));
@@ -649,15 +648,13 @@ void TestCircuitViewRingOscillator(void)
 	AssertTrue(cCircuit.CreateSimulation(pcPath, &cSimulation, &cFamilies));
 	pcTimeline = cSimulation.GetTimeline();
 
-	pcLow = NewMalloc<CPowerSource>();
-	pcLow->Init(cSimulation.GetSubcircuitTopSimulation(), "Disable", 0.0f);
+	pcLow = &OMalloc<CPowerSource>(cSimulation.GetSubcircuitTopSimulation(), "Disable", 0.0f);
 	AssertTrue(pcLow->GetPowerOutPort()->ConnectLive(pcEnable->GetTrace(pcPath, &cSimulation, 0), pcTimeline));
 	pcTimeline->Run();
 	AssertInt(TV_High, pcFamily->GetValue(pcRing->GetTrace(pcPath, &cSimulation, 0)->GetVoltage(cSimulation.GetTime()), fVcc));
 	pcLow->GetPowerOutPort()->Disconnect(pcTimeline);
 
-	pcHigh = NewMalloc<CPowerSource>();
-	pcHigh->Init(cSimulation.GetSubcircuitTopSimulation(), "Enable", fVcc);
+	pcHigh = &OMalloc<CPowerSource>(cSimulation.GetSubcircuitTopSimulation(), "Enable", fVcc);
 	AssertTrue(pcHigh->GetPowerOutPort()->ConnectLive(pcEnable->GetTrace(pcPath, &cSimulation, 0), pcTimeline));
 
 	iChanges = 0;

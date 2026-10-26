@@ -3,6 +3,7 @@
 #include "BaseLib/ConstructorCall.h"
 #include "BaseLib/PointerFunctions.h"
 #include "BaseLib/Logger.h"
+#include "StandardLib/Objects.h"
 #include "MicroprocessorLib/LongTime.h"
 #include "MicroprocessorLib/Units.h"
 #include "MicroprocessorLib/Voltage.h"
@@ -64,11 +65,9 @@ public:
 		mpcTimeline = mcSimulation.GetTimeline();
 		mpcVCC = NewTrace();
 		mpcGND = NewTrace();
-		pcPower = NewMalloc<CPowerSource>();
-		pcPower->Init(mpcTop, "VCC", 3.3f);
+		pcPower = &OMalloc<CPowerSource>(mpcTop, "VCC", 3.3f);
 		pcPower->GetPowerOutPort()->Connect(mpcVCC);
-		pcPower = NewMalloc<CPowerSource>();
-		pcPower->Init(mpcTop, "GND", 0.0f);
+		pcPower = &OMalloc<CPowerSource>(mpcTop, "GND", 0.0f);
 		pcPower->GetPowerOutPort()->Connect(mpcGND);
 	}
 
@@ -96,10 +95,8 @@ public:
 		CConstant*		pcConstant;
 		size			i;
 
-		pcPins = NewMalloc<CConstantPins>();
-		pcPins->Init(mpcFamily, uiBits);
-		pcConstant = NewMalloc<CConstant>();
-		pcConstant->Init(mpcTop, szName, pcPins, iValue);
+		pcConstant = &OMalloc<CConstant>(mpcTop, szName, OMalloc<CConstantPins>(mpcFamily, uiBits), iValue);
+		pcPins = pcConstant->GetConstantPins();
 		Power(pcConstant);
 		for (i = 0; i < uiBits; i++)
 		{
@@ -135,36 +132,51 @@ public:
 
 		if ((eGate == G_And) || (eGate == G_Nand))
 		{
-			CAndGatePins*	pcPins = NewMalloc<CAndGatePins>();
-			CAndGate*		pcAnd = (eGate == G_And) ? NewMalloc<CAndGate>() : NewMalloc<CNandGate>();
+			CAndGate*	pcAnd;
 
-			pcPins->Init(uiInputs, mpcFamily);
-			pcAnd->Init(mpcTop, "", pcPins);
+			if (eGate == G_And)
+			{
+				pcAnd = &OMalloc<CAndGate>(mpcTop, "", OMalloc<CAndGatePins>(uiInputs, mpcFamily));
+			}
+			else
+			{
+				pcAnd = &OMalloc<CNandGate>(mpcTop, "", OMalloc<CAndGatePins>(uiInputs, mpcFamily));
+			}
 			pcGate = pcAnd;
-			papcInputs = pcPins->GetInputs();
-			pcOutput = pcPins->GetOutput();
+			papcInputs = pcAnd->GetAndGatePins()->GetInputs();
+			pcOutput = pcAnd->GetAndGatePins()->GetOutput();
 		}
 		else if ((eGate == G_Or) || (eGate == G_Nor))
 		{
-			COrGatePins*	pcPins = NewMalloc<COrGatePins>();
-			COrGate*		pcOr = (eGate == G_Or) ? NewMalloc<COrGate>() : NewMalloc<CNorGate>();
+			COrGate*	pcOr;
 
-			pcPins->Init(uiInputs, mpcFamily);
-			pcOr->Init(mpcTop, "", pcPins);
+			if (eGate == G_Or)
+			{
+				pcOr = &OMalloc<COrGate>(mpcTop, "", OMalloc<COrGatePins>(uiInputs, mpcFamily));
+			}
+			else
+			{
+				pcOr = &OMalloc<CNorGate>(mpcTop, "", OMalloc<COrGatePins>(uiInputs, mpcFamily));
+			}
 			pcGate = pcOr;
-			papcInputs = pcPins->GetInputs();
-			pcOutput = pcPins->GetOutput();
+			papcInputs = pcOr->GetOrGatePins()->GetInputs();
+			pcOutput = pcOr->GetOrGatePins()->GetOutput();
 		}
 		else
 		{
-			CXorGatePins*	pcPins = NewMalloc<CXorGatePins>();
-			CXorGate*		pcXor = (eGate == G_Xor) ? NewMalloc<CXorGate>() : NewMalloc<CXnorGate>();
+			CXorGate*	pcXor;
 
-			pcPins->Init(uiInputs, mpcFamily);
-			pcXor->Init(mpcTop, "", pcPins);
+			if (eGate == G_Xor)
+			{
+				pcXor = &OMalloc<CXorGate>(mpcTop, "", OMalloc<CXorGatePins>(uiInputs, mpcFamily));
+			}
+			else
+			{
+				pcXor = &OMalloc<CXnorGate>(mpcTop, "", OMalloc<CXorGatePins>(uiInputs, mpcFamily));
+			}
 			pcGate = pcXor;
-			papcInputs = pcPins->GetInputs();
-			pcOutput = pcPins->GetOutput();
+			papcInputs = pcXor->GetXorGatePins()->GetInputs();
+			pcOutput = pcXor->GetXorGatePins()->GetOutput();
 		}
 
 		Power(pcGate);
@@ -191,18 +203,21 @@ public:
 
 	CTrace* Buffer(CTrace* pcIn, bool bInvert)
 	{
-		CBufferPins*	pcPins;
 		CBuffer*		pcBuffer;
 		CTrace*			pcOut;
 
-		pcPins = NewMalloc<CBufferPins>();
-		pcPins->Init(1, mpcFamily);
-		pcBuffer = bInvert ? NewMalloc<CInverter>() : NewMalloc<CBuffer>();
-		pcBuffer->Init(mpcTop, "", pcPins);
+		if (bInvert)
+		{
+			pcBuffer = &OMalloc<CInverter>(mpcTop, "", OMalloc<CBufferPins>(1, mpcFamily));
+		}
+		else
+		{
+			pcBuffer = &OMalloc<CBuffer>(mpcTop, "", OMalloc<CBufferPins>(1, mpcFamily));
+		}
 		Power(pcBuffer);
-		pcPins->GetInput(0)->Connect(pcIn);
+		pcBuffer->GetBufferPins()->GetInput(0)->Connect(pcIn);
 		pcOut = NewTrace();
-		pcPins->GetOutput(0)->Connect(pcOut);
+		pcBuffer->GetBufferPins()->GetOutput(0)->Connect(pcOut);
 		return pcOut;
 	}
 
@@ -217,10 +232,8 @@ public:
 		CProbe*		pcProbe;
 		size		i;
 
-		pcPins = NewMalloc<CProbePins>();
-		pcPins->Init(mpcFamily, uiBits);
-		pcProbe = NewMalloc<CProbe>();
-		pcProbe->Init(mpcTop, "", pcPins);
+		pcProbe = &OMalloc<CProbe>(mpcTop, "", OMalloc<CProbePins>(mpcFamily, uiBits));
+		pcPins = pcProbe->GetProbePins();
 		Power(pcProbe);
 		for (i = 0; i < uiBits; i++)
 		{

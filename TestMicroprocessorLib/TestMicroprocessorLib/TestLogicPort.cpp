@@ -28,17 +28,30 @@
 //////////////////////////////////////////////////////////////////////////
 class CTestBufferPins : public CPins
 {
+CONSTRUCTABLE(CTestBufferPins);
 public:
 	CLogicPort*		mpcIn;
 	CLogicPort*		mpcOut;
 
 	void Init(CVoltageConfigurationSource* pcSource)
 	{
+		PreInit();
+
 		CPins::Init();
 		mpcIn = NewMalloc<CLogicPort>();
 		mpcIn->Init(PT_Input, this, "In", pcSource);
 		mpcOut = NewMalloc<CLogicPort>();
 		mpcOut->Init(PT_Output, this, "Out", pcSource);
+
+		PostInit();
+	}
+
+	void Class(void) override
+	{
+		CPins::Class();
+
+		U_Pointer(mpcIn);
+		U_Pointer(mpcOut);
 	}
 };
 
@@ -57,15 +70,22 @@ public:
 
 	void Init(CSubcircuitSimulation* pcSimulation, const char* szName, CVoltageConfigurationSource* pcSource, CChars* pszLog)
 	{
-		CTestBufferPins*	pcPins;
+		PreInit();
 
-		pcPins = NewMalloc<CTestBufferPins>();
-		pcPins->Init(pcSource);
-		CIntegratedCircuit::Init(pcSimulation, szName, pcPins);
+		CIntegratedCircuit::Init(pcSimulation, szName, OMalloc<CTestBufferPins>(pcSource));
 		mpszLog = pszLog;
+
+		PostInit();
 	}
 
-	CTestBufferPins* GetBufferPins(void) { return (CTestBufferPins*)mpcPins; }
+	void Class(void) override
+	{
+		CIntegratedCircuit::Class();
+
+		U_Pointer(mpszLog);
+	}
+
+	CTestBufferPins* GetBufferPins(void) { return (CTestBufferPins*)&mpPins; }
 	void SimulationStarted(CTimeline* pcTimeline) {}
 	const char* GetType(void) { return "Buffer"; }
 
@@ -104,13 +124,22 @@ public:
 
 	void Init(CSubcircuitSimulation* pcSimulation, const char* szName, CVoltageConfigurationSource* pcSource, int64 iPeriod)
 	{
-		CTestBufferPins*	pcPins;
+		PreInit();
 
-		pcPins = NewMalloc<CTestBufferPins>();
-		pcPins->Init(pcSource);
-		CIntegratedCircuit::Init(pcSimulation, szName, pcPins);
+		CIntegratedCircuit::Init(pcSimulation, szName, OMalloc<CTestBufferPins>(pcSource));
 		miPeriod = iPeriod;
 		ResetState();
+
+		PostInit();
+	}
+
+	void Class(void) override
+	{
+		CIntegratedCircuit::Class();
+
+		U_Int64(miPeriod);
+		U_Bool(mbHigh);
+		U_Size(muiTicks);
 	}
 
 	const char* GetType(void) { return "Clock"; }
@@ -131,7 +160,7 @@ public:
 	{
 		mbHigh = !mbHigh;
 		muiTicks++;
-		((CTestBufferPins*)mpcPins)->mpcOut->Write(pcTimeline, mbHigh);
+		((CTestBufferPins*)&mpPins)->mpcOut->Write(pcTimeline, mbHigh);
 		CTickEvent::Schedule(miPeriod, this, pcTimeline);
 	}
 };
@@ -183,8 +212,7 @@ public:
 	{
 		CPowerSource*	pcPower;
 
-		pcPower = NewMalloc<CPowerSource>();
-		pcPower->Init(mpcTop, szName, fVoltage);
+		pcPower = &OMalloc<CPowerSource>(mpcTop, szName, fVoltage);
 		return pcPower;
 	}
 
@@ -198,8 +226,7 @@ public:
 	{
 		CTestBuffer*	pcBuffer;
 
-		pcBuffer = NewMalloc<CTestBuffer>();
-		pcBuffer->Init(mpcTop, szName, pcSource, &mszLog);
+		pcBuffer = &OMalloc<CTestBuffer>(mpcTop, szName, pcSource, &mszLog);
 		Power(pcBuffer);
 		return pcBuffer;
 	}
@@ -258,7 +285,6 @@ void TestLogicPortTrace(void)
 	AssertLong(0, pcHigh->GetPowerOutPort()->GetTraceID());
 
 	AssertTrue(cTest.mpcCircuit->Remove(pcLow));
-	SafeKill(pcLow);
 	AssertSize(0, pcTrace->NumConnectedPorts());
 	cTest.Kill();
 }
@@ -560,8 +586,7 @@ void TestLogicPortNoPower(void)
 	cConfiguration.Init(4.0f, 1.0f, 3.0f, 0.0f, 4.0f, 1024, 1024);
 	cFamily.Add(&cConfiguration, LOGIC_LEVEL_TTL);
 
-	pcDriver = NewMalloc<CTestBuffer>();
-	pcDriver->Init(cTest.mpcTop, "D", &cFamily, &cTest.mszLog);
+	pcDriver = &OMalloc<CTestBuffer>(cTest.mpcTop, "D", &cFamily, &cTest.mszLog);
 	cTest.mcSimulation.SimulationStarted();
 	pcDriverOut = pcDriver->GetBufferPins()->mpcOut;
 	AssertFalse(pcDriver->IsPowered(0));
@@ -667,8 +692,7 @@ void TestLogicPortTick(void)
 	CChars				sz;
 
 	cTest.Init();
-	pcClock = NewMalloc<CTestClock>();
-	pcClock->Init(cTest.mpcTop, "Clock", &cTest.mcFixed, 10000);
+	pcClock = &OMalloc<CTestClock>(cTest.mpcTop, "Clock", &cTest.mcFixed, 10000);
 	cTest.Power(pcClock);
 	pcBuffer = cTest.AddBuffer("U1", &cTest.mcFixed);
 	pcClockTrace = cTest.mpcCircuit->AddTrace();

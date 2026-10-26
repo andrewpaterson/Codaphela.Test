@@ -534,14 +534,12 @@ void TestW65C816Reset(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 
 	TestW65C816OnlyInitAndKill();
 	TestW65C816ResetReleaseBeforePhi2Falling();
 	TestW65C816ResetReleaseBeforePhi2Rising();
 	TestW65C816ResetVector();
 
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

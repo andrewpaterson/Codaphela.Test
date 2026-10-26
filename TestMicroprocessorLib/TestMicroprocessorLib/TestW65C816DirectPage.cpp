@@ -291,7 +291,6 @@ void TestW65C816DirectPage(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 
 	TestW65C816DirectPageNative();
 	TestW65C816DirectPageNativeIndexedWraps();
@@ -302,7 +301,6 @@ void TestW65C816DirectPage(void)
 	TestW65C816DirectPageEmulationIndirectLongDoesNotWrap();
 	TestW65C816DirectPageStore();
 
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

@@ -602,7 +602,6 @@ void TestFast65C64(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 	C65C64InstructionFactory::GetInstance()->Init();
 	gsTestFast65C64Failures = 0;
 
@@ -612,7 +611,6 @@ void TestFast65C64(void)
 	TestFast65C64Fuzz(false, 0x65C816ULL);
 
 	C65C64InstructionFactory::GetInstance()->Kill();
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

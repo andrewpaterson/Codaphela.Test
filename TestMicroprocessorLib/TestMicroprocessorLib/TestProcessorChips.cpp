@@ -53,6 +53,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 class CTestRamPins : public CPins
 {
+CONSTRUCTABLE(CTestRamPins);
 public:
 	CLogicPortBus	mcAddress;
 	CLogicPortBus	mcData;
@@ -85,6 +86,8 @@ public:
 	{
 		size	i;
 
+		PreInit();
+
 		CPins::Init();
 		mcAddress.Init();
 		for (i = 0; i < uiAddressBits; i++)
@@ -109,13 +112,30 @@ public:
 			mpcLowerByte = AddPort(PT_Input, "Lower Byte", -1, pcSource);
 			mpcUpperByte = AddPort(PT_Input, "Upper Byte", -1, pcSource);
 		}
+
+		PostInit();
 	}
 
-	void Kill(void)
+	void Class(void) override
+	{
+		CPins::Class();
+
+		U_Data(CLogicPortBus, mcAddress);
+		U_Data(CLogicPortBus, mcData);
+		U_Pointer(mpcPHI2);
+		U_Pointer(mpcRWB);
+		U_Pointer(mpcVDA);
+		U_Pointer(mpcVPA);
+		U_Pointer(mpcVPB);
+		U_Pointer(mpcLowerByte);
+		U_Pointer(mpcUpperByte);
+	}
+
+	void Free(void) override
 	{
 		mcAddress.Kill();
 		mcData.Kill();
-		CPins::Kill();
+		CPins::Free();
 	}
 };
 
@@ -142,18 +162,38 @@ public:
 	size			muiReads;
 	size			muiWrites;
 
-	void Init(CSubcircuitSimulation* pcSimulation, CTestRamPins* pcPins, CTestRamMemory* pcMemory, bool b65C64)
+	void Init(CSubcircuitSimulation* pcSimulation, Ptr<CTestRamPins> pPins, CTestRamMemory* pcMemory, bool b65C64)
 	{
-		CIntegratedCircuit::Init(pcSimulation, "RAM", pcPins);
+		PreInit();
+
+		CIntegratedCircuit::Init(pcSimulation, "RAM", pPins);
 		mpcMemory = pcMemory;
 		mb65C64 = b65C64;
 		mbValid = false;
 		mbDriving = false;
 		muiReads = 0;
 		muiWrites = 0;
+
+		PostInit();
 	}
 
-	CTestRamPins* GetRamPins(void) { return (CTestRamPins*)mpcPins; }
+	void Class(void) override
+	{
+		CIntegratedCircuit::Class();
+
+		U_Pointer(mpcMemory);
+		U_Bool(mb65C64);
+		U_UInt32(muiAddress);
+		U_Bool(mbValid);
+		U_Bool(mbWrite);
+		U_Bool(mbLower);
+		U_Bool(mbUpper);
+		U_Bool(mbDriving);
+		U_Size(muiReads);
+		U_Size(muiWrites);
+	}
+
+	CTestRamPins* GetRamPins(void) { return (CTestRamPins*)&mpPins; }
 	const char* GetType(void) { return "Test RAM"; }
 	void SimulationStarted(CTimeline* pcTimeline) {}
 
@@ -245,10 +285,8 @@ CTrace* AddChipClock(CTestBoard* pcBoard, float32 fFrequency, CClockOscillator**
 	CClockOscillator*		pcClock;
 	CTrace*					pcTrace;
 
-	pcPins = NewMalloc<CClockOscillatorPins>();
-	pcPins->Init(pcBoard->mpcFamily, false);
-	pcClock = NewMalloc<CClockOscillator>();
-	pcClock->Init(pcBoard->mpcTop, "Clock", pcPins, fFrequency);
+	pcClock = &OMalloc<CClockOscillator>(pcBoard->mpcTop, "Clock", OMalloc<CClockOscillatorPins>(pcBoard->mpcFamily, false), fFrequency);
+	pcPins = pcClock->GetClockOscillatorPins();
 	pcBoard->Power(pcClock);
 	pcTrace = pcBoard->NewTrace();
 	pcPins->GetOutput()->Connect(pcTrace);
@@ -369,18 +407,14 @@ void TestProcessorChipsW65C816(void)
 	pcReset = cBoard.Input("RESB", 0, 1, &pcResetTrace);
 	pcHigh = cBoard.Input("High", true);
 
-	pcPins = NewMalloc<CW65C816ChipPins>();
-	pcPins->Init(cBoard.mpcFamily);
-	pcChip = NewMalloc<CW65C816Chip>();
-	pcChip->Init(cBoard.mpcTop, "U1", pcPins);
+	pcChip = &OMalloc<CW65C816Chip>(cBoard.mpcTop, "U1", OMalloc<CW65C816ChipPins>(cBoard.mpcFamily));
+	pcPins = pcChip->GetChipPins();
 	cBoard.Power(pcChip);
 	AssertString(W65C816_CHIP_TYPE, pcChip->GetType());
 	AssertString("Address 15", pcPins->GetAddress()->GetPort(15)->GetName());
 
-	pcRamPins = NewMalloc<CTestRamPins>();
-	pcRamPins->Init(cBoard.mpcFamily, 16, 8, false);
-	pcRam = NewMalloc<CTestRam>();
-	pcRam->Init(cBoard.mpcTop, pcRamPins, &cMemory, false);
+	pcRam = &OMalloc<CTestRam>(cBoard.mpcTop, OMalloc<CTestRamPins>(cBoard.mpcFamily, 16, 8, false), &cMemory, false);
+	pcRamPins = pcRam->GetRamPins();
 	cBoard.Power(pcRam);
 
 	ConnectBuses(&cBoard, pcPins->GetAddress(), &pcRamPins->mcAddress);
@@ -490,18 +524,14 @@ void TestProcessorChips65C64(void)
 	pcReset = cBoard.Input("RESB", 0, 1, &pcResetTrace);
 	pcHigh = cBoard.Input("High", true);
 
-	pcPins = NewMalloc<C65C64ChipPins>();
-	pcPins->Init(cBoard.mpcFamily);
-	pcChip = NewMalloc<C65C64Chip>();
-	pcChip->Init(cBoard.mpcTop, "U1", pcPins);
+	pcChip = &OMalloc<C65C64Chip>(cBoard.mpcTop, "U1", OMalloc<C65C64ChipPins>(cBoard.mpcFamily));
+	pcPins = pcChip->GetChipPins();
 	cBoard.Power(pcChip);
 	AssertString(C65C64_CHIP_TYPE, pcChip->GetType());
 	AssertString("Address 31", pcPins->GetAddress()->GetPort(31)->GetName());
 
-	pcRamPins = NewMalloc<CTestRamPins>();
-	pcRamPins->Init(cBoard.mpcFamily, 32, 16, true);
-	pcRam = NewMalloc<CTestRam>();
-	pcRam->Init(cBoard.mpcTop, pcRamPins, &cMemory, true);
+	pcRam = &OMalloc<CTestRam>(cBoard.mpcTop, OMalloc<CTestRamPins>(cBoard.mpcFamily, 32, 16, true), &cMemory, true);
+	pcRamPins = pcRam->GetRamPins();
 	cBoard.Power(pcRam);
 
 	ConnectBuses(&cBoard, pcPins->GetAddress(), &pcRamPins->mcAddress);
@@ -568,10 +598,8 @@ void TestProcessorChipsOscilloscope(void)
 
 	cBoard.Init();
 	pcClock = AddChipClock(&cBoard, 10 * FREQUENCY_MHZ, NULL);
-	pcPins = NewMalloc<COscilloscopePins>();
-	pcPins->Init(2);
-	pcScope = NewMalloc<COscilloscope>();
-	pcScope->Init(cBoard.mpcTop, "Scope", pcPins, 100 * FREQUENCY_MHZ, 10, 10);
+	pcScope = &OMalloc<COscilloscope>(cBoard.mpcTop, "Scope", OMalloc<COscilloscopePins>(2), 100 * FREQUENCY_MHZ, 10, 10);
+	pcPins = pcScope->GetOscilloscopePins();
 	pcPins->GetInput(0)->Connect(pcClock);
 	AssertString(OSCILLOSCOPE_TYPE, pcScope->GetType());
 	AssertString("Input 1", pcPins->GetInput(1)->GetName());
@@ -661,15 +689,11 @@ struct SW65C816Computer
 		pcClock = AddChipClock(&cBoard, CHIP_CLOCK_FREQUENCY, NULL);
 		pcReset = cBoard.Input("RESB", 0, 1, &pcResetTrace);
 		pcHigh = cBoard.Input("High", true);
-		pcPins = NewMalloc<CW65C816ChipPins>();
-		pcPins->Init(cBoard.mpcFamily);
-		pcChip = NewMalloc<CW65C816Chip>();
-		pcChip->Init(cBoard.mpcTop, "U1", pcPins);
+		pcChip = &OMalloc<CW65C816Chip>(cBoard.mpcTop, "U1", OMalloc<CW65C816ChipPins>(cBoard.mpcFamily));
+		pcPins = pcChip->GetChipPins();
 		cBoard.Power(pcChip);
-		pcRamPins = NewMalloc<CTestRamPins>();
-		pcRamPins->Init(cBoard.mpcFamily, 16, 8, false);
-		pcRam = NewMalloc<CTestRam>();
-		pcRam->Init(cBoard.mpcTop, pcRamPins, &cMemory, false);
+		pcRam = &OMalloc<CTestRam>(cBoard.mpcTop, OMalloc<CTestRamPins>(cBoard.mpcFamily, 16, 8, false), &cMemory, false);
+		pcRamPins = pcRam->GetRamPins();
 		cBoard.Power(pcRam);
 		ConnectBuses(&cBoard, pcPins->GetAddress(), &pcRamPins->mcAddress);
 		ConnectBuses(&cBoard, pcPins->GetData(), &pcRamPins->mcData);
@@ -743,15 +767,11 @@ struct S65C64Computer
 		pcClock = AddChipClock(&cBoard, CHIP_CLOCK_FREQUENCY, NULL);
 		pcReset = cBoard.Input("RESB", 0, 1, &pcResetTrace);
 		pcHigh = cBoard.Input("High", true);
-		pcPins = NewMalloc<C65C64ChipPins>();
-		pcPins->Init(cBoard.mpcFamily);
-		pcChip = NewMalloc<C65C64Chip>();
-		pcChip->Init(cBoard.mpcTop, "U1", pcPins);
+		pcChip = &OMalloc<C65C64Chip>(cBoard.mpcTop, "U1", OMalloc<C65C64ChipPins>(cBoard.mpcFamily));
+		pcPins = pcChip->GetChipPins();
 		cBoard.Power(pcChip);
-		pcRamPins = NewMalloc<CTestRamPins>();
-		pcRamPins->Init(cBoard.mpcFamily, 32, 16, true);
-		pcRam = NewMalloc<CTestRam>();
-		pcRam->Init(cBoard.mpcTop, pcRamPins, &cMemory, true);
+		pcRam = &OMalloc<CTestRam>(cBoard.mpcTop, OMalloc<CTestRamPins>(cBoard.mpcFamily, 32, 16, true), &cMemory, true);
+		pcRamPins = pcRam->GetRamPins();
 		cBoard.Power(pcRam);
 		ConnectBuses(&cBoard, pcPins->GetAddress(), &pcRamPins->mcAddress);
 		ConnectBuses(&cBoard, pcPins->GetData(), &pcRamPins->mcData);

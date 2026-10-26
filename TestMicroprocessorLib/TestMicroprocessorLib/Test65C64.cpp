@@ -1091,7 +1091,6 @@ void Test65C64(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 	Test65C64FactoryUsers();
 	C65C64InstructionFactory::GetInstance()->Init();
 
@@ -1113,7 +1112,6 @@ void Test65C64(void)
 	Test65C64BlockCopy();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

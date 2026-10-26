@@ -228,14 +228,12 @@ void TestW65C816BlockMove(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 
 	TestW65C816BlockMoveMVN();
 	TestW65C816BlockMoveMVP();
 	TestW65C816BlockMoveSameBank();
 	TestW65C816BlockMoveEmulation();
 
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

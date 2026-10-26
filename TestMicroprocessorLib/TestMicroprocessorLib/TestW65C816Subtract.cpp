@@ -217,7 +217,6 @@ void TestW65C816Subtract(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 
 	TestW65C816SubtractSBCImmediateFullLog();
 	TestW65C816SubtractSBCImmediate();
@@ -227,7 +226,6 @@ void TestW65C816Subtract(void)
 	TestW65C816SubtractBruceClark03();
 	TestW65C816SubtractBruceClark04();
 
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

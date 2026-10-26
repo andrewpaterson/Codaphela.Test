@@ -361,7 +361,6 @@ void TestW65C816Add(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 
 	TestW65C816AddADCImmediateFullLog();
 	TestW65C816AddADCImmediate();
@@ -376,7 +375,6 @@ void TestW65C816Add(void)
 	TestW65C816AddBruceClark04();
 	TestW65C816AddBruceClark05();
 
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

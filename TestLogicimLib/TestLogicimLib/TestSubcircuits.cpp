@@ -1110,6 +1110,40 @@ void TestSubcircuitInsideItself(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// An instance of a subcircuit with two pins of one name can't be made;
+// it isn't left in the circuit, and no instance simulation is left.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestSubcircuitDuplicatePinNames(void)
+{
+	SSubcircuitTest				sTest;
+	CCircuitView*				pcTwin;
+	CCircuitView*				pcTop;
+	CSubcircuitInstanceView*	pcInstance;
+	SLogConfig					sLogConfig;
+
+	sTest.Init();
+	pcTwin = sTest.cCircuits.Add("Twin");
+	AddTestPin(pcTwin, 0, 3, "A", PA_Left, PAN_Centre);
+	AddTestPin(pcTwin, 0, -3, "A", PA_Right, PAN_Centre);
+	pcTop = sTest.cCircuits.Add("Top");
+	pcInstance = AddTestInstance(pcTop, 10, 0, "U1", pcTwin);
+
+	gcLogger.GetConfig(&sLogConfig);
+	gcLogger.SetSilent();
+	AssertFalse(pcTop->CreateSimulation(sTest.cCircuits.GetTopPath(pcTop), &sTest.cSimulation, &sTest.cFamilies));
+	gcLogger.SetConfig(&sLogConfig);
+
+	AssertSize(0, sTest.cSimulation.GetCircuit()->NumPassives());
+	AssertSize(0, sTest.cSimulation.NumInstanceSimulations());
+	AssertSize(0, pcInstance->NumComponents());
+
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // A project with subcircuits, saved part way through its simulation and
 // loaded into another, saves the same and runs on the same.
 //
@@ -1289,6 +1323,7 @@ void TestSubcircuits(void)
 	TestSubcircuitReusedAtTwoDepths();
 	TestSubcircuitSimulationsTickedApart();
 	TestSubcircuitInsideItself();
+	TestSubcircuitDuplicatePinNames();
 	TestSubcircuitFileRoundTrip();
 	TestSubcircuitLayoutRender();
 

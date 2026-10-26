@@ -243,7 +243,6 @@ void TestStandardRemoveComponent(void)
 	pcGate->Disconnect(cBoard.mpcTimeline);
 	pcGate->DisconnectPorts(cBoard.mpcTimeline);
 	AssertTrue(pcCircuit->Remove(pcGate));
-	SafeKill(pcGate);
 
 	cBoard.Run();
 	AssertInt(TV_Undriven, cBoard.Value(pcAnd));
@@ -270,10 +269,8 @@ void TestStandardDescriptions(void)
 	CPortEvent*		pcPortEvent;
 
 	cBoard.Init();
-	pcPins = NewMalloc<CAndGatePins>();
-	pcPins->Init(2, cBoard.mpcFamily);
-	pcGate = NewMalloc<CAndGate>();
-	pcGate->Init(cBoard.mpcTop, "U1", pcPins);
+	pcGate = &OMalloc<CAndGate>(cBoard.mpcTop, "U1", OMalloc<CAndGatePins>(2, cBoard.mpcFamily));
+	pcPins = pcGate->GetAndGatePins();
 	cBoard.Power(pcGate);
 	pcOut = cBoard.NewTrace();
 	pcPins->GetOutput()->Connect(pcOut);
@@ -346,10 +343,8 @@ void TestStandardLiveWiring(void)
 	cBoard.Init();
 	pcA = cBoard.Input("A", false);
 	pcB = cBoard.Input("B", false);
-	pcPins = NewMalloc<COrGatePins>();
-	pcPins->Init(2, cBoard.mpcFamily);
-	pcNor = NewMalloc<CNorGate>();
-	pcNor->Init(cBoard.mpcTop, "U1", pcPins);
+	pcNor = &OMalloc<CNorGate>(cBoard.mpcTop, "U1", OMalloc<COrGatePins>(2, cBoard.mpcFamily));
+	pcPins = pcNor->GetOrGatePins();
 	cBoard.Power(pcNor);
 	pcOut = cBoard.NewTrace();
 	pcPins->GetOutput()->Connect(pcOut);
@@ -374,8 +369,7 @@ void TestStandardLiveWiring(void)
 	//Input 1 on an undriven trace, then a supply wired onto it: the input sees the high.
 	pcT = cBoard.NewTrace();
 	pcPins->GetInput(1)->Connect(pcT);
-	pcHigh = NewMalloc<CPowerSource>();
-	pcHigh->Init(cBoard.mpcTop, "High", 3.3f);
+	pcHigh = &OMalloc<CPowerSource>(cBoard.mpcTop, "High", 3.3f);
 	AssertTrue(pcHigh->GetPowerOutPort()->ConnectLive(pcT, cBoard.mpcTimeline));
 	AssertSize(1, cBoard.mpcTimeline->NumSimultaneousEvents());
 	AssertSize(1, cBoard.mpcTimeline->GetFirstSimultaneousEvents()->NumEvents());
@@ -383,10 +377,8 @@ void TestStandardLiveWiring(void)
 	AssertInt(TV_Low, cBoard.Value(pcOut));
 
 	//A probe wired to the driven output: only the probe is told.
-	pcProbePins = NewMalloc<CProbePins>();
-	pcProbePins->Init(cBoard.mpcFamily, 1);
-	pcProbe = NewMalloc<CProbe>();
-	pcProbe->Init(cBoard.mpcTop, "P", pcProbePins);
+	pcProbe = &OMalloc<CProbe>(cBoard.mpcTop, "P", OMalloc<CProbePins>(cBoard.mpcFamily, 1));
+	pcProbePins = pcProbe->GetProbePins();
 	cBoard.Power(pcProbe);
 	AssertTrue(pcProbePins->GetInput(0)->ConnectLive(pcOut, cBoard.mpcTimeline));
 	AssertSize(1, cBoard.mpcTimeline->GetFirstSimultaneousEvents()->NumEvents());
@@ -776,10 +768,8 @@ CClockOscillator* AddClock(CTestBoard* pcBoard, CTrace** ppcOut, CTrace** ppcOut
 	CClockOscillatorPins*	pcPins;
 	CClockOscillator*		pcClock;
 
-	pcPins = NewMalloc<CClockOscillatorPins>();
-	pcPins->Init(pcBoard->mpcFamily, ppcOutInverse != NULL);
-	pcClock = NewMalloc<CClockOscillator>();
-	pcClock->Init(pcBoard->mpcTop, "Clock", pcPins, 10 * FREQUENCY_MHZ);
+	pcClock = &OMalloc<CClockOscillator>(pcBoard->mpcTop, "Clock", OMalloc<CClockOscillatorPins>(pcBoard->mpcFamily, ppcOutInverse != NULL), 10 * FREQUENCY_MHZ);
+	pcPins = pcClock->GetClockOscillatorPins();
 	pcBoard->Power(pcClock);
 	*ppcOut = pcBoard->NewTrace();
 	pcPins->GetOutput()->Connect(*ppcOut);
@@ -839,10 +829,8 @@ void TestStandardClock(void)
 	{
 		CClockOscillatorPins*	pcPins;
 
-		pcPins = NewMalloc<CClockOscillatorPins>();
-		pcPins->Init(cBoard.mpcFamily, false);
-		pcClock = NewMalloc<CClockOscillator>();
-		pcClock->Init(cBoard.mpcTop, "Clock", pcPins, 10 * FREQUENCY_MHZ);
+		pcClock = &OMalloc<CClockOscillator>(cBoard.mpcTop, "Clock", OMalloc<CClockOscillatorPins>(cBoard.mpcFamily, false), 10 * FREQUENCY_MHZ);
+		pcPins = pcClock->GetClockOscillatorPins();
 		AssertNull(pcPins->GetOutputInverse());
 	}
 	cBoard.Start();
@@ -859,7 +847,7 @@ void TestStandardClock(void)
 
 	//Unwiring its power stops it ticking and driving.
 	pcOut = cBoard.NewTrace();
-	((CClockOscillatorPins*)pcClock->GetPins())->GetOutput()->ConnectLive(pcOut, cBoard.mpcTimeline);
+	(pcClock->GetClockOscillatorPins())->GetOutput()->ConnectLive(pcOut, cBoard.mpcTimeline);
 	cBoard.mpcTimeline->RunToTime(CLOCK_HALF_CYCLE / 2);
 	AssertTrue(IsVoltage(pcOut->GetVoltage(cBoard.mpcTimeline->GetTime())));
 	pcClock->GetPins()->GetVoltageCommon()->Disconnect(cBoard.mpcTimeline);
@@ -881,10 +869,8 @@ CDTypeFlipFlopPins* AddFlipFlop(CTestBoard* pcBoard, CTrace* pcClock, CTrace* pc
 	CDTypeFlipFlopPins*	pcPins;
 	CDTypeFlipFlop*		pcFlipFlop;
 
-	pcPins = NewMalloc<CDTypeFlipFlopPins>();
-	pcPins->Init(pcBoard->mpcFamily);
-	pcFlipFlop = NewMalloc<CDTypeFlipFlop>();
-	pcFlipFlop->Init(pcBoard->mpcTop, "", pcPins);
+	pcFlipFlop = &OMalloc<CDTypeFlipFlop>(pcBoard->mpcTop, "", OMalloc<CDTypeFlipFlopPins>(pcBoard->mpcFamily));
+	pcPins = pcFlipFlop->GetDTypeFlipFlopPins();
 	pcBoard->Power(pcFlipFlop);
 	pcPins->GetClock()->Connect(pcClock);
 	pcPins->GetSet()->Connect(pcSet);
@@ -1092,10 +1078,8 @@ void TestStandardCounter(void)
 	cBoard.Init();
 	AddClock(&cBoard, &pcClockTrace, NULL);
 
-	pcPins = NewMalloc<CCounterPins>();
-	pcPins->Init(cBoard.mpcFamily, 4);
-	pcCounter = NewMalloc<CCounter>();
-	pcCounter->Init(cBoard.mpcTop, "U1", pcPins, 4, 9);
+	pcCounter = &OMalloc<CCounter>(cBoard.mpcTop, "U1", OMalloc<CCounterPins>(cBoard.mpcFamily, 4), 4, 9);
+	pcPins = pcCounter->GetCounterPins();
 	cBoard.Power(pcCounter);
 	AssertString(COUNTER_TYPE, pcCounter->GetType());
 	AssertString("Data 3", pcPins->GetData()->GetPtr(3)->GetName());

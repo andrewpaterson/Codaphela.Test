@@ -1156,7 +1156,6 @@ void TestW65C816Load(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 
 	TestW65C816LoadLDAImmediate();
 	TestW65C816LoadLDAAbsolute();
@@ -1174,7 +1173,6 @@ void TestW65C816Load(void)
 	TestW65C816LoadLDADirectPageIndirectLongIndexedWithY();
 	TestW65C816LoadLDADirectPageIndexedIndirectWithX();
 
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

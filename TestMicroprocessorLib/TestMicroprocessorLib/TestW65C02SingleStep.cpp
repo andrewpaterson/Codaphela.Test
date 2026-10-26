@@ -75,7 +75,6 @@ void TestW65C02SingleStep(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 	CW65C02InstructionFactory::GetInstance()->Init();
 
 	for (iOpcode = 0; iOpcode < 256; iOpcode++)
@@ -88,7 +87,6 @@ void TestW65C02SingleStep(void)
 	}
 
 	CW65C02InstructionFactory::GetInstance()->Kill();
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

@@ -236,7 +236,6 @@ void Test65C64Bits(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 	C65C64InstructionFactory::GetInstance()->Init();
 
 	Test65C64Find();
@@ -244,7 +243,6 @@ void Test65C64Bits(void)
 	Test65C64StatusToBit();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

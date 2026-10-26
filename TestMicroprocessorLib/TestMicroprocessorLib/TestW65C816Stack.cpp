@@ -518,7 +518,6 @@ void TestW65C816Stack(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 
 	TestW65C816StackPushPullEightBit();
 	TestW65C816StackPushPullSixteenBit();
@@ -534,7 +533,6 @@ void TestW65C816Stack(void)
 	TestW65C816StackEmulationPageWrap();
 	TestW65C816StackEmulationJSLLeavesPage();
 
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

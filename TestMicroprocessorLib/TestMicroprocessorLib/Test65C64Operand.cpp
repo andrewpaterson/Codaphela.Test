@@ -134,14 +134,12 @@ void Test65C64Operand(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 	C65C64InstructionFactory::GetInstance()->Init();
 
 	Test65C64NegateAbsolute();
 	Test65C64PushPullOperand();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

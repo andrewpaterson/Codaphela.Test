@@ -924,7 +924,6 @@ void TestFast65C816(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 	CW65C816InstructionFactory::GetInstance()->Init();
 	gsTestFast65C816Failures = 0;
 
@@ -935,7 +934,6 @@ void TestFast65C816(void)
 	TestFast65C816Interrupts(true);
 
 	CW65C816InstructionFactory::GetInstance()->Kill();
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

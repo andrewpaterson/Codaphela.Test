@@ -609,7 +609,6 @@ void TestW65C816Logic(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 
 	TestW65C816LogicAND();
 	TestW65C816LogicORAAndEOR();
@@ -627,7 +626,6 @@ void TestW65C816Logic(void)
 	TestW65C816LogicIncrementDecrement16Bit();
 	TestW65C816LogicFlagInstructions();
 
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

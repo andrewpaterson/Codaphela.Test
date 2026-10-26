@@ -582,7 +582,6 @@ void TestW65C816Timing(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 
 	TestW65C816TimingImpliedAndImmediate();
 	TestW65C816TimingAbsolute();
@@ -601,7 +600,6 @@ void TestW65C816Timing(void)
 	TestW65C816TimingSignalsReadModifyWrite();
 	TestW65C816TimingSignalsBRK();
 
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

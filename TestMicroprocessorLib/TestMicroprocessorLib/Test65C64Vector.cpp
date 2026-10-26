@@ -258,7 +258,6 @@ void Test65C64Vector(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 	C65C64InstructionFactory::GetInstance()->Init();
 
 	Test65C64VectorDecode();
@@ -267,7 +266,6 @@ void Test65C64Vector(void)
 	Test65C64VectorInvert();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

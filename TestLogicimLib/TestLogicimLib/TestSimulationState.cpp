@@ -84,8 +84,7 @@ CPowerSource* AddRingEnable(CCircuitSimulation* pcSimulation, CCircuitView* pcCi
 {
 	CPowerSource*	pcSupply;
 
-	pcSupply = NewMalloc<CPowerSource>();
-	pcSupply->Init(pcSimulation->GetSubcircuitTopSimulation(), "Enable", fVoltage);
+	pcSupply = &OMalloc<CPowerSource>(pcSimulation->GetSubcircuitTopSimulation(), "Enable", fVoltage);
 	if (bLive)
 	{
 		AssertTrue(pcSupply->GetPowerOutPort()->ConnectLive(pcCircuit->GetTrace(0)->GetTrace(pcViewPath, pcSimulation, 0), pcSimulation->GetTimeline()));
@@ -326,12 +325,6 @@ void TestSimulationStateStates(void)
 	CCounter*							apcCounter[2];
 	CDTypeFlipFlop*						apcFlop[2];
 	COscilloscope*						apcScope[2];
-	CClockOscillatorPins*				pcClockPins;
-	CConstantPins*						pcConstantPins;
-	CCounterPins*						pcCounterPins;
-	CDTypeFlipFlopPins*					pcFlopPins;
-	COscilloscopePins*					pcScopePins;
-	CAndGatePins*						pcAndPins;
 	CAndGate*							pcAnd;
 	int									i;
 
@@ -343,26 +336,11 @@ void TestSimulationStateStates(void)
 	pcTop = cSimulation.GetSubcircuitTopSimulation();
 	for (i = 0; i < 2; i++)
 	{
-		pcClockPins = NewMalloc<CClockOscillatorPins>();
-		pcClockPins->Init(pcFamily, true);
-		apcClock[i] = NewMalloc<CClockOscillator>();
-		apcClock[i]->Init(pcTop, "Clock", pcClockPins, 1000000.0f);
-		pcConstantPins = NewMalloc<CConstantPins>();
-		pcConstantPins->Init(pcFamily, 8);
-		apcConstant[i] = NewMalloc<CConstant>();
-		apcConstant[i]->Init(pcTop, "Constant", pcConstantPins, 0x12);
-		pcCounterPins = NewMalloc<CCounterPins>();
-		pcCounterPins->Init(pcFamily, 4);
-		apcCounter[i] = NewMalloc<CCounter>();
-		apcCounter[i]->Init(pcTop, "Counter", pcCounterPins, 4, 15);
-		pcFlopPins = NewMalloc<CDTypeFlipFlopPins>();
-		pcFlopPins->Init(pcFamily);
-		apcFlop[i] = NewMalloc<CDTypeFlipFlop>();
-		apcFlop[i]->Init(pcTop, "Flop", pcFlopPins);
-		pcScopePins = NewMalloc<COscilloscopePins>();
-		pcScopePins->Init(2);
-		apcScope[i] = NewMalloc<COscilloscope>();
-		apcScope[i]->Init(pcTop, "Scope", pcScopePins, 1000000.0f, 1, 3);
+		apcClock[i] = &OMalloc<CClockOscillator>(pcTop, "Clock", OMalloc<CClockOscillatorPins>(pcFamily, true), 1000000.0f);
+		apcConstant[i] = &OMalloc<CConstant>(pcTop, "Constant", OMalloc<CConstantPins>(pcFamily, 8), 0x12);
+		apcCounter[i] = &OMalloc<CCounter>(pcTop, "Counter", OMalloc<CCounterPins>(pcFamily, 4), 4, 15);
+		apcFlop[i] = &OMalloc<CDTypeFlipFlop>(pcTop, "Flop", OMalloc<CDTypeFlipFlopPins>(pcFamily));
+		apcScope[i] = &OMalloc<COscilloscope>(pcTop, "Scope", OMalloc<COscilloscopePins>(2), 1000000.0f, 1, 3);
 	}
 
 	//Made, they remember how they start.
@@ -416,26 +394,11 @@ void TestSimulationStateStates(void)
 		apcFlop[i]->ResetState();
 		apcScope[i]->ResetState();
 	}
-	pcClockPins = NewMalloc<CClockOscillatorPins>();
-	pcClockPins->Init(pcFamily, true);
-	apcClock[1] = NewMalloc<CClockOscillator>();
-	apcClock[1]->Init(pcTop, "Clock", pcClockPins, 1000000.0f);
-	pcConstantPins = NewMalloc<CConstantPins>();
-	pcConstantPins->Init(pcFamily, 8);
-	apcConstant[1] = NewMalloc<CConstant>();
-	apcConstant[1]->Init(pcTop, "Constant", pcConstantPins, 0x12);
-	pcCounterPins = NewMalloc<CCounterPins>();
-	pcCounterPins->Init(pcFamily, 4);
-	apcCounter[1] = NewMalloc<CCounter>();
-	apcCounter[1]->Init(pcTop, "Counter", pcCounterPins, 4, 15);
-	pcFlopPins = NewMalloc<CDTypeFlipFlopPins>();
-	pcFlopPins->Init(pcFamily);
-	apcFlop[1] = NewMalloc<CDTypeFlipFlop>();
-	apcFlop[1]->Init(pcTop, "Flop", pcFlopPins);
-	pcScopePins = NewMalloc<COscilloscopePins>();
-	pcScopePins->Init(2);
-	apcScope[1] = NewMalloc<COscilloscope>();
-	apcScope[1]->Init(pcTop, "Scope", pcScopePins, 1000000.0f, 1, 3);
+	apcClock[1] = &OMalloc<CClockOscillator>(pcTop, "Clock", OMalloc<CClockOscillatorPins>(pcFamily, true), 1000000.0f);
+	apcConstant[1] = &OMalloc<CConstant>(pcTop, "Constant", OMalloc<CConstantPins>(pcFamily, 8), 0x12);
+	apcCounter[1] = &OMalloc<CCounter>(pcTop, "Counter", OMalloc<CCounterPins>(pcFamily, 4), 4, 15);
+	apcFlop[1] = &OMalloc<CDTypeFlipFlop>(pcTop, "Flop", OMalloc<CDTypeFlipFlopPins>(pcFamily));
+	apcScope[1] = &OMalloc<COscilloscope>(pcTop, "Scope", OMalloc<COscilloscopePins>(2), 1000000.0f, 1, 3);
 	AssertSameStateXML(apcClock[1], apcClock[0]);
 	AssertSameStateXML(apcConstant[1], apcConstant[0]);
 	AssertSameStateXML(apcCounter[1], apcCounter[0]);
@@ -443,10 +406,7 @@ void TestSimulationStateStates(void)
 	AssertSameStateXML(apcScope[1], apcScope[0]);
 	AssertLong(0x12, apcConstant[0]->GetConstantValue());
 
-	pcAndPins = NewMalloc<CAndGatePins>();
-	pcAndPins->Init(2, pcFamily);
-	pcAnd = NewMalloc<CAndGate>();
-	pcAnd->Init(pcTop, "And", pcAndPins);
+	pcAnd = &OMalloc<CAndGate>(pcTop, "And", OMalloc<CAndGatePins>(2, pcFamily));
 	AssertTrue(pcAnd->GetStateXMLName() == NULL);
 
 	cSimulation.Kill();
@@ -595,7 +555,6 @@ void TestSimulationStateW65C816Core(void)
 	CFamilyVoltageConfigurationStore	cFamilies;
 	CCircuitSimulation					cSimulation;
 	CW65C816Chip*						apcChip[2];
-	CW65C816ChipPins*					pcPins;
 	SW65CCoreState						sSet;
 	SW65CCoreState						sGot;
 	size								i;
@@ -607,10 +566,7 @@ void TestSimulationStateW65C816Core(void)
 	cSimulation.Init("Core");
 	for (i = 0; i < 2; i++)
 	{
-		pcPins = NewMalloc<CW65C816ChipPins>();
-		pcPins->Init(cFamilies.Get("LVC"));
-		apcChip[i] = NewMalloc<CW65C816Chip>();
-		apcChip[i]->Init(cSimulation.GetSubcircuitTopSimulation(), "MPU", pcPins);
+		apcChip[i] = &OMalloc<CW65C816Chip>(cSimulation.GetSubcircuitTopSimulation(), "MPU", OMalloc<CW65C816ChipPins>(cFamilies.Get("LVC")));
 	}
 
 	memset(&sSet, 0, sizeof(SW65CCoreState));
@@ -722,7 +678,6 @@ void TestSimulationState65C64Core(void)
 	CFamilyVoltageConfigurationStore	cFamilies;
 	CCircuitSimulation					cSimulation;
 	C65C64Chip*							apcChip[2];
-	C65C64ChipPins*						pcPins;
 	S65C64CoreState						sState;
 	size								i;
 
@@ -732,10 +687,7 @@ void TestSimulationState65C64Core(void)
 	cSimulation.Init("Core");
 	for (i = 0; i < 2; i++)
 	{
-		pcPins = NewMalloc<C65C64ChipPins>();
-		pcPins->Init(cFamilies.Get("LVC"));
-		apcChip[i] = NewMalloc<C65C64Chip>();
-		apcChip[i]->Init(cSimulation.GetSubcircuitTopSimulation(), "MPU", pcPins);
+		apcChip[i] = &OMalloc<C65C64Chip>(cSimulation.GetSubcircuitTopSimulation(), "MPU", OMalloc<C65C64ChipPins>(cFamilies.Get("LVC")));
 	}
 
 	//An interrupt part way through with a transfer pending.

@@ -4,7 +4,8 @@
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalMemory.h"
-#include "StandardLib/Unknowns.h"
+#include "BaseLib/GlobalDataTypesIO.h"
+#include "StandardLib/Objects.h"
 #include "MicroprocessorLib/MetaTrace.h"
 #include "TestLib/Assert.h"
 
@@ -55,7 +56,8 @@ int __cdecl main(void)
 	TypesInit();
 	TypeConverterInit();
 	MemoryInit();
-	UnknownsInit();
+	DataIOInit();
+	ObjectsInit();
 	gcMetaTraceUndriven.Init();
 
 	TestW65C816Reset();
@@ -92,7 +94,8 @@ int __cdecl main(void)
 	TestStandardIntegratedCircuits();
 	TestProcessorChips();
 
-	UnknownsKill();
+	ObjectsKill();
+	DataIOKill();
 	MemoryKill();
 	TypeConverterKill();
 	TypesKill();

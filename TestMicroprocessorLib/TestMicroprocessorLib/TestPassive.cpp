@@ -68,8 +68,7 @@ void TestPassiveCircuitSimulation(void)
 	sz.Kill();
 
 	AssertTrue(cSimulation.GetCircuit()->IsEmpty());
-	pcPower = NewMalloc<CPowerSource>();
-	pcPower->Init(pcTop, "VCC", 5.0f);
+	pcPower = &OMalloc<CPowerSource>(pcTop, "VCC", 5.0f);
 	AssertFalse(cSimulation.GetCircuit()->IsEmpty());
 	AssertSize(1, cSimulation.GetCircuit()->NumPassives());
 
@@ -78,7 +77,6 @@ void TestPassiveCircuitSimulation(void)
 	gcLogger.SetConfig(&sLogConfig);
 
 	AssertTrue(cSimulation.GetCircuit()->Remove(pcPower));
-	SafeKill(pcPower);
 	AssertTrue(cSimulation.GetCircuit()->IsEmpty());
 	AssertTrue(cSimulation.Reset());
 	AssertTrue(cSimulation.GetTimeline()->GetContext() == &cSimulation);
@@ -101,10 +99,9 @@ void TestPassivePowerSource(void)
 
 	TestPassiveResetIDs();
 	cSimulation.Init("Main");
-	pcPower = NewMalloc<CPowerSource>();
-	pcPower->Init(cSimulation.GetSubcircuitTopSimulation(), "Supply", 3.3f);
+	pcPower = &OMalloc<CPowerSource>(cSimulation.GetSubcircuitTopSimulation(), "Supply", 3.3f);
 	AssertString("Power Source", pcPower->GetType());
-	AssertString("Supply", pcPower->GetName());
+	AssertString("Supply", pcPower->GetComponentName());
 	AssertSize(1, pcPower->NumPorts());
 	AssertTrue(pcPower->GetPort(POWER_PIN_POWER) == pcPower->GetPowerOutPort());
 	AssertInt(PT_PowerOut, pcPower->GetPowerOutPort()->GetPortType());
@@ -144,8 +141,7 @@ void TestPassivePin(void)
 	TestPassiveResetIDs();
 	cSimulation.Init("Main");
 	pcTop = cSimulation.GetSubcircuitTopSimulation();
-	pcPin = NewMalloc<CPin>();
-	pcPin->Init(pcTop, "Data", 4);
+	pcPin = &OMalloc<CPin>(pcTop, "Data", 4);
 	AssertString("Pin", pcPin->GetType());
 	AssertSize(4, pcPin->NumTracePorts());
 	AssertSize(6, pcPin->NumPorts());
@@ -164,8 +160,7 @@ void TestPassivePin(void)
 
 	AssertFalse(IsVoltage(pcPin->GetVCC(0)));
 	pcVCC = cSimulation.GetCircuit()->AddTrace();
-	pcPower = NewMalloc<CPowerSource>();
-	pcPower->Init(pcTop, "VCC", 5.0f);
+	pcPower = &OMalloc<CPowerSource>(pcTop, "VCC", 5.0f);
 	pcPower->GetPowerOutPort()->Connect(pcVCC);
 	pcPin->GetVoltageCommon()->Connect(pcVCC);
 	AssertFloat(5.0f, pcPin->GetVCC(0), 3);
@@ -176,9 +171,8 @@ void TestPassivePin(void)
 	AssertFalse(IsVoltage(pcBit->GetVoltage(0)));
 	AssertSize(1, pcBit->NumConnectedPorts());
 
-	//Killing the pin disconnects its ports.
+	//Removing the pin frees it, which disconnects its ports.
 	AssertTrue(cSimulation.GetCircuit()->Remove(pcPin));
-	SafeKill(pcPin);
 	AssertSize(0, pcBit->NumConnectedPorts());
 	AssertSize(1, pcVCC->NumConnectedPorts());
 
@@ -205,8 +199,7 @@ void TestPassiveSplitter(void)
 	aszEnd.Init();
 	aszEnd.Add("D[0..1]");
 
-	pcSplitter = NewMalloc<CSplitter>();
-	pcSplitter->Init(cSimulation.GetSubcircuitTopSimulation(), "Split", &aszStart, &aszEnd);
+	pcSplitter = &OMalloc<CSplitter>(cSimulation.GetSubcircuitTopSimulation(), "Split", &aszStart, &aszEnd);
 	aszStart.Kill();
 	aszEnd.Kill();
 
@@ -239,8 +232,7 @@ void TestPassiveSubcircuitInstance(void)
 
 	TestPassiveResetIDs();
 	cSimulation.Init("Main");
-	pcInstance = NewMalloc<CSubcircuitInstance>();
-	pcInstance->Init(cSimulation.GetSubcircuitTopSimulation(), "ALU");
+	pcInstance = &OMalloc<CSubcircuitInstance>(cSimulation.GetSubcircuitTopSimulation(), "ALU");
 	AssertString("Subcircuit instance", pcInstance->GetType());
 
 	papcPorts = pcInstance->AddTracePorts("A", 8);

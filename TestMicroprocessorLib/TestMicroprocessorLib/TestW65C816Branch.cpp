@@ -368,7 +368,6 @@ void TestW65C816Branch(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 
 	TestW65C816BranchConditional();
 	TestW65C816BranchOverflowSet();
@@ -382,7 +381,6 @@ void TestW65C816Branch(void)
 	TestW65C816BranchJMPAbsoluteIndexedIndirect();
 	TestW65C816BranchJMLAbsoluteIndirectLong();
 
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

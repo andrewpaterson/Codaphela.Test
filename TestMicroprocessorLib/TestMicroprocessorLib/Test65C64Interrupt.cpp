@@ -265,7 +265,6 @@ void Test65C64Interrupt(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 	C65C64InstructionFactory::GetInstance()->Init();
 
 	Test65C64InterruptLevel();
@@ -273,7 +272,6 @@ void Test65C64Interrupt(void)
 	Test65C64InterruptWake();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

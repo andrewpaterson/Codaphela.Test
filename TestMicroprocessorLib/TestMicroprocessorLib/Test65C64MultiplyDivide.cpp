@@ -351,7 +351,6 @@ void Test65C64MultiplyDivide(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 	C65C64InstructionFactory::GetInstance()->Init();
 
 	Test65C64MultiplySheetExample();
@@ -376,7 +375,6 @@ void Test65C64MultiplyDivide(void)
 	Test65C64DivideHighB(0x000FFFFFFFFFFFFFULL, 0, 0x0010000000000000ULL, 0xFFFFFFFFFFFFF000ULL, 0);
 
 	C65C64InstructionFactory::GetInstance()->Kill();
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();

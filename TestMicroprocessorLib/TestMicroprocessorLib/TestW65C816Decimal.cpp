@@ -164,14 +164,12 @@ void TestW65C816Decimal(void)
 	NumberInit();
 	BeginTests();
 
-	DataIOInit();
 
 	TestW65C816DecimalAdd();
 	TestW65C816DecimalSubtract();
 	TestW65C816DecimalAdd16Bit();
 	TestW65C816DecimalSubtract16Bit();
 
-	DataIOKill();
 
 	TestStatistics();
 	NumberKill();
