@@ -25,6 +25,9 @@
 #include "LogicimLib/ComponentPlacement.h"
 #include "LogicimLib/ComponentViewFactory.h"
 #include "BaseLib/PointerFunctions.h"
+#include "SupportLib/Image.h"
+#include "SupportLib/GeometryMap.h"
+#include "SupportLib/SpriteMap.h"
 #include "TestLib/Assert.h"
 
 
@@ -1143,6 +1146,155 @@ void TestCircuitEditorPlaceEveryComponent(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The pointer moved to a pixel on a canvas showing the circuit through the
+// viewport, as CCircuitCanvas::MovedOver passes it to the editor.
+//
+//////////////////////////////////////////////////////////////////////////
+static void PointAtPixel(SEditorTest* psTest, CCircuitViewport* pcViewport, int32 x, int32 y)
+{
+	SFloat64Vec2	sScreen;
+	SFloat64Vec2	sGrid;
+
+	sScreen.Init(x, y);
+	pcViewport->ScreenToGrid(&sGrid, &sScreen);
+	psTest->cEditor.PointerMoved(sGrid);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The editor painted through the viewport into an image as the circuit
+// canvas paints it (see CCircuitPainter::InitImage), and the box around the pixels of its hover colour that
+// aren't blended with anything.  False if there are none.
+//
+//////////////////////////////////////////////////////////////////////////
+static bool GetPaintedHoverBox(CCircuitEditor* pcEditor, CCircuitViewport* pcViewport, CCircuitColours* pcColours, SInt32Vec2* psMinimum, SInt32Vec2* psMaximum)
+{
+	Ptr<CImage>			pImage;
+	Ptr<CGeometryMap>	pMap;
+	Ptr<CSpriteMap>		pSprites;
+	CCircuitPainter		cPainter;
+	SInt32Vec2			sSize;
+	uint8*				puiPixel;
+	uint8				uiRed;
+	uint8				uiGreen;
+	uint8				uiBlue;
+	int32				x;
+	int32				y;
+	bool				bFound;
+
+	sSize = pcViewport->GetSize();
+	pImage = OMalloc<CImage>(sSize.x, sSize.y, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
+	pMap = OMalloc<CGeometryMap>();
+	pSprites = OMalloc<CSpriteMap>();
+
+	cPainter.InitImage(pImage, pcViewport, &pMap, &pSprites, pcColours, NULL, pcEditor->GetViewPath(), pcEditor->GetSimulation());
+	pcEditor->Paint(&cPainter);
+	AssertTrue(cPainter.BlitImage());
+	cPainter.Kill();
+
+	uiRed = (uint8)Get8BitRedColour(pcColours->msPortHover);
+	uiGreen = (uint8)Get8BitGreenColour(pcColours->msPortHover);
+	uiBlue = (uint8)Get8BitBlueColour(pcColours->msPortHover);
+	bFound = false;
+	for (y = 0; y < sSize.y; y++)
+	{
+		for (x = 0; x < sSize.x; x++)
+		{
+			puiPixel = &((uint8*)pImage->GetData())[(x + y * sSize.x) * 3];
+			if ((puiPixel[0] == uiRed) && (puiPixel[1] == uiGreen) && (puiPixel[2] == uiBlue))
+			{
+				if (!bFound)
+				{
+					psMinimum->Init(x, y);
+					psMaximum->Init(x, y);
+					bFound = true;
+				}
+				else
+				{
+					if (x < psMinimum->x) psMinimum->x = x;
+					if (y < psMinimum->y) psMinimum->y = y;
+					if (x > psMaximum->x) psMaximum->x = x;
+					if (y > psMaximum->y) psMaximum->y = y;
+				}
+			}
+		}
+	}
+	return bFound;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Zoomed in on a canvas whose middle isn't on a pixel, with the view
+// scrolled, the pointer anywhere within a little under half a grid unit
+// of a port, either side of it, hovers that port and the hover ring is
+// painted centred on it.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCircuitEditorPortHover(void)
+{
+	SEditorTest			sTest;
+	CCircuitView*		pcMain;
+	CInverterView*		pcInverter;
+	CPortView*			pcPort;
+	CCircuitViewport	cViewport;
+	CCircuitColours		cColours;
+	SInt32Vec2			sPort;
+	SInt32Vec2			sHover;
+	SFloat64Vec2		sGrid;
+	SFloat64Vec2		sScreen;
+	SInt32Vec2			sMinimum;
+	SInt32Vec2			sMaximum;
+	float64				fNear;
+	size				i;
+	int					iDX;
+	int					iDY;
+
+	sTest.Init();
+	cColours.InitLogicim();
+	pcMain = sTest.cEditor.AddCircuit("Main");
+	pcInverter = AddTestInverter(pcMain, -3, -2);
+	AssertTrue(sTest.cEditor.Simulate("Main"));
+
+	cViewport.Init(401, 301);
+	cViewport.SetZoom(4);
+	cViewport.SetPosition(37, -23);
+	fNear = 0.4 * cViewport.GetPixelsPerGrid();
+
+	AssertSize(2, pcInverter->NumPortViews());
+	for (i = 0; i < pcInverter->NumPortViews(); i++)
+	{
+		pcPort = pcInverter->GetPortView(i);
+		sPort = pcPort->GetGridPosition();
+		sGrid.Init(sPort.x, sPort.y);
+		cViewport.GridToScreen(&sScreen, &sGrid);
+
+		for (iDY = -1; iDY <= 1; iDY++)
+		{
+			for (iDX = -1; iDX <= 1; iDX++)
+			{
+				PointAtPixel(&sTest, &cViewport, (int32)floor(sScreen.x + iDX * fNear + 0.5), (int32)floor(sScreen.y + iDY * fNear + 0.5));
+				AssertTrue(sTest.cEditor.GetHoverConnection(&sHover));
+				AssertInt(sPort.x, sHover.x);
+				AssertInt(sPort.y, sHover.y);
+			}
+		}
+
+		PointAtPixel(&sTest, &cViewport, (int32)floor(sScreen.x + 0.5), (int32)floor(sScreen.y + 0.5));
+		AssertTrue(GetPaintedHoverBox(&sTest.cEditor, &cViewport, &cColours, &sMinimum, &sMaximum));
+		AssertDouble(sScreen.x, (sMinimum.x + sMaximum.x) / 2.0, 0);
+		AssertDouble(sScreen.y, (sMinimum.y + sMaximum.y) / 2.0, 0);
+	}
+
+	cViewport.Kill();
+	cColours.Kill();
+	sTest.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // The view saved as XML, for comparing.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -1378,6 +1530,7 @@ void TestCircuitEditor(void)
 	DataMemoryInit();
 
 	TestCircuitEditorSelection();
+	TestCircuitEditorPortHover();
 	TestCircuitEditorPlace();
 	TestCircuitEditorMove();
 	TestCircuitEditorMoveFromJunction();

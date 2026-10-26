@@ -21,30 +21,22 @@ bool RenderCircuitPNG(CCircuitView* pcCircuit, CCircuitColours* pcColours, int32
 	Ptr<CSpriteMap>		pSprites;
 	CCircuitViewport	cViewport;
 	CCircuitPainter		cPainter;
-	CInt32Rect			cRect;
 	bool				bResult;
 
 	pImage = OMalloc<CImage>(iWidth, iHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, CHANNEL_STOP);
 	pMap = OMalloc<CGeometryMap>();
-	pMap->SetViewport(pImage);
 	pSprites = OMalloc<CSpriteMap>();
-	pSprites->SetViewport(pImage);
-	pSprites->SetBlitterCache(pSprites->CreateBlitterCache());
 
 	cViewport.Init(iWidth, iHeight);
 	cViewport.SetZoom(fZoom);
-	cPainter.Init(&cViewport, &pMap, &pSprites, pcColours, pcFonts, pcViewPath, pcSimulation);
-
-	pMap->AddRectangle(0, 0, iWidth, iHeight, pcColours->msBackground);
+	cPainter.InitImage(pImage, &cViewport, &pMap, &pSprites, pcColours, pcFonts, pcViewPath, pcSimulation);
 	if (bGrid)
 	{
 		PaintCircuitGrid(&cPainter);
 	}
 	pcCircuit->Paint(&cPainter);
 
-	cRect.Init(0, 0, iWidth, iHeight);
-	bResult = pMap->Blit(&cRect, false);
-	bResult &= pSprites->Blit(&cRect, true);
+	bResult = cPainter.BlitImage();
 	bResult &= SavePNG(pImage, (char*)szOutput);
 
 	cPainter.Kill();
