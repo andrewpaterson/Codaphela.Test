@@ -1083,6 +1083,87 @@ void TestIndexTreeMemoryIterate(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The safe iterator keeps its key in INDEX_TREE_ITERATOR_KEY_SIZE bytes and
+// grows it onto the heap for a longer one: keys either side of that, and
+// much longer, come back whole; a short destination gets the start of the
+// key but the iteration still goes on from the whole key; an iteration
+// stopped early is killed.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIndexTreeMemoryIterateLongKeys(void)
+{
+	CIndexTreeMemory			cIndex;
+	CIndexTreeMemoryAccess		cAccess;
+	SIndexTreeMemoryIterator	sIter;
+	static uint8				auiKeys[7][300];	//Static: too big for the W65C816's stack.
+	size						auiKeySizes[7] = { 1, 15, 16, 17, 21, 201, 250 };  //Not longer: the W65C816's MAX_KEY_SIZE is 260.
+	static uint8				auiKey[300];
+	size						uiKeySize;
+	int32						iData;
+	size						uiDataSize;
+	size						i;
+	bool						bExists;
+
+	//Keys of 'A' ending in their index's digit, which sorts before 'A': in iteration order.
+	for (i = 0; i < 7; i++)
+	{
+		memset(auiKeys[i], 'A', auiKeySizes[i]);
+		auiKeys[i][auiKeySizes[i] - 1] = (uint8)('0' + i);
+	}
+
+	cIndex.Init();
+	cAccess.Init(&cIndex);
+	for (i = 0; i < 7; i++)
+	{
+		AssertTrue(cAccess.PutKeyInt(auiKeys[i], auiKeySizes[i], (int32)i));
+	}
+
+	i = 0;
+	bExists = cIndex.StartIteration(&sIter, auiKey, &uiKeySize, 300, &iData, &uiDataSize, sizeof(int32));
+	while (bExists)
+	{
+		AssertSize(auiKeySizes[i], uiKeySize);
+		AssertSize(auiKeySizes[i], sIter.iKeyLength);
+		AssertMemory(auiKeys[i], auiKey, auiKeySizes[i]);
+		AssertInt((int32)i, iData);
+		i++;
+		bExists = cIndex.Iterate(&sIter, auiKey, &uiKeySize, 300, &iData, &uiDataSize, sizeof(int32));
+	}
+	AssertSize(7, i);
+	AssertFalse(sIter.IsLive());
+
+	//Only the first 4 bytes are wanted.
+	i = 0;
+	bExists = cIndex.StartIteration(&sIter, auiKey, &uiKeySize, 4, &iData, &uiDataSize, sizeof(int32));
+	while (bExists)
+	{
+		AssertSize(auiKeySizes[i], uiKeySize);
+		AssertInt((int32)i, iData);
+		i++;
+		bExists = cIndex.Iterate(&sIter, auiKey, &uiKeySize, 4, &iData, &uiDataSize, sizeof(int32));
+	}
+	AssertSize(7, i);
+
+	//Stopped at the 201 byte key (on the heap).
+	bExists = cIndex.StartIteration(&sIter, NULL, NULL, 0, &iData, &uiDataSize, sizeof(int32));
+	while (bExists && (iData != 5))
+	{
+		bExists = cIndex.Iterate(&sIter, NULL, NULL, 0, &iData, &uiDataSize, sizeof(int32));
+	}
+	AssertTrue(bExists);
+	AssertSize(201, sIter.iKeyLength);
+	AssertTrue(sIter.IsLive());
+	sIter.Kill();
+	AssertFalse(sIter.IsLive());
+	sIter.Kill();
+	AssertFalse(cIndex.Iterate(&sIter, NULL, NULL, 0, &iData, &uiDataSize, sizeof(int32)));
+
+	cIndex.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryReadWrite(void)
@@ -2235,6 +2316,7 @@ void TestIndexTreeMemory(void)
 	TestIndexTreeMemoryRemoveNullNode();
 	TestIndexTreeMemoryAddLongLong();
 	TestIndexTreeMemoryIterate();
+	TestIndexTreeMemoryIterateLongKeys();
 	TestIndexTreeMemoryReadWrite();
 	TestIndexTreeMemoryRemoveOnRoot();
 	TestIndexTreeMemoryResizeData();

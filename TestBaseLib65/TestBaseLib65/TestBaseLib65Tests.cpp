@@ -36,6 +36,20 @@ static const char* gaszTestBaseLib65Excluded[] =
 };
 
 
+//The tests that are not run on the W65C816.
+static const char* gaszTestBaseLib65Excluded816[] =
+{
+	//Allocates more than the W65C816's 16MB (24 bit addresses) holds.
+	"TestListVariable",
+
+	//More than the 4G instructions each program gets here (the W65C816's code is slower).  It passes when given longer
+	//(TEST_PROJECT65_STEPS).
+	"TestMapStringIntAndPointer",
+
+	NULL
+};
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -49,8 +63,11 @@ void TestBaseLib65Tests(void)
 	sProject.szTestProject = "TestBaseLib";
 	sProject.aszLibraries = gaszTestBaseLib65Libraries;
 	sProject.aszExcluded = gaszTestBaseLib65Excluded;
+	sProject.aszExcluded816 = gaszTestBaseLib65Excluded816;
 	sProject.uiMinPrograms = 101;
 	sProject.iMinTestsRun = 30001;
+	sProject.uiMinPrograms816 = 156;
+	sProject.iMinTestsRun816 = 30001;
 	TestProject65RunTests(&sProject);
 
 	TestStatistics();

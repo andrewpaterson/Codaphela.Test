@@ -48,8 +48,11 @@ void TestSupportLib65Tests(void)
 	sProject.szTestProject = "TestSupportLib";
 	sProject.aszLibraries = gaszTestSupportLib65Libraries;
 	sProject.aszExcluded = gaszTestSupportLib65Excluded;
+	sProject.aszExcluded816 = NULL;
 	sProject.uiMinPrograms = 46;
 	sProject.iMinTestsRun = 20649;
+	sProject.uiMinPrograms816 = 0;
+	sProject.iMinTestsRun816 = 0;
 	TestProject65RunTests(&sProject);
 
 	TestStatistics();

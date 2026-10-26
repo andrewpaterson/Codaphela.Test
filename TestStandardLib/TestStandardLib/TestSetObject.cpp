@@ -37,7 +37,7 @@ void TestSetObjectAdd(void)
 
 	Ptr<CTestSaveableObject1> pSaveable = pacStuff->UnsafeGet(0);
 	AssertTrue(pSaveable.IsNotNull());
-	AssertInt(7, pSaveable->miInt);
+	AssertInt((int32)7, pSaveable->miInt);
 
 	ObjectsKill(false);
 }
@@ -58,8 +58,8 @@ void TestSetObjectGet(void)
 	pacStuff->Add(pSaveable);
 
 	AssertSize(2, pacStuff->NumElements());
-	AssertInt(7, pacStuff->UnsafeGet(0)->miInt);
-	AssertInt(3, pacStuff->UnsafeGet(1)->miInt);
+	AssertInt((int32)7, pacStuff->UnsafeGet(0)->miInt);
+	AssertInt((int32)3, pacStuff->UnsafeGet(1)->miInt);
 
 	ObjectsKill(false);
 }
@@ -87,9 +87,9 @@ void TestSetObjectAddAll(void)
 	pacMore->AddAll(pacStuff);
 
 	AssertSize(3, pacMore->NumElements());
-	AssertInt(7, pacMore->UnsafeGet(0)->miInt);
-	AssertInt(3, pacMore->UnsafeGet(1)->miInt);
-	AssertInt(5, pacMore->UnsafeGet(2)->miInt);
+	AssertInt((int32)7, pacMore->UnsafeGet(0)->miInt);
+	AssertInt((int32)3, pacMore->UnsafeGet(1)->miInt);
+	AssertInt((int32)5, pacMore->UnsafeGet(2)->miInt);
 
 	ObjectsKill(false);
 }
@@ -119,8 +119,8 @@ void TestSetObjectRemove(void)
 	pacStuff->Remove(pSaveable);
 
 	AssertSize(2, pacStuff->NumElements());
-	AssertInt(7, pacStuff->UnsafeGet(0)->miInt);
-	AssertInt(3, pacStuff->UnsafeGet(1)->miInt);
+	AssertInt((int32)7, pacStuff->UnsafeGet(0)->miInt);
+	AssertInt((int32)3, pacStuff->UnsafeGet(1)->miInt);
 
 	ObjectsFlush();
 	ObjectsKill(false);

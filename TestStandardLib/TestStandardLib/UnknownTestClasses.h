@@ -6,7 +6,7 @@ class CTestUnknown : public CUnknown
 CONSTRUCTABLE(CTestUnknown)
 public:
 
-	int	miCount;
+	int32	miCount;
 
 	void	Init(void);
 	void	Init(int iCount);
@@ -50,10 +50,10 @@ class CTestUnknownJobbie : public CUnknown
 {
 CONSTRUCTABLE(CTestUnknownJobbie)
 public:
-	int		miANumber;
+	int32	miANumber;
 	CChars	mszText;
 
-	void 	Init(int iNumber, const char* pszText);
+	void 	Init(int32 iNumber, const char* pszText);
 	void 	Kill(void);
 	bool	Save(CFileWriter* pcFile);
 	bool	Load(CFileReader* pcFile);

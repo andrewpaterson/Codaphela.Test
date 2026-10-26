@@ -886,6 +886,7 @@ void TestNamedIndexedDataIterate(EIndexWriteThrough eWriteThrough)
 	AssertLong(0x0506LL, oi);
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, 0);
+	sIter.Kill();
 	AssertLong(INVALID_O_INDEX, oi);
 
 
@@ -977,7 +978,7 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 			{
 				sz.Append(" ");
 			}
-			iIndex = cRandom.Next(0, (int)(iNumWords - 1));
+			iIndex = cRandom.Next(0, (int32)(iNumWords - 1));
 			sz.Append(aszWords.Get(iIndex));
 		}
 		cObject.Init(sz.Text(), oi-1, oi * 7);
@@ -1251,7 +1252,7 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 			{
 				sz.Append(" ");
 			}
-			iIndex = cRandom.Next(0, (int)(iNumWords - 1));
+			iIndex = cRandom.Next(0, (int32)(iNumWords - 1));
 			sz.Append(aszWords.Get(iIndex));
 		}
 

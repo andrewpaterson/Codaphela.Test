@@ -203,7 +203,7 @@ void TestMapUnknownUnknownGet(void)
 		pcKey = gcUnknowns.Add<CTestNamedUnknown>();
 		pcValue = gcUnknowns.Add<CTestUnknownJobbie>();
 		pcKey->Init(SizeToString(ui));
-		pcValue->Init((int)((ui + 1) * 7), SizeToString(ui));
+		pcValue->Init((int32)((ui + 1) * 7), SizeToString(ui));
 		aPtrs.Add(pcKey);
 		cMap.Put(pcKey, pcValue);
 	}
@@ -223,7 +223,7 @@ void TestMapUnknownUnknownGet(void)
 		pcKey = (CTestNamedUnknown*)pcTestKey;
 		pcValue = (CTestUnknownJobbie*)pcTestValue;
 		bValid &= StringCompare(SizeToString(ui), pcKey->mszName.Text()) == 0;
-		bValid &= ((int)ui + 1) * 7 == pcValue->miANumber;
+		bValid &= ((int32)ui + 1) * 7 == pcValue->miANumber;
 		bValid &= StringCompare(SizeToString(ui), pcValue->mszText.Text()) == 0;
 
 		if (!bValid)
@@ -290,7 +290,7 @@ void TestMapUnknownUnknownLoad(void)
 		pcKey = gcUnknowns.Add<CTestNamedUnknown>();
 		pcValue = gcUnknowns.Add<CTestUnknownJobbie>();
 		pcKey->Init(SizeToString(ui));
-		pcValue->Init((int)((ui + 1) * 7), SizeToString(ui));
+		pcValue->Init((int32)((ui + 1) * 7), SizeToString(ui));
 		cMap.Put(pcKey, pcValue);
 	}
 	AssertSize(12000, cMap.NumElements());
@@ -483,7 +483,7 @@ void TestMapUnknownUnknownLoadNull(void)
 		{
 			pcValue = (CTestUnknownJobbie*)pcTestValue;
 			AssertString("Something", pcKey->mszName.Text());
-			AssertInt(7, pcValue->miANumber);
+			AssertInt((int32)7, pcValue->miANumber);
 			AssertString("Something", pcValue->mszText.Text());
 			uiValues++;
 		}
@@ -576,7 +576,7 @@ void TestMapUnknownUnknownReplaceSameValue(void)
 	AssertSize(1, cMap.NumElements());
 	AssertSize(2, gcUnknowns.NumElements());
 	AssertPointer(pcValue, cMap.Get(pcKey));
-	AssertInt(1, pcValue->miANumber);
+	AssertInt((int32)1, pcValue->miANumber);
 	AssertString("Key", pcKey->mszName.Text());
 
 	cMap.Kill();

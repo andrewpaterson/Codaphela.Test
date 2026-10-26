@@ -446,7 +446,7 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 		AssertInt(2, cOwStart1->GetDistToRoot());
 		AssertInt(3, cShared->GetDistToRoot());
 
-		AssertInt(89, cOwStart1->mp1->miInt);
+		AssertInt((int32)89, cOwStart1->mp1->miInt);
 		cOwStart1->mp1->miInt = 66;
 
 		iNumUnknowns = gcUnknowns.NumElements();
@@ -468,9 +468,9 @@ void TestObjectGraphDeserialiserOverwritingOfExistingNamesFromChunkedFiles(void)
 		cRoot->Add(cOwStart2);
 
 		AssertNotNull(&cOwStart2);
-		AssertInt(89, cOwStart2->mp1->miInt);
+		AssertInt((int32)89, cOwStart2->mp1->miInt);
 		AssertLong(cOwStart1->mp1->GetIndex(), cOwStart2->mp1->GetIndex());
-		AssertInt(89, cOwStart1->mp1->miInt);
+		AssertInt((int32)89, cOwStart1->mp1->miInt);
 		AssertPointer(&cOwStart1->mp1, &cOwStart2->mp1);
 
 		cObject = gcObjects.Get("Ow/Start 2");

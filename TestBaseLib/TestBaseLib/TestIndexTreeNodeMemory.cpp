@@ -68,7 +68,7 @@ CIndexTreeNodeMemory* TestIndexTreeNodeMemoryMalloc(void)
 
 	iSize = sizeof(CIndexTreeNodeMemory) + (MAX_UINT8 - 1) * sizeof(CIndexTreeNodeMemory*);
 	pcNode = (CIndexTreeNodeMemory*)malloc(iSize);
-	memset(pcNode, 0xfffefdfc, iSize);
+	memset(pcNode, 0xfc, iSize);  //memset uses the low byte of 0xfffefdfc.
 	return pcNode;
 }
 

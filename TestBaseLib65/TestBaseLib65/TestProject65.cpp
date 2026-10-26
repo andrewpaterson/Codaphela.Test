@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "BaseLib/TextFile.h"
@@ -41,6 +42,9 @@
 //The program ends below the stack (001F:FFFF down): its heap is above 2MB.
 #define TEST_PROJECT65_PROGRAM_LIMIT	0x1C0000
 
+//The W65C816's code is bigger: its program may go to 0080:0000, and Libc65's heap starts after it.
+#define TEST_PROJECT816_PROGRAM_LIMIT	0x800000
+
 #define TEST_PROJECT65_MAX_STEPS		4000000000ULL
 
 
@@ -61,6 +65,42 @@ static bool TestProject65IsExcluded(STestProject65* psProject, const char* szTes
 	for (i = 0; psProject->aszExcluded[i]; i++)
 	{
 		if (StringCompare(psProject->aszExcluded[i], szTest) == 0)
+		{
+			return true;
+		}
+	}
+	for (i = 0; (geTestProject65Target == CPPT_W65C816) && psProject->aszExcluded816 && psProject->aszExcluded816[i]; i++)
+	{
+		if (StringCompare(psProject->aszExcluded816[i], szTest) == 0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Whether szTest is run: always, unless TEST_PROJECT65_ONLY lists the tests
+// to run (comma separated, for debugging them).
+//
+//////////////////////////////////////////////////////////////////////////
+static bool TestProject65IsOnly(const char* szTest)
+{
+	const char*	szOnly;
+	const char*	szFound;
+	size		uiLength;
+
+	szOnly = getenv("TEST_PROJECT65_ONLY");
+	if (!szOnly)
+	{
+		return true;
+	}
+	uiLength = strlen(szTest);
+	for (szFound = strstr(szOnly, szTest); szFound; szFound = strstr(szFound + 1, szTest))
+	{
+		if (((szFound == szOnly) || (szFound[-1] == ',')) && ((szFound[uiLength] == '\0') || (szFound[uiLength] == ',')))
 		{
 			return true;
 		}
@@ -256,6 +296,12 @@ static void TestProject65CopyDirectory(STestProject65* psProject)
 	}
 	aszEntries.Kill();
 
+	//The tests' own Output (empty: what an earlier run left there is not copied), which some tests make directories in.
+	szDest.Init(szOutput);
+	cFileUtil.AppendToPath(&szDest, "Output");
+	AssertTrue(cFileUtil.MakeDir(szDest.Text()));
+	szDest.Kill();
+
 	aszEntries.Init();
 	cFileUtil.FindAllFiles(szTestDirectory.Text(), &aszEntries, false, true);
 	for (i = 0; i < aszEntries.NumElements(); i++)
@@ -342,8 +388,93 @@ static void TestProject65AddProjects(STestProject65* psProject, CCPP65Builder* p
 		}
 	}
 	szPath.Kill();
-	pcBuilder->SetLimit(TEST_PROJECT65_PROGRAM_LIMIT);
+	pcBuilder->SetLimit((geTestProject65Target == CPPT_W65C816) ? TEST_PROJECT816_PROGRAM_LIMIT : TEST_PROJECT65_PROGRAM_LIMIT);
 	szTestDirectory.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Appends uiAddress and the symbol at or before it (from the linker's map).
+//
+//////////////////////////////////////////////////////////////////////////
+static void TestProject65AppendSymbol(CCPP65Builder* pcBuilder, uint32 uiAddress, CChars* pszDest)
+{
+	const char*	szMap;
+	const char*	szLine;
+	const char*	szBest;
+	uint32		uiBest;
+	uint32		uiValue;
+	int			iLength;
+
+	szMap = strstr(pcBuilder->GetMap(), "Symbols\n");
+	szBest = NULL;
+	uiBest = 0;
+	for (szLine = szMap; szLine; szLine = strchr(szLine + 1, '\n'))
+	{
+		//  $00012345 G Name (object), or L for a local (but not a block's label, L and digits).
+		if ((szLine[1] == ' ') && (szLine[3] == '$') && ((szLine[13] == 'G') || ((szLine[13] == 'L') && !((szLine[15] == 'L') && (szLine[16] >= '0') && (szLine[16] <= '9')))))
+		{
+			uiValue = (uint32)strtoul(&szLine[4], NULL, 16);
+			if ((uiValue <= uiAddress) && (uiValue >= uiBest))
+			{
+				uiBest = uiValue;
+				szBest = &szLine[15];
+			}
+		}
+	}
+	pszDest->Append("$");
+	pszDest->AppendHexHiLo(&uiAddress, sizeof(uint32));
+	if (szBest)
+	{
+		iLength = (int)(strchr(szBest, ' ') - szBest);
+		pszDest->Append(" (");
+		pszDest->Append(szBest, iLength);
+		pszDest->Append(" + ");
+		pszDest->Append(uiAddress - uiBest);
+		pszDest->Append(")");
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Appends where a program that didn't return stopped: the address, the symbol at or before it (from the linker's
+// map), S and how many instructions ran.  On the W65C816 (pcMemory given) the return addresses on the stack (three
+// bytes after a jsl) are its calls, innermost first.
+//
+//////////////////////////////////////////////////////////////////////////
+static void TestProject65AppendStop(CCPP65Builder* pcBuilder, uint32 uiAddress, uint32 uiS, uint64 uiSteps, CChars* pszDest, CAsm65Memory* pcMemory = NULL)
+{
+	uint32	uiTop;
+	uint32	uiReturn;
+	int		iCalls;
+
+	pszDest->Append("Stopped at ");
+	TestProject65AppendSymbol(pcBuilder, uiAddress, pszDest);
+	pszDest->Append(", S $");
+	pszDest->AppendHexHiLo(&uiS, sizeof(uint32));
+	pszDest->Append(", after ");
+	pszDest->Append((int64)uiSteps);
+	pszDest->Append(" million instructions\n");
+
+	if (pcMemory)
+	{
+		uiTop = GetCPPTarget(CPPT_W65C816)->uiStackTop;
+		iCalls = 0;
+		for (; (uiS + 3 <= uiTop) && (iCalls < 12); uiS++)
+		{
+			uiReturn = pcMemory->GetByte(uiS + 1) | ((uint32)pcMemory->GetByte(uiS + 2) << 8) | ((uint32)pcMemory->GetByte(uiS + 3) << 16);
+			if ((uiReturn >= 0x10003) && (uiReturn < 0x800000) && (pcMemory->GetByte(uiReturn - 3) == 0x22))
+			{
+				pszDest->Append("  called from ");
+				TestProject65AppendSymbol(pcBuilder, uiReturn - 3, pszDest);
+				pszDest->AppendNewLine();
+				iCalls++;
+				uiS += 2;
+			}
+		}
+	}
 }
 
 
@@ -360,9 +491,12 @@ static bool TestProject65Run(STestProject65* psProject, CCPP65Builder* pcBuilder
 	CFast65C816			cMPU816;
 	CChars				szOutput;
 	uint64				uiSteps;
+	uint64				uiMaxSteps;
 	bool				bReturned;
 	bool				bW65C816;
 
+	//TEST_PROJECT65_STEPS (millions of instructions) gives a slow test longer, for timing it.
+	uiMaxSteps = getenv("TEST_PROJECT65_STEPS") ? (uint64)strtoul(getenv("TEST_PROJECT65_STEPS"), NULL, 10) * 1000000 : TEST_PROJECT65_MAX_STEPS;
 	bW65C816 = geTestProject65Target == CPPT_W65C816;
 	pcMemory = NewMalloc<CAsm65Memory>();
 	if (bW65C816)
@@ -387,22 +521,30 @@ static bool TestProject65Run(STestProject65* psProject, CCPP65Builder* pcBuilder
 	{
 		pcMemory->InitFast816(&cMPU816);
 		cMPU816.Reset();
-		for (uiSteps = 0; (uiSteps < TEST_PROJECT65_MAX_STEPS) && !cMPU816.IsStopped(); uiSteps += 1000000)
+		for (uiSteps = 0; (uiSteps < uiMaxSteps) && !cMPU816.IsStopped(); uiSteps += 1000000)
 		{
 			cMPU816.Run(1000000);
 		}
 		bReturned = cMPU816.IsStopped() && (cMPU816.GetS() == GetCPPTarget(CPPT_W65C816)->uiStackTop);
+		if (!bReturned)
+		{
+			TestProject65AppendStop(pcBuilder, cMPU816.GetProgramAddress(), cMPU816.GetS(), uiSteps / 1000000, pszConsole, pcMemory);
+		}
 		cMPU816.Kill();
 	}
 	else
 	{
 		pcMemory->InitFast(&cMPU);
 		cMPU.Reset();
-		for (uiSteps = 0; (uiSteps < TEST_PROJECT65_MAX_STEPS) && !cMPU.IsStopped(); uiSteps += 1000000)
+		for (uiSteps = 0; (uiSteps < uiMaxSteps) && !cMPU.IsStopped(); uiSteps += 1000000)
 		{
 			cMPU.Run(1000000);
 		}
 		bReturned = cMPU.IsStopped() && (cMPU.GetS() == CPP65_STACK_TOP);
+		if (!bReturned)
+		{
+			TestProject65AppendStop(pcBuilder, cMPU.GetProgramCounter(), cMPU.GetS(), uiSteps / 1000000, pszConsole);
+		}
 		cMPU.Kill();
 	}
 
@@ -446,6 +588,7 @@ void TestProject65RunTests(STestProject65* psProject)
 	bCompiled = cBuilder.Compile();
 	AssertString("", cBuilder.GetErrors());
 	AssertTrue(bCompiled);
+	printf("%s", cBuilder.GetWarnings());
 
 	TestProject65TestDirectory(psProject, &szMainFile);
 	szMainFile.Append(_FS_);
@@ -472,6 +615,10 @@ void TestProject65RunTests(STestProject65* psProject)
 	for (i = 0; i < aszTests.NumElements(); i++)
 	{
 		if (TestProject65IsExcluded(psProject, aszTests.GetText(i)))
+		{
+			continue;
+		}
+		if (!TestProject65IsOnly(aszTests.GetText(i)))
 		{
 			continue;
 		}
@@ -508,8 +655,20 @@ void TestProject65RunTests(STestProject65* psProject)
 		szActual.Kill();
 		szExpected.Kill();
 	}
-	AssertTrue(uiPrograms >= psProject->uiMinPrograms);
-	AssertTrue(iTotalRun >= psProject->iMinTestsRun);
+	printf("%s: %d programs, %d asserts\n", psProject->szTestProject, (int)uiPrograms, iTotalRun);
+	if (!getenv("TEST_PROJECT65_ONLY"))
+	{
+		if (geTestProject65Target == CPPT_W65C816)
+		{
+			AssertTrue(uiPrograms >= psProject->uiMinPrograms816);
+			AssertTrue(iTotalRun >= psProject->iMinTestsRun816);
+		}
+		else
+		{
+			AssertTrue(uiPrograms >= psProject->uiMinPrograms);
+			AssertTrue(iTotalRun >= psProject->iMinTestsRun);
+		}
+	}
 
 	szMainFile.Kill();
 	aszTests.Kill();

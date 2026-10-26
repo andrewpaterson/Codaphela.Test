@@ -34,7 +34,7 @@ void TestArrayObjectAdd(void)
 
 	Ptr<CTestSaveableObject1> pSaveable = pacStuff->Get(0);
 	AssertTrue(pSaveable.IsNotNull());
-	AssertInt(7, pSaveable->miInt);
+	AssertInt((int32)7, pSaveable->miInt);
 
 	ObjectsKill(false);
 }
@@ -55,8 +55,8 @@ void TestArrayObjectGet(void)
 	pacStuff->Add(pSaveable);
 
 	AssertSize(2, pacStuff->NumElements());
-	AssertInt(7, pacStuff->Get(0)->miInt);
-	AssertInt(3, pacStuff->Get(1)->miInt);
+	AssertInt((int32)7, pacStuff->Get(0)->miInt);
+	AssertInt((int32)3, pacStuff->Get(1)->miInt);
 
 	ObjectsKill(false);
 }
@@ -77,8 +77,8 @@ void TestArrayObjectInsert(void)
 	pacStuff->Insert(0, pSaveable);
 
 	AssertSize(2, pacStuff->NumElements());
-	AssertInt(3, pacStuff->Get(0)->miInt);
-	AssertInt(7, pacStuff->Get(1)->miInt);
+	AssertInt((int32)3, pacStuff->Get(0)->miInt);
+	AssertInt((int32)7, pacStuff->Get(1)->miInt);
 
 	ObjectsKill(false);
 }
@@ -110,9 +110,9 @@ void TestArrayObjectAddAll(void)
 	pacMore->AddAll(pacStuff);
 
 	AssertSize(3, pacMore->NumElements());
-	AssertInt(5, pacMore->Get(0)->miInt);
-	AssertInt(3, pacMore->Get(1)->miInt);
-	AssertInt(7, pacMore->Get(2)->miInt);
+	AssertInt((int32)5, pacMore->Get(0)->miInt);
+	AssertInt((int32)3, pacMore->Get(1)->miInt);
+	AssertInt((int32)7, pacMore->Get(2)->miInt);
 
 	ObjectsKill(false);
 }
@@ -142,8 +142,8 @@ void TestArrayObjectRemove(void)
 	pacStuff->RemoveAt(1);
 
 	AssertSize(2, pacStuff->NumElements());
-	AssertInt(5, pacStuff->Get(0)->miInt);
-	AssertInt(7, pacStuff->Get(1)->miInt);
+	AssertInt((int32)5, pacStuff->Get(0)->miInt);
+	AssertInt((int32)7, pacStuff->Get(1)->miInt);
 
 	ObjectsFlush();
 	ObjectsKill(false);

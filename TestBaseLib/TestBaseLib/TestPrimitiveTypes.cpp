@@ -75,7 +75,12 @@ void TestPrimitiveTypesSizes(void)
 #ifdef LINUX_GNU
 	AssertSize(4, sizeof(wchar_t));
 #endif // LINUX_GNU
+#ifdef __W65C816__
+	AssertSize(2, sizeof(int));
+#else
 	AssertSize(4, sizeof(int));
+#endif // __W65C816__
+	AssertSize(4, sizeof(int32));
 	AssertSize(8, sizeof(int64));
 #ifdef BUILD_64
 	AssertSize(8, sizeof(void*));

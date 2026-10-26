@@ -1,9 +1,13 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/NumberControl.h"
 #include "BaseLib/ArrayInt.h"
+#include "BaseLib/ArrayChars.h"
+#include "BaseLib/FileUtil.h"
 #include "MicroprocessorLib/W65C816InstructionFactory.h"
 #include "Assembler65Lib/Asm816Lockstep.h"
 #include "Assembler65Lib/Asm65Memory.h"
@@ -32,6 +36,102 @@ uint64	TestCPP65FloatUlps(uint32 uiActual, uint32 uiExpected);
 #define TEST_CPP816_STEPS		50000000
 #define TEST_CPP816_SLOW_STEPS	500000000
 #define TEST_CPP816_RESULTS		0x100000
+#define TEST_CPP816_BASELIB_MEMORY	0x1000000
+#define TEST_CPP816_BASELIB_LIMIT	0x1C0000
+
+
+//Libc65's units for the W65C816 (no 65C64 assembly).
+static const char* gaszTestCPP816Libc65[] = { "string.cpp", "stdlib.cpp", "ctype.cpp", "time.cpp", "math.cpp", "softfloat.cpp", "new.cpp", "signal.cpp", "stdio.cpp", "host.cpp", NULL };
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Runs the program a few instructions at a time and counts where it is after each run by the function (the symbol
+// in the linker's map at or before the address), then prints the functions it was most often in (W65C816.txt step
+// 7).  Returns how many instructions ran.
+//
+//////////////////////////////////////////////////////////////////////////
+size TestCPP816Profile(CCPP65Builder* pcBuilder, CFast65C816* pcFast, size uiMaxSteps)
+{
+	CArrayTemplate<uint32>	auiAddresses;
+	CArrayTemplate<int32>	aiCounts;
+	CArrayChars				aszNames;
+	const char*				szLine;
+	const char*				szName;
+	uint32					uiAddress;
+	size					uiSteps;
+	size					uiRun;
+	size					ui;
+	size					uiBest;
+	int32					iZero;
+	int32					iTotal;
+	int						iShown;
+
+	//The map's functions in address order: "  $00012345 G Name (object)".
+	auiAddresses.Init();
+	aszNames.Init();
+	aiCounts.Init();
+	iZero = 0;
+	for (szLine = strstr(pcBuilder->GetMap(), "Symbols\n"); szLine; szLine = strchr(szLine + 1, '\n'))
+	{
+		if ((szLine[1] == ' ') && (szLine[3] == '$') && ((szLine[13] == 'G') || ((szLine[13] == 'L') && !((szLine[15] == 'L') && (szLine[16] >= '0') && (szLine[16] <= '9')))))
+		{
+			uiAddress = (uint32)strtoul(&szLine[4], NULL, 16);
+			szName = &szLine[15];
+			auiAddresses.Add(&uiAddress);
+			aszNames.Add(szName, 0, (size)(strchr(szName, ' ') - szName));
+			aiCounts.Add(&iZero);
+		}
+	}
+
+	uiSteps = 0;
+	iTotal = 0;
+	while ((uiSteps < uiMaxSteps) && !pcFast->IsStopped())
+	{
+		uiRun = pcFast->Run(97);
+		uiSteps += uiRun;
+		if (uiRun == 0)
+		{
+			break;
+		}
+		uiAddress = pcFast->GetProgramAddress();
+		uiBest = (size)-1;
+		for (ui = 0; ui < auiAddresses.NumElements(); ui++)
+		{
+			if ((*auiAddresses.Get(ui) <= uiAddress) && ((uiBest == (size)-1) || (*auiAddresses.Get(ui) >= *auiAddresses.Get(uiBest))))
+			{
+				uiBest = ui;
+			}
+		}
+		if (uiBest != (size)-1)
+		{
+			(*aiCounts.Get(uiBest))++;
+			iTotal++;
+		}
+	}
+
+	for (iShown = 0; iShown < 12; iShown++)
+	{
+		uiBest = 0;
+		for (ui = 1; ui < aiCounts.NumElements(); ui++)
+		{
+			if (*aiCounts.Get(ui) > *aiCounts.Get(uiBest))
+			{
+				uiBest = ui;
+			}
+		}
+		if ((aiCounts.NumElements() == 0) || (*aiCounts.Get(uiBest) == 0))
+		{
+			break;
+		}
+		fprintf(stderr, "CPP816_PROFILE %5.1f%% %s\n", 100.0 * *aiCounts.Get(uiBest) / (iTotal ? iTotal : 1), aszNames.GetText(uiBest));
+		*aiCounts.Get(uiBest) = 0;
+	}
+	aiCounts.Kill();
+	aszNames.Kill();
+	auiAddresses.Kill();
+	return uiSteps;
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -42,13 +142,15 @@ uint64	TestCPP65FloatUlps(uint32 uiActual, uint32 uiExpected);
 // instructions.  Returns main's int (16 bits, sign extended), or -1000000 if it didn't build or stop.
 //
 //////////////////////////////////////////////////////////////////////////
-int32 TestCPP816RunProject(const char** aszUnits, const char* szStubs, const char* szSource, bool bLockstep = false, uint32* puiResults = NULL, size uiResults = 0, size uiMaxSteps = TEST_CPP816_STEPS)
+int32 TestCPP816RunProject(const char** aszUnits, const char* szStubs, const char* szSource, bool bLockstep = false, uint32* puiResults = NULL, size uiResults = 0, size uiMaxSteps = TEST_CPP816_STEPS, bool bBaseLib = false)
 {
 	CCPP65Builder	cBuilder;
 	CAsm65Memory	cMemory;
 	CFast65C816		cFast;
 	CAsm816Lockstep	cLockstep;
 	CChars			szMissing;
+	CChars			szProject;
+	CFileUtil		cFileUtil;
 	size			uiSteps;
 	size			i;
 	int32			iResult;
@@ -67,6 +169,24 @@ int32 TestCPP816RunProject(const char** aszUnits, const char* szStubs, const cha
 	{
 		TestCPP65AddUnits(&cBuilder, aszUnits, false);
 	}
+	if (bBaseLib)
+	{
+		//All of BaseLib and Libc65, each unit linked only when it is used.
+		szProject.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "BaseLib" _FS_ "BaseLib.vcxproj");
+		cFileUtil.FullPath(&szProject);
+		bResult &= cBuilder.AddVisualStudioProject("BaseLib", szProject.Text(), true);
+		szProject.Kill();
+		szProject.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "Libc65");
+		cFileUtil.FullPath(&szProject);
+		for (i = 0; gaszTestCPP816Libc65[i]; i++)
+		{
+			cBuilder.AddUnit("Libc65", szProject.Text(), gaszTestCPP816Libc65[i], true);
+		}
+		szProject.Kill();
+
+		//A program with BaseLib in it is bigger: it ends below the stack, with the heap above 2MB in 16MB.
+		cBuilder.SetLimit(TEST_CPP816_BASELIB_LIMIT);
+	}
 	bResult &= cBuilder.Link();
 	AssertString("", cBuilder.GetErrors());
 	AssertTrue(bResult);
@@ -76,7 +196,7 @@ int32 TestCPP816RunProject(const char** aszUnits, const char* szStubs, const cha
 	szMissing.Kill();
 	if (bResult)
 	{
-		cMemory.Init();
+		cMemory.Init(bBaseLib ? TEST_CPP816_BASELIB_MEMORY : ASM65_MEMORY_LOW_SIZE);
 		cMemory.Load(cBuilder.GetOutput());
 		cMemory.InitFast816(&cFast);
 		cFast.Reset();
@@ -87,11 +207,20 @@ int32 TestCPP816RunProject(const char** aszUnits, const char* szStubs, const cha
 			AssertString("", cLockstep.GetDifferences());
 			cLockstep.Kill();
 		}
+		else if (getenv("CPP816_PROFILE"))
+		{
+			uiSteps = TestCPP816Profile(&cBuilder, &cFast, uiMaxSteps);
+		}
 		else
 		{
 			uiSteps = cFast.Run(uiMaxSteps);
 		}
 		AssertTrue(uiSteps < uiMaxSteps);
+		if (getenv("CPP816_STEPS"))
+		{
+			//How fast the code is (W65C816.txt step 7).
+			fprintf(stderr, "CPP816_STEPS %s: %d instructions %d cycles\n", (aszUnits && aszUnits[0]) ? aszUnits[0] : "source", (int)uiSteps, (int)cFast.NumCycles());
+		}
 		AssertTrue(cFast.IsStopped());
 		AssertInt(0, (int)cMemory.NumBadAccesses());
 		if (cFast.IsStopped())
@@ -505,6 +634,368 @@ void TestCPP816NewDelete(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Bugs found running TestBaseLib on the W65C816.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816TestBaseLibBugs(void)
+{
+	//Pointers compare as 24 bit addresses (across banks).
+	AssertInt(1 + 2 + 4 + 8 + 16, TestCPP816Run(
+		"int Compare(char* pa, char* pb, char* pc)\n"
+		"{\n"
+		"\treturn (pa < pb) + (pb > pa) * 2 + (pc >= pa) * 4 + (pa <= pb) * 8 + ((pc >= pa) && (pc < pb)) * 16;\n"
+		"}\n"
+		"int main(void) { return Compare((char*)0x1FFF0, (char*)0x30010, (char*)0x20005); }\n"));
+
+	static const char*	aszMersenneTwister[] = { "BaseLib/MersenneTwister.cpp", "Libc65/time.cpp", NULL };
+
+	//CMersenneTwister::Next(int, int) gives the same numbers as natively (18248 is the native checksum).
+	AssertInt(18248, TestCPP816RunProject(aszMersenneTwister, "",
+		"#include \"BaseLib/MersenneTwister.h\"\n"
+		"int main()\n"
+		"{\n"
+		"\tCMersenneTwister c;\n"
+		"\tint s = 0;\n"
+		"\tc.Init(3456897);\n"
+		"\tfor (int i = 0; i < 100; i++) { int a = c.Next(0, 580 - i); int b = c.Next(0, 2); s = (s * 31 + a * 3 + b) & 0x7FFF; }\n"
+		"\treturn s;\n"
+		"}\n", false, NULL, 0, TEST_CPP816_SLOW_STEPS));
+
+	//An object whose copy isn't its bytes is passed by the address of a copy the caller makes and destroys.
+	AssertInt(7 + 2 * 10 + 2 * 100 + 9 * 1000, TestCPP816Run(
+		"int giCopies;\n"
+		"int giGone;\n"
+		"class CHeld\n"
+		"{\n"
+		"public:\n"
+		"\tint\tmi;\n"
+		"\tCHeld(int i) { mi = i; }\n"
+		"\tCHeld(const CHeld& c) { mi = c.mi; giCopies++; }\n"
+		"\t~CHeld() { giGone++; }\n"
+		"};\n"
+		"int Value(CHeld c, int iAdd) { int i = c.mi + iAdd; c.mi = 1000; return i; }\n"
+		"int main(void)\n"
+		"{\n"
+		"\tint r;\n"
+		"\tint s;\n"
+		"\t{\n"
+		"\t\tCHeld h(5);\n"
+		"\t\tr = Value(h, 2);\n"
+		"\t\ts = Value(h, 4) + h.mi - 5;\n"
+		"\t}\n"
+		"\treturn r + giCopies * 10 + (giGone - 1) * 100 + s * 1000;\n"
+		"}\n"));
+
+	AssertInt(1 + 20, TestCPP816RunProject(NULL, "",
+		"#include <string.h>\n"
+		"#include \"BaseLib/FastFunctions.h\"\n"
+		"#include \"BaseLib/TypeConverter.h\"\n"
+		"#include \"BaseLib/NumberControl.h\"\n"
+		"#include \"BaseLib/Calculator.h\"\n"
+		"#include \"BaseLib/CalculatorParser.h\"\n"
+		"int Eval(const char* sz, const char* szExpected)\n"
+		"{\n"
+		"\tCCalculator\t\t\tcCalculator;\n"
+		"\tCCalculatorParser\tcParser;\n"
+		"\tCNumber\t\t\t\tcResult;\n"
+		"\tCCalcExpression*\tpcExpression;\n"
+		"\tCCalculatorSymbols\tcSymbols;\n"
+		"\tCChars\t\t\t\tszResult;\n"
+		"\tint\t\t\t\t\tiSame;\n"
+		"\tcSymbols.Init(false);\n"
+		"\tcCalculator.Init(&cSymbols);\n"
+		"\tcParser.Init(&cCalculator);\n"
+		"\tpcExpression = (CCalcExpression*)cParser.Parse(sz);\n"
+		"\tcParser.Kill();\n"
+		"\tcResult = cCalculator.Eval(pcExpression);\n"
+		"\tszResult.Init();\n"
+		"\tcResult.Print(&szResult);\n"
+		"\tiSame = strcmp(szResult.Text(), szExpected) == 0;\n"
+		"\tszResult.Kill();\n"
+		"\tcCalculator.Kill();\n"
+		"\tdelete pcExpression;\n"
+		"\tcSymbols.Kill();\n"
+		"\treturn iSame;\n"
+		"}\n"
+		"int main(void)\n"
+		"{\n"
+		"\tFastFunctionsInit();\n"
+		"\tTypeConverterInit();\n"
+		"\tNumberInit();\n"
+		"\treturn Eval(\"-1\", \"-1\") + Eval(\"1 == -1\", \"0\") * 20;\n"
+		"}\n", false, NULL, 0, TEST_CPP816_SLOW_STEPS, true));
+
+	AssertInt(3 + 40 + 500, TestCPP816RunProject(NULL, "",
+		"long double Half(long double ld) { return ld / 2.0L; }\n"
+		"int main(void)\n"
+		"{\n"
+		"\tlong double ld = 1.5;\n"
+		"\tdouble d = (double)(ld * 2);\n"
+		"\tlong double l2 = 0.0L;\n"
+		"\tl2 = l2 * 10 + 4;\n"
+		"\treturn (int)d + (int)(l2 * 10) + (int)(Half(1000.0L));\n"
+		"}\n", false, NULL, 0, TEST_CPP816_STEPS, true));
+
+	AssertInt(14, TestCPP816RunProject(NULL, "",
+		"#include \"BaseLib/Number.h\"\n"
+		"#include \"BaseLib/NumberControl.h\"\n"
+		"#include \"BaseLib/FastFunctions.h\"\n"
+		"int main(void)\n"
+		"{\n"
+		"\tCNumber\ta;\n"
+		"\tCNumber\tb;\n"
+		"\tFastFunctionsInit();\n"
+		"\tNumberInit();\n"
+		"\ta.Init(100);\n"
+		"\tb.Init(7);\n"
+		"\ta.Divide(&b);\n"
+		"\treturn a.IntValue();\n"
+		"}\n", false, NULL, 0, TEST_CPP816_SLOW_STEPS, true));
+	AssertInt(1, TestCPP816RunProject(NULL, "",
+		"#include <string.h>\n"
+		"#include \"BaseLib/FloatPrinter.h\"\n"
+		"#include \"BaseLib/NumberControl.h\"\n"
+		"#include \"BaseLib/FastFunctions.h\"\n"
+		"int main(void)\n"
+		"{\n"
+		"\tchar\tsz[64];\n"
+		"\tFastFunctionsInit();\n"
+		"\tNumberInit();\n"
+		"\tDoubleToString(sz, 64, 345.34, 2);\n"
+		"\treturn strcmp(sz, \"345.34\") == 0;\n"
+		"}\n", false, NULL, 0, TEST_CPP816_SLOW_STEPS, true));
+	AssertInt(1 + 20 + 300, TestCPP816RunProject(NULL, "",
+		"#include \"BaseLib/Number.h\"\n"
+		"#include \"BaseLib/NumberControl.h\"\n"
+		"#include \"BaseLib/FastFunctions.h\"\n"
+		"int main(void)\n"
+		"{\n"
+		"\tCNumber\ta;\n"
+		"\tCNumber\tb;\n"
+		"\tFastFunctionsInit();\n"
+		"\tNumberInit();\n"
+		"\ta.Init(1);\n"
+		"\tb.Init(-1);\n"
+		"\treturn (a.Equals(&b) ? 0 : 1) + (b.IsNegative() ? 20 : 0) + ((b.IntValue() == -1) ? 300 : 0);\n"
+		"}\n", false, NULL, 0, TEST_CPP816_SLOW_STEPS, true));
+
+	static const char*	aszFloat[] = { "Libc65/softfloat.cpp", NULL };
+
+	AssertInt(0x407, TestCPP816RunProject(aszFloat, "",
+		"int Exponent(double f, int iShift)\n"
+		"{\n"
+		"\tunsigned char* pui = (unsigned char*)&f;\n"
+		"\treturn (int)((*((long long*)pui) & 0x7ff0000000000000) >> iShift);\n"
+		"}\n"
+		"int main(void) { return Exponent(345.34, 52); }\n"));
+	AssertInt(0x407, TestCPP816RunProject(aszFloat, "",
+		"template<class FLOAT, class INTEGER>\n"
+		"int Exponent(FLOAT f, INTEGER iMask, int iShift)\n"
+		"{\n"
+		"\tunsigned char* pui = (unsigned char*)&f;\n"
+		"\treturn (int)((*((INTEGER*)pui) & iMask) >> iShift);\n"
+		"}\n"
+		"int main(void) { return Exponent<double, long long>(345.34, 0x7ff0000000000000, 52); }\n"));
+
+	AssertInt(8 + 7 * 10, TestCPP816Run(
+		"int main(void)\n"
+		"{\n"
+		"\tunion { long long i64; signed char ia8[8]; };\n"
+		"\ti64 = 0x0102030405060708LL;\n"
+		"\treturn ia8[0] + ia8[1] * 10;\n"
+		"}\n"));
+	AssertInt(8 + 7 * 10, TestCPP816Run(
+		"int main(void)\n"
+		"{\n"
+		"\tlong long i64;\n"
+		"\ti64 = 0x0102030405060708LL;\n"
+		"\tsigned char* p = (signed char*)&i64;\n"
+		"\treturn p[0] + p[1] * 10;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Shifts by constants (whole words moved, then the bits) of 32 and 64 bit values, signed and unsigned, against the
+// same shifts natively.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816ConstantShifts(void)
+{
+	CChars		szSource;
+	int			i;
+	uint32		ui32;
+	uint64		ui64;
+	int32		i32;
+	int64		i64;
+	uint32		uiSum;
+
+	ui32 = 0x9ABCDEF1;
+	i32 = (int32)0x9ABCDEF1;
+	ui64 = 0x9ABCDEF123456789ULL;
+	i64 = (int64)0x9ABCDEF123456789ULL;
+	uiSum = 0;
+	szSource.Init("unsigned long gui32 = 0x9ABCDEF1UL;\nlong gi32 = (long)0x9ABCDEF1UL;\nunsigned long long gui64 = 0x9ABCDEF123456789ULL;\nlong long gi64 = (long long)0x9ABCDEF123456789ULL;\n");
+	szSource.Append("int main(void)\n{\n\tunsigned long s = 0;\n");
+	for (i = 1; i < 32; i++)
+	{
+		uiSum = uiSum * 3 + (ui32 << i) + (ui32 >> i) + (uint32)(i32 >> i);
+		szSource.Append("\ts = s * 3 + (gui32 << ")->Append(i)->Append(") + (gui32 >> ")->Append(i)->Append(") + (unsigned long)(gi32 >> ")->Append(i)->Append(");\n");
+	}
+	for (i = 1; i < 64; i++)
+	{
+		uiSum = uiSum * 5 + (uint32)(ui64 << i) + (uint32)((ui64 << i) >> 32) + (uint32)(ui64 >> i) + (uint32)((ui64 >> i) >> 32) + (uint32)(i64 >> i) + (uint32)((i64 >> i) >> 32);
+		szSource.Append("\ts = s * 5 + (unsigned long)(gui64 << ")->Append(i)->Append(") + (unsigned long)((gui64 << ")->Append(i)->Append(") >> 32) + (unsigned long)(gui64 >> ")->Append(i)->Append(") + (unsigned long)((gui64 >> ")->Append(i)->Append(") >> 32) + (unsigned long)(gi64 >> ")->Append(i)->Append(") + (unsigned long)((gi64 >> ")->Append(i)->Append(") >> 32);\n");
+	}
+	szSource.Append("\treturn (int)(s ^ (s >> 16)) & 0x7FFF;\n}\n");
+	AssertInt((int)((uiSum ^ (uiSum >> 16)) & 0x7FFF), TestCPP816Run(szSource.Text()));
+	szSource.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Explicit destructor calls (with placement new, as an object is made and
+// destroyed in memory the caller owns): through a pointer, through a base
+// pointer to a virtual destructor, on a named object, and of a class without
+// a destructor (nothing happens).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816DestructorCalls(void)
+{
+	AssertInt(1 + 20 + 300 + 4000, TestCPP816RunProject(NULL, "",
+		"#include <new>\n"
+		"int giDestroyed = 0;\n"
+		"class CPlain { public: int mi; ~CPlain() { giDestroyed += mi; } };\n"
+		"class CBase { public: virtual ~CBase() { giDestroyed += 1000; } };\n"
+		"class CDerived : public CBase { public: ~CDerived() { giDestroyed += 3000; } };\n"
+		"class CTrivial { public: int mi; };\n"
+		"int main(void)\n"
+		"{\n"
+		"\tlong\t\talBuffer[8];\n"
+		"\tCPlain*\t\tpcPlain;\n"
+		"\tCBase*\t\tpcBase;\n"
+		"\tCTrivial*\tpcTrivial;\n"
+		"\tpcPlain = new(alBuffer) CPlain;\n"
+		"\tpcPlain->mi = 1;\n"
+		"\tpcPlain->~CPlain();\n"
+		"\tpcPlain = new(alBuffer) CPlain;\n"
+		"\tpcPlain->mi = 20;\n"
+		"\t(*pcPlain).~CPlain();\n"
+		"\tpcPlain = new(alBuffer) CPlain;\n"
+		"\tpcPlain->mi = 300;\n"
+		"\tpcPlain->CPlain::~CPlain();\n"
+		"\tpcBase = new(alBuffer) CDerived;\n"
+		"\tpcBase->~CBase();\n"
+		"\tpcTrivial = new(alBuffer) CTrivial;\n"
+		"\tpcTrivial->~CTrivial();\n"
+		"\treturn giDestroyed;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Compiles szSource for eTarget (it must compile) and returns how many
+// warnings mention szWarning.
+//
+//////////////////////////////////////////////////////////////////////////
+int TestCPP816CountWarnings(const char* szSource, const char* szWarning, ECPPTarget eTarget = CPPT_W65C816)
+{
+	CCPP65Builder	cBuilder;
+	CChars			szAssembly;
+	CChars			szErrors;
+	CChars			szWarnings;
+	int				iCount;
+	const char*		sz;
+
+	cBuilder.Init();
+	szAssembly.Init();
+	szErrors.Init();
+	szWarnings.Init();
+	AssertTrue(CCPP65Builder::Generate(&szAssembly, &szErrors, cBuilder.GetIncludeDirectories(), "Test.cpp", szSource, false, NULL, eTarget, &szWarnings));
+	AssertString("", szErrors.Text());
+
+	iCount = 0;
+	for (sz = strstr(szWarnings.Text(), szWarning); sz; sz = strstr(sz + 1, szWarning))
+	{
+		iCount++;
+	}
+	szWarnings.Kill();
+	szErrors.Kill();
+	szAssembly.Kill();
+	cBuilder.Kill();
+	return iCount;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Integer constant expressions that overflow their type, and constants that
+// an implicit conversion truncates, are warned about: the W65C816's 16 bit int
+// turns code written for a 32 bit int quietly wrong ("12000 * 6").
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816Warnings(void)
+{
+	//An int expression that doesn't fit 16 bits: not on the 65C64, where int is 32 bits.
+	AssertInt(1, TestCPP816CountWarnings("int F(void) { return 12000 * 6; }\n", "Integer overflow"));
+	AssertInt(0, TestCPP816CountWarnings("int F(void) { return 12000 * 6; }\n", "Integer overflow", CPPT_65C64));
+	AssertInt(1, TestCPP816CountWarnings("int F(void) { return 30000 + 30000; }\n", "Integer overflow"));
+	AssertInt(1, TestCPP816CountWarnings("int F(void) { return 1 << 15; }\n", "Integer overflow"));
+	AssertInt(1, TestCPP816CountWarnings("unsigned F(void) { return 40000u * 2; }\n", "Integer overflow"));
+
+	//What the code means is fine: a long expression, unsigned wrap by subtraction, a cast.
+	AssertInt(0, TestCPP816CountWarnings("long F(void) { return (long)12000 * 6; }\n", "overflow"));
+	AssertInt(0, TestCPP816CountWarnings("long F(void) { return 12000L * 6; }\n", "overflow"));
+	AssertInt(0, TestCPP816CountWarnings("unsigned F(void) { return 0u - 1; }\n", "overflow"));
+	AssertInt(0, TestCPP816CountWarnings("int F(void) { return (int)70000L; }\n", "overflow"));
+	AssertInt(0, TestCPP816CountWarnings("int F(void) { return 32767; }\n", "overflow"));
+
+	//A constant an implicit conversion truncates: parameters, initialisers, assignments, returns and globals.
+	AssertInt(1, TestCPP816CountWarnings("void G(int i);\nvoid F(void) { G(89037124); }\n", "Integer conversion overflow"));
+	AssertInt(0, TestCPP816CountWarnings("void G(int i);\nvoid F(void) { G(89037124); }\n", "Integer conversion overflow", CPPT_65C64));
+	AssertInt(1, TestCPP816CountWarnings("int F(void) { int i = 70000; return i; }\n", "Integer conversion overflow"));
+	AssertInt(1, TestCPP816CountWarnings("int F(void) { int i; i = 70000; return i; }\n", "Integer conversion overflow"));
+	AssertInt(1, TestCPP816CountWarnings("int F(void) { return 70000; }\n", "Integer conversion overflow"));
+	AssertInt(1, TestCPP816CountWarnings("int giX = 70000;\n", "Integer conversion overflow"));
+	AssertInt(1, TestCPP816CountWarnings("char F(void) { return 300; }\n", "Integer conversion overflow"));
+
+	//Bit patterns are fine: -1 to unsigned, 0xFFFF to a 16 bit int, 255 or -128 to a char.
+	AssertInt(0, TestCPP816CountWarnings("unsigned F(void) { unsigned u = -1; return u; }\n", "overflow"));
+	AssertInt(0, TestCPP816CountWarnings("int F(void) { int i = 0xFFFF; return i; }\n", "overflow"));
+	AssertInt(0, TestCPP816CountWarnings("char F(void) { char c = 255; c = -128; return c; }\n", "overflow"));
+	AssertInt(0, TestCPP816CountWarnings("unsigned long F(void) { unsigned long ul = 0xFFFFFFFF; return ul; }\n", "overflow"));
+
+	//An expression looked at more than once is warned about once.
+	AssertInt(1, TestCPP816CountWarnings("void G(int i);\nvoid F(void) { G(12000 * 6); }\n", "Integer overflow"));
+
+	//An enum is as big as its enumerators need ([dcl.enum]), not always an int: TRISTATE's TRIERROR = 0xffffffff.
+	AssertInt(0, TestCPP816CountWarnings("enum ETri { TRI_FALSE = 0, TRI_ERROR = 0xffffffff };\nETri F(void) { ETri e = TRI_ERROR; return e; }\n", "overflow"));
+	AssertInt(2 + 4 * 8 + 1 * 64 + 2 * 512 + 4 * 4096, TestCPP816RunProject(NULL, "",
+		"enum E1 { A1 = 1 };\n"
+		"enum E2 { A2 = 0, B2 = 0xffffffff };\n"
+		"enum E3 : unsigned char { A3 };\n"
+		"enum class E4 { A4 };\n"
+		"enum E5 { A5 = -1, B5 = 40000 };\n"
+		"int main(void)\n"
+		"{\n"
+		"\treturn (int)(sizeof(E1) + sizeof(E2) * 8 + sizeof(E3) * 64 + sizeof(E4) * 512 + sizeof(E5) * 4096);\n"
+		"}\n"));
+	AssertInt(3, TestCPP816RunProject(NULL, "",
+		"enum ETri { TRI_FALSE = 0, TRI_TRUE = 1, TRI_ERROR = 0xffffffff };\n"
+		"ETri Get(int i) { return (i == 0) ? TRI_ERROR : TRI_TRUE; }\n"
+		"int main(void)\n"
+		"{\n"
+		"\tETri e = Get(0);\n"
+		"\treturn ((e == TRI_ERROR) ? 1 : 0) + ((unsigned long)e == 0xffffffffUL ? 2 : 0) + ((Get(1) == TRI_ERROR) ? 4 : 0);\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCPP816(void)
@@ -526,6 +1017,10 @@ void TestCPP816(void)
 	TestCPP816BaseLib();
 	TestCPP816NewDelete();
 	TestCPP816Floats();
+	TestCPP816TestBaseLibBugs();
+	TestCPP816ConstantShifts();
+	TestCPP816Warnings();
+	TestCPP816DestructorCalls();
 
 	CW65C816InstructionFactory::GetInstance()->Kill();
 	NumberKill();

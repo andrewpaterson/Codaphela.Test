@@ -99,7 +99,7 @@ void TestClassDefinition(void)
 #ifdef BUILD_64
 	AssertSize(OBJECT_SIZE + 400, pcField->GetOffset());
 #else
-	AssertInt(OBJECT_SIZE + 224, pcField->GetOffset());
+	AssertSize(OBJECT_SIZE + 224, pcField->GetOffset());
 #endif // BUILD_64
 
 	pcField = pcTestClassClass->GetField("mauiData");
@@ -107,7 +107,7 @@ void TestClassDefinition(void)
 #ifdef BUILD_64
 	AssertSize(OBJECT_SIZE + 416, pcField->GetOffset());
 #else
-	AssertInt(OBJECT_SIZE + 240, pcField->GetOffset());
+	AssertSize(OBJECT_SIZE + 240, pcField->GetOffset());
 #endif // BUILD_64
 
 	pTestClass = NULL;
@@ -274,7 +274,7 @@ void TestClassSerialisation(void)
 		memcpy(pTestClass->mauiData, szData, 12);
 		pTestClass->mDouble = 7980345645697084.0;
 		pTestClass->mInt = 45978634;
-		pTestClass->miUnmanagedInt = 907843256;
+		pTestClass->miUnmanagedInt = 28943;
 		pTestClass->mTiny.mc = 'c';
 
 		cWriter.Init(szDirectory, "", "File");
@@ -310,7 +310,7 @@ void TestClassSerialisation(void)
 		AssertMemory(szData, pTestClass->mauiData, 12);
 		AssertInt(45978634, pTestClass->mInt);
 		AssertDouble(7980345645697084.0, pTestClass->mDouble, 0);
-		AssertInt(907843256, pTestClass->miUnmanagedInt);
+		AssertInt(28943, pTestClass->miUnmanagedInt);
 		AssertChar('c', pTestClass->mTiny.mc);
 		AssertLong(oi, pTestClass->GetIndex());
 
@@ -426,7 +426,7 @@ void TestClassUnmanagedMatrixSerialisation(void)
 		{
 			AssertFloat((float)(i + 1), pf[i], 3);
 		}
-		AssertInt(12345, pTestClass->miAfter);
+		AssertInt((int32)12345, pTestClass->miAfter);
 
 		pTestClass = NULL;
 	}

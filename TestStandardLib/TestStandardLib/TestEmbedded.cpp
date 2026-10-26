@@ -285,9 +285,9 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	SafeKill(pcSequence);
 	ObjectsKill(false);
 
-	uiEmbeddedTestSize = OBJECT_SIZE + sizeof(int) + sizeof(float) + POINTER_SIZE;
+	uiEmbeddedTestSize = OBJECT_SIZE + sizeof(int32) + sizeof(float) + POINTER_SIZE;
 	AssertSize(sizeof(CEmbeddedTest), uiEmbeddedTestSize);
-	uiEmbeddedContainerSize = OBJECT_SIZE + 4 + uiEmbeddedTestSize + sizeof(int) + uiEmbeddedTestSize + sizeof(float) + POINTER_SIZE + 12  /* random padding I assume */;
+	uiEmbeddedContainerSize = OBJECT_SIZE + 4 + uiEmbeddedTestSize + sizeof(int32) + uiEmbeddedTestSize + sizeof(float) + POINTER_SIZE + 12  /* random padding I assume */;
 	AssertSize(sizeof(CEmbeddedContainer), uiEmbeddedContainerSize);
 	AssertSize(sizeof(CEmbeddedComplex), OBJECT_SIZE + uiEmbeddedTestSize + sizeof(int32) * 2 + sizeof(CArray<>) + uiEmbeddedContainerSize + POINTER_SIZE);
 
@@ -306,24 +306,24 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	AssertString("CEmbeddedComplex", szClassName);
 	AssertLong(oiComplex, pComplex.GetIndex());
 
-	AssertInt(1, pComplex->mai[0]);
-	AssertInt(2, pComplex->mai[1]);
+	AssertInt((int32)1, pComplex->mai[0]);
+	AssertInt((int32)2, pComplex->mai[1]);
 	
 	AssertLong(INVALID_O_INDEX, pComplex->mcSimple.GetIndex());
-	AssertInt(85, pComplex->mcSimple.miAmANumber);
+	AssertInt((int32)85, pComplex->mcSimple.miAmANumber);
 	AssertFloat(58.0f, pComplex->mcSimple.mfSoAmI, 0);
 
 	AssertLong(INVALID_O_INDEX, pComplex->mcContainer.GetIndex());
-	AssertInt(73, pComplex->mcContainer.mi);
+	AssertInt((int32)73, pComplex->mcContainer.mi);
 	AssertFloat(666.0f, pComplex->mcContainer.mf, 0);
 	AssertString("And", pComplex->mcContainer.msz);
 
 	AssertLong(INVALID_O_INDEX, pComplex->mcContainer.mcOne.GetIndex());
-	AssertInt(85, pComplex->mcContainer.mcOne.miAmANumber);
+	AssertInt((int32)85, pComplex->mcContainer.mcOne.miAmANumber);
 	AssertFloat(58.0f, pComplex->mcContainer.mcOne.mfSoAmI, 0);
 
 	AssertLong(INVALID_O_INDEX, pComplex->mcContainer.mcTwo.GetIndex());
-	AssertInt(85, pComplex->mcContainer.mcTwo.miAmANumber);
+	AssertInt((int32)85, pComplex->mcContainer.mcTwo.miAmANumber);
 	AssertFloat(58.0f, pComplex->mcContainer.mcTwo.mfSoAmI, 0);
 
 	AssertLong(3, gcObjects.NumMemoryIndexes());

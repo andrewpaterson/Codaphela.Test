@@ -31,10 +31,10 @@ void TestIntVec3Print(void)
 	SIntVec3	si;
 	CChars		sz;
 
-	si.Init(345, 0, 1397533873);
+	si.Init(345, 0, 13975);
 	sz.Init();
 	si.Print(&sz);
-	AssertString("[         345,           0,  1397533873]", sz.Text());
+	AssertString("[    345,      0,  13975]", sz.Text());
 	sz.Kill();
 }
 

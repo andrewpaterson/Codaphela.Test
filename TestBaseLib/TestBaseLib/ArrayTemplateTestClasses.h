@@ -1,11 +1,12 @@
 #ifndef __ARRAY_TEMPLATE_TEST_CLASSES__
 #define __ARRAY_TEMPLATE_TEST_CLASSES__
+#include "BaseLib/PrimitiveTypes.h"
 
 
 struct STestArrayTemplateItem
 {
-	int	i1;
-	int	i2;
+	int32	i1;
+	int32	i2;
 };
 
 

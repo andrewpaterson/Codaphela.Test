@@ -225,7 +225,7 @@ void TestArrayTemplateEmbeddedSizeof(void)
 	AssertSize(36, 3 * sizeof(CTestOverridenArrayTemplateItem));
 	AssertSize(24, sizeof(CArrayTemplate<CTestOverridenArrayTemplateItem>));
 
-	AssertSize(sizeof(int) + 3 * sizeof(CTestOverridenArrayTemplateItem), sizeof(CTestArrayTemplateEmbedded));
+	AssertSize(sizeof(void*) + 3 * sizeof(CTestOverridenArrayTemplateItem), sizeof(CTestArrayTemplateEmbedded));
 #endif // BUILD_64
 }
 
@@ -243,36 +243,36 @@ void TestArrayTemplateEmbeddedAllocationWithVirtualClass(void)
 
 	pc = ac.Add();
 	pc->Init(5);
-	AssertInt(5, pc->i1);
-	AssertInt(33, pc->i2);
+	AssertInt((int32)5, pc->i1);
+	AssertInt((int32)33, pc->i2);
 
 	pc = ac.InsertAt(0);
 	pc->Init(6);
-	AssertInt(6, pc->i1);
-	AssertInt(33, pc->i2);
+	AssertInt((int32)6, pc->i1);
+	AssertInt((int32)33, pc->i2);
 
 	pc = ac.Add();
 	pc->Init(7);
-	AssertInt(7, pc->i1);
-	AssertInt(33, pc->i2);
+	AssertInt((int32)7, pc->i1);
+	AssertInt((int32)33, pc->i2);
 	AssertPointer(ac.Get(2), pc);
 
 	pc = ac.Add();
 	pc->Init(8);
-	AssertInt(8, pc->i1);
-	AssertInt(33, pc->i2);
+	AssertInt((int32)8, pc->i1);
+	AssertInt((int32)33, pc->i2);
 	AssertPointer(ac.Get(3), pc);
 
 	AssertSize(4, ac.NumElements());
 
 	pc = ac.InsertAt(3);
 	pc->Init(9);
-	AssertInt(9, pc->i1);
-	AssertInt(33, pc->i2);
+	AssertInt((int32)9, pc->i1);
+	AssertInt((int32)33, pc->i2);
 	AssertPointer(ac.Get(3), pc);
 	pc = ac.Get(4);
-	AssertInt(8, pc->i1);
-	AssertInt(33, pc->i2);
+	AssertInt((int32)8, pc->i1);
+	AssertInt((int32)33, pc->i2);
 
 	ac.Kill();
 }

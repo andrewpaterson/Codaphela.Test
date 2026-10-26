@@ -563,7 +563,7 @@ void TestMemoryManagerEmptyCache(void)
 	cRandom.Init(3456897);
 	for (i = 0; i < 100; i++)
 	{
-		iIndex = cRandom.Next(0, (int)(apvAllocations.NumElements() - 1));
+		iIndex = cRandom.Next(0, (int32)(apvAllocations.NumElements() - 1));
 		iToRemove = cRandom.Next(0, 2);
 		if (iIndex + iToRemove >= (int32)apvAllocations.NumElements())
 		{

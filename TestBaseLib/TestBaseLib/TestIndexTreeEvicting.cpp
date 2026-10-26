@@ -217,7 +217,7 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	CMemoryAllocator					cAllocator;
 	CGeneralMemory*						pcMemory;
 	int									x;
-	int									y;
+	int32								y;
 	CIndexTreeEvictionStrategyRandom	cStrategy;
 	size								uiCacheSize;
 	
@@ -282,7 +282,7 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 #endif // BUILD_64
 	AssertSize(1, cEvictedNodes.NumElements());
 	AssertString("Plantation", (char*)cEvictedNodes.GetKey(0));
-	AssertInt(y, *((int*)cEvictedNodes.GetData(0)));
+	AssertInt(y, *((int32*)cEvictedNodes.GetData(0)));
 	AssertSize(1, cIndexTree.NumMemoryElements());
 	AssertSize(7, cIndexTree.NumMemoryNodes());
 

@@ -488,7 +488,7 @@ void TestNamedIndexesMoreCacheEviction(void)
 			{
 				sz.Append(" ");
 			}
-			iIndex = cRandom.Next(0, (int)(iNumWords - 1));
+			iIndex = cRandom.Next(0, (int32)(iNumWords - 1));
 			sz.Append(aszWords.Get(iIndex));
 		}
 		cNamedIndexes.Add(sz.Text(), oi);

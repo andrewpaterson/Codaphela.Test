@@ -70,13 +70,13 @@ void TestArrayTemplatePtrSorting(void)
 	ap.Sort(TestComparePtrPtr);
 
 	ps = ap.GetPtr(0);
-	AssertInt(1, ps->i1);
+	AssertInt((int32)1, ps->i1);
 	ps = ap.GetPtr(1);
-	AssertInt(2, ps->i1);
+	AssertInt((int32)2, ps->i1);
 	ps = ap.GetPtr(2);
-	AssertInt(3, ps->i1);
+	AssertInt((int32)3, ps->i1);
 	ps = ap.GetPtr(3);
-	AssertInt(4, ps->i1);
+	AssertInt((int32)4, ps->i1);
 
 	ap.Kill();
 }

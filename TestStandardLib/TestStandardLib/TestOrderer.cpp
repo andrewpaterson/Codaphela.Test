@@ -678,7 +678,7 @@ void TestOrdererSaveAndLoad(void)
 		pA = gcObjects.Get("A");
 		pB = gcObjects.Get("B");
 		pC = gcObjects.Get("C");
-		AssertInt(3, pC->mx);
+		AssertInt((int32)3, pC->mx);
 		pHolder = pOrderer->GetHolder(pC);
 		AssertTrue(pHolder.IsNotNull());
 		AssertSize(2, pHolder->GetRequirements()->NumElements());

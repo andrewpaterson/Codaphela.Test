@@ -84,6 +84,7 @@ void TestFontCreateFont(void)
 		bExists = pFont->Iterate(&sIter, (uint8*)szCharacter, &uiLength, 4);
 		bExists = pFont->Iterate(&sIter, (uint8*)szCharacter, &uiLength, 4);
 		bExists = pFont->Iterate(&sIter, (uint8*)szCharacter, &uiLength, 4);
+		sIter.Kill();
 
 		cFactory.Kill();
 		cImportParams.Kill();

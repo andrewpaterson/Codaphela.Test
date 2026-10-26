@@ -23,7 +23,7 @@ void TestChannelsAccessorContiguous(void)
 	CChannelsAccessor*			pcAccessor;
 	CChannelsAccessorCreator	cCreator;
 	void*						pvData;
-	int							iData;
+	int32						iData;
 	uint16						sData;
 
 	pcChannels = UMalloc(CChannels);
@@ -42,7 +42,7 @@ void TestChannelsAccessorContiguous(void)
 	iData = 784;
 	pcAccessor->Set(1, &iData);
 	pvData = pcAccessor->Get(1);
-	AssertInt(784, *(int*)pvData);
+	AssertInt((int32)784, *(int32*)pvData);
 	pcAccessor->Kill();
 
 	pcChannels->BeginChange();
@@ -54,7 +54,7 @@ void TestChannelsAccessorContiguous(void)
 	pcAccessor = cCreator.CreateAndKill();
 	AssertString("CChannelsAccessorContiguous", pcAccessor->ClassName());
 	pvData = pcAccessor->Get(1);
-	AssertInt(784, *(int*)pvData);
+	AssertInt((int32)784, *(int32*)pvData);
 	pcAccessor->Kill();
 
 	cCreator.Init(pcChannels);
@@ -75,7 +75,7 @@ void TestChannelsAccessorContiguous(void)
 	AssertString("CChannelsAccessorContiguous", pcAccessor->ClassName());
 	AssertSize(6, pcAccessor->GetByteSize());
 	pvData = pcAccessor->Get(1);
-	AssertInt(784, *(int*)pvData);
+	AssertInt((int32)784, *(int32*)pvData);
 	pvData = RemapSinglePointer(pvData, 4);
 	AssertInt(602, *(uint16*)pvData);
 	pcAccessor->Kill();
@@ -95,7 +95,7 @@ void TestChannelsAccessorByteAligned(void)
 	CChannelsAccessorCreator	cCreator;
 	uint16*						psData;
 	uint16						sData[3];
-	int							iData;
+	int32						iData;
 
 	pcChannels = UMalloc(CChannels);
 	pcChannels->Init();
@@ -135,12 +135,12 @@ void TestChannelsAccessorByteAligned(void)
 	AssertString("CChannelsAccessorByteAligned", pcAccessor->ClassName());
 	psData = (uint16*)pcAccessor->Get(1);
 	AssertShort((uint16)602, psData[0]);
-	AssertInt(999999, *(int*)&psData[1]);
+	AssertInt(999999, *(int32*)&psData[1]);
 	sData[0] = 22172;
 	sData[1] = 18432;
 	sData[2] = 30812;
 	pcAccessor->Set(0, sData);
-	AssertInt(2019313664, *(int*)RemapSinglePointer(pcChannels->GetData(), 2));
+	AssertInt(2019313664, *(int32*)RemapSinglePointer(pcChannels->GetData(), 2));
 	AssertShort((uint16)22172, *(uint16*)RemapSinglePointer(pcChannels->GetData(), 6));
 	pcAccessor->Kill();
 

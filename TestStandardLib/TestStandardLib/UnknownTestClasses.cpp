@@ -186,7 +186,7 @@ void CTestUnknown::Print(CChars* psz)
 //                                                                      //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
-void CTestUnknownJobbie::Init(int iNumber, const char* pszText)
+void CTestUnknownJobbie::Init(int32 iNumber, const char* pszText)
 {
 	miANumber = iNumber;
 	mszText.Init(pszText);

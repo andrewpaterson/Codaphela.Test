@@ -8,7 +8,7 @@
 //////////////////////////////////////////////////////////////////////////
 void CEmbeddedTest::Class(void)
 {
-	U_SInt(miAmANumber);
+	U_Int32(miAmANumber);
 	U_Float32(mfSoAmI);
 	M_Pointer(mpTest);
 }
@@ -73,7 +73,7 @@ void CEmbeddedContainer::Class(void)
 	M_Pointer(mpTest);
 	M_Embedded(mcOne);
 	M_Embedded(mcTwo);
-	U_SInt(mi);
+	U_Int32(mi);
 	U_Float32(mf);
 }
 

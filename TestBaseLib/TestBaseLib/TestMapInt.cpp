@@ -158,7 +158,7 @@ void TestMapIntInt(void)
 
 	AssertSize(0, cMap.GetArray()->GetSortedSize());
 	AssertSize(3, cMap.GetArray()->GetHoldingSize());
-	AssertSize(4, (*(SMNode**)cMap.GetArray()->GetInHolding(0, 0))->iKeySize);
+	AssertSize(sizeof(int), (*(SMNode**)cMap.GetArray()->GetInHolding(0, 0))->iKeySize);
 
 	cMap.InsertHoldingIntoSorted();
 	cMap.GetInSorted(0, (void**)&piKey, (void**)&piValue);

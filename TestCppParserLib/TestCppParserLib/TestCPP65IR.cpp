@@ -170,7 +170,7 @@ void TestCPP65IRMembers(void)
 	AssertInt(5, TestCPP65IRMain(
 		"struct CPtr { int* mp; int* operator&() { return mp; } };\n"
 		"struct CHolder { CPtr mcPtr; int* Get() { return &mcPtr; } };\n"
-		"int main() { int x = 5; CHolder h; h.mcPtr.mp = &x; return *h.Get(); }", 2));
+		"int main() { int x = 5; CHolder h; h.mcPtr.mp = &x; return *h.Get(); }", 3));
 }
 
 

@@ -14,7 +14,7 @@ public:
 	Ptr<CArrayObject>	mcArray;
 
 	CChars				mszString;
-	int					mx;
+	int32				mx;
 
 public:
 	void	Init(const char* szString, int x);

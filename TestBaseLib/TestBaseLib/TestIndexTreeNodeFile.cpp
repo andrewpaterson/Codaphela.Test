@@ -35,7 +35,11 @@ void TestIndexTreeNodeFileSizeofs(void)
 	AssertSize(16, sizeof(CIndexTreeNode));
 #endif // BUILD_64
 	AssertTrue(sizeof(CIndexTreeNodeFile*) <= sizeof(CIndexTreeChildNode) - sizeof(int));
+#ifdef __W65C816__
+	AssertSize(2, sizeof(int));  //Just ot be sure.
+#else
 	AssertSize(4, sizeof(int));  //Just ot be sure.
+#endif // __W65C816__
 }
 
 

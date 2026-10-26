@@ -257,6 +257,7 @@ void TestWriteTransactionIteration(void)
 	AssertTrue(pcTransaction->StartNameIteration(&sIter, szKey, &oi));
 	AssertString("Gamma", szKey);
 	AssertFalse(pcTransaction->NameIterate(&sIter, szKey, &oi));
+	sIter.Kill();
 
 	pcTransaction->Abort();
 	SafeKill(pcTransaction);

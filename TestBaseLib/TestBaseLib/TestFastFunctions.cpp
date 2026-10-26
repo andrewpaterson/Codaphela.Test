@@ -81,7 +81,7 @@ void TestMemcmpFast(void)
 	for (i = 1; i < 16; i++)
 	{
 		iResult = ga_memcmp_fast[i](pc2, pc2);
-		AssertZero(&iResult, 4);
+		AssertZero(&iResult, sizeof(int));
 	}
 }
 

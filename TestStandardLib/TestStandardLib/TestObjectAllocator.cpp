@@ -89,7 +89,7 @@ void TestObjectAllocatorNamedAdd(void)
 
 		AssertLong(1LL, pNamed1.GetIndex());
 		AssertString("My Object Name", pNamed1.GetName());
-		AssertInt(98, pNamed1->miNum);
+		AssertInt((int32)98, pNamed1->miNum);
 
 		pTemp = gcObjects.Get("My Object Name");
 		AssertPointer(pNamed1.Object(), pTemp.Object());
@@ -151,8 +151,8 @@ void TestObjectAllocatorNamedOverwrite(void)
 
 		pNamed1 = gcObjects.Get(2LL);
 		AssertNotNull(pNamed1.Object());
-		AssertInt(2, pNamed1->miNum);
-		AssertInt(2, pNamed2->miNum);
+		AssertInt((int32)2, pNamed1->miNum);
+		AssertInt((int32)2, pNamed2->miNum);
 		AssertPointer(pNamed2.Object(), pNamed1.Object());
 
 		AssertLong(1, gcObjects.NumMemoryIndexes());
@@ -605,8 +605,8 @@ void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwritten(void)
 		pNamed4->mpNamedTest1 = pNamed6;
 		pNamed4->mpNamedTest2 = pNamed5;
 
-		AssertInt(3, pNamed1->mpNamedTest1->miNum);
-		AssertInt(4, pNamed2->mpNamedTest1->miNum);
+		AssertInt((int32)3, pNamed1->mpNamedTest1->miNum);
+		AssertInt((int32)4, pNamed2->mpNamedTest1->miNum);
 
 		AssertLong(8, gcObjects.NumMemoryIndexes());
 		AssertLong(7, gcObjects.NumMemoryNames());
@@ -630,8 +630,8 @@ void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwritten(void)
 		AssertLong(9LL, pNamed3New->GetIndex());
 		AssertLong(10ll, pNamed4New->GetIndex());
 
-		AssertInt(33, pNamed1->mpNamedTest1->miNum);
-		AssertInt(44, pNamed2->mpNamedTest1->miNum);
+		AssertInt((int32)33, pNamed1->mpNamedTest1->miNum);
+		AssertInt((int32)44, pNamed2->mpNamedTest1->miNum);
 
 		AssertTrue(&pNamed3 == &pNamed3New);
 		AssertTrue(&pNamed4 == &pNamed4New);

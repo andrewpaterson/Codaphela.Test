@@ -103,44 +103,49 @@ void TestObjectStackPointedTo(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The object is made in the caller's memory (as a local would be in this
+// frame) and destroyed before returning, so the caller can see what the
+// destructor did without reading a frame that has returned.
 //
 //////////////////////////////////////////////////////////////////////////
-void ObjectReuseOutOfFrame(CTestClass** pcTestClass)
+void ObjectReuseOutOfFrame(void* pvStorage)
 {
-	CTestClass		cStackTestClass;
+	CTestClass*		pcStackTestClass;
 	CChars			sz;
 
-	(*pcTestClass) = &cStackTestClass;
+	pcStackTestClass = new(pvStorage) CTestClass;
 
 	sz.Init(); 
-	cStackTestClass.PrintFlags(&sz);
+	pcStackTestClass->PrintFlags(&sz);
 	AssertString("CALLED_CONSTRUCTOR", sz.Text());
 	sz.Kill();
 
-	cStackTestClass.Init();
+	pcStackTestClass->Init();
 	sz.Init();
-	cStackTestClass.PrintFlags(&sz);
+	pcStackTestClass->PrintFlags(&sz);
 	AssertString("CALLED_CONSTRUCTOR, DIRTY, CALLED_INIT, CALLED_CLASS", sz.Text());
 	sz.Kill();
 
-	cStackTestClass.Kill();
+	pcStackTestClass->Kill();
 	sz.Init();
-	cStackTestClass.PrintFlags(&sz);
+	pcStackTestClass->PrintFlags(&sz);
 	AssertString("CALLED_CONSTRUCTOR, DIRTY, CALLED_KILL, CALLED_CLASS", sz.Text());
 	sz.Kill();
 
 
-	cStackTestClass.Init();
+	pcStackTestClass->Init();
 	sz.Init();
-	cStackTestClass.PrintFlags(&sz);
+	pcStackTestClass->PrintFlags(&sz);
 	AssertString("CALLED_CONSTRUCTOR, DIRTY, CALLED_INIT, CALLED_CLASS", sz.Text());
 	sz.Kill();
 
-	cStackTestClass.Kill();
+	pcStackTestClass->Kill();
 	sz.Init();
-	cStackTestClass.PrintFlags(&sz);
+	pcStackTestClass->PrintFlags(&sz);
 	AssertString("CALLED_CONSTRUCTOR, DIRTY, CALLED_KILL, CALLED_CLASS", sz.Text());
 	sz.Kill();
+
+	pcStackTestClass->~CTestClass();
 }
 
 
@@ -150,12 +155,14 @@ void ObjectReuseOutOfFrame(CTestClass** pcTestClass)
 //////////////////////////////////////////////////////////////////////////
 void TestObjectStackObjectReuse(void)
 {
+	int64			alliStorage[(sizeof(CTestClass) + sizeof(int64) - 1) / sizeof(int64)];  //int64s to align it.
 	CTestClass*		pcTestClass;
 	CChars			sz;
 
 	ObjectsInit();
 
-	ObjectReuseOutOfFrame(&pcTestClass);
+	ObjectReuseOutOfFrame(alliStorage);
+	pcTestClass = (CTestClass*)alliStorage;
 	sz.Init();
 	pcTestClass->PrintFlags(&sz);
 	AssertString("", sz.Text());

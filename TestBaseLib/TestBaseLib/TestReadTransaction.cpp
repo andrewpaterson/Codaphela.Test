@@ -29,6 +29,7 @@ void AssertReadIndices(CReadTransaction* pcRead, OIndex oi1, OIndex oi2)
 	AssertLong(oi1, pcRead->StartIndexIteration(&sIter, szData, &iDataSize, 256));
 	AssertLong(oi2, pcRead->IndexIterate(&sIter, szData, &iDataSize, 256));
 	AssertLong(INVALID_O_INDEX, pcRead->IndexIterate(&sIter, szData, &iDataSize, 256));
+	sIter.Kill();
 }
 
 
@@ -89,6 +90,7 @@ void TestReadTransactionWriteTransaction(void)
 	AssertTrue(pcAfter->NameIterate(&sIter, szKey, &oi));
 	AssertString("Gamma", szKey);
 	AssertFalse(pcAfter->NameIterate(&sIter, szKey, &oi));
+	sIter.Kill();
 
 	//The old versions go when the last reader that needs them ends.
 	SafeKill(pcBefore);

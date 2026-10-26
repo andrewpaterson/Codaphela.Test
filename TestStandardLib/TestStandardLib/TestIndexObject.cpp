@@ -176,6 +176,7 @@ void TestIndexObjectIterateSafeNull(void)
 
 		memset(auiKey, 0, 8);
 		pPtr = pIndex->Iterate(&sIter, auiKey, &uiKeySize, 8, &bExists);
+		sIter.Kill();
 		AssertFalse(bExists);
 		AssertNull(&pPtr);
 	}

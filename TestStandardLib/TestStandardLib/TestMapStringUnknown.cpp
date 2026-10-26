@@ -74,7 +74,7 @@ void TestMapStringUnknownGet(void)
 	AssertSize(3, gcUnknowns.NumElements());
 
 	pcTest = (CTestUnknownJobbie*)cMap.Get("World");
-	AssertInt(19, pcTest->miANumber);
+	AssertInt((int32)19, pcTest->miANumber);
 	AssertString("A pony", pcTest->mszText.Text());
 
 	pcA1 = UMalloc(CTestUnknownJobbie);
@@ -267,19 +267,19 @@ void TestMapStringUnknownLoad(void)
 	AssertSize(4, gcUnknowns.NumElements());
 
 	pcTest = (CTestUnknownJobbie*)cMap.Get("Hello");
-	AssertInt(7, pcTest->miANumber);
+	AssertInt((int32)7, pcTest->miANumber);
 	AssertString("1st", pcTest->mszText.Text());
 
 	pcTest = (CTestUnknownJobbie*)cMap.Get("World");
-	AssertInt(19, pcTest->miANumber);
+	AssertInt((int32)19, pcTest->miANumber);
 	AssertString("A pony", pcTest->mszText.Text());
 
 	pcTest = (CTestUnknownJobbie*)cMap.Get("Aardvark");
-	AssertInt(4, pcTest->miANumber);
+	AssertInt((int32)4, pcTest->miANumber);
 	AssertString("Restore", pcTest->mszText.Text());
 
 	pcTest = (CTestUnknownJobbie*)cMap.Get("Yurk");
-	AssertInt(8, pcTest->miANumber);
+	AssertInt((int32)8, pcTest->miANumber);
 	AssertString("Yurk", pcTest->mszText.Text());
 	AssertSize(4, gcUnknowns.NumElements());
 
@@ -353,13 +353,13 @@ void TestMapStringUnknownLoadNull(void)
 	AssertSize(2, gcUnknowns.NumElements());
 
 	pcTest = (CTestUnknownJobbie*)cMap.Get("Hello");
-	AssertInt(7, pcTest->miANumber);
+	AssertInt((int32)7, pcTest->miANumber);
 	AssertString("1st", pcTest->mszText.Text());
 
 	AssertNull(cMap.Get("Nothing"));
 
 	pcTest = (CTestUnknownJobbie*)cMap.Get("World");
-	AssertInt(19, pcTest->miANumber);
+	AssertInt((int32)19, pcTest->miANumber);
 	AssertString("A pony", pcTest->mszText.Text());
 
 	cMap.Kill();
@@ -401,7 +401,7 @@ void TestMapStringUnknownReplaceValues(void)
 	AssertSize(1, cMap.NumElements());
 	AssertSize(2, gcUnknowns.NumElements());
 	AssertPointer(pcValue1, cMap.Get("Key"));
-	AssertInt(1, pcValue1->miANumber);
+	AssertInt((int32)1, pcValue1->miANumber);
 
 	//A new value replaces the old one, which is killed.
 	AssertTrue(cMap.Put("Key", pcValue2));

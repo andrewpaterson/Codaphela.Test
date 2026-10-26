@@ -13,7 +13,7 @@ class CEmbeddedTest : public CObject
 CONSTRUCTABLE(CEmbeddedTest)
 DESTRUCTABLE(CEmbeddedTest)
 public:
-	int		miAmANumber;
+	int32	miAmANumber;
 	float	mfSoAmI;
 	Ptr<>	mpTest;
 
@@ -33,7 +33,7 @@ DESTRUCTABLE(CEmbeddedContainer)
 public:
 	char				msz[4];
 	CEmbeddedTest		mcOne;
-	int					mi;
+	int32				mi;
 	CEmbeddedTest		mcTwo;
 	float				mf;
 	Ptr<>				mpTest;

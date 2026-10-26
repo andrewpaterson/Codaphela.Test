@@ -155,7 +155,7 @@ void TestObjectDirtyOnPrimitiveAssignment(void)
 	ObjectsInit(pcDatabase, pcSequence);
 
 	pObject = gcObjects.Get(oi);
-	AssertInt(7, pObject->mi32);
+	AssertInt((int32)7, pObject->mi32);
 	AssertFalse(pObject.IsDirty());
 
 	ObjectsFlush();

@@ -44,9 +44,9 @@ void TestChunkFileObjectWriterSerialised(void)
 		Ptr<CTestInteger>			pcObject4;
 		CChunkFile					cChunkFile;
 		CChunkFileFileSystem		cChunkFileFileSystem;
-		int							iLength;
+		int32						iLength;
 		char						szTest[4];
-		int							iTest;
+		int32						iTest;
 		Ptr<CTestInteger>			pcGet;
 
 		AssertTrue(cFileUtil.RemoveDir("Output" _FS_ "ChunkFileObjectWriter"));
@@ -104,31 +104,31 @@ void TestChunkFileObjectWriterSerialised(void)
 		//CTestWithArray pcObject1
 		AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Warning"));
 		AssertTrue(cChunkFileFileSystem.ReadInt32(&iLength));
-		AssertInt(134, iLength);
+		AssertInt((int32)134, iLength);
 		AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 		AssertString("DAT", szTest);
 		AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 		AssertString("NAM", szTest);
 		AssertTrue(cChunkFileFileSystem.ReadData(&iTest, 4));
-		AssertInt(-1, iTest);
+		AssertInt((int32)-1, iTest);
 		AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
 
 		//CArrayObject
 		AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Unnamed/0000000000000002"));
 		AssertTrue(cChunkFileFileSystem.ReadInt32(&iLength));
-		AssertInt(127, iLength);
+		AssertInt((int32)127, iLength);
 		AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 		AssertString("DAT", szTest);
 		AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 		AssertString("IDX", szTest);
 		AssertTrue(cChunkFileFileSystem.ReadData(&iTest, 4));
-		AssertInt(-1, iTest);
+		AssertInt((int32)-1, iTest);
 		AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
 
 		//CTestInteger pcObject2
 		AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Unnamed/0000000000000003"));
 		AssertTrue(cChunkFileFileSystem.ReadInt32(&iLength));
-		AssertInt(57, iLength);
+		AssertInt((int32)57, iLength);
 		AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 		AssertString("DAT", szTest);
 		AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
@@ -138,25 +138,25 @@ void TestChunkFileObjectWriterSerialised(void)
 		//CTestInteger pcObject3
 		AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Unnamed/0000000000000004"));
 		AssertTrue(cChunkFileFileSystem.ReadInt32(&iLength));
-		AssertInt(57, iLength);
+		AssertInt((int32)57, iLength);
 		AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 		AssertString("DAT", szTest);
 		AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 		AssertString("IDX", szTest);
 		AssertTrue(cChunkFileFileSystem.ReadData(&iTest, 4));
-		AssertInt(-1, iTest);
+		AssertInt((int32)-1, iTest);
 		AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
 
 		//CTestInteger pcObject4
 		AssertTrue(cChunkFileFileSystem.ReadChunkBegin("Unnamed/0000000000000005"));
 		AssertTrue(cChunkFileFileSystem.ReadInt32(&iLength));
-		AssertInt(57, iLength);
+		AssertInt((int32)57, iLength);
 		AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 		AssertString("DAT", szTest);
 		AssertTrue(cChunkFileFileSystem.ReadData(szTest, 4));
 		AssertString("IDX", szTest);
 		AssertTrue(cChunkFileFileSystem.ReadData(&iTest, 4));
-		AssertInt(-1, iTest);
+		AssertInt((int32)-1, iTest);
 		AssertTrue(cChunkFileFileSystem.ReadChunkEnd());
 
 		AssertTrue(cChunkFileFileSystem.ReadClose());

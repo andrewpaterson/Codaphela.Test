@@ -28,7 +28,11 @@ void TestDataTypesIOInt2(void)
 	cMemoryFile.Init();
 	cFile.Init(&cMemoryFile);
 	cFile.Open(EFM_Write_Create);
+#ifdef __W65C816__
+	si2In.Init(0x1020, (int)0x80a0);  //An int is 16 bits.
+#else
 	si2In.Init(0x10203040, 0x80a0b0c0);
+#endif
 	bResult = (((SDataTypeIO*)&si2In)->*fSave)(&cFile);
 	AssertTrue(bResult);
 	cFile.Close();
@@ -40,8 +44,13 @@ void TestDataTypesIOInt2(void)
 	cFile.Kill();
 	cMemoryFile.Kill();
 
+#ifdef __W65C816__
+	AssertInt((int)0x1020, si2Out.x);
+	AssertInt((int)0x80a0, si2Out.y);
+#else
 	AssertInt((int)0x10203040, si2Out.x);
 	AssertInt((int)0x80a0b0c0, si2Out.y);
+#endif
 
 	cDataIO.Kill();
 }

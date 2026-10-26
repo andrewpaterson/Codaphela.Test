@@ -3,7 +3,7 @@
 #include "BaseLib/DebugOutput.h"
 #include "BaseLib/Logger.h"
 #include "BaseLib/LogString.h"
-#include "BaseLib/MapIntInt.h"
+#include "BaseLib/MapLongLong.h"
 #include "TestLib/Assert.h"
 
 
@@ -15,10 +15,10 @@ void TestArraySizer(void)
 {
 	BeginTests();
 
-	CMapIntInt	miiExpected;
+	CMapLongLong	miiExpected;
 	size		iElements;
 	size		iChunkSize;
-	int*		piExpectedChunkSize;
+	int64*		piExpectedChunkSize;
 	size		iCount;
 
 	miiExpected.Init(true);
@@ -80,7 +80,7 @@ void TestArraySizer(void)
 			iChunkSize = CalculateChunkSize(iElements);
 			AssertSize(0, iElements % iChunkSize);
 
-			piExpectedChunkSize = (int*)miiExpected.Get((int)iElements);
+			piExpectedChunkSize = miiExpected.Get((int64)iElements);
 			if (piExpectedChunkSize)
 			{
 				AssertSize((size)*piExpectedChunkSize, iChunkSize);

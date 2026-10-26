@@ -100,7 +100,7 @@ void TestIndexPtrIterate(void)
 	memset(szExpected, 0, 6);
 	cIndex.Init();
 
-	szMemory = (char*)malloc(12000 * 6);
+	szMemory = (char*)malloc((size)12000 * 6);
 	bValid = true;
 	for (ui = 0; ui < 12000; ui++)
 	{

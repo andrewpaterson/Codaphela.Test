@@ -175,7 +175,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertTrue(cA1.IsNotNull());
 	AssertString("CTestWithArray", cA1->ClassName());
 	AssertString("Something with One", cA1->mszString.Text());
-	AssertInt(1, cA1->mx);
+	AssertInt((int32)1, cA1->mx);
 
 	AssertPointer(cBase.Object(), cA1.Object());
 
@@ -183,7 +183,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	AssertTrue(cA2.IsNotNull());
 	AssertString("CTestWithArray", cA2.ClassName());
 	AssertString("An with 2", cA2->mszString.Text());
-	AssertInt(2, cA2->mx);
+	AssertInt((int32)2, cA2->mx);
 
 	cNS1 = gcObjects.Get("NamedString 1");
 	AssertTrue(cNS1.IsNotNull());
@@ -225,7 +225,7 @@ void TestObjectReaderChunkedDeserialised(void)
 	cI3 = gcObjects.Get(oiI3);
 	AssertString("CTestInteger", cI3->ClassName());
 
-	AssertInt(3, cI1->mx);
+	AssertInt((int32)3, cI1->mx);
 	AssertInt(2, cI1->my);
 	AssertInt(1, cI1->mz);
 

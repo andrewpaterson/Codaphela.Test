@@ -295,21 +295,21 @@ void TestArrayUnknownLoad(void)
 
 	pcUnknown = cArray.Get(0);
 	AssertString("CTestUnknown", pcUnknown->ClassName());
-	AssertInt(3, ((CTestUnknown*)pcUnknown)->miCount);
+	AssertInt((int32)3, ((CTestUnknown*)pcUnknown)->miCount);
 
 	pcUnknown = cArray.Get(1);
 	AssertString("CTestUnknownJobbie", pcUnknown->ClassName());
-	AssertInt(2, ((CTestUnknownJobbie*)pcUnknown)->miANumber);
+	AssertInt((int32)2, ((CTestUnknownJobbie*)pcUnknown)->miANumber);
 	AssertString("Two", ((CTestUnknownJobbie*)pcUnknown)->mszText.Text());
 
 	pcUnknown = cArray.Get(2);
 	AssertString("CTestUnknownJobbie", pcUnknown->ClassName());
-	AssertInt(1, ((CTestUnknownJobbie*)pcUnknown)->miANumber);
+	AssertInt((int32)1, ((CTestUnknownJobbie*)pcUnknown)->miANumber);
 	AssertString("Onety", ((CTestUnknownJobbie*)pcUnknown)->mszText.Text());
 
 	pcUnknown = cArray.Get(3);
 	AssertString("CTestUnknown", pcUnknown->ClassName());
-	AssertInt(0, ((CTestUnknown*)pcUnknown)->miCount);
+	AssertInt((int32)0, ((CTestUnknown*)pcUnknown)->miCount);
 
 	cArray.Kill();
 
@@ -373,11 +373,11 @@ void TestArrayUnknownLoadNull(void)
 	AssertNull(cArray.Get(0));
 	pcUnknown = cArray.Get(1);
 	AssertString("CTestUnknown", pcUnknown->ClassName());
-	AssertInt(1, ((CTestUnknown*)pcUnknown)->miCount);
+	AssertInt((int32)1, ((CTestUnknown*)pcUnknown)->miCount);
 	AssertNull(cArray.Get(2));
 	pcUnknown = cArray.Get(3);
 	AssertString("CTestUnknownJobbie", pcUnknown->ClassName());
-	AssertInt(2, ((CTestUnknownJobbie*)pcUnknown)->miANumber);
+	AssertInt((int32)2, ((CTestUnknownJobbie*)pcUnknown)->miANumber);
 
 	cArray.Kill();
 	AssertSize(0, gcUnknowns.NumElements());

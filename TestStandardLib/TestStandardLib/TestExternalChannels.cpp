@@ -109,11 +109,11 @@ void TestContiguousExternalChannels(void)
 {
 	CChannels			cChannels;
 	CChannels			cExternalChannel;
-	int					vSourse;
-	int					iExpected0;
-	int					iExpected1;
-	int					iExpected2;
-	int					iExpected3;
+	int32				vSourse;
+	int32				iExpected0;
+	int32				iExpected1;
+	int32				iExpected2;
+	int32				iExpected3;
 
 	//Rows      3 2 1 0
 	vSourse = 0xFF00aa55;
@@ -149,10 +149,10 @@ void TestContiguousExternalChannels(void)
 	iExpected1 = 0xaaff00aa;
 	iExpected2 = 0x00000000;
 	iExpected3 = 0xFFffffff;
-	AssertPointer((void*)(size)iExpected0, (void*)(size)((int*)cChannels.GetData())[0]);
-	AssertPointer((void*)(size)iExpected1, (void*)(size)((int*)cChannels.GetData())[1]);
-	AssertPointer((void*)(size)iExpected2, (void*)(size)((int*)cChannels.GetData())[2]);
-	AssertPointer((void*)(size)iExpected3, (void*)(size)((int*)cChannels.GetData())[3]);
+	AssertIntHex((uint32)iExpected0, ((uint32*)cChannels.GetData())[0]);
+	AssertIntHex((uint32)iExpected1, ((uint32*)cChannels.GetData())[1]);
+	AssertIntHex((uint32)iExpected2, ((uint32*)cChannels.GetData())[2]);
+	AssertIntHex((uint32)iExpected3, ((uint32*)cChannels.GetData())[3]);
 
 	cCopy.Kill();
 	cChannels.Kill();

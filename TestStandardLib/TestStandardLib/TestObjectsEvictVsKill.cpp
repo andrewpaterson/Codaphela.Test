@@ -45,7 +45,7 @@ void TestObjectsEvictVsKillUserEvictAfterSave(EIndexWriteThrough eWriteThrough)
 	AssertLong(eWriteThrough == IWT_No ? 0LL : 3LL , pcDatabase->NumIndices());
 	AssertLong(4, gcObjects.NumMemoryIndexes());
 
-	AssertInt(0x07070707, pTest1a->mi);
+	AssertInt((int32)0x07070707, pTest1a->mi);
 
 	pTest1a->Flush();
 

@@ -2192,6 +2192,34 @@ void TestCPP65GeneratorNewDelete(void)
 		"	return giLog;\n"
 		"}\n"));
 
+	//Explicit destructor calls on objects made with placement new: through a pointer, on the object, qualified (not
+	//virtual), through a base pointer to a virtual destructor, and of a class with none.
+	AssertInt(4321, TestCPP65RunProject(aszUnits, "", 20000000,
+		"#include <new>\n"
+		"int giDestroyed = 0;\n"
+		"struct P { int m; ~P() { giDestroyed += m; } };\n"
+		"struct B { virtual ~B() { giDestroyed += 1000; } };\n"
+		"struct D : B { ~D() { giDestroyed += 3000; } };\n"
+		"struct T { int m; };\n"
+		"int main()\n"
+		"{\n"
+		"	long al[8];\n"
+		"	P* p = new(al) P;\n"
+		"	p->m = 1;\n"
+		"	p->~P();\n"
+		"	p = new(al) P;\n"
+		"	p->m = 20;\n"
+		"	(*p).~P();\n"
+		"	p = new(al) P;\n"
+		"	p->m = 300;\n"
+		"	p->P::~P();\n"
+		"	B* b = new(al) D;\n"
+		"	b->~B();\n"
+		"	T* t = new(al) T;\n"
+		"	t->~T();\n"
+		"	return giDestroyed;\n"
+		"}\n"));
+
 	AssertInt(1000, TestCPP65RunProject(aszUnits, "", 20000000,
 		"int main()\n"
 		"{\n"

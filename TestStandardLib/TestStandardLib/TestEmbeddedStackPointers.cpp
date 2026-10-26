@@ -101,8 +101,8 @@ void TestEmbeddedStackPointersEmbeddedDistPassThruPointer(void)
 	pComplex = &cComplex;
 
 	AssertSize(1, cComplex.NumStackFroms());
-	AssertInt(1234, pComplex->mai[0]);
-	AssertInt(7890, pComplex->mai[1]);
+	AssertInt((int32)1234, pComplex->mai[0]);
+	AssertInt((int32)7890, pComplex->mai[1]);
 
 	AssertInt(0, cComplex.GetDistToStack());
 
@@ -151,8 +151,8 @@ void TestEmbeddedStackPointersEmbeddedDistDirect(void)
 	pComplex = &cComplex;
 
 	AssertSize(1, cComplex.NumStackFroms());
-	AssertInt(1234, pComplex->mai[0]);
-	AssertInt(7890, pComplex->mai[1]);
+	AssertInt((int32)1234, pComplex->mai[0]);
+	AssertInt((int32)7890, pComplex->mai[1]);
 
 	AssertInt(0, cComplex.GetDistToStack());
 

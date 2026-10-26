@@ -26,6 +26,18 @@ static const char* gaszTestStandardLib65Excluded[] =
 };
 
 
+//And the tests that are not run on the W65C816.
+static const char* gaszTestStandardLib65Excluded816[] =
+{
+	//More than the 4G instructions each program gets here (3.4G on the 65C64; the W65C816's code is slower).  They
+	//pass when given longer (TEST_PROJECT65_STEPS).
+	"TestSetUnknown",
+	"TestMapUnknownUnknown",
+
+	NULL
+};
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -39,8 +51,11 @@ void TestStandardLib65Tests(void)
 	sProject.szTestProject = "TestStandardLib";
 	sProject.aszLibraries = gaszTestStandardLib65Libraries;
 	sProject.aszExcluded = gaszTestStandardLib65Excluded;
+	sProject.aszExcluded816 = gaszTestStandardLib65Excluded816;
 	sProject.uiMinPrograms = 57;
 	sProject.iMinTestsRun = 4877;
+	sProject.uiMinPrograms816 = 55;
+	sProject.iMinTestsRun816 = 4662;
 	TestProject65RunTests(&sProject);
 
 	TestStatistics();

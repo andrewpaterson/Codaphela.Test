@@ -109,6 +109,7 @@ void TestIndexUnknownIterate(void)
 	AssertPointer(pcValue2, pcValue);
 	memset(szKey, 0, 20);
 	bExists = cIndex.Iterate(&sIter, (uint8*)szKey, &uiKeyLength, 20, &pcValue);
+	sIter.Kill();
 	AssertFalse(bExists);
 
 	AssertSize(3, cIndex.NumElements());
@@ -147,7 +148,7 @@ void TestIndexUnknownGet(void)
 	for (ui = 0; ui < 12000; ui++)
 	{
 		pcValue = gcUnknowns.Add<CTestUnknownJobbie>();
-		pcValue->Init((int)((ui + 1) * 7), SizeToString(ui));
+		pcValue->Init((int32)((ui + 1) * 7), SizeToString(ui));
 		szKey = SizeToString(ui);
 		cIndex.Put(szKey, pcValue);
 	}
@@ -162,7 +163,7 @@ void TestIndexUnknownGet(void)
 		bValid = StringCompare("CTestUnknownJobbie", pcTestValue->ClassName()) == 0;
 		
 		pcValue = (CTestUnknownJobbie*)pcTestValue;
-		bValid &= ((int)ui + 1) * 7 == pcValue->miANumber;
+		bValid &= ((int32)ui + 1) * 7 == pcValue->miANumber;
 		bValid &= StringCompare(SizeToString(ui), pcValue->mszText.Text()) == 0;
 
 		if (!bValid)
@@ -222,7 +223,7 @@ void TestIndexUnknownLoad(void)
 	for (ui = 0; ui < 12000; ui++)
 	{
 		pcValue1 = gcUnknowns.Add<CTestUnknownJobbie>();
-		pcValue1->Init((int)((ui + 1) * 7), SizeToString(ui));
+		pcValue1->Init((int32)((ui + 1) * 7), SizeToString(ui));
 		szKey1 = SizeToString(ui);
 		cIndex.Put(szKey1, pcValue1);
 	}
@@ -271,6 +272,7 @@ void TestIndexUnknownLoad(void)
 		bExists = cIndexIn.Iterate(&sIter, (uint8*)szKey, &uiKeyLength, 20, &pcValue);
 		ui++;
 	}
+	sIter.Kill();
 	AssertTrue(bValid);
 	AssertSize(12000, ui);
 
@@ -460,10 +462,10 @@ void TestIndexUnknownLoadNull(void)
 	AssertSize(2, gcUnknowns.NumElements());
 
 	pcValue = (CTestUnknownJobbie*)cIndexIn.Get("Hello");
-	AssertInt(7, pcValue->miANumber);
+	AssertInt((int32)7, pcValue->miANumber);
 	AssertNull(cIndexIn.Get("Nothing"));
 	pcValue = (CTestUnknownJobbie*)cIndexIn.Get("World");
-	AssertInt(19, pcValue->miANumber);
+	AssertInt((int32)19, pcValue->miANumber);
 
 	AssertTrue(cIndexIn.Remove("Nothing"));
 	AssertSize(2, cIndexIn.NumElements());
@@ -508,7 +510,7 @@ void TestIndexUnknownReplaceValues(void)
 	AssertSize(1, cMap.NumElements());
 	AssertSize(2, gcUnknowns.NumElements());
 	AssertPointer(pcValue1, cMap.Get("Key"));
-	AssertInt(1, pcValue1->miANumber);
+	AssertInt((int32)1, pcValue1->miANumber);
 
 	//A new value replaces the old one, which is killed.
 	AssertTrue(cMap.Put("Key", pcValue2));

@@ -62,7 +62,7 @@ void TestArrayTypeInstantiation(void)
 #ifdef BUILD_64
 	AssertSize(104, iSize);
 #else
-	AssertInt(52, iSize);
+	AssertInt((uint32)52, iSize);
 #endif // BUILD_64
 
 	szName = cArray.ClassName();
@@ -133,10 +133,10 @@ void TestArrayTypeLoad(void)
 	AssertSize(4, cArray.NumElements());
 	AssertSize(4, gcUnknowns.NumElements());
 
-	AssertInt(3, cArray.Get(0)->miCount);
-	AssertInt(2, cArray.Get(1)->miCount);
-	AssertInt(1, cArray.Get(2)->miCount);
-	AssertInt(0, cArray.Get(3)->miCount);
+	AssertInt((int32)3, cArray.Get(0)->miCount);
+	AssertInt((int32)2, cArray.Get(1)->miCount);
+	AssertInt((int32)1, cArray.Get(2)->miCount);
+	AssertInt((int32)0, cArray.Get(3)->miCount);
 
 	cArray.Kill();
 

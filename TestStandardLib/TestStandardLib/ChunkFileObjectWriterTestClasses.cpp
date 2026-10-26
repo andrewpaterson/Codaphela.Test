@@ -19,7 +19,7 @@ void CTestWithArray::Class(void)
 {
 	M_Pointer(mcArray);
 	U_String(mszString);
-	U_SInt(mx);
+	U_Int32(mx);
 }
 
 

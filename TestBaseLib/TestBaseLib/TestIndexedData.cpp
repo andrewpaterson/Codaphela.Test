@@ -163,6 +163,7 @@ void TestIndexedDataIteration(EIndexWriteThrough eWriteThrough)
 	oi = cIndexedData.Iterate(&sIter, NULL, NULL, 0);
 	AssertLong(3908343914887489103LL, oi);
 	oi = cIndexedData.Iterate(&sIter, NULL, NULL, 0);
+	sIter.Kill();
 	AssertLong(INVALID_O_INDEX, oi);
 	AssertInt(2, (int)cIndexedData.NumElements());
 
