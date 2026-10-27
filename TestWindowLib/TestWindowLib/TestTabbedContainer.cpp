@@ -14,6 +14,27 @@
 Ptr<CFont> ReadLabelFont(void);
 
 
+class CTestTabbedContainerListener : public CTabbedContainerListener
+{
+CONSTRUCTABLE(CTestTabbedContainerListener);
+public:
+	CTabComponent*	mpcDoubleClicked;
+	int				miDoubleClicks;
+
+	void Init(void)
+	{
+		mpcDoubleClicked = NULL;
+		miDoubleClicks = 0;
+	}
+
+	void TabDoubleClicked(CUnknown* pcSource, void* pvContext) override
+	{
+		mpcDoubleClicked = (CTabComponent*)pcSource;
+		miDoubleClicks++;
+	}
+};
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -52,6 +73,8 @@ void TestTabbedContainerTabs(void)
 		Ptr<CTabComponent>			pFileTab;
 		Ptr<CCanvas>				pFile;
 		int32						iBarHeight;
+		int32						iEditorWidth;
+		CTestTabbedContainerListener	cListener;
 
 		cNativeFactory.Init(&gcMemoryAllocator, 200, 100, NULL);
 		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
@@ -113,6 +136,37 @@ void TestTabbedContainerTabs(void)
 		pTestWindow->InputCommand(CIC_ExecuteComponent, true);
 		AssertTrue(pTabbed->GetSelected() == pFileTab);
 
+		//Pressing and releasing a tab twice quickly is a double click, which tells the listeners.  The cross isn't.
+		cListener.Init();
+		AssertTrue(pTabbed->AddListener(&cListener));
+		pTestWindow->Layout();
+		pTestWindow->PointerMoved(pInputTab->GetPosition().x + 10, 2);
+		pTestWindow->InputCommand(CIC_ActivateComponent, true);
+		pTestWindow->InputCommand(CIC_ExecuteComponent, true);
+		AssertInt(0, cListener.miDoubleClicks);
+		pTestWindow->InputCommand(CIC_ActivateComponent, true);
+		pTestWindow->InputCommand(CIC_ExecuteComponent, true);
+		AssertInt(1, cListener.miDoubleClicks);
+		AssertTrue(cListener.mpcDoubleClicked == &pInputTab);
+		pTestWindow->InputCommand(CIC_ActivateComponent, true);
+		pTestWindow->InputCommand(CIC_ExecuteComponent, true);
+		AssertInt(1, cListener.miDoubleClicks);
+
+		//Renaming a tab resizes it.
+		iEditorWidth = pEditorTab->GetActualSize().x;
+		pEditorTab->SetText("Editor 2");
+		pTestWindow->Layout();
+		AssertString("Editor 2", pEditorTab->GetText());
+		AssertTrue(pEditorTab->GetActualSize().x > iEditorWidth);
+		pEditorTab->SetText("Editor");
+		pTestWindow->Layout();
+		AssertInt(iEditorWidth, pEditorTab->GetActualSize().x);
+
+		pTestWindow->PointerMoved(pFileTab->GetPosition().x + 2, 2);
+		pTestWindow->InputCommand(CIC_ActivateComponent, true);
+		pTestWindow->InputCommand(CIC_ExecuteComponent, true);
+		AssertTrue(pTabbed->GetSelected() == pFileTab);
+
 		//Its cross closes it and the tab before it, the last now, is selected.
 		pTestWindow->Layout();
 		pTestWindow->PointerMoved(pFileTab->GetClose()->GetPosition().x + 8, pFileTab->GetClose()->GetPosition().y + 8);
@@ -122,6 +176,8 @@ void TestTabbedContainerTabs(void)
 		AssertTrue(pTabbed->GetSelected() == pEditorTab);
 		AssertTrue(pFile->GetParent().IsNull());
 		AssertTrue(pFileTab->GetParent().IsNull());
+		AssertInt(1, cListener.miDoubleClicks);
+		AssertTrue(pTabbed->RemoveListener(&cListener));
 
 		//A tab added after a closed one goes after the others.
 		pFileTab = pTabbed->AddTab("Again", pFile, NULL, true);
