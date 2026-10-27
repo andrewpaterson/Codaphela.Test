@@ -238,12 +238,15 @@
     <ClCompile Include="TestFillContainer.cpp" />
     <ClCompile Include="TestLabel.cpp" />
     <ClCompile Include="TestTextArea.cpp" />
+    <ClCompile Include="TestTextAreaEdit.cpp" />
     <ClCompile Include="TestScrollPane.cpp" />
     <ClCompile Include="TestButton.cpp" />
     <ClCompile Include="TestButtonBar.cpp" />
     <ClCompile Include="TestList.cpp" />
     <ClCompile Include="TestComponentInput.cpp" />
     <ClCompile Include="TestComponentInputDevices.cpp" />
+    <ClCompile Include="TestInputAction.cpp" />
+    <ClCompile Include="TestTabbedContainer.cpp" />
     <ClCompile Include="TestComponentInputWinRaw.cpp" />
     <ClCompile Include="TestInputSourceChannel.cpp" />
     <ClCompile Include="InputTestComponent.cpp" />

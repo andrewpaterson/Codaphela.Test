@@ -40,6 +40,12 @@
     <ClCompile Include="TestComponentInputDevices.cpp">
       <Filter>Source\Component\Window</Filter>
     </ClCompile>
+    <ClCompile Include="TestInputAction.cpp">
+      <Filter>Source\Component\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTabbedContainer.cpp">
+      <Filter>Source\Component\Window</Filter>
+    </ClCompile>
     <ClCompile Include="TestInputSourceChannel.cpp">
       <Filter>Source\Component\Window</Filter>
     </ClCompile>
@@ -62,6 +68,9 @@
       <Filter>Source\Component\Drawing</Filter>
     </ClCompile>
     <ClCompile Include="TestTextArea.cpp">
+      <Filter>Source\Component\Drawing</Filter>
+    </ClCompile>
+    <ClCompile Include="TestTextAreaEdit.cpp">
       <Filter>Source\Component\Drawing</Filter>
     </ClCompile>
     <ClCompile Include="TestScrollPane.cpp">

@@ -1,6 +1,18 @@
 #include "StandardLib/ClassDefines.h"
 #include "WindowLib/Window.h"
+#include "WindowLib/NativeWindowFactory.h"
 #include "InputTestComponent.h"
+
+
+//The commands the tests give, each logged by name.
+static EComponentInputCommand	gaeInputTestCommands[] =
+{
+	CIC_Up, CIC_Left, CIC_WordLeft, CIC_End, CIC_LineUp, CIC_LineDown, CIC_SelectUp, CIC_SelectAll,
+	CIC_Space, CIC_Tab, CIC_BackTab, CIC_Enter, CIC_EndEnter, CIC_Copy, CIC_Paste,
+	CIC_ActivateComponent, CIC_ExecuteComponent, CIC_ContextMenu,
+	CIC_StartDragScroll, CIC_ContDragScroll, CIC_StopDragScroll, CIC_StartDragSelect, CIC_ContDragSelect, CIC_StopDragSelect,
+	CIC_Hover,
+};
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -15,6 +27,9 @@ void CInputTestComponent::Init(Ptr<CWindow> pWindow, const char* szName, CChars*
 	mszName.Init(szName);
 	mpszLog = pszLog;
 	SetCanGetFocus(bCanGetFocus);
+	AddInputActions(gaeInputTestCommands, sizeof(gaeInputTestCommands) / sizeof(EComponentInputCommand), this, &CInputTestComponent::CommandAction);
+	AddInputAction(IAF_Printable, NULL, this, &CInputTestComponent::PrintableAction);
+	AddInputAction(IAF_Wheel, NULL, this, &CInputTestComponent::WheelAction);
 
 	PostInit();
 }
@@ -76,14 +91,53 @@ void CInputTestComponent::Log(const char* szCall, int x, int y)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Paste is logged as Paste() for an empty clipboard and Paste(...) for
+// anything on it.
 //
 //////////////////////////////////////////////////////////////////////////
-void CInputTestComponent::Printable(char c, bool bInsert)
+void CInputTestComponent::CommandAction(SComponentInputEvent* psEvent)
 {
-	mpszLog->Append(&mszName);
-	mpszLog->Append(":Printable(");
-	mpszLog->Append(c);
-	mpszLog->Append(bInsert ? ",Insert);" : ",Overwrite);");
+	CChars	szClipboard;
+	int		x;
+	int		y;
+
+	x = psEvent->x;
+	y = psEvent->y;
+	switch (psEvent->eCommand)
+	{
+	case CIC_Up:				Log("Up");								break;
+	case CIC_Left:				Log("Left");							break;
+	case CIC_WordLeft:			Log("WordLeft");						break;
+	case CIC_End:				Log("End");								break;
+	case CIC_LineUp:			Log("LineUp");							break;
+	case CIC_LineDown:			Log("LineDown");						break;
+	case CIC_SelectUp:			Log("SelectUp");						break;
+	case CIC_SelectAll:			Log("SelectAll");						break;
+	case CIC_Space:				Log(psEvent->bInsert ? "Space(Insert)" : "Space(Overwrite)");	break;
+	case CIC_Tab:				Log(psEvent->bInsert ? "Tab(Insert)" : "Tab(Overwrite)");		break;
+	case CIC_BackTab:			Log("BackTab");							break;
+	case CIC_Enter:				Log("Enter");							break;
+	case CIC_EndEnter:			Log("EndEnter");						break;
+	case CIC_Copy:				Log("Copy");							break;
+	case CIC_ActivateComponent:	Log("Activate", x, y);					break;
+	case CIC_ExecuteComponent:	Log("Execute", x, y);					break;
+	case CIC_ContextMenu:		Log("ContextMenu", x, y);				break;
+	case CIC_StartDragScroll:	Log("StartDragScroll", x, y);			break;
+	case CIC_ContDragScroll:	Log("ContDragScroll", x, y);			break;
+	case CIC_StopDragScroll:	Log("StopDragScroll", x, y);			break;
+	case CIC_StartDragSelect:	Log("StartDragSelect", x, y);			break;
+	case CIC_ContDragSelect:	Log("ContDragSelect", x, y);			break;
+	case CIC_StopDragSelect:	Log("StopDragSelect", x, y);			break;
+	case CIC_Hover:				Log("Hover", x, y);						break;
+	case CIC_Paste:
+		szClipboard.Init();
+		mpWindow->GetFactory()->GetClipboardText(&szClipboard);
+		Log(szClipboard.Empty() ? "Paste()" : "Paste(...)");
+		szClipboard.Kill();
+		break;
+	default:
+		break;
+	}
 }
 
 
@@ -91,34 +145,32 @@ void CInputTestComponent::Printable(char c, bool bInsert)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void CInputTestComponent::Space(bool bInsert) { Log(bInsert ? "Space(Insert)" : "Space(Overwrite)"); }
-void CInputTestComponent::Paste(char* szSource) { Log(szSource[0] == '\0' ? "Paste()" : "Paste(...)"); }
+void CInputTestComponent::PrintableAction(SComponentInputEvent* psEvent)
+{
+	mpszLog->Append(&mszName);
+	mpszLog->Append(":Printable(");
+	mpszLog->Append(psEvent->cPrintable);
+	mpszLog->Append(psEvent->bInsert ? ",Insert);" : ",Overwrite);");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Logged then passed on, so the parents hear it too.
+//
+//////////////////////////////////////////////////////////////////////////
+void CInputTestComponent::WheelAction(SComponentInputEvent* psEvent)
+{
+	Log("Wheel", psEvent->iRight, psEvent->iDown);
+	psEvent->bPass = true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void CInputTestComponent::FocusGained(void) { Log("Gained"); }
 void CInputTestComponent::FocusLost(void) { Log("Lost"); }
 void CInputTestComponent::MovedInto(void) { Log("Into"); }
 void CInputTestComponent::MovedOutof(void) { Log("Outof"); }
-void CInputTestComponent::Up(void) { Log("Up"); }
-void CInputTestComponent::Left(void) { Log("Left"); }
-void CInputTestComponent::WordLeft(void) { Log("WordLeft"); }
-void CInputTestComponent::End(void) { Log("End"); }
-void CInputTestComponent::LineUp(void) { Log("LineUp"); }
-void CInputTestComponent::LineDown(void) { Log("LineDown"); }
-bool CInputTestComponent::Wheel(int iRight, int iDown) { Log("Wheel", iRight, iDown); return false; }
-void CInputTestComponent::SelectUp(void) { Log("SelectUp"); }
-void CInputTestComponent::SelectAll(void) { Log("SelectAll"); }
-void CInputTestComponent::Tab(bool bInsert) { Log(bInsert ? "Tab(Insert)" : "Tab(Overwrite)"); }
-void CInputTestComponent::BackTab(void) { Log("BackTab"); }
-void CInputTestComponent::Enter(void) { Log("Enter"); }
-void CInputTestComponent::EndEnter(void) { Log("EndEnter"); }
-void CInputTestComponent::Copy(CChars* pszDest) { Log("Copy"); }
-void CInputTestComponent::ActivateComponent(int x, int y) { Log("Activate", x, y); }
-void CInputTestComponent::ExecuteComponent(int x, int y) { Log("Execute", x, y); }
-void CInputTestComponent::ContextMenu(int x, int y) { Log("ContextMenu", x, y); }
-void CInputTestComponent::StartDragScroll(int x, int y) { Log("StartDragScroll", x, y); }
-void CInputTestComponent::ContDragScroll(int x, int y) { Log("ContDragScroll", x, y); }
-void CInputTestComponent::StopDragScroll(int x, int y) { Log("StopDragScroll", x, y); }
-void CInputTestComponent::StartDragSelect(int x, int y) { Log("StartDragSelect", x, y); }
-void CInputTestComponent::ContDragSelect(int x, int y) { Log("ContDragSelect", x, y); }
-void CInputTestComponent::StopDragSelect(int x, int y) { Log("StopDragSelect", x, y); }
-void CInputTestComponent::Hover(int x, int y) { Log("Hover", x, y); }
-

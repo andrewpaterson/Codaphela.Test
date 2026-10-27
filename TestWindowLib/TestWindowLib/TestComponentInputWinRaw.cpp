@@ -67,6 +67,7 @@ class CTestRawInput : public CNativeInput
 {
 public:
 	CInput*				mpcInput;
+	CComponentInput*	mpcComponentInput;  //Updates the input through its source once it is set.
 	int					miKeyboard;
 	int					miMouse;
 	STestRawKeyboard	msKeyboard;
@@ -77,6 +78,7 @@ public:
 	void Init(CInput* pcInput)
 	{
 		mpcInput = pcInput;
+		mpcComponentInput = NULL;
 		miKeyboard = -1;
 		miMouse = -1;
 		mbKeyboard = false;
@@ -121,7 +123,19 @@ public:
 		msKeyboard.usFlags = usFlags;
 		msKeyboard.usMakeCode = usMakeCode;
 		mbKeyboard = true;
-		mpcInput->Update();
+		Update();
+	}
+
+	void Update(void)
+	{
+		if (mpcComponentInput)
+		{
+			mpcComponentInput->Update();
+		}
+		else
+		{
+			mpcInput->Update();
+		}
 	}
 
 	void Press(uint16 usVKey, bool bExtended = false, uint16 usMakeCode = 0) { Key(usVKey, bExtended ? TEST_RI_KEY_E0 : 0, usMakeCode); }
@@ -134,7 +148,7 @@ public:
 		msMouse.usButtonFlags = usButtonFlags;
 		msMouse.sButtonData = sButtonData;
 		mbMouse = true;
-		mpcInput->Update();
+		Update();
 	}
 };
 
@@ -171,6 +185,7 @@ void TestComponentInputWinRawDevices(void)
 		CChars						szLog;
 		CInput						cInput;
 		CTestRawInput				cRaw;
+		Ptr<CWindowInputSource>		pInputSource;
 		CComponentInput				cComponentInput;
 
 		szLog.Init();
@@ -192,7 +207,9 @@ void TestComponentInputWinRawDevices(void)
 		cRaw.Init(&cInput);
 		AssertTrue(cInput.AddNativeInput(&cRaw));
 
-		cComponentInput.Init(&cInput, &pTestWindow);
+		pInputSource = OMalloc<CWindowInputSource>(&cInput);
+		cComponentInput.Init(&pInputSource, &pTestWindow);
+		cRaw.mpcComponentInput = &cComponentInput;
 		AssertSize(1, cComponentInput.AddKeyboards());
 		AssertSize(1, cComponentInput.AddMice());
 		pTestWindow->SetComponentInput(&cComponentInput);
@@ -267,6 +284,8 @@ void TestComponentInputWinRawDevices(void)
 
 		pTestWindow->SetComponentInput(NULL);
 		cComponentInput.Kill();
+		cRaw.mpcComponentInput = NULL;
+		pInputSource = NULL;
 		cInput.Kill();
 		cRaw.Kill();
 

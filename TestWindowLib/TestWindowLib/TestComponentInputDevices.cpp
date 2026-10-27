@@ -26,11 +26,13 @@ public:
 	CInput					mcInput;
 	CProgramDeviceDetail*	mpcKeyboard;
 	CProgramDeviceDetail*	mpcMouse;
+	CComponentInput*		mpcComponentInput;  //Updates the input through its source once it is set.
 
 	void Init(void)
 	{
 		CProgramInput*	pcProgram;
 
+		mpcComponentInput = NULL;
 		mcInput.Init(NULL);
 
 		//The details are in an array that moves as it grows so they are only got once both are added.
@@ -89,7 +91,14 @@ public:
 	void Event(CProgramDeviceDetail* pcDetail, char* szSource, float fValue)
 	{
 		pcDetail->AddEvent(szSource, fValue);
-		mcInput.Update();
+		if (mpcComponentInput)
+		{
+			mpcComponentInput->Update();
+		}
+		else
+		{
+			mcInput.Update();
+		}
 	}
 
 	void Press(char* szKey) { Event(mpcKeyboard, szKey, 1.0f); }
@@ -120,6 +129,7 @@ void TestComponentInputKeyboard(void)
 		CPointer					pNull;
 		CChars						szLog;
 		CComponentInputTestDevices	cDevices;
+		Ptr<CWindowInputSource>		pInputSource;
 		CComponentInput				cComponentInput;
 
 		szLog.Init();
@@ -136,7 +146,9 @@ void TestComponentInputKeyboard(void)
 		pTestWindow->Layout();
 
 		cDevices.Init();
-		cComponentInput.Init(&cDevices.mcInput, &pTestWindow);
+		pInputSource = OMalloc<CWindowInputSource>(&cDevices.mcInput);
+		cComponentInput.Init(&pInputSource, &pTestWindow);
+		cDevices.mpcComponentInput = &cComponentInput;
 		AssertTrue(cComponentInput.AddKeyboard(cDevices.GetKeyboard()));
 		AssertTrue(cComponentInput.AddMouse(cDevices.GetMouse()));
 		AssertFalse(cComponentInput.AddKeyboard(cDevices.GetKeyboard()));
@@ -259,6 +271,8 @@ void TestComponentInputKeyboard(void)
 		AssertLog("B:Printable(a,Insert);B:Printable(a,Insert);");
 
 		cComponentInput.Kill();
+		cDevices.mpcComponentInput = NULL;
+		pInputSource = NULL;
 		cDevices.Kill();
 
 		ORoot()->Remove(pTestWindow);
@@ -295,6 +309,7 @@ void TestComponentInputMouse(void)
 		CPointer					pNull;
 		CChars						szLog;
 		CComponentInputTestDevices	cDevices;
+		Ptr<CWindowInputSource>		pInputSource;
 		CComponentInput				cComponentInput;
 
 		szLog.Init();
@@ -311,7 +326,9 @@ void TestComponentInputMouse(void)
 		pTestWindow->Layout();
 
 		cDevices.Init();
-		cComponentInput.Init(&cDevices.mcInput, &pTestWindow);
+		pInputSource = OMalloc<CWindowInputSource>(&cDevices.mcInput);
+		cComponentInput.Init(&pInputSource, &pTestWindow);
+		cDevices.mpcComponentInput = &cComponentInput;
 		AssertTrue(cComponentInput.AddKeyboard(cDevices.GetKeyboard()));
 		AssertTrue(cComponentInput.AddMouse(cDevices.GetMouse()));
 
@@ -372,11 +389,13 @@ void TestComponentInputMouse(void)
 
 		//Once killed the devices are disabled and nothing is heard.
 		cComponentInput.Kill();
+		cDevices.mpcComponentInput = NULL;
 		cDevices.Tap("A");
 		cDevices.PressButton("Button 1");
 		cDevices.ReleaseButton("Button 1");
 		AssertLog("");
 
+		pInputSource = NULL;
 		cDevices.Kill();
 
 		ORoot()->Remove(pTestWindow);
