@@ -282,6 +282,25 @@ void TestComponentInputWinRawDevices(void)
 		cRaw.Tap('A');
 		AssertLog("A:Outof;B:Lost;B:Gained;B:Printable(a,Insert);B:Printable(a,Insert);");
 
+		//A modifier's event is held back while it could start a chord but the device has it down.
+		cRaw.Press(VK_TEST_CONTROL);
+		cRaw.Press(VK_TEST_SHIFT, false, MAKE_LEFT_SHIFT);
+		AssertTrue(cComponentInput.IsSourceDown("Left Control"));
+		AssertTrue(cComponentInput.IsSourceDown("Left Shift"));
+		AssertFalse(cComponentInput.IsSourceDown("Right Control"));
+		AssertFalse(cComponentInput.IsSourceDown("Right Shift"));
+		AssertFalse(cComponentInput.IsSourceDown("A"));
+		cRaw.Release(VK_TEST_SHIFT, false, MAKE_LEFT_SHIFT);
+		cRaw.Release(VK_TEST_CONTROL);
+		AssertFalse(cComponentInput.IsSourceDown("Left Control"));
+		AssertFalse(cComponentInput.IsSourceDown("Left Shift"));
+		cRaw.Mouse(TEST_RI_MOUSE_BUTTON_3_DOWN);
+		AssertTrue(cComponentInput.IsSourceDown("Button 3"));
+		AssertFalse(cComponentInput.IsSourceDown("Button 1"));
+		AssertFalse(cComponentInput.IsSourceDown("No Such Key"));
+		cRaw.Mouse(TEST_RI_MOUSE_BUTTON_3_UP);
+		AssertFalse(cComponentInput.IsSourceDown("Button 3"));
+
 		pTestWindow->SetComponentInput(NULL);
 		cComponentInput.Kill();
 		cRaw.mpcComponentInput = NULL;
