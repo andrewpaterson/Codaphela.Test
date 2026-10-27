@@ -34,6 +34,7 @@ void TestTextField(void);
 void TestCheckBox(void);
 void TestComboBox(void);
 void TestDialog(void);
+void TestFileChooser(void);
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -82,6 +83,7 @@ int __cdecl main(void)
 	TestCheckBox();
 	TestComboBox();
 	TestDialog();
+	TestFileChooser();
 
 	cFileUtil.RemoveDir("Output");
 
