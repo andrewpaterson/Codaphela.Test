@@ -126,6 +126,21 @@ void Test65C64Encoding(void)
 	AssertInt(0, sDecoded.uiOperandWords);
 	AssertInt(MA65_Read, sDecoded.eAccess);
 
+	//The sign extending cpyx is code 15 extend 6.  Width code 3 is unused.
+	AssertShortHex((uint16)0x96EF, Op65CpyxSigned(R65_X, OPERAND_MODE_OFFSET, R65_W, 2));
+	Decode65C64(0x96EF, &sDecoded);
+	AssertInt(I65_Cpyx, sDecoded.eInstruction);
+	AssertTrue(sDecoded.bSigned);
+	AssertInt(R65_X, sDecoded.sFirst.eRegister);
+	AssertInt(OK65_Memory, sDecoded.sSecond.eKind);
+	AssertInt(R65_W, sDecoded.ePre1);
+	AssertInt(OPERAND_MODE_OFFSET, sDecoded.uiMode);
+	AssertInt(2, sDecoded.uiWidthBytes);
+	AssertInt(1, sDecoded.uiOperandWords);
+	AssertInt(MA65_Read, sDecoded.eAccess);
+	Decode65C64(0x96EF | (3 << 7), &sDecoded);
+	AssertInt(I65_Illegal, sDecoded.eInstruction);
+
 	Decode65C64(Op65Shift(true, R65_A, 3), &sDecoded);
 	AssertInt(I65_Shl, sDecoded.eInstruction);
 	AssertLong(3, sDecoded.sSecond.iEmbedded);
@@ -929,6 +944,10 @@ void Test65C64CopyExtend(void)
 	pcContext->Op(Op65RI(C65_CPY, R65_W, 2), 0x2004);
 	pcContext->Op(Op65Cpyx(false, R65_X, OPERAND_MODE_ADDRESS_REGISTER, R65_W, 1));
 	pcContext->Op(Op65Cpyx(false, R65_X, OPERAND_MODE_OFFSET, R65_Zero, 1), 0x3010);
+	pcContext->Op(Op65CpyxSigned(R65_A, OPERAND_MODE_OFFSET, R65_Zero, 1), 0x2007);
+	pcContext->Op(Op65CpyxSigned(R65_X, OPERAND_MODE_OFFSET, R65_Zero, 1), 0x2007);
+	pcContext->Op(Op65CpyxSigned(R65_A, OPERAND_MODE_OFFSET, R65_Zero, 2), 0x2006);
+	pcContext->Op(Op65CpyxSigned(R65_X, OPERAND_MODE_OFFSET, R65_Zero, 4), 0x2005);
 	pcContext->Op(Op65Stp());
 
 	Test65C64Reset(&sTest);
@@ -969,6 +988,18 @@ void Test65C64CopyExtend(void)
 	AssertSize(3, Test65C64Step(&sTest));
 	AssertLongLongIntHex(0LL, pcMPU->GetX());
 	AssertShortHex((uint16)STATUS65_ZERO, Test65C64Flags(&sTest));
+
+	//Sign extended to the register's width.
+	AssertSize(3, Test65C64Step(&sTest));
+	AssertLongLongIntHex(0xFFFFFF88LL, pcMPU->GetA());
+	AssertShortHex((uint16)STATUS65_NEGATIVE, Test65C64Flags(&sTest));
+	AssertSize(3, Test65C64Step(&sTest));
+	AssertLongLongIntHex(0xFF88LL, pcMPU->GetX());
+	AssertSize(3, Test65C64Step(&sTest));
+	AssertLongLongIntHex(0xFFFF8877LL, pcMPU->GetA());
+	AssertSize(5, Test65C64Step(&sTest));
+	AssertLongLongIntHex(0x7766LL, pcMPU->GetX());
+	AssertShortHex((uint16)0, Test65C64Flags(&sTest));
 
 	AssertSize(1, Test65C64Step(&sTest));
 	AssertFalse(sTest.cMeta.TickInstruction());

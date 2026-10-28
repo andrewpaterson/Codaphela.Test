@@ -142,6 +142,9 @@ void TestAsm65ErrorsCopyExtendBranchEqual(void)
 		"	cpyx A, [$10 + V]:8\n"
 		"	cpyx A, [$10]\n"
 		"	cpy A, [$10]:8\n"
+		"	cpyx [$10]:s8, A\n"
+		"	cpyx A, [$10]:s64\n"
+		"	cpyx A:s, [$10]:8\n"
 		"	brae (0, z), 4\n"
 		"	brane (z, 1), 4\n"));
 	AssertString(
@@ -153,9 +156,12 @@ void TestAsm65ErrorsCopyExtendBranchEqual(void)
 		"7:11: Register V cannot address memory here '$10'\n"
 		"8:11: cpyx memory needs a width of :8, :16, :32 or :64 '$10'\n"
 		"9:15: A width is not allowed here '8'\n"
-		"10:8: Expected a status flag '0'\n"
-		"11:12: Expected a status flag '1'\n", cAssembler.GetErrors());
-	AssertSize(10, cAssembler.NumErrors());
+		"10:8: A copy into memory cannot sign extend '$10'\n"
+		"11:11: 64 bits has nothing to sign extend; use :64 '$10'\n"
+		"12:7: cpyx sign extends memory: [address]:s8, :s16 or :s32 'A'\n"
+		"13:8: Expected a status flag '0'\n"
+		"14:12: Expected a status flag '1'\n", cAssembler.GetErrors());
+	AssertSize(13, cAssembler.NumErrors());
 	cAssembler.Kill();
 }
 

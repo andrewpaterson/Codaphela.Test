@@ -165,6 +165,8 @@ void TestAsm65EncodingFlow(void)
 	AssertAsm("cpyx A, [$1234]:16", "0x037c 0x1234");
 	AssertAsm("cpyx [$12345678 + X]:8, Y", "0xf03c 0x5678 0x1234");
 	AssertAsm("cpyx X, [[W]]:64", "0x4ffc");
+	AssertAsm("cpyx X, [$10 + W]:s16", "0x96ef 0x0010");
+	AssertAsm("cpyx Y, [Y]:s32", "0xfd6f");
 	AssertAsm("jmp A", "0x080a");
 	AssertAsm("jmp $1100", "0x108a 0x1100");
 	AssertAsm("jsr $1100", "0x10aa 0x1100");

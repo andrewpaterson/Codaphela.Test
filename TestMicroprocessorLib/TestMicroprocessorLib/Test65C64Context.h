@@ -175,6 +175,7 @@ uint16	Op65BranchImmediate(uint8 uiCondition, uint8 uiFirst, uint8 uiSecond, uin
 uint16	Op65BranchEqual(bool bNotEqual, uint8 uiFirst, uint8 uiSecond, int iOffset);
 uint16	Op65BranchEqualImmediate(bool bNotEqual, uint8 uiFirst, uint8 uiSecond, uint8 uiBytes);
 uint16	Op65Cpyx(bool bSwap, E65Register eRegister, uint8 uiMode, E65Register eAddress, uint8 uiBytes);
+uint16	Op65CpyxSigned(E65Register eRegister, uint8 uiMode, E65Register eAddress, uint8 uiBytes);
 uint16	Op65Bal(int iOffset);
 uint16	Op65Nop(uint8 uiWait);
 uint16	Op65Shift(bool bLeft, E65Register eFirst, uint8 uiAmount);

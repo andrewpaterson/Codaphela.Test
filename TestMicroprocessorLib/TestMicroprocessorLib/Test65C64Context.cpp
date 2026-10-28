@@ -856,6 +856,34 @@ uint16 Op65Cpyx(bool bSwap, E65Register eRegister, uint8 uiMode, E65Register eAd
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The sign extending cpyx (instruction code 15 extend 6).  uiBytes is 1, 2 or 4.
+//
+//////////////////////////////////////////////////////////////////////////
+uint16 Op65CpyxSigned(E65Register eRegister, uint8 uiMode, E65Register eAddress, uint8 uiBytes)
+{
+	uint16	uiMinimal;
+	uint16	uiWidth;
+
+	for (uiMinimal = 0; uiMinimal < 7; uiMinimal++)
+	{
+		if (gaui65MinimalModes[uiMinimal] == uiMode)
+		{
+			break;
+		}
+	}
+	for (uiWidth = 0; uiWidth < 3; uiWidth++)
+	{
+		if (gaui65CopyExtendBytes[uiWidth] == uiBytes)
+		{
+			break;
+		}
+	}
+	return (uint16)((Get65C64RegisterIndex(eRegister, gae65ABXY, 4) << 14) | (Get65C64RegisterIndex(eAddress, gae65NoneWXY, 4) << 12) | (uiMinimal << 9) | (uiWidth << 7) | (6 << 4) | 15);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 uint16 Op65Bal(int iOffset)
