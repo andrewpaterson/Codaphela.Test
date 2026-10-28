@@ -159,9 +159,12 @@ void TestAsm65EncodingMemory(void)
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65EncodingFlow(void)
 {
-	AssertAsm("shl A, 1", "0x23ec");
-	AssertAsm("shr A, X", "0x383c");
-	AssertAsm("shl A, 20", "0x206c 0x0014");
+	AssertAsm("shl A, 1", "0x23ee");
+	AssertAsm("shr A, X", "0x383e");
+	AssertAsm("shl A, 20", "0x206e 0x0014");
+	AssertAsm("cpyx A, [$1234]:16", "0x037c 0x1234");
+	AssertAsm("cpyx [$12345678 + X]:8, Y", "0xf03c 0x5678 0x1234");
+	AssertAsm("cpyx X, [[W]]:64", "0x4ffc");
 	AssertAsm("jmp A", "0x080a");
 	AssertAsm("jmp $1100", "0x108a 0x1100");
 	AssertAsm("jsr $1100", "0x10aa 0x1100");
@@ -188,6 +191,9 @@ void TestAsm65EncodingFlow(void)
 	AssertAsm("brsr -100", "0x08ba 0x009c");
 	AssertAsm("brsr -100 + C", "0x08ba 0x009c");
 	AssertAsm("bras c, C + 8", "0x434c");
+	AssertAsm("brae (c, z), 8", "0x4fac");
+	AssertAsm("brane (n, v), -4", "0x95ec");
+	AssertAsm("brae (f, g), 100", "0xdc2c 0x0064");
 	AssertAsm("brasa (z, c), C + 2", "0x608c");
 	AssertAsm("braso (n, v), C + 1000", "0x9adc 0x03e8");
 	AssertAsm("psh C, V", "0x40aa");
@@ -267,8 +273,8 @@ void TestAsm65EncodingBlockVector(void)
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65EncodingDecode(void)
 {
-	static const char*	aszLines[] = { "cpy A, [[$1234] + Y]", "add A, [V + X]", "shl [$10 + X], 3", "shr [V + Y], B", "jsr [V + X]", "brsr X", "vpxor W, V, +1, A, 32", "bpcpy Y, V, -1, A, !z", "fccr A, X", "scb (X, Y), (A, 63), B" };
-	static const E65Instruction	aeInstructions[] = { I65_Cpy, I65_Add, I65_Shl, I65_Shr, I65_Jsr, I65_Brsr, I65_Vpxor, I65_Bpcpy, I65_Fccr, I65_Scb };
+	static const char*	aszLines[] = { "cpy A, [[$1234] + Y]", "add A, [V + X]", "shl [$10 + X], 3", "shr [V + Y], B", "jsr [V + X]", "brsr X", "vpxor W, V, +1, A, 32", "bpcpy Y, V, -1, A, !z", "fccr A, X", "scb (X, Y), (A, 63), B", "brae (c, z), 8", "brane (c, z), 100", "cpyx A, [$10]:32" };
+	static const E65Instruction	aeInstructions[] = { I65_Cpy, I65_Add, I65_Shl, I65_Shr, I65_Jsr, I65_Brsr, I65_Vpxor, I65_Bpcpy, I65_Fccr, I65_Scb, I65_Brae, I65_Brane, I65_Cpyx };
 	size				i;
 	CAsm65Assembler		cAssembler;
 	CChars				szSource;

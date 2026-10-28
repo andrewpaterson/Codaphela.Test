@@ -125,6 +125,43 @@ void TestAsm65ErrorsRanges(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+//
+//////////////////////////////////////////////////////////////////////////
+void TestAsm65ErrorsCopyExtendBranchEqual(void)
+{
+	CAsm65Assembler	cAssembler;
+
+	cAssembler.Init();
+	AssertFalse(cAssembler.Assemble(
+		".org $1000\n"
+		"	cpyx A, [V + X]:8\n"
+		"	cpyx A, [[$10] + Y]:8\n"
+		"	cpyx S, [$10]:8\n"
+		"	cpyx A, [$10]:24\n"
+		"	cpyx A, B\n"
+		"	cpyx A, [$10 + V]:8\n"
+		"	cpyx A, [$10]\n"
+		"	cpy A, [$10]:8\n"
+		"	brae (0, z), 4\n"
+		"	brane (z, 1), 4\n"));
+	AssertString(
+		"2:11: cpyx cannot use that addressing mode 'V'\n"
+		"3:12: cpyx cannot use that addressing mode '$10'\n"
+		"4:7: The register must be A, B, X or Y 'S'\n"
+		"5:11: cpyx memory needs a width of :8, :16, :32 or :64 '$10'\n"
+		"6:10: cpyx needs a memory operand 'B'\n"
+		"7:11: Register V cannot address memory here '$10'\n"
+		"8:11: cpyx memory needs a width of :8, :16, :32 or :64 '$10'\n"
+		"9:15: A width is not allowed here '8'\n"
+		"10:8: Expected a status flag '0'\n"
+		"11:12: Expected a status flag '1'\n", cAssembler.GetErrors());
+	AssertSize(10, cAssembler.NumErrors());
+	cAssembler.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Tokeniser errors stop assembly before the first pass.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -190,6 +227,7 @@ void TestAsm65Errors(void)
 
 	TestAsm65ErrorsStatements();
 	TestAsm65ErrorsRanges();
+	TestAsm65ErrorsCopyExtendBranchEqual();
 	TestAsm65ErrorsTokens();
 	TestAsm65ErrorsWarnings();
 

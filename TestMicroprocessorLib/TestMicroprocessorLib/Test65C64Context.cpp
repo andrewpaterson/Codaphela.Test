@@ -666,7 +666,7 @@ uint16 Op65Stat(uint8 uiDestinationFlag, uint8 uiSourceFlag)
 //////////////////////////////////////////////////////////////////////////
 uint16 Op65ShiftRegister(bool bLeft, E65Register eFirst, E65Register eSecond)
 {
-	return (uint16)((eFirst << 13) | (eSecond << 10) | (OPERAND_MODE_REGISTER << 6) | ((bLeft ? 2 : 3) << 4) | 12);
+	return (uint16)((eFirst << 13) | (eSecond << 10) | (OPERAND_MODE_REGISTER << 6) | ((bLeft ? 2 : 3) << 4) | 14);
 }
 
 
@@ -797,6 +797,65 @@ uint16 Op65BranchImmediate(uint8 uiCondition, uint8 uiFirst, uint8 uiSecond, uin
 
 //////////////////////////////////////////////////////////////////////////
 //
+// brae and brane with an embedded offset of -8, -4, 4 or 8.
+//
+//////////////////////////////////////////////////////////////////////////
+uint16 Op65BranchEqual(bool bNotEqual, uint8 uiFirst, uint8 uiSecond, int iOffset)
+{
+	uint16	uiIndex;
+
+	for (uiIndex = 0; uiIndex < 4; uiIndex++)
+	{
+		if (gai65EqualBranchOffsets[uiIndex] == iOffset)
+		{
+			break;
+		}
+	}
+	return (uint16)((uiFirst << 13) | (uiSecond << 10) | (uiIndex << 8) | (1 << 7) | (bNotEqual << 6) | (2 << 4) | 12);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+uint16 Op65BranchEqualImmediate(bool bNotEqual, uint8 uiFirst, uint8 uiSecond, uint8 uiBytes)
+{
+	return (uint16)((uiFirst << 13) | (uiSecond << 10) | ((uiBytes - 1) << 8) | (0 << 7) | (bNotEqual << 6) | (2 << 4) | 12);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// uiMode is a full addressing mode; it must have a minimal mode.  eRegister is A, B, X
+// or Y and eAddress None, W, X or Y.
+//
+//////////////////////////////////////////////////////////////////////////
+uint16 Op65Cpyx(bool bSwap, E65Register eRegister, uint8 uiMode, E65Register eAddress, uint8 uiBytes)
+{
+	uint16	uiMinimal;
+	uint16	uiWidth;
+
+	for (uiMinimal = 0; uiMinimal < 7; uiMinimal++)
+	{
+		if (gaui65MinimalModes[uiMinimal] == uiMode)
+		{
+			break;
+		}
+	}
+	for (uiWidth = 0; uiWidth < 3; uiWidth++)
+	{
+		if (gaui65CopyExtendBytes[uiWidth] == uiBytes)
+		{
+			break;
+		}
+	}
+	return (uint16)((bSwap << 15) | (Get65C64RegisterIndex(eRegister, gae65ABXY, 4) << 13) | (Get65C64RegisterIndex(eAddress, gae65NoneWXY, 4) << 11) | (uiMinimal << 8) | (uiWidth << 6) | (3 << 4) | 12);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 uint16 Op65Bal(int iOffset)
@@ -821,7 +880,7 @@ uint16 Op65Nop(uint8 uiWait)
 //////////////////////////////////////////////////////////////////////////
 uint16 Op65Shift(bool bLeft, E65Register eFirst, uint8 uiAmount)
 {
-	return (uint16)((eFirst << 13) | ((uiAmount - 1) << 10) | (OPERAND_MODE_EMBEDDED << 6) | ((bLeft ? 2 : 3) << 4) | 12);
+	return (uint16)((eFirst << 13) | ((uiAmount - 1) << 10) | (OPERAND_MODE_EMBEDDED << 6) | ((bLeft ? 2 : 3) << 4) | 14);
 }
 
 

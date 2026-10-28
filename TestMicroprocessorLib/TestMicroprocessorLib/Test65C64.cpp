@@ -88,6 +88,51 @@ void Test65C64Encoding(void)
 	Decode65C64(Op65RI(C65_CPY, R65_A, 0), &sDecoded);
 	AssertInt(I65_Illegal, sDecoded.eInstruction);
 
+	//Code 12 extend 2 is brae and brane, extend 3 is cpyx.  The shifts are code 14 extend 2 and 3.
+	AssertShortHex((uint16)0x4FAC, Op65BranchEqual(false, F65_C, F65_Z, 8));
+	Decode65C64(0x4FAC, &sDecoded);
+	AssertInt(I65_Brae, sDecoded.eInstruction);
+	AssertInt(F65_C, sDecoded.uiFlagFirst);
+	AssertInt(F65_Z - 2, sDecoded.uiFlagSecond);
+	AssertInt(OK65_Embedded, sDecoded.sSecond.eKind);
+	AssertInt(8, sDecoded.iBranchOffset);
+	Decode65C64(Op65BranchEqualImmediate(true, F65_F, F65_G, 3), &sDecoded);
+	AssertInt(I65_Brane, sDecoded.eInstruction);
+	AssertInt(OK65_Immediate, sDecoded.sSecond.eKind);
+	AssertInt(3, sDecoded.sSecond.uiImmediateBytes);
+	AssertInt(2, sDecoded.uiOperandWords);
+	Decode65C64(Op65BranchEqual(false, F65_TRUE, F65_Z, 4), &sDecoded);
+	AssertInt(I65_Illegal, sDecoded.eInstruction);
+	Decode65C64(Op65BranchEqual(true, F65_Z, F65_FALSE, 4), &sDecoded);
+	AssertInt(I65_Illegal, sDecoded.eInstruction);
+
+	AssertShortHex((uint16)0xF03C, Op65Cpyx(true, R65_Y, OPERAND_MODE_ABSOLUTE, R65_X, 1));
+	Decode65C64(0xF03C, &sDecoded);
+	AssertInt(I65_Cpyx, sDecoded.eInstruction);
+	AssertInt(OK65_Memory, sDecoded.sFirst.eKind);
+	AssertInt(R65_Y, sDecoded.sSecond.eRegister);
+	AssertInt(R65_X, sDecoded.ePre1);
+	AssertInt(OPERAND_MODE_ABSOLUTE, sDecoded.uiMode);
+	AssertInt(1, sDecoded.uiWidthBytes);
+	AssertInt(2, sDecoded.uiOperandWords);
+	AssertInt(MA65_Write, sDecoded.eAccess);
+	Decode65C64(Op65Cpyx(false, R65_X, OPERAND_MODE_REGISTER_INDIRECT, R65_W, 8), &sDecoded);
+	AssertInt(I65_Cpyx, sDecoded.eInstruction);
+	AssertInt(R65_X, sDecoded.sFirst.eRegister);
+	AssertInt(OK65_Memory, sDecoded.sSecond.eKind);
+	AssertInt(R65_W, sDecoded.ePre1);
+	AssertTrue(sDecoded.bIndirect);
+	AssertInt(8, sDecoded.uiWidthBytes);
+	AssertInt(0, sDecoded.uiOperandWords);
+	AssertInt(MA65_Read, sDecoded.eAccess);
+
+	Decode65C64(Op65Shift(true, R65_A, 3), &sDecoded);
+	AssertInt(I65_Shl, sDecoded.eInstruction);
+	AssertLong(3, sDecoded.sSecond.iEmbedded);
+	Decode65C64(Op65ShiftRegister(false, R65_A, R65_X), &sDecoded);
+	AssertInt(I65_Shr, sDecoded.eInstruction);
+	AssertInt(R65_X, sDecoded.sSecond.eRegister);
+
 	AssertTrue(C65C64InstructionFactory::GetInstance()->NumForms() > 100);
 }
 
@@ -809,6 +854,132 @@ void Test65C64Branch(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void Test65C64BranchEqual(void)
+{
+	STest65C64			sTest;
+	C65C64*				pcMPU;
+	CTest65C64Context*	pcContext;
+
+	Test65C64Begin(&sTest, 0x1000);
+	pcContext = sTest.pcContext;
+	pcContext->Op(Op65RR(C65_CPY, R65_A, R65_Zero));
+	pcContext->Op(Op65BranchEqual(false, F65_Z, F65_N, 4));
+	pcContext->Op(Op65BranchEqual(true, F65_Z, F65_N, 4));
+	pcContext->Op(Op65RE(C65_CPY, R65_X, 1));
+	pcContext->Op(Op65RE(C65_CPY, R65_X, 2));
+	AssertIntHex(0x100A, pcContext->Here());
+	pcContext->Op(Op65BranchEqualImmediate(false, F65_N, F65_C, 1), 4);
+	pcContext->Op(Op65RE(C65_CPY, R65_Y, 1));
+	pcContext->Op(Op65RE(C65_CPY, R65_Y, 2));
+	AssertIntHex(0x1012, pcContext->Here());
+	pcContext->Op(Op65BranchEqual(true, F65_N, F65_C, -4));
+	pcContext->Op(Op65BranchEqual(false, F65_F, F65_G, -8));
+	pcContext->Op(Op65Stp());
+
+	Test65C64Reset(&sTest);
+	pcMPU = Test65C64MPU(&sTest);
+
+	//z is set and n clear, so brae falls through and brane is taken.
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertIntHex(0x1004, pcMPU->GetProgramCounter());
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertIntHex(0x100A, pcMPU->GetProgramCounter());
+
+	//n and c are both clear.
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertIntHex(0x1012, pcMPU->GetProgramCounter());
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertIntHex(0x1014, pcMPU->GetProgramCounter());
+
+	//f and g are both clear: 0x1016 - 8.
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertIntHex(0x100E, pcMPU->GetProgramCounter());
+
+	AssertLongLongIntHex(0LL, pcMPU->GetX());
+	AssertLongLongIntHex(0LL, pcMPU->GetY());
+	Test65C64End(&sTest);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void Test65C64CopyExtend(void)
+{
+	STest65C64			sTest;
+	C65C64*				pcMPU;
+	CTest65C64Context*	pcContext;
+
+	Test65C64Begin(&sTest, 0x1000);
+	pcContext = sTest.pcContext;
+	Test65C64SetData(pcContext);
+	pcContext->SetLong(0x3008, 0xFFFFFFFF);
+	pcContext->Op(Op65Wth(R65_A, 4));
+	pcContext->OpLong(Op65Cpyx(false, R65_A, OPERAND_MODE_ABSOLUTE, R65_Zero, 1), 0x2001);
+	pcContext->Op(Op65RE(C65_CPY, R65_A, -1));
+	pcContext->Op(Op65Cpyx(false, R65_A, OPERAND_MODE_OFFSET, R65_Zero, 2), 0x2002);
+	pcContext->Op(Op65Cpyx(false, R65_A, OPERAND_MODE_OFFSET, R65_Zero, 8), 0x2000);
+	pcContext->Op(Op65Wth(R65_B, 4));
+	pcContext->OpLong(Op65RI(C65_CPY, R65_B, 4), 0x8899AABB);
+	pcContext->Op(Op65Cpyx(true, R65_B, OPERAND_MODE_OFFSET, R65_Zero, 2), 0x3000);
+	pcContext->Op(Op65Cpyx(true, R65_B, OPERAND_MODE_OFFSET, R65_Zero, 8), 0x3004);
+	pcContext->Op(Op65Wth(R65_X, 2));
+	pcContext->Op(Op65RI(C65_CPY, R65_W, 2), 0x2004);
+	pcContext->Op(Op65Cpyx(false, R65_X, OPERAND_MODE_ADDRESS_REGISTER, R65_W, 1));
+	pcContext->Op(Op65Cpyx(false, R65_X, OPERAND_MODE_OFFSET, R65_Zero, 1), 0x3010);
+	pcContext->Op(Op65Stp());
+
+	Test65C64Reset(&sTest);
+	pcMPU = Test65C64MPU(&sTest);
+
+	AssertSize(1, Test65C64Step(&sTest));
+
+	//Memory into a register zero extends.
+	AssertSize(4, Test65C64Step(&sTest));
+	AssertLongLongIntHex(0x22LL, pcMPU->GetA());
+	AssertShortHex((uint16)0, Test65C64Flags(&sTest));
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertLongLongIntHex(0xFFFFFFFFLL, pcMPU->GetA());
+	AssertSize(3, Test65C64Step(&sTest));
+	AssertLongLongIntHex(0x4433LL, pcMPU->GetA());
+
+	//Wider than the register truncates.
+	AssertSize(6, Test65C64Step(&sTest));
+	AssertLongLongIntHex(0x44332211LL, pcMPU->GetA());
+
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertSize(3, Test65C64Step(&sTest));
+
+	//The register's low bits into memory, n and z from the value written.
+	AssertSize(3, Test65C64Step(&sTest));
+	AssertShortHex((uint16)0xAABB, pcContext->GetWord(0x3000));
+	AssertShortHex((uint16)0, pcContext->GetWord(0x3002));
+	AssertShortHex((uint16)STATUS65_NEGATIVE, Test65C64Flags(&sTest));
+	AssertSize(6, Test65C64Step(&sTest));
+	AssertIntHex(0x8899AABB, pcContext->GetLong(0x3004));
+	AssertIntHex(0, pcContext->GetLong(0x3008));
+	AssertShortHex((uint16)0, Test65C64Flags(&sTest));
+
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertSize(2, Test65C64Step(&sTest));
+	AssertLongLongIntHex(0x55LL, pcMPU->GetX());
+	AssertSize(3, Test65C64Step(&sTest));
+	AssertLongLongIntHex(0LL, pcMPU->GetX());
+	AssertShortHex((uint16)STATUS65_ZERO, Test65C64Flags(&sTest));
+
+	AssertSize(1, Test65C64Step(&sTest));
+	AssertFalse(sTest.cMeta.TickInstruction());
+	Test65C64End(&sTest);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void Test65C64PushPull(void)
 {
 	STest65C64			sTest;
@@ -1106,6 +1277,8 @@ void Test65C64(void)
 	Test65C64Subroutine();
 	Test65C64SubroutinePushStatusAndRelative();
 	Test65C64Branch();
+	Test65C64BranchEqual();
+	Test65C64CopyExtend();
 	Test65C64PushPull();
 	Test65C64State();
 	Test65C64BreakReturn();
