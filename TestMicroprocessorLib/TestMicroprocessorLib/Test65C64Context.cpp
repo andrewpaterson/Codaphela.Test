@@ -425,7 +425,7 @@ uint16 Op65M(uint8 uiCode, bool bSwap, E65Register eRegister, uint8 uiMode, E65R
 {
 	if (IsArithmetic(uiCode))
 	{
-		return (uint16)((bSwap << 15) | (eRegister << 11) | ((uint16)Get65C64RegisterIndex(eAddress, gae65NoneWXY, 4) << 9) | (uiMode << 5) | (bSigned << 4) | uiCode);
+		return (uint16)((bSwap << 15) | (eRegister << 11) | ((uint16)Get65C64RegisterIndex(eAddress, gae65NoneVXY, 4) << 9) | (uiMode << 5) | (bSigned << 4) | uiCode);
 	}
 	return (uint16)((bSwap << 15) | (eRegister << 11) | (eAddress << 8) | (uiMode << 4) | uiCode);
 }
@@ -444,7 +444,7 @@ uint16 Op65ME(uint8 uiCode, int iValue, uint8 uiMode, E65Register eAddress)
 	uiField = (uint16)(uiSign ? iValue + 8 : iValue - 1);
 	if (IsArithmetic(uiCode))
 	{
-		return (uint16)((uiSign << 15) | (1 << 14) | (uiField << 11) | ((uint16)Get65C64RegisterIndex(eAddress, gae65NoneWXY, 4) << 9) | (uiMode << 5) | uiCode);
+		return (uint16)((uiSign << 15) | (1 << 14) | (uiField << 11) | ((uint16)Get65C64RegisterIndex(eAddress, gae65NoneVXY, 4) << 9) | (uiMode << 5) | uiCode);
 	}
 	return (uint16)((uiSign << 15) | (1 << 14) | (uiField << 11) | (eAddress << 8) | (uiMode << 4) | uiCode);
 }
@@ -828,7 +828,7 @@ uint16 Op65BranchEqualImmediate(bool bNotEqual, uint8 uiFirst, uint8 uiSecond, u
 //////////////////////////////////////////////////////////////////////////
 //
 // uiMode is a full addressing mode; it must have a minimal mode.  eRegister is A, B, X
-// or Y and eAddress None, W, X or Y.
+// or Y and eAddress None, V, X or Y.
 //
 //////////////////////////////////////////////////////////////////////////
 uint16 Op65Cpyx(bool bSwap, E65Register eRegister, uint8 uiMode, E65Register eAddress, uint8 uiBytes)
@@ -850,7 +850,7 @@ uint16 Op65Cpyx(bool bSwap, E65Register eRegister, uint8 uiMode, E65Register eAd
 			break;
 		}
 	}
-	return (uint16)((bSwap << 15) | (Get65C64RegisterIndex(eRegister, gae65ABXY, 4) << 13) | (Get65C64RegisterIndex(eAddress, gae65NoneWXY, 4) << 11) | (uiMinimal << 8) | (uiWidth << 6) | (3 << 4) | 12);
+	return (uint16)((bSwap << 15) | (Get65C64RegisterIndex(eRegister, gae65ABXY, 4) << 13) | (Get65C64RegisterIndex(eAddress, gae65NoneVXY, 4) << 11) | (uiMinimal << 8) | (uiWidth << 6) | (3 << 4) | 12);
 }
 
 
@@ -878,7 +878,7 @@ uint16 Op65CpyxSigned(E65Register eRegister, uint8 uiMode, E65Register eAddress,
 			break;
 		}
 	}
-	return (uint16)((Get65C64RegisterIndex(eRegister, gae65ABXY, 4) << 14) | (Get65C64RegisterIndex(eAddress, gae65NoneWXY, 4) << 12) | (uiMinimal << 9) | (uiWidth << 7) | (6 << 4) | 15);
+	return (uint16)((Get65C64RegisterIndex(eRegister, gae65ABXY, 4) << 14) | (Get65C64RegisterIndex(eAddress, gae65NoneVXY, 4) << 12) | (uiMinimal << 9) | (uiWidth << 7) | (6 << 4) | 15);
 }
 
 

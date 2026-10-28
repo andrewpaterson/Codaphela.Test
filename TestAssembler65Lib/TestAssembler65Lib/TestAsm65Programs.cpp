@@ -54,6 +54,45 @@ void TestAsm65ProgramsBlockMove(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// add, sub and cmp address memory with V (the user, 2026-10-28), directly and
+// through a pointer: [n + V] and [[n + V]].
+//
+//////////////////////////////////////////////////////////////////////////
+void TestAsm65ProgramsArithmeticWithV(void)
+{
+	STestAsm65Run	sRun;
+
+	AssertTrue(TestAsm65Begin(&sRun,
+		".org $1000\n"
+		"	cpy V, $2FF3\n"
+		"	cpy A, 5\n"
+		"	cmp A, [[13 + V]]\n"
+		"	brac z, Fail\n"
+		"	add [[13 + V]], 1\n"
+		"	add A, [[13 + V]]\n"
+		"	sub A, [17 + V]\n"
+		"	cpy B, 7\n"
+		"	cmp B, [17 + V]\n"
+		"	brac z, Fail\n"
+		"	stp\n"
+		"Fail:\n"
+		"	cpy A, 0\n"
+		"	stp\n"
+		"\n"
+		".org $3000\n"
+		"	.long $4000, 7\n"
+		".org $4000\n"
+		"	.long 5\n", 0x1000));
+
+	TestAsm65Run(&sRun, 100);
+	AssertIntHex(6, sRun.pcContext->GetLong(0x4000));
+	AssertLongLongIntHex(4, TestAsm65MPU(&sRun)->GetA());
+	TestAsm65End(&sRun);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // The second example on the Example Block Move sheet: W is the source, V the
 // destination and A + 1 the number of 64 bit values.
 //
@@ -243,6 +282,7 @@ void TestAsm65Programs(void)
 	BeginTests();
 
 	TestAsm65ProgramsBlockMove();
+	TestAsm65ProgramsArithmeticWithV();
 	TestAsm65ProgramsVectorMove();
 	TestAsm65ProgramsArithmeticShift();
 	TestAsm65ProgramsSignExtend();

@@ -16,7 +16,7 @@ void TestAsm65ErrorsStatements(void)
 		"	cpy A, B\n"
 		"	foo A, B\n"
 		"	cpy A, Missing\n"
-		"	add A, [V]\n"
+		"	add A, [W]\n"
 		"Dup:	nop\n"
 		"Dup:	nop\n"
 		"	brk 2000\n"
@@ -28,7 +28,7 @@ void TestAsm65ErrorsStatements(void)
 	AssertString(
 		"2:2: Unknown instruction 'foo'\n"
 		"3:9: Undefined symbol 'Missing'\n"
-		"4:10: Register V cannot address memory here 'V'\n"
+		"4:10: Register W cannot address memory here 'W'\n"
 		"6:1: Symbol is already defined 'Dup'\n"
 		"7:6: A break vector is 0 to 1023 '2000'\n"
 		"8:1: Reserved name cannot be a label 'A'\n"
@@ -139,7 +139,8 @@ void TestAsm65ErrorsCopyExtendBranchEqual(void)
 		"	cpyx S, [$10]:8\n"
 		"	cpyx A, [$10]:24\n"
 		"	cpyx A, B\n"
-		"	cpyx A, [$10 + V]:8\n"
+		"	cpyx A, [$10 + W]:8\n"
+		"	add A, [$10 + W]\n"
 		"	cpyx A, [$10]\n"
 		"	cpy A, [$10]:8\n"
 		"	cpyx [$10]:s8, A\n"
@@ -153,15 +154,16 @@ void TestAsm65ErrorsCopyExtendBranchEqual(void)
 		"4:7: The register must be A, B, X or Y 'S'\n"
 		"5:11: cpyx memory needs a width of :8, :16, :32 or :64 '$10'\n"
 		"6:10: cpyx needs a memory operand 'B'\n"
-		"7:11: Register V cannot address memory here '$10'\n"
-		"8:11: cpyx memory needs a width of :8, :16, :32 or :64 '$10'\n"
-		"9:15: A width is not allowed here '8'\n"
-		"10:8: A copy into memory cannot sign extend '$10'\n"
-		"11:11: 64 bits has nothing to sign extend; use :64 '$10'\n"
-		"12:7: cpyx sign extends memory: [address]:s8, :s16 or :s32 'A'\n"
-		"13:8: Expected a status flag '0'\n"
-		"14:12: Expected a status flag '1'\n", cAssembler.GetErrors());
-	AssertSize(13, cAssembler.NumErrors());
+		"7:11: Register W cannot address memory here '$10'\n"
+		"8:10: Register W cannot address memory here '$10'\n"
+		"9:11: cpyx memory needs a width of :8, :16, :32 or :64 '$10'\n"
+		"10:15: A width is not allowed here '8'\n"
+		"11:8: A copy into memory cannot sign extend '$10'\n"
+		"12:11: 64 bits has nothing to sign extend; use :64 '$10'\n"
+		"13:7: cpyx sign extends memory: [address]:s8, :s16 or :s32 'A'\n"
+		"14:8: Expected a status flag '0'\n"
+		"15:12: Expected a status flag '1'\n", cAssembler.GetErrors());
+	AssertSize(14, cAssembler.NumErrors());
 	cAssembler.Kill();
 }
 

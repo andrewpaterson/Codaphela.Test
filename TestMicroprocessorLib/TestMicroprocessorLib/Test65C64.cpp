@@ -51,12 +51,13 @@ void Test65C64Encoding(void)
 	AssertInt(2, sDecoded.uiOperandWords);
 	AssertInt(MA65_Write, sDecoded.eAccess);
 
-	Decode65C64(Op65ME(C65_SUB, -3, OPERAND_MODE_OFFSET, R65_W), &sDecoded);
+	//Arithmetic, shifts and cpyx address memory with none, V, X or Y (the user, 2026-10-28).
+	Decode65C64(Op65ME(C65_SUB, -3, OPERAND_MODE_OFFSET, R65_V), &sDecoded);
 	AssertInt(I65_Sub, sDecoded.eInstruction);
 	AssertInt(OK65_Memory, sDecoded.sFirst.eKind);
 	AssertInt(OK65_Embedded, sDecoded.sSecond.eKind);
 	AssertLong(-3, sDecoded.sSecond.iEmbedded);
-	AssertInt(R65_W, sDecoded.ePre1);
+	AssertInt(R65_V, sDecoded.ePre1);
 	AssertInt(1, sDecoded.uiOperandWords);
 	AssertInt(MA65_ReadWrite, sDecoded.eAccess);
 
@@ -116,24 +117,24 @@ void Test65C64Encoding(void)
 	AssertInt(1, sDecoded.uiWidthBytes);
 	AssertInt(2, sDecoded.uiOperandWords);
 	AssertInt(MA65_Write, sDecoded.eAccess);
-	Decode65C64(Op65Cpyx(false, R65_X, OPERAND_MODE_REGISTER_INDIRECT, R65_W, 8), &sDecoded);
+	Decode65C64(Op65Cpyx(false, R65_X, OPERAND_MODE_REGISTER_INDIRECT, R65_V, 8), &sDecoded);
 	AssertInt(I65_Cpyx, sDecoded.eInstruction);
 	AssertInt(R65_X, sDecoded.sFirst.eRegister);
 	AssertInt(OK65_Memory, sDecoded.sSecond.eKind);
-	AssertInt(R65_W, sDecoded.ePre1);
+	AssertInt(R65_V, sDecoded.ePre1);
 	AssertTrue(sDecoded.bIndirect);
 	AssertInt(8, sDecoded.uiWidthBytes);
 	AssertInt(0, sDecoded.uiOperandWords);
 	AssertInt(MA65_Read, sDecoded.eAccess);
 
 	//The sign extending cpyx is code 15 extend 6.  Width code 3 is unused.
-	AssertShortHex((uint16)0x96EF, Op65CpyxSigned(R65_X, OPERAND_MODE_OFFSET, R65_W, 2));
+	AssertShortHex((uint16)0x96EF, Op65CpyxSigned(R65_X, OPERAND_MODE_OFFSET, R65_V, 2));
 	Decode65C64(0x96EF, &sDecoded);
 	AssertInt(I65_Cpyx, sDecoded.eInstruction);
 	AssertTrue(sDecoded.bSigned);
 	AssertInt(R65_X, sDecoded.sFirst.eRegister);
 	AssertInt(OK65_Memory, sDecoded.sSecond.eKind);
-	AssertInt(R65_W, sDecoded.ePre1);
+	AssertInt(R65_V, sDecoded.ePre1);
 	AssertInt(OPERAND_MODE_OFFSET, sDecoded.uiMode);
 	AssertInt(2, sDecoded.uiWidthBytes);
 	AssertInt(1, sDecoded.uiOperandWords);
@@ -941,8 +942,8 @@ void Test65C64CopyExtend(void)
 	pcContext->Op(Op65Cpyx(true, R65_B, OPERAND_MODE_OFFSET, R65_Zero, 2), 0x3000);
 	pcContext->Op(Op65Cpyx(true, R65_B, OPERAND_MODE_OFFSET, R65_Zero, 8), 0x3004);
 	pcContext->Op(Op65Wth(R65_X, 2));
-	pcContext->Op(Op65RI(C65_CPY, R65_W, 2), 0x2004);
-	pcContext->Op(Op65Cpyx(false, R65_X, OPERAND_MODE_ADDRESS_REGISTER, R65_W, 1));
+	pcContext->Op(Op65RI(C65_CPY, R65_V, 2), 0x2004);
+	pcContext->Op(Op65Cpyx(false, R65_X, OPERAND_MODE_ADDRESS_REGISTER, R65_V, 1));
 	pcContext->Op(Op65Cpyx(false, R65_X, OPERAND_MODE_OFFSET, R65_Zero, 1), 0x3010);
 	pcContext->Op(Op65CpyxSigned(R65_A, OPERAND_MODE_OFFSET, R65_Zero, 1), 0x2007);
 	pcContext->Op(Op65CpyxSigned(R65_X, OPERAND_MODE_OFFSET, R65_Zero, 1), 0x2007);

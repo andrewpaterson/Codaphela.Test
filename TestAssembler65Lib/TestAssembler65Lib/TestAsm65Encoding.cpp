@@ -148,6 +148,8 @@ void TestAsm65EncodingMemory(void)
 	AssertAsm("and [$40], A", "0x8861 0x0040");
 	AssertAsm("add A, [$1234 + X]", "0x0cc5 0x1234");
 	AssertAsm("add A, [V + X]", "0x1765");
+	AssertAsm("add A, [12 + V]", "0x0ac5 0x000c");
+	AssertAsm("cmp [12 + V], -1", "0xfac7 0x000c");
 	AssertAsm("cpy [$20], 0", "0x8060 0x0020");
 	AssertAsm("cpy [$20], -8", "0xc060 0x0020");
 }
@@ -162,10 +164,12 @@ void TestAsm65EncodingFlow(void)
 	AssertAsm("shl A, 1", "0x23ee");
 	AssertAsm("shr A, X", "0x383e");
 	AssertAsm("shl A, 20", "0x206e 0x0014");
+	AssertAsm("shl [12 + V], A", "0x85ae 0x000c");
 	AssertAsm("cpyx A, [$1234]:16", "0x037c 0x1234");
 	AssertAsm("cpyx [$12345678 + X]:8, Y", "0xf03c 0x5678 0x1234");
-	AssertAsm("cpyx X, [[W]]:64", "0x4ffc");
-	AssertAsm("cpyx X, [$10 + W]:s16", "0x96ef 0x0010");
+	AssertAsm("cpyx X, [[V]]:64", "0x4ffc");
+	AssertAsm("cpyx X, [$10 + V]:s16", "0x96ef 0x0010");
+	AssertAsm("cpyx A, [12 + V]:8", "0x0b3c 0x000c");
 	AssertAsm("cpyx Y, [Y]:s32", "0xfd6f");
 	AssertAsm("jmp A", "0x080a");
 	AssertAsm("jmp $1100", "0x108a 0x1100");

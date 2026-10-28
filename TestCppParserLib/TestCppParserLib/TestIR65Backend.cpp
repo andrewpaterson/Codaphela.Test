@@ -688,12 +688,12 @@ void TestIR65BackendAllocation(void)
 		"L2:\n"
 		"\t\tcpy A, X\n"
 		"\t\tshl A, 2\n"
-		"\t\tadd A, [0 + W]\n"
+		"\t\tadd A, [0]\n"
 		"\t\tcpy A, [A]\n"
 		"\t\tadd Y, A\n"
 		"\t\tadd X, 1\n"
 		"L3:\n"
-		"\t\tcmp X, [4 + W]\n"
+		"\t\tcmp X, [4]\n"
 		"\t\tbraso (n, v), L2\n"
 		"L4:\n"
 		"\t\tcpy A, Y\n"
@@ -856,7 +856,8 @@ void TestIR65BackendAllocation(void)
 		"\t%r = add i64 %s2, %v\n"
 		"\tret i64 %r\n}\n"));
 	//A string compare's pointers are only addresses and steps, so the bytes get X and Y and the pointers are read through
-	//([[n + W]]): "abc" against "abd" is -1.
+	//([[n + W]]): "abc" against "abd" is -1.  The bytes are only compared, so they are read narrow (cpy, not cpyx): X and
+	//Y stay 8 bits wide across the loop.
 	szAssembly.Init();
 	AssertLong(-1, (int32)TestIR65Run(
 		"function i32 @_Compare__FPcPc(ptr %a, ptr %b), local\n{\n"
@@ -873,7 +874,7 @@ void TestIR65BackendAllocation(void)
 		"function i32 @_main()\n{\nb:\n"
 		"\t%s = slot ptr 4, 4\n\tstore i32 6513249, %s\n\t%t = slot ptr 4, 4\n\tstore i32 6578785, %t\n"
 		"\t%r = call i32 @_Compare__FPcPc(ptr %s, ptr %t)\n\tret i32 %r\n}\n", false, &szAssembly));
-	AssertTrue(szAssembly.Contains("cpy X, [[") && szAssembly.Contains("cpy Y, [["));
+	AssertTrue(szAssembly.Contains("cpy X, [[") && szAssembly.Contains("cpy Y, [[") && !szAssembly.Contains("cpyx"));
 	szAssembly.Kill();
 }
 
@@ -920,7 +921,7 @@ void TestIR65BackendWidths(void)
 		"\t\tcpy Y, [[0 + W]]\n"
 		"\t\tcmp Y, 0\n"
 		"\t\tbras z, L2\n"
-		"\t\tadd [0 + W], 1\n"
+		"\t\tadd [0], 1\n"
 		"\t\tadd X, 1\n"
 		"\t\tbra L1\n"
 		"L2:\n"
@@ -937,7 +938,7 @@ void TestIR65BackendWidths(void)
 		"\t\tcmp Y, 0\n"
 		"\t\twth Y, 32\n"
 		"\t\tbras z, L2\n"
-		"\t\tadd [0 + W], 1\n"
+		"\t\tadd [0], 1\n"
 		"\t\tadd X, 1\n"
 		"\t\tbra L1\n"
 		"L2:\n"
@@ -1126,7 +1127,7 @@ void TestIR65BackendFlags(void)
 	//no flags).
 	TestIR65FlagsOptimise(
 		"_F:\n"
-		"\t\tcmp X, [4 + W]\n"
+		"\t\tcmp X, [4]\n"
 		"\t\tbras z, L1\n"
 		"\t\tpsh A\n"
 		"L1:\n"
@@ -1135,11 +1136,11 @@ void TestIR65BackendFlags(void)
 		"L2:\n"
 		"\t\tret\n",
 		"_F:\n"
-		"\t\tcmp X, [4 + W]\n"
+		"\t\tcmp X, [4]\n"
 		"\t\tbras z, L1\n"
 		"\t\tpsh A\n"
 		"L1:\n"
-		"\t\tcmp X, [4 + W]\n"
+		"\t\tcmp X, [4]\n"
 		"\t\tbrac c, L2\n"
 		"\t\tret\n"
 		"L2:\n"
@@ -1148,11 +1149,11 @@ void TestIR65BackendFlags(void)
 	//cpy A, 1 sets the flags, X changes, [4 + W] is written, and c is read after a cmp A, 0: all stay.
 	TestIR65FlagsOptimise(
 		"_F:\n"
-		"\t\tcmp X, [4 + W]\n"
+		"\t\tcmp X, [4]\n"
 		"\t\tadd X, 1\n"
-		"\t\tcmp X, [4 + W]\n"
+		"\t\tcmp X, [4]\n"
 		"\t\tcpy [4 + W], A\n"
-		"\t\tcmp X, [4 + W]\n"
+		"\t\tcmp X, [4]\n"
 		"\t\tbras z, L1\n"
 		"\t\tadd A, 1\n"
 		"\t\tcmp A, 0\n"
@@ -1161,11 +1162,11 @@ void TestIR65BackendFlags(void)
 		"L1:\n"
 		"\t\tret\n",
 		"_F:\n"
-		"\t\tcmp X, [4 + W]\n"
+		"\t\tcmp X, [4]\n"
 		"\t\tadd X, 1\n"
-		"\t\tcmp X, [4 + W]\n"
+		"\t\tcmp X, [4]\n"
 		"\t\tcpy [4 + W], A\n"
-		"\t\tcmp X, [4 + W]\n"
+		"\t\tcmp X, [4]\n"
 		"\t\tbras z, L1\n"
 		"\t\tadd A, 1\n"
 		"\t\tcmp A, 0\n"
@@ -1235,7 +1236,7 @@ void TestIR65BackendPeepholeCopies(void)
 		"\t\tcpy A, [4 + B]\n"
 		"\t\tcpy [12 + W], A\n"
 		"\t\tcpy X, A\n"
-		"\t\tadd X, [12 + W]\n"
+		"\t\tadd X, [12]\n"
 		"\t\tret\n",
 		"_F:\n"
 		"\t\tcpy B, [9 + V]\n"
@@ -1246,7 +1247,7 @@ void TestIR65BackendPeepholeCopies(void)
 		"\t\tcpy A, [12 + W]\n"
 		"\t\tcpy X, A\n"
 		"\t\tcpy A, X\n"
-		"\t\tadd X, [12 + W]\n"
+		"\t\tadd X, [12]\n"
 		"\t\tret\n");
 
 	//Kept: z of the second cpy is read; [8 + V] may be written through X; [X] may be volatile; a call changes

@@ -347,10 +347,7 @@ void TestCPP65GeneratorAssembly(void)
 		"\t\tpsh V\n"
 		"\t\tsub S, 4\n"
 		"\t\tcpy V, S\n"
-		"\t\twth Y, 8\n"
-		"\t\tcpy Y, [13 + V]\n"
-		"\t\tcpy A, Y:s\n"
-		"\t\twth Y, 32\n"
+		"\t\tcpyx A, [13 + V]:s8\n"
 		"\t\tcpy [1 + V], A\n"
 		"\t\tcpy A, [1 + V]\n"
 		"\t\tcpy B, 3\n"
@@ -443,11 +440,11 @@ void TestCPP65GeneratorConvention(void)
 		"\t\tcpy A, [9 + V]\n"
 		"\t\tcpy B, [13 + V]\n"
 		"\t\tsub A, B\n"
-		"\t\tcpy [0 + W], A\n"
+		"\t\tcpy [0], A\n"
 		"\t\tcpy A, [9 + V]\n"
 		"\t\tcpy B, [13 + V]\n"
 		"\t\tadd A, B\n"
-		"\t\tcpy B, [0 + W]\n"
+		"\t\tcpy B, [0]\n"
 		"\t\tmul\n"
 		"\t\tcpy W, 0\n"
 		"\t\tcpy A, Y\n"
@@ -468,7 +465,7 @@ void TestCPP65GeneratorConvention(void)
 	szAssembly.Init();
 	szErrors.Init();
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "int g(int x);\nint f(int a) { return g(a) - (a + 1); }"));
-	AssertTrue(szAssembly.Contains("psh A") && !szAssembly.Contains("+ W]"));
+	AssertTrue(szAssembly.Contains("psh A") && !szAssembly.Contains("cpy [0], A"));
 	szErrors.Kill();
 	szAssembly.Kill();
 }
