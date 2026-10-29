@@ -606,6 +606,28 @@ void TestIR816BackendX(void)
 		"\tbrif %c, l, x\n"
 		"x:\n\tret i32 %s2\n}\n");
 
+	//trunc, zext, sext and a shift by a constant worked out in A and kept in X.
+	AssertIR816(4 * 4950 + 1468,
+		"function i32 @_main()\n{\n"
+		"e:\n\tjmp l\n"
+		"l:\n"
+		"\t%i = phi i16 [e, 0], [l, %i2]\n"
+		"\t%s = phi i16 [e, 0], [l, %s3]\n"
+		"\t%b = trunc i16 %i to i8\n"
+		"\t%w = zext i8 %b to i16\n"
+		"\t%t = shl i16 %w, 2\n"
+		"\t%m = ult i16 %i, 100\n"
+		"\t%z = zext i1 %m to i16\n"
+		"\t%n = sub i16 0, %z\n"
+		"\t%u = and i16 %t, %n\n"
+		"\t%e = sext i8 %b to i16\n"
+		"\t%s2 = add i16 %s, %u\n"
+		"\t%s3 = add i16 %s2, %e\n"
+		"\t%i2 = add i16 %i, 1\n"
+		"\t%c = slt i16 %i2, 200\n"
+		"\tbrif %c, l, x\n"
+		"x:\n\t%r = sext i16 %s3 to i32\n\tret i32 %r\n}\n");
+
 	for (i = 0; i < sizeof(aiValues) / sizeof(aiValues[0]); i++)
 	{
 		for (j = 0; j < 4; j++)
