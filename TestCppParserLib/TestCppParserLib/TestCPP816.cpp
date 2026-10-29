@@ -512,12 +512,15 @@ void TestCPP816Builtins(void)
 //////////////////////////////////////////////////////////////////////////
 //
 // Loops that fill, copy, measure or compare memory, which the optimiser
-// makes memset, memmove, strlen and memcmp calls (ReplaceLoopIdioms), give
+// makes memset, memmove, strlen, memcmp, memchr and strchr calls
+// (ReplaceLoopIdioms), give
 // what the loops would: a fill of bytes and of 16 bit zeros, a copy of 16 bit
 // elements, copies that overlap both ways (a copy up into itself repeats the
 // first bytes, as the loop does, so it stays a loop), lengths counted by an
 // index and by a pointer, and compares that differ first, in the middle,
-// last or not at all.  Returns the answers wrong.
+// last or not at all, and searches by pointer, by index and to a terminator
+// that find the first, middle, last, a zero or nothing.  Returns the answers
+// wrong.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCPP816LoopIdioms(void)
@@ -584,6 +587,42 @@ void TestCPP816LoopIdioms(void)
 		"	}\n"
 		"	return 1;\n"
 		"}\n"
+		"const unsigned char* Find(const unsigned char* puc, unsigned char uc, unsigned long uiCount)\n"
+		"{\n"
+		"	unsigned long	i;\n"
+		"	for (i = 0; i < uiCount; i++)\n"
+		"	{\n"
+		"		if (puc[i] == uc)\n"
+		"		{\n"
+		"			return &puc[i];\n"
+		"		}\n"
+		"	}\n"
+		"	return 0;\n"
+		"}\n"
+		"long FindIndex(const unsigned char* puc, unsigned char uc, long iCount)\n"
+		"{\n"
+		"	long	i;\n"
+		"	for (i = 0; i < iCount; i++)\n"
+		"	{\n"
+		"		if (puc[i] == uc)\n"
+		"		{\n"
+		"			return i;\n"
+		"		}\n"
+		"	}\n"
+		"	return -1;\n"
+		"}\n"
+		"const char* Chr(const char* sz, char c)\n"
+		"{\n"
+		"	while (*sz != c)\n"
+		"	{\n"
+		"		if (*sz == 0)\n"
+		"		{\n"
+		"			return 0;\n"
+		"		}\n"
+		"		sz++;\n"
+		"	}\n"
+		"	return sz;\n"
+		"}\n"
 		"void CopyBytes(unsigned char* pucTo, unsigned char* pucFrom, long iCount)\n"
 		"{\n"
 		"	long	i;\n"
@@ -642,6 +681,15 @@ void TestCPP816LoopIdioms(void)
 		"	gauc[100] = 'a';\n"
 		"	gauc[200] = 'c';\n"
 		"	iWrong += (Same(gauc, gauc + 1, 200) != 0) + (Same(gauc, gauc + 1, 199) != 1);\n"
+		"	gauc[0] = 'x';\n"
+		"	gauc[120] = 'y';\n"
+		"	gauc[249] = 'z';\n"
+		"	iWrong += (Find(gauc, 'x', 250) != gauc) + (Find(gauc, 'y', 250) != gauc + 120) + (Find(gauc, 'z', 250) != gauc + 249);\n"
+		"	iWrong += (Find(gauc, 'z', 249) != 0) + (Find(gauc, 'q', 300) != 0) + (Find(gauc, 'x', 0) != 0) + (Find(gauc + 1, 0, 299) != gauc + 250);\n"
+		"	iWrong += (FindIndex(gauc, 'x', 250) != 0) + (FindIndex(gauc, 'y', 250) != 120) + (FindIndex(gauc, 'z', 250) != 249);\n"
+		"	iWrong += (FindIndex(gauc, 'z', 249) != -1) + (FindIndex(gauc, 'q', 300) != -1) + (FindIndex(gauc, 'x', 0) != -1);\n"
+		"	iWrong += (Chr((char*)gauc, 'x') != (char*)gauc) + (Chr((char*)gauc, 'y') != (char*)gauc + 120) + (Chr((char*)gauc, 'z') != (char*)gauc + 249);\n"
+		"	iWrong += (Chr((char*)gauc, 'q') != 0) + (Chr((char*)gauc, 0) != (char*)gauc + 250) + (Chr(\"\", 'a') != 0) + (Chr(\"\", 0) == 0);\n"
 		"	return iWrong;\n"
 		"}\n"));
 }

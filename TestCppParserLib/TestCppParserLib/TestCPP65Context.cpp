@@ -126,7 +126,7 @@ bool TestCPP65BeginBuilt(STestCPP65Run* psRun, CCPP65Builder* pcBuilder)
 bool TestCPP65BeginAssembly(STestCPP65Run* psRun, const char* szAssembly)
 {
 	static const char*	aszString[] = { "Libc65/string.asm", NULL };
-	static const char*	aszCalls[] = { "_memset", "_memmove", "_memcmp", "_strlen", NULL };
+	static const char*	aszCalls[] = { "_memset", "_memmove", "_memcmp", "_strlen", "_memchr", "_strchr", NULL };
 	CCPP65Builder		cBuilder;
 	bool				bResult;
 	bool				bString;
