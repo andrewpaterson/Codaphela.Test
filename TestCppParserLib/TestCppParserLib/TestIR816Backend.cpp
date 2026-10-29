@@ -561,6 +561,66 @@ void TestIR816BackendShifts(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Values kept in X (AllocateX): a loop's counter and sum (phis, the counter
+// stepped with inx), the counter as the second operand of a sub (through
+// the scratch word), and signed compares of a 16 bit value with 0 that
+// branch on N and Z.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendX(void)
+{
+	static const int16	aiValues[] = { -32768, -5, -1, 0, 1, 7, 32767 };
+	static const char*	aszCompares[] = { "slt", "sle", "sgt", "sge" };
+	char				sz[512];
+	CChars				szAssembly;
+	size				i;
+	size				j;
+	int64				lliExpected;
+
+	szAssembly.Init();
+	AssertLong(4950, TestIR816Run(
+		"function i32 @_main()\n{\n"
+		"e:\n\tjmp l\n"
+		"l:\n"
+		"\t%i = phi i16 [e, 0], [l, %i2]\n"
+		"\t%s = phi i16 [e, 0], [l, %s2]\n"
+		"\t%s2 = add i16 %s, %i\n"
+		"\t%i2 = add i16 %i, 1\n"
+		"\t%c = slt i16 %i2, 100\n"
+		"\tbrif %c, l, x\n"
+		"x:\n\t%r = sext i16 %s2 to i32\n\tret i32 %r\n}\n", false, &szAssembly));
+	AssertTrue(szAssembly.Contains("inx"));
+	szAssembly.Kill();
+
+	AssertIR816(1000 * 100 - 4950,
+		"function i32 @_main()\n{\n"
+		"e:\n\tjmp l\n"
+		"l:\n"
+		"\t%i = phi i16 [e, 0], [l, %i2]\n"
+		"\t%s = phi i32 [e, 0], [l, %s2]\n"
+		"\t%d = sub i16 1000, %i\n"
+		"\t%w = sext i16 %d to i32\n"
+		"\t%s2 = add i32 %s, %w\n"
+		"\t%i2 = add i16 %i, 1\n"
+		"\t%c = ult i16 %i2, 100\n"
+		"\tbrif %c, l, x\n"
+		"x:\n\tret i32 %s2\n}\n");
+
+	for (i = 0; i < sizeof(aiValues) / sizeof(aiValues[0]); i++)
+	{
+		for (j = 0; j < 4; j++)
+		{
+			lliExpected = (j == 0) ? (aiValues[i] < 0) : ((j == 1) ? (aiValues[i] <= 0) : ((j == 2) ? (aiValues[i] > 0) : (aiValues[i] >= 0)));
+			snprintf(sz, sizeof(sz), "function i32 @_C__Fs(i16 %%x), local\n{\nb:\n\t%%c = %s i16 %%x, 0\n\tbrif %%c, y, n\ny:\n\tret i32 1\nn:\n\tret i32 0\n}\n\n"
+				"function i32 @_main()\n{\nb:\n\t%%r = call i32 @_C__Fs(i16 %d)\n\tret i32 %%r\n}\n", aszCompares[j], aiValues[i]);
+			AssertIR816(lliExpected, sz);
+		}
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // 64 bit values: four words, returned through the hidden pointer.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -724,6 +784,7 @@ void TestIR816Backend(void)
 	TestIR816BackendCompareCarry();
 	TestIR816BackendSharedPlaces();
 	TestIR816BackendShifts();
+	TestIR816BackendX();
 	TestIR816BackendWide();
 	TestIR816BackendMemoryAndCalls();
 	TestIR816BackendBigFrame();
