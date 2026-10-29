@@ -2,6 +2,7 @@
 #include "CppParserLib/IRPrinter.h"
 #include "CppParserLib/IRVerifier.h"
 #include "CppParserLib/IROptimiser.h"
+#include "CppParserLib/IRLoops.h"
 #include "TestLib/Assert.h"
 
 
@@ -394,8 +395,8 @@ void TestIRRoundTripNumbered(void)
 
 SIROpcode	gasTestIRTargetOpcodes[2] =
 {
-	{ "cpya", IRSH_Operands, IRTM_Integer, 0, { IROK_Same, IROK_None }, IRRS_Same, 0 },
-	{ "pshb", IRSH_Operands, IRTM_Integer, 0, { IROK_Same, IROK_None }, IRRS_None, IRF_Volatile },
+	{ "cpya", IRSH_Operands, IRTM_Integer, 0, { IROK_Same, IROK_None }, IRRS_Same, 0, 0 },
+	{ "pshb", IRSH_Operands, IRTM_Integer, 0, { IROK_Same, IROK_None }, IRRS_None, IRF_Volatile, 0 },
 };
 
 
@@ -625,6 +626,132 @@ void TestIRDominators(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// a heads a loop (latch d) with c a loop of its own inside it; x is
+// unreachable.  %x is worked out before both loops, %y in the outer one.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIRLoops(void)
+{
+	CIRModule			cModule;
+	CCPPErrors			cErrors;
+	CIRParser			cParser;
+	CIRDominators		cDominators;
+	CIRDefinitions		cDefinitions;
+	CIRLoops			cLoops;
+	CArrayIRLoopExits	asExits;
+	CIRFunction*		pcFunction;
+	CIRBlock*			pcS;
+	CIRBlock*			pcA;
+	CIRBlock*			pcB;
+	CIRBlock*			pcC;
+	CIRBlock*			pcD;
+	CIRBlock*			pcE;
+	CIRBlock*			pcX;
+	SIRLoop*			psLoop;
+	SIRReference		sX;
+	SIRReference		sY;
+
+	cModule.Init();
+	cErrors.Init();
+	cParser.Init(&cModule, &cErrors);
+	AssertTrue(cParser.Parse(
+		"function void @f(i1 %c, i32 %p)\n"
+		"{\n"
+		"s:\n\t%x = add i32 %p, 1\n\tjmp a\n"
+		"a:\n\tbrif %c, b, e\n"
+		"b:\n\t%y = add i32 %x, 1\n\tjmp c\n"
+		"c:\n\t%z = add i32 %y, %x\n\tbrif %c, c, d\n"
+		"x:\n\tjmp c\n"
+		"d:\n\tbrif %c, a, e\n"
+		"e:\n\tret\n"
+		"}\n"));
+	cParser.Kill();
+	AssertString("", cErrors.Text());
+
+	pcFunction = cModule.GetFunction(0);
+	pcS = pcFunction->FindBlock("s");
+	pcA = pcFunction->FindBlock("a");
+	pcB = pcFunction->FindBlock("b");
+	pcC = pcFunction->FindBlock("c");
+	pcD = pcFunction->FindBlock("d");
+	pcE = pcFunction->FindBlock("e");
+	pcX = pcFunction->FindBlock("x");
+	sX = pcFunction->FindTemporary("x");
+	sY = pcFunction->FindTemporary("y");
+
+	pcFunction->Renumber();
+	pcFunction->ComputePredecessors();
+	cDominators.Init();
+	cDominators.Compute(pcFunction);
+	cDefinitions.Init();
+	cDefinitions.Compute(pcFunction);
+	cLoops.Init();
+	cLoops.Compute(pcFunction, &cDominators);
+
+	AssertSize(2, cLoops.NumLoops());
+	psLoop = cLoops.GetLoop(0);
+	AssertPointer(pcA, psLoop->pcHead);
+	AssertPointer(pcS, psLoop->pcEntering);
+	AssertPointer(pcS, psLoop->pcPreheader);
+	AssertInt(-1, psLoop->iParent);
+	AssertInt(1, psLoop->iDepth);
+	AssertSize(4, cLoops.NumBlocks(0));
+	AssertPointer(pcA, cLoops.GetBlock(0, 0));
+	AssertSize(1, cLoops.NumLatches(0));
+	AssertPointer(pcD, cLoops.GetLatch(0, 0));
+
+	psLoop = cLoops.GetLoop(1);
+	AssertPointer(pcC, psLoop->pcHead);
+	AssertPointer(pcB, psLoop->pcEntering);
+	AssertPointer(pcB, psLoop->pcPreheader);
+	AssertInt(0, psLoop->iParent);
+	AssertInt(2, psLoop->iDepth);
+	AssertSize(1, cLoops.NumBlocks(1));
+	AssertPointer(pcC, cLoops.GetLatch(1, 0));
+
+	AssertTrue(cLoops.Contains(0, pcC));
+	AssertTrue(cLoops.Contains(0, pcD));
+	AssertFalse(cLoops.Contains(1, pcB));
+	AssertFalse(cLoops.Contains(0, pcE));
+	AssertFalse(cLoops.Contains(0, pcX));
+	AssertInt(2, cLoops.Depth(pcC));
+	AssertInt(1, cLoops.Depth(pcB));
+	AssertInt(0, cLoops.Depth(pcE));
+	AssertInt(-1, cLoops.Innermost(pcX));
+	AssertTrue(cLoops.IsHead(pcA));
+	AssertFalse(cLoops.IsHead(pcB));
+
+	asExits.Init();
+	cLoops.GetExits(0, &asExits);
+	AssertSize(2, asExits.NumElements());
+	AssertPointer(pcA, asExits.Get(0)->pcFrom);
+	AssertPointer(pcE, asExits.Get(0)->pcTo);
+	AssertPointer(pcD, asExits.Get(1)->pcFrom);
+	AssertPointer(pcE, asExits.Get(1)->pcTo);
+	cLoops.GetExits(1, &asExits);
+	AssertSize(1, asExits.NumElements());
+	AssertPointer(pcD, asExits.Get(0)->pcTo);
+	asExits.Kill();
+
+	AssertTrue(cLoops.IsInvariant(0, sX, &cDefinitions));
+	AssertFalse(cLoops.IsInvariant(0, sY, &cDefinitions));
+	AssertTrue(cLoops.IsInvariant(1, sY, &cDefinitions));
+	AssertTrue(cLoops.IsInvariant(1, *pcFunction->masParameters.Get(1), &cDefinitions));
+	AssertPointer(pcB, cDefinitions.Block(sY));
+	AssertTrue(cDefinitions.IsDefinedBy(sY, IRO_Add));
+	AssertInt(2, cDefinitions.NumUses(sX));
+	AssertInt(1, cDefinitions.NumUses(sY));
+
+	cLoops.Kill();
+	cDefinitions.Kill();
+	cDominators.Kill();
+	cErrors.Kill();
+	cModule.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // szText, optimised, must verify and print as szExpected.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -679,20 +806,20 @@ void TestIROptimiser(void)
 		"function i32 @_Sum__FPii(ptr %p, i32 %n)\n"
 		"{\n"
 		"entry:\n"
-		"\tjmp test\n"
-		"test:\n"
-		"\t%0 = phi i32 [entry, 0], [body, %sum]\n"
-		"\t%1 = phi i32 [entry, 0], [body, %next]\n"
-		"\t%c = slt i32 %1, %n\n"
-		"\tbrif %c, body, exit\n"
+		"\t%0 = slt i32 0, %n\n"
+		"\tbrif %0, body, exit\n"
 		"body:\n"
-		"\t%a = ptradd ptr %p, %1\n"
+		"\t%1 = phi i32 [entry, 0], [body, %sum]\n"
+		"\t%2 = phi i32 [entry, 0], [body, %next]\n"
+		"\t%a = ptradd ptr %p, %2\n"
 		"\t%v = load i32 %a\n"
-		"\t%sum = add i32 %0, %v\n"
-		"\t%next = add i32 %1, 1\n"
-		"\tjmp test\n"
+		"\t%sum = add i32 %1, %v\n"
+		"\t%next = add i32 %2, 1\n"
+		"\t%3 = slt i32 %next, %n\n"
+		"\tbrif %3, body, exit\n"
 		"exit:\n"
-		"\tret i32 %0\n"
+		"\t%4 = phi i32 [entry, 0], [body, %sum]\n"
+		"\tret i32 %4\n"
 		"}\n",
 		"space default 4\n"
 		"\n"
@@ -844,20 +971,22 @@ void TestIROptimiser(void)
 		"function i32 @l(ptr %this, i32 %n)\n"
 		"{\n"
 		"e:\n"
+		"\t%0 = slt i32 0, %n\n"
+		"\tbrif %0, 0, x\n"
+		"b:\n"
+		"\t%1 = phi i32 [0, 0], [b, %s2]\n"
+		"\t%2 = phi i32 [0, 0], [b, %i2]\n"
+		"\t%s2 = add i32 %1, %v\n"
+		"\t%i2 = add i32 %2, 1\n"
+		"\t%3 = slt i32 %i2, %n\n"
+		"\tbrif %3, b, x\n"
+		"x:\n"
+		"\t%4 = phi i32 [e, 0], [b, %s2]\n"
+		"\tret i32 %4\n"
+		"0:\n"
 		"\t%f = ptradd ptr %this, 4\n"
 		"\t%v = load i32 %f\n"
-		"\tjmp h\n"
-		"h:\n"
-		"\t%s = phi i32 [e, 0], [b, %s2]\n"
-		"\t%i = phi i32 [e, 0], [b, %i2]\n"
-		"\t%c = slt i32 %i, %n\n"
-		"\tbrif %c, b, x\n"
-		"b:\n"
-		"\t%s2 = add i32 %s, %v\n"
-		"\t%i2 = add i32 %i, 1\n"
-		"\tjmp h\n"
-		"x:\n"
-		"\tret i32 %s\n"
+		"\tjmp b\n"
 		"}\n",
 		"space default 4\n"
 		"\n"
@@ -1105,6 +1234,72 @@ void TestIROptimiser(void)
 		"\tret i32 %u\n"
 		"}\n");
 
+	//j's phi is 0 coming from z, so z goes straight to n (and j, left with one way in, joins m).
+	AssertIROptimised(
+		"function i32 @t(i32 %a, i32 %b)\n"
+		"{\n"
+		"e:\n"
+		"\t%c = slt i32 %a, 0\n"
+		"\tbrif %c, n, m\n"
+		"m:\n"
+		"\t%d = add i32 %a, %b\n"
+		"\t%q = ne i32 %d, 0\n"
+		"\tbrif %q, y, n\n"
+		"y:\n"
+		"\tret i32 1\n"
+		"n:\n"
+		"\tret i32 2\n"
+		"}\n",
+		"function i32 @t(i32 %a, i32 %b)\n"
+		"{\n"
+		"e:\n"
+		"\t%c = slt i32 %a, 0\n"
+		"\tbrif %c, z, m\n"
+		"z:\n"
+		"\tjmp j\n"
+		"m:\n"
+		"\t%d = add i32 %a, %b\n"
+		"\tjmp j\n"
+		"j:\n"
+		"\t%p = phi i32 [z, 0], [m, %d]\n"
+		"\t%q = ne i32 %p, 0\n"
+		"\tbrif %q, y, n\n"
+		"y:\n"
+		"\tret i32 1\n"
+		"n:\n"
+		"\tret i32 2\n"
+		"}\n");
+
+	//b + a is a + b worked out before; b - a isn't a - b.
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i32 @w(i32 %a, i32 %b)\n"
+		"{\n"
+		"x:\n"
+		"\t%s = add i32 %a, %b\n"
+		"\t%d = sub i32 %a, %b\n"
+		"\t%e = sub i32 %b, %a\n"
+		"\t%u = mul i32 %s, %s\n"
+		"\t%v = mul i32 %d, %e\n"
+		"\t%w = add i32 %u, %v\n"
+		"\tret i32 %w\n"
+		"}\n",
+		"space default 4\n"
+		"\n"
+		"function i32 @w(i32 %a, i32 %b)\n"
+		"{\n"
+		"x:\n"
+		"\t%s = add i32 %a, %b\n"
+		"\t%t = add i32 %b, %a\n"
+		"\t%d = sub i32 %a, %b\n"
+		"\t%e = sub i32 %b, %a\n"
+		"\t%u = mul i32 %s, %t\n"
+		"\t%v = mul i32 %d, %e\n"
+		"\t%w = add i32 %u, %v\n"
+		"\tret i32 %w\n"
+		"}\n");
+
 	//After !(a < b), a > b is a != b, a >= b is true and b <= a too.
 	AssertIROptimised(
 		"space default 4\n"
@@ -1217,21 +1412,21 @@ void TestIROptimiser(void)
 		"function i32 @_Sum(ptr %p, i32 %n)\n"
 		"{\n"
 		"b:\n"
-		"\tjmp t\n"
-		"t:\n"
-		"\t%i = phi i32 [b, 0], [l, %j]\n"
-		"\t%s = phi i32 [b, 0], [l, %s2]\n"
-		"\t%0 = phi ptr [b, %p], [l, %1]\n"
-		"\t%c = slt i32 %i, %n\n"
-		"\tbrif %c, l, x\n"
+		"\t%0 = slt i32 0, %n\n"
+		"\tbrif %0, l, x\n"
 		"l:\n"
-		"\t%v = load i32 %0\n"
-		"\t%s2 = add i32 %s, %v\n"
-		"\t%j = add i32 %i, 1\n"
-		"\t%1 = ptradd ptr %0, 4\n"
-		"\tjmp t\n"
+		"\t%1 = phi i32 [l, %j], [b, 0]\n"
+		"\t%2 = phi i32 [l, %s2], [b, 0]\n"
+		"\t%3 = phi ptr [l, %5], [b, %p]\n"
+		"\t%v = load i32 %3\n"
+		"\t%s2 = add i32 %2, %v\n"
+		"\t%j = add i32 %1, 1\n"
+		"\t%4 = slt i32 %j, %n\n"
+		"\t%5 = ptradd ptr %3, 4\n"
+		"\tbrif %4, l, x\n"
 		"x:\n"
-		"\tret i32 %s\n"
+		"\t%6 = phi i32 [b, 0], [l, %s2]\n"
+		"\tret i32 %6\n"
 		"}\n",
 		"space default 4\n"
 		"\n"
@@ -1263,18 +1458,20 @@ void TestIROptimiser(void)
 		"{\n"
 		"b:\n"
 		"\t%m = sext i16 %n to i32\n"
-		"\t%0 = add i32 %m, 1\n"
-		"\tjmp t\n"
-		"t:\n"
-		"\t%i = phi i32 [b, 0], [l, %j]\n"
-		"\t%1 = slt i32 %i, %0\n"
-		"\tbrif %1, l, x\n"
+		"\t%0 = sgt i16 0, %n\n"
+		"\tbrif %0, x, 0\n"
 		"l:\n"
-		"\tstore i32 %i, %p\n"
-		"\t%j = add i32 %i, 1\n"
-		"\tjmp t\n"
+		"\t%1 = phi i32 [0, 0], [l, %j]\n"
+		"\tstore i32 %1, %p\n"
+		"\t%j = add i32 %1, 1\n"
+		"\t%2 = slt i32 %j, %4\n"
+		"\tbrif %2, l, x\n"
 		"x:\n"
-		"\tret i32 %i\n"
+		"\t%3 = phi i32 [b, 0], [l, %j]\n"
+		"\tret i32 %3\n"
+		"0:\n"
+		"\t%4 = add i32 %m, 1\n"
+		"\tjmp l\n"
 		"}\n",
 		"space default 4\n"
 		"\n"
@@ -1316,6 +1513,7 @@ void TestIR(void)
 	TestIRParserErrors();
 	TestIRVerifierErrors();
 	TestIRDominators();
+	TestIRLoops();
 	TestIROptimiser();
 
 	TestStatistics();
