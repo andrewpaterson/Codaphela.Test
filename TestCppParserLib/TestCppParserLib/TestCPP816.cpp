@@ -7,6 +7,8 @@
 #include "BaseLib/ArrayInt.h"
 #include "BaseLib/ArrayChars.h"
 #include "BaseLib/FileUtil.h"
+#include "BaseLib/FileBasic.h"
+#include "BaseLib/DiskFile.h"
 #include "MicroprocessorLib/W65C816InstructionFactory.h"
 #include "Assembler65Lib/Asm816Lockstep.h"
 #include "Assembler65Lib/Asm65Memory.h"
@@ -133,15 +135,29 @@ size TestCPP816Profile(CCPP65Builder* pcBuilder, CFast65C816* pcFast, size uiMax
 }
 
 
+//Memory a test program reads and writes: puiLoad's uiLoadBytes are put at uiLoadAddress before it runs, and the
+//uiSaveBytes at uiSaveAddress copied to puiSave after.
+struct STestCPP816Memory
+{
+	const uint8*	puiLoad;
+	size			uiLoadBytes;
+	uint32			uiLoadAddress;
+	uint8*			puiSave;
+	size			uiSaveBytes;
+	uint32			uiSaveAddress;
+};
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 // Compiles and links szSource (if given) and the units (TestCPP65AddUnits, without the 65C64 assembly ones) for
-// the W65C816 and runs it in CAsm65Memory's 2MB.  The labels in szStubs must be exactly the ones used but defined
-// by no unit.  The first uiResults longs at 0010:0000 are copied to puiResults.  It may run uiMaxSteps
-// instructions.  Returns main's int (16 bits, sign extended), or -1000000 if it didn't build or stop.
+// the W65C816 and runs it in CAsm65Memory's 2MB (with psMemory's bytes put in and taken out, if given).  The labels
+// in szStubs must be exactly the ones used but defined by no unit.  The first uiResults longs at 0010:0000 are copied
+// to puiResults.  It may run uiMaxSteps instructions.  Returns main's int (16 bits, sign extended), or -1000000 if it
+// didn't build or stop.
 //
 //////////////////////////////////////////////////////////////////////////
-int32 TestCPP816RunProject(const char** aszUnits, const char* szStubs, const char* szSource, bool bLockstep = false, uint32* puiResults = NULL, size uiResults = 0, size uiMaxSteps = TEST_CPP816_STEPS, bool bBaseLib = false)
+int32 TestCPP816RunProject(const char** aszUnits, const char* szStubs, const char* szSource, bool bLockstep = false, uint32* puiResults = NULL, size uiResults = 0, size uiMaxSteps = TEST_CPP816_STEPS, bool bBaseLib = false, STestCPP816Memory* psMemory = NULL)
 {
 	CCPP65Builder	cBuilder;
 	CAsm65Memory	cMemory;
@@ -201,6 +217,10 @@ int32 TestCPP816RunProject(const char** aszUnits, const char* szStubs, const cha
 	{
 		cMemory.Init(bBaseLib ? TEST_CPP816_BASELIB_MEMORY : ASM65_MEMORY_LOW_SIZE);
 		cMemory.Load(cBuilder.GetOutput());
+		for (i = 0; psMemory && (i < psMemory->uiLoadBytes); i++)
+		{
+			cMemory.SetByte(psMemory->uiLoadAddress + (uint32)i, psMemory->puiLoad[i]);
+		}
 		cMemory.InitFast816(&cFast);
 		cFast.Reset();
 		if (bLockstep)
@@ -234,6 +254,10 @@ int32 TestCPP816RunProject(const char** aszUnits, const char* szStubs, const cha
 		for (i = 0; i < uiResults; i++)
 		{
 			puiResults[i] = cMemory.GetLong(TEST_CPP816_RESULTS + 4 * (uint32)i);
+		}
+		for (i = 0; psMemory && (i < psMemory->uiSaveBytes); i++)
+		{
+			psMemory->puiSave[i] = cMemory.GetByte(psMemory->uiSaveAddress + (uint32)i);
 		}
 		cFast.Kill();
 		cMemory.Kill();
@@ -819,6 +843,151 @@ void TestCPP816Sprites(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Functions inlined across units that name their unit's own symbols (a
+// string, a static global, a static local) aren't exported: the names mean
+// other things in the unit calling them.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816LocalSymbols(void)
+{
+	static const char*	aszUnits[] = { "Input/CPP65/LocalSymbolsProject/Name.cpp", "Libc65/string816.asm", "Input/CPP65/LocalSymbolsProject/Main.cpp", NULL };
+
+	AssertInt(7, TestCPP816RunProject(aszUnits, "", NULL));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A restrict global pointer promises that what it reaches isn't reached
+// another way.  Here it breaks the promise, pointing at the int the loop
+// reads: with __restrict the read leaves the loop and sees the int before
+// the stores (0x101 three times); without it each read sees them (0x100,
+// then 0, then 0).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816Restrict(void)
+{
+	static const char*	szSource =
+		"int giWidth;\n"
+		"unsigned char* RESTRICT gpuMemory;\n"
+		"int Sum(int n) { int s = 0; for (int i = 0; i < n; i++) { gpuMemory[i] = 0; s += giWidth; } return s; }\n"
+		"int main(void) { gpuMemory = (unsigned char*)&giWidth; giWidth = 0x101; return Sum(3); }\n";
+	CChars	szRestrict;
+	CChars	szPlain;
+
+	szRestrict.Init("#define RESTRICT __restrict\n");
+	szRestrict.Append(szSource);
+	szPlain.Init("#define RESTRICT\n");
+	szPlain.Append(szSource);
+	AssertInt(0x303, TestCPP816Run(szRestrict.Text()));
+	AssertInt(0x100, TestCPP816Run(szPlain.Text()));
+	szPlain.Kill();
+	szRestrict.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A restrict parameter breaking its promise in the same way: p is giWidth.
+// Sum is called through a volatile pointer so it isn't inlined (restrict is
+// dropped then).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816RestrictParameter(void)
+{
+	static const char*	szSource =
+		"int giWidth;\n"
+		"int Sum(unsigned char* RESTRICT p, int n) { int s = 0; for (int i = 0; i < n; i++) { p[i] = 0; s += giWidth; } return s; }\n"
+		"int (* volatile gpfSum)(unsigned char*, int) = Sum;\n"
+		"int main(void) { giWidth = 0x101; return gpfSum((unsigned char*)&giWidth, 3); }\n";
+	CChars	szRestrict;
+	CChars	szPlain;
+
+	szRestrict.Init("#define RESTRICT __restrict\n");
+	szRestrict.Append(szSource);
+	szPlain.Init("#define RESTRICT\n");
+	szPlain.Append(szSource);
+	AssertInt(0x303, TestCPP816Run(szRestrict.Text()));
+	AssertInt(0x100, TestCPP816Run(szPlain.Text()));
+	szPlain.Kill();
+	szRestrict.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Tide/Video's sprites (Input/CPP65/TideVideoProject: Image.c, Image.h, Sprite.c and Sprite.h as they are but for
+// guiImageMemory declared __restrict, Main.c as MainSprites.c without its font and heap) drawn from Input/SFT/Graphics.sft (put at 0008:0000) into an 8 bit
+// 320 x 200 screen at 0011:0000: the background, Maki standing and walking (clipped at both sides).  The expected
+// hash is the same sources built natively; the screen is saved to Output/Graphics.raw.  DrawPixel, which reads
+// globals, is inlined across the units.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816TideVideo(void)
+{
+	static const char*	aszUnits[] = { "Input/CPP65/TideVideoProject/Image.c", "Input/CPP65/TideVideoProject/Sprite.c", "Libc65/string816.asm", "Input/CPP65/TideVideoProject/Main.c", NULL };
+	STestCPP816Memory	sMemory;
+	CFileBasic			cFile;
+	CFileUtil			cFileUtil;
+	CCPP65Builder		cBuilder;
+	CChars				szProject;
+	int64				iAddress;
+	uint8*				puiSft;
+	uint8*				puiScreen;
+	size				uiSftBytes;
+	uint32				auiResults[2];
+
+	cFile.Init(DiskFile("Input" _FS_ "SFT" _FS_ "Graphics.sft"));
+	AssertTrue(cFile.Open(EFM_Read));
+	uiSftBytes = (size)cFile.Size();
+	AssertInt(77719, (int)uiSftBytes);
+	puiSft = (uint8*)malloc(uiSftBytes);
+	AssertInt(1, (int)cFile.Read(puiSft, uiSftBytes, 1));
+	cFile.Close();
+	cFile.Kill();
+
+	puiScreen = (uint8*)malloc(320 * 200);
+	sMemory.puiLoad = puiSft;
+	sMemory.uiLoadBytes = uiSftBytes;
+	sMemory.uiLoadAddress = 0x080000;
+	sMemory.puiSave = puiScreen;
+	sMemory.uiSaveBytes = 320 * 200;
+	sMemory.uiSaveAddress = 0x110000;
+	AssertInt(8, TestCPP816RunProject(aszUnits, "", NULL, false, auiResults, 2, TEST_CPP816_STEPS, false, &sMemory));
+	AssertIntHex(0xD06A69C6, auiResults[0]);
+	AssertInt(8, auiResults[1]);
+
+	cFileUtil.MakeDir("Output");
+	cFile.Init(DiskFile("Output" _FS_ "Graphics.raw"));
+	AssertTrue(cFile.Open(EFM_Write_Create));
+	cFile.Write(puiScreen, 320 * 200, 1);
+	cFile.Close();
+	cFile.Kill();
+	free(puiScreen);
+	free(puiSft);
+
+	//DrawPixel (Image.c, which reads Image.c's globals) is inlined into DrawSprite (Sprite.c) across the units, the
+	//globals named the same: it is left out of the program.
+	cBuilder.Init();
+	cBuilder.SetTarget(CPPT_W65C816);
+	TestCPP65AddIncludeDirectories(&cBuilder);
+	AssertTrue(cBuilder.AddStartUp());
+	szProject.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "Libc65");
+	cFileUtil.FullPath(&szProject);
+	cBuilder.AddMathTables(szProject.Text());
+	szProject.Kill();
+	TestCPP65AddUnits(&cBuilder, aszUnits, false);
+	AssertTrue(cBuilder.Link());
+	AssertString("", cBuilder.GetErrors());
+	AssertTrue(cBuilder.GetSymbol("_DrawSprite__FssPC13SSpriteHeader", &iAddress));
+	AssertTrue(cBuilder.GetSymbol("_guiImageWidth", &iAddress));
+	AssertFalse(cBuilder.GetSymbol("_DrawPixel__Fssh", &iAddress));
+	cBuilder.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // BaseLib's FloatHelper and SQuaternion with softfloat.cpp (and math.cpp) compiled for the W65C816, against the
 // same calls natively, as on the 65C64.
 //
@@ -1351,6 +1520,10 @@ void TestCPP816(void)
 	TestCPP816LoopIdioms();
 	TestCPP816BaseLib();
 	TestCPP816Sprites();
+	TestCPP816TideVideo();
+	TestCPP816Restrict();
+	TestCPP816RestrictParameter();
+	TestCPP816LocalSymbols();
 	TestCPP816NewDelete();
 	TestCPP816Floats();
 	TestCPP816TestBaseLibBugs();

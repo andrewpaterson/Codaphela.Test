@@ -531,7 +531,6 @@ void TestFileIOLinkedListBlockAligned(void)
 }
 
 typedef CArrayTemplate<CFileIOTest>			CArrayFileIOTest;
-typedef CArrayTemplateMinimal<CFileIOTest>	CArrayFileIOTestMinimal;
 
 //////////////////////////////////////////////////////////////////////////
 //
@@ -550,8 +549,6 @@ void TestFileIOArray(void)
 	size						ii;
 	CArrayBlock					av;
 	CArrayBlock					avi;
-	CArrayFileIOTestMinimal		asTest;
-	CArrayFileIOTestMinimal		asTestIn;
 
 	TestFileIOBegin(&cMemory, &cFile);
 
@@ -569,12 +566,6 @@ void TestFileIOArray(void)
 	av.Init(&gcSystemAllocator, 1);
 	av.Resize(12);
 	memcpy(av.GetData(), "ABCDEFGHIJK\0", 12);
-	asTest.Init();
-	for (i = 0; i <= 10; i++)
-	{
-		pcTest = asTest.Add();
-		pcTest->Init((int)(i*3-2));
-	}
 
 	AssertSize(9, acTest.NumElements());
 	AssertSize(16, acTest.AllocatedElements());
@@ -582,13 +573,10 @@ void TestFileIOArray(void)
 	AssertSize(8, ai.AllocatedElements());
 	AssertSize(12, av.NumElements());
 	AssertSize(16, av.AllocatedElements());
-	AssertSize(11, asTest.NumElements());
 	AssertTrue(acTest.Write(&cFile));
 	AssertTrue(ai.Write(&cFile));
 	AssertTrue(av.Write(&cFile));
-	AssertTrue(asTest.Write(&cFile));
 
-	asTest.Kill();
 	av.Kill();
 	ai.Kill();
 	acTest.Kill();
@@ -614,15 +602,7 @@ void TestFileIOArray(void)
 	AssertSize(12, avi.NumElements());
 	AssertSize(16, avi.AllocatedElements());
 	AssertString("ABCDEFGHIJK", (char*)avi.GetData());
-	AssertTrue(asTestIn.Read(&cFile));
-	AssertSize(11, asTestIn.NumElements());
-	for (i = 0; i <= 10; i++)
-	{
-		pcTest = asTestIn.Get(i);
-		AssertTrue(pcTest->IsOkay((int)(i*3-2)));
-	}
 
-	asTestIn.Kill();
 	avi.Kill();
 	aii.Kill();
 	acTestIn.Kill();

@@ -4,7 +4,8 @@
 
 //////////////////////////////////////////////////////////////////////////
 //
-// va_start, va_arg, va_copy and va_end over ints, the arguments promoted to int, long longs and pointers.
+// va_start, va_arg, va_copy and va_end over ints, the arguments promoted to int, long longs and pointers.  A
+// char or bool last named parameter takes a whole 2 byte slot on the W65C816.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65StdargArguments(void)
@@ -18,6 +19,7 @@ void TestLibc65StdargArguments(void)
 		'h', 7, 'w',							//pointers
 		(int32)0xFFFFFFFF, 2000000000,			//unsigned int
 		12, 12,									//va_copy reads the same arguments again
+		3, 1234,								//after a char and a bool named parameter
 	};
 	STestLibc65Run		sRun;
 	size				i;
@@ -90,6 +92,28 @@ void TestLibc65StdargArguments(void)
 		"	va_end(apCopy);\n"
 		"	va_end(ap);\n"
 		"}\n"
+		"int CountToStop(char cStop, ...)\n"
+		"{\n"
+		"	va_list	ap;\n"
+		"	int		iCount;\n"
+		"	va_start(ap, cStop);\n"
+		"	iCount = 0;\n"
+		"	while ((char)va_arg(ap, int) != cStop)\n"
+		"	{\n"
+		"		iCount++;\n"
+		"	}\n"
+		"	va_end(ap);\n"
+		"	return iCount;\n"
+		"}\n"
+		"int FirstAfterBool(bool b, ...)\n"
+		"{\n"
+		"	va_list	ap;\n"
+		"	int		i;\n"
+		"	va_start(ap, b);\n"
+		"	i = va_arg(ap, int);\n"
+		"	va_end(ap);\n"
+		"	return i;\n"
+		"}\n"
 		"int main()\n"
 		"{\n"
 		"	char			c;\n"
@@ -109,6 +133,8 @@ void TestLibc65StdargArguments(void)
 		"	Record(\"pip\", \"hello\", 7, \"world\");\n"
 		"	Record(\"uu\", 0xFFFFFFFFUL, 2000000000UL);\n"
 		"	Twice(3, 3, 4, 5);\n"
+		"	*gp++ = CountToStop(0, 'C', 'A', 'B', 0);\n"
+		"	*gp++ = FirstAfterBool(true, 1234);\n"
 		"	return 0;\n"
 		"}\n"));
 	AssertTrue(TestLibc65Run(&sRun, 2000000));

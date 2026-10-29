@@ -11,9 +11,9 @@
 void TestDataMemorySizeof(void)
 {
 #ifdef BUILD_64
-	AssertSize(152, sizeof(CDataMemory));
+	AssertSize(176, sizeof(CDataMemory));
 #else
-	AssertSize(76, sizeof(CDataMemory));
+	AssertSize(88, sizeof(CDataMemory));
 #endif // BUILD_64
 }
 

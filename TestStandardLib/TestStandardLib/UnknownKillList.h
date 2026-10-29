@@ -1,10 +1,10 @@
 #ifndef __UNKNOWN_KILL_LIST_H__
 #define __UNKNOWN_KILL_LIST_H__
-#include "BaseLib/ArrayTemplateMinimal.h"
+#include "BaseLib/ArrayTemplate.h"
 
 
 class CUnknownTestHelper;
-class CKillList : public CArrayTemplateMinimal<CUnknownTestHelper*>
+class CKillList : public CArrayTemplate<CUnknownTestHelper*>
 {
 public:
 	void AddKill(CUnknownTestHelper* pcKilled);

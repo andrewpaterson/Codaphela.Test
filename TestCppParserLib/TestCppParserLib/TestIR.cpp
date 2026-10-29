@@ -3,6 +3,8 @@
 #include "CppParserLib/IRVerifier.h"
 #include "CppParserLib/IROptimiser.h"
 #include "CppParserLib/IRLoops.h"
+#include "CppParserLib/IRImports.h"
+#include "CppParserLib/IRInliner.h"
 #include "TestLib/Assert.h"
 
 
@@ -505,7 +507,7 @@ void TestIRLarge(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIRParserErrors(void)
 {
-	AssertIRErrors("(1, 1): Expected space, global or function. [fun]\n", "fun");
+	AssertIRErrors("(1, 1): Expected space, global, function or restrict. [fun]\n", "fun");
 	AssertIRErrors("(4, 7): Expected an opcode with a result. [plus]\n",
 		"function void @f()\n{\nb:\n\t%x = plus i32 1, 2\n\tret\n}\n");
 	AssertIRErrors("(4, 2): Expected a block label. [%x]\n",
@@ -874,6 +876,23 @@ void TestIROptimiserLoopInvariants(void)
 		"minus:\n\t%b = sub i32 %s, %i\n\tjmp next\n"
 		"next:\n\t%s2 = phi i32 [plus, %a], [minus, %b]\n\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
 		"exit:\n\tret i32 %s2\n}\n", false);
+	//The branch's other way is an inner cycle that also leaves the loop: unswitched, the loop's copy of it can't be
+	//reached, each of its two blocks the other's only predecessor, and the loop's counter is used after the loop.  The
+	//blocks go before the counter's uses are rewritten (CIRSSAUpdater would go round them for ever).
+	AssertIROptimised(
+		"function i32 @_C__Fiii(i32 %n, i32 %f, i32 %g)\n{\nentry:\n\t%c = ne i32 %f, 0\n\tbrif %c, loop, 0\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\t%0 = phi i32 [loop, %i], [2, %1]\n\tret i32 %0\n"
+		"0:\n\t%1 = phi i32 [entry, 0], [1, %2]\n\tjmp 2\n"
+		"1:\n\t%2 = add i32 %4, 2\n\t%3 = slt i32 %2, 100\n\tbrif %3, 2, 0\n"
+		"2:\n\t%4 = phi i32 [0, %1], [1, %2]\n\t%5 = slt i32 %4, %g\n\tbrif %5, 1, exit\n}\n",
+		"function i32 @_C__Fiii(i32 %n, i32 %f, i32 %g)\n{\nentry:\n\t%c = ne i32 %f, 0\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [plus, %i2], [inner2, %k2]\n\tbrif %c, plus, inner\n"
+		"plus:\n\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"inner:\n\t%k = phi i32 [loop, %i], [inner2, %k2]\n\t%e = slt i32 %k, %g\n\tbrif %e, inner2, exit\n"
+		"inner2:\n\t%k2 = add i32 %k, 2\n\t%x = slt i32 %k2, 100\n\tbrif %x, inner, loop\n"
+		"exit:\n\tret i32 %i\n}\n", false);
+
 	AssertIROptimised(
 		"space default 4\n\nfunction void @_F__FPci(ptr %p, i32 %a, i32 %n)\n{\nentry:\n\t%0 = ptradd ptr %p, %a\n\tjmp loop\n"
 		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%q = ptradd ptr %0, %i\n\tstore i8 7, %q\n"
@@ -883,6 +902,244 @@ void TestIROptimiserLoopInvariants(void)
 		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%o = add i32 %a, %i\n\t%q = ptradd ptr %p, %o\n\tstore i8 7, %q\n"
 		"\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
 		"exit:\n\tret\n}\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A store through a pointer loaded from a restrict symbol doesn't alias
+// other symbols, so their loads leave the loop; through any other pointer
+// it might.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserRestrict(void)
+{
+	AssertIROptimised(
+		"space default 4\nrestrict @M\n\nfunction void @_F__Fii(i32 %y, i32 %n)\n{\nentry:\n\t%w = load i32 @W\n\t%r = mul i32 %y, %w\n"
+		"\t%m = load ptr @M\n\t%a = ptradd ptr %m, %r\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%q = ptradd ptr %a, %i\n\tstore i8 7, %q\n"
+		"\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n",
+		"space default 4\nrestrict @M\n\nfunction void @_F__Fii(i32 %y, i32 %n)\n{\nentry:\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%w = load i32 @W\n\t%r = mul i32 %y, %w\n\t%m = load ptr @M\n"
+		"\t%a = ptradd ptr %m, %r\n\t%q = ptradd ptr %a, %i\n\tstore i8 7, %q\n"
+		"\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n");
+	AssertIROptimised(
+		"space default 4\n\nfunction void @_F__Fii(i32 %y, i32 %n)\n{\nentry:\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%w = load i32 @W\n\t%r = mul i32 %y, %w\n\t%m = load ptr @M\n"
+		"\t%a = ptradd ptr %m, %r\n\t%q = ptradd ptr %a, %i\n\tstore i8 7, %q\n"
+		"\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n",
+		"space default 4\n\nfunction void @_F__Fii(i32 %y, i32 %n)\n{\nentry:\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%w = load i32 @W\n\t%r = mul i32 %y, %w\n\t%m = load ptr @M\n"
+		"\t%a = ptradd ptr %m, %r\n\t%q = ptradd ptr %a, %i\n\tstore i8 7, %q\n"
+		"\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n");
+	AssertIROptimised(
+		"space default 4\nrestrict @M\n\nfunction void @_F__FPcii(ptr %p, i32 %y, i32 %n)\n{\nentry:\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%w = load i32 @W\n\t%m = load ptr @M\n"
+		"\t%a = ptradd ptr %m, %w\n\tstore i8 7, %a\n\t%q = ptradd ptr %p, %i\n\tstore i8 8, %q\n"
+		"\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n",
+		"space default 4\nrestrict @M\n\nfunction void @_F__FPcii(ptr %p, i32 %y, i32 %n)\n{\nentry:\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%w = load i32 @W\n\t%m = load ptr @M\n"
+		"\t%a = ptradd ptr %m, %w\n\tstore i8 7, %a\n\t%q = ptradd ptr %p, %i\n\tstore i8 8, %q\n"
+		"\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A restrict parameter (and pointers stepped from it through phis) doesn't
+// alias symbols, plain parameters or other restrict pointers.  A restrict
+// symbol and a plain parameter may.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserRestrictParameters(void)
+{
+	//Stores through a restrict p stepped in the loop: @W's load leaves it.
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function void @_F__FPci(ptr restrict %p, i32 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\t%w = load i8 @W\n"
+		"\tjmp loop\n"
+		"loop:\n"
+		"\t%i = phi i32 [entry, 0], [loop, %i2]\n"
+		"\t%q = phi ptr [entry, %p], [loop, %q2]\n"
+		"\tstore i8 %w, %q\n"
+		"\t%q2 = ptradd ptr %q, 1\n"
+		"\t%i2 = add i32 %i, 1\n"
+		"\t%d = slt i32 %i2, %n\n"
+		"\tbrif %d, loop, exit\n"
+		"exit:\n"
+		"\tret\n"
+		"}\n",
+		"space default 4\n\nfunction void @_F__FPci(ptr restrict %p, i32 %n)\n{\nentry:\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%q = phi ptr [entry, %p], [loop, %q2]\n\t%w = load i8 @W\n\tstore i8 %w, %q\n"
+		"\t%q2 = ptradd ptr %q, 1\n\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n");
+	//Stores through a plain q: a load through the restrict p leaves the loop.
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function void @_F__FPcPci(ptr restrict %p, ptr %q, i32 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\t%v = load i8 %p\n"
+		"\tjmp loop\n"
+		"loop:\n"
+		"\t%i = phi i32 [entry, 0], [loop, %i2]\n"
+		"\t%a = ptradd ptr %q, %i\n"
+		"\tstore i8 %v, %a\n"
+		"\t%i2 = add i32 %i, 1\n"
+		"\t%d = slt i32 %i2, %n\n"
+		"\tbrif %d, loop, exit\n"
+		"exit:\n"
+		"\tret\n"
+		"}\n",
+		"space default 4\n\nfunction void @_F__FPcPci(ptr restrict %p, ptr %q, i32 %n)\n{\nentry:\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%v = load i8 %p\n\t%a = ptradd ptr %q, %i\n\tstore i8 %v, %a\n"
+		"\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n");
+	//Neither restrict: it stays.
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function void @_F__FPcPci(ptr %p, ptr %q, i32 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\tjmp loop\n"
+		"loop:\n"
+		"\t%i = phi i32 [entry, 0], [loop, %i2]\n"
+		"\t%v = load i8 %p\n"
+		"\t%a = ptradd ptr %q, %i\n"
+		"\tstore i8 %v, %a\n"
+		"\t%i2 = add i32 %i, 1\n"
+		"\t%d = slt i32 %i2, %n\n"
+		"\tbrif %d, loop, exit\n"
+		"exit:\n"
+		"\tret\n"
+		"}\n",
+		"space default 4\n\nfunction void @_F__FPcPci(ptr %p, ptr %q, i32 %n)\n{\nentry:\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%v = load i8 %p\n\t%a = ptradd ptr %q, %i\n\tstore i8 %v, %a\n"
+		"\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n");
+	//A restrict symbol's pointer and a plain parameter (which may be the symbol's value): it stays.
+	AssertIROptimised(
+		"space default 4\n"
+		"restrict @M\n"
+		"\n"
+		"function void @_F__FPci(ptr %q, i32 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\t%m = load ptr @M\n"
+		"\tjmp loop\n"
+		"loop:\n"
+		"\t%i = phi i32 [entry, 0], [loop, %i2]\n"
+		"\t%v = load i8 %m\n"
+		"\t%a = ptradd ptr %q, %i\n"
+		"\tstore i8 %v, %a\n"
+		"\t%i2 = add i32 %i, 1\n"
+		"\t%d = slt i32 %i2, %n\n"
+		"\tbrif %d, loop, exit\n"
+		"exit:\n"
+		"\tret\n"
+		"}\n",
+		"space default 4\nrestrict @M\n\nfunction void @_F__FPci(ptr %q, i32 %n)\n{\nentry:\n\t%m = load ptr @M\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%v = load i8 %m\n\t%a = ptradd ptr %q, %i\n\tstore i8 %v, %a\n"
+		"\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n");
+	//The pointer stored through is p in one way and q in the other: no single base, so it stays.
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function void @_F__FPcPcii(ptr restrict %p, ptr %q, i32 %f, i32 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\t%c = ne i32 %f, 0\n"
+		"\tbrif %c, loop, b\n"
+		"b:\n"
+		"\tjmp loop\n"
+		"loop:\n"
+		"\t%i = phi i32 [b, 0], [loop, %i2], [entry, 0]\n"
+		"\t%r = phi ptr [b, %q], [loop, %r], [entry, %p]\n"
+		"\t%w = load i8 @W\n"
+		"\t%s = ptradd ptr %r, %i\n"
+		"\tstore i8 %w, %s\n"
+		"\t%i2 = add i32 %i, 1\n"
+		"\t%d = slt i32 %i2, %n\n"
+		"\tbrif %d, loop, exit\n"
+		"exit:\n"
+		"\tret\n"
+		"}\n",
+		"space default 4\n\nfunction void @_F__FPcPcii(ptr restrict %p, ptr %q, i32 %f, i32 %n)\n{\nentry:\n\t%c = ne i32 %f, 0\n\tbrif %c, a, b\n"
+		"a:\n\tjmp loop\nb:\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [a, 0], [b, 0], [loop, %i2]\n\t%r = phi ptr [a, %p], [b, %q], [loop, %r]\n\t%w = load i8 @W\n\t%s = ptradd ptr %r, %i\n\tstore i8 %w, %s\n"
+		"\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A restrict symbol stays restrict when a function naming it is exported
+// to CIRImports and inlined into another unit.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIRImportsRestrict(void)
+{
+	CIRModule		cUnit;
+	CIRModule		cCaller;
+	CCPPErrors		cErrors;
+	CIRParser		cParser;
+	CIRImports		cImports;
+	CIRInliner		cInliner;
+	CArrayChars		aszMissing;
+	CIRPrinter		cPrinter;
+	CChars			szPrinted;
+	int				iSymbol;
+
+	cErrors.Init();
+	cUnit.Init();
+	cParser.Init(&cUnit, &cErrors);
+	AssertTrue(cParser.Parse("space default 4\nrestrict @M\n\nfunction void @_Put__Fic(i32 %i, i8 %c)\n{\nentry:\n"
+		"\t%m = load ptr @M\n\t%a = ptradd ptr %m, %i\n\tstore i8 %c, %a\n\tret\n}\n"));
+	cParser.Kill();
+	cImports.Init(16);
+	AssertTrue(cImports.Export(&cUnit, cUnit.GetFunction(0)));
+	iSymbol = cImports.GetModule()->FindSymbol("M");
+	AssertTrue(iSymbol >= 0);
+	AssertTrue(cImports.GetModule()->IsRestrict((uint32)iSymbol));
+
+	cCaller.Init();
+	cParser.Init(&cCaller, &cErrors);
+	AssertTrue(cParser.Parse("space default 4\n\nfunction void @_F__Fi(i32 %i)\n{\nentry:\n\tcall void @_Put__Fic(i32 %i, i8 7)\n\tret\n}\n"));
+	cParser.Kill();
+	AssertFalse(cCaller.HasRestrict());
+	aszMissing.Init();
+	cInliner.Init(&cCaller, 16, 16, 4);
+	cInliner.SetImports(&cImports, &aszMissing);
+	AssertTrue(cInliner.InlineCalls(cCaller.GetFunction(0)));
+	cInliner.Kill();
+	aszMissing.Kill();
+
+	szPrinted.Init();
+	cPrinter.Init(&cCaller, &szPrinted);
+	cPrinter.PrintModule();
+	cPrinter.Kill();
+	AssertString("space default 4\nrestrict @M\n\nfunction void @_F__Fi(i32 %i)\n{\nentry:\n\tjmp 1\n0:\n\tret\n"
+		"1:\n\t%0 = load ptr @M\n\t%1 = ptradd ptr %0, %i\n\tstore i8 7, %1\n\tjmp 0\n}\n", szPrinted.Text());
+	szPrinted.Kill();
+
+	cCaller.Kill();
+	cImports.Kill();
+	cUnit.Kill();
+	cErrors.Kill();
 }
 
 
@@ -2030,6 +2287,9 @@ void TestIR(void)
 	TestIROptimiser();
 	TestIROptimiserConstantsRight();
 	TestIROptimiserLoopInvariants();
+	TestIROptimiserRestrict();
+	TestIROptimiserRestrictParameters();
+	TestIRImportsRestrict();
 
 	TestStatistics();
 }

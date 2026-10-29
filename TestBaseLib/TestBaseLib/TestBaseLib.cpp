@@ -14,7 +14,6 @@ void TestArrayLong(void);
 void TestArrayTemplate(void);
 void TestArrayTemplatePtr(void);
 void TestArrayVoidPtrGet(void);
-void TestArrayMinimalTemplate(void);
 void TestLogToString(void);
 void TestLogger(void);
 void TestMapBlock(void);
@@ -201,7 +200,6 @@ int __cdecl main(void)
 	TestArrayTemplatePtr();
 	TestArrayVoidPtrGet();
 	TestArrayTemplatePrimitive();
-	TestArrayMinimalTemplate();
 	TestArrayBlockSorted();
 	TestArraySizer();
 	TestChars();

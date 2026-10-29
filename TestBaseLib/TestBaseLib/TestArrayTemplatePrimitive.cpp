@@ -12,6 +12,7 @@
 void TestArrayTemplatePrimitive(void)
 {
 	CArrayChar		aChars;
+	CArrayLargeChar	aLargeChars;
 	CArrayFloat32	aFloats;
 	CArrayFloat64	aDoubles;
 	CArrayInt64		aLongs;
@@ -23,6 +24,20 @@ void TestArrayTemplatePrimitive(void)
 	aChars.Add('A');
 	AssertChar('A', aChars.GetValue(0));
 	aChars.Kill();
+
+	aLargeChars.Init();
+	aLargeChars.AddList(0, 'C', 'A', 'B', 0);
+	AssertSize(3, aLargeChars.NumElements());
+	aLargeChars.QuickSort();
+	AssertChar('A', aLargeChars.GetValue(0));
+	AssertChar('C', aLargeChars.GetValue(2));
+	AssertSize(1, aLargeChars.Find('B'));
+	AssertTrue(aLargeChars.Find('Z') == ARRAY_LARGE_ELEMENT_NOT_FOUND);
+	aLargeChars.GrowToAtLeastNumElements(70000, true, 0);
+	aLargeChars.SetValue(69999, 'Z');
+	AssertSize(70000, aLargeChars.NumElements());
+	AssertSize(69999, aLargeChars.Find('Z'));
+	aLargeChars.Kill();
 
 	aFloats.Init();
 	aFloats.InsertAt(5.1f, 0);

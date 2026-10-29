@@ -1276,7 +1276,7 @@ void TestFat32WriteAndSeek(void)
 	CFatFile		cFatFile;
 	bool			bResult;
 	CFatVolume		cVolume;
-	int				i;
+	int32			i;
 	char*			szSource;
 	char*			szRead;
 	size			uiBytesRead;
@@ -1304,7 +1304,7 @@ void TestFat32WriteAndSeek(void)
 	AssertInt(FAT_SUCCESS, eResult);
 
 	bool bAllSuccess = true;
-	for (i = 0; i < (int)cFatFile.Size(); i++)
+	for (i = 0; i < (int32)cFatFile.Size(); i++)
 	{
 		eResult = cFatFile.Seek(i, FAT_SEEK_START);
 		if (eResult != FAT_SUCCESS)

@@ -396,9 +396,6 @@
     <ClCompile Include="TestIndexTreeIterator.cpp">
       <Filter>Source\Data\Index</Filter>
     </ClCompile>
-    <ClCompile Include="TestArrayTemplateMinimal.cpp">
-      <Filter>Source\Data\Array\Minimal</Filter>
-    </ClCompile>
     <ClCompile Include="TestTextParser.cpp">
       <Filter>Source\Text</Filter>
     </ClCompile>
