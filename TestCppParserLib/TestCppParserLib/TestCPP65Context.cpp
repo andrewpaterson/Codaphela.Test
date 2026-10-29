@@ -119,18 +119,37 @@ bool TestCPP65BeginBuilt(STestCPP65Run* psRun, CCPP65Builder* pcBuilder)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Assembles a program (one object with its start up), links it, loads it and runs reset.  A label it uses but
-// doesn't define is a link error.
+// Assembles a program (one object with its start up), with Libc65's string.asm if it calls a string routine it
+// doesn't define, links it, loads it and runs reset.  Another label it uses but doesn't define is a link error.
 //
 //////////////////////////////////////////////////////////////////////////
 bool TestCPP65BeginAssembly(STestCPP65Run* psRun, const char* szAssembly)
 {
-	CCPP65Builder	cBuilder;
-	bool			bResult;
+	static const char*	aszString[] = { "Libc65/string.asm", NULL };
+	static const char*	aszCalls[] = { "_memset", "_memmove", "_memcmp", "_strlen", NULL };
+	CCPP65Builder		cBuilder;
+	bool				bResult;
+	bool				bString;
+	size				i;
+	CChars				szLabel;
 
 	cBuilder.Init();
 	cBuilder.SetStubMissing(false);
 	bResult = cBuilder.AddAssembly("program", szAssembly);
+
+	//Libc65's string routines when the program calls one it doesn't have (the optimiser makes loops calls of them).
+	bString = false;
+	for (i = 0; aszCalls[i]; i++)
+	{
+		szLabel.Init(aszCalls[i]);
+		szLabel.Append(':');
+		bString |= (strstr(szAssembly, aszCalls[i]) != NULL) && (strstr(szAssembly, szLabel.Text()) == NULL);
+		szLabel.Kill();
+	}
+	if (bString)
+	{
+		TestCPP65AddUnits(&cBuilder, aszString, true);
+	}
 	bResult &= cBuilder.Link();
 	AssertString("", cBuilder.GetErrors());
 	bResult &= TestCPP65BeginBuilt(psRun, &cBuilder);

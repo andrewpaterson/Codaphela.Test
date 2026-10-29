@@ -241,13 +241,15 @@ int32 TestCPP816RunProject(const char** aszUnits, const char* szStubs, const cha
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Compiles, links and runs szSource.  Returns main's int (16 bits, sign extended), or -1000000 if it didn't build
-// or stop.
+// Compiles, links and runs szSource, with Libc65's string routines (the optimiser makes loops calls of them).
+// Returns main's int (16 bits, sign extended), or -1000000 if it didn't build or stop.
 //
 //////////////////////////////////////////////////////////////////////////
 int32 TestCPP816Run(const char* szSource, bool bLockstep = false)
 {
-	return TestCPP816RunProject(NULL, "", szSource, bLockstep);
+	static const char*	aszUnits[] = { "Libc65/string816.asm", NULL };
+
+	return TestCPP816RunProject(aszUnits, "", szSource, bLockstep);
 }
 
 
@@ -509,11 +511,13 @@ void TestCPP816Builtins(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Loops that fill or copy memory, which the optimiser makes memset and
-// memmove calls (ReplaceLoopIdioms), give what the loops would: a fill of
-// bytes and of 16 bit zeros, a copy of 16 bit elements, and copies that
-// overlap both ways (a copy up into itself repeats the first bytes, as the
-// loop does, so it stays a loop).  Returns the bytes wrong.
+// Loops that fill, copy, measure or compare memory, which the optimiser
+// makes memset, memmove, strlen and memcmp calls (ReplaceLoopIdioms), give
+// what the loops would: a fill of bytes and of 16 bit zeros, a copy of 16 bit
+// elements, copies that overlap both ways (a copy up into itself repeats the
+// first bytes, as the loop does, so it stays a loop), lengths counted by an
+// index and by a pointer, and compares that differ first, in the middle,
+// last or not at all.  Returns the answers wrong.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCPP816LoopIdioms(void)
@@ -547,6 +551,38 @@ void TestCPP816LoopIdioms(void)
 		"	{\n"
 		"		psTo[i] = psFrom[i];\n"
 		"	}\n"
+		"}\n"
+		"int Length(const char* sz)\n"
+		"{\n"
+		"	int	i;\n"
+		"	i = 0;\n"
+		"	while (sz[i] != 0)\n"
+		"	{\n"
+		"		i++;\n"
+		"	}\n"
+		"	return i;\n"
+		"}\n"
+		"unsigned long PointerLength(const char* sz)\n"
+		"{\n"
+		"	const char*	pc;\n"
+		"	pc = sz;\n"
+		"	while (*pc)\n"
+		"	{\n"
+		"		pc++;\n"
+		"	}\n"
+		"	return (unsigned long)(pc - sz);\n"
+		"}\n"
+		"int Same(unsigned char* puc1, unsigned char* puc2, unsigned long uiCount)\n"
+		"{\n"
+		"	unsigned long	i;\n"
+		"	for (i = 0; i < uiCount; i++)\n"
+		"	{\n"
+		"		if (puc1[i] != puc2[i])\n"
+		"		{\n"
+		"			return 0;\n"
+		"		}\n"
+		"	}\n"
+		"	return 1;\n"
 		"}\n"
 		"void CopyBytes(unsigned char* pucTo, unsigned char* pucFrom, long iCount)\n"
 		"{\n"
@@ -591,6 +627,21 @@ void TestCPP816LoopIdioms(void)
 		"	{\n"
 		"		iWrong += gauc[i] != ((i <= 100) ? 0 : (((i >= 150) && (i < 250)) ? (unsigned char)(i + 10) : (unsigned char)i));\n"
 		"	}\n"
+		"	iWrong += (Length(\"\") != 0) + (Length(\"Hello world\") != 11) + (PointerLength(\"\") != 0) + (PointerLength(\"Hello\") != 5);\n"
+		"	for (i = 0; i < 300; i++)\n"
+		"	{\n"
+		"		gauc[i] = (i == 250) ? 0 : 'a';\n"
+		"	}\n"
+		"	iWrong += (Length((char*)gauc) != 250) + (PointerLength((char*)gauc + 10) != 240);\n"
+		"	iWrong += (Same(gauc, gauc + 1, 200) != 1) + (Same(gauc, gauc + 1, 0) != 1);\n"
+		"	gauc[0] = 'b';\n"
+		"	iWrong += (Same(gauc, gauc + 1, 200) != 0);\n"
+		"	gauc[0] = 'a';\n"
+		"	gauc[100] = 'c';\n"
+		"	iWrong += (Same(gauc, gauc + 1, 200) != 0) + (Same(gauc + 1, gauc + 2, 98) != 1);\n"
+		"	gauc[100] = 'a';\n"
+		"	gauc[200] = 'c';\n"
+		"	iWrong += (Same(gauc, gauc + 1, 200) != 0) + (Same(gauc, gauc + 1, 199) != 1);\n"
 		"	return iWrong;\n"
 		"}\n"));
 }
