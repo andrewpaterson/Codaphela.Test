@@ -2294,7 +2294,6 @@ void TestIndexTreeMemory(void)
 {
 
 	BeginTests();
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	LocalMallocatorsInit();
@@ -2336,7 +2335,6 @@ void TestIndexTreeMemory(void)
 	DataOrderersKill();
 	MemoryKill();
 	TypeConverterKill();
-	FastFunctionsKill();
 	TestStatistics();
 }
 

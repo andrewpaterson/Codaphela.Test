@@ -1,4 +1,3 @@
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "StandardLib/ChannelPadder.h"

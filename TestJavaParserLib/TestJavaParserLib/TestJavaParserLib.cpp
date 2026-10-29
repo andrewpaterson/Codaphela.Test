@@ -30,7 +30,6 @@ int __cdecl main(void)
 	int	iTotalTestsFailed;
 
 	InitTotalStatistics();
-	FastFunctionsInit();
 	NumberInit();
 
 	TestJavaParserPrintFloat();
@@ -48,7 +47,6 @@ int __cdecl main(void)
 
 	iTotalTestsFailed = TestTotalStatistics();
 
-	FastFunctionsKill();
 	NumberKill();
 	_CrtDumpMemoryLeaks();
 	return iTotalTestsFailed;

@@ -440,7 +440,6 @@ void TestObjectFree(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 
@@ -454,7 +453,6 @@ void TestObjectFree(void)
 
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

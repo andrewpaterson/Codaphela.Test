@@ -195,7 +195,6 @@ void TestIndexPtrIterate(void)
 void TestIndexPtr(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 	MemoryInit();
 	LocalMallocatorsInit(&gcConstructors, &gcMallocators);
 	DataOrderersInit(&gcConstructors, &gcDataOrderers);
@@ -205,7 +204,6 @@ void TestIndexPtr(void)
 
 	DataOrderersKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TestStatistics();
 }
 

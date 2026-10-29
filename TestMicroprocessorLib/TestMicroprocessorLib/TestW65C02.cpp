@@ -1,4 +1,4 @@
-#include "BaseLib/FastFunctions.h"
+#include <string.h>
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "MicroprocessorLib/W65C02.h"

@@ -1,5 +1,4 @@
 #include <string.h>
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/NumberControl.h"
@@ -481,6 +480,46 @@ void TestIR816BackendCompareCarry(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A result shares the place of an argument that dies where it is defined (and a loop's next value its phi's place),
+// but not of one still live after it: a call's result that is never used is only live where it is written, and a
+// shift's count is read after its value is copied to the result.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendSharedPlaces(void)
+{
+	AssertIR816(42,
+		"function i32 @_Seven__Fi(i32 %x), local\n{\nb:\n\tret i32 7\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%a = add i32 40, 2\n\t%r = call i32 @_Seven__Fi(i32 %a)\n\tret i32 %a\n}\n");
+
+	AssertIR816(126,
+		"function i32 @_Seven__Fi(i32 %x), local\n{\nb:\n\tret i32 7\n}\n\n"
+		"function i32 @_main()\n{\n"
+		"entry:\n\t%p = add i32 40, 2\n\tjmp loop\n"
+		"loop:\n"
+		"\t%i = phi i32 [entry, 0], [loop, %i2]\n"
+		"\t%r = call i32 @_Seven__Fi(i32 %p)\n"
+		"\t%i2 = add i32 %i, %p\n"
+		"\t%c = ult i32 %i2, 100\n"
+		"\tbrif %c, loop, exit\n"
+		"exit:\n\tret i32 %i2\n}\n", true);
+
+	AssertIR816((((1000 - 42) ^ 255) << 2 << 2) + (2 << 2),
+		"function i32 @_main()\n{\nb:\n"
+		"\t%a = add i32 40, 2\n"
+		"\t%b = sub i32 1000, %a\n"
+		"\t%c = xor i32 %b, 255\n"
+		"\t%d = shl i32 %c, 2\n"
+		"\t%k = add i32 1, 1\n"
+		"\t%e = shl i32 %d, %k\n"
+		"\t%j = add i32 1, 1\n"
+		"\t%f = shl i32 %j, %j\n"
+		"\t%g = add i32 %e, %f\n"
+		"\tret i32 %g\n}\n", true);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // 64 bit values: four words, returned through the hidden pointer.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -631,7 +670,6 @@ void TestIR816Backend(void)
 	BeginTests();
 
 	TypesInit();
-	FastFunctionsInit();
 	TypeConverterInit();
 	NumberInit();
 	C65C64InstructionFactory::GetInstance()->Init();
@@ -643,6 +681,7 @@ void TestIR816Backend(void)
 	TestIR816BackendDivide();
 	TestIR816BackendDividePaths();
 	TestIR816BackendCompareCarry();
+	TestIR816BackendSharedPlaces();
 	TestIR816BackendWide();
 	TestIR816BackendMemoryAndCalls();
 	TestIR816BackendBigFrame();
@@ -651,7 +690,6 @@ void TestIR816Backend(void)
 	C65C64InstructionFactory::GetInstance()->Kill();
 	NumberKill();
 	TypeConverterKill();
-	FastFunctionsKill();
 	TypesKill();
 
 	TestStatistics();

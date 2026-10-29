@@ -68,7 +68,7 @@ void TestIndexTreeIteratorUnsafeIterate(void)
 		iMapDataSize = strlen(pacData);
 		AssertSize(iMapDataSize, iDataSize);
 
-		iResult = memcmp_fast(pacData, pvData, (int)iDataSize);
+		iResult = memcmp(pacData, pvData, (int)iDataSize);
 		AssertSize(0, iResult);
 
 		bExists = cIndexTree.Iterate(&sIter, (void**)&pvData, &iDataSize);
@@ -134,7 +134,6 @@ void TestIndexTreeIteratorIterate(void)
 //////////////////////////////////////////////////////////////////////////
 void TestIndexTreeMemoryIterator(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	MemoryInit();
 	WordsInit();
@@ -147,7 +146,6 @@ void TestIndexTreeMemoryIterator(void)
 	TestStatistics();
 	WordsKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TypeConverterKill();
 }
 

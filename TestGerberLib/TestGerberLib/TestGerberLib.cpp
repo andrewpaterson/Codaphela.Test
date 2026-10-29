@@ -2,7 +2,6 @@
 //
 
 #include "BaseLib/LeakDetector.h"
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
@@ -30,7 +29,6 @@ int __cdecl main(void)
 	InitTotalStatistics();
 
 
-	FastFunctionsInit();
 	TypesInit();
 	TypeConverterInit();
 	MemoryInit();
@@ -48,7 +46,6 @@ int __cdecl main(void)
 	MemoryKill();
 	TypeConverterKill();
 	TypesKill();
-	FastFunctionsKill();
 
 
 	iResult = TestTotalStatistics();

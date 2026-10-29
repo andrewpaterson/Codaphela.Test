@@ -105,7 +105,7 @@ void TestTextFieldEditing(void)
 		AssertInt(BS_MouseOver, pField->GetBorderState());
 		Click(pTestWindow);
 		AssertTrue(pFocus->GetFocussedComponent() == pField);
-		AssertInt(BS_Selected, pField->GetBorderState());
+		AssertInt(BS_Focussed, pField->GetBorderState());
 
 		//Typing inserts at the caret.
 		pTestWindow->InputPrintable('a', true);

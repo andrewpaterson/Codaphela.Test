@@ -478,7 +478,6 @@ void TestClass(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 
 	TestClassDefinition();
@@ -490,7 +489,6 @@ void TestClass(void)
 	TestClassHeapObjectEmbeddedPointers();
 
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

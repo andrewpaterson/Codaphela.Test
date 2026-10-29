@@ -120,7 +120,7 @@ void TestComboBoxChoosing(void)
 		AssertInt(BS_MouseOver, pCombo->GetBorderState());
 		Click(pTestWindow);
 		AssertTrue(pCombo->IsOpen());
-		AssertInt(BS_Selected, pCombo->GetBorderState());
+		AssertInt(BS_Focussed, pCombo->GetBorderState());
 		AssertTrue(pFocus->GetFocussedComponent() == pMenu);
 		pPopup = pTestWindow->GetPopup(pMenu);
 		sVec = pPopup->GetPosition();

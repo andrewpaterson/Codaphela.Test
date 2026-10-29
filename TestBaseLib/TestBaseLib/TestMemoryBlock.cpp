@@ -72,12 +72,10 @@ void TestMemoryBlockGlobalMemory(void)
 void TestMemoryBlock(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	TestMemoryBlockAllocate();
 	TestMemoryBlockGlobalMemory();
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 

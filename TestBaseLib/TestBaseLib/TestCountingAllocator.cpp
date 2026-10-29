@@ -374,7 +374,6 @@ void TestCountingAllocatorSizeTrackingGlobalMemoryAllocator(void)
 void TestCountingAllocator(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	TestCountingAllocatorSizeSystemAllocator();
 	TestCountingAllocatorSizeMemoryAllocator();
@@ -383,7 +382,6 @@ void TestCountingAllocator(void)
 	TestCountingAllocatorSizeTrackingSystemAllocator();
 	TestCountingAllocatorSizeTrackingGlobalMemoryAllocator();
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 

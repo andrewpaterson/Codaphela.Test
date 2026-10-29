@@ -175,8 +175,7 @@ static void TestProject65ListTests(CArrayChars* paszLines, CArrayChars* paszTest
 
 //////////////////////////////////////////////////////////////////////////
 //
-// The main's file with only szTest's (first) call left in main.  Natively the tests before main calls
-// FastFunctionsInit run after earlier tests have initialised the fast functions, so the program does that first.
+// The main's file with only szTest's (first) call left in main.
 //
 //////////////////////////////////////////////////////////////////////////
 static void TestProject65SingleTestMain(CArrayChars* paszLines, const char* szTest, CChars* pszDest)
@@ -186,25 +185,18 @@ static void TestProject65SingleTestMain(CArrayChars* paszLines, const char* szTe
 	size	i;
 	bool	bMain;
 	bool	bDone;
-	bool	bFastFunctions;
 
 	bMain = false;
 	bDone = false;
-	bFastFunctions = false;
 	for (i = 0; i < paszLines->NumElements(); i++)
 	{
 		szLine = paszLines->GetText(i);
 		bMain |= TestProject65MainStart(szLine);
-		bFastFunctions |= bMain && (strstr(szLine, "FastFunctionsInit();") != NULL);
 
 		if (bMain && TestProject65TestCall(szLine, &szName))
 		{
 			if (!bDone && szName.Equals(szTest))
 			{
-				if (!bFastFunctions)
-				{
-					pszDest->Append("\tFastFunctionsInit();\n");
-				}
 				pszDest->Append(szLine)->AppendNewLine();
 				bDone = true;
 			}

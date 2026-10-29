@@ -58,11 +58,9 @@ Header1|Header2\n\
 void TestCSVFileEditable(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	TestCSVFileEditableRead();
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 

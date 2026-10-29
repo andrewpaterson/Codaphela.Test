@@ -245,7 +245,6 @@ void TestStackEmbeddedReInit(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 
@@ -259,7 +258,6 @@ void TestStackEmbeddedReInit(void)
 
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

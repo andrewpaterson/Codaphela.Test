@@ -730,7 +730,6 @@ void TestFileIOMap(void)
 void TestFileIO(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 	MemoryInit();
 
 	TestFileIOHelpers();
@@ -746,6 +745,5 @@ void TestFileIO(void)
 	TestFileIOMap();
 
 	MemoryKill();
-	FastFunctionsKill();
 	TestStatistics();
 }

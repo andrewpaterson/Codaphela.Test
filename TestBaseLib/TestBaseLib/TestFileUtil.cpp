@@ -899,7 +899,6 @@ void TestFileUtil(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestFileUtilRemoveExtension();
 	TestFileUtilFindExtension();
@@ -923,7 +922,6 @@ void TestFileUtil(void)
 	TestFileUtilCopyAndCompare();
 	TestFileUtilRemoveDir();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

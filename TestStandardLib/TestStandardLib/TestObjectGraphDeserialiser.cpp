@@ -498,7 +498,6 @@ void TestObjectGraphDeserialiser(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 
@@ -509,7 +508,6 @@ void TestObjectGraphDeserialiser(void)
 
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

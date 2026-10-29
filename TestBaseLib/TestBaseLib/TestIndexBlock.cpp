@@ -630,7 +630,6 @@ void TestIndexBlockDataFree(void)
 void TestIndexBlock(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 	MemoryInit();
 	LocalMallocatorsInit(&gcConstructors, &gcMallocators);
 	DataOrderersInit(&gcConstructors, &gcDataOrderers);
@@ -646,7 +645,6 @@ void TestIndexBlock(void)
 
 	DataOrderersKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TestStatistics();
 }
 

@@ -9,11 +9,9 @@
 void TestCircularMemoryList(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	//TestCircularMemoryListPush();
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 

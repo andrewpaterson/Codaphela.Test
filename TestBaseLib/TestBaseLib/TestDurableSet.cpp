@@ -1,5 +1,4 @@
 #include "TestLib/Assert.h"
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/DurableFile.h"
 #include "BaseLib/DurableSet.h"
 #include "BaseLib/DurableFileController.h"

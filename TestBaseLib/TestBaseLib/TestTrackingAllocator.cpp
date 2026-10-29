@@ -53,11 +53,9 @@ void TestTrackingAllocatorCount(void)
 void TestTrackingAllocator(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	TestTrackingAllocatorCount();
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 

@@ -446,7 +446,7 @@ void TestNamedIndexedDataGetName(EIndexWriteThrough eWriteThrough)
 	cController.End();
 
 	cController.Begin();
-	memset_fast(pai, 0x04, sizeof(pai));
+	memset(pai, 0x04, sizeof(pai));
 	cDatabase.Add(0x89072fc3, "graphics/world/city1.3ds", pai, sizeof(pai));
 
 	szName.Init();

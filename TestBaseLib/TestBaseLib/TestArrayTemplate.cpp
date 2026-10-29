@@ -766,7 +766,6 @@ void TestArrayTemplate(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestArrayTemplateMisc();
 	TestArrayTemplateAllocation();
@@ -786,7 +785,6 @@ void TestArrayTemplate(void)
 	TestArrayTemplateSetChunkSize();
 	TestArrayTemplateShuffle();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

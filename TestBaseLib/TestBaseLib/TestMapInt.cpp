@@ -185,12 +185,10 @@ void TestMapInt(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestMapIntTemplate();
 	TestMapIntInt();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

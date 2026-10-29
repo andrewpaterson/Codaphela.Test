@@ -768,7 +768,6 @@ void TestDehollowfication(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 
@@ -781,7 +780,6 @@ void TestDehollowfication(void)
 
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

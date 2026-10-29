@@ -115,12 +115,10 @@ void TestLinkedListBlock(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestLinkedListBlockIndexOf();
 	TestLinkedListBlockWrite();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

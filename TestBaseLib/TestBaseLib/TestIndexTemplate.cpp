@@ -33,7 +33,6 @@ void TestIndexTemplateTemplateStuff(void)
 void TestIndexTemplateTemplate(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 	MemoryInit();
 	LocalMallocatorsInit(&gcConstructors, &gcMallocators);
 	DataOrderersInit(&gcConstructors, &gcDataOrderers);
@@ -42,7 +41,6 @@ void TestIndexTemplateTemplate(void)
 
 	DataOrderersKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TestStatistics();
 }
 

@@ -1,4 +1,3 @@
-#include "BaseLib/FastFunctions.h"
 #include "SupportLib/Sphere.h"
 #include "TestLib/Assert.h"
 

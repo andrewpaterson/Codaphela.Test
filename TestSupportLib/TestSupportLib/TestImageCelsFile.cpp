@@ -1,4 +1,3 @@
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "BaseLib/TextFile.h"

@@ -65,13 +65,11 @@ void TestChunkFileFileRead(void)
 void TestChunkFileFile(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 	MemoryInit();
 
 	TestChunkFileFileRead();
 
 	MemoryKill();
-	FastFunctionsKill();
 	TestStatistics();
 }
 

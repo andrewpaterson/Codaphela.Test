@@ -121,11 +121,9 @@ void TestListTemplate(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestListTemplateMethods();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

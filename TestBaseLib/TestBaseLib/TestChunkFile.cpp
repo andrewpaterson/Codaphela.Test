@@ -211,7 +211,6 @@ void TestChunkFileFileBasic(void)
 void TestChunkFile(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 	MemoryInit();
 	
 	TestChunkFileSimple();
@@ -220,7 +219,6 @@ void TestChunkFile(void)
 	TestChunkFileFileBasic();
 
 	MemoryKill();
-	FastFunctionsKill();
 	TestStatistics();
 }
 

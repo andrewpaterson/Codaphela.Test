@@ -40,11 +40,9 @@ void TestTemporaryMemorySize(void)
 void TestTemporaryMemory(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	TestTemporaryMemorySize();
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 

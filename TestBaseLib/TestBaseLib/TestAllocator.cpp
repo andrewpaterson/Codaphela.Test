@@ -117,13 +117,11 @@ void TestAllocatorFreeList(void)
 void TestAllocator(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	TestAllocatorSystem();
 	TestAllocatorNull();
 	TestAllocatorFreeList();
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 

@@ -66,7 +66,7 @@ void TestBaseLib65Tests(void)
 	sProject.aszExcluded816 = gaszTestBaseLib65Excluded816;
 	sProject.uiMinPrograms = 101;
 	sProject.iMinTestsRun = 30001;
-	sProject.uiMinPrograms816 = 156;
+	sProject.uiMinPrograms816 = 155;
 	sProject.iMinTestsRun816 = 30001;
 	TestProject65RunTests(&sProject);
 

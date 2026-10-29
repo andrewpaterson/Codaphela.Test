@@ -122,7 +122,6 @@ void TestEmbeddedObjectRemapTos(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 
@@ -130,7 +129,6 @@ void TestEmbeddedObjectRemapTos(void)
 
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

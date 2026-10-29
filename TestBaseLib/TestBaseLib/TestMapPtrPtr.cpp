@@ -78,11 +78,9 @@ void TestMapPtrPtr(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestMapPtrPtrIterate();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

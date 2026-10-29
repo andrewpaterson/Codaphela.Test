@@ -137,13 +137,11 @@ void TestCSVFileReadLineMaxLength(void)
 void TestCSVFileImmutable(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	TestCSVFileImmutableRead();
 	TestCSVFileImmutableLongLine();
 	TestCSVFileReadLineMaxLength();
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 

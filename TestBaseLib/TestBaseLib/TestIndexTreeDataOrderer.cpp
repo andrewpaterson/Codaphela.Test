@@ -279,7 +279,6 @@ void TestIndexTreeDataOrdererCreation(void)
 void TestIndexTreeDataOrderer(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 	MemoryInit();
 
 	TestIndexTreeDataOrdererAccess();
@@ -288,7 +287,6 @@ void TestIndexTreeDataOrderer(void)
 	TestIndexTreeDataOrdererCreation();
 
 	MemoryKill();
-	FastFunctionsKill();
 	TestStatistics();
 }
 

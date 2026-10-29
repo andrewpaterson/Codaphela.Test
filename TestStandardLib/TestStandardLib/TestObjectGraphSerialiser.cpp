@@ -93,7 +93,6 @@ void TestObjectGraphSerialiserReachability(void)
 void TestObjectGraphSerialiser(void)
 {
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 	ObjectsInit();
@@ -105,7 +104,6 @@ void TestObjectGraphSerialiser(void)
 	ObjectsKill();
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 }
 

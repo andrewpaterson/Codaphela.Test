@@ -1,4 +1,3 @@
-#include "BaseLib/FastFunctions.h"
 #include "SupportLib/Polygon.h"
 #include "SupportLib/Triangle.h"
 #include "TestLib/Assert.h"

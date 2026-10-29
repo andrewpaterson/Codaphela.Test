@@ -435,7 +435,6 @@ void TestArrayIntFindFinalContiguousInSorted(void)
 void TestArrayInt(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	TestArrayIntAddFind();
 	TestArrayIntSortingUsingQuickSort();
@@ -444,7 +443,6 @@ void TestArrayInt(void)
 	TestArrayIntRemoveAt();
 	TestArrayIntFindFinalContiguousInSorted();
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 

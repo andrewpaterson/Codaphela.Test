@@ -12,7 +12,6 @@ void TestIndexTreeMemory(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 
 	CIndexTreeMemory			cIndexTree;
@@ -47,7 +46,6 @@ void TestIndexTreeMemory(void)
 	cIndexTree.Kill();
 
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

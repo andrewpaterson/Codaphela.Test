@@ -425,7 +425,6 @@ void TestObjectConverter(void)
 
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 
@@ -435,7 +434,6 @@ void TestObjectConverter(void)
 
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 

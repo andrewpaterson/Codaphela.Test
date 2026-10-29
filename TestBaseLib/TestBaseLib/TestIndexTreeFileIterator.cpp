@@ -76,7 +76,7 @@ void TestIndexTreeFileIteratorUnsafeIterate(void)
 		iMapDataSize = strlen(pacData);
 		AssertSize(iMapDataSize, iDataSize);
 
-		iResult = memcmp_fast(pacData, pvData, (int)iDataSize);
+		iResult = memcmp(pacData, pvData, (int)iDataSize);
 		AssertInt(0, iResult);
 
 		bExists = cIndexTree.UnsafeIterate(&sIter, pacKey, &iKeyLength, 10, (void**)&pvData, &iDataSize);

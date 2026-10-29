@@ -1,5 +1,4 @@
 #include "BaseLib/GlobalMemory.h"
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalDataTypesIO.h"

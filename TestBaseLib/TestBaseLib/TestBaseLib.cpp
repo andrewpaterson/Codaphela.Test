@@ -132,7 +132,6 @@ void TestGlobalDataTypesIO(void);
 void TestFloatHelper(void);
 void TestIntegerHelper(void);
 void TestFixedPoint(void);
-void TestFastFunctions(void);
 void TestPropertiesFile(void);
 void TestJSONParser(void);
 void TestXMLParser(void);
@@ -320,10 +319,8 @@ int __cdecl main(void)
 	TestIndexTemplateTemplate();
 	TestCalculator();
 
-	FastFunctionsInit();
 	NumberInit();
 
-	TestFastFunctions();
 	TestPropertiesFile();
 	TestJSONParser();
 	TestXMLParser();
@@ -364,7 +361,6 @@ int __cdecl main(void)
 	TestFat32();
 
 	NumberKill();
-	FastFunctionsKill();
 
 	iResult = TestTotalStatistics();
 	LeakDetection();

@@ -1,5 +1,4 @@
 #include "BaseLib/FileUtil.h"
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/NumberControl.h"
@@ -1399,7 +1398,6 @@ void TestIR65Backend(void)
 	BeginTests();
 
 	TypesInit();
-	FastFunctionsInit();
 	TypeConverterInit();
 	NumberInit();
 	C65C64InstructionFactory::GetInstance()->Init();
@@ -1422,7 +1420,6 @@ void TestIR65Backend(void)
 	C65C64InstructionFactory::GetInstance()->Kill();
 	NumberKill();
 	TypeConverterKill();
-	FastFunctionsKill();
 	TypesKill();
 
 	TestStatistics();

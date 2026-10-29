@@ -90,11 +90,9 @@ void TestArrayTemplatePtr(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestArrayTemplatePtrSorting();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

@@ -155,12 +155,10 @@ void TestWorkerThreadPool(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestWorkerThreadPoolInitialiseAndKill();
 	TestWorkerThreadPoolConcurrency();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

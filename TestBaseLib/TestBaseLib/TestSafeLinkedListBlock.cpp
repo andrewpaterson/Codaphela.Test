@@ -117,12 +117,10 @@ void TestSafeLinkedListBlock(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestSafeLinkedListBlockIndexOf();
 	TestSafeLinkedListBlockWrite();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

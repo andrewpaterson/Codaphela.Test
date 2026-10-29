@@ -1,4 +1,3 @@
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/Calculator.h"
 #include "BaseLib/CalculatorParser.h"
@@ -868,7 +867,6 @@ void TestCalculatorShift(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCalculator(void)
 {
-	FastFunctionsInit();
 	TypeConverterInit();
 	NumberInit();
 	BeginTests();
@@ -894,6 +892,5 @@ void TestCalculator(void)
 	TestStatistics();
 	NumberKill();
 	TypeConverterKill();
-	FastFunctionsKill();
 }
 

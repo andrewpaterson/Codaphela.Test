@@ -186,14 +186,12 @@ void TestArrayBitReadWrite(void)
 void TestArrayBit(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 	MemoryInit();
 
 	TestArrayBitAdd();
 	TestArrayBitReadWrite();
 
 	MemoryKill();
-	FastFunctionsKill();
 	TestStatistics();
 }
 

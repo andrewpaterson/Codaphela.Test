@@ -242,7 +242,6 @@ void TestMapStringIntAndPointerIterate(void)
 void TestMapStringIntAndPointer(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 	NumberInit();
 
 	TestMapStringIntAndPointerPut();
@@ -250,7 +249,6 @@ void TestMapStringIntAndPointer(void)
 	TestMapStringIntAndPointerIterate();
 
 	NumberKill();
-	FastFunctionsKill();
 	TestStatistics();
 }
 

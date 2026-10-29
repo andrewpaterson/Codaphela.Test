@@ -485,7 +485,6 @@ void TestSetBlock(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestSetBlockInternals();
 	TestSetBlockGet();
@@ -495,7 +494,6 @@ void TestSetBlock(void)
 	TestSetBlockDataMemoryUnchanged();
 	TestSetBlockRemoveHalf();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

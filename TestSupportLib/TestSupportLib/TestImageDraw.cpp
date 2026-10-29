@@ -1,5 +1,5 @@
 #include <math.h>
-#include "BaseLib/FastFunctions.h"
+#include <string.h>
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "StandardLib/Objects.h"
 #include "StandardLib/ArrayObject.h"

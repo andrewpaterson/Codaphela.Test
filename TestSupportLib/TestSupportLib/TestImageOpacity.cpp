@@ -1,6 +1,6 @@
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/PointerRemapper.h"
-#include "BaseLib/FastFunctions.h"
+#include <string.h>
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "StandardLib/Unknowns.h"

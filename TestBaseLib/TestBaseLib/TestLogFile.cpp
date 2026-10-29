@@ -1,4 +1,4 @@
-#include "BaseLib/FastFunctions.h"
+#include <string.h>
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/MemoryFile.h"
 #include "BaseLib/DiskFile.h"

@@ -387,7 +387,6 @@ void TestObjectFreeOrdering(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 
@@ -406,7 +405,6 @@ void TestObjectFreeOrdering(void)
 
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

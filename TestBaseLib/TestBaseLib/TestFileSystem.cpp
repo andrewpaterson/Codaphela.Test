@@ -175,7 +175,6 @@ void TestFileSystemIterator(void)
 void TestFileSystem(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	TestFileSystemInit();
 	TestFileSystemNearest();
@@ -183,7 +182,6 @@ void TestFileSystem(void)
 	TestFileSystemGetFiles();
 	TestFileSystemIterator();
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 

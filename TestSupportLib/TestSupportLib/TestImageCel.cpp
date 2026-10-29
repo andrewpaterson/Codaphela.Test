@@ -1,4 +1,3 @@
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "StandardLib/Objects.h"
 #include "SupportLib/ImageCel.h"

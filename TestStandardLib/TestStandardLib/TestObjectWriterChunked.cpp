@@ -20,7 +20,6 @@
 void TestChunkFileObjectWriterSerialised(void)
 {	
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 
@@ -171,7 +170,6 @@ void TestChunkFileObjectWriterSerialised(void)
 
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 
 	cFileUtil.RemoveDir("Output" _FS_ "ChunkFileObjectWriter");

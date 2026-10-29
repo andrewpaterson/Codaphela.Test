@@ -28,11 +28,9 @@ void TestStackMemoryCompilation(void)
 void TestStackMemory(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	TestStackMemoryCompilation();
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 

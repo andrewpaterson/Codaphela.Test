@@ -705,6 +705,21 @@ void TestAsm816Banks(void)
 	cLinker.Kill();
 	cObject.Kill();
 
+	//A table of 4 byte init entries runs on into the next bank without a gap (each entry 4 byte aligned, so none crosses
+	//the end of a bank and is moved on), and __init_start is its first entry (after the alignment).
+	AssertTrue(TestAsm816LinkBanks(&cLinker, &cObject,
+		".section text.Code\n.space $FFF5\nE1:\nE2:\nE3:\nE4:\n"
+		".section init.E1\n.align 4\n.long E1\n.section init.E2\n.align 4\n.long E2\n"
+		".section init.E3\n.align 4\n.long E3\n.section init.E4\n.align 4\n.long E4\n", 0x010000));
+	AssertString("", cLinker.GetErrors());
+	AssertTrue(cLinker.GetSymbol("__init_start", &iStart));
+	AssertTrue(cLinker.GetSymbol("__init_end", &iResult));
+	AssertInt(0, (int)(iStart & 3));
+	AssertInt(16, (int)(iResult - iStart));
+	AssertTrue((iStart < 0x20000) && (iResult > 0x20000));
+	cLinker.Kill();
+	cObject.Kill();
+
 	//Sections with addresses can't overlap or cross the end of a bank.
 	AssertFalse(TestAsm816LinkBanks(&cLinker, &cObject, ".section text.A, at $10000\n.space 8\n.section text.B, at $10004\n.space 8\n.section text.C, at $1FFFE\n.space 4\n", 0x010000));
 	AssertTrue(strstr(cLinker.GetErrors(), "Section overlaps another section with an address 'text.B'") != NULL);

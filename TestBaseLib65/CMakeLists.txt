@@ -173,7 +173,6 @@ target_link_libraries(BaseLib PUBLIC baselib_options)
 target_link_libraries(BaseLib PUBLIC Threads::Threads)
 
 # Uses AVX intrinsics unconditionally; MSVC allows that without a flag, g++ does not.
-set_source_files_properties("${BASELIB_DIR}/FastMemcpy.cpp" PROPERTIES COMPILE_OPTIONS -mavx)
 
 add_library(TestLib STATIC ${TESTLIB_SOURCES})
 target_link_libraries(TestLib PUBLIC BaseLib)

@@ -10,7 +10,7 @@ void FillQueueElement(void* pvData, size uiSize, char c)
 {
 	if (pvData && uiSize > 1)
 	{
-		memset_fast(pvData, c, uiSize - 1);
+		memset(pvData, c, uiSize - 1);
 		((char*)pvData)[uiSize - 1] = '\0';
 	}
 }
@@ -298,13 +298,11 @@ void TestMemoryQueueRemap(void)
 void TestMemoryQueue(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	TestMemoryQueuePush();
 	TestMemoryQueuePeek();
 	TestMemoryQueueRemap();
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 

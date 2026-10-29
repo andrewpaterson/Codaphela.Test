@@ -645,7 +645,6 @@ void TestInputChordsCommonStart(void)
 //////////////////////////////////////////////////////////////////////////
 void TestInputChords(void)
 {
-	FastFunctionsInit();
 	TypesInit();
 	TypeConverterInit();
 	MemoryInit();
@@ -796,6 +795,5 @@ void TestInputChords(void)
 	MemoryKill();
 	TypeConverterKill();
 	TypesKill();
-	FastFunctionsKill();
 }
 

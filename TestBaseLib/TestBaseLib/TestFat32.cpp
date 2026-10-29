@@ -1,4 +1,4 @@
-#include "BaseLib/FastFunctions.h"
+#include <string.h>
 #include "BaseLib/IntegerHelper.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/RedirectPrintf.h"

@@ -1,4 +1,3 @@
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/PointerRemapper.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
@@ -1418,7 +1417,6 @@ void TestPreprocessor(void)
 	BeginTests();
 
 	TypesInit();
-	FastFunctionsInit();
 	TypeConverterInit();
 	NumberInit();
 
@@ -1456,7 +1454,6 @@ void TestPreprocessor(void)
 
 	NumberKill();
 	TypeConverterKill();
-	FastFunctionsKill();
 	TypesKill();
 
 	TestStatistics();

@@ -247,7 +247,6 @@ void TestEmbeddedStackPointers(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 
@@ -259,7 +258,6 @@ void TestEmbeddedStackPointers(void)
 
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

@@ -77,7 +77,6 @@ int __cdecl main(void)
 	InitTotalStatistics();
 	InitAllocatorDebug(2 MB);
 	
-	FastFunctionsInit();
 	NumberInit();
 
 	TestIndexTreeMemory();
@@ -143,7 +142,6 @@ int __cdecl main(void)
 	TestCompressionZLib();
 
 	NumberKill();
-	FastFunctionsKill();
 
 	iResult = TestTotalStatistics();
 	LeakDetection();

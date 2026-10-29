@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "BaseLib/FastFunctions.h"
+#include <string.h>
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/NumberControl.h"
@@ -476,7 +476,6 @@ void TestCPP65IR(void)
 	BeginTests();
 
 	TypesInit();
-	FastFunctionsInit();
 	TypeConverterInit();
 	NumberInit();
 	C65C64InstructionFactory::GetInstance()->Init();
@@ -496,7 +495,6 @@ void TestCPP65IR(void)
 	C65C64InstructionFactory::GetInstance()->Kill();
 	NumberKill();
 	TypeConverterKill();
-	FastFunctionsKill();
 	TypesKill();
 
 	TestStatistics();

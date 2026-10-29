@@ -74,12 +74,10 @@ void TestArrayTemplateEmbeddedPtrQuickSort(void)
 void TestArrayTemplateEmbeddedPtr(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	TestArrayTemplateEmbeddedPtrAdd();
 	TestArrayTemplateEmbeddedPtrQuickSort();
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 

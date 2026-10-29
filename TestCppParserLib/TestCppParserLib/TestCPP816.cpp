@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/NumberControl.h"
@@ -688,7 +687,6 @@ void TestCPP816TestBaseLibBugs(void)
 
 	AssertInt(1 + 20, TestCPP816RunProject(NULL, "",
 		"#include <string.h>\n"
-		"#include \"BaseLib/FastFunctions.h\"\n"
 		"#include \"BaseLib/TypeConverter.h\"\n"
 		"#include \"BaseLib/NumberControl.h\"\n"
 		"#include \"BaseLib/Calculator.h\"\n"
@@ -719,7 +717,6 @@ void TestCPP816TestBaseLibBugs(void)
 		"}\n"
 		"int main(void)\n"
 		"{\n"
-		"\tFastFunctionsInit();\n"
 		"\tTypeConverterInit();\n"
 		"\tNumberInit();\n"
 		"\treturn Eval(\"-1\", \"-1\") + Eval(\"1 == -1\", \"0\") * 20;\n"
@@ -739,12 +736,10 @@ void TestCPP816TestBaseLibBugs(void)
 	AssertInt(14, TestCPP816RunProject(NULL, "",
 		"#include \"BaseLib/Number.h\"\n"
 		"#include \"BaseLib/NumberControl.h\"\n"
-		"#include \"BaseLib/FastFunctions.h\"\n"
 		"int main(void)\n"
 		"{\n"
 		"\tCNumber\ta;\n"
 		"\tCNumber\tb;\n"
-		"\tFastFunctionsInit();\n"
 		"\tNumberInit();\n"
 		"\ta.Init(100);\n"
 		"\tb.Init(7);\n"
@@ -755,11 +750,9 @@ void TestCPP816TestBaseLibBugs(void)
 		"#include <string.h>\n"
 		"#include \"BaseLib/FloatPrinter.h\"\n"
 		"#include \"BaseLib/NumberControl.h\"\n"
-		"#include \"BaseLib/FastFunctions.h\"\n"
 		"int main(void)\n"
 		"{\n"
 		"\tchar\tsz[64];\n"
-		"\tFastFunctionsInit();\n"
 		"\tNumberInit();\n"
 		"\tDoubleToString(sz, 64, 345.34, 2);\n"
 		"\treturn strcmp(sz, \"345.34\") == 0;\n"
@@ -767,12 +760,10 @@ void TestCPP816TestBaseLibBugs(void)
 	AssertInt(1 + 20 + 300, TestCPP816RunProject(NULL, "",
 		"#include \"BaseLib/Number.h\"\n"
 		"#include \"BaseLib/NumberControl.h\"\n"
-		"#include \"BaseLib/FastFunctions.h\"\n"
 		"int main(void)\n"
 		"{\n"
 		"\tCNumber\ta;\n"
 		"\tCNumber\tb;\n"
-		"\tFastFunctionsInit();\n"
 		"\tNumberInit();\n"
 		"\ta.Init(1);\n"
 		"\tb.Init(-1);\n"
@@ -1003,7 +994,6 @@ void TestCPP816(void)
 	BeginTests();
 
 	TypesInit();
-	FastFunctionsInit();
 	TypeConverterInit();
 	NumberInit();
 	CW65C816InstructionFactory::GetInstance()->Init();
@@ -1025,7 +1015,6 @@ void TestCPP816(void)
 	CW65C816InstructionFactory::GetInstance()->Kill();
 	NumberKill();
 	TypeConverterKill();
-	FastFunctionsKill();
 	TypesKill();
 
 	TestStatistics();

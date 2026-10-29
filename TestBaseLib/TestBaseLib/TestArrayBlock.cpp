@@ -53,11 +53,9 @@ void TestArrayBlock(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestArrayBlockRemoveBatch();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

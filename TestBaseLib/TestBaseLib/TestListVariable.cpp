@@ -80,13 +80,11 @@ void TestListVariableAdd(void)
 void TestListVariable(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 	DataMemoryInit();
 
 	TestListVariableAdd();
 
 	DataMemoryKill();
-	FastFunctionsKill();
 	TestStatistics();
 }
 

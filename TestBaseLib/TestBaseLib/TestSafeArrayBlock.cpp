@@ -137,13 +137,11 @@ void TestSafeArrayBlock(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestSafeArrayBlockAdd();
 	TestSafeArrayBlockRemoveRange();
 	TestSafeArrayBlockWrite();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

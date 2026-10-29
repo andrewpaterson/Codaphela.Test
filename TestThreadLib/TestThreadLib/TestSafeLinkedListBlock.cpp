@@ -90,11 +90,9 @@ void TestSafeLinkedListBlock(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestSafeLinkedListBlockThreads();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

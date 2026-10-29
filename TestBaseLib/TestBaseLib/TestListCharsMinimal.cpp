@@ -51,11 +51,9 @@ void TestListCharsMinimal(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestListCharsMinimalStuff();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

@@ -68,7 +68,6 @@ void TestObjectsEvictVsKill(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 
@@ -77,7 +76,6 @@ void TestObjectsEvictVsKill(void)
 
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

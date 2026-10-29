@@ -7,7 +7,6 @@
 #include "CppParserLib/CppTokeniser.h"
 #include "CppParserLib/CppParser.h"
 #include "CppParserLib/CPP65Generator.h"
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/NumberControl.h"
@@ -3052,7 +3051,6 @@ void TestCPP65Generator(void)
 	BeginTests();
 
 	TypesInit();
-	FastFunctionsInit();
 	TypeConverterInit();
 	NumberInit();
 	C65C64InstructionFactory::GetInstance()->Init();
@@ -3086,7 +3084,6 @@ void TestCPP65Generator(void)
 	C65C64InstructionFactory::GetInstance()->Kill();
 	NumberKill();
 	TypeConverterKill();
-	FastFunctionsKill();
 	TypesKill();
 
 	TestStatistics();

@@ -608,7 +608,6 @@ void TestMemoryManagerEmptyCache(void)
 void TestMemoryManager(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	TestMemoryManagerContiguousAllocations();
 	TestMemoryManagerDeallocate1();
@@ -618,7 +617,6 @@ void TestMemoryManager(void)
 	TestMemoryManagerDeallocateAllocate3();
 	TestMemoryManagerEmptyCache();
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 

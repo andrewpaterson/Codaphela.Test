@@ -802,7 +802,6 @@ void TestMapBlock(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestMapBlockInternals();
 	TestMapBlockGet();
@@ -815,7 +814,6 @@ void TestMapBlock(void)
 	TestMapBlockDataFree();
 	TestMapBlockIterate();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

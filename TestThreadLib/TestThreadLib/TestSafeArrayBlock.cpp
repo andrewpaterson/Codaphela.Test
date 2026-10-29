@@ -82,11 +82,9 @@ void TestSafeArrayBlock(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestSafeArrayBlockThreads();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

@@ -448,7 +448,6 @@ void TestArrayTemplateEmbeddedPrimitiveSorted(void)
 void TestArrayTemplateEmbedded(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 
 	TestArrayTemplateEmbeddedAdd();
 	TestArrayTemplateEmbeddedRemoveAt();
@@ -458,7 +457,6 @@ void TestArrayTemplateEmbedded(void)
 	TestArrayTemplateEmbeddedChangeChunkSize();
 	TestArrayTemplateEmbeddedPrimitiveSorted();
 
-	FastFunctionsKill();
 	TestStatistics();
 }
 

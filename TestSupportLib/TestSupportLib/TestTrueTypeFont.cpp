@@ -1,4 +1,4 @@
-#include "BaseLib/FastFunctions.h"
+#include <string.h>
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/UTF8.h"

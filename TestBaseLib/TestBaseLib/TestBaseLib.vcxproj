@@ -405,7 +405,6 @@
     <ClCompile Include="TestXMLWriter.cpp" />
     <ClCompile Include="TestFunctionCaller.cpp" />
     <ClCompile Include="TestNumber.cpp" />
-    <ClCompile Include="TestFastFunctions.cpp" />
     <ClCompile Include="TestXMLParser.cpp" />
     <ClCompile Include="WordKey.cpp" />
   </ItemGroup>

@@ -1,5 +1,5 @@
 #include "BaseLib/Logger.h"
-#include "BaseLib/FastFunctions.h"
+#include <string.h>
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/FileBasic.h"
 #include "BaseLib/PointerRemapper.h"

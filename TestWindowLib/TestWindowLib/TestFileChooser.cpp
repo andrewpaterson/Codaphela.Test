@@ -6,7 +6,7 @@
 #include "WindowLib/ClearCanvasDraw.h"
 #include "WindowLib/JewelTheme.h"
 #include "WindowLib/JewelColours.h"
-#include "WindowLib/JewelButtonImages.h"
+#include "WindowLib/JewelImageGenerator.h"
 #include "WindowLib/FileChooser.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/Assert.h"
@@ -127,8 +127,8 @@ void TestFileChooserBrowse(void)
 		sLook.sBackground = JEWEL_PANEL;
 		sLook.sDivider = JEWEL_SEPARATOR;
 		pTestWindow->GetColourFormat(&cFormat);
-		pFolderIcon = CJewelButtonImages::CreateFolder(JEWEL_ICON, &cFormat);
-		pFileIcon = CJewelButtonImages::CreateFile(JEWEL_ICON, &cFormat);
+		pFolderIcon = CJewelImageGenerator::CreateFolder(JEWEL_ICON, &cFormat);
+		pFileIcon = CJewelImageGenerator::CreateFile(JEWEL_ICON, &cFormat);
 
 		//The folder first then the text files, the XML file filtered out.  The file started on is selected and named.
 		cChooser.Init(pTestWindow, &sLook, "Open File", false, szStart, gasTestFileChooserTypes, 2, pFolderIcon, pFileIcon);

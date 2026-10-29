@@ -106,12 +106,10 @@ void TestThread(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestThreadStandAlone();
 	TestThreadInThreadPool();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

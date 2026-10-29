@@ -247,14 +247,12 @@ void TestLinkedListTemplate(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestLinkedListTemplateIndexOf();
 	TestLinkedListTemplateByteSize();
 	TestLinkedListTemplateWrite();
 	TestLinkedListTemplateMoveTo();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

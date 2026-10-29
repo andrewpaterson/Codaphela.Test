@@ -9,7 +9,7 @@
 #include "WindowLib/ClearCanvasDraw.h"
 #include "WindowLib/Button.h"
 #include "WindowLib/WindowTheme.h"
-#include "WindowLib/JewelButtonImages.h"
+#include "WindowLib/JewelImageGenerator.h"
 #include "WinRefLib/WinRefWindowFactory.h"
 #include "TestLib/AssertGeometric.h"
 #include "TestLib/AssertFile.h"
@@ -68,7 +68,7 @@ Ptr<CButtonImages> ReadBlueButtonImages(CColourFormatHelper* pcFormat)
 		apStrips[i] = ReadSpaceImage("BlueButton", aszStates[i]);
 		apStrips[i] = CImageColourConverter::ConvertColour(apStrips[i], pcFormat->meOrder);
 	}
-	return OMalloc<CButtonImages>(apStrips[BS_Normal], apStrips[BS_MouseOver], apStrips[BS_Selected], apStrips[BS_Pushed], Set32BitColour((uint8)115, 151, 255));
+	return OMalloc<CButtonImages>(apStrips[BS_Normal], apStrips[BS_MouseOver], apStrips[BS_Focussed], apStrips[BS_Pushed], Set32BitColour((uint8)115, 151, 255));
 }
 
 
@@ -181,13 +181,13 @@ void TestButtonInput(void)
 		//Moving off a pressed button and letting go doesn't click it.
 		pTestWindow->InputCommand(CIC_ActivateComponent, true);
 		pTestWindow->PointerMoved(2, y);
-		AssertInt(BS_Selected, pOK->GetState());
+		AssertInt(BS_Focussed, pOK->GetState());
 		pTestWindow->PointerMoved(x, y);
 		AssertInt(BS_Pushed, pOK->GetState());
 		pTestWindow->PointerMoved(2, y);
 		pTestWindow->InputCommand(CIC_ExecuteComponent, true);
 		AssertLog("");
-		AssertInt(BS_Selected, pOK->GetState());
+		AssertInt(BS_Focussed, pOK->GetState());
 
 		//Space and enter click the button with focus.
 		pTestWindow->InputCommand(CIC_Space, true);
@@ -197,7 +197,7 @@ void TestButtonInput(void)
 		//Hovering over Cancel doesn't take focus from OK.
 		x = pCancel->GetPosition().x + pCancel->GetActualSize().x / 2;
 		pTestWindow->PointerMoved(x, y);
-		AssertInt(BS_Selected, pOK->GetState());
+		AssertInt(BS_Focussed, pOK->GetState());
 		AssertInt(BS_MouseOver, pCancel->GetState());
 		pTestWindow->InputCommand(CIC_ActivateComponent, true);
 		AssertInt(BS_Normal, pOK->GetState());
@@ -207,7 +207,7 @@ void TestButtonInput(void)
 
 		//Clicking the background clears focus.
 		pTestWindow->PointerMoved(100, 2);
-		AssertInt(BS_Selected, pCancel->GetState());
+		AssertInt(BS_Focussed, pCancel->GetState());
 		pTestWindow->InputCommand(CIC_ActivateComponent, true);
 		pTestWindow->InputCommand(CIC_ExecuteComponent, true);
 		AssertInt(BS_Normal, pCancel->GetState());
@@ -223,7 +223,7 @@ void TestButtonInput(void)
 		AssertFalse(pCancel->IsPressed());
 		//Focus comes back but the pointer isn't known until it moves.
 		pTestWindow->Activate();
-		AssertInt(BS_Selected, pCancel->GetState());
+		AssertInt(BS_Focussed, pCancel->GetState());
 		pTestWindow->InputCommand(CIC_ExecuteComponent, true);
 		AssertLog("");
 		pTestWindow->PointerMoved(x, y);
@@ -305,8 +305,8 @@ void TestButtonDefault(void)
 		pFocus = pTestWindow->GetFocus();
 
 		pFont = ReadLabelFont();
-		pImages = CJewelButtonImages::CreateButtonImages(&cHelper);
-		pDefaultImages = CJewelButtonImages::CreateDefaultButtonImages(&cHelper);
+		pImages = CJewelImageGenerator::CreateButtonImages(&cHelper);
+		pDefaultImages = CJewelImageGenerator::CreateDefaultButtonImages(&cHelper);
 		AssertInt(Set32BitColour((uint8)0x2B, 0x2D, 0x30), pImages->GetFaceColour(BS_Pushed));
 		AssertInt(Set32BitColour((uint8)0x36, 0x6A, 0xCE), pDefaultImages->GetFaceColour(BS_Pushed));
 
@@ -539,7 +539,7 @@ void TestButtonStates(char* szName, Ptr<CButtonImages>(*ReadImages)(CColourForma
 		pTick->SetPositions(SInt32Vec2(sPosition.x + sSize.x / 2, sPosition.y + sSize.y / 2), SInt32Vec2(1, 1));
 
 		pTestWindow->Show();
-		AssertInt(bReturnOver ? BS_Pushed : BS_Selected, pButton->GetState());
+		AssertInt(bReturnOver ? BS_Pushed : BS_Focussed, pButton->GetState());
 
 		ValidateLabelObjects();
 
@@ -612,7 +612,7 @@ void TestButtonIcons(void)
 		pTestWindow->GetColourFormat(&cHelper);
 
 		pFont = ReadLabelFont();
-		pImages = CJewelButtonImages::CreateButtonImages(&cHelper);
+		pImages = CJewelImageGenerator::CreateButtonImages(&cHelper);
 		pWolf = ReadDarkForestCel("Wolf.png", &cHelper);
 		pMoon = ReadDarkForestCel("Moon.png", &cHelper);
 		iWolfWidth = pWolf->GetSubImage()->GetFullWidth();
@@ -722,8 +722,8 @@ void TestButton(void)
 	TestButtonDefault();
 	TestButtonIcons();
 	TestButtonStates((char*)"ButtonStates", ReadBlueButtonImages, NULL, Set32BitColour((uint8)40, 40, 48), false);
-	TestButtonStates((char*)"JewelButtonStates", CJewelButtonImages::CreateButtonImages, NULL, Set32BitColour((uint8)0x1E, 0x1F, 0x22), true);
-	TestButtonStates((char*)"JewelDefaultButtonStates", CJewelButtonImages::CreateButtonImages, CJewelButtonImages::CreateDefaultButtonImages, Set32BitColour((uint8)0x1E, 0x1F, 0x22), true);
+	TestButtonStates((char*)"JewelButtonStates", CJewelImageGenerator::CreateButtonImages, NULL, Set32BitColour((uint8)0x1E, 0x1F, 0x22), true);
+	TestButtonStates((char*)"JewelDefaultButtonStates", CJewelImageGenerator::CreateButtonImages, CJewelImageGenerator::CreateDefaultButtonImages, Set32BitColour((uint8)0x1E, 0x1F, 0x22), true);
 
 	ObjectsFlush();
 	ObjectsKill();

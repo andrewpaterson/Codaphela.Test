@@ -317,7 +317,6 @@ void TestPackFileGetFiles(void)
 void TestPackFile(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 	MemoryInit();
 
 	TestPackFileReadWriteSingleFile();
@@ -328,7 +327,6 @@ void TestPackFile(void)
 	TestPackFileIterate();
 
 	MemoryKill();
-	FastFunctionsKill();
 	TestStatistics();
 }
 

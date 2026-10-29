@@ -1,4 +1,3 @@
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/NaiveFile.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/TypeNames.h"

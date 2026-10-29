@@ -343,14 +343,12 @@ void TestListBlock(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestListBlockAdd();
 	TestListBlockRemove();
 	TestListBlockRemoveRange();
 	TestListBlockPushPop();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

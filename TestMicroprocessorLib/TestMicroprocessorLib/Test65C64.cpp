@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/GlobalDataTypesIO.h"
 #include "MicroprocessorLib/65C64InstructionFactory.h"

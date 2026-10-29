@@ -1,6 +1,5 @@
 #include <string.h>
 #include "BaseLib/LeakDetector.h"
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/NumberControl.h"
@@ -36,7 +35,6 @@ int __cdecl main(int argc, char** argv)
 	InitTotalStatistics();
 
 	TypesInit();
-	FastFunctionsInit();
 	TypeConverterInit();
 	NumberInit();
 	C65C64InstructionFactory::GetInstance()->Init();
@@ -52,7 +50,6 @@ int __cdecl main(int argc, char** argv)
 	C65C64InstructionFactory::GetInstance()->Kill();
 	NumberKill();
 	TypeConverterKill();
-	FastFunctionsKill();
 	TypesKill();
 
 	iTotalTestsFailed = TestTotalStatistics();

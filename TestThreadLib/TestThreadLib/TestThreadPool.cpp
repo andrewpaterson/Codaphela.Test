@@ -103,11 +103,9 @@ void TestThreadPool(void)
 {
 	BeginTests();
 	MemoryInit();
-	FastFunctionsInit();
 
 	TestThreadPoolThreadDestroyed();
 
-	FastFunctionsKill();
 	MemoryKill();
 	TestStatistics();
 }

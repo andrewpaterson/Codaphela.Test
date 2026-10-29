@@ -1,4 +1,3 @@
-#include "BaseLib/FastFunctions.h"
 #include "SupportLib/HalfSpace.h"
 #include "TestLib/Assert.h"
 

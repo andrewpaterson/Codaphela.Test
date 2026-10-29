@@ -1,4 +1,3 @@
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/PointerRemapper.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
@@ -13,7 +12,6 @@
 void TestNoInclude(void)
 {
 	TypesInit();
-	FastFunctionsInit();
 	TypeConverterInit();
 	NumberInit();
 
@@ -37,7 +35,6 @@ void TestNoInclude(void)
 
 	NumberKill();
 	TypeConverterKill();
-	FastFunctionsKill();
 	TypesKill();
 }
 
@@ -49,7 +46,6 @@ void TestNoInclude(void)
 void TestOneInclude(void)
 {
 	TypesInit();
-	FastFunctionsInit();
 	TypeConverterInit();
 	NumberInit();
 
@@ -76,7 +72,6 @@ void TestOneInclude(void)
 
 	NumberKill();
 	TypeConverterKill();
-	FastFunctionsKill();
 	TypesKill();
 }
 
@@ -88,7 +83,6 @@ void TestOneInclude(void)
 void TestReinclude(void)
 {
 	TypesInit();
-	FastFunctionsInit();
 	TypeConverterInit();
 	NumberInit();
 
@@ -129,7 +123,6 @@ void TestReinclude(void)
 
 	NumberKill();
 	TypeConverterKill();
-	FastFunctionsKill();
 	TypesKill();
 }
 

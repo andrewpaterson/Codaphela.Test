@@ -30,7 +30,6 @@ void TestObjectAllocatorAddConstructors(void)
 void TestObjectAllocatorSimpleAdd(void)
 {
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 	ObjectsInit();
@@ -55,7 +54,6 @@ void TestObjectAllocatorSimpleAdd(void)
 	ObjectsKill();
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 }
 
@@ -67,7 +65,6 @@ void TestObjectAllocatorSimpleAdd(void)
 void TestObjectAllocatorNamedAdd(void)
 {
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 	ObjectsInit();
@@ -109,7 +106,6 @@ void TestObjectAllocatorNamedAdd(void)
 	ObjectsKill();
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 }
 
@@ -121,7 +117,6 @@ void TestObjectAllocatorNamedAdd(void)
 void TestObjectAllocatorNamedOverwrite(void)
 {
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 	ObjectsInit();
@@ -165,7 +160,6 @@ void TestObjectAllocatorNamedOverwrite(void)
 	ObjectsKill();
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 }
 
@@ -190,7 +184,6 @@ void TestObjectAllocatorCountDestructions(CBaseObject* pvObject)
 void TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed(void)
 {
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 	ObjectsInit();
@@ -341,7 +334,6 @@ void TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed(void)
 	ObjectsKill();
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 }
 
@@ -353,7 +345,6 @@ void TestObjectAllocatorOverwriteFromRootCausesChildrenToBeDestroyed(void)
 void TestObjectAllocatorNullCausesChildrenToBeDestroyed(void)
 {
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 	ObjectsInit();
@@ -498,7 +489,6 @@ void TestObjectAllocatorNullCausesChildrenToBeDestroyed(void)
 	ObjectsKill();
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 }
 
@@ -510,7 +500,6 @@ void TestObjectAllocatorNullCausesChildrenToBeDestroyed(void)
 void TestObjectAllocatorAssignmentToNullObject(void)
 {
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 	ObjectsInit();
@@ -549,7 +538,6 @@ void TestObjectAllocatorAssignmentToNullObject(void)
 	ObjectsKill();
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 }
 
@@ -561,7 +549,6 @@ void TestObjectAllocatorAssignmentToNullObject(void)
 void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwritten(void)
 {
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 	ObjectsInit();
@@ -645,7 +632,6 @@ void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwritten(void)
 	ObjectsKill();
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 }
 
@@ -657,7 +643,6 @@ void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwritten(void)
 void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwrittenWithEmbedded(void)
 {
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 	ObjectsInit();
@@ -744,7 +729,6 @@ void TestObjectAllocatorOverwrittensParentMaintainsPointerToOverwrittenWithEmbed
 	ObjectsKill();
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 }
 
@@ -760,7 +744,6 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 
 	cFileUtil.RemoveDir(szDirectory);
 	MemoryInit();
-	FastFunctionsInit();
 	TypesInit();
 	DataIOInit();
 	{
@@ -927,7 +910,6 @@ void TestObjectAllocatorOverwrittensFlushedObjects(void)
 
 	DataIOKill();
 	TypesKill();
-	FastFunctionsKill();
 	MemoryKill();
 	cFileUtil.RemoveDir(szDirectory);
 }

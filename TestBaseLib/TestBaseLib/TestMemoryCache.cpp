@@ -9,7 +9,7 @@
 //////////////////////////////////////////////////////////////////////////
 void FillCachedElement(void* pvData, int iSize, char c)
 {
-	memset_fast(pvData, c, iSize-1);
+	memset(pvData, c, iSize-1);
 	((char*)pvData)[iSize-1] = '\0';
 }
 
@@ -659,7 +659,6 @@ void TestMemoryCacheReallocate(void)
 void TestMemoryCache(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 	DataMemoryInit();
 
 	TestMemoryCacheSimple();
@@ -672,7 +671,6 @@ void TestMemoryCache(void)
 	TestMemoryCacheReallocate();
 
 	DataMemoryKill();
-	FastFunctionsKill();
 	TestStatistics();
 }
 

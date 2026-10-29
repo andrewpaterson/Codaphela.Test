@@ -1,4 +1,3 @@
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/TextFile.h"
 #include "BaseLib/IndexedFile.h"
 #include "TestLib/Assert.h"

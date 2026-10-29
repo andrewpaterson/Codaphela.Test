@@ -2,7 +2,6 @@
 #include <dirent.h>
 #endif // LINUX_GNU
 #include "BaseLib/Logger.h"
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/FileBasic.h"
 #include "BaseLib/TextFile.h"

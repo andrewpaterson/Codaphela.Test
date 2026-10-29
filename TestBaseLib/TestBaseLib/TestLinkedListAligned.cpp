@@ -159,7 +159,7 @@ void TestLinkedListBlockAlignedExhaustive(void)
 	void*						pvNext;
 	void*						pvPrev;
 
-	memset_fast(pv, 0, 1 KB);
+	memset(pv, 0, 1 KB);
 	for (i = 0; i < 256; i++)
 	{
 		pv[i] = (uint8)i;
@@ -173,7 +173,7 @@ void TestLinkedListBlockAlignedExhaustive(void)
 		for (uiDataSize = 1; uiDataSize <= 128; uiDataSize++)
 		{
 			pvNew = cList.Add(uiDataSize, iAlignment);
-			memcpy_fast(pvNew, pv, uiDataSize);
+			memcpy(pvNew, pv, uiDataSize);
 
 			iExpectedElements++;
 		}
@@ -211,7 +211,7 @@ void TestLinkedListBlockAlignedExhaustive(void)
 				AssertSize(uiDataSize, psNode->sAligned.uiSize);
 			}
 
-			iResult = memcmp_fast(pv, pvData, uiDataSize);
+			iResult = memcmp(pv, pvData, uiDataSize);
 			if (iResult != 0)
 			{
 				AssertMemory(pv, pvData, uiDataSize);
@@ -289,7 +289,7 @@ void TestLinkedListBlockAlignedExhaustive(void)
 				AssertSize(uiDataSize, psNode->sAligned.uiSize);
 			}
 
-			iResult = memcmp_fast(pv, pvData, uiDataSize);
+			iResult = memcmp(pv, pvData, uiDataSize);
 			if (iResult != 0)
 			{
 				AssertMemory(pv, pvData, uiDataSize);
@@ -337,7 +337,6 @@ void TestLinkedListBlockAlignedExhaustive(void)
 void TestLinkedListBlockAligned(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 	MemoryInit();
 
 	TestLinkedListBlockAlignedAdd();
@@ -346,7 +345,6 @@ void TestLinkedListBlockAligned(void)
 	TestLinkedListBlockAlignedExhaustive();
 
 	MemoryKill();
-	FastFunctionsKill();
 	TestStatistics();
 }
 

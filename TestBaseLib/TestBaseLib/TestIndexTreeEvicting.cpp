@@ -1,5 +1,4 @@
 #include "BaseLib/StringHelper.h"
-#include "BaseLib/FastFunctions.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/SystemAllocator.h"
 #include "BaseLib/MemoryAllocator.h"

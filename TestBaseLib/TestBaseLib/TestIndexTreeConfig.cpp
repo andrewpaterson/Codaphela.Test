@@ -158,7 +158,6 @@ void TestIndexTreeMemoryConfigLocalMallocatorReading(void)
 void TestIndexTreeMemoryConfig(void)
 {
 	BeginTests();
-	FastFunctionsInit();
 	MemoryInit();
 	LocalMallocatorsInit(&gcConstructors, &gcMallocators);
 	DataOrderersInit();
@@ -168,7 +167,6 @@ void TestIndexTreeMemoryConfig(void)
 
 	DataOrderersKill();
 	MemoryKill();
-	FastFunctionsKill();
 	TestStatistics();
 }
 
