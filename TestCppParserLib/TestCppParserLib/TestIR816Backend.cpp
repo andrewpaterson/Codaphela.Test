@@ -647,6 +647,151 @@ void TestIR816BackendDivide16(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A mul by a constant is shifts and adds when they cost less than the runtime call (ExpandMultiplies): constants with
+// a few signed digits, negative ones and ones whose digits carry past the top, on 16, 32 and 64 bits, against the
+// expected product and the 65C64's.  The value is a parameter so the product isn't worked out when compiled.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendMultiplyConstants(void)
+{
+	static const int64	alliConstants[] = { 3, 5, 6, 7, 10, 12, 15, 31, 100, 255, 320, 1000, 65537, -3, -5, -10, -320, 0x7FFFFFFF };
+	static const int64	alliValues[] = { 1234, -77, 0x12345 };
+	static const char*	aszTypes[] = { "i16", "i32", "i64" };
+	static const int	aiBits[] = { 16, 32, 64 };
+	char				sz[512];
+	size				i;
+	size				j;
+	size				k;
+	int64				lliExpected;
+	uint64				ulliMask;
+	CChars				szAssembly;
+
+	for (k = 0; k < 3; k++)
+	{
+		ulliMask = (aiBits[k] == 64) ? (uint64)-1 : (((uint64)1 << aiBits[k]) - 1);
+		for (i = 0; i < sizeof(alliConstants) / sizeof(alliConstants[0]); i++)
+		{
+			for (j = 0; j < sizeof(alliValues) / sizeof(alliValues[0]); j++)
+			{
+				lliExpected = (int64)(((uint64)alliValues[j] * (uint64)alliConstants[i]) & ulliMask);
+				if ((aiBits[k] < 64) && (lliExpected & ((int64)1 << (aiBits[k] - 1))))
+				{
+					lliExpected -= (int64)1 << aiBits[k];
+				}
+				if (aiBits[k] >= 32)
+				{
+					snprintf(sz, sizeof(sz), "function %s @_M__F(%s %%a), local\n{\nb:\n\t%%m = mul %s %%a, %lld\n\tret %s %%m\n}\n\n"
+						"function %s @_main()\n{\nb:\n\t%%r = call %s @_M__F(%s %lld)\n\tret %s %%r\n}\n", aszTypes[k], aszTypes[k], aszTypes[k], (long long)(alliConstants[i] & (int64)ulliMask),
+						aszTypes[k], aszTypes[k], aszTypes[k], aszTypes[k], (long long)(alliValues[j] & (int64)ulliMask), aszTypes[k]);
+				}
+				else
+				{
+					snprintf(sz, sizeof(sz), "function %s @_M__F(%s %%a), local\n{\nb:\n\t%%m = mul %s %%a, %lld\n\tret %s %%m\n}\n\n"
+						"function i32 @_main()\n{\nb:\n\t%%r = call %s @_M__F(%s %lld)\n\t%%s = sext %s %%r to i32\n\tret i32 %%s\n}\n",
+						aszTypes[k], aszTypes[k], aszTypes[k], (long long)(alliConstants[i] & (int64)ulliMask), aszTypes[k], aszTypes[k], aszTypes[k], (long long)(alliValues[j] & (int64)ulliMask), aszTypes[k]);
+					if (aiBits[k] == 16)
+					{
+						lliExpected = (int16)lliExpected;
+					}
+				}
+				AssertIR816(lliExpected, sz);
+			}
+		}
+	}
+
+	//An i8 product's shift by a constant mustn't count in X, where the trunc it shifts may be kept (AllocateX).
+	AssertIR816(0x01080F16, "function i32 @_main()\n{\nentry:\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%h = phi i32 [entry, 0], [loop, %h2]\n"
+		"\t%t = trunc i32 %i to i8\n\t%m = mul i8 %t, 7\n\t%a = add i8 %m, 1\n\t%z = zext i8 %a to i32\n"
+		"\t%hs = shl i32 %h, 8\n\t%h2 = add i32 %hs, %z\n\t%i2 = add i32 %i, 1\n\t%c = slt i32 %i2, 4\n\tbrif %c, loop, exit\n"
+		"exit:\n\tret i32 %h2\n}\n", true);
+
+	//The products' code: 320 has two digits (shifts and an add), 0x55555555 too many (the call).
+	szAssembly.Init();
+	AssertLong(1234 * 320, TestIR816Run("function i32 @_M__Fl(i32 %a), local\n{\nb:\n\t%m = mul i32 %a, 320\n\tret i32 %m\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%r = call i32 @_M__Fl(i32 1234)\n\tret i32 %r\n}\n", false, &szAssembly));
+	AssertFalse(szAssembly.Contains("R816_Mul32"));
+	szAssembly.Kill();
+	szAssembly.Init();
+	AssertLong((int32)(1234 * 0x55555555U), TestIR816Run("function i32 @_M__Fl(i32 %a), local\n{\nb:\n\t%m = mul i32 %a, 1431655765\n\tret i32 %m\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%r = call i32 @_M__Fl(i32 1234)\n\tret i32 %r\n}\n", false, &szAssembly));
+	AssertTrue(szAssembly.Contains("jsl R816_Mul32"));
+	szAssembly.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Shifts by a constant (ShiftConstant): whole words, then a byte moved a word at a time, then bits; the counts around
+// each byte and word of shl, lshr and ashr on 16, 32 and 64 bits.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendShiftConstants(void)
+{
+	static const char*	aszOpcodes[] = { "shl", "lshr", "ashr" };
+	static const char*	aszTypes[] = { "i16", "i32", "i64" };
+	static const int	aiBits[] = { 16, 32, 64 };
+	static const uint64	aulliValues[] = { 0x8123456789ABCDEFULL, 0x0123456789ABCDEFULL };
+	static const int	aiCounts[] = { 1, 3, 7, 8, 9, 15, 16, 17, 23, 24, 25, 31, 32, 33, 39, 40, 47, 48, 55, 56, 57, 63 };
+	char				sz[512];
+	int					iOpcode;
+	int					iType;
+	int					iCount;
+	size				i;
+	size				iValue;
+	uint64				ulliValue;
+	uint64				ulliMask;
+	uint64				ulliExpected;
+	int64				lliSigned;
+
+	for (iType = 0; iType < 3; iType++)
+	{
+		ulliMask = (aiBits[iType] == 64) ? (uint64)-1 : (((uint64)1 << aiBits[iType]) - 1);
+		for (iValue = 0; iValue < 2; iValue++)
+		{
+			//The value's top bit set, and not.
+			ulliValue = aulliValues[iValue] >> (64 - aiBits[iType]);
+			lliSigned = (int64)(ulliValue << (64 - aiBits[iType])) >> (64 - aiBits[iType]);
+			for (iOpcode = 0; iOpcode < 3; iOpcode++)
+			{
+				for (i = 0; (i < sizeof(aiCounts) / sizeof(aiCounts[0])) && (aiCounts[i] < aiBits[iType]); i++)
+				{
+					iCount = aiCounts[i];
+					if (iOpcode == 0)
+					{
+						ulliExpected = (ulliValue << iCount) & ulliMask;
+					}
+					else if (iOpcode == 1)
+					{
+						ulliExpected = ulliValue >> iCount;
+					}
+					else
+					{
+						ulliExpected = (uint64)(lliSigned >> iCount) & ulliMask;
+					}
+					if (aiBits[iType] >= 32)
+					{
+						snprintf(sz, sizeof(sz), "function %s @_S__F(%s %%a), local\n{\nb:\n\t%%s = %s %s %%a, %d\n\tret %s %%s\n}\n\n"
+							"function %s @_main()\n{\nb:\n\t%%r = call %s @_S__F(%s %llu)\n\tret %s %%r\n}\n", aszTypes[iType], aszTypes[iType], aszOpcodes[iOpcode], aszTypes[iType], iCount, aszTypes[iType],
+							aszTypes[iType], aszTypes[iType], aszTypes[iType], (unsigned long long)ulliValue, aszTypes[iType]);
+						AssertIR816((aiBits[iType] == 64) ? (int64)ulliExpected : (int64)(int32)(uint32)ulliExpected, sz);
+					}
+					else
+					{
+						snprintf(sz, sizeof(sz), "function %s @_S__F(%s %%a), local\n{\nb:\n\t%%s = %s %s %%a, %d\n\tret %s %%s\n}\n\n"
+							"function i32 @_main()\n{\nb:\n\t%%r = call %s @_S__F(%s %llu)\n\t%%z = zext %s %%r to i32\n\tret i32 %%z\n}\n",
+							aszTypes[iType], aszTypes[iType], aszOpcodes[iOpcode], aszTypes[iType], iCount, aszTypes[iType], aszTypes[iType], aszTypes[iType], (unsigned long long)ulliValue, aszTypes[iType]);
+						AssertIR816((int64)ulliExpected, sz);
+					}
+				}
+			}
+		}
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Unsigned 32 bit compares branch on the high words' Z, then on the low words' C: the peephole mustn't take the
 // compare of a high word with 0 out (its carry is read after the branch, a label and a .width away).
 //
@@ -1090,6 +1235,8 @@ void TestIR816Backend(void)
 	TestIR816BackendDividePaths();
 	TestIR816BackendMultiply();
 	TestIR816BackendDivide16();
+	TestIR816BackendMultiplyConstants();
+	TestIR816BackendShiftConstants();
 	TestIR816BackendCompareCarry();
 	TestIR816BackendSharedPlaces();
 	TestIR816BackendFused();

@@ -778,6 +778,47 @@ void TestCPP816BaseLib(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Sprite drawing in C style (Input/CPP65/SpriteProject: Sprite.h and Sprite.cpp as given, Image.cpp's DrawPixel on a
+// 320 x 200 byte screen at 0011:0000): a container of an opaque and a transparent sprite, iterated and drawn.  The
+// expected values are from the same sources built natively (with DrawPixel on an array): 20 pixels set, 2 images and
+// the screen's hash.  DrawPixel is inlined across the units.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816Sprites(void)
+{
+	static const char*	aszSprites[] = { "Input/CPP65/SpriteProject/Sprite.cpp", "Input/CPP65/SpriteProject/Image.cpp", "Libc65/string816.asm", "Input/CPP65/SpriteProject/Main.cpp", NULL };
+	uint32				auiResults[2];
+
+	CCPP65Builder		cBuilder;
+	CChars				szProject;
+	CFileUtil			cFileUtil;
+	int64				iAddress;
+
+	AssertInt(20, TestCPP816RunProject(aszSprites, "", NULL, true, auiResults, 2));
+	AssertIntHex(974038828, auiResults[0]);
+	AssertInt(2, auiResults[1]);
+
+	//DrawPixel (Image.cpp) is inlined into DrawSprite (Sprite.cpp, compiled before it, so again at the end) and into
+	//nothing else: it is left out of the program.
+	cBuilder.Init();
+	cBuilder.SetTarget(CPPT_W65C816);
+	TestCPP65AddIncludeDirectories(&cBuilder);
+	AssertTrue(cBuilder.AddStartUp());
+	szProject.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "Libc65");
+	cFileUtil.FullPath(&szProject);
+	cBuilder.AddMathTables(szProject.Text());
+	szProject.Kill();
+	TestCPP65AddUnits(&cBuilder, aszSprites, false);
+	AssertTrue(cBuilder.Link());
+	AssertString("", cBuilder.GetErrors());
+	AssertTrue(cBuilder.GetSymbol("_DrawSprite__FssPC13SSpriteHeader", &iAddress));
+	AssertFalse(cBuilder.GetSymbol("_DrawPixel__Fssh", &iAddress));
+	cBuilder.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // BaseLib's FloatHelper and SQuaternion with softfloat.cpp (and math.cpp) compiled for the W65C816, against the
 // same calls natively, as on the 65C64.
 //
@@ -1309,6 +1350,7 @@ void TestCPP816(void)
 	TestCPP816MemSwp();
 	TestCPP816LoopIdioms();
 	TestCPP816BaseLib();
+	TestCPP816Sprites();
 	TestCPP816NewDelete();
 	TestCPP816Floats();
 	TestCPP816TestBaseLibBugs();
