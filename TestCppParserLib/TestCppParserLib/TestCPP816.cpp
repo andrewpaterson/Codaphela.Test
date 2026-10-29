@@ -859,11 +859,18 @@ void TestCPP816LocalSymbols(void)
 //////////////////////////////////////////////////////////////////////////
 //
 // A loop that only steps q and x until x is x0 + d (when d isn't 0) goes:
-// q is p + d after it.  x wraps past 65535 in the second call.
+// q is p + d after it.  x wraps past 65535 in the second call.  And a loop
+// counter times a value the loop doesn't change, wrapping.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCPP816ExitValues(void)
 {
+	//y * w (16 bit, wrapping past 65535) as a phi stepped by w (ReduceMultiplies).
+	AssertInt(-19760,
+		TestCPP816Run(
+			"unsigned int F(unsigned int y0, unsigned int w, unsigned int n)\n"
+			"{\n\tunsigned int s = 0;\n\tfor (unsigned int y = y0; y < n; y++)\n\t{\n\t\ts ^= y * w;\n\t}\n\treturn s;\n}\n"
+			"int main(void) { return (int)F(3, 1000, 90); }\n", true));
 	AssertInt(300 + 2 + 0,
 		TestCPP816Run(
 			"int Skip(const char* p, unsigned int x0, unsigned int d)\n"

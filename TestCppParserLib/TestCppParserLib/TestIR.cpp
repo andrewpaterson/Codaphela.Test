@@ -1383,6 +1383,63 @@ void TestIROptimiserSinkAndHoist(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A counter times a value the loop doesn't change is a phi of its own,
+// stepped by an add; times a value the loop changes it stays a mul.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserReduceMultiplies(void)
+{
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i16 @_F__Fsss(i16 %y0, i16 %w, i16 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\t%0 = mul i16 %y0, %w\n"
+		"\tjmp loop\n"
+		"loop:\n"
+		"\t%y = phi i16 [entry, %y0], [loop, %y2]\n"
+		"\t%s = phi i16 [entry, 0], [loop, %s2]\n"
+		"\t%1 = phi i16 [entry, %0], [loop, %2]\n"
+		"\t%s2 = xor i16 %s, %1\n"
+		"\t%y2 = add i16 %y, 1\n"
+		"\t%2 = add i16 %1, %w\n"
+		"\t%d = slt i16 %y2, %n\n"
+		"\tbrif %d, loop, exit\n"
+		"exit:\n"
+		"\tret i16 %s2\n"
+		"}\n",
+		"space default 4\n\nfunction i16 @_F__Fsss(i16 %y0, i16 %w, i16 %n)\n{\nentry:\n\tjmp loop\n"
+		"loop:\n\t%y = phi i16 [entry, %y0], [loop, %y2]\n\t%s = phi i16 [entry, 0], [loop, %s2]\n"
+		"\t%m = mul i16 %y, %w\n\t%s2 = xor i16 %s, %m\n\t%y2 = add i16 %y, 1\n\t%d = slt i16 %y2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret i16 %s2\n}\n");
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i16 @_F__Fsss(i16 %y0, i16 %w, i16 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\tjmp loop\n"
+		"loop:\n"
+		"\t%y = phi i16 [entry, %y0], [loop, %y2]\n"
+		"\t%s = phi i16 [entry, 0], [loop, %s2]\n"
+		"\t%m = mul i16 %y, %s\n"
+		"\t%s2 = xor i16 %s, %m\n"
+		"\t%y2 = add i16 %y, 1\n"
+		"\t%d = slt i16 %y2, %n\n"
+		"\tbrif %d, loop, exit\n"
+		"exit:\n"
+		"\tret i16 %s2\n"
+		"}\n",
+		"space default 4\n\nfunction i16 @_F__Fsss(i16 %y0, i16 %w, i16 %n)\n{\nentry:\n\tjmp loop\n"
+		"loop:\n\t%y = phi i16 [entry, %y0], [loop, %y2]\n\t%s = phi i16 [entry, 0], [loop, %s2]\n"
+		"\t%m = mul i16 %y, %s\n\t%s2 = xor i16 %s, %m\n\t%y2 = add i16 %y, 1\n\t%d = slt i16 %y2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret i16 %s2\n}\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // A restrict symbol stays restrict when a function naming it is exported
 // to CIRImports and inlined into another unit.
 //
@@ -2590,6 +2647,7 @@ void TestIR(void)
 	TestIROptimiserSinkLoads();
 	TestIROptimiserExitValues();
 	TestIROptimiserSinkAndHoist();
+	TestIROptimiserReduceMultiplies();
 
 	TestStatistics();
 }

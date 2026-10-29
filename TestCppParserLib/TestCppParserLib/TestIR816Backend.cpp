@@ -1239,8 +1239,8 @@ static bool TestIR816PreviousIsDirectLoad(const char* szAssembly, const char* sz
 //
 // Whether the code has a bra to the label after it, a branch to a label
 // whose first instruction is a bra, a branch over a bra to the label after
-// it, an lda before a bra to code that starts with lda or txa, or tax and
-// txa together (PeepholeBranches leaves none).
+// it, an lda before a bra to code that starts with lda or txa, tax and txa
+// together, or a loop's mark (PeepholeBranches leaves none).
 //
 //////////////////////////////////////////////////////////////////////////
 static bool TestIR816UntidyBranch(const char* szAssembly)
@@ -1251,7 +1251,7 @@ static bool TestIR816UntidyBranch(const char* szAssembly)
 	char		szLabel[40];
 	int			iLength;
 
-	if (strstr(szAssembly, "\t\ttax\n\t\ttxa\n") || strstr(szAssembly, "\t\ttxa\n\t\ttax\n"))
+	if (strstr(szAssembly, "\t\ttax\n\t\ttxa\n") || strstr(szAssembly, "\t\ttxa\n\t\ttax\n") || strstr(szAssembly, "\t\ttax\n\t\tclc\n\t\ttxa\n") || strstr(szAssembly, " ;R\n"))
 	{
 		return true;
 	}
