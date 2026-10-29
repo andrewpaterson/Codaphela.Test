@@ -753,11 +753,12 @@ void TestIRLoops(void)
 //////////////////////////////////////////////////////////////////////////
 //
 // szText, optimised (for a target whose loads and stores add an index for
-// nothing, unless bIndexedAddresses is false), must verify and print as
+// nothing, unless bIndexedAddresses is false; with loops made memset and
+// memmove calls, a 16 bit int, if bLibrary), must verify and print as
 // szExpected.
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertIROptimised(const char* szExpected, const char* szText, bool bIndexedAddresses = true)
+void AssertIROptimised(const char* szExpected, const char* szText, bool bIndexedAddresses = true, bool bLibrary = false)
 {
 	CIRModule		cModule;
 	CCPPErrors		cErrors;
@@ -775,6 +776,10 @@ void AssertIROptimised(const char* szExpected, const char* szText, bool bIndexed
 	cParser.Kill();
 	cOptimiser.Init(&cModule);
 	cOptimiser.SetIndexedAddresses(bIndexedAddresses);
+	if (bLibrary)
+	{
+		cOptimiser.SetLibraryInt(IRType(IRTK_I16));
+	}
 	for (ui = 0; ui < cModule.NumFunctions(); ui++)
 	{
 		cOptimiser.Optimise(cModule.GetFunction(ui));
@@ -1280,6 +1285,91 @@ void TestIROptimiser(void)
 		"exit:\n"
 		"\tret i32 %s\n"
 		"}\n", false);
+
+	//A loop storing 7 to p[i] for i from 0 to n is memset(p, 7, n).
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function void @_F__FPci(ptr %p, i32 %n)\n"
+		"{\n"
+		"e:\n"
+		"\t%0 = slt i32 0, %n\n"
+		"\tbrif %0, 0, x\n"
+		"x:\n"
+		"\tret\n"
+		"0:\n"
+		"\t%1 = call ptr @_memset(ptr %p, i16 7, i32 %n)\n"
+		"\tret\n"
+		"}\n",
+		"function void @_F__FPci(ptr %p, i32 %n)\n"
+		"{\n"
+		"e:\n"
+		"\tjmp t\n"
+		"t:\n"
+		"\t%i = phi i32 [e, 0], [b, %i2]\n"
+		"\t%c = slt i32 %i, %n\n"
+		"\tbrif %c, b, x\n"
+		"b:\n"
+		"\t%a = ptradd ptr %p, %i\n"
+		"\tstore i8 7, %a\n"
+		"\t%i2 = add i32 %i, 1\n"
+		"\tjmp t\n"
+		"x:\n"
+		"\tret\n"
+		"}\n", true, true);
+
+	//A loop copying q[i] to p[i], 16 bits each, is memmove when p is at or below q or past the end of what it reads.
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function void @_C__FPsPsj(ptr %p, ptr %q, i32 %n)\n"
+		"{\n"
+		"e:\n"
+		"\t%0 = ult i32 0, %n\n"
+		"\tbrif %0, 0, x\n"
+		"b:\n"
+		"\t%1 = phi i32 [0, 0], [b, %i2]\n"
+		"\t%2 = phi ptr [0, %q], [b, %5]\n"
+		"\t%3 = phi ptr [0, %p], [b, %6]\n"
+		"\t%v = load i16 %2\n"
+		"\tstore i16 %v, %3\n"
+		"\t%i2 = add i32 %1, 1\n"
+		"\t%4 = ult i32 %i2, %n\n"
+		"\t%5 = ptradd ptr %2, 2\n"
+		"\t%6 = ptradd ptr %3, 2\n"
+		"\tbrif %4, b, x\n"
+		"x:\n"
+		"\tret\n"
+		"0:\n"
+		"\t%7 = shl i32 %n, 1\n"
+		"\t%8 = ule ptr %p, %q\n"
+		"\t%9 = ptradd ptr %q, %7\n"
+		"\t%10 = uge ptr %p, %9\n"
+		"\t%11 = or i1 %8, %10\n"
+		"\tbrif %11, 1, b\n"
+		"1:\n"
+		"\t%12 = call ptr @_memmove(ptr %p, ptr %q, i32 %7)\n"
+		"\tret\n"
+		"}\n",
+		"function void @_C__FPsPsj(ptr %p, ptr %q, i32 %n)\n"
+		"{\n"
+		"e:\n"
+		"\tjmp t\n"
+		"t:\n"
+		"\t%i = phi i32 [e, 0], [b, %i2]\n"
+		"\t%c = ult i32 %i, %n\n"
+		"\tbrif %c, b, x\n"
+		"b:\n"
+		"\t%o = shl i32 %i, 1\n"
+		"\t%s = ptradd ptr %q, %o\n"
+		"\t%v = load i16 %s\n"
+		"\t%d = ptradd ptr %p, %o\n"
+		"\tstore i16 %v, %d\n"
+		"\t%i2 = add i32 %i, 1\n"
+		"\tjmp t\n"
+		"x:\n"
+		"\tret\n"
+		"}\n", true, true);
 
 	//j's phi is 0 coming from z, so z goes straight to n (and j, left with one way in, joins m).
 	AssertIROptimised(

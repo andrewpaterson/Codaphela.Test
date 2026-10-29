@@ -509,6 +509,149 @@ void TestCPP816Builtins(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Loops that fill or copy memory, which the optimiser makes memset and
+// memmove calls (ReplaceLoopIdioms), give what the loops would: a fill of
+// bytes and of 16 bit zeros, a copy of 16 bit elements, and copies that
+// overlap both ways (a copy up into itself repeats the first bytes, as the
+// loop does, so it stays a loop).  Returns the bytes wrong.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816LoopIdioms(void)
+{
+	static const char*	aszUnits[] = { "Libc65/string816.asm", NULL };
+
+	AssertInt(0, TestCPP816RunProject(aszUnits, "",
+		"unsigned char	gauc[300];\n"
+		"short			gas[100];\n"
+		"short			gas2[100];\n"
+		"void Fill(unsigned char* puc, unsigned char uc, long iCount)\n"
+		"{\n"
+		"	long	i;\n"
+		"	for (i = 0; i < iCount; i++)\n"
+		"	{\n"
+		"		puc[i] = uc;\n"
+		"	}\n"
+		"}\n"
+		"void Zero(short* ps, unsigned long uiCount)\n"
+		"{\n"
+		"	unsigned long	i;\n"
+		"	for (i = 0; i < uiCount; i++)\n"
+		"	{\n"
+		"		ps[i] = 0;\n"
+		"	}\n"
+		"}\n"
+		"void Copy(short* psTo, short* psFrom, unsigned long uiCount)\n"
+		"{\n"
+		"	unsigned long	i;\n"
+		"	for (i = 0; i < uiCount; i++)\n"
+		"	{\n"
+		"		psTo[i] = psFrom[i];\n"
+		"	}\n"
+		"}\n"
+		"void CopyBytes(unsigned char* pucTo, unsigned char* pucFrom, long iCount)\n"
+		"{\n"
+		"	long	i;\n"
+		"	for (i = 0; i < iCount; i++)\n"
+		"	{\n"
+		"		pucTo[i] = pucFrom[i];\n"
+		"	}\n"
+		"}\n"
+		"int main(void)\n"
+		"{\n"
+		"	long	i;\n"
+		"	int		iWrong;\n"
+		"	iWrong = 0;\n"
+		"	for (i = 0; i < 300; i++)\n"
+		"	{\n"
+		"		gauc[i] = 1;\n"
+		"	}\n"
+		"	Fill(gauc + 3, 9, 200);\n"
+		"	for (i = 0; i < 300; i++)\n"
+		"	{\n"
+		"		iWrong += gauc[i] != (((i >= 3) && (i < 203)) ? 9 : 1);\n"
+		"	}\n"
+		"	for (i = 0; i < 100; i++)\n"
+		"	{\n"
+		"		gas[i] = (short)(i * 3 - 50);\n"
+		"		gas2[i] = 5;\n"
+		"	}\n"
+		"	Zero(gas2 + 10, 50);\n"
+		"	Copy(gas2 + 70, gas + 20, 25);\n"
+		"	for (i = 0; i < 100; i++)\n"
+		"	{\n"
+		"		iWrong += gas2[i] != (((i >= 10) && (i < 60)) ? 0 : (((i >= 70) && (i < 95)) ? (short)((i - 50) * 3 - 50) : 5));\n"
+		"	}\n"
+		"	for (i = 0; i < 300; i++)\n"
+		"	{\n"
+		"		gauc[i] = (unsigned char)i;\n"
+		"	}\n"
+		"	CopyBytes(gauc + 1, gauc, 100);\n"
+		"	CopyBytes(gauc + 150, gauc + 160, 100);\n"
+		"	for (i = 0; i < 300; i++)\n"
+		"	{\n"
+		"		iWrong += gauc[i] != ((i <= 100) ? 0 : (((i >= 150) && (i < 250)) ? (unsigned char)(i + 10) : (unsigned char)i));\n"
+		"	}\n"
+		"	return iWrong;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// MemSwp in string816.asm (BaseLib's is left out for the W65C816): every
+// length from 0 to 40 and 255 to 257, both buffers swapped and the bytes
+// after them unchanged.  Returns the bytes wrong.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816MemSwp(void)
+{
+	static const char*	aszUnits[] = { "Libc65/string816.asm", NULL };
+
+	AssertInt(0, TestCPP816RunProject(aszUnits, "",
+		"void MemSwp(const void* pv1, const void* pv2, unsigned long uiLength);\n"
+		"unsigned char gauc1[300];\n"
+		"unsigned char gauc2[300];\n"
+		"int Check(unsigned long uiLength)\n"
+		"{\n"
+		"	unsigned long	i;\n"
+		"	int				iWrong;\n"
+		"	for (i = 0; i < 300; i++)\n"
+		"	{\n"
+		"		gauc1[i] = (unsigned char)(i + 1);\n"
+		"		gauc2[i] = (unsigned char)(i * 3 + 7);\n"
+		"	}\n"
+		"	MemSwp(gauc1, gauc2, uiLength);\n"
+		"	iWrong = 0;\n"
+		"	for (i = 0; i < 300; i++)\n"
+		"	{\n"
+		"		if (gauc1[i] != ((i < uiLength) ? (unsigned char)(i * 3 + 7) : (unsigned char)(i + 1)))\n"
+		"		{\n"
+		"			iWrong++;\n"
+		"		}\n"
+		"		if (gauc2[i] != ((i < uiLength) ? (unsigned char)(i + 1) : (unsigned char)(i * 3 + 7)))\n"
+		"		{\n"
+		"			iWrong++;\n"
+		"		}\n"
+		"	}\n"
+		"	return iWrong;\n"
+		"}\n"
+		"int main(void)\n"
+		"{\n"
+		"	unsigned long	ul;\n"
+		"	int				iWrong;\n"
+		"	iWrong = 0;\n"
+		"	for (ul = 0; ul <= 40; ul++)\n"
+		"	{\n"
+		"		iWrong += Check(ul);\n"
+		"	}\n"
+		"	iWrong += Check(255) + Check(256) + Check(257);\n"
+		"	return iWrong;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // BaseLib code with the Libc65 code it needs, as TestCPP65GeneratorBaseLib runs it on the 65C64.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -538,8 +681,8 @@ void TestCPP816BaseLib(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCPP816Floats(void)
 {
-	static const char*	aszFloatHelper[] = { "BaseLib/FloatHelper.cpp", "Libc65/softfloat.cpp", "Libc65/math.cpp", "Input/CPP65/FloatHelperProject/Main.cpp", NULL };
-	static const char*	aszQuaternion[] = { "BaseLib/Quaternion.cpp", "Libc65/softfloat.cpp", "Input/CPP65/QuaternionProject/Main.cpp", NULL };
+	static const char*	aszFloatHelper[] = { "BaseLib/FloatHelper.cpp", "Libc65/softfloat.cpp", "Libc65/math.cpp", "Libc65/string816.asm", "Input/CPP65/FloatHelperProject/Main.cpp", NULL };
+	static const char*	aszQuaternion[] = { "BaseLib/Quaternion.cpp", "Libc65/softfloat.cpp", "Libc65/string816.asm", "Input/CPP65/QuaternionProject/Main.cpp", NULL };
 	uint32				auiResults[256];
 	size				i;
 	uint32				uiExpected;
@@ -1004,6 +1147,8 @@ void TestCPP816(void)
 	TestCPP816Statements();
 	TestCPP816Globals();
 	TestCPP816Builtins();
+	TestCPP816MemSwp();
+	TestCPP816LoopIdioms();
 	TestCPP816BaseLib();
 	TestCPP816NewDelete();
 	TestCPP816Floats();
