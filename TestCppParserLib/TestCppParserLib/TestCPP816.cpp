@@ -871,6 +871,11 @@ void TestCPP816ExitValues(void)
 			"unsigned int F(unsigned int y0, unsigned int w, unsigned int n)\n"
 			"{\n\tunsigned int s = 0;\n\tfor (unsigned int y = y0; y < n; y++)\n\t{\n\t\ts ^= y * w;\n\t}\n\treturn s;\n}\n"
 			"int main(void) { return (int)F(3, 1000, 90); }\n", true));
+	AssertInt(-23988,
+		TestCPP816Run(
+			"unsigned int G(unsigned int y, unsigned int w)\n"
+			"{\n\tunsigned int s = 0;\n\tfor (unsigned int i = 0; i < 200; i++)\n\t{\n\t\tif ((i % 3) == 0)\n\t\t{\n\t\t\ty++;\n\t\t}\n\t\ts ^= y * w;\n\t}\n\treturn s;\n}\n"
+			"int main(void) { return (int)G(5, 700); }\n", true));
 	AssertInt(300 + 2 + 0,
 		TestCPP816Run(
 			"int Skip(const char* p, unsigned int x0, unsigned int d)\n"

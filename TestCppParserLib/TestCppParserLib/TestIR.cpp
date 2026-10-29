@@ -1384,7 +1384,8 @@ void TestIROptimiserSinkAndHoist(void)
 //////////////////////////////////////////////////////////////////////////
 //
 // A counter times a value the loop doesn't change is a phi of its own,
-// stepped by an add; times a value the loop changes it stays a mul.
+// stepped by an add (also when it is stepped on some ways round only);
+// times a value the loop changes it stays a mul.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestIROptimiserReduceMultiplies(void)
@@ -1434,6 +1435,41 @@ void TestIROptimiserReduceMultiplies(void)
 		"space default 4\n\nfunction i16 @_F__Fsss(i16 %y0, i16 %w, i16 %n)\n{\nentry:\n\tjmp loop\n"
 		"loop:\n\t%y = phi i16 [entry, %y0], [loop, %y2]\n\t%s = phi i16 [entry, 0], [loop, %s2]\n"
 		"\t%m = mul i16 %y, %s\n\t%s2 = xor i16 %s, %m\n\t%y2 = add i16 %y, 1\n\t%d = slt i16 %y2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret i16 %s2\n}\n");
+	//y stepped on one way round only: its web (the head's phi, y + 1, the phi joining them) has a product web.
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i16 @_F__Fssss(i16 %y0, i16 %w, i16 %f, i16 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\t%0 = mul i16 %y0, %w\n"
+		"\tjmp loop\n"
+		"loop:\n"
+		"\t%i = phi i16 [entry, 0], [join, %i2]\n"
+		"\t%s = phi i16 [entry, 0], [join, %s2]\n"
+		"\t%1 = phi i16 [entry, %0], [join, %3]\n"
+		"\t%a = and i16 %i, %f\n"
+		"\t%c = eq i16 %a, 0\n"
+		"\tbrif %c, step, join\n"
+		"step:\n"
+		"\t%2 = add i16 %1, %w\n"
+		"\tjmp join\n"
+		"join:\n"
+		"\t%3 = phi i16 [loop, %1], [step, %2]\n"
+		"\t%s2 = xor i16 %s, %3\n"
+		"\t%i2 = add i16 %i, 1\n"
+		"\t%d = slt i16 %i2, %n\n"
+		"\tbrif %d, loop, exit\n"
+		"exit:\n"
+		"\tret i16 %s2\n"
+		"}\n",
+		"space default 4\n\nfunction i16 @_F__Fssss(i16 %y0, i16 %w, i16 %f, i16 %n)\n{\nentry:\n\tjmp loop\n"
+		"loop:\n\t%i = phi i16 [entry, 0], [join, %i2]\n\t%y = phi i16 [entry, %y0], [join, %y3]\n\t%s = phi i16 [entry, 0], [join, %s2]\n"
+		"\t%a = and i16 %i, %f\n\t%c = eq i16 %a, 0\n\tbrif %c, step, join\n"
+		"step:\n\t%y2 = add i16 %y, 1\n\tjmp join\n"
+		"join:\n\t%y3 = phi i16 [loop, %y], [step, %y2]\n\t%m = mul i16 %y3, %w\n\t%s2 = xor i16 %s, %m\n"
+		"\t%i2 = add i16 %i, 1\n\t%d = slt i16 %i2, %n\n\tbrif %d, loop, exit\n"
 		"exit:\n\tret i16 %s2\n}\n");
 }
 
