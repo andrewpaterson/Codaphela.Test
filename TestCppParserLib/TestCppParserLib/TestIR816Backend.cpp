@@ -2,11 +2,15 @@
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/NumberControl.h"
+#include "BaseLib/TextFile.h"
+#include "BaseLib/ConstructorCall.h"
+#include "BaseLib/PointerFunctions.h"
 #include "MicroprocessorLib/W65C816InstructionFactory.h"
 #include "MicroprocessorLib/65C64InstructionFactory.h"
 #include "Assembler65Lib/Asm816Assembler.h"
 #include "Assembler65Lib/Asm816Lockstep.h"
 #include "Assembler65Lib/Asm65Linker.h"
+#include "Assembler65Lib/Asm65Library.h"
 #include "Assembler65Lib/Asm65Memory.h"
 #include "CppParserLib/IRParser.h"
 #include "CppParserLib/IRVerifier.h"
@@ -25,6 +29,7 @@
 #define TEST_IR816_STEPS		50000000		//The most steps a test program may take.
 #define TEST_IR816_MEMORY		0x100000
 #define TEST_IR816_STACK_TOP	0xEFFF
+#define TEST_IR816_MATH_TABLES	".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "Libc65" _FS_ "MathTbls"
 
 
 int64 TestIR65Run(const char* szIR, bool bFloat, CChars* pszAssembly);
@@ -71,6 +76,41 @@ static bool TestIR816Assemble(CAsm65Object* pcObject, const char* szName, const 
 	AssertString("", cAssembler.GetErrors());
 	cAssembler.Kill();
 	return bResult;
+}
+
+
+//The maths tables the runtime uses (MathMult for multiply), assembled once and linked when used.
+static CAsm65Library*	gpcTestIR816MathTables = NULL;
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+static CAsm65Library* TestIR816MathTables(void)
+{
+	CTextFile			cFile;
+	CChars				szPath;
+	CAsm816Assembler	cAssembler;
+
+	if (gpcTestIR816MathTables)
+	{
+		return gpcTestIR816MathTables;
+	}
+	gpcTestIR816MathTables = NewMalloc<CAsm65Library>();
+	gpcTestIR816MathTables->Init("MathTables");
+	szPath.Init(TEST_IR816_MATH_TABLES _FS_ "MathMult.asm");
+	cFile.Init();
+	AssertTrue(cFile.Read(szPath.Text()));
+	cFile.PassifyNewlines();
+	cAssembler.Init();
+	cAssembler.SetDirectory(TEST_IR816_MATH_TABLES);
+	AssertTrue(cAssembler.AssembleObject(cFile.Text(), gpcTestIR816MathTables->AddObject("MathMult.asm")));
+	AssertString("", cAssembler.GetErrors());
+	cAssembler.Kill();
+	cFile.Kill();
+	szPath.Kill();
+	return gpcTestIR816MathTables;
 }
 
 
@@ -147,6 +187,7 @@ int64 TestIR816Run(const char* szIR, bool bLockstep, CChars* pszAssembly = NULL)
 		{
 			cLinker.AddObject(&acObjects[i]);
 		}
+		cLinker.AddLibrary(TestIR816MathTables());
 		AssertTrue(cLinker.Link());
 		AssertString("", cLinker.GetErrors());
 		AssertTrue(cLinker.GetSymbol("Result", &iResult));
@@ -439,6 +480,93 @@ void TestIR816BackendDividePaths(void)
 			"function i64 @_main()\n{\nb:\n\t%%r = call i64 @_D__Fyy(i64 %llu, i64 %llu)\n\tret i64 %%r\n}\n", (unsigned long long)auiPairs64[i][0], (unsigned long long)auiPairs64[i][1]);
 		AssertIR816((int64)(auiPairs64[i][0] % auiPairs64[i][1]), sz);
 	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The runtime multiply (R816_Mul16 and R816_Mul32, byte products from MathMult): 1024 products of two pseudo
+// random values shifted right by every pair of amounts (so every half and byte is 0 in some), hashed.
+//
+//////////////////////////////////////////////////////////////////////////
+static const char* gszTestIR816Multiply =
+	"function $T @_M__F$M($T %a, $T %b), local\n{\nb:\n\t%m = mul $T %a, %b\n\tret $T %m\n}\n\n"
+	"function i32 @_main()\n{\n"
+	"entry:\n\tjmp loop\n"
+	"loop:\n\t%i = phi $T [entry, 0], [body, %i2]\n\t%x = phi $T [entry, 12345], [body, %x2]\n\t%y = phi $T [entry, 6789], [body, %y2]\n\t%h = phi $T [entry, 0], [body, %h2]\n"
+	"\t%done = eq $T %i, 1024\n\tbrif %done, exit, body\n"
+	"body:\n"
+	"\t%xm = mul $T %x, 25173\n\t%x2 = add $T %xm, 13849\n\t%ym = mul $T %y, 1103\n\t%y2 = add $T %ym, 7919\n"
+	"\t%sa = and $T %i, $S\n\t%ti = lshr $T %i, 5\n\t%sb = and $T %ti, $S\n"
+	"\t%a = lshr $T %x2, %sa\n\t%b = lshr $T %y2, %sb\n"
+	"\t%p = call $T @_M__F$M($T %a, $T %b)\n"
+	"\t%hs = shl $T %h, 5\n\t%ha = add $T %hs, %h\n\t%h2 = xor $T %ha, %p\n"
+	"\t%i2 = add $T %i, 1\n\tjmp loop\n"
+	"exit:\n$RET}\n";
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendMultiply(void)
+{
+	uint32	i;
+	uint32	x32;
+	uint32	y32;
+	uint32	h32;
+	uint16	x16;
+	uint16	y16;
+	uint16	h16;
+	CChars	szIR;
+	CChars	szAssembly;
+
+	x32 = 12345;
+	y32 = 6789;
+	h32 = 0;
+	x16 = 12345;
+	y16 = 6789;
+	h16 = 0;
+	for (i = 0; i < 1024; i++)
+	{
+		x32 = x32 * 25173 + 13849;
+		y32 = y32 * 1103 + 7919;
+		h32 = (h32 * 33) ^ ((x32 >> (i & 31)) * (y32 >> ((i >> 5) & 31)));
+		x16 = (uint16)(x16 * 25173 + 13849);
+		y16 = (uint16)(y16 * 1103 + 7919);
+		h16 = (uint16)((h16 * 33) ^ (uint16)((uint16)(x16 >> (i & 15)) * (uint16)(y16 >> ((i >> 5) & 15))));
+	}
+
+	szIR.Init(gszTestIR816Multiply);
+	szIR.Replace("$T", "i32");
+	szIR.Replace("$M", "jj");
+	szIR.Replace("$S", "31");
+	szIR.Replace("$RET", "\tret i32 %h\n");
+	szAssembly.Init();
+	AssertLong((int32)h32, TestIR816Run(szIR.Text(), false, &szAssembly));
+	AssertTrue(szAssembly.Contains("jsl R816_Mul32"));
+	szAssembly.Kill();
+	AssertIR816((int32)h32, szIR.Text());
+	szIR.Kill();
+
+	szIR.Init(gszTestIR816Multiply);
+	szIR.Replace("$T", "i16");
+	szIR.Replace("$M", "tt");
+	szIR.Replace("$S", "15");
+	szIR.Replace("$RET", "\t%r = zext i16 %h to i32\n\tret i32 %r\n");
+	szAssembly.Init();
+	AssertLong(h16, TestIR816Run(szIR.Text(), false, &szAssembly));
+	AssertTrue(szAssembly.Contains("jsl R816_Mul16"));
+	szAssembly.Kill();
+	AssertIR816(h16, szIR.Text());
+	szIR.Kill();
+
+	AssertIR816(0x7FFF8001, "function i32 @_M__Fjj(i32 %a, i32 %b), local\n{\nb:\n\t%m = mul i32 %a, %b\n\tret i32 %m\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%r = call i32 @_M__Fjj(i32 65535, i32 -32769)\n\tret i32 %r\n}\n", true);
+	AssertIR816(1, "function i32 @_M__Fjj(i32 %a, i32 %b), local\n{\nb:\n\t%m = mul i32 %a, %b\n\tret i32 %m\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%r = call i32 @_M__Fjj(i32 -1, i32 -1)\n\tret i32 %r\n}\n", true);
+	AssertIR816(1, "function i16 @_M__Ftt(i16 %a, i16 %b), local\n{\nb:\n\t%m = mul i16 %a, %b\n\tret i16 %m\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%r = call i16 @_M__Ftt(i16 -1, i16 -1)\n\t%z = zext i16 %r to i32\n\tret i32 %z\n}\n", true);
 }
 
 
@@ -885,6 +1013,7 @@ void TestIR816Backend(void)
 	TestIR816BackendNarrow();
 	TestIR816BackendDivide();
 	TestIR816BackendDividePaths();
+	TestIR816BackendMultiply();
 	TestIR816BackendCompareCarry();
 	TestIR816BackendSharedPlaces();
 	TestIR816BackendFused();
@@ -895,6 +1024,7 @@ void TestIR816Backend(void)
 	TestIR816BackendMemoryAndCalls();
 	TestIR816BackendBigFrame();
 
+	SafeKill(gpcTestIR816MathTables);
 	CW65C816InstructionFactory::GetInstance()->Kill();
 	C65C64InstructionFactory::GetInstance()->Kill();
 	NumberKill();

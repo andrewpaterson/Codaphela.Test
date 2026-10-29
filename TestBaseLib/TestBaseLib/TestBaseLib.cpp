@@ -97,6 +97,7 @@ void TestMemoryManager(void);
 void TestArrayInt2D(void);
 void TestTreeTemplate(void);
 void TestMD5File(void);
+void TestIntelHex(void);
 void TestDiskFile(void);
 void TestBufferedFile(void);
 void TestMemoryFile(void);
@@ -269,6 +270,7 @@ int __cdecl main(void)
 	TestDiskFile();
 	TestBufferedFile();
 	TestMD5File();
+	TestIntelHex();
 	TestSorting();
 	TestArrayBit();
 	TestArrayTemplateEmbedded();

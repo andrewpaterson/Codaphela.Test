@@ -122,6 +122,7 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 			szUnit.Kill();
 		}
 	}
+	cBuilder.AddMathTables(szLibc65.Text());
 	TestLibc65FullPath(&szBaseLib, TEST_LIBC65_LIBRARIES _FS_ "BaseLib");
 	cBuilder.AddUnit("BaseLib", szBaseLib.Text(), "TrueMallocator.cpp", true);
 	szBaseLib.Kill();

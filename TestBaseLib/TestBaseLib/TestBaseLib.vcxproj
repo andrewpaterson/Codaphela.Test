@@ -342,6 +342,7 @@
     <ClCompile Include="TestFileFinder.cpp" />
     <ClCompile Include="TestFileUtil.cpp" />
     <ClCompile Include="TestTextFile.cpp" />
+    <ClCompile Include="TestIntelHex.cpp" />
     <ClCompile Include="TestMD5File.cpp" />
     <ClCompile Include="TestMemoryFile.cpp" />
     <ClCompile Include="TestChunkFile.cpp" />

@@ -160,6 +160,10 @@ int32 TestCPP816RunProject(const char** aszUnits, const char* szStubs, const cha
 	cBuilder.SetTarget(CPPT_W65C816);
 	TestCPP65AddIncludeDirectories(&cBuilder);
 	bResult = cBuilder.AddStartUp();
+	szProject.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "Libc65");
+	cFileUtil.FullPath(&szProject);
+	cBuilder.AddMathTables(szProject.Text());
+	szProject.Kill();
 	if (szSource)
 	{
 		bResult &= cBuilder.AddSource("Test.cpp", szSource);

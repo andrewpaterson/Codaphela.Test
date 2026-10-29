@@ -397,6 +397,7 @@ static void TestProject65AddProjects(STestProject65* psProject, CCPP65Builder* p
 			szUnit.Kill();
 		}
 	}
+	pcBuilder->AddMathTables(szPath.Text());
 	szPath.Kill();
 	pcBuilder->SetLimit((geTestProject65Target == CPPT_W65C816) ? TEST_PROJECT816_PROGRAM_LIMIT : TEST_PROJECT65_PROGRAM_LIMIT);
 	szTestDirectory.Kill();
