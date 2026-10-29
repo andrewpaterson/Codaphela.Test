@@ -1457,15 +1457,15 @@ void TestIROptimiser(void)
 		"e:\n"
 		"\t%0 = ult i32 0, %n\n"
 		"\tbrif %0, 0, none\n"
-		"found:\n"
-		"\tret ptr %2\n"
 		"none:\n"
 		"\tret ptr 0\n"
 		"0:\n"
 		"\t%1 = zext i8 %v to i16\n"
 		"\t%2 = call ptr @_memchr(ptr %p, i16 %1, i32 %n)\n"
 		"\t%3 = eq ptr %2, 0\n"
-		"\tbrif %3, none, found\n"
+		"\tbrif %3, none, 1\n"
+		"1:\n"
+		"\tret ptr %2\n"
 		"}\n",
 		"function ptr @_F__FPchj(ptr %p, i8 %v, i32 %n)\n"
 		"{\n"
@@ -1488,6 +1488,35 @@ void TestIROptimiser(void)
 		"none:\n"
 		"\tret ptr 0\n"
 		"}\n", false, true);
+
+	//Sums that cancel are what is left: (a + b) - b, (b + a) - b, a + (b - a), (b - a) + a and p + (q - p).
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i32 @t(i32 %a, i32 %b, ptr %p, ptr %q)\n"
+		"{\n"
+		"e:\n"
+		"\tstore ptr %q, %p\n"
+		"\tret i32 %b\n"
+		"}\n",
+		"function i32 @t(i32 %a, i32 %b, ptr %p, ptr %q)\n"
+		"{\n"
+		"e:\n"
+		"\t%0 = add i32 %a, %b\n"
+		"\t%1 = sub i32 %0, %b\n"
+		"\t%2 = add i32 %b, %1\n"
+		"\t%3 = sub i32 %2, %b\n"
+		"\t%4 = sub i32 %b, %3\n"
+		"\t%5 = add i32 %3, %4\n"
+		"\t%6 = sub i32 %5, %a\n"
+		"\t%7 = add i32 %6, %a\n"
+		"\t%8 = ptrtoi ptr %q to i32\n"
+		"\t%9 = ptrtoi ptr %p to i32\n"
+		"\t%10 = sub i32 %8, %9\n"
+		"\t%11 = ptradd ptr %p, %10\n"
+		"\tstore ptr %11, %p\n"
+		"\tret i32 %7\n"
+		"}\n");
 
 	//The same returning i: memchr's offset from p.
 	AssertIROptimised(
