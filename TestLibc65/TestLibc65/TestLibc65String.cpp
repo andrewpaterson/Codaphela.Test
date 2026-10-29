@@ -229,6 +229,56 @@ void TestLibc65StringBanks(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// memset of every length from 0 to 80 at four alignments (string816.asm
+// stores 16 bytes at a time, then words, then a byte), the bytes round each
+// fill unchanged.  Returns the bytes wrong.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLibc65StringFills(void)
+{
+	static const char*	aszUnits[] = { "string.cpp", "string.asm", NULL };
+	STestLibc65Run		sRun;
+
+	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "",
+		"#include <string.h>\n"
+		"int main()\n"
+		"{\n"
+		"	unsigned char	ac[100];\n"
+		"	int				iLength;\n"
+		"	int				iOffset;\n"
+		"	int				i;\n"
+		"	int				iWrong;\n"
+		"	unsigned char	uc;\n"
+		"	iWrong = 0;\n"
+		"	for (iLength = 0; iLength <= 80; iLength++)\n"
+		"	{\n"
+		"		for (iOffset = 0; iOffset < 4; iOffset++)\n"
+		"		{\n"
+		"			for (i = 0; i < 100; i++)\n"
+		"			{\n"
+		"				ac[i] = 1;\n"
+		"			}\n"
+		"			memset(ac + 8 + iOffset, iLength + 0x100 + 3, iLength);\n"
+		"			for (i = 0; i < 100; i++)\n"
+		"			{\n"
+		"				uc = ((i >= 8 + iOffset) && (i < 8 + iOffset + iLength)) ? (unsigned char)(iLength + 3) : 1;\n"
+		"				if (ac[i] != uc)\n"
+		"				{\n"
+		"					iWrong++;\n"
+		"				}\n"
+		"			}\n"
+		"		}\n"
+		"	}\n"
+		"	return iWrong;\n"
+		"}\n"));
+	AssertTrue(TestLibc65Run(&sRun, 20000000));
+	AssertInt(0, TestLibc65Return(&sRun));
+	TestLibc65End(&sRun);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65String(void)
@@ -238,6 +288,7 @@ void TestLibc65String(void)
 	TestLibc65StringFunctions();
 	TestLibc65StringRandomCases();
 	TestLibc65StringBanks();
+	TestLibc65StringFills();
 
 	TestStatistics();
 }

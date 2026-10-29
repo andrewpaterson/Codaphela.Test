@@ -752,10 +752,12 @@ void TestIRLoops(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// szText, optimised, must verify and print as szExpected.
+// szText, optimised (for a target whose loads and stores add an index for
+// nothing, unless bIndexedAddresses is false), must verify and print as
+// szExpected.
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertIROptimised(const char* szExpected, const char* szText)
+void AssertIROptimised(const char* szExpected, const char* szText, bool bIndexedAddresses = true)
 {
 	CIRModule		cModule;
 	CCPPErrors		cErrors;
@@ -772,6 +774,7 @@ void AssertIROptimised(const char* szExpected, const char* szText)
 	AssertTrue(cParser.Parse(szText));
 	cParser.Kill();
 	cOptimiser.Init(&cModule);
+	cOptimiser.SetIndexedAddresses(bIndexedAddresses);
 	for (ui = 0; ui < cModule.NumFunctions(); ui++)
 	{
 		cOptimiser.Optimise(cModule.GetFunction(ui));
@@ -1233,6 +1236,50 @@ void TestIROptimiser(void)
 		"\t%u = add i32 %t, %s\n"
 		"\tret i32 %u\n"
 		"}\n");
+
+	//Without indexed addresses (the W65C816), p + i in a loop counting i up by 1 is a pointer stepping by 1.
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i32 @_Sum__FPii(ptr %p, i32 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\t%0 = slt i32 0, %n\n"
+		"\tbrif %0, body, exit\n"
+		"body:\n"
+		"\t%1 = phi i32 [body, %sum], [entry, 0]\n"
+		"\t%2 = phi i32 [body, %next], [entry, 0]\n"
+		"\t%3 = phi ptr [body, %5], [entry, %p]\n"
+		"\t%v = load i8 %3\n"
+		"\t%w = zext i8 %v to i32\n"
+		"\t%sum = add i32 %1, %w\n"
+		"\t%next = add i32 %2, 1\n"
+		"\t%4 = slt i32 %next, %n\n"
+		"\t%5 = ptradd ptr %3, 1\n"
+		"\tbrif %4, body, exit\n"
+		"exit:\n"
+		"\t%6 = phi i32 [entry, 0], [body, %sum]\n"
+		"\tret i32 %6\n"
+		"}\n",
+		"function i32 @_Sum__FPii(ptr %p, i32 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\tjmp test\n"
+		"test:\n"
+		"\t%s = phi i32 [entry, 0], [body, %sum]\n"
+		"\t%i = phi i32 [entry, 0], [body, %next]\n"
+		"\t%c = slt i32 %i, %n\n"
+		"\tbrif %c, body, exit\n"
+		"body:\n"
+		"\t%a = ptradd ptr %p, %i\n"
+		"\t%v = load i8 %a\n"
+		"\t%w = zext i8 %v to i32\n"
+		"\t%sum = add i32 %s, %w\n"
+		"\t%next = add i32 %i, 1\n"
+		"\tjmp test\n"
+		"exit:\n"
+		"\tret i32 %s\n"
+		"}\n", false);
 
 	//j's phi is 0 coming from z, so z goes straight to n (and j, left with one way in, joins m).
 	AssertIROptimised(

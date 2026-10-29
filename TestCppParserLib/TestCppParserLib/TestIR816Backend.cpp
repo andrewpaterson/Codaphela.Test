@@ -226,6 +226,7 @@ void TestIR816BackendBasics(void)
 		"\t\t.global _main\n"
 		"_main:\n"
 		"\t\t.width (A, X), 16\n"
+		"\t\t.relax\n"
 		"\t\tphd\n"
 		"\t\ttsc\n"
 		"\t\tsec\n"
@@ -233,12 +234,8 @@ void TestIR816BackendBasics(void)
 		"\t\ttcs\n"
 		"\t\ttcd\n"
 		"L1:\n"
+		"\t\tldx 0\n"
 		"\t\tlda 42\n"
-		"\t\tsta [D + 5]\n"
-		"\t\tlda 0\n"
-		"\t\tsta [D + 7]\n"
-		"\t\tlda [D + 5]\n"
-		"\t\tldx [D + 7]\n"
 		"\t\ttay\n"
 		"\t\ttdc\n"
 		"\t\tclc\n"
@@ -413,14 +410,16 @@ void TestIR816BackendDivide(void)
 //
 // The runtime divide's paths (R816_UDiv32 and R816_UDiv64 in IR816Backend.cpp), with values passed in so they aren't
 // worked out when compiled: both under 65536, a divisor under 65536 with a dividend's high word below it and not
-// (and a divisor of 65535, which carries out of A), a wide divisor with a narrow dividend and with a wide one; 64
+// (and a divisor of 65535, which carries out of A), a dividend below the divisor, a divisor of 1, a dividend under 256,
+// a wide divisor with a narrow dividend and with a wide one; 64
 // bits with zero words at the top of the dividend skipped and not.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestIR816BackendDividePaths(void)
 {
 	static const uint32	auiPairs32[][2] = { { 60000, 7 }, { 0x0003FFFF, 10 }, { 4000000000U, 7 }, { 0xFFFFFFFF, 0xFFFF }, { 0xFFFFFFFF, 0x8001 },
-											{ 1234, 100000 }, { 4000000000U, 70000 }, { 0xFFFFFFFF, 0x10000 }, { 65535, 65535 }, { 0x0000FFFF, 0x0000FFFF } };
+											{ 1234, 100000 }, { 4000000000U, 70000 }, { 0xFFFFFFFF, 0x10000 }, { 65535, 65535 }, { 0x0000FFFF, 0x0000FFFF },
+											{ 5, 9 }, { 200, 7 }, { 255, 16 }, { 40000, 1 }, { 0x12345678, 1 }, { 0x12345678, 0x1234 } };
 	static const uint64	auiPairs64[][2] = { { 0xFFFFFFFFULL, 7 }, { 0x8000000000000005ULL, 3 }, { 12345, 0x100000000ULL }, { 0xFFFFFFFFFFFFFFFFULL, 0xFFFFFFFFULL },
 											{ 0x123456789ABCDEFULL, 0x10001ULL }, { 5, 5 } };
 	char				sz[1024];
@@ -515,6 +514,48 @@ void TestIR816BackendSharedPlaces(void)
 		"\t%f = shl i32 %j, %j\n"
 		"\t%g = add i32 %e, %f\n"
 		"\tret i32 %g\n}\n", true);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Shifts by a count only known at run time (in X, a word in A, a whole word
+// moved first for 16 or more) and by constants, of 16 and 32 bit values.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendShifts(void)
+{
+	static const int	aiCounts[] = { 0, 1, 5, 15, 16, 17, 31 };
+	static const char*	aszOpcodes[] = { "shl", "lshr", "ashr" };
+	char				sz[512];
+	size				i;
+	size				j;
+	int64				lliExpected;
+	uint32				uiValue;
+	uint16				uiShort;
+
+	uiValue = 0x9234ABCD;
+	uiShort = 0x9A5C;
+	for (i = 0; i < sizeof(aiCounts) / sizeof(aiCounts[0]); i++)
+	{
+		for (j = 0; j < 3; j++)
+		{
+			lliExpected = (j == 0) ? (int32)(uiValue << aiCounts[i]) : ((j == 1) ? (int32)(uiValue >> aiCounts[i]) : ((int32)uiValue >> aiCounts[i]));
+			snprintf(sz, sizeof(sz), "function i32 @_S__Fl(i32 %%n), local\n{\nb:\n\t%%r = %s i32 %u, %%n\n\tret i32 %%r\n}\n\n"
+				"function i32 @_main()\n{\nb:\n\t%%r = call i32 @_S__Fl(i32 %d)\n\tret i32 %%r\n}\n", aszOpcodes[j], uiValue, aiCounts[i]);
+			AssertIR816(lliExpected, sz);
+			snprintf(sz, sizeof(sz), "function i32 @_main()\n{\nb:\n\t%%r = %s i32 %u, %d\n\tret i32 %%r\n}\n", aszOpcodes[j], uiValue, aiCounts[i]);
+			AssertIR816(lliExpected, sz);
+
+			if (aiCounts[i] < 16)
+			{
+				lliExpected = (j == 0) ? (int16)(uint16)(uiShort << aiCounts[i]) : ((j == 1) ? (int16)(uiShort >> aiCounts[i]) : ((int16)uiShort >> aiCounts[i]));
+				snprintf(sz, sizeof(sz), "function i16 @_S__Fs(i16 %%n), local\n{\nb:\n\t%%r = %s i16 %u, %%n\n\tret i16 %%r\n}\n\n"
+					"function i32 @_main()\n{\nb:\n\t%%r = call i16 @_S__Fs(i16 %d)\n\t%%w = sext i16 %%r to i32\n\tret i32 %%w\n}\n", aszOpcodes[j], uiShort, aiCounts[i]);
+				AssertIR816(lliExpected, sz);
+			}
+		}
+	}
 }
 
 
@@ -682,6 +723,7 @@ void TestIR816Backend(void)
 	TestIR816BackendDividePaths();
 	TestIR816BackendCompareCarry();
 	TestIR816BackendSharedPlaces();
+	TestIR816BackendShifts();
 	TestIR816BackendWide();
 	TestIR816BackendMemoryAndCalls();
 	TestIR816BackendBigFrame();

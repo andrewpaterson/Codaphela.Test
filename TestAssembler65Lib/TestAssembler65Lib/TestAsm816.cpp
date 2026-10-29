@@ -162,6 +162,27 @@ static void AssertAsm816(const char* szExpected, const char* szSource)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// szSource's bytes are szBranch, then 200 zeros (.space 200), then a nop.
+//
+//////////////////////////////////////////////////////////////////////////
+static void TestAsm816Relax(const char* szBranch, const char* szSource)
+{
+	CChars	szExpected;
+	int		i;
+
+	szExpected.Init(szBranch);
+	for (i = 0; i < 200; i++)
+	{
+		szExpected.Append(" 00");
+	}
+	szExpected.Append(" ea");
+	AssertAsm816(szExpected.Text(), szSource);
+	szExpected.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // One line with 16 bit widths.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -263,6 +284,11 @@ void TestAsm816Encoding(void)
 
 	//Data.
 	AssertAsm816("56 34 12 78 56 34 12", ".word24 $123456\n.long $12345678");
+
+	//.relax: a branch to a label too far away goes over a brl the other way (bra becomes brl); a near one is kept.
+	AssertAsm816("d0 01 ea ea", ".relax\nbne Near\nnop\nNear:\nnop");
+	TestAsm816Relax("f0 03 82 c8 00", ".relax\nbne Far\n.space 200\nFar:\nnop");
+	TestAsm816Relax("82 c8 00", ".relax\nbra Far\n.space 200\nFar:\nnop");
 }
 
 
