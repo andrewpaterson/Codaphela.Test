@@ -412,6 +412,75 @@ void TestIR816BackendDivide(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The runtime divide's paths (R816_UDiv32 and R816_UDiv64 in IR816Backend.cpp), with values passed in so they aren't
+// worked out when compiled: both under 65536, a divisor under 65536 with a dividend's high word below it and not
+// (and a divisor of 65535, which carries out of A), a wide divisor with a narrow dividend and with a wide one; 64
+// bits with zero words at the top of the dividend skipped and not.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendDividePaths(void)
+{
+	static const uint32	auiPairs32[][2] = { { 60000, 7 }, { 0x0003FFFF, 10 }, { 4000000000U, 7 }, { 0xFFFFFFFF, 0xFFFF }, { 0xFFFFFFFF, 0x8001 },
+											{ 1234, 100000 }, { 4000000000U, 70000 }, { 0xFFFFFFFF, 0x10000 }, { 65535, 65535 }, { 0x0000FFFF, 0x0000FFFF } };
+	static const uint64	auiPairs64[][2] = { { 0xFFFFFFFFULL, 7 }, { 0x8000000000000005ULL, 3 }, { 12345, 0x100000000ULL }, { 0xFFFFFFFFFFFFFFFFULL, 0xFFFFFFFFULL },
+											{ 0x123456789ABCDEFULL, 0x10001ULL }, { 5, 5 } };
+	char				sz[1024];
+	size				i;
+	CChars				szAssembly;
+
+	//The values reach the routines (they aren't worked out by inlining).
+	szAssembly.Init();
+	snprintf(sz, sizeof(sz), "function i32 @_D__Fjj(i32 %%a, i32 %%b), local\n{\nb:\n\t%%q = udiv i32 %%a, %%b\n\tret i32 %%q\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%%r = call i32 @_D__Fjj(i32 %u, i32 %u)\n\tret i32 %%r\n}\n", auiPairs32[0][0], auiPairs32[0][1]);
+	AssertLong(auiPairs32[0][0] / auiPairs32[0][1], TestIR816Run(sz, false, &szAssembly));
+	AssertTrue(szAssembly.Contains("jsl R816_UDiv32"));
+	szAssembly.Kill();
+
+	for (i = 0; i < sizeof(auiPairs32) / sizeof(auiPairs32[0]); i++)
+	{
+		snprintf(sz, sizeof(sz), "function i32 @_D__Fjj(i32 %%a, i32 %%b), local\n{\nb:\n\t%%q = udiv i32 %%a, %%b\n\tret i32 %%q\n}\n\n"
+			"function i32 @_main()\n{\nb:\n\t%%r = call i32 @_D__Fjj(i32 %u, i32 %u)\n\tret i32 %%r\n}\n", auiPairs32[i][0], auiPairs32[i][1]);
+		AssertIR816((int32)(auiPairs32[i][0] / auiPairs32[i][1]), sz);
+		snprintf(sz, sizeof(sz), "function i32 @_D__Fjj(i32 %%a, i32 %%b), local\n{\nb:\n\t%%q = urem i32 %%a, %%b\n\tret i32 %%q\n}\n\n"
+			"function i32 @_main()\n{\nb:\n\t%%r = call i32 @_D__Fjj(i32 %u, i32 %u)\n\tret i32 %%r\n}\n", auiPairs32[i][0], auiPairs32[i][1]);
+		AssertIR816((int32)(auiPairs32[i][0] % auiPairs32[i][1]), sz);
+	}
+	for (i = 0; i < sizeof(auiPairs64) / sizeof(auiPairs64[0]); i++)
+	{
+		snprintf(sz, sizeof(sz), "function i64 @_D__Fyy(i64 %%a, i64 %%b), local\n{\nb:\n\t%%q = udiv i64 %%a, %%b\n\tret i64 %%q\n}\n\n"
+			"function i64 @_main()\n{\nb:\n\t%%r = call i64 @_D__Fyy(i64 %llu, i64 %llu)\n\tret i64 %%r\n}\n", (unsigned long long)auiPairs64[i][0], (unsigned long long)auiPairs64[i][1]);
+		AssertIR816((int64)(auiPairs64[i][0] / auiPairs64[i][1]), sz);
+		snprintf(sz, sizeof(sz), "function i64 @_D__Fyy(i64 %%a, i64 %%b), local\n{\nb:\n\t%%q = urem i64 %%a, %%b\n\tret i64 %%q\n}\n\n"
+			"function i64 @_main()\n{\nb:\n\t%%r = call i64 @_D__Fyy(i64 %llu, i64 %llu)\n\tret i64 %%r\n}\n", (unsigned long long)auiPairs64[i][0], (unsigned long long)auiPairs64[i][1]);
+		AssertIR816((int64)(auiPairs64[i][0] % auiPairs64[i][1]), sz);
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Unsigned 32 bit compares branch on the high words' Z, then on the low words' C: the peephole mustn't take the
+// compare of a high word with 0 out (its carry is read after the branch, a label and a .width away).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendCompareCarry(void)
+{
+	static const uint32	auiPairs[][2] = { { 0x10000, 4 }, { 3, 4 }, { 4, 4 }, { 5, 4 }, { 0, 0x10000 }, { 0x20000, 0x10000 }, { 0x10003, 0x10004 } };
+	char				sz[512];
+	size				i;
+
+	for (i = 0; i < sizeof(auiPairs) / sizeof(auiPairs[0]); i++)
+	{
+		snprintf(sz, sizeof(sz), "function i32 @_C__Fjj(i32 %%a, i32 %%b), local\n{\nb:\n\t%%c = ult i32 %%a, %%b\n\tbrif %%c, y, n\n"
+			"y:\n\tret i32 1\nn:\n\t%%d = uge i32 %%a, 4\n\tbrif %%d, g, l\ng:\n\tret i32 2\nl:\n\tret i32 3\n}\n\n"
+			"function i32 @_main()\n{\nb:\n\t%%r = call i32 @_C__Fjj(i32 %u, i32 %u)\n\tret i32 %%r\n}\n", auiPairs[i][0], auiPairs[i][1]);
+		AssertIR816((auiPairs[i][0] < auiPairs[i][1]) ? 1 : ((auiPairs[i][0] >= 4) ? 2 : 3), sz);
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // 64 bit values: four words, returned through the hidden pointer.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -572,6 +641,8 @@ void TestIR816Backend(void)
 	TestIR816BackendLoops();
 	TestIR816BackendNarrow();
 	TestIR816BackendDivide();
+	TestIR816BackendDividePaths();
+	TestIR816BackendCompareCarry();
 	TestIR816BackendWide();
 	TestIR816BackendMemoryAndCalls();
 	TestIR816BackendBigFrame();

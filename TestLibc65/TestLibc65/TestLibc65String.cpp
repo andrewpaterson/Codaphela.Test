@@ -174,6 +174,61 @@ void TestLibc65StringRandomCases(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// memcpy, memmove and memset across 64KB boundaries (the W65C816's banks: string816.asm's block moves stop at the
+// end of a bank and go on in the next), the source and destination crossing at different places: a copy up, an
+// overlapping copy down and a fill.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLibc65StringBanks(void)
+{
+	static const char*	aszUnits[] = { "string.cpp", "string.asm", NULL };
+	STestLibc65Run		sRun;
+	unsigned char		aucSource[512];
+	unsigned char		aucMoved[512];
+	unsigned char		aucFill[100];
+	int					i;
+
+	//The program's pc is 0x108000 (TestLibc65Bytes' offset 0); the banks start at 0x110000, 0x120000 and 0x130000.  i
+	//is a long: an int is 16 bits on the W65C816, and 0x7F00 + i would be negative past 255.
+	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "",
+		"#include <string.h>\n"
+		"int main()\n"
+		"{\n"
+		"	unsigned char*	pc;\n"
+		"	long			i;\n"
+		"	pc = (unsigned char*)0x108000;\n"
+		"	for (i = 0; i < 512; i++)\n"
+		"	{\n"
+		"		pc[0x7F00 + i] = (unsigned char)(i * 7 + 1);\n"
+		"		pc[0x8F00 + i] = (unsigned char)(i * 7 + 1);\n"
+		"	}\n"
+		"	memcpy(pc + 0x17F40, pc + 0x7F00, 512);\n"
+		"	memmove(pc + 0x8F00 + 37, pc + 0x8F00, 400);\n"
+		"	memset(pc + 0x27FF0, 0x5A, 100);\n"
+		"	return 0;\n"
+		"}\n"));
+	AssertTrue(TestLibc65Run(&sRun, 2000000));
+	AssertInt(0, TestLibc65Return(&sRun));
+
+	for (i = 0; i < 512; i++)
+	{
+		aucSource[i] = (unsigned char)(i * 7 + 1);
+		aucMoved[i] = (unsigned char)(i * 7 + 1);
+	}
+	memmove(aucMoved + 37, aucMoved, 400);
+	memset(aucFill, 0x5A, 100);
+	AssertMemory(aucSource, TestLibc65Bytes(&sRun, 0x17F40), 512);
+	AssertMemory(aucMoved, TestLibc65Bytes(&sRun, 0x8F00), 512);
+	AssertMemory(aucFill, TestLibc65Bytes(&sRun, 0x27FF0), 100);
+	AssertTrue(TestLibc65Bytes(&sRun, 0x27FEF)[0] == 0);
+	AssertTrue(TestLibc65Bytes(&sRun, 0x27FF0 + 100)[0] == 0);
+
+	TestLibc65End(&sRun);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65String(void)
@@ -182,6 +237,7 @@ void TestLibc65String(void)
 
 	TestLibc65StringFunctions();
 	TestLibc65StringRandomCases();
+	TestLibc65StringBanks();
 
 	TestStatistics();
 }

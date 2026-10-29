@@ -52,11 +52,36 @@ static bool TestLibc65IsAssembly(const char* szUnit)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The W65C816's unit for a 65C64 assembly unit: X816.asm for X.asm when there is one (in szDirectory), else empty.
+//
+//////////////////////////////////////////////////////////////////////////
+static void TestLibc65Unit816(const char* szDirectory, const char* szUnit, CChars* pszUnit)
+{
+	CChars		szPath;
+	CFileUtil	cFileUtil;
+
+	pszUnit->Init();
+	pszUnit->Append(szUnit, (size)(strrchr(szUnit, '.') - szUnit));
+	pszUnit->Append("816.asm");
+	szPath.Init(szDirectory);
+	szPath.Append(_FS_);
+	szPath.Append(*pszUnit);
+	if (!cFileUtil.Exists(szPath.Text()))
+	{
+		pszUnit->Kill();
+		pszUnit->Init();
+	}
+	szPath.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Compiles szSource and the Libc65 units (file names in commonlibraries/Libc65, NULL terminated) and links
 // the start up and szSource with the Libc65 units as a library (a unit is linked when something needs it).
 // BaseLib's TrueMallocator.cpp, which malloc uses, is in the library too.
-// Loads the program at reset.  On the W65C816 the units in 65C64 assembly (.asm) are left out: their .cpp units
-// have the same functions for it.  The labels in szStubs (space separated, sorted) must be exactly the ones
+// Loads the program at reset.  On the W65C816 a unit in 65C64 assembly (X.asm) is its W65C816 assembly (X816.asm)
+// when there is some, else left out: their .cpp units have the other functions for it.  The labels in szStubs (space separated, sorted) must be exactly the ones
 // used but defined by no linked unit; the linker makes each a stp so a call to one stops the program.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -67,6 +92,7 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 	CChars			szLibraries;
 	CChars			szBaseLib;
 	CChars			szMissing;
+	CChars			szUnit;
 	size			i;
 	bool			bResult;
 
@@ -84,6 +110,16 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 		if ((geTestLibc65Target == CPPT_65C64) || !TestLibc65IsAssembly(aszUnits[i]))
 		{
 			cBuilder.AddUnit("Libc65", szLibc65.Text(), aszUnits[i], true);
+		}
+		else
+		{
+			//The W65C816's own assembly for the unit, if it has some.
+			TestLibc65Unit816(szLibc65.Text(), aszUnits[i], &szUnit);
+			if (!szUnit.Empty())
+			{
+				cBuilder.AddUnit("Libc65", szLibc65.Text(), szUnit.Text(), true);
+			}
+			szUnit.Kill();
 		}
 	}
 	TestLibc65FullPath(&szBaseLib, TEST_LIBC65_LIBRARIES _FS_ "BaseLib");

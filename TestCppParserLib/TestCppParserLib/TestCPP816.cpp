@@ -41,7 +41,7 @@ uint64	TestCPP65FloatUlps(uint32 uiActual, uint32 uiExpected);
 
 
 //Libc65's units for the W65C816 (no 65C64 assembly).
-static const char* gaszTestCPP816Libc65[] = { "string.cpp", "stdlib.cpp", "ctype.cpp", "time.cpp", "math.cpp", "softfloat.cpp", "new.cpp", "signal.cpp", "stdio.cpp", "host.cpp", NULL };
+static const char* gaszTestCPP816Libc65[] = { "string.cpp", "string816.asm", "stdlib.cpp", "ctype.cpp", "time.cpp", "math.cpp", "softfloat.cpp", "new.cpp", "signal.cpp", "stdio.cpp", "host.cpp", NULL };
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -515,10 +515,10 @@ void TestCPP816Builtins(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCPP816BaseLib(void)
 {
-	static const char*	aszMD5[] = { "BaseLib/MD5.cpp", "Libc65/string.cpp", "Input/CPP65/MD5Project/Main.cpp", NULL };
+	static const char*	aszMD5[] = { "BaseLib/MD5.cpp", "Libc65/string.cpp", "Libc65/string816.asm", "Input/CPP65/MD5Project/Main.cpp", NULL };
 	static const char*	aszMersenneTwister[] = { "BaseLib/MersenneTwister.cpp", "Libc65/time.cpp", "Input/CPP65/MersenneTwisterProject/Main.cpp", NULL };
 	static const char*	aszSort[] = { "BaseLib/QuickSort.cpp", "BaseLib/BubbleSort.cpp", "BaseLib/BinarySearch.cpp", "Input/CPP65/SortProject/MemSwpStub.cpp", "Input/CPP65/SortProject/Main.cpp", NULL };
-	static const char*	aszRedBlackTree[] = { "BaseLib/RedBlackTree.cpp", "Libc65/string.cpp", "Libc65/stdlib.cpp", "BaseLib/TrueMallocator.cpp", "Libc65/ctype.cpp", "Input/CPP65/RedBlackTreeProject/FreeListStub.cpp", "Input/CPP65/RedBlackTreeProject/Main.cpp", NULL };
+	static const char*	aszRedBlackTree[] = { "BaseLib/RedBlackTree.cpp", "Libc65/string.cpp", "Libc65/string816.asm", "Libc65/stdlib.cpp", "BaseLib/TrueMallocator.cpp", "Libc65/ctype.cpp", "Input/CPP65/RedBlackTreeProject/FreeListStub.cpp", "Input/CPP65/RedBlackTreeProject/Main.cpp", NULL };
 	static const char*	aszStatic[] = { "Input/CPP65/StaticProject/Other.cpp", NULL };
 
 	AssertInt(0x3F, TestCPP816RunProject(aszMD5, "", NULL));
@@ -584,7 +584,7 @@ void TestCPP816Floats(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCPP816NewDelete(void)
 {
-	static const char*	aszUnits[] = { "Libc65/new.cpp", "Libc65/stdlib.cpp", "BaseLib/TrueMallocator.cpp", "Libc65/string.cpp", "Libc65/ctype.cpp", NULL };
+	static const char*	aszUnits[] = { "Libc65/new.cpp", "Libc65/stdlib.cpp", "BaseLib/TrueMallocator.cpp", "Libc65/string.cpp", "Libc65/string816.asm", "Libc65/ctype.cpp", NULL };
 
 	AssertInt(7, TestCPP816RunProject(aszUnits, "", "int main() { int* p = new int(7); int r = *p; delete p; return r; }\n"));
 

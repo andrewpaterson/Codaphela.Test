@@ -329,7 +329,7 @@ size TestCPP65CompileLibrary(const char* szLibrary, CChars* pszErrors)
 //
 // Adds the units (paths under commonlibraries, or under this test's directory when they start with "Input"), each
 // to be compiled into an object.  The units in a directory share a CLibrary (their include settings).  Units in
-// 65C64 assembly (.asm) are left out unless bAssembly.
+// 65C64 assembly (.asm) are left out unless bAssembly, and units in W65C816 assembly (816.asm) when it is.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCPP65AddUnits(CCPP65Builder* pcBuilder, const char** aszUnits, bool bAssembly)
@@ -347,7 +347,7 @@ void TestCPP65AddUnits(CCPP65Builder* pcBuilder, const char** aszUnits, bool bAs
 		iSlash = szLibrary.FindFromEnd('/');
 		szFile.Init(szLibrary.Text(iSlash + 1));
 		szLibrary.SetLength(iSlash);
-		if (bAssembly || !szFile.EndsWithIgnoreCase(".asm"))
+		if (szFile.EndsWithIgnoreCase("816.asm") ? !bAssembly : (bAssembly || !szFile.EndsWithIgnoreCase(".asm")))
 		{
 			if (szLibrary.StartsWith("Input"))
 			{

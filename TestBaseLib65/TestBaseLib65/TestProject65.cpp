@@ -331,6 +331,8 @@ static void TestProject65AddProjects(STestProject65* psProject, CCPP65Builder* p
 	CChars		szPath;
 	CChars		szTestDirectory;
 	CChars		szMain;
+	CChars		szUnit;
+	CChars		szUnitPath;
 	size		i;
 
 	TestProject65TestDirectory(psProject, &szTestDirectory);
@@ -385,6 +387,22 @@ static void TestProject65AddProjects(STestProject65* psProject, CCPP65Builder* p
 		if ((geTestProject65Target == CPPT_65C64) || (strcmp(strrchr(gaszTestProject65Libc65[i], '.'), ".asm") != 0))
 		{
 			pcBuilder->AddUnit("Libc65", szPath.Text(), gaszTestProject65Libc65[i], true);
+		}
+		else
+		{
+			//The W65C816's own assembly for a 65C64 assembly unit (X816.asm for X.asm), if it has some.
+			szUnit.Init();
+			szUnit.Append(gaszTestProject65Libc65[i], (size)(strrchr(gaszTestProject65Libc65[i], '.') - gaszTestProject65Libc65[i]));
+			szUnit.Append("816.asm");
+			szUnitPath.Init(szPath);
+			szUnitPath.Append(_FS_);
+			szUnitPath.Append(szUnit);
+			if (cFileUtil.Exists(szUnitPath.Text()))
+			{
+				pcBuilder->AddUnit("Libc65", szPath.Text(), szUnit.Text(), true);
+			}
+			szUnitPath.Kill();
+			szUnit.Kill();
 		}
 	}
 	szPath.Kill();
