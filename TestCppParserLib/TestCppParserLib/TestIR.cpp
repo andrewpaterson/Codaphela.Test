@@ -1223,6 +1223,166 @@ void TestIROptimiserSinkLoads(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A loop stepping p and x by 1 until x + 1 is x0 + d, entered only when
+// 0 < d, goes round d times: after it p is p0 + d, and the loop, doing
+// nothing else, goes.  Unguarded (d may be 0: 65536 times round) or with
+// a store in it, it stays.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserExitValues(void)
+{
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function ptr @_F__FPcss(ptr %p0, i16 %x0, i16 %d)\n"
+		"{\n"
+		"entry:\n"
+		"\t%g = ult i16 0, %d\n"
+		"\tbrif %g, 0, none\n"
+		"none:\n"
+		"\tret ptr %p0\n"
+		"0:\n"
+		"\t%0 = zext i16 %d to i32\n"
+		"\t%1 = ptradd ptr %p0, %0\n"
+		"\tret ptr %1\n"
+		"}\n",
+		"space default 4\n\nfunction ptr @_F__FPcss(ptr %p0, i16 %x0, i16 %d)\n{\nentry:\n\t%n = add i16 %x0, %d\n\t%g = ult i16 0, %d\n\tbrif %g, loop, none\n"
+		"loop:\n\t%x = phi i16 [entry, %x0], [loop, %x2]\n\t%p = phi ptr [entry, %p0], [loop, %p2]\n"
+		"\t%p2 = ptradd ptr %p, 1\n\t%x2 = add i16 %x, 1\n\t%e = ne i16 %x2, %n\n\tbrif %e, loop, exit\n"
+		"exit:\n\tret ptr %p2\n"
+		"none:\n\tret ptr %p0\n}\n");
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function ptr @_F__FPcss(ptr %p0, i16 %x0, i16 %d)\n"
+		"{\n"
+		"entry:\n"
+		"\t%n = add i16 %x0, %d\n"
+		"\tjmp loop\n"
+		"loop:\n"
+		"\t%x = phi i16 [entry, %x0], [loop, %x2]\n"
+		"\t%p = phi ptr [entry, %p0], [loop, %p2]\n"
+		"\t%p2 = ptradd ptr %p, 1\n"
+		"\t%x2 = add i16 %x, 1\n"
+		"\t%e = ne i16 %x2, %n\n"
+		"\tbrif %e, loop, exit\n"
+		"exit:\n"
+		"\tret ptr %p2\n"
+		"}\n",
+		"space default 4\n\nfunction ptr @_F__FPcss(ptr %p0, i16 %x0, i16 %d)\n{\nentry:\n\t%n = add i16 %x0, %d\n\tjmp loop\n"
+		"loop:\n\t%x = phi i16 [entry, %x0], [loop, %x2]\n\t%p = phi ptr [entry, %p0], [loop, %p2]\n"
+		"\t%p2 = ptradd ptr %p, 1\n\t%x2 = add i16 %x, 1\n\t%e = ne i16 %x2, %n\n\tbrif %e, loop, exit\n"
+		"exit:\n\tret ptr %p2\n}\n");
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function ptr @_F__FPcss(ptr %p0, i16 %x0, i16 %d)\n"
+		"{\n"
+		"entry:\n"
+		"\t%n = add i16 %x0, %d\n"
+		"\t%g = ult i16 0, %d\n"
+		"\tbrif %g, 0, none\n"
+		"loop:\n"
+		"\t%x = phi i16 [0, %x0], [loop, %x2]\n"
+		"\t%p = phi ptr [0, %p0], [loop, %p2]\n"
+		"\tstore i8 0, %p\n"
+		"\t%p2 = ptradd ptr %p, 1\n"
+		"\t%x2 = add i16 %x, 1\n"
+		"\t%e = ne i16 %x2, %n\n"
+		"\tbrif %e, loop, exit\n"
+		"exit:\n"
+		"\tret ptr %1\n"
+		"none:\n"
+		"\tret ptr %p0\n"
+		"0:\n"
+		"\t%0 = zext i16 %d to i32\n"
+		"\t%1 = ptradd ptr %p0, %0\n"
+		"\tjmp loop\n"
+		"}\n",
+		"space default 4\n\nfunction ptr @_F__FPcss(ptr %p0, i16 %x0, i16 %d)\n{\nentry:\n\t%n = add i16 %x0, %d\n\t%g = ult i16 0, %d\n\tbrif %g, loop, none\n"
+		"loop:\n\t%x = phi i16 [entry, %x0], [loop, %x2]\n\t%p = phi ptr [entry, %p0], [loop, %p2]\n\tstore i8 0, %p\n"
+		"\t%p2 = ptradd ptr %p, 1\n\t%x2 = add i16 %x, 1\n\t%e = ne i16 %x2, %n\n\tbrif %e, loop, exit\n"
+		"exit:\n\tret ptr %p2\n"
+		"none:\n\tret ptr %p0\n}\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A comparison only a brif in a later block reads moves to that block (not
+// into a loop it wasn't in), and an instruction both ways of a brif work
+// out is worked out once before it.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserSinkAndHoist(void)
+{
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i32 @_F__Fiii(i32 %a, i32 %b, i32 %f)\n"
+		"{\n"
+		"entry:\n"
+		"\t%g = ne i32 %f, 0\n"
+		"\tbrif %g, test, other\n"
+		"test:\n"
+		"\t%c = slt i32 %a, 0\n"
+		"\tbrif %c, neg, pos\n"
+		"neg:\n"
+		"\tret i32 1\n"
+		"pos:\n"
+		"\tret i32 2\n"
+		"other:\n"
+		"\tret i32 3\n"
+		"}\n",
+		"space default 4\n\nfunction i32 @_F__Fiii(i32 %a, i32 %b, i32 %f)\n{\nentry:\n\t%c = slt i32 %a, 0\n\t%g = ne i32 %f, 0\n\tbrif %g, test, other\n"
+		"test:\n\tbrif %c, neg, pos\n"
+		"neg:\n\tret i32 1\npos:\n\tret i32 2\nother:\n\tret i32 3\n}\n");
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i32 @_F__Fiii(i32 %a, i32 %b, i32 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\t%c = slt i32 %a, %b\n"
+		"\tbrif %c, loop, 0\n"
+		"loop:\n"
+		"\t%i = phi i32 [entry, 0], [loop, %i2]\n"
+		"\t%i2 = add i32 %i, 1\n"
+		"\t%d = slt i32 %i2, %n\n"
+		"\tbrif %d, loop, out\n"
+		"out:\n"
+		"\tret i32 %i2\n"
+		"0:\n"
+		"\tret i32 0\n"
+		"}\n",
+		"space default 4\n\nfunction i32 @_F__Fiii(i32 %a, i32 %b, i32 %n)\n{\nentry:\n\t%c = slt i32 %a, %b\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [next, %i2]\n\tbrif %c, next, out\n"
+		"next:\n\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, out\n"
+		"out:\n\t%r = phi i32 [loop, %i], [next, %i2]\n\tret i32 %r\n}\n");
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i32 @_F__Fiii(i32 %a, i32 %b, i32 %f)\n"
+		"{\n"
+		"entry:\n"
+		"\t%x = mul i32 %a, %b\n"
+		"\t%g = ne i32 %f, 0\n"
+		"\tbrif %g, one, two\n"
+		"one:\n"
+		"\t%y = add i32 %x, 1\n"
+		"\tret i32 %y\n"
+		"two:\n"
+		"\t%w = sub i32 %x, 1\n"
+		"\tret i32 %w\n"
+		"}\n",
+		"space default 4\n\nfunction i32 @_F__Fiii(i32 %a, i32 %b, i32 %f)\n{\nentry:\n\t%g = ne i32 %f, 0\n\tbrif %g, one, two\n"
+		"one:\n\t%x = mul i32 %a, %b\n\t%y = add i32 %x, 1\n\tret i32 %y\n"
+		"two:\n\t%z = mul i32 %a, %b\n\t%w = sub i32 %z, 1\n\tret i32 %w\n}\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // A restrict symbol stays restrict when a function naming it is exported
 // to CIRImports and inlined into another unit.
 //
@@ -2428,6 +2588,8 @@ void TestIR(void)
 	TestIRImportsRestrict();
 	TestIROptimiserLoopCounters();
 	TestIROptimiserSinkLoads();
+	TestIROptimiserExitValues();
+	TestIROptimiserSinkAndHoist();
 
 	TestStatistics();
 }

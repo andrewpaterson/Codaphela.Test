@@ -858,6 +858,24 @@ void TestCPP816LocalSymbols(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A loop that only steps q and x until x is x0 + d (when d isn't 0) goes:
+// q is p + d after it.  x wraps past 65535 in the second call.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816ExitValues(void)
+{
+	AssertInt(300 + 2 + 0,
+		TestCPP816Run(
+			"int Skip(const char* p, unsigned int x0, unsigned int d)\n"
+			"{\n\tconst char* q = p;\n\tunsigned int x = x0;\n"
+			"\tif (d > 0)\n\t{\n\t\tdo\n\t\t{\n\t\t\tq++;\n\t\t\tx++;\n\t\t} while (x != x0 + d);\n\t}\n"
+			"\treturn (int)(q - p);\n}\n"
+			"int main(void) { char a[1]; return Skip(a, 65531, 300) + Skip(a, 65535, 2) + Skip(a, 7, 0); }\n", true));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // A restrict global pointer promises that what it reaches isn't reached
 // another way.  Here it breaks the promise, pointing at the int the loop
 // reads: with __restrict the read leaves the loop and sees the int before
@@ -1524,6 +1542,7 @@ void TestCPP816(void)
 	TestCPP816Restrict();
 	TestCPP816RestrictParameter();
 	TestCPP816LocalSymbols();
+	TestCPP816ExitValues();
 	TestCPP816NewDelete();
 	TestCPP816Floats();
 	TestCPP816TestBaseLibBugs();
