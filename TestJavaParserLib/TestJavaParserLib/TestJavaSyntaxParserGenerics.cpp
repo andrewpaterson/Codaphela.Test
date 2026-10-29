@@ -18,7 +18,7 @@ void TestJavaSyntaxParserGenericGeneric(void)
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
-	char						szFilename[] = __ENGINE_FUNCTION__".Java";
+	char						szFilename[] = "TestJavaSyntaxParserGenericGeneric.Java";
 	char						szFileContents[] = "\
 public final class W65C816Assembler<List<List>>\n\
 {\n\
@@ -51,7 +51,7 @@ void TestJavaSyntaxParserGenericExtends(void)
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
-	char						szFilename[] = __ENGINE_FUNCTION__".Java";
+	char						szFilename[] = "TestJavaSyntaxParserGenericExtends.Java";
 	char						szFileContents[] = "\
 public final class W65C816Assembler<X extends Integer>\n\
 {\n\
@@ -84,7 +84,7 @@ void TestJavaSyntaxParserGenericWildcard(void)
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
-	char						szFilename[] = __ENGINE_FUNCTION__".Java";
+	char						szFilename[] = "TestJavaSyntaxParserGenericWildcard.Java";
 	char						szFileContents[] = "\
 public final class W65C816Assembler<? extends Map<?, ?>>\n\
 {\n\
@@ -117,7 +117,7 @@ void TestJavaSyntaxParserGenericComplex(void)
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
-	char						szFilename[] = __ENGINE_FUNCTION__".Java";
+	char						szFilename[] = "TestJavaSyntaxParserGenericComplex.Java";
 	char						szFileContents[] = "\
 public class W65C816Assembler<X, Y extends List<Map<X, ? extends Integer>>, ? extends Map<?, ?>>\n\
 {\n\
@@ -153,7 +153,7 @@ void TestJavaSyntaxParserGenericError(void)
 	CChars						szOutput;
 	char*						szBuffer;
 	int							iLength;
-	char						szFilename[] = __ENGINE_FUNCTION__".Java";
+	char						szFilename[] = "TestJavaSyntaxParserGenericError.Java";
 	char						szFileContents[] = "\
 public final class W65C816Assembler<List \n\
 {\n\

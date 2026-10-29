@@ -1087,6 +1087,142 @@ void TestIROptimiserRestrictParameters(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A loop counting c from 0 up to n beside x going up by 1 too tests x
+// against x0 + n instead, and c goes, when the loop is only entered when
+// 0 < n.  Unguarded (n may be 0: once round, where != would go round
+// 65535 times) it stays.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserLoopCounters(void)
+{
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function void @_F__FPcss(ptr %p, i16 %x0, i16 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\t%g = ult i16 0, %n\n"
+		"\tbrif %g, 0, exit\n"
+		"loop:\n"
+		"\t%x = phi i16 [0, %x0], [loop, %x2]\n"
+		"\t%w = zext i16 %x to i32\n"
+		"\t%a = ptradd ptr %p, %w\n"
+		"\tstore i8 7, %a\n"
+		"\t%x2 = add i16 %x, 1\n"
+		"\t%0 = ne i16 %x2, %1\n"
+		"\tbrif %0, loop, exit\n"
+		"exit:\n"
+		"\tret\n"
+		"0:\n"
+		"\t%1 = add i16 %x0, %n\n"
+		"\tjmp loop\n"
+		"}\n",
+		"space default 4\n\nfunction void @_F__FPcss(ptr %p, i16 %x0, i16 %n)\n{\nentry:\n\t%g = ult i16 0, %n\n\tbrif %g, loop, exit\n"
+		"loop:\n\t%c = phi i16 [entry, 0], [loop, %c2]\n\t%x = phi i16 [entry, %x0], [loop, %x2]\n"
+		"\t%w = zext i16 %x to i32\n\t%a = ptradd ptr %p, %w\n\tstore i8 7, %a\n"
+		"\t%x2 = add i16 %x, 1\n\t%c2 = add i16 %c, 1\n\t%d = ult i16 %c2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n");
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function void @_F__FPcss(ptr %p, i16 %x0, i16 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\tjmp loop\n"
+		"loop:\n"
+		"\t%c = phi i16 [entry, 0], [loop, %c2]\n"
+		"\t%x = phi i16 [entry, %x0], [loop, %x2]\n"
+		"\t%w = zext i16 %x to i32\n"
+		"\t%a = ptradd ptr %p, %w\n"
+		"\tstore i8 7, %a\n"
+		"\t%x2 = add i16 %x, 1\n"
+		"\t%c2 = add i16 %c, 1\n"
+		"\t%d = ult i16 %c2, %n\n"
+		"\tbrif %d, loop, exit\n"
+		"exit:\n"
+		"\tret\n"
+		"}\n",
+		"space default 4\n\nfunction void @_F__FPcss(ptr %p, i16 %x0, i16 %n)\n{\nentry:\n\tjmp loop\n"
+		"loop:\n\t%c = phi i16 [entry, 0], [loop, %c2]\n\t%x = phi i16 [entry, %x0], [loop, %x2]\n"
+		"\t%w = zext i16 %x to i32\n\t%a = ptradd ptr %p, %w\n\tstore i8 7, %a\n"
+		"\t%x2 = add i16 %x, 1\n\t%c2 = add i16 %c, 1\n\t%d = ult i16 %c2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A load used only in one later block moves down to its use when nothing
+// on the way may write it; a store through another pointer, or a use in a
+// loop the load isn't in, keeps it where it is.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserSinkLoads(void)
+{
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function void @_F__FPcPci(ptr %p, ptr %q, i32 %f)\n"
+		"{\n"
+		"entry:\n"
+		"\t%c = ne i32 %f, 0\n"
+		"\tbrif %c, use, exit\n"
+		"use:\n"
+		"\t%v = load i8 %p\n"
+		"\tstore i8 %v, %q\n"
+		"\tret\n"
+		"exit:\n"
+		"\tret\n"
+		"}\n",
+		"space default 4\n\nfunction void @_F__FPcPci(ptr %p, ptr %q, i32 %f)\n{\nentry:\n\t%v = load i8 %p\n\t%c = ne i32 %f, 0\n\tbrif %c, use, exit\n"
+		"use:\n\tstore i8 %v, %q\n\tret\n"
+		"exit:\n\tret\n}\n");
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function void @_F__FPcPcPci(ptr %p, ptr %q, ptr %r, i32 %f)\n"
+		"{\n"
+		"entry:\n"
+		"\t%v = load i8 %p\n"
+		"\tstore i8 0, %r\n"
+		"\t%c = ne i32 %f, 0\n"
+		"\tbrif %c, use, exit\n"
+		"use:\n"
+		"\tstore i8 %v, %q\n"
+		"\tret\n"
+		"exit:\n"
+		"\tret\n"
+		"}\n",
+		"space default 4\n\nfunction void @_F__FPcPcPci(ptr %p, ptr %q, ptr %r, i32 %f)\n{\nentry:\n\t%v = load i8 %p\n\tstore i8 0, %r\n\t%c = ne i32 %f, 0\n\tbrif %c, use, exit\n"
+		"use:\n\tstore i8 %v, %q\n\tret\n"
+		"exit:\n\tret\n}\n");
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function void @_F__FPcPci(ptr %p, ptr %q, i32 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\t%v = load i8 %p\n"
+		"\tjmp loop\n"
+		"loop:\n"
+		"\t%i = phi i32 [entry, 0], [loop, %i2]\n"
+		"\t%a = ptradd ptr %q, %i\n"
+		"\tstore i8 %v, %a\n"
+		"\t%i2 = add i32 %i, 1\n"
+		"\t%d = slt i32 %i2, %n\n"
+		"\tbrif %d, loop, exit\n"
+		"exit:\n"
+		"\tret\n"
+		"}\n",
+		"space default 4\n\nfunction void @_F__FPcPci(ptr %p, ptr %q, i32 %n)\n{\nentry:\n\t%v = load i8 %p\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%a = ptradd ptr %q, %i\n\tstore i8 %v, %a\n"
+		"\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // A restrict symbol stays restrict when a function naming it is exported
 // to CIRImports and inlined into another unit.
 //
@@ -2290,6 +2426,8 @@ void TestIR(void)
 	TestIROptimiserRestrict();
 	TestIROptimiserRestrictParameters();
 	TestIRImportsRestrict();
+	TestIROptimiserLoopCounters();
+	TestIROptimiserSinkLoads();
 
 	TestStatistics();
 }

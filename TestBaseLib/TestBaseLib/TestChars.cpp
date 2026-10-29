@@ -821,6 +821,34 @@ void TestCharsReadAndWrite(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// CLargeChars is CChars counted with lsize; it appends natural strings.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCharsLarge(void)
+{
+	CLargeChars		szLarge;
+	CChars			szNatural;
+
+	szLarge.Init("Hello");
+	szNatural.Init(" World");
+	szLarge.Append(&szNatural);
+	szLarge.Append(szNatural);
+	AssertString("Hello World World", szLarge.Text());
+	AssertSize(17, szLarge.Length());
+	AssertSize(6, szLarge.Find("World"));
+
+	szLarge.Append('.', 70000);
+	AssertSize(70017, szLarge.Length());
+	AssertChar('.', szLarge.GetChar(70016));
+	AssertTrue(szLarge.EndsWith("..."));
+
+	szNatural.Kill();
+	szLarge.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestChars(void)
@@ -845,6 +873,7 @@ void TestChars(void)
 	TestCharsStripWhitespace();
 	TestCharsReadAndWrite();
 	TestCharsReplaceIntensive();
+	TestCharsLarge();
 	
 	TestStatistics();
 }

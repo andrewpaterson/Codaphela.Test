@@ -1,0 +1,23 @@
+-----------------------------------------------------------
+- Log File: [Log.txt]
+-----------------------------------------------------------
+
+--------------- /home/r2d2/Codaphela/test/TestSupportLib/TestSupportLib/TestSoundCel.cpp ---------------
+ERROR: (SoundCel.cpp:239) CSoundCel::GetSamples Frames [18] to [22] are past the end of the cel [20].
+ERROR: (Sound.cpp:730) CSound::GetSampleChannel Channel index [1] is not less than the number of channels [1].
+ERROR: (SoundCel.cpp:244) CSoundCel::GetSamples Cel is not in its source sound.
+ERROR: (SoundCelGroup.cpp:136) CSoundCelGroup::AddSound Sound sample rate [8000] is not the bank's [16000].
+ERROR: (SoundCelGroup.cpp:141) CSoundCelGroup::AddSound Sound has [2] channels but the bank has [1].
+ERROR: (SoundCelGroup.cpp:93) CSoundCelGroup::AddCel Cel is not in the group's sound.
+ERROR: (SoundCelGroup.cpp:93) CSoundCelGroup::AddCel Cel is not in the group's sound.
+Tests Run: 73
+Passed: 73
+Failed: 0
+
+------------------------------ Total Results ------------------------------
+Total Tests Run: 73
+Total Passed: 73
+Total Failed: 0
+
+Total Time:   0.00s
+

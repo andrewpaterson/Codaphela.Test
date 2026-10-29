@@ -1,6 +1,4 @@
-#define _CRTDBG_MAP_ALLOC  
-#include <stdlib.h>  
-#include <crtdbg.h>  
+#include "BaseLib/LeakDetector.h"
 
 #include "TestLib/Assert.h"
 
@@ -25,7 +23,7 @@ void TestJavaSyntaxParser(void);
 //////////////////////////////////////////////////////////////////////////
 int __cdecl main(void)
 {
-	_CrtSetBreakAlloc(0);
+	BreakOnAllocation(0);
 	
 	int	iTotalTestsFailed;
 
@@ -48,7 +46,7 @@ int __cdecl main(void)
 	iTotalTestsFailed = TestTotalStatistics();
 
 	NumberKill();
-	_CrtDumpMemoryLeaks();
+	LeakDetection();
 	return iTotalTestsFailed;
 }
 

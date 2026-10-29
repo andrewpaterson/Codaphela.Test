@@ -1174,6 +1174,158 @@ void TestIR816BackendMemoryAndCalls(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A pointer plus a zero extended i16 used only by 1 word loads and stores
+// puts the i16 in Y ([[D + p]:24 + Y]), the zext not worked out.  Y carries
+// into the bank: the bytes go from $07FFF0 over $080000, and the word at
+// $07FFFF is read across it.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendIndexed(void)
+{
+	static const char*	szIR =
+		"function i32 @_main()\n{\nentry:\n\t%p = itoptr i32 524272 to ptr\n\tjmp fill\n"
+		"fill:\n\t%i = phi i16 [entry, 0], [fill, %i2]\n\t%w = zext i16 %i to i32\n\t%a = ptradd ptr %p, %w\n"
+		"\t%b = trunc i16 %i to i8\n\tstore i8 %b, %a\n\t%i2 = add i16 %i, 1\n\t%c = ult i16 %i2, 32\n\tbrif %c, fill, sum\n"
+		"sum:\n\t%j = phi i16 [fill, 0], [sum, %j2]\n\t%s = phi i16 [fill, 0], [sum, %s2]\n\t%x = zext i16 %j to i32\n"
+		"\t%q = ptradd ptr %p, %x\n\t%v = load i8 %q\n\t%vw = zext i8 %v to i16\n\t%s2 = add i16 %s, %vw\n"
+		"\t%j2 = add i16 %j, 1\n\t%d = ult i16 %j2, 32\n\tbrif %d, sum, done\n"
+		"done:\n\t%k = copy i16 15\n\t%y = zext i16 %k to i32\n\t%r = ptradd ptr %p, %y\n\t%h = load i16 %r\n"
+		"\t%t = add i16 %s2, %h\n\t%u = zext i16 %t to i32\n\tret i32 %u\n}\n";
+	static const char*	szCopyIR =
+		"function i32 @_main()\n{\nentry:\n\t%p = itoptr i32 524272 to ptr\n\t%o = itoptr i32 458736 to ptr\n\tjmp fill\n"
+		"fill:\n\t%i = phi i16 [entry, 0], [fill, %i2]\n\t%w = zext i16 %i to i32\n\t%a = ptradd ptr %p, %w\n"
+		"\t%b = trunc i16 %i to i8\n\tstore i8 %b, %a\n\t%i2 = add i16 %i, 1\n\t%c = ult i16 %i2, 32\n\tbrif %c, fill, copy\n"
+		"copy:\n\t%j = phi i16 [fill, 0], [copy, %j2]\n\t%x = zext i16 %j to i32\n\t%f = ptradd ptr %p, %x\n\t%g = ptradd ptr %o, %x\n"
+		"\t%v = load i8 %f\n\tstore i8 %v, %g\n\t%j2 = add i16 %j, 1\n\t%d = ult i16 %j2, 32\n\tbrif %d, copy, sum\n"
+		"sum:\n\t%k = phi i16 [copy, 0], [sum, %k2]\n\t%s = phi i16 [copy, 0], [sum, %s2]\n\t%y = zext i16 %k to i32\n"
+		"\t%q = ptradd ptr %o, %y\n\t%e = load i8 %q\n\t%ew = zext i8 %e to i16\n\t%s2 = add i16 %s, %ew\n"
+		"\t%k2 = add i16 %k, 1\n\t%m = ult i16 %k2, 32\n\tbrif %m, sum, done\n"
+		"done:\n\t%u = zext i16 %s2 to i32\n\tret i32 %u\n}\n";
+	CChars				szAssembly;
+
+	szAssembly.Init();
+	AssertLong(496 + 0x100F, TestIR816Run(szIR, true, &szAssembly));
+	AssertTrue(strstr(szAssembly.Text(), "\t\ttxy\n") || strstr(szAssembly.Text(), "\t\tldy [D + "));
+	szAssembly.Kill();
+
+	//A byte loaded and only stored by the next instruction is copied through A under the store's sep m, from
+	//$07FFF0 + i to $06FFF0 + i (both over a bank).
+	szAssembly.Init();
+	AssertLong(496, TestIR816Run(szCopyIR, true, &szAssembly));
+	AssertTrue(strstr(szAssembly.Text(), "\t\tsep m\n\t\ttxy\n\t\tlda [[D + ") != NULL);
+	szAssembly.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Whether the line before szLine is an lda of a direct page word.
+//
+//////////////////////////////////////////////////////////////////////////
+static bool TestIR816PreviousIsDirectLoad(const char* szAssembly, const char* szLine)
+{
+	const char*	szPrevious;
+
+	szPrevious = szLine - 1;
+	while ((szPrevious > szAssembly) && (szPrevious[-1] != '\n'))
+	{
+		szPrevious--;
+	}
+	return strncmp(szPrevious, "\t\tlda [D + ", 11) == 0;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Whether the code has a bra to the label after it, a branch to a label
+// whose first instruction is a bra, a branch over a bra to the label after
+// it, or an lda before a bra to code that starts with lda or txa
+// (PeepholeBranches leaves none).
+//
+//////////////////////////////////////////////////////////////////////////
+static bool TestIR816UntidyBranch(const char* szAssembly)
+{
+	const char*	szLine;
+	const char*	szEnd;
+	const char*	szTarget;
+	char		szLabel[40];
+	int			iLength;
+
+	for (szLine = szAssembly; *szLine; szLine = *szEnd ? szEnd + 1 : szEnd)
+	{
+		szEnd = strchr(szLine, '\n');
+		if (!szEnd)
+		{
+			szEnd = szLine + strlen(szLine);
+		}
+		if ((szLine[0] != '\t') || (szLine[2] != 'b') || (szLine[5] != ' ') || (szLine[6] != 'L'))
+		{
+			continue;
+		}
+		iLength = (int)(szEnd - (szLine + 6));
+		if ((iLength <= 0) || (iLength > 30))
+		{
+			continue;
+		}
+		snprintf(szLabel, sizeof(szLabel), "\n%.*s:\n", iLength, szLine + 6);
+		if ((strncmp(szLine + 2, "bra", 3) == 0) && (strncmp(szEnd, szLabel, strlen(szLabel)) == 0))
+		{
+			return true;
+		}
+		szTarget = strstr(szAssembly, szLabel);
+		if (szTarget && (strncmp(szTarget + strlen(szLabel), "\t\tbra ", 6) == 0))
+		{
+			return true;
+		}
+		if ((strncmp(szLine + 2, "bra", 3) != 0) && (strncmp(szEnd, "\n\t\tbra L", 8) == 0) && strchr(szEnd + 1, '\n') &&
+			(strncmp(strchr(szEnd + 1, '\n'), szLabel, strlen(szLabel)) == 0))
+		{
+			return true;
+		}
+		if ((strncmp(szLine + 2, "bra", 3) == 0) && szTarget && ((strncmp(szTarget + strlen(szLabel), "\t\tlda ", 6) == 0) || (strncmp(szTarget + strlen(szLabel), "\t\ttxa", 5) == 0)) &&
+			(szLine >= szAssembly + 2) && TestIR816PreviousIsDirectLoad(szAssembly, szLine))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A pixel loop clipped at both sides (like DrawSprite's): its branches
+// are tidied (PeepholeBranches) and it still works out the same.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendBranches(void)
+{
+	static const char*	szIR =
+		"function i32 @_main()\n{\nentry:\n\t%p = itoptr i32 524272 to ptr\n\t%o = itoptr i32 458736 to ptr\n\tjmp fill\n"
+		"fill:\n\t%i = phi i16 [entry, 0], [fill, %i2]\n\t%w = zext i16 %i to i32\n\t%a = ptradd ptr %p, %w\n"
+		"\t%b = trunc i16 %i to i8\n\tstore i8 %b, %a\n\t%i2 = add i16 %i, 1\n\t%c = ult i16 %i2, 32\n\tbrif %c, fill, start\n"
+		"start:\n\tjmp loop\n"
+		"loop:\n\t%x = phi i16 [start, 65531], [next, %x2]\n\t%s = phi ptr [start, %p], [next, %s2]\n"
+		"\t%n = slt i16 %x, 0\n\tbrif %n, next, right\n"
+		"right:\n\t%r = ugt i16 %x, 19\n\tbrif %r, next, draw\n"
+		"draw:\n\t%v = load i8 %s\n\t%xw = zext i16 %x to i32\n\t%d = ptradd ptr %o, %xw\n\tstore i8 %v, %d\n\tjmp next\n"
+		"next:\n\t%s2 = ptradd ptr %s, 1\n\t%x2 = add i16 %x, 1\n\t%e = ne i16 %x2, 27\n\tbrif %e, loop, sum\n"
+		"sum:\n\t%k = phi i16 [next, 0], [sum, %k2]\n\t%t = phi i16 [next, 0], [sum, %t2]\n\t%y = zext i16 %k to i32\n"
+		"\t%q = ptradd ptr %o, %y\n\t%f = load i8 %q\n\t%fw = zext i8 %f to i16\n\t%t2 = add i16 %t, %fw\n"
+		"\t%k2 = add i16 %k, 1\n\t%m = ult i16 %k2, 20\n\tbrif %m, sum, done\n"
+		"done:\n\t%u = zext i16 %t2 to i32\n\tret i32 %u\n}\n";
+	CChars				szAssembly;
+
+	//x from -5 to 26 draws x = 0..19 from source bytes 5..24.
+	szAssembly.Init();
+	AssertLong(290, TestIR816Run(szIR, true, &szAssembly));
+	AssertFalse(TestIR816UntidyBranch(szAssembly.Text()));
+	szAssembly.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // A frame bigger than the direct page's 256 bytes: values past it are reached through X, and an argument past it is
 // copied near before it is followed as a pointer.
 //
@@ -1245,6 +1397,8 @@ void TestIR816Backend(void)
 	TestIR816BackendX();
 	TestIR816BackendWide();
 	TestIR816BackendMemoryAndCalls();
+	TestIR816BackendIndexed();
+	TestIR816BackendBranches();
 	TestIR816BackendBigFrame();
 
 	SafeKill(gpcTestIR816MathTables);

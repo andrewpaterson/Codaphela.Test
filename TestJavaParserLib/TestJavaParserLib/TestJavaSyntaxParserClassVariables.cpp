@@ -27,7 +27,7 @@ void TestJavaSyntaxParserClassVariablesSimpleDeclaration(void)
 	CChars						sz;
 	CStatementArray*			papcStatements;
 	CJavaSyntaxStatement*		pcStatement;
-	char						szFilename[] = __ENGINE_FUNCTION__".Java";
+	char						szFilename[] = "TestJavaSyntaxParserClassVariablesSimpleDeclaration.Java";
 	char						szFileContents[] = "\
 class Clazz\n\
 {\n\
@@ -126,7 +126,7 @@ void TestJavaSyntaxParserClassVariablesGenericDeclaration(void)
 	CJavaSyntaxGeneric*					pcGeneric;
 	CTypeCommonArray*					apcGenerics;
 	CJavaSyntaxExtent*					pcExtent;
-	char								szFilename[] = __ENGINE_FUNCTION__".Java";
+	char								szFilename[] = "TestJavaSyntaxParserClassVariablesGenericDeclaration.Java";
 	char								szFileContents[] = "\
 class Clazz<Y>\n\
 {\n\
@@ -257,7 +257,7 @@ void TestJavaSyntaxParserClassVariablesSimpleInitialisation(void)
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
-	char						szFilename[] = __ENGINE_FUNCTION__".Java";
+	char						szFilename[] = "TestJavaSyntaxParserClassVariablesSimpleInitialisation.Java";
 	char						szFileContents[] = "\
 class Clazz\n\
 {\n\
@@ -294,7 +294,7 @@ void TestJavaSyntaxParserClassVariablesNewInitialisation(void)
 	CClassCommonArray*			papcClasses;
 	CJavaSyntaxClass*			pcClass;
 	CStatementArray*			papcStatements;
-	char						szFilename[] = __ENGINE_FUNCTION__".Java";
+	char						szFilename[] = "TestJavaSyntaxParserClassVariablesNewInitialisation.Java";
 	char						szFileContents[] = "\
 class Clazz\n\
 {\n\
@@ -335,7 +335,7 @@ void TestJavaSyntaxParserClassVariablesNewInitialisationErrors(void)
 	CTokenParserEnvironment		cTokenParser;
 	CJavaSyntaxParser			cSyntaxParser;
 	CJavaSyntaxMemory			cSyntaxMemory;
-	char						szFilename[] = __ENGINE_FUNCTION__".Java";
+	char						szFilename[] = "TestJavaSyntaxParserClassVariablesNewInitialisationErrors.Java";
 	char						szUnclosed[] = "\
 class Clazz\n\
 {\n\

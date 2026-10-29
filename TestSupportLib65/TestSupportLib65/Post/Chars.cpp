@@ -1,0 +1,6578 @@
+typedef unsigned long size_t;
+typedef long ptrdiff_t;
+typedef long long max_align_t;
+extern "C"
+{
+void* malloc(size_t uiBytes);
+void* calloc(size_t uiCount, size_t uiBytes);
+void* realloc(void* pv, size_t uiBytes);
+void free(void* pv);
+int abs(int i);
+long labs(long i);
+int atoi(const char* sz);
+long atol(const char* sz);
+long strtol(const char* sz, char** pszEnd, int iBase);
+unsigned long strtoul(const char* sz, char** pszEnd, int iBase);
+long long strtoll(const char* sz, char** pszEnd, int iBase);
+unsigned long long strtoull(const char* sz, char** pszEnd, int iBase);
+double strtod(const char* sz, char** pszEnd);
+float strtof(const char* sz, char** pszEnd);
+long double strtold(const char* sz, char** pszEnd);
+double atof(const char* sz);
+int rand(void);
+void srand(unsigned int uiSeed);
+void qsort(void* pvBase, size_t uiCount, size_t uiBytes, int (*fCompare)(const void*, const void*));
+void abort(void);
+int atexit(void (*fFunction)(void));
+void exit(int iStatus);
+void _Exit(int iStatus);
+}
+extern "C"
+{
+void* memcpy(void* pvDest, const void* pvSource, size_t uiBytes);
+void* memmove(void* pvDest, const void* pvSource, size_t uiBytes);
+void* memset(void* pvDest, int iValue, size_t uiBytes);
+int memcmp(const void* pv1, const void* pv2, size_t uiBytes);
+void* memchr(const void* pv, int iValue, size_t uiBytes);
+size_t strlen(const char* sz);
+char* strcpy(char* szDest, const char* szSource);
+char* strncpy(char* szDest, const char* szSource, size_t uiChars);
+char* strcat(char* szDest, const char* szSource);
+char* strncat(char* szDest, const char* szSource, size_t uiChars);
+int strcmp(const char* sz1, const char* sz2);
+int strncmp(const char* sz1, const char* sz2, size_t uiChars);
+char* strchr(const char* sz, int c);
+char* strrchr(const char* sz, int c);
+char* strstr(const char* sz, const char* szFind);
+}
+typedef char* va_list;
+struct FILE;
+typedef long fpos_t;
+extern "C"
+{
+extern FILE* stdin;
+extern FILE* stdout;
+extern FILE* stderr;
+FILE* fopen(const char* szName, const char* szMode);
+int fclose(FILE* pcFile);
+size_t fread(void* pv, size_t uiSize, size_t uiCount, FILE* pcFile);
+size_t fwrite(const void* pv, size_t uiSize, size_t uiCount, FILE* pcFile);
+int fseek(FILE* pcFile, long iOffset, int iOrigin);
+long ftell(FILE* pcFile);
+int fflush(FILE* pcFile);
+int feof(FILE* pcFile);
+int fgetc(FILE* pcFile);
+int fputc(int c, FILE* pcFile);
+int fputs(const char* sz, FILE* pcFile);
+int puts(const char* sz);
+int putchar(int c);
+int remove(const char* szName);
+int rename(const char* szOld, const char* szNew);
+int printf(const char* szFormat, ...);
+int fprintf(FILE* pcFile, const char* szFormat, ...);
+int sprintf(char* szDest, const char* szFormat, ...);
+int snprintf(char* szDest, size_t uiSize, const char* szFormat, ...);
+int vsprintf(char* szDest, const char* szFormat, va_list vaArguments);
+int vsnprintf(char* szDest, size_t uiSize, const char* szFormat, va_list vaArguments);
+int vprintf(const char* szFormat, va_list vaArguments);
+int vfprintf(FILE* pcFile, const char* szFormat, va_list vaArguments);
+}
+typedef signed char int8_t;
+typedef short int16_t;
+typedef long int32_t;
+typedef long long int64_t;
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned long uint32_t;
+typedef unsigned long long uint64_t;
+typedef signed char int_least8_t;
+typedef short int_least16_t;
+typedef long int_least32_t;
+typedef long long int_least64_t;
+typedef unsigned char uint_least8_t;
+typedef unsigned short uint_least16_t;
+typedef unsigned long uint_least32_t;
+typedef unsigned long long uint_least64_t;
+typedef int int_fast8_t;
+typedef int int_fast16_t;
+typedef long int_fast32_t;
+typedef long long int_fast64_t;
+typedef unsigned int uint_fast8_t;
+typedef unsigned int uint_fast16_t;
+typedef unsigned long uint_fast32_t;
+typedef unsigned long long uint_fast64_t;
+typedef long intptr_t;
+typedef unsigned long uintptr_t;
+typedef long long intmax_t;
+typedef unsigned long long uintmax_t;
+typedef int8_t int8;
+typedef int16_t int16;
+typedef int32_t int32;
+typedef uint8_t uint8;
+typedef uint32_t uint32;
+typedef uint16_t uint16;
+typedef int64_t int64 ;
+typedef uint64_t uint64 ;
+typedef int64 int128 ;
+typedef uint64 uint128 ;
+typedef char char8;
+typedef wchar_t char16;
+typedef float float32;
+typedef double float64 ;
+typedef long double float128;
+typedef unsigned int uint;
+typedef size_t size;
+typedef uintptr_t ptr;
+typedef ptrdiff_t ptrdiff;
+typedef size lsize;
+typedef int64 longint;
+typedef uint64 ulongint;
+class CFileReader;
+class CFileWriter;
+enum EPrimitiveType
+{
+PT_Undefined,
+PT_int8,
+PT_int16,
+PT_int32,
+PT_int64,
+PT_uint8,
+PT_uint16,
+PT_uint32,
+PT_uint64,
+PT_float32,
+PT_float64,
+PT_float96,
+PT_char8,
+PT_char16,
+PT_M2float32,
+PT_M3float32,
+PT_M4float32,
+PT_M2float64,
+PT_M3float64,
+PT_M4float64,
+PT_M2int32,
+PT_M3int32,
+PT_M4int32,
+PT_bool,
+PRIMTIVE_OPERATOR_END,
+PT_bit,
+PT_crumb,
+PT_tribble,
+PT_nybble,
+PT_nickle,
+PT_sixbits,
+PRIMTIVE_CONVERTER_END,
+PT_M4x4float32,
+PT_M4x4float64,
+PT_String,
+PT_StringImmutable,
+PT_Number,
+PT_Date,
+PT_DateTime,
+PT_void,
+PT_Pointer,
+PT_Data,
+PT_Enum,
+PT_char8Pointer,
+PT_char16Pointer,
+PT_int,
+PT_uint,
+PT_size,
+NUM_PRIMITIVE_TYPES,
+CLASS_TYPES = 0x80,
+};
+EPrimitiveType IntPrimitive(void);
+EPrimitiveType SizePrimitive(void);
+EPrimitiveType UIntPrimitive(void);
+void* RemapSinglePointer(const void* pvPtr, ptrdiff iOffest);
+__inline void* RemapSinglePointer(const void* pvPtr, ptrdiff iOffest)
+{
+return &((char*)pvPtr)[iOffest];
+}
+uint32 TruncateLowBits(uint32 i);
+bool IsPowerOfTwo(uint32 i);
+uint32 GetBestHighBit(uint32 i);
+size GetLogBase2(uint32 i);
+uint8 GetByte(uint32 iInt, uint16 iPos);
+uint32 SetByte(uint8 c, uint16 iPos);
+bool GetBit(size iBit, void* pvBitArray);
+bool GetBitReverseHiLo(size iBit, void* pvBitArray);
+size CountBits(void* pvBitArray, size iBitLength);
+size CountBitsSingly(void* pvBitArray, size iBitLength);
+size CountDigits(int16 i);
+size CountDigits(int32 i);
+size CountDigits(int64 i);
+void SetBit(size iBit, void* pvBitArray, bool bBit);
+void SetBits(size iStart, void* pvBitArray, bool bBit, size iLength);
+void SetFlagByte(uint8* psiDest, uint8 iFlag, bool iFlagValue);
+void SetFlagByte(int8* psiDest, int8 iFlag, bool iFlagValue);
+void SetFlagShort(uint16* psiDest, uint16 iFlag, bool iFlagValue);
+void SetFlagShort(int16* psiDest, int16 iFlag, bool iFlagValue);
+void SetFlagInt(uint32* piDest, uint32 iFlag, bool iFlagValue);
+void SetFlagInt(int32* piDest, int32 iFlag, bool iFlagValue);
+void SetFlagLong(uint64* psiDest, uint64 iFlag, bool iFlagValue);
+void SetFlagLong(int64* psiDest, int64 iFlag, bool iFlagValue);
+void SetFlagSize(size* piDest, size iFlag, bool iFlagValue);
+size FindFirstClearBit(void* pvArray, size iArraySize);
+size FindFirstClearBit(uint32 uiBits);
+size FindFirstSetBit(void* pvArray, size iArraySize);
+size FindFirstSetBit(uint64 uiBits);
+size FindLastClearBit(void* pvArray, size iArraySize);
+size FindLastSetBit(void* pvArray, size iArraySize);
+size FindNextSetBit(void* pvArray, size iArraySize, size iStartBit);
+size FindNextClearBit(void* pvArray, size iArraySize, size iStartBit);
+void SwapInt16(int16* pi1, int16* pi2);
+void SwapUint16(uint16* pi1, uint16* pi2);
+void SwapInt32(int32* pi1, int32* pi2);
+void SwapUint32(uint32* pi1, uint32* pi2);
+void SwapInt(int* pi1, int* pi2);
+void SwapInt(uint* pi1, uint* pi2);
+void SwapByte(uint8* pc1, uint8* pi2);
+void SwapSize(size* pui1, size* pui2);
+void SwapBit(uint8* puiByte, size uiBit1, size uiBit2);
+void SwapBit(uint16* puiByte, size uiBit1, size uiBit2);
+size FindFirstInt(int32* piIntArray, int32 iSearch, size iMaxLength);
+size FindFirstByte(uint8* pcCharArray, uint8 uiSearch, size iMaxLength);
+uint8 GetHighNybble(uint8 c);
+uint8 GetLowNybble(uint8 c);
+uint8 GetLowByte(uint16 uiValue);
+uint8 GetHighByte(uint16 uiValue);
+uint16 SetLowByte(uint16 uiVariable, uint8 uiData);
+uint16 SetHighByte(uint16 uiVariable, uint8 uiData);
+int CompareByte(const void* arg1, const void* arg2);
+int CompareByteReverse(const void* arg1, const void* arg2);
+int CompareShort(const void* arg1, const void* arg2);
+int CompareShortReverse(const void* arg1, const void* arg2);
+int CompareInt(const void* arg1, const void* arg2);
+int CompareIntReverse(const void* arg1, const void* arg2);
+int CompareLong(const void* arg1, const void* arg2);
+int CompareLongReverse(const void* arg1, const void* arg2);
+uint8 GetCrumb(size iCrumb, void* pvArray);
+uint8 GetNybble(size iNybble, void* pvArray);
+void CopyBits(void* pvDest, size iDestOffset, void* pvSource, size iSourceOffset, size iNumBits, bool bClear);
+void CopyBitsReverseHiLo(void* pvDest, size iDestOffset, void* pvSource, size iSourceOffset, size iNumBits, bool bClear);
+int16 ReverseShortEndianness(int16 s);
+int32 ReverseIntEndianness(int32 i);
+int64 ReverseLongEndianness(int64 i);
+uint16 ReverseShortEndianness(uint16 s);
+uint32 ReverseIntEndianness(uint32 i);
+uint64 ReverseLongEndianness(uint64 i);
+void ReverseEndianness(void* pv, size iSize);
+void ReverseBytes(void* pv, size iSize);
+size CalculateStride(size iElementSize, uint16 iAlignment);
+uint8 CalculateOffset(int16 iOffset, uint16 iAlignment);
+int32 IntAbs(int32 i);
+uint32 GetPowerOf2SizeDown(uint32 iInt);
+uint32 GetPowerOf2SizeUp(uint32 iInt);
+uint32 GetPowerOf2SizeAuto(uint32 iInt);
+int32 LargestInt(int32* pInts, int32 iCount);
+size Min(size ui1, size ui2);
+size Max(size ui1, size ui2);
+int8 Absolute(int8 i);
+int16 Absolute(int16 i);
+int32 Absolute(int32 i);
+int64 Absolute(int64 i);
+int16 SquareRoot(int16 i);
+int32 SquareRoot(int32 i);
+int64 SquareRoot(int64 i);
+inline bool FixBool(int32 i)
+{
+return i != 0;
+}
+inline bool FixBool(void* pv)
+{
+return pv != 0L;
+}
+void* operator new(size_t uiBytes);
+void* operator new[](size_t uiBytes);
+void operator delete(void* pv) noexcept;
+void operator delete[](void* pv) noexcept;
+inline void* operator new(size_t uiBytes, void* pv) noexcept { return pv; }
+inline void* operator new[](size_t uiBytes, void* pv) noexcept { return pv; }
+template<class Class>
+constexpr bool IsTriviallyDefaultConstructible(void)
+{
+return __is_trivially_constructible(Class);
+}
+template<class Class>
+Class* NewMalloc(void)
+{
+Class* pv;
+pv = (Class*)malloc(sizeof(Class));
+memset(pv, 0, sizeof(Class));
+new(pv) Class;
+return pv;
+}
+template<class Class>
+Class* New(Class* pv)
+{
+memset(pv, 0, sizeof(Class));
+new(pv) Class;
+return pv;
+}
+template<class Class>
+class CPostMalloc
+{
+public:
+Class* PostMalloc(Class* pv);
+Class* PostMalloc(Class* pv, lsize iNumElements, lsize iStride);
+template<class Subclass>
+Class* PostMalloc(Subclass* pv);
+template<class Subclass>
+Class* PostMalloc(Subclass* pv, lsize iNumElements, lsize iStride);
+bool RequiresVirtualFunctionTable(void);
+};
+template<class Class>
+Class* CPostMalloc<Class>::PostMalloc(Class* pv)
+{
+if (!IsTriviallyDefaultConstructible<Class>())
+{
+new(pv) Class;
+}
+return pv;
+}
+template<class Class>
+Class* CPostMalloc<Class>::PostMalloc(Class* pv, lsize iNumElements, lsize iStride)
+{
+lsize i;
+if (RequiresVirtualFunctionTable())
+{
+for (i = 0; i < iNumElements; i++)
+{
+new(pv) Class;
+pv = (Class*)RemapSinglePointer(pv, iStride);
+}
+}
+return pv;
+}
+template<class Class> template<class Subclass>
+Class* CPostMalloc<Class>::PostMalloc(Subclass* pv)
+{
+if (!IsTriviallyDefaultConstructible<Subclass>())
+{
+new(pv) Subclass;
+}
+return pv;
+}
+template<class Class> template<class Subclass>
+Class* CPostMalloc<Class>::PostMalloc(Subclass* pv, lsize iNumElements, lsize iStride)
+{
+lsize i;
+if (RequiresVirtualFunctionTable())
+{
+for (i = 0; i < iNumElements; i++)
+{
+new(pv) Subclass;
+pv = (Subclass*)RemapSinglePointer(pv, iStride);
+}
+}
+return pv;
+}
+template<class Class>
+bool CPostMalloc<Class>::RequiresVirtualFunctionTable(void)
+{
+return !IsTriviallyDefaultConstructible<Class>();
+}
+class _CForceVirtualSuper1
+{
+virtual void _ForceVirtual1(void) {};
+};
+class _CForceVirtualSuper2
+{
+virtual void _ForceVirtual2(void) {};
+};
+class CConstructable : public _CForceVirtualSuper1, public _CForceVirtualSuper2
+{
+public:
+virtual const char* ClassName(void) =0;
+virtual size ClassSize(void) =0;
+};
+class CChars;
+class CKillable
+{
+public:
+virtual void Kill(void) =0;
+virtual void Print(CChars* psz);
+};
+class CFileReader;
+class CFileWriter;
+template<class M>
+class CArrayTemplatePtr;
+typedef CArrayTemplatePtr<void> CArrayVoidPtr;
+class CMallocator : public CConstructable, public CKillable
+{
+public:
+virtual void* Malloc(lsize uiSize) =0;
+virtual void* Malloc(lsize uiSize, char(** pacDebugName)[4]);
+virtual void* Realloc(void* pv, lsize uiSize) =0;
+virtual bool Free(void* pv) =0;
+virtual size FreeMultiple(CArrayVoidPtr* pav);
+virtual bool IsLocal(void) =0;
+virtual size SizeOffset(void) =0;
+virtual const char* ShortName(void) =0;
+};
+extern size guiMaxDebugAllocatorSize;
+void InitAllocatorDebug(size uiMaxDebugAllocatorSize);
+void KillAllocatorDebug(void);
+CMallocator* ReadMallocator(CFileReader* pcFileReader);
+bool WriteMallocator(CFileWriter* pcFileWriter, CMallocator* pcMalloc);
+enum TRISTATE
+{
+TRITRUE = true,
+TRIFALSE = false,
+TRIGNORED = 0xfffffffe,
+TRIERROR = 0xffffffff
+};
+extern TRISTATE gTriState;
+TRISTATE Negate(TRISTATE tristate);
+TRISTATE Fix(TRISTATE tristate);
+bool NotTrue(TRISTATE tristate);
+typedef int64 filePos;
+class CFileReader
+{
+public:
+bool ReadData(void* pvData, lsize iDataSize);
+bool ReadStringLength(size* piLength);
+bool ReadStringChars(char* szString, size iLength);
+bool ReadString(char* szString, size iMaxLength);
+bool ReadInt8(int8* pi);
+bool ReadInt8(uint8* pi);
+bool ReadInt16(int16* pi);
+bool ReadInt16(uint16* pi);
+bool ReadInt32(int32* pi);
+bool ReadInt32(uint32* pi);
+bool ReadInt64(int64* plli);
+bool ReadInt64(uint64* plli);
+bool ReadSInt(int* pi);
+bool ReadSInt(uint* pi);
+bool ReadSize(lsize* pui);
+bool ReadSizes(size* pai, size iLength);
+bool ReadFloat(float32* pf);
+bool ReadFloat(float64* pf);
+bool ReadChar(char8* pc);
+bool ReadWChar(char16* pc);
+bool ReadBool(bool* pb);
+bool ReadBits(void* pvData, size iByteLength);
+bool ReadIntArray(int32* pai, size iLength);
+bool ReadLittleEndianInt16(int16* pi);
+bool ReadLittleEndianInt16(uint16* pui);
+bool ReadLittleEndianInt32(int32* pi);
+bool ReadLittleEndianInt32(uint32* pui);
+bool ReadBigEndianInt16(int16* pi);
+bool ReadBigEndianInt16(uint16* pui);
+bool ReadBigEndianInt32(int32* pi);
+bool ReadBigEndianInt32(uint32* pui);
+template<class M>
+bool ReadPrimitive(M* pc);
+protected:
+virtual size Read(void* pvDest, lsize iSize, lsize iCount) =0;
+};
+template<class M>
+bool CFileReader::ReadPrimitive(M* pc)
+{
+if (Read(pc, sizeof(M), 1) != 1) { return false; };
+return true;
+}
+class CFileWriter
+{
+public:
+bool WriteData(const void* pvData, lsize iDataSize);
+bool WriteString(const char* szString);
+bool WriteInt(int i);
+bool WriteInt(uint i);
+bool WriteInt8(int8 i);
+bool WriteInt8(uint8 i);
+bool WriteInt16(int16 i);
+bool WriteInt16(uint16 i);
+bool WriteInt32(int32 i);
+bool WriteInt32(uint32 i);
+bool WriteInt64(int64 i);
+bool WriteInt64(uint64 i);
+bool WriteSize(lsize ui);
+bool WriteSizes(size* pai, size iLength);
+bool WriteSInt(int i);
+bool WriteSInt(uint i);
+bool WriteFloat(float32 f);
+bool WriteFloat(float64 f);
+bool WriteChar(char8 c);
+bool WriteWChar(char16 c);
+bool WriteBool(bool b);
+bool WriteBits(void* pvData, size iBitLength);
+bool WriteIntArray(int32* pai, size iLength);
+bool WriteLittleEndianInt16(int16 i);
+bool WriteLittleEndianInt16(uint16 ui);
+bool WriteLittleEndianInt32(int32 i);
+bool WriteLittleEndianInt32(uint32 ui);
+bool WriteBigEndianInt16(int16 i);
+bool WriteBigEndianInt16(uint16 ui);
+bool WriteBigEndianInt32(int32 i);
+bool WriteBigEndianInt32(uint32 ui);
+template<class M>
+bool WritePrimitive(M c);
+protected:
+virtual size Write(const void* pvSource, lsize iSize, lsize iCount) =0;
+};
+template<class M>
+bool CFileWriter::WritePrimitive(M c)
+{
+if (Write(&c, sizeof(M), 1) != 1) { return false; };
+return true;
+}
+class CFileIO : public CFileReader, public CFileWriter
+{
+};
+class CMalloc
+{
+protected:
+CMallocator* mpcMalloc;
+public:
+void Init(CMallocator* pcMalloc);
+void Kill(void);
+void* Malloc(lsize uiSize);
+void* Realloc(void* pv, lsize iMemSize);
+void Free(void* pv);
+bool IsMallocInitialised(void);
+bool IsMalloc(CMallocator* pcMalloc);
+};
+typedef int (*DataCompare)(const void* pvLeft, const void* pvRight);
+struct SArrayTemplateHeader
+{
+size miElementSize;
+size miUsedElements;
+size miChunkSize;
+bool Write(CFileWriter* pcFileWriter);
+bool Read(CFileReader* pcFileReader);
+};
+class CRandom;
+class CArrayBlock : public CMalloc, protected SArrayTemplateHeader
+{
+protected:
+size miNumElements;
+void* mpvArray;
+public:
+void _Init(void);
+void Init(size iElementSize);
+void Init(CMallocator* pcMalloc, size iElementSize);
+void Init(CMallocator* pcMalloc, size iElementSize, size iChunkSize);
+void Init(CMallocator* pcMalloc, size iElementSize, void* pvData, size uiNumData);
+void ReInit(void);
+void Finalise(void);
+void Fake(size iElementSize, void* pvData, size iNum, size iChunkSize = 1);
+void Kill(void);
+void SetAllocateSize(size iSize);
+void FakeSetUsedElements(size iUsedElements);
+size NumElements(void);
+bool IsEmpty(void);
+bool IsNotEmpty(void);
+size AllocatedElements(void);
+size ElementSize(void);
+void* Add(void);
+void* Add(void* pvData);
+void* AddGetIndex(size* piIndex);
+size AddExistingGetIndex(void* pvData);
+size AddIfUnique(void* pvData);
+size AddIfUniqueKey(void* pvData, size iKeyOffset, size iKeySize);
+void Copy(CArrayBlock* pcOtherArray);
+void* Get(size iIndex);
+void* SafeGet(size iIndex);
+size GetAdjustedIndex(size iIndex);
+void* GetData(void);
+void GetHeader(SArrayTemplateHeader* psHeader);
+size GetIndex(void* pvData);
+void* Tail(void);
+void* InsertArrayAfterEnd(CArrayBlock* pcOtherArray);
+void* InsertArrayAt(CArrayBlock* pcOtherArray, size iIndex);
+void* InsertArrayBeforeStart(CArrayBlock* pcOtherArray);
+void* InsertAt(size iIndex);
+void* InsertAt(void* pvData, size iIndex);
+void* InsertBlockAfterEnd(void* paElements, size iLength);
+void* InsertBlockAt(void* paElements, size iIndex, size iLength);
+void* InsertBlockBeforeStart(void* paElements, size iLength);
+size InsertIntoSorted(DataCompare fCompare, void* pvData, bool bOverwriteExisting);
+void* InsertNumAt(size iNumElements, size iIndex);
+void InsertBatch(size iFirstIndex, size iNumInBatch, size iNumBatches, size iStrideToNextBatch);
+bool Pop(void* pvDest);
+bool Pop(void);
+void Push(void* pvData);
+void* Push(void);
+void* PushCopy(void);
+bool PopFirst(void* pvData);
+bool PopFirst(void);
+size AddNum(size iNumElements);
+size RemoveNum(size iNumElements);
+void* GrowToAtLeastNumElements(size iNumElements, bool bClear = false, uint8 iClear = 0);
+size Resize(size iNumElements);
+void Sort(DataCompare fCompare);
+void BubbleSort(DataCompare fCompare);
+void QuickSort(DataCompare fCompare);
+void TimSort(DataCompare fCompare);
+bool IsSorted(DataCompare fCompare);
+void Reverse(void);
+void Shuffle(CRandom* pcRandom = 0L);
+bool Contains(void* pvData);
+bool Equals(CArrayBlock* pcOtherArray);
+size Find(void* pvData);
+bool FindInSorted(void* pvData, DataCompare fCompare, size* piIndex);
+size FindWithIntKey(int iKey);
+size FindWithIntKey(int iKey, size iKeyOffset);
+size FindWithKey(void* pvData, size iKeyOffset, size iKeySize);
+void RemoveAt(size iIndex, bool bPreserveOrder = true);
+void RemoveAt(size* paiIndex, size iNumElements, bool bPreserveOrder = true);
+void RemoveRange(size iStartIndex, size iEndIndexExclusive, bool bPreserveOrder = true);
+bool RemoveTail(void);
+bool RemoveFirst(void);
+void RemoveBatch(size iFirstIndex, size iNumInBatch, size iNumBatches, size iStrideToNextBatch);
+void RemoveAll(void);
+bool Remove(void* pvData, bool bPreserveOrder = true);
+size RemoveArray(CArrayBlock* pcOtherArray, bool bPreserveOrder = true);
+size RemoveArrayFromSorted(CArrayBlock* pcOtherArray, DataCompare fCompare);
+void Set(size iIndex, void* pvData);
+bool SafeSet(size iIndex, void* pvData);
+void Swap(size iIndex1, size iIndex2);
+void Zero(void);
+void One(void);
+size ByteSize(void);
+size ChunkSize(void);
+size SetUsedElements(size iNumElements);
+size RemoveAtNoDeallocate(size iIndex);
+bool SetChunkSize(size iChunkSize);
+bool Write(CFileWriter* pcFileWriter);
+bool Read(CFileReader* pcFileReader);
+bool WriteAllocatorAndHeader(CFileWriter* pcFileWriter);
+bool WriteHeader(CFileWriter* pcFileWriter);
+bool WriteHeader(CFileWriter* pcFileWriter, size uiFileElementSize);
+bool ReadAllocatorAndHeader(CFileReader* pcFileReader);
+bool ReadHeader(CFileReader* pcFileReader, CMallocator* pcMalloc);
+bool ReadHeader(CFileReader* pcFileReader, CMallocator* pcMalloc, size uiFileElementSize, size uiElementSize);
+protected:
+bool BinarySearch(void* pvData, size iLeft, size iRight, DataCompare fCompare, size* piIndex);
+void* CopyArrayInto(CArrayBlock* pcOtherArray, size iIndex);
+void* CopyBlockInto(void* paElements, size iLength, size iIndex);
+void PrivateRemoveAt(size iIndex, bool bPreserveOrder, size iDataSize);
+void PrivateRemoveRange(size iStartIndex, size iEndIndexExclusive, bool bPreserveOrder, size iDataSize);
+size RemoveAtNoDeallocate(size iIndex, bool bPreserveOrder, size iDataSize);
+void SetArraySize(size iNumElements);
+};
+struct SArrayLargeTemplateHeader
+{
+lsize miElementSize;
+lsize miUsedElements;
+lsize miChunkSize;
+bool Write(CFileWriter* pcFileWriter);
+bool Read(CFileReader* pcFileReader);
+};
+class CRandom;
+class CArrayLargeBlock : public CMalloc, protected SArrayLargeTemplateHeader
+{
+protected:
+lsize miNumElements;
+void* mpvArray;
+public:
+void _Init(void);
+void Init(lsize iElementSize);
+void Init(CMallocator* pcMalloc, lsize iElementSize);
+void Init(CMallocator* pcMalloc, lsize iElementSize, lsize iChunkSize);
+void Init(CMallocator* pcMalloc, lsize iElementSize, void* pvData, lsize uiNumData);
+void ReInit(void);
+void Finalise(void);
+void Fake(lsize iElementSize, void* pvData, lsize iNum, lsize iChunkSize = 1);
+void Kill(void);
+void SetAllocateSize(lsize iSize);
+void FakeSetUsedElements(lsize iUsedElements);
+lsize NumElements(void);
+bool IsEmpty(void);
+bool IsNotEmpty(void);
+lsize AllocatedElements(void);
+lsize ElementSize(void);
+void* Add(void);
+void* Add(void* pvData);
+void* AddGetIndex(lsize* piIndex);
+lsize AddExistingGetIndex(void* pvData);
+lsize AddIfUnique(void* pvData);
+lsize AddIfUniqueKey(void* pvData, lsize iKeyOffset, lsize iKeySize);
+void Copy(CArrayLargeBlock* pcOtherArray);
+void* Get(lsize iIndex);
+void* SafeGet(lsize iIndex);
+lsize GetAdjustedIndex(lsize iIndex);
+void* GetData(void);
+void GetHeader(SArrayLargeTemplateHeader* psHeader);
+lsize GetIndex(void* pvData);
+void* Tail(void);
+void* InsertArrayAfterEnd(CArrayLargeBlock* pcOtherArray);
+void* InsertArrayAt(CArrayLargeBlock* pcOtherArray, lsize iIndex);
+void* InsertArrayBeforeStart(CArrayLargeBlock* pcOtherArray);
+void* InsertAt(lsize iIndex);
+void* InsertAt(void* pvData, lsize iIndex);
+void* InsertBlockAfterEnd(void* paElements, lsize iLength);
+void* InsertBlockAt(void* paElements, lsize iIndex, lsize iLength);
+void* InsertBlockBeforeStart(void* paElements, lsize iLength);
+lsize InsertIntoSorted(DataCompare fCompare, void* pvData, bool bOverwriteExisting);
+void* InsertNumAt(lsize iNumElements, lsize iIndex);
+void InsertBatch(lsize iFirstIndex, lsize iNumInBatch, lsize iNumBatches, lsize iStrideToNextBatch);
+bool Pop(void* pvDest);
+bool Pop(void);
+void Push(void* pvData);
+void* Push(void);
+void* PushCopy(void);
+bool PopFirst(void* pvData);
+bool PopFirst(void);
+lsize AddNum(lsize iNumElements);
+lsize RemoveNum(lsize iNumElements);
+void* GrowToAtLeastNumElements(lsize iNumElements, bool bClear = false, uint8 iClear = 0);
+lsize Resize(lsize iNumElements);
+void Sort(DataCompare fCompare);
+void BubbleSort(DataCompare fCompare);
+void QuickSort(DataCompare fCompare);
+void TimSort(DataCompare fCompare);
+bool IsSorted(DataCompare fCompare);
+void Reverse(void);
+void Shuffle(CRandom* pcRandom = 0L);
+bool Contains(void* pvData);
+bool Equals(CArrayLargeBlock* pcOtherArray);
+lsize Find(void* pvData);
+bool FindInSorted(void* pvData, DataCompare fCompare, lsize* piIndex);
+lsize FindWithIntKey(int iKey);
+lsize FindWithIntKey(int iKey, lsize iKeyOffset);
+lsize FindWithKey(void* pvData, lsize iKeyOffset, lsize iKeySize);
+void RemoveAt(lsize iIndex, bool bPreserveOrder = true);
+void RemoveAt(lsize* paiIndex, lsize iNumElements, bool bPreserveOrder = true);
+void RemoveRange(lsize iStartIndex, lsize iEndIndexExclusive, bool bPreserveOrder = true);
+bool RemoveTail(void);
+bool RemoveFirst(void);
+void RemoveBatch(lsize iFirstIndex, lsize iNumInBatch, lsize iNumBatches, lsize iStrideToNextBatch);
+void RemoveAll(void);
+bool Remove(void* pvData, bool bPreserveOrder = true);
+lsize RemoveArray(CArrayLargeBlock* pcOtherArray, bool bPreserveOrder = true);
+lsize RemoveArrayFromSorted(CArrayLargeBlock* pcOtherArray, DataCompare fCompare);
+void Set(lsize iIndex, void* pvData);
+bool SafeSet(lsize iIndex, void* pvData);
+void Swap(lsize iIndex1, lsize iIndex2);
+void Zero(void);
+void One(void);
+lsize ByteSize(void);
+lsize ChunkSize(void);
+lsize SetUsedElements(lsize iNumElements);
+lsize RemoveAtNoDeallocate(lsize iIndex);
+bool SetChunkSize(lsize iChunkSize);
+bool Write(CFileWriter* pcFileWriter);
+bool Read(CFileReader* pcFileReader);
+bool WriteAllocatorAndHeader(CFileWriter* pcFileWriter);
+bool WriteHeader(CFileWriter* pcFileWriter);
+bool WriteHeader(CFileWriter* pcFileWriter, lsize uiFileElementSize);
+bool ReadAllocatorAndHeader(CFileReader* pcFileReader);
+bool ReadHeader(CFileReader* pcFileReader, CMallocator* pcMalloc);
+bool ReadHeader(CFileReader* pcFileReader, CMallocator* pcMalloc, lsize uiFileElementSize, lsize uiElementSize);
+protected:
+bool BinarySearch(void* pvData, lsize iLeft, lsize iRight, DataCompare fCompare, lsize* piIndex);
+void* CopyArrayInto(CArrayLargeBlock* pcOtherArray, lsize iIndex);
+void* CopyBlockInto(void* paElements, lsize iLength, lsize iIndex);
+void PrivateRemoveAt(lsize iIndex, bool bPreserveOrder, lsize iDataSize);
+void PrivateRemoveRange(lsize iStartIndex, lsize iEndIndexExclusive, bool bPreserveOrder, lsize iDataSize);
+lsize RemoveAtNoDeallocate(lsize iIndex, bool bPreserveOrder, lsize iDataSize);
+void SetArraySize(lsize iNumElements);
+};
+template<class M>
+class CArrayTemplate : public CArrayBlock, protected CPostMalloc<M>
+{
+public:
+void Init(void);
+void Init(CMallocator* pcMalloc);
+void Init(CMallocator* pcMalloc, size iChunkSize);
+void Init(CMallocator* pcMalloc, M* pvData, size uiNumData);
+void Fake(M* pvData, size iNum, size iChunkSize = 1);
+void Kill(void);
+M* Add(void);
+M* Add(M* pvData);
+M* AddGetIndex(size* piIndex);
+size AddIfUnique(M* pvData);
+size AddIfUniqueKey(M* pvData, size iKeyOffset, size iKeySize);
+void Copy(CArrayTemplate<M>* pcOtherArray);
+M* Get(size iIndex);
+M* SafeGet(size iIndex);
+M* GetData(void);
+size GetIndex(M* pvData);
+M* Tail(void);
+M& operator[](size iIndex);
+M* InsertArrayAfterEnd(CArrayTemplate<M>* pcOtherArray);
+M* InsertArrayAt(CArrayTemplate<M>* pcOtherArray, size iIndex);
+M* InsertArrayBeforeStart(CArrayTemplate<M>* pcOtherArray);
+M* InsertAt(size iIndex);
+M* InsertAt(M* pvData, size iIndex);
+M* InsertBlockAfterEnd(M* paElements, size iLength);
+M* InsertBlockAt(M* paElements, size iLength, size iIndex);
+M* InsertBlockBeforeStart(M* paElements, size iLength);
+size InsertIntoSorted(DataCompare fCompare, M* pvData, bool bOverwriteExisting);
+M* InsertNumAt(size iNumElements, size iIndex);
+size RemoveArray(CArrayTemplate<M>* pcOtherArray, bool bPreserveOrder = true);
+size RemoveArrayFromSorted(CArrayTemplate<M>* pcOtherArray, DataCompare fCompare);
+bool Pop(M* pvData);
+bool Pop(void);
+void Push(M* pvData);
+M* Push(void);
+M* PushCopy(void);
+bool Contains(M* pvData);
+bool Equals(CArrayTemplate<M>* pcOtherArray);
+size Find(M* pvData);
+bool FindInSorted(M* pvData, DataCompare fCompare, size* piIndex);
+size FindWithKey(M* pvData, size iKeyOffset, size iKeySize);
+void Set(size iIndex, M* pvData);
+bool SafeSet(size iIndex, M* pvData);
+};
+template<class M> void CArrayTemplate<M>::Init(void) { CArrayBlock::Init(sizeof(M)); }
+template<class M> void CArrayTemplate<M>::Init(CMallocator* pcMalloc) { CArrayBlock::Init(pcMalloc, sizeof(M)); }
+template<class M> void CArrayTemplate<M>::Init(CMallocator* pcMalloc, size iChunkSize) { CArrayBlock::Init(pcMalloc, sizeof(M), iChunkSize); }
+template<class M> void CArrayTemplate<M>::Init(CMallocator* pcMalloc, M* pvData, size uiNumData) { CArrayBlock::Init(pcMalloc, sizeof(M), pvData, uiNumData); }
+template<class M> void CArrayTemplate<M>::Kill(void) { CArrayBlock::Kill(); }
+template<class M> M* CArrayTemplate<M>::SafeGet(size iIndex) { return (M*)CArrayBlock::SafeGet(iIndex); }
+template<class M> bool CArrayTemplate<M>::SafeSet(size iIndex, M* pvData) { return CArrayBlock::SafeSet(iIndex, pvData); }
+template<class M> M* CArrayTemplate<M>::Add(void) { return this->PostMalloc((M*)CArrayBlock::Add()); }
+template<class M> M* CArrayTemplate<M>::AddGetIndex(size* piIndex) { return this->PostMalloc((M*)CArrayBlock::AddGetIndex(piIndex)); }
+template<class M> M* CArrayTemplate<M>::Add(M* pvData) { return (M*)CArrayBlock::Add(pvData); }
+template<class M> void CArrayTemplate<M>::Set(size iIndex, M* pvData) { return CArrayBlock::Set(iIndex, pvData); }
+template<class M> M* CArrayTemplate<M>::InsertAt(size iIndex) { return this->PostMalloc((M*)CArrayBlock::InsertAt(iIndex)); }
+template<class M> M* CArrayTemplate<M>::InsertAt(M* pvData, size iIndex) { return (M*)CArrayBlock::InsertAt(pvData, iIndex); }
+template<class M> void CArrayTemplate<M>::Copy(CArrayTemplate* pcOtherArray) { CArrayBlock::Copy(pcOtherArray); }
+template<class M>
+void CArrayTemplate<M>::Push(M* pvData)
+{
+CArrayBlock::Push(pvData);
+}
+template<class M>
+M* CArrayTemplate<M>::Push(void)
+{
+return Add();
+}
+template<class M>
+M* CArrayTemplate<M>::PushCopy(void)
+{
+return (M*)CArrayBlock::PushCopy();
+}
+template<class M>
+bool CArrayTemplate<M>::Pop(M* pvData)
+{
+return CArrayBlock::Pop(pvData);
+}
+template<class M>
+bool CArrayTemplate<M>::Pop(void)
+{
+return CArrayBlock::Pop();
+}
+template<class M>
+M* CArrayTemplate<M>::Tail(void)
+{
+return (M*)CArrayBlock::Tail();
+}
+template<class M>
+size CArrayTemplate<M>::AddIfUnique(M* pvData)
+{
+return CArrayBlock::AddIfUnique(pvData);
+}
+template<class M>
+size CArrayTemplate<M>::Find(M* pvData)
+{
+return CArrayBlock::Find(pvData);
+}
+template<class M>
+bool CArrayTemplate<M>::Contains(M* pvData)
+{
+return CArrayBlock::Contains(pvData);
+}
+template<class M>
+size CArrayTemplate<M>::AddIfUniqueKey(M* pvData, size iKeyOffset, size iKeySize)
+{
+return CArrayBlock::AddIfUniqueKey(pvData, iKeyOffset, iKeySize);
+}
+template<class M>
+size CArrayTemplate<M>::FindWithKey(M* pvData, size iKeyOffset, size iKeySize)
+{
+return CArrayBlock::FindWithKey(pvData, iKeyOffset, iKeySize);
+}
+template<class M>
+bool CArrayTemplate<M>::Equals(CArrayTemplate<M>* pcOtherArray)
+{
+return CArrayBlock::Equals(pcOtherArray);
+}
+template<class M>
+size CArrayTemplate<M>::InsertIntoSorted(DataCompare fCompare, M* pvData, bool bOverwriteExisting)
+{
+return CArrayBlock::InsertIntoSorted(fCompare, pvData, bOverwriteExisting);
+}
+template<class M>
+bool CArrayTemplate<M>::FindInSorted(M* pvData, DataCompare fCompare, size* piIndex)
+{
+return CArrayBlock::FindInSorted(pvData, fCompare, piIndex);
+}
+template<class M>
+M* CArrayTemplate<M>::InsertArrayAfterEnd(CArrayTemplate<M>* pcOtherArray)
+{
+return (M*)CArrayBlock::InsertArrayAfterEnd(pcOtherArray);
+}
+template<class M>
+M* CArrayTemplate<M>::InsertArrayBeforeStart(CArrayTemplate<M>* pcOtherArray)
+{
+return (M*)CArrayBlock::InsertArrayBeforeStart(pcOtherArray);
+}
+template<class M>
+M* CArrayTemplate<M>::InsertArrayAt(CArrayTemplate<M>* pcOtherArray, size iIndex)
+{
+return (M*)CArrayBlock::InsertArrayAt(pcOtherArray, iIndex);
+}
+template<class M>
+M* CArrayTemplate<M>::InsertNumAt(size iNumElements, size iIndex)
+{
+return this->PostMalloc((M*)CArrayBlock::InsertNumAt(iNumElements, iIndex), iNumElements, miElementSize);
+}
+template<class M>
+M* CArrayTemplate<M>::InsertBlockAfterEnd(M* paElements, size iLength)
+{
+return (M*)CArrayBlock::InsertBlockAfterEnd(paElements, iLength);
+}
+template<class M>
+M* CArrayTemplate<M>::InsertBlockBeforeStart(M* paElements, size iLength)
+{
+return (M*)CArrayBlock::InsertBlockBeforeStart(paElements, iLength);
+}
+template<class M>
+M* CArrayTemplate<M>::InsertBlockAt(M* paElements, size iLength, size iIndex)
+{
+return (M*)CArrayBlock::InsertBlockAt(paElements, iLength, iIndex);
+}
+template<class M>
+M* CArrayTemplate<M>::Get(size iIndex)
+{
+return (M*)CArrayBlock::Get(iIndex);
+}
+template<class M>
+size CArrayTemplate<M>::GetIndex(M* pvData)
+{
+return CArrayBlock::GetIndex(pvData);
+}
+template<class M>
+M* CArrayTemplate<M>::GetData(void)
+{
+return (M*)CArrayBlock::GetData();
+}
+template<class M>
+void CArrayTemplate<M>::Fake(M* pvData, size iNum, size iChunkSize)
+{
+CArrayBlock::Fake(sizeof(M), pvData, iNum, iChunkSize);
+}
+template<class M>
+M& CArrayTemplate<M>::operator[](size iIndex)
+{
+return ((M*)this->mpvArray)[iIndex];
+}
+template<class M>
+size CArrayTemplate<M>::RemoveArray(CArrayTemplate<M>* pcOtherArray, bool bPreserveOrder)
+{
+return CArrayBlock::RemoveArray(pcOtherArray, bPreserveOrder);
+}
+template<class M>
+size CArrayTemplate<M>::RemoveArrayFromSorted(CArrayTemplate<M>* pcOtherArray, DataCompare fCompare)
+{
+return CArrayBlock::RemoveArrayFromSorted(pcOtherArray, fCompare);
+}
+template<class M>
+class CArrayLargeTemplate : public CArrayLargeBlock, protected CPostMalloc<M>
+{
+public:
+void Init(void);
+void Init(CMallocator* pcMalloc);
+void Init(CMallocator* pcMalloc, lsize iChunkSize);
+void Init(CMallocator* pcMalloc, M* pvData, lsize uiNumData);
+void Fake(M* pvData, lsize iNum, lsize iChunkSize = 1);
+void Kill(void);
+M* Add(void);
+M* Add(M* pvData);
+M* AddGetIndex(lsize* piIndex);
+lsize AddIfUnique(M* pvData);
+lsize AddIfUniqueKey(M* pvData, lsize iKeyOffset, lsize iKeySize);
+void Copy(CArrayLargeTemplate<M>* pcOtherArray);
+M* Get(lsize iIndex);
+M* SafeGet(lsize iIndex);
+M* GetData(void);
+lsize GetIndex(M* pvData);
+M* Tail(void);
+M& operator[](lsize iIndex);
+M* InsertArrayAfterEnd(CArrayLargeTemplate<M>* pcOtherArray);
+M* InsertArrayAt(CArrayLargeTemplate<M>* pcOtherArray, lsize iIndex);
+M* InsertArrayBeforeStart(CArrayLargeTemplate<M>* pcOtherArray);
+M* InsertAt(lsize iIndex);
+M* InsertAt(M* pvData, lsize iIndex);
+M* InsertBlockAfterEnd(M* paElements, lsize iLength);
+M* InsertBlockAt(M* paElements, lsize iLength, lsize iIndex);
+M* InsertBlockBeforeStart(M* paElements, lsize iLength);
+lsize InsertIntoSorted(DataCompare fCompare, M* pvData, bool bOverwriteExisting);
+M* InsertNumAt(lsize iNumElements, lsize iIndex);
+lsize RemoveArray(CArrayLargeTemplate<M>* pcOtherArray, bool bPreserveOrder = true);
+lsize RemoveArrayFromSorted(CArrayLargeTemplate<M>* pcOtherArray, DataCompare fCompare);
+bool Pop(M* pvData);
+bool Pop(void);
+void Push(M* pvData);
+M* Push(void);
+M* PushCopy(void);
+bool Contains(M* pvData);
+bool Equals(CArrayLargeTemplate<M>* pcOtherArray);
+lsize Find(M* pvData);
+bool FindInSorted(M* pvData, DataCompare fCompare, lsize* piIndex);
+lsize FindWithKey(M* pvData, lsize iKeyOffset, lsize iKeySize);
+void Set(lsize iIndex, M* pvData);
+bool SafeSet(lsize iIndex, M* pvData);
+};
+template<class M> void CArrayLargeTemplate<M>::Init(void) { CArrayLargeBlock::Init(sizeof(M)); }
+template<class M> void CArrayLargeTemplate<M>::Init(CMallocator* pcMalloc) { CArrayLargeBlock::Init(pcMalloc, sizeof(M)); }
+template<class M> void CArrayLargeTemplate<M>::Init(CMallocator* pcMalloc, lsize iChunkSize) { CArrayLargeBlock::Init(pcMalloc, sizeof(M), iChunkSize); }
+template<class M> void CArrayLargeTemplate<M>::Init(CMallocator* pcMalloc, M* pvData, lsize uiNumData) { CArrayLargeBlock::Init(pcMalloc, sizeof(M), pvData, uiNumData); }
+template<class M> void CArrayLargeTemplate<M>::Kill(void) { CArrayLargeBlock::Kill(); }
+template<class M> M* CArrayLargeTemplate<M>::SafeGet(lsize iIndex) { return (M*)CArrayLargeBlock::SafeGet(iIndex); }
+template<class M> bool CArrayLargeTemplate<M>::SafeSet(lsize iIndex, M* pvData) { return CArrayLargeBlock::SafeSet(iIndex, pvData); }
+template<class M> M* CArrayLargeTemplate<M>::Add(void) { return this->PostMalloc((M*)CArrayLargeBlock::Add()); }
+template<class M> M* CArrayLargeTemplate<M>::AddGetIndex(lsize* piIndex) { return this->PostMalloc((M*)CArrayLargeBlock::AddGetIndex(piIndex)); }
+template<class M> M* CArrayLargeTemplate<M>::Add(M* pvData) { return (M*)CArrayLargeBlock::Add(pvData); }
+template<class M> void CArrayLargeTemplate<M>::Set(lsize iIndex, M* pvData) { return CArrayLargeBlock::Set(iIndex, pvData); }
+template<class M> M* CArrayLargeTemplate<M>::InsertAt(lsize iIndex) { return this->PostMalloc((M*)CArrayLargeBlock::InsertAt(iIndex)); }
+template<class M> M* CArrayLargeTemplate<M>::InsertAt(M* pvData, lsize iIndex) { return (M*)CArrayLargeBlock::InsertAt(pvData, iIndex); }
+template<class M> void CArrayLargeTemplate<M>::Copy(CArrayLargeTemplate* pcOtherArray) { CArrayLargeBlock::Copy(pcOtherArray); }
+template<class M>
+void CArrayLargeTemplate<M>::Push(M* pvData)
+{
+CArrayLargeBlock::Push(pvData);
+}
+template<class M>
+M* CArrayLargeTemplate<M>::Push(void)
+{
+return Add();
+}
+template<class M>
+M* CArrayLargeTemplate<M>::PushCopy(void)
+{
+return (M*)CArrayLargeBlock::PushCopy();
+}
+template<class M>
+bool CArrayLargeTemplate<M>::Pop(M* pvData)
+{
+return CArrayLargeBlock::Pop(pvData);
+}
+template<class M>
+bool CArrayLargeTemplate<M>::Pop(void)
+{
+return CArrayLargeBlock::Pop();
+}
+template<class M>
+M* CArrayLargeTemplate<M>::Tail(void)
+{
+return (M*)CArrayLargeBlock::Tail();
+}
+template<class M>
+lsize CArrayLargeTemplate<M>::AddIfUnique(M* pvData)
+{
+return CArrayLargeBlock::AddIfUnique(pvData);
+}
+template<class M>
+lsize CArrayLargeTemplate<M>::Find(M* pvData)
+{
+return CArrayLargeBlock::Find(pvData);
+}
+template<class M>
+bool CArrayLargeTemplate<M>::Contains(M* pvData)
+{
+return CArrayLargeBlock::Contains(pvData);
+}
+template<class M>
+lsize CArrayLargeTemplate<M>::AddIfUniqueKey(M* pvData, lsize iKeyOffset, lsize iKeySize)
+{
+return CArrayLargeBlock::AddIfUniqueKey(pvData, iKeyOffset, iKeySize);
+}
+template<class M>
+lsize CArrayLargeTemplate<M>::FindWithKey(M* pvData, lsize iKeyOffset, lsize iKeySize)
+{
+return CArrayLargeBlock::FindWithKey(pvData, iKeyOffset, iKeySize);
+}
+template<class M>
+bool CArrayLargeTemplate<M>::Equals(CArrayLargeTemplate<M>* pcOtherArray)
+{
+return CArrayLargeBlock::Equals(pcOtherArray);
+}
+template<class M>
+lsize CArrayLargeTemplate<M>::InsertIntoSorted(DataCompare fCompare, M* pvData, bool bOverwriteExisting)
+{
+return CArrayLargeBlock::InsertIntoSorted(fCompare, pvData, bOverwriteExisting);
+}
+template<class M>
+bool CArrayLargeTemplate<M>::FindInSorted(M* pvData, DataCompare fCompare, lsize* piIndex)
+{
+return CArrayLargeBlock::FindInSorted(pvData, fCompare, piIndex);
+}
+template<class M>
+M* CArrayLargeTemplate<M>::InsertArrayAfterEnd(CArrayLargeTemplate<M>* pcOtherArray)
+{
+return (M*)CArrayLargeBlock::InsertArrayAfterEnd(pcOtherArray);
+}
+template<class M>
+M* CArrayLargeTemplate<M>::InsertArrayBeforeStart(CArrayLargeTemplate<M>* pcOtherArray)
+{
+return (M*)CArrayLargeBlock::InsertArrayBeforeStart(pcOtherArray);
+}
+template<class M>
+M* CArrayLargeTemplate<M>::InsertArrayAt(CArrayLargeTemplate<M>* pcOtherArray, lsize iIndex)
+{
+return (M*)CArrayLargeBlock::InsertArrayAt(pcOtherArray, iIndex);
+}
+template<class M>
+M* CArrayLargeTemplate<M>::InsertNumAt(lsize iNumElements, lsize iIndex)
+{
+return this->PostMalloc((M*)CArrayLargeBlock::InsertNumAt(iNumElements, iIndex), iNumElements, miElementSize);
+}
+template<class M>
+M* CArrayLargeTemplate<M>::InsertBlockAfterEnd(M* paElements, lsize iLength)
+{
+return (M*)CArrayLargeBlock::InsertBlockAfterEnd(paElements, iLength);
+}
+template<class M>
+M* CArrayLargeTemplate<M>::InsertBlockBeforeStart(M* paElements, lsize iLength)
+{
+return (M*)CArrayLargeBlock::InsertBlockBeforeStart(paElements, iLength);
+}
+template<class M>
+M* CArrayLargeTemplate<M>::InsertBlockAt(M* paElements, lsize iLength, lsize iIndex)
+{
+return (M*)CArrayLargeBlock::InsertBlockAt(paElements, iLength, iIndex);
+}
+template<class M>
+M* CArrayLargeTemplate<M>::Get(lsize iIndex)
+{
+return (M*)CArrayLargeBlock::Get(iIndex);
+}
+template<class M>
+lsize CArrayLargeTemplate<M>::GetIndex(M* pvData)
+{
+return CArrayLargeBlock::GetIndex(pvData);
+}
+template<class M>
+M* CArrayLargeTemplate<M>::GetData(void)
+{
+return (M*)CArrayLargeBlock::GetData();
+}
+template<class M>
+void CArrayLargeTemplate<M>::Fake(M* pvData, lsize iNum, lsize iChunkSize)
+{
+CArrayLargeBlock::Fake(sizeof(M), pvData, iNum, iChunkSize);
+}
+template<class M>
+M& CArrayLargeTemplate<M>::operator[](lsize iIndex)
+{
+return ((M*)this->mpvArray)[iIndex];
+}
+template<class M>
+lsize CArrayLargeTemplate<M>::RemoveArray(CArrayLargeTemplate<M>* pcOtherArray, bool bPreserveOrder)
+{
+return CArrayLargeBlock::RemoveArray(pcOtherArray, bPreserveOrder);
+}
+template<class M>
+lsize CArrayLargeTemplate<M>::RemoveArrayFromSorted(CArrayLargeTemplate<M>* pcOtherArray, DataCompare fCompare)
+{
+return CArrayLargeBlock::RemoveArrayFromSorted(pcOtherArray, fCompare);
+}
+int StringCompare(const char* ps1, const char* ps2);
+int StringInsensitiveCompare(const char* ps1, const char* ps2);
+char* StrIStr(char* ps1, const char* ps2);
+int MemICmp(const void* pv1, const void* pv2, size iLength);
+int MemCmp(const void* pv1, size iLen1, const void* pv2, size iLen2);
+void MemSwp(const void* pv1, const void* pv2, size uiLength);
+char* StrRev(char* szString);
+char* StrRev(char* szString, size iLength);
+const char* FindChar(const char* szString, char c, bool bReverse = false);
+size FindCharIndex(char chr, const char* str, size index);
+char* StrCpySafe(char* szDest, const char* szSource, size iDestLength, size* piSourceLength = 0L);
+char* StrCatSafe(char* szDest, const char* szSource, size iDestLength, size* piSourceLength = 0L);
+char* StrCpy(char* szDest, const char* szString, const char* szLastCharInclusive);
+void StrCpySafeStripSurroundingSpaces(char* szDest, char* szSource, size uiMaxLength);
+char* ToLower(char* szString);
+char* ToUpper(char* szString);
+char ToLower(char c);
+char ToUpper(char c);
+size StrPrintable(const char* szString);
+size StrPrintable(const char* szString, size iLength);
+size StrLen(const char* szString);
+size StrLen(const char* szString, const char* szLastCharInclusive);
+bool StrEmpty(const char* szString);
+char* NullToEmpty(const char* szString);
+char GetHexChar(size c4Bit);
+size GetCharHex(char cHexChar);
+size NumberOfDigits(size uiNumber);
+char* NextString(const char* szCurrent);
+char* ByteToString(char* szDest, size iDestLength, int8 iValue, uint16 iBase = 10);
+char* ByteToString(char* szDest, size iDestLength, uint8 iValue, uint16 iBase = 10);
+char* ShortToString(char* szDest, size iDestLength, int16 iValue, uint16 iBase = 10);
+char* ShortToString(char* szDest, size iDestLength, uint16 iValue, uint16 iBase = 10);
+char* IntToString(char* szDest, size iDestLength, int32 iValue, uint16 iBase = 10);
+char* IntToString(char* szDest, size iDestLength, uint32 iValue, uint16 iBase = 10);
+char* SizeToString(char* szDest, size iDestLength, size iValue, uint16 iBase = 10);
+char* LongToString(char* szDest, size iDestLength, int64 lliValue, uint16 iBase = 10);
+char* LongToString(char* szDest, size iDestLength, uint64 ulliValue, uint16 iBase = 10);
+char* FlagsToString(char* szDest, size iDestLength, int8 iFlags);
+char* FlagsToString(char* szDest, size iDestLength, uint8 iFlags);
+char* FlagsToString(char* szDest, size iDestLength, int16 iFlags);
+char* FlagsToString(char* szDest, size iDestLength, uint16 iFlags);
+char* FlagsToString(char* szDest, size iDestLength, int32 iFlags);
+char* FlagsToString(char* szDest, size iDestLength, uint32 iFlags);
+char* CharToString(char* szDest, size iDestLength, char c);
+char* CharToString(char* szDest, size iDestLength, uint8 c);
+char* CharToString(char* szDest, size iDestLength, char16 c);
+char* BoolToString(char* szDest, size iDestLength, bool b);
+extern char gszDigits[17];
+extern char gszEmptyString[4];
+class CExternalString
+{
+public:
+const char* msz;
+size miLen;
+void Init(void);
+void Init(const char* sz, size iLen);
+void Init(const char* szStart, const char* szLastCharInclusive);
+void Clear(void);
+const char* EndInclusive(void);
+void Dump(void);
+bool Equals(CExternalString* pcOther);
+bool Equals(char* sz);
+};
+template<class M>
+int ComparePrimitive(const void* arg1, const void* arg2)
+{
+if ((*((M*)arg1)) < (*((M*)arg2)))
+{
+return -1;
+}
+if ((*((M*)arg1)) > (*((M*)arg2)))
+{
+return 1;
+}
+return 0;
+}
+template<class M>
+class CArrayTemplatePrimitive : public CArrayTemplate<M>
+{
+protected:
+using CArrayTemplate<M>::miUsedElements;
+using CArrayTemplate<M>::mpvArray;
+public:
+using CArrayTemplate<M>::FindInSorted;
+using CArrayTemplate<M>::Resize;
+using CArrayTemplate<M>::SetUsedElements;
+M GetValue(size iIndex);
+M SafeGetValue(size iIndex, M iNotFound);
+M operator[](size iIndex);
+void SetValue(size iIndex, M iElement);
+void Add(M iElement);
+void Add(M* paElements, size iNumElements);
+void InsertAt(M iElement, size iIndex);
+void SetArrayValues(M iValue);
+void SetArrayValues(M iStart, M iIncrement);
+void QuickSort(void);
+void BubbleSort(void);
+size Find(M iValue);
+size AddIfUnique(M iValue);
+void Swap(size iIndex1, size iIndex2);
+void InsertIntoSorted(M iElement, bool bOverwriteExisting);
+bool RemoveFromSorted(M iElement);
+bool RemoveDuplicatesFromSorted(void);
+void MakeUnique(void);
+void Intersect(CArrayTemplatePrimitive<M>* pcArray1, CArrayTemplatePrimitive<M>* pcArray2);
+bool IsSorted(void);
+size FindFinalContiguousInSorted(void);
+M Pop(void);
+void Push(M iElement);
+void AddRemap(size iElementPos, M iRemapNum);
+void AddList(M iStop, ...);
+void RemoveRemap(size iElementPos);
+};
+template<class M>
+M CArrayTemplatePrimitive<M>::GetValue(size iIndex)
+{
+return (*(CArrayTemplate<M>::Get(iIndex)));
+}
+template<class M>
+M CArrayTemplatePrimitive<M>::operator[](size iIndex)
+{
+return (*(CArrayTemplate<M>::Get(iIndex)));
+}
+template<class M>
+M CArrayTemplatePrimitive<M>::SafeGetValue(size iIndex, M iNotFound)
+{
+if (iIndex < miUsedElements)
+{
+return ((M*)mpvArray)[iIndex];
+}
+return iNotFound;
+}
+template<class M>
+void CArrayTemplatePrimitive<M>::SetValue(size iIndex, M iElement)
+{
+((M*)mpvArray)[iIndex] = iElement;
+}
+template<class M>
+void CArrayTemplatePrimitive<M>::Add(M iElement)
+{
+M* pvTemp;
+pvTemp = CArrayTemplate<M>::Add();
+*pvTemp = iElement;
+}
+template<class M>
+void CArrayTemplatePrimitive<M>::Add(M* paElements, size iNumElements)
+{
+size i;
+M* pvTemp;
+for (i = 0; i < iNumElements; i++)
+{
+pvTemp = CArrayTemplate<M>::Add();
+*pvTemp = paElements[i];
+}
+}
+template<class M>
+void CArrayTemplatePrimitive<M>::InsertAt(M iElement, size iIndex)
+{
+M* pvTemp;
+pvTemp = CArrayTemplate<M>::InsertAt(iIndex);
+if (pvTemp)
+{
+*pvTemp = iElement;
+}
+}
+template<class M>
+void CArrayTemplatePrimitive<M>::SetArrayValues(M iValue)
+{
+size i;
+for (i = 0; i < miUsedElements; i++)
+{
+((M*)mpvArray)[i] = iValue;
+}
+}
+template<class M>
+void CArrayTemplatePrimitive<M>::SetArrayValues(M iStartValue, M iIncrement)
+{
+size i;
+for (i = 0; i < miUsedElements; i++)
+{
+((M*)mpvArray)[i] = iStartValue;
+iStartValue += iIncrement;
+}
+}
+template<class M>
+void CArrayTemplatePrimitive<M>::QuickSort(void)
+{
+CArrayTemplate<M>::QuickSort(&ComparePrimitive<M>);
+}
+template<class M>
+void CArrayTemplatePrimitive<M>::BubbleSort(void)
+{
+CArrayTemplate<M>::BubbleSort(&ComparePrimitive<M>);
+}
+template<class M>
+size CArrayTemplatePrimitive<M>::Find(M iValue)
+{
+size i;
+for (i = 0; i < miUsedElements; i++)
+{
+if (((M*)mpvArray)[i] == iValue)
+{
+return i;
+}
+}
+return ((size)-1);
+}
+template<class M>
+size CArrayTemplatePrimitive<M>::AddIfUnique(M iValue)
+{
+size iPos;
+iPos = Find(iValue);
+if (iPos == ((size)-1))
+{
+Add(iValue);
+}
+return iPos;
+}
+template<class M>
+void CArrayTemplatePrimitive<M>::Swap(size iIndex1, size iIndex2)
+{
+M* piElement1;
+M* piElement2;
+M iTemp;
+piElement1 = this->Get(iIndex1);
+piElement2 = this->Get(iIndex2);
+iTemp = (*piElement1);
+(*piElement1) = (*piElement2);
+(*piElement2) = iTemp;
+}
+template<class M>
+void CArrayTemplatePrimitive<M>::InsertIntoSorted(M iElement, bool bOverwriteExisting)
+{
+size iPos;
+bool bExists;
+bExists = FindInSorted(&iElement, ComparePrimitive<M>, &iPos);
+if (iPos < miUsedElements)
+{
+if (!bExists)
+{
+InsertAt(iElement, iPos);
+}
+else
+{
+if (bOverwriteExisting)
+{
+CArrayTemplate<M>::Set(iPos, &iElement);
+}
+else
+{
+InsertAt(iElement, iPos);
+}
+}
+}
+else
+{
+Add(iElement);
+}
+}
+template<class M>
+bool CArrayTemplatePrimitive<M>::RemoveFromSorted(M iElement)
+{
+size iPos;
+bool bExists;
+bExists = FindInSorted(&iElement, ComparePrimitive<M>, &iPos);
+if (bExists)
+{
+this->RemoveAt(iPos, true);
+return true;
+}
+return false;
+}
+template<class M>
+bool CArrayTemplatePrimitive<M>::RemoveDuplicatesFromSorted(void)
+{
+size i;
+M iValue;
+M iCurrent;
+bool bAnyRemoved;
+size iWrite;
+bAnyRemoved = false;
+if (miUsedElements > 0)
+{
+iCurrent = GetValue(0);
+iWrite = 1;
+for (i = 1; i < miUsedElements; i++)
+{
+iValue = GetValue(i);
+if (iValue != iCurrent)
+{
+SetValue(iWrite, iValue);
+iCurrent = iValue;
+iWrite++;
+}
+else
+{
+bAnyRemoved = true;
+}
+}
+if (bAnyRemoved)
+{
+Resize(iWrite);
+}
+}
+return bAnyRemoved;
+}
+template<class M>
+void CArrayTemplatePrimitive<M>::MakeUnique(void)
+{
+QuickSort();
+RemoveDuplicatesFromSorted();
+}
+template<class M>
+void CArrayTemplatePrimitive<M>::Intersect(CArrayTemplatePrimitive<M>* pcArray1, CArrayTemplatePrimitive<M>* pcArray2)
+{
+size i;
+size j;
+M x;
+M y;
+for (i = 0; i < pcArray1->NumElements(); i++)
+{
+x = pcArray1->GetValue(i);
+for (j = 0; j < pcArray2->NumElements(); j++)
+{
+y = pcArray2->GetValue(j);
+if (x == y)
+{
+Add(x);
+break;
+}
+}
+}
+}
+template<class M>
+bool CArrayTemplatePrimitive<M>::IsSorted(void)
+{
+size i;
+M iValue;
+M iLast;
+if (miUsedElements > 1)
+{
+iLast = GetValue(0);
+for (i = 1; i < miUsedElements; i++)
+{
+iValue = GetValue(i);
+if (i != 0)
+{
+if (iValue < iLast)
+{
+return false;
+}
+}
+iLast = iValue;
+}
+return true;
+}
+else
+{
+return true;
+}
+}
+template<class M>
+size CArrayTemplatePrimitive<M>::FindFinalContiguousInSorted(void)
+{
+size i;
+M iValue;
+if (miUsedElements == 0)
+{
+return ((size)-1);
+}
+for (i = 0; i < miUsedElements; i++)
+{
+iValue = GetValue(i);
+if ((M)i != iValue)
+{
+if (i > 0)
+{
+return i - 1;
+}
+else
+{
+return ((size)-1);
+}
+}
+}
+return miUsedElements - 1;
+}
+template<class M>
+M CArrayTemplatePrimitive<M>::Pop(void)
+{
+M i;
+CArrayTemplate<M>::Pop(&i);
+return i;
+}
+template<class M>
+void CArrayTemplatePrimitive<M>::Push(M iElement)
+{
+Add(iElement);
+}
+template<class M>
+void CArrayTemplatePrimitive<M>::AddRemap(size iElementPos, M iRemapNum)
+{
+M* pi;
+size iIndex;
+size iNumToAdd;
+size iMinusOne;
+if (miUsedElements > iElementPos)
+{
+pi = CArrayTemplate<M>::Get(iElementPos);
+(*pi) = iRemapNum;
+}
+else
+{
+iMinusOne = ((size)-1);
+iNumToAdd = (iElementPos - miUsedElements);
+for (iIndex = 0; iIndex < iNumToAdd; iIndex++)
+{
+Add((M)iMinusOne);
+}
+Add(iRemapNum);
+}
+}
+template<class M>
+void CArrayTemplatePrimitive<M>::RemoveRemap(size iElementPos)
+{
+M* pi;
+size iIndex;
+size iCutDown;
+if (iElementPos < miUsedElements)
+{
+pi = CArrayTemplate<M>::Get(iElementPos);
+(*pi) = -1;
+}
+iCutDown = miUsedElements;
+iIndex = miUsedElements;
+if (iIndex != 0)
+{
+do
+{
+iIndex--;
+pi = CArrayTemplate<M>::Get(iIndex);
+if (*pi == (M)-1)
+{
+iCutDown = iIndex;
+}
+else
+{
+break;
+}
+if (iIndex == 0)
+{
+break;
+}
+}
+while (iIndex != 0);
+}
+if (iCutDown != miUsedElements)
+{
+SetUsedElements(iCutDown);
+}
+}
+template<class M>
+void CArrayTemplatePrimitive<M>::AddList(M iStop, ...)
+{
+va_list vaMarker;
+M iValue;
+((vaMarker) = (char*)&(iStop) + sizeof(iStop));
+iValue = (*(M*)(((vaMarker) += sizeof(M)) - sizeof(M)));
+while (iValue != iStop)
+{
+Add(iValue);
+iValue = (*(M*)(((vaMarker) += sizeof(M)) - sizeof(M)));
+}
+((vaMarker) = 0);
+}
+template<class M>
+class CArrayLargeTemplatePrimitive : public CArrayLargeTemplate<M>
+{
+protected:
+using CArrayLargeTemplate<M>::miUsedElements;
+using CArrayLargeTemplate<M>::mpvArray;
+public:
+using CArrayLargeTemplate<M>::FindInSorted;
+using CArrayLargeTemplate<M>::Resize;
+using CArrayLargeTemplate<M>::SetUsedElements;
+M GetValue(lsize iIndex);
+M SafeGetValue(lsize iIndex, M iNotFound);
+M operator[](lsize iIndex);
+void SetValue(lsize iIndex, M iElement);
+void Add(M iElement);
+void Add(M* paElements, lsize iNumElements);
+void InsertAt(M iElement, lsize iIndex);
+void SetArrayValues(M iValue);
+void SetArrayValues(M iStart, M iIncrement);
+void QuickSort(void);
+void BubbleSort(void);
+lsize Find(M iValue);
+lsize AddIfUnique(M iValue);
+void Swap(lsize iIndex1, lsize iIndex2);
+void InsertIntoSorted(M iElement, bool bOverwriteExisting);
+bool RemoveFromSorted(M iElement);
+bool RemoveDuplicatesFromSorted(void);
+void MakeUnique(void);
+void Intersect(CArrayLargeTemplatePrimitive<M>* pcArray1, CArrayLargeTemplatePrimitive<M>* pcArray2);
+bool IsSorted(void);
+lsize FindFinalContiguousInSorted(void);
+M Pop(void);
+void Push(M iElement);
+void AddRemap(lsize iElementPos, M iRemapNum);
+void AddList(M iStop, ...);
+void RemoveRemap(lsize iElementPos);
+};
+template<class M>
+M CArrayLargeTemplatePrimitive<M>::GetValue(lsize iIndex)
+{
+return (*(CArrayLargeTemplate<M>::Get(iIndex)));
+}
+template<class M>
+M CArrayLargeTemplatePrimitive<M>::operator[](lsize iIndex)
+{
+return (*(CArrayLargeTemplate<M>::Get(iIndex)));
+}
+template<class M>
+M CArrayLargeTemplatePrimitive<M>::SafeGetValue(lsize iIndex, M iNotFound)
+{
+if (iIndex < miUsedElements)
+{
+return ((M*)mpvArray)[iIndex];
+}
+return iNotFound;
+}
+template<class M>
+void CArrayLargeTemplatePrimitive<M>::SetValue(lsize iIndex, M iElement)
+{
+((M*)mpvArray)[iIndex] = iElement;
+}
+template<class M>
+void CArrayLargeTemplatePrimitive<M>::Add(M iElement)
+{
+M* pvTemp;
+pvTemp = CArrayLargeTemplate<M>::Add();
+*pvTemp = iElement;
+}
+template<class M>
+void CArrayLargeTemplatePrimitive<M>::Add(M* paElements, lsize iNumElements)
+{
+lsize i;
+M* pvTemp;
+for (i = 0; i < iNumElements; i++)
+{
+pvTemp = CArrayLargeTemplate<M>::Add();
+*pvTemp = paElements[i];
+}
+}
+template<class M>
+void CArrayLargeTemplatePrimitive<M>::InsertAt(M iElement, lsize iIndex)
+{
+M* pvTemp;
+pvTemp = CArrayLargeTemplate<M>::InsertAt(iIndex);
+if (pvTemp)
+{
+*pvTemp = iElement;
+}
+}
+template<class M>
+void CArrayLargeTemplatePrimitive<M>::SetArrayValues(M iValue)
+{
+lsize i;
+for (i = 0; i < miUsedElements; i++)
+{
+((M*)mpvArray)[i] = iValue;
+}
+}
+template<class M>
+void CArrayLargeTemplatePrimitive<M>::SetArrayValues(M iStartValue, M iIncrement)
+{
+lsize i;
+for (i = 0; i < miUsedElements; i++)
+{
+((M*)mpvArray)[i] = iStartValue;
+iStartValue += iIncrement;
+}
+}
+template<class M>
+void CArrayLargeTemplatePrimitive<M>::QuickSort(void)
+{
+CArrayLargeTemplate<M>::QuickSort(&ComparePrimitive<M>);
+}
+template<class M>
+void CArrayLargeTemplatePrimitive<M>::BubbleSort(void)
+{
+CArrayLargeTemplate<M>::BubbleSort(&ComparePrimitive<M>);
+}
+template<class M>
+lsize CArrayLargeTemplatePrimitive<M>::Find(M iValue)
+{
+lsize i;
+for (i = 0; i < miUsedElements; i++)
+{
+if (((M*)mpvArray)[i] == iValue)
+{
+return i;
+}
+}
+return ((lsize)-1);
+}
+template<class M>
+lsize CArrayLargeTemplatePrimitive<M>::AddIfUnique(M iValue)
+{
+lsize iPos;
+iPos = Find(iValue);
+if (iPos == ((lsize)-1))
+{
+Add(iValue);
+}
+return iPos;
+}
+template<class M>
+void CArrayLargeTemplatePrimitive<M>::Swap(lsize iIndex1, lsize iIndex2)
+{
+M* piElement1;
+M* piElement2;
+M iTemp;
+piElement1 = this->Get(iIndex1);
+piElement2 = this->Get(iIndex2);
+iTemp = (*piElement1);
+(*piElement1) = (*piElement2);
+(*piElement2) = iTemp;
+}
+template<class M>
+void CArrayLargeTemplatePrimitive<M>::InsertIntoSorted(M iElement, bool bOverwriteExisting)
+{
+lsize iPos;
+bool bExists;
+bExists = FindInSorted(&iElement, ComparePrimitive<M>, &iPos);
+if (iPos < miUsedElements)
+{
+if (!bExists)
+{
+InsertAt(iElement, iPos);
+}
+else
+{
+if (bOverwriteExisting)
+{
+CArrayLargeTemplate<M>::Set(iPos, &iElement);
+}
+else
+{
+InsertAt(iElement, iPos);
+}
+}
+}
+else
+{
+Add(iElement);
+}
+}
+template<class M>
+bool CArrayLargeTemplatePrimitive<M>::RemoveFromSorted(M iElement)
+{
+lsize iPos;
+bool bExists;
+bExists = FindInSorted(&iElement, ComparePrimitive<M>, &iPos);
+if (bExists)
+{
+this->RemoveAt(iPos, true);
+return true;
+}
+return false;
+}
+template<class M>
+bool CArrayLargeTemplatePrimitive<M>::RemoveDuplicatesFromSorted(void)
+{
+lsize i;
+M iValue;
+M iCurrent;
+bool bAnyRemoved;
+lsize iWrite;
+bAnyRemoved = false;
+if (miUsedElements > 0)
+{
+iCurrent = GetValue(0);
+iWrite = 1;
+for (i = 1; i < miUsedElements; i++)
+{
+iValue = GetValue(i);
+if (iValue != iCurrent)
+{
+SetValue(iWrite, iValue);
+iCurrent = iValue;
+iWrite++;
+}
+else
+{
+bAnyRemoved = true;
+}
+}
+if (bAnyRemoved)
+{
+Resize(iWrite);
+}
+}
+return bAnyRemoved;
+}
+template<class M>
+void CArrayLargeTemplatePrimitive<M>::MakeUnique(void)
+{
+QuickSort();
+RemoveDuplicatesFromSorted();
+}
+template<class M>
+void CArrayLargeTemplatePrimitive<M>::Intersect(CArrayLargeTemplatePrimitive<M>* pcArray1, CArrayLargeTemplatePrimitive<M>* pcArray2)
+{
+lsize i;
+lsize j;
+M x;
+M y;
+for (i = 0; i < pcArray1->NumElements(); i++)
+{
+x = pcArray1->GetValue(i);
+for (j = 0; j < pcArray2->NumElements(); j++)
+{
+y = pcArray2->GetValue(j);
+if (x == y)
+{
+Add(x);
+break;
+}
+}
+}
+}
+template<class M>
+bool CArrayLargeTemplatePrimitive<M>::IsSorted(void)
+{
+lsize i;
+M iValue;
+M iLast;
+if (miUsedElements > 1)
+{
+iLast = GetValue(0);
+for (i = 1; i < miUsedElements; i++)
+{
+iValue = GetValue(i);
+if (i != 0)
+{
+if (iValue < iLast)
+{
+return false;
+}
+}
+iLast = iValue;
+}
+return true;
+}
+else
+{
+return true;
+}
+}
+template<class M>
+lsize CArrayLargeTemplatePrimitive<M>::FindFinalContiguousInSorted(void)
+{
+lsize i;
+M iValue;
+if (miUsedElements == 0)
+{
+return ((lsize)-1);
+}
+for (i = 0; i < miUsedElements; i++)
+{
+iValue = GetValue(i);
+if ((M)i != iValue)
+{
+if (i > 0)
+{
+return i - 1;
+}
+else
+{
+return ((lsize)-1);
+}
+}
+}
+return miUsedElements - 1;
+}
+template<class M>
+M CArrayLargeTemplatePrimitive<M>::Pop(void)
+{
+M i;
+CArrayLargeTemplate<M>::Pop(&i);
+return i;
+}
+template<class M>
+void CArrayLargeTemplatePrimitive<M>::Push(M iElement)
+{
+Add(iElement);
+}
+template<class M>
+void CArrayLargeTemplatePrimitive<M>::AddRemap(lsize iElementPos, M iRemapNum)
+{
+M* pi;
+lsize iIndex;
+lsize iNumToAdd;
+lsize iMinusOne;
+if (miUsedElements > iElementPos)
+{
+pi = CArrayLargeTemplate<M>::Get(iElementPos);
+(*pi) = iRemapNum;
+}
+else
+{
+iMinusOne = ((lsize)-1);
+iNumToAdd = (iElementPos - miUsedElements);
+for (iIndex = 0; iIndex < iNumToAdd; iIndex++)
+{
+Add((M)iMinusOne);
+}
+Add(iRemapNum);
+}
+}
+template<class M>
+void CArrayLargeTemplatePrimitive<M>::RemoveRemap(lsize iElementPos)
+{
+M* pi;
+lsize iIndex;
+lsize iCutDown;
+if (iElementPos < miUsedElements)
+{
+pi = CArrayLargeTemplate<M>::Get(iElementPos);
+(*pi) = -1;
+}
+iCutDown = miUsedElements;
+iIndex = miUsedElements;
+if (iIndex != 0)
+{
+do
+{
+iIndex--;
+pi = CArrayLargeTemplate<M>::Get(iIndex);
+if (*pi == (M)-1)
+{
+iCutDown = iIndex;
+}
+else
+{
+break;
+}
+if (iIndex == 0)
+{
+break;
+}
+}
+while (iIndex != 0);
+}
+if (iCutDown != miUsedElements)
+{
+SetUsedElements(iCutDown);
+}
+}
+template<class M>
+void CArrayLargeTemplatePrimitive<M>::AddList(M iStop, ...)
+{
+va_list vaMarker;
+M iValue;
+((vaMarker) = (char*)&(iStop) + sizeof(iStop));
+iValue = (*(M*)(((vaMarker) += sizeof(M)) - sizeof(M)));
+while (iValue != iStop)
+{
+Add(iValue);
+iValue = (*(M*)(((vaMarker) += sizeof(M)) - sizeof(M)));
+}
+((vaMarker) = 0);
+}
+class CArrayChar: public CArrayTemplatePrimitive<char>
+{
+public:
+void AddList(char iStop, ...);
+};
+class CArrayLargeChar: public CArrayLargeTemplatePrimitive<char>
+{
+public:
+void AddList(char iStop, ...);
+};
+bool IsWhitespace(char c, bool bIncludeNewLines = true);
+class CArrayInt : public CArrayTemplatePrimitive<int>
+{
+public:
+size FindUnusedInSorted(void);
+void Dump(void);
+};
+struct SStringAlloc
+{
+CMallocator* pcMalloc;
+char* szString;
+size uiLength;
+};
+union UString
+{
+SStringAlloc sStringAlloc;
+char sz[12];
+};
+class CChars;
+class CCharsImmutable
+{
+public:const char* ClassName(void){ return "CCharsImmutable";}size ClassSize(void){ return sizeof(CCharsImmutable);}
+friend class CFileReader;
+friend class CFileWriter;
+protected:
+bool mbMallocated;
+UString muString;
+public:
+void _Init(void);
+void Init(const char* sz);
+void Init(const char* sz, CMallocator* pcMalloc);
+void Init(const char* sz, size uiLength);
+void Init(const char* sz, size uiLength, CMallocator* pcMalloc);
+void Init(void);
+void InitLength(size uiLength);
+void InitLength(size uiLength, CMallocator* pcMalloc);
+void Kill(void);
+void Dump(void);
+char* Text(void);
+size Length(void);
+void Set(const char* sz);
+bool Empty(void);
+bool Equals(const char* szString);
+bool Equals(const char* szString, size iLen);
+bool Equals(CChars* pszString);
+bool EqualsIgnoreCase(const char* szString);
+bool EqualsIgnoreCase(CChars* pszString);
+bool Contains(const char* szString);
+bool ContainsIgnoreCase(const char* szString);
+bool Contains(char c);
+bool EndsWith(const char* szString);
+bool EndsWithIgnoreCase(const char* szString);
+bool EndsWith(char c);
+bool StartsWith(const char* szString);
+bool StartsWithIgnoreCase(const char* szString);
+bool StartsWith(char c);
+bool SubStringEquals(size iStart, const char* szString);
+bool SubStringEqualsIgnoreCase(size iStart, const char* szString);
+size FindFromEnd(const char* szString);
+size FindFromEnd(size iPos, const char* szString);
+size FindFromEnd(char c);
+size FindFromEnd(size iIndex, char c);
+size Find(const char* szString);
+size Find(size iPos, const char* szString);
+size Find(size iPos, char c);
+size Find(char c);
+bool WriteString(CFileWriter* pcWriter);
+bool ReadString(CFileReader* pcReader);
+};
+class CArrayChars;
+class CChars
+{
+public:const char* ClassName(void){ return "CChars";}size ClassSize(void){ return sizeof(CChars);}
+friend class CFileReader;
+friend class CFileWriter;
+protected:
+CArrayChar mcText;
+public:
+void _Init(void);
+CChars* Init(void);
+CChars* Init(const char* szString);
+CChars* Init(CChars szString);
+CChars* Init(CChars* psz);
+CChars* Init(const char* szString, size iStartInclusive);
+CChars* Init(CChars szString, size iStartInclusive, size iEndExclusive);
+CChars* Init(const char* szString, size iStartInclusive, size iEndExclusive);
+CChars* Init(char cPadCharacter, size iNumber);
+CChars* Init(CExternalString* pcString);
+CChars* InitList(const char* szFirst, ...);
+CChars* InitList(CChars* szFirst, ...);
+CChars* InitLength(size iLength);
+CChars* InitLength(CMallocator* pcMalloc, size iLength);
+bool InitData2(const char* szData, size iDataLength);
+void Kill(void);
+void DumpKill(void);
+void Fake(const char* szString);
+void Fake(const char* szString, size iStartInclusive, size iEndExclusive);
+CChars* ReInit(void);
+size Length(void);
+void Set(const char* szString);
+void Set(CChars szString);
+void Set(CChars* psz);
+CChars* Append(const char* szString);
+CChars* Append(const char* szString, size iStrlen);
+CChars* Append(CChars szString);
+CChars* Append(CChars* psz);
+CChars* Append(CCharsImmutable* psz);
+CChars* Append(char cPadCharacter);
+CChars* Append(char cPadCharacter, size iNumber);
+CChars* Append(int32 i);
+CChars* Append(int32 i, uint16 iBase);
+CChars* Append(uint32 ui);
+CChars* Append(uint32 ui, uint16 iBase);
+CChars* Append(float f, size iMaxDecimals = -1, bool bAppendF = false);
+CChars* Append(double d, size iMaxDecimals = -1, bool bAppendD = false);
+CChars* Append(int64 lli);
+CChars* Append(uint64 ulli);
+CChars* Append(CExternalString* pcString);
+CChars* AppendList(const char* szFirst, ...);
+CChars* AppendQuoted(char c);
+CChars* AppendQuoted(const char* szString);
+CChars* AppendNewLine(void);
+CChars* AppendNewLine(CChars szString);
+CChars* AppendCarriageReturn(void);
+CChars* AppendHexHiLo(void* pv, size iNumBytes);
+CChars* AppendHexLoHi(void* pv, size iNumBytes);
+CChars* AppendSubString(const char* szString, size iLength);
+CChars* AppendSubString(CChars szString, size iStartInclusive, size iEndExclusive);
+CChars* AppendSubString(CChars* pszString, size iStartInclusive, size iEndExclusive);
+CChars* AppendSubString(const char* szString, size iStartInclusive, size iEndExclusive);
+CChars* AppendSubString(const char* szStartInclusive, const char* szEndExclusive);
+CChars* AppendBool(bool bValue);
+CChars* AppendBool(bool bValue, const char* szTrue, const char* szFalse);
+CChars* AppendData(const char* szData, size iMaxLength);
+CChars* AppendData(const char* szData, size iDataLength, size iMaxLength);
+bool AppendData2(const char* szData, size iDataLength);
+CChars* AppendPointer(void* pv);
+bool AppendFlag(uint32 msFlags, uint32 uiFlag, const char* szFlagName, bool bAppendComma = false);
+void Insert(size iPos, char c);
+void Insert(size iPos, char c, size uiCount);
+void Insert(size iPos, const char* szString);
+void Insert(size iPos, CChars* pszString);
+void Minimize(void);
+char* Text(void);
+char* Text(size iIndex);
+bool Empty(void);
+void LeftAlign(CChars szString, char cPadCharacter, size iWidth);
+void LeftAlign(const char* szString, char cPadCharacter, size iWidth);
+void RightAlign(CChars szString, char cPadCharacter, size iWidth);
+void RightAlign(const char* szString, char cPadCharacter, size iWidth);
+void RightAlign(size uiOffset, char cPadCharacter, size uiWidth);
+void RightAlign(char cPadCharacter, size iWidth);
+void RemoveLastCharacter(void);
+void RemoveFromStart(size iNumChars);
+void RemoveFromEnd(size iNumChars);
+void Remove(size iStartInclusive, size iEndExclusive);
+void RemoveEnd(size iIndex);
+void RemoveCharacter(size iPos);
+void Split(CArrayChars* aszDest, char cSplitter);
+void SplitLines(CArrayChars* aszDest);
+bool Equals(const char* szString);
+bool Equals(CChars szString);
+bool Equals(const char* szString, size iLen);
+bool Equals(CChars* pszString);
+bool EqualsIgnoreCase(const char* szString);
+bool EqualsIgnoreCase(CChars szString);
+bool Contains(const char* szString);
+bool ContainsIgnoreCase(const char* szString);
+bool Contains(char c);
+bool EndsWith(const char* szString);
+bool EndsWithIgnoreCase(const char* szString);
+bool EndsWith(char c);
+bool StartsWith(const char* szString);
+bool StartsWithIgnoreCase(const char* szString);
+bool StartsWith(char c);
+size Occurrences(const char* szString);
+bool SubStringEquals(size iStart, const char* szString);
+bool SubStringEqualsIgnoreCase(size iStart, const char* szString);
+size FindFromEnd(const char* szString);
+size FindFromEnd(size iPos, const char* szString);
+size FindFromEnd(char c);
+size FindFromEnd(size iIndex, char c);
+size Find(const char* szString);
+size Find(size iPos, const char* szString);
+size Find(size iPos, char c);
+size Find(char c);
+size FindDigit(size iStartIndex);
+char GetChar(size iIndex);
+void SetChar(size iPos, char c);
+void Difference(CArrayInt* paiNewToOldIndices, CArrayInt* paiOldToNewIndices, CChars szOldString);
+bool IsWhitespace(size iPos, bool bIncludeNewLines);
+bool IsWhitespace(void);
+void SetLength(size iLength);
+size StripWhitespace(bool bIncludeNewLines = false);
+int Compare(CChars* szOther);
+int Compare(const char* szOther);
+int CompareIgnoreCase(CChars* szOther);
+int CompareIgnoreCase(const char* szOther);
+size Replace(char cFind, char cReplace);
+size Replace(const char* szFind, const char* szReplace);
+void Overwrite(size iPos, const char* szReplace);
+void Reverse(void);
+void Clear(void);
+size CountNewLines(void);
+size Count(char c);
+void LowerCase(void);
+void UpperCase(void);
+void ReplaceNonTabsWithSpace(void);
+bool WriteString(CFileWriter* pcWriter);
+bool ReadString(CFileReader* pcReader);
+bool ReadChars(CFileReader* pcReader);
+char* CopyIntoBuffer(char* szDest, size iDestLength);
+void PassifyNewlines(void);
+void MakeCPlusPlus(void);
+char* FindLineContaining(const char* szPosition, size* piLineNumber);
+void Dump(void);
+static void Dump(const char* szString);
+protected:
+char* PrivateGrow(size iNumberOfCharacters);
+size ReplaceWithLonger(const char* szFind, const char* szReplace, size iFindLen, size iDifference);
+size ReplaceWithShorter(const char* szFind, const char* szReplace, size iReplaceLen, size iFindLen, size iDifference);
+size ReplaceWithEqualLength(const char* szFind, const char* szReplace, size iFindLen);
+size FindEndOfLeadingWhitespace(bool bIncludeNewLines);
+size FindStartOfTrailingWhitespace(bool bIncludeNewLines);
+void SetNonNull(const char* szString, size iLen);
+void SetEmpty(void);
+void CleanIfEmpty(void);
+void InitEmpty(void);
+bool IsFakeEmpty(void);
+void Unfake(void);
+void UnfakeIfFakeEmpty(void);
+};
+class CLargeChars
+{
+public:const char* ClassName(void){ return "CLargeChars";}size ClassSize(void){ return sizeof(CLargeChars);}
+friend class CFileReader;
+friend class CFileWriter;
+protected:
+CArrayLargeChar mcText;
+public:
+void _Init(void);
+CLargeChars* Init(void);
+CLargeChars* Init(const char* szString);
+CLargeChars* Init(CLargeChars szString);
+CLargeChars* Init(CLargeChars* psz);
+CLargeChars* Init(const char* szString, lsize iStartInclusive);
+CLargeChars* Init(CLargeChars szString, lsize iStartInclusive, lsize iEndExclusive);
+CLargeChars* Init(const char* szString, lsize iStartInclusive, lsize iEndExclusive);
+CLargeChars* Init(char cPadCharacter, lsize iNumber);
+CLargeChars* Init(CExternalString* pcString);
+CLargeChars* InitList(const char* szFirst, ...);
+CLargeChars* InitList(CLargeChars* szFirst, ...);
+CLargeChars* InitLength(lsize iLength);
+CLargeChars* InitLength(CMallocator* pcMalloc, lsize iLength);
+bool InitData2(const char* szData, lsize iDataLength);
+void Kill(void);
+void DumpKill(void);
+void Fake(const char* szString);
+void Fake(const char* szString, lsize iStartInclusive, lsize iEndExclusive);
+CLargeChars* ReInit(void);
+lsize Length(void);
+void Set(const char* szString);
+void Set(CLargeChars szString);
+void Set(CLargeChars* psz);
+CLargeChars* Append(const char* szString);
+CLargeChars* Append(const char* szString, lsize iStrlen);
+CLargeChars* Append(CLargeChars szString);
+CLargeChars* Append(CLargeChars* psz);
+CLargeChars* Append(CChars szString);
+CLargeChars* Append(CChars* psz);
+CLargeChars* Append(CCharsImmutable* psz);
+CLargeChars* Append(char cPadCharacter);
+CLargeChars* Append(char cPadCharacter, lsize iNumber);
+CLargeChars* Append(int32 i);
+CLargeChars* Append(int32 i, uint16 iBase);
+CLargeChars* Append(uint32 ui);
+CLargeChars* Append(uint32 ui, uint16 iBase);
+CLargeChars* Append(float f, lsize iMaxDecimals = -1, bool bAppendF = false);
+CLargeChars* Append(double d, lsize iMaxDecimals = -1, bool bAppendD = false);
+CLargeChars* Append(int64 lli);
+CLargeChars* Append(uint64 ulli);
+CLargeChars* Append(CExternalString* pcString);
+CLargeChars* AppendList(const char* szFirst, ...);
+CLargeChars* AppendQuoted(char c);
+CLargeChars* AppendQuoted(const char* szString);
+CLargeChars* AppendNewLine(void);
+CLargeChars* AppendNewLine(CLargeChars szString);
+CLargeChars* AppendCarriageReturn(void);
+CLargeChars* AppendHexHiLo(void* pv, lsize iNumBytes);
+CLargeChars* AppendHexLoHi(void* pv, lsize iNumBytes);
+CLargeChars* AppendSubString(const char* szString, lsize iLength);
+CLargeChars* AppendSubString(CLargeChars szString, lsize iStartInclusive, lsize iEndExclusive);
+CLargeChars* AppendSubString(CLargeChars* pszString, lsize iStartInclusive, lsize iEndExclusive);
+CLargeChars* AppendSubString(const char* szString, lsize iStartInclusive, lsize iEndExclusive);
+CLargeChars* AppendSubString(const char* szStartInclusive, const char* szEndExclusive);
+CLargeChars* AppendBool(bool bValue);
+CLargeChars* AppendBool(bool bValue, const char* szTrue, const char* szFalse);
+CLargeChars* AppendData(const char* szData, lsize iMaxLength);
+CLargeChars* AppendData(const char* szData, lsize iDataLength, lsize iMaxLength);
+bool AppendData2(const char* szData, lsize iDataLength);
+CLargeChars* AppendPointer(void* pv);
+bool AppendFlag(uint32 msFlags, uint32 uiFlag, const char* szFlagName, bool bAppendComma = false);
+void Insert(lsize iPos, char c);
+void Insert(lsize iPos, char c, lsize uiCount);
+void Insert(lsize iPos, const char* szString);
+void Insert(lsize iPos, CLargeChars* pszString);
+void Minimize(void);
+char* Text(void);
+char* Text(lsize iIndex);
+bool Empty(void);
+void LeftAlign(CLargeChars szString, char cPadCharacter, lsize iWidth);
+void LeftAlign(const char* szString, char cPadCharacter, lsize iWidth);
+void RightAlign(CLargeChars szString, char cPadCharacter, lsize iWidth);
+void RightAlign(const char* szString, char cPadCharacter, lsize iWidth);
+void RightAlign(lsize uiOffset, char cPadCharacter, lsize uiWidth);
+void RightAlign(char cPadCharacter, lsize iWidth);
+void RemoveLastCharacter(void);
+void RemoveFromStart(lsize iNumChars);
+void RemoveFromEnd(lsize iNumChars);
+void Remove(lsize iStartInclusive, lsize iEndExclusive);
+void RemoveEnd(lsize iIndex);
+void RemoveCharacter(lsize iPos);
+void Split(CArrayChars* aszDest, char cSplitter);
+void SplitLines(CArrayChars* aszDest);
+bool Equals(const char* szString);
+bool Equals(CLargeChars szString);
+bool Equals(const char* szString, lsize iLen);
+bool Equals(CLargeChars* pszString);
+bool EqualsIgnoreCase(const char* szString);
+bool EqualsIgnoreCase(CLargeChars szString);
+bool Contains(const char* szString);
+bool ContainsIgnoreCase(const char* szString);
+bool Contains(char c);
+bool EndsWith(const char* szString);
+bool EndsWithIgnoreCase(const char* szString);
+bool EndsWith(char c);
+bool StartsWith(const char* szString);
+bool StartsWithIgnoreCase(const char* szString);
+bool StartsWith(char c);
+lsize Occurrences(const char* szString);
+bool SubStringEquals(lsize iStart, const char* szString);
+bool SubStringEqualsIgnoreCase(lsize iStart, const char* szString);
+lsize FindFromEnd(const char* szString);
+lsize FindFromEnd(lsize iPos, const char* szString);
+lsize FindFromEnd(char c);
+lsize FindFromEnd(lsize iIndex, char c);
+lsize Find(const char* szString);
+lsize Find(lsize iPos, const char* szString);
+lsize Find(lsize iPos, char c);
+lsize Find(char c);
+lsize FindDigit(lsize iStartIndex);
+char GetChar(lsize iIndex);
+void SetChar(lsize iPos, char c);
+void Difference(CArrayInt* paiNewToOldIndices, CArrayInt* paiOldToNewIndices, CLargeChars szOldString);
+bool IsWhitespace(lsize iPos, bool bIncludeNewLines);
+bool IsWhitespace(void);
+void SetLength(lsize iLength);
+lsize StripWhitespace(bool bIncludeNewLines = false);
+int Compare(CLargeChars* szOther);
+int Compare(const char* szOther);
+int CompareIgnoreCase(CLargeChars* szOther);
+int CompareIgnoreCase(const char* szOther);
+lsize Replace(char cFind, char cReplace);
+lsize Replace(const char* szFind, const char* szReplace);
+void Overwrite(lsize iPos, const char* szReplace);
+void Reverse(void);
+void Clear(void);
+lsize CountNewLines(void);
+lsize Count(char c);
+void LowerCase(void);
+void UpperCase(void);
+void ReplaceNonTabsWithSpace(void);
+bool WriteString(CFileWriter* pcWriter);
+bool ReadString(CFileReader* pcReader);
+bool ReadChars(CFileReader* pcReader);
+char* CopyIntoBuffer(char* szDest, lsize iDestLength);
+void PassifyNewlines(void);
+void MakeCPlusPlus(void);
+char* FindLineContaining(const char* szPosition, lsize* piLineNumber);
+void Dump(void);
+static void Dump(const char* szString);
+protected:
+char* PrivateGrow(lsize iNumberOfCharacters);
+lsize ReplaceWithLonger(const char* szFind, const char* szReplace, lsize iFindLen, lsize iDifference);
+lsize ReplaceWithShorter(const char* szFind, const char* szReplace, lsize iReplaceLen, lsize iFindLen, lsize iDifference);
+lsize ReplaceWithEqualLength(const char* szFind, const char* szReplace, lsize iFindLen);
+lsize FindEndOfLeadingWhitespace(bool bIncludeNewLines);
+lsize FindStartOfTrailingWhitespace(bool bIncludeNewLines);
+void SetNonNull(const char* szString, lsize iLen);
+void SetEmpty(void);
+void CleanIfEmpty(void);
+void InitEmpty(void);
+bool IsFakeEmpty(void);
+void Unfake(void);
+void UnfakeIfFakeEmpty(void);
+};
+int CompareChars(const void* arg1, const void* arg2);
+int CompareCharsIgnoreCase(const void* arg1, const void* arg2);
+class CRandom;
+typedef CArrayTemplate<CChars> __CArrayChars;
+class CArrayChars
+{
+public:
+__CArrayChars mcArray;
+bool mbFaked;
+void _Init(void);
+void Init(void);
+void Init(const char* szFirst, ...);
+void Init(CArrayChars* pasz);
+void Fake(void);
+void ReInit(void);
+void Kill(void);
+size NumElements(void);
+CChars* Add(CChars cChars);
+CChars* Add(CChars* pcChars);
+CChars* Add(const char* szString);
+CChars* Add(void);
+CChars* Add(const char* szString, size iStartInclusive, size iEndExclusive);
+CChars* Add(const char* szText, char* szLastCharInclusive);
+CChars* AddLength(size uiLength);
+CChars* AddIfUnique(char* szString);
+CChars* AddIfUnique(CChars cChars);
+void AddList(const char* sz, ...);
+CChars* InsertIntoSorted(char* szText, char* szLastCharInclusive);
+CChars* InsertIntoSorted(CChars* psz);
+void Remove(CChars* pcChars);
+void Remove(const char* szString);
+void Remove(size iIndex);
+bool RemoveTail(void);
+CChars* Get(size iIndex);
+CChars* Tail(void);
+char* GetText(size iIndex);
+size GetIndex(const char* szStart, size iLen);
+size GetIndex(const char* szStart);
+size GetIndex(CChars* psz);
+size GetSubStringIndex(const char* szStart);
+size FindInSorted(const char* szString, bool bCaseSensitive = true);
+size FindInSorted(CChars* szString, bool bCaseSensitive = true);
+void Copy(CArrayChars* pcSource);
+bool Equals(CArrayChars* pcOther);
+bool Contains(const char* szText);
+bool Contains(CChars* psz);
+bool ContainsSubString(const char* szText);
+void QuickSort(bool bCaseSensitive = true);
+void BubbleSort(bool bCaseSensitive = true);
+void Shuffle(CRandom* pcRandom = 0L);
+bool Split(const char* szString, char cSplitter);
+size GetLongestChars(void);
+char GetCharAt(size x, size y);
+void Finalise(void);
+void Print(CChars* psz);
+void Dump(void);
+};
+size PassifyNewlines(char *szString);
+size CountNewLines(char* szString, size iLen);
+size CountCarriageReturns(const char* szString, size iLen);
+size CountLineFeeds(char* szString, size iLen);
+extern "C"
+{
+double fabs(double x);
+float fabsf(float x);
+double sqrt(double x);
+float sqrtf(float x);
+double sin(double x);
+float sinf(float x);
+double cos(double x);
+float cosf(float x);
+double tan(double x);
+float tanf(float x);
+double asin(double x);
+double acos(double x);
+double atan(double x);
+float atanf(float x);
+double atan2(double y, double x);
+float atan2f(float y, float x);
+double exp(double x);
+float expf(float x);
+double log(double x);
+float logf(float x);
+double log10(double x);
+double pow(double x, double y);
+float powf(float x, float y);
+double floor(double x);
+float floorf(float x);
+double ceil(double x);
+float ceilf(float x);
+double fmod(double x, double y);
+float fmodf(float x, float y);
+double modf(double x, double* pdInteger);
+double ldexp(double x, int iExponent);
+double frexp(double x, int* piExponent);
+double round(double x);
+float roundf(float x);
+long lround(double x);
+long lroundf(float x);
+long long llround(double x);
+long long llroundf(float x);
+double trunc(double x);
+float truncf(float x);
+double hypot(double x, double y);
+float hypotf(float x, float y);
+float asinf(float x);
+float acosf(float x);
+long double fabsl(long double x);
+long double sqrtl(long double x);
+long double floorl(long double x);
+long double ceill(long double x);
+long double truncl(long double x);
+long double roundl(long double x);
+long double fmodl(long double x, long double y);
+long double powl(long double x, long double y);
+long double logl(long double x);
+long double log10l(long double x);
+long double expl(long double x);
+}
+bool isnan(double x);
+bool isnan(float x);
+bool isinf(double x);
+bool isinf(float x);
+bool isfinite(double x);
+bool isfinite(float x);
+float32 Deg2Dot(float32 fDegrees);
+float64 Deg2Dot(float64 fDegrees);
+class CFileUtil
+{
+public:
+bool MakeDir(const char* szPathName);
+bool RemoveDir(const char* szPathName);
+bool CopyDir(const char* szSource, const char* szDest);
+bool Touch(const char* szFilename);
+bool TouchDir(const char* szFilename, bool bLastIsFilename = false);
+bool Delete(const char* szFilename);
+bool SyncFile(const char* szFilename);
+bool SyncDirectory(const char* szDirectory);
+bool SyncParentDirectory(const char* szFilename);
+bool Exists(const char* szFilename);
+bool IsDirectory(const char* szPathName);
+bool Compare(const char* szFilename1, const char* szFilename2);
+bool CompareSize(const char* szFilename1, const char* szFilename2);
+bool Copy(const char* szSource, const char* szDest);
+filePos Size(const char* szFilename);
+bool MakeDirs(bool bRemoveFirst, const char* szPathName, ...);
+bool RemoveDirs(const char* szPathName, ...);
+bool IsAbsolutePath(const char* szPathName);
+void FullPath(CChars* szPathName);
+char GetDriveLetter(const char* szPathName);
+void CollapsePath(CChars* szPathName);
+void CurrentDirectory(CChars* szDest);
+void SplitPath(const char* szPathName, CChars* szDestFilename, CChars* szDestDirectory);
+void SplitPath(const char* szPathName, CArrayChars* paszComponents);
+void GetFileName(CChars* szDest, char* szPathName);
+void RemoveExtension(CChars* szPathName);
+size FindExtension(const char* szPathName);
+void AppendToPath(CChars* szPathName, const char* szItem);
+void PrependToPath(CChars* szPathName, const char* szItem);
+void RemoveLastFromPath(CChars* szPathName);
+void RemovePath(CChars* szPathName);
+bool IsExtension(const char* szFilename, const char* szExtension);
+bool IsRootDirectory(const char* szPathName);
+void FindFilesWithNameContaining(const char* szPathName, const char* szFilename, CArrayChars* paszFiles, bool bIncludeSubDirs = false, bool bHidden= true);
+void FindFilesWithExtension(const char* szPathName, const char* szExtension, CArrayChars* paszFiles, bool bIncludeSubDirs = false, bool bHidden = true);
+void FindAllDirectories(const char* szPathName, CArrayChars* paszFiles, bool bHidden = true);
+bool FindAllFiles(const char* szPathName, CArrayChars* paszFiles, bool bIncludeSubDirs = false, bool bHidden = true);
+void MakeNameFromDirectory(CChars* pszName, CChars* pszFilename, CChars* pszDirectory);
+void FixSeparators(CChars* szPathName);
+private:
+bool RecurseRemoveDir(const char* szPathName);
+bool RecurseCopyDir(const char* szSource, const char* szDest);
+bool CopyDirEntry(const char* szSource, const char* szDest, bool bDirectory);
+bool FindFiles(const char* szPathName, bool bDirectories, const char* szInName, const char* szExtension, CArrayChars* paszFiles, bool bHidden);
+bool IsFindMatch(const char* szName, bool bDirectory, bool bDirectories, const char* szInName, const char* szExtension);
+bool RecurseFindFiles(const char* szPathName, const char* szInName, const char* szExtension, CArrayChars* paszFiles, bool bHidden);
+bool Compare(const char* szFilename1, const char* szFilename2, bool bSizeOnly);
+size FindFirstSeparator(const char* szString);
+size FindLastSeparator(const char* szPathName);
+void RemoveLastSeparator(CChars* szPathName);
+};
+int CompareFileNamesNTFS(const char* szName1, const char* szName2);
+class CNullAllocator : public CMallocator
+{
+public:const char* ClassName(void){ return "CNullAllocator";}size ClassSize(void){ return sizeof(CNullAllocator);}
+public:
+void Kill(void);
+void* Malloc(lsize uiSize);
+void* Realloc(void* pv, lsize iMemSize);
+bool Free(void* pv);
+const char* GetName(void);
+bool IsLocal(void);
+size SizeOffset(void);
+const char* ShortName(void);
+};
+extern CNullAllocator gcNullAllocator;
+char* FloatToString(char* szDest, size iDestLength, float f, int iMaxDecimals = -1, bool bAppendF = false);
+char* DoubleToString(char* szDest, size iDestLength, double f, int iMaxDecimals = -1, bool bAppendF = false);
+int ComparePtr(const void* arg1, const void* arg2);
+int ComparePtrPtr(const void* arg1, const void* arg2);
+int CompareChars(const void* arg1, const void* arg2)
+{
+CChars* szString1;
+CChars* szString2;
+szString1 = (CChars*)arg1;
+szString2 = (CChars*)arg2;
+return szString1->Compare(szString2);
+}
+int CompareCharsIgnoreCase(const void* arg1, const void* arg2)
+{
+CChars* szString1;
+CChars* szString2;
+szString1 = (CChars*)arg1;
+szString2 = (CChars*)arg2;
+return szString1->CompareIgnoreCase(szString2);
+}
+char GetNumberAs1DigitHex(size nybble)
+{
+if (nybble <= 15)
+{
+return gszDigits[nybble];
+}
+return '?';
+}
+void CChars::_Init(void)
+{
+mcText._Init();
+}
+CChars* CChars::InitLength(size iLength)
+{
+if (iLength != 0)
+{
+mcText.Init();
+mcText.Resize(iLength + 1);
+mcText.SetValue(iLength, '\0');
+return this;
+}
+else
+{
+InitEmpty();
+return this;
+}
+}
+CChars* CChars::InitLength(CMallocator* pcMalloc, size iLength)
+{
+if (iLength != 0)
+{
+mcText.Init(pcMalloc);
+mcText.Resize(iLength + 1);
+mcText.SetValue(iLength, '\0');
+return this;
+}
+else
+{
+InitEmpty();
+return this;
+}
+}
+CChars* CChars::Init(void)
+{
+InitEmpty();
+return this;
+}
+CChars* CChars::Init(const char* szString)
+{
+mcText.Init();
+if (!StrEmpty(szString))
+{
+Set(szString);
+}
+else
+{
+SetEmpty();
+}
+return this;
+}
+CChars* CChars::Init(CChars szString, size iStartInclusive, size iEndExclusive)
+{
+if ((iEndExclusive > iStartInclusive) && (iEndExclusive != ((size)-1)))
+{
+mcText.Init();
+AppendSubString(szString, iStartInclusive, iEndExclusive);
+CleanIfEmpty();
+}
+else
+{
+InitEmpty();
+}
+return this;
+}
+CChars* CChars::Init(const char* szString, size iStartInclusive, size iEndExclusive)
+{
+if (iEndExclusive > iStartInclusive)
+{
+mcText.Init();
+AppendSubString(szString, iStartInclusive, iEndExclusive);
+CleanIfEmpty();
+}
+else
+{
+InitEmpty();
+}
+return this;
+}
+CChars* CChars::Init(const char* szString, size iStartInclusive)
+{
+mcText.Init();
+Set(&szString[iStartInclusive]);
+return this;
+}
+CChars* CChars::Init(CChars szString)
+{
+if (!szString.Empty())
+{
+mcText.Init();
+mcText.Copy(&(szString.mcText));
+}
+else
+{
+InitEmpty();
+}
+return this;
+}
+CChars* CChars::Init(CChars* psz)
+{
+if (psz && !psz->Empty())
+{
+mcText.Init();
+mcText.Copy(&(psz->mcText));
+}
+else
+{
+InitEmpty();
+}
+return this;
+}
+CChars* CChars::Init(char cPadCharacter, size iNumber)
+{
+if (iNumber != 0)
+{
+mcText.Init();
+Append(cPadCharacter, iNumber);
+}
+else
+{
+InitEmpty();
+}
+return this;
+}
+CChars* CChars::Init(CExternalString* pcString)
+{
+return Init(pcString->msz, 0, pcString->miLen);
+}
+CChars* CChars::InitList(const char* szFirst, ...)
+{
+InitEmpty();
+va_list vaMarker;
+const char* pc;
+size iCount;
+if (szFirst)
+{
+iCount = 0;
+pc = szFirst;
+((vaMarker) = (char*)&(szFirst) + sizeof(szFirst));
+while (pc)
+{
+Append(pc);
+iCount++;
+pc = (*(char**)(((vaMarker) += sizeof(char*)) - sizeof(char*)));
+}
+((vaMarker) = 0);
+}
+CleanIfEmpty();
+return this;
+}
+CChars* CChars::InitList(CChars* szFirst, ...)
+{
+InitEmpty();
+va_list vaMarker;
+CChars* pc;
+size iCount;
+if (szFirst)
+{
+iCount = 0;
+pc = szFirst;
+((vaMarker) = (char*)&(szFirst) + sizeof(szFirst));
+while (pc && pc->Length() != 0)
+{
+Append(pc->Text());
+iCount++;
+pc = (*(CChars**)(((vaMarker) += sizeof(CChars*)) - sizeof(CChars*)));
+}
+((vaMarker) = 0);
+}
+CleanIfEmpty();
+return this;
+}
+bool CChars::InitData2(const char* szData, size iDataLength)
+{
+InitEmpty();
+return AppendData2(szData, iDataLength);
+}
+void CChars::Kill(void)
+{
+if (!IsFakeEmpty())
+{
+mcText.Kill();
+}
+}
+void CChars::DumpKill(void)
+{
+Dump();
+Kill();
+}
+void CChars::Fake(const char* szString)
+{
+if (szString)
+{
+mcText.Fake((char*)szString, strlen(szString) + 1);
+}
+else
+{
+InitEmpty();
+}
+}
+void CChars::Fake(const char* szString, size iStartInclusive, size iEndExclusive)
+{
+char* pcPosition;
+if (iEndExclusive > iStartInclusive)
+{
+pcPosition = (char*)RemapSinglePointer(szString, iStartInclusive);
+mcText.Fake(pcPosition, iEndExclusive - iStartInclusive + 1);
+}
+else
+{
+InitEmpty();
+}
+}
+CChars* CChars::ReInit(void)
+{
+Kill();
+return Init();
+}
+size CChars::Length(void)
+{
+if (mcText.IsEmpty() || IsFakeEmpty())
+{
+return 0;
+}
+return mcText.NumElements() - 1;
+}
+void CChars::Set(CChars szString)
+{
+size uiLen;
+uiLen = szString.Length() + 1;
+if (uiLen > 1)
+{
+SetNonNull(szString.Text(), uiLen);
+}
+else
+{
+SetEmpty();
+}
+}
+void CChars::Set(CChars* psz)
+{
+size uiLen;
+uiLen = psz->Length() + 1;
+if (uiLen > 1)
+{
+SetNonNull(psz->Text(), uiLen);
+}
+else
+{
+SetEmpty();
+}
+}
+void CChars::Set(const char* szString)
+{
+size uiLen;
+if (!StrEmpty(szString))
+{
+uiLen = (strlen(szString)) + 1;
+SetNonNull(szString, uiLen);
+}
+else
+{
+SetEmpty();
+}
+}
+void CChars::SetNonNull(const char* szString, size uiLen)
+{
+if (!IsFakeEmpty())
+{
+mcText.Resize(uiLen);
+}
+else
+{
+Unfake();
+mcText.Resize(uiLen);
+}
+memcpy(mcText.GetData(), szString, uiLen);
+}
+void CChars::SetEmpty(void)
+{
+if (!IsFakeEmpty())
+{
+mcText.Resize(0);
+InitEmpty();
+}
+}
+void CChars::SetChar(size iIndex, char c)
+{
+if (iIndex < Length())
+{
+mcText.SetValue(iIndex, c);
+}
+}
+CChars* CChars::Append(const char* szString)
+{
+size uiLen;
+char* pcPosition;
+if (!StrEmpty(szString))
+{
+uiLen = strlen(szString);
+pcPosition = PrivateGrow(uiLen);
+memcpy(pcPosition, szString, uiLen);
+pcPosition[uiLen] = '\0';
+}
+return this;
+}
+CChars* CChars::Append(CExternalString* pcString)
+{
+char* pcPosition;
+if (pcString && pcString->miLen > 0)
+{
+pcPosition = PrivateGrow(pcString->miLen);
+memcpy(pcPosition, pcString->msz, pcString->miLen);
+pcPosition[pcString->miLen] = '\0';
+}
+return this;
+}
+CChars* CChars::Append(const char* szString, size uiLen)
+{
+char* pcPosition;
+char* pcZero;
+if (szString && uiLen > 0)
+{
+pcPosition = PrivateGrow(uiLen);
+memcpy(pcPosition, szString, uiLen);
+pcZero = mcText.Tail();
+*pcZero = '\0';
+}
+return this;
+}
+CChars* CChars::Append(char cPadCharacter)
+{
+char* pcReplace;
+UnfakeIfFakeEmpty();
+pcReplace = mcText.Tail();
+*pcReplace = cPadCharacter;
+mcText.Add(0);
+return this;
+}
+CChars* CChars::Append(CChars szString)
+{
+Append(szString.Text());
+return this;
+}
+CChars* CChars::Append(CChars* psz)
+{
+Append(psz->Text());
+return this;
+}
+CChars* CChars::Append(CCharsImmutable* psz)
+{
+Append(psz->Text());
+return this;
+}
+CChars* CChars::Append(int32 i)
+{
+char szString[32];
+IntToString(szString, 32, i);
+return Append(szString);
+}
+CChars* CChars::Append(int32 i, uint16 iBase)
+{
+char szString[32];
+IntToString(szString, 32, i, iBase);
+return Append(szString);
+}
+CChars* CChars::Append(uint64 ulli)
+{
+char szString[64];
+LongToString(szString, 64, ulli);
+return Append(szString);
+}
+CChars* CChars::Append(int64 lli)
+{
+char szString[64];
+LongToString(szString, 64, lli);
+return Append(szString);
+}
+CChars* CChars::Append(uint32 ui)
+{
+char szString[32];
+IntToString(szString, 32, ui);
+return Append(szString);
+}
+CChars* CChars::Append(uint32 ui, uint16 iBase)
+{
+char szString[32];
+IntToString(szString, 32, ui, iBase);
+return Append(szString);
+}
+CChars* CChars::Append(float f, size iMaxDecimals, bool bAppendF)
+{
+char szString[32];
+if (!FloatToString(szString, 32, f, (int)iMaxDecimals, bAppendF))
+{
+return this;
+}
+return Append(szString);
+}
+CChars* CChars::Append(double d, size iMaxDecimals, bool bAppendD)
+{
+char szString[128];
+if (!DoubleToString(szString, 128, d, (int)iMaxDecimals, bAppendD))
+{
+return this;
+}
+return Append(szString);
+}
+CChars* CChars::AppendQuoted(const char* szString)
+{
+Append('"');
+Append(szString);
+Append('"');
+return this;
+}
+CChars* CChars::AppendQuoted(char c)
+{
+Append('\'');
+Append(c);
+Append('\'');
+return this;
+}
+CChars* CChars::AppendNewLine(void)
+{
+return Append("\n");
+}
+CChars* CChars::AppendCarriageReturn(void)
+{
+return Append("\r");
+}
+CChars* CChars::AppendNewLine(CChars szString)
+{
+Append(&szString);
+return AppendNewLine();
+}
+CChars* CChars::AppendHexHiLo(void* pv, size iNumBytes)
+{
+size i;
+char* pb;
+int8 nibble;
+char c;
+if (iNumBytes != 0)
+{
+i = iNumBytes;
+do
+{
+i--;
+pb = (char*)RemapSinglePointer(pv, i);
+nibble = GetHighNybble(*pb);
+c = GetNumberAs1DigitHex(nibble);
+Append(c);
+nibble = GetLowNybble(*pb);
+c = GetNumberAs1DigitHex(nibble);
+Append(c);
+}
+while (i != 0);
+}
+return this;
+}
+CChars* CChars::AppendHexLoHi(void* pv, size iNumBytes)
+{
+size i;
+char* pb;
+int8 nibble;
+char c;
+if (iNumBytes != 0)
+{
+for (i = 0; i < iNumBytes; i++)
+{
+pb = (char*)RemapSinglePointer(pv, i);
+nibble = GetHighNybble(*pb);
+c = GetNumberAs1DigitHex(nibble);
+Append(c);
+nibble = GetLowNybble(*pb);
+c = GetNumberAs1DigitHex(nibble);
+Append(c);
+}
+}
+return this;
+}
+CChars* CChars::AppendBool(bool bValue)
+{
+return AppendBool(bValue, "True", "False");
+}
+CChars* CChars::AppendBool(bool bValue, const char* szTrue, const char* szFalse)
+{
+if (bValue)
+{
+return Append(szTrue);
+}
+else
+{
+return Append(szFalse);
+}
+}
+void CChars::Insert(size iPos, char c)
+{
+if (iPos >= mcText.NumElements())
+{
+return;
+}
+UnfakeIfFakeEmpty();
+mcText.InsertAt(c, iPos);
+}
+void CChars::Insert(size iPos, char c, size uiCount)
+{
+size i;
+mcText.InsertNumAt(uiCount, iPos);
+for (i = 0; i < uiCount; i++)
+{
+mcText.Set(iPos + i, &c);
+}
+}
+void CChars::Insert(size iPos, const char* szString)
+{
+char* pcNew;
+size uiInsertLen;
+if (StrEmpty(szString))
+{
+return;
+}
+UnfakeIfFakeEmpty();
+uiInsertLen = strlen(szString);
+pcNew = mcText.InsertNumAt(uiInsertLen, iPos);
+if (pcNew)
+{
+memcpy(pcNew, szString, uiInsertLen);
+}
+}
+void CChars::Insert(size iPos, CChars* pszString)
+{
+char* pcNew;
+size uiInsertLen;
+if (pszString == 0L || pszString->Empty())
+{
+return;
+}
+UnfakeIfFakeEmpty();
+uiInsertLen = pszString->Length();
+pcNew = mcText.InsertNumAt(uiInsertLen, iPos);
+if (pcNew)
+{
+memcpy(pcNew, pszString->Text(), uiInsertLen);
+}
+}
+void CChars::Minimize(void)
+{
+if (!IsFakeEmpty())
+{
+mcText.Finalise();
+}
+}
+char* CChars::Text(void)
+{
+return mcText.GetData();
+}
+char* CChars::Text(size iIndex)
+{
+if (iIndex < Length())
+{
+return mcText.Get(iIndex);
+}
+else
+{
+return mcText.Tail();
+}
+}
+bool CChars::Empty(void)
+{
+if (Length() == 0)
+{
+return true;
+}
+return false;
+}
+CChars* CChars::AppendList(const char* szFirst, ...)
+{
+va_list vaMarker;
+const char* pc;
+size iCount;
+iCount = 0;
+pc = szFirst;
+((vaMarker) = (char*)&(szFirst) + sizeof(szFirst));
+while (pc != 0L)
+{
+Append(pc);
+iCount++;
+pc = (*(char**)(((vaMarker) += sizeof(char*)) - sizeof(char*)));
+}
+((vaMarker) = 0);
+return this;
+}
+char* CChars::PrivateGrow(size iNumberOfCharacters)
+{
+char* pszPosition;
+size iPosition;
+if (mcText.IsEmpty())
+{
+if (iNumberOfCharacters != 0)
+{
+mcText.AddNum(iNumberOfCharacters + 1);
+}
+else
+{
+SetEmpty();
+}
+return mcText.GetData();
+}
+else
+{
+if (iNumberOfCharacters != 0)
+{
+if (IsFakeEmpty())
+{
+Unfake();
+}
+iPosition = mcText.AddNum(iNumberOfCharacters);
+pszPosition = (char*)RemapSinglePointer(mcText.GetData(), iPosition - 1);
+return pszPosition;
+}
+else
+{
+SetEmpty();
+return mcText.GetData();
+}
+}
+}
+CChars* CChars::Append(char cPadCharacter, size iNumber)
+{
+char* pcPosition;
+if ((iNumber != 0) && (iNumber != ((size)-1)))
+{
+pcPosition = PrivateGrow(iNumber);
+memset(pcPosition, cPadCharacter, iNumber);
+pcPosition = mcText.Tail();
+*pcPosition = '\0';
+}
+return this;
+}
+void CChars::LeftAlign(const char* szString, char cPadCharacter, size uiWidth)
+{
+size uiLen;
+uiLen = strlen(szString);
+if (uiLen != 0)
+{
+uiLen = strlen(szString);
+if (uiLen <= uiWidth)
+{
+Append(szString);
+Append(cPadCharacter, uiWidth - uiLen);
+}
+else
+{
+AppendSubString(szString, 0, uiWidth);
+}
+}
+}
+void CChars::RightAlign(const char* szString, char cPadCharacter, size uiWidth)
+{
+size uiLen;
+uiLen = strlen(szString);
+if (uiLen != 0)
+{
+if (uiLen <= uiWidth)
+{
+Append(cPadCharacter, uiWidth - uiLen);
+Append(szString);
+}
+else
+{
+AppendSubString(szString, 0, uiWidth);
+}
+}
+}
+void CChars::LeftAlign(CChars szString, char cPadCharacter, size uiWidth)
+{
+if (szString.Length() <= uiWidth)
+{
+Append(szString);
+Append(cPadCharacter, uiWidth - szString.Length());
+}
+else
+{
+AppendSubString(szString, 0, uiWidth);
+}
+}
+void CChars::RightAlign(CChars szString, char cPadCharacter, size uiWidth)
+{
+if (szString.Length() <= uiWidth)
+{
+Append(cPadCharacter, uiWidth - szString.Length());
+Append(szString);
+}
+else
+{
+AppendSubString(szString, 0, uiWidth);
+}
+}
+void CChars::RightAlign(size uiOffset, char cPadCharacter, size uiWidth)
+{
+size uiLen;
+uiLen = Length() - uiOffset;
+if (uiLen != 0)
+{
+if (uiLen <= uiWidth)
+{
+Insert(uiOffset, cPadCharacter, uiWidth - uiLen);
+}
+}
+}
+void CChars::RightAlign(char cPadCharacter, size uiWidth)
+{
+size iLength;
+char* pcDest;
+size iOldWidth;
+if (Length() < uiWidth)
+{
+iLength = uiWidth - Length();
+iOldWidth = Length();
+PrivateGrow(iLength);
+pcDest = (char*)RemapSinglePointer(mcText.GetData(), iLength);
+memmove(pcDest, mcText.GetData(), iOldWidth);
+memset(mcText.GetData(), cPadCharacter, iLength);
+(*mcText.Tail()) = '\0';
+}
+}
+CChars* CChars::AppendSubString(const char* szString, size iLength)
+{
+char* pcPosition;
+if ((szString) && (iLength != 0))
+{
+pcPosition = PrivateGrow(iLength);
+memcpy(pcPosition, szString, iLength);
+(*mcText.Tail()) = '\0';
+}
+return this;
+}
+CChars* CChars::AppendSubString(CChars szString, size iStartInclusive, size iEndExclusive)
+{
+const char* pcPosition;
+pcPosition = (char*)RemapSinglePointer((void*)szString.Text(), iStartInclusive);
+return AppendSubString(pcPosition, iEndExclusive-iStartInclusive);
+}
+CChars* CChars::AppendSubString(CChars* pszString, size iStartInclusive, size iEndExclusive)
+{
+const char* pcPosition;
+pcPosition = (char*)RemapSinglePointer((void*)pszString->Text(), iStartInclusive);
+return AppendSubString(pcPosition, iEndExclusive-iStartInclusive);
+}
+CChars* CChars::AppendSubString(const char* szString, size iStartInclusive, size iEndExclusive)
+{
+const char* pcPosition;
+pcPosition = (char*)RemapSinglePointer((void*)szString, iStartInclusive);
+return AppendSubString(pcPosition, iEndExclusive-iStartInclusive);
+}
+CChars* CChars::AppendSubString(const char* szStartInclusive, const char* szEndExclusive)
+{
+return AppendSubString(szStartInclusive, (size)(szEndExclusive-szStartInclusive));
+}
+void CChars::RemoveLastCharacter(void)
+{
+char* pcPosition;
+if (Length() != 0)
+{
+mcText.RemoveTail();
+if (mcText.NumElements() > 1)
+{
+pcPosition = mcText.Tail();
+*pcPosition = '\0';
+}
+else
+{
+SetEmpty();
+}
+}
+}
+void CChars::RemoveFromStart(size iNumChars)
+{
+Remove(0, iNumChars);
+}
+void CChars::RemoveFromEnd(size iNumChars)
+{
+size iLength;
+iLength = Length();
+if (iNumChars >= iLength)
+{
+SetEmpty();
+}
+Remove(iLength - iNumChars, iLength);
+}
+void CChars::Remove(size iStartInclusive, size iEndExclusive)
+{
+size iLength;
+if (!Empty())
+{
+iLength = Length();
+if (iEndExclusive > iLength)
+{
+iEndExclusive = iLength;
+}
+mcText.RemoveRange(iStartInclusive, iEndExclusive);
+CleanIfEmpty();
+}
+}
+void CChars::RemoveEnd(size iIndex)
+{
+size iToRemove;
+size uiLength;
+uiLength = Length();
+if (uiLength >= iIndex)
+{
+iToRemove = uiLength - iIndex;
+if (iToRemove != 0)
+{
+if (iIndex != 0)
+{
+mcText.RemoveRange(iIndex, uiLength);
+}
+else
+{
+SetEmpty();
+}
+}
+}
+}
+void CChars::RemoveCharacter(size iPos)
+{
+if (iPos < Length())
+{
+mcText.RemoveAt(iPos, true);
+CleanIfEmpty();
+}
+}
+void CChars::Split(CArrayChars* aszDest, char cSplitter)
+{
+size iPos;
+char* pszPos;
+size iMax;
+pszPos = Text();
+iMax = Length();
+for (;;)
+{
+iPos = FindFirstByte((uint8*)pszPos, cSplitter, iMax);
+if (iPos != ((size)-1))
+{
+aszDest->Add(pszPos, 0, iPos);
+iPos++;
+pszPos = (char*)RemapSinglePointer((void*)pszPos, iPos);
+iMax -= iPos;
+}
+else
+{
+aszDest->Add(pszPos, 0, iMax);
+break;
+}
+}
+}
+void CChars::SplitLines(CArrayChars* aszDest)
+{
+Split(aszDest, '\n');
+}
+bool CChars::Equals(const char* szString)
+{
+if (szString)
+{
+if (StringCompare(Text(), szString) == 0)
+{
+return true;
+}
+}
+return false;
+}
+bool CChars::Equals(const char* szString, size uiLen)
+{
+if (uiLen == Length())
+{
+if (memcmp(Text(), szString, uiLen) == 0)
+{
+return true;
+}
+}
+return false;
+}
+bool CChars::Equals(CChars szString)
+{
+return Equals(szString.Text());
+}
+bool CChars::Equals(CChars* pszString)
+{
+return Equals(pszString->Text());
+}
+bool CChars::EqualsIgnoreCase(const char* szString)
+{
+if (StringInsensitiveCompare(Text(), szString) == 0)
+{
+return true;
+}
+return false;
+}
+bool CChars::EqualsIgnoreCase(CChars szString)
+{
+return EqualsIgnoreCase(szString.Text());
+}
+bool CChars::Contains(const char* szString)
+{
+char* pc;
+if (!szString)
+{
+return false;
+}
+pc = strstr(Text(), szString);
+if (pc)
+{
+return true;
+}
+return false;
+}
+bool CChars::ContainsIgnoreCase(const char* szString)
+{
+char* pc;
+pc = StrIStr(Text(), szString);
+if (pc)
+{
+return true;
+}
+return false;
+}
+bool CChars::Contains(char c)
+{
+return Find(0, c) != ((size)-1);
+}
+size CChars::Occurrences(const char* szString)
+{
+size iCount;
+size iIndex;
+size iFindLen;
+iFindLen = strlen(szString);
+if (iFindLen == 0)
+{
+return 0;
+}
+iIndex = Find(0, szString);
+if (iIndex == ((size)-1))
+{
+return 0;
+}
+iCount = 0;
+for (;;)
+{
+iCount++;
+iIndex += iFindLen;
+iIndex = Find(iIndex, szString);
+if (iIndex == ((size)-1))
+{
+return iCount;
+}
+}
+}
+bool CChars::StartsWith(const char* szString)
+{
+if (szString == 0L)
+{
+return false;
+}
+return SubStringEquals(0, szString);
+}
+bool CChars::StartsWithIgnoreCase(const char* szString)
+{
+if (szString == 0L)
+{
+return false;
+}
+return SubStringEqualsIgnoreCase(0, szString);
+}
+bool CChars::StartsWith(char c)
+{
+size iLength;
+iLength = Length();
+if (iLength != 0)
+{
+if (Text()[0] == c)
+{
+return true;
+}
+}
+return false;
+}
+bool CChars::EndsWith(const char* szString)
+{
+size uiLen;
+if (szString == 0L)
+{
+return false;
+}
+uiLen = strlen(szString);
+if (uiLen > Length())
+{
+return false;
+}
+return SubStringEquals(Length() - uiLen, szString);
+}
+bool CChars::EndsWith(char c)
+{
+size iLength;
+iLength = Length();
+if (iLength != 0)
+{
+if (Text()[iLength - 1] == c)
+{
+return true;
+}
+}
+return false;
+}
+bool CChars::EndsWithIgnoreCase(const char* szString)
+{
+size uiLen;
+if (szString == 0L)
+{
+return false;
+}
+uiLen = strlen(szString);
+if (uiLen > Length())
+{
+return false;
+}
+return SubStringEqualsIgnoreCase(Length() - strlen(szString), szString);
+}
+bool CChars::SubStringEquals(size iStart, const char* szString)
+{
+size i;
+size j;
+size uiLen;
+size iSubLen;
+char* szText;
+szText = Text();
+uiLen = Length();
+if (uiLen == 0)
+{
+iSubLen = strlen(szString);
+if (iSubLen != 0)
+{
+return false;
+}
+else
+{
+return iStart == 0;
+}
+}
+if (iStart >= uiLen)
+{
+return false;
+}
+for (i = iStart, j = 0; i < uiLen; i++, j++)
+{
+if (szString[j] != 0)
+{
+if (szText[i] != szString[j])
+{
+return false;
+}
+}
+else
+{
+break;
+}
+}
+return true;
+}
+bool CChars::SubStringEqualsIgnoreCase(size iStart, const char* szString)
+{
+size i;
+size j;
+size uiLen;
+size c1;
+size c2;
+char* szText;
+szText = Text();
+uiLen = Length();
+for (i = iStart, j = 0; i < uiLen; i++, j++)
+{
+if (szString[j] != 0)
+{
+c1 = ToLower(szText[i]);
+c2 = ToLower(szString[j]);
+if (c1 != c2)
+{
+return false;
+}
+}
+else
+{
+break;
+}
+}
+return true;
+}
+size CChars::FindFromEnd(const char* szString)
+{
+size iOtherLen;
+iOtherLen = strlen(szString);
+return FindFromEnd(Length() - iOtherLen, szString);
+}
+size CChars::FindFromEnd(size iIndex, const char* szString)
+{
+size i;
+if (iIndex > Length())
+{
+return ((size)-1);
+}
+i = iIndex + 1;
+do
+{
+i--;
+if (SubStringEquals(i, szString))
+{
+return i;
+}
+}
+while (i != 0);
+return ((size)-1);
+}
+size CChars::FindFromEnd(char c)
+{
+if (mcText.IsEmpty() || IsFakeEmpty())
+{
+return ((size)-1);
+}
+return FindFromEnd(Length() - 1, c);
+}
+size CChars::FindFromEnd(size iIndex, char c)
+{
+size i;
+char* szText;
+szText = Text();
+i = iIndex + 1;
+do
+{
+i--;
+if (szText[i] == c)
+{
+return i;
+}
+}
+while (i != 0);
+return ((size)-1);
+}
+size CChars::Find(const char* szString)
+{
+return Find(0, szString);
+}
+size CChars::Find(size iIndex, const char* szString)
+{
+size iOtherLen;
+size i;
+size uiLen;
+size iDiff;
+uiLen = Length();
+if (iIndex > uiLen)
+{
+return ((size)-1);
+}
+iOtherLen = strlen(szString);
+if (iOtherLen > uiLen - iIndex)
+{
+return ((size)-1);
+}
+iDiff = uiLen - iOtherLen;
+for (i = iIndex; i <= iDiff; i++)
+{
+if (SubStringEquals(i, szString))
+{
+return i;
+}
+}
+return ((size)-1);
+}
+size CChars::Find(size iIndex, char c)
+{
+size i;
+size uiLen;
+char* szText;
+szText = Text();
+uiLen = Length();
+for (i = iIndex; i < uiLen; i++)
+{
+if (szText[i] == c)
+{
+return i;
+}
+}
+return ((size)-1);
+}
+size CChars::Find(char c)
+{
+return Find(0, c);
+}
+size CChars::FindDigit(size iIndex)
+{
+size i;
+char c;
+size uiLen;
+uiLen = Length();
+for (i = iIndex; i < uiLen; i++)
+{
+c = *mcText.Get(i);
+if ((c >= '0') && (c <= '9'))
+{
+return i;
+}
+}
+return ((size)-1);
+}
+char CChars::GetChar(size iIndex)
+{
+char* pc;
+pc = mcText.SafeGet(iIndex);
+if (pc)
+{
+return *pc;
+}
+return '\0';
+}
+void CChars::Difference(CArrayInt* paiNewToOldIndices, CArrayInt* paiOldToNewIndices, CChars szOldString)
+{
+size i;
+size j;
+CChars cTemp;
+char cNew;
+char cOld;
+size uiLen;
+size iOldLen;
+uiLen = Length();
+paiOldToNewIndices->SetUsedElements(szOldString.Length());
+paiOldToNewIndices->SetArrayValues(-1);
+paiNewToOldIndices->SetUsedElements(uiLen);
+paiNewToOldIndices->SetArrayValues(-1);
+cTemp.Init(szOldString);
+iOldLen = cTemp.Length();
+for (j = 0; j < uiLen; j++)
+{
+cNew = GetChar(j);
+for (i = 0; i < iOldLen; i++)
+{
+cOld = cTemp.GetChar(i);
+if (cOld == cNew)
+{
+cTemp.SetChar(i, 1);
+paiOldToNewIndices->SetValue(i, (int)j);
+paiNewToOldIndices->SetValue(j, (int)i);
+break;
+}
+}
+}
+cTemp.Kill();
+}
+bool CChars::IsWhitespace(size iPos, bool bIncludeNewLines)
+{
+char c;
+c = GetChar(iPos);
+return ::IsWhitespace(c, bIncludeNewLines);
+}
+bool CChars::IsWhitespace(void)
+{
+size i;
+size uiLen;
+uiLen = Length();
+for (i = 0; i < uiLen; i++)
+{
+if (!IsWhitespace(i, true))
+{
+return false;
+}
+}
+return true;
+}
+void CChars::SetLength(size iLength)
+{
+if (iLength != 0)
+{
+UnfakeIfFakeEmpty();
+mcText.Resize(iLength + 1);
+mcText.SetValue(iLength, '\0');
+}
+else
+{
+SetEmpty();
+}
+}
+size CChars::FindEndOfLeadingWhitespace(bool bIncludeNewLines)
+{
+size iLength;
+size iStart;
+iLength = Length();
+for (iStart = 0; iStart < iLength; iStart++)
+{
+if (!IsWhitespace(iStart, bIncludeNewLines))
+{
+break;
+}
+}
+return iStart;
+}
+size CChars::FindStartOfTrailingWhitespace(bool bIncludeNewLines)
+{
+size iLength;
+size iEnd;
+iLength = Length();
+if (iLength != 0)
+{
+iEnd = iLength;
+do
+{
+iEnd--;
+if (!IsWhitespace(iEnd, bIncludeNewLines))
+{
+break;
+}
+}
+while (iEnd != 0);
+return iEnd;
+}
+return 0;
+}
+size CChars::StripWhitespace(bool bIncludeNewLines)
+{
+size iLength;
+size iStart;
+size iEnd;
+iStart = FindEndOfLeadingWhitespace(bIncludeNewLines);
+iEnd = FindStartOfTrailingWhitespace(bIncludeNewLines);
+if (iEnd < iStart)
+{
+SetEmpty();
+}
+else
+{
+iLength = Length();
+Remove(iEnd+1, iLength);
+Remove(0, iStart);
+}
+return iStart;
+}
+int CChars::Compare(CChars* szOther)
+{
+return StringCompare(Text(), szOther->Text());
+}
+int CChars::CompareIgnoreCase(CChars* szOther)
+{
+return StringInsensitiveCompare(Text(), szOther->Text());
+}
+int CChars::Compare(const char* szOther)
+{
+return StringCompare(Text(), szOther);
+}
+int CChars::CompareIgnoreCase(const char* szOther)
+{
+return StringInsensitiveCompare(Text(), szOther);
+}
+size CChars::Replace(char cFind, char cReplace)
+{
+size i;
+size iLength;
+size iCount;
+iLength = Length();
+iCount = 0;
+for (i = 0; i < iLength; i++)
+{
+if (mcText.GetValue(i) == cFind)
+{
+mcText.SetValue(i, cReplace);
+iCount++;
+}
+}
+return iCount;
+}
+size CChars::Replace(const char* szFind, const char* szReplace)
+{
+size iReplaceLen;
+size iFindLen;
+if (szFind == 0L)
+{
+return 0;
+}
+iFindLen = strlen(szFind);
+if (iFindLen == 0)
+{
+return 0;
+}
+if (szReplace == 0L)
+{
+iReplaceLen = 0;
+}
+else
+{
+iReplaceLen = strlen(szReplace);
+}
+if (iReplaceLen > iFindLen)
+{
+return ReplaceWithLonger(szFind, szReplace, iFindLen, iReplaceLen - iFindLen);
+}
+else if (iFindLen > iReplaceLen)
+{
+return ReplaceWithShorter(szFind, szReplace, iReplaceLen, iFindLen, iFindLen - iReplaceLen);
+}
+else
+{
+return ReplaceWithEqualLength(szFind, szReplace, iFindLen);
+}
+}
+size CChars::ReplaceWithEqualLength(const char* szFind, const char* szReplace, size iFindLen)
+{
+size iCount;
+size iIndex;
+iCount = 0;
+iIndex = Find(0, szFind);
+while (iIndex != ((size)-1))
+{
+Overwrite(iIndex, szReplace);
+iCount++;
+iIndex = Find(iIndex + iFindLen, szFind);
+}
+return iCount;}
+size CChars::ReplaceWithShorter(const char* szFind, const char* szReplace, size iReplaceLen, size iFindLen, size iDifference)
+{
+size iCount;
+size iIndex;
+size iTotalDifference;
+size iOldIndex;
+size iDestPos;
+size iSize;
+size iEnd;
+iCount = 0;
+iIndex = Find(0, szFind);
+if (iIndex == ((size)-1))
+{
+return 0;
+}
+iOldIndex = 0;
+iDestPos = 0;
+for (;;)
+{
+iSize = iIndex - iOldIndex - iDifference;
+if (iReplaceLen != 0)
+{
+if (iCount != 0)
+{
+memmove(mcText.Get(iDestPos), mcText.Get(iOldIndex + iFindLen), iSize - 1);
+}
+Overwrite(iIndex - (iCount * iDifference), szReplace);
+}
+else
+{
+if (iCount != 0)
+{
+memmove(mcText.Get(iDestPos), mcText.Get(iOldIndex + iFindLen), iSize);
+}
+}
+iCount++;
+iOldIndex = iIndex;
+iDestPos = iOldIndex + iReplaceLen - (iDifference * (iCount - 1));
+iIndex = Find(iIndex + iFindLen, szFind);
+if (iIndex == ((size)-1))
+{
+iTotalDifference = iDifference * iCount;
+iEnd = Length() - iTotalDifference;
+iSize = Length() - iOldIndex - iFindLen;
+if (iEnd != iDestPos)
+{
+if (iCount != 0)
+{
+memmove(mcText.Get(iDestPos), mcText.Get(iOldIndex + iFindLen), iSize);
+}
+}
+break;
+}
+}
+mcText.RemoveNum(iTotalDifference);
+(*mcText.Tail()) = '\0';
+return iCount;
+}
+size CChars::ReplaceWithLonger(const char* szFind, const char* szReplace, size iFindLen, size iDifference)
+{
+size iCount;
+size iIndex;
+size i;
+size iTotalDifference;
+size iOldIndex;
+iCount = Occurrences(szFind);
+if (iCount == 0)
+{
+return 0;
+}
+iTotalDifference = iDifference * iCount;
+mcText.AddNum(iTotalDifference);
+(*mcText.Tail()) = '\0';
+iIndex = Length() - (iFindLen + iTotalDifference);
+i = iCount;
+do
+{
+i--;
+iOldIndex = iIndex;
+iIndex = FindFromEnd(iIndex, szFind);
+memmove(mcText.Get(iIndex + iFindLen + (iDifference * (i + 1))), mcText.Get(iIndex + iFindLen), iOldIndex - iIndex);
+Overwrite(iIndex + (iDifference * i), szReplace);
+iIndex -= iFindLen;
+}
+while (i != 0);
+return iCount;
+}
+void CChars::Overwrite(size iIndex, const char* szReplace)
+{
+size i;
+size j;
+size uiLen;
+if (StrEmpty(szReplace))
+{
+return;
+}
+uiLen = Length();
+for (i = iIndex, j = 0; i < uiLen; i++, j++)
+{
+if (szReplace[j] == 0)
+{
+return;
+}
+mcText.SetValue(i, szReplace[j]);
+}
+}
+void CChars::Reverse(void)
+{
+if (!Empty())
+{
+StrRev(mcText.GetData(), mcText.NumElements());
+}
+}
+void CChars::Clear(void)
+{
+if (!IsFakeEmpty())
+{
+SetEmpty();
+}
+}
+CChars* CChars::AppendData(const char* szData, size iMaxLength)
+{
+size i;
+size iLength;
+iLength = iMaxLength;
+for (i = 0; i < iMaxLength; i++)
+{
+if (szData[i] == 0)
+{
+iLength = i;
+break;
+}
+}
+return Append(szData, iLength);
+}
+CChars* CChars::AppendData(const char* szData, size iDataLength, size iMaxLength)
+{
+size i;
+size iLength;
+uint8 c;
+bool bLastReadable;
+if (iDataLength > iMaxLength)
+{
+iLength = iMaxLength;
+}
+else
+{
+iLength = iDataLength;
+}
+bLastReadable = true;
+for (i = 0; i < iLength; i++)
+{
+if (!bLastReadable)
+{
+Append(",");
+}
+c = szData[i];
+if (c == 0)
+{
+if ((bLastReadable) && (i != 0))
+{
+Append("\\0");
+}
+else
+{
+Append(" 0x00");
+}
+bLastReadable = false;
+}
+else if (c == '\n')
+{
+if (bLastReadable)
+{
+Append("\\r");
+}
+else
+{
+Append(" 0x0D");
+}
+bLastReadable = false;
+}
+else if ((c >= 32) && (c <= 126))
+{
+if (!bLastReadable)
+{
+Append(' ');
+}
+bLastReadable = true;
+Append((char)c);
+}
+else
+{
+bLastReadable = false;
+Append(" 0x");
+AppendHexHiLo(&c, 1);
+}
+}
+if (iDataLength > iMaxLength)
+{
+Append("...");
+}
+return this;
+}
+bool CChars::AppendData2(const char* szData, size iDataLength)
+{
+size i;
+size iPrintable;
+uint8 c;
+float fPrintable;
+CChars szString;
+if ((szData == 0L) || (iDataLength == 0))
+{
+return false;
+}
+iPrintable = StrPrintable(szData, iDataLength);
+fPrintable = (float)iPrintable / (float)iDataLength;
+if (fPrintable >= 0.9f)
+{
+Append(szData, iDataLength);
+return false;
+}
+else
+{
+Append("0x");
+szString.Init();
+for (i = 0; i < iDataLength; i++)
+{
+c = szData[i];
+szString.Clear();
+szString.Append((int32)c, (uint16)16);
+szString.RightAlign('0', 2);
+Append(szString);
+if (i != iDataLength - 1)
+{
+Append(' ');
+}
+}
+szString.Kill();
+}
+return true;
+}
+CChars* CChars::AppendPointer(void* pv)
+{
+Append("0x");
+return AppendHexHiLo(&pv, sizeof(void*));
+}
+bool CChars::AppendFlag(uint32 msFlags, uint32 uiFlag, const char* szFlagName, bool bAppendComma)
+{
+if (msFlags & uiFlag)
+{
+if (bAppendComma)
+{
+Append(", ");
+}
+Append(szFlagName);
+return true;
+}
+return false;
+}
+size CChars::CountNewLines(void)
+{
+return ::CountNewLines(mcText.GetData(), mcText.NumElements());
+}
+size CChars::Count(char c)
+{
+size i;
+char cAt;
+size iCount;
+size uiLen;
+uiLen = Length();
+iCount = 0;
+for (i = 0; i < uiLen; i++)
+{
+cAt = mcText.GetValue(i);
+if (cAt == c)
+{
+iCount ++;
+}
+}
+return iCount;
+}
+void CChars::LowerCase(void)
+{
+ToLower(mcText.GetData());
+}
+void CChars::UpperCase(void)
+{
+ToUpper(mcText.GetData());
+}
+void CChars::ReplaceNonTabsWithSpace(void)
+{
+size i;
+char c;
+size uiLen;
+uiLen = Length();
+for (i = 0; i < uiLen; i++)
+{
+c = mcText.GetValue(i);
+if (c != '\t')
+{
+mcText.SetValue(i, ' ');
+}
+}
+}
+void CChars::PassifyNewlines(void)
+{
+size iNewLen;
+iNewLen = ::PassifyNewlines(mcText.GetData());
+if (iNewLen != ((size)-1))
+{
+mcText.Resize(iNewLen + 1);
+}
+}
+char* CChars::FindLineContaining(const char* szPosition, size* piLineNumber)
+{
+size i;
+size iNumLineFeeds;
+size uiLen;
+char* szString;
+char* szStartOfLine;
+char* szCurrent;
+uiLen = Length();
+iNumLineFeeds = 0;
+szString = Text();
+szStartOfLine = Text();
+for (i = 0; i < uiLen; i++)
+{
+szCurrent = &szString[i];
+if (*szCurrent == '\n')
+{
+szStartOfLine = &szString[i + 1];
+}
+if (szCurrent == szPosition)
+{
+break;
+}
+if (*szCurrent == '\n')
+{
+iNumLineFeeds++;
+}
+}
+if (piLineNumber) { *piLineNumber = iNumLineFeeds; };
+return szStartOfLine;
+}
+void CChars::MakeCPlusPlus(void)
+{
+size iIndex;
+bool bStartOfLine;
+char c;
+bStartOfLine = true;
+iIndex = 0;
+for (;;)
+{
+if (bStartOfLine)
+{
+Insert(iIndex, '"');
+iIndex++;
+bStartOfLine = false;
+}
+if (iIndex >= Length())
+{
+Insert(iIndex, '"');
+break;
+}
+c = GetChar(iIndex);
+if (c == '\n')
+{
+Insert(iIndex, "\\n\"");
+iIndex += 4;
+bStartOfLine = true;
+if (iIndex >= Length())
+{
+RemoveCharacter(iIndex - 1);
+break;
+}
+}
+else
+{
+iIndex++;
+}
+}
+}
+bool CChars::WriteString(CFileWriter* pcWriter)
+{
+CArrayChar c;
+if (!IsFakeEmpty())
+{
+return mcText.Write(pcWriter);
+}
+else
+{
+c.Fake(0L, 0);
+return c.Write(pcWriter);
+}
+}
+bool CChars::ReadString(CFileReader* pcReader)
+{
+bool bResult;
+bResult = mcText.Read(pcReader);
+if (bResult)
+{
+if ((mcText.NumElements() == 0) && (mcText.IsMalloc(&gcNullAllocator)))
+{
+InitEmpty();
+}
+return true;
+}
+return false;
+}
+bool CChars::ReadChars(CFileReader* pcReader)
+{
+size iLength;
+if (!pcReader->ReadStringLength(&iLength))
+{
+return false;
+}
+if (iLength == 0)
+{
+Init();
+return true;
+}
+else if (iLength != 0)
+{
+Init('@', iLength - 1);
+if (!pcReader->ReadData(Text(), iLength))
+{
+return false;
+}
+return true;
+}
+else
+{
+return false;
+}
+}
+void CChars::CleanIfEmpty(void)
+{
+if (mcText.NumElements() <= 1)
+{
+if (!IsFakeEmpty())
+{
+SetEmpty();
+}
+}
+}
+void CChars::InitEmpty(void)
+{
+mcText.Fake(gszEmptyString, 1);
+}
+bool CChars::IsFakeEmpty(void)
+{
+return mcText.GetData() == gszEmptyString;
+}
+void CChars::Unfake(void)
+{
+mcText.Init();
+mcText.Add('\0');
+}
+void CChars::UnfakeIfFakeEmpty(void)
+{
+if (IsFakeEmpty())
+{
+Unfake();
+}
+}
+char* CChars::CopyIntoBuffer(char* szDest, size iDestLength)
+{
+size iLength;
+if (iDestLength == ((size)-1))
+{
+StrCpySafe(szDest, Text(), iDestLength);
+return szDest;
+}
+else if (iDestLength == 0)
+{
+return szDest;
+}
+else
+{
+iLength = Length();
+if (iLength < iDestLength)
+{
+memcpy(szDest, Text(), iLength + 1);
+}
+else
+{
+memcpy(szDest, Text(), iDestLength - 2);
+szDest[iDestLength - 1] = '\0';
+}
+return szDest;
+}
+}
+void CChars::Dump(void)
+{
+CChars szString;
+size i;
+size uiLen;
+uiLen = Length();
+if (uiLen <= 10000)
+{
+if (uiLen != 0)
+{
+printf("%s", Text());
+}
+return;
+}
+for (i = 0; i < uiLen - 10000; i += 10000)
+{
+szString.Init(Text(), i, i + 10000);
+printf("%s", szString.Text());
+szString.Kill();
+}
+szString.Init(Text(), i, uiLen);
+printf("%s", szString.Text());
+szString.Kill();
+}
+void CChars::Dump(const char* szString)
+{
+printf("%s", szString);
+}
+void CLargeChars::_Init(void)
+{
+mcText._Init();
+}
+CLargeChars* CLargeChars::InitLength(lsize iLength)
+{
+if (iLength != 0)
+{
+mcText.Init();
+mcText.Resize(iLength + 1);
+mcText.SetValue(iLength, '\0');
+return this;
+}
+else
+{
+InitEmpty();
+return this;
+}
+}
+CLargeChars* CLargeChars::InitLength(CMallocator* pcMalloc, lsize iLength)
+{
+if (iLength != 0)
+{
+mcText.Init(pcMalloc);
+mcText.Resize(iLength + 1);
+mcText.SetValue(iLength, '\0');
+return this;
+}
+else
+{
+InitEmpty();
+return this;
+}
+}
+CLargeChars* CLargeChars::Init(void)
+{
+InitEmpty();
+return this;
+}
+CLargeChars* CLargeChars::Init(const char* szString)
+{
+mcText.Init();
+if (!StrEmpty(szString))
+{
+Set(szString);
+}
+else
+{
+SetEmpty();
+}
+return this;
+}
+CLargeChars* CLargeChars::Init(CLargeChars szString, lsize iStartInclusive, lsize iEndExclusive)
+{
+if ((iEndExclusive > iStartInclusive) && (iEndExclusive != ((lsize)-1)))
+{
+mcText.Init();
+AppendSubString(szString, iStartInclusive, iEndExclusive);
+CleanIfEmpty();
+}
+else
+{
+InitEmpty();
+}
+return this;
+}
+CLargeChars* CLargeChars::Init(const char* szString, lsize iStartInclusive, lsize iEndExclusive)
+{
+if (iEndExclusive > iStartInclusive)
+{
+mcText.Init();
+AppendSubString(szString, iStartInclusive, iEndExclusive);
+CleanIfEmpty();
+}
+else
+{
+InitEmpty();
+}
+return this;
+}
+CLargeChars* CLargeChars::Init(const char* szString, lsize iStartInclusive)
+{
+mcText.Init();
+Set(&szString[iStartInclusive]);
+return this;
+}
+CLargeChars* CLargeChars::Init(CLargeChars szString)
+{
+if (!szString.Empty())
+{
+mcText.Init();
+mcText.Copy(&(szString.mcText));
+}
+else
+{
+InitEmpty();
+}
+return this;
+}
+CLargeChars* CLargeChars::Init(CLargeChars* psz)
+{
+if (psz && !psz->Empty())
+{
+mcText.Init();
+mcText.Copy(&(psz->mcText));
+}
+else
+{
+InitEmpty();
+}
+return this;
+}
+CLargeChars* CLargeChars::Init(char cPadCharacter, lsize iNumber)
+{
+if (iNumber != 0)
+{
+mcText.Init();
+Append(cPadCharacter, iNumber);
+}
+else
+{
+InitEmpty();
+}
+return this;
+}
+CLargeChars* CLargeChars::Init(CExternalString* pcString)
+{
+return Init(pcString->msz, 0, pcString->miLen);
+}
+CLargeChars* CLargeChars::InitList(const char* szFirst, ...)
+{
+InitEmpty();
+va_list vaMarker;
+const char* pc;
+lsize iCount;
+if (szFirst)
+{
+iCount = 0;
+pc = szFirst;
+((vaMarker) = (char*)&(szFirst) + sizeof(szFirst));
+while (pc)
+{
+Append(pc);
+iCount++;
+pc = (*(char**)(((vaMarker) += sizeof(char*)) - sizeof(char*)));
+}
+((vaMarker) = 0);
+}
+CleanIfEmpty();
+return this;
+}
+CLargeChars* CLargeChars::InitList(CLargeChars* szFirst, ...)
+{
+InitEmpty();
+va_list vaMarker;
+CLargeChars* pc;
+lsize iCount;
+if (szFirst)
+{
+iCount = 0;
+pc = szFirst;
+((vaMarker) = (char*)&(szFirst) + sizeof(szFirst));
+while (pc && pc->Length() != 0)
+{
+Append(pc->Text());
+iCount++;
+pc = (*(CLargeChars**)(((vaMarker) += sizeof(CLargeChars*)) - sizeof(CLargeChars*)));
+}
+((vaMarker) = 0);
+}
+CleanIfEmpty();
+return this;
+}
+bool CLargeChars::InitData2(const char* szData, lsize iDataLength)
+{
+InitEmpty();
+return AppendData2(szData, iDataLength);
+}
+void CLargeChars::Kill(void)
+{
+if (!IsFakeEmpty())
+{
+mcText.Kill();
+}
+}
+void CLargeChars::DumpKill(void)
+{
+Dump();
+Kill();
+}
+void CLargeChars::Fake(const char* szString)
+{
+if (szString)
+{
+mcText.Fake((char*)szString, strlen(szString) + 1);
+}
+else
+{
+InitEmpty();
+}
+}
+void CLargeChars::Fake(const char* szString, lsize iStartInclusive, lsize iEndExclusive)
+{
+char* pcPosition;
+if (iEndExclusive > iStartInclusive)
+{
+pcPosition = (char*)RemapSinglePointer(szString, iStartInclusive);
+mcText.Fake(pcPosition, iEndExclusive - iStartInclusive + 1);
+}
+else
+{
+InitEmpty();
+}
+}
+CLargeChars* CLargeChars::ReInit(void)
+{
+Kill();
+return Init();
+}
+lsize CLargeChars::Length(void)
+{
+if (mcText.IsEmpty() || IsFakeEmpty())
+{
+return 0;
+}
+return mcText.NumElements() - 1;
+}
+void CLargeChars::Set(CLargeChars szString)
+{
+lsize uiLen;
+uiLen = szString.Length() + 1;
+if (uiLen > 1)
+{
+SetNonNull(szString.Text(), uiLen);
+}
+else
+{
+SetEmpty();
+}
+}
+void CLargeChars::Set(CLargeChars* psz)
+{
+lsize uiLen;
+uiLen = psz->Length() + 1;
+if (uiLen > 1)
+{
+SetNonNull(psz->Text(), uiLen);
+}
+else
+{
+SetEmpty();
+}
+}
+void CLargeChars::Set(const char* szString)
+{
+lsize uiLen;
+if (!StrEmpty(szString))
+{
+uiLen = (strlen(szString)) + 1;
+SetNonNull(szString, uiLen);
+}
+else
+{
+SetEmpty();
+}
+}
+void CLargeChars::SetNonNull(const char* szString, lsize uiLen)
+{
+if (!IsFakeEmpty())
+{
+mcText.Resize(uiLen);
+}
+else
+{
+Unfake();
+mcText.Resize(uiLen);
+}
+memcpy(mcText.GetData(), szString, uiLen);
+}
+void CLargeChars::SetEmpty(void)
+{
+if (!IsFakeEmpty())
+{
+mcText.Resize(0);
+InitEmpty();
+}
+}
+void CLargeChars::SetChar(lsize iIndex, char c)
+{
+if (iIndex < Length())
+{
+mcText.SetValue(iIndex, c);
+}
+}
+CLargeChars* CLargeChars::Append(const char* szString)
+{
+lsize uiLen;
+char* pcPosition;
+if (!StrEmpty(szString))
+{
+uiLen = strlen(szString);
+pcPosition = PrivateGrow(uiLen);
+memcpy(pcPosition, szString, uiLen);
+pcPosition[uiLen] = '\0';
+}
+return this;
+}
+CLargeChars* CLargeChars::Append(CExternalString* pcString)
+{
+char* pcPosition;
+if (pcString && pcString->miLen > 0)
+{
+pcPosition = PrivateGrow(pcString->miLen);
+memcpy(pcPosition, pcString->msz, pcString->miLen);
+pcPosition[pcString->miLen] = '\0';
+}
+return this;
+}
+CLargeChars* CLargeChars::Append(const char* szString, lsize uiLen)
+{
+char* pcPosition;
+char* pcZero;
+if (szString && uiLen > 0)
+{
+pcPosition = PrivateGrow(uiLen);
+memcpy(pcPosition, szString, uiLen);
+pcZero = mcText.Tail();
+*pcZero = '\0';
+}
+return this;
+}
+CLargeChars* CLargeChars::Append(char cPadCharacter)
+{
+char* pcReplace;
+UnfakeIfFakeEmpty();
+pcReplace = mcText.Tail();
+*pcReplace = cPadCharacter;
+mcText.Add(0);
+return this;
+}
+CLargeChars* CLargeChars::Append(CLargeChars szString)
+{
+Append(szString.Text());
+return this;
+}
+CLargeChars* CLargeChars::Append(CLargeChars* psz)
+{
+Append(psz->Text());
+return this;
+}
+CLargeChars* CLargeChars::Append(CChars szString)
+{
+Append(szString.Text());
+return this;
+}
+CLargeChars* CLargeChars::Append(CChars* psz)
+{
+Append(psz->Text());
+return this;
+}
+CLargeChars* CLargeChars::Append(CCharsImmutable* psz)
+{
+Append(psz->Text());
+return this;
+}
+CLargeChars* CLargeChars::Append(int32 i)
+{
+char szString[32];
+IntToString(szString, 32, i);
+return Append(szString);
+}
+CLargeChars* CLargeChars::Append(int32 i, uint16 iBase)
+{
+char szString[32];
+IntToString(szString, 32, i, iBase);
+return Append(szString);
+}
+CLargeChars* CLargeChars::Append(uint64 ulli)
+{
+char szString[64];
+LongToString(szString, 64, ulli);
+return Append(szString);
+}
+CLargeChars* CLargeChars::Append(int64 lli)
+{
+char szString[64];
+LongToString(szString, 64, lli);
+return Append(szString);
+}
+CLargeChars* CLargeChars::Append(uint32 ui)
+{
+char szString[32];
+IntToString(szString, 32, ui);
+return Append(szString);
+}
+CLargeChars* CLargeChars::Append(uint32 ui, uint16 iBase)
+{
+char szString[32];
+IntToString(szString, 32, ui, iBase);
+return Append(szString);
+}
+CLargeChars* CLargeChars::Append(float f, lsize iMaxDecimals, bool bAppendF)
+{
+char szString[32];
+if (!FloatToString(szString, 32, f, (int)iMaxDecimals, bAppendF))
+{
+return this;
+}
+return Append(szString);
+}
+CLargeChars* CLargeChars::Append(double d, lsize iMaxDecimals, bool bAppendD)
+{
+char szString[128];
+if (!DoubleToString(szString, 128, d, (int)iMaxDecimals, bAppendD))
+{
+return this;
+}
+return Append(szString);
+}
+CLargeChars* CLargeChars::AppendQuoted(const char* szString)
+{
+Append('"');
+Append(szString);
+Append('"');
+return this;
+}
+CLargeChars* CLargeChars::AppendQuoted(char c)
+{
+Append('\'');
+Append(c);
+Append('\'');
+return this;
+}
+CLargeChars* CLargeChars::AppendNewLine(void)
+{
+return Append("\n");
+}
+CLargeChars* CLargeChars::AppendCarriageReturn(void)
+{
+return Append("\r");
+}
+CLargeChars* CLargeChars::AppendNewLine(CLargeChars szString)
+{
+Append(&szString);
+return AppendNewLine();
+}
+CLargeChars* CLargeChars::AppendHexHiLo(void* pv, lsize iNumBytes)
+{
+lsize i;
+char* pb;
+int8 nibble;
+char c;
+if (iNumBytes != 0)
+{
+i = iNumBytes;
+do
+{
+i--;
+pb = (char*)RemapSinglePointer(pv, i);
+nibble = GetHighNybble(*pb);
+c = GetNumberAs1DigitHex(nibble);
+Append(c);
+nibble = GetLowNybble(*pb);
+c = GetNumberAs1DigitHex(nibble);
+Append(c);
+}
+while (i != 0);
+}
+return this;
+}
+CLargeChars* CLargeChars::AppendHexLoHi(void* pv, lsize iNumBytes)
+{
+lsize i;
+char* pb;
+int8 nibble;
+char c;
+if (iNumBytes != 0)
+{
+for (i = 0; i < iNumBytes; i++)
+{
+pb = (char*)RemapSinglePointer(pv, i);
+nibble = GetHighNybble(*pb);
+c = GetNumberAs1DigitHex(nibble);
+Append(c);
+nibble = GetLowNybble(*pb);
+c = GetNumberAs1DigitHex(nibble);
+Append(c);
+}
+}
+return this;
+}
+CLargeChars* CLargeChars::AppendBool(bool bValue)
+{
+return AppendBool(bValue, "True", "False");
+}
+CLargeChars* CLargeChars::AppendBool(bool bValue, const char* szTrue, const char* szFalse)
+{
+if (bValue)
+{
+return Append(szTrue);
+}
+else
+{
+return Append(szFalse);
+}
+}
+void CLargeChars::Insert(lsize iPos, char c)
+{
+if (iPos >= mcText.NumElements())
+{
+return;
+}
+UnfakeIfFakeEmpty();
+mcText.InsertAt(c, iPos);
+}
+void CLargeChars::Insert(lsize iPos, char c, lsize uiCount)
+{
+lsize i;
+mcText.InsertNumAt(uiCount, iPos);
+for (i = 0; i < uiCount; i++)
+{
+mcText.Set(iPos + i, &c);
+}
+}
+void CLargeChars::Insert(lsize iPos, const char* szString)
+{
+char* pcNew;
+lsize uiInsertLen;
+if (StrEmpty(szString))
+{
+return;
+}
+UnfakeIfFakeEmpty();
+uiInsertLen = strlen(szString);
+pcNew = mcText.InsertNumAt(uiInsertLen, iPos);
+if (pcNew)
+{
+memcpy(pcNew, szString, uiInsertLen);
+}
+}
+void CLargeChars::Insert(lsize iPos, CLargeChars* pszString)
+{
+char* pcNew;
+lsize uiInsertLen;
+if (pszString == 0L || pszString->Empty())
+{
+return;
+}
+UnfakeIfFakeEmpty();
+uiInsertLen = pszString->Length();
+pcNew = mcText.InsertNumAt(uiInsertLen, iPos);
+if (pcNew)
+{
+memcpy(pcNew, pszString->Text(), uiInsertLen);
+}
+}
+void CLargeChars::Minimize(void)
+{
+if (!IsFakeEmpty())
+{
+mcText.Finalise();
+}
+}
+char* CLargeChars::Text(void)
+{
+return mcText.GetData();
+}
+char* CLargeChars::Text(lsize iIndex)
+{
+if (iIndex < Length())
+{
+return mcText.Get(iIndex);
+}
+else
+{
+return mcText.Tail();
+}
+}
+bool CLargeChars::Empty(void)
+{
+if (Length() == 0)
+{
+return true;
+}
+return false;
+}
+CLargeChars* CLargeChars::AppendList(const char* szFirst, ...)
+{
+va_list vaMarker;
+const char* pc;
+lsize iCount;
+iCount = 0;
+pc = szFirst;
+((vaMarker) = (char*)&(szFirst) + sizeof(szFirst));
+while (pc != 0L)
+{
+Append(pc);
+iCount++;
+pc = (*(char**)(((vaMarker) += sizeof(char*)) - sizeof(char*)));
+}
+((vaMarker) = 0);
+return this;
+}
+char* CLargeChars::PrivateGrow(lsize iNumberOfCharacters)
+{
+char* pszPosition;
+lsize iPosition;
+if (mcText.IsEmpty())
+{
+if (iNumberOfCharacters != 0)
+{
+mcText.AddNum(iNumberOfCharacters + 1);
+}
+else
+{
+SetEmpty();
+}
+return mcText.GetData();
+}
+else
+{
+if (iNumberOfCharacters != 0)
+{
+if (IsFakeEmpty())
+{
+Unfake();
+}
+iPosition = mcText.AddNum(iNumberOfCharacters);
+pszPosition = (char*)RemapSinglePointer(mcText.GetData(), iPosition - 1);
+return pszPosition;
+}
+else
+{
+SetEmpty();
+return mcText.GetData();
+}
+}
+}
+CLargeChars* CLargeChars::Append(char cPadCharacter, lsize iNumber)
+{
+char* pcPosition;
+if ((iNumber != 0) && (iNumber != ((lsize)-1)))
+{
+pcPosition = PrivateGrow(iNumber);
+memset(pcPosition, cPadCharacter, iNumber);
+pcPosition = mcText.Tail();
+*pcPosition = '\0';
+}
+return this;
+}
+void CLargeChars::LeftAlign(const char* szString, char cPadCharacter, lsize uiWidth)
+{
+lsize uiLen;
+uiLen = strlen(szString);
+if (uiLen != 0)
+{
+uiLen = strlen(szString);
+if (uiLen <= uiWidth)
+{
+Append(szString);
+Append(cPadCharacter, uiWidth - uiLen);
+}
+else
+{
+AppendSubString(szString, 0, uiWidth);
+}
+}
+}
+void CLargeChars::RightAlign(const char* szString, char cPadCharacter, lsize uiWidth)
+{
+lsize uiLen;
+uiLen = strlen(szString);
+if (uiLen != 0)
+{
+if (uiLen <= uiWidth)
+{
+Append(cPadCharacter, uiWidth - uiLen);
+Append(szString);
+}
+else
+{
+AppendSubString(szString, 0, uiWidth);
+}
+}
+}
+void CLargeChars::LeftAlign(CLargeChars szString, char cPadCharacter, lsize uiWidth)
+{
+if (szString.Length() <= uiWidth)
+{
+Append(szString);
+Append(cPadCharacter, uiWidth - szString.Length());
+}
+else
+{
+AppendSubString(szString, 0, uiWidth);
+}
+}
+void CLargeChars::RightAlign(CLargeChars szString, char cPadCharacter, lsize uiWidth)
+{
+if (szString.Length() <= uiWidth)
+{
+Append(cPadCharacter, uiWidth - szString.Length());
+Append(szString);
+}
+else
+{
+AppendSubString(szString, 0, uiWidth);
+}
+}
+void CLargeChars::RightAlign(lsize uiOffset, char cPadCharacter, lsize uiWidth)
+{
+lsize uiLen;
+uiLen = Length() - uiOffset;
+if (uiLen != 0)
+{
+if (uiLen <= uiWidth)
+{
+Insert(uiOffset, cPadCharacter, uiWidth - uiLen);
+}
+}
+}
+void CLargeChars::RightAlign(char cPadCharacter, lsize uiWidth)
+{
+lsize iLength;
+char* pcDest;
+lsize iOldWidth;
+if (Length() < uiWidth)
+{
+iLength = uiWidth - Length();
+iOldWidth = Length();
+PrivateGrow(iLength);
+pcDest = (char*)RemapSinglePointer(mcText.GetData(), iLength);
+memmove(pcDest, mcText.GetData(), iOldWidth);
+memset(mcText.GetData(), cPadCharacter, iLength);
+(*mcText.Tail()) = '\0';
+}
+}
+CLargeChars* CLargeChars::AppendSubString(const char* szString, lsize iLength)
+{
+char* pcPosition;
+if ((szString) && (iLength != 0))
+{
+pcPosition = PrivateGrow(iLength);
+memcpy(pcPosition, szString, iLength);
+(*mcText.Tail()) = '\0';
+}
+return this;
+}
+CLargeChars* CLargeChars::AppendSubString(CLargeChars szString, lsize iStartInclusive, lsize iEndExclusive)
+{
+const char* pcPosition;
+pcPosition = (char*)RemapSinglePointer((void*)szString.Text(), iStartInclusive);
+return AppendSubString(pcPosition, iEndExclusive-iStartInclusive);
+}
+CLargeChars* CLargeChars::AppendSubString(CLargeChars* pszString, lsize iStartInclusive, lsize iEndExclusive)
+{
+const char* pcPosition;
+pcPosition = (char*)RemapSinglePointer((void*)pszString->Text(), iStartInclusive);
+return AppendSubString(pcPosition, iEndExclusive-iStartInclusive);
+}
+CLargeChars* CLargeChars::AppendSubString(const char* szString, lsize iStartInclusive, lsize iEndExclusive)
+{
+const char* pcPosition;
+pcPosition = (char*)RemapSinglePointer((void*)szString, iStartInclusive);
+return AppendSubString(pcPosition, iEndExclusive-iStartInclusive);
+}
+CLargeChars* CLargeChars::AppendSubString(const char* szStartInclusive, const char* szEndExclusive)
+{
+return AppendSubString(szStartInclusive, (lsize)(szEndExclusive-szStartInclusive));
+}
+void CLargeChars::RemoveLastCharacter(void)
+{
+char* pcPosition;
+if (Length() != 0)
+{
+mcText.RemoveTail();
+if (mcText.NumElements() > 1)
+{
+pcPosition = mcText.Tail();
+*pcPosition = '\0';
+}
+else
+{
+SetEmpty();
+}
+}
+}
+void CLargeChars::RemoveFromStart(lsize iNumChars)
+{
+Remove(0, iNumChars);
+}
+void CLargeChars::RemoveFromEnd(lsize iNumChars)
+{
+lsize iLength;
+iLength = Length();
+if (iNumChars >= iLength)
+{
+SetEmpty();
+}
+Remove(iLength - iNumChars, iLength);
+}
+void CLargeChars::Remove(lsize iStartInclusive, lsize iEndExclusive)
+{
+lsize iLength;
+if (!Empty())
+{
+iLength = Length();
+if (iEndExclusive > iLength)
+{
+iEndExclusive = iLength;
+}
+mcText.RemoveRange(iStartInclusive, iEndExclusive);
+CleanIfEmpty();
+}
+}
+void CLargeChars::RemoveEnd(lsize iIndex)
+{
+lsize iToRemove;
+lsize uiLength;
+uiLength = Length();
+if (uiLength >= iIndex)
+{
+iToRemove = uiLength - iIndex;
+if (iToRemove != 0)
+{
+if (iIndex != 0)
+{
+mcText.RemoveRange(iIndex, uiLength);
+}
+else
+{
+SetEmpty();
+}
+}
+}
+}
+void CLargeChars::RemoveCharacter(lsize iPos)
+{
+if (iPos < Length())
+{
+mcText.RemoveAt(iPos, true);
+CleanIfEmpty();
+}
+}
+void CLargeChars::Split(CArrayChars* aszDest, char cSplitter)
+{
+lsize iPos;
+char* pszPos;
+lsize iMax;
+pszPos = Text();
+iMax = Length();
+for (;;)
+{
+iPos = FindFirstByte((uint8*)pszPos, cSplitter, iMax);
+if (iPos != ((lsize)-1))
+{
+aszDest->Add(pszPos, 0, iPos);
+iPos++;
+pszPos = (char*)RemapSinglePointer((void*)pszPos, iPos);
+iMax -= iPos;
+}
+else
+{
+aszDest->Add(pszPos, 0, iMax);
+break;
+}
+}
+}
+void CLargeChars::SplitLines(CArrayChars* aszDest)
+{
+Split(aszDest, '\n');
+}
+bool CLargeChars::Equals(const char* szString)
+{
+if (szString)
+{
+if (StringCompare(Text(), szString) == 0)
+{
+return true;
+}
+}
+return false;
+}
+bool CLargeChars::Equals(const char* szString, lsize uiLen)
+{
+if (uiLen == Length())
+{
+if (memcmp(Text(), szString, uiLen) == 0)
+{
+return true;
+}
+}
+return false;
+}
+bool CLargeChars::Equals(CLargeChars szString)
+{
+return Equals(szString.Text());
+}
+bool CLargeChars::Equals(CLargeChars* pszString)
+{
+return Equals(pszString->Text());
+}
+bool CLargeChars::EqualsIgnoreCase(const char* szString)
+{
+if (StringInsensitiveCompare(Text(), szString) == 0)
+{
+return true;
+}
+return false;
+}
+bool CLargeChars::EqualsIgnoreCase(CLargeChars szString)
+{
+return EqualsIgnoreCase(szString.Text());
+}
+bool CLargeChars::Contains(const char* szString)
+{
+char* pc;
+if (!szString)
+{
+return false;
+}
+pc = strstr(Text(), szString);
+if (pc)
+{
+return true;
+}
+return false;
+}
+bool CLargeChars::ContainsIgnoreCase(const char* szString)
+{
+char* pc;
+pc = StrIStr(Text(), szString);
+if (pc)
+{
+return true;
+}
+return false;
+}
+bool CLargeChars::Contains(char c)
+{
+return Find(0, c) != ((lsize)-1);
+}
+lsize CLargeChars::Occurrences(const char* szString)
+{
+lsize iCount;
+lsize iIndex;
+lsize iFindLen;
+iFindLen = strlen(szString);
+if (iFindLen == 0)
+{
+return 0;
+}
+iIndex = Find(0, szString);
+if (iIndex == ((lsize)-1))
+{
+return 0;
+}
+iCount = 0;
+for (;;)
+{
+iCount++;
+iIndex += iFindLen;
+iIndex = Find(iIndex, szString);
+if (iIndex == ((lsize)-1))
+{
+return iCount;
+}
+}
+}
+bool CLargeChars::StartsWith(const char* szString)
+{
+if (szString == 0L)
+{
+return false;
+}
+return SubStringEquals(0, szString);
+}
+bool CLargeChars::StartsWithIgnoreCase(const char* szString)
+{
+if (szString == 0L)
+{
+return false;
+}
+return SubStringEqualsIgnoreCase(0, szString);
+}
+bool CLargeChars::StartsWith(char c)
+{
+lsize iLength;
+iLength = Length();
+if (iLength != 0)
+{
+if (Text()[0] == c)
+{
+return true;
+}
+}
+return false;
+}
+bool CLargeChars::EndsWith(const char* szString)
+{
+lsize uiLen;
+if (szString == 0L)
+{
+return false;
+}
+uiLen = strlen(szString);
+if (uiLen > Length())
+{
+return false;
+}
+return SubStringEquals(Length() - uiLen, szString);
+}
+bool CLargeChars::EndsWith(char c)
+{
+lsize iLength;
+iLength = Length();
+if (iLength != 0)
+{
+if (Text()[iLength - 1] == c)
+{
+return true;
+}
+}
+return false;
+}
+bool CLargeChars::EndsWithIgnoreCase(const char* szString)
+{
+lsize uiLen;
+if (szString == 0L)
+{
+return false;
+}
+uiLen = strlen(szString);
+if (uiLen > Length())
+{
+return false;
+}
+return SubStringEqualsIgnoreCase(Length() - strlen(szString), szString);
+}
+bool CLargeChars::SubStringEquals(lsize iStart, const char* szString)
+{
+lsize i;
+lsize j;
+lsize uiLen;
+lsize iSubLen;
+char* szText;
+szText = Text();
+uiLen = Length();
+if (uiLen == 0)
+{
+iSubLen = strlen(szString);
+if (iSubLen != 0)
+{
+return false;
+}
+else
+{
+return iStart == 0;
+}
+}
+if (iStart >= uiLen)
+{
+return false;
+}
+for (i = iStart, j = 0; i < uiLen; i++, j++)
+{
+if (szString[j] != 0)
+{
+if (szText[i] != szString[j])
+{
+return false;
+}
+}
+else
+{
+break;
+}
+}
+return true;
+}
+bool CLargeChars::SubStringEqualsIgnoreCase(lsize iStart, const char* szString)
+{
+lsize i;
+lsize j;
+lsize uiLen;
+lsize c1;
+lsize c2;
+char* szText;
+szText = Text();
+uiLen = Length();
+for (i = iStart, j = 0; i < uiLen; i++, j++)
+{
+if (szString[j] != 0)
+{
+c1 = ToLower(szText[i]);
+c2 = ToLower(szString[j]);
+if (c1 != c2)
+{
+return false;
+}
+}
+else
+{
+break;
+}
+}
+return true;
+}
+lsize CLargeChars::FindFromEnd(const char* szString)
+{
+lsize iOtherLen;
+iOtherLen = strlen(szString);
+return FindFromEnd(Length() - iOtherLen, szString);
+}
+lsize CLargeChars::FindFromEnd(lsize iIndex, const char* szString)
+{
+lsize i;
+if (iIndex > Length())
+{
+return ((lsize)-1);
+}
+i = iIndex + 1;
+do
+{
+i--;
+if (SubStringEquals(i, szString))
+{
+return i;
+}
+}
+while (i != 0);
+return ((lsize)-1);
+}
+lsize CLargeChars::FindFromEnd(char c)
+{
+if (mcText.IsEmpty() || IsFakeEmpty())
+{
+return ((lsize)-1);
+}
+return FindFromEnd(Length() - 1, c);
+}
+lsize CLargeChars::FindFromEnd(lsize iIndex, char c)
+{
+lsize i;
+char* szText;
+szText = Text();
+i = iIndex + 1;
+do
+{
+i--;
+if (szText[i] == c)
+{
+return i;
+}
+}
+while (i != 0);
+return ((lsize)-1);
+}
+lsize CLargeChars::Find(const char* szString)
+{
+return Find(0, szString);
+}
+lsize CLargeChars::Find(lsize iIndex, const char* szString)
+{
+lsize iOtherLen;
+lsize i;
+lsize uiLen;
+lsize iDiff;
+uiLen = Length();
+if (iIndex > uiLen)
+{
+return ((lsize)-1);
+}
+iOtherLen = strlen(szString);
+if (iOtherLen > uiLen - iIndex)
+{
+return ((lsize)-1);
+}
+iDiff = uiLen - iOtherLen;
+for (i = iIndex; i <= iDiff; i++)
+{
+if (SubStringEquals(i, szString))
+{
+return i;
+}
+}
+return ((lsize)-1);
+}
+lsize CLargeChars::Find(lsize iIndex, char c)
+{
+lsize i;
+lsize uiLen;
+char* szText;
+szText = Text();
+uiLen = Length();
+for (i = iIndex; i < uiLen; i++)
+{
+if (szText[i] == c)
+{
+return i;
+}
+}
+return ((lsize)-1);
+}
+lsize CLargeChars::Find(char c)
+{
+return Find(0, c);
+}
+lsize CLargeChars::FindDigit(lsize iIndex)
+{
+lsize i;
+char c;
+lsize uiLen;
+uiLen = Length();
+for (i = iIndex; i < uiLen; i++)
+{
+c = *mcText.Get(i);
+if ((c >= '0') && (c <= '9'))
+{
+return i;
+}
+}
+return ((lsize)-1);
+}
+char CLargeChars::GetChar(lsize iIndex)
+{
+char* pc;
+pc = mcText.SafeGet(iIndex);
+if (pc)
+{
+return *pc;
+}
+return '\0';
+}
+void CLargeChars::Difference(CArrayInt* paiNewToOldIndices, CArrayInt* paiOldToNewIndices, CLargeChars szOldString)
+{
+lsize i;
+lsize j;
+CLargeChars cTemp;
+char cNew;
+char cOld;
+lsize uiLen;
+lsize iOldLen;
+uiLen = Length();
+paiOldToNewIndices->SetUsedElements(szOldString.Length());
+paiOldToNewIndices->SetArrayValues(-1);
+paiNewToOldIndices->SetUsedElements(uiLen);
+paiNewToOldIndices->SetArrayValues(-1);
+cTemp.Init(szOldString);
+iOldLen = cTemp.Length();
+for (j = 0; j < uiLen; j++)
+{
+cNew = GetChar(j);
+for (i = 0; i < iOldLen; i++)
+{
+cOld = cTemp.GetChar(i);
+if (cOld == cNew)
+{
+cTemp.SetChar(i, 1);
+paiOldToNewIndices->SetValue(i, (int)j);
+paiNewToOldIndices->SetValue(j, (int)i);
+break;
+}
+}
+}
+cTemp.Kill();
+}
+bool CLargeChars::IsWhitespace(lsize iPos, bool bIncludeNewLines)
+{
+char c;
+c = GetChar(iPos);
+return ::IsWhitespace(c, bIncludeNewLines);
+}
+bool CLargeChars::IsWhitespace(void)
+{
+lsize i;
+lsize uiLen;
+uiLen = Length();
+for (i = 0; i < uiLen; i++)
+{
+if (!IsWhitespace(i, true))
+{
+return false;
+}
+}
+return true;
+}
+void CLargeChars::SetLength(lsize iLength)
+{
+if (iLength != 0)
+{
+UnfakeIfFakeEmpty();
+mcText.Resize(iLength + 1);
+mcText.SetValue(iLength, '\0');
+}
+else
+{
+SetEmpty();
+}
+}
+lsize CLargeChars::FindEndOfLeadingWhitespace(bool bIncludeNewLines)
+{
+lsize iLength;
+lsize iStart;
+iLength = Length();
+for (iStart = 0; iStart < iLength; iStart++)
+{
+if (!IsWhitespace(iStart, bIncludeNewLines))
+{
+break;
+}
+}
+return iStart;
+}
+lsize CLargeChars::FindStartOfTrailingWhitespace(bool bIncludeNewLines)
+{
+lsize iLength;
+lsize iEnd;
+iLength = Length();
+if (iLength != 0)
+{
+iEnd = iLength;
+do
+{
+iEnd--;
+if (!IsWhitespace(iEnd, bIncludeNewLines))
+{
+break;
+}
+}
+while (iEnd != 0);
+return iEnd;
+}
+return 0;
+}
+lsize CLargeChars::StripWhitespace(bool bIncludeNewLines)
+{
+lsize iLength;
+lsize iStart;
+lsize iEnd;
+iStart = FindEndOfLeadingWhitespace(bIncludeNewLines);
+iEnd = FindStartOfTrailingWhitespace(bIncludeNewLines);
+if (iEnd < iStart)
+{
+SetEmpty();
+}
+else
+{
+iLength = Length();
+Remove(iEnd+1, iLength);
+Remove(0, iStart);
+}
+return iStart;
+}
+int CLargeChars::Compare(CLargeChars* szOther)
+{
+return StringCompare(Text(), szOther->Text());
+}
+int CLargeChars::CompareIgnoreCase(CLargeChars* szOther)
+{
+return StringInsensitiveCompare(Text(), szOther->Text());
+}
+int CLargeChars::Compare(const char* szOther)
+{
+return StringCompare(Text(), szOther);
+}
+int CLargeChars::CompareIgnoreCase(const char* szOther)
+{
+return StringInsensitiveCompare(Text(), szOther);
+}
+lsize CLargeChars::Replace(char cFind, char cReplace)
+{
+lsize i;
+lsize iLength;
+lsize iCount;
+iLength = Length();
+iCount = 0;
+for (i = 0; i < iLength; i++)
+{
+if (mcText.GetValue(i) == cFind)
+{
+mcText.SetValue(i, cReplace);
+iCount++;
+}
+}
+return iCount;
+}
+lsize CLargeChars::Replace(const char* szFind, const char* szReplace)
+{
+lsize iReplaceLen;
+lsize iFindLen;
+if (szFind == 0L)
+{
+return 0;
+}
+iFindLen = strlen(szFind);
+if (iFindLen == 0)
+{
+return 0;
+}
+if (szReplace == 0L)
+{
+iReplaceLen = 0;
+}
+else
+{
+iReplaceLen = strlen(szReplace);
+}
+if (iReplaceLen > iFindLen)
+{
+return ReplaceWithLonger(szFind, szReplace, iFindLen, iReplaceLen - iFindLen);
+}
+else if (iFindLen > iReplaceLen)
+{
+return ReplaceWithShorter(szFind, szReplace, iReplaceLen, iFindLen, iFindLen - iReplaceLen);
+}
+else
+{
+return ReplaceWithEqualLength(szFind, szReplace, iFindLen);
+}
+}
+lsize CLargeChars::ReplaceWithEqualLength(const char* szFind, const char* szReplace, lsize iFindLen)
+{
+lsize iCount;
+lsize iIndex;
+iCount = 0;
+iIndex = Find(0, szFind);
+while (iIndex != ((lsize)-1))
+{
+Overwrite(iIndex, szReplace);
+iCount++;
+iIndex = Find(iIndex + iFindLen, szFind);
+}
+return iCount;}
+lsize CLargeChars::ReplaceWithShorter(const char* szFind, const char* szReplace, lsize iReplaceLen, lsize iFindLen, lsize iDifference)
+{
+lsize iCount;
+lsize iIndex;
+lsize iTotalDifference;
+lsize iOldIndex;
+lsize iDestPos;
+lsize iSize;
+lsize iEnd;
+iCount = 0;
+iIndex = Find(0, szFind);
+if (iIndex == ((lsize)-1))
+{
+return 0;
+}
+iOldIndex = 0;
+iDestPos = 0;
+for (;;)
+{
+iSize = iIndex - iOldIndex - iDifference;
+if (iReplaceLen != 0)
+{
+if (iCount != 0)
+{
+memmove(mcText.Get(iDestPos), mcText.Get(iOldIndex + iFindLen), iSize - 1);
+}
+Overwrite(iIndex - (iCount * iDifference), szReplace);
+}
+else
+{
+if (iCount != 0)
+{
+memmove(mcText.Get(iDestPos), mcText.Get(iOldIndex + iFindLen), iSize);
+}
+}
+iCount++;
+iOldIndex = iIndex;
+iDestPos = iOldIndex + iReplaceLen - (iDifference * (iCount - 1));
+iIndex = Find(iIndex + iFindLen, szFind);
+if (iIndex == ((lsize)-1))
+{
+iTotalDifference = iDifference * iCount;
+iEnd = Length() - iTotalDifference;
+iSize = Length() - iOldIndex - iFindLen;
+if (iEnd != iDestPos)
+{
+if (iCount != 0)
+{
+memmove(mcText.Get(iDestPos), mcText.Get(iOldIndex + iFindLen), iSize);
+}
+}
+break;
+}
+}
+mcText.RemoveNum(iTotalDifference);
+(*mcText.Tail()) = '\0';
+return iCount;
+}
+lsize CLargeChars::ReplaceWithLonger(const char* szFind, const char* szReplace, lsize iFindLen, lsize iDifference)
+{
+lsize iCount;
+lsize iIndex;
+lsize i;
+lsize iTotalDifference;
+lsize iOldIndex;
+iCount = Occurrences(szFind);
+if (iCount == 0)
+{
+return 0;
+}
+iTotalDifference = iDifference * iCount;
+mcText.AddNum(iTotalDifference);
+(*mcText.Tail()) = '\0';
+iIndex = Length() - (iFindLen + iTotalDifference);
+i = iCount;
+do
+{
+i--;
+iOldIndex = iIndex;
+iIndex = FindFromEnd(iIndex, szFind);
+memmove(mcText.Get(iIndex + iFindLen + (iDifference * (i + 1))), mcText.Get(iIndex + iFindLen), iOldIndex - iIndex);
+Overwrite(iIndex + (iDifference * i), szReplace);
+iIndex -= iFindLen;
+}
+while (i != 0);
+return iCount;
+}
+void CLargeChars::Overwrite(lsize iIndex, const char* szReplace)
+{
+lsize i;
+lsize j;
+lsize uiLen;
+if (StrEmpty(szReplace))
+{
+return;
+}
+uiLen = Length();
+for (i = iIndex, j = 0; i < uiLen; i++, j++)
+{
+if (szReplace[j] == 0)
+{
+return;
+}
+mcText.SetValue(i, szReplace[j]);
+}
+}
+void CLargeChars::Reverse(void)
+{
+if (!Empty())
+{
+StrRev(mcText.GetData(), mcText.NumElements());
+}
+}
+void CLargeChars::Clear(void)
+{
+if (!IsFakeEmpty())
+{
+SetEmpty();
+}
+}
+CLargeChars* CLargeChars::AppendData(const char* szData, lsize iMaxLength)
+{
+lsize i;
+lsize iLength;
+iLength = iMaxLength;
+for (i = 0; i < iMaxLength; i++)
+{
+if (szData[i] == 0)
+{
+iLength = i;
+break;
+}
+}
+return Append(szData, iLength);
+}
+CLargeChars* CLargeChars::AppendData(const char* szData, lsize iDataLength, lsize iMaxLength)
+{
+lsize i;
+lsize iLength;
+uint8 c;
+bool bLastReadable;
+if (iDataLength > iMaxLength)
+{
+iLength = iMaxLength;
+}
+else
+{
+iLength = iDataLength;
+}
+bLastReadable = true;
+for (i = 0; i < iLength; i++)
+{
+if (!bLastReadable)
+{
+Append(",");
+}
+c = szData[i];
+if (c == 0)
+{
+if ((bLastReadable) && (i != 0))
+{
+Append("\\0");
+}
+else
+{
+Append(" 0x00");
+}
+bLastReadable = false;
+}
+else if (c == '\n')
+{
+if (bLastReadable)
+{
+Append("\\r");
+}
+else
+{
+Append(" 0x0D");
+}
+bLastReadable = false;
+}
+else if ((c >= 32) && (c <= 126))
+{
+if (!bLastReadable)
+{
+Append(' ');
+}
+bLastReadable = true;
+Append((char)c);
+}
+else
+{
+bLastReadable = false;
+Append(" 0x");
+AppendHexHiLo(&c, 1);
+}
+}
+if (iDataLength > iMaxLength)
+{
+Append("...");
+}
+return this;
+}
+bool CLargeChars::AppendData2(const char* szData, lsize iDataLength)
+{
+lsize i;
+lsize iPrintable;
+uint8 c;
+float fPrintable;
+CLargeChars szString;
+if ((szData == 0L) || (iDataLength == 0))
+{
+return false;
+}
+iPrintable = StrPrintable(szData, iDataLength);
+fPrintable = (float)iPrintable / (float)iDataLength;
+if (fPrintable >= 0.9f)
+{
+Append(szData, iDataLength);
+return false;
+}
+else
+{
+Append("0x");
+szString.Init();
+for (i = 0; i < iDataLength; i++)
+{
+c = szData[i];
+szString.Clear();
+szString.Append((int32)c, (uint16)16);
+szString.RightAlign('0', 2);
+Append(szString);
+if (i != iDataLength - 1)
+{
+Append(' ');
+}
+}
+szString.Kill();
+}
+return true;
+}
+CLargeChars* CLargeChars::AppendPointer(void* pv)
+{
+Append("0x");
+return AppendHexHiLo(&pv, sizeof(void*));
+}
+bool CLargeChars::AppendFlag(uint32 msFlags, uint32 uiFlag, const char* szFlagName, bool bAppendComma)
+{
+if (msFlags & uiFlag)
+{
+if (bAppendComma)
+{
+Append(", ");
+}
+Append(szFlagName);
+return true;
+}
+return false;
+}
+lsize CLargeChars::CountNewLines(void)
+{
+return ::CountNewLines(mcText.GetData(), mcText.NumElements());
+}
+lsize CLargeChars::Count(char c)
+{
+lsize i;
+char cAt;
+lsize iCount;
+lsize uiLen;
+uiLen = Length();
+iCount = 0;
+for (i = 0; i < uiLen; i++)
+{
+cAt = mcText.GetValue(i);
+if (cAt == c)
+{
+iCount ++;
+}
+}
+return iCount;
+}
+void CLargeChars::LowerCase(void)
+{
+ToLower(mcText.GetData());
+}
+void CLargeChars::UpperCase(void)
+{
+ToUpper(mcText.GetData());
+}
+void CLargeChars::ReplaceNonTabsWithSpace(void)
+{
+lsize i;
+char c;
+lsize uiLen;
+uiLen = Length();
+for (i = 0; i < uiLen; i++)
+{
+c = mcText.GetValue(i);
+if (c != '\t')
+{
+mcText.SetValue(i, ' ');
+}
+}
+}
+void CLargeChars::PassifyNewlines(void)
+{
+lsize iNewLen;
+iNewLen = ::PassifyNewlines(mcText.GetData());
+if (iNewLen != ((lsize)-1))
+{
+mcText.Resize(iNewLen + 1);
+}
+}
+char* CLargeChars::FindLineContaining(const char* szPosition, lsize* piLineNumber)
+{
+lsize i;
+lsize iNumLineFeeds;
+lsize uiLen;
+char* szString;
+char* szStartOfLine;
+char* szCurrent;
+uiLen = Length();
+iNumLineFeeds = 0;
+szString = Text();
+szStartOfLine = Text();
+for (i = 0; i < uiLen; i++)
+{
+szCurrent = &szString[i];
+if (*szCurrent == '\n')
+{
+szStartOfLine = &szString[i + 1];
+}
+if (szCurrent == szPosition)
+{
+break;
+}
+if (*szCurrent == '\n')
+{
+iNumLineFeeds++;
+}
+}
+if (piLineNumber) { *piLineNumber = iNumLineFeeds; };
+return szStartOfLine;
+}
+void CLargeChars::MakeCPlusPlus(void)
+{
+lsize iIndex;
+bool bStartOfLine;
+char c;
+bStartOfLine = true;
+iIndex = 0;
+for (;;)
+{
+if (bStartOfLine)
+{
+Insert(iIndex, '"');
+iIndex++;
+bStartOfLine = false;
+}
+if (iIndex >= Length())
+{
+Insert(iIndex, '"');
+break;
+}
+c = GetChar(iIndex);
+if (c == '\n')
+{
+Insert(iIndex, "\\n\"");
+iIndex += 4;
+bStartOfLine = true;
+if (iIndex >= Length())
+{
+RemoveCharacter(iIndex - 1);
+break;
+}
+}
+else
+{
+iIndex++;
+}
+}
+}
+bool CLargeChars::WriteString(CFileWriter* pcWriter)
+{
+CArrayLargeChar c;
+if (!IsFakeEmpty())
+{
+return mcText.Write(pcWriter);
+}
+else
+{
+c.Fake(0L, 0);
+return c.Write(pcWriter);
+}
+}
+bool CLargeChars::ReadString(CFileReader* pcReader)
+{
+bool bResult;
+bResult = mcText.Read(pcReader);
+if (bResult)
+{
+if ((mcText.NumElements() == 0) && (mcText.IsMalloc(&gcNullAllocator)))
+{
+InitEmpty();
+}
+return true;
+}
+return false;
+}
+bool CLargeChars::ReadChars(CFileReader* pcReader)
+{
+lsize iLength;
+if (!pcReader->ReadStringLength(&iLength))
+{
+return false;
+}
+if (iLength == 0)
+{
+Init();
+return true;
+}
+else if (iLength != 0)
+{
+Init('@', iLength - 1);
+if (!pcReader->ReadData(Text(), iLength))
+{
+return false;
+}
+return true;
+}
+else
+{
+return false;
+}
+}
+void CLargeChars::CleanIfEmpty(void)
+{
+if (mcText.NumElements() <= 1)
+{
+if (!IsFakeEmpty())
+{
+SetEmpty();
+}
+}
+}
+void CLargeChars::InitEmpty(void)
+{
+mcText.Fake(gszEmptyString, 1);
+}
+bool CLargeChars::IsFakeEmpty(void)
+{
+return mcText.GetData() == gszEmptyString;
+}
+void CLargeChars::Unfake(void)
+{
+mcText.Init();
+mcText.Add('\0');
+}
+void CLargeChars::UnfakeIfFakeEmpty(void)
+{
+if (IsFakeEmpty())
+{
+Unfake();
+}
+}
+char* CLargeChars::CopyIntoBuffer(char* szDest, lsize iDestLength)
+{
+lsize iLength;
+if (iDestLength == ((lsize)-1))
+{
+StrCpySafe(szDest, Text(), iDestLength);
+return szDest;
+}
+else if (iDestLength == 0)
+{
+return szDest;
+}
+else
+{
+iLength = Length();
+if (iLength < iDestLength)
+{
+memcpy(szDest, Text(), iLength + 1);
+}
+else
+{
+memcpy(szDest, Text(), iDestLength - 2);
+szDest[iDestLength - 1] = '\0';
+}
+return szDest;
+}
+}
+void CLargeChars::Dump(void)
+{
+CLargeChars szString;
+lsize i;
+lsize uiLen;
+uiLen = Length();
+if (uiLen <= 10000)
+{
+if (uiLen != 0)
+{
+printf("%s", Text());
+}
+return;
+}
+for (i = 0; i < uiLen - 10000; i += 10000)
+{
+szString.Init(Text(), i, i + 10000);
+printf("%s", szString.Text());
+szString.Kill();
+}
+szString.Init(Text(), i, uiLen);
+printf("%s", szString.Text());
+szString.Kill();
+}
+void CLargeChars::Dump(const char* szString)
+{
+printf("%s", szString);
+}
