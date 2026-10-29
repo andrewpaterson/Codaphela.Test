@@ -754,11 +754,11 @@ void TestIRLoops(void)
 //
 // szText, optimised (for a target whose loads and stores add an index for
 // nothing, unless bIndexedAddresses is false; with loops made memset and
-// memmove calls, a 16 bit int, if bLibrary), must verify and print as
-// szExpected.
+// memmove calls, a 16 bit int, if bLibrary; with multiplies made narrow if
+// bNarrowMultiplies), must verify and print as szExpected.
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertIROptimised(const char* szExpected, const char* szText, bool bIndexedAddresses = true, bool bLibrary = false)
+void AssertIROptimised(const char* szExpected, const char* szText, bool bIndexedAddresses = true, bool bLibrary = false, bool bNarrowMultiplies = false)
 {
 	CIRModule		cModule;
 	CCPPErrors		cErrors;
@@ -776,6 +776,7 @@ void AssertIROptimised(const char* szExpected, const char* szText, bool bIndexed
 	cParser.Kill();
 	cOptimiser.Init(&cModule);
 	cOptimiser.SetIndexedAddresses(bIndexedAddresses);
+	cOptimiser.SetNarrowMultiplies(bNarrowMultiplies);
 	if (bLibrary)
 	{
 		cOptimiser.SetLibraryInt(IRType(IRTK_I16));
@@ -797,6 +798,91 @@ void AssertIROptimised(const char* szExpected, const char* szText, bool bIndexed
 	szPrinted.Kill();
 	cErrors.Kill();
 	cModule.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A constant goes to the right of a commutative operation (256 * a is a shift like a * 256); a mul of a value the
+// branches before it keep from 0 to 199 by 320 fits 16 bits (NarrowMultiplies, the W65C816's), and one that may be
+// negative or too big doesn't; a sext of a value the branches keep 0 or more is a zext.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserConstantsRight(void)
+{
+	static const char*	szNarrow =
+		"function i32 @_P__Fs(i16 %y)\n{\nentry:\n\t%n = slt i16 %y, 0\n\tbrif %n, out, check\n"
+		"check:\n\t%b = sge i16 %y, LIMIT\n\tbrif %b, out, in\n"
+		"in:\n\t%w = sext i16 %y to i32\n\t%m = mul i32 %w, 320\n\tret i32 %m\n"
+		"out:\n\tret i32 0\n}\n";
+	CChars				szText;
+
+	AssertIROptimised(
+		"function i32 @_M__Fi(i32 %a)\n{\nb:\n\t%m = shl i32 %a, 8\n\t%s = add i32 %m, 3\n\tret i32 %s\n}\n",
+		"function i32 @_M__Fi(i32 %a)\n{\nb:\n\t%m = mul i32 256, %a\n\t%s = add i32 3, %m\n\tret i32 %s\n}\n");
+
+	//0 to 204: 204 * 320 = 65280 fits.
+	szText.Init(szNarrow);
+	szText.Replace("LIMIT", "205");
+	AssertIROptimised(
+		"function i32 @_P__Fs(i16 %y)\n{\nentry:\n\t%n = slt i16 %y, 0\n\tbrif %n, out, check\n"
+		"check:\n\t%b = sge i16 %y, 205\n\tbrif %b, out, in\n"
+		"in:\n\t%0 = mul i16 %y, 320\n\t%m = zext i16 %0 to i32\n\tret i32 %m\n"
+		"out:\n\tret i32 0\n}\n", szText.Text(), true, false, true);
+	szText.Kill();
+
+	//0 to 205: 205 * 320 = 65600 doesn't (the sext is a zext, the value not negative).
+	szText.Init(szNarrow);
+	szText.Replace("LIMIT", "206");
+	AssertIROptimised(
+		"function i32 @_P__Fs(i16 %y)\n{\nentry:\n\t%n = slt i16 %y, 0\n\tbrif %n, out, check\n"
+		"check:\n\t%b = sge i16 %y, 206\n\tbrif %b, out, in\n"
+		"in:\n\t%w = zext i16 %y to i32\n\t%m = mul i32 %w, 320\n\tret i32 %m\n"
+		"out:\n\tret i32 0\n}\n", szText.Text(), true, false, true);
+	szText.Kill();
+
+	//May be negative.
+	AssertIROptimised(
+		"function i32 @_P__Fs(i16 %y)\n{\nentry:\n\t%b = sge i16 %y, 200\n\tbrif %b, out, in\n"
+		"in:\n\t%w = sext i16 %y to i32\n\t%m = mul i32 %w, 320\n\tret i32 %m\n"
+		"out:\n\tret i32 0\n}\n",
+		"function i32 @_P__Fs(i16 %y)\n{\nentry:\n\t%b = sge i16 %y, 200\n\tbrif %b, out, in\n"
+		"in:\n\t%w = sext i16 %y to i32\n\t%m = mul i32 %w, 320\n\tret i32 %m\n"
+		"out:\n\tret i32 0\n}\n", true, false, true);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A loop with a branch on a value that is the same each time round is two loops, the preheader choosing
+// (UnswitchLoops), the sum after them a phi of both; an address p + (a + i) in a loop with p and a the same each
+// time round is (p + a) + i, p + a before the loop (SplitLoopAddresses).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserLoopInvariants(void)
+{
+	AssertIROptimised(
+		"function i32 @_U__Fii(i32 %n, i32 %f)\n{\nentry:\n\t%c = ne i32 %f, 0\n\tbrif %c, loop, 0\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%s = phi i32 [entry, 0], [loop, %a]\n\t%a = add i32 %s, %i\n"
+		"\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\t%0 = phi i32 [loop, %a], [0, %3]\n\tret i32 %0\n"
+		"0:\n\t%1 = phi i32 [entry, 0], [0, %4]\n\t%2 = phi i32 [entry, 0], [0, %3]\n\t%3 = sub i32 %2, %1\n"
+		"\t%4 = add i32 %1, 1\n\t%5 = slt i32 %4, %n\n\tbrif %5, 0, exit\n}\n",
+		"function i32 @_U__Fii(i32 %n, i32 %f)\n{\nentry:\n\t%c = ne i32 %f, 0\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [next, %i2]\n\t%s = phi i32 [entry, 0], [next, %s2]\n\tbrif %c, plus, minus\n"
+		"plus:\n\t%a = add i32 %s, %i\n\tjmp next\n"
+		"minus:\n\t%b = sub i32 %s, %i\n\tjmp next\n"
+		"next:\n\t%s2 = phi i32 [plus, %a], [minus, %b]\n\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret i32 %s2\n}\n", false);
+	AssertIROptimised(
+		"space default 4\n\nfunction void @_F__FPci(ptr %p, i32 %a, i32 %n)\n{\nentry:\n\t%0 = ptradd ptr %p, %a\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%q = ptradd ptr %0, %i\n\tstore i8 7, %q\n"
+		"\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n",
+		"function void @_F__FPci(ptr %p, i32 %a, i32 %n)\n{\nentry:\n\tjmp loop\n"
+		"loop:\n\t%i = phi i32 [entry, 0], [loop, %i2]\n\t%o = add i32 %a, %i\n\t%q = ptradd ptr %p, %o\n\tstore i8 7, %q\n"
+		"\t%i2 = add i32 %i, 1\n\t%d = slt i32 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n");
 }
 
 
@@ -1942,6 +2028,8 @@ void TestIR(void)
 	TestIRDominators();
 	TestIRLoops();
 	TestIROptimiser();
+	TestIROptimiserConstantsRight();
+	TestIROptimiserLoopInvariants();
 
 	TestStatistics();
 }
