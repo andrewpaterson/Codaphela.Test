@@ -1229,6 +1229,62 @@ void TestCPP816Warnings(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A comparison with a constant outside the other side's range is always true
+// or always false (a 16 bit size compared with a 32 bit "not found").  With
+// SetWarnNarrowing a non constant integer implicitly converted to a narrower
+// type is warned about (a 32 bit index stored in a 16 bit one).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816RangeWarnings(void)
+{
+	//A 16 bit unsigned can't be 0xFFFFFFFF; in conditions and in values.
+	AssertInt(1, TestCPP816CountWarnings("int F(unsigned u) { return u == 0xFFFFFFFFUL; }\n", "Comparison is always false"));
+	AssertInt(1, TestCPP816CountWarnings("int F(unsigned u) { return u != 0xFFFFFFFFUL; }\n", "Comparison is always true"));
+	AssertInt(1, TestCPP816CountWarnings("int F(unsigned u) { if (u == 0xFFFFFFFFUL) return 1; return 0; }\n", "Comparison is always false"));
+	AssertInt(0, TestCPP816CountWarnings("int F(unsigned u) { return u == 0xFFFFFFFFUL; }\n", "Comparison", CPPT_65C64));
+
+	//Relational comparisons, the constant on either side.
+	AssertInt(1, TestCPP816CountWarnings("int F(int i) { return i < 40000L; }\n", "Comparison is always true"));
+	AssertInt(1, TestCPP816CountWarnings("int F(int i) { return 40000L < i; }\n", "Comparison is always false"));
+	AssertInt(1, TestCPP816CountWarnings("int F(int i) { return i >= -40000L; }\n", "Comparison is always true"));
+	AssertInt(1, TestCPP816CountWarnings("int F(unsigned char c) { return c >= 256; }\n", "Comparison is always false"));
+	AssertInt(1, TestCPP816CountWarnings("int F(unsigned char c) { return 256 > c; }\n", "Comparison is always true"));
+
+	//The constant is converted first: -1 is 0xFFFF as a 16 bit unsigned, but an int on the 65C64.
+	AssertInt(0, TestCPP816CountWarnings("int F(unsigned u) { return u == -1; }\n", "Comparison"));
+	AssertInt(1, TestCPP816CountWarnings("int F(unsigned short u) { return u == -1; }\n", "Comparison is always false", CPPT_65C64));
+
+	//In range, both sides variable or constant, and a signed side compared as unsigned.
+	AssertInt(0, TestCPP816CountWarnings("int F(int i) { return i == 32767; }\n", "Comparison"));
+	AssertInt(0, TestCPP816CountWarnings("int F(int i) { return i < 0; }\n", "Comparison"));
+	AssertInt(0, TestCPP816CountWarnings("int F(unsigned long ul) { return ul == 0xFFFFFFFFUL; }\n", "Comparison"));
+	AssertInt(0, TestCPP816CountWarnings("int F(unsigned u, long l) { return u == l; }\n", "Comparison"));
+	AssertInt(0, TestCPP816CountWarnings("int F(void) { return 70000L == 0xFFFFFFFFUL; }\n", "Comparison"));
+	AssertInt(0, TestCPP816CountWarnings("int F(int i) { return i == 0xFFFFFFFFUL; }\n", "Comparison"));
+	AssertInt(0, TestCPP816CountWarnings("enum ETri { TRI_FALSE = 0, TRI_ERROR = 0xffffffff };\nint F(ETri e) { return e == TRI_ERROR; }\n", "Comparison"));
+
+	//Narrowing is off by default.
+	AssertInt(0, TestCPP816CountWarnings("int F(long l) { int i = l; return i; }\n", "narrows"));
+
+	CCPP65Generator::SetDefaultWarnNarrowing(true);
+	AssertInt(1, TestCPP816CountWarnings("int F(long l) { int i = l; return i; }\n", "Integer conversion narrows"));
+	AssertInt(1, TestCPP816CountWarnings("int F(long l) { int i; i = l; return i; }\n", "Integer conversion narrows"));
+	AssertInt(1, TestCPP816CountWarnings("int F(long l) { return l; }\n", "Integer conversion narrows"));
+	AssertInt(1, TestCPP816CountWarnings("void G(int i);\nvoid F(long l) { G(l); }\n", "Integer conversion narrows"));
+	AssertInt(1, TestCPP816CountWarnings("char F(int i) { return i; }\n", "Integer conversion narrows"));
+
+	//Widening, explicit casts, same width and constants (which have their own warning) aren't.
+	AssertInt(0, TestCPP816CountWarnings("long F(int i) { long l = i; return l; }\n", "narrows"));
+	AssertInt(0, TestCPP816CountWarnings("int F(long l) { return (int)l; }\n", "narrows"));
+	AssertInt(0, TestCPP816CountWarnings("unsigned F(int i) { return i; }\n", "narrows"));
+	AssertInt(0, TestCPP816CountWarnings("int F(void) { int i = 7L; return i; }\n", "narrows"));
+	AssertInt(0, TestCPP816CountWarnings("int F(long l) { return l; }\n", "narrows", CPPT_65C64));
+	CCPP65Generator::SetDefaultWarnNarrowing(false);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCPP816(void)
@@ -1254,6 +1310,7 @@ void TestCPP816(void)
 	TestCPP816TestBaseLibBugs();
 	TestCPP816ConstantShifts();
 	TestCPP816Warnings();
+	TestCPP816RangeWarnings();
 	TestCPP816DestructorCalls();
 
 	CW65C816InstructionFactory::GetInstance()->Kill();

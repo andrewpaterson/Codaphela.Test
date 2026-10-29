@@ -227,22 +227,9 @@ void TestIR816BackendBasics(void)
 		"_main:\n"
 		"\t\t.width (A, X), 16\n"
 		"\t\t.relax\n"
-		"\t\tphd\n"
-		"\t\ttsc\n"
-		"\t\tsec\n"
-		"\t\tsbc 22\n"
-		"\t\ttcs\n"
-		"\t\ttcd\n"
 		"L1:\n"
 		"\t\tldx 0\n"
 		"\t\tlda 42\n"
-		"\t\ttay\n"
-		"\t\ttdc\n"
-		"\t\tclc\n"
-		"\t\tadc 22\n"
-		"\t\ttcs\n"
-		"\t\ttya\n"
-		"\t\tpld\n"
 		"\t\trtl\n"
 		"\n", szAssembly.Text());
 	szAssembly.Kill();
@@ -514,6 +501,101 @@ void TestIR816BackendSharedPlaces(void)
 		"\t%f = shl i32 %j, %j\n"
 		"\t%g = add i32 %e, %f\n"
 		"\tret i32 %g\n}\n", true);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// 32 bit values used once by the next instruction, read into A a word at a
+// time as it goes (CanFuse): a load or'd, an xor stored, a load added as the
+// second operand, a sub stored, a load and'd as the second operand, a load
+// added then stored, and chains of them.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendFused(void)
+{
+	AssertIR816(0x123C5670,
+		"function i32 @_main()\n{\nb:\n"
+		"\t%s = slot ptr 8, 4\n"
+		"\t%t = ptradd ptr %s, 4\n"
+		"\tstore i32 305419896, %s\n"
+		"\tstore i32 -16777216, %t\n"
+		"\t%a = load i32 %s\n"
+		"\t%o = or i32 %a, 15\n"
+		"\t%x = xor i32 %o, 65535\n"
+		"\tstore i32 %x, %t\n"
+		"\t%b = load i32 %t\n"
+		"\t%k = load i32 %s\n"
+		"\t%c = add i32 %b, %k\n"
+		"\t%d = sub i32 %c, 7\n"
+		"\tstore i32 %d, %s\n"
+		"\t%e = load i32 %s\n"
+		"\t%m = and i32 1048575, %e\n"
+		"\t%f = load i32 %t\n"
+		"\t%g = add i32 %f, 1\n"
+		"\tstore i32 %g, %t\n"
+		"\t%h = load i32 %t\n"
+		"\t%r = xor i32 %m, %h\n"
+		"\tret i32 %r\n}\n", true);
+
+	//Chains: a load, and and xor stored back to the same place; an add, or and store; an add then an and of a constant
+	//(a word the and doesn't read would leave the add's carry out, so it isn't fused).
+	AssertIR816(545128460,
+		"function i32 @_main()\n{\nb:\n"
+		"\t%s = slot ptr 8, 4\n"
+		"\t%t = ptradd ptr %s, 4\n"
+		"\tstore i32 305419896, %s\n"
+		"\tstore i32 252645135, %t\n"
+		"\t%a = load i32 %t\n"
+		"\t%b = and i32 %a, -65281\n"
+		"\t%c = load i32 %s\n"
+		"\t%d = xor i32 %b, %c\n"
+		"\tstore i32 %d, %t\n"
+		"\t%e = load i32 %s\n"
+		"\t%f = add i32 %e, 65536\n"
+		"\t%g = or i32 %f, 3\n"
+		"\tstore i32 %g, %s\n"
+		"\t%h = load i32 %t\n"
+		"\t%i = load i32 %s\n"
+		"\t%j = add i32 %h, %i\n"
+		"\t%k = and i32 %j, -65536\n"
+		"\t%l = load i32 %t\n"
+		"\t%m = load i32 %s\n"
+		"\t%n = xor i32 %l, %m\n"
+		"\t%r = xor i32 %n, %k\n"
+		"\tret i32 %r\n}\n", true);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// 32 bit values stepped by 1 and -1 in their own places (StepInPlace): inc
+// and dec on the direct page, carrying across the words.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendStepInPlace(void)
+{
+	CChars	szAssembly;
+
+	szAssembly.Init();
+	AssertLong(0x10001 ^ 0xFFFE, TestIR816Run(
+		"function i32 @_main()\n{\n"
+		"e:\n\tjmp l\n"
+		"l:\n"
+		"\t%i = phi i32 [e, 65534], [l, %i2]\n"
+		"\t%d = phi i32 [e, 65537], [l, %d2]\n"
+		"\t%n = phi i32 [e, 0], [l, %n2]\n"
+		"\t%i2 = add i32 %i, 1\n"
+		"\t%d2 = sub i32 %d, 1\n"
+		"\t%n2 = add i32 %n, 1\n"
+		"\t%c = ult i32 %n2, 3\n"
+		"\tbrif %c, l, x\n"
+		"x:\n"
+		"\t%r = xor i32 %i2, %d2\n"
+		"\tret i32 %r\n}\n", true, &szAssembly));
+	AssertTrue(strstr(szAssembly.Text(), "\t\tinc [D + ") != NULL);
+	AssertTrue(strstr(szAssembly.Text(), "\t\tdec [D + ") != NULL);
+	szAssembly.Kill();
 }
 
 
@@ -805,6 +887,8 @@ void TestIR816Backend(void)
 	TestIR816BackendDividePaths();
 	TestIR816BackendCompareCarry();
 	TestIR816BackendSharedPlaces();
+	TestIR816BackendFused();
+	TestIR816BackendStepInPlace();
 	TestIR816BackendShifts();
 	TestIR816BackendX();
 	TestIR816BackendWide();
