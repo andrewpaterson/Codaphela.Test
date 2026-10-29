@@ -79,7 +79,7 @@ static bool TestIR816Assemble(CAsm65Object* pcObject, const char* szName, const 
 }
 
 
-//The maths tables the runtime uses (MathMult for multiply), assembled once and linked when used.
+//The maths tables the runtime uses (MathMult for multiply, MathInvert for divide), assembled once and linked when used.
 static CAsm65Library*	gpcTestIR816MathTables = NULL;
 
 
@@ -89,9 +89,11 @@ static CAsm65Library*	gpcTestIR816MathTables = NULL;
 //////////////////////////////////////////////////////////////////////////
 static CAsm65Library* TestIR816MathTables(void)
 {
+	static const char*	aszTables[] = { "MathMult.asm", "MathInvert.asm", NULL };
 	CTextFile			cFile;
 	CChars				szPath;
 	CAsm816Assembler	cAssembler;
+	size				i;
 
 	if (gpcTestIR816MathTables)
 	{
@@ -99,17 +101,21 @@ static CAsm65Library* TestIR816MathTables(void)
 	}
 	gpcTestIR816MathTables = NewMalloc<CAsm65Library>();
 	gpcTestIR816MathTables->Init("MathTables");
-	szPath.Init(TEST_IR816_MATH_TABLES _FS_ "MathMult.asm");
-	cFile.Init();
-	AssertTrue(cFile.Read(szPath.Text()));
-	cFile.PassifyNewlines();
-	cAssembler.Init();
-	cAssembler.SetDirectory(TEST_IR816_MATH_TABLES);
-	AssertTrue(cAssembler.AssembleObject(cFile.Text(), gpcTestIR816MathTables->AddObject("MathMult.asm")));
-	AssertString("", cAssembler.GetErrors());
-	cAssembler.Kill();
-	cFile.Kill();
-	szPath.Kill();
+	for (i = 0; aszTables[i]; i++)
+	{
+		szPath.Init(TEST_IR816_MATH_TABLES _FS_);
+		szPath.Append(aszTables[i]);
+		cFile.Init();
+		AssertTrue(cFile.Read(szPath.Text()));
+		cFile.PassifyNewlines();
+		cAssembler.Init();
+		cAssembler.SetDirectory(TEST_IR816_MATH_TABLES);
+		AssertTrue(cAssembler.AssembleObject(cFile.Text(), gpcTestIR816MathTables->AddObject(aszTables[i])));
+		AssertString("", cAssembler.GetErrors());
+		cAssembler.Kill();
+		cFile.Kill();
+		szPath.Kill();
+	}
 	return gpcTestIR816MathTables;
 }
 
@@ -572,6 +578,75 @@ void TestIR816BackendMultiply(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The 16 bit runtime divide (R816_UDiv16 and R816_URem16, reciprocals from MathInvert): 2048 pseudo random dividends
+// and divisors shifted right by every pair of amounts (divisors of every size, powers of two, 0 and 1, dividends below
+// them), the quotients and remainders hashed.
+//
+//////////////////////////////////////////////////////////////////////////
+static const char* gszTestIR816Divide16 =
+	"function i16 @_Q__Ftt(i16 %a, i16 %b), local\n{\nb:\n\t%q = udiv i16 %a, %b\n\tret i16 %q\n}\n\n"
+	"function i16 @_R__Ftt(i16 %a, i16 %b), local\n{\nb:\n\t%r = urem i16 %a, %b\n\tret i16 %r\n}\n\n"
+	"function i32 @_main()\n{\n"
+	"entry:\n\tjmp loop\n"
+	"loop:\n\t%i = phi i16 [entry, 0], [body, %i2]\n\t%x = phi i16 [entry, 12345], [body, %x2]\n\t%y = phi i16 [entry, 6789], [body, %y2]\n\t%h = phi i16 [entry, 0], [body, %h3]\n"
+	"\t%done = eq i16 %i, 2048\n\tbrif %done, exit, body\n"
+	"body:\n"
+	"\t%xm = mul i16 %x, 25173\n\t%x2 = add i16 %xm, 13849\n\t%ym = mul i16 %y, 1103\n\t%y2 = add i16 %ym, 7919\n"
+	"\t%sa = and i16 %i, 15\n\t%ti = lshr i16 %i, 4\n\t%sb = and i16 %ti, 15\n"
+	"\t%a = lshr i16 %x2, %sa\n\t%b0 = lshr i16 %y2, %sb\n\t%bz = eq i16 %b0, 0\n\t%bw = zext i1 %bz to i16\n\t%b = or i16 %b0, %bw\n"
+	"\t%q = call i16 @_Q__Ftt(i16 %a, i16 %b)\n\t%r = call i16 @_R__Ftt(i16 %a, i16 %b)\n"
+	"\t%hs = shl i16 %h, 5\n\t%ha = add i16 %hs, %h\n\t%h2 = xor i16 %ha, %q\n\t%h2s = shl i16 %h2, 3\n\t%h3 = xor i16 %h2s, %r\n"
+	"\t%i2 = add i16 %i, 1\n\tjmp loop\n"
+	"exit:\n\t%z = zext i16 %h to i32\n\tret i32 %z\n}\n";
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIR816BackendDivide16(void)
+{
+	uint16	i;
+	uint16	x;
+	uint16	y;
+	uint16	h;
+	uint16	a;
+	uint16	b;
+	CChars	szAssembly;
+
+	x = 12345;
+	y = 6789;
+	h = 0;
+	for (i = 0; i < 2048; i++)
+	{
+		x = (uint16)(x * 25173 + 13849);
+		y = (uint16)(y * 1103 + 7919);
+		a = (uint16)(x >> (i & 15));
+		b = (uint16)(y >> ((i >> 4) & 15));
+		if (b == 0)
+		{
+			b = 1;
+		}
+		h = (uint16)((h * 33) ^ (a / b));
+		h = (uint16)((h << 3) ^ (a % b));
+	}
+
+	szAssembly.Init();
+	AssertLong(h, TestIR816Run(gszTestIR816Divide16, false, &szAssembly));
+	AssertTrue(szAssembly.Contains("jsl R816_UDiv16"));
+	AssertTrue(szAssembly.Contains("jsl R816_URem16"));
+	szAssembly.Kill();
+	AssertIR816(h, gszTestIR816Divide16);
+
+	AssertIR816(0xFFFF, "function i16 @_Q__Ftt(i16 %a, i16 %b), local\n{\nb:\n\t%q = udiv i16 %a, %b\n\tret i16 %q\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%r = call i16 @_Q__Ftt(i16 1234, i16 0)\n\t%z = zext i16 %r to i32\n\tret i32 %z\n}\n", true);
+	AssertIR816(65535 / 300, "function i16 @_Q__Ftt(i16 %a, i16 %b), local\n{\nb:\n\t%q = udiv i16 %a, %b\n\tret i16 %q\n}\n\n"
+		"function i32 @_main()\n{\nb:\n\t%r = call i16 @_Q__Ftt(i16 -1, i16 300)\n\t%z = zext i16 %r to i32\n\tret i32 %z\n}\n", true);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Unsigned 32 bit compares branch on the high words' Z, then on the low words' C: the peephole mustn't take the
 // compare of a high word with 0 out (its carry is read after the branch, a label and a .width away).
 //
@@ -1014,6 +1089,7 @@ void TestIR816Backend(void)
 	TestIR816BackendDivide();
 	TestIR816BackendDividePaths();
 	TestIR816BackendMultiply();
+	TestIR816BackendDivide16();
 	TestIR816BackendCompareCarry();
 	TestIR816BackendSharedPlaces();
 	TestIR816BackendFused();

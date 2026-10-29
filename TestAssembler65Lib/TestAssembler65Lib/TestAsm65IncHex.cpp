@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////////////
 //
 // .inchex in absolute mode: Input/IncHex.hex has DE AD BE EF at $10 and
-// CA FE at $16, so $14 and $15 are filled with $FF.
+// CA FE at $16, so $14 and $15 are filled with $FF; whole and sliced.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65IncHexAbsolute(void)
@@ -44,6 +44,21 @@ void TestAsm65IncHexAbsolute(void)
 	AssertLongLongIntHex(0x100ALL, iEnd);
 	AssertIntHex(0xFFFF, cAssembler.GetOutput()->GetWord(0x1000));
 	AssertIntHex(0xADDE, cAssembler.GetOutput()->GetWord(0x1002));
+	cAssembler.Kill();
+
+	//Slices: from $12 to the end, and 4 bytes from $13.
+	cAssembler.Init();
+	cAssembler.SetDirectory("Input");
+	AssertTrue(cAssembler.Assemble(".org $1000\n.inchex \"IncHex.hex\", $12\nMiddle:\n.inchex \"IncHex.hex\", $13, 4\nEnd:\n"));
+	AssertString("", cAssembler.GetErrors());
+	AssertTrue(cAssembler.GetSymbol("Middle", &iEnd));
+	AssertLongLongIntHex(0x1006LL, iEnd);
+	AssertTrue(cAssembler.GetSymbol("End", &iEnd));
+	AssertLongLongIntHex(0x100ALL, iEnd);
+	AssertIntHex(0xEFBE, cAssembler.GetOutput()->GetWord(0x1000));
+	AssertIntHex(0xFECA, cAssembler.GetOutput()->GetWord(0x1004));
+	AssertIntHex(0xFFEF, cAssembler.GetOutput()->GetWord(0x1006));
+	AssertIntHex(0xCAFF, cAssembler.GetOutput()->GetWord(0x1008));
 	cAssembler.Kill();
 }
 
@@ -80,7 +95,7 @@ static void AssertIncHexError(const char* szExpected, const char* szSource, bool
 //////////////////////////////////////////////////////////////////////////
 void TestAsm65IncHexErrors(void)
 {
-	AssertIncHexError("2:23: The file has bytes below the base '$11'\n", ".org $1000\n.inchex \"IncHex.hex\", $11\n", false);
+	AssertIncHexError("2:9: Included bytes must be 0 to 16MB '\"IncHex.hex\"'\n", ".org $1000\n.inchex \"IncHex.hex\", $10, -1\n", false);
 	AssertIncHexError("2:9: Could not read Input" _FS_ "Missing.hex '\"Missing.hex\"'\n", ".org $1000\n.inchex \"Missing.hex\"\n", false);
 	AssertIncHexError("2:9: Expected a file name '5'\n", ".org $1000\n.inchex 5\n", false);
 	AssertIncHexError("2:9: A bss section only has labels, .space and .align '\"IncHex.hex\"'\n", ".section bss.Table\n.inchex \"IncHex.hex\"\n", true);
