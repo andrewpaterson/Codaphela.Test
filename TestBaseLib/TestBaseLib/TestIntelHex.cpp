@@ -1,4 +1,5 @@
 #include "BaseLib/IntelHex.h"
+#include "BaseLib/Chars.h"
 #include "TestLib/Assert.h"
 
 
@@ -27,9 +28,9 @@ void TestIntelHexParse(void)
 	AssertString("", cHex.GetError());
 	AssertSize(2, cHex.NumSegments());
 	AssertIntHex(0x10000, cHex.GetSegment(0)->uiAddress);
-	AssertSize(4, cHex.GetSegment(0)->cBytes.NumElements());
+	AssertLSize(4, cHex.GetSegment(0)->cBytes.NumElements());
 	AssertIntHex(0xA0002, cHex.GetSegment(1)->uiAddress);
-	AssertSize(4, cHex.GetSegment(1)->cBytes.NumElements());
+	AssertLSize(4, cHex.GetSegment(1)->cBytes.NumElements());
 	AssertIntHex(0x10000, cHex.GetLowAddress());
 	AssertLongLongIntHex(0xA0006LL, cHex.GetEndAddress());
 	AssertFalse(cHex.IsEmpty());
@@ -129,6 +130,104 @@ void TestIntelHexRead(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void AppendIntelHexByte(CLargeChars* psz, uint8 uiByte, uint8* puiSum)
+{
+	const char*	szDigits = "0123456789ABCDEF";
+
+	psz->Append(szDigits[uiByte >> 4]);
+	psz->Append(szDigits[uiByte & 0xF]);
+	*puiSum = (uint8)(*puiSum + uiByte);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void AppendIntelHexRecord(CLargeChars* psz, uint8 uiType, uint16 uiOffset, uint8* puiData, uint8 uiCount)
+{
+	uint8	uiSum;
+	uint8	i;
+
+	uiSum = 0;
+	psz->Append(':');
+	AppendIntelHexByte(psz, uiCount, &uiSum);
+	AppendIntelHexByte(psz, (uint8)(uiOffset >> 8), &uiSum);
+	AppendIntelHexByte(psz, (uint8)uiOffset, &uiSum);
+	AppendIntelHexByte(psz, uiType, &uiSum);
+	for (i = 0; i < uiCount; i++)
+	{
+		AppendIntelHexByte(psz, puiData[i], &uiSum);
+	}
+	AppendIntelHexByte(psz, (uint8)(0 - uiSum), &uiSum);
+	psz->Append('\n');
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// One segment of more bytes than a natural array holds on a 16 bit size.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIntelHexLargeSegment(void)
+{
+	CIntelHex	cHex;
+	CLargeChars	sz;
+	uint32		uiAddress;
+	uint32		uiLength;
+	uint8		auiData[250];
+	uint8		uiCount;
+	uint8		i;
+	uint8		auiUpper[2];
+	uint8		uiByte;
+
+	uiLength = 70000;
+	sz.Init();
+	for (uiAddress = 0; uiAddress < uiLength; uiAddress += uiCount)
+	{
+		if ((uiAddress & 0xFFFF) == 0)
+		{
+			auiUpper[0] = (uint8)(uiAddress >> 24);
+			auiUpper[1] = (uint8)(uiAddress >> 16);
+			AppendIntelHexRecord(&sz, 4, 0, auiUpper, 2);
+		}
+		uiCount = 250;
+		if (uiLength - uiAddress < uiCount)
+		{
+			uiCount = (uint8)(uiLength - uiAddress);
+		}
+		if (0x10000 - (uiAddress & 0xFFFF) < uiCount)
+		{
+			uiCount = (uint8)(0x10000 - (uiAddress & 0xFFFF));
+		}
+		for (i = 0; i < uiCount; i++)
+		{
+			auiData[i] = (uint8)((uiAddress + i) ^ ((uiAddress + i) >> 8));
+		}
+		AppendIntelHexRecord(&sz, 0, (uint16)uiAddress, auiData, uiCount);
+	}
+	AppendIntelHexRecord(&sz, 1, 0, NULL, 0);
+
+	cHex.Init();
+	AssertTrue(cHex.Parse(sz.Text()));
+	AssertString("", cHex.GetError());
+	AssertSize(1, cHex.NumSegments());
+	AssertLSize(70000, cHex.GetSegment(0)->cBytes.NumElements());
+	AssertLongLongIntHex(70000LL, cHex.GetEndAddress());
+	AssertTrue(cHex.Get(0xFFFF, &uiByte));
+	AssertByteHex((uint8)(0xFF ^ 0xFF), uiByte);
+	AssertTrue(cHex.Get(69999, &uiByte));
+	AssertByteHex((uint8)(69999 ^ (69999 >> 8)), uiByte);
+	AssertFalse(cHex.Get(70000, &uiByte));
+	cHex.Kill();
+	sz.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestIntelHex(void)
 {
 	BeginTests();
@@ -136,6 +235,7 @@ void TestIntelHex(void)
 	TestIntelHexParse();
 	TestIntelHexErrors();
 	TestIntelHexRead();
+	TestIntelHexLargeSegment();
 
 	TestStatistics();
 }

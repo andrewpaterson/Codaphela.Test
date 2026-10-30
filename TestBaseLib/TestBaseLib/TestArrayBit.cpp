@@ -18,7 +18,7 @@ void TestArrayBitAdd(void)
 	cArrayBit.Add(true);
 	cArrayBit.Add(false);
 
-	AssertSize(2, cArrayBit.NumElements());
+	AssertLSize(2, cArrayBit.NumElements());
 
 	AssertTrue(cArrayBit.Get(0));
 	AssertFalse(cArrayBit.Get(1));
@@ -30,7 +30,7 @@ void TestArrayBitAdd(void)
 	cArrayBit.Add(true);
 	cArrayBit.Add(false);
 
-	AssertSize(8, cArrayBit.NumElements());
+	AssertLSize(8, cArrayBit.NumElements());
 
 	AssertTrue(cArrayBit.Get(2));
 	AssertFalse(cArrayBit.Get(3));
@@ -45,7 +45,7 @@ void TestArrayBitAdd(void)
 
 	cArrayBit.Add(ui, 0, 88);
 
-	AssertSize(96, cArrayBit.NumElements());
+	AssertLSize(96, cArrayBit.NumElements());
 
 	AssertFalse(cArrayBit.Get(8));
 	AssertTrue(cArrayBit.Get(9));
@@ -62,7 +62,7 @@ void TestArrayBitAdd(void)
 
 	cArrayBit.Add(true);
 
-	AssertSize(97, cArrayBit.NumElements());
+	AssertLSize(97, cArrayBit.NumElements());
 	AssertTrue(cArrayBit.Get(96));
 
 	AssertIntHex((uint32)0xcbb78e55, ((uint32*)cArrayBit.GetData())[0]);
@@ -77,11 +77,11 @@ void TestArrayBitAdd(void)
 	cArrayBit.Add(true);
 	cArrayBit.Add(false);
 
-	AssertSize(104, cArrayBit.NumElements());
+	AssertLSize(104, cArrayBit.NumElements());
 
 	cArrayBit.Add(true);
 
-	AssertSize(105, cArrayBit.NumElements());
+	AssertLSize(105, cArrayBit.NumElements());
 	AssertTrue(cArrayBit.Get(104));
 
 	AssertFalse(cArrayBit.Get(97));
@@ -121,7 +121,7 @@ void TestArrayBitReadWrite(void)
 	
 	cArrayBitIn.Read(&cFile);
 
-	AssertSize(2, cArrayBitIn.NumElements());
+	AssertLSize(2, cArrayBitIn.NumElements());
 
 	AssertTrue(cArrayBitIn.Get(0));
 	AssertFalse(cArrayBitIn.Get(1));
@@ -146,7 +146,7 @@ void TestArrayBitReadWrite(void)
 	cArrayBit.Add(true);
 	cArrayBit.Add(false);
 	cArrayBit.Add(true);
-	AssertSize(105, cArrayBit.NumElements());
+	AssertLSize(105, cArrayBit.NumElements());
 
 	cFile.Open(EFM_Write_Create);
 	AssertTrue(cArrayBit.Write(&cFile));
@@ -157,7 +157,7 @@ void TestArrayBitReadWrite(void)
 	cFile.Open(EFM_Read);
 	cArrayBitIn.Read(&cFile);
 
-	AssertSize(105, cArrayBitIn.NumElements());
+	AssertLSize(105, cArrayBitIn.NumElements());
 	AssertTrue(cArrayBitIn.Get(0));
 	AssertFalse(cArrayBitIn.Get(1));
 	AssertIntHex((uint32)0xcbb78e55, ((uint32*)cArrayBitIn.GetData())[0]);
@@ -181,6 +181,43 @@ void TestArrayBitReadWrite(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// More bits than a natural size counts on a 16 bit size.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayBitLarge(void)
+{
+	CArrayBit	cArrayBit;
+	uint8		auiBits[2];
+
+	cArrayBit.Init();
+	cArrayBit.GrowTo(70000);
+	cArrayBit.Zero();
+	AssertLSize(70000, cArrayBit.NumElements());
+
+	cArrayBit.Set(69999, true);
+	cArrayBit.Set(65536, true);
+	AssertTrue(cArrayBit.Get(69999));
+	AssertTrue(cArrayBit.Get(65536));
+	AssertFalse(cArrayBit.Get(65535));
+	AssertFalse(cArrayBit.Get(69998));
+	AssertFalse(cArrayBit.Get(464));
+
+	auiBits[0] = 0;
+	auiBits[1] = 0;
+	cArrayBit.Get(auiBits, 0, 69992, 8);
+	AssertByteHex((uint8)0x80, auiBits[0]);
+
+	cArrayBit.Add(true);
+	AssertLSize(70001, cArrayBit.NumElements());
+	AssertTrue(cArrayBit.Get(70000));
+	AssertTrue(cArrayBit.Get(69999));
+
+	cArrayBit.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestArrayBit(void)
@@ -190,6 +227,7 @@ void TestArrayBit(void)
 
 	TestArrayBitAdd();
 	TestArrayBitReadWrite();
+	TestArrayBitLarge();
 
 	MemoryKill();
 	TestStatistics();

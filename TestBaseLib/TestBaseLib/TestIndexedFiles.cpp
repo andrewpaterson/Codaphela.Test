@@ -114,7 +114,7 @@ void TestIndexedFilesWrite(void)
 	CFileDataIndex			cDataIndex2;
 	CFileDataIndex			cDataIndex3;
 	CFileDataIndex			cDataIndex4;
-	size			uiDataSize;
+	lsize			uiDataSize;
 	char					szData[1024];
 	SLogConfig				sLogConfig;
 
@@ -249,7 +249,7 @@ void TestIndexedFilesWrite(void)
 	cIndexedFiles.ReadIndexedFileDescriptors();
 
 	uiDataSize = cIndexedFiles.GetFileDataSize(0);
-	AssertSize(88, uiDataSize);
+	AssertLSize(88, uiDataSize);
 
 	cDataIndex.Init(0, 0);
 	memset(szData, 0, 1024);
@@ -262,7 +262,7 @@ void TestIndexedFilesWrite(void)
 	AssertString(szData3, szData);
 
 	uiDataSize = cIndexedFiles.GetFileDataSize(1);
-	AssertSize(100, uiDataSize);
+	AssertLSize(100, uiDataSize);
 
 	cDataIndex.Init(1, 0);
 	memset(szData, 0, 1024);

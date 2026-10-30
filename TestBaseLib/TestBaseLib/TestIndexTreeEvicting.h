@@ -11,17 +11,17 @@ public:
 		return CIndexTreeEvicting::GetRoot();
 	}
 
-	size GetSystemMemorySize(void)
+	lsize GetSystemMemorySize(void)
 	{
 		return CIndexTreeEvicting::GetSystemMemorySize();
 	}
 
-	size NumMemoryNodes(void)
+	lsize NumMemoryNodes(void)
 	{
 		return CIndexTreeEvicting::NumMemoryNodes();
 	}
 
-	size NumMemoryElements(void)
+	lsize NumMemoryElements(void)
 	{
 		return CIndexTreeEvicting::NumMemoryElements();
 	}

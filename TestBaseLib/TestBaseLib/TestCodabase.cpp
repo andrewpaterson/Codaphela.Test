@@ -198,13 +198,13 @@ void TestCodabaseSetPutRemove(EIndexWriteThrough eWriteThrough)
 	AssertTrue(pcDatabase->Set("Alpha", szEins, strlen(szEins) + 1));
 	memset(szResult, 0, 2 KB);
 	AssertTrue(pcDatabase->Get(1LL, &uiDataSize, szResult, 2 KB));
-	AssertSize(5, uiDataSize);
+	AssertLSize(5, uiDataSize);
 	AssertString(szEins, szResult);
 
 	AssertTrue(pcDatabase->Set(1LL, szVier));
 	memset(szResult, 0, 2 KB);
 	AssertTrue(pcDatabase->Get(1LL, &uiDataSize, szResult, 2 KB));
-	AssertSize(5, uiDataSize);
+	AssertLSize(5, uiDataSize);
 	AssertString(szVier, szResult);
 
 	AssertTrue(pcDatabase->Put(2LL, szZwei, strlen(szZwei) + 1));
@@ -315,17 +315,17 @@ void TestCodabaseIterate(EIndexWriteThrough eWriteThrough)
 		if (oi == 0x0102LL)
 		{
 			AssertString(szRutherford, szResult);
-			AssertSize(strlen(szRutherford) + 1, iDataSize);
+			AssertLSize(strlen(szRutherford) + 1, iDataSize);
 		}
 		else if (oi == 0x0203LL)
 		{
 			AssertString(szBohr, szResult);
-			AssertSize(strlen(szBohr) + 1, iDataSize);
+			AssertLSize(strlen(szBohr) + 1, iDataSize);
 		}
 		else if (oi == 0x0304LL)
 		{
 			AssertString(szPlanck, szResult);
-			AssertSize(strlen(szPlanck) + 1, iDataSize);
+			AssertLSize(strlen(szPlanck) + 1, iDataSize);
 		}
 		else
 		{

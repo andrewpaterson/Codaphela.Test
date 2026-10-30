@@ -842,6 +842,20 @@ void TestCharsLarge(void)
 	AssertChar('.', szLarge.GetChar(70016));
 	AssertTrue(szLarge.EndsWith("..."));
 
+	szLarge.Reverse();
+	AssertLSize(70017, szLarge.Length());
+	AssertTrue(szLarge.EndsWith("dlroW dlroW olleH"));
+	AssertChar('.', szLarge.GetChar(0));
+	AssertChar('\0', szLarge.Text()[70017]);
+
+	szNatural.Clear();
+	szNatural.Append("abc");
+	szNatural.Reverse();
+	AssertString("cba", szNatural.Text());
+	szNatural.Clear();
+	szNatural.Reverse();
+	AssertString("", szNatural.Text());
+
 	szNatural.Kill();
 	szLarge.Kill();
 }

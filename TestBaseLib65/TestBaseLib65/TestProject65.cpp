@@ -52,6 +52,20 @@
 ECPPTarget	geTestProject65Target = CPPT_65C64;
 static CAsm816Profile*	gpcTestProject65Measure = NULL;
 
+#define TEST_PROJECT65_REPORT_LINES		60		//The most lines and functions a profile report lists.
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The file TEST_PROJECT65_PROFILE (or TEST_PROJECT65_MEASURE_FRAMES) names
+// for the profile, or NULL.
+//
+//////////////////////////////////////////////////////////////////////////
+static const char* TestProject65ProfileFile(void)
+{
+	return getenv("TEST_PROJECT65_PROFILE") ? getenv("TEST_PROJECT65_PROFILE") : getenv("TEST_PROJECT65_MEASURE_FRAMES");
+}
+
 
 static const char* gaszTestProject65Libc65[] = { "string.cpp", "string.asm", "stdlib.cpp", "ctype.cpp", "time.cpp", "math.cpp", "softfloat.cpp", "softfloat.asm", "new.cpp", "signal.cpp", "stdio.cpp", "host.cpp", NULL };
 static const char* gaszTestProject816Suffixes[] = { "816.asm", "816_16.asm", NULL };
@@ -542,8 +556,9 @@ static bool TestProject65Run(STestProject65* psProject, CCPP65Builder* pcBuilder
 		cMPU816.Reset();
 		if (gpcTestProject65Measure)
 		{
-			//TEST_PROJECT65_MEASURE_FRAMES: each function's direct page accesses, calls and recursion (CAsm816Profile).
-			uiSteps = gpcTestProject65Measure->Run(pcMemory, &cMPU816, pcBuilder->GetMap(), (size)uiMaxSteps);
+			//TEST_PROJECT65_PROFILE: each function's direct page accesses, calls and recursion, and its lines' cycles
+			//(CAsm816Profile).
+			uiSteps = gpcTestProject65Measure->Run(pcMemory, &cMPU816, pcBuilder->GetMap(), (size)uiMaxSteps, pcBuilder->GetLineTable());
 		}
 		else
 		{
@@ -657,7 +672,8 @@ void TestProject65RunTests(STestProject65* psProject)
 		cBuilder.SetListingDirectory(getenv("TEST_PROJECT65_LISTINGS"));
 	}
 	//TEST_PROJECT65_FRAME_PROFILE builds with a profile (the W65C816's aligned frames measured, not estimated);
-	//TEST_PROJECT65_MEASURE_FRAMES measures the programs and writes their profile to the file it names.
+	//TEST_PROJECT65_PROFILE (or TEST_PROJECT65_MEASURE_FRAMES) builds with a line table, profiles the programs and
+	//writes their profile to the file it names, and TEST_PROJECT65_PROFILE_REPORT writes where their cycles went.
 	//TEST_PROJECT65_CYCLES prints each program's cycles.
 	cFrameProfile.Init();
 	if (getenv("TEST_PROJECT65_FRAME_PROFILE") && cFrameProfile.Read(getenv("TEST_PROJECT65_FRAME_PROFILE")))
@@ -665,7 +681,8 @@ void TestProject65RunTests(STestProject65* psProject)
 		cBuilder.SetFrameProfile(&cFrameProfile);
 	}
 	cMeasure.Init();
-	gpcTestProject65Measure = getenv("TEST_PROJECT65_MEASURE_FRAMES") ? &cMeasure : NULL;
+	gpcTestProject65Measure = TestProject65ProfileFile() ? &cMeasure : NULL;
+	cBuilder.SetLineTable(gpcTestProject65Measure != NULL);
 	TestProject65AddProjects(psProject, &cBuilder);
 	bCompiled = cBuilder.Compile();
 	AssertString("", cBuilder.GetErrors());
@@ -767,7 +784,11 @@ void TestProject65RunTests(STestProject65* psProject)
 
 	if (gpcTestProject65Measure)
 	{
-		AssertTrue(cMeasure.Write(getenv("TEST_PROJECT65_MEASURE_FRAMES")));
+		AssertTrue(cMeasure.Write(TestProject65ProfileFile()));
+		if (getenv("TEST_PROJECT65_PROFILE_REPORT"))
+		{
+			AssertTrue(cMeasure.WriteReport(getenv("TEST_PROJECT65_PROFILE_REPORT"), TEST_PROJECT65_REPORT_LINES));
+		}
 		gpcTestProject65Measure = NULL;
 	}
 	cMeasure.Kill();

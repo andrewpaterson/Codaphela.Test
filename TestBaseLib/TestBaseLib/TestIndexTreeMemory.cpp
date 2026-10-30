@@ -400,12 +400,12 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 	char					szResult[256];
 
 	cAllocator.Init(&gcSystemAllocator);
-	AssertSize(0, cAllocator.AllocatedUserSize());
+	AssertLSize(0, cAllocator.AllocatedUserSize());
 
 	cIndex.Init(LifeLocal<CMallocator>(&cAllocator), IKR_No);
 	cAccess.Init(&cIndex);
 	AssertSize(0, cIndex.NumElements());
-	AssertSize(cIndex.ByteSize(), cAllocator.AllocatedUserSize());
+	AssertLSize(cIndex.ByteSize(), cAllocator.AllocatedUserSize());
 
 	iKeyLength = strlen("Spoedling");
 	AssertNull(cIndex.GetNode((uint8*)"Spoedling", iKeyLength));
@@ -413,7 +413,7 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 	AssertTrue(cAccess.PutStringData("SpoedlingZ", szKerfuffle, 10));
 	AssertSize(1, cIndex.NumElements());
 
-	AssertSize(cIndex.ByteSize(), cAllocator.AllocatedUserSize());
+	AssertLSize(cIndex.ByteSize(), cAllocator.AllocatedUserSize());
 	pcNode = cIndex.GetNode((uint8*)"Spoedling", iKeyLength);
 	AssertNotNull(pcNode);
 	pcChildNode = pcNode->Get('Z');
@@ -422,7 +422,7 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 
 	AssertTrue(cAccess.PutStringData("Spoedling", szTwo, 3));
 	AssertSize(2, cIndex.NumElements());
-	AssertSize(cIndex.ByteSize(), cAllocator.AllocatedUserSize());
+	AssertLSize(cIndex.ByteSize(), cAllocator.AllocatedUserSize());
 	AssertString("kerfuffle", cAccess.GetStringString("SpoedlingZ", szResult));
 	AssertString("22", cAccess.GetStringString("Spoedling", szResult));
 
@@ -434,7 +434,7 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 
 	AssertTrue(cAccess.PutStringData("Spoedling", szOtherTwo, 3));
 	AssertSize(2, cIndex.NumElements());
-	AssertSize(cIndex.ByteSize(), cAllocator.AllocatedUserSize());
+	AssertLSize(cIndex.ByteSize(), cAllocator.AllocatedUserSize());
 	AssertString("kerfuffle", cAccess.GetStringString("SpoedlingZ", szResult));
 	AssertString("OT", cAccess.GetStringString("Spoedling", szResult));
 
@@ -446,7 +446,7 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 
 	AssertTrue(cAccess.PutStringData("Spoedling", szThree, 4));
 	AssertSize(2, cIndex.NumElements());
-	AssertSize(cIndex.ByteSize(), cAllocator.AllocatedUserSize());
+	AssertLSize(cIndex.ByteSize(), cAllocator.AllocatedUserSize());
 	AssertString("kerfuffle", cAccess.GetStringString("SpoedlingZ", szResult));
 	AssertString("333", cAccess.GetStringString("Spoedling", szResult));
 
@@ -458,7 +458,7 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 
 	AssertTrue(cAccess.PutStringData("Spoedling", szOne, 2));
 	AssertSize(2, cIndex.NumElements());
-	AssertSize(cIndex.ByteSize(), cAllocator.AllocatedUserSize());
+	AssertLSize(cIndex.ByteSize(), cAllocator.AllocatedUserSize());
 	AssertString("kerfuffle", cAccess.GetStringString("SpoedlingZ", szResult));
 	AssertString("1", cAccess.GetStringString("Spoedling", szResult));
 
@@ -470,7 +470,7 @@ void TestIndexTreeMemoryPutDifferenceSizeDuplicates(void)
 
 	cAccess.Kill();
 	cIndex.Kill();
-	AssertSize(0, cAllocator.AllocatedUserSize());
+	AssertLSize(0, cAllocator.AllocatedUserSize());
 }
 
 
@@ -833,7 +833,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 	AssertSize(2072, cTrackingAlloc.AllocatedUserSize());
 #else
 	AssertSize(1040, iExpectedRootSize);
-	AssertSize(1040, cTrackingAlloc.AllocatedUserSize());
+	AssertLSize(1040, cTrackingAlloc.AllocatedUserSize());
 #endif // BUILD_64
 
 	li = 0x77LL; cAccess.PutStringLong("M", li);
@@ -844,14 +844,14 @@ void TestIndexTreeMemoryRemoveResize(void)
 	AssertSize(2128, cTrackingAlloc.AllocatedUserSize());
 #else
 	AssertSize(1064, iExpectedRootSize + sizeof(CIndexTreeNodeMemory) + sizeof(int64));
-	AssertSize(1076, cTrackingAlloc.AllocatedUserSize());
+	AssertLSize(1076, cTrackingAlloc.AllocatedUserSize());
 #endif // BUILD_64
 
 	li = 0x88LL; cAccess.PutStringLong("MA", li);
 #ifdef BUILD_64
 	AssertSize(2192, cTrackingAlloc.AllocatedUserSize());
 #else
-	AssertSize(1116, cTrackingAlloc.AllocatedUserSize());
+	AssertLSize(1116, cTrackingAlloc.AllocatedUserSize());
 #endif // BUILD_64
 	li = 0x99LL; cAccess.PutStringLong("MC", li);
 	AssertSize(4, cIndex.NumAllocatedNodes());
@@ -859,7 +859,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 #ifdef BUILD_64
 	AssertSize(2264, cTrackingAlloc.AllocatedUserSize());
 #else
-	AssertSize(1160, cTrackingAlloc.AllocatedUserSize());
+	AssertLSize(1160, cTrackingAlloc.AllocatedUserSize());
 #endif // BUILD_64
 
 	li = 0xaaLL; cAccess.PutStringLong("MB", li);
@@ -868,7 +868,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 #ifdef BUILD_64
 	AssertSize(2320, cTrackingAlloc.AllocatedUserSize());
 #else
-	AssertSize(1196, cTrackingAlloc.AllocatedUserSize());
+	AssertLSize(1196, cTrackingAlloc.AllocatedUserSize());
 #endif // BUILD_64
 
 	li = 0xbbLL; cAccess.PutStringLong("MBP", li);
@@ -878,7 +878,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 #ifdef BUILD_64
 	AssertSize(2384, cTrackingAlloc.AllocatedUserSize());
 #else
-	AssertSize(1236, cTrackingAlloc.AllocatedUserSize());
+	AssertLSize(1236, cTrackingAlloc.AllocatedUserSize());
 #endif // BUILD_64
 
 	AssertLong(0xaaLL, cAccess.GetStringLong("MB"));
@@ -889,7 +889,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 #ifdef BUILD_64
 	AssertSize(2352, cTrackingAlloc.AllocatedUserSize());
 #else
-	AssertSize(1216, cTrackingAlloc.AllocatedUserSize());
+	AssertLSize(1216, cTrackingAlloc.AllocatedUserSize());
 #endif // BUILD_64
 	AssertFalse(cAccess.HasString("MB"));
 
@@ -901,7 +901,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 #ifdef BUILD_64
 	AssertSize(2264, cTrackingAlloc.AllocatedUserSize());
 #else
-	AssertSize(1160, cTrackingAlloc.AllocatedUserSize());
+	AssertLSize(1160, cTrackingAlloc.AllocatedUserSize());
 #endif // BUILD_64
 	AssertFalse(cAccess.HasString("MBP"));
 
@@ -914,7 +914,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 #ifdef BUILD_64
 	AssertSize(2192, cTrackingAlloc.AllocatedUserSize());
 #else
-	AssertSize(1116, cTrackingAlloc.AllocatedUserSize());
+	AssertLSize(1116, cTrackingAlloc.AllocatedUserSize());
 #endif // BUILD_64
 	AssertFalse(cAccess.HasString("MA"));
 
@@ -926,7 +926,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 #ifdef BUILD_64
 	AssertSize(2128, cTrackingAlloc.AllocatedUserSize());
 #else
-	AssertSize(1076, cTrackingAlloc.AllocatedUserSize());
+	AssertLSize(1076, cTrackingAlloc.AllocatedUserSize());
 #endif // BUILD_64
 	AssertFalse(cAccess.HasString("MC"));
 
@@ -938,7 +938,7 @@ void TestIndexTreeMemoryRemoveResize(void)
 #ifdef BUILD_64
 	AssertSize(2072, cTrackingAlloc.AllocatedUserSize());
 #else
-	AssertSize(1040, cTrackingAlloc.AllocatedUserSize());
+	AssertLSize(1040, cTrackingAlloc.AllocatedUserSize());
 #endif // BUILD_64
 	AssertFalse(cAccess.HasString("M"));
 

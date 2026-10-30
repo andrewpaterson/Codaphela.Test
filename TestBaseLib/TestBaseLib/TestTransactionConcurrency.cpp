@@ -602,7 +602,7 @@ void TestTransactionConcurrencyBank(void)
 		iTotal += iBalance;
 	}
 	AssertInt(BANK_ACCOUNTS * BANK_START_BALANCE, iTotal);
-	AssertSize(0, pcDatabase->NumVersions());
+	AssertLSize(0, pcDatabase->NumVersions());
 
 	KillConcurrencyCodabase(pcDatabase);
 }

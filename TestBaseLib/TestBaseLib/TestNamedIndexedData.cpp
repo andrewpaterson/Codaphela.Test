@@ -186,8 +186,8 @@ void TestNamedIndexedDataAddString(EIndexWriteThrough eWriteThrough)
 	cController.End();
 
 	cController.Begin();
-	AssertSize(sizeof(CTestNamedIndexedDataObject), cDatabase.Size(0x0203));
-	AssertSize(sizeof(CTestNamedIndexedDataObject), cDatabase.Size(0x0102));
+	AssertLSize(sizeof(CTestNamedIndexedDataObject), cDatabase.Size(0x0203));
+	AssertLSize(sizeof(CTestNamedIndexedDataObject), cDatabase.Size(0x0102));
 	AssertLong(2, cDatabase.NumIndices());
 	AssertLong(2, cDatabase.NumNames());
 	cController.End();
@@ -265,7 +265,7 @@ void TestNamedIndexedDataAddChars(EIndexWriteThrough eWriteThrough)
 	szName.Init("Ernest");
 	bResult = cDatabase.Get(&szName, &uiDataSize, &cResult, cResult.Size());
 	szName.Kill();
-	AssertSize(sizeof(CTestNamedIndexedDataObject), uiDataSize);
+	AssertLSize(sizeof(CTestNamedIndexedDataObject), uiDataSize);
 	AssertTrue(bResult);
 	AssertString("Rutherford", cResult.mszString);
 	AssertLong(1871, cResult.miNumberX);
@@ -819,27 +819,27 @@ void TestNamedIndexedDataIterate(EIndexWriteThrough eWriteThrough)
 
 	oi = cDatabase.StartIndexIteration(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
 	AssertLong(0x0102LL, oi);
-	AssertSize(sizeof(CTestNamedIndexedDataObject), iDataSize);
+	AssertLSize(sizeof(CTestNamedIndexedDataObject), iDataSize);
 	AssertMemory(&cObject1, &cResult, iDataSize);
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
 	AssertLong(0x0203LL, oi);
-	AssertSize(sizeof(CTestNamedIndexedDataObject), iDataSize);
+	AssertLSize(sizeof(CTestNamedIndexedDataObject), iDataSize);
 	AssertMemory(&cObject2, &cResult, iDataSize);
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
 	AssertLong(0x0304LL, oi);
-	AssertSize(sizeof(CTestNamedIndexedDataObject), iDataSize);
+	AssertLSize(sizeof(CTestNamedIndexedDataObject), iDataSize);
 	AssertMemory(&cObject3, &cResult, iDataSize);
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
 	AssertLong(0x0405LL, oi);
-	AssertSize(sizeof(CTestNamedIndexedDataObject), iDataSize);
+	AssertLSize(sizeof(CTestNamedIndexedDataObject), iDataSize);
 	AssertMemory(&cObject4, &cResult, iDataSize);
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
 	AssertLong(0x0506LL, oi);
-	AssertSize(sizeof(CTestNamedIndexedDataObject), iDataSize);
+	AssertLSize(sizeof(CTestNamedIndexedDataObject), iDataSize);
 	AssertMemory(&cObject5, &cResult, iDataSize);
 
 	oi = cDatabase.IndexIterate(&sIter, &cResult, &iDataSize, sizeof(CTestNamedIndexedDataObject));
@@ -1337,9 +1337,9 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 	AssertSize(330, cDatabase.GetDataSystemMemorySize());
 	AssertSize(15920, cDatabase.GetNamesSystemMemorySize());
 #else
-	AssertSize(6728, cDatabase.GetIndiciesSystemMemorySize());
-	AssertSize(314, cDatabase.GetDataSystemMemorySize());
-	AssertSize(16252, cDatabase.GetNamesSystemMemorySize());
+	AssertLSize(6728, cDatabase.GetIndiciesSystemMemorySize());
+	AssertLSize(314, cDatabase.GetDataSystemMemorySize());
+	AssertLSize(16252, cDatabase.GetNamesSystemMemorySize());
 #endif // BUILD_64
 	AssertLong(1, cDatabase.NumIndicesCached());
 	AssertLong(1, cDatabase.NumDataCached());
@@ -1373,9 +1373,9 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 	AssertSize(339, cDatabase.GetDataSystemMemorySize());
 	AssertSize(16048, cDatabase.GetNamesSystemMemorySize());
 #else
-	AssertSize(6812, cDatabase.GetIndiciesSystemMemorySize());
-	AssertSize(323, cDatabase.GetDataSystemMemorySize());
-	AssertSize(15708, cDatabase.GetNamesSystemMemorySize());
+	AssertLSize(6812, cDatabase.GetIndiciesSystemMemorySize());
+	AssertLSize(323, cDatabase.GetDataSystemMemorySize());
+	AssertLSize(15708, cDatabase.GetNamesSystemMemorySize());
 #endif // BUILD_64
 	AssertLong(1, cDatabase.NumIndicesCached());
 	AssertLong(1, cDatabase.NumDataCached());

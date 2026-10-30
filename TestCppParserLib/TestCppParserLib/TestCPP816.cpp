@@ -1466,6 +1466,230 @@ void TestCPP816DestructorCalls(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Builds and runs szSource on the W65C816 with pcProfile guiding it (NULL
+// for none), profiling the run into pcMeasure (NULL to not) with the
+// program's line table.  Returns main's result and its cycles.
+//
+//////////////////////////////////////////////////////////////////////////
+int32 TestCPP816RunProfiled(const char* szSource, CAsm816Profile* pcProfile, CAsm816Profile* pcMeasure, uint64* puiCycles)
+{
+	static const char*	aszUnits[] = { "Libc65/string816.asm", NULL };
+	CCPP65Builder		cBuilder;
+	CAsm65Memory		cMemory;
+	CFast65C816			cFast;
+	int32				iResult;
+
+	iResult = -1000000;
+	cBuilder.Init();
+	cBuilder.SetTarget(CPPT_W65C816);
+	cBuilder.SetFrameProfile(pcProfile);
+	cBuilder.SetLineTable(pcMeasure != NULL);
+	TestCPP65AddIncludeDirectories(&cBuilder);
+	AssertTrue(cBuilder.AddStartUp());
+	AssertTrue(cBuilder.AddSource("Test.cpp", szSource));
+	TestCPP65AddUnits(&cBuilder, aszUnits, false);
+	AssertTrue(cBuilder.Link());
+	AssertString("", cBuilder.GetErrors());
+
+	cMemory.Init(ASM65_MEMORY_LOW_SIZE);
+	cMemory.Load(cBuilder.GetOutput());
+	cMemory.InitFast816(&cFast);
+	cFast.Reset();
+	if (pcMeasure)
+	{
+		pcMeasure->Run(&cMemory, &cFast, cBuilder.GetMap(), TEST_CPP816_STEPS, cBuilder.GetLineTable());
+	}
+	else
+	{
+		cFast.Run(TEST_CPP816_STEPS);
+	}
+	AssertTrue(cFast.IsStopped());
+	if (cFast.IsStopped())
+	{
+		iResult = (int16)cFast.GetC();
+	}
+	*puiCycles = cFast.NumCycles();
+	cFast.Kill();
+	cMemory.Kill();
+	cBuilder.Kill();
+	return iResult;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A profile by line: a call's line counts how often it ran, in the
+// function it is in.  With the profile the hot call (in the loop) of a
+// function too big to inline without one is inlined; the cold one isn't.
+// A function compiled from other code since (another fingerprint) starts
+// its profile again.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816ProfileGuidedInlining(void)
+{
+	static const char*	szSource =
+		"int Mix(int a, int b)\n"
+		"{\n"
+		"\tint x = a * 3 + b;\n"
+		"\tx ^= (x >> 2); x += a & 7; x -= b | 5; x ^= x << 1;\n"
+		"\tx += a * b; x ^= (b >> 3); x += 11; x -= a; x ^= 0x55;\n"
+		"\tx += b * 5; x ^= (a >> 1); x += (b & 3) * 9; x ^= (x >> 4);\n"
+		"\tx += a ^ b; x -= (a | b) >> 2; x ^= (b << 2); x += (a & b) * 7;\n"
+		"\treturn x;\n"
+		"}\n"
+		"int main()\n"
+		"{\n"
+		"\tint r = 0;\n"
+		"\tfor (int i = 0; i < 2000; i++)\n"
+		"\t{\n"
+		"\t\tr += Mix(i, r & 255);\n"
+		"\t}\n"
+		"\tr += Mix(r, 3);\n"
+		"\treturn r;\n"
+		"}\n";
+	CAsm816Profile			cProfile;
+	CAsm816Profile			cGuided;
+	SAsm816FunctionProfile*	psMix;
+	SAsm816FunctionProfile*	psMain;
+	int32					iResult;
+	uint64					uiPlain;
+	uint64					uiGuided;
+
+	cProfile.Init();
+	iResult = TestCPP816RunProfiled(szSource, NULL, &cProfile, &uiPlain);
+	psMix = cProfile.Get("_Mix__Fss");
+	AssertNotNull((void*)psMix);
+	AssertLong(2001, psMix ? (int64)psMix->ulliCalls : 0);
+	AssertTrue(cProfile.GetLine("_main", "Test.cpp", 15) != NULL);
+	AssertLong(2000, cProfile.GetLine("_main", "Test.cpp", 15) ? (int64)cProfile.GetLine("_main", "Test.cpp", 15)->ulliEntries : 0);
+	AssertLong(2000, (int64)cProfile.LineEntries("Test.cpp", 15));
+	psMain = cProfile.Get("_main");
+	AssertTrue(psMain && (psMain->uiHash != 0) && (psMain->iTime != 0));
+
+	//Guided: only the call in main's loop is inlined.
+	cGuided.Init();
+	AssertInt(iResult, TestCPP816RunProfiled(szSource, &cProfile, &cGuided, &uiGuided));
+	psMix = cGuided.Get("_Mix__Fss");
+	AssertLong(1, psMix ? (int64)psMix->ulliCalls : 0);
+	AssertTrue(uiGuided < uiPlain);
+	cGuided.Kill();
+	cProfile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Divides and remainders by constants of values in a known range (a char,
+// an unsigned char, an and) are a multiply and shifts, not the runtime's
+// divide: every value gives the same quotients and remainders.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816ConstantDivisions(void)
+{
+	static const char*	szSource =
+		"int main()\n"
+		"{\n"
+		"\tunsigned int r = 0;\n"
+		"\tfor (int i = -128; i < 128; i++) { char c = (char)i; r = r * 31 + (unsigned int)(c / 10) * 7 + (unsigned int)(c % 10); }\n"
+		"\tfor (int i = 0; i < 256; i++) { unsigned char u = (unsigned char)i; r = r * 31 + u / 10 + (u % 7) * 3 + u / 3; }\n"
+		"\tfor (int i = 0; i < 1000; i++) { int x = i & 511; r = r * 31 + x / 9 + x % 9; }\n"
+		"\treturn (int)r;\n"
+		"}\n";
+	CCPP65Builder	cBuilder;
+	CChars			szAssembly;
+	CChars			szErrors;
+	uint64			uiCycles;
+
+	AssertInt(26921, TestCPP816RunProfiled(szSource, NULL, NULL, &uiCycles));
+
+	cBuilder.Init();
+	TestCPP65AddIncludeDirectories(&cBuilder);
+	szAssembly.Init();
+	szErrors.Init();
+	AssertTrue(CCPP65Builder::Generate(&szAssembly, &szErrors, cBuilder.GetIncludeDirectories(), "Test.cpp", szSource, false, NULL, CPPT_W65C816));
+	AssertString("", szErrors.Text());
+	AssertFalse(szAssembly.Contains("R816_SDiv") || szAssembly.Contains("R816_SRem") || szAssembly.Contains("R816_UDiv") || szAssembly.Contains("R816_URem"));
+	szErrors.Kill();
+	szAssembly.Kill();
+	cBuilder.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A small function that takes an object by value (passed as its bytes: the
+// callee takes the parameter's address) is inlined, with the object in a
+// slot in the caller; the callee changing its copy changes the caller's
+// object neither.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816InlineObjectParameters(void)
+{
+	static const char*	szSource =
+		"struct SPair { int a; int b; char c; };\n"
+		"int Weigh(SPair s, int k) { s.a += k; return s.a * 2 + s.b - s.c; }\n"
+		"int main()\n"
+		"{\n"
+		"\tSPair\tp;\n"
+		"\tint\t\tr = 0;\n"
+		"\tp.a = 1; p.b = 10; p.c = 3;\n"
+		"\tfor (int i = 0; i < 20; i++)\n"
+		"\t{\n"
+		"\t\tp.b = i;\n"
+		"\t\tr += Weigh(p, i);\n"
+		"\t}\n"
+		"\treturn (p.a == 1) ? r : -1;\n"
+		"}\n";
+	CAsm816Profile			cProfile;
+	SAsm816FunctionProfile*	psWeigh;
+	uint64					uiCycles;
+
+	cProfile.Init();
+	AssertInt(20 * 2 + 2 * 190 + 190 - 60, TestCPP816RunProfiled(szSource, NULL, &cProfile, &uiCycles));
+	psWeigh = cProfile.Get("_Weigh__FC5SPairs");
+	AssertTrue((psWeigh == NULL) || (psWeigh->ulliCalls == 0));
+	cProfile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A variadic function's named parameter of a class that isn't trivially
+// copyable (SupportLib's CTileLayerCel::SetTiles takes a Ptr) is passed by
+// the address of a copy the caller makes and destroys, as any call's; the
+// last named parameter stays on the stack for va_start.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816VariadicObjectParameters(void)
+{
+	AssertInt(1 + 100 + 60 + 1000 + 10000, TestCPP816RunProject(NULL, "",
+		"#include <stdarg.h>\n"
+		"int giCopies = 0;\n"
+		"int giDestroyed = 0;\n"
+		"class CPtr { public: int* mp; CPtr(int* p) { mp = p; } CPtr(const CPtr& c) { mp = c.mp; giCopies++; } ~CPtr() { giDestroyed++; } };\n"
+		"int Sum(int x, CPtr p, int n, ...)\n"
+		"{\n"
+		"\tva_list\tap;\n"
+		"\tint\t\tt;\n"
+		"\tint\t\ti;\n"
+		"\tva_start(ap, n);\n"
+		"\tt = x + *p.mp;\n"
+		"\tfor (i = 0; i < n; i++) t += va_arg(ap, int);\n"
+		"\tva_end(ap);\n"
+		"\treturn t;\n"
+		"}\n"
+		"int main(void)\n"
+		"{\n"
+		"\tint\t\tv = 100;\n"
+		"\tCPtr\tc(&v);\n"
+		"\tint\t\tr = Sum(1, c, 3, 10, 20, 30);\n"
+		"\treturn r + giCopies * 1000 + giDestroyed * 10000;\n"
+		"}\n"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Compiles szSource for eTarget (it must compile) and returns how many
 // warnings mention szWarning.
 //
@@ -1714,6 +1938,39 @@ void TestCPP816Warnings(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A for loop's counter compared with a wider value that isn't a constant
+// wraps before it can pass one that doesn't fit: a 16 bit i against a 32 bit
+// count goes round forever once the count passes 65535.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816LoopCounterWarnings(void)
+{
+	const char*	szWarning = "Loop counter narrower than its bound";
+
+	//i++, ++i, i += 2 and i-- against a 32 bit bound, on either side, in && and with a comma.
+	AssertInt(1, TestCPP816CountWarnings("unsigned long N(void);\nint F(void) { unsigned i; int t = 0; for (i = 0; i < N(); i++) t++; return t; }\n", szWarning));
+	AssertInt(1, TestCPP816CountWarnings("int F(unsigned long n) { int t = 0; for (unsigned i = 0; n > i; ++i) t++; return t; }\n", szWarning));
+	AssertInt(1, TestCPP816CountWarnings("int F(unsigned long n) { int t = 0; for (unsigned i = 0; i <= n; i += 2) t++; return t; }\n", szWarning));
+	AssertInt(1, TestCPP816CountWarnings("int F(unsigned long n) { int t = 0; for (unsigned i = 10; i != n; i--) t++; return t; }\n", szWarning));
+	AssertInt(1, TestCPP816CountWarnings("int F(unsigned long n, int b) { int t = 0; for (unsigned i = 0; b && (i < n); i++) t++; return t; }\n", szWarning));
+	AssertInt(1, TestCPP816CountWarnings("int F(unsigned long n) { int t = 0; unsigned j = 0; for (unsigned i = 0; i < n; i++, j++) t++; return t; }\n", szWarning));
+	AssertInt(1, TestCPP816CountWarnings("struct S { unsigned m; int F(unsigned long n) { int t = 0; for (m = 0; m < n; m++) t++; return t; } };\nint G(void) { S s; return s.F(5); }\n", szWarning));
+
+	//The same width, a wider counter, a constant bound, a converted bound, a variable that isn't stepped, and the 65C64 (32 bit ints).
+	AssertInt(0, TestCPP816CountWarnings("int F(unsigned n) { int t = 0; for (unsigned i = 0; i < n; i++) t++; return t; }\n", szWarning));
+	AssertInt(0, TestCPP816CountWarnings("int F(unsigned n) { int t = 0; for (unsigned long i = 0; i < n; i++) t++; return t; }\n", szWarning));
+	AssertInt(0, TestCPP816CountWarnings("int F(void) { int t = 0; for (unsigned i = 0; i < 100L; i++) t++; return t; }\n", szWarning));
+	AssertInt(0, TestCPP816CountWarnings("int F(char b) { int t = 0; for (unsigned char i = 0; i < (b ? 7 : 3); i++) t++; return t; }\n", szWarning));
+	AssertInt(1, TestCPP816CountWarnings("int F(char b, int n) { int t = 0; for (unsigned char i = 0; i < (b ? n : 3); i++) t++; return t; }\n", szWarning));
+	AssertInt(0, TestCPP816CountWarnings("int F(unsigned long n) { int t = 0; for (unsigned i = 0; i < (unsigned)n; i++) t++; return t; }\n", szWarning));
+	AssertInt(0, TestCPP816CountWarnings("int F(unsigned long n) { int t = 0; unsigned j = 0; for (unsigned i = 0; j < n; i++) t++; return t; }\n", szWarning));
+	AssertInt(0, TestCPP816CountWarnings("int F(unsigned long n) { int t = 0; for (unsigned i = 0; i < n; i++) t++; return t; }\n", szWarning, CPPT_65C64));
+	AssertInt(1, TestCPP816CountWarnings("int F(unsigned long long n) { int t = 0; for (unsigned i = 0; i < n; i++) t++; return t; }\n", szWarning, CPPT_65C64));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // A comparison with a constant outside the other side's range is always true
 // or always false (a 16 bit size compared with a 32 bit "not found").  With
 // SetWarnNarrowing a non constant integer implicitly converted to a narrower
@@ -1939,8 +2196,13 @@ void TestCPP816(void)
 	TestCPP816ConstantShifts();
 	TestCPP816Warnings();
 	TestCPP816RangeWarnings();
+	TestCPP816LoopCounterWarnings();
 	TestCPP816SizeLsizeBugs();
 	TestCPP816DestructorCalls();
+	TestCPP816VariadicObjectParameters();
+	TestCPP816ProfileGuidedInlining();
+	TestCPP816InlineObjectParameters();
+	TestCPP816ConstantDivisions();
 	TestCPP816AlignedFrames();
 
 	CW65C816InstructionFactory::GetInstance()->Kill();

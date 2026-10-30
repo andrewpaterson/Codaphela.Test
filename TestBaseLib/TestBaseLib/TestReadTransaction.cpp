@@ -94,7 +94,7 @@ void TestReadTransactionWriteTransaction(void)
 
 	//The old versions go when the last reader that needs them ends.
 	SafeKill(pcBefore);
-	AssertSize(0, pcDatabase->NumVersions());
+	AssertLSize(0, pcDatabase->NumVersions());
 	SafeKill(pcAfter);
 	SafeKill(pcDatabase);
 	AssertTrue(cFileUtil.RemoveDir(READ_TRANSACTION_DIR));
@@ -144,7 +144,7 @@ void TestReadTransactionDirectSession(void)
 	SafeKill(pcBefore);
 	SafeKill(pcDuring);
 	SafeKill(pcAfter);
-	AssertSize(0, pcDatabase->NumVersions());
+	AssertLSize(0, pcDatabase->NumVersions());
 	SafeKill(pcDatabase);
 	AssertTrue(cFileUtil.RemoveDir(READ_TRANSACTION_DIR));
 }
@@ -173,12 +173,12 @@ void TestReadTransactionVersions(void)
 	AssertTrue(pcWrite->Set(2LL, szA, strlen(szA) + 1));
 	AssertTrue(pcWrite->Commit());
 	SafeKill(pcWrite);
-	AssertSize(0, pcDatabase->NumVersions());
+	AssertLSize(0, pcDatabase->NumVersions());
 	AssertTrue(pcDatabase->Open());
 	AssertTrue(pcDatabase->Set(2LL, szB, strlen(szB) + 1));
-	AssertSize(0, pcDatabase->NumVersions());
+	AssertLSize(0, pcDatabase->NumVersions());
 	AssertTrue(pcDatabase->Close());
-	AssertSize(0, pcDatabase->NumVersions());
+	AssertLSize(0, pcDatabase->NumVersions());
 
 	//Each reader sees the commit before it began.
 	pcFirst = pcDatabase->BeginReadTransaction();
@@ -213,7 +213,7 @@ void TestReadTransactionVersions(void)
 	AssertReadString(pcFirst, 1LL, "One");
 	AssertTrue(pcDatabase->NumVersions() > 0);
 	SafeKill(pcFirst);
-	AssertSize(0, pcDatabase->NumVersions());
+	AssertLSize(0, pcDatabase->NumVersions());
 
 	//Reading never waits for a writer, even on the writer's own thread.
 	pcWrite = pcDatabase->BeginWriteTransaction();
@@ -364,7 +364,7 @@ void TestReadTransactionThreads(void)
 	}
 	cMutex.Kill();
 
-	AssertSize(0, pcDatabase->NumVersions());
+	AssertLSize(0, pcDatabase->NumVersions());
 	SafeKill(pcDatabase);
 	AssertTrue(cFileUtil.RemoveDir(READ_TRANSACTION_DIR));
 }

@@ -138,7 +138,7 @@ void TestIndexTreeEvictingEvictRandom(EIndexWriteThrough eWriteThrough, EIndexKe
 	CMemoryAllocator					cAllocator;
 	CIndexTreeEvictionStrategyRandom	cStrategy;
 	CIndexTreeEvictedList				cIndexTreeEvictedList;   // CIndexTreeEvictionCallback
-	size								sSize;
+	lsize								sSize;
 	CIndexTreeFileDefaultDataCallback	cWriterCallback;
 
 	cHelper.Init("Output" _FS_"IndexTreeEvicting0a", "primary", "backup", true);
@@ -172,23 +172,23 @@ void TestIndexTreeEvictingEvictRandom(EIndexWriteThrough eWriteThrough, EIndexKe
 
 	cAccess.Flush();
 	sSize = cIndexTree.GetRoot()->CalculateNodeSize();
-	AssertSize(2062LL, sSize);
+	AssertLSize(2062LL, sSize);
 	sSize = cIndexTree.GetSystemMemorySize();
 #ifdef BUILD_64
 	AssertSize(4596LL, sSize);
 #else
-	AssertSize(3424LL, sSize);
+	AssertLSize(3424LL, sSize);
 #endif // BUILD_64
 
 	cAccess.DeleteLong(1LL);
 	cAccess.Flush();
 	sSize = cIndexTree.GetRoot()->CalculateNodeSize();
-	AssertSize(2062LL, sSize);
+	AssertLSize(2062LL, sSize);
 	sSize = cIndexTree.GetSystemMemorySize();
 #ifdef BUILD_64
 	AssertSize(4136LL, sSize);
 #else
-	AssertSize(3100LL, sSize);
+	AssertLSize(3100LL, sSize);
 #endif // BUILD_64
 
 
@@ -250,8 +250,8 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 #else
 	AssertLong(3316LL, pcMemory->GetTotalAllocatedMemory());
 #endif // BUILD_64
-	AssertSize(1, cIndexTree.NumMemoryElements());
-	AssertSize(7, cIndexTree.NumMemoryNodes());
+	AssertLSize(1, cIndexTree.NumMemoryElements());
+	AssertLSize(7, cIndexTree.NumMemoryNodes());
 	AssertSize(7, strlen("Tomato") + 1);  //6 nodes for Tomato + the root node.
 	AssertSize(0, cEvictedNodes.NumElements());
 	cEvictedNodes.Clear();
@@ -267,8 +267,8 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	AssertSize(1, cEvictedNodes.NumElements());
 	AssertString("Tomato", (char*)cEvictedNodes.GetKey(0));
 	AssertInt(x, *((int*)cEvictedNodes.GetData(0)));
-	AssertSize(1, cIndexTree.NumMemoryElements());
-	AssertSize(11, cIndexTree.NumMemoryNodes());
+	AssertLSize(1, cIndexTree.NumMemoryElements());
+	AssertLSize(11, cIndexTree.NumMemoryNodes());
 	AssertSize(11, strlen("Plantation") + 1);  //10 nodes for Plantation + the root node.
 	cEvictedNodes.Clear();
 
@@ -282,8 +282,8 @@ void TestIndexTreeEvictingPut(EIndexWriteThrough eWriteThrough)
 	AssertSize(1, cEvictedNodes.NumElements());
 	AssertString("Plantation", (char*)cEvictedNodes.GetKey(0));
 	AssertInt(y, *((int32*)cEvictedNodes.GetData(0)));
-	AssertSize(1, cIndexTree.NumMemoryElements());
-	AssertSize(7, cIndexTree.NumMemoryNodes());
+	AssertLSize(1, cIndexTree.NumMemoryElements());
+	AssertLSize(7, cIndexTree.NumMemoryNodes());
 
 	cController.End();
 
@@ -741,7 +741,7 @@ void TestIndexTreeEvictingEvictLastAccessed(void)
 	CAccessDataOrderer						cOrderer;
 	char									szData[1024];
 	int										i;
-	size									sSize;
+	lsize									sSize;
 	char*									szEvictedKey;
 	size									uiCacheSize;
 

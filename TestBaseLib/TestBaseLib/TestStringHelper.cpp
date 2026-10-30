@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <string.h>
 #include "TestLib/Assert.h"
 #include "BaseLib/StringHelper.h"
 #include "BaseLib/ArrayElementNotFound.h"
@@ -534,6 +536,41 @@ void TestStrLen(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// MemICmpLarge and StrIStr past what a size counts.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestMemICmpLarge(void)
+{
+	char*	sz1;
+	char*	sz2;
+	lsize	uiLength;
+
+	uiLength = 70000;
+	sz1 = (char*)malloc(uiLength + 1);
+	sz2 = (char*)malloc(uiLength + 1);
+	memset(sz1, 'a', uiLength);
+	memset(sz2, 'A', uiLength);
+	sz1[uiLength] = '\0';
+	sz2[uiLength] = '\0';
+
+	AssertInt(0, MemICmpLarge(sz1, sz2, uiLength));
+	sz2[69999] = 'B';
+	AssertTrue(MemICmpLarge(sz1, sz2, uiLength) < 0);
+	AssertInt(0, MemICmpLarge(sz1, sz2, 69999));
+	AssertTrue(StrIStr(sz1, sz2) == NULL);
+	sz2[69999] = 'A';
+	AssertTrue(StrIStr(sz1, sz2) == sz1);
+	sz2[4464] = 'B';
+	AssertInt(0, MemICmpLarge(sz1, sz2, 4464));
+	AssertTrue(MemICmpLarge(sz1, sz2, 4465) < 0);
+
+	free(sz2);
+	free(sz1);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestStringHelper(void)
@@ -557,6 +594,7 @@ void TestStringHelper(void)
     TestBoolToString();
     TestFindChar();
     TestFindCharIndex();
+	TestMemICmpLarge();
 
 	TestStatistics();
 }

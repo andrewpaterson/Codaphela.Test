@@ -172,10 +172,10 @@ void TestWriteTransactionRules(void)
 	//Set with no size keeps the size, Put changes an existing object.
 	AssertTrue(pcTransaction->Set(5LL, szBad));
 	AssertTrue(pcTransaction->Get(5LL, &uiDataSize, NULL, 0));
-	AssertSize(4, uiDataSize);
+	AssertLSize(4, uiDataSize);
 	AssertTrue(pcTransaction->Put(5LL, "Epsilon", szLonger, strlen(szLonger) + 1));
 	AssertTrue(pcTransaction->Get("Epsilon", &uiDataSize, szResult, 256));
-	AssertSize(12, uiDataSize);
+	AssertLSize(12, uiDataSize);
 	AssertString(szLonger, szResult);
 
 	//An object added and removed in the same transaction never reaches the Codabase.
@@ -237,7 +237,7 @@ void TestWriteTransactionIteration(void)
 	oi = pcTransaction->StartIndexIteration(&sIter, szData, &iDataSize, 256);
 	AssertLong(1LL, oi);
 	AssertString(szUno, szData);
-	AssertSize(4, iDataSize);
+	AssertLSize(4, iDataSize);
 	memset(szData, 0, 256);
 	oi = pcTransaction->IndexIterate(&sIter, szData, &iDataSize, 256);
 	AssertLong(3LL, oi);

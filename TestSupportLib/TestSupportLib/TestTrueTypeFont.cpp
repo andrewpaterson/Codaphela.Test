@@ -681,8 +681,8 @@ uint8* GetMostOpaqueGlyphPixel(Ptr<CGlyph> pGlyph)
 	CSubImage*		pcSubImage;
 	uint8*			puiPixel;
 	uint8*			puiMost;
-	int				x;
-	int				y;
+	int32			x;
+	int32			y;
 
 	pImage = pGlyph->GetSourceImage();
 	pcSubImage = pGlyph->GetSubImage();

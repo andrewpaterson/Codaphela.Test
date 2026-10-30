@@ -568,12 +568,12 @@ void TestMapBlockPutDifferenceSizeDuplicates(void)
 	SMNode*				pcNode;
 
 	cAllocator.Init(&gcSystemAllocator);
-	AssertSize(0, cAllocator.AllocatedUserSize());
+	AssertLSize(0, cAllocator.AllocatedUserSize());
 
 	cIndex.Init(&cAllocator);
 	cAccess.Init(&cIndex);
 	AssertSize(0, cIndex.NumElements());
-	AssertSize(cAllocator.AllocatedUserSize(), cIndex.ByteSize());
+	AssertLSize(cAllocator.AllocatedUserSize(), cIndex.ByteSize());
 
 	iKeyLength = strlen("Spoedling");
 	AssertNull(cIndex.GetNode("Spoedling", iKeyLength));
@@ -625,7 +625,7 @@ void TestMapBlockPutDifferenceSizeDuplicates(void)
 
 	cAccess.Kill();
 	cIndex.Kill();
-	AssertSize(0, cAllocator.AllocatedUserSize());
+	AssertLSize(0, cAllocator.AllocatedUserSize());
 }
 
 

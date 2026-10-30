@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <string.h>
 #include "BaseLib/IntegerHelper.h"
 #include "TestLib/Assert.h"
 
@@ -535,6 +537,205 @@ void TestIntegerHelperEndianness(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The bit finders checked against GetBit, for each count of bits from 0
+// to 96 and patterns of bits: the size ones, the Large ones and the Next
+// ones (Libc65's string816_16.asm and string816.asm on the W65C816).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIntegerHelperFindBitsAgainstGetBit(void)
+{
+	uint8	auiBits[14];
+	uint32	uiSeed;
+	size	iPattern;
+	size	iCount;
+	size	i;
+	size	iFirstSet;
+	size	iFirstClear;
+	size	iLastSet;
+	size	iLastClear;
+	size	iStart;
+	size	iNextSet;
+	size	iNextClear;
+
+	uiSeed = 12345;
+	for (iPattern = 0; iPattern < 24; iPattern++)
+	{
+		for (i = 0; i < 14; i++)
+		{
+			uiSeed = uiSeed * 1103515245 + 12345;
+			if (iPattern == 0)
+			{
+				auiBits[i] = 0;
+			}
+			else if (iPattern == 1)
+			{
+				auiBits[i] = 0xFF;
+			}
+			else if (iPattern < 8)
+			{
+				//Sparse: mostly zero (or mostly ones), a bit here and there.
+				auiBits[i] = (uint8)((((uiSeed >> 16) & 7) == 0) ? (1 << ((uiSeed >> 20) & 7)) : 0);
+				if (iPattern >= 5)
+				{
+					auiBits[i] = (uint8)~auiBits[i];
+				}
+			}
+			else
+			{
+				auiBits[i] = (uint8)(uiSeed >> 16);
+			}
+		}
+
+		for (iCount = 0; iCount <= 96; iCount++)
+		{
+			iFirstSet = ARRAY_ELEMENT_NOT_FOUND;
+			iFirstClear = ARRAY_ELEMENT_NOT_FOUND;
+			iLastSet = ARRAY_ELEMENT_NOT_FOUND;
+			iLastClear = ARRAY_ELEMENT_NOT_FOUND;
+			for (i = 0; i < iCount; i++)
+			{
+				if (GetBit(i, auiBits))
+				{
+					if (iFirstSet == ARRAY_ELEMENT_NOT_FOUND)
+					{
+						iFirstSet = i;
+					}
+					iLastSet = i;
+				}
+				else
+				{
+					if (iFirstClear == ARRAY_ELEMENT_NOT_FOUND)
+					{
+						iFirstClear = i;
+					}
+					iLastClear = i;
+				}
+			}
+
+			AssertSize(iFirstSet, FindFirstSetBit(auiBits, iCount));
+			AssertSize(iFirstClear, FindFirstClearBit(auiBits, iCount));
+			AssertSize(iLastSet, FindLastSetBit(auiBits, iCount));
+			AssertSize(iLastClear, FindLastClearBit(auiBits, iCount));
+			AssertLSize((iFirstSet == ARRAY_ELEMENT_NOT_FOUND) ? ARRAY_LARGE_ELEMENT_NOT_FOUND : iFirstSet, FindFirstSetBitLarge(auiBits, iCount));
+			AssertLSize((iFirstClear == ARRAY_ELEMENT_NOT_FOUND) ? ARRAY_LARGE_ELEMENT_NOT_FOUND : iFirstClear, FindFirstClearBitLarge(auiBits, iCount));
+			AssertLSize((iLastSet == ARRAY_ELEMENT_NOT_FOUND) ? ARRAY_LARGE_ELEMENT_NOT_FOUND : iLastSet, FindLastSetBitLarge(auiBits, iCount));
+			AssertLSize((iLastClear == ARRAY_ELEMENT_NOT_FOUND) ? ARRAY_LARGE_ELEMENT_NOT_FOUND : iLastClear, FindLastClearBitLarge(auiBits, iCount));
+
+			for (iStart = 0; iStart < iCount; iStart += 5)
+			{
+				iNextSet = ARRAY_ELEMENT_NOT_FOUND;
+				iNextClear = ARRAY_ELEMENT_NOT_FOUND;
+				for (i = iStart; i < iCount; i++)
+				{
+					if (GetBit(i, auiBits))
+					{
+						if (iNextSet == ARRAY_ELEMENT_NOT_FOUND)
+						{
+							iNextSet = i;
+						}
+					}
+					else if (iNextClear == ARRAY_ELEMENT_NOT_FOUND)
+					{
+						iNextClear = i;
+					}
+				}
+				AssertLSize((iNextSet == ARRAY_ELEMENT_NOT_FOUND) ? ARRAY_LARGE_ELEMENT_NOT_FOUND : iNextSet, FindNextSetBitLarge(auiBits, iCount, iStart));
+				AssertLSize((iNextClear == ARRAY_ELEMENT_NOT_FOUND) ? ARRAY_LARGE_ELEMENT_NOT_FOUND : iNextClear, FindNextClearBitLarge(auiBits, iCount, iStart));
+			}
+		}
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// FindFirstClearBit(uint32) and FindFirstSetBit(uint64) for every bit,
+// with the bits below it the other way and the ones above random.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIntegerHelperFindBitInWord(void)
+{
+	size	i;
+	uint32	uiSeed;
+	uint32	ui;
+	uint64	ulli;
+
+	uiSeed = 54321;
+	for (i = 0; i < 32; i++)
+	{
+		uiSeed = uiSeed * 1103515245 + 12345;
+		ui = (uiSeed << i) | (((uint32)1 << i) - 1);
+		ui &= ~((uint32)1 << i);
+		AssertSize(i, FindFirstClearBit(ui));
+	}
+	AssertSize(32, FindFirstClearBit((uint32)0xFFFFFFFF));
+	AssertSize(0, FindFirstClearBit((uint32)0));
+
+	for (i = 0; i < 64; i++)
+	{
+		uiSeed = uiSeed * 1103515245 + 12345;
+		ulli = (((uint64)uiSeed << 32) | uiSeed) << i;
+		ulli |= (uint64)1 << i;
+		AssertSize(i, FindFirstSetBit(ulli));
+	}
+	AssertSize(0, FindFirstSetBit((uint64)1));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The Large bit finders past a size's count: 70000 bytes, so the words
+// cross a 64KB bank and the count of words has a high word.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIntegerHelperFindBitsLarge(void)
+{
+	uint8*	puiBits;
+	lsize	uiBytes;
+	lsize	uiBits;
+
+	uiBytes = 70000;
+	uiBits = uiBytes * 8;
+	puiBits = (uint8*)malloc(uiBytes);
+	AssertNotNull(puiBits);
+	memset(puiBits, 0, uiBytes);
+
+	AssertLSize(ARRAY_LARGE_ELEMENT_NOT_FOUND, FindFirstSetBitLarge(puiBits, uiBits));
+	AssertLSize(ARRAY_LARGE_ELEMENT_NOT_FOUND, FindLastSetBitLarge(puiBits, uiBits));
+	AssertLSize(0, FindFirstClearBitLarge(puiBits, uiBits));
+	AssertLSize(uiBits - 1, FindLastClearBitLarge(puiBits, uiBits));
+
+	SetBitLarge(553333, puiBits, true);
+	AssertLSize(553333, FindFirstSetBitLarge(puiBits, uiBits));
+	AssertLSize(553333, FindLastSetBitLarge(puiBits, uiBits));
+	AssertLSize(ARRAY_LARGE_ELEMENT_NOT_FOUND, FindFirstSetBitLarge(puiBits, 553333));
+	AssertLSize(553333, FindFirstSetBitLarge(puiBits, 553334));
+	AssertLSize(553333, FindNextSetBitLarge(puiBits, uiBits, 70001));
+
+	SetBitLarge(524290, puiBits, true);
+	SetBitLarge(70001, puiBits, true);
+	AssertLSize(70001, FindFirstSetBitLarge(puiBits, uiBits));
+	AssertLSize(524290, FindNextSetBitLarge(puiBits, uiBits, 70002));
+	AssertLSize(553333, FindLastSetBitLarge(puiBits, uiBits));
+	AssertLSize(524290, FindLastSetBitLarge(puiBits, 553333));
+	AssertLSize(70001, FindLastSetBitLarge(puiBits, 524290));
+
+	memset(puiBits, 0xFF, uiBytes);
+	AssertLSize(ARRAY_LARGE_ELEMENT_NOT_FOUND, FindFirstClearBitLarge(puiBits, uiBits));
+	AssertLSize(ARRAY_LARGE_ELEMENT_NOT_FOUND, FindLastClearBitLarge(puiBits, uiBits));
+	SetBitLarge(524287, puiBits, false);
+	SetBitLarge(524288, puiBits, false);
+	AssertLSize(524287, FindFirstClearBitLarge(puiBits, uiBits));
+	AssertLSize(524288, FindLastClearBitLarge(puiBits, uiBits));
+	AssertLSize(524288, FindNextClearBitLarge(puiBits, uiBits, 524288));
+	AssertLSize(ARRAY_LARGE_ELEMENT_NOT_FOUND, FindNextClearBitLarge(puiBits, uiBits, 524289));
+
+	free(puiBits);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestIntegerHelper(void)
@@ -551,5 +752,8 @@ void TestIntegerHelper(void)
 	TestIntegerHelperBitFunctions();
 	TestIntegerHelperMisc();
 	TestIntegerHelperEndianness();
+	TestIntegerHelperFindBitsAgainstGetBit();
+	TestIntegerHelperFindBitInWord();
+	TestIntegerHelperFindBitsLarge();
 }
 

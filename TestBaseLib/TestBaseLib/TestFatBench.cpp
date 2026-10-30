@@ -23,7 +23,23 @@ struct SFatBenchFile
 };
 
 
-static uint32	guiFatBenchSeed;
+static uint16	guiFatBenchSeed;		//Never 0.
+static uint8	gauiFatBenchPool[256];	//Random bytes the files' contents are copied from (FatBenchFill).
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A 16 bit xorshift (7, 9, 8): cheap on the 65 targets, so the benchmark's
+// time is the FAT code's, not its random numbers'.
+//
+//////////////////////////////////////////////////////////////////////////
+static uint16 FatBenchRandom16(void)
+{
+	guiFatBenchSeed ^= (uint16)(guiFatBenchSeed << 7);
+	guiFatBenchSeed ^= (uint16)(guiFatBenchSeed >> 9);
+	guiFatBenchSeed ^= (uint16)(guiFatBenchSeed << 8);
+	return guiFatBenchSeed;
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -32,22 +48,55 @@ static uint32	guiFatBenchSeed;
 //////////////////////////////////////////////////////////////////////////
 static uint32 FatBenchRandom(void)
 {
-	guiFatBenchSeed = guiFatBenchSeed * 1103515245 + 12345;
-	return guiFatBenchSeed >> 8;
+	uint32	uiHigh;
+
+	uiHigh = FatBenchRandom16();
+	return (uiHigh << 16) | FatBenchRandom16();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The pool of random bytes FatBenchFill copies.
+//
+//////////////////////////////////////////////////////////////////////////
+static void FatBenchFillPool(void)
+{
+	uint16	i;
+	uint16	uiRandom;
+
+	for (i = 0; i < 256; i += 2)
+	{
+		uiRandom = FatBenchRandom16();
+		gauiFatBenchPool[i] = (uint8)uiRandom;
+		gauiFatBenchPool[i + 1] = (uint8)(uiRandom >> 8);
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// The pool's bytes from a random place in it, round and round (a fill
+// differs from the last by where it starts): copied, so the benchmark's
+// time is the FAT code's.
 //
 //////////////////////////////////////////////////////////////////////////
 static void FatBenchFill(uint8* puiData, uint32 uiSize)
 {
-	uint32	i;
+	uint32	uiDone;
+	uint32	uiLength;
+	uint32	uiStart;
 
-	for (i = 0; i < uiSize; i++)
+	uiStart = FatBenchRandom16() & 255;
+	for (uiDone = 0; uiDone < uiSize; uiDone += uiLength)
 	{
-		puiData[i] = (uint8)FatBenchRandom();
+		uiLength = 256 - uiStart;
+		if (uiLength > uiSize - uiDone)
+		{
+			uiLength = uiSize - uiDone;
+		}
+		memcpy(&puiData[uiDone], &gauiFatBenchPool[uiStart], uiLength);
+		uiStart = 0;
 	}
 }
 
@@ -283,7 +332,8 @@ static void FatBenchRun(uint8 uiSectorsPerCluster, uint64 uiSectors)
 	uint8*			puiBuffer;
 	uint32			i;
 
-	guiFatBenchSeed = 0x5EED + uiSectorsPerCluster;
+	guiFatBenchSeed = (uint16)(0x5EED + uiSectorsPerCluster);
+	FatBenchFillPool();
 
 	cMemoryDrive.Init(uiSectors);
 	eResult = FatFormat(FAT_FS_TYPE_FAT32, "Bench", uiSectorsPerCluster, &cMemoryDrive);
