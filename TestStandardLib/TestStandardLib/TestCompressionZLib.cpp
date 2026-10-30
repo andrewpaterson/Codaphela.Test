@@ -17,7 +17,7 @@
 // Inflates puiData into pacOutput (which must be initialised).
 //
 //////////////////////////////////////////////////////////////////////////
-bool InflateMemory(uint8* puiData, size uiDataSize, bool bZLib, CArrayUint8* pacOutput, size uiMaxOutput = INFLATER_UNLIMITED)
+bool InflateMemory(uint8* puiData, lsize uiDataSize, bool bZLib, CArrayLargeUint8* pacOutput, lsize uiMaxOutput = INFLATER_UNLIMITED)
 {
 	CFileBasic	cFile;
 	CInflater	cInflater;
@@ -39,7 +39,7 @@ bool InflateMemory(uint8* puiData, size uiDataSize, bool bZLib, CArrayUint8* pac
 // Deflates puiData into pcMemory (which must be initialised).
 //
 //////////////////////////////////////////////////////////////////////////
-bool DeflateMemory(uint8* puiData, size uiDataSize, bool bZLib, CMemoryFile* pcMemory)
+bool DeflateMemory(uint8* puiData, lsize uiDataSize, bool bZLib, CMemoryFile* pcMemory)
 {
 	CFileBasic	cFile;
 	CDeflater	cDeflater;
@@ -65,11 +65,11 @@ bool DeflateMemory(uint8* puiData, size uiDataSize, bool bZLib, CMemoryFile* pcM
 // Returns the compressed size.
 //
 //////////////////////////////////////////////////////////////////////////
-size AssertDeflateRoundTrip(uint8* puiData, size uiDataSize, bool bZLib)
+lsize AssertDeflateRoundTrip(uint8* puiData, lsize uiDataSize, bool bZLib)
 {
 	CMemoryFile		cMemory;
-	CArrayUint8		acOutput;
-	size			uiCompressedSize;
+	CArrayLargeUint8		acOutput;
+	lsize			uiCompressedSize;
 
 	cMemory.Init();
 	AssertTrue(DeflateMemory(puiData, uiDataSize, bZLib, &cMemory));
@@ -186,7 +186,7 @@ void TestCompressionBits(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCompressionInflateZLib(void)
 {
-	CArrayUint8		acOutput;
+	CArrayLargeUint8		acOutput;
 	const char*		szHello = "Hello Hello Hello Hello Codaphela";
 	const char*		szLetters = "abbaadbabbabadcaabaababcbaabcaabacdbababcaacbaacac";
 
@@ -238,7 +238,7 @@ void TestCompressionInflateZLib(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCompressionInflateRaw(void)
 {
-	CArrayUint8		acOutput;
+	CArrayLargeUint8		acOutput;
 
 	//A literal 'A' then a match of length 3 at distance 1.
 	uint8 auiOverlap[] = { 0x73, 0x04, 0x02, 0x00 };
@@ -258,7 +258,7 @@ void TestCompressionInflateRaw(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCompressionInflateBad(void)
 {
-	CArrayUint8		acOutput;
+	CArrayLargeUint8		acOutput;
 
 	uint8 auiBadCheck[] = { 0x78, 0x02, 0x03, 0x00, 0x00, 0x00, 0x00, 0x01 };
 	uint8 auiBadMethod[] = { 0x77, 0x09, 0x03, 0x00, 0x00, 0x00, 0x00, 0x01 };
@@ -297,8 +297,8 @@ void TestCompressionInflateBad(void)
 void TestCompressionDeflate(void)
 {
 	uint8*			puiData;
-	size			uiSize;
-	size			i;
+	lsize			uiSize;
+	lsize			i;
 	uint32			uiRandom;
 	CMemoryFile		cFirst;
 	CMemoryFile		cSecond;
@@ -368,7 +368,7 @@ void TestCompressionDeflate(void)
 // puiTotalSize.
 //
 //////////////////////////////////////////////////////////////////////////
-uint32 DeflatedCRC(uint8* puiData, size uiDataSize, bool bZLib, size* puiTotalSize)
+uint32 DeflatedCRC(uint8* puiData, lsize uiDataSize, bool bZLib, lsize* puiTotalSize)
 {
 	CMemoryFile		cMemory;
 	CCRC32			cCRC;
@@ -394,9 +394,9 @@ uint32 DeflatedCRC(uint8* puiData, size uiDataSize, bool bZLib, size* puiTotalSi
 void TestCompressionDeflateMatches(void)
 {
 	uint8*			puiData;
-	size			i;
-	size			uiLength;
-	size			uiTotalSize;
+	lsize			i;
+	lsize			uiLength;
+	lsize			uiTotalSize;
 	uint32			uiRandom;
 	uint32			uiCRC;
 	CCRC32			cCRCs;
@@ -451,7 +451,7 @@ void TestCompressionDeflateMatches(void)
 		cCRCs.Update((uint8*)&uiCRC, sizeof(uint32));
 	}
 
-	AssertSize(79768, uiTotalSize);
+	AssertLSize(79768, uiTotalSize);
 	AssertInt((uint32)0xB8EF328D, cCRCs.Get());
 	free(puiData);
 }
@@ -466,17 +466,17 @@ void TestCompressionDeflateMatches(void)
 void TestCompressionInflateCodes(void)
 {
 	uint8*			puiData;
-	size			i;
-	size			j;
+	lsize			i;
+	lsize			j;
 	uint32			uiRandom;
 	CMemoryFile		cMemory;
 	CMemoryFile		cFollowed;
 	CFileBasic		cFile;
 	CInflater		cInflater;
-	CArrayUint8		acOutput;
+	CArrayLargeUint8		acOutput;
 	uint8			uiByte;
 	uint8			auiFollowing[2] = { 0xA5, 0x5A };
-	size			uiCompressedSize;
+	lsize			uiCompressedSize;
 	bool			bResult;
 
 	puiData = (uint8*)malloc(100000);

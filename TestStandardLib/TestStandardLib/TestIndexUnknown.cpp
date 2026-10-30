@@ -148,7 +148,7 @@ void TestIndexUnknownGet(void)
 	for (ui = 0; ui < 12000; ui++)
 	{
 		pcValue = gcUnknowns.Add<CTestUnknownJobbie>();
-		pcValue->Init((int32)((ui + 1) * 7), SizeToString(ui));
+		pcValue->Init(((int32)ui + 1) * 7, SizeToString(ui));
 		szKey = SizeToString(ui);
 		cIndex.Put(szKey, pcValue);
 	}
@@ -223,7 +223,7 @@ void TestIndexUnknownLoad(void)
 	for (ui = 0; ui < 12000; ui++)
 	{
 		pcValue1 = gcUnknowns.Add<CTestUnknownJobbie>();
-		pcValue1->Init((int32)((ui + 1) * 7), SizeToString(ui));
+		pcValue1->Init(((int32)ui + 1) * 7, SizeToString(ui));
 		szKey1 = SizeToString(ui);
 		cIndex.Put(szKey1, pcValue1);
 	}

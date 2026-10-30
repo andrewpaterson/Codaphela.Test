@@ -783,10 +783,10 @@ void TestFileUtilCopyDirFailures(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestFileUtilWriteLargeFile(const char* szFilename, size iSize)
+void TestFileUtilWriteLargeFile(const char* szFilename, lsize iSize)
 {
 	FILE*	pFile;
-	size	i;
+	lsize	i;
 
 	pFile = fopen(szFilename, "wb");
 	for (i = 0; i < iSize; i++)
@@ -804,7 +804,7 @@ void TestFileUtilWriteLargeFile(const char* szFilename, size iSize)
 void TestFileUtilCopyAndCompare(void)
 {
 	CFileUtil	cFileUtil;
-	size		iLarge;
+	lsize		iLarge;
 	FILE*		pFile;
 
 	cFileUtil.RemoveDir(FILE_UTIL_TEST_DIR);

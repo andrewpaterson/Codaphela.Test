@@ -286,10 +286,10 @@ void TestEmbeddedObjectContainerDehollowfication(void)
 	ObjectsKill(false);
 
 	uiEmbeddedTestSize = OBJECT_SIZE + sizeof(int32) + sizeof(float) + POINTER_SIZE;
-	AssertSize(sizeof(CEmbeddedTest), uiEmbeddedTestSize);
+	AssertLayoutSize(sizeof(CEmbeddedTest), uiEmbeddedTestSize);
 	uiEmbeddedContainerSize = OBJECT_SIZE + 4 + uiEmbeddedTestSize + sizeof(int32) + uiEmbeddedTestSize + sizeof(float) + POINTER_SIZE + 12  /* random padding I assume */;
-	AssertSize(sizeof(CEmbeddedContainer), uiEmbeddedContainerSize);
-	AssertSize(sizeof(CEmbeddedComplex), OBJECT_SIZE + uiEmbeddedTestSize + sizeof(int32) * 2 + sizeof(CArray<>) + uiEmbeddedContainerSize + POINTER_SIZE);
+	AssertLayoutSize(sizeof(CEmbeddedContainer), uiEmbeddedContainerSize);
+	AssertLayoutSize(sizeof(CEmbeddedComplex), OBJECT_SIZE + uiEmbeddedTestSize + sizeof(int32) * 2 + sizeof(CArray<>) + uiEmbeddedContainerSize + POINTER_SIZE);
 
 	pcSequence = CSequenceFactory::Create(szDirectory, DS_No);
 	pcDatabase = CCodabaseFactory::Create(szDirectory, IWT_No, DS_No);

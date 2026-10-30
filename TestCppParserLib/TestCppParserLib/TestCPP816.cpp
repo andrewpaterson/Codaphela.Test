@@ -1888,7 +1888,12 @@ void TestCPP816SizeLsizeBugs(void)
 	AssertInt(1, TestCPP816CountWarnings("long long gl;\nvoid F(unsigned short ui) { gl = ui * 0x39e7; }\n", "widened after it may have wrapped"));
 	AssertInt(1, TestCPP816CountWarnings("void* Remap(void* pv, long l);\nvoid* F(void* pv, unsigned short ui) { return Remap(pv, ui << 3); }\n", "widened after it may have wrapped"));
 	AssertInt(0, TestCPP816CountWarnings("long long gl;\nvoid F(unsigned short ui) { gl = (long long)ui * 0x39e7; }\n", "widened after it may have wrapped"));
-	AssertInt(0, TestCPP816CountWarnings("long long gl;\nvoid F(unsigned short ui) { gl = (long long)(ui * 0x39e7); }\n", "widened after it may have wrapped"));
+	AssertInt(1, TestCPP816CountWarnings("long long gl;\nvoid F(unsigned short ui) { gl = (long long)(ui * 0x39e7); }\n", "widened after it may have wrapped"));
+	//TestIndexUnknown: the cast doesn't make the multiply wider.
+	AssertInt(1, TestCPP816CountWarnings("void Init(long l);\nvoid F(unsigned short ui) { Init((long)((ui + 1) * 7)); }\n", "widened after it may have wrapped"));
+	AssertInt(0, TestCPP816CountWarnings("void Init(long l);\nvoid F(unsigned short ui) { Init(((long)ui + 1) * 7); }\n", "widened after it may have wrapped"));
+	AssertInt(0, TestCPP816CountWarnings("long F(void) { return (long)(4 * 7); }\n", "widened after it may have wrapped"));
+	AssertInt(0, TestCPP816CountWarnings("unsigned short F(unsigned short a, unsigned short b) { return (unsigned short)(a * b); }\n", "widened after it may have wrapped"));
 	AssertInt(0, TestCPP816CountWarnings("long gl;\nvoid F(unsigned short ui) { gl = ui + 1; }\n", "widened after it may have wrapped"));
 
 	//CChars::PassifyNewlines: ::PassifyNewlines' 16 bit MAX_SIZE in a 32 bit lsize, compared with MAX_LSIZE.

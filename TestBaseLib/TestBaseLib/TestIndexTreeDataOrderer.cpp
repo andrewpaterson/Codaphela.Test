@@ -128,7 +128,7 @@ void TestIndexTreeDataOrdererRemapListNodes(void)
 	do 
 	{
 		i--;
-		cAccess.PutIntLong((int32)(i << 8), i);
+		cAccess.PutIntLong((int32)i << 8, i);
 	}
 	while (i != 0);
 
@@ -136,7 +136,7 @@ void TestIndexTreeDataOrdererRemapListNodes(void)
 	do
 	{
 		i--;
-		cAccess.PutIntChar((int32)(i << 8), 'A' + (char)i);
+		cAccess.PutIntChar((int32)i << 8, 'A' + (char)i);
 	}
 	while (i != 0);
 
@@ -144,17 +144,17 @@ void TestIndexTreeDataOrdererRemapListNodes(void)
 
 	for (i = 0; i <= 60; i+=2)
 	{
-		AssertTrue(cAccess.HasInt((int32)(i << 8)));
+		AssertTrue(cAccess.HasInt((int32)i << 8));
 	}
 	AssertIndexTreeDataOrdererString(&cOrderer, "}{ywusqomkigeca_][YWUSQOMKIGECABDFHJLNPRTVXZ\\^`bdfhjlnprtvxz|");
 
 	for (i = 0; i <= 60; i++)
 	{
-		cAccess.PutIntLong((int32)(i << 8), i);
+		cAccess.PutIntLong((int32)i << 8, i);
 	}
 	for (i = 0; i <= 60; i++)
 	{
-		cAccess.PutIntChar((int32)(i << 8), 'A' + (char)i);
+		cAccess.PutIntChar((int32)i << 8, 'A' + (char)i);
 	}
 	AssertIndexTreeDataOrdererString(&cOrderer, "}|{zyxwvutsrqponmlkjihgfedcba`_^]\\[ZYXWVUTSRQPONMLKJIHGFEDCBA");
 
@@ -162,7 +162,7 @@ void TestIndexTreeDataOrdererRemapListNodes(void)
 	do
 	{
 		i -= 2;
-		AssertTrue(cAccess.HasInt((int32)(i << 8)));
+		AssertTrue(cAccess.HasInt((int32)i << 8));
 	}
 	while (i != 0);
 

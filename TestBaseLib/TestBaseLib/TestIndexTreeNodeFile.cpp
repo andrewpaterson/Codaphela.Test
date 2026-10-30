@@ -93,7 +93,7 @@ void TestIndexTreeNodeFileRootMemory(void)
 	AssertFalse(pcNode->HasData());
 	AssertTrue(pcNode->ValidateNodesEmpty());
 
-	pcNode->Contain(33, INDEX_TREE_FILE_NODE_UNALLOCATED);
+	pcNode->Contain(33, INDEX_TREE_FILE_NODE_UNALLOCATED_BYTE);
 	AssertFalse(pcNode->IsEmpty());
 	AssertTrue(pcNode->HasNodes());
 	AssertFalse(pcNode->HasData());

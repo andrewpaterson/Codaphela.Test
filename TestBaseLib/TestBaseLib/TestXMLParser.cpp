@@ -315,6 +315,7 @@ void TestXMLParserErrors(void)
 </Root>\n";
 
 	cMemory.Init();
+	cMemory.Open(EFM_ReadWrite_Create);
 	cLogger.Init(&cMemory, NULL);
 	sLogConfig = cLogger.SetSilent();
 	cMarkup.Init();

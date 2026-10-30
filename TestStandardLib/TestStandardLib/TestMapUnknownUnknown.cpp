@@ -203,7 +203,7 @@ void TestMapUnknownUnknownGet(void)
 		pcKey = gcUnknowns.Add<CTestNamedUnknown>();
 		pcValue = gcUnknowns.Add<CTestUnknownJobbie>();
 		pcKey->Init(SizeToString(ui));
-		pcValue->Init((int32)((ui + 1) * 7), SizeToString(ui));
+		pcValue->Init(((int32)ui + 1) * 7, SizeToString(ui));
 		aPtrs.Add(pcKey);
 		cMap.Put(pcKey, pcValue);
 	}
@@ -290,7 +290,7 @@ void TestMapUnknownUnknownLoad(void)
 		pcKey = gcUnknowns.Add<CTestNamedUnknown>();
 		pcValue = gcUnknowns.Add<CTestUnknownJobbie>();
 		pcKey->Init(SizeToString(ui));
-		pcValue->Init((int32)((ui + 1) * 7), SizeToString(ui));
+		pcValue->Init(((int32)ui + 1) * 7, SizeToString(ui));
 		cMap.Put(pcKey, pcValue);
 	}
 	AssertSize(12000, cMap.NumElements());

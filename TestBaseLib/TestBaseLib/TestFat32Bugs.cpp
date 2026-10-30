@@ -684,7 +684,7 @@ void TestFatBugLongNameKeptForNextEntry(void)
 	uint8			uiChecksum;
 	uint32			uiSize;
 	uint32			uiCount;
-	int				i;
+	int32			i;  //Counts past 32767.
 
 	FatBugVolume(&cDrive, &cVolume, 1);
 	FatBugFill(auiData, 100, 13);

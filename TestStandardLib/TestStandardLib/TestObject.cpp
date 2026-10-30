@@ -23,17 +23,17 @@ void TestObjectSize(void)
 	ObjectsInit();
 
 #ifdef BUILD_64
-	AssertSize(32, sizeof(CUnknown));
+	AssertLayoutSize(32, sizeof(CUnknown));
 #else
-	AssertSize(16, sizeof(CUnknown));
+	AssertLayoutSize(16, sizeof(CUnknown));
 #endif // BUILD_64
-	AssertSize(EMBEDDED_OBJECT_SIZE, sizeof(CEmbeddedObject));
-	AssertSize(BASE_OBJECT_SIZE, sizeof(CBaseObject));  //Check your struct alignement.  This is too large.
-	AssertSize(OBJECT_SIZE, sizeof(CObject));
-	AssertSize(OBJECT_SIZE + POINTER_SIZE + 8, sizeof(CRoot));
-	AssertSize(OBJECT_SIZE + 8, sizeof(CSetObject));
-	AssertSize(OBJECT_SIZE + 8, sizeof(CArrayObject));
-	AssertSize(POINTER_SIZE, sizeof(CPointer));
+	AssertLayoutSize(EMBEDDED_OBJECT_SIZE, sizeof(CEmbeddedObject));
+	AssertLayoutSize(BASE_OBJECT_SIZE, sizeof(CBaseObject));  //Check your struct alignement.  This is too large.
+	AssertLayoutSize(OBJECT_SIZE, sizeof(CObject));
+	AssertLayoutSize(OBJECT_SIZE + POINTER_SIZE + 8, sizeof(CRoot));
+	AssertLayoutSize(OBJECT_SIZE + 8, sizeof(CSetObject));
+	AssertLayoutSize(OBJECT_SIZE + 8, sizeof(CArrayObject));
+	AssertLayoutSize(POINTER_SIZE, sizeof(CPointer));
 
 	ObjectsFlush();
 	ObjectsKill();

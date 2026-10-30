@@ -286,7 +286,7 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	DataIOInit();
 
 	uiTestObjectSize = sizeof(CTestObjectWithFields);
-	AssertSize(OBJECT_SIZE + POINTER_SIZE + POINTER_SIZE + 128, uiTestObjectSize);
+	AssertLayoutSize(OBJECT_SIZE + POINTER_SIZE + POINTER_SIZE + 128, uiTestObjectSize);
 	
 	uiBoolSize = sizeof(Bool);  // 	uint16(muiClassType) + uint16(muiNegativeEmbeddingOffset) + uint8(mVal:bool) + uint8(padding)
 	AssertSize(6, uiBoolSize);
@@ -374,13 +374,13 @@ void TestObjectDirtyOnPrimitiveAssignmentWithEmbedded(void)
 	AssertSize(3, pacPointers->NumElements());
 	pcField = (CPointerField*)pacPointers->GetPtr(0);
 	AssertString("mpObjectA", pcField->GetName());
-	AssertSize(OBJECT_SIZE + uiBoolSize, pcField->GetOffset());
+	AssertLayoutSize(OBJECT_SIZE + uiBoolSize, pcField->GetOffset());
 	pcField = (CPointerField*)pacPointers->GetPtr(1);
 	AssertString("mpObjectB", pcField->GetName());
-	AssertSize(OBJECT_SIZE + uiBoolSize + POINTER_SIZE + uiTestObjectSize, pcField->GetOffset());
+	AssertLayoutSize(OBJECT_SIZE + uiBoolSize + POINTER_SIZE + uiTestObjectSize, pcField->GetOffset());
 	pcField = (CPointerField*)pacPointers->GetPtr(2);
 	AssertString("mpObjectC", pcField->GetName());
-	AssertSize(OBJECT_SIZE + uiBoolSize + POINTER_SIZE + uiTestObjectSize + POINTER_SIZE + uiTestObjectSize, pcField->GetOffset());
+	AssertLayoutSize(OBJECT_SIZE + uiBoolSize + POINTER_SIZE + uiTestObjectSize + POINTER_SIZE + uiTestObjectSize, pcField->GetOffset());
 
 	pcObject = (CTestEmbeddedObjectWithFields*)pObject.Object();
 	pcpPtr = (CPointer*)RemapSinglePointer(pcObject, pcField->GetOffset());
