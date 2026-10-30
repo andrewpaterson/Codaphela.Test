@@ -20,10 +20,10 @@ void TestImageCelCropBorders(void)
 	cCel.Init(&pcImage);
 	cCel.CropTransparentBorders();
 
-	AssertInt(24, cCel.GetSubImage()->GetFullWidth());
-	AssertInt(24, cCel.GetSubImage()->GetImageWidth());
-	AssertInt(24, cCel.GetSubImage()->GetFullHeight());
-	AssertInt(24, cCel.GetSubImage()->GetImageHeight());
+	AssertInt((int32)24, cCel.GetSubImage()->GetFullWidth());
+	AssertInt((int32)24, cCel.GetSubImage()->GetImageWidth());
+	AssertInt((int32)24, cCel.GetSubImage()->GetFullHeight());
+	AssertInt((int32)24, cCel.GetSubImage()->GetImageHeight());
 
 	cCel.Kill();
 	pcImage->Kill();
@@ -32,12 +32,12 @@ void TestImageCelCropBorders(void)
 	cCel.Init(&pcImage);
 	cCel.CropTransparentBorders();
 
-	AssertInt(24, cCel.GetSubImage()->GetFullWidth());
-	AssertInt(21, cCel.GetSubImage()->GetImageWidth());
-	AssertInt(24, cCel.GetSubImage()->GetFullHeight());
-	AssertInt(18, cCel.GetSubImage()->GetImageHeight());
-	AssertInt(1, cCel.GetSubImage()->mcImageRect.msTopLeft.x);
-	AssertInt(3, cCel.GetSubImage()->mcImageRect.msTopLeft.y);
+	AssertInt((int32)24, cCel.GetSubImage()->GetFullWidth());
+	AssertInt((int32)21, cCel.GetSubImage()->GetImageWidth());
+	AssertInt((int32)24, cCel.GetSubImage()->GetFullHeight());
+	AssertInt((int32)18, cCel.GetSubImage()->GetImageHeight());
+	AssertInt((int32)1, cCel.GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt((int32)3, cCel.GetSubImage()->mcImageRect.msTopLeft.y);
 
 	cCel.Kill();
 	pcImage->Kill();
@@ -46,10 +46,10 @@ void TestImageCelCropBorders(void)
 	cCel.Init(&pcImage);
 	cCel.CropTransparentBorders();
 
-	AssertInt(24, cCel.GetSubImage()->GetFullWidth());
-	AssertInt(0, cCel.GetSubImage()->GetImageWidth());
-	AssertInt(24, cCel.GetSubImage()->GetFullHeight());
-	AssertInt(0, cCel.GetSubImage()->GetImageHeight());
+	AssertInt((int32)24, cCel.GetSubImage()->GetFullWidth());
+	AssertInt((int32)0, cCel.GetSubImage()->GetImageWidth());
+	AssertInt((int32)24, cCel.GetSubImage()->GetFullHeight());
+	AssertInt((int32)0, cCel.GetSubImage()->GetImageHeight());
 	AssertBool(true, cCel.GetSubImage()->IsImageEmpty());
 
 	cCel.Kill();
@@ -79,15 +79,15 @@ void TestImageCelMaskCropBorders(void)
 	AssertInt(1, pcRect1->GetMask());
 	AssertInt(2, pcRect2->GetMask());
 
-	AssertInt(36, pcRect1->GetSubImage()->GetFullWidth());
-	AssertInt(28, pcRect1->GetSubImage()->GetImageWidth());
-	AssertInt(22, pcRect1->GetSubImage()->GetFullHeight());
-	AssertInt(18, pcRect1->GetSubImage()->GetImageHeight());
+	AssertInt((int32)36, pcRect1->GetSubImage()->GetFullWidth());
+	AssertInt((int32)28, pcRect1->GetSubImage()->GetImageWidth());
+	AssertInt((int32)22, pcRect1->GetSubImage()->GetFullHeight());
+	AssertInt((int32)18, pcRect1->GetSubImage()->GetImageHeight());
 
-	AssertInt(31, pcRect2->GetSubImage()->GetFullWidth());
-	AssertInt(25, pcRect2->GetSubImage()->GetImageWidth());
-	AssertInt(22, pcRect2->GetSubImage()->GetFullHeight());
-	AssertInt(11, pcRect2->GetSubImage()->GetImageHeight());
+	AssertInt((int32)31, pcRect2->GetSubImage()->GetFullWidth());
+	AssertInt((int32)25, pcRect2->GetSubImage()->GetImageWidth());
+	AssertInt((int32)22, pcRect2->GetSubImage()->GetFullHeight());
+	AssertInt((int32)11, pcRect2->GetSubImage()->GetImageHeight());
 
 	cDivider.Kill();
 	pcImage = NULL;
@@ -109,12 +109,12 @@ void TestImageCelTransparentColourCropBorders(void)
 	cCel.Init(&pcImage, (SImageColour*)&cBlack);
 	cCel.CropTransparentBorders();
 
-	AssertInt(24, cCel.GetSubImage()->GetFullWidth());
-	AssertInt(18, cCel.GetSubImage()->GetImageWidth());
-	AssertInt(24, cCel.GetSubImage()->GetFullHeight());
-	AssertInt(19, cCel.GetSubImage()->GetImageHeight());
-	AssertInt(4, cCel.GetSubImage()->mcImageRect.msTopLeft.x);
-	AssertInt(2, cCel.GetSubImage()->mcImageRect.msTopLeft.y);
+	AssertInt((int32)24, cCel.GetSubImage()->GetFullWidth());
+	AssertInt((int32)18, cCel.GetSubImage()->GetImageWidth());
+	AssertInt((int32)24, cCel.GetSubImage()->GetFullHeight());
+	AssertInt((int32)19, cCel.GetSubImage()->GetImageHeight());
+	AssertInt((int32)4, cCel.GetSubImage()->mcImageRect.msTopLeft.x);
+	AssertInt((int32)2, cCel.GetSubImage()->mcImageRect.msTopLeft.y);
 
 	cCel.Kill();
 	pcImage->Kill();

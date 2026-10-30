@@ -17,7 +17,7 @@ void TestSoundInit(void)
 	Ptr<CSound> pcSound = OMalloc<CSound>(44100, 100, PT_int16, SOUND_LEFT, SOUND_RIGHT, CHANNEL_STOP);
 	AssertSize(2, pcSound->NumChannels());
 	AssertSize(100, pcSound->GetNumFrames());
-	AssertInt(44100, pcSound->GetSampleRate());
+	AssertInt((int32)44100, pcSound->GetSampleRate());
 	AssertSize(4, pcSound->GetFrameByteStride());
 	AssertSize(400, pcSound->GetByteSize());
 	AssertTrue(pcSound->HasChannels(SOUND_LEFT, SOUND_RIGHT, CHANNEL_STOP));
@@ -63,10 +63,10 @@ void TestSoundSampleConversion(void)
 	pcSound->SetSample(2, 0, 1.0);
 	pcSound->SetSample(3, 0, -7.0);
 	memcpy(ai16, pcSound->GetData(), sizeof(ai16));
-	AssertInt(-32768, ai16[0]);
+	AssertInt((int16)-32768, ai16[0]);
 	AssertInt(16384, ai16[1]);
 	AssertInt(32767, ai16[2]);
-	AssertInt(-32768, ai16[3]);
+	AssertInt((int16)-32768, ai16[3]);
 	AssertDouble(-1.0, pcSound->GetSample(0, 0), 12);
 	AssertDouble(0.5, pcSound->GetSample(1, 0), 12);
 
@@ -210,12 +210,12 @@ void TestSoundChange(void)
 	pcSound->SetNumFrames(50);
 	pcSound->SetSampleRate(16000);
 	AssertSize(50, pcSound->GetNumFrames());
-	AssertInt(16000, pcSound->GetSampleRate());
+	AssertInt((int32)16000, pcSound->GetSampleRate());
 	AssertTrue(pcSound->EndChange());
 
 	AssertSize(3, pcSound->NumChannels());
 	AssertSize(50, pcSound->GetNumFrames());
-	AssertInt(16000, pcSound->GetSampleRate());
+	AssertInt((int32)16000, pcSound->GetSampleRate());
 	AssertSize(6, pcSound->GetFrameByteStride());
 
 	iMismatches = 0;
@@ -276,11 +276,11 @@ void TestSoundChannels(void)
 	AssertInt(SS_BackRight, GetSoundSpeaker(SOUND_BACK_RIGHT));
 	AssertInt(NUM_SOUND_SPEAKERS, GetSoundSpeaker(IMAGE_DIFFUSE_RED));
 
-	AssertInt(0x00001, GetSoundSpeakerMask(SOUND_FRONT_LEFT));
-	AssertInt(0x00020, GetSoundSpeakerMask(SOUND_BACK_RIGHT));
-	AssertInt(0x20000, GetSoundSpeakerMask(SOUND_TOP_BACK_RIGHT));
-	AssertInt(0, GetSoundSpeakerMask(SOUND_MONO));
-	AssertInt(0, GetSoundSpeakerMask(SOUND_DISCRETE(0)));
+	AssertInt((uint32)0x00001, GetSoundSpeakerMask(SOUND_FRONT_LEFT));
+	AssertInt((uint32)0x00020, GetSoundSpeakerMask(SOUND_BACK_RIGHT));
+	AssertInt((uint32)0x20000, GetSoundSpeakerMask(SOUND_TOP_BACK_RIGHT));
+	AssertInt((uint32)0, GetSoundSpeakerMask(SOUND_MONO));
+	AssertInt((uint32)0, GetSoundSpeakerMask(SOUND_DISCRETE(0)));
 	AssertSize(SOUND_LOW_FREQUENCY, GetSoundSpeakerForMaskBit(3));
 	AssertSize(CHANNEL_STOP, GetSoundSpeakerForMaskBit(18));
 

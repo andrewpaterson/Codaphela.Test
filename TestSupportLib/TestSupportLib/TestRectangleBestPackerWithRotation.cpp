@@ -14,10 +14,10 @@ int RectanglePackerRandom(uint32* puiSeed);
 void AssertPackedRectangle(CPackedRectangle* pcPackedRect, const char* szUserData, int iLeft, int iTop, int iRight, int iBottom, bool bRotated)
 {
 	AssertString(szUserData, (char*)pcPackedRect->GetUserData());
-	AssertInt(iLeft, pcPackedRect->msTopLeft.x);
-	AssertInt(iTop, pcPackedRect->msTopLeft.y);
-	AssertInt(iRight, pcPackedRect->msBottomRight.x);
-	AssertInt(iBottom, pcPackedRect->msBottomRight.y);
+	AssertInt((int32)iLeft, pcPackedRect->msTopLeft.x);
+	AssertInt((int32)iTop, pcPackedRect->msTopLeft.y);
+	AssertInt((int32)iRight, pcPackedRect->msBottomRight.x);
+	AssertInt((int32)iBottom, pcPackedRect->msBottomRight.y);
 	AssertBool(bRotated, pcPackedRect->IsRotated());
 }
 
@@ -210,8 +210,8 @@ void TestRectanglePackerWithRotationDefault(void)
 	pcPackedRect = macRects.Get(0);
 	for (i = 1; i < macRects.NumElements(); i++)
 	{
-		AssertInt(pcPackedRect->GetWidth(), macRects.Get(i)->GetWidth());
-		AssertInt(pcPackedRect->GetHeight(), macRects.Get(i)->GetHeight());
+		AssertInt((int32)pcPackedRect->GetWidth(), macRects.Get(i)->GetWidth());
+		AssertInt((int32)pcPackedRect->GetHeight(), macRects.Get(i)->GetHeight());
 	}
 	macRects.Kill();
 	cRotationPacker.Kill();
@@ -293,17 +293,17 @@ void TestRectanglePackerWithRotationRandom(void)
 		for (i = 0; i < macRects.NumElements(); i++)
 		{
 			pcPackedRect = macRects.Get(i);
-			uiIndex = (size)pcPackedRect->GetUserData() - 1;
+			uiIndex = (size)(ptr)pcPackedRect->GetUserData() - 1;
 			if (pcPackedRect->IsRotated())
 			{
 				bAnyRotated = true;
-				AssertInt(aiHeights[uiIndex], pcPackedRect->GetWidth());
-				AssertInt(aiWidths[uiIndex], pcPackedRect->GetHeight());
+				AssertInt((int32)aiHeights[uiIndex], pcPackedRect->GetWidth());
+				AssertInt((int32)aiWidths[uiIndex], pcPackedRect->GetHeight());
 			}
 			else
 			{
-				AssertInt(aiWidths[uiIndex], pcPackedRect->GetWidth());
-				AssertInt(aiHeights[uiIndex], pcPackedRect->GetHeight());
+				AssertInt((int32)aiWidths[uiIndex], pcPackedRect->GetWidth());
+				AssertInt((int32)aiHeights[uiIndex], pcPackedRect->GetHeight());
 			}
 		}
 		macRects.Kill();
@@ -333,8 +333,8 @@ void TestRectanglePackerWithRotationEmpty(void)
 	macRects.Kill();
 
 	sImageSize = cPacker.GetPackedImageSize();
-	AssertInt(0, sImageSize.x);
-	AssertInt(0, sImageSize.y);
+	AssertInt((int32)0, sImageSize.x);
+	AssertInt((int32)0, sImageSize.y);
 
 	cPacker.Kill();
 }

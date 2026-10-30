@@ -412,10 +412,10 @@ void TestFontFamilyLazyMatchesRasterise(void)
 		uint8						auiKey[64];
 		size						uiKeyLength;
 		bool						bExists;
-		size						uiBytes;
+		lsize						uiBytes;
 		uint8*						puiLazy;
 		uint8*						puiEager;
-		size						i;
+		lsize						i;
 		size						uiDifferences;
 		ARGB32						sRed;
 
@@ -447,9 +447,9 @@ void TestFontFamilyLazyMatchesRasterise(void)
 			bExists = pLazy->Iterate(&sIter, auiKey, &uiKeyLength, 64);
 		}
 
-		AssertInt(pEager->GetImage()->GetWidth(), pLazy->GetImage()->GetWidth());
-		AssertInt(pEager->GetImage()->GetHeight(), pLazy->GetImage()->GetHeight());
-		uiBytes = (size)pLazy->GetImage()->GetWidth() * pLazy->GetImage()->GetHeight() * 4;
+		AssertInt((int32)pEager->GetImage()->GetWidth(), pLazy->GetImage()->GetWidth());
+		AssertInt((int32)pEager->GetImage()->GetHeight(), pLazy->GetImage()->GetHeight());
+		uiBytes = (lsize)pLazy->GetImage()->GetWidth() * pLazy->GetImage()->GetHeight() * 4;
 		AssertMemory(pEager->GetImage()->GetData(), pLazy->GetImage()->GetData(), uiBytes);
 
 		//Opacity, red, green, blue.  Eager recolouring also colours pixels with no opacity.
@@ -488,7 +488,7 @@ void TestFontFamilyLazyMatchesRasterise(void)
 //////////////////////////////////////////////////////////////////////////
 uint8 GetFontImageOpacity(Ptr<CFont> pFont, int32 x, int32 y)
 {
-	return ((uint8*)pFont->GetImage()->GetData())[((size)y * pFont->GetImage()->GetWidth() + x) * 4];
+	return ((uint8*)pFont->GetImage()->GetData())[((lsize)y * pFont->GetImage()->GetWidth() + x) * 4];
 }
 
 
@@ -546,18 +546,18 @@ void TestFontFamilyClockwise(void)
 
 			pcUp = pUprightGlyph->GetSubImage();
 			pcTurned = pClockwiseGlyph->GetSubImage();
-			AssertInt(pUpright->GetLineHeight(), pcTurned->GetFullWidth());
-			AssertInt(pUprightGlyph->GetStep(), pcTurned->GetFullHeight());
-			AssertInt(pcUp->GetImageHeight(), pcTurned->GetImageWidth());
-			AssertInt(pcUp->GetImageWidth(), pcTurned->GetImageHeight());
+			AssertInt((int32)pUpright->GetLineHeight(), pcTurned->GetFullWidth());
+			AssertInt((int32)pUprightGlyph->GetStep(), pcTurned->GetFullHeight());
+			AssertInt((int32)pcUp->GetImageHeight(), pcTurned->GetImageWidth());
+			AssertInt((int32)pcUp->GetImageWidth(), pcTurned->GetImageHeight());
 			if (pcUp->GetImageWidth() == 0)
 			{
 				continue;
 			}
-			AssertInt(pcUp->msOffsetBottomRight.y, pcTurned->msOffsetTopLeft.x);
-			AssertInt(pcUp->msOffsetTopLeft.x, pcTurned->msOffsetTopLeft.y);
-			AssertInt(pcUp->msOffsetTopLeft.y, pcTurned->msOffsetBottomRight.x);
-			AssertInt(pcUp->msOffsetBottomRight.x, pcTurned->msOffsetBottomRight.y);
+			AssertInt((int32)pcUp->msOffsetBottomRight.y, pcTurned->msOffsetTopLeft.x);
+			AssertInt((int32)pcUp->msOffsetTopLeft.x, pcTurned->msOffsetTopLeft.y);
+			AssertInt((int32)pcUp->msOffsetTopLeft.y, pcTurned->msOffsetBottomRight.x);
+			AssertInt((int32)pcUp->msOffsetBottomRight.x, pcTurned->msOffsetBottomRight.y);
 
 			//The upright glyph's top row is the turned glyph's right column.
 			uiDifferences = 0;

@@ -46,7 +46,7 @@ void TestImageColourAccessorBytes(void)
 	AssertTrue(bResult);
 
 	//Remember ints have reverse endiannes which is why the test number below looks backwards.
-	AssertIntHex(0x3f7fff54, *(int*)((void*)sDest.c));
+	AssertIntHex(0x3f7fff54, *(int32*)((void*)sDest.c));
 
 	pcAccessor->Set(1, 0, &sDest);
 	pcAccessor->Kill();

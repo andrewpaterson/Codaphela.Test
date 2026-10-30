@@ -149,8 +149,8 @@ void TestImageReaderPNG(void)
 
 
 	pcImage = ReadImage("Input" _FS_ "basn4a08.png");
-	AssertInt(32, pcImage->GetWidth());
-	AssertInt(32, pcImage->GetHeight());
+	AssertInt((int32)32, pcImage->GetWidth());
+	AssertInt((int32)32, pcImage->GetHeight());
 	AssertSize(2048, pcImage->GetByteSize());
 	acChannels.Init();
 	pcImage->GetAllChannels(&acChannels);

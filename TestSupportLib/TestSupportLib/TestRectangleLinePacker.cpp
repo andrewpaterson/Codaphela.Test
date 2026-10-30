@@ -31,23 +31,23 @@ void TestRectangleLinePackerLeftToRight(void)
 
 	pcPackedRect = macRects.Get(0);
 	AssertString(sz1, (char*)pcPackedRect->GetUserData());
-	AssertInt(2, pcPackedRect->msTopLeft.x);
-	AssertInt(2, pcPackedRect->msTopLeft.y);
-	AssertInt(5, pcPackedRect->msBottomRight.x);
-	AssertInt(4, pcPackedRect->msBottomRight.y);
+	AssertInt((int32)2, pcPackedRect->msTopLeft.x);
+	AssertInt((int32)2, pcPackedRect->msTopLeft.y);
+	AssertInt((int32)5, pcPackedRect->msBottomRight.x);
+	AssertInt((int32)4, pcPackedRect->msBottomRight.y);
 
 	//One pixel gap between the rectangles.
 	pcPackedRect = macRects.Get(1);
 	AssertString(sz2, (char*)pcPackedRect->GetUserData());
-	AssertInt(6, pcPackedRect->msTopLeft.x);
-	AssertInt(2, pcPackedRect->msTopLeft.y);
-	AssertInt(10, pcPackedRect->msBottomRight.x);
-	AssertInt(7, pcPackedRect->msBottomRight.y);
+	AssertInt((int32)6, pcPackedRect->msTopLeft.x);
+	AssertInt((int32)2, pcPackedRect->msTopLeft.y);
+	AssertInt((int32)10, pcPackedRect->msBottomRight.x);
+	AssertInt((int32)7, pcPackedRect->msBottomRight.y);
 	macRects.Kill();
 
 	sImageSize = cPacker.GetPackedImageSize();
-	AssertInt(12, sImageSize.x);
-	AssertInt(9, sImageSize.y);
+	AssertInt((int32)12, sImageSize.x);
+	AssertInt((int32)9, sImageSize.y);
 
 	cPacker.Kill();
 }
@@ -79,22 +79,22 @@ void TestRectangleLinePackerTopToBottom(void)
 	AssertSize(2, macRects.NumElements());
 
 	pcPackedRect = macRects.Get(0);
-	AssertInt(2, pcPackedRect->msTopLeft.x);
-	AssertInt(2, pcPackedRect->msTopLeft.y);
-	AssertInt(5, pcPackedRect->msBottomRight.x);
-	AssertInt(4, pcPackedRect->msBottomRight.y);
+	AssertInt((int32)2, pcPackedRect->msTopLeft.x);
+	AssertInt((int32)2, pcPackedRect->msTopLeft.y);
+	AssertInt((int32)5, pcPackedRect->msBottomRight.x);
+	AssertInt((int32)4, pcPackedRect->msBottomRight.y);
 
 	//One pixel gap between the rectangles.
 	pcPackedRect = macRects.Get(1);
-	AssertInt(2, pcPackedRect->msTopLeft.x);
-	AssertInt(5, pcPackedRect->msTopLeft.y);
-	AssertInt(6, pcPackedRect->msBottomRight.x);
-	AssertInt(10, pcPackedRect->msBottomRight.y);
+	AssertInt((int32)2, pcPackedRect->msTopLeft.x);
+	AssertInt((int32)5, pcPackedRect->msTopLeft.y);
+	AssertInt((int32)6, pcPackedRect->msBottomRight.x);
+	AssertInt((int32)10, pcPackedRect->msBottomRight.y);
 	macRects.Kill();
 
 	sImageSize = cPacker.GetPackedImageSize();
-	AssertInt(8, sImageSize.x);
-	AssertInt(12, sImageSize.y);
+	AssertInt((int32)8, sImageSize.x);
+	AssertInt((int32)12, sImageSize.y);
 
 	cPacker.Kill();
 }
@@ -160,15 +160,15 @@ void TestRectangleLinePackerPow2(void)
 	cPacker.GetPackedRectangles(&macRects);
 	AssertSize(2, macRects.NumElements());
 	pcPackedRect = macRects.Get(1);
-	AssertInt(6, pcPackedRect->msTopLeft.x);
-	AssertInt(2, pcPackedRect->msTopLeft.y);
-	AssertInt(10, pcPackedRect->msBottomRight.x);
-	AssertInt(7, pcPackedRect->msBottomRight.y);
+	AssertInt((int32)6, pcPackedRect->msTopLeft.x);
+	AssertInt((int32)2, pcPackedRect->msTopLeft.y);
+	AssertInt((int32)10, pcPackedRect->msBottomRight.x);
+	AssertInt((int32)7, pcPackedRect->msBottomRight.y);
 	macRects.Kill();
 
 	sImageSize = cPacker.GetPackedImageSize();
-	AssertInt(16, sImageSize.x);
-	AssertInt(16, sImageSize.y);
+	AssertInt((int32)16, sImageSize.x);
+	AssertInt((int32)16, sImageSize.y);
 	cPacker.Kill();
 
 	//8x12 rounds up to 8x16.
@@ -181,15 +181,15 @@ void TestRectangleLinePackerPow2(void)
 	cPacker.GetPackedRectangles(&macRects);
 	AssertSize(2, macRects.NumElements());
 	pcPackedRect = macRects.Get(1);
-	AssertInt(2, pcPackedRect->msTopLeft.x);
-	AssertInt(5, pcPackedRect->msTopLeft.y);
-	AssertInt(6, pcPackedRect->msBottomRight.x);
-	AssertInt(10, pcPackedRect->msBottomRight.y);
+	AssertInt((int32)2, pcPackedRect->msTopLeft.x);
+	AssertInt((int32)5, pcPackedRect->msTopLeft.y);
+	AssertInt((int32)6, pcPackedRect->msBottomRight.x);
+	AssertInt((int32)10, pcPackedRect->msBottomRight.y);
 	macRects.Kill();
 
 	sImageSize = cPacker.GetPackedImageSize();
-	AssertInt(8, sImageSize.x);
-	AssertInt(16, sImageSize.y);
+	AssertInt((int32)8, sImageSize.x);
+	AssertInt((int32)16, sImageSize.y);
 	cPacker.Kill();
 }
 
@@ -213,15 +213,15 @@ void TestRectangleLinePackerEmpty(void)
 	macRects.Kill();
 
 	sImageSize = cPacker.GetPackedImageSize();
-	AssertInt(0, sImageSize.x);
-	AssertInt(0, sImageSize.y);
+	AssertInt((int32)0, sImageSize.x);
+	AssertInt((int32)0, sImageSize.y);
 	cPacker.Kill();
 
 	cPacker.Init(false, true, 2, 1);
 	cPacker.Pack();
 	sImageSize = cPacker.GetPackedImageSize();
-	AssertInt(0, sImageSize.x);
-	AssertInt(0, sImageSize.y);
+	AssertInt((int32)0, sImageSize.x);
+	AssertInt((int32)0, sImageSize.y);
 	cPacker.Kill();
 }
 

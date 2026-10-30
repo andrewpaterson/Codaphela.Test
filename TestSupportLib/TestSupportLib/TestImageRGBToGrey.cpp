@@ -28,8 +28,8 @@ void TestImageRGBToGrey1(void)
 	AssertChannel(IP_Diffuse, CT_Green, PT_uint8, acChannels.Get(1));
 	AssertChannel(IP_Diffuse, CT_Blue, PT_uint8, acChannels.Get(2));
 	acChannels.Kill();
-	AssertInt(32, pcImage->GetWidth());
-	AssertInt(32, pcImage->GetHeight());
+	AssertInt((int32)32, pcImage->GetWidth());
+	AssertInt((int32)32, pcImage->GetHeight());
 	AssertSize(3072, pcImage->GetByteSize());
 
 	cRGBToGrey.Init(RGBTGS_OnlyIfChannelsSame);
@@ -42,8 +42,8 @@ void TestImageRGBToGrey1(void)
 	AssertSize(1, acChannels.NumElements());
 	AssertChannel(IP_Diffuse, CT_Intensity, PT_uint8, acChannels.Get(0));
 	acChannels.Kill();
-	AssertInt(32, pcImage->GetWidth());
-	AssertInt(32, pcImage->GetHeight());
+	AssertInt((int32)32, pcImage->GetWidth());
+	AssertInt((int32)32, pcImage->GetHeight());
 	AssertSize(1024, pcImage->GetChannels()->GetSize());
 	AssertSize(1024, pcImage->GetByteSize());
 

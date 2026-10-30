@@ -1386,39 +1386,146 @@ void TestCPP816TestBaseLibBugs(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// Shifts by constants (whole words moved, then the bits) of 32 and 64 bit values, signed and unsigned, against the
-// same shifts natively.
+// Shifts by constants (whole words moved, then a byte, then the bits) of
+// 16, 32 and 64 bit values, signed and unsigned, positive and negative (and
+// the edges), by every amount, against the same shifts natively.
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCPP816ConstantShifts(void)
 {
-	CChars		szSource;
-	int			i;
-	uint32		ui32;
-	uint64		ui64;
-	int32		i32;
-	int64		i64;
-	uint32		uiSum;
+	static const uint16	aui16[] = { 0x9AB1, 0x5A3C, 0x8000, 0x7FFF, 0xFFFF };
+	static const uint32	aui32[] = { 0x9ABCDEF1, 0x5ABCDEF1, 0x80000000, 0xFFFFFFFF };
+	static const uint64	aui64[] = { 0x9ABCDEF123456789ULL, 0x1ABCDEF123456789ULL };
+	CChars				szSource;
+	int					i;
+	size				uiValue;
+	uint16				ui16;
+	int16				i16;
+	uint32				ui32;
+	int32				i32;
+	uint64				ui64;
+	int64				i64;
+	uint32				uiSum;
 
-	ui32 = 0x9ABCDEF1;
-	i32 = (int32)0x9ABCDEF1;
-	ui64 = 0x9ABCDEF123456789ULL;
-	i64 = (int64)0x9ABCDEF123456789ULL;
 	uiSum = 0;
-	szSource.Init("unsigned long gui32 = 0x9ABCDEF1UL;\nlong gi32 = (long)0x9ABCDEF1UL;\nunsigned long long gui64 = 0x9ABCDEF123456789ULL;\nlong long gi64 = (long long)0x9ABCDEF123456789ULL;\n");
-	szSource.Append("int main(void)\n{\n\tunsigned long s = 0;\n");
-	for (i = 1; i < 32; i++)
+	szSource.Init("volatile unsigned short gui16;\nvolatile short gi16;\nvolatile unsigned long gui32;\nvolatile long gi32;\nvolatile unsigned long long gui64;\nvolatile long long gi64;\n");
+	szSource.Append("unsigned long s = 0;\n");
+	for (uiValue = 0; uiValue < sizeof(aui16) / sizeof(uint16); uiValue++)
 	{
-		uiSum = uiSum * 3 + (ui32 << i) + (ui32 >> i) + (uint32)(i32 >> i);
-		szSource.Append("\ts = s * 3 + (gui32 << ")->Append(i)->Append(") + (gui32 >> ")->Append(i)->Append(") + (unsigned long)(gi32 >> ")->Append(i)->Append(");\n");
+		ui16 = aui16[uiValue];
+		i16 = (int16)aui16[uiValue];
+		szSource.Append("void Shift16_")->Append((int)uiValue)->Append("(void)\n{\n\tgui16 = ")->Append((int)ui16)->Append("U;\n\tgi16 = (short)")->Append((int)ui16)->Append("U;\n");
+		for (i = 1; i < 16; i++)
+		{
+			uiSum = uiSum * 3 + (uint16)(ui16 << i) + (uint16)(ui16 >> i) + (uint16)(i16 >> i);
+			szSource.Append("\ts = s * 3 + (unsigned short)(gui16 << ")->Append(i)->Append(") + (unsigned short)(gui16 >> ")->Append(i)->Append(") + (unsigned short)(gi16 >> ")->Append(i)->Append(");\n");
+		}
+		szSource.Append("}\n");
 	}
-	for (i = 1; i < 64; i++)
+	for (uiValue = 0; uiValue < sizeof(aui32) / sizeof(uint32); uiValue++)
 	{
-		uiSum = uiSum * 5 + (uint32)(ui64 << i) + (uint32)((ui64 << i) >> 32) + (uint32)(ui64 >> i) + (uint32)((ui64 >> i) >> 32) + (uint32)(i64 >> i) + (uint32)((i64 >> i) >> 32);
-		szSource.Append("\ts = s * 5 + (unsigned long)(gui64 << ")->Append(i)->Append(") + (unsigned long)((gui64 << ")->Append(i)->Append(") >> 32) + (unsigned long)(gui64 >> ")->Append(i)->Append(") + (unsigned long)((gui64 >> ")->Append(i)->Append(") >> 32) + (unsigned long)(gi64 >> ")->Append(i)->Append(") + (unsigned long)((gi64 >> ")->Append(i)->Append(") >> 32);\n");
+		ui32 = aui32[uiValue];
+		i32 = (int32)aui32[uiValue];
+		szSource.Append("void Shift32_")->Append((int)uiValue)->Append("(void)\n{\n\tgui32 = ")->Append((int64)ui32)->Append("UL;\n\tgi32 = (long)")->Append((int64)ui32)->Append("UL;\n");
+		for (i = 1; i < 32; i++)
+		{
+			uiSum = uiSum * 3 + (ui32 << i) + (ui32 >> i) + (uint32)(i32 >> i);
+			szSource.Append("\ts = s * 3 + (gui32 << ")->Append(i)->Append(") + (gui32 >> ")->Append(i)->Append(") + (unsigned long)(gi32 >> ")->Append(i)->Append(");\n");
+		}
+		szSource.Append("}\n");
+	}
+	for (uiValue = 0; uiValue < sizeof(aui64) / sizeof(uint64); uiValue++)
+	{
+		ui64 = aui64[uiValue];
+		i64 = (int64)aui64[uiValue];
+		szSource.Append("void Shift64_")->Append((int)uiValue)->Append("(void)\n{\n\tgui64 = ")->Append((int64)(ui64 >> 32))->Append("ULL << 32 | ")->Append((int64)(ui64 & 0xFFFFFFFF))->Append("ULL;\n\tgi64 = (long long)gui64;\n");
+		for (i = 1; i < 64; i++)
+		{
+			uiSum = uiSum * 5 + (uint32)(ui64 << i) + (uint32)((ui64 << i) >> 32) + (uint32)(ui64 >> i) + (uint32)((ui64 >> i) >> 32) + (uint32)(i64 >> i) + (uint32)((i64 >> i) >> 32);
+			szSource.Append("\ts = s * 5 + (unsigned long)(gui64 << ")->Append(i)->Append(") + (unsigned long)((gui64 << ")->Append(i)->Append(") >> 32) + (unsigned long)(gui64 >> ")->Append(i)->Append(") + (unsigned long)((gui64 >> ")->Append(i)->Append(") >> 32) + (unsigned long)(gi64 >> ")->Append(i)->Append(") + (unsigned long)((gi64 >> ")->Append(i)->Append(") >> 32);\n");
+		}
+		szSource.Append("}\n");
+	}
+	szSource.Append("int main(void)\n{\n");
+	for (uiValue = 0; uiValue < sizeof(aui16) / sizeof(uint16); uiValue++)
+	{
+		szSource.Append("\tShift16_")->Append((int)uiValue)->Append("();\n");
+	}
+	for (uiValue = 0; uiValue < sizeof(aui32) / sizeof(uint32); uiValue++)
+	{
+		szSource.Append("\tShift32_")->Append((int)uiValue)->Append("();\n");
+	}
+	for (uiValue = 0; uiValue < sizeof(aui64) / sizeof(uint64); uiValue++)
+	{
+		szSource.Append("\tShift64_")->Append((int)uiValue)->Append("();\n");
 	}
 	szSource.Append("\treturn (int)(s ^ (s >> 16)) & 0x7FFF;\n}\n");
 	AssertInt((int)((uiSum ^ (uiSum >> 16)) & 0x7FFF), TestCPP816Run(szSource.Text()));
+	szSource.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Shifts by counts known only when they run (word, byte and the jump into
+// the unrolled bit steps, or the loop in memory for 64 bits) of 8, 16, 32
+// and 64 bit values, signed and unsigned, by every count from 0 to the
+// width less one, against the same shifts natively.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816VariableShifts(void)
+{
+	static const uint16	aui16[] = { 0x9AB1, 0x5A3C, 0x8000, 0x7FFF, 0xFFFF };
+	static const uint32	aui32[] = { 0x9ABCDEF1, 0x5ABCDEF1, 0x80000000, 0xFFFFFFFF };
+	static const uint64	aui64[] = { 0x9ABCDEF123456789ULL, 0x1ABCDEF123456789ULL };
+	static const uint8	aui8[] = { 0x9A, 0x5C, 0x80, 0xFF };
+	CChars				szSource;
+	int					i;
+	size				uiValue;
+	uint32				uiSum;
+
+	uiSum = 0;
+	szSource.Init("unsigned short aui16[] = { 0x9AB1, 0x5A3C, 0x8000, 0x7FFF, 0xFFFF };\n");
+	szSource.Append("unsigned long aui32[] = { 0x9ABCDEF1, 0x5ABCDEF1, 0x80000000, 0xFFFFFFFF };\n");
+	szSource.Append("unsigned long long aui64[] = { 0x9ABCDEF123456789ULL, 0x1ABCDEF123456789ULL };\n");
+	szSource.Append("unsigned char aui8[] = { 0x9A, 0x5C, 0x80, 0xFF };\n");
+	szSource.Append("volatile int giCount;\n");
+	szSource.Append("int main(void)\n{\n\tunsigned long s;\n\tint v;\n\tint i;\n\ts = 0;\n");
+	szSource.Append("\tfor (v = 0; v < 5; v++) { for (i = 0; i < 16; i++) { giCount = i; s = s * 3 + (unsigned short)(aui16[v] << giCount) + (unsigned short)(aui16[v] >> giCount) + (unsigned short)((short)aui16[v] >> giCount); } }\n");
+	szSource.Append("\tfor (v = 0; v < 4; v++) { for (i = 0; i < 32; i++) { giCount = i; s = s * 3 + (aui32[v] << giCount) + (aui32[v] >> giCount) + (unsigned long)((long)aui32[v] >> giCount); } }\n");
+	szSource.Append("\tfor (v = 0; v < 2; v++) { for (i = 0; i < 64; i++) { giCount = i; s = s * 5 + (unsigned long)(aui64[v] << giCount) + (unsigned long)((aui64[v] << giCount) >> 32) + (unsigned long)(aui64[v] >> giCount) + (unsigned long)((long long)aui64[v] >> giCount); } }\n");
+	szSource.Append("\tfor (v = 0; v < 4; v++) { for (i = 0; i < 8; i++) { giCount = i; s = s * 3 + (unsigned char)(aui8[v] << giCount) + (unsigned char)(aui8[v] >> giCount) + (unsigned char)((signed char)aui8[v] >> giCount); } }\n");
+	szSource.Append("\treturn (int)(s ^ (s >> 16)) & 0x7FFF;\n}\n");
+
+	for (uiValue = 0; uiValue < sizeof(aui16) / sizeof(uint16); uiValue++)
+	{
+		for (i = 0; i < 16; i++)
+		{
+			uiSum = uiSum * 3 + (uint16)(aui16[uiValue] << i) + (uint16)(aui16[uiValue] >> i) + (uint16)((int16)aui16[uiValue] >> i);
+		}
+	}
+	for (uiValue = 0; uiValue < sizeof(aui32) / sizeof(uint32); uiValue++)
+	{
+		for (i = 0; i < 32; i++)
+		{
+			uiSum = uiSum * 3 + (aui32[uiValue] << i) + (aui32[uiValue] >> i) + (uint32)((int32)aui32[uiValue] >> i);
+		}
+	}
+	for (uiValue = 0; uiValue < sizeof(aui64) / sizeof(uint64); uiValue++)
+	{
+		for (i = 0; i < 64; i++)
+		{
+			uiSum = uiSum * 5 + (uint32)(aui64[uiValue] << i) + (uint32)((aui64[uiValue] << i) >> 32) + (uint32)(aui64[uiValue] >> i) + (uint32)((int64)aui64[uiValue] >> i);
+		}
+	}
+	for (uiValue = 0; uiValue < sizeof(aui8) / sizeof(uint8); uiValue++)
+	{
+		for (i = 0; i < 8; i++)
+		{
+			uiSum = uiSum * 3 + (uint8)(aui8[uiValue] << i) + (uint8)(aui8[uiValue] >> i) + (uint8)((int8)aui8[uiValue] >> i);
+		}
+	}
+	AssertInt((int)((uiSum ^ (uiSum >> 16)) & 0x7FFF), TestCPP816Run(szSource.Text(), true));
 	szSource.Kill();
 }
 
@@ -1477,6 +1584,8 @@ int32 TestCPP816RunProfiled(const char* szSource, CAsm816Profile* pcProfile, CAs
 	CCPP65Builder		cBuilder;
 	CAsm65Memory		cMemory;
 	CFast65C816			cFast;
+	CChars				szProject;
+	CFileUtil			cFileUtil;
 	int32				iResult;
 
 	iResult = -1000000;
@@ -1486,6 +1595,10 @@ int32 TestCPP816RunProfiled(const char* szSource, CAsm816Profile* pcProfile, CAs
 	cBuilder.SetLineTable(pcMeasure != NULL);
 	TestCPP65AddIncludeDirectories(&cBuilder);
 	AssertTrue(cBuilder.AddStartUp());
+	szProject.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "Libc65");
+	cFileUtil.FullPath(&szProject);
+	cBuilder.AddMathTables(szProject.Text());
+	szProject.Kill();
 	AssertTrue(cBuilder.AddSource("Test.cpp", szSource));
 	TestCPP65AddUnits(&cBuilder, aszUnits, false);
 	AssertTrue(cBuilder.Link());
@@ -1574,6 +1687,155 @@ void TestCPP816ProfileGuidedInlining(void)
 	AssertTrue(uiGuided < uiPlain);
 	cGuided.Kill();
 	cProfile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// 32 bit loop counters whose start and bound fit 16 bits count in 16 bits:
+// up and down, < <= > >=, starting past the bound, near the ends of 16
+// bits, with the counter's value used in the loop and after it.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816NarrowCounters(void)
+{
+	static const char*	szSource =
+		"short gas[7] = { -32767, -5, 0, 7, 32766, 100, -1 };\n"
+		"long Sum(short a, short b) { long t = 0; for (long i = a; i <= b; i++) { t += i; } return t; }\n"
+		"long Down(short a, short b) { long t = 0; long i; for (i = a; i >= b; i--) { t += i * 3; } return t + i; }\n"
+		"long Lt(short a, short b) { long i; long n = 0; for (i = a; i < b; i++) { n++; } return n * 7 + i; }\n"
+		"long Gt(short a, short b) { long i; long n = 0; for (i = a; i > b; i--) { n++; } return n * 5 - i; }\n"
+		"long (*volatile gpSum)(short, short) = Sum;\n"
+		"long (*volatile gpDown)(short, short) = Down;\n"
+		"long (*volatile gpLt)(short, short) = Lt;\n"
+		"long (*volatile gpGt)(short, short) = Gt;\n"
+		"int main()\n"
+		"{\n"
+		"\tunsigned long r = 0;\n"
+		"\tfor (int a = 0; a < 7; a++)\n"
+		"\t{\n"
+		"\t\tfor (int b = 0; b < 7; b++)\n"
+		"\t\t{\n"
+		"\t\t\tr = r * 31 + (unsigned long)gpSum(gas[a], gas[b]);\n"
+		"\t\t\tr = r * 31 + (unsigned long)gpDown(gas[a], gas[b]);\n"
+		"\t\t\tr = r * 31 + (unsigned long)gpLt(gas[a], gas[b]);\n"
+		"\t\t\tr = r * 31 + (unsigned long)gpGt(gas[a], gas[b]);\n"
+		"\t\t}\n"
+		"\t}\n"
+		"\treturn (int)r;\n"
+		"}\n";
+	uint64	uiCycles;
+
+	AssertInt(-24560, TestCPP816RunProfiled(szSource, NULL, NULL, &uiCycles));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// TestCPP816IntIndexPointers' functions natively, with 16 bit ints.
+//
+//////////////////////////////////////////////////////////////////////////
+uint16 TestCPP816IntIndexSubtract(char* pc, const char* pd, int16 iThis, int16 iOther, int16 iFirst)
+{
+	char	cCarry;
+	char	cResult;
+
+	cCarry = 0;
+	for (; iOther >= iFirst; iOther--, iThis--)
+	{
+		cResult = (char)(pc[iThis] + 10 - (pd[iOther] + cCarry));
+		if (cResult >= 10)
+		{
+			cCarry = 0;
+			cResult -= 10;
+		}
+		else
+		{
+			cCarry = 1;
+		}
+		pc[iThis] = cResult;
+	}
+	return (uint16)cCarry;
+}
+
+
+uint16 TestCPP816IntIndexSum(int16* as, int16 iStart, int16 iEnd)
+{
+	uint16	t;
+	int16	i;
+
+	t = 0;
+	for (i = iStart; i < iEnd; i++)
+	{
+		t = (uint16)(t + (uint16)(as[i] * 3));
+	}
+	return t;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// int (16 bit) indices stepped through arrays (two going down together, as
+// CNumber's PrivateSubtract does, and one going up through shorts) become
+// pointers stepped round the loop, not the index sign extended and added
+// each time: the same results, in under 66000 cycles (72255 without).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816IntIndexPointers(void)
+{
+	static const char*	szSource =
+		"char gac[40];\n"
+		"char gad[40];\n"
+		"short gas[40];\n"
+		"int Subtract(char* pc, const char* pd, int iThis, int iOther, int iFirst)\n"
+		"{\n"
+		"\tchar cCarry = 0;\n"
+		"\tfor (; iOther >= iFirst; iOther--, iThis--)\n"
+		"\t{\n"
+		"\t\tchar cResult = pc[iThis] + 10 - (pd[iOther] + cCarry);\n"
+		"\t\tif (cResult >= 10) { cCarry = 0; cResult -= 10; } else { cCarry = 1; }\n"
+		"\t\tpc[iThis] = cResult;\n"
+		"\t}\n"
+		"\treturn cCarry;\n"
+		"}\n"
+		"unsigned int Sum(int iStart, int iEnd) { unsigned int t = 0; for (int i = iStart; i < iEnd; i++) { t += (unsigned int)(gas[i] * 3); } return t; }\n"
+		"int (*volatile gpSubtract)(char*, const char*, int, int, int) = Subtract;\n"
+		"unsigned int (*volatile gpSum)(int, int) = Sum;\n"
+		"int main()\n"
+		"{\n"
+		"\tunsigned int r = 0;\n"
+		"\tfor (int i = 0; i < 40; i++) { gac[i] = (char)((i * 7) % 10); gad[i] = (char)((i * 3 + 1) % 10); gas[i] = (short)(i * 101 - 2000); }\n"
+		"\tr = r * 31 + (unsigned int)gpSubtract(gac, gad, 39, 30, 0);\n"
+		"\tr = r * 31 + (unsigned int)gpSubtract(gac + 20, gad + 10, 19, 29, 12);\n"
+		"\tfor (int i = 0; i < 40; i++) { r = r * 31 + (unsigned int)gac[i]; }\n"
+		"\tr = r * 31 + (unsigned int)gpSum(0, 40) + (unsigned int)gpSum(5, 6) + (unsigned int)gpSum(7, 7);\n"
+		"\treturn (int)r;\n"
+		"}\n";
+	uint64			uiCycles;
+	char			ac[40];
+	char			ad[40];
+	int16			as[40];
+	uint16			uiResult;
+	int				i;
+
+	//The same natively, with 16 bit ints.
+	for (i = 0; i < 40; i++)
+	{
+		ac[i] = (char)((i * 7) % 10);
+		ad[i] = (char)((i * 3 + 1) % 10);
+		as[i] = (int16)(i * 101 - 2000);
+	}
+	uiResult = 0;
+	uiResult = (uint16)(uiResult * 31 + TestCPP816IntIndexSubtract(ac, ad, 39, 30, 0));
+	uiResult = (uint16)(uiResult * 31 + TestCPP816IntIndexSubtract(ac + 20, ad + 10, 19, 29, 12));
+	for (i = 0; i < 40; i++)
+	{
+		uiResult = (uint16)(uiResult * 31 + (uint16)ac[i]);
+	}
+	uiResult = (uint16)(uiResult * 31 + TestCPP816IntIndexSum(as, 0, 40) + TestCPP816IntIndexSum(as, 5, 6) + TestCPP816IntIndexSum(as, 7, 7));
+
+	AssertInt((int16)uiResult, TestCPP816RunProfiled(szSource, NULL, NULL, &uiCycles));
+	AssertTrue(uiCycles < 66000);
 }
 
 
@@ -2157,6 +2419,14 @@ void TestCPP816SizeLsizeBugs(void)
 	AssertInt(1, TestCPP816CountWarnings("unsigned short Find(void);\nint F(void) { unsigned long ul; ul = Find(); if (ul != 0xFFFFFFFFUL) { return 1; } return 0; }\n", "Comparison is always true: a 16 bit value, zero extended, is compared with 4294967295"));
 	AssertInt(0, TestCPP816CountWarnings("unsigned long Find(void);\nint F(void) { unsigned long ul; ul = Find(); if (ul != 0xFFFFFFFFUL) { return 1; } return 0; }\n", "Comparison is always"));
 	AssertInt(0, TestCPP816CountWarnings("unsigned short Find(void);\nint F(void) { unsigned long ul; ul = Find(); if (ul != 0xFFFFUL) { return 1; } return 0; }\n", "Comparison is always"));
+
+	//SupportLib's Convert8BitColourTo32BitColour: uint8s promoted to a 16 bit int and shifted by 16 and 24 are zero.
+	AssertInt(2, TestCPP816CountWarnings("unsigned long F(unsigned char r, unsigned char b, unsigned char a) { return r | (b << 16) | (a << 24); }\n", "Shift count"));
+	AssertInt(1, TestCPP816CountWarnings("int F(int i) { return i >> 16; }\n", "Shift count 16 is not less than the 16 bit width"));
+	//SupportLib's Set32BitColour(r, g, b): a constant 255 << 24 is shifted as a 16 bit int too.
+	AssertInt(1, TestCPP816CountWarnings("unsigned long F(unsigned long ul) { ul |= 255 << 24; return ul; }\n", "Shift count 24"));
+	AssertInt(0, TestCPP816CountWarnings("unsigned long F(unsigned char b) { return ((unsigned long)b << 16) | (b << 15); }\n", "Shift count"));
+	AssertInt(0, TestCPP816CountWarnings("unsigned long F(unsigned char b, int i) { return (unsigned long)b << i; }\n", "Shift count"));
 }
 
 
@@ -2194,6 +2464,7 @@ void TestCPP816(void)
 	TestCPP816Floats();
 	TestCPP816TestBaseLibBugs();
 	TestCPP816ConstantShifts();
+	TestCPP816VariableShifts();
 	TestCPP816Warnings();
 	TestCPP816RangeWarnings();
 	TestCPP816LoopCounterWarnings();
@@ -2203,6 +2474,8 @@ void TestCPP816(void)
 	TestCPP816ProfileGuidedInlining();
 	TestCPP816InlineObjectParameters();
 	TestCPP816ConstantDivisions();
+	TestCPP816IntIndexPointers();
+	TestCPP816NarrowCounters();
 	TestCPP816AlignedFrames();
 
 	CW65C816InstructionFactory::GetInstance()->Kill();

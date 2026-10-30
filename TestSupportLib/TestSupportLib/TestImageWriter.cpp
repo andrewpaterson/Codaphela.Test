@@ -35,8 +35,8 @@ void AssertPNGRoundTrip(const char* szName)
 	Ptr<CImage> pcComp = ReadImage(szOutput.Text());
 	AssertTrue(pcComp.IsNotNull());
 
-	AssertInt(pcImage->GetWidth(), pcComp->GetWidth());
-	AssertInt(pcImage->GetHeight(), pcComp->GetHeight());
+	AssertInt((int32)pcImage->GetWidth(), pcComp->GetWidth());
+	AssertInt((int32)pcImage->GetHeight(), pcComp->GetHeight());
 
 	aiExpectedChannels.Init();
 	aiActualChannels.Init();
@@ -78,8 +78,8 @@ void TestImagePNGWriter(void)
 	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "basn2c08.png");
 	WriteImage(pcImage, "Output" _FS_ "basn2c08.png");
 	Ptr<CImage> pcComp = ReadImage("Output" _FS_ "basn2c08.png");
-	AssertInt(32, pcComp->GetWidth());
-	AssertInt(32, pcComp->GetHeight());
+	AssertInt((int32)32, pcComp->GetWidth());
+	AssertInt((int32)32, pcComp->GetHeight());
 	aiChannels.Init();
 	pcComp->GetAllChannels(&aiChannels);
 	AssertSize(3, aiChannels.NumElements());
@@ -150,8 +150,8 @@ void TestImageRADWriter(void)
 	AssertTrue(bResult);
 	Ptr<CImage> pcComp = ReadImage("Output" _FS_ "writerad.rad");
 	AssertTrue(bResult);
-	AssertInt(32, pcComp->GetWidth());
-	AssertInt(32, pcComp->GetHeight());
+	AssertInt((int32)32, pcComp->GetWidth());
+	AssertInt((int32)32, pcComp->GetHeight());
 	aiChannels.Init();
 	pcComp->GetAllChannels(&aiChannels);
 	AssertSize(3, aiChannels.NumElements());

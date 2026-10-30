@@ -1,17 +1,17 @@
-TestCoreLib/TestCoreLib/Log.txt
-TestBaseLib/TestBaseLib/Log.txt
-TestStandardLib/TestStandardLib/Log.txt
-TestStandardLib/TestStandardLib120427.vsp
-TestStandardLib/TestStandardLib.psess
-TestCoreLib/TestCoreLib/Database1
-TestStandardLib/TestStandardLib/Output
-TestSupportLib/TestSupportLib/Log.txt
-TestSupportLib/TestSupportLib/Output
-TestCppParserLib/TestCppParserLib/Log.txt
-TestInputLib/TestInputLib/Log.txt
-TestCoreLib/TestCoreLib/Output
-TestGerberLib/TestGerberLib/Output/*
-TestAssembler65Lib/TestAssembler65Lib/Output/*
+/TestCoreLib/TestCoreLib/Log.txt
+/TestBaseLib/TestBaseLib/Log.txt
+/TestStandardLib/TestStandardLib/Log.txt
+/TestStandardLib/TestStandardLib120427.vsp
+/TestStandardLib/TestStandardLib.psess
+/TestCoreLib/TestCoreLib/Database1
+/TestStandardLib/TestStandardLib/Output
+/TestSupportLib/TestSupportLib/Log.txt
+/TestSupportLib/TestSupportLib/Output
+/TestCppParserLib/TestCppParserLib/Log.txt
+/TestInputLib/TestInputLib/Log.txt
+/TestCoreLib/TestCoreLib/Output
+/TestGerberLib/TestGerberLib/Output/*
+/TestAssembler65Lib/TestAssembler65Lib/Output/*
 *.VC.db
 *.suo
 *.sdf
@@ -28,33 +28,38 @@ TestAssembler65Lib/TestAssembler65Lib/Output/*
 /TestWindowLib/TestWindowLib/Log.txt
 /TestWindowLib/TestWindowLib/Output/*
 
-TestMicroprocessorLib/Log.txt
+/TestMicroprocessorLib/Log.txt
 
-TestAssembler65Lib/TestAssembler65Lib/Log.txt
+/TestAssembler65Lib/TestAssembler65Lib/Log.txt
 /TestAssembler65Lib/TestAssembler65Lib/Output/*
 
-TestLibc65/TestLibc65/Log.txt
+/TestLibc65/TestLibc65/Log.txt
 /TestLibc65/TestLibc65/Post/*
-TestBaseLib65/TestBaseLib65/Post/*
-TestBaseLib65/TestBaseLib65/Output/*
+/TestBaseLib65/TestBaseLib65/Post/*
+/TestBaseLib65/TestBaseLib65/Output/*
 
-TestLogicimLib/TestLogicimLib/Log.txt
+/TestLogicimLib/TestLogicimLib/Log.txt
 
-TestKicadImporterLib/TestKicadImporterLib/Log.txt
-TestKicadImporterLib/TestKicadImporterLib/Output/
+/TestKicadImporterLib/TestKicadImporterLib/Log.txt
+/TestKicadImporterLib/TestKicadImporterLib/Output/
 
-TestBaseLib65/TestBaseLib65/Log.txt
+/TestBaseLib65/TestBaseLib65/Log.txt
 
-TestStandardLib65/TestStandardLib65/Log.txt
-TestStandardLib65/TestStandardLib65/Post/*
-TestStandardLib65/TestStandardLib65/Output/*
+/TestStandardLib65/TestStandardLib65/Log.txt
+/TestStandardLib65/TestStandardLib65/Post/*
+/TestStandardLib65/TestStandardLib65/Output/*
 
-TestStandardLib65/TestStandardLib65/Out_TestArrayObject/*
+/TestSupportLib65/TestSupportLib65/Post/*
 
-..gitignore.swp
+*.swp
 
 # MSBuild output for every project and platform (Win32: Debug/Release, x64: x64/Debug, x64/Release)
 [Dd]ebug/
 [Rr]elease/
 x64/
-/TestSupportLib65/TestSupportLib65/Post/*
+
+# What every test project writes when it runs: its log, and the Output and Post folders next to its sources
+Log.txt
+/*/*/Output/
+/*/*/Post/
+!/TestJavaParserLib/TestJavaParserLib/Post/

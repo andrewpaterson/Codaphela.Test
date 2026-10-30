@@ -134,8 +134,8 @@ void TestImageCombinerStarControl(void)
 	pacLoadedCels = CelsReader("Output" _FS_ "StarControl.cels");
 	AssertTrue(pacLoadedCels.IsNotNull());
 	AssertSize(360, pacLoadedCels->NumElements());
-	AssertInt(iWidth, pacLoadedCels->Get(0)->GetSourceImage()->GetWidth());
-	AssertInt(iHeight, pacLoadedCels->Get(0)->GetSourceImage()->GetHeight());
+	AssertInt((int32)iWidth, pacLoadedCels->Get(0)->GetSourceImage()->GetWidth());
+	AssertInt((int32)iHeight, pacLoadedCels->Get(0)->GetSourceImage()->GetHeight());
 	AssertString("Input/StarControl/Earthling Cruiser/frame0000", pacLoadedCels->Get(0)->GetName());
 	AssertString("Input/StarControl/Ur-Quan Dreadnought/frame0071", pacLoadedCels->Get(359)->GetName());
 
@@ -199,17 +199,17 @@ void TestImageCombinerUserSpecifiedSize(void)
 	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 8, 0, 12, 4));
 	pcImage = cCombiner.Combine();
 	AssertTrue(pcImage.IsNotNull());
-	AssertInt(14, pcImage->GetWidth());
-	AssertInt(6, pcImage->GetHeight());
+	AssertInt((int32)14, pcImage->GetWidth());
+	AssertInt((int32)6, pcImage->GetHeight());
 
 	pacCels = cCombiner.GetCels();
 	AssertSize(3, pacCels->NumElements());
 	for (i = 0; i < pacCels->NumElements(); i++)
 	{
 		pcRect = &pacCels->Get(i)->GetSubImage()->mcImageRect;
-		AssertInt(4, pcRect->GetWidth());
-		AssertInt(4, pcRect->GetHeight());
-		AssertInt(1, pcRect->msTopLeft.y);
+		AssertInt((int32)4, pcRect->GetWidth());
+		AssertInt((int32)4, pcRect->GetHeight());
+		AssertInt((int32)1, pcRect->msTopLeft.y);
 		AssertTrue(pcRect->msTopLeft.x >= 1);
 		AssertTrue(pcRect->msBottomRight.x <= 13);
 	}
@@ -246,10 +246,10 @@ void AssertCombinedCelRect(Ptr<CArrayImageCel> pacCels, size iIndex, int iLeft, 
 	CInt32Rect*	pcRect;
 
 	pcRect = &pacCels->Get(iIndex)->GetSubImage()->mcImageRect;
-	AssertInt(iLeft, pcRect->msTopLeft.x);
-	AssertInt(iTop, pcRect->msTopLeft.y);
-	AssertInt(iRight, pcRect->msBottomRight.x);
-	AssertInt(iBottom, pcRect->msBottomRight.y);
+	AssertInt((int32)iLeft, pcRect->msTopLeft.x);
+	AssertInt((int32)iTop, pcRect->msTopLeft.y);
+	AssertInt((int32)iRight, pcRect->msBottomRight.x);
+	AssertInt((int32)iBottom, pcRect->msBottomRight.y);
 }
 
 
@@ -272,8 +272,8 @@ void TestImageCombinerLineLayoutGaps(void)
 	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 4, 0, 8, 4));
 	pcImage = cCombiner.Combine();
 	AssertTrue(pcImage.IsNotNull());
-	AssertInt(10, pcImage->GetWidth());
-	AssertInt(6, pcImage->GetHeight());
+	AssertInt((int32)10, pcImage->GetWidth());
+	AssertInt((int32)6, pcImage->GetHeight());
 
 	pacCels = cCombiner.GetCels();
 	AssertSize(2, pacCels->NumElements());
@@ -289,8 +289,8 @@ void TestImageCombinerLineLayoutGaps(void)
 	cCombiner.AddCel(OMalloc<CImageCel>(pcSource, 4, 0, 8, 4));
 	pcImage = cCombiner.Combine();
 	AssertTrue(pcImage.IsNotNull());
-	AssertInt(6, pcImage->GetWidth());
-	AssertInt(11, pcImage->GetHeight());
+	AssertInt((int32)6, pcImage->GetWidth());
+	AssertInt((int32)11, pcImage->GetHeight());
 
 	pacCels = cCombiner.GetCels();
 	AssertSize(2, pacCels->NumElements());

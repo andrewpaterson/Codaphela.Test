@@ -86,8 +86,8 @@ void TestBumpMapperHeightToBumpUVs(void)
 	pRampUVs = cToUVs.Modify(pRamp);
 	cToUVs.Kill();
 
-	AssertInt(6, pFlatUVs->GetWidth());
-	AssertInt(6, pFlatUVs->GetHeight());
+	AssertInt((int32)6, pFlatUVs->GetWidth());
+	AssertInt((int32)6, pFlatUVs->GetHeight());
 	AssertTrue(pFlatUVs->HasChannels(IMAGE_BUMP_U, IMAGE_BUMP_V, CHANNEL_STOP));
 	AssertSize(72, pFlatUVs->GetByteSize());
 	AssertSize(72, pRampUVs->GetByteSize());

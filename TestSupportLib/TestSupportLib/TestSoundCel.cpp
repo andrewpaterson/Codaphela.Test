@@ -157,7 +157,7 @@ void TestSoundCelToSound(void)
 	Ptr<CSound> pcCopy = pcCel->ToSound();
 
 	AssertSize(7, pcCopy->GetNumFrames());
-	AssertInt(8000, pcCopy->GetSampleRate());
+	AssertInt((int32)8000, pcCopy->GetSampleRate());
 	AssertInt(PT_int8, pcCopy->GetPrimitiveType());
 	iMismatches = 0;
 	for (i = 0; i < 7; i++)

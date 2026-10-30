@@ -134,8 +134,8 @@ void TestImageCelGroupSourceCombine(void)
 
 	if (pcImage.IsNotNull())
 	{
-		AssertInt(777, pcImage->GetWidth());
-		AssertInt(88, pcImage->GetHeight());
+		AssertInt((int32)777, pcImage->GetWidth());
+		AssertInt((int32)88, pcImage->GetHeight());
 		WriteImage(&pcImage, "Output" _FS_ "StarControl.raw");
 		AssertFileMemory("Input" _FS_ "StarControl.raw", pcImage->mcChannels.GetData(), pcImage->GetByteSize());
 	}
@@ -189,15 +189,15 @@ void TestImageCelsSourceBorderMasks(void)
 	AssertInt(1, pcCel1->GetMask());
 	AssertInt(2, pcCel2->GetMask());
 
-	AssertInt(36, pcCel1->GetSubImage()->GetFullWidth());
-	AssertInt(28, pcCel1->GetSubImage()->GetImageWidth());
-	AssertInt(22, pcCel1->GetSubImage()->GetFullHeight());
-	AssertInt(18, pcCel1->GetSubImage()->GetImageHeight());
+	AssertInt((int32)36, pcCel1->GetSubImage()->GetFullWidth());
+	AssertInt((int32)28, pcCel1->GetSubImage()->GetImageWidth());
+	AssertInt((int32)22, pcCel1->GetSubImage()->GetFullHeight());
+	AssertInt((int32)18, pcCel1->GetSubImage()->GetImageHeight());
 
-	AssertInt(31, pcCel2->GetSubImage()->GetFullWidth());
-	AssertInt(25, pcCel2->GetSubImage()->GetImageWidth());
-	AssertInt(22, pcCel2->GetSubImage()->GetFullHeight());
-	AssertInt(11, pcCel2->GetSubImage()->GetImageHeight());
+	AssertInt((int32)31, pcCel2->GetSubImage()->GetFullWidth());
+	AssertInt((int32)25, pcCel2->GetSubImage()->GetImageWidth());
+	AssertInt((int32)22, pcCel2->GetSubImage()->GetFullHeight());
+	AssertInt((int32)11, pcCel2->GetSubImage()->GetImageHeight());
 
 	pCels = NULL;
 	cSource.Kill();
@@ -237,10 +237,10 @@ void TestImageCelsSourceBorderMasksPackOnLoad(void)
 	//The packed cels keep the cropped sizes of the masked regions.
 	pCel1 = pCels->Get(0);
 	pCel2 = pCels->Get(1);
-	AssertInt(28, pCel1->GetSubImage()->GetImageWidth());
-	AssertInt(18, pCel1->GetSubImage()->GetImageHeight());
-	AssertInt(25, pCel2->GetSubImage()->GetImageWidth());
-	AssertInt(11, pCel2->GetSubImage()->GetImageHeight());
+	AssertInt((int32)28, pCel1->GetSubImage()->GetImageWidth());
+	AssertInt((int32)18, pCel1->GetSubImage()->GetImageHeight());
+	AssertInt((int32)25, pCel2->GetSubImage()->GetImageWidth());
+	AssertInt((int32)11, pCel2->GetSubImage()->GetImageHeight());
 
 	pCel1 = NULL;
 	pCel2 = NULL;

@@ -50,39 +50,39 @@ void TestRectanglePackerHorizontalAllSameSize(void)
 	pcLine = pcBestAttempt->macLines.Get(0);
 	AssertSize(6, pcLine->macRectangles.NumElements());
 
-	AssertInt(0, pcLine->miy);
-	AssertInt(60, pcLine->miWidth);
-	AssertInt(10, pcLine->miHeight);
+	AssertInt((int32)0, pcLine->miy);
+	AssertInt((int32)60, pcLine->miWidth);
+	AssertInt((int32)10, pcLine->miHeight);
 
 	pcRect = pcLine->Get(sz1);
 	AssertNotNull(pcRect);
-	AssertInt(50, pcRect->mix);
-	AssertInt(0, pcRect->miy);
+	AssertInt((int32)50, pcRect->mix);
+	AssertInt((int32)0, pcRect->miy);
 
 	pcRect = pcLine->Get(sz2);
 	AssertNotNull(pcRect);
-	AssertInt(10, pcRect->mix);
-	AssertInt(0, pcRect->miy);
+	AssertInt((int32)10, pcRect->mix);
+	AssertInt((int32)0, pcRect->miy);
 
 	pcRect = pcLine->Get(sz3);
 	AssertNotNull(pcRect);
-	AssertInt(20, pcRect->mix);
-	AssertInt(0, pcRect->miy);
+	AssertInt((int32)20, pcRect->mix);
+	AssertInt((int32)0, pcRect->miy);
 
 	pcRect = pcLine->Get(sz4);
 	AssertNotNull(pcRect);
-	AssertInt(30, pcRect->mix);
-	AssertInt(0, pcRect->miy);
+	AssertInt((int32)30, pcRect->mix);
+	AssertInt((int32)0, pcRect->miy);
 
 	pcRect = pcLine->Get(sz5);
 	AssertNotNull(pcRect);
-	AssertInt(40, pcRect->mix);
-	AssertInt(0, pcRect->miy);
+	AssertInt((int32)40, pcRect->mix);
+	AssertInt((int32)0, pcRect->miy);
 
 	pcRect = pcLine->Get(sz6);
 	AssertNotNull(pcRect);
-	AssertInt(0, pcRect->mix);
-	AssertInt(0, pcRect->miy);
+	AssertInt((int32)0, pcRect->mix);
+	AssertInt((int32)0, pcRect->miy);
 
 	cPacker.Kill();
 }
@@ -139,26 +139,26 @@ void TestRectanglePackerSquareAllSameSize(void)
 
 	pcBestAttempt = cPacker.GetBestAttempt();
 	AssertSize(3, pcBestAttempt->macLines.NumElements());
-	AssertInt(3, pcBestAttempt->miHeight);
-	AssertInt(3, pcBestAttempt->miWidth);
+	AssertInt((int32)3, pcBestAttempt->miHeight);
+	AssertInt((int32)3, pcBestAttempt->miWidth);
 
 	pcLine = pcBestAttempt->macLines.Get(0);
 	AssertSize(3, pcLine->macRectangles.NumElements());
-	AssertInt(0, pcLine->miy);
-	AssertInt(3, pcLine->miWidth);
-	AssertInt(1, pcLine->miHeight);
+	AssertInt((int32)0, pcLine->miy);
+	AssertInt((int32)3, pcLine->miWidth);
+	AssertInt((int32)1, pcLine->miHeight);
 
 	pcLine = pcBestAttempt->macLines.Get(1);
 	AssertSize(3, pcLine->macRectangles.NumElements());
-	AssertInt(1, pcLine->miy);
-	AssertInt(3, pcLine->miWidth);
-	AssertInt(1, pcLine->miHeight);
+	AssertInt((int32)1, pcLine->miy);
+	AssertInt((int32)3, pcLine->miWidth);
+	AssertInt((int32)1, pcLine->miHeight);
 
 	pcLine = pcBestAttempt->macLines.Get(2);
 	AssertSize(2, pcLine->macRectangles.NumElements());
-	AssertInt(2, pcLine->miy);
-	AssertInt(2, pcLine->miWidth);
-	AssertInt(1, pcLine->miHeight);
+	AssertInt((int32)2, pcLine->miy);
+	AssertInt((int32)2, pcLine->miWidth);
+	AssertInt((int32)1, pcLine->miHeight);
 
 	cPacker.Kill();
 }
@@ -217,8 +217,8 @@ void TestRectanglePackerHorizontalPowerOf2Sizes(void)
 
 	pcBestAttempt = cPacker.GetBestAttempt();
 	AssertSize(1, pcBestAttempt->macLines.NumElements());
-	AssertInt(24, pcBestAttempt->miWidth);
-	AssertInt(8, pcBestAttempt->miHeight);
+	AssertInt((int32)24, pcBestAttempt->miWidth);
+	AssertInt((int32)8, pcBestAttempt->miHeight);
 
 	szRep.Init();
 	pcBestAttempt->Print(&szRep);
@@ -248,9 +248,9 @@ void TestRectanglePackerSquarePowerOf2Sizes(void)
 
 	pcBestAttempt = cPacker.GetBestAttempt();
 	AssertSize(2, pcBestAttempt->macLines.NumElements());
-	AssertInt(14, pcBestAttempt->miMaxWidth);
-	AssertInt(14, pcBestAttempt->miWidth);
-	AssertInt(16, pcBestAttempt->miHeight);
+	AssertInt((int32)14, pcBestAttempt->miMaxWidth);
+	AssertInt((int32)14, pcBestAttempt->miWidth);
+	AssertInt((int32)16, pcBestAttempt->miHeight);
 
 	szRep.Init();
 	pcBestAttempt->Print(&szRep);
@@ -285,9 +285,9 @@ void TestRectanglePackerSquareThinRectangles(void)
 
 	pcBestAttempt = cPacker.GetBestAttempt();
 	AssertNotNull(pcBestAttempt);
-	AssertInt(10, pcBestAttempt->miMaxWidth);
-	AssertInt(10, pcBestAttempt->miWidth);
-	AssertInt(10, pcBestAttempt->miHeight);
+	AssertInt((int32)10, pcBestAttempt->miMaxWidth);
+	AssertInt((int32)10, pcBestAttempt->miWidth);
+	AssertInt((int32)10, pcBestAttempt->miHeight);
 	cPacker.Kill();
 
 	//With a one pixel gap each rectangle covers 11x2 so the side is ceil(sqrt(220)) - 1 = 14, still one rectangle per row.
@@ -303,9 +303,9 @@ void TestRectanglePackerSquareThinRectangles(void)
 
 	pcBestAttempt = cPacker.GetBestAttempt();
 	AssertNotNull(pcBestAttempt);
-	AssertInt(14, pcBestAttempt->miMaxWidth);
-	AssertInt(10, pcBestAttempt->miWidth);
-	AssertInt(19, pcBestAttempt->miHeight);
+	AssertInt((int32)14, pcBestAttempt->miMaxWidth);
+	AssertInt((int32)10, pcBestAttempt->miWidth);
+	AssertInt((int32)19, pcBestAttempt->miHeight);
 	cPacker.Kill();
 }
 
@@ -328,8 +328,8 @@ void TestRectanglePackerVerticalPowerOf2Sizes(void)
 
 	pcBestAttempt = cPacker.GetBestAttempt();
 	AssertSize(4, pcBestAttempt->macLines.NumElements());
-	AssertInt(8, pcBestAttempt->miWidth);
-	AssertInt(24, pcBestAttempt->miHeight);
+	AssertInt((int32)8, pcBestAttempt->miWidth);
+	AssertInt((int32)24, pcBestAttempt->miHeight);
 
 	szRep.Init();
 	pcBestAttempt->Print(&szRep);
@@ -358,8 +358,8 @@ void TestRectanglePackerDefault(void)
 
 	pcBestAttempt = cPacker.GetBestAttempt();
 	AssertSize(1, pcBestAttempt->macLines.NumElements());
-	AssertInt(24, pcBestAttempt->miWidth);
-	AssertInt(8, pcBestAttempt->miHeight);
+	AssertInt((int32)24, pcBestAttempt->miWidth);
+	AssertInt((int32)8, pcBestAttempt->miHeight);
 	AssertLong(7, pcBestAttempt->GetWastedArea());
 
 	szRep.Init();
@@ -369,8 +369,8 @@ void TestRectanglePackerDefault(void)
 
 	pcWorstAttempt = cPacker.GetWorstAttempt();
 	AssertSize(2, pcWorstAttempt->macLines.NumElements());
-	AssertInt(22, pcWorstAttempt->miWidth);
-	AssertInt(12, pcWorstAttempt->miHeight);
+	AssertInt((int32)22, pcWorstAttempt->miWidth);
+	AssertInt((int32)12, pcWorstAttempt->miHeight);
 	AssertLong(79, pcWorstAttempt->GetWastedArea());
 
 	szRep.Init();
@@ -420,24 +420,24 @@ void TestRectanglePackerGetPackedRectangles(void)
 
 	pcPackedRect = macRects.Get(0);
 	AssertString(sz1, (char*)pcPackedRect->GetUserData());
-	AssertInt(0, pcPackedRect->msTopLeft.x);
-	AssertInt(0, pcPackedRect->msTopLeft.y);
-	AssertInt(7, pcPackedRect->msBottomRight.x);
-	AssertInt(5, pcPackedRect->msBottomRight.y);
+	AssertInt((int32)0, pcPackedRect->msTopLeft.x);
+	AssertInt((int32)0, pcPackedRect->msTopLeft.y);
+	AssertInt((int32)7, pcPackedRect->msBottomRight.x);
+	AssertInt((int32)5, pcPackedRect->msBottomRight.y);
 
 	pcPackedRect = macRects.Get(1);
 	AssertString(sz3, (char*)pcPackedRect->GetUserData());
-	AssertInt(0, pcPackedRect->msTopLeft.x);
-	AssertInt(5, pcPackedRect->msTopLeft.y);
-	AssertInt(4, pcPackedRect->msBottomRight.x);
-	AssertInt(10, pcPackedRect->msBottomRight.y);
+	AssertInt((int32)0, pcPackedRect->msTopLeft.x);
+	AssertInt((int32)5, pcPackedRect->msTopLeft.y);
+	AssertInt((int32)4, pcPackedRect->msBottomRight.x);
+	AssertInt((int32)10, pcPackedRect->msBottomRight.y);
 
 	pcPackedRect = macRects.Get(2);
 	AssertString(sz2, (char*)pcPackedRect->GetUserData());
-	AssertInt(4, pcPackedRect->msTopLeft.x);
-	AssertInt(5, pcPackedRect->msTopLeft.y);
-	AssertInt(7, pcPackedRect->msBottomRight.x);
-	AssertInt(10, pcPackedRect->msBottomRight.y);
+	AssertInt((int32)4, pcPackedRect->msTopLeft.x);
+	AssertInt((int32)5, pcPackedRect->msTopLeft.y);
+	AssertInt((int32)7, pcPackedRect->msBottomRight.x);
+	AssertInt((int32)10, pcPackedRect->msBottomRight.y);
 
 	macRects.Kill();
 	cPacker.Kill();
@@ -482,26 +482,26 @@ void TestRectanglePackerGetPackedRectanglesWithEdges(void)
 	AssertSize(3, macRects.NumElements());
 
 	pcPackedRect = macRects.Get(0);
-	AssertInt(2, pcPackedRect->msTopLeft.x);
-	AssertInt(2, pcPackedRect->msTopLeft.y);
-	AssertInt(9, pcPackedRect->msBottomRight.x);
-	AssertInt(7, pcPackedRect->msBottomRight.y);
+	AssertInt((int32)2, pcPackedRect->msTopLeft.x);
+	AssertInt((int32)2, pcPackedRect->msTopLeft.y);
+	AssertInt((int32)9, pcPackedRect->msBottomRight.x);
+	AssertInt((int32)7, pcPackedRect->msBottomRight.y);
 
 	pcPackedRect = macRects.Get(1);
-	AssertInt(2, pcPackedRect->msTopLeft.x);
-	AssertInt(8, pcPackedRect->msTopLeft.y);
-	AssertInt(6, pcPackedRect->msBottomRight.x);
-	AssertInt(13, pcPackedRect->msBottomRight.y);
+	AssertInt((int32)2, pcPackedRect->msTopLeft.x);
+	AssertInt((int32)8, pcPackedRect->msTopLeft.y);
+	AssertInt((int32)6, pcPackedRect->msBottomRight.x);
+	AssertInt((int32)13, pcPackedRect->msBottomRight.y);
 
 	pcPackedRect = macRects.Get(2);
-	AssertInt(2, pcPackedRect->msTopLeft.x);
-	AssertInt(14, pcPackedRect->msTopLeft.y);
-	AssertInt(5, pcPackedRect->msBottomRight.x);
-	AssertInt(19, pcPackedRect->msBottomRight.y);
+	AssertInt((int32)2, pcPackedRect->msTopLeft.x);
+	AssertInt((int32)14, pcPackedRect->msTopLeft.y);
+	AssertInt((int32)5, pcPackedRect->msBottomRight.x);
+	AssertInt((int32)19, pcPackedRect->msBottomRight.y);
 
 	sImageSize = pcBestAttempt->GetPackedImageSize();
-	AssertInt(11, sImageSize.x);
-	AssertInt(21, sImageSize.y);
+	AssertInt((int32)11, sImageSize.x);
+	AssertInt((int32)21, sImageSize.y);
 
 	macRects.Kill();
 	cPacker.Kill();
@@ -607,15 +607,15 @@ void TestRectanglePackerWidestNotFirst(void)
 	cRect.Init(0, 0, 4, 4);
 	cPacker.AddRectangle(&cRect, NULL);
 
-	AssertInt(10, cPacker.GetSourcesMinWidth());
-	AssertInt(16, cPacker.GetSourcesMaxWidth());
+	AssertInt((int32)10, cPacker.GetSourcesMinWidth());
+	AssertInt((int32)16, cPacker.GetSourcesMaxWidth());
 
 	cPacker.AddVerticalAttempt();
 	cPacker.Pack();
 
 	pcBestAttempt = cPacker.GetBestAttempt();
 	AssertNotNull(pcBestAttempt);
-	AssertInt(10, pcBestAttempt->miMaxWidth);
+	AssertInt((int32)10, pcBestAttempt->miMaxWidth);
 
 	szRep.Init();
 	pcBestAttempt->Print(&szRep);
@@ -666,8 +666,8 @@ void TestRectanglePackerEmpty(void)
 	macRects.Kill();
 
 	sImageSize = cPacker.GetPackedImageSize();
-	AssertInt(0, sImageSize.x);
-	AssertInt(0, sImageSize.y);
+	AssertInt((int32)0, sImageSize.x);
+	AssertInt((int32)0, sImageSize.y);
 	cPacker.Kill();
 
 	cPacker.Init(2, 1);
@@ -704,8 +704,8 @@ void TestRectanglePackerNoAttemptFits(void)
 	macRects.Kill();
 
 	sImageSize = cPacker.GetPackedImageSize();
-	AssertInt(0, sImageSize.x);
-	AssertInt(0, sImageSize.y);
+	AssertInt((int32)0, sImageSize.x);
+	AssertInt((int32)0, sImageSize.y);
 
 	cPacker.Kill();
 }
@@ -808,8 +808,8 @@ void TestRectanglePackerRandomGaps(void)
 		AssertSize(uiNumRectangles, macRects.NumElements());
 		AssertTrue(ArePackedRectanglesSeparated(&macRects, 1));
 		AssertTrue(ArePackedRectanglesInside(&macRects, sImageSize, 2));
-		AssertInt(0, sImageSize.x & (sImageSize.x - 1));
-		AssertInt(0, sImageSize.y & (sImageSize.y - 1));
+		AssertInt((int32)0, sImageSize.x & (sImageSize.x - 1));
+		AssertInt((int32)0, sImageSize.y & (sImageSize.y - 1));
 		macRects.Kill();
 		cPow2Packer.Kill();
 	}
@@ -937,8 +937,8 @@ void TestRectanglePackerDefaultAttemptRange(void)
 	cPacker.AddDefaultAttempts();
 	pacAttempts = cPacker.GetPackAttempts();
 	AssertSize(7, pacAttempts->NumElements());
-	AssertInt(16, pacAttempts->Get(0)->miMaxWidth);
-	AssertInt(10, pacAttempts->Tail()->miMaxWidth);
+	AssertInt((int32)16, pacAttempts->Get(0)->miMaxWidth);
+	AssertInt((int32)10, pacAttempts->Tail()->miMaxWidth);
 	cPacker.Kill();
 
 	//The single row includes a gap between each rectangle.
@@ -953,8 +953,8 @@ void TestRectanglePackerDefaultAttemptRange(void)
 
 	cPacker.AddDefaultAttempts();
 	pacAttempts = cPacker.GetPackAttempts();
-	AssertInt(18, pacAttempts->Get(0)->miMaxWidth);
-	AssertInt(10, pacAttempts->Tail()->miMaxWidth);
+	AssertInt((int32)18, pacAttempts->Get(0)->miMaxWidth);
+	AssertInt((int32)10, pacAttempts->Tail()->miMaxWidth);
 
 	//The single row attempt packs every rectangle on one line.
 	cPacker.Pack();
@@ -991,16 +991,16 @@ void TestRectanglePackerInvalidAttemptsSortLast(void)
 
 	pcBestAttempt = cPacker.GetBestAttempt();
 	AssertNotNull(pcBestAttempt);
-	AssertInt(16, pcBestAttempt->miMaxWidth);
-	AssertInt(14, pcBestAttempt->miWidth);
-	AssertInt(4, pcBestAttempt->miHeight);
+	AssertInt((int32)16, pcBestAttempt->miMaxWidth);
+	AssertInt((int32)14, pcBestAttempt->miWidth);
+	AssertInt((int32)4, pcBestAttempt->miHeight);
 
 	pacAttempts = cPacker.GetPackAttempts();
 	AssertSize(4, pacAttempts->NumElements());
 
 	pcAttempt = pacAttempts->Get(1);
 	AssertTrue(pcAttempt->mbValid);
-	AssertInt(12, pcAttempt->miMaxWidth);
+	AssertInt((int32)12, pcAttempt->miMaxWidth);
 	AssertLong(60, pcAttempt->miArea);
 
 	pcAttempt = pacAttempts->Get(2);

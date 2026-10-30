@@ -147,13 +147,13 @@ void AssertSameImage(Ptr<CImage> pcExpected, Ptr<CImage> pcActual, int iAllowedM
 	size			uiChannel;
 	CChannel*		pcExpectedChannel;
 	CChannel*		pcActualChannel;
-	int				iNumPixels;
+	lsize			uiNumPixels;
 	size			uiExpectedStride;
 	size			uiActualStride;
 	uint8*			puiExpected;
 	uint8*			puiActual;
-	int				iPixel;
-	int				iMismatches;
+	lsize			uiPixel;
+	int32			iMismatches;
 
 	AssertTrue(pcExpected.IsNotNull());
 	AssertTrue(pcActual.IsNotNull());
@@ -162,8 +162,8 @@ void AssertSameImage(Ptr<CImage> pcExpected, Ptr<CImage> pcActual, int iAllowedM
 		return;
 	}
 
-	AssertInt(pcExpected->GetWidth(), pcActual->GetWidth());
-	AssertInt(pcExpected->GetHeight(), pcActual->GetHeight());
+	AssertInt((int32)pcExpected->GetWidth(), pcActual->GetWidth());
+	AssertInt((int32)pcExpected->GetHeight(), pcActual->GetHeight());
 	if ((pcExpected->GetWidth() != pcActual->GetWidth()) || (pcExpected->GetHeight() != pcActual->GetHeight()))
 	{
 		return;
@@ -175,9 +175,9 @@ void AssertSameImage(Ptr<CImage> pcExpected, Ptr<CImage> pcActual, int iAllowedM
 	pcActual->GetAllChannels(&aiActualChannels);
 	AssertSize(aiExpectedChannels.NumElements(), aiActualChannels.NumElements());
 
-	iNumPixels = pcExpected->GetWidth() * pcExpected->GetHeight();
-	uiExpectedStride = pcExpected->GetByteSize() / iNumPixels;
-	uiActualStride = pcActual->GetByteSize() / iNumPixels;
+	uiNumPixels = (lsize)pcExpected->GetWidth() * pcExpected->GetHeight();
+	uiExpectedStride = (size)(pcExpected->GetByteSize() / uiNumPixels);
+	uiActualStride = (size)(pcActual->GetByteSize() / uiNumPixels);
 	puiExpected = (uint8*)pcExpected->GetData();
 	puiActual = (uint8*)pcActual->GetData();
 	iMismatches = 0;
@@ -196,9 +196,9 @@ void AssertSameImage(Ptr<CImage> pcExpected, Ptr<CImage> pcActual, int iAllowedM
 		{
 			continue;
 		}
-		for (iPixel = 0; iPixel < iNumPixels; iPixel++)
+		for (uiPixel = 0; uiPixel < uiNumPixels; uiPixel++)
 		{
-			if (!SameChannelValue(&puiExpected[iPixel * uiExpectedStride + pcExpectedChannel->miByteOffset], &puiActual[iPixel * uiActualStride + pcActualChannel->miByteOffset], pcExpectedChannel->eType, pcExpectedChannel->miByteSize))
+			if (!SameChannelValue(&puiExpected[uiPixel * uiExpectedStride + pcExpectedChannel->miByteOffset], &puiActual[uiPixel * uiActualStride + pcActualChannel->miByteOffset], pcExpectedChannel->eType, pcExpectedChannel->miByteSize))
 			{
 				iMismatches++;
 			}
@@ -208,7 +208,7 @@ void AssertSameImage(Ptr<CImage> pcExpected, Ptr<CImage> pcActual, int iAllowedM
 	{
 		iMismatches = 0;
 	}
-	AssertInt(0, iMismatches);
+	AssertInt((int32)0, iMismatches);
 
 	aiExpectedChannels.Kill();
 	aiActualChannels.Kill();

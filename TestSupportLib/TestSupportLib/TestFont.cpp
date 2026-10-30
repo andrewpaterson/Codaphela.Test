@@ -220,8 +220,8 @@ void AssertGlyph(int iXExpected, int iYExpected, char* szExpected, SGlyphPositio
 {
 	CChars						sz;
 
-	AssertInt(iXExpected, psGlyph->sPosition.x);
-	AssertInt(iYExpected, psGlyph->sPosition.y);
+	AssertInt((int32)iXExpected, psGlyph->sPosition.x);
+	AssertInt((int32)iYExpected, psGlyph->sPosition.y);
 	sz.Init();
 	psGlyph->pcGlyph->Print(&sz);
 	AssertString(szExpected, sz.Text());
@@ -595,8 +595,8 @@ void TestFontTrueTypeCreateFont(void)
 		AssertInt(6, pFont->GetDescent());
 		AssertInt(28, pFont->GetLineHeight());
 		AssertInt(7, pFont->GetSpaceWidth());
-		AssertInt(512, pImage->GetWidth());
-		AssertInt(452, pImage->GetHeight());
+		AssertInt((int32)512, pImage->GetWidth());
+		AssertInt((int32)452, pImage->GetHeight());
 
 		//Liberation Sans 'A' advances 1366 units (16 pixels) and is 1409 units high (17 rows), starting 5 rows below the top of the line.
 		pGlyph = pFont->GetGlyph((uint16)'A', 1);
@@ -604,17 +604,17 @@ void TestFontTrueTypeCreateFont(void)
 		AssertInt(16, pGlyph->GetFullWidth());
 		AssertInt(28, pGlyph->GetFullHeight());
 		pcSubImage = pGlyph->GetSubImage();
-		AssertInt(0, pcSubImage->GetImageLeft());
-		AssertInt(5, pcSubImage->GetImageTop());
-		AssertInt(16, pcSubImage->GetImageWidth());
-		AssertInt(17, pcSubImage->GetImageHeight());
+		AssertInt((int32)0, pcSubImage->GetImageLeft());
+		AssertInt((int32)5, pcSubImage->GetImageTop());
+		AssertInt((int32)16, pcSubImage->GetImageWidth());
+		AssertInt((int32)17, pcSubImage->GetImageHeight());
 
 		//Space has no image, only an advance.
 		pGlyph = pFont->GetGlyph((uint16)' ', 1);
 		AssertTrue(pGlyph.IsNotNull());
 		AssertInt(7, pGlyph->GetFullWidth());
 		AssertInt(28, pGlyph->GetFullHeight());
-		AssertInt(0, pGlyph->GetSubImage()->GetImageWidth());
+		AssertInt((int32)0, pGlyph->GetSubImage()->GetImageWidth());
 
 		//Code points below 0xFF are keyed with one byte, others with more.
 		pGlyph = pFont->GetGlyph((uint16)0x00C1, 1);
@@ -765,16 +765,16 @@ void AssertFontGlyphsEqual(Ptr<CFont> pExpected, Ptr<CFont> pActual)
 
 		pcExpected = pExpectedGlyph->GetSubImage();
 		pcActual = pActualGlyph->GetSubImage();
-		AssertInt(pcExpected->mcImageRect.msTopLeft.x, pcActual->mcImageRect.msTopLeft.x);
-		AssertInt(pcExpected->mcImageRect.msTopLeft.y, pcActual->mcImageRect.msTopLeft.y);
-		AssertInt(pcExpected->mcImageRect.msBottomRight.x, pcActual->mcImageRect.msBottomRight.x);
-		AssertInt(pcExpected->mcImageRect.msBottomRight.y, pcActual->mcImageRect.msBottomRight.y);
-		AssertInt(pcExpected->msOffsetTopLeft.x, pcActual->msOffsetTopLeft.x);
-		AssertInt(pcExpected->msOffsetTopLeft.y, pcActual->msOffsetTopLeft.y);
-		AssertInt(pcExpected->msOffsetBottomRight.x, pcActual->msOffsetBottomRight.x);
-		AssertInt(pcExpected->msOffsetBottomRight.y, pcActual->msOffsetBottomRight.y);
-		AssertInt(pcExpected->msAlignment.x, pcActual->msAlignment.x);
-		AssertInt(pcExpected->msAlignment.y, pcActual->msAlignment.y);
+		AssertInt((int32)pcExpected->mcImageRect.msTopLeft.x, pcActual->mcImageRect.msTopLeft.x);
+		AssertInt((int32)pcExpected->mcImageRect.msTopLeft.y, pcActual->mcImageRect.msTopLeft.y);
+		AssertInt((int32)pcExpected->mcImageRect.msBottomRight.x, pcActual->mcImageRect.msBottomRight.x);
+		AssertInt((int32)pcExpected->mcImageRect.msBottomRight.y, pcActual->mcImageRect.msBottomRight.y);
+		AssertInt((int32)pcExpected->msOffsetTopLeft.x, pcActual->msOffsetTopLeft.x);
+		AssertInt((int32)pcExpected->msOffsetTopLeft.y, pcActual->msOffsetTopLeft.y);
+		AssertInt((int32)pcExpected->msOffsetBottomRight.x, pcActual->msOffsetBottomRight.x);
+		AssertInt((int32)pcExpected->msOffsetBottomRight.y, pcActual->msOffsetBottomRight.y);
+		AssertInt((int32)pcExpected->msAlignment.x, pcActual->msAlignment.x);
+		AssertInt((int32)pcExpected->msAlignment.y, pcActual->msAlignment.y);
 
 		uiCount++;
 		bExists = pExpected->Iterate(&sIter, auiKey, &uiLength, 4);
@@ -845,8 +845,8 @@ void TestFontTrueTypeWriteAndRead(void)
 		pLoadedImage = pLoadedFont->GetImage();
 		AssertTrue(pLoadedImage.IsNotNull());
 		AssertTrue(pLoadedImage != pImage);
-		AssertInt(pImage->GetWidth(), pLoadedImage->GetWidth());
-		AssertInt(pImage->GetHeight(), pLoadedImage->GetHeight());
+		AssertInt((int32)pImage->GetWidth(), pLoadedImage->GetWidth());
+		AssertInt((int32)pImage->GetHeight(), pLoadedImage->GetHeight());
 
 		szInputFilename.Init(szImageFilename);
 		szInputFilename.Replace("Output", "Input");

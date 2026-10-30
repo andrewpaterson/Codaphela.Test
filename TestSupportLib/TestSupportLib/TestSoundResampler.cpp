@@ -85,7 +85,7 @@ float64 ResampledSineError(ESoundResample eResample, uint32 uiSourceRate, uint32
 	Ptr<CSound> pcDest = cResampler.Modify(pcSource);
 	cResampler.Kill();
 
-	AssertInt(uiDestRate, pcDest->GetSampleRate());
+	AssertInt((int32)uiDestRate, pcDest->GetSampleRate());
 	AssertSize(CSoundResampler::GetResampledNumFrames(uiSourceRate / 10, uiSourceRate, uiDestRate), pcDest->GetNumFrames());
 	fError = SineError(pcDest, fFrequency, 0.8);
 
@@ -364,7 +364,7 @@ void TestSoundResamplerModifierStack(void)
 
 	//The sound itself changed, so everything pointing to it sees the new rate.
 	AssertTrue(cStack.GetSound() == pcSound);
-	AssertInt(44100, pcAlias->GetSampleRate());
+	AssertInt((int32)44100, pcAlias->GetSampleRate());
 	AssertSize(4410, pcAlias->GetNumFrames());
 	AssertInt(PT_int16, pcAlias->GetPrimitiveType());
 	AssertTrue(pcAlias->HasChannel(SOUND_FRONT_CENTRE));
@@ -406,7 +406,7 @@ void TestSoundResamplerModifierStackFailure(void)
 	cStack.ApplyAll();
 	gcLogger.SetConfig(&sLogConfig);
 
-	AssertInt(8000, pcSound->GetSampleRate());
+	AssertInt((int32)8000, pcSound->GetSampleRate());
 	AssertSize(80, pcSound->GetNumFrames());
 
 	cStack.Kill();

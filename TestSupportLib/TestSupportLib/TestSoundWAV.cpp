@@ -8,12 +8,13 @@
 
 
 //The sample patterns written by Input/WAV/MakeWAV.py.
-int32 ExpectedWAV8(size i, size c)		{ return (int32)((i * 7 + c * 50) & 0xFF); }
-int32 ExpectedWAV16(size i, size c)		{ return (int32)((i * 1237 + c * 9001) & 0xFFFF) - 32768; }
-int32 ExpectedWAV24(size i, size c)		{ return (int32)((i * 76543 + c * 1000003) & 0xFFFFFF) - 0x800000; }
+//The arithmetic is in 32 bits (as in Python) so a 16 bit size doesn't wrap it.
+int32 ExpectedWAV8(size i, size c)		{ return (int32)(((uint32)i * 7 + (uint32)c * 50) & 0xFF); }
+int32 ExpectedWAV16(size i, size c)		{ return (int32)(((uint32)i * 1237 + (uint32)c * 9001) & 0xFFFF) - 32768; }
+int32 ExpectedWAV24(size i, size c)		{ return (int32)(((uint32)i * 76543 + (uint32)c * 1000003) & 0xFFFFFF) - 0x800000; }
 int32 ExpectedWAV32(size i, size c)		{ return (int32)((uint32)(((uint64)i * 123456789 + (uint64)c * 987654321) & 0xFFFFFFFF) ^ 0x80000000); }
-float64 ExpectedWAVFloat32(size i, size c)	{ return (float64)((int)((i * 37 + c * 11) % 200) - 100) / 128.0; }
-float64 ExpectedWAVFloat64(size i, size c)	{ return (float64)((int)((i * 12345 + c * 777) % 100000) - 50000) / 65536.0; }
+float64 ExpectedWAVFloat32(size i, size c)	{ return (float64)((int32)(((uint32)i * 37 + (uint32)c * 11) % 200) - 100) / 128.0; }
+float64 ExpectedWAVFloat64(size i, size c)	{ return (float64)((int32)(((uint32)i * 12345 + (uint32)c * 777) % 100000) - 50000) / 65536.0; }
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -66,7 +67,7 @@ void AssertWAV(const char* szName, uint32 uiSampleRate, size uiNumFrames, EPrimi
 		return;
 	}
 
-	AssertInt(uiSampleRate, pcSound->GetSampleRate());
+	AssertInt((int32)uiSampleRate, pcSound->GetSampleRate());
 	AssertSize(uiNumFrames, pcSound->GetNumFrames());
 	AssertInt(eType, pcSound->GetPrimitiveType());
 
@@ -80,7 +81,7 @@ void AssertWAV(const char* szName, uint32 uiSampleRate, size uiNumFrames, EPrimi
 			AssertSize(eChannel, pcSound->GetChannelAtIndex(uiNumChannels)->iChannel);
 		}
 		uiNumChannels++;
-		eChannel = va_arg(vaMarker, EChannel);
+		eChannel = VA_ARG_SIZE(vaMarker);
 	}
 	va_end(vaMarker);
 	AssertSize(uiNumChannels, pcSound->NumChannels());
@@ -232,7 +233,7 @@ void AssertWAVRoundTrip(Ptr<CSound> pcSound, const char* szName, EWAVSampleForma
 		return;
 	}
 
-	AssertInt(pcSound->GetSampleRate(), pcRead->GetSampleRate());
+	AssertInt((int32)pcSound->GetSampleRate(), pcRead->GetSampleRate());
 	AssertSize(pcSound->GetNumFrames(), pcRead->GetNumFrames());
 	AssertSize(pcSound->NumChannels(), pcRead->NumChannels());
 	AssertInt(eReadType, pcRead->GetPrimitiveType());

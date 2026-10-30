@@ -29,7 +29,7 @@ void TestMeshFaceReturn(void)
 	AssertInt(6, iCorner2);
 	AssertInt(7, iCorner3);
 
-	AssertInt(17, r.miFirstFace);
+	AssertInt((int32)17, r.miFirstFace);
 	AssertInt(3, r.NewEdges());
 
 	r.Pack(34671, 15, 14, 13, 12, 11, 10, 5);
@@ -45,7 +45,7 @@ void TestMeshFaceReturn(void)
 	AssertInt(11, iCorner5);
 	AssertInt(10, iCorner6);
 
-	AssertInt(34671, r.miFirstFace);
+	AssertInt((int32)34671, r.miFirstFace);
 	AssertInt(5, r.NewEdges());
 
 	r.PackEmpty();
@@ -71,7 +71,7 @@ void TestMeshFaceReturn(void)
 	AssertInt(11, iCorner5);
 	AssertInt(10, iCorner6);
 
-	AssertInt(17, r1.miFirstFace);
+	AssertInt((int32)17, r1.miFirstFace);
 	AssertInt(7, r1.NewEdges());
 }
 

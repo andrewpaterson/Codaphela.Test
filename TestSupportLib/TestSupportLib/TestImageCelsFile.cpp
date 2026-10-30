@@ -18,16 +18,16 @@
 //////////////////////////////////////////////////////////////////////////
 void AssertSubImage(CSubImage* pcExpected, CSubImage* pcActual)
 {
-	AssertInt(pcExpected->mcImageRect.msTopLeft.x, pcActual->mcImageRect.msTopLeft.x);
-	AssertInt(pcExpected->mcImageRect.msTopLeft.y, pcActual->mcImageRect.msTopLeft.y);
-	AssertInt(pcExpected->mcImageRect.msBottomRight.x, pcActual->mcImageRect.msBottomRight.x);
-	AssertInt(pcExpected->mcImageRect.msBottomRight.y, pcActual->mcImageRect.msBottomRight.y);
-	AssertInt(pcExpected->msOffsetTopLeft.x, pcActual->msOffsetTopLeft.x);
-	AssertInt(pcExpected->msOffsetTopLeft.y, pcActual->msOffsetTopLeft.y);
-	AssertInt(pcExpected->msOffsetBottomRight.x, pcActual->msOffsetBottomRight.x);
-	AssertInt(pcExpected->msOffsetBottomRight.y, pcActual->msOffsetBottomRight.y);
-	AssertInt(pcExpected->msAlignment.x, pcActual->msAlignment.x);
-	AssertInt(pcExpected->msAlignment.y, pcActual->msAlignment.y);
+	AssertInt((int32)pcExpected->mcImageRect.msTopLeft.x, pcActual->mcImageRect.msTopLeft.x);
+	AssertInt((int32)pcExpected->mcImageRect.msTopLeft.y, pcActual->mcImageRect.msTopLeft.y);
+	AssertInt((int32)pcExpected->mcImageRect.msBottomRight.x, pcActual->mcImageRect.msBottomRight.x);
+	AssertInt((int32)pcExpected->mcImageRect.msBottomRight.y, pcActual->mcImageRect.msBottomRight.y);
+	AssertInt((int32)pcExpected->msOffsetTopLeft.x, pcActual->msOffsetTopLeft.x);
+	AssertInt((int32)pcExpected->msOffsetTopLeft.y, pcActual->msOffsetTopLeft.y);
+	AssertInt((int32)pcExpected->msOffsetBottomRight.x, pcActual->msOffsetBottomRight.x);
+	AssertInt((int32)pcExpected->msOffsetBottomRight.y, pcActual->msOffsetBottomRight.y);
+	AssertInt((int32)pcExpected->msAlignment.x, pcActual->msAlignment.x);
+	AssertInt((int32)pcExpected->msAlignment.y, pcActual->msAlignment.y);
 }
 
 
@@ -80,8 +80,8 @@ void TestImageCelsFileWriteRead(void)
 	AssertSize(7, pacLoadedCels->NumElements());
 
 	pLoadedCel = pacLoadedCels->Get(0);
-	AssertInt(252, pLoadedCel->GetSourceImage()->GetWidth());
-	AssertInt(91, pLoadedCel->GetSourceImage()->GetHeight());
+	AssertInt((int32)252, pLoadedCel->GetSourceImage()->GetWidth());
+	AssertInt((int32)91, pLoadedCel->GetSourceImage()->GetHeight());
 	AssertFalse(pLoadedCel->IsNamed());
 
 	for (i = 0; i < pacLoadedCels->NumElements(); i++)
@@ -139,22 +139,22 @@ void TestImageCelsFileReadOptional(void)
 	AssertSize(2, pacLoadedCels->NumElements());
 
 	pcSubImage = pacLoadedCels->Get(0)->GetSubImage();
-	AssertInt(1, pcSubImage->mcImageRect.msTopLeft.y);
-	AssertInt(2, pcSubImage->mcImageRect.msTopLeft.x);
-	AssertInt(3, pcSubImage->mcImageRect.msBottomRight.y);
-	AssertInt(4, pcSubImage->mcImageRect.msBottomRight.x);
-	AssertInt(5, pcSubImage->msOffsetTopLeft.y);
-	AssertInt(6, pcSubImage->msOffsetTopLeft.x);
-	AssertInt(7, pcSubImage->msOffsetBottomRight.y);
-	AssertInt(8, pcSubImage->msOffsetBottomRight.x);
-	AssertInt(-9, pcSubImage->msAlignment.x);
-	AssertInt(-10, pcSubImage->msAlignment.y);
+	AssertInt((int32)1, pcSubImage->mcImageRect.msTopLeft.y);
+	AssertInt((int32)2, pcSubImage->mcImageRect.msTopLeft.x);
+	AssertInt((int32)3, pcSubImage->mcImageRect.msBottomRight.y);
+	AssertInt((int32)4, pcSubImage->mcImageRect.msBottomRight.x);
+	AssertInt((int32)5, pcSubImage->msOffsetTopLeft.y);
+	AssertInt((int32)6, pcSubImage->msOffsetTopLeft.x);
+	AssertInt((int32)7, pcSubImage->msOffsetBottomRight.y);
+	AssertInt((int32)8, pcSubImage->msOffsetBottomRight.x);
+	AssertInt((int32)-9, pcSubImage->msAlignment.x);
+	AssertInt((int32)-10, pcSubImage->msAlignment.y);
 
 	pcSubImage = pacLoadedCels->Get(1)->GetSubImage();
-	AssertInt(10, pcSubImage->mcImageRect.msTopLeft.y);
-	AssertInt(20, pcSubImage->mcImageRect.msTopLeft.x);
-	AssertInt(30, pcSubImage->mcImageRect.msBottomRight.y);
-	AssertInt(40, pcSubImage->mcImageRect.msBottomRight.x);
+	AssertInt((int32)10, pcSubImage->mcImageRect.msTopLeft.y);
+	AssertInt((int32)20, pcSubImage->mcImageRect.msTopLeft.x);
+	AssertInt((int32)30, pcSubImage->mcImageRect.msBottomRight.y);
+	AssertInt((int32)40, pcSubImage->mcImageRect.msBottomRight.x);
 	pacLoadedCels = NULL;
 }
 

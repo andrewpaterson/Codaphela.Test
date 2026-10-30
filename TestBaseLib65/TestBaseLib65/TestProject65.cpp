@@ -558,7 +558,7 @@ static bool TestProject65Run(STestProject65* psProject, CCPP65Builder* pcBuilder
 		{
 			//TEST_PROJECT65_PROFILE: each function's direct page accesses, calls and recursion, and its lines' cycles
 			//(CAsm816Profile).
-			uiSteps = gpcTestProject65Measure->Run(pcMemory, &cMPU816, pcBuilder->GetMap(), (size)uiMaxSteps, pcBuilder->GetLineTable());
+			uiSteps = gpcTestProject65Measure->Run(pcMemory, &cMPU816, pcBuilder->GetMap(), uiMaxSteps, pcBuilder->GetLineTable());
 		}
 		else
 		{

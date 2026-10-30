@@ -384,8 +384,8 @@ void TestTrueTypeRasteriseGlyph(void)
 		AssertTrue(pcImage.IsNotNull());
 		AssertInt(0, iLeft);
 		AssertInt(-12, iTop);
-		AssertInt(11, pcImage->GetWidth());
-		AssertInt(12, pcImage->GetHeight());
+		AssertInt((int32)11, pcImage->GetWidth());
+		AssertInt((int32)12, pcImage->GetHeight());
 		AssertSize(1, pcImage->NumChannels());
 		AssertTrue(pcImage->HasChannel(IMAGE_OPACITY));
 		sz.Init();
@@ -614,10 +614,10 @@ void TestTrueTypeFontFactoryLazyGlyphs(void)
 		AssertTrue(pGlyphA->GetSourceImage() == pImage);
 		psDescription = pFont->GetGlyphDescription((uint8*)"A", 1);
 		AssertNotNull(psDescription);
-		AssertInt(psDescription->cSubImage.GetSourceLeft(), pGlyphA->GetSubImage()->GetSourceLeft());
-		AssertInt(psDescription->cSubImage.GetSourceTop(), pGlyphA->GetSubImage()->GetSourceTop());
-		AssertInt(psDescription->cSubImage.GetImageWidth(), pGlyphA->GetSubImage()->GetImageWidth());
-		AssertInt(psDescription->cSubImage.GetImageHeight(), pGlyphA->GetSubImage()->GetImageHeight());
+		AssertInt((int32)psDescription->cSubImage.GetSourceLeft(), pGlyphA->GetSubImage()->GetSourceLeft());
+		AssertInt((int32)psDescription->cSubImage.GetSourceTop(), pGlyphA->GetSubImage()->GetSourceTop());
+		AssertInt((int32)psDescription->cSubImage.GetImageWidth(), pGlyphA->GetSubImage()->GetImageWidth());
+		AssertInt((int32)psDescription->cSubImage.GetImageHeight(), pGlyphA->GetSubImage()->GetImageHeight());
 		AssertInt(11, pGlyphA->GetFullWidth());
 		AssertInt(pFont->GetLineHeight(), pGlyphA->GetFullHeight());
 
@@ -709,13 +709,13 @@ uint8* GetMostOpaqueGlyphPixel(Ptr<CGlyph> pGlyph)
 //////////////////////////////////////////////////////////////////////////
 size CountOpacityDifferences(Ptr<CImage> pImage1, Ptr<CImage> pImage2)
 {
-	size	i;
-	size	uiNumPixels;
+	lsize	i;
+	lsize	uiNumPixels;
 	size	uiCount;
 	uint8*	puiData1;
 	uint8*	puiData2;
 
-	uiNumPixels = (size)pImage1->GetWidth() * pImage1->GetHeight();
+	uiNumPixels = (lsize)pImage1->GetWidth() * pImage1->GetHeight();
 	puiData1 = (uint8*)pImage1->GetData();
 	puiData2 = (uint8*)pImage2->GetData();
 	uiCount = 0;
@@ -763,8 +763,8 @@ void TestTrueTypeFontFactoryColours(void)
 
 		AssertTrue(pBlack->GetDescription() == pRed->GetDescription());
 		AssertTrue(pBlack->GetImage() != pRed->GetImage());
-		AssertInt(pDescription->GetImageWidth(), pRed->GetImage()->GetWidth());
-		AssertInt(pDescription->GetImageHeight(), pRed->GetImage()->GetHeight());
+		AssertInt((int32)pDescription->GetImageWidth(), pRed->GetImage()->GetWidth());
+		AssertInt((int32)pDescription->GetImageHeight(), pRed->GetImage()->GetHeight());
 		AssertSize(2, pDescription->NumGlyphs());
 		AssertSize(0, pDescription->GetGlyph((uint8*)"A", 1)->uiIndex);
 		AssertSize(1, pDescription->GetGlyph((uint8*)"B", 1)->uiIndex);
@@ -778,8 +778,8 @@ void TestTrueTypeFontFactoryColours(void)
 		AssertTrue(pBlackA != pRedA);
 		AssertTrue(pBlackA->GetSourceImage() == pBlack->GetImage());
 		AssertTrue(pRedA->GetSourceImage() == pRed->GetImage());
-		AssertInt(pBlackA->GetSubImage()->GetSourceLeft(), pRedA->GetSubImage()->GetSourceLeft());
-		AssertInt(pBlackA->GetSubImage()->GetSourceTop(), pRedA->GetSubImage()->GetSourceTop());
+		AssertInt((int32)pBlackA->GetSubImage()->GetSourceLeft(), pRedA->GetSubImage()->GetSourceLeft());
+		AssertInt((int32)pBlackA->GetSubImage()->GetSourceTop(), pRedA->GetSubImage()->GetSourceTop());
 		AssertInt(pBlackA->GetStep(), pRedA->GetStep());
 
 		//The same coverage in each colour.
@@ -1069,8 +1069,8 @@ void TestTrueTypeFontColoursTextRuns(void)
 		AssertPointer(&pWhite->GetImage(), &pasGlyphs->Get(4)->pcGlyph->GetSourceImage());
 
 		//The glyphs are placed as if the text were all one colour.
-		AssertInt(pasGlyphs->Get(2)->sPosition.x + pasGlyphs->Get(2)->pcGlyph->GetStep(), pasGlyphs->Get(3)->sPosition.x);
-		AssertInt(pasGlyphs->Get(2)->sPosition.y, pasGlyphs->Get(3)->sPosition.y);
+		AssertInt((int32)pasGlyphs->Get(2)->sPosition.x + pasGlyphs->Get(2)->pcGlyph->GetStep(), pasGlyphs->Get(3)->sPosition.x);
+		AssertInt((int32)pasGlyphs->Get(2)->sPosition.y, pasGlyphs->Get(3)->sPosition.y);
 
 		pDraw = NULL;
 		pLayout = NULL;
@@ -1154,12 +1154,12 @@ void TestTrueTypeFontMixedSizeLayout(void)
 		LayoutMixedSizes(pLayout, pDraw, pSmall, pBig, "aA b\nb", 1, 2);
 		pasGlyphs = pDraw->GetGlyphs();
 		AssertSize(5, pasGlyphs->NumElements());
-		AssertInt(iBigAscent - iSmallAscent, pasGlyphs->Get(0)->sPosition.y);
-		AssertInt(0, pasGlyphs->Get(1)->sPosition.y);
-		AssertInt(iBigAscent - iSmallAscent, pasGlyphs->Get(2)->sPosition.y);
-		AssertInt(iBigAscent - iSmallAscent, pasGlyphs->Get(3)->sPosition.y);
-		AssertInt(iBigHeight, pasGlyphs->Get(4)->sPosition.y);
-		AssertInt(0, pasGlyphs->Get(4)->sPosition.x);
+		AssertInt((int32)iBigAscent - iSmallAscent, pasGlyphs->Get(0)->sPosition.y);
+		AssertInt((int32)0, pasGlyphs->Get(1)->sPosition.y);
+		AssertInt((int32)iBigAscent - iSmallAscent, pasGlyphs->Get(2)->sPosition.y);
+		AssertInt((int32)iBigAscent - iSmallAscent, pasGlyphs->Get(3)->sPosition.y);
+		AssertInt((int32)iBigHeight, pasGlyphs->Get(4)->sPosition.y);
+		AssertInt((int32)0, pasGlyphs->Get(4)->sPosition.x);
 		sSize = pLayout->GetSize();
 		AssertInt(iBigHeight + iSmallHeight, sSize.y);
 
@@ -1167,8 +1167,8 @@ void TestTrueTypeFontMixedSizeLayout(void)
 		LayoutMixedSizes(pLayout, pDraw, pSmall, pBig, "a\n\nA", 3, 4);
 		pasGlyphs = pDraw->GetGlyphs();
 		AssertSize(2, pasGlyphs->NumElements());
-		AssertInt(0, pasGlyphs->Get(0)->sPosition.y);
-		AssertInt(iSmallHeight * 2, pasGlyphs->Get(1)->sPosition.y);
+		AssertInt((int32)0, pasGlyphs->Get(0)->sPosition.y);
+		AssertInt((int32)iSmallHeight * 2, pasGlyphs->Get(1)->sPosition.y);
 		sSize = pLayout->GetSize();
 		AssertInt(iSmallHeight * 2 + iBigHeight, sSize.y);
 
@@ -1179,10 +1179,10 @@ void TestTrueTypeFontMixedSizeLayout(void)
 		LayoutMixedSizes(pLayout, pDraw, pSmall, pBig, "aa BB", 3, 5);
 		pasGlyphs = pDraw->GetGlyphs();
 		AssertSize(5, pasGlyphs->NumElements());
-		AssertInt(0, pasGlyphs->Get(0)->sPosition.y);
-		AssertInt(0, pasGlyphs->Get(3)->sPosition.x);
-		AssertInt(iSmallHeight, pasGlyphs->Get(3)->sPosition.y);
-		AssertInt(iSmallHeight, pasGlyphs->Get(4)->sPosition.y);
+		AssertInt((int32)0, pasGlyphs->Get(0)->sPosition.y);
+		AssertInt((int32)0, pasGlyphs->Get(3)->sPosition.x);
+		AssertInt((int32)iSmallHeight, pasGlyphs->Get(3)->sPosition.y);
+		AssertInt((int32)iSmallHeight, pasGlyphs->Get(4)->sPosition.y);
 		sSize = pLayout->GetSize();
 		AssertInt(iSmallHeight + iBigHeight, sSize.y);
 
@@ -1254,12 +1254,12 @@ void TestTrueTypeFontMixedTypefaceLayout(void)
 		pDraw->End();
 		pasGlyphs = pDraw->GetGlyphs();
 		AssertSize(4, pasGlyphs->NumElements());
-		AssertInt(iRowAscent - pLiberation->GetAscent(), pasGlyphs->Get(0)->sPosition.y);
-		AssertInt(iRowAscent - pMono->GetAscent(), pasGlyphs->Get(1)->sPosition.y);
-		AssertInt(iRowAscent - pInter->GetAscent(), pasGlyphs->Get(2)->sPosition.y);
-		AssertInt(pasGlyphs->Get(0)->pcGlyph->GetFullWidth(), pasGlyphs->Get(1)->sPosition.x);
-		AssertInt(pasGlyphs->Get(1)->sPosition.x + pasGlyphs->Get(1)->pcGlyph->GetFullWidth(), pasGlyphs->Get(2)->sPosition.x);
-		AssertInt(iRowAscent + iRowDescent, pasGlyphs->Get(3)->sPosition.y);
+		AssertInt((int32)iRowAscent - pLiberation->GetAscent(), pasGlyphs->Get(0)->sPosition.y);
+		AssertInt((int32)iRowAscent - pMono->GetAscent(), pasGlyphs->Get(1)->sPosition.y);
+		AssertInt((int32)iRowAscent - pInter->GetAscent(), pasGlyphs->Get(2)->sPosition.y);
+		AssertInt((int32)pasGlyphs->Get(0)->pcGlyph->GetFullWidth(), pasGlyphs->Get(1)->sPosition.x);
+		AssertInt((int32)pasGlyphs->Get(1)->sPosition.x + pasGlyphs->Get(1)->pcGlyph->GetFullWidth(), pasGlyphs->Get(2)->sPosition.x);
+		AssertInt((int32)iRowAscent + iRowDescent, pasGlyphs->Get(3)->sPosition.y);
 		sSize = pLayout->GetSize();
 		AssertInt(iRowAscent + iRowDescent + pInter->GetLineHeight(), sSize.y);
 
@@ -1400,10 +1400,10 @@ void TestTrueTypeFontScriptLayout(void)
 		pDraw->End();
 		pasGlyphs = pDraw->GetGlyphs();
 		AssertSize(4, pasGlyphs->NumElements());
-		AssertInt(iRowAscent - pBig->GetAscent(), pasGlyphs->Get(0)->sPosition.y);
-		AssertInt(0, pasGlyphs->Get(1)->sPosition.y);
-		AssertInt(iRowAscent - pBig->GetAscent(), pasGlyphs->Get(2)->sPosition.y);
-		AssertInt(iRowAscent - (pSmall->GetAscent() - 4), pasGlyphs->Get(3)->sPosition.y);
+		AssertInt((int32)iRowAscent - pBig->GetAscent(), pasGlyphs->Get(0)->sPosition.y);
+		AssertInt((int32)0, pasGlyphs->Get(1)->sPosition.y);
+		AssertInt((int32)iRowAscent - pBig->GetAscent(), pasGlyphs->Get(2)->sPosition.y);
+		AssertInt((int32)iRowAscent - (pSmall->GetAscent() - 4), pasGlyphs->Get(3)->sPosition.y);
 		sSize = pLayout->GetSize();
 		AssertInt(iRowAscent + iRowDescent, sSize.y);
 		AssertTrue(sSize.y > pBig->GetLineHeight());
@@ -1562,9 +1562,9 @@ void TestTrueTypeFontDecorationLayout(void)
 		pasGlyphs = pDraw->GetGlyphs();
 		AssertSize(5, pasGlyphs->NumElements());
 		AssertSize(2, pasRectangles->NumElements());
-		AssertInt(0, pasRectangles->Get(0)->x);
+		AssertInt((int32)0, pasRectangles->Get(0)->x);
 		AssertInt(iA + iB, pasRectangles->Get(0)->iWidth);
-		AssertInt(iA + iB + iSpace, pasRectangles->Get(1)->x);
+		AssertInt((int32)iA + iB + iSpace, pasRectangles->Get(1)->x);
 		AssertInt(iA + iB, pasRectangles->Get(1)->iWidth);
 
 		//Nothing decorated, nothing drawn.

@@ -72,7 +72,7 @@ void TestMapViewportBlit(void)
 		cMaps.Init(pBlitterCache, pDestImage);
 
 		pTileMap = OMalloc<CTileMap>();
-		pCelLayer = OMalloc<CTileLayerCel>(pTileMap, "Cel", SSizeVec2(4, 4), SSizeVec2(16, 16), 0, SIntVec2(0, 0));
+		pCelLayer = OMalloc<CTileLayerCel>(pTileMap, "Cel", SSizeVec2(4, 4), SSizeVec2(16, 16), 0, SInt32Vec2(0, 0));
 		pCelLayer->SetTiles(0, 0, pacBackgroundCels, 7, 5, 5, 6);
 		pCelLayer->SetTiles(0, 1, pacBackgroundCels, 19, 2, 2, 4);
 		pCelLayer->SetTiles(0, 2, pacBackgroundCels, 18, 2, 3, 4);
@@ -146,7 +146,7 @@ void TestMapViewportBooleanLayer(void)
 		bool						bResult;
 		uint8*						puiData;
 		size						uiNonZero;
-		size						i;
+		lsize						i;
 
 		ImageChannelDescriptorInit();
 
@@ -162,10 +162,10 @@ void TestMapViewportBooleanLayer(void)
 
 		//A boolean layer has no blitters and must not stop the cel layer beside it from getting them.
 		pTileMap = OMalloc<CTileMap>();
-		pBooleanLayer = OMalloc<CTileLayerBoolean>(pTileMap, "Boolean", SSizeVec2(4, 4), SSizeVec2(16, 16), 1, SIntVec2(0, 0));
+		pBooleanLayer = OMalloc<CTileLayerBoolean>(pTileMap, "Boolean", SSizeVec2(4, 4), SSizeVec2(16, 16), 1, SInt32Vec2(0, 0));
 		pBooleanLayer->SetTile(1, 1, true);
 		pTileMap->AddLayer(pBooleanLayer);
-		pCelLayer = OMalloc<CTileLayerCel>(pTileMap, "Cel", SSizeVec2(4, 4), SSizeVec2(16, 16), 0, SIntVec2(0, 0));
+		pCelLayer = OMalloc<CTileLayerCel>(pTileMap, "Cel", SSizeVec2(4, 4), SSizeVec2(16, 16), 0, SInt32Vec2(0, 0));
 		pCelLayer->SetTiles(0, 0, pacBackgroundCels, 7, 5, 5, 6);
 		pCelLayer->SetTiles(0, 1, pacBackgroundCels, 19, 2, 2, 4);
 		pTileMap->AddLayer(pCelLayer);

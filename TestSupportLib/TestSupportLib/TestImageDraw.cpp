@@ -1522,8 +1522,8 @@ void TestImageDrawCelSizedBorders(void)
 	//so the full cel is 6x4.  The borders are sized with the rest of the cel.
 	pSource = CreateDrawCelTranslucentImage(7, 5);
 	pCel = OMalloc<CImageCel>(pSource, 1, 1, 5, 4, 1, 0, 1, 1, SUB_IMAGE_ALIGNMENT_LEFT | SUB_IMAGE_ALIGNMENT_TOP);
-	AssertInt(6, pCel->GetSubImage()->GetFullWidth());
-	AssertInt(4, pCel->GetSubImage()->GetFullHeight());
+	AssertInt((int32)6, pCel->GetSubImage()->GetFullWidth());
+	AssertInt((int32)4, pCel->GetSubImage()->GetFullHeight());
 
 	pDest = OMalloc<CImage>(20, 16, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
 	AssertDrawCelSizes(pCel, 4, pDest, 3);

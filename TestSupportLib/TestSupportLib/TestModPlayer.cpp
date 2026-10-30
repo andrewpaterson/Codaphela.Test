@@ -132,8 +132,8 @@ void TestModPlayerBasic(void)
 	pcSound = cPlayer.RenderSong(PT_float32);
 	AssertTrue(cPlayer.IsFinished());
 	cPlayer.Kill();
-	AssertSize(64 * 6 * 882, pcSound->GetNumFrames());
-	AssertInt(44100, pcSound->GetSampleRate());
+	AssertLSize((lsize)64 * 6 * 882, pcSound->GetNumFrames());
+	AssertInt((int32)44100, pcSound->GetSampleRate());
 	AssertTrue(pcSound->HasChannels(SOUND_LEFT, SOUND_RIGHT, CHANNEL_STOP));
 
 	//Channel 0 is hard left.  The 32 frame square at period 428 plays at 3546894.6 / 428 / 32 = 259 Hz.
@@ -382,7 +382,7 @@ void TestModPlayerEffects(void)
 	cPlayer.Init(pcSong, 44100);
 	Ptr<CSound> pcSound = cPlayer.RenderSong(PT_float32);
 	cPlayer.Kill();
-	AssertSize(14 * 6 * 882 + 3 * 882 + (3 + 9 + 18 + 3 + 3) * 441, pcSound->GetNumFrames());
+	AssertLSize((lsize)14 * 6 * 882 + 3 * 882 + (3 + 9 + 18 + 3 + 3) * 441, pcSound->GetNumFrames());
 	AssertTrue(SaveWAV(pcSound, "Output" _FS_ "Effects.wav"));
 
 	pcSong = NULL;
@@ -533,7 +533,7 @@ void TestModPlayerTune(void)
 	Ptr<CSound> pcSound = cPlayer.RenderSong(PT_int16);
 	AssertTrue(cPlayer.IsFinished());
 	cPlayer.Kill();
-	AssertSize(4 * 64 * 6 * 640, pcSound->GetNumFrames());
+	AssertLSize((lsize)4 * 64 * 6 * 640, pcSound->GetNumFrames());
 
 	//No clipping, and both sides are playing.
 	fPeak = 0.0;

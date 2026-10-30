@@ -166,8 +166,8 @@ void TestImageBMPWriterGreyAlpha(void)
 	AssertTrue(bResult);
 	Ptr<CImage> pcComp = ReadImage("Output" _FS_ "basn4a08.bmp");
 	AssertTrue(pcComp->HasChannels(IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, IMAGE_OPACITY, CHANNEL_STOP));
-	AssertInt(pcImage->GetWidth(), pcComp->GetWidth());
-	AssertInt(pcImage->GetHeight(), pcComp->GetHeight());
+	AssertInt((int32)pcImage->GetWidth(), pcComp->GetWidth());
+	AssertInt((int32)pcImage->GetHeight(), pcComp->GetHeight());
 
 	iNumPixels = pcImage->GetWidth() * pcImage->GetHeight();
 	uiSourceStride = pcImage->GetByteSize() / iNumPixels;

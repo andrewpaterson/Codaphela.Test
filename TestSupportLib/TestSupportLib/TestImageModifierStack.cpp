@@ -78,20 +78,20 @@ void TestImageResamplerPowerOf2(void)
 
 	cResampler.Init(IR_NearestNeighbour, RS_Up);
 	pDest = cResampler.Modify(pSource);
-	AssertInt(32, pDest->GetWidth());
-	AssertInt(16, pDest->GetHeight());
+	AssertInt((int32)32, pDest->GetWidth());
+	AssertInt((int32)16, pDest->GetHeight());
 	cResampler.Kill();
 
 	cResampler.Init(IR_NearestNeighbour, RS_Down);
 	pDest = cResampler.Modify(pSource);
-	AssertInt(16, pDest->GetWidth());
-	AssertInt(8, pDest->GetHeight());
+	AssertInt((int32)16, pDest->GetWidth());
+	AssertInt((int32)8, pDest->GetHeight());
 	cResampler.Kill();
 
 	cResampler.Init(IR_NearestNeighbour, RS_Auto);
 	pDest = cResampler.Modify(pSource);
-	AssertInt(16, pDest->GetWidth());
-	AssertInt(16, pDest->GetHeight());
+	AssertInt((int32)16, pDest->GetWidth());
+	AssertInt((int32)16, pDest->GetHeight());
 	cResampler.Kill();
 
 	//An image that is already a power of two in size is returned as it is.

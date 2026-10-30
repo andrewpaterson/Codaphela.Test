@@ -367,14 +367,14 @@ void TestImageCopierRealPNG(void)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void AssertImageSize(int iWidth, int iHeight, int iExpectedWidth, int iExpectedHeight, size uiExpectedByteSize)
+void AssertImageSize(int32 iWidth, int32 iHeight, int32 iExpectedWidth, int32 iExpectedHeight, lsize uiExpectedByteSize)
 {
 	CImage	cImage;
 
 	cImage.Init(iWidth, iHeight, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, IMAGE_OPACITY, CHANNEL_STOP);
 	AssertInt(iExpectedWidth, cImage.GetWidth());
 	AssertInt(iExpectedHeight, cImage.GetHeight());
-	AssertSize(uiExpectedByteSize, cImage.GetByteSize());
+	AssertLSize(uiExpectedByteSize, cImage.GetByteSize());
 	if (uiExpectedByteSize == 0)
 	{
 		AssertNull(cImage.GetData());

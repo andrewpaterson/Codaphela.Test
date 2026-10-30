@@ -101,10 +101,10 @@ void TestImageResampleBilinearDouble(void)
 	Ptr<CImage> pcDest = MakeResampleDest(pcSource, 4, 1);
 	AssertTrue(ResampleBilinear(pcSource, pcDest));
 	GetResampleIntegers(pcDest, 0, aiRow);
-	AssertInt(0, aiRow[0]);
-	AssertInt(25, aiRow[1]);
-	AssertInt(75, aiRow[2]);
-	AssertInt(100, aiRow[3]);
+	AssertInt((int32)0, aiRow[0]);
+	AssertInt((int32)25, aiRow[1]);
+	AssertInt((int32)75, aiRow[2]);
+	AssertInt((int32)100, aiRow[3]);
 
 	pcSource = OMalloc<CImage>(2, 2, PT_uint8, IMAGE_DIFFUSE_GREY, CHANNEL_STOP);
 	SetResampleIntegers(pcSource, 0, aiSource);
@@ -113,17 +113,17 @@ void TestImageResampleBilinearDouble(void)
 	GetResampleIntegers(pcDest, 0, aiDest);
 
 	//The corners are the source pixels.
-	AssertInt(0, aiDest[0]);
-	AssertInt(100, aiDest[3]);
-	AssertInt(200, aiDest[12]);
-	AssertInt(40, aiDest[15]);
+	AssertInt((int32)0, aiDest[0]);
+	AssertInt((int32)100, aiDest[3]);
+	AssertInt((int32)200, aiDest[12]);
+	AssertInt((int32)40, aiDest[15]);
 
 	//(0 * 0.75 + 100 * 0.25) * 0.75 + (200 * 0.75 + 40 * 0.25) * 0.25 = 58.75.
-	AssertInt(59, aiDest[5]);
+	AssertInt((int32)59, aiDest[5]);
 	//(0 * 0.25 + 100 * 0.75) * 0.25 + (200 * 0.25 + 40 * 0.75) * 0.75 = 78.75.
-	AssertInt(79, aiDest[10]);
+	AssertInt((int32)79, aiDest[10]);
 	//Column 0, row 1: 0 * 0.75 + 200 * 0.25.
-	AssertInt(50, aiDest[4]);
+	AssertInt((int32)50, aiDest[4]);
 
 	pcSource = NULL;
 	pcDest = NULL;
@@ -149,10 +149,10 @@ void TestImageResampleBilinearHalve(void)
 	Ptr<CImage> pcDest = MakeResampleDest(pcSource, 2, 2);
 	AssertTrue(ResampleBilinear(pcSource, pcDest));
 	GetResampleIntegers(pcDest, 0, aiDest);
-	AssertInt(35, aiDest[0]);
-	AssertInt(55, aiDest[1]);
-	AssertInt(102, aiDest[2]);		//101.75
-	AssertInt(202, aiDest[3]);		//201.5 rounds up.
+	AssertInt((int32)35, aiDest[0]);
+	AssertInt((int32)55, aiDest[1]);
+	AssertInt((int32)102, aiDest[2]);		//101.75
+	AssertInt((int32)202, aiDest[3]);		//201.5 rounds up.
 
 	pcSource = NULL;
 	pcDest = NULL;
@@ -284,18 +284,18 @@ void TestImageResampleBilinearNybbles(void)
 	AssertTrue(ResampleBilinear(pcSource, pcDest));
 
 	GetResampleIntegers(pcDest, 0, aiRow);
-	AssertInt(0, aiRow[0]);
-	AssertInt(4, aiRow[1]);		//3.75
-	AssertInt(11, aiRow[2]);		//11.25
-	AssertInt(15, aiRow[3]);
+	AssertInt((int32)0, aiRow[0]);
+	AssertInt((int32)4, aiRow[1]);		//3.75
+	AssertInt((int32)11, aiRow[2]);		//11.25
+	AssertInt((int32)15, aiRow[3]);
 	GetResampleIntegers(pcDest, 1, aiRow);
-	AssertInt(15, aiRow[0]);
-	AssertInt(11, aiRow[1]);
-	AssertInt(4, aiRow[2]);
-	AssertInt(0, aiRow[3]);
+	AssertInt((int32)15, aiRow[0]);
+	AssertInt((int32)11, aiRow[1]);
+	AssertInt((int32)4, aiRow[2]);
+	AssertInt((int32)0, aiRow[3]);
 	GetResampleIntegers(pcDest, 2, aiRow);
-	AssertInt(6, aiRow[0]);
-	AssertInt(6, aiRow[3]);
+	AssertInt((int32)6, aiRow[0]);
+	AssertInt((int32)6, aiRow[3]);
 
 	pcSource = NULL;
 	pcDest = NULL;
@@ -415,12 +415,12 @@ void TestImageResampleBicubicOvershoot(void)
 	pcDest = MakeResampleDest(pcSource, 8, 1);
 	AssertTrue(ResampleBicubic(pcSource, pcDest));
 	GetResampleIntegers(pcDest, 0, aiRow);
-	AssertInt(0, aiRow[0]);
-	AssertInt(0, aiRow[2]);			//Would be below zero.
-	AssertInt(52, aiRow[3]);		//255 * 0.203125.
-	AssertInt(203, aiRow[4]);
-	AssertInt(255, aiRow[5]);		//Would be above 255.
-	AssertInt(255, aiRow[7]);
+	AssertInt((int32)0, aiRow[0]);
+	AssertInt((int32)0, aiRow[2]);			//Would be below zero.
+	AssertInt((int32)52, aiRow[3]);		//255 * 0.203125.
+	AssertInt((int32)203, aiRow[4]);
+	AssertInt((int32)255, aiRow[5]);		//Would be above 255.
+	AssertInt((int32)255, aiRow[7]);
 
 	pcSource = NULL;
 	pcDest = NULL;
@@ -457,8 +457,8 @@ float64 ResampledWaveError(EImageResample eResample)
 	cResampler.Init(eResample, 64, 64);
 	Ptr<CImage> pcDest = cResampler.Modify(pcSource);
 	cResampler.Kill();
-	AssertInt(64, pcDest->GetWidth());
-	AssertInt(64, pcDest->GetHeight());
+	AssertInt((int32)64, pcDest->GetWidth());
+	AssertInt((int32)64, pcDest->GetHeight());
 	GetResampleFloats(pcDest, 0, afDest);
 
 	//Away from the edges, which are held.
@@ -524,23 +524,23 @@ void TestImageResamplerModify(void)
 	cResampler.Init(IR_Bilinear, 9, 5);
 	Ptr<CImage> pcBilinear = cResampler.Modify(pcSource);
 	cResampler.Kill();
-	AssertInt(9, pcBilinear->GetWidth());
-	AssertInt(5, pcBilinear->GetHeight());
+	AssertInt((int32)9, pcBilinear->GetWidth());
+	AssertInt((int32)5, pcBilinear->GetHeight());
 	AssertTrue(pcBilinear->HasChannels(IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, IMAGE_OPACITY, CHANNEL_STOP));
 	AssertInt(PT_uint8, pcBilinear->GetPrimitiveType());
 
 	cResampler.Init(IR_Bicubic, 3, 11);
 	Ptr<CImage> pcBicubic = cResampler.Modify(pcSource);
 	cResampler.Kill();
-	AssertInt(3, pcBicubic->GetWidth());
-	AssertInt(11, pcBicubic->GetHeight());
+	AssertInt((int32)3, pcBicubic->GetWidth());
+	AssertInt((int32)11, pcBicubic->GetHeight());
 	AssertTrue(pcBicubic->IsSameFormat(pcSource));
 
 	cResampler.Init(IR_Smart, 9, 5);
 	Ptr<CImage> pcSmart = cResampler.Modify(pcSource);
 	cResampler.Kill();
-	AssertInt(9, pcSmart->GetWidth());
-	AssertInt(5, pcSmart->GetHeight());
+	AssertInt((int32)9, pcSmart->GetWidth());
+	AssertInt((int32)5, pcSmart->GetHeight());
 	AssertTrue(pcSmart->IsSameFormat(pcSource));
 
 	pcSource = NULL;
@@ -558,11 +558,11 @@ void TestImageResamplerModify(void)
 int CountBlended(Ptr<CImage> pcImage, int32 iLow, int32 iHigh)
 {
 	int32*	pai;
-	size	i;
-	size	uiNumPixels;
+	lsize	i;
+	lsize	uiNumPixels;
 	int		iCount;
 
-	uiNumPixels = (size)pcImage->GetWidth() * pcImage->GetHeight();
+	uiNumPixels = (lsize)pcImage->GetWidth() * pcImage->GetHeight();
 	pai = (int32*)malloc(sizeof(int32) * uiNumPixels);
 	GetResampleIntegers(pcImage, 0, pai);
 	iCount = 0;
@@ -793,8 +793,8 @@ void TestImageResampleSmartLonePixel(void)
 	}
 	AssertInt(12, iWhite);
 	AssertInt(0, iOutside);
-	AssertInt(0, aiDest[8 * 20 + 8]);
-	AssertInt(255, aiDest[8 * 20 + 9]);
+	AssertInt((int32)0, aiDest[8 * 20 + 8]);
+	AssertInt((int32)255, aiDest[8 * 20 + 9]);
 	AssertInt(0, CountBlended(pcSmart, 0, 255));
 
 	pcSource = NULL;
@@ -824,23 +824,23 @@ void TestImageResampleSmartColours(void)
 	Ptr<CImage> pcDest = MakeResampleDest(pcSource, 4, 1);
 	AssertTrue(ResampleSmart(pcSource, pcDest));
 	GetResampleIntegers(pcDest, 0, aiRow);
-	AssertInt(255, aiRow[0]);
-	AssertInt(255, aiRow[1]);
-	AssertInt(0, aiRow[2]);
-	AssertInt(0, aiRow[3]);
+	AssertInt((int32)255, aiRow[0]);
+	AssertInt((int32)255, aiRow[1]);
+	AssertInt((int32)0, aiRow[2]);
+	AssertInt((int32)0, aiRow[3]);
 	GetResampleIntegers(pcDest, 2, aiRow);
-	AssertInt(0, aiRow[1]);
-	AssertInt(255, aiRow[2]);
+	AssertInt((int32)0, aiRow[1]);
+	AssertInt((int32)255, aiRow[2]);
 
 	SetResampleIntegers(pcSource, 0, aiClose);
 	SetResampleIntegers(pcSource, 1, aiSame);
 	SetResampleIntegers(pcSource, 2, aiSame);
 	AssertTrue(ResampleSmart(pcSource, pcDest));
 	GetResampleIntegers(pcDest, 0, aiRow);
-	AssertInt(100, aiRow[0]);
-	AssertInt(101, aiRow[1]);		//100.75
-	AssertInt(102, aiRow[2]);		//102.25
-	AssertInt(103, aiRow[3]);
+	AssertInt((int32)100, aiRow[0]);
+	AssertInt((int32)101, aiRow[1]);		//100.75
+	AssertInt((int32)102, aiRow[2]);		//102.25
+	AssertInt((int32)103, aiRow[3]);
 
 	pcSource = NULL;
 	pcDest = NULL;
@@ -864,13 +864,13 @@ void TestImageResampleSmartOpacity(void)
 	Ptr<CImage> pcDest = MakeResampleDest(pcSource, 4, 1);
 	AssertTrue(ResampleSmart(pcSource, pcDest));
 	GetResampleIntegers(pcDest, 1, aiRow);
-	AssertInt(255, aiRow[0]);
-	AssertInt(255, aiRow[1]);
-	AssertInt(0, aiRow[2]);
-	AssertInt(0, aiRow[3]);
+	AssertInt((int32)255, aiRow[0]);
+	AssertInt((int32)255, aiRow[1]);
+	AssertInt((int32)0, aiRow[2]);
+	AssertInt((int32)0, aiRow[3]);
 	GetResampleIntegers(pcDest, 0, aiRow);
-	AssertInt(80, aiRow[1]);
-	AssertInt(80, aiRow[2]);
+	AssertInt((int32)80, aiRow[1]);
+	AssertInt((int32)80, aiRow[2]);
 
 	pcSource = NULL;
 	pcDest = NULL;
@@ -884,11 +884,11 @@ void TestImageResampleSmartOpacity(void)
 //////////////////////////////////////////////////////////////////////////
 void GetRealImageRGB(Ptr<CImage> pcImage, int32** papaiRGB)
 {
-	size	uiNumPixels;
+	lsize	uiNumPixels;
 	size	c;
 	EChannel aeChannels[3] = { IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE };
 
-	uiNumPixels = (size)pcImage->GetWidth() * pcImage->GetHeight();
+	uiNumPixels = (lsize)pcImage->GetWidth() * pcImage->GetHeight();
 	for (c = 0; c < 3; c++)
 	{
 		papaiRGB[c] = (int32*)malloc(sizeof(int32) * uiNumPixels);
@@ -906,13 +906,13 @@ float64 RealImageError(Ptr<CImage> pcImage, Ptr<CImage> pcTruth)
 {
 	int32*	apaiImage[3];
 	int32*	apaiTruth[3];
-	size	uiNumPixels;
-	size	i;
+	lsize	uiNumPixels;
+	lsize	i;
 	size	c;
 	float64	fSum;
 	float64	fDifference;
 
-	uiNumPixels = (size)pcImage->GetWidth() * pcImage->GetHeight();
+	uiNumPixels = (lsize)pcImage->GetWidth() * pcImage->GetHeight();
 	GetRealImageRGB(pcImage, apaiImage);
 	GetRealImageRGB(pcTruth, apaiTruth);
 	fSum = 0.0;
@@ -944,7 +944,7 @@ float64 RealImageHardEdges(Ptr<CImage> pcImage)
 	uint32	x;
 	uint32	y;
 	size	c;
-	size	uiPixel;
+	lsize	uiPixel;
 	size	uiHard;
 	size	uiPairs;
 	bool	bHorizontal;
@@ -959,7 +959,7 @@ float64 RealImageHardEdges(Ptr<CImage> pcImage)
 	{
 		for (x = 0; x + 1 < uiWidth; x++)
 		{
-			uiPixel = (size)y * uiWidth + x;
+			uiPixel = (lsize)y * uiWidth + x;
 			bHorizontal = false;
 			bVertical = false;
 			for (c = 0; c < 3; c++)
@@ -993,8 +993,8 @@ Ptr<CImage> ResampleRealImage(Ptr<CImage> pcSource, EImageResample eResample, co
 	pcDest = cResampler.Modify(pcSource);
 	cResampler.Kill();
 
-	AssertInt(640, pcDest->GetWidth());
-	AssertInt(512, pcDest->GetHeight());
+	AssertInt((int32)640, pcDest->GetWidth());
+	AssertInt((int32)512, pcDest->GetHeight());
 	AssertTrue(pcDest->IsSameFormat(pcSource));
 
 	szFile.Init("Output" _FS_ "RevoyLofiCyberpunk-");
@@ -1034,8 +1034,8 @@ void TestImageResamplerRealImage(void)
 	{
 		return;
 	}
-	AssertInt(160, pcSource->GetWidth());
-	AssertInt(128, pcSource->GetHeight());
+	AssertInt((int32)160, pcSource->GetWidth());
+	AssertInt((int32)128, pcSource->GetHeight());
 
 	Ptr<CImage> pcNearest = ResampleRealImage(pcSource, IR_NearestNeighbour, "Nearest");
 	Ptr<CImage> pcBilinear = ResampleRealImage(pcSource, IR_Bilinear, "Bilinear");

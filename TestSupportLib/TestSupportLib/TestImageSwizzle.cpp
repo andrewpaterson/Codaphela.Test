@@ -25,8 +25,8 @@ void TestImageSwizzle1(void)
 	CImageColourRGB			cRGB;
 
 	Ptr<CImage> pcImage = ReadImage("Input" _FS_ "swizzel.png");
-	AssertInt(25, pcImage->GetWidth());
-	AssertInt(25, pcImage->GetHeight());
+	AssertInt((int32)25, pcImage->GetWidth());
+	AssertInt((int32)25, pcImage->GetHeight());
 
 	cStack.Init(pcImage);
 	

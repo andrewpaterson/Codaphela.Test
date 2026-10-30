@@ -75,8 +75,8 @@ void TestGeometryMapRectangles(void)
 		pMap->AddRectangle(0, 0, 0, 5, Set32BitColour((uint8)255, (uint8)0, (uint8)0));
 		pMap->AddRectangle(0, 0, 5, -1, Set32BitColour((uint8)255, (uint8)0, (uint8)0));
 		AssertSize(1, pMap->NumCommands());
-		AssertInt(4, pMap->GetCommand(0)->cBounds.msBottomRight.x);
-		AssertInt(3, pMap->GetCommand(0)->cBounds.msBottomRight.y);
+		AssertInt((int32)4, pMap->GetCommand(0)->cBounds.msBottomRight.x);
+		AssertInt((int32)3, pMap->GetCommand(0)->cBounds.msBottomRight.y);
 
 		//Half covered green, partly off the image.
 		pMap->AddRectangle(5, 3, 10, 10, Set32BitColour((uint8)0, (uint8)255, (uint8)0, (uint8)128));
@@ -407,8 +407,8 @@ void TestGeometryMapCircles(void)
 		AssertSize(2, pMap->NumCommands());
 		AssertInt(GC_FilledCircle, pMap->GetCommand(0)->eType);
 		AssertInt(GC_Circle, pMap->GetCommand(1)->eType);
-		AssertInt(2, pMap->GetCommand(0)->cBounds.msTopLeft.x);
-		AssertInt(9, pMap->GetCommand(0)->cBounds.msBottomRight.x);
+		AssertInt((int32)2, pMap->GetCommand(0)->cBounds.msTopLeft.x);
+		AssertInt((int32)9, pMap->GetCommand(0)->cBounds.msBottomRight.x);
 
 		cViewport.Init(0, 0, 24, 12);
 		AssertTrue(pMap->Blit(&cViewport, false));
@@ -601,8 +601,8 @@ void TestGeometryMapPolylines(void)
 		pMap->AddPolyline(asSquare, 4, true, 1, sWhite);
 		AssertInt(GC_Polyline, pMap->GetCommand(0)->eType);
 		AssertTrue(pMap->GetCommand(0)->bClosed);
-		AssertInt(2, pMap->GetCommand(0)->cBounds.msTopLeft.x);
-		AssertInt(9, pMap->GetCommand(0)->cBounds.msBottomRight.x);
+		AssertInt((int32)2, pMap->GetCommand(0)->cBounds.msTopLeft.x);
+		AssertInt((int32)9, pMap->GetCommand(0)->cBounds.msBottomRight.x);
 
 		//An open corner three pixels thick, translucent.  Its mitre fills the outside corner square and the overlaps
 		//aren't blended twice.
