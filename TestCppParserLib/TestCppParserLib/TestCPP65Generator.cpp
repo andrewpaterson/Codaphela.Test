@@ -13,6 +13,8 @@
 #include "BaseLib/FloatHelper.h"
 #include "BaseLib/Quaternion.h"
 #include "BaseLib/ArrayInt.h"
+#include "BaseLib/TextFile.h"
+#include "CppParserLib/CPP65Builder.h"
 #include "TestLib/Assert.h"
 
 
@@ -2985,6 +2987,113 @@ void TestCPP65GeneratorLockstep(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// szAssembly without its source comment lines ("\t\t; ").
+//
+//////////////////////////////////////////////////////////////////////////
+static void TestCPP65WithoutComments(CChars* pszDest, const char* szAssembly)
+{
+	CArrayChars	aszLines;
+	size		ui;
+
+	aszLines.Init();
+	aszLines.Split(szAssembly, '\n');
+	for (ui = 0; ui < aszLines.NumElements(); ui++)
+	{
+		if (!aszLines.Get(ui)->StartsWith("\t\t; "))
+		{
+			pszDest->Append(*aszLines.Get(ui));
+			if (ui + 1 < aszLines.NumElements())
+			{
+				pszDest->AppendNewLine();
+			}
+		}
+	}
+	aszLines.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A listing: the C++ source line before the code for it, in order (the
+// loop's line again after its body's, as its step follows), and the code
+// the same as without the comments, on both targets.  The builder writes a
+// unit's listing as Unit.lst.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP65GeneratorListing(void)
+{
+	static const char*	szSource =
+		"int Sum(int* p, int n)\n"
+		"{\n"
+		"\tint t = 0;\n"
+		"\tfor (int i = 0; i < n; i++)\n"
+		"\t{\n"
+		"\t\tt += p[i];\n"
+		"\t}\n"
+		"\treturn t;\n"
+		"}\n";
+	static const char*	aszComments[] = { "\t\t; Generated.cpp(4): for (int i = 0; i < n; i++)\n", "\t\t; Generated.cpp(6): t += p[i];\n", "\t\t; Generated.cpp(4): for (int i = 0; i < n; i++)\n", "\t\t; Generated.cpp(8): return t;\n", NULL };
+	static ECPPTarget	aeTargets[] = { CPPT_65C64, CPPT_W65C816 };
+	CCPP65Builder		cBuilder;
+	CChars				szPlain;
+	CChars				szListing;
+	CChars				szStripped;
+	CChars				szErrors;
+	CTextFile			cFile;
+	CFileUtil			cFileUtil;
+	const char*			szAt;
+	size				ui;
+	int					i;
+
+	for (ui = 0; ui < 2; ui++)
+	{
+		cBuilder.Init();
+		TestCPP65AddIncludeDirectories(&cBuilder);
+		szPlain.Init();
+		szListing.Init();
+		szErrors.Init();
+		AssertTrue(CCPP65Builder::Generate(&szPlain, &szErrors, cBuilder.GetIncludeDirectories(), "Generated.cpp", szSource, false, NULL, aeTargets[ui]));
+		AssertTrue(CCPP65Builder::Generate(&szListing, &szErrors, cBuilder.GetIncludeDirectories(), "Generated.cpp", szSource, false, NULL, aeTargets[ui], NULL, NULL, true));
+		AssertString("", szErrors.Text());
+		AssertFalse(szPlain.Contains("\t\t;"));
+
+		szAt = szListing.Text();
+		for (i = 0; aszComments[i] != NULL; i++)
+		{
+			szAt = strstr(szAt, aszComments[i]);
+			AssertNotNull((void*)szAt);
+			if (szAt == NULL)
+			{
+				break;
+			}
+			szAt += strlen(aszComments[i]);
+		}
+
+		szStripped.Init();
+		TestCPP65WithoutComments(&szStripped, szListing.Text());
+		AssertString(szPlain.Text(), szStripped.Text());
+		szStripped.Kill();
+		szErrors.Kill();
+		szListing.Kill();
+		szPlain.Kill();
+		cBuilder.Kill();
+	}
+
+	cFileUtil.RemoveDir("Output" _FS_ "CPP65Listing");
+	cBuilder.Init();
+	TestCPP65AddIncludeDirectories(&cBuilder);
+	cBuilder.SetListingDirectory("Output" _FS_ "CPP65Listing");
+	AssertTrue(cBuilder.AddSource("Listed.cpp", szSource));
+	cFile.Init();
+	AssertTrue(cFile.Read("Output" _FS_ "CPP65Listing" _FS_ "Listed.lst"));
+	AssertTrue(strstr(cFile.Text(), "\t\t; Listed.cpp(6): t += p[i];\n") != NULL);
+	cFile.Kill();
+	cBuilder.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCPP65Generator(void)
@@ -3021,6 +3130,7 @@ void TestCPP65Generator(void)
 	TestCPP65GeneratorLazy();
 	TestCPP65GeneratorLockstep();
 	TestCPP65GeneratorErrors();
+	TestCPP65GeneratorListing();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
 	NumberKill();

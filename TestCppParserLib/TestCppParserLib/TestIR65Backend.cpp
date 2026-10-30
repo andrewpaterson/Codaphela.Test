@@ -9,6 +9,7 @@
 #include "CppParserLib/IR65Flags.h"
 #include "CppParserLib/IR65Peephole.h"
 #include "CppParserLib/IR65Widths.h"
+#include "CppParserLib/IRSourceMarkers.h"
 #include "TestLib/Assert.h"
 #include "TestCPP65Context.h"
 
@@ -1374,6 +1375,76 @@ void TestIR65BackendPeepholeCopies(void)
 // straight on; a bra to a ret is a ret; then the code nothing reaches goes.
 //
 //////////////////////////////////////////////////////////////////////////
+//
+// A listing's source markers are taken out before the text passes and put
+// back after: before the line they were before, a line a pass rewrote
+// (paired in order between lines that stayed), or the next line still
+// there; of two that go before one line the last stays.  A line repeated
+// further on doesn't draw a marker to it.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIRSourceMarkers(void)
+{
+	CIRSourceMarkers	cMarkers;
+	CChars				sz;
+
+	sz.Init("; before\n");
+	sz.Append(
+		"_F:\n"
+		"\t\t;@5\n"
+		"\t\tcpy A, 0\n"
+		"\t\tcpy [0 + W], A\n"
+		"\t\t;@7\n"
+		"\t\tcpy A, 1\n"
+		"\t\t;@9\n"
+		"\t\tcpy A, 0\n"
+		"\t\tcpy [4 + W], A\n"
+		"\t\t;@11\n"
+		"\t\tadd A, 2\n"
+		"\t\tret\n");
+	cMarkers.Init();
+	cMarkers.Take(&sz, 9);
+	AssertString(
+		"; before\n"
+		"_F:\n"
+		"\t\tcpy A, 0\n"
+		"\t\tcpy [0 + W], A\n"
+		"\t\tcpy A, 1\n"
+		"\t\tcpy A, 0\n"
+		"\t\tcpy [4 + W], A\n"
+		"\t\tadd A, 2\n"
+		"\t\tret\n", sz.Text());
+
+	//The passes: the + W goes, the first cpy A, 1 goes.
+	sz.Kill();
+	sz.Init(
+		"; before\n"
+		"_F:\n"
+		"\t\tcpy A, 0\n"
+		"\t\tcpy [0], A\n"
+		"\t\tcpy A, 0\n"
+		"\t\tcpy [4], A\n"
+		"\t\tadd A, 2\n"
+		"\t\tret\n");
+	cMarkers.Put(&sz, 9);
+	AssertString(
+		"; before\n"
+		"_F:\n"
+		"\t\t;@5\n"
+		"\t\tcpy A, 0\n"
+		"\t\tcpy [0], A\n"
+		"\t\t;@9\n"
+		"\t\tcpy A, 0\n"
+		"\t\tcpy [4], A\n"
+		"\t\t;@11\n"
+		"\t\tadd A, 2\n"
+		"\t\tret\n", sz.Text());
+	cMarkers.Kill();
+	sz.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 void TestIR65BackendPeepholeJumps(void)
 {
 	TestIR65PeepholeOptimise(
@@ -1460,6 +1531,7 @@ void TestIR65Backend(void)
 	TestIR65BackendFlags();
 	TestIR65BackendPeepholeCopies();
 	TestIR65BackendPeepholeJumps();
+	TestIRSourceMarkers();
 
 	C65C64InstructionFactory::GetInstance()->Kill();
 	NumberKill();
