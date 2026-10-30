@@ -31,6 +31,7 @@ struct STestMapAccessKey
 
 	void Init(int32 a, int16 b)
 	{
+		memset(this, 0, sizeof(STestMapAccessKey));  //The padding after mb is part of the key's bytes.
 		ma = a;
 		mb = b;
 	}

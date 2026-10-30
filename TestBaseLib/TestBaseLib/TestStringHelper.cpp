@@ -508,6 +508,32 @@ void TestFindCharIndex(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// StrLen is a natural length: a C string too long for a size is MAX_SIZE
+// (strlen is the lsize length).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestStrLen(void)
+{
+	char*	sz;
+
+	AssertSize(5, StrLen("hello"));
+	AssertSize(0, StrLen(""));
+
+	sz = (char*)malloc(70001);
+	memset(sz, 'a', 70000);
+	sz[70000] = '\0';
+#ifdef SIZE_16
+	AssertSize(MAX_SIZE, StrLen(sz));
+#else
+	AssertSize(70000, StrLen(sz));
+#endif // SIZE_16
+	AssertLSize(70000, strlen(sz));
+	free(sz);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestStringHelper(void)
@@ -523,6 +549,7 @@ void TestStringHelper(void)
 	TestToLower();
 	TestToUpper();
     TestMemSwp();
+    TestStrLen();
     TestMemCmp();
     TestFlagsToString();
     TestCharToString();

@@ -279,7 +279,7 @@ void TestLibc65StringFills(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// The W65C816's 16 bit count memcpy16, memmove16, memset16, memcmp16 and
+// The W65C816's 16 bit count memcpy16, memmove16, memset16, memcmp16, strlen16 and
 // BaseLib's MemSwp16 (string816_16.asm, for BaseLib's natural arrays)
 // across 64KB boundaries: a copy up, overlapping moves down and up, a fill
 // across a bank and one within it, a fill of 0 bytes, compares that are
@@ -338,6 +338,14 @@ void TestLibc65String16(void)
 		"	iWrong += memcmp16(pc + 0x7F00, pc + 0x17F40, 101) != 0;\n"
 		"	pc[0x17F40 + 101] ^= 0x80;\n"
 		"	pc[0x17F40 + 300] ^= 0x80;\n"
+		"	iWrong += strlen16(\"hello\") != 5;\n"
+		"	iWrong += strlen16(\"\") != 0;\n"
+		"	memset(pc + 0x70000, 'a', 65534);\n"
+		"	pc[0x70000 + 65534] = 0;\n"
+		"	iWrong += strlen16((char*)pc + 0x70000) != 65534;\n"
+		"	memset(pc + 0x70000, 'a', 70000);\n"
+		"	pc[0x70000 + 70000] = 0;\n"
+		"	iWrong += strlen16((char*)pc + 0x70000) != 65535;\n"
 		"	MemSwp16(pc + 0x57F00, pc + 0x67F00, 0);\n"
 		"	MemSwp16(pc + 0x57F00, pc + 0x67F00, 301);\n"
 		"	for (i = 0; i < 512; i++)\n"
