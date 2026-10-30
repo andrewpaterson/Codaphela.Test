@@ -561,7 +561,7 @@ void CodabaseThread(void* pvData)
 	psData = (SCodabaseThreadData*)pvData;
 	for (i = 0; i < CODABASE_THREAD_ITEMS; i++)
 	{
-		oi = (OIndex)(psData->iThread * 1000 + i + 1);
+		oi = (OIndex)psData->iThread * 1000 + i + 1;
 		CodabaseThreadData(szData, psData->iThread, i, false);
 		if ((i % 2) == 0)
 		{
@@ -615,7 +615,7 @@ void AssertCodabaseThreadItems(CCodabase* pcDatabase)
 			}
 			else
 			{
-				pcDatabase->Get((OIndex)(iThread * 1000 + i + 1), szResult);
+				pcDatabase->Get((OIndex)iThread * 1000 + i + 1, szResult);
 			}
 			if (strcmp(szData, szResult) != 0)
 			{

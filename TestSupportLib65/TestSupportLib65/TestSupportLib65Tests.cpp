@@ -35,6 +35,18 @@ static const char* gaszTestSupportLib65Excluded[] =
 };
 
 
+//And the tests that are not run on the W65C816.
+static const char* gaszTestSupportLib65Excluded816[] =
+{
+	//More than the 4G instructions each program gets here (the W65C816's code is slower).  They pass when given longer
+	//(TEST_PROJECT65_STEPS=30000): TestImageSFTWriter in 17.3G cycles, TestRectangleBestPackerWithRotation in 18.6G.
+	"TestImageSFTWriter",
+	"TestRectangleBestPackerWithRotation",
+
+	NULL
+};
+
+
 //////////////////////////////////////////////////////////////////////////
 //
 //
@@ -48,11 +60,11 @@ void TestSupportLib65Tests(void)
 	sProject.szTestProject = "TestSupportLib";
 	sProject.aszLibraries = gaszTestSupportLib65Libraries;
 	sProject.aszExcluded = gaszTestSupportLib65Excluded;
-	sProject.aszExcluded816 = NULL;
+	sProject.aszExcluded816 = gaszTestSupportLib65Excluded816;
 	sProject.uiMinPrograms = 46;
 	sProject.iMinTestsRun = 20649;
-	sProject.uiMinPrograms816 = 0;
-	sProject.iMinTestsRun816 = 0;
+	sProject.uiMinPrograms816 = 44;
+	sProject.iMinTestsRun816 = 12258;
 	TestProject65RunTests(&sProject);
 
 	TestStatistics();

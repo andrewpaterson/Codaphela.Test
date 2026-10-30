@@ -600,7 +600,7 @@ float64 SumShapeOpacity(Ptr<CImage> pImage)
 {
 	int		x;
 	int		y;
-	int		iSum;
+	int32	iSum;
 
 	iSum = 0;
 	for (y = 0; y < (int)pImage->GetHeight(); y++)
@@ -1133,11 +1133,11 @@ void AssertDrawCelTranslucentPixels(Ptr<CImage> pDest, size uiRed, size uiGreen,
 	puiData = (uint8*)pDest->GetData();
 	for (i = 0; i < 4; i++)
 	{
-		uiExpected = (auiColour[0] * auiAlpha[i] + 127) / 255;
+		uiExpected = ((uint32)auiColour[0] * auiAlpha[i] + 127) / 255;
 		AssertInt((int)uiExpected, puiData[i * 4 + uiRed]);
-		uiExpected = (auiColour[1] * auiAlpha[i] + 127) / 255;
+		uiExpected = ((uint32)auiColour[1] * auiAlpha[i] + 127) / 255;
 		AssertInt((int)uiExpected, puiData[i * 4 + uiGreen]);
-		uiExpected = (auiColour[2] * auiAlpha[i] + 127) / 255;
+		uiExpected = ((uint32)auiColour[2] * auiAlpha[i] + 127) / 255;
 		AssertInt((int)uiExpected, puiData[i * 4 + uiBlue]);
 		AssertInt(auiAlpha[i], puiData[i * 4 + uiOpacity]);
 	}

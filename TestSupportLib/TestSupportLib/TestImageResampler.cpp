@@ -513,7 +513,7 @@ void TestImageResamplerModify(void)
 
 	for (i = 0; i < 6 * 4; i++)
 	{
-		aiSource[i] = (i * 37) & 0xFF;
+		aiSource[i] = ((int32)i * 37) & 0xFF;
 	}
 	Ptr<CImage> pcSource = OMalloc<CImage>(6, 4, PT_uint8, IMAGE_DIFFUSE_RED, IMAGE_DIFFUSE_GREEN, IMAGE_DIFFUSE_BLUE, IMAGE_OPACITY, CHANNEL_STOP);
 	for (i = 0; i < 4; i++)

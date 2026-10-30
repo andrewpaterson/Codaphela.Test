@@ -1174,7 +1174,7 @@ void TestTrueTypeFontMixedSizeLayout(void)
 
 		//A big word wrapped to the next line leaves the first line only as high as the small glyphs on it.
 		//Wide enough for BB but not for aa BB.
-		iWidth = pBig->GetGlyph((uint32)'B', 1)->GetFullWidth() * 2 + 1;
+		iWidth = (int32)pBig->GetGlyph((uint32)'B', 1)->GetFullWidth() * 2 + 1;
 		pLayout->SetWidth(iWidth);
 		LayoutMixedSizes(pLayout, pDraw, pSmall, pBig, "aa BB", 3, 5);
 		pasGlyphs = pDraw->GetGlyphs();

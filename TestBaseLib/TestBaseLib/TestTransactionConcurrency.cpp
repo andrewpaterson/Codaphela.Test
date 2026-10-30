@@ -442,10 +442,10 @@ void BankTeller(void* pvData)
 	int					iFromBalance;
 	int					iToBalance;
 	bool				bResult;
-	unsigned int		uiRandom;
+	uint32				uiRandom;
 
 	psData = (SBankThread*)pvData;
-	uiRandom = (unsigned int)psData->iSeed;
+	uiRandom = (uint32)psData->iSeed;
 	for (i = 0; i < BANK_TRANSFERS; i++)
 	{
 		uiRandom = uiRandom * 1103515245u + 12345u;

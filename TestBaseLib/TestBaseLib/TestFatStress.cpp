@@ -189,7 +189,7 @@ static void FatStressMarkCluster(SFatStress* ps, uint32 uiCluster)
 {
 	AssertTrue(uiCluster >= 2);
 	AssertTrue(uiCluster < ps->uiClusters + 2);
-	AssertFalse(FixBool(ps->puiClusterOwners[uiCluster >> 3] & (1 << (uiCluster & 7))));
+	AssertFalse(FixBool(ps->puiClusterOwners[uiCluster >> 3] & ((uint32)1 << (uiCluster & 7))));
 	ps->puiClusterOwners[uiCluster >> 3] |= (uint8)(1 << (uiCluster & 7));
 }
 

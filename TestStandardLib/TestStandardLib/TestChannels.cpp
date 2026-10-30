@@ -289,9 +289,9 @@ void TestChannelsLoad(void)
 			{
 				for (b = 0; b < 4; b++)
 				{
-					pcAccessorR->Set(x + y * 8, &r);
-					pcAccessorG->Set(x + y * 8, &g);
-					pcAccessorB->Set(x + y * 8, &b);
+					pcAccessorR->Set(x + (lsize)y * 8, &r);
+					pcAccessorG->Set(x + (lsize)y * 8, &g);
+					pcAccessorB->Set(x + (lsize)y * 8, &b);
 
 					x++;
 					if (x >= 8)
@@ -413,9 +413,9 @@ void TestChannelsLoad(void)
 			{
 				for (b = 0; b < 4; b++)
 				{
-					ar = *((uint8*)pcAccessorR->Get(x + y * 8));
-					ag = *((uint8*)pcAccessorG->Get(x + y * 8));
-					ab = *((uint8*)pcAccessorB->Get(x + y * 8));
+					ar = *((uint8*)pcAccessorR->Get(x + (lsize)y * 8));
+					ag = *((uint8*)pcAccessorG->Get(x + (lsize)y * 8));
+					ab = *((uint8*)pcAccessorB->Get(x + (lsize)y * 8));
 
 					if ((ar != (uint8)r) ||
 						(ag != (uint8)g) ||

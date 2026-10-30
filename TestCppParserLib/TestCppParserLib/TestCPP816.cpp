@@ -2408,6 +2408,12 @@ void TestCPP816SizeLsizeBugs(void)
 	AssertInt(1, TestCPP816CountWarnings("void* Remap(void* pv, long l);\nvoid* F(void* pv, unsigned short ui) { return Remap(pv, ui << 3); }\n", "widened after it may have wrapped"));
 	AssertInt(0, TestCPP816CountWarnings("long long gl;\nvoid F(unsigned short ui) { gl = (long long)ui * 0x39e7; }\n", "widened after it may have wrapped"));
 	AssertInt(1, TestCPP816CountWarnings("long long gl;\nvoid F(unsigned short ui) { gl = (long long)(ui * 0x39e7); }\n", "widened after it may have wrapped"));
+	//SupportLib's row blitters: y * uiRowStride + x * uiPixelStride made a 16 bit offset, then widened to a ptrdiff.
+	AssertInt(1, TestCPP816CountWarnings("void* Remap(void* pv, long l);\nvoid* F(void* pv, unsigned short y, unsigned short s, unsigned short x) { return Remap(pv, y * s + x * 3); }\n", "widened after it may have wrapped"));
+	AssertInt(1, TestCPP816CountWarnings("long gl;\nvoid F(unsigned short a, unsigned short b) { gl = (a << 4) | b; }\n", "widened after it may have wrapped"));
+	AssertInt(0, TestCPP816CountWarnings("void* Remap(void* pv, long l);\nvoid* F(void* pv, unsigned short y, unsigned long s, unsigned short x) { return Remap(pv, y * s + x); }\n", "widened after it may have wrapped"));
+	AssertInt(0, TestCPP816CountWarnings("long gl;\nvoid F(unsigned short a, unsigned short b) { gl = a + b; }\n", "widened after it may have wrapped"));
+
 	//TestIndexUnknown: the cast doesn't make the multiply wider.
 	AssertInt(1, TestCPP816CountWarnings("void Init(long l);\nvoid F(unsigned short ui) { Init((long)((ui + 1) * 7)); }\n", "widened after it may have wrapped"));
 	AssertInt(0, TestCPP816CountWarnings("void Init(long l);\nvoid F(unsigned short ui) { Init(((long)ui + 1) * 7); }\n", "widened after it may have wrapped"));
@@ -2419,6 +2425,14 @@ void TestCPP816SizeLsizeBugs(void)
 	AssertInt(1, TestCPP816CountWarnings("unsigned short Find(void);\nint F(void) { unsigned long ul; ul = Find(); if (ul != 0xFFFFFFFFUL) { return 1; } return 0; }\n", "Comparison is always true: a 16 bit value, zero extended, is compared with 4294967295"));
 	AssertInt(0, TestCPP816CountWarnings("unsigned long Find(void);\nint F(void) { unsigned long ul; ul = Find(); if (ul != 0xFFFFFFFFUL) { return 1; } return 0; }\n", "Comparison is always"));
 	AssertInt(0, TestCPP816CountWarnings("unsigned short Find(void);\nint F(void) { unsigned long ul; ul = Find(); if (ul != 0xFFFFUL) { return 1; } return 0; }\n", "Comparison is always"));
+
+	//TestSound's every 16 bit value loop: i <= 32767 with a 16 bit int never ends.
+	AssertInt(1, TestCPP816CountWarnings("int F(void) { int i; int n; n = 0; for (i = -32768; i <= 32767; i++) { n++; } return n; }\n", "Comparison is always true: the constant 32767 is the largest value of the 16 bit signed"));
+	AssertInt(0, TestCPP816CountWarnings("int F(unsigned short u) { return 65535 < u; }\n", "Comparison is always"));
+	AssertInt(1, TestCPP816CountWarnings("int F(short s) { return s >= -32768; }\n", "Comparison is always true"));
+	AssertInt(0, TestCPP816CountWarnings("int F(unsigned short u) { return u >= 0; }\n", "Comparison is always"));
+	AssertInt(0, TestCPP816CountWarnings("int F(int i) { return i < 32767; }\n", "Comparison is always"));
+	AssertInt(0, TestCPP816CountWarnings("int F(long l) { return l <= 32767; }\n", "Comparison is always"));
 
 	//SupportLib's Convert8BitColourTo32BitColour: uint8s promoted to a 16 bit int and shifted by 16 and 24 are zero.
 	AssertInt(2, TestCPP816CountWarnings("unsigned long F(unsigned char r, unsigned char b, unsigned char a) { return r | (b << 16) | (a << 24); }\n", "Shift count"));

@@ -53,8 +53,8 @@ void TestSoundSampleConversion(void)
 	uint8	aui8[4];
 	int32	ai32[2];
 	float32	af32[2];
-	int		i;
-	int		iMismatches;
+	int32	i;
+	int32	iMismatches;
 	int16	i16;
 
 	Ptr<CSound> pcSound = OMalloc<CSound>(8000, 4, PT_int16, SOUND_MONO, CHANNEL_STOP);
@@ -81,7 +81,7 @@ void TestSoundSampleConversion(void)
 			iMismatches++;
 		}
 	}
-	AssertInt(0, iMismatches);
+	AssertInt((int32)0, iMismatches);
 
 	pcSound = OMalloc<CSound>(8000, 4, PT_uint8, SOUND_MONO, CHANNEL_STOP);
 	pcSound->SetSample(0, 0, 0.0);
@@ -340,7 +340,7 @@ void TestSoundBittyConversion(void)
 
 		//Out of range samples are clamped.
 		ConvertSampleFromFloat(&uiBack, aeTypes[t], 1.0);
-		if (uiBack != (uint64)((1 << aiBits[t]) - 1))
+		if (uiBack != ((uint64)1 << aiBits[t]) - 1)
 		{
 			iMismatches++;
 		}
