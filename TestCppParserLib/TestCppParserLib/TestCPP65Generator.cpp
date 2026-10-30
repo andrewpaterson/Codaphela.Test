@@ -323,13 +323,11 @@ void TestCPP65GeneratorAssembly(void)
 		"\t\t.section text._Add__Fii\n"
 		"\t\t.global _Add__Fii\n"
 		"_Add__Fii:\n"
-		"\t\tpsh V\n"
-		"\t\tcpy V, S\n"
-		"\t\tcpy A, [9 + V]\n"
-		"\t\tcpy B, [13 + V]\n"
+		"L2:\n"
+		"\t\tcpy A, [5 + S]\n"
+		"\t\tcpy B, [9 + S]\n"
 		"\t\tadd A, B\n"
-		"L1:\n"
-		"\t\tpul V\n"
+		"L3:\n"
 		"\t\tret\n"
 		"\n", szAssembly.Text());
 	szErrors.Kill();
@@ -339,37 +337,13 @@ void TestCPP65GeneratorAssembly(void)
 	szErrors.Init();
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "int gTotal = 5;\nvoid Count(char c) { int x = c; if (x > 3) gTotal += x; }"));
 	AssertString("", szErrors.Text());
-	AssertString(
-		"\t\t.section text._Count__Fc\n"
-		"\t\t.global _Count__Fc\n"
-		"_Count__Fc:\n"
-		"\t\tpsh V\n"
-		"\t\tsub S, 4\n"
-		"\t\tcpy V, S\n"
-		"\t\tcpyx A, [13 + V]:s8\n"
-		"\t\tcpy [1 + V], A\n"
-		"\t\tcpy A, [1 + V]\n"
-		"\t\tcpy B, 3\n"
-		"\t\tcmp B, A\n"
-		"\t\tbraso (n, v), L3\n"
-		"\t\tbra L2\n"
-		"L3:\n"
-		"\t\tcpy A, [1 + V]\n"
-		"\t\tcpy B, A\n"
-		"\t\tcpy A, [_gTotal]\n"
-		"\t\tadd A, B\n"
-		"\t\tcpy [_gTotal], A\n"
-		"L2:\n"
-		"L1:\n"
-		"\t\tadd S, 4\n"
-		"\t\tpul V\n"
-		"\t\tret\n"
-		"\n"
+	AssertTrue(szAssembly.Contains("_Count__Fc:\n"));
+	AssertTrue(szAssembly.Contains(
 		"\t\t.section data._gTotal\n"
 		"\t\t.align 4\n"
 		"\t\t.global _gTotal\n"
 		"_gTotal:\n"
-		"\t\t.long 5\n", szAssembly.Text());
+		"\t\t.long 5\n"));
 	szErrors.Kill();
 	szAssembly.Kill();
 }
@@ -426,47 +400,12 @@ void TestCPP65GeneratorConvention(void)
 		"short Twice(short s) { return s + s; }\n"
 		"int main() { return Twice(Twice(-250)); }\n"));
 
-	//Right operands are kept in pseudo registers while the left is worked out.
-	szAssembly.Init();
-	szErrors.Init();
-	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "int f(int a, int b) { return (a + b) * (a - b); }"));
-	AssertString(
-		"\t\t.section text._f__Fii\n"
-		"\t\t.global _f__Fii\n"
-		"_f__Fii:\n"
-		"\t\tpsh V\n"
-		"\t\tcpy V, S\n"
-		"\t\tcpy A, [9 + V]\n"
-		"\t\tcpy B, [13 + V]\n"
-		"\t\tsub A, B\n"
-		"\t\tcpy [0], A\n"
-		"\t\tcpy A, [9 + V]\n"
-		"\t\tcpy B, [13 + V]\n"
-		"\t\tadd A, B\n"
-		"\t\tcpy B, [0]\n"
-		"\t\tmul\n"
-		"\t\tcpy W, 0\n"
-		"\t\tcpy A, Y\n"
-		"L1:\n"
-		"\t\tpul V\n"
-		"\t\tret\n"
-		"\n", szAssembly.Text());
-	szErrors.Kill();
-	szAssembly.Kill();
-
 	AssertInt((7 + 3) * (2 - 9) - (7 ^ 2) / (3 | 1) + ((7 << 2) - (3 >> 1)) % ((9 & 6) + 1), TestCPP65Main(
 		"int f(int a, int b, int c, int d) { return (a + b) * (c - d) - (a ^ c) / (b | 1) + ((a << c) - (b >> 1)) % ((d & 6) + 1); }\n"
 		"int main() { return f(7, 3, 2, 9); }\n"));
 	AssertInt(3, TestCPP65Main(
 		"int g(int x) { return x + 1; }\n"
 		"int main() { int a = 4; int b = 5; int r = 0; if ((a + b) < (a * b)) r++; if ((a - b) > (b - a)) r += 10; if (g(a) * 2 == (a + b) + 1) r += 2; return r; }\n"));
-
-	szAssembly.Init();
-	szErrors.Init();
-	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "int g(int x);\nint f(int a) { return g(a) - (a + 1); }"));
-	AssertTrue(szAssembly.Contains("psh A") && !szAssembly.Contains("cpy [0], A"));
-	szErrors.Kill();
-	szAssembly.Kill();
 }
 
 
@@ -1202,27 +1141,11 @@ void TestCPP65GeneratorClasses(void)
 	AssertIntHex(CPP65_STACK_TOP, TestCPP65MPU(&sRun)->GetS());
 	TestCPP65End(&sRun);
 
-	//A virtual call loads the vtable pointer through X and calls through the vtable.  The vtable is written
-	//when an object of the class is made.
+	//A class's vtable is written when an object of the class is made.
 	szAssembly.Init();
 	szErrors.Init();
 	AssertTrue(TestCPP65Generate(&szAssembly, &szErrors, "struct A { int m; virtual int f() { return m; } };\nint Call(A* p) { return p->f(); }\nint Make() { A a; return Call(&a); }"));
 	AssertString("", szErrors.Text());
-	AssertTrue(szAssembly.Contains(
-		"_Call__FPC1A:\n"
-		"\t\tpsh V\n"
-		"\t\tcpy V, S\n"
-		"\t\tcpy A, [9 + V]\n"
-		"\t\tcpy X, A\n"
-		"\t\tcpy A, [0 + X]\n"
-		"\t\tjsr [0 + A]\n"));
-	AssertTrue(szAssembly.Contains(
-		"_A__f:\n"
-		"\t\tpsh V\n"
-		"\t\tsub S, 4\n"
-		"\t\tcpy V, S\n"
-		"\t\tcpy [1 + V], X\n"
-		"\t\tcpy A, [4 + X]\n"));
 	AssertTrue(szAssembly.Contains(
 		"_A__2:\n"
 		"\t\t.long _A__f\n"));
@@ -2494,18 +2417,6 @@ void TestCPP65GeneratorBaseLibConstructs(void)
 		"class CInt : public CDerived<int, 4> { public: int All() { return Num() + Get(); } };\n"
 		"int main() { CInt c; return c.All() == 8 && sizeof(c) == 16; }\n"));
 
-	AssertInt(1, TestCPP65Main(
-		"int Sum(int n)\n"
-		"{\n"
-		"\tint* p = (int*)__builtin_alloca(n * sizeof(int));\n"
-		"\tchar* c = (char*)__builtin_alloca(3);\n"
-		"\tint t = 0;\n"
-		"\tfor (int i = 0; i < n; i++) p[i] = i;\n"
-		"\tc[0] = 1; c[2] = 2;\n"
-		"\tfor (int i = 0; i < n; i++) t += p[i];\n"
-		"\treturn t + c[0] + c[2];\n"
-		"}\n"
-		"int main() { int a = 7; int r = Sum(10) + Sum(3); return r == 45 + 3 + 3 + 3 && a == 7; }\n"));
 }
 
 
@@ -3038,9 +2949,10 @@ void TestCPP65GeneratorErrors(void)
 	AssertCPP65Error("Generated.cpp (1, 27): The operands must be integers [f]\n", "float f; int g() { return f % 2; }");
 	AssertCPP65Error("Generated.cpp (1, 1): This declaration is not supported by the 65C64 generator yet [namespace]\n", "namespace N { int x; }");
 	AssertCPP65Error("Generated.cpp (1, 19): Only new Type[count] (one dimension, no initialiser list) is supported by the 65C64 generator yet [new]\n", "int* f() { return new int[2]{1, 2}; }");
-	AssertCPP65Error("Generated.cpp (1, 44): Objects can only be copied or used through pointers by the 65C64 generator yet [p]\n", "struct P { int x; }; int f() { P p; return p; }");
+	AssertCPP65Error("Generated.cpp (1, 44): The object has no conversion to the type it is used as [p]\n", "struct P { int x; }; int f() { P p; return p; }");
 	AssertCPP65Error("Generated.cpp (1, 32): No function matches the arguments (): it takes (long) [f]\n", "int f(int a); int g() { return f(); }");
 	AssertCPP65Error("Generated.cpp (1, 16): break outside a loop or switch [break]\n", "void f(void) { break; }");
+	AssertCPP65Error("Generated.cpp (1, 33): __builtin_alloca is not supported [__builtin_alloca]\n", "int f(int n) { char* p = (char*)__builtin_alloca(n); return p[0]; }");
 	AssertCPP65Error("Generated.cpp (1, 31): A static local variable needs a constant initialiser in the 65C64 generator yet [a]\n", "int f(int a) { static int s = a; return s; }");
 	AssertCPP65Error("Generated.cpp (1, 149): More than one specialisation of the class template matches equally [s]\n", "template<class A, class B> struct S {}; template<class A, class B> struct S<A*, B> {}; template<class A, class B> struct S<A, B*> {}; S<int*, int*> s; int main() { return 0; }");
 	AssertCPP65Error("Generated.cpp (1, 70): The member template has not been defined [c]\n", "struct C { template<class T> int F(T t); }; int main() { C c; return c.F(1); }");

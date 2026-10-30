@@ -568,7 +568,34 @@ static bool TestProject65Run(STestProject65* psProject, CCPP65Builder* pcBuilder
 	{
 		pcMemory->InitFast(&cMPU);
 		cMPU.Reset();
-		for (uiSteps = 0; (uiSteps < uiMaxSteps) && !cMPU.IsStopped(); uiSteps += 1000000)
+		if (getenv("TEST_PROJECT65_TRACE"))
+		{
+			//TEST_PROJECT65_TRACE: one instruction at a time, stopping when the program counter leaves the program; the
+			//last addresses it was at are printed.
+			uint32	auiTrace[64];
+			uint32	auiTraceS[64];
+			size	uiTrace;
+			size	ui;
+
+			uiTrace = 0;
+			for (uiSteps = 0; (uiSteps < uiMaxSteps) && !cMPU.IsStopped() && (cMPU.GetProgramCounter() >= CPP65_PROGRAM_ADDRESS); uiSteps++)
+			{
+				auiTrace[uiTrace % 64] = cMPU.GetProgramCounter();
+				auiTraceS[uiTrace % 64] = cMPU.GetS();
+				uiTrace++;
+				cMPU.Run(1);
+			}
+			for (ui = (uiTrace > 64) ? uiTrace - 64 : 0; ui < uiTrace; ui++)
+			{
+				pszConsole->Append("  ");
+				TestProject65AppendSymbol(pcBuilder, auiTrace[ui % 64], pszConsole);
+				pszConsole->Append(" S $");
+				pszConsole->AppendHexHiLo(&auiTraceS[ui % 64], sizeof(uint32));
+				pszConsole->AppendNewLine();
+			}
+			uiSteps *= 1000000;
+		}
+		for (uiSteps = 0; (uiSteps < uiMaxSteps) && !cMPU.IsStopped() && !getenv("TEST_PROJECT65_TRACE"); uiSteps += 1000000)
 		{
 			cMPU.Run(1000000);
 		}

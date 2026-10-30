@@ -944,6 +944,50 @@ void TestIR65BackendWidths(void)
 		"\t\tcpy A, X\n"
 		"\t\tret\n");
 
+	//L3 is a loop's label first gone to with Y's width unknown (the ways into L1 disagree), so it starts with it unknown
+	//and the call is made with Y set back to 32 bits (deciding it again as 32 at the label left the call with Y 8 bits).
+	TestIR65WidthsOptimise(
+		"_F:\n"
+		"\t\tcmp A, 0\n"
+		"\t\tbras z, L1\n"
+		"\t\twth Y, 8\n"
+		"\t\tcpy Y, [X]\n"
+		"L1:\n"
+		"\t\tcmp A, 1\n"
+		"\t\tbras z, L3\n"
+		"\t\tbra L4\n"
+		"L3:\n"
+		"\t\tcmp A, 2\n"
+		"\t\twth Y, 32\n"
+		"\t\tbras z, L5\n"
+		"\t\tjsr _G\n"
+		"\t\tret\n"
+		"L4:\n"
+		"\t\tsub A, 1\n"
+		"\t\tbra L3\n"
+		"L5:\n"
+		"\t\tret\n",
+		"_F:\n"
+		"\t\tcmp A, 0\n"
+		"\t\tbras z, L1\n"
+		"\t\twth Y, 8\n"
+		"\t\tcpy Y, [X]\n"
+		"\t\twth Y, 32\n"
+		"L1:\n"
+		"\t\tcmp A, 1\n"
+		"\t\tbras z, L3\n"
+		"\t\tbra L4\n"
+		"L3:\n"
+		"\t\tcmp A, 2\n"
+		"\t\tbras z, L5\n"
+		"\t\tjsr _G\n"
+		"\t\tret\n"
+		"L4:\n"
+		"\t\tsub A, 1\n"
+		"\t\tbra L3\n"
+		"L5:\n"
+		"\t\tret\n");
+
 	//The extended bits are returned, so the wthx stays.
 	TestIR65WidthsOptimise(
 		"_F:\n"

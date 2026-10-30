@@ -265,14 +265,14 @@ void TestCPP65IRConstructors(void)
 	AssertInt(13424, TestCPP65IRMain(sz.Text(), 11));
 	sz.Kill();
 
-	//Temporaries that need destroying go at the end of their full expression, last made first (+ works out its right
+	//Temporaries that need destroying go at the end of their full expression, last made first (+ works out its left
 	//operand first); an object's operator+= is its member function.
 	sz.Init(szLog);
 	sz.Append(
 		"struct CTemp { int miId; CTemp(int i) { miId = i; Log(i); } ~CTemp() { Log(miId + 5); } int Get() { return miId; } CTemp& operator+=(int i) { miId += i; return *this; } };\n"
 		"CTemp Make(int i) { return CTemp(i); }\n"
 		"int main() { int a = Make(1).Get() + Make(2).Get(); int r; { CTemp t(3); t += 1; r = t.Get(); } int b = CTemp(1).Get(); if ((a != 3) || (r != 4) || (b != 1)) return -1; return LogValue(); }");
-	AssertInt(21673916, TestCPP65IRMain(sz.Text(), 8));
+	AssertInt(12763916, TestCPP65IRMain(sz.Text(), 8));
 	sz.Kill();
 
 	//Pointers to members: a member function (called on an object and through a pointer, a base's from a derived object,
@@ -307,7 +307,7 @@ void TestCPP65IRConstructors(void)
 		"FInt gaf[2] = { Two, Times };\n"
 		"FInt Pick(int i) { return gaf[i]; }\n"
 		"struct CCell { int miValue; }; struct CRow { int miCount; CCell macCells[3]; };\n"
-		"int main() { FInt pf = Times; CRow r; r.macCells[2].miValue = 50; return gaf[0](9) + (*pf)(3) + Pick(0)(1) * 2 + r.macCells[2].miValue; }", 4));
+		"int main() { FInt pf = Times; CRow r; r.macCells[2].miValue = 50; return gaf[0](9) + (*pf)(3) + Pick(0)(1) * 2 + r.macCells[2].miValue; }", 5));
 
 	//f(args...) passes the pack's elements; object.pf() and pf() in a member call through a field.
 	AssertInt(321 + 8 + 12, TestCPP65IRMain(

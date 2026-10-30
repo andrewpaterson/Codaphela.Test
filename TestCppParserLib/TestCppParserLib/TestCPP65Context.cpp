@@ -398,9 +398,11 @@ void TestCPP65AddUnits(CCPP65Builder* pcBuilder, const char** aszUnits, bool bAs
 //////////////////////////////////////////////////////////////////////////
 bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const char* szStubs, const char* szSource, CChars* pszMap, bool bLazy)
 {
-	CCPP65Builder	cBuilder;
-	CChars			szMissing;
-	bool			bResult;
+	static const char*	aszString[] = { "Libc65/string.asm", NULL };
+	CCPP65Builder		cBuilder;
+	CChars				szMissing;
+	size				i;
+	bool				bResult;
 
 	cBuilder.Init();
 	TestCPP65AddIncludeDirectories(&cBuilder);
@@ -415,6 +417,15 @@ bool TestCPP65BeginProject(STestCPP65Run* psRun, const char** aszUnits, const ch
 		bResult &= cBuilder.AddSource("source", szSource);
 	}
 	TestCPP65AddUnits(&cBuilder, aszUnits, true);
+
+	//Libc65's string routines (the optimiser makes loops calls of them).
+	for (i = 0; aszUnits && aszUnits[i] && !strstr(aszUnits[i], "string.asm"); i++)
+	{
+	}
+	if (!aszUnits || !aszUnits[i])
+	{
+		TestCPP65AddUnits(&cBuilder, aszString, true);
+	}
 
 	//A program that doesn't build isn't loaded.
 	bResult &= cBuilder.Link();
