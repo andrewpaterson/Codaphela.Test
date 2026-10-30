@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "Assembler65Lib/Asm816Profile.h"
 #include "BaseLib/TextFile.h"
 #include "BaseLib/FileUtil.h"
 #include "BaseLib/ArrayChars.h"
@@ -49,6 +50,7 @@
 
 
 ECPPTarget	geTestProject65Target = CPPT_65C64;
+static CAsm816Profile*	gpcTestProject65Measure = NULL;
 
 
 static const char* gaszTestProject65Libc65[] = { "string.cpp", "string.asm", "stdlib.cpp", "ctype.cpp", "time.cpp", "math.cpp", "softfloat.cpp", "softfloat.asm", "new.cpp", "signal.cpp", "stdio.cpp", "host.cpp", NULL };
@@ -84,7 +86,7 @@ static bool TestProject65IsExcluded(STestProject65* psProject, const char* szTes
 //////////////////////////////////////////////////////////////////////////
 //
 // Whether szTest is run: always, unless TEST_PROJECT65_ONLY lists the tests
-// to run (comma separated, for debugging them).
+// to run (comma separated, for debugging them; excluded ones too).
 //
 //////////////////////////////////////////////////////////////////////////
 static bool TestProject65IsOnly(const char* szTest)
@@ -538,11 +540,24 @@ static bool TestProject65Run(STestProject65* psProject, CCPP65Builder* pcBuilder
 	{
 		pcMemory->InitFast816(&cMPU816);
 		cMPU816.Reset();
-		for (uiSteps = 0; (uiSteps < uiMaxSteps) && !cMPU816.IsStopped(); uiSteps += 1000000)
+		if (gpcTestProject65Measure)
 		{
-			cMPU816.Run(1000000);
+			//TEST_PROJECT65_MEASURE_FRAMES: each function's direct page accesses, calls and recursion (CAsm816Profile).
+			uiSteps = gpcTestProject65Measure->Run(pcMemory, &cMPU816, pcBuilder->GetMap(), (size)uiMaxSteps);
+		}
+		else
+		{
+			for (uiSteps = 0; (uiSteps < uiMaxSteps) && !cMPU816.IsStopped(); uiSteps += 1000000)
+			{
+				cMPU816.Run(1000000);
+			}
 		}
 		bReturned = cMPU816.IsStopped() && (cMPU816.GetS() == GetCPPTarget(CPPT_W65C816)->uiStackTop);
+		if (getenv("TEST_PROJECT65_CYCLES"))
+		{
+			printf("CYCLES %llu\n", (unsigned long long)cMPU816.NumCycles());
+			fflush(stdout);
+		}
 		if (!bReturned)
 		{
 			TestProject65AppendStop(pcBuilder, cMPU816.GetProgramAddress(), cMPU816.GetS(), uiSteps / 1000000, pszConsole, pcMemory);
@@ -558,6 +573,11 @@ static bool TestProject65Run(STestProject65* psProject, CCPP65Builder* pcBuilder
 			cMPU.Run(1000000);
 		}
 		bReturned = cMPU.IsStopped() && (cMPU.GetS() == CPP65_STACK_TOP);
+		if (getenv("TEST_PROJECT65_CYCLES"))
+		{
+			printf("CYCLES %llu\n", (unsigned long long)cMPU.NumCycles());
+			fflush(stdout);
+		}
 		if (!bReturned)
 		{
 			TestProject65AppendStop(pcBuilder, cMPU.GetProgramCounter(), cMPU.GetS(), uiSteps / 1000000, pszConsole);
@@ -579,6 +599,8 @@ static bool TestProject65Run(STestProject65* psProject, CCPP65Builder* pcBuilder
 void TestProject65RunTests(STestProject65* psProject)
 {
 	CCPP65Builder	cBuilder;
+	CAsm816Profile	cFrameProfile;
+	CAsm816Profile	cMeasure;
 	CTextFile		cFile;
 	CArrayChars		aszLines;
 	CArrayChars		aszTests;
@@ -602,6 +624,16 @@ void TestProject65RunTests(STestProject65* psProject)
 
 	cBuilder.Init();
 	cBuilder.SetTarget(geTestProject65Target);
+	//TEST_PROJECT65_FRAME_PROFILE builds with a profile (the W65C816's aligned frames measured, not estimated);
+	//TEST_PROJECT65_MEASURE_FRAMES measures the programs and writes their profile to the file it names.
+	//TEST_PROJECT65_CYCLES prints each program's cycles.
+	cFrameProfile.Init();
+	if (getenv("TEST_PROJECT65_FRAME_PROFILE") && cFrameProfile.Read(getenv("TEST_PROJECT65_FRAME_PROFILE")))
+	{
+		cBuilder.SetFrameProfile(&cFrameProfile);
+	}
+	cMeasure.Init();
+	gpcTestProject65Measure = getenv("TEST_PROJECT65_MEASURE_FRAMES") ? &cMeasure : NULL;
 	TestProject65AddProjects(psProject, &cBuilder);
 	bCompiled = cBuilder.Compile();
 	AssertString("", cBuilder.GetErrors());
@@ -632,7 +664,7 @@ void TestProject65RunTests(STestProject65* psProject)
 	uiPrograms = 0;
 	for (i = 0; i < aszTests.NumElements(); i++)
 	{
-		if (TestProject65IsExcluded(psProject, aszTests.GetText(i)))
+		if (!getenv("TEST_PROJECT65_ONLY") && TestProject65IsExcluded(psProject, aszTests.GetText(i)))
 		{
 			continue;
 		}
@@ -701,6 +733,13 @@ void TestProject65RunTests(STestProject65* psProject)
 		}
 	}
 
+	if (gpcTestProject65Measure)
+	{
+		AssertTrue(cMeasure.Write(getenv("TEST_PROJECT65_MEASURE_FRAMES")));
+		gpcTestProject65Measure = NULL;
+	}
+	cMeasure.Kill();
+	cFrameProfile.Kill();
 	szMainFile.Kill();
 	aszTests.Kill();
 	aszLines.Kill();

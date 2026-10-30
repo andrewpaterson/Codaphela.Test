@@ -2224,6 +2224,35 @@ void TestCPP65GeneratorNewDelete(void)
 		"	for (int i = 0; i < 1000; i++) { int* p = new int[1000]; if (p) n++; delete[] p; }\n"
 		"	return n;\n"
 		"}\n"));
+
+	//new T() and new T{} value initialise: a class without constructors of its own is zeroed (arrays in it too), in
+	//place or (big ones) with memset, before a member's constructor runs.  The heap block is dirtied first.
+	AssertInt(7, TestCPP65RunProject(aszUnits, "", 20000000,
+		"#include <stdlib.h>\n"
+		"#include <string.h>\n"
+		"struct SPlain { int a; long b[4]; };\n"
+		"struct SBig { long c[40]; };\n"
+		"class CMember { public: int m; CMember() { m = 7; } };\n"
+		"struct SMixed { CMember cm; long d[3]; };\n"
+		"void Dirty(int n) { void* p = malloc(n); memset(p, 0x55, n); free(p); }\n"
+		"int main()\n"
+		"{\n"
+		"	int r = 0;\n"
+		"	Dirty(sizeof(SPlain));\n"
+		"	SPlain* a = new SPlain();\n"
+		"	if ((a->a != 0) || (a->b[0] != 0) || (a->b[3] != 0)) r |= 1;\n"
+		"	Dirty(sizeof(SBig));\n"
+		"	SBig* b = new SBig{};\n"
+		"	if ((b->c[0] != 0) || (b->c[39] != 0)) r |= 2;\n"
+		"	Dirty(sizeof(SMixed));\n"
+		"	SMixed* c = new SMixed();\n"
+		"	if ((c->d[0] != 0) || (c->d[2] != 0)) r |= 4;\n"
+		"	if (c->cm.m != 7) r |= 8;\n"
+		"	delete a;\n"
+		"	delete b;\n"
+		"	delete c;\n"
+		"	return r + 7;\n"
+		"}\n"));
 }
 
 

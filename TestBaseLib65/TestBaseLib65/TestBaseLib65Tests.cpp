@@ -27,6 +27,9 @@ static const char* gaszTestBaseLib65Excluded[] =
 	"TestNamedIndexedData",
 	"TestIndexTreeAccess",
 	"TestFat32",
+	"TestFatBench",		//Private: run with TEST_PROJECT65_ONLY.
+	"TestFatStress",
+	"TestFat32Bugs",		//14G cycles on the 65C64, 44G on the W65C816.
 
 	//Expects a bigger block, malloc'ed after free, at another address (as MSVC and glibc give it).  Libc65's malloc
 	//joins the block just freed to the free memory after it, so the bigger block starts in the same place.

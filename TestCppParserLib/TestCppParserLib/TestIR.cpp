@@ -1998,7 +1998,8 @@ void TestIROptimiser(void)
 		"\tret i32 %r\n"
 		"}\n");
 
-	//Unsigned / and % by a power of two are a shift and an and; signed ones aren't changed.
+	//Unsigned / and % by a power of two are a shift and an and; signed / is a shift after 7 is added to a negative
+	//value (so it rounds towards 0).
 	AssertIROptimised(
 		"space default 4\n"
 		"\n"
@@ -2007,7 +2008,10 @@ void TestIROptimiser(void)
 		"x:\n"
 		"\t%q = lshr i32 %a, 3\n"
 		"\t%r = and i32 %a, 7\n"
-		"\t%s = sdiv i32 %a, 8\n"
+		"\t%0 = ashr i32 %a, 31\n"
+		"\t%1 = lshr i32 %0, 29\n"
+		"\t%2 = add i32 %a, %1\n"
+		"\t%s = ashr i32 %2, 3\n"
 		"\t%t = add i32 %q, %r\n"
 		"\t%u = add i32 %t, %s\n"
 		"\tret i32 %u\n"

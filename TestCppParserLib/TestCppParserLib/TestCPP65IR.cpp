@@ -61,6 +61,20 @@ void TestCPP65IRArithmetic(void)
 	AssertInt(-2, TestCPP65IRMain("int main() { int x = -8; return x >> 2; }", 1));
 	AssertInt(10 + 9 + 11 + 11, TestCPP65IRMain(
 		"int main() { int i = 10; int a = i++; int b = i--; int c = ++i; return a + (b - 2) + c + i; }", 1));
+
+	//Signed / and % by powers of 2 are shifts and adds (negative values round towards 0); the sum was worked out natively.
+	AssertInt(7, TestCPP65IRMain(
+		"long Mix(long s, int x) { return s * 3 + x / 2 + x % 2 + x / 4 * 5 + x % 4 * 7 + x / 8 + x % 16 * 11; }\n"
+		"long MixLong(long s, long l) { return s * 5 + l / 16 + l % 16 + l / 1024 + l % 2; }\n"
+		"int main()\n"
+		"{\n"
+		"	long s = 0;\n"
+		"	for (int i = -1000; i <= 1000; i++) { s = Mix(s, i) & 0xFFFFFFF; }\n"
+		"	for (int i = -1000; i <= 1000; i += 7) { s = MixLong(s, (long)i * 99991) & 0xFFFFFFF; }\n"
+		"	int x = -32767 - 1; s += x / 2 + x % 4 + x / 16384; x = 32767; s += x / 2 + x % 4 + x / 16384;\n"
+		"	long l = -2147483647L - 1; s += l / 2 + l % 8;\n"
+		"	return ((s & 0xFFFFFFF) == 259971084L) ? 7 : 1;\n"
+		"}\n", 3));
 }
 
 

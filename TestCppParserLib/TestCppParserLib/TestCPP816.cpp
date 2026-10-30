@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "Assembler65Lib/Asm816Profile.h"
 #include "BaseLib/TypeNames.h"
 #include "BaseLib/TypeConverter.h"
 #include "BaseLib/NumberControl.h"
@@ -308,6 +309,20 @@ void TestCPP816Basics(void)
 		"{\n"
 		"\tint32_t i = INT32_MAX;\n"
 		"\treturn sizeof(i) * 1000 + sizeof(size_t) * 100 + sizeof(int16_t) * 10 + (INT_MAX == 32767);\n"
+		"}\n"));
+
+	//Signed / and % by powers of 2 are shifts and adds (negative values round towards 0); the sum was worked out natively.
+	AssertInt(7, TestCPP816Run(
+		"long Mix(long s, int x) { return s * 3 + x / 2 + x % 2 + x / 4 * 5 + x % 4 * 7 + x / 8 + x % 16 * 11; }\n"
+		"long MixLong(long s, long l) { return s * 5 + l / 16 + l % 16 + l / 1024 + l % 2; }\n"
+		"int main()\n"
+		"{\n"
+		"	long s = 0;\n"
+		"	for (int i = -1000; i <= 1000; i++) { s = Mix(s, i) & 0xFFFFFFF; }\n"
+		"	for (int i = -1000; i <= 1000; i += 7) { s = MixLong(s, (long)i * 99991) & 0xFFFFFFF; }\n"
+		"	int x = -32767 - 1; s += x / 2 + x % 4 + x / 16384; x = 32767; s += x / 2 + x % 4 + x / 16384;\n"
+		"	long l = -2147483647L - 1; s += l / 2 + l % 8;\n"
+		"	return ((s & 0xFFFFFFF) == 259971084L) ? 7 : 1;\n"
 		"}\n"));
 }
 
@@ -1162,6 +1177,35 @@ void TestCPP816NewDelete(void)
 		"	for (int i = 0; i < 1000; i++) { int* p = new int[1000]; if (p) n++; delete[] p; }\n"
 		"	return n;\n"
 		"}\n"));
+
+	//new T() and new T{} value initialise: a class without constructors of its own is zeroed (arrays in it too), in
+	//place or (big ones) with memset, before a member's constructor runs.  The heap block is dirtied first.
+	AssertInt(7, TestCPP816RunProject(aszUnits, "",
+		"#include <stdlib.h>\n"
+		"#include <string.h>\n"
+		"struct SPlain { int a; long b[4]; };\n"
+		"struct SBig { long c[40]; };\n"
+		"class CMember { public: int m; CMember() { m = 7; } };\n"
+		"struct SMixed { CMember cm; long d[3]; };\n"
+		"void Dirty(int n) { void* p = malloc(n); memset(p, 0x55, n); free(p); }\n"
+		"int main()\n"
+		"{\n"
+		"	int r = 0;\n"
+		"	Dirty(sizeof(SPlain));\n"
+		"	SPlain* a = new SPlain();\n"
+		"	if ((a->a != 0) || (a->b[0] != 0) || (a->b[3] != 0)) r |= 1;\n"
+		"	Dirty(sizeof(SBig));\n"
+		"	SBig* b = new SBig{};\n"
+		"	if ((b->c[0] != 0) || (b->c[39] != 0)) r |= 2;\n"
+		"	Dirty(sizeof(SMixed));\n"
+		"	SMixed* c = new SMixed();\n"
+		"	if ((c->d[0] != 0) || (c->d[2] != 0)) r |= 4;\n"
+		"	if (c->cm.m != 7) r |= 8;\n"
+		"	delete a;\n"
+		"	delete b;\n"
+		"	delete c;\n"
+		"	return r + 7;\n"
+		"}\n"));
 }
 
 
@@ -1457,6 +1501,155 @@ int TestCPP816CountWarnings(const char* szSource, const char* szWarning, ECPPTar
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Whether the function whose label starts with szPrefix (in the linked
+// program's map) starts with an aligned frame's prologue: phd, tsc, tax (a
+// frame that isn't aligned is phd, tsc, sec).
+//
+//////////////////////////////////////////////////////////////////////////
+bool TestCPP816IsAligned(CCPP65Builder* pcBuilder, CAsm65Memory* pcMemory, const char* szPrefix)
+{
+	const char*	szLine;
+	uint32		uiAddress;
+
+	for (szLine = strstr(pcBuilder->GetMap(), "Symbols\n"); szLine; szLine = strchr(szLine + 1, '\n'))
+	{
+		if ((szLine[1] == ' ') && (szLine[3] == '$') && (strncmp(&szLine[15], szPrefix, strlen(szPrefix)) == 0))
+		{
+			uiAddress = (uint32)strtoul(&szLine[4], NULL, 16);
+			return (pcMemory->GetByte(uiAddress) == 0x0B) && (pcMemory->GetByte(uiAddress + 1) == 0x3B) && (pcMemory->GetByte(uiAddress + 2) == 0xAA);
+		}
+	}
+	AssertString("A function", szPrefix);
+	return false;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Builds szSource for the W65C816 (aligned frames estimated, or measured by
+// pcProfile if given) and runs it, measuring its functions into pcMeasure (if given).
+// Returns main's int; *puiCycles gets the cycles, and *pbAligned (for each
+// of the aszPrefixes' functions) whether it has an aligned frame.
+//
+//////////////////////////////////////////////////////////////////////////
+int32 TestCPP816RunFrames(const char* szSource, CAsm816Profile* pcProfile, CAsm816Profile* pcMeasure, uint64* puiCycles, const char** aszPrefixes, bool* abAligned)
+{
+	static const char*	aszUnits[] = { "Libc65/string816.asm", NULL };
+	CCPP65Builder		cBuilder;
+	CAsm65Memory		cMemory;
+	CFast65C816			cFast;
+	CChars				szProject;
+	CFileUtil			cFileUtil;
+	size				i;
+	int32				iResult;
+
+	iResult = -1000000;
+	cBuilder.Init();
+	cBuilder.SetTarget(CPPT_W65C816);
+	cBuilder.SetFrameProfile(pcProfile);
+	TestCPP65AddIncludeDirectories(&cBuilder);
+	AssertTrue(cBuilder.AddStartUp());
+	szProject.Init(".." _FS_ ".." _FS_ ".." _FS_ "commonlibraries" _FS_ "Libc65");
+	cFileUtil.FullPath(&szProject);
+	cBuilder.AddMathTables(szProject.Text());
+	szProject.Kill();
+	AssertTrue(cBuilder.AddSource("Test.cpp", szSource));
+	TestCPP65AddUnits(&cBuilder, aszUnits, false);
+	AssertTrue(cBuilder.Link());
+	AssertString("", cBuilder.GetErrors());
+
+	cMemory.Init(ASM65_MEMORY_LOW_SIZE);
+	cMemory.Load(cBuilder.GetOutput());
+	for (i = 0; aszPrefixes[i]; i++)
+	{
+		abAligned[i] = TestCPP816IsAligned(&cBuilder, &cMemory, aszPrefixes[i]);
+	}
+	cMemory.InitFast816(&cFast);
+	cFast.Reset();
+	if (pcMeasure)
+	{
+		pcMeasure->Run(&cMemory, &cFast, cBuilder.GetMap(), TEST_CPP816_STEPS);
+	}
+	else
+	{
+		cFast.Run(TEST_CPP816_STEPS);
+	}
+	AssertTrue(cFast.IsStopped());
+	if (cFast.IsStopped())
+	{
+		iResult = (int16)cFast.GetC();
+		AssertIntHex(GetCPPTarget(CPPT_W65C816)->uiStackTop, (uint32)cFast.GetS());
+	}
+	*puiCycles = cFast.NumCycles();
+	cFast.Kill();
+	cMemory.Kill();
+	cBuilder.Kill();
+	return iResult;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A function gets D on a page (a cycle less each direct page access) when
+// it's worth it and it can't recurse: by default when its loops' accesses
+// are estimated to be well past the cost; with a profile (CAsm816Profile,
+// CCPP65Builder::SetFrameProfile) when they were measured to be.  Its
+// arguments are copied up to the aligned frame (stored, or pushed when the
+// frame passes the page) and S as it was is kept for the epilogue.  (The
+// functions are called through pointers, so they aren't inlined.)
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816AlignedFrames(void)
+{
+	static const char*	szSource =
+		"int Sum(int* p, int n, int k) { int s = 0; for (int i = 0; i < n; i++) { s += p[i] * k; } return s; }\n"
+		"long Wide(int n, long add) { int a[200]; for (int i = 0; i < 200; i++) { a[i] = i + n; } long s = add; for (int i = 0; i < 200; i++) { s += a[i]; } return s; }\n"
+		"int Cold(int* p, int n) { int s = 0; for (int i = 0; i < n; i++) { s += p[i] * p[i] - i; } return s; }\n"
+		"int (*volatile gpSum)(int*, int, int) = Sum;\n"
+		"long (*volatile gpWide)(int, long) = Wide;\n"
+		"int (*volatile gpCold)(int*, int) = Cold;\n"
+		"long Big(int n, long add) { int a[200]; for (int i = 0; i < 200; i++) { a[i] = i + n; } long s = add; for (int i = 0; i < 200; i++) { s += a[i]; } if (n > 0) { s += Big(n - 1, 1); } return s; }\n"
+		"int main()\n"
+		"{\n"
+		"	int v[100];\n"
+		"	long w = 0;\n"
+		"	int r = 0;\n"
+		"	for (int i = 0; i < 100; i++) { v[i] = i; }\n"
+		"	for (int i = 0; i < 5; i++) { r += gpSum(v, 100, 1); }\n"
+		"	for (int i = 0; i < 20; i++) { w += gpWide(i, 1); }\n"
+		"	int c = gpCold(v, 3);\n"
+		"	long b = Big(5, 7);\n"
+		"	return ((r == 24750) && (w == 436020L) && (c == 2) && (b == 122412L)) ? 7 : 1;\n"
+		"}\n";
+	static const char*	aszPrefixes[] = { "_Sum", "_Wide", "_Cold", "_Big", NULL };
+	CAsm816Profile		cProfile;
+	uint64				uiEstimated;
+	uint64				uiMeasured;
+	bool				abAligned[4];
+
+	//Estimated: Sum, Wide (its frame past the page) and Cold have loops; Big calls itself.
+	cProfile.Init();
+	AssertInt(7, TestCPP816RunFrames(szSource, NULL, &cProfile, &uiEstimated, aszPrefixes, abAligned));
+	AssertTrue(abAligned[0]);
+	AssertTrue(abAligned[1]);
+	AssertTrue(abAligned[2]);
+	AssertFalse(abAligned[3]);
+	AssertTrue((cProfile.Get("_Big__Fsi") != NULL) && cProfile.Get("_Big__Fsi")->bRecursive);
+	AssertTrue((cProfile.Get("_Sum__FPsss") != NULL) && !cProfile.Get("_Sum__FPsss")->bRecursive);
+	AssertTrue((cProfile.Get("_Wide__Fsi") != NULL) && !cProfile.Get("_Wide__Fsi")->bRecursive);
+
+	//Measured: Cold's loop ran 3 times once, not worth a page of stack.
+	AssertInt(7, TestCPP816RunFrames(szSource, &cProfile, NULL, &uiMeasured, aszPrefixes, abAligned));
+	AssertTrue(abAligned[0]);
+	AssertTrue(abAligned[1]);
+	AssertFalse(abAligned[2]);
+	AssertFalse(abAligned[3]);
+	cProfile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Integer constant expressions that overflow their type, and constants that
 // an implicit conversion truncates, are warned about: the W65C816's 16 bit int
 // turns code written for a 32 bit int quietly wrong ("12000 * 6").
@@ -1743,6 +1936,7 @@ void TestCPP816(void)
 	TestCPP816RangeWarnings();
 	TestCPP816SizeLsizeBugs();
 	TestCPP816DestructorCalls();
+	TestCPP816AlignedFrames();
 
 	CW65C816InstructionFactory::GetInstance()->Kill();
 	NumberKill();
