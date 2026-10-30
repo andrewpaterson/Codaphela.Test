@@ -221,7 +221,8 @@ static uint64 TestSoftFloatRandomDouble(void)
 	case 2:
 		return (TestSoftFloatRandom() & 0x800FFFFFFFFFFFFFULL) | ((uint64)(1023 - 126 - (ulli % 40)) << 52);
 	case 3:
-		return (TestSoftFloatRandom() & 0x800FFFFFFFFFFFFFULL) | ((uint64)(1023 + 127 - (ulli % 6)) << 52);
+		//Up to two exponents past the largest float's, half with the float fraction all 1s so rounding carries into the exponent (to infinity from the largest).
+		return (TestSoftFloatRandom() & 0x800FFFFFFFFFFFFFULL) | ((uint64)(1023 + 129 - (ulli % 8)) << 52) | (((ulli >> 8) & 1) ? 0x000FFFFFE0000000ULL : 0);
 	case 4:
 		return (SoftFloatToDouble(TestSoftFloatRandomFloat(0)) | ((uint64)1 << 28)) ^ (ulli & 1);
 	default:
