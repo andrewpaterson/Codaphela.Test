@@ -15,10 +15,10 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-Ptr<CSound> MakeSine(uint32 uiSampleRate, size uiNumFrames, float64 fFrequency, float64 fAmplitude, EPrimitiveType eType)
+Ptr<CSound> MakeSine(uint32 uiSampleRate, lsize uiNumFrames, float64 fFrequency, float64 fAmplitude, EPrimitiveType eType)
 {
 	Ptr<CSound>	pcSound;
-	size		i;
+	lsize		i;
 
 	pcSound = OMalloc<CSound>(uiSampleRate, uiNumFrames, eType, SOUND_MONO, CHANNEL_STOP);
 	for (i = 0; i < uiNumFrames; i++)
@@ -37,13 +37,13 @@ Ptr<CSound> MakeSine(uint32 uiSampleRate, size uiNumFrames, float64 fFrequency, 
 //////////////////////////////////////////////////////////////////////////
 float64 SineError(Ptr<CSound> pcSound, float64 fFrequency, float64 fAmplitude)
 {
-	size	i;
-	size	uiNumFrames;
-	size	uiMargin;
+	lsize	i;
+	lsize	uiNumFrames;
+	lsize	uiMargin;
 	float64	fExpected;
 	float64	fDifference;
 	float64	fSum;
-	size	uiCount;
+	lsize	uiCount;
 
 	uiNumFrames = pcSound->GetNumFrames();
 	uiMargin = uiNumFrames / 8;
@@ -86,7 +86,7 @@ float64 ResampledSineError(ESoundResample eResample, uint32 uiSourceRate, uint32
 	cResampler.Kill();
 
 	AssertInt((int32)uiDestRate, pcDest->GetSampleRate());
-	AssertSize(CSoundResampler::GetResampledNumFrames(uiSourceRate / 10, uiSourceRate, uiDestRate), pcDest->GetNumFrames());
+	AssertLSize(CSoundResampler::GetResampledNumFrames(uiSourceRate / 10, uiSourceRate, uiDestRate), pcDest->GetNumFrames());
 	fError = SineError(pcDest, fFrequency, 0.8);
 
 	pcSource = NULL;
@@ -101,12 +101,12 @@ float64 ResampledSineError(ESoundResample eResample, uint32 uiSourceRate, uint32
 //////////////////////////////////////////////////////////////////////////
 void TestSoundResamplerNumFrames(void)
 {
-	AssertSize(48000, CSoundResampler::GetResampledNumFrames(44100, 44100, 48000));
-	AssertSize(44100, CSoundResampler::GetResampledNumFrames(48000, 48000, 44100));
-	AssertSize(3, CSoundResampler::GetResampledNumFrames(3, 48000, 44100));
-	AssertSize(1, CSoundResampler::GetResampledNumFrames(1, 48000, 8000));
-	AssertSize(0, CSoundResampler::GetResampledNumFrames(0, 48000, 8000));
-	AssertSize(0, CSoundResampler::GetResampledNumFrames(10, 0, 8000));
+	AssertLSize(48000, CSoundResampler::GetResampledNumFrames(44100, 44100, 48000));
+	AssertLSize(44100, CSoundResampler::GetResampledNumFrames(48000, 48000, 44100));
+	AssertLSize(3, CSoundResampler::GetResampledNumFrames(3, 48000, 44100));
+	AssertLSize(1, CSoundResampler::GetResampledNumFrames(1, 48000, 8000));
+	AssertLSize(0, CSoundResampler::GetResampledNumFrames(0, 48000, 8000));
+	AssertLSize(0, CSoundResampler::GetResampledNumFrames(10, 0, 8000));
 }
 
 
@@ -184,7 +184,7 @@ void TestSoundResamplerAntiAliasing(void)
 void TestSoundResamplerExact(void)
 {
 	CSoundResampler	cResampler;
-	size			i;
+	lsize			i;
 	int				iMismatches;
 	float64			fExpected;
 	float64			fDifference;
@@ -216,7 +216,7 @@ void TestSoundResamplerExact(void)
 	cResampler.Init(SR_Linear, 12000);
 	pcDest = cResampler.Modify(pcSource);
 	cResampler.Kill();
-	AssertSize(1200, pcDest->GetNumFrames());
+	AssertLSize(1200, pcDest->GetNumFrames());
 
 	iMismatches = 0;
 	for (i = 0; i < 1198; i++)
@@ -262,7 +262,7 @@ void TestSoundResamplerChannels(void)
 	AssertSize(2, pcDest->NumChannels());
 	AssertTrue(pcDest->HasChannels(SOUND_LEFT, SOUND_RIGHT, CHANNEL_STOP));
 	AssertInt(PT_int16, pcDest->GetPrimitiveType());
-	AssertSize(4410, pcDest->GetNumFrames());
+	AssertLSize(4410, pcDest->GetNumFrames());
 
 	//16 bit samples are within a step or so of the sine wave.
 	fError = 0.0;
@@ -308,17 +308,17 @@ void TestSoundResamplerEdges(void)
 	cResampler.Init(SR_Sinc, 16000);
 	pcDest = cResampler.Modify(pcSource);
 	AssertTrue(pcDest.IsNotNull());
-	AssertSize(0, pcDest->GetNumFrames());
+	AssertLSize(0, pcDest->GetNumFrames());
 
 	pcSource = OMalloc<CSound>(8000, 1, PT_int16, SOUND_MONO, CHANNEL_STOP);
 	pcSource->SetSample(0, 0, 0.5);
 	pcDest = cResampler.Modify(pcSource);
-	AssertSize(2, pcDest->GetNumFrames());
+	AssertLSize(2, pcDest->GetNumFrames());
 	cResampler.Kill();
 
 	cResampler.Init(SR_Cubic, 16000);
 	pcDest = cResampler.Modify(pcSource);
-	AssertSize(2, pcDest->GetNumFrames());
+	AssertLSize(2, pcDest->GetNumFrames());
 	AssertDouble(0.5, pcDest->GetSample(0, 0), 12);
 	AssertDouble(0.5, pcDest->GetSample(1, 0), 12);
 	cResampler.Kill();
@@ -365,7 +365,7 @@ void TestSoundResamplerModifierStack(void)
 	//The sound itself changed, so everything pointing to it sees the new rate.
 	AssertTrue(cStack.GetSound() == pcSound);
 	AssertInt((int32)44100, pcAlias->GetSampleRate());
-	AssertSize(4410, pcAlias->GetNumFrames());
+	AssertLSize(4410, pcAlias->GetNumFrames());
 	AssertInt(PT_int16, pcAlias->GetPrimitiveType());
 	AssertTrue(pcAlias->HasChannel(SOUND_FRONT_CENTRE));
 
@@ -407,7 +407,7 @@ void TestSoundResamplerModifierStackFailure(void)
 	gcLogger.SetConfig(&sLogConfig);
 
 	AssertInt((int32)8000, pcSound->GetSampleRate());
-	AssertSize(80, pcSound->GetNumFrames());
+	AssertLSize(80, pcSound->GetNumFrames());
 
 	cStack.Kill();
 	pcSound = NULL;
@@ -435,7 +435,7 @@ void TestSoundResamplerBitty(void)
 	Ptr<CSound> pcDest = cResampler.Modify(pcSource);
 	cResampler.Kill();
 
-	AssertSize(8, pcDest->GetNumFrames());
+	AssertLSize(8, pcDest->GetNumFrames());
 	AssertInt(PT_nybble, pcDest->GetPrimitiveType());
 	AssertTrue(pcDest->GetSamples(0, 0, 8, afRead));
 

@@ -16,10 +16,10 @@ void TestSoundInit(void)
 
 	Ptr<CSound> pcSound = OMalloc<CSound>(44100, 100, PT_int16, SOUND_LEFT, SOUND_RIGHT, CHANNEL_STOP);
 	AssertSize(2, pcSound->NumChannels());
-	AssertSize(100, pcSound->GetNumFrames());
+	AssertLSize(100, pcSound->GetNumFrames());
 	AssertInt((int32)44100, pcSound->GetSampleRate());
 	AssertSize(4, pcSound->GetFrameByteStride());
-	AssertSize(400, pcSound->GetByteSize());
+	AssertLSize(400, pcSound->GetByteSize());
 	AssertTrue(pcSound->HasChannels(SOUND_LEFT, SOUND_RIGHT, CHANNEL_STOP));
 	AssertFalse(pcSound->HasChannel(SOUND_FRONT_CENTRE));
 	AssertInt(PT_int16, pcSound->GetPrimitiveType());
@@ -32,7 +32,7 @@ void TestSoundInit(void)
 
 	Ptr<CSound> pcCopy = OMalloc<CSound>(pcSound);
 	AssertTrue(pcCopy->IsSameFormat(pcSound));
-	AssertSize(100, pcCopy->GetNumFrames());
+	AssertLSize(100, pcCopy->GetNumFrames());
 
 	Ptr<CSound> pcRate = OMalloc<CSound>(22050, 100, pcSound);
 	AssertFalse(pcRate->IsSameFormat(pcSound));
@@ -209,12 +209,12 @@ void TestSoundChange(void)
 	pcSound->AddChannel(SOUND_FRONT_CENTRE, PT_int16);
 	pcSound->SetNumFrames(50);
 	pcSound->SetSampleRate(16000);
-	AssertSize(50, pcSound->GetNumFrames());
+	AssertLSize(50, pcSound->GetNumFrames());
 	AssertInt((int32)16000, pcSound->GetSampleRate());
 	AssertTrue(pcSound->EndChange());
 
 	AssertSize(3, pcSound->NumChannels());
-	AssertSize(50, pcSound->GetNumFrames());
+	AssertLSize(50, pcSound->GetNumFrames());
 	AssertInt((int32)16000, pcSound->GetSampleRate());
 	AssertSize(6, pcSound->GetFrameByteStride());
 
@@ -381,7 +381,7 @@ void TestSoundBittyPacked(void)
 	Ptr<CSound> pcSound = OMalloc<CSound>(8000, 3, PT_nybble, SOUND_LEFT, SOUND_RIGHT, CHANNEL_STOP);
 	AssertTrue(pcSound->CanAccessSamples());
 	AssertSize(1, pcSound->GetFrameByteStride());
-	AssertSize(3, pcSound->GetByteSize());
+	AssertLSize(3, pcSound->GetByteSize());
 
 	pcSound->SetSample(0, 0, -1.0);
 	pcSound->SetSample(0, 1, 0.875);
@@ -435,7 +435,7 @@ void TestSoundBittyMixed(void)
 	AssertTrue(pcSound->EndChange());
 	AssertTrue(pcSound->CanAccessSamples());
 	AssertSize(13, pcSound->GetFrameBitStride());
-	AssertSize(28, pcSound->GetByteSize());
+	AssertLSize(28, pcSound->GetByteSize());
 
 	for (i = 0; i < 17; i++)
 	{

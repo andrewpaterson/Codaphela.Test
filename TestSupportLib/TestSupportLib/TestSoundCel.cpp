@@ -40,19 +40,19 @@ void TestSoundCelInit(void)
 	Ptr<CSound> pcSound = MakeSoundCelRamp(100);
 
 	Ptr<CSoundCel> pcWhole = OMalloc<CSoundCel>(pcSound);
-	AssertSize(0, pcWhole->GetFirstFrame());
-	AssertSize(100, pcWhole->GetNumFrames());
+	AssertLSize(0, pcWhole->GetFirstFrame());
+	AssertLSize(100, pcWhole->GetNumFrames());
 	AssertFalse(pcWhole->HasLoop());
-	AssertSize(SOUND_CEL_NO_LOOP, pcWhole->GetLoopFrame());
-	AssertSize(0, pcWhole->GetLoopNumFrames());
+	AssertLSize(SOUND_CEL_NO_LOOP, pcWhole->GetLoopFrame());
+	AssertLSize(0, pcWhole->GetLoopNumFrames());
 	AssertTrue(pcWhole->IsValid());
 	AssertTrue(pcWhole->GetSourceSound() == pcSound);
 
 	//Frames are counted from the start of the cel.
 	Ptr<CSoundCel> pcCel = OMalloc<CSoundCel>(pcSound, 40, 20, 5);
 	AssertTrue(pcCel->HasLoop());
-	AssertSize(5, pcCel->GetLoopFrame());
-	AssertSize(15, pcCel->GetLoopNumFrames());
+	AssertLSize(5, pcCel->GetLoopFrame());
+	AssertLSize(15, pcCel->GetLoopNumFrames());
 	AssertDouble(40.0 / 128.0, pcCel->GetSample(0, 0), 12);
 	AssertDouble(59.0 / 128.0, pcCel->GetSample(19, 0), 12);
 	AssertTrue(pcCel->GetSamples(0, 2, 4, af));
@@ -97,7 +97,7 @@ void TestSoundCelPlay(void)
 
 	//Frames 10 to 19, no loop.
 	Ptr<CSoundCel> pcOnce = OMalloc<CSoundCel>(pcSound, 10, 10);
-	AssertSize(10, pcOnce->Play(0, 0, 24, af));
+	AssertLSize(10, pcOnce->Play(0, 0, 24, af));
 	iMismatches = 0;
 	for (i = 0; i < 24; i++)
 	{
@@ -105,14 +105,14 @@ void TestSoundCelPlay(void)
 		iMismatches += af[i] != fExpected ? 1 : 0;
 	}
 	AssertInt(0, iMismatches);
-	AssertSize(3, pcOnce->Play(0, 7, 5, af));
+	AssertLSize(3, pcOnce->Play(0, 7, 5, af));
 	AssertDouble(19.0 / 128.0, af[2], 12);
 	AssertDouble(0.0, af[3], 12);
-	AssertSize(0, pcOnce->Play(0, 50, 5, af));
+	AssertLSize(0, pcOnce->Play(0, 50, 5, af));
 
 	//Frames 10 to 19, looping back to the cel's frame 6: 0 to 9 then 6 7 8 9 6 7 8 9...
 	Ptr<CSoundCel> pcLoop = OMalloc<CSoundCel>(pcSound, 10, 10, 6);
-	AssertSize(24, pcLoop->Play(0, 0, 24, af));
+	AssertLSize(24, pcLoop->Play(0, 0, 24, af));
 	iMismatches = 0;
 	for (i = 0; i < 24; i++)
 	{
@@ -122,13 +122,13 @@ void TestSoundCelPlay(void)
 	AssertInt(0, iMismatches);
 
 	//Starting long after the cel started.
-	AssertSize(3, pcLoop->Play(0, 1001, 3, af));
+	AssertLSize(3, pcLoop->Play(0, 1001, 3, af));
 	AssertDouble((10.0 + 6.0 + (1001 - 6) % 4) / 128.0, af[0], 12);
 	AssertDouble((10.0 + 6.0 + (1002 - 6) % 4) / 128.0, af[1], 12);
 
 	//Looping the whole cel.
 	Ptr<CSoundCel> pcWhole = OMalloc<CSoundCel>(pcSound, 25, 5, 0);
-	AssertSize(12, pcWhole->Play(0, 0, 12, af));
+	AssertLSize(12, pcWhole->Play(0, 0, 12, af));
 	iMismatches = 0;
 	for (i = 0; i < 12; i++)
 	{
@@ -156,7 +156,7 @@ void TestSoundCelToSound(void)
 	Ptr<CSoundCel> pcCel = OMalloc<CSoundCel>(pcSound, 20, 7);
 	Ptr<CSound> pcCopy = pcCel->ToSound();
 
-	AssertSize(7, pcCopy->GetNumFrames());
+	AssertLSize(7, pcCopy->GetNumFrames());
 	AssertInt((int32)8000, pcCopy->GetSampleRate());
 	AssertInt(PT_int8, pcCopy->GetPrimitiveType());
 	iMismatches = 0;
@@ -209,15 +209,15 @@ void TestSoundCelGroup(void)
 	AssertSize(3, cGroup.NumCels());
 
 	AssertTrue(cGroup.GetSound() == pcBank);
-	AssertSize(20, pcBank->GetNumFrames());
+	AssertLSize(20, pcBank->GetNumFrames());
 	AssertInt(PT_int8, pcBank->GetPrimitiveType());
 
-	AssertSize(0, cGroup.GetCel(0)->GetFirstFrame());
-	AssertSize(10, cGroup.GetCel(1)->GetFirstFrame());
-	AssertSize(16, cGroup.GetCel(2)->GetFirstFrame());
+	AssertLSize(0, cGroup.GetCel(0)->GetFirstFrame());
+	AssertLSize(10, cGroup.GetCel(1)->GetFirstFrame());
+	AssertLSize(16, cGroup.GetCel(2)->GetFirstFrame());
 	AssertFalse(cGroup.GetCel(0)->HasLoop());
-	AssertSize(2, cGroup.GetCel(1)->GetLoopFrame());
-	AssertSize(0, cGroup.GetCel(2)->GetLoopFrame());
+	AssertLSize(2, cGroup.GetCel(1)->GetLoopFrame());
+	AssertLSize(0, cGroup.GetCel(2)->GetLoopFrame());
 
 	//Cels added before the bank grew still read their samples.
 	iMismatches = 0;
@@ -236,7 +236,7 @@ void TestSoundCelGroup(void)
 	AssertInt(0, iMismatches);
 
 	//Cel 1 is 0 -1/8 -2/8 -3/8 -4/8 -5/8 looping from its frame 2.
-	AssertSize(8, cGroup.GetCel(1)->Play(0, 4, 8, af));
+	AssertLSize(8, cGroup.GetCel(1)->Play(0, 4, 8, af));
 	AssertDouble(-4.0 / 8.0, af[0], 12);
 	AssertDouble(-5.0 / 8.0, af[1], 12);
 	AssertDouble(-2.0 / 8.0, af[2], 12);
@@ -257,7 +257,7 @@ void TestSoundCelGroup(void)
 	AssertSize(ARRAY_ELEMENT_NOT_FOUND, cGroup.AddCel(pcOther));
 	gcLogger.SetConfig(&sLogConfig);
 	AssertSize(4, cGroup.NumCels());
-	AssertSize(20, pcBank->GetNumFrames());
+	AssertLSize(20, pcBank->GetNumFrames());
 
 	cGroup.Kill();
 	pcBank = NULL;
@@ -284,8 +284,8 @@ void TestSoundCelGroupBitty(void)
 	cGroup.Init(pcBank);
 	AssertSize(0, cGroup.AddSound(MakeSoundCelRamp(5)));
 	AssertSize(1, cGroup.AddSound(MakeSoundCelRamp(3)));
-	AssertSize(8, pcBank->GetNumFrames());
-	AssertSize(4, pcBank->GetByteSize());
+	AssertLSize(8, pcBank->GetNumFrames());
+	AssertLSize(4, pcBank->GetByteSize());
 
 	//i / 128 rounds to the nearest sixteenth: all of these are the middle code.
 	iMismatches = 0;
@@ -297,7 +297,7 @@ void TestSoundCelGroupBitty(void)
 
 	AssertTrue(SaveWAV(pcBank, "Output" _FS_ "bank.wav"));
 	Ptr<CSound> pcRead = LoadWAV("Output" _FS_ "bank.wav");
-	AssertSize(8, pcRead->GetNumFrames());
+	AssertLSize(8, pcRead->GetNumFrames());
 
 	cGroup.Kill();
 	pcBank = NULL;

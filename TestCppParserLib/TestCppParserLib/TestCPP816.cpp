@@ -1575,10 +1575,11 @@ void TestCPP816DestructorCalls(void)
 //
 // Builds and runs szSource on the W65C816 with pcProfile guiding it (NULL
 // for none), profiling the run into pcMeasure (NULL to not) with the
-// program's line table.  Returns main's result and its cycles.
+// program's line table.  Returns main's result and its cycles, and the
+// program's map in pszMap (when not NULL).
 //
 //////////////////////////////////////////////////////////////////////////
-int32 TestCPP816RunProfiled(const char* szSource, CAsm816Profile* pcProfile, CAsm816Profile* pcMeasure, uint64* puiCycles)
+int32 TestCPP816RunProfiled(const char* szSource, CAsm816Profile* pcProfile, CAsm816Profile* pcMeasure, uint64* puiCycles, CChars* pszMap = NULL)
 {
 	static const char*	aszUnits[] = { "Libc65/string816.asm", NULL };
 	CCPP65Builder		cBuilder;
@@ -1603,6 +1604,10 @@ int32 TestCPP816RunProfiled(const char* szSource, CAsm816Profile* pcProfile, CAs
 	TestCPP65AddUnits(&cBuilder, aszUnits, false);
 	AssertTrue(cBuilder.Link());
 	AssertString("", cBuilder.GetErrors());
+	if (pszMap)
+	{
+		pszMap->Append(cBuilder.GetMap());
+	}
 
 	cMemory.Init(ASM65_MEMORY_LOW_SIZE);
 	cMemory.Load(cBuilder.GetOutput());
@@ -1687,6 +1692,134 @@ void TestCPP816ProfileGuidedInlining(void)
 	AssertTrue(uiGuided < uiPlain);
 	cGuided.Kill();
 	cProfile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Hot divides and remainders of a byte's values by constants (char / 10,
+// unsigned char % 7) are looked up in tables (R816_STable10, R816_UTable7)
+// when a profile says they are hot, and give what the reciprocals give for
+// every byte; char multiplies look the product up in MathMult.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816ProfileGuidedDivisionTables(void)
+{
+	static const char*	szSource =
+		"int main()\n"
+		"{\n"
+		"\tunsigned short h = 0;\n"
+		"\tfor (int k = 0; k < 3; k++)\n"
+		"\t{\n"
+		"\t\tfor (int i = 0; i < 256; i++)\n"
+		"\t\t{\n"
+		"\t\t\tsigned char c = (signed char)i;\n"
+		"\t\t\tunsigned char u = (unsigned char)(i + k);\n"
+		"\t\t\tsigned char q = c / 10;\n"
+		"\t\t\tsigned char r = c % 10;\n"
+		"\t\t\tunsigned char uq = u / 7;\n"
+		"\t\t\tunsigned char ur = u % 7;\n"
+		"\t\t\tsigned char m = (signed char)(c * (signed char)(i >> 3));\n"
+		"\t\t\th = h * 31 + (unsigned char)q;\n"
+		"\t\t\th = h * 31 + (unsigned char)r;\n"
+		"\t\t\th = h * 31 + uq;\n"
+		"\t\t\th = h * 31 + ur;\n"
+		"\t\t\th = h * 31 + (unsigned char)m;\n"
+		"\t\t}\n"
+		"\t}\n"
+		"\treturn (int)(short)h;\n"
+		"}\n";
+	CAsm816Profile	cProfile;
+	CChars			szPlainMap;
+	CChars			szGuidedMap;
+	uint64			uiPlain;
+	uint64			uiGuided;
+	uint16			uiHash;
+	int				k;
+	int				i;
+	signed char		c;
+	unsigned char	u;
+
+	uiHash = 0;
+	for (k = 0; k < 3; k++)
+	{
+		for (i = 0; i < 256; i++)
+		{
+			c = (signed char)i;
+			u = (unsigned char)(i + k);
+			uiHash = (uint16)(uiHash * 31 + (unsigned char)(signed char)(c / 10));
+			uiHash = (uint16)(uiHash * 31 + (unsigned char)(signed char)(c % 10));
+			uiHash = (uint16)(uiHash * 31 + (unsigned char)(u / 7));
+			uiHash = (uint16)(uiHash * 31 + (unsigned char)(u % 7));
+			uiHash = (uint16)(uiHash * 31 + (unsigned char)(signed char)(c * (signed char)(i >> 3)));
+		}
+	}
+
+	cProfile.Init();
+	szPlainMap.Init();
+	AssertInt((int16)uiHash, TestCPP816RunProfiled(szSource, NULL, &cProfile, &uiPlain, &szPlainMap));
+	AssertFalse(szPlainMap.Contains("R816_STable10"));
+	AssertFalse(szPlainMap.Contains("R816_UTable7"));
+	AssertFalse(szPlainMap.Contains("R816_Mul16"));
+
+	szGuidedMap.Init();
+	AssertInt((int16)uiHash, TestCPP816RunProfiled(szSource, &cProfile, NULL, &uiGuided, &szGuidedMap));
+	AssertTrue(szGuidedMap.Contains("R816_STable10"));
+	AssertTrue(szGuidedMap.Contains("R816_UTable7"));
+	AssertTrue(uiGuided < uiPlain);
+	szGuidedMap.Kill();
+	szPlainMap.Kill();
+	cProfile.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Loads and stores through a pointer plus a signed 16 bit index (biased:
+// (p - 32768) + zext(i ^ 32768) with the index in Y), negative and
+// positive, bytes and words, in a loop and not.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816BiasedIndices(void)
+{
+	static const char*	szSource =
+		"char gac[600];\n"
+		"short gas[600];\n"
+		"char Get(char* p, short i) { return p[i]; }\n"
+		"char (*volatile gpGet)(char*, short) = Get;\n"
+		"int main()\n"
+		"{\n"
+		"\tchar* pc = &gac[300];\n"
+		"\tshort* ps = &gas[300];\n"
+		"\tunsigned short h = 0;\n"
+		"\tfor (short i = -300; i < 300; i++) { pc[i] = (char)(i * 7); ps[i] = (short)(i * 1001); }\n"
+		"\tfor (short i = 299; i >= -300; i--) { h = h * 31 + (unsigned char)pc[i]; h = h * 31 + (unsigned short)ps[i]; }\n"
+		"\th = h * 31 + (unsigned char)gpGet(pc, -300);\n"
+		"\th = h * 31 + (unsigned char)gpGet(pc, 299);\n"
+		"\th = h * 31 + (unsigned char)gpGet(pc, 0);\n"
+		"\treturn (int)(short)h;\n"
+		"}\n";
+	signed char	ac[600];
+	short		as[600];
+	uint16		uiHash;
+	int			i;
+	uint64		uiCycles;
+
+	for (i = -300; i < 300; i++)
+	{
+		ac[i + 300] = (signed char)(i * 7);
+		as[i + 300] = (short)(i * 1001);
+	}
+	uiHash = 0;
+	for (i = 299; i >= -300; i--)
+	{
+		uiHash = (uint16)(uiHash * 31 + (unsigned char)ac[i + 300]);
+		uiHash = (uint16)(uiHash * 31 + (unsigned short)as[i + 300]);
+	}
+	uiHash = (uint16)(uiHash * 31 + (unsigned char)ac[0]);
+	uiHash = (uint16)(uiHash * 31 + (unsigned char)ac[599]);
+	uiHash = (uint16)(uiHash * 31 + (unsigned char)ac[300]);
+	AssertInt((int16)uiHash, TestCPP816RunProfiled(szSource, NULL, NULL, &uiCycles));
 }
 
 
@@ -2486,6 +2619,8 @@ void TestCPP816(void)
 	TestCPP816DestructorCalls();
 	TestCPP816VariadicObjectParameters();
 	TestCPP816ProfileGuidedInlining();
+	TestCPP816ProfileGuidedDivisionTables();
+	TestCPP816BiasedIndices();
 	TestCPP816InlineObjectParameters();
 	TestCPP816ConstantDivisions();
 	TestCPP816IntIndexPointers();

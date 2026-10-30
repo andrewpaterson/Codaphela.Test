@@ -42,16 +42,16 @@ void TestModReader(void)
 
 	//The samples are cels in one signed 8 bit bank.
 	AssertInt(PT_int8, pcSong->GetSampleBank()->GetSound()->GetPrimitiveType());
-	AssertSize(32 + 512, pcSong->GetSampleBank()->GetSound()->GetNumFrames());
+	AssertLSize(32 + 512, pcSong->GetSampleBank()->GetSound()->GetNumFrames());
 	pcCel = pcSong->GetSampleCel(1);
-	AssertSize(0, pcCel->GetFirstFrame());
-	AssertSize(32, pcCel->GetNumFrames());
-	AssertSize(0, pcCel->GetLoopFrame());
+	AssertLSize(0, pcCel->GetFirstFrame());
+	AssertLSize(32, pcCel->GetNumFrames());
+	AssertLSize(0, pcCel->GetLoopFrame());
 	AssertDouble(0.5, pcCel->GetSample(0, 0), 12);
 	AssertDouble(-0.5, pcCel->GetSample(16, 0), 12);
 	pcCel = pcSong->GetSampleCel(2);
-	AssertSize(32, pcCel->GetFirstFrame());
-	AssertSize(512, pcCel->GetNumFrames());
+	AssertLSize(32, pcCel->GetFirstFrame());
+	AssertLSize(512, pcCel->GetNumFrames());
 	AssertFalse(pcCel->HasLoop());
 	AssertTrue(pcSong->GetSampleCel(3).IsNull());
 
@@ -121,7 +121,7 @@ void TestModPlayerBasic(void)
 	Ptr<CModSong> pcSong = LoadMOD("Input" _FS_ "MOD" _FS_ "Basic.mod");
 
 	cPlayer.Init(pcSong, 44100);
-	AssertSize(882, cPlayer.SkipTick());
+	AssertLSize(882, cPlayer.SkipTick());
 	AssertTrue(cPlayer.GetChannel(0)->bPlaying);
 	AssertInt(428, cPlayer.GetChannel(0)->iPeriod);
 	AssertInt(64, cPlayer.GetChannel(0)->iVolume);
@@ -172,7 +172,7 @@ SModChannel* PlayModTick(CModPlayer* pcPlayer, size uiOrder, size uiRow, size ui
 {
 	float64	afStereo[882 * 2];
 
-	AssertSize(uiFrames, pcPlayer->Render(afStereo, uiFrames));
+	AssertLSize(uiFrames, pcPlayer->Render(afStereo, uiFrames));
 	AssertSize(uiOrder, pcPlayer->GetOrder());
 	AssertSize(uiRow, pcPlayer->GetRow());
 	AssertSize(uiTick, pcPlayer->GetTick());
@@ -192,7 +192,7 @@ void TestModPlayerEffects(void)
 	size			uiRow;
 	int				aiVibrato[5] = { 0, 6, 11, 14, 15 };
 	int				aiTremolo[5] = { 12, 24, 34, 41, 43 };
-	size			uiFramesBefore;
+	lsize			uiFramesBefore;
 
 	Ptr<CModSong> pcSong = LoadMOD("Input" _FS_ "MOD" _FS_ "Effects.mod");
 	cPlayer.Init(pcSong, 44100);
@@ -303,7 +303,7 @@ void TestModPlayerEffects(void)
 	AssertInt(428, psChannel->iPeriod);
 	psChannel = PlayModTick(&cPlayer, 0, 11, 1, 882);
 	AssertTrue(psChannel->fPosition > 0.5);
-	AssertSize(882, cPlayer.SkipTick());
+	AssertLSize(882, cPlayer.SkipTick());
 	psChannel = cPlayer.GetChannel(0);
 	AssertSize(2, cPlayer.GetTick());
 	AssertDouble(0.0, psChannel->fPosition, 12);
@@ -373,9 +373,9 @@ void TestModPlayerEffects(void)
 	}
 	AssertFalse(cPlayer.IsFinished());
 	uiFramesBefore = cPlayer.GetFramesPlayed();
-	AssertSize(0, cPlayer.SkipTick());
+	AssertLSize(0, cPlayer.SkipTick());
 	AssertTrue(cPlayer.IsFinished());
-	AssertSize(uiFramesBefore, cPlayer.GetFramesPlayed());
+	AssertLSize(uiFramesBefore, cPlayer.GetFramesPlayed());
 	cPlayer.Kill();
 
 	//The whole song: 14 rows of 6 x 882, 1 of 3 x 882, 1 of 3 x 441 then 9 + 18 + 3 + 3 ticks of 441.
@@ -424,7 +424,7 @@ void TestModPlayerFineTune(void)
 		cPlayer.SkipTick();
 	}
 	AssertFalse(cPlayer.IsFinished());
-	AssertSize(0, cPlayer.SkipTick());
+	AssertLSize(0, cPlayer.SkipTick());
 	AssertTrue(cPlayer.IsFinished());
 	cPlayer.Kill();
 
@@ -445,7 +445,7 @@ void TestModPlayerStereo(void)
 	Ptr<CModSong> pcSong = LoadMOD("Input" _FS_ "MOD" _FS_ "Eight.mod");
 
 	cPlayer.Init(pcSong, 44100);
-	AssertSize(882, cPlayer.Render(afStereo, 882));
+	AssertLSize(882, cPlayer.Render(afStereo, 882));
 	AssertDouble(-1.0, cPlayer.GetChannel(0)->fPan, 12);
 	AssertDouble(1.0, cPlayer.GetChannel(1)->fPan, 12);
 	AssertDouble(1.0, cPlayer.GetChannel(2)->fPan, 12);
@@ -459,7 +459,7 @@ void TestModPlayerStereo(void)
 	cPlayer.Kill();
 
 	cPlayer.Init(pcSong, 44100, MI_Nearest, 0.0);
-	AssertSize(882, cPlayer.Render(afStereo, 882));
+	AssertLSize(882, cPlayer.Render(afStereo, 882));
 	AssertDouble(afStereo[100], afStereo[101], 12);
 	cPlayer.Kill();
 
@@ -477,17 +477,17 @@ void PrintModRowLevels(Ptr<CSound> pcSound, size uiRowFrames, CChars* psz)
 {
 	size	uiRow;
 	size	uiNumRows;
-	size	i;
+	lsize	i;
 	size	c;
 	float64	fSample;
 	float64	afSum[2];
 
-	uiNumRows = pcSound->GetNumFrames() / uiRowFrames;
+	uiNumRows = (size)(pcSound->GetNumFrames() / uiRowFrames);
 	for (uiRow = 0; uiRow < uiNumRows; uiRow++)
 	{
 		afSum[0] = 0.0;
 		afSum[1] = 0.0;
-		for (i = uiRow * uiRowFrames; i < (uiRow + 1) * uiRowFrames; i++)
+		for (i = (lsize)uiRow * uiRowFrames; i < ((lsize)uiRow + 1) * uiRowFrames; i++)
 		{
 			for (c = 0; c < 2; c++)
 			{
@@ -517,7 +517,7 @@ void TestModPlayerTune(void)
 	CModPlayer	cPlayer;
 	CChars		sz;
 	CFileBasic	cFile;
-	size		i;
+	lsize		i;
 	size		c;
 	float64		fPeak;
 	float64		fSample;
