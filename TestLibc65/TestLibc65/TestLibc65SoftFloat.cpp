@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "BaseLib/Chars.h"
 #include "TestLib/Assert.h"
 #include "TestLibc65Context.h"
@@ -546,6 +547,11 @@ static void TestSoftFloatFunction(const char* szName, ETestSoftFloatKind eKind, 
 			}
 		}
 		AssertTrue(TestLibc65Run(&sRun, 400 * psCases->uiCount + 1000));
+		if (getenv("TEST_SOFT_FLOAT_CYCLES"))
+		{
+			//The program's cycles (the loop round each call included) over its calls, for tuning.
+			printf("CYCLES %s %llu\n", szName, (unsigned long long)(((geTestLibc65Target == CPPT_W65C816) ? sRun.cMPU816.NumCycles() : sRun.cMPU.NumCycles()) / psCases->uiCount));
+		}
 		for (i = 0; i < psCases->uiCount; i++)
 		{
 			ulliExpected = TestSoftFloatReference(szName, psCases->auiFirst[i], psCases->auiSecond[i]);

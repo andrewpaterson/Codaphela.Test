@@ -43,7 +43,7 @@ uint64	TestCPP65FloatUlps(uint32 uiActual, uint32 uiExpected);
 
 
 //Libc65's units for the W65C816 (no 65C64 assembly).
-static const char* gaszTestCPP816Libc65[] = { "string.cpp", "string816.asm", "string816_16.asm", "stdlib.cpp", "ctype.cpp", "time.cpp", "math.cpp", "softfloat.cpp", "new.cpp", "signal.cpp", "stdio.cpp", "host.cpp", NULL };
+static const char* gaszTestCPP816Libc65[] = { "string.cpp", "string816.asm", "string816_16.asm", "stdlib.cpp", "ctype.cpp", "time.cpp", "math.cpp", "softfloat.cpp", "softfloat816.asm", "new.cpp", "signal.cpp", "stdio.cpp", "host.cpp", NULL };
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -1087,8 +1087,8 @@ void TestCPP816TideVideo(void)
 //////////////////////////////////////////////////////////////////////////
 void TestCPP816Floats(void)
 {
-	static const char*	aszFloatHelper[] = { "BaseLib/FloatHelper.cpp", "Libc65/softfloat.cpp", "Libc65/math.cpp", "Libc65/string816.asm", "Input/CPP65/FloatHelperProject/Main.cpp", NULL };
-	static const char*	aszQuaternion[] = { "BaseLib/Quaternion.cpp", "Libc65/softfloat.cpp", "Libc65/string816.asm", "Input/CPP65/QuaternionProject/Main.cpp", NULL };
+	static const char*	aszFloatHelper[] = { "BaseLib/FloatHelper.cpp", "Libc65/softfloat.cpp", "Libc65/softfloat816.asm", "Libc65/math.cpp", "Libc65/string816.asm", "Input/CPP65/FloatHelperProject/Main.cpp", NULL };
+	static const char*	aszQuaternion[] = { "BaseLib/Quaternion.cpp", "Libc65/softfloat.cpp", "Libc65/softfloat816.asm", "Libc65/string816.asm", "Input/CPP65/QuaternionProject/Main.cpp", NULL };
 	uint32				auiResults[256];
 	size				i;
 	uint32				uiExpected;
@@ -1348,7 +1348,7 @@ void TestCPP816TestBaseLibBugs(void)
 		"\treturn (a.Equals(&b) ? 0 : 1) + (b.IsNegative() ? 20 : 0) + ((b.IntValue() == -1) ? 300 : 0);\n"
 		"}\n", false, NULL, 0, TEST_CPP816_SLOW_STEPS, true));
 
-	static const char*	aszFloat[] = { "Libc65/softfloat.cpp", NULL };
+	static const char*	aszFloat[] = { "Libc65/softfloat.cpp", "Libc65/softfloat816.asm", NULL };
 
 	AssertInt(0x407, TestCPP816RunProject(aszFloat, "",
 		"int Exponent(double f, int iShift)\n"
@@ -1819,6 +1819,79 @@ void TestCPP816BiasedIndices(void)
 	uiHash = (uint16)(uiHash * 31 + (unsigned char)ac[0]);
 	uiHash = (uint16)(uiHash * 31 + (unsigned char)ac[599]);
 	uiHash = (uint16)(uiHash * 31 + (unsigned char)ac[300]);
+	AssertInt((int16)uiHash, TestCPP816RunProfiled(szSource, NULL, NULL, &uiCycles));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A pointer chosen between one base plus different i16 indices (and null)
+// and only loaded and stored through is the base plus the chosen index
+// (MergeAddressPhis); a choice between two bases is left as it is.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816MergedAddressPhis(void)
+{
+	static const char*	szSource =
+		"char gac[400];\n"
+		"char gbc[400];\n"
+		"struct SDigits { short iWhole; char ac[400]; };\n"
+		"SDigits gs;\n"
+		"char* At(SDigits* p, short i) { if (i > 0) { return &p->ac[p->iWhole - i]; } else if (i < 0) { return &p->ac[p->iWhole - i - 1]; } return 0; }\n"
+		"void Set(SDigits* p, short i, char c) { *At(p, i) = c; }\n"
+		"char Get(SDigits* p, short i) { return *At(p, i); }\n"
+		"char* Pick(short b, short i) { return b ? &gac[i + 100] : &gbc[i + 200]; }\n"
+		"int main()\n"
+		"{\n"
+		"\tunsigned short h = 0;\n"
+		"\tgs.iWhole = 200;\n"
+		"\tfor (short i = -199; i <= 199; i++) { if (i != 0) { Set(&gs, i, (char)(i * 3)); } }\n"
+		"\tfor (short i = 199; i >= -199; i--) { if (i != 0) { h = h * 31 + (unsigned char)Get(&gs, i); } }\n"
+		"\tfor (short i = -100; i < 100; i++) { *Pick(i & 1, i) = (char)(i + 5); }\n"
+		"\tfor (short i = 0; i < 400; i++) { h = h * 31 + (unsigned char)gac[i]; h = h * 31 + (unsigned char)gbc[i]; }\n"
+		"\treturn (int)(short)h;\n"
+		"}\n";
+	signed char	ac[400];
+	signed char	abc[400];
+	signed char	ad[400];
+	uint16		uiHash;
+	int			i;
+	uint64		uiCycles;
+
+	memset(ac, 0, sizeof(ac));
+	memset(abc, 0, sizeof(abc));
+	memset(ad, 0, sizeof(ad));
+	for (i = -199; i <= 199; i++)
+	{
+		if (i != 0)
+		{
+			ad[(i > 0) ? (200 - i) : (200 - i - 1)] = (signed char)(i * 3);
+		}
+	}
+	uiHash = 0;
+	for (i = 199; i >= -199; i--)
+	{
+		if (i != 0)
+		{
+			uiHash = (uint16)(uiHash * 31 + (unsigned char)ad[(i > 0) ? (200 - i) : (200 - i - 1)]);
+		}
+	}
+	for (i = -100; i < 100; i++)
+	{
+		if (i & 1)
+		{
+			ac[i + 100] = (signed char)(i + 5);
+		}
+		else
+		{
+			abc[i + 200] = (signed char)(i + 5);
+		}
+	}
+	for (i = 0; i < 400; i++)
+	{
+		uiHash = (uint16)(uiHash * 31 + (unsigned char)ac[i]);
+		uiHash = (uint16)(uiHash * 31 + (unsigned char)abc[i]);
+	}
 	AssertInt((int16)uiHash, TestCPP816RunProfiled(szSource, NULL, NULL, &uiCycles));
 }
 
@@ -2621,6 +2694,7 @@ void TestCPP816(void)
 	TestCPP816ProfileGuidedInlining();
 	TestCPP816ProfileGuidedDivisionTables();
 	TestCPP816BiasedIndices();
+	TestCPP816MergedAddressPhis();
 	TestCPP816InlineObjectParameters();
 	TestCPP816ConstantDivisions();
 	TestCPP816IntIndexPointers();
