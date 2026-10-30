@@ -6,9 +6,11 @@
 
 #define TEST_TRUE_MALLOCATOR_MEMORY		0x10000
 #define TEST_TRUE_MALLOCATOR_ALLOCATIONS	200
+#define TEST_TRUE_MALLOCATOR_LARGE_MEMORY	0x30000
 
 
 uint8	gauiTestTrueMallocatorMemory[TEST_TRUE_MALLOCATOR_MEMORY];
+uint8	gauiTestTrueMallocatorLargeMemory[TEST_TRUE_MALLOCATOR_LARGE_MEMORY];
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -19,7 +21,7 @@ uint8	gauiTestTrueMallocatorMemory[TEST_TRUE_MALLOCATOR_MEMORY];
 void TestTrueMallocatorInit(void)
 {
 	CTrueMallocator	cMallocator;
-	size			uiLargest;
+	lsize			uiLargest;
 
 	AssertTrue(cMallocator.Init(gauiTestTrueMallocatorMemory, TEST_TRUE_MALLOCATOR_MEMORY));
 	AssertTrue(cMallocator.IsValid());
@@ -57,11 +59,11 @@ void TestTrueMallocatorMallocFree(void)
 	bAligned = true;
 	for (i = 0; i < 10; i++)
 	{
-		apui[i] = (uint8*)cMallocator.Malloc(i * 13);
+		apui[i] = (uint8*)cMallocator.Malloc((lsize)i * 13);
 		AssertNotNull(apui[i]);
-		bAligned &= ((size)apui[i] & (TRUE_MALLOCATOR_ALIGNMENT - 1)) == 0;
+		bAligned &= ((ptr)apui[i] & (TRUE_MALLOCATOR_ALIGNMENT - 1)) == 0;
 		AssertTrue(cMallocator.Size(apui[i]) >= i * 13);
-		memset(apui[i], (int)i, i * 13);
+		memset(apui[i], (int)i, (lsize)i * 13);
 	}
 	AssertTrue(bAligned);
 	AssertSize(10, cMallocator.NumAllocations());
@@ -312,6 +314,61 @@ void TestTrueMallocatorRandom(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Blocks and free space bigger than 64KB.  Sizes are lsize: with the W65C816's 16 bit size they wrapped and
+// the heap overwrote itself.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestTrueMallocatorLarge(void)
+{
+	CTrueMallocator	cMallocator;
+	uint8*			pui1;
+	uint8*			pui2;
+	uint8*			pui3;
+	lsize			uiLargest;
+
+	AssertTrue(cMallocator.Init(gauiTestTrueMallocatorLargeMemory, TEST_TRUE_MALLOCATOR_LARGE_MEMORY));
+	uiLargest = cMallocator.LargestFree();
+	AssertTrue(uiLargest > 0x20000);
+
+	pui1 = (uint8*)cMallocator.Malloc(100000);
+	AssertNotNull(pui1);
+	AssertTrue(cMallocator.Size(pui1) >= 100000);
+	memset(pui1, 0x5A, 100000);
+	pui2 = (uint8*)cMallocator.Malloc(70000);
+	AssertNotNull(pui2);
+	memset(pui2, 0xA5, 70000);
+	AssertTrue((pui2 >= pui1 + 100000) || (pui2 + 70000 <= pui1));
+	AssertTrue(cMallocator.IsValid());
+	AssertLSize(2, cMallocator.NumAllocations());
+	AssertTrue(cMallocator.AllocatedBytes() >= 170000);
+	AssertInt(0x5A, pui1[99999]);
+	AssertInt(0xA5, pui2[69999]);
+
+	//Too big for what is left.
+	AssertNull(cMallocator.Malloc(100000));
+
+	//Freeing the first gives back its 100000 bytes; growing the second keeps what it had.
+	cMallocator.Free(pui1);
+	AssertTrue(cMallocator.LargestFree() >= 100000);
+	pui3 = (uint8*)cMallocator.Malloc(90000);
+	AssertNotNull(pui3);
+	cMallocator.Free(pui3);
+	pui2 = (uint8*)cMallocator.Realloc(pui2, 90000);
+	AssertNotNull(pui2);
+	AssertInt(0xA5, pui2[0]);
+	AssertInt(0xA5, pui2[69999]);
+	AssertTrue(cMallocator.IsValid());
+
+	cMallocator.Free(pui2);
+	AssertLSize(0, cMallocator.NumAllocations());
+	AssertLSize(0, cMallocator.AllocatedBytes());
+	AssertLSize(uiLargest, cMallocator.LargestFree());
+	cMallocator.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestTrueMallocator(void)
@@ -323,6 +380,7 @@ void TestTrueMallocator(void)
 	TestTrueMallocatorFull();
 	TestTrueMallocatorRealloc();
 	TestTrueMallocatorRandom();
+	TestTrueMallocatorLarge();
 
 	TestStatistics();
 }

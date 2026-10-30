@@ -28,7 +28,7 @@ void TestLinkedListBlockAlignedAdd(void)
 		for (k = 0; k < 5; k++)
 		{
 			pv = cList.InsertAfterTail(65, iAlignment, 0);
-			AssertSize(0, ((size)pv) % iAlignment);
+			AssertSize(0, (size)(((ptr)pv) % iAlignment));
 
 			psNode = cList.GetNode(pv);
 			pvAllocatedEnd = (void*)((uint8*)psNode->sAligned.pvAlloc + sizeof(SLLAlignedNode) + 65 + iAlignment -1);
@@ -200,7 +200,7 @@ void TestLinkedListBlockAlignedExhaustive(void)
 				AssertInt(iAlignment, psNode->sAligned.iAlignment);
 			}
 
-			iResult = (int)(((size)pvData) % iAlignment);
+			iResult = (int)(((ptr)pvData) % iAlignment);
 			if (iResult != 0)
 			{
 				AssertInt(0, iResult);
@@ -278,7 +278,7 @@ void TestLinkedListBlockAlignedExhaustive(void)
 				AssertInt(iAlignment, psNode->sAligned.iAlignment);
 			}
 
-			iResult = (int)(((size)pvData) % iAlignment);
+			iResult = (int)(((ptr)pvData) % iAlignment);
 			if (iResult != 0)
 			{
 				AssertInt(0, iResult);

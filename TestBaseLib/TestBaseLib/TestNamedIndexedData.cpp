@@ -220,7 +220,7 @@ void TestNamedIndexedDataAddChars(EIndexWriteThrough eWriteThrough)
 	CTestNamedIndexedDataObject			cResult;
 	bool								bResult;
 	CChars								szName;
-	size								uiDataSize;
+	lsize								uiDataSize;
 
 	cFileUtil.RemoveDir("Output" _FS_ "Database2a");
 
@@ -788,7 +788,7 @@ void TestNamedIndexedDataIterate(EIndexWriteThrough eWriteThrough)
 	CTestNamedIndexedDataObject			cObject5;
 	SIndexTreeFileIterator				sIter;
 	CTestNamedIndexedDataObject			cResult;
-	size								iDataSize;
+	lsize								iDataSize;
 	OIndex								oi;
 	char								szKey[MAX_KEY_SIZE];
 	bool								bResult;
@@ -917,7 +917,7 @@ void TestNamedIndexedDataIterateDuringTreeChange(EIndexWriteThrough eWriteThroug
 	CTestNamedIndexedDataObject			cObject;
 	SIndexTreeFileIterator				sIter;
 	CTestNamedIndexedDataObject			cResult;
-	size								iDataSize;
+	lsize								iDataSize;
 	OIndex								oi;
 	char								szKey[MAX_KEY_SIZE];
 	bool								bResult;
@@ -1206,7 +1206,7 @@ void TestNamedIndexedDataGetDoesNotExceedCache(EIndexWriteThrough eWriteThrough)
 	CIndexedDataEvictionCounter			cDataEvictionCounter;
 	CIndexTreeEvictionCounter			cNameEvictionCounter;
 	size								i;
-	size								uiDataSize;
+	lsize								uiDataSize;
 	char*								szName;
 
 	aszWords.Init();

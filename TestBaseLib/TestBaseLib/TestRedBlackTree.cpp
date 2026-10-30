@@ -107,9 +107,9 @@ void TestRedBlackTreeAdd(void)
 
 	for (i = 0; i < 1000; i++)
 	{
-		psItem = AddTestRedBlackTreeItem(&cTree, i * 3, i);
+		psItem = AddTestRedBlackTreeItem(&cTree, (int64)i * 3, i);
 		AssertNotNull(psItem);
-		AssertLong(i * 3, psItem->iTime);
+		AssertLong((int64)i * 3, psItem->iTime);
 		AssertInt(i, psItem->iValue);
 		if (i < 100)
 		{
@@ -214,7 +214,7 @@ void TestRedBlackTreeIterateRange(void)
 	InitTestRedBlackTree(&cTree);
 	for (i = 1; i <= 10; i++)
 	{
-		AddTestRedBlackTreeItem(&cTree, i * 10, i);
+		AddTestRedBlackTreeItem(&cTree, (int64)i * 10, i);
 	}
 
 	iStart = 25;

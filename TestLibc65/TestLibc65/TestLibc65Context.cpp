@@ -52,17 +52,18 @@ static bool TestLibc65IsAssembly(const char* szUnit)
 
 //////////////////////////////////////////////////////////////////////////
 //
-// The W65C816's unit for a 65C64 assembly unit: X816.asm for X.asm when there is one (in szDirectory), else empty.
+// The W65C816's unit for a 65C64 assembly unit: X<szSuffix> (X816.asm or X816_16.asm) for X.asm when there is
+// one (in szDirectory), else empty.
 //
 //////////////////////////////////////////////////////////////////////////
-static void TestLibc65Unit816(const char* szDirectory, const char* szUnit, CChars* pszUnit)
+static void TestLibc65Unit816(const char* szDirectory, const char* szUnit, const char* szSuffix, CChars* pszUnit)
 {
 	CChars		szPath;
 	CFileUtil	cFileUtil;
 
 	pszUnit->Init();
 	pszUnit->Append(szUnit, (size)(strrchr(szUnit, '.') - szUnit));
-	pszUnit->Append("816.asm");
+	pszUnit->Append(szSuffix);
 	szPath.Init(szDirectory);
 	szPath.Append(_FS_);
 	szPath.Append(*pszUnit);
@@ -80,8 +81,8 @@ static void TestLibc65Unit816(const char* szDirectory, const char* szUnit, CChar
 // Compiles szSource and the Libc65 units (file names in commonlibraries/Libc65, NULL terminated) and links
 // the start up and szSource with the Libc65 units as a library (a unit is linked when something needs it).
 // BaseLib's TrueMallocator.cpp, which malloc uses, is in the library too.
-// Loads the program at reset.  On the W65C816 a unit in 65C64 assembly (X.asm) is its W65C816 assembly (X816.asm)
-// when there is some, else left out: their .cpp units have the other functions for it.  The labels in szStubs (space separated, sorted) must be exactly the ones
+// Loads the program at reset.  On the W65C816 a unit in 65C64 assembly (X.asm) is its W65C816 assembly (X816.asm,
+// and X816_16.asm) when there is some, else left out: their .cpp units have the other functions for it.  The labels in szStubs (space separated, sorted) must be exactly the ones
 // used but defined by no linked unit; the linker makes each a stp so a call to one stops the program.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -94,7 +95,9 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 	CChars			szMissing;
 	CChars			szUnit;
 	size			i;
+	size			j;
 	bool			bResult;
+	const char*		aszSuffixes[] = { "816.asm", "816_16.asm", NULL };
 
 	TestLibc65FullPath(&szLibc65, TEST_LIBC65_DIRECTORY);
 	TestLibc65FullPath(&szLibraries, TEST_LIBC65_LIBRARIES);
@@ -113,13 +116,16 @@ bool TestLibc65Begin(STestLibc65Run* psRun, const char** aszUnits, const char* s
 		}
 		else
 		{
-			//The W65C816's own assembly for the unit, if it has some.
-			TestLibc65Unit816(szLibc65.Text(), aszUnits[i], &szUnit);
-			if (!szUnit.Empty())
+			//The W65C816's own assembly for the unit, and with 16 bit counts, if it has some.
+			for (j = 0; aszSuffixes[j]; j++)
 			{
-				cBuilder.AddUnit("Libc65", szLibc65.Text(), szUnit.Text(), true);
+				TestLibc65Unit816(szLibc65.Text(), aszUnits[i], aszSuffixes[j], &szUnit);
+				if (!szUnit.Empty())
+				{
+					cBuilder.AddUnit("Libc65", szLibc65.Text(), szUnit.Text(), true);
+				}
+				szUnit.Kill();
 			}
-			szUnit.Kill();
 		}
 	}
 	cBuilder.AddMathTables(szLibc65.Text());

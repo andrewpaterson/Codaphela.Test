@@ -1330,7 +1330,7 @@ void TestIndexTreeMemoryResizeData(void)
 	AssertSize(3, pcNode->NumIndexes());
 	AssertSize(2, pcNode->NumValidIndexes());
 	AssertSize(0, pcNode->GetDataSize());
-	iNodeMemoryOffset1 = (size)pcNode->GetNodesMemory() - (size)pcNode;
+	iNodeMemoryOffset1 = (size)((ptr)pcNode->GetNodesMemory() - (ptr)pcNode);
 	AssertSize(cIndex.SizeofNode(), iNodeMemoryOffset1);
 
 	AssertTrue(cAccess.PutStringData("A", szAObject, strlen(szAObject) + 1));
@@ -1339,7 +1339,7 @@ void TestIndexTreeMemoryResizeData(void)
 	AssertSize(3, pcNode->NumIndexes());
 	AssertSize(2, pcNode->NumValidIndexes());
 	AssertSize(18, pcNode->GetDataSize());
-	iNodeMemoryOffset2 = (size)pcNode->GetNodesMemory() - (size)pcNode;
+	iNodeMemoryOffset2 = (size)((ptr)pcNode->GetNodesMemory() - (ptr)pcNode);
 	AssertSize(cIndex.SizeofDataNode() + pcNode->GetDataSize(), iNodeMemoryOffset2);
 	AssertTrue(iNodeMemoryOffset2 > iNodeMemoryOffset1);
 

@@ -667,7 +667,7 @@ void TestFileIOMap(void)
 
 	TestFileIOBegin(&cMemory, &cFile);
 	
-	cMap.Init(&CompareInt, true);
+	cMap.Init(&CompareSize, true);
 	i = 9;	ld = 1.4783409838732098273349;
 	cMap.Put(&i, &ld);
 	i = 22;	ld = 1.7983487629380598763752;
@@ -689,7 +689,7 @@ void TestFileIOMap(void)
 	cMap.Kill();
 	TestFileIOMiddle(&cFile);
 
-	AssertTrue(cMapIn.Read(&cFile, &CompareInt));
+	AssertTrue(cMapIn.Read(&cFile, &CompareSize));
 	AssertSize(3, cMapIn.NumElements());
 	//CMapTemplateTemplate doesn't actually have full read and write methods.
 

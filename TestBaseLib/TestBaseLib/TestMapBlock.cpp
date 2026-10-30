@@ -95,7 +95,7 @@ void TestMapBlockInternals(void)
 	SMNode**			psNode2;
 	size*				piKey;
 
-	cMap.Init(&CompareInt, true);
+	cMap.Init(&CompareSize, true);
 	i = 7; j = 43;
 	cMap.Put(&i, sizeof(size), &j, sizeof(size));
 
@@ -293,7 +293,7 @@ void TestMapBlockAddDuplicate(void)
 	iWorldLen = strlen("World");
 	iHelloLen = strlen("Hello");
 
-	cMap.Init(&CompareInt, true);
+	cMap.Init(&CompareSize, true);
 	bResult = cMap.Put(&ia, sizeof(size), "Hello", iHelloLen + 1);
 	AssertTrue(bResult);
 	AssertSize(1, cMap.NumElements());
@@ -321,7 +321,7 @@ void TestMapBlockRemove(void)
 	bool		bResult;
 	char*		szData;
 
-	cMap.Init(&CompareInt, true);
+	cMap.Init(&CompareSize, true);
 	bResult = cMap.Put(&ia, sizeof(size), "Hello", strlen("Hello") + 1);
 	bResult = cMap.Put(&ib, sizeof(size), "World", strlen("World") + 1);
 	bResult = cMap.Put(&ic, sizeof(size), "Rogue", strlen("Rogue") + 1);

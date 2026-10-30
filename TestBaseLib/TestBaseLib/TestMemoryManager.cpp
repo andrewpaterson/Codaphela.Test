@@ -34,8 +34,8 @@ void TestMemoryManagerContiguousAllocations(void)
 	AssertNotNull(pvMem2);
 	AssertNotNull(pvMem3);
 	AssertNull(pvMem4);
-	AssertSize(10 + MM_NODE_HEADER_SIZE, (size)pvMem2 - (size)pvMem1);
-	AssertSize(20 + MM_NODE_HEADER_SIZE, (size)pvMem3 - (size)pvMem2);
+	AssertSize(10 + MM_NODE_HEADER_SIZE, (size)((ptr)pvMem2 - (ptr)pvMem1));
+	AssertSize(20 + MM_NODE_HEADER_SIZE, (size)((ptr)pvMem3 - (ptr)pvMem2));
 
 	cMemory.Kill();
 
@@ -68,7 +68,7 @@ SMMNode* AssertNode(SMMNode* psNode, uint32 uiExpectedUserSize, uint32 uiExpecte
 	size uiActualNodeSize;
 
 	uiActualUserSize = GetMMNodeDataSize(psNode) - MM_NODE_HEADER_SIZE;
-	uiActualNodeSize = ((size)(psNode->psNext) - (size)psNode) - MM_NODE_HEADER_SIZE;
+	uiActualNodeSize = (size)((ptr)(psNode->psNext) - (ptr)psNode) - MM_NODE_HEADER_SIZE;
 	AssertSize(uiExpectedUserSize, uiActualUserSize);
 	AssertSize(uiExpectedNodeSize, uiActualNodeSize);
 	AssertBool(bUsed, FixBool(psNode->uiFlags & MM_NODE_USED));

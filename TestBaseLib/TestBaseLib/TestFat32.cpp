@@ -22,7 +22,7 @@ void TestFat32ReadSpecific(void)
 {
 	CMemoryDrive			cMemoryDrive;
 	CDiskFile				cFile;
-	size					uiLength;
+	lsize					uiLength;
 	void*					pvMemory;
 	SFatDirectoryEntry*		psFatDirectoryEntry;
 	SFatDirectoryEntry		sFatFileEntry;
@@ -30,7 +30,7 @@ void TestFat32ReadSpecific(void)
 	EFatCode				eResult;
 	CFatFile				cFatFile;
 	bool					bResult;
-	size					uiBytesRead;
+	lsize					uiBytesRead;
 	static char					auiFileData[44 KB];
 	static char					auiExpectedData[44 KB];
 	CFatVolume				cVolume;
@@ -38,7 +38,7 @@ void TestFat32ReadSpecific(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -146,7 +146,7 @@ void TestFat32ReadSpecific(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "SDCard.cpp");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	AssertSize(44000, uiLength);
 	cFile.Read(auiExpectedData, uiLength, 1);
 	cFile.Close();
@@ -174,7 +174,7 @@ void TestFat32ReadDirectoryTree(void)
 {
 	CMemoryDrive			cMemoryDrive;
 	CDiskFile				cFile;
-	size					uiLength;
+	lsize					uiLength;
 	void*					pvMemory;
 	EFatCode				eResult;
 	bool					bResult;
@@ -185,13 +185,13 @@ void TestFat32ReadDirectoryTree(void)
 	SFatDirectoryEntry		sFatFileEntry;
 	static char					auiFileData[44 KB];
 	CFatFile				cFatFile;
-	size					uiBytesRead;
+	lsize					uiBytesRead;
 	CFatVolume				cVolume;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -287,7 +287,7 @@ void TestFat32Format(void)
 {
 	CMemoryDrive			cMemoryDrive;
 	CDiskFile				cFile;
-	size					uiLength;
+	lsize					uiLength;
 	void*					pvMemory;
 	EFatCode				eResult;
 	bool					bResult;
@@ -298,7 +298,7 @@ void TestFat32Format(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -332,7 +332,7 @@ void TestFat32CreateFileEntries(void)
 {
 	CMemoryDrive			cMemoryDrive;
 	CDiskFile				cFile;
-	size					uiLength;
+	lsize					uiLength;
 	void*					pvMemory;
 	EFatCode				eResult;
 	bool					bResult;
@@ -348,7 +348,7 @@ void TestFat32CreateFileEntries(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -455,7 +455,7 @@ void TestFat32CreateFileEntries(void)
 void TestFat32OpenWriteMode(void)
 {
 	CMemoryDrive			cMemoryDrive;
-	size					uiLength;
+	lsize					uiLength;
 	EFatCode				eResult;
 	CFatFile				cFatFile;
 	CFatVolume				cVolume;
@@ -467,7 +467,7 @@ void TestFat32OpenWriteMode(void)
 	cMemoryDrive.Init(uiLength, 512);
 	
 	cMemoryDrive.Erase();
-	uiMaxSectorSize = cMemoryDrive.SetMaxSectorForTesting((uiLength / 512) * 1024);
+	uiMaxSectorSize = cMemoryDrive.SetMaxSectorForTesting((uint64)(uiLength / 512) * 1024);
 
 	eResult = FatFormat(FAT_FS_TYPE_FAT32, "Fat32", 64, &cMemoryDrive);
 	AssertInt(FAT_SUCCESS, eResult);
@@ -506,7 +506,7 @@ void TestFat32Write(void)
 {
 	CMemoryDrive			cMemoryDrive;
 	CDiskFile				cFile;
-	size					uiLength;
+	lsize					uiLength;
 	void*					pvMemory;
 	EFatCode				eResult;
 	bool					bResult;
@@ -515,12 +515,12 @@ void TestFat32Write(void)
 	char					auiFileData[4 KB];
 	char					auiFileData2[4 KB];
 	int						i;
-	size					uiBytesRead;
+	lsize					uiBytesRead;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -580,7 +580,7 @@ void TestFat32CreateDirectory(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void*			pvMemory;
 	EFatCode		eResult;
 	bool			bResult;
@@ -591,7 +591,7 @@ void TestFat32CreateDirectory(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -634,7 +634,7 @@ void TestFat32FormatAndCreateDirectory(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void*			pvMemory;
 	EFatCode		eResult;
 	bool			bResult;
@@ -645,7 +645,7 @@ void TestFat32FormatAndCreateDirectory(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -689,7 +689,7 @@ void TestFat32CreateFileEntryAndAllocate(void)
 {
 	CMemoryDrive			cMemoryDrive;
 	CDiskFile				cFile;
-	size					uiLength;
+	lsize					uiLength;
 	EFatCode				eResult;
 	CFatVolume				cVolume;
 	uint64					uiMaxSectorSize;
@@ -700,7 +700,7 @@ void TestFat32CreateFileEntryAndAllocate(void)
 	cMemoryDrive.Init(uiLength, 512);
 
 	cMemoryDrive.Erase();
-	uiMaxSectorSize = cMemoryDrive.SetMaxSectorForTesting((uiLength / 512) * 1024);
+	uiMaxSectorSize = cMemoryDrive.SetMaxSectorForTesting((uint64)(uiLength / 512) * 1024);
 
 	eResult = FatFormat(FAT_FS_TYPE_FAT32, "Logic", 64, &cMemoryDrive);
 	AssertInt(FAT_SUCCESS, eResult);
@@ -790,7 +790,7 @@ void TestFat32CreateDirectoryAfterWrite(void)
 {
 	CMemoryDrive		cMemoryDrive;
 	CDiskFile			cFile;
-	size				uiLength;
+	lsize				uiLength;
 	void*				pvMemory;
 	EFatCode			eResult;
 	bool				bResult;
@@ -799,14 +799,14 @@ void TestFat32CreateDirectoryAfterWrite(void)
 	char*				puiFileData2;
 	int32				iLength;
 	CFatFile			cFatFile;
-	size				uiBytesRead;
+	lsize				uiBytesRead;
 	CChars				sz;
 	SFatDirectoryEntry	sFatFileEntry;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -962,7 +962,7 @@ void TestFat32GreatWrite(void)
 {
 	CMemoryDrive			cMemoryDrive;
 	CDiskFile				cFile;
-	size					uiLength;
+	lsize					uiLength;
 	void*					pvMemory;
 	EFatCode				eResult;
 	bool					bResult;
@@ -972,14 +972,14 @@ void TestFat32GreatWrite(void)
 	CFatFile				cFatFile;
 	char*					puiFileData;
 	char*					puiFileData2;
-	size					uiBytesRead;
+	lsize					uiBytesRead;
 	int32					iLength;
 	CChars					sz;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -1132,13 +1132,13 @@ void TestFat32MultipleSmallReads(void)
 {
 	CMemoryDrive			cMemoryDrive;
 	CDiskFile				cFile;
-	size					uiLength;
+	lsize					uiLength;
 	void*					pvMemory;
 	SFatDirectoryEntry		sFatFileEntry;
 	EFatCode				eResult;
 	CFatFile				cFatFile;
 	bool					bResult;
-	size					uiBytesRead;
+	lsize					uiBytesRead;
 	static char					auiFileData[44 KB];
 	static char					auiExpectedData[44 KB];
 	CFatVolume				cVolume;
@@ -1150,7 +1150,7 @@ void TestFat32MultipleSmallReads(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -1196,7 +1196,7 @@ void TestFat32MultipleSmallReads(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "SDCard.cpp");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	AssertSize(44000, uiLength);
 	cFile.Read(auiExpectedData, uiLength, 1);
 	cFile.Close();
@@ -1218,7 +1218,7 @@ void TestFat32Seek(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void*			pvMemory;
 	EFatCode		eResult;
 	CFatFile		cFatFile;
@@ -1229,7 +1229,7 @@ void TestFat32Seek(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -1270,7 +1270,7 @@ void TestFat32WriteAndSeek(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void*			pvMemory;
 	EFatCode		eResult;
 	CFatFile		cFatFile;
@@ -1279,14 +1279,14 @@ void TestFat32WriteAndSeek(void)
 	int32			i;
 	char*			szSource;
 	char*			szRead;
-	size			uiBytesRead;
+	lsize			uiBytesRead;
 
 	szSource = AllocateStringBuffer(196 KB);
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -1320,7 +1320,7 @@ void TestFat32WriteAndSeek(void)
 	AssertInt(FAT_SUCCESS, eResult);
 	eResult = cFatFile.Read((uint8*)szRead, 196 KB, &uiBytesRead);
 	AssertInt(FAT_SUCCESS, eResult);
-	AssertSize((size)(196 KB), uiBytesRead);
+	AssertLSize((lsize)(196 KB), uiBytesRead);
 	AssertString(szSource, szRead);
 
 	bAllSuccess = true;
@@ -1341,9 +1341,9 @@ void TestFat32WriteAndSeek(void)
 			break;
 		}
 		
-		if (uiBytesRead != (size)(196 KB - i))
+		if (uiBytesRead != (lsize)(196 KB - i))
 		{
-			AssertSize((size)(196 KB - i), uiBytesRead);
+			AssertLSize((lsize)(196 KB - i), uiBytesRead);
 			bAllSuccess = false;
 			break;
 		}
@@ -1369,7 +1369,7 @@ void TestFat32SeekWriteAndRead1(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void*			pvMemory;
 	EFatCode		eResult;
 	CFatFile		cFatFile;
@@ -1382,7 +1382,7 @@ void TestFat32SeekWriteAndRead1(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -1426,7 +1426,7 @@ void TestFat32SeekWriteAndRead2(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void*			pvMemory;
 	EFatCode		eResult;
 	CFatFile		cFatFile;
@@ -1436,13 +1436,13 @@ void TestFat32SeekWriteAndRead2(void)
 	char			szThree[4];
 	char			c;
 	char			szDest[8 KB];
-	size			uiBytesRead;
+	lsize			uiBytesRead;
 	bool			bAllSuccess;
 	
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -1514,7 +1514,7 @@ void TestFat32SeekWriteAndRead3(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void*			pvMemory;
 	EFatCode		eResult;
 	CFatFile		cFatFile;
@@ -1524,13 +1524,13 @@ void TestFat32SeekWriteAndRead3(void)
 	char			szThree[4];
 	char			c;
 	char			szDest[8 KB];
-	size			uiBytesRead;
+	lsize			uiBytesRead;
 	bool			bAllSuccess;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -1611,19 +1611,19 @@ void TestFat32RenameSameLength(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void*			pvMemory;
 	EFatCode		eResult;
 	CFatFile		cFatFile;
 	bool			bResult;
 	CFatVolume		cVolume;
-	size			uiBytesRead;
+	lsize			uiBytesRead;
 	char			auiFileData[13];
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -1662,20 +1662,20 @@ void TestFat32RenameShortToLong(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void*			pvMemory;
 	EFatCode		eResult;
 	CFatFile		cFatFile;
 	bool			bResult;
 	CFatVolume		cVolume;
-	size			uiBytesRead;
+	lsize			uiBytesRead;
 	char			auiFileData[13];
 	CChars			sz;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -1719,20 +1719,20 @@ void TestFat32CreateFileRenameFileCreateFile(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void*			pvMemory;
 	EFatCode		eResult;
 	CFatFile		cFatFile;
 	bool			bResult;
 	CFatVolume		cVolume;
-	size			uiBytesRead;
+	lsize			uiBytesRead;
 	char			auiFileData[13];
 	CChars			sz;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -2028,7 +2028,7 @@ void TestFat32Delete(void)
 {
 	CMemoryDrive		cMemoryDrive;
 	CDiskFile			cFile;
-	size				uiLength;
+	lsize				uiLength;
 	void*				pvMemory;
 	EFatCode			eResult;
 	CFatFile			cFatFile;
@@ -2041,7 +2041,7 @@ void TestFat32Delete(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -2139,7 +2139,7 @@ void TestFat32WriteLargerThanOneClusterAppend(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void* pvMemory;
 	EFatCode		eResult;
 	CFatFile		cFatFile;
@@ -2147,7 +2147,7 @@ void TestFat32WriteLargerThanOneClusterAppend(void)
 	CFatVolume		cVolume;
 	char* szSource;
 	char* szRead;
-	size			uiBytesRead;
+	lsize			uiBytesRead;
 	uint64			uiMaxSectorSize;
 	CChars			sz;
 
@@ -2156,7 +2156,7 @@ void TestFat32WriteLargerThanOneClusterAppend(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -2322,7 +2322,7 @@ void TestFat32WriteLargerThanOneClusterOverwrite(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void*			pvMemory;
 	EFatCode		eResult;
 	CFatFile		cFatFile;
@@ -2330,7 +2330,7 @@ void TestFat32WriteLargerThanOneClusterOverwrite(void)
 	CFatVolume		cVolume;
 	char*			szSource;
 	char*			szRead;
-	size			uiBytesRead;
+	lsize			uiBytesRead;
 	uint64			uiMaxSectorSize;
 	int32			i;
 	bool			bAllSuccessful;
@@ -2340,7 +2340,7 @@ void TestFat32WriteLargerThanOneClusterOverwrite(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -2489,7 +2489,7 @@ void TestFat32PartionsMount(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void*			pvMemory;
 	EFatCode		eResult;
 	bool			bResult;
@@ -2498,7 +2498,7 @@ void TestFat32PartionsMount(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "SDCard4PartitionMBR.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -2523,7 +2523,7 @@ void TestFat32Close(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void*			pvMemory;
 	EFatCode		eResult;
 	CFatFile		cFatFile;
@@ -2531,12 +2531,12 @@ void TestFat32Close(void)
 	CFatVolume		cVolume;
 	static char			auiFileData[44 KB];
 	static char			auiExpectedData[44 KB];
-	size			uiBytesRead;
+	lsize			uiBytesRead;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -2546,7 +2546,7 @@ void TestFat32Close(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "SDCard.cpp");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	AssertSize(44000, uiLength);
 	cFile.Read(auiExpectedData, uiLength, 1);
 	cFile.Close();
@@ -2593,7 +2593,7 @@ void TestFat32TruncateToSmall(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void* pvMemory;
 	EFatCode		eResult;
 	CFatFile		cFatFile;
@@ -2601,13 +2601,13 @@ void TestFat32TruncateToSmall(void)
 	CFatVolume		cVolume;
 	static char			auiFileData[44 KB];
 	static char			auiExpectedData[44 KB];
-	size			uiBytesRead;
+	lsize			uiBytesRead;
 	CChars			sz;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -2617,7 +2617,7 @@ void TestFat32TruncateToSmall(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "SDCard.cpp");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	AssertSize(44000, uiLength);
 	cFile.Read(auiExpectedData, uiLength, 1);
 	cFile.Close();
@@ -2680,7 +2680,7 @@ void TestFat32OpenOverwrite(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void*			pvMemory;
 	EFatCode		eResult;
 	CFatFile		cFatFile;
@@ -2688,13 +2688,13 @@ void TestFat32OpenOverwrite(void)
 	CFatVolume		cVolume;
 	static char			auiFileData[44 KB];
 	static char			auiExpectedData[44 KB];
-	size			uiBytesRead;
+	lsize			uiBytesRead;
 	CChars			sz;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -2704,7 +2704,7 @@ void TestFat32OpenOverwrite(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "SDCard.cpp");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	AssertSize(44000, uiLength);
 	cFile.Read(auiExpectedData, uiLength, 1);
 	cFile.Close();
@@ -2764,7 +2764,7 @@ void TestFat32TruncateToZero(void)
 {
 	CMemoryDrive	cMemoryDrive;
 	CDiskFile		cFile;
-	size			uiLength;
+	lsize			uiLength;
 	void*			pvMemory;
 	EFatCode		eResult;
 	CFatFile		cFatFile;
@@ -2772,13 +2772,13 @@ void TestFat32TruncateToZero(void)
 	CFatVolume		cVolume;
 	static char			auiFileData[44 KB];
 	static char			auiExpectedData[44 KB];
-	size			uiBytesRead;
+	lsize			uiBytesRead;
 	CChars			sz;
 
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "ComplexDisk.img");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	cMemoryDrive.Init(uiLength, 512);
 	pvMemory = cMemoryDrive.GetMemory();
 	cFile.Read(pvMemory, uiLength, 1);
@@ -2788,7 +2788,7 @@ void TestFat32TruncateToZero(void)
 	cFile.Init("Input" _FS_ "Fat32" _FS_ "SDCard.cpp");
 	bResult = cFile.Open(EFM_Read);
 	AssertTrue(bResult);
-	uiLength = (size)cFile.Size();
+	uiLength = (lsize)cFile.Size();
 	AssertSize(44000, uiLength);
 	cFile.Read(auiExpectedData, uiLength, 1);
 	cFile.Close();

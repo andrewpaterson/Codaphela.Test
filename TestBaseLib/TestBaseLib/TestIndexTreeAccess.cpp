@@ -574,7 +574,7 @@ void TestIndexTreeFileAccess(const char* szSubirectory, EIndexWriteThrough eWrit
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void TestIndexTreeEvictingAccess(const char* szSubirectory, size sCacheSize, EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse, int32 iFlushFrequency)
+void TestIndexTreeEvictingAccess(const char* szSubirectory, lsize sCacheSize, EIndexWriteThrough eWriteThrough, EIndexKeyReverse eKeyReverse, int32 iFlushFrequency)
 {
 	CIndexTreeEvictingAccess 						cAccess;
 	CIndexTreeEvicting								cIndexTree;

@@ -85,9 +85,15 @@ void TestPrimitiveTypesSizes(void)
 #ifdef BUILD_64
 	AssertSize(8, sizeof(void*));
 	AssertSize(8, sizeof(size));
+	AssertSize(8, sizeof(lsize));
+#elif defined(SIZE_16)
+	AssertSize(4, sizeof(void*));
+	AssertSize(2, sizeof(size));
+	AssertSize(4, sizeof(lsize));
 #else
 	AssertSize(4, sizeof(void*));
 	AssertSize(4, sizeof(size));
+	AssertSize(4, sizeof(lsize));
 #endif // BUILD_64
 }
 

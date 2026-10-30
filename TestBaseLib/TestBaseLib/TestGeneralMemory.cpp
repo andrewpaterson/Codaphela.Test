@@ -14,6 +14,8 @@ void TestGeneralMemorySizeof(void)
 {
 #ifdef BUILD_64
 	AssertSize(320, sizeof(CGeneralMemory));
+#elif defined(SIZE_16)
+	AssertSize(120, sizeof(CGeneralMemory));
 #else
 	AssertSize(160, sizeof(CGeneralMemory));
 #endif // BUILD_64
@@ -49,9 +51,11 @@ void TestGeneralMemoryAdd(void)
 	pcListSame = cMemory.GetFreeList(8, 4, 0);
 	AssertPointer(pcList, pcListSame);
 #ifdef BUILD_64
-	AssertSize(65640, cMemory.ByteSize());
+	AssertLSize(65640, cMemory.ByteSize());
+#elif defined(SIZE_16)
+	AssertLSize(65588, cMemory.ByteSize());
 #else
-	AssertSize(65592, cMemory.ByteSize());
+	AssertLSize(65592, cMemory.ByteSize());
 #endif // BUILD_64
 
 	pv2 = cMemory.Grow(pv1, 2);
@@ -61,9 +65,11 @@ void TestGeneralMemoryAdd(void)
 	AssertPointer(pcList, CFreeList::GetSlabNode(psAlloc)->pcList);
 	AssertPointer(pv1, pv2);
 #ifdef BUILD_64
-	AssertSize(65640, cMemory.ByteSize());
+	AssertLSize(65640, cMemory.ByteSize());
+#elif defined(SIZE_16)
+	AssertLSize(65588, cMemory.ByteSize());
 #else
-	AssertSize(65592, cMemory.ByteSize());
+	AssertLSize(65592, cMemory.ByteSize());
 #endif // BUILD_64
 
 	pv4 = cMemory.Grow(pv2, 4);
@@ -103,9 +109,11 @@ void TestGeneralMemoryAdd(void)
 	pcList = cMemory.GetFreeList(8, 4, 0);
 	AssertNull(pcList);
 #ifdef BUILD_64
-	AssertSize(65640, cMemory.ByteSize());
+	AssertLSize(65640, cMemory.ByteSize());
+#elif defined(SIZE_16)
+	AssertLSize(65588, cMemory.ByteSize());
 #else
-	AssertSize(65592, cMemory.ByteSize());
+	AssertLSize(65592, cMemory.ByteSize());
 #endif // BUILD_64
 
 	cMemory.Kill();
@@ -142,9 +150,11 @@ void TestGeneralMemoryLargeAdd(void)
 	pcList = cMemory.TestGetFreeListsHead();
 	AssertNotNull(pcList);
 #ifdef BUILD_64
-	AssertSize(65640, cMemory.ByteSize());
+	AssertLSize(65640, cMemory.ByteSize());
+#elif defined(SIZE_16)
+	AssertLSize(65588, cMemory.ByteSize());
 #else
-	AssertSize(65592, cMemory.ByteSize());
+	AssertLSize(65592, cMemory.ByteSize());
 #endif // BUILD_64
 	cMemory.Kill();
 

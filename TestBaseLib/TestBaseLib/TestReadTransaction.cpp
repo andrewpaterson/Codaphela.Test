@@ -24,7 +24,7 @@ void AssertReadIndices(CReadTransaction* pcRead, OIndex oi1, OIndex oi2)
 {
 	SIndexTreeFileIterator	sIter;
 	char					szData[256];
-	size					iDataSize;
+	lsize					iDataSize;
 
 	AssertLong(oi1, pcRead->StartIndexIteration(&sIter, szData, &iDataSize, 256));
 	AssertLong(oi2, pcRead->IndexIterate(&sIter, szData, &iDataSize, 256));

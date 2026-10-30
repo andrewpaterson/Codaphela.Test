@@ -221,6 +221,11 @@ void TestArrayTemplateEmbeddedSizeof(void)
 
 	//The int is padded to the alignment of the item's virtual function table pointer.
 	AssertSize(sizeof(void*) + 3 * sizeof(CTestOverridenArrayTemplateItem), sizeof(CTestArrayTemplateEmbedded));
+#elif defined(SIZE_16)
+	AssertSize(36, 3 * sizeof(CTestOverridenArrayTemplateItem));
+	AssertSize(16, sizeof(CArrayTemplate<CTestOverridenArrayTemplateItem>));
+
+	AssertSize(sizeof(void*) + 3 * sizeof(CTestOverridenArrayTemplateItem), sizeof(CTestArrayTemplateEmbedded));
 #else
 	AssertSize(36, 3 * sizeof(CTestOverridenArrayTemplateItem));
 	AssertSize(24, sizeof(CArrayTemplate<CTestOverridenArrayTemplateItem>));

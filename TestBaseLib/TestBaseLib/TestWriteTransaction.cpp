@@ -144,7 +144,7 @@ void TestWriteTransactionRules(void)
 	char				szLonger[] = "Longer data";
 	char				szReplaced[] = "Replaced";
 	char				szResult[256];
-	size				uiDataSize;
+	lsize				uiDataSize;
 
 	cFileUtil.RemoveDir(WRITE_TRANSACTION_DIR);
 	pcDatabase = CreateTransactionTestCodabase(WRITE_TRANSACTION_DIR, DS_No);
@@ -220,7 +220,7 @@ void TestWriteTransactionIteration(void)
 	SIndexTreeFileIterator	sIter;
 	char					szData[256];
 	char					szKey[MAX_KEY_SIZE + 1];
-	size					iDataSize;
+	lsize					iDataSize;
 	OIndex					oi;
 	char					szUno[] = "Uno";
 	char					szThree[] = "Three";

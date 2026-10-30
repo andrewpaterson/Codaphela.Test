@@ -155,7 +155,7 @@ void TestCodabaseSetPutRemove(EIndexWriteThrough eWriteThrough)
 	SLogConfig	sLogConfig;
 	char		szResult[2 KB];
 	char		szName[MAX_KEY_SIZE];
-	size		uiDataSize;
+	lsize		uiDataSize;
 	size		uiNameLength;
 	char		szOne[] = "One";
 	char		szTwo[] = "Two";
@@ -283,7 +283,7 @@ void TestCodabaseIterate(EIndexWriteThrough eWriteThrough)
 	SIndexTreeFileIterator	sIter;
 	char					szResult[2 KB];
 	char					szKey[MAX_KEY_SIZE];
-	size					iDataSize;
+	lsize					iDataSize;
 	OIndex					oi;
 	bool					bResult;
 	int						iCount;

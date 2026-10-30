@@ -14,9 +14,9 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-char* FatCacheAllocateTestData(size iDataLength)
+char* FatCacheAllocateTestData(lsize iDataLength)
 {
-	size	i;
+	lsize	i;
 	char*	pvData;
 
 	iDataLength = 65 KB;
@@ -51,9 +51,9 @@ char* FatCacheAllocateTestData(size iDataLength)
 //
 //
 //////////////////////////////////////////////////////////////////////////
-void FatCacheFillTestDrive(char* pcMemory, size iDataLength)
+void FatCacheFillTestDrive(char* pcMemory, lsize iDataLength)
 {
-	size	i;
+	lsize	i;
 	char	c;
 
 	c = 'A';
@@ -91,7 +91,7 @@ void TestFatCacheWrite(void)
 	CDiskFile			cFile;
 	CFatClusterCache	cCache;
 	char*				pvData;
-	size				iDataLength;
+	lsize				iDataLength;
 	uint32				uiLength;
 
 	iDataLength = 65 KB;
@@ -175,7 +175,7 @@ void TestFatCacheDirty(void)
 	CDiskFile			cFile;
 	CFatClusterCache	cCache;
 	char*				pvData;
-	size				iDataLength;
+	lsize				iDataLength;
 	uint32				uiLength;
 
 	iDataLength = 65 KB;
@@ -239,7 +239,7 @@ void TestFatCacheDiscontiguousWrites(void)
 	CDiskFile			cFile;
 	CFatClusterCache	cCache;
 	char*				pvData;
-	size				iDataLength;
+	lsize				iDataLength;
 	uint32				uiLength;
 	uint8*				pcMemory;
 	size				iStart;
@@ -358,7 +358,7 @@ void TestFatCacheRead(void)
 	CDiskFile			cFile;
 	CFatClusterCache	cCache;
 	char*				pvData;
-	size				iDataLength;
+	lsize				iDataLength;
 	char*				pcMemory;
 	uint32				uiLength;
 	bool				bResult;
@@ -454,7 +454,7 @@ void TestFatCacheWriteLimits(void)
 	CDiskFile			cFile;
 	CFatClusterCache	cCache;
 	char*				pvData;
-	size				iDataLength;
+	lsize				iDataLength;
 	uint32				uiLength;
 	bool				bResult;
 	char*				pcMemory;
@@ -612,7 +612,7 @@ void TestFatCacheComplex(void)
 	CDiskFile			cFile;
 	CFatClusterCache	cCache;
 	char*				acData;
-	size				iDataLength;
+	lsize				iDataLength;
 	uint32				uiLength;
 	bool				bResult;
 	char*				pcDriveMemory;

@@ -62,7 +62,7 @@ void TestMemoryQueuePush(void)
 	void*			pvC;
 	void*			pvE;
 	void*			pvF;
-	size			uiDataSize;
+	lsize			uiDataSize;
 	void*			pv;
 	char			c;
 
@@ -161,7 +161,7 @@ void TestMemoryQueuePeek(void)
 	void*			pvQueue;
 	char			c;
 	void*			pv;
-	size			uiDataSize;
+	lsize			uiDataSize;
 
 	//128 bytes in a 32 bit build; room for three elements and their descriptors.
 	pvQueue = malloc(92 + 3 * sizeof(SMemoryCacheDescriptor) + sizeof(SCircularMemoryList));

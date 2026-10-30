@@ -52,6 +52,7 @@ ECPPTarget	geTestProject65Target = CPPT_65C64;
 
 
 static const char* gaszTestProject65Libc65[] = { "string.cpp", "string.asm", "stdlib.cpp", "ctype.cpp", "time.cpp", "math.cpp", "softfloat.cpp", "softfloat.asm", "new.cpp", "signal.cpp", "stdio.cpp", "host.cpp", NULL };
+static const char* gaszTestProject816Suffixes[] = { "816.asm", "816_16.asm", NULL };
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -326,6 +327,7 @@ static void TestProject65AddProjects(STestProject65* psProject, CCPP65Builder* p
 	CChars		szUnit;
 	CChars		szUnitPath;
 	size		i;
+	size		j;
 
 	TestProject65TestDirectory(psProject, &szTestDirectory);
 	szPath.Init(TEST_PROJECT65_PROJECTS "Libc65");
@@ -382,19 +384,23 @@ static void TestProject65AddProjects(STestProject65* psProject, CCPP65Builder* p
 		}
 		else
 		{
-			//The W65C816's own assembly for a 65C64 assembly unit (X816.asm for X.asm), if it has some.
-			szUnit.Init();
-			szUnit.Append(gaszTestProject65Libc65[i], (size)(strrchr(gaszTestProject65Libc65[i], '.') - gaszTestProject65Libc65[i]));
-			szUnit.Append("816.asm");
-			szUnitPath.Init(szPath);
-			szUnitPath.Append(_FS_);
-			szUnitPath.Append(szUnit);
-			if (cFileUtil.Exists(szUnitPath.Text()))
+			//The W65C816's own assembly for a 65C64 assembly unit (X816.asm for X.asm, and X816_16.asm with 16 bit
+			//counts), if it has some.
+			for (j = 0; gaszTestProject816Suffixes[j]; j++)
 			{
-				pcBuilder->AddUnit("Libc65", szPath.Text(), szUnit.Text(), true);
+				szUnit.Init();
+				szUnit.Append(gaszTestProject65Libc65[i], (size)(strrchr(gaszTestProject65Libc65[i], '.') - gaszTestProject65Libc65[i]));
+				szUnit.Append(gaszTestProject816Suffixes[j]);
+				szUnitPath.Init(szPath);
+				szUnitPath.Append(_FS_);
+				szUnitPath.Append(szUnit);
+				if (cFileUtil.Exists(szUnitPath.Text()))
+				{
+					pcBuilder->AddUnit("Libc65", szPath.Text(), szUnit.Text(), true);
+				}
+				szUnitPath.Kill();
+				szUnit.Kill();
 			}
-			szUnitPath.Kill();
-			szUnit.Kill();
 		}
 	}
 	pcBuilder->AddMathTables(szPath.Text());
@@ -580,6 +586,7 @@ void TestProject65RunTests(STestProject65* psProject)
 	CChars			szMain;
 	CChars			szMainFile;
 	CChars			szConsole;
+	CChars			szMissing;
 	CChars			szExpected;
 	CChars			szActual;
 	size			i;
@@ -639,6 +646,13 @@ void TestProject65RunTests(STestProject65* psProject)
 		bLinked = cBuilder.LinkWith(szMainFile.Text(), szMain.Text());
 		szMain.Kill();
 
+		//A label no object defines is linked as address 0: calling it runs off into bank 0.
+		szMissing.Init();
+		if (bLinked)
+		{
+			cBuilder.GetMissingNames(&szMissing);
+		}
+
 		//The test's name, and how it went if it did not pass.
 		szExpected.Init(aszTests.GetText(i));
 		szActual.Init(aszTests.GetText(i));
@@ -647,6 +661,11 @@ void TestProject65RunTests(STestProject65* psProject)
 		{
 			szActual.Append(" did not link: ");
 			szActual.Append(cBuilder.GetErrors());
+		}
+		else if (!szMissing.Empty())
+		{
+			szActual.Append(" is missing: ");
+			szActual.Append(szMissing);
 		}
 		else
 		{
@@ -662,6 +681,7 @@ void TestProject65RunTests(STestProject65* psProject)
 			iTotalRun += (iRun > 0) ? iRun : 0;
 		}
 		AssertString(szExpected.Text(), szActual.Text());
+		szMissing.Kill();
 		szConsole.Kill();
 		szActual.Kill();
 		szExpected.Kill();

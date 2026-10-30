@@ -838,7 +838,7 @@ void TestCharsLarge(void)
 	AssertSize(6, szLarge.Find("World"));
 
 	szLarge.Append('.', 70000);
-	AssertSize(70017, szLarge.Length());
+	AssertLSize(70017, szLarge.Length());
 	AssertChar('.', szLarge.GetChar(70016));
 	AssertTrue(szLarge.EndsWith("..."));
 

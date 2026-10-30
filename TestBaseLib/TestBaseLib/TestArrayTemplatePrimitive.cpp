@@ -35,8 +35,8 @@ void TestArrayTemplatePrimitive(void)
 	AssertTrue(aLargeChars.Find('Z') == ARRAY_LARGE_ELEMENT_NOT_FOUND);
 	aLargeChars.GrowToAtLeastNumElements(70000, true, 0);
 	aLargeChars.SetValue(69999, 'Z');
-	AssertSize(70000, aLargeChars.NumElements());
-	AssertSize(69999, aLargeChars.Find('Z'));
+	AssertLSize(70000, aLargeChars.NumElements());
+	AssertLSize(69999, aLargeChars.Find('Z'));
 	aLargeChars.Kill();
 
 	aFloats.Init();

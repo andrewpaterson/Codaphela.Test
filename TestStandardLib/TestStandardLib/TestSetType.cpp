@@ -69,7 +69,7 @@ void TestSetTypeInstantiation(void)
 #ifdef BUILD_64
 	AssertSize(104, iSize);
 #else
-	AssertInt((uint32)52, iSize);
+	AssertSize(52, iSize);
 #endif // BUILD_64
 
 	szName = cSet.ClassName();

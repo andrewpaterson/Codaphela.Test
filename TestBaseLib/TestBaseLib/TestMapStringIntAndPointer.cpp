@@ -146,7 +146,7 @@ void TestMapStringIntAndPointerRemove(void)
 		bPass = TestNumberMatchesIndex(&cMap, &aiKeys);
 		AssertTrue(bPass);
 		ui--;
-	} while (ui != SIZE_MAX);
+	} while (ui != MAX_SIZE);
 
 	uiSize = cMap.NumElements();
 	AssertSize(0, uiSize);

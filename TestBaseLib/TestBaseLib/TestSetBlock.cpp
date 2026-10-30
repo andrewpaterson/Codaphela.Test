@@ -71,7 +71,7 @@ void TestSetBlockInternals(void)
 	SSNode**			psNode2;
 	size*				piKey;
 
-	cSet.Init(&CompareInt, true);
+	cSet.Init(&CompareSize, true);
 	i = 7;
 	cSet.Put(&i, sizeof(size));
 
@@ -230,7 +230,7 @@ void TestSetBlockAddDuplicate(void)
 	bool		bResult;
 
 
-	cSet.Init(&CompareInt, true);
+	cSet.Init(&CompareSize, true);
 	bResult = cSet.Put(&ia, sizeof(size));
 	AssertTrue(bResult);
 	AssertSize(1, cSet.NumElements());
@@ -257,7 +257,7 @@ void TestSetBlockRemove(void)
 	size		ic = 'c';
 	bool		bResult;
 
-	cSet.Init(&CompareInt, true);
+	cSet.Init(&CompareSize, true);
 	bResult = cSet.Put(&ia, sizeof(size));
 	bResult = cSet.Put(&ib, sizeof(size));
 	bResult = cSet.Put(&ic, sizeof(size));

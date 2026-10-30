@@ -279,6 +279,104 @@ void TestLibc65StringFills(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The W65C816's 16 bit count memcpy16, memmove16, memset16, memcmp16 and
+// BaseLib's MemSwp16 (string816_16.asm, for BaseLib's natural arrays)
+// across 64KB boundaries: a copy up, overlapping moves down and up, a fill
+// across a bank and one within it, a fill of 0 bytes, compares that are
+// equal or differ in a word's first or second byte, and a swap.  The program
+// returns the compares and swapped bytes wrong.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestLibc65String16(void)
+{
+	static const char*	aszUnits[] = { "string.cpp", "string.asm", NULL };
+	STestLibc65Run		sRun;
+	unsigned char		aucSource[512];
+	unsigned char		aucDown[512];
+	unsigned char		aucUp[512];
+	unsigned char		aucFill[100];
+	int					i;
+
+	if (geTestLibc65Target != CPPT_W65C816)
+	{
+		return;
+	}
+
+	//The program's pc is 0x108000 (TestLibc65Bytes' offset 0); the banks start at offsets 0x8000, 0x18000 and on.
+	AssertTrue(TestLibc65Begin(&sRun, aszUnits, "",
+		"#include <string.h>\n"
+		"void MemSwp16(const void* pv1, const void* pv2, unsigned short uiLength);\n"
+		"int main()\n"
+		"{\n"
+		"	unsigned char*	pc;\n"
+		"	long			i;\n"
+		"	int				iWrong;\n"
+		"	pc = (unsigned char*)0x108000;\n"
+		"	for (i = 0; i < 512; i++)\n"
+		"	{\n"
+		"		pc[0x7F00 + i] = (unsigned char)(i * 7 + 1);\n"
+		"		pc[0x27F00 + i] = (unsigned char)(i * 7 + 1);\n"
+		"		pc[0x37F00 + i] = (unsigned char)(i * 7 + 1);\n"
+		"		pc[0x57F00 + i] = (unsigned char)(i * 3);\n"
+		"		pc[0x67F00 + i] = (unsigned char)(i * 11 + 5);\n"
+		"	}\n"
+		"	memcpy16(pc + 0x17F40, pc + 0x7F00, 512);\n"
+		"	memmove16(pc + 0x27F00 + 37, pc + 0x27F00, 400);\n"
+		"	memmove16(pc + 0x37F00, pc + 0x37F00 + 37, 400);\n"
+		"	memset16(pc + 0x47FF0, 0x5A, 100);\n"
+		"	memset16(pc + 0x50010, 0xA5, 77);\n"
+		"	memset16(pc + 0x50100, 0x11, 0);\n"
+		"	iWrong = 0;\n"
+		"	iWrong += memcmp16(pc + 0x7F00, pc + 0x17F40, 512) != 0;\n"
+		"	iWrong += memcmp16(pc, pc + 1, 0) != 0;\n"
+		"	pc[0x17F40 + 300] ^= 0x80;\n"
+		"	iWrong += memcmp16(pc + 0x7F00, pc + 0x17F40, 512) >= 0;\n"
+		"	iWrong += memcmp16(pc + 0x7F00, pc + 0x17F40, 300) != 0;\n"
+		"	iWrong += memcmp16(pc + 0x7F00, pc + 0x17F40, 301) >= 0;\n"
+		"	pc[0x17F40 + 101] ^= 0x80;\n"
+		"	iWrong += memcmp16(pc + 0x7F00, pc + 0x17F40, 512) <= 0;\n"
+		"	iWrong += memcmp16(pc + 0x7F00, pc + 0x17F40, 101) != 0;\n"
+		"	pc[0x17F40 + 101] ^= 0x80;\n"
+		"	pc[0x17F40 + 300] ^= 0x80;\n"
+		"	MemSwp16(pc + 0x57F00, pc + 0x67F00, 0);\n"
+		"	MemSwp16(pc + 0x57F00, pc + 0x67F00, 301);\n"
+		"	for (i = 0; i < 512; i++)\n"
+		"	{\n"
+		"		iWrong += pc[0x57F00 + i] != ((i < 301) ? (unsigned char)(i * 11 + 5) : (unsigned char)(i * 3));\n"
+		"		iWrong += pc[0x67F00 + i] != ((i < 301) ? (unsigned char)(i * 3) : (unsigned char)(i * 11 + 5));\n"
+		"	}\n"
+		"	return iWrong;\n"
+		"}\n"));
+	AssertTrue(TestLibc65Run(&sRun, 4000000));
+	AssertInt(0, TestLibc65Return(&sRun));
+
+	for (i = 0; i < 512; i++)
+	{
+		aucSource[i] = (unsigned char)(i * 7 + 1);
+		aucDown[i] = (unsigned char)(i * 7 + 1);
+		aucUp[i] = (unsigned char)(i * 7 + 1);
+	}
+	memmove(aucDown + 37, aucDown, 400);
+	memmove(aucUp, aucUp + 37, 400);
+	memset(aucFill, 0x5A, 100);
+	AssertMemory(aucSource, TestLibc65Bytes(&sRun, 0x17F40), 512);
+	AssertMemory(aucDown, TestLibc65Bytes(&sRun, 0x27F00), 512);
+	AssertMemory(aucUp, TestLibc65Bytes(&sRun, 0x37F00), 512);
+	AssertMemory(aucFill, TestLibc65Bytes(&sRun, 0x47FF0), 100);
+	AssertTrue(TestLibc65Bytes(&sRun, 0x47FEF)[0] == 0);
+	AssertTrue(TestLibc65Bytes(&sRun, 0x47FF0 + 100)[0] == 0);
+	memset(aucFill, 0xA5, 77);
+	AssertMemory(aucFill, TestLibc65Bytes(&sRun, 0x50010), 77);
+	AssertTrue(TestLibc65Bytes(&sRun, 0x5000F)[0] == 0);
+	AssertTrue(TestLibc65Bytes(&sRun, 0x50010 + 77)[0] == 0);
+	AssertTrue(TestLibc65Bytes(&sRun, 0x50100)[0] == 0);
+
+	TestLibc65End(&sRun);
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestLibc65String(void)
@@ -289,6 +387,7 @@ void TestLibc65String(void)
 	TestLibc65StringRandomCases();
 	TestLibc65StringBanks();
 	TestLibc65StringFills();
+	TestLibc65String16();
 
 	TestStatistics();
 }

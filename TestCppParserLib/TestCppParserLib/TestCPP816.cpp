@@ -42,7 +42,7 @@ uint64	TestCPP65FloatUlps(uint32 uiActual, uint32 uiExpected);
 
 
 //Libc65's units for the W65C816 (no 65C64 assembly).
-static const char* gaszTestCPP816Libc65[] = { "string.cpp", "string816.asm", "stdlib.cpp", "ctype.cpp", "time.cpp", "math.cpp", "softfloat.cpp", "new.cpp", "signal.cpp", "stdio.cpp", "host.cpp", NULL };
+static const char* gaszTestCPP816Libc65[] = { "string.cpp", "string816.asm", "string816_16.asm", "stdlib.cpp", "ctype.cpp", "time.cpp", "math.cpp", "softfloat.cpp", "new.cpp", "signal.cpp", "stdio.cpp", "host.cpp", NULL };
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -888,6 +888,54 @@ void TestCPP816ExitValues(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// Optimisations whose IR tests are in TestIR, run: a load isn't moved past
+// a store that may write it (SinkLoads), an instruction both ways of an if
+// work out is worked out once (HoistCommon), and a loop's counter is
+// replaced by the other value it steps (ReplaceLoopCounters), n = 0 too.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816MovedCode(void)
+{
+	AssertInt(10,
+		TestCPP816Run(
+			"int H(int* p, int* q, int f) { int v = *p; if (f) { *q = 5; return v; } return 0; }\n"
+			"int main(void) { int a = 1; int r = H(&a, &a, 1) * 10; return r + H(&a, &a, 0); }\n", true));
+	AssertInt((3 * 4 + 1 + 100) + (5 * 2 - 1),
+		TestCPP816Run(
+			"int K(int a, int b, int f) { int c = a < b; int r; if (f) r = a * b + 1; else r = a * b - 1; if (c) r += 100; return r; }\n"
+			"int main(void) { return K(3, 4, 1) + K(5, 2, 0); }\n", true));
+	AssertInt(3 + 4 + 5 + 6 + 7,
+		TestCPP816Run(
+			"int L(const char* p, int x0, int n) { int s = 0; int x = x0; for (int i = 0; i < n; i++) { s += p[x]; x++; } return s; }\n"
+			"int main(void) { char a[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }; return L(a, 2, 5) + L(a, 0, 0) * 100; }\n", true));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// BaseLib units compiled for the W65C816 without errors: the IR of each
+// function verifies after the optimiser (Float32Vec2TransformCoords's two
+// muls of its counter once read a moved instruction's result, and the
+// first parameter was replaced).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816CompileBaseLibUnits(void)
+{
+	static const char*	aszUnits[] = { "BaseLib/Float32Vec2.cpp", "BaseLib/Float32Vec3.cpp", "BaseLib/Float32Vec4.cpp", NULL };
+	CCPP65Builder		cBuilder;
+
+	cBuilder.Init();
+	cBuilder.SetTarget(CPPT_W65C816);
+	TestCPP65AddIncludeDirectories(&cBuilder);
+	TestCPP65AddUnits(&cBuilder, aszUnits, false);
+	cBuilder.Link();
+	AssertString("", cBuilder.GetErrors());
+	cBuilder.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // A restrict global pointer promises that what it reaches isn't reached
 // another way.  Here it breaks the promise, pointing at the int the loop
 // reads: with __restrict the read leaves the loop and sees the int before
@@ -1529,6 +1577,136 @@ void TestCPP816RangeWarnings(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// What making BaseLib's size 16 bits on the W65C816 (with a 32 bit lsize)
+// turned up.  Libc65's printf read %ld as a 16 bit int.  MemSwp is string816.asm's (lsize length): when BaseLib
+// declared it with a size length the call named a label nothing defined, and
+// its stub was the 65C64's stp, which the W65C816 ran as something else: the
+// sorts called address 0.  A missing name's stub now stops the W65C816.  A
+// pointer to a 16 bit value passed for a pointer to a 32 bit one, and a call
+// that matches two overloads (size and lsize), are errors that say so, not
+// "doesn't support yet".  A 16 bit multiply widened to 64 bits (a key made
+// from a 16 bit index) is warned about, and so is a comparison that can't
+// change once the values are followed (a 16 bit "not found" widened and
+// compared with the 32 bit one).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCPP816SizeLsizeBugs(void)
+{
+	CCPP65Builder	cBuilder;
+	CChars			szAssembly;
+	CChars			szErrors;
+	CAsm65Memory	cMemory;
+	int64			lliAddress;
+
+	//BaseLib's sorts swap with MemSwp.
+	AssertInt(1 + 3 * 10, TestCPP816RunProject(NULL, "",
+		"#include \"BaseLib/ArrayUint.h\"\n"
+		"int main(void)\n"
+		"{\n"
+		"\tCArrayUint\tc;\n"
+		"\tint\t\t\tr;\n"
+		"\tc.Init();\n"
+		"\tc.Add(3);\n"
+		"\tc.Add(1);\n"
+		"\tc.Add(2);\n"
+		"\tc.BubbleSort();\n"
+		"\tr = c[0] + c[2] * 10;\n"
+		"\tc.QuickSort();\n"
+		"\tc.Kill();\n"
+		"\treturn r;\n"
+		"}\n", false, NULL, 0, TEST_CPP816_SLOW_STEPS, true));
+
+	//printf's l is a long, not an int: an int is 16 bits on the W65C816.
+	AssertInt(1, TestCPP816RunProject(NULL, "",
+		"#include <stdio.h>\n"
+		"#include <string.h>\n"
+		"int main(void)\n"
+		"{\n"
+		"\tchar\tsz[64];\n"
+		"\tsprintf(sz, \"%ld %lu %d %lx %u\", -65588L, 65588UL, 7, 0x12345678UL, 9u);\n"
+		"\treturn strcmp(sz, \"-65588 65588 7 12345678 9\") == 0;\n"
+		"}\n", false, NULL, 0, TEST_CPP816_SLOW_STEPS, true));
+
+	//TestMemoryQueue's FillQueueElement: uiSize - 1 is both widened for memset and a store's folded index (Y).  Its
+	//store to the frame was dropped (the zext's lda right after took it from A), so Y was read from a slot never
+	//written and the '\0' went somewhere else.
+	AssertInt(1, TestCPP816RunProject(NULL, "",
+		"#include <string.h>\n"
+		"void Fill(void* pvData, unsigned short uiSize, char c)\n"
+		"{\n"
+		"\tif (pvData && uiSize > 1)\n"
+		"\t{\n"
+		"\t\tmemset(pvData, c, uiSize - 1);\n"
+		"\t\t((char*)pvData)[uiSize - 1] = '\\0';\n"
+		"\t}\n"
+		"}\n"
+		"int main(void)\n"
+		"{\n"
+		"\tchar\tac[40];\n"
+		"\tmemset(ac, 'x', 40);\n"
+		"\tFill(ac, 28, 'D');\n"
+		"\treturn (ac[26] == 'D') && (ac[27] == '\\0') && (ac[28] == 'x');\n"
+		"}\n", false, NULL, 0, TEST_CPP816_SLOW_STEPS, true));
+
+	//No conversion from unsigned short* to unsigned long*.
+	cBuilder.Init();
+	szAssembly.Init();
+	szErrors.Init();
+	AssertFalse(CCPP65Builder::Generate(&szAssembly, &szErrors, cBuilder.GetIncludeDirectories(), "Test.cpp",
+		"void F(unsigned long* pul) { *pul = 7; }\n"
+		"int main(void) { unsigned short u; F(&u); return u; }\n", false, NULL, CPPT_W65C816));
+	AssertNull(strstr(szErrors.Text(), "doesn't support"));
+	AssertNull(strstr(szErrors.Text(), "Unknown instruction"));
+	AssertNotNull(strstr(szErrors.Text(), "No function matches the arguments (unsigned short*): it takes (unsigned long*)"));
+	szErrors.Kill();
+	szAssembly.Kill();
+	cBuilder.Kill();
+
+	//An int matches a size and an lsize parameter as well.
+	cBuilder.Init();
+	szAssembly.Init();
+	szErrors.Init();
+	AssertFalse(CCPP65Builder::Generate(&szAssembly, &szErrors, cBuilder.GetIncludeDirectories(), "Test.cpp",
+		"void M(void* p, unsigned short u);\n"
+		"void M(void* p, unsigned long u);\n"
+		"int main(void) { char a[4]; M(a, 6); return 0; }\n", false, NULL, CPPT_W65C816));
+	AssertNull(strstr(szErrors.Text(), "doesn't support"));
+	AssertNotNull(strstr(szErrors.Text(), "The call is ambiguous"));
+	szErrors.Kill();
+	szAssembly.Kill();
+	cBuilder.Kill();
+
+	//The stub a name nothing defines is linked to is the W65C816's stp ($DB), not the 65C64's.
+	cBuilder.Init();
+	cBuilder.SetTarget(CPPT_W65C816);
+	TestCPP65AddIncludeDirectories(&cBuilder);
+	AssertTrue(cBuilder.AddStartUp());
+	AssertTrue(cBuilder.AddSource("Test.cpp", "void Missing(void);\nint main(void) { Missing(); return 5; }\n"));
+	AssertTrue(cBuilder.Link());
+	AssertSize(1, cBuilder.NumMissing());
+	AssertTrue(cBuilder.GetSymbol("_Missing", &lliAddress));
+	cMemory.Init(ASM65_MEMORY_LOW_SIZE);
+	cMemory.Load(cBuilder.GetOutput());
+	AssertInt(0xDB, cMemory.GetByte((uint32)lliAddress));
+	cMemory.Kill();
+	cBuilder.Kill();
+
+	//TestIndexPtr's keys: ui * 0x39e7 multiplied in 16 bits, then widened.
+	AssertInt(1, TestCPP816CountWarnings("long long gl;\nvoid F(unsigned short ui) { gl = ui * 0x39e7; }\n", "widened after it may have wrapped"));
+	AssertInt(1, TestCPP816CountWarnings("void* Remap(void* pv, long l);\nvoid* F(void* pv, unsigned short ui) { return Remap(pv, ui << 3); }\n", "widened after it may have wrapped"));
+	AssertInt(0, TestCPP816CountWarnings("long long gl;\nvoid F(unsigned short ui) { gl = (long long)ui * 0x39e7; }\n", "widened after it may have wrapped"));
+	AssertInt(0, TestCPP816CountWarnings("long long gl;\nvoid F(unsigned short ui) { gl = (long long)(ui * 0x39e7); }\n", "widened after it may have wrapped"));
+	AssertInt(0, TestCPP816CountWarnings("long gl;\nvoid F(unsigned short ui) { gl = ui + 1; }\n", "widened after it may have wrapped"));
+
+	//CChars::PassifyNewlines: ::PassifyNewlines' 16 bit MAX_SIZE in a 32 bit lsize, compared with MAX_LSIZE.
+	AssertInt(1, TestCPP816CountWarnings("unsigned short Find(void);\nint F(void) { unsigned long ul; ul = Find(); if (ul != 0xFFFFFFFFUL) { return 1; } return 0; }\n", "Comparison is always true: a 16 bit value, zero extended, is compared with 4294967295"));
+	AssertInt(0, TestCPP816CountWarnings("unsigned long Find(void);\nint F(void) { unsigned long ul; ul = Find(); if (ul != 0xFFFFFFFFUL) { return 1; } return 0; }\n", "Comparison is always"));
+	AssertInt(0, TestCPP816CountWarnings("unsigned short Find(void);\nint F(void) { unsigned long ul; ul = Find(); if (ul != 0xFFFFUL) { return 1; } return 0; }\n", "Comparison is always"));
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestCPP816(void)
@@ -1555,12 +1733,15 @@ void TestCPP816(void)
 	TestCPP816RestrictParameter();
 	TestCPP816LocalSymbols();
 	TestCPP816ExitValues();
+	TestCPP816MovedCode();
+	TestCPP816CompileBaseLibUnits();
 	TestCPP816NewDelete();
 	TestCPP816Floats();
 	TestCPP816TestBaseLibBugs();
 	TestCPP816ConstantShifts();
 	TestCPP816Warnings();
 	TestCPP816RangeWarnings();
+	TestCPP816SizeLsizeBugs();
 	TestCPP816DestructorCalls();
 
 	CW65C816InstructionFactory::GetInstance()->Kill();

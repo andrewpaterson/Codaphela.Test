@@ -6,6 +6,7 @@
 
 
 typedef CArrayTemplate<STestArrayTemplateItem> CTestArrayTemplate;
+typedef CArrayLargeTemplate<STestArrayTemplateItem> CTestLargeArrayTemplate;
 typedef CArrayTemplate<CTestOverridenArrayTemplateItem> CTestOverriddenArray;
 
 
@@ -229,6 +230,45 @@ bool TestArrayTemplateCheckOrder(CTestArrayTemplate* pasTestArrayTemplate, size 
 //
 //
 //////////////////////////////////////////////////////////////////////////
+void TestArrayTemplateInitialiseArray(CTestLargeArrayTemplate* pasTestArrayTemplate, lsize iNumElements)
+{
+	lsize						i;
+	STestArrayTemplateItem*		psItem;
+
+	pasTestArrayTemplate->Init();
+	for (i = 0; i < iNumElements; i++)
+	{
+		psItem = pasTestArrayTemplate->Add();
+		psItem->i1 = psItem->i2 = (int32)i;
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+bool TestArrayTemplateCheckOrder(CTestLargeArrayTemplate* pasTestArrayTemplate, lsize iNumElements)
+{
+	lsize						i;
+	STestArrayTemplateItem*		psItem;
+
+	for (i = 0; i < iNumElements; i++)
+	{
+		psItem = pasTestArrayTemplate->Get(i);
+		if (!((psItem->i1 == (int32)i) && (psItem->i2 == (int32)i)))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
 void TestArrayTemplateBubbleSort(int32 iSeed, size iArraySize)
 {
 	CTestArrayTemplate	asTestArrayTemplate;
@@ -279,6 +319,53 @@ void TestArrayTemplateTimSort(int32 iSeed, size iArraySize)
 {
 	CTestArrayTemplate	asTestArrayTemplate;
 	CRandom				cRandom;
+
+	TestArrayTemplateInitialiseArray(&asTestArrayTemplate, iArraySize);
+
+	cRandom.Init(iSeed);
+	asTestArrayTemplate.Shuffle(&cRandom);
+	cRandom.Kill();
+
+	asTestArrayTemplate.TimSort(&SortTestArrayTemplateItemFunc);
+
+	AssertTrue(TestArrayTemplateCheckOrder(&asTestArrayTemplate, iArraySize));
+
+	asTestArrayTemplate.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// Past 64KB (8 byte items) on 16 bit targets: a large array.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayTemplateLargeQuickSort(int32 iSeed, lsize iArraySize)
+{
+	CTestLargeArrayTemplate	asTestArrayTemplate;
+	CRandom					cRandom;
+
+	TestArrayTemplateInitialiseArray(&asTestArrayTemplate, iArraySize);
+
+	cRandom.Init(iSeed);
+	asTestArrayTemplate.Shuffle(&cRandom);
+	cRandom.Kill();
+
+	asTestArrayTemplate.QuickSort(&SortTestArrayTemplateItemFunc);
+
+	AssertTrue(TestArrayTemplateCheckOrder(&asTestArrayTemplate, iArraySize));
+
+	asTestArrayTemplate.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////
+void TestArrayTemplateLargeTimSort(int32 iSeed, lsize iArraySize)
+{
+	CTestLargeArrayTemplate	asTestArrayTemplate;
+	CRandom					cRandom;
 
 	TestArrayTemplateInitialiseArray(&asTestArrayTemplate, iArraySize);
 
@@ -773,11 +860,11 @@ void TestArrayTemplate(void)
 	TestArrayTemplateCopy();
 	TestArrayTemplateBubbleSort(89037124, 1000);
 	TestArrayTemplateQuickSort(79543983, 1000);
-	TestArrayTemplateQuickSort(87459345, 10000);
-	TestArrayTemplateQuickSort(32884993, 100000);
+	TestArrayTemplateLargeQuickSort(87459345, 10000);
+	TestArrayTemplateLargeQuickSort(32884993, 100000);
 	TestArrayTemplateTimSort(23758469, 1000);
-	TestArrayTemplateTimSort(87758402, 10000);
-	TestArrayTemplateTimSort(45987231, 100000);
+	TestArrayTemplateLargeTimSort(87758402, 10000);
+	TestArrayTemplateLargeTimSort(45987231, 100000);
 	TestArrayTemplateRemove();
 	TestArrayTemplateFake();
 	TestArrayTemplateInsertBatch();

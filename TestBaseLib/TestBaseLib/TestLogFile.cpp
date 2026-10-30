@@ -388,7 +388,7 @@ void TestLogFileExtendLastWriteLarge(void)
 		}
 		AssertSize(1, cFile.Write(auiChunk, 1000, 1));
 		AssertSize(1, pcLogFile->GetNumWrites());
-		AssertSize((i + 1) * 1000, pcLogFile->GetWriteSize(0));
+		AssertLSize((lsize)(i + 1) * 1000, pcLogFile->GetWriteSize(0));
 	}
 
 	AssertTrue(pcLogFile->Commit());
@@ -403,7 +403,7 @@ void TestLogFileExtendLastWriteLarge(void)
 	{
 		for (j = 0; j < 1000; j++)
 		{
-			if (puiData[i * 1000 + j] != (uint8)(i + j * 7))
+			if (puiData[(lsize)i * 1000 + j] != (uint8)(i + j * 7))
 			{
 				bMatch = false;
 			}

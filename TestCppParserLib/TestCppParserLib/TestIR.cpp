@@ -1436,6 +1436,38 @@ void TestIROptimiserReduceMultiplies(void)
 		"loop:\n\t%y = phi i16 [entry, %y0], [loop, %y2]\n\t%s = phi i16 [entry, 0], [loop, %s2]\n"
 		"\t%m = mul i16 %y, %s\n\t%s2 = xor i16 %s, %m\n\t%y2 = add i16 %y, 1\n\t%d = slt i16 %y2, %n\n\tbrif %d, loop, exit\n"
 		"exit:\n\tret i16 %s2\n}\n");
+	//Two muls of the counter in one block, each by its own stride (BaseLib's Float32Vec2TransformCoords; whether the
+	//adds put in the block move its instructions depends on its size: TestCPP816CompileBaseLibUnits compiles that).
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function void @_T__FPcsPcss(ptr %out, i16 %so, ptr %in, i16 %si, i16 %n)\n"
+		"{\n"
+		"entry:\n"
+		"\t%g = slt i16 0, %n\n"
+		"\tbrif %g, loop, exit\n"
+		"loop:\n"
+		"\t%i = phi i16 [loop, %i2], [entry, 0]\n"
+		"\t%0 = phi i16 [loop, %3], [entry, 0]\n"
+		"\t%1 = phi i16 [loop, %2], [entry, 0]\n"
+		"\t%ax = sext i16 %0 to i32\n"
+		"\t%p = call ptr @_Remap(ptr %out, i32 %ax)\n"
+		"\t%bx = sext i16 %1 to i32\n"
+		"\t%q = call ptr @_Remap(ptr %in, i32 %bx)\n"
+		"\tcall void @_Use(ptr %p, ptr %q)\n"
+		"\t%i2 = add i16 %i, 1\n"
+		"\t%2 = add i16 %1, %si\n"
+		"\t%3 = add i16 %0, %so\n"
+		"\t%d = slt i16 %i2, %n\n"
+		"\tbrif %d, loop, exit\n"
+		"exit:\n"
+		"\tret\n"
+		"}\n",
+		"space default 4\n\nfunction void @_T__FPcsPcss(ptr %out, i16 %so, ptr %in, i16 %si, i16 %n)\n{\nentry:\n\t%g = slt i16 0, %n\n\tbrif %g, loop, exit\n"
+		"loop:\n\t%i = phi i16 [entry, 0], [loop, %i2]\n\t%a = mul i16 %i, %so\n\t%ax = sext i16 %a to i32\n\t%p = call ptr @_Remap(ptr %out, i32 %ax)\n"
+		"\t%b = mul i16 %i, %si\n\t%bx = sext i16 %b to i32\n\t%q = call ptr @_Remap(ptr %in, i32 %bx)\n\tcall void @_Use(ptr %p, ptr %q)\n"
+		"\t%i2 = add i16 %i, 1\n\t%d = slt i16 %i2, %n\n\tbrif %d, loop, exit\n"
+		"exit:\n\tret\n}\n");
 	//y stepped on one way round only: its web (the head's phi, y + 1, the phi joining them) has a product web.
 	AssertIROptimised(
 		"space default 4\n"
@@ -1471,6 +1503,25 @@ void TestIROptimiserReduceMultiplies(void)
 		"join:\n\t%y3 = phi i16 [loop, %y], [step, %y2]\n\t%m = mul i16 %y3, %w\n\t%s2 = xor i16 %s, %m\n"
 		"\t%i2 = add i16 %i, 1\n\t%d = slt i16 %i2, %n\n\tbrif %d, loop, exit\n"
 		"exit:\n\tret i16 %s2\n}\n");
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// x * 0 and x & 0 are 0.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIROptimiserTimesZero(void)
+{
+	AssertIROptimised(
+		"space default 4\n"
+		"\n"
+		"function i16 @_F__Fs(i16 %x)\n"
+		"{\n"
+		"entry:\n"
+		"\tret i16 0\n"
+		"}\n",
+		"space default 4\n\nfunction i16 @_F__Fs(i16 %x)\n{\nentry:\n\t%a = mul i16 %x, 0\n\t%b = and i16 %x, 0\n\t%c = mul i16 0, %x\n\t%d = add i16 %a, %b\n\t%e = add i16 %d, %c\n\tret i16 %e\n}\n");
 }
 
 
@@ -2684,6 +2735,7 @@ void TestIR(void)
 	TestIROptimiserExitValues();
 	TestIROptimiserSinkAndHoist();
 	TestIROptimiserReduceMultiplies();
+	TestIROptimiserTimesZero();
 
 	TestStatistics();
 }

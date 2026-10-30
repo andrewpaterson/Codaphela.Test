@@ -100,12 +100,12 @@ void TestIndexPtrIterate(void)
 	memset(szExpected, 0, 6);
 	cIndex.Init();
 
-	szMemory = (char*)malloc((size)12000 * 6);
+	szMemory = (char*)malloc((lsize)12000 * 6);
 	bValid = true;
 	for (ui = 0; ui < 12000; ui++)
 	{
-		iKey = ui * 0x39e7;
-		szValue = (char*)RemapSinglePointer(szMemory, ui * 6);
+		iKey = (int64)ui * 0x39e7;
+		szValue = (char*)RemapSinglePointer(szMemory, (lsize)ui * 6);
 		SizeToString(szValue, 6, ui);
 		bValid &= cIndex.Put((uint8*)&iKey, sizeof(int64), szValue);
 		if (!bValid)

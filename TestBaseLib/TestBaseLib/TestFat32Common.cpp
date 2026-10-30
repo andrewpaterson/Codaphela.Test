@@ -7,11 +7,11 @@
 //
 //
 //////////////////////////////////////////////////////////////////////////
-char* AllocateStringBuffer(size uiSize)
+char* AllocateStringBuffer(lsize uiSize)
 {
 	char*	 szSource;
 	char	c;
-	size	i;
+	lsize	i;
 
 	szSource = (char*)malloc(uiSize);
 	c = 'A';

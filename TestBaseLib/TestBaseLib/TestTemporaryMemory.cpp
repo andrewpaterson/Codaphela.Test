@@ -20,7 +20,7 @@ void TestTemporaryMemorySize(void)
 	pv = cTemp.Size(9);
 	AssertPointer(pvOld, pv);
 	pvOld = pv;
-	pv = cTemp.Size((size)1024 * 1024);
+	pv = cTemp.Size((lsize)1024 * 1024);
 	AssertFalse(pvOld == pv);
 
 	cTemp.Kill();
