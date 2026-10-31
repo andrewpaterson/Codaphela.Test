@@ -460,6 +460,16 @@ void TestFindChar(void)
 	sz = FindChar(szDotted, 'z', true);
 	AssertNull((void*)sz);
 
+	//Forwards: not found, the terminator isn't found either, and no string.
+	sz = FindChar(szDotted, 'z');
+	AssertNull((void*)sz);
+
+	sz = FindChar(szDotted, '\0');
+	AssertNull((void*)sz);
+
+	sz = FindChar(NULL, '.');
+	AssertNull((void*)sz);
+
 	sz = FindChar(NULL, '.', true);
 	AssertNull((void*)sz);
 

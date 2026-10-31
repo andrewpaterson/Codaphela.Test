@@ -455,6 +455,39 @@ void TestCPP816Statements(void)
 		"}\n"
 		"int main(void) { return Pick(0) + Pick(1) + Pick(5) + Pick(9); }\n"));
 
+	//alignas on a class and on members lays them out as MSVC does (BaseLib reads and writes them as raw bytes), also
+	//inside #pragma pack(1).
+	AssertInt(8 + 8 * 10 + 16 * 100 + 8 * 1000, TestCPP816Run(
+		"struct alignas(8) A { char c; };\n"
+		"struct B { char c; alignas(4) char d; };\n"
+		"struct C { char c; A a; };\n"
+		"int main(void) { C c; return sizeof(A) + sizeof(B) * 10 + sizeof(C) * 100 + (int)((char*)&c.a - (char*)&c) * 1000; }\n"));
+	AssertInt(4 + 8 * 10 + 4 * 100, TestCPP816Run(
+		"struct alignas(long) D { char c; };\n"
+		"#pragma pack(push, 1)\n"
+		"struct P { char c; alignas(4) int i; };\n"
+		"#pragma pack(pop)\n"
+		"int main(void) { P p; return sizeof(D) + sizeof(P) * 10 + (int)((char*)&p.i - (char*)&p) * 100; }\n"));
+
+	//Attributed statements ([[fallthrough]];, [[likely]] if) compile to the statements.
+	AssertInt(3 + 2 + 0 + 1, TestCPP816Run(
+		"int Fall(int i)\n"
+		"{\n"
+		"\tint r = 0;\n"
+		"\tswitch (i)\n"
+		"\t{\n"
+		"\tcase 1:\n"
+		"\t\tr += 1;\n"
+		"\t\t[[fallthrough]];\n"
+		"\tcase 2:\n"
+		"\t\tr += 2;\n"
+		"\t\tbreak;\n"
+		"\t}\n"
+		"\t[[likely]] if (i > 2) r++;\n"
+		"\treturn r;\n"
+		"}\n"
+		"int main(void) { return Fall(1) + Fall(2) + Fall(0) + Fall(3); }\n"));
+
 	AssertInt(720 / 7 + 720 % 7 + (720 >> 3) + (-720 >> 2) + (3 << 4), TestCPP816Run(
 		"int Factorial(int n) { int r = 1; do { r *= n; n--; } while (n > 1); return r; }\n"
 		"int main(void) { int f = Factorial(6); int m = -f; return f / 7 + f % 7 + (f >> 3) + (m >> 2) + (3 << 4); }\n", true));

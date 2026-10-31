@@ -2483,6 +2483,80 @@ void TestFat32WriteLargerThanOneClusterOverwrite(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The drive's image, read into it.  Returns its length.
+//
+//////////////////////////////////////////////////////////////////////////
+lsize TestFat32ReadImage(CMemoryDrive* pcDrive, const char* szName)
+{
+	CDiskFile	cFile;
+	CChars		szPath;
+	lsize		uiLength;
+
+	szPath.Init("Input" _FS_ "Fat32" _FS_);
+	szPath.Append(szName);
+	cFile.Init(szPath.Text());
+	AssertTrue(cFile.Open(EFM_Read));
+	uiLength = (lsize)cFile.Size();
+	pcDrive->Init(uiLength, 512);
+	cFile.Read(pcDrive->GetMemory(), uiLength, 1);
+	cFile.Close();
+	cFile.Kill();
+	szPath.Kill();
+	return uiLength;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
+// A mount that fails leaves the volume unmounted, so unmounting it writes
+// nothing: it used to keep the file system of the volume mounted before
+// (FAT32) and write that volume's file system information sector to the
+// drive it failed to mount.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestFat32FailedMountAfterMount(void)
+{
+	CMemoryDrive	cFat32Drive;
+	CMemoryDrive	cPartitionsDrive;
+	CFatVolume		cVolume;
+	uint8*			pucBefore;
+	uint8*			pucAfter;
+	lsize			uiLength;
+	lsize			ui;
+	lsize			uiChanged;
+
+	TestFat32ReadImage(&cFat32Drive, "ComplexDisk.img");
+	uiLength = TestFat32ReadImage(&cPartitionsDrive, "SDCard4PartitionMBR.img");
+	pucBefore = (uint8*)malloc(uiLength);
+	pucAfter = (uint8*)cPartitionsDrive.GetMemory();
+	for (ui = 0; ui < uiLength; ui++)
+	{
+		pucBefore[ui] = pucAfter[ui];
+	}
+
+	AssertInt(FAT_SUCCESS, cVolume.Mount(&cFat32Drive));
+	AssertInt(FAT_SUCCESS, cVolume.Unmount());
+
+	AssertInt(FAT_INVALID_FAT_VOLUME, cVolume.Mount(&cPartitionsDrive));
+	AssertInt(FAT_SUCCESS, cVolume.Unmount());
+	uiChanged = 0;
+	for (ui = 0; ui < uiLength; ui++)
+	{
+		if (pucBefore[ui] != pucAfter[ui])
+		{
+			uiChanged++;
+		}
+	}
+	AssertLSize(0, uiChanged);
+
+	free(pucBefore);
+	cPartitionsDrive.Kill();
+	cFat32Drive.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestFat32PartionsMount(void)
@@ -2879,6 +2953,7 @@ void TestFat32(void)
 	TestFat32TruncateToSmall();
 	TestFat32TruncateToZero();
 	TestFat32PartionsMount();
+	TestFat32FailedMountAfterMount();
 
 	TestStatistics();
 	WordsKill();

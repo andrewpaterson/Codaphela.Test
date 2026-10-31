@@ -488,6 +488,7 @@ void TestFatMountSectorSizePowerOfTwo(void)
 	auiSector[12] = 0x03;
 	AssertTrue(cDrive.Write(0, auiSector));
 	AssertFalse(cVolume.Mount(&cDrive) == FAT_SUCCESS);
+	AssertInt(FAT_SUCCESS, cVolume.Unmount());
 
 	auiSector[11] = 0x00;
 	auiSector[12] = 0x02;

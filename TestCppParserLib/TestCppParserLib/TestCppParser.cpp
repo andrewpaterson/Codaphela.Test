@@ -1320,6 +1320,64 @@ int f(void)\n\
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A statement that isn't a declaration can start with attributes too
+// ([[fallthrough]];, [[likely]] if ...): they are kept with the statement
+// (CCPPSyntaxAttributedStatement), not parsed as a lambda.  [stmt.pre]
+//
+//////////////////////////////////////////////////////////////////////////
+void TestCppParserAttributedStatements(void)
+{
+	SParsedText		sParsed;
+	CChars			sz;
+
+	AssertTrue(sParsed.Init("\
+int f(int a)\n\
+{\n\
+	int r = 0;\n\
+	switch (a)\n\
+	{\n\
+	case 1:\n\
+		r += 1;\n\
+		[[fallthrough]];\n\
+	case 2:\n\
+		r += 2;\n\
+		break;\n\
+	}\n\
+	[[likely]] if (a) r++;\n\
+	[[gnu::hot]] [[likely]] return r;\n\
+}"));
+	AssertInt(0, sParsed.iErrors);
+
+	sz.Init();
+	AssertString("\
+int f(int a)\n\
+{\n\
+	int r = 0;\n\
+	switch (a)\n\
+	{\n\
+	case 1:\n\
+		r += 1;\n\
+		[[fallthrough]]\n\
+		;\n\
+	case 2:\n\
+		r += 2;\n\
+		break;\n\
+	}\n\
+	[[likely]]\n\
+	if (a)\n\
+		r++;\n\
+	[[gnu::hot]] [[likely]]\n\
+	return r;\n\
+}\n", sParsed.Print(&sz));
+	sz.Kill();
+
+	AssertPointer(sParsed.GetSymbol("r", 0), sParsed.GetSymbol("r", 4));
+	sParsed.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // .template and ->template name a member template of a dependent type.
 // [temp.names] 4
 //
@@ -1480,6 +1538,7 @@ void TestCppParser(void)
 	TestCppParserCyclicUsingDirectives();
 	TestCppParserClassAlignas();
 	TestCppParserAttributedDeclarationStatements();
+	TestCppParserAttributedStatements();
 	TestCppParserTemplateMemberAccess();
 	TestCppParserSizeofPack();
 	TestCppParserDeclarationErrors();

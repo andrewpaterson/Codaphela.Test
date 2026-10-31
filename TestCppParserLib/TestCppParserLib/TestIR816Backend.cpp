@@ -1447,6 +1447,11 @@ void TestIR816BackendPeepholeBranches(void)
 	AssertPeepholeBranches("\t\tbra L1\nL2:\n\t\trtl\nL1:\n\t\tclc\n\t\tlda 4\n\t\tbra L2\n",
 		"\t\tlda [D + 3]\n\t\tbra L1\nL2:\n\t\trtl\nL1:\n\t\tclc\n\t\tlda 4\n\t\tbra L2\n");
 	AssertPeepholeBranches("L1:\n\t\tldx 2\n\t\ttxa\n\t\trtl\n", "\t\tlda [D + 3]\nL1:\n\t\tldx 2\n\t\ttxa\n\t\trtl\n");
+	//...and past steps and shifts of memory, pushes and index compares (IR816LeavesA, as IR816DeadLoad).
+	AssertPeepholeBranches("L1:\n\t\tinc [D + 5]\n\t\tpei [D + 7]\n\t\tphx\n\t\tcpx 3\n\t\tlda 1\n\t\trtl\n",
+		"\t\tlda [D + 3]\nL1:\n\t\tinc [D + 5]\n\t\tpei [D + 7]\n\t\tphx\n\t\tcpx 3\n\t\tlda 1\n\t\trtl\n");
+	AssertPeepholeBranches("\t\tlda [D + 3]\nL1:\n\t\tinc A\n\t\tlda 1\n\t\trtl\n", "\t\tlda [D + 3]\nL1:\n\t\tinc A\n\t\tlda 1\n\t\trtl\n");
+	AssertPeepholeBranches("\t\tlda [D + 3]\nL1:\n\t\tpha\n\t\tlda 1\n\t\trtl\n", "\t\tlda [D + 3]\nL1:\n\t\tpha\n\t\tlda 1\n\t\trtl\n");
 
 	//Kept: a branch reads its N and Z, the code after reads A, or it reads memory that isn't the direct page's.
 	AssertPeepholeBranches("\t\tlda [D + 3]\nL1:\n\t\tbeq L2\n\t\trtl\nL2:\n\t\trtl\n", "\t\tlda [D + 3]\nL1:\n\t\tbeq L2\n\t\trtl\nL2:\n\t\trtl\n");

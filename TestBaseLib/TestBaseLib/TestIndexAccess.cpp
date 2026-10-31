@@ -30,6 +30,8 @@ struct STestIndexAccessKey
 
 	void Init(int32 a, int16 b)
 	{
+		//The whole struct is the key: its padding after mb must be the same every time.
+		memset(this, 0, sizeof(STestIndexAccessKey));
 		ma = a;
 		mb = b;
 	}
