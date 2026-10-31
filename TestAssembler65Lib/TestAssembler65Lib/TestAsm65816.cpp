@@ -752,6 +752,16 @@ void TestAsm65816Banks(void)
 	AssertTrue(strstr(cLinker.GetErrors(), "Section crosses the end of a bank 'text.C'") != NULL);
 	cLinker.Kill();
 	cObject.Kill();
+
+	//Code bigger than a bank can't run (the program counter wraps in its bank); data may be.
+	AssertFalse(TestAsm65816LinkBanks(&cLinker, &cObject, ".section text.Huge\n.space $10001\n", 0x010000));
+	AssertTrue(strstr(cLinker.GetErrors(), "Code is bigger than a bank 'text.Huge'") != NULL);
+	cLinker.Kill();
+	cObject.Kill();
+	AssertTrue(TestAsm65816LinkBanks(&cLinker, &cObject, ".section text.Code\nnop\n.section rodata.Table\n.space $10001\n", 0x010000));
+	AssertString("", cLinker.GetErrors());
+	cLinker.Kill();
+	cObject.Kill();
 }
 
 

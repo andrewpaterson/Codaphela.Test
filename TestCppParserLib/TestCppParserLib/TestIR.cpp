@@ -1956,6 +1956,64 @@ void TestIRImportsRestrict(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// A function that calls itself is inlined once into a caller: its copy's
+// calls of itself aren't (they would be inlined again each round, doubling
+// the caller: a W65C816 function that grew past 64KB ran off its bank).
+//
+//////////////////////////////////////////////////////////////////////////
+void TestIRInlineRecursive(void)
+{
+	CIRModule		cModule;
+	CCPPErrors		cErrors;
+	CIRParser		cParser;
+	CIRInliner		cInliner;
+	CIRPrinter		cPrinter;
+	CChars			szPrinted;
+	CIRFunction*	pcCaller;
+	size			ui;
+
+	cErrors.Init();
+	cModule.Init();
+	cParser.Init(&cModule, &cErrors);
+	AssertTrue(cParser.Parse("space default 4\n\n"
+		"function i16 @_R__Fs(i16 %n)\n{\nentry:\n\t%z = eq i16 %n, 0\n\tbrif %z, done, more\n"
+		"done:\n\tret i16 0\nmore:\n\t%m = sub i16 %n, 1\n\t%r = call i16 @_R__Fs(i16 %m)\n\t%s = add i16 %r, 2\n\tret i16 %s\n}\n\n"
+		"function i16 @_P__Fs(i16 %n)\n{\nentry:\n\t%d = add i16 %n, %n\n\tret i16 %d\n}\n\n"
+		"function i16 @_F__Fs(i16 %n)\n{\nentry:\n\t%a = call i16 @_R__Fs(i16 %n)\n\t%b = call i16 @_P__Fs(i16 %a)\n\tret i16 %b\n}\n"));
+	cParser.Kill();
+	pcCaller = NULL;
+	for (ui = 0; ui < cModule.NumFunctions(); ui++)
+	{
+		if (cModule.GetFunction(ui)->muiSymbol == (uint32)cModule.FindSymbol("_F__Fs"))
+		{
+			pcCaller = cModule.GetFunction(ui);
+		}
+	}
+	AssertNotNull(pcCaller);
+	cInliner.Init(&cModule, 64, 64, 8);
+	AssertTrue(cInliner.InlineCalls(pcCaller));
+	cInliner.InlineCalls(pcCaller);
+	cInliner.InlineCalls(pcCaller);
+	cInliner.Kill();
+
+	szPrinted.Init();
+	cPrinter.Init(&cModule, &szPrinted);
+	cPrinter.PrintFunction(pcCaller);
+	cPrinter.Kill();
+	//_R inlined once (its body's sub and add are in _F), its copy's call of itself left; _P inlined.
+	AssertTrue(strstr(szPrinted.Text(), "call i16 @_R__Fs") != NULL);
+	AssertTrue(strstr(strstr(szPrinted.Text(), "call i16 @_R__Fs") + 1, "call i16 @_R__Fs") == NULL);
+	AssertTrue(strstr(szPrinted.Text(), "sub i16") != NULL);
+	AssertTrue(strstr(szPrinted.Text(), "call i16 @_P__Fs") == NULL);
+	szPrinted.Kill();
+
+	cModule.Kill();
+	cErrors.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 // Locals in slots and parameters read through argaddr become temporaries
 // and phis; constants fold; empty blocks go.
 //
@@ -4040,6 +4098,7 @@ void TestIR(void)
 	TestIROptimiserRestrict();
 	TestIROptimiserRestrictParameters();
 	TestIRImportsRestrict();
+	TestIRInlineRecursive();
 	TestIROptimiserLoopCounters();
 	TestIROptimiserZeroExtendedCounters();
 	TestIROptimiserSharedDivisions();

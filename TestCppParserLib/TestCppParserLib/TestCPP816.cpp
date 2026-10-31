@@ -1780,6 +1780,14 @@ void TestCPP816ProfileGuidedInlining(void)
 		"\tx ^= (x >> 3); x += a & 5; x -= b | 9; x ^= x << 2; x += a * 5;\n"
 		"\tx ^= (b >> 2); x += 13; x -= b; x ^= 0x33; x += a * 9; x ^= (b >> 1);\n"
 		"\tx += (a & 7) * 3; x ^= (x >> 5); x += a | b; x -= (a ^ b) >> 3; x ^= (a << 3);\n"
+		"\tx ^= (x >> 1); x += a * 3; x -= b | 5; x ^= x << 1; x += (a & b) * 7; x ^= (b >> 1); x += a ^ 11;\n"
+		"\tx ^= (x >> 2); x += a * 4; x -= b | 6; x ^= x << 2; x += (a & b) * 8; x ^= (b >> 2); x += a ^ 12;\n"
+		"\tx ^= (x >> 3); x += a * 5; x -= b | 7; x ^= x << 3; x += (a & b) * 9; x ^= (b >> 3); x += a ^ 13;\n"
+		"\tx ^= (x >> 4); x += a * 6; x -= b | 8; x ^= x << 1; x += (a & b) * 10; x ^= (b >> 4); x += a ^ 14;\n"
+		"\tx ^= (x >> 5); x += a * 7; x -= b | 9; x ^= x << 2; x += (a & b) * 11; x ^= (b >> 1); x += a ^ 15;\n"
+		"\tx ^= (x >> 1); x += a * 8; x -= b | 10; x ^= x << 3; x += (a & b) * 12; x ^= (b >> 2); x += a ^ 16;\n"
+		"\tx ^= (x >> 2); x += a * 9; x -= b | 11; x ^= x << 1; x += (a & b) * 13; x ^= (b >> 3); x += a ^ 17;\n"
+		"\tx ^= (x >> 3); x += a * 10; x -= b | 12; x ^= x << 2; x += (a & b) * 14; x ^= (b >> 4); x += a ^ 18;\n"
 		"\treturn x;\n"
 		"}\n"
 		"int main()\n"
@@ -1807,9 +1815,9 @@ void TestCPP816ProfileGuidedInlining(void)
 	psMix = cProfile.Get("_Mix__Fss");
 	AssertNotNull((void*)psMix);
 	AssertLong(2001, psMix ? (int64)psMix->ulliCalls : 0);
-	AssertTrue(cProfile.GetLine("_main", "Test.cpp", 18) != NULL);
-	AssertLong(2000, cProfile.GetLine("_main", "Test.cpp", 18) ? (int64)cProfile.GetLine("_main", "Test.cpp", 18)->ulliEntries : 0);
-	AssertLong(2000, (int64)cProfile.LineEntries("Test.cpp", 18));
+	AssertTrue(cProfile.GetLine("_main", "Test.cpp", 26) != NULL);
+	AssertLong(2000, cProfile.GetLine("_main", "Test.cpp", 26) ? (int64)cProfile.GetLine("_main", "Test.cpp", 26)->ulliEntries : 0);
+	AssertLong(2000, (int64)cProfile.LineEntries("Test.cpp", 26));
 	psMain = cProfile.Get("_main");
 	AssertTrue(psMain && (psMain->uiHash != 0) && (psMain->iTime != 0));
 
