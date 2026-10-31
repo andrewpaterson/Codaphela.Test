@@ -54,6 +54,11 @@ public:
 	void Printable(SComponentInputEvent* psEvent)	{ mpszLog->Append("Printable("); mpszLog->Append(psEvent->cPrintable); mpszLog->Append(");"); }
 	void Movement(SComponentInputEvent* psEvent)	{ mpszLog->Append("Move("); mpszLog->Append(psEvent->iRight); mpszLog->Append(","); mpszLog->Append(psEvent->iDown); mpszLog->Append(");"); }
 	void Wheel(SComponentInputEvent* psEvent)		{ mpszLog->Append("Wheel("); mpszLog->Append(psEvent->iDown); mpszLog->Append(");"); }
+	void Undo(SComponentInputEvent* psEvent)		{ mpszLog->Append("Undo;"); }
+	void StepUndo(SComponentInputEvent* psEvent)	{ mpszLog->Append("StepUndo;"); }
+	void Redo(SComponentInputEvent* psEvent)		{ mpszLog->Append("Redo;"); }
+	void StepRedo(SComponentInputEvent* psEvent)	{ mpszLog->Append("StepRedo;"); }
+	void HomeEnter(SComponentInputEvent* psEvent)	{ mpszLog->Append("HomeEnter;"); }
 };
 
 
@@ -195,7 +200,7 @@ public:
 	CProgramDeviceDetail*	mpcMouse;
 	CComponentInput*		mpcComponentInput;
 
-	void Init(void)
+	void Init(bool bRightModifiers = true)
 	{
 		CProgramInput*	pcProgram;
 
@@ -208,8 +213,16 @@ public:
 		mpcMouse = pcProgram->macPDeviceDetails.Get(1);
 		mpcKeyboard->AddSource("Left Shift");
 		mpcKeyboard->AddSource("Left Control");
+		if (bRightModifiers)
+		{
+			mpcKeyboard->AddSource("Right Shift");
+			mpcKeyboard->AddSource("Right Control");
+		}
 		mpcKeyboard->AddSource("A");
 		mpcKeyboard->AddSource("C");
+		mpcKeyboard->AddSource("Y");
+		mpcKeyboard->AddSource("Z");
+		mpcKeyboard->AddSource("Enter");
 		mpcKeyboard->AddSource("Tab");
 		mpcMouse->AddSource("Button 1");
 		mpcMouse->AddSource("Wheel Forward");
@@ -339,6 +352,123 @@ void TestInputActionDispatch(void)
 
 //////////////////////////////////////////////////////////////////////////
 //
+// The undo and redo chords, with and without shift, in the orders people
+// press them.  Shift can be pressed or let go while control is held.  The
+// keys a chord uses up are never seen as keys.  A keyboard without right
+// modifiers gets only the left ones' chords, so control+Z isn't also
+// control+shift+Z.
+//
+//////////////////////////////////////////////////////////////////////////
+void TestInputActionUndoChords(bool bRightModifiers)
+{
+	CWinRefWindowFactory	cNativeFactory;
+
+	{
+		Ptr<CWindow>				pTestWindow;
+		Ptr<CTickTestRefWindow>		pTick;
+		SDataTestRefWindow			cData;
+		CPointer					pNull;
+		Ptr<CGridContainer>			pGrid;
+		Ptr<CActionTestComponent>	pA;
+		CChars						szLog;
+		CActionTestDevices			cDevices;
+		Ptr<CWindowInputSource>		pInputSource;
+		CComponentInput				cComponentInput;
+
+		szLog.Init();
+		cNativeFactory.Init(&gcMemoryAllocator, 64, 32, NULL);
+		pTick = OMalloc<CTickTestRefWindow>(&cData, 1);
+		pTestWindow = OMalloc<CWindow>("Undo Window", &cNativeFactory, pTick, pNull, CFT_RGB, CCO_RGB, CRGB_24bit, ARGB_None);
+		ORoot()->Add(pTestWindow);
+		pGrid = OMalloc<CGridContainer>(pTestWindow);
+		pTestWindow->SetContainer(pGrid);
+		pA = OMalloc<CActionTestComponent>(pTestWindow, &szLog);
+		AssertTrue(pGrid->AddComponent(pA, 0, 0, 1, 1, 1, 1));
+		pTestWindow->Layout();
+
+		cDevices.Init(bRightModifiers);
+		pInputSource = OMalloc<CWindowInputSource>(&cDevices.mcInput);
+		cComponentInput.Init(&pInputSource, &pTestWindow);
+		cDevices.mpcComponentInput = &cComponentInput;
+		AssertTrue(cComponentInput.AddKeyboard(cDevices.GetKeyboard()));
+		AssertTrue(cComponentInput.AddMouse(cDevices.GetMouse()));
+
+		pA->AddInputAction(CIC_Undo, &pA, &CActionTestComponent::Undo);
+		pA->AddInputAction(CIC_StepUndo, &pA, &CActionTestComponent::StepUndo);
+		pA->AddInputAction(CIC_Redo, &pA, &CActionTestComponent::Redo);
+		pA->AddInputAction(CIC_StepRedo, &pA, &CActionTestComponent::StepRedo);
+		pA->AddInputAction(CIC_HomeEnter, &pA, &CActionTestComponent::HomeEnter);
+		pA->AddInputAction(IAF_AnyKeyDown, NULL, &pA, &CActionTestComponent::AnyKeyDown);
+
+		pTestWindow->PointerMoved(10, 10);
+		cDevices.Click("Button 1");
+		AssertTrue(pA->IsFocussed());
+		szLog.Clear();
+
+		cDevices.Press("Left Control"); cDevices.Tap("Z"); cDevices.Release("Left Control");
+		AssertLog("Undo;");
+
+		cDevices.Press("Left Control"); cDevices.Press("Left Shift"); cDevices.Tap("Z"); cDevices.Release("Left Shift"); cDevices.Release("Left Control");
+		AssertLog("StepUndo;");
+
+		cDevices.Press("Left Shift"); cDevices.Press("Left Control"); cDevices.Tap("Z"); cDevices.Release("Left Control"); cDevices.Release("Left Shift");
+		AssertLog("StepUndo;");
+
+		cDevices.Press("Left Control"); cDevices.Tap("Z"); cDevices.Tap("Z"); cDevices.Tap("Z"); cDevices.Release("Left Control");
+		AssertLog("Undo;Undo;Undo;");
+
+		cDevices.Press("Left Control"); cDevices.Press("Left Shift"); cDevices.Tap("Z"); cDevices.Tap("Z"); cDevices.Tap("Z"); cDevices.Release("Left Shift"); cDevices.Release("Left Control");
+		AssertLog("StepUndo;StepUndo;StepUndo;");
+
+		cDevices.Press("Left Control"); cDevices.Tap("Z"); cDevices.Press("Left Shift"); cDevices.Tap("Z"); cDevices.Release("Left Shift"); cDevices.Tap("Z"); cDevices.Release("Left Control");
+		AssertLog("Undo;StepUndo;Undo;");
+
+		cDevices.Press("Left Control"); cDevices.Press("Left Shift"); cDevices.Tap("Z"); cDevices.Release("Left Shift"); cDevices.Tap("Z"); cDevices.Release("Left Control");
+		AssertLog("StepUndo;Undo;");
+
+		if (bRightModifiers)
+		{
+			cDevices.Press("Right Control"); cDevices.Press("Right Shift"); cDevices.Tap("Z"); cDevices.Release("Right Shift"); cDevices.Release("Right Control");
+			AssertLog("StepUndo;");
+		}
+
+		cDevices.Press("Left Control"); cDevices.Press("Left Shift"); cDevices.Press("Z"); cDevices.Release("Left Shift"); cDevices.Release("Z"); cDevices.Release("Left Control");
+		AssertLog("StepUndo;");
+
+		cDevices.Press("Left Control"); cDevices.Press("Left Shift"); cDevices.Tap("Y"); cDevices.Release("Left Shift"); cDevices.Tap("Y"); cDevices.Release("Left Control");
+		AssertLog("StepRedo;Redo;");
+
+		cDevices.Tap("Z");
+		AssertLog("AnyDown(Z);");
+
+		cDevices.Press("Left Control"); cDevices.Press("Left Shift"); cDevices.Tap("Enter"); cDevices.Release("Left Shift"); cDevices.Release("Left Control");
+		AssertLog("HomeEnter;");
+
+		//Control+Enter isn't a chord.
+		cDevices.Press("Left Control"); cDevices.Tap("Enter"); cDevices.Release("Left Control");
+		AssertLog("AnyDown(Left Control);AnyDown(Enter);");
+
+		cComponentInput.Kill();
+		pInputSource = NULL;
+		cDevices.Kill();
+
+		ORoot()->Remove(pTestWindow);
+		pTestWindow = NULL;
+		pTick = NULL;
+		pGrid = NULL;
+		pA = NULL;
+		szLog.Kill();
+	}
+
+	AssertSize(0, gcObjects.NumFreeObjects());
+	AssertTrue(ORoot()->RemoveAll());
+	AssertSize(2, gcObjects.NumMemoryIndexes());
+	cNativeFactory.Kill();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//
 //
 //////////////////////////////////////////////////////////////////////////
 void TestInputAction(void)
@@ -348,6 +478,8 @@ void TestInputAction(void)
 
 	TestInputActionMatching();
 	TestInputActionDispatch();
+	TestInputActionUndoChords(true);
+	TestInputActionUndoChords(false);
 
 	ObjectsFlush();
 	ObjectsKill();
